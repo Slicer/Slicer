@@ -13,6 +13,7 @@ message(STATUS "file_std='${file_std}'")
 message(STATUS "rm_files='${rm_files}'")
 
 # run the command, generate the temporary file
+message("Command: ${test_exe} ${test_exe_args}")
 execute_process(
   COMMAND ${test_exe} ${test_exe_args}
   RESULT_VARIABLE test_exe_rv
