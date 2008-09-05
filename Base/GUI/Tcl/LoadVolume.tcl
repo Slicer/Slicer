@@ -772,8 +772,12 @@ itcl::body LoadVolume::populateDICOMTable {fileName} {
 
   set row 0
   foreach key $firstKeys {
-    set description $header($key,description)
-    set value $header($key,value)
+    set description $_DICOM($key)
+    if { [info exists header($key,value)] } {
+      set value $header($key,value)
+    } else {
+      set value "Not Available"
+    }
     if { $showGroupElement } {
       $w InsertCellText $row $_dicomColumn(Group/Element) $key
     }
