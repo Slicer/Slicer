@@ -543,11 +543,12 @@ if { [BuildThis $::NETLIB_TEST_FILE "netlib"] && !$::USE_SYSTEM_PYTHON && [strin
         # windows binary already checked out
     } else {
 
+        set utilDir $::Slicer3_LIB/../Slicer3/Base/GUI/Python/util
         cd $::Slicer3_LIB/netlib/lapack
         if { $isLinux && $::tcl_platform(machine) == "x86_64" } {
-          file copy -force make.inc.LINUX64 make.inc
+          file copy -force $utilDir/lapack-make.inc.LINUX64 make.inc
         } else {
-          file copy -force make.inc.LINUX make.inc
+          file copy -force $utilDir/lapack-make.inc.LINUX make.inc
         }
         runcmd make lapacklib
         file copy lapack_LINUX.a $::Slicer3_LIB/netlib-build/lapack-build/liblapack.a
@@ -566,6 +567,17 @@ if {  [BuildThis $::NUMPY_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [strin
     # do numpy
 
     runcmd $::SVN co $::NUMPY_TAG numpy
+
+    if { $isLinux } {
+        # Add MAIN__ stub symbol to work around link error with gnu fortran
+        # (protect the definition in case the patch is applied more than once)
+        set fp [open numpy/numpy/linalg/python_xerbla.c "a"]
+        puts $fp "#ifndef MAIN__DEFINED"
+        puts $fp "int MAIN__() {return (0);}"
+        puts $fp "#endif"
+        puts $fp "#define MAIN__DEFINED"
+        close $fp
+    }
 
     if { $isWindows } {
         # windows binary already checked out
