@@ -714,7 +714,6 @@ void vtkITKArchetypeImageSeriesReader::AssembleNthVolume ( int n )
 
 }
 
-
 //----------------------------------------------------------------------------
 const char* vtkITKArchetypeImageSeriesReader::GetNthFileName ( int idxSeriesInstanceUID,
                                                         int idxContentTime,
@@ -1046,7 +1045,7 @@ const char* vtkITKArchetypeImageSeriesReader::GetFileName( unsigned int n )
 
 }
 
-unsigned int vtkITKArchetypeImageSeriesReader::AddFileName( char* filename )
+unsigned int vtkITKArchetypeImageSeriesReader::AddFileName( const char* filename )
 {
   std::string filenamestr (filename);
   this->FileNames.push_back( filenamestr );

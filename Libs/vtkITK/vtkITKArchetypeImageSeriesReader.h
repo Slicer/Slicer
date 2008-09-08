@@ -68,7 +68,7 @@ public:
   // Specify the file names to be used when looking for extra files
   // that match the archetype in defining the volume to load (e.g.
   // other canidate dicom files to look in for matching tags)
-  unsigned int AddFileName( char* filename );
+  unsigned int AddFileName( const char* filename );
   const char* GetFileName( unsigned int n );
   void ResetFileNames();
 
