@@ -431,6 +431,7 @@ proc launch_SetPaths {} {
     set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.5/site-packages:$::env(PYTHONPATH)"
     set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.5/lib-tk:$::env(PYTHONPATH)"
     set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.5/test:$::env(PYTHONPATH)"
+    set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.5/site-packages/numpy/lib:$::env(PYTHONPATH)"
 }
 
 #
