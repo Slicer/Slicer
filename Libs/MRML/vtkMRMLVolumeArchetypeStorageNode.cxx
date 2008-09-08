@@ -245,6 +245,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
       }
     else
       {
+      vtkDebugMacro("ReadData: readerSeries number of file names = " << readerSeries->GetNumberOfFileNames());
       reader = readerSeries;
       readerFile->Delete();
       }
@@ -273,6 +274,12 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
 
 
   reader->SetArchetype(fullName.c_str());
+  // set the list of file names on the reader
+  reader->ResetFileNames();
+  for (int n = 0; n < this->GetNumberOfFileNames(); n++)
+    {
+    reader->AddFileName(this->GetNthFileName(n));
+    }
   reader->SetOutputScalarTypeToNative();
   reader->SetDesiredCoordinateOrientationToNative();
   if (this->CenterImage) 
@@ -307,6 +314,18 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   // set volume attributes
   volNode->SetAndObserveStorageNodeID(this->GetID());
   volNode->SetMetaDataDictionary( reader->GetMetaDataDictionary() );
+
+  // get all the file names from the reader
+  if (reader->GetNumberOfFileNames() > 1)
+    {
+    vtkDebugMacro("Number of file names = " << reader->GetNumberOfFileNames() << ", number of slice location = " << reader->GetNumberOfSliceLocation());
+    for (unsigned int n = 1; n < reader->GetNumberOfFileNames(); n++)
+      {
+      const char *thisFileName = reader->GetFileName(n);
+      int currentSize = this->AddFileName(thisFileName);
+      vtkDebugMacro("After adding file " << n << ", filename = " << thisFileName << " to this storage node's list, current size of the list = " << currentSize);
+      }
+    }
   //TODO update scene to send Modified event
  
   vtkImageChangeInformation *ici = vtkImageChangeInformation::New();

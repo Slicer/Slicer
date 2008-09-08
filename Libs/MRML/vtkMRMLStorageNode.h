@@ -38,12 +38,14 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   virtual void ReadXMLAttributes( const char** atts);
   
   // Description:
-  // Read data and set it in the referenced node
+  // Read data and set it in the referenced node. 
+  // Return 1 on success, 0 on failure.
   // NOTE: Subclasses should implement this method
   virtual int ReadData(vtkMRMLNode *refNode) = 0;
 
   // Description:
   // Write data from a  referenced node
+  // Return 1 on success, 0 on failure.
   // NOTE: Subclasses should implement this method
   virtual int WriteData(vtkMRMLNode *refNode) = 0;
 
@@ -60,9 +62,12 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   virtual const char* GetNodeTagName() = 0;
 
   // Description:
-  // A file name or one name in a series
+  // A file name or the archetype file name for a series
   vtkSetStringMacro(FileName);
   vtkGetStringMacro(FileName);
+  // Description:
+  // return the nth file name, null if doesn't exist
+  const char *GetNthFileName(int n);
 
   // Description:
   // Use compression on write
@@ -139,6 +144,7 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   // dir
   //BTX
   std::string GetFullNameFromFileName();
+  std::string GetFullNameFromNthFileName(int n);
   //ETX
 
   // Description:
@@ -147,6 +153,46 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   // 1 if is supported, 0 otherwise.
   // Subclasses should implement this method.
   virtual int SupportedFileType(const char *fileName);
+
+  // Description:
+  // Add in another file name to the list of file names
+  unsigned int AddFileName (const char *fileName);
+  // Description:
+  // Clear the array of file names
+  void ResetFileNameList();
+  
+  // Description:
+  // See how many file names were generated during ExecuteInformation
+  int GetNumberOfFileNames()
+  {
+    return this->FileNameList.size();
+  };
+
+  // Description:
+  // Add in another URI to the list of URI's
+  unsigned int AddURI(const char *uri);
+
+  // Description:
+  // Get the nth URI from the list of URI's
+  const char *GetNthURI(int n);
+  
+  // Description:
+  // Clear the array of URIs
+  void ResetURIList();
+  
+  // Description:
+  // Return how many uri names this storage node holds in it's list
+  int GetNumberOfURIs()
+  {
+    return this->URIList.size();
+  }
+
+  // Description:
+  // Set a new data directory for all files
+  void SetDataDirectory(const char* dataDirName);
+  // Description:
+  // Set a new URI base for all URI's
+  void SetURIPrefix(const char *uriPrefix);
   
 protected:
   vtkMRMLStorageNode();
@@ -154,13 +200,28 @@ protected:
   vtkMRMLStorageNode(const vtkMRMLStorageNode&);
   void operator=(const vtkMRMLStorageNode&);
 
+  // Description:
+  // Set the nth file in FileNameList, checks that it is already defined
+  void ResetNthFileName(int n, const char *fileName);
+  // Description:
+  // Set the nth uri in URIList, checks that it is already defined
+  void ResetNthURI(int n, const char *uri);
+  
   char *FileName;
   char *URI;
   vtkURIHandler *URIHandler;
   int UseCompression;
   int ReadState;
   int WriteState;
-  
+
+  //BTX
+  // Description:
+  // An array of file names, should contain the FileName but may not
+  std::vector<std::string> FileNameList;
+  // Description:
+  // An array of URI's, should contain the URI but may not
+  std::vector<std::string> URIList;
+  //ETX
 };
 
 #endif
