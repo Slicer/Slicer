@@ -66,6 +66,7 @@ if { [itcl::find class LoadVolume] == "" } {
     variable _DICOM ;# map from group/element to name
     variable _dicomColumn ;# keep track of columns
     variable _dicomTree ;# currently loaded dicom directory
+    variable _dicomSeriesFileList "" ;# files in the current series list
 
     # methods
     method processEvent {{caller ""} {event ""}} {}
@@ -429,12 +430,18 @@ itcl::body LoadVolume::apply { } {
     set name [file root [file tail $fileName]]
   }
 
+  set fileList [vtkStringArray New]
+  foreach s $_dicomSeriesFileList {
+    $fileList InsertNextValue $s
+  }
   set volumeLogic [$::slicer3::VolumesGUI GetLogic]
-  set ret [catch [list $volumeLogic AddArchetypeVolume "$fileName" $name $loadingOptions] node]
+  set ret [catch [list $volumeLogic AddArchetypeVolume "$fileName" $name $loadingOptions $fileList] node]
   if { $ret } {
     $this errorDialog "Could not load $fileName as a volume\n\nError is:\n$node"
     return 1
   }
+  $fileList Delete
+
   set selNode [$::slicer3::ApplicationLogic GetSelectionNode]
   if { $node == "" } {
     $this errorDialog "Could not load $fileName as a volume"
@@ -666,9 +673,11 @@ itcl::body LoadVolume::selectArchetype { path name {optionsName ""} } {
   [$o(name) GetWidget] SetValue $name
   $this populateDICOMTable $path
 
-  # if this is a different directory than have loaded, then 
+  #
+  # if this is a different directory than we have loaded, then 
   # try to restore from cache.  If can't, then wait until
   # user clicks 'Parse Directory' button
+  #
   if { ![info exists _dicomTree(directoryName)] || $_dicomTree(directoryName) != $directoryName } {
     # get the dicom info for this directory if it exists
     set dicomCache [DICOMCache #auto]
@@ -676,6 +685,16 @@ itcl::body LoadVolume::selectArchetype { path name {optionsName ""} } {
     itcl::delete object $dicomCache
 
     $this populateDICOMTree $directoryName _dicomTree
+
+    # look for the rest of the series and set the file names list 
+    # as an instance variable to be used if the user selects apply
+    set _dicomSeriesFileList ""
+    set fileLists [array names _dicomTree *files]
+    foreach fileList $fileLists {
+      if { [lsearch $_dicomTree($fileList) $path] != -1 } {
+        set _dicomSeriesFileList $_dicomTree($fileList)
+      }
+    }
   }
 
   set _processingEvents 0
