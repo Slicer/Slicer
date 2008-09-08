@@ -44,6 +44,8 @@
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
 
+#include "vtkStringArray.h"
+
 vtkCxxRevisionMacro(vtkSlicerVolumesLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerVolumesLogic);
 
@@ -405,7 +407,7 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
 // bit 3: auto calculate window/level
 // bit 4: discard image orientation
 // higher bits are reserved for future use
-vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions)
+vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions, vtkStringArray *fileList)
 {
   int centerImage = 0;
   int labelMap = 0;
@@ -494,6 +496,21 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     {
     storageNode1->SetFileName(filename);
     storageNode2->SetFileName(filename);
+    if (fileList != NULL)
+      {
+      int numFiles = fileList->GetNumberOfValues();
+      vtkWarningMacro("Have a list of " << numFiles << " files that go along with the archetype");
+      vtkStdString thisFileName;
+      storageNode1->ResetFileNameList();
+      storageNode2->ResetFileNameList();
+      for (int n = 0; n < numFiles; n++)
+        {
+        thisFileName = fileList->GetValue(n);
+        //vtkWarningMacro("\tfile " << n << " =  " << thisFileName);
+        storageNode1->AddFileName(thisFileName);
+        storageNode2->AddFileName(thisFileName);
+        }
+      }
     }
   storageNode1->SetCenterImage(centerImage);
   storageNode1->AddObserver(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);

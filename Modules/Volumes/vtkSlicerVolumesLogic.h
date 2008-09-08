@@ -32,6 +32,7 @@
 class vtkMRMLScalarVolumeNode;
 class vtkMRMLScalarVolumeDisplayNode;
 class vtkMRMLVolumeHeaderlessStorageNode;
+class vtkStringArray;
 
 class VTK_VOLUMES_EXPORT vtkSlicerVolumesLogic : public vtkSlicerModuleLogic 
 {
@@ -58,7 +59,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerVolumesLogic : public vtkSlicerModuleLogic
   // bit 1: centered
   // bit 2: loading signal file
   // higher bits are reserved for future use
-  vtkMRMLVolumeNode* AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions);
+  vtkMRMLVolumeNode* AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions, vtkStringArray *fileList = NULL);
 
   // Description:
   // Create new mrml node and associated storage node.
