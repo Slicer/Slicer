@@ -59,7 +59,11 @@ class VTK_VOLUMES_EXPORT vtkSlicerVolumesLogic : public vtkSlicerModuleLogic
   // bit 1: centered
   // bit 2: loading signal file
   // higher bits are reserved for future use
-  vtkMRMLVolumeNode* AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions, vtkStringArray *fileList = NULL);
+  vtkMRMLVolumeNode* AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions) 
+    {
+    return (this->AddArchetypeVolume( filename, volname, loadingOptions, NULL));
+    };
+  vtkMRMLVolumeNode* AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions, vtkStringArray *fileList);
 
   // Description:
   // Create new mrml node and associated storage node.
