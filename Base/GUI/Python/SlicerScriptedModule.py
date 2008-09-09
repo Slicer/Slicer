@@ -32,7 +32,7 @@ class SlicerScriptedModuleImporter(object):
             for aname in importedModule.__dict__:
                 a = importedModule.__dict__[aname]
                 if type(a) == type:
-                    if issubclass(a,ScriptedModuleGUI):
+                    if issubclass(a,ScriptedModuleGUI) and a != ScriptedModuleGUI:
                         ScriptedModuleGUIClass = a
                         break
             if ScriptedModuleGUIClass == None:
