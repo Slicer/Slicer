@@ -1,0 +1,8 @@
+Project(VolumeRenderingCudaExamples)
+
+ADD_EXECUTABLE(VolumeRenderingCudaExample
+  VolumeRenderingCudaExample.cxx
+)
+TARGET_LINK_LIBRARIES(VolumeRenderingCudaExample
+  VolumeRenderingCudaModule
+)
