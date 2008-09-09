@@ -60,6 +60,7 @@ subdirs(
 #  MRAblation <- not working either
    Volumes
    EMSegment
+   VolumeRenderingCuda
   )
 
 if(Slicer3_USE_NAVITRACK)
