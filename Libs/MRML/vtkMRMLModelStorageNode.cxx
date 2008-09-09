@@ -33,6 +33,7 @@
 #include "vtkPolyDataWriter.h"
 #include "vtkXMLPolyDataWriter.h"
 #include "vtkSTLWriter.h"
+#include "vtkTriangleFilter.h"
 
 #include "vtkPointData.h"
 #include "vtkCellArray.h"
@@ -347,9 +348,11 @@ int vtkMRMLModelStorageNode::WriteData(vtkMRMLNode *refNode)
   }
   else if (extension == ".stl")
   {
+    vtkTriangleFilter *triangulator = vtkTriangleFilter::New();
     vtkSTLWriter *writer = vtkSTLWriter::New();
     writer->SetFileName(fullName.c_str());
-    writer->SetInput( modelNode->GetPolyData() );
+    triangulator->SetInput( modelNode->GetPolyData() );
+    writer->SetInput( triangulator->GetOutput() );
     try
     {
       writer->Write();
@@ -358,6 +361,7 @@ int vtkMRMLModelStorageNode::WriteData(vtkMRMLNode *refNode)
     {
       result = 0;
     }
+    triangulator->Delete();    
     writer->Delete();    
   }
   else
