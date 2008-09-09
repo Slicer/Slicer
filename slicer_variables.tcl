@@ -148,7 +148,9 @@ set ::NAVITRACK "OFF"
 # Option for build using system Python, should be "true" or "false"
 set ::USE_SYSTEM_PYTHON "false"
 # CMake option for Python, must be "off" on "on", default is "off"
-set ::USE_PYTHON "off"
+set ::USE_PYTHON "ON"
+# CMake option for numerical Python, only matters if Python is on
+set ::USE_NUMPY "ON"
 
 # The absolute path and directory containing the navitrack library,
 # for instance on linux the libNaviTrack.so
@@ -457,5 +459,6 @@ switch $::tcl_platform(os) {
         set ::SERIAL_MAKE $::MAKE
     }
 }
+
 
 
