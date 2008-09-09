@@ -123,6 +123,7 @@ set(SlicerBaseGUI_SRCS
   vtkSlicerPermissionPrompterWidget.cxx
   vtkSlicerXNATPermissionPrompterWidget.cxx
   vtkSlicerROIGUI.cxx
+  vtkKWCheckBoxSelectionDialog.cxx
   # VTK Replacement classes
   vtkSlicerInteractorStyle.cxx
   vtkSlicerViewerInteractorStyle.cxx
