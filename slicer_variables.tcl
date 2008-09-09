@@ -148,7 +148,7 @@ set ::NAVITRACK "OFF"
 # Option for build using system Python, should be "true" or "false"
 set ::USE_SYSTEM_PYTHON "false"
 # CMake option for Python, must be "off" on "on", default is "off"
-set ::USE_PYTHON "ON"
+set ::USE_PYTHON "off"
 # CMake option for numerical Python, only matters if Python is on
 set ::USE_NUMPY "ON"
 
@@ -344,6 +344,7 @@ switch $::tcl_platform(os) {
         set ::GENERATOR "Unix Makefiles" 
         set ::COMPILER_PATH "/usr/bin"
         set ::COMPILER "g++"
+        set ::FORTRAN_COMPILER "g77"
         set ::CMAKE $::CMAKE_PATH/bin/cmake
         set numCPUs [lindex [exec grep processor /proc/cpuinfo | wc] 0]
         set ::MAKE "make -j [expr $numCPUs * 2]"
@@ -355,6 +356,7 @@ switch $::tcl_platform(os) {
         set ::GENERATOR "Unix Makefiles" 
         set ::COMPILER_PATH "/usr/bin"
         set ::COMPILER "g++"
+        set ::FORTRAN_COMPILER "gfortran"
         set ::CMAKE $::CMAKE_PATH/bin/cmake
         set ::MAKE make
         set ::SERIAL_MAKE make
