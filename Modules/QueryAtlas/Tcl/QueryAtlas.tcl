@@ -766,7 +766,7 @@ proc QueryAtlasAddAnnotations {LHAnnoFileName RHAnnoFileName } {
         #
         # read the freesurfer labels for the aseg+aparc
         #
-        set lutFile $::Slicer3_HOME/share/FreeSurfer/FreeSurferColorLUT.txt
+        set lutFile "$::Slicer3_HOME/share/FreeSurfer/FreeSurferColorLUT.txt"
         if { [file exists $lutFile] } {
             set fp [open $lutFile "r"]
             while { ![eof $fp] } {
@@ -1297,6 +1297,7 @@ proc QueryAtlasPickOnQuerySlice {x y renderer modelNode} {
     # if we got here, we know the attribute data is valid and we have a slice node
     set nodes(sliceNode) [$::slicer3::MRMLScene GetNodeByID $nodes(SliceID)]
     set nodes(compositeNode) [$::slicer3::MRMLScene GetNodeByID $nodes(CompositeID)]
+
     set propCollection [$::QA(cellPicker) GetPickList]
     $propCollection RemoveAllItems
     
@@ -1316,6 +1317,7 @@ proc QueryAtlasPickOnQuerySlice {x y renderer modelNode} {
 
     set cellID [$::QA(cellPicker) GetCellId]
     set pCoords [$::QA(cellPicker) GetPCoords]
+
     if { $cellID != -1 } {
         set polyData [$::QA(cellPickerSliceMapper) GetInput]
         set cell [$polyData GetCell $cellID]
@@ -1342,45 +1344,44 @@ proc QueryAtlasPickOnQuerySlice {x y renderer modelNode} {
         set texture [$displayNode GetTextureImageData]
         foreach {w h d} [$texture GetDimensions] {}
         if { $x >= 0 && $x < $w && $y >= 0 && $y < $h } {
-          set alpha [$texture GetScalarComponentAsDouble $x $y 0 3]
+            set alpha [$texture GetScalarComponentAsDouble $x $y 0 3]
         } else {
-          set alpha 0
+            set alpha 0
         }
         if { $alpha == 0 } {
-          set pointLabels ""
+            set pointLabels ""
         } else {
-
-          #
-          # here we have a visible portion of the slice model and we want to
-          # look for a valid label in it
-          #
-          set labelID [$nodes(compositeNode) GetLabelVolumeID]
-          if { $labelID == "" } {
-            set pointLabels "No Label Layer"
-          } else {
-            set nodes(labelNode) [$::slicer3::MRMLScene GetNodeByID $labelID]
-            set rasToIJK [vtkMatrix4x4 New]
-            $nodes(labelNode) GetRASToIJKMatrix $rasToIJK
-            set ijk [lrange [eval $rasToIJK MultiplyPoint $rasPoint 1] 0 2]
-            set imageData [$nodes(labelNode) GetImageData]
-            foreach var {i j k} val $ijk {
-                set $var [expr int(round($val))]
-            }
-            set labelValue [$imageData GetScalarComponentAsDouble $i $j $k 0]
-            if { [info exists ::QAFS($labelValue,name)] } {
-                if { $::QAFS($labelValue,name) == "Unknown" } {
-                    set pointLabels "Not Labeled"
-                } else {
-                    set pointLabels "$::QAFS($labelValue,name)"
-                }
+            #
+            # here we have a visible portion of the slice model and we want to
+            # look for a valid label in it
+            #
+            set labelID [$nodes(compositeNode) GetLabelVolumeID]
+            if { $labelID == "" } {
+                set pointLabels "No Label Layer"
             } else {
-                set pointLabels "label: $labelValue (no name available), ijk $ijk"
+                set nodes(labelNode) [$::slicer3::MRMLScene GetNodeByID $labelID]
+                set rasToIJK [vtkMatrix4x4 New]
+                $nodes(labelNode) GetRASToIJKMatrix $rasToIJK
+                set ijk [lrange [eval $rasToIJK MultiplyPoint $rasPoint 1] 0 2]
+                set imageData [$nodes(labelNode) GetImageData]
+                foreach var {i j k} val $ijk {
+                    set $var [expr int(round($val))]
+                }
+                set labelValue [$imageData GetScalarComponentAsDouble $i $j $k 0]
+                scan $labelValue %d labelValue
+                if { [info exists ::QAFS($labelValue,name)] } {
+                    if { $::QAFS($labelValue,name) == "Unknown" } {
+                        set pointLabels "Not Labeled"
+                    } else {
+                        set pointLabels "$::QAFS($labelValue,name)"
+                    }
+                } else {
+                    set pointLabels "label: $labelValue (no name available), ijk $ijk"
+                }
+                $rasToIJK Delete
             }
-            $rasToIJK Delete
-          }
         }
     }
-
     return $pointLabels
 }
 
@@ -1432,6 +1433,7 @@ proc QueryAtlasPickCallback {} {
     set ::QA(lastRootXY) [winfo pointerxy [$renderWidget GetWidgetName]]
 
 
+
     #
     # look at slices to find the closes hit point that is not transparent
     #
@@ -1443,6 +1445,7 @@ proc QueryAtlasPickCallback {} {
     for { set zz 0 } { $zz < $numModels } { incr zz } {
         set testNode [ $::slicer3::MRMLScene GetNthNodeByClass $zz "vtkMRMLModelNode" ]          
         set pointLabels [QueryAtlasPickOnQuerySlice $x $y $renderer $testNode]
+        # pointLabels will be non-null if a Slice is being picked.
         if { $pointLabels != "" } {
             foreach {sx sy sz} [eval QueryAtlasWorldToScreen $::QA(CurrentRASPoint)] {}
             if { $sz < $nearestSliceZ } {
@@ -1452,7 +1455,6 @@ proc QueryAtlasPickCallback {} {
             }
         }
     }
-
 
     #
     # use the cell index picker to see if we're over one of the models
@@ -1491,47 +1493,53 @@ proc QueryAtlasPickCallback {} {
             incr i
         }
         set cellNumber [expr $cellNumber - $cellBase]
+        # convert from a float to an int.
+        scan $cellNumber %d cellNumber
     }
 
-    if { $_useMID != "" } {
-        if { $cellNumber >= 0 && $cellNumber < [$::QA(polyData_$_useMID) GetNumberOfCells] } {
-            set cell [$::QA(polyData_$_useMID) GetCell $cellNumber]
 
-            set ::QA(currentHit) "QueryModel"
 
-            set labels [[$::QA(polyData_$_useMID) GetPointData] GetScalars "labels"]
-            set points [$::QA(polyData_$_useMID) GetPoints]
+    if { $_useMID != ""} {
+        set numCells [ $::QA(polyData_$_useMID) GetNumberOfCells ]
+        if { [info exists ::QA(polyData_$_useMID)] } {
+            if { $cellNumber >= 0 && $cellNumber < $numCells } {
 
-            set m $_useMID
-            array set labelMap $::QA(labelMap_$m)
-            set pointLabelsModel ""
-            set numberOfPoints [$cell GetNumberOfPoints]
+                set cell [$::QA(polyData_$_useMID) GetCell $cellNumber]
+                set ::QA(currentHit) "QueryModel"
 
-            set nearestIndex ""
-            set nearestDistance 1000000
+                set labels [[$::QA(polyData_$_useMID) GetPointData] GetScalars "labels"]
+                set points [$::QA(polyData_$_useMID) GetPoints]
 
-            for {set p 0} {$p < $numberOfPoints} {incr p} {
-                set index [$cell GetPointId $p]
-                set ras [$points GetPoint $index]
-                foreach {sx sy sz} [eval QueryAtlasWorldToScreen $ras] {}
-                set dist [QueryAtlasDistance "$sx $sy" "$x $y"]
-                if { $dist < $nearestDistance } {
-                    set nearestDistance $dist
-                    set nearestIndex $index
-                    set nearestModelRAS $ras
+                set m $_useMID
+                array set labelMap $::QA(labelMap_$m)
+                set pointLabelsModel ""
+                set numberOfPoints [$cell GetNumberOfPoints]
+
+                set nearestIndex ""
+                set nearestDistance 1000000
+
+                for {set p 0} {$p < $numberOfPoints} {incr p} {
+                    set index [$cell GetPointId $p]
+                    set ras [$points GetPoint $index]
+                    foreach {sx sy sz} [eval QueryAtlasWorldToScreen $ras] {}
+                    set dist [QueryAtlasDistance "$sx $sy" "$x $y"]
+                    if { $dist < $nearestDistance } {
+                        set nearestDistance $dist
+                        set nearestIndex $index
+                        set nearestModelRAS $ras
+                    }
                 }
-            }
-            
-            if { $nearestIndex != "" } {
-                set ::QA(CurrentRASPoint) $nearestModelRAS
-                set pointLabel [$labels GetValue $nearestIndex]
-                if { [info exists labelMap($pointLabel)] } {
-                    set pointLabelsModel $labelMap($pointLabel)
-                } else {
-                    lappend pointLabelsModel ""
+                if { $nearestIndex != "" } {
+                    set ::QA(CurrentRASPoint) $nearestModelRAS
+                    set pointLabel [$labels GetValue $nearestIndex]
+                    if { [info exists labelMap($pointLabel)] } {
+                        set pointLabelsModel $labelMap($pointLabel)
+                    } else {
+                        lappend pointLabelsModel ""
+                    }
                 }
-            }
-        }
+            } 
+        } 
     }
 
     #--- slice or model
