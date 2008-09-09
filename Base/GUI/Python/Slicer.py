@@ -95,6 +95,7 @@ def __init(self, tclName=None):
         raise Exception, "Subclassing wrapped classes is not allowed."
     if not tclName:
         self.SlicerWrapper = SlicerWrapper(self.__class__.ClassName).New()
+        slicer.addInstance(self.SlicerWrapper)
         self.OwnWrapper = True
     else:
         self.SlicerWrapper = SlicerWrapper(tclName)
@@ -105,6 +106,7 @@ def __repr(self):
 
 def __del(self):
 #   TODO: need to call superclass' __del__?
+# TODO: I'm not convinced this gets called... (SP)
     if self.OwnWrapper:
         self.SlicerWrapper.Delete()
 
@@ -253,12 +255,22 @@ class Slicer(object):
     def __init__ (self):
         self.callTk = tk.tk.call
         self.ns = "::slicer3"
+        self.instances = []
 
     def eval (self, inString):
         return self.__eval(inString)
 
     def __eval (self, inString):
         return self.callTk(*string.split(inString))
+
+    def addInstance(self,instance):
+        self.instances.append(instance)
+
+    # deleteInstances should be called by slicer before Py_Finalize() to unreference
+    # all the instances created here
+    def deleteInstances(self):
+        for i in self.instances:
+            tk.tk.eval("%s Delete" % i)
 
     def __getattr__ (self, inName):
         # Get the variable or command from the namespace
@@ -284,6 +296,7 @@ class Slicer(object):
 
     def ListVolumeNodes(self):
         return ListVolumeNodes()
+
 
 slicer = Slicer()
 

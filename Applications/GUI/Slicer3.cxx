@@ -2001,8 +2001,15 @@ int Slicer3_main(int argc, char *argv[])
 #endif
 
 #ifdef Slicer3_USE_PYTHON
-// Shutdown python interpreter
-Py_Finalize();
+  // Shutdown python interpreter
+  v = PyRun_String( "Slicer.slicer.deleteInstances()\n",
+                    Py_file_input,
+                    PythonDictionary,PythonDictionary);
+  if (v == NULL)
+    {
+    PyErr_Print();
+    }
+  Py_Finalize();
 #endif
 
   //--- scene next;
