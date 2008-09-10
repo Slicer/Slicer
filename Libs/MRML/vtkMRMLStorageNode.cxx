@@ -110,7 +110,7 @@ void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
       std::string filename = vtkMRMLNode::URLDecodeString(attValue);
       this->SetFileName(filename.c_str());
       }
-    if (!strncmp(attName, "fileListMember", 15))
+    if (!strncmp(attName, "fileListMember", 14))
       {
       std::string filename = vtkMRMLNode::URLDecodeString(attValue);
       this->AddFileName(filename.c_str());
@@ -120,7 +120,7 @@ void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
       std::string uri = vtkMRMLNode::URLDecodeString(attValue);
       this->SetURI(uri.c_str());
       }
-    else if (!strncmp(attName, "uriListMember", 14))
+    else if (!strncmp(attName, "uriListMember", 13))
       {
       std::string uri = vtkMRMLNode::URLDecodeString(attValue);
       this->AddURI(uri.c_str());
