@@ -778,7 +778,7 @@ void vtkSlicerModuleChooseGUI::Populate( )
         std::stringstream methodString;
         methodString << "SelectModule \"" << (*mit).c_str() << "\"";
         this->GetModulesMenuButton()->GetMenu( )
-          ->AddCommand( (*mit).c_str(), this,
+          ->AddRadioButton( (*mit).c_str(), this,
                         methodString.str().c_str() );
         allMap[(*mit).c_str()] = methodString.str();
         ++mit;
@@ -825,7 +825,7 @@ void vtkSlicerModuleChooseGUI::Populate( )
             {
             std::stringstream methodString;
             methodString << "SelectModule \"" << (*mit).c_str() << "\"";
-            index = menu->AddCommand( (*mit).c_str(), this,
+            index = menu->AddRadioButton( (*mit).c_str(), this,
                                       methodString.str().c_str());
 
             allMap[(*mit).c_str()] = methodString.str();
@@ -841,7 +841,7 @@ void vtkSlicerModuleChooseGUI::Populate( )
       int numLines = 0;
       while ( allIt != allMap.end() )
         {
-        all->AddCommand( (*allIt).first.c_str(), this,
+        all->AddRadioButton( (*allIt).first.c_str(), this,
                          (*allIt).second.c_str());
         ++allIt;
         numLines++;
