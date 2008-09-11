@@ -17,6 +17,8 @@ class vtkKWCheckButton;
 class vtkKWRadioButtonSet;
 class vtkKWSpinBoxWithLabel;
 class vtkKWDirectoryPresetSelector;
+class vtkKWCheckBoxSelectionDialog;
+class vtkKWPushButton;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationSettingsInterface
   : public vtkKWApplicationSettingsInterface
@@ -57,7 +59,8 @@ public:
   virtual void RmSelectCallback();
   virtual void EnableDaemonCallback(int state);
   virtual void ConfirmDeleteCallback(int state);
-  
+  virtual void ModulesSelectionCallback();
+
   // Description:
   // Callbacks for the Slicer font settings.
   virtual void SetFontFamilyCallback ( );
@@ -122,6 +125,9 @@ private:
   vtkKWLoadSaveButtonWithLabel *RemoteCacheDirectoryButton;
   vtkKWSpinBoxWithLabel *RemoteCacheLimitSpinBox;
   vtkKWSpinBoxWithLabel * RemoteCacheFreeBufferSizeSpinBox;
+
+  vtkKWPushButton *ModulesSelectionButton;
+  vtkKWCheckBoxSelectionDialog *LoadModulesSelector;
   
 };
 

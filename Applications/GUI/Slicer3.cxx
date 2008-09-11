@@ -1055,66 +1055,74 @@ int Slicer3_main(int argc, char *argv[])
     loadableModuleFactory.Scan();
     }
 
+  vtkStringArray *ignoreModules = slicerApp->GetIgnoreModules();
+
   std::vector<std::string> loadableModuleNames = 
     loadableModuleFactory.GetModuleNames();
   std::vector<std::string>::const_iterator lmit =
     loadableModuleNames.begin();
-    
+  
+  vtkStringArray *loadableModules = vtkStringArray::New();
+
   while (lmit != loadableModuleNames.end())
     {
     LoadableModuleDescription desc = loadableModuleFactory.GetModuleDescription(*lmit);
-    slicerApp->SplashMessage(desc.GetMessage().c_str());
-
-    // Initialize TCL
-
-    TclInit Tcl_Init = desc.GetTclInitFunction();
-
-    if (Tcl_Init != 0)
+    loadableModules->InsertNextValue(desc.GetName());
+    if (ignoreModules->LookupValue(desc.GetName().c_str()) < 0)
       {
-      (*Tcl_Init)(interp);
+      slicerApp->SplashMessage(desc.GetMessage().c_str());
+     
+      // Initialize TCL
+
+      TclInit Tcl_Init = desc.GetTclInitFunction();
+
+      if (Tcl_Init != 0)
+        {
+        (*Tcl_Init)(interp);
+        }
+      else
+        {
+        std::string warning("Cannot get tcl init function for: ");
+        warning += desc.GetName(); 
+        warning += std::string("\n");
+        WarningMessage( warning.c_str() );
+        }
+
+      vtkSlicerModuleGUI* gui = desc.GetGUIPtr();
+      vtkSlicerModuleLogic* logic = desc.GetLogicPtr();
+      logic->SetAndObserveMRMLScene( scene );
+      logic->SetModuleName(desc.GetShortName().c_str());
+
+      vtkIntArray* events = logic->NewObservableEvents();
+      logic->SetAndObserveMRMLSceneEvents(scene, events);
+      events->Delete();
+          
+      events = gui->NewObservableEvents();
+      gui->SetAndObserveMRMLSceneEvents(scene, events);
+      events->Delete();
+          
+      logic->SetApplicationLogic(appLogic);
+      logic->SetModuleLocation(desc.GetLocation().c_str());
+
+      gui->SetApplication( slicerApp );
+      gui->SetApplicationGUI( appGUI );
+      gui->SetAndObserveApplicationLogic( appLogic );
+      gui->SetAndObserveMRMLScene( scene );
+      gui->SetModuleLogic(logic);
+      gui->SetGUIName( desc.GetGUIName().c_str() );
+      gui->GetUIPanel()->SetName( gui->GetGUIName ( ) );
+      gui->GetUIPanel()->SetUserInterfaceManager( appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
+      gui->GetUIPanel()->Create( );
+      slicerApp->AddModuleGUI( gui );
+      gui->BuildGUI ( );
+      gui->AddGUIObservers ( );
+      gui->Init();
       }
-    else
-      {
-      std::string warning("Cannot get tcl init function for: ");
-      warning += desc.GetName(); 
-      warning += std::string("\n");
-      WarningMessage( warning.c_str() );
-      }
-
-    vtkSlicerModuleGUI* gui = desc.GetGUIPtr();
-    vtkSlicerModuleLogic* logic = desc.GetLogicPtr();
-    logic->SetAndObserveMRMLScene( scene );
-    logic->SetModuleName(desc.GetShortName().c_str());
-
-    vtkIntArray* events = logic->NewObservableEvents();
-    logic->SetAndObserveMRMLSceneEvents(scene, events);
-    events->Delete();
-        
-    events = gui->NewObservableEvents();
-    gui->SetAndObserveMRMLSceneEvents(scene, events);
-    events->Delete();
-        
-    logic->SetApplicationLogic(appLogic);
-    logic->SetModuleLocation(desc.GetLocation().c_str());
-
-    gui->SetApplication( slicerApp );
-    gui->SetApplicationGUI( appGUI );
-    gui->SetAndObserveApplicationLogic( appLogic );
-    gui->SetAndObserveMRMLScene( scene );
-    gui->SetModuleLogic(logic);
-    gui->SetGUIName( desc.GetGUIName().c_str() );
-    gui->GetUIPanel()->SetName( gui->GetGUIName ( ) );
-    gui->GetUIPanel()->SetUserInterfaceManager( appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
-    gui->GetUIPanel()->Create( );
-    slicerApp->AddModuleGUI( gui );
-    gui->BuildGUI ( );
-    gui->AddGUIObservers ( );
-    gui->Init();
-
     lmit++;
     }
-
-
+  
+  slicerApp->SetLoadableModules(loadableModules);
+  loadableModules->Delete();
 
   // ADD INDIVIDUAL MODULES
   // (these require appGUI to be built):

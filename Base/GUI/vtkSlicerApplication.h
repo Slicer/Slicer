@@ -5,6 +5,7 @@
 #ifndef __vtkSlicerApplication_h
 #define __vtkSlicerApplication_h
 
+#include "vtkStringArray.h"
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkKWApplication.h"
 #include "vtkKWRegistryHelper.h" // really could have been avoided :(
@@ -103,6 +104,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   static const char *RmRegKey;
   static const char *HomeModuleRegKey;
   static const char *LoadModulesRegKey;
+  static const char *IgnoreModulesRegKey;
   static const char *LoadCommandLineModulesRegKey;
   static const char *EnableDaemonRegKey;
   static const char *ApplicationFontFamilyRegKey;
@@ -223,6 +225,17 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   vtkSetMacro(LoadModules, int);
   vtkGetMacro(LoadModules, int);
   vtkBooleanMacro(LoadModules, int);
+
+  // Description:
+  // Set/Get names of modules that should be ignored (of all loadable modules)
+  vtkSetObjectMacro(IgnoreModules, vtkStringArray);
+  vtkGetObjectMacro(IgnoreModules, vtkStringArray);
+
+  // Description:
+  // Set/Get names of all loadable modules
+  vtkSetObjectMacro(LoadableModules, vtkStringArray);
+  vtkGetObjectMacro(LoadableModules, vtkStringArray);
+
 
   // Description:
   // Set/Get if command line modules should be loaded (i.e. CLI plugins)
@@ -348,7 +361,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // Collections of GUIs
   vtkSlicerGUICollection *ModuleGUICollection;
 
-  
+//BTX
+  void StringToArray(std::string string, char separator, vtkStringArray *array);
+  void ArrayToString(vtkStringArray *array, std::string sep, char *string, int maxLength );
+//ETX  
+
   char ConfirmDelete[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char ModulePaths[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char PotentialModulePaths[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
@@ -361,6 +378,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   char HomeModule [ vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char ApplicationFontSize [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char ApplicationFontFamily [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  char IgnoreModuleNames [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   
   int ApplicationWindowWidth;
   int ApplicationWindowHeight;
@@ -368,6 +386,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   int ApplicationLayoutType;
 
   char RegistryHolder [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+
+  vtkStringArray *IgnoreModules;
+  vtkStringArray *LoadableModules;
 
   int LoadModules;
   int LoadCommandLineModules;
@@ -381,6 +402,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   char RemoteCacheDirectory[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   int RemoteCacheLimit;
   int RemoteCacheFreeBufferSize;
+
   
 private:
   vtkSlicerApplication ( const vtkSlicerApplication& ); // Not implemented.
@@ -389,6 +411,7 @@ private:
   //BTX
   itk::MutexLock::Pointer DisplayMessageQueueActiveLock;
   itk::MutexLock::Pointer DisplayMessageQueueLock;
+  std::string NameSeparator;
   //ETX
   bool DisplayMessageQueueActive;
 

@@ -31,7 +31,14 @@ vtkKWCheckBoxSelectionDialog::vtkKWCheckBoxSelectionDialog ( )
   this->CancelButton = NULL;
   this->MultiColumnList = NULL;
 
+  this->Title=NULL;
+  this->EntryColomnName=NULL;
+  this->BoxColomnName=NULL;
+
+
   this->SetTitle("");
+  this->SetEntryColomnName("");
+  this->SetBoxColomnName("");
 
   this->SelectedLabels = vtkStringArray::New();
 }
@@ -63,6 +70,8 @@ vtkKWCheckBoxSelectionDialog::~vtkKWCheckBoxSelectionDialog ( )
     this->Dialog->Delete();
     }
   this->SetTitle(NULL);
+  this->SetEntryColomnName(NULL);
+  this->SetBoxColomnName(NULL);
 
   this->SelectedLabels->Delete();
 }
@@ -78,37 +87,35 @@ void vtkKWCheckBoxSelectionDialog::PrintSelf ( ostream& os, vtkIndent indent )
 
 
 //---------------------------------------------------------------------------
-void vtkKWCheckBoxSelectionDialog::AddEntry(char *label, char *description, int selected)
+void vtkKWCheckBoxSelectionDialog::AddEntry(char *label, int selected)
 {
   this->Create();
 
   this->MultiColumnList->GetWidget()->AddRow();
   int row = this->MultiColumnList->GetWidget()->GetNumberOfRows() - 1;
   this->MultiColumnList->GetWidget()->SetCellText(row,0,label);
-  this->MultiColumnList->GetWidget()->SetCellText(row,1,description);
-  this->MultiColumnList->GetWidget()->SetCellTextAsInt(row,2,selected);
-  this->MultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton(row, 2);
+  this->MultiColumnList->GetWidget()->SetCellTextAsInt(row,1,selected);
+  this->MultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton(row, 1);
 }
 
 //---------------------------------------------------------------------------
 void vtkKWCheckBoxSelectionDialog::RemoveAllEntries()
 {
-  if (this->MultiColumnList->GetWidget()->GetNumberOfRows())
+  if (this->MultiColumnList && this->MultiColumnList->GetWidget()->GetNumberOfRows())
     {
     this->MultiColumnList->GetWidget()->DeleteAllRows ();
     }
-  this->SelectedLabels->Reset();
 }
 
 //---------------------------------------------------------------------------
-vtkStringArray* vtkKWCheckBoxSelectionDialog::GetSelectedLabels()
+vtkStringArray* vtkKWCheckBoxSelectionDialog::GetSelectedEntries()
 {
   this->SelectedLabels->Reset();
 
   int nrows = this->MultiColumnList->GetWidget()->GetNumberOfRows();
   for (int row=0; row<nrows; row++)
     {
-    if (this->MultiColumnList->GetWidget()->GetCellTextAsInt(row, 2))
+    if (this->MultiColumnList->GetWidget()->GetCellTextAsInt(row, 1))
       {
       std::string label (this->MultiColumnList->GetWidget()->GetCellText(row, 0));
       this->SelectedLabels->InsertNextValue(label.c_str());
@@ -117,6 +124,22 @@ vtkStringArray* vtkKWCheckBoxSelectionDialog::GetSelectedLabels()
   return SelectedLabels;
 }
 
+//---------------------------------------------------------------------------
+vtkStringArray* vtkKWCheckBoxSelectionDialog::GetUnselectedEntries()
+{
+  this->SelectedLabels->Reset();
+
+  int nrows = this->MultiColumnList->GetWidget()->GetNumberOfRows();
+  for (int row=0; row<nrows; row++)
+    {
+    if (!this->MultiColumnList->GetWidget()->GetCellTextAsInt(row, 1))
+      {
+      std::string label (this->MultiColumnList->GetWidget()->GetCellText(row, 0));
+      this->SelectedLabels->InsertNextValue(label.c_str());
+      }
+    }
+  return SelectedLabels;
+}
 
 //---------------------------------------------------------------------------
 void vtkKWCheckBoxSelectionDialog::ProcessWidgetEvents ( vtkObject *caller,
@@ -126,11 +149,13 @@ void vtkKWCheckBoxSelectionDialog::ProcessWidgetEvents ( vtkObject *caller,
   if (this->OkButton ==  vtkKWPushButton::SafeDownCast(caller) && event ==  vtkKWPushButton::InvokedEvent)
     {
     this->MultiColumnList->GetWidget()->FinishEditing();
+    this->Cancel = 0;
     this->Dialog->OK();
 //  this->InvokeEvent(vtkKWCheckBoxSelectionDialog::DataSavedEvent);
     }
   else if (this->CancelButton ==  vtkKWPushButton::SafeDownCast(caller) && event ==  vtkKWPushButton::InvokedEvent)
     { 
+    this->Cancel = 1;
     this->Dialog->Cancel();
     }
 } 
@@ -192,24 +217,20 @@ void vtkKWCheckBoxSelectionDialog::CreateWidget ( )
     
   // set up the columns of data for each point
   // name, x, y, z, orientation w, x, y, z, selected
-  this->MultiColumnList->GetWidget()->AddColumn("Module Name");
+  this->MultiColumnList->GetWidget()->AddColumn(this->GetEntryColomnName());
   this->MultiColumnList->GetWidget()->ColumnEditableOff(0);
-  this->MultiColumnList->GetWidget()->SetColumnWidth(0, 12);
+  this->MultiColumnList->GetWidget()->SetColumnWidth(0, 40);
 
-  this->MultiColumnList->GetWidget()->AddColumn("Module Description");
-  this->MultiColumnList->GetWidget()->ColumnEditableOff(1);
-  this->MultiColumnList->GetWidget()->SetColumnWidth(1, 32);
-
-  this->MultiColumnList->GetWidget()->AddColumn("Disable");
-  this->MultiColumnList->GetWidget()->SetColumnWidth(2, 6);
-  this->MultiColumnList->GetWidget()->SetColumnEditWindowToCheckButton(2);
-  this->MultiColumnList->GetWidget()->SetColumnFormatCommandToEmptyOutput(2);
-  this->MultiColumnList->GetWidget()->ColumnEditableOn(2);
+  this->MultiColumnList->GetWidget()->AddColumn(this->GetBoxColomnName());
+  this->MultiColumnList->GetWidget()->SetColumnWidth(1, 6);
+  this->MultiColumnList->GetWidget()->SetColumnEditWindowToCheckButton(1);
+  this->MultiColumnList->GetWidget()->SetColumnFormatCommandToEmptyOutput(1);
+  this->MultiColumnList->GetWidget()->ColumnEditableOn(1);
 
   // make the save column editable by checkbox
   // now set the attributes that are equal across the columns
   int col;
-  for (col = 0; col <= 2; col++)
+  for (col = 0; col < 2; col++)
     {        
     this->MultiColumnList->GetWidget()->SetColumnAlignmentToLeft(col);
     }

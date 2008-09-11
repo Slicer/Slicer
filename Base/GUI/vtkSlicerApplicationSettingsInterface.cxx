@@ -10,6 +10,7 @@
 #include "vtkKWLoadSaveButtonWithLabel.h"
 #include "vtkKWLoadSaveDialog.h"
 #include "vtkKWMenu.h"
+#include "vtkKWPushButton.h"
 #include "vtkKWRadioButton.h"
 #include "vtkKWRadioButtonSet.h"
 #include "vtkKWSpinBox.h"
@@ -23,6 +24,7 @@
 #include "vtkSlicerTheme.h"
 #include "vtkSlicerToolbarGUI.h"
 #include "vtkSlicerViewControlGUI.h"
+#include "vtkKWCheckBoxSelectionDialog.h"
 
 #include "vtkSlicerConfigure.h" // Slicer3_INSTALL_* 
 
@@ -46,6 +48,7 @@ vtkSlicerApplicationSettingsInterface::vtkSlicerApplicationSettingsInterface()
   this->UnzipSelectButton = NULL;
   this->RmSelectButton = NULL;
   this->LoadModulesCheckButton = NULL;
+  this->ModulesSelectionButton = NULL;
   this->LoadCommandLineModulesCheckButton = NULL;
   this->EnableDaemonCheckButton = NULL;
 
@@ -60,6 +63,7 @@ vtkSlicerApplicationSettingsInterface::vtkSlicerApplicationSettingsInterface()
   this->RemoteCacheDirectoryButton = NULL;
   this->RemoteCacheLimitSpinBox = NULL;
   this->RemoteCacheFreeBufferSizeSpinBox = NULL;
+  this->LoadModulesSelector = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -148,6 +152,12 @@ vtkSlicerApplicationSettingsInterface::~vtkSlicerApplicationSettingsInterface()
     this->TemporaryDirectoryButton = 0;
     }
 
+  if (this->ModulesSelectionButton)
+    {
+    this->ModulesSelectionButton->Delete();
+    this->ModulesSelectionButton = NULL;
+    }
+
   if (this->LoadModulesCheckButton)
     {
     this->LoadModulesCheckButton->Delete();
@@ -207,7 +217,14 @@ vtkSlicerApplicationSettingsInterface::~vtkSlicerApplicationSettingsInterface()
     this->RemoteCacheFreeBufferSizeSpinBox->Delete();
     this->RemoteCacheFreeBufferSizeSpinBox = NULL;
     }
-    
+
+  if (this->LoadModulesSelector)
+    {
+    this->LoadModulesSelector->SetParent(NULL);
+    this->LoadModulesSelector->Delete();
+    this->LoadModulesSelector = NULL;
+    }
+  
 }
 
 //----------------------------------------------------------------------------
@@ -540,6 +557,41 @@ void vtkSlicerApplicationSettingsInterface::Create()
 
   tk_cmd << "pack " << this->LoadModulesCheckButton->GetWidgetName()
          << "  -side top -anchor w -expand no -fill none" << endl;
+
+
+  // --------------------------------------------------------------
+  // add modules selection button
+
+  if (!this->ModulesSelectionButton)
+    {
+    this->ModulesSelectionButton = vtkKWPushButton::New();
+    }
+  this->ModulesSelectionButton->SetParent(frame);
+  this->ModulesSelectionButton->Create();
+  this->ModulesSelectionButton->SetText(
+    "Select Modules...");
+  this->ModulesSelectionButton->SetCommand(
+    this, "ModulesSelectionCallback");
+  this->ModulesSelectionButton->SetBalloonHelpString(
+    "Control if modules should be loaded at startup.");
+
+  tk_cmd << "pack " << this->ModulesSelectionButton->GetWidgetName()
+       << "  -side top -anchor w -expand no -fill none" << endl;
+         //<< "  --side left -anchor w -padx 2 -pady 4 -expand no -fill none" << endl;
+
+  // --------------------------------------------------------------
+  // add modules selection dialog
+
+  if (!this->LoadModulesSelector)
+    {
+    this->LoadModulesSelector = vtkKWCheckBoxSelectionDialog::New();
+    }
+  this->LoadModulesSelector->SetParent(frame);
+  this->LoadModulesSelector->SetEntryColomnName("Module");
+  this->LoadModulesSelector->SetBoxColomnName("Load");
+  this->LoadModulesSelector->SetTitle("Select modules to load");
+  //this->LoadModulesSelector->Create();
+
 
   // --------------------------------------------------------------
   // Module settings : Load commandline modules on startup ? (CLI plugins)
@@ -918,6 +970,14 @@ void vtkSlicerApplicationSettingsInterface::ConfirmDeleteCallback(int state)
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationSettingsInterface::LoadModulesCallback(int state)
 {
+  if (state)
+    {
+    this->ModulesSelectionButton->SetEnabled(1);
+    }
+  else
+    {
+    this->ModulesSelectionButton->SetEnabled(0);
+    }
   vtkSlicerApplication *app
     = vtkSlicerApplication::SafeDownCast(this->GetApplication());
   if (app)
@@ -926,6 +986,35 @@ void vtkSlicerApplicationSettingsInterface::LoadModulesCallback(int state)
     }
 }
 
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationSettingsInterface::ModulesSelectionCallback()
+{
+  vtkSlicerApplication *app
+    = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  if (app)
+    {
+    this->LoadModulesSelector->RemoveAllEntries();
+    vtkStringArray *modules = app->GetLoadableModules();
+    vtkStringArray *ignoreModules = app->GetIgnoreModules();
+
+    for (int i=0; i<modules->GetNumberOfValues(); i++)
+      {
+      vtkStdString module = modules->GetValue(i);
+      int load = 1;
+      if (ignoreModules->LookupValue(module) >=0 )
+        {
+        load = 0;
+        }
+      this->LoadModulesSelector->AddEntry((char *)module.c_str(), load);
+      }
+    this->LoadModulesSelector->Invoke();
+
+    if (!this->LoadModulesSelector->GetCancel())
+      {
+      app->SetIgnoreModules(this->LoadModulesSelector->GetUnselectedEntries());
+      }
+    }
+}
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationSettingsInterface::LoadCommandLineModulesCallback(int state)
 {
@@ -1243,6 +1332,18 @@ void vtkSlicerApplicationSettingsInterface::Update()
       this->LoadModulesCheckButton->SetSelectedState(
         app->GetLoadModules() ? 1 : 0);
       }
+    if (this->ModulesSelectionButton)
+      {
+      if (app->GetLoadModules())
+        {
+        this->ModulesSelectionButton->SetEnabled(1);
+        }
+      else
+        {
+        this->ModulesSelectionButton->SetEnabled(0);
+        }
+      }
+
     if (this->LoadCommandLineModulesCheckButton)
       {
       this->LoadCommandLineModulesCheckButton->SetSelectedState(

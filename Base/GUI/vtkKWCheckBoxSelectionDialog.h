@@ -52,7 +52,7 @@ public:
 
   // Description:
   // Add entry name
-  void AddEntry(char *Label, char *Description, int selected);
+  void AddEntry(char *Label, int selected);
 
   // Description:
   // Clear all entries
@@ -60,22 +60,36 @@ public:
 
   // Description:
   // Returns selected entries
-  vtkStringArray* GetSelectedLabels();
-  
+  vtkStringArray* GetSelectedEntries();
+ 
+  // Description:
+  // Returns unselected entries
+  vtkStringArray* GetUnselectedEntries();
+
   // Description:
   // invoke the widget
   void Invoke();
-  
-//BTX
-  // Description:
-  // Returns selected entries
-  std::vector<std::string> GetSelected();
-//ETX
 
   // Description:
   // Title
   vtkGetStringMacro(Title);
   vtkSetStringMacro(Title);
+
+  // Description:
+  // First colomn name
+  vtkGetStringMacro(EntryColomnName);
+  vtkSetStringMacro(EntryColomnName);
+
+  // Description:
+  // First colomn name
+  vtkGetStringMacro(BoxColomnName);
+  vtkSetStringMacro(BoxColomnName);
+
+  // Description:
+  // Cancel action
+  vtkSetMacro(Cancel, int);
+  vtkGetMacro(Cancel, int);
+
 
   // Update widget
   //void UpdateWidget();
@@ -100,6 +114,9 @@ private:
   vtkStringArray *SelectedLabels;
 
   char *Title;
+  char *EntryColomnName;
+  char *BoxColomnName;
+  int Cancel;
 
   vtkKWDialog *Dialog;
 

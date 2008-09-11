@@ -65,6 +65,7 @@ const char *vtkSlicerApplication::ConfirmDeleteRegKey = "ConfirmDelete";
 const char *vtkSlicerApplication::HomeModuleRegKey = "HomeModule";
 const char *vtkSlicerApplication::LoadCommandLineModulesRegKey = "LoadCommandLineModules";
 const char *vtkSlicerApplication::LoadModulesRegKey = "LoadModules";
+const char *vtkSlicerApplication::IgnoreModulesRegKey = "IgnoreModules";
 const char *vtkSlicerApplication::EnableDaemonRegKey = "EnableDaemon";
 const char *vtkSlicerApplication::ApplicationFontSizeRegKey = "ApplicationFontSize";
 const char *vtkSlicerApplication::ApplicationFontFamilyRegKey = "ApplicationFontFamily";
@@ -214,6 +215,10 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     strcpy ( this->HomeModule, "");
     this->LoadCommandLineModules = 1;
     this->LoadModules = 1;
+    this->IgnoreModules = vtkStringArray::New();
+    this->LoadableModules = vtkStringArray::New();
+    strcpy(this->IgnoreModuleNames, "");
+    this->NameSeparator = ";";
     this->EnableDaemon = 0;
    
     this->DefaultGeometry = vtkSlicerGUILayout::New ( );
@@ -330,7 +335,9 @@ vtkSlicerApplication::~vtkSlicerApplication ( ) {
     this->DisplayMessageQueueActiveLock->Lock();
     this->DisplayMessageQueueActive = false;
     this->DisplayMessageQueueActiveLock->Unlock();
-    
+
+    this->IgnoreModules->Delete();
+    this->LoadableModules->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -680,7 +687,15 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
     }
 
   if (this->HasRegistryValue(
-    2, "RunTime", vtkSlicerApplication::LoadModulesRegKey))
+    2, "RunTime", vtkSlicerApplication::IgnoreModulesRegKey))
+    {
+    this->GetRegistryValue(2, "RunTime", vtkSlicerApplication::IgnoreModulesRegKey,
+                           this->IgnoreModuleNames);
+    this->StringToArray(std::string(this->IgnoreModuleNames), this->NameSeparator.c_str()[0], this->IgnoreModules);
+    }
+
+  if (this->HasRegistryValue(
+    2, "RunTime", vtkSlicerApplication::LoadModulesRegKey))     
     {
     this->LoadModules = this->GetIntRegistryValue(
       2, "RunTime", vtkSlicerApplication::LoadModulesRegKey);
@@ -872,6 +887,14 @@ void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
   this->SetRegistryValue(
     2, "RunTime", vtkSlicerApplication::LoadModulesRegKey, "%d", 
     this->LoadModules);
+
+  
+  this->ArrayToString(this->IgnoreModules, this->NameSeparator, this->IgnoreModuleNames, 
+                      vtkKWRegistryHelper::RegistryKeyValueSizeMax);
+  this->SetRegistryValue(
+    2, "RunTime", vtkSlicerApplication::IgnoreModulesRegKey, "%s", 
+    this->IgnoreModuleNames);
+  
 
   this->SetRegistryValue(
     2, "RunTime", vtkSlicerApplication::EnableDaemonRegKey, "%d", 
@@ -1654,4 +1677,44 @@ void* vtkSlicerApplication::GetPythonModule()
 void* vtkSlicerApplication::GetPythonDictionary()
 { 
   return this->PythonDictionary; 
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::StringToArray(std::string s, char separator, vtkStringArray *array)
+{ 
+  std::string sr = s;
+  std::replace( sr.begin(), sr.end(), ' ', '?' );
+  std::replace( sr.begin(), sr.end(), separator, ' ' );
+  std::istringstream stream( sr );
+  for( ;; )
+    {
+    std::string word;
+    if( !( stream >> word ) ) 
+      { 
+      break; 
+      }
+    std::replace( word.begin(), word.end(), '?', ' ');
+    array->InsertNextValue(word);
+    }
+}
+
+void vtkSlicerApplication::ArrayToString(vtkStringArray *array, std::string sep, char *string, int maxLength )
+{ 
+  int len=0;
+  std::string res = "";
+  for (int i=0; i<array->GetNumberOfValues(); i++)
+    {
+    if (len >= maxLength)
+      {
+      break;
+      }
+    std::string s(array->GetValue(i).c_str());
+    if (i) 
+      {
+      res = res + sep;
+      }
+    res = res + s;
+    len += (s.size()+1);
+    }
+  strcpy(string, res.c_str());
 }
