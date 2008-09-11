@@ -41,6 +41,7 @@ vtkSlicerModelDisplayWidget::vtkSlicerModelDisplayWidget ( )
     this->ModelHierarchyNode = NULL;
     this->ModelHierarchyLogic = NULL;
 
+    this->SelectedButton = NULL;
     this->VisibilityButton = NULL;
     this->ScalarVisibilityButton = NULL;
     this->ScalarMenu = NULL;
@@ -65,6 +66,12 @@ vtkSlicerModelDisplayWidget::~vtkSlicerModelDisplayWidget ( )
   this->RemoveWidgetObservers();
   this->SetModelHierarchyLogic(NULL);
 
+  if (this->SelectedButton)
+    {
+    this->SelectedButton->SetParent(NULL);
+    this->SelectedButton->Delete();
+    this->SelectedButton = NULL;
+    }
   if (this->VisibilityButton)
     {
     this->VisibilityButton->SetParent(NULL);
@@ -218,10 +225,20 @@ void vtkSlicerModelDisplayWidget::UpdateMRML()
 
   this->UpdatingMRML = 1;
 
+  int selected = this->SelectedButton->GetWidget()->GetSelectedState();
+  if (this->ModelNode)
+    {
+    vtkDebugMacro("UpdateMRML: setting model node's selected state to: " << selected);
+    this->ModelNode->SetSelected(selected);
+    }
+  // update children selected?
+  
   if ( this->ModelDisplayNode )
     {
+    vtkDebugMacro("UpdateMRML: setting model display node selected state to: " << selected);
+    this->ModelDisplayNode->SetSelected(selected);
+    
     int visibility = this->VisibilityButton->GetWidget()->GetSelectedState();
-
     this->ModelDisplayNode->SetVisibility(visibility);
     // update hierarchy children visibility 
     if (this->ModelHierarchyNode != NULL && this->ModelNode == NULL)
@@ -232,7 +249,7 @@ void vtkSlicerModelDisplayWidget::UpdateMRML()
         dnode->SetVisibility(visibility);
         }
       
-      // chnage children visibility 
+      // change children visibility 
       std::vector< vtkMRMLModelHierarchyNode *> childrenNodes;
       this->ModelHierarchyLogic->GetHierarchyChildrenNodes(this->ModelHierarchyNode, childrenNodes);
       for (unsigned int i=0; i<childrenNodes.size(); i++)
@@ -341,7 +358,7 @@ void vtkSlicerModelDisplayWidget::UpdateWidget()
     this->UpdatingWidget = 0;
     return;
     }
-  
+
   // get the model node so can get at it's scalars
   if (this->ModelNode != NULL &&
       this->ModelNode->GetPolyData() != NULL)
@@ -391,7 +408,15 @@ void vtkSlicerModelDisplayWidget::UpdateWidget()
     this->ColorSelectorWidget->SetEnabled(0);
     vtkDebugMacro("ModelNode is null, can't set up the scalars menu\n"); 
     }
-  
+
+  if (this->ModelNode)
+    {
+    vtkDebugMacro("UpdateWidget: Updating SelectedButton from model node's selected value: " << this->ModelNode->GetSelected());
+    this->SelectedButton->GetWidget()->SetSelectedState(this->ModelNode->GetSelected());
+    }
+  // for now, let the display node's selected over ride the model node's flag
+  this->SelectedButton->GetWidget()->SetSelectedState(this->ModelDisplayNode->GetSelected());
+
   this->VisibilityButton->GetWidget()->SetSelectedState(this->ModelDisplayNode->GetVisibility());
   this->ScalarVisibilityButton->GetWidget()->SetSelectedState(this->ModelDisplayNode->GetScalarVisibility());
   
@@ -467,6 +492,7 @@ void vtkSlicerModelDisplayWidget::RemoveMRMLObservers ( )
 
 //---------------------------------------------------------------------------
 void vtkSlicerModelDisplayWidget::RemoveWidgetObservers ( ) {
+  this->SelectedButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->VisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ScalarVisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ScalarMenu->GetWidget()->GetMenu()->RemoveObservers(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -516,6 +542,14 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
   // Don't select child classes (like FiberBundles)
   //this->ModelSelectorWidget->ChildClassesEnabledOff();
 
+  this->SelectedButton = vtkKWCheckButtonWithLabel::New();
+  this->SelectedButton->SetParent ( modelDisplayFrame );
+  this->SelectedButton->Create ( );
+  this->SelectedButton->SetLabelText("Selected");
+  this->SelectedButton->SetBalloonHelpString("set model selected (very much under construction)");
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+                 this->SelectedButton->GetWidgetName() );
+  
   this->VisibilityButton = vtkKWCheckButtonWithLabel::New();
   this->VisibilityButton->SetParent ( modelDisplayFrame );
   this->VisibilityButton->Create ( );
@@ -619,7 +653,8 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
   this->OpacityScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
   this->OpacityScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand );
   this->OpacityScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  
+
+  this->SelectedButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->VisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ScalarVisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ScalarMenu->GetWidget()->GetMenu()->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand);

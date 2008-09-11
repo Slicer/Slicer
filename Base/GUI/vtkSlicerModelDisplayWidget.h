@@ -98,7 +98,8 @@ public:
   vtkMRMLModelDisplayNode* ModelDisplayNode;
   vtkMRMLModelNode *ModelNode;
   vtkMRMLModelHierarchyNode *ModelHierarchyNode;
-  
+
+  vtkKWCheckButtonWithLabel *SelectedButton;
   vtkKWCheckButtonWithLabel *VisibilityButton;
   vtkKWCheckButtonWithLabel *ScalarVisibilityButton;
   vtkKWMenuButtonWithLabel *ScalarMenu;

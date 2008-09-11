@@ -1597,14 +1597,14 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLDisplayableNode *mode
               vtkDebugMacro("Display node active scalar name was null, but the node says active point scalar name = '" << pointScalarName.c_str() << "', cell = '" << cellScalarName.c_str() << "'");
               if (pointScalarName.compare("") != 0)
                 {
-                vtkWarningMacro("Setting the display node's active scalar to " << pointScalarName.c_str());
+                vtkDebugMacro("Setting the display node's active scalar to " << pointScalarName.c_str());
                 dnode->SetActiveScalarName(pointScalarName.c_str());
                 }
               else
                 {
                 if (cellScalarName.compare("") != 0)
                   {
-                  vtkWarningMacro("Setting the display node's active scalar to " << cellScalarName.c_str());
+                  vtkDebugMacro("Setting the display node's active scalar to " << cellScalarName.c_str());
                   dnode->SetActiveScalarName(cellScalarName.c_str());
                   }
                 else
@@ -1647,11 +1647,26 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLDisplayableNode *mode
           }
          //// }
 //        actor->GetProperty()->SetBackfaceCulling(dnode->GetBackfaceCulling());
-        actor->GetProperty()->SetColor(dnode->GetColor());
+
+        if (mdnode)
+          {
+          if (mdnode->GetSelected())
+            {
+            vtkDebugMacro("Model display node " << mdnode->GetName() << " is selected...");
+            actor->GetProperty()->SetColor(mdnode->GetSelectedColor());
+            actor->GetProperty()->SetAmbient(mdnode->GetSelectedAmbient());
+            actor->GetProperty()->SetSpecular(mdnode->GetSelectedSpecular());
+            }
+          else
+            {
+            //vtkWarningMacro("Model display node " << mdnode->GetName() << " is not selected...");
+            actor->GetProperty()->SetColor(dnode->GetColor());
+            actor->GetProperty()->SetAmbient(dnode->GetAmbient());
+            actor->GetProperty()->SetSpecular(dnode->GetSpecular());
+            }
+          }
         actor->GetProperty()->SetOpacity(dnode->GetOpacity());
-        actor->GetProperty()->SetAmbient(dnode->GetAmbient());
         actor->GetProperty()->SetDiffuse(dnode->GetDiffuse());
-        actor->GetProperty()->SetSpecular(dnode->GetSpecular());
         actor->GetProperty()->SetSpecularPower(dnode->GetPower());
         if (dnode->GetTextureImageData() != NULL)
           {
