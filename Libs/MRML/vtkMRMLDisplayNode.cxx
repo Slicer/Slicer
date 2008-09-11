@@ -57,6 +57,7 @@ vtkMRMLDisplayNode::vtkMRMLDisplayNode()
   this->SelectedColor[1] = 0.0;
   this->SelectedColor[2] = 0.0;
   this->SelectedAmbient = 0.4;
+  this->SelectedSpecular = 0.5;
   
   this->TextureImageData = NULL;
   this->ColorNodeID = NULL;
@@ -102,11 +103,13 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
     }
 
   of << indent << " selectedAmbient=\"" << this->SelectedAmbient << "\"";
-  
+
   of << indent << " ambient=\"" << this->Ambient << "\"";
 
   of << indent << " diffuse=\"" << this->Diffuse << "\"";
 
+  of << indent << " selectedSpecular=\"" << this->SelectedSpecular << "\"";
+  
   of << indent << " specular=\"" << this->Specular << "\"";
 
   of << indent << " power=\"" << this->Power << "\"";
@@ -185,6 +188,12 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
       std::stringstream ss;
       ss << attValue;
       ss >> SelectedAmbient;
+      }
+    else if (!strcmp(attName, "selectedSpecular")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> SelectedSpecular;
       }
     else if (!strcmp(attName, "scalarRange")) 
       {
@@ -334,6 +343,7 @@ void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
   
   // Numbers
   this->SetSelectedAmbient(node->SelectedAmbient);
+  this->SetSelectedSpecular(node->SelectedSpecular);
   this->SetOpacity(node->Opacity);
   this->SetAmbient(node->Ambient);
   this->SetDiffuse(node->Diffuse);
@@ -365,6 +375,7 @@ void vtkMRMLDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Color:             " << this->Color << "\n";
   os << indent << "SelectedColor:     " << this->SelectedColor << "\n";
   os << indent << "SelectedAmbient:   " << this->SelectedAmbient << "\n";
+  os << indent << "SelectedSpecular:  " << this->SelectedSpecular << "\n";
   os << indent << "Opacity:           " << this->Opacity << "\n";
   os << indent << "Ambient:           " << this->Ambient << "\n";
   os << indent << "Diffuse:           " << this->Diffuse << "\n";

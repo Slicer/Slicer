@@ -106,6 +106,10 @@ class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
   // Node's selected ambient
   vtkSetMacro(SelectedAmbient, double);
   vtkGetMacro(SelectedAmbient, double);
+  // Description:
+  // Node's selected specular
+  vtkSetMacro(SelectedSpecular, double);
+  vtkGetMacro(SelectedSpecular, double);
   
   // Description:
   // Opacity of the surface expressed as a number from 0 to 1
@@ -237,6 +241,7 @@ protected:
   double Specular;
   double Power;
   double SelectedAmbient;
+  double SelectedSpecular;
 
   // Booleans
   int Visibility;
