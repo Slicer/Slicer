@@ -1,0 +1,2 @@
+Name: OpenIGTLink
+GUIName: OpenIGTLink
