@@ -2,6 +2,7 @@
 #define CUDAPPMEMORYBASE_H_
 
 #include "CudappSupportModule.h"
+#include <stdlib.h>
 #include <stddef.h>
 #include <ostream>
 namespace Cudapp
