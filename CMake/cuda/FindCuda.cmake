@@ -89,7 +89,7 @@ INCLUDE(${CMAKE_SOURCE_DIR}/CMake/cuda/CudaDependency.cmake)
 
 # Parse CUDA build type.
 IF (NOT CUDA_BUILD_TYPE)
-  SET(CUDA_BUILD_TYPE "Emulation" CACHE STRING "Cuda build type: Emulation or Device")
+  SET(CUDA_BUILD_TYPE "Device" CACHE STRING "Cuda build type: Emulation or Device")
 ENDIF(NOT CUDA_BUILD_TYPE)
 
 # Emulation if the card isn't present.
@@ -105,8 +105,18 @@ SET(CUDA_BUILD_CUBIN TRUE CACHE BOOL "Generate and parse .cubin files in Device 
 
 # Search for the cuda distribution.
 IF (NOT CUDA_INSTALL_PREFIX)
-  SET(cuda_path "$ENV{CUDA_BIN_PATH}")
-  IF (cuda_path) 
+  FIND_PROGRAM(CUDA_NVCC 
+    nvcc
+    PATHS $ENV{CUDA_BIN_PATH}
+          /usr/local/bin
+    )
+
+  SET(cuda_path "${CUDA_NVCC}")
+  IF (cuda_path)
+    MARK_AS_ADVANCED(CUDA_NVCC)
+    STRING(REGEX REPLACE "[/\\\\]?bin[/\\\\]?nvcc[/\\\\]?$" "" cuda_path ${cuda_path})
+  ELSE(cuda_path)
+    SET(cuda_path "$ENV{CUDA_BIN_PATH}")
     STRING(REGEX REPLACE "[/\\\\]?bin[/\\\\]?$" "" cuda_path ${cuda_path})
   ENDIF(cuda_path)
 
@@ -118,19 +128,20 @@ IF (NOT CUDA_INSTALL_PREFIX)
 ENDIF (NOT CUDA_INSTALL_PREFIX)
 
 # CUDA_NVCC
+IF(CUDA_INSTALL_PREFIX)
 IF (NOT CUDA_NVCC)
   FIND_PROGRAM(CUDA_NVCC 
     nvcc
     PATHS ${CUDA_INSTALL_PREFIX}/bin $ENV{CUDA_BIN_PATH}
+          /usr/local/bin
     )
 
   IF(NOT CUDA_NVCC)
-    MESSAGE(FATAL_ERROR "Could not find nvcc")
+    MESSAGE(STATUS "Could not find nvcc")
   ELSE(NOT CUDA_NVCC)
     MARK_AS_ADVANCED(CUDA_NVCC)
   ENDIF(NOT CUDA_NVCC)
 ENDIF(NOT CUDA_NVCC)
-
 
 # CUDA_NVCC_INCLUDE_ARGS
 # IF (NOT FOUND_CUDA_NVCC_INCLUDE)
@@ -140,11 +151,11 @@ ENDIF(NOT CUDA_NVCC)
     )
   
   IF(NOT FOUND_CUDA_NVCC_INCLUDE)
-    MESSAGE(FATAL_ERROR "Could not find Cuda headers")
+    MESSAGE(STATUS "Could not find Cuda headers")
   ELSE(NOT FOUND_CUDA_NVCC_INCLUDE)
     # Set the initial include dir.
     SET (CUDA_NVCC_INCLUDE_ARGS "-I"${FOUND_CUDA_NVCC_INCLUDE})
-    SET (CUDA_INCLUDE ${FOUND_CUDA_NVCC_INCLUDE})
+        SET (CUDA_INCLUDE ${FOUND_CUDA_NVCC_INCLUDE})
 
     MARK_AS_ADVANCED(
       FOUND_CUDA_NVCC_INCLUDE
@@ -166,13 +177,13 @@ IF (NOT CUDA_TARGET_LINK)
   
   # Check to see if cudart library was found.
   IF(NOT FOUND_CUDART)
-    MESSAGE(FATAL_ERROR "Could not find cudart library (cudart)")
+    MESSAGE(STATUS "Could not find cudart library (cudart)")
   ENDIF(NOT FOUND_CUDART)  
 
   # 1.1 toolkit on linux doesn't appear to have a separate library.
   FIND_LIBRARY(FOUND_CUDA
     cuda
-    PATHS ${CUDA_INSTALL_PREFIX}/lib
+    PATHS ${CUDA_INSTALL_PREFIX}/lib /usr/lib
     DOC "\"cuda\" library (older versions only)."
     NO_DEFAULT_PATH
     NO_CMAKE_ENVIRONMENT_PATH
@@ -184,6 +195,9 @@ IF (NOT CUDA_TARGET_LINK)
   # Add cuda library to the link line only if it is found.
   IF (FOUND_CUDA)
     SET(CUDA_TARGET_LINK ${FOUND_CUDA})
+    MARK_AS_ADVANCED(
+      FOUND_CUDA
+      )
   ENDIF(FOUND_CUDA)
 
   # Always add cudart to the link line.
@@ -194,24 +208,31 @@ IF (NOT CUDA_TARGET_LINK)
     MARK_AS_ADVANCED(
       CUDA_TARGET_LINK 
       CUDA_LIB
-      FOUND_CUDA
       FOUND_CUDART
       )
   ELSE(FOUND_CUDART)
-    MESSAGE(FATAL_ERROR "Could not find cuda libraries.")
+    MESSAGE(STATUS "Could not find cuda libraries.")
   ENDIF(FOUND_CUDART)
   
 ENDIF(NOT CUDA_TARGET_LINK)
 
 # CUDA_CUT_INCLUDE
 IF(NOT CUDA_CUT_INCLUDE)
+  IF(APPLE)
+    SET(SEARCH_PATHS /Developer/CUDA/common/inc
+                     $ENV{HOME}/NVIDIA_CUDA_SDK_MACOSX/common/inc)
+  ELSEIF(WIN32)
+    SET(SEARCH_PATHS "C:/Program Files/NVIDIA Corporation/NVIDIA SDK 10/NVIDIA CUDA SDK/common/inc"
+                     "C:/Program Files/NVIDIA Corporation/NVIDIA CUDA SDK/common/inc")
+  ELSE(APPLE)
+     SET(SEARCH_PATHS $ENV{HOME}/NVIDIA_CUDA_SDK/common/inc
+                      ${CUDA_INSTALL_PREFIX}/local/NVSDK0.2/common/inc
+                      ${CUDA_INSTALL_PREFIX}/NVSDK0.2/common/inc
+                      ${CUDA_INSTALL_PREFIX}/NV_CUDA_SDK/common/inc)
+  ENDIF(APPLE)
   FIND_PATH(FOUND_CUT_INCLUDE
     cutil.h
-    PATHS ${CUDA_INSTALL_PREFIX}/local/NVSDK0.2/common/inc
-          ${CUDA_INSTALL_PREFIX}/NVSDK0.2/common/inc
-          ${CUDA_INSTALL_PREFIX}/NV_CUDA_SDK/common/inc
-          $ENV{HOME}/NVIDIA_CUDA_SDK/common/inc
-          "C:/Program Files/NVIDIA Corporation/NVIDIA SDK 10/NVIDIA CUDA SDK/common/inc"
+    PATHS ${SEARCH_PATHS}
     DOC "Location of cutil.h"
     )
   IF(FOUND_CUT_INCLUDE)
@@ -225,14 +246,22 @@ ENDIF(NOT CUDA_CUT_INCLUDE)
 
 # CUDA_CUT_TARGET_LINK
 IF(NOT CUDA_CUT_TARGET_LINK)
+  IF(APPLE)
+    SET(SEARCH_PATHS /Developer/CUDA/lib
+                     $ENV{HOME}/NVIDIA_CUDA_SDK_MACOSX/lib)
+  ELSEIF(WIN32)
+    SET(SEARCH_PATHS "C:/Program Files/NVIDIA Corporation/NVIDIA SDK 10/NVIDIA CUDA SDK/lib"
+                     "C:/Program Files/NVIDIA Corporation/NVIDIA CUDA SDK/lib")
+  ELSE(APPLE)
+     SET(SEARCH_PATHS $ENV{HOME}/NVIDIA_CUDA_SDK/lib
+                      ${CUDA_INSTALL_PREFIX}/local/NVSDK0.2/lib
+                      ${CUDA_INSTALL_PREFIX}/NVSDK0.2/lib
+                      ${CUDA_INSTALL_PREFIX}/NV_CUDA_SDK/lib)
+  ENDIF(APPLE)
   FIND_LIBRARY(FOUND_CUT
     cutil
     cutil32
-    PATHS ${CUDA_INSTALL_PREFIX}/local/NVSDK0.2/lib
-          ${CUDA_INSTALL_PREFIX}/NVSDK0.2/lib
-          ${CUDA_INSTALL_PREFIX}/NV_CUDA_SDK/lib
-          $ENV{HOME}/NVIDIA_CUDA_SDK/lib
-          "C:/Program Files/NVIDIA Corporation/NVIDIA SDK 10/NVIDIA CUDA SDK/common/lib"
+    PATHS ${SEARCH_PATHS}
     NO_DEFAULT_PATH
     NO_CMAKE_ENVIRONMENT_PATH
     NO_CMAKE_PATH
@@ -247,7 +276,7 @@ IF(NOT CUDA_CUT_TARGET_LINK)
       )
   ENDIF(FOUND_CUT)
 ENDIF(NOT CUDA_CUT_TARGET_LINK)
-
+ENDIF(CUDA_INSTALL_PREFIX)
 
 ###############################################################################
 # Add include directories to pass to the nvcc command.
@@ -281,6 +310,8 @@ MACRO(CUDA_add_custom_commands)
     # Add a custom target to generate a cpp file.
     SET(generated_file  "${CMAKE_BINARY_DIR}/src/cuda/${file}_generated.c")
     SET(generated_target "${file}_target")
+    GET_FILENAME_COMPONENT(file_we ${file} NAME_WE)
+    SET(generated_object "${file_we}.o")        
     
     FILE(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/src/cuda)
 
@@ -292,15 +323,35 @@ MACRO(CUDA_add_custom_commands)
     # MESSAGE("${CUDA_NVCC} ${source_file} ${CUDA_NVCC_FLAGS} -cuda -o ${generated_file} ${CUDA_NVCC_INCLUDE_ARGS}")
     
     # Bring in the dependencies.  Creates a variable CUDA_NVCC_DEPEND
-    SET(cmake_dependency_file "${generated_file}.depend")
-    CUDA_INCLUDE_NVCC_DEPENDENCIES(${cmake_dependency_file})
-    SET(NVCC_generated_dependency_file "${generated_file}.NVCC-depend")
+        SET(cmake_dependency_file "${generated_file}.depend")
+        CUDA_INCLUDE_NVCC_DEPENDENCIES(${cmake_dependency_file})
+        SET(NVCC_generated_dependency_file "${generated_file}.NVCC-depend")
 
+   # Build object to be linked to library 
 
-  # Build the NVCC made dependency file
+   IF(APPLE)
+   ADD_CUSTOM_COMMAND(
+     OUTPUT ${generated_object}
+      MAIN_DEPENDENCY ${source_file} 
+      DEPENDS ${CUDA_NVCC_DEPEND}
+      DEPENDS ${cmake_dependency_file}
+      DEPENDS ${NVCC_generated_cubin_file}
+      COMMAND ${CUDA_NVCC} 
+      ARGS ${source_file} 
+           ${CUDA_NVCC_FLAGS}
+           -DNVCC
+           -c 
+           -use_fast_math -O3
+           -o ${generated_object} 
+           ${CUDA_NVCC_INCLUDE_ARGS}
+       COMMENT "Building NVCC ${file}: ${generated_object}\n"
+      )
+  ENDIF(APPLE)
+
+        # Build the NVCC made dependency file
   IF (CUDA_BUILD_TYPE MATCHES "Device" AND CUDA_BUILD_CUBIN)
     SET(NVCC_generated_cubin_file "${generated_file}.NVCC-cubin.txt")
-      ADD_CUSTOM_COMMAND(
+          ADD_CUSTOM_COMMAND(
 
       # Generate the .cubin output.
       OUTPUT ${NVCC_generated_cubin_file}
@@ -332,8 +383,8 @@ MACRO(CUDA_add_custom_commands)
     SET(NVCC_generated_cubin_file "${source_file}")
   ENDIF (CUDA_BUILD_TYPE MATCHES "Device"AND CUDA_BUILD_CUBIN)
 
-      # Build the NVCC made dependency file
-      ADD_CUSTOM_COMMAND(
+        # Build the NVCC made dependency file
+        ADD_CUSTOM_COMMAND(
       OUTPUT ${NVCC_generated_dependency_file}
       COMMAND ${CUDA_NVCC}
       ARGS ${source_file} 
@@ -345,12 +396,12 @@ MACRO(CUDA_add_custom_commands)
       # MAIN_DEPENDENCY ${source_file}
       DEPENDS ${source_file}
       DEPENDS ${CUDA_NVCC_DEPEND}
-      COMMENT "Building NVCC Dependency File: ${NVCC_generated_dependency_file}\n"
+          COMMENT "Building NVCC Dependency File: ${NVCC_generated_dependency_file}\n"
     )
     
     # Build the CMake readible dependency file
-      ADD_CUSTOM_COMMAND(
-         OUTPUT ${cmake_dependency_file}
+        ADD_CUSTOM_COMMAND(
+          OUTPUT ${cmake_dependency_file}
       COMMAND ${CMAKE_COMMAND}
       ARGS 
       -D input_file="${NVCC_generated_dependency_file}"
@@ -375,11 +426,15 @@ MACRO(CUDA_add_custom_commands)
            ${CUDA_NVCC_INCLUDE_ARGS}
        COMMENT "Building NVCC ${source_file}: ${generated_file}\n"
       )
-
+            
     SET(cuda_cu_sources ${cuda_cu_sources} ${source_file})
 
     # Add the generated file name to the source list.
-    SET(target_srcs ${target_srcs} ${generated_file})
+    IF(APPLE)
+      SET(target_srcs ${target_srcs} ${generated_object})
+    ELSE(APPLE)
+      SET(target_srcs ${target_srcs} ${generated_file})
+    ENDIF(APPLE)    
     
     ELSE(${file} MATCHES ".*\\.cu$")
   
