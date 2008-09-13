@@ -182,9 +182,6 @@ IF(BUILD_SHARED_LIBS)
       ARCHIVE DESTINATION lib COMPONENT Development)
 ENDIF(BUILD_SHARED_LIBS)
 
-
-
-
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
 
@@ -192,9 +189,9 @@ IF(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing)
 ENDIF(BUILD_TESTING)
 
-##IF(BUILD_EXAMPLES)
+IF(BUILD_EXAMPLES)
   ADD_SUBDIRECTORY(Examples)
-##ENDIF(BUILD_EXAMPLES)
+ENDIF(BUILD_EXAMPLES)
 
 CONFIGURE_FILE(
   ${VolumeRenderingCudaModule_SOURCE_DIR}/vtkVolumeRenderingCudaModuleConfigure.h.in 
@@ -206,11 +203,11 @@ CONFIGURE_FILE(
   COPYONLY
 )
 
-#install(TARGETS ${lib_name}
-#  RUNTIME DESTINATION ${Slicer3_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
-#  LIBRARY DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
-#  ARCHIVE DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT Development
-#)
+install(TARGETS ${lib_name}
+  RUNTIME DESTINATION ${Slicer3_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT Development
+)
 
 slicer3_set_modules_output_path(${lib_name})
 slicer3_install_modules(${lib_name})

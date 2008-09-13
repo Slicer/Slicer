@@ -36,9 +36,6 @@
 // vtkCuda
 #include "vtkCudaVolumeMapper.h"
 #include "vtkCudaMemoryTexture.h"
-extern "C" {
-#include "CUDA_renderAlgo.h"
-}
 
 vtkVolumeRenderingCudaModuleGUI::vtkVolumeRenderingCudaModuleGUI()
 {
