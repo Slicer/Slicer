@@ -114,10 +114,10 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
   virtual std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> GetSliceGlyphDisplayNodes( vtkMRMLVolumeNode* node );
 
 
+//ETX
   // Description:
   // add slice glyph display nodes if not already present and return it
-  virtual std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*>  AddSliceGlyphDisplayNodes( vtkMRMLVolumeNode* node );
-//ETX
+  virtual void  AddSliceGlyphDisplayNodes( vtkMRMLVolumeNode* node );
 
 
 

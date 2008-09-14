@@ -317,7 +317,7 @@ std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> vtkMRMLDiffusionTensorVolu
 }
 
 //----------------------------------------------------------------------------
-std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> vtkMRMLDiffusionTensorVolumeDisplayNode::AddSliceGlyphDisplayNodes( vtkMRMLVolumeNode* volumeNode )
+void vtkMRMLDiffusionTensorVolumeDisplayNode::AddSliceGlyphDisplayNodes( vtkMRMLVolumeNode* volumeNode )
 {
   std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> nodes = this->GetSliceGlyphDisplayNodes( volumeNode );
   if (nodes.size() == 0)
@@ -353,10 +353,7 @@ std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> vtkMRMLDiffusionTensorVolu
 
         volumeNode->AddAndObserveDisplayNodeID(node->GetID());
         
-        
-        nodes.push_back(node);
         }
       }
    }
-  return nodes;
 }
