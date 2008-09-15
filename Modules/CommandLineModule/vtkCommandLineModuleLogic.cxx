@@ -1527,6 +1527,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     std::string ExecuteModuleString =
       "import sys;\n"
       "import Slicer;\n"
+      "import inspect\n"
       "ModuleName = \"" + node->GetModuleDescription().GetTarget() + "\"\n"
       "ModuleArgs = []\n"
       "ArgTags = []\n"
@@ -1553,11 +1554,17 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         ExecuteModuleString += "ArgMultiples.append ( '" + (*pit).GetMultiple() + "' )\n";
         }
       }
+    // TODO: FlagArgs, PositionalArgs, Arguments are in global scope - potential name clash
     ExecuteModuleString +=
       "FlagArgs, PositionalArgs = Slicer.ParseArgs ( ModuleArgs, ArgTags , ArgFlags, ArgMultiples )\n"
       "Module = __import__ ( ModuleName )\n"
       "reload ( Module )\n"
-      "Module.Execute ( *PositionalArgs, **FlagArgs )\n";
+      "Arguments = inspect.getargspec(Module.Execute)[0]\n"
+      "if 'commandLineModuleNode' in Arguments:\n"
+      "  FlagArgs['commandLineModuleNode'] = '";
+    ExecuteModuleString += std::string(node->GetID()) + "'\n";
+    ExecuteModuleString += "Module.Execute ( *PositionalArgs, **FlagArgs )\n";
+
 #ifdef Slicer3_USE_PYTHON    
     PyObject* v;
       
