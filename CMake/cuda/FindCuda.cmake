@@ -329,7 +329,6 @@ MACRO(CUDA_add_custom_commands)
 
    # Build object to be linked to library 
 
-   IF(APPLE)
    ADD_CUSTOM_COMMAND(
      OUTPUT ${generated_object}
       MAIN_DEPENDENCY ${source_file} 
@@ -346,8 +345,7 @@ MACRO(CUDA_add_custom_commands)
            ${CUDA_NVCC_INCLUDE_ARGS}
        COMMENT "Building NVCC ${file}: ${generated_object}\n"
       )
-  ENDIF(APPLE)
-
+      
         # Build the NVCC made dependency file
   IF (CUDA_BUILD_TYPE MATCHES "Device" AND CUDA_BUILD_CUBIN)
     SET(NVCC_generated_cubin_file "${generated_file}.NVCC-cubin.txt")
@@ -430,11 +428,11 @@ MACRO(CUDA_add_custom_commands)
     SET(cuda_cu_sources ${cuda_cu_sources} ${source_file})
 
     # Add the generated file name to the source list.
-    IF(APPLE)
+    IF(UNIX)
       SET(target_srcs ${target_srcs} ${generated_object})
-    ELSE(APPLE)
+    ELSE(UNIX)
       SET(target_srcs ${target_srcs} ${generated_file})
-    ENDIF(APPLE)    
+    ENDIF(UNIX)    
     
     ELSE(${file} MATCHES ".*\\.cu$")
   
