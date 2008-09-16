@@ -666,7 +666,8 @@ void vtkSlicerFiducialListWidget::ProcessMRMLEvents ( vtkObject *caller,
   // if get a node added event from the scene, check to see if it was a fiducial list that was added
   else if (callScene != NULL &&
            event == vtkMRMLScene::NodeAddedEvent &&
-           callDataList != NULL)
+           callDataList != NULL &&
+           vtkMRMLFiducialListNode::SafeDownCast ( (vtkObjectBase *)callData ))
     {
       vtkDebugMacro("Got a scene node added event: fiducial list node was added");
       //this->UpdateFiducialListFromMRML(callDataList);

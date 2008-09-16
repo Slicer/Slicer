@@ -10,12 +10,15 @@ proc DistanceMapFiducialsDestructor {this} {
 }
 
 proc DistanceMapFiducialsTearDownGUI {this} {
-
+  $::DistanceMapFiducials($this,resample) Delete
+  $::DistanceMapFiducials($this,euclideanDistance) Delete
+  $::DistanceMapFiducials($this,marchingCubes) Delete
+    $::DistanceMapFiducials($this,transform) Delete
 
   # nodeSelector  ;# disabled for now
   set widgets {
     run volumesSelect
-    volumesOutputSelect volumesFrame 
+    fiducialOutputSelect distanceScale volumesFrame 
   }
 
   foreach w $widgets {
@@ -58,6 +61,17 @@ proc DistanceMapFiducialsBuildGUI {this} {
   [$this GetUIPanel] AddPage "DistanceMapFiducials" "DistanceMapFiducials" ""
   set pageWidget [[$this GetUIPanel] GetPageWidget "DistanceMapFiducials"]
 
+  set ::DistanceMapFiducials($this,resample) [vtkImageResample New]
+  set ::DistanceMapFiducials($this,euclideanDistance) [vtkImageEuclideanDistance New]
+  set ::DistanceMapFiducials($this,marchingCubes) [vtkMarchingCubes New]
+  set ::DistanceMapFiducials($this,transform) [vtkTransformPolyDataFilter New]
+
+  $::DistanceMapFiducials($this,marchingCubes) ComputeNormalsOff 
+  $::DistanceMapFiducials($this,marchingCubes) ComputeGradientsOff
+  $::DistanceMapFiducials($this,marchingCubes) ComputeScalarsOff
+  $::DistanceMapFiducials($this,euclideanDistance) SetAlgorithmToSaito
+
+
   #
   # help frame
   #
@@ -86,16 +100,38 @@ proc DistanceMapFiducialsBuildGUI {this} {
   $::DistanceMapFiducials($this,volumesSelect) SetBalloonHelpString "The Source Volume to operate on"
   pack [$::DistanceMapFiducials($this,volumesSelect) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
 
-  set ::DistanceMapFiducials($this,volumesOutputSelect) [vtkSlicerNodeSelectorWidget New]
-  $::DistanceMapFiducials($this,volumesOutputSelect) SetParent [$::DistanceMapFiducials($this,volumesFrame) GetFrame]
-  $::DistanceMapFiducials($this,volumesOutputSelect) Create
-  $::DistanceMapFiducials($this,volumesOutputSelect) NewNodeEnabledOn
-  $::DistanceMapFiducials($this,volumesOutputSelect) SetNodeClass "vtkMRMLScalarVolumeNode" "" "" ""
-  $::DistanceMapFiducials($this,volumesOutputSelect) SetMRMLScene [[$this GetLogic] GetMRMLScene]
-  $::DistanceMapFiducials($this,volumesOutputSelect) UpdateMenu
-  $::DistanceMapFiducials($this,volumesOutputSelect) SetLabelText "Output Volume:"
-  $::DistanceMapFiducials($this,volumesOutputSelect) SetBalloonHelpString "The target output volume"
-  pack [$::DistanceMapFiducials($this,volumesOutputSelect) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+  set ::DistanceMapFiducials($this,fiducialOutputSelect) [vtkSlicerNodeSelectorWidget New]
+  $::DistanceMapFiducials($this,fiducialOutputSelect) SetParent [$::DistanceMapFiducials($this,volumesFrame) GetFrame]
+  $::DistanceMapFiducials($this,fiducialOutputSelect) Create
+  $::DistanceMapFiducials($this,fiducialOutputSelect) NewNodeEnabledOn
+  $::DistanceMapFiducials($this,fiducialOutputSelect) SetNodeClass "vtkMRMLFiducialListNode" "" "" ""
+  $::DistanceMapFiducials($this,fiducialOutputSelect) SetMRMLScene [[$this GetLogic] GetMRMLScene]
+  $::DistanceMapFiducials($this,fiducialOutputSelect) SetNewNodeEnabled 1
+  $::DistanceMapFiducials($this,fiducialOutputSelect) UpdateMenu
+  $::DistanceMapFiducials($this,fiducialOutputSelect) SetLabelText "Output Fiducial List:"
+  $::DistanceMapFiducials($this,fiducialOutputSelect) SetBalloonHelpString "The target output fiducial list"
+  pack [$::DistanceMapFiducials($this,fiducialOutputSelect) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+
+
+  set ::DistanceMapFiducials($this,resampleScale) [vtkKWScaleWithLabel New]
+  $::DistanceMapFiducials($this,resampleScale) SetParent [$::DistanceMapFiducials($this,volumesFrame) GetFrame]
+  $::DistanceMapFiducials($this,resampleScale) Create
+  $::DistanceMapFiducials($this,resampleScale) SetLabelText "Downsample Factor"
+  [$::DistanceMapFiducials($this,resampleScale) GetWidget] SetRange 1 10
+  [$::DistanceMapFiducials($this,resampleScale) GetWidget] SetResolution 1
+  [$::DistanceMapFiducials($this,resampleScale) GetWidget] SetValue 2
+  $::DistanceMapFiducials($this,resampleScale) SetBalloonHelpString "Downsampling of input volume"
+  pack [$::DistanceMapFiducials($this,resampleScale) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+
+  set ::DistanceMapFiducials($this,distanceScale) [vtkKWScaleWithLabel New]
+  $::DistanceMapFiducials($this,distanceScale) SetParent [$::DistanceMapFiducials($this,volumesFrame) GetFrame]
+  $::DistanceMapFiducials($this,distanceScale) Create
+  $::DistanceMapFiducials($this,distanceScale) SetLabelText "Distance"
+  [$::DistanceMapFiducials($this,distanceScale) GetWidget] SetRange 0 100
+  [$::DistanceMapFiducials($this,distanceScale) GetWidget] SetResolution 0.5
+  [$::DistanceMapFiducials($this,distanceScale) GetWidget] SetValue 5
+  $::DistanceMapFiducials($this,distanceScale) SetBalloonHelpString "Distance form the label map"
+  pack [$::DistanceMapFiducials($this,distanceScale) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
 
   set ::DistanceMapFiducials($this,run) [vtkKWPushButton New]
   $::DistanceMapFiducials($this,run) SetParent [$::DistanceMapFiducials($this,volumesFrame) GetFrame]
@@ -178,19 +214,6 @@ proc DistanceMapFiducialsGetParameterNode {} {
 }
 
 
-proc DistanceMapFiducialsGetLabel {} {
-  set node [DistanceMapFiducialsGetParameterNode]
-  if { [$node GetParameter "label"] == "" } {
-    $node SetParameter "label" 1
-  }
-  return [$node GetParameter "label"]
-}
-
-proc DistanceMapFiducialsSetLabel {index} {
-  set node [DistanceMapFiducialsGetParameterNode]
-  $node SetParameter "label" $index
-}
-
 #
 # MRML Event processing
 #
@@ -214,12 +237,64 @@ proc DistanceMapFiducialsExit {this} {
 
 proc DistanceMapFiducialsApply {this} {
 
-  set dialog [vtkKWMessageDialog New]
-  $dialog SetParent [$::slicer3::ApplicationGUI GetMainSlicerWindow]
-  $dialog SetMasterWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
-  $dialog SetStyleToMessage
-  $dialog SetText "Perform action here..."
-  $dialog Create
-  $dialog Invoke
-  $dialog Delete
+  set vol [$::DistanceMapFiducials($this,volumesSelect) GetSelected]
+  set fid [$::DistanceMapFiducials($this,fiducialOutputSelect) GetSelected]
+  if { $vol == "" || $fid == "" } {
+        return
+    }
+  set img [vtkImageData New]
+  set spacing [$vol GetSpacing]
+
+  set mat [vtkMatrix4x4 New]
+  $vol GetRASToIJKMatrix $mat
+  $mat Invert
+
+  set trans [vtkTransform New]
+  $trans Identity
+  $trans PreMultiply
+  $trans Concatenate $mat
+  $trans Scale [expr 1.0/[lindex $spacing 0]] [expr 1.0/[lindex $spacing 1]] [expr 1.0/[lindex $spacing 2]]
+  
+  $::DistanceMapFiducials($this,transform) SetTransform $trans
+
+  set dist [[$::DistanceMapFiducials($this,distanceScale) GetWidget] GetValue]
+  set dist [expr $dist * $dist]
+
+  set resamp [[$::DistanceMapFiducials($this,resampleScale) GetWidget] GetValue]
+  set resamp [expr 1.0/$resamp]
+
+  $img DeepCopy [$vol GetImageData]
+  $img SetSpacing [lindex $spacing 0] [lindex $spacing 1] [lindex $spacing 2]
+
+  $::DistanceMapFiducials($this,resample) SetInput $img
+  $::DistanceMapFiducials($this,resample) SetAxisMagnificationFactor 0 $resamp
+  $::DistanceMapFiducials($this,resample) SetAxisMagnificationFactor 1 $resamp
+  $::DistanceMapFiducials($this,resample) SetAxisMagnificationFactor 2 $resamp
+  $::DistanceMapFiducials($this,resample) Update
+  
+  $::DistanceMapFiducials($this,euclideanDistance) SetInput [$::DistanceMapFiducials($this,resample) GetOutput]
+  $::DistanceMapFiducials($this,euclideanDistance) Update
+
+  $::DistanceMapFiducials($this,marchingCubes) SetInput [$::DistanceMapFiducials($this,euclideanDistance) GetOutput]
+  $::DistanceMapFiducials($this,marchingCubes) SetValue 0 $dist
+  $::DistanceMapFiducials($this,marchingCubes) Update
+
+  $::DistanceMapFiducials($this,transform) SetInput [$::DistanceMapFiducials($this,marchingCubes) GetOutput]
+  $::DistanceMapFiducials($this,transform) Update
+
+  $fid RemoveAllFiducials
+  $fid SetDisableModifiedEvent 1
+
+  set poly [$::DistanceMapFiducials($this,transform) GetOutput]
+  set nvert [$poly GetNumberOfPoints]
+  for {set i 0} {$i < $nvert} {incr i} {
+    set xyz [$poly GetPoint $i]
+    $fid AddFiducialWithXYZ [lindex $xyz 0] [lindex $xyz 1] [lindex $xyz 2] 0
+    if {$i == [expr $nvert - 2]} {
+      $fid SetDisableModifiedEvent 0
+    }
+  }
+  $img Delete
+  $mat Delete
+  $trans Delete
 }

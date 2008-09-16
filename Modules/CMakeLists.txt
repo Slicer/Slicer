@@ -60,6 +60,7 @@ subdirs(
 #  MRAblation <- not working either
    Volumes
    EMSegment
+   DistanceMapFiducials
    #VolumeRenderingCuda
   )
 
