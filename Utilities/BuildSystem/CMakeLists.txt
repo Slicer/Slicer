@@ -43,7 +43,7 @@ slicer_parse_module_file("${SLICER_LOCAL_MODULES_PATH}/TestModule2/")
 
 # Parse a remote module
 
-slicer_parse_module_url("http://www.na-mic.org/ViewVC/index.cgi/trunk/BuildSystem/Modules/TestModule1/TestModule1.xml?root=NAMICSandBox&view=co")
+slicer_parse_module_url("http://viewvc.slicer.org/viewcvs.cgi/trunk/Utilities/BuildSystem/Modules/TestModule1/TestModule1.xml?view=co")
 
 # Here is how to retrieve module's information
 
