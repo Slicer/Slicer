@@ -25,11 +25,17 @@ Version:   $Revision: 1.3 $
 //----------------------------------------------------------------------------
 vtkMRMLStorableNode::vtkMRMLStorableNode()
 {
+  this->UserTagTable = vtkUserTagTable::New();
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLStorableNode::~vtkMRMLStorableNode()
 {
+  if ( this->UserTagTable )
+    {
+    this->UserTagTable->Delete();
+    this->UserTagTable = NULL;
+    }
   this->SetAndObserveStorageNodeID( NULL);
 }
 
@@ -56,8 +62,35 @@ void vtkMRMLStorableNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " storageNodeRef=\"" << ss.str().c_str() << "\"";
     }
-}
 
+  
+
+  //---write any user tags.
+  if ( this->GetUserTagTable() != NULL )
+    {
+    ss.clear();
+    ss.str ( "" );
+    int numc = this->GetUserTagTable()->GetTagTable()->GetNumberOfColumns();
+    const char *kwd, *val;
+    for (int i=0; i < numc; i++ )
+      {
+      kwd = this->GetUserTagTable()->GetUserTagKeyword(i);
+      val = this->GetUserTagTable()->GetUserTagValue (i);
+      if (kwd != NULL && val != NULL) 
+        {
+        ss << kwd << "=" << val;
+        if ( i < (numc-1) )
+          {
+          ss << " ";
+          }
+        }
+      }
+    if ( ss.str().c_str()!= NULL )
+      {
+      of << indent << " userTags=\"" << ss.str().c_str() << "\"";
+      }
+    }
+}
 
 
 //----------------------------------------------------------------------------
@@ -81,10 +114,39 @@ void vtkMRMLStorableNode::ReadXMLAttributes(const char** atts)
         ss >> id;
         this->AddStorageNodeID(id.c_str());
         }
-
-      //this->Scene->AddReferencedNodeID(this->StorageNodeID, this);
       }
-    }  
+    //---Read any user tags
+    else if (!strcmp (attName, "userTags"))
+      {
+      if ( this->GetUserTagTable() == NULL )
+        {
+        this->UserTagTable = vtkUserTagTable::New();
+        }
+      std::stringstream ss(attValue);
+      std::string kwd = "";
+      std::string val = "";
+      int i;
+      while (!ss.eof())
+        {
+        std::string tags;
+        ss >> tags;
+        //--- now pull apart individual tags
+        if ( tags.c_str() != NULL )
+          {
+          i = tags.find("=");
+          if ( i != std::string::npos)
+            {
+            kwd = tags.substr(0, i);
+            val = tags.substr(i+1, std::string::npos );
+            if ( kwd.c_str() != NULL && val.c_str() != NULL )
+              {
+              this->GetUserTagTable()->AddKeywordValuePair ( kwd.c_str(), val.c_str() );
+              }
+            }
+          }        
+        }
+      }  
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -110,7 +172,31 @@ void vtkMRMLStorableNode::Copy(vtkMRMLNode *anode)
     {
     return;
     }
-      
+
+  //---
+  //--- Copy any user tags
+  //---
+  if ( node->GetUserTagTable() != NULL )
+    {
+    //--- make sure the destination node has a TagTable.
+    if ( this->GetUserTagTable() == NULL )
+      {
+      this->UserTagTable = vtkUserTagTable::New();
+      }
+
+    //--- copy.
+    int numc = node->GetUserTagTable()->GetTagTable()->GetNumberOfColumns();
+    const char *kwd, *val;
+    for ( int j=0; j < numc; j++ )
+      {
+      kwd = node->GetUserTagTable()->GetUserTagKeyword(j);
+      val = node->GetUserTagTable()->GetUserTagValue (j);
+      if (kwd != NULL && val != NULL )
+        {
+        this->UserTagTable->AddKeywordValuePair ( kwd, val );
+        }
+      }
+    }
       
   this->SetAndObserveStorageNodeID(NULL);
 
@@ -126,6 +212,7 @@ void vtkMRMLStorableNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   
   Superclass::PrintSelf(os,indent);
+  this->UserTagTable->PrintSelf(os, indent);
    for (unsigned int i=0; i<this->StorageNodeIDs.size(); i++)
     {
     os << indent << "StorageNodeIDs[" << i << "]: " <<

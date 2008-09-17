@@ -26,6 +26,7 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLTransformableNode.h"
+#include "vtkUserTagTable.h"
 
 class vtkCallbackCommand;
 class vtkMRMLStorageNode;
@@ -39,9 +40,14 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
   
   //--------------------------------------------------------------------------
+  // Methods for user-specified metadata
+  //--------------------------------------------------------------------------
+  vtkGetObjectMacro ( UserTagTable, vtkUserTagTable );
+  
+  //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
-
+  
   virtual vtkMRMLNode* CreateNodeInstance() = 0;
 
   virtual const char* GetNodeTagName() = 0;
@@ -131,6 +137,8 @@ public:
   void SetNthStorageNodeID(int n, const char* id);
   void AddStorageNodeID(const char* id);
   void AddAndObserveStorageNode(vtkMRMLStorageNode *dnode);
+
+  vtkUserTagTable *UserTagTable;
 
 //BTX
   std::vector<std::string> StorageNodeIDs;
