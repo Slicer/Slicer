@@ -29,18 +29,19 @@
 static NPY_TYPES getNumpyDataTypeFromVTKDataType( int dataType, bool& success )
 {
   NPY_TYPES t = NPY_FLOAT64;
+
   if ( dataType == VTK_ID_TYPE )
   {
-    #ifdef VTK_SIZEOF_ID_TYPE==VTK_SIZE_OF__UINT8
+    #if    VTK_SIZEOF_ID_TYPE==1
       dataType = VTK_TYPE_UINT8;
-    #elif  VTK_SIZEOF_ID_TYPE==VTK_SIZEOF___UINT16
+    #elif  VTK_SIZEOF_ID_TYPE==2
       dataType = VTK_TYPE_UINT16;
-    #elif VTK_SIZEOF_ID_TYPE==VTK_SIZE_OF___UINT32
+    #elif  VTK_SIZEOF_ID_TYPE==4
       dataType = VTK_TYPE_UINT32;
-    #elif VTK_SIZEOF_ID_TYPE==VTK_SIZEOF___UINT64
+    #elif  VTK_SIZEOF_ID_TYPE==8
       dataType = VTK_TYPE_INT64; //In this code VTK_LONG gets mapped tp NPY_INT64
     #else
-      dataType = VTK_INT
+      dataType = VTK_INT;
     #endif
    }
 
