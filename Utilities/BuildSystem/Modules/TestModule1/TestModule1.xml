@@ -1,7 +1,7 @@
 <Name>TestModule1</Name>
 <Group>Segmentation</Group>
 <Description>Test module #1</Description>
-<SourceLocation>http://www.na-mic.org/svn/NAMICSandBox/trunk/BuildSystem/Modules/TestModule1</SourceLocation>
+<SourceLocation>http://svn.slicer.org/Slicer3/trunk/Utilities/BuildSystem/Modules/TestModule1</SourceLocation>
 <HomePage>http://na-mic.org/Wiki/index.php/Slicer3:Build/Modules</HomePage>
 <Version>1.0</Version>
 <Dependency>VTK</Dependency>
