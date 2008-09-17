@@ -830,11 +830,13 @@ int Slicer3_main(int argc, char *argv[])
   // register all existing uri handlers (add to collection)
   vtkHTTPHandler *httpHandler = vtkHTTPHandler::New();
   httpHandler->SetPrefix ( "http://" );
+  httpHandler->SetName ( "HTTPHandler");
   scene->AddURIHandler(httpHandler);
   httpHandler->Delete();
 
   vtkSRBHandler *srbHandler = vtkSRBHandler::New();
   srbHandler->SetPrefix ( "srb://" );
+  srbHandler->SetName ( "SRBHandler" );
   scene->AddURIHandler(srbHandler);
   srbHandler->Delete();
 
@@ -843,6 +845,7 @@ int Slicer3_main(int argc, char *argv[])
   xnatPermissionPrompter->SetApplication ( slicerApp );
   xnatPermissionPrompter->SetPromptTitle ("Permission Prompt");
   xnatHandler->SetPrefix ( "xnat://" );
+  xnatHandler->SetName ( "XNATHandler" );
   xnatHandler->SetRequiresPermission (1);
   xnatHandler->SetPermissionPrompter ( xnatPermissionPrompter );
   scene->AddURIHandler(xnatHandler);
