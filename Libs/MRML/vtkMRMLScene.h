@@ -371,6 +371,9 @@ public:
   // returns NULL on failure
   vtkURIHandler *FindURIHandler(const char *URI);
   // Description:
+  // Returns a URIhandler of a specific type if its name is known.
+  vtkURIHandler *FindURIHandlerByName ( const char *name );
+  // Description:
   // Add a uri handler to the collection.
   void AddURIHandler(vtkURIHandler *handler);
   

@@ -11,6 +11,7 @@ vtkURIHandler::vtkURIHandler()
   this->RequiresPermission = 0;
   this->PermissionPrompter = NULL;
   this->Prefix = NULL;
+  this->Name = NULL;
 }
 
 
@@ -26,6 +27,10 @@ vtkURIHandler::~vtkURIHandler()
   if ( this->Prefix != NULL )
     {
     this->SetPrefix ( NULL );
+    }
+  if ( this->Name != NULL )
+    {
+    this->SetName ( NULL );
     }
 }
 

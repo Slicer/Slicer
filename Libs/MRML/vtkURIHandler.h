@@ -61,6 +61,8 @@ class VTK_MRML_EXPORT vtkURIHandler : public vtkObject
   vtkSetObjectMacro ( PermissionPrompter, vtkPermissionPrompter );
   vtkGetStringMacro ( Prefix );
   vtkSetStringMacro ( Prefix );
+  vtkGetStringMacro ( Name );
+  vtkSetStringMacro ( Name );
 
  private:
 
@@ -89,6 +91,7 @@ class VTK_MRML_EXPORT vtkURIHandler : public vtkObject
   //ETX
   FILE *LocalFile;
   char *Prefix;
+  char *Name;
 };
 
 #endif

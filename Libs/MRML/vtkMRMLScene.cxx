@@ -2044,6 +2044,36 @@ void vtkMRMLScene::AddURIHandler(vtkURIHandler *handler)
   this->GetURIHandlerCollection()->AddItem(handler);
 }
 
+
+//------------------------------------------------------------------------------
+vtkURIHandler * vtkMRMLScene::FindURIHandlerByName(const char *name)
+{
+  vtkURIHandler *u;
+  if ( name == NULL )
+    {
+    vtkErrorMacro("FindURIHandlerByName: name is null.");
+    return NULL;
+    }
+  if (this->GetURIHandlerCollection() == NULL)
+    {
+    vtkWarningMacro("FindURIHandlerByName: No URI handlers registered on the scene.");
+    return NULL;
+    }
+  for (int i = 0; i < this->GetURIHandlerCollection()->GetNumberOfItems(); i++)
+    {
+    u = vtkURIHandler::SafeDownCast(this->GetURIHandlerCollection()->GetItemAsObject(i));
+    if ( u && ( !strcmp (u->GetName(), name ) ) )
+      {
+      vtkDebugMacro("FindURIHandlerByName: found a handler with name " << name << " at index " << i << " in the handler collection");
+      return vtkURIHandler::SafeDownCast(this->GetURIHandlerCollection()->GetItemAsObject(i));
+      }
+    }
+  vtkWarningMacro("FindURIHandlerByName: unable to find a URI handler in the collection of " << this->GetURIHandlerCollection()->GetNumberOfItems() << " handlers to match the name " << name);
+  return NULL;
+  
+}
+
+
 //------------------------------------------------------------------------------
 vtkURIHandler * vtkMRMLScene::FindURIHandler(const char *URI)
 {
