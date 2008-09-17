@@ -1,0 +1,9 @@
+<Name>Slicer3</Name>
+<Group>Core</Group>
+<Description>Slicer3, a cross-platform end user application for analyzing and visualizing medical images, for developing and deploying new image computing technologies.</Description>
+<SourceLocation>http://www.na-mic.org/svn/Slicer3/trunk</SourceLocation>
+<HomePage>http://na-mic.org/Wiki/index.php/Slicer3</HomePage>
+<Dependency>VTK</Dependency>
+<Dependency>ITK</Dependency>
+<Dependency>Teem</Dependency>
+<Dependency>KWWidgets</Dependency>

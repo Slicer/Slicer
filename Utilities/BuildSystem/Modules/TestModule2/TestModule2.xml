@@ -1,0 +1,10 @@
+<Name>TestModule2</Name>
+<Group>Segmentation</Group>
+<Description>Test module #2</Description>
+<SourceLocation>:pserver:anoncvs:@public.kitware.com:/cvsroot/Sandbox</SourceLocation>
+<CVSModule>Sandbox/barre/slicer3/TestModule2</CVSModule>
+<HomePage>http://na-mic.org/Wiki/index.php/Slicer3:Build/Modules</HomePage>
+<Version>1.0</Version>
+<Dependency>TestModule1</Dependency>
+<Author>Sebastien BARRE</Author>
+<Acknowledgement>Kitware, Inc.</Acknowledgement>

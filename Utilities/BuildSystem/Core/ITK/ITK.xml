@@ -1,0 +1,16 @@
+<Name>ITK</Name>
+<Group>Core</Group>
+<Description>ITK, a free, cross-platform and open-license toolkit for performing registration and segmentation.</Description>
+<SourceLocation>:pserver:anonymous:insight@www.itk.org:/cvsroot/Insight</SourceLocation>
+<CVSModule>Insight</CVSModule>
+<CVSTag>ITK-3-4</CVSTag>
+<HomePage>http://itk.org</HomePage>
+<Version>3.4</Version>
+<Acknowledgement>Kitware, Inc.</Acknowledgement>
+<Acknowledgement>GE Corporate R&D</Acknowledgement>
+<Acknowledgement>Insightful</Acknowledgement>
+<Acknowledgement>UNC Chapel Hill</Acknowledgement>
+<Acknowledgement>University of Utah</Acknowledgement>
+<Acknowledgement>University of Pennsylvania</Acknowledgement>
+<Acknowledgement>National Library of Medicine (NLM)</Acknowledgement>
+<Acknowledgement>National Institutes of Health (NIH)</Acknowledgement>
