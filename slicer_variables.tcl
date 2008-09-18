@@ -344,7 +344,7 @@ switch $::tcl_platform(os) {
         set ::GENERATOR "Unix Makefiles" 
         set ::COMPILER_PATH "/usr/bin"
         set ::COMPILER "g++"
-        set ::FORTRAN_COMPILER "g77"
+        set ::FORTRAN_COMPILER "gfortran"
         set ::CMAKE $::CMAKE_PATH/bin/cmake
         set numCPUs [lindex [exec grep processor /proc/cpuinfo | wc] 0]
         set ::MAKE "make -j [expr $numCPUs * 2]"

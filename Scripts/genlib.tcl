@@ -548,6 +548,7 @@ if { [BuildThis $::NETLIB_TEST_FILE "netlib"] && !$::USE_SYSTEM_PYTHON && [strin
         set utilDir $::Slicer3_LIB/../Slicer3/Base/GUI/Python/util
         cd $::Slicer3_LIB/netlib/lapack
         if { $isLinux && $::tcl_platform(machine) == "x86_64" } {
+          # TODO: these have hardcoded gfortran (not controlled by ::FORTRAN_COMPILER)
           file copy -force $utilDir/lapack-make.inc.LINUX64 make.inc
         } else {
           file copy -force $utilDir/lapack-make.inc.LINUX make.inc

@@ -16,11 +16,11 @@ PLAT = _LINUX
 #  selected.  Define LOADER and LOADOPTS to refer to the loader and 
 #  desired load options for your machine.
 #
-FORTRAN  = g77 
+FORTRAN  = gfortran 
 OPTS     = -O2
 DRVOPTS  = $(OPTS)
 NOOPT    =
-LOADER   = g77
+LOADER   = gfortran
 LOADOPTS =
 #
 # Timer for the SECOND and DSECND routines
