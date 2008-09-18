@@ -311,13 +311,13 @@ if { [BuildThis $::CMAKE "cmake"] == 1 } {
 if { [BuildThis $::TCL_TEST_FILE "tcl"] == 1 } {
 
     if {$isWindows} {
-      runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Binaries/Windows/tcl-build tcl-build
+      runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Binaries/Windows/$::TCL_VERSION-build tcl-build
     }
 
     file mkdir $Slicer3_LIB/tcl
     cd $Slicer3_LIB/tcl
 
-    runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tcl tcl
+    runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/$::TCL_VERSION/tcl tcl
     if {$::GENLIB(buildit)} {
       if {$isWindows} {
           # can't do windows
@@ -334,7 +334,7 @@ if { [BuildThis $::TCL_TEST_FILE "tcl"] == 1 } {
 if { [BuildThis $::TK_TEST_FILE "tk"] == 1 } {
     cd $Slicer3_LIB/tcl
 
-    runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tk tk
+    runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/$::TCL_VERSION/tk tk
 
     if {$::GENLIB(buildit)} {
       if {$isWindows} {
@@ -359,7 +359,7 @@ if { [BuildThis $::ITCL_TEST_FILE "itcl"] == 1 } {
 
     cd $Slicer3_LIB/tcl
 
-    runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/incrTcl incrTcl
+    runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/$::TCL_VERSION/incrTcl incrTcl
 
     cd $Slicer3_LIB/tcl/incrTcl
 
@@ -377,7 +377,9 @@ if { [BuildThis $::ITCL_TEST_FILE "itcl"] == 1 } {
         # need to run ranlib separately on lib for Darwin
         # file is created and ranlib is needed inside make all
         catch "eval runcmd $::MAKE all"
-        runcmd ranlib ../incrTcl/itcl/libitclstub3.2.a
+        if { [file exists ../incrTcl/itcl/libitclstub3.2.a] } {
+          runcmd ranlib ../incrTcl/itcl/libitclstub3.2.a
+        }
       }
       eval runcmd $::MAKE all
       eval runcmd $::SERIAL_MAKE install
@@ -392,7 +394,7 @@ if { [BuildThis $::ITCL_TEST_FILE "itcl"] == 1 } {
 if { [BuildThis $::IWIDGETS_TEST_FILE "iwidgets"] == 1 } {
     cd $Slicer3_LIB/tcl
 
-    runcmd  $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/iwidgets iwidgets
+    runcmd  $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/$::TCL_VERSION/iwidgets iwidgets
 
     if {$::GENLIB(buildit)} {
         if {$isWindows} {
@@ -415,7 +417,7 @@ if { [BuildThis $::IWIDGETS_TEST_FILE "iwidgets"] == 1 } {
 if { [BuildThis $::BLT_TEST_FILE "blt"] == 1 } {
     cd $Slicer3_LIB/tcl
 
-    runcmd  $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/blt blt
+    runcmd  $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/$::TCL_VERSION/blt blt
 
     if {$::GENLIB(buildit)} {
         if { $isWindows } { 
@@ -523,9 +525,9 @@ if { [BuildThis $::NETLIB_TEST_FILE "netlib"] && !$::USE_SYSTEM_PYTHON && [strin
         set files [glob $::Slicer3_LIB/netlib/BLAS/*.f]
         foreach f $files {
               if { $isLinux && $::tcl_platform(machine) == "x86_64" } {
-                runcmd g77 -O3 -fno-second-underscore -fPIC -m64 -c $f
+                runcmd $::FORTRAN_COMPILER -O3 -fno-second-underscore -fPIC -m64 -c $f
               } else {
-                runcmd g77 -fno-second-underscore -O2 -c $f
+                runcmd $::FORTRAN_COMPILER -fno-second-underscore -O2 -c $f
               }
           set ofile [file root [file tail $f]].o        
           runcmd ar r libblas.a $ofile
