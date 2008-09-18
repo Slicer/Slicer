@@ -83,6 +83,7 @@ set(MRML_SRCS
   vtkEventBroker.cxx
   vtkImageAccumulateDiscrete.cxx
   vtkImageBimodalAnalysis.cxx
+  vtkDataFileFormatHelper.cxx
   vtkMRMLCameraNode.cxx
   vtkMRMLClipModelsNode.cxx
   vtkMRMLColorNode.cxx
