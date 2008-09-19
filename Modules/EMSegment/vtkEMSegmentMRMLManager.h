@@ -431,6 +431,9 @@ public:
   virtual int       GetEnableTargetToTargetRegistration();
   virtual void      SetEnableTargetToTargetRegistration(int enable);
 
+  virtual const char*  GetColormap();
+  virtual void         SetColormap(const char* colormap);
+
   //BTX
   enum
     {

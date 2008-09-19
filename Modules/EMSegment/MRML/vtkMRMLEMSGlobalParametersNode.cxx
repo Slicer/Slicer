@@ -47,7 +47,7 @@ vtkMRMLEMSGlobalParametersNode::vtkMRMLEMSGlobalParametersNode()
   this->RegistrationDeformableType    = 0;
   this->RegistrationInterpolationType = 0; // !!! this needs to be specified
 
-  this->RegistrationAtlasVolumeKey = NULL;
+  this->RegistrationAtlasVolumeKey  = NULL;
   this->RegistrationTargetVolumeKey = NULL;
 
   this->EnableTargetToTargetRegistration = 0;
@@ -66,6 +66,8 @@ vtkMRMLEMSGlobalParametersNode::vtkMRMLEMSGlobalParametersNode()
   this->SegmentationBoundaryMax[0] = 0;
   this->SegmentationBoundaryMax[1] = 0;
   this->SegmentationBoundaryMax[2] = 0;  
+
+  this->Colormap = NULL;                   
 }
 
 //-----------------------------------------------------------------------------
@@ -74,6 +76,7 @@ vtkMRMLEMSGlobalParametersNode::~vtkMRMLEMSGlobalParametersNode()
   this->SetWorkingDirectory(NULL);
   this->SetRegistrationTargetVolumeKey(NULL);
   this->SetRegistrationAtlasVolumeKey(NULL);
+  this->SetColormap(NULL);
 }
 
 //-----------------------------------------------------------------------------
@@ -172,6 +175,9 @@ void vtkMRMLEMSGlobalParametersNode::WriteXML(ostream& of, int nIndent)
                      vtksys_stl::
                      ostream_iterator<vtksys_stl::string>(of, " "));
     of << "\" ";
+
+    of << indent << "Colormap=\"" 
+       << (this->Colormap ? this->Colormap : "NULL") << "\" ";
 }
 
 //-----------------------------------------------------------------------------
@@ -279,7 +285,7 @@ void vtkMRMLEMSGlobalParametersNode::ReadXMLAttributes(const char** attrs)
       ss << val;
       ss >> this->UpdateIntermediateData;
       }
-    if (!strcmp(key, "IntensityNormalizationParameterNodeIDs"))
+    else if (!strcmp(key, "IntensityNormalizationParameterNodeIDs"))
       {
       vtksys_stl::stringstream ss;
       ss << val;
@@ -296,7 +302,11 @@ void vtkMRMLEMSGlobalParametersNode::ReadXMLAttributes(const char** attrs)
         ++index;
         }
       }
-    }
+     if (!strcmp(key, "Colormap"))
+      {
+      this->SetColormap(val);
+      }
+   }
 }
 
 //-----------------------------------------------------------------------------
@@ -326,6 +336,8 @@ void vtkMRMLEMSGlobalParametersNode::Copy(vtkMRMLNode *rhs)
 
   this->IntensityNormalizationParameterList = 
     node->IntensityNormalizationParameterList;
+  
+  this->SetColormap(node->Colormap);
 }
 
 //-----------------------------------------------------------------------------
@@ -333,7 +345,7 @@ void vtkMRMLEMSGlobalParametersNode::PrintSelf(ostream& os,
                                                vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
-
+ 
   os << indent << "NumberOfTargetInputChannels: "
      << this->NumberOfTargetInputChannels << "\n";
 
@@ -382,6 +394,9 @@ void vtkMRMLEMSGlobalParametersNode::PrintSelf(ostream& os,
                    this->IntensityNormalizationParameterList.end(),
                    vtksys_stl::ostream_iterator<vtksys_stl::string>(os, " "));
   os << "\n";
+
+  os << indent << "Colormap: " 
+     << (this->Colormap ? this->Colormap : "(none)") << "\n";
 }
 
 const char*

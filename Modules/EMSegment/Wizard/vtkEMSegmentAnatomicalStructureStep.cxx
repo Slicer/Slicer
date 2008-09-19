@@ -19,6 +19,17 @@
 #include "vtkKWTree.h"
 #include "vtkKWTreeWithScrollbars.h"
 #include "vtkKWPushButtonSet.h"
+#include "vtkKWMultiColumnList.h"
+#include "vtkKWMultiColumnListWithScrollbars.h"
+#include "vtkSlicerColorDisplayWidget.h"
+
+#include "vtkSlicerWidget.h"
+#include "vtkKWApplication.h"
+#include "vtkKWCheckButton.h"
+#include "vtkMRMLFreeSurferProceduralColorNode.h"
+#include "vtkCallbackCommand.h"
+#include "vtkMRMLEMSGlobalParametersNode.h"
+#include "vtkKWLabelWithLabel.h"
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkEMSegmentAnatomicalStructureStep);
@@ -36,15 +47,39 @@ vtkEMSegmentAnatomicalStructureStep::vtkEMSegmentAnatomicalStructureStep()
   this->AnatomicalStructureFrame         = NULL;
   this->AnatomicalStructureTreeButtonSet = NULL;
 
+
+
   this->AnatomicalNodeAttributesFrame        = NULL;
   this->AnatomicalNodeAttributeNameEntry     = NULL;
   this->AnatomicalNodeIntensityLabelEntry    = NULL;
-  this->AnatomicalNodeAttributeColorButton   = NULL;
+  this->AnatomicalNodeAttributeColorFrame    = NULL;
+  this->AnatomicalNodeAttributeColorLabel    = NULL;
+  this->ShowOnlyNamedColorsCheckButton       = NULL;
+  this->ColorMultiColumnList                 = NULL;
+  this->NumberOfColumns = 3;
+  this->MultiSelectMode = false;
+
+  this->ColormapFrame        = NULL;
+  this->ColorSelectorWidget  = NULL;
+
+  this->SelectedColormapChangedCallbackCommand = vtkCallbackCommand::New();
+  this->SelectedColormapChangedCallbackCommand->SetClientData(reinterpret_cast<void *>(this));
+  this->SelectedColormapChangedCallbackCommand->SetCallback( 
+    vtkEMSegmentAnatomicalStructureStep::SelectedColormapChangedCallback );
+
+  this->SelectedColorChangedCallbackCommand = vtkCallbackCommand::New();
+  this->SelectedColorChangedCallbackCommand->SetClientData(reinterpret_cast<void *>(this));
+  this->SelectedColorChangedCallbackCommand->SetCallback( 
+    vtkEMSegmentAnatomicalStructureStep::SelectedColorChangedCallback );
+
+  LockSelectedColorChangedMessage = false;
 }
 
 //----------------------------------------------------------------------------
 vtkEMSegmentAnatomicalStructureStep::~vtkEMSegmentAnatomicalStructureStep()
 {
+  this->RemoveSelectedColorChangedObserver(); 
+
   if (this->ContextMenu)
     {
     this->ContextMenu->Delete();
@@ -87,10 +122,52 @@ vtkEMSegmentAnatomicalStructureStep::~vtkEMSegmentAnatomicalStructureStep()
     this->AnatomicalNodeIntensityLabelEntry = NULL;
     }
 
-  if (this->AnatomicalNodeAttributeColorButton)
+  if (this->AnatomicalNodeAttributeColorLabel)
     {
-    this->AnatomicalNodeAttributeColorButton->Delete();
-    this->AnatomicalNodeAttributeColorButton = NULL;
+    this->AnatomicalNodeAttributeColorLabel->Delete();
+    this->AnatomicalNodeAttributeColorLabel = NULL;
+    }
+
+  if (this->AnatomicalNodeAttributeColorFrame)
+    {
+    this->AnatomicalNodeAttributeColorFrame->Delete();
+    this->AnatomicalNodeAttributeColorFrame = NULL;
+    }
+
+  if (this->ShowOnlyNamedColorsCheckButton)
+    {
+    this->ShowOnlyNamedColorsCheckButton->Delete();
+    this->ShowOnlyNamedColorsCheckButton = NULL;
+    }
+
+  if (this->ColorMultiColumnList)
+    {
+      this->ColorMultiColumnList->Delete();
+      this->ColorMultiColumnList = NULL;
+    }
+
+  if (this->ColormapFrame)
+    {
+    this->ColormapFrame->Delete();
+    this->ColormapFrame = NULL;
+    }
+
+  if (this->ColorSelectorWidget)
+    {
+    this->ColorSelectorWidget->Delete();
+    this->ColorSelectorWidget = NULL;
+    }
+
+  if ( this->SelectedColormapChangedCallbackCommand )
+    {
+    this->SelectedColormapChangedCallbackCommand->Delete();
+    this->SelectedColormapChangedCallbackCommand = NULL;
+    }
+
+  if ( this->SelectedColorChangedCallbackCommand )
+    {
+    this->SelectedColorChangedCallbackCommand->Delete();
+    this->SelectedColorChangedCallbackCommand = NULL;
     }
 }
 
@@ -215,12 +292,69 @@ void vtkEMSegmentAnatomicalStructureStep::ShowUserInterface()
 
   vtkKWTree *tree = this->AnatomicalStructureTree->GetWidget();
   tree->SetSelectionChangedCommand(
-    this, "DisplaySelectedNodeAnatomicalAttributesCallback");
+    this, "SelectedAnatomicalNodeChangedCallback");
   tree->SetRightClickOnNodeCommand(this, "PopupNodeContextMenuCallback");
   tree->SetNodeParentChangedCommand(this, "NodeParentChangedCallback");
   tree->EnableReparentingOn();
 
-  // Create the frame
+
+  //create Colormap frame
+
+  if (!this->ColormapFrame)
+    {
+    this->ColormapFrame = vtkKWFrameWithLabel::New();
+    }
+  if (!this->ColormapFrame->IsCreated())
+    {
+    this->ColormapFrame->SetParent(wizard_widget->GetClientArea());
+    this->ColormapFrame->Create();
+    this->ColormapFrame->SetLabelText("Colormap");
+    }
+
+  this->Script("pack %s -side top -expand n -fill both -padx 0 -pady 2", 
+               this->ColormapFrame->GetWidgetName());
+
+  // Create a ColorSelectorWidget for the user to selecting a colormap
+  if (!this->ColorSelectorWidget)
+    {
+    this->ColorSelectorWidget = vtkSlicerNodeSelectorWidget::New();
+    }
+  if (!this->ColorSelectorWidget->IsCreated())
+    {
+    this->ColorSelectorWidget->SetParent(
+      this->ColormapFrame->GetFrame());
+    this->ColorSelectorWidget->Create();
+    this->ColorSelectorWidget
+        ->SetNodeClass("vtkMRMLColorNode", NULL, NULL, NULL);
+    // don't allow new nodes to be created until can edit them
+    // this->ColorSelectorWidget->NewNodeEnabledOn();
+    this->ColorSelectorWidget->ShowHiddenOn();
+    this->ColorSelectorWidget->SetMRMLScene(
+      this->GetGUI()->GetMRMLManager()->GetMRMLScene());
+    this->ColorSelectorWidget->SetBorderWidth(2);
+    this->ColorSelectorWidget->SetPadX(2);
+    this->ColorSelectorWidget->SetPadY(2);
+    //this->ColorSelectorWidget->GetWidget()->IndicatorVisibilityOff();
+    this->ColorSelectorWidget->GetWidget()->SetWidth(14);
+    this->ColorSelectorWidget->SetLabelText( "Select colormap: ");
+    this->ColorSelectorWidget
+        ->SetBalloonHelpString("Select a colormap from the current mrml scene.");
+    this->ColorSelectorWidget->SetLabelWidth(
+      EMSEG_WIDGETS_LABEL_WIDTH - 12);
+    }
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  vtkMRMLScene            *mrmlScene   = this->ColorSelectorWidget->GetMRMLScene();
+  if (mrmlManager->GetColormap() && mrmlScene )
+    {
+    this->ColorSelectorWidget->SetSelected( 
+        mrmlScene->GetNodeByID( mrmlManager->GetColormap() ) );
+    }
+
+  this->Script ("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                this->ColorSelectorWidget->GetWidgetName(),
+                this->ColormapFrame->GetFrame()->GetWidgetName());
+  
+  // Create NodeAttribute frame
 
   if (!this->AnatomicalNodeAttributesFrame)
     {
@@ -253,11 +387,10 @@ void vtkEMSegmentAnatomicalStructureStep::ShowUserInterface()
       EMSEG_WIDGETS_LABEL_WIDTH - 12);
 
     vtkKWEntry *entry = this->AnatomicalNodeAttributeNameEntry->GetWidget();
-    entry->SetWidth(30);
+    entry->SetWidth(16);
     entry->SetCommandTriggerToAnyChange();
     }
-
-  this->Script("pack %s -side top -anchor nw -padx 2 -pady 2", 
+  this->Script("grid %s -column 0 -columnspan 2 -row 0 -sticky nw -padx 2 -pady 2", 
                this->AnatomicalNodeAttributeNameEntry->GetWidgetName());
 
   // Create the node label
@@ -281,34 +414,117 @@ void vtkEMSegmentAnatomicalStructureStep::ShowUserInterface()
       ->SetCommandTriggerToAnyChange();
     }
 
-  // Create the node color button
+  // Create the node color label
 
-  if (!this->AnatomicalNodeAttributeColorButton)
+  if (!this->AnatomicalNodeAttributeColorLabel)
     {
-    this->AnatomicalNodeAttributeColorButton = vtkKWChangeColorButton::New();
+    this->AnatomicalNodeAttributeColorLabel = vtkKWLabelWithLabel::New();  
     }
-  if (!this->AnatomicalNodeAttributeColorButton->IsCreated())
+  if (!this->AnatomicalNodeAttributeColorLabel->IsCreated())
     {
-    this->AnatomicalNodeAttributeColorButton->SetParent(
+    this->AnatomicalNodeAttributeColorLabel->SetParent(
       this->AnatomicalNodeAttributesFrame->GetFrame());
-    this->AnatomicalNodeAttributeColorButton->LabelOutsideButtonOn();
-    this->AnatomicalNodeAttributeColorButton->Create();
-    this->AnatomicalNodeAttributeColorButton->SetLabelText("Color:");
-    this->AnatomicalNodeAttributeColorButton->SetLabelWidth(
-      EMSEG_WIDGETS_LABEL_WIDTH - 12);
+    this->AnatomicalNodeAttributeColorLabel->Create();
+    this->AnatomicalNodeAttributeColorLabel->SetWidth(2);
+    this->AnatomicalNodeAttributeColorLabel->SetHeight(20);
+    this->AnatomicalNodeAttributeColorLabel->SetLabelWidth( 
+      EMSEG_WIDGETS_LABEL_WIDTH - 12); 
+    this->AnatomicalNodeAttributeColorLabel->SetLabelText("Color: ");
+    this->AnatomicalNodeAttributeColorLabel->SetLabelPositionToRight();
     }
+
+  // Create the node color frame
+
+  if (!this->AnatomicalNodeAttributeColorFrame)
+    {
+    this->AnatomicalNodeAttributeColorFrame = vtkKWFrame::New();  
+    }
+  if (!this->AnatomicalNodeAttributeColorFrame->IsCreated())
+    {
+    this->AnatomicalNodeAttributeColorFrame->SetParent(
+      this->AnatomicalNodeAttributesFrame->GetFrame());
+    this->AnatomicalNodeAttributeColorFrame->Create();
+    this->AnatomicalNodeAttributeColorFrame->SetWidth(100);
+    this->AnatomicalNodeAttributeColorFrame->SetHeight(20);
+    }
+
+  // Create a MultiColumnList for displaying the color lookup table
+
+  if (!this->ColorMultiColumnList)
+    {
+    this->ColorMultiColumnList = vtkKWMultiColumnListWithScrollbars::New ( );
+    }
+  if(!this->ColorMultiColumnList->IsCreated())
+    {
+    this->ColorMultiColumnList->SetParent ( 
+      this->AnatomicalNodeAttributesFrame->GetFrame() );
+    this->ColorMultiColumnList->Create ( );
+    this->ColorMultiColumnList->SetHeight(4);
+    this->ColorMultiColumnList->GetWidget()->SetSelectionTypeToRow();
+    this->ColorMultiColumnList->GetWidget()->MovableRowsOff();
+    this->ColorMultiColumnList->GetWidget()->MovableColumnsOff();
+    // set up the columns of data for each table entry
+    // refer to the header file for the order
+    this->ColorMultiColumnList->GetWidget()->AddColumn("Entry");
+    this->ColorMultiColumnList->GetWidget()->AddColumn("Name");
+    this->ColorMultiColumnList->GetWidget()->AddColumn("Color");
+    
+    if(this->MultiSelectMode)
+      {
+      this->ColorMultiColumnList->GetWidget()->SetSelectionModeToMultiple();
+      }
+    else
+      {
+      // we should never get here. ColorMultiColumnList is set in Single Selection mode.
+      this->ColorMultiColumnList->GetWidget()->SetSelectionModeToSingle();
+      }
+    
+    // now set attribs that are equal across the columns
+    int col;
+    for (col = 0; col < this->NumberOfColumns; col++)
+      {
+      this->ColorMultiColumnList->GetWidget()->SetColumnWidth(col, 6);
+      this->ColorMultiColumnList->GetWidget()->SetColumnAlignmentToLeft(col);
+      this->ColorMultiColumnList->GetWidget()->ColumnEditableOff(col);
+      }
+    // set the name and colour column widths to be higher
+    this->ColorMultiColumnList->GetWidget()->SetColumnWidth(NameColumn, 20);
+    this->ColorMultiColumnList->GetWidget()->SetColumnWidth(ColourColumn, 20);
+    
+    this->ColorMultiColumnList->GetWidget()->SetCellUpdatedCommand(this, "UpdateElement");
+    }
+
+  // create ShowOnlyNamedColors button
+
+  if (!this->ShowOnlyNamedColorsCheckButton)
+    {
+    this->ShowOnlyNamedColorsCheckButton = vtkKWCheckButton::New();
+    }
+  if (!this->ShowOnlyNamedColorsCheckButton->IsCreated())
+    {
+    this->ShowOnlyNamedColorsCheckButton->SetParent ( 
+          this->AnatomicalNodeAttributesFrame->GetFrame() );
+    this->ShowOnlyNamedColorsCheckButton->Create();
+    this->ShowOnlyNamedColorsCheckButton->SelectedStateOff();
+    this->ShowOnlyNamedColorsCheckButton->SetText("Show Only Named Colors");
+    }
+
+
+  this->AddSelectedColorChangedObserver();
 
   // Update the UI with the proper value, if there is a selection
 
-  this->DisplaySelectedNodeAnatomicalAttributesCallback();
+  this->SelectedAnatomicalNodeChangedCallback();
 }
 
 //----------------------------------------------------------------------------
-void vtkEMSegmentAnatomicalStructureStep::DisplaySelectedNodeAnatomicalAttributesCallback()
+void vtkEMSegmentAnatomicalStructureStep::SelectedAnatomicalNodeChangedCallback()
 {
   // Update the UI with the proper value, if there is a selection
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+
+
   if (!mrmlManager)
     {
     return;
@@ -348,7 +564,7 @@ void vtkEMSegmentAnatomicalStructureStep::DisplaySelectedNodeAnatomicalAttribute
       entry->SetValue(NULL);
       }
     }
-
+ 
   // Update the node intensity label
 
   if (this->AnatomicalNodeIntensityLabelEntry)
@@ -363,7 +579,7 @@ void vtkEMSegmentAnatomicalStructureStep::DisplaySelectedNodeAnatomicalAttribute
               static_cast<int>(sel_vol_id));
       entry->SetCommand(this, buffer);
       entry->SetValueAsInt(intLabel);
-      this->Script("pack %s -side top -anchor nw -padx 2 -pady 2", 
+      this->Script("grid %s -column 0 -row 1 -sticky nw -padx 2 -pady 2", 
                    this->AnatomicalNodeIntensityLabelEntry->GetWidgetName());
       }
     else
@@ -371,43 +587,353 @@ void vtkEMSegmentAnatomicalStructureStep::DisplaySelectedNodeAnatomicalAttribute
       this->AnatomicalNodeIntensityLabelEntry->SetEnabled(0);
       entry->SetCommand(NULL, NULL);
       entry->SetValue(NULL);
-      this->Script("pack forget %s", 
+      this->Script("grid forget %s", 
                    this->AnatomicalNodeIntensityLabelEntry->GetWidgetName());
       }
     }
 
-  // Update the node color
-
-  if (this->AnatomicalNodeAttributeColorButton)
+  // Update the node color label
+ 
+  if (this->AnatomicalNodeAttributeColorLabel)
     {
     if (has_valid_selection && sel_is_leaf_node)
       {
-      this->AnatomicalNodeAttributeColorButton->SetEnabled(enabled);
-      sprintf(buffer, "SelectedNodeColorChangedCallback %d", 
-              static_cast<int>(sel_vol_id));
-      this->AnatomicalNodeAttributeColorButton->SetCommand(this, buffer);
-      double rgb[3] = { 0.5, 0.5, 0.5 };
-      mrmlManager->GetTreeNodeColor(sel_vol_id, rgb);
-      this->AnatomicalNodeAttributeColorButton->SetColor(rgb);
-
-      //
-      // We hide the color button for now because the color that is
-      // selected here is not the color that is displayed for the
-      // segmentation later.  Colors are dealt with using the colormap
-      // mechanism and that functionality should be integrated here at
-      // some point.
-      //this->Script("pack %s -side top -anchor nw -padx 2 -pady 2", 
-      //             this->AnatomicalNodeAttributeColorButton->GetWidgetName());
-      }
-    else
+      this->AnatomicalNodeAttributeColorLabel->SetEnabled(enabled);
+      this->Script("grid %s -column 1 -row 1 -sticky ne -padx 2 -pady 2",  
+                   this->AnatomicalNodeAttributeColorLabel->GetWidgetName());
+     }
+    else 
       {
-      this->AnatomicalNodeAttributeColorButton->SetEnabled(0);
-      this->AnatomicalNodeAttributeColorButton->SetCommand(NULL, NULL);
-      // see comment just above
-      //this->Script("pack forget %s", 
-      //             this->AnatomicalNodeAttributeColorButton->GetWidgetName());
+      this->AnatomicalNodeAttributeColorLabel->SetEnabled(0);
+      this->Script("grid forget %s", 
+                   this->AnatomicalNodeAttributeColorLabel->GetWidgetName());
       }
     }
+
+  // Update the node color frame
+ 
+  if (this->AnatomicalNodeAttributeColorFrame)
+    {
+    if (has_valid_selection && sel_is_leaf_node)
+      {
+      this->AnatomicalNodeAttributeColorFrame->SetEnabled(enabled);
+      this->Script("grid %s -column 2 -row 1 -sticky ne -padx 2 -pady 2",  
+                   this->AnatomicalNodeAttributeColorFrame->GetWidgetName());
+      //this->Script("grid columnconfigure .t 0 -weight 1",  
+      //             this->AnatomicalNodeAttributeColorFrame->GetWidgetName());
+     }
+    else 
+      {
+      this->AnatomicalNodeAttributeColorFrame->SetEnabled(0);
+      this->Script("grid forget %s", 
+                   this->AnatomicalNodeAttributeColorFrame->GetWidgetName());
+      }
+    }
+
+  // update the color selection 
+
+  if(this->ColorMultiColumnList && this->ShowOnlyNamedColorsCheckButton 
+     && this->ColorSelectorWidget)
+    {
+    if (has_valid_selection && sel_is_leaf_node)
+      {
+      vtkEMSegmentAnatomicalStructureStep::SelectedColormapChangedCallback(this, 0, this, NULL);  
+
+      this->ColorMultiColumnList->SetEnabled(enabled);
+      this->Script ("grid %s -column 0 -columnspan 3 -row 2 -sticky nw -padx 2 -pady 2",  
+                    this->ColorMultiColumnList->GetWidgetName(),
+                    this->AnatomicalNodeAttributesFrame->GetFrame()->GetWidgetName());
+
+      this->ShowOnlyNamedColorsCheckButton->SetEnabled(enabled);
+      this->Script("grid %s -column 0 -columnspan 2 -row 3 -sticky nw -padx 2 -pady 2", 
+                  this->ShowOnlyNamedColorsCheckButton->GetWidgetName(),
+                  this->AnatomicalNodeAttributesFrame->GetFrame()->GetWidgetName());
+      } 
+    else
+      {
+      this->ColorMultiColumnList->SetEnabled(0);
+       this->Script ("grid forget %s", 
+                    this->ColorMultiColumnList->GetWidgetName());
+      this->ShowOnlyNamedColorsCheckButton->SetEnabled(0);
+      this->Script("grid forget %s",
+                  this->ShowOnlyNamedColorsCheckButton->GetWidgetName());
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkEMSegmentAnatomicalStructureStep::SelectedColormapChangedCallback(vtkObject *caller,
+                                         unsigned long eid, void *clientData, void *callData)
+{
+  vtkEMSegmentAnatomicalStructureStep *self = 
+        reinterpret_cast<vtkEMSegmentAnatomicalStructureStep *>(clientData);
+
+  if (!self)
+    {
+    return;
+    }
+
+  vtkMRMLColorNode *colorNode = vtkMRMLColorNode::SafeDownCast(
+     self->ColorSelectorWidget->GetSelected());
+
+  if (colorNode == NULL)
+    {
+    return;
+    }
+
+  int numColours = 0;
+  if (vtkMRMLColorTableNode::SafeDownCast(colorNode) != NULL)
+    {
+    numColours = vtkMRMLColorTableNode::SafeDownCast(colorNode)->GetNumberOfColors();
+    }
+  else if (vtkMRMLFreeSurferProceduralColorNode::SafeDownCast(colorNode) != NULL &&
+           vtkMRMLFreeSurferProceduralColorNode::SafeDownCast(colorNode)->GetLookupTable() != NULL)
+    {
+    numColours = vtkMRMLFreeSurferProceduralColorNode::SafeDownCast(colorNode)
+                 ->GetLookupTable()->GetNumberOfColors();
+    }
+  
+  bool showOnlyNamedColors;
+  if (self->ShowOnlyNamedColorsCheckButton->GetSelectedState())
+    {
+    showOnlyNamedColors = true;
+    }
+  else
+    {
+    showOnlyNamedColors = false;
+    }
+    
+  bool deleteFlag = true;
+  if (numColours > self->ColorMultiColumnList->GetWidget()->GetNumberOfRows())
+    {
+    // add rows to the table
+    int numToAdd = numColours - self->ColorMultiColumnList->GetWidget()->GetNumberOfRows();
+    self->ColorMultiColumnList->GetWidget()->AddRows(numToAdd);
+    }
+  if (numColours < self->ColorMultiColumnList->GetWidget()->GetNumberOfRows())
+    {
+    // delete some rows
+    for (int r = self->ColorMultiColumnList->GetWidget()->GetNumberOfRows(); r >= numColours; r--)
+      {
+      self->ColorMultiColumnList->GetWidget()->DeleteRow(r);
+      }
+    }
+  if (showOnlyNamedColors || numColours != self->ColorMultiColumnList->GetWidget()->GetNumberOfRows())
+    {
+    // clear out the multi column list box and fill it in with the new list
+    // - if only showing named colours, there might not be numColours rows
+    vtkDebugWithObjectMacro(self, "Clearing out the colours MCLB, numColours = " << numColours);
+    self->ColorMultiColumnList->GetWidget()->DeleteAllRows();
+    }
+  else
+    {
+    deleteFlag = false;
+    }
+  
+  // a row for each colour
+  double *colour = NULL;
+  const char *name;
+  // keep track of where to add the current colour into the table
+  int thisRow = 0;
+  for (int row = 0; row < numColours; row++)
+    {
+    // get the colour
+    if (colorNode->GetLookupTable() != NULL)
+      {
+      colour = colorNode->GetLookupTable()->GetTableValue(row);
+      }
+    if (colour == NULL)
+      {
+      vtkErrorWithObjectMacro (self, "SetGUIFromNode: at " << row << "th colour, got a null pointer" << endl);
+      }
+    // get the colour label
+    name = colorNode->GetColorName(row);
+    if (!showOnlyNamedColors ||
+        (showOnlyNamedColors && strcmp(name, colorNode->GetNoName()) != 0))
+      {
+      // update this colour
+      if (deleteFlag)
+        {
+        self->ColorMultiColumnList->GetWidget()->AddRow();
+        }
+      // now set the table
+      // which entry is it in the colour table?
+      if (thisRow == 0 || row == 0 ||
+          self->ColorMultiColumnList->GetWidget()->GetCellTextAsInt(thisRow, EntryColumn) != row)
+        {
+        vtkDebugWithObjectMacro(self, "Setting entry column #" << thisRow << " to " << row);
+        self->ColorMultiColumnList->GetWidget()->SetCellTextAsInt(thisRow, EntryColumn, row);
+        }
+      
+      // what's it's name?
+      if (strcmp(self->ColorMultiColumnList->GetWidget()->GetCellText(thisRow,NameColumn), name) != 0)
+        {
+        self->ColorMultiColumnList->GetWidget()->SetCellText(thisRow,NameColumn,name);
+        }
+      
+      // what's the colour?
+      if (colour != NULL)
+        {
+        self->ColorMultiColumnList->GetWidget()->SetCellBackgroundColor(thisRow, ColourColumn, colour);
+        }
+      else
+        {
+        self->ColorMultiColumnList->GetWidget()->ClearCellBackgroundColor(thisRow, ColourColumn);
+        }
+      thisRow++;
+      } 
+    vtkDebugWithObjectMacro(self, "Done rebuilding table, row = " << row << ", thisRow = " << thisRow);
+    }
+
+  vtkEMSegmentMRMLManager *mrmlManager = self->GetGUI()->GetMRMLManager();
+  vtkKWTree *tree = self->AnatomicalStructureTree->GetWidget();
+
+  if (!mrmlManager || !tree)
+    {
+    return;
+    }
+
+  mrmlManager->SetColormap(colorNode->GetID());
+  if (tree->HasSelection())
+    {
+    vtksys_stl::string sel_node = tree->GetSelection();
+    vtkIdType sel_vol_id = tree->GetNodeUserDataAsInt(sel_node.c_str());
+    int labelIndex = mrmlManager->GetTreeNodeIntensityLabel(sel_vol_id);
+
+    self->SelectRowByIntensityLabelEntryValue(labelIndex);
+    }
+  
+  self->UpdateAnatomicalNodeAttributeColorFrame();
+ 
+}
+ 
+//----------------------------------------------------------------------------
+void vtkEMSegmentAnatomicalStructureStep::SelectedColorChangedCallback(vtkObject *caller,
+                                    unsigned long eid, void *clientData, void *callData)
+{
+  vtkEMSegmentAnatomicalStructureStep *self = 
+      reinterpret_cast<vtkEMSegmentAnatomicalStructureStep *>(clientData);
+
+  if (!self)
+    {
+    return;
+    }
+
+
+  if (!self->ColorMultiColumnList || !self->AnatomicalNodeIntensityLabelEntry)
+    {
+    return;
+    }
+
+  //Here we need different behaviors for MultiSelection and Single Selection
+  if(self->MultiSelectMode)
+  {
+    // we should never get here. ColorMultiColumnList is set in Single Selection mode.
+    return;
+  }
+
+  vtkEMSegmentMRMLManager *mrmlManager = self->GetGUI()->GetMRMLManager();
+  vtkKWTree *tree = self->AnatomicalStructureTree->GetWidget();
+  if (!mrmlManager || !tree)
+    {
+    return;
+    }
+
+  if (!tree->HasSelection())
+    {
+    return;
+    }
+
+  vtksys_stl::string  sel_node = tree->GetSelection();
+  vtkIdType sel_vol_id = tree->GetNodeUserDataAsInt(sel_node.c_str());
+
+  if (!mrmlManager->GetTreeNodeIsLeaf(sel_vol_id))
+    {
+    return;
+    }
+  
+  if(self->LockSelectedColorChangedMessage)
+    {
+    return;
+    }
+  //enter critical section.
+  self->LockSelectedColorChangedMessage = true;
+
+  int numRows = self->ColorMultiColumnList->GetWidget()->GetNumberOfSelectedRows();
+  if (numRows == 0 && self->ColorMultiColumnList->GetWidget()->GetNumberOfRows() > 1)
+    {
+    // no selection was made, use the value stored in mrmlManager 
+    int row = mrmlManager->GetTreeNodeIntensityLabel(sel_vol_id);
+    self->SelectRowByIntensityLabelEntryValue(row);
+    numRows = self->ColorMultiColumnList->GetWidget()->GetNumberOfSelectedRows();
+    vtkDebugWithObjectMacro(self, 
+      "No rows were selected, forcing selection of row " << row << ", numRows = " << numRows);
+    } 
+  if (numRows != 1)
+    {
+    vtkWarningWithObjectMacro(self, 
+      "Error in selection: "  << numRows << " selected, select just one and try again.");
+    } 
+
+  int rowInLabelEntry = self->AnatomicalNodeIntensityLabelEntry->GetWidget()->GetValueAsInt();
+  int rowInColumnList = self->GetIntensityLabelEntryValueOfFirstSelectedRow();
+  int rowInmrmlManager= mrmlManager->GetTreeNodeIntensityLabel(sel_vol_id);
+
+  if (rowInLabelEntry == rowInColumnList)
+    {
+     //leave critical section.
+    self->LockSelectedColorChangedMessage = false;
+    return;
+    }
+
+  // event triggered by IntensityLabelEntry, need to change the selection of ColorMultiColumnList
+  // note: the intensity label maybe an invalid one (negative), in this case, we do not update
+  if (self->AnatomicalNodeIntensityLabelEntry->GetWidget() == vtkKWEntry::SafeDownCast(caller))
+    {    
+    if (rowInLabelEntry < 0)
+      {
+      vtkWarningWithObjectMacro(self, 
+        "Error in label value: " << rowInLabelEntry << " found, intensity label should be non-negative.");
+      
+      //leave critical section.
+      self->LockSelectedColorChangedMessage = false;
+      return;
+      }
+    mrmlManager->SetTreeNodeIntensityLabel(sel_vol_id, rowInLabelEntry);
+    self->SelectRowByIntensityLabelEntryValue(rowInLabelEntry);
+    self->UpdateAnatomicalNodeAttributeColorFrame();
+    }
+
+
+  // event triggered by ColorMultiColumnList, need to change the value in IntensityLabelEntry
+  // note: the selected row number maybe an invalid one (negative), this could happen when the
+  // list is cleared and we use the index stored in mrmlManager to select an non-existent row. 
+  // in this case, we do not update
+  if (self->ColorMultiColumnList->GetWidget() == vtkKWMultiColumnList::SafeDownCast(caller))
+    {
+    if (rowInColumnList < 0)
+      {
+      vtkWarningWithObjectMacro(self, 
+        "Error in selection: " << rowInLabelEntry << " found, selected row should be non-negative.");
+
+      //leave critical section.
+      self->LockSelectedColorChangedMessage = false;
+      return;
+      }
+
+    mrmlManager->SetTreeNodeIntensityLabel(sel_vol_id, rowInColumnList);
+
+    if (self->AnatomicalNodeIntensityLabelEntry)
+      { 
+      self->AnatomicalNodeIntensityLabelEntry->GetWidget()->SetValueAsInt(rowInColumnList);
+      }
+
+    self->UpdateAnatomicalNodeAttributeColorFrame();
+    }
+ 
+  //leave critical section.
+  self->LockSelectedColorChangedMessage = false;
+  return;
 }
 
 //----------------------------------------------------------------------------
@@ -682,7 +1208,7 @@ void vtkEMSegmentAnatomicalStructureStep::AddChildNodeCallback(vtkIdType sel_vol
   tree->SetNodeUserDataAsInt(child_node, child_id); 
   tree->OpenNode(sel_node.c_str());
   tree->SelectNode(child_node);
-  this->DisplaySelectedNodeAnatomicalAttributesCallback();
+  this->SelectedAnatomicalNodeChangedCallback();
 }
 
 //----------------------------------------------------------------------------
@@ -758,4 +1284,76 @@ void vtkEMSegmentAnatomicalStructureStep::SelectedNodeColorChangedCallback(
 void vtkEMSegmentAnatomicalStructureStep::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
+}
+
+//----------------------------------------------------------------------------
+void vtkEMSegmentAnatomicalStructureStep::RemoveSelectedColorChangedObserver()
+{
+  this->ColorSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, 
+                                              (vtkCommand *)this->SelectedColormapChangedCallbackCommand );  
+  this->ShowOnlyNamedColorsCheckButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, 
+                                              (vtkCommand *)this->SelectedColormapChangedCallbackCommand );
+  this->ColorMultiColumnList->GetWidget()->RemoveObservers(vtkKWMultiColumnList::SelectionChangedEvent,
+                                             (vtkCommand *)this->SelectedColorChangedCallbackCommand );
+  this->AnatomicalNodeIntensityLabelEntry->GetWidget()->RemoveObservers (vtkKWEntry::EntryValueChangedEvent,
+                                              (vtkCommand *)this->SelectedColorChangedCallbackCommand );
+}
+
+//----------------------------------------------------------------------------
+void vtkEMSegmentAnatomicalStructureStep::AddSelectedColorChangedObserver()
+{
+ // add observers
+  this->ColorSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, 
+                                          (vtkCommand *)this->SelectedColormapChangedCallbackCommand );  
+  this->ShowOnlyNamedColorsCheckButton->AddObserver    (vtkKWCheckButton::SelectedStateChangedEvent, 
+                                          (vtkCommand *)this->SelectedColormapChangedCallbackCommand );
+  this->ColorMultiColumnList->GetWidget()->AddObserver(vtkKWMultiColumnList::SelectionChangedEvent,
+                                          (vtkCommand *)this->SelectedColorChangedCallbackCommand );
+  this->AnatomicalNodeIntensityLabelEntry->GetWidget()->AddObserver (vtkKWEntry::EntryValueChangedEvent,
+                                          (vtkCommand *)this->SelectedColorChangedCallbackCommand );
+}
+
+//----------------------------------------------------------------------------
+int vtkEMSegmentAnatomicalStructureStep::
+SelectRowByIntensityLabelEntryValue(int entryValue, int columnIndex)
+{
+  int numRows = this->ColorMultiColumnList->GetWidget()->GetNumberOfRows();
+  for(int rowIndex=0; rowIndex<numRows; rowIndex++)
+    {
+    if (this->ColorMultiColumnList->GetWidget()->GetCellTextAsInt(rowIndex, columnIndex) == entryValue)
+      {
+      this->ColorMultiColumnList->GetWidget()->SelectSingleRow(rowIndex);
+      return rowIndex;
+      }
+    }
+  this->ColorMultiColumnList->GetWidget()->ClearSelection();
+  return -1;
+}
+
+//----------------------------------------------------------------------------
+int vtkEMSegmentAnatomicalStructureStep::
+GetIntensityLabelEntryValueOfFirstSelectedRow(int columnIndex)
+{
+  int numRows = this->ColorMultiColumnList->GetWidget()->GetNumberOfSelectedRows();
+  if (numRows<1)
+    {
+    return -1;
+    }
+  int rowIndex = this->ColorMultiColumnList->GetWidget()->GetIndexOfFirstSelectedRow();
+  return this->ColorMultiColumnList->GetWidget()->GetCellTextAsInt(rowIndex, columnIndex);
+}
+
+//----------------------------------------------------------------------------
+void vtkEMSegmentAnatomicalStructureStep::UpdateAnatomicalNodeAttributeColorFrame()
+{
+  int rowIndex = this->ColorMultiColumnList->GetWidget()->GetIndexOfFirstSelectedRow();
+  if( rowIndex < 0) 
+    {
+    this->AnatomicalNodeAttributeColorFrame->SetBackgroundColor(0.0, 0.0, 0.0);
+    }
+  else
+    {
+    double* colour = this->ColorMultiColumnList->GetWidget()->GetCellBackgroundColor(rowIndex, ColourColumn);
+    this->AnatomicalNodeAttributeColorFrame->SetBackgroundColor(colour);
+    }
 }

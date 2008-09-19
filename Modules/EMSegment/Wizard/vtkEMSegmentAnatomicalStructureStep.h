@@ -5,10 +5,15 @@
 
 class vtkKWFrameWithLabel;
 class vtkKWEntryWithLabel;
-class vtkKWChangeColorButton;
+//class vtkKWChangeColorButton;
 class vtkKWMenu;
 class vtkKWTreeWithScrollbars;
 class vtkKWPushButtonSet;
+class vtkSlicerNodeSelectorWidget;
+class vtkKWMultiColumnListWithScrollbars;
+class vtkKWCheckButton;
+class vtkKWFrame;
+class vtkKWLabelWithLabel;
 
 class VTK_EMSEGMENT_EXPORT vtkEMSegmentAnatomicalStructureStep : public vtkEMSegmentStep
 {
@@ -33,7 +38,7 @@ public:
 
   // Description:
   // Callbacks.
-  virtual void DisplaySelectedNodeAnatomicalAttributesCallback();
+  virtual void SelectedAnatomicalNodeChangedCallback();
   virtual void PopupNodeContextMenuCallback(const char *node);
   virtual void DeleteNodeCallback(vtkIdType);
   virtual void AddChildNodeCallback(vtkIdType);
@@ -58,18 +63,60 @@ protected:
   vtkKWFrameWithLabel     *AnatomicalStructureFrame;
   vtkKWPushButtonSet      *AnatomicalStructureTreeButtonSet;
 
-  vtkKWFrameWithLabel      *AnatomicalNodeAttributesFrame;
-  vtkKWEntryWithLabel      *AnatomicalNodeAttributeNameEntry;
-  vtkKWEntryWithLabel      *AnatomicalNodeIntensityLabelEntry;
-  vtkKWChangeColorButton   *AnatomicalNodeAttributeColorButton;
+  vtkKWFrameWithLabel                *AnatomicalNodeAttributesFrame;
+  vtkKWEntryWithLabel                *AnatomicalNodeAttributeNameEntry;
+  vtkKWEntryWithLabel                *AnatomicalNodeIntensityLabelEntry;
+  vtkKWFrame                         *AnatomicalNodeAttributeColorFrame;
+  vtkKWLabelWithLabel                *AnatomicalNodeAttributeColorLabel;
+  vtkKWCheckButton                   *ShowOnlyNamedColorsCheckButton;
+  vtkKWMultiColumnListWithScrollbars *ColorMultiColumnList;
+  int NumberOfColumns;
+  bool MultiSelectMode;
 
+  vtkKWFrameWithLabel                *ColormapFrame;
+  vtkSlicerNodeSelectorWidget        *ColorSelectorWidget;
+
+  vtkCallbackCommand      *SelectedColorChangedCallbackCommand;
+  vtkCallbackCommand      *SelectedColormapChangedCallbackCommand;
+
+  //BTX
+  enum
+    {
+      EntryColumn = 0,
+      NameColumn = 1,
+      ColourColumn = 2,
+    };
+  //ETX
+  
   // Description:
   // The anatomical tree (common to several steps)
   virtual void PopulateAnatomicalStructureTree(const char*, vtkIdType);
 
+  static void SelectedColormapChangedCallback(vtkObject *caller,  
+                     unsigned long eid, void *clientData, void *callData);
+  static void SelectedColorChangedCallback(vtkObject *caller, 
+                     unsigned long eid, void *clientData, void *callData);
+
 private:
   vtkEMSegmentAnatomicalStructureStep(const vtkEMSegmentAnatomicalStructureStep&);
   void operator=(const vtkEMSegmentAnatomicalStructureStep&);
+
+  void UpdateAnatomicalNodeAttributeColorFrame();
+  void AddSelectedColorChangedObserver();
+  void RemoveSelectedColorChangedObserver();
+
+  // Select a row in ColorMultiColumnList that has the matching entryValue
+  // Return -1 with no selection performed if such an entry does not exist.
+  int SelectRowByIntensityLabelEntryValue(int entryValue, int columnIndex = EntryColumn);
+
+  // Get the intensity label value of the first selected row in ColorMultiColumnList
+  // return -1 if no row has been selected
+  int GetIntensityLabelEntryValueOfFirstSelectedRow(int columnIndex = EntryColumn);
+
+  // AnatomicalNodeIntensityLabelEntry and ColorMultiColumnList are sending update
+  // messages to each other, we need a lock to prevent endless loop.
+  bool LockSelectedColorChangedMessage;
+
 };
 
 #endif

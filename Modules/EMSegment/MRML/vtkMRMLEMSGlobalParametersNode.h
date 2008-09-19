@@ -107,6 +107,9 @@ public:
   vtkSetMacro(EnableTargetToTargetRegistration, int);
   vtkGetMacro(EnableTargetToTargetRegistration, int);
 
+  vtkSetStringMacro(Colormap);
+  vtkGetStringMacro(Colormap);
+
 protected:
   vtkMRMLEMSGlobalParametersNode();
   ~vtkMRMLEMSGlobalParametersNode();
@@ -127,13 +130,15 @@ protected:
 
   int                                 MultithreadingEnabled;
   int                                 UpdateIntermediateData;
-
+  
   int                                 SegmentationBoundaryMin[3];
   int                                 SegmentationBoundaryMax[3];
 
   int                                 NumberOfTargetInputChannels;
 
   int                                 EnableTargetToTargetRegistration;
+
+  char*                               Colormap;
 
   //BTX
   typedef vtkstd::vector<std::string>  IntensityNormalizationParameterListType;

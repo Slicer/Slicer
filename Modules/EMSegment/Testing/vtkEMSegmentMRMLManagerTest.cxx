@@ -347,7 +347,7 @@ int main(int argc, char** argv)
     vtkTestSetGetMacroIndex(pass, m,
                             TreeNodeStoppingConditionMFAIterations,
                             MAGIC_INT, treeNodeID);
-    
+     
     // normalization parameters
     int numTargets = m->GetTargetNumberOfSelectedVolumes();
     vtkIdType targetID = m->GetTargetSelectedVolumeNthID(numTargets-1);
@@ -414,8 +414,10 @@ int main(int argc, char** argv)
       
       // save parameters
       vtkTestSetGetStringMacro(pass, m, 
-                               SaveWorkingDirectory, MAGIC_STRING.c_str());
+                               Colormap, MAGIC_STRING.c_str());
       vtkTestSetGetStringMacro(pass, m, 
+                               SaveWorkingDirectory, MAGIC_STRING.c_str());
+      vtkTestSetGetStringMacro(pass, m,    
                                SaveTemplateFilename, MAGIC_STRING.c_str());
       vtkTestSetGetMacro(pass, m, 
                          SaveTemplateAfterSegmentation, MAGIC_INT);

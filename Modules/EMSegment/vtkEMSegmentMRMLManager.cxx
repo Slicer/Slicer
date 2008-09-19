@@ -2680,6 +2680,26 @@ SetEnableTargetToTargetRegistration(int enable)
 //----------------------------------------------------------------------------
 const char*
 vtkEMSegmentMRMLManager::
+GetColormap()
+{
+  return this->GetGlobalParametersNode() ? this->GetGlobalParametersNode()->
+    GetColormap() : NULL;  
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
+SetColormap(const char* colormap)
+{
+  if (this->GetGlobalParametersNode())
+    {
+    this->GetGlobalParametersNode()->SetColormap(colormap);  
+    }
+}
+
+//----------------------------------------------------------------------------
+const char*
+vtkEMSegmentMRMLManager::
 GetSaveWorkingDirectory()
 {
   return this->GetGlobalParametersNode() ? this->GetGlobalParametersNode()->
