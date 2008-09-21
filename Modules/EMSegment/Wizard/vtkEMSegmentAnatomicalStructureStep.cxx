@@ -1289,14 +1289,26 @@ void vtkEMSegmentAnatomicalStructureStep::PrintSelf(ostream& os, vtkIndent inden
 //----------------------------------------------------------------------------
 void vtkEMSegmentAnatomicalStructureStep::RemoveSelectedColorChangedObserver()
 {
-  this->ColorSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, 
+  if (this->ColorSelectorWidget)
+    {
+    this->ColorSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, 
                                               (vtkCommand *)this->SelectedColormapChangedCallbackCommand );  
-  this->ShowOnlyNamedColorsCheckButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, 
+    }
+  if (this->ShowOnlyNamedColorsCheckButton)
+    {
+    this->ShowOnlyNamedColorsCheckButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, 
                                               (vtkCommand *)this->SelectedColormapChangedCallbackCommand );
-  this->ColorMultiColumnList->GetWidget()->RemoveObservers(vtkKWMultiColumnList::SelectionChangedEvent,
+    }
+  if (this->ColorMultiColumnList)
+    {
+    this->ColorMultiColumnList->GetWidget()->RemoveObservers(vtkKWMultiColumnList::SelectionChangedEvent,
                                              (vtkCommand *)this->SelectedColorChangedCallbackCommand );
-  this->AnatomicalNodeIntensityLabelEntry->GetWidget()->RemoveObservers (vtkKWEntry::EntryValueChangedEvent,
+    }
+  if (this->AnatomicalNodeIntensityLabelEntry)
+    {
+    this->AnatomicalNodeIntensityLabelEntry->GetWidget()->RemoveObservers (vtkKWEntry::EntryValueChangedEvent,
                                               (vtkCommand *)this->SelectedColorChangedCallbackCommand );
+    }
 }
 
 //----------------------------------------------------------------------------
