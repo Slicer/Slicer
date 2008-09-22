@@ -692,8 +692,7 @@ void vtkSlicerSliceLogic::UpdatePipeline()
         this->SliceModelNode->GetModelDisplayNode()->SetVisibility( this->SliceNode->GetSliceVisible() );
         }
 
-      // upadte texture
-      this->ExtractModelTexture->Update();
+
       if (!((this->GetBackgroundLayer() != NULL && this->GetBackgroundLayer()->GetImageData() != NULL) ||
                  (this->GetForegroundLayer() != NULL && this->GetForegroundLayer()->GetImageData() != NULL) ||
                  (this->GetLabelLayer() != NULL && this->GetLabelLayer()->GetImageData() != NULL) )  )
@@ -702,6 +701,8 @@ void vtkSlicerSliceLogic::UpdatePipeline()
         }
       else if (this->SliceModelNode->GetModelDisplayNode()->GetTextureImageData() != this->ExtractModelTexture->GetOutput())
         {
+        // upadte texture
+        this->ExtractModelTexture->Update();
         this->SliceModelNode->GetModelDisplayNode()->SetAndObserveTextureImageData(this->ExtractModelTexture->GetOutput());
         }
        
