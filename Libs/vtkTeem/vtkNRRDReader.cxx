@@ -61,7 +61,7 @@ vtkNRRDReader::vtkNRRDReader()
   HeaderKeys = NULL;
   CurrentFileName = NULL;
   nrrd = nrrdNew();
-  UseNativeOrigin = false;
+  UseNativeOrigin = true;
   ReadStatus = 0;
 }
 

@@ -61,7 +61,7 @@ vtkMRMLNode* vtkMRMLNRRDStorageNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLNRRDStorageNode::vtkMRMLNRRDStorageNode()
 {
-  this->CenterImage = 1;
+  this->CenterImage = 0;
 }
 
 //----------------------------------------------------------------------------
