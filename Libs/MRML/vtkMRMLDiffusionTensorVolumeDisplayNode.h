@@ -119,6 +119,9 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
   // add slice glyph display nodes if not already present and return it
   virtual void  AddSliceGlyphDisplayNodes( vtkMRMLVolumeNode* node );
 
+  // Description:
+  // Gets ImageData converted from the real data in the node
+  virtual vtkImageData* GetImageData();
 
 
 protected:
