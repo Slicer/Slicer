@@ -110,6 +110,7 @@ proc EditorBuildGUI {this} {
   $::Editor($this,volumesSelect) SetParent [$::Editor($this,volumesFrame) GetFrame]
   $::Editor($this,volumesSelect) Create
   $::Editor($this,volumesSelect) SetNodeClass "vtkMRMLScalarVolumeNode" "" "" ""
+  $::Editor($this,volumesSelect) ChildClassesEnabledOff
   $::Editor($this,volumesSelect) SetMRMLScene [[$this GetLogic] GetMRMLScene]
   $::Editor($this,volumesSelect) UpdateMenu
   $::Editor($this,volumesSelect) SetLabelText "Source Volume:"
