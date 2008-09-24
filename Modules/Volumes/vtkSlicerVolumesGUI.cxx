@@ -432,8 +432,16 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
       vtkITKArchetypeImageSeriesReader* reader = vtkITKArchetypeImageSeriesReader::New();
       reader->SetSingleFile( 1 );
       reader->SetArchetype( filename );
-      reader->Update();
-      this->CopyTagAndValues( reader );
+      try 
+        {
+        reader->Update();
+        this->CopyTagAndValues( reader );
+        }
+      catch (vtkstd::exception &e) 
+        {
+        e; // dummy access to avoid warning
+        }
+      reader->Delete();
       }
     else
       {
