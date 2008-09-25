@@ -10,7 +10,10 @@ if(NOT DEFINED launcher_platform)
 endif(NOT DEFINED launcher_platform)
 if(${launcher_platform} MATCHES Windows)
   if(CMAKE_CL_64)
-    set(launcher_platform  win64)
+    # set(launcher_platform  win64)
+    # since Slicer3-win64.exe has not been created yet (Steve?), let's use
+    # the win32 one.
+    set(launcher_platform  win32)
   else(CMAKE_CL_64)
     set(launcher_platform  win32)
   endif(CMAKE_CL_64)
