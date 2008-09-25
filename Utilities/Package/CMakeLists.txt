@@ -1,3 +1,4 @@
+# -------------------------------------------------------------------------
 # Find and install Tcl
 
 if(TCL_INCLUDE_PATH)
@@ -28,24 +29,30 @@ if(TCL_DIR)
     )
 endif(TCL_DIR)
 
+# -------------------------------------------------------------------------
 # Find and install python
 
 if(Slicer3_USE_PYTHON)
   set(PYTHON_DIR "${Slicer3_BINARY_DIR}/../Slicer3-lib/python-build")
-  if(PYTHON_DIR)
+  if(WIN32 AND NOT EXISTS "${PYTHON_DIR}" AND EXISTS "${PYTHON_INCLUDE_PATH}")
+    get_filename_component(PYTHON_DIR "${PYTHON_INCLUDE_PATH}" PATH)
+  endif(WIN32 AND NOT EXISTS "${PYTHON_DIR}" AND EXISTS "${PYTHON_INCLUDE_PATH}")
+  if(EXISTS "${PYTHON_DIR}")
     install(DIRECTORY
-      ${PYTHON_DIR}/
+      "${PYTHON_DIR}/"
       DESTINATION lib/Python
       )
-  endif(PYTHON_DIR)
+  endif(EXISTS "${PYTHON_DIR}")
 endif(Slicer3_USE_PYTHON)
+
+# -------------------------------------------------------------------------
+# CPack
 
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt.in"
   "${Slicer3_BINARY_DIR}/PackageLibraries/CMakeLists.txt"
   @ONLY)
 
-# If the cmake version includes cpack, use it
 include(InstallRequiredSystemLibraries)
 include(${CMAKE_CURRENT_SOURCE_DIR}/InstallDebugSystemLibraries.cmake)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Medical Visualization and Processing Environment for Research")
@@ -76,6 +83,41 @@ endif(APPLE)
 # slicer3 does _not_ require setting the windows path
 set(CPACK_NSIS_MODIFY_PATH OFF)
 
-set(CPACK_PACKAGE_EXECUTABLES "..\\\\Slicer3" "Slicer")
+set(APPLICATION_NAME "Slicer")
+set(EXECUTABLE_NAME "Slicer3")
+set(CPACK_PACKAGE_EXECUTABLES "..\\\\${EXECUTABLE_NAME}" "${APPLICATION_NAME}")
+
+# -------------------------------------------------------------------------
+# File extensions
+
+set(FILE_EXTENSIONS .mrml .xcat)
+
+if(FILE_EXTENSIONS)
+
+  # For NSIS (Win32) now, we will add MacOSX support later (get back to Wes)
+
+  if(WIN32 AND NOT UNIX)
+    set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS)
+    set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS)
+    foreach(ext ${FILE_EXTENSIONS})
+      string(LENGTH "${ext}" len)
+      math(EXPR len_m1 "${len} - 1")
+      string(SUBSTRING "${ext}" 1 ${len_m1} ext_wo_dot)
+      set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS 
+        "${CPACK_NSIS_EXTRA_INSTALL_COMMANDS}
+            WriteRegStr HKCR \\\"${APPLICATION_NAME}\\\" \\\"\\\" \\\"${APPLICATION_NAME} supported file\\\"
+            WriteRegStr HKCR \\\"${APPLICATION_NAME}\\\\shell\\\\open\\\\command\\\" \\\"\\\" \\\"$\\\\\\\"$INSTDIR\\\\${EXECUTABLE_NAME}.exe$\\\\\\\" $\\\\\\\"%1$\\\\\\\"\\\"
+            WriteRegStr HKCR \\\"${ext}\\\" \\\"\\\" \\\"${APPLICATION_NAME}\\\"
+            WriteRegStr HKCR \\\"${ext}\\\" \\\"Content Type\\\" \\\"application/x-${ext_wo_dot}\\\"
+          ")
+      set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS}
+            DeleteRegKey HKCR \\\" ${APPLICATION_NAME}\\\"
+            DeleteRegKey HKCR \\\"${ext}\\\"
+          ")
+    endforeach(ext)
+  endif(WIN32 AND NOT UNIX)
+
+endif(FILE_EXTENSIONS)
+
 include(CPack)
 
