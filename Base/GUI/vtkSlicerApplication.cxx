@@ -39,6 +39,7 @@
 
 #include "itksys/SystemTools.hxx"
 #include <queue>
+#include <algorithm>
 #include "vtkKWMessageDialog.h"
 
 #include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
