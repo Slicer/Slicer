@@ -259,7 +259,7 @@ itcl::body SWidget::getPixel { image i j k } {
       set pixel "Unknown"
     }
   }
-  if { $pixel == [expr int($pixel)] } {
+  if { [string is double $pixel] && $pixel == [expr int($pixel)] } {
     set pixel [expr int($pixel)]
   }
   return $pixel
