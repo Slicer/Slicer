@@ -17,7 +17,6 @@
 
 // Widgets
 #include "vtkKWPushButton.h"
-#include "vtkKWTypeChooserBox.h"
 #include "vtkKWMatrixWidget.h"
 #include "vtkKWLabel.h"
 #include "vtkKWVolumePropertyWidget.h"
@@ -305,6 +304,10 @@ void vtkVolumeRenderingCudaModuleGUI::DeleteMapper()
         this->CudaMapper->Delete();
         this->CudaMapper = NULL;
     }
+}
+
+void vtkVolumeRenderingCudaModuleGUI::Init(){
+  
 }
 
 void vtkVolumeRenderingCudaModuleGUI::ProcessGUIEvents ( vtkObject *caller, unsigned long event,

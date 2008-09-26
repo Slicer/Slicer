@@ -95,6 +95,8 @@ class VTK_VOLUMERENDERINGCUDAMODULE_EXPORT vtkVolumeRenderingCudaModuleGUI : pub
     vtkGetObjectMacro(InteractorStyle, vtkSlicerViewerInteractorStyle);
     virtual void SetInteractorStyle(vtkSlicerViewerInteractorStyle *interactorStyle);
 
+    void Init();
+
   // Description:
   // Methods describe behavior at module enter and exit.
   virtual void Enter ( );

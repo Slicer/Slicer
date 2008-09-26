@@ -78,9 +78,10 @@ void LoadHead()
     readers[0]->SetDataScalarTypeToUnsignedChar();
     readers[0]->SetNumberOfScalarComponents(1);
     readers[0]->SetDataExtent(0, 255, 0, 255, 0, 93);
-    readers[0]->SetDataSpacing(1.0, 1.0, 1.0);
+    readers[0]->SetDataSpacing(1.0, 1.0, 2.0);
     readers[0]->SetFileDimensionality(3);
-    readers[0]->SetFileName("D:\\fullhead94.raw");
+    //readers[0]->SetFileName("D:\\fullhead94.raw");
+    readers[0]->SetFileName("/home/nicky/Data/Data/rawdata_fromLiao/fullhead94.raw");
     readers[0]->Update();
 }
 
@@ -109,7 +110,8 @@ void LoadHeart()
     readers[0]->SetDataExtent(0, 255, 0, 255, 0, 255);
     readers[0]->SetDataSpacing(1.0, 1.0, 1.0);
     readers[0]->SetFileDimensionality(3);
-    readers[0]->SetFileName("D:\\heart256.raw");
+    //    readers[0]->SetFileName("D:\\heart256.raw");
+    readers[0]->SetFileName("/home/nicky/Data/Data/CT-heart-cube/heart256.raw");
     readers[0]->Update();
 }
 
@@ -231,43 +233,41 @@ void SetClipRatio(int val)
 
 void ChangeModel(vtkObject* caller, unsigned long eid, void* clientData, void* callData)
 {
-    cb_Animate->SetSelectedState(0);
-    if (! strcmp(mb_Model->GetValue(), "Head"))
-        LoadHead();
-    else if (!strcmp(mb_Model->GetValue(), "Heart"))
-        LoadHeartSeries();
-    else if (!strcmp(mb_Model->GetValue(), "Lung"))
-        LoadLungSeries();
-    else if (!strcmp(mb_Model->GetValue(), "Bunny"))
-        LoadBunny();
-    else if (!strcmp(mb_Model->GetValue(), "Prostate"))
-        LoadProstate();
-    else if (!strcmp(mb_Model->GetValue(), "Ultrasound Heart"))
-        LoadUltrasoundHeartSeries();
-    else
-        Clear();
+  cb_Animate->SetSelectedState(0);
+  if (! strcmp(mb_Model->GetValue(), "Head"))
+    LoadHead();
+  else if (!strcmp(mb_Model->GetValue(), "Heart"))
+    LoadHeart();
+  else if (!strcmp(mb_Model->GetValue(), "Lung"))
+    LoadLungSeries();
+  else if (!strcmp(mb_Model->GetValue(), "Bunny"))
+    LoadBunny();
+  else if (!strcmp(mb_Model->GetValue(), "Prostate"))
+    LoadProstate();
+  else if (!strcmp(mb_Model->GetValue(), "Ultrasound Heart"))
+    LoadUltrasoundHeartSeries();
+  else
+    Clear();
 
-
-
-    unsigned int i;
-    for (i = 0; i < clippers.size(); i++)
-        clippers[i]->Delete();
-    clippers.clear();
-    for (i = 0; i < readers.size(); i++)
+  unsigned int i;
+  for (i = 0; i < clippers.size(); i++)
+    clippers[i]->Delete();
+  clippers.clear();
+  for (i = 0; i < readers.size(); i++)
     {
-        clippers.push_back(vtkImageClip::New());
-        clippers[i]->SetInput(readers[i]->GetOutput());
-        clippers[i]->SetOutputWholeExtent(readers[i]->GetOutput()->GetExtent());
-        clippers[i]->ClipDataOn();
-        clippers[i]->Update();
-        VolumeMapper->Update();
+      clippers.push_back(vtkImageClip::New());
+      clippers[i]->SetInput(readers[i]->GetOutput());
+      clippers[i]->SetOutputWholeExtent(readers[i]->GetOutput()->GetExtent());
+      clippers[i]->ClipDataOn();
+      clippers[i]->Update();
+      VolumeMapper->Update();
     }
-    SetClipRatio(50);
-
-    if (!readers.empty())
-        VolumeMapper->SetInput(clippers[0]->GetOutput());
-
-    app->Script("after idle %s Render", renderWidget->GetTclName());
+  SetClipRatio(50);
+  
+  if (!readers.empty())
+    VolumeMapper->SetInput(clippers[0]->GetOutput());
+  
+  app->Script("after idle %s Render", renderWidget->GetTclName());
 }
 
 void SetMapper(vtkVolumeMapper* mapper)
@@ -518,7 +518,7 @@ int my_main(int argc, char *argv[])
     VolumeMapper = vtkCudaVolumeMapper::New();
     Volume->SetMapper(VolumeMapper);
 
-    LoadHead();
+    LoadHeart();
     clippers.push_back(vtkImageClip::New());
     clippers[0]->SetInput(readers[0]->GetOutput());
     clippers[0]->Update();
@@ -558,7 +558,7 @@ int my_main(int argc, char *argv[])
     mb_Model->GetMenu()->AddRadioButton("Ultrasound Heart");
     
     mb_Model->GetMenu()->AddRadioButton("Empty");
-    mb_Model->SetValue("Head");
+    mb_Model->SetValue("Heart");
     mb_Model->GetMenu()->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand*)ModelCallbackCommand);
 
     app->Script("pack %s -side top -anchor nw -expand n -fill x -pady 2",

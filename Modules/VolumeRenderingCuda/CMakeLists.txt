@@ -71,7 +71,7 @@ file(GLOB headers
   vtkCudaMemoryTexture.cxx
     
   ## WIDGETS ##
-    vtkKWTypeChooserBox.cxx
+    #vtkKWTypeChooserBox.cxx
   )
   SET(VolumeRenderingCudaModule_ADDITIONAL_HEADERS
     # Cuda Classes
@@ -189,9 +189,9 @@ IF(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing)
 ENDIF(BUILD_TESTING)
 
-IF(BUILD_EXAMPLES)
+#IF(BUILD_EXAMPLES)
   ADD_SUBDIRECTORY(Examples)
-ENDIF(BUILD_EXAMPLES)
+#ENDIF(BUILD_EXAMPLES)
 
 CONFIGURE_FILE(
   ${VolumeRenderingCudaModule_SOURCE_DIR}/vtkVolumeRenderingCudaModuleConfigure.h.in 
