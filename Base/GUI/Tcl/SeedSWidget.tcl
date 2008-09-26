@@ -42,6 +42,7 @@ if { [itcl::find class SeedSWidget] == "" } {
     public variable visibility "1"
     public variable text ""
     public variable textScale "1"
+    public variable inactive "0"
 
     variable _startOffset "0 0 0"
     variable _currentPosition "0 0 0"
@@ -320,12 +321,14 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
         "MouseMoveEvent" {
           switch $_actionState {
             "dragging" {
-              foreach {wx wy} [$_interactor GetEventPosition] {}
-              foreach {ex ey ez} [$this dcToXYZ $wx $wy] {}
-              foreach {dx dy dz} $_startOffset {}
-              set newxyz [list [expr $ex + $dx] [expr $ey + $dy] [expr $ez + $dz]]
-              set _currentPosition [$this xyzToRAS $newxyz]
-              eval $movingCommand
+              if { !$inactive } {
+                foreach {wx wy} [$_interactor GetEventPosition] {}
+                foreach {ex ey ez} [$this dcToXYZ $wx $wy] {}
+                foreach {dx dy dz} $_startOffset {}
+                set newxyz [list [expr $ex + $dx] [expr $ey + $dy] [expr $ez + $dz]]
+                set _currentPosition [$this xyzToRAS $newxyz]
+                eval $movingCommand
+              }
             }
           }
         }

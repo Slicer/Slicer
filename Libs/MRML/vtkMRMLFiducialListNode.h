@@ -220,6 +220,11 @@ public:
   vtkSetMacro(Power, double);
   vtkGetMacro(Power, double);
 
+  // Description:
+  // When fiducial lists are locked, they cannot be manipulated using the interactive widgets
+  vtkSetMacro(Locked, int);
+  vtkGetMacro(Locked, int);
+
   //BTX
   // Description:
   // Which kind of glyph should be used to display this fiducial?
@@ -292,6 +297,7 @@ protected:
   double Diffuse;
   double Specular;
   double Power;
+  int Locked;
   int GlyphType;
 };
 

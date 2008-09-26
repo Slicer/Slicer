@@ -282,6 +282,7 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
           $seedSWidget configure -opacity [$fidListNode GetOpacity]
           $seedSWidget configure -text [$fidListNode GetNthFiducialLabelText $f]
           $seedSWidget configure -textScale [$fidListNode GetTextScale]
+          $seedSWidget configure -inactive [$fidListNode GetLocked]
           if { [$fidListNode GetNthFiducialSelected $f] } {
             $seedSWidget configure -selected 1
           }

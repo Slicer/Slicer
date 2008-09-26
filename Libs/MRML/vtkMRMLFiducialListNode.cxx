@@ -72,6 +72,7 @@ vtkMRMLFiducialListNode::vtkMRMLFiducialListNode()
   this->Diffuse = 1.0;
   this->Specular = 0;
   this->Power = 1;
+  this->Locked = 0;
 
   //this->GlyphType = this->Diamond3D;
   this->GlyphType = this->StarBurst2D;
@@ -124,6 +125,8 @@ void vtkMRMLFiducialListNode::WriteXML(ostream& of, int nIndent)
   of << " specular=\"" << this->Specular << "\"";
 
   of << " power=\"" << this->Power << "\"";
+
+  of << " locked=\"" << this->Locked << "\"";
 
   of << " opacity=\"" << this->Opacity << "\"";
   
@@ -230,6 +233,12 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
           ss << attValue;
           ss >> this->Power;
       }
+      else if (!strcmp(attName, "locked")) 
+      {
+          std::stringstream ss;
+          ss << attValue;
+          ss >> this->Locked;
+      }
       else if (!strcmp(attName, "opacity")) 
       {
           std::stringstream ss;
@@ -314,6 +323,7 @@ void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
   this->SetDiffuse(node->Diffuse);
   this->SetSpecular(node->Specular);
   this->SetPower(node->Power);
+  this->SetLocked(node->Locked);
 
   // Copy all fiducials
   this->RemoveAllFiducials();
@@ -513,6 +523,7 @@ void vtkMRMLFiducialListNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Diffuse:  (" << this->Diffuse << ")\n";
   os << indent << "Specular: (" << this->Specular << ")\n";
   os << indent << "Power:    (" << this->Power << ")\n";
+  os << indent << "Locked:    (" << this->Locked << ")\n";
   
   if (this->GetNumberOfFiducials() > 0)
   {
