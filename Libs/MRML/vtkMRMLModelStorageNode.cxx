@@ -36,6 +36,7 @@
 #include "vtkTriangleFilter.h"
 
 #include "vtkPointData.h"
+#include "vtkStringArray.h"
 #include "vtkCellArray.h"
 
 #include "itksys/SystemTools.hxx"
@@ -423,4 +424,17 @@ int vtkMRMLModelStorageNode::SupportedFileType(const char *fileName)
   {
     return 0;
   }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLModelStorageNode::InitializeSupportedWriteFileTypes()
+{
+  // Look at WriteData(), .g and .meta are not being written even though 
+  // SupportedFileType() says they are supported
+  this->SupportedWriteFileTypes->InsertNextValue("vtkPolyDataWriter (.vtk)");
+  this->SupportedWriteFileTypes->InsertNextValue("vtkXMLPolyDataReader (.vtp)");
+  //
+  //this->SupportedWriteFileTypes->InsertNextValue("vtkXMLPolyDataReader (.g)");
+  //this->SupportedWriteFileTypes->InsertNextValue("vtkXMLPolyDataReader (.meta)");
+  this->SupportedWriteFileTypes->InsertNextValue("vtkSTLReader (.stl)");
 }

@@ -87,6 +87,10 @@ class VTK_MRML_EXPORT vtkMRMLVolumeArchetypeStorageNode : public vtkMRMLStorageN
   // Subclasses should implement this method.
   virtual int SupportedFileType(const char *fileName);
 
+  // Description:
+  // Initialize all the supported write file types
+  virtual void InitializeSupportedWriteFileTypes();
+
 protected:
 
 
@@ -102,4 +106,6 @@ protected:
 };
 
 #endif
+
+
 

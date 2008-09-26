@@ -20,6 +20,7 @@ Version:   $Revision: 1.1.1.1 $
 #include "vtkCommand.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkStringArray.h"
 #include "vtkURIHandler.h"
 
 #include <vtksys/stl/string>
@@ -37,6 +38,9 @@ vtkMRMLStorageNode::vtkMRMLStorageNode()
   this->URIHandler = NULL;
   this->FileNameList.clear();
   this->URIList.clear();
+
+  this->SupportedWriteFileTypes = vtkStringArray::New();
+  this->WriteFileFormat = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -56,6 +60,16 @@ vtkMRMLStorageNode::~vtkMRMLStorageNode()
     {
     // don't delete it, it's obtained from the scene, it's just a pointer
     this->URIHandler = NULL;
+    }
+
+  if(this->SupportedWriteFileTypes)
+    {
+    this->SupportedWriteFileTypes->Delete();
+    }
+  if(this->WriteFileFormat)
+    {
+    delete [] this->WriteFileFormat;
+    this->WriteFileFormat = NULL;
     }
 }
 
@@ -191,6 +205,15 @@ void vtkMRMLStorageNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "UseCompression:   " << this->UseCompression << "\n";
   os << indent << "ReadState:  " << this->GetReadStateAsString() << "\n";
   os << indent << "WriteState: " << this->GetWriteStateAsString() << "\n";
+  os << indent << "SupportedWriteFileTypes: \n";
+  for(int i=0; i<this->SupportedWriteFileTypes->GetNumberOfTuples(); i++)
+    {
+    os << indent << "FileType: " << 
+      this->SupportedWriteFileTypes->GetValue(i) << "\n";
+    }
+  os << indent << "WriteFileFormat: " <<
+    (this->WriteFileFormat ? this->WriteFileFormat : "(none)") << "\n";
+
 }
 
 //----------------------------------------------------------------------------
@@ -428,6 +451,7 @@ int vtkMRMLStorageNode::SupportedFileType(const char *fileName)
   return 0;
 }
 
+
 //----------------------------------------------------------------------------
 unsigned int vtkMRMLStorageNode::AddFileName( const char* filename )
 {
@@ -567,4 +591,22 @@ void vtkMRMLStorageNode::SetURIPrefix(const char *uriPrefix)
 
   // then reset all the uris in the list
 }
+
+//----------------------------------------------------------------------------
+vtkStringArray* vtkMRMLStorageNode::GetSupportedWriteFileTypes()
+{
+  if(this->SupportedWriteFileTypes->GetNumberOfTuples()==0)
+    {
+    this->InitializeSupportedWriteFileTypes();
+    }
+  return this->SupportedWriteFileTypes;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLStorageNode::InitializeSupportedWriteFileTypes()
+{
+  this->SupportedWriteFileTypes->Reset();
+  this->SupportedWriteFileTypes->SetNumberOfTuples(0);
+}
+
 

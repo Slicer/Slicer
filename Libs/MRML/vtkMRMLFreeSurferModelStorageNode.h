@@ -80,6 +80,10 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelStorageNode : public vtkMRMLModelSto
   bool IsKnownFileExtension(std::string ext);
 //ETX
   virtual int SupportedFileType(const char *fileName);
+
+  // Description:
+  // Initialize all the supported write file types
+  virtual void InitializeSupportedWriteFileTypes();
   
 protected:
   vtkMRMLFreeSurferModelStorageNode();
@@ -97,4 +101,6 @@ protected:
 };
 
 #endif
+
+
 

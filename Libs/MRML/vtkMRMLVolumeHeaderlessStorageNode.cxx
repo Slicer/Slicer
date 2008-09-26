@@ -532,6 +532,12 @@ int vtkMRMLVolumeHeaderlessStorageNode::WriteData(vtkMRMLNode *refNode)
   writer->SetFileName(fullName.c_str());
   
   writer->SetInput( volNode->GetImageData() );
+  if(this->WriteFileFormat)
+    {
+    writer->SetImageIOClassName(
+      this->GetScene()->GetDataIOManager()->GetFileFormatHelper()->
+      GetClassNameFromFormatString(this->WriteFileFormat));
+    }
 
   // set volume attributes
   vtkMatrix4x4* mat = vtkMatrix4x4::New();
@@ -581,6 +587,19 @@ int vtkMRMLVolumeHeaderlessStorageNode::SupportedFileType(const char *fileName)
   // for now, return 1
   return 1;
   
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeHeaderlessStorageNode::InitializeSupportedWriteFileTypes()
+{
+  Superclass::InitializeSupportedWriteFileTypes();
+  vtkStringArray* supportedFormats = this->GetScene()->GetDataIOManager()->
+    GetFileFormatHelper()->GetITKSupportedWriteFileFormats();
+  for(int i=0; i<supportedFormats->GetNumberOfTuples(); i++)
+    {
+    this->SupportedWriteFileTypes->InsertNextValue(
+      supportedFormats->GetValue(i));
+    }
 }
 
 

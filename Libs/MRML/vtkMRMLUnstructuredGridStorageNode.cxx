@@ -24,6 +24,7 @@ Version:   $Revision: 1.2 $
 
 #include "vtkUnstructuredGridReader.h"
 #include "vtkUnstructuredGridWriter.h"
+#include "vtkStringArray.h"
 
 
 //------------------------------------------------------------------------------
@@ -51,7 +52,6 @@ vtkMRMLNode* vtkMRMLUnstructuredGridStorageNode::CreateNodeInstance()
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLUnstructuredGridStorageNode;
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLUnstructuredGridStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
@@ -234,4 +234,11 @@ int vtkMRMLUnstructuredGridStorageNode::SupportedFileType(const char *fileName)
     {
     return 0;
     }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLUnstructuredGridStorageNode::InitializeSupportedWriteFileTypes()
+{
+  this->SupportedWriteFileTypes->InsertNextValue(
+    "vtkUnstructuredGridWriter (.vtk)");
 }

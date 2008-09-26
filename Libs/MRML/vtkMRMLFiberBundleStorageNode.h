@@ -41,6 +41,10 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleStorageNode : public vtkMRMLModelStorage
   // Subclasses should implement this method.
   virtual int SupportedFileType(const char *fileName);
 
+  // Description:
+  // Initialize all the supported write file types
+  virtual void InitializeSupportedWriteFileTypes();
+
 protected:
   vtkMRMLFiberBundleStorageNode(){};
   ~vtkMRMLFiberBundleStorageNode(){};

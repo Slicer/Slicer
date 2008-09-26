@@ -20,6 +20,7 @@ Version:   $Revision: 1.6 $
 #include "vtkImageChangeInformation.h"
 #include "vtkMRMLColorTableStorageNode.h"
 #include "vtkMRMLColorTableNode.h"
+#include "vtkStringArray.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLColorTableStorageNode* vtkMRMLColorTableStorageNode::New()
@@ -384,4 +385,11 @@ int vtkMRMLColorTableStorageNode::SupportedFileType(const char *fileName)
     {
     return 0;
     }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableStorageNode::InitializeSupportedWriteFileTypes()
+{
+  this->SupportedWriteFileTypes->InsertNextValue("Color Table (.ctbl)");
+  this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
 }

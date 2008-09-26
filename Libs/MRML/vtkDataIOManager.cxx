@@ -2,6 +2,7 @@
 #include "vtkObjectFactory.h"
 
 #include "vtkDataIOManager.h"
+#include "vtkDataFileFormatHelper.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
@@ -29,6 +30,8 @@ vtkDataIOManager::vtkDataIOManager()
   this->TransferUpdateCommand->SetClientData ( reinterpret_cast<void *>(this) );
   this->TransferUpdateCommand->SetCallback (vtkDataIOManager::TransferUpdateCallback );
   this->InUpdateCallbackFlag = 0;
+
+  this->FileFormatHelper = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -53,6 +56,13 @@ vtkDataIOManager::~vtkDataIOManager()
     this->CacheManager->Delete();
     this->CacheManager = NULL;
     }
+
+  if(this->FileFormatHelper)
+    {
+    this->FileFormatHelper->Delete();
+    this->FileFormatHelper =  NULL;
+    }
+
   this->EnableAsynchronousIO = 0;
 }
 
@@ -525,5 +535,15 @@ int vtkDataIOManager::GetUniqueTransferID ( )
   return ( id );
 }
 
+
+//----------------------------------------------------------------------------
+vtkDataFileFormatHelper* vtkDataIOManager:: GetFileFormatHelper()
+{
+  if(!this->FileFormatHelper)
+    {
+    this->FileFormatHelper = vtkDataFileFormatHelper::New();
+    }
+  return this->FileFormatHelper;
+}
 
 

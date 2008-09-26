@@ -30,6 +30,7 @@ Version:   $Revision: 1.6 $
 #include "vtkNRRDReader.h"
 #include "vtkNRRDWriter.h"
 #include "vtkDoubleArray.h"
+#include "vtkStringArray.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLNRRDStorageNode* vtkMRMLNRRDStorageNode::New()
@@ -586,4 +587,11 @@ int vtkMRMLNRRDStorageNode::SupportedFileType(const char *fileName)
     vtkWarningMacro("SupportedFileType: can't read files with extension " << extension.c_str());
     return 0;
     }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLNRRDStorageNode::InitializeSupportedWriteFileTypes()
+{
+  this->SupportedWriteFileTypes->InsertNextValue("vtkNRRDWriter (.nrrd)");
+  this->SupportedWriteFileTypes->InsertNextValue("vtkNRRDWriter (.nhdr)");
 }

@@ -132,6 +132,16 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
   ConnectPipelines(vtkExporter, itkImporter);
 
   // write image
+  if(self->GetImageIOClassName())
+    {
+    itk::LightObject::Pointer objectType =
+      itk::ObjectFactoryBase::CreateInstance(self->GetImageIOClassName());
+    itk::ImageIOBase* imageIOType = dynamic_cast< itk::ImageIOBase * >(
+      objectType.GetPointer());
+    if(imageIOType){
+      itkImageWriter->SetImageIO(imageIOType);
+      }
+    }
   itkImageWriter->SetInput(itkImporter->GetOutput());
   itkImporter->GetOutput()->SetDirection(direction);
   itkImporter->GetOutput()->Update();
@@ -152,6 +162,7 @@ vtkITKImageWriter::vtkITKImageWriter()
   this->FileName = NULL;
   this->RasToIJKMatrix = NULL;
   this->UseCompression = 0;
+  this->ImageIOClassName = NULL;
 }
 
 
@@ -163,6 +174,11 @@ vtkITKImageWriter::~vtkITKImageWriter()
     delete [] this->FileName;
     this->FileName = NULL;
   }
+
+  if (this->ImageIOClassName) {
+    delete [] this->ImageIOClassName;
+    this->ImageIOClassName = NULL;
+  }
 }
 
 
@@ -173,6 +189,8 @@ void vtkITKImageWriter::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "FileName: " <<
     (this->FileName ? this->FileName : "(none)") << "\n";
+  os << indent << "ImageIOClassName: " <<
+    (this->ImageIOClassName ? this->ImageIOClassName : "(none)") << "\n";
 }
 
 
@@ -346,5 +364,7 @@ void vtkITKImageWriter::Write()
     return; 
   }
 }
+
+
 
 

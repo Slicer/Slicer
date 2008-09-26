@@ -86,6 +86,11 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelOverlayStorageNode : public vtkMRMLM
   // Description:
   // can I load files with extensions like this filename has?
   int SupportedFileType(const char *fileName);
+
+  // Description:
+  // Initialize all the supported write file types
+  virtual void InitializeSupportedWriteFileTypes();
+
 protected:
   vtkMRMLFreeSurferModelOverlayStorageNode();
   ~vtkMRMLFreeSurferModelOverlayStorageNode();
@@ -100,4 +105,6 @@ protected:
 };
 
 #endif
+
+
 

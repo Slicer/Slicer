@@ -29,6 +29,7 @@ Version:   $Revision: 1.2 $
 #include "vtkImageData.h"
 #include "vtkDoubleArray.h"
 #include "vtkPointData.h"
+#include "vtkStringArray.h"
 
 #include "vtkITKBSplineTransform.h"
 
@@ -862,4 +863,10 @@ int vtkMRMLTransformStorageNode::WriteData(vtkMRMLNode *refNode)
 
 
   return result;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformStorageNode::InitializeSupportedWriteFileTypes()
+{
+  this->SupportedWriteFileTypes->InsertNextValue("Transform (.*)");
 }

@@ -11,14 +11,13 @@
 #include "vtkDataTransfer.h"
 #include "vtkCacheManager.h"
 #include "vtkCollection.h"
+#include "vtkDataFileFormatHelper.h"
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 
 #ifndef vtkObjectPointer
 #define vtkObjectPointer(xx) (reinterpret_cast <vtkObject **>( (xx) ))
 #endif
-
-
 
 class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject 
 {
@@ -35,6 +34,11 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
   vtkGetMacro ( EnableAsynchronousIO, int );
   vtkGetMacro ( InUpdateCallbackFlag, int );
   vtkSetMacro ( InUpdateCallbackFlag, int );
+
+  // Description:
+  // Get/Set the DataFileFormatHelper object
+  vtkDataFileFormatHelper* GetFileFormatHelper();
+  vtkSetObjectMacro ( FileFormatHelper, vtkDataFileFormatHelper );
   
   void SetEnableAsynchronousIO ( int );
 
@@ -114,6 +118,8 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
   vtkCacheManager *CacheManager;
   int EnableAsynchronousIO;
 
+  vtkDataFileFormatHelper* FileFormatHelper;
+
  protected:
   vtkDataIOManager();
   virtual ~vtkDataIOManager();
@@ -123,4 +129,6 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
 };
 
 #endif
+
+
 

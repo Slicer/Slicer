@@ -25,6 +25,9 @@
 #include "vtkMatrix4x4.h"
 
 #include "vtkITK.h"
+#include "itkImageIOBase.h"
+
+class vtkStringArray;
 
 class VTK_ITK_EXPORT vtkITKImageWriter : public vtkProcessObject
 {
@@ -52,8 +55,12 @@ public:
   // Description:
   // Set/Get the input object from the image pipeline.
   void SetInput(vtkImageData *input);
-
   vtkImageData *GetInput();
+
+  // Description:
+  // Set/Get the ImageIO class name.
+  vtkGetStringMacro (ImageIOClassName);
+  vtkSetStringMacro (ImageIOClassName);
 
   // Description:
   // The main interface which triggers the writer to start.
@@ -71,6 +78,7 @@ protected:
   char *FileName;
   vtkMatrix4x4* RasToIJKMatrix;
   int UseCompression;
+  char* ImageIOClassName;
 
 private:
   vtkITKImageWriter(const vtkITKImageWriter&);  // Not implemented.
@@ -80,6 +88,8 @@ private:
 //vtkStandardNewMacro(vtkITKImageWriter)
 
 #endif
+
+
 
 
 

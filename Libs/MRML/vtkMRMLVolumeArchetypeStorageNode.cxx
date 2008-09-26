@@ -33,6 +33,7 @@ Version:   $Revision: 1.6 $
 #include "vtkImageData.h"
 #include "vtkDataArray.h"
 #include "vtkPointData.h"
+#include "vtkStringArray.h"
 #include "vtkITKArchetypeImageSeriesReader.h"
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
 #include "vtkITKArchetypeImageSeriesVectorReaderFile.h"
@@ -398,6 +399,12 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
   
   writer->SetInput( volNode->GetImageData() );
   writer->SetUseCompression(this->GetUseCompression());
+  if(this->WriteFileFormat)
+    {
+    writer->SetImageIOClassName(
+      this->GetScene()->GetDataIOManager()->GetFileFormatHelper()->
+      GetClassNameFromFormatString(this->WriteFileFormat));
+    }
 
   // set volume attributes
   vtkMatrix4x4* mat = vtkMatrix4x4::New();
@@ -447,4 +454,17 @@ int vtkMRMLVolumeArchetypeStorageNode::SupportedFileType(const char *fileName)
 
   // for now, return 1
   return 1;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeArchetypeStorageNode::InitializeSupportedWriteFileTypes()
+{
+  Superclass::InitializeSupportedWriteFileTypes();
+  vtkStringArray* supportedFormats = this->GetScene()->GetDataIOManager()->
+    GetFileFormatHelper()->GetITKSupportedWriteFileFormats();
+  for(int i=0; i<supportedFormats->GetNumberOfTuples(); i++)
+    {
+    this->SupportedWriteFileTypes->InsertNextValue(
+      supportedFormats->GetValue(i));
+    }
 }

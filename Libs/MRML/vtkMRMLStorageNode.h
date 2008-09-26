@@ -23,6 +23,7 @@
 #include "vtkMRMLScene.h"
 #include "vtkURIHandler.h"
 
+class vtkStringArray;
 class vtkURIHandler;
 class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
 {
@@ -155,6 +156,16 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   virtual int SupportedFileType(const char *fileName);
 
   // Description:
+  // Get all the supported write file types
+  // Subclasses should overwrite InitializeSupportedWriteFileTypes().
+  virtual vtkStringArray* GetSupportedWriteFileTypes();
+
+  // Description:
+  // Allow to set specific file format that this node will write output.
+  vtkSetStringMacro(WriteFileFormat);
+  vtkGetStringMacro(WriteFileFormat);
+
+  // Description:
   // Add in another file name to the list of file names
   unsigned int AddFileName (const char *fileName);
   // Description:
@@ -222,7 +233,17 @@ protected:
   // An array of URI's, should contain the URI but may not
   std::vector<std::string> URIList;
   //ETX
+  vtkStringArray* SupportedWriteFileTypes;
+  char* WriteFileFormat;
+
+  // Description:
+  // Initialize all the supported write file types
+  // Subclasses should use this method to initialize SupportedWriteFileTypes.
+  virtual void InitializeSupportedWriteFileTypes();
+
 };
 
 #endif
+
+
 

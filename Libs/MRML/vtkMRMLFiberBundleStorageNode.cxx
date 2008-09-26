@@ -53,5 +53,12 @@ vtkMRMLNode* vtkMRMLFiberBundleStorageNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 int vtkMRMLFiberBundleStorageNode::SupportedFileType(const char *fileName)
 {
-  return 0;
+  return this->Superclass::SupportedFileType(fileName);
+  //return 0;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLFiberBundleStorageNode::InitializeSupportedWriteFileTypes()
+{
+  this->Superclass::InitializeSupportedWriteFileTypes();
 }

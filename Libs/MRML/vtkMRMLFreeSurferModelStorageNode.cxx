@@ -393,3 +393,11 @@ int vtkMRMLFreeSurferModelStorageNode::SupportedFileType(const char *fileName)
     }
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLFreeSurferModelStorageNode::InitializeSupportedWriteFileTypes()
+{
+  // Look at WriteData()
+  // Not supporting any writing currently
+}
+
+
