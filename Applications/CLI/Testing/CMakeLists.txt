@@ -105,11 +105,10 @@ add_test(LinearRegistrationTest01 ${Slicer3_EXE} --launch LinearRegistrationTest
   LinearRegistrationTest
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest01.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest01Transform.txt 
-  --initialtransform ${TEST_DATA}/itkAffineTransform01.txt
   --spatialsamples 10000
-  --histogrambins 32
+  --histogrambins 100
   --iterations 50
-  --learningrate 0.01
+  --learningrate 0.001
   --translationscale 100
   ${TEST_DATA}/CTHeadAxial.nhdr 
   ${TEST_DATA}/CTHeadAxial.nhdr 
@@ -118,7 +117,6 @@ add_test(LinearRegistrationTest02 ${Slicer3_EXE} --launch LinearRegistrationTest
   LinearRegistrationTest
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest02.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest02Transform.txt 
-  --initialtransform ${TEST_DATA}/itkAffineTransform02.txt
   --spatialsamples 10000
   --histogrambins 32
   --iterations 50
@@ -131,7 +129,6 @@ add_test(LinearRegistrationTest03 ${Slicer3_EXE} --launch LinearRegistrationTest
   LinearRegistrationTest
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest03.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest03Transform.txt 
-  --initialtransform ${TEST_DATA}/itkAffineTransform03.txt
   --spatialsamples 10000
   --histogrambins 32
   --iterations 50
@@ -144,7 +141,6 @@ add_test(LinearRegistrationTest04 ${Slicer3_EXE} --launch LinearRegistrationTest
   LinearRegistrationTest
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest04.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest04Transform.txt 
-  --initialtransform ${TEST_DATA}/itkAffineTransform04.txt
   --spatialsamples 10000
   --histogrambins 32
   --iterations 50
