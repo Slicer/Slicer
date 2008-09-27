@@ -447,7 +447,7 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkD
   std::string keys(reader->GetHeaderKeys());
   std::string key,value,num;
   std::string tag,tagnex;
-  char *tmp;
+  const char *tmp;
   vtkDoubleArray *factor = vtkDoubleArray::New();
   grad->SetNumberOfComponents(3);
   double g[3];
@@ -455,7 +455,7 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkD
 
   // search for modality tag
   key = "modality";
-  tmp = reader->GetHeaderValue((char *) key.c_str());
+  tmp = reader->GetHeaderValue(key.c_str());
   if (tmp == NULL)
     {
     factor->Delete();
@@ -478,7 +478,7 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkD
     num = keys.substr(pos+tag.size(),4);
     // Insert gradient
     key = tag+num;
-    tmp = reader->GetHeaderValue((char *) key.c_str());
+    tmp = reader->GetHeaderValue(key.c_str());
     if (tmp == NULL)
       {
       continue;
@@ -504,7 +504,7 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkD
     factor->InsertNextValue(sqrt(g[0]*g[0]+g[1]*g[1]+g[2]*g[2]));
     // find repetitions of this gradient
     key = tagnex+num;
-    tmp = reader->GetHeaderValue((char *) key.c_str());
+    tmp = reader->GetHeaderValue(key.c_str());
     if (tmp == NULL)
       {
       value = "";
@@ -528,7 +528,7 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkD
   double range[2];
   // search for tag DWMRI_b-value
   key = "DWMRI_b-value";
-  tmp = reader->GetHeaderValue((char *) key.c_str());
+  tmp = reader->GetHeaderValue(key.c_str());
   if (tmp == NULL)
     {
     factor->Delete();
