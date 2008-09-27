@@ -128,11 +128,11 @@ char* vtkNRRDReader::GetHeaderKeys()
   return HeaderKeys;
 }
 
-char* vtkNRRDReader::GetHeaderValue(char *key)
+const char* vtkNRRDReader::GetHeaderValue(const char *key)
 {
   std::map<std::string,std::string>::iterator i = HeaderKeyValue.find(key);
   if (i != HeaderKeyValue.end()) {
-    return (char *)(i->second.c_str());
+    return (i->second.c_str());
   }
   else {
     return NULL;
@@ -577,13 +577,13 @@ void vtkNRRDReader::ExecuteInformation()
     }
       
   if (this->UseNativeOrigin && AIR_EXISTS(this->nrrd->spaceOrigin[0])) {
-       for (int i=0; i < 3; i++) {
+       for (i=0; i < 3; i++) {
            IjkToRasMatrix->SetElement(i, 3, origin[i]);
        }
        vtkMatrix4x4::Invert(IjkToRasMatrix, this->RasToIjkMatrix);
    } else {
        vtkMatrix4x4::Invert(IjkToRasMatrix, this->RasToIjkMatrix);
-       for (int i=0; i < 3; i++) {
+       for (i=0; i < 3; i++) {
            this->RasToIjkMatrix->SetElement(i, 3, (dataExtent[2*i+1] - dataExtent[2*i])/2.0);
        }
    }
@@ -612,7 +612,7 @@ void vtkNRRDReader::ExecuteInformation()
 
    if (AIR_EXISTS(this->nrrd->measurementFrame[0][0])) 
    {
-    for (int i=0;i<3;i++)
+    for (i=0;i<3;i++)
       {
 
      switch (this->nrrd->space)

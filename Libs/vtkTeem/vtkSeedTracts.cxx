@@ -862,9 +862,9 @@ void vtkSeedTracts::TransformStreamlinesToRASAndAppendToPolyData(vtkPolyData *ou
      vtkDebugMacro("Rotating tensors: get tensors from probe");        
      vtkDataArray *oldTensors = transformer->GetOutput()->GetPointData()->GetTensors();
      vtkDebugMacro("Rotating tensors: rotate");
-     for (vtkIdType i = 0; i < numPts; i++)
+     for (vtkIdType ii = 0; ii < numPts; ii++)
        {
-         oldTensors->GetTuple(i,tensor);
+         oldTensors->GetTuple(ii,tensor);
          int idx = 0;
          for (int row = 0; row < 3; row++)
            {
@@ -911,7 +911,7 @@ void vtkSeedTracts::SeedStreamlinesFromROIIntersectWithROI2()
   vtkIdType inIncX, inIncY, inIncZ;
   int inExt[6];
   double point[3], point2[3];
-  unsigned long count = 0;
+
   //unsigned long target;
   short *inPtr;
   vtkHyperStreamlineDTMRI *newStreamline;
@@ -996,15 +996,6 @@ void vtkSeedTracts::SeedStreamlinesFromROIIntersectWithROI2()
       //for (idxY = 0; idxY <= maxY; idxY++)
       for (idxY = 0; idxY <= maxY; idxY += increment)
         {
-          //if (!(count%target)) 
-          //{
-          //this->UpdateProgress(count/(50.0*target) + (maxZ+1)*(maxY+1));
-          //cout << (count/(50.0*target) + (maxZ+1)*(maxY+1)) << endl;
-          //cout << "progress: " << count << endl;
-          //}
-          //count++;
-          
-          //for (idxX = 0; idxX <= maxX; idxX++)
           for (idxX = 0; idxX <= maxX; idxX += increment)
             {
               // if it is in the ROI/mask

@@ -79,7 +79,7 @@ public:
 
   // Description:
   // Get a value given a key in the header
-  char* GetHeaderValue(char *key);
+  const char* GetHeaderValue(const char *key);
 
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
@@ -257,5 +257,3 @@ private:
 
 };
 #endif
-
-
