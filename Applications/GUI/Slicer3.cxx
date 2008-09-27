@@ -549,15 +549,15 @@ int Slicer3_main(int argc, char *argv[])
   // load itcl package (needed for interactive widgets)
   //
   {    
-  std::string cmd;
+  std::string tclCmd;
   int returnCode;
 
   // Pass arguments to the Tcl script
-  cmd =  "package require Itcl;";
-  returnCode = Slicer3_Tcl_Eval( interp, cmd.c_str() );
+  tclCmd =  "package require Itcl;";
+  returnCode = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
   if ( returnCode )
     {
-    slicerCerr("Error: slicer requires the Itcl package (" << cmd.c_str() << ")" << endl);
+    slicerCerr("Error: slicer requires the Itcl package (" << tclCmd.c_str() << ")" << endl);
     return ( returnCode );
     }
   }
@@ -566,18 +566,18 @@ int Slicer3_main(int argc, char *argv[])
   // load the gui tcl package (for the interactive widgets)
   //
   {    
-  std::string cmd;
+  std::string tclCmd;
   int returnCode;
 
   // Pass arguments to the Tcl script
-  cmd =  "lappend auto_path \"" + slicerHome + "/"
+  tclCmd =  "lappend auto_path \"" + slicerHome + "/"
     Slicer3_INSTALL_LIB_DIR + "/SlicerBaseGUI/Tcl\"; ";
   //cmd += "puts $auto_path; ";
-  cmd += "package require SlicerBaseGUITcl; ";
-  returnCode = Slicer3_Tcl_Eval( interp, cmd.c_str() );
+  tclCmd += "package require SlicerBaseGUITcl; ";
+  returnCode = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
   if ( returnCode )
     {
-    slicerCerr("Load SlicerBaseGUITcl: " << cmd.c_str() << endl);
+    slicerCerr("Load SlicerBaseGUITcl: " << tclCmd.c_str() << endl);
     return ( returnCode );
     }
   }
@@ -588,14 +588,14 @@ int Slicer3_main(int argc, char *argv[])
   //
 #ifdef _WIN32
   {    
-  std::string cmd;
+  std::string tclCmd;
   int returnCode;
 
-  cmd =  "wm iconbitmap . -default \""+ slicerHome + "/" + Slicer3_INSTALL_SHARE_DIR + "/Resources/slicer3.ico\"";
-  returnCode = Slicer3_Tcl_Eval( interp, cmd.c_str() );
+  tclCmd =  "wm iconbitmap . -default \""+ slicerHome + "/" + Slicer3_INSTALL_SHARE_DIR + "/Resources/slicer3.ico\"";
+  returnCode = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
   if ( returnCode )
     {
-    slicerCerr("Load Custom Icons: " << cmd.c_str() << endl);
+    slicerCerr("Load Custom Icons: " << tclCmd.c_str() << endl);
     }
   }
 #endif
@@ -644,15 +644,15 @@ int Slicer3_main(int argc, char *argv[])
     }
 
   {
-  std::string cmd, slicerAppName;
+  std::string tclCmd, slicerAppName;
 
   slicerAppName = slicerApp->GetTclName();
 
   slicerApp->Script ("namespace eval slicer3 set Application %s", slicerAppName.c_str());
 
-  cmd = "rename exit tcl_exit; ";
+  tclCmd = "rename exit tcl_exit; ";
 
-  cmd += 
+  tclCmd += 
     "proc exit {args} { \
       if { $args != {} && [string is integer $args] == \"1\" } { \
         " + slicerAppName + " SetExitStatus $args \
@@ -661,7 +661,7 @@ int Slicer3_main(int argc, char *argv[])
       } ;\
       after idle {" + slicerAppName + " Exit}; \
     }";
-  Slicer3_Tcl_Eval( interp, cmd.c_str() );
+  Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
   }
 
   //
@@ -670,20 +670,20 @@ int Slicer3_main(int argc, char *argv[])
   if ( File != "" )
     {    
 
-    std::string cmd;
+    std::string tclCmd;
     
     // Pass arguments to the Tcl script
-    cmd = "set args \"\"; ";
+    tclCmd = "set args \"\"; ";
     std::vector<std::string>::const_iterator argit = Args.begin();
     while (argit != Args.end())
       {
-      cmd += " lappend args \"" + *argit + "\"; ";
+      tclCmd += " lappend args \"" + *argit + "\"; ";
       ++argit;
       }
-    Slicer3_Tcl_Eval( interp, cmd.c_str() );
+    Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
 
-    cmd = "source " + File;
-    int returnCode = Slicer3_Tcl_Eval( interp, cmd.c_str() );
+    tclCmd = "source " + File;
+    int returnCode = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
     Slicer3_Tcl_Eval( interp, "update" );
     slicerApp->Delete();
     return ( returnCode );
@@ -694,11 +694,11 @@ int Slicer3_main(int argc, char *argv[])
   //
   if ( Eval != "" )
     {    
-    std::string cmd = "set ::SLICER(eval) \"" + Eval + "\" ; ";
-    cmd += "regsub -all {\\.,} $::SLICER(eval) \";\" ::SLICER(eval); ";
-    cmd += "regsub -all {,\\.} $::SLICER(eval) \";\" ::SLICER(eval); ";
-    cmd += "eval $::SLICER(eval);";
-    int returnCode = Slicer3_Tcl_Eval( interp, cmd.c_str() );
+    std::string tclCmd = "set ::SLICER(eval) \"" + Eval + "\" ; ";
+    tclCmd += "regsub -all {\\.,} $::SLICER(eval) \";\" ::SLICER(eval); ";
+    tclCmd += "regsub -all {,\\.} $::SLICER(eval) \";\" ::SLICER(eval); ";
+    tclCmd += "eval $::SLICER(eval);";
+    int returnCode = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
     Slicer3_Tcl_Eval( interp, "update" );
     slicerApp->Delete();
     return ( returnCode );
@@ -1298,10 +1298,10 @@ int Slicer3_main(int argc, char *argv[])
   if ( Daemon || slicerApp->GetEnableDaemon() )
     {
     slicerApp->SplashMessage("Initializing Slicer Daemon...");
-    std::string cmd;
-    cmd =  "source \"" + slicerHome + "/"
+    std::string tclCmd;
+    tclCmd =  "source \"" + slicerHome + "/"
       Slicer3_INSTALL_MODULES_LIB_DIR "/SlicerDaemon/Tcl/slicerd.tcl\"; slicerd_start; ";
-    Slicer3_Tcl_Eval(interp, cmd.c_str());
+    Slicer3_Tcl_Eval(interp, tclCmd.c_str());
     }
 #endif
 
@@ -1612,8 +1612,8 @@ int Slicer3_main(int argc, char *argv[])
   // use the startup script passed on command line if it exists
   if ( Script != "" )
     {    
-    std::string cmd = "after idle source " + Script;
-    Slicer3_Tcl_Eval( interp, cmd.c_str() ) ;
+    std::string tclCmd = "after idle source " + Script;
+    Slicer3_Tcl_Eval( interp, tclCmd.c_str() ) ;
     }
 
   int res; // return code (exit code)
@@ -1625,11 +1625,11 @@ int Slicer3_main(int argc, char *argv[])
   //
   if ( Exec != "" )
     {    
-    std::string cmd = "set ::SLICER(exec) \"" + Exec + "\" ; ";
-    cmd += "regsub -all {\\.,} $::SLICER(exec) \";\" ::SLICER(exec); ";
-    cmd += "regsub -all {,\\.} $::SLICER(exec) \";\" ::SLICER(exec); ";
-    cmd += "after idle eval $::SLICER(exec);";
-    res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
+    std::string tclCmd = "set ::SLICER(exec) \"" + Exec + "\" ; ";
+    tclCmd += "regsub -all {\\.,} $::SLICER(exec) \";\" ::SLICER(exec); ";
+    tclCmd += "regsub -all {,\\.} $::SLICER(exec) \";\" ::SLICER(exec); ";
+    tclCmd += "after idle eval $::SLICER(exec);";
+    res = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
     }
 
   //
@@ -1643,13 +1643,13 @@ int Slicer3_main(int argc, char *argv[])
       {
       std::string fileName;
       // strip backslashes
-      char buffer[2]; buffer[1] = '\0';
-      for (unsigned int i = 0; i < (*argit).size(); i++)
+      char argBuffer[2]; argBuffer[1] = '\0';
+      for (i = 0; i < (*argit).size(); i++)
         {
-        buffer[0] = (*argit)[i];
-        if ( buffer[0] != '\\' )
+        argBuffer[0] = (*argit)[i];
+        if ( argBuffer[0] != '\\' )
           {
-          fileName.append(std::string(buffer));
+          fileName.append(std::string(argBuffer));
           }
         }
       // is it a MRML or XML file?
@@ -1659,16 +1659,16 @@ int Slicer3_main(int argc, char *argv[])
         appLogic->GetMRMLScene()->SetURL(fileName.c_str());
         // and then load it
         slicerApp->SplashMessage("Set scene url, connecting...");
-        std::string cmd = "after idle {update; $::slicer3::MRMLScene Connect}";
-        res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
+        std::string tclCmd = "after idle {update; $::slicer3::MRMLScene Connect}";
+        res = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
         }                    
       else if (fileName.find(".xml",0) != std::string::npos
                || fileName.find(".XML",0) != std::string::npos)
         {
         // if it's an xml file, load it
-        std::string cmd = "after idle {update; ImportSlicer2Scene \"" + *argit + "\"}";
+        std::string tclCmd = "after idle {update; ImportSlicer2Scene \"" + *argit + "\"}";
         slicerApp->SplashMessage("Importing Slicer2 scene...");
-        res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
+        res = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
         slicerApp->SplashMessage("Imported scene.");
         }
       else if (fileName.find(".xcat",0) != std::string::npos
@@ -1676,21 +1676,21 @@ int Slicer3_main(int argc, char *argv[])
         {
         // if it's an xcede file, load it
         slicerApp->SplashMessage("Importing Xcede catalog ...");
-        std::string cmd = "after idle {update; XcatalogImport \"" + *argit + "\"}";
-        res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
+        std::string tclCmd = "after idle {update; XcatalogImport \"" + *argit + "\"}";
+        res = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
         slicerApp->SplashMessage("Imported catalog.");
         }
       else if (fileName.find(".tcl",0) != std::string::npos)
         {
         // if it's a tcl file source it after the app starts
-        std::string cmd = "after idle {update; source " + *argit + "}";
-        res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
+        std::string tclCmd = "after idle {update; source " + *argit + "}";
+        res = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
         }
       else
         {
         // if we're not sure, assume it is data to load...
-        std::string cmd = "after idle {update; ::Loader::ShowDialog {" + *argit + "}}";
-        res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
+        std::string tclCmd = "after idle {update; ::Loader::ShowDialog {" + *argit + "}}";
+        res = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
         }
       ++argit;
       }
@@ -1702,8 +1702,8 @@ int Slicer3_main(int argc, char *argv[])
   if ( LoadDicomDir != "" )
     {    
     // load either a directory or an archetype
-    std::string cmd = "after idle {update; ::Loader::LoadArchetype {" + LoadDicomDir + "}}";
-    res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
+    std::string tclCmd = "after idle {update; ::Loader::LoadArchetype {" + LoadDicomDir + "}}";
+    res = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
     }
 
 
