@@ -394,6 +394,11 @@ configure_file(${Slicer3_SOURCE_DIR}/CTestConfig.cmake
 configure_file(${Slicer3_SOURCE_DIR}/UseSlicer3.cmake.in
   ${Slicer3_BINARY_DIR}/UseSlicer3.cmake COPYONLY IMMEDIATE)
 
+configure_file(${Slicer3_SOURCE_DIR}/CMake/RemoveTemporaryFiles.cmake.in
+  ${Slicer3_BINARY_DIR}/CMake/RemoveTemporaryFiles.cmake @ONLY IMMEDIATE)
+configure_file(${Slicer3_SOURCE_DIR}/CMake/Slicer3SampleBuildTest.cmake.in
+  ${Slicer3_BINARY_DIR}/CMake/Slicer3SampleBuildTest.cmake @ONLY)
+
 install(FILES
   #   ${Slicer3_BINARY_DIR}/Slicer3BuildSettings.cmake
   ${Slicer3_SOURCE_DIR}/CTestConfig.cmake
