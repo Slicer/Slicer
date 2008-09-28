@@ -99,7 +99,7 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
     this->SetGlyphMode(this->glyphModeTubes);
   };
 
-  virtual vtkPolyData* ExecuteGlyphPipeLineAndGetPolyData( vtkImageData* ) {return NULL;};
+  //virtual vtkPolyData* ExecuteGlyphPipeLineAndGetPolyData( vtkImageData* ) {return NULL;};
 
   virtual void SetDefaultColorMap() {};
 

@@ -671,11 +671,13 @@ void vtkMRMLVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
   for (int i=0; i<this->GetNumberOfDisplayNodes(); i++)
     {
     vtkMRMLDisplayNode *dnode = this->GetNthDisplayNode(i);
-    if (dnode != NULL && dnode == vtkMRMLDisplayNode::SafeDownCast(caller) &&
+    if (dnode != NULL && !dnode->IsA("vtkMRMLDiffusionTensorVolumeSliceDisplayNode") && dnode == vtkMRMLDisplayNode::SafeDownCast(caller) &&
         event ==  vtkCommand::ModifiedEvent)
       {
       vtkDebugMacro("ProcessMRMLEvents: got display node modified event on the " << i << "th display node");
       this->UpdateFromMRML();
+      // once is enough
+      return;
       }
     }
   return;

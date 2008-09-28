@@ -1443,9 +1443,6 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       {
       vtkMRMLDiffusionTensorVolumeDisplayNode *dtvdn = vtkMRMLDiffusionTensorVolumeDisplayNode::New();
       disp = dtvdn; // assign to superclass pointer
-      dwdpn = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
-      this->MRMLScene->AddNode( dwdpn );
-      dtvdn->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(dwdpn->GetID());
       dwdpn->Delete();
       }
     else

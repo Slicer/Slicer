@@ -311,28 +311,21 @@ void vtkMRMLTensorVolumeNode::CalculateAutoLevels(vtkMRMLScalarVolumeDisplayNode
 
   if (displayNode != NULL ) 
     {
-    if (displayNode->GetDiffusionTensorDisplayPropertiesNode())
+    imageDataScalar = NULL;
+    if (this->AssignAttributeTensorsFromScalars == NULL)
       {
-      if (this->AssignAttributeTensorsFromScalars == NULL)
-        {
-        this->AssignAttributeTensorsFromScalars = vtkAssignAttribute::New();
-        }
-      if (this->DTIMathematics == NULL)
-        {
-        this->DTIMathematics = vtkDiffusionTensorMathematics::New();
-        }
-      this->AssignAttributeTensorsFromScalars->Assign(vtkDataSetAttributes::TENSORS, vtkDataSetAttributes::SCALARS, vtkAssignAttribute::POINT_DATA);  
-      
-      this->DTIMathematics->SetInput(imageDataScalar);
-      this->DTIMathematics->SetOperation(displayNode->GetDiffusionTensorDisplayPropertiesNode()->
-                                   GetScalarInvariant());
-      this->DTIMathematics->Update();
-      imageDataScalar = this->DTIMathematics->GetOutput();
+      this->AssignAttributeTensorsFromScalars = vtkAssignAttribute::New();
       }
-    else
+    if (this->DTIMathematics == NULL)
       {
-      imageDataScalar = NULL;
+      this->DTIMathematics = vtkDiffusionTensorMathematics::New();
       }
+    this->AssignAttributeTensorsFromScalars->Assign(vtkDataSetAttributes::TENSORS, vtkDataSetAttributes::SCALARS, vtkAssignAttribute::POINT_DATA);  
+    
+    this->DTIMathematics->SetInput(imageDataScalar);
+    this->DTIMathematics->SetOperation(displayNode->GetScalarInvariant());
+    this->DTIMathematics->Update();
+    imageDataScalar = this->DTIMathematics->GetOutput();
     }
   if (imageDataScalar != NULL)
     {

@@ -345,6 +345,7 @@ void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
   // turn on modified events
   this->DisableModifiedEventOff();
   this->Modified();
+  this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, NULL);
 }
 
 //----------------------------------------------------------------------------

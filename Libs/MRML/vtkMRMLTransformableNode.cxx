@@ -62,6 +62,7 @@ void vtkMRMLTransformableNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLTransformableNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
+  Superclass::UpdateReferenceID(oldID, newID);
   if (this->TransformNodeID && !strcmp(oldID, this->TransformNodeID))
     {
     this->SetAndObserveTransformNodeID(newID);

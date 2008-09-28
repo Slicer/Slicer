@@ -443,7 +443,6 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
   vtkMRMLVolumeNode *volumeNode = NULL;
   vtkMRMLVolumeDisplayNode *displayNode = NULL;
   vtkMRMLLabelMapVolumeDisplayNode *lmdisplayNode= NULL;
-  vtkMRMLDiffusionTensorDisplayPropertiesNode *displayPropertiesNode = NULL;
 
   vtkMRMLDiffusionTensorVolumeDisplayNode *dtdisplayNode = NULL;
   vtkMRMLDiffusionWeightedVolumeDisplayNode *dwdisplayNode = NULL;
@@ -563,10 +562,6 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
   this->GetMRMLScene()->AddNodeNoNotify(tensorNode);
   tensorNode->SetAndObserveStorageNodeID(storageNode1->GetID());
   tensorNode->SetAndObserveDisplayNodeID(dtdisplayNode->GetID());
-  displayPropertiesNode = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
-  displayPropertiesNode->SetScene(this->GetMRMLScene());
-  this->GetMRMLScene()->AddNodeNoNotify(displayPropertiesNode);
-  dtdisplayNode->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(displayPropertiesNode->GetID());
     
   // set up the vector node's support nodes
   vdisplayNode = vtkMRMLVectorVolumeDisplayNode::New();
@@ -667,12 +662,9 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     {
     tensorNode->SetAndObserveDisplayNodeID(NULL);
     tensorNode->SetAndObserveStorageNodeID(NULL);
-    dtdisplayNode->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(NULL);
-    this->GetMRMLScene()->RemoveNodeNoNotify(displayPropertiesNode);
     this->GetMRMLScene()->RemoveNodeNoNotify(dtdisplayNode);
     this->GetMRMLScene()->RemoveNodeNoNotify(tensorNode);
     tensorNode->Delete(); tensorNode = NULL;
-    displayPropertiesNode->Delete(); displayPropertiesNode = NULL;
     dtdisplayNode->Delete(); dtdisplayNode = NULL;
     }
   if (nodeSetUsed != 3 && nodeSetUsed != 4)
@@ -779,10 +771,6 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
   if (displayNode)
     {
     displayNode->Delete();
-    }
-  if (displayPropertiesNode)
-    {
-    displayPropertiesNode->Delete();
     }
   return volumeNode;
 }

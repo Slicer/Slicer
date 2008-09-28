@@ -215,10 +215,6 @@ void vtkMRMLGlyphableVolumeSliceDisplayNode::UpdateReferences()
 }
 
 
-//----------------------------------------------------------------------------
-void vtkMRMLGlyphableVolumeSliceDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
-{
-}
 
 
 

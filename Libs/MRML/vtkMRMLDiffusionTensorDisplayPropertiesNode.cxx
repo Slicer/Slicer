@@ -365,107 +365,107 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::UpdateGlyphSource ( )
 
 const char* vtkMRMLDiffusionTensorDisplayPropertiesNode::GetScalarEnumAsString(int var)
 {
-  if (var ==  this->Trace)
+  if (var ==  vtkMRMLDiffusionTensorDisplayPropertiesNode::Trace)
     {
     return "Trace";
     }
-  if (var == this->Determinant)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::Determinant)
     {
     return "Determinant";
     }
-  if (var == this->RelativeAnisotropy)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::RelativeAnisotropy)
     {
     return "RelativeAnisotropy";
     }
-  if (var == this->FractionalAnisotropy)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy)
     {
     return "FractionalAnisotropy";
     }
-  if (var == this->MaxEigenvalue)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalue)
     {
     return "MaxEigenvalue";
     }
-  if (var == this->MidEigenvalue)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::MidEigenvalue)
     {
     return "MidEigenvalue";
     }
-  if (var == this->MinEigenvalue)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::MinEigenvalue)
     {
     return "MinEigenvalue";
     }
-  if (var == this->LinearMeasure)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::LinearMeasure)
     {
     return "LinearMeasure";
     }
-  if (var == this->PlanarMeasure)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::PlanarMeasure)
     {
     return "PlanarMeasure";
     }
-  if (var == this->SphericalMeasure)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::SphericalMeasure)
     {
     return "SphericalMeasure";
     }
-  if (var == this->ColorOrientation)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation)
     {
     return "ColorOrientation";
     }
-  if (var == this->D11)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::D11)
     {
     return "D11";
     }
-  if (var == this->D22)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::D22)
     {
     return "D22";
     }
-  if (var == this->D33)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::D33)
     {
     return "D33";
     }
-  if (var == this->Mode)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::Mode)
     {
     return "Mode";
     }
-  if (var == this->ColorMode)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorMode)
     {
     return "ColorMode";
     }
-  if (var == this->MaxEigenvalueProjX)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalueProjX)
     {
     return "MaxEigenvalueProjX";
     }
-  if (var == this->MaxEigenvalueProjY)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalueProjY)
     {
     return "MaxEigenvalueProjY";
     }
-  if (var == this->MaxEigenvalueProjZ)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalueProjZ)
     {
     return "MaxEigenvalueProjZ";
     }
-  if (var == this->MaxEigenvec_ProjX)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvec_ProjX)
     {
     return "MaxEigenvec_ProjX";
     }
-  if (var == this->MaxEigenvec_ProjY)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvec_ProjY)
     {
     return "MaxEigenvec_ProjY";
     }
-  if (var == this->MaxEigenvec_ProjZ)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvec_ProjZ)
     {
     return "MaxEigenvec_ProjZ";
     }
-  if (var == this->ParallelDiffusivity)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::ParallelDiffusivity)
     {
     return "ParallelDiffusivity";
     }
-  if (var == this->PerpendicularDiffusivity)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::PerpendicularDiffusivity)
     {
     return "PerpendicularDiffusivity";
     }
-  if (var == this->ColorOrientationMiddleEigenvector)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector)
     {
     return "ColorOrientationMiddleEigenvector";
     }
-  if (var == this->ColorOrientationMinEigenvector)
+  if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector)
     {
     return "ColorOrientationMinEigenvector";
     }

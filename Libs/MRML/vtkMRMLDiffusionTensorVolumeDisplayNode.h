@@ -58,7 +58,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "DiffusionTensorVolumeDisplay";};
 
-  virtual vtkPolyData* ExecuteGlyphPipeLineAndGetPolyData( vtkImageData* );
+  //virtual vtkPolyData* ExecuteGlyphPipeLineAndGetPolyData( vtkImageData* );
 
   // Description:
   // Updates this node if it depends on other nodes
@@ -87,21 +87,64 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
   // MRML nodes that are observed
   //--------------------------------------------------------------------------
 
-  // Description:
-  // Get diffusion tensor display MRML object for fiber line.
-  vtkMRMLDiffusionTensorDisplayPropertiesNode* GetDiffusionTensorDisplayPropertiesNode ( );
-
-  // Description:
-  // Set diffusion tensor display MRML object for fiber line.
-  void SetAndObserveDiffusionTensorDisplayPropertiesNodeID ( const char *ID );
-
-  // Description:
-  // Get ID of diffusion tensor display MRML object for fiber line.
-  vtkGetStringMacro(DiffusionTensorDisplayPropertiesNodeID);
 
     // Description:
   // Sets vtkImageData to be converted to displayable vtkImageData
   virtual void SetImageData(vtkImageData *imageData);
+
+
+  // Description:
+  // Get type of scalar invariant (tensor-derived scalar, invariant to tensor 
+  // rotation) selected for display.
+  vtkGetMacro(ScalarInvariant, int);
+
+  // Description:
+  // Get type of scalar invariant (tensor-derived scalar, invariant to tensor 
+  // rotation) selected for display.
+  vtkSetMacro(ScalarInvariant, int);
+ 
+  // Description:
+  // Set scalar invariant to trace (sum of eigenvalues).
+  void SetScalarInvariantToTrace() {
+    this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::Trace);
+  };
+
+  //Description:
+  // Set scalar invariant to relative anisotropy
+  void SetScalarInvariantToRelativeAnisotropy() {
+    this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::RelativeAnisotropy);
+  };
+
+  // Description:
+  // Set scalar invariant to FA (normalized variance of eigenvalues)
+  void SetScalarInvariantToFractionalAnisotropy() {
+    this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy);
+  };
+
+  // Description:
+  // Set scalar invariant to C_L (Westin's linear measure)
+  void SetScalarInvariantToLinearMeasure() {
+    this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::LinearMeasure);
+  };
+
+  // Description:
+  // Set scalar invariant to C_P (Westin's planar measure)
+  void SetScalarInvariantToPlanarMeasure() {
+    this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::PlanarMeasure);
+  };
+
+  // Description:
+  // Set scalar invariant to C_S (Westin's spherical measure)
+  void SetScalarInvariantToSphericalMeasure() {
+    this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::SphericalMeasure);
+  };
+
+  // Description:
+  // Return a text string describing the ScalarInvariant variable
+  virtual const char * GetScalarInvariantAsString()
+    {
+    return vtkMRMLDiffusionTensorDisplayPropertiesNode::GetScalarEnumAsString(this->ScalarInvariant);
+    };
 
   virtual void UpdateImageDataPipeline();
 
@@ -130,17 +173,15 @@ protected:
   vtkMRMLDiffusionTensorVolumeDisplayNode(const vtkMRMLDiffusionTensorVolumeDisplayNode&);
   void operator=(const vtkMRMLDiffusionTensorVolumeDisplayNode&);
   
-  vtkMRMLDiffusionTensorDisplayPropertiesNode *DiffusionTensorDisplayPropertiesNode;
-  char *DiffusionTensorDisplayPropertiesNodeID;
-
-  vtkSetReferenceStringMacro(DiffusionTensorDisplayPropertiesNodeID);
-
   vtkDiffusionTensorGlyph* DiffusionTensorGlyphFilter;
 
   // used for main scalar invarant (can be 1 or 3 component)
   vtkDiffusionTensorMathematicsSimple *DTIMathematics;
   // used for calculating single component magnitude for color images
   vtkDiffusionTensorMathematicsSimple *DTIMathematicsAlpha;
+
+   // Scalar display parameters
+  int ScalarInvariant;
 
 };
 

@@ -61,6 +61,7 @@ void vtkMRMLHierarchyNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLHierarchyNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
+  Superclass::UpdateReferenceID(oldID, newID);
   if (this->ParentNodeID && !strcmp(oldID, this->ParentNodeID))
     {
     this->SetParentNodeID(ParentNodeID);

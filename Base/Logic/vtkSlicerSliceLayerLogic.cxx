@@ -195,10 +195,7 @@ void vtkSlicerSliceLayerLogic::ProcessMRMLEvents(vtkObject * caller,
     vtkMRMLDiffusionTensorVolumeDisplayNode *dtiVDN = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(caller);
     if (this->VolumeDisplayNode == dtiVDN && dtiVDN != NULL)
       {
-      if (dtiVDN->GetDiffusionTensorDisplayPropertiesNode())
-        {
-        this->DTIMathematics->SetOperation(dtiVDN->GetDiffusionTensorDisplayPropertiesNode()->GetScalarInvariant());
-        }
+      this->DTIMathematics->SetOperation(dtiVDN->GetScalarInvariant());
       }
     else
       {      

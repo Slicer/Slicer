@@ -415,6 +415,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdateReferences()
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
+  Superclass::UpdateReferenceID(oldID, newID);
   if (this->DiffusionTensorDisplayPropertiesNodeID && !strcmp(oldID, this->DiffusionTensorDisplayPropertiesNodeID))
     {
     this->SetDiffusionTensorDisplayPropertiesNodeID(newID);

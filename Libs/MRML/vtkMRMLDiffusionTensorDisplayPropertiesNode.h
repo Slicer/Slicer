@@ -454,6 +454,9 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   // (so a line, sphere, or tube) to use as a source for a glyphing filter.
   vtkGetObjectMacro( GlyphSource, vtkPolyData );
 
+ //Helper function to get the string of Scalar enums
+  static const char *GetScalarEnumAsString(int val);
+
  protected:
   vtkMRMLDiffusionTensorDisplayPropertiesNode();
   ~vtkMRMLDiffusionTensorDisplayPropertiesNode();
@@ -501,8 +504,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   // TO DO: is this causing an extra modified event?
   vtkSetObjectMacro( GlyphSource, vtkPolyData );
 
-  //Helper function to get the string of Scalar enums
-  virtual const char *GetScalarEnumAsString(int val);
 
   // TO DO: add specific lookup tables ranging from 0..1 for or -1 1
   // for scalar invariants with those ranges

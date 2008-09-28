@@ -68,13 +68,13 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
   // when the node is deleted in the scene
   virtual void UpdateReferences();
 
+  virtual void UpdateReferenceID(const char *oldID, const char *newID)
+    { Superclass::UpdateReferenceID(oldID, newID); };
+
   // Description:
   // Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene);
 
-  // Description:
-  // Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
   // Description:
   // alternative method to propagate events generated in Display nodes

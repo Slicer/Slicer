@@ -116,6 +116,7 @@ void vtkMRMLGlyphableVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLGlyphableVolumeDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
+  Superclass::UpdateReferenceID(oldID, newID);
   if (this->GlyphColorNodeID && !strcmp(oldID, this->GlyphColorNodeID))
     {
     this->SetGlyphColorNodeID(newID);
@@ -190,11 +191,7 @@ void vtkMRMLGlyphableVolumeDisplayNode::UpdateReferences()
     this->SetAndObserveGlyphColorNodeID(NULL);
     }
 }
-//-----------------------------------------------------------
-vtkPolyData* vtkMRMLGlyphableVolumeDisplayNode::ExecuteGlyphPipeLineAndGetPolyData( vtkImageData* )
-{
-  return NULL;
-}
+
 //----------------------------------------------------------------------------
 vtkMRMLColorNode* vtkMRMLGlyphableVolumeDisplayNode::GetGlyphColorNode()
 {

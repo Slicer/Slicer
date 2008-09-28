@@ -194,6 +194,7 @@ void vtkMRMLSliceCompositeNode::UpdateReferences()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceCompositeNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
+  Superclass::UpdateReferenceID(oldID, newID);
   if (this->BackgroundVolumeID && !strcmp(oldID, this->BackgroundVolumeID))
     {
     this->SetBackgroundVolumeID(newID);
