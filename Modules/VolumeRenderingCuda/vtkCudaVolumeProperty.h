@@ -2,9 +2,9 @@
 #define VTKCUDAVOLUMEPROPERTY_H_
 
 #include "vtkVolumeProperty.h"
-#include "vtkVolumeRenderingCudaModule.h"
+#include "vtkVolumeRenderingCuda.h"
 
-class VTK_VOLUMERENDERINGCUDAMODULE_EXPORT vtkCudaVolumeProperty : public vtkVolumeProperty
+class VTK_VOLUMERENDERINGCUDA_EXPORT vtkCudaVolumeProperty : public vtkVolumeProperty
 {
   vtkTypeRevisionMacro(vtkCudaVolumeProperty, vtkVolumeProperty);
   static vtkCudaVolumeProperty *New();

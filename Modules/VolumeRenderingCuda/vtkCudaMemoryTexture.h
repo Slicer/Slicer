@@ -2,7 +2,7 @@
 #define __VTKCUDAMEMORYTEXTURE_H__
 
 #include "vtkObject.h"
-#include "vtkVolumeRenderingCudaModule.h"
+#include "vtkVolumeRenderingCuda.h"
 
 class vtkImageData;
 
@@ -13,7 +13,7 @@ class vtkImageData;
 //    DeviceMemory;
 //    HostMemory;}
 //ETX
-class VTK_VOLUMERENDERINGCUDAMODULE_EXPORT vtkCudaMemoryTexture : public vtkObject
+class VTK_VOLUMERENDERINGCUDA_EXPORT vtkCudaMemoryTexture : public vtkObject
 {
     vtkTypeRevisionMacro(vtkCudaMemoryTexture, vtkObject);
 public:

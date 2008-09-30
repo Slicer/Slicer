@@ -1,5 +1,5 @@
-#include "vtkVolumeRenderingCudaModuleGUI.h"
-#include "vtkVolumeRenderingCudaModuleLogic.h"
+#include "vtkVolumeRenderingCudaGUI.h"
+#include "vtkVolumeRenderingCudaLogic.h"
 #include "vtkSlicerApplication.h"
 
 #include "vtkImageGradientMagnitude.h"
@@ -36,7 +36,7 @@
 #include "vtkCudaVolumeMapper.h"
 #include "vtkCudaMemoryTexture.h"
 
-vtkVolumeRenderingCudaModuleGUI::vtkVolumeRenderingCudaModuleGUI()
+vtkVolumeRenderingCudaGUI::vtkVolumeRenderingCudaGUI()
 {
     this->CudaMapper = NULL;
     this->CudaVolume = NULL;
@@ -63,7 +63,7 @@ vtkVolumeRenderingCudaModuleGUI::vtkVolumeRenderingCudaModuleGUI()
 }
 
 
-vtkVolumeRenderingCudaModuleGUI::~vtkVolumeRenderingCudaModuleGUI()
+vtkVolumeRenderingCudaGUI::~vtkVolumeRenderingCudaGUI()
 {
     if (this->CudaMapper != NULL)
     {
@@ -88,7 +88,7 @@ vtkVolumeRenderingCudaModuleGUI::~vtkVolumeRenderingCudaModuleGUI()
     DeleteWidget(this->VolumePropertyWidget);
 }
 
-void vtkVolumeRenderingCudaModuleGUI::DeleteWidget(vtkKWWidget* widget)
+void vtkVolumeRenderingCudaGUI::DeleteWidget(vtkKWWidget* widget)
 {
     if (widget != NULL)
     {
@@ -97,17 +97,17 @@ void vtkVolumeRenderingCudaModuleGUI::DeleteWidget(vtkKWWidget* widget)
     }
 }
 
-vtkVolumeRenderingCudaModuleGUI* vtkVolumeRenderingCudaModuleGUI::New()
+vtkVolumeRenderingCudaGUI* vtkVolumeRenderingCudaGUI::New()
 {
-    vtkObject* ret = vtkObjectFactory::CreateInstance("vtkVolumeRenderingCudaModuleGUI");
+    vtkObject* ret = vtkObjectFactory::CreateInstance("vtkVolumeRenderingCudaGUI");
     if (ret)
-        return (vtkVolumeRenderingCudaModuleGUI*)ret;
+        return (vtkVolumeRenderingCudaGUI*)ret;
     // If the Factory was unable to create the object, we do it ourselfes.
-    return new vtkVolumeRenderingCudaModuleGUI();
+    return new vtkVolumeRenderingCudaGUI();
 }
 
 
-void vtkVolumeRenderingCudaModuleGUI::BuildGUI ( )
+void vtkVolumeRenderingCudaGUI::BuildGUI ( )
 {
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     this->GetUIPanel()->AddPage("VolumeRenderingCuda","VolumeRenderingCuda",NULL);
@@ -212,7 +212,7 @@ void vtkVolumeRenderingCudaModuleGUI::BuildGUI ( )
     this->Built=true;
 }
 
-void vtkVolumeRenderingCudaModuleGUI::TearDownGUI ( )
+void vtkVolumeRenderingCudaGUI::TearDownGUI ( )
 {
     this->Exit();
     if ( this->Built )
@@ -221,16 +221,16 @@ void vtkVolumeRenderingCudaModuleGUI::TearDownGUI ( )
     }
 }
 
-void vtkVolumeRenderingCudaModuleGUI::CreateModuleEventBindings ( )
+void vtkVolumeRenderingCudaGUI::CreateModuleEventBindings ( )
 {
-    vtkDebugMacro("VolumeRenderingCudaModule: CreateModuleEventBindings: No ModuleEventBindings yet");
+    vtkDebugMacro("VolumeRenderingCuda: CreateModuleEventBindings: No ModuleEventBindings yet");
 }
-void vtkVolumeRenderingCudaModuleGUI::ReleaseModuleEventBindings ( )
+void vtkVolumeRenderingCudaGUI::ReleaseModuleEventBindings ( )
 {
-    vtkDebugMacro("VolumeRenderingCudaModule: ReleaseModuleEventBindings: No ModuleEventBindings to remove yet");
+    vtkDebugMacro("VolumeRenderingCuda: ReleaseModuleEventBindings: No ModuleEventBindings to remove yet");
 }
 
-void vtkVolumeRenderingCudaModuleGUI::AddGUIObservers ( )
+void vtkVolumeRenderingCudaGUI::AddGUIObservers ( )
 {
     this->NS_ImageData->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
 
@@ -254,7 +254,7 @@ void vtkVolumeRenderingCudaModuleGUI::AddGUIObservers ( )
     this->ThresholdRange->AddObserver(vtkKWRange::RangeValueChangingEvent, (vtkCommand*)this->GUICallbackCommand);
 }
 
-void vtkVolumeRenderingCudaModuleGUI::RemoveGUIObservers ( )
+void vtkVolumeRenderingCudaGUI::RemoveGUIObservers ( )
 {
   this->RenderModeChooser->GetMenu()->RemoveObservers(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand*)this->GUICallbackCommand);
   this->RayCastingMethodChooser->GetMenu()->RemoveObservers(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand*)this->GUICallbackCommand);
@@ -262,18 +262,18 @@ void vtkVolumeRenderingCudaModuleGUI::RemoveGUIObservers ( )
   this->RenderObjectModeChooser->GetMenu()->RemoveObservers(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand*)this->GUICallbackCommand);
   this->VolumeRenderDirectionChooser->GetMenu()->RemoveObservers(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand*)this->GUICallbackCommand);
 }
-void vtkVolumeRenderingCudaModuleGUI::RemoveMRMLNodeObservers ( )
+void vtkVolumeRenderingCudaGUI::RemoveMRMLNodeObservers ( )
 {
   if(this->SliceMatrix!=NULL){
     this->SliceMatrix->RemoveObservers(vtkCommand::ModifiedEvent, (vtkCommand*)this->MRMLCallbackCommand);
   }
 }
 
-void vtkVolumeRenderingCudaModuleGUI::RemoveLogicObservers ( )
+void vtkVolumeRenderingCudaGUI::RemoveLogicObservers ( )
 {
 }
 
-void vtkVolumeRenderingCudaModuleGUI::CreateMapper()
+void vtkVolumeRenderingCudaGUI::CreateMapper()
 {
     if (this->CudaMapper == NULL)
     {
@@ -291,7 +291,7 @@ void vtkVolumeRenderingCudaModuleGUI::CreateMapper()
 
 }
 
-void vtkVolumeRenderingCudaModuleGUI::DeleteMapper()
+void vtkVolumeRenderingCudaGUI::DeleteMapper()
 {
     if (this->CudaVolume != NULL)
       {
@@ -306,11 +306,7 @@ void vtkVolumeRenderingCudaModuleGUI::DeleteMapper()
     }
 }
 
-void vtkVolumeRenderingCudaModuleGUI::Init(){
-  
-}
-
-void vtkVolumeRenderingCudaModuleGUI::ProcessGUIEvents ( vtkObject *caller, unsigned long event,
+void vtkVolumeRenderingCudaGUI::ProcessGUIEvents ( vtkObject *caller, unsigned long event,
                                                          void *callData )
 {
   vtkDebugMacro("vtkVolumeRenderingModuleGUI::ProcessGUIEvents: event = " << event);
@@ -542,13 +538,13 @@ void vtkVolumeRenderingCudaModuleGUI::ProcessGUIEvents ( vtkObject *caller, unsi
   
 }
 
-void vtkVolumeRenderingCudaModuleGUI::ScheduleRender()
+void vtkVolumeRenderingCudaGUI::ScheduleRender()
 {
   this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
   this->RenderScheduled = false;   
 }
 
-void vtkVolumeRenderingCudaModuleGUI::ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData)
+void vtkVolumeRenderingCudaGUI::ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData)
 {
   
   if(caller == this->SliceMatrix){
@@ -573,15 +569,15 @@ void vtkVolumeRenderingCudaModuleGUI::ProcessMRMLEvents ( vtkObject *caller, uns
 }
 
 
-void vtkVolumeRenderingCudaModuleGUI::SetViewerWidget(vtkSlicerViewerWidget *viewerWidget)
+void vtkVolumeRenderingCudaGUI::SetViewerWidget(vtkSlicerViewerWidget *viewerWidget)
 {
 }
-void vtkVolumeRenderingCudaModuleGUI::SetInteractorStyle(vtkSlicerViewerInteractorStyle *interactorStyle)
+void vtkVolumeRenderingCudaGUI::SetInteractorStyle(vtkSlicerViewerInteractorStyle *interactorStyle)
 {
 }
 
 
-void vtkVolumeRenderingCudaModuleGUI::Enter ( )
+void vtkVolumeRenderingCudaGUI::Enter ( )
 {
     vtkDebugMacro("Enter Volume Rendering Cuda Module");
 
@@ -599,19 +595,19 @@ void vtkVolumeRenderingCudaModuleGUI::Enter ( )
     this->NS_SliceMatrix->UpdateMenu();
 
 }
-void vtkVolumeRenderingCudaModuleGUI::Exit ( )
+void vtkVolumeRenderingCudaGUI::Exit ( )
 {
     vtkDebugMacro("Exit: removeObservers for VolumeRenderingModule");
     this->ReleaseModuleEventBindings();
 }
 
 
-void vtkVolumeRenderingCudaModuleGUI::PrintSelf(ostream& os, vtkIndent indent)
+void vtkVolumeRenderingCudaGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
     this->SuperClass::PrintSelf(os, indent);
 
-    os<<indent<<"vtkVolumeRenderingCudaModuleGUI"<<endl;
-    os<<indent<<"vtkVolumeRenderingCudaModuleLogic"<<endl;
+    os<<indent<<"vtkVolumeRenderingCudaGUI"<<endl;
+    os<<indent<<"vtkVolumeRenderingCudaLogic"<<endl;
     if(this->GetLogic())
     {
         this->GetLogic()->PrintSelf(os,indent.GetNextIndent());

@@ -1,4 +1,4 @@
-PROJECT(VolumeRenderingCudaModule)
+PROJECT(VolumeRenderingCuda)
 
 cmake_minimum_required(VERSION 2.4)
 if(COMMAND cmake_policy)
@@ -41,8 +41,8 @@ include_directories(
 # Configure include file
 #
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkVolumeRenderingCudaModuleConfigure.h.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/vtkVolumeRenderingCudaModuleConfigure.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkVolumeRenderingCudaConfigure.h.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/vtkVolumeRenderingCudaConfigure.h
   )
 
 file(GLOB headers 
@@ -51,7 +51,7 @@ file(GLOB headers
 
 # --------------------------------------------------------------------------
 # Sources
-  SET(VolumeRenderingCudaModule_SRCS
+  SET(VolumeRenderingCuda_SRCS
 
   ### CUDA Volume Rendering Integration Classes ###
     vtkCudaVolumeMapper.cxx
@@ -59,8 +59,8 @@ file(GLOB headers
     vtkCudaVolumeInformationHandler.cxx
     vtkCudaRendererInformationHandler.cxx
     vtkVolumeRenderingCudaFactory.cxx
-    vtkVolumeRenderingCudaModuleGUI.cxx
-    vtkVolumeRenderingCudaModuleLogic.cxx
+    vtkVolumeRenderingCudaGUI.cxx
+    vtkVolumeRenderingCudaLogic.cxx
   
   
   #### CUDA Pipeline Classes ####
@@ -73,7 +73,7 @@ file(GLOB headers
   ## WIDGETS ##
     #vtkKWTypeChooserBox.cxx
   )
-  SET(VolumeRenderingCudaModule_ADDITIONAL_HEADERS
+  SET(VolumeRenderingCuda_ADDITIONAL_HEADERS
     # Cuda Classes
       cudaTypeRange.h
       CUDA_renderBase.h
@@ -84,7 +84,7 @@ file(GLOB headers
       cudaVolumeInformation.h
       )
   
-  SET(VolumeRenderingCudaModule_CUDA_SRCS
+  SET(VolumeRenderingCuda_CUDA_SRCS
       CUDA_renderBase.cu
       CUDA_renderSlice.cu
       CUDA_renderSingleSlice.cu      
@@ -105,8 +105,8 @@ INCLUDE_DIRECTORIES(
   ${CUDA_INSTALL_PREFIX}/include
   ${CudaSupport_SOURCE_DIR}
   ${CudaSupport_BINARY_DIR}
-  ${VolumeRenderingCudaModule_SOURCE_DIR}
-  ${VolumeRenderingCudaModule_BINARY_DIR}
+  ${VolumeRenderingCuda_SOURCE_DIR}
+  ${VolumeRenderingCuda_BINARY_DIR}
   ${SlicerBase_SOURCE_DIR}
   ${SlicerBase_BINARY_DIR}
   ${SlicerBaseLogic_SOURCE_DIR}
@@ -134,23 +134,23 @@ INCLUDE_DIRECTORIES(
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-VTK_WRAP_TCL3(VolumeRenderingCudaModule
-         VolumeRenderingCudaModule_TCL_SRCS 
-         "${VolumeRenderingCudaModule_SRCS}" 
+VTK_WRAP_TCL3(VolumeRenderingCuda
+         VolumeRenderingCuda_TCL_SRCS 
+         "${VolumeRenderingCuda_SRCS}" 
          "")
 
 #---------------------------------------------------------------------------
 # Add Loadable Module support
 
-generatelm(VolumeRenderingCudaModule_SRCS VolumeRenderingCudaModule.txt)
+generatelm(VolumeRenderingCuda_SRCS VolumeRenderingCuda.txt)
 
 # --------------------------------------------------------------------------
 # Build the library
 
-set(lib_name VolumeRenderingCudaModule)
+set(lib_name VolumeRenderingCuda)
 
 ## Set the Libraries we link
-SET(VolumeRenderingCudaModule_LIBRARIES
+SET(VolumeRenderingCuda_LIBRARIES
   SlicerBaseLogic 
   SlicerBaseGUI 
   MRML
@@ -165,14 +165,14 @@ SET(VolumeRenderingCudaModule_LIBRARIES
  )
 
 CUDA_ADD_LIBRARY(${lib_name}
-  ${VolumeRenderingCudaModule_SRCS}
-  ${VolumeRenderingCudaModule_ADDITIONAL_HEADERS}
-  ${VolumeRenderingCudaModule_TCL_SRCS}
-  ${VolumeRenderingCudaModule_CUDA_SRCS}
+  ${VolumeRenderingCuda_SRCS}
+  ${VolumeRenderingCuda_ADDITIONAL_HEADERS}
+  ${VolumeRenderingCuda_TCL_SRCS}
+  ${VolumeRenderingCuda_CUDA_SRCS}
   )
 
 TARGET_LINK_LIBRARIES(${lib_name}
-  ${VolumeRenderingCudaModule_LIBRARIES}
+  ${VolumeRenderingCuda_LIBRARIES}
   )
 
 IF(BUILD_SHARED_LIBS)
@@ -194,12 +194,12 @@ ENDIF(BUILD_TESTING)
 #ENDIF(BUILD_EXAMPLES)
 
 CONFIGURE_FILE(
-  ${VolumeRenderingCudaModule_SOURCE_DIR}/vtkVolumeRenderingCudaModuleConfigure.h.in 
-  ${VolumeRenderingCudaModule_BINARY_DIR}/vtkVolumeRenderingCudaModuleConfigure.h
+  ${VolumeRenderingCuda_SOURCE_DIR}/vtkVolumeRenderingCudaConfigure.h.in 
+  ${VolumeRenderingCuda_BINARY_DIR}/vtkVolumeRenderingCudaConfigure.h
 )
 CONFIGURE_FILE(
-  ${VolumeRenderingCudaModule_SOURCE_DIR}/presets.xml
-  ${VolumeRenderingCudaModule_BINARY_DIR}/presets.xml
+  ${VolumeRenderingCuda_SOURCE_DIR}/presets.xml
+  ${VolumeRenderingCuda_BINARY_DIR}/presets.xml
   COPYONLY
 )
 

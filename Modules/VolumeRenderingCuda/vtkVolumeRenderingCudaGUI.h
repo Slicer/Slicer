@@ -2,10 +2,8 @@
 #define VTKSLICERVOLUMERENDERINGCUDA_H_
 
 #include "vtkSlicerModuleGUI.h"
-#include "vtkVolumeRenderingCudaModule.h"
-
-
-class vtkVolumeRenderingCudaModuleLogic;
+#include "vtkVolumeRenderingCuda.h"
+#include "vtkVolumeRenderingCudaLogic.h"
 
 class vtkCudaVolumeMapper;
 class vtkVolume;
@@ -22,27 +20,27 @@ class vtkKWHistogramSet;
 class vtkKWRange;
 class vtkSlicerNodeSelectorWidget;
 
-class VTK_VOLUMERENDERINGCUDAMODULE_EXPORT vtkVolumeRenderingCudaModuleGUI : public vtkSlicerModuleGUI
+class VTK_VOLUMERENDERINGCUDA_EXPORT vtkVolumeRenderingCudaGUI : public vtkSlicerModuleGUI
 {
  public:
  //BTX
   typedef vtkSlicerModuleGUI SuperClass;
  //ETX
-  static vtkVolumeRenderingCudaModuleGUI* New();
-  vtkTypeMacro(vtkVolumeRenderingCudaModuleGUI, vtkSlicerModuleGUI);
+  static vtkVolumeRenderingCudaGUI* New();
+  vtkTypeMacro(vtkVolumeRenderingCudaGUI, vtkSlicerModuleGUI);
 
   /// Logic part
-  vtkGetObjectMacro(Logic, vtkVolumeRenderingCudaModuleLogic);
-  // this does not work vtkSetObjectMacro(Logic, vtkVolumeRenderingCudaModuleLogic);
-  virtual void SetLogic(vtkVolumeRenderingCudaModuleLogic *logic)
+  vtkGetObjectMacro(Logic, vtkVolumeRenderingCudaLogic);
+  // this does not work vtkSetObjectMacro(Logic, vtkVolumeRenderingCudaLogic);
+  virtual void SetLogic(vtkVolumeRenderingCudaLogic *logic)
   {
     this->Logic=logic;
   }
 
   virtual void SetModuleLogic(vtkSlicerLogic *logic)
   {
-    //this->SetLogic( dynamic_cast<vtkVolumeRenderingCudaModuleLogic*> (logic) );
-    this->SetLogic( (vtkVolumeRenderingCudaModuleLogic*) (logic) );
+    this->SetLogic( dynamic_cast<vtkVolumeRenderingCudaLogic*> (logic) );
+    //this->SetLogic( (vtkVolumeRenderingCudaLogic*) (logic) );
   }
 
   void DeleteWidget(vtkKWWidget* widget);
@@ -95,13 +93,10 @@ class VTK_VOLUMERENDERINGCUDAMODULE_EXPORT vtkVolumeRenderingCudaModuleGUI : pub
     vtkGetObjectMacro(InteractorStyle, vtkSlicerViewerInteractorStyle);
     virtual void SetInteractorStyle(vtkSlicerViewerInteractorStyle *interactorStyle);
 
-    void Init();
-
   // Description:
   // Methods describe behavior at module enter and exit.
   virtual void Enter ( );
   virtual void Exit ( );
-  
   
   void PrintSelf(ostream& os, vtkIndent indent);
   
@@ -110,12 +105,12 @@ class VTK_VOLUMERENDERINGCUDAMODULE_EXPORT vtkVolumeRenderingCudaModuleGUI : pub
   bool RenderScheduled;
 
  protected:
-  vtkVolumeRenderingCudaModuleGUI();
-  virtual ~vtkVolumeRenderingCudaModuleGUI();
+  vtkVolumeRenderingCudaGUI();
+  virtual ~vtkVolumeRenderingCudaGUI();
 
 
-  vtkVolumeRenderingCudaModuleGUI(const vtkVolumeRenderingCudaModuleGUI&); // not implemented
-  void operator=(const vtkVolumeRenderingCudaModuleGUI&); // not implemented
+  vtkVolumeRenderingCudaGUI(const vtkVolumeRenderingCudaGUI&); // not implemented
+  void operator=(const vtkVolumeRenderingCudaGUI&); // not implemented
 
 private:
   void CreateMapper();
@@ -124,7 +119,7 @@ private:
 private:
   // Description:
   // Pointer to the module's logic class
-  vtkVolumeRenderingCudaModuleLogic *Logic;
+  vtkVolumeRenderingCudaLogic *Logic;
 
   vtkCudaVolumeMapper* CudaMapper;
   vtkVolume* CudaVolume;

@@ -28,4 +28,4 @@
 #define SLICER_VTK5
 #endif
 
-#include "vtkVolumeRenderingCudaModuleWin32Header.h"
+#include "vtkVolumeRenderingCudaWin32Header.h"

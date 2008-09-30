@@ -26,12 +26,12 @@ ClientData vtkCudaRendererInformationHandlerNewCommand();
 int vtkVolumeRenderingCudaFactoryCommand(ClientData cd, Tcl_Interp *interp,
              int argc, char *argv[]);
 ClientData vtkVolumeRenderingCudaFactoryNewCommand();
-int vtkVolumeRenderingCudaModuleGUICommand(ClientData cd, Tcl_Interp *interp,
+int vtkVolumeRenderingCudaGUICommand(ClientData cd, Tcl_Interp *interp,
              int argc, char *argv[]);
-ClientData vtkVolumeRenderingCudaModuleGUINewCommand();
-int vtkVolumeRenderingCudaModuleLogicCommand(ClientData cd, Tcl_Interp *interp,
+ClientData vtkVolumeRenderingCudaGUINewCommand();
+int vtkVolumeRenderingCudaLogicCommand(ClientData cd, Tcl_Interp *interp,
              int argc, char *argv[]);
-ClientData vtkVolumeRenderingCudaModuleLogicNewCommand();
+ClientData vtkVolumeRenderingCudaLogicNewCommand();
 int vtkCudaImageDataFilterCommand(ClientData cd, Tcl_Interp *interp,
              int argc, char *argv[]);
 ClientData vtkCudaImageDataFilterNewCommand();
@@ -78,10 +78,10 @@ int VTK_EXPORT Volumerenderingcudamodule_Init(Tcl_Interp *interp)
                   vtkCudaRendererInformationHandlerCommand);
   vtkTclCreateNew(interp,(char *) "vtkVolumeRenderingCudaFactory", vtkVolumeRenderingCudaFactoryNewCommand,
                   vtkVolumeRenderingCudaFactoryCommand);
-  vtkTclCreateNew(interp,(char *) "vtkVolumeRenderingCudaModuleGUI", vtkVolumeRenderingCudaModuleGUINewCommand,
-                  vtkVolumeRenderingCudaModuleGUICommand);
-  vtkTclCreateNew(interp,(char *) "vtkVolumeRenderingCudaModuleLogic", vtkVolumeRenderingCudaModuleLogicNewCommand,
-                  vtkVolumeRenderingCudaModuleLogicCommand);
+  vtkTclCreateNew(interp,(char *) "vtkVolumeRenderingCudaGUI", vtkVolumeRenderingCudaGUINewCommand,
+                  vtkVolumeRenderingCudaGUICommand);
+  vtkTclCreateNew(interp,(char *) "vtkVolumeRenderingCudaLogic", vtkVolumeRenderingCudaLogicNewCommand,
+                  vtkVolumeRenderingCudaLogicCommand);
   vtkTclCreateNew(interp,(char *) "vtkCudaImageDataFilter", vtkCudaImageDataFilterNewCommand,
                   vtkCudaImageDataFilterCommand);
   vtkTclCreateNew(interp,(char *) "vtkCudaImageData", vtkCudaImageDataNewCommand,
@@ -90,7 +90,7 @@ int VTK_EXPORT Volumerenderingcudamodule_Init(Tcl_Interp *interp)
                   vtkCudaMemoryTextureCommand);
   vtkTclCreateNew(interp,(char *) "vtkKWTypeChooserBox", vtkKWTypeChooserBoxNewCommand,
                   vtkKWTypeChooserBoxCommand);
-  char pkgName[]="VolumeRenderingCudaModule";
+  char pkgName[]="VolumeRenderingCuda";
   char pkgVers[]=VTK_TCL_TO_STRING(VTK_MAJOR_VERSION) "." VTK_TCL_TO_STRING(VTK_MINOR_VERSION);
   Tcl_PkgProvide(interp, pkgName, pkgVers);
   return TCL_OK;

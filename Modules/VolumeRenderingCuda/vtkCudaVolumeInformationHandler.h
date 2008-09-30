@@ -2,7 +2,7 @@
 #define vtkCudaVolumeInformationHandler_H_
 
 #include "vtkObject.h"
-#include "vtkVolumeRenderingCudaModule.h"
+#include "vtkVolumeRenderingCuda.h"
 #include "vtkMatrix4x4.h"
 
 class vtkVolume;
@@ -18,7 +18,7 @@ class vtkImageData;
 
 //ETX
 
-class VTK_VOLUMERENDERINGCUDAMODULE_EXPORT vtkCudaVolumeInformationHandler : public vtkObject
+class VTK_VOLUMERENDERINGCUDA_EXPORT vtkCudaVolumeInformationHandler : public vtkObject
 {
     vtkTypeRevisionMacro(vtkCudaVolumeInformationHandler, vtkObject);
 public:

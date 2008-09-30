@@ -19,9 +19,9 @@
 #define __vtkVolumeRenderingCudaFactory_h
 
 #include "vtkObject.h"
-#include "vtkVolumeRenderingCudaModule.h"
+#include "vtkVolumeRenderingCuda.h"
 
-class VTK_VOLUMERENDERINGCUDAMODULE_EXPORT vtkVolumeRenderingCudaFactory : public vtkObject
+class VTK_VOLUMERENDERINGCUDA_EXPORT vtkVolumeRenderingCudaFactory : public vtkObject
 {
 public:
   static vtkVolumeRenderingCudaFactory *New();

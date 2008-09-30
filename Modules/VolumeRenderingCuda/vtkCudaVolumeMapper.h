@@ -2,7 +2,7 @@
 #define __vtkCudaVolumeMapper_h
 
 #include "vtkVolumeMapper.h"
-#include "vtkVolumeRenderingCudaModule.h"
+#include "vtkVolumeRenderingCuda.h"
 
 class vtkVolumeProperty;
 class vtkMatrix4x4;
@@ -13,7 +13,7 @@ class vtkCudaRendererInformationHandler;
 class vtkCudaVolumeInformationHandler;
 class vtkCudaMemoryTexture;
 
-class VTK_VOLUMERENDERINGCUDAMODULE_EXPORT vtkCudaVolumeMapper : public vtkVolumeMapper
+class VTK_VOLUMERENDERINGCUDA_EXPORT vtkCudaVolumeMapper : public vtkVolumeMapper
 {
 public:
     vtkTypeRevisionMacro(vtkCudaVolumeMapper, vtkVolumeMapper);

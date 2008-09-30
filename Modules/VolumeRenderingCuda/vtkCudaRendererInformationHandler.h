@@ -2,7 +2,7 @@
 #define VTKCUDARENDERERINFORMATIONHANDLER_H_
 
 #include "vtkObject.h"
-#include "vtkVolumeRenderingCudaModule.h"
+#include "vtkVolumeRenderingCuda.h"
 
 class vtkRenderer;
 class vtkMatrix4x4;
@@ -13,7 +13,7 @@ class vtkCudaMemoryTexture;
 #include "CudappHostMemory.h"
 #include "cudaRendererInformation.h"
 //ETX
-class VTK_VOLUMERENDERINGCUDAMODULE_EXPORT vtkCudaRendererInformationHandler : public vtkObject
+class VTK_VOLUMERENDERINGCUDA_EXPORT vtkCudaRendererInformationHandler : public vtkObject
 {
     vtkTypeRevisionMacro(vtkCudaRendererInformationHandler, vtkObject);
 public:

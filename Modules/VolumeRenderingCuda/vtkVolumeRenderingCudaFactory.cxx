@@ -24,7 +24,7 @@
 
 #include "stdlib.h"
 #include "vtkCudaVolumeMapper.h"
-#include "vtkVolumeRenderingCudaModuleGUI.h"
+#include "vtkVolumeRenderingCudaGUI.h"
 
 vtkCxxRevisionMacro(vtkVolumeRenderingCudaFactory, "$Revision: 1.7 $");
 vtkStandardNewMacro(vtkVolumeRenderingCudaFactory);
@@ -50,8 +50,8 @@ vtkObject* vtkVolumeRenderingCudaFactory::CreateInstance(const char* vtkclassnam
       !strcmp("vtkOpenGLVolumeTextureMapper2D", vtkclassname))
     return vtkCudaVolumeMapper::New();
 
-  if (!strcmp("vtkVolumeRenderingCudaModuleGUI", vtkclassname))
-    return vtkVolumeRenderingCudaModuleGUI::New();
+  if (!strcmp("vtkVolumeRenderingCudaGUI", vtkclassname))
+    return vtkVolumeRenderingCudaGUI::New();
 
   return 0;
 }

@@ -2,11 +2,11 @@
 #define VTKCUDAIMAGEDATAFILTER_H_
 
 #include "vtkImageShiftScale.h"
-#include "vtkVolumeRenderingCudaModule.h"
+#include "vtkVolumeRenderingCuda.h"
 
 class vtkCudaImageData;
 
-class VTK_VOLUMERENDERINGCUDAMODULE_EXPORT vtkCudaImageDataFilter : public vtkImageShiftScale
+class VTK_VOLUMERENDERINGCUDA_EXPORT vtkCudaImageDataFilter : public vtkImageShiftScale
 {
 public:
     vtkTypeRevisionMacro(vtkCudaImageDataFilter, vtkImageShiftScale);

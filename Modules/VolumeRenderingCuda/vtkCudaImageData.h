@@ -2,13 +2,13 @@
 #define VTKCUDAIMAGEDATA_H_
 
 #include "vtkImageData.h"
-#include "vtkVolumeRenderingCudaModule.h"
+#include "vtkVolumeRenderingCuda.h"
 
 //BTX
 namespace Cudapp { class Memory; }
 //ETX
 
-class VTK_VOLUMERENDERINGCUDAMODULE_EXPORT vtkCudaImageData : public vtkImageData
+class VTK_VOLUMERENDERINGCUDA_EXPORT vtkCudaImageData : public vtkImageData
 {
 public:
     vtkTypeRevisionMacro(vtkCudaImageData, vtkDataSet);
