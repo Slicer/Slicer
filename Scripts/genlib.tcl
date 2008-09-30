@@ -547,14 +547,17 @@ if { [BuildThis $::NETLIB_TEST_FILE "netlib"] && !$::USE_SYSTEM_PYTHON && [strin
 
         set utilDir $::Slicer3_LIB/../Slicer3/Base/GUI/Python/util
         cd $::Slicer3_LIB/netlib/lapack
-        if { $isLinux && $::tcl_platform(machine) == "x86_64" } {
-          # TODO: these have hardcoded gfortran (not controlled by ::FORTRAN_COMPILER)
-          file copy -force $utilDir/lapack-make.inc.LINUX64 make.inc
+        if { $isDarwin } {
+          set platform DARWIN
+        } elseif { $isLinux && $::tcl_platform(machine) == "x86_64" } {
+          set platform LINUX64
         } else {
-          file copy -force $utilDir/lapack-make.inc.LINUX make.inc
+          set platform LINUX
         }
+        # TODO: these have hardcoded gfortran (not controlled by ::FORTRAN_COMPILER)
+        file copy -force $utilDir/lapack-make.inc.$platform make.inc
         runcmd make lapacklib
-        file copy lapack_LINUX.a $::Slicer3_LIB/netlib-build/lapack-build/liblapack.a
+        file copy -force lapack_$platform.a $::Slicer3_LIB/netlib-build/lapack-build/liblapack.a
     }
 }
 
