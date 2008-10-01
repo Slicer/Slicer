@@ -242,6 +242,7 @@ public:
   vtkGetMacro(AddToScene, int);
   vtkSetMacro(AddToScene, int);
   vtkBooleanMacro(AddToScene, int);
+  void SetAddToSceneNoModify(int value);
 
   // Description:
   // Turn off generating InvokeEvent for set macros

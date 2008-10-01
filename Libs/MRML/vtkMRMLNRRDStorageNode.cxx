@@ -131,6 +131,11 @@ void vtkMRMLNRRDStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
 
 int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
 {
+  if ( !this->GetAddToScene() || !refNode->GetAddToScene() )
+  {
+    return 1;
+  }
+
   vtkDebugMacro("Reading NRRD data");
   // test whether refNode is a valid node to hold a volume
   if ( !( refNode->IsA("vtkMRMLScalarVolumeNode") || refNode->IsA("vtkMRMLVectorVolumeNode" ) || 

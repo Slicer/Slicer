@@ -337,6 +337,12 @@ void vtkMRMLNode::MRMLCallback(vtkObject *caller,
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLNode::SetAddToSceneNoModify(int value)
+{
+   this->AddToScene = value;
+}
+
+//----------------------------------------------------------------------------
 const char*  vtkMRMLNode::ConstructID(const char * str, int index)
 {
     std::stringstream ss;

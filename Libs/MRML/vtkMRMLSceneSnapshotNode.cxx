@@ -270,14 +270,16 @@ void vtkMRMLSceneSnapshotNode::RestoreScene()
       if (snode)
         {
         snode->CopyWithSceneWithSingleModifiedEvent(node);
+        // to prevent reading data on UpdateScene()
+        snode->SetAddToSceneNoModify(0);
         }
       else 
         {
         this->Scene->AddNodeNoNotify(node);
         addedNodes.push_back(node);
+        // to prevent reading data on UpdateScene()
+        node->SetAddToSceneNoModify(0);
         }
-      // to prevent reading data on UpdateScene()
-      node->SetAddToScene(0);
       }
     }
 
@@ -288,6 +290,12 @@ void vtkMRMLSceneSnapshotNode::RestoreScene()
     node = this->Scene->GetNthNode(n);
     node->UpdateScene(this->Scene);
     }
+
+  // reset AddToScene in the scene
+  for (n=0; n<nnodesScene; n++) 
+    {
+    node->SetAddToSceneNoModify(1);
+    }
  
   // reset AddToScene
   for (n=0; n < nnodesSanpshot; n++) 
@@ -295,9 +303,7 @@ void vtkMRMLSceneSnapshotNode::RestoreScene()
     node = (vtkMRMLNode*)this->Nodes->GetItemAsObject(n);
     if (node)
       {
-      node->SetDisableModifiedEvent(1);
-      node->SetAddToScene(1);
-      node->SetDisableModifiedEvent(0);
+      node->SetAddToSceneNoModify(1);
       }
     }
 
