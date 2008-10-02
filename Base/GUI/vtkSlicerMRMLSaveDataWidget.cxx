@@ -33,10 +33,11 @@
 #include <vtksys/stl/string>
 #include <vtksys/SystemTools.hxx>
 
+#define PICK_FORMAT_MESSAGE "Pick format for saving"
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerMRMLSaveDataWidget );
 vtkCxxRevisionMacro ( vtkSlicerMRMLSaveDataWidget, "$Revision: 1.0 $");
-
 
 //---------------------------------------------------------------------------
 vtkSlicerMRMLSaveDataWidget::vtkSlicerMRMLSaveDataWidget ( )
@@ -134,7 +135,9 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                     void *callData )
 {
 
-  if (this->SaveSceneButton->GetWidget()->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) && event == vtkKWTopLevel::WithdrawEvent )
+  if (this->SaveSceneButton->GetWidget()->GetLoadSaveDialog() == 
+    vtkKWLoadSaveDialog::SafeDownCast(caller) 
+    && event == vtkKWTopLevel::WithdrawEvent )
     {
     const char *fileName = this->SaveSceneButton->GetWidget()->GetFileName();
     if (fileName)
@@ -153,7 +156,9 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
       }
     }
 
-  else if (this->SaveDataButton->GetWidget()->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) && event == vtkKWTopLevel::WithdrawEvent )
+  else if (this->SaveDataButton->GetWidget()->GetLoadSaveDialog() == 
+    vtkKWLoadSaveDialog::SafeDownCast(caller) && 
+    event == vtkKWTopLevel::WithdrawEvent )
     {
     const char *fileName = this->SaveDataButton->GetWidget()->GetFileName();
     if (fileName) 
@@ -167,7 +172,8 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
       this->UpdateDataDirectory();
       }
     }
-  else if (this->SaveAllDataButton ==  vtkKWPushButton::SafeDownCast(caller) && event ==  vtkKWPushButton::InvokedEvent)
+  else if (this->SaveAllDataButton ==  vtkKWPushButton::SafeDownCast(caller) && 
+    event ==  vtkKWPushButton::InvokedEvent)
     {
     int nrows = this->MultiColumnList->GetWidget()->GetNumberOfRows();
     for (int row=0; row<nrows; row++)
@@ -176,7 +182,8 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
       }
     this->UpdateEnableState();
     }
-  else if (this->SaveNoDataButton ==  vtkKWPushButton::SafeDownCast(caller) && event ==  vtkKWPushButton::InvokedEvent)
+  else if (this->SaveNoDataButton ==  vtkKWPushButton::SafeDownCast(caller) && 
+    event ==  vtkKWPushButton::InvokedEvent)
     {
     int nrows = this->MultiColumnList->GetWidget()->GetNumberOfRows();
     for (int row=0; row<nrows; row++)
@@ -185,7 +192,8 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
       }
     this->UpdateEnableState();
     }
-  else if (this->SaveDataOnlyButton ==  vtkKWPushButton::SafeDownCast(caller) && event ==  vtkKWPushButton::InvokedEvent)
+  else if (this->SaveDataOnlyButton ==  vtkKWPushButton::SafeDownCast(caller) && 
+    event ==  vtkKWPushButton::InvokedEvent)
     {
     this->MultiColumnList->GetWidget()->FinishEditing();
     if(this->SaveMarkedData())
@@ -194,7 +202,8 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
       this->InvokeEvent(vtkSlicerMRMLSaveDataWidget::DataSavedEvent);
       }
     }
-  else if (this->OkButton ==  vtkKWPushButton::SafeDownCast(caller) && event ==  vtkKWPushButton::InvokedEvent)
+  else if (this->OkButton ==  vtkKWPushButton::SafeDownCast(caller) && 
+    event ==  vtkKWPushButton::InvokedEvent)
     {
     this->MultiColumnList->GetWidget()->FinishEditing();
     std::string sceneFileName = this->SaveSceneButton->GetWidget()->GetFileName();
@@ -236,7 +245,8 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
         }
       }
     }
-  else if (this->CancelButton ==  vtkKWPushButton::SafeDownCast(caller) && event ==  vtkKWPushButton::InvokedEvent)
+  else if (this->CancelButton ==  vtkKWPushButton::SafeDownCast(caller) && 
+    event ==  vtkKWPushButton::InvokedEvent)
     { 
     this->SaveDialog->Cancel();
     }
@@ -300,7 +310,8 @@ int vtkSlicerMRMLSaveDataWidget::SaveMarkedData()
   int numNotWrite = 0;
   for (int row=0; row<nrows; row++)
     {
-    if (this->MultiColumnList->GetWidget()->GetCellTextAsInt(row, Save_Column))
+    if (this->MultiColumnList->GetWidget()->GetCellTextAsInt(row, Save_Column)
+      && this->IsRowFileFormatSet(row))
       {
       arrayRows->InsertNextValue(row);
       }
@@ -333,14 +344,13 @@ int vtkSlicerMRMLSaveDataWidget::SaveData(vtkIntArray* arrayRows)
       vtkErrorMacro(<< this->GetClassName() << " did not have a file name for: " << node->GetName());
       return 0;
       }
-    //vtkKWLoadSaveButton* lsButton = this->MultiColumnList->GetWidget()->
-    //  GetCellWindowAsLoadSaveButton(row, FileDirectory_Column);
-    //if(!lsButton || lsButton->GetFileName()==NULL )
-    //  {
-    //  vtkErrorMacro(<< this->GetClassName() << " did not have a directory for: " << fileName);
-    //  return;
-    //  }
-    //std::string filePath(lsButton->GetFileName());
+    std::string fileExt = vtksys::SystemTools::GetFilenameLastExtension(fileName);
+    std::string currExt = this->GetRowCurrentFileExtension(row); 
+    if(fileExt.empty() && strcmp(currExt.c_str(), ".*"))
+      {
+      fileName.append(currExt);
+      }
+
     std::string filePath (this->MultiColumnList->GetWidget()->GetCellText(row, FileDirectory_Column));
     if(filePath.empty() || !vtksys::SystemTools::FileIsDirectory(filePath.c_str()))
       {
@@ -765,11 +775,20 @@ void vtkSlicerMRMLSaveDataWidget::UpdateRowFileNameWithExtension(
     {
     return;
     }
-  std::string currExt = this->GetRowCurrentFileExtension(row);
+  const char* tmpExt = this->GetRowCurrentFileExtension(row);
+  if(!tmpExt || !(*tmpExt))
+    {
+    vtkWarningMacro(<< this->GetClassName() << 
+      ": Invalid file format for saving!");
+    this->SetRowMarkedForSave(row, 0);
+    }
+
+  std::string currExt = tmpExt; 
   if(strcmp(currExt.c_str(), ".*")==0)
     {
     return;
     }
+
   std::string fileName = this->MultiColumnList->GetWidget()->GetCellText(
     row,FileName_Column);
   std::string fileExt = vtksys::SystemTools::GetFilenameExtension(fileName);
@@ -794,7 +813,8 @@ void vtkSlicerMRMLSaveDataWidget::UpdateRowFileFormatWithName(
     {
     return;
     }
-  std::string currExt = this->GetRowCurrentFileExtension(row);
+
+  std::string currExt = this->GetRowCurrentFileExtension(row); 
   if(strcmp(currExt.c_str(), ".*")==0)
     {
     return;
@@ -802,7 +822,8 @@ void vtkSlicerMRMLSaveDataWidget::UpdateRowFileFormatWithName(
 
   std::string fileName = this->MultiColumnList->GetWidget()->GetCellText(
     row,FileName_Column);
-  std::string fileExt = vtksys::SystemTools::GetFilenameExtension(fileName);
+  std::string fileExt = vtksys::SystemTools::GetFilenameLastExtension(fileName);
+
   if(!fileExt.empty() && strcmp(fileExt.c_str(), currExt.c_str()))
     {
     const char* fileFormat =
@@ -837,11 +858,16 @@ const char* vtkSlicerMRMLSaveDataWidget::GetRowFileFormatWithExtension(
     {
     std::string value, strExt;
     std::string::size_type ext_pos;
-    for(int i=0; cb->GetNumberOfValues(); i++)
+    for(int i=0; i<cb->GetNumberOfValues(); i++)
       {
       strExt = cb->GetValueFromIndex(i);
-      value = vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
+      const char* tmpExt = vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
         strExt.c_str());
+      if(!tmpExt || !(*tmpExt))
+        {
+        continue;
+        }
+      value = tmpExt;
       ext_pos = value.find(extension);
       if(ext_pos != std::string::npos)
         {
@@ -859,10 +885,13 @@ const char* vtkSlicerMRMLSaveDataWidget::GetRowCurrentFileExtension(int row)
     {
     return NULL;
     }
-  const char* fileformat = this->MultiColumnList->GetWidget()->GetCellText(row,Format_Column);
-  if(fileformat)
+  const char* fileformat = this->MultiColumnList->GetWidget()->
+    GetCellText(row,Format_Column);
+  if(fileformat && *fileformat)
     {
-    return vtkDataFileFormatHelper::GetFileExtensionFromFormatString(fileformat);
+    std::string tmpFormat(fileformat);
+    return vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
+      tmpFormat.c_str());
     }
   else
     {
@@ -874,25 +903,45 @@ const char* vtkSlicerMRMLSaveDataWidget::GetRowCurrentFileExtension(int row)
 void vtkSlicerMRMLSaveDataWidget::SetFileNameRelatedCells(
   int row, const char* filename, vtkStringArray* supportedFileFormats)
 {
-  if(!this->MultiColumnList->IsCreated() || !filename || !(*filename) ||
-    !supportedFileFormats || supportedFileFormats->GetNumberOfTuples()==0)
-   {
-   return;
-   }
+  if(!this->MultiColumnList->IsCreated() || !filename || !(*filename) )
+    {
+    return;
+    }
+
+  if(!supportedFileFormats || 
+    supportedFileFormats->GetNumberOfTuples()==0)
+    {
+    this->DisableRowForSaving(row, filename);
+    return;
+    }
+
   std::string name = vtksys::SystemTools::CollapseFullPath(filename);
   std::string strExt = vtksys::SystemTools::GetFilenameLastExtension(name);
   const char* pFileFormat = this->GetFileFormatWithExtension(strExt.c_str(),
     supportedFileFormats);
   if(!pFileFormat || !(*pFileFormat))
     {
+    this->InitRowForNonSupportedFormat(row, name.c_str(), supportedFileFormats);
     return;
     }
+  this->SetFileNameAndDirectoryCells(row, name.c_str());
   std::string fileFormat = pFileFormat;
   this->MultiColumnList->GetWidget()->SetCellText(
     row,Format_Column, fileFormat.c_str());
   this->MultiColumnList->GetWidget()->
     SetCellWindowCommandToComboBoxWithValuesAsArray(
     row, Format_Column, supportedFileFormats);
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerMRMLSaveDataWidget::SetFileNameAndDirectoryCells(
+  int row, const char* filename)
+{
+  if(!filename || !(*filename))
+    {
+    return;
+    }
+  std::string name = vtksys::SystemTools::CollapseFullPath(filename);
   std::string text = vtksys::SystemTools::GetFilenameName(name);
   this->MultiColumnList->GetWidget()->SetCellText(row,FileName_Column,
     text.c_str());
@@ -904,6 +953,76 @@ void vtkSlicerMRMLSaveDataWidget::SetFileNameRelatedCells(
     text.c_str());
   this->MultiColumnList->GetWidget()->SetCellWindowCommandToPickDirectoryButton(
     row,FileDirectory_Column);
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerMRMLSaveDataWidget::DisableRowForSaving(
+  int row, const char* filename)
+{
+  vtkKWMultiColumnList* dataTable = this->MultiColumnList->GetWidget();
+  dataTable->SetCellTextAsInt(row,Save_Column,0);
+  dataTable->SetCellWindowCommandToCheckButton(row, Save_Column);
+
+  const char* noFileFormats[] = {"Not supported"};
+  dataTable->SetCellText(row,Format_Column, "Not supported");
+  dataTable->SetCellWindowCommandToComboBoxWithValues(
+    row, Format_Column, 1, noFileFormats);
+
+  this->SetFileNameAndDirectoryCells(row, filename);
+  this->SetFileNameRelatedCellsEnabled(row, 0);
+
+  // Disable the "Save" checkbox
+  //vtkKWCheckButton* cb = dataTable->
+  //  GetCellWindowAsComboBox(row, Save_Column);
+  //if(cb)
+  //  {
+  //  cb->SetEnabled(0);
+  //  }
+  dataTable->CellEditableOff(row,Save_Column);
+  dataTable->SetCellEnabledAttribute(row, Save_Column, 0);
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerMRMLSaveDataWidget::InitRowForNonSupportedFormat(
+  int row, const char* filename, vtkStringArray* supportedFileFormats)
+{
+  vtkKWMultiColumnList* dataTable = this->MultiColumnList->GetWidget();
+  dataTable->SetCellTextAsInt(row,Save_Column,0);
+  dataTable->SetCellWindowCommandToCheckButton(row, Save_Column);
+
+  supportedFileFormats->InsertValue(0, PICK_FORMAT_MESSAGE);
+  dataTable->SetCellText(row,Format_Column, PICK_FORMAT_MESSAGE);
+  dataTable->SetCellWindowCommandToComboBoxWithValuesAsArray(
+    row, Format_Column, supportedFileFormats);
+
+  this->SetFileNameAndDirectoryCells(row, filename);
+  //this->SetFileNameRelatedCellsEnabled(row, 0);
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerMRMLSaveDataWidget::SetFileNameRelatedCellsEnabled(
+  int row, int enable)
+{
+  vtkKWMultiColumnList* dataTable = this->MultiColumnList->GetWidget();
+  // Disable the embedded widget
+  //vtkKWComboBox* cb = dataTable->
+  //  GetCellWindowAsComboBox(row, Format_Column);
+  //if(cb)
+  //  {
+  //  cb->SetEnabled(enable);
+  //  }
+  //vtkKWLoadSaveButton* lsb = dataTable->
+  //  GetCellWindowAsPickDirectoryButton(row, FileDirectory_Column);
+  //if(lsb)
+  //  {
+  //  lsb->SetEnabled(enable);
+  //  }
+  dataTable->SetCellEditable(row,Format_Column, enable);
+  dataTable->SetCellEditable(row,FileName_Column, enable);
+  dataTable->SetCellEditable(row,FileDirectory_Column, enable);
+  dataTable->SetCellEnabledAttribute(row, Format_Column, enable);
+  dataTable->SetCellEnabledAttribute(row, FileName_Column, enable);
+  dataTable->SetCellEnabledAttribute(row, FileDirectory_Column, enable);
 }
 
 //---------------------------------------------------------------------------
@@ -1290,7 +1409,6 @@ void vtkSlicerMRMLSaveDataWidget::UpdateDataTableCell(
 {
   std::string fileName =this->MultiColumnList->GetWidget()->GetCellText(
     row,FileName_Column);
-  std::string currExt = this->GetRowCurrentFileExtension(row);
   std::string oldFileName(this->MultiColumnList->GetWidget()->GetCellText(
     row, Hidden_FileName_Column));
   std::string currText = this->MultiColumnList->GetWidget()->GetCellText(row, col);
@@ -1299,6 +1417,7 @@ void vtkSlicerMRMLSaveDataWidget::UpdateDataTableCell(
   switch(col)
     {
     case Save_Column:
+      this->IsRowFileFormatSet(row);
       this->UpdateEnableState();
       break;
     case FileName_Column:
@@ -1311,24 +1430,27 @@ void vtkSlicerMRMLSaveDataWidget::UpdateDataTableCell(
         break;
         }
 
-      if(strcmp(pText, oldFileName.c_str()))
+      if(strcmp(pText, oldFileName.c_str())
+        && this->IsRowFileFormatSet(row))
         {
-        this->SetRowMarkedForSave(row, 1);
         this->UpdateRowFileFormatWithName(row);
         this->MultiColumnList->GetWidget()->SetCellText(
           row, Hidden_FileName_Column, pText);
+        this->SetRowMarkedForSave(row, 1);
         }
       break;
     case Format_Column:
       if(!pText || !(*pText) ||!strlen(pText))
         {
-        vtkErrorMacro(<< this->GetClassName() << 
+        vtkWarningMacro(<< this->GetClassName() << 
           ": Invalid file format for saving!");
+        this->SetRowMarkedForSave(row, 0);
         return;
         }
 
-      if(!currExt.empty() && !fileName.empty())
+      if(this->IsRowFileFormatSet(row) && !fileName.empty())
         {
+        std::string currExt = this->GetRowCurrentFileExtension(row);
         std::string fileExt = vtksys::SystemTools::GetFilenameExtension(fileName);
         if(fileExt.empty() || strcmp(fileExt.c_str(), currExt.c_str()))
           {
@@ -1342,6 +1464,53 @@ void vtkSlicerMRMLSaveDataWidget::UpdateDataTableCell(
       break;
     default:
       break;
+    }
+}
+
+//---------------------------------------------------------------------------
+int vtkSlicerMRMLSaveDataWidget::IsRowFileFormatSet(int row)
+{
+  const char* tmpExt = this->GetRowCurrentFileExtension(row);
+  if(!tmpExt || !(*tmpExt))
+    {
+    this->SetFirstAvailableFormat(row);
+    //check again of the file format
+    tmpExt = this->GetRowCurrentFileExtension(row);
+    if(!tmpExt || !(*tmpExt))
+      {
+      vtkWarningMacro(<< this->GetClassName() << 
+        ": The file format is not set for saving!");
+      this->SetRowMarkedForSave(row, 0);
+      return 0;
+      }
+    }
+
+  return 1;
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerMRMLSaveDataWidget::SetFirstAvailableFormat(int row)
+{
+  vtkKWComboBox* cb = this->MultiColumnList->GetWidget()->
+    GetCellWindowAsComboBox(row, Format_Column);
+  if(cb)
+    {
+    std::string value, strExt;
+    for(int i=0; i<cb->GetNumberOfValues(); i++)
+      {
+      strExt = cb->GetValueFromIndex(i);
+      const char* tmpExt = vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
+        strExt.c_str());
+      if(!tmpExt || !(*tmpExt))
+        {
+        continue;
+        }
+      cb->SetValue(strExt.c_str());
+      this->MultiColumnList->GetWidget()->SetCellText(
+        row,Format_Column,strExt.c_str());
+      this->UpdateRowFileNameWithExtension(row);
+      break;
+      }
     }
 }
 

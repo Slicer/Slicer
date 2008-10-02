@@ -122,6 +122,28 @@ protected:
   // (FileFormat_Column, FileName_Column, FileDirectory_Column)
   void SetFileNameRelatedCells(
     int row, const char* filename, vtkStringArray* supportedFileFormats);
+  void SetFileNameAndDirectoryCells(int row, const char* filename);
+
+  // Description:
+  // Set enable state of the filename related cells given the row index and state
+  // (FileFormat_Column, FileName_Column, FileDirectory_Column)
+  void SetFileNameRelatedCellsEnabled(int row, int enable);
+
+  // Description:
+  // If there is no extension, or the extension is not supported for writing,
+  // The "File Format" column will need to be changed to supported formats if
+  // the "Saved" option is turned on for this node
+  void InitRowForNonSupportedFormat(
+    int row, const char* filename, vtkStringArray* supportedFileFormats);
+  
+  // Description:
+  // Select the first available supported format from the dropdown
+  void SetFirstAvailableFormat(int row);
+
+  // Description:
+  // Check whether a valid file format is set for the row
+  // Return 0 for NO; 1 for YES.
+  int IsRowFileFormatSet(int row);
 
   // Description:
   // Get a file format given the file extension and all the supported formats
@@ -180,6 +202,10 @@ protected:
   // Description:
   // Update the node data directory given the row index.
   virtual void UpdateNodeDataDirectory(int row);
+
+  // Description:
+  // Disable the row for data saving
+  virtual void DisableRowForSaving(int row, const char* filename);
 
   //BTX
   // Description:
