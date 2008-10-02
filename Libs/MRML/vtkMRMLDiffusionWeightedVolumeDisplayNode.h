@@ -66,6 +66,10 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeDisplayNode : public vtkMRML
     this->ExtractComponent->SetInput( imageData);
     };
 
+  // Description:
+  // Gets ImageData converted from the real data in the node
+  virtual vtkImageData* GetImageData();
+
   virtual void UpdateImageDataPipeline()
     {
     this->ExtractComponent->SetComponents(this->GetDiffusionComponent());

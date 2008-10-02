@@ -124,3 +124,14 @@ void vtkMRMLDiffusionWeightedVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent
 
 
 
+//----------------------------------------------------------------------------
+vtkImageData* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetImageData()
+{
+  this->UpdateImageDataPipeline();
+  if (this->ExtractComponent->GetInput() == NULL)
+    {
+    return NULL;
+    }
+  this->AppendComponents->Update();
+  return this->AppendComponents->GetOutput();
+};
