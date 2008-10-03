@@ -1302,7 +1302,7 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
   this->SelectSceneAndModifiedDataButton->Create ( );
   //this->SelectSceneAndModifiedDataButton->SetText ("Select Scene & Modified Data Only");
   this->SelectSceneAndModifiedDataButton->SetImageToIcon(this->GUIIcons->GetCheckModified());
-  this->SelectSceneAndModifiedDataButton->SetBalloonHelpString("Select Scene & Modified Data Only");
+  this->SelectSceneAndModifiedDataButton->SetBalloonHelpString("Select scene & modified data only");
   this->Script("pack %s -side left -anchor w -padx 2 -pady 2", 
               this->SelectSceneAndModifiedDataButton->GetWidgetName());
 
@@ -1312,7 +1312,7 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
   this->SelectModifiedDataButton->Create ( );
   //this->SelectModifiedDataButton->SetText ("Select Modified Data Only");
   this->SelectModifiedDataButton->SetImageToIcon(this->GUIIcons->GetCheckModifiedData());
-  this->SelectModifiedDataButton->SetBalloonHelpString("Select Modified Data Only");
+  this->SelectModifiedDataButton->SetBalloonHelpString("Select modified data only");
   this->Script("pack %s -side left -anchor w -padx 2 -pady 2", 
               this->SelectModifiedDataButton->GetWidgetName());
   
@@ -1322,7 +1322,7 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
   this->SelectAllButton->Create ( );
   //this->SelectAllButton->SetText ("Select All");
   this->SelectAllButton->SetImageToIcon(this->GUIIcons->GetCheckAll());
-  this->SelectAllButton->SetBalloonHelpString("Check all save boxes");
+  this->SelectAllButton->SetBalloonHelpString("Select all");
   this->Script("pack %s -side left -anchor w -padx 2 -pady 2", 
               this->SelectAllButton->GetWidgetName());
 
@@ -1332,7 +1332,7 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
   this->SelectNoneButton->Create ( );
   //this->SelectNoneButton->SetText ("Select None");
   this->SelectNoneButton->SetImageToIcon(this->GUIIcons->GetUncheckAll());
-  this->SelectNoneButton->SetBalloonHelpString("Uncheck all save boxes");
+  this->SelectNoneButton->SetBalloonHelpString("Select none");
   this->Script("pack %s -side left -anchor w -padx 2 -pady 2", 
               this->SelectNoneButton->GetWidgetName());
 
@@ -1652,7 +1652,7 @@ void vtkSlicerMRMLSaveDataWidget::UpdateEnableState()
       numSelected++;
       }
     }
-  this->OkButton->SetEnabled(nrows>0 ? 1 : 0);
+  this->OkButton->SetEnabled(numSelected>0 ? 1 : 0);
   this->ChangeAllSelectedDirButton->SetEnabled(numSelected>0 ? 1 : 0);
 
   this->SelectAllButton->SetEnabled(numSelected < nrows ? 1 : 0);
