@@ -3,6 +3,7 @@
 #include "vtkStringArray.h"
 
 #include "vtkSlicerMRMLSaveDataWidget.h"
+#include "vtkSlicerSaveDataWidgetIcons.h"
 #include "vtkDataFileFormatHelper.h"
 
 #include "vtkKWTopLevel.h"
@@ -43,20 +44,20 @@ vtkCxxRevisionMacro ( vtkSlicerMRMLSaveDataWidget, "$Revision: 1.0 $");
 vtkSlicerMRMLSaveDataWidget::vtkSlicerMRMLSaveDataWidget ( )
 {
   this->SaveDialog = NULL;
-  this->SaveSceneButton = NULL;
-  //this->SceneName = NULL;
-  this->SaveDataButton = NULL;
+  this->ChangeAllSelectedDirButton = NULL;
 
-  this->SaveAllDataButton = NULL;
-  this->SaveNoDataButton = NULL;
-  
+  this->SelectAllButton = NULL;
+  this->SelectNoneButton = NULL;
+  this->SelectModifiedDataButton = NULL;
+  this->SelectSceneAndModifiedDataButton = NULL;
+
   this->DataDirectoryName = NULL;
   this->OkButton = NULL;
-  this->SaveDataOnlyButton = NULL;
   this->CancelButton = NULL;
   this->MultiColumnList = NULL;
 
   this->IsProcessing = false;
+  this->GUIIcons = NULL;
 }
 
 
@@ -75,11 +76,6 @@ vtkSlicerMRMLSaveDataWidget::~vtkSlicerMRMLSaveDataWidget ( )
     this->OkButton->SetParent(NULL);
     this->OkButton->Delete();
     }
-  if (this->SaveDataOnlyButton)
-    {
-    this->SaveDataOnlyButton->SetParent(NULL);
-    this->SaveDataOnlyButton->Delete();
-    }
   if (this->CancelButton)
     {
     this->CancelButton->SetParent(NULL);
@@ -90,33 +86,36 @@ vtkSlicerMRMLSaveDataWidget::~vtkSlicerMRMLSaveDataWidget ( )
     this->SaveDialog->SetParent(NULL);
     this->SaveDialog->Delete();
     }
-  if (this->SaveAllDataButton)
+  if (this->SelectAllButton)
     {
-    this->SaveAllDataButton->SetParent(NULL);
-    this->SaveAllDataButton->Delete();
+    this->SelectAllButton->SetParent(NULL);
+    this->SelectAllButton->Delete();
     }
-  if (this->SaveNoDataButton)
+  if (this->SelectNoneButton)
     {
-    this->SaveNoDataButton->SetParent(NULL);
-    this->SaveNoDataButton->Delete();
+    this->SelectNoneButton->SetParent(NULL);
+    this->SelectNoneButton->Delete();
     }
-  if (this->SaveSceneButton)
+  if (this->SelectModifiedDataButton)
     {
-    this->SaveSceneButton->SetParent(NULL);
-    this->SaveSceneButton->Delete();
+    this->SelectModifiedDataButton->SetParent(NULL);
+    this->SelectModifiedDataButton->Delete();
     }
-  //if (this->SceneName)
-  //  {
-  //  this->SceneName->SetParent(NULL);
-  //  this->SceneName->Delete();
-  //  }
-  if (this->SaveDataButton)
+  if (this->SelectSceneAndModifiedDataButton)
     {
-    this->SaveDataButton->SetParent(NULL);
-    this->SaveDataButton->Delete();
+    this->SelectSceneAndModifiedDataButton->SetParent(NULL);
+    this->SelectSceneAndModifiedDataButton->Delete();
     }
-
-  
+  if (this->ChangeAllSelectedDirButton)
+    {
+    this->ChangeAllSelectedDirButton->SetParent(NULL);
+    this->ChangeAllSelectedDirButton->Delete();
+    }
+  if(this->GUIIcons)
+    {
+    this->GUIIcons->Delete();
+    this->GUIIcons = NULL;
+    }
   this->SetDataDirectoryName( NULL);
 }
 
@@ -134,33 +133,11 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                     unsigned long event, 
                                                     void *callData )
 {
-
-  if (this->SaveSceneButton->GetWidget()->GetLoadSaveDialog() == 
-    vtkKWLoadSaveDialog::SafeDownCast(caller) 
-    && event == vtkKWTopLevel::WithdrawEvent )
-    {
-    const char *fileName = this->SaveSceneButton->GetWidget()->GetFileName();
-    if (fileName)
-      {
-      if (this->DataDirectoryName == NULL) 
-        {
-        vtksys_stl::string dir =  
-          vtksys::SystemTools::GetParentDirectory(fileName);   
-        if (dir[dir.size()-1] != '/')
-          {
-          dir = dir + vtksys_stl::string("/");
-          }
-        this->SetDataDirectoryName(dir.c_str());
-        this->UpdateDataDirectory();
-        }
-      }
-    }
-
-  else if (this->SaveDataButton->GetWidget()->GetLoadSaveDialog() == 
+  if (this->ChangeAllSelectedDirButton->GetWidget()->GetLoadSaveDialog() == 
     vtkKWLoadSaveDialog::SafeDownCast(caller) && 
     event == vtkKWTopLevel::WithdrawEvent )
     {
-    const char *fileName = this->SaveDataButton->GetWidget()->GetFileName();
+    const char *fileName = this->ChangeAllSelectedDirButton->GetWidget()->GetFileName();
     if (fileName) 
       {
       std::string name(fileName);
@@ -172,76 +149,64 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
       this->UpdateDataDirectory();
       }
     }
-  else if (this->SaveAllDataButton ==  vtkKWPushButton::SafeDownCast(caller) && 
+  else if (this->SelectAllButton ==  vtkKWPushButton::SafeDownCast(caller) && 
     event ==  vtkKWPushButton::InvokedEvent)
     {
+    this->SetAllRowsSelected(1);
+    }
+  else if (this->SelectModifiedDataButton ==  vtkKWPushButton::SafeDownCast(caller) && 
+    event ==  vtkKWPushButton::InvokedEvent)
+    {
+    this->SetAllRowsSelected(0);
     int nrows = this->MultiColumnList->GetWidget()->GetNumberOfRows();
     for (int row=0; row<nrows; row++)
       {
-      this->SetRowMarkedForSave(row, 1, 0);
+      if(this->IsRowFileFormatSet(row) 
+        && this->IsRowModified(row) && !this->IsSceneRow(row))
+        {
+        this->SetRowMarkedForSave(row, 1, 0);
+        }
       }
     this->UpdateEnableState();
     }
-  else if (this->SaveNoDataButton ==  vtkKWPushButton::SafeDownCast(caller) && 
+  else if (this->SelectSceneAndModifiedDataButton ==  vtkKWPushButton::SafeDownCast(caller) && 
     event ==  vtkKWPushButton::InvokedEvent)
     {
+    this->SetAllRowsSelected(0);
     int nrows = this->MultiColumnList->GetWidget()->GetNumberOfRows();
     for (int row=0; row<nrows; row++)
       {
-      this->SetRowMarkedForSave(row, 0, 0);
+      if(this->IsRowFileFormatSet(row) && this->IsRowModified(row))
+        {
+        this->SetRowMarkedForSave(row, 1, 0);
+        }
       }
     this->UpdateEnableState();
     }
-  else if (this->SaveDataOnlyButton ==  vtkKWPushButton::SafeDownCast(caller) && 
+  else if (this->SelectNoneButton ==  vtkKWPushButton::SafeDownCast(caller) && 
     event ==  vtkKWPushButton::InvokedEvent)
     {
-    this->MultiColumnList->GetWidget()->FinishEditing();
-    if(this->SaveMarkedData())
-      {
-      this->SaveDialog->OK();
-      this->InvokeEvent(vtkSlicerMRMLSaveDataWidget::DataSavedEvent);
-      }
+    this->SetAllRowsSelected(0);
     }
   else if (this->OkButton ==  vtkKWPushButton::SafeDownCast(caller) && 
     event ==  vtkKWPushButton::InvokedEvent)
     {
     this->MultiColumnList->GetWidget()->FinishEditing();
-    std::string sceneFileName = this->SaveSceneButton->GetWidget()->GetFileName();
-    if (sceneFileName.empty())
+    // If scene row is selected for save, then try to save
+    // the scene related data first.
+    int sceneRow = this->GetSceneRowIndex();
+    int saveScene = 0;
+    if(sceneRow >=0)
       {
-      vtkKWMessageDialog *message = vtkKWMessageDialog::New();
-      message->SetParent ( this->GetParent() );
-      message->SetMasterWindow ( this->SaveDialog );
-      message->SetStyleToMessage ();
-      message->SetText("No scene file selected. Scene is not saved");
-      message->Create();
-      message->Invoke();
-      message->Delete();
-      return;
-      }
-    int writeScene = 1;
-    fstream fin;
-    fin.open(sceneFileName.c_str(), ios::in);
-    if( fin.is_open() )
-      {
-      vtkKWMessageDialog *message = vtkKWMessageDialog::New();
-      message->SetParent ( this->GetParent() );
-      message->SetMasterWindow ( this->SaveDialog );
-      message->SetStyleToYesNo();
-      std::string msg = "File " + sceneFileName + " exists. Do you want to replace it?";
-      message->SetText(msg.c_str());
-      message->Create();
-      writeScene = message->Invoke();
-      message->Delete();
-      }          
-    fin.close();
-
-    if(writeScene && this->SaveModifiedData())
-      {
-      if(this->SaveScene())
+      saveScene = this->MultiColumnList->GetWidget()->GetCellTextAsInt(
+        sceneRow, Save_Column);
+      if(saveScene)
         {
-        this->SaveDialog->OK();
-        this->InvokeEvent(vtkSlicerMRMLSaveDataWidget::DataSavedEvent);
+        this->SaveSceneWithData(sceneRow);
+        }
+      else
+        {
+        this->SaveMarkedData();
         }
       }
     }
@@ -267,6 +232,49 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
 }
 
 //---------------------------------------------------------------------------
+void vtkSlicerMRMLSaveDataWidget::SaveSceneWithData(int sceneRow)
+{
+  std::string sceneFileName = this->GetRowFullFileName(sceneRow);
+  if (sceneFileName.empty())
+    {
+    vtkKWMessageDialog *message = vtkKWMessageDialog::New();
+    message->SetParent ( this->GetParent() );
+    message->SetMasterWindow ( this->SaveDialog );
+    message->SetStyleToMessage ();
+    message->SetText("No scene file selected. Scene is not saved");
+    message->Create();
+    message->Invoke();
+    message->Delete();
+    return;
+    }
+  int writeScene = 1;
+  fstream fin;
+  fin.open(sceneFileName.c_str(), ios::in);
+  if( fin.is_open() )
+    {
+    vtkKWMessageDialog *message = vtkKWMessageDialog::New();
+    message->SetParent ( this->GetParent() );
+    message->SetMasterWindow ( this->SaveDialog );
+    message->SetStyleToYesNo();
+    std::string msg = "File " + sceneFileName + " exists. Do you want to replace it?";
+    message->SetText(msg.c_str());
+    message->Create();
+    writeScene = message->Invoke();
+    message->Delete();
+    }          
+  fin.close();
+
+  if(writeScene && this->SaveModifiedData())
+    {
+    if(this->SaveScene(sceneRow))
+      {
+      this->SaveDialog->OK();
+      this->InvokeEvent(vtkSlicerMRMLSaveDataWidget::DataSavedEvent);
+      }
+    }
+}
+
+//---------------------------------------------------------------------------
 int vtkSlicerMRMLSaveDataWidget::SaveModifiedData()
 {
   vtkKWMultiColumnList* mcList = this->MultiColumnList->GetWidget();
@@ -274,21 +282,31 @@ int vtkSlicerMRMLSaveDataWidget::SaveModifiedData()
   int numMarked = 0;
   for (int row=0; row<nrows; row++)
     {
-    if (strcmp(mcList->GetCellText(row,Status_Column), "Modified")==0 && 
-      !mcList->GetCellTextAsInt(row, Save_Column))
+    if(this->IsSceneRow(row))
+      {
+      continue;
+      }
+    if (this->IsRowModified(row) 
+      && !mcList->GetCellTextAsInt(row, Save_Column))
       {
       vtkKWMessageDialog *message = vtkKWMessageDialog::New();
       message->SetParent ( this->GetParent() );
       message->SetMasterWindow ( this->SaveDialog );
-      message->SetStyleToMessage();
-      std::string msg("Node: ");
+      //message->SetStyleToMessage();
+      message->SetStyleToYesNo();
+      std::string msg("The node: ");
       msg.append(mcList->GetCellText(row, NodeName_Column)).append( 
-        " is modified, but not marked for Save.\n You must mark all modified nodes for Save in order to save a scene!");
+        ", is modified, but not marked for Save.\n ").append(
+        "If a scene is saved without saving all modified data, \nthe saved mrml file may not describe this dataset properly!\n").append(
+        "Do you still want to continue?");
       message->SetText(msg.c_str());
       message->Create();
-      message->Invoke();
+      int isOK = message->Invoke();
       message->Delete();
-      return 0;
+      if(!isOK)
+        {
+        return 0;
+        }
       }
     numMarked = mcList->GetCellTextAsInt(row, Save_Column) ? numMarked+1 : numMarked;
     }
@@ -310,8 +328,8 @@ int vtkSlicerMRMLSaveDataWidget::SaveMarkedData()
   int numNotWrite = 0;
   for (int row=0; row<nrows; row++)
     {
-    if (this->MultiColumnList->GetWidget()->GetCellTextAsInt(row, Save_Column)
-      && this->IsRowFileFormatSet(row))
+    if (!this->IsSceneRow(row) &&
+      this->MultiColumnList->GetWidget()->GetCellTextAsInt(row, Save_Column))
       {
       arrayRows->InsertNextValue(row);
       }
@@ -338,30 +356,25 @@ int vtkSlicerMRMLSaveDataWidget::SaveData(vtkIntArray* arrayRows)
     vtkMRMLStorageNode* snode = vtkMRMLStorageNode::SafeDownCast(
       this->MRMLScene->GetNodeByID(
       this->MultiColumnList->GetWidget()->GetCellText(row, Hidden_StorageNodeID_Column)));
-    std::string fileName (this->MultiColumnList->GetWidget()->GetCellText(row, FileName_Column));
-    if(fileName.empty())
+    
+    std::string filePath = this->GetRowFullFileName(row);
+    if(filePath.empty())
       {
-      vtkErrorMacro(<< this->GetClassName() << " did not have a file name for: " << node->GetName());
-      return 0;
-      }
-    std::string fileExt = vtksys::SystemTools::GetFilenameLastExtension(fileName);
-    std::string currExt = this->GetRowCurrentFileExtension(row); 
-    if(fileExt.empty() && strcmp(currExt.c_str(), ".*"))
-      {
-      fileName.append(currExt);
+      vtkKWMessageDialog *message = vtkKWMessageDialog::New();
+      message->SetParent ( this->GetParent() );
+      message->SetMasterWindow ( this->SaveDialog );
+      message->SetStyleToMessage ();
+      std::string msg(this->GetClassName());
+      msg.append(" did not have a file name for: ").append(node->GetName()).append(
+        ",\n so this node is not saved!");
+      message->SetText(msg.c_str());
+      message->Create();
+      message->Invoke();
+      message->Delete();
+      numNotWrite++;
+      continue;
       }
 
-    std::string filePath (this->MultiColumnList->GetWidget()->GetCellText(row, FileDirectory_Column));
-    if(filePath.empty() || !vtksys::SystemTools::FileIsDirectory(filePath.c_str()))
-      {
-      vtkErrorMacro(<< this->GetClassName() << " did not have a valid path for: " << node->GetName());
-      return 0;
-      }
-    if (filePath[filePath.size()-1] != '/')
-      {
-      filePath.append("/");
-      }
-    filePath.append(fileName.c_str());
     std::string oldFileName = snode->GetFileName();
     std::string oldURI = snode->GetURI() ? snode->GetURI() : "";
     snode->SetFileName(filePath.c_str());
@@ -382,7 +395,7 @@ int vtkSlicerMRMLSaveDataWidget::SaveData(vtkIntArray* arrayRows)
       message->SetParent ( this->GetParent() );
       message->SetMasterWindow ( this->SaveDialog );
       message->SetStyleToYesNo();
-      std::string msg = "File " + fileName + " exists. Do you want to replace it?";
+      std::string msg = "File, " + filePath + ", \n exists. Do you want to replace it?";
       message->SetText(msg.c_str());
       message->Create();
       writeFile = message->Invoke();
@@ -404,7 +417,7 @@ int vtkSlicerMRMLSaveDataWidget::SaveData(vtkIntArray* arrayRows)
         message->SetParent ( this->GetParent() );      
         message->SetMasterWindow ( this->SaveDialog );
         message->SetStyleToOkCancel();
-        std::string msg = "Cannot write data file " + fileName + ". Do you want to continue saving?";
+        std::string msg = "Cannot write data file, " + filePath + ". \nDo you want to continue saving?";
         message->SetText(msg.c_str());
         message->Create();
         int ok = message->Invoke();
@@ -435,14 +448,15 @@ int vtkSlicerMRMLSaveDataWidget::SaveData(vtkIntArray* arrayRows)
 }
 
 //---------------------------------------------------------------------------
-int vtkSlicerMRMLSaveDataWidget::SaveScene()
+int vtkSlicerMRMLSaveDataWidget::SaveScene(int sceneRow)
 {
-  const char *fileName = this->SaveSceneButton->GetWidget()->GetFileName();
-  if (!fileName && this->MRMLScene)
+  std::string fileName = this->GetRowFullFileName(sceneRow);
+  //const char *fileName = this->SaveSceneButton->GetWidget()->GetFileName();
+  if (fileName.empty() && this->MRMLScene)
     {
     fileName = this->MRMLScene->GetURL();
     }
-  if (fileName == NULL)
+  if (fileName.empty())
     {
     vtkKWMessageDialog *message = vtkKWMessageDialog::New();
     message->SetParent ( this->GetParent() );
@@ -456,7 +470,7 @@ int vtkSlicerMRMLSaveDataWidget::SaveScene()
   else if(this->GetMRMLScene())
     {
     vtksys_stl::string directory = 
-      vtksys::SystemTools::GetParentDirectory(fileName);
+      vtksys::SystemTools::GetParentDirectory(fileName.c_str());
     this->MRMLScene->SetRootDirectory(directory.c_str());
     directory = directory + vtksys_stl::string("/");
 
@@ -478,12 +492,46 @@ int vtkSlicerMRMLSaveDataWidget::SaveScene()
         }
       }
 
-    this->GetMRMLScene()->SetURL(fileName);
+    this->GetMRMLScene()->SetURL(fileName.c_str());
     this->GetMRMLScene()->Commit();  
     return 1;
     }
 
   return 0;
+}
+
+//---------------------------------------------------------------------------
+std::string vtkSlicerMRMLSaveDataWidget::GetRowFullFileName(int row)
+{
+  std::string empStr("");
+  std::string fileName (this->MultiColumnList->GetWidget()->GetCellText(row, FileName_Column));
+  if(fileName.empty())
+    {
+    //vtkErrorMacro(<< this->GetClassName() << " did not have a file name for: " << node->GetName());
+    return empStr;
+    }
+
+  std::string filePath (this->MultiColumnList->GetWidget()->GetCellText(row, FileDirectory_Column));
+  if(filePath.empty() || !vtksys::SystemTools::FileIsDirectory(filePath.c_str()))
+    {
+    //vtkErrorMacro(<< this->GetClassName() << " did not have a valid path for: " << node->GetName());
+    return empStr;
+    }
+
+  std::string fileExt = vtksys::SystemTools::GetFilenameLastExtension(fileName);
+  std::string currExt = this->GetRowCurrentFileExtension(row); 
+  if(strcmp(currExt.c_str(), ".*") &&
+    (fileExt.empty() || strcmp(currExt.c_str(), fileExt.c_str())))
+    {
+    fileName.append(currExt);
+    }
+  if (filePath[filePath.size()-1] != '/')
+    {
+    filePath.append("/");
+    }
+  filePath.append(fileName.c_str());
+
+  return filePath;
 }
 
 //---------------------------------------------------------------------------
@@ -510,9 +558,12 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
     this->MultiColumnList->GetWidget()->DeleteAllRows ();
     }
 
+  this->AddMRMLSceneRow();
+    
+  vtkKWMultiColumnList* dataTable = this->MultiColumnList->GetWidget();
   int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLVolumeNode");
   int n;
-  int row = 0;
+  int row = dataTable->GetNumberOfRows();
   for (n=0; n<nnodes; n++)
     {
     node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLVolumeNode");
@@ -729,6 +780,75 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
 }
 
 //---------------------------------------------------------------------------
+int vtkSlicerMRMLSaveDataWidget::IsSceneRow(int row)
+{
+  std::string strType(
+    this->MultiColumnList->GetWidget()->GetCellText(row,Type_Column));
+  return (strType.find("SCENE")!=std::string::npos);
+}
+
+//---------------------------------------------------------------------------
+int vtkSlicerMRMLSaveDataWidget::GetSceneRowIndex()
+{
+  int nrows = this->MultiColumnList->GetWidget()->GetNumberOfRows();
+  for (int row=0; row<nrows; row++)
+    {    
+    if (this->IsSceneRow(row))
+      {
+      return row;
+      }
+    }
+
+  return -1;
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerMRMLSaveDataWidget::AddMRMLSceneRow()
+{
+  if (this->MRMLScene != NULL)
+    {
+    std::string dir = this->MRMLScene->GetRootDirectory();
+    if (dir[dir.size()-1] != '/')
+      {
+      dir += std::string("/");
+      }
+    this->SetDataDirectoryName(dir.c_str());
+    if (this->DataDirectoryName && *this->DataDirectoryName)
+      {
+      this->ChangeAllSelectedDirButton->GetWidget()->SetInitialFileName(
+        this->DataDirectoryName);
+      this->ChangeAllSelectedDirButton->GetWidget()->GetLoadSaveDialog()->
+        SetFileName(this->DataDirectoryName);
+      }
+    const char *url = this->MRMLScene->GetURL();
+    if (url && *url)
+      {
+      vtkKWMultiColumnList* dataTable = this->MultiColumnList->GetWidget();
+      int row = dataTable->GetNumberOfRows();
+      dataTable->AddRow();
+
+      // Initialize the mrml scene row
+      dataTable->SetCellText(row,NodeName_Column,"(Scene Description)");
+      this->SetRowModified(row, 1);
+      this->SetRowMarkedForSave(row, 1);
+
+      dataTable->SetCellText(row,Type_Column,"(SCENE)");
+      const char* mrmlFileFormats[] = {"MRML (.mrml)"};
+      dataTable->SetCellText(row,Format_Column, "MRML (.mrml)");
+      dataTable->SetCellWindowCommandToComboBoxWithValues(
+        row, Format_Column, 1, mrmlFileFormats);
+
+      this->SetFileNameAndDirectoryCells(row, url);
+      dataTable->SetCellEditable(row,Format_Column, 0);
+      dataTable->SetCellEnabledAttribute(row, Format_Column, 0);
+
+      //this->SaveSceneButton->GetWidget()->SetInitialFileName(url);
+      //this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->SetFileName(url);
+      }
+    }
+}
+
+//---------------------------------------------------------------------------
 void vtkSlicerMRMLSaveDataWidget::AddNodeId(const char* strID, int row)
 {
   this->Nodes.push_back(strID);
@@ -806,8 +926,7 @@ void vtkSlicerMRMLSaveDataWidget::UpdateRowFileNameWithExtension(
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerMRMLSaveDataWidget::UpdateRowFileFormatWithName(
-  int row)
+void vtkSlicerMRMLSaveDataWidget::UpdateRowFileFormatWithName(int row)
 {
   if(row>=this->MultiColumnList->GetWidget()->GetNumberOfRows())
     {
@@ -839,6 +958,11 @@ void vtkSlicerMRMLSaveDataWidget::UpdateRowFileFormatWithName(
         }
       this->MultiColumnList->GetWidget()->SetCellText(
         row,Format_Column,fileName.c_str());
+      }
+    else
+      {
+      vtkWarningMacro(<< "The new extension: " << fileExt.c_str() << 
+        ", is not supported! The current extension will be used.");
       }
     }
 }
@@ -1004,19 +1128,6 @@ void vtkSlicerMRMLSaveDataWidget::SetFileNameRelatedCellsEnabled(
   int row, int enable)
 {
   vtkKWMultiColumnList* dataTable = this->MultiColumnList->GetWidget();
-  // Disable the embedded widget
-  //vtkKWComboBox* cb = dataTable->
-  //  GetCellWindowAsComboBox(row, Format_Column);
-  //if(cb)
-  //  {
-  //  cb->SetEnabled(enable);
-  //  }
-  //vtkKWLoadSaveButton* lsb = dataTable->
-  //  GetCellWindowAsPickDirectoryButton(row, FileDirectory_Column);
-  //if(lsb)
-  //  {
-  //  lsb->SetEnabled(enable);
-  //  }
   dataTable->SetCellEditable(row,Format_Column, enable);
   dataTable->SetCellEditable(row,FileName_Column, enable);
   dataTable->SetCellEditable(row,FileDirectory_Column, enable);
@@ -1050,7 +1161,7 @@ void vtkSlicerMRMLSaveDataWidget::UpdateDataDirectory()
     return;
     }
   
-  this->SaveDataButton->GetWidget()->SetInitialFileName(
+  this->ChangeAllSelectedDirButton->GetWidget()->SetInitialFileName(
     this->DataDirectoryName);
 
   int nrows = this->MultiColumnList->GetWidget()->GetNumberOfRows();
@@ -1059,8 +1170,10 @@ void vtkSlicerMRMLSaveDataWidget::UpdateDataDirectory()
     if (this->MultiColumnList->GetWidget()->GetCellTextAsInt(row, Save_Column))
       {
       // Do we really need this?
-      this->UpdateNodeDataDirectory(row);
-
+      if(!this->IsSceneRow(row))
+        {
+        this->UpdateNodeDataDirectory(row);
+        }
       // Update the data table
       this->SetDataDirectoryRelatedCells(row, this->DataDirectoryName);
       }
@@ -1082,12 +1195,15 @@ void vtkSlicerMRMLSaveDataWidget::ProcessMRMLEvents ( vtkObject *caller,
 void vtkSlicerMRMLSaveDataWidget::AddWidgetObservers ( ) 
 {
   this->OkButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-  this->SaveDataOnlyButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  //this->SaveDataOnlyButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->CancelButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-  this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->AddObserver ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->SaveDataButton->GetWidget()->GetLoadSaveDialog()->AddObserver ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->SaveAllDataButton->AddObserver(  vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-  this->SaveNoDataButton->AddObserver(  vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  //this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->AddObserver ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ChangeAllSelectedDirButton->GetWidget()->GetLoadSaveDialog()->AddObserver ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SelectAllButton->AddObserver(  vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->SelectNoneButton->AddObserver(  vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->SelectModifiedDataButton->AddObserver(  vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->SelectSceneAndModifiedDataButton->AddObserver(  vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  
   this->MultiColumnList->GetWidget()->AddObserver(  vtkKWMultiColumnList::CellUpdatedEvent,  
     (vtkCommand *)this->GUICallbackCommand );
 }
@@ -1100,36 +1216,37 @@ void vtkSlicerMRMLSaveDataWidget::RemoveWidgetObservers ( )
     this->OkButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  
         (vtkCommand *)this->GUICallbackCommand );
     }
-  if (this->SaveDataOnlyButton)
-    {
-    this->SaveDataOnlyButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  
-        (vtkCommand *)this->GUICallbackCommand );
-    }
   if (this->CancelButton)
     {
     this->CancelButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  
         (vtkCommand *)this->GUICallbackCommand );
     }
-  if (this->SaveSceneButton)
+  if (this->ChangeAllSelectedDirButton)
     {
-    this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers( vtkKWTopLevel::WithdrawEvent,
-      (vtkCommand *)this->GUICallbackCommand );
-    }
-  if (this->SaveDataButton)
-    {
-    this->SaveDataButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers (vtkKWTopLevel::WithdrawEvent,
+    this->ChangeAllSelectedDirButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers (vtkKWTopLevel::WithdrawEvent,
         (vtkCommand *)this->GUICallbackCommand );
     }
-  if (this->SaveAllDataButton)
+  if (this->SelectAllButton)
     {
-    this->SaveAllDataButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  
+    this->SelectAllButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  
         (vtkCommand *)this->GUICallbackCommand );
     }
-  if (this->SaveNoDataButton)
+  if (this->SelectNoneButton)
     {
-    this->SaveNoDataButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  
+    this->SelectNoneButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  
         (vtkCommand *)this->GUICallbackCommand );
     }
+  if (this->SelectSceneAndModifiedDataButton)
+    {
+    this->SelectSceneAndModifiedDataButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  
+        (vtkCommand *)this->GUICallbackCommand );
+    }
+  if (this->SelectModifiedDataButton)
+    {
+    this->SelectModifiedDataButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  
+        (vtkCommand *)this->GUICallbackCommand );
+    }
+
   if (this->MultiColumnList)
     {
     this->MultiColumnList->GetWidget()->RemoveObservers(  vtkKWMultiColumnList::CellUpdatedEvent,  
@@ -1148,6 +1265,11 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
     return;
     }
 
+  if(!this->GUIIcons)
+    {
+    this->GUIIcons = vtkSlicerSaveDataWidgetIcons::New();
+    }
+
   // Call the superclass to create the whole widget
 
   this->Superclass::CreateWidget();
@@ -1163,22 +1285,9 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
   vtkKWFrameWithLabel *dataFrame = vtkKWFrameWithLabel::New ( );
   dataFrame->SetParent ( this->SaveDialog );
   dataFrame->Create ( );
-  dataFrame->SetLabelText ("Save Data Options");
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+  dataFrame->SetLabelText ("Save Scene & Data Options");
+  this->Script ( "pack %s -side top -anchor nw -fill both -expand true -padx 2 -pady 2",
                  dataFrame->GetWidgetName() );
- 
-  // add the multicolumn list to show the points
-  this->MultiColumnList = vtkKWMultiColumnListWithScrollbars::New ( );
-  this->MultiColumnList->SetParent ( dataFrame->GetFrame() );
-  this->MultiColumnList->Create ( );
-  this->MultiColumnList->SetHeight(4);
-  this->MultiColumnList->GetWidget()->SetSelectionTypeToCell();
-  
-  this->SetupSaveDataListWidget();
-  this->Script ( "pack %s -fill both -expand true",
-                     this->MultiColumnList->GetWidgetName());
- 
-  // saveDataMCList->SetCellUpdatedCommand(this, "UpdateElement");
 
   // add a button frame
   vtkKWFrame *buttonFrame = vtkKWFrame::New();
@@ -1186,77 +1295,71 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
   buttonFrame->Create();
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  buttonFrame->GetWidgetName() );
+
+  // add a button to change the save flags of all modified data and scene to ON
+  this->SelectSceneAndModifiedDataButton = vtkKWPushButton::New();
+  this->SelectSceneAndModifiedDataButton->SetParent ( buttonFrame );
+  this->SelectSceneAndModifiedDataButton->Create ( );
+  //this->SelectSceneAndModifiedDataButton->SetText ("Select Scene & Modified Data Only");
+  this->SelectSceneAndModifiedDataButton->SetImageToIcon(this->GUIIcons->GetCheckModified());
+  this->SelectSceneAndModifiedDataButton->SetBalloonHelpString("Select Scene & Modified Data Only");
+  this->Script("pack %s -side left -anchor w -padx 2 -pady 2", 
+              this->SelectSceneAndModifiedDataButton->GetWidgetName());
+
+  // add a button to change the save flags of all modified data to ON
+  this->SelectModifiedDataButton = vtkKWPushButton::New();
+  this->SelectModifiedDataButton->SetParent ( buttonFrame );
+  this->SelectModifiedDataButton->Create ( );
+  //this->SelectModifiedDataButton->SetText ("Select Modified Data Only");
+  this->SelectModifiedDataButton->SetImageToIcon(this->GUIIcons->GetCheckModifiedData());
+  this->SelectModifiedDataButton->SetBalloonHelpString("Select Modified Data Only");
+  this->Script("pack %s -side left -anchor w -padx 2 -pady 2", 
+              this->SelectModifiedDataButton->GetWidgetName());
   
   // add a button to change all the save flags to on
-  this->SaveAllDataButton = vtkKWPushButton::New();
-  this->SaveAllDataButton->SetParent ( buttonFrame );
-  this->SaveAllDataButton->Create ( );
-  this->SaveAllDataButton->SetText ("Select All");
-  this->SaveAllDataButton->SetBalloonHelpString("Check all save boxes");
-  this->Script("pack %s -side left -anchor w -padx 2 -pady 4", 
-              this->SaveAllDataButton->GetWidgetName());
+  this->SelectAllButton = vtkKWPushButton::New();
+  this->SelectAllButton->SetParent ( buttonFrame );
+  this->SelectAllButton->Create ( );
+  //this->SelectAllButton->SetText ("Select All");
+  this->SelectAllButton->SetImageToIcon(this->GUIIcons->GetCheckAll());
+  this->SelectAllButton->SetBalloonHelpString("Check all save boxes");
+  this->Script("pack %s -side left -anchor w -padx 2 -pady 2", 
+              this->SelectAllButton->GetWidgetName());
 
   // add a button to change all the save flags to off
-  this->SaveNoDataButton = vtkKWPushButton::New();
-  this->SaveNoDataButton->SetParent ( buttonFrame );
-  this->SaveNoDataButton->Create ( );
-  this->SaveNoDataButton->SetText ("Select None");
-  this->SaveNoDataButton->SetBalloonHelpString("Uncheck all save boxes");
-  this->Script("pack %s -side left -anchor w -padx 2 -pady 4", 
-              this->SaveNoDataButton->GetWidgetName());
+  this->SelectNoneButton = vtkKWPushButton::New();
+  this->SelectNoneButton->SetParent ( buttonFrame );
+  this->SelectNoneButton->Create ( );
+  //this->SelectNoneButton->SetText ("Select None");
+  this->SelectNoneButton->SetImageToIcon(this->GUIIcons->GetUncheckAll());
+  this->SelectNoneButton->SetBalloonHelpString("Uncheck all save boxes");
+  this->Script("pack %s -side left -anchor w -padx 2 -pady 2", 
+              this->SelectNoneButton->GetWidgetName());
 
   // add a data file browser 
-  this->SaveDataButton = vtkKWLoadSaveButtonWithLabel::New ( );
-  this->SaveDataButton->SetParent ( dataFrame->GetFrame() );
-  this->SaveDataButton->Create ( );
-  this->SaveDataButton->SetLabelPositionToLeft();
-  this->SaveDataButton->SetLabelText ("Set Data Directory for All Selected:");
-  this->SaveDataButton->GetWidget()->TrimPathFromFileNameOff();
-  this->SaveDataButton->GetWidget()->SetMaximumFileNameLength(64);
-  this->SaveDataButton->GetWidget()->GetLoadSaveDialog()->ChooseDirectoryOn();
-  this->SaveDataButton->GetWidget()->GetLoadSaveDialog()->RetrieveLastPathFromRegistry(
+  this->ChangeAllSelectedDirButton = vtkKWLoadSaveButtonWithLabel::New ( );
+  this->ChangeAllSelectedDirButton->SetParent ( buttonFrame );
+  this->ChangeAllSelectedDirButton->Create ( );
+  this->ChangeAllSelectedDirButton->SetLabelPositionToLeft();
+  this->ChangeAllSelectedDirButton->SetLabelText ("Change Destination for All Selected:");
+  this->ChangeAllSelectedDirButton->GetWidget()->TrimPathFromFileNameOff();
+  this->ChangeAllSelectedDirButton->GetWidget()->SetMaximumFileNameLength(64);
+  this->ChangeAllSelectedDirButton->GetWidget()->GetLoadSaveDialog()->ChooseDirectoryOn();
+  this->ChangeAllSelectedDirButton->GetWidget()->GetLoadSaveDialog()->RetrieveLastPathFromRegistry(
     "OpenPath");
-  this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
-                 this->SaveDataButton->GetWidgetName());
-
-  // Scene Frame
-  vtkKWFrameWithLabel *frame = vtkKWFrameWithLabel::New ( );
-  frame->SetParent ( this->SaveDialog );
-  frame->Create ( );
-  frame->SetLabelText ("Save Scene Options");
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 frame->GetWidgetName() );
+  this->Script("pack %s -side right -anchor nw -expand n -padx 2 -pady 2", 
+                 this->ChangeAllSelectedDirButton->GetWidgetName());
+ 
+  // add the multicolumn list to show the points
+  this->MultiColumnList = vtkKWMultiColumnListWithScrollbars::New ( );
+  this->MultiColumnList->SetParent ( dataFrame->GetFrame() );
+  this->MultiColumnList->Create ( );
+  //this->MultiColumnList->SetHeight(4);
+  this->MultiColumnList->GetWidget()->SetSelectionTypeToCell();
   
-
-  // add a scene file browser 
-  this->SaveSceneButton = vtkKWLoadSaveButtonWithLabel::New ( );
-  this->SaveSceneButton->SetParent ( frame->GetFrame() );
-  this->SaveSceneButton->Create ( );
-  this->SaveSceneButton->SetLabelPositionToLeft();
-  this->SaveSceneButton->SetLabelText ("Scene File:");
-  this->SaveSceneButton->GetWidget()->TrimPathFromFileNameOff();
-  this->SaveSceneButton->GetWidget()->SetMaximumFileNameLength(100);
-  this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes(
-                                                            "{ {scene} {*.mrml} }");
-  this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->SetDefaultExtension(".mrml");
-  this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->SaveDialogOn();
-  this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->RetrieveLastPathFromRegistry(
-    "OpenPath");
-  this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
-              this->SaveSceneButton->GetWidgetName());
-  // scene name
-  //this->SceneName = vtkKWEntryWithLabel::New();
-  /***
-  this->SceneName->SetParent(frame->GetFrame());
-  this->SceneName->Create();
-  this->SceneName->SetWidth(20);
-  this->SceneName->SetLabelWidth(12);
-  this->SceneName->SetLabelText("Scene Name:");
-  this->SceneName->GetWidget()->SetValue ( "" );
-  this->Script(
-    "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
-    this->SceneName->GetWidgetName());
-  ***/
+  this->SetupSaveDataListWidget();
+  this->Script ( "pack %s -side top -fill both -expand y",
+                     this->MultiColumnList->GetWidgetName());
 
   // save Frame
   vtkKWFrame *saveFrame = vtkKWFrame::New ( );
@@ -1265,43 +1368,39 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  saveFrame->GetWidgetName() );
 
-  // add Cancel button
-  this->CancelButton = vtkKWPushButton::New ( );
-  this->CancelButton->SetParent ( saveFrame );
-  this->CancelButton->Create ( );
-  this->CancelButton->SetText ("Cancel");
-  this->Script("pack %s -side right -anchor w -padx 16 -pady 4", 
-              this->CancelButton->GetWidgetName());
-
-  // add SaveDataOnlyButton button
-  this->SaveDataOnlyButton = vtkKWPushButton::New ( );
-  this->SaveDataOnlyButton->SetParent ( saveFrame );
-  this->SaveDataOnlyButton->Create ( );
-  this->SaveDataOnlyButton->SetText ("Save Selected Data Only");
-  this->Script("pack %s -side right -anchor w -padx 4 -pady 4", 
-              this->SaveDataOnlyButton->GetWidgetName());
-
   // add OK button
   this->OkButton = vtkKWPushButton::New ( );
   this->OkButton->SetParent ( saveFrame );
   this->OkButton->Create ( );
-  this->OkButton->SetText ("Save Scene & Selected Data");
-  this->Script("pack %s -side right -anchor w -padx 4 -pady 4", 
-              this->OkButton->GetWidgetName());
+  this->OkButton->SetText ("Save Selected");
+  //this->Script("pack %s -side right -anchor center -padx 16 -pady 4", 
+  //            this->OkButton->GetWidgetName());
+  this->Script ( "grid %s -row 0 -column 0 -sticky news -padx 8 -pady 4 ", 
+    this->OkButton->GetWidgetName());
+
+  // add Cancel button
+  this->CancelButton = vtkKWPushButton::New ( );
+  this->CancelButton->SetParent ( saveFrame );
+  this->CancelButton->Create ( );
+  this->CancelButton->SetWidth (this->OkButton->GetWidth());
+  this->CancelButton->SetText ("Cancel");
+
+  //this->Script("pack %s -side right -anchor center -padx 16 -pady 4", 
+  //            this->CancelButton->GetWidgetName());
+  this->Script ( "grid %s -row 0 -column 1 -sticky news -padx 8 -pady 4 ", 
+    this->CancelButton->GetWidgetName());
 
   // add observers
   this->AddWidgetObservers();
   
   this->MultiColumnList->SetEnabled(1);
   this->OkButton->SetEnabled(1);
-  this->SaveDataOnlyButton->SetEnabled(1);
   
   if (this->MRMLScene != NULL)
     {
     this->SetAndObserveMRMLScene(this->MRMLScene);
     }
 
-  frame->Delete();
   dataFrame->Delete();
   saveFrame->Delete();
   buttonFrame->Delete();
@@ -1372,29 +1471,6 @@ void vtkSlicerMRMLSaveDataWidget::Invoke ( )
 {
   this->Create();
 
-  if (this->MRMLScene != NULL)
-    {
-    std::string dir = this->MRMLScene->GetRootDirectory();
-    if (dir[dir.size()-1] != '/')
-      {
-      dir += std::string("/");
-      }
-    this->SetDataDirectoryName(dir.c_str());
-    if (this->DataDirectoryName && *this->DataDirectoryName)
-      {
-      this->SaveDataButton->GetWidget()->SetInitialFileName(
-        this->DataDirectoryName);
-      this->SaveDataButton->GetWidget()->GetLoadSaveDialog()->
-        SetFileName(this->DataDirectoryName);
-      }
-    const char *url = this->MRMLScene->GetURL();
-    if (url && *url)
-      {
-      this->SaveSceneButton->GetWidget()->SetInitialFileName(url);
-      this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->SetFileName(url);
-      }
-    }
-    
   this->UpdateFromMRML();
 
   if (this->SaveDialog)
@@ -1431,6 +1507,7 @@ void vtkSlicerMRMLSaveDataWidget::UpdateDataTableCell(
         }
 
       if(strcmp(pText, oldFileName.c_str())
+        && !this->IsSceneRow(row)
         && this->IsRowFileFormatSet(row))
         {
         this->UpdateRowFileFormatWithName(row);
@@ -1536,6 +1613,31 @@ void vtkSlicerMRMLSaveDataWidget::SetRowModified(
     row,Status_Column,strText.c_str());
 }
 
+//---------------------------------------------------------------------------
+int vtkSlicerMRMLSaveDataWidget::IsRowModified( int row)
+{
+  return (strcmp(this->MultiColumnList->GetWidget()
+    ->GetCellText(row,Status_Column), "Modified")==0);
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerMRMLSaveDataWidget::SetAllRowsSelected(int selected)
+{
+  int nrows = this->MultiColumnList->GetWidget()->GetNumberOfRows();
+  for (int row=0; row<nrows; row++)
+    {
+    if(selected && this->IsRowFileFormatSet(row))
+      {
+      this->SetRowMarkedForSave(row, 1, 0);
+      }
+    else
+      {
+      this->SetRowMarkedForSave(row, 0, 0);
+      }
+    }
+  this->UpdateEnableState();
+}
+
 //----------------------------------------------------------------------------
 void vtkSlicerMRMLSaveDataWidget::UpdateEnableState()
 {
@@ -1551,12 +1653,12 @@ void vtkSlicerMRMLSaveDataWidget::UpdateEnableState()
       }
     }
   this->OkButton->SetEnabled(nrows>0 ? 1 : 0);
-  this->SaveDataOnlyButton->SetEnabled(numSelected>0 ? 1 : 0);
-  this->SaveDataButton->SetEnabled(numSelected>0 ? 1 : 0);
-  this->SaveSceneButton->SetEnabled(nrows>0 ? 1 : 0);
+  this->ChangeAllSelectedDirButton->SetEnabled(numSelected>0 ? 1 : 0);
 
-  this->SaveAllDataButton->SetEnabled(numSelected < nrows ? 1 : 0);
-  this->SaveNoDataButton->SetEnabled(numSelected > 0 ? 1 : 0);
+  this->SelectAllButton->SetEnabled(numSelected < nrows ? 1 : 0);
+  this->SelectNoneButton->SetEnabled(numSelected > 0 ? 1 : 0);
+  this->SelectSceneAndModifiedDataButton->SetEnabled(nrows>0 ? 1 : 0);
+  this->SelectModifiedDataButton->SetEnabled(nrows>0 ? 1 : 0);
 }
 
 //----------------------------------------------------------------------------

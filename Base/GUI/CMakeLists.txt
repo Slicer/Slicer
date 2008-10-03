@@ -69,6 +69,7 @@ set(SlicerBaseGUI_SRCS
   vtkSlicerViewControlIcons.cxx
   vtkSlicerSlicesControlIcons.cxx
   vtkSlicerCheckRadioButtonIcons.cxx
+  vtkSlicerSaveDataWidgetIcons.cxx
   vtkSlicerApplication.cxx
   vtkSlicerComponentGUI.cxx
   vtkSlicerModuleGUI.cxx

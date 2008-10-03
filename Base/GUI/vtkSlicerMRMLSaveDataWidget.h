@@ -38,6 +38,7 @@ class vtkKWMultiColumnListWithScrollbars;
 class vtkKWPushButton;
 class vtkMRMLStorageNode;
 class vtkStringArray;
+class vtkSlicerSaveDataWidgetIcons;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerMRMLSaveDataWidget : public vtkSlicerWidget
 {
@@ -93,7 +94,7 @@ protected:
   // Description:
   // Save Scene
   // Return 1 on success; 0 on failure
-  int SaveScene();
+  int SaveScene(int sceneRow);
 
   // Description:
   // Save all the node data given their corresponding row indices
@@ -179,6 +180,14 @@ protected:
   void SetRowModified(int row, int modified);
 
   // Description:
+  // Set the Status_Column to be "modified" or "not modified"
+  void SetAllRowsSelected(int selected);
+
+  // Description:
+  // Check the Status_Column or the row, "modified" or "not modified"
+  int IsRowModified( int row);
+
+  // Description:
   // Invoked when the user successfully updated the data table
   // located at ('row', 'col') with the new contents, as a result
   // of editing the corresponding cell interactively.
@@ -207,6 +216,22 @@ protected:
   // Disable the row for data saving
   virtual void DisableRowForSaving(int row, const char* filename);
 
+  // Description:
+  // Add a row for the mrml scene.
+  virtual void AddMRMLSceneRow();
+  
+  // Description:
+  // Check if a row is the row for MRML scene file by checking the type column.
+  virtual int IsSceneRow(int row);
+
+  // Description:
+  // Get the index of the scene row
+  virtual int GetSceneRowIndex();
+  
+  // Description:
+  // Save the scene with modified and marked data.
+  virtual void SaveSceneWithData(int sceneRow);
+
   //BTX
   // Description:
   // The column orders in the list box
@@ -223,6 +248,10 @@ protected:
     Hidden_StorageNodeID_Column,
     Hidden_FileName_Column 
     };
+
+  // Description:
+  // Get the full file name of the row
+  std::string GetRowFullFileName(int row);
   //ETX
 
 private:
@@ -236,24 +265,18 @@ private:
   
   vtkKWDialog *SaveDialog;
 
-  vtkKWLoadSaveButtonWithLabel *SaveSceneButton;
+  vtkSlicerSaveDataWidgetIcons* GUIIcons;
 
-  //vtkKWEntryWithLabel *SceneName;
-
-  //vtkKWCheckButton *SaveSceneCheckBox;
-
- 
-  
-  vtkKWLoadSaveButtonWithLabel *SaveDataButton;
+  vtkKWLoadSaveButtonWithLabel *ChangeAllSelectedDirButton;
 
   // Description:
   // change all the save flags on the data
-  vtkKWPushButton *SaveAllDataButton;
-  vtkKWPushButton *SaveNoDataButton;
+  vtkKWPushButton *SelectAllButton;
+  vtkKWPushButton *SelectNoneButton;
+  vtkKWPushButton *SelectModifiedDataButton;
+  vtkKWPushButton *SelectSceneAndModifiedDataButton;
   
-  vtkKWPushButton *SaveDataOnlyButton;
   vtkKWPushButton *OkButton;
-
   vtkKWPushButton *CancelButton;
   
   vtkKWMultiColumnListWithScrollbars *MultiColumnList;
