@@ -25,6 +25,7 @@
 #include "vtkPointData.h"
 
 #include "vtkMRMLTransformableNode.h"
+#include "vtkMRMLModelNode.h"
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLFiberBundleNode.h"
@@ -54,7 +55,7 @@ void vtkSlicerTractographyFiducialSeedingLogic::PrintSelf(ostream& os, vtkIndent
 }
 
 int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTensorVolumeNode *volumeNode,
-                                                            vtkMRMLFiducialListNode *fiducialListNode,
+                                                            vtkMRMLTransformableNode *transformableNode,
                                                             vtkMRMLFiberBundleNode *fiberNode,
                                                             const char * stoppingMode, 
                                                             double stoppingValue, 
@@ -63,8 +64,8 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
                                                             double regionSize, double sampleStep)
 {
   // 0. check inputs
-  if (volumeNode == NULL || fiducialListNode == NULL || fiberNode == NULL ||
-      volumeNode->GetImageData() == NULL || fiducialListNode->GetNumberOfFiducials() == 0)
+  if (volumeNode == NULL || transformableNode == NULL || fiberNode == NULL ||
+      volumeNode->GetImageData() == NULL)
     {
     if (fiberNode && fiberNode->GetPolyData())
       {
@@ -82,7 +83,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   
   //2. Set Up matrices
   vtkMRMLTransformNode* vxformNode = volumeNode->GetParentTransformNode();
-  vtkMRMLTransformNode* fxformNode = fiducialListNode->GetParentTransformNode();
+  vtkMRMLTransformNode* fxformNode = transformableNode->GetParentTransformNode();
   vtkMatrix4x4* transformVolumeToFifucial = vtkMatrix4x4::New();
   transformVolumeToFifucial->Identity();
   if (fxformNode != NULL )
@@ -182,29 +183,50 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   // Temp fix to provide a scalar
   seed->GetInputTensorField()->GetPointData()->SetScalars(volumeNode->GetImageData()->GetPointData()->GetScalars());
   
-  
+  vtkMRMLFiducialListNode *fiducialListNode = vtkMRMLFiducialListNode::SafeDownCast(transformableNode);
+  vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(transformableNode);
+
   // loop over fiducials
-  int nf = fiducialListNode->GetNumberOfFiducials();
-  for (int f=0; f<nf; f++)
+  if (fiducialListNode) 
     {
-    float *xyzf = fiducialListNode->GetNthFiducialXYZ(f);
-    for (float x = -regionSize/2.0; x <= regionSize/2.0; x+=sampleStep)
+    int nf = fiducialListNode->GetNumberOfFiducials();
+    for (int f=0; f<nf; f++)
       {
-      for (float y = -regionSize/2.0; y <= regionSize/2.0; y+=sampleStep)
+      float *xyzf = fiducialListNode->GetNthFiducialXYZ(f);
+      for (float x = -regionSize/2.0; x <= regionSize/2.0; x+=sampleStep)
         {
-        for (float z = -regionSize/2.0; z <= regionSize/2.0; z+=sampleStep)
+        for (float y = -regionSize/2.0; y <= regionSize/2.0; y+=sampleStep)
           {
-          float newXYZ[3];
-          newXYZ[0] = xyzf[0] + x;
-          newXYZ[1] = xyzf[1] + y;
-          newXYZ[2] = xyzf[2] + z;
-          float *xyz = transFiducial->TransformFloatPoint(newXYZ);
-          //Run the thing
-          seed->SeedStreamlineFromPoint(xyz[0], xyz[1], xyz[2]);
+          for (float z = -regionSize/2.0; z <= regionSize/2.0; z+=sampleStep)
+            {
+            float newXYZ[3];
+            newXYZ[0] = xyzf[0] + x;
+            newXYZ[1] = xyzf[1] + y;
+            newXYZ[2] = xyzf[2] + z;
+            float *xyz = transFiducial->TransformFloatPoint(newXYZ);
+            //Run the thing
+            seed->SeedStreamlineFromPoint(xyz[0], xyz[1], xyz[2]);
+            }
           }
         }
       }
     }
+  
+  // loop over points in the models
+  if (modelNode) 
+    {
+    int nf = modelNode->GetPolyData()->GetNumberOfPoints();
+    for (int f=0; f<nf; f++)
+      {
+      double *xyzf = modelNode->GetPolyData()->GetPoint(f);
+
+      double *xyz = transFiducial->TransformDoublePoint(xyzf);
+           
+      //Run the thing
+      seed->SeedStreamlineFromPoint(xyz[0], xyz[1], xyz[2]);
+      }
+    }
+    
     
   //6. Extra5ct PolyData in RAS
   vtkPolyData *outFibers = vtkPolyData::New();

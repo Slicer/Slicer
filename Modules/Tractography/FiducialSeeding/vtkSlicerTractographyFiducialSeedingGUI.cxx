@@ -35,6 +35,8 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLTransformableNode.h"
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLFiducialListNode.h"
+#include "vtkMRMLTransformableNode.h"
+#include "vtkMRMLModelNode.h"
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLTransformNode.h"
 
@@ -85,7 +87,7 @@ vtkSlicerTractographyFiducialSeedingGUI::vtkSlicerTractographyFiducialSeedingGUI
 
   this->TractographyFiducialSeedingNodeSelector = vtkSlicerNodeSelectorWidget::New();
 
-  this->FiducialListNode = NULL;
+  this->TransformableNode = NULL;
   
   this->StoppingMode = NULL;
   this->StoppingThreshold=0.15;
@@ -175,7 +177,7 @@ vtkSlicerTractographyFiducialSeedingGUI::~vtkSlicerTractographyFiducialSeedingGU
     this->TractographyFiducialSeedingNodeSelector = NULL;
   }
 
-  vtkSetAndObserveMRMLNodeMacro(this->FiducialListNode, NULL);
+  vtkSetAndObserveMRMLNodeMacro(this->TransformableNode, NULL);
   
   vtkSetMRMLNodeMacro(this->TractographyFiducialSeedingNode, NULL);
 
@@ -275,10 +277,8 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessGUIEvents ( vtkObject *call
     
     int createFiber = 1;
     vtkMRMLDiffusionTensorVolumeNode *volumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->VolumeSelector->GetSelected());
-    vtkMRMLFiducialListNode *fiducialListNode = vtkMRMLFiducialListNode::SafeDownCast(this->FiducialSelector->GetSelected());
-  
-
-    if (this->OverwritePolyDataWarning && volumeNode && fiducialListNode && fiberNode && fiberNode->GetPolyData() != NULL)
+    vtkMRMLTransformableNode *fiducialListNode = vtkMRMLTransformableNode::SafeDownCast(this->FiducialSelector->GetSelected());  
+    if (this->OverwritePolyDataWarning && volumeNode && fiducialListNode  && fiberNode && fiberNode->GetPolyData() != NULL)
       {
       vtkKWMessageDialog *message = vtkKWMessageDialog::New();
       message->SetParent ( this->UIPanel->GetPageWidget ( "Tractography" ) );
@@ -296,14 +296,9 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessGUIEvents ( vtkObject *call
     }
   if (selector == this->FiducialSelector && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent  &&
     this->FiducialSelector->GetSelected() != NULL) 
-    { 
-    vtkMRMLFiducialListNode* n = vtkMRMLFiducialListNode::SafeDownCast(this->FiducialSelector->GetSelected());
-    vtkIntArray *events = vtkIntArray::New();
-    //events->InsertNextValue( vtkCommand::ModifiedEvent);
-    events->InsertNextValue( vtkMRMLFiducialListNode::FiducialModifiedEvent);
-    events->InsertNextValue( vtkMRMLTransformableNode::TransformModifiedEvent);
-    vtkSetAndObserveMRMLNodeEventsMacro(this->FiducialListNode, n, events);
-    events->Delete();
+    {
+    vtkMRMLTransformableNode *node = vtkMRMLTransformableNode::SafeDownCast(this->FiducialSelector->GetSelected());
+    this->AddTransformableNodeObserver(node);
 
     this->CreateTracts();
     }
@@ -430,7 +425,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessMRMLEvents ( vtkObject *cal
   if (event == vtkMRMLScene::SceneCloseEvent)
     {
     vtkSetAndObserveMRMLNodeMacro( this->TractographyFiducialSeedingNode, NULL);
-    this->AddFiducialListNodeObserver(NULL);
+    this->AddTransformableNodeObserver(NULL);
     return;
     }
   // if parameter node has been added, update GUI widgets with new values
@@ -440,16 +435,16 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessMRMLEvents ( vtkObject *cal
     {
     vtkSetAndObserveMRMLNodeMacro( this->TractographyFiducialSeedingNode, snode);
    
-    vtkMRMLFiducialListNode *fn = NULL;
+    vtkMRMLTransformableNode *fn = NULL;
     if (this->GetMRMLScene() && this->TractographyFiducialSeedingNode->GetInputFiducialRef())
       {
-      fn = vtkMRMLFiducialListNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(
+      fn = vtkMRMLTransformableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(
           this->TractographyFiducialSeedingNode->GetInputFiducialRef()));
     
       }
     if (fn)
       {
-      this->AddFiducialListNodeObserver(fn);
+      this->AddTransformableNodeObserver(fn);
       }
     this->UpdateGUI();
     this->CreateTracts();
@@ -460,16 +455,16 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessMRMLEvents ( vtkObject *cal
   snode = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(caller);
   if (snode != NULL && this->GetTractographyFiducialSeedingNode() == snode) 
     {
-    vtkMRMLFiducialListNode *fn = NULL;
+    vtkMRMLTransformableNode *fn = NULL;
     if (this->GetMRMLScene() && this->TractographyFiducialSeedingNode->GetInputFiducialRef())
       {
-      fn = vtkMRMLFiducialListNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(
+      fn = vtkMRMLTransformableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(
           this->TractographyFiducialSeedingNode->GetInputFiducialRef()));
     
       }
-    if (fn != this->FiducialListNode)
+    if (fn != this->TransformableNode)
       {
-      this->AddFiducialListNodeObserver(fn);
+      this->AddTransformableNodeObserver(fn);
       }
     this->UpdateGUI();
     this->CreateTracts();
@@ -477,21 +472,28 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessMRMLEvents ( vtkObject *cal
     }
 
   // if parameter node has been changed externally, update GUI widgets with new values
-  vtkMRMLFiducialListNode* node = vtkMRMLFiducialListNode::SafeDownCast(caller);
-  if (node != NULL && this->FiducialListNode == node) 
+  vtkMRMLTransformableNode* node = vtkMRMLTransformableNode::SafeDownCast(caller);
+  if (node != NULL && this->TransformableNode == node) 
     {
     this->CreateTracts();
     }
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerTractographyFiducialSeedingGUI::AddFiducialListNodeObserver(vtkMRMLFiducialListNode *n)
+void vtkSlicerTractographyFiducialSeedingGUI::AddTransformableNodeObserver(vtkMRMLTransformableNode *n)
 {
     vtkIntArray *events = vtkIntArray::New();
     //events->InsertNextValue( vtkCommand::ModifiedEvent);
-    events->InsertNextValue( vtkMRMLFiducialListNode::FiducialModifiedEvent);
     events->InsertNextValue( vtkMRMLTransformableNode::TransformModifiedEvent);
-    vtkSetAndObserveMRMLNodeEventsMacro(this->FiducialListNode, n, events);
+    if (vtkMRMLModelNode::SafeDownCast(n) != NULL) 
+      {
+      events->InsertNextValue( vtkMRMLModelNode::PolyDataModifiedEvent);
+      }
+    else if (vtkMRMLFiducialListNode::SafeDownCast(n) != NULL) 
+      {
+      events->InsertNextValue( vtkMRMLFiducialListNode::FiducialModifiedEvent);
+      }
+    vtkSetAndObserveMRMLNodeEventsMacro(this->TransformableNode, n, events);
     events->Delete();
   }
 
@@ -505,7 +507,7 @@ void vtkSlicerTractographyFiducialSeedingGUI:: CreateTracts()
     }
   
   vtkMRMLDiffusionTensorVolumeNode *volumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->VolumeSelector->GetSelected());
-  vtkMRMLFiducialListNode *fiducialListNode = vtkMRMLFiducialListNode::SafeDownCast(this->FiducialSelector->GetSelected());
+  vtkMRMLTransformableNode *fiducialListNode = vtkMRMLTransformableNode::SafeDownCast(this->FiducialSelector->GetSelected());
   vtkMRMLFiberBundleNode *fiberNode = vtkMRMLFiberBundleNode::SafeDownCast(this->OutFiberSelector->GetSelected());
   
   std::string stopingMode = this->StoppingModeMenu->GetWidget()->GetValue ();
@@ -592,6 +594,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
                 this->VolumeSelector->GetWidgetName());
   
   this->FiducialSelector->SetNodeClass("vtkMRMLFiducialListNode", NULL, NULL, NULL);
+  this->FiducialSelector->AddNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
   this->FiducialSelector->SetNewNodeEnabled(0);
   this->FiducialSelector->NoneEnabledOn();
   this->FiducialSelector->SetShowHidden(1);
@@ -600,8 +603,8 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
   this->FiducialSelector->SetMRMLScene(this->GetApplicationLogic()->GetMRMLScene());
   this->FiducialSelector->UpdateMenu();
   this->FiducialSelector->SetBorderWidth(2);
-  this->FiducialSelector->SetLabelText( "Select FiducialList");
-  this->FiducialSelector->SetBalloonHelpString("select a fiducial list for seeding.");
+  this->FiducialSelector->SetLabelText( "Select FiducialList or Model");
+  this->FiducialSelector->SetBalloonHelpString("select a fiducial list or model for seeding.");
   app->Script("pack %s -side top -anchor e -padx 20 -pady 4", 
                 this->FiducialSelector->GetWidgetName());
 
@@ -662,21 +665,21 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
 
   this->RegionSizeScale->SetParent ( moduleFrame->GetFrame() );
   this->RegionSizeScale->Create ( );
-  this->RegionSizeScale->SetLabelText("Seeding Region Size (mm)");
+  this->RegionSizeScale->SetLabelText("Fiducail Seeding Region Size (mm)");
   this->RegionSizeScale->GetWidget()->SetRange(0,10);
   this->RegionSizeScale->GetWidget()->SetResolution(0.5);
   this->RegionSizeScale->GetWidget()->SetValue(1.0);
-  this->RegionSizeScale->SetBalloonHelpString("The size of the seeding region.");
+  this->RegionSizeScale->SetBalloonHelpString("The size of the seeding region for each fiducail.");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->RegionSizeScale->GetWidgetName() );
 
   this->RegionSampleSizeScale->SetParent ( moduleFrame->GetFrame() );
   this->RegionSampleSizeScale->Create ( );
-  this->RegionSampleSizeScale->SetLabelText("Seeding Step Size (mm)");
+  this->RegionSampleSizeScale->SetLabelText("Fiducail Seeding Step Size (mm)");
   this->RegionSampleSizeScale->GetWidget()->SetRange(1,10);
   this->RegionSampleSizeScale->GetWidget()->SetResolution(0.5);
   this->RegionSampleSizeScale->GetWidget()->SetValue(0.5);
-  this->RegionSampleSizeScale->SetBalloonHelpString("Step between seedin samples");
+  this->RegionSampleSizeScale->SetBalloonHelpString("Step between seedin samples in the fiducial regob=n");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->RegionSampleSizeScale->GetWidgetName() );
 

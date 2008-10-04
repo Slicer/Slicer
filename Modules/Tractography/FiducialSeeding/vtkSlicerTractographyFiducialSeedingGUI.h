@@ -18,7 +18,8 @@
 #include "vtkSlicerModuleGUI.h"
 
 #include "vtkMRMLScene.h"
-#include "vtkMRMLFiducialListNode.h"
+#include "vtkMRMLTransformableNode.h"
+#include "vtkMRMLNode.h"
 
 #include "vtkSlicerTractographyFiducialSeeding.h"
 #include "vtkMRMLTractographyFiducialSeedingNode.h"
@@ -117,7 +118,7 @@ class VTK_FIDUCIALSEEDING_EXPORT vtkSlicerTractographyFiducialSeedingGUI : publi
   // Description: Get/Set MRML node
   vtkGetObjectMacro (TractographyFiducialSeedingNode, vtkMRMLTractographyFiducialSeedingNode);
 
-  void AddFiducialListNodeObserver(vtkMRMLFiducialListNode *n);
+  void AddTransformableNodeObserver(vtkMRMLTransformableNode *n);
   
 protected:
   vtkSlicerTractographyFiducialSeedingGUI();
@@ -159,9 +160,7 @@ protected:
   vtkSlicerNodeSelectorWidget* TractographyFiducialSeedingNodeSelector;
 
 
-  void SetFiducialListNode(vtkMRMLFiducialListNode* FiducialListNode);
-
-  vtkMRMLFiducialListNode* FiducialListNode;
+  vtkMRMLTransformableNode* TransformableNode;
   vtkMRMLTractographyFiducialSeedingNode *TractographyFiducialSeedingNode;
 
   int UpdatingMRML;
