@@ -261,6 +261,8 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::AddSliceGlyphDisplayNodes( vtkMRML
         this->GetScene()->AddNode(node);
         node->Delete();
 
+        node->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(glyphDTDPN->GetID());
+
         node->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
 
         volumeNode->AddAndObserveDisplayNodeID(node->GetID());
