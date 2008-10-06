@@ -62,6 +62,8 @@ subdirs(
    EMSegment
    DistanceMapFiducials
    #VolumeRenderingCuda
+   OpenIGTLink
+   NeuroNav
   )
 
 if(Slicer3_USE_NAVITRACK)
