@@ -1154,7 +1154,6 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   vtkMRMLScalarVolumeNode *svnd = 0;
   vtkMRMLVectorVolumeNode *vvnd = 0;
   vtkMRMLDiffusionTensorVolumeNode *dtvnd = 0;
-  vtkMRMLDiffusionTensorDisplayPropertiesNode *dwdpn = NULL;
   vtkMRMLDiffusionWeightedVolumeNode *dwvnd = 0;
   vtkMRMLModelNode *mnd = 0;
   vtkMRMLLinearTransformNode *ltnd = 0;
@@ -1443,7 +1442,6 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       {
       vtkMRMLDiffusionTensorVolumeDisplayNode *dtvdn = vtkMRMLDiffusionTensorVolumeDisplayNode::New();
       disp = dtvdn; // assign to superclass pointer
-      //dwdpn->Delete();
       }
     else
       {
