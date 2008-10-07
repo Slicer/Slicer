@@ -29,10 +29,16 @@ ITKImageFileFormat FileFormatTable[] =
   {"BioRadImageIO", "Binary header followed by pixel data in binary", "BioRad", ".pic"},
   {"Brains2MaskImageIO", "Binary Mask Octree-encoded", "Brains2", ".mask"},
  // {"DICOMImageIO2", "Deprecated", "DICOM", "---"},
-  {"GDCMImageIO", "DICOM 2D, 3D and 4D", "DICOM", ".dcm"},
-  {"GDCMImageIO", "DICOM 2D, 3D and 4D", "DICOM", ".DCM"},
-  {"GDCMImageIO", "DICOM 2D, 3D and 4D", "DICOM", ".dicom"},
-  {"GDCMImageIO", "DICOM 2D, 3D and 4D", "DICOM", ".DICOM"},
+
+
+ // These are disabled for now, because we need more specifications for saving this format, 
+ // and Slicer has other ways to save out dicom files.
+//  {"GDCMImageIO", "DICOM 2D, 3D and 4D", "DICOM", ".dcm"},
+//  {"GDCMImageIO", "DICOM 2D, 3D and 4D", "DICOM", ".DCM"},
+//  {"GDCMImageIO", "DICOM 2D, 3D and 4D", "DICOM", ".dicom"},
+//  {"GDCMImageIO", "DICOM 2D, 3D and 4D", "DICOM", ".DICOM"},
+
+
 //  {"GE4ImageIO", "Not Available for Writing", "GE4", "---"},
 //  {"GE5ImageIO", "Not Available for Writing", "GE5", "---"},
 //  {"GEAwImageIO", "Not Available for Writing", "GEAw", "---"},

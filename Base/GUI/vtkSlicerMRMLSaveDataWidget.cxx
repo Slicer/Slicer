@@ -820,8 +820,18 @@ void vtkSlicerMRMLSaveDataWidget::AddMRMLSceneRow()
       this->ChangeAllSelectedDirButton->GetWidget()->GetLoadSaveDialog()->
         SetFileName(this->DataDirectoryName);
       }
+    std::string uriName;
     const char *url = this->MRMLScene->GetURL();
-    if (url && *url)
+    if (!url || !(*url))
+      {
+      uriName = dir.append("SlicerScene1");
+      }
+    else
+      {
+      uriName = url;
+      }
+
+    if(!uriName.empty())
       {
       vtkKWMultiColumnList* dataTable = this->MultiColumnList->GetWidget();
       int row = dataTable->GetNumberOfRows();
@@ -838,12 +848,12 @@ void vtkSlicerMRMLSaveDataWidget::AddMRMLSceneRow()
       dataTable->SetCellWindowCommandToComboBoxWithValues(
         row, Format_Column, 1, mrmlFileFormats);
 
-      this->SetFileNameAndDirectoryCells(row, url);
+      this->SetFileNameAndDirectoryCells(row, uriName.c_str());
       dataTable->SetCellEditable(row,Format_Column, 0);
       dataTable->SetCellEnabledAttribute(row, Format_Column, 0);
 
-      //this->SaveSceneButton->GetWidget()->SetInitialFileName(url);
-      //this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->SetFileName(url);
+      //this->SaveSceneButton->GetWidget()->SetInitialFileName(uriName.c_str());
+      //this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->SetFileName(uriName.c_str());
       }
     }
 }

@@ -240,5 +240,5 @@ int vtkMRMLUnstructuredGridStorageNode::SupportedFileType(const char *fileName)
 void vtkMRMLUnstructuredGridStorageNode::InitializeSupportedWriteFileTypes()
 {
   this->SupportedWriteFileTypes->InsertNextValue(
-    "vtkUnstructuredGridWriter (.vtk)");
+    "Unstructured Grid (.vtk)");
 }

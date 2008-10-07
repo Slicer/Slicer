@@ -431,10 +431,10 @@ void vtkMRMLModelStorageNode::InitializeSupportedWriteFileTypes()
 {
   // Look at WriteData(), .g and .meta are not being written even though 
   // SupportedFileType() says they are supported
-  this->SupportedWriteFileTypes->InsertNextValue("vtkPolyDataWriter (.vtk)");
-  this->SupportedWriteFileTypes->InsertNextValue("vtkXMLPolyDataReader (.vtp)");
+  this->SupportedWriteFileTypes->InsertNextValue("Poly Data (.vtk)");
+  this->SupportedWriteFileTypes->InsertNextValue("XML Poly Data (.vtp)");
   //
   //this->SupportedWriteFileTypes->InsertNextValue("vtkXMLPolyDataReader (.g)");
   //this->SupportedWriteFileTypes->InsertNextValue("vtkXMLPolyDataReader (.meta)");
-  this->SupportedWriteFileTypes->InsertNextValue("vtkSTLReader (.stl)");
+  this->SupportedWriteFileTypes->InsertNextValue("STL (.stl)");
 }

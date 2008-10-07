@@ -597,6 +597,6 @@ int vtkMRMLNRRDStorageNode::SupportedFileType(const char *fileName)
 //----------------------------------------------------------------------------
 void vtkMRMLNRRDStorageNode::InitializeSupportedWriteFileTypes()
 {
-  this->SupportedWriteFileTypes->InsertNextValue("vtkNRRDWriter (.nrrd)");
-  this->SupportedWriteFileTypes->InsertNextValue("vtkNRRDWriter (.nhdr)");
+  this->SupportedWriteFileTypes->InsertNextValue("NRRD (.nrrd)");
+  this->SupportedWriteFileTypes->InsertNextValue("NRRD (.nhdr)");
 }
