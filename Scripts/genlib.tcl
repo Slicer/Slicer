@@ -73,6 +73,7 @@ proc Usage { {msg ""} } {
     set msg "$msg\n   --update : do a cvs update even if there's an existing build"
     set msg "$msg\n   --release : compile with optimization flags"
     set msg "$msg\n   --nobuild : only download and/or update, but don't build"
+    set msg "$msg\n   --test-type : type of ctest to run (for enabled packages)"
     set msg "$msg\n   optional space separated list of packages to build (lower case)"
     puts stderr $msg
 }
@@ -80,6 +81,7 @@ proc Usage { {msg ""} } {
 set GENLIB(clean) "false"
 set GENLIB(update) "false"
 set GENLIB(buildit) "true"
+set GENLIB(test-type) ""
 set ::GENLIB(buildList) ""
 
 set isRelease 0
@@ -102,6 +104,15 @@ for {set i 0} {$i < $argc} {incr i} {
         }
         "--nobuild" {
             set ::GENLIB(buildit) "false"
+        }
+        "-t" -
+        "--test-type" {
+            incr i
+            if { $i == $argc } {
+                Usage "Missing test-type argument"
+            } else {
+                set ::GENLIB(test-type) [lindex $argv $i]
+            }
         }
         "--help" -
         "-h" {
@@ -880,7 +891,9 @@ if { [BuildThis $::ITK_TEST_FILE "itk"] == 1 } {
 if { [BuildThis $::TEEM_TEST_FILE "teem"] == 1 } {
     cd $Slicer3_LIB
 
-    runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/teem teem
+    #runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/teem teem
+    runcmd $::SVN co https://teem.svn.sourceforge.net/svnroot/teem/teem/trunk teem
+
 
     if {$::GENLIB(buildit)} {
       file mkdir $Slicer3_LIB/teem-build
@@ -916,12 +929,14 @@ if { [BuildThis $::TEEM_TEST_FILE "teem"] == 1 } {
         -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
         $C_FLAGS \
         -DBUILD_SHARED_LIBS:BOOL=ON \
-        -DBUILD_TESTING:BOOL=OFF \
+        -DBUILD_TESTING:BOOL=ON \
+        -DTEEM_BZIP2:BOOL=OFF \
         -DTEEM_ZLIB:BOOL=ON \
         -DTEEM_PNG:BOOL=ON \
         -DTEEM_VTK_MANGLE:BOOL=ON \
         -DTEEM_VTK_TOOLKITS_IPATH:FILEPATH=$::Slicer3_LIB/VTK-build \
-        -DZLIB_INCLUDE_DIR:PATH=$::Slicer3_LIB/VTK/Utilities/vtkzlib \
+        -DZLIB_INCLUDE_DIR:PATH=$::Slicer3_LIB/VTK/Utilities \
+        -DTEEM_VTK_ZLIB_MANGLE_IPATH:PATH=$::Slicer3_LIB/VTK/Utilities/vtkzlib \
         -DTEEM_ZLIB_DLLCONF_IPATH:PATH=$::Slicer3_LIB/VTK-build/Utilities \
         -DZLIB_LIBRARY:FILEPATH=$::Slicer3_LIB/VTK-build/bin/$::VTK_BUILD_SUBDIR/$zlib \
         -DPNG_PNG_INCLUDE_DIR:PATH=$::Slicer3_LIB/VTK/Utilities/vtkpng \
@@ -933,10 +948,17 @@ if { [BuildThis $::TEEM_TEST_FILE "teem"] == 1 } {
         if { $MSVC6 } {
             runcmd $::MAKE teem.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
         } else {
+          if { $::GENLIB(test-type) == "" } {
             runcmd $::MAKE teem.SLN /build  $::VTK_BUILD_TYPE
-        }
+          } else
+            runcmd $::MAKE teem.SLN /build  $::VTK_BUILD_TYPE $::GENLIB(test-type)
+          }
       } else {
-        eval runcmd $::MAKE 
+        if { $::GENLIB(test-type) == "" } {
+          eval runcmd $::MAKE 
+        } else {
+          eval runcmd $::MAKE $::GENLIB(test-type)
+        }
       }
   }
 }

@@ -334,6 +334,9 @@ if { $::GETBUILDTEST(release) != "" } {
 if { $::GETBUILDTEST(update) != "" } {
    append cmd " $::GETBUILDTEST(update)"
 } 
+if { $::GETBUILDTEST(test-type) != "" } {
+   append cmd " --test-type $::GETBUILDTEST(test-type)"
+} 
 if { $::GETBUILDTEST(buildList) != "" } {
     # puts "Passing $::GETBUILDTEST(buildList) to genlib"
     append cmd " $::GETBUILDTEST(buildList)"
