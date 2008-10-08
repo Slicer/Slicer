@@ -892,7 +892,7 @@ if { [BuildThis $::TEEM_TEST_FILE "teem"] == 1 } {
     cd $Slicer3_LIB
 
     #runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/teem teem
-    runcmd $::SVN co https://teem.svn.sourceforge.net/svnroot/teem/teem/trunk teem
+    runcmd echo t | $::SVN co https://teem.svn.sourceforge.net/svnroot/teem/teem/trunk teem
 
 
     if {$::GENLIB(buildit)} {
@@ -950,9 +950,10 @@ if { [BuildThis $::TEEM_TEST_FILE "teem"] == 1 } {
         } else {
           if { $::GENLIB(test-type) == "" } {
             runcmd $::MAKE teem.SLN /build  $::VTK_BUILD_TYPE
-          } else
+          } else {
             runcmd $::MAKE teem.SLN /build  $::VTK_BUILD_TYPE $::GENLIB(test-type)
           }
+        }
       } else {
         if { $::GENLIB(test-type) == "" } {
           eval runcmd $::MAKE 
