@@ -930,6 +930,7 @@ if { [BuildThis $::TEEM_TEST_FILE "teem"] == 1 } {
         $C_FLAGS \
         -DBUILD_SHARED_LIBS:BOOL=ON \
         -DBUILD_TESTING:BOOL=ON \
+        -DTEEM_PTHREAD:BOOL=OFF \
         -DTEEM_BZIP2:BOOL=OFF \
         -DTEEM_ZLIB:BOOL=ON \
         -DTEEM_PNG:BOOL=ON \
