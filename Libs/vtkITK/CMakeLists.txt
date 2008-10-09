@@ -57,7 +57,9 @@ set(vtkITK_SRCS
   vtkITKImageToImageFilterUSUL.h
   vtkITKImageToImageFilterUSUS.h
   vtkITKImageToImageFilterSS.h
+  vtkITKImageToImageFilterUSF.h
   vtkITKGradientAnisotropicDiffusionImageFilter.cxx
+  vtkITKDistanceTransform.cxx
   vtkITKLevelTracingImageFilter.cxx
   vtkITKLevelTracing3DImageFilter.cxx
   vtkITKWandImageFilter.cxx
