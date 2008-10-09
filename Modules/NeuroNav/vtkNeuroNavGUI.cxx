@@ -403,7 +403,8 @@ void vtkNeuroNavGUI::HandleMouseEvent(vtkSlicerInteractorStyle *style)
     }
   else if (style == istyle2)
     {
-    anno = appGUI->GetMainSliceGUI("Blue")->GetSliceViewer()->GetRenderWidget()->GetCornerAnnotation();
+    // ??!?!?! this would /never/ work!
+    //anno = appGUI->GetMainSliceGUI("Blue")->GetSliceViewer()->GetRenderWidget()->GetCornerAnnotation();
     }
 
   if (anno)
