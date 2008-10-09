@@ -16,6 +16,8 @@
 #include "vtkCallbackCommand.h"
 #include "vtkPlaneSource.h"
 #include "vtkPoints.h"
+#include "vtkImageBlend.h"
+#include "vtkImageMathematics.h"
 
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLTransformNode.h"
@@ -639,20 +641,62 @@ void vtkSlicerSliceLogic::UpdatePipeline()
     //    parameters.  Then check if this is the same as the current 'real' blend,
     //    and if not send a modified event
     //
+
+    vtkImageMathematics *tempMath = vtkImageMathematics::New();
     vtkImageBlend *tempBlend = vtkImageBlend::New();
+
+    bool alphaBlending = (this->SliceCompositeNode->GetCompositing() == 0);
     
+    if (this->SliceCompositeNode->GetCompositing()
+             == vtkMRMLSliceCompositeNode::Add)
+      {
+      // add the foreground and background
+      tempMath->SetOperationToAdd();
+      }
+    else if (this->SliceCompositeNode->GetCompositing()
+             == vtkMRMLSliceCompositeNode::Subtract)
+      {
+      // subtract the foreground and background
+      tempMath->SetOperationToSubtract();
+      }
+
+    if (!alphaBlending)
+      {
+      if (!(this->BackgroundLayer && this->BackgroundLayer->GetImageData())
+          || !(this->ForegroundLayer && this->ForegroundLayer->GetImageData()))
+        {
+        // not enough inputs for add/subtract, so use alpha blending
+        // pipeline
+        alphaBlending = true;
+        }
+      }
+
     tempBlend->RemoveAllInputs ( );
     int layerIndex = 0;
-    if ( this->BackgroundLayer && this->BackgroundLayer->GetImageData() )
+
+    if (!alphaBlending)
       {
-      tempBlend->AddInput( this->BackgroundLayer->GetImageData() );
+      tempMath->SetInput1( this->ForegroundLayer->GetImageData() );
+      tempMath->SetInput2( this->BackgroundLayer->GetImageData() );
+
+      tempBlend->AddInput( tempMath->GetOutput() );
       tempBlend->SetOpacity( layerIndex++, 1.0 );
       }
-    if ( this->ForegroundLayer && this->ForegroundLayer->GetImageData() )
+    else
       {
-      tempBlend->AddInput( this->ForegroundLayer->GetImageData() );
-      tempBlend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetForegroundOpacity() );
+      if ( this->BackgroundLayer && this->BackgroundLayer->GetImageData() )
+        {
+        tempBlend->AddInput( this->BackgroundLayer->GetImageData() );
+        tempBlend->SetOpacity( layerIndex++, 1.0 );
+        }
+      if ( this->ForegroundLayer && this->ForegroundLayer->GetImageData() )
+        {
+        tempBlend->AddInput( this->ForegroundLayer->GetImageData() );
+        tempBlend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetForegroundOpacity() );
+        }
       }
+
+    // always blending the label layer
     if ( this->LabelLayer && this->LabelLayer->GetImageData() )
       {
       tempBlend->AddInput( this->LabelLayer->GetImageData() );
@@ -678,6 +722,7 @@ void vtkSlicerSliceLogic::UpdatePipeline()
       }
 
     tempBlend->Delete();
+    tempMath->Delete();  // Blend may still be holding a reference
 
     //Models
 

@@ -87,6 +87,12 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   void SetReferenceLabelVolumeID(const char *id) { this->SetLabelVolumeID(id); }
 
   // Description:
+  // Compositing mode for foreground and background can be alpha
+  // blending, addition, or subtraction
+  vtkGetMacro (Compositing, int);
+  vtkSetMacro (Compositing, int);
+  
+  // Description:
   // opacity of the Foreground for rendering over background
   // TODO: make this an arbitrary list of layers
   // TODO: make different composite types (checkerboard, etc)
@@ -174,6 +180,13 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
       Normal = 0,
       JumpSlice
     };
+  // Modes for compositing
+  enum
+    {
+      Alpha = 0,
+      Add,
+      Subtract
+    };
   //ETX
 
 protected:
@@ -187,6 +200,8 @@ protected:
   char *LabelVolumeID;
   double ForegroundOpacity;
 
+  int Compositing;
+  
   double LabelOpacity;
   int LinkedControl;
 

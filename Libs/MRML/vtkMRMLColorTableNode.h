@@ -85,6 +85,30 @@ public:
   void SetTypeToRandom();
   void SetTypeToUser();
   void SetTypeToFile();
+  void SetTypeToRed();
+  void SetTypeToGreen();
+  void SetTypeToBlue();
+  void SetTypeToCyan();
+  void SetTypeToMagenta();
+  void SetTypeToYellow();
+  void SetTypeToWarm1();
+  void SetTypeToWarm2();
+  void SetTypeToWarm3();
+  void SetTypeToCool1();
+  void SetTypeToCool2();
+  void SetTypeToCool3();  
+  void SetTypeToWarmShade1();
+  void SetTypeToWarmShade2();
+  void SetTypeToWarmShade3();
+  void SetTypeToCoolShade1();
+  void SetTypeToCoolShade2();
+  void SetTypeToCoolShade3();  
+  void SetTypeToWarmTint1();
+  void SetTypeToWarmTint2();
+  void SetTypeToWarmTint3();
+  void SetTypeToCoolTint1();
+  void SetTypeToCoolTint2();
+  void SetTypeToCoolTint3();  
 
 
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
@@ -107,7 +131,22 @@ public:
   // Random - 255 random colors
   // User - user defined in the GUI
   // File - read in from file
-
+  // Red - red ramp (like greyscale but with red, meant for layering with cyan)
+  // Green - green ramp (like greyscale but with green, layering with magenta)
+  // Blue - blue ramp (like greyscale but with blue, layering with yellow)
+  // Yellow - yellow ramp (complementary ramp to blue, layering yeilds gray)
+  // Cyan - cyan ramp (complementary ramp to red, layering yeilds gray)
+  // Magenta - magenta ramp (complementary ramp to green, layering yeilds gray)
+  // Warm# - ramps of warm colors that are complimentary to Cool#
+  // WarmShade# - ramps of warm colors with variation in value that are
+  //       complimentary to CoolShade# 
+  // WarmTint# - ramps of warm colors with variation in saturation that are
+  //       complimentary to CoolTint# 
+  // Cool# - ramps of cool colors that are complimentary to Warm#
+  // CoolShade# - ramps of cool colors with variation in value that are
+  //       complimentary to WarmShade# 
+  // CoolTint# - ramps of cool colors with variation in saturation that are
+  //       complimentary to WarmSTint# 
   enum
     {
       FullRainbow = 0,
@@ -125,13 +164,37 @@ public:
       Random = 12,
       User = 13,
       File = 14,
+      Red = 15,
+      Green = 16,
+      Blue = 17,
+      Yellow = 18,
+      Cyan = 19,
+      Magenta = 20,
+      Warm1 = 21,
+      Warm2 = 22,
+      Warm3 = 23,
+      Cool1 = 24,
+      Cool2 = 25,
+      Cool3 = 26,
+      WarmShade1 = 27,
+      WarmShade2 = 28,
+      WarmShade3 = 29,
+      CoolShade1 = 30,
+      CoolShade2 = 31,
+      CoolShade3 = 32,
+      WarmTint1 = 33,
+      WarmTint2 = 34,
+      WarmTint3 = 35,
+      CoolTint1 = 36,
+      CoolTint2 = 37,
+      CoolTint3 = 38,
     };
   //ETX
 
   // Description:
   // Return the lowest and highest integers, for use in looping
   int GetFirstType () { return this->FullRainbow; };
-  int GetLastType () { return this->File; };
+  int GetLastType () { return this->CoolTint3; };
   
   // Description:
   // return a text string describing the colour look up table type

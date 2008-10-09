@@ -50,6 +50,7 @@ vtkSlicerSlicesControlGUI::vtkSlicerSlicesControlGUI ( )
   this->FitToWindowButton = vtkKWPushButton::New ( );
   this->CrossHairButton = vtkKWMenuButton::New ( );
   this->SpatialUnitsButton = vtkKWMenuButton::New ( );
+  this->CompositingButton = vtkKWMenuButton::New ( );
   this->AnnotationButton = vtkKWMenuButton::New ( );
   this->LabelOpacityTopLevel = vtkKWTopLevel::New ( );
   this->LabelOpacityScale = vtkKWScaleWithEntry::New ( );
@@ -174,6 +175,12 @@ vtkSlicerSlicesControlGUI::~vtkSlicerSlicesControlGUI ( )
     this->SpatialUnitsButton->Delete ( );
     this->SpatialUnitsButton = NULL;    
     }
+  if ( this->CompositingButton )
+    {
+    this->CompositingButton->SetParent ( NULL );
+    this->CompositingButton->Delete ( );
+    this->CompositingButton = NULL;    
+    }
   if ( this->AnnotationButton )
     {
     this->AnnotationButton->SetParent ( NULL );
@@ -243,6 +250,7 @@ void vtkSlicerSlicesControlGUI::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "LabelOpacityTopLevel: " << this->GetLabelOpacityTopLevel ( ) << "\n";
 
 //    os << indent << "GridButton: " << this->GetGridButton ( ) << "\n";
+    os << indent << "CompositingButton: " << this->GetCompositingButton ( ) << "\n";
     os << indent << "AnnotationButton: " << this->GetAnnotationButton ( ) << "\n";
     os << indent << "SpatialUnitsButton: " << this->GetSpatialUnitsButton ( ) << "\n";
     os << indent << "CrossHairButton: " << this->GetCrossHairButton ( ) << "\n";
@@ -403,6 +411,7 @@ void vtkSlicerSlicesControlGUI::RemoveGUIObservers ( )
   this->ShowFgButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ShowBgButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->LabelOpacityButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->CompositingButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->AnnotationButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SpatialUnitsButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->CrossHairButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -431,6 +440,7 @@ void vtkSlicerSlicesControlGUI::AddGUIObservers ( )
   this->ShowFgButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ShowBgButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->LabelOpacityButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->CompositingButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->AnnotationButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SpatialUnitsButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->CrossHairButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -638,7 +648,11 @@ void vtkSlicerSlicesControlGUI::ProcessGUIEvents ( vtkObject *caller,
       //
       // MenuButtons:
       //
-      if ( menu == this->AnnotationButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+      if ( menu == this->CompositingButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+        {
+        this->ModifyCompositingMode ( );
+        }
+      else if ( menu == this->AnnotationButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
         {
         this->ModifyAnnotationMode ( );
         }
@@ -1189,6 +1203,61 @@ void vtkSlicerSlicesControlGUI::ModifyAnnotationMode ( )
     }
 }
 
+//----------------------------------------------------------------------------
+void vtkSlicerSlicesControlGUI::ModifyCompositingMode ( )
+{
+  vtkSlicerApplicationGUI *appGUI;
+  vtkMRMLSliceCompositeNode *cnode;
+  
+  if ( this->GetApplication() )
+    {
+    appGUI = vtkSlicerApplicationGUI::SafeDownCast (this->GetApplicationGUI());
+    
+    // first save the state of all slice composite nodes for undo
+    int nnodes = appGUI->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+    vtkCollection *nodes = vtkCollection::New();
+    for (int i = 0; i < nnodes; i++)
+      {
+      cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
+             appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+      if ( cnode )
+        {
+        nodes->AddItem (cnode );
+        }
+    }
+    this->MRMLScene->SaveStateForUndo ( nodes );
+    nodes->Delete ( );
+
+    // then change the compositing mode for all slice composite nodes
+    for (int i = 0; i < nnodes; i++)
+      {
+      cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
+             appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+      if ( this->GetCompositingButton()->GetMenu()->GetItemSelectedState("Alpha blend") == 1)
+        {
+        if ( cnode->GetCompositing() != vtkMRMLSliceCompositeNode::Alpha )
+          {
+        cnode->SetCompositing ( vtkMRMLSliceCompositeNode::Alpha );
+          }
+        }
+      else if (this->GetCompositingButton()->GetMenu()->GetItemSelectedState( "Add") == 1)
+        {
+        if ( cnode->GetCompositing() != vtkMRMLSliceCompositeNode::Add )
+          {
+        cnode->SetCompositing ( vtkMRMLSliceCompositeNode::Add );
+          }
+        }
+      else if (this->GetCompositingButton()->GetMenu()->GetItemSelectedState( "Subtract") == 1)
+        {
+        if ( cnode->GetCompositing() != vtkMRMLSliceCompositeNode::Subtract )
+          {
+          cnode->SetCompositing ( vtkMRMLSliceCompositeNode::Subtract );
+          }
+        }
+      }
+    }
+}
+
 
 
 //----------------------------------------------------------------------------
@@ -1471,6 +1540,17 @@ void vtkSlicerSlicesControlGUI::BuildAnnotationMenu ( )
 }
 
 //---------------------------------------------------------------------------
+void vtkSlicerSlicesControlGUI::BuildCompositingMenu ( )
+{
+  this->CompositingButton->GetMenu()->DeleteAllItems ( );
+  this->CompositingButton->GetMenu()->AddRadioButton ( "Alpha blend");
+  this->CompositingButton->GetMenu()->AddRadioButton ( "Add");
+  this->CompositingButton->GetMenu()->AddRadioButton ( "Subtract" );
+  this->CompositingButton->GetMenu()->AddSeparator ( );
+  this->CompositingButton->GetMenu()->AddCommand ("close");
+}
+
+//---------------------------------------------------------------------------
 void vtkSlicerSlicesControlGUI::BuildCrossHairMenu ( )
 {
   this->CrossHairButton->GetMenu()->DeleteAllItems ( );
@@ -1690,6 +1770,13 @@ void vtkSlicerSlicesControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->FitToWindowButton->SetImageToIcon ( this->SlicesControlIcons->GetFitToWindowIcon() );
       this->FitToWindowButton->SetBalloonHelpString ( "Fits image data to the window in all Slice Viewers." );
 
+      this->CompositingButton->SetParent (appF);
+      this->CompositingButton->Create ( );
+      this->CompositingButton->SetBorderWidth ( 0 );
+      this->CompositingButton->SetImageToIcon ( this->SlicesControlIcons->GetLabelOpacityIcon() );
+      this->CompositingButton->IndicatorVisibilityOff ( );
+      this->CompositingButton->SetBalloonHelpString ( "Choose compositing options for all Slice Viewers." );
+
       this->AnnotationButton->SetParent (appF);
       this->AnnotationButton->Create ( );
       this->AnnotationButton->SetBorderWidth ( 0 );
@@ -1831,6 +1918,7 @@ void vtkSlicerSlicesControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->FeaturesVisibleButton->GetWidgetName ( ) );
       this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->FitToWindowButton->GetWidgetName ( ) );
       this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->LabelOpacityButton->GetWidgetName ( ) );
+      this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->CompositingButton->GetWidgetName ( ) );
       this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->AnnotationButton->GetWidgetName ( ) );
       this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->CrossHairButton->GetWidgetName ( ) );
       this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->SpatialUnitsButton->GetWidgetName ( ) );
@@ -1843,6 +1931,7 @@ void vtkSlicerSlicesControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->Script ( "pack %s -side right -anchor e -padx 2 -pady 3 -expand n", this->ToggleFgBgButton->GetWidgetName ( ) );
 
       //--- populate menus
+      this->BuildCompositingMenu ();
       this->BuildAnnotationMenu ( );
       this->BuildCrossHairMenu ( );
       this->BuildSpacesMenu ( );

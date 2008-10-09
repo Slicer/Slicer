@@ -47,6 +47,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     vtkGetObjectMacro ( LabelOpacityTopLevel, vtkKWTopLevel );
     vtkGetObjectMacro ( FieldOfViewTopLevel, vtkKWTopLevel );
 //    vtkGetObjectMacro ( GridButton, vtkKWMenuButton );
+    vtkGetObjectMacro ( CompositingButton, vtkKWMenuButton );
     vtkGetObjectMacro ( AnnotationButton, vtkKWMenuButton );
     vtkGetObjectMacro ( SpatialUnitsButton, vtkKWMenuButton );
     vtkGetObjectMacro ( CrossHairButton, vtkKWMenuButton );
@@ -111,6 +112,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     virtual void HideFieldOfViewEntries ( );
     virtual void FitFOVToBackground( double fov, int viewer );
 
+    virtual void BuildCompositingMenu();
     virtual void BuildAnnotationMenu ( );
     virtual void BuildCrossHairMenu ( );
     virtual void BuildSpacesMenu ( );
@@ -118,6 +120,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     virtual void BuildVisibilityMenu ( );
     
     virtual void FitSlicesToBackground ( );
+    virtual void ModifyCompositingMode ( );
     virtual void ModifyAnnotationMode ( );
     virtual void ModifySpatialUnitsMode ( );
     virtual void ModifyCrossHairMode ( );
@@ -153,6 +156,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     vtkKWTopLevel *LabelOpacityTopLevel;
     vtkKWTopLevel *FieldOfViewTopLevel;
 //    vtkKWMenuButton *GridButton;
+    vtkKWMenuButton *CompositingButton;
     vtkKWMenuButton *AnnotationButton;
     vtkKWMenuButton *SpatialUnitsButton;
     vtkKWMenuButton *CrossHairButton;

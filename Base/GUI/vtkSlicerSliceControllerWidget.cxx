@@ -313,6 +313,7 @@ void vtkSlicerSliceControllerWidget::AddWidgetObservers ( )
     this->FitToWindowButton->AddObserver (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
     this->MoreMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
     this->MoreMenuButton->GetMenu()->GetItemCascade (this->MoreMenuButton->GetMenu()->GetIndexOfItem("Lightbox view"))->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
+    this->MoreMenuButton->GetMenu()->GetItemCascade (this->MoreMenuButton->GetMenu()->GetIndexOfItem("Compositing"))->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
     this->VolumeDisplayMenuButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );    
     this->LightboxButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
     this->LightboxApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
@@ -349,6 +350,7 @@ void vtkSlicerSliceControllerWidget::RemoveWidgetObservers ( ) {
     this->FitToWindowButton->RemoveObservers (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
     this->MoreMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
     this->MoreMenuButton->GetMenu()->GetItemCascade (this->MoreMenuButton->GetMenu()->GetIndexOfItem("Lightbox view"))->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
+    this->MoreMenuButton->GetMenu()->GetItemCascade (this->MoreMenuButton->GetMenu()->GetIndexOfItem("Compositing"))->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
     this->VolumeDisplayMenuButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
     this->LightboxButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
     this->LightboxApplyButton->RemoveObservers (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
@@ -620,6 +622,8 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->LabelOutlineToggleButton->SetBorderWidth ( 0 );
     this->LabelOutlineToggleButton->SetImageToIcon ( this->SliceControlIcons->GetSliceLabelOutlineOnIcon ( ));    
     this->LabelOutlineToggleButton->SetBalloonHelpString ( "Toggle between showing label map volume with regions outlined or filled.");
+
+
     //
     // Create a menubutton that navigates to Volumes->Display
     // 
@@ -757,6 +761,23 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->MoreMenuButton->GetMenu()->SetItemImage ( index, imageName);
     this->MoreMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
 
+    vtkKWMenu* m3 = vtkKWMenu::New();
+    m3->SetParent(this->MoreMenuButton->GetMenu());
+    m3->Create();
+    m3->AddRadioButton ( "Alpha blend" );
+    m3->AddRadioButton ( "Add" );
+    m3->AddRadioButton ( "Subtract" );
+    m3->AddSeparator();
+    m3->AddCommand( "close" );
+    this->MoreMenuButton->GetMenu()->AddCascade ("Compositing", m3);
+    index = this->MoreMenuButton->GetMenu()->GetIndexOfItem ( "Compositing");
+    imageName = "CompositingImage";
+    vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName,  this->SliceControlIcons->GetAllLabelOpacityIcon ( ));
+    this->MoreMenuButton->GetMenu()->SetItemImage ( index, imageName);
+    this->MoreMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
+    m3->Delete();
+
+
     this->MoreMenuButton->GetMenu()->AddSeparator ( );
 
     vtkKWMenu* m1 = vtkKWMenu::New();
@@ -797,7 +818,6 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->MoreMenuButton->GetMenu()->SetItemImage ( index, imageName);
     this->MoreMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
     m2->Delete();
-
 
     this->MoreMenuButton->GetMenu()->AddSeparator ( );
     this->MoreMenuButton->GetMenu()->AddCommand ( "tear off control panel" );
@@ -2041,6 +2061,90 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
                 }
               }
             }
+          }
+        }
+      }
+    }
+  else if ( menu == this->MoreMenuButton->GetMenu()->GetItemCascade (this->MoreMenuButton->GetMenu()->GetIndexOfItem("Compositing")) &&
+            event == vtkKWMenu::MenuItemInvokedEvent && app )
+    {
+    int cindex = this->MoreMenuButton->GetMenu()->GetIndexOfItem ("Compositing");
+    vtkKWMenu *cmenu = this->MoreMenuButton->GetMenu()->GetItemCascade(cindex);
+    int numItems = cmenu->GetNumberOfItems();
+    int found = 0;
+    int item;
+    for ( item=0; item < numItems; item++)
+      {
+      if ( cmenu->GetItemSelectedState(item) )
+        {
+        found = 1;
+        break;
+        }
+      }
+    if ( found )
+      {
+      const char *lbstr = cmenu->GetItemLabel ( item );
+      if ( !strcmp ( lbstr, "Alpha blend") )
+        {
+        if (link)
+          {
+          nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLSliceCompositeNode");
+          for ( i=0; i<nnodes; i++)
+            {
+            cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
+              this->GetMRMLScene()->GetNthNodeByClass (i, "vtkMRMLSliceCompositeNode"));
+            
+            this->MRMLScene->SaveStateForUndo ( cnode );
+            cnode->SetCompositing (vtkMRMLSliceCompositeNode::Alpha );
+            }
+          }
+        else
+          {
+          this->MRMLScene->SaveStateForUndo( this->SliceCompositeNode );
+          this->SliceCompositeNode
+          ->SetCompositing(vtkMRMLSliceCompositeNode::Alpha);
+          }
+        }
+      else if (!strcmp ( lbstr, "Add") )
+        {
+        if (link)
+          {
+          nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLSliceCompositeNode");
+          for ( i=0; i<nnodes; i++)
+            {
+            cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
+              this->GetMRMLScene()->GetNthNodeByClass (i, "vtkMRMLSliceCompositeNode"));
+            
+            this->MRMLScene->SaveStateForUndo ( cnode );
+            cnode->SetCompositing (vtkMRMLSliceCompositeNode::Add );
+            }
+          }
+        else
+          {
+          this->MRMLScene->SaveStateForUndo( this->SliceCompositeNode );
+          this->SliceCompositeNode
+          ->SetCompositing(vtkMRMLSliceCompositeNode::Add);
+          }
+        }
+      else if (!strcmp ( lbstr, "Subtract") )
+        {
+        if (link)
+          {
+          nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLSliceCompositeNode");
+          for ( i=0; i<nnodes; i++)
+            {
+            cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
+              this->GetMRMLScene()->GetNthNodeByClass (i, "vtkMRMLSliceCompositeNode"));
+            
+            this->MRMLScene->SaveStateForUndo ( cnode );
+            cnode->SetCompositing (vtkMRMLSliceCompositeNode::Subtract );
+            }
+          }
+        else
+          {
+          this->MRMLScene->SaveStateForUndo( this->SliceCompositeNode );
+          this->SliceCompositeNode
+          ->SetCompositing(vtkMRMLSliceCompositeNode::Subtract);
           }
         }
       }

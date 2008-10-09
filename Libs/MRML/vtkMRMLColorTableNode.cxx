@@ -317,6 +317,148 @@ void vtkMRMLColorTableNode::SetTypeToFile()
     this->SetType(this->File);
 }
 
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToRed()
+{
+    this->SetType(this->Red);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToGreen()
+{
+    this->SetType(this->Green);
+}
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToBlue()
+{
+    this->SetType(this->Blue);
+}
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToCyan()
+{
+    this->SetType(this->Cyan);
+}
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToMagenta()
+{
+    this->SetType(this->Magenta);
+}
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToYellow()
+{
+    this->SetType(this->Yellow);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToWarm1()
+{
+    this->SetType(this->Warm1);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToWarm2()
+{
+    this->SetType(this->Warm2);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToWarm3()
+{
+    this->SetType(this->Warm3);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToCool1()
+{
+    this->SetType(this->Cool1);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToCool2()
+{
+    this->SetType(this->Cool2);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToCool3()
+{
+    this->SetType(this->Cool3);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToWarmShade1()
+{
+    this->SetType(this->WarmShade1);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToWarmShade2()
+{
+    this->SetType(this->WarmShade2);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToWarmShade3()
+{
+    this->SetType(this->WarmShade3);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToCoolShade1()
+{
+    this->SetType(this->CoolShade1);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToCoolShade2()
+{
+    this->SetType(this->CoolShade2);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToCoolShade3()
+{
+    this->SetType(this->CoolShade3);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToWarmTint1()
+{
+    this->SetType(this->WarmTint1);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToWarmTint2()
+{
+    this->SetType(this->WarmTint2);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToWarmTint3()
+{
+    this->SetType(this->WarmTint3);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToCoolTint1()
+{
+    this->SetType(this->CoolTint1);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToCoolTint2()
+{
+    this->SetType(this->CoolTint2);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToCoolTint3()
+{
+    this->SetType(this->CoolTint3);
+}
+
+
 //----------------------------------------------------------------------------
 const char* vtkMRMLColorTableNode::GetTypeAsIDString()
 {
@@ -379,6 +521,102 @@ const char* vtkMRMLColorTableNode::GetTypeAsIDString()
   if (this->Type == this->File)
     {
     return "vtkMRMLColorTableNodeFile";
+    }
+  if (this->Type == this->Red)
+    {
+    return "vtkMRMLColorTableNodeRed";
+    }
+  if (this->Type == this->Green)
+    {
+    return "vtkMRMLColorTableNodeGreen";
+    }
+  if (this->Type == this->Blue)
+    {
+    return "vtkMRMLColorTableNodeBlue";
+    }
+  if (this->Type == this->Yellow)
+    {
+    return "vtkMRMLColorTableNodeYellow";
+    }
+  if (this->Type == this->Magenta)
+    {
+    return "vtkMRMLColorTableNodeMagenta";
+    }
+  if (this->Type == this->Cyan)
+    {
+    return "vtkMRMLColorTableNodeCyan";
+    }
+  if (this->Type == this->Warm1)
+    {
+    return "vtkMRMLColorTableNodeWarm1";
+    }
+  if (this->Type == this->Warm2)
+    {
+    return "vtkMRMLColorTableNodeWarm2";
+    }
+  if (this->Type == this->Warm3)
+    {
+    return "vtkMRMLColorTableNodeWarm3";
+    }
+  if (this->Type == this->Cool1)
+    {
+    return "vtkMRMLColorTableNodeCool1";
+    }
+  if (this->Type == this->Cool2)
+    {
+    return "vtkMRMLColorTableNodeCool2";
+    }
+  if (this->Type == this->Cool3)
+    {
+    return "vtkMRMLColorTableNodeCool3";
+    }
+  if (this->Type == this->WarmShade1)
+    {
+    return "vtkMRMLColorTableNodeWarmShade1";
+    }
+  if (this->Type == this->WarmShade2)
+    {
+    return "vtkMRMLColorTableNodeWarmShade2";
+    }
+  if (this->Type == this->WarmShade3)
+    {
+    return "vtkMRMLColorTableNodeWarmShade3";
+    }
+  if (this->Type == this->CoolShade1)
+    {
+    return "vtkMRMLColorTableNodeCoolShade1";
+    }
+  if (this->Type == this->CoolShade2)
+    {
+    return "vtkMRMLColorTableNodeCoolShade2";
+    }
+  if (this->Type == this->CoolShade3)
+    {
+    return "vtkMRMLColorTableNodeCoolShade3";
+    }
+  if (this->Type == this->WarmTint1)
+    {
+    return "vtkMRMLColorTableNodeWarmTint1";
+    }
+  if (this->Type == this->WarmTint2)
+    {
+    return "vtkMRMLColorTableNodeWarmTint2";
+    }
+  if (this->Type == this->WarmTint3)
+    {
+    return "vtkMRMLColorTableNodeWarmTint3";
+    }
+  if (this->Type == this->CoolTint1)
+    {
+    return "vtkMRMLColorTableNodeCoolTint1";
+    }
+  if (this->Type == this->CoolTint2)
+    {
+    return "vtkMRMLColorTableNodeCoolTint2";
+    }
+  if (this->Type == this->CoolTint3)
+    {
+    return "vtkMRMLColorTableNodeCoolTint3";
     }
   return "(unknown)";
 }
@@ -446,6 +684,102 @@ const char* vtkMRMLColorTableNode::GetTypeAsString()
     {
     return "File";
     }
+  if (this->Type == this->Red)
+    {
+    return "Red";
+    }
+  if (this->Type == this->Green)
+    {
+    return "Green";
+    }
+  if (this->Type == this->Blue)
+    {
+    return "Blue";
+    }
+  if (this->Type == this->Cyan)
+    {
+    return "Cyan";
+    }
+  if (this->Type == this->Magenta)
+    {
+    return "Magenta";
+    }
+  if (this->Type == this->Yellow)
+    {
+    return "Yellow";
+    }
+  if (this->Type == this->Warm1)
+    {
+    return "Warm1";
+    }
+  if (this->Type == this->Warm2)
+    {
+    return "Warm2";
+    }
+  if (this->Type == this->Warm3)
+    {
+    return "Warm3";
+    }
+  if (this->Type == this->Cool1)
+    {
+    return "Cool1";
+    }
+  if (this->Type == this->Cool2)
+    {
+    return "Cool2";
+    }
+  if (this->Type == this->Cool3)
+    {
+    return "Cool3";
+    }
+  if (this->Type == this->WarmShade1)
+    {
+    return "WarmShade1";
+    }
+  if (this->Type == this->WarmShade2)
+    {
+    return "WarmShade2";
+    }
+  if (this->Type == this->WarmShade3)
+    {
+    return "WarmShade3";
+    }
+  if (this->Type == this->CoolShade1)
+    {
+    return "CoolShade1";
+    }
+  if (this->Type == this->CoolShade2)
+    {
+    return "CoolShade2";
+    }
+  if (this->Type == this->CoolShade3)
+    {
+    return "CoolShade3";
+    }
+  if (this->Type == this->WarmTint1)
+    {
+    return "WarmTint1";
+    }
+  if (this->Type == this->WarmTint2)
+    {
+    return "WarmTint2";
+    }
+  if (this->Type == this->WarmTint3)
+    {
+    return "WarmTint3";
+    }
+  if (this->Type == this->CoolTint1)
+    {
+    return "CoolTint1";
+    }
+  if (this->Type == this->CoolTint2)
+    {
+    return "CoolTint2";
+    }
+  if (this->Type == this->CoolTint3)
+    {
+    return "CoolTint3";
+    }
   return "(unknown)";
 }
 
@@ -512,6 +846,294 @@ void vtkMRMLColorTableNode::SetType(int type)
       this->GetLookupTable()->SetHueRange(0, 0);
       this->GetLookupTable()->SetSaturationRange(0, 0);
       this->GetLookupTable()->SetValueRange(0, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->Red)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(0, 0);
+      this->GetLookupTable()->SetSaturationRange(1, 1);
+      this->GetLookupTable()->SetValueRange(0, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->Green)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(0.333, 0.333);
+      this->GetLookupTable()->SetSaturationRange(1, 1);
+      this->GetLookupTable()->SetValueRange(0, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->Blue)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(0.667, 0.667);
+      this->GetLookupTable()->SetSaturationRange(1, 1);
+      this->GetLookupTable()->SetValueRange(0, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->Yellow)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(0.167, 0.167);
+      this->GetLookupTable()->SetSaturationRange(1, 1);
+      this->GetLookupTable()->SetValueRange(0, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->Cyan)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(0.5, 0.5);
+      this->GetLookupTable()->SetSaturationRange(1, 1);
+      this->GetLookupTable()->SetValueRange(0, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->Magenta)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(0.833, 0.833);
+      this->GetLookupTable()->SetSaturationRange(1, 1);
+      this->GetLookupTable()->SetValueRange(0, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->WarmShade1)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(0.167, 0.0);
+      this->GetLookupTable()->SetSaturationRange(1, 1);
+      this->GetLookupTable()->SetValueRange(0, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->WarmShade2)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(.333, 0.167);
+      this->GetLookupTable()->SetSaturationRange(1, 1);
+      this->GetLookupTable()->SetValueRange(0, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->WarmShade3)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(0.5, 0.333);
+      this->GetLookupTable()->SetSaturationRange(1, 1);
+      this->GetLookupTable()->SetValueRange(0, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->CoolShade1)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(0.667, 0.5);
+      this->GetLookupTable()->SetSaturationRange(1, 1);
+      this->GetLookupTable()->SetValueRange(0, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->CoolShade2)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(0.833, 0.667);
+      this->GetLookupTable()->SetSaturationRange(1, 1);
+      this->GetLookupTable()->SetValueRange(0, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->CoolShade3)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(1.0, 0.833);
+      this->GetLookupTable()->SetSaturationRange(1, 1);
+      this->GetLookupTable()->SetValueRange(0, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->WarmTint1)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(0.167, 0.0);
+      this->GetLookupTable()->SetSaturationRange(0, 1);
+      this->GetLookupTable()->SetValueRange(1, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->WarmTint2)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(.333, 0.167);
+      this->GetLookupTable()->SetSaturationRange(0, 1);
+      this->GetLookupTable()->SetValueRange(1, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->WarmTint3)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(0.5, 0.333);
+      this->GetLookupTable()->SetSaturationRange(0, 1);
+      this->GetLookupTable()->SetValueRange(1, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->CoolTint1)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(0.667, 0.5);
+      this->GetLookupTable()->SetSaturationRange(0, 1);
+      this->GetLookupTable()->SetValueRange(1, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->CoolTint2)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(0.833, 0.667);
+      this->GetLookupTable()->SetSaturationRange(0, 1);
+      this->GetLookupTable()->SetValueRange(1, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->CoolTint3)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(1.0, 0.833);
+      this->GetLookupTable()->SetSaturationRange(0, 1);
+      this->GetLookupTable()->SetValueRange(1, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->Warm1)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(0.167, 0.0);
+      this->GetLookupTable()->SetSaturationRange(1, 1);
+      this->GetLookupTable()->SetValueRange(1, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->Warm2)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(.333, 0.167);
+      this->GetLookupTable()->SetSaturationRange(1, 1);
+      this->GetLookupTable()->SetValueRange(1, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->Warm3)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(0.5, 0.333);
+      this->GetLookupTable()->SetSaturationRange(1, 1);
+      this->GetLookupTable()->SetValueRange(1, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->Cool1)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(0.667, 0.5);
+      this->GetLookupTable()->SetSaturationRange(1, 1);
+      this->GetLookupTable()->SetValueRange(1, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->Cool2)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(0.833, 0.667);
+      this->GetLookupTable()->SetSaturationRange(1, 1);
+      this->GetLookupTable()->SetValueRange(1, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->Cool3)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(1.0, 0.833);
+      this->GetLookupTable()->SetSaturationRange(1, 1);
+      this->GetLookupTable()->SetValueRange(1, 1);
       this->GetLookupTable()->SetAlphaRange(1, 1); // not used
       this->GetLookupTable()->Build();
       this->SetNamesFromColors();
