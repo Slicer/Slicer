@@ -73,9 +73,13 @@ install(FILES
 # Sources
 
 set(RemoteIO_SRCS
-  vtkHTTPHandler.cxx
-  vtkSRBHandler.cxx
-  vtkXNATHandler.cxx
+ vtkHTTPHandler.cxx
+ vtkSRBHandler.cxx
+ vtkXNATHandler.cxx
+ vtkHIDHandler.cxx
+ vtkXNDHandler.cxx
+ vtkHIDTagTable.cxx
+ vtkXNDTagTable.cxx
   )
 
 # --------------------------------------------------------------------------
