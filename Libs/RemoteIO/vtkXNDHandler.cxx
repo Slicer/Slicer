@@ -249,3 +249,17 @@ const char *vtkXNDHandler::QueryServer( const char *uri, const char *destination
 }
 
 
+//----------------------------------------------------------------------------
+const char* vtkXNDHandler::GetXMLDeclaration()
+{
+  const char *returnString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+  return  (returnString);
+}
+
+
+//----------------------------------------------------------------------------
+const char* vtkXNDHandler::GetNameSpace()
+{
+  const char *returnString = "xmlns=\"http://nrg.wustl.edu/xe\"";
+  return (returnString);
+}

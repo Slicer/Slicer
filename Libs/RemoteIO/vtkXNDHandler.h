@@ -42,6 +42,8 @@ class VTK_RemoteIO_EXPORT vtkXNDHandler : public vtkHTTPHandler
                               const char *hostname );
 
   virtual const char *QueryServer ( const char *uri, const char *destination);
+  const char *GetXMLDeclaration();
+  const char *GetNameSpace();
 
  private:
 
