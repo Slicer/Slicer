@@ -105,6 +105,8 @@ extern "C" {
 #include "vtkHTTPHandler.h"
 #include "vtkSRBHandler.h"
 #include "vtkXNATHandler.h"
+#include "vtkHIDHandler.h"
+#include "vtkXNDHandler.h"
 #include "vtkSlicerPermissionPrompterWidget.h"
 #include "vtkSlicerXNATPermissionPrompterWidget.h"
 #endif
@@ -851,6 +853,19 @@ int Slicer3_main(int argc, char *argv[])
   scene->AddURIHandler(xnatHandler);
   xnatPermissionPrompter->Delete();
   xnatHandler->Delete();
+
+  vtkHIDHandler *hidHandler = vtkHIDHandler::New();
+  hidHandler->SetPrefix ( "hid://" );
+  hidHandler->SetName ( "HIDHandler" );
+  scene->AddURIHandler( hidHandler);
+  hidHandler->Delete();
+  
+  vtkXNDHandler *xndHandler = vtkXNDHandler::New();
+  xndHandler->SetPrefix ( "xnd://" );
+  xndHandler->SetName ( "XNDHandler" );
+  scene->AddURIHandler( xndHandler);
+  xndHandler->Delete();
+
 #endif
 
 
