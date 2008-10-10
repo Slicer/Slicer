@@ -165,7 +165,8 @@ if { $installed } {
       if { [file exists "@ITK_DIR@/bin/$buildType/ITKCommon.dll"] } {
         set ::ITK_BUILD_SUBDIR $buildType
       }
-      if { [file exists "@TEEM_DIR@/bin/$buildType/air.dll"] } {
+      if { [file exists "@TEEM_DIR@/bin/$buildType/air.dll"] ||
+             [file exists "@TEEM_DIR@/bin/$buildType/teem.dll"] } {
         set ::TEEM_BUILD_SUBDIR $buildType
       }
     }
