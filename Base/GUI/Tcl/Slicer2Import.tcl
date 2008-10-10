@@ -536,7 +536,7 @@ proc ImportNodeColor {node} {
 }
 
 proc ImportNodeOptions {node} {
-  $::slicer3::MRMLScene SetErrorMessage "$err\nwarning: option nodes cannot be imported"
+  $::slicer3::MRMLScene SetErrorMessage "warning: option nodes cannot be imported"
   $::slicer3::MRMLScene SetErrorCode 1
 }
 
