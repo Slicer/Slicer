@@ -19,8 +19,11 @@
 #include "vtkCacheManager.h"
 #include "vtkSlicerApplication.h"
 
+#include "vtkMRMLVolumeArchetypeStorageNode.h"
+#include "vtkMRMLFreeSurferModelStorageNode.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorableNode.h"
+
 
 
 vtkFetchMILogic* vtkFetchMILogic::New()
@@ -41,9 +44,13 @@ vtkFetchMILogic::vtkFetchMILogic()
 {
   this->FetchMINode = NULL;
   this->SceneTags = vtkTagTable::New();
+  this->SaveSceneDescription = 1;
   this->SceneSelected = 1;
   // used for parsing xml.
   this->NumberOfElements = 0;
+
+  this->CurrentURI = NULL;
+
 }
 
 
@@ -54,6 +61,12 @@ vtkFetchMILogic::~vtkFetchMILogic()
 { 
   this->SetFetchMINode(NULL);
   this->SceneTags->Delete();
+
+  if ( this->CurrentURI )
+    {
+    delete [] this->CurrentURI;
+    this->CurrentURI  = NULL;
+    }
 }
 
 
@@ -61,9 +74,26 @@ vtkFetchMILogic::~vtkFetchMILogic()
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::PrintSelf(ostream& os, vtkIndent indent)
 {
+  Superclass::PrintSelf(os,indent);
+
+  os << indent << "XMLDirName: " << this->XMLDirName.c_str() << "\n";
+  os << indent << "HTTPResponseFileName: " << this->HTTPResponseFileName.c_str() << "\n";
+  os << indent << "XMLUploadFileName: " << this->XMLUploadFileName.c_str() << "\n";
+  os << indent << "MRMLCacheFileName: " << this->MRMLCacheFileName.c_str() << "\n";
+  os << indent << "DownloadDirName: " << this->DownloadDirName.c_str() << "\n";
+  os << indent << "Selected Storable Node IDs:\n";
+  for (unsigned int i = 0; i < this->SelectedStorableNodeIDs.size(); i++)
+    {
+    os << indent.GetNextIndent() << i << ": " << this->SelectedStorableNodeIDs[i].c_str() << "\n";
+    }
+  os << indent << "SaveSceneDsecription: " << this->SaveSceneDescription << "\n";
+  os << indent << "SceneSelected: " << this->SceneSelected << "\n";
+
+  os << indent << "SceneTags: (TBD)\n";
+
+  os << indent << "NumberOfElements: " << this->NumberOfElements << "\n";
+  os << indent << "CurrentURI: " << (this->CurrentURI == NULL ? "null" : this->CurrentURI) << "\n";
 }
-
-
 
 
 //----------------------------------------------------------------------------
@@ -499,7 +529,7 @@ void vtkFetchMILogic::ParseTagQueryResponse ( )
     return;
     }
 
-  const char *svr = this->GetFetchMINode()->GetSelectedServer();
+//  const char *svr = this->GetFetchMINode()->GetSelectedServer();
   const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
     
   if ( this->GetHTTPResponseFileName() != NULL )
@@ -578,7 +608,7 @@ void vtkFetchMILogic::ParseResourceQueryResponse ( )
     return;
     }
 
-  const char *svr = this->GetFetchMINode()->GetSelectedServer();
+//  const char *svr = this->GetFetchMINode()->GetSelectedServer();
   const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
 
   if ( this->GetHTTPResponseFileName() != NULL )
@@ -810,7 +840,7 @@ int vtkFetchMILogic::WriteMetadataForUpload ( const char *filename, const char *
       file << h->GetNameSpace();
       file << "\n";
         
-      for (i=0; i < num; i++ )
+      for (int i=0; i < num; i++ )
         {
         att = t->GetTagAttribute(i);
         val = t->GetTagValue(i);
@@ -944,39 +974,161 @@ void vtkFetchMILogic::RequestResourceDownloadFromXND ( const char *uri, const ch
 {
   // This method will download resource with uri
   // from the currently selected remote repository.
+
+  if (uri == NULL || nodeType == NULL)
+    {
+    vtkErrorMacro("vtkFetchMILogic::RequestResourceDownloadFromXND: uri isn't set or nodeType isn't set. uri = " << (uri == NULL ? "null" : uri) << ", nodeType = " << (nodeType == NULL ? "null" : nodeType));
+    return;
+    }
   
   //--- Get the MRML Scene
   if ( this->GetMRMLScene() == NULL )
     {
-    vtkErrorMacro ("vtkFetchMILogic::RequestResourceUploadToXND: Null scene. ");
+    vtkErrorMacro ("vtkFetchMILogic::RequestResourceDownloadFromXND: Null scene. ");
     return;
     }
   if ( this->GetFetchMINode() == NULL )
     {
-    vtkErrorMacro ("vtkFetchMILogic::RequestResourceUploadToXND: Null FetchMI node. ");
+    vtkErrorMacro ("vtkFetchMILogic::RequestResourceDownloadFromXND: Null FetchMI node. ");
     return;
     }
 
-  vtkXNDHandler *h = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XND" ));
-  if ( h == NULL )
+  
+  vtkXNDHandler *handler = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XND" ));
+  if ( handler == NULL )
     {
-    vtkErrorMacro ("vtkFetchMILogic::RequestResourceUploadToXND: Null URIHandler. ");
+    vtkErrorMacro ("vtkFetchMILogic::RequestResourceDownloadFromXND: Null URIHandler. ");
     return;
     }
-  
+
+  // for the storage nodes to find the right handler, use xnd:// instead of
+  // http
+  int index;
+  std::string uriString(uri);
+  std::string suffix;
+  // get all charactersup to the ://
+  if ((index = uriString.find("://", 0) ) != std::string::npos)
+    {
+    suffix = uriString.substr(index, std::string::npos);
+    uriString = std::string("xnd") + suffix;
+    vtkDebugMacro("vtkFetchMILogic::RequestResourceDownloadFromXND: new uri string = " << uriString.c_str());
+    }
+    
   if ( !(strcmp(nodeType, "Volume" )))
     {
-    //--- create the node
+    // is it a label map?
+    /*
+    vtkSlicerVolumesLogic *volumesLogic = vtkSlicerVolumesGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Volumes"))->GetLogic();
+    if (volumesLogic)
+      {
+      int loadingOptions = 0 || 8;
+      volumesLogic->AddArchetypeVolume(uriString.c_str(), "XNDVolume", loadingOptions);
+      }
+    */
+    //--- create the node, assume scalar
+    vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::New();
+    vtkMRMLScalarVolumeDisplayNode  *sdisplayNode = NULL;
+    vtkMRMLVolumeArchetypeStorageNode *storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
+    // set the volume name
+    std::string volumeName;
+    volumeName = vtksys::SystemTools::GetFilenameName(uriString);
+    scalarNode->SetName(volumeName.c_str());
+    // set the uri
+    storageNode->SetURI(uriString.c_str());
+     // need to set the scene on the storage node so that it can test looking
+     // for file handlers, but setting ti explicitly
+    storageNode->SetScene(this->GetMRMLScene());
+
     //--- set its URIhandler
+    storageNode->SetURIHandler(handler);
+    // set other flags on the storage node
+    /*
+    storageNode->SetCenterImage(centerImage);
+    storageNode->SetSingleFile(singleFile);
+    storageNode->SetUseOrientationFromFile(useOrientationFromFile);
+    */
+    this->GetMRMLScene()->SaveStateForUndo();
+   
+    // add storage nodes to the scene so can observe them
+    this->GetMRMLScene()->AddNodeNoNotify(storageNode);
+    this->GetMRMLScene()->AddNodeNoNotify(scalarNode);
+    scalarNode->SetAndObserveStorageNodeID(storageNode->GetID());
+    this->GetMRMLScene()->AddNodeNoNotify(sdisplayNode);
+    scalarNode->SetAndObserveDisplayNodeID(sdisplayNode->GetID());
+
     //--- download to cache and load.
+    storageNode->ReadData(scalarNode);
+
+    // since added the node w/o notification, let the scene know now that it
+    // has a new node
+    this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::NodeAddedEvent, scalarNode);
+
+    // clean up
+    if (scalarNode)
+      {
+      scalarNode->Delete();
+      }
+    if (storageNode)
+      {
+      storageNode->Delete();
+      }
+    if (sdisplayNode)
+      {
+      sdisplayNode->Delete();
+      }
+
     }
   if ( !(strcmp(nodeType, "Model" )))
     {
-    //--- create the node
+    // get the models logic
+    /*
+    vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Models"))->GetLogic();
+    if (modelsLogic)
+      {
+      modelsLogic->AddNode(uriString.c_str());
+      }
+    */
+    //--- create the node, assuming a free surfer model for now
+    vtkMRMLModelNode *modelNode = vtkMRMLModelNode::New();
+    vtkMRMLModelDisplayNode *displayNode = vtkMRMLModelDisplayNode::New();
+    vtkMRMLFreeSurferModelStorageNode *fsmStorageNode = vtkMRMLFreeSurferModelStorageNode::New();
+    fsmStorageNode->SetUseStripper(0);  // turn off stripping by default (breaks some pickers)
+
+    // set the uri
+    fsmStorageNode->SetURI(uriString.c_str());
+    modelNode->SetName("XNDModel");
+    
     //--- set its URIhandler
+    fsmStorageNode->SetURIHandler(handler);
+    
     //--- download to cache and load.
+    this->GetMRMLScene()->SaveStateForUndo();
+
+    modelNode->SetScene(this->GetMRMLScene());
+    fsmStorageNode->SetScene(this->GetMRMLScene());
+    displayNode->SetScene(this->GetMRMLScene()); 
+
+    this->GetMRMLScene()->AddNodeNoNotify(fsmStorageNode);  
+    this->GetMRMLScene()->AddNodeNoNotify(displayNode);
+    modelNode->SetAndObserveStorageNodeID(fsmStorageNode->GetID());
+    modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());  
+    displayNode->SetPolyData(modelNode->GetPolyData());
+    
+    this->GetMRMLScene()->AddNode(modelNode);  
+    // the scene points to it still
+    modelNode->Delete();
+
+    int retval = fsmStorageNode->ReadData(modelNode);
+    if (retval != 1)
+      {
+      vtkErrorMacro("AddModel: error reading " << uriString.c_str());
+      this->GetMRMLScene()->RemoveNode(modelNode);
+      this->GetMRMLScene()->RemoveNode(fsmStorageNode);
+      this->GetMRMLScene()->RemoveNode(displayNode);
+      }
+    fsmStorageNode->Delete();
+    displayNode->Delete();
     }
-  
 }
 
 
@@ -1059,21 +1211,33 @@ void vtkFetchMILogic::RequestSceneDownloadFromXND ( const char *uri )
   //--- Get the MRML Scene
   if ( this->GetMRMLScene() == NULL )
     {
-    vtkErrorMacro ("vtkFetchMILogic::RequestResourceUploadToXND: Null scene. ");
+    vtkErrorMacro ("vtkFetchMILogic::RequestSceneDownloadFromXND: Null scene. ");
     return;
     }
   if ( this->GetFetchMINode() == NULL )
     {
-    vtkErrorMacro ("vtkFetchMILogic::RequestResourceUploadToXND: Null FetchMI node. ");
+    vtkErrorMacro ("vtkFetchMILogic::RequestSceneDownloadFromXND: Null FetchMI node. ");
     return;
     }
 
-  vtkXNDHandler *h = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XND" ));
-  if ( h == NULL )
+  vtkXNDHandler *handler = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XND" ));
+  if ( handler == NULL )
     {
-    vtkErrorMacro ("vtkFetchMILogic::RequestResourceUploadToXND: Null URIHandler. ");
+    vtkErrorMacro ("vtkFetchMILogic::RequestSceneDownloadFromXND: Null URIHandler. ");
     return;
-    }
+    } 
+
+  std::string localURL = this->GetMRMLScene()->GetCacheManager()->GetFilenameFromURI(uri);
+  std::string remoteURL = uri;
+  // currently have to pass a host name
+  std::string hostname = "bobby.bwh.harvard.edu:8000";
+  
+  // do a synchronous dl
+  handler->SetHostName(hostname.c_str());
+  handler->StageFileRead(remoteURL.c_str(), localURL.c_str());
+
+  // now override the mrml scene's url to point to file on disk
+  this->GetMRMLScene()->SetURL(localURL.c_str());
   
   //--- we need to add a method on MRMLScene called SetURIHandler()
   //--- that explictly sets the handler to use for downloading scene.
@@ -1085,7 +1249,7 @@ void vtkFetchMILogic::RequestSceneDownloadFromXND ( const char *uri )
   //--- CanHandleURI(uri).
 
   //--- load the remote scene
-  //--- this->MRMLScene->Connect();
+  this->MRMLScene->Connect();
 
   //--- finally, reset the MRMLScene's URIHandler.
   //--- this->MRMLScene->SetURIHandler ( NULL );
@@ -1125,45 +1289,149 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
     return;
     }
 
-  vtkXNDHandler *h = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XND" ));
-  if ( h == NULL )
+  vtkXNDHandler *handler = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XND" ));
+  if ( handler == NULL )
     {
     vtkErrorMacro ("vtkFetchMILogic::RequestResourceUploadToXND: Null URIHandler. ");
     return;
     }
   
   
+
+  // PASS #0
+  // check to make sure all storable nodes have storage nodes with filenames
+  // set
+  vtkMRMLNode *node;
+  for (unsigned int n = 0; n < this->SelectedStorableNodeIDs.size(); n++)
+    {
+    node = this->GetMRMLScene()->GetNodeByID( this->SelectedStorableNodeIDs[n] );
+    if (node->GetModifiedSinceRead())
+      {
+      vtkErrorMacro("vtkFetchMILogic::RequestResourceUploadToXND: error, node " << this->SelectedStorableNodeIDs[n] << " has been modified. Please save all unsaved nodes first");
+      return;
+      }
+    }
   //
   // PASS#1: SET CACHE FILENAMES AND SET URI HANDLER.
   //
   // Get all selected storable nodes from this->SelectedStorableNodeIDs;
-  // (This vector of strings is populated by the GUI when upload button is selected)
-  // FOR EACH FILENAME & FILELISTMEMBER IN EACH NODE:
-  // {
-  //--- Set Filename to be cachedir/filename
-  //--- If the node is a multivolume, set the filename and all FileListMembers to
-  //--- corresponding cachedir/filenames using AddFileName() method.
-  //--- Write the file (or multivolume set of files) to cache.
-  //--- USE GetNumberOfFileNames to get the number of FileListMembers.
-  //--- USE GetNthFileName to get each, probably SetNthFileName to set each.
-  //--- If this fails, error message and return.
-
-  //--- Set the URIHandler on the storage node
-  // *NOTE: make sure to see that DataIOManagerLogic (or whatever) checks to see
-  // if the URIHandler is set before calling CanHandleURI() on all scene handlers,
-  // and if not, fix this logic to use the storage node's handler as set.
-  // } // end LOOP THRU NODES.
-
+  // (This vector of strings is populated by the GUI when upload button is
+  // selected)
+  vtkMRMLStorableNode *storableNode;
+  for (unsigned int n = 0; n < this->SelectedStorableNodeIDs.size(); n++)
+    {
+    storableNode = vtkMRMLStorableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID( this->SelectedStorableNodeIDs[n] ));
+    // for each storage node
+    int numStorageNodes = storableNode->GetNumberOfStorageNodes();
+    vtkMRMLStorageNode *storageNode;
+    for (int i = 0; i < numStorageNodes; i++)
+      {
+      storageNode = storableNode->GetNthStorageNode(i);
+      
+      // FOR EACH FILENAME & FILELISTMEMBER IN EACH NODE:
+      // {
+      //--- Set Filename to be cachedir/filename
+      // get out the file name
+      const char *filename = vtksys::SystemTools::GetFilenameName(storageNode->GetFileName()).c_str();
+      // get the cache dir
+      vtksys_stl::vector<vtksys_stl::string> pathComponents;
+      vtksys::SystemTools::SplitPath( this->GetMRMLScene()->GetCacheManager()->GetRemoteCacheDirectory(), pathComponents);
+      // add the file name to the cache dir
+      pathComponents.push_back(filename);
+      // set it
+      storageNode->SetFileName(vtksys::SystemTools::JoinPath(pathComponents).c_str());
+      //--- If the node is a multivolume, set the filename and all FileListMembers to
+      //--- corresponding cachedir/filenames using AddFileName() method.
+      for (int filenum = 0; filenum < storageNode->GetNumberOfFileNames(); filenum++)
+        {
+        const char *nthFilename = storageNode->GetNthFileName(filenum);
+        pathComponents.pop_back();
+        pathComponents.push_back(nthFilename);
+        storageNode->AddFileName(vtksys::SystemTools::JoinPath(pathComponents).c_str());
+        }
+      //--- Write the file (or multivolume set of files) to cache.
+      //--- USE GetNumberOfFileNames to get the number of FileListMembers.
+      //--- USE GetNthFileName to get each, probably SetNthFileName to set each.
+      //--- If this fails, error message and return.
+      
+      //--- Set the URIHandler on the storage node
+      storageNode->SetURIHandler(handler);
+      // *NOTE: make sure to see that DataIOManagerLogic (or whatever) checks to see
+      // if the URIHandler is set before calling CanHandleURI() on all scene handlers,
+      // and if not, fix this logic to use the storage node's handler as set.
+      // } // end LOOP THRU NODES.
+      }
+    }
   
   //
   // PASS#2: GENERATE METADATA, UPLOAD METADATA, and SET URIS
   //
   // Loop thru again to generate metadata and upload.
   // Get all selected storable nodes from this->SelectedStorableNodeIDs;
+  for (unsigned int n = 0; n < this->SelectedStorableNodeIDs.size(); n++)
+    {
+    std::string nodeID = this->SelectedStorableNodeIDs[n];
+    storableNode = vtkMRMLStorableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID( nodeID.c_str() ));
+    // for each storage node
+    int numStorageNodes = storableNode->GetNumberOfStorageNodes();
+    vtkMRMLStorageNode *storageNode;
+    for (int i = 0; i < numStorageNodes; i++)
+      {
+      storageNode = storableNode->GetNthStorageNode(i);
   // FOR EACH FILENAME & FILELISTMEMBER IN EACH NODE:
   // {
   //--- call this->WriteMetadataForUpload( filename, nodeID ) on the node
   //--- CHECK RETURN VALUE.
+      int retval = this->WriteMetadataForUpload(storageNode->GetFileName(), nodeID.c_str() );
+      if (retval == 0)
+        {
+        vtkErrorMacro("vtkFetchMILogic::RequestResourceUploadToXND: error writing xml for upload, filename = " << storageNode->GetFileName() << ", id = " << nodeID.c_str());
+        return;
+        }
+      //------ if OK:
+      //------ call the handler's PostMetadata() method.
+      //char *metadataResponse =
+      //------ this->PostMetadata(storageNode->GetFileName());
+      this->PostMetadata();
+      // parse the return, it's a uri
+      const char *uri = this->ParsePostMetadataResponse();//metadataResponse);
+      //------ Handle bad posts which return NULL -- if the uri is null, abort for the node,
+      //------ and set node's URI (and all URIListMembers) to NULL so they won't be staged.
+      //------ and deselect the node in the FetchMINode's list
+      //------ this->FetchMINode->DeselectNode ( nodeID)
+      if (uri == NULL)
+        {
+        vtkErrorMacro("vtkFetchMILogic::RequestResourceUploadToXND: error parsing uri from post meta data call"); // , response = " << metadataResponse);
+        }
+      else
+        {
+        vtkDebugMacro("vtkFetchMILogic::RequestResourceUploadToXND: parsed out a return metadatauri : " << uri);
+        // then save it in the storage node
+        storageNode->SetURI(uri);
+        }
+      // now deal with the rest of the files in the storage node
+      int numFiles = storageNode->GetNumberOfFileNames();
+      for (int filenum = 0; filenum < numFiles; filenum++)
+        {
+        if (this->WriteMetadataForUpload(storageNode->GetNthFileName(filenum), nodeID.c_str() ) != 1)
+          {
+          vtkErrorMacro("vtkFetchMILogic::RequestResourceUploadToXND: error writing xml for upload, nth filename = " << storageNode->GetNthFileName(filenum) << ", id = " << nodeID.c_str());
+          return;
+          }
+        //char *metadataResponse = this->PostMetadata(storageNode->GetNthFileName(filenum));
+        this->PostMetadata();
+        // parse the return, it's a uri
+        const char *uri = this->ParsePostMetadataResponse(); // metadataResponse);
+        if (uri == NULL)
+          {
+          vtkErrorMacro("vtkFetchMILogic::RequestResourceUploadToXND: error parsing uri from post meta data call"); //, response = " << metadataResponse);
+          }
+        else
+          {
+          vtkDebugMacro("vtkFetchMILogic::RequestResourceUploadToXND: parsed out a return metadatauri : " << uri);
+          // then save it in the storage node
+          storageNode->AddURI(uri);
+          }
   //------
   //------ if OK:
   //------ call the handler's PostMetadata() method.
@@ -1186,6 +1454,9 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
   //------ (NOTE: some nodes will have filename changed to cache now. should we
   //------ keep original filenames around and switch them back if upload is aborted?)
   // } // end LOOP THRU NODES.
+        }
+      }
+    }
   
 
   //
@@ -1198,12 +1469,28 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
   // {
   //--- Call StageFileWrite (filename, uri ) and upload.
   // } // end LOOP THRU NODES.
+  for (unsigned int n = 0; n < this->SelectedStorableNodeIDs.size(); n++)
+    {
+    std::string nodeID = this->SelectedStorableNodeIDs[n];
+    storableNode = vtkMRMLStorableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID( nodeID.c_str() ));
+    // for each storage node
+    int numStorageNodes = storableNode->GetNumberOfStorageNodes();
+    vtkMRMLStorageNode *storageNode;
+    for (int i = 0; i < numStorageNodes; i++)
+      {
+      storageNode = storableNode->GetNthStorageNode(i);
+      storageNode->WriteData(storableNode);
+      }
+    }
   
 
   //
   // LAST STEP: WRITE SCENE XML AND UPLOAD.
   //
   // Check to see if save scene is selected this->SceneSelected
+  if (this->SceneSelected)
+    {
+    vtkErrorMacro("NOT WRITING SCENE XML YET!");
   // If so write mrml file to cache, include all nodes that have uris AND are selected for upload.
   // (get all selected storable nodes from this->SelectedStorableNodeIDs)
   // call this->WriteMetadataForUpload( filename, MRMLScene) to generate metadata
@@ -1213,7 +1500,8 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
   //--- h->StageFileWrite(cachefile, uri);
   // Otherwise:
   //--- pop up error message
-  //--- call this->FetchMINode->DeselectScene() 
+  //--- call this->FetchMINode->DeselectScene()
+    }
 
 }
 
@@ -1225,12 +1513,10 @@ void vtkFetchMILogic::RequestResourceUploadToHID ( )
 }
 
 
-
-//--- Nicole: are the file paths going to be well-formed?
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::CreateTemporaryFiles ( )
 {
-  // This method creates three temporary files in cache dir, one
+  // This method creates three temporary filenames, using the cache dir, one
   // for holding http from server responses to queries, one
   // for holding xml metadata created for XNAT Desktop uploads,
   // and one for holding mrml scenes downloaded to cache.
@@ -1247,28 +1533,36 @@ void vtkFetchMILogic::CreateTemporaryFiles ( )
           if (vtksys::SystemTools::FileIsDirectory( this->XMLDirName.c_str() ))
             {
             //--- for now, create temporary query response file in cache dir.
-            this->HTTPResponseFileName = this->XMLDirName;
-            this->HTTPResponseFileName += "/";
-            this->HTTPResponseFileName += "FetchMI_QueryResponse.xml";
+            vtksys_stl::vector<vtksys_stl::string> pathComponents;
+            vtksys::SystemTools::SplitPath( this->XMLDirName.c_str(), pathComponents);
+            // now add the new file name to the end of the path
+            pathComponents.push_back("FetchMI_QueryResponse.xml");
+            this->HTTPResponseFileName = vtksys::SystemTools::JoinPath(pathComponents);
             vtkDebugMacro ( "HTTPResponseFileName = " << this->HTTPResponseFileName );
 
-            //--- for now, create temporary xml metadata description file in cache dir.
-            this->XMLUploadFileName = this->XMLDirName;
-            this->XMLUploadFileName += "/";
-            this->XMLUploadFileName += "FetchMI_UploadMetadata.xml";
+            //--- for now, create temporary xml metadata description file in
+            //--- cache dir.
+            pathComponents.pop_back();
+            pathComponents.push_back("FetchMI_UploadMetadata.xml");
+            this->XMLUploadFileName =  vtksys::SystemTools::JoinPath(pathComponents);
             vtkDebugMacro ( "XMLUploadFileName = " << this->XMLUploadFileName );
 
             //--- for now, create temporary cache file where downloaded mrml files go.
-            this->MRMLCacheFileName = this->XMLDirName;
-            this->MRMLCacheFileName += "/";
-            this->MRMLCacheFileName += "FetchMI_UploadMetadata.xml";
+            pathComponents.pop_back();
+            pathComponents.push_back("FetchMI_MRMLCache.xml");
+            this->MRMLCacheFileName = vtksys::SystemTools::JoinPath(pathComponents);
             vtkDebugMacro ( "MRMLCacheFileName = " << this->MRMLCacheFileName );
+
+            // Wendy: do we need to touch these files, or just create the file names?
             }
           }
         }
       else
         {
-        vtkDebugMacro ("RemoteCacheDirectory is not set!");
+        vtkWarningMacro ("RemoteCacheDirectory is not set! Creating files in current dir");
+        this->HTTPResponseFileName = std::string("FetchMI_QueryResponse.xml");
+        this->XMLUploadFileName = std::string("FetchMI_UploadMetadata.xml");
+        this->MRMLCacheFileName = std::string("FetchMI_MRMLCache.xml");
         }
       }
     }
