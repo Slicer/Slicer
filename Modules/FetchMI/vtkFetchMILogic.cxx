@@ -19,6 +19,9 @@
 #include "vtkCacheManager.h"
 #include "vtkSlicerApplication.h"
 
+#include "vtkMRMLNode.h"
+#include "vtkMRMLStorableNode.h"
+
 
 vtkFetchMILogic* vtkFetchMILogic::New()
 {
@@ -287,6 +290,8 @@ void vtkFetchMILogic::QueryServerForResources ( )
               }
             }
           }
+        // what's in here?
+        const char *testy = q.str().c_str();
         const char *errorString = h->QueryServer ( q.str().c_str(), this->GetHTTPResponseFileName() );
         if ( !strcmp(errorString, "OK" ))
           {
@@ -672,28 +677,169 @@ void vtkFetchMILogic::TagStorableNodes ( )
 
 
 // filename is a dataset's filename or mrmlscene filename.
-// ID is a
+// ID is a nodeID or is the text "MRMLScene".
 //----------------------------------------------------------------------------
-int vtkFetchMILogic::WriteXMLForUpload ( const char *filename, const char *ID)
+int vtkFetchMILogic::WriteMetadataForUpload ( const char *filename, const char *ID)
 {
 
-  //--- Check to see if ID == MRMLScene.
-  //------ if YES:
-  //------ check to see if the scene is tagged for upload in
-  //------ this->SceneTags (File_Type attribute should be set to MRML
-  //------ by default at least). If not, set (File_Type attribute to MRML in this->SceneTags.
-  //------ Write XML for the scene file using this->SceneTags
-  
-  //------ if NO,
-  //------ Check to see if the ID is a storable node in scene.
-  //------ if NO, return 0.
-  //------ Check to see if the node is tagged for upload
-  //------ if not, return 0.
-  //------ Write the xml description for each filename
-  //------ into file with filename=this->XMLUploadFileName
-  //------ return 1 if file writes ok, else return 0
+  if ( this->FetchMINode == NULL) 
+    {
+    vtkErrorMacro ( "vtkFetchMILogic: FetchMINode is NULL.");
+    return 0;
+    }
+  if (this->GetXMLUploadFileName() == NULL)
+    {
+    vtkErrorMacro ( "vtkFetchMILogic: XMLUploadFileName is not set." );
+    return 0;
+    }
+  if (this->MRMLScene == NULL )
+    {
+    vtkErrorMacro ( "vtkFetchMILogic: WriteMetadataForUpload has null MRMLScene." );
+    return 0;        
+    }  
+
+  ofstream file;
+  // open the file for writing.
+#ifdef _WIN32
+  file.open(this->GetXMLUploadFileName(), std::ios::out | std::ios::binary);
+#else
+  file.open(this->GetXMLUploadFileName(), std::ios::out);
+#endif
+  if ( file.fail() )
+    {
+    vtkErrorMacro ("WriteMetadataForUpload: could not open file " << this->GetXMLUploadFileName() );
+    return 0;
+    }
+
+
+  const char *svr = this->GetFetchMINode()->GetSelectedServer();
+  const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
+  const char *att;
+  const char *val;
+
+
+  if ( !(strcmp(svctype, "XND" )))
+    {
+    vtkXNDHandler *h = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XND" ));
+    if ( h == NULL )
+      {
+      vtkErrorMacro ( "vtkFetchMILogic: WriteMetadataForUpload got a null XNDHandler." );
+      return 0;
+      }
+
+    //--- Check to see if ID == MRMLScene.
+    if ( !(strcmp(ID, "MRMLScene" ) ) )
+      {
+      vtkTagTable *t = this->SceneTags;
+      // make sure SlicerDataType tag is set to 'MRML'
+      t->AddOrUpdateTag ( "SlicerDataType", "MRML" );
+      int num = t->GetNumberOfTags();
+      //------ Write XML for the scene file using this->SceneTags
+
+      file << h->GetXMLDeclaration();
+      file << "\n";
+      file << "<Metadata ";
+      file << h->GetNameSpace();
+      file << "\n";
+        
+      for ( int i=0; i < num; i++ )
+        {
+        att = t->GetTagAttribute(i);
+        val = t->GetTagValue(i);
+        if ( t->IsTagSelected(att))
+          {
+          file << "<Tag Label=";
+          file << att;
+          file << ">\n";
+          file << "<Value>";
+          file << val;
+          file << "</Value>\n";
+          }
+        }
+      file << "\n";
+      file << "</Metadata>";
+      file << "\n";
+      }
+    else
+      {
+      //------ Check to see if the ID is a storable node in scene.
+      //------ if NO, return 0.
+      //------ Check to see if the node is tagged for upload
+      //------ if not, return 0.
+      //------ Write the xml description for each filename
+      //------ into file with filename=this->XMLUploadFileName
+      //------ return 1 if file writes ok, else return 0
+
+      vtkMRMLStorableNode *n = vtkMRMLStorableNode::SafeDownCast(this->MRMLScene->GetNodeByID ( ID ));
+      if ( n == NULL )
+        {
+        vtkErrorMacro ( "vtkFetchMILogic: WriteMetadataForUpload got a null node to write." );
+        return 0;        
+        }
+      
+      // Set up a temporary tag table in case the node doesn't have one.
+      vtkTagTable *tmpTags= vtkTagTable::New();
+      vtkTagTable *t = n->GetUserTagTable();
+      if ( t == NULL)
+        {
+        t = tmpTags;
+        }
+
+      // make sure there's a SlicerDataType tag.
+      int num = t->GetNumberOfTags();
+      int found = 0;
+      for ( int i=0; i < num; i++ )
+        {
+        att = t->GetTagAttribute(i);
+        if ( !strcmp (att, "SlicerDataType" ))
+          {
+          found = 1;
+          break;
+          }
+        }
+      if ( !found )
+        {
+        t->AddOrUpdateTag ( "SlicerDataType", "<unknown>" );
+        }
+
+      //------ Write XML for the scene file using this->SceneTags
+      num = t->GetNumberOfTags();
+      file << h->GetXMLDeclaration();
+      file << "\n";
+      file << "<Metadata ";
+      file << h->GetNameSpace();
+      file << "\n";
+        
+      for (i=0; i < num; i++ )
+        {
+        att = t->GetTagAttribute(i);
+        val = t->GetTagValue(i);
+        if ( t->IsTagSelected(att))
+          {
+          file << "<Tag Label=";
+          file << att;
+          file << ">\n";
+          file << "<Value>";
+          file << val;
+          file << "</Value>\n";
+          }
+        }
+      file << "\n";
+      file << "</Metadata>";
+      file << "\n";
+
+      tmpTags->Delete();
+      }
+    }
+  else
+    {
+    //no-op
+    }
+
+  file.close();
   return (1);
 }
+
 
 
 //----------------------------------------------------------------------------
@@ -1016,12 +1162,12 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
   // Get all selected storable nodes from this->SelectedStorableNodeIDs;
   // FOR EACH FILENAME & FILELISTMEMBER IN EACH NODE:
   // {
-  //--- call this->WriteXMLForUpload( filename, nodeID ) on the node
+  //--- call this->WriteMetadataForUpload( filename, nodeID ) on the node
   //--- CHECK RETURN VALUE.
   //------
   //------ if OK:
   //------ call the handler's PostMetadata() method.
-  //------ *NOTE: if the node is a multivolume node, then the WriteXMLForUpload() and
+  //------ *NOTE: if the node is a multivolume node, then the WriteMetadataForUpload() and
   //------ this->PostMetadata() methods have to be called on each individual filename/ListMemeber
   //------ in the node.
   //------ call this->ParseMetadataPostResponse() (returns uri) to get the uri for each filename.
@@ -1060,7 +1206,7 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
   // Check to see if save scene is selected this->SceneSelected
   // If so write mrml file to cache, include all nodes that have uris AND are selected for upload.
   // (get all selected storable nodes from this->SelectedStorableNodeIDs)
-  // call this->WriteXMLForUpload( filename, MRMLScene) to generate metadata
+  // call this->WriteMetadataForUpload( filename, MRMLScene) to generate metadata
   // If return is successful,
   //--- Call handler's PostMetadata() method which returns uri for MRML file.
   //--- Set scene's URI

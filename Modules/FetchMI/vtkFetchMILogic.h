@@ -114,7 +114,7 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   // This method takes each dataset selected for upload
 
   // return 1 if file is written and 0 if not.
-  int WriteXMLForUpload ( const char *filename, const char *ID );
+  int WriteMetadataForUpload ( const char *filename, const char *ID );
 
   // Description:
   // This method sets up the upload of each storable node
