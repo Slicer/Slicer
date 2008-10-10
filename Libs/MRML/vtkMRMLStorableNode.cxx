@@ -25,7 +25,7 @@ Version:   $Revision: 1.3 $
 //----------------------------------------------------------------------------
 vtkMRMLStorableNode::vtkMRMLStorableNode()
 {
-  this->UserTagTable = vtkUserTagTable::New();
+  this->UserTagTable = vtkTagTable::New();
 }
 
 //----------------------------------------------------------------------------
@@ -70,12 +70,12 @@ void vtkMRMLStorableNode::WriteXML(ostream& of, int nIndent)
     {
     ss.clear();
     ss.str ( "" );
-    int numc = this->GetUserTagTable()->GetTagTable()->GetNumberOfColumns();
+    int numc = this->GetUserTagTable()->GetNumberOfTags();
     const char *kwd, *val;
     for (int i=0; i < numc; i++ )
       {
-      kwd = this->GetUserTagTable()->GetUserTagKeyword(i);
-      val = this->GetUserTagTable()->GetUserTagValue (i);
+      kwd = this->GetUserTagTable()->GetTagAttribute(i);
+      val = this->GetUserTagTable()->GetTagValue (i);
       if (kwd != NULL && val != NULL) 
         {
         ss << kwd << "=" << val;
@@ -120,7 +120,7 @@ void vtkMRMLStorableNode::ReadXMLAttributes(const char** atts)
       {
       if ( this->GetUserTagTable() == NULL )
         {
-        this->UserTagTable = vtkUserTagTable::New();
+        this->UserTagTable = vtkTagTable::New();
         }
       std::stringstream ss(attValue);
       std::string kwd = "";
@@ -140,7 +140,7 @@ void vtkMRMLStorableNode::ReadXMLAttributes(const char** atts)
             val = tags.substr(i+1, std::string::npos );
             if ( kwd.c_str() != NULL && val.c_str() != NULL )
               {
-              this->GetUserTagTable()->AddKeywordValuePair ( kwd.c_str(), val.c_str() );
+              this->GetUserTagTable()->AddOrUpdateTag ( kwd.c_str(), val.c_str() );
               }
             }
           }        
@@ -181,19 +181,21 @@ void vtkMRMLStorableNode::Copy(vtkMRMLNode *anode)
     //--- make sure the destination node has a TagTable.
     if ( this->GetUserTagTable() == NULL )
       {
-      this->UserTagTable = vtkUserTagTable::New();
+      this->UserTagTable = vtkTagTable::New();
       }
 
     //--- copy.
-    int numc = node->GetUserTagTable()->GetTagTable()->GetNumberOfColumns();
+    int numc = node->GetUserTagTable()->GetNumberOfTags();
     const char *kwd, *val;
+    int sel;
     for ( int j=0; j < numc; j++ )
       {
-      kwd = node->GetUserTagTable()->GetUserTagKeyword(j);
-      val = node->GetUserTagTable()->GetUserTagValue (j);
-      if (kwd != NULL && val != NULL )
+      kwd = node->GetUserTagTable()->GetTagAttribute(j);
+      val = node->GetUserTagTable()->GetTagValue (j);
+      sel = node->GetUserTagTable()->IsTagSelected ( kwd );
+      if (kwd != NULL && val != NULL && sel >= 0 )
         {
-        this->UserTagTable->AddKeywordValuePair ( kwd, val );
+        this->UserTagTable->AddOrUpdateTag ( kwd, val, sel );
         }
       }
     }

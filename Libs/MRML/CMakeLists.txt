@@ -150,7 +150,8 @@ set(MRML_SRCS
   vtkMRMLNonlinearTransformNode.cxx
   vtkPermissionPrompter.cxx
   vtkURIHandler.cxx
-  vtkUserTagTable.cxx
+  vtkTagTableCollection.cxx
+  vtkTagTable.cxx
   # Note: when you add new node types, add
   # register code to the vtkMRMLScene constructor
   )
