@@ -478,7 +478,7 @@ void vtkFetchMIGUI::BuildGUI ( )
   if ( this->Logic != NULL )
     {
     this->Logic->GetMRMLScene()->RegisterNodeClass(n);
-    if ( this->Logic->GetFetchMINode() != NULL )
+    if ( this->Logic->GetFetchMINode() == NULL )
       {
       this->Logic->SetFetchMINode ( NULL );
       this->Logic->SetFetchMINode( n );
