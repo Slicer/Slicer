@@ -87,10 +87,12 @@ vtkMRMLFetchMINode::~vtkMRMLFetchMINode()
     }
   if ( this->SelectedServer != NULL )
     {
+    delete [] this->SelectedServer;
     this->SelectedServer = NULL;
     }
   if ( this->SelectedServiceType != NULL )
     {
+    delete [] this->SelectedServiceType;
     this->SelectedServiceType = NULL;
     }
 }
@@ -142,6 +144,11 @@ void vtkMRMLFetchMINode::SetKnownServers ( )
 //----------------------------------------------------------------------------
 void vtkMRMLFetchMINode::SetServer ( const char *s)
 {
+  if (s == NULL)
+    {
+    vtkErrorMacro("SetServer: can't select a null server.");
+    return;
+    }
   this->SetSelectedServer (s);
   if ( !(strcmp(s, "http://loci.ucsd.edu/hid" ) ))
     {
@@ -167,10 +174,16 @@ void vtkMRMLFetchMINode::SetServiceType ( const char *s)
 //----------------------------------------------------------------------------
 void vtkMRMLFetchMINode::AddNewServer ( const char *name )
 {
-  
+
   int unique = 1;
   std::string s;
 
+  if (name == NULL)
+    {
+    vtkErrorMacro("AddNewServer: can't add a null server name.");
+    return;
+    }
+  
   int n = this->KnownServers.size();
   for ( int i = 0; i < n; i++ )
     {
@@ -216,6 +229,10 @@ void vtkMRMLFetchMINode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLFetchMINode *node = (vtkMRMLFetchMINode *) anode;
 
+  this->SetSelectedServer(node->GetSelectedServer());
+  this->SetSelectedServiceType(node->GetSelectedServiceType());
+
+  // TODO: loop through known servers
 }
 
 //----------------------------------------------------------------------------
@@ -229,6 +246,10 @@ void vtkMRMLFetchMINode::PrintSelf(ostream& os, vtkIndent indent)
     {
     os << indent << "KnownServers[" << i << "] = " << this->KnownServers[i] << "\n";
     }
+  os << indent << "SelectedServer: " << (this->SelectedServer == NULL ? "null" :  this->SelectedServer) << "\n";
+  os << indent << "SelectedServiceType: " << (this->SelectedServiceType == NULL ? "null" : this->SelectedServiceType) << "\n";
+  os << indent << "QueryError: " << this->QueryError << "\n";
+  os << indent << "ErrorMessage: " << this->ErrorMessage.c_str() << "\n";
 }
 
 
