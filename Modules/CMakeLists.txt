@@ -49,6 +49,7 @@ subdirs(
 #   PythonGADScriptedModule
    QdecModule
    QueryAtlas
+#   FetchMI
    ScriptedModule
    ScriptedModuleExample
    SlicerDaemon
@@ -77,6 +78,7 @@ endif(Slicer3_USE_NAVITRACK)
 ## MODELS_DEBUG
 ## VOLUMES_DEBUG
 ## QUERYATLAS_DEBUG
+## FETCHMI_DEBUG
 ## COLORS_DEBUG
 ## FIDUCIALS_DEBUG
 ## CAMERA_DEBUG
