@@ -75,14 +75,21 @@ void vtkHIDHandler::PrintSelf(ostream& os, vtkIndent indent)
 
 //----------------------------------------------------------------------------
 void vtkHIDHandler::StageFileRead(const char * source,
-                                   const char *destination,
-                                   const char *hostname)
+                                  const char *destination)
+
 {
   if (source == NULL || destination == NULL)
     {
     vtkErrorMacro("StageFileRead: source or dest is null!");
     return;
     }
+  const char *hostname = this->GetHostName();
+  if ( hostname == NULL )
+    {
+    vtkErrorMacro("StageFileWrite: null host name");
+    return;    
+    }
+
   /*
   if (this->LocalFile)
     {
@@ -140,8 +147,8 @@ void vtkHIDHandler::StageFileRead(const char * source,
 
 //----------------------------------------------------------------------------
 void vtkHIDHandler::StageFileWrite(const char *source,
-                                   const char *destination,
-                                   const char *hostname )
+                                   const char *destination)
+
 {
   // need to use the -k argument for signed... how to
   // do with curl_easy?
@@ -156,6 +163,13 @@ void vtkHIDHandler::StageFileWrite(const char *source,
     }
   this->LocalFile = new std::ofstream(destination, std::ios::binary);
   */
+  const char *hostname = this->GetHostName();
+  if ( hostname == NULL )
+    {
+    vtkErrorMacro("StageFileWrite: null host name");
+    return;    
+    }
+
   this->LocalFile = fopen(source, "r");
 
   this->InitTransfer( );

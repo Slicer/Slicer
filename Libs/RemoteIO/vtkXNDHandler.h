@@ -21,6 +21,9 @@ class VTK_RemoteIO_EXPORT vtkXNDHandler : public vtkHTTPHandler
   vtkTypeRevisionMacro(vtkXNDHandler, vtkHTTPHandler);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  vtkGetStringMacro (HostName);
+  vtkSetStringMacro (HostName);
+
   // Description:
   // To prevent XND handler from capturing any non-xnd requests
   // that start with http://, this test will fail. The handler must be
@@ -31,21 +34,22 @@ class VTK_RemoteIO_EXPORT vtkXNDHandler : public vtkHTTPHandler
   // This function downloads the specified source (uri) to 
   // a specified destination file, from a specified host.
   virtual void StageFileRead(const char * source,
-                                   const char * destination,
-                                   const char *hostname);
+                             const char * destination);
+
 
   // Description:
   // This function uploads the specified file (source) to
   // the specified destination (uri), on a specified host.
   virtual void StageFileWrite(const char * source,
-                              const char *destination,
-                              const char *hostname );
+                              const char *destination);
+
 
   virtual const char *QueryServer ( const char *uri, const char *destination);
   const char *GetXMLDeclaration();
   const char *GetNameSpace();
 
  private:
+  char *HostName;
 
  protected:
   vtkXNDHandler();

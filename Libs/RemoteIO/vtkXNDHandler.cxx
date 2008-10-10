@@ -73,13 +73,19 @@ void vtkXNDHandler::PrintSelf(ostream& os, vtkIndent indent)
 //--- for downloading
 //----------------------------------------------------------------------------
 void vtkXNDHandler::StageFileRead(const char * source,
-                                   const char *destination,
-                                   const char *hostname)
+                                  const char *destination )
 {
   if (source == NULL || destination == NULL)
     {
     vtkErrorMacro("StageFileRead: source or dest is null!");
     return;
+    }
+
+  const char *hostname = this->GetHostName();
+  if ( hostname == NULL )
+    {
+    vtkErrorMacro("StageFileWrite: null host name");
+    return;    
     }
   /*
   if (this->LocalFile)
@@ -137,13 +143,20 @@ void vtkXNDHandler::StageFileRead(const char * source,
 //--- for uploading
 //----------------------------------------------------------------------------
 void vtkXNDHandler::StageFileWrite(const char *source,
-                                   const char *destination,
-                                   const char *hostname )
+                                   const char *destination )
+
 {
   if (source == NULL || destination == NULL)
     {
     vtkErrorMacro("StageFileWrite: source or dest is null!");
     return;
+    }
+
+  const char *hostname = this->GetHostName();
+  if ( hostname == NULL )
+    {
+    vtkErrorMacro("StageFileWrite: null host name");
+    return;    
     }
 
   //--- check these arguments...
