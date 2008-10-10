@@ -337,6 +337,8 @@ void vtkFetchMILogic::GetXMLElement( vtkXMLDataElement *element )
     return;
     }
 
+  this->GetXMLEntry ( element );
+  
   int nnested = element->GetNumberOfNestedElements();
   for ( int i=0; i < nnested; i++)
     {
