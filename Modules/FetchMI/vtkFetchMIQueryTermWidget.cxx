@@ -13,6 +13,7 @@
 #include "vtkKWCheckButton.h"
 #include "vtkFetchMIIcons.h"
 
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkFetchMIQueryTermWidget );
 vtkCxxRevisionMacro ( vtkFetchMIQueryTermWidget, "$Revision: 1.0 $");
@@ -29,6 +30,7 @@ vtkFetchMIQueryTermWidget::vtkFetchMIQueryTermWidget ( )
     this->SearchButton = NULL;
     this->FetchMIIcons = NULL;
     this->NumberOfColumns = 3;
+    this->Logic = NULL;
 }
 
 
@@ -36,6 +38,7 @@ vtkFetchMIQueryTermWidget::vtkFetchMIQueryTermWidget ( )
 vtkFetchMIQueryTermWidget::~vtkFetchMIQueryTermWidget ( )
 {
   this->RemoveMRMLObservers();
+  this->SetLogic ( NULL );
 
   if ( this->SearchButton )
     {

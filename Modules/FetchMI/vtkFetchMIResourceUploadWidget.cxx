@@ -29,7 +29,7 @@ vtkFetchMIResourceUploadWidget::vtkFetchMIResourceUploadWidget ( )
     this->ShowTagsButton = NULL;
     this->FetchMIIcons = NULL;
     this->NumberOfColumns = 3;
-
+    this->Logic = NULL;
 }
 
 
@@ -37,6 +37,7 @@ vtkFetchMIResourceUploadWidget::vtkFetchMIResourceUploadWidget ( )
 vtkFetchMIResourceUploadWidget::~vtkFetchMIResourceUploadWidget ( )
 {
   this->RemoveMRMLObservers();
+  this->SetLogic ( NULL );
 
   if ( this->UploadSelectedButton )
     {

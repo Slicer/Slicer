@@ -4,6 +4,7 @@
 
 #include "vtkFetchMIWin32Header.h"
 #include "vtkFetchMIMulticolumnWidget.h"
+#include "vtkFetchMILogic.h"
 
 class vtkKWPushButton;
 class vtkFetchMIIcons;
@@ -24,6 +25,8 @@ public:
   vtkGetObjectMacro ( ClearSelectedButton, vtkKWPushButton);
   vtkGetObjectMacro ( DownloadSelectedButton, vtkKWPushButton );
   vtkGetObjectMacro ( FetchMIIcons, vtkFetchMIIcons );
+  vtkGetObjectMacro ( Logic, vtkFetchMILogic );
+  vtkSetObjectMacro ( Logic, vtkFetchMILogic );
 
 
   // Description:
@@ -79,6 +82,7 @@ public:
   vtkKWPushButton *ClearAllButton;
   vtkKWPushButton *ClearSelectedButton;
   vtkFetchMIIcons *FetchMIIcons;
+  vtkFetchMILogic *Logic;
 
   // Description:
   // Create the widget.

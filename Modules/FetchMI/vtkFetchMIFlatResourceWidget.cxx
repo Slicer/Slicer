@@ -30,7 +30,7 @@ vtkFetchMIFlatResourceWidget::vtkFetchMIFlatResourceWidget ( )
     this->FetchMIIcons = NULL;
     //--- initial (select & result)
     this->NumberOfColumns = 2;
-
+    this->Logic = NULL;
 }
 
 
@@ -38,6 +38,7 @@ vtkFetchMIFlatResourceWidget::vtkFetchMIFlatResourceWidget ( )
 vtkFetchMIFlatResourceWidget::~vtkFetchMIFlatResourceWidget ( )
 {
   this->RemoveMRMLObservers();
+  this->SetLogic ( NULL );
 
   if ( this->DownloadSelectedButton )
     {

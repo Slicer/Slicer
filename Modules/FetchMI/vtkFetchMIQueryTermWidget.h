@@ -4,6 +4,7 @@
 
 #include "vtkFetchMIWin32Header.h"
 #include "vtkFetchMIMulticolumnWidget.h"
+#include "vtkFetchMILogic.h"
 
 class vtkKWPushButton;
 class vtkFetchMIIcons;
@@ -25,6 +26,8 @@ public:
   vtkGetObjectMacro ( ClearSelectedButton, vtkKWPushButton);
   vtkGetObjectMacro ( SearchButton, vtkKWPushButton );
   vtkGetObjectMacro ( FetchMIIcons, vtkFetchMIIcons );
+  vtkGetObjectMacro ( Logic, vtkFetchMILogic );
+  vtkSetObjectMacro ( Logic, vtkFetchMILogic );
   
   // Description:
   // Method to add a new keyword value pair to the tag list
@@ -83,6 +86,7 @@ public:
   vtkKWPushButton *ClearSelectedButton;
   vtkKWPushButton *SearchButton;
   vtkFetchMIIcons *FetchMIIcons;
+  vtkFetchMILogic *Logic;
 
   // Description:
   // Create the widget.

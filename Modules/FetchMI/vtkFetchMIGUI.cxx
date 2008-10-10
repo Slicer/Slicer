@@ -582,16 +582,19 @@ void vtkFetchMIGUI::BuildGUI ( )
   this->QueryList = vtkFetchMIQueryTermWidget::New();
   this->QueryList->SetParent ( queryFrame->GetFrame() );
   this->QueryList->Create();
+  this->QueryList->SetLogic ( this->Logic );
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->QueryList->GetWidgetName() );
 
   this->ResourceList = vtkFetchMIFlatResourceWidget::New();
   this->ResourceList->SetParent ( resourceFrame->GetFrame() );
   this->ResourceList->Create();
+  this->ResourceList->SetLogic ( this->Logic );
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->ResourceList->GetWidgetName() );
 
   this->TaggedDataList = vtkFetchMIResourceUploadWidget::New();
   this->TaggedDataList->SetParent ( descriptionFrame->GetFrame() );
   this->TaggedDataList->Create();
+  this->TaggedDataList->SetLogic ( this->Logic );
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->TaggedDataList->GetWidgetName() );
 
   // Clean up.
