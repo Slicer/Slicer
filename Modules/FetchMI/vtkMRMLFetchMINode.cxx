@@ -50,8 +50,8 @@ vtkMRMLFetchMINode::vtkMRMLFetchMINode()
    this->SetKnownServers();
    this->QueryError = 0;
 
-   this->SelectedServer = "http://localhost:8081";
-   this->SelectedServiceType = "XND";
+   this->SelectedServer = NULL; //"http://localhost:8081";
+   this->SelectedServiceType = NULL; // "XND";
    
    this->ResourceDescription = vtkTagTable::New();
 

@@ -298,25 +298,33 @@ void vtkFetchMIGUI::UpdateTagTableFromMRML ( )
   if ( this->GetFetchMINode() != NULL )
     {
     const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
+    if (svctype == NULL)
+      {
+      return;
+      }
+    
     //--- update the Tags Table.
     if ( !strcmp ( "XND", svctype ))
       {
-      vtkXNDTagTable *t = vtkXNDTagTable::SafeDownCast ( this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XNDTags" ));
-      if ( t != NULL )
+      if (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XNDTags" ) != NULL)
         {
-        //--- see if we get this far ok.
-        const char *att;
-        const char *val;
-        int i, row;
-        for (i=0; i < t->GetNumberOfTags(); i++ )
+        vtkXNDTagTable *t = vtkXNDTagTable::SafeDownCast ( this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XNDTags" ));
+        if ( t != NULL )
           {
-          att = t->GetTagAttribute(i);
-          val = t->GetTagValue(i);
-          this->QueryList->AddNewItem (att, val );
-          row = this->QueryList->GetRowForAttribute ( att );
-          if ( row >= 0 && (t->IsTagSelected(att)) )
+          //--- see if we get this far ok.
+          const char *att;
+          const char *val;
+          int i, row;
+          for (i=0; i < t->GetNumberOfTags(); i++ )
             {
-            this->QueryList->SelectRow(row);              
+            att = t->GetTagAttribute(i);
+            val = t->GetTagValue(i);
+            this->QueryList->AddNewItem (att, val );
+            row = this->QueryList->GetRowForAttribute ( att );
+            if ( row >= 0 && (t->IsTagSelected(att)) )
+              {
+              this->QueryList->SelectRow(row);              
+              }
             }
           }
         }
@@ -324,17 +332,19 @@ void vtkFetchMIGUI::UpdateTagTableFromMRML ( )
 
     else if ( !strcmp ( "HID", svctype))
       {
-      vtkHIDTagTable *t = vtkHIDTagTable::SafeDownCast ( this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "HIDTags" ));
-      if ( t != NULL )
+      if (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "HIDTags" ) != NULL)
         {
-        std::map<std::string, std::string> tt = t->TagTable;
-        std::map<std::string, int> st= t->TagSelectionTable;
+        vtkHIDTagTable *t = vtkHIDTagTable::SafeDownCast ( this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "HIDTags" ));
+        if ( t != NULL )
+          {
+          std::map<std::string, std::string> tt = t->TagTable;
+          std::map<std::string, int> st= t->TagSelectionTable;
+          }
         }
       }
     }
+
 }
-
-
 
 //---------------------------------------------------------------------------
 void vtkFetchMIGUI::ProcessMRMLEvents ( vtkObject *caller,
