@@ -230,6 +230,19 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
     else if ( b == this->QueryTagsButton )
       {
       this->Logic->QueryServerForTags();
+      // TODO: temporary fix for HID which we are
+      // not yet querying for available tags. Just
+      // repopulate from default tags in FetchMINode
+      const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
+      if ( svctype == NULL )
+        {
+        vtkErrorMacro ( "vtkFetchMIGUI: got null service type" );
+        return;
+        }
+      if ( !(strcmp (svctype, "HID")))
+        {
+        this->UpdateTagTableFromMRML();
+        }
       }
     }
 

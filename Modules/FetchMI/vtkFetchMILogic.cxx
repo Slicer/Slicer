@@ -197,6 +197,11 @@ void vtkFetchMILogic::QueryServerForTags ( )
   
   const char *svr = this->GetFetchMINode()->GetSelectedServer();
   const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
+  if ( (svr == NULL) || (svctype== NULL ))
+    {
+    vtkErrorMacro ("vtkFetchMILogic: Null server or servicetype" );
+    return;
+    }
 
   if ( !(strcmp ("HID", svctype )) )
     {
@@ -255,6 +260,12 @@ void vtkFetchMILogic::QueryServerForResources ( )
   
   const char *svr = this->GetFetchMINode()->GetSelectedServer();
   const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
+  if ( (svr == NULL) || (svctype== NULL ))
+    {
+    vtkErrorMacro ("vtkFetchMILogic: Null server or servicetype" );
+    return;
+    }
+
 
   if ( !(strcmp ("HID", svctype )) )
     {
@@ -419,6 +430,12 @@ void vtkFetchMILogic::GetXMLEntry( vtkXMLDataElement *element )
   // do different things based on what elements we find.
 
   svctype = this->GetFetchMINode()->GetSelectedServiceType();
+  if ( svctype== NULL )
+    {
+    vtkErrorMacro ("vtkFetchMILogic: Null server or servicetype" );
+    return;
+    }
+
 
   //---
   // TAGS
@@ -543,6 +560,11 @@ void vtkFetchMILogic::ParseTagQueryResponse ( )
 
 //  const char *svr = this->GetFetchMINode()->GetSelectedServer();
   const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
+  if ( svctype == NULL )
+    {
+    vtkErrorMacro ("vtkFetchMILogic: Null server or servicetype" );
+    return;
+    }
     
   if ( this->GetHTTPResponseFileName() != NULL )
     {
@@ -622,6 +644,11 @@ void vtkFetchMILogic::ParseResourceQueryResponse ( )
 
 //  const char *svr = this->GetFetchMINode()->GetSelectedServer();
   const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
+  if ( svctype == NULL )
+    {
+    vtkErrorMacro ("vtkFetchMILogic: Null server or servicetype" );
+    return;
+    }
 
   if ( this->GetHTTPResponseFileName() != NULL )
     {
@@ -759,6 +786,11 @@ int vtkFetchMILogic::WriteMetadataForUpload ( const char *filename, const char *
   const char *att;
   const char *val;
 
+  if ( svctype == NULL )
+    {
+    vtkErrorMacro ("vtkFetchMILogic: Null server or servicetype" );
+    return 0;
+    }
 
   if ( !(strcmp(svctype, "XND" )))
     {
@@ -895,6 +927,11 @@ void vtkFetchMILogic::RequestResourceUpload ( )
     }
 
   const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
+  if ( svctype == NULL )
+    {
+    vtkErrorMacro ("vtkFetchMILogic: Null server or servicetype" );
+    return;
+    }
   //--- we'll have to have separate methods for each
   if ( !(strcmp ("XND", svctype )) )
     {
@@ -915,6 +952,12 @@ void vtkFetchMILogic::RequestResourceDownload ( const char *uri, const char *nod
     }
 
   const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
+  if ( svctype == NULL )
+    {
+    vtkErrorMacro ("vtkFetchMILogic: Null server or servicetype" );
+    return;
+    }
+  
   //--- we'll have to have separate methods for each
   if ( !(strcmp ("XND", svctype )) )
     {
@@ -1156,6 +1199,12 @@ void vtkFetchMILogic::RequestSceneDownload ( const char *uri )
     }
 
   const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
+  if ( svctype == NULL )
+    {
+    vtkErrorMacro ("vtkFetchMILogic: Null server or servicetype" );
+    return;
+    }
+  
   //--- we'll have to have separate methods for each
   if ( !(strcmp ("XND", svctype )) )
     {
