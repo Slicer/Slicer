@@ -253,6 +253,7 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
         if ( this->ServerMenuButton->GetValue() != NULL )
           {
           this->FetchMINode->SetServer ( this->ServerMenuButton->GetValue() );
+          this->UpdateTagTableFromMRML();
           }
         }
       }
@@ -336,7 +337,6 @@ void vtkFetchMIGUI::UpdateTagTableFromMRML ( )
       vtkXNDTagTable *t = vtkXNDTagTable::SafeDownCast ( this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XNDTags" ));
       if ( t != NULL )
         {
-        //--- see if we get this far ok.
         const char *att;
         const char *val;
         int i, row;
@@ -362,8 +362,20 @@ void vtkFetchMIGUI::UpdateTagTableFromMRML ( )
       vtkHIDTagTable *t = vtkHIDTagTable::SafeDownCast ( this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "HIDTags" ));
       if ( t != NULL )
         {
-        std::map<std::string, std::string> tt = t->TagTable;
-        std::map<std::string, int> st= t->TagSelectionTable;
+        const char *att;
+        const char *val;
+        int i, row;
+        for (i=0; i < t->GetNumberOfTags(); i++ )
+          {
+          att = t->GetTagAttribute(i);
+          val = t->GetTagValue(i);
+          this->QueryList->AddNewItem (att, val );
+          row = this->QueryList->GetRowForAttribute ( att );
+          if ( row >= 0 && (t->IsTagSelected(att)) )
+            {
+            this->QueryList->SelectRow(row);              
+            }
+          }
         }
       }
     }
