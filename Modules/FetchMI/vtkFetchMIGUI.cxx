@@ -265,26 +265,37 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkFetchMIGUI::UpdateResourceTableFromMRML ( )
 {
-  if ( this->GetFetchMINode() != NULL )
+  if ( this->GetFetchMINode() == NULL )
     {
-    //--- update the Resource Table.
-    vtkTagTable *t = this->FetchMINode->GetResourceDescription();
-    if ( t != NULL )
+    vtkErrorMacro ("FetchMIGUI: UpdateResourceTableFromMRML got a NULL FetchMINode." );
+    return;
+    }
+  if ( this->ResourceList == NULL )
+    {
+    vtkErrorMacro ("FetchMIGUI: UpdateResourceTableFromMRML got a NULL ResourceList widget." );
+    return;
+    }
+
+  //--- clear the widget
+  this->ResourceList->DeleteAllItems();
+  
+  //--- update the Resource Table from the FetchMINode
+  vtkTagTable *t = this->FetchMINode->GetResourceDescription();
+  if ( t != NULL )
+    {
+    //--- see if we get this far ok.
+    const char *att;
+    const char *val;
+    int i, row;
+    for (i=0; i < t->GetNumberOfTags(); i++ )
       {
-      //--- see if we get this far ok.
-      const char *att;
-      const char *val;
-      int i, row;
-      for (i=0; i < t->GetNumberOfTags(); i++ )
+      att = t->GetTagAttribute(i);
+      val = t->GetTagValue(i);
+      this->ResourceList->AddNewItem (att, val);
+      row = this->ResourceList->GetRowForAttribute ( att );
+      if ( row >= 0 && (t->IsTagSelected(att)) )
         {
-        att = t->GetTagAttribute(i);
-        val = t->GetTagValue(i);
-        this->ResourceList->AddNewItem (att, val);
-        row = this->ResourceList->GetRowForAttribute ( att );
-        if ( row >= 0 && (t->IsTagSelected(att)) )
-          {
-          this->ResourceList->SelectRow(row);              
-          }
+        this->ResourceList->SelectRow(row);              
         }
       }
     }
@@ -295,56 +306,70 @@ void vtkFetchMIGUI::UpdateResourceTableFromMRML ( )
 void vtkFetchMIGUI::UpdateTagTableFromMRML ( )
 {
 
-  if ( this->GetFetchMINode() != NULL )
+  if ( this->GetFetchMINode() == NULL )
     {
-    const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
-    if (svctype == NULL)
-      {
-      return;
-      }
+    vtkErrorMacro ("FetchMIGUI: UpdateTagTableFromMRML got a NULL FetchMINode." );
+    return;
+    }
+  if ( this->QueryList == NULL )
+    {
+    vtkErrorMacro ("FetchMIGUI: UpdateTagTableFromMRML got a NULL QueryList widget." );
+    return;
+    }
+  
+  const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
+  if (svctype == NULL)
+    {
+    return;
+    }
     
-    //--- update the Tags Table.
-    if ( !strcmp ( "XND", svctype ))
-      {
-      if (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XNDTags" ) != NULL)
-        {
-        vtkXNDTagTable *t = vtkXNDTagTable::SafeDownCast ( this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XNDTags" ));
-        if ( t != NULL )
-          {
-          //--- see if we get this far ok.
-          const char *att;
-          const char *val;
-          int i, row;
-          for (i=0; i < t->GetNumberOfTags(); i++ )
-            {
-            att = t->GetTagAttribute(i);
-            val = t->GetTagValue(i);
-            this->QueryList->AddNewItem (att, val );
-            row = this->QueryList->GetRowForAttribute ( att );
-            if ( row >= 0 && (t->IsTagSelected(att)) )
-              {
-              this->QueryList->SelectRow(row);              
-              }
-            }
-          }
-        }
-      }
+  //--- clear the table
+  this->QueryList->DeleteAllItems();
 
-    else if ( !strcmp ( "HID", svctype))
+  //--- now repopulate it from the FetchMINode, depending on
+  //--- which service is selected.
+
+  if ( !strcmp ( "XND", svctype ))
+    {
+    if (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XNDTags" ) != NULL)
       {
-      if (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "HIDTags" ) != NULL)
+      vtkXNDTagTable *t = vtkXNDTagTable::SafeDownCast ( this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XNDTags" ));
+      if ( t != NULL )
         {
-        vtkHIDTagTable *t = vtkHIDTagTable::SafeDownCast ( this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "HIDTags" ));
-        if ( t != NULL )
+        //--- see if we get this far ok.
+        const char *att;
+        const char *val;
+        int i, row;
+        for (i=0; i < t->GetNumberOfTags(); i++ )
           {
-          std::map<std::string, std::string> tt = t->TagTable;
-          std::map<std::string, int> st= t->TagSelectionTable;
+          att = t->GetTagAttribute(i);
+          val = t->GetTagValue(i);
+          this->QueryList->AddNewItem (att, val );
+          row = this->QueryList->GetRowForAttribute ( att );
+          if ( row >= 0 && (t->IsTagSelected(att)) )
+            {
+            this->QueryList->SelectRow(row);              
+            }
           }
         }
       }
     }
 
+  else if ( !strcmp ( "HID", svctype))
+    {
+    if (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "HIDTags" ) != NULL)
+      {
+      vtkHIDTagTable *t = vtkHIDTagTable::SafeDownCast ( this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "HIDTags" ));
+      if ( t != NULL )
+        {
+        std::map<std::string, std::string> tt = t->TagTable;
+        std::map<std::string, int> st= t->TagSelectionTable;
+        }
+      }
+    }
 }
+
+
 
 //---------------------------------------------------------------------------
 void vtkFetchMIGUI::ProcessMRMLEvents ( vtkObject *caller,

@@ -434,7 +434,19 @@ void vtkFetchMILogic::GetXMLEntry( vtkXMLDataElement *element )
       //--- tag values should be set by user.
       value = element->GetCharacterData();
       vtkXNDTagTable* t = vtkXNDTagTable::SafeDownCast (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XNDTags" ));
-      t->AddOrUpdateTag ( value, "<none>", 0 );
+      //--- make sure to keep SlicerDataType a default
+      //--- value of 'MRML' in the XNDTagTable.
+      //--- This promotes tagging of scenes with a
+      //--- consistent attribute/value, and searching for scenes
+      //--- with that consistent tag.
+      if ( !(strcmp (value, "SlicerDataType" )))
+        {
+        t->AddOrUpdateTag ( value, "MRML", 0 );        
+        }
+      else
+        {
+        t->AddOrUpdateTag ( value, "<none>", 0 );
+        }
       }
     else if (!(strcmp ("HID", svctype )) )
       {
