@@ -212,7 +212,6 @@ const char* vtkFetchMIResourceUploadWidget::GetNthSelectedSlicerDataType(int n)
 {
   int r = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
   int counter = 0;
-  const char *dtype;
 
   for ( int i=0; i < r; i++)
     {
@@ -220,8 +219,7 @@ const char* vtkFetchMIResourceUploadWidget::GetNthSelectedSlicerDataType(int n)
       {
       if ( counter == n )
         {
-        dtype = this->GetMultiColumnList()->GetWidget()->GetCellText (i,2);
-        return ( dtype );
+        return (this->GetMultiColumnList()->GetWidget()->GetCellText (i,2) );
         }
       counter++;
       }
@@ -235,7 +233,6 @@ const char* vtkFetchMIResourceUploadWidget::GetNthSelectedDataTarget(int n)
 {
  int r = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
   int counter = 0;
-  const char *nodeID;
 
   for ( int i=0; i < r; i++)
     {
@@ -243,8 +240,7 @@ const char* vtkFetchMIResourceUploadWidget::GetNthSelectedDataTarget(int n)
       {
       if ( counter == n )
         {
-        nodeID = this->GetMultiColumnList()->GetWidget()->GetCellText (i,3);
-        return ( nodeID );
+        return ( this->GetMultiColumnList()->GetWidget()->GetCellText (i,3) );
         }
       counter++;
       }
@@ -447,6 +443,7 @@ void vtkFetchMIResourceUploadWidget::AddNewItem ( const char *resource )
     {
     i = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
     this->GetMultiColumnList()->GetWidget()->AddRow();
+    this->GetMultiColumnList()->GetWidget()->RowSelectableOff(i);
     this->GetMultiColumnList()->GetWidget()->SetCellWindowCommandToCheckButton(i, 0);
     this->GetMultiColumnList()->GetWidget()->SetCellImageToIcon ( i, 1, this->FetchMIIcons->GetShowDataTagsIcon() );
     this->GetMultiColumnList()->GetWidget()->SetCellText (i, 2, "MRML" );

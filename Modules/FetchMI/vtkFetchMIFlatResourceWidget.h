@@ -68,7 +68,7 @@ public:
   virtual void DeleteSelectedItems();
   virtual int GetNumberOfSelectedItems();
   virtual const char *GetNthSelectedSlicerDataType(int n);
-  virtual const char *GetNthSelectedResource(int n);
+  virtual const char *GetNthSelectedURI(int n);
   virtual int GetRowForAttribute(const char *att );
   
  protected:

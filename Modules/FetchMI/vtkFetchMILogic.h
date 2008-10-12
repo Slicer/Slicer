@@ -70,14 +70,23 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   void ParseResourceQueryResponse ( );
   
   // Description:
-  // This method assembles the appropriate uri
-  // and sets up the download for that resource.
-  void RequestResourceDownload ( const char *uri, const char *nodeType );
-  void RequestSceneDownload(const char *uri);
-  void RequestResourceDownloadFromXND ( const char *uri, const char *nodeType);
-  void RequestResourceDownloadFromHID ( const char *uri, const char *nodeType );
+  // This method assembles the appropriate uri,
+  // filters the slicerDataType to make sure it is a
+  // known type, and sets up its download.
+  int RequestResourceDownload ( const char *uri, const char *slicerDataType );
+
+  // Description:
+  // This method requests download of the scene
+  // from a supported webservice.
   void RequestSceneDownloadFromXND ( const char *uri);
   void RequestSceneDownloadFromHID ( const char *uri);
+  
+  // Description:
+  // This method requests download of a slicerDataType
+  // from a supported webservice.
+  void RequestResourceDownloadFromXND ( const char *uri, const char *slicerDataType);
+  void RequestResourceDownloadFromHID ( const char *uri, const char *slicerDataType );
+
 
   
   //---------------------------------------------------------------------
@@ -129,7 +138,8 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   const char *ParsePostMetadataResponse();
   void GetNumberOfXMLElements(vtkXMLDataElement *element);
   void GetXMLElement(vtkXMLDataElement *element );
-  void GetXMLEntry ( vtkXMLDataElement *element );
+  void GetXNDXMLEntry ( vtkXMLDataElement *element );
+  void GetHIDXMLEntry ( vtkXMLDataElement *element );
   vtkGetMacro ( NumberOfElements, int );
   vtkSetMacro ( NumberOfElements, int );
   

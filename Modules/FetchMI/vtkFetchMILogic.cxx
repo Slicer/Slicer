@@ -61,12 +61,7 @@ vtkFetchMILogic::~vtkFetchMILogic()
 { 
   this->SetFetchMINode(NULL);
   this->SceneTags->Delete();
-
-  if ( this->CurrentURI )
-    {
-    delete [] this->CurrentURI;
-    this->CurrentURI  = NULL;
-    }
+  this->CurrentURI  = NULL;
 }
 
 
@@ -382,8 +377,21 @@ void vtkFetchMILogic::GetXMLElement( vtkXMLDataElement *element )
     vtkErrorMacro ( "vtkFetchMILogic: GetXMLElement called with null vtkXMLDataElement.");
     return;
     }
+  if ( this->GetFetchMINode() == NULL )
+    {
+    vtkErrorMacro ( "vtkFetchMILogic: FetchMINode is NULL.");
+    return;
+    }
 
-  this->GetXMLEntry ( element );
+  const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
+  if ( !(strcmp (svctype, "XND")))
+    {
+    this->GetXNDXMLEntry ( element );
+    }
+  else if ( !(strcmp(svctype, "HID")))
+    {
+    this->GetHIDXMLEntry ( element );
+    }
   
   int nnested = element->GetNumberOfNestedElements();
   for ( int i=0; i < nnested; i++)
@@ -401,7 +409,13 @@ void vtkFetchMILogic::GetXMLElement( vtkXMLDataElement *element )
 
 
 //----------------------------------------------------------------------------
-void vtkFetchMILogic::GetXMLEntry( vtkXMLDataElement *element )
+void vtkFetchMILogic::GetHIDXMLEntry( vtkXMLDataElement *element )
+{
+}
+
+
+//----------------------------------------------------------------------------
+void vtkFetchMILogic::GetXNDXMLEntry( vtkXMLDataElement *element )
 {
 
   if (element ==  NULL )
@@ -413,9 +427,8 @@ void vtkFetchMILogic::GetXMLEntry( vtkXMLDataElement *element )
   const char *name = element->GetName();
   const char *attName;
   const char *value;
-  const char *svctype;
   const char *dtype = "<unknown>";
-;
+
   if ( name == NULL )
     {
     return;
@@ -429,13 +442,6 @@ void vtkFetchMILogic::GetXMLEntry( vtkXMLDataElement *element )
   // check to see if this is an item of interest.
   // do different things based on what elements we find.
 
-  svctype = this->GetFetchMINode()->GetSelectedServiceType();
-  if ( svctype== NULL )
-    {
-    vtkErrorMacro ("vtkFetchMILogic: Null server or servicetype" );
-    return;
-    }
-
 
   //---
   // TAGS
@@ -443,19 +449,18 @@ void vtkFetchMILogic::GetXMLEntry( vtkXMLDataElement *element )
   if ( (!(strcmp(name, "Label" ))) ||
        (!(strcmp(name, "label" ))) )
     {
-
     // parse the xml file and put result into node's XND tag table.
-    if ( !(strcmp ("XND", svctype )) )
+    //--- we are filling up the Query tag table here.
+    //--- tag values should be set by user.
+    value = element->GetCharacterData();
+    vtkXNDTagTable* t = vtkXNDTagTable::SafeDownCast (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XNDTags" ));
+    //--- make sure to keep SlicerDataType a default
+    //--- value of 'MRML' in the XNDTagTable.
+    //--- This promotes tagging of scenes with a
+    //--- consistent attribute/value, and searching for scenes
+    //--- with that consistent tag.
+    if ( value != NULL )
       {
-      //--- we are filling up the Query tag table here.
-      //--- tag values should be set by user.
-      value = element->GetCharacterData();
-      vtkXNDTagTable* t = vtkXNDTagTable::SafeDownCast (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XNDTags" ));
-      //--- make sure to keep SlicerDataType a default
-      //--- value of 'MRML' in the XNDTagTable.
-      //--- This promotes tagging of scenes with a
-      //--- consistent attribute/value, and searching for scenes
-      //--- with that consistent tag.
       if ( !(strcmp (value, "SlicerDataType" )))
         {
         t->AddOrUpdateTag ( value, "MRML", 0 );        
@@ -465,87 +470,87 @@ void vtkFetchMILogic::GetXMLEntry( vtkXMLDataElement *element )
         t->AddOrUpdateTag ( value, "<none>", 0 );
         }
       }
-    else if (!(strcmp ("HID", svctype )) )
-      {
-      // no-op
-      }
     }
-  
 
   //---
   // RESOURCES
   //---
-  if ((!(strcmp(name, "uri" ))) ||
-      (!(strcmp(name, "Uri" ))) ||
-      (!(strcmp(name, "URI" ))) )
-    {
-
-    this->CurrentURI = "";
-    // parse the xml file for the uri 
-    if ( !(strcmp ("XND", svctype )) )
-      {
-      // uri
-      value = element->GetCharacterData();
-      if ( value != NULL )
-        {
-        this->CurrentURI = value;
-        this->FetchMINode->GetResourceDescription()->AddOrUpdateTag ( this->CurrentURI, dtype, 0 );        
-        }
-      }
-    else if (!(strcmp ("HID", svctype )) )
-      {
-      // no-op
-      }
-    }
-
-
-
-  //---
-  // SLICER DATA TYPE
-  //---
-  if ((!(strcmp(name, "tag" ))) ||
-      (!(strcmp(name, "Tag" ))) ||
-      (!(strcmp(name, "TAG" ))) )
+  if ((!(strcmp(name, "resource" ))) ||
+      (!(strcmp(name, "Resource" ))) ||
+      (!(strcmp(name, "RESOURCE" ))) )
     {
     // parse the xml file and put result into ResourceDescription table.
     // looking for the SlicerDataType to pair with uri
-    if ( !(strcmp ("XND", svctype )) )
+    this->CurrentURI = "";
+    int nnested = element->GetNumberOfNestedElements();
+    vtkXMLDataElement *nestedElement;
+    //--- get uri
+    for ( int i=0; i < nnested; i++)
       {
-      // see if the attribute in this tag is called Label, and if its value is SlicerDataType
-      int numatts = element->GetNumberOfAttributes();
-      for ( int i=0; i < numatts; i++ )
+      nestedElement = element->GetNestedElement ( i );
+      if (nestedElement == NULL)
         {
-        attName = element->GetAttributeName(i);        
-        value = element->GetAttributeValue(i);
-        if ( !strcmp(value, "SlicerDataType" ) )
+        break;
+        }
+
+      if (!(strcmp(nestedElement->GetName(), "uri")) ||
+          !(strcmp(nestedElement->GetName(), "Uri")) ||
+          !(strcmp(nestedElement->GetName(), "URI")) )            
+        {
+        value = nestedElement->GetCharacterData();
+        if ( value != NULL )
           {
-          // if yes, then get the nested Value Element          
-          int nnested = element->GetNumberOfNestedElements();
-          vtkXMLDataElement *nestedElement = element;
-          for ( int j=0; j < nnested; j++)
-            {
-            nestedElement = nestedElement->GetNestedElement ( j );
-            value = nestedElement->GetName();
-            if ( !(strcmp (value, "Value" )) ||
-                 !(strcmp (value, "value" )) )
-              {
-              dtype = nestedElement->GetCharacterData();              
-              break;              
-              }
-            }          
-          break;
+          this->CurrentURI = value;
+          this->FetchMINode->GetResourceDescription()->AddOrUpdateTag ( this->CurrentURI, dtype, 0 );        
           }
         }
-      //now pair it up with CurrentURI and add to ResourceDescription.
-      this->FetchMINode->GetResourceDescription()->AddOrUpdateTag ( this->CurrentURI, dtype, 0 );
-      this->CurrentURI = "";
-      }
-    else if (!(strcmp ("HID", svctype )) )
-      {
-      // no-op
+
+      //--- get data type
+      if (((!(strcmp(nestedElement->GetName(), "tag" ))) ||
+           (!(strcmp(nestedElement->GetName(), "Tag" ))) ||
+           (!(strcmp(nestedElement->GetName(), "TAG" )))) &&
+          ( (strcmp(this->CurrentURI, ""))))
+        {
+        // see if the attribute in this tag is called Label, and if its value is SlicerDataType
+        int numatts = nestedElement->GetNumberOfAttributes();
+        for ( int j=0; j < numatts; j++ )
+          {
+          attName = nestedElement->GetAttributeName(j);        
+          value = nestedElement->GetAttributeValue(j);
+          if ( attName != NULL && value != NULL )
+            {            
+            if ( !strcmp(value, "SlicerDataType" ) )
+              {
+              // if yes, then get the nested Value Element          
+              int nnested2 = nestedElement->GetNumberOfNestedElements();
+              vtkXMLDataElement *nested2Element = nestedElement;
+              for ( int k=0; k < nnested2; k++)
+                {
+                nested2Element = nestedElement->GetNestedElement ( k );
+                if ( nested2Element == NULL )
+                  {
+                  break;
+                  }
+                value = nested2Element->GetName();
+                if ( value != NULL )
+                  {
+                  if ( !(strcmp (value, "Value" )) ||
+                       !(strcmp (value, "value" )) )
+                    {
+                    dtype = nested2Element->GetCharacterData();              
+                    //now pair it up with CurrentURI and add to ResourceDescription.
+                    this->FetchMINode->GetResourceDescription()->AddOrUpdateTag ( this->CurrentURI, dtype, 0 );
+                    this->CurrentURI = "";
+                    break;              
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
-
 }
 
 
@@ -746,7 +751,7 @@ void vtkFetchMILogic::TagStorableNodes ( )
 
 
 // filename is a dataset's filename or mrmlscene filename.
-// ID is a nodeID or is the text "MRMLScene".
+// ID is a nodeID or is the text "MRML".
 //----------------------------------------------------------------------------
 int vtkFetchMILogic::WriteMetadataForUpload ( const char *filename, const char *ID)
 {
@@ -794,15 +799,15 @@ int vtkFetchMILogic::WriteMetadataForUpload ( const char *filename, const char *
 
   if ( !(strcmp(svctype, "XND" )))
     {
-    vtkXNDHandler *h = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XND" ));
+    vtkXNDHandler *h = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XNDHandler" ));
     if ( h == NULL )
       {
       vtkErrorMacro ( "vtkFetchMILogic: WriteMetadataForUpload got a null XNDHandler." );
       return 0;
       }
 
-    //--- Check to see if ID == MRMLScene.
-    if ( !(strcmp(ID, "MRMLScene" ) ) )
+    //--- Check to see if ID == MRML.
+    if ( !(strcmp(ID, "MRML" ) ) )
       {
       vtkTagTable *t = this->SceneTags;
       // make sure SlicerDataType tag is set to 'MRML'
@@ -941,32 +946,80 @@ void vtkFetchMILogic::RequestResourceUpload ( )
 
 
 
+//--- This method has to figure out whether we are downloading
+//--- a scene or a dataset then has to figure out which service is queried
+//--- and call the correct method to download a scene or resource
 //----------------------------------------------------------------------------
-void vtkFetchMILogic::RequestResourceDownload ( const char *uri, const char *nodeType)
+int vtkFetchMILogic::RequestResourceDownload ( const char *uri, const char *slicerDataType)
 {
 
   if ( this->GetFetchMINode() == NULL )
     {
     vtkErrorMacro ( "vtkFetchMILogic: FetchMINode is NULL.");
-    return;
+    return -1;
     }
 
   const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
   if ( svctype == NULL )
     {
     vtkErrorMacro ("vtkFetchMILogic: Null server or servicetype" );
-    return;
+    return -1;
     }
   
-  //--- we'll have to have separate methods for each
-  if ( !(strcmp ("XND", svctype )) )
+  if ( uri == NULL || slicerDataType == NULL )
     {
-    this->RequestResourceDownloadFromXND( uri, nodeType );
+    vtkErrorMacro ("vtkFetchMILogic: Null uri or slicerDataType." );
+    return -1;
     }
-  if ( !(strcmp ("HID", svctype )) )
+  
+/*
+  //--- make sure we have a data type we know how to handle.
+  if ( (strcmp (slicerDataType, "VTKModel")) &&
+       (strcmp (slicerDataType, "FreeSurferModel")) &&
+       (strcmp (slicerDataType, "ScalarVolume")) &&
+       (strcmp (slicerDataType, "MRML" )))
     {
-    this->RequestResourceDownloadFromHID( uri, nodeType );
+    //--- retval reports an unknown slicerDataType.
+    return 0;    
     }
+*/
+
+  //--- FOR NOW, ONLY mrml...
+  if ( (strcmp (slicerDataType, "MRML")))
+    {
+    //--- retval reports an unknown slicerDataType.
+    return 0;    
+    }
+
+
+  //--- handle scene with separate set of methods.
+  if ( !(strcmp(slicerDataType, "MRML")))
+    {
+    //--- check all known webservices to see which is selected
+    if ( !(strcmp ("XND", svctype )) )
+      {
+      this->RequestSceneDownloadFromXND( uri );
+      }
+    if ( !(strcmp ("HID", svctype )) )
+      {
+      this->RequestSceneDownloadFromHID( uri );
+      }
+    }
+  else 
+    {
+    //--- check all known webservices to see which is selected
+    if ( !(strcmp ("XND", svctype )) )
+      {
+      this->RequestResourceDownloadFromXND( uri, slicerDataType );
+      }
+    if ( !(strcmp ("HID", svctype )) )
+      {
+      this->RequestResourceDownloadFromHID( uri, slicerDataType );
+      }
+    }
+
+  //--- retval means good as far as we can tell.
+  return 1;
 }
 
 
@@ -974,7 +1027,7 @@ void vtkFetchMILogic::RequestResourceDownload ( const char *uri, const char *nod
 
 
 //----------------------------------------------------------------------------
-void vtkFetchMILogic::RequestResourceDownloadFromHID ( const char *uri, const char *nodeType )
+void vtkFetchMILogic::RequestResourceDownloadFromHID ( const char *uri, const char *slicerDataType )
 {
   // This method will download resource with uri
   // from the currently selected remote repository.
@@ -991,20 +1044,26 @@ void vtkFetchMILogic::RequestResourceDownloadFromHID ( const char *uri, const ch
     return;
     }
 
-  vtkHIDHandler *h = vtkHIDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "HID" ));
+  vtkHIDHandler *h = vtkHIDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "HIDHandler" ));
   if ( h == NULL )
     {
     vtkErrorMacro ("vtkFetchMILogic::RequestResourceUploadToHID: Null URIHandler. ");
     return;
     }
 
-  if ( !(strcmp(nodeType, "Volume" )))
+  if ( !(strcmp(slicerDataType, "ScalarVolume" )))
     {
     //--- create the node
     //--- set its URIhandler
     //--- download to cache and load.
     }
-  if ( !(strcmp(nodeType, "Model" )))
+  if ( !(strcmp(slicerDataType, "VTKModel" )))
+    {
+    //--- create the node
+    //--- set its URIhandler
+    //--- download to cache and load.
+    }
+  if ( !(strcmp(slicerDataType, "FreeSurferModel" )))
     {
     //--- create the node
     //--- set its URIhandler
@@ -1013,26 +1072,18 @@ void vtkFetchMILogic::RequestResourceDownloadFromHID ( const char *uri, const ch
   
 }
 
-//---------------------------------------------------------------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------------------------------------------------------------
 
 
-// Nicole: can you take a stab? Assume we know the nodeType.
-// however, if we just have a raw uri, not sure we'll know it's
-// nodeType. we may be able to infer from File_Type tag, but
-// not sure yet.
+
 //----------------------------------------------------------------------------
-void vtkFetchMILogic::RequestResourceDownloadFromXND ( const char *uri, const char *nodeType )
+void vtkFetchMILogic::RequestResourceDownloadFromXND ( const char *uri, const char *slicerDataType )
 {
   // This method will download resource with uri
   // from the currently selected remote repository.
 
-  if (uri == NULL || nodeType == NULL)
+  if (uri == NULL || slicerDataType == NULL)
     {
-    vtkErrorMacro("vtkFetchMILogic::RequestResourceDownloadFromXND: uri isn't set or nodeType isn't set. uri = " << (uri == NULL ? "null" : uri) << ", nodeType = " << (nodeType == NULL ? "null" : nodeType));
+    vtkErrorMacro("vtkFetchMILogic::RequestResourceDownloadFromXND: uri isn't set or slicerDataType isn't set. uri = " << (uri == NULL ? "null" : uri) << ", slicerDataType = " << (slicerDataType == NULL ? "null" : slicerDataType));
     return;
     }
   
@@ -1049,7 +1100,7 @@ void vtkFetchMILogic::RequestResourceDownloadFromXND ( const char *uri, const ch
     }
 
   
-  vtkXNDHandler *handler = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XND" ));
+  vtkXNDHandler *handler = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XNDHandler" ));
   if ( handler == NULL )
     {
     vtkErrorMacro ("vtkFetchMILogic::RequestResourceDownloadFromXND: Null URIHandler. ");
@@ -1069,7 +1120,7 @@ void vtkFetchMILogic::RequestResourceDownloadFromXND ( const char *uri, const ch
     vtkDebugMacro("vtkFetchMILogic::RequestResourceDownloadFromXND: new uri string = " << uriString.c_str());
     }
     
-  if ( !(strcmp(nodeType, "Volume" )))
+  if ( !(strcmp(slicerDataType, "ScalarVolume" )))
     {
     // is it a label map?
     /*
@@ -1133,7 +1184,7 @@ void vtkFetchMILogic::RequestResourceDownloadFromXND ( const char *uri, const ch
       }
 
     }
-  if ( !(strcmp(nodeType, "Model" )))
+  if ( !(strcmp(slicerDataType, "VTKModel" )))
     {
     // get the models logic
     /*
@@ -1188,37 +1239,7 @@ void vtkFetchMILogic::RequestResourceDownloadFromXND ( const char *uri, const ch
 
 
 
-//----------------------------------------------------------------------------
-void vtkFetchMILogic::RequestSceneDownload ( const char *uri )
-{
 
-  if ( this->GetFetchMINode() == NULL )
-    {
-    vtkErrorMacro ( "vtkFetchMILogic: FetchMINode is NULL.");
-    return;
-    }
-
-  const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
-  if ( svctype == NULL )
-    {
-    vtkErrorMacro ("vtkFetchMILogic: Null server or servicetype" );
-    return;
-    }
-  
-  //--- we'll have to have separate methods for each
-  if ( !(strcmp ("XND", svctype )) )
-    {
-    this->RequestSceneDownloadFromXND( uri );
-    }
-  if ( !(strcmp ("HID", svctype )) )
-    {
-    this->RequestSceneDownloadFromHID( uri );
-    }
-
-}
-
-
-// Nicole: can you flesh out?
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::RequestSceneDownloadFromHID ( const char *uri)
 {
@@ -1237,32 +1258,43 @@ void vtkFetchMILogic::RequestSceneDownloadFromHID ( const char *uri)
     return;
     }
 
-  vtkHIDHandler *h = vtkHIDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "HID" ));
-  if ( h == NULL )
+  vtkHIDHandler *handler = vtkHIDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "HIDHandler" ));
+  if ( handler == NULL )
     {
     vtkErrorMacro ("vtkFetchMILogic::RequestResourceUploadToHID: Null URIHandler. ");
     return;
     }
-  
-  //--- we need to add a method on MRMLScene called SetURIHandler()
-  //--- that explictly sets the handler to use for downloading scene.
-  //--- this->MRMLScene->SetURIHandler ( h );
-  //--- this->MRMLScene->SetURI ( uri );
-  //---
-  //--- then, in MRMLScene->FindURIHandler() we need to first check
-  //--- if the scene's uri handler is set and use it if so. Otherwise, call
-  //--- CanHandleURI(uri).
 
-  //--- load the remote scene
-  //--- this->MRMLScene->Connect();
+  std::string localURL = this->GetMRMLScene()->GetCacheManager()->GetFilenameFromURI(uri);
+  std::string remoteURL = uri;
 
-  //--- finally, reset the MRMLScene's URIHandler.
-  //--- this->MRMLScene->SetURIHandler ( NULL );
+  // currently have to pass a host name
+  // TODO: test this!
+  std::string svr = this->GetFetchMINode()->GetSelectedServer();
+  std::string hostname;
+  int index;
+  if ( (index = svr.find("://", 0)) != std::string::npos)
+    {
+    hostname = svr.substr( index+3, std::string::npos );
+    // do a synchronous dl
+    handler->SetHostName(hostname.c_str());
+    handler->StageFileRead(remoteURL.c_str(), localURL.c_str());
+    
+    // now override the mrml scene's url to point to file on disk
+    this->GetMRMLScene()->SetURL(localURL.c_str());
+
+
+    //--- load the remote scene
+    this->MRMLScene->Connect();
+
+    }
 }
 
 
 
-//--- Nicole: this one requires touching vtkmrmlscene
+
+
+
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::RequestSceneDownloadFromXND ( const char *uri )
 {
@@ -1281,7 +1313,7 @@ void vtkFetchMILogic::RequestSceneDownloadFromXND ( const char *uri )
     return;
     }
 
-  vtkXNDHandler *handler = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XND" ));
+  vtkXNDHandler *handler = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XNDHandler" ));
   if ( handler == NULL )
     {
     vtkErrorMacro ("vtkFetchMILogic::RequestSceneDownloadFromXND: Null URIHandler. ");
@@ -1290,32 +1322,36 @@ void vtkFetchMILogic::RequestSceneDownloadFromXND ( const char *uri )
 
   std::string localURL = this->GetMRMLScene()->GetCacheManager()->GetFilenameFromURI(uri);
   std::string remoteURL = uri;
+
   // currently have to pass a host name
-  std::string hostname = "bobby.bwh.harvard.edu:8000";
-  
-  // do a synchronous dl
-  handler->SetHostName(hostname.c_str());
-  handler->StageFileRead(remoteURL.c_str(), localURL.c_str());
+  // TODO: test this!
+  std::string svr = this->GetFetchMINode()->GetSelectedServer();
+  std::string hostname;
+  int index;
+  if ( (index = svr.find("://", 0)) != std::string::npos)
+    {
+    hostname = svr.substr( index+3, std::string::npos );
+    // do a synchronous dl
+    handler->SetHostName(hostname.c_str());
+    handler->StageFileRead(remoteURL.c_str(), localURL.c_str());
+    
+    // now override the mrml scene's url to point to file on disk
+    this->GetMRMLScene()->SetURL(localURL.c_str());
 
-  // now override the mrml scene's url to point to file on disk
-  this->GetMRMLScene()->SetURL(localURL.c_str());
-  
-  //--- we need to add a method on MRMLScene called SetURIHandler()
-  //--- that explictly sets the handler to use for downloading scene.
-  //--- this->MRMLScene->SetURIHandler ( h );
-  //--- this->MRMLScene->SetURI ( uri );
-  //---
-  //--- then, in MRMLScene->FindURIHandler() we need to first check
-  //--- if the scene's uri handler is set and use it if so. Otherwise, call
-  //--- CanHandleURI(uri).
-
-  //--- load the remote scene
-  this->MRMLScene->Connect();
-
-  //--- finally, reset the MRMLScene's URIHandler.
-  //--- this->MRMLScene->SetURIHandler ( NULL );
-  
+    //--- load the remote scene
+    //--- TODO:
+    //--- this downloads the scene file, but looks
+    //--- like its referenced data don't download
+    //--- (at least they don't show up in the cachedir).
+    //--- Not sure what's going on.
+    //--- Scene shows up with empty nodes created.
+    this->MRMLScene->Connect();
+    }
 }
+
+
+
+
 
 
 //--- Nicole: this is the serious chunk.
@@ -1350,7 +1386,7 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
     return;
     }
 
-  vtkXNDHandler *handler = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XND" ));
+  vtkXNDHandler *handler = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XNDHandler" ));
   if ( handler == NULL )
     {
     vtkErrorMacro ("vtkFetchMILogic::RequestResourceUploadToXND: Null URIHandler. ");
@@ -1554,7 +1590,7 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
     vtkErrorMacro("NOT WRITING SCENE XML YET!");
   // If so write mrml file to cache, include all nodes that have uris AND are selected for upload.
   // (get all selected storable nodes from this->SelectedStorableNodeIDs)
-  // call this->WriteMetadataForUpload( filename, MRMLScene) to generate metadata
+  // call this->WriteMetadataForUpload( filename, MRML) to generate metadata
   // If return is successful,
   //--- Call handler's PostMetadata() method which returns uri for MRML file.
   //--- Set scene's URI

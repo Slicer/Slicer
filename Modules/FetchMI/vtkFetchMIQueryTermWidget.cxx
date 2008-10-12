@@ -382,6 +382,7 @@ void vtkFetchMIQueryTermWidget::AddNewItem ( const char *keyword, const char *va
     {
     i = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
     this->GetMultiColumnList()->GetWidget()->AddRow();
+    this->GetMultiColumnList()->GetWidget()->RowSelectableOff(i);
     this->GetMultiColumnList()->GetWidget()->SetCellWindowCommandToCheckButton(i, 0);
     this->GetMultiColumnList()->GetWidget()->SetCellText (i, 1, keyword );
     this->GetMultiColumnList()->GetWidget()->SetCellText (i, 2, value );
@@ -399,11 +400,9 @@ void vtkFetchMIQueryTermWidget::AddNewItem ( const char *keyword, const char *va
 int  vtkFetchMIQueryTermWidget::GetRowForAttribute ( const char *attribute )
 {
   int r = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
-  const char *att;
   for ( int i=0; i<r; i++ )
     {
-    att = this->GetMultiColumnList()->GetWidget()->GetCellText (i,1);
-    if ( !strcmp (att, attribute) )
+    if ( !strcmp (this->GetMultiColumnList()->GetWidget()->GetCellText (i,1), attribute) )
       {
       return i;
       }
@@ -468,7 +467,6 @@ const char* vtkFetchMIQueryTermWidget::GetNthSelectedAttribute(int n)
 {
   int r = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
   int counter = 0;
-  const char *att;
 
   for ( int i=0; i < r; i++)
     {
@@ -476,8 +474,7 @@ const char* vtkFetchMIQueryTermWidget::GetNthSelectedAttribute(int n)
       {
       if ( counter == n )
         {
-        att = this->GetMultiColumnList()->GetWidget()->GetCellText (i,1);
-        return ( att );
+        return (this->GetMultiColumnList()->GetWidget()->GetCellText (i,1)  );
         }
       counter++;
       }
@@ -493,7 +490,6 @@ const char* vtkFetchMIQueryTermWidget::GetNthSelectedValue(int n)
 {
   int r = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
   int counter = 0;
-  const char *att;
 
   for ( int i=0; i < r; i++)
     {
@@ -501,8 +497,7 @@ const char* vtkFetchMIQueryTermWidget::GetNthSelectedValue(int n)
       {
       if ( counter == n )
         {
-        att = this->GetMultiColumnList()->GetWidget()->GetCellText (i,2);
-        return ( att );
+        return ( this->GetMultiColumnList()->GetWidget()->GetCellText (i,2) );
         }
       counter++;
       }

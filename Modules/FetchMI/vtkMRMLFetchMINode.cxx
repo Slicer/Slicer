@@ -134,7 +134,7 @@ void vtkMRMLFetchMINode::ReadXMLAttributes(const char** atts)
 void vtkMRMLFetchMINode::SetKnownServers ( )
 {
    //--- add all known servers
-  this->AddNewServer ( "http://bobby:8000" );
+  this->AddNewServer ( "http://bobby.bwh.harvard.edu:8000" );
   this->AddNewServer ( "http://localhost:8081" );
   this->AddNewServer ( "http://loci.ucsd.edu/hid" );
   this->InvokeEvent (vtkMRMLFetchMINode::KnownServersModifiedEvent );

@@ -12,6 +12,8 @@
 #include "vtkKWLabel.h"
 #include "vtkKWCheckButton.h"
 #include "vtkFetchMIIcons.h"
+#include "vtkKWMessageDialog.h"
+#include <string>
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkFetchMIFlatResourceWidget );
@@ -115,7 +117,55 @@ void vtkFetchMIFlatResourceWidget::ProcessWidgetEvents ( vtkObject *caller,
       }
     else if ( (b == this->GetDownloadSelectedButton()) && (event == vtkKWPushButton::InvokedEvent ) )
       {
-      //this->DownloadItem( "" );
+      //--- Request download of each selected resource
+      int num = this->GetNumberOfSelectedItems();
+      std::string dtype;
+      std::string uri;
+      int retval;
+      int dlFlag = 0;
+      int dtFlag = 0;
+      std::string msg;
+      for ( int n=0; n <num; n++)
+        {
+        dtype = this->GetNthSelectedSlicerDataType (n);
+        uri = this->GetNthSelectedURI (n);
+        retval = this->Logic->RequestResourceDownload (uri.c_str(), dtype.c_str());
+        if ( retval == 0 )
+          {
+          // unknown data type
+          dtFlag = 1;
+          }
+        if ( retval < 0 )
+          {
+          // null pointer problem with download request
+          dlFlag = 1;
+          }
+        }
+      //--- report to user if any downloads failed.
+      if ( dtFlag == 1 )
+        {
+          //--- pop up error message: unknown dtype.
+          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+          dialog->SetParent ( this->GetParent() );
+          dialog->SetStyleToMessage();
+          msg = "The SlicerDataType of one or more of the requested resources has an unknown value. Known values are: MRML, ScalarVolume, VTKModel, and FreeSurferModel.";
+          dialog->SetText ( msg.c_str() );
+          dialog->Create();
+          dialog->Invoke();
+          dialog->Delete();
+        }
+      if ( dlFlag == 1 )
+        {
+        //--- popup error message.
+          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+          dialog->SetParent ( this->GetParent() );
+          dialog->SetStyleToMessage();
+          msg = "Download of one or more requested resources failed.";
+          dialog->SetText ( msg.c_str() );
+          dialog->Create();
+          dialog->Invoke();
+          dialog->Delete();
+        }
       }
     else if ( (b == this->GetClearSelectedButton()) && (event == vtkKWPushButton::InvokedEvent ) )
       {
@@ -214,18 +264,16 @@ int vtkFetchMIFlatResourceWidget::GetNumberOfSelectedItems()
 //---------------------------------------------------------------------------
 const char* vtkFetchMIFlatResourceWidget::GetNthSelectedSlicerDataType(int n)
 {
- int r = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
+  int r = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
   int counter = 0;
-  const char *dtype;
-
+  
   for ( int i=0; i < r; i++)
     {
     if ( this->IsItemSelected(i) )
       {
       if ( counter == n )
         {
-        dtype = this->GetMultiColumnList()->GetWidget()->GetCellText (i,2);
-        return ( dtype );
+        return (this->GetMultiColumnList()->GetWidget()->GetCellText (i,1) );
         }
       counter++;
       }
@@ -235,20 +283,18 @@ const char* vtkFetchMIFlatResourceWidget::GetNthSelectedSlicerDataType(int n)
 
 
 //---------------------------------------------------------------------------
-const char* vtkFetchMIFlatResourceWidget::GetNthSelectedResource(int n)
+const char* vtkFetchMIFlatResourceWidget::GetNthSelectedURI (int n)
 {
- int r = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
+  int r = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
   int counter = 0;
-  const char *uri;
-
+  
   for ( int i=0; i < r; i++)
     {
     if ( this->IsItemSelected(i) )
       {
       if ( counter == n )
         {
-        uri = this->GetMultiColumnList()->GetWidget()->GetCellText (i,3);
-        return ( uri );
+        return ( this->GetMultiColumnList()->GetWidget()->GetCellText (i,2) );
         }
       counter++;
       }
@@ -422,11 +468,9 @@ void vtkFetchMIFlatResourceWidget::CreateWidget ( )
 int  vtkFetchMIFlatResourceWidget::GetRowForAttribute ( const char *attribute )
 {
   int r = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
-  const char *att;
   for ( int i=0; i<r; i++ )
     {
-    att = this->GetMultiColumnList()->GetWidget()->GetCellText (i,1);
-    if ( !strcmp (att, attribute) )
+    if ( !strcmp (this->GetMultiColumnList()->GetWidget()->GetCellText (i,1), attribute) )
       {
       return i;
       }
@@ -465,6 +509,7 @@ void vtkFetchMIFlatResourceWidget::AddNewItem ( const char *term, const char *dt
     {
     i = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
     this->GetMultiColumnList()->GetWidget()->AddRow();
+    this->GetMultiColumnList()->GetWidget()->RowSelectableOff(i);
     this->GetMultiColumnList()->GetWidget()->SetCellWindowCommandToCheckButton(i, 0);
     this->GetMultiColumnList()->GetWidget()->SetCellText (i, 1, dtype );
     this->GetMultiColumnList()->GetWidget()->SetCellText (i, 2, term );
