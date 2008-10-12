@@ -142,6 +142,13 @@ public:
     this->vtkCast->SetInput(Input);
   };
 
+  // Description:
+  // Return the input to the filter
+  virtual vtkDataObject* GetInput()
+  {
+    return (vtkDataObject::SafeDownCast( this->vtkCast->GetInput() ));
+  };
+
   // Description: Override vtkSource's Update so that we can access
   // this class's GetOutput(). vtkSource's GetOutput is not virtual.
   void Update()
