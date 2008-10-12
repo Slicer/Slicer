@@ -54,12 +54,18 @@ size_t hid_ProgressCallback(FILE* outputFile, double dltotal, double dlnow, doub
 //----------------------------------------------------------------------------
 vtkHIDHandler::vtkHIDHandler()
 {
+  this->HostName = NULL;
 }
 
 
 //----------------------------------------------------------------------------
 vtkHIDHandler::~vtkHIDHandler()
 {
+  if ( this->HostName )
+    {
+    delete [] this->HostName;
+    this->HostName = NULL;
+    }
 }
 
 

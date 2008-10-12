@@ -53,12 +53,18 @@ size_t xnd_ProgressCallback(FILE* outputFile, double dltotal, double dlnow, doub
 //----------------------------------------------------------------------------
 vtkXNDHandler::vtkXNDHandler()
 {
+  this->HostName = NULL;
 }
 
 
 //----------------------------------------------------------------------------
 vtkXNDHandler::~vtkXNDHandler()
 {
+  if ( this->HostName )
+    {
+    delete [] this->HostName;
+    this->HostName = NULL;
+    }
 }
 
 

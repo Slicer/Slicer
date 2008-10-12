@@ -41,7 +41,7 @@ void vtkHIDTagTable::Initialize( )
   this->ClearTagTable();
   this->AddOrUpdateTag ( "Subject", "NULL" );
   this->AddOrUpdateTag ( "Experiment", "NULL" );
-  this->AddOrUpdateTag ( "File_Type", "NULL" );
+  this->AddOrUpdateTag ( "File_Type", "MRML" );
   this->SelectTag ( "File_Type");
 
 }
