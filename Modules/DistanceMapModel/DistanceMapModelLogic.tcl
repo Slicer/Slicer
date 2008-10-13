@@ -1,11 +1,11 @@
 #
-# DistanceMapFiducials logic procs
+# DistanceMapModel logic procs
 #
 
 #
 # make a clone of the scripted module example with a new name
 #
-proc DistanceMapFiducialsClone { moduleName {slicerSourceDir ""} {targetDir ""} } {
+proc DistanceMapModelClone { moduleName {slicerSourceDir ""} {targetDir ""} } {
 
   if { $slicerSourceDir == "" } {
     set slicerSourceDir $::env(Slicer3_HOME)/../Slicer3
@@ -19,7 +19,7 @@ proc DistanceMapFiducialsClone { moduleName {slicerSourceDir ""} {targetDir ""} 
   puts "Making $targetDir"
   file mkdir $targetDir
 
-  set files [glob $slicerSourceDir/Modules/DistanceMapFiducials/*]
+  set files [glob $slicerSourceDir/Modules/DistanceMapModel/*]
   foreach f $files {
     set ff [file tail $f]
     if { [string match ".*" $ff] || [string match "*~" $ff] } {
@@ -28,9 +28,9 @@ proc DistanceMapFiducialsClone { moduleName {slicerSourceDir ""} {targetDir ""} 
     set fp [open $f "r"]
     set contents [read $fp]
     close $fp
-    regsub -all "DistanceMapFiducials" $contents $moduleName newContents
+    regsub -all "DistanceMapModel" $contents $moduleName newContents
 
-    regsub -all "DistanceMapFiducials" $ff $moduleName newFileName
+    regsub -all "DistanceMapModel" $ff $moduleName newFileName
     set fp [open $targetDir/$newFileName "w"]
     puts -nonewline $fp $newContents
     close $fp
@@ -43,7 +43,7 @@ proc DistanceMapFiducialsClone { moduleName {slicerSourceDir ""} {targetDir ""} 
 #
 # make a model of the current label map for the given slice logic
 #
-proc DistanceMapFiducialsAddQuickModel { sliceLogic } {
+proc DistanceMapModelAddQuickModel { sliceLogic } {
 
   #
   # get the image data for the label layer
@@ -77,7 +77,7 @@ proc DistanceMapFiducialsAddQuickModel { sliceLogic } {
   $modelNode SetName "QuickModel"
   $modelNode SetScene $::slicer3::MRMLScene
   $modelDisplayNode SetScene $::slicer3::MRMLScene
-  eval $modelDisplayNode SetColor [lrange [DistanceMapFiducialsGetPaintColor $::DistanceMapFiducials(singleton)] 0 2]
+  eval $modelDisplayNode SetColor [lrange [DistanceMapModelGetPaintColor $::DistanceMapModel(singleton)] 0 2]
   $::slicer3::MRMLScene AddNode $modelDisplayNode
   $modelNode SetAndObserveDisplayNodeID [$modelDisplayNode GetID]
   $::slicer3::MRMLScene AddNode $modelNode
@@ -99,7 +99,7 @@ proc DistanceMapFiducialsAddQuickModel { sliceLogic } {
 # - copy works, but image data is not correct somehow.
 # - also need a GUI to access this function
 #
-proc DistanceMapFiducialsLabelCheckpoint {} {
+proc DistanceMapModelLabelCheckpoint {} {
 
   #
   # get the image data for the label layer
@@ -133,7 +133,7 @@ proc DistanceMapFiducialsLabelCheckpoint {} {
 #
 # make it easier to test the model by looking for the first slice logic
 #
-proc DistanceMapFiducialsTestQuickModel {} {
+proc DistanceMapModelTestQuickModel {} {
   set sliceLogic [lindex [vtkSlicerSliceLogic ListInstances] 0]
-  DistanceMapFiducialsAddQuickModel $sliceLogic
+  DistanceMapModelAddQuickModel $sliceLogic
 }

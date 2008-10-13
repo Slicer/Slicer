@@ -61,7 +61,7 @@ subdirs(
 #  MRAblation <- not working either
    Volumes
    EMSegment
-   DistanceMapFiducials
+   DistanceMapModel
    #VolumeRenderingCuda
    OpenIGTLink
    NeuroNav

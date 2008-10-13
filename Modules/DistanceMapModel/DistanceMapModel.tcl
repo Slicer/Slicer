@@ -1,5 +1,5 @@
 
-package provide DistanceMapFiducials 3.0
+package provide DistanceMapModel 3.0
 
 #########################################################
 #

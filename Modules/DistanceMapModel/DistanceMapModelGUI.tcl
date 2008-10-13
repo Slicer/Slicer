@@ -1,46 +1,46 @@
 #
-# DistanceMapFiducials GUI Procs
+# DistanceMapModel GUI Procs
 # - the 'this' argument to all procs is a vtkScriptedModuleGUI
 #
 
-proc DistanceMapFiducialsConstructor {this} {
+proc DistanceMapModelConstructor {this} {
 }
 
-proc DistanceMapFiducialsDestructor {this} {
+proc DistanceMapModelDestructor {this} {
 }
 
-proc DistanceMapFiducialsTearDownGUI {this} {
-  $::DistanceMapFiducials($this,resample) Delete
-  $::DistanceMapFiducials($this,euclideanDistance) Delete
-  $::DistanceMapFiducials($this,marchingCubes) Delete
-    $::DistanceMapFiducials($this,transform) Delete
+proc DistanceMapModelTearDownGUI {this} {
+  $::DistanceMapModel($this,resample) Delete
+  $::DistanceMapModel($this,euclideanDistance) Delete
+  $::DistanceMapModel($this,marchingCubes) Delete
+    $::DistanceMapModel($this,transform) Delete
 
   # nodeSelector  ;# disabled for now
   set widgets {
     run volumesSelect
-    fiducialOutputSelect distanceScale volumesFrame 
+    modelOutputSelect distanceScale volumesFrame 
   }
 
   foreach w $widgets {
-    $::DistanceMapFiducials($this,$w) SetParent ""
-    $::DistanceMapFiducials($this,$w) Delete
+    $::DistanceMapModel($this,$w) SetParent ""
+    $::DistanceMapModel($this,$w) Delete
   }
 
   if { [[$this GetUIPanel] GetUserInterfaceManager] != "" } {
-    set pageWidget [[$this GetUIPanel] GetPageWidget "DistanceMapFiducials"]
-    [$this GetUIPanel] RemovePage "DistanceMapFiducials"
+    set pageWidget [[$this GetUIPanel] GetPageWidget "DistanceMapModel"]
+    [$this GetUIPanel] RemovePage "DistanceMapModel"
   }
 
-  unset ::DistanceMapFiducials(singleton)
+  unset ::DistanceMapModel(singleton)
 
 }
 
-proc DistanceMapFiducialsBuildGUI {this} {
+proc DistanceMapModelBuildGUI {this} {
 
-  if { [info exists ::DistanceMapFiducials(singleton)] } {
-    error "DistanceMapFiducials singleton already created"
+  if { [info exists ::DistanceMapModel(singleton)] } {
+    error "DistanceMapModel singleton already created"
   }
-  set ::DistanceMapFiducials(singleton) $this
+  set ::DistanceMapModel(singleton) $this
 
   #
   # create and register the node class
@@ -58,134 +58,134 @@ proc DistanceMapFiducialsBuildGUI {this} {
 
 
   $this SetCategory "Demonstration"
-  [$this GetUIPanel] AddPage "DistanceMapFiducials" "DistanceMapFiducials" ""
-  set pageWidget [[$this GetUIPanel] GetPageWidget "DistanceMapFiducials"]
+  [$this GetUIPanel] AddPage "DistanceMapModel" "DistanceMapModel" ""
+  set pageWidget [[$this GetUIPanel] GetPageWidget "DistanceMapModel"]
 
-  set ::DistanceMapFiducials($this,resample) [vtkImageResample New]
-  set ::DistanceMapFiducials($this,euclideanDistance) [vtkITKDistanceTransform New]
-  set ::DistanceMapFiducials($this,marchingCubes) [vtkMarchingCubes New]
-  set ::DistanceMapFiducials($this,transform) [vtkTransformPolyDataFilter New]
+  set ::DistanceMapModel($this,resample) [vtkImageResample New]
+  set ::DistanceMapModel($this,euclideanDistance) [vtkITKDistanceTransform New]
+  set ::DistanceMapModel($this,marchingCubes) [vtkMarchingCubes New]
+  set ::DistanceMapModel($this,transform) [vtkTransformPolyDataFilter New]
 
-  $::DistanceMapFiducials($this,marchingCubes) ComputeNormalsOff 
-  $::DistanceMapFiducials($this,marchingCubes) ComputeGradientsOff
-  $::DistanceMapFiducials($this,marchingCubes) ComputeScalarsOff
-  $::DistanceMapFiducials($this,euclideanDistance) SetSquaredDistance 0
-  $::DistanceMapFiducials($this,euclideanDistance) SetInsideIsPositive 0
-  $::DistanceMapFiducials($this,euclideanDistance) SetUseImageSpacing 1
+  $::DistanceMapModel($this,marchingCubes) ComputeNormalsOff 
+  $::DistanceMapModel($this,marchingCubes) ComputeGradientsOff
+  $::DistanceMapModel($this,marchingCubes) ComputeScalarsOff
+  $::DistanceMapModel($this,euclideanDistance) SetSquaredDistance 0
+  $::DistanceMapModel($this,euclideanDistance) SetInsideIsPositive 0
+  $::DistanceMapModel($this,euclideanDistance) SetUseImageSpacing 1
 
 
   #
   # help frame
   #
-  set helptext "The DistanceMapFiducials shows the framework for creating a scripted module in Tcl."
+  set helptext "The DistanceMapModel shows the framework for creating a scripted module in Tcl."
   set abouttext "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details."
   $this BuildHelpAndAboutFrame $pageWidget $helptext $abouttext
 
 
   #
-  # DistanceMapFiducials Volumes
+  # DistanceMapModel Volumes
   #
-  set ::DistanceMapFiducials($this,volumesFrame) [vtkSlicerModuleCollapsibleFrame New]
-  $::DistanceMapFiducials($this,volumesFrame) SetParent $pageWidget
-  $::DistanceMapFiducials($this,volumesFrame) Create
-  $::DistanceMapFiducials($this,volumesFrame) SetLabelText "Volumes"
-  pack [$::DistanceMapFiducials($this,volumesFrame) GetWidgetName] \
+  set ::DistanceMapModel($this,volumesFrame) [vtkSlicerModuleCollapsibleFrame New]
+  $::DistanceMapModel($this,volumesFrame) SetParent $pageWidget
+  $::DistanceMapModel($this,volumesFrame) Create
+  $::DistanceMapModel($this,volumesFrame) SetLabelText "Volumes"
+  pack [$::DistanceMapModel($this,volumesFrame) GetWidgetName] \
     -side top -anchor nw -fill x -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
 
-  set ::DistanceMapFiducials($this,volumesSelect) [vtkSlicerNodeSelectorWidget New]
-  $::DistanceMapFiducials($this,volumesSelect) SetParent [$::DistanceMapFiducials($this,volumesFrame) GetFrame]
-  $::DistanceMapFiducials($this,volumesSelect) Create
-  $::DistanceMapFiducials($this,volumesSelect) SetNodeClass "vtkMRMLScalarVolumeNode" "" "" ""
-  $::DistanceMapFiducials($this,volumesSelect) SetMRMLScene [[$this GetLogic] GetMRMLScene]
-  $::DistanceMapFiducials($this,volumesSelect) UpdateMenu
-  $::DistanceMapFiducials($this,volumesSelect) SetLabelText "Source Volume:"
-  $::DistanceMapFiducials($this,volumesSelect) SetBalloonHelpString "The Source Volume to operate on"
-  pack [$::DistanceMapFiducials($this,volumesSelect) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+  set ::DistanceMapModel($this,volumesSelect) [vtkSlicerNodeSelectorWidget New]
+  $::DistanceMapModel($this,volumesSelect) SetParent [$::DistanceMapModel($this,volumesFrame) GetFrame]
+  $::DistanceMapModel($this,volumesSelect) Create
+  $::DistanceMapModel($this,volumesSelect) SetNodeClass "vtkMRMLScalarVolumeNode" "" "" ""
+  $::DistanceMapModel($this,volumesSelect) SetMRMLScene [[$this GetLogic] GetMRMLScene]
+  $::DistanceMapModel($this,volumesSelect) UpdateMenu
+  $::DistanceMapModel($this,volumesSelect) SetLabelText "Source Label Volume:"
+  $::DistanceMapModel($this,volumesSelect) SetBalloonHelpString "The Source Label Volume to operate on"
+  pack [$::DistanceMapModel($this,volumesSelect) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
 
-  set ::DistanceMapFiducials($this,fiducialOutputSelect) [vtkSlicerNodeSelectorWidget New]
-  $::DistanceMapFiducials($this,fiducialOutputSelect) SetParent [$::DistanceMapFiducials($this,volumesFrame) GetFrame]
-  $::DistanceMapFiducials($this,fiducialOutputSelect) Create
-  $::DistanceMapFiducials($this,fiducialOutputSelect) NewNodeEnabledOn
-  $::DistanceMapFiducials($this,fiducialOutputSelect) SetNodeClass "vtkMRMLModelNode" "" "" ""
-  $::DistanceMapFiducials($this,fiducialOutputSelect) SetMRMLScene [[$this GetLogic] GetMRMLScene]
-  $::DistanceMapFiducials($this,fiducialOutputSelect) SetNewNodeEnabled 1
-  $::DistanceMapFiducials($this,fiducialOutputSelect) UpdateMenu
-  $::DistanceMapFiducials($this,fiducialOutputSelect) SetLabelText "Output Fiducial List:"
-  $::DistanceMapFiducials($this,fiducialOutputSelect) SetBalloonHelpString "The target output fiducial list"
-  pack [$::DistanceMapFiducials($this,fiducialOutputSelect) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+  set ::DistanceMapModel($this,modelOutputSelect) [vtkSlicerNodeSelectorWidget New]
+  $::DistanceMapModel($this,modelOutputSelect) SetParent [$::DistanceMapModel($this,volumesFrame) GetFrame]
+  $::DistanceMapModel($this,modelOutputSelect) Create
+  $::DistanceMapModel($this,modelOutputSelect) NewNodeEnabledOn
+  $::DistanceMapModel($this,modelOutputSelect) SetNodeClass "vtkMRMLModelNode" "" "" ""
+  $::DistanceMapModel($this,modelOutputSelect) SetMRMLScene [[$this GetLogic] GetMRMLScene]
+  $::DistanceMapModel($this,modelOutputSelect) SetNewNodeEnabled 1
+  $::DistanceMapModel($this,modelOutputSelect) UpdateMenu
+  $::DistanceMapModel($this,modelOutputSelect) SetLabelText "Output Model:"
+  $::DistanceMapModel($this,modelOutputSelect) SetBalloonHelpString "The target output model"
+  pack [$::DistanceMapModel($this,modelOutputSelect) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
 
 
-  set ::DistanceMapFiducials($this,resampleScale) [vtkKWScaleWithLabel New]
-  $::DistanceMapFiducials($this,resampleScale) SetParent [$::DistanceMapFiducials($this,volumesFrame) GetFrame]
-  $::DistanceMapFiducials($this,resampleScale) Create
-  $::DistanceMapFiducials($this,resampleScale) SetLabelText "Downsample Factor"
-  [$::DistanceMapFiducials($this,resampleScale) GetWidget] SetRange 1 10
-  [$::DistanceMapFiducials($this,resampleScale) GetWidget] SetResolution 1
-  [$::DistanceMapFiducials($this,resampleScale) GetWidget] SetValue 2
-  $::DistanceMapFiducials($this,resampleScale) SetBalloonHelpString "Downsampling of input volume"
-  pack [$::DistanceMapFiducials($this,resampleScale) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+  set ::DistanceMapModel($this,resampleScale) [vtkKWScaleWithLabel New]
+  $::DistanceMapModel($this,resampleScale) SetParent [$::DistanceMapModel($this,volumesFrame) GetFrame]
+  $::DistanceMapModel($this,resampleScale) Create
+  $::DistanceMapModel($this,resampleScale) SetLabelText "Downsample Factor"
+  [$::DistanceMapModel($this,resampleScale) GetWidget] SetRange 1 10
+  [$::DistanceMapModel($this,resampleScale) GetWidget] SetResolution 1
+  [$::DistanceMapModel($this,resampleScale) GetWidget] SetValue 2
+  $::DistanceMapModel($this,resampleScale) SetBalloonHelpString "Downsampling of input volume"
+  pack [$::DistanceMapModel($this,resampleScale) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
 
-  set ::DistanceMapFiducials($this,distanceScale) [vtkKWScaleWithLabel New]
-  $::DistanceMapFiducials($this,distanceScale) SetParent [$::DistanceMapFiducials($this,volumesFrame) GetFrame]
-  $::DistanceMapFiducials($this,distanceScale) Create
-  $::DistanceMapFiducials($this,distanceScale) SetLabelText "Distance"
-  [$::DistanceMapFiducials($this,distanceScale) GetWidget] SetRange 0 100
-  [$::DistanceMapFiducials($this,distanceScale) GetWidget] SetResolution 0.5
-  [$::DistanceMapFiducials($this,distanceScale) GetWidget] SetValue 5
-  $::DistanceMapFiducials($this,distanceScale) SetBalloonHelpString "Distance form the label map"
-  pack [$::DistanceMapFiducials($this,distanceScale) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+  set ::DistanceMapModel($this,distanceScale) [vtkKWScaleWithLabel New]
+  $::DistanceMapModel($this,distanceScale) SetParent [$::DistanceMapModel($this,volumesFrame) GetFrame]
+  $::DistanceMapModel($this,distanceScale) Create
+  $::DistanceMapModel($this,distanceScale) SetLabelText "Distance"
+  [$::DistanceMapModel($this,distanceScale) GetWidget] SetRange -20 100
+  [$::DistanceMapModel($this,distanceScale) GetWidget] SetResolution 1
+  [$::DistanceMapModel($this,distanceScale) GetWidget] SetValue 5
+  $::DistanceMapModel($this,distanceScale) SetBalloonHelpString "Distance form the label map"
+  pack [$::DistanceMapModel($this,distanceScale) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
 
-  set ::DistanceMapFiducials($this,run) [vtkKWPushButton New]
-  $::DistanceMapFiducials($this,run) SetParent [$::DistanceMapFiducials($this,volumesFrame) GetFrame]
-  $::DistanceMapFiducials($this,run) Create
-  $::DistanceMapFiducials($this,run) SetText "Apply"
-  $::DistanceMapFiducials($this,run) SetBalloonHelpString "Apply algorithm."
-  pack [$::DistanceMapFiducials($this,run) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+  set ::DistanceMapModel($this,run) [vtkKWPushButton New]
+  $::DistanceMapModel($this,run) SetParent [$::DistanceMapModel($this,volumesFrame) GetFrame]
+  $::DistanceMapModel($this,run) Create
+  $::DistanceMapModel($this,run) SetText "Apply"
+  $::DistanceMapModel($this,run) SetBalloonHelpString "Apply algorithm."
+  pack [$::DistanceMapModel($this,run) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
 
 }
 
-proc DistanceMapFiducialsAddGUIObservers {this} {
-  $this AddObserverByNumber $::DistanceMapFiducials($this,run) 10000 
+proc DistanceMapModelAddGUIObservers {this} {
+  $this AddObserverByNumber $::DistanceMapModel($this,run) 10000 
     
   $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
     
 }
 
-proc DistanceMapFiducialsRemoveGUIObservers {this} {
+proc DistanceMapModelRemoveGUIObservers {this} {
   $this RemoveMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
 }
 
-proc DistanceMapFiducialsRemoveLogicObservers {this} {
+proc DistanceMapModelRemoveLogicObservers {this} {
 }
 
-proc DistanceMapFiducialsRemoveMRMLNodeObservers {this} {
+proc DistanceMapModelRemoveMRMLNodeObservers {this} {
 }
 
-proc DistanceMapFiducialsProcessLogicEvents {this caller event} {
+proc DistanceMapModelProcessLogicEvents {this caller event} {
 }
 
-proc DistanceMapFiducialsProcessGUIEvents {this caller event} {
+proc DistanceMapModelProcessGUIEvents {this caller event} {
   
-  if { $caller == $::DistanceMapFiducials($this,run) } {
+  if { $caller == $::DistanceMapModel($this,run) } {
     switch $event {
       "10000" {
-        DistanceMapFiducialsApply $this
+        DistanceMapModelApply $this
       }
     }
   } 
 
-  DistanceMapFiducialsUpdateMRML $this
+  DistanceMapModelUpdateMRML $this
 }
 
 #
-# Accessors to DistanceMapFiducials state
+# Accessors to DistanceMapModel state
 #
 
 
-# get the DistanceMapFiducials parameter node, or create one if it doesn't exist
-proc DistanceMapFiducialsCreateParameterNode {} {
+# get the DistanceMapModel parameter node, or create one if it doesn't exist
+proc DistanceMapModelCreateParameterNode {} {
   set node [vtkMRMLScriptedModuleNode New]
-  $node SetModuleName "DistanceMapFiducials"
+  $node SetModuleName "DistanceMapModel"
 
   # set node defaults
   $node SetParameter label 1
@@ -194,22 +194,22 @@ proc DistanceMapFiducialsCreateParameterNode {} {
   $node Delete
 }
 
-# get the DistanceMapFiducials parameter node, or create one if it doesn't exist
-proc DistanceMapFiducialsGetParameterNode {} {
+# get the DistanceMapModel parameter node, or create one if it doesn't exist
+proc DistanceMapModelGetParameterNode {} {
 
   set node ""
   set nNodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLScriptedModuleNode"]
   for {set i 0} {$i < $nNodes} {incr i} {
     set n [$::slicer3::MRMLScene GetNthNodeByClass $i "vtkMRMLScriptedModuleNode"]
-    if { [$n GetModuleName] == "DistanceMapFiducials" } {
+    if { [$n GetModuleName] == "DistanceMapModel" } {
       set node $n
       break;
     }
   }
 
   if { $node == "" } {
-    DistanceMapFiducialsCreateParameterNode
-    set node [DistanceMapFiducialsGetParameterNode]
+    DistanceMapModelCreateParameterNode
+    set node [DistanceMapModelGetParameterNode]
   }
 
   return $node
@@ -220,10 +220,10 @@ proc DistanceMapFiducialsGetParameterNode {} {
 # MRML Event processing
 #
 
-proc DistanceMapFiducialsUpdateMRML {this} {
+proc DistanceMapModelUpdateMRML {this} {
 }
 
-proc DistanceMapFiducialsProcessMRMLEvents {this callerID event} {
+proc DistanceMapModelProcessMRMLEvents {this callerID event} {
 
     set caller [[[$this GetLogic] GetMRMLScene] GetNodeByID $callerID]
     if { $caller == "" } {
@@ -231,16 +231,16 @@ proc DistanceMapFiducialsProcessMRMLEvents {this callerID event} {
     }
 }
 
-proc DistanceMapFiducialsEnter {this} {
+proc DistanceMapModelEnter {this} {
 }
 
-proc DistanceMapFiducialsExit {this} {
+proc DistanceMapModelExit {this} {
 }
 
-proc DistanceMapFiducialsApply {this} {
+proc DistanceMapModelApply {this} {
 
-  set vol [$::DistanceMapFiducials($this,volumesSelect) GetSelected]
-  set fid [$::DistanceMapFiducials($this,fiducialOutputSelect) GetSelected]
+  set vol [$::DistanceMapModel($this,volumesSelect) GetSelected]
+  set fid [$::DistanceMapModel($this,modelOutputSelect) GetSelected]
   if { $vol == "" || $fid == "" } {
         return
     }
@@ -257,34 +257,34 @@ proc DistanceMapFiducialsApply {this} {
   $trans Concatenate $mat
   $trans Scale [expr 1.0/[lindex $spacing 0]] [expr 1.0/[lindex $spacing 1]] [expr 1.0/[lindex $spacing 2]]
   
-  $::DistanceMapFiducials($this,transform) SetTransform $trans
+  $::DistanceMapModel($this,transform) SetTransform $trans
 
-  set dist [[$::DistanceMapFiducials($this,distanceScale) GetWidget] GetValue]
+  set dist [[$::DistanceMapModel($this,distanceScale) GetWidget] GetValue]
   #set dist [expr $dist * $dist]
 
-  set resamp [[$::DistanceMapFiducials($this,resampleScale) GetWidget] GetValue]
+  set resamp [[$::DistanceMapModel($this,resampleScale) GetWidget] GetValue]
   set resamp [expr 1.0/$resamp]
 
   $img DeepCopy [$vol GetImageData]
   $img SetSpacing [lindex $spacing 0] [lindex $spacing 1] [lindex $spacing 2]
 
-  $::DistanceMapFiducials($this,resample) SetInput $img
-  $::DistanceMapFiducials($this,resample) SetAxisMagnificationFactor 0 $resamp
-  $::DistanceMapFiducials($this,resample) SetAxisMagnificationFactor 1 $resamp
-  $::DistanceMapFiducials($this,resample) SetAxisMagnificationFactor 2 $resamp
-  $::DistanceMapFiducials($this,resample) Update
+  $::DistanceMapModel($this,resample) SetInput $img
+  $::DistanceMapModel($this,resample) SetAxisMagnificationFactor 0 $resamp
+  $::DistanceMapModel($this,resample) SetAxisMagnificationFactor 1 $resamp
+  $::DistanceMapModel($this,resample) SetAxisMagnificationFactor 2 $resamp
+  $::DistanceMapModel($this,resample) Update
   
-  $::DistanceMapFiducials($this,euclideanDistance) SetInput [$::DistanceMapFiducials($this,resample) GetOutput]
-  $::DistanceMapFiducials($this,euclideanDistance) Update
+  $::DistanceMapModel($this,euclideanDistance) SetInput [$::DistanceMapModel($this,resample) GetOutput]
+  $::DistanceMapModel($this,euclideanDistance) Update
 
-  $::DistanceMapFiducials($this,marchingCubes) SetInput [$::DistanceMapFiducials($this,euclideanDistance) GetOutput]
-  $::DistanceMapFiducials($this,marchingCubes) SetValue 0 $dist
-  $::DistanceMapFiducials($this,marchingCubes) Update
+  $::DistanceMapModel($this,marchingCubes) SetInput [$::DistanceMapModel($this,euclideanDistance) GetOutput]
+  $::DistanceMapModel($this,marchingCubes) SetValue 0 $dist
+  $::DistanceMapModel($this,marchingCubes) Update
 
-  $::DistanceMapFiducials($this,transform) SetInput [$::DistanceMapFiducials($this,marchingCubes) GetOutput]
-  $::DistanceMapFiducials($this,transform) Update
+  $::DistanceMapModel($this,transform) SetInput [$::DistanceMapModel($this,marchingCubes) GetOutput]
+  $::DistanceMapModel($this,transform) Update
 
-  set poly [$::DistanceMapFiducials($this,transform) GetOutput]
+  set poly [$::DistanceMapModel($this,transform) GetOutput]
   $fid SetAndObservePolyData $poly
 
   if {[$fid GetDisplayNode] == ""} {
