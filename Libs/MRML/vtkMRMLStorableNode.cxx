@@ -64,7 +64,6 @@ void vtkMRMLStorableNode::WriteXML(ostream& of, int nIndent)
     }
 
   
-
   //---write any user tags.
   if ( this->GetUserTagTable() != NULL )
     {
@@ -90,6 +89,7 @@ void vtkMRMLStorableNode::WriteXML(ostream& of, int nIndent)
       of << indent << " userTags=\"" << ss.str().c_str() << "\"";
       }
     }
+
 }
 
 
@@ -140,7 +140,7 @@ void vtkMRMLStorableNode::ReadXMLAttributes(const char** atts)
             val = tags.substr(i+1, std::string::npos );
             if ( kwd.c_str() != NULL && val.c_str() != NULL )
               {
-              this->GetUserTagTable()->AddOrUpdateTag ( kwd.c_str(), val.c_str() );
+              this->GetUserTagTable()->AddOrUpdateTag ( kwd.c_str(), val.c_str(), 0 );
               }
             }
           }        

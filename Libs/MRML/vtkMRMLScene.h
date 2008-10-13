@@ -36,6 +36,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLNode.h"
 #include "vtkCacheManager.h"
 #include "vtkDataIOManager.h"
+#include "vtkTagTable.h"
 
 class vtkGeneralTransform;
 class vtkURIHandler;
@@ -365,6 +366,8 @@ public:
   vtkSetObjectMacro ( DataIOManager, vtkDataIOManager );
   vtkGetObjectMacro ( URIHandlerCollection, vtkCollection );
   vtkSetObjectMacro ( URIHandlerCollection, vtkCollection );
+  vtkGetObjectMacro ( UserTagTable, vtkTagTable);
+  vtkSetObjectMacro ( UserTagTable, vtkTagTable);  
 
   // Description:
   // find a URI handler in the collection that can work on the passed URI
@@ -397,6 +400,7 @@ protected:
   vtkCacheManager *CacheManager;
   vtkDataIOManager *DataIOManager;
   vtkCollection *URIHandlerCollection;
+  vtkTagTable *UserTagTable;
 
   unsigned long SceneModifiedTime;
   

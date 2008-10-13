@@ -99,6 +99,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->CacheManager = NULL;
   this->DataIOManager = NULL;
   this->URIHandlerCollection = NULL;
+  this->UserTagTable = NULL;
 
   this->ErrorCode = 0;
 
@@ -346,8 +347,14 @@ vtkMRMLScene::~vtkMRMLScene()
     this->URIHandlerCollection->Delete();
     this->URIHandlerCollection = NULL;
     }
-
+  if ( this->UserTagTable != NULL )
+    {
+    this->UserTagTable->Delete();
+    this->UserTagTable = NULL;
+    }
 }
+
+
 
 //------------------------------------------------------------------------------
 void vtkMRMLScene::Clear(int removeSingletons) 
@@ -1326,7 +1333,11 @@ void vtkMRMLScene::PrintSelf(ostream& os, vtkIndent indent)
     std::string className = (*iter);
     os << indent << "Number Of Nodes for class " << className.c_str() << " : " << this->GetNumberOfNodesByClass(className.c_str()) << "\n";
     }
+  this->UserTagTable->PrintSelf(os, indent);
 }
+
+
+
 
 //------------------------------------------------------------------------------
 int vtkMRMLScene::GetUniqueIDIndexByClass(const char* className)
