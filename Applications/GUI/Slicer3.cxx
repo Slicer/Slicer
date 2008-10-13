@@ -820,12 +820,10 @@ int Slicer3_main(int argc, char *argv[])
   dataIOManagerLogic->SetApplicationLogic ( appLogic );
   dataIOManagerLogic->SetAndObserveDataIOManager ( dataIOManager );
 
-
   scene->SetDataIOManager ( dataIOManager );
   scene->SetCacheManager( cacheManager );
   vtkCollection *URIHandlerCollection = vtkCollection::New();
   // add some new handlers
-    
     
   scene->SetURIHandlerCollection( URIHandlerCollection );
 #if !defined(REMOTEIO_DEBUG)
@@ -866,6 +864,11 @@ int Slicer3_main(int argc, char *argv[])
   scene->AddURIHandler( xndHandler);
   xndHandler->Delete();
 
+  //add something to hold user tags
+  vtkTagTable *userTagTable = vtkTagTable::New();
+  scene->SetUserTagTable( userTagTable );
+  userTagTable->Delete();
+  
 #endif
 
 
@@ -1869,6 +1872,8 @@ int Slicer3_main(int argc, char *argv[])
     URIHandlerCollection->Delete();
     URIHandlerCollection = NULL;
     }
+  scene->SetUserTagTable( NULL );
+
 
     
   //--- delete gui first, removing Refs to Logic and MRML
