@@ -114,6 +114,11 @@ protected:
   void AddUnstructuredGridNodes();
 
   // Description:
+  // Apply selected tags to selected data.
+  void TagSelectedData();
+  void ShowAllTagView();
+  
+  // Description:
   // Updates parameters values in MRML node based on GUI widgets 
   void UpdateMRML();
 

@@ -74,9 +74,14 @@ public:
   virtual const char *GetNthSelectedSlicerDataType(int n);
   virtual const char *GetNthSelectedDataTarget(int n);
   void ShowTagViewCallback();
-  void ShowAllTaggedView();
 
-
+  //BTX
+  enum
+    {
+      TagSelectedDataEvent = 11000,
+      ShowAllTagViewEvent,
+    };
+  //ETX
   
  protected:
   vtkFetchMIResourceUploadWidget();

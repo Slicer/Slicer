@@ -19,8 +19,8 @@ vtkFetchMITagViewWidget::vtkFetchMITagViewWidget ( )
 
   this->CloseButton = NULL;
   this->TagViewWindow = NULL;
-  this->NodeLabel = NULL;
-  this->TagTable = NULL;
+  this->TitleLabel = NULL;
+  this->TextBox = NULL;
 }
 
 
@@ -39,17 +39,17 @@ vtkFetchMITagViewWidget::~vtkFetchMITagViewWidget ( )
     this->TagViewWindow->Delete();
     this->TagViewWindow = NULL;
     }
-  if ( this->NodeLabel )
+  if ( this->TitleLabel )
     {
-    this->NodeLabel->SetParent ( NULL );
-    this->NodeLabel->Delete();
-    this->NodeLabel = NULL;
+    this->TitleLabel->SetParent ( NULL );
+    this->TitleLabel->Delete();
+    this->TitleLabel = NULL;
     }
-  if ( this->TagTable )
+  if ( this->TextBox )
     {
-    this->TagTable->SetParent ( NULL );
-    this->TagTable->Delete();
-    this->TagTable = NULL;
+    this->TextBox->SetParent ( NULL );
+    this->TextBox->Delete();
+    this->TextBox = NULL;
     }
 }
 
@@ -62,8 +62,8 @@ void vtkFetchMITagViewWidget::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "vtkFetchMITagViewWidget: " << this->GetClassName ( ) << "\n";
     os << indent << "CloseButton: " << this->GetCloseButton() << "\n";
     os << indent << "TagViewWindow: " << this->GetTagViewWindow() << "\n";
-    os << indent << "NodeLabel: " << this->GetNodeLabel() << "\n";
-    os << indent << "TagTable: " << this->GetTagTable () << "\n";
+    os << indent << "TitleLabel: " << this->GetTitleLabel() << "\n";
+    os << indent << "TextBox: " << this->GetTextBox () << "\n";
 
 }
 
@@ -119,6 +119,17 @@ void vtkFetchMITagViewWidget::DisplayTagViewWindow ( )
 }
 
 
+//---------------------------------------------------------------------------
+void vtkFetchMITagViewWidget::SetTagText ( const char *text )
+{
+  this->TextBox->GetWidget()->SetText ( text );
+}
+
+//---------------------------------------------------------------------------
+void vtkFetchMITagViewWidget::SetTagTitle ( const char *title )
+{
+  this->TitleLabel->SetText ( title );
+}
 
 
 //---------------------------------------------------------------------------
@@ -153,25 +164,24 @@ void vtkFetchMITagViewWidget::CreateWidget ( )
     this->CloseButton->Create();
     this->CloseButton->SetText ( "close" );
   
-    this->NodeLabel = vtkKWLabel::New();
-    this->NodeLabel->SetParent ( this->TagViewWindow );
-    this->NodeLabel->Create();
-    this->NodeLabel->SetJustificationToCenter();
-    this->NodeLabel->SetHeight ( 2 );    
+    this->TitleLabel = vtkKWLabel::New();
+    this->TitleLabel->SetParent ( this->TagViewWindow );
+    this->TitleLabel->Create();
+    this->TitleLabel->SetJustificationToCenter();
+    this->TitleLabel->SetHeight ( 2 );    
 
-    this->TagTable = vtkKWMultiColumnListWithScrollbars::New ( );
-    this->TagTable->SetParent ( this->TagViewWindow );
-    this->TagTable->Create ( );
-    this->TagTable->GetWidget()->SetWidth(0);
-    this->TagTable->GetWidget()->SetHeight(3);
-    this->TagTable->GetWidget()->SetSelectionTypeToRow ( );
-    this->TagTable->GetWidget()->SetSelectionModeToMultiple ( );
-    this->TagTable->GetWidget()->MovableRowsOff ( );
-    this->TagTable->GetWidget()->MovableColumnsOff ( );
+    this->TextBox = vtkKWTextWithScrollbars::New ( );
+    this->TextBox->SetParent ( this->TagViewWindow );
+    this->TextBox->Create ( );
+    this->TextBox->HorizontalScrollbarVisibilityOn();
+    this->TextBox->VerticalScrollbarVisibilityOn();
+    this->TextBox->GetWidget()->SetReliefToGroove();
+    this->TextBox->GetWidget()->QuickFormattingOn();
+    this->TextBox->GetWidget()->SetWrapToWord();
 
     // pack all but HelpButton, which gets packed into another widget.
-    this->Script ("pack %s -side top -expand n -anchor c -padx 0 -pady 2", this->NodeLabel->GetWidgetName() );
-    this->Script ("pack %s -side top -expand y -anchor c -padx 2 -pady 4", this->TagTable->GetWidgetName() );
+    this->Script ("pack %s -side top -expand n -anchor c -padx 0 -pady 2", this->TitleLabel->GetWidgetName() );
+    this->Script ("pack %s -side top -expand y -anchor c -padx 2 -pady 4", this->TextBox->GetWidgetName() );
     this->Script ("pack %s -side top -expand n -anchor c -padx 0 -pady 2", this->CloseButton->GetWidgetName() );
     this->Bind();
 }

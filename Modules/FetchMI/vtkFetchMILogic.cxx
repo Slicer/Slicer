@@ -1684,16 +1684,16 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
   if (this->SceneSelected)
     {
     vtkErrorMacro("NOT WRITING SCENE XML YET!");
-  // If so write mrml file to cache, include all nodes that have uris AND are selected for upload.
-  // (get all selected storable nodes from this->SelectedStorableNodeIDs)
-  // call this->WriteMetadataForUpload( filename, MRML) to generate metadata
-  // If return is successful,
-  //--- Call handler's PostMetadata() method which returns uri for MRML file.
-  //--- Set scene's URI
-  //--- h->StageFileWrite(cachefile, uri);
-  // Otherwise:
-  //--- pop up error message
-  //--- call this->FetchMINode->DeselectScene()
+    // If so write mrml file to cache, include all nodes that have uris AND are selected for upload.
+    // (get all selected storable nodes from this->SelectedStorableNodeIDs)
+    // call this->WriteMetadataForUpload( filename, "MRML") to generate metadata
+    //
+    // If return is successful,
+    //--- Call handler's PostMetadata() method which returns uri for MRML file.
+    //--- Set scene's URI
+    //--- h->StageFileWrite(cachefile, uri);
+    // Otherwise:
+    //--- pop up error message
     }
 
 }

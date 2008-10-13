@@ -3,8 +3,8 @@
 
 #include "vtkFetchMIWin32Header.h"
 #include "vtkKWTopLevel.h"
-#include "vtkKWMultiColumnList.h"
-#include "vtkKWMultiColumnListWithScrollbars.h"
+#include "vtkKWText.h"
+#include "vtkKWTextWithScrollbars.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWLabel.h"
 
@@ -22,10 +22,26 @@ public:
   // Getting the window in which to display help text.
   vtkGetObjectMacro ( TagViewWindow, vtkKWTopLevel );
   vtkGetObjectMacro ( CloseButton, vtkKWPushButton );
-  vtkGetObjectMacro ( NodeLabel, vtkKWLabel );
-  vtkGetObjectMacro ( TagTable, vtkKWMultiColumnListWithScrollbars );  
+  vtkGetObjectMacro ( TextBox, vtkKWTextWithScrollbars );  
+  vtkGetObjectMacro ( TitleLabel,  vtkKWLabel);
+
+// Description:
+  // Use this method to set the help or information text.
+  // Only simple formatting is now possible, for instance:
+  // **bold** and
+  //__underline__ and
+  //~~italic~~
+  // and that's about it.
+  void SetTagText ( const char *text );
 
   // Description:
+  // Use this method to set the text to appear in the title
+  // of the help window. Best to use something brief, less
+  // than 30 chars, for instance:
+  void SetTagTitle ( const char *title );
+
+
+// Description:
   // Internal Callbacks. do not use.
   void DisplayTagViewWindow ( );
   void DestroyTagViewWindow ( );
@@ -43,8 +59,8 @@ public:
 
   vtkKWTopLevel *TagViewWindow;
   vtkKWPushButton *CloseButton;
-  vtkKWLabel *NodeLabel;
-  vtkKWMultiColumnListWithScrollbars *TagTable;
+  vtkKWLabel *TitleLabel;
+  vtkKWTextWithScrollbars *TextBox;
   
 private:
   vtkFetchMITagViewWidget(const vtkFetchMITagViewWidget&); // Not implemented

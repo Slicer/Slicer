@@ -109,11 +109,12 @@ void vtkFetchMIResourceUploadWidget::ProcessWidgetEvents ( vtkObject *caller,
       }
     if ( (b == this->GetApplyTagsButton()) && (event == vtkKWPushButton::InvokedEvent ) )
       {
-      this->DeleteAllItems( );
+      this->InvokeEvent (vtkFetchMIResourceUploadWidget::TagSelectedDataEvent);
       }
     else if ( (b == this->GetDeselectAllButton()) && (event == vtkKWPushButton::InvokedEvent ) )
       {
       this->DeselectAllItems ( );
+      this->GetMultiColumnList()->GetWidget()->InvokeEvent ( vtkKWMultiColumnList::CellUpdatedEvent);
       }
     else if ( (b == this->GetUploadSelectedButton()) && (event == vtkKWPushButton::InvokedEvent ) )
       {
@@ -125,10 +126,11 @@ void vtkFetchMIResourceUploadWidget::ProcessWidgetEvents ( vtkObject *caller,
     else if ( (b == this->GetSelectAllButton()) && (event == vtkKWPushButton::InvokedEvent ) )
       {
       this->SelectAllItems ( );
+      this->GetMultiColumnList()->GetWidget()->InvokeEvent ( vtkKWMultiColumnList::CellUpdatedEvent);
       }
     else if ( (b == this->GetShowTagsButton()) && (event == vtkKWPushButton::InvokedEvent ) )
       {
-      this->ShowAllTaggedView();
+      this->InvokeEvent (vtkFetchMIResourceUploadWidget::ShowAllTagViewEvent );
       }
     }
   this->UpdateMRML();
@@ -185,14 +187,16 @@ void vtkFetchMIResourceUploadWidget::UpdateSelectedStorableNodes()
 {
   int numrows, i;
   
+  //--- mark which nodes are selected and whether the scene is selected
+  //--- in the logic class.
   numrows = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
   for ( i = 0; i < numrows; i++ )
     {
     if ( this->IsItemSelected(i) )
       {
-      if ( !(strcmp( (this->GetMultiColumnList()->GetWidget()->GetCellText (i, 3)), "MRML")))
+      if ( !(strcmp( (this->GetMultiColumnList()->GetWidget()->GetCellText (i, 3)), "Scene description")))
         {
-        this->Logic->AddSelectedStorableNode ( "MRML" );
+        this->Logic->SelectScene();
         }
       else
         {
@@ -201,7 +205,14 @@ void vtkFetchMIResourceUploadWidget::UpdateSelectedStorableNodes()
       }
     else
       {
-      this->Logic->RemoveSelectedStorableNode ( this->GetMultiColumnList()->GetWidget()->GetCellText(i,3) );
+      if ( !(strcmp( (this->GetMultiColumnList()->GetWidget()->GetCellText (i, 3)), "Scene description")))
+        {
+        this->Logic->DeselectScene();
+        }
+      else
+        {
+        this->Logic->RemoveSelectedStorableNode ( this->GetMultiColumnList()->GetWidget()->GetCellText(i,3) );
+        }
       }
     }
 }
@@ -506,14 +517,6 @@ void vtkFetchMIResourceUploadWidget::AddNewItem ( const char *dataset, const cha
     this->GetMultiColumnList()->GetWidget()->SetCellSelectionBackgroundColor ( i, 2,
                                                                               this->GetMultiColumnList()->GetWidget()->GetCellBackgroundColor(i, 2) );
     }
-}
-
-
-
-      
-//---------------------------------------------------------------------------
-void vtkFetchMIResourceUploadWidget::ShowAllTaggedView()
-{
 }
 
 

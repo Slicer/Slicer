@@ -43,7 +43,7 @@
 #include "vtkFetchMIQueryTermWidget.h"
 #include "vtkFetchMIFlatResourceWidget.h"
 #include "vtkFetchMIResourceUploadWidget.h"
-
+#include "vtkFetchMITagViewWidget.h"
 
 #include <map>
 #include <string>
@@ -173,6 +173,8 @@ void vtkFetchMIGUI::AddGUIObservers ( )
 {
   this->QueryList->AddWidgetObservers();
   this->ResourceList->AddWidgetObservers();
+  this->TaggedDataList->AddObserver(vtkFetchMIResourceUploadWidget::TagSelectedDataEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->TaggedDataList->AddObserver(vtkFetchMIResourceUploadWidget::ShowAllTagViewEvent, (vtkCommand *)this->GUICallbackCommand);
   this->TaggedDataList->AddWidgetObservers();
 
   this->AddServerEntry->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -188,6 +190,8 @@ void vtkFetchMIGUI::RemoveGUIObservers ( )
 {
   this->QueryList->RemoveWidgetObservers();
   this->ResourceList->RemoveWidgetObservers();
+  this->TaggedDataList->RemoveObservers(vtkFetchMIResourceUploadWidget::TagSelectedDataEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->TaggedDataList->RemoveObservers(vtkFetchMIResourceUploadWidget::ShowAllTagViewEvent, (vtkCommand *)this->GUICallbackCommand);
   this->TaggedDataList->RemoveWidgetObservers();
 
   this->AddServerEntry->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -234,6 +238,19 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
   vtkKWEntry *e = vtkKWEntry::SafeDownCast ( caller );
   vtkKWMenu *m = vtkKWMenu::SafeDownCast ( caller );
+  vtkFetchMIResourceUploadWidget *w = vtkFetchMIResourceUploadWidget::SafeDownCast ( caller );
+
+  if ( w != NULL )
+    {
+    if ( (w== this->TaggedDataList) && (event == vtkFetchMIResourceUploadWidget::TagSelectedDataEvent) )
+      {
+      this->TagSelectedData();
+      }
+    else if ( (w== this->TaggedDataList) && (event == vtkFetchMIResourceUploadWidget::ShowAllTagViewEvent) )
+      {
+      this->ShowAllTagView();
+      }
+    }
 
   if ( b && event == vtkKWPushButton::InvokedEvent )
     {
@@ -331,6 +348,7 @@ void vtkFetchMIGUI::UpdateResourceTableFromMRML ( )
       }
     }
 }
+
 
 
 
@@ -639,6 +657,8 @@ void vtkFetchMIGUI::AddMRMLSceneRow()
     }
   this->SetDataDirectoryName ( dir.c_str());
   
+  //--- make sure the scene has a selected SlicerDataType tag.
+  this->MRMLScene->GetUserTagTable()->AddOrUpdateTag ( "SlicerDataType", "MRML", 1);
 
   std::string uriName;
   const char *url = this->MRMLScene->GetURL();
@@ -654,7 +674,7 @@ void vtkFetchMIGUI::AddMRMLSceneRow()
   if(!uriName.empty())
     {
     //--- put a row in the TaggedDataList with selected, datatype, and url.
-    this->TaggedDataList->AddNewItem ( uriName.c_str(), "MRML");
+    this->TaggedDataList->AddNewItem ( "Scene description", "MRML");
 //    this->TaggedDataList->SelectRow(0);
     }
 }
@@ -890,6 +910,162 @@ void vtkFetchMIGUI::UpdateGUI ()
   this->UpdateSceneTableFromMRML();
   this->UpdatingGUI = 0;
 }
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkFetchMIGUI::ShowAllTagView()
+{
+  if ( this->MRMLScene == NULL )
+    {
+    //TODO vtkErrorMacro();
+    return;
+    }
+  if ( this->ResourceList == NULL )
+    {
+    //TODO vtkErrorMacro();
+    return;
+    }
+  if ( this->ApplicationGUI == NULL )
+    {
+    //TODO vtkErrorMacro();
+    return;
+    }
+
+  vtkFetchMITagViewWidget *viewer = vtkFetchMITagViewWidget::New();
+  viewer->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow() );
+  viewer->Create();
+
+  viewer->SetTagTitle ("Tags for all currently selected data:");
+  std::stringstream ss;
+  vtkMRMLStorableNode *node;
+  vtkTagTable *t;
+
+  //--- figure out the text
+  int dnum = this->TaggedDataList->GetNumberOfSelectedItems();
+  int i, j;
+  int numtags;
+  const char *nodeID;
+  const char *att;
+  const char *val;
+  for (i=0; i<dnum; i++)
+    {
+    nodeID = this->TaggedDataList->GetNthSelectedDataTarget(i);
+    if ( nodeID != NULL )
+      {
+      //--- tag the data.
+      ss << "**Tags for ";
+      ss << nodeID;
+      ss << "**\n";
+      if ( !(strcmp (nodeID, "Scene description")))
+        {
+        t = this->MRMLScene->GetUserTagTable();
+        }
+      else
+        {
+        node = vtkMRMLStorableNode::SafeDownCast ( this->MRMLScene->GetNodeByID(nodeID));
+        if ( node != NULL )
+          {
+          t = node->GetUserTagTable();
+          }
+        }
+      if ( t != NULL )
+        {
+        numtags = t->GetNumberOfTags();
+        for ( j=0; j <numtags; j++)
+          {
+          att = t->GetTagAttribute(j);
+          val = t->GetTagValue(j);
+          if ( att!= NULL && val != NULL )
+            {
+            ss << att;
+            ss << " = ";
+            ss << "~~";
+            ss << val;
+            ss << "~~\n";
+            }
+          }
+        }
+      }
+    }
+  
+  viewer->SetTagText ( ss.str().c_str() );
+  viewer->DisplayTagViewWindow();
+}
+
+
+//---------------------------------------------------------------------------
+void vtkFetchMIGUI::TagSelectedData()
+{
+  if ( this->MRMLScene == NULL )
+    {
+    //TODO vtkErrorMacro();
+    return;
+    }
+  if ( this->QueryList == NULL)
+    {
+    //TODO vtkErrorMacro();
+    return;
+    }
+  if ( this->ResourceList == NULL )
+    {
+    //TODO vtkErrorMacro();
+    return;
+    }
+  
+  //--- get all selected tags in QueryList
+  vtkMRMLStorableNode *node;
+  vtkTagTable *t;
+  
+  int i, j;
+  int dnum;
+  int num = this->QueryList->GetNumberOfSelectedItems();
+  const char *att;
+  const char *val;
+  for ( i=0; i < num; i++)
+    {
+    att = this->QueryList->GetNthSelectedAttribute(i);
+    val = this->QueryList->GetNthSelectedValue(i);
+
+    if ( att != NULL && val != NULL )
+      {
+      //--- apply to all selected data in TaggedDataList
+      dnum = this->TaggedDataList->GetNumberOfSelectedItems();
+      const char *nodeID;
+      for (j=0; j<dnum; j++)
+        {
+        nodeID = this->TaggedDataList->GetNthSelectedDataTarget(j);
+        if ( nodeID != NULL )
+          {
+          //--- tag the data.
+          if ( !(strcmp (nodeID, "Scene description")))
+            {
+            t = this->MRMLScene->GetUserTagTable();
+            if ( t != NULL )
+              {
+              t->AddOrUpdateTag ( "SlicerDataType", "MRML", 1 );
+              }
+            }
+          else
+            {
+            node = vtkMRMLStorableNode::SafeDownCast ( this->MRMLScene->GetNodeByID(nodeID));
+            if ( node != NULL )
+              {
+              t = node->GetUserTagTable();
+              if ( t != NULL )
+                {
+                t->AddOrUpdateTag ( att, val, 1 );
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+}
+
+
 
 
 //---------------------------------------------------------------------------
