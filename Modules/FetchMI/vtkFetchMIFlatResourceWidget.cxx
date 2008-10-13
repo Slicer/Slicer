@@ -464,6 +464,8 @@ void vtkFetchMIFlatResourceWidget::CreateWidget ( )
 
 
 
+
+
 //---------------------------------------------------------------------------
 int  vtkFetchMIFlatResourceWidget::GetRowForAttribute ( const char *attribute )
 {
@@ -492,7 +494,7 @@ void vtkFetchMIFlatResourceWidget::AddNewItem ( const char *term, const char *dt
   int n = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
   for ( i=0; i<n; i++ )
     {
-    if ( !strcmp (this->GetMultiColumnList()->GetWidget()->GetCellText(i, 1), term ) )
+    if ( !strcmp (this->GetMultiColumnList()->GetWidget()->GetCellText(i, 2), term ) )
       {
       unique = 0;
       }

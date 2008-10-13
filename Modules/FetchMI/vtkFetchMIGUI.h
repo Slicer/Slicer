@@ -39,6 +39,9 @@ class VTK_FETCHMI_EXPORT vtkFetchMIGUI : public vtkSlicerModuleGUI
   this->SetLogic(reinterpret_cast<vtkFetchMILogic*> (logic)); 
   }
 
+  vtkGetStringMacro (DataDirectoryName);
+  vtkSetStringMacro (DataDirectoryName);
+  
    // Description: Get/Set MRML node
   vtkGetObjectMacro (Logic, vtkFetchMILogic);
   vtkSetObjectMacro (Logic, vtkFetchMILogic);
@@ -104,10 +107,16 @@ protected:
   void UpdateGUI();
   void UpdateTagTableFromMRML();
   void UpdateResourceTableFromMRML();
+  void UpdateSceneTableFromMRML();
+  void AddMRMLSceneRow();
+  void AddVolumeNodes();
+  void AddModelNodes();
+  void AddUnstructuredGridNodes();
 
   // Description:
   // Updates parameters values in MRML node based on GUI widgets 
   void UpdateMRML();
+
   
   vtkFetchMILogic *Logic;
   vtkMRMLFetchMINode* FetchMINode;
@@ -120,7 +129,7 @@ protected:
   vtkKWPushButton *QueryTagsButton;
   vtkFetchMIIcons *FetchMIIcons;
 
-
+  char *DataDirectoryName;
   int UpdatingGUI;
   int UpdatingMRML;
 

@@ -99,9 +99,14 @@ void vtkFetchMIResourceUploadWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                          unsigned long event, void *callData )
 {
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
+  vtkKWMultiColumnList *l = vtkKWMultiColumnList::SafeDownCast( caller );
   
   if ( this->IsCreated() )
     {
+    if ( (l == this->GetMultiColumnList()->GetWidget()) && (event == vtkKWMultiColumnList::CellUpdatedEvent) )
+      {
+      this->UpdateSelectedStorableNodes();
+      }
     if ( (b == this->GetApplyTagsButton()) && (event == vtkKWPushButton::InvokedEvent ) )
       {
       this->DeleteAllItems( );
@@ -112,6 +117,10 @@ void vtkFetchMIResourceUploadWidget::ProcessWidgetEvents ( vtkObject *caller,
       }
     else if ( (b == this->GetUploadSelectedButton()) && (event == vtkKWPushButton::InvokedEvent ) )
       {
+      if ( this->Logic )
+        {
+        this->Logic->RequestResourceUpload ( );
+        }
       }
     else if ( (b == this->GetSelectAllButton()) && (event == vtkKWPushButton::InvokedEvent ) )
       {
@@ -119,6 +128,7 @@ void vtkFetchMIResourceUploadWidget::ProcessWidgetEvents ( vtkObject *caller,
       }
     else if ( (b == this->GetShowTagsButton()) && (event == vtkKWPushButton::InvokedEvent ) )
       {
+      this->ShowAllTaggedView();
       }
     }
   this->UpdateMRML();
@@ -133,6 +143,13 @@ void vtkFetchMIResourceUploadWidget::SelectRow( int i)
 }
 
 
+//---------------------------------------------------------------------------
+void vtkFetchMIResourceUploadWidget::DeselectRow( int i)
+{
+    this->GetMultiColumnList()->GetWidget()->SetCellTextAsInt(i, 0, 0 );
+    this->GetMultiColumnList()->GetWidget()->SetCellWindowCommandToCheckButton(i, 0);
+}
+
 
 //---------------------------------------------------------------------------
 void vtkFetchMIResourceUploadWidget::SelectAllItems()
@@ -142,8 +159,7 @@ void vtkFetchMIResourceUploadWidget::SelectAllItems()
   numrows = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
   for ( i = 0; i < numrows; i++ )
     {
-    this->GetMultiColumnList()->GetWidget()->SetCellTextAsInt(i, 0, 1 );
-    this->GetMultiColumnList()->GetWidget()->SetCellWindowCommandToCheckButton(i, 0);    
+    this->SelectRow(i);
     }
 }
 
@@ -157,8 +173,36 @@ void vtkFetchMIResourceUploadWidget::DeselectAllItems()
   numrows = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
   for ( i = 0; i < numrows; i++ )
     {
-    this->GetMultiColumnList()->GetWidget()->SetCellTextAsInt(i, 0, 0 );
-    this->GetMultiColumnList()->GetWidget()->SetCellWindowCommandToCheckButton(i, 0);
+    this->DeselectRow(i);
+    }
+}
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkFetchMIResourceUploadWidget::UpdateSelectedStorableNodes()
+{
+  int numrows, i;
+  
+  numrows = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
+  for ( i = 0; i < numrows; i++ )
+    {
+    if ( this->IsItemSelected(i) )
+      {
+      if ( !(strcmp( (this->GetMultiColumnList()->GetWidget()->GetCellText (i, 3)), "MRML")))
+        {
+        this->Logic->AddSelectedStorableNode ( "MRML" );
+        }
+      else
+        {
+        this->Logic->AddSelectedStorableNode ( this->GetMultiColumnList()->GetWidget()->GetCellText(i,3) );
+        }
+      }
+    else
+      {
+      this->Logic->RemoveSelectedStorableNode ( this->GetMultiColumnList()->GetWidget()->GetCellText(i,3) );
+      }
     }
 }
 
@@ -250,7 +294,6 @@ const char* vtkFetchMIResourceUploadWidget::GetNthSelectedDataTarget(int n)
 
 
 
-
 //---------------------------------------------------------------------------
 void vtkFetchMIResourceUploadWidget::ProcessMRMLEvents ( vtkObject *caller,
                                               unsigned long event, void *callData )
@@ -289,6 +332,7 @@ void vtkFetchMIResourceUploadWidget::RemoveWidgetObservers ( ) {
   this->GetDeselectAllButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GetUploadSelectedButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GetSelectAllButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GetMultiColumnList()->GetWidget()->RemoveObservers(vtkKWMultiColumnList::CellUpdatedEvent, (vtkCommand *)this->GUICallbackCommand );
 
 }
 
@@ -302,6 +346,7 @@ void vtkFetchMIResourceUploadWidget::AddWidgetObservers ( ) {
   this->GetDeselectAllButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->GetUploadSelectedButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GetSelectAllButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GetMultiColumnList()->GetWidget()->AddObserver(vtkKWMultiColumnList::CellUpdatedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -336,15 +381,15 @@ void vtkFetchMIResourceUploadWidget::CreateWidget ( )
   this->GetMultiColumnList()->GetWidget()->SetColumnAlignmentToLeft (1 );
   this->GetMultiColumnList()->GetWidget()->ColumnResizableOff ( 1 );
   this->GetMultiColumnList()->GetWidget()->ColumnStretchableOff ( 1 );
+  this->GetMultiColumnList()->GetWidget()->SetSelectionCommand (this, "ShowTagViewCallback");
   this->GetMultiColumnList()->GetWidget()->SetColumnFormatCommandToEmptyOutput(1);
-  this->GetMultiColumnList()->GetWidget()->SetSelectionCommand ( this, "ShowTagViewCallback" );
 
   this->GetMultiColumnList()->GetWidget()->AddColumn ( "Slicer data type" );
   this->GetMultiColumnList()->GetWidget()->ColumnEditableOn ( 2 );
   this->GetMultiColumnList()->GetWidget()->SetColumnWidth ( 2, 0 );
   this->GetMultiColumnList()->GetWidget()->SetColumnSortModeToAscii ( 2 );
 
-  this->GetMultiColumnList()->GetWidget()->AddColumn ( "data" );
+  this->GetMultiColumnList()->GetWidget()->AddColumn ( "scene/data" );
   this->GetMultiColumnList()->GetWidget()->ColumnEditableOn ( 3 );
   this->GetMultiColumnList()->GetWidget()->SetColumnWidth ( 3, 0 );
   this->GetMultiColumnList()->GetWidget()->SetColumnSortModeToAscii ( 3 );
@@ -421,40 +466,55 @@ void vtkFetchMIResourceUploadWidget::CreateWidget ( )
 
 
 //---------------------------------------------------------------------------
-void vtkFetchMIResourceUploadWidget::AddNewItem ( const char *resource )
+void vtkFetchMIResourceUploadWidget::AddNewItem ( const char *dataset, const char *dtype )
 {
+  // default query terms in list
   int i, unique;
 
   unique = 1;
-  // check to see if resource is unique before adding it
+  // check to see if dataset is unique before adding it
   int n = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
   for ( i=0; i<n; i++ )
     {
-    if ( !strcmp (this->GetMultiColumnList()->GetWidget()->GetCellText(i, 2), resource ) )
+    if ( !strcmp (this->GetMultiColumnList()->GetWidget()->GetCellText(i, 3), dataset ) )
       {
       unique = 0;
       }
     }
-  if ( !strcmp (resource, "") )
+  if ( !strcmp (dataset, "") )
     {
-    resource = "<new>";
+    dataset = "<unknown_data>";
+    }
+  if ( !strcmp (dtype, "") )
+    {
+    dtype = "<unknown>";
     }
   if ( unique )
     {
+    //this->GetMultiColumnList()->GetWidget()->SetSelectionTypeToRow();
     i = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
     this->GetMultiColumnList()->GetWidget()->AddRow();
     this->GetMultiColumnList()->GetWidget()->RowSelectableOff(i);
     this->GetMultiColumnList()->GetWidget()->SetCellWindowCommandToCheckButton(i, 0);
-    this->GetMultiColumnList()->GetWidget()->SetCellImageToIcon ( i, 1, this->FetchMIIcons->GetShowDataTagsIcon() );
-    this->GetMultiColumnList()->GetWidget()->SetCellText (i, 2, "MRML" );
-    this->GetMultiColumnList()->GetWidget()->SetCellText (i, 3, resource );
+    this->GetMultiColumnList()->GetWidget()->SetCellImageToIcon(i, 1, this->FetchMIIcons->GetShowDataTagsIcon() );
+    this->GetMultiColumnList()->GetWidget()->SetCellText (i, 2, dtype );
+    this->GetMultiColumnList()->GetWidget()->SetCellText (i, 3, dataset );
     this->GetMultiColumnList()->GetWidget()->SetCellBackgroundColor (i, 0, 1.0, 1.0, 1.0);
-    this->GetMultiColumnList()->GetWidget()->SetRowSelectionBackgroundColor ( i,
-                                                                              this->GetMultiColumnList()->GetWidget()->GetRowBackgroundColor(i) );
     this->GetMultiColumnList()->GetWidget()->SetCellSelectionBackgroundColor (i, 0, 1.0, 1.0, 1.0);
+    this->GetMultiColumnList()->GetWidget()->SetCellSelectionBackgroundColor ( i, 1,
+                                                                              this->GetMultiColumnList()->GetWidget()->GetCellBackgroundColor(i, 1) );
+    this->GetMultiColumnList()->GetWidget()->SetCellSelectionBackgroundColor ( i, 2,
+                                                                              this->GetMultiColumnList()->GetWidget()->GetCellBackgroundColor(i, 2) );
     }
 }
 
+
+
+      
+//---------------------------------------------------------------------------
+void vtkFetchMIResourceUploadWidget::ShowAllTaggedView()
+{
+}
 
 
 //---------------------------------------------------------------------------

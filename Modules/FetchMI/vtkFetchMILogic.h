@@ -155,6 +155,20 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   // it returns NULL;
   const char *GetHTTPResponseFileName ( );
   const char *GetXMLUploadFileName ( );
+
+  // Description:
+  // Convenience methods for adding to and clearing
+  // vector of modified nodes
+  void ClearModifiedNodes();
+  void AddModifiedNode (const char *nodeID);
+  void RemoveModifiedNode (const char *nodeID);
+
+  // Description:
+  // Convenience methods for adding to and clearing
+  // vector of selected nodes
+  void ClearSelectedStorableNodes();
+  void AddSelectedStorableNode ( const char *nodeID);
+  void RemoveSelectedStorableNode ( const char *nodeID);
   
   //BTX
   //---
@@ -174,6 +188,7 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   // Vector of strings populated by the GUI when
   // the upload button is selected. 
   std::vector<std::string> SelectedStorableNodeIDs;
+  std::vector<std::string> ModifiedNodes;
   //ETX
   // flag that's set if scene is selected for uplaod.
   int SaveSceneDescription;

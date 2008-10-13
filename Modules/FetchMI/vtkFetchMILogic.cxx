@@ -81,6 +81,11 @@ void vtkFetchMILogic::PrintSelf(ostream& os, vtkIndent indent)
     {
     os << indent.GetNextIndent() << i << ": " << this->SelectedStorableNodeIDs[i].c_str() << "\n";
     }
+  os << indent << "Modified Node IDs:\n";
+  for (unsigned int i = 0; i < this->ModifiedNodes.size(); i++)
+    {
+    os << indent.GetNextIndent() << i << ": " << this->ModifiedNodes[i].c_str() << "\n";
+    }  
   os << indent << "SaveSceneDsecription: " << this->SaveSceneDescription << "\n";
   os << indent << "SceneSelected: " << this->SceneSelected << "\n";
 
@@ -1350,6 +1355,97 @@ void vtkFetchMILogic::RequestSceneDownloadFromXND ( const char *uri )
 }
 
 
+
+
+
+//----------------------------------------------------------------------------
+void vtkFetchMILogic::ClearModifiedNodes()
+{
+  this->ModifiedNodes.clear();
+}
+
+
+
+
+//----------------------------------------------------------------------------
+void vtkFetchMILogic::AddModifiedNode( const char *nodeID)
+{
+  int z = this->ModifiedNodes.size();
+  int unique = 1;
+
+  for (int i=0; i < z; i++ )
+    {
+    if ( !(strcmp(this->ModifiedNodes[i].c_str(), nodeID )))
+      {
+      unique = 0;
+      }
+    }
+
+  if ( unique )
+    {
+    this->ModifiedNodes.push_back(nodeID);
+    }
+}
+
+
+//----------------------------------------------------------------------------
+void vtkFetchMILogic::RemoveModifiedNode( const char *nodeID)
+{
+  int z = this->ModifiedNodes.size();
+  for (int i=0; i < z; i++ )
+    {
+    if ( !(strcmp(this->ModifiedNodes[i].c_str(), nodeID )))
+      {
+      this->ModifiedNodes.erase(this->ModifiedNodes.begin()+i);
+      }
+    }
+}
+
+
+
+
+//----------------------------------------------------------------------------
+void vtkFetchMILogic::ClearSelectedStorableNodes ()
+{
+  this->SelectedStorableNodeIDs.clear();
+}
+
+
+
+//----------------------------------------------------------------------------
+void vtkFetchMILogic::AddSelectedStorableNode( const char *nodeID)
+{
+  int z = this->SelectedStorableNodeIDs.size();
+  int unique = 1;
+
+  for (int i=0; i < z; i++ )
+    {
+    if ( !(strcmp(this->SelectedStorableNodeIDs[i].c_str(), nodeID )))
+      {
+      unique = 0;
+      }
+    }
+
+  if ( unique )
+    {
+    this->SelectedStorableNodeIDs.push_back(nodeID);
+    }
+}
+
+
+
+//----------------------------------------------------------------------------
+void vtkFetchMILogic::RemoveSelectedStorableNode( const char *nodeID)
+{
+  int z = this->SelectedStorableNodeIDs.size();
+  for (int i=0; i < z; i++ )
+    {
+    if ( !(strcmp(this->SelectedStorableNodeIDs[i].c_str(), nodeID )))
+      {
+      this->SelectedStorableNodeIDs.erase(this->SelectedStorableNodeIDs.begin()+i);
+      }
+    }
+}
 
 
 

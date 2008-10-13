@@ -28,7 +28,7 @@ public:
   vtkGetObjectMacro ( Logic, vtkFetchMILogic );
   vtkSetObjectMacro ( Logic, vtkFetchMILogic );
   
-  virtual void AddNewItem ( const char *dataset );
+  virtual void AddNewItem ( const char *dataset, const char *dtype);
   
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
@@ -56,8 +56,15 @@ public:
   // Description:
   // Selection methods
   virtual void SelectRow ( int i );
+  virtual void DeselectRow ( int i );
   virtual void SelectAllItems();
   virtual void DeselectAllItems();
+
+  // Description:
+  // Each time the widget is clicked (select or deselect)
+  // this method maintains a current vector of strings
+  // of selected nodes (and scene).
+  virtual void UpdateSelectedStorableNodes();
 
   // Description:
   // Methods to operate on selected items.
@@ -66,6 +73,10 @@ public:
   virtual int GetNumberOfSelectedItems();
   virtual const char *GetNthSelectedSlicerDataType(int n);
   virtual const char *GetNthSelectedDataTarget(int n);
+  void ShowTagViewCallback();
+  void ShowAllTaggedView();
+
+
   
  protected:
   vtkFetchMIResourceUploadWidget();
@@ -83,8 +94,6 @@ public:
   // Description:
   // Create the widget.
   virtual void CreateWidget();
-
-  void ShowTagViewCallback();
 
   // Description:
   // Update the widget, used when the color node id changes
