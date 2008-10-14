@@ -39,10 +39,12 @@ void vtkHIDTagTable::Initialize( )
   //--- experiment
   //--- file_type
   this->ClearTagTable();
-  this->AddOrUpdateTag ( "Subject", "NULL" );
-  this->AddOrUpdateTag ( "Experiment", "NULL" );
+  this->AddOrUpdateTag ( "Subject", "000670986943" );
+  this->AddOrUpdateTag ( "Experiment", "fBIRNPhaseII__0010" );
   this->AddOrUpdateTag ( "File_Type", "MRML" );
   this->SelectTag ( "File_Type");
+  this->SelectTag ( "Subject");
+  this->SelectTag ( "Experiment");
 
 }
 
