@@ -395,6 +395,10 @@ void vtkFetchMIFlatResourceWidget::CreateWidget ( )
   this->GetMultiColumnList()->GetWidget()->ColumnEditableOn ( 2 );
   this->GetMultiColumnList()->GetWidget()->SetColumnWidth ( 2, 0 );
   this->GetMultiColumnList()->GetWidget()->SetColumnSortModeToAscii ( 2 );
+
+  // some problems with editing, so add a call back
+  this->GetMultiColumnList()->GetWidget()->SetRightClickCommand(this, "RightClickListCallback");
+  
   this->Script ( "pack %s -side top -fill x -expand n", this->GetMultiColumnList()->GetWidgetName() );
 
   // frame for the buttons
@@ -465,7 +469,13 @@ void vtkFetchMIFlatResourceWidget::CreateWidget ( )
 }
 
 
-
+//----------------------------------------------------------------------------
+void vtkFetchMIFlatResourceWidget::RightClickListCallback(int row, int col, int x, int y)
+{
+    vtkKWMultiColumnList *list =
+        this->GetMultiColumnList()->GetWidget();
+    list->EditCell(row, col);
+}
 
 
 //---------------------------------------------------------------------------

@@ -71,6 +71,10 @@ public:
   virtual const char *GetNthSelectedURI(int n);
   virtual int GetRowForAttribute(const char *att );
 
+  // Description:
+  // editing callback for the multicolumn list
+  void RightClickListCallback(int row, int col, int x, int y);
+  
  protected:
   vtkFetchMIFlatResourceWidget();
   virtual ~vtkFetchMIFlatResourceWidget();
