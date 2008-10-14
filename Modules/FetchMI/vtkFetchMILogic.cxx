@@ -1190,16 +1190,64 @@ void vtkFetchMILogic::RequestResourceDownloadFromXND ( const char *uri, const ch
       }
 
     }
-  if ( !(strcmp(slicerDataType, "VTKModel" )))
+  
+  // get the models logic
+  /*
+    if ( !(strcmp(slicerDataType, "VTKModel" ) ||
+    !(strcmp(slicerDataType, "FreeSurferModel" )) )
     {
-    // get the models logic
-    /*
     vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Models"))->GetLogic();
     if (modelsLogic)
+    {
+    modelsLogic->AddNode(uriString.c_str());
+    }
+    }
+  */
+  if ( !(strcmp(slicerDataType, "VTKModel" )))
+    {
+    //--- create the node
+    vtkMRMLModelNode *modelNode = vtkMRMLModelNode::New();
+    vtkMRMLModelDisplayNode *displayNode = vtkMRMLModelDisplayNode::New();
+    vtkMRMLModelStorageNode *mStorageNode = vtkMRMLModelStorageNode::New();
+
+    // set the uri
+    mStorageNode->SetURI(uriString.c_str());
+    modelNode->SetName("XNDModel");
+
+    //--- set its URIhandler
+    mStorageNode->SetURIHandler(handler);
+
+    //--- download to cache and load.
+    this->GetMRMLScene()->SaveStateForUndo();
+
+    modelNode->SetScene(this->GetMRMLScene());
+    mStorageNode->SetScene(this->GetMRMLScene());
+    displayNode->SetScene(this->GetMRMLScene()); 
+
+    this->GetMRMLScene()->AddNodeNoNotify(mStorageNode);  
+    this->GetMRMLScene()->AddNodeNoNotify(displayNode);
+    modelNode->SetAndObserveStorageNodeID(mStorageNode->GetID());
+    modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());  
+    displayNode->SetPolyData(modelNode->GetPolyData());
+    
+    this->GetMRMLScene()->AddNode(modelNode);  
+    // the scene points to it still
+    modelNode->Delete();
+
+    int retval = mStorageNode->ReadData(modelNode);
+    if (retval != 1)
       {
-      modelsLogic->AddNode(uriString.c_str());
+      vtkErrorMacro("AddModel: error reading " << uriString.c_str());
+      this->GetMRMLScene()->RemoveNode(modelNode);
+      this->GetMRMLScene()->RemoveNode(mStorageNode);
+      this->GetMRMLScene()->RemoveNode(displayNode);
       }
-    */
+    mStorageNode->Delete();
+    displayNode->Delete();
+    }
+
+  if ( !(strcmp(slicerDataType, "FreeSurferModel" )))
+    {
     //--- create the node, assuming a free surfer model for now
     vtkMRMLModelNode *modelNode = vtkMRMLModelNode::New();
     vtkMRMLModelDisplayNode *displayNode = vtkMRMLModelDisplayNode::New();
@@ -1208,7 +1256,7 @@ void vtkFetchMILogic::RequestResourceDownloadFromXND ( const char *uri, const ch
 
     // set the uri
     fsmStorageNode->SetURI(uriString.c_str());
-    modelNode->SetName("XNDModel");
+    modelNode->SetName("XNDFSModel");
     
     //--- set its URIhandler
     fsmStorageNode->SetURIHandler(handler);
