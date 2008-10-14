@@ -1511,6 +1511,10 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
   // (This vector of strings is populated by the GUI when upload button is
   // selected)
   vtkMRMLStorableNode *storableNode;
+  // get the cache dir
+  vtksys_stl::vector<vtksys_stl::string> pathComponents;
+  vtksys::SystemTools::SplitPath( this->GetMRMLScene()->GetCacheManager()->GetRemoteCacheDirectory(), pathComponents);
+  
   for (unsigned int n = 0; n < this->SelectedStorableNodeIDs.size(); n++)
     {
     storableNode = vtkMRMLStorableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID( this->SelectedStorableNodeIDs[n] ));
@@ -1526,9 +1530,7 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
       //--- Set Filename to be cachedir/filename
       // get out the file name
       const char *filename = vtksys::SystemTools::GetFilenameName(storageNode->GetFileName()).c_str();
-      // get the cache dir
-      vtksys_stl::vector<vtksys_stl::string> pathComponents;
-      vtksys::SystemTools::SplitPath( this->GetMRMLScene()->GetCacheManager()->GetRemoteCacheDirectory(), pathComponents);
+     
       // add the file name to the cache dir
       pathComponents.push_back(filename);
       // set it
@@ -1686,14 +1688,41 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
     vtkErrorMacro("NOT WRITING SCENE XML YET!");
     // If so write mrml file to cache, include all nodes that have uris AND are selected for upload.
     // (get all selected storable nodes from this->SelectedStorableNodeIDs)
+    // --- for now, assume the scene just contains selected nodes for upload
+
+    // set the file name to write the mrml file to cache
+    const char *mrmlFileName = vtksys::SystemTools::GetFilenameName(this->GetMRMLScene()->GetURL()).c_str();
+    // take the last file off of the path
+    pathComponents.pop_back();
+    // addthe mrml file
+    pathComponents.push_back(mrmlFileName);
+    // set the new url
+    mrmlFileName = vtksys::SystemTools::JoinPath(pathComponents).c_str();
+    this->GetMRMLScene()->SetURL(mrmlFileName);
+    
     // call this->WriteMetadataForUpload( filename, "MRML") to generate metadata
     //
-    // If return is successful,
-    //--- Call handler's PostMetadata() method which returns uri for MRML file.
-    //--- Set scene's URI
-    //--- h->StageFileWrite(cachefile, uri);
-    // Otherwise:
-    //--- pop up error message
+    int retval = this->WriteMetadataForUpload(mrmlFileName, "MRML");
+    if (retval == 1)
+      {
+      // If return is successful,
+      //--- Call handler's PostMetadata() method which returns uri for MRML
+      //file.
+      this->PostMetadata();
+      const char *uri =  this->ParsePostMetadataResponse();
+      //--- Set scene's URI
+      this->GetMRMLScene()->SetURL(uri);
+
+      // now upload it
+      handler->StageFileWrite(uri, mrmlFileName);
+      }
+    else
+      {
+      // Otherwise:
+      //--- pop up error message
+      vtkErrorMacro("RequestResourceUploadToXND: Error writing MRML scene to : " << this->GetMRMLScene()->GetURL());
+      return;
+      }
     }
 
 }
