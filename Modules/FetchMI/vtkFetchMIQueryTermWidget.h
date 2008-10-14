@@ -83,6 +83,10 @@ public:
     };
   //ETX
 
+  // Description:
+  // editing callback for the multicolumn list
+  void RightClickListCallback(int row, int col, int x, int y);
+  
  protected:
   vtkFetchMIQueryTermWidget();
   virtual ~vtkFetchMIQueryTermWidget();

@@ -281,6 +281,10 @@ void vtkFetchMIQueryTermWidget::CreateWidget ( )
   this->GetMultiColumnList()->GetWidget()->SetColumnWidth ( 2, 0 );
   this->GetMultiColumnList()->GetWidget()->SetColumnSortModeToAscii ( 2 );
   this->GetMultiColumnList()->GetWidget()->SetColumnEditWindowToEntry ( 1 );
+
+  // some problems with editing, so add a call back
+  this->GetMultiColumnList()->GetWidget()->SetRightClickCommand(this, "RightClickListCallback");
+
   this->Script ( "pack %s -side top -fill x -expand n", this->GetMultiColumnList()->GetWidgetName() );
 
   // frame for the buttons
@@ -357,7 +361,13 @@ void vtkFetchMIQueryTermWidget::CreateWidget ( )
   bFrame->Delete();
 }
 
-
+//----------------------------------------------------------------------------
+void vtkFetchMIQueryTermWidget::RightClickListCallback(int row, int col, int x, int y)
+{
+    vtkKWMultiColumnList *list =
+        this->GetMultiColumnList()->GetWidget();
+    list->EditCell(row, col);
+}
 
 
 //---------------------------------------------------------------------------
