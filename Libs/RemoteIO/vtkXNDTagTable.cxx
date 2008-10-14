@@ -37,7 +37,6 @@ void vtkXNDTagTable::Initialize( )
 
   this->ClearTagTable();
   this->AddOrUpdateTag ( "SlicerDataType", "MRML" );
-  this->SelectTag ( "SlicerDataType" );
 }
 
 

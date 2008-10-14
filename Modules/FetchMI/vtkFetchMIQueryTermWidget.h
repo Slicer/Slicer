@@ -69,11 +69,20 @@ public:
   // Description:
   // Methods to operate on selected items.
   virtual int IsItemSelected(int i);
+  virtual const char *GetAttributeOfItem (int i );
+  virtual const char *GetValueOfItem (int i );
   virtual void DeleteSelectedItems();
   virtual int GetNumberOfSelectedItems();
   virtual const char *GetNthSelectedAttribute(int n);
   virtual const char *GetNthSelectedValue(int n);
   
+  //BTX
+  enum
+    {
+      TagChangedEvent = 11000,
+    };
+  //ETX
+
  protected:
   vtkFetchMIQueryTermWidget();
   virtual ~vtkFetchMIQueryTermWidget();

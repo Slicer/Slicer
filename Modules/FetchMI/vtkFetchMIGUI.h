@@ -105,6 +105,7 @@ protected:
   // Description:
   // Updates GUI widgets based on parameters values in MRML node
   void UpdateGUI();
+  void UpdateTagTableFromGUI();
   void UpdateTagTableFromMRML();
   void UpdateResourceTableFromMRML();
   void UpdateSceneTableFromMRML();

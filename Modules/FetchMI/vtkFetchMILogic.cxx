@@ -300,28 +300,28 @@ void vtkFetchMILogic::QueryServerForResources ( )
         //--- and a value, and both are not "", "NULL" or "none"
         //--- etc.
         int num = t->GetNumberOfTags();
-        const char *att;
-        const char *val;
+        vtksys_stl::string att;
+        vtksys_stl::string val;
         for ( int i =0; i<num; i++)
           {
           att = t->GetTagAttribute(i);
           val = t->GetTagValue(i);
-          if ( t->IsTagSelected(att))
+          if ( t->IsTagSelected(att.c_str()))
             {
             //--- do some checking...
-            if ( att != NULL && val != NULL )
+            if ( att.c_str() != NULL && val.c_str() != NULL )
               {
-              if ( (strcmp(att, "NULL")) &&
-                   (strcmp(att, "null")) &&
-                   (strcmp(att, "<none>")) &&
-                   (strcmp(att, "none")) &&
-                   (strcmp(att, "" )))
+              if ( (strcmp(att.c_str(), "NULL")) &&
+                   (strcmp(att.c_str(), "null")) &&
+                   (strcmp(att.c_str(), "<none>")) &&
+                   (strcmp(att.c_str(), "none")) &&
+                   (strcmp(att.c_str(), "" )))
                 {
-                if ( (strcmp(val, "NULL")) &&
-                   (strcmp(val, "null")) &&
-                   (strcmp(val, "<none>")) &&
-                   (strcmp(val, "none")) &&
-                   (strcmp(val, "" )))
+                if ( (strcmp(val.c_str(), "NULL")) &&
+                   (strcmp(val.c_str(), "null")) &&
+                   (strcmp(val.c_str(), "<none>")) &&
+                   (strcmp(val.c_str(), "none")) &&
+                   (strcmp(val.c_str(), "" )))
                   {
                   q << "&";
                   q << att;
@@ -1430,6 +1430,7 @@ void vtkFetchMILogic::AddModifiedNode( const char *nodeID)
       }
     }
 
+
   if ( unique )
     {
     this->ModifiedNodes.push_back(nodeID);
@@ -1558,6 +1559,7 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
   //
   // Get all selected storable nodes from this->SelectedStorableNodeIDs;
   // (This vector of strings is populated by the GUI when upload button is
+
   // selected)
   vtkMRMLStorableNode *storableNode;
   // get the cache dir

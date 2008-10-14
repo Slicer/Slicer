@@ -13,6 +13,8 @@
 #include "vtkKWCheckButton.h"
 #include "vtkFetchMIIcons.h"
 #include "vtkKWMessageDialog.h"
+
+#include <vtksys/SystemTools.hxx>
 #include <string>
 
 //---------------------------------------------------------------------------
@@ -148,7 +150,7 @@ void vtkFetchMIFlatResourceWidget::ProcessWidgetEvents ( vtkObject *caller,
           vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
           dialog->SetParent ( this->GetParent() );
           dialog->SetStyleToMessage();
-          msg = "The SlicerDataType of one or more of the requested resources has an unknown value. Known values are: MRML, ScalarVolume, VTKModel, and FreeSurferModel.";
+          msg = "The SlicerDataType of one or more of the requested resources has an unknown value. Known values are: MRML, Volume, ScalarVolume, LabelMap, VTKModel, FreeSurferModel, DTIVolume, DWIVolume, and UnstructuredGrid. Tagging the data with an incorrect SlicerDataType can cause the scene to load improperly.";
           dialog->SetText ( msg.c_str() );
           dialog->Create();
           dialog->Invoke();
@@ -469,16 +471,24 @@ void vtkFetchMIFlatResourceWidget::CreateWidget ( )
 //---------------------------------------------------------------------------
 int  vtkFetchMIFlatResourceWidget::GetRowForAttribute ( const char *attribute )
 {
+
   int r = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
+  vtksys_stl::string att;
+  vtksys_stl::string lowatt;
+  vtksys_stl::string target = attribute;
+  vtksys_stl::string lowtarg;
+  lowtarg = vtksys::SystemTools::LowerCase(target);
+
   for ( int i=0; i<r; i++ )
     {
-    if ( !strcmp (this->GetMultiColumnList()->GetWidget()->GetCellText (i,1), attribute) )
+    att = this->GetMultiColumnList()->GetWidget()->GetCellText (i,1);
+    lowatt = vtksys::SystemTools::LowerCase(att);
+    if ( !strcmp ( lowatt.c_str(), lowtarg.c_str() ))
       {
       return i;
       }
     }
   return -1;
-  
 }
 
 

@@ -13,6 +13,7 @@
 #include "vtkKWCheckButton.h"
 #include "vtkFetchMIIcons.h"
 
+#include <vtksys/SystemTools.hxx>
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkFetchMIQueryTermWidget );
@@ -106,9 +107,14 @@ void vtkFetchMIQueryTermWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                          unsigned long event, void *callData )
 {
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
+  vtkKWMultiColumnList *l = vtkKWMultiColumnList::SafeDownCast( caller );
   
   if ( this->IsCreated() )
     {
+    if ( (l == this->GetMultiColumnList()->GetWidget()) && (event == vtkKWMultiColumnList::CellUpdatedEvent) )
+      {
+      this->InvokeEvent (vtkFetchMIQueryTermWidget::TagChangedEvent );
+      }
     if ( (b == this->GetClearAllButton()) && (event == vtkKWPushButton::InvokedEvent ) )
       {
       this->DeleteAllItems( );
@@ -218,7 +224,7 @@ void vtkFetchMIQueryTermWidget::RemoveWidgetObservers ( ) {
   this->GetClearSelectedButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->GetSelectAllButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GetSearchButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-
+  this->GetMultiColumnList()->GetWidget()->RemoveObservers(vtkKWMultiColumnList::CellUpdatedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -230,6 +236,7 @@ void vtkFetchMIQueryTermWidget::AddWidgetObservers ( ) {
   this->GetClearSelectedButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->GetSelectAllButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GetSearchButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GetMultiColumnList()->GetWidget()->AddObserver(vtkKWMultiColumnList::CellUpdatedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -400,9 +407,17 @@ void vtkFetchMIQueryTermWidget::AddNewItem ( const char *keyword, const char *va
 int  vtkFetchMIQueryTermWidget::GetRowForAttribute ( const char *attribute )
 {
   int r = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
+  vtksys_stl::string att;
+  vtksys_stl::string lowatt;
+  vtksys_stl::string target = attribute;
+  vtksys_stl::string lowtarg;
+  lowtarg = vtksys::SystemTools::LowerCase(target);
+
   for ( int i=0; i<r; i++ )
     {
-    if ( !strcmp (this->GetMultiColumnList()->GetWidget()->GetCellText (i,1), attribute) )
+    att = this->GetMultiColumnList()->GetWidget()->GetCellText (i,1);
+    lowatt = vtksys::SystemTools::LowerCase(att);
+    if ( !strcmp ( lowatt.c_str(), lowtarg.c_str() ))
       {
       return i;
       }
@@ -420,9 +435,9 @@ int vtkFetchMIQueryTermWidget::IsItemSelected(int i)
   if ( i >=0 && i < r )
     {
     int sel = this->GetMultiColumnList()->GetWidget()->GetCellTextAsInt (i,0);
-    if ( sel == 0 || sel == 1 )
+    if ( sel == 1 )
       {
-      return (sel);
+      return (1);
       }
     }
   return 0;
@@ -450,6 +465,7 @@ void vtkFetchMIQueryTermWidget::DeleteSelectedItems()
 int vtkFetchMIQueryTermWidget::GetNumberOfSelectedItems()
 {
   int r = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
+
   int numSelected = 0;
   for ( int i=0; i < r; i++)
     {
@@ -459,6 +475,42 @@ int vtkFetchMIQueryTermWidget::GetNumberOfSelectedItems()
       }
     }
   return ( numSelected );
+}
+
+
+//---------------------------------------------------------------------------
+const char* vtkFetchMIQueryTermWidget::GetAttributeOfItem(int i )
+{
+  int r = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
+  if ( i >=0 && i < r )
+    {
+    for ( int n=0; n < r; n++)
+      {
+      if ( n == i )
+        {
+        return (this->GetMultiColumnList()->GetWidget()->GetCellText (i,1)  );
+        }
+      }
+    }
+  return NULL;
+}
+
+
+//---------------------------------------------------------------------------
+const char* vtkFetchMIQueryTermWidget::GetValueOfItem(int i )
+{
+  int r = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
+  if ( i >=0 && i < r )
+    {
+    for ( int n=0; n < r; n++)
+      {
+      if ( n == i )
+        {
+        return (this->GetMultiColumnList()->GetWidget()->GetCellText (i,2)  );
+        }
+      }
+    }
+  return NULL;
 }
 
 

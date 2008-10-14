@@ -379,7 +379,7 @@ void vtkFetchMIResourceUploadWidget::CreateWidget ( )
   // create the icons
   this->FetchMIIcons = vtkFetchMIIcons::New();
 
-  this->GetMultiColumnList()->GetWidget()->AddColumn ( "select" );
+  this->GetMultiColumnList()->GetWidget()->AddColumn ( "tag" );
   this->GetMultiColumnList()->GetWidget()->ColumnEditableOn ( 0 );
   this->GetMultiColumnList()->GetWidget()->SetColumnAlignmentToLeft (0 );
   this->GetMultiColumnList()->GetWidget()->ColumnResizableOff ( 0 );
@@ -423,7 +423,7 @@ void vtkFetchMIResourceUploadWidget::CreateWidget ( )
   this->UploadSelectedButton->SetBorderWidth ( 0 );
   this->UploadSelectedButton->SetReliefToFlat();  
   this->UploadSelectedButton->SetImageToIcon ( this->FetchMIIcons->GetUploadIcon() );
-  this->UploadSelectedButton->SetBalloonHelpString ( "Upload selected datasets (this button will eventually pop up the SaveDataWidget configured for the selected server)" );
+  this->UploadSelectedButton->SetBalloonHelpString ( "Upload tagged scene and data" );
 
   this->SelectAllButton = vtkKWPushButton::New();
   this->SelectAllButton->SetParent (bFrame);
@@ -439,7 +439,7 @@ void vtkFetchMIResourceUploadWidget::CreateWidget ( )
   this->ShowTagsButton->SetBorderWidth ( 0 );
   this->ShowTagsButton->SetReliefToFlat();  
   this->ShowTagsButton->SetImageToIcon ( this->FetchMIIcons->GetShowDataTagsIcon() );
-  this->ShowTagsButton->SetBalloonHelpString ( "Pop-up a tag-view of datasets" );
+  this->ShowTagsButton->SetBalloonHelpString ( "Pop-up a tag-view of scene and data" );
 
   this->ApplyTagsButton = vtkKWPushButton::New();
   this->ApplyTagsButton->SetParent (bFrame);
@@ -464,8 +464,8 @@ void vtkFetchMIResourceUploadWidget::CreateWidget ( )
                 this->DeselectAllButton->GetWidgetName() );
   this->Script ("pack %s %s %s %s -side left -anchor w -expand n -padx 2 -pady 2",
                 spacer->GetWidgetName(),
-                this->ShowTagsButton->GetWidgetName(),
                 this->ApplyTagsButton->GetWidgetName(),
+                this->ShowTagsButton->GetWidgetName(),
                 this->UploadSelectedButton->GetWidgetName());
 
   spacer->Delete();

@@ -173,6 +173,7 @@ void vtkFetchMITagViewWidget::CreateWidget ( )
     this->TextBox = vtkKWTextWithScrollbars::New ( );
     this->TextBox->SetParent ( this->TagViewWindow );
     this->TextBox->Create ( );
+    this->TextBox->SetWidth (30 );
     this->TextBox->HorizontalScrollbarVisibilityOn();
     this->TextBox->VerticalScrollbarVisibilityOn();
     this->TextBox->GetWidget()->SetReliefToGroove();
@@ -181,7 +182,7 @@ void vtkFetchMITagViewWidget::CreateWidget ( )
 
     // pack all but HelpButton, which gets packed into another widget.
     this->Script ("pack %s -side top -expand n -anchor c -padx 0 -pady 2", this->TitleLabel->GetWidgetName() );
-    this->Script ("pack %s -side top -expand y -anchor c -padx 2 -pady 4", this->TextBox->GetWidgetName() );
+    this->Script ("pack %s -side top -expand y -fill both -anchor c -padx 2 -pady 4", this->TextBox->GetWidgetName() );
     this->Script ("pack %s -side top -expand n -anchor c -padx 0 -pady 2", this->CloseButton->GetWidgetName() );
     this->Bind();
 }

@@ -38,6 +38,7 @@ class VTK_MRML_EXPORT vtkTagTable : public vtkObject
   // Description:
   // Replace a tag column in the TagTable
   virtual int UpdateTag ( const char *attribute, const char *value );
+  virtual int UpdateTag ( const char *attribute, const char *value, int selected );
 
   // Description:
   // Get the attribute at a particular index in the TagTable.

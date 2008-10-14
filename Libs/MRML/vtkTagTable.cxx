@@ -101,6 +101,8 @@ void vtkTagTable::AddOrUpdateTag ( const char *attribute, const char *value, int
 {
   //--- add a attribute value pair. If the attribute
   //--- already exists in the table, overwrite its value and parentID.
+
+  
   if ( attribute != NULL )
     {
     if ( value == NULL )
@@ -110,7 +112,7 @@ void vtkTagTable::AddOrUpdateTag ( const char *attribute, const char *value, int
 
     //--- replace the tag if already present.
     //--- maintain its selected status.
-    if ( this->UpdateTag ( attribute, value ) == 1 )
+    if ( this->UpdateTag ( attribute, value, selected ) == 1 )
       {
       return;
       }
@@ -173,16 +175,25 @@ void vtkTagTable::AddUniqueTag ( const char *attribute, const char *value )
 //----------------------------------------------------------------------------
 int vtkTagTable::UpdateTag ( const char *attribute, const char *value )
 {
+
+  vtksys_stl::string att = attribute;
+  vtksys_stl::string val = value;  
+
+  //--- try to do a case insensitive comparison.
+  //--- this was Attribute, ATTRIBUTE, attribute (etc) will match.
+  vtksys_stl::string lowAtt;
+  vtksys_stl::string lowVal;
+  vtksys_stl::string lowTest;
+  lowAtt = vtksys::SystemTools::LowerCase (att);
+  lowVal = vtksys::SystemTools::LowerCase(val);
   
-    std::string att (attribute);
-    std::string val (value);
-    
     std::map<std::string, std::string>::iterator iter;
     for ( iter = this->TagTable.begin();
           iter != this->TagTable.end();
           iter++)
       {
-      if (iter->first == att )
+      lowTest = vtksys::SystemTools::LowerCase(iter->first);
+      if (lowTest == lowAtt )
         {
         iter->second = val;
         return 1;
@@ -190,6 +201,47 @@ int vtkTagTable::UpdateTag ( const char *attribute, const char *value )
       }
     return 0;
 }
+
+
+//----------------------------------------------------------------------------
+int vtkTagTable::UpdateTag ( const char *attribute, const char *value, int selected )
+{
+
+  vtksys_stl::string att = attribute;
+  vtksys_stl::string val = value;  
+
+  //--- try to do a case insensitive comparison.
+  //--- this was Attribute, ATTRIBUTE, attribute (etc) will match.
+  vtksys_stl::string lowAtt;
+  vtksys_stl::string lowVal;
+  vtksys_stl::string lowTest;
+  lowAtt = vtksys::SystemTools::LowerCase (att);
+  lowVal = vtksys::SystemTools::LowerCase(val);
+  
+    std::map<std::string, std::string>::iterator iter;
+    for ( iter = this->TagTable.begin();
+          iter != this->TagTable.end();
+          iter++)
+      {
+      lowTest = vtksys::SystemTools::LowerCase(iter->first);
+      if (lowTest == lowAtt )
+        {
+        iter->second = val;
+        if ( selected )
+          {
+          this->SelectTag ( attribute );
+          }
+        else
+          {
+          this->DeselectTag ( attribute );
+          }
+        return 1;
+        }
+      }
+    return 0;
+}
+
+
 
 
 

@@ -172,15 +172,16 @@ void vtkFetchMIGUI::PrintSelf(ostream& os, vtkIndent indent)
 void vtkFetchMIGUI::AddGUIObservers ( ) 
 {
   this->QueryList->AddWidgetObservers();
+  this->QueryList->AddObserver(vtkFetchMIQueryTermWidget::TagChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->ResourceList->AddWidgetObservers();
   this->TaggedDataList->AddObserver(vtkFetchMIResourceUploadWidget::TagSelectedDataEvent, (vtkCommand *)this->GUICallbackCommand);
   this->TaggedDataList->AddObserver(vtkFetchMIResourceUploadWidget::ShowAllTagViewEvent, (vtkCommand *)this->GUICallbackCommand);
   this->TaggedDataList->AddWidgetObservers();
-
-  this->AddServerEntry->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->QueryTagsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->AddServerButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ServerMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+//  this->AddServerEntry->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+//  this->AddServerButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
 }
 
 
@@ -189,15 +190,16 @@ void vtkFetchMIGUI::AddGUIObservers ( )
 void vtkFetchMIGUI::RemoveGUIObservers ( )
 {
   this->QueryList->RemoveWidgetObservers();
+  this->QueryList->RemoveObservers(vtkFetchMIQueryTermWidget::TagChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->ResourceList->RemoveWidgetObservers();
   this->TaggedDataList->RemoveObservers(vtkFetchMIResourceUploadWidget::TagSelectedDataEvent, (vtkCommand *)this->GUICallbackCommand);
   this->TaggedDataList->RemoveObservers(vtkFetchMIResourceUploadWidget::ShowAllTagViewEvent, (vtkCommand *)this->GUICallbackCommand);
   this->TaggedDataList->RemoveWidgetObservers();
-
-  this->AddServerEntry->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->QueryTagsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->AddServerButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ServerMenuButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+//  this->AddServerEntry->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+//  this->AddServerButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
 }
 
 
@@ -239,6 +241,7 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
   vtkKWEntry *e = vtkKWEntry::SafeDownCast ( caller );
   vtkKWMenu *m = vtkKWMenu::SafeDownCast ( caller );
   vtkFetchMIResourceUploadWidget *w = vtkFetchMIResourceUploadWidget::SafeDownCast ( caller );
+  vtkFetchMIQueryTermWidget *q= vtkFetchMIQueryTermWidget::SafeDownCast ( caller );
 
   if ( w != NULL )
     {
@@ -249,6 +252,13 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
     else if ( (w== this->TaggedDataList) && (event == vtkFetchMIResourceUploadWidget::ShowAllTagViewEvent) )
       {
       this->ShowAllTagView();
+      }
+    }
+  if ( q != NULL )
+    {
+    if ( (q== this->QueryList) && (event == vtkFetchMIQueryTermWidget::TagChangedEvent) )
+      {
+      this->UpdateTagTableFromGUI();
       }
     }
 
@@ -658,7 +668,7 @@ void vtkFetchMIGUI::AddMRMLSceneRow()
   this->SetDataDirectoryName ( dir.c_str());
   
   //--- make sure the scene has a selected SlicerDataType tag.
-  this->MRMLScene->GetUserTagTable()->AddOrUpdateTag ( "SlicerDataType", "MRML", 1);
+  this->MRMLScene->GetUserTagTable()->AddOrUpdateTag ( "SlicerDataType", "MRML", 0);
 
   std::string uriName;
   const char *url = this->MRMLScene->GetURL();
@@ -675,9 +685,85 @@ void vtkFetchMIGUI::AddMRMLSceneRow()
     {
     //--- put a row in the TaggedDataList with selected, datatype, and url.
     this->TaggedDataList->AddNewItem ( "Scene description", "MRML");
-//    this->TaggedDataList->SelectRow(0);
     }
 }
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkFetchMIGUI::UpdateTagTableFromGUI ( )
+{
+  if ( this->GetFetchMINode() == NULL )
+    {
+    vtkErrorMacro ("FetchMIGUI: UpdateTagTableFromGUI got a NULL FetchMINode." );
+    return;
+    }
+  if ( this->QueryList == NULL )
+    {
+    vtkErrorMacro ("FetchMIGUI: UpdateTagTableFromGUI got a NULL QueryList widget." );
+    return;
+    }
+  
+  const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
+  if (svctype == NULL)
+    {
+    return;
+    }
+
+  int num = this->QueryList->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
+  std::string att;
+  std::string val;
+  int sel;
+  //--- update the FetchMINode, depending on what service is selected.
+  if ( !strcmp ( "XND", svctype ))
+    {
+    vtkXNDTagTable *t;
+    if (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XNDTags" ) != NULL)
+      {
+      t = vtkXNDTagTable::SafeDownCast ( this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XNDTags" ));
+      if ( t == NULL )
+        {
+        // TODO: vtkErrorMacro
+        return;
+        }
+      for ( int i=0; i < num; i++ )
+        {
+        att = this->QueryList->GetAttributeOfItem ( i );
+        val = this->QueryList->GetValueOfItem ( i );
+        sel = this->QueryList->IsItemSelected ( i );
+        t->AddOrUpdateTag ( att.c_str(), val.c_str(), sel );
+        }
+      }
+    }
+  else if ( !strcmp ( "HID", svctype))
+    {
+    vtkHIDTagTable *t;
+    if (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "HIDTags" ) != NULL)
+      {
+      t = vtkHIDTagTable::SafeDownCast ( this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "HIDTags" ));
+      if ( t == NULL )
+        {
+        // TODO: vtkErrorMacro
+        return;
+        }
+      for ( int i=0; i < num; i++ )
+        {
+        att = this->QueryList->GetAttributeOfItem ( i );
+        val = this->QueryList->GetValueOfItem ( i );
+        if ( this->QueryList->IsItemSelected ( i ) )
+          {
+          t->AddOrUpdateTag ( att.c_str(), val.c_str(), 1 );
+          }
+        else
+          {
+          t->AddOrUpdateTag ( att.c_str(), val.c_str(), 0 );
+          }
+        }
+      }
+    }
+}
+
 
 
 
@@ -888,7 +974,11 @@ void vtkFetchMIGUI::UpdateGUI ()
         s = this->FetchMINode->KnownServers[i];
         this->ServerMenuButton->GetMenu()->AddRadioButton ( s.c_str() );      
         }
-
+      //TODO: hook up these commands!
+      this->ServerMenuButton->GetMenu()->AddSeparator();
+      this->ServerMenuButton->GetMenu()->AddCommand("Add New XND Server");
+      this->ServerMenuButton->GetMenu()->AddCommand("Add New HID Server");
+      
       //--- select active server in the ServerMenuButton
       if ( this->FetchMINode->GetSelectedServer() != NULL )
         {
@@ -955,9 +1045,10 @@ void vtkFetchMIGUI::ShowAllTagView()
     if ( nodeID != NULL )
       {
       //--- tag the data.
-      ss << "**Tags for ";
+      ss << "\n";
+      ss << "**";
       ss << nodeID;
-      ss << "**\n";
+      ss << ":**\n";
       if ( !(strcmp (nodeID, "Scene description")))
         {
         t = this->MRMLScene->GetUserTagTable();
@@ -981,9 +1072,8 @@ void vtkFetchMIGUI::ShowAllTagView()
             {
             ss << att;
             ss << " = ";
-            ss << "~~";
             ss << val;
-            ss << "~~\n";
+            ss << "\n";
             }
           }
         }
@@ -1021,14 +1111,14 @@ void vtkFetchMIGUI::TagSelectedData()
   int i, j;
   int dnum;
   int num = this->QueryList->GetNumberOfSelectedItems();
-  const char *att;
-  const char *val;
+  std::string att;
+  std::string val;
   for ( i=0; i < num; i++)
     {
     att = this->QueryList->GetNthSelectedAttribute(i);
     val = this->QueryList->GetNthSelectedValue(i);
 
-    if ( att != NULL && val != NULL )
+    if ( att.c_str() != NULL && val.c_str() != NULL )
       {
       //--- apply to all selected data in TaggedDataList
       dnum = this->TaggedDataList->GetNumberOfSelectedItems();
@@ -1044,6 +1134,9 @@ void vtkFetchMIGUI::TagSelectedData()
             t = this->MRMLScene->GetUserTagTable();
             if ( t != NULL )
               {
+              //--- add current tag
+              t->AddOrUpdateTag ( att.c_str(), val.c_str(), 1 );
+              //--- enforce this tag on the scene.
               t->AddOrUpdateTag ( "SlicerDataType", "MRML", 1 );
               }
             }
@@ -1055,7 +1148,7 @@ void vtkFetchMIGUI::TagSelectedData()
               t = node->GetUserTagTable();
               if ( t != NULL )
                 {
-                t->AddOrUpdateTag ( att, val, 1 );
+                t->AddOrUpdateTag ( att.c_str(), val.c_str(), 1 );
                 }
               }
             }
@@ -1125,6 +1218,7 @@ void vtkFetchMIGUI::BuildGUI ( )
   this->QueryTagsButton->SetImageToIcon ( this->FetchMIIcons->GetQueryTagsIcon() );
   this->QueryTagsButton->SetBalloonHelpString ( "Query for tags that the selected web service supports.");  
   
+/*
   vtkKWLabel *l2 = vtkKWLabel::New();
   l2->SetParent ( serverFrame );
   l2->Create();
@@ -1140,7 +1234,6 @@ void vtkFetchMIGUI::BuildGUI ( )
   this->AddServerButton->SetReliefToFlat();  
   this->AddServerButton->SetImageToIcon ( this->FetchMIIcons->GetAddNewIcon() );
   this->AddServerButton->SetBalloonHelpString ( "Add a new XNAT Desktop server to the menu" );
-
   this->Script ( "grid %s -row 0 -column 0 -sticky e -padx 2 -pady 2", l2->GetWidgetName() );
   this->Script ( "grid %s -row 0 -column 1 -sticky ew -padx 2 -pady 2", this->AddServerEntry->GetWidgetName() );
   this->Script ( "grid %s -row 0 -column 2 -sticky w -padx 2 -pady 2", this->AddServerButton->GetWidgetName() );
@@ -1150,7 +1243,15 @@ void vtkFetchMIGUI::BuildGUI ( )
   this->Script ( "grid columnconfigure %s 0 -weight 0", serverFrame->GetWidgetName() );
   this->Script ( "grid columnconfigure %s 1 -weight 1", serverFrame->GetWidgetName() );
   this->Script ( "grid columnconfigure %s 2 -weight 0", serverFrame->GetWidgetName() );
-
+*/
+  
+  this->Script ( "grid %s -row 0 -column 0 -sticky e -padx 2 -pady 2", l1->GetWidgetName() );
+  this->Script ( "grid %s -row 0 -column 1 -sticky ew -padx 2 -pady 2", this->ServerMenuButton->GetWidgetName() );
+  this->Script ( "grid %s -row 0 -column 2 -sticky w -padx 2 -pady 2", this->QueryTagsButton->GetWidgetName() );
+  this->Script ( "grid columnconfigure %s 0 -weight 0", serverFrame->GetWidgetName() );
+  this->Script ( "grid columnconfigure %s 1 -weight 1", serverFrame->GetWidgetName() );
+  this->Script ( "grid columnconfigure %s 2 -weight 0", serverFrame->GetWidgetName() );
+  
   // Query Frame
   vtkSlicerModuleCollapsibleFrame *queryFrame = vtkSlicerModuleCollapsibleFrame::New ( );
   queryFrame->SetParent(page);
@@ -1198,11 +1299,15 @@ void vtkFetchMIGUI::BuildGUI ( )
 
   // Clean up.
   l1->Delete();
-  l2->Delete();
+//  l2->Delete();  this->Script ( "grid columnconfigure %s 0 -weight 0", serverFrame->GetWidgetName() );
+  this->Script ( "grid columnconfigure %s 1 -weight 1", serverFrame->GetWidgetName() );
+  this->Script ( "grid columnconfigure %s 2 -weight 0", serverFrame->GetWidgetName() );
   serverFrame->Delete();
   queryFrame->Delete();
   resourceFrame->Delete();
-  descriptionFrame->Delete();
+  descriptionFrame->Delete();  this->Script ( "grid columnconfigure %s 0 -weight 0", serverFrame->GetWidgetName() );
+  this->Script ( "grid columnconfigure %s 1 -weight 1", serverFrame->GetWidgetName() );
+  this->Script ( "grid columnconfigure %s 2 -weight 0", serverFrame->GetWidgetName() );
 
   this->UpdateGUI();
   this->Logic->CreateTemporaryFiles();
