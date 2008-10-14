@@ -24,6 +24,7 @@
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorableNode.h"
 
+#include "vtkKWMessageDialog.h"
 
 
 vtkFetchMILogic* vtkFetchMILogic::New()
@@ -1534,6 +1535,7 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
       // add the file name to the cache dir
       pathComponents.push_back(filename);
       // set it
+      vtkDebugMacro("RequestResourceUploadToXND: setting file name " << vtksys::SystemTools::JoinPath(pathComponents).c_str() << " to storage node " << storageNode->GetID());
       storageNode->SetFileName(vtksys::SystemTools::JoinPath(pathComponents).c_str());
       //--- If the node is a multivolume, set the filename and all FileListMembers to
       //--- corresponding cachedir/filenames using AddFileName() method.
@@ -1542,6 +1544,7 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
         const char *nthFilename = storageNode->GetNthFileName(filenum);
         pathComponents.pop_back();
         pathComponents.push_back(nthFilename);
+        vtkDebugMacro("RequestResourceUploadToXND: adding file name " << vtksys::SystemTools::JoinPath(pathComponents).c_str() << " to storage node " << storageNode->GetID());
         storageNode->AddFileName(vtksys::SystemTools::JoinPath(pathComponents).c_str());
         }
       //--- Write the file (or multivolume set of files) to cache.
@@ -1573,10 +1576,10 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
     for (int i = 0; i < numStorageNodes; i++)
       {
       storageNode = storableNode->GetNthStorageNode(i);
-  // FOR EACH FILENAME & FILELISTMEMBER IN EACH NODE:
-  // {
-  //--- call this->WriteMetadataForUpload( filename, nodeID ) on the node
-  //--- CHECK RETURN VALUE.
+      // FOR EACH FILENAME & FILELISTMEMBER IN EACH NODE:
+      // {
+      //--- call this->WriteMetadataForUpload( filename, nodeID ) on the node
+      //--- CHECK RETURN VALUE.
       int retval = this->WriteMetadataForUpload(storageNode->GetFileName(), nodeID.c_str() );
       if (retval == 0)
         {
@@ -1584,7 +1587,7 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
         return;
         }
       //------ if OK:
-      //------ call the handler's PostMetadata() method.
+      //------ call the PostMetadata() method.
       //char *metadataResponse =
       //------ this->PostMetadata(storageNode->GetFileName());
       this->PostMetadata();
@@ -1593,66 +1596,92 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
       //------ Handle bad posts which return NULL -- if the uri is null, abort for the node,
       //------ and set node's URI (and all URIListMembers) to NULL so they won't be staged.
       //------ and deselect the node in the FetchMINode's list
-      //------ this->FetchMINode->DeselectNode ( nodeID)
+      //------ this->DeselectNode ( nodeID)
       if (uri == NULL)
         {
-        vtkErrorMacro("vtkFetchMILogic::RequestResourceUploadToXND: error parsing uri from post meta data call"); // , response = " << metadataResponse);
+        vtkErrorMacro("vtkFetchMILogic::RequestResourceUploadToXND: error parsing uri from post meta data call, aborting this stotage node " << storageNode->GetID()); // , response = " << metadataResponse);
+        storageNode->SetURI(NULL);
+        storageNode->ResetURIList();
+        this->DeselectNode(nodeID.c_str());
+        // bail out of the rest of the storage nodes
+        i = numStorageNodes;
+        // for now, decrement the node number, since DeselectNode removes an
+        // element from the list we're iterating over
+        n--;
         }
       else
         {
         vtkDebugMacro("vtkFetchMILogic::RequestResourceUploadToXND: parsed out a return metadatauri : " << uri);
         // then save it in the storage node
         storageNode->SetURI(uri);
-        }
-      // now deal with the rest of the files in the storage node
-      int numFiles = storageNode->GetNumberOfFileNames();
-      for (int filenum = 0; filenum < numFiles; filenum++)
-        {
-        if (this->WriteMetadataForUpload(storageNode->GetNthFileName(filenum), nodeID.c_str() ) != 1)
+        
+        // now deal with the rest of the files in the storage node
+        int numFiles = storageNode->GetNumberOfFileNames();
+        for (int filenum = 0; filenum < numFiles; filenum++)
           {
-          vtkErrorMacro("vtkFetchMILogic::RequestResourceUploadToXND: error writing xml for upload, nth filename = " << storageNode->GetNthFileName(filenum) << ", id = " << nodeID.c_str());
-          return;
+          if (this->WriteMetadataForUpload(storageNode->GetNthFileName(filenum), nodeID.c_str() ) != 1)
+            {
+            vtkErrorMacro("vtkFetchMILogic::RequestResourceUploadToXND: error writing xml for upload, nth filename = " << storageNode->GetNthFileName(filenum) << ", id = " << nodeID.c_str());
+            return;
+            }
+          //------ if OK:
+          //------ call the PostMetadata() method.
+          //char *metadataResponse = this->PostMetadata(storageNode->GetNthFileName(filenum));
+          this->PostMetadata();
+          // parse the return, it's a uri
+          const char *uri = this->ParsePostMetadataResponse(); // metadataResponse);
+          if (uri == NULL)
+            {
+            //------ if NOT OK for any individual filename:
+            //------ then abort for the node,
+            //------ and set node's URI (and all URIListMembers) to NULL so they won't be staged.
+            //------ pop up error message giving user chance to continue saving other data, or abort altogether.
+            //------ IF CONTINUE
+            //------ and deselect the node in the FetchMINode's list this->FetchMINode->DeselectNode ( nodeID)
+            //------ ELSE return
+            //------ (NOTE: some nodes will have filename changed to cache now. should we
+            //------ keep original filenames around and switch them back if
+            //------ upload is aborted?)
+           
+            vtkErrorMacro("vtkFetchMILogic::RequestResourceUploadToXND: error parsing uri from post meta data call for file # " << filenum); //, response = " << metadataResponse);
+            storageNode->SetURI(NULL);
+            storageNode->ResetURIList();
+            // ask user
+            vtkKWMessageDialog *message = vtkKWMessageDialog::New();
+            // TODO: figure out which parent to use
+//            message->SetParent ( this->GetParent() );
+//            message->SetMasterWindow ( this->SaveDialog );
+            message->SetStyleToYesNo();
+            std::string msg = "File " + std::string(storageNode->GetNthFileName(filenum)) + " unable to upload to remote host.\nDo you want to continue saving data?";
+            message->SetText(msg.c_str());
+            message->Create();
+            int response = message->Invoke();
+            if (response)
+              {
+              this->DeselectNode(nodeID.c_str());
+              // for now, decrement the node number, since DeselectNode removes an
+              // element from the list we're iterating over
+              n--;
+              
+              // bail out of the rest of the files
+              filenum = numFiles;
+              }
+            else
+              {
+              // bail out of the rest of the storage nodes
+              i = numStorageNodes;
+              }
+            }
+          else
+            {
+            vtkDebugMacro("vtkFetchMILogic::RequestResourceUploadToXND: parsed out a return metadatauri : " << uri << ", adding it to storage node " << storageNode->GetID());
+            // then save it in the storage node
+            storageNode->AddURI(uri);
+            }         
           }
-        //char *metadataResponse = this->PostMetadata(storageNode->GetNthFileName(filenum));
-        this->PostMetadata();
-        // parse the return, it's a uri
-        const char *uri = this->ParsePostMetadataResponse(); // metadataResponse);
-        if (uri == NULL)
-          {
-          vtkErrorMacro("vtkFetchMILogic::RequestResourceUploadToXND: error parsing uri from post meta data call"); //, response = " << metadataResponse);
-          }
-        else
-          {
-          vtkDebugMacro("vtkFetchMILogic::RequestResourceUploadToXND: parsed out a return metadatauri : " << uri);
-          // then save it in the storage node
-          storageNode->AddURI(uri);
-          }
-  //------
-  //------ if OK:
-  //------ call the handler's PostMetadata() method.
-  //------ *NOTE: if the node is a multivolume node, then the WriteMetadataForUpload() and
-  //------ this->PostMetadata() methods have to be called on each individual filename/ListMemeber
-  //------ in the node.
-  //------ call this->ParseMetadataPostResponse() (returns uri) to get the uri for each filename.
-  //------ Handle bad posts which return NULL -- if the uri is null, abort for the node,
-  //------ and set node's URI (and all URIListMembers) to NULL so they won't be staged.
-  //------ and deselect the node in the FetchMINode's list this->FetchMINode->DeselectNode ( nodeID)
-  //------ Set the URI on the first filename, or call AddURI to subsequent for multivolume files.
-  //------
-  //------ if NOT OK for any individual filename:
-  //------ then abort for the node,
-  //------ and set node's URI (and all URIListMembers) to NULL so they won't be staged.
-  //------ pop up error message giving user chance to continue saving other data, or abort altogether.
-  //------ IF CONTINUE
-  //------ and deselect the node in the FetchMINode's list this->FetchMINode->DeselectNode ( nodeID)
-  //------ ELSE return
-  //------ (NOTE: some nodes will have filename changed to cache now. should we
-  //------ keep original filenames around and switch them back if upload is aborted?)
-  // } // end LOOP THRU NODES.
         }
       }
     }
-  
 
   //
   // PASS#3: STAGE WRITE OF ALL DATA.
@@ -1674,7 +1703,11 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
     for (int i = 0; i < numStorageNodes; i++)
       {
       storageNode = storableNode->GetNthStorageNode(i);
-      storageNode->WriteData(storableNode);
+      vtkDebugMacro("RequestResourceUploadToXND: caling write data on storage node " << i << ": " << storageNode->GetID());
+      if (!storageNode->WriteData(storableNode))
+        {
+        vtkErrorMacro("RequestResourceUploadToXND: WriteData call failed on storage node " << storageNode->GetID() << " for node " << storableNode->GetName());
+        }
       }
     }
   
@@ -1685,7 +1718,7 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
   // Check to see if save scene is selected this->SceneSelected
   if (this->SceneSelected)
     {
-    vtkErrorMacro("NOT WRITING SCENE XML YET!");
+    vtkDebugMacro("RequestResourceUploadToXND: uploading scene...");
     // If so write mrml file to cache, include all nodes that have uris AND are selected for upload.
     // (get all selected storable nodes from this->SelectedStorableNodeIDs)
     // --- for now, assume the scene just contains selected nodes for upload
@@ -1698,6 +1731,7 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
     pathComponents.push_back(mrmlFileName);
     // set the new url
     mrmlFileName = vtksys::SystemTools::JoinPath(pathComponents).c_str();
+    vtkDebugMacro("RequestResourceUploadToXND: setting scene url to " << mrmlFileName);
     this->GetMRMLScene()->SetURL(mrmlFileName);
     
     // call this->WriteMetadataForUpload( filename, "MRML") to generate metadata
@@ -1711,9 +1745,11 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
       this->PostMetadata();
       const char *uri =  this->ParsePostMetadataResponse();
       //--- Set scene's URI
+      vtkDebugMacro("RequestResourceUploadToXND: setting mrml scene url to " << uri);
       this->GetMRMLScene()->SetURL(uri);
 
       // now upload it
+      vtkDebugMacro("RequestResourceUploadToXND: uploading mrml file");
       handler->StageFileWrite(uri, mrmlFileName);
       }
     else
