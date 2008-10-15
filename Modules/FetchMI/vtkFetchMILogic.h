@@ -137,6 +137,7 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   // in the scene (in this->SelectedStorableNodeIDs).
   // For all resources, it generates metadata and uplaods it,
   // then it uploads data, and finally uploads scene.
+  int TestForRequiredTags ( );
   void RequestResourceUpload ();
   void RequestResourceUploadToXND ();
   void RequestResourceUploadToHID ();

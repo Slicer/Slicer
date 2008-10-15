@@ -907,6 +907,12 @@ void vtkFetchMIGUI::ProcessMRMLEvents ( vtkObject *caller,
                                             unsigned long event,
                                             void *callData ) 
 {
+  if ( this->FetchMINode == NULL )
+    {
+    vtkErrorMacro ("FetchMIGUI: ProcessMRMLEvents has a NULL FetchMINode");
+    return;
+    }
+
   // if parameter node has been changed externally, update GUI widgets with new values
   vtkMRMLFetchMINode* node = vtkMRMLFetchMINode::SafeDownCast(caller);
 
@@ -932,6 +938,16 @@ void vtkFetchMIGUI::ProcessMRMLEvents ( vtkObject *caller,
   
   else if (node != NULL && this->GetFetchMINode() == node) 
     {
+    if ( event == vtkMRMLFetchMINode::RemoteIOErrorEvent )
+      {
+          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+          dialog->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow() );
+          dialog->SetStyleToMessage();
+          dialog->SetText ( this->FetchMINode->GetErrorMessage() );
+          dialog->Create();
+          dialog->Invoke();
+          dialog->Delete();
+      }
     if (event == vtkMRMLFetchMINode::TagResponseReadyEvent )
       {
       //--- check for error

@@ -49,6 +49,8 @@ vtkMRMLFetchMINode::vtkMRMLFetchMINode()
    this->TagTableCollection = vtkTagTableCollection::New();
    this->SetKnownServers();
 
+   this->SetRequiredTags();
+
    this->ErrorMessage = NULL;
    this->SelectedServer = NULL; 
    this->SelectedServiceType = NULL; 
@@ -149,6 +151,24 @@ void vtkMRMLFetchMINode::ReadXMLAttributes(const char** atts)
 
 
 
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLFetchMINode::SetRequiredTags ( )
+{
+  //--- for xnat desktop
+  this->AddRequiredXNDTag ( "Experiment" );
+  this->AddRequiredXNDTag ( "Project" );
+  this->AddRequiredXNDTag ( "Scan" );
+  this->AddRequiredXNDTag ( "Subject" );  
+  this->AddRequiredXNDTag ( "Modality" );
+  this->AddRequiredXNDTag ( "SlicerDataType" );
+}
+
+
+
+
+
 //----------------------------------------------------------------------------
 void vtkMRMLFetchMINode::SetKnownServers ( )
 {
@@ -158,6 +178,8 @@ void vtkMRMLFetchMINode::SetKnownServers ( )
   this->AddNewServer ( "https://loci.ucsd.edu/hid" );
   this->InvokeEvent (vtkMRMLFetchMINode::KnownServersModifiedEvent );
 }
+
+
 
 
 //----------------------------------------------------------------------------
@@ -188,6 +210,38 @@ void vtkMRMLFetchMINode::SetServiceType ( const char *s)
 {
   this->SetSelectedServiceType (s);
 }
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLFetchMINode::AddRequiredXNDTag ( const char *tag )
+{
+  int unique = 1;
+  std::string s;
+
+  if (tag == NULL)
+    {
+    vtkErrorMacro("AddRequiredXNDTag: can't add  a null tag!");
+    return;
+    }
+  
+  int n = this->RequiredXNDTags.size();
+  for ( int i = 0; i < n; i++ )
+    {
+    s = RequiredXNDTags[i];
+    if ( !(strcmp ( s.c_str(), tag)) )
+      {
+      unique = 0;
+      break;
+      }
+    }
+    //--- add the server tag if it's not already here.
+    if ( unique )
+      {
+      this->RequiredXNDTags.push_back ( std::string ( tag ) );
+      }
+
+}
+
 
 
 //----------------------------------------------------------------------------

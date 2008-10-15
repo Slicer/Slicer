@@ -53,6 +53,9 @@ class VTK_FETCHMI_EXPORT vtkMRMLFetchMINode : public vtkMRMLNode
   // Set all default web servers
   virtual void SetKnownServers ( );
   
+  virtual void SetRequiredTags();
+  virtual void AddRequiredXNDTag(const char *);
+  
   // Description:
   // Get unique node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "FetchMI"; };
@@ -79,6 +82,7 @@ class VTK_FETCHMI_EXPORT vtkMRMLFetchMINode : public vtkMRMLNode
   
   //BTX
   std::vector<std::string> KnownServers;
+  std::vector<std::string> RequiredXNDTags;
   //ETX
 
   //BTX

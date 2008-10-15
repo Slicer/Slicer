@@ -1209,6 +1209,85 @@ int vtkFetchMILogic::WriteMetadataForUpload ( const char *filename, const char *
 
 
 
+
+//----------------------------------------------------------------------------
+int vtkFetchMILogic::TestForRequiredTags ( )
+{
+
+  if ( this->FetchMINode == NULL )
+    {
+    vtkErrorMacro ("vtkFetchMILogic: Null FetchMINode" );
+    return -1;
+    }
+
+  const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
+  if ( svctype == NULL )
+    {
+    vtkErrorMacro ("vtkFetchMILogic: Null server or servicetype" );
+    return 0;
+    }
+  
+  if ( !(strcmp ("HID", svctype )) )
+    {
+    //no-op
+    }
+  if ( !(strcmp ("XND", svctype )) )
+    {
+    //--- check scene and all selected nodes.
+    //---Required tags: experiment, project, subject, scan, modality, SlicerDataType.
+    vtkTagTable *t;
+    if ( this->SceneSelected )
+      {
+      if ( this->MRMLScene == NULL )
+        {
+        vtkErrorMacro ("vtkFetchMILogic: Null MRMLScene." );
+        return 0;        
+        }
+      //--- look at scene tags
+      t = this->MRMLScene->GetUserTagTable();
+      if ( t == NULL)
+        {
+        return 0;
+        }
+      for ( int i=0; i < this->FetchMINode->RequiredXNDTags.size(); i++ )
+        {
+        if ( t->CheckTableForTag (this->FetchMINode->RequiredXNDTags[i].c_str()) < 0 )
+          {
+          return 0;
+          }
+        }
+      }
+
+    //--- and look at each node.
+    for ( int n=0; n < this->SelectedStorableNodeIDs.size(); n++)
+      {
+      const char *nodeID = this->SelectedStorableNodeIDs[n].c_str();
+      vtkMRMLStorableNode *node = vtkMRMLStorableNode::SafeDownCast ( this->MRMLScene->GetNodeByID (nodeID));
+      if ( node != NULL )
+        {
+        t = this->FetchMINode->GetTagTableCollection()->FindTagTableByName ("XNDTags");
+        if ( t == NULL )
+          {
+          return 0;
+          }
+        for ( int i=0; i < this->FetchMINode->RequiredXNDTags.size(); i++ )
+          {
+          if ( t->CheckTableForTag (this->FetchMINode->RequiredXNDTags[i].c_str()) < 0 )
+            {
+            return 0;
+            }
+          }
+        }
+      }
+    }
+
+  return 1;
+}
+
+
+
+
+
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::RequestResourceUpload ( )
 {
@@ -1230,10 +1309,17 @@ void vtkFetchMILogic::RequestResourceUpload ( )
     {
     //no-op
     }
-  //--- we'll have to have separate methods for each
   if ( !(strcmp ("XND", svctype )) )
     {
-    this->RequestResourceUploadToXND();
+    if ( this->TestForRequiredTags() > 0 )
+      {
+      this->RequestResourceUploadToXND();
+      }
+    else
+      {
+      this->FetchMINode->SetErrorMessage ("Some or all items selected are not described by all tags required by XNAT Desktop and Slicer. Please include values for: Project, Experiment, Subject, Scan, Modality, and SlicerDataType.");
+      this->InvokeEvent(vtkMRMLFetchMINode::RemoteIOErrorEvent );
+      }
     }
 }
 
@@ -1979,6 +2065,17 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
             //------ keep original filenames around and switch them back if
             //------ upload is aborted?)
            
+            //---
+            //--- Here, instead of bugging user mid-upload, let's
+            //--- keep a list of things that failed, and then
+            //--- tell user at end.
+            //--- Can do this using:
+            //--- this->FetchMINode->SetErrorMessage( "the following datasets didn't properly upload: nodeIDA, nodeiDB...");
+            //--- this->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
+            //--- that will trigger the GUI to post the message.
+            //--- Can do this here, or at the end of the method...
+            //---
+
             vtkErrorMacro("vtkFetchMILogic::RequestResourceUploadToXND: error parsing uri from post meta data call for file # " << filenum); //, response = " << metadataResponse);
             storageNode->SetURI(NULL);
             storageNode->ResetURIList();
