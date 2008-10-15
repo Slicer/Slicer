@@ -107,6 +107,12 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   void TagStorableNodes ( );
 
   // Description:
+  // Method takes a data type as a string and
+  // returns the index of the known data type,
+  // or a -1 if the type is unknown.
+  int CheckValidSlicerDataType ( const char *dtype);
+
+  // Description:
   // Makes sure all data is appropriately tagged
   // before upload happens.
 

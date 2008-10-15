@@ -118,10 +118,7 @@ void vtkFetchMIResourceUploadWidget::ProcessWidgetEvents ( vtkObject *caller,
       }
     else if ( (b == this->GetUploadSelectedButton()) && (event == vtkKWPushButton::InvokedEvent ) )
       {
-      if ( this->Logic )
-        {
-        this->Logic->RequestResourceUpload ( );
-        }
+      this->InvokeEvent ( vtkFetchMIResourceUploadWidget::UploadRequestedEvent );
       }
     else if ( (b == this->GetSelectAllButton()) && (event == vtkKWPushButton::InvokedEvent ) )
       {
@@ -261,6 +258,41 @@ int vtkFetchMIResourceUploadWidget::GetNumberOfSelectedItems()
     }
   return ( numSelected );
 }
+
+
+
+//---------------------------------------------------------------------------
+int vtkFetchMIResourceUploadWidget::GetNumberOfItems()
+{
+  return (this->GetMultiColumnList()->GetWidget()->GetNumberOfRows() );
+}
+
+
+//---------------------------------------------------------------------------
+const char* vtkFetchMIResourceUploadWidget::GetNthDataTarget(int i )
+{
+  int r = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
+  if ( i >= 0 && i < r )
+    {
+    return (this->GetMultiColumnList()->GetWidget()->GetCellText (i,3) );
+    }
+  return NULL;
+
+}
+
+
+//---------------------------------------------------------------------------
+const char* vtkFetchMIResourceUploadWidget::GetNthSlicerDataType(int i)
+{
+  int r = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
+
+  if ( i >= 0 && i < r )
+    {
+    return (this->GetMultiColumnList()->GetWidget()->GetCellText (i,2) );
+    }
+  return NULL;
+}
+
 
 //---------------------------------------------------------------------------
 const char* vtkFetchMIResourceUploadWidget::GetNthSelectedSlicerDataType(int n)

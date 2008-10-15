@@ -71,8 +71,11 @@ public:
   virtual int IsItemSelected(int i );
   virtual void DeleteSelectedItems();
   virtual int GetNumberOfSelectedItems();
+  virtual int GetNumberOfItems();
   virtual const char *GetNthSelectedSlicerDataType(int n);
   virtual const char *GetNthSelectedDataTarget(int n);
+  virtual const char *GetNthDataTarget(int n );
+  virtual const char *GetNthSlicerDataType(int n);
   void ShowTagViewCallback();
 
   //BTX
@@ -80,6 +83,7 @@ public:
     {
       TagSelectedDataEvent = 11000,
       ShowAllTagViewEvent,
+      UploadRequestedEvent,
     };
   //ETX
 

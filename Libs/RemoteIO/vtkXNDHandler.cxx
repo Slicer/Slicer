@@ -176,6 +176,31 @@ void vtkXNDHandler::StageFileWrite(const char *source,
 
 
 
+//----------------------------------------------------------------------------
+const char *vtkXNDHandler::PostMetadata ( const char *source )
+{
+
+//  source is a filename of a file that has metadata in it.
+
+  
+// DOCDATA1='-X POST -H "Content-Type: application/x-xnat-metadata+xml" -H "Content-Disposition: x-xnat-metadata; filename=\"'
+// DOCDATA2='\"" -d @../GAGE-XND.xml'
+
+//# post metadata for file
+//uri=`eval curl $DOCDATA1$file$DOCDATA2 $SERVER/data`
+//echo "$uri"
+
+//#now post data
+//FILEDATA='-T'
+//eval curl $FILEDATA $file $uri
+
+// try to return a uri as a string.
+  return NULL;
+  
+}
+
+
+
 
 
 

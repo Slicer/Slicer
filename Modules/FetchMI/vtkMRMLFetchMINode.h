@@ -1,6 +1,8 @@
 #ifndef __vtkMRMLFetchMINode_h
 #define __vtkMRMLFetchMINode_h
 
+#include "vtkStringArray.h"
+
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkTagTable.h"
@@ -18,6 +20,8 @@ class VTK_FETCHMI_EXPORT vtkMRMLFetchMINode : public vtkMRMLNode
   vtkTypeRevisionMacro(vtkMRMLFetchMINode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  vtkGetObjectMacro ( SlicerDataTypes, vtkStringArray );
+  vtkSetObjectMacro ( SlicerDataTypes, vtkStringArray );
   vtkGetObjectMacro ( ResourceDescription, vtkTagTable );
   vtkGetObjectMacro ( TagTableCollection, vtkTagTableCollection );
   vtkGetStringMacro ( SelectedServer );
@@ -71,7 +75,8 @@ class VTK_FETCHMI_EXPORT vtkMRMLFetchMINode : public vtkMRMLNode
   char *SelectedServer;
   char *SelectedServiceType;
   char *ErrorMessage;
-
+  vtkStringArray *SlicerDataTypes;
+  
   //BTX
   std::vector<std::string> KnownServers;
   //ETX

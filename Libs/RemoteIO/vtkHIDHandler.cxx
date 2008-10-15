@@ -103,7 +103,7 @@ void vtkHIDHandler::StageFileRead(const char * source,
   this->LocalFile = fopen(destination, "wb");
   curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEDATA, this->LocalFile);
   curl_easy_setopt ( this->CurlHandle, CURLOPT_SSL_VERIFYPEER, 0 );
-
+    
   vtkDebugMacro("StageFileRead: about to do the curl download... source = " << source << ", dest = " << destination);
   CURLcode retval = curl_easy_perform(this->CurlHandle);
 
@@ -197,6 +197,7 @@ const char* vtkHIDHandler::QueryServer( const char *uri, const char *destination
   this->LocalFile = fopen(destination, "w");
   curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEDATA, this->LocalFile);
   curl_easy_setopt ( this->CurlHandle, CURLOPT_SSL_VERIFYPEER, 0 );
+  curl_easy_setopt ( this->CurlHandle, CURLOPT_SSL_VERIFYHOST, 0 );
 
   vtkDebugMacro("QueryServer: about to do the curl download... uri = " << uri << ", dest = " << destination);
   CURLcode retval = curl_easy_perform(this->CurlHandle);

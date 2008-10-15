@@ -36,7 +36,8 @@ class VTK_RemoteIO_EXPORT vtkXNDHandler : public vtkHTTPHandler
   virtual void StageFileRead(const char * source,
                              const char * destination);
 
-
+  const char* PostMetadata ( const char *source );
+  
   // Description:
   // This function uploads the specified file (source) to
   // the specified destination (uri), on a specified host.

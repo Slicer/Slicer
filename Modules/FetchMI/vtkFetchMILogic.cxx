@@ -510,7 +510,138 @@ void vtkFetchMILogic::GetXMLElement( vtkXMLDataElement *element )
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::GetHIDXMLEntry( vtkXMLDataElement *element )
 {
+
+  if (element ==  NULL )
+    {
+    vtkErrorMacro ( "vtkFetchMILogic: GetXMLEntry called with null vtkXMLDataElement.");
+    return;
+    }
+
+  const char *name = element->GetName();
+  const char *attName;
+  const char *value;
+  const char *dtype = "<unknown>";
+
+  if ( name == NULL )
+    {
+    return;
+    }
+  if ( this->GetFetchMINode() == NULL )
+    {
+    vtkErrorMacro ( "vtkFetchMILogic: FetchMINode is NULL.");
+    return;
+    }
+
+  // check to see if this is an item of interest.
+  // do different things based on what elements we find.
+  //---
+  // TAGS
+  //---
+  if ( (!(strcmp(name, "ul" ))) ||
+       (!(strcmp(name, "UL" ))) )
+    {
+    // see if the attribute in this tag is called Label, and if its value is SlicerDataType
+    int numatts = element->GetNumberOfAttributes();
+    for ( int i=0; i < numatts; i++ )
+      {
+      attName = element->GetAttributeName(i);        
+      value = element->GetAttributeValue(i);
+      if ( attName != NULL && value != NULL )
+        {            
+        if ( (!strcmp(value, "mrml" )) ||
+             (!strcmp(value, "MRML")) )
+          {
+          //=== if this says 1, then good. if 3, then we can simplify ths metod.
+          int nnested = element->GetNumberOfNestedElements();
+          vtkXMLDataElement *nnestedElement = element;
+          for ( int j=0; j < nnested; j++)
+            {
+            nnestedElement = nnestedElement->GetNestedElement ( j );
+            if ( nnestedElement == NULL )
+              {
+              break;
+              }
+            name = nnestedElement->GetName();
+            if ( name != NULL )
+              {
+              if ( !(strcmp (name, "li" )) ||
+                   !(strcmp (name, "LI" )) )
+                {
+                //--- go in deeper.
+                int nnnested = nnestedElement->GetNumberOfNestedElements();
+                vtkXMLDataElement *nnnestedElement = nnestedElement;
+                for ( int k=0; k < nnnested; k++ )
+                  {
+                  nnnestedElement = nnnestedElement->GetNestedElement ( k );
+                  if ( nnnestedElement == NULL )
+                    {
+                    break;
+                    }
+                  name = nnnestedElement->GetName();
+                  int numatts2 = nnnestedElement->GetNumberOfAttributes();
+                  for (int n=0; n<numatts2; n++)
+                    {
+                    if ( name != NULL )
+                      {
+                      if ( !(strcmp (name, "a" )) ||
+                           !(strcmp (name, "A" )) )
+                        {
+                        attName = nnnestedElement->GetAttributeName(n);        
+                        value = nnnestedElement->GetAttributeValue(n);
+                        if ( attName != NULL && value != NULL )
+                          {
+                          if ( !(strcmp(attName, "href")) ||
+                               !(strcmp(attName, "HREF")))
+                            {
+                            this->CurrentURI = value;
+                            this->FetchMINode->GetResourceDescription()->AddOrUpdateTag ( this->CurrentURI, dtype, 0 );
+                            break;
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
 }
+
+
+
+//----------------------------------------------------------------------------
+int vtkFetchMILogic::CheckValidSlicerDataType ( const char *dtype)
+{
+  if ( this->FetchMINode == NULL )
+    {
+    vtkErrorMacro ( "vtkFetchMILogic: Got NULL FetchMINode pointer.");
+    return -1;
+    }
+
+  vtksys_stl::string s = dtype;
+  vtksys_stl::string tmp;
+
+  int num = this->FetchMINode->GetSlicerDataTypes()->GetNumberOfValues();
+  for ( int i=0; i < num; i++ )
+    {
+    tmp = this->FetchMINode->GetSlicerDataTypes()->GetValue(i);
+    if ( tmp.c_str() != NULL )
+      {
+      if ( tmp == s )
+        {
+        return (i);
+        }
+      }
+    }
+
+  return -1;
+}
+
+
 
 
 //----------------------------------------------------------------------------
@@ -824,7 +955,38 @@ void vtkFetchMILogic::ParseResourceQueryResponse ( )
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::PostMetadata ( )
 {
+  if (this->FetchMINode == NULL )
+    {
+    vtkErrorMacro ( "FetchMILogic: PostMetadata got a NULL FetchMINode" );
+    return;
+    }
+  if (this->GetXMLUploadFileName() == NULL)
+    {
+    vtkErrorMacro ( "FetchMILogic: Got NULL file for Metadata upload.");
+    return;
+    }
+
+  const char *svr = this->GetFetchMINode()->GetSelectedServer();
+  const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();  
+  if ( svctype == NULL )
+    {
+    vtkErrorMacro ( "FetchMILogic: PostMetadata got a NULL Web Service Type");
+    return;
+    }
+  if ( !(strcmp(svctype, "XND")))
+    {
+    vtkXNDHandler *handler = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XNDHandler" ));
+    if ( handler == NULL )
+      {
+      vtkErrorMacro ( "vtkFetchMILogic: WriteMetadataForUpload got a null XNDHandler." );
+      return;
+      }    
+    const char *uri = handler->PostMetadata ( this->GetXMLUploadFileName() );
+    }
 }
+
+
+
 
 
 //----------------------------------------------------------------------------
@@ -914,7 +1076,12 @@ int vtkFetchMILogic::WriteMetadataForUpload ( const char *filename, const char *
     //--- Check to see if ID == MRML.
     if ( !(strcmp(ID, "MRML" ) ) )
       {
-      vtkTagTable *t = this->SceneTags;
+      vtkTagTable *t = this->GetMRMLScene()->GetUserTagTable();
+      if ( t == NULL )
+        {
+      vtkErrorMacro ( "vtkFetchMILogic: WriteMetadataForUpload got a null tag table for the scene." );
+      return 0;
+        }
       // make sure SlicerDataType tag is set to 'MRML'
       t->AddOrUpdateTag ( "SlicerDataType", "MRML" );
       int num = t->GetNumberOfTags();
@@ -924,20 +1091,26 @@ int vtkFetchMILogic::WriteMetadataForUpload ( const char *filename, const char *
       file << "\n";
       file << "<Metadata ";
       file << h->GetNameSpace();
+      file << ">";
       file << "\n";
         
       for ( int i=0; i < num; i++ )
         {
         att = t->GetTagAttribute(i);
         val = t->GetTagValue(i);
-        if ( t->IsTagSelected(att))
+//        if ( t->IsTagSelected(att))
+        // use all tags for now
+        if ( 1 )
           {
           file << "<Tag Label=";
+          file << "\"";
           file << att;
+          file << "\"";
           file << ">\n";
           file << "<Value>";
           file << val;
           file << "</Value>\n";
+          file << "</Tag>\n";
           }
         }
       file << "\n";
@@ -992,20 +1165,26 @@ int vtkFetchMILogic::WriteMetadataForUpload ( const char *filename, const char *
       file << "\n";
       file << "<Metadata ";
       file << h->GetNameSpace();
+      file << ">";
       file << "\n";
-        
+
       for (int i=0; i < num; i++ )
         {
         att = t->GetTagAttribute(i);
         val = t->GetTagValue(i);
-        if ( t->IsTagSelected(att))
+//        if ( t->IsTagSelected(att))
+        // use all tags for now.
+        if ( 1 )
           {
           file << "<Tag Label=";
+          file << "\"";
           file << att;
+          file << "\"";
           file << ">\n";
           file << "<Value>";
           file << val;
           file << "</Value>\n";
+          file << "</Tag>\n";
           }
         }
       file << "\n";
@@ -1041,6 +1220,11 @@ void vtkFetchMILogic::RequestResourceUpload ( )
     {
     vtkErrorMacro ("vtkFetchMILogic: Null server or servicetype" );
     return;
+    }
+  
+  if ( !(strcmp ("HID", svctype )) )
+    {
+    //no-op
     }
   //--- we'll have to have separate methods for each
   if ( !(strcmp ("XND", svctype )) )
@@ -1637,7 +1821,6 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
     vtkErrorMacro ("vtkFetchMILogic::RequestResourceUploadToXND: Null URIHandler. ");
     return;
     }
-  
   
 
   // PASS #0

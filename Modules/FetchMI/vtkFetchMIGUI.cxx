@@ -178,6 +178,7 @@ void vtkFetchMIGUI::AddGUIObservers ( )
   this->ResourceList->AddWidgetObservers();
   this->TaggedDataList->AddObserver(vtkFetchMIResourceUploadWidget::TagSelectedDataEvent, (vtkCommand *)this->GUICallbackCommand);
   this->TaggedDataList->AddObserver(vtkFetchMIResourceUploadWidget::ShowAllTagViewEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->TaggedDataList->AddObserver(vtkFetchMIResourceUploadWidget::UploadRequestedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->TaggedDataList->AddWidgetObservers();
   this->QueryTagsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ServerMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -197,6 +198,7 @@ void vtkFetchMIGUI::RemoveGUIObservers ( )
   this->ResourceList->RemoveWidgetObservers();
   this->TaggedDataList->RemoveObservers(vtkFetchMIResourceUploadWidget::TagSelectedDataEvent, (vtkCommand *)this->GUICallbackCommand);
   this->TaggedDataList->RemoveObservers(vtkFetchMIResourceUploadWidget::ShowAllTagViewEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->TaggedDataList->RemoveObservers(vtkFetchMIResourceUploadWidget::UploadRequestedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->TaggedDataList->RemoveWidgetObservers();
   this->QueryTagsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ServerMenuButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -237,6 +239,12 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
 
   if ( this->FetchMINode == NULL )
     {
+    //TODO: error macro
+    return;
+    }
+  if ( this->Logic == NULL )
+    {
+    //TODO: error macro
     return;
     }
 
@@ -255,6 +263,43 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
     else if ( (w== this->TaggedDataList) && (event == vtkFetchMIResourceUploadWidget::ShowAllTagViewEvent) )
       {
       this->ShowAllTagView();
+      }
+    else if ( (w== this->TaggedDataList) && (event == vtkFetchMIResourceUploadWidget::UploadRequestedEvent) )
+      {
+      //--- SAVE ORIGINAL SELECTION STATE
+      //--- for now, select everything, so we upload scene + all data.
+      std::vector<std::string> tmpSelected;
+      int tmp = Logic->SceneSelected;
+      for ( int i=0; i< Logic->SelectedStorableNodeIDs.size(); i++)
+        {
+        tmpSelected.push_back(Logic->SelectedStorableNodeIDs[i] );
+        }
+      
+      //--- SELECT ALL
+      Logic->SceneSelected=1;
+      Logic->SelectedStorableNodeIDs.clear();      
+      const char *nodeID;
+      for ( i=0; i < this->TaggedDataList->GetNumberOfItems(); i++)
+        {
+        nodeID = this->TaggedDataList->GetNthDataTarget(i);
+        if ( nodeID != NULL )
+          {
+          if ( (strcmp(nodeID, "Scene description" )))
+            {
+            Logic->SelectedStorableNodeIDs.push_back( nodeID );
+            }
+          }
+        }
+      //--- request upload
+      this->Logic->RequestResourceUpload ( );
+
+      //--- RESET SELECTION STATE
+      Logic->SceneSelected = tmp;
+      Logic->SelectedStorableNodeIDs.clear();
+      for ( i=0; i< tmpSelected.size(); i++)
+        {
+        Logic->SelectedStorableNodeIDs.push_back(tmpSelected[i] );
+        }
       }
     }
   if ( q != NULL )
