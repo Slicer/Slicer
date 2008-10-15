@@ -1748,7 +1748,7 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
       //------ this->DeselectNode ( nodeID)
       if (uri == NULL)
         {
-        vtkErrorMacro("vtkFetchMILogic::RequestResourceUploadToXND: error parsing uri from post meta data call, aborting this stotage node " << storageNode->GetID()); // , response = " << metadataResponse);
+        vtkErrorMacro("vtkFetchMILogic::RequestResourceUploadToXND: error parsing uri from post meta data call, aborting this storage node " << storageNode->GetID()); // , response = " << metadataResponse);
         storageNode->SetURI(NULL);
         storageNode->ResetURIList();
         this->DeselectNode(nodeID.c_str());
