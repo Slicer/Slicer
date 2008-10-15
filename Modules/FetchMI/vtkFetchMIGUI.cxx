@@ -279,7 +279,7 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
       Logic->SceneSelected=1;
       Logic->SelectedStorableNodeIDs.clear();      
       const char *nodeID;
-      for ( i=0; i < this->TaggedDataList->GetNumberOfItems(); i++)
+      for ( int i=0; i < this->TaggedDataList->GetNumberOfItems(); i++)
         {
         nodeID = this->TaggedDataList->GetNthDataTarget(i);
         if ( nodeID != NULL )
@@ -296,7 +296,7 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
       //--- RESET SELECTION STATE
       Logic->SceneSelected = tmp;
       Logic->SelectedStorableNodeIDs.clear();
-      for ( i=0; i< tmpSelected.size(); i++)
+      for ( int i=0; i< tmpSelected.size(); i++)
         {
         Logic->SelectedStorableNodeIDs.push_back(tmpSelected[i] );
         }
