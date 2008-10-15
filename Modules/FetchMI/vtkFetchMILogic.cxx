@@ -284,7 +284,6 @@ void vtkFetchMILogic::QueryServerForResources ( )
       //--- Check local file to receive response.
       if ( this->GetHTTPResponseFileName( ) )
         {
-
         //--- for now only these queries are supported:
         //--- find a mrml file
         //curl -k "https://loci.ucsd.edu/hid/search?exp=fBIRNPhaseII__0010&subject=000670986943&file_type=MRML" 
@@ -359,8 +358,6 @@ void vtkFetchMILogic::QueryServerForResources ( )
           q << val;
           }
 
-        // what's in here?
-        const char *testy = q.str().c_str();
         const char *errorString = h->QueryServer ( q.str().c_str(), this->GetHTTPResponseFileName() );
         if ( !strcmp(errorString, "OK" ))
           {
@@ -395,6 +392,7 @@ void vtkFetchMILogic::QueryServerForResources ( )
         //--- and a value, and both are not "", "NULL" or "none"
         //--- etc.
         int num = t->GetNumberOfTags();
+        int firsttag = 1;
         for ( int i =0; i<num; i++)
           {
           att = t->GetTagAttribute(i);
@@ -416,7 +414,11 @@ void vtkFetchMILogic::QueryServerForResources ( )
                      (strcmp(val.c_str(), "none")) &&
                      (strcmp(val.c_str(), "" )))
                   {
-                  q << "&";
+                  if ( firsttag )
+                    {
+                    q << "&";
+                    firsttag = 0;
+                    }
                   q << att;
                   q << "=";
                   q << val;
@@ -425,8 +427,6 @@ void vtkFetchMILogic::QueryServerForResources ( )
               }
             }
           }
-        // what's in here?
-        const char *testy = q.str().c_str();
         const char *errorString = h->QueryServer ( q.str().c_str(), this->GetHTTPResponseFileName() );
         if ( !strcmp(errorString, "OK" ))
           {
@@ -809,6 +809,14 @@ void vtkFetchMILogic::ParseResourceQueryResponse ( )
         {
         parser->Delete();
         }
+
+        //--- clear response file contents: better way?
+        FILE *fptr = fopen(this->GetHTTPResponseFileName(), "w");    
+        if ( fptr)
+          {
+          fclose ( fptr);
+          }
+        fclose ( fptr);
       this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::ResourceResponseReadyEvent );
       }
     }
