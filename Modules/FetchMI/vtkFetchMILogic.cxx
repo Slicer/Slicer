@@ -662,7 +662,7 @@ void vtkFetchMILogic::ParseTagQueryResponse ( )
     return;
     }
 
-//  const char *svr = this->GetFetchMINode()->GetSelectedServer();
+  this->FetchMINode->SetErrorMessage ( NULL );
   const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
   if ( svctype == NULL )
     {
@@ -703,7 +703,7 @@ void vtkFetchMILogic::ParseTagQueryResponse ( )
       if ( retval == 0 )
         {
         parser->Delete();
-        this->FetchMINode->ErrorMessage = "Unable to parse tag query response.";
+        this->FetchMINode->SetErrorMessage ("Unable to parse tag query response.");
         this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
         return;
         }
@@ -723,14 +723,22 @@ void vtkFetchMILogic::ParseTagQueryResponse ( )
       else
         {
         // let user know the parsing didn't go well.
-        this->FetchMINode->ErrorMessage = "Unable to parse tag query response. Displayed list of tags has not been updated.";
+        this->FetchMINode->SetErrorMessage ("Unable to parse tag query response. Displayed list of tags has not been updated.");
         this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );          
         }
-      this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::TagResponseReadyEvent );
       if ( parser )
         {
         parser->Delete();
         }
+
+      this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::TagResponseReadyEvent );
+      //--- clear response file contents: better way?
+      FILE *fptr = fopen(this->GetHTTPResponseFileName(), "w");    
+      if ( fptr)
+        {
+        fclose ( fptr);
+        }
+      fclose ( fptr);
       }
     }
 }
@@ -746,7 +754,7 @@ void vtkFetchMILogic::ParseResourceQueryResponse ( )
     return;
     }
 
-//  const char *svr = this->GetFetchMINode()->GetSelectedServer();
+  this->FetchMINode->SetErrorMessage(NULL );
   const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
   if ( svctype == NULL )
     {
@@ -765,62 +773,54 @@ void vtkFetchMILogic::ParseResourceQueryResponse ( )
     return;
     }
 
-  //--- TODO: distinguish these better.... 
-  if ( !(strcmp ("HID", svctype )) )
+  if ( (this->FetchMINode->GetResourceDescription() != NULL) && (this->GetHTTPResponseFileName() != NULL) )
     {
-    //--- HID
-    }
-  else if ( !(strcmp ("XND", svctype)) )
-    {
-    //--- XND
-    if ( (this->FetchMINode->GetResourceDescription() != NULL) && (this->GetHTTPResponseFileName() != NULL) )
+    //--- check for file.
+    vtkXMLDataParser *parser = vtkXMLDataParser::New();
+    parser->SetFileName ( this->GetHTTPResponseFileName() );
+    parser->SetIgnoreCharacterData ( 0 );
+    int retval = parser->Parse();
+    if ( retval == 0 )
       {
-      //--- check for file.
-      vtkXMLDataParser *parser = vtkXMLDataParser::New();
-      parser->SetFileName ( this->GetHTTPResponseFileName() );
-      parser->SetIgnoreCharacterData ( 0 );
-      int retval = parser->Parse();
-      if ( retval == 0 )
-        {
-        parser->Delete();
-        this->FetchMINode->ErrorMessage = "Unable to parse tag query response.";
-        this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
-        return;
-        }
-      this->NumberOfElements = 0;
-      vtkXMLDataElement *root = parser->GetRootElement();
-      if ( root != NULL )
-        {
-        this->GetNumberOfXMLElements( root );
-        if ( this->NumberOfElements > 0 )
-          {
-          //--- If response is good, parse response into table.
-          root = parser->GetRootElement();
-          this->GetXMLElement ( root );
-          }
-        }
-      else
-        {
-        // let user know the parsing didn't go well.
-        this->FetchMINode->ErrorMessage = "Unable to parse tag query response. Displayed list of tags has not been updated.";
-        this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );          
-        }
-      if ( parser )
-        {
-        parser->Delete();
-        }
-
-        //--- clear response file contents: better way?
-        FILE *fptr = fopen(this->GetHTTPResponseFileName(), "w");    
-        if ( fptr)
-          {
-          fclose ( fptr);
-          }
-        fclose ( fptr);
-      this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::ResourceResponseReadyEvent );
+      parser->Delete();
+      this->FetchMINode->SetErrorMessage("Unable to parse resource query response.");
+      this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
+      return;
       }
+    this->NumberOfElements = 0;
+    vtkXMLDataElement *root = parser->GetRootElement();
+    if ( root != NULL )
+      {
+      this->GetNumberOfXMLElements( root );
+      if ( this->NumberOfElements > 0 )
+        {
+        //--- If response is good, parse response into table.
+        root = parser->GetRootElement();
+        this->GetXMLElement ( root );
+        }
+      }
+    else
+      {
+      // let user know the parsing didn't go well.
+      this->FetchMINode->SetErrorMessage("Unable to parse tag resource response.");
+      this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );          
+      }
+    if ( parser )
+      {
+      parser->Delete();
+      }
+
+    //--- clear response file contents: better way?
+    FILE *fptr = fopen(this->GetHTTPResponseFileName(), "w");    
+    if ( fptr)
+      {
+      fclose ( fptr);
+      }
+    fclose ( fptr);
+    this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::ResourceResponseReadyEvent );
     }
 }
+
 
 
 //----------------------------------------------------------------------------

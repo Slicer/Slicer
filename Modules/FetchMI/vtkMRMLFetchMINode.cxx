@@ -48,10 +48,10 @@ vtkMRMLFetchMINode::vtkMRMLFetchMINode()
 
    this->TagTableCollection = vtkTagTableCollection::New();
    this->SetKnownServers();
-   this->QueryError = 0;
 
-   this->SelectedServer = NULL; //"http://localhost:8081";
-   this->SelectedServiceType = NULL; // "XND";
+   this->ErrorMessage = NULL;
+   this->SelectedServer = NULL; 
+   this->SelectedServiceType = NULL; 
    
    this->ResourceDescription = vtkTagTable::New();
 
@@ -94,6 +94,11 @@ vtkMRMLFetchMINode::~vtkMRMLFetchMINode()
     {
     delete [] this->SelectedServiceType;
     this->SelectedServiceType = NULL;
+    }
+  if ( this->ErrorMessage != NULL )
+    {
+    delete [] this->ErrorMessage;
+    this->ErrorMessage = NULL;
     }
 }
 
@@ -248,8 +253,7 @@ void vtkMRMLFetchMINode::PrintSelf(ostream& os, vtkIndent indent)
     }
   os << indent << "SelectedServer: " << (this->SelectedServer == NULL ? "null" :  this->SelectedServer) << "\n";
   os << indent << "SelectedServiceType: " << (this->SelectedServiceType == NULL ? "null" : this->SelectedServiceType) << "\n";
-  os << indent << "QueryError: " << this->QueryError << "\n";
-  os << indent << "ErrorMessage: " << this->ErrorMessage.c_str() << "\n";
+  os << indent << "ErrorMessage: " << this->GetErrorMessage() << "\n";
 }
 
 

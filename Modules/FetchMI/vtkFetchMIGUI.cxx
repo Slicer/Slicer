@@ -36,6 +36,7 @@
 #include "vtkKWFrame.h"
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWPushButton.h"
+#include "vtkKWMessageDialog.h"
 
 #include "vtkFetchMIIcons.h"
 #include "vtkKWMultiColumnList.h"
@@ -864,6 +865,12 @@ void vtkFetchMIGUI::ProcessMRMLEvents ( vtkObject *caller,
   // if parameter node has been changed externally, update GUI widgets with new values
   vtkMRMLFetchMINode* node = vtkMRMLFetchMINode::SafeDownCast(caller);
 
+  if ( this->ApplicationGUI == NULL )
+    {
+    //TODO vtkErrorMacro();
+    return;    
+    }
+  
   if ( event == vtkMRMLScene::SceneCloseEvent )
     {
     this->Logic->ClearModifiedNodes();
@@ -882,10 +889,32 @@ void vtkFetchMIGUI::ProcessMRMLEvents ( vtkObject *caller,
     {
     if (event == vtkMRMLFetchMINode::TagResponseReadyEvent )
       {
+      //--- check for error
+      if ( this->FetchMINode->GetErrorMessage() != NULL )
+        {
+          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+          dialog->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow() );
+          dialog->SetStyleToMessage();
+          dialog->SetText ( this->FetchMINode->GetErrorMessage() );
+          dialog->Create();
+          dialog->Invoke();
+          dialog->Delete();
+        }
       this->UpdateTagTableFromMRML();
       }
     if (event == vtkMRMLFetchMINode::ResourceResponseReadyEvent )
       {
+      //--- check for error
+      if ( this->FetchMINode->GetErrorMessage() != NULL )
+        {
+          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+          dialog->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow() );
+          dialog->SetStyleToMessage();
+          dialog->SetText ( this->FetchMINode->GetErrorMessage() );
+          dialog->Create();
+          dialog->Invoke();
+          dialog->Delete();
+        }
       this->UpdateResourceTableFromMRML();
       }
     else

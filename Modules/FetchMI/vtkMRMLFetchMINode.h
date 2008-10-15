@@ -26,8 +26,8 @@ class VTK_FETCHMI_EXPORT vtkMRMLFetchMINode : public vtkMRMLNode
   vtkGetStringMacro ( SelectedServiceType );
   vtkSetStringMacro ( SelectedServiceType );
   void SetServiceType ( const char* );
-  vtkGetMacro ( QueryError, int );
-  vtkSetMacro ( QueryError, int );
+  vtkGetStringMacro ( ErrorMessage);
+  vtkSetStringMacro ( ErrorMessage);
 
   // Description:
   // Create instance of a GAD node.
@@ -70,11 +70,10 @@ class VTK_FETCHMI_EXPORT vtkMRMLFetchMINode : public vtkMRMLNode
   vtkTagTableCollection *TagTableCollection;
   char *SelectedServer;
   char *SelectedServiceType;
-  int QueryError;
+  char *ErrorMessage;
 
   //BTX
   std::vector<std::string> KnownServers;
-  std::string ErrorMessage;
   //ETX
 
   //BTX
