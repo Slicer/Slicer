@@ -1061,6 +1061,17 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
 {
   this->FileNames.resize(0);
 
+  if (this->IndexArchetype < 0
+      || this->IndexArchetype > this->IndexSeriesInstanceUIDs.size()
+      || this->IndexArchetype > this->IndexTriggerTime.size()
+      || this->IndexArchetype > this->IndexDiffusionGradientOrientation.size()
+      || this->IndexArchetype > this->IndexImageOrientationPatient.size())
+    {
+      vtkErrorMacro("AssembleVolumeContainingArchetype: index archetype " << this->IndexArchetype << " is out of bounds 0-" << this->IndexSeriesInstanceUIDs.size());
+      return 0;
+    }
+      
+
   long int iArchetypeSeriesUID = this->IndexSeriesInstanceUIDs[this->IndexArchetype];
   //long int iArchetypeContentTime = this->IndexContentTime[this->IndexArchetype];
   long int iArchetypeTriggerTime = this->IndexTriggerTime[this->IndexArchetype];
