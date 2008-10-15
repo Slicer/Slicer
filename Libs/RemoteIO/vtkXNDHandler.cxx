@@ -177,10 +177,11 @@ void vtkXNDHandler::StageFileWrite(const char *source,
 
 
 //----------------------------------------------------------------------------
-const char *vtkXNDHandler::PostMetadata ( const char *source )
+const char *vtkXNDHandler::PostMetadata ( const char *uri, const char *source )
 {
 
-//  source is a filename of a file that has metadata in it.
+  // uri will contain $srv/data, for instance http://localhost:8081/data
+  //  source is a filename of a file that has metadata in it.
 
   
 // DOCDATA1='-X POST -H "Content-Type: application/x-xnat-metadata+xml" -H "Content-Disposition: x-xnat-metadata; filename=\"'

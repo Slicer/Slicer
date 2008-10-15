@@ -981,7 +981,11 @@ void vtkFetchMILogic::PostMetadata ( )
       vtkErrorMacro ( "vtkFetchMILogic: WriteMetadataForUpload got a null XNDHandler." );
       return;
       }    
-    const char *uri = handler->PostMetadata ( this->GetXMLUploadFileName() );
+    
+    std::stringstream ss;
+    ss << svr;
+    ss << "/data";
+    const char *returnval =handler->PostMetadata ( ss.str().c_str(), this->GetXMLUploadFileName() );
     }
 }
 
