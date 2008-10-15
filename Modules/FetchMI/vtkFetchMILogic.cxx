@@ -738,7 +738,6 @@ void vtkFetchMILogic::ParseTagQueryResponse ( )
         {
         fclose ( fptr);
         }
-      fclose ( fptr);
       }
     }
 }
@@ -816,7 +815,6 @@ void vtkFetchMILogic::ParseResourceQueryResponse ( )
       {
       fclose ( fptr);
       }
-    fclose ( fptr);
     this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::ResourceResponseReadyEvent );
     }
 }
