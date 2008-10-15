@@ -5,6 +5,7 @@
 #include "vtkTable.h"
 #include "vtkMRML.h"
 
+#include <vtksys/SystemTools.hxx>
 #include <string>
 #include <map>
 
@@ -54,8 +55,12 @@ class VTK_MRML_EXPORT vtkTagTable : public vtkObject
   
   // Description:
   // Checks TagTable to see if a attribute already exists.
-  // Returns 1 if attribute is found, or 0 if it's not found.
+  // Returns index of attribute if found, or -1 if it's not found.
   virtual int CheckTableForTag ( const char *attribute, const char *value );
+
+  // Description:
+  // Returns index of table for which tag exists, or returns -1
+  virtual int CheckTableForTag ( const char *attribute );
 
   virtual void SelectTag ( const char *attribute );
   virtual void DeselectTag ( const char *attribute );

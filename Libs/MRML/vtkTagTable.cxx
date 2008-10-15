@@ -5,9 +5,9 @@
 #include "vtkVariant.h"
 #include "vtkStringArray.h"
 
-#include <vtksys/SystemTools.hxx>
 #include <iostream>
 #include <sstream>
+#include <string>
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkTagTable );
@@ -176,14 +176,14 @@ void vtkTagTable::AddUniqueTag ( const char *attribute, const char *value )
 int vtkTagTable::UpdateTag ( const char *attribute, const char *value )
 {
 
-  vtksys_stl::string att = attribute;
-  vtksys_stl::string val = value;  
+  std::string att = attribute;
+  std::string val = value;  
 
   //--- try to do a case insensitive comparison.
   //--- this was Attribute, ATTRIBUTE, attribute (etc) will match.
-  vtksys_stl::string lowAtt;
-  vtksys_stl::string lowVal;
-  vtksys_stl::string lowTest;
+  std::string lowAtt;
+  std::string lowVal;
+  std::string lowTest;
   lowAtt = vtksys::SystemTools::LowerCase (att);
   lowVal = vtksys::SystemTools::LowerCase(val);
   
@@ -207,14 +207,14 @@ int vtkTagTable::UpdateTag ( const char *attribute, const char *value )
 int vtkTagTable::UpdateTag ( const char *attribute, const char *value, int selected )
 {
 
-  vtksys_stl::string att = attribute;
-  vtksys_stl::string val = value;  
+  std::string att = attribute;
+  std::string val = value;  
 
   //--- try to do a case insensitive comparison.
   //--- this was Attribute, ATTRIBUTE, attribute (etc) will match.
-  vtksys_stl::string lowAtt;
-  vtksys_stl::string lowVal;
-  vtksys_stl::string lowTest;
+  std::string lowAtt;
+  std::string lowVal;
+  std::string lowTest;
   lowAtt = vtksys::SystemTools::LowerCase (att);
   lowVal = vtksys::SystemTools::LowerCase(val);
   
@@ -376,25 +376,57 @@ const char * vtkTagTable::GetTagValue ( const char* attribute)
 }
 
 
-
 //----------------------------------------------------------------------------
- int vtkTagTable::CheckTableForTag ( const char *attribute, const char *value)
+int vtkTagTable::CheckTableForTag ( const char *attribute )
 {
-  std::string att(attribute);
-  std::string val (value);
-
+  std::string att;
+  std::string lowatt;
   std::map<std::string, std::string>::iterator iter;
-  
+
+  att = vtksys::SystemTools::LowerCase(attribute);
+  int index = 0;
   for ( iter = this->TagTable.begin();
           iter != this->TagTable.end();
           iter++)
       {
-      if (iter->first == att && iter->second == val )
+      lowatt = vtksys::SystemTools::LowerCase(iter->first);
+      if ( lowatt.c_str() == att.c_str() )
         {
-        return ( 1 );
+        return ( index );
         }
+      index ++;
       }
-    return ( 0 );
+    return ( -1 );
+}
+
+
+
+//----------------------------------------------------------------------------
+ int vtkTagTable::CheckTableForTag ( const char *attribute, const char *value)
+{
+  std::string att;
+  std::string val;
+  std::map<std::string, std::string>::iterator iter;
+  
+  att = vtksys::SystemTools::LowerCase(attribute);
+  val = vtksys::SystemTools::LowerCase(value);
+  std::string lowatt;
+  std::string lowval;
+  
+  int index = 0;
+  for ( iter = this->TagTable.begin();
+          iter != this->TagTable.end();
+          iter++)
+      {
+      lowatt = vtksys::SystemTools::LowerCase(iter->first);
+      lowval = vtksys::SystemTools::LowerCase(iter->second);
+      if ( (lowatt.c_str() == att.c_str()) && (lowval.c_str() == val.c_str()) )
+        {
+        return ( index );
+        }
+      index ++;
+      }
+    return ( -1 );
 }
 
 

@@ -1,6 +1,7 @@
 #ifndef __vtkFetchMILogic_h
 #define __vtkFetchMILogic_h
 
+#include <vtksys/SystemTools.hxx>
 #include "vtkSlicerModuleLogic.h"
 #include "vtkMRMLScene.h"
 #include "vtkXMLDataElement.h"

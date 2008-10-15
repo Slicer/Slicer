@@ -93,28 +93,15 @@ void vtkXNDHandler::StageFileRead(const char * source,
     vtkErrorMacro("StageFileWrite: null host name");
     return;    
     }
-  /*
-  if (this->LocalFile)
-    {
-    this->LocalFile->close();
-    delete this->LocalFile;
-    this->LocalFile = NULL;
-    }
-  this->LocalFile = new std::ofstream(destination, std::ios::binary);
-*/
+
   this->InitTransfer( );
 
   curl_easy_setopt(this->CurlHandle, CURLOPT_HTTPGET, 1);
   curl_easy_setopt(this->CurlHandle, CURLOPT_URL, source);
-  //  curl_easy_setopt(this->CurlHandle, CURLOPT_NOPROGRESS, false);
   curl_easy_setopt(this->CurlHandle, CURLOPT_FOLLOWLOCATION, true);
-  // use the default curl write call back
   curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEFUNCTION, NULL); // write_callback);
   this->LocalFile = fopen(destination, "wb");
-  // output goes into LocalFile, must be  FILE*
   curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEDATA, this->LocalFile);
-  //--- allow for self-signing certificate
-//  curl_easy_setopt ( this->CurlHandle, CURLOPT_SSL_VERIFYPEER, 0 );
   vtkDebugMacro("StageFileRead: about to do the curl download... source = " << source << ", dest = " << destination);
   CURLcode retval = curl_easy_perform(this->CurlHandle);
 
@@ -137,11 +124,6 @@ void vtkXNDHandler::StageFileRead(const char * source,
     }
   this->CloseTransfer();
 
-  /*
-  this->LocalFile->close();
-  delete this->LocalFile;
-  this->LocalFile = NULL;
-  */
   fclose(this->LocalFile);
 }
 
@@ -165,28 +147,15 @@ void vtkXNDHandler::StageFileWrite(const char *source,
     return;    
     }
 
-  //--- check these arguments...
-  /*
-  if (this->LocalFile)
-    {
-    this->LocalFile->close();
-    delete this->LocalFile;
-    this->LocalFile = NULL;
-    }
-  this->LocalFile = new std::ofstream(destination, std::ios::binary);
-  */
   this->LocalFile = fopen(source, "r");
 
   this->InitTransfer( );
   
   curl_easy_setopt(this->CurlHandle, CURLOPT_POST, 1);
   curl_easy_setopt(this->CurlHandle, CURLOPT_URL, source);
-//  curl_easy_setopt(this->CurlHandle, CURLOPT_NOPROGRESS, false);
   curl_easy_setopt(this->CurlHandle, CURLOPT_FOLLOWLOCATION, true);
   curl_easy_setopt(this->CurlHandle, CURLOPT_READFUNCTION, xnd_read_callback);
   curl_easy_setopt(this->CurlHandle, CURLOPT_READDATA, this->LocalFile);
-//  curl_easy_setopt(this->CurlHandle, CURLOPT_PROGRESSDATA, NULL);
-  //curl_easy_setopt(this->CurlHandle, CURLOPT_PROGRESSFUNCTION, ProgressCallback);
   CURLcode retval = curl_easy_perform(this->CurlHandle);
 
    if (retval == CURLE_OK)
@@ -202,11 +171,6 @@ void vtkXNDHandler::StageFileWrite(const char *source,
   this->CloseTransfer();
   
   fclose(this->LocalFile);
-  /*
-  this->LocalFile->close();
-  delete this->LocalFile;
-  this->LocalFile = NULL;
-  */
 }
 
 

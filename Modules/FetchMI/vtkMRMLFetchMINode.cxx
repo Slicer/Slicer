@@ -136,7 +136,7 @@ void vtkMRMLFetchMINode::SetKnownServers ( )
    //--- add all known servers
   this->AddNewServer ( "http://bobby.bwh.harvard.edu:8000" );
   this->AddNewServer ( "http://localhost:8081" );
-  this->AddNewServer ( "http://loci.ucsd.edu/hid" );
+  this->AddNewServer ( "https://loci.ucsd.edu/hid" );
   this->InvokeEvent (vtkMRMLFetchMINode::KnownServersModifiedEvent );
 }
 
@@ -150,7 +150,7 @@ void vtkMRMLFetchMINode::SetServer ( const char *s)
     return;
     }
   this->SetSelectedServer (s);
-  if ( !(strcmp(s, "http://loci.ucsd.edu/hid" ) ))
+  if ( !(strcmp(s, "https://loci.ucsd.edu/hid" ) ))
     {
     this->SetServiceType ( "HID" );
     }

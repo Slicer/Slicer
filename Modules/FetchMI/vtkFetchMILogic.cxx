@@ -226,7 +226,7 @@ void vtkFetchMILogic::QueryServerForTags ( )
       if ( this->GetHTTPResponseFileName( ) )
         {
         //--- Build query
-        vtksys_stl::stringstream q;
+        std::stringstream q;
         q << svr;
         q << "/tags";
         const char *errorString = h->QueryServer ( q.str().c_str(), this->GetHTTPResponseFileName() );
@@ -268,21 +268,117 @@ void vtkFetchMILogic::QueryServerForResources ( )
     }
 
 
+  std::string att;
+  std::string val;
+  std::stringstream q;
+  
   if ( !(strcmp ("HID", svctype )) )
     {
+    //---
     //--- HID
+    //---
     vtkHIDHandler *h = vtkHIDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "HIDHandler" ));
-    if ( h )
+    vtkHIDTagTable* t = vtkHIDTagTable::SafeDownCast (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "HIDTags" ));
+    if ( h && t )
       {
-      // for now assume we can't query for tags.
-      // just fill the table up with default ones.
-      // TODO: find out how to query HID webservices for tags.
-      // h->QueryServer ( uri, responseFile );
+      //--- Check local file to receive response.
+      if ( this->GetHTTPResponseFileName( ) )
+        {
+
+        //--- for now only these queries are supported:
+        //--- find a mrml file
+        //curl -k "https://loci.ucsd.edu/hid/search?exp=fBIRNPhaseII__0010&subject=000670986943&file_type=MRML" 
+        //--- query for subjects by experiment
+        //curl -k https://loci.ucsd.edu/hid/experiments/subjects
+        //--- query for experiments
+        //curl -k https://loci.ucsd.edu/hid/experiments 
+
+        // h->QueryServer ( uri, responseFile );
+        //--- Limited query capability, so just query for mrml now.
+        //--- Look thru tag table for values for Experiment
+        //--- and values for Subject.
+        //--- if we don't find them, note as much to the user,
+        //--- and don't make the query.
+
+        //--- do a case insensitive find on the attributes
+        int subjectIndex = t->CheckTableForTag("Subject");
+        int experimentIndex = t->CheckTableForTag("Experiment");
+        int filetypeIndex = t->CheckTableForTag("File_type");
+
+        //--- if any of the key tags are missing.... report to user and abort query.
+        if ( subjectIndex < 0 || experimentIndex < 0 || filetypeIndex < 0 )
+          {
+          //error message
+          return;
+          }
+
+        //--- otherwise assemble the hid query.
+        q << svr << "/search?";
+
+        att =  t->GetTagAttribute(experimentIndex);
+        if ( att.c_str() != NULL )
+          {
+          if ( t->IsTagSelected(att.c_str()) )
+            {
+            val = t->GetTagValue(experimentIndex);
+            }
+          }
+        if ( att.c_str() != NULL && val.c_str() != NULL )
+          {
+          q << "exp=";
+          q << val;
+          q << "&";
+          }
+
+        att =  t->GetTagAttribute(subjectIndex);
+        if ( att.c_str() != NULL )
+          {
+          if ( t->IsTagSelected(att.c_str()) )
+            {
+            val = t->GetTagValue(subjectIndex);
+            }
+          }
+        if ( att.c_str() != NULL && val.c_str() != NULL )
+          {
+          q << "subject=";
+          q << val;
+          q << "&";
+          }
+
+        att =  t->GetTagAttribute(filetypeIndex);
+        if ( att.c_str() != NULL )
+          {
+          if ( t->IsTagSelected(att.c_str()) )
+            {
+            val = t->GetTagValue(filetypeIndex);
+            }
+          }
+        if ( att.c_str() != NULL && val.c_str() != NULL )
+          {
+          q << "file_type=";
+          q << val;
+          }
+
+        // what's in here?
+        const char *testy = q.str().c_str();
+        const char *errorString = h->QueryServer ( q.str().c_str(), this->GetHTTPResponseFileName() );
+        if ( !strcmp(errorString, "OK" ))
+          {
+          this->ParseResourceQueryResponse ( );
+          }
+        }
+      else
+        {
+        vtkErrorMacro ( "XML Response dir not set." );
+        }
       }
     }
+
   else if ( !(strcmp ("XND", svctype)) )
     {
+    //---
     //--- XND
+    //---
     vtkXNDHandler *h = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XNDHandler" ));
     vtkXNDTagTable* t = vtkXNDTagTable::SafeDownCast (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XNDTags" ));
     if ( h && t )
@@ -291,7 +387,6 @@ void vtkFetchMILogic::QueryServerForResources ( )
       if ( this->GetHTTPResponseFileName( ) )
         {
         //--- Build query
-        vtksys_stl::stringstream q;
         q << svr << "/search?";
 
         //--- TODO: is there a better way to filter out weird tags?
@@ -300,8 +395,6 @@ void vtkFetchMILogic::QueryServerForResources ( )
         //--- and a value, and both are not "", "NULL" or "none"
         //--- etc.
         int num = t->GetNumberOfTags();
-        vtksys_stl::string att;
-        vtksys_stl::string val;
         for ( int i =0; i<num; i++)
           {
           att = t->GetTagAttribute(i);
@@ -318,10 +411,10 @@ void vtkFetchMILogic::QueryServerForResources ( )
                    (strcmp(att.c_str(), "" )))
                 {
                 if ( (strcmp(val.c_str(), "NULL")) &&
-                   (strcmp(val.c_str(), "null")) &&
-                   (strcmp(val.c_str(), "<none>")) &&
-                   (strcmp(val.c_str(), "none")) &&
-                   (strcmp(val.c_str(), "" )))
+                     (strcmp(val.c_str(), "null")) &&
+                     (strcmp(val.c_str(), "<none>")) &&
+                     (strcmp(val.c_str(), "none")) &&
+                     (strcmp(val.c_str(), "" )))
                   {
                   q << "&";
                   q << att;
@@ -1563,7 +1656,7 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
   // selected)
   vtkMRMLStorableNode *storableNode;
   // get the cache dir
-  vtksys_stl::vector<vtksys_stl::string> pathComponents;
+  std::vector<std::string> pathComponents;
   vtksys::SystemTools::SplitPath( this->GetMRMLScene()->GetCacheManager()->GetRemoteCacheDirectory(), pathComponents);
   
   for (unsigned int n = 0; n < this->SelectedStorableNodeIDs.size(); n++)
@@ -1841,7 +1934,7 @@ void vtkFetchMILogic::CreateTemporaryFiles ( )
           if (vtksys::SystemTools::FileIsDirectory( this->XMLDirName.c_str() ))
             {
             //--- for now, create temporary query response file in cache dir.
-            vtksys_stl::vector<vtksys_stl::string> pathComponents;
+            std::vector<std::string> pathComponents;
             vtksys::SystemTools::SplitPath( this->XMLDirName.c_str(), pathComponents);
             // now add the new file name to the end of the path
             pathComponents.push_back("FetchMI_QueryResponse.xml");

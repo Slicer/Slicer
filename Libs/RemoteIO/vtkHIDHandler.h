@@ -43,8 +43,7 @@ class VTK_RemoteIO_EXPORT vtkHIDHandler : public vtkHTTPHandler
   virtual void StageFileWrite(const char * source,
                               const char *destination);
 
-
-  virtual void QueryServer (const char *uri, const char *destination);
+  virtual const char *QueryServer ( const char *uri, const char *destination);
 
  private:
   char *HostName;

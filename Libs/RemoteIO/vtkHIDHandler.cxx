@@ -76,9 +76,6 @@ void vtkHIDHandler::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 
-
-
-
 //----------------------------------------------------------------------------
 void vtkHIDHandler::StageFileRead(const char * source,
                                   const char *destination)
@@ -96,28 +93,15 @@ void vtkHIDHandler::StageFileRead(const char * source,
     return;    
     }
 
-  /*
-  if (this->LocalFile)
-    {
-    this->LocalFile->close();
-    delete this->LocalFile;
-    this->LocalFile = NULL;
-    }
-  this->LocalFile = new std::ofstream(destination, std::ios::binary);
-*/
   this->InitTransfer( );
 
   
   curl_easy_setopt(this->CurlHandle, CURLOPT_HTTPGET, 1);
   curl_easy_setopt(this->CurlHandle, CURLOPT_URL, source);
-  //  curl_easy_setopt(this->CurlHandle, CURLOPT_NOPROGRESS, false);
   curl_easy_setopt(this->CurlHandle, CURLOPT_FOLLOWLOCATION, true);
-  // use the default curl write call back
-  curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEFUNCTION, NULL); // write_callback);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEFUNCTION, NULL); 
   this->LocalFile = fopen(destination, "wb");
-  // output goes into LocalFile, must be  FILE*
   curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEDATA, this->LocalFile);
-  //--- allow for self-signing certificate
   curl_easy_setopt ( this->CurlHandle, CURLOPT_SSL_VERIFYPEER, 0 );
 
   vtkDebugMacro("StageFileRead: about to do the curl download... source = " << source << ", dest = " << destination);
@@ -141,14 +125,9 @@ void vtkHIDHandler::StageFileRead(const char * source,
     vtkErrorMacro("StageFileRead: error running curl: " << stringError);
     }
   this->CloseTransfer();
-
-  /*
-  this->LocalFile->close();
-  delete this->LocalFile;
-  this->LocalFile = NULL;
-  */
   fclose(this->LocalFile);
 }
+
 
 
 //----------------------------------------------------------------------------
@@ -159,16 +138,6 @@ void vtkHIDHandler::StageFileWrite(const char *source,
   // need to use the -k argument for signed... how to
   // do with curl_easy?
 
-  //--- check these arguments...
-  /*
-  if (this->LocalFile)
-    {
-    this->LocalFile->close();
-    delete this->LocalFile;
-    this->LocalFile = NULL;
-    }
-  this->LocalFile = new std::ofstream(destination, std::ios::binary);
-  */
   const char *hostname = this->GetHostName();
   if ( hostname == NULL )
     {
@@ -180,15 +149,11 @@ void vtkHIDHandler::StageFileWrite(const char *source,
 
   this->InitTransfer( );
   
-  curl_easy_setopt(this->CurlHandle, CURLOPT_PUT, 1);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_POST, 1);
   curl_easy_setopt(this->CurlHandle, CURLOPT_URL, source);
-//  curl_easy_setopt(this->CurlHandle, CURLOPT_NOPROGRESS, false);
   curl_easy_setopt(this->CurlHandle, CURLOPT_FOLLOWLOCATION, true);
   curl_easy_setopt(this->CurlHandle, CURLOPT_READFUNCTION, hid_read_callback);
   curl_easy_setopt(this->CurlHandle, CURLOPT_READDATA, this->LocalFile);
-//  curl_easy_setopt(this->CurlHandle, CURLOPT_PROGRESSDATA, NULL);
-  //curl_easy_setopt(this->CurlHandle, CURLOPT_PROGRESSFUNCTION, ProgressCallback);
-  //--- allow for self-signing certificate
   curl_easy_setopt ( this->CurlHandle, CURLOPT_SSL_VERIFYPEER, 0 );
 
   CURLcode retval = curl_easy_perform(this->CurlHandle);
@@ -206,11 +171,6 @@ void vtkHIDHandler::StageFileWrite(const char *source,
   this->CloseTransfer();
   
   fclose(this->LocalFile);
-  /*
-  this->LocalFile->close();
-  delete this->LocalFile;
-  this->LocalFile = NULL;
-  */
 }
 
 
@@ -218,50 +178,55 @@ void vtkHIDHandler::StageFileWrite(const char *source,
 
 //--- for querying
 //----------------------------------------------------------------------------
-void vtkHIDHandler::QueryServer( const char *uri, const char *destination)
+const char* vtkHIDHandler::QueryServer( const char *uri, const char *destination)
 {
+  const char *returnString;
   if (uri == NULL )
     {
-    vtkErrorMacro("QueryServer: uri is NULL!")
-    return;
+    returnString = "QueryServer: uri is NULL!";
+    vtkErrorMacro("QueryServer: uri is NULL!");
+    return ( returnString );
     }
 
   this->InitTransfer( );
 
   curl_easy_setopt(this->CurlHandle, CURLOPT_HTTPGET, 1);
   curl_easy_setopt(this->CurlHandle, CURLOPT_URL, uri);
-  //  curl_easy_setopt(this->CurlHandle, CURLOPT_NOPROGRESS, false);
   curl_easy_setopt(this->CurlHandle, CURLOPT_FOLLOWLOCATION, true);
-  // use the default curl write call back
   curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEFUNCTION, NULL); // write_callback);
-  this->LocalFile = fopen(destination, "wb");
-  // output goes into LocalFile, must be  FILE*
+  this->LocalFile = fopen(destination, "w");
   curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEDATA, this->LocalFile);
-  //--- allow for self-signing certificate
+  curl_easy_setopt ( this->CurlHandle, CURLOPT_SSL_VERIFYPEER, 0 );
+
   vtkDebugMacro("QueryServer: about to do the curl download... uri = " << uri << ", dest = " << destination);
   CURLcode retval = curl_easy_perform(this->CurlHandle);
 
-
   if (retval == CURLE_OK)
     {
+    returnString = "OK";
     vtkDebugMacro("QueryServer: successful return from curl");
-    }
-  else if (retval == CURLE_BAD_FUNCTION_ARGUMENT)
-    {
-    vtkErrorMacro("QueryServer: bad function argument to curl, did you init CurlHandle?");
-    }
-  else if (retval == CURLE_OUT_OF_MEMORY)
-    {
-    vtkErrorMacro("QueryServer: curl ran out of memory!");
     }
   else
     {
-    const char *stringError = curl_easy_strerror(retval);
-    vtkErrorMacro("QueryServer: error running curl: " << stringError);
+    if (retval == CURLE_BAD_FUNCTION_ARGUMENT)
+      {
+      returnString = "Bad function arguement to cURL.";
+      vtkErrorMacro("QueryServer: bad function argument to curl, did you init CurlHandle?");
+      }
+    else if (retval == CURLE_OUT_OF_MEMORY)
+      {
+      returnString = "Transfer library (cURL) ran out of memory.";
+      vtkErrorMacro("QueryServer: curl ran out of memory!");
+      }
+    else
+      {
+      returnString = curl_easy_strerror(retval);
+      vtkErrorMacro("QueryServer: error running curl: " << returnString);
+      }
     }
   this->CloseTransfer();
-
   fclose(this->LocalFile);
+  return ( returnString );
 }
 
 
