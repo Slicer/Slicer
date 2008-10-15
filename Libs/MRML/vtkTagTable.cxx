@@ -390,7 +390,7 @@ int vtkTagTable::CheckTableForTag ( const char *attribute )
           iter++)
       {
       lowatt = vtksys::SystemTools::LowerCase(iter->first);
-      if ( lowatt.c_str() == att.c_str() )
+      if ( lowatt == att )
         {
         return ( index );
         }
@@ -420,7 +420,7 @@ int vtkTagTable::CheckTableForTag ( const char *attribute )
       {
       lowatt = vtksys::SystemTools::LowerCase(iter->first);
       lowval = vtksys::SystemTools::LowerCase(iter->second);
-      if ( (lowatt.c_str() == att.c_str()) && (lowval.c_str() == val.c_str()) )
+      if ( (lowatt == att ) && (lowval == val) )
         {
         return ( index );
         }
