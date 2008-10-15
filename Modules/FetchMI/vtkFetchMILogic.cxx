@@ -953,17 +953,19 @@ void vtkFetchMILogic::ParseResourceQueryResponse ( )
 
 
 //----------------------------------------------------------------------------
-void vtkFetchMILogic::PostMetadata ( )
+const char * vtkFetchMILogic::PostMetadata ( )
 {
+  const char *returnval = NULL;
+  
   if (this->FetchMINode == NULL )
     {
     vtkErrorMacro ( "FetchMILogic: PostMetadata got a NULL FetchMINode" );
-    return;
+    return returnval;
     }
   if (this->GetXMLUploadFileName() == NULL)
     {
     vtkErrorMacro ( "FetchMILogic: Got NULL file for Metadata upload.");
-    return;
+    return returnval;
     }
 
   const char *svr = this->GetFetchMINode()->GetSelectedServer();
@@ -971,7 +973,7 @@ void vtkFetchMILogic::PostMetadata ( )
   if ( svctype == NULL )
     {
     vtkErrorMacro ( "FetchMILogic: PostMetadata got a NULL Web Service Type");
-    return;
+    return returnval;
     }
   if ( !(strcmp(svctype, "XND")))
     {
@@ -979,14 +981,19 @@ void vtkFetchMILogic::PostMetadata ( )
     if ( handler == NULL )
       {
       vtkErrorMacro ( "vtkFetchMILogic: WriteMetadataForUpload got a null XNDHandler." );
-      return;
-      }    
+      return returnval;
+      }
     
     std::stringstream ss;
     ss << svr;
     ss << "/data";
-    const char *returnval =handler->PostMetadata ( ss.str().c_str(), this->GetXMLUploadFileName() );
+    // returnval = handler->PostMetadata ( this->GetXMLUploadFileName() );
+    returnval = handler->PostMetadata ( ss.str().c_str(), this->GetXMLUploadFileName() );
+    return returnval;
     }
+
+  vtkErrorMacro("WriteMetadataForUpload: unknown service type " << svctype);
+  return returnval;
 }
 
 
@@ -994,7 +1001,7 @@ void vtkFetchMILogic::PostMetadata ( )
 
 
 //----------------------------------------------------------------------------
-const char*vtkFetchMILogic::ParsePostMetadataResponse ( )
+const char * vtkFetchMILogic::ParsePostMetadataResponse ( const char *response)
 {
   return ( NULL );
 }
@@ -1961,13 +1968,24 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
       storageNode->SetFileName(vtksys::SystemTools::JoinPath(pathComponents).c_str());
       //--- If the node is a multivolume, set the filename and all FileListMembers to
       //--- corresponding cachedir/filenames using AddFileName() method.
+      // make up a vector of the new file names
+      std::vector<std::string> CacheFileNameList;
       for (int filenum = 0; filenum < storageNode->GetNumberOfFileNames(); filenum++)
         {
         const char *nthFilename = storageNode->GetNthFileName(filenum);
+        nthFilename =  vtksys::SystemTools::GetFilenameName(nthFilename).c_str();
         pathComponents.pop_back();
         pathComponents.push_back(nthFilename);
-        vtkDebugMacro("RequestResourceUploadToXND: adding file name " << vtksys::SystemTools::JoinPath(pathComponents).c_str() << " to storage node " << storageNode->GetID());
-        storageNode->AddFileName(vtksys::SystemTools::JoinPath(pathComponents).c_str());
+        vtkDebugMacro("RequestResourceUploadToXND: adding file name " << vtksys::SystemTools::JoinPath(pathComponents).c_str() << " to list of new file names");
+        CacheFileNameList.push_back(vtksys::SystemTools::JoinPath(pathComponents).c_str());
+        }
+      // reset the file list
+      storageNode->ResetFileNameList();
+      // now add the new ones back in
+      for (int filenum = 0; filenum < CacheFileNameList.size(); filenum++)
+        {
+        vtkDebugMacro("RequestResourceUploadToXND: adding file name " << CacheFileNameList[filenum] << " to storage node " << storageNode->GetID());
+        storageNode->AddFileName(CacheFileNameList[filenum].c_str());
         }
       //--- Write the file (or multivolume set of files) to cache.
       //--- USE GetNumberOfFileNames to get the number of FileListMembers.
@@ -2010,11 +2028,9 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
         }
       //------ if OK:
       //------ call the PostMetadata() method.
-      //char *metadataResponse =
-      //------ this->PostMetadata(storageNode->GetFileName());
-      this->PostMetadata();
+      const char *metadataResponse = this->PostMetadata();
       // parse the return, it's a uri
-      const char *uri = this->ParsePostMetadataResponse();//metadataResponse);
+      const char *uri = this->ParsePostMetadataResponse(metadataResponse);
       //------ Handle bad posts which return NULL -- if the uri is null, abort for the node,
       //------ and set node's URI (and all URIListMembers) to NULL so they won't be staged.
       //------ and deselect the node in the FetchMINode's list
@@ -2048,10 +2064,9 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
             }
           //------ if OK:
           //------ call the PostMetadata() method.
-          //char *metadataResponse = this->PostMetadata(storageNode->GetNthFileName(filenum));
-          this->PostMetadata();
+          const char *metadataResponse = this->PostMetadata();
           // parse the return, it's a uri
-          const char *uri = this->ParsePostMetadataResponse(); // metadataResponse);
+          const char *uri = this->ParsePostMetadataResponse(metadataResponse);
           if (uri == NULL)
             {
             //------ if NOT OK for any individual filename:
@@ -2175,15 +2190,23 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
       // If return is successful,
       //--- Call handler's PostMetadata() method which returns uri for MRML
       //file.
-      this->PostMetadata();
-      const char *uri =  this->ParsePostMetadataResponse();
-      //--- Set scene's URI
-      vtkDebugMacro("RequestResourceUploadToXND: setting mrml scene url to " << uri);
-      this->GetMRMLScene()->SetURL(uri);
-
-      // now upload it
-      vtkDebugMacro("RequestResourceUploadToXND: uploading mrml file");
-      handler->StageFileWrite(uri, mrmlFileName);
+      const char *response = this->PostMetadata();
+      const char *uri =  this->ParsePostMetadataResponse(response);
+      if (uri != NULL)
+        {
+        //--- Set scene's URI
+        vtkDebugMacro("RequestResourceUploadToXND: setting mrml scene url to " << uri);
+        this->GetMRMLScene()->SetURL(uri);
+        
+        // now upload it
+        vtkDebugMacro("RequestResourceUploadToXND: uploading mrml file");
+        handler->StageFileWrite(uri, mrmlFileName);
+        }
+      else
+        {
+        vtkErrorMacro("RequestResourceUploadToXND: unable to parse out response from posting metadata, uri is null. Response = " << response);
+        return;
+        }
       }
     else
       {
