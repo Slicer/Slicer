@@ -173,6 +173,7 @@ void vtkFetchMIGUI::AddGUIObservers ( )
 {
   this->QueryList->AddWidgetObservers();
   this->QueryList->AddObserver(vtkFetchMIQueryTermWidget::TagChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->QueryList->AddObserver(vtkFetchMIQueryTermWidget::QuerySubmittedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->ResourceList->AddWidgetObservers();
   this->TaggedDataList->AddObserver(vtkFetchMIResourceUploadWidget::TagSelectedDataEvent, (vtkCommand *)this->GUICallbackCommand);
   this->TaggedDataList->AddObserver(vtkFetchMIResourceUploadWidget::ShowAllTagViewEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -191,6 +192,7 @@ void vtkFetchMIGUI::RemoveGUIObservers ( )
 {
   this->QueryList->RemoveWidgetObservers();
   this->QueryList->RemoveObservers(vtkFetchMIQueryTermWidget::TagChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->QueryList->RemoveObservers(vtkFetchMIQueryTermWidget::QuerySubmittedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->ResourceList->RemoveWidgetObservers();
   this->TaggedDataList->RemoveObservers(vtkFetchMIResourceUploadWidget::TagSelectedDataEvent, (vtkCommand *)this->GUICallbackCommand);
   this->TaggedDataList->RemoveObservers(vtkFetchMIResourceUploadWidget::ShowAllTagViewEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -260,6 +262,12 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       this->UpdateTagTableFromGUI();
       }
+    if ( (q== this->QueryList) && (event == vtkFetchMIQueryTermWidget::QuerySubmittedEvent) )
+      {
+      this->ResourceList->DeleteAllItems();
+      vtkTagTable *t = this->FetchMINode->GetResourceDescription();
+      t->ClearTagTable();
+      }    
     }
 
   if ( b && event == vtkKWPushButton::InvokedEvent )

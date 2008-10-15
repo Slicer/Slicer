@@ -80,6 +80,7 @@ public:
   enum
     {
       TagChangedEvent = 11000,
+      QuerySubmittedEvent,
     };
   //ETX
 

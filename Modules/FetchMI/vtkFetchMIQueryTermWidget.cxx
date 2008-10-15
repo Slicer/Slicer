@@ -137,6 +137,7 @@ void vtkFetchMIQueryTermWidget::ProcessWidgetEvents ( vtkObject *caller,
       }
     else if ( (b == this->GetSearchButton()) && (event == vtkKWPushButton::InvokedEvent ) )
       {
+      this->InvokeEvent ( vtkFetchMIQueryTermWidget::QuerySubmittedEvent );
       this->Logic->QueryServerForResources();
       }
 
