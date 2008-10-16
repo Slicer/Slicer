@@ -15,7 +15,7 @@ size_t xnd_read_callback(void *ptr, size_t size, size_t nmemb, FILE *stream)
      by default internally */
   retcode = fread(ptr, size, nmemb, stream);
 
-  std::cout << "*** We read " << retcode << " bytes from file\n";
+  std::cout << "*** vtkXNDHandler: We read " << retcode << " bytes from file\n";
 
   return retcode;
 }
@@ -24,7 +24,19 @@ size_t xnd_write_callback(void *ptr, size_t size, size_t nmemb, void *stream)
 {
   if (stream == NULL)
     {
-    std::cerr << "write_callback: can't write, stream is null. size = " << size << std::endl;
+    std::cerr << "xnd_write_callback: can't write, stream is null. size = " << size << std::endl;
+    return -1;
+    }
+  int written = fwrite(ptr, size, nmemb, (FILE *)stream);
+  return written;
+}
+
+// write header
+size_t xnd_writeheader_callback(void *ptr, size_t size, size_t nmemb, void *stream)
+{
+  if (stream == NULL)
+    {
+    std::cerr << "xnd_writeheader_callback: can't write, stream is null. size = " << size << std::endl;
     return -1;
     }
   int written = fwrite(ptr, size, nmemb, (FILE *)stream);
@@ -177,26 +189,192 @@ void vtkXNDHandler::StageFileWrite(const char *source,
 
 
 //----------------------------------------------------------------------------
-const char *vtkXNDHandler::PostMetadata ( const char *uri, const char *source )
+const char *vtkXNDHandler::PostMetadata ( const char *serverPath, const char *metaDataFileName, const char *dataFileName )
 {
-
-  // uri will contain $srv/data, for instance http://localhost:8081/data
-  //  source is a filename of a file that has metadata in it.
-
+  const char *response = NULL;
   
-// DOCDATA1='-X POST -H "Content-Type: application/x-xnat-metadata+xml" -H "Content-Disposition: x-xnat-metadata; filename=\"'
-// DOCDATA2='\"" -d @../GAGE-XND.xml'
+  // serverPath will contain $srv/data, for instance http://localhost:8081/data
+  //  metaDataFileName is a filename of a file that has metadata in it.
+  // dataFileName is the name of the file for which we are uploading metadata
+  if (metaDataFileName == NULL)
+    {
+    vtkErrorMacro("PostMetadata: metaDataFileName is null.");
+    return response;
+    }
+  
+  const char *hostname = this->GetHostName();
+  if ( hostname == NULL )
+    {
+    vtkErrorMacro("PostMetadata: null host name");
+    return response;
+    }
 
+  this->LocalFile = fopen(metaDataFileName, "r");
+  if (this->LocalFile == NULL)
+    {
+    vtkErrorMacro("PostMetadata: unable to open meta data file " << metaDataFileName);
+    return response;
+    }
+  // read all the stuff in the file into a buffer
+  fseek(this->LocalFile, 0, SEEK_END);
+  long lSize = ftell(this->LocalFile);
+  rewind(this->LocalFile);
+  // allocate memory
+  char *post_data = NULL;
+  post_data = (char*)malloc(sizeof(char)*lSize);
+  if (post_data == NULL)
+    {
+    vtkErrorMacro("PostMetadata: unable to allocate a buffer to read from meta data file, size = " << lSize);
+    }
+  else
+    {
+    size_t result = fread(post_data, 1, lSize, this->LocalFile);
+    if (result != lSize)
+      {
+      vtkErrorMacro("PostMetadata: error reading contents of the metadatafile " << metaDataFileName <<", read " << result << " instead of " << lSize);
+      }    
+    }
+  this->InitTransfer();
+
+  std::string dataFileNameString = std::string(dataFileName);
+  std::string header1 = "Content-Type: application/x-xnat-metadata+xml";
+  std::string header2 = "Content-Disposition: x-xnat-metadata; filename=\"" + dataFileNameString + "\"";
+
+  vtkDebugMacro("header1= '" << header1.c_str() << "', header2= '" << header2.c_str() << "'");
+  
+  curl_easy_setopt(this->CurlHandle, CURLOPT_HEADERFUNCTION, NULL);
+  struct curl_slist *cl = NULL;
+  // append the list of headers to the curl list
+  cl = curl_slist_append(cl, header1.c_str());
+  cl = curl_slist_append(cl, header2.c_str());
+  curl_easy_setopt(this->CurlHandle, CURLOPT_HTTPHEADER, cl);
+
+  curl_easy_setopt(this->CurlHandle, CURLOPT_POST, 1);
+  
+  // use the headers
+  curl_easy_setopt(this->CurlHandle, CURLOPT_HEADER, true);
+  
+  // set the uri, will usually be $SERVER/data
+  curl_easy_setopt(this->CurlHandle, CURLOPT_URL, serverPath);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_FOLLOWLOCATION, true);
+  if (post_data)
+    {
+    curl_easy_setopt(this->CurlHandle, CURLOPT_POSTFIELDS, post_data);
+    curl_easy_setopt(this->CurlHandle, CURLOPT_POSTFIELDSIZE, strlen(post_data));
+    }
+  else
+    {
+    // use this to read the local file
+    curl_easy_setopt(this->CurlHandle, CURLOPT_READFUNCTION, xnd_read_callback);
+    curl_easy_setopt(this->CurlHandle, CURLOPT_READDATA, this->LocalFile);
+    }
+  
+  // then need to set up a local file for capturing the return uri from the
+  // post
+  const char *returnURIFileName = "/tmp/Slicer3nicole/uriFile.txt";
+  FILE *returnURIFile = fopen(returnURIFileName, "w");
+  if (returnURIFile == NULL)
+    {
+    vtkErrorMacro("PostMetadata: unable to open a local file caled " << returnURIFileName << " to write out to for capturing the uri");
+    }
+  else
+    {
+    // for windows
+    curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEFUNCTION, NULL); // write_callback);
+    curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEDATA, returnURIFile);
+    }
 //# post metadata for file
 //uri=`eval curl $DOCDATA1$file$DOCDATA2 $SERVER/data`
 //echo "$uri"
 
-//#now post data
-//FILEDATA='-T'
-//eval curl $FILEDATA $file $uri
+  CURLcode retval = curl_easy_perform(this->CurlHandle);
 
+  if (retval == CURLE_OK)
+    {
+    vtkDebugMacro("PostMetadata: successful return from curl");
+    }
+   else
+    {
+    const char *stringError = curl_easy_strerror(retval);
+    vtkErrorMacro("PostMetadata: error running curl: " << stringError);
+    }
+
+  curl_slist_free_all(cl);
+  
+  this->CloseTransfer();
+
+  if (this->LocalFile)
+    {
+    fclose(this->LocalFile);
+    }
+  if (post_data)
+    {
+    free(post_data);
+    }
+  if (returnURIFile)
+    {
+    fclose(returnURIFile);
+    }
+  // now read from it
+  if (retval == CURLE_OK)
+    {
+    vtkWarningMacro("PostMetadata: trying to parse the uri out from " << returnURIFileName);
+    returnURIFile = fopen(returnURIFileName, "r");
+    if (returnURIFile == NULL)
+      {
+      vtkErrorMacro("PostMetadata: unable to open " << returnURIFileName << " to parse out the uri");
+      }
+    else
+      {
+      // read everything from it
+      fseek(returnURIFile, 0, SEEK_END);
+      long lSize = ftell(returnURIFile);
+      rewind(returnURIFile);
+      char *returnURIBody = (char*)malloc(sizeof(char)*lSize);
+      if (returnURIBody == NULL)
+        {
+        vtkErrorMacro("PostMetadata: unable to allocate buffer for contents of returned uri file, size = " << lSize);
+        }
+      else
+        {
+        size_t result = fread(returnURIBody, 1, lSize, returnURIFile);
+        if (result != lSize)
+          {
+          vtkErrorMacro("PostMetadata: error reading contents of the returned uri file " << returnURIFileName <<", read " << result << " instead of " << lSize);
+          }
+        // get the last line of the file
+        //char line[1024];
+        //fgets (line , 1024 , );
+        // now parse it out, looking for a line that starts with Location:
+        std::string returnURIString(returnURIBody);
+        vtkWarningMacro("PostMetaData: returned URI string = " << returnURIString.c_str());
+        std::string::size_type loc = returnURIString.find("Location: ");
+        std::string::size_type content = returnURIString.find("Content-Length: ");
+        if (loc != std::string::npos)
+          {
+          std::string::size_type endloc = content - 2;//returnURIString.find("\r\n", loc);
+          if (endloc != std::string::npos)
+            {
+            std::string::size_type len = endloc - loc + 10;
+            vtkWarningMacro("PostMetaData: found start of loc " << loc << " and end = " << endloc << ", len = " << len);
+            // now extract the substring
+            std::string responseString = returnURIString.substr(loc + 10, len);
+            response = responseString.c_str();
+            vtkWarningMacro("PostMetaData: returning response string " << response);
+            }
+          }
+        free(returnURIBody);
+        }
+      }
+    }
+  else { vtkWarningMacro("PostMetadata: posting failed, not trying to return the uri"); }
+
+   if (returnURIFile)
+    {
+    fclose(returnURIFile);
+    }
 // try to return a uri as a string.
-  return NULL;
+  return response;
   
 }
 
