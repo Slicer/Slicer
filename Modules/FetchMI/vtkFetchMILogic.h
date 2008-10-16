@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 
+class vtkXNDHandler;
 class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
 {
   public:
@@ -130,7 +131,7 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   // This method takes each dataset selected for upload
 
   // return 1 if file is written and 0 if not.
-  int WriteMetadataForUpload ( const char *filename, const char *ID );
+  int WriteMetadataForUpload ( const char *filename, const char *ID, vtkXNDHandler *handler);
 
   // Description:
   // This method sets up the upload of each storable node
@@ -142,7 +143,7 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   void RequestResourceUploadToXND ();
   void RequestResourceUploadToHID ();
 
-  const char* PostMetadata();
+  const char* PostMetadata( vtkXNDHandler *handler );
   const char *ParsePostMetadataResponse(const char * response);
   void GetNumberOfXMLElements(vtkXMLDataElement *element);
   void GetXMLElement(vtkXMLDataElement *element );
