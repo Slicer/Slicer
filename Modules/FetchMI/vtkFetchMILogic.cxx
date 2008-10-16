@@ -953,7 +953,7 @@ void vtkFetchMILogic::ParseResourceQueryResponse ( )
 
 
 //----------------------------------------------------------------------------
-const char * vtkFetchMILogic::PostMetadata ( vtkXNDHandler *handler )
+const char * vtkFetchMILogic::PostMetadata ( vtkXNDHandler *handler, const char *filename )
 {
   const char *returnval = NULL;
   
@@ -968,7 +968,7 @@ const char * vtkFetchMILogic::PostMetadata ( vtkXNDHandler *handler )
     return returnval;
     }
 
-  const char *svr = this->GetFetchMINode()->GetSelectedServer();
+  std::string svr = this->GetFetchMINode()->GetSelectedServer();
   const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();  
   if ( svctype == NULL )
     {
@@ -984,12 +984,19 @@ const char * vtkFetchMILogic::PostMetadata ( vtkXNDHandler *handler )
       vtkErrorMacro ( "vtkFetchMILogic: PostMetadata got a null XNDHandler." );
       return returnval;
       }
-    
+    std::string::size_type index =  svr.find("://", 0);
+    if ( index  != std::string::npos)
+      {
+      std::string hostname = svr.substr( index+3, std::string::npos );
+      // do a synchronous dl
+      handler->SetHostName(hostname.c_str());
+      }
+     
     std::stringstream ss;
-    ss << svr;
+    ss << svr.c_str();
     ss << "/data";
     // returnval = handler->PostMetadata ( this->GetXMLUploadFileName() );
-    returnval = handler->PostMetadata ( ss.str().c_str(), this->GetXMLUploadFileName() );
+    returnval = handler->PostMetadata ( ss.str().c_str(), this->GetXMLUploadFileName(), filename );
     return returnval;
     }
 
@@ -1004,7 +1011,15 @@ const char * vtkFetchMILogic::PostMetadata ( vtkXNDHandler *handler )
 //----------------------------------------------------------------------------
 const char * vtkFetchMILogic::ParsePostMetadataResponse ( const char *response)
 {
-  return ( NULL );
+  // check to see if response starts with http://, if so, return it as is
+  if (!strncmp(response, "http://", 7))
+    {
+    return response;
+    }
+  else
+    {
+    return ( NULL );
+    }
 }
 
 
@@ -1065,7 +1080,7 @@ int vtkFetchMILogic::WriteMetadataForUpload ( const char *filename, const char *
     }
 
 
-  const char *svr = this->GetFetchMINode()->GetSelectedServer();
+//  const char *svr = this->GetFetchMINode()->GetSelectedServer();
   const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
   const char *att;
   const char *val;
@@ -1133,9 +1148,7 @@ int vtkFetchMILogic::WriteMetadataForUpload ( const char *filename, const char *
           file << "</Tag>\n";
           }
         }
-      file << "\n";
-      file << "</Metadata>";
-      file << "\n";
+      file << "</Metadata>\n";
       }
     else
       {
@@ -1207,9 +1220,7 @@ int vtkFetchMILogic::WriteMetadataForUpload ( const char *filename, const char *
           file << "</Tag>\n";
           }
         }
-      file << "\n";
-      file << "</Metadata>";
-      file << "\n";
+      file << "</Metadata>\n";
 
       tmpTags->Delete();
       }
@@ -1328,7 +1339,7 @@ void vtkFetchMILogic::RequestResourceUpload ( )
     }
   if ( !(strcmp ("XND", svctype )) )
     {
-    if ( this->TestForRequiredTags() > 0 )
+    if ( 1 || this->TestForRequiredTags() > 0 )
       {
       this->RequestResourceUploadToXND();
       }
@@ -1506,7 +1517,7 @@ void vtkFetchMILogic::RequestResourceDownloadFromXND ( const char *uri, const ch
 
   // for the storage nodes to find the right handler, use xnd:// instead of
   // http
-  int index;
+  std::string::size_type index;
   std::string uriString(uri);
   std::string suffix;
   // get all charactersup to the ://
@@ -1717,7 +1728,7 @@ void vtkFetchMILogic::RequestSceneDownloadFromHID ( const char *uri)
   // TODO: test this!
   std::string svr = this->GetFetchMINode()->GetSelectedServer();
   std::string hostname;
-  int index;
+  std::string::size_type index;
   if ( (index = svr.find("://", 0)) != std::string::npos)
     {
     hostname = svr.substr( index+3, std::string::npos );
@@ -1772,8 +1783,9 @@ void vtkFetchMILogic::RequestSceneDownloadFromXND ( const char *uri )
   // TODO: test this!
   std::string svr = this->GetFetchMINode()->GetSelectedServer();
   std::string hostname;
-  int index;
-  if ( (index = svr.find("://", 0)) != std::string::npos)
+  std::string::size_type index;
+  index = svr.find("://", 0);
+  if ( index != std::string::npos)
     {
     hostname = svr.substr( index+3, std::string::npos );
     // do a synchronous dl
@@ -2044,7 +2056,7 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
       //------ if OK:
       //------ call the PostMetadata() method.
       vtkDebugMacro("RequestResourceUploadToXND: calling post meta data.");
-      const char *metadataResponse = this->PostMetadata(handler);
+      const char *metadataResponse = this->PostMetadata(handler, storageNode->GetFileName());
       vtkDebugMacro("RequestResourceUploadToXND: response from posting = " << (metadataResponse == NULL ? "null" : metadataResponse));
       // parse the return, it's a uri
       const char *uri = this->ParsePostMetadataResponse(metadataResponse);
@@ -2081,7 +2093,7 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
             }
           //------ if OK:
           //------ call the PostMetadata() method.
-          const char *metadataResponse = this->PostMetadata( handler );
+          const char *metadataResponse = this->PostMetadata( handler, storageNode->GetNthFileName(filenum) );
           // parse the return, it's a uri
           const char *uri = this->ParsePostMetadataResponse(metadataResponse);
           if (uri == NULL)
@@ -2168,10 +2180,18 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
     for (int i = 0; i < numStorageNodes; i++)
       {
       storageNode = storableNode->GetNthStorageNode(i);
-      vtkDebugMacro("RequestResourceUploadToXND: caling write data on storage node " << i << ": " << storageNode->GetID());
-      if (!storageNode->WriteData(storableNode))
+      if (storageNode->GetURIHandler() == NULL)
         {
-        vtkErrorMacro("RequestResourceUploadToXND: WriteData call failed on storage node " << storageNode->GetID() << " for node " << storableNode->GetName());
+        //  we set it to null on error above
+        vtkWarningMacro("RequestResourceUploadToXND: not writing on storage node " << i);
+        }
+      else
+        {
+        vtkDebugMacro("RequestResourceUploadToXND: caling write data on storage node " << i << ": " << storageNode->GetID());
+        if (!storageNode->WriteData(storableNode))
+          {
+          vtkErrorMacro("RequestResourceUploadToXND: WriteData call failed on storage node " << storageNode->GetID() << " for node " << storableNode->GetName());
+          }
         }
       }
     }
@@ -2207,7 +2227,7 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
       // If return is successful,
       //--- Call handler's PostMetadata() method which returns uri for MRML
       //file.
-      const char *response = this->PostMetadata( handler );
+      const char *response = this->PostMetadata( handler, mrmlFileName );
       const char *uri =  this->ParsePostMetadataResponse(response);
       if (uri != NULL)
         {
@@ -2217,11 +2237,12 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
         
         // now upload it
         vtkDebugMacro("RequestResourceUploadToXND: uploading mrml file");
+        // hope the hostname has been set...
         handler->StageFileWrite(uri, mrmlFileName);
         }
       else
         {
-        vtkErrorMacro("RequestResourceUploadToXND: unable to parse out response from posting metadata, uri is null. Response = " << response);
+        vtkErrorMacro("RequestResourceUploadToXND: unable to parse out response from posting metadata for mrml scene, uri is null. Response = " << (response == NULL ? "null" : response));
         return;
         }
       }

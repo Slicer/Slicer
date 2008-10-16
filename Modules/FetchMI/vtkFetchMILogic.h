@@ -143,7 +143,7 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   void RequestResourceUploadToXND ();
   void RequestResourceUploadToHID ();
 
-  const char* PostMetadata( vtkXNDHandler *handler );
+  const char* PostMetadata( vtkXNDHandler *handler, const char *filename );
   const char *ParsePostMetadataResponse(const char * response);
   void GetNumberOfXMLElements(vtkXMLDataElement *element);
   void GetXMLElement(vtkXMLDataElement *element );
