@@ -953,7 +953,7 @@ void vtkFetchMILogic::ParseResourceQueryResponse ( )
 
 
 //----------------------------------------------------------------------------
-const char * vtkFetchMILogic::PostMetadata ( )
+const char * vtkFetchMILogic::PostMetadata ( vtkXNDHandler *handler )
 {
   const char *returnval = NULL;
   
@@ -977,10 +977,11 @@ const char * vtkFetchMILogic::PostMetadata ( )
     }
   if ( !(strcmp(svctype, "XND")))
     {
-    vtkXNDHandler *handler = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XNDHandler" ));
+    // SafeDownCast in FindURIHandlerByName was causing a crash
+    //vtkXNDHandler *handler = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XNDHandler" ));
     if ( handler == NULL )
       {
-      vtkErrorMacro ( "vtkFetchMILogic: WriteMetadataForUpload got a null XNDHandler." );
+      vtkErrorMacro ( "vtkFetchMILogic: PostMetadata got a null XNDHandler." );
       return returnval;
       }
     
@@ -1031,7 +1032,7 @@ void vtkFetchMILogic::TagStorableNodes ( )
 // filename is a dataset's filename or mrmlscene filename.
 // ID is a nodeID or is the text "MRML".
 //----------------------------------------------------------------------------
-int vtkFetchMILogic::WriteMetadataForUpload ( const char *filename, const char *ID)
+int vtkFetchMILogic::WriteMetadataForUpload ( const char *filename, const char *ID, vtkXNDHandler *handler)
 {
 
   if ( this->FetchMINode == NULL) 
@@ -1077,8 +1078,16 @@ int vtkFetchMILogic::WriteMetadataForUpload ( const char *filename, const char *
 
   if ( !(strcmp(svctype, "XND" )))
     {
-    vtkXNDHandler *h = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XNDHandler" ));
-    if ( h == NULL )
+    // doing a SafeDownCast in FindURIHandlerByName  was causing a crash...
+/*    vtkURIHandler *uriHandler = this->GetMRMLScene()->FindURIHandlerByName ( "XNDHandler" );
+    if (uriHandler == NULL)
+      {
+      vtkErrorMacro ( "vtkFetchMILogic: WriteMetadataForUpload got a null URIHandler." );
+      return 0;
+      }
+    vtkXNDHandler *h = vtkXNDHandler::SafeDownCast (uriHandler);
+*/
+    if ( handler == NULL )
       {
       vtkErrorMacro ( "vtkFetchMILogic: WriteMetadataForUpload got a null XNDHandler." );
       return 0;
@@ -1098,10 +1107,10 @@ int vtkFetchMILogic::WriteMetadataForUpload ( const char *filename, const char *
       int num = t->GetNumberOfTags();
       //------ Write XML for the scene file using this->SceneTags
 
-      file << h->GetXMLDeclaration();
+      file << handler->GetXMLDeclaration();
       file << "\n";
       file << "<Metadata ";
-      file << h->GetNameSpace();
+      file << handler->GetNameSpace();
       file << ">";
       file << "\n";
         
@@ -1172,10 +1181,10 @@ int vtkFetchMILogic::WriteMetadataForUpload ( const char *filename, const char *
 
       //------ Write XML for the scene file using this->SceneTags
       num = t->GetNumberOfTags();
-      file << h->GetXMLDeclaration();
+      file << handler->GetXMLDeclaration();
       file << "\n";
       file << "<Metadata ";
-      file << h->GetNameSpace();
+      file << handler->GetNameSpace();
       file << ">";
       file << "\n";
 
@@ -1315,6 +1324,7 @@ void vtkFetchMILogic::RequestResourceUpload ( )
   if ( !(strcmp ("HID", svctype )) )
     {
     //no-op
+    vtkWarningMacro("RequestResourceUpload: HID upload not implemented yet.");
     }
   if ( !(strcmp ("XND", svctype )) )
     {
@@ -1322,10 +1332,11 @@ void vtkFetchMILogic::RequestResourceUpload ( )
       {
       this->RequestResourceUploadToXND();
       }
-    else
+      else
       {
       this->FetchMINode->SetErrorMessage ("Some or all items selected are not described by all tags required by XNAT Desktop and Slicer. Please include values for: Project, Experiment, Subject, Scan, Modality, and SlicerDataType.");
       this->InvokeEvent(vtkMRMLFetchMINode::RemoteIOErrorEvent );
+      vtkWarningMacro("Some or all items selected are not described by all tags required by XNAT Desktop and Slicer.");
       }
     }
 }
@@ -1421,19 +1432,19 @@ void vtkFetchMILogic::RequestResourceDownloadFromHID ( const char *uri, const ch
   //--- Get the MRML Scene
   if ( this->GetMRMLScene() == NULL )
     {
-    vtkErrorMacro ("vtkFetchMILogic::RequestResourceUploadToHID: Null scene. ");
+    vtkErrorMacro ("vtkFetchMILogic::RequestResourceDownloadFromHID: Null scene. ");
     return;
     }
   if ( this->GetFetchMINode() == NULL )
     {
-    vtkErrorMacro ("vtkFetchMILogic::RequestResourceUploadToHID: Null FetchMI node. ");
+    vtkErrorMacro ("vtkFetchMILogic::RequestResourceDownloadFromHID: Null FetchMI node. ");
     return;
     }
 
   vtkHIDHandler *h = vtkHIDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "HIDHandler" ));
   if ( h == NULL )
     {
-    vtkErrorMacro ("vtkFetchMILogic::RequestResourceUploadToHID: Null URIHandler. ");
+    vtkErrorMacro ("vtkFetchMILogic::RequestResourceDownloadFromHID: Null URIHandler. ");
     return;
     }
 
@@ -1683,19 +1694,19 @@ void vtkFetchMILogic::RequestSceneDownloadFromHID ( const char *uri)
   //--- Get the MRML Scene
   if ( this->GetMRMLScene() == NULL )
     {
-    vtkErrorMacro ("vtkFetchMILogic::RequestResourceUploadToHID: Null scene. ");
+    vtkErrorMacro ("vtkFetchMILogic::RequestResourceDownloadFromHID: Null scene. ");
     return;
     }
   if ( this->GetFetchMINode() == NULL )
     {
-    vtkErrorMacro ("vtkFetchMILogic::RequestResourceUploadToHID: Null FetchMI node. ");
+    vtkErrorMacro ("vtkFetchMILogic::RequestResourceDownloadFromHID: Null FetchMI node. ");
     return;
     }
 
   vtkHIDHandler *handler = vtkHIDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "HIDHandler" ));
   if ( handler == NULL )
     {
-    vtkErrorMacro ("vtkFetchMILogic::RequestResourceUploadToHID: Null URIHandler. ");
+    vtkErrorMacro ("vtkFetchMILogic::RequestResourceDownloadFromHID: Null URIHandler. ");
     return;
     }
 
@@ -1884,6 +1895,7 @@ void vtkFetchMILogic::RemoveSelectedStorableNode( const char *nodeID)
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::RequestResourceUploadToXND (  )
 {
+//  this->DebugOn();
 
   //-------------------------
   // This method sets up the upload of each storable node
@@ -1993,6 +2005,7 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
       //--- If this fails, error message and return.
       
       //--- Set the URIHandler on the storage node
+      vtkDebugMacro("RequestResourceUploadToXND: setting handler on storage node " << (storageNode->GetID() == NULL ? "(null)" : storageNode->GetID()));
       storageNode->SetURIHandler(handler);
       // *NOTE: make sure to see that DataIOManagerLogic (or whatever) checks to see
       // if the URIHandler is set before calling CanHandleURI() on all scene handlers,
@@ -2009,6 +2022,7 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
   for (unsigned int n = 0; n < this->SelectedStorableNodeIDs.size(); n++)
     {
     std::string nodeID = this->SelectedStorableNodeIDs[n];
+    vtkDebugMacro("RequestResourceUploadToXND: generating metadata for selected storable node " << nodeID.c_str());
     storableNode = vtkMRMLStorableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID( nodeID.c_str() ));
     // for each storage node
     int numStorageNodes = storableNode->GetNumberOfStorageNodes();
@@ -2016,11 +2030,12 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
     for (int i = 0; i < numStorageNodes; i++)
       {
       storageNode = storableNode->GetNthStorageNode(i);
+      vtkDebugMacro("RequestResourceUploadToXND: have storage node " << i << ", calling write metadata for upload with id " << nodeID.c_str() << " and file name " << storageNode->GetFileName());
       // FOR EACH FILENAME & FILELISTMEMBER IN EACH NODE:
       // {
       //--- call this->WriteMetadataForUpload( filename, nodeID ) on the node
       //--- CHECK RETURN VALUE.
-      int retval = this->WriteMetadataForUpload(storageNode->GetFileName(), nodeID.c_str() );
+      int retval = this->WriteMetadataForUpload(storageNode->GetFileName(), nodeID.c_str(), handler );
       if (retval == 0)
         {
         vtkErrorMacro("vtkFetchMILogic::RequestResourceUploadToXND: error writing xml for upload, filename = " << storageNode->GetFileName() << ", id = " << nodeID.c_str());
@@ -2028,7 +2043,9 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
         }
       //------ if OK:
       //------ call the PostMetadata() method.
-      const char *metadataResponse = this->PostMetadata();
+      vtkDebugMacro("RequestResourceUploadToXND: calling post meta data.");
+      const char *metadataResponse = this->PostMetadata(handler);
+      vtkDebugMacro("RequestResourceUploadToXND: response from posting = " << (metadataResponse == NULL ? "null" : metadataResponse));
       // parse the return, it's a uri
       const char *uri = this->ParsePostMetadataResponse(metadataResponse);
       //------ Handle bad posts which return NULL -- if the uri is null, abort for the node,
@@ -2057,14 +2074,14 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
         int numFiles = storageNode->GetNumberOfFileNames();
         for (int filenum = 0; filenum < numFiles; filenum++)
           {
-          if (this->WriteMetadataForUpload(storageNode->GetNthFileName(filenum), nodeID.c_str() ) != 1)
+          if (this->WriteMetadataForUpload(storageNode->GetNthFileName(filenum), nodeID.c_str(), handler) != 1)
             {
             vtkErrorMacro("vtkFetchMILogic::RequestResourceUploadToXND: error writing xml for upload, nth filename = " << storageNode->GetNthFileName(filenum) << ", id = " << nodeID.c_str());
             return;
             }
           //------ if OK:
           //------ call the PostMetadata() method.
-          const char *metadataResponse = this->PostMetadata();
+          const char *metadataResponse = this->PostMetadata( handler );
           // parse the return, it's a uri
           const char *uri = this->ParsePostMetadataResponse(metadataResponse);
           if (uri == NULL)
@@ -2184,13 +2201,13 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
     
     // call this->WriteMetadataForUpload( filename, "MRML") to generate metadata
     //
-    int retval = this->WriteMetadataForUpload(mrmlFileName, "MRML");
+    int retval = this->WriteMetadataForUpload(mrmlFileName, "MRML", handler);
     if (retval == 1)
       {
       // If return is successful,
       //--- Call handler's PostMetadata() method which returns uri for MRML
       //file.
-      const char *response = this->PostMetadata();
+      const char *response = this->PostMetadata( handler );
       const char *uri =  this->ParsePostMetadataResponse(response);
       if (uri != NULL)
         {
@@ -2216,7 +2233,7 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
       return;
       }
     }
-
+//  this->DebugOff();
 }
 
 
