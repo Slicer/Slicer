@@ -1510,96 +1510,104 @@ int Slicer3_main(int argc, char *argv[])
   // - have the GUI construct itself
   //
 
-  slicerApp->SplashMessage("Initializing Scripted Modules...");
-  std::string tclCommand = "set ::Slicer3_PACKAGES(list) {};";
-
-  module_paths_it = modulePathsList.begin();
-  for (; module_paths_it != module_paths_end; module_paths_it++)
+  std::string tclCommand;
+  if ( !NoModules )
     {
-    vtksys_stl::string module_path(*module_paths_it);
-    vtksys::SystemTools::ConvertToUnixSlashes(module_path);
-    if (*module_path.c_str() &&
-        vtksys::SystemTools::FileExists(module_path.c_str()))
-      {
-      tclCommand += "set dirs [glob \"" + module_path + "/*\"]; ";
-      tclCommand += "foreach d $dirs { ";
-      tclCommand += "  foreach subdir {\".\" \"Tcl\"} {";
-      tclCommand += "    set location [file join [file join $d $subdir] pkgIndex.tcl];";
-      tclCommand += "    if { [file exists $location] } {";
-      tclCommand += "      set package [file tail $d];";
-      tclCommand += "      if { [lsearch -exact $::Slicer3_PACKAGES(list) $package] == -1 } {";
-      tclCommand += "        set ::Slicer3_PACKAGES($package,location) $location;";
-      tclCommand += "        lappend ::Slicer3_PACKAGES(list) $package;";
-      tclCommand += "        lappend ::auto_path $d;";
-      tclCommand += "      }";
-      tclCommand += "    }";
-      tclCommand += "  }";
-      tclCommand += "}; ";
-      }
-    }
-  Slicer3_Tcl_Eval( interp, tclCommand.c_str());
+    slicerApp->SplashMessage("Initializing Scripted Modules...");
+    tclCommand = "set ::Slicer3_PACKAGES(list) {};";
 
-  tclCommand = "";
-  tclCommand += "foreach package $::Slicer3_PACKAGES(list) { ";
-  tclCommand += "  package require $package;";
-  tclCommand += "  set ::Slicer3_PACKAGES($package,logic) [vtkScriptedModuleLogic New];";
-  tclCommand += "  set logic $::Slicer3_PACKAGES($package,logic);";
-  tclCommand += "  $logic SetModuleName $package;";
-  tclCommand += "  $logic SetModuleLocation $::Slicer3_PACKAGES($package,location);";
-  tclCommand += "  $logic SetAndObserveMRMLScene $::slicer3::MRMLScene;";
-  tclCommand += "  $logic SetApplicationLogic $::slicer3::ApplicationLogic;";
-  tclCommand += "  set ::Slicer3_PACKAGES($package,gui) [vtkScriptedModuleGUI New];";
-  tclCommand += "  set gui $::Slicer3_PACKAGES($package,gui);";
-  tclCommand += "  $gui SetModuleName $package;";
-  tclCommand += "  $gui SetLogic $logic;";
-  tclCommand += "  $gui SetApplicationGUI $::slicer3::ApplicationGUI;";
-  tclCommand += "  $gui SetApplication $::slicer3::Application;";
-  tclCommand += "  $gui SetGUIName $package;";
-  tclCommand += "  [$gui GetUIPanel] SetName $package;";
-  tclCommand += "  [$gui GetUIPanel] SetUserInterfaceManager [[$::slicer3::ApplicationGUI GetMainSlicerWindow] GetMainUserInterfaceManager];";
-  tclCommand += "  [$gui GetUIPanel] Create;";
-  tclCommand += "  $::slicer3::Application AddModuleGUI $gui;" ;
-  tclCommand += "  $gui BuildGUI;";
-  tclCommand += "  $gui AddGUIObservers;";
-  tclCommand += "";
-  tclCommand += "}";
-  Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
+    module_paths_it = modulePathsList.begin();
+    for (; module_paths_it != module_paths_end; module_paths_it++)
+      {
+      vtksys_stl::string module_path(*module_paths_it);
+      vtksys::SystemTools::ConvertToUnixSlashes(module_path);
+      if (*module_path.c_str() &&
+          vtksys::SystemTools::FileExists(module_path.c_str()))
+        {
+        tclCommand += "set dirs [glob \"" + module_path + "/*\"]; ";
+        tclCommand += "foreach d $dirs { ";
+        tclCommand += "  foreach subdir {\".\" \"Tcl\"} {";
+        tclCommand += "    set location [file join [file join $d $subdir] pkgIndex.tcl];";
+        tclCommand += "    if { [file exists $location] } {";
+        tclCommand += "      set package [file tail $d];";
+        tclCommand += "      if { [lsearch -exact $::Slicer3_PACKAGES(list) $package] == -1 } {";
+        tclCommand += "        set ::Slicer3_PACKAGES($package,location) $location;";
+        tclCommand += "        lappend ::Slicer3_PACKAGES(list) $package;";
+        tclCommand += "        lappend ::auto_path $d;";
+        tclCommand += "      }";
+        tclCommand += "    }";
+        tclCommand += "  }";
+        tclCommand += "}; ";
+        }
+      }
+    Slicer3_Tcl_Eval( interp, tclCommand.c_str());
+
+    tclCommand = "";
+    tclCommand += "foreach package $::Slicer3_PACKAGES(list) { ";
+    tclCommand += "  package require $package;";
+    tclCommand += "  set ::Slicer3_PACKAGES($package,logic) [vtkScriptedModuleLogic New];";
+    tclCommand += "  set logic $::Slicer3_PACKAGES($package,logic);";
+    tclCommand += "  $logic SetModuleName $package;";
+    tclCommand += "  $logic SetModuleLocation $::Slicer3_PACKAGES($package,location);";
+    tclCommand += "  $logic SetAndObserveMRMLScene $::slicer3::MRMLScene;";
+    tclCommand += "  $logic SetApplicationLogic $::slicer3::ApplicationLogic;";
+    tclCommand += "  set ::Slicer3_PACKAGES($package,gui) [vtkScriptedModuleGUI New];";
+    tclCommand += "  set gui $::Slicer3_PACKAGES($package,gui);";
+    tclCommand += "  $gui SetModuleName $package;";
+    tclCommand += "  $gui SetLogic $logic;";
+    tclCommand += "  $gui SetApplicationGUI $::slicer3::ApplicationGUI;";
+    tclCommand += "  $gui SetApplication $::slicer3::Application;";
+    tclCommand += "  $gui SetGUIName $package;";
+    tclCommand += "  [$gui GetUIPanel] SetName $package;";
+    tclCommand += "  [$gui GetUIPanel] SetUserInterfaceManager [[$::slicer3::ApplicationGUI GetMainSlicerWindow] GetMainUserInterfaceManager];";
+    tclCommand += "  [$gui GetUIPanel] Create;";
+    tclCommand += "  $::slicer3::Application AddModuleGUI $gui;" ;
+    tclCommand += "  $gui BuildGUI;";
+    tclCommand += "  $gui AddGUIObservers;";
+    tclCommand += "";
+    tclCommand += "}";
+    Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
+    }
 
 #ifdef Slicer3_USE_PYTHON
-  slicerApp->SplashMessage("Initializing Python Scripted Modules...");
-  std::string pythonCommand = "";
 
-  pythonCommand += "import sys\n";
-  pythonCommand += "import os\n";
-  pythonCommand += "packageNames = []\n";
-
-  module_paths_it = modulePathsList.begin();
-  for (; module_paths_it != module_paths_end; module_paths_it++)
+  if ( !NoModules )
     {
-    vtksys_stl::string module_path(*module_paths_it);
-    vtksys::SystemTools::ConvertToUnixSlashes(module_path);
-    if (*module_path.c_str() &&
-        vtksys::SystemTools::FileExists(module_path.c_str()))
+    slicerApp->SplashMessage("Initializing Python Scripted Modules...");
+    std::string pythonCommand = "";
+
+    pythonCommand += "import sys\n";
+    pythonCommand += "import os\n";
+    pythonCommand += "packageNames = []\n";
+
+    module_paths_it = modulePathsList.begin();
+    for (; module_paths_it != module_paths_end; module_paths_it++)
       {
-      pythonCommand += "modulePath = '" + module_path + "'\n";
-      pythonCommand += "sys.path.append(modulePath)\n";
-      pythonCommand += "for packageName in os.listdir(modulePath):\n";
-      pythonCommand += "    if os.path.isfile(os.path.join(modulePath,packageName,'__init__.py')):\n";
-      pythonCommand += "        packageNames.append(packageName)\n";
+      vtksys_stl::string module_path(*module_paths_it);
+      vtksys::SystemTools::ConvertToUnixSlashes(module_path);
+      if (*module_path.c_str() &&
+          vtksys::SystemTools::FileExists(module_path.c_str()))
+        {
+        pythonCommand += "modulePath = '" + module_path + "'\n";
+        pythonCommand += "sys.path.append(modulePath)\n";
+        pythonCommand += "for packageName in os.listdir(modulePath):\n";
+        pythonCommand += "    if os.path.isfile(os.path.join(modulePath,packageName,'__init__.py')):\n";
+        pythonCommand += "        packageNames.append(packageName)\n";
+        }
       }
-    }
 
-  pythonCommand += "import Slicer\n";
-  pythonCommand += "import SlicerScriptedModule\n";
-  pythonCommand += "SlicerScriptedModuleInfo = SlicerScriptedModule.SlicerScriptedModuleImporter(packageNames)\n";
-  pythonCommand += "SlicerScriptedModuleInfo.ScanAndInitModules()\n";
+    pythonCommand += "import Slicer\n";
+    pythonCommand += "import SlicerScriptedModule\n";
+    pythonCommand += "SlicerScriptedModuleInfo = SlicerScriptedModule.SlicerScriptedModuleImporter(packageNames)\n";
+    pythonCommand += "SlicerScriptedModuleInfo.ScanAndInitModules()\n";
 
-  v = PyRun_String( pythonCommand.c_str(),
-                    Py_file_input,
-                    PythonDictionary,PythonDictionary);
-  if (v == NULL)
-    {
-    PyErr_Print();
+    v = PyRun_String( pythonCommand.c_str(),
+                      Py_file_input,
+                      PythonDictionary,PythonDictionary);
+    if (v == NULL)
+      {
+      PyErr_Print();
+      }
     }
 #endif
 #endif
@@ -1806,21 +1814,27 @@ int Slicer3_main(int argc, char *argv[])
 #endif    
 
 #if !defined(SCRIPTEDMODULE_DEBUG) && defined(Slicer3_BUILD_MODULES)
-  // remove the observers from the scripted modules
-  tclCommand = "";
-  tclCommand += "foreach package $::Slicer3_PACKAGES(list) { ";
-  tclCommand += "  $::Slicer3_PACKAGES($package,gui) RemoveGUIObservers;";
-  tclCommand += "  $::Slicer3_PACKAGES($package,gui) TearDownGUI;";
-  tclCommand += "}";
-  Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
+  if ( !NoModules )
+    {
+    // remove the observers from the scripted modules
+    tclCommand = "";
+    tclCommand += "foreach package $::Slicer3_PACKAGES(list) { ";
+    tclCommand += "  $::Slicer3_PACKAGES($package,gui) RemoveGUIObservers;";
+    tclCommand += "  $::Slicer3_PACKAGES($package,gui) TearDownGUI;";
+    tclCommand += "}";
+    Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
+    }
 
 #if defined(Slicer3_USE_PYTHON)
-  v = PyRun_String( "SlicerScriptedModuleInfo.TearDownAllGUI();\n",
-                    Py_file_input,
-                    PythonDictionary,PythonDictionary);    
-  if (v == NULL)
+  if ( !NoModules )
     {
-    PyErr_Print(); 
+    v = PyRun_String( "SlicerScriptedModuleInfo.TearDownAllGUI();\n",
+                      Py_file_input,
+                      PythonDictionary,PythonDictionary);    
+    if (v == NULL)
+      {
+      PyErr_Print(); 
+      }
     }
 #endif
 #endif
@@ -1910,19 +1924,25 @@ int Slicer3_main(int argc, char *argv[])
 //  slicesGUI->Delete ();
 
 #if !defined(SCRIPTEDMODULE_DEBUG) && defined(Slicer3_BUILD_MODULES)
-  tclCommand = "";
-  tclCommand += "foreach package $::Slicer3_PACKAGES(list) { ";
-  tclCommand += "  $::Slicer3_PACKAGES($package,gui) Delete;";
-  tclCommand += "}";
-  Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
+  if ( !NoModules )
+    {
+    tclCommand = "";
+    tclCommand += "foreach package $::Slicer3_PACKAGES(list) { ";
+    tclCommand += "  $::Slicer3_PACKAGES($package,gui) Delete;";
+    tclCommand += "}";
+    Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
+    }
 
 #if defined(Slicer3_USE_PYTHON)
-  v = PyRun_String( "SlicerScriptedModuleInfo.DeleteAllGUI();\n",
-                    Py_file_input,
-                    PythonDictionary,PythonDictionary);
-  if (v == NULL)
+  if ( !NoModules )
     {
-    PyErr_Print();
+    v = PyRun_String( "SlicerScriptedModuleInfo.DeleteAllGUI();\n",
+                      Py_file_input,
+                      PythonDictionary,PythonDictionary);
+    if (v == NULL)
+      {
+      PyErr_Print();
+      }
     }
 #endif
 #endif
@@ -2012,21 +2032,27 @@ int Slicer3_main(int argc, char *argv[])
 
 
 #if !defined(SCRIPTEDMODULE_DEBUG) && defined(Slicer3_BUILD_MODULES)
-  // delete the scripted logics
-  tclCommand = "";
-  tclCommand += "foreach package $::Slicer3_PACKAGES(list) { ";
-  tclCommand += "  $::Slicer3_PACKAGES($package,logic) SetAndObserveMRMLScene {};";
-  tclCommand += "  $::Slicer3_PACKAGES($package,logic) Delete;";
-  tclCommand += "}";
-  Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
+  if ( !NoModules )
+    {
+    // delete the scripted logics
+    tclCommand = "";
+    tclCommand += "foreach package $::Slicer3_PACKAGES(list) { ";
+    tclCommand += "  $::Slicer3_PACKAGES($package,logic) SetAndObserveMRMLScene {};";
+    tclCommand += "  $::Slicer3_PACKAGES($package,logic) Delete;";
+    tclCommand += "}";
+    Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
+    }
 
 #if defined(Slicer3_USE_PYTHON)
-  v = PyRun_String( "SlicerScriptedModuleInfo.DeleteAllLogic();\n",
-                    Py_file_input,
-                    PythonDictionary,PythonDictionary);
-  if (v == NULL)
+  if ( !NoModules )
     {
-    PyErr_Print();
+    v = PyRun_String( "SlicerScriptedModuleInfo.DeleteAllLogic();\n",
+                      Py_file_input,
+                      PythonDictionary,PythonDictionary);
+    if (v == NULL)
+      {
+      PyErr_Print();
+      }
     }
 #endif
 #endif
