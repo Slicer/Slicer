@@ -537,11 +537,11 @@ void vtkFetchMIResourceUploadWidget::AddNewItem ( const char *dataset, const cha
     }
   if ( !strcmp (dataset, "") )
     {
-    dataset = "<unknown_data>";
+    dataset = "unknown_data";
     }
   if ( !strcmp (dtype, "") )
     {
-    dtype = "<unknown>";
+    dtype = "unknown";
     }
   if ( unique )
     {

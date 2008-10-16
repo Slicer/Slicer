@@ -520,7 +520,7 @@ void vtkFetchMILogic::GetHIDXMLEntry( vtkXMLDataElement *element )
   const char *name = element->GetName();
   const char *attName;
   const char *value;
-  const char *dtype = "<unknown>";
+  const char *dtype = "unknown";
 
   if ( name == NULL )
     {
@@ -657,7 +657,7 @@ void vtkFetchMILogic::GetXNDXMLEntry( vtkXMLDataElement *element )
   const char *name = element->GetName();
   const char *attName;
   const char *value;
-  const char *dtype = "<unknown>";
+  const char *dtype = "unknown";
 
   if ( name == NULL )
     {
@@ -1176,7 +1176,7 @@ int vtkFetchMILogic::WriteMetadataForUpload ( const char *filename, const char *
         }
       if ( !found )
         {
-        t->AddOrUpdateTag ( "SlicerDataType", "<unknown>" );
+        t->AddOrUpdateTag ( "SlicerDataType", "unknown" );
         }
 
       //------ Write XML for the scene file using this->SceneTags

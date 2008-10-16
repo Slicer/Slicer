@@ -521,11 +521,11 @@ void vtkFetchMIFlatResourceWidget::AddNewItem ( const char *term, const char *dt
     }
   if ( !strcmp (term, "") )
     {
-    term = "<new>";
+    term = "new";
     }
   if ( !strcmp (dtype, "") )
     {
-    term = "<unknown>";
+    term = "unknown";
     }
   if ( unique )
     {
