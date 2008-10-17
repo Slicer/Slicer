@@ -163,13 +163,43 @@ void vtkXNDHandler::StageFileWrite(const char *source,
 
   this->LocalFile = fopen(source, "r");
 
+  // read all the stuff in the file into a buffer
+  fseek(this->LocalFile, 0, SEEK_END);
+  long lSize = ftell(this->LocalFile);
+  rewind(this->LocalFile);
+
+  // allocate memory
+  char *post_data = NULL;
+  post_data = (char*)malloc(sizeof(char)*lSize);
+  if (post_data == NULL)
+    {
+    vtkErrorMacro("PostMetadata: unable to allocate a buffer to read from meta data file, size = " << lSize);
+    }
+  else
+    {
+    size_t result = fread(post_data, 1, lSize, this->LocalFile);
+    if (result != lSize)
+      {
+      vtkErrorMacro("PostMetadata: error reading contents of the file " << source <<", read " << result << " instead of " << lSize);
+      post_data = NULL;
+      }    
+    }
+  
   this->InitTransfer( );
   
   curl_easy_setopt(this->CurlHandle, CURLOPT_POST, 1);
   curl_easy_setopt(this->CurlHandle, CURLOPT_URL, source);
   curl_easy_setopt(this->CurlHandle, CURLOPT_FOLLOWLOCATION, true);
-  curl_easy_setopt(this->CurlHandle, CURLOPT_READFUNCTION, xnd_read_callback);
-  curl_easy_setopt(this->CurlHandle, CURLOPT_READDATA, this->LocalFile);
+  if (post_data)
+    {
+    curl_easy_setopt(this->CurlHandle, CURLOPT_POSTFIELDS, post_data);
+    curl_easy_setopt(this->CurlHandle, CURLOPT_POSTFIELDSIZE, strlen(post_data));
+    }
+  else
+    {
+    curl_easy_setopt(this->CurlHandle, CURLOPT_READFUNCTION, xnd_read_callback);
+    curl_easy_setopt(this->CurlHandle, CURLOPT_READDATA, this->LocalFile);
+    }
   CURLcode retval = curl_easy_perform(this->CurlHandle);
 
    if (retval == CURLE_OK)
