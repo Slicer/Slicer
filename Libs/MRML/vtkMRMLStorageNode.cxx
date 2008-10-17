@@ -82,6 +82,15 @@ void vtkMRMLStorageNode::WriteXML(ostream& of, int nIndent)
   if (this->FileName != NULL) 
     {
     of << indent << " fileName=\"" << vtkMRMLNode::URLEncodeString(this->FileName) << "\"";
+    
+    // if there is a file list, add the archetype to it. add file will check
+    // that it's not already there. currently needed for reading in multi
+    // volume files with the vtk itk io factory 10/17/08. - NOT TESTED YET
+    /*if (this->GetNumberOfFileNames() > 0)
+      {
+      this->AddFileName(this->FileName);
+      }
+    */
     }
   for (int i = 0; i < this->GetNumberOfFileNames(); i++)
     {
@@ -284,8 +293,16 @@ void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
       {
       vtkDebugMacro("StageReadData: setting read state to pending, finding a URI handler and queuing read on the io manager");
       this->SetReadStatePending();
-      // set up the data handler
-      this->URIHandler = this->Scene->FindURIHandler(this->URI);
+      // set up the data handler if it's not set already (may want to over
+      // ride, esp. for the XND handler)
+      if (this->URIHandler == NULL)
+        {
+        this->URIHandler = this->Scene->FindURIHandler(this->URI);
+        }
+      else
+        {
+        vtkWarningMacro("StageReadData: using the already set uri handler: " << this->URIHandler->GetName());
+        }
       if (this->URIHandler != NULL)
         {
         vtkDebugMacro("StageReadData: got a URI Handler");
@@ -347,8 +364,15 @@ void vtkMRMLStorageNode::StageWriteData ( vtkMRMLNode *refNode )
        {
        vtkDebugMacro("StageWriteData: setting write state to pending, finding a URI handler and queuing write on the io manager");
        this->SetWriteStatePending();
-       // set up the data handler
-       this->URIHandler = this->Scene->FindURIHandler(this->URI);
+       // set up the data handler if it's not set already
+       if (this->URIHandler == NULL)
+         {
+         this->URIHandler = this->Scene->FindURIHandler(this->URI);
+         }
+       else
+         {
+         vtkWarningMacro("StageWriteData: using the already set uri handler: " << this->URIHandler->GetName());
+         }
        if (this->URIHandler != NULL)
          {
          vtkDebugMacro("StageWriteData: got a URI Handler");
@@ -451,12 +475,29 @@ int vtkMRMLStorageNode::SupportedFileType(const char *fileName)
   return 0;
 }
 
+//----------------------------------------------------------------------------
+int vtkMRMLStorageNode::FileNameIsInList(const char *fileName)
+{
+  
+  std::string fname = std::string(fileName);
+  for (unsigned int i = 0; i < this->FileNameList.size(); i++)
+    {
+    if (fname.compare(this->FileNameList[i]) == 0)
+      {
+      return 1;
+      }
+    }
+  return 0;
+}
 
 //----------------------------------------------------------------------------
 unsigned int vtkMRMLStorageNode::AddFileName( const char* filename )
 {
   std::string filenamestr (filename);
-  this->FileNameList.push_back( filenamestr );
+  if (!this->FileNameIsInList(filename))
+    {
+    this->FileNameList.push_back( filenamestr );
+    }
   return this->FileNameList.size();
 }
 

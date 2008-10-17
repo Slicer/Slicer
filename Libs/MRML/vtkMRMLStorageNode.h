@@ -180,6 +180,11 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   };
 
   // Description:
+  // is filename in the filename list already?
+  // returns 1 if yes, 0 if no
+  int FileNameIsInList(const char *fileName);
+  
+  // Description:
   // Add in another URI to the list of URI's
   unsigned int AddURI(const char *uri);
 
