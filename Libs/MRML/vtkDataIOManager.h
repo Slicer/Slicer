@@ -102,6 +102,7 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
       NewTransferEvent,
       TransferUpdateEvent,
       SettingsUpdateEvent,
+      DisplayManagerWindowEvent,
     };
 
   // function that gets called when a data transfer has been updated.
