@@ -345,7 +345,7 @@ const char *vtkXNDHandler::PostMetadata ( const char *serverPath,
   // now read from it
   if (retval == CURLE_OK)
     {
-    vtkWarningMacro("PostMetadata: trying to parse the uri out from " << returnURIFileName);
+    vtkDebugMacro("PostMetadata: trying to parse the uri out from " << returnURIFileName);
     returnURIFile = fopen(returnURIFileName, "r");
     if (returnURIFile == NULL)
       {
@@ -357,7 +357,9 @@ const char *vtkXNDHandler::PostMetadata ( const char *serverPath,
       fseek(returnURIFile, 0, SEEK_END);
       long lSize = ftell(returnURIFile);
       rewind(returnURIFile);
-      char *returnURIBody = (char*)malloc(sizeof(char)*lSize);
+      // allocate the return body with an extra character, as we're going to
+      // add the null character at the end to help with parsing
+      char *returnURIBody = (char*)malloc(sizeof(char)*(lSize+1));
       if (returnURIBody == NULL)
         {
         vtkErrorMacro("PostMetadata: unable to allocate buffer for contents of returned uri file, size = " << lSize);
@@ -371,75 +373,40 @@ const char *vtkXNDHandler::PostMetadata ( const char *serverPath,
           fclose (returnURIFile);
           return (response);
           }
-        // get the last line of the file
-        //char line[1024];
-        //fgets (line , 1024 , );
-        // now parse it out, looking for a line that starts with Location:
-        std::string returnURIString(returnURIBody);
-        vtkWarningMacro("PostMetaData: returned URI string = " << returnURIString.c_str());
-//        std::string::size_type loc = returnURIString.find("Location: ");
-//        std::string::size_type content = returnURIString.find("Content-Length: ");
-
-
-        //--- begin wjp-test get the last http, if present
-        //--- I think in a well-formed response, there are two versions of the uri.
-        //--- in the error response, I think there is one (at most) uris...
-        //--- if there are none in the error response, we'll have to refactor this to just
-        //--- get the last uri and use it.
-        std::string::size_type firstloc = returnURIString.find_first_of("http://");
-        std::string::size_type lastloc = returnURIString.find_last_of("http://");
-
-
-        if ( (firstloc != std::string::npos) &&
-             (lastloc != std::string::npos) &&
-             (firstloc != lastloc) )
+        // add the null character at the end since it's in utf8 format and
+        // we're doing some magic here (don't use string.find, it won't work)
+         returnURIBody[lSize] = '\0';
+        // get the first instance of the uri
+        const char *http = "http://";
+        char *httpPointer1 = strstr(returnURIBody, http);
+        // find the second uri, past the first one
+        char *httpPointer2 = strstr(httpPointer1+7, http);
+        if (httpPointer2 != NULL)
           {
-          //--- begin wjp-test: get the string;
-          std::string responseString = returnURIString.substr(lastloc, std::string::npos);
-          response = responseString.c_str();
-
-//        if ( loc != std::string::npos)
-//          {
-//          std::string::iterator it = std::remove(responseString.begin(), responseString.end(), "\r");
-//          responseString.erase(it, responseString.end() );
-//          it = std::remove(responseString.begin(), responseString.end(), "\n");
-//          responseString.erase(it, responseString.end() );
-          //--- end wjp-test
-
-
-
-          
-          vtkWarningMacro("PostMetaData: returning response string " << response);
-
-//          std::string::size_type endloc = content - 2;//returnURIString.find("\r\n", loc);
-//          if (endloc != std::string::npos)
-//            {
-//            std::string::size_type len = endloc - loc + 10;
-//            vtkWarningMacro("PostMetaData: found start of loc " << loc << " and end = " << endloc << ", len = " << len);
-//            // now extract the substring
-//            std::string responseString = returnURIString.substr(loc + 10, len);
-//            response = responseString.c_str();
-//            vtkWarningMacro("PostMetaData: returning response string " << response);
-//            }
-
+          vtkDebugMacro("PostMetadata: strstr found a string pointer = '" << httpPointer2 << "'");
+          std::string responseString = std::string(httpPointer2);
+          response = responseString.c_str();          
           }
         else
           {
-          vtkWarningMacro ("PostMetadata: can't find a uri in the response.");
+          vtkErrorMacro ("PostMetadata: can't find a (second) uri in the response file " << returnURIFileName);
           }
-        free(returnURIBody);
         }
+      free(returnURIBody);
       }
     }
-  else { vtkWarningMacro("PostMetadata: posting failed, not trying to return the uri"); }
+  else
+    {
+    vtkErrorMacro("PostMetadata: posting failed, not trying to return the uri");
+    }
 
-   if (returnURIFile)
+  if (returnURIFile)
     {
     fclose(returnURIFile);
     }
-// try to return a uri as a string.
+  // return a uri as a string.
+  vtkWarningMacro("PostMetaData: returning response string '" << response << "'");
   return response;
-  
 }
 
 
