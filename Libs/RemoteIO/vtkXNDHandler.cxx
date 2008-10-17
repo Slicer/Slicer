@@ -1,6 +1,8 @@
 #include "itksys/Process.h"
 #include "itksys/SystemTools.hxx"
 #include "vtkXNDHandler.h"
+#include <iterator>
+#include <string>
 
 vtkStandardNewMacro ( vtkXNDHandler );
 vtkCxxRevisionMacro ( vtkXNDHandler, "$Revision: 1.0 $" );
@@ -189,18 +191,40 @@ void vtkXNDHandler::StageFileWrite(const char *source,
 
 
 //----------------------------------------------------------------------------
-const char *vtkXNDHandler::PostMetadata ( const char *serverPath, const char *metaDataFileName, const char *dataFileName )
+const char *vtkXNDHandler::PostMetadata ( const char *serverPath,
+                                          const char *metaDataFileName,
+                                          const char *dataFileName,
+                                          const char *temporaryResponseFileName)
 {
   const char *response = NULL;
   
   // serverPath will contain $srv/data, for instance http://localhost:8081/data
-  //  metaDataFileName is a filename of a file that has metadata in it.
+  // metaDataFileName is a filename of a file that has metadata in it.
   // dataFileName is the name of the file for which we are uploading metadata
+  // temporaryResponseFileName is the name of the file into which
+  // the server response to the POST is sent. This file is parsed for error or uri.
+  if ( serverPath == NULL )
+    {
+    vtkErrorMacro("PostMetadata: serverPath is null.");
+    return response;
+    }
   if (metaDataFileName == NULL)
     {
     vtkErrorMacro("PostMetadata: metaDataFileName is null.");
     return response;
     }
+  if (dataFileName == NULL)
+    {
+    vtkErrorMacro("PostMetadata: dataFileName is null.");
+    return response;
+    }
+  if (temporaryResponseFileName == NULL)
+    {
+    vtkErrorMacro("PostMetadata: temporaryResponseFileName is null.");
+    return response;
+    }
+
+
   
   const char *hostname = this->GetHostName();
   if ( hostname == NULL )
@@ -215,10 +239,13 @@ const char *vtkXNDHandler::PostMetadata ( const char *serverPath, const char *me
     vtkErrorMacro("PostMetadata: unable to open meta data file " << metaDataFileName);
     return response;
     }
+
+  
   // read all the stuff in the file into a buffer
   fseek(this->LocalFile, 0, SEEK_END);
   long lSize = ftell(this->LocalFile);
   rewind(this->LocalFile);
+
   // allocate memory
   char *post_data = NULL;
   post_data = (char*)malloc(sizeof(char)*lSize);
@@ -236,10 +263,10 @@ const char *vtkXNDHandler::PostMetadata ( const char *serverPath, const char *me
     }
   this->InitTransfer();
 
+
   std::string dataFileNameString = std::string(dataFileName);
   std::string header1 = "Content-Type: application/x-xnat-metadata+xml";
   std::string header2 = "Content-Disposition: x-xnat-metadata; filename=\"" + dataFileNameString + "\"";
-
   vtkDebugMacro("header1= '" << header1.c_str() << "', header2= '" << header2.c_str() << "'");
   
   curl_easy_setopt(this->CurlHandle, CURLOPT_HEADERFUNCTION, NULL);
@@ -271,7 +298,7 @@ const char *vtkXNDHandler::PostMetadata ( const char *serverPath, const char *me
   
   // then need to set up a local file for capturing the return uri from the
   // post
-  const char *returnURIFileName = "/tmp/Slicer3nicole/uriFile.txt";
+  const char *returnURIFileName = temporaryResponseFileName;
   FILE *returnURIFile = fopen(returnURIFileName, "w");
   if (returnURIFile == NULL)
     {
@@ -341,6 +368,8 @@ const char *vtkXNDHandler::PostMetadata ( const char *serverPath, const char *me
         if (result != lSize)
           {
           vtkErrorMacro("PostMetadata: error reading contents of the returned uri file " << returnURIFileName <<", read " << result << " instead of " << lSize);
+          fclose (returnURIFile);
+          return (response);
           }
         // get the last line of the file
         //char line[1024];
@@ -348,20 +377,55 @@ const char *vtkXNDHandler::PostMetadata ( const char *serverPath, const char *me
         // now parse it out, looking for a line that starts with Location:
         std::string returnURIString(returnURIBody);
         vtkWarningMacro("PostMetaData: returned URI string = " << returnURIString.c_str());
-        std::string::size_type loc = returnURIString.find("Location: ");
-        std::string::size_type content = returnURIString.find("Content-Length: ");
-        if (loc != std::string::npos)
+//        std::string::size_type loc = returnURIString.find("Location: ");
+//        std::string::size_type content = returnURIString.find("Content-Length: ");
+
+
+        //--- begin wjp-test get the last http, if present
+        //--- I think in a well-formed response, there are two versions of the uri.
+        //--- in the error response, I think there is one (at most) uris...
+        //--- if there are none in the error response, we'll have to refactor this to just
+        //--- get the last uri and use it.
+        std::string::size_type firstloc = returnURIString.find_first_of("http://");
+        std::string::size_type lastloc = returnURIString.find_last_of("http://");
+
+
+        if ( (firstloc != std::string::npos) &&
+             (lastloc != std::string::npos) &&
+             (firstloc != lastloc) )
           {
-          std::string::size_type endloc = content - 2;//returnURIString.find("\r\n", loc);
-          if (endloc != std::string::npos)
-            {
-            std::string::size_type len = endloc - loc + 10;
-            vtkWarningMacro("PostMetaData: found start of loc " << loc << " and end = " << endloc << ", len = " << len);
-            // now extract the substring
-            std::string responseString = returnURIString.substr(loc + 10, len);
-            response = responseString.c_str();
-            vtkWarningMacro("PostMetaData: returning response string " << response);
-            }
+          //--- begin wjp-test: get the string;
+          std::string responseString = returnURIString.substr(lastloc, std::string::npos);
+          response = responseString.c_str();
+
+//        if ( loc != std::string::npos)
+//          {
+//          std::string::iterator it = std::remove(responseString.begin(), responseString.end(), "\r");
+//          responseString.erase(it, responseString.end() );
+//          it = std::remove(responseString.begin(), responseString.end(), "\n");
+//          responseString.erase(it, responseString.end() );
+          //--- end wjp-test
+
+
+
+          
+          vtkWarningMacro("PostMetaData: returning response string " << response);
+
+//          std::string::size_type endloc = content - 2;//returnURIString.find("\r\n", loc);
+//          if (endloc != std::string::npos)
+//            {
+//            std::string::size_type len = endloc - loc + 10;
+//            vtkWarningMacro("PostMetaData: found start of loc " << loc << " and end = " << endloc << ", len = " << len);
+//            // now extract the substring
+//            std::string responseString = returnURIString.substr(loc + 10, len);
+//            response = responseString.c_str();
+//            vtkWarningMacro("PostMetaData: returning response string " << response);
+//            }
+
+          }
+        else
+          {
+          vtkWarningMacro ("PostMetadata: can't find a uri in the response.");
           }
         free(returnURIBody);
         }

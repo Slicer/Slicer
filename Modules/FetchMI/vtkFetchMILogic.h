@@ -164,6 +164,7 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   // it returns NULL;
   const char *GetHTTPResponseFileName ( );
   const char *GetXMLUploadFileName ( );
+  const char *GetTemporaryResponseFileName ( );
 
   // Description:
   // Convenience methods for adding to and clearing
@@ -192,6 +193,7 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   std::string XMLDirName;
   std::string HTTPResponseFileName;
   std::string XMLUploadFileName;
+  std::string TemporaryResponseFileName;
   std::string MRMLCacheFileName;
   std::string DownloadDirName;
   // Vector of strings populated by the GUI when
