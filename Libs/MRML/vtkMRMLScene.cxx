@@ -561,6 +561,10 @@ int vtkMRMLScene::Connect()
   this->ClearRedoStack ( );
   this->UniqueIDByClass.clear();
 
+  if ( this->GetUserTagTable() != NULL )
+    {
+    this->GetUserTagTable()->ClearTagTable();
+    }
   int res = this->Import();
   if (!res)
     {
@@ -741,8 +745,41 @@ int vtkMRMLScene::Commit(const char* url)
   
   //file << "<?xml version=\"1.0\" standalone='no'?>\n";
   //file << "<!DOCTYPE MRML SYSTEM \"mrml20.dtd\">\n";
-  file << "<MRML>\n";
-   
+
+  //--- BEGIN test of user tags
+  //file << "<MRML>\n";
+  file << "<MRML ";
+  
+  //---write any user tags.
+  std::stringstream ss;
+  if ( this->GetUserTagTable() != NULL )
+    {
+    ss.clear();
+    ss.str ( "" );
+    int numc = this->GetUserTagTable()->GetNumberOfTags();
+    const char *kwd, *val;
+    for (int i=0; i < numc; i++ )
+      {
+      kwd = this->GetUserTagTable()->GetTagAttribute(i);
+      val = this->GetUserTagTable()->GetTagValue (i);
+      if (kwd != NULL && val != NULL) 
+        {
+        ss << kwd << "=" << val;
+        if ( i < (numc-1) )
+          {
+          ss << " ";
+          }
+        }
+      }
+    if ( ss.str().c_str()!= NULL )
+      {
+      file << "userTags=\"" << ss.str().c_str() << "\"";
+      }
+    }
+
+  file << ">\n";
+  //--- END test of user tags
+  
   // Write each node
   int n;
   for (n=0; n < this->CurrentScene->GetNumberOfItems(); n++) 

@@ -13,7 +13,9 @@ Version:   $Revision: 1.8 $
 =========================================================================auto=*/
 #include "vtkObjectFactory.h"
 #include "vtkMRMLParser.h"
-
+#include <sstream>
+#include <string>
+#include <iostream>
 
 //------------------------------------------------------------------------------
 vtkMRMLParser* vtkMRMLParser::New()
@@ -34,6 +36,44 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
 {
   if (!strcmp(tagName, "MRML")) 
     {
+    //--- BEGIN test of user tags
+    //--- pull out any tags describing the scene and fill the scene's tagtable.
+    const char* attName;
+    const char* attValue;
+    while (*atts != NULL) 
+      {
+      attName = *(atts++);
+      attValue = *(atts++);      
+      if ( this->MRMLScene->GetUserTagTable() == NULL )
+        {
+        //--- null table, no tags are read.
+        return;
+        }
+      std::stringstream ss(attValue);
+      std::string kwd = "";
+      std::string val = "";
+      int i;
+      while (!ss.eof())
+        {
+        std::string tags;
+        ss >> tags;
+        //--- now pull apart individual tags
+        if ( tags.c_str() != NULL )
+          {
+          i = tags.find("=");
+          if ( i != std::string::npos)
+            {
+            kwd = tags.substr(0, i);
+            val = tags.substr(i+1, std::string::npos );
+            if ( kwd.c_str() != NULL && val.c_str() != NULL )
+              {
+              this->MRMLScene->GetUserTagTable()->AddOrUpdateTag ( kwd.c_str(), val.c_str(), 0 );
+              }
+            }
+          }        
+        }
+      }
+    //--- END test of user tags. 
     return;
     }
   const char* className = this->MRMLScene->GetClassNameByTag(tagName);
