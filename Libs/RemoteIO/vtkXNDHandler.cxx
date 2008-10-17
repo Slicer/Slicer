@@ -180,6 +180,7 @@ void vtkXNDHandler::StageFileWrite(const char *source,
     {
     const char *stringError = curl_easy_strerror(retval);
     vtkErrorMacro("StageFileWrite: error running curl: " << stringError);
+    vtkErrorMacro("\t\tsource = " << source << ", destination = " << destination);
     }
    
   this->CloseTransfer();
