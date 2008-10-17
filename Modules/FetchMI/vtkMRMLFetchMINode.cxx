@@ -129,6 +129,7 @@ void vtkMRMLFetchMINode::WriteXML(ostream& of, int nIndent)
 
 }
 
+
 //----------------------------------------------------------------------------
 void vtkMRMLFetchMINode::ReadXMLAttributes(const char** atts)
 {
@@ -178,7 +179,6 @@ void vtkMRMLFetchMINode::SetKnownServers ( )
   this->AddNewServer ( "https://loci.ucsd.edu/hid" );
   this->InvokeEvent (vtkMRMLFetchMINode::KnownServersModifiedEvent );
 }
-
 
 
 

@@ -739,6 +739,7 @@ void vtkFetchMIGUI::AddMRMLSceneRow()
     {
     //--- put a row in the TaggedDataList with selected, datatype, and url.
     this->TaggedDataList->AddNewItem ( "Scene description", "MRML");
+    this->TaggedDataList->SelectRow ( 0 );
     }
 }
 
@@ -1084,7 +1085,7 @@ void vtkFetchMIGUI::UpdateGUI ()
         }
       else
         {
-        this->ServerMenuButton->SetValue ( "<none>" );
+        this->ServerMenuButton->SetValue ( "none" );
         }
       }
     
@@ -1307,7 +1308,7 @@ void vtkFetchMIGUI::BuildGUI ( )
   this->ServerMenuButton = vtkKWMenuButton::New();
   this->ServerMenuButton->SetParent (serverFrame );
   this->ServerMenuButton->Create();
-  this->ServerMenuButton->SetValue ( "<none>" );
+  this->ServerMenuButton->SetValue ( "none" );
   this->QueryTagsButton = vtkKWPushButton::New();
   this->QueryTagsButton->SetParent ( serverFrame );
   this->QueryTagsButton->Create();

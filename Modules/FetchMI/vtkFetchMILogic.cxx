@@ -49,7 +49,6 @@ vtkFetchMILogic::vtkFetchMILogic()
   this->SceneSelected = 1;
   // used for parsing xml.
   this->NumberOfElements = 0;
-
   this->CurrentURI = NULL;
 
 }
@@ -150,16 +149,26 @@ void vtkFetchMILogic::SelectNode( const char *nodeID)
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::SelectScene()
 {
+  if ( this->FetchMINode == NULL )
+    {
+    vtkErrorMacro ( "vtkFetchMILogic: FetchMINode is NULL.");
+    return;
+    }
   this->SceneSelected = 1;
-  this->InvokeEvent (vtkMRMLFetchMINode::SaveSelectionEvent );
+
 }
 
 
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::DeselectScene()
 {
+  if ( this->FetchMINode == NULL )
+    {
+    vtkErrorMacro ( "vtkFetchMILogic: FetchMINode is NULL.");
+    return;
+    }
   this->SceneSelected = 0;
-  this->InvokeEvent (vtkMRMLFetchMINode::SaveSelectionEvent );
+
 }
 
 
@@ -307,7 +316,7 @@ void vtkFetchMILogic::QueryServerForResources ( )
         //--- if any of the key tags are missing.... report to user and abort query.
         if ( subjectIndex < 0 || experimentIndex < 0 || filetypeIndex < 0 )
           {
-          //error message
+          vtkErrorMacro ( "vtkFetchMILogic: Not all required tags are on data");
           return;
           }
 
@@ -404,14 +413,14 @@ void vtkFetchMILogic::QueryServerForResources ( )
               {
               if ( (strcmp(att.c_str(), "NULL")) &&
                    (strcmp(att.c_str(), "null")) &&
-                   (strcmp(att.c_str(), "<none>")) &&
                    (strcmp(att.c_str(), "none")) &&
+                   (strcmp(att.c_str(), "None")) &&
                    (strcmp(att.c_str(), "" )))
                 {
                 if ( (strcmp(val.c_str(), "NULL")) &&
                      (strcmp(val.c_str(), "null")) &&
-                     (strcmp(val.c_str(), "<none>")) &&
                      (strcmp(val.c_str(), "none")) &&
+                     (strcmp(val.c_str(), "None")) &&
                      (strcmp(val.c_str(), "" )))
                   {
                   if ( firsttag )
@@ -697,7 +706,7 @@ void vtkFetchMILogic::GetXNDXMLEntry( vtkXMLDataElement *element )
         }
       else
         {
-        t->AddOrUpdateTag ( value, "<none>", 0 );
+        t->AddOrUpdateTag ( value, "none", 0 );
         }
       }
     }
@@ -1244,7 +1253,7 @@ int vtkFetchMILogic::TestForRequiredTags ( )
   if ( this->FetchMINode == NULL )
     {
     vtkErrorMacro ("vtkFetchMILogic: Null FetchMINode" );
-    return -1;
+    return 0;
     }
 
   const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
@@ -1346,7 +1355,7 @@ void vtkFetchMILogic::RequestResourceUpload ( )
       else
       {
       this->FetchMINode->SetErrorMessage ("Some or all items selected are not described by all tags required by XNAT Desktop and Slicer. Please include values for: Project, Experiment, Subject, Scan, Modality, and SlicerDataType.");
-      this->InvokeEvent(vtkMRMLFetchMINode::RemoteIOErrorEvent );
+      this->FetchMINode->InvokeEvent(vtkMRMLFetchMINode::RemoteIOErrorEvent );
       vtkWarningMacro("Some or all items selected are not described by all tags required by XNAT Desktop and Slicer.");
       }
     }
@@ -2115,7 +2124,7 @@ void vtkFetchMILogic::RequestResourceUploadToXND (  )
             //--- tell user at end.
             //--- Can do this using:
             //--- this->FetchMINode->SetErrorMessage( "the following datasets didn't properly upload: nodeIDA, nodeiDB...");
-            //--- this->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
+            //--- this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
             //--- that will trigger the GUI to post the message.
             //--- Can do this here, or at the end of the method...
             //---

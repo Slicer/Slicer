@@ -11,6 +11,7 @@
 #include "vtkKWPushButton.h"
 #include "vtkKWIcon.h"
 #include "vtkKWCheckButton.h"
+#include "vtkKWComboBox.h"
 #include "vtkFetchMIIcons.h"
 
 #include <vtksys/SystemTools.hxx>
@@ -271,18 +272,30 @@ void vtkFetchMIQueryTermWidget::CreateWidget ( )
   this->GetMultiColumnList()->GetWidget()->SetColumnFormatCommandToEmptyOutput(0);
   this->GetMultiColumnList()->GetWidget()->SetColumnEditWindowToCheckButton ( 0);
 
-  this->GetMultiColumnList()->GetWidget()->AddColumn ( "attribute               " );
+  this->GetMultiColumnList()->GetWidget()->AddColumn ( "attribute            " );
   this->GetMultiColumnList()->GetWidget()->ColumnEditableOn ( 1 );
   this->GetMultiColumnList()->GetWidget()->SetColumnWidth ( 1, 0 );
   this->GetMultiColumnList()->GetWidget()->SetColumnSortModeToAscii ( 1 );
   this->GetMultiColumnList()->GetWidget()->SetColumnEditWindowToEntry ( 1 );
 
-  this->GetMultiColumnList()->GetWidget()->AddColumn ( "value                    " );
+  this->GetMultiColumnList()->GetWidget()->AddColumn ( "value                 " );
   this->GetMultiColumnList()->GetWidget()->ColumnEditableOn ( 2 );
   this->GetMultiColumnList()->GetWidget()->SetColumnWidth ( 2, 0 );
   this->GetMultiColumnList()->GetWidget()->SetColumnSortModeToAscii ( 2 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnEditWindowToEntry ( 1 );
-
+  this->GetMultiColumnList()->GetWidget()->SetColumnEditWindowToEntry ( 2 );
+/*  
+  this->GetMultiColumnList()->GetWidget()->AddColumn ( "help" );
+  this->GetMultiColumnList()->GetWidget()->ColumnEditableOff ( 3 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnWidth ( 3, 0 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnSortModeToAscii (3 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnEditWindowToEntry ( 3 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnAlignmentToLeft (3 );
+  this->GetMultiColumnList()->GetWidget()->ColumnResizableOff ( 3 );
+  this->GetMultiColumnList()->GetWidget()->ColumnStretchableOff ( 3 );
+  this->GetMultiColumnList()->GetWidget()->SetSelectionCommand (this, "ShowHelpCallback");
+  this->GetMultiColumnList()->GetWidget()->SetColumnFormatCommandToEmptyOutput(3);
+*/
+  
   // some problems with editing, so add a call back
   this->GetMultiColumnList()->GetWidget()->SetRightClickCommand(this, "RightClickListCallback");
 
@@ -362,6 +375,8 @@ void vtkFetchMIQueryTermWidget::CreateWidget ( )
   bFrame->Delete();
 }
 
+
+
 //----------------------------------------------------------------------------
 void vtkFetchMIQueryTermWidget::RightClickListCallback(int row, int col, int x, int y)
 {
@@ -389,11 +404,11 @@ void vtkFetchMIQueryTermWidget::AddNewItem ( const char *keyword, const char *va
     }
   if ( !strcmp (keyword, "") )
     {
-    keyword = "<new>";
+    keyword = "new";
     }
   if ( !strcmp (value, "") )
     {
-    value = "<none>";
+    value = "none";
     }
 
   if ( unique )
@@ -404,8 +419,9 @@ void vtkFetchMIQueryTermWidget::AddNewItem ( const char *keyword, const char *va
     this->GetMultiColumnList()->GetWidget()->SetCellWindowCommandToCheckButton(i, 0);
     this->GetMultiColumnList()->GetWidget()->SetCellText (i, 1, keyword );
     this->GetMultiColumnList()->GetWidget()->SetCellText (i, 2, value );
-    this->GetMultiColumnList()->GetWidget()->SetColumnEditWindowToEntry (1);
-    this->GetMultiColumnList()->GetWidget()->SetColumnEditWindowToEntry (2);
+    this->GetMultiColumnList()->GetWidget()->SetCellEditWindowToEntry (i, 1);
+    this->GetMultiColumnList()->GetWidget()->SetCellEditWindowToEntry (i, 2);
+
     this->GetMultiColumnList()->GetWidget()->SetCellBackgroundColor (i, 0, 1.0, 1.0, 1.0);
     this->GetMultiColumnList()->GetWidget()->SetRowSelectionBackgroundColor ( i,
                                                                               this->GetMultiColumnList()->GetWidget()->GetRowBackgroundColor(i) );
