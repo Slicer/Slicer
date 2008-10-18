@@ -291,6 +291,35 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
           }
         }
       //--- request upload
+      this->Logic->CheckStorageNodeFilenames();
+      this->Logic->SetCacheFilenamesAndURIHandler();
+
+      //--- for a test, we'll break Logic->RequestResourceUpload()
+      //--- into chunks, and the whole block is below. If it works,
+      //--- we can work on modularizing it.
+      //--- We're letting gui get at tcl to do utf-8 char encoding
+      //--- via kww Script method.
+      //--- encoding convertfrom data (from other to utf-8)
+      //--- encoding convertto data (from utf-8 to other)
+      
+      //--- for each storable node:
+      //--- generate metadata (in logic)
+      //--- convert it to utf-8 (in gui)
+      //--- post metadata (in logic)
+      //--- parse metadata (in gui)
+      //--- and set URIs (in gui)
+      //--- post data (in logic pass3)
+      //--- generate scene metatdata (in logic)
+      //--- convert it to utf-8 (in gui)
+      //--- post metadata (in logic)
+      //--- parse metadata (in gui)
+      //--- set URI (in logic)
+      //--- set URI (in gui)
+      //--- post scene (in logic)
+      
+      
+      //--- eventually comment this out... and replace
+      //--- with above for test
       this->Logic->RequestResourceUpload ( );
 
       //--- RESET SELECTION STATE
@@ -1388,6 +1417,7 @@ void vtkFetchMIGUI::BuildGUI ( )
   this->ResourceList->SetParent ( resourceFrame->GetFrame() );
   this->ResourceList->Create();
   this->ResourceList->SetLogic ( this->Logic );
+  this->SetMRMLScene ( this->MRMLScene );
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->ResourceList->GetWidgetName() );
 
   this->TaggedDataList = vtkFetchMIResourceUploadWidget::New();
