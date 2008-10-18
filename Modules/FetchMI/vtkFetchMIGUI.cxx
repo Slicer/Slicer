@@ -291,8 +291,8 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
           }
         }
       //--- request upload
-      this->Logic->CheckStorageNodeFilenames();
-      this->Logic->SetCacheFilenamesAndURIHandler();
+      // this->Logic->CheckStorageNodeFilenames();
+      //this->Logic->SetCacheFilenamesAndURIHandler();
 
       //--- for a test, we'll break Logic->RequestResourceUpload()
       //--- into chunks, and the whole block is below. If it works,
