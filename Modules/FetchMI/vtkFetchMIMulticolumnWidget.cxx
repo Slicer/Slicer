@@ -83,7 +83,7 @@ void vtkFetchMIMulticolumnWidget::CreateWidget ( )
   this->MultiColumnList->SetParent ( this->ContainerFrame );
   this->MultiColumnList->Create ( );
   this->MultiColumnList->GetWidget()->SetWidth(0);
-  this->MultiColumnList->GetWidget()->SetHeight(3);
+  this->MultiColumnList->GetWidget()->SetHeight(5);
   this->MultiColumnList->GetWidget()->SetSelectionTypeToRow ( );
   this->MultiColumnList->GetWidget()->SetSelectionModeToMultiple ( );
   this->MultiColumnList->GetWidget()->MovableRowsOff ( );
