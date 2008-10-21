@@ -106,8 +106,8 @@ def __repr(self):
 
 def __del(self):
 #   TODO: need to call superclass' __del__?
-# TODO: I'm not convinced this gets called... (SP)
     if self.OwnWrapper:
+        slicer.removeInstance(self.SlicerWrapper)
         self.SlicerWrapper.Delete()
 
 def __getTclName(self):
@@ -264,11 +264,16 @@ class Slicer(object):
         return self.callTk(*string.split(inString))
 
     def addInstance(self,instance):
-        self.instances.append(instance)
+        self.instances.append(instance.obj)
+
+    def removeInstance(self,instance):
+        self.instances.remove(instance.obj)
 
     # deleteInstances should be called by slicer before Py_Finalize() to unreference
     # all the instances created here
     def deleteInstances(self):
+        if len(self.instances) == 0:
+            print "Slicer.py: No hanging instances to delete."
         for i in self.instances:
             tk.tk.eval("%s Delete" % i)
 
