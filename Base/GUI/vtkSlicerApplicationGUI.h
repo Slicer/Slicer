@@ -56,6 +56,7 @@ class vtkSlicerMRMLSaveDataWidget;
 class vtkSlicerFiducialListWidget;
 class vtkSlicerSlicesGUI;
 class vtkSlicerSlicesControlGUI;
+class vtkSlicerModulesWizardDialog;
 
 // Description:
 // This class implements Slicer's main Application GUI.
@@ -104,10 +105,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // The Fiducial List Widget
     vtkGetObjectMacro (FiducialListWidget, vtkSlicerFiducialListWidget);
 
-        // Description:
-        // Pointers to the SlicesGUI used by the ApplicationGUI.
-        vtkGetObjectMacro (SlicesGUI, vtkSlicerSlicesGUI);
-        virtual void SetSlicesGUI(vtkSlicerSlicesGUI*);
+    // Description:
+    // Pointers to the SlicesGUI used by the ApplicationGUI.
+    vtkGetObjectMacro (SlicesGUI, vtkSlicerSlicesGUI);
+    virtual void SetSlicesGUI(vtkSlicerSlicesGUI*);
 
     // Description:
     // Get the frames that populate the Slicer GUI
@@ -245,6 +246,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void PostToVisualBlog ();
 
     // Description:
+    // Method to display the Loadable Modules wizard
+    virtual void ShowModulesWizard();
+
+    // Description:
     // Display Slicer's main window
     virtual void DisplayMainSlicerWindow ( );
 
@@ -302,7 +307,6 @@ protected:
     vtkSlicerToolbarGUI *ApplicationToolbar;
     vtkSlicerViewControlGUI *ViewControlGUI;
     vtkSlicerSlicesControlGUI *SlicesControlGUI;
-//    vtkSlicerModuleChooseGUI *ModuleChooseGUI;
     vtkSlicerLogoDisplayGUI *LogoDisplayGUI;
     
     // Description:
@@ -314,9 +318,9 @@ protected:
     // Fiducial List Widget
     vtkSlicerFiducialListWidget *FiducialListWidget;
     
-  // Description:
-  // Contains the state of the ApplicationGUI's layout
-  vtkMRMLLayoutNode *GUILayoutNode;
+    // Description:
+    // Contains the state of the ApplicationGUI's layout
+    vtkMRMLLayoutNode *GUILayoutNode;
 
     // Description:
     // use STL::Map to hold all SliceViewers where key is the layoutName
@@ -333,6 +337,11 @@ protected:
     int ViewerPageTag;
 
     vtkSlicerMRMLSaveDataWidget *SaveDataWidget;
+
+    // Description:
+    // Wizard-based dialog for selecting and downoading Loadable Modules
+    vtkSlicerModulesWizardDialog *ModulesWizardDialog;
+
     int ProcessingMRMLEvent;
     bool SceneClosing;
     bool Built;

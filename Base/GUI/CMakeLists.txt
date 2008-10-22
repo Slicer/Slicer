@@ -20,6 +20,8 @@ set(include_dirs
   ${FreeSurfer_SOURCE_DIR}
   ${FreeSurfer_BINARY_DIR}
   ${OPENTRACKER_INC_DIR}
+  ${RemoteIO_SOURCE_DIR}
+  ${RemoteIO_BINARY_DIR}
   )
 
 include_directories(${include_dirs})
@@ -125,6 +127,10 @@ set(SlicerBaseGUI_SRCS
   vtkSlicerXNATPermissionPrompterWidget.cxx
   vtkSlicerROIGUI.cxx
   vtkKWCheckBoxSelectionDialog.cxx
+  vtkSlicerModulesWizardDialog.cxx
+  vtkSlicerRepositoryStep.cxx
+  vtkSlicerModulesStep.cxx
+  vtkSlicerProgressStep.cxx
   # VTK Replacement classes
   vtkSlicerInteractorStyle.cxx
   vtkSlicerViewerInteractorStyle.cxx

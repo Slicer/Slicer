@@ -65,6 +65,7 @@ a
 #include "vtkSlicerViewerInteractorStyle.h"
 #include "vtkSlicerSlicesGUI.h"
 #include "vtkSlicerSlicesControlGUI.h"
+#include "vtkSlicerModulesWizardDialog.h"
 
 #include "vtkSlicerFiducialListWidget.h"
 #include "vtkMRMLScene.h"
@@ -105,23 +106,22 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
   this->MRMLScene = NULL;
   this->Built = false;
   
-    //---  
-    // widgets used in the Slice module
-    //---
+  //---  
+  // widgets used in the Slice module
+  //---
   
-    //--- slicer main window
-    this->MainSlicerWindow = vtkSlicerWindow::New ( );
+  //--- slicer main window
+  this->MainSlicerWindow = vtkSlicerWindow::New ( );
 
-    // Frames that comprise the Main Slicer GUI
+  // Frames that comprise the Main Slicer GUI
 
-    this->TopFrame = vtkKWFrame::New();
-    this->LogoFrame = vtkKWFrame::New();
-    this->SlicesControlFrame = vtkSlicerModuleCollapsibleFrame::New();
-    this->ViewControlFrame = vtkSlicerModuleCollapsibleFrame::New();
-    this->DropShadowFrame = vtkKWFrame::New();
-    this->GridFrame1 = vtkKWFrame::New ( );
-    this->GridFrame2 = vtkKWFrame::New ( );
-
+  this->TopFrame = vtkKWFrame::New();
+  this->LogoFrame = vtkKWFrame::New();
+  this->SlicesControlFrame = vtkSlicerModuleCollapsibleFrame::New();
+  this->ViewControlFrame = vtkSlicerModuleCollapsibleFrame::New();
+  this->DropShadowFrame = vtkKWFrame::New();
+  this->GridFrame1 = vtkKWFrame::New ( );
+  this->GridFrame2 = vtkKWFrame::New ( );
   
   // initialize in case any are not defined.
   this->ApplicationToolbar = NULL;
@@ -144,29 +144,29 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     this->LogoDisplayGUI = vtkSlicerLogoDisplayGUI::New ( );
 #endif
     
-    //--- Main viewer
-    this->ViewerWidget = NULL;
-    this->FiducialListWidget = NULL;
+  //--- Main viewer
+  this->ViewerWidget = NULL;
+  this->FiducialListWidget = NULL;
 
-    // use STL::MAP to hold all main slice viewers
-    this->SlicesGUI = NULL;
+  // use STL::MAP to hold all main slice viewers
+  this->SlicesGUI = NULL;
 
-    this->GUILayoutNode = NULL;
+  this->GUILayoutNode = NULL;
 
-    //--- Save and load scene dialogs, widgets
-    this->LoadSceneDialog = vtkKWLoadSaveDialog::New();
+  //--- Save and load scene dialogs, widgets
+  this->LoadSceneDialog = vtkKWLoadSaveDialog::New();
 
-    this->SaveDataWidget = vtkSlicerMRMLSaveDataWidget::New();
+  this->SaveDataWidget = vtkSlicerMRMLSaveDataWidget::New();
 
-    //--- unique tag used to mark all view notebook pages
-    //--- so that they can be identified and deleted when 
-    //--- viewer is reformatted.
-    this->ViewerPageTag = 1999;
-    this->ProcessingMRMLEvent = 0;
-    this->SceneClosing = false;
+  this->ModulesWizardDialog = vtkSlicerModulesWizardDialog::New();
+
+  //--- unique tag used to mark all view notebook pages
+  //--- so that they can be identified and deleted when 
+  //--- viewer is reformatted.
+  this->ViewerPageTag = 1999;
+  this->ProcessingMRMLEvent = 0;
+  this->SceneClosing = false;
 }
-
-
 
 //---------------------------------------------------------------------------
 vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
@@ -177,6 +177,12 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
       this->SaveDataWidget->SetParent(NULL);
       this->SaveDataWidget->Delete();
       this->SaveDataWidget=NULL;
+      }
+
+    if (this->ModulesWizardDialog)
+      {
+      this->ModulesWizardDialog->Delete();
+      this->ModulesWizardDialog = NULL;
       }
 
     if ( this->GUILayoutNode )
@@ -698,6 +704,21 @@ void vtkSlicerApplicationGUI::ProcessSaveSceneAsCommand()
   this->SaveDataWidget->RemoveObservers ( vtkSlicerMRMLSaveDataWidget::DataSavedEvent,  (vtkCommand *)this->GUICallbackCommand );
   return;
 }    
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::ShowModulesWizard()
+{
+  if (!this->ModulesWizardDialog->IsCreated())
+    {
+      this->ModulesWizardDialog->SetApplication( this->GetApplication() );
+      this->ModulesWizardDialog->Create();
+    }
+
+  this->ModulesWizardDialog->Invoke();  
+
+  return;
+}    
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::AddGUIObservers ( )
@@ -1225,7 +1246,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
 
   i = this->GetMainSlicerWindow()->GetViewMenu()->InsertCommand (
                                                                  this->GetMainSlicerWindow()->GetViewMenuInsertPosition(),
-                                                                 "Module Search", NULL, "::ModuleSearch::ShowDialog");
+                                                                 "Module Search", this, "ShowModulesWizard");
   this->GetMainSlicerWindow()->GetViewMenu()->SetItemAccelerator ( i, "slash");
   this->GetMainSlicerWindow()->GetViewMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
 
