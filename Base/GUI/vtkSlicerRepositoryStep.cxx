@@ -112,7 +112,7 @@ int vtkSlicerRepositoryStep::IsRepositoryValid()
     {
 
 
-      std::string url("http://svn.slicer.org/Slicer3/Modules/");
+      std::string url("http://svn.slicer.org/Slicer3/trunk/Modules/"); 
 
       // :NOTE: 20081021 tgl: Is there a better way?
 
