@@ -32,13 +32,13 @@ vtkKWCheckBoxSelectionDialog::vtkKWCheckBoxSelectionDialog ( )
   this->MultiColumnList = NULL;
 
   this->Title=NULL;
-  this->EntryColomnName=NULL;
-  this->BoxColomnName=NULL;
+  this->EntryColumnName=NULL;
+  this->BoxColumnName=NULL;
 
 
   this->SetTitle("");
-  this->SetEntryColomnName("");
-  this->SetBoxColomnName("");
+  this->SetEntryColumnName("");
+  this->SetBoxColumnName("");
 
   this->SelectedLabels = vtkStringArray::New();
 }
@@ -70,8 +70,8 @@ vtkKWCheckBoxSelectionDialog::~vtkKWCheckBoxSelectionDialog ( )
     this->Dialog->Delete();
     }
   this->SetTitle(NULL);
-  this->SetEntryColomnName(NULL);
-  this->SetBoxColomnName(NULL);
+  this->SetEntryColumnName(NULL);
+  this->SetBoxColumnName(NULL);
 
   this->SelectedLabels->Delete();
 }
@@ -217,11 +217,11 @@ void vtkKWCheckBoxSelectionDialog::CreateWidget ( )
     
   // set up the columns of data for each point
   // name, x, y, z, orientation w, x, y, z, selected
-  this->MultiColumnList->GetWidget()->AddColumn(this->GetEntryColomnName());
+  this->MultiColumnList->GetWidget()->AddColumn(this->GetEntryColumnName());
   this->MultiColumnList->GetWidget()->ColumnEditableOff(0);
   this->MultiColumnList->GetWidget()->SetColumnWidth(0, 40);
 
-  this->MultiColumnList->GetWidget()->AddColumn(this->GetBoxColomnName());
+  this->MultiColumnList->GetWidget()->AddColumn(this->GetBoxColumnName());
   this->MultiColumnList->GetWidget()->SetColumnWidth(1, 6);
   this->MultiColumnList->GetWidget()->SetColumnEditWindowToCheckButton(1);
   this->MultiColumnList->GetWidget()->SetColumnFormatCommandToEmptyOutput(1);

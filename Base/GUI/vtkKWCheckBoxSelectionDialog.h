@@ -77,13 +77,13 @@ public:
 
   // Description:
   // First colomn name
-  vtkGetStringMacro(EntryColomnName);
-  vtkSetStringMacro(EntryColomnName);
+  vtkGetStringMacro(EntryColumnName);
+  vtkSetStringMacro(EntryColumnName);
 
   // Description:
   // First colomn name
-  vtkGetStringMacro(BoxColomnName);
-  vtkSetStringMacro(BoxColomnName);
+  vtkGetStringMacro(BoxColumnName);
+  vtkSetStringMacro(BoxColumnName);
 
   // Description:
   // Cancel action
@@ -114,8 +114,8 @@ private:
   vtkStringArray *SelectedLabels;
 
   char *Title;
-  char *EntryColomnName;
-  char *BoxColomnName;
+  char *EntryColumnName;
+  char *BoxColumnName;
   int Cancel;
 
   vtkKWDialog *Dialog;

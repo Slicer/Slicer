@@ -587,8 +587,8 @@ void vtkSlicerApplicationSettingsInterface::Create()
     this->LoadModulesSelector = vtkKWCheckBoxSelectionDialog::New();
     }
   this->LoadModulesSelector->SetParent(frame);
-  this->LoadModulesSelector->SetEntryColomnName("Module");
-  this->LoadModulesSelector->SetBoxColomnName("Load");
+  this->LoadModulesSelector->SetEntryColumnName("Module");
+  this->LoadModulesSelector->SetBoxColumnName("Load");
   this->LoadModulesSelector->SetTitle("Select modules to load");
   //this->LoadModulesSelector->Create();
 
