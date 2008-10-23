@@ -167,6 +167,7 @@ target_link_libraries(${lib_name}
   ModuleDescriptionParser
   SlicerBaseLogic
   FreeSurfer
+  RemoteIO
   )
 
 slicer3_get_persistent_property(Slicer3_Base_LIBRARIES tmp)
