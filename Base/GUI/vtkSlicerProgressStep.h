@@ -1,6 +1,7 @@
 #ifndef __vtkSlicerProgressStep_h
 #define __vtkSlicerProgressStep_h
 
+#include <string>
 #include "vtkKWWizardStep.h"
 
 class vtkSlicerModulesWizardDialog;
