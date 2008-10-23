@@ -402,6 +402,7 @@ void vtkSlicerMRMLTreeWidget::AddMRMLObservers ( )
     this->MRMLScene->AddObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand);
     this->MRMLScene->AddObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
     this->MRMLScene->AddObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    this->MRMLScene->AddObserver(vtkMRMLScene::SceneEditedEvent, (vtkCommand *)this->MRMLCallbackCommand);
     }
   else
     {
@@ -420,6 +421,7 @@ void vtkSlicerMRMLTreeWidget::RemoveMRMLObservers ()
   this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand);
   this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
   this->MRMLScene->RemoveObservers(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
+  this->MRMLScene->RemoveObservers(vtkMRMLScene::SceneEditedEvent, (vtkCommand *)this->MRMLCallbackCommand);
 }
 
 //---------------------------------------------------------------------------
@@ -431,6 +433,10 @@ void vtkSlicerMRMLTreeWidget::ProcessMRMLEvents ( vtkObject *caller,
   vtkMRMLTransformableNode *tnode = vtkMRMLTransformableNode::SafeDownCast(node);
   if (this->MRMLScene && (event == vtkMRMLScene::SceneCloseEvent || 
                          vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene && tnode)) 
+    {
+    this->UpdateTreeFromMRML();
+    }
+  if ( this->MRMLScene && (event == vtkMRMLScene::SceneEditedEvent) )
     {
     this->UpdateTreeFromMRML();
     }

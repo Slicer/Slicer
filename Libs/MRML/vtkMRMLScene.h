@@ -316,6 +316,7 @@ public:
       SceneCloseEvent = 66003,
       SceneClosingEvent = 66004,
       SceneLoadingErrorEvent = 66005,
+      SceneEditedEvent = 66006,
     };
 //ETX
 
@@ -358,6 +359,11 @@ public:
     {
     this->SceneModifiedTime ++;
     };
+
+  void Edited()
+    {
+    this->InvokeEvent( vtkMRMLScene::SceneEditedEvent );
+    }
 
 
   vtkGetObjectMacro ( CacheManager, vtkCacheManager );
