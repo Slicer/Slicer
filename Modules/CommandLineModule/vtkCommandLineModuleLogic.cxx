@@ -1609,6 +1609,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
   if (node->GetStatus() != vtkMRMLCommandLineModuleNode::Cancelled &&
       node->GetStatus() != vtkMRMLCommandLineModuleNode::CompletedWithErrors)
     {
+    // reload nodes
     for (id2fn = nodesToReload.begin(); id2fn != nodesToReload.end(); ++id2fn)
       {
       // Is this node one that was put in the miniscene? Nodes in the
@@ -1637,6 +1638,59 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         // that needs to be removed.  It wouldn't make sense for two
         // outputs of a module to produce the same file to be reloaded.
         filesToDelete.erase( (*id2fn).second );
+        }
+      }
+
+    // rewire the mrml scene as directed 
+    for (pgit = pgbeginit; pgit != pgendit; ++pgit)
+      {
+      // iterate over each parameter in this group
+      std::vector<ModuleParameter>::const_iterator pbeginit
+        = (*pgit).GetParameters().begin();
+      std::vector<ModuleParameter>::const_iterator pendit
+        = (*pgit).GetParameters().end();
+      std::vector<ModuleParameter>::const_iterator pit;
+
+      for (pit = pbeginit; pit != pendit; ++pit)
+        {
+        if ((*pit).GetTag() == "transform"
+            && (*pit).GetChannel() == "output"
+            && (*pit).GetReference().size() > 0)
+          {
+          std::string reference;
+          if (node->GetModuleDescription().HasParameter((*pit).GetReference()))
+            {
+            reference
+              = node->GetModuleDescription()
+                           .GetParameterDefaultValue((*pit).GetReference());
+            if (reference.size() > 0)
+              {
+              vtkMRMLTransformableNode *t
+                = vtkMRMLTransformableNode::SafeDownCast(this->MRMLScene
+                           ->GetNodeByID(reference.c_str()));
+              if (t)
+                {
+                vtkSmartPointer<vtkStringArray> reqSTNID = vtkStringArray::New();
+                vtkStdString areq;
+                areq = "[$::slicer3::MRMLScene GetNodeByID " + reference + "] "
+                  + "SetAndObserveTransformNodeID "
+                  + (*pit).GetDefault() + " ; "
+                  + "$::slicer3::MRMLScene Edited";
+                reqSTNID->InsertNextValue( areq );
+                this->GetApplicationLogic()->RequestModified( reqSTNID );
+                }
+              else
+                {
+                vtkWarningMacro( << "Cannot find referenced node " << (*pit).GetDefault());
+                }
+              }
+            }
+          else
+            {
+            vtkWarningMacro( << "Referenced parameter unknown: " << (*pit).GetReference() );
+            }
+        
+          }
         }
       }
     }
@@ -1701,8 +1755,6 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
 
   // node was registered when the task was scheduled so unregister now
   node->UnRegister(this);
-  miniscene->Delete();
-
 }
 
 
