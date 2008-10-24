@@ -175,7 +175,9 @@ void vtkXNDHandler::StageFileWrite(const char *source,
   long lSize = ftell(this->LocalFile);
   rewind(this->LocalFile);
 
+
   unsigned char *post_data = NULL;
+/*
   post_data = (unsigned char*)malloc(sizeof(unsigned char)*lSize);
   // read into buffer and close
 
@@ -191,21 +193,31 @@ void vtkXNDHandler::StageFileWrite(const char *source,
       vtkErrorMacro("StageFileWrite: error reading contents of the sourcefile" << source <<", read " << result << " instead of " << lSize);
       }    
     }
-
+*/
   this->InitTransfer( );
-  //-- set content type and use chunked transfer encoding.
-  std::string header1 = "Content-Type: application/octet-stream";
-  struct curl_slist *cl = NULL;
-  cl = curl_slist_append(cl, header1.c_str());
-  cl = curl_slist_append(cl, "Transfer-Encoding: chunked");
+//-- set content type and use chunked transfer encoding.
+//  std::string header1 = "Content-Type: application/octet-stream";
+//  struct curl_slist *cl = NULL;
+//  cl = curl_slist_append(cl, header1.c_str());
+//  cl = curl_slist_append(cl, "Transfer-Encoding: chunked");
+//  curl_easy_setopt(this->CurlHandle, CURLOPT_POST, 1);
 
-  curl_easy_setopt(this->CurlHandle, CURLOPT_POST, 1);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_PUT, 1);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_URL, destination);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_FOLLOWLOCATION, true);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_READFUNCTION, xnd_read_callback);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_READDATA, this->LocalFile);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_INFILESIZE, lSize);
+  CURLcode retval = curl_easy_perform(this->CurlHandle);
+  
+/*
+  curl_easy_setopt(this->CurlHandle, CURLOPT_PUT, 1);
   curl_easy_setopt(this->CurlHandle, CURLOPT_POSTFIELDSIZE, lSize);
   curl_easy_setopt(this->CurlHandle, CURLOPT_URL, destination);
   curl_easy_setopt(this->CurlHandle, CURLOPT_FOLLOWLOCATION, true);
   curl_easy_setopt(this->CurlHandle, CURLOPT_POSTFIELDS, post_data);
   CURLcode retval = curl_easy_perform(this->CurlHandle);
-
+*/
    if (retval == CURLE_OK)
     {
     vtkDebugMacro("StageFileWrite: successful return from curl");
