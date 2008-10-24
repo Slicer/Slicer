@@ -14,6 +14,7 @@ class vtkSlicerNodeSelectorWidget;
 class vtkFetchMIQueryTermWidget;
 class vtkFetchMIFlatResourceWidget;
 class vtkFetchMIResourceUploadWidget;
+class vtkXNDHandler;
 
 class vtkKWFrame;
 class vtkKWFrameWithLabel;
@@ -39,6 +40,8 @@ class VTK_FETCHMI_EXPORT vtkFetchMIGUI : public vtkSlicerModuleGUI
   this->SetLogic(reinterpret_cast<vtkFetchMILogic*> (logic)); 
   }
 
+  vtkGetStringMacro (ReservedURI);
+  vtkSetStringMacro (ReservedURI);
   vtkGetStringMacro (DataDirectoryName);
   vtkSetStringMacro (DataDirectoryName);
   
@@ -63,7 +66,7 @@ class VTK_FETCHMI_EXPORT vtkFetchMIGUI : public vtkSlicerModuleGUI
   // Create widgets
   virtual void BuildGUI ( );
   virtual void TearDownGUI ( );
-
+  void LoadTclPackage ( );
   // Description:
   // Add obsereves to GUI widgets
   virtual void AddGUIObservers ( );
@@ -113,6 +116,11 @@ protected:
   void AddVolumeNodes();
   void AddModelNodes();
   void AddUnstructuredGridNodes();
+  void RequestUpload();
+
+  int WriteMetadataForUpload_XND (const char *ID);
+  void WriteDocumentDeclaration_XND ( );
+  const char* ParseMetadataPostResponse ( );
 
   // Description:
   // Apply selected tags to selected data.
@@ -123,7 +131,7 @@ protected:
   // Updates parameters values in MRML node based on GUI widgets 
   void UpdateMRML();
 
-  
+
   vtkFetchMILogic *Logic;
   vtkMRMLFetchMINode* FetchMINode;
   vtkFetchMIQueryTermWidget *QueryList;
@@ -134,7 +142,8 @@ protected:
   vtkKWEntry *AddServerEntry;
   vtkKWPushButton *QueryTagsButton;
   vtkFetchMIIcons *FetchMIIcons;
-
+  
+  char *ReservedURI;
   char *DataDirectoryName;
   int UpdatingGUI;
   int UpdatingMRML;

@@ -139,11 +139,16 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   // For all resources, it generates metadata and uplaods it,
   // then it uploads data, and finally uploads scene.
   int TestForRequiredTags ( );
-  void RequestResourceUpload ();
+
+  int CheckStorageNodeFileNames();
+  void SetCacheFileNamesAndXNDHandler(vtkXNDHandler *handler);
+  
   void RequestResourceUploadToXND ();
   void RequestResourceUploadToHID ();
-
   const char* PostMetadata( vtkXNDHandler *handler, const char *filename );
+
+  void PostStorableNodesToXND();
+  int PostMetadataToXND( vtkXNDHandler *handler, const char *dataFilename );
   const char *ParsePostMetadataResponse(const char * response);
   void GetNumberOfXMLElements(vtkXMLDataElement *element);
   void GetXMLElement(vtkXMLDataElement *element );
@@ -165,6 +170,8 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   const char *GetHTTPResponseFileName ( );
   const char *GetXMLUploadFileName ( );
   const char *GetTemporaryResponseFileName ( );
+  const char *GetXMLHeaderFileName ( );
+  const char *GetXMLDocumentDeclarationFileName ( );
 
   // Description:
   // Convenience methods for adding to and clearing
@@ -196,6 +203,9 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   std::string TemporaryResponseFileName;
   std::string MRMLCacheFileName;
   std::string DownloadDirName;
+  std::string HeaderFileName;
+  std::string DocumentDeclarationFileName;
+  
   // Vector of strings populated by the GUI when
   // the upload button is selected. 
   std::vector<std::string> SelectedStorableNodeIDs;

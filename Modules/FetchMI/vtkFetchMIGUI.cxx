@@ -21,6 +21,7 @@
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 
+#include "vtkXNDHandler.h"
 #include "vtkXNDTagTable.h"
 #include "vtkHIDTagTable.h"
 #include "vtkTagTable.h"
@@ -81,6 +82,7 @@ vtkFetchMIGUI::vtkFetchMIGUI()
   this->UpdatingGUI = 0;
   this->UpdatingMRML = 0;
   this->DataDirectoryName = NULL;
+  this->ReservedURI = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -170,6 +172,24 @@ void vtkFetchMIGUI::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
+void vtkFetchMIGUI::LoadTclPackage ( )
+{
+  if (!this->GetLogic())
+    {
+    return;
+    }
+  std::string dir(this->GetLogic()->GetModuleShareDirectory());
+  std::string qaTclCommand =  "set ::FETCHMI_PACKAGE {}; ";
+  qaTclCommand += "package forget FetchMI; ";
+  qaTclCommand += "  set dir \"" + dir + "\";";
+  qaTclCommand += "  if { [ file exists \"$dir/Tcl/pkgIndex.tcl\" ] } { ";
+  qaTclCommand += "    lappend ::auto_path $dir; ";
+  qaTclCommand += "    package require FetchMI ";
+  qaTclCommand += "  }";
+  this->Script ( qaTclCommand.c_str() ); 
+}
+
+//---------------------------------------------------------------------------
 void vtkFetchMIGUI::AddGUIObservers ( ) 
 {
   this->QueryList->AddWidgetObservers();
@@ -231,6 +251,347 @@ void vtkFetchMIGUI::RemoveLogicObservers ( ) {
 }
 
 
+
+//---------------------------------------------------------------------------
+void vtkFetchMIGUI::WriteDocumentDeclaration_XND ( )
+{
+  const char *filename = this->Logic->GetXMLDocumentDeclarationFileName();
+  if ( filename == NULL )
+    {
+    vtkErrorMacro ("WriteDocumentDeclaration: got null filename" );
+    return;
+    }
+
+
+  this->Script ( "FetchMIWriteDocumentDeclaration_XND \"%s\"",  filename );
+}
+
+
+//---------------------------------------------------------------------------
+int vtkFetchMIGUI::WriteMetadataForUpload_XND (const char *nodeID )
+{
+  //  return 1 if ok, 0 if not.
+  if ( this->FetchMINode == NULL) 
+    {
+    vtkErrorMacro ( "vtkFetchMIGUI: FetchMINode is NULL.");
+    return 0;
+    }
+  if (this->MRMLScene == NULL )
+    {
+    vtkErrorMacro ( "vtkFetchMIGUI: WriteMetadataForUpload_XND has null MRMLScene." );
+    return 0;        
+    }
+  const char *metadataFilename = Logic->GetXMLUploadFileName();
+  if ( metadataFilename == NULL )
+    {
+    vtkErrorMacro ("WriteMetadataForUpload_XND: got null filename" );
+    return 0;
+    }
+  const char *declarationFilename = Logic->GetXMLDocumentDeclarationFileName();
+  if ( declarationFilename == NULL )
+    {
+    vtkErrorMacro ("WriteMetadataForUpload_XND: got null filename" );
+    return 0;
+    }
+
+  if ( !(strcmp (nodeID, "MRMLScene" )))
+    {
+    this->Script ( "FetchMIWriteMetadataForScene_XND \"%s\" \"%s\"", metadataFilename, declarationFilename );
+    }
+  else
+    {
+    this->Script ( "FetchMIWriteMetadataForNode_XND \"%s\" \"%s\" \"%s\"", metadataFilename, declarationFilename, nodeID);
+    }
+  return 1;
+}
+
+
+//---------------------------------------------------------------------------
+const char* vtkFetchMIGUI::ParseMetadataPostResponse ( )
+{
+  
+  if ( this->Logic->GetTemporaryResponseFileName() == NULL )
+    {
+    vtkErrorMacro ("ParseMetadataPostResponse got null filename to parse");
+    return (NULL);
+    }
+  
+  // method sets this->ReservedURI; clear it first.
+  this->SetReservedURI ( NULL );
+  const char *responseFilename = this->Logic->GetTemporaryResponseFileName();
+  if ( responseFilename == NULL )
+    {
+    vtkErrorMacro ( "ParseMetadataPostResponse: got null filename" );
+    return (NULL);
+    }
+
+  this->Script ( "FetchMIParseMetadataPostResponse_XND \"%s\"", responseFilename );
+  return ( this->GetReservedURI() );
+}
+
+
+//---------------------------------------------------------------------------
+void vtkFetchMIGUI::RequestUpload ( )
+{
+  //---
+  //--- for a test, this method combines our original
+  //--- Logic->RequestResourceUpload() and
+  //--- Logic->RequestResourceUploadToXND().
+  //--- In particular, it breaks the latter workhorse method
+  //--- into chunks to take advantage of Tcl's UTF-8 char encoding.
+  //---
+  //--- We're letting gui get at tcl to do utf-8 char encoding
+  //--- via kww Script method. 
+  //--- use:
+  //--- encoding convertfrom data (from other to utf-8)
+  //--- encoding convertto data (from utf-8 to other)
+  //---
+
+  if ( this->GetMRMLScene() == NULL )
+    {
+    vtkErrorMacro ( "RequestUpload: MRMLScene is NULL.");
+    return;
+    }
+  if ( this->GetFetchMINode() == NULL )
+    {
+    vtkErrorMacro ( "RequestUpload: FetchMINode is NULL.");
+    return;
+    }
+  if ( this->GetApplicationGUI() == NULL )
+    {
+    vtkErrorMacro ( "RequestUpload: ApplicationGUI is NULL ");
+    }
+  
+  int retval;
+  
+  const char *svr = this->GetFetchMINode()->GetSelectedServer();
+  const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
+  if ( svr == NULL || svctype == NULL )
+    {
+    vtkErrorMacro ("RequestUpload: Null server or servicetype" );
+    return;
+    }
+
+  
+  //--- SAVE ORIGINAL SELECTION STATE
+  //--- for now, override GUI selection state --
+  //--- select everything, so we upload scene + all data.
+  std::vector<std::string> tmpSelected;
+  int tmp = Logic->SceneSelected;
+  for ( int i=0; i< Logic->SelectedStorableNodeIDs.size(); i++)
+    {
+    tmpSelected.push_back(Logic->SelectedStorableNodeIDs[i] );
+    }
+      
+  //--- SELECT ALL
+  Logic->SceneSelected=1;
+  Logic->SelectedStorableNodeIDs.clear();      
+  const char *nodeID;
+  for ( int i=0; i < this->TaggedDataList->GetNumberOfItems(); i++)
+    {
+    nodeID = this->TaggedDataList->GetNthDataTarget(i);
+    if ( nodeID != NULL )
+      {
+      if ( (strcmp(nodeID, "Scene description" )))
+        {
+        Logic->SelectedStorableNodeIDs.push_back( nodeID );
+        }
+      }
+    }
+  
+  if ( !(strcmp ("HID", svctype )) )
+    {
+    //no-op
+    vtkWarningMacro("RequestUpload: HID upload not implemented yet.");
+    }
+
+
+  
+  if ( !(strcmp ("XND", svctype )) )
+    {
+    vtkXNDHandler *handler = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XNDHandler" ));
+    if ( handler == NULL )
+      {
+      vtkErrorMacro ("RequestUpload: Null URIHandler. ");
+    return;
+      }
+    //---
+    //--- request upload
+    //---
+    // if nodes have been modified since read, prompt user  to save them first.
+    if ( retval = this->Logic->CheckStorageNodeFileNames() == 0 )
+      {
+      //--- TODO: put up save-stuff message dialog
+      return;
+      }
+    //--- explicitly set the cache filenames and the URI Handler to be XND
+    //--- for all storables.
+    this->Logic->SetCacheFileNamesAndXNDHandler(handler);
+
+    //--- write the XML doc description and header info in utf-8 format.
+    this->WriteDocumentDeclaration_XND ( );
+
+    //--- for each storable node:
+    //--- generate metadata in utf-8 format (in gui)
+    //--- post metadata (in logic)
+    //--- parse metadata and set URIs (in gui)
+    vtkMRMLStorableNode *storableNode;
+    for (unsigned int n = 0; n < Logic->SelectedStorableNodeIDs.size(); n++)
+      {
+      std::string nodeID = Logic->SelectedStorableNodeIDs[n];
+      vtkDebugMacro("RequestUpload: generating metadata for selected storable node " << nodeID.c_str());
+      storableNode = vtkMRMLStorableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID( nodeID.c_str() ));
+      // for each storage node
+      int numStorageNodes = storableNode->GetNumberOfStorageNodes();
+      vtkMRMLStorageNode *storageNode;
+      for (int i = 0; i < numStorageNodes; i++)
+        {
+        storageNode = storableNode->GetNthStorageNode(i);
+        vtkDebugMacro("RequestUpload: have storage node " << i << ", calling write metadata for upload with id " << nodeID.c_str() << " and file name " << storageNode->GetFileName());
+
+        //--- write header and metadata
+        const char *snodeFileName = storageNode->GetFileName();
+        vtksys_stl::string vtkFileName = vtksys::SystemTools::GetFilenameName ( snodeFileName );
+        const char *strippedFileName = vtkFileName.c_str();
+        if ( retval = this->WriteMetadataForUpload_XND(nodeID.c_str()) == 0 )
+          {
+          //TODO: error dialog 
+          return;
+          }
+
+        //--- post and parse response
+        this->Logic->PostMetadataToXND(handler, strippedFileName);
+        const char *uri = this->ParseMetadataPostResponse();
+        if (uri == NULL)
+          {
+          storageNode->SetURI(NULL);
+          storageNode->ResetURIList();
+          this->Logic->DeselectNode(nodeID.c_str());
+          // bail out of the rest of the storage nodes
+          i = numStorageNodes;
+          // for now, decrement the node number, since DeselectNode removes an
+          // element from the list we're iterating over
+          n--;
+          }
+        else
+          {
+          vtkDebugMacro("RequestUpload: parsed out a return metadatauri : " << uri);
+          // then save it in the storage node
+          storageNode->SetURI(uri);
+        
+          // now deal with the rest of the files in the storage node
+          int numFiles = storageNode->GetNumberOfFileNames();
+          for (int filenum = 0; filenum < numFiles; filenum++)
+            {
+            //--- write header and metadata
+            const char *nodeFileName = storageNode->GetNthFileName(filenum);
+            vtkFileName = vtksys::SystemTools::GetFilenameName ( nodeFileName );
+            strippedFileName = vtkFileName.c_str();
+            if ( retval = this->WriteMetadataForUpload_XND(nodeID.c_str()) == 0 )
+              {
+              //TODO: error dialog 
+              return;
+              }
+
+            //--- post and parse response
+            this->Logic->PostMetadataToXND(handler, strippedFileName);
+            const char *uri = this->ParseMetadataPostResponse();
+            if (uri == NULL)
+              {
+              //--- TODO: clean up filenames now. they are set to cache path.
+              vtkErrorMacro("RequestUpload:  error parsing uri from post meta data call for file # " << filenum); //, response = " << metadataResponse);
+              storageNode->SetURI(NULL);
+              storageNode->ResetURIList();
+              vtkKWMessageDialog *message = vtkKWMessageDialog::New();
+              message->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow() );
+              message->SetMasterWindow ( this->GetApplicationGUI()->GetMainSlicerWindow() );
+              message->SetStyleToYesNo();
+              std::string msg = "File " + std::string(storageNode->GetNthFileName(filenum)) + " unable to upload to remote host.\nDo you want to continue saving data?";
+              message->SetText(msg.c_str());
+              message->Create();
+              int response = message->Invoke();
+              if (response)
+                {
+                this->Logic->DeselectNode(nodeID.c_str());
+                // for now, decrement the node number, since DeselectNode removes an
+                // element from the list we're iterating over
+                n--;
+              
+                // bail out of the rest of the files
+                filenum = numFiles;
+                }
+              else
+                {
+                // bail out of the rest of the storage nodes
+                i = numStorageNodes;
+                }
+              }
+            else
+              {
+              vtkDebugMacro("RequestUpload: parsed out a return metadatauri : " << uri << ", adding it to storage node " << storageNode->GetID());
+              // then save it in the storage node
+              storageNode->AddURI(uri);
+              }         
+            }
+          }
+        }
+      }
+
+    //--- post data (in logic pass3)
+    handler->SetHostName(svr);
+    this->Logic->PostStorableNodesToXND();
+
+    //--- post metadata (in logic)
+    //--- parse metadata (in gui)
+
+    if ( this->Logic->SceneSelected )
+      {
+      //--- explicitly write the scene to cache (uri already points to cache)
+      this->MRMLScene->Commit();
+
+      //--- write header and metadata
+      const char *sceneFileName =this->GetMRMLScene()->GetURL();
+      vtksys_stl::string vtkFileName = vtksys::SystemTools::GetFilenameName (  sceneFileName );
+      const char *strippedFileName = vtkFileName.c_str();
+      if ( retval = this->WriteMetadataForUpload_XND("MRMLScene") == 0 )
+        {
+        //TODO: error dialog 
+        return;
+        }
+      //--- generate scene metatdata (in gui)
+      this->Logic->PostMetadataToXND(handler, strippedFileName);
+      const char *uri = this->ParseMetadataPostResponse();
+      if ( uri != NULL )
+        {
+        // set particular XND host in the XNDhandler
+        handler->SetHostName(svr);
+        handler->StageFileWrite(sceneFileName, uri);
+        }
+      else
+        {
+        vtkErrorMacro("RequestUpload: unable to parse out response from posting metadata for mrml scene, uri is null. ");
+        return;
+        }
+      }
+
+    //--- comment this out... and replace
+    //--- with above for test Originally, this was only thing here.
+    //this->Logic->RequestResourceUpload ( );
+    // end XND
+    } 
+
+
+  //--- RESET SELECTION STATE
+  Logic->SceneSelected = tmp;
+  Logic->SelectedStorableNodeIDs.clear();
+  for ( int i=0; i< tmpSelected.size(); i++)
+    {
+    Logic->SelectedStorableNodeIDs.push_back(tmpSelected[i] );
+    }
+}
+
+
+
 //---------------------------------------------------------------------------
 void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
                                            unsigned long event,
@@ -266,69 +627,7 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
       }
     else if ( (w== this->TaggedDataList) && (event == vtkFetchMIResourceUploadWidget::UploadRequestedEvent) )
       {
-      //--- SAVE ORIGINAL SELECTION STATE
-      //--- for now, select everything, so we upload scene + all data.
-      std::vector<std::string> tmpSelected;
-      int tmp = Logic->SceneSelected;
-      for ( int i=0; i< Logic->SelectedStorableNodeIDs.size(); i++)
-        {
-        tmpSelected.push_back(Logic->SelectedStorableNodeIDs[i] );
-        }
-      
-      //--- SELECT ALL
-      Logic->SceneSelected=1;
-      Logic->SelectedStorableNodeIDs.clear();      
-      const char *nodeID;
-      for ( int i=0; i < this->TaggedDataList->GetNumberOfItems(); i++)
-        {
-        nodeID = this->TaggedDataList->GetNthDataTarget(i);
-        if ( nodeID != NULL )
-          {
-          if ( (strcmp(nodeID, "Scene description" )))
-            {
-            Logic->SelectedStorableNodeIDs.push_back( nodeID );
-            }
-          }
-        }
-      //--- request upload
-      // this->Logic->CheckStorageNodeFilenames();
-      //this->Logic->SetCacheFilenamesAndURIHandler();
-
-      //--- for a test, we'll break Logic->RequestResourceUpload()
-      //--- into chunks, and the whole block is below. If it works,
-      //--- we can work on modularizing it.
-      //--- We're letting gui get at tcl to do utf-8 char encoding
-      //--- via kww Script method.
-      //--- encoding convertfrom data (from other to utf-8)
-      //--- encoding convertto data (from utf-8 to other)
-      
-      //--- for each storable node:
-      //--- generate metadata (in logic)
-      //--- convert it to utf-8 (in gui)
-      //--- post metadata (in logic)
-      //--- parse metadata (in gui)
-      //--- and set URIs (in gui)
-      //--- post data (in logic pass3)
-      //--- generate scene metatdata (in logic)
-      //--- convert it to utf-8 (in gui)
-      //--- post metadata (in logic)
-      //--- parse metadata (in gui)
-      //--- set URI (in logic)
-      //--- set URI (in gui)
-      //--- post scene (in logic)
-      
-      
-      //--- eventually comment this out... and replace
-      //--- with above for test
-      this->Logic->RequestResourceUpload ( );
-
-      //--- RESET SELECTION STATE
-      Logic->SceneSelected = tmp;
-      Logic->SelectedStorableNodeIDs.clear();
-      for ( int i=0; i< tmpSelected.size(); i++)
-        {
-        Logic->SelectedStorableNodeIDs.push_back(tmpSelected[i] );
-        }
+      this->RequestUpload();
       }
     }
   if ( q != NULL )
@@ -1440,6 +1739,8 @@ void vtkFetchMIGUI::BuildGUI ( )
 
   this->UpdateGUI();
   this->Logic->CreateTemporaryFiles();
+
+//  this->LoadTclPackage();
 }
 
 

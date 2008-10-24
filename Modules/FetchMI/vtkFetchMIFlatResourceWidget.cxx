@@ -14,6 +14,9 @@
 #include "vtkFetchMIIcons.h"
 #include "vtkKWMessageDialog.h"
 
+#include "vtkDataIOManager.h"
+#include "vtkMRMLScene.h"
+
 #include <vtksys/SystemTools.hxx>
 #include <string>
 
@@ -119,6 +122,14 @@ void vtkFetchMIFlatResourceWidget::ProcessWidgetEvents ( vtkObject *caller,
       }
     else if ( (b == this->GetDownloadSelectedButton()) && (event == vtkKWPushButton::InvokedEvent ) )
       {
+      //--- raise the DataIOManager Window.
+      if ( this->GetMRMLScene() != NULL )
+        {
+        if ( this->GetMRMLScene()->GetDataIOManager() != NULL )
+          {
+          this->GetMRMLScene()->GetDataIOManager()->InvokeEvent(vtkDataIOManager::DisplayManagerWindowEvent );
+          }
+        }
       //--- Request download of each selected resource
       int num = this->GetNumberOfSelectedItems();
       std::string dtype;
