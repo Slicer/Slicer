@@ -226,7 +226,7 @@ void vtkHTTPHandler::StageFileWrite(const char * source, const char * destinatio
   this->InitTransfer( );
   
   curl_easy_setopt(this->CurlHandle, CURLOPT_PUT, 1);
-  curl_easy_setopt(this->CurlHandle, CURLOPT_URL, source);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_URL, destination);
 //  curl_easy_setopt(this->CurlHandle, CURLOPT_NOPROGRESS, false);
   curl_easy_setopt(this->CurlHandle, CURLOPT_FOLLOWLOCATION, true);
   curl_easy_setopt(this->CurlHandle, CURLOPT_READFUNCTION, read_callback);
