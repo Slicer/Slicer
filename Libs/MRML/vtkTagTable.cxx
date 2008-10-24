@@ -41,7 +41,7 @@ void vtkTagTable::PrintSelf(ostream& os, vtkIndent indent)
   
   Superclass::PrintSelf ( os, indent );
   
-  os << indent << "Name = " << this->GetName() << "\n";
+  os << indent << "Name = " << (this->GetName() == 0 ? "(none)" : this->GetName()) << "\n";
 
   iter = this->TagTable.begin();
 
