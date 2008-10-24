@@ -3,6 +3,8 @@
 #include "vtkXNDHandler.h"
 #include <iterator>
 #include <string>
+#include <iostream>
+#include <fstream>
 
 vtkStandardNewMacro ( vtkXNDHandler );
 vtkCxxRevisionMacro ( vtkXNDHandler, "$Revision: 1.0 $" );
@@ -161,45 +163,47 @@ void vtkXNDHandler::StageFileWrite(const char *source,
     return;    
     }
 
-  this->LocalFile = fopen(source, "r");
-
+  // Open file
+  this->LocalFile = fopen(source, "rb");
+  if (this->LocalFile == NULL)
+    {
+    vtkErrorMacro("StageFileWrite: unable to open file " << source );
+    return;
+    }
   // read all the stuff in the file into a buffer
   fseek(this->LocalFile, 0, SEEK_END);
   long lSize = ftell(this->LocalFile);
   rewind(this->LocalFile);
 
-  // allocate memory
-  char *post_data = NULL;
-  post_data = (char*)malloc(sizeof(char)*lSize);
+  unsigned char *post_data = NULL;
+  post_data = (unsigned char*)malloc(sizeof(unsigned char)*lSize);
+  // read into buffer and close
+
   if (post_data == NULL)
     {
-    vtkErrorMacro("PostMetadata: unable to allocate a buffer to read from meta data file, size = " << lSize);
+    vtkErrorMacro("StageFileWrite unable to allocate a buffer to read from source file, size = " << lSize);
     }
   else
     {
-    size_t result = fread(post_data, 1, lSize, this->LocalFile);
+    size_t result = fread(post_data, 1, lSize*sizeof(unsigned char), this->LocalFile);
     if (result != lSize)
       {
-      vtkErrorMacro("PostMetadata: error reading contents of the file " << source <<", read " << result << " instead of " << lSize);
-      post_data = NULL;
+      vtkErrorMacro("StageFileWrite: error reading contents of the sourcefile" << source <<", read " << result << " instead of " << lSize);
       }    
     }
-  
+
   this->InitTransfer( );
-  
+  //-- set content type and use chunked transfer encoding.
+  std::string header1 = "Content-Type: application/octet-stream";
+  struct curl_slist *cl = NULL;
+  cl = curl_slist_append(cl, header1.c_str());
+  cl = curl_slist_append(cl, "Transfer-Encoding: chunked");
+
   curl_easy_setopt(this->CurlHandle, CURLOPT_POST, 1);
-  curl_easy_setopt(this->CurlHandle, CURLOPT_URL, source);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_POSTFIELDSIZE, lSize);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_URL, destination);
   curl_easy_setopt(this->CurlHandle, CURLOPT_FOLLOWLOCATION, true);
-  if (post_data)
-    {
-    curl_easy_setopt(this->CurlHandle, CURLOPT_POSTFIELDS, post_data);
-    curl_easy_setopt(this->CurlHandle, CURLOPT_POSTFIELDSIZE, strlen(post_data));
-    }
-  else
-    {
-    curl_easy_setopt(this->CurlHandle, CURLOPT_READFUNCTION, xnd_read_callback);
-    curl_easy_setopt(this->CurlHandle, CURLOPT_READDATA, this->LocalFile);
-    }
+  curl_easy_setopt(this->CurlHandle, CURLOPT_POSTFIELDS, post_data);
   CURLcode retval = curl_easy_perform(this->CurlHandle);
 
    if (retval == CURLE_OK)
@@ -214,11 +218,127 @@ void vtkXNDHandler::StageFileWrite(const char *source,
     }
    
   this->CloseTransfer();
-  
-  fclose(this->LocalFile);
+  if (post_data)
+    {
+    free(post_data);
+    }
 }
 
 
+
+
+//----------------------------------------------------------------------------
+int vtkXNDHandler::PostMetadataTest ( const char *serverPath,
+                                      const char *headerFileName,
+                                      const char *dataFileName,
+                                      const char *metaDataFileName,
+                                      const char *temporaryResponseFileName )
+{
+  
+  // serverPath will contain $srv/data, for instance http://localhost:8081/data
+  // metaDataFileName is a filename of a file that has metadata in it.
+  // temporaryResponseFileName is the name of the file into which
+  if ( serverPath == NULL )
+    {
+    vtkErrorMacro("PostMetadata: serverPath is null.");
+    return 0;
+    }
+  if (metaDataFileName == NULL)
+    {
+    vtkErrorMacro("PostMetadata: metaDataFileName is null.");
+    return 0;
+    }
+  if (temporaryResponseFileName == NULL)
+    {
+    vtkErrorMacro("PostMetadata: temporaryResponseFileName is null.");
+    return 0;
+    }
+  if (headerFileName == NULL )
+    {
+    vtkErrorMacro ("PostMetadataTest: null header filename");
+    return 0;
+    }
+ const char *hostname = this->GetHostName();
+  if ( hostname == NULL )
+    {
+    vtkErrorMacro("PostMetadata: null host name");
+    return 0;
+    }
+
+  //--- tried this foen with both 'r' and 'rb'
+  this->LocalFile = fopen(metaDataFileName, "r");
+  if (this->LocalFile == NULL)
+    {
+    vtkErrorMacro("PostMetadata: unable to open meta data file " << metaDataFileName);
+    return 0;
+    }
+  
+
+  this->InitTransfer();
+
+  //-- add header
+  std::string dataFileNameString = std::string(dataFileName);
+  std::string header1 = "Content-Type: application/x-xnat-metadata+xml";
+  std::string header2 = "Content-Disposition: x-xnat-metadata; filename=\"" + dataFileNameString + "\"";
+  struct curl_slist *cl = NULL;
+  cl = curl_slist_append(cl, header1.c_str());
+  cl = curl_slist_append(cl, header2.c_str());
+  cl = curl_slist_append(cl, "Transfer-Encoding: chunked");
+  
+  //-- configure the curl handle
+  curl_easy_setopt(this->CurlHandle, CURLOPT_VERBOSE, true);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_HEADERFUNCTION, NULL);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_HTTPHEADER, cl);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_POST, 1);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_HEADER, true);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_URL, serverPath);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_FOLLOWLOCATION, true);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_READFUNCTION, xnd_read_callback);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_READDATA, this->LocalFile);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_POSTFIELDS, NULL );
+  
+  // then need to set up a local file for capturing the return uri from the
+  // post
+  const char *returnURIFileName = temporaryResponseFileName;
+  FILE *returnURIFile = fopen(returnURIFileName, "wb");
+  if (returnURIFile == NULL)
+    {
+    vtkErrorMacro("PostMetadata: unable to open a local file caled " << returnURIFileName << " to write out to for capturing the uri");
+    }
+  else
+    {
+    // for windows
+    curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEFUNCTION, NULL); // write_callback);
+    curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEDATA, returnURIFile);
+    }
+
+  CURLcode retval = curl_easy_perform(this->CurlHandle);
+
+  if (retval == CURLE_OK)
+    {
+    vtkDebugMacro("PostMetadata: successful return from curl");
+    }
+   else
+    {
+    const char *stringError = curl_easy_strerror(retval);
+    vtkErrorMacro("PostMetadata: error running curl: " << stringError);
+    }
+
+  curl_slist_free_all(cl);
+  this->CloseTransfer();
+
+
+  if (this->LocalFile)
+    {
+    fclose(this->LocalFile);
+    }
+  if (returnURIFile)
+    {
+    fclose(returnURIFile);
+    }
+
+  return 1;
+}
 
 
 //----------------------------------------------------------------------------

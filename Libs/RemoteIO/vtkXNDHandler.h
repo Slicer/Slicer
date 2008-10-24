@@ -46,7 +46,11 @@ class VTK_RemoteIO_EXPORT vtkXNDHandler : public vtkHTTPHandler
                              const char *metaDataFileName,
                              const char *dataFileName,
                              const char *temporaryResponseFileName);
-  
+  int PostMetadataTest ( const char *serverPath,
+                         const char *headerFileName,
+                         const char *dataFileName,
+                         const char *metaDataFileName,
+                         const char *temporaryResponseFileName )  ;
   // Description:
   // This function uploads the specified file (source) to
   // the specified destination (uri), on a specified host.

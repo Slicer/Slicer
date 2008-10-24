@@ -198,6 +198,7 @@ const char* vtkHIDHandler::QueryServer( const char *uri, const char *destination
   curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEDATA, this->LocalFile);
   curl_easy_setopt ( this->CurlHandle, CURLOPT_SSL_VERIFYPEER, 0 );
   curl_easy_setopt ( this->CurlHandle, CURLOPT_SSL_VERIFYHOST, 0 );
+  curl_easy_setopt ( this->CurlHandle, CURLOPT_VERBOSE, 1 );
 
   vtkDebugMacro("QueryServer: about to do the curl download... uri = " << uri << ", dest = " << destination);
   CURLcode retval = curl_easy_perform(this->CurlHandle);
