@@ -170,37 +170,14 @@ void vtkXNDHandler::StageFileWrite(const char *source,
     vtkErrorMacro("StageFileWrite: unable to open file " << source );
     return;
     }
-  // read all the stuff in the file into a buffer
+  // read all the stuff in the file into a buffer to find size.
+  // seems to work correctly as long as file is binary.
   fseek(this->LocalFile, 0, SEEK_END);
   long lSize = ftell(this->LocalFile);
   rewind(this->LocalFile);
 
-
   unsigned char *post_data = NULL;
-/*
-  post_data = (unsigned char*)malloc(sizeof(unsigned char)*lSize);
-  // read into buffer and close
-
-  if (post_data == NULL)
-    {
-    vtkErrorMacro("StageFileWrite unable to allocate a buffer to read from source file, size = " << lSize);
-    }
-  else
-    {
-    size_t result = fread(post_data, 1, lSize*sizeof(unsigned char), this->LocalFile);
-    if (result != lSize)
-      {
-      vtkErrorMacro("StageFileWrite: error reading contents of the sourcefile" << source <<", read " << result << " instead of " << lSize);
-      }    
-    }
-*/
   this->InitTransfer( );
-//-- set content type and use chunked transfer encoding.
-//  std::string header1 = "Content-Type: application/octet-stream";
-//  struct curl_slist *cl = NULL;
-//  cl = curl_slist_append(cl, header1.c_str());
-//  cl = curl_slist_append(cl, "Transfer-Encoding: chunked");
-//  curl_easy_setopt(this->CurlHandle, CURLOPT_POST, 1);
 
   curl_easy_setopt(this->CurlHandle, CURLOPT_PUT, 1);
   curl_easy_setopt(this->CurlHandle, CURLOPT_URL, destination);
@@ -210,14 +187,6 @@ void vtkXNDHandler::StageFileWrite(const char *source,
   curl_easy_setopt(this->CurlHandle, CURLOPT_INFILESIZE, lSize);
   CURLcode retval = curl_easy_perform(this->CurlHandle);
   
-/*
-  curl_easy_setopt(this->CurlHandle, CURLOPT_PUT, 1);
-  curl_easy_setopt(this->CurlHandle, CURLOPT_POSTFIELDSIZE, lSize);
-  curl_easy_setopt(this->CurlHandle, CURLOPT_URL, destination);
-  curl_easy_setopt(this->CurlHandle, CURLOPT_FOLLOWLOCATION, true);
-  curl_easy_setopt(this->CurlHandle, CURLOPT_POSTFIELDS, post_data);
-  CURLcode retval = curl_easy_perform(this->CurlHandle);
-*/
    if (retval == CURLE_OK)
     {
     vtkDebugMacro("StageFileWrite: successful return from curl");
@@ -353,6 +322,8 @@ int vtkXNDHandler::PostMetadataTest ( const char *serverPath,
 }
 
 
+
+//--- No longer used. PostMetadataTest method above used instead.
 //----------------------------------------------------------------------------
 const char *vtkXNDHandler::PostMetadata ( const char *serverPath,
                                           const char *metaDataFileName,
