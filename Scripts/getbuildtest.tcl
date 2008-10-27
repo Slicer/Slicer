@@ -60,6 +60,7 @@ set ::GETBUILDTEST(doxy) "false"
 set ::GETBUILDTEST(verbose) "false"
 set ::GETBUILDTEST(buildList) ""
 set ::GETBUILDTEST(cpack-generator) ""
+set ::GETBUILDTEST(rpm-spec) ""
 
 set strippedargs ""
 set argc [llength $argv]
@@ -366,6 +367,7 @@ if {$isLinux || $isDarwin} {
     if {$::GETBUILDTEST(cpack-generator) == "RPM" || $::GETBUILDTEST(cpack-generator) == "DEB"} {
         # RPMs cannot have dashes in the version names, so we use underscores instead
         set ::GETBUILDTEST(version-patch) [clock format [clock seconds] -format %Y_%m_%d]
+        set ::GETBUILDTEST(rpm-spec) "%define __spec_install_post /bin/true"
 
         if { $::GETBUILDTEST(cpack-generator) == "RPM" } {
             set ::GETBUILDTEST(cpack-extension) ".rpm"
@@ -420,6 +422,7 @@ runcmd $::CMAKE \
         -DSlicer3_VERSION_PATCH:STRING=$::GETBUILDTEST(version-patch) \
         -DCPACK_GENERATOR:STRING=$::GETBUILDTEST(cpack-generator) \
         -DCPACK_PACKAGE_FILE_NAME:STRING=$::GETBUILDTEST(binary-filename) \
+        -DCPACK_RPM_SPEC_MORE_DEFINE=$::GETBUILDTEST(rpm-spec) \
         -DSlicer3_USE_IGSTK=$::IGSTK \
         -DSlicer3_USE_NAVITRACK=$::NAVITRACK \
         -DNAVITRACK_LIB_DIR:FILEPATH=$::NAVITRACK_LIB_DIR \
