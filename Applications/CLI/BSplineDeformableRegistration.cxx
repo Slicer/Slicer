@@ -51,9 +51,9 @@ public:
   typedef itk::SmartPointer<Self>  Pointer;
   itkNewMacro( Self );
   typedef itk::SingleValuedCostFunction CostFunctionType;
-  void SetProcessInformation (ModuleProcessInformation * info)
+  void SetRegistration (itk::ProcessObject * obj)
     {
-    m_ProcessInformation = info; 
+    m_Registration = obj; 
     }
   void SetCostFunction(CostFunctionType* fn)
     {
@@ -61,7 +61,7 @@ public:
     }
 protected:
   CommandIterationUpdate() {};
-  ModuleProcessInformation *m_ProcessInformation;
+  itk::ProcessObject::Pointer m_Registration;
   CostFunctionType::Pointer m_CostFunction;
 public:
   typedef itk::LBFGSBOptimizer  OptimizerType;
@@ -81,33 +81,11 @@ public:
         return;
         }
       
-      if (m_ProcessInformation)
+      if (m_Registration)
         {
-        m_ProcessInformation->Progress = 
+        m_Registration->UpdateProgress( 
           static_cast<double>(optimizer->GetCurrentIteration()) /
-           static_cast<double>(optimizer->GetMaximumNumberOfIterations());
-        }
-      else
-        {
-        std::cout << "Optimizer Iteration: "
-                  << optimizer->GetCurrentIteration() << ", "
-                  << " Metric: "
-                  << m_CostFunction->GetValue(optimizer->GetCurrentPosition())
-                  << std::endl;
-//         std::cout << "<filter-comment>"
-//                   << "Optimizer Iteration: "
-//                   << optimizer->GetCurrentIteration() << ", "
-//                   << " Metric: "
-//                   << optimizer->GetValue()
-//                   << "</filter-comment>"
-//                   << std::endl;
-//         std::cout << "<filter-progress>"
-//                   << (static_cast<double>(optimizer->GetCurrentIteration()) /
-//                       static_cast<double>(optimizer->GetMaximumNumberOfIterations()))
-        
-//                   << "</filter-progress>"
-//                   << std::endl;
-        std::cout << std::flush;
+          static_cast<double>(optimizer->GetMaximumNumberOfIterations()));
         }
     }
 };
@@ -223,18 +201,18 @@ template<class T> int DoIt( int argc, char * argv[], T )
   itk::TimeProbesCollectorBase collector;
 
   collector.Start( "Read fixed volume" );
-//   itk::PluginFilterWatcher watchOrientFixed(fixedOrient,
-//                                             "Orient Fixed Image",
-//                                             CLPProcessInformation,
-//                                             1.0/3.0, 0.0);
+  itk::PluginFilterWatcher watchOrientFixed(fixedOrient,
+                                            "Orient Fixed Image",
+                                            CLPProcessInformation,
+                                            1.0/3.0, 0.0);
   fixedOrient->Update();
   collector.Stop( "Read fixed volume" );
 
   collector.Start( "Read moving volume" );
-//   itk::PluginFilterWatcher watchOrientMoving(movingOrient,
-//                                             "Orient Moving Image",
-//                                              CLPProcessInformation,
-//                                             1.0/3.0, 1.0/3.0);
+  itk::PluginFilterWatcher watchOrientMoving(movingOrient,
+                                            "Orient Moving Image",
+                                             CLPProcessInformation,
+                                            1.0/3.0, 1.0/3.0);
   movingOrient->Update();
   collector.Stop( "Read moving volume" );
 
@@ -374,7 +352,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
   // Create the Command observer and register it with the optimizer.
   //
   typename CommandIterationUpdate::Pointer observer = CommandIterationUpdate::New();
-  observer->SetProcessInformation (CLPProcessInformation);
+  observer->SetRegistration ( registration );
   observer->SetCostFunction( metric );
 
   optimizer->AddObserver( itk::IterationEvent(), observer );
@@ -401,10 +379,10 @@ template<class T> int DoIt( int argc, char * argv[], T )
 
   try 
     { 
-//     itk::PluginFilterWatcher watchRegistration(registration,
-//                                                "Registering",
-//                                                CLPProcessInformation,
-//                                                1.0/3.0, 2.0/3.0);
+    itk::PluginFilterWatcher watchRegistration(registration,
+                                               "Registering",
+                                               CLPProcessInformation,
+                                               1.0/3.0, 2.0/3.0);
     collector.Start( "Registration" );
     registration->Update();
     collector.Stop( "Registration" );
