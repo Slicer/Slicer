@@ -350,6 +350,8 @@ void vtkSlicerSliceLayerLogic::UpdateNodeReferences ()
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLayerLogic::UpdateTransforms()
 {
+  static bool reportedNonlinearTransformSupport = false;
+  
   if (this->UpdatingTransforms) 
     {
     return;
@@ -383,7 +385,11 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
       {
       if ( !transformNode->IsTransformToWorldLinear() )
         {
-        vtkErrorMacro ("non linear transforms not yet supported");
+        if (!reportedNonlinearTransformSupport)
+          {
+          vtkErrorMacro ("Nonlinear transforms are not yet supported in slice viewers.");
+          reportedNonlinearTransformSupport = true;
+          }
         }
       else
         {
