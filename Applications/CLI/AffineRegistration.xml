@@ -11,6 +11,37 @@
 This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
 </acknowledgements>
 
+ <parameters advanced="true">
+    <label>Preprocessing</label>
+    <description>Preprocessing of images (smoothing) before registration.</description>
+
+    <integer>
+      <name>FixedImageSmoothingFactor</name>
+      <longflag>fixedsmoothingfactor</longflag>
+      <description>Amount of smoothing applied to fixed image prior to registration. Default is 0 (none). Range is 0-5 (unitless). Consider smoothing the input data if there is considerable amounts of noise or the noise pattern in the fixed and moving images is very different.</description>
+      <label>Smoothing level for fixed image</label>
+      <default>0</default>
+      <constraints>
+        <minimum>0</minimum>
+        <maximum>5</maximum>
+        <step>1</step>
+      </constraints>
+    </integer>
+
+    <integer>
+      <name>MovingImageSmoothingFactor</name>
+      <longflag>movingsmoothingfactor</longflag>
+      <description>Amount of smoothing applied to moving image prior to registration. Default is 0 (none). Range is 0-5 (unitless). Consider smoothing the input data if there is considerable amounts of noise or the noise pattern in the fixed and moving images is very different.</description>
+      <label>Smoothing level for moving image</label>
+      <default>0</default>
+      <constraints>
+        <minimum>0</minimum>
+        <maximum>5</maximum>
+        <step>1</step>
+      </constraints>
+    </integer>
+  </parameters>
+
   <parameters>
     <label>Registration Parameters</label>
     <description>Parameters used for registration</description>
