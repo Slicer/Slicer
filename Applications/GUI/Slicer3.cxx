@@ -667,6 +667,18 @@ int Slicer3_main(int argc, char *argv[])
   }
 
   //
+  // ignore any modules specified on the command line
+  //
+  vtkStringArray *ignoreModules = slicerApp->GetIgnoreModules();
+  std::vector<std::string>::const_iterator ignoreit = IgnoreModule.begin();
+  while (ignoreit != IgnoreModule.end())
+    {
+    ignoreModules->InsertNextValue((*ignoreit).c_str());
+    ++ignoreit;
+    }
+
+
+  //
   // use the startup script passed on command line if it exists
   //
   if ( File != "" )
@@ -1076,8 +1088,6 @@ int Slicer3_main(int argc, char *argv[])
     loadableModuleFactory.Scan();
     }
 
-  vtkStringArray *ignoreModules = slicerApp->GetIgnoreModules();
-
   std::vector<std::string> loadableModuleNames = 
     loadableModuleFactory.GetModuleNames();
   std::vector<std::string>::const_iterator lmit =
@@ -1089,6 +1099,7 @@ int Slicer3_main(int argc, char *argv[])
     {
     LoadableModuleDescription desc = loadableModuleFactory.GetModuleDescription(*lmit);
     loadableModules->InsertNextValue(desc.GetName());
+
     if (ignoreModules->LookupValue(desc.GetName().c_str()) < 0)
       {
       slicerApp->SplashMessage(desc.GetMessage().c_str());
@@ -1424,15 +1435,19 @@ int Slicer3_main(int argc, char *argv[])
     {
     LoadableModuleDescription desc = loadableModuleFactory.GetModuleDescription(*lmit);
 
-    vtkSlicerModuleGUI* gui = desc.GetGUIPtr();
+    if (ignoreModules->LookupValue(desc.GetName().c_str()) < 0)
+      {
 
-    name = gui->GetTclName();
-    std::string format("namespace eval slicer3 set ");
-    format += desc.GetShortName();
-    format += "GUI %s";
+      vtkSlicerModuleGUI* gui = desc.GetGUIPtr();
 
-    slicerApp->Script (format.c_str(), name);        
+      name = gui->GetTclName();
+      std::string format("namespace eval slicer3 set ");
+      format += desc.GetShortName();
+      format += "GUI %s";
 
+      slicerApp->Script (format.c_str(), name);        
+
+      }
     lmit++;
     }
 
@@ -1760,15 +1775,17 @@ int Slicer3_main(int argc, char *argv[])
   // REMOVE OBSERVERS and references to MRML and Logic
 
   lmit = loadableModuleNames.begin();
-  while (lmit != loadableModuleNames.end()) {
-  LoadableModuleDescription desc = loadableModuleFactory.GetModuleDescription(*lmit);
+  while (lmit != loadableModuleNames.end()) 
+    {
+    LoadableModuleDescription desc = loadableModuleFactory.GetModuleDescription(*lmit);
+    if (ignoreModules->LookupValue(desc.GetName().c_str()) < 0)
+      {
+      desc.GetGUIPtr()->TearDownGUI();
+      desc.GetGUIPtr()->RemoveGUIObservers();
 
-  desc.GetGUIPtr()->TearDownGUI();
-  desc.GetGUIPtr()->RemoveGUIObservers();
-
-  lmit++;
-  }
-
+      }
+    lmit++;
+    }
 
 #ifndef MODELS_DEBUG
   modelsGUI->TearDownGUI ( );
@@ -1893,13 +1910,17 @@ int Slicer3_main(int argc, char *argv[])
   //--- delete gui first, removing Refs to Logic and MRML
     
   lmit = loadableModuleNames.begin();
-  while (lmit != loadableModuleNames.end()) {
-  LoadableModuleDescription desc = loadableModuleFactory.GetModuleDescription(*lmit);
+  while (lmit != loadableModuleNames.end()) 
+    {
+    LoadableModuleDescription desc = loadableModuleFactory.GetModuleDescription(*lmit);
 
-  desc.GetGUIPtr()->Delete();
+    if (ignoreModules->LookupValue(desc.GetName().c_str()) < 0)
+      {
+      desc.GetGUIPtr()->Delete();
 
-  lmit++;
-  }
+      }
+    lmit++;
+    }
 
 #ifndef MODELS_DEBUG
   modelsGUI->Delete ();
@@ -1982,16 +2003,20 @@ int Slicer3_main(int argc, char *argv[])
   appLogic->ClearCollections ( );
 
   lmit = loadableModuleNames.begin();
-  while (lmit != loadableModuleNames.end()) {
-  LoadableModuleDescription desc = loadableModuleFactory.GetModuleDescription(*lmit);
+  while (lmit != loadableModuleNames.end()) 
+    {
+    LoadableModuleDescription desc = loadableModuleFactory.GetModuleDescription(*lmit);
 
-  vtkSlicerModuleLogic* logic = desc.GetLogicPtr();
+    if (ignoreModules->LookupValue(desc.GetName().c_str()) < 0)
+      {
+      vtkSlicerModuleLogic* logic = desc.GetLogicPtr();
 
-  logic->SetAndObserveMRMLScene( NULL );
-  logic->Delete();
+      logic->SetAndObserveMRMLScene( NULL );
+      logic->Delete();
 
-  lmit++;
-  }
+      }
+    lmit++;
+    }
 
 
 #ifndef MODELS_DEBUG

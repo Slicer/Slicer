@@ -77,6 +77,13 @@
       <label>Verbose module discovery</label>
       </boolean>
 
+      <string multiple="true">
+      <name>IgnoreModule</name>
+      <longflag>--ignore_module</longflag>
+      <description>Specify module name to ignore on loading</description>
+      <label>Module to Ignore</label>
+      </string>
+
       <boolean>
       <name>Daemon</name>
       <longflag>--daemon</longflag>
