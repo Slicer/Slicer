@@ -161,8 +161,8 @@ template<class T1, class T2> int DoIt2( int argc, char * argv[], const T1&, cons
   typedef itk::ImageFileWriter<MovingImageType> WriterType;//##
   typedef itk::ContinuousIndex<double, 3> ContinuousIndexType;
 
-  bool DoInitializeTransform = false;
-  int RandomSeed = 1234567;
+  //bool DoInitializeTransform = false;
+  //int RandomSeed = 1234567;
 
   // Add a time probe
   itk::TimeProbesCollectorBase collector;
@@ -478,7 +478,7 @@ template<class T1, class T2> int DoIt2( int argc, char * argv[], const T1&, cons
     // Set the output sampling based on the fixed image.
     // ResampleImageFilter needs an image of the same type as the
     // moving image.
-    MovingImageType::Pointer fixedInformation = MovingImageType::New();
+    typename MovingImageType::Pointer fixedInformation = MovingImageType::New();
     fixedInformation->CopyInformation( fixedReader->GetOutput() );
     resample->SetOutputParametersFromImage ( fixedInformation );
 
