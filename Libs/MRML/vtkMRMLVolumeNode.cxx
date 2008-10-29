@@ -615,27 +615,8 @@ void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *imageData)
 
   if ( this->ImageData != oldImageData )
     {
-    if (this->ImageData != NULL)
-      {
-      //this->ImageData->Modified();
-      this->InvokeEvent(vtkCommand::ModifiedEvent);
-      // calculating auto levels will be triggered by process mrml events
-      //calling UpdateFromMRML
-      }
     this->Modified();
     }
-  /**
-  int ndisp = this->GetNumberOfDisplayNodes();
-  for (int n=0; n<ndisp; n++) 
-    {
-    vtkMRMLVolumeDisplayNode *dnode = vtkMRMLVolumeDisplayNode::SafeDownCast(this->GetNthDisplayNode(n));
-    if (dnode)
-      {
-      dnode->SetImageData(ImageData);
-      }
-    }
-    **/
-  //vtkSetAndObserveMRMLObjectMacro(this->ImageData, ImageData);
 }
 
 
@@ -660,7 +641,7 @@ void vtkMRMLVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
   if (this->ImageData && this->ImageData == vtkImageData::SafeDownCast(caller) &&
     event ==  vtkCommand::ModifiedEvent)
     {
-    this->ModifiedSinceRead = true;
+    this->ModifiedSinceReadOn();
     this->InvokeEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent, NULL);
     // update from mrml / calc auto levels
     this->UpdateFromMRML();
