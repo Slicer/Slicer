@@ -55,8 +55,8 @@ vtkTumorGrowthLogic::vtkTumorGrowthLogic()
   this->Analysis_Intensity_Variance  = 0.0;
   this->Analysis_Intensity_Threshold = 0.0;
 
-  this->Analysis_Intensity_SubtractROI    = NULL;
-  this->Analysis_Intensity_Final          = NULL;
+  this->Analysis_Intensity_ROIGrowthInt   = NULL;
+  this->Analysis_Intensity_ROIShrinkInt   = NULL;
   this->Analysis_Intensity_ROINegativeBin = NULL;
   this->Analysis_Intensity_ROIPositiveBin = NULL;
   this->Analysis_Intensity_ROIBinCombine  = NULL;
@@ -87,14 +87,14 @@ vtkTumorGrowthLogic::~vtkTumorGrowthLogic()
   //   this->GlobalTransform = NULL;
   // }
   
-  if (this->Analysis_Intensity_SubtractROI) {
-    this->Analysis_Intensity_SubtractROI->Delete();
-    this->Analysis_Intensity_SubtractROI= NULL;
+  if (this->Analysis_Intensity_ROIGrowthInt) {
+    this->Analysis_Intensity_ROIGrowthInt->Delete();
+    this->Analysis_Intensity_ROIGrowthInt= NULL;
   }
 
-  if (this->Analysis_Intensity_Final) {
-    this->Analysis_Intensity_Final->Delete();
-    this->Analysis_Intensity_Final= NULL;
+  if (this->Analysis_Intensity_ROIShrinkInt) {
+    this->Analysis_Intensity_ROIShrinkInt->Delete();
+    this->Analysis_Intensity_ROIShrinkInt= NULL;
   }
 
   if (this->Analysis_Intensity_ROINegativeBin) {
@@ -167,7 +167,7 @@ int vtkTumorGrowthLogic::CheckROI(vtkMRMLVolumeNode* volumeNode) {
 
   for (int i = 0 ; i < 3 ; i++) {
     if ((this->TumorGrowthNode->GetROIMax(i) < 0) || (this->TumorGrowthNode->GetROIMax(i) >= dimensions[i])) {
-      cout << "vtkTumorGrowthLogic::CheckROI: dimension["<<i<<"] = " << dimensions[i] << endl;
+      // cout << "vtkTumorGrowthLogic::CheckROI: dimension["<<i<<"] = " << dimensions[i] << endl;
       return 0 ;
     }
     if ((this->TumorGrowthNode->GetROIMin(i) < 0) || (this->TumorGrowthNode->GetROIMin(i) >= dimensions[i])) return 0 ;
@@ -453,13 +453,17 @@ int vtkTumorGrowthLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
     // Kilian-Feb-08 you should first register and then normalize bc registration is not impacted by normalization 
     app->Script("::TumorGrowthTcl::Scan2ToScan1Registration_GUI Local"); 
     progressBar->SetValue(50.0/TimeLength);
+
     app->Script("::TumorGrowthTcl::HistogramNormalization_GUI"); 
     progressBar->SetValue(55.0/TimeLength);
+
+
   } else {
     cout << "DEBUGGING " << endl;
+    if (1) {
     if (!this->TumorGrowthNode->GetScan2_NormedRef() || !strcmp(this->TumorGrowthNode->GetScan2_NormedRef(),"")) { 
       char fileName[1024];
-      sprintf(fileName,"%s/TG_scan2_norm.nhdr",this->TumorGrowthNode->GetWorkingDir());
+      sprintf(fileName,"%s/TG_scan2_norm.nrrd",this->TumorGrowthNode->GetWorkingDir());
       vtkMRMLVolumeNode* tmp = this->LoadVolume(app,fileName,0,"TG_scan2_norm");
       if (tmp) {
         this->TumorGrowthNode->SetScan2_NormedRef(tmp->GetID());
@@ -468,7 +472,21 @@ int vtkTumorGrowthLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
          return 0;
       }
     }
+    } else {
+      if (!this->TumorGrowthNode->GetScan2_LocalRef() || !strcmp(this->TumorGrowthNode->GetScan2_LocalRef(),"")) { 
+      char fileName[1024];
+      sprintf(fileName,"%s/TG_scan2_Local.nrrd",this->TumorGrowthNode->GetWorkingDir());
+      vtkMRMLVolumeNode* tmp = this->LoadVolume(app,fileName,0,"TG_scan2_Local");
+      if (tmp) {
+        this->TumorGrowthNode->SetScan2_LocalRef(tmp->GetID());
+      } else {
+         cout << "Error: Could not load " << fileName << endl;
+         return 0;
+      }
+      }
+    }
   }
+
 
   if (this->TumorGrowthNode->GetAnalysis_Intensity_Flag()) { 
     if (!atoi(app->Script("::TumorGrowthTcl::IntensityThresholding_GUI 1"))) return 0; 
@@ -507,16 +525,16 @@ void vtkTumorGrowthLogic::RegisterMRMLNodesWithScene() {
    tmNode->Delete();
 }
 
-vtkImageData* vtkTumorGrowthLogic::CreateAnalysis_Intensity_SubtractROI() {
-  if (this->Analysis_Intensity_Final) { this->Analysis_Intensity_SubtractROI->Delete(); }
-  this->Analysis_Intensity_SubtractROI = vtkImageData::New();
-  return this->Analysis_Intensity_SubtractROI;
+vtkImageData* vtkTumorGrowthLogic::CreateAnalysis_Intensity_ROIGrowthInt() {
+  if (this->Analysis_Intensity_ROIGrowthInt) { this->Analysis_Intensity_ROIGrowthInt->Delete(); }
+  this->Analysis_Intensity_ROIGrowthInt = vtkImageData::New();
+  return this->Analysis_Intensity_ROIGrowthInt;
 }
 
-vtkImageThreshold* vtkTumorGrowthLogic::CreateAnalysis_Intensity_Final() {
-  if (this->Analysis_Intensity_Final) { this->Analysis_Intensity_Final->Delete(); }
-  this->Analysis_Intensity_Final = vtkImageThreshold::New();
-  return this->Analysis_Intensity_Final;
+vtkImageData* vtkTumorGrowthLogic::CreateAnalysis_Intensity_ROIShrinkInt() {
+  if (this->Analysis_Intensity_ROIShrinkInt) { this->Analysis_Intensity_ROIShrinkInt->Delete(); }
+  this->Analysis_Intensity_ROIShrinkInt = vtkImageData::New();
+  return this->Analysis_Intensity_ROIShrinkInt;
 }
 
 vtkImageThreshold* vtkTumorGrowthLogic::CreateAnalysis_Intensity_ROINegativeBin() {
@@ -577,11 +595,7 @@ vtkImageData*  vtkTumorGrowthLogic::GetAnalysis_Intensity_ROIBinDisplay() {
 
 double vtkTumorGrowthLogic::MeassureGrowth() {
   
-  if (!this->Analysis_Intensity_Final || !this->Analysis_Intensity_ROINegativeBin || !this->Analysis_Intensity_ROIPositiveBin || !this->Analysis_Intensity_ROITotal) return -1;
-  // Just for display 
-  
-  this->Analysis_Intensity_Final->ThresholdByUpper(this->Analysis_Intensity_Threshold); 
-  this->Analysis_Intensity_Final->Update();
+  if (!this->Analysis_Intensity_ROINegativeBin || !this->Analysis_Intensity_ROIPositiveBin || !this->Analysis_Intensity_ROITotal) return -1;
   this->Analysis_Intensity_ROINegativeBin->ThresholdByLower(-this->Analysis_Intensity_Threshold); 
   this->Analysis_Intensity_ROINegativeBin->Update(); 
   this->Analysis_Intensity_ROIPositiveBin->ThresholdByUpper(this->Analysis_Intensity_Threshold); 

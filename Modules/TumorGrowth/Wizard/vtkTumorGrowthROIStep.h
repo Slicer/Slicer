@@ -96,6 +96,7 @@ private:
 
   vtkMRMLScalarVolumeNode *ROILabelMapNode;
   vtkImageRectangularSource *ROILabelMap;
+  int ROIHideFlag; 
 
 };
 

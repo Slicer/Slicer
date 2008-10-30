@@ -18,6 +18,14 @@ if {0} { ;# comment
 
 # Remember to run make before executing script again so that this tcl script is copied over to slicer3-build directory 
 namespace eval TumorGrowthTcl {
+    variable newIntensityAnalysis 1
+
+    # the region were we detect growth or shrinkage around the segmentation in square voxels 
+    # 16 == 4 voxels 
+    variable RegionChangingBand 17
+
+    # Returns the th
+    variable ThresholdHistory 
 
     proc HistogramNormalization_GUI { } {
       # Print "HistogramNormalization_GUI Start"
@@ -74,23 +82,12 @@ namespace eval TumorGrowthTcl {
       vtkImageEuclideanDistance TUMOR_DIST 
         TUMOR_DIST   SetInput $SCAN1_SEGMENT
         TUMOR_DIST   SetAlgorithmToSaito
-        TUMOR_DIST   SetMaximumDistance 100 
+        TUMOR_DIST   SetMaximumDistance 145 
         TUMOR_DIST   ConsiderAnisotropyOff
       TUMOR_DIST   Update
 
-      set CAST [vtkImageCast New]
-        $CAST SetInput [TUMOR_DIST GetOutput] 
-        $CAST SetOutputScalarType [$SCAN1_SEGMENT GetScalarType] 
-      $CAST Update
-
-      set INSIDE [vtkImageMathematics New]
-        $INSIDE SetInput1 [$CAST GetOutput] 
-        $INSIDE SetInput2 $SCAN1_SEGMENT 
-        $INSIDE SetOperationToMultiply
-      $INSIDE Update 
-
       vtkImageAccumulate HistTemp
-          HistTemp SetInput [$INSIDE  GetOutput]
+          HistTemp SetInput [TUMOR_DIST  GetOutput]
       HistTemp Update
           
       set Max [lindex [HistTemp GetMax] 0]
@@ -98,53 +95,71 @@ namespace eval TumorGrowthTcl {
       catch {TUMOR_INSIDE Delete}
       vtkImageThreshold TUMOR_INSIDE
         TUMOR_INSIDE SetOutputScalarType [$SCAN1_SEGMENT GetScalarType] 
-        TUMOR_INSIDE SetInput [$INSIDE GetOutput]
-        TUMOR_INSIDE ThresholdByUpper [expr $Max*0.5]
+        TUMOR_INSIDE SetInput [TUMOR_DIST GetOutput]
+        # This is much better - bc it is not set but for right now we set it static 
+        # TUMOR_INSIDE ThresholdByUpper [expr $Max*0.5]
+        # Later - compute dynamically 
+        TUMOR_INSIDE ThresholdByUpper $TumorGrowthTcl::RegionChangingBand
         TUMOR_INSIDE SetInValue 1
         TUMOR_INSIDE SetOutValue 0
       TUMOR_INSIDE Update
       
       # Calculate the mean for scan 1 and Scan 2 (we leave out the factor of voxels bc it does not matter latter
       catch { HighIntensityRegion Delete }
-      foreach ID "1 2" {
-         vtkImageMathematics HighIntensityRegion
-            HighIntensityRegion SetInput1 [TUMOR_INSIDE GetOutput] 
-            if {$ID > 1} { HighIntensityRegion SetInput2 $SCAN2
-            } else { HighIntensityRegion SetInput2 $SCAN1 }
-            HighIntensityRegion SetOperationToMultiply
-         HighIntensityRegion Update 
-         
-         vtkImageSumOverVoxels SUM
-              SUM SetInput [HighIntensityRegion GetOutput] 
-         SUM Update
+
+
+      set Scan1Intensities [HistogramNormalization_HistFct  [TUMOR_INSIDE GetOutput] $SCAN1 ]
+      set Scan2Intensities  [HistogramNormalization_HistFct [TUMOR_INSIDE GetOutput] $SCAN2 ]
+      set runs 0
+
+      set INPUT [vtkImageData New]
+      $INPUT DeepCopy $SCAN2
       
-         set TumorGrowth(Scan${ID},ROI_SUM_INTENS) [SUM GetVoxelSum ]
-         SUM Delete
-         HighIntensityRegion Delete
-      } 
-      $CAST Delete
-      $INSIDE Delete    
+      # Do multiplication multiple times to accound for computation errors
+      # should be all dynamic - no time right now - make it dependent on size of tumor
+      set NormFactor 2.0
+      while { ($NormFactor < 0.995 ||  $NormFactor > 1.005) && ($runs < 5) } {
+
+       # Multiply scan2 with the factor that normalizes both mean  
+       if {$Scan2Intensities == 0 } { 
+          set NormFactor 0.0 
+      set runs 5
+       } else {
+       set NormFactor [expr  double($Scan1Intensities) / double($Scan2Intensities)]
+       }
+       catch {TumorGrowth(Scan2,ROISuperSampleNormalized) Delete}
+       vtkImageMathematics TumorGrowth(Scan2,ROISuperSampleNormalized)
+         TumorGrowth(Scan2,ROISuperSampleNormalized) SetInput1  $INPUT 
+         TumorGrowth(Scan2,ROISuperSampleNormalized) SetOperationToMultiplyByK 
+         TumorGrowth(Scan2,ROISuperSampleNormalized) SetConstantK $NormFactor
+       TumorGrowth(Scan2,ROISuperSampleNormalized) Update      
+       $OUTPUT DeepCopy [TumorGrowth(Scan2,ROISuperSampleNormalized) GetOutput]
+       $INPUT DeepCopy  $OUTPUT
+       TumorGrowth(Scan2,ROISuperSampleNormalized) Delete
+       set Scan2Intensities  [HistogramNormalization_HistFct [TUMOR_INSIDE GetOutput] $INPUT ]
+       incr runs
+      }
+      $INPUT Delete
       TUMOR_DIST Delete
       TUMOR_INSIDE Delete
-      
-       # Multiply scan2 with the factor that normalizes both mean  
-       if {$TumorGrowth(Scan2,ROI_SUM_INTENS) == 0 } { 
-          set NormFactor 0.0 
-       } else {
-        set NormFactor [expr  double($TumorGrowth(Scan1,ROI_SUM_INTENS)) / double($TumorGrowth(Scan2,ROI_SUM_INTENS))]  
-       }
-       # Print "Intensity Normalization Factor:  $NormFactor"
-      
-      catch {TumorGrowth(Scan2,ROISuperSampleNormalized) Delete}
-      vtkImageMathematics TumorGrowth(Scan2,ROISuperSampleNormalized)
-           TumorGrowth(Scan2,ROISuperSampleNormalized) SetInput1  $SCAN2 
-           TumorGrowth(Scan2,ROISuperSampleNormalized) SetOperationToMultiplyByK 
-           TumorGrowth(Scan2,ROISuperSampleNormalized) SetConstantK $NormFactor
-      TumorGrowth(Scan2,ROISuperSampleNormalized) Update
-      
-      $OUTPUT DeepCopy [TumorGrowth(Scan2,ROISuperSampleNormalized) GetOutput]
-      TumorGrowth(Scan2,ROISuperSampleNormalized) Delete
-    }
+     }
+
+    proc HistogramNormalization_HistFct {SCAN SEGMENT} {
+    set HighIntensityRegion [vtkImageMathematics New]
+    $HighIntensityRegion SetInput1 $SEGMENT
+        $HighIntensityRegion SetInput2 $SCAN 
+        $HighIntensityRegion SetOperationToMultiply
+        $HighIntensityRegion Update 
+         
+        set SUM [vtkImageSumOverVoxels New]
+        $SUM SetInput [$HighIntensityRegion GetOutput] 
+        $SUM Update
+    set result [$SUM GetVoxelSum ]
+    $SUM Delete
+        $HighIntensityRegion Delete
+    return $result
+    } 
+
 
     proc HistogramNormalization_DeleteOutput { } {
       # -------------------------------------
@@ -458,8 +473,8 @@ namespace eval TumorGrowthTcl {
 
     # -------------------------------------------------------------
     proc Analysis_Intensity_GUI { } {
-        puts "=============================================="
-        puts "Analysis_Intensity Start" 
+        # puts "=============================================="
+        # puts "Analysis_Intensity Start" 
 
         # -------------------------------------
         # Define Interfrace Parameters 
@@ -476,9 +491,18 @@ namespace eval TumorGrowthTcl {
         # -------------------------------------
         Analysis_Intensity_DeleteOutput_GUI 
 
+    # Changes Made to intensity Analysis in Oct 08
+    if {$TumorGrowthTcl::newIntensityAnalysis } {
+        set SCAN1_NODE [$SCENE GetNodeByID [$NODE GetScan1_SuperSampleRef]]
+        # you can also use the imge after local registration - norm should not impact analysis 
+        set SCAN2_NODE [$SCENE GetNodeByID [$NODE GetScan2_NormedRef]] 
+
+    } else {
         set SCAN1_NODE [$SCENE GetNodeByID [$NODE GetScan1_ThreshRef]]
-        set SEGM_NODE  [$SCENE GetNodeByID [$NODE GetScan1_SegmentRef]]
         set SCAN2_NODE [$SCENE GetNodeByID [$NODE GetScan2_ThreshRef]]
+    }
+
+        set SEGM_NODE  [$SCENE GetNodeByID [$NODE GetScan1_SegmentRef]]
 
         if {$SCAN1_NODE == "" || $SEGM_NODE == "" || $SCAN2_NODE == "" } { 
            puts "ERROR:Analysis_Intensity_GUI: Incomplete Input" 
@@ -508,8 +532,9 @@ namespace eval TumorGrowthTcl {
   
     proc Analysis_Intensity_CMD {LOGIC SCAN1_ImageData SCAN1_SegmData SCAN2_ImageData AnalysisSensitivity } {
         # Print "Analysis_Intensity_CMD $LOGIC $SCAN1_ImageData $SCAN1_SegmData $SCAN2_ImageData $AnalysisSensitivity"
-        set AnalysisSubtractROI       [$LOGIC CreateAnalysis_Intensity_SubtractROI]
-        set AnalysisFinal             [$LOGIC CreateAnalysis_Intensity_Final]
+        set AnalysisGrowthROIIntensity    [$LOGIC CreateAnalysis_Intensity_ROIGrowthInt]
+        set AnalysisShrinkROIIntensity    [$LOGIC CreateAnalysis_Intensity_ROIShrinkInt]
+
         set AnalysisROINegativeBin    [$LOGIC CreateAnalysis_Intensity_ROINegativeBin]
         set AnalysisROIPositiveBin    [$LOGIC CreateAnalysis_Intensity_ROIPositiveBin]
         set AnalysisROIBinCombine     [$LOGIC CreateAnalysis_Intensity_ROIBinCombine]
@@ -524,7 +549,7 @@ namespace eval TumorGrowthTcl {
         # -------------------------------------
 
         set result "[Analysis_Intensity_Fct $SCAN1_ImageData $SCAN1_SegmData $SCAN2_ImageData $AnalysisSensitivity \
-                              $AnalysisSubtractROI $AnalysisFinal $AnalysisROINegativeBin $AnalysisROIPositiveBin $AnalysisROIBinCombine \
+                              $AnalysisGrowthROIIntensity $AnalysisShrinkROIIntensity $AnalysisROINegativeBin $AnalysisROIPositiveBin $AnalysisROIBinCombine \
                               $AnalysisROIBinReal $AnalysisROIBinAdd $AnalysisROIBinDisplay $AnalysisROITotal ]"
 
         $LOGIC SetAnalysis_Intensity_Mean [lindex $result 0]
@@ -533,13 +558,16 @@ namespace eval TumorGrowthTcl {
     }
 
 
-    proc Analysis_Intensity_Fct { Scan1Data Scan1Segment Scan2Data AnalysisSensitivity AnalysisSubtractROI AnalysisFinal AnalysisROINegativeBin  AnalysisROIPositiveBin AnalysisROIBinCombine AnalysisROIBinReal  AnalysisROIBinAdd AnalysisROIBinDisplay  AnalysisROITotal } {
+    proc Analysis_Intensity_Fct { Scan1Data Scan1Segment Scan2Data AnalysisSensitivity AnalysisGrowthROIIntensity AnalysisShrinkROIIntensity
+                                  AnalysisROINegativeBin AnalysisROIPositiveBin AnalysisROIBinCombine AnalysisROIBinReal  AnalysisROIBinAdd 
+                                  AnalysisROIBinDisplay  AnalysisROITotal } {
        
        # -----------------------------------------
        # Part I: Does not change 
        # ----------------------------------------
 
        # Subtract consecutive scans from each other
+    catch { TumorGrowth(FinalSubtract) Delete }
        vtkImageMathematics TumorGrowth(FinalSubtract)
          TumorGrowth(FinalSubtract) SetInput1 $Scan2Data 
          TumorGrowth(FinalSubtract) SetInput2 $Scan1Data 
@@ -549,6 +577,7 @@ namespace eval TumorGrowthTcl {
        # puts "    ScalarRange:     [[TumorGrowth(FinalSubtract) GetOutput] GetScalarRange]"
 
        # do a little bit of smoothing 
+    catch { TumorGrowth(FinalSubtractSmooth) Delete }
        vtkImageMedian3D TumorGrowth(FinalSubtractSmooth)
         TumorGrowth(FinalSubtractSmooth) SetInput [TumorGrowth(FinalSubtract) GetOutput]
         TumorGrowth(FinalSubtractSmooth) SetKernelSize 3 3 3
@@ -557,50 +586,158 @@ namespace eval TumorGrowthTcl {
 
        # puts "    ScalarRange:     [[TumorGrowth(FinalSubtractSmooth) GetOutput] GetScalarRange]"
 
-       # Compute intensity distribution of dormant tissue 
-       set result [Analysis_Intensity_ComputeThreshold [TumorGrowth(FinalSubtractSmooth) GetOutput] $Scan1Segment $AnalysisSensitivity]
-       set FinalThreshold [lindex $result 2]
+       # Compute intensity distribution of dormant tissue
+       if {$TumorGrowthTcl::newIntensityAnalysis} {
+     set FinalThreshold [Analysis_Intensity_ComputeThreshold_Histogram [TumorGrowth(FinalSubtractSmooth) GetOutput] $Scan1Segment $AnalysisSensitivity]
+         set result "0 0 $FinalThreshold"
+       } else {
+         set result [Analysis_Intensity_ComputeThreshold_Gaussian [TumorGrowth(FinalSubtractSmooth) GetOutput] $Scan1Segment $AnalysisSensitivity]
+         set FinalThreshold [lindex $result 2]
+
+       }
 
        # Define ROI by assinging flipping binary map 
-       vtkImageThreshold TumorGrowth(FinalROI) 
-         TumorGrowth(FinalROI)  SetInput $Scan1Segment 
-         TumorGrowth(FinalROI)  SetInValue 1
-         TumorGrowth(FinalROI)  SetOutValue 0
-         TumorGrowth(FinalROI)  ThresholdByLower 0 
-         TumorGrowth(FinalROI)  SetOutputScalarTypeToShort
-       TumorGrowth(FinalROI) Update
+    catch { TumorGrowth(FinalROIInvSegment) Delete }
+       vtkImageThreshold TumorGrowth(FinalROIInvSegment) 
+         TumorGrowth(FinalROIInvSegment)  SetInput $Scan1Segment 
+         TumorGrowth(FinalROIInvSegment)  SetInValue 1
+         TumorGrowth(FinalROIInvSegment)  SetOutValue 0
+         TumorGrowth(FinalROIInvSegment)  ThresholdByLower 0 
+         TumorGrowth(FinalROIInvSegment)  SetOutputScalarTypeToShort
+       TumorGrowth(FinalROIInvSegment) Update
 
-       # Define image of ROI
-       vtkImageMathematics TumorGrowth(FinalMultiply)
-         TumorGrowth(FinalMultiply) SetInput1 [TumorGrowth(FinalROI)       GetOutput] 
-         TumorGrowth(FinalMultiply) SetInput2 [TumorGrowth(FinalSubtractSmooth)  GetOutput] 
-         TumorGrowth(FinalMultiply) SetOperationToMultiply  
-       TumorGrowth(FinalMultiply) Update
+       catch { TumorGrowth(FinalROIGrowth) Delete }
+       vtkImageData TumorGrowth(FinalROIGrowth)
+       catch { TumorGrowth(FinalROIShrink) Delete }
+       vtkImageData TumorGrowth(FinalROIShrink)
+   
+       if {$TumorGrowthTcl::newIntensityAnalysis} {
+         # Kilian - Oct - 08 
+         # Also allows meassuring shrinkage
+         # Start 
+         
+         # 1. Define ROIs 
 
-       # Save part of Analysis that does not change
+     # Cut off edges bc of registration can cause artificats in growth analysis
+         # do it later by applying resampling to the box itself when performing local registration
+     set EXTENT [$Scan1Segment GetWholeExtent]
+     set CENTER "[expr ([lindex $EXTENT 1] + [lindex $EXTENT 0]) / 2] [expr ([lindex $EXTENT 3] + [lindex $EXTENT 2]) / 2] [expr ([lindex $EXTENT 5] + [lindex $EXTENT 4]) / 2]"
+     set DIM "[expr [lindex $EXTENT 1] - [lindex $EXTENT 0] + 1 ] [expr [lindex $EXTENT 3] - [lindex $EXTENT 2] + 1 ] [expr [lindex $EXTENT 5] - [lindex $EXTENT 4] + 1 ]"
+     set SIZE ""
 
-       $AnalysisSubtractROI DeepCopy [TumorGrowth(FinalMultiply) GetOutput] 
+     for {set i 0 } {$i < 3 } { incr i} {
+         set tmp [expr [lindex $DIM $i ] -8] 
+           if {$tmp > 0 } {
+           set SIZE "${SIZE}$tmp " 
+           } else {
+           set SIZE "${SIZE}1 "  
+           }
+     }
+    
+         catch {  TumorGrowth(FinalROIGlobal) Delete }
+     vtkImageRectangularSource  TumorGrowth(FinalROIGlobal) 
+       eval TumorGrowth(FinalROIGlobal) SetWholeExtent $EXTENT
+           TumorGrowth(FinalROIGlobal) SetOutputScalarTypeToShort
+           TumorGrowth(FinalROIGlobal) SetInsideGraySlopeFlag 0
+       TumorGrowth(FinalROIGlobal) SetInValue 1
+           TumorGrowth(FinalROIGlobal) SetOutValue 0
+       eval TumorGrowth(FinalROIGlobal) SetCenter $CENTER; 
+           eval TumorGrowth(FinalROIGlobal) SetSize $SIZE; 
+         TumorGrowth(FinalROIGlobal) Update
 
-       TumorGrowth(FinalSubtract)  Delete 
-       TumorGrowth(FinalSubtractSmooth) Delete
-       TumorGrowth(FinalROI) Delete 
-       TumorGrowth(FinalMultiply)  Delete 
+         # VolumeWriter BOX [TumorGrowth(FinalROIGlobal) GetOutput]
+ 
+
+         # vtkImageKilianDistanceTransform does not work anymore 
+     catch { TumorGrowth(FinalROIDist) Delete }
+         vtkImageEuclideanDistance TumorGrowth(FinalROIDist)
+       TumorGrowth(FinalROIDist) SetInput [TumorGrowth(FinalROIInvSegment) GetOutput]
+           TumorGrowth(FinalROIDist) SetAlgorithmToSaito
+           TumorGrowth(FinalROIDist) SetMaximumDistance 100 
+           TumorGrowth(FinalROIDist) ConsiderAnisotropyOff
+         TumorGrowth(FinalROIDist)  Update
+
+     catch {  TumorGrowth(FinalROIBin) Delete }
+         vtkImageThreshold TumorGrowth(FinalROIBin)
+          TumorGrowth(FinalROIBin) SetOutputScalarType [[TumorGrowth(FinalROIInvSegment) GetOutput] GetScalarType] 
+           TumorGrowth(FinalROIBin) SetInput [TumorGrowth(FinalROIDist) GetOutput]
+           TumorGrowth(FinalROIBin) ThresholdBetween 1 $TumorGrowthTcl::RegionChangingBand
+           TumorGrowth(FinalROIBin) SetInValue 1
+           TumorGrowth(FinalROIBin) SetOutValue 0
+         TumorGrowth(FinalROIBin) Update
+
+     catch {  TumorGrowth(FinalROIBinGlobal) Delete }
+         vtkImageMathematics TumorGrowth(FinalROIBinGlobal)
+       TumorGrowth(FinalROIBinGlobal) SetInput1 [TumorGrowth(FinalROIBin) GetOutput] 
+       TumorGrowth(FinalROIBinGlobal) SetInput2 [TumorGrowth(FinalROIGlobal) GetOutput] 
+           TumorGrowth(FinalROIBinGlobal) SetOperationToMultiply  
+         TumorGrowth(FinalROIBinGlobal) Update
+    
+
+         TumorGrowth(FinalROIGrowth) DeepCopy [TumorGrowth(FinalROIBinGlobal)  GetOutput] 
+
+     TumorGrowth(FinalROIDist) SetInput $Scan1Segment
+     TumorGrowth(FinalROIDist) Update 
+         TumorGrowth(FinalROIBin) Update
+         TumorGrowth(FinalROIBinGlobal) Update
+
+         TumorGrowth(FinalROIShrink) DeepCopy [TumorGrowth(FinalROIBinGlobal)  GetOutput] 
+
+         TumorGrowth(FinalROIDist) Delete 
+         TumorGrowth(FinalROIBin) Delete 
+         TumorGrowth(FinalROIBinGlobal) Delete
+         TumorGrowth(FinalROIGlobal) Delete
+         #
+         # End of Change of Kilian Oct-08
+         #
+         
+     } else {
+     # Original Definition
+     TumorGrowth(FinalROIGrowth) DeepCopy [TumorGrowth(FinalROIInvSegment) GetOutput] 
+     TumorGrowth(FinalROIShrink) DeepCopy [TumorGrowth(FinalROIInvSegment) GetOutput] 
+     }
+    
+     # VolumeWriter Shrink TumorGrowth(FinalROIShrink)
+     # VolumeWriter Growth TumorGrowth(FinalROIGrowth) 
+
+     # Define Intensities to be analyzed for growth
+     catch { TumorGrowth(FinalROIGrowthInt) Delete }
+     vtkImageMathematics TumorGrowth(FinalROIGrowthInt)
+       TumorGrowth(FinalROIGrowthInt) SetInput1 TumorGrowth(FinalROIGrowth) 
+       TumorGrowth(FinalROIGrowthInt) SetInput2 [TumorGrowth(FinalSubtractSmooth)  GetOutput] 
+       TumorGrowth(FinalROIGrowthInt) SetOperationToMultiply  
+     TumorGrowth(FinalROIGrowthInt) Update
+
+     $AnalysisGrowthROIIntensity DeepCopy [TumorGrowth(FinalROIGrowthInt) GetOutput] 
+
+     vtkImageMathematics TumorGrowth(FinalROIShrinkInt)
+       TumorGrowth(FinalROIShrinkInt) SetInput1 TumorGrowth(FinalROIShrink) 
+       TumorGrowth(FinalROIShrinkInt) SetInput2 [TumorGrowth(FinalSubtractSmooth)  GetOutput] 
+       TumorGrowth(FinalROIShrinkInt) SetOperationToMultiply  
+     TumorGrowth(FinalROIShrinkInt) Update
+      
+     $AnalysisShrinkROIIntensity DeepCopy [TumorGrowth(FinalROIShrinkInt) GetOutput] 
+
+     # VolumeWriter ShrinkInt  $AnalysisShrinkROIIntensity
+     # VolumeWriter GrowthInt  $AnalysisGrowthROIIntensity
+
+     # Delete Filters
+     TumorGrowth(FinalROIGrowthInt) Delete
+     TumorGrowth(FinalROIShrinkInt) Delete
+
+     TumorGrowth(FinalROIGrowth) Delete 
+     TumorGrowth(FinalROIShrink) Delete 
+     TumorGrowth(FinalROIInvSegment) Delete
+     TumorGrowth(FinalSubtractSmooth) Delete
+     TumorGrowth(FinalSubtract)  Delete 
 
        # -----------------------------------------
        # Part II: modifies according to sensitivity parameter
        # ----------------------------------------
 
-        # puts "AnalysisFinal $AnalysisFinal "
-         $AnalysisFinal SetInput $AnalysisSubtractROI  
-         $AnalysisFinal ReplaceInOff
-         $AnalysisFinal SetOutValue 0
-         $AnalysisFinal ThresholdByUpper  $FinalThreshold
-         $AnalysisFinal SetOutputScalarTypeToShort
-       $AnalysisFinal Update
-
        # vtkImageThreshold TumorGrowth(FinalROINegativeBin) 
 
-         $AnalysisROINegativeBin SetInput $AnalysisSubtractROI   
+         $AnalysisROINegativeBin SetInput $AnalysisShrinkROIIntensity 
          $AnalysisROINegativeBin SetInValue -1
          $AnalysisROINegativeBin SetOutValue 0
          $AnalysisROINegativeBin ThresholdByLower  -$FinalThreshold
@@ -609,7 +746,7 @@ namespace eval TumorGrowthTcl {
 
        # Initializing tumor growth prediction
        # catch { TumorGrowth(FinalROIBin) Delete}
-         $AnalysisROIPositiveBin  SetInput $AnalysisSubtractROI   
+         $AnalysisROIPositiveBin  SetInput $AnalysisGrowthROIIntensity 
          $AnalysisROIPositiveBin  SetInValue 1
          $AnalysisROIPositiveBin  SetOutValue 0
          $AnalysisROIPositiveBin  ThresholdByUpper  $FinalThreshold
@@ -689,10 +826,14 @@ namespace eval TumorGrowthTcl {
     } 
 
     proc Analysis_Intensity_UpdateThreshold_Fct {LOGIC  AnalysisSensitivity } {
-        set AnalysisMean           [$LOGIC GetAnalysis_Intensity_Mean ]
-        set AnalysisVariance       [$LOGIC GetAnalysis_Intensity_Variance ]
-        set ThresholdValue         [Analysis_Intensity_InverseStandardCumulativeDistribution $AnalysisSensitivity  $AnalysisMean $AnalysisVariance]      
-        if { $ThresholdValue < 0.0 } { set ThresholdValue 0.0 }
+    if { $TumorGrowthTcl::newIntensityAnalysis } {
+      set ThresholdValue [Analysis_Intensity_UpdateThreshold_His $AnalysisSensitivity] 
+    } else {
+          set AnalysisMean           [$LOGIC GetAnalysis_Intensity_Mean ]
+          set AnalysisVariance       [$LOGIC GetAnalysis_Intensity_Variance ]
+          set ThresholdValue         [Analysis_Intensity_InverseStandardCumulativeDistribution $AnalysisSensitivity  $AnalysisMean $AnalysisVariance] 
+          if { $ThresholdValue < 1 } { set ThresholdValue 1 }
+    }
         $LOGIC SetAnalysis_Intensity_Threshold $ThresholdValue
     }
 
@@ -763,30 +904,181 @@ namespace eval TumorGrowthTcl {
     return [expr $mu + $sigma *sqrt(2)* $InvErf]
   }
 
-  # Compute threshold based on Gaussian noise in segmented region 
-  proc Analysis_Intensity_ComputeThreshold {Scan1SubScan2 Scan1Segment AnalysisSensitivity} {
+
+  # Compute threshold based of histogram of segmented region 
+  # what we compute here is a statistics over the noise (image intensity) inside the tumor 
+  #  
+  # We then define change as voxels where the intensity differences between the two images is greater 
+  # than a certain threshold. The threshold corresponds to the percentage of voxels, whose intensity 
+  # differences at that location is smaller or equal to the threshold
+  # e.g.  Threshold is zero than any intensity differences would be defined as change
+
+  proc Analysis_Intensity_ComputeThreshold_Histogram {Scan1SubScan2 Scan1Segment AnalysisSensitivity} {
+
     # compute Gaussian pdf for noise
+    catch { compThrAbs Delete}
+    # it is extremly important that the mean of the absolute value is roughly zero otherwise this approach will fail
+    # bc we always bias shrinkage or growth towards based on the image with the greater overall intensity value 
+    # ideally compose two seperate histograms - one for shrinkage (the negative values) and one for growth (the positive values ) => zero mean does not matter anymore 
+    vtkImageMathematics compThrAbs 
+       compThrAbs  SetInput1 $Scan1SubScan2
+       compThrAbs  SetOperationToAbsoluteValue
+    compThrAbs  Update
+
+    # Compute intside area 
+    catch { compThrROIDis Delete}
+    vtkImageEuclideanDistance compThrROIDis
+      compThrROIDis SetInput $Scan1Segment 
+      compThrROIDis SetAlgorithmToSaito
+      compThrROIDis SetMaximumDistance 100 
+      compThrROIDis ConsiderAnisotropyOff
+     compThrROIDis  Update
+
+    # Compute region of interest
+    catch { compThrROIBin Delete}
+    vtkImageThreshold compThrROIBin
+      compThrROIBin SetOutputScalarType [[compThrAbs GetOutput] GetScalarType] 
+      compThrROIBin SetInput [compThrROIDis GetOutput]
+      compThrROIBin ThresholdByUpper $TumorGrowthTcl::RegionChangingBand
+      compThrROIBin SetInValue 1
+      compThrROIBin SetOutValue 0
+    compThrROIBin Update
+
+    # Compute Intensity of Interest     
+    catch { compThrROIAbs Delete}
+    vtkImageMathematics compThrROIAbs 
+       compThrROIAbs  SetInput1 [compThrROIBin  GetOutput]
+       compThrROIAbs  SetInput2 [compThrAbs  GetOutput]
+       compThrROIAbs  SetOperationToMultiply 
+    compThrROIAbs  Update
+
+    # Compute Nominator 
+    catch { compThrSum Delete}
+    vtkImageSumOverVoxels compThrSum
+       compThrSum SetInput [compThrROIBin GetOutput]
+       compThrSum Update
+    set SizeOfROI [compThrSum GetVoxelSum]
+    compThrSum Delete
+
+    # Compute Threshold by Percentage
+    set perIndex 0
+    set totalSum 0
+    catch { compThrHist Delete}
+    vtkImageAccumulate compThrHist
+       compThrHist SetInput [compThrROIAbs GetOutput] 
+       compThrHist Update
+       set min    [lindex [compThrHist GetMin] 0]
+       set max    [lindex [compThrHist GetMax] 0] 
+       set SizeOfVolume [compThrHist GetVoxelCount]
+
+       set bins [expr int($max)] 
+       set origin 0
+       set spacing 1.0
+
+       compThrHist SetComponentOrigin $origin 0.0 0.0 
+       compThrHist SetComponentExtent 0 $bins 0 0 0 0
+       compThrHist SetComponentSpacing $spacing 0.0 0.0
+    compThrHist Update
+    set hisData [compThrHist GetOutput] 
+
+    set thrIndex $origin
+    for {set idx 0} { $idx <= $bins } {incr idx}  {
+    set count [expr int([$hisData GetScalarComponentAsFloat $idx 0 0 0])]
+    if {!$idx} {
+        # subtract the area that is not part of the are of interest
+        set count [expr int($count - ($SizeOfVolume - $SizeOfROI))]
+    }
+
+    if {$count} {
+        incr totalSum $count
+        set newPerIndex [expr int( $totalSum * 1000 / $SizeOfROI  + 1)  ]
+        # puts "---- $SizeOfROI $totalSum $count $newPerIndex "
+
+        while { $perIndex < $newPerIndex } {
+        set TumorGrowthTcl::ThresholdHistory($perIndex) $thrIndex
+        incr perIndex
+        }
+        if {$perIndex > 1000} {break}
+    }
+        incr thrIndex
+    }
+    # just for rounding errors - should not be needed
+    while {$perIndex < 1001} {
+    set TumorGrowthTcl::ThresholdHistory($perIndex) $thrIndex
+    incr perIndex
+    }
+
+    # Clean Up
+    compThrHist   Delete
+    compThrROIAbs Delete
+    compThrROIBin Delete
+    compThrROIDis Delete
+    compThrAbs    Delete
+    
+    return "[Analysis_Intensity_UpdateThreshold_His $AnalysisSensitivity ]"
+  }
+
+  proc Analysis_Intensity_UpdateThreshold_His { Sensitivity } {
+      set probIndex [expr int($Sensitivity *1000)];
+      if {$probIndex < 0 || $probIndex > 1000 } {return 1}
+      set ThrIndex  $TumorGrowthTcl::ThresholdHistory($probIndex)
+      
+      if {$ThrIndex == 0 } {return 1}
+      return $ThrIndex
+  }
+
+  # Compute threshold based on Gaussian noise in segmented region 
+  proc Analysis_Intensity_ComputeThreshold_Gaussian {Scan1SubScan2 Scan1Segment AnalysisSensitivity} {
+    # compute Gaussian pdf for noise
+    catch { compThrNoise Delete}
     vtkImageMathematics compThrNoise 
        compThrNoise  SetInput1 $Scan1SubScan2
        compThrNoise  SetOperationToAbsoluteValue
     compThrNoise  Update
 
     # Make sure that Segmentation is binarized 
+    catch { compThrROI Delete}
     vtkImageThreshold compThrROI 
      compThrROI SetInput $Scan1Segment 
      compThrROI SetInValue 1
      compThrROI SetOutValue 0
      compThrROI  ThresholdByUpper 1 
-      compThrROI  SetOutputScalarTypeToShort
+     compThrROI  SetOutputScalarTypeToShort
     compThrROI  Update
+
+
 
     # -----------------------------------------------------
     # Compute Mean     
+    catch { compThrROINoise Delete}
     vtkImageMathematics compThrROINoise 
        compThrROINoise  SetInput1 [compThrROI  GetOutput]
        compThrROINoise  SetInput2 [compThrNoise  GetOutput]
        compThrROINoise  SetOperationToMultiply 
     compThrROINoise  Update
+
+    # VolumeWriter ThreshImage [compThrROINoise GetOutput]
+
+
+    # little experiment 
+    catch { compThrROIInv Delete}
+    vtkImageThreshold compThrROIInv 
+     compThrROIInv SetInput $Scan1Segment 
+     compThrROIInv SetInValue 0
+     compThrROIInv SetOutValue 1
+     compThrROIInv  ThresholdByUpper 1 
+     compThrROIInv  SetOutputScalarTypeToShort
+    compThrROIInv  Update
+    catch { compThrROIInvNoise Delete}
+    vtkImageMathematics compThrROIInvNoise 
+       compThrROIInvNoise  SetInput1 [compThrROIInv  GetOutput]
+       compThrROIInvNoise  SetInput2 [compThrNoise  GetOutput]
+       compThrROIInvNoise  SetOperationToMultiply 
+    compThrROIInvNoise  Update
+
+    # VolumeWriter ThreshInvImage [compThrROIInvNoise GetOutput]
+    compThrROIInvNoise Delete
+    compThrROIInv  Delete
 
     # Compute Nominator 
     vtkImageSumOverVoxels compThrSum
@@ -1127,13 +1419,14 @@ namespace eval TumorGrowthTcl {
     # if {[catch {set GUI  [$::slicer3::Application GetModuleGUIByName "ChangeTracker"] } ]} { return }
     # if {[catch {set NODE [$GUI  GetNode]}]} { return }
     # set DIR [$NODE GetWorkingDir] 
-    set DIR /home/pohl/Slicer/Slicer3/Modules/TumorGrowth/Test-TGcmd
+    set DIR  /data/local/Slicer3TestData/blub 
     puts "Write Data to  $DIR/$fileName " 
+    catch {iwriter Delete}
     vtkNRRDWriter iwriter
-          iwriter SetInput $Output
-          iwriter SetFileName $DIR/$fileName
+    iwriter SetInput $Output
+    iwriter SetFileName $DIR/${fileName}.nrrd
           iwriter Write
         iwriter Delete
-    }
+  }
 }
  

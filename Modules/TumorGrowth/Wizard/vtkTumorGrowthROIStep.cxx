@@ -47,6 +47,7 @@ vtkTumorGrowthROIStep::vtkTumorGrowthROIStep()
   this->LabelROIZ       = NULL;
   this->ROILabelMapNode = NULL;
   this->ROILabelMap     = NULL;
+  this->ROIHideFlag     = 0; 
 }
 
 //----------------------------------------------------------------------------
@@ -504,6 +505,7 @@ void vtkTumorGrowthROIStep::ROIReset() {
   if (this->ROIX) this->ROIX->SetRange(-1,-1);
   if (this->ROIY) this->ROIY->SetRange(-1,-1);
   if (this->ROIZ) this->ROIZ->SetRange(-1,-1);
+  this->ROIHideFlag = 0;
 }
 
 
@@ -726,6 +728,8 @@ void vtkTumorGrowthROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long ev
       if (this->ROILabelMapNode) {
         this->ButtonsShow->SetText("Show VOI");
         this->ROIMapRemove();
+    this->ROIHideFlag = 1;
+
       } else { 
         if (this->ROIMapShow()) { 
           this->ButtonsShow->SetText("Hide VOI");
@@ -735,6 +739,10 @@ void vtkTumorGrowthROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long ev
     if (this->ButtonsReset && (button == this->ButtonsReset)) 
     { 
       this->ROIReset();
+      if (this->ROILabelMapNode) {
+        this->ButtonsShow->SetText("Show VOI");
+        this->ROIMapRemove();
+      }
     }
     return;
   }
@@ -760,8 +768,10 @@ void vtkTumorGrowthROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long ev
     int ijkCoords[3];
     this->RetrieveInteractorIJKCoordinates(sliceGUI, rwi, ijkCoords);
     this->ROIUpdateWithNewSample(ijkCoords);
-
-  }    
+    if (!this->ROILabelMapNode && !this->ROIHideFlag && this->ROICheck()) {
+      if (this->ROIMapShow()) this->ButtonsShow->SetText("Hide VOI");
+    }
+  }  
   // Define SHOW Button 
 }
 

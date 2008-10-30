@@ -68,8 +68,8 @@ public:
   double MeassureGrowth();
   void DeleteAnalyzeOutput(vtkSlicerApplication *app);
 
-  vtkImageData* CreateAnalysis_Intensity_SubtractROI();
-  vtkImageThreshold* CreateAnalysis_Intensity_Final();
+  vtkImageData* CreateAnalysis_Intensity_ROIGrowthInt();
+  vtkImageData* CreateAnalysis_Intensity_ROIShrinkInt();
   vtkImageThreshold* CreateAnalysis_Intensity_ROINegativeBin();
   vtkImageThreshold* CreateAnalysis_Intensity_ROIPositiveBin();
   vtkImageMathematics* CreateAnalysis_Intensity_ROIBinCombine();
@@ -153,8 +153,8 @@ private:
   double Analysis_Intensity_Mean;
   double Analysis_Intensity_Variance;
   double Analysis_Intensity_Threshold;
-  vtkImageData          *Analysis_Intensity_SubtractROI;
-  vtkImageThreshold     *Analysis_Intensity_Final;
+  vtkImageData          *Analysis_Intensity_ROIGrowthInt;
+  vtkImageData          *Analysis_Intensity_ROIShrinkInt;
   vtkImageThreshold     *Analysis_Intensity_ROINegativeBin;
   vtkImageThreshold     *Analysis_Intensity_ROIPositiveBin;
   vtkImageMathematics   *Analysis_Intensity_ROIBinCombine;

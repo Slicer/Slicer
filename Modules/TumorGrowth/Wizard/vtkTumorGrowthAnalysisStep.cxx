@@ -772,39 +772,42 @@ void vtkTumorGrowthAnalysisStep::SensitivityChangedCallback(int flag)
   if (!this->SensitivityMedium || !this->SensitivityLow ||  !this->SensitivityHigh || !mrmlNode || !this->GrowthLabel ) return;
 
   double senValue = mrmlNode->GetAnalysis_Intensity_Sensitivity();
+  // original values   int senValueList[3] = {0.1, 0.6, 1.0};
+  double senValueList[3] = {0.6, 0.95, 0.997};
+
   if (flag == -1) {
-    if (senValue == 0.1) flag = 1;
-    else if (senValue == 1.0) flag = 3;
+    if (senValue == senValueList[0]) flag = 1;
+    else if (senValue == senValueList[2]) flag = 3;
     else {
       flag = 2;
-      senValue = 0.6;
+      senValue = senValueList[1];
     }
   }
 
   if (flag == 1) {
     if (!this->SensitivityLow->GetSelectedState()) {
       // make sure that it is always on even if you click on it twice
-      if (senValue == 0.1) this->SensitivityLow->SelectedStateOn();
+      if (senValue == senValueList[0]) this->SensitivityLow->SelectedStateOn();
       // don't do anything 
       return;
     }
-    mrmlNode->SetAnalysis_Intensity_Sensitivity(0.1);
+    mrmlNode->SetAnalysis_Intensity_Sensitivity(senValueList[0]);
     this->SensitivityMedium->SelectedStateOff();
     this->SensitivityHigh->SelectedStateOff();
   } else if (flag == 2) {
     if (!this->SensitivityMedium->GetSelectedState()) {
-      if (senValue == 0.6) this->SensitivityMedium->SelectedStateOn();
+      if (senValue == senValueList[1]) this->SensitivityMedium->SelectedStateOn();
       return;
     }
-    mrmlNode->SetAnalysis_Intensity_Sensitivity(0.6);
+    mrmlNode->SetAnalysis_Intensity_Sensitivity(senValueList[1]);
     this->SensitivityLow->SelectedStateOff();
     this->SensitivityHigh->SelectedStateOff();
   } else if (flag == 3) {
     if (!this->SensitivityHigh->GetSelectedState()) {
-      if (senValue == 1) this->SensitivityHigh->SelectedStateOn();
+      if (senValue == senValueList[2]) this->SensitivityHigh->SelectedStateOn();
       return;
     }
-    mrmlNode->SetAnalysis_Intensity_Sensitivity(1);
+    mrmlNode->SetAnalysis_Intensity_Sensitivity(senValueList[2]);
     this->SensitivityLow->SelectedStateOff();
     this->SensitivityMedium->SelectedStateOff();
   }
