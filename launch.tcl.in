@@ -110,8 +110,7 @@ if { $installed } {
 
   set ::env(ITK_BIN_DIR)        $::env(Slicer3_HOME)/lib/InsightToolkit
 
-  #set ::env(TEEM_DIR)           $::env(Slicer3_HOME)/lib/TEEM-@TEEM_VERSION_MAJOR@.@TEEM_VERSION_MINOR@
-  set ::env(TEEM_DIR)           $::env(Slicer3_HOME)/lib
+  set ::env(TEEM_DIR)           $::env(Slicer3_HOME)/lib/TEEM-@TEEM_VERSION_MAJOR@.@TEEM_VERSION_MINOR@
 
   set ::env(TCL_DIR)            $::env(Slicer3_HOME)/lib/TclTk
   set ::env(TCL_LIBRARY)        "$::env(TCL_DIR)/lib/tcl@TCL_TK_VERSION_DOT@"
