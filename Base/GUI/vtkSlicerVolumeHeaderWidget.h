@@ -34,6 +34,7 @@
 #include "vtkMRMLStorageNode.h"
 
 class vtkKWPushButtonWithLabel;
+class vtkKWCheckButtonWithLabel;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumeHeaderWidget : public vtkSlicerWidget
 {
@@ -112,6 +113,8 @@ protected:
   vtkKWEntryWithLabel *ScalarTypeEntry;
   
   vtkKWEntryWithLabel *FileNameEntry;
+
+  vtkKWCheckButtonWithLabel *LabelMapCheckButton;
 
 private:
 

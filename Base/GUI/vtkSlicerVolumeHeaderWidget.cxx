@@ -3,11 +3,17 @@
 
 #include "vtkSlicerVolumeHeaderWidget.h"
 
+#include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLScalarVolumeDisplayNode.h"
+#include "vtkMRMLLabelMapVolumeDisplayNode.h"
+
 #include "vtkKWFrame.h"
 #include "vtkKWMenu.h"
 #include "vtkKWMenuButton.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWPushButtonWithLabel.h"
+#include "vtkKWCheckButton.h"
+#include "vtkKWCheckButtonWithLabel.h"
 
 #include <itksys/SystemTools.hxx> 
 
@@ -45,6 +51,8 @@ vtkSlicerVolumeHeaderWidget::vtkSlicerVolumeHeaderWidget ( )
   this->ScalarTypeEntry = NULL;
   
   this->FileNameEntry = NULL;
+
+  this->LabelMapCheckButton = NULL;
 
   this->AddNodeSelectorWidget = 0;
 
@@ -134,6 +142,11 @@ vtkSlicerVolumeHeaderWidget::~vtkSlicerVolumeHeaderWidget ( )
     {
     this->FileNameEntry->SetParent(NULL);
     this->FileNameEntry->Delete();
+    }
+  if (this->LabelMapCheckButton)
+    {
+    this->LabelMapCheckButton->SetParent(NULL);
+    this->LabelMapCheckButton->Delete();
     }
 
   this->SetMRMLScene ( NULL );  
@@ -298,6 +311,38 @@ void vtkSlicerVolumeHeaderWidget::ProcessWidgetEvents ( vtkObject *caller,
         }
       }
     }
+
+  vtkKWCheckButton *cbutton = vtkKWCheckButton::SafeDownCast(caller);
+  if ( cbutton == this->LabelMapCheckButton->GetWidget() )
+    {
+    vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
+    if ( volumeNode )
+      {
+      vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::SafeDownCast( volumeNode );
+      if ( scalarNode && !strcmp( "vtkMRMLScalarVolumeNode", scalarNode->GetClassName() ) )
+        {
+        int willBeLabel = cbutton->GetSelectedState();
+        int wasLabel = scalarNode->GetLabelMap();
+        if ( !wasLabel && willBeLabel )
+          {
+          vtkMRMLLabelMapVolumeDisplayNode *labelDisplayNode  = vtkMRMLLabelMapVolumeDisplayNode::New();
+          this->MRMLScene->AddNodeNoNotify(labelDisplayNode);
+          labelDisplayNode->SetAndObserveColorNodeID ("vtkMRMLColorTableNodeLabels");
+          scalarNode->SetAndObserveDisplayNodeID( labelDisplayNode->GetID() );
+          scalarNode->SetLabelMap( 1 );
+          this->MRMLScene->Edited();
+          }
+        if ( wasLabel && !willBeLabel )
+          {
+          vtkMRMLScalarVolumeDisplayNode *displayNode  = vtkMRMLScalarVolumeDisplayNode::New();
+          this->MRMLScene->AddNodeNoNotify(displayNode);
+          scalarNode->SetAndObserveDisplayNodeID( displayNode->GetID() );
+          scalarNode->SetLabelMap( 0 );
+          this->MRMLScene->Edited();
+          }
+        }
+      }
+    }
 }
 
 
@@ -365,6 +410,21 @@ void vtkSlicerVolumeHeaderWidget::UpdateWidgetFromMRML ()
     this->FileNameEntry->GetWidget()->SetValue("");
     }
 
+  if (this->LabelMapCheckButton)
+    {
+    vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::SafeDownCast( volumeNode );
+    if ( scalarNode && !strcmp( "vtkMRMLScalarVolumeNode", scalarNode->GetClassName() ) )
+      {
+      this->LabelMapCheckButton->SetEnabled(1);
+      vtkKWCheckButton *button = this->LabelMapCheckButton->GetWidget();
+      button->SetSelectedState( scalarNode->GetLabelMap() );
+      }
+    else
+      {
+      this->LabelMapCheckButton->SetEnabled(0);
+      }
+    }
+
   this->UpdatingFromMRML = 0;
   return;
 }
@@ -406,6 +466,12 @@ void vtkSlicerVolumeHeaderWidget::AddWidgetObservers ( )
         vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
 
+  if (this->LabelMapCheckButton)
+    {
+    this->LabelMapCheckButton->GetWidget()->AddObserver(
+        vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+
 }
 
 //---------------------------------------------------------------------------
@@ -440,6 +506,12 @@ void vtkSlicerVolumeHeaderWidget::RemoveWidgetObservers ( )
     {
     this->CenterButton->GetWidget()->RemoveObservers(
         vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+
+  if (this->LabelMapCheckButton)
+    {
+    this->LabelMapCheckButton->GetWidget()->RemoveObservers(
+        vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
 }
 
@@ -661,6 +733,15 @@ void vtkSlicerVolumeHeaderWidget::CreateWidget ( )
                "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
                this->FileNameEntry->GetWidgetName());
 
+  this->LabelMapCheckButton = vtkKWCheckButtonWithLabel::New();
+  this->LabelMapCheckButton->SetParent(frame);
+  this->LabelMapCheckButton->Create();
+  this->LabelMapCheckButton->SetLabelText("Label Map:");
+  this->LabelMapCheckButton->SetLabelWidth(18);
+  this->LabelMapCheckButton->SetWidth(48);
+  this->Script(
+               "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+               this->LabelMapCheckButton->GetWidgetName());
 
   this->AddWidgetObservers();
   volumeHeaderFrame->Delete();
