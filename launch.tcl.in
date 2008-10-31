@@ -143,6 +143,8 @@ if { $installed } {
 
 } else {
 
+  # the not-installed case
+
   set ::BUILD_SUBDIR  ""
   set ::VTK_BUILD_SUBDIR  ""
   set ::KWWidgets_BUILD_SUBDIR  ""

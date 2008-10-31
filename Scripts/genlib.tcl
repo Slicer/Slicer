@@ -943,6 +943,7 @@ if { [BuildThis $::TEEM_TEST_FILE "teem"] == 1 } {
         -DPNG_PNG_INCLUDE_DIR:PATH=$::Slicer3_LIB/VTK/Utilities/vtkpng \
         -DTEEM_PNG_DLLCONF_IPATH:PATH=$::Slicer3_LIB/VTK-build/Utilities \
         -DPNG_LIBRARY:FILEPATH=$::Slicer3_LIB/VTK-build/bin/$::VTK_BUILD_SUBDIR/$png \
+        -DTEEM_USE_LIB_INSTALL_SUBDIR:BOOL=ON \
         ../teem
 
       if {$isWindows} {
