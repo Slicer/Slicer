@@ -32,11 +32,7 @@ if { [itcl::find class SliceSWidget] == "" } {
     variable _actionStartViewportOrigin "0 0"
     variable _actionStartWindowXY "0 0"
     variable _actionStartFOV "250 250 250"
-    variable _fiducialsSWidget ""
-    variable _gridSWidget ""
-    variable _crosshairSWidget ""
-    variable _regionsSWidget ""
-    variable _slicePlaneSWidget ""
+    variable _swidgets ""
 
     # methods
     method resizeSliceNode {} {}
@@ -49,6 +45,7 @@ if { [itcl::find class SliceSWidget] == "" } {
     method jumpSlice { r a s } {}
     method jumpOtherSlices { r a s } {}
     method getLinkedSliceLogics {} {}
+    method addSliceModelSWidgets {} {}
   }
 }
 
@@ -59,12 +56,13 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
 
   $this configure -sliceGUI $sliceGUI
 
-  set _fiducialsSWidget [FiducialsSWidget #auto $sliceGUI]
-  set _gridSWidget [GridSWidget #auto $sliceGUI]
-  $_gridSWidget configure -layer "label"
-  set _crosshairSWidget [CrosshairSWidget #auto $sliceGUI]
-  set _regionsSWidget [RegionsSWidget #auto $sliceGUI]
-  set _slicePlaneSWidget [SlicePlaneSWidget #auto $sliceGUI]
+  lappend _swidgets [FiducialsSWidget #auto $sliceGUI]
+  set gridSWidget [GridSWidget #auto $sliceGUI]
+  $gridSWidget configure -layer "label"
+  lappend _swidgets $gridSWidget
+  lappend _swidgets [CrosshairSWidget #auto $sliceGUI]
+  lappend _swidgets [RegionsSWidget #auto $sliceGUI]
+  lappend _swidgets [SlicePlaneSWidget #auto $sliceGUI]
  
   # create matrices to store transform state
   set o(storeXYToRAS) [$this vtkNew vtkMatrix4x4]
@@ -120,15 +118,9 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
 
 itcl::body SliceSWidget::destructor {} {
 
-  ::SWidget::ProtectedDelete $_fiducialsSWidget
-
-  ::SWidget::ProtectedDelete $_gridSWidget
-
-  ::SWidget::ProtectedDelete $_crosshairSWidget
-
-  ::SWidget::ProtectedDelete $_regionsSWidget
-
-  ::SWidget::ProtectedDelete $_slicePlaneSWidget
+  foreach sw $_swidgets {
+    ::SWidget::ProtectedDelete $sw
+  }
 
   $_renderWidget RemoveAllRenderers
 }
@@ -761,8 +753,6 @@ itcl::body SliceSWidget::moveSlice { delta } {
     }    
 }
 
-
-
 itcl::body SliceSWidget::jumpSlice { r a s } {
   set logic [$sliceGUI GetLogic]
   set sliceNode [$logic GetSliceNode]
@@ -774,6 +764,18 @@ itcl::body SliceSWidget::jumpOtherSlices { r a s } {
   set sliceNode [$logic GetSliceNode]
   $sliceNode JumpAllSlices $r $a $s
 }
+
+itcl::body SliceSWidget::addSliceModelSWidgets {} {
+  set class "vtkMRMLModelNode"
+  set number [$slicer3::MRMLScene GetNumberOfNodesByClass $class]
+  for {set n 0} {$n < $number} {incr n} {
+    set modelNode [$::slicer3::MRMLScene GetNthNodeByClass $n $class]
+    set modelSWidget [ModelSWidget #auto $sliceGUI]
+    $modelSWidget configure -modelID [$modelNode GetID]
+    lappend _swidgets $modelSWidget
+  }
+}
+
 
 # Return the SliceLogics that are linked to the current 
 # SliceNode/SliceCompositeNode.  
