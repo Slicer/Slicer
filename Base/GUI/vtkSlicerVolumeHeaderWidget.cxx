@@ -336,6 +336,7 @@ void vtkSlicerVolumeHeaderWidget::ProcessWidgetEvents ( vtkObject *caller,
           {
           vtkMRMLScalarVolumeDisplayNode *displayNode  = vtkMRMLScalarVolumeDisplayNode::New();
           this->MRMLScene->AddNodeNoNotify(displayNode);
+          displayNode->SetAndObserveColorNodeID ("vtkMRMLColorNodeGrey");
           scalarNode->SetAndObserveDisplayNodeID( displayNode->GetID() );
           scalarNode->SetLabelMap( 0 );
           this->MRMLScene->Edited();
