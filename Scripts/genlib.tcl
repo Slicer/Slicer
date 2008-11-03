@@ -72,6 +72,7 @@ proc Usage { {msg ""} } {
     set msg "$msg\n   --clean : delete the target first"
     set msg "$msg\n   --update : do a cvs update even if there's an existing build"
     set msg "$msg\n   --release : compile with optimization flags"
+    set msg "$msg\n   --relwithdebinfo : compile with optimization flags and debugging symbols"
     set msg "$msg\n   --nobuild : only download and/or update, but don't build"
     set msg "$msg\n   --test-type : type of ctest to run (for enabled packages)"
     set msg "$msg\n   optional space separated list of packages to build (lower case)"
@@ -85,6 +86,7 @@ set GENLIB(test-type) ""
 set ::GENLIB(buildList) ""
 
 set isRelease 0
+set isRelWithDebInfo 0
 set strippedargs ""
 set argc [llength $argv]
 for {set i 0} {$i < $argc} {incr i} {
@@ -101,6 +103,10 @@ for {set i 0} {$i < $argc} {incr i} {
         "--release" {
             set isRelease 1
             set ::VTK_BUILD_TYPE "Release"
+        }
+        "--relwithdebinfo" {
+            set isRelWithDebInfo 1
+            set ::VTK_BUILD_TYPE "ReleaseWithDebInfo"
         }
         "--nobuild" {
             set ::GENLIB(buildit) "false"
@@ -250,7 +256,18 @@ if ($isRelease) {
     }
     puts "Overriding slicer_variables.tcl; VTK_BUILD_TYPE is '$::env(VTK_BUILD_TYPE)', VTK_BUILD_SUBDIR is '$::VTK_BUILD_SUBDIR'"
     set ::VTK_DEBUG_LEAKS "OFF"
+}
 
+if ($isRelWithDebInfo) {
+    set ::VTK_BUILD_TYPE "RelWithDebInfo"
+    set ::env(VTK_BUILD_TYPE) $::VTK_BUILD_TYPE
+    if ($isWindows) {
+        set ::VTK_BUILD_SUBDIR "RelWithDebInfo"
+    } else {
+        set ::VTK_BUILD_SUBDIR ""
+    }
+    puts "Overriding slicer_variables.tcl; VTK_BUILD_TYPE is '$::env(VTK_BUILD_TYPE)', VTK_BUILD_SUBDIR is '$::VTK_BUILD_SUBDIR'"
+    set ::VTK_DEBUG_LEAKS "OFF"
 }
 
 # tcl file delete is broken on Darwin, so use rm -rf instead
