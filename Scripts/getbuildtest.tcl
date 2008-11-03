@@ -30,6 +30,7 @@ proc Usage { {msg ""} } {
     set msg "$msg\n   -f --clean : delete lib and build directories first"
     set msg "$msg\n   -t --test-type : CTest test target (default: Experimental)"
     set msg "$msg\n   --release : compile with optimization flags"
+    set msg "$msg\n   --relwithdebinfo : compile with optimization flags and debugging symbols"
     set msg "$msg\n   -u --update : does a cvs/svn update on each lib"
     set msg "$msg\n   --no-slicer-update : don't update slicer source (does not effect libs)"
     set msg "$msg\n   --build-dir : override default build directory"
@@ -81,6 +82,10 @@ for {set i 0} {$i < $argc} {incr i} {
         "--release" {
             set ::GETBUILDTEST(release) "--release"
             set ::VTK_BUILD_TYPE "Release"
+        }
+        "--relwithdebinfo" {
+            set ::GETBUILDTEST(release) "--relwithdebinfo"
+            set ::VTK_BUILD_TYPE "RelWithDebInfo"
         }
         "--build-dir" {
             incr i
