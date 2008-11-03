@@ -715,6 +715,7 @@ itcl::body SliceSWidget::moveSlice { delta } {
     set orientString [$sliceNode GetOrientationString]
 
     set offset [$logic GetSliceOffset]
+    set spacing [$logic GetLowestVolumeSliceSpacing]
 
     set logics ""
     set link [$_sliceCompositeNode GetLinkedControl]
@@ -739,17 +740,26 @@ itcl::body SliceSWidget::moveSlice { delta } {
 
             set currSliceNode [$sgui GetSliceNode]
             set currOrientString [$currSliceNode GetOrientationString]
+
             if { [string compare $orientString $currOrientString] == 0 } {
                 lappend logics [$sgui GetLogic]
-            }
+            } 
         }
     } else {
         lappend logics [$sliceGUI GetLogic]
     }
 
     # set the slice offset for all slice logics
+    # also set the slice spacing for all slice nodes to match (jvm)
+    set numberOfLogics [llength $logics]
     foreach logic $logics {
         $logic SetSliceOffset [expr $offset + $delta]
+        if { true || $numberOfLogics == 1 } { 
+            [$logic GetSliceNode] SetSliceSpacingModeToAutomatic 
+        } else {
+            [$logic GetSliceNode] SetSliceSpacingModeToPrescribed
+            eval [$logic GetSliceNode] SetPrescribedSliceSpacing $spacing
+        }
     }    
 }
 

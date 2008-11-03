@@ -12,13 +12,16 @@
 #include "vtkSlicerModuleGUI.h"
 #include "vtkSlicerSliceLogic.h"
 #include "vtkMRMLSliceNode.h"
+#include "vtkSmartPointer.h"
 
 //BTX
 class SliceGUIMap;
+class ParameterWidgetMap;
 //ETX
 
 class vtkObject;
 class vtkKWFrame;
+class vtkSlicerVisibilityIcons;
 
 // Description:
 // This class implements Slicer's Slice GUI.
@@ -82,13 +85,19 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesGUI : public vtkSlicerModuleGUI
   vtkSlicerSlicesGUI ( );
   virtual ~vtkSlicerSlicesGUI ( );
 
+  void UpdateGUI();
+  
  private:
   // Description:
   // An STL::MAP of the slice GUIs
   //BTX
   SliceGUIMap *InternalSliceGUIMap;
+  ParameterWidgetMap *InternalParameterWidgetMap;
+  vtkSmartPointer<vtkMRMLSliceNode> SliceNode;
   //ETX
 
+  vtkSlicerVisibilityIcons *VisibilityIcons;
+  
   vtkSlicerSlicesGUI ( const vtkSlicerSlicesGUI& ); // Not implemented.
   void operator = ( const vtkSlicerSlicesGUI& ); //Not implemented.
 }; 

@@ -84,6 +84,9 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->LayoutGridRows = 1;
 
   this->SetOrientationToAxial();
+
+  this->PrescribedSliceSpacing[0] = this->PrescribedSliceSpacing[1] = this->PrescribedSliceSpacing[2] = 1;
+  this->SliceSpacingMode = AutomaticSliceSpacingMode;
 }
 
 //----------------------------------------------------------------------------
@@ -441,6 +444,11 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
   of << indent << " sliceVisibility=\"" << (this->SliceVisible ? "true" : "false") << "\"";
   of << indent << " widgetVisibility=\"" << (this->WidgetVisible ? "true" : "false") << "\"";
   of << indent << " useLabelOutline=\"" << (this->UseLabelOutline ? "true" : "false") << "\"";
+  of << indent << " sliceSpacingMode=\"" << this->SliceSpacingMode << "\"";
+  of << indent << " prescribedSliceSpacing=\""
+     << this->PrescribedSliceSpacing[0] << " "
+     << this->PrescribedSliceSpacing[1] << " "
+     << this->PrescribedSliceSpacing[2] << "\"";
 
 
 }
@@ -555,6 +563,27 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
           }
         }
       }
+    else if (!strcmp(attName, "prescribedSliceSpacing"))
+      {
+      std::stringstream ss;
+      double val;
+      ss << attValue;
+      int i;
+      for (i=0; i<3; i++) 
+        {
+        ss >> val;
+        this->PrescribedSliceSpacing[i] = val;
+        }
+      }
+    else if (!strcmp(attName, "sliceSpacingMode"))
+      {
+      std::stringstream ss;
+      int val;
+      ss << attValue;
+      ss >> val;
+
+      this->SetSliceSpacingMode( val );
+      }
     }
   this->UpdateMatrices();
 }
@@ -573,12 +602,15 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
 
   this->LayoutGridColumns = node->LayoutGridColumns;
   this->LayoutGridRows = node->LayoutGridRows;
+
+  this->SliceSpacingMode = node->SliceSpacingMode;
   
   int i;
   for(i=0; i<3; i++) 
     {
     this->FieldOfView[i] = node->FieldOfView[i];
     this->Dimensions[i] = node->Dimensions[i];
+    this->PrescribedSliceSpacing[i] = node->PrescribedSliceSpacing[i];
     }
   this->UpdateMatrices();
 
@@ -616,6 +648,11 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "XYToRAS: \n";
   this->XYToRAS->PrintSelf(os, indent.GetNextIndent());
+
+  os << indent << "Slice spacing mode: " << (this->SliceSpacingMode == AutomaticSliceSpacingMode ? "Automatic" : "Prescribed") << "\n";
+  os << indent << "Prescribed slice spacing: (" << this->PrescribedSliceSpacing[0] << ", "
+                               << this->PrescribedSliceSpacing[1] << ", "
+                               << this->PrescribedSliceSpacing[2] << ")\n";
 }
 
 //----------------------------------------------------------------------------
@@ -808,3 +845,16 @@ void vtkMRMLSliceNode::SetLayoutGridColumns(int cols)
 }
   
   
+
+void
+vtkMRMLSliceNode::SetSliceSpacingModeToAutomatic()
+{
+  this->SetSliceSpacingMode(AutomaticSliceSpacingMode);
+}
+
+
+void
+vtkMRMLSliceNode::SetSliceSpacingModeToPrescribed()
+{
+  this->SetSliceSpacingMode(PrescribedSliceSpacingMode);
+}

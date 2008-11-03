@@ -168,6 +168,28 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   void JumpSlice(double r, double a, double s);
   void JumpAllSlices(double r, double a, double s);
 
+  // Description:
+  // Enum to specify whether the slice spacing is automatically
+  // determined or prescribed
+  //BTX
+  enum {AutomaticSliceSpacingMode=0, PrescribedSliceSpacingMode};
+  //ETX
+  
+  // Description:
+  // Get/Set the slice spacing mode. Slice spacing can be
+  // automatically calculated using GetLowestVolumeSliceSpacing() or prescribed
+  vtkGetMacro(SliceSpacingMode, int);
+  vtkSetMacro(SliceSpacingMode, int);
+  void SetSliceSpacingModeToAutomatic();
+  void SetSliceSpacingModeToPrescribed();
+
+  // Description:
+  // Set the slice spacing.  to use when the SliceSpacingMode is
+  // "Prescribed"
+  vtkSetVector3Macro(PrescribedSliceSpacing, double);
+  vtkGetVector3Macro(PrescribedSliceSpacing, double);
+
+  
 protected:
 
 
@@ -190,6 +212,9 @@ protected:
 
   int LayoutGridRows;
   int LayoutGridColumns;
+
+  int SliceSpacingMode;
+  double PrescribedSliceSpacing[3];
 
 };
 

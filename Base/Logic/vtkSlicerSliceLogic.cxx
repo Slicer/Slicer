@@ -133,6 +133,7 @@ void vtkSlicerSliceLogic::UpdateSliceNode()
     if ( node == NULL )
       {
       node = vtkMRMLSliceNode::New();
+      node->SetName(this->GetName());
       node->SetLayoutName(this->GetName());
       node->SetSingletonTag(this->GetName());
       this->SetSliceNode (node);
@@ -152,7 +153,7 @@ void vtkSlicerSliceLogic::UpdateSliceNode()
     node = this->SliceNode;
     node->Register(this);
     this->SetSliceNode (NULL);
-    this->MRMLScene->AddNodeNoNotify(node);
+    this->MRMLScene->AddNode(node);
     this->SetSliceNode (node);
     node->UnRegister(this);
     }
@@ -643,6 +644,7 @@ void vtkSlicerSliceLogic::UpdatePipeline()
     //
 
     vtkImageMathematics *tempMath = vtkImageMathematics::New();
+    vtkImageCast *tempCast = vtkImageCast::New();
     vtkImageBlend *tempBlend = vtkImageBlend::New();
 
     bool alphaBlending = (this->SliceCompositeNode->GetCompositing() == 0);
@@ -652,12 +654,16 @@ void vtkSlicerSliceLogic::UpdatePipeline()
       {
       // add the foreground and background
       tempMath->SetOperationToAdd();
+      tempMath->GetOutput()->SetScalarType(VTK_SHORT);
+      tempCast->SetOutputScalarTypeToUnsignedChar();
       }
     else if (this->SliceCompositeNode->GetCompositing()
              == vtkMRMLSliceCompositeNode::Subtract)
       {
       // subtract the foreground and background
       tempMath->SetOperationToSubtract();
+      tempMath->GetOutput()->SetScalarType(VTK_SHORT);
+      tempCast->SetOutputScalarTypeToUnsignedChar();
       }
 
     if (!alphaBlending)
@@ -678,8 +684,9 @@ void vtkSlicerSliceLogic::UpdatePipeline()
       {
       tempMath->SetInput1( this->ForegroundLayer->GetImageData() );
       tempMath->SetInput2( this->BackgroundLayer->GetImageData() );
-
-      tempBlend->AddInput( tempMath->GetOutput() );
+      tempCast->SetInput( tempMath->GetOutput() );
+      
+      tempBlend->AddInput( tempCast->GetOutput() );
       tempBlend->SetOpacity( layerIndex++, 1.0 );
       }
     else
@@ -723,6 +730,7 @@ void vtkSlicerSliceLogic::UpdatePipeline()
 
     tempBlend->Delete();
     tempMath->Delete();  // Blend may still be holding a reference
+    tempCast->Delete();  // Blend may still be holding a reference
 
     //Models
 
@@ -1053,7 +1061,6 @@ void vtkSlicerSliceLogic::GetVolumeSliceDimensions(vtkMRMLVolumeNode *volumeNode
 // Get the spacing of the volume, transformed to slice space
 double *vtkSlicerSliceLogic::GetVolumeSliceSpacing(vtkMRMLVolumeNode *volumeNode)
 {
-
   if ( !volumeNode )
     {
     return (this->SliceSpacing);
@@ -1066,6 +1073,17 @@ double *vtkSlicerSliceLogic::GetVolumeSliceSpacing(vtkMRMLVolumeNode *volumeNode
     return (this->SliceSpacing);
     }
 
+  if (sliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::PrescribedSliceSpacingMode)
+    {
+    // jvm - should we cache the PrescribedSliceSpacing in SliceSpacing?
+    double *pspacing = sliceNode->GetPrescribedSliceSpacing();
+    this->SliceSpacing[0] = pspacing[0];
+    this->SliceSpacing[1] = pspacing[1];
+    this->SliceSpacing[2] = pspacing[2];
+    return (pspacing);
+    }
+  
+  
   vtkMatrix4x4 *ijkToRAS = vtkMatrix4x4::New();
   vtkMatrix4x4 *rasToSlice = vtkMatrix4x4::New();
   vtkMatrix4x4 *ijkToSlice = vtkMatrix4x4::New();

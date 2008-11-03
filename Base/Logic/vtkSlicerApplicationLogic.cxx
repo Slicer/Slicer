@@ -544,14 +544,15 @@ void vtkSlicerApplicationLogic::CreateSliceLogics()
     events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
 
     vtkSlicerSliceLogic *sliceLogic = vtkSlicerSliceLogic::New ( );
-        this->AddSliceLogic("Red", sliceLogic);
-        sliceLogic->SetName("Red");
-        sliceLogic = vtkSlicerSliceLogic::New();
-        this->AddSliceLogic("Yellow", sliceLogic);
-        sliceLogic->SetName("Yellow");
-        sliceLogic = vtkSlicerSliceLogic::New();
-        this->AddSliceLogic("Green", sliceLogic);
-        sliceLogic->SetName("Green");
+    sliceLogic->SetName("Red");
+    this->AddSliceLogic("Red", sliceLogic);
+    sliceLogic = vtkSlicerSliceLogic::New();
+    sliceLogic->SetName("Yellow");
+    this->AddSliceLogic("Yellow", sliceLogic);
+    sliceLogic = vtkSlicerSliceLogic::New();
+    sliceLogic->SetName("Green");
+    this->AddSliceLogic("Green", sliceLogic);
+    
 
         SliceLogicMap::iterator lit;
         for (lit = this->InternalSliceLogicMap->begin(); lit != this->InternalSliceLogicMap->end(); ++lit)
