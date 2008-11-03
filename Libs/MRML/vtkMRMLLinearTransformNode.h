@@ -23,6 +23,8 @@
 
 #include "vtkMRMLTransformNode.h"
 
+class vtkMRMLStorageNode;
+
 class VTK_MRML_EXPORT vtkMRMLLinearTransformNode : public vtkMRMLTransformNode
 {
   public:
@@ -80,6 +82,13 @@ class VTK_MRML_EXPORT vtkMRMLLinearTransformNode : public vtkMRMLTransformNode
   virtual void ApplyTransform(vtkMatrix4x4* transformMatrix);
   virtual void ApplyTransform(vtkAbstractTransform* transform);
  
+  // Description:
+  // Create default storage node or NULL if does not have one
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
+    {
+    return Superclass::CreateDefaultStorageNode();
+    };
+
 protected:
   vtkMRMLLinearTransformNode();
   ~vtkMRMLLinearTransformNode();

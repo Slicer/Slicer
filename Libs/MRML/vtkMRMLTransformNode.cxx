@@ -20,7 +20,7 @@ Version:   $Revision: 1.14 $
 
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLScene.h"
-
+#include "vtkMRMLTransformStorageNode.h"
 
 //----------------------------------------------------------------------------
 vtkMRMLTransformNode::vtkMRMLTransformNode()
@@ -231,4 +231,10 @@ void vtkMRMLTransformNode::ApplyTransform(vtkAbstractTransform* transform)
 {
   this->TransformToParent->Concatenate(transform); 
 }
+
+vtkMRMLStorageNode* vtkMRMLTransformNode::CreateDefaultStorageNode()
+{
+  return vtkMRMLTransformStorageNode::New();
+}
+
 // End

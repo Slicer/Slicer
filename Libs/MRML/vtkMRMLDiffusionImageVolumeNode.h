@@ -31,6 +31,7 @@
 
 class vtkDoubleArray;
 class vtkMRMLDiffusionTensorVolumeSliceDisplayNode;
+class vtkMRMLStorageNode;
 
 class VTK_MRML_EXPORT vtkMRMLDiffusionImageVolumeNode : public vtkMRMLTensorVolumeNode
 {
@@ -107,6 +108,13 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionImageVolumeNode : public vtkMRMLTensorVolu
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
+
+  // Description:
+  // Create default storage node or NULL if does not have one
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
+    {
+    return Superclass::CreateDefaultStorageNode();
+    };
 
 protected:
   vtkMRMLDiffusionImageVolumeNode();

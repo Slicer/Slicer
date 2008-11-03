@@ -57,6 +57,13 @@ class VTK_MRML_EXPORT vtkMRMLUnstructuredGridStorageNode : public vtkMRMLStorage
   // Initialize all the supported write file types
   virtual void InitializeSupportedWriteFileTypes();
 
+  // Description:
+  // Return a defualt file extension for writting
+  virtual const char* GetDefaultWriteFileExtension()
+    {
+    return "vtk";
+    };
+
 protected:
   vtkMRMLUnstructuredGridStorageNode(){};
   ~vtkMRMLUnstructuredGridStorageNode(){};

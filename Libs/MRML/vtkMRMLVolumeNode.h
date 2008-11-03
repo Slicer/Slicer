@@ -36,6 +36,7 @@
 #include "itkMetaDataDictionary.h"
 
 class vtkImageData;
+class vtkMRMLStorageNode;
 
 class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
 {
@@ -168,6 +169,14 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
   // that the image data has changed, usually call CalculateAutoLevels
   virtual void UpdateFromMRML();
   
+  // Description:
+  // Create default storage node or NULL if does not have one
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
+    {
+    return Superclass::CreateDefaultStorageNode();
+    };
+
+
 protected:
   vtkMRMLVolumeNode();
   ~vtkMRMLVolumeNode();

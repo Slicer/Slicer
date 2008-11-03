@@ -21,6 +21,8 @@
 
 #include "vtkMRMLNonlinearTransformNode.h"
 
+class vtkMRMLStorageNode;
+
 class VTK_MRML_EXPORT vtkMRMLGridTransformNode : public vtkMRMLNonlinearTransformNode
 {
   public:
@@ -45,6 +47,13 @@ class VTK_MRML_EXPORT vtkMRMLGridTransformNode : public vtkMRMLNonlinearTransfor
   // Description:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "GridTransform";};
+
+  // Description:
+  // Create default storage node or NULL if does not have one
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
+    {
+    return Superclass::CreateDefaultStorageNode();
+    };
 
 protected:
   vtkMRMLGridTransformNode();

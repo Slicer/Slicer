@@ -27,6 +27,8 @@
 
 
 class vtkColorTransferFunction;
+class vtkMRMLStorageNodel;
+
 class VTK_MRML_EXPORT vtkMRMLProceduralColorNode : public vtkMRMLColorNode
 {
 public:
@@ -93,6 +95,13 @@ public:
   // Get the color transfer function for this node
   vtkGetObjectMacro(ColorTransferFunction, vtkColorTransferFunction);
 
+  // Description:
+  // Create default storage node or NULL if does not have one
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
+    {
+    return Superclass::CreateDefaultStorageNode();
+    };
+  
 protected:
   vtkMRMLProceduralColorNode();
   ~vtkMRMLProceduralColorNode();

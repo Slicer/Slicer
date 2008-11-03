@@ -35,6 +35,7 @@
 
 
 class vtkCallbackCommand;
+class vtkMRMLStorageNode;
 
 class VTK_MRML_EXPORT vtkMRMLFiberBundleNode : public vtkMRMLModelNode
 {
@@ -78,6 +79,12 @@ public:
   // add glyph display node if not already present and return it
   vtkMRMLFiberBundleDisplayNode* AddGlyphDisplayNode();
 
+  // Description:
+  // Create default storage node or NULL if does not have one
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
+    {
+    return Superclass::CreateDefaultStorageNode();
+    };
   
 protected:
   vtkMRMLFiberBundleNode(){};

@@ -91,6 +91,13 @@ class VTK_MRML_EXPORT vtkMRMLVolumeArchetypeStorageNode : public vtkMRMLStorageN
   // Initialize all the supported write file types
   virtual void InitializeSupportedWriteFileTypes();
 
+  // Description:
+  // Return a defualt file extension for writting
+  virtual const char* GetDefaultWriteFileExtension()
+    {
+    return "nhdr";
+    };
+
 protected:
 
 

@@ -68,6 +68,13 @@ class VTK_MRML_EXPORT vtkMRMLTransformStorageNode : public vtkMRMLStorageNode
   // Initialize all the supported write file types
   virtual void InitializeSupportedWriteFileTypes();
 
+  // Description:
+  // Return a default file extension for writting
+  virtual const char* GetDefaultWriteFileExtension()
+    {
+    return "xfrm";
+    };
+
 protected:
   vtkMRMLTransformStorageNode();
   ~vtkMRMLTransformStorageNode();

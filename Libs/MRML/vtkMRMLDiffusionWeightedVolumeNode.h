@@ -27,6 +27,7 @@
 
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
+#include "vtkMRMLNRRDStorageNode.h"
 
 class vtkImageData;
 class vtkDoubleArray;
@@ -99,6 +100,13 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLScalarV
   // Description:
   // Extract the diffusion component and pass it to CalculateScalarAutoLevel
   virtual void CalculateAutoLevels( vtkMRMLScalarVolumeDisplayNode *refNode = NULL, vtkImageData *refData = NULL);
+
+  // Description:
+  // Create default storage node or NULL if does not have one
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
+    {
+    return vtkMRMLNRRDStorageNode::New();
+    };
 
 protected:
   vtkMRMLDiffusionWeightedVolumeNode();

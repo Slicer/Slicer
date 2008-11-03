@@ -75,6 +75,7 @@
 
 class vtkImageData;
 class vtkDoubleArray;
+class vtkMRMLStorageNode;
 
 class VTK_MRML_EXPORT vtkMRMLTimeSeriesVolumeNode : public vtkMRMLVolumeNode
 {
@@ -111,6 +112,14 @@ class VTK_MRML_EXPORT vtkMRMLTimeSeriesVolumeNode : public vtkMRMLVolumeNode
  // Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID) 
     { Superclass::UpdateReferenceID(oldID, newID); };
+
+  // Description:
+  // Create default storage node or NULL if does not have one
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
+    {
+    return Superclass::CreateDefaultStorageNode();
+    };
+
 
 protected:
   vtkMRMLTimeSeriesVolumeNode();

@@ -20,6 +20,7 @@ Version:   $Revision: 1.3 $
 
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
+#include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLScene.h"
 
 #include "vtkDataSetAttributes.h"
@@ -687,3 +688,9 @@ void vtkMRMLModelNode::ApplyTransform(vtkAbstractTransform* transform)
 
   transformFilter->Delete();
 }
+
+vtkMRMLStorageNode* vtkMRMLModelNode::CreateDefaultStorageNode()
+{
+  return vtkMRMLStorageNode::SafeDownCast(vtkMRMLModelStorageNode::New());
+}
+

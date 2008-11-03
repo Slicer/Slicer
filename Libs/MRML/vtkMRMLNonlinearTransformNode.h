@@ -22,6 +22,7 @@
 #include "vtkMRMLTransformNode.h"
 
 class vtkWarpTransform;
+class vtkMRMLStorageNode;
 
 class VTK_MRML_EXPORT vtkMRMLNonlinearTransformNode : public vtkMRMLTransformNode
 {
@@ -79,6 +80,13 @@ class VTK_MRML_EXPORT vtkMRMLNonlinearTransformNode : public vtkMRMLTransformNod
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
+  // Description:
+  // Create default storage node or NULL if does not have one
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
+    {
+    return Superclass::CreateDefaultStorageNode();
+    };
+
   
 protected:
   vtkMRMLNonlinearTransformNode();

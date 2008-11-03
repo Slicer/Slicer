@@ -20,6 +20,7 @@
 
 
 #include "vtkMRMLTensorVolumeNode.h"
+#include "vtkMRMLVolumeArchetypeStorageNode.h"
 
 class vtkImageData;
 
@@ -47,6 +48,13 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeNode : public vtkMRMLTensorVolumeNode
   // Description:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "VectorVolume";};
+
+  // Description:
+  // Create default storage node or NULL if does not have one
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
+    {
+    return vtkMRMLVolumeArchetypeStorageNode::New();
+    };
 
 protected:
   vtkMRMLVectorVolumeNode();

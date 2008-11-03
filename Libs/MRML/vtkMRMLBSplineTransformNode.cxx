@@ -22,6 +22,7 @@ Version:   $Revision: 1.14 $
 #include "vtkITKBSplineTransform.h"
 
 #include "vtkMRMLBSplineTransformNode.h"
+#include "vtkMRMLTransformStorageNode.h"
 #include "vtkMRMLScene.h"
 
 
@@ -269,6 +270,7 @@ void vtkMRMLBSplineTransformNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
 }
+
 
 
 // End

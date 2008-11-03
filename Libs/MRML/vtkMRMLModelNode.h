@@ -28,9 +28,10 @@
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 
-
+class vtkMRMLStorageNode;
 class vtkCallbackCommand;
 class vtkFloatArray;
+
 class VTK_MRML_EXPORT vtkMRMLModelNode : public vtkMRMLDisplayableNode
 {
 public:
@@ -110,6 +111,15 @@ public:
 
   virtual bool CanApplyNonLinearTransforms() { return true; }
   virtual void ApplyTransform(vtkAbstractTransform* transform);
+
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
+
+  // Description:
+  // Return a default file extension for writting
+  virtual const char* GetDefaultWriteFileExtension()
+    {
+    return "vtk";
+    };
 
 protected:
   vtkMRMLModelNode();

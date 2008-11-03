@@ -20,6 +20,9 @@
 #define __vtkMRMLBSplineTransformNode_h
 
 #include "vtkMRMLNonlinearTransformNode.h"
+#include "vtkMRMLBSplineTransformNode.h"
+
+class vtkMRMLStorageNode;
 
 class VTK_MRML_EXPORT vtkMRMLBSplineTransformNode : public vtkMRMLNonlinearTransformNode
 {
@@ -45,6 +48,14 @@ class VTK_MRML_EXPORT vtkMRMLBSplineTransformNode : public vtkMRMLNonlinearTrans
   // Description:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "BSplineTransform";};
+
+  // Description:
+  // Create default storage node or NULL if does not have one
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
+    {
+    return Superclass::CreateDefaultStorageNode();
+    };
+
 
 protected:
   vtkMRMLBSplineTransformNode();

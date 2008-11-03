@@ -131,6 +131,13 @@ public:
     };
 //ETX
 
+  // Description:
+  // Create default storage node or NULL if does not have one
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
+    {
+    return Superclass::CreateDefaultStorageNode();
+    };
+
  protected:
   vtkMRMLDisplayableNode();
   ~vtkMRMLDisplayableNode();

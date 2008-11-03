@@ -31,6 +31,7 @@
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLUnstructuredGridDisplayNode.h"
 
+class vtkMRMLUnstructuredGridStorageNode;
 class vtkCallbackCommand;
 
 class VTK_MRML_EXPORT vtkMRMLUnstructuredGridNode : public vtkMRMLDisplayableNode
@@ -81,6 +82,11 @@ public:
 
   virtual bool CanApplyNonLinearTransforms() { return true; }
   virtual void ApplyTransform(vtkAbstractTransform* transform);
+
+  // Description:
+  // Create default storage node or NULL if does not have one
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
+
 
 protected:
   vtkMRMLUnstructuredGridNode();

@@ -28,9 +28,12 @@
 #include "vtkMRMLDiffusionImageVolumeNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
+#include "vtkMRMLNRRDStorageNode.h"
+#include "vtkMRMLNRRDStorageNode.h"
 
 class vtkDoubleArray;
 class vtkMRMLDiffusionTensorVolumeSliceDisplayNode;
+class vtkMRMLStorageNode;
 
 class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeNode : public vtkMRMLDiffusionImageVolumeNode
 {
@@ -87,6 +90,14 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeNode : public vtkMRMLDiffusion
   {
     return vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
   }
+
+  // Description:
+  // Create default storage node or NULL if does not have one
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
+    {
+    return vtkMRMLNRRDStorageNode::New();
+    };
+
 
 protected:
   vtkMRMLDiffusionTensorVolumeNode();

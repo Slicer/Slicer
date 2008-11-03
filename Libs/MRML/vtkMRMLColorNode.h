@@ -147,6 +147,13 @@ public:
 
   virtual bool CanApplyNonLinearTransforms() { return false; }
   virtual void ApplyTransform(vtkAbstractTransform* transform) { return; };
+ 
+  // Description:
+  // Create default storage node or NULL if does not have one
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
+    {
+    return Superclass::CreateDefaultStorageNode();
+    };
 
 protected:
   vtkMRMLColorNode();

@@ -161,6 +161,7 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplay
   // Get ID of diffusion tensor display MRML object for fiber glyph.
   vtkGetStringMacro(DiffusionTensorDisplayPropertiesNodeID);
 
+
  protected:
   vtkMRMLFiberBundleDisplayNode ( );
   ~vtkMRMLFiberBundleDisplayNode ( );

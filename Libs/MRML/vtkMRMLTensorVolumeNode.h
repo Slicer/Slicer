@@ -32,6 +32,8 @@ class vtkDoubleArray;
 class vtkMatrix4x4;
 class vtkDiffusionTensorMathematics;
 class vtkAssignAttribute;
+class vtkMRMLStorageNode;
+
 
 class VTK_MRML_EXPORT vtkMRMLTensorVolumeNode : public vtkMRMLScalarVolumeNode
 {
@@ -98,6 +100,10 @@ class VTK_MRML_EXPORT vtkMRMLTensorVolumeNode : public vtkMRMLScalarVolumeNode
   // node, and pass it on to CalculateScalarAutoLevels.
   virtual void CalculateAutoLevels(vtkMRMLScalarVolumeDisplayNode *refNode = NULL, vtkImageData *refData = NULL);
  
+  // Description:
+  // Create default storage node or NULL if does not have one
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
+
 protected:
   vtkMRMLTensorVolumeNode();
   ~vtkMRMLTensorVolumeNode();

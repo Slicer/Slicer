@@ -27,6 +27,7 @@ Version:   $Revision: 1.14 $
 #include "vtkDiffusionTensorMathematics.h"
 #include "vtkAssignAttribute.h"
 #include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLNRRDStorageNode.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLTensorVolumeNode* vtkMRMLTensorVolumeNode::New()
@@ -332,5 +333,10 @@ void vtkMRMLTensorVolumeNode::CalculateAutoLevels(vtkMRMLScalarVolumeDisplayNode
     // pass it up to the superclass
     this->CalculateScalarAutoLevels(displayNode, imageDataScalar);
     }
+}
+
+vtkMRMLStorageNode* vtkMRMLTensorVolumeNode::CreateDefaultStorageNode()
+{
+  return vtkMRMLNRRDStorageNode::New();
 }
 

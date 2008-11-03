@@ -104,7 +104,14 @@ public:
   // Description:
   // Initialize all the supported write file types
   virtual void InitializeSupportedWriteFileTypes();
-  
+
+ // Description:
+  // Return a default file extension for writting
+  virtual const char* GetDefaultWriteFileExtension()
+    {
+    return "vtk";
+    };
+
 protected:
   vtkMRMLModelStorageNode();
   ~vtkMRMLModelStorageNode();

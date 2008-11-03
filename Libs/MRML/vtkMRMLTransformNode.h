@@ -19,16 +19,18 @@
 #ifndef __vtkMRMLTransformNode_h
 #define __vtkMRMLTransformNode_h
 
-#include "vtkMRMLTransformableNode.h"
+#include "vtkMRMLStorableNode.h"
 
 #include "vtkGeneralTransform.h"
 #include "vtkMatrix4x4.h"
 
-class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLTransformableNode
+class vtkMRMLStorageNode;
+
+class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLStorableNode
 {
   public:
   static vtkMRMLTransformNode *New(){return NULL;};
-  vtkTypeMacro(vtkMRMLTransformNode,vtkMRMLTransformableNode);
+  vtkTypeMacro(vtkMRMLTransformNode,vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance() = 0;
@@ -99,6 +101,10 @@ class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLTransformableNode
 
   virtual bool CanApplyNonLinearTransforms() { return true; }
   virtual void ApplyTransform(vtkAbstractTransform* transform);
+
+  // Description:
+  // Create default storage node or NULL if does not have one
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
 protected:
   vtkMRMLTransformNode();

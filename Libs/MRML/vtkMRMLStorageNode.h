@@ -25,6 +25,7 @@
 
 class vtkStringArray;
 class vtkURIHandler;
+
 class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
 {
   public:
@@ -210,6 +211,13 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   // Set a new URI base for all URI's
   void SetURIPrefix(const char *uriPrefix);
   
+  // Description:
+  // Return a default file extension for writting
+  virtual const char* GetDefaultWriteFileExtension()
+    {
+    return NULL;
+    };
+
 protected:
   vtkMRMLStorageNode();
   ~vtkMRMLStorageNode();

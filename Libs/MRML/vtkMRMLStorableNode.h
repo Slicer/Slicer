@@ -127,6 +127,11 @@ public:
     return this->GetNthStorageNode(0);
     };
   
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
+    {
+    return NULL;
+    };
+
  protected:
   vtkMRMLStorableNode();
   ~vtkMRMLStorableNode();

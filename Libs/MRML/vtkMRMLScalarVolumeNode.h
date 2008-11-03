@@ -27,10 +27,14 @@
 
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
+#include "vtkMRMLVolumeArchetypeStorageNode.h"
 
 class vtkImageData;
 class vtkImageAccumulateDiscrete;
 class vtkImageBimodalAnalysis;
+class vtkMRMLStorageNode;
+class vtkMRMLStorageNode;
+
 class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
 {
   public:
@@ -93,6 +97,13 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
   void CalculateStatisticsAutoLevels( vtkMRMLScalarVolumeDisplayNode *refNode = NULL,
                                       vtkImageData *imageData = NULL);
   
+  // Description:
+  // Create default storage node or NULL if does not have one
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
+    {
+    return vtkMRMLVolumeArchetypeStorageNode::New();
+    };
+
 protected:
   vtkMRMLScalarVolumeNode();
   ~vtkMRMLScalarVolumeNode();

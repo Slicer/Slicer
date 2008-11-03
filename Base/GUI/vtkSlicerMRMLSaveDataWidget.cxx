@@ -551,7 +551,6 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
   this->Nodes.clear();
   this->StorageNodes.clear();
 
-  vtkMRMLNode *node;
   int nModified = 0;
   if (this->MultiColumnList->GetWidget()->GetNumberOfRows())
     {
@@ -561,43 +560,49 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
   this->AddMRMLSceneRow();
     
   vtkKWMultiColumnList* dataTable = this->MultiColumnList->GetWidget();
-  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLVolumeNode");
+  
+  // Process all Storable nodes
+  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLStorableNode");
   int n;
   int row = dataTable->GetNumberOfRows();
+  vtkMRMLStorableNode *node = NULL;
+
   for (n=0; n<nnodes; n++)
     {
-    node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLVolumeNode");
+    node = vtkMRMLStorableNode::SafeDownCast(this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLStorableNode"));
     if (node->GetHideFromEditors()) 
       {
       continue;
       }
-    vtkMRMLVolumeNode *vnode = vtkMRMLVolumeNode::SafeDownCast(node);
-    vtkMRMLStorageNode* snode = vnode->GetStorageNode();
+    vtkMRMLStorageNode* storageNode = node->CreateDefaultStorageNode();
+    if (storageNode == NULL)
+      {
+      continue;
+      }
+    
+    vtkMRMLStorageNode* snode = node->GetStorageNode();
     if (snode == NULL) 
       {
-      vtkMRMLStorageNode *storageNode;
-      if ( vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node) || 
-            vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node) )
-        {
-        storageNode = vtkMRMLNRRDStorageNode::New();
-        }
-      else
-        {
-        storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
-        }
       storageNode->SetScene(this->GetMRMLScene());
       this->SetMRMLScene(this->GetMRMLScene());
       this->GetMRMLScene()->AddNode(storageNode);  
       this->SetAndObserveMRMLScene(this->GetMRMLScene());
-      vnode->SetAndObserveStorageNodeID(storageNode->GetID());
+      node->SetAndObserveStorageNodeID(storageNode->GetID());
       storageNode->Delete();
       snode = storageNode;
       }
+    
     if (snode->GetFileName() == NULL && this->DataDirectoryName != NULL) 
       {
       std::string name (this->DataDirectoryName);
       name += std::string(node->GetName());
-      name += std::string(".nrrd");
+      const char* ext = snode->GetDefaultWriteFileExtension();
+      if (ext) 
+        {
+        name += std::string(".");
+        name += std::string(ext);
+        }
+      
       snode->SetFileName(name.c_str());
       }
 
@@ -627,152 +632,13 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
       this->SetRowModified(row, 0);
       this->SetRowMarkedForSave(row, 0);
       }
-    this->MultiColumnList->GetWidget()->SetCellText(row,Type_Column,"Volume");
+    this->MultiColumnList->GetWidget()->SetCellText(row,Type_Column,node->GetNodeTagName());
     this->SetFileNameRelatedCells(row, name.c_str(), snode->GetSupportedWriteFileTypes());
     this->AddNodeId(node->GetID(), row);
     this->AddStorageNodeId(snode->GetID(), row);
     row++;
     }
 
-  nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLModelNode");
-  for (n=0; n<nnodes; n++)
-    {
-    node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLModelNode");
-    if (node->GetHideFromEditors()) 
-      {
-      continue;
-      }
-    vtkMRMLModelNode *vnode = vtkMRMLModelNode::SafeDownCast(node);
-    vtkMRMLStorageNode* snode = vnode->GetStorageNode();
-    if (snode == NULL && !node->GetModifiedSinceRead())
-      {
-      continue;
-      }
-    if (snode == NULL && node->GetModifiedSinceRead()) 
-      {
-      vtkMRMLModelStorageNode *storageNode = vtkMRMLModelStorageNode::New();
-      storageNode->SetScene(this->GetMRMLScene());
-      this->SetMRMLScene(this->GetMRMLScene());
-      this->GetMRMLScene()->AddNode(storageNode);  
-      this->SetAndObserveMRMLScene(this->GetMRMLScene());
-      vnode->SetAndObserveStorageNodeID(storageNode->GetID());
-      storageNode->Delete();
-      snode = storageNode;
-      }
-    if (snode->GetFileName() == NULL && this->DataDirectoryName != NULL) {
-      std::string name (this->DataDirectoryName);
-      name += std::string(node->GetName());
-      name += std::string(".vtk");
-      snode->SetFileName(name.c_str());
-    }
-
-    // get absolute filename
-    std::string name;
-    if (this->MRMLScene->IsFilePathRelative(snode->GetFileName()))
-      {
-      name = this->MRMLScene->GetRootDirectory();
-      if (name[name.size()-1] != '/')
-        {
-        name = name + std::string("/");
-        }
-      }
-    name += snode->GetFileName();
-    
-    this->MultiColumnList->GetWidget()->AddRow();
-    this->MultiColumnList->GetWidget()->SetCellText(
-      row,NodeName_Column,node->GetName());
-    if (node->GetModifiedSinceRead()) 
-      {
-      this->SetRowModified(row, 1);
-      this->SetRowMarkedForSave(row, 1);
-      nModified++;
-      }
-    else
-      {
-      this->SetRowModified(row, 0);
-      this->SetRowMarkedForSave(row, 0);
-      }
-    this->MultiColumnList->GetWidget()->SetCellText(row,Type_Column,"Model");
-    this->SetFileNameRelatedCells(row, name.c_str(), snode->GetSupportedWriteFileTypes());
-    this->AddNodeId(node->GetID(), row);
-    this->AddStorageNodeId(snode->GetID(), row);
-
-    row++;
-    }
-  
-#if !defined(MESHING_DEBUG) && defined(Slicer3_BUILD_MODULES)  
-  // *** add UnstructuredGrid types 
-  // An additional datatype, MRMLUnstructuredGrid and its subclasses are 
-  // also searched in the MRML tree.  This is done so instances of FiniteElement
-  // meshes and other vtkUnstructuredGrid datatypes can be stored persistently.
-  // this code is gated by MESHING_DEBUG since the MEshing MRML modules 
-  
-  nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLUnstructuredGridNode");
-  for (n=0; n<nnodes; n++)
-    {
-    node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLUnstructuredGridNode");
-    if (node->GetHideFromEditors()) 
-      {
-      continue;
-      }
-    vtkMRMLUnstructuredGridNode *vnode = vtkMRMLUnstructuredGridNode::SafeDownCast(node);
-    vtkMRMLStorageNode* snode = vnode->GetStorageNode();
-    if (snode == NULL && !node->GetModifiedSinceRead())
-      {
-      continue;
-      }
-    if (snode == NULL && node->GetModifiedSinceRead()) 
-      {
-        vtkMRMLUnstructuredGridStorageNode *storageNode = vtkMRMLUnstructuredGridStorageNode::New();
-      storageNode->SetScene(this->GetMRMLScene());
-      this->SetMRMLScene(this->GetMRMLScene());
-      this->GetMRMLScene()->AddNode(storageNode);  
-      this->SetAndObserveMRMLScene(this->GetMRMLScene());
-      vnode->SetAndObserveStorageNodeID(storageNode->GetID());
-      storageNode->Delete();
-      snode = storageNode;
-      }
-    if (snode->GetFileName() == NULL && this->DataDirectoryName != NULL) {
-      std::string name (this->DataDirectoryName);
-      name += std::string(node->GetName());
-      name += std::string(".vtk");
-      snode->SetFileName(name.c_str());
-    }
-
-    // get absolute filename
-    std::string name;
-    if (this->MRMLScene->IsFilePathRelative(snode->GetFileName()))
-      {
-      name = this->MRMLScene->GetRootDirectory();
-      if (name[name.size()-1] != '/')
-        {
-        name = name + std::string("/");
-        }
-      }
-    name += snode->GetFileName();
-
-    this->MultiColumnList->GetWidget()->AddRow();
-    this->MultiColumnList->GetWidget()->SetCellText(row,NodeName_Column,node->GetName());
-    if (node->GetModifiedSinceRead()) 
-      {
-      this->SetRowModified(row, 1);
-      this->SetRowMarkedForSave(row, 1);
-      nModified++;
-      }
-    else
-      {
-      this->SetRowModified(row, 0);
-      this->SetRowMarkedForSave(row, 0);
-      }
-    this->MultiColumnList->GetWidget()->SetCellText(row,Type_Column,"UnstructuredGrid");
-    this->SetFileNameRelatedCells(row, name.c_str(), snode->GetSupportedWriteFileTypes());
-    this->AddNodeId(node->GetID(), row);
-    this->AddStorageNodeId(snode->GetID(), row);
-    row++;
-    }
-    // end of UGrid MRML node processing
-#endif  
-  
   this->IsProcessing = false;
 
   return nModified;

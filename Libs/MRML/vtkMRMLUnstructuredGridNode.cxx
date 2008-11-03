@@ -21,6 +21,7 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLUnstructuredGridNode.h"
 #include "vtkMRMLUnstructuredGridDisplayNode.h"
 #include "vtkMRMLUnstructuredGridStorageNode.h"
+#include "vtkMRMLUnstructuredGridStorageNode.h"
 
 #include "vtkAbstractTransform.h"
 #include "vtkTransformFilter.h"
@@ -146,5 +147,10 @@ void vtkMRMLUnstructuredGridNode::ApplyTransform(vtkAbstractTransform* transform
   this->GetUnstructuredGrid()->DeepCopy(transformFilter->GetOutput());
 
   transformFilter->Delete();
+}
+
+vtkMRMLStorageNode* vtkMRMLUnstructuredGridNode::CreateDefaultStorageNode()
+{
+  return vtkMRMLUnstructuredGridStorageNode::New();
 }
 
