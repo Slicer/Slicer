@@ -591,9 +591,16 @@ void vtkCommandLineModuleGUI::UpdateMRML ()
       {
       n->SetParameterAsString((*wit).first, e->GetWidget()->GetValue());
       }
-    else if (ns && ns->GetSelected() != NULL)
+    else if (ns)
       {
-      n->SetParameterAsString((*wit).first, ns->GetSelected()->GetID());
+      if (ns->GetSelected() != NULL)
+        {
+        n->SetParameterAsString((*wit).first, ns->GetSelected()->GetID());
+        }
+      else
+        {
+        n->SetParameterAsString((*wit).first, "");
+        }
       }
     else if (lsb)
       {
@@ -830,8 +837,9 @@ void vtkCommandLineModuleGUI::UpdateGUI ()
               // No value, use the default "None"-node. THis will not
               // work if the selector is configured to select something
               // other than a MRMLScalarVolumeNode
-              ns->SetSelected(this->Logic->GetMRMLScene()
-                              ->GetNodeByID("None"));
+//               ns->SetSelected(this->Logic->GetMRMLScene()
+//                               ->GetNodeByID("None"));
+              ns->SetSelected( 0 );
               }
             else
               {

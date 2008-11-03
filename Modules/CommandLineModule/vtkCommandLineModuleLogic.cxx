@@ -1670,14 +1670,17 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
                            ->GetNodeByID(reference.c_str()));
               if (t)
                 {
-                vtkSmartPointer<vtkStringArray> reqSTNID = vtkStringArray::New();
-                vtkStdString areq;
-                areq = "[$::slicer3::MRMLScene GetNodeByID " + reference + "] "
-                  + "SetAndObserveTransformNodeID "
-                  + (*pit).GetDefault() + " ; "
-                  + "$::slicer3::MRMLScene Edited";
-                reqSTNID->InsertNextValue( areq );
-                this->GetApplicationLogic()->RequestModified( reqSTNID );
+                if ( (*pit).GetDefault() != "" )
+                  {
+                  vtkSmartPointer<vtkStringArray> reqSTNID = vtkStringArray::New();
+                  vtkStdString areq;
+                  areq = "[$::slicer3::MRMLScene GetNodeByID " + reference + "] "
+                    + "SetAndObserveTransformNodeID "
+                    + (*pit).GetDefault() + " ; "
+                    + "$::slicer3::MRMLScene Edited";
+                  reqSTNID->InsertNextValue( areq );
+                  this->GetApplicationLogic()->RequestModified( reqSTNID );
+                  }
                 }
               else
                 {
