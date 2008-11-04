@@ -178,14 +178,28 @@ void vtkFetchMIGUI::LoadTclPackage ( )
     {
     return;
     }
+  std::string qaTclCommand;
+  if (0)
+    {
   std::string dir(this->GetLogic()->GetModuleShareDirectory());
-  std::string qaTclCommand =  "set ::FETCHMI_PACKAGE {}; ";
+  qaTclCommand =  "set ::FETCHMI_PACKAGE {}; ";
   qaTclCommand += "package forget FetchMI; ";
   qaTclCommand += "  set dir \"" + dir + "\";";
   qaTclCommand += "  if { [ file exists \"$dir/Tcl/pkgIndex.tcl\" ] } { ";
   qaTclCommand += "    lappend ::auto_path $dir; ";
   qaTclCommand += "    package require FetchMI ";
   qaTclCommand += "  }";
+    }
+  else
+    {
+    // it's not a package that defines a tcl scripted module, just a file with
+    // some helper procs in it, so just source it
+    std::string dir(this->GetLogic()->GetModuleLibDirectory());
+    qaTclCommand = "  set dir \"" + dir + "\";";
+    qaTclCommand += " if  { [ file exists \"$dir/Tcl/FetchMIXMLUtilities.tcl\" ] } { ";
+    qaTclCommand += " source \"$dir/Tcl/FetchMIXMLUtilities.tcl\"";
+    qaTclCommand += "  }";
+    }
   this->Script ( qaTclCommand.c_str() ); 
 }
 
@@ -419,7 +433,8 @@ void vtkFetchMIGUI::RequestUpload ( )
     //--- request upload
     //---
     // if nodes have been modified since read, prompt user  to save them first.
-    if ( retval = this->Logic->CheckStorageNodeFileNames() == 0 )
+    retval = this->Logic->CheckStorageNodeFileNames();
+    if ( retval == 0 )
       {
       //--- TODO: put up save-stuff message dialog
       return;
@@ -453,7 +468,8 @@ void vtkFetchMIGUI::RequestUpload ( )
         const char *snodeFileName = storageNode->GetFileName();
         vtksys_stl::string vtkFileName = vtksys::SystemTools::GetFilenameName ( snodeFileName );
         const char *strippedFileName = vtkFileName.c_str();
-        if ( retval = this->WriteMetadataForUpload_XND(nodeID.c_str()) == 0 )
+        retval = this->WriteMetadataForUpload_XND(nodeID.c_str());
+        if ( retval == 0 )
           {
           //TODO: error dialog 
           return;
@@ -487,7 +503,8 @@ void vtkFetchMIGUI::RequestUpload ( )
             const char *nodeFileName = storageNode->GetNthFileName(filenum);
             vtkFileName = vtksys::SystemTools::GetFilenameName ( nodeFileName );
             strippedFileName = vtkFileName.c_str();
-            if ( retval = this->WriteMetadataForUpload_XND(nodeID.c_str()) == 0 )
+            retval = this->WriteMetadataForUpload_XND(nodeID.c_str());
+            if ( retval == 0 )
               {
               //TODO: error dialog 
               return;
@@ -553,7 +570,8 @@ void vtkFetchMIGUI::RequestUpload ( )
       const char *sceneFileName =this->GetMRMLScene()->GetURL();
       vtksys_stl::string vtkFileName = vtksys::SystemTools::GetFilenameName (  sceneFileName );
       const char *strippedFileName = vtkFileName.c_str();
-      if ( retval = this->WriteMetadataForUpload_XND("MRMLScene") == 0 )
+      retval = this->WriteMetadataForUpload_XND("MRMLScene");
+      if (retval == 0 )
         {
         //TODO: error dialog 
         return;
@@ -1740,7 +1758,7 @@ void vtkFetchMIGUI::BuildGUI ( )
   this->UpdateGUI();
   this->Logic->CreateTemporaryFiles();
 
-//  this->LoadTclPackage();
+  this->LoadTclPackage();
 }
 
 
