@@ -434,6 +434,7 @@ itcl::body LoadVolume::apply { } {
   foreach s $_dicomSeriesFileList {
     $fileList InsertNextValue $s
   }
+
   set volumeLogic [$::slicer3::VolumesGUI GetLogic]
   set ret [catch [list $volumeLogic AddArchetypeVolume "$fileName" $name $loadingOptions $fileList] node]
   if { $ret } {
@@ -678,7 +679,9 @@ itcl::body LoadVolume::selectArchetype { path name {optionsName ""} } {
   # try to restore from cache.  If can't, then wait until
   # user clicks 'Parse Directory' button
   #
-  if { ![info exists _dicomTree(directoryName)] || $_dicomTree(directoryName) != $directoryName } {
+  if { ![info exists _dicomTree(directoryName)] || 
+        $_dicomTree(directoryName) != $directoryName ||
+        [lsearch $_dicomSeriesFileList $path] == -1 } {
     # get the dicom info for this directory if it exists
     set dicomCache [DICOMCache #auto]
     $dicomCache getTreeForDirectory $directoryName _dicomTree
