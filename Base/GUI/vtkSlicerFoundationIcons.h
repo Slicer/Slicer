@@ -79,6 +79,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFoundationIcons : public vtkSlicerIcon
     vtkGetObjectMacro (SlicerFiducialsSelectNoneIcon, vtkKWIcon );
     vtkGetObjectMacro (SlicerFiducialsSelectAllInListIcon, vtkKWIcon );
     vtkGetObjectMacro (SlicerFiducialsSelectNoneInListIcon, vtkKWIcon );
+    vtkGetObjectMacro (SlicerLockIcon, vtkKWIcon );
+    vtkGetObjectMacro (SlicerUnlockIcon, vtkKWIcon );
+    vtkGetObjectMacro (SlicerCompositeIcon, vtkKWIcon );
 
     void AssignImageDataToIcons ( );
     
@@ -150,6 +153,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFoundationIcons : public vtkSlicerIcon
     vtkKWIcon *SlicerFiducialsSelectNoneIcon;
     vtkKWIcon *SlicerFiducialsSelectAllInListIcon;
     vtkKWIcon *SlicerFiducialsSelectNoneInListIcon;
+    vtkKWIcon *SlicerCompositeIcon;
+    vtkKWIcon *SlicerLockIcon;
+    vtkKWIcon *SlicerUnlockIcon;
     
  private:
     vtkSlicerFoundationIcons ( const vtkSlicerFoundationIcons&); // Not implemented
