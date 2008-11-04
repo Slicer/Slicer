@@ -181,13 +181,21 @@ std::vector<vtkSlicerModulesStep::ManifestEntry> vtkSlicerModulesStep::ParseMani
 {
   std::vector<ManifestEntry> result;
 
+  if (txt.empty()) {
+    return result;
+  }
+
   std::string::size_type prev = 0;
   std::string::size_type space = txt.find(" ", prev);
   std::string::size_type newline = txt.find("\n", prev);
 
   ManifestEntry entry;
 
-  while (space != std::string::npos)
+  // :NOTE: 20081003 tgl: Put in a sanity check of 10,000 to
+  // prevent an infinite loop.  Get Out The Vote 2008!
+
+  int count = 0;
+  while (space != std::string::npos && count < 10000)
     {
       entry.URL = txt.substr(prev, space - prev);
 
@@ -202,8 +210,9 @@ std::vector<vtkSlicerModulesStep::ManifestEntry> vtkSlicerModulesStep::ParseMani
       newline = txt.find("\n", newline + 1);
 
       result.push_back(entry);
+      
+      count++;
     }
-
 
   return result;
 }
