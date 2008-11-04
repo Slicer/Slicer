@@ -91,3 +91,25 @@ slicer3_install_modules(${lib_name})
 if(BUILD_TESTING)
 #  subdirs(Testing)
 endif(BUILD_TESTING)
+
+# --------------------------------------------------------------------------
+# Install support files
+
+# Should those paths change, make sure to update 
+# - Tcl/FetchMIXMLUtilities.tcl
+
+# Tcl files
+
+file(GLOB TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Tcl/*.tcl")
+
+foreach (file ${TCLFILES})
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/${file}
+    COPYONLY)
+endforeach(file)
+
+install(
+  FILES ${TCLFILES}
+  DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/Tcl
+  )
