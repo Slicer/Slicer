@@ -1153,3 +1153,60 @@ static const unsigned char image_SlicerFiducialsSelectNoneInList[] =
   "eNpjYmJgogz9JxdQUbtnWiVJJC1sJwZg2v737z+YJIjBAAZw9WhcuHpctqMphoh8+fYbl+"
   "2YigmKkGo7Hr8TtAirOC1sp5HfiQt5ouKduqluqOc4srVTggAkl8Lt";
 
+
+/* 
+ * Resource generated for file:
+ *    SlicerLock.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerLock_width          = 21;
+static const unsigned int  image_SlicerLock_height         = 21;
+static const unsigned int  image_SlicerLock_pixel_size     = 3;
+static const unsigned long image_SlicerLock_length         = 276;
+static const unsigned long image_SlicerLock_decoded_length = 1323;
+
+static const unsigned char image_SlicerLock[] = 
+  "eNqtlLENwyAQRb1PGs+BXTEEJSO49yzpTJEpGCMjuLOUPPkkK4b4THB+gY5/93QHQjTNVb"
+  "1qdYTHGMdxtNa2bctKjFOIhxD6vr/thYN/itOl6zrqied5XpaFlRgHP5khx5lT2Fz4ZHWc"
+  "kyo4WR3nrhScrIIPq4wxX3F8KTjCiTndcCyySX2+Rc65+144+TNLtt77x6ppmp574UiKGq"
+  "W7DCn41k5wSRUOzwvZtsR1w0vruuGTs/80fMXNb90VKfjnACV/y19+myt6A/7UCqU=";
+
+/* 
+ * Resource generated for file:
+ *    SlicerUnlock.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerUnlock_width          = 21;
+static const unsigned int  image_SlicerUnlock_height         = 21;
+static const unsigned int  image_SlicerUnlock_pixel_size     = 3;
+static const unsigned long image_SlicerUnlock_length         = 300;
+static const unsigned long image_SlicerUnlock_decoded_length = 1323;
+
+static const unsigned char image_SlicerUnlock[] = 
+  "eNqtVLsNwyAQ9T5p3HsDcOUhXHoE9wxClc4UmcIWPZI7FnDpJnnySSiGQAjOK9B9eHfvTo"
+  "iquopnKWL0eZ6FEF3X1XWNEzYimXSllJTydkbbtoh/pe/7viyL1hoVjDHruuKkapxzT0NM"
+  "PIps2+ZcFKEKmCKHHgIaQMceyujW2qZpsMkEfTzAGPtYAXG6EKPDxnRjHMh690MX6Pv+fg"
+  "Yi4TPz3GEYHgemabJnIEIp3El0J5FEd+2ITqlM8XghzoVdJp5al4n3Zv9JfMHmXfcEEvR3"
+  "ATl/y19+myt4ATSAF7Y=";
+
+/* 
+ * Resource generated for file:
+ *    SlicerComposite.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerComposite_width          = 21;
+static const unsigned int  image_SlicerComposite_height         = 21;
+static const unsigned int  image_SlicerComposite_pixel_size     = 3;
+static const unsigned long image_SlicerComposite_length         = 424;
+static const unsigned long image_SlicerComposite_decoded_length = 1323;
+
+static const unsigned char image_SlicerComposite[] = 
+  "eNpjYKAUbCYXYGq3dWAiBq1evXr79u1YtX/7yQBEEyYz4mIA1bS1tQFNIFX7s5cMQARUU1"
+  "FRsXjxYrh2ZWcFCJJ0SMRExqaMpeWMQO0QBNReUFAwb948ZO3iPxmACKiYoeMPCIUvhDCA"
+  "Ir7+jDt2g2x//IwBiGihXXaeABCBtAM1IqEBd7yXDwmOx0Sy8owGRijJBjPiILYDTUBjAK"
+  "VMTU39/f2zYCAvLw8t2eDX7uHhkZOTMwEGJk2aNHfu3PXr12M6HhMBpVJSUnp6evBkGfy2"
+  "l5eXT5s2jWztzc3Nc+bMMTKyBKK0tDQIA007HgS0esmSJevWrTMyMpo5c6arqyuQjawdGB"
+  "T9/f1dXV1AP8JJCACyly1bBgyodWAANAHCQCsuVqxYMX/+/AULFsBJCACy8Zc2lAAAL/Pc"
+  "1A==";
+
+
+
+
+
