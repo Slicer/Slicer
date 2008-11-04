@@ -16,6 +16,7 @@
 #include "vtkSlicerWidget.h"
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkSlicerSlicesControlIcons.h"
+#include "vtkSlicerFoundationIcons.h"
 #include "vtkSlicerToolbarIcons.h"
 #include "vtkSlicerVisibilityIcons.h"
 
@@ -42,6 +43,7 @@ public:
   vtkGetObjectMacro ( VisibilityToggle, vtkKWPushButton );
   vtkGetObjectMacro ( LoadDataButton, vtkKWPushButton );
   vtkGetObjectMacro ( LinkButton, vtkKWPushButton );
+  vtkGetObjectMacro ( FoundationIcons, vtkSlicerFoundationIcons );
   vtkGetObjectMacro ( VisibilityIcons, vtkSlicerVisibilityIcons );
   vtkGetObjectMacro ( ViewConfigureIcons, vtkSlicerToolbarIcons );
   vtkGetObjectMacro ( SliceControlIcons, vtkSlicerSlicesControlIcons);
@@ -200,6 +202,7 @@ protected:
   vtkKWPushButton *LabelOutlineToggleButton;
 
   vtkKWTopLevel *LightboxTopLevel;
+  vtkSlicerFoundationIcons *FoundationIcons;
   vtkSlicerVisibilityIcons *VisibilityIcons;
   vtkSlicerToolbarIcons *ViewConfigureIcons;
   vtkSlicerSlicesControlIcons *SliceControlIcons;

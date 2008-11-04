@@ -5,12 +5,13 @@
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerSlicesControlGUI.h"
-#include "vtkSlicerSlicesControlIcons.h"
 #include "vtkSlicerSlicesGUI.h"
 #include "vtkSlicerSliceGUI.h"
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkSlicerTheme.h"
 #include "vtkSlicerVisibilityIcons.h"
+#include "vtkSlicerSlicesControlIcons.h"
+#include "vtkSlicerFoundationIcons.h"
 
 #include "vtkKWWidget.h"
 #include "vtkKWScale.h"
@@ -75,7 +76,7 @@ vtkSlicerSlicesControlGUI::vtkSlicerSlicesControlGUI ( )
   this->SliceInteracting = 0;
 
   this->VisibilityIcons = NULL;
-
+  this->FoundationIcons = NULL;
   this->LastLabelOpacity = 1.0;
 }
 
@@ -218,6 +219,11 @@ vtkSlicerSlicesControlGUI::~vtkSlicerSlicesControlGUI ( )
     {
     this->VisibilityIcons->Delete  ( );
     this->VisibilityIcons = NULL;
+    }
+  if ( this->FoundationIcons )
+    {
+//    this->FoundationIcons->Delete();
+    this->FoundationIcons = NULL;
     }
   
   this->SetApplicationGUI ( NULL );
@@ -1730,6 +1736,7 @@ void vtkSlicerSlicesControlGUI::BuildGUI ( vtkKWFrame *appF )
       //
       // icons we need...
       this->VisibilityIcons = vtkSlicerVisibilityIcons::New ( );
+      this->FoundationIcons = p->GetSlicerFoundationIcons();
     
       vtkKWFrame *FgBgFrame = vtkKWFrame::New ( );
       FgBgFrame->SetParent ( appF);
@@ -1759,7 +1766,7 @@ void vtkSlicerSlicesControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->SliceFadeScale->SetRange (0.0, 1.0);
       this->SliceFadeScale->SetResolution ( 0.01 );
       this->SliceFadeScale->SetValue ( 0.0 );
-      this->SliceFadeScale->SetLength ( 120 );
+      this->SliceFadeScale->SetLength ( 110 );
       this->SliceFadeScale->SetOrientationToHorizontal ( );
       this->SliceFadeScale->ValueVisibilityOff ( );
       this->SliceFadeScale->SetBalloonHelpString ( "Scale fades between Foreground and Background Layers." );
@@ -1773,7 +1780,7 @@ void vtkSlicerSlicesControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->CompositingButton->SetParent (appF);
       this->CompositingButton->Create ( );
       this->CompositingButton->SetBorderWidth ( 0 );
-      this->CompositingButton->SetImageToIcon ( this->SlicesControlIcons->GetLabelOpacityIcon() );
+      this->CompositingButton->SetImageToIcon ( this->FoundationIcons->GetSlicerCompositeIcon() );
       this->CompositingButton->IndicatorVisibilityOff ( );
       this->CompositingButton->SetBalloonHelpString ( "Choose compositing options for all Slice Viewers." );
 
@@ -1918,8 +1925,8 @@ void vtkSlicerSlicesControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->FeaturesVisibleButton->GetWidgetName ( ) );
       this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->FitToWindowButton->GetWidgetName ( ) );
       this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->LabelOpacityButton->GetWidgetName ( ) );
-      this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->CompositingButton->GetWidgetName ( ) );
       this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->AnnotationButton->GetWidgetName ( ) );
+      this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->CompositingButton->GetWidgetName ( ) );
       this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->CrossHairButton->GetWidgetName ( ) );
       this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->SpatialUnitsButton->GetWidgetName ( ) );
       this->Script ( "pack %s -side left -anchor w -padx 2 -pady 3 -expand n", this->FieldOfViewButton->GetWidgetName ( ) );

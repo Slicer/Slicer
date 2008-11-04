@@ -22,6 +22,7 @@ class vtkKWFrame;
 class vtkKWEntry;
 class vtkKWEntryWithLabel;
 class vtkSlicerVisibilityIcons;
+class vtkSlicerFoundationIcons;
 
 // Description:
 // This class implements Slicer's SlicesControl Panel on Main GUI panel
@@ -78,6 +79,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     vtkGetMacro (ProcessingMRMLEvent, int);
 
     vtkGetObjectMacro ( VisibilityIcons, vtkSlicerVisibilityIcons );
+    vtkGetObjectMacro ( FoundationIcons, vtkSlicerFoundationIcons );
     
     // Description:
     // Get the main slicer toolbars.
@@ -140,6 +142,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
 
     vtkSlicerApplicationGUI *ApplicationGUI;
     vtkSlicerSlicesControlIcons *SlicesControlIcons;
+    vtkSlicerFoundationIcons *FoundationIcons;
 
     // Description:
     // visibility icons, for the label opacity toggle
