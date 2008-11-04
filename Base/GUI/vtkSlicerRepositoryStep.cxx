@@ -131,6 +131,8 @@ int vtkSlicerRepositoryStep::IsRepositoryValid()
 #    else
       url += "nitrc-manifest.sunos.txt";
 #    endif
+#   else
+      url += "nitrc-manifest.txt";
 #   endif
 #  endif
 # endif
