@@ -487,6 +487,7 @@ void vtkSlicerSliceLayerLogic::UpdateImageDisplay()
     // layer (turned on in slice logic when the label layer is instantiated)
     // and the slice node is set to use it.
     if (labelMapVolumeDisplayNode && this->GetIsLabelLayer() &&
+        (this->GetSliceNode() != NULL) &&
         this->GetSliceNode()->GetUseLabelOutline() )
       {
       vtkDebugMacro("UpdateImageDisplay: volume node (not diff tensor), using label outline");
@@ -533,7 +534,8 @@ void vtkSlicerSliceLayerLogic::UpdateGlyphs(vtkImageData *sliceImage)
       for (unsigned int n=0; n<dnodes.size(); n++)
         {
         vtkMRMLGlyphableVolumeSliceDisplayNode* dnode = dnodes[n];
-        if (!strcmp(this->GetSliceNode()->GetLayoutName(), dnode->GetName()) )
+        if (this->GetSliceNode() != NULL &&
+            !strcmp(this->GetSliceNode()->GetLayoutName(), dnode->GetName()) )
           {
           dnode->SetSliceImage(sliceImage);
 
