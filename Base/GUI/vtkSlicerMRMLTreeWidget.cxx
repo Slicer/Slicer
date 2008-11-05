@@ -317,7 +317,7 @@ void vtkSlicerMRMLTreeWidget::NodeParentChangedCallback(
       vtkMRMLTransformableNode *node = vtkMRMLTransformableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(nodeID));
       if (node != NULL)
         {
-        if (tnode != NULL)
+        if (tnode != NULL && tnode != node)
           {
           node->SetAndObserveTransformNodeID(tnode->GetID());
           node->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent);
