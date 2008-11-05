@@ -7,6 +7,8 @@
 #include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkKWFrameWithLabel.h"
 
+#include "vtkSlicerTransformLogic.h"
+
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
 #include "vtkMRMLTransformStorageNode.h"
@@ -123,22 +125,18 @@ void vtkSlicerTransformsGUI::ProcessGUIEvents ( vtkObject *caller,
     const char *fileName = this->LoadButton->GetFileName();
     if ( fileName ) 
       {
-      // TODO Logic that can read multiple transform node types
-      }
-      else
-        {
-        this->LoadButton->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
-        
-        }
-
+      vtkSlicerTransformLogic *logic = vtkSlicerTransformLogic::New();
+      logic->AddTransform(fileName, this->GetMRMLScene());
+      
+      this->LoadButton->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
       }
     
     // reset the file browse button text
     this->LoadButton->SetText ("Load Transform");
+    }
 
-    return;
-
-    } 
+  return;
+} 
 
 //---------------------------------------------------------------------------
 void vtkSlicerTransformsGUI::CreateModuleEventBindings ( )
@@ -225,7 +223,7 @@ void vtkSlicerTransformsGUI::BuildGUI ( )
     app->Script ( "grid %s -row 1 -column 0 -padx 2 -pady 2 -sticky w",  this->BIRNLabel->GetWidgetName());
     app->Script ( "grid %s -row 1 -column 1 -padx 2 -pady 2 -sticky w",  this->NCIGTLabel->GetWidgetName());                  
 
-    /*  COMMENTED UNTIL THE CREATION LOGIC WORKS
+    //  COMMENTED UNTIL THE CREATION LOGIC WORKS
     // ---
     // LOAD FRAME            
     vtkSlicerModuleCollapsibleFrame *modLoadFrame = vtkSlicerModuleCollapsibleFrame::New ( );
@@ -234,7 +232,7 @@ void vtkSlicerTransformsGUI::BuildGUI ( )
     modLoadFrame->SetLabelText ("Load");
     modLoadFrame->ExpandFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  modLoadFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Tractography")->GetWidgetName());
+                  modLoadFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Transforms")->GetWidgetName());
 
     // add a file browser 
     this->LoadButton = vtkKWLoadSaveButton::New ( );
@@ -246,7 +244,7 @@ void vtkSlicerTransformsGUI::BuildGUI ( )
                                                              "{ {model} {*.*} }");
     app->Script("pack %s -side left -anchor w -padx 2 -pady 4", 
                 this->LoadButton->GetWidgetName());
-   */
+   //*/
 
   // DISPLAY & EDIT FRAME
 //  vtkSlicerModuleCollapsibleFrame *displayAndEditFrame = vtkSlicerModuleCollapsibleFrame::New ( );

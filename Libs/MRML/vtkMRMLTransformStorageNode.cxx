@@ -882,3 +882,29 @@ void vtkMRMLTransformStorageNode::InitializeSupportedWriteFileTypes()
   this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
   this->SupportedWriteFileTypes->InsertNextValue("Transform (.*)");
 }
+
+//----------------------------------------------------------------------------
+int vtkMRMLTransformStorageNode::SupportedFileType(const char *fileName)
+{
+  // check to see which file name we need to check
+  std::string name;
+  if (fileName)
+  {
+    name = std::string(fileName);
+  }
+  else if (this->FileName != NULL)
+  {
+    name = std::string(this->FileName);
+  }
+  else if (this->URI != NULL)
+  {
+    name = std::string(this->URI);
+  }
+  else
+  {
+    vtkWarningMacro("SupportedFileType: no file name to check");
+    return 0;
+  }
+
+  return 1;
+}

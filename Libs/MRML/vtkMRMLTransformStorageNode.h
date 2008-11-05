@@ -65,6 +65,12 @@ class VTK_MRML_EXPORT vtkMRMLTransformStorageNode : public vtkMRMLStorageNode
   virtual const char* GetNodeTagName()  {return "TransformStorage";};
 
   // Description:
+  // Check to see if this storage node can handle the file type in the input
+  // string. If input string is null, check URI, then check FileName. 
+  // Subclasses should implement this method.
+  virtual int SupportedFileType(const char *fileName);
+
+  // Description:
   // Initialize all the supported write file types
   virtual void InitializeSupportedWriteFileTypes();
 
