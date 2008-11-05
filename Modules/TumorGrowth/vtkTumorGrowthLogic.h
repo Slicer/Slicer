@@ -15,6 +15,7 @@ class vtkSlicerApplication;
 class vtkKWApplication;
 class vtkImageMathematics;
 class vtkImageIslandFilter;
+class vtkImageMedian3D;
 
 class VTK_TUMORGROWTH_EXPORT vtkTumorGrowthLogic : 
   public vtkSlicerModuleLogic
@@ -65,14 +66,25 @@ public:
 
   // Main Growth Function 
   int AnalyzeGrowth(vtkSlicerApplication *application);
+  double MeassureGrowth(int ThreshMin, int ThreshMax);
   double MeassureGrowth();
   void DeleteAnalyzeOutput(vtkSlicerApplication *app);
 
-  vtkImageData* CreateAnalysis_Intensity_ROIGrowthInt();
-  vtkImageData* CreateAnalysis_Intensity_ROIShrinkInt();
-  vtkImageThreshold* CreateAnalysis_Intensity_ROINegativeBin();
-  vtkImageThreshold* CreateAnalysis_Intensity_ROIPositiveBin();
-  vtkImageMathematics* CreateAnalysis_Intensity_ROIBinCombine();
+  vtkImageThreshold*    CreateAnalysis_Intensity_Scan1ByLower();
+  vtkImageThreshold*    CreateAnalysis_Intensity_Scan1Range();
+  vtkImageThreshold*    CreateAnalysis_Intensity_Scan2ByLower();
+  vtkImageThreshold*    CreateAnalysis_Intensity_Scan2Range();
+
+  vtkImageMathematics*  CreateAnalysis_Intensity_ScanSubtract();
+  vtkImageMedian3D*     CreateAnalysis_Intensity_ScanSubtractSmooth();
+  vtkImageData*         CreateAnalysis_Intensity_ROIGrowth();
+  vtkImageData*         CreateAnalysis_Intensity_ROIShrink();
+
+  vtkImageMathematics*  CreateAnalysis_Intensity_ROIGrowthInt();
+  vtkImageMathematics*  CreateAnalysis_Intensity_ROIShrinkInt();
+  vtkImageThreshold*    CreateAnalysis_Intensity_ROINegativeBin();
+  vtkImageThreshold*    CreateAnalysis_Intensity_ROIPositiveBin();
+  vtkImageMathematics*  CreateAnalysis_Intensity_ROIBinCombine();
   vtkImageIslandFilter* CreateAnalysis_Intensity_ROIBinReal();
   vtkImageData   *GetAnalysis_Intensity_ROIBinReal();
 
@@ -153,8 +165,18 @@ private:
   double Analysis_Intensity_Mean;
   double Analysis_Intensity_Variance;
   double Analysis_Intensity_Threshold;
-  vtkImageData          *Analysis_Intensity_ROIGrowthInt;
-  vtkImageData          *Analysis_Intensity_ROIShrinkInt;
+  vtkImageThreshold*    Analysis_Intensity_Scan1ByLower;
+  vtkImageThreshold*    Analysis_Intensity_Scan1Range;
+  vtkImageThreshold*    Analysis_Intensity_Scan2ByLower;
+  vtkImageThreshold*    Analysis_Intensity_Scan2Range;
+
+  vtkImageMathematics*  Analysis_Intensity_ScanSubtract;
+  vtkImageMedian3D*     Analysis_Intensity_ScanSubtractSmooth;
+  vtkImageData*         Analysis_Intensity_ROIGrowth;
+  vtkImageData*         Analysis_Intensity_ROIShrink;
+
+  vtkImageMathematics   *Analysis_Intensity_ROIGrowthInt;
+  vtkImageMathematics   *Analysis_Intensity_ROIShrinkInt;
   vtkImageThreshold     *Analysis_Intensity_ROINegativeBin;
   vtkImageThreshold     *Analysis_Intensity_ROIPositiveBin;
   vtkImageMathematics   *Analysis_Intensity_ROIBinCombine;

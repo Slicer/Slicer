@@ -18,6 +18,7 @@
 #include "vtkSlicerVolumesGUI.h"
 #include "vtkRigidRegistrator.h"
 #include "vtkKWProgressGauge.h"
+#include "vtkImageMedian3D.h"
 //#include "vtkSlicerApplication.h"
 
 #define ERROR_NODE_VTKID 0
@@ -55,6 +56,14 @@ vtkTumorGrowthLogic::vtkTumorGrowthLogic()
   this->Analysis_Intensity_Variance  = 0.0;
   this->Analysis_Intensity_Threshold = 0.0;
 
+  this->Analysis_Intensity_Scan1ByLower = NULL; 
+  this->Analysis_Intensity_Scan1Range   = NULL; 
+  this->Analysis_Intensity_Scan2ByLower = NULL; 
+  this->Analysis_Intensity_Scan2Range   = NULL; 
+  this->Analysis_Intensity_ScanSubtract = NULL; 
+  this->Analysis_Intensity_ScanSubtractSmooth = NULL; 
+  this->Analysis_Intensity_ROIGrowth      = NULL; 
+  this->Analysis_Intensity_ROIShrink      = NULL; 
   this->Analysis_Intensity_ROIGrowthInt   = NULL;
   this->Analysis_Intensity_ROIShrinkInt   = NULL;
   this->Analysis_Intensity_ROINegativeBin = NULL;
@@ -87,6 +96,47 @@ vtkTumorGrowthLogic::~vtkTumorGrowthLogic()
   //   this->GlobalTransform = NULL;
   // }
   
+
+  if (this->Analysis_Intensity_Scan1ByLower) {
+    this->Analysis_Intensity_Scan1ByLower->Delete();
+    this->Analysis_Intensity_Scan1ByLower = NULL;
+  } 
+
+  if (this->Analysis_Intensity_Scan1Range) {
+    this->Analysis_Intensity_Scan1Range->Delete();
+    this->Analysis_Intensity_Scan1Range = NULL;
+  } 
+
+  if (this->Analysis_Intensity_Scan2ByLower) {
+    this->Analysis_Intensity_Scan2ByLower->Delete();
+    this->Analysis_Intensity_Scan2ByLower = NULL;
+  } 
+  
+  if (this->Analysis_Intensity_Scan2Range) {
+    this->Analysis_Intensity_Scan2Range->Delete();
+    this->Analysis_Intensity_Scan2Range = NULL;
+  } 
+
+  if (this->Analysis_Intensity_ScanSubtract) {
+    this->Analysis_Intensity_ScanSubtract->Delete();
+    this->Analysis_Intensity_ScanSubtract = NULL;
+  }
+  
+  if (this->Analysis_Intensity_ScanSubtractSmooth) { 
+    this->Analysis_Intensity_ScanSubtractSmooth->Delete();
+    this->Analysis_Intensity_ScanSubtractSmooth= NULL;
+  }
+
+  if (this->Analysis_Intensity_ROIGrowth) {
+    this->Analysis_Intensity_ROIGrowth->Delete();
+    this->Analysis_Intensity_ROIGrowth= NULL;
+
+  } 
+  if (this->Analysis_Intensity_ROIShrink) {
+    this->Analysis_Intensity_ROIShrink->Delete();
+    this->Analysis_Intensity_ROIShrink= NULL;
+  } 
+
   if (this->Analysis_Intensity_ROIGrowthInt) {
     this->Analysis_Intensity_ROIGrowthInt->Delete();
     this->Analysis_Intensity_ROIGrowthInt= NULL;
@@ -463,7 +513,7 @@ int vtkTumorGrowthLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
     if (1) {
     if (!this->TumorGrowthNode->GetScan2_NormedRef() || !strcmp(this->TumorGrowthNode->GetScan2_NormedRef(),"")) { 
       char fileName[1024];
-      sprintf(fileName,"%s/TG_scan2_norm.nrrd",this->TumorGrowthNode->GetWorkingDir());
+      sprintf(fileName,"%s/TG_scan2_norm.nhdr",this->TumorGrowthNode->GetWorkingDir());
       vtkMRMLVolumeNode* tmp = this->LoadVolume(app,fileName,0,"TG_scan2_norm");
       if (tmp) {
         this->TumorGrowthNode->SetScan2_NormedRef(tmp->GetID());
@@ -525,15 +575,65 @@ void vtkTumorGrowthLogic::RegisterMRMLNodesWithScene() {
    tmNode->Delete();
 }
 
-vtkImageData* vtkTumorGrowthLogic::CreateAnalysis_Intensity_ROIGrowthInt() {
+
+vtkImageThreshold* vtkTumorGrowthLogic::CreateAnalysis_Intensity_Scan1ByLower() {
+  if (this->Analysis_Intensity_Scan1ByLower) { this->Analysis_Intensity_Scan1ByLower->Delete(); }
+  this->Analysis_Intensity_Scan1ByLower = vtkImageThreshold::New();
+  return this->Analysis_Intensity_Scan1ByLower;
+}
+
+vtkImageThreshold* vtkTumorGrowthLogic::CreateAnalysis_Intensity_Scan1Range() {
+  if (this->Analysis_Intensity_Scan1Range) { this->Analysis_Intensity_Scan1Range->Delete(); }
+  this->Analysis_Intensity_Scan1Range = vtkImageThreshold::New();
+  return this->Analysis_Intensity_Scan1Range;
+}
+
+vtkImageThreshold* vtkTumorGrowthLogic::CreateAnalysis_Intensity_Scan2ByLower() {
+  if (this->Analysis_Intensity_Scan2ByLower) { this->Analysis_Intensity_Scan2ByLower->Delete(); }
+  this->Analysis_Intensity_Scan2ByLower = vtkImageThreshold::New();
+  return this->Analysis_Intensity_Scan2ByLower;
+}
+
+vtkImageThreshold* vtkTumorGrowthLogic::CreateAnalysis_Intensity_Scan2Range() {
+  if (this->Analysis_Intensity_Scan2Range) { this->Analysis_Intensity_Scan2Range->Delete(); }
+  this->Analysis_Intensity_Scan2Range = vtkImageThreshold::New();
+  return this->Analysis_Intensity_Scan2Range;
+}
+
+
+vtkImageMathematics* vtkTumorGrowthLogic::CreateAnalysis_Intensity_ScanSubtract() {
+  if (this->Analysis_Intensity_ScanSubtract) { this->Analysis_Intensity_ScanSubtract->Delete(); }
+  this->Analysis_Intensity_ScanSubtract = vtkImageMathematics::New();
+  return this->Analysis_Intensity_ScanSubtract;
+}
+
+vtkImageMedian3D* vtkTumorGrowthLogic::CreateAnalysis_Intensity_ScanSubtractSmooth() {
+  if (this->Analysis_Intensity_ScanSubtractSmooth) { this->Analysis_Intensity_ScanSubtractSmooth->Delete(); }
+  this->Analysis_Intensity_ScanSubtractSmooth = vtkImageMedian3D::New();
+  return this->Analysis_Intensity_ScanSubtractSmooth;
+}
+
+vtkImageData* vtkTumorGrowthLogic::CreateAnalysis_Intensity_ROIGrowth() {
+  if (this->Analysis_Intensity_ROIGrowth) { this->Analysis_Intensity_ROIGrowth->Delete(); }
+  this->Analysis_Intensity_ROIGrowth = vtkImageData::New();
+  return this->Analysis_Intensity_ROIGrowth;
+}
+
+vtkImageData* vtkTumorGrowthLogic::CreateAnalysis_Intensity_ROIShrink() {
+  if (this->Analysis_Intensity_ROIShrink) { this->Analysis_Intensity_ROIShrink->Delete(); }
+  this->Analysis_Intensity_ROIShrink = vtkImageData::New();
+  return this->Analysis_Intensity_ROIShrink;
+}
+
+vtkImageMathematics* vtkTumorGrowthLogic::CreateAnalysis_Intensity_ROIGrowthInt() {
   if (this->Analysis_Intensity_ROIGrowthInt) { this->Analysis_Intensity_ROIGrowthInt->Delete(); }
-  this->Analysis_Intensity_ROIGrowthInt = vtkImageData::New();
+  this->Analysis_Intensity_ROIGrowthInt = vtkImageMathematics::New();
   return this->Analysis_Intensity_ROIGrowthInt;
 }
 
-vtkImageData* vtkTumorGrowthLogic::CreateAnalysis_Intensity_ROIShrinkInt() {
+vtkImageMathematics* vtkTumorGrowthLogic::CreateAnalysis_Intensity_ROIShrinkInt() {
   if (this->Analysis_Intensity_ROIShrinkInt) { this->Analysis_Intensity_ROIShrinkInt->Delete(); }
-  this->Analysis_Intensity_ROIShrinkInt = vtkImageData::New();
+  this->Analysis_Intensity_ROIShrinkInt = vtkImageMathematics::New();
   return this->Analysis_Intensity_ROIShrinkInt;
 }
 
@@ -592,11 +692,47 @@ vtkImageData*  vtkTumorGrowthLogic::GetAnalysis_Intensity_ROIBinDisplay() {
   return (this->Analysis_Intensity_ROIBinDisplay ? this->Analysis_Intensity_ROIBinDisplay->GetOutput() : NULL);
 }
 
-
 double vtkTumorGrowthLogic::MeassureGrowth() {
+   if (this->TumorGrowthNode) {
+     return this->MeassureGrowth(this->TumorGrowthNode->GetSegmentThresholdMin(),this->TumorGrowthNode->GetSegmentThresholdMax());
+   } 
+   cout << "Error: vtkTumorGrowthLogic::MeassureGrowth: No TumorGrowthNode defined" << endl;
+   return 0.0;
+ }
+
+double vtkTumorGrowthLogic::MeassureGrowth(int SegmentThreshMin, int SegmentThreshMax) {
   
   if (!this->Analysis_Intensity_ROINegativeBin || !this->Analysis_Intensity_ROIPositiveBin || !this->Analysis_Intensity_ROITotal) return -1;
-  this->Analysis_Intensity_ROINegativeBin->ThresholdByLower(-this->Analysis_Intensity_Threshold); 
+  // Not good programming because we have to change it also in corresponding place in tcl file 
+  int IntensityMin = SegmentThreshMin - this->Analysis_Intensity_Threshold -1 ;
+  int IntensityMax = SegmentThreshMax + this->Analysis_Intensity_Threshold +1 ;
+
+  if (this->Analysis_Intensity_Scan1ByLower) {
+    this->Analysis_Intensity_Scan1ByLower->ThresholdByUpper(IntensityMin);
+    this->Analysis_Intensity_Scan1ByLower->Update();
+  }
+  if ( this->Analysis_Intensity_Scan1Range ) {
+    this->Analysis_Intensity_Scan1Range->ThresholdByLower(IntensityMax); 
+    this->Analysis_Intensity_Scan1Range->Update();
+  }
+
+  if (this->Analysis_Intensity_Scan2ByLower) {
+    this->Analysis_Intensity_Scan2ByLower->ThresholdByUpper(IntensityMin);
+    this->Analysis_Intensity_Scan2ByLower->Update(); 
+  }
+
+  if (this->Analysis_Intensity_Scan2Range) {
+    this->Analysis_Intensity_Scan2Range->ThresholdByLower(IntensityMax); 
+    this->Analysis_Intensity_Scan2Range->Update();
+  }
+
+  this->Analysis_Intensity_ScanSubtract->Update();
+  this->Analysis_Intensity_ScanSubtractSmooth->Update();
+  this->Analysis_Intensity_ROIGrowthInt->Update();
+  this->Analysis_Intensity_ROIShrinkInt->Update();
+
+  // See Corresponding comment in TumorGrowthFct - reduces bias towards shrinkage
+  this->Analysis_Intensity_ROINegativeBin->ThresholdByLower(-1.1*this->Analysis_Intensity_Threshold); 
   this->Analysis_Intensity_ROINegativeBin->Update(); 
   this->Analysis_Intensity_ROIPositiveBin->ThresholdByUpper(this->Analysis_Intensity_Threshold); 
   this->Analysis_Intensity_ROIPositiveBin->Update(); 
@@ -604,6 +740,7 @@ double vtkTumorGrowthLogic::MeassureGrowth() {
   this->Analysis_Intensity_ROIBinAdd->Update();
   this->Analysis_Intensity_ROIBinDisplay->Update();
   this->Analysis_Intensity_ROITotal->Update(); 
+
   return this->Analysis_Intensity_ROITotal->GetVoxelSum(); 
 }
 

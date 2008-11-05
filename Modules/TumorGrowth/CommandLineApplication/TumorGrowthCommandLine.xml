@@ -79,6 +79,13 @@
      <description>Save all intermediate results</description> 
      <default>true</default>
    </boolean>
+    <boolean>
+     <name>tgDebugFlag</name>
+     <longflag>debug</longflag>
+     <label>Debug</label>
+     <description>Run in debug mode</description> 
+     <default>false</default>
+   </boolean>
   </parameters>
 </executable>
 

@@ -773,7 +773,7 @@ void vtkTumorGrowthAnalysisStep::SensitivityChangedCallback(int flag)
 
   double senValue = mrmlNode->GetAnalysis_Intensity_Sensitivity();
   // original values   int senValueList[3] = {0.1, 0.6, 1.0};
-  double senValueList[3] = {0.6, 0.95, 0.997};
+  double senValueList[3] = {0.9, 0.96, 0.99};
 
   if (flag == -1) {
     if (senValue == senValueList[0]) flag = 1;
