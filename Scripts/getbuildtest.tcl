@@ -414,7 +414,7 @@ runcmd $::CMAKE \
         -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
         -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
         -DKWWidgets_DIR:FILEPATH=$Slicer3_LIB/KWWidgets-build \
-        -DTEEM_DIR:FILEPATH=$Slicer3_LIB/teem-build \
+        -DTeem_DIR:FILEPATH=$Slicer3_LIB/teem-build \
         -DIGSTK_DIR:FILEPATH=$Slicer3_LIB/IGSTK-build \
         -DINCR_TCL_LIBRARY:FILEPATH=$::INCR_TCL_LIB \
         -DINCR_TK_LIBRARY:FILEPATH=$::INCR_TK_LIB \

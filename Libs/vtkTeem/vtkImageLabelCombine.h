@@ -26,7 +26,7 @@
 
 #include "vtkThreadedImageAlgorithm.h"
 
-class VTK_TEEM_EXPORT vtkImageLabelCombine : public vtkThreadedImageAlgorithm
+class VTK_Teem_EXPORT vtkImageLabelCombine : public vtkThreadedImageAlgorithm
 {
 public:
   static vtkImageLabelCombine *New();

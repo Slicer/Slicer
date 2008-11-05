@@ -19,7 +19,7 @@
 #include "vtkPreciseHyperStreamline.h"
 #include "vtkPoints.h"
 
-class VTK_TEEM_EXPORT vtkPreciseHyperStreamlinePoints : public vtkPreciseHyperStreamline
+class VTK_Teem_EXPORT vtkPreciseHyperStreamlinePoints : public vtkPreciseHyperStreamline
 {
 public:
   static vtkPreciseHyperStreamlinePoints *New();

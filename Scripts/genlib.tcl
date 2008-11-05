@@ -905,7 +905,7 @@ if { [BuildThis $::ITK_TEST_FILE "itk"] == 1 } {
 # -- relies on VTK's png and zlib
 #
 
-if { [BuildThis $::TEEM_TEST_FILE "teem"] == 1 } {
+if { [BuildThis $::Teem_TEST_FILE "teem"] == 1 } {
     cd $Slicer3_LIB
 
     #runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/teem teem
@@ -947,20 +947,20 @@ if { [BuildThis $::TEEM_TEST_FILE "teem"] == 1 } {
         $C_FLAGS \
         -DBUILD_SHARED_LIBS:BOOL=ON \
         -DBUILD_TESTING:BOOL=ON \
-        -DTEEM_PTHREAD:BOOL=OFF \
-        -DTEEM_BZIP2:BOOL=OFF \
-        -DTEEM_ZLIB:BOOL=ON \
-        -DTEEM_PNG:BOOL=ON \
-        -DTEEM_VTK_MANGLE:BOOL=ON \
-        -DTEEM_VTK_TOOLKITS_IPATH:FILEPATH=$::Slicer3_LIB/VTK-build \
+        -DTeem_PTHREAD:BOOL=OFF \
+        -DTeem_BZIP2:BOOL=OFF \
+        -DTeem_ZLIB:BOOL=ON \
+        -DTeem_PNG:BOOL=ON \
+        -DTeem_VTK_MANGLE:BOOL=ON \
+        -DTeem_VTK_TOOLKITS_IPATH:FILEPATH=$::Slicer3_LIB/VTK-build \
         -DZLIB_INCLUDE_DIR:PATH=$::Slicer3_LIB/VTK/Utilities \
-        -DTEEM_VTK_ZLIB_MANGLE_IPATH:PATH=$::Slicer3_LIB/VTK/Utilities/vtkzlib \
-        -DTEEM_ZLIB_DLLCONF_IPATH:PATH=$::Slicer3_LIB/VTK-build/Utilities \
+        -DTeem_VTK_ZLIB_MANGLE_IPATH:PATH=$::Slicer3_LIB/VTK/Utilities/vtkzlib \
+        -DTeem_ZLIB_DLLCONF_IPATH:PATH=$::Slicer3_LIB/VTK-build/Utilities \
         -DZLIB_LIBRARY:FILEPATH=$::Slicer3_LIB/VTK-build/bin/$::VTK_BUILD_SUBDIR/$zlib \
         -DPNG_PNG_INCLUDE_DIR:PATH=$::Slicer3_LIB/VTK/Utilities/vtkpng \
-        -DTEEM_PNG_DLLCONF_IPATH:PATH=$::Slicer3_LIB/VTK-build/Utilities \
+        -DTeem_PNG_DLLCONF_IPATH:PATH=$::Slicer3_LIB/VTK-build/Utilities \
         -DPNG_LIBRARY:FILEPATH=$::Slicer3_LIB/VTK-build/bin/$::VTK_BUILD_SUBDIR/$png \
-        -DTEEM_USE_LIB_INSTALL_SUBDIR:BOOL=ON \
+        -DTeem_USE_LIB_INSTALL_SUBDIR:BOOL=ON \
         ../teem
 
       if {$isWindows} {
@@ -1109,8 +1109,8 @@ if {! $::GENLIB(buildit)} {
 if { ![file exists $::CMAKE] } {
     puts "CMake test file $::CMAKE not found."
 }
-if { ![file exists $::TEEM_TEST_FILE] } {
-    puts "Teem test file $::TEEM_TEST_FILE not found."
+if { ![file exists $::Teem_TEST_FILE] } {
+    puts "Teem test file $::Teem_TEST_FILE not found."
 }
 if { ![file exists $::IGSTK_TEST_FILE] } {
     puts "IGSTK test file $::IGSTK_TEST_FILE not found."
@@ -1141,7 +1141,7 @@ if { ![file exists $::ITK_TEST_FILE] } {
 }
 
 if { ![file exists $::CMAKE] || \
-         ![file exists $::TEEM_TEST_FILE] || \
+         ![file exists $::Teem_TEST_FILE] || \
          ![file exists $::SLICERLIBCURL_TEST_FILE] || \
          ![file exists $::TCL_TEST_FILE] || \
          ![file exists $::TK_TEST_FILE] || \

@@ -10,9 +10,9 @@ set(dirs
 # Note: Order of of SUBDIRS is important if your projects depend
 # on code in other projects (put dependent project later).
 
-if(TEEM_FOUND)
+if(Teem_FOUND)
   set(dirs ${dirs} vtkTeem)
-endif(TEEM_FOUND)
+endif(Teem_FOUND)
 
 set(dirs ${dirs}
   vtkITK

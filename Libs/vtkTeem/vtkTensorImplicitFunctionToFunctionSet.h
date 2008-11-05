@@ -30,7 +30,7 @@
 #include "vtkFunctionSet.h"
 #include "vtkImageData.h"
 
-class VTK_TEEM_EXPORT vtkTensorImplicitFunctionToFunctionSet : public vtkFunctionSet
+class VTK_Teem_EXPORT vtkTensorImplicitFunctionToFunctionSet : public vtkFunctionSet
 {
  public:
   static vtkTensorImplicitFunctionToFunctionSet *New();

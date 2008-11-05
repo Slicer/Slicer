@@ -30,7 +30,7 @@
 class vtkMatrix4x4;
 class vtkImageData;
 
-class VTK_TEEM_EXPORT vtkDiffusionTensorMathematicsSimple : public vtkSimpleImageToImageFilter
+class VTK_Teem_EXPORT vtkDiffusionTensorMathematicsSimple : public vtkSimpleImageToImageFilter
 {
 public:
   static vtkDiffusionTensorMathematicsSimple *New();

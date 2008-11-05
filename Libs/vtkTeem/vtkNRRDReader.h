@@ -57,7 +57,7 @@
 #define NORMALS 3
 #define TENSORS 4
 
-class VTK_TEEM_EXPORT vtkNRRDReader : public vtkMedicalImageReader2
+class VTK_Teem_EXPORT vtkNRRDReader : public vtkMedicalImageReader2
 {
 public:
   static vtkNRRDReader *New();

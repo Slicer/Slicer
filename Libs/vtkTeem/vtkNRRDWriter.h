@@ -19,7 +19,7 @@
 
 class vtkImageData;
 
-class VTK_TEEM_EXPORT vtkNRRDWriter : public vtkWriter
+class VTK_Teem_EXPORT vtkNRRDWriter : public vtkWriter
 {
 public:
 

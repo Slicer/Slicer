@@ -14,9 +14,11 @@
 #ifndef __vtkPreciseHyperPoint_h
 #define __vtkPreciseHyperPoint_h
 
+#include "vtkTeemConfigure.h"
+
 //BTX
 
-class VTK_TEEM_EXPORT vtkPreciseHyperPoint { //;prevent man page generation
+class VTK_Teem_EXPORT vtkPreciseHyperPoint { //;prevent man page generation
 public:
     vtkPreciseHyperPoint(); // method sets up storage
     vtkPreciseHyperPoint &operator=(const vtkPreciseHyperPoint& hp); //for resizing

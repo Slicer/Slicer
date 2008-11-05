@@ -41,7 +41,7 @@
 #define USE_VTK_PRECISE_HYPERSTREAMLINE_POINTS 2
 #define USE_VTK_HYPERSTREAMLINE_TEEM 3
 
-class VTK_TEEM_EXPORT vtkSeedTracts : public vtkObject
+class VTK_Teem_EXPORT vtkSeedTracts : public vtkObject
 {
  public:
   static vtkSeedTracts *New();

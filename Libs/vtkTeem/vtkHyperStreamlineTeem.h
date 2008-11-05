@@ -11,7 +11,7 @@
 #include "teem/ten.h"
 #include "teem/nrrd.h"
 
-class VTK_TEEM_EXPORT vtkHyperStreamlineTeem : public vtkHyperStreamlineDTMRI
+class VTK_Teem_EXPORT vtkHyperStreamlineTeem : public vtkHyperStreamlineDTMRI
 {
 
  public:

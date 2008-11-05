@@ -129,7 +129,7 @@ endif(Slicer3_BUILD_TESTING)
 set(SKIP_KWWidgets_BUILD_SETTINGS_FILE 1)
 set(SKIP_VTK_BUILD_SETTINGS_FILE 1)
 set(SKIP_ITK_BUILD_SETTINGS_FILE 1)
-set(SKIP_TEEM_BUILD_SETTINGS_FILE 1)
+set(SKIP_Teem_BUILD_SETTINGS_FILE 1)
  
 ## Python
 option(Slicer3_USE_PYTHON "Integrate a python interpreter into Slicer." OFF)
@@ -152,11 +152,11 @@ endif(NOT KWWidgets_FOUND)
 include(${KWWidgets_USE_FILE})
 
 ## Teem
-find_package(TEEM REQUIRED)
-if(NOT TEEM_FOUND)
-  message(FATAL_ERROR "Need TEEM to build")
-endif(NOT TEEM_FOUND)
-include(${TEEM_USE_FILE})
+find_package(Teem REQUIRED)
+if(NOT Teem_FOUND)
+  message(FATAL_ERROR "Need Teem to build")
+endif(NOT Teem_FOUND)
+include(${Teem_USE_FILE})
 
 ## SlicerLibCurl
 find_package(SLICERLIBCURL REQUIRED)
@@ -223,7 +223,7 @@ set(INCR_TCL_VERSION "${INCR_TCL_MAJOR_VERSION}${INCR_TCL_MINOR_VERSION}")
 #
 include("${KWWidgets_CMAKE_DIR}/KWWidgetsPathsMacros.cmake")
 set(extra_dirs
-  "${TEEM_DIR}/bin"
+  "${Teem_DIR}/bin"
   "${BatchMake_DIR}/bin"
   "${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}"
   "${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_LIB_DIR}"

@@ -24,7 +24,7 @@
 #include "teem/nrrd.h"
 #include "teem/ten.h"
 
-class VTK_TEEM_EXPORT vtkTeemEstimateDiffusionTensor : public vtkImageToImageFilter
+class VTK_Teem_EXPORT vtkTeemEstimateDiffusionTensor : public vtkImageToImageFilter
 {
  public:
   static vtkTeemEstimateDiffusionTensor *New();

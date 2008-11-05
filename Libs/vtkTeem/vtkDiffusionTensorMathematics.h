@@ -31,7 +31,7 @@
 
 class vtkMatrix4x4;
 class vtkImageData;
-class VTK_TEEM_EXPORT vtkDiffusionTensorMathematics : public vtkThreadedImageAlgorithm
+class VTK_Teem_EXPORT vtkDiffusionTensorMathematics : public vtkThreadedImageAlgorithm
 {
 public:
   static vtkDiffusionTensorMathematics *New();

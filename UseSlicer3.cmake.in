@@ -11,7 +11,7 @@
 set(SKIP_KWWidgets_BUILD_SETTINGS_FILE 1)
 set(SKIP_VTK_BUILD_SETTINGS_FILE 1)
 set(SKIP_ITK_BUILD_SETTINGS_FILE 1)
-set(SKIP_TEEM_BUILD_SETTINGS_FILE 1)
+set(SKIP_Teem_BUILD_SETTINGS_FILE 1)
 
 find_package(GenerateCLP REQUIRED)
 if(GenerateCLP_FOUND)
@@ -28,10 +28,10 @@ if(KWWidgets_FOUND)
   include(${KWWidgets_USE_FILE})
 endif(KWWidgets_FOUND)
 
-find_package(TEEM REQUIRED)
-if(TEEM_FOUND)
-  include(${TEEM_USE_FILE})
-endif(TEEM_FOUND)
+find_package(Teem REQUIRED)
+if(Teem_FOUND)
+  include(${Teem_USE_FILE})
+endif(Teem_FOUND)
 
 # Add compiler flags needed to use Slicer3.
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${Slicer3_REQUIRED_C_FLAGS}")

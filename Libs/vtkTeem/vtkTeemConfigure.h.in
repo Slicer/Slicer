@@ -12,10 +12,10 @@
 #pragma warning ( disable : 4275 )
 
 #if defined(vtkTeem_EXPORTS)
-#define VTK_TEEM_EXPORT __declspec( dllexport ) 
+#define VTK_Teem_EXPORT __declspec( dllexport ) 
 #else
-#define VTK_TEEM_EXPORT __declspec( dllimport ) 
+#define VTK_Teem_EXPORT __declspec( dllimport ) 
 #endif
 #else
-#define VTK_TEEM_EXPORT
+#define VTK_Teem_EXPORT
 #endif

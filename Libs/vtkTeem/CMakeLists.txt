@@ -8,8 +8,8 @@ endif(COMMAND cmake_policy)
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
 
-find_package(TEEM REQUIRED)
-include(${TEEM_USE_FILE})
+find_package(Teem REQUIRED)
+include(${Teem_USE_FILE})
 
 if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
@@ -92,15 +92,15 @@ add_library(${lib_name}
   )
 
 # after teem 1.9, all the teem libraries are groups in one big libteem.so
-if ( ${TEEM_VERSION_MAJOR} GREATER 1 )
-  set(TEEM_LIBRARIES teem)
-else ( ${TEEM_VERSION_MAJOR} GREATER 1 )
-  if ( ${TEEM_VERSION_MINOR} LESS 10 )
-    set(TEEM_LIBRARIES air biff nrrd ten ell)
-  else ( ${TEEM_VERSION_MINOR} LESS 10 )
-    set(TEEM_LIBRARIES teem)
-  endif ( ${TEEM_VERSION_MINOR} LESS 10 )
-endif ( ${TEEM_VERSION_MAJOR} GREATER 1 )
+if ( ${Teem_VERSION_MAJOR} GREATER 1 )
+  set(Teem_LIBRARIES teem)
+else ( ${Teem_VERSION_MAJOR} GREATER 1 )
+  if ( ${Teem_VERSION_MINOR} LESS 10 )
+    set(Teem_LIBRARIES air biff nrrd ten ell)
+  else ( ${Teem_VERSION_MINOR} LESS 10 )
+    set(Teem_LIBRARIES teem)
+  endif ( ${Teem_VERSION_MINOR} LESS 10 )
+endif ( ${Teem_VERSION_MAJOR} GREATER 1 )
 
 target_link_libraries(${lib_name} 
   vtkCommon
@@ -108,7 +108,7 @@ target_link_libraries(${lib_name}
   vtkImagingTCL
   vtkIOTCL
   vtkGraphicsTCL
-  ${TEEM_LIBRARIES}
+  ${Teem_LIBRARIES}
   )
 
 install(TARGETS ${lib_name}

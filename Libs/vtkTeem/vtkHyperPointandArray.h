@@ -26,7 +26,7 @@
 //
 // Special classes for manipulating data
 //BTX
-class VTK_TEEM_EXPORT vtkHyperPoint { //;prevent man page generation
+class VTK_Teem_EXPORT vtkHyperPoint { //;prevent man page generation
 public:
     vtkHyperPoint(); // method sets up storage
     vtkHyperPoint &operator=(const vtkHyperPoint& hp); //for resizing
@@ -46,7 +46,7 @@ public:
 //ETX
 
 //BTX
-class VTK_TEEM_EXPORT vtkHyperArray { //;prevent man page generation
+class VTK_Teem_EXPORT vtkHyperArray { //;prevent man page generation
 public:
   vtkHyperArray();
   ~vtkHyperArray()

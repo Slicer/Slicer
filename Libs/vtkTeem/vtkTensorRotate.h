@@ -28,7 +28,7 @@
 
 class vtkFloatArray;
 class vtkImageData;
-class VTK_TEEM_EXPORT vtkTensorRotate : public vtkImageToImageFilter
+class VTK_Teem_EXPORT vtkTensorRotate : public vtkImageToImageFilter
 {
 public:
   static vtkTensorRotate *New();

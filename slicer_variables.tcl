@@ -74,7 +74,7 @@ puts stderr "Slicer3_HOME is $::Slicer3_HOME"
 
 set ::Slicer3_TAG "http://svn.slicer.org/Slicer3/trunk"
 set ::CMAKE_TAG "CMake-2-6"
-set ::TEEM_TAG "Teem-1-9-0-patches"
+set ::Teem_TAG "Teem-1-9-0-patches"
 set ::KWWidgets_TAG "HEAD"
 set ::VTK_TAG "VTK-5-2"
 set ::ITK_TAG ITK-3-8
@@ -116,8 +116,8 @@ if { ![info exists ::Slicer3_BUILD] } {
     }
 }
 
-set ::TEEM_SRC_DIR  $::Slicer3_LIB/teem
-set ::TEEM_BUILD_DIR  $::Slicer3_LIB/teem-build
+set ::Teem_SRC_DIR  $::Slicer3_LIB/teem
+set ::Teem_BUILD_DIR  $::Slicer3_LIB/teem-build
 set ::VTK_DIR  $::Slicer3_LIB/VTK-build
 set ::VTK_SRC_DIR $::Slicer3_LIB/VTK
 if { ![info exists ::VTK_BUILD_TYPE] } {
@@ -182,7 +182,7 @@ switch $::tcl_platform(os) {
 switch $::tcl_platform(os) {
     "SunOS" {
         set ::VTK_BUILD_SUBDIR ""
-        set ::TEEM_BIN_DIR  $::TEEM_BUILD_DIR/bin
+        set ::Teem_BIN_DIR  $::Teem_BUILD_DIR/bin
 
         set ::INCR_TCL_LIB $::TCL_LIB_DIR/lib/libitcl3.2.so
         set ::INCR_TK_LIB $::TCL_LIB_DIR/lib/libitk3.2.so
@@ -199,7 +199,7 @@ switch $::tcl_platform(os) {
         set ::SCIPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/scipy/version.pyc
         set ::TK_TEST_FILE  $::TCL_BIN_DIR/wish8.4
         set ::ITCL_TEST_FILE $::TCL_LIB_DIR/libitcl3.2.so
-        set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu
+        set ::Teem_TEST_FILE $::Teem_BIN_DIR/unu
         set ::VTK_TEST_FILE $::VTK_DIR/bin/vtk
         set ::KWWidgets_TEST_FILE $::KWWidgets_BUILD_DIR/bin/libKWWidgets.so
         set ::VTK_TCL_LIB $::TCL_LIB_DIR/libtcl8.4.$shared_lib_ext 
@@ -221,7 +221,7 @@ switch $::tcl_platform(os) {
     }
     "Darwin" {
         set ::VTK_BUILD_SUBDIR ""
-        set ::TEEM_BIN_DIR  $::TEEM_BUILD_DIR/bin
+        set ::Teem_BIN_DIR  $::Teem_BUILD_DIR/bin
 
         set ::TCL_TEST_FILE $::TCL_BIN_DIR/tclsh8.4
         set ::TK_TEST_FILE  $::TCL_BIN_DIR/wish8.4
@@ -239,7 +239,7 @@ switch $::tcl_platform(os) {
         set ::ITCL_TEST_FILE $::TCL_LIB_DIR/libitcl3.2.dylib
         set ::IWIDGETS_TEST_FILE $::TCL_LIB_DIR/iwidgets4.0.1/iwidgets.tcl
         set ::BLT_TEST_FILE $::TCL_BIN_DIR/bltwish24
-        set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu
+        set ::Teem_TEST_FILE $::Teem_BIN_DIR/unu
         set ::VTK_TEST_FILE $::VTK_DIR/bin/vtk
         set ::KWWidgets_TEST_FILE $::KWWidgets_BUILD_DIR/bin/libKWWidgets.$shared_lib_ext
         set ::VTK_TCL_LIB $::TCL_LIB_DIR/libtcl8.4.$shared_lib_ext 
@@ -254,7 +254,7 @@ switch $::tcl_platform(os) {
     }
     "Linux" {
         set ::VTK_BUILD_SUBDIR ""
-        set ::TEEM_BIN_DIR  $::TEEM_BUILD_DIR/bin
+        set ::Teem_BIN_DIR  $::Teem_BUILD_DIR/bin
 
         set ::TCL_TEST_FILE $::TCL_BIN_DIR/tclsh8.4
         set ::INCR_TCL_LIB $::TCL_LIB_DIR/lib/libitcl3.2.so
@@ -272,7 +272,7 @@ switch $::tcl_platform(os) {
         set ::SCIPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/scipy/version.pyc
         set ::TK_TEST_FILE  $::TCL_BIN_DIR/wish8.4
         set ::ITCL_TEST_FILE $::TCL_LIB_DIR/libitcl3.2.so
-        set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu
+        set ::Teem_TEST_FILE $::Teem_BIN_DIR/unu
         set ::VTK_TEST_FILE $::VTK_DIR/bin/vtk
         set ::KWWidgets_TEST_FILE $::KWWidgets_BUILD_DIR/bin/libKWWidgets.so
         set ::VTK_TCL_LIB $::TCL_LIB_DIR/libtcl8.4.$shared_lib_ext 
@@ -289,7 +289,7 @@ switch $::tcl_platform(os) {
     # Windows NT currently covers WinNT, Win2000, XP Home, XP Pro
 
         set ::VTK_BUILD_SUBDIR $::VTK_BUILD_TYPE
-        set ::TEEM_BIN_DIR  $::TEEM_BUILD_DIR/bin/$::VTK_BUILD_TYPE
+        set ::Teem_BIN_DIR  $::Teem_BUILD_DIR/bin/$::VTK_BUILD_TYPE
 
         set ::env(VTK_BUILD_SUBDIR) $::VTK_BUILD_SUBDIR
         set ::TCL_TEST_FILE $::TCL_BIN_DIR/tclsh84.exe
@@ -299,7 +299,7 @@ switch $::tcl_platform(os) {
         set ::INCR_TK_LIB $::TCL_LIB_DIR/lib/itk3.2/itk32.lib
         set ::IWIDGETS_TEST_FILE $::TCL_LIB_DIR/iwidgets4.0.2/iwidgets.tcl
         set ::BLT_TEST_FILE $::TCL_BIN_DIR/BLT24.dll
-        set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu.exe
+        set ::Teem_TEST_FILE $::Teem_BIN_DIR/unu.exe
         if { $::USE_SYSTEM_PYTHON } {
           error "need to define system python path for $::tcl_platform(os)"
         }

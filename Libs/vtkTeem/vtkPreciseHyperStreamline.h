@@ -60,7 +60,7 @@
 
 class vtkPreciseHyperArray;
 
-class VTK_TEEM_EXPORT vtkPreciseHyperStreamline : public vtkDataSetToPolyDataFilter
+class VTK_Teem_EXPORT vtkPreciseHyperStreamline : public vtkDataSetToPolyDataFilter
 {
  public:
   vtkTypeRevisionMacro(vtkPreciseHyperStreamline,vtkDataSetToPolyDataFilter);

@@ -24,7 +24,7 @@
 //
 // Special classes for manipulating data
 //BTX
-class VTK_TEEM_EXPORT vtkTractographyPoint { //;prevent man page generation
+class VTK_Teem_EXPORT vtkTractographyPoint { //;prevent man page generation
 public:
     vtkTractographyPoint(); // method sets up storage
     vtkTractographyPoint &operator=(const vtkTractographyPoint& hp); //for resizing
@@ -48,7 +48,7 @@ public:
 //ETX
 
 //BTX
-class VTK_TEEM_EXPORT vtkTractographyArray { //;prevent man page generation
+class VTK_Teem_EXPORT vtkTractographyArray { //;prevent man page generation
 public:
   vtkTractographyArray();
   ~vtkTractographyArray()

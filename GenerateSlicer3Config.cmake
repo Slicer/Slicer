@@ -33,7 +33,7 @@ SET(Slicer3_Base_LIBRARY_DIRS_CONFIG ${Slicer3_BINARY_DIR}/bin)
 SET(ITK_DIR_CONFIG ${ITK_DIR})
 SET(VTK_DIR_CONFIG ${VTK_DIR})
 SET(KWWidgets_DIR_CONFIG ${KWWidgets_DIR})
-SET(TEEM_DIR_CONFIG ${TEEM_DIR})
+SET(Teem_DIR_CONFIG ${Teem_DIR})
 
 # Configure Slicer3Config.cmake for the install tree.
 CONFIGURE_FILE(

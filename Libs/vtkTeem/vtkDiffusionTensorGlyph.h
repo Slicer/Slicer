@@ -68,7 +68,7 @@ class vtkImageData;
 class vtkMatrix4x4;
 
 
-class VTK_TEEM_EXPORT vtkDiffusionTensorGlyph : public vtkTensorGlyph
+class VTK_Teem_EXPORT vtkDiffusionTensorGlyph : public vtkTensorGlyph
 {
 public:
   vtkTypeRevisionMacro(vtkDiffusionTensorGlyph,vtkTensorGlyph);

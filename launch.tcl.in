@@ -110,7 +110,7 @@ if { $installed } {
 
   set ::env(ITK_BIN_DIR)        $::env(Slicer3_HOME)/lib/InsightToolkit
 
-  set ::env(TEEM_DIR)           $::env(Slicer3_HOME)/lib/TEEM-@TEEM_VERSION_MAJOR@.@TEEM_VERSION_MINOR@
+  set ::env(Teem_DIR)           $::env(Slicer3_HOME)/lib/Teem-@Teem_VERSION_MAJOR@.@Teem_VERSION_MINOR@
 
   set ::env(TCL_DIR)            $::env(Slicer3_HOME)/lib/TclTk
   set ::env(TCL_LIBRARY)        "$::env(TCL_DIR)/lib/tcl@TCL_TK_VERSION_DOT@"
@@ -149,7 +149,7 @@ if { $installed } {
   set ::VTK_BUILD_SUBDIR  ""
   set ::KWWidgets_BUILD_SUBDIR  ""
   set ::ITK_BUILD_SUBDIR  ""
-  set ::TEEM_BUILD_SUBDIR  ""
+  set ::Teem_BUILD_SUBDIR  ""
 
   if {$::env(BUILD) == $::WINDOWS} {
     foreach buildType {"." Debug RelWithDebInfo Release MinSizeRel} {
@@ -167,9 +167,9 @@ if { $installed } {
       if { [file exists "@ITK_DIR@/bin/$buildType/ITKCommon.dll"] } {
         set ::ITK_BUILD_SUBDIR $buildType
       }
-      if { [file exists "@TEEM_DIR@/bin/$buildType/air.dll"] ||
-             [file exists "@TEEM_DIR@/bin/$buildType/teem.dll"] } {
-        set ::TEEM_BUILD_SUBDIR $buildType
+      if { [file exists "@Teem_DIR@/bin/$buildType/air.dll"] ||
+             [file exists "@Teem_DIR@/bin/$buildType/teem.dll"] } {
+        set ::Teem_BUILD_SUBDIR $buildType
       }
     }
   } else {
@@ -193,7 +193,7 @@ if { $installed } {
 
   set ::env(PYTHON_DIR)         [file normalize [file dirname [file dirname "@PYTHON_INCLUDE_PATH@"]]]
 
-  set ::env(TEEM_DIR)           [file normalize "@TEEM_DIR@/bin/$::TEEM_BUILD_SUBDIR"]
+  set ::env(Teem_DIR)           [file normalize "@Teem_DIR@/bin/$::Teem_BUILD_SUBDIR"]
 
   # Slicer3 Libs
 
@@ -322,7 +322,7 @@ proc launch_SetPaths {} {
             set ::env(LD_LIBRARY_PATH) $::env(TCL_DIR)/lib:$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(TCL_DIR)/lib/itcl@INCR_TCL_VERSION_DOT@:$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(TCL_DIR)/lib/itk@INCR_TCL_VERSION_DOT@:$::env(LD_LIBRARY_PATH)
-            set ::env(LD_LIBRARY_PATH) $::env(TEEM_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(Teem_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(VTK_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(PYTHON_DIR)/lib:$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(FreeSurfer_DIR):$::env(LD_LIBRARY_PATH)
@@ -342,7 +342,7 @@ proc launch_SetPaths {} {
             set ::env(LD_LIBRARY_PATH) $::env(Slicer3_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(Slicer3_PLUGINS_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(Slicer3_MODULES_DIR):$::env(LD_LIBRARY_PATH)
-            set ::env(PATH) "$::env(PATH):$::env(TEEM_DIR)"
+            set ::env(PATH) "$::env(PATH):$::env(Teem_DIR)"
             set ::env(PATH) "$::env(Slicer3_BIN_DIR):$::env(PATH)"
             set ::env(PATH) "$::env(Slicer3_PLUGINS_DIR):$::env(PATH)"
             set ::env(PATH) "$::env(Slicer3_MODULES_DIR):$::env(PATH)"
@@ -354,7 +354,7 @@ proc launch_SetPaths {} {
             set ::env(DYLD_LIBRARY_PATH) $::env(TCL_DIR)/lib:$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(TCL_DIR)/lib/itcl@INCR_TCL_VERSION_DOT@:$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(TCL_DIR)/lib/itk@INCR_TCL_VERSION_DOT@:$::env(DYLD_LIBRARY_PATH)
-            set ::env(DYLD_LIBRARY_PATH) $::env(TEEM_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(Teem_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(VTK_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(PYTHON_DIR)/lib:$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(FreeSurfer_DIR):$::env(DYLD_LIBRARY_PATH)
@@ -374,7 +374,7 @@ proc launch_SetPaths {} {
             set ::env(DYLD_LIBRARY_PATH) $::env(Slicer3_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(Slicer3_PLUGINS_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(Slicer3_MODULES_DIR):$::env(DYLD_LIBRARY_PATH)
-            set ::env(PATH) $::env(PATH):$::env(TEEM_DIR)
+            set ::env(PATH) $::env(PATH):$::env(Teem_DIR)
             set ::env(PATH) "$::env(Slicer3_BIN_DIR):$::env(PATH)"
             set ::env(PATH) "$::env(Slicer3_PLUGINS_DIR):$::env(PATH)"
             set ::env(PATH) "$::env(Slicer3_MODULES_DIR):$::env(PATH)"
@@ -386,7 +386,7 @@ proc launch_SetPaths {} {
             set ::env(Path) $::env(TCL_DIR)/bin\;$::env(Path)
             set ::env(Path) $::env(TCL_DIR)/lib/itcl@INCR_TCL_VERSION_DOT@\;$::env(Path)
             set ::env(Path) $::env(TCL_DIR)/lib/itk@INCR_TCL_VERSION_DOT@\;$::env(Path)
-            set ::env(Path) $::env(TEEM_DIR)\;$::env(Path)
+            set ::env(Path) $::env(Teem_DIR)\;$::env(Path)
             set ::env(Path) $::env(PYTHON_DIR)\;$::env(Path)
             set ::env(Path) $::env(VTK_DIR)\;$::env(Path)
             set ::env(Path) $::env(FreeSurfer_DIR)\;$::env(Path)

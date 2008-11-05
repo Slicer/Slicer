@@ -11,14 +11,14 @@ include(${VTK_USE_FILE})
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})
 
-option(MRML_USE_TEEM "Build MRML with TEEM support." ON)
-mark_as_advanced(MRML_USE_TEEM)
-if(MRML_USE_TEEM)
-  find_package(TEEM REQUIRED)
-  include(${TEEM_USE_FILE})
+option(MRML_USE_Teem "Build MRML with Teem support." ON)
+mark_as_advanced(MRML_USE_Teem)
+if(MRML_USE_Teem)
+  find_package(Teem REQUIRED)
+  include(${Teem_USE_FILE})
   option(MRML_USE_vtkTeem "Build MRML with vtkTeem support." ON)
   mark_as_advanced(MRML_USE_vtkTeem)
-endif(MRML_USE_TEEM)
+endif(MRML_USE_Teem)
 
 if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
@@ -37,11 +37,11 @@ set(packages
   FreeSurfer
   )
 
-if(MRML_USE_TEEM)
+if(MRML_USE_Teem)
   set(packages ${packages} 
     vtkTeem
     )
-endif(MRML_USE_TEEM)
+endif(MRML_USE_Teem)
   
 foreach(package 
     ${packages}
@@ -156,7 +156,7 @@ set(MRML_SRCS
   # register code to the vtkMRMLScene constructor
   )
 
-if(MRML_USE_TEEM)
+if(MRML_USE_Teem)
   if(MRML_USE_vtkTeem)
     set(MRML_SRCS
       ${MRML_SRCS}
@@ -174,7 +174,7 @@ if(MRML_USE_TEEM)
       vtkMRMLVectorVolumeNode.cxx        
       )
   endif(MRML_USE_vtkTeem)
-endif(MRML_USE_TEEM)
+endif(MRML_USE_Teem)
 
 # Abstract/pure virtual classes
 
@@ -224,12 +224,12 @@ target_link_libraries(${lib_name}
   FreeSurfer
   )
 
-if(MRML_USE_TEEM)
-  target_link_libraries(${lib_name} ${TEEM_LIBRARIES})
+if(MRML_USE_Teem)
+  target_link_libraries(${lib_name} ${Teem_LIBRARIES})
   if(MRML_USE_vtkTeem)
     target_link_libraries(${lib_name} vtkTeem)
   endif(MRML_USE_vtkTeem)
-endif(MRML_USE_TEEM)
+endif(MRML_USE_Teem)
 
 install(TARGETS ${lib_name}
   RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 

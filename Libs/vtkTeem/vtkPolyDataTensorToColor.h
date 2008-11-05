@@ -29,7 +29,7 @@
 
 #include "vtkTensorGlyph.h"
 
-class VTK_TEEM_EXPORT vtkPolyDataTensorToColor : public vtkPolyDataAlgorithm
+class VTK_Teem_EXPORT vtkPolyDataTensorToColor : public vtkPolyDataAlgorithm
 {
 public:
   static vtkPolyDataTensorToColor *New();

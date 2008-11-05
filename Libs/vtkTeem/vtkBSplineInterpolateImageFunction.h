@@ -34,7 +34,7 @@
 #define ImageDimension 3
 
 class vtkImageData;
-class  VTK_TEEM_EXPORT vtkBSplineInterpolateImageFunction : public vtkImplicitFunction
+class  VTK_Teem_EXPORT vtkBSplineInterpolateImageFunction : public vtkImplicitFunction
 {
  public:
   static vtkBSplineInterpolateImageFunction *New();

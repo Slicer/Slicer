@@ -30,7 +30,7 @@
 
 #include "vtkImageToImageFilter.h"
 
-class VTK_TEEM_EXPORT vtkImageGetTensorComponents : public vtkImageToImageFilter
+class VTK_Teem_EXPORT vtkImageGetTensorComponents : public vtkImageToImageFilter
 {
 public:
   static vtkImageGetTensorComponents *New();

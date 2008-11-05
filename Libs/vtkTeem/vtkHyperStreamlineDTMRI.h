@@ -41,7 +41,7 @@
 #include "vtkDiffusionTensorMathematics.h" // for VTK_TENS_FRACTIONAL_ANISOTROPY
 #include "vtkTractographyPointAndArray.h"
 
-class VTK_TEEM_EXPORT vtkHyperStreamlineDTMRI : public vtkHyperStreamline
+class VTK_Teem_EXPORT vtkHyperStreamlineDTMRI : public vtkHyperStreamline
 {
 public:
   vtkTypeRevisionMacro(vtkHyperStreamlineDTMRI,vtkHyperStreamline);

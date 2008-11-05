@@ -34,7 +34,7 @@
 #include "vtkImageMask.h"
 #include "vtkImageTwoInputFilter.h"
 
-class VTK_TEEM_EXPORT vtkTensorMask : public vtkImageMask
+class VTK_Teem_EXPORT vtkTensorMask : public vtkImageMask
 {
 public:
 
