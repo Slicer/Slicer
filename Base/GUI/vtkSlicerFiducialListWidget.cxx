@@ -1661,7 +1661,7 @@ void vtkSlicerFiducialListWidget::RemoveFiducialObserversForList(vtkMRMLFiducial
     }
   if (flist->HasObserver( vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand ) == 1)
     {
-      vtkWarningMacro("Removing observer on node added event on the fid list");
+    vtkDebugMacro("Removing observer on node added event on the fid list");
     flist->RemoveObservers ( vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand );
     }
 }
@@ -1922,7 +1922,7 @@ void vtkSlicerFiducialListWidget::RemovePointWidget(const char *pointID)
 //---------------------------------------------------------------------------
 void vtkSlicerFiducialListWidget::RemovePointWidgetsForList(vtkMRMLFiducialListNode *flist)
 {
-  if (flist == NULL ||
+  if (flist == NULL || 
       this->DisplayedPointWidgets.size() == 0)
     {
     return;
