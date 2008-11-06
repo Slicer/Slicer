@@ -8,6 +8,7 @@
 #include "vtkKWWizardWorkflow.h"
 #include "vtkKWRadioButtonSet.h"
 #include "vtkKWRadioButton.h"
+#include "vtkKWStateMachineInput.h"
 
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerModulesWizardDialog.h"
@@ -27,6 +28,9 @@ vtkSlicerRepositoryStep::vtkSlicerRepositoryStep()
   this->SetDescription("Select a Slicer3 Loadable Module repository.");
   this->WizardDialog = NULL;
   this->RepositoryRadioButtonSet = NULL;
+
+  this->RepositoryValidationFailed = vtkKWStateMachineInput::New();
+  this->RepositoryValidationFailed->SetName("failed");
 }
 
 //----------------------------------------------------------------------------
@@ -111,7 +115,6 @@ int vtkSlicerRepositoryStep::IsRepositoryValid()
   if (vtkSlicerRepositoryStep::RepositoryNITRC == this->GetSelectedRepository())
     {
 
-
       std::string url("http://svn.slicer.org/Slicer3/trunk/Modules/"); 
 
       // :NOTE: 20081021 tgl: Is there a better way?
@@ -122,7 +125,7 @@ int vtkSlicerRepositoryStep::IsRepositoryValid()
 # if defined(linux) || defined(__linux)
       url += "nitrc-manifest.linux.txt";
 # else
-#  ifdef __MACOSX__
+#  ifdef __APPLE__
       url += "nitrc-manifest.darwin.txt";
 #  else
 #   if defined(sun) || defined(__sun)
@@ -160,6 +163,8 @@ int vtkSlicerRepositoryStep::IsRepositoryValid()
 
   handler->Delete();
 
+  std::cout << "result: " << result << std::endl;
+
   return result;
 }
 
@@ -172,16 +177,18 @@ void vtkSlicerRepositoryStep::Validate()
   vtkKWWizardWorkflow *wizard_workflow = wizard_widget->GetWizardWorkflow();
 
   int valid = this->IsRepositoryValid();
-  if (valid == vtkSlicerRepositoryStep::RepositoryConnectionError)
+  if (valid == vtkSlicerRepositoryStep::RepositoryConnectionError || 
+      valid == vtkSlicerRepositoryStep::RepositoryError)
     {
+
+      std::cout << "ERROR, pushing validation failed" << std::endl;
       wizard_widget->SetErrorText("Could not connect to specified repository.");
-      wizard_workflow->PushInput(vtkKWWizardStep::GetValidationFailedInput());
+      wizard_workflow->PushInput(this->GetRepositoryValidationFailed());
     }
   else
     {
 
-      wizard_workflow->PushInput(
-        vtkKWWizardStep::GetValidationSucceededInput());
+      wizard_workflow->PushInput(vtkKWWizardStep::GetValidationSucceededInput());
 
     }
 

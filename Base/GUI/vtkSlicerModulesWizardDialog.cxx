@@ -69,6 +69,17 @@ void vtkSlicerModulesWizardDialog::CreateWidget()
   wizard_workflow->AddNextStep(this->ProgressStep);
   this->ProgressStep->Delete();
 
+  // if repository validation failed, then go to the last step
+
+  wizard_workflow->AddInput(
+    this->RepositoryStep->GetRepositoryValidationFailed());
+  wizard_workflow->CreateNextTransition(
+    this->RepositoryStep,
+    this->RepositoryStep->GetRepositoryValidationFailed(),
+    this->ProgressStep);
+  wizard_workflow->CreateBackTransition(
+    this->RepositoryStep, this->ProgressStep);
+
   // -----------------------------------------------------------------
   // Initial and finish step
 

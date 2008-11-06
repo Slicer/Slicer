@@ -5,6 +5,7 @@
 
 class vtkSlicerModulesWizardDialog;
 class vtkKWRadioButtonSet;
+class vtkKWStateMachineInput;
 
 class vtkSlicerRepositoryStep : public vtkKWWizardStep
 {
@@ -46,12 +47,17 @@ public:
   vtkGetObjectMacro(WizardDialog, vtkSlicerModulesWizardDialog);
   virtual void SetWizardDialog(vtkSlicerModulesWizardDialog*);
 
+  // Description:
+  // Get the input to branch when repository has failed or is empty.
+  vtkGetObjectMacro(RepositoryValidationFailed, vtkKWStateMachineInput);
+
 protected:
   vtkSlicerRepositoryStep();
   ~vtkSlicerRepositoryStep();
 
   vtkKWRadioButtonSet *RepositoryRadioButtonSet;
   vtkSlicerModulesWizardDialog *WizardDialog;
+  vtkKWStateMachineInput *RepositoryValidationFailed;
 
 private:
   vtkSlicerRepositoryStep(const vtkSlicerRepositoryStep&);   // Not implemented.
