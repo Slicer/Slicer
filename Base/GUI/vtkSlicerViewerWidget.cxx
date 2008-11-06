@@ -799,6 +799,12 @@ void vtkSlicerViewerWidget::UpdateCameraNode()
     if (istyle)
       {
       istyle->SetCameraNode(this->CameraNode);
+      if (istyle->GetApplicationLogic() == NULL &&
+          this->GetApplicationLogic() != NULL)
+        {
+        vtkDebugMacro("Updating interactor style's application logic, since it was null");
+        istyle->SetApplicationLogic(this->GetApplicationLogic());
+        }
       }
     }
   this->MainViewer->GetRenderer()->SetActiveCamera(this->CameraNode->GetCamera());
@@ -891,7 +897,15 @@ void vtkSlicerViewerWidget::CreateWidget ( )
     {
     vtkSlicerViewerInteractorStyle *iStyle = vtkSlicerViewerInteractorStyle::New();
     iStyle->SetViewerWidget( this );
-    iStyle->SetApplicationLogic ( this->ApplicationLogic );
+    if (this->ApplicationLogic != NULL)
+      {
+      iStyle->SetApplicationLogic ( this->ApplicationLogic );
+      }
+    else
+      {
+      vtkDebugMacro("Not setting interactor style's application logic to null.");
+      }
+
     rwi->SetInteractorStyle (iStyle);
     iStyle->Delete();
     }

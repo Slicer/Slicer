@@ -124,6 +124,7 @@ void vtkSlicerViewerInteractorStyle::OnLeftButtonDown()
                           this->Interactor->GetEventPosition()[1]);
   if (this->CurrentRenderer == NULL)
     {
+    vtkDebugMacro("OnLeftButtonDown: couldn't find the poked renderer at event position " << this->Interactor->GetEventPosition()[0] << ", " << this->Interactor->GetEventPosition()[1]);
     return;
     }
   
@@ -132,14 +133,25 @@ void vtkSlicerViewerInteractorStyle::OnLeftButtonDown()
   
   if ( this->GetCameraNode() != NULL )
     {
-    vtkMRMLInteractionNode *interactionNode;
-    interactionNode = vtkMRMLInteractionNode::SafeDownCast (this->GetCameraNode()->GetScene()->GetNthNodeByClass(0,"vtkMRMLInteractionNode"));
-    //this->GetApplicationLogic()->GetInteractionNode());
+    vtkMRMLInteractionNode *interactionNode = NULL;
+    if (this->GetApplicationLogic())
+      {
+      interactionNode = this->GetApplicationLogic()->GetInteractionNode();
+      }
+    else
+      {
+      interactionNode = vtkMRMLInteractionNode::SafeDownCast (this->GetCameraNode()->GetScene()->GetNthNodeByClass(0,"vtkMRMLInteractionNode"));
+      }
     if (interactionNode != NULL)
       {
       mouseInteractionMode = interactionNode->GetCurrentInteractionMode();
+      vtkDebugMacro("OnLeftButton: mouse interaction mode = " << mouseInteractionMode);
       // release the pointer
       interactionNode = NULL;
+      }
+    else
+      {
+      vtkErrorMacro("OnLeftButton: no interaction node! Assuming ViewTransform");
       }
     }
   
@@ -168,44 +180,34 @@ void vtkSlicerViewerInteractorStyle::OnLeftButtonDown()
         {
         this->StartRotate();
         }
-      else if (mouseInteractionMode == vtkMRMLInteractionNode::Place)
+      else if (mouseInteractionMode == vtkMRMLInteractionNode::Place ||
+               mouseInteractionMode == vtkMRMLInteractionNode::PickManipulate)
         {
-        /*
-        // get the current renderer's size, and possibly update the interactor
-        int *renSize = ren->GetSize();
-        if (this->Interactor->GetSize()[0] != renSize[0] ||
-            this->Interactor->GetSize()[1] != renSize[1])
-          {
-          std::cout << "MousePut: Updating interactor size to renderer size " << renSize[0] << "," << renSize[1] << endl;
-          this->Interactor->UpdateSize(renSize[0], renSize[1]);
-          }
-        */
         // get the current event position, flipping Y
         int x = this->Interactor->GetEventPosition()[0];
         int rawY = this->Interactor->GetEventPosition()[1];
         this->Interactor->SetEventPositionFlipY(x, rawY);
         int y = this->Interactor->GetEventPosition()[1];
-        vtkDebugMacro("MousePut: got x = " << x << ", y = " << y << " (raw y = " << rawY << ")\n");
-        // throw a pick event, let observers deal with it        
-        this->InvokeEvent(vtkSlicerViewerInteractorStyle::PickEvent, this->Interactor->GetEventPosition());       
-        }
-      else if (mouseInteractionMode == vtkMRMLInteractionNode::PickManipulate)
-        {
-        // deal with select mode
-        // throw a select region event
-        this->InvokeEvent(vtkSlicerViewerInteractorStyle::SelectRegionEvent);
+        vtkDebugMacro("MouseMode Place or PickManipulate:: got x = " << x << ", y = " << y << " (raw y = " << rawY << ")\n");
+        // now throw the events
+        if (mouseInteractionMode == vtkMRMLInteractionNode::Place)
+          {
+          this->InvokeEvent(vtkSlicerViewerInteractorStyle::PickEvent, this->Interactor->GetEventPosition());       
+          }
+        else if (mouseInteractionMode == vtkMRMLInteractionNode::PickManipulate)
+          {
+          // deal with select mode
+          // throw a select region event
+          this->InvokeEvent(vtkSlicerViewerInteractorStyle::SelectRegionEvent, this->Interactor->GetEventPosition());
 
-        // TODO: expand the mouse interaction modes and events to support
-        // picking everything needed
+          // TODO: expand the mouse interaction modes and events to support
+          // picking everything needed
 #ifndef QDEC_DEBUG
-        // for the Qdec module, throw a plot event that won't clash with the
-        // fiducials module looking for a pick event
-        int x = this->Interactor->GetEventPosition()[0];
-        int rawY = this->Interactor->GetEventPosition()[1];
-        this->Interactor->SetEventPositionFlipY(x, rawY);
-        int y = this->Interactor->GetEventPosition()[1];
-        this->InvokeEvent(vtkSlicerViewerInteractorStyle::PlotEvent, this->Interactor->GetEventPosition());
+          // for the Qdec module, throw a plot event that won't clash with the
+          // fiducials module looking for a pick event
+          this->InvokeEvent(vtkSlicerViewerInteractorStyle::PlotEvent, this->Interactor->GetEventPosition());
 #endif
+          }
         }
       }
     }
