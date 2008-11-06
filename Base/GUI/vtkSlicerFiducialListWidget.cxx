@@ -1079,9 +1079,9 @@ void vtkSlicerFiducialListWidget::UpdateFiducialsFromMRML()
     }
 
   // Render
-  if (this->MainViewer != NULL)
+  if (this->ViewerWidget != NULL)
     {
-    this->RequestRender();
+    this->ViewerWidget->RequestRender();
     }
 }
 

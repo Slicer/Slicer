@@ -878,6 +878,12 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   this->MainViewer->SetParent (this->ViewerFrame );
   this->MainViewer->Create ( );
 
+  // tell the render widget not to respond to the Render() method
+  // - this class turns on rendering explicitly when it's own
+  //   Render() method is called.  This avoids redundant renders
+  //   when, for example, the annotation is changed.
+  this->MainViewer->RenderStateOff();
+
   // make a Slicer viewer interactor style to process our events
   // look at the InteractorStyle to get our events
   vtkRenderWindowInteractor *rwi = this->MainViewer->GetRenderWindowInteractor();
@@ -1351,8 +1357,10 @@ void vtkSlicerViewerWidget::Render()
     this->UpdateFromMRML();
     }
 
+  this->MainViewer->RenderStateOn();
   this->MainViewer->Render();
   vtkDebugMacro("vtkSlicerViewerWidget::Render called render" << endl);
+  this->MainViewer->RenderStateOff();
   this->SetRenderPending(0);
 }
 
