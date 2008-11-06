@@ -93,3 +93,5 @@ endif(Slicer3_USE_NAVITRACK)
 if(Slicer3_BUILD_TESTING)
 #  subdirs(Testing)
 endif(Slicer3_BUILD_TESTING)
+
+include(loadablemodules.cmake)
