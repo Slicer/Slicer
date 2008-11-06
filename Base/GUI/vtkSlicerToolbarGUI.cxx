@@ -449,6 +449,11 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
       }
     interactionNode = this->GetApplicationLogic()->GetInteractionNode();
 
+    if (interactionNode == NULL)
+      {
+      vtkErrorMacro("ProcessGUIEvents: no interaction node in the scene, not updating the interaction mode!");
+      }
+                                   
     if ( app != NULL )
       {
       vtkKWRadioButton *radiob = vtkKWRadioButton::SafeDownCast ( caller );
