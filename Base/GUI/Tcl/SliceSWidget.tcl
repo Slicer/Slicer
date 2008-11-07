@@ -754,12 +754,12 @@ itcl::body SliceSWidget::moveSlice { delta } {
     set numberOfLogics [llength $logics]
     foreach logic $logics {
         $logic SetSliceOffset [expr $offset + $delta]
-        if { true || $numberOfLogics == 1 } { 
-            [$logic GetSliceNode] SetSliceSpacingModeToAutomatic 
-        } else {
-            [$logic GetSliceNode] SetSliceSpacingModeToPrescribed
-            eval [$logic GetSliceNode] SetPrescribedSliceSpacing $spacing
-        }
+#        if { $numberOfLogics == 1 } { 
+#            [$logic GetSliceNode] SetSliceSpacingModeToAutomatic 
+#        } else {
+#            [$logic GetSliceNode] SetSliceSpacingModeToPrescribed
+#            eval [$logic GetSliceNode] SetPrescribedSliceSpacing $spacing
+#        }
     }    
 }
 
