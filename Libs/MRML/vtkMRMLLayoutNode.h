@@ -60,6 +60,14 @@ public:
   vtkSetMacro ( NumberOfCompareViewLightboxColumns, int );  
 
   // Description:
+  // Set/Get the size of the main and secondary panels (size of Frame1
+  // in each panel)
+  vtkGetMacro( MainPanelSize, int);
+  vtkSetMacro( MainPanelSize, int);
+  vtkGetMacro( SecondaryPanelSize, int);
+  vtkSetMacro( SecondaryPanelSize, int);
+
+// Description:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Layout";};
 
@@ -97,6 +105,9 @@ protected:
   int NumberOfCompareViewColumns;
   int NumberOfCompareViewLightboxRows;
   int NumberOfCompareViewLightboxColumns;
+
+  int MainPanelSize;
+  int SecondaryPanelSize;
 };
 
 #endif

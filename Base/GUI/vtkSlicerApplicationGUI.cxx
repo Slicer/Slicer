@@ -569,8 +569,18 @@ void vtkSlicerApplicationGUI::UpdateLayout ( )
   if ( this->Built == false )
     {
     return;
-    }
+    } 
 
+  // make the panel frame sizes match the node (jvm)
+  // std::cout << "Setting sizes: " << *this->GUILayoutNode << std::endl;
+  this->MainSlicerWindow->GetMainSplitFrame()->SetFrame1Size( this->GUILayoutNode->GetMainPanelSize() );
+  this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Size( this->GUILayoutNode->GetSecondaryPanelSize() );  
+  
+  // make the panel visibility match the node (jvm)
+  this->MainSlicerWindow->SetMainPanelVisibility( this->GUILayoutNode->GetGUIPanelVisibility() );
+  this->MainSlicerWindow->SetSecondaryPanelVisibility( this->GUILayoutNode->GetBottomPanelVisibility() );
+
+  
   //--- stop spinning/rocking... and
   //--- repack the layout in main viewer if required.
   int target = this->GUILayoutNode->GetViewArrangement();
@@ -723,6 +733,10 @@ void vtkSlicerApplicationGUI::ShowModulesWizard()
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::AddGUIObservers ( )
 {
+  this->MainSlicerWindow->GetMainSplitFrame()->GetFrame1()->SetBinding("<Configure>", this, "MainSplitFrameConfigureCallback %w %h");
+  this->MainSlicerWindow->GetSecondarySplitFrame()->GetFrame1()->SetBinding("<Configure>", this, "SecondarySplitFrameConfigureCallback %w %h");
+  
+  
         vtkSlicerApplication::SafeDownCast ( this->GetApplication() )->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
         this->GetMainSlicerWindow()->GetFileMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
         // keep track of changes to Home Module set from Application Settings interface;
@@ -777,6 +791,9 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::RemoveGUIObservers ( )
 {
+
+  this->MainSlicerWindow->GetMainSplitFrame()->GetFrame1()->RemoveBinding("<Configure>", this, "MainSplitFrameConfigureCallback %w %h");
+  this->MainSlicerWindow->GetSecondarySplitFrame()->GetFrame1()->RemoveBinding("<Configure>", this, "SecondarySplitFrameConfigureCallback %w %h");
 
   vtkSlicerApplication::SafeDownCast ( this->GetApplication() )->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GetMainSlicerWindow()->GetFileMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -953,6 +970,7 @@ void vtkSlicerApplicationGUI::ProcessMRMLEvents ( vtkObject *caller,
        ln == this->GUILayoutNode &&
        event == vtkCommand::ModifiedEvent )
     {
+    //std::cout << "Layout node modified: " << *this->GUILayoutNode << std::endl;
     this->ApplicationToolbar->UpdateLayoutMenu();
     this->UpdateLayout();
     }
@@ -961,12 +979,14 @@ void vtkSlicerApplicationGUI::ProcessMRMLEvents ( vtkObject *caller,
       scene == this->MRMLScene &&
       event == vtkCommand::ModifiedEvent )
     {
-    //--- do we need to update the layout?
+    // std::cout << "Scene modified" << std::endl;
     if(this->ApplicationToolbar)
       {
       this->ApplicationToolbar->UpdateLayoutMenu();
       }
-    this->UpdateLayout();    
+    // do not update the layout on every scene modified. only update
+    // the layout when the layout node is modified (first case) or
+    // when switching to a new layout node (third case)
     }
   else if (scene != NULL &&
            scene == this->MRMLScene &&
@@ -996,6 +1016,7 @@ void vtkSlicerApplicationGUI::ProcessMRMLEvents ( vtkObject *caller,
       this->GUILayoutNode = NULL;
       this->SetAndObserveGUILayoutNode ( layout );
 */
+      // std::cout << "Switching layout nodes" << std::endl;
       this->UpdateLayout();
       this->ApplicationToolbar->UpdateLayoutMenu();
       if ( this->ApplicationLogic != NULL )
@@ -1081,8 +1102,15 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
   if ( this->MainSlicerWindow != NULL ) {
 
   // set up Slicer's main window
-  this->MainSlicerWindow->SecondaryPanelVisibilityOn ( );
-  this->MainSlicerWindow->MainPanelVisibilityOn ( );
+  if (this->ProcessingMRMLEvent)
+    {
+    // can't just modify the node because we'll never get
+    // ModifiedEvent on the node to change the visibilities
+    this->MainSlicerWindow->SecondaryPanelVisibilityOn ( );
+    this->MainSlicerWindow->MainPanelVisibilityOn ( );
+    }
+  this->GUILayoutNode->SetGUIPanelVisibility(1);
+  this->GUILayoutNode->SetBottomPanelVisibility(1);
   app->AddWindow ( this->MainSlicerWindow );
 
 
@@ -1722,6 +1750,7 @@ void vtkSlicerApplicationGUI::PackMainViewer ( int arrangmentType, const char *w
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     // parent the sliceGUI  based on selected view arrangement & build
 
+    
       switch ( arrangmentType)
         {
         case vtkMRMLLayoutNode::SlicerLayoutInitialView:
@@ -1909,7 +1938,13 @@ void vtkSlicerApplicationGUI::PackConventionalView ( )
 
     vtkSlicerSliceGUI *g = NULL;
     
-    this->MainSlicerWindow->SetSecondaryPanelVisibility ( 1 );
+    if (this->ProcessingMRMLEvent)
+      {
+      // can't just modify the node because we'll never get
+      // ModifiedEvent on the node to change the visibilities
+      this->MainSlicerWindow->SetSecondaryPanelVisibility ( 1 );
+      }
+    this->GUILayoutNode->SetBottomPanelVisibility(1);
     this->ViewerWidget->PackWidget(this->MainSlicerWindow->GetViewFrame() );
 
     this->Script ( "pack %s -side top -fill both -expand y -padx 0 -pady 0 ", this->GridFrame2->GetWidgetName ( ) );
@@ -1958,14 +1993,6 @@ void vtkSlicerApplicationGUI::PackConventionalView ( )
       {
       layout->SetViewArrangement ( vtkMRMLLayoutNode::SlicerLayoutConventionalView );
       }
-    if ( geom->GetDefaultSliceGUIFrameHeight() > 0 )
-      {
-      this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Size ( geom->GetDefaultSliceGUIFrameHeight () );
-      }
-    else
-      {
-      this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Size ( geom->GetStandardSliceGUIFrameHeight () );
-      }
     }
 }
 
@@ -1985,8 +2012,13 @@ void vtkSlicerApplicationGUI::PackOneUp3DView ( )
       }
     
     // Expose the main panel frame only
-//      this->MainSlicerWindow->SetMainPanelVisibility ( 1 );
-    this->MainSlicerWindow->SetSecondaryPanelVisibility ( 0 );
+    if (this->ProcessingMRMLEvent)
+      {
+      // can't just modify the node because we'll never get
+      // ModifiedEvent on the node to change the visibilities
+      this->MainSlicerWindow->SetSecondaryPanelVisibility ( 0 );
+      }
+    this->GUILayoutNode->SetBottomPanelVisibility( 0 );
     this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );      
     this->ViewerWidget->PackWidget(this->MainSlicerWindow->GetViewFrame() );
     
@@ -2023,8 +2055,13 @@ void vtkSlicerApplicationGUI::PackOneUpSliceView ( const char * whichSlice )
       }
 
     // Expose the main panel frame only
-//      this->MainSlicerWindow->SetMainPanelVisibility ( 1 );
-    this->MainSlicerWindow->SetSecondaryPanelVisibility ( 0 );
+    if (this->ProcessingMRMLEvent)
+      {
+      // can't just modify the node because we'll never get
+      // ModifiedEvent on the node to change the visibilities
+      this->MainSlicerWindow->SetSecondaryPanelVisibility ( 0 );
+      }
+    this->GUILayoutNode->SetBottomPanelVisibility( 0 );
     
     vtkSlicerSliceGUI *g;
     int cur = layout->GetViewArrangement();    
@@ -2089,9 +2126,13 @@ void vtkSlicerApplicationGUI::PackFourUpView ( )
       }
     
     // Expose both the main panel frame and secondary panel frame
-    //      this->MainSlicerWindow->SetMainPanelVisibility ( 1 );
-    this->MainSlicerWindow->SetSecondaryPanelVisibility ( 0 );
-    this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Size ( 0 );
+    if (this->ProcessingMRMLEvent)
+      {
+      // can't just modify the node because we'll never get
+      // ModifiedEvent on the node to change the visibilities
+      this->MainSlicerWindow->SetSecondaryPanelVisibility ( 0 );
+      }
+    this->GUILayoutNode->SetBottomPanelVisibility( 0 );
     
     // Use this frame in MainSlicerWindow's ViewFrame to grid in the various viewers.
     this->Script ( "pack %s -side top -fill both -expand y -padx 0 -pady 0 ", this->GridFrame1->GetWidgetName ( ) );
@@ -2137,16 +2178,13 @@ void vtkSlicerApplicationGUI::PackTabbed3DView ( )
       return;
       }
 
-    if ( geom->GetDefaultSliceGUIFrameHeight() > 0 )
+    if (this->ProcessingMRMLEvent)
       {
-      this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Size ( geom->GetDefaultSliceGUIFrameHeight() );
+      // can't just modify the node because we'll never get
+      // ModifiedEvent on the node to change the visibilities
+      this->MainSlicerWindow->SetSecondaryPanelVisibility ( 0 );
       }
-    else
-      {
-      this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Size ( geom->GetStandardSliceGUIFrameHeight() );
-      }
-//      this->MainSlicerWindow->SetMainPanelVisibility ( 1 );
-    this->MainSlicerWindow->SetSecondaryPanelVisibility ( 0 );
+    this->GUILayoutNode->SetBottomPanelVisibility( 0 );
     
     vtkSlicerSliceGUI *g = this->SlicesGUI->GetSliceGUI("Red");
     g->PackGUI( this->MainSlicerWindow->GetSecondaryPanelFrame( ));
@@ -2191,7 +2229,13 @@ void vtkSlicerApplicationGUI::PackTabbedSliceView ( )
       }
     
 
-    this->MainSlicerWindow->SetSecondaryPanelVisibility ( 0 );
+    if (this->ProcessingMRMLEvent)
+      {
+      // can't just modify the node because we'll never get
+      // ModifiedEvent on the node to change the visibilities
+      this->MainSlicerWindow->SetSecondaryPanelVisibility ( 0 );
+      }
+    this->GUILayoutNode->SetBottomPanelVisibility( 0 );
     
     this->MainSlicerWindow->GetViewNotebook()->AddPage("Red slice", NULL, NULL, this->ViewerPageTag );
     
@@ -2235,7 +2279,13 @@ void vtkSlicerApplicationGUI::PackCompareView()
     vtkMRMLLayoutNode *layout = this->GetGUILayoutNode ( );
     double x, y, z;
     
-    this->MainSlicerWindow->SetSecondaryPanelVisibility ( 1 );
+    if (this->ProcessingMRMLEvent)
+      {
+      // can't just modify the node because we'll never get
+      // ModifiedEvent on the node to change the visibilities
+      this->MainSlicerWindow->SetSecondaryPanelVisibility ( 1 );
+      }
+    this->GUILayoutNode->SetBottomPanelVisibility( 1 );
     
     // setup the layout for Frame1
     this->Script ( "pack %s -side top -fill both -expand y -padx 0 -pady 0 ", this->GridFrame1->GetWidgetName ( ) );
@@ -2342,17 +2392,6 @@ void vtkSlicerApplicationGUI::PackCompareView()
       {
       layout->SetViewArrangement( vtkMRMLLayoutNode::SlicerLayoutCompareView );
       }
-    if ( geom->GetDefaultSliceGUIFrameHeight() > 0 )
-      {
-      this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Size ( geom->GetDefaultSliceGUIFrameHeight () );
-      }
-    else
-      {
-      this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Size ( geom->GetStandardSliceGUIFrameHeight () );
-      }
-
-
-
     }
 }
 
@@ -2754,3 +2793,14 @@ void vtkSlicerApplicationGUI::UpdateRemoteIOConfigurationForRegistry()
 }
 
 
+void vtkSlicerApplicationGUI::MainSplitFrameConfigureCallback(int width, int height)
+{
+  // std::cout << "MainSplitFrameConfigureCallback" << std::endl;
+  this->GUILayoutNode->SetMainPanelSize( this->MainSlicerWindow->GetMainSplitFrame()->GetFrame1Size() );
+}
+
+void vtkSlicerApplicationGUI::SecondarySplitFrameConfigureCallback(int width, int height)
+{
+  // std::cout << "SecondarySplitFrameConfigureCallback" << std::endl;
+  this->GUILayoutNode->SetSecondaryPanelSize( this->MainSlicerWindow->GetSecondarySplitFrame()->GetFrame1Size() );
+}

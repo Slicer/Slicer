@@ -49,6 +49,8 @@ vtkMRMLLayoutNode::vtkMRMLLayoutNode()
   this->NumberOfCompareViewColumns = 0;
   this->NumberOfCompareViewLightboxRows = 1;
   this->NumberOfCompareViewLightboxColumns = 1;
+  this->MainPanelSize = 400;
+  this->SecondaryPanelSize = 400;
   return;
 
 }
@@ -76,6 +78,8 @@ void vtkMRMLLayoutNode::WriteXML(ostream& of, int nIndent)
   of << indent << " numberOfCompareViewColumns=\"" << this->NumberOfCompareViewColumns << "\"";
   of << indent << " numberOfLightboxRows=\"" << this->NumberOfCompareViewLightboxRows << "\"";
   of << indent << " numberOfLightboxColumns=\"" << this->NumberOfCompareViewLightboxColumns << "\"";
+  of << indent << " mainPanelSize=\"" << this->MainPanelSize << "\"";
+  of << indent << " secondaryPanelSize=\"" << this->SecondaryPanelSize << "\"";
 }
 
 
@@ -140,6 +144,18 @@ void vtkMRMLLayoutNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> this->NumberOfCompareViewLightboxColumns;
       }
+    else if ( !strcmp (attName, "mainPanelSize" ))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->MainPanelSize;
+      }
+    else if ( !strcmp (attName, "secondaryPanelSize" ))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->SecondaryPanelSize;
+      }
     }
 
 }
@@ -169,6 +185,10 @@ void vtkMRMLLayoutNode::Copy(vtkMRMLNode *anode)
   this->SetNumberOfCompareViewColumns ( node->GetNumberOfCompareViewColumns() );
   this->SetNumberOfCompareViewLightboxRows ( node->GetNumberOfCompareViewLightboxRows() );
   this->SetNumberOfCompareViewLightboxColumns ( node->GetNumberOfCompareViewLightboxColumns() );
+
+  this->SetMainPanelSize( node->GetMainPanelSize() );
+  this->SetSecondaryPanelSize( node->GetSecondaryPanelSize() );
+  
 }
 
 //----------------------------------------------------------------------------
@@ -186,6 +206,8 @@ void vtkMRMLLayoutNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "NumberOfCompareViewColumns: " << this->NumberOfCompareViewColumns << "\n";
   os << indent << "NumberOfCompareViewLightboxRows: " << this->NumberOfCompareViewLightboxRows << "\n";
   os << indent << "NumberOfCompareViewLightboxColumns: " << this->NumberOfCompareViewLightboxColumns << "\n";
+  os << indent << "Main panel size: " << this->MainPanelSize << "\n";
+  os << indent << "Secondary panel size: " << this->SecondaryPanelSize << "\n";
 }
 
 

@@ -277,10 +277,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     //--- through the ApplicationGUI to CacheManager.
     virtual void ConfigureRemoteIOSettings();
 
+    // Description:
+    // Callbacks set on the configure events of the split frames
+    void MainSplitFrameConfigureCallback(int width, int height);
+    void SecondarySplitFrameConfigureCallback(int width, int height);
+  
 protected:
     vtkSlicerApplicationGUI ( );
     virtual ~vtkSlicerApplicationGUI ( );
 
+  
     // Description:
     // Main Slicer window
     vtkSlicerWindow *MainSlicerWindow;
