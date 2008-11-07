@@ -350,7 +350,9 @@ itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
   [$sliceGUI GetSliceViewer] RequestRender
 
   set property [$o(actor) GetProperty]
-  $property SetColor [expr rand()] [expr rand()] [expr rand()]
+  $property SetColor 0 1 1
+  $property SetLineWidth 1
+  $property SetPointSize 5
 }
 
 proc ModelSWidget::ManyWidgetTest { sliceGUI } {
