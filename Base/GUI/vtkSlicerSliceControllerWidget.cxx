@@ -2493,8 +2493,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     if ( value != newValue || event == vtkKWScale::ScaleValueChangingEvent)
       {
       // if slice viewers are linked in CompareView layout mode,
-      // modify all slice logic this allows to synch all Compare Slice
-      // Viewers in the CompareView layout mode
+      // modify all slice logic to synch all Compare Slice viewers
       if ( link && sgui && (layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutCompareView))
         {
         vtkSlicerSlicesGUI *ssgui = vtkSlicerSlicesGUI::SafeDownCast ( app->GetModuleGUIByName ("Slices") );
@@ -2525,6 +2524,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
                  !strcmp(this->SliceNode->GetOrientationString(), sgui->GetSliceNode()->GetOrientationString()))
               {
               sgui->GetLogic()->SetSliceOffset( newValue );
+              modified = 1;
               }
             }
           }
