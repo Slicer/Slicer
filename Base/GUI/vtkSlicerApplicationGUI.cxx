@@ -2373,6 +2373,23 @@ void vtkSlicerApplicationGUI::PackCompareView()
         g->GridSpanGUI( this->GetGridFrame2( ), ncount, 0, 1, 3 );
         g->GetSliceViewer()->SetWidth(geom->GetDefaultSliceGUIFrameWidth());
         this->Script ("grid rowconfigure %s %d -weight 1", this->GridFrame2->GetWidgetName(), ncount );
+
+        if (g->GetLogic()->GetSliceCompositeNode()->GetBackgroundVolumeID() == 0)
+          {
+          // no volume assigned. use the background of Red viewer for
+          // first compare viewer, the foreground of Red Viewer for
+          // second compare viewer, and rest like the first
+          vtkSlicerSliceGUI *red = this->SlicesGUI->GetSliceGUI("Red");
+          if ((ncount == 0 || ncount > 2) && red && red->GetLogic()->GetSliceCompositeNode()->GetBackgroundVolumeID())
+            {
+            g->GetLogic()->GetSliceCompositeNode()->SetBackgroundVolumeID( red->GetLogic()->GetSliceCompositeNode()->GetBackgroundVolumeID());
+            }
+          else if (ncount == 1 && red && red->GetLogic()->GetSliceCompositeNode()->GetForegroundVolumeID())
+            {
+            g->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID( red->GetLogic()->GetSliceCompositeNode()->GetForegroundVolumeID());
+            }
+          }
+        
         ncount++;
         //--- if more compare viewers were created previously,
         //--- but fewer are requested in this layout change,
@@ -2383,7 +2400,7 @@ void vtkSlicerApplicationGUI::PackCompareView()
           }
         }
       }
-    
+
     this->GetSlicesControlGUI()->RequestFOVEntriesUpdate();
     
     this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );

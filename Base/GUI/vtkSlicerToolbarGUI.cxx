@@ -1347,7 +1347,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
     this->CompareViewBoxRowEntry = vtkKWEntry::New ( );
     this->CompareViewBoxRowEntry->SetParent ( viewerConfigFrame->GetFrame() );
     this->CompareViewBoxRowEntry->Create ( );
-    this->CompareViewBoxRowEntry->SetValueAsInt (1);
+    this->CompareViewBoxRowEntry->SetValueAsInt (2);
     this->CompareViewBoxRowEntry->SetWidth ( 3 );
     //--- grid compare viewer configuration widgets
     this->Script ( "grid %s -row 0 -column 0 -sticky e -padx 2 -pady 4", rowsLabel->GetWidgetName());
