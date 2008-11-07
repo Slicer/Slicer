@@ -1074,7 +1074,10 @@ int vtkSlicerViewControlGUI::InvokeNameDialog( const char *msg, const char *name
   //--- now name the node...
   vtkKWEntryWithLabel *entry = this->NameDialog->GetEntry();
   this->NameDialog->SetText ( msg );
-  entry->GetWidget()->SetValue(name);
+  if (entry->GetWidget()->GetValue() == NULL || !strcmp(entry->GetWidget()->GetValue(),"")) 
+    {
+    entry->GetWidget()->SetValue(name);
+    }
   int result = this->NameDialog->Invoke();
   if ( !result )
     {

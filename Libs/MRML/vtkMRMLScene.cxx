@@ -1434,7 +1434,7 @@ const char* vtkMRMLScene::GetUniqueNameByString(const char* className)
   std::string sname(className);
   if (UniqueIDByClass.find(sname) == UniqueIDByClass.end() ) 
     {
-    UniqueIDByClass[className] = 1;
+    UniqueIDByClass[className] = 0;
     }
   int id = UniqueIDByClass[sname];
 
@@ -1444,7 +1444,10 @@ const char* vtkMRMLScene::GetUniqueNameByString(const char* className)
     {
     std::stringstream ss;
     ss << className;
-    ss << id;
+    if (id > 0) 
+      {
+      ss << id;
+      }
     name = ss.str();
     bool nameExists = false;
     unsigned int i;
