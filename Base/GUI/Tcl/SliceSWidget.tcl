@@ -477,6 +477,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       set thisSliceSpacing [[$sliceGUI GetLogic] GetLowestVolumeSliceSpacing]
       set sliceGUIs [$this getLinkedSliceGUIs]
       foreach gui $sliceGUIs {
+          [[$gui GetSliceViewer] GetRenderWidget] CornerAnnotationVisibilityOn
           set snode [$gui GetSliceNode]
           if { $_sliceNode != $snode } {
               # prescribe spacing for all other guis
@@ -494,6 +495,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       #puts "LeaveEvent."
       set sliceGUIs [$this getLinkedSliceGUIs]
       foreach gui $sliceGUIs {
+          [[$gui GetSliceViewer] GetRenderWidget] CornerAnnotationVisibilityOff
           set snode [$gui GetSliceNode]
           $snode SetSliceSpacingModeToAutomatic
           
