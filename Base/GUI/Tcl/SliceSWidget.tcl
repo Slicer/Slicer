@@ -481,12 +481,13 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
           [[$gui GetSliceViewer] GetRenderWidget] CornerAnnotationVisibilityOn
           set snode [$gui GetSliceNode]
           if { $_sliceNode != $snode } {
-              set that [$this getSliceSWidgetForGUI $gui]
-              $that resizeSliceNode
-
               # prescribe spacing for all other guis
               eval $snode SetPrescribedSliceSpacing $thisSliceSpacing
               $snode SetSliceSpacingModeToPrescribed
+
+              # then tell them to reslice
+              set that [$this getSliceSWidgetForGUI $gui]
+              $that resizeSliceNode
 
               [$gui GetSliceViewer] RequestRender
           }
