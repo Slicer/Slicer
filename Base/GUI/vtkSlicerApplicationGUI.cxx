@@ -1750,6 +1750,10 @@ void vtkSlicerApplicationGUI::PackMainViewer ( int arrangmentType, const char *w
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     // parent the sliceGUI  based on selected view arrangement & build
 
+    // jvm - if Slicer crashes when starting, try putting in this line
+    // to overrride the cached layout
+    
+    // arrangmentType = vtkMRMLLayoutNode::SlicerLayoutInitialView;
     
       switch ( arrangmentType)
         {
@@ -1777,9 +1781,12 @@ void vtkSlicerApplicationGUI::PackMainViewer ( int arrangmentType, const char *w
         case vtkMRMLLayoutNode::SlicerLayoutOneUpSliceView:
           if ( whichSlice == NULL )
             {
-            whichSlice = "Red";
+            this->PackOneUpSliceView ( "Red" );
             }
+          else
+            {
             this->PackOneUpSliceView ( whichSlice );
+            }
           break;
         case vtkMRMLLayoutNode::SlicerLayoutTabbed3DView:
           this->PackTabbed3DView ( );
@@ -2386,7 +2393,7 @@ void vtkSlicerApplicationGUI::PackCompareView()
             }
           else if (ncount == 1 && red && red->GetLogic()->GetSliceCompositeNode()->GetForegroundVolumeID())
             {
-            g->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID( red->GetLogic()->GetSliceCompositeNode()->GetForegroundVolumeID());
+            g->GetLogic()->GetSliceCompositeNode()->SetBackgroundVolumeID( red->GetLogic()->GetSliceCompositeNode()->GetForegroundVolumeID());
             }
           }
         

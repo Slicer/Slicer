@@ -37,15 +37,17 @@ if { [itcl::find class SliceSWidget] == "" } {
     # methods
     method resizeSliceNode {} {}
     method processEvent {{caller ""} {event ""}} {}
-    method updateAnnotation {x y r a s} {}
-    method updateAnnotations {x y r a s} {}
+    method updateAnnotation {x y z r a s} {}
+    method updateAnnotations {x y z r a s} {}
     method incrementSlice {} {}
     method decrementSlice {} {}
     method moveSlice { delta } {}
     method jumpSlice { r a s } {}
     method jumpOtherSlices { r a s } {}
     method getLinkedSliceLogics {} {}
+    method getLinkedSliceGUIs {} {}
     method addSliceModelSWidgets {} {}
+    method isCompareView {} {}
   }
 }
 
@@ -72,20 +74,6 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
   # set the annotation property
   [$_annotation GetTextProperty] SetColor 1 1 1
   [$_annotation GetTextProperty] SetShadow 1
-
-  # create an actor as feedback for the focus state
-  set o(focusIcon) [vtkNew vtkSphereSource]
-  $o(focusIcon) SetRadius 2
-  set o(focusMapper) [vtkNew vtkPolyDataMapper2D]
-  set o(focusActor) [vtkNew vtkActor2D]
-  $o(focusMapper) SetInput [$o(focusIcon) GetOutput]
-  $o(focusActor) SetMapper $o(focusMapper)
-  [$o(focusActor) GetProperty] SetColor 1 1 0
-  $o(focusActor) VisibilityOff
-  $o(focusActor) SetPosition 3 3
-  # We'll need to change this or come up with a different way to indicate which active frame
-  [$_renderWidget GetRenderer] AddActor2D $o(focusActor)
-  lappend _actors $o(focusActor)
 
   # TODO:
   # create text actors for L/R, I/S, P/A
@@ -135,7 +123,6 @@ itcl::body SliceSWidget::destructor {} {
 # make sure the size of the slice matches the window size of the widget
 #
 itcl::body SliceSWidget::resizeSliceNode {} {
-
   set epsilon 1.0e-6
 
   if { $_layers(background,node) != "" } {
@@ -297,10 +284,10 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       # - then handle modifying the view
       #
       set link [$_sliceCompositeNode GetLinkedControl]
-      if { $link == 1 } {
-        $this updateAnnotations $x $y $r $a $s
+      if { $link == 1 && [$this isCompareView] == 1 } {
+        $this updateAnnotations $x $y $z $r $a $s
       } else {
-        $this updateAnnotation $x $y $r $a $s
+        $this updateAnnotation $x $y $z $r $a $s
       }
 
       if { [$_interactor GetShiftKey] } {
@@ -485,10 +472,33 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     "EnterEvent" { 
       $_renderWidget CornerAnnotationVisibilityOn
       [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText "Middle Button: Pan; Right Button: Zoom"
+
+      #puts "EnterEvent."
+      set thisSliceSpacing [[$sliceGUI GetLogic] GetLowestVolumeSliceSpacing]
+      set sliceGUIs [$this getLinkedSliceGUIs]
+      foreach gui $sliceGUIs {
+          set snode [$gui GetSliceNode]
+          if { $_sliceNode != $snode } {
+              # prescribe spacing for all other guis
+              eval $snode SetPrescribedSliceSpacing $thisSliceSpacing
+              $snode SetSliceSpacingModeToPrescribed
+
+              [$gui GetSliceViewer] RequestRender
+          }
+      }
     }
     "LeaveEvent" { 
       $_renderWidget CornerAnnotationVisibilityOff
       [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText ""
+
+      #puts "LeaveEvent."
+      set sliceGUIs [$this getLinkedSliceGUIs]
+      foreach gui $sliceGUIs {
+          set snode [$gui GetSliceNode]
+          $snode SetSliceSpacingModeToAutomatic
+          
+          [$gui GetSliceViewer] RequestRender
+      }
     }
     "TimerEvent" { }
     "KeyPressEvent" { 
@@ -511,8 +521,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
             foreach logic $sliceLogics {
               set snode [$logic GetSliceNode]
               $logic FitSliceToBackground $w $h
-              $snode UpdateMatrices
-            }
+              $snode UpdateMatrices            }
           }
           "b" - "Left" - "Down" {
             $this decrementSlice
@@ -540,12 +549,12 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     "KeyReleaseEvent" { 
     }
     "FocusInEvent" {
-      $o(focusActor) VisibilityOn
-      [$sliceGUI GetSliceViewer] RequestRender
+      #puts "focusin. prescribing spacing"
+      #need to do the same as EnterEvent?
     }
     "FocusOutEvent" {
-      $o(focusActor) VisibilityOff
-      [$sliceGUI GetSliceViewer] RequestRender
+      #puts "focusout. automatic spacing"
+      #need to do the same as EnterEvent?
     }
     "ExitEvent" { }
   }
@@ -553,11 +562,11 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   set xyToRAS [$_sliceNode GetXYToRAS]
   set ras [$xyToRAS MultiplyPoint $x $y $z 1]
   foreach {r a s t} $ras {}
-  $this updateAnnotation $x $y $r $a $s
+  $this updateAnnotation $x $y $z $r $a $s
 
 }
 
-itcl::body SliceSWidget::updateAnnotations {x y r a s} {
+itcl::body SliceSWidget::updateAnnotations {x y z r a s} {
   set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
   set numsgui [$ssgui GetNumberOfSliceGUI]
   for { set i 0 } { $i < $numsgui } { incr i } {
@@ -566,74 +575,114 @@ itcl::body SliceSWidget::updateAnnotations {x y r a s} {
       set lname [$ssgui GetFirstSliceGUILayoutName]
     } else {
       set sgui [$ssgui GetNextSliceGUI $lname]
-      set lname [$ssgui GetFirstSliceGUILayoutName]
+      set lname [$ssgui GetNextSliceGUILayoutName $lname]
     }
+    set sNode [$sgui GetSliceNode]
     set logic [$sgui GetLogic]
     set sliceCompositeNode [$logic GetSliceCompositeNode]
 
-  set colorName ""
-  if {[info command $_layers(label,node)] != "" && \
-      $_layers(label,node) != "" && \
-      $_layers(label,pixel) != "" && \
-      $_layers(label,pixel) != "Unknown" && \
-      $_layers(label,pixel) != "Out of Frame"} {
-      set labelDisplayNode [$_layers(label,node) GetDisplayNode]
-      if {$labelDisplayNode != "" && [$labelDisplayNode GetColorNodeID] != ""} {
+    if { [string first "Compare" $lname] != 0 } {
+      continue
+    } 
+    
+    set laybelText ""
+    set voxelText ""
+    set ijkText ""
+    set xyText ""
+    set rasText ""
+
+    # find the SliceSWidget for sgui
+    set found 0
+    set itclobjects [itcl::find objects]
+    foreach sw $itclobjects {
+      if {[$sw isa SliceSWidget]} {
+        if {[$sw cget -sliceGUI] == $sgui} {
+          set found 1
+          break;
+        }
+      }
+    }
+
+    if { $found } {
+      # need the z
+      $sw queryLayers $x $y $z
+      
+      array set slayers [$sw getLayers]
+
+      set colorName ""
+      if {[info command $slayers(label,node)] != "" && \
+            $slayers(label,node) != "" && \
+            $slayers(label,pixel) != "" && \
+            $slayers(label,pixel) != "Unknown" && \
+            $slayers(label,pixel) != "Out of Frame"} {
+        set labelDisplayNode [$slayers(label,node) GetDisplayNode]
+        if {$labelDisplayNode != "" && [$labelDisplayNode GetColorNodeID] != ""} {
           set colorNode [$labelDisplayNode GetColorNode]
           if {$colorNode != ""} {
-              if {[string is integer $_layers(label,pixel)]} {
-                  set colorName [$colorNode GetColorName $_layers(label,pixel)]
-              }
+            if {[string is integer $slayers(label,pixel)]} {
+              set colorName [$colorNode GetColorName $slayers(label,pixel)]
+            }
           }
+        }
       }
-  }
-  set labelText "Lb: $_layers(label,pixel) $colorName"
-  set voxelText "Fg: $_layers(foreground,pixel)\nBg: $_layers(background,pixel)"
-  set ijkText [format "Bg I: %d\nBg J: %d\nBg K: %d" \
-                $_layers(background,i) $_layers(background,j) $_layers(background,k)]
-  set xyText "X: $x\nY:$y"
-  set rasText [format "R: %.1f\nA: %.1f\nS: %.1f" $r $a $s]
+      set labelText "Lb: $slayers(label,pixel) $colorName"
+      set voxelText "Fg: $slayers(foreground,pixel)\nBg: $slayers(background,pixel)"
+      set ijkText [format "Bg I: %d\nBg J: %d\nBg K: %d" \
+                     $slayers(background,i) $slayers(background,j) $slayers(background,k)]
+      set xyText "X: $x\nY:$y"
+      set rasText [format "R: %.1f\nA: %.1f\nS: %.1f" $r $a $s]
+    }
 
-  set spaceText0 ""
-  set spaceText1 ""
-  switch [$sliceCompositeNode GetAnnotationSpace] {
-    "0" {set spaceText0 $xyText}
-    "1" {set spaceText0 $ijkText}
-    "2" {set spaceText0 $rasText}
-    "3" {set spaceText0 $rasText; set spaceText1 $ijkText}
-  }
-
-  switch [$sliceCompositeNode GetAnnotationMode] {
-    "0" {
-      $_annotation SetText 0 ""
-      $_annotation SetText 1 ""
-      $_annotation SetText 2 ""
-      $_annotation SetText 3 ""
+    set spacingText "Sp: [lindex [$logic GetLowestVolumeSliceSpacing] 2]mm"
+    if { [$sNode GetSliceSpacingMode] == 1 } {
+      set spacingText "(Sp: [lindex [$logic GetLowestVolumeSliceSpacing] 2]mm)"
     }
-    "1" {
-      $_annotation SetText 0 "${labelText}\n${voxelText}"
-      $_annotation SetText 1 $spaceText0
-      $_annotation SetText 2 $spaceText1
-      $_annotation SetText 3 ""
-    }
-    "2" {
-      $_annotation SetText 0 "${labelText}"
-      $_annotation SetText 1 ""
-      $_annotation SetText 2 ""
-      $_annotation SetText 3 ""
-    }
-    "3" {
-      $_annotation SetText 0 "${labelText}\n${voxelText}"
-      $_annotation SetText 1 ""
-      $_annotation SetText 2 ""
-      $_annotation SetText 3 ""
-    }
-  }
     
+    set spaceText0 ""
+    set spaceText1 ""
+    switch [$sliceCompositeNode GetAnnotationSpace] {
+      "0" {set spaceText0 $xyText}
+      "1" {set spaceText0 $ijkText}
+      "2" {set spaceText0 $rasText}
+      "3" {set spaceText0 $rasText; set spaceText1 $ijkText}
+    }
+    
+
+    [[$sgui GetSliceViewer] GetRenderWidget] CornerAnnotationVisibilityOn
+    set annotation [[[$sgui GetSliceViewer] GetRenderWidget] GetCornerAnnotation] 
+    switch [$sliceCompositeNode GetAnnotationMode] {
+      "0" {
+        $annotation SetText 0 ""
+        $annotation SetText 1 ""
+        $annotation SetText 2 ""
+        $annotation SetText 3 ""
+      }
+      "1" {
+        $annotation SetText 0 "${labelText}\n${voxelText}"
+        $annotation SetText 1 $spaceText0
+        $annotation SetText 2 $spaceText1
+        $annotation SetText 3 "\n\n${spacingText}"
+      }
+      "2" {
+        $annotation SetText 0 "${labelText}"
+        $annotation SetText 1 ""
+        $annotation SetText 2 ""
+        $annotation SetText 3 ""
+      }
+      "3" {
+        $annotation SetText 0 "${labelText}\n${voxelText}"
+        $annotation SetText 1 ""
+        $annotation SetText 2 ""
+        $annotation SetText 3 ""
+      }
+    }
+    
+    # jvm - request a render so the annotations on other viewers update
+    [$sgui GetSliceViewer] RequestRender
   }
 }
 
-itcl::body SliceSWidget::updateAnnotation {x y r a s} {
+itcl::body SliceSWidget::updateAnnotation {x y z r a s} {
 
   set logic [$sliceGUI GetLogic]
   set sliceCompositeNode [$logic GetSliceCompositeNode]
@@ -663,6 +712,11 @@ itcl::body SliceSWidget::updateAnnotation {x y r a s} {
   set xyText "X: $x\nY:$y"
   set rasText [format "R: %.1f\nA: %.1f\nS: %.1f" $r $a $s]
 
+  set spacingText "Sp: [lindex [[$sliceGUI GetLogic] GetLowestVolumeSliceSpacing] 2]mm"
+  if { [$_sliceNode GetSliceSpacingMode] == 1 } {
+          set spacingText "(Sp: [lindex [[$sliceGUI GetLogic] GetLowestVolumeSliceSpacing] 2]mm)"
+  }
+
   set spaceText0 ""
   set spaceText1 ""
   switch [$sliceCompositeNode GetAnnotationSpace] {
@@ -683,7 +737,7 @@ itcl::body SliceSWidget::updateAnnotation {x y r a s} {
       $_annotation SetText 0 "${labelText}\n${voxelText}"
       $_annotation SetText 1 $spaceText0
       $_annotation SetText 2 $spaceText1
-      $_annotation SetText 3 ""
+      $_annotation SetText 3 "\n\n${spacingText}"
     }
     "2" {
       $_annotation SetText 0 "${labelText}"
@@ -732,11 +786,9 @@ itcl::body SliceSWidget::moveSlice { delta } {
                 set lname [$ssgui GetNextSliceGUILayoutName $lname]
             }
             
-            if { [string compare $lname "Red"] == 0 || 
-             [string compare $lname "Yellow"] == 0 ||
-             [string compare $lname "Green"] == 0 } {
-                continue
-            }
+            if { [string first "Compare" $lname] != 0 } {
+              continue
+            } 
 
             set currSliceNode [$sgui GetSliceNode]
             set currOrientString [$currSliceNode GetOrientationString]
@@ -801,7 +853,7 @@ itcl::body SliceSWidget::getLinkedSliceLogics { } {
 
     set logics ""
     set link [$_sliceCompositeNode GetLinkedControl]
-    if { $link == 1 } {
+    if { [$this isCompareView] == 1 && $link == 1 } {
         set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
         set layout [$::slicer3::ApplicationGUI GetGUILayoutNode]
         set viewArrangement [$layout GetViewArrangement]
@@ -817,13 +869,9 @@ itcl::body SliceSWidget::getLinkedSliceLogics { } {
                 set lname [$ssgui GetNextSliceGUILayoutName $lname]
             }
 
-            if { $viewArrangement==12 } {
-                if { [string compare $lname "Red"] == 0 || 
-                     [string compare $lname "Yellow"] == 0 ||
-                     [string compare $lname "Green"] == 0 } {
-                    continue
-                }
-            }
+            if { [string first "Compare" $lname] != 0 } {
+              continue
+            } 
 
             set currSliceNode [$sgui GetSliceNode]
             set currOrientString [$currSliceNode GetOrientationString]
@@ -836,4 +884,65 @@ itcl::body SliceSWidget::getLinkedSliceLogics { } {
     }
 
   return $logics
+}
+
+# Return the SliceGUIs that are linked to the current 
+# SliceNode/SliceCompositeNode.  
+#
+# The list of linked GUIs either contains the current slice (because 
+# linking is off) or a list of GUIs (one for the current slice and others 
+# for linked slices).
+#
+itcl::body SliceSWidget::getLinkedSliceGUIs { } {
+    set logic [$sliceGUI GetLogic]
+    set sliceNode [$logic GetSliceNode]
+    set orientString [$sliceNode GetOrientationString]
+
+    set guis ""
+    set link [$_sliceCompositeNode GetLinkedControl]
+    if { [$this isCompareView] == 1 && $link == 1 } {
+        set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
+        set layout [$::slicer3::ApplicationGUI GetGUILayoutNode]
+        set viewArrangement [$layout GetViewArrangement]
+
+        set numsgui [$ssgui GetNumberOfSliceGUI]
+
+        for { set i 0 } { $i < $numsgui } { incr i } {
+            if { $i == 0} {
+                set sgui [$ssgui GetFirstSliceGUI]
+                set lname [$ssgui GetFirstSliceGUILayoutName]
+            } else {
+                set sgui [$ssgui GetNextSliceGUI $lname]
+                set lname [$ssgui GetNextSliceGUILayoutName $lname]
+            }
+
+            if { [string first "Compare" $lname] != 0 } {
+              continue
+            } 
+
+            set currSliceNode [$sgui GetSliceNode]
+            set currOrientString [$currSliceNode GetOrientationString]
+            if { [string compare $orientString $currOrientString] == 0 } {
+                lappend guis $sgui
+            }
+        }
+    } else {
+        lappend guis $sliceGUI
+    }
+
+  return $guis
+}
+
+
+# Are we in a compare view mode?
+itcl::body SliceSWidget::isCompareView { } {
+
+  set layout [$::slicer3::ApplicationGUI GetGUILayoutNode]
+  set viewArrangement [$layout GetViewArrangement]
+
+  if { $viewArrangement == 12 } {
+    return 1
+  } else {
+    return 0
+  }
 }
