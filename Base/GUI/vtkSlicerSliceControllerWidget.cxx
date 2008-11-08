@@ -1668,6 +1668,15 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     {
     link = 0;
     }
+
+  // Is the slice node a CompareView node?
+  bool isCompareView = false;
+  if (this->SliceNode
+      && (strncmp(this->SliceNode->GetSingletonTag(), "Compare", 7) == 0))
+    {
+    isCompareView = true;
+    }
+
   
   //
   // --- Get a route to all SliceGUI's SliceNodes and SliceCompositeNodes in case of link
@@ -2144,7 +2153,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       const char *lbstr = cmenu->GetItemLabel ( item );
       if ( !strcmp ( lbstr, "1x1 view") )
         {
-        if ( link && sgui )
+        if ( link && sgui && isCompareView)
           {
           // apply this reformat to all slice MRML
           this->SliceViewerLayoutConfig(1, 1);
@@ -2157,7 +2166,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
         }
       else if ( !strcmp ( lbstr, "2x2 view") )
         {
-        if ( link && sgui )
+        if ( link && sgui && isCompareView)
           {
           // apply this reformat to all slice MRML
           this->SliceViewerLayoutConfig(2, 2);
@@ -2170,7 +2179,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
         }
       else if ( !strcmp ( lbstr, "3x3 view") )
         {
-        if ( link && sgui )
+        if ( link && sgui && isCompareView)
           {
           // apply this reformat to all slice MRML
           this->SliceViewerLayoutConfig(3, 3);
@@ -2183,7 +2192,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
         }
       else if ( !strcmp ( lbstr, "6x6 view") )
         {
-        if ( link && sgui )
+        if ( link && sgui && isCompareView)
           {
           // apply this reformat to all slice MRML
           this->SliceViewerLayoutConfig(6, 6);
@@ -2196,7 +2205,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
         }
       else if ( !strcmp ( lbstr, "1x2 view") )
         {
-        if ( link && sgui )
+        if ( link && sgui && isCompareView)
           {
           // apply this reformat to all slice MRML
           this->SliceViewerLayoutConfig(1, 2);
@@ -2209,7 +2218,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
         }
       else if ( !strcmp ( lbstr, "1x3 view") )
         {
-        if ( link && sgui )
+        if ( link && sgui && isCompareView)
           {
           // apply this reformat to all slice MRML
           this->SliceViewerLayoutConfig(1,3);
@@ -2222,7 +2231,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
         }
       else if ( !strcmp ( lbstr, "1x4 view") )
         {
-        if ( link && sgui )
+        if ( link && sgui && isCompareView)
           {
           // apply this reformat to all slice MRML
           this->SliceViewerLayoutConfig(1, 4);
@@ -2235,7 +2244,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
         }
       else if ( !strcmp ( lbstr, "1x6 view") )
         {
-        if ( link && sgui )
+        if ( link && sgui && isCompareView)
           {
           // apply this reformat to all slice MRML
           this->SliceViewerLayoutConfig(1, 6);
@@ -2248,7 +2257,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
         }
       else if ( !strcmp ( lbstr, "1x8 view") )
         {
-        if ( link && sgui )
+        if ( link && sgui && isCompareView)
           {
           // apply this reformat to all slice MRML
           this->SliceViewerLayoutConfig(1, 8);
@@ -2275,7 +2284,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     //
     if ( !strcmp ( this->LightboxButton->GetValue(), "1x1 view") )
       {
-      if ( link && sgui )
+      if ( link && sgui && isCompareView)
         {
         // apply this reformat to all slice MRML
         this->SliceViewerLayoutConfig(1, 1);
@@ -2288,7 +2297,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       }
     else if ( !strcmp ( this->LightboxButton->GetValue(), "2x2 view") )
       {
-      if ( link && sgui )
+      if ( link && sgui && isCompareView)
         {
         // apply this reformat to all CompareX slice MRMLs
         this->SliceViewerLayoutConfig(2, 2);
@@ -2301,7 +2310,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       }
     else if  ( !strcmp ( this->LightboxButton->GetValue(), "3x3 view" ) )
       {
-      if ( link && sgui )
+      if ( link && sgui && isCompareView)
         {
         // apply this reformat to all CompareX slice MRMLs
         this->SliceViewerLayoutConfig(3, 3);
@@ -2314,7 +2323,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       }
     else if ( !strcmp ( this->LightboxButton->GetValue (), "6x6 view") )
       {
-      if ( link && sgui )
+      if ( link && sgui && isCompareView)
         {
         // apply this reformat to all CompareX slice MRMLs
         this->SliceViewerLayoutConfig(6, 6);
@@ -2327,7 +2336,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       }
     else if ( !strcmp ( this->LightboxButton->GetValue (), "1x2 view") )
       {
-      if ( link && sgui )
+      if ( link && sgui && isCompareView)
         {
         // apply this reformat to all CompareX slice MRMLs
         this->SliceViewerLayoutConfig( 1, 2 );
@@ -2340,7 +2349,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       }
     else if ( !strcmp ( this->LightboxButton->GetValue (), "1x3 view") )
       {
-      if ( link && sgui )
+      if ( link && sgui && isCompareView)
         {
         // apply this reformat to all CompareX slice MRMLs
         this->SliceViewerLayoutConfig( 1, 3 );
@@ -2353,7 +2362,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       }
     else if ( !strcmp ( this->LightboxButton->GetValue (), "1x4 view") )
       {
-      if ( link && sgui )
+      if ( link && sgui && isCompareView)
         {
         // apply this reformat to all CompareX slice MRMLs
         this->SliceViewerLayoutConfig( 1, 4 );
@@ -2366,7 +2375,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       }
     else if ( !strcmp ( this->LightboxButton->GetValue (), "1x6 view") )
       {
-      if ( link && sgui )
+      if ( link && sgui && isCompareView)
         {
         // apply this reformat to all CompareX slice MRMLs
         this->SliceViewerLayoutConfig( 1, 6 );
@@ -2379,7 +2388,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       }
     else if ( !strcmp ( this->LightboxButton->GetValue (), "1x8 view") )
       {
-      if ( link && sgui )
+      if ( link && sgui && isCompareView)
         {
         // apply this reformat to all CompareX slice MRMLs
         this->SliceViewerLayoutConfig( 1, 8 );
@@ -2402,9 +2411,9 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     {
     numRows = this->LightboxRowsEntry->GetValueAsInt();
     numColumns = this->LightboxColumnsEntry->GetValueAsInt();
-    if ( link && sgui )
+    if ( link && sgui && isCompareView)
       {
-      // apply this reformat to all slice MRMLs
+      // apply this reformat to all compare slice nodes
       this->SliceViewerLayoutConfig(numRows, numColumns);
       }
     else
