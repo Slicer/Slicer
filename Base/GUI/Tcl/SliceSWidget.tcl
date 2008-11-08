@@ -48,6 +48,7 @@ if { [itcl::find class SliceSWidget] == "" } {
     method getLinkedSliceGUIs {} {}
     method addSliceModelSWidgets {} {}
     method isCompareView {} {}
+    method getSliceSWidgetForGUI { gui } {}
   }
 }
 
@@ -480,6 +481,9 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
           [[$gui GetSliceViewer] GetRenderWidget] CornerAnnotationVisibilityOn
           set snode [$gui GetSliceNode]
           if { $_sliceNode != $snode } {
+              set that [$this getSliceSWidgetForGUI $gui]
+              $that resizeSliceNode
+
               # prescribe spacing for all other guis
               eval $snode SetPrescribedSliceSpacing $thisSliceSpacing
               $snode SetSliceSpacingModeToPrescribed
@@ -594,19 +598,9 @@ itcl::body SliceSWidget::updateAnnotations {x y z r a s} {
     set rasText ""
 
     # find the SliceSWidget for sgui
-    set found 0
-    set itclobjects [itcl::find objects]
-    foreach sw $itclobjects {
-      if {[$sw isa SliceSWidget]} {
-        if {[$sw cget -sliceGUI] == $sgui} {
-          set found 1
-          break;
-        }
-      }
-    }
+    set sw [$this getSliceSWidgetForGUI $sgui]
 
-    if { $found } {
-      # need the z
+    if { $sw != "" } {
       $sw queryLayers $x $y $z
       
       array set slayers [$sw getLayers]
@@ -947,4 +941,25 @@ itcl::body SliceSWidget::isCompareView { } {
   } else {
     return 0
   }
+}
+
+# Locate the SliceSWidget that works with a specific gui
+itcl::body SliceSWidget::getSliceSWidgetForGUI {gui} {
+    # find the SliceSWidget for sgui
+    set found 0
+    set itclobjects [itcl::find objects]
+    foreach sw $itclobjects {
+      if {[$sw isa SliceSWidget]} {
+        if {[$sw cget -sliceGUI] == $gui} {
+          set found 1
+          break;
+        }
+      }
+    }
+
+    if { $found } {
+      return $sw
+    } else {
+      return ""
+    }
 }
