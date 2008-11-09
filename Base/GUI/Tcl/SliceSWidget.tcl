@@ -500,11 +500,13 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       #puts "LeaveEvent."
       set sliceGUIs [$this getLinkedSliceGUIs]
       foreach gui $sliceGUIs {
-          [[$gui GetSliceViewer] GetRenderWidget] CornerAnnotationVisibilityOff
-          set snode [$gui GetSliceNode]
+        [[$gui GetSliceViewer] GetRenderWidget] CornerAnnotationVisibilityOff
+        set snode [$gui GetSliceNode]
+        if { [$this isCompareView] } {
           $snode SetSliceSpacingModeToAutomatic
+        }
           
-          [$gui GetSliceViewer] RequestRender
+        [$gui GetSliceViewer] RequestRender
       }
     }
     "TimerEvent" { }
