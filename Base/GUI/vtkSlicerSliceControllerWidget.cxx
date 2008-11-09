@@ -23,6 +23,8 @@
 #include "vtkKWPushButton.h"
 #include "vtkKWTkUtilities.h"
 #include "vtkKWIcon.h"
+#include "vtkKWSpinBox.h"
+#include "vtkKWSpinBoxWithLabel.h"
 
 #include "vtkRenderer.h"
 
@@ -75,6 +77,9 @@ vtkSlicerSliceControllerWidget::vtkSlicerSliceControllerWidget ( ) {
   this->LightboxRows = 1;
   this->LightboxColumns = 1;
   this->LastLabelOpacity = 1.0;
+  this->PrescribedSliceSpacingEntry = 0;
+  this->PrescribedSliceSpacingTopLevel = NULL;
+  this->PrescribedSliceSpacingApplyButton = NULL;
 }
 
 
@@ -286,6 +291,24 @@ vtkSlicerSliceControllerWidget::~vtkSlicerSliceControllerWidget ( ){
   this->SetSliceNode ( NULL );
   this->SetSliceCompositeNode ( NULL );
   this->SetAndObserveSliceLogic ( NULL );
+  if ( this->PrescribedSliceSpacingEntry )
+    {
+    this->PrescribedSliceSpacingEntry->SetParent( NULL );
+    this->PrescribedSliceSpacingEntry->Delete();
+    this->PrescribedSliceSpacingEntry = 0;
+    }
+  if ( this->PrescribedSliceSpacingTopLevel )
+    {
+    this->PrescribedSliceSpacingTopLevel->SetParent(NULL);
+    this->PrescribedSliceSpacingTopLevel->Delete  ( );
+    this->PrescribedSliceSpacingTopLevel = NULL;
+    }
+  if ( this->PrescribedSliceSpacingApplyButton )
+    {
+    this->PrescribedSliceSpacingApplyButton->SetParent ( NULL );
+    this->PrescribedSliceSpacingApplyButton->Delete();
+    this->PrescribedSliceSpacingApplyButton = NULL;
+    }
 }
 
 
@@ -318,11 +341,13 @@ void vtkSlicerSliceControllerWidget::AddWidgetObservers ( )
     this->LinkButton->AddObserver (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
     this->FitToWindowButton->AddObserver (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
     this->MoreMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
+    this->MoreMenuButton->GetMenu()->GetItemCascade (this->MoreMenuButton->GetMenu()->GetIndexOfItem("Slice spacing mode"))->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
     this->MoreMenuButton->GetMenu()->GetItemCascade (this->MoreMenuButton->GetMenu()->GetIndexOfItem("Lightbox view"))->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
     this->MoreMenuButton->GetMenu()->GetItemCascade (this->MoreMenuButton->GetMenu()->GetIndexOfItem("Compositing"))->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
     this->VolumeDisplayMenuButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );    
     this->LightboxButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
     this->LightboxApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
+    this->PrescribedSliceSpacingApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
     this->ForegroundMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
     this->BackgroundMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
 }
@@ -355,11 +380,13 @@ void vtkSlicerSliceControllerWidget::RemoveWidgetObservers ( ) {
     this->LinkButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );        
     this->FitToWindowButton->RemoveObservers (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
     this->MoreMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
+    this->MoreMenuButton->GetMenu()->GetItemCascade (this->MoreMenuButton->GetMenu()->GetIndexOfItem("Slice spacing mode"))->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
     this->MoreMenuButton->GetMenu()->GetItemCascade (this->MoreMenuButton->GetMenu()->GetIndexOfItem("Lightbox view"))->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
     this->MoreMenuButton->GetMenu()->GetItemCascade (this->MoreMenuButton->GetMenu()->GetIndexOfItem("Compositing"))->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
     this->VolumeDisplayMenuButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
     this->LightboxButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
     this->LightboxApplyButton->RemoveObservers (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
+    this->PrescribedSliceSpacingApplyButton->RemoveObservers (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
     this->ForegroundMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
     this->BackgroundMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
 }
@@ -729,6 +756,48 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     rowsLabel->Delete();
     columnsLabel->Delete();
     popUpFrame1->Delete();
+
+    this->PrescribedSliceSpacingTopLevel = vtkKWTopLevel::New ( );
+    this->PrescribedSliceSpacingTopLevel->SetApplication ( app );
+    this->PrescribedSliceSpacingTopLevel->SetMasterWindow ( this->ContainerFrame );
+    this->PrescribedSliceSpacingTopLevel->Create ( );
+    this->PrescribedSliceSpacingTopLevel->HideDecorationOn ( );
+    this->PrescribedSliceSpacingTopLevel->Withdraw ( );
+    this->PrescribedSliceSpacingTopLevel->SetBorderWidth ( 2 );
+    this->PrescribedSliceSpacingTopLevel->SetReliefToGroove ( );
+
+    vtkKWFrame *popUpFrameP = vtkKWFrame::New ( );
+    popUpFrameP->SetParent ( this->PrescribedSliceSpacingTopLevel );
+    popUpFrameP->Create ( );
+    this->Script ( "pack %s -side left -anchor w -padx 2 -pady 2 -fill x -fill y -expand n", popUpFrameP->GetWidgetName ( ) );
+    this->PrescribedSliceSpacingEntry = vtkKWSpinBoxWithLabel::New();
+    this->PrescribedSliceSpacingEntry->SetParent( popUpFrameP );
+    this->PrescribedSliceSpacingEntry->Create();
+    this->PrescribedSliceSpacingEntry->GetWidget()->SetValue( 1.0 );
+    this->PrescribedSliceSpacingEntry->GetWidget()->SetIncrement( 0.001 );
+    this->PrescribedSliceSpacingEntry->GetWidget()->SetRange(0, VTK_LARGE_FLOAT);
+    this->PrescribedSliceSpacingEntry->GetWidget()->SetWidth( 5 );
+    this->PrescribedSliceSpacingEntry->SetLabelText( "Prescribed spacing: " );
+    popUpFrameP->Delete();
+
+    vtkKWFrame *fP = vtkKWFrame::New();
+    fP->SetParent ( popUpFrameP);
+    fP->Create();
+    this->PrescribedSliceSpacingApplyButton = vtkKWPushButton::New ( );
+    this->PrescribedSliceSpacingApplyButton->SetParent ( fP );
+    this->PrescribedSliceSpacingApplyButton->Create ( );
+    this->PrescribedSliceSpacingApplyButton->SetText ("Apply");
+    vtkKWPushButton *bP = vtkKWPushButton::New();
+    bP->SetParent ( fP );
+    bP->Create();
+    bP->SetText ( "Cancel");
+    bP->SetBinding ( "<Button-1>", this,  "HidePrescribedSliceSpacingEntry");
+    this->Script ( "grid %s -row 0 -column 0 -padx 2 -pady 8", this->PrescribedSliceSpacingEntry->GetWidgetName());
+    this->Script ( "grid %s -row 1 -column 0 -columnspan 1 -pady 8 -sticky ew", fP->GetWidgetName() );
+    this->Script ( "pack %s %s -side left -padx 4 -anchor c", bP->GetWidgetName(), this->PrescribedSliceSpacingApplyButton->GetWidgetName() );
+    bP->Delete();
+    fP->Delete();
+    
     
     this->MoreMenuButton->Create();
     this->MoreMenuButton->SetBorderWidth ( 0 );
@@ -782,7 +851,30 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->MoreMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
     m3->Delete();
 
+    vtkKWMenu *ms = vtkKWMenu::New();
+    ms->SetParent(this->MoreMenuButton->GetMenu());
+    ms->Create();
+    ms->AddRadioButton( "Automatic" );
+    ms->AddRadioButton( "Prescribed" );
+    ms->AddSeparator();
+    ms->AddCommand( "close" );
+    ms->SelectItem( "Automatic" );
+    this->MoreMenuButton->GetMenu()->AddCascade("Slice spacing mode", ms);
+    index = this->MoreMenuButton->GetMenu()->GetIndexOfItem ( "Slice spacing mode");
+    imageName = "LightboxImage";
+    vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->ViewConfigureIcons->GetLightBoxViewIcon ( ) );
+    this->MoreMenuButton->GetMenu()->SetItemImage ( index, imageName);
+    this->MoreMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
+    ms->Delete();
 
+    this->MoreMenuButton->GetMenu()->AddCommand ("Set slice spacing", this, "PopUpPrescribedSliceSpacingEntry");
+    index = this->MoreMenuButton->GetMenu()->GetIndexOfItem ( "Set slice spacing");
+    imageName = "LightboxImage";
+    vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName,  this->SliceControlIcons->GetSliceWidgetOnIcon() );
+    this->MoreMenuButton->GetMenu()->SetItemImage ( index, imageName);
+    this->MoreMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
+    
+    
     this->MoreMenuButton->GetMenu()->AddSeparator ( );
 
     vtkKWMenu* m1 = vtkKWMenu::New();
@@ -2132,6 +2224,43 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
         }
       }
     }
+  else if ( menu == this->MoreMenuButton->GetMenu()->GetItemCascade (this->MoreMenuButton->GetMenu()->GetIndexOfItem("Slice spacing mode")) &&
+            event == vtkKWMenu::MenuItemInvokedEvent && app )
+    {
+    int cindex = this->MoreMenuButton->GetMenu()->GetIndexOfItem ("Slice spacing mode");
+    vtkKWMenu *cmenu = this->MoreMenuButton->GetMenu()->GetItemCascade(cindex);
+    int numItems = cmenu->GetNumberOfItems();
+    int found = 0;
+    int item;
+    for ( item=0; item < numItems; item++)
+      {
+      if ( cmenu->GetItemSelectedState(item) )
+        {
+        found = 1;
+        break;
+        }
+      }
+    if ( found )
+      {
+      const char *lbstr = cmenu->GetItemLabel ( item );
+      if ( !strcmp ( lbstr, "Automatic") )
+        {
+        if (this->SliceNode->GetSliceSpacingMode() != vtkMRMLSliceNode::AutomaticSliceSpacingMode)
+          {
+          this->MRMLScene->SaveStateForUndo( this->SliceNode );
+          this->SliceNode->SetSliceSpacingModeToAutomatic();
+          }
+        }
+      else if ( !strcmp( lbstr, "Prescribed") )
+        {
+        if (this->SliceNode->GetSliceSpacingMode() != vtkMRMLSliceNode::PrescribedSliceSpacingMode)
+          {
+          this->MRMLScene->SaveStateForUndo( this->SliceNode );
+          this->SliceNode->SetSliceSpacingModeToPrescribed();
+          }
+        }
+      }
+    }
   else if ( menu == this->MoreMenuButton->GetMenu()->GetItemCascade (this->MoreMenuButton->GetMenu()->GetIndexOfItem("Lightbox view")) &&
             event == vtkKWMenu::MenuItemInvokedEvent && app )
     {
@@ -2423,6 +2552,22 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       this->SliceNode->SetLayoutGrid( numRows, numColumns );
       }
     this->HideLightboxCustomLayoutFrame();
+    }
+  if ( button == this->PrescribedSliceSpacingApplyButton &&
+       event == vtkKWPushButton::InvokedEvent )
+    {
+    std::stringstream ss;
+    ss << this->PrescribedSliceSpacingEntry->GetWidget()->GetValue();
+    double val;
+    ss >> val;
+    double *current = this->SliceNode->GetPrescribedSliceSpacing();
+    double spacing[3];
+    spacing[0] = current[0];
+    spacing[1] = current[1];
+    spacing[2] = val;
+    this->SliceNode->SetPrescribedSliceSpacing(spacing);
+
+    this->HidePrescribedSliceSpacingEntry();
     }
   
   //
@@ -3128,6 +3273,25 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
       this->MoreMenuButton->GetMenu()->SetItemImage ( onIndex, imageName);
       this->MoreMenuButton->GetMenu()->SetItemLabel ( onIndex, labelOutlineOff );
       }
+
+    // update the slice spacing mode
+    vtkKWMenu *smenu = this->MoreMenuButton->GetMenu()->GetItemCascade(this->MoreMenuButton->GetMenu()->GetIndexOfItem("Slice spacing mode"));
+    int automaticIndex = smenu->GetIndexOfItem("Automatic");
+    int prescribedIndex = smenu->GetIndexOfItem("Prescribed");
+
+    if (snode->GetSliceSpacingMode() == vtkMRMLSliceNode::AutomaticSliceSpacingMode)
+      {
+      smenu->SelectItem( "Automatic" );
+      }
+    else if (snode->GetSliceSpacingMode() == vtkMRMLSliceNode::PrescribedSliceSpacingMode)
+      {
+      smenu->SelectItem( "Prescribed" );
+      }
+                                                                       
+    
+    // update the slice spacing entry
+    this->PrescribedSliceSpacingEntry->GetWidget()->SetValue(snode->GetPrescribedSliceSpacing()[2]);
+
     
     //--- update widgets that configure lightbox.
     int lbRows = snode->GetLayoutGridRows();
@@ -3386,3 +3550,38 @@ void vtkSlicerSliceControllerWidget::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os, indent);
   // widgets?
 }
+
+
+void vtkSlicerSliceControllerWidget::PopUpPrescribedSliceSpacingEntry()
+{
+  if ( !this->MoreMenuButton || !this->MoreMenuButton->IsCreated())
+    {
+    return;
+    }
+
+  // Get the position of the mouse, position the popup
+
+  int x, y, px, py, ph;
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication());
+  
+//  vtkKWTkUtilities::GetMousePointerCoordinates(this->LightboxButton, &x, &y);
+  vtkKWTkUtilities::GetMousePointerCoordinates(this->MoreMenuButton, &x, &y);
+  vtkKWTkUtilities::GetWidgetCoordinates(this->MoreMenuButton, &px, &py);
+  vtkKWTkUtilities::GetWidgetSize(this->MoreMenuButton, NULL, &ph);
+ 
+  this->PrescribedSliceSpacingTopLevel->SetPosition(px-ph, py+ph);
+  app->ProcessPendingEvents();
+  this->PrescribedSliceSpacingTopLevel->DeIconify();
+  this->PrescribedSliceSpacingTopLevel->Raise();
+  
+}
+
+void vtkSlicerSliceControllerWidget::HidePrescribedSliceSpacingEntry()
+{
+  if ( !this->PrescribedSliceSpacingTopLevel )
+    {
+    return;
+    }
+  this->PrescribedSliceSpacingTopLevel->Withdraw();
+}
+

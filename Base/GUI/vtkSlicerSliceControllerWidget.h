@@ -4,6 +4,7 @@
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkKWCompositeWidget.h"
 #include "vtkKWScaleWithEntry.h"
+#include "vtkKWSpinBoxWithLabel.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWMenuButtonWithSpinButtonsWithLabel.h"
 #include "vtkKWMenuButton.h"
@@ -131,6 +132,8 @@ public:
   virtual void PopUpLabelOpacityScaleAndEntry ( );
   virtual void HideLightboxCustomLayoutFrame ( );
   virtual void PopUpLightboxCustomLayoutFrame ( );
+  virtual void PopUpPrescribedSliceSpacingEntry();
+  virtual void HidePrescribedSliceSpacingEntry();
   
   // Description:
   // Shrink/Expand the widget
@@ -216,7 +219,10 @@ protected:
   vtkKWEntry *LightboxColumnsEntry;
   vtkKWPushButton *LightboxApplyButton;
   vtkKWMenuButton *MoreMenuButton;
-
+  vtkKWSpinBoxWithLabel *PrescribedSliceSpacingEntry;
+  vtkKWTopLevel *PrescribedSliceSpacingTopLevel;
+  vtkKWPushButton *PrescribedSliceSpacingApplyButton;
+  
   int LightboxRows;
   int LightboxColumns;
 
