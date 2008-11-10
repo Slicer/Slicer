@@ -63,15 +63,10 @@ subdirs(
    EMSegment
    DistanceMapModel
    #VolumeRenderingCuda
-   OpenIGTLink
+   OpenIGTLinkIF
    NeuroNav
   )
 
-if(Slicer3_USE_NAVITRACK)
-  subdirs(
-    RealTimeImaging
-    )
-endif(Slicer3_USE_NAVITRACK)
 
 ## SLICES_DEBUG
 ## GAD_DEBUG
