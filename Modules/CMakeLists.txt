@@ -63,7 +63,7 @@ subdirs(
    EMSegment
    DistanceMapModel
    #VolumeRenderingCuda
-   OpenIGTLinkIF
+   #OpenIGTLinkIF
    NeuroNav
   )
 
