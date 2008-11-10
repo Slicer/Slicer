@@ -360,7 +360,7 @@ runcmd $::CMAKE \
         -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
         -DKWWidgets_DIR:FILEPATH=$Slicer3_LIB/KWWidgets-build \
         -DTEEM_DIR:FILEPATH=$Slicer3_LIB/teem-build \
-        -DIGSTK_DIR:FILEPATH=$Slicer3_LIB/IGSTK-build \
+        -DOPENIGTLINK_DIR:FILEPATH=$Slicer3_LIB/OpenIGTLink-build \
         -DSandBox_DIR:FILEPATH=$Slicer3_LIB/NAMICSandBox \
         -DCMAKE_BUILD_TYPE=$::VTK_BUILD_TYPE \
         -DCMAKE_CXX_FLAGS_DEBUG:STRING=$::CMAKE_CXX_FLAGS_DEBUG \
@@ -370,13 +370,9 @@ runcmd $::CMAKE \
         -DSlicer3_USE_PYTHON=$BuildPython \
         -DPYTHON_INCLUDE_PATH:PATH=$::Slicer3_LIB/python-build/include/python2.5 \
         -DPYTHON_LIBRARY:FILEPATH=$::Slicer3_LIB/python-build/lib/libpython2.5$::GETBUILDTEST(shared-lib-extension) \
-        -DSlicer3_USE_IGSTK=$::IGSTK \
-        -DSlicer3_USE_OPENTRACKER=$::OPENTRACKER \
         -DOT_VERSION_13=$::OT_VERSION \
         -DOT_LIB_DIR:FILEPATH=$::OT_LIB_DIR \
         -DOT_INC_DIR:FILEPATH=$::OT_INC_DIR \
-        -DNAVITRACK_INCLUDE_DIR:FILEPATH=$Slicer3_LIB/NaviTrack/include \
-        -DNAVITRACK_BINARY_DIR:FILEPATH=$Slicer3_LIB/NaviTrack-build/$VTK_BUILD_SUBDIR/ \
         -Ddcmtk_SOURCE_DIR:FILEPATH=$Slicer3_LIB/dcmtk \
         -DBatchMake_DIR:FILEPATH=$Slicer3_LIB/BatchMake-build \
         -DSlicer3_USE_BatchMake=ON \

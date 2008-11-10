@@ -415,7 +415,7 @@ runcmd $::CMAKE \
         -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
         -DKWWidgets_DIR:FILEPATH=$Slicer3_LIB/KWWidgets-build \
         -DTeem_DIR:FILEPATH=$Slicer3_LIB/teem-build \
-        -DIGSTK_DIR:FILEPATH=$Slicer3_LIB/IGSTK-build \
+        -DOPENIGTLINK_DIR:FILEPATH=$Slicer3_LIB/OpenIGTLink-build \
         -DINCR_TCL_LIBRARY:FILEPATH=$::INCR_TCL_LIB \
         -DINCR_TK_LIBRARY:FILEPATH=$::INCR_TK_LIB \
         -DSlicer3_USE_PYTHON=$::USE_PYTHON \
@@ -428,10 +428,6 @@ runcmd $::CMAKE \
         -DCPACK_GENERATOR:STRING=$::GETBUILDTEST(cpack-generator) \
         -DCPACK_PACKAGE_FILE_NAME:STRING=$::GETBUILDTEST(binary-filename) \
         -DCPACK_RPM_SPEC_MORE_DEFINE=$::GETBUILDTEST(rpm-spec) \
-        -DSlicer3_USE_IGSTK=$::IGSTK \
-        -DSlicer3_USE_NAVITRACK=$::NAVITRACK \
-        -DNAVITRACK_LIB_DIR:FILEPATH=$::NAVITRACK_LIB_DIR \
-        -DNAVITRACK_INC_DIR:FILEPATH=$::NAVITRACK_INC_DIR \
         -DSLICERLIBCURL_DIR:FILEPATH=$Slicer3_LIB/cmcurl-build \
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=$::GETBUILDTEST(cmake-verbose) \
         $Slicer3_HOME

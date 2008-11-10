@@ -986,67 +986,56 @@ if { [BuildThis $::Teem_TEST_FILE "teem"] == 1 } {
 
 
 ################################################################################
-# Get and build igstk 
+# Get and build OpenIGTLink 
 #
 
-if { [BuildThis $::IGSTK_TEST_FILE "igstk"] == 1 } {
+if { [BuildThis $::OPENIGTLINK_TEST_FILE "openigtlink"] == 1 } {
     cd $Slicer3_LIB
 
-    runcmd $::CVS -d:pserver:anonymous:igstk@public.kitware.com:/cvsroot/IGSTK login
-    eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous@public.kitware.com:/cvsroot/IGSTK co -r IGSTK-2-0 IGSTK"
+    runcmd $::SVN co http://svn.na-mic.org/NAMICSandBox/trunk/OpenIGTLink OpenIGTLink
 
     if {$::GENLIB(buildit)} {
-      file mkdir $Slicer3_LIB/IGSTK-build
-      cd $Slicer3_LIB/IGSTK-build
-
+      file mkdir $Slicer3_LIB/OpenIGTLink-build
+      cd $Slicer3_LIB/OpenIGTLink-build
 
       if {$isDarwin} {
         runcmd $::CMAKE \
             -G$GENERATOR \
             -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
             -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
-            -DVTK_DIR:PATH=$VTK_DIR \
-            -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
             -DBUILD_SHARED_LIBS:BOOL=ON \
             -DCMAKE_SKIP_RPATH:BOOL=OFF \
-            -DIGSTK_BUILD_EXAMPLES:BOOL=OFF \
-            -DIGSTK_BUILD_TESTING:BOOL=OFF \
+            -DOpenIGTLink_DIR:FILEPATH=$Slicer3_LIB/OpenIGTLink-build \
             -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
-            ../IGSTK
+            ../OpenIGTLink
       } else {
         runcmd $::CMAKE \
             -G$GENERATOR \
             -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
             -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
-            -DVTK_DIR:PATH=$VTK_DIR \
-            -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
             -DBUILD_SHARED_LIBS:BOOL=ON \
             -DCMAKE_SKIP_RPATH:BOOL=ON \
-            -DIGSTK_BUILD_EXAMPLES:BOOL=OFF \
-            -DIGSTK_BUILD_TESTING:BOOL=OFF \
+            -DOpenIGTLink_DIR:FILEPATH=$Slicer3_LIB/OpenIGTLink-build \
             -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
-            ../IGSTK
+            ../OpenIGTLink
       }
 
       if { $isDarwin } {
         runcmd $::CMAKE \
           -DCMAKE_SHARED_LINKER_FLAGS:STRING="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
           -DCMAKE_EXE_LINKER_FLAGS="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
-          ../IGSTK
+          ../OpenIGTLink
       }
 
       if {$isWindows} {
         if { $MSVC6 } {
-            runcmd $::MAKE IGSTK.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
+            runcmd $::MAKE OpenIGTLink.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
         } else {
-            runcmd $::MAKE IGSTK.SLN /build  $::VTK_BUILD_TYPE
+            runcmd $::MAKE OpenIGTLink.SLN /build  $::VTK_BUILD_TYPE
         }
       } else {
         # Running this cmake again will populate those CMake variables 
-        # in IGSTK/CMakeLists.txt marked as MARK_AS_ADVANCED with their 
-        # default values. For instance, IGSTK_SERIAL_PORT_0, IGSTK_SERIAL_PORT_1,
-        # IGSTK_SERIAL_PORT_2, ......
-        eval runcmd $::CMAKE ../IGSTK 
+        eval runcmd $::CMAKE ../OpenIGTLink 
 
         eval runcmd $::MAKE 
       }
@@ -1112,8 +1101,8 @@ if { ![file exists $::CMAKE] } {
 if { ![file exists $::Teem_TEST_FILE] } {
     puts "Teem test file $::Teem_TEST_FILE not found."
 }
-if { ![file exists $::IGSTK_TEST_FILE] } {
-    puts "IGSTK test file $::IGSTK_TEST_FILE not found."
+if { ![file exists $::OPENIGTLINK_TEST_FILE] } {
+    puts "OpenIGTLink test file $::OPENIGTLINK_TEST_FILE not found."
 }
 if { ![file exists $::SLICERLIBCURL_TEST_FILE] } {
     puts "SLICERLIBCURL test file $::SLICERLIBCURL_TEST_FILE not found."
