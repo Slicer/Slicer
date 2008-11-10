@@ -16,16 +16,18 @@
 #define __vtkIGTLCircularBuffer_h
 
 #include "vtkObject.h"
-#include "vtkOpenIGTLinkWin32Header.h" 
+#include "vtkOpenIGTLinkIFWin32Header.h" 
 
 #include <string>
+
+#include "igtlMessageBase.h"
 
 #define IGTLCB_CIRC_BUFFER_SIZE    3
 
 
 class vtkMutexLock;
 
-class VTK_OPENIGTLINK_EXPORT vtkIGTLCircularBuffer : public vtkObject
+class VTK_OPENIGTLINKIF_EXPORT vtkIGTLCircularBuffer : public vtkObject
 {
  public:
 
@@ -37,15 +39,17 @@ class VTK_OPENIGTLINK_EXPORT vtkIGTLCircularBuffer : public vtkObject
   int GetNumberOfBuffer() { return IGTLCB_CIRC_BUFFER_SIZE; }
 
   int            StartPush();
-  void           PushDeviceType(const char* deviceType);
-  void           PushData(int size, unsigned char* data);
-  unsigned char* GetPushDataArea(int size);
   void           EndPush();
+  //BTX
+  igtl::MessageBase::Pointer GetPushBuffer();
+  //ETX
+
   int            StartPull();
-  const char*    PullDeviceType();
-  int            PullSize();
-  unsigned char* PullData();
   void           EndPull();
+  //BTX
+  igtl::MessageBase::Pointer GetPullBuffer();
+  //ETX
+
   int            IsUpdated() { return this->UpdateFlag; };
 
  protected:
@@ -66,6 +70,10 @@ class VTK_OPENIGTLINK_EXPORT vtkIGTLCircularBuffer : public vtkObject
   //ETX
   long long          Size[IGTLCB_CIRC_BUFFER_SIZE];
   unsigned char*     Data[IGTLCB_CIRC_BUFFER_SIZE];
+
+  //BTX
+  igtl::MessageBase::Pointer Messages[IGTLCB_CIRC_BUFFER_SIZE];
+  //ETX
   
 };
 

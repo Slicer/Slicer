@@ -23,10 +23,15 @@
 #include "vtkMutexLock.h"
 #include "vtkImageData.h"
 
-#include "igtl_util.h"
-#include "igtl_header.h"
-#include "igtl_image.h"
-#include "igtl_transform.h"
+//#include "igtl_util.h"
+//#include "igtl_header.h"
+//#include "igtl_image.h"
+//#include "igtl_transform.h"
+
+#include "igtlOSUtil.h"
+#include "igtlMessageBase.h"
+#include "igtlMessageHeader.h"
+#include "igtlClientSocket.h"
 
 #include "vtkIGTLCircularBuffer.h"
 #include "vtkIGTLConnector.h"
@@ -49,6 +54,10 @@ vtkIGTLConnector::vtkIGTLConnector()
   this->ServerPort = 18944;
   this->Mutex = vtkMutexLock::New();
   this->CircularBufferMutex = vtkMutexLock::New();
+  this->RestrictDeviceName = 0;
+  this->IncomingDeviceList.clear();
+  this->OutgoingDeviceList.clear();
+  this->UnspecifiedDeviceList.clear();
 }
 
 //---------------------------------------------------------------------------
@@ -111,9 +120,8 @@ int vtkIGTLConnector::Start()
   // since it takes for a while for the thread to update
   // this->State to non STATE_OFF value. This causes error
   // after calling vtkIGTLConnector::Start() in ProcessGUIEvent()
-  // in vtkOpenIGTLinkGUI class.
+  // in vtkOpenIGTLinkIFGUI class.
   this->State = STATE_WAIT_CONNECTION;
-  
 
   return 1;
 }
@@ -142,6 +150,7 @@ int vtkIGTLConnector::Stop()
     }
 }
 
+
 //---------------------------------------------------------------------------
 void* vtkIGTLConnector::ThreadFunction(void* ptr)
 {
@@ -162,14 +171,14 @@ void* vtkIGTLConnector::ThreadFunction(void* ptr)
   // Communication -- common to both Server and Client
   while (!igtlcon->ServerStopFlag)
     {
-    //vtkErrorMacro("vtkOpenIGTLinkLogic::ThreadFunction(): alive.");
+    //vtkErrorMacro("vtkOpenIGTLinkIFLogic::ThreadFunction(): alive.");
     igtlcon->Mutex->Lock();
     igtlcon->Socket = igtlcon->WaitForConnection();
     igtlcon->Mutex->Unlock();
     if (igtlcon->Socket != NULL)
       {
       igtlcon->State = STATE_CONNECTED;
-      //vtkErrorMacro("vtkOpenIGTLinkLogic::ThreadFunction(): Client Connected.");
+      //vtkErrorMacro("vtkOpenIGTLinkIFLogic::ThreadFunction(): Client Connected.");
       igtlcon->ReceiveController();
       igtlcon->State = STATE_WAIT_CONNECTION;
       }
@@ -248,16 +257,18 @@ vtkClientSocket* vtkIGTLConnector::WaitForConnection()
 //---------------------------------------------------------------------------
 int vtkIGTLConnector::ReceiveController()
 {
-  igtl_header header;
+  //igtl_header header;
+  igtl::MessageHeader::Pointer headerMsg;
+  headerMsg = igtl::MessageHeader::New();
 
   if (!this->Socket)
     {
     return 0;
     }
-
+  
   while (!this->ServerStopFlag)
     {
-
+    
     // check if connection is alive
     if (!this->Socket->GetConnected())
       {
@@ -266,38 +277,42 @@ int vtkIGTLConnector::ReceiveController()
 
     //----------------------------------------------------------------
     // Receive Header
+    headerMsg->InitPack();
 
-    int r = this->Socket->Receive(&header, IGTL_HEADER_SIZE);
-
-    if (r != IGTL_HEADER_SIZE)
+    int r = this->Socket->Receive(headerMsg->GetPackPointer(), headerMsg->GetPackSize());
+    if (r != headerMsg->GetPackSize())
       {
-      //vtkErrorMacro("Irregluar size.");
-      }
-
-    igtl_header_convert_byte_order(&header);  
-    char deviceType[13];
-    deviceType[12] = 0;
-    memcpy((void*)deviceType, header.name, 12);
-      
-    char deviceName[21];
-    deviceName[20] = 0;
-    memcpy((void*)deviceName, header.device_name, 20);
-      
-    //vtkErrorMacro("deviceType  = " << deviceType);
-    //vtkErrorMacro("deviceName  = " << deviceName);
-    //vtkErrorMacro("size = "        << header.body_size);
-      
-    if (header.version != IGTL_HEADER_VERSION)
-      {
-      //vtkErrorMacro("Unsupported OpenIGTLink version.");
+      vtkErrorMacro("Irregluar size.");
       break;
       }
 
+    // Deserialize the header
+    headerMsg->Unpack();
 
     //----------------------------------------------------------------
+    // Check Device Name if device name is restricted
+    if (this->RestrictDeviceName)
+      {
+      if (this->IncomingDeviceList[std::string(headerMsg->GetDeviceName())] != headerMsg->GetDeviceType())
+        {
+        // The conbination of device name and type doesn't exist on the list
+        // just read and discad
+        this->Skip(headerMsg->GetBodySizeToRead());
+        continue;
+        
+        }
+      }
+    else
+      {
+      // if device name is not restricted:
+      if (this->IncomingDeviceList[std::string(headerMsg->GetDeviceName())] != headerMsg->GetDeviceType())
+        this->IncomingDeviceList[std::string(headerMsg->GetDeviceName())] = headerMsg->GetDeviceType();
+      }
+    
+    //----------------------------------------------------------------
     // Search Circular Buffer
-
-    std::string key = deviceName;
+    
+    std::string key = headerMsg->GetDeviceName();
     CircularBufferMap::iterator iter = this->Buffer.find(key);
     if (iter == this->Buffer.end()) // First time to refer the device name
       {
@@ -305,39 +320,87 @@ int vtkIGTLConnector::ReceiveController()
       this->Buffer[key] = vtkIGTLCircularBuffer::New();
       this->CircularBufferMutex->Unlock();
       }
-
-
+    
     //----------------------------------------------------------------
     // Load to the circular buffer
-
-    vtkIGTLCircularBuffer* buffer = this->Buffer[key];
-
-    if (buffer && buffer->StartPush() != -1)
+    
+    vtkIGTLCircularBuffer* circBuffer = this->Buffer[key];
+    
+    if (circBuffer && circBuffer->StartPush() != -1)
       {
-      buffer->StartPush();
-      buffer->PushDeviceType(deviceType);
+      circBuffer->StartPush();
+      
+      igtl::MessageBase::Pointer buffer = circBuffer->GetPushBuffer();
+      buffer->SetMessageHeader(headerMsg);
+      buffer->AllocatePack();
 
-      unsigned char* dataPtr = buffer->GetPushDataArea(header.body_size);
-      int read = this->Socket->Receive(dataPtr, header.body_size);
-      if (read != header.body_size)
+      int read = this->Socket->Receive(buffer->GetPackBodyPointer(), buffer->GetPackBodySize());
+      if (read != buffer->GetPackBodySize())
         {
-        //vtkErrorMacro ("Only read " << read << " but expected to read " << IGTL_IMAGE_HEADER_SIZE << "\n");
+        vtkErrorMacro ("Only read " << read << " but expected to read "
+                       << buffer->GetPackBodySize() << "\n");
         continue;
         }
-
-      // check CRC here
-      buffer->EndPush();
+      
+      circBuffer->EndPush();
+      
       }
     else
       {
       break;
       }
-      
+    
     } // while (!this->ServerStopFlag)
-
+  
   this->Socket->CloseSocket();
-
+  
   return 0;
+    
+}
+  
+
+//---------------------------------------------------------------------------
+int vtkIGTLConnector::SendData(int size, unsigned char* data)
+{
+  
+  if (!this->Socket)
+    {
+    return 0;
+    }
+  
+  // check if connection is alive
+  if (!this->Socket->GetConnected())
+    {
+    return 0;
+    }
+
+  return this->Socket->Send(data, size);  // return 1 on success, otherwise 0.
+
+}
+
+
+//---------------------------------------------------------------------------
+int vtkIGTLConnector::Skip(int length, int skipFully/*=1*/)
+{
+  unsigned char dummy[256];
+  int block  = 256;
+  int n      = 0;
+  int remain = length;
+  
+  do
+    {
+    if (remain < block)
+      {
+      block = remain;
+      }
+    
+    n = this->Socket->Receive(dummy, block, skipFully);
+    remain -= n;
+    }
+  while (remain > 0 || (skipFully && n < block));
+
+  return (length - remain);
+
 
 }
 
@@ -357,6 +420,7 @@ int vtkIGTLConnector::GetUpdatedBuffersList(NameListType& nameList)
     }
   return nameList.size();
 }
+
 
 //---------------------------------------------------------------------------
 vtkIGTLCircularBuffer* vtkIGTLConnector::GetCircularBuffer(std::string& key)

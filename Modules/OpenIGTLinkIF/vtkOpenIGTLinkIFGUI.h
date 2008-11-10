@@ -12,15 +12,15 @@
 
 ==========================================================================*/
 
-#ifndef __vtkOpenIGTLinkGUI_h
-#define __vtkOpenIGTLinkGUI_h
+#ifndef __vtkOpenIGTLinkIFGUI_h
+#define __vtkOpenIGTLinkIFGUI_h
 
 #ifdef WIN32
-#include "vtkOpenIGTLinkWin32Header.h"
+#include "vtkOpenIGTLinkIFWin32Header.h"
 #endif
 
 #include "vtkSlicerModuleGUI.h"
-#include "vtkOpenIGTLinkLogic.h"
+#include "vtkOpenIGTLinkIFLogic.h"
 #include "vtkIGTLConnector.h"
 
 #include "vtkIGTDataManager.h"
@@ -45,14 +45,12 @@ class vtkKWLoadSaveButtonWithLabel;
 class vtkKWMultiColumnListWithScrollbars;
 class vtkKWWizardWidget;
 
-class vtkOpenIGTLinkStep;
-
 class vtkTransform;
 
 // Description:    
 // This class implements Slicer's Volumes GUI
 //
-class VTK_OPENIGTLINK_EXPORT vtkOpenIGTLinkGUI : public vtkSlicerModuleGUI
+class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
 {
  public:
   //BTX
@@ -84,14 +82,14 @@ class VTK_OPENIGTLINK_EXPORT vtkOpenIGTLinkGUI : public vtkSlicerModuleGUI
  public:
   // Description:    
   // Usual vtk class functions
-  static vtkOpenIGTLinkGUI* New ();
-  vtkTypeRevisionMacro ( vtkOpenIGTLinkGUI, vtkSlicerModuleGUI );
+  static vtkOpenIGTLinkIFGUI* New ();
+  vtkTypeRevisionMacro ( vtkOpenIGTLinkIFGUI, vtkSlicerModuleGUI );
   void PrintSelf (ostream& os, vtkIndent indent );
   
   //SendDATANavitrack
   // Description:    
   // Get methods on class members (no Set methods required)
-  vtkGetObjectMacro ( Logic, vtkOpenIGTLinkLogic );
+  vtkGetObjectMacro ( Logic, vtkOpenIGTLinkIFLogic );
   
   // Description:
   // API for setting VolumeNode, VolumeLogic and
@@ -100,7 +98,7 @@ class VTK_OPENIGTLINK_EXPORT vtkOpenIGTLinkGUI : public vtkSlicerModuleGUI
   { 
     this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
 
-  //void SetAndObserveModuleLogic ( vtkOpenIGTLinkLogic *logic )
+  //void SetAndObserveModuleLogic ( vtkOpenIGTLinkIFLogic *logic )
   //{ this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ); }
   // Description: 
 
@@ -147,8 +145,8 @@ class VTK_OPENIGTLINK_EXPORT vtkOpenIGTLinkGUI : public vtkSlicerModuleGUI
   //ETX
   
  protected:
-  vtkOpenIGTLinkGUI ( );
-  virtual ~vtkOpenIGTLinkGUI ( );
+  vtkOpenIGTLinkIFGUI ( );
+  virtual ~vtkOpenIGTLinkIFGUI ( );
   
   //----------------------------------------------------------------
   // Timer
@@ -174,7 +172,12 @@ class VTK_OPENIGTLINK_EXPORT vtkOpenIGTLinkGUI : public vtkSlicerModuleGUI
   vtkKWEntry*          ConnectorAddressEntry;
   vtkKWEntry*          ConnectorPortEntry;
 
-  
+  vtkKWCheckButton*    EnableAdvancedSettingButton;
+  vtkKWMultiColumnListWithScrollbars* MrmlNodeList;
+
+  vtkKWPushButton* AddDeviceNameButton;
+  vtkKWPushButton* DeleteDeviceNameButton;  
+
   //----------------------------------------------------------------
   // Visualization Control Frame
 
@@ -203,7 +206,7 @@ class VTK_OPENIGTLINK_EXPORT vtkOpenIGTLinkGUI : public vtkSlicerModuleGUI
   // Logic Values
   //----------------------------------------------------------------
 
-  vtkOpenIGTLinkLogic *Logic;
+  vtkOpenIGTLinkIFLogic *Logic;
 
   vtkIGTDataManager *DataManager;
   vtkIGTPat2ImgRegistration *Pat2ImgReg;
@@ -229,6 +232,17 @@ class VTK_OPENIGTLINK_EXPORT vtkOpenIGTLinkGUI : public vtkSlicerModuleGUI
   
   //int RealtimeImageOrient;
 
+
+  //----------------------------------------------------------------
+  // Connector and MRML Node list management
+  //----------------------------------------------------------------
+
+  int   CurrentMrmlNodeListID;  // raw number
+  //BTX
+  vtkOpenIGTLinkIFLogic::IGTLMrmlNodeListType CurrentNodeListAvailable;
+  vtkOpenIGTLinkIFLogic::IGTLMrmlNodeListType CurrentNodeListSelected;
+  //ETX
+
   //----------------------------------------------------------------
   // Locator Model
   //----------------------------------------------------------------
@@ -248,8 +262,8 @@ class VTK_OPENIGTLINK_EXPORT vtkOpenIGTLinkGUI : public vtkSlicerModuleGUI
 
  private:
 
-  vtkOpenIGTLinkGUI ( const vtkOpenIGTLinkGUI& ); // Not implemented.
-  void operator = ( const vtkOpenIGTLinkGUI& ); //Not implemented.
+  vtkOpenIGTLinkIFGUI ( const vtkOpenIGTLinkIFGUI& ); // Not implemented.
+  void operator = ( const vtkOpenIGTLinkIFGUI& ); //Not implemented.
   
   void BuildGUIForWizardFrame();
   void BuildGUIForConnectorBrowserFrame ();
@@ -267,8 +281,9 @@ class VTK_OPENIGTLINK_EXPORT vtkOpenIGTLinkGUI : public vtkSlicerModuleGUI
 
   void UpdateConnectorList(int updateLevel);
   void UpdateConnectorPropertyFrame(int i);
-
- 
+  void UpdateMrmlNodeListFrame(int con);
+ public:
+  virtual int OnMrmlNodeListChanged(int row, int col, const char* item);
 };
 
 

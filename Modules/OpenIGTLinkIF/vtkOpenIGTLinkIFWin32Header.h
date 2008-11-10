@@ -12,18 +12,18 @@ Version:   $Revision: $
 
 ==========================================================================*/
 
-#ifndef __vtkOpenIGTLinkWin32Header_h
-#define __vtkOpenIGTLinkWin32Header_h
+#ifndef __vtkOpenIGTLinkIFWin32Header_h
+#define __vtkOpenIGTLinkIFWin32Header_h
 
-#include <vtkOpenIGTLinkConfigure.h>
+#include <vtkOpenIGTLinkIFConfigure.h>
 
 #if defined(WIN32) && !defined(VTKSLICER_STATIC)
-#if defined(OpenIGTLink_EXPORTS)
-#define VTK_OPENIGTLINK_EXPORT __declspec( dllexport ) 
+#if defined(OpenIGTLinkIF_EXPORTS)
+#define VTK_OPENIGTLINKIF_EXPORT __declspec( dllexport ) 
 #else
-#define VTK_OPENIGTLINK_EXPORT __declspec( dllimport ) 
+#define VTK_OPENIGTLINKIF_EXPORT __declspec( dllimport ) 
 #endif
 #else
-#define VTK_OPENIGTLINK_EXPORT 
+#define VTK_OPENIGTLINKIF_EXPORT 
 #endif
 #endif
