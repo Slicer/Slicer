@@ -87,6 +87,8 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
 
   this->PrescribedSliceSpacing[0] = this->PrescribedSliceSpacing[1] = this->PrescribedSliceSpacing[2] = 1;
   this->SliceSpacingMode = AutomaticSliceSpacingMode;
+
+  this->ActiveSlice = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -419,6 +421,8 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
         this->Dimensions[1] << " " <<
         this->Dimensions[2] << "\"";
 
+  of << indent << " activeSlice=\"" << this->ActiveSlice << "\"";
+  
   of << indent << " layoutGridRows=\"" << 
         this->LayoutGridRows << "\"";
 
@@ -477,6 +481,15 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
         this->FieldOfView[i] = val;
         }
       }
+    else if (!strcmp(attName, "activeSlice")) 
+      {
+      std::stringstream ss;
+      int val;
+      ss << attValue;
+      ss >> val;
+      
+      this->ActiveSlice = val;
+      }
     else if (!strcmp(attName, "layoutGridRows")) 
       {
       std::stringstream ss;
@@ -494,6 +507,15 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
       ss >> val;
       
       this->LayoutGridColumns = val;
+      }
+    else if (!strcmp(attName, "activeSlice")) 
+      {
+      std::stringstream ss;
+      int val;
+      ss << attValue;
+      ss >> val;
+      
+      this->ActiveSlice = val;
       }
     else if (!strcmp(attName, "sliceVisibility")) 
       {
@@ -600,9 +622,11 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
   this->SliceToRAS->DeepCopy(node->GetSliceToRAS());
   this->SetOrientationString(node->GetOrientationString());
 
+  this->ActiveSlice = node->ActiveSlice;
+
   this->LayoutGridColumns = node->LayoutGridColumns;
   this->LayoutGridRows = node->LayoutGridRows;
-
+  
   this->SliceSpacingMode = node->SliceSpacingMode;
   
   int i;
@@ -635,7 +659,8 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
   os << "\n";
 
   os << indent << "Layout grid: " << this->LayoutGridRows << "x" << this->LayoutGridColumns << "\n";
-
+  os << indent << "Active slice: " << this->ActiveSlice << "\n";
+  
   os << indent << "SliceVisible: " <<
     (this->SliceVisible ? "true" : "false") << "\n";
   os << indent << "WidgetVisible: " <<
@@ -779,6 +804,13 @@ void vtkMRMLSliceNode::SetLayoutGrid(int rows, int columns)
     this->LayoutGridRows = rows;
     this->LayoutGridColumns = columns;        
     
+    // if the active slice is not on the lightbox, then reset active
+    // slice to the last slice in the lightbox
+    if (this->ActiveSlice >= this->LayoutGridRows*this->LayoutGridColumns)
+      {
+      this->ActiveSlice = this->LayoutGridRows*this->LayoutGridColumns - 1;
+      }
+
     this->UpdateMatrices();
     }
 }
@@ -809,6 +841,13 @@ void vtkMRMLSliceNode::SetLayoutGridRows(int rows)
     // cache the layout
     this->LayoutGridRows = rows;
     
+    // if the active slice is not on the lightbox, then reset active
+    // slice to the last slice in the lightbox
+    if (this->ActiveSlice >= this->LayoutGridRows*this->LayoutGridColumns)
+      {
+      this->ActiveSlice = this->LayoutGridRows*this->LayoutGridColumns - 1;
+      }
+
     this->UpdateMatrices();
     }
 }
@@ -840,6 +879,13 @@ void vtkMRMLSliceNode::SetLayoutGridColumns(int cols)
     // cache the layout
     this->LayoutGridColumns = cols;
     
+    // if the active slice is not on the lightbox, then reset active
+    // slice to the last slice in the lightbox
+    if (this->ActiveSlice >= this->LayoutGridRows*this->LayoutGridColumns)
+      {
+      this->ActiveSlice = this->LayoutGridRows*this->LayoutGridColumns - 1;
+      }
+
     this->UpdateMatrices();
     }
 }

@@ -8,6 +8,7 @@
 #include "vtkViewport.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkSmartPointer.h"
+#include "vtkMath.h"
 
 #include "vtkSlicerSliceViewer.h"
 #include "vtkSlicerApplication.h"
@@ -22,6 +23,8 @@
 #include "vtkActor2D.h"
 #include "vtkActor2DCollection.h"
 #include "vtkMapper2D.h"
+#include "vtkProperty2D.h"
+#include "vtkCellArray.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerSliceViewer );
@@ -47,58 +50,31 @@ vtkSlicerSliceViewer::vtkSlicerSliceViewer ( ) {
     //   when, for example, the annotation is changed.
     this->RenderWidget->RenderStateOff();
 
-    this->ImageMapper = vtkImageMapper::New();
-    this->ImageMapper->SetColorWindow(255);
-    this->ImageMapper->SetColorLevel(127.5);
-
-    this->ImageMapperVec.push_back( ImageMapper );
-
-    this->Actor2D = vtkActor2D::New();
-    this->Actor2D->SetMapper( this->ImageMapper );
-
-    this->LayoutGridRows = 1;
-    this->LayoutGridColumns = 1;
-
+    this->HighlightColor[0] = 1;
+    this->HighlightColor[0] = 1;
+    this->HighlightColor[0] = 0;
+    
     this->ActorCollection = vtkActor2DCollection::New();
     this->PolyDataCollection = vtkPolyDataCollection::New();
     this->LookupTableCollection = vtkCollection::New();
 
     this->RenderPending = 0;
+
+    // Initialize the layout the zero so CreateWidget and set up
+    // the rendering pipeline
+    this->LayoutGridRows = 0;
+    this->LayoutGridColumns = 0;
+
 }
 
 
 //---------------------------------------------------------------------------
 vtkSlicerSliceViewer::~vtkSlicerSliceViewer ( ){
 
-    if ( this->Actor2D )
-      {
-        if ( this->RenderWidget )
-          {
-          int numberOfRenderers = this->RenderWidget->GetNumberOfRenderers();
-          for ( int i=0; i<numberOfRenderers; i++ )
-            {
-            this->RenderWidget->GetNthRenderer( i )->RemoveActor2D( this->Actor2D );
-            }
-          }
-        this->Actor2D->SetMapper ( NULL );
-        this->Actor2D->Delete ( );
-        this->Actor2D = NULL;
-      }
-
-    int numberMappers = this->ImageMapperVec.size();
-    for ( int i=1; i<numberMappers; i++ )  // start at 1 to skip this->ImageMapper
-      {
-      this->ImageMapperVec[i]->Delete();
-      this->ImageMapperVec[i] = NULL;
-      }
-
+  // clear the smart pointer managed lists
     this->ImageMapperVec.clear();
-
-    if ( this->ImageMapper )
-      {
-      this->ImageMapper->Delete ( );
-      this->ImageMapper = NULL;
-      }
+    this->HighlightActorVec.clear();
+    
     if ( this->PolyDataCollection )
       {
       this->PolyDataCollection->RemoveAllItems();
@@ -227,7 +203,8 @@ void vtkSlicerSliceViewer::CreateWidget ( ) {
     this->RenderWidget->CornerAnnotationVisibilityOn();
     this->RenderWidget->SetBorderWidth(2);
     this->RenderWidget->SetReliefToGroove ( );
-    this->RenderWidget->GetRenderer()->AddActor2D( this->Actor2D );
+
+    this->ChangeLayout(1, 1);
 }
 
 //---------------------------------------------------------------------------
@@ -279,6 +256,10 @@ void vtkSlicerSliceViewer::ChangeLayout( int numberRows, int numberColumns )
     this->ImageMapperVec.clear();
 
     //-------
+    // Remove all highlights
+    this->HighlightActorVec.clear();
+    
+    //-------
     // Remove all current renderers.
     //
     this->RenderWidget->RemoveAllRenderers();
@@ -316,6 +297,48 @@ void vtkSlicerSliceViewer::ChangeLayout( int numberRows, int numberColumns )
 
         this->RenderWidget->AddRenderer( renderer );
 
+        // create a highlight actor (2D box around viewport) for each
+        // viewport in the lightbox and hide them initially
+        vtkPolyData *poly = vtkPolyData::New();
+        vtkPoints *points = vtkPoints::New();
+        double eps = 0.01;
+        points->InsertNextPoint( eps, eps, 0 );
+        points->InsertNextPoint( 1, eps, 0 );
+        points->InsertNextPoint( 1, 1, 0 );
+        points->InsertNextPoint( eps, 1, 0 );
+        vtkCellArray *cells = vtkCellArray::New();
+        cells->InsertNextCell(5);
+        cells->InsertCellPoint( 0 );
+        cells->InsertCellPoint( 1 );
+        cells->InsertCellPoint( 2 );
+        cells->InsertCellPoint( 3 );
+        cells->InsertCellPoint( 0 );
+        poly->SetPoints(points);
+        poly->SetLines(cells);
+
+        vtkCoordinate *coordinate = vtkCoordinate::New();
+        coordinate->SetCoordinateSystemToNormalizedViewport();
+        coordinate->SetViewport(renderer);
+        
+        vtkPolyDataMapper2D *pmapper = vtkPolyDataMapper2D::New();
+        pmapper->SetInput( poly );
+        pmapper->SetTransformCoordinate( coordinate );
+        coordinate->Delete();
+        poly->Delete();
+
+        vtkActor2D *pactor = vtkActor2D::New();
+        pactor->SetMapper(pmapper);
+        pactor->GetProperty()->SetColor(1, 1, 0);
+        pactor->GetProperty()->SetDisplayLocationToForeground();
+        pactor->GetProperty()->SetLineWidth(3); // wide enough so not clipped
+        pactor->VisibilityOff();
+        pmapper->Delete();
+
+        renderer->AddActor2D(pactor);
+        pactor->Delete();
+
+        this->HighlightActorVec.push_back(pactor);
+        
         //-------
         // First renderer, grab a handle to the camera to share
         // amongst the rest of the renderers
@@ -361,4 +384,34 @@ void vtkSlicerSliceViewer::SetImageData( vtkImageData* imageData )
     }
 }
 
+
+void vtkSlicerSliceViewer::HighlightSlice( int slice )
+{
+  if (slice >= 0 && slice < (int)this->HighlightActorVec.size())
+    {
+    // good time to propagate the color as well
+    this->HighlightActorVec[slice]->GetProperty()->SetColor(this->HighlightColor);
+    this->HighlightActorVec[slice]->VisibilityOn();
+    }
+}
+
+void vtkSlicerSliceViewer::UnhighlightSlice( int slice )
+{
+  if (slice >= 0 && slice < (int) this->HighlightActorVec.size())
+    {
+    // good time to propagate the color as well
+    this->HighlightActorVec[slice]->GetProperty()->SetColor(this->HighlightColor);
+    this->HighlightActorVec[slice]->VisibilityOff();
+    }
+}
+
+void vtkSlicerSliceViewer::UnhighlightAllSlices( )
+{
+  for (unsigned int i = 0; i < this->HighlightActorVec.size(); ++i)
+    {
+    // good time to propagate the color as well
+    this->HighlightActorVec[i]->GetProperty()->SetColor(this->HighlightColor);
+    this->HighlightActorVec[i]->VisibilityOff();
+    }
+}
 

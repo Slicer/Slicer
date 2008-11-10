@@ -184,11 +184,16 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   void SetSliceSpacingModeToPrescribed();
 
   // Description:
-  // Set the slice spacing.  to use when the SliceSpacingMode is
+  // Set/get the slice spacing to use when the SliceSpacingMode is
   // "Prescribed"
   vtkSetVector3Macro(PrescribedSliceSpacing, double);
   vtkGetVector3Macro(PrescribedSliceSpacing, double);
 
+  // Description:
+  // Set/get the active slice in the lightbox. The active slice is
+  // shown in the 3D scene
+  vtkSetMacro(ActiveSlice, int);
+  vtkGetMacro(ActiveSlice, int);
   
 protected:
 
@@ -216,6 +221,7 @@ protected:
   int SliceSpacingMode;
   double PrescribedSliceSpacing[3];
 
+  int ActiveSlice;
 };
 
 #endif

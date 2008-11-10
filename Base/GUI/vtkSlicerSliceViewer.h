@@ -30,8 +30,6 @@ public:
   vtkTypeRevisionMacro ( vtkSlicerSliceViewer, vtkKWCompositeWidget );
   void PrintSelf (ostream& os, vtkIndent indent);
     
-  vtkGetObjectMacro ( ImageMapper, vtkImageMapper );
-  vtkGetObjectMacro ( Actor2D, vtkActor2D );
   vtkGetObjectMacro ( ActorCollection, vtkActor2DCollection );
   vtkGetObjectMacro ( PolyDataCollection, vtkPolyDataCollection );
   vtkGetObjectMacro ( LookupTableCollection, vtkCollection );
@@ -54,6 +52,14 @@ public:
   vtkGetMacro (LayoutGridColumns, int);
   vtkSetMacro (LayoutGridColumns, int);
 
+  // Description:
+  // Control the highlight of a viewport in a lightbox. Hightlight is
+  // used to designate the active slice in a lightbox
+  void HighlightSlice(int slice);
+  void UnhighlightSlice(int slice);
+  void UnhighlightAllSlices();
+  vtkSetVector3Macro(HighlightColor, double);
+  
   // Description:
   // Request Render posts a request to the event queue for processing when
   // all other user events have been handled.  Render does the actual render.
@@ -78,12 +84,13 @@ protected:
 
   // Slice viewer widgets
   vtkKWRenderWidget *RenderWidget;
-  vtkImageMapper *ImageMapper;
-  vtkActor2D *Actor2D;
 
+  double HighlightColor[3];
+  
   // To accomadate changes in layout
   //BTX
   std::vector< vtkSmartPointer< vtkImageMapper > > ImageMapperVec;
+  std::vector< vtkSmartPointer< vtkActor2D > > HighlightActorVec;
   //ETX
 
   int LayoutGridRows;

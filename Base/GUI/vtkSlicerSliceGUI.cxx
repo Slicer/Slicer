@@ -137,6 +137,7 @@ void vtkSlicerSliceGUI::AddGUIObservers ( ) {
     rw->AddObserver ( vtkKWEvent::FocusInEvent, (vtkCommand *)this->GUICallbackCommand );
     rw->AddObserver ( vtkKWEvent::FocusOutEvent, (vtkCommand *)this->GUICallbackCommand );
     }
+
 }
 
 
@@ -164,6 +165,7 @@ void vtkSlicerSliceGUI::RemoveGUIObservers ( ) {
     rw->RemoveObservers ( vtkKWEvent::FocusInEvent, (vtkCommand *)this->GUICallbackCommand );
     rw->RemoveObservers ( vtkKWEvent::FocusOutEvent, (vtkCommand *)this->GUICallbackCommand );
     }
+
 }
 
 //---------------------------------------------------------------------------
@@ -322,8 +324,6 @@ void vtkSlicerSliceGUI::ProcessMRMLEvents ( vtkObject *caller,
 
   // process mrml changes
   vtkMRMLDisplayNode* dnode= vtkMRMLDisplayNode::SafeDownCast(caller);
-
-  
   if ( this->GetLogic() && dnode )
     {
     vtkSlicerSliceLogic *sliceLogic = this->GetLogic ( );
@@ -352,6 +352,16 @@ void vtkSlicerSliceGUI::ProcessMRMLEvents ( vtkObject *caller,
     */
     sliceViewer->RequestRender ( );
     }
+
+  vtkMRMLSliceNode *snode = vtkMRMLSliceNode::SafeDownCast(caller);
+  if (this->SliceNode && snode == this->SliceNode
+      && event == vtkCommand::ModifiedEvent)
+    {
+    this->GetSliceViewer()->UnhighlightAllSlices();
+    this->GetSliceViewer()->HighlightSlice( this->SliceNode->GetActiveSlice());
+    }
+  
+
 }
 
 
@@ -429,7 +439,8 @@ void vtkSlicerSliceGUI::BuildGUI ( vtkKWFrame *f, double *c )
       this->SliceViewer->SetApplication ( app );
       this->SliceViewer->SetParent ( this->SliceGUIFrame );
       this->SliceViewer->Create (  );
-
+      this->SliceViewer->SetHighlightColor(c);
+      
       this->SliceGUIFrame
         ->SetConfigurationOptionAsInt("-highlightthickness", 2);
       this->SliceGUIFrame
@@ -506,9 +517,9 @@ void vtkSlicerSliceGUI::SetupViewerAndController()
     this->GetSliceController()->SetAndObserveSliceLogic( this->GetLogic() );
     }
 
-  if ( this->GetSliceViewer() && this->GetSliceViewer()->GetImageMapper() )
+  if ( this->GetSliceViewer() )
     {
-    this->GetSliceViewer()->GetImageMapper()->SetInput( idata );
+    this->GetSliceViewer()->SetImageData( idata );
     }
   if ( this->GetSliceController() )
     {

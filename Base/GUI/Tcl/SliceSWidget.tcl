@@ -512,7 +512,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     "TimerEvent" { }
     "KeyPressEvent" { 
       set key [$_interactor GetKeySym]
-      if { [lsearch "v r b f space c e Up Down Left Right" $key] != -1 } {
+      if { [lsearch "v r b f space c e s S Up Down Left Right" $key] != -1 } {
         $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
         $sliceGUI SetGUICommandAbortFlag 1
         switch [$_interactor GetKeySym] {
@@ -546,6 +546,50 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
           }
           "e" {
             EditorToggleErasePaintLabel
+          }
+          "s" {
+            # set the active slice. if in compare view put this slice in 
+            # the background of the red viewer
+            if { $z >= 0 && $z < [lindex [$_sliceNode GetDimensions] 2] } {
+              $_sliceNode SetActiveSlice [expr int($z)]
+              if { [$this isCompareView] == 1 } {
+                # set the volume on the red viewer
+                set redGUI [$::slicer3::ApplicationGUI GetMainSliceGUI Red]
+                set redLogic [$redGUI GetLogic]
+                set redNode [$redGUI GetSliceNode]
+                set redCNode [$redLogic GetSliceCompositeNode]
+
+                $redCNode SetReferenceBackgroundVolumeID [$_sliceCompositeNode GetBackgroundVolumeID]
+                
+                # set the slice offset on the red viewer (translate to 
+                # active slice)
+                set offset [[$sliceGUI GetLogic] GetSliceOffset]
+                set offset2 [expr $offset + [$_sliceNode GetActiveSlice] * [lindex [[$sliceGUI GetLogic] GetLowestVolumeSliceSpacing] 2] ]
+                $redLogic SetSliceOffset $offset2
+              }
+            }
+          }
+          "S" {
+            # set the active slice. if in compare view put this slice in 
+            # the foreground of the red viewer
+            if { $z >= 0 && $z < [lindex [$_sliceNode GetDimensions] 2] } {
+              $_sliceNode SetActiveSlice [expr int($z)]
+              if { [$this isCompareView] == 1 } {
+                # set the volume on the red viewer
+                set redGUI [$::slicer3::ApplicationGUI GetMainSliceGUI Red]
+                set redLogic [$redGUI GetLogic]
+                set redNode [$redGUI GetSliceNode]
+                set redCNode [$redLogic GetSliceCompositeNode]
+
+                $redCNode SetReferenceForegroundVolumeID [$_sliceCompositeNode GetBackgroundVolumeID]
+                
+                # set the slice offset on the red viewer (translate to 
+                # active slice?)
+                set offset [[$sliceGUI GetLogic] GetSliceOffset]
+                set offset [expr $offset + [$_sliceNode GetActiveSlice] * [lindex [[$sliceGUI GetLogic] GetLowestVolumeSliceSpacing] 2] ]
+                $redLogic SetSliceOffset $offset
+              } 
+            }
           }
           default {
             set capture 0
@@ -801,16 +845,9 @@ itcl::body SliceSWidget::moveSlice { delta } {
     }
 
     # set the slice offset for all slice logics
-    # also set the slice spacing for all slice nodes to match (jvm)
     set numberOfLogics [llength $logics]
     foreach logic $logics {
         $logic SetSliceOffset [expr $offset + $delta]
-#        if { $numberOfLogics == 1 } { 
-#            [$logic GetSliceNode] SetSliceSpacingModeToAutomatic 
-#        } else {
-#            [$logic GetSliceNode] SetSliceSpacingModeToPrescribed
-#            eval [$logic GetSliceNode] SetPrescribedSliceSpacing $spacing
-#        }
     }    
 }
 

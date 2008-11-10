@@ -166,6 +166,11 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
           }
         this->ImageData->DeepCopy( this->Blend->GetOutput()); 
         this->ExtractModelTexture->SetInput( this->ImageData );
+        vtkTransform *activeSliceTransform = vtkTransform::New();
+        activeSliceTransform->Identity();
+        activeSliceTransform->Translate(0, 0, this->SliceNode->GetActiveSlice() );
+        this->ExtractModelTexture->SetResliceTransform( activeSliceTransform );
+        activeSliceTransform->Delete();
         }
       }
     else 

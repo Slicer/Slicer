@@ -359,6 +359,9 @@ void vtkSlicerSliceLogic::ProcessLogicEvents()
     double outPt[4];
     double *outPt3 = outPt;
 
+    // set the z position to be the active slice (from the lightbox)
+    inPt[2] = this->SliceNode->GetActiveSlice();
+
     xyToRAS->MultiplyPoint(inPt, outPt);
     points->SetPoint(0, outPt3);
 
