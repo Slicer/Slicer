@@ -301,7 +301,7 @@ void vtkSlicerSliceViewer::ChangeLayout( int numberRows, int numberColumns )
         // viewport in the lightbox and hide them initially
         vtkPolyData *poly = vtkPolyData::New();
         vtkPoints *points = vtkPoints::New();
-        double eps = 0.01;
+        double eps = 0.0;
         points->InsertNextPoint( eps, eps, 0 );
         points->InsertNextPoint( 1, eps, 0 );
         points->InsertNextPoint( 1, 1, 0 );
