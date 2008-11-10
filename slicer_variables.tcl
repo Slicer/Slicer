@@ -136,14 +136,10 @@ set ::PYTHON_BIN_DIR $::Slicer3_LIB/python-build
 set ::CMAKE_PATH $::Slicer3_LIB/CMake-build
 set ::SOV_BINARY_DIR ""
 set ::XVNC_EXECUTABLE " "
-set ::IGSTK_DIR $::Slicer3_LIB/IGSTK-build 
+set ::OPENIGTLINK_DIR $::Slicer3_LIB/OpenIGTLink-build 
 set ::SLICERLIBCURL_SRC_DIR $::Slicer3_LIB/cmcurl
 set ::SLICERLIBCURL_BUILD_DIR $::Slicer3_LIB/cmcurl-build
 
-
-# Options for building IGT modules in Slicer
-set ::IGSTK "OFF"
-set ::NAVITRACK "OFF"
 
 # Option for build using system Python, should be "true" or "false"
 set ::USE_SYSTEM_PYTHON "false"
@@ -152,15 +148,6 @@ set ::USE_PYTHON "off"
 # CMake option for numerical Python, only matters if Python is on
 set ::USE_NUMPY "ON"
 
-# The absolute path and directory containing the navitrack library,
-# for instance on linux the libNaviTrack.so
-# set ::NAVITRACK_LIB_DIR /home/hliu/projects/navitrack/NaviTrack-build
-set ::NAVITRACK_LIB_DIR "" 
-
-# The navitrack include directry, e.g.
-# /home/hliu/projects/navitrack/NaviTrack/include
-# set ::NAVITRACK_INC_DIR /home/hliu/projects/navitrack/NaviTrack/include
-set ::NAVITRACK_INC_DIR "" 
 
 switch $::tcl_platform(os) {
     "SunOS" {
@@ -208,7 +195,7 @@ switch $::tcl_platform(os) {
         set ::ITK_TEST_FILE $::ITK_BINARY_PATH/bin/libITKCommon.$shared_lib_ext
         set ::TK_EVENT_PATCH $::Slicer3_HOME/tkEventPatch.diff
         set ::env(VTK_BUILD_SUBDIR) $::VTK_BUILD_SUBDIR
-        set ::IGSTK_TEST_FILE $::IGSTK_DIR/bin/libIGSTK.$shared_lib_ext
+        set ::OPENIGTLINK_TEST_FILE $::OPENIGTLINK_DIR/bin/libOpenIGTLink.$shared_lib_ext
         set ::SLICERLIBCURL_TEST_FILE $::SLICERLIBCURL_BUILD_DIR/bin/libslicerlibcurl.$shared_lib_ext
         set ::IWIDGETS_TEST_FILE $::TCL_LIB_DIR/iwidgets4.0.1/iwidgets.tcl
         set ::BLT_TEST_FILE $::TCL_BIN_DIR/bltwish24
@@ -248,7 +235,7 @@ switch $::tcl_platform(os) {
         set ::ITK_TEST_FILE $::ITK_BINARY_PATH/bin/libITKCommon.$shared_lib_ext
         set ::TK_EVENT_PATCH $::Slicer3_HOME/tkEventPatch.diff
         set ::env(VTK_BUILD_SUBDIR) $::VTK_BUILD_SUBDIR
-        set ::IGSTK_TEST_FILE $::IGSTK_DIR/bin/libIGSTK.$shared_lib_ext
+        set ::OPENIGTLINK_TEST_FILE $::OPENIGTLINK_DIR/bin/libOpenIGTLink.$shared_lib_ext
         set ::SLICERLIBCURL_TEST_FILE $::SLICERLIBCURL_BUILD_DIR/bin/libslicerlibcurl.a
 
     }
@@ -281,7 +268,7 @@ switch $::tcl_platform(os) {
         set ::ITK_TEST_FILE $::ITK_BINARY_PATH/bin/libITKCommon.$shared_lib_ext
         set ::TK_EVENT_PATCH $::Slicer3_HOME/tkEventPatch.diff
         set ::env(VTK_BUILD_SUBDIR) $::VTK_BUILD_SUBDIR
-        set ::IGSTK_TEST_FILE $::IGSTK_DIR/bin/libIGSTK.$shared_lib_ext
+        set ::OPENIGTLINK_TEST_FILE $::OPENIGTLINK_DIR/bin/libOpenIGTLink.$shared_lib_ext
         set ::SLICERLIBCURL_TEST_FILE $::SLICERLIBCURL_BUILD_DIR/bin/libslicerlibcurl.a
 
     }
@@ -315,7 +302,7 @@ switch $::tcl_platform(os) {
         set ::VTK_TK_LIB $::TCL_LIB_DIR/tk84.lib
         set ::VTK_TCLSH $::TCL_BIN_DIR/tclsh84.exe
         set ::ITK_TEST_FILE $::ITK_BINARY_PATH/bin/$::VTK_BUILD_TYPE/ITKCommon.dll
-        set ::IGSTK_TEST_FILE $::IGSTK_DIR/bin/$::VTK_BUILD_TYPE/IGSTK.lib
+        set ::OPENIGTLINK_TEST_FILE $::OPENIGTLINK_DIR/bin/$::VTK_BUILD_TYPE/OpenIGTLink.lib
         set ::SLICERLIBCURL_TEST_FILE $::SLICERLIBCURL_BUILD_DIR/bin/$::VTK_BUILD_TYPE/slicerlibcurl.lib
     }
     default {
