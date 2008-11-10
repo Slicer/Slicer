@@ -52,7 +52,7 @@ vtkMRMLNode* vtkMRMLSelectionNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLSelectionNode::vtkMRMLSelectionNode()
 {
-  this->SingletonTag = "vtkMRMLSelectionNode";
+  this->SingletonTag = const_cast<char *>("vtkMRMLSelectionNode");
 
   this->ActiveVolumeID = NULL;
   this->ActiveLabelVolumeID = NULL;

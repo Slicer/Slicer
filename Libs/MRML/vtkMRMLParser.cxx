@@ -52,7 +52,7 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
       std::stringstream ss(attValue);
       std::string kwd = "";
       std::string val = "";
-      int i;
+      unsigned int i;
       while (!ss.eof())
         {
         std::string tags;

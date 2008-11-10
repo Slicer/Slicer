@@ -52,7 +52,7 @@ vtkMRMLNode* vtkMRMLViewNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLViewNode::vtkMRMLViewNode()
 {
-  this->SingletonTag = "vtkMRMLViewNode";
+  this->SingletonTag = const_cast<char *>("vtkMRMLViewNode");
 
   this->Active = 0;
   this->BoxVisible = 1;

@@ -251,7 +251,6 @@ void vtkTagTable::SelectTag ( const char *attribute )
     std::string att (attribute);
      
     std::map<std::string, int>::iterator iter;
-    int updated=0;
     for ( iter = this->TagSelectionTable.begin();
           iter != this->TagSelectionTable.end();
           iter++)
@@ -271,7 +270,6 @@ void vtkTagTable::DeselectTag ( const char *attribute)
     std::string att (attribute);
      
     std::map<std::string, int>::iterator iter;
-    int updated=0;
     for ( iter = this->TagSelectionTable.begin();
           iter != this->TagSelectionTable.end();
           iter++)
@@ -292,7 +290,6 @@ int vtkTagTable::IsTagSelected ( const char *attribute )
     std::string att (attribute);
      
     std::map<std::string, int>::iterator iter;
-    int updated=0;
     for ( iter = this->TagSelectionTable.begin();
           iter != this->TagSelectionTable.end();
           iter++)
@@ -459,7 +456,6 @@ void vtkTagTable::DeleteTag ( const char *attribute  )
 
   std::string att(attribute);
   
-  int deltag=0;
   this->TagTable.erase( att );
   this->TagSelectionTable.erase (att );
 }

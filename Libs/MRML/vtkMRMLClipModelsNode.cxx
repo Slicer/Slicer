@@ -52,7 +52,7 @@ vtkMRMLNode* vtkMRMLClipModelsNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLClipModelsNode::vtkMRMLClipModelsNode()
 {
-  this->SingletonTag = "vtkMRMLClipModelsNode";
+  this->SingletonTag = const_cast<char *>("vtkMRMLClipModelsNode");
   this->HideFromEditors = true;
   this->ClipType = 0;
   this->RedSliceClipState = 0;
