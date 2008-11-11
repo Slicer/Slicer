@@ -1092,6 +1092,8 @@ void vtkSlicerSlicesControlGUI::ModifyCrossHairMode ( )
       {
       cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
                                                        appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+
+      // Crosshair mode
       if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("No crosshair") == 1 )
         {
         if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::NoCrosshair )
@@ -1127,7 +1129,23 @@ void vtkSlicerSlicesControlGUI::ModifyCrossHairMode ( )
           cnode->SetCrosshairMode ( vtkMRMLSliceCompositeNode::ShowAll );
           }
         }      
-      else if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Jump slice") == 1)
+      else if (this->GetCrossHairButton()->GetMenu()->GetItemSelectedState( "Small basic") ==1 )
+        {
+        if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::ShowSmallBasic )
+          {
+          cnode->SetCrosshairMode ( vtkMRMLSliceCompositeNode::ShowSmallBasic );
+          }
+        }      
+      else if (this->GetCrossHairButton()->GetMenu()->GetItemSelectedState( "Small basic + intersection") ==1 )
+        {
+        if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::ShowSmallIntersection )
+          {
+          cnode->SetCrosshairMode ( vtkMRMLSliceCompositeNode::ShowSmallIntersection );
+          }
+        }      
+
+      // Crosshair Actions
+      if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Jump slice") == 1)
         {
         if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::JumpSlice )
           {
@@ -1139,6 +1157,29 @@ void vtkSlicerSlicesControlGUI::ModifyCrossHairMode ( )
         if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::Normal )
           {
           cnode->SetCrosshairBehavior ( vtkMRMLSliceCompositeNode::Normal );
+          }
+        }      
+
+      // Crosshair thickness
+      if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Fine") == 1)
+        {
+        if ( cnode->GetCrosshairThickness() != vtkMRMLSliceCompositeNode::Fine )
+          {
+          cnode->SetCrosshairToFine();
+          }
+        }      
+      else if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Medium") == 1)
+        {
+        if ( cnode->GetCrosshairThickness() != vtkMRMLSliceCompositeNode::Medium )
+          {
+          cnode->SetCrosshairToMedium();
+          }
+        }      
+      else if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Thick") == 1)
+        {
+        if ( cnode->GetCrosshairThickness() != vtkMRMLSliceCompositeNode::Thick )
+          {
+          cnode->SetCrosshairToThick();
           }
         }      
       }
@@ -1559,15 +1600,47 @@ void vtkSlicerSlicesControlGUI::BuildCompositingMenu ( )
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesControlGUI::BuildCrossHairMenu ( )
 {
+  int item;
   this->CrossHairButton->GetMenu()->DeleteAllItems ( );
-  this->CrossHairButton->GetMenu()->AddRadioButton ("No crosshair" );
-  this->CrossHairButton->GetMenu()->AddRadioButton ("Basic crosshair" );  
-  this->CrossHairButton->GetMenu()->AddRadioButton ("Basic + intersection" );
-  this->CrossHairButton->GetMenu()->AddRadioButton ("Basic + hashmarks" );
-  this->CrossHairButton->GetMenu()->AddRadioButton ("Basic + hashmarks + intersection" );
+
+  item = this->CrossHairButton->GetMenu()->AddRadioButton ("No crosshair" );
+  this->CrossHairButton->GetMenu()->SetItemGroupName(item, "CrosshairMode" );
+  
+  item = this->CrossHairButton->GetMenu()->AddRadioButton ("Basic crosshair" );
+  this->CrossHairButton->GetMenu()->SetItemGroupName(item, "CrosshairMode" );
+  
+  item = this->CrossHairButton->GetMenu()->AddRadioButton ("Basic + intersection" );
+  this->CrossHairButton->GetMenu()->SetItemGroupName(item, "CrosshairMode" );
+  
+  item = this->CrossHairButton->GetMenu()->AddRadioButton ("Basic + hashmarks" );
+  this->CrossHairButton->GetMenu()->SetItemGroupName(item, "CrosshairMode" );
+  
+  item = this->CrossHairButton->GetMenu()->AddRadioButton ("Basic + hashmarks + intersection" );
+  this->CrossHairButton->GetMenu()->SetItemGroupName(item, "CrosshairMode" );
+  
+  item = this->CrossHairButton->GetMenu()->AddRadioButton ("Small basic" );
+  this->CrossHairButton->GetMenu()->SetItemGroupName(item, "CrosshairMode" );
+  this->CrossHairButton->GetMenu()->SelectItem ("Small basic");
+  
+  item = this->CrossHairButton->GetMenu()->AddRadioButton ("Small Basic + intersection" );
+  this->CrossHairButton->GetMenu()->SetItemGroupName(item, "CrosshairMode" );
+  
+  this->CrossHairButton->GetMenu()->AddSeparator();
+  item = this->CrossHairButton->GetMenu()->AddRadioButton ("Fine");
+  this->CrossHairButton->GetMenu()->SetItemGroupName(item, "CrosshairThickness" );
+
+  item = this->CrossHairButton->GetMenu()->AddRadioButton ("Medium");
+  this->CrossHairButton->GetMenu()->SetItemGroupName(item, "CrosshairThickness" );
+
+  item = this->CrossHairButton->GetMenu()->AddRadioButton ("Thick");
+  this->CrossHairButton->GetMenu()->SetItemGroupName(item, "CrosshairThickness" );
+
+  this->CrossHairButton->GetMenu()->SelectItem ("Medium");
+
+  
+  this->CrossHairButton->GetMenu()->AddSeparator();
   this->CrossHairButton->GetMenu()->AddCheckButton ("Jump slice" );
   this->CrossHairButton->GetMenu()->DeselectItem ( "Jump slice" );
-  this->CrossHairButton->GetMenu()->SelectItem ("No crosshair");
   this->CrossHairButton->GetMenu()->AddSeparator ( );
   this->CrossHairButton->GetMenu()->AddCommand ("close");
 }

@@ -58,6 +58,7 @@ public:
   void HighlightSlice(int slice);
   void UnhighlightSlice(int slice);
   void UnhighlightAllSlices();
+  vtkGetVector3Macro(HighlightColor, double);
   vtkSetVector3Macro(HighlightColor, double);
   
   // Description:

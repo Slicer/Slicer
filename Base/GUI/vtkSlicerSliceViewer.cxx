@@ -31,6 +31,7 @@ vtkStandardNewMacro ( vtkSlicerSliceViewer );
 vtkCxxRevisionMacro ( vtkSlicerSliceViewer, "$Revision: 1.0 $");
 
 
+
 //---------------------------------------------------------------------------
 vtkSlicerSliceViewer::vtkSlicerSliceViewer ( ) {
 
@@ -414,4 +415,5 @@ void vtkSlicerSliceViewer::UnhighlightAllSlices( )
     this->HighlightActorVec[i]->VisibilityOff();
     }
 }
+
 

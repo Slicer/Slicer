@@ -26,7 +26,8 @@ if { [itcl::find class CrosshairSWidget] == "" } {
     destructor {}
 
     #public variable rgba ".5 .9 .5 .6"  ;# crosshair color
-    public variable rgba "1.0 0.8 0.1 .6"  ;# crosshair color
+    #public variable rgba "1.0 0.8 0.1 .6"  ;# crosshair color
+    public variable rgba "1.0 0.8 0.1 1.0"  ;# crosshair color
 
     variable _compositeNode
 
@@ -35,6 +36,8 @@ if { [itcl::find class CrosshairSWidget] == "" } {
     method updateCrosshair { } {}
     method resetCrosshair { } {}
     method addCrosshairLine { startPoint endPoint } {}
+
+    method setPosition { r a s } {}
   }
 }
 
@@ -44,6 +47,9 @@ if { [itcl::find class CrosshairSWidget] == "" } {
 itcl::body CrosshairSWidget::constructor {sliceGUI} {
 
   $this configure -sliceGUI $sliceGUI
+
+  # cache the color of the viewer
+  set rgba "[lindex [[$sliceGUI GetSliceViewer] GetHighlightColor] 0] [lindex [[$sliceGUI GetSliceViewer] GetHighlightColor] 1] [lindex [[$sliceGUI GetSliceViewer] GetHighlightColor] 2] [lindex $rgba 3]"
  
   # create crosshair display parts
   set o(crosshairPolyData) [vtkNew vtkPolyData]
@@ -67,7 +73,7 @@ itcl::body CrosshairSWidget::constructor {sliceGUI} {
 
   $::slicer3::Broker AddObservation $sliceGUI DeleteEvent "::SWidget::ProtectedDelete $this"
 
-  set events {  "MouseMoveEvent" "UserEvent" }
+  set events {  "MouseMoveEvent" "UserEvent" "EnterEvent" "LeaveEvent"}
   foreach event $events {
     $::slicer3::Broker AddObservation $sliceGUI $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI $event"
   }
@@ -125,17 +131,59 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
     switch $event {
 
       "MouseMoveEvent" {
-        #
-        # TODO: what do we want to do on mouse move?
-        #
+          #
+          # TODO: what do we want to do on mouse move?
+          #
+          
+          # update the actors...
+          foreach {windowx windowy} [$_interactor GetEventPosition] {}
+          foreach {x y z} [$this dcToXYZ $windowx $windowy] {}  
+          
+          set xyToRAS [$_sliceNode GetXYToRAS]
+          set ras [$xyToRAS MultiplyPoint $x $y $z 1]
+          
+          # position this crosshair actor at the viewport position
+          $o(crosshairActor) SetPosition $x $y
 
-        # update the actors...
+          # set other crosshairs to this ras
+          foreach {r a s w} $ras {}
+          set itclobjects [itcl::find objects]
+          foreach cw $itclobjects {
+            if {[$cw isa CrosshairSWidget] && $cw != $this} {
+              $cw setPosition $r $a $s
+              if { [[[[$cw cget -sliceGUI] GetLogic] GetSliceCompositeNode] GetCrosshairBehavior] == 1 } {
+                [[[$cw cget -sliceGUI] GetLogic] GetSliceNode] JumpSlice $r $a $s
+              }
+              [[$cw cget -sliceGUI] GetSliceViewer] RequestRender
+            }
+          }
+
+        return
+      }
+      "EnterEvent" {
+#         puts "EnterEvent"
+#         if { [$_sliceCompositeNode GetCrosshairMode] != 0 } {
+#           # set the cursor to a dot (can't figure out how to hide it)
+#           set tkutil [vtkKWTkUtilities New]
+#           $tkutil SetTopLevelMouseCursor [[$sliceGUI GetSliceViewer] GetWidget] "rightbutton"
+#           $tkutil Delete
+#         }
+
+        return
+      }
+      "LeaveEvent" {
+#         puts "LeaveEvent"
+#         if { [$_sliceCompositeNode GetCrosshairMode] != 0 } {
+#           # show the cursor
+#           set tkutil [vtkKWTkUtilities New]
+#           $tkutil SetTopLevelMouseCursor [[$sliceGUI GetSliceViewer] GetWidget] "arrow"
+#           $tkutil Delete
+#         }
+
+        return
       }
     }
-
-    return
   }
-
 }
 
 itcl::body CrosshairSWidget::resetCrosshair { } {
@@ -182,12 +230,21 @@ itcl::body CrosshairSWidget::updateCrosshair { } {
   set w [winfo width $tkwindow]
   set h [winfo height $tkwindow]
 
-  set halfW [expr $w / 2.0]
-  set halfWminus [expr $halfW - 5]
-  set halfWplus [expr $halfW + 5]
-  set halfH [expr $h / 2.0]
-  set halfHminus [expr $halfH - 5]
-  set halfHplus [expr $halfH + 5]
+  set negW [expr -1.0*$w]
+  set negWminus -5
+  set negWminus2 -10
+  set posWplus 5
+  set posWplus2 10
+  set posW $w
+
+  set negH [expr -1.0*$h]
+  set negHminus -5
+  set negHminus2 -10
+  set posHplus 5
+  set posHplus2 10
+  set posH $h
+
+
 
   switch [$sliceCompositeNode GetCrosshairMode] {
     "0" {
@@ -195,34 +252,62 @@ itcl::body CrosshairSWidget::updateCrosshair { } {
     }
     "1" {
       # show basic
-      $this addCrosshairLine "$halfW 0 0 0" "$halfW $halfHminus 0 0"
-      $this addCrosshairLine "$halfW $halfHplus 0 0" "$halfW $h 0 0"
-      $this addCrosshairLine "0 $halfH 0 0" "$halfWminus $halfH 0 0"
-      $this addCrosshairLine "$halfWplus $halfH 0 0" "$w $halfH 0 0"
+      $this addCrosshairLine "0 $negH 0 0" "0 $negHminus 0 0"
+      $this addCrosshairLine "0 $posHplus 0 0" "0 $posH 0 0"
+      $this addCrosshairLine "$negW 0 0 0" "$negWminus 0 0 0"
+      $this addCrosshairLine "$posWplus 0 0 0" "$posW 0 0 0"
     }
     "2" {
       # show intersection
-      $this addCrosshairLine "$halfW 0 0 0" "$halfW $h 0 0"
-      $this addCrosshairLine "0 $halfH 0 0" "$w $halfH 0 0"
+      $this addCrosshairLine "$negW 0 0 0" "$posW 0 0 0"
+      $this addCrosshairLine "0 $negH 0 0" "0 $posH 0 0"
     }
     "3" {
       # show hashmarks
-      # TODO: add hashmarks
-      $this addCrosshairLine "$halfW 0 0 0" "$halfW $halfHminus 0 0"
-      $this addCrosshairLine "$halfW $halfHplus 0 0" "$halfW $h 0 0"
-      $this addCrosshairLine "0 $halfH 0 0" "$halfWminus $halfH 0 0"
-      $this addCrosshairLine "$halfWplus $halfH 0 0" "$w $halfH 0 0"
+      # TODO: add hashmarks (in cm?)
+      $this addCrosshairLine "0 $negH 0 0" "0 $negHminus 0 0"
+      $this addCrosshairLine "0 $posHplus 0 0" "0 $posH 0 0"
+      $this addCrosshairLine "$negW 0 0 0" "$negWminus 0 0 0"
+      $this addCrosshairLine "$posWplus 0 0 0" "$posW 0 0 0"
     }
     "4" {
       # show all
-      # TODO: add hashmarks
+      # TODO: add hashmarks (in cm?)
       # show intersection
-      $this addCrosshairLine "$halfW 0 0 0" "$halfW $h 0 0"
-      $this addCrosshairLine "0 $halfH 0 0" "$w $halfH 0 0"
+      $this addCrosshairLine "$negW 0 0 0" "$posW 0 0 0"
+      $this addCrosshairLine "0 $negH 0 0" "0 $posH 0 0"
+    }
+    "5" {
+      # small open cross
+      $this addCrosshairLine "0 $negHminus2 0 0" "0 $negHminus 0 0"
+      $this addCrosshairLine "0 $posHplus 0 0" "0 $posHplus2 0 0"
+      $this addCrosshairLine "$negWminus2 0 0 0" "$negWminus 0 0 0"
+      $this addCrosshairLine "$posWplus 0 0 0" "$posWplus2 0 0 0"
+    }
+    "6" {
+      # small closed cross (intersection)
+      $this addCrosshairLine "0 $negHminus2 0 0" "0 $posHplus2 0 0"
+      $this addCrosshairLine "$negWminus2 0 0 0" "$posWplus2 0 0 0"
     }
   }
 
+  if { [$sliceCompositeNode GetCrosshairThickness] == 1 } {
+    [$o(crosshairActor) GetProperty] SetLineWidth 1
+  } elseif  { [$sliceCompositeNode GetCrosshairThickness] == 2 } {
+    [$o(crosshairActor) GetProperty] SetLineWidth 3
+  } elseif  { [$sliceCompositeNode GetCrosshairThickness] == 3 } {
+    [$o(crosshairActor) GetProperty] SetLineWidth 5
+  } 
+
   [$sliceGUI GetSliceViewer] RequestRender
+}
+
+
+itcl::body CrosshairSWidget::setPosition { r a s } {
+
+  foreach {x y z } [rasToXYZ "$r $a $s"] {}
+
+  $o(crosshairActor) SetPosition $x $y
 }
 
 proc CrosshairSWidget::AddCrosshair {} {
@@ -247,3 +332,4 @@ proc CrosshairSWidget::ToggleCrosshair {} {
     CrosshairSWidget::RemoveCrosshair
   }
 }
+

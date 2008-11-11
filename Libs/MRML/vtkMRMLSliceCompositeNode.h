@@ -140,7 +140,13 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   vtkSetMacro (CrosshairMode, int );  
   vtkGetMacro (CrosshairBehavior, int );
   vtkSetMacro (CrosshairBehavior, int );  
-
+  vtkSetClampMacro (CrosshairThickness, int, 1, 3);
+  vtkGetMacro (CrosshairThickness, int);
+  void SetCrosshairToFine() { this->SetCrosshairThickness(1); }
+  void SetCrosshairToMedium() { this->SetCrosshairThickness(2); }
+  void SetCrosshairToThick() { this->SetCrosshairThickness(3); }
+  
+  
   // Description:
   // Name of the layout
   void SetLayoutName(const char *layoutName) {
@@ -173,7 +179,15 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
       ShowBasic,
       ShowIntersection,
       ShowHashmarks,
-      ShowAll
+      ShowAll,
+      ShowSmallBasic,
+      ShowSmallIntersection
+    };
+  enum
+    {
+      Fine = 1,
+      Medium,
+      Thick,
     };
   enum
     {
@@ -216,6 +230,7 @@ protected:
   int AnnotationMode;
   
   int CrosshairMode;
+  int CrosshairThickness;
   int CrosshairBehavior;
 
 };
