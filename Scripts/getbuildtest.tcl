@@ -415,11 +415,12 @@ runcmd $::CMAKE \
         -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
         -DKWWidgets_DIR:FILEPATH=$Slicer3_LIB/KWWidgets-build \
         -DTeem_DIR:FILEPATH=$Slicer3_LIB/teem-build \
-        -DOPENIGTLINK_DIR:FILEPATH=$Slicer3_LIB/OpenIGTLink-build \
+        -DOpenIGTLink_DIR:FILEPATH=$Slicer3_LIB/OpenIGTLink-build \
         -DINCR_TCL_LIBRARY:FILEPATH=$::INCR_TCL_LIB \
         -DINCR_TK_LIBRARY:FILEPATH=$::INCR_TK_LIB \
         -DSlicer3_USE_PYTHON=$::USE_PYTHON \
         -DSlicer3_USE_NUMPY=$::USE_NUMPY \
+        -DSlicer3_USE_OPENIGTLINK=$::USE_OPENIGTLINK \
         -DPYTHON_INCLUDE_PATH:PATH=$::PYTHON_INCLUDE \
         -DPYTHON_LIBRARY:FILEPATH=$::PYTHON_LIB \
         -DSandBox_DIR:FILEPATH=$Slicer3_LIB/NAMICSandBox \

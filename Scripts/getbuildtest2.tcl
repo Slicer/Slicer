@@ -360,7 +360,7 @@ runcmd $::CMAKE \
         -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
         -DKWWidgets_DIR:FILEPATH=$Slicer3_LIB/KWWidgets-build \
         -DTEEM_DIR:FILEPATH=$Slicer3_LIB/teem-build \
-        -DOPENIGTLINK_DIR:FILEPATH=$Slicer3_LIB/OpenIGTLink-build \
+        -DOpenIGTLink_DIR:FILEPATH=$Slicer3_LIB/OpenIGTLink-build \
         -DSandBox_DIR:FILEPATH=$Slicer3_LIB/NAMICSandBox \
         -DCMAKE_BUILD_TYPE=$::VTK_BUILD_TYPE \
         -DCMAKE_CXX_FLAGS_DEBUG:STRING=$::CMAKE_CXX_FLAGS_DEBUG \
