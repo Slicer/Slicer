@@ -63,9 +63,15 @@ subdirs(
    EMSegment
    DistanceMapModel
    #VolumeRenderingCuda
-   #OpenIGTLinkIF
-   NeuroNav
   )
+
+if(Slicer3_USE_OPENIGTLINK)
+  subdirs(
+    OpenIGTLinkIF
+    NeuroNav
+    )
+endif(Slicer3_USE_OPENIGTLINK)
+
 
 
 ## SLICES_DEBUG
