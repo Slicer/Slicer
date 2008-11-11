@@ -564,6 +564,7 @@ set( Slicer3_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
 
 ###################
 
+subdirs ( SparseFieldLevelSetContour )
 subdirs ( Realign )
 subdirs( DiffusionApplications )
 subdirs( ExtractSkeleton )

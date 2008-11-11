@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+<title>SFLS SulciSeg</title>
+<description>Sparse-Field Levelset Sulci Segmentation. Given some initial points in polydata will construct a contour and evolve it to high mean-curvature areas, returning the interior region indices.</description>
+  <parameters>
+  
+	<label>Input Parameters</label>
+	<description>The inputs for the contour initialization and poly data</description>
+	<geometry>
+		<name>InputSurface</name>
+		<description>The filename of the input vtk polydata file for the surface.</description>
+		<label>Input Surface</label>
+		<longflag>inputScene</longflag>
+		<channel>input</channel>
+	</geometry>
+	<double-vector>
+		<name>InteriorSeedPt</name>
+		<flag>s</flag>
+		<longflag>seed</longflag>
+		<description>
+		A point in the coordinate space for an interior point
+		</description>
+		<label>Double Vector Parameter</label>
+		<default>0.0,0.0,0.0</default>
+	</double-vector>
+	<point coordinateSystem="ras" multiple="true">
+		<name>ContourSeedPts</name>
+		<label>Contour Points</label>
+		<flag>c</flag>
+		<longflag>contourpoints</longflag>
+		<description>The initialization points in x,y,z coords where the contour is seeded initially. Warning: there are topological restrictions, see the documentation.</description>
+	</point>
+  </parameters>
+  
+  <parameters>
+	<label>Output Parameters</label>
+	<description>Output params.</description>
+	<geometry type="model">
+		<name>OutputSurface</name>
+		<description>Output surface, the input with added scalar map for result.</description>
+		<label>Output Surface</label>
+		<longflag>outputScene</longflag>
+		<channel>output</channel>
+	</geometry>
+	<file>
+		<name>OutputFilename</name>
+		<description>Name of the output data file.</description>
+		<label>Output Filename</label>
+		<longflag>outputFilename</longflag>
+		<default>lsvtkout.txt</default>
+	</file>
+   </parameters>
+  
+  <contributor>
+  Peter Karasev, pkarasev@gatech.edu
+  </contributor>
+  <documentation-url>
+  http://www.google.com
+  </documentation-url>
+  <category>segmentation</category>
+</executable>
