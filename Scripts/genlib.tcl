@@ -1101,7 +1101,7 @@ if { ![file exists $::CMAKE] } {
 if { ![file exists $::Teem_TEST_FILE] } {
     puts "Teem test file $::Teem_TEST_FILE not found."
 }
-if { ![file exists $::OPENIGTLINK_TEST_FILE] } {
+if { ![file exists $::OPENIGTLINK_TEST_FILE] && [string tolower $::USE_OPENIGTLINK] == "on" } {
     puts "OpenIGTLink test file $::OPENIGTLINK_TEST_FILE not found."
 }
 if { ![file exists $::SLICERLIBCURL_TEST_FILE] } {
