@@ -909,7 +909,7 @@ if { [BuildThis $::Teem_TEST_FILE "teem"] == 1 } {
     cd $Slicer3_LIB
 
     #runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/teem teem
-    runcmd echo t | $::SVN co https://teem.svn.sourceforge.net/svnroot/teem/teem/trunk teem
+    runcmd echo t | $::SVN co http://teem.svn.sourceforge.net/svnroot/teem/teem/trunk teem
 
 
     if {$::GENLIB(buildit)} {
