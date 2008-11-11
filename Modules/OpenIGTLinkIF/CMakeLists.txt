@@ -15,14 +15,6 @@ if(NOT Slicer3_SOURCE_DIR)
   slicer3_set_default_install_prefix_for_external_projects()
 endif(NOT Slicer3_SOURCE_DIR)
 
-# --------------------------------------------------------------------------
-# Find Open IGT Link library
-set(OpenIGTLink_DIR "${Slicer3_SOURCE_DIR}/../Slicer3-lib/OpenIGTLink-build")
-find_package(OpenIGTLink REQUIRED)
-if(OpenIGTLink_FOUND)
-  include(${OpenIGTLink_USE_FILE})
-endif(OpenIGTLink_FOUND)
-
 
 # --------------------------------------------------------------------------
 # Include dirs
