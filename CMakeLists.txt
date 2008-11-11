@@ -174,34 +174,12 @@ endif(Slicer3_USE_BatchMake)
 ## MIDAS
 option(Slicer3_USE_MIDAS "Build Slicer3 with MIDAS support." OFF)
 
-## NaviTrack 
-option(Slicer3_USE_NAVITRACK "Build Slicer3 with NaviTrack support." OFF)
-if(Slicer3_USE_NAVITRACK)
-  find_library(NAVITRACK_LIB 
-    NAMES NaviTrack
-    PATHS ${NAVITRACK_LIB_DIR} 
-    )
-  if(NAVITRACK_LIB-NOTFOUND)
-    message(FATAL_ERROR "Need NaviTrack to build")
-  endif(NAVITRACK_LIB-NOTFOUND)
-  # include file for OpenTracker 2.0 
-  find_path(NAVITRACK_INC "OpenTracker/OpenTracker.h" 
-    ${NAVITRACK_INC_DIR}
-    )
-  if(NAVITRACK_INC-NOTFOUND)
-    message(FATAL_ERROR "Need OpenTracker.h to build")
-  endif(NAVITRACK_INC-NOTFOUND)
-else(Slicer3_USE_NAVITRACK)
-  set(NAVITRACK_LIB "")
-  set(NAVITRACK_INC "")
-endif(Slicer3_USE_NAVITRACK)
-
-## IGSTK (Built in Slicer3-lib)
-option(Slicer3_USE_IGSTK "Build Slicer3 with IGSTK support." OFF)
-if(Slicer3_USE_IGSTK)
-  find_package(IGSTK REQUIRED)
-  include(${IGSTK_USE_FILE})
-endif(Slicer3_USE_IGSTK)
+## OpenIGTLink (Built in Slicer3-lib)
+option(Slicer3_USE_OPENIGTLINK "Build Slicer3 with OpenIGTLink support." OFF)
+if(Slicer3_USE_OPENIGTLINK)
+  find_package(OpenIGTLink REQUIRED)
+  include(${OpenIGTLink_USE_FILE})
+endif(Slicer3_USE_OPENIGTLINK)
 
 #-----------------------------------------------------------------------------
 # Need some Tcl/Tk info
