@@ -464,3 +464,70 @@ static const unsigned char image_SlicesWinLevThreshCol[] =
   "j8n2HJfwatUe1UD3kIAgI2NlYTE+PU1NSaqqrZs2atWbPmxLFj9+/effn8+bvXr4eo9hfP"
   "n396944i7e/f0yLkh2h+pwQBAC0bDMc=";
 
+/* 
+ * Resource generated for file:
+ *    SlicerAutomaticSliceSpacing.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerAutomaticSliceSpacing_width          = 21;
+static const unsigned int  image_SlicerAutomaticSliceSpacing_height         = 21;
+static const unsigned int  image_SlicerAutomaticSliceSpacing_pixel_size     = 3;
+static const unsigned long image_SlicerAutomaticSliceSpacing_length         = 260;
+static const unsigned long image_SlicerAutomaticSliceSpacing_decoded_length = 1323;
+
+static const unsigned char image_SlicerAutomaticSliceSpacing[] = 
+  "eNpjYKAU/P///9+/f3/+/Pn58+f379+/EQeAKuHageTBTQHICCKCKQ6XffbsGbL2j/dTkB"
+  "FEBFMcLnv27Fk07UxMDGgaMUm4mr179yJrJxUgawcG2tu3b2/dugV00nEweM7DAyexAmTH"
+  "A4MdGJhAE4AB8hgMPvPxwUmsADnoMCPuNz8/nCQYcRDwgpERK/qPA2BqvwgDr3l5IQxitO"
+  "Oyl3jtJxctQkMjXDuREYdL+3+8gGDEEamdPEBxOccAABhcC6c=";
+
+/* 
+ * Resource generated for file:
+ *    SlicerAutomaticSliceSpacingMode.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerAutomaticSliceSpacingMode_width          = 21;
+static const unsigned int  image_SlicerAutomaticSliceSpacingMode_height         = 21;
+static const unsigned int  image_SlicerAutomaticSliceSpacingMode_pixel_size     = 3;
+static const unsigned long image_SlicerAutomaticSliceSpacingMode_length         = 292;
+static const unsigned long image_SlicerAutomaticSliceSpacingMode_decoded_length = 1323;
+
+static const unsigned char image_SlicerAutomaticSliceSpacingMode[] = 
+  "eNpjYKAU/P///9+/f3/+/Pn58+f379+/EQeAKuHageTBTQHICCKCKQ6XffbsGbL2j/dTkB"
+  "FEBFMcLnv27Fk07UxMDGgaMUm4mr179yJrJxUgawcG2tu3b2/dugV00nEweM7DAyexAmTH"
+  "A4MdGJhAE4AB8hgMPvPxwUmsADnoMCPuNz8/nCQYcRDwgpERK/qPA2BqvwgDr3l5IQxitO"
+  "Oyl3jtJxctQkMjXDs84oyMLIEoLS0NwiBSO7JdRkZGM2fOdHV1JT7i0FwLNAFPsiEVUFzO"
+  "MQAAOw34Hw==";
+
+/* 
+ * Resource generated for file:
+ *    SlicerManualSliceSpacing.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerManualSliceSpacing_width          = 21;
+static const unsigned int  image_SlicerManualSliceSpacing_height         = 21;
+static const unsigned int  image_SlicerManualSliceSpacing_pixel_size     = 3;
+static const unsigned long image_SlicerManualSliceSpacing_length         = 272;
+static const unsigned long image_SlicerManualSliceSpacing_decoded_length = 1323;
+
+static const unsigned char image_SlicerManualSliceSpacing[] = 
+  "eNpjYKAU/AeCf//+/f797/v3v1++/P30iSj05Qtc+0kOjoObAohHQPU/79xB1v7xfgoygo"
+  "hgisNlv+zahaadiYkBSAJF0LRDRCAkRA1Q/MPixcjaSUXI2oGB9vvZs+9nzgCd9GnTJiD6"
+  "yc0NJ7EiZMcDgx0YmEATgAHy88YNIPrDxwcnsSOkoMOMuH/8/HCSYMRBQBYS2M/ODif/4w"
+  "CY2i/CwGteXgiDGO24EiTx2mdigBGuHRKJZGv/jxcQjDgitZMHKC7nGADpFggQ";
+
+/* 
+ * Resource generated for file:
+ *    SlicerManualSliceSpacingMode.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerManualSliceSpacingMode_width          = 21;
+static const unsigned int  image_SlicerManualSliceSpacingMode_height         = 21;
+static const unsigned int  image_SlicerManualSliceSpacingMode_pixel_size     = 3;
+static const unsigned long image_SlicerManualSliceSpacingMode_length         = 304;
+static const unsigned long image_SlicerManualSliceSpacingMode_decoded_length = 1323;
+
+static const unsigned char image_SlicerManualSliceSpacingMode[] = 
+  "eNrlVLEKgzAUDC4Kov5Ltn6Aez+iOPSPOvsHji6lY8Glm4PQzaVLKwERa+xBaHgYbSMdex"
+  "xHOHPJ470gY79iBKSUfS/bdhBiaBorCqHjZ887ZVt7Yn9XVTT+uO4olWP6+qvI80nccRgU"
+  "ziSuHKVqD/x7mtL4WtI4mtbXdVsUKKnJMrDzfa2zpMWj7WgmTkBDurIEn2GodZ6kdebgZB"
+  "Rp/To4hT3B0XW1jgsw45c3bkGgFjbxpQdpHz8Y+PO4GiI2cL4BkyRRC8s4vYtzDjOOY/vB"
+  "TarFCR+ezVr8/J9jLwvW9Ig=";
+
+
