@@ -171,7 +171,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   // Description:
   // Enum to specify the method of jumping slices
   //BTX
-  enum {Normal=0, CenteredJumpSlice, OffsetJumpSlice};
+  enum {CenteredJumpSlice=0, OffsetJumpSlice};
   //ETX
 
   // Description:
@@ -181,7 +181,6 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   // offset to get the RAS position on the slice.
   vtkSetMacro(JumpMode, int);
   vtkGetMacro(JumpMode, int);
-  void SetJumpModeToNormal();
   void SetJumpModeToCentered();
   void SetJumpModeToOffset();
   

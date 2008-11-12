@@ -67,6 +67,7 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
   this->AnnotationSpace = vtkMRMLSliceCompositeNode::IJKAndRAS;
   this->AnnotationMode = vtkMRMLSliceCompositeNode::All;
   this->CrosshairMode = vtkMRMLSliceCompositeNode::ShowSmallBasic;
+  this->CrosshairBehavior = vtkMRMLSliceCompositeNode::Normal;
   this->CrosshairThickness = vtkMRMLSliceCompositeNode::Medium;
 }
 
@@ -170,6 +171,15 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
     of << indent << " crosshairMode=\"" << "ShowSmallIntersection" << "\"";
     }
   
+  if ( this->CrosshairBehavior == vtkMRMLSliceCompositeNode::JumpSlice )
+    {
+    of << indent << " crosshairBehavior=\"" << "JumpSlice" << "\"";
+    }
+  else if ( this->CrosshairBehavior == vtkMRMLSliceCompositeNode::Normal )
+    {
+    of << indent << " crosshairBehavior=\"" << "Normal" << "\"";
+    }
+
   if ( this->CrosshairThickness == vtkMRMLSliceCompositeNode::Fine )
     {
     of << indent << " crosshairThickness=\"" << "Fine" << "\"";
@@ -377,6 +387,20 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
         this->SetCrosshairMode (vtkMRMLSliceCompositeNode::ShowSmallIntersection);
         }
       }
+    else if (!strcmp (attName, "crosshairBehavior" ))
+      {
+      if ( !strcmp (attValue, "JumpSlice"))
+        {
+        this->SetCrosshairBehavior ( vtkMRMLSliceCompositeNode::JumpSlice);
+        }
+      }
+    else if (!strcmp (attName, "crosshairBehavior" ))
+      {
+      if ( !strcmp (attValue, "Normal"))
+        {
+        this->SetCrosshairBehavior ( vtkMRMLSliceCompositeNode::Normal);
+        }
+      }
     else if(!strcmp (attName, "crosshairThickness" ))
       {
       if (!strcmp (attValue, "Fine"))
@@ -418,6 +442,7 @@ void vtkMRMLSliceCompositeNode::Copy(vtkMRMLNode *anode)
   this->SetAnnotationSpace ( node->GetAnnotationSpace() );
   this->SetAnnotationMode ( node->GetAnnotationMode() );
   this->SetCrosshairMode ( node->GetCrosshairMode() );
+  this->SetCrosshairBehavior (node->GetCrosshairBehavior());
   this->SetCrosshairThickness (node->GetCrosshairThickness());
 }
 
@@ -444,6 +469,7 @@ void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "AnnotationSpace: " << this->AnnotationSpace << "\n";
   os << indent << "AnnotationMode: " << this->AnnotationMode << "\n";
   os << indent << "CrosshairMode: " << this->CrosshairMode << "\n";
+  os << indent << "CrosshairBehavior: " << this->CrosshairBehavior << "\n";
   os << indent << "CrosshairThickness: " << this->CrosshairThickness << "\n";
 }
 

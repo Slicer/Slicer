@@ -60,7 +60,7 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->SliceToRAS = vtkMatrix4x4::New();
   this->SliceToRAS->Identity();
 
-  this->JumpMode = Normal;
+  this->JumpMode = CenteredJumpSlice;
   
   this->OrientationString = NULL;
 
@@ -682,11 +682,7 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
     (this->UseLabelOutline ? "true" : "false") << "\n";
 
   os << indent << "Jump mode: ";
-  if (this->JumpMode == Normal)
-    {
-    std::cout << "Normal\n";
-    }
-  else if (this->JumpMode == CenteredJumpSlice)
+  if (this->JumpMode == CenteredJumpSlice)
     {
     std::cout << "Centered\n";
     }
@@ -734,7 +730,7 @@ void vtkMRMLSliceNode::JumpSlice(double r, double a, double s)
   double sr = sliceToRAS->GetElement(0, 3);
   double sa = sliceToRAS->GetElement(1, 3);
   double ss = sliceToRAS->GetElement(2, 3);
-  if (this->JumpMode == CenteredJumpSlice || this->JumpMode == Normal)
+  if (this->JumpMode == CenteredJumpSlice)
     {
     if ( r != sr || a != sa || s != ss )
       {
@@ -962,9 +958,4 @@ vtkMRMLSliceNode::SetJumpModeToOffset()
   this->SetJumpMode(OffsetJumpSlice);
 }
 
-void
-vtkMRMLSliceNode::SetJumpModeToNormal()
-{
-  this->SetJumpMode(Normal);
-}
 

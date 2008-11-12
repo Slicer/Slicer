@@ -138,6 +138,8 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   // configures the crosshair appearance and behavior
   vtkGetMacro (CrosshairMode, int );
   vtkSetMacro (CrosshairMode, int );  
+  vtkGetMacro (CrosshairBehavior, int );
+  vtkSetMacro (CrosshairBehavior, int );  
   vtkSetClampMacro (CrosshairThickness, int, 1, 3);
   vtkGetMacro (CrosshairThickness, int);
   void SetCrosshairToFine() { this->SetCrosshairThickness(1); }
@@ -170,7 +172,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
       LabelValuesOnly,
       LabelAndVoxelValuesOnly
     };
-  // Modes for crosshair display
+  // Modes for crosshair display and behavior
   enum
     {
       NoCrosshair = 0,
@@ -186,6 +188,11 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
       Fine = 1,
       Medium,
       Thick,
+    };
+  enum
+    {
+      Normal = 0,
+      JumpSlice
     };
   // Modes for compositing
   enum
@@ -224,6 +231,7 @@ protected:
   
   int CrosshairMode;
   int CrosshairThickness;
+  int CrosshairBehavior;
 
 };
 

@@ -1145,6 +1145,22 @@ void vtkSlicerSlicesControlGUI::ModifyCrossHairMode ( )
           }
         }      
 
+      // Crosshair Actions
+      if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Jump slice") == 1)
+        {
+        if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::JumpSlice )
+          {
+          cnode->SetCrosshairBehavior ( vtkMRMLSliceCompositeNode::JumpSlice );
+          }
+        }      
+      else if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Jump slice") == 0)
+        {
+        if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::Normal )
+          {
+          cnode->SetCrosshairBehavior ( vtkMRMLSliceCompositeNode::Normal );
+          }
+        }      
+
       // Crosshair thickness
       if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Fine") == 1)
         {
@@ -1191,14 +1207,7 @@ void vtkSlicerSlicesControlGUI::ModifyCrossHairMode ( )
       snode = vtkMRMLSliceNode::SafeDownCast ( appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceNode" ) );
 
       // Crosshair Actions
-      if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("No jumping") == 1)
-        {
-        if ( snode->GetJumpMode() != vtkMRMLSliceNode::Normal )
-          {
-          snode->SetJumpMode ( vtkMRMLSliceNode::Normal );
-          }
-        }      
-      else if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Centered jumping") == 1)
+      if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Centered jumping") == 1)
         {
         if ( snode->GetJumpMode() != vtkMRMLSliceNode::CenteredJumpSlice )
           {
@@ -1669,14 +1678,15 @@ void vtkSlicerSlicesControlGUI::BuildCrossHairMenu ( )
 
   
   this->CrossHairButton->GetMenu()->AddSeparator();
-  item = this->CrossHairButton->GetMenu()->AddRadioButton ("No jumping" );
-  this->CrossHairButton->GetMenu()->SetItemGroupName(item, "JumpMode" );
+  this->CrossHairButton->GetMenu()->AddCheckButton ("Jump slice" );
+  this->CrossHairButton->GetMenu()->DeselectItem ( "Jump slice" );
+  this->CrossHairButton->GetMenu()->AddSeparator();
   item = this->CrossHairButton->GetMenu()->AddRadioButton ("Centered jumping" );
   this->CrossHairButton->GetMenu()->SetItemGroupName(item, "JumpMode" );
   item = this->CrossHairButton->GetMenu()->AddRadioButton ("Offset jumping" );
   this->CrossHairButton->GetMenu()->SetItemGroupName(item, "JumpMode" );
   
-  this->CrossHairButton->GetMenu()->SelectItem ( "No jumping" );
+  this->CrossHairButton->GetMenu()->SelectItem ( "Centered jumping" );
   this->CrossHairButton->GetMenu()->AddSeparator ( );
   this->CrossHairButton->GetMenu()->AddCommand ("close");
 }

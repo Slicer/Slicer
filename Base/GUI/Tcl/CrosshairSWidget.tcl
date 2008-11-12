@@ -151,7 +151,7 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
           foreach cw $itclobjects {
             if {[$cw isa CrosshairSWidget] && $cw != $this} {
               $cw setPosition $r $a $s
-              if { [[[[$cw cget -sliceGUI] GetLogic] GetSliceNode] GetJumpMode] != 0 } {
+              if { [[[[$cw cget -sliceGUI] GetLogic] GetSliceCompositeNode] GetCrosshairBehavior] != 0 } {
                 [[[$cw cget -sliceGUI] GetLogic] GetSliceNode] JumpSlice $r $a $s
               }
               [[$cw cget -sliceGUI] GetSliceViewer] RequestRender
