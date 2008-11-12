@@ -356,8 +356,8 @@ void vtkMRMLScalarVolumeNode::CalculateScalarAutoLevels(vtkMRMLScalarVolumeDispl
     imageDataScalar->GetScalarRange(range);
     // Workaround for image data where all accumulate samples fall
     // within the same histogram bin
-    if (this->Bimodal->GetWindow() == 0.0 && this->Bimodal->GetLevel() == 0.0 ||
-        (imageDataScalar->GetScalarType() != VTK_INT && range[1]-range[0] < 1.00001) ) 
+    if ( (this->Bimodal->GetWindow() == 0.0 && this->Bimodal->GetLevel() == 0.0) ||
+         (imageDataScalar->GetScalarType()!= VTK_INT && (range[1]-range[0]) < 1.00001) )
       {
  
       double min = range[0];
