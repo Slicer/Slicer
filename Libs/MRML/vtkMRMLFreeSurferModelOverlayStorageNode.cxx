@@ -135,7 +135,7 @@ void vtkMRMLFreeSurferModelOverlayStorageNode::ReadXMLAttributes(const char** at
       {
       
       // one per line
-      char *extNames = (char*)attValue;
+      char *extNames = const_cast<char*>(attValue);
       vtkDebugMacro("Have scalar overlay file extensions: " << extNames);
       char *ptr = strtok(extNames, " ");
       vtkDebugMacro("Got ext name " << ptr);
