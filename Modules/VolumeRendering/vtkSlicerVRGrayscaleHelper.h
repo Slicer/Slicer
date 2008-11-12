@@ -180,6 +180,13 @@ public:
     void CalculateAndSetSampleDistances();
 
 
+    // Description:
+    // The hardware accelerated texture mapper.  
+    vtkGetObjectMacro ( MapperTexture, vtkSlicerVolumeTextureMapper3D);
+
+    // Description:
+    // The software accelerated software mapper
+    vtkGetObjectMacro ( MapperRaycast, vtkSlicerFixedPointVolumeRayCastMapper);
 
 protected:
     //--------------------------------------------------------------------------
@@ -402,7 +409,7 @@ protected:
 
     // Description:
     // The hardware accelerated texture mapper.
-    vtkSlicerVolumeTextureMapper3D *MapperTexture;
+    vtkSlicerVolumeTextureMapper3D *MapperTexture;    
 
     // Description:
     // The software accelerated software mapper
