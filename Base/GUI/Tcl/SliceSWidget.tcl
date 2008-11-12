@@ -755,9 +755,10 @@ itcl::body SliceSWidget::updateAnnotation {x y z r a s} {
   set xyText "X: $x\nY:$y"
   set rasText [format "R: %.1f\nA: %.1f\nS: %.1f" $r $a $s]
 
-  set spacingText "Sp: [lindex [[$sliceGUI GetLogic] GetLowestVolumeSliceSpacing] 2]mm"
+  set formattedSpacing [format "%.3g" [lindex [[$sliceGUI GetLogic] GetLowestVolumeSliceSpacing] 2]]
+  set spacingText "Sp: ${formattedSpacing}mm"
   if { [$_sliceNode GetSliceSpacingMode] == 1 } {
-          set spacingText "(Sp: [lindex [[$sliceGUI GetLogic] GetLowestVolumeSliceSpacing] 2]mm)"
+    set spacingText "(Sp: ${formattedSpacing}mm)"
   }
 
   set spaceText0 ""
