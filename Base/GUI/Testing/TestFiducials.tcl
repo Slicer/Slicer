@@ -18,7 +18,7 @@ proc TestFiducial {} {
     if { [$fiducialList GetNthFiducialLabelText $f] != "RenameTest$f" } {
       error "fiducial name didn't change ($f)"
     }
-    if { [string trim [$fiducialList GetNthFiducialXYZ $f]] != "$tenf $tenf $tenf" } {
+    if { [string trimright [$fiducialList GetNthFiducialXYZ $f] ".0"] != "$tenf $tenf $tenf" } {
       error "fiducial XYZ didn't change ($f) (XYZ is [$fiducialList GetNthFiducialXYZ $f] not $tenf $tenf $tenf)"
     }
     if { [string trim [$fiducialList GetNthFiducialOrientation $f]] != "$f $f $f 1" } {
