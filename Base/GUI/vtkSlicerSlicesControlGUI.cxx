@@ -1067,6 +1067,7 @@ void vtkSlicerSlicesControlGUI::ModifyCrossHairMode ( )
 {
   vtkSlicerApplicationGUI *appGUI;
   vtkMRMLSliceCompositeNode *cnode;
+  vtkMRMLSliceNode *snode;
   
   if ( this->GetApplicationGUI() )
     {
@@ -1144,22 +1145,6 @@ void vtkSlicerSlicesControlGUI::ModifyCrossHairMode ( )
           }
         }      
 
-      // Crosshair Actions
-      if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Jump slice") == 1)
-        {
-        if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::JumpSlice )
-          {
-          cnode->SetCrosshairBehavior ( vtkMRMLSliceCompositeNode::JumpSlice );
-          }
-        }      
-      else if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Jump slice") == 0)
-        {
-        if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::Normal )
-          {
-          cnode->SetCrosshairBehavior ( vtkMRMLSliceCompositeNode::Normal );
-          }
-        }      
-
       // Crosshair thickness
       if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Fine") == 1)
         {
@@ -1182,6 +1167,51 @@ void vtkSlicerSlicesControlGUI::ModifyCrossHairMode ( )
           cnode->SetCrosshairToThick();
           }
         }      
+      }
+
+    // do the same thing for the slice nodes
+    // first save the state of all slice composite nodes for undo
+    int snnodes = appGUI->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceNode");
+    vtkCollection *snodes = vtkCollection::New();
+    for (int i = 0; i < snnodes; i++)
+      {
+      snode = vtkMRMLSliceNode::SafeDownCast (
+             appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceNode" ) );
+      if ( snode )
+        {
+        snodes->AddItem (snode );
+        }
+    }
+    this->MRMLScene->SaveStateForUndo ( snodes );
+    snodes->Delete ( );
+
+    // then change the annotation mode for all slice composite nodes
+    for (int i = 0; i < snnodes; i++)
+      {
+      snode = vtkMRMLSliceNode::SafeDownCast ( appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceNode" ) );
+
+      // Crosshair Actions
+      if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("No jumping") == 1)
+        {
+        if ( snode->GetJumpMode() != vtkMRMLSliceNode::Normal )
+          {
+          snode->SetJumpMode ( vtkMRMLSliceNode::Normal );
+          }
+        }      
+      else if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Centered jumping") == 1)
+        {
+        if ( snode->GetJumpMode() != vtkMRMLSliceNode::CenteredJumpSlice )
+          {
+          snode->SetJumpMode ( vtkMRMLSliceNode::CenteredJumpSlice );
+          }
+        }      
+      else if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Offset jumping") == 1)
+        {
+        if ( snode->GetJumpMode() != vtkMRMLSliceNode::OffsetJumpSlice )
+          {
+          snode->SetJumpMode ( vtkMRMLSliceNode::OffsetJumpSlice );
+          }
+        }
       }
     }
 }
@@ -1639,8 +1669,14 @@ void vtkSlicerSlicesControlGUI::BuildCrossHairMenu ( )
 
   
   this->CrossHairButton->GetMenu()->AddSeparator();
-  this->CrossHairButton->GetMenu()->AddCheckButton ("Jump slice" );
-  this->CrossHairButton->GetMenu()->DeselectItem ( "Jump slice" );
+  item = this->CrossHairButton->GetMenu()->AddRadioButton ("No jumping" );
+  this->CrossHairButton->GetMenu()->SetItemGroupName(item, "JumpMode" );
+  item = this->CrossHairButton->GetMenu()->AddRadioButton ("Centered jumping" );
+  this->CrossHairButton->GetMenu()->SetItemGroupName(item, "JumpMode" );
+  item = this->CrossHairButton->GetMenu()->AddRadioButton ("Offset jumping" );
+  this->CrossHairButton->GetMenu()->SetItemGroupName(item, "JumpMode" );
+  
+  this->CrossHairButton->GetMenu()->SelectItem ( "No jumping" );
   this->CrossHairButton->GetMenu()->AddSeparator ( );
   this->CrossHairButton->GetMenu()->AddCommand ("close");
 }

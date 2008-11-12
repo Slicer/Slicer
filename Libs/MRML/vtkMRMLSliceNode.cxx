@@ -60,6 +60,8 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->SliceToRAS = vtkMatrix4x4::New();
   this->SliceToRAS->Identity();
 
+  this->JumpMode = Normal;
+  
   this->OrientationString = NULL;
 
     // calculated by UpdateMatrices()
@@ -445,6 +447,7 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
   of << indent << " sliceToRAS=\"" << ss.str().c_str() << "\"";
   of << indent << " layoutName=\"" << this->GetLayoutName() << "\"";
   of << indent << " orientation=\"" << this->OrientationString << "\"";
+  of << indent << " jumpMode=\"" << this->JumpMode << "\"";
   of << indent << " sliceVisibility=\"" << (this->SliceVisible ? "true" : "false") << "\"";
   of << indent << " widgetVisibility=\"" << (this->WidgetVisible ? "true" : "false") << "\"";
   of << indent << " useLabelOutline=\"" << (this->UseLabelOutline ? "true" : "false") << "\"";
@@ -516,6 +519,15 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
       ss >> val;
       
       this->ActiveSlice = val;
+      }
+    else if (!strcmp(attName, "jumpMode")) 
+      {
+      std::stringstream ss;
+      int val;
+      ss << attValue;
+      ss >> val;
+      
+      this->JumpMode = val;
       }
     else if (!strcmp(attName, "sliceVisibility")) 
       {
@@ -622,6 +634,7 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
   this->SliceToRAS->DeepCopy(node->GetSliceToRAS());
   this->SetOrientationString(node->GetOrientationString());
 
+  this->JumpMode = node->JumpMode;
   this->ActiveSlice = node->ActiveSlice;
 
   this->LayoutGridColumns = node->LayoutGridColumns;
@@ -667,7 +680,20 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
     (this->WidgetVisible ? "true" : "false") << "\n";
   os << indent << "UseLabelOutline: " <<
     (this->UseLabelOutline ? "true" : "false") << "\n";
-  
+
+  os << indent << "Jump mode: ";
+  if (this->JumpMode == Normal)
+    {
+    std::cout << "Normal\n";
+    }
+  else if (this->JumpMode == CenteredJumpSlice)
+    {
+    std::cout << "Centered\n";
+    }
+  else
+    {
+    std::cout << "Offset\n";
+    }
   os << indent << "SliceToRAS: \n";
   this->SliceToRAS->PrintSelf(os, indent.GetNextIndent());
 
@@ -708,12 +734,31 @@ void vtkMRMLSliceNode::JumpSlice(double r, double a, double s)
   double sr = sliceToRAS->GetElement(0, 3);
   double sa = sliceToRAS->GetElement(1, 3);
   double ss = sliceToRAS->GetElement(2, 3);
-  if ( r != sr || a != sa || s != ss ) {
-    sliceToRAS->SetElement( 0, 3, r );
-    sliceToRAS->SetElement( 1, 3, a );
-    sliceToRAS->SetElement( 2, 3, s );
+  if (this->JumpMode == CenteredJumpSlice)
+    {
+    if ( r != sr || a != sa || s != ss )
+      {
+      sliceToRAS->SetElement( 0, 3, r );
+      sliceToRAS->SetElement( 1, 3, a );
+      sliceToRAS->SetElement( 2, 3, s );
+      this->UpdateMatrices();
+      }
+    }
+  else if (this->JumpMode == OffsetJumpSlice)
+    {
+    double d;
+    d = (r-sr)*sliceToRAS->GetElement(0,2)
+      + (a-sa)*sliceToRAS->GetElement(1,2)
+      + (s-ss)*sliceToRAS->GetElement(2,2);
+    sr += d*sliceToRAS->GetElement(0,2);
+    sa += d*sliceToRAS->GetElement(1,2);
+    ss += d*sliceToRAS->GetElement(2,2);
+    
+    sliceToRAS->SetElement( 0, 3, sr );
+    sliceToRAS->SetElement( 1, 3, sa );
+    sliceToRAS->SetElement( 2, 3, ss );
     this->UpdateMatrices();
-  }
+    }
 }
 
 void vtkMRMLSliceNode::JumpAllSlices(double r, double a, double s)
@@ -904,3 +949,22 @@ vtkMRMLSliceNode::SetSliceSpacingModeToPrescribed()
 {
   this->SetSliceSpacingMode(PrescribedSliceSpacingMode);
 }
+
+void
+vtkMRMLSliceNode::SetJumpModeToCentered()
+{
+  this->SetJumpMode(CenteredJumpSlice);
+}
+
+void
+vtkMRMLSliceNode::SetJumpModeToOffset()
+{
+  this->SetJumpMode(OffsetJumpSlice);
+}
+
+void
+vtkMRMLSliceNode::SetJumpModeToNormal()
+{
+  this->SetJumpMode(Normal);
+}
+

@@ -151,7 +151,7 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
           foreach cw $itclobjects {
             if {[$cw isa CrosshairSWidget] && $cw != $this} {
               $cw setPosition $r $a $s
-              if { [[[[$cw cget -sliceGUI] GetLogic] GetSliceCompositeNode] GetCrosshairBehavior] == 1 } {
+              if { [[[[$cw cget -sliceGUI] GetLogic] GetSliceNode] GetJumpMode] != 0 } {
                 [[[$cw cget -sliceGUI] GetLogic] GetSliceNode] JumpSlice $r $a $s
               }
               [[$cw cget -sliceGUI] GetSliceViewer] RequestRender
@@ -165,7 +165,7 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
 #         if { [$_sliceCompositeNode GetCrosshairMode] != 0 } {
 #           # set the cursor to a dot (can't figure out how to hide it)
 #           set tkutil [vtkKWTkUtilities New]
-#           $tkutil SetTopLevelMouseCursor [[$sliceGUI GetSliceViewer] GetWidget] "rightbutton"
+#           $tkutil SetTopLevelMouseCursor [[$sliceGUI GetSliceViewer] GetParentToplevel] "rightbutton"
 #           $tkutil Delete
 #         }
 
@@ -176,7 +176,7 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
 #         if { [$_sliceCompositeNode GetCrosshairMode] != 0 } {
 #           # show the cursor
 #           set tkutil [vtkKWTkUtilities New]
-#           $tkutil SetTopLevelMouseCursor [[$sliceGUI GetSliceViewer] GetWidget] "arrow"
+#           $tkutil SetTopLevelMouseCursor [[$sliceGUI GetSliceViewer] GetParentToplevel] "arrow"
 #           $tkutil Delete
 #         }
 
