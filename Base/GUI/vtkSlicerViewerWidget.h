@@ -52,6 +52,10 @@ class vtkWorldPointPicker;
 class vtkPropPicker;
 class vtkCellPicker;
 class vtkPointPicker;
+class vtkSlicerBoxWidget2;
+class vtkSlicerBoxRepresentation;
+
+
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewerWidget : public vtkSlicerWidget
 {
 
@@ -187,6 +191,11 @@ public:
   vtkGetObjectMacro( ModelHierarchyLogic, vtkSlicerModelHierarchyLogic );
   vtkSetObjectMacro( ModelHierarchyLogic, vtkSlicerModelHierarchyLogic );
 
+  vtkGetObjectMacro ( BoxWidget, vtkSlicerBoxWidget2 );
+  vtkGetObjectMacro ( BoxWidgetRepresentation, vtkSlicerBoxRepresentation );
+
+  void SetBoxWidgetInteractor();
+
 protected:
   vtkSlicerViewerWidget();
   virtual ~vtkSlicerViewerWidget();
@@ -307,6 +316,9 @@ protected:
   // Reset all the pick vars
   void ResetPick();
   
+  vtkSlicerBoxWidget2         *BoxWidget;
+  vtkSlicerBoxRepresentation  *BoxWidgetRepresentation;
+
 private:
   
   vtkSlicerViewerWidget(const vtkSlicerViewerWidget&); // Not implemented

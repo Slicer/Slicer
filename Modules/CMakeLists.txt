@@ -62,6 +62,7 @@ subdirs(
    Volumes
    EMSegment
    DistanceMapModel
+   ClipModel
    #VolumeRenderingCuda
   )
 

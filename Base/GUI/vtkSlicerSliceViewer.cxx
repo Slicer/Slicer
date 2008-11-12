@@ -26,6 +26,7 @@
 #include "vtkProperty2D.h"
 #include "vtkCellArray.h"
 
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerSliceViewer );
 vtkCxxRevisionMacro ( vtkSlicerSliceViewer, "$Revision: 1.0 $");
@@ -65,7 +66,6 @@ vtkSlicerSliceViewer::vtkSlicerSliceViewer ( ) {
     // the rendering pipeline
     this->LayoutGridRows = 0;
     this->LayoutGridColumns = 0;
-
 }
 
 
@@ -102,7 +102,6 @@ vtkSlicerSliceViewer::~vtkSlicerSliceViewer ( ){
       this->RenderWidget->Delete ( );
       this->RenderWidget = NULL;
     }
-
 
 }
 

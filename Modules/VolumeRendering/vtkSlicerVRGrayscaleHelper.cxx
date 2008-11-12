@@ -1725,72 +1725,72 @@ void vtkSlicerVRGrayscaleHelper::ProcessEnableDisableCropping(int cbSelectedStat
 void vtkSlicerVRGrayscaleHelper::ProcessDisplayClippingBox(int clippingEnabled)
 {
     if(this->BW_Clipping_Widget==NULL)
-    {
-        this->BW_Clipping_Widget = vtkSlicerBoxWidget2::New();
-        this->BW_Clipping_Representation = vtkSlicerBoxRepresentation::New();
-        this->BW_Clipping_Widget->SetRepresentation(this->BW_Clipping_Representation);
-        vtkRenderWindowInteractor *interactor=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetInteractor();
-        this->BW_Clipping_Widget->SetInteractor(interactor);
-
-        this->BW_Clipping_Representation->SetPlaceFactor(1);
+      {
+      this->Gui->GetApplicationGUI()->GetViewerWidget()->SetBoxWidgetInteractor();
+      
+      this->BW_Clipping_Widget = this->Gui->GetApplicationGUI()->GetViewerWidget()->GetBoxWidget();
+    
+      this->BW_Clipping_Representation = this->Gui->GetApplicationGUI()->GetViewerWidget()->GetBoxWidgetRepresentation();
+      
+      this->BW_Clipping_Representation->SetPlaceFactor(1);
 //      this->BW_Clipping_Widget->SetProp3D(this->Volume);
-        // get the bounding box of the volume
-        double *bounds = this->Volume->GetBounds();
-        if (bounds != NULL)
-          {
-          this->BW_Clipping_Representation->PlaceWidget(bounds);
-          }
-        //data is saved in IJK->Convert to ras
-
-        double pointA[3];
-        pointA[0]=this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[0];
-            pointA[1]=this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[2];
-            pointA[2]=this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[4];
-
-        double pointB[3];
-        pointB[0]=this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[1];
-            pointB[1]=this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[3];
-            pointB[2]=this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[5];
-            this->NoSetRangeNeeded=1;
-        for(int i=0;i<3;i++)
+      // get the bounding box of the volume
+      double *bounds = this->Volume->GetBounds();
+      if (bounds != NULL)
         {
-            if(pointA[i]<pointB[i])
-            {
-            this->RA_Cropping[i]->SetRange(pointA[i],pointB[i]);
-            }
-            else
-            {
-                this->RA_Cropping[i]->SetRange(pointB[i],pointA[i]);
-            }
+        this->BW_Clipping_Representation->PlaceWidget(bounds);
         }
-        double pointPlace[6];
-        pointPlace[0] = pointA[0];
-        pointPlace[1] = pointB[0];
-        pointPlace[2] = pointA[0]; // is this correct?
-        pointPlace[3] = pointB[1];
-        pointPlace[4] = pointA[2];
-        pointPlace[5] = pointB[2];
-        this->BW_Clipping_Representation->PlaceWidget(pointPlace); //pointA[0],pointB[0],pointA[0],pointB[1],pointA[2],pointB[2]);
-        this->BW_Clipping_Representation->InsideOutOn();
-        this->BW_Clipping_Widget->RotationEnabledOff();
-        this->BW_Clipping_Widget->TranslationEnabledOn();
-        this->BW_Clipping_Representation->GetSelectedHandleProperty()->SetColor(0.2,0.6,0.15);
-        this->NoSetRangeNeeded=0;
-       
-
-
-        this->BW_Clipping_Widget->AddObserver(vtkCommand::InteractionEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
-        this->BW_Clipping_Widget->AddObserver(vtkCommand::EndInteractionEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
-        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetInteractor()->ReInitialize();
-    }
+      //data is saved in IJK->Convert to ras
+      
+      double pointA[3];
+      pointA[0]=this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[0];
+      pointA[1]=this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[2];
+      pointA[2]=this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[4];
+      
+      double pointB[3];
+      pointB[0]=this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[1];
+      pointB[1]=this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[3];
+      pointB[2]=this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[5];
+      this->NoSetRangeNeeded=1;
+      for(int i=0;i<3;i++)
+        {
+        if(pointA[i]<pointB[i])
+          {
+          this->RA_Cropping[i]->SetRange(pointA[i],pointB[i]);
+          }
+        else
+          {
+          this->RA_Cropping[i]->SetRange(pointB[i],pointA[i]);
+          }
+        }
+      double pointPlace[6];
+      pointPlace[0] = pointA[0];
+      pointPlace[1] = pointB[0];
+      pointPlace[2] = pointA[0]; // is this correct?
+      pointPlace[3] = pointB[1];
+      pointPlace[4] = pointA[2];
+      pointPlace[5] = pointB[2];
+      this->BW_Clipping_Representation->PlaceWidget(pointPlace); //pointA[0],pointB[0],pointA[0],pointB[1],pointA[2],pointB[2]);
+      this->BW_Clipping_Representation->InsideOutOn();
+      this->BW_Clipping_Widget->RotationEnabledOff();
+      this->BW_Clipping_Widget->TranslationEnabledOn();
+      this->BW_Clipping_Representation->GetSelectedHandleProperty()->SetColor(0.2,0.6,0.15);
+      this->NoSetRangeNeeded=0;
+      
+      
+      
+      this->BW_Clipping_Widget->AddObserver(vtkCommand::InteractionEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
+      this->BW_Clipping_Widget->AddObserver(vtkCommand::EndInteractionEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
+      this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetInteractor()->ReInitialize();
+      }
     if(clippingEnabled)
-    {
-        this->BW_Clipping_Widget->On();
-    }
+      {
+      this->BW_Clipping_Widget->On();
+      }
     else
-    {
-        this->BW_Clipping_Widget->Off();
-    }
+      {
+      this->BW_Clipping_Widget->Off();
+      }
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
 }
 
@@ -1852,13 +1852,10 @@ void vtkSlicerVRGrayscaleHelper::DestroyCropping(void)
         this->BW_Clipping_Widget->RemoveObservers(vtkCommand::InteractionEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
         this->BW_Clipping_Widget->RemoveObservers(vtkCommand::EndInteractionEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
         this->BW_Clipping_Widget->Off();
-        this->BW_Clipping_Widget->SetRepresentation(NULL);
-        this->BW_Clipping_Widget->Delete();
         this->BW_Clipping_Widget=NULL;
     }
     if (this->BW_Clipping_Representation)
       {
-        this->BW_Clipping_Representation->Delete();
         this->BW_Clipping_Representation =  NULL;
       }
     if(this->CB_Clipping)

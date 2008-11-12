@@ -135,6 +135,8 @@ set(SlicerBaseGUI_SRCS
   vtkSlicerInteractorStyle.cxx
   vtkSlicerViewerInteractorStyle.cxx
   vtkSlicerRenderWidget.cxx
+  vtkSlicerBoxRepresentation.cxx
+  vtkSlicerBoxWidget2.cxx
   )
 
 # Helper classes

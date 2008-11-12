@@ -57,8 +57,8 @@ set(VolumeRenderingReplacements_SRCS
   #GUI
   #vtkSlicerBoxWidget.cxx
   vtkSlicerVolumePropertyWidget.cxx
-  vtkSlicerBoxWidget2.cxx
-  vtkSlicerBoxRepresentation.cxx
+  #vtkSlicerBoxWidget2.cxx
+  #vtkSlicerBoxRepresentation.cxx
   )
 
 # --------------------------------------------------------------------------

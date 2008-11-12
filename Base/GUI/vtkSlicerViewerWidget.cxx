@@ -53,6 +53,10 @@
 #include "vtkCellPicker.h"
 #include "vtkPointPicker.h"
 
+
+#include "vtkSlicerBoxWidget2.h"
+#include "vtkSlicerBoxRepresentation.h"
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerViewerWidget );
 vtkCxxRevisionMacro ( vtkSlicerViewerWidget, "$Revision: 1.0 $");
@@ -97,6 +101,11 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
 
   this->PickedCellID = 0;
   this->PickedPointID = 0;
+
+    
+  this->BoxWidget = vtkSlicerBoxWidget2::New();
+  this->BoxWidgetRepresentation = vtkSlicerBoxRepresentation::New();
+  this->BoxWidget->SetRepresentation(this->BoxWidgetRepresentation);
 
 }
 
@@ -206,6 +215,11 @@ vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
     {
     this->ModelHierarchyLogic->Delete();
     }
+  
+  this->BoxWidget->SetRepresentation(NULL);
+  this->BoxWidgetRepresentation->Delete();
+  this->BoxWidget->Delete();
+
 }
 
 //---------------------------------------------------------------------------
@@ -1948,3 +1962,13 @@ int vtkSlicerViewerWidget::Pick(int x, int y)
   return 1;
 }     
 
+void vtkSlicerViewerWidget::SetBoxWidgetInteractor ()
+{
+  if ( this->GetMainViewer() &&  
+       this->GetMainViewer()->GetRenderWindow() &&
+       this->GetMainViewer()->GetRenderWindow()->GetInteractor() )
+    {
+    vtkRenderWindowInteractor *interactor = this->GetMainViewer()->GetRenderWindow()->GetInteractor();
+    this->BoxWidget->SetInteractor(interactor);
+    }
+}
