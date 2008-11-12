@@ -312,6 +312,22 @@ itcl::body CrosshairSWidget::setPosition { r a s } {
 
   foreach {x y z } [rasToXYZ "$r $a $s"] {}
 
+  # determine which renderer based on z position
+  set k [expr int($z + 0.5)]
+
+  # remove the crosshair from the old renderer and add it to the new one
+  if { [info command $_renderer] != ""} {
+    $_renderer RemoveActor2D $o(crosshairActor)
+  }
+
+  if { $k >= 0 && $k < [$_renderWidget GetNumberOfRenderers] } {
+    set _renderer [$_renderWidget GetNthRenderer $k]
+    if { [info command $_renderer] != ""} {
+      $_renderer AddActor2D $o(crosshairActor)
+    }
+  }
+  
+  # position the actor
   $o(crosshairActor) SetPosition $x $y
 
   # turn the actor on/off depending on whether it is NEWLY visible or
