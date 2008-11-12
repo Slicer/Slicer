@@ -734,7 +734,7 @@ void vtkMRMLSliceNode::JumpSlice(double r, double a, double s)
   double sr = sliceToRAS->GetElement(0, 3);
   double sa = sliceToRAS->GetElement(1, 3);
   double ss = sliceToRAS->GetElement(2, 3);
-  if (this->JumpMode == CenteredJumpSlice)
+  if (this->JumpMode == CenteredJumpSlice || this->JumpMode == Normal)
     {
     if ( r != sr || a != sa || s != ss )
       {
