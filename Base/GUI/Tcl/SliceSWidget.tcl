@@ -59,14 +59,6 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
 
   $this configure -sliceGUI $sliceGUI
 
-  lappend _swidgets [FiducialsSWidget #auto $sliceGUI]
-  set gridSWidget [GridSWidget #auto $sliceGUI]
-  $gridSWidget configure -layer "label"
-  lappend _swidgets $gridSWidget
-  lappend _swidgets [CrosshairSWidget #auto $sliceGUI]
-  lappend _swidgets [RegionsSWidget #auto $sliceGUI]
-  lappend _swidgets [SlicePlaneSWidget #auto $sliceGUI]
- 
   # create matrices to store transform state
   set o(storeXYToRAS) [$this vtkNew vtkMatrix4x4]
   set o(storeSliceToRAS) [$this vtkNew vtkMatrix4x4]
@@ -102,6 +94,16 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
   $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
 #  $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node AnyEvent"
 
+  # put the other widgets last the events in this widget get natural
+  # priority over the same event to a child widget
+  lappend _swidgets [FiducialsSWidget #auto $sliceGUI]
+  set gridSWidget [GridSWidget #auto $sliceGUI]
+  $gridSWidget configure -layer "label"
+  lappend _swidgets $gridSWidget
+  lappend _swidgets [CrosshairSWidget #auto $sliceGUI]
+  lappend _swidgets [RegionsSWidget #auto $sliceGUI]
+  lappend _swidgets [SlicePlaneSWidget #auto $sliceGUI]
+ 
 }
 
 
@@ -676,9 +678,10 @@ itcl::body SliceSWidget::updateAnnotations {x y z r a s} {
       set rasText [format "R: %.1f\nA: %.1f\nS: %.1f" $r $a $s]
     }
 
-    set spacingText "Sp: [lindex [$logic GetLowestVolumeSliceSpacing] 2]mm"
-    if { [$sNode GetSliceSpacingMode] == 1 } {
-      set spacingText "(Sp: [lindex [$logic GetLowestVolumeSliceSpacing] 2]mm)"
+    set formattedSpacing [format "%.3g" [lindex [[$sliceGUI GetLogic] GetLowestVolumeSliceSpacing] 2]]
+    set spacingText "Sp: ${formattedSpacing}mm"
+    if { [$_sliceNode GetSliceSpacingMode] == 1 } {
+      set spacingText "(Sp: ${formattedSpacing}mm)"
     }
     
     set spaceText0 ""

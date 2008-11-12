@@ -131,33 +131,38 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
     switch $event {
 
       "MouseMoveEvent" {
-          #
-          # TODO: what do we want to do on mouse move?
-          #
-          
           # update the actors...
           foreach {windowx windowy} [$_interactor GetEventPosition] {}
-          foreach {x y z} [$this dcToXYZ $windowx $windowy] {}  
+          set xyz [$this dcToXYZ $windowx $windowy]
           
-          set xyToRAS [$_sliceNode GetXYToRAS]
-          set ras [$xyToRAS MultiplyPoint $x $y $z 1]
+          set ras [$this xyzToRAS $xyz]
+          foreach {r a s} $ras {}
           
-          # position this crosshair actor at the viewport position
-          $o(crosshairActor) SetPosition $x $y
+          # position this crosshair actor at the viewport position and 
+          # set its visibility (setPosition does both)
+          $this setPosition $r $a $s
 
           # set other crosshairs to this ras
-          foreach {r a s w} $ras {}
           set itclobjects [itcl::find objects]
+
           foreach cw $itclobjects {
+            set jumped 0
             if {[$cw isa CrosshairSWidget] && $cw != $this} {
-              $cw setPosition $r $a $s
+              # jump the slice if necessary
               if { [[[[$cw cget -sliceGUI] GetLogic] GetSliceCompositeNode] GetCrosshairBehavior] != 0 } {
                 [[[$cw cget -sliceGUI] GetLogic] GetSliceNode] JumpSlice $r $a $s
-              }
-              [[$cw cget -sliceGUI] GetSliceViewer] RequestRender
+                set jumped 1
+              } 
+              # now set the position
+              set renderNeeded [$cw setPosition $r $a $s]
+
+              # only need to request a render if we are not jumping slices 
+              # and the cursor state changed
+              if { $jumped == 0 && $renderNeeded == 1 } {
+                [[$cw cget -sliceGUI] GetSliceViewer] RequestRender
+              } 
             }
           }
-
         return
       }
       "EnterEvent" {
@@ -308,6 +313,27 @@ itcl::body CrosshairSWidget::setPosition { r a s } {
   foreach {x y z } [rasToXYZ "$r $a $s"] {}
 
   $o(crosshairActor) SetPosition $x $y
+
+  # turn the actor on/off depending on whether it is NEWLY visible or
+  # not (this is where we will also move the actor from viewport to
+  # viewport in the lightbox
+  set changed 0
+  if { $z >= -0.5 && $z < [expr 0.5+[lindex [$_sliceNode GetDimensions] 2]-1]} {
+    # cursor is visible on the displayed slice, check if this is a state change
+    if { [$o(crosshairActor) GetVisibility] == 0} {
+      $o(crosshairActor) VisibilityOn
+      set changed 1
+    }
+  } else {
+    # cursor is not visible on any currently displayed slice, check if
+    # this is a state change
+    if { [$o(crosshairActor) GetVisibility] == 1} {
+      $o(crosshairActor) VisibilityOff
+      set changed 1
+    }
+  }
+
+  return $changed
 }
 
 proc CrosshairSWidget::AddCrosshair {} {
