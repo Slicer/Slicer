@@ -22,6 +22,7 @@ Version:   $Revision: 1.2 $
 
 #include "vtkTransform.h"
 #include "vtkMatrix4x4.h"
+#include "vtkMath.h"
 
 #include "vnl/vnl_double_3.h"
 
@@ -730,13 +731,27 @@ void vtkMRMLSliceNode::JumpSlice(double r, double a, double s)
   double sr = sliceToRAS->GetElement(0, 3);
   double sa = sliceToRAS->GetElement(1, 3);
   double ss = sliceToRAS->GetElement(2, 3);
+
+  // deduce the slice spacing
+  vtkMatrix4x4 *xyzToRAS = this->GetXYToRAS();
+
+  double p1xyz[4] = {0.0,0.0,0.0,1.0};
+  double p2xyz[4] = {0.0,0.0,1.0,1.0};
+
+  double p1ras[4], p2ras[4];
+
+  xyzToRAS->MultiplyPoint(p1xyz, p1ras);
+  xyzToRAS->MultiplyPoint(p2xyz, p2ras);
+
+  double sliceSpacing = sqrt(vtkMath::Distance2BetweenPoints(p2ras, p1ras));
+  
   if (this->JumpMode == CenteredJumpSlice)
     {
     if ( r != sr || a != sa || s != ss )
       {
-      sliceToRAS->SetElement( 0, 3, r );
-      sliceToRAS->SetElement( 1, 3, a );
-      sliceToRAS->SetElement( 2, 3, s );
+      sliceToRAS->SetElement( 0, 3, r - this->ActiveSlice*sliceSpacing*sliceToRAS->GetElement(0,2) );
+      sliceToRAS->SetElement( 1, 3, a - this->ActiveSlice*sliceSpacing*sliceToRAS->GetElement(1,2));
+      sliceToRAS->SetElement( 2, 3, s - this->ActiveSlice*sliceSpacing*sliceToRAS->GetElement(2,2) );
       this->UpdateMatrices();
       }
     }
@@ -746,9 +761,9 @@ void vtkMRMLSliceNode::JumpSlice(double r, double a, double s)
     d = (r-sr)*sliceToRAS->GetElement(0,2)
       + (a-sa)*sliceToRAS->GetElement(1,2)
       + (s-ss)*sliceToRAS->GetElement(2,2);
-    sr += d*sliceToRAS->GetElement(0,2);
-    sa += d*sliceToRAS->GetElement(1,2);
-    ss += d*sliceToRAS->GetElement(2,2);
+    sr += (d - this->ActiveSlice*sliceSpacing)*sliceToRAS->GetElement(0,2);
+    sa += (d - this->ActiveSlice*sliceSpacing)*sliceToRAS->GetElement(1,2);
+    ss += (d - this->ActiveSlice*sliceSpacing)*sliceToRAS->GetElement(2,2);
     
     sliceToRAS->SetElement( 0, 3, sr );
     sliceToRAS->SetElement( 1, 3, sa );
