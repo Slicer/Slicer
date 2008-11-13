@@ -28,7 +28,7 @@
       <channel>input</channel>
       <description>Target volume</description>
     </image>
-    <image>
+    <image type="vector">
       <name>demonsDeformationVolume</name>
       <flag>O</flag>
       <longflag>output_field</longflag>
