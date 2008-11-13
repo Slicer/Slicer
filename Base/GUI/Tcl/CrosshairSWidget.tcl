@@ -29,8 +29,6 @@ if { [itcl::find class CrosshairSWidget] == "" } {
     #public variable rgba "1.0 0.8 0.1 .6"  ;# crosshair color
     public variable rgba "1.0 0.8 0.1 1.0"  ;# crosshair color
 
-    variable _compositeNode
-
     # methods
     method processEvent {{caller ""} {event ""}} {}
     method updateCrosshair { } {}
@@ -82,7 +80,7 @@ itcl::body CrosshairSWidget::constructor {sliceGUI} {
   $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
   $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node AnyEvent"
 
-  set _compositeNode [[$sliceGUI GetLogic] GetSliceCompositeNode]
+  set node [[$sliceGUI GetLogic] GetSliceCompositeNode]
   $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
   $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node AnyEvent"
 
@@ -121,7 +119,7 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
     return
   }
 
-  if { $caller == $_sliceNode || $caller == $_compositeNode } {
+  if { $caller == $_sliceNode || $caller == $_sliceCompositeNode } {
     $this updateCrosshair
     return
   }
