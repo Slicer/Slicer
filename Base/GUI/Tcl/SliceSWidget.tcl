@@ -696,9 +696,9 @@ itcl::body SliceSWidget::updateAnnotations {x y z r a s} {
       set rasText [format "R: %.1f\nA: %.1f\nS: %.1f" $r $a $s]
     }
 
-    set formattedSpacing [format "%.3g" [lindex [[$sliceGUI GetLogic] GetLowestVolumeSliceSpacing] 2]]
+    set formattedSpacing [format "%.3g" [lindex [$logic GetLowestVolumeSliceSpacing] 2]]
     set spacingText "Sp: ${formattedSpacing}mm"
-    if { [$_sliceNode GetSliceSpacingMode] == 1 } {
+    if { [$sNode GetSliceSpacingMode] == 1 } {
       set spacingText "(Sp: ${formattedSpacing}mm)"
     }
     
