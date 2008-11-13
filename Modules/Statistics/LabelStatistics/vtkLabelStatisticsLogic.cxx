@@ -86,6 +86,9 @@ void vtkLabelStatisticsLogic::Apply()
     vtkErrorMacro("No input volume found with id= " << this->LabelStatisticsNode->GetInputLabelmapRef());
     return;
     }
+
+  const double *spacing = inLabelmapVolume->GetSpacing();
+  double cubicMMPerVoxel = spacing[0] * spacing[1] * spacing[2];
   
   this->InvokeEvent(vtkLabelStatisticsLogic::StartLabelStats, (void*)"start label stats");
   
@@ -100,66 +103,60 @@ void vtkLabelStatisticsLogic::Apply()
   hi = (int)(stataccum->GetMax())[0];
   stataccum->Delete();
 
-  std::string tmpString("Label\tCount\tMin\tMax\tMean\tStdDev\n");
+  std::string tmpString("Label\tCount\tArea\tMin\tMax\tMean\tStdDev\n");
   this->LabelStatisticsNode->SetResultText(tmpString.c_str());
 
-   for(int i = lo; i <= hi; i++ ) 
-   {
-     this->SetProgress((float)i/hi);
-     std::string event_message = "Label ";
-     std::stringstream s;
-     s << i;
-     event_message.append(s.str());
-     this->InvokeEvent(vtkLabelStatisticsLogic::LabelStatsOuterLoop, (void*)event_message.c_str());
-     //logic copied from slicer2 LabelStatistics MaskStat
-     // create the binary volume of the label
-     vtkImageThreshold *thresholder = vtkImageThreshold::New();
-     thresholder->SetInput(inLabelmapVolume->GetImageData());
-     thresholder->SetInValue(1);
-     thresholder->SetOutValue(0);
-     thresholder->ReplaceOutOn();
-     thresholder->ThresholdBetween(i,i);
-     thresholder->SetOutputScalarType(inGrayscaleVolume->GetImageData()->GetScalarType());
-     thresholder->Update();
-     
-     this->InvokeEvent(vtkLabelStatisticsLogic::LabelStatsInnerLoop, (void*)"0.25");
-     
-     // use vtk's statistics class with the binary labelmap as a stencil
-     vtkImageToImageStencil *stencil = vtkImageToImageStencil::New();
-     stencil->SetInput(thresholder->GetOutput());
-     stencil->ThresholdBetween(1, 1);
-     
-     this->InvokeEvent(vtkLabelStatisticsLogic::LabelStatsInnerLoop, (void*)"0.5");
-     
-    vtkImageAccumulate *stat1 = vtkImageAccumulate::New();
-    stat1->SetInput(inGrayscaleVolume->GetImageData());
-    stat1->SetStencil(stencil->GetOutput());
-    stat1->Update();
+  for(int i = lo; i <= hi; i++ ) 
+    {
+    this->SetProgress((float)i/hi);
+    std::string event_message = "Label ";
+    std::stringstream s;
+    s << i;
+    event_message.append(s.str());
+    this->InvokeEvent(vtkLabelStatisticsLogic::LabelStatsOuterLoop, (void*)event_message.c_str());
+    //logic copied from slicer2 LabelStatistics MaskStat
+    // create the binary volume of the label
+    vtkImageThreshold *thresholder = vtkImageThreshold::New();
+    thresholder->SetInput(inLabelmapVolume->GetImageData());
+    thresholder->SetInValue(1);
+    thresholder->SetOutValue(0);
+    thresholder->ReplaceOutOn();
+    thresholder->ThresholdBetween(i,i);
+    thresholder->SetOutputScalarType(inGrayscaleVolume->GetImageData()->GetScalarType());
+    thresholder->Update();
     
-    stencil->Delete();
+    this->InvokeEvent(vtkLabelStatisticsLogic::LabelStatsInnerLoop, (void*)"0.25");
+    
+    // use vtk's statistics class with the binary labelmap as a stencil
+    vtkImageToImageStencil *stencil = vtkImageToImageStencil::New();
+    stencil->SetInput(thresholder->GetOutput());
+    stencil->ThresholdBetween(1, 1);
+    
+    this->InvokeEvent(vtkLabelStatisticsLogic::LabelStatsInnerLoop, (void*)"0.5");
+    
+   vtkImageAccumulate *stat1 = vtkImageAccumulate::New();
+   stat1->SetInput(inGrayscaleVolume->GetImageData());
+   stat1->SetStencil(stencil->GetOutput());
+   stat1->Update();
+   
+   stencil->Delete();
 
- this->InvokeEvent(vtkLabelStatisticsLogic::LabelStatsInnerLoop, (void*)"0.75");
+    this->InvokeEvent(vtkLabelStatisticsLogic::LabelStatsInnerLoop, (void*)"0.75");
 
     if ( (stat1->GetVoxelCount()) > 0 ) 
       {
-      //   std::cout << i << "\t";
-      //       std::cout << stat1->GetVoxelCount() << "\t";
-      //       std::cout << (stat1->GetMin())[0] <<  "\t";
-      //       std::cout << (stat1->GetMax())[0] << "\t";
-      //       std::cout << (stat1->GetMean())[0] << "\t";
-      //       std::cout << (stat1->GetStandardDeviation())[0] << std::endl;
-      //       std::cout << std::endl;
       
       //add an entry to the LabelStats list
       vtkMRMLLabelStatisticsNode::LabelStatsEntry entry;
       entry.Label = i;
       entry.Count = stat1->GetVoxelCount();
+      entry.Area = entry.Count * cubicMMPerVoxel;
       entry.Min = (int)(stat1->GetMin())[0];
       entry.Max = (int)(stat1->GetMax())[0];
       entry.Mean = (stat1->GetMean())[0];
       entry.StdDev = (stat1->GetStandardDeviation())[0];
       
-   this->InvokeEvent(vtkLabelStatisticsLogic::LabelStatsInnerLoop, (void*)"1");
+      this->InvokeEvent(vtkLabelStatisticsLogic::LabelStatsInnerLoop, (void*)"1");
 
       this->LabelStatisticsNode->LabelStats.push_back(entry);
 
@@ -175,6 +172,14 @@ void vtkLabelStatisticsLogic::Apply()
       std::stringstream ss;
       std::string str;
       ss << stat1->GetVoxelCount();
+      ss >> str;
+      tmpString.append(str);
+      tmpString.append("\t");
+      }
+      {
+      std::stringstream ss;
+      std::string str;
+      ss << entry.Area;
       ss >> str;
       tmpString.append(str);
       tmpString.append("\t");

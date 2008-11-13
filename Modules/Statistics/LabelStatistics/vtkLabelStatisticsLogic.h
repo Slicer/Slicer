@@ -53,12 +53,8 @@ class VTK_LABELSTATISTICS_EXPORT vtkLabelStatisticsLogic : public vtkSlicerModul
   
   float GetProgress();
   void SetProgress(float p);
-  //vtkGetFloatMacro(Progress);
-  //vtkSetFloatMacro(Progress);
   vtkGetStringMacro(Res);
   vtkSetStringMacro(Res);
-  // vtkGetMacro(TestFloat);
-  //vtkSetMacro(TestFloat);
  
  protected:
   vtkLabelStatisticsLogic();

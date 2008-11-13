@@ -116,11 +116,8 @@ protected:
  
   vtkLabelStatisticsLogic *Logic;
   vtkMRMLLabelStatisticsNode* LabelStatisticsNode;
-  //vtkKWText* VolStatsResult;
   vtkKWMultiColumnList* ResultList;
   vtkKWLoadSaveButton* SaveToFile;
-  //vtkKWPushButton* SaveToClipboardButton;
-  
 };
 
 #endif

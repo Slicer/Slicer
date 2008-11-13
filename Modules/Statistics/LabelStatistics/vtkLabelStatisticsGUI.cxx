@@ -244,7 +244,6 @@ void vtkLabelStatisticsGUI::UpdateGUI ()
   vtkMRMLLabelStatisticsNode* n = this->GetLabelStatisticsNode();
   if (n != NULL)
     {
-      // this->VolStatsResult->SetText(n->GetResultText());
     if(!n->LabelStats.empty()) 
       { 
       typedef std::list<vtkMRMLLabelStatisticsNode::LabelStatsEntry>::const_iterator LI;
@@ -252,17 +251,15 @@ void vtkLabelStatisticsGUI::UpdateGUI ()
         for (LI li = n->LabelStats.begin(); li != n->LabelStats.end(); ++li)
           {
            const vtkMRMLLabelStatisticsNode::LabelStatsEntry& label = *li;  
-           //  std::cout << "This is i: " << i <<std::endl;
-           // std::cout << "Label: " << label.Label << "\tMin: " << label.Min ;
-           // std::cout << "\tMax: " << label.Max << "\tMean: " << label.Mean << std::endl ;
            
            this->ResultList->InsertCellTextAsInt(i, 0, label.Label);
            this->ResultList->InsertCellTextAsInt(i, 1, label.Count);
+           this->ResultList->InsertCellTextAsInt(i, 2, label.Area);
            
-           this->ResultList->InsertCellTextAsInt(i, 2, label.Min);
-           this->ResultList->InsertCellTextAsInt(i, 3, label.Max);
-           this->ResultList->InsertCellTextAsDouble(i, 4, label.Mean);
-           this->ResultList->InsertCellTextAsDouble(i, 5, label.StdDev);
+           this->ResultList->InsertCellTextAsInt(i, 3, label.Min);
+           this->ResultList->InsertCellTextAsInt(i, 4, label.Max);
+           this->ResultList->InsertCellTextAsDouble(i, 5, label.Mean);
+           this->ResultList->InsertCellTextAsDouble(i, 6, label.StdDev);
            i++;
           }
       }
@@ -341,16 +338,6 @@ void vtkLabelStatisticsGUI::BuildGUI ( )
   app->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
                 this->ApplyButton->GetWidgetName());
 
-//   this->VolStatsResult->SetParent( moduleFrame->GetFrame());
-//   this->VolStatsResult->Create();
-//   this->VolStatsResult->SetWidth(0);
-//   this->VolStatsResult->SetHeight(7);
-//   this->VolStatsResult->SetWrapToChar();
-//   this->VolStatsResult->ReadOnlyOn();
-//   app->Script(
-//     "pack %s -side top -anchor e -expand n -fill x -padx 2 -pady 6", 
-//     VolStatsResult->GetWidgetName());
- 
   this->ResultList->SetParent( moduleFrame->GetFrame());
   this->ResultList->Create();
   
@@ -366,6 +353,9 @@ void vtkLabelStatisticsGUI::BuildGUI ( )
   this->ResultList->ColumnEditableOn(col_index);
 
   col_index = this->ResultList->AddColumn("Count");
+  this->ResultList->ColumnEditableOn(col_index);
+
+  col_index = this->ResultList->AddColumn("Area (mm^3)");
   this->ResultList->ColumnEditableOn(col_index);
 
   col_index = this->ResultList->AddColumn("Min");
@@ -384,12 +374,6 @@ void vtkLabelStatisticsGUI::BuildGUI ( )
     "pack %s -side top -anchor e  -padx 20 -pady 10", 
     this->ResultList->GetWidgetName());
  
-  // Create the button to copy result to clipboard
-  // this->SaveToClipboardButton->SetParent( moduleFrame->GetFrame() );
-//   this->SaveToClipboardButton->Create();
-//   this->SaveToClipboardButton->SetText("Copy result to clipboard");
-//   this->SaveToClipboardButton->SetWidth ( 20 );
-
   this->SaveToFile->SetParent( moduleFrame->GetFrame() );
   this->SaveToFile->Create();
   this->SaveToFile->SetText("Save to file");
