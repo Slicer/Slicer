@@ -76,9 +76,9 @@ itcl::body CrosshairSWidget::constructor {sliceGUI} {
     $::slicer3::Broker AddObservation $sliceGUI $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI $event"
   }
 
-  set node [[$sliceGUI GetLogic] GetSliceNode]
-  $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
-  $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node AnyEvent"
+#   set node [[$sliceGUI GetLogic] GetSliceNode]
+#   $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
+#   $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node AnyEvent"
 
   set node [[$sliceGUI GetLogic] GetSliceCompositeNode]
   $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
@@ -119,7 +119,7 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
     return
   }
 
-  if { $caller == $_sliceNode || $caller == $_sliceCompositeNode } {
+  if { $caller == $_sliceCompositeNode } {
     $this updateCrosshair
     return
   }
@@ -302,7 +302,7 @@ itcl::body CrosshairSWidget::updateCrosshair { } {
     [$o(crosshairActor) GetProperty] SetLineWidth 5
   } 
 
-  [$sliceGUI GetSliceViewer] RequestRender
+#  [$sliceGUI GetSliceViewer] RequestRender
 }
 
 
