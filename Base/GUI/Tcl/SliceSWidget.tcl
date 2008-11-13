@@ -573,6 +573,10 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
                 # offset needed for the active slice in red viewer
                 set offset3 [expr $offset2 - [$redNode GetActiveSlice] * [lindex [[$redGUI GetLogic] GetLowestVolumeSliceSpacing] 2] ]
                 $redLogic SetSliceOffset $offset3
+
+                # force the red viewer to recalculate its matrices
+                set that [$this getSliceSWidgetForGUI $redGUI]
+                $that resizeSliceNode
               }
             }
           }
@@ -589,7 +593,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
                 set redNode [$redGUI GetSliceNode]
                 set redCNode [$redLogic GetSliceCompositeNode]
 
-                $redCNode SetReferenceBackgroundVolumeID [$_sliceCompositeNode GetForegroundVolumeID]
+                $redCNode SetReferenceForegroundVolumeID [$_sliceCompositeNode GetBackgroundVolumeID]
                 
                 # set the slice offset on the red viewer (translate to 
                 # active slice)
@@ -600,6 +604,10 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
                 # offset needed for the active slice in red viewer
                 set offset3 [expr $offset2 - [$redNode GetActiveSlice] * [lindex [[$redGUI GetLogic] GetLowestVolumeSliceSpacing] 2] ]
                 $redLogic SetSliceOffset $offset3
+
+                # force the red viewer to recalculate its matrices
+                set that [$this getSliceSWidgetForGUI $redGUI]
+                $that resizeSliceNode
               }
             }
           }
