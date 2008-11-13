@@ -169,25 +169,24 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
         return
       }
       "EnterEvent" {
-#         puts "EnterEvent"
-#         if { [$_sliceCompositeNode GetCrosshairMode] != 0 } {
-#           # set the cursor to a dot (can't figure out how to hide it)
-#           set tkutil [vtkKWTkUtilities New]
-#           $tkutil SetTopLevelMouseCursor [[$sliceGUI GetSliceViewer] GetParentToplevel] "rightbutton"
-#           $tkutil Delete
-#         }
+        # hide the system cursor
+        $_interactor HideCursor
 
         return
       }
       "LeaveEvent" {
-#         puts "LeaveEvent"
-#         if { [$_sliceCompositeNode GetCrosshairMode] != 0 } {
-#           # show the cursor
-#           set tkutil [vtkKWTkUtilities New]
-#           $tkutil SetTopLevelMouseCursor [[$sliceGUI GetSliceViewer] GetParentToplevel] "arrow"
-#           $tkutil Delete
-#         }
+        # show the system cursor
+        $_interactor ShowCursor
 
+        # hide the crosshair
+        set itclobjects [itcl::find objects]
+        foreach cw $itclobjects {
+          if {[$cw isa CrosshairSWidget]} {
+            array set objs [$cw getObjects]
+            $objs(crosshairActor) VisibilityOff
+            [[$cw cget -sliceGUI] GetSliceViewer] RequestRender
+          }
+        }
         return
       }
     }
