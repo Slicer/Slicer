@@ -21,12 +21,12 @@
 
 #include "vtkObject.h"
 #include "vtkOpenIGTLinkIFWin32Header.h" 
+#include "igtlServerSocket.h"
+#include "igtlClientSocket.h"
 
 
 //class vtkSocketCommunicator;
 class vtkMultiThreader;
-class vtkClientSocket;
-class vtkServerSocket;
 class vtkMutexLock;
 
 class vtkImageData;
@@ -34,7 +34,6 @@ class vtkMatrix4x4;
 
 class vtkIGTLCircularBuffer;
 class vtkMRMLNode;
-
 
 class VTK_OPENIGTLINKIF_EXPORT vtkIGTLConnector : public vtkObject
 {
@@ -117,7 +116,10 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLConnector : public vtkObject
   //----------------------------------------------------------------
   // OpenIGTLink Message handlers
   //----------------------------------------------------------------
-  vtkClientSocket* WaitForConnection();
+  //BTX
+  //igtl::ClientSocket::Pointer WaitForConnection();
+  //ETX
+  int WaitForConnection();
   int ReceiveController();
   int SendData(int size, unsigned char* data);
   int Skip(int length, int skipFully=1);
@@ -161,8 +163,10 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLConnector : public vtkObject
 
   vtkMultiThreader* Thread;
   vtkMutexLock*     Mutex;
-  vtkServerSocket*  ServerSocket;
-  vtkClientSocket*  Socket;
+  //BTX
+  igtl::ServerSocket::Pointer  ServerSocket;
+  igtl::ClientSocket::Pointer  Socket;
+  //ETX
   int               ThreadID;
   int               ServerPort;
   int               ServerStopFlag;

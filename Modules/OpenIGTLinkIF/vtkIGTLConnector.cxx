@@ -16,22 +16,15 @@
 
 #include <vtksys/SystemTools.hxx>
 
-//#include "vtkSocketCommunicator.h"
 #include "vtkMultiThreader.h"
-#include "vtkServerSocket.h"
-#include "vtkClientSocket.h"
+#include "igtlServerSocket.h"
+#include "igtlClientSocket.h"
 #include "vtkMutexLock.h"
 #include "vtkImageData.h"
-
-//#include "igtl_util.h"
-//#include "igtl_header.h"
-//#include "igtl_image.h"
-//#include "igtl_transform.h"
 
 #include "igtlOSUtil.h"
 #include "igtlMessageBase.h"
 #include "igtlMessageHeader.h"
-#include "igtlClientSocket.h"
 
 #include "vtkIGTLCircularBuffer.h"
 #include "vtkIGTLConnector.h"
@@ -45,11 +38,9 @@ vtkIGTLConnector::vtkIGTLConnector()
   this->Type   = TYPE_NOT_DEFINED;
   this->State  = STATE_OFF;
 
-  //this->Communicator = vtkSocketCommunicator::New();
   this->Thread = vtkMultiThreader::New();
   this->ServerStopFlag = false;
   this->ThreadID = -1;
-  this->ServerSocket = NULL;
   this->ServerHostname = "localhost";
   this->ServerPort = 18944;
   this->Mutex = vtkMutexLock::New();
@@ -135,7 +126,7 @@ int vtkIGTLConnector::Stop()
     // NOTE: Thread should be killed by activating ServerStopFlag.
     this->ServerStopFlag = true;
     this->Mutex->Lock();
-    if (this->Socket)
+    if (this->Socket.IsNotNull())
       {
       this->Socket->CloseSocket();
       }
@@ -164,7 +155,7 @@ void* vtkIGTLConnector::ThreadFunction(void* ptr)
   
   if (igtlcon->Type == TYPE_SERVER)
     {
-    igtlcon->ServerSocket = vtkServerSocket::New();
+    igtlcon->ServerSocket = igtl::ServerSocket::New();
     igtlcon->ServerSocket->CreateServer(igtlcon->ServerPort);
     }
   
@@ -173,9 +164,10 @@ void* vtkIGTLConnector::ThreadFunction(void* ptr)
     {
     //vtkErrorMacro("vtkOpenIGTLinkIFLogic::ThreadFunction(): alive.");
     igtlcon->Mutex->Lock();
-    igtlcon->Socket = igtlcon->WaitForConnection();
+    //igtlcon->Socket = igtlcon->WaitForConnection();
+    igtlcon->WaitForConnection();
     igtlcon->Mutex->Unlock();
-    if (igtlcon->Socket != NULL)
+    if (igtlcon->Socket.IsNotNull())
       {
       igtlcon->State = STATE_CONNECTED;
       //vtkErrorMacro("vtkOpenIGTLinkIFLogic::ThreadFunction(): Client Connected.");
@@ -184,18 +176,16 @@ void* vtkIGTLConnector::ThreadFunction(void* ptr)
       }
     }
 
-  if (igtlcon->ServerSocket)
-    {
-    igtlcon->ServerSocket->CloseSocket();
-    igtlcon->ServerSocket->Delete();
-    igtlcon->ServerSocket = NULL;
-    }
-  if (igtlcon->Socket)
+  if (igtlcon->Socket.IsNotNull())
     {
     igtlcon->Socket->CloseSocket();
-    igtlcon->Socket->Delete();
-    igtlcon->Socket = NULL;
     }
+
+  if (igtlcon->Type == TYPE_SERVER && igtlcon->ServerSocket.IsNotNull())
+    {
+    igtlcon->ServerSocket->CloseSocket();
+    }
+  
   igtlcon->ThreadID = -1;
   igtlcon->State = STATE_OFF;
 
@@ -204,13 +194,15 @@ void* vtkIGTLConnector::ThreadFunction(void* ptr)
 }
 
 //---------------------------------------------------------------------------
-vtkClientSocket* vtkIGTLConnector::WaitForConnection()
+//igtl::ClientSocket::Pointer vtkIGTLConnector::WaitForConnection()
+int vtkIGTLConnector::WaitForConnection()
 {
-  vtkClientSocket* socket = NULL;
+  //igtl::ClientSocket::Pointer socket;
 
   if (this->Type == TYPE_CLIENT)
     {
-    socket = vtkClientSocket::New();
+    //socket = igtl::ClientSocket::New();
+    this->Socket = igtl::ClientSocket::New();
     }
 
   while (!this->ServerStopFlag)
@@ -218,20 +210,20 @@ vtkClientSocket* vtkIGTLConnector::WaitForConnection()
     if (this->Type == TYPE_SERVER)
       {
       //vtkErrorMacro("vtkIGTLConnector: Waiting for client @ port #" << this->ServerPort);
-      socket = this->ServerSocket->WaitForConnection(1000);
-      if (socket != NULL) // if client connected
+      this->Socket = this->ServerSocket->WaitForConnection(1000);      
+      if (this->Socket.IsNotNull()) // if client connected
         {
         //vtkErrorMacro("vtkIGTLConnector: connected.");
-        return socket;
+        return 1;
         }
       }
     else if (this->Type == TYPE_CLIENT) // if this->Type == TYPE_CLIENT
       {
       //vtkErrorMacro("vtkIGTLConnector: Connecting to server...");
-      int r = socket->ConnectToServer(this->ServerHostname.c_str(), this->ServerPort);
+      int r = this->Socket->ConnectToServer(this->ServerHostname.c_str(), this->ServerPort);
       if (r == 0) // if connected to server
         {
-        return socket;
+        return 1;
         }
       else
         {
@@ -244,14 +236,14 @@ vtkClientSocket* vtkIGTLConnector::WaitForConnection()
       }
     }
 
-  if (socket != NULL)
+  if (this->Socket.IsNotNull())
     {
     //vtkErrorMacro("vtkOpenIGTLinkLogic::WaitForConnection(): Socket Closed.");
-    socket->CloseSocket();
-    socket->Delete();
+    this->Socket->CloseSocket();
     }
 
-  return NULL;
+  //return NULL;
+  return 0;
 }
 
 //---------------------------------------------------------------------------
@@ -261,7 +253,7 @@ int vtkIGTLConnector::ReceiveController()
   igtl::MessageHeader::Pointer headerMsg;
   headerMsg = igtl::MessageHeader::New();
 
-  if (!this->Socket)
+  if (this->Socket.IsNull())
     {
     return 0;
     }
@@ -363,7 +355,7 @@ int vtkIGTLConnector::ReceiveController()
 int vtkIGTLConnector::SendData(int size, unsigned char* data)
 {
   
-  if (!this->Socket)
+  if (this->Socket.IsNull())
     {
     return 0;
     }

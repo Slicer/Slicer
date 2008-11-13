@@ -157,18 +157,13 @@ vtkOpenIGTLinkIFGUI::vtkOpenIGTLinkIFGUI ( )
 
   this->ImagingMenu            = NULL;
 
+
   //----------------------------------------------------------------
   // Locator  (MRML)
   this->CloseScene             = false;
 
   this->TimerFlag = 0;
 
-  //----------------------------------------------------------------
-  // Interactor styles for MainSliceGUI
-
-  this->MainSliceGUIInteractorObserver0 = NULL;
-  this->MainSliceGUIInteractorObserver1 = NULL;
-  this->MainSliceGUIInteractorObserver2 = NULL;
 }
 
 //---------------------------------------------------------------------------
@@ -281,6 +276,7 @@ vtkOpenIGTLinkIFGUI::~vtkOpenIGTLinkIFGUI ( )
 }
 
 
+
 //---------------------------------------------------------------------------
 void vtkOpenIGTLinkIFGUI::PrintSelf ( ostream& os, vtkIndent indent )
 {
@@ -296,23 +292,14 @@ void vtkOpenIGTLinkIFGUI::PrintSelf ( ostream& os, vtkIndent indent )
 //---------------------------------------------------------------------------
 void vtkOpenIGTLinkIFGUI::RemoveGUIObservers ( )
 {
-  //vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
-
-  if (GetMainSliceGUIInteractors())
-    {
-    this->MainSliceGUIInteractorObserver0->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
-    this->MainSliceGUIInteractorObserver1->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
-    this->MainSliceGUIInteractorObserver2->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
-    }
-
-  /*
+  vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
+  
   appGUI->GetMainSliceGUI("Red")->GetSliceViewer()->GetRenderWidget()
     ->GetRenderWindowInteractor()->GetInteractorStyle()->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
   appGUI->GetMainSliceGUI("Yellow")->GetSliceViewer()->GetRenderWidget()
     ->GetRenderWindowInteractor()->GetInteractorStyle()->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
   appGUI->GetMainSliceGUI("Green")->GetSliceViewer()->GetRenderWidget()
     ->GetRenderWindowInteractor()->GetInteractorStyle()->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
-  */
 
   //----------------------------------------------------------------
   // Connector Browser Frame
@@ -449,7 +436,7 @@ void vtkOpenIGTLinkIFGUI::RemoveGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkOpenIGTLinkIFGUI::RemoveLogicObservers ( )
 {
-  //vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
+  vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
   if (this->GetLogic())
     {
     this->GetLogic()->RemoveObservers(vtkCommand::ModifiedEvent,
@@ -466,7 +453,7 @@ void vtkOpenIGTLinkIFGUI::AddGUIObservers ( )
   // make a user interactor style to process our events
   // look at the InteractorStyle to get our events
 
-  //vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
+  vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
 
   //----------------------------------------------------------------
   // MRML
@@ -486,16 +473,6 @@ void vtkOpenIGTLinkIFGUI::AddGUIObservers ( )
   //----------------------------------------------------------------
   // Main Slice GUI
 
-  if (GetMainSliceGUIInteractors())
-    {
-    this->MainSliceGUIInteractorObserver0
-      ->AddObserver(vtkCommand::LeftButtonPressEvent, (vtkCommand *)this->GUICallbackCommand);
-    this->MainSliceGUIInteractorObserver1
-      ->AddObserver(vtkCommand::LeftButtonPressEvent, (vtkCommand *)this->GUICallbackCommand);
-    this->MainSliceGUIInteractorObserver2
-      ->AddObserver(vtkCommand::LeftButtonPressEvent, (vtkCommand *)this->GUICallbackCommand);
-    }
-  /*
   appGUI->GetMainSliceGUI("Red")->GetSliceViewer()->GetRenderWidget()
     ->GetRenderWindowInteractor()->GetInteractorStyle()
     ->AddObserver(vtkCommand::LeftButtonPressEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -505,7 +482,6 @@ void vtkOpenIGTLinkIFGUI::AddGUIObservers ( )
   appGUI->GetMainSliceGUI("Green")->GetSliceViewer()->GetRenderWidget()
     ->GetRenderWindowInteractor()->GetInteractorStyle()
     ->AddObserver(vtkCommand::LeftButtonPressEvent, (vtkCommand *)this->GUICallbackCommand);
-  */
   
 
   //----------------------------------------------------------------
@@ -619,19 +595,6 @@ void vtkOpenIGTLinkIFGUI::HandleMouseEvent(vtkSlicerInteractorStyle *style)
 {
 
   vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
-
-  vtkSlicerInteractorStyle *istyle0;
-  vtkSlicerInteractorStyle *istyle1;
-  vtkSlicerInteractorStyle *istyle2;
-
-  if (GetMainSliceGUIInteractors())
-    {
-    istyle0 = vtkSlicerInteractorStyle::SafeDownCast(this->MainSliceGUIInteractorObserver0);
-    istyle1 = vtkSlicerInteractorStyle::SafeDownCast(this->MainSliceGUIInteractorObserver1);
-    istyle2 = vtkSlicerInteractorStyle::SafeDownCast(this->MainSliceGUIInteractorObserver2);
-    }
-    
-    /*
   vtkSlicerInteractorStyle *istyle0 
     = vtkSlicerInteractorStyle::SafeDownCast(appGUI->GetMainSliceGUI("Red")->GetSliceViewer()
                                              ->GetRenderWidget()->GetRenderWindowInteractor()->GetInteractorStyle());
@@ -641,7 +604,6 @@ void vtkOpenIGTLinkIFGUI::HandleMouseEvent(vtkSlicerInteractorStyle *style)
   vtkSlicerInteractorStyle *istyle2 
     = vtkSlicerInteractorStyle::SafeDownCast(appGUI->GetMainSliceGUI("Green")->GetSliceViewer()
                                              ->GetRenderWidget()->GetRenderWindowInteractor()->GetInteractorStyle());
-    */
   
   vtkCornerAnnotation *anno = NULL;
   if (style == istyle0)
@@ -664,7 +626,7 @@ void vtkOpenIGTLinkIFGUI::HandleMouseEvent(vtkSlicerInteractorStyle *style)
       std::string ras = std::string(rasText);
         
       // remove "R:," "A:," and "S:" from the string
-      unsigned int loc = ras.find("R:", 0);
+      int loc = ras.find("R:", 0);
       if ( loc != std::string::npos ) 
         {
         ras = ras.replace(loc, 2, "");
@@ -681,7 +643,7 @@ void vtkOpenIGTLinkIFGUI::HandleMouseEvent(vtkSlicerInteractorStyle *style)
         }
       
       // remove "\n" from the string
-      unsigned int found = ras.find("\n", 0);
+      int found = ras.find("\n", 0);
       while ( found != std::string::npos )
         {
         ras = ras.replace(found, 1, " ");
@@ -1822,57 +1784,6 @@ void vtkOpenIGTLinkIFGUI::ChangeSlicePlaneDriver(int slice, const char* driver)
 
 
 //---------------------------------------------------------------------------
-int vtkOpenIGTLinkIFGUI::GetMainSliceGUIInteractors()
-{
-
-  vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
-
-  if (!this->MainSliceGUIInteractorObserver0)
-    {
-    vtkSlicerSliceGUI* ssg = appGUI->GetMainSliceGUI("Red");
-    if (ssg
-        && ssg->GetSliceViewer()
-        && ssg->GetSliceViewer()->GetRenderWidget()
-        && ssg->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor())
-      {
-      this->MainSliceGUIInteractorObserver0 = ssg->GetSliceViewer()->GetRenderWidget()
-        ->GetRenderWindowInteractor()->GetInteractorStyle();
-      }
-    }
-
-  if (!this->MainSliceGUIInteractorObserver1)
-    {
-    vtkSlicerSliceGUI* ssg = appGUI->GetMainSliceGUI("Yellow");
-    if (ssg
-        && ssg->GetSliceViewer()
-        && ssg->GetSliceViewer()->GetRenderWidget()
-        && ssg->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor())
-      {
-      this->MainSliceGUIInteractorObserver1 = ssg->GetSliceViewer()->GetRenderWidget()
-        ->GetRenderWindowInteractor()->GetInteractorStyle();
-      }
-    }
-
-  if (!this->MainSliceGUIInteractorObserver2)
-    {
-    vtkSlicerSliceGUI* ssg = appGUI->GetMainSliceGUI("Green");
-    if (ssg
-        && ssg->GetSliceViewer()
-        && ssg->GetSliceViewer()->GetRenderWidget()
-        && ssg->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor())
-      {
-      this->MainSliceGUIInteractorObserver2 = ssg->GetSliceViewer()->GetRenderWidget()
-        ->GetRenderWindowInteractor()->GetInteractorStyle();
-      }
-    }
-
-  return (this->MainSliceGUIInteractorObserver0 &&
-          this->MainSliceGUIInteractorObserver1 &&
-          this->MainSliceGUIInteractorObserver2);
-}
-
-
-//---------------------------------------------------------------------------
 void vtkOpenIGTLinkIFGUI::UpdateConnectorList(int updateLevel)
 {
   if (this->ConnectorList == NULL)
@@ -2158,7 +2069,7 @@ void vtkOpenIGTLinkIFGUI::UpdateMrmlNodeListFrame(int con)
 
   // Set number of rows in the table
   int totalrows = incoming->size() + outgoing->size() + unspecified->size();
-  //int numRows = this->ConnectorList->GetWidget()->GetNumberOfRows();
+  int numRows = this->ConnectorList->GetWidget()->GetNumberOfRows();
 
   this->MrmlNodeList->GetWidget()->AddRows(totalrows);
 
@@ -2167,7 +2078,7 @@ void vtkOpenIGTLinkIFGUI::UpdateMrmlNodeListFrame(int con)
   this->GetLogic()->GetDeviceNamesFromMrml(this->CurrentNodeListAvailable);
   vtkStringArray* deviceNames = vtkStringArray::New();
 
-  for (unsigned int i = 0; i < this->CurrentNodeListAvailable.size(); i ++)
+  for (int i = 0; i < this->CurrentNodeListAvailable.size(); i ++)
     {
     char str[256];
     sprintf(str, "%s (%s)", this->CurrentNodeListAvailable[i].name.c_str(), this->CurrentNodeListAvailable[i].type.c_str());
@@ -2178,7 +2089,7 @@ void vtkOpenIGTLinkIFGUI::UpdateMrmlNodeListFrame(int con)
   int row = 0;
   for (row = 0; row < totalrows; row ++) // First create unspecified rows
     {
-    //const char* typeStrs[] = {"TRANSFORM", "IMAGE", "POSITION"};
+    const char* typeStrs[] = {"TRANSFORM", "IMAGE", "POSITION"};
     const char* ioStrs[]   = {"--", "IN", "OUT"};
 
     char command[256];
@@ -2261,7 +2172,7 @@ int vtkOpenIGTLinkIFGUI::OnMrmlNodeListChanged(int row, int col, const char* ite
   // -----------------------------------------
   // Get original node info at (row, col)
 
-  //vtkIGTLConnector::DeviceNameList* list;
+  vtkIGTLConnector::DeviceNameList* list;
   std::string& origName = this->CurrentNodeListSelected[row].name;
   std::string& origType = this->CurrentNodeListSelected[row].type;
   int origIo            = this->CurrentNodeListSelected[row].io;
@@ -2272,7 +2183,7 @@ int vtkOpenIGTLinkIFGUI::OnMrmlNodeListChanged(int row, int col, const char* ite
   if (col == 0) // Name (Type) column has been interacted
     {
     // Get current node info at (row, col)
-    unsigned int index = this->MrmlNodeList->GetWidget()->GetCellWindowAsComboBox(row, 0)->GetValueIndex(item);
+    int index = this->MrmlNodeList->GetWidget()->GetCellWindowAsComboBox(row, 0)->GetValueIndex(item);
     std::cerr << "INDEX == " << index << std::endl;
     if (index < 0 || index >= this->CurrentNodeListAvailable.size())
       {

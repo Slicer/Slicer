@@ -27,7 +27,6 @@
 #include "vtkIGTPat2ImgRegistration.h"
 #include "vtkCallbackCommand.h"
 #include "vtkSlicerInteractorStyle.h"
-#include "vtkInteractorObserver.h"
 
 #include <string>
 
@@ -200,11 +199,8 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
 
   bool              IsSliceOrientationAdded;
 
+  
   // Module logic and mrml pointers
-
-  vtkInteractorObserver* MainSliceGUIInteractorObserver0;
-  vtkInteractorObserver* MainSliceGUIInteractorObserver1;
-  vtkInteractorObserver* MainSliceGUIInteractorObserver2;
 
   //----------------------------------------------------------------
   // Logic Values
@@ -278,7 +274,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   int  ChangeWorkPhase(int phase, int fChangeWizard=0);
   void ChangeSlicePlaneDriver(int slice, const char* driver);
 
-  int  GetMainSliceGUIInteractors();
 
   //----------------------------------------------------------------
   // Connector List and Properties control
@@ -287,10 +282,8 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   void UpdateConnectorList(int updateLevel);
   void UpdateConnectorPropertyFrame(int i);
   void UpdateMrmlNodeListFrame(int con);
-
  public:
   virtual int OnMrmlNodeListChanged(int row, int col, const char* item);
-
 };
 
 
