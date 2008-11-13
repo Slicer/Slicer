@@ -124,6 +124,11 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
     return
   }
 
+  if { [$_sliceCompositeNode GetCrosshairMode] == 0 } {
+    # not using a crosshair, eject
+    return
+  }
+
   if { $caller == $sliceGUI } {
 
     switch $event {
