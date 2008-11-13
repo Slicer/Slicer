@@ -13,6 +13,10 @@ vtkCxxRevisionMacro ( vtkSlicerSlicesControlIcons, "$Revision: 1.0 $");
 vtkSlicerSlicesControlIcons::vtkSlicerSlicesControlIcons ( )
 {
 
+  this->ManualSliceSpacingIcon = vtkKWIcon::New();
+  this->AutomaticSliceSpacingIcon = vtkKWIcon::New();  
+  this->ManualSliceSpacingModeIcon = vtkKWIcon::New();
+  this->AutomaticSliceSpacingModeIcon = vtkKWIcon::New();  
   this->SliceMoreOptionsIcon = vtkKWIcon::New();
   this->SliceWidgetOnIcon = vtkKWIcon::New();
   this->SliceWidgetOffIcon = vtkKWIcon::New();
@@ -51,6 +55,26 @@ vtkSlicerSlicesControlIcons::vtkSlicerSlicesControlIcons ( )
 vtkSlicerSlicesControlIcons::~vtkSlicerSlicesControlIcons ( )
 {
 
+  if ( this->ManualSliceSpacingIcon)
+    {
+    this->ManualSliceSpacingIcon->Delete();
+    this->ManualSliceSpacingIcon = NULL;
+    }
+  if ( this->ManualSliceSpacingModeIcon)
+    {
+    this->ManualSliceSpacingModeIcon->Delete();
+    this->ManualSliceSpacingModeIcon = NULL;
+    }
+  if ( this->AutomaticSliceSpacingIcon)
+    {
+    this->AutomaticSliceSpacingIcon->Delete();
+    this->AutomaticSliceSpacingIcon = NULL;
+    }
+  if ( this->AutomaticSliceSpacingModeIcon)
+    {
+    this->AutomaticSliceSpacingModeIcon->Delete();
+    this->AutomaticSliceSpacingModeIcon = NULL;
+    }
   if ( this->SliceMoreOptionsIcon)
     {
     this->SliceMoreOptionsIcon->Delete();
@@ -190,6 +214,26 @@ vtkSlicerSlicesControlIcons::~vtkSlicerSlicesControlIcons ( )
 void vtkSlicerSlicesControlIcons::AssignImageDataToIcons ( ) {
 
 
+  this->ManualSliceSpacingIcon->SetImage (image_SlicerManualSliceSpacing,
+                                          image_SlicerManualSliceSpacing_width,
+                                          image_SlicerManualSliceSpacing_height,
+                                          image_SlicerManualSliceSpacing_pixel_size,
+                                          image_SlicerManualSliceSpacing_length, 0);
+  this->ManualSliceSpacingModeIcon->SetImage (image_SlicerManualSliceSpacingMode,
+                                          image_SlicerManualSliceSpacingMode_width,
+                                          image_SlicerManualSliceSpacingMode_height,
+                                          image_SlicerManualSliceSpacingMode_pixel_size,
+                                          image_SlicerManualSliceSpacingMode_length, 0);
+  this->AutomaticSliceSpacingIcon->SetImage (image_SlicerAutomaticSliceSpacing,
+                                          image_SlicerAutomaticSliceSpacing_width,
+                                          image_SlicerAutomaticSliceSpacing_height,
+                                          image_SlicerAutomaticSliceSpacing_pixel_size,
+                                          image_SlicerAutomaticSliceSpacing_length, 0);
+  this->AutomaticSliceSpacingModeIcon->SetImage (image_SlicerAutomaticSliceSpacingMode,
+                                          image_SlicerAutomaticSliceSpacingMode_width,
+                                          image_SlicerAutomaticSliceSpacingMode_height,
+                                          image_SlicerAutomaticSliceSpacingMode_pixel_size,
+                                          image_SlicerAutomaticSliceSpacingMode_length, 0);
   this->SliceMoreOptionsIcon->SetImage ( image_SliceMoreOptions,
                                          image_SliceMoreOptions_width,
                                          image_SliceMoreOptions_height,
@@ -330,6 +374,7 @@ void vtkSlicerSlicesControlIcons::PrintSelf ( ostream& os, vtkIndent indent )
 {
     this->vtkObject::PrintSelf ( os, indent );
 
+
     os << indent << "SlicerSlicesControlIcons: " << this->GetClassName ( ) << "\n";
     os << indent << "SliceMoreOptionsIcon: " << this->GetSliceMoreOptionsIcon() << "\n";
     os << indent << "SliceWidgetOnIcon: " << this->GetSliceWidgetOnIcon() << "\n";
@@ -357,4 +402,8 @@ void vtkSlicerSlicesControlIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "FeaturesVisibleIcon: " << this->GetFeaturesVisibleIcon() << "\n";
     os << indent << "WinLevThreshColIcon: " << this->GetWinLevThreshColIcon() << "\n";
     os << indent << "FieldOfViewIcon: " << this->GetFieldOfViewIcon() << "\n";
+    os << indent << "ManualSliceSpacingIcon: " << this->GetManualSliceSpacingIcon() << "\n";
+    os << indent << "ManualSliceSpacingModeIcon: " << this->GetManualSliceSpacingModeIcon() << "\n";
+    os << indent << "AutomaticSliceSpacingIcon: " << this->GetAutomaticSliceSpacingIcon() << "\n";
+    os << indent << "AutomaticSliceSpacingModeIcon: " << this->GetAutomaticSliceSpacingModeIcon() << "\n";    
 }

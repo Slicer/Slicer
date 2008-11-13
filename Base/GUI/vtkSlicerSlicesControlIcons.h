@@ -24,6 +24,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlIcons : public vtkSlicerI
     vtkTypeRevisionMacro ( vtkSlicerSlicesControlIcons, vtkSlicerIcons );
     void PrintSelf ( ostream& os, vtkIndent indent );
 
+    vtkGetObjectMacro ( ManualSliceSpacingIcon, vtkKWIcon );
+    vtkGetObjectMacro ( ManualSliceSpacingModeIcon, vtkKWIcon );
+    vtkGetObjectMacro ( AutomaticSliceSpacingIcon, vtkKWIcon );
+    vtkGetObjectMacro ( AutomaticSliceSpacingModeIcon, vtkKWIcon );
     vtkGetObjectMacro ( FgIcon, vtkKWIcon );
     vtkGetObjectMacro ( BgIcon, vtkKWIcon );
     vtkGetObjectMacro ( ToggleFgBgIcon, vtkKWIcon );
@@ -59,6 +63,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlIcons : public vtkSlicerI
     vtkSlicerSlicesControlIcons ( );
     virtual ~vtkSlicerSlicesControlIcons ( );
 
+    vtkKWIcon *ManualSliceSpacingIcon;
+    vtkKWIcon *AutomaticSliceSpacingIcon;
+    vtkKWIcon *ManualSliceSpacingModeIcon;
+    vtkKWIcon *AutomaticSliceSpacingModeIcon;
     vtkKWIcon *SliceMoreOptionsIcon;
     vtkKWIcon *SliceWidgetOnIcon;
     vtkKWIcon *SliceWidgetOffIcon;

@@ -222,6 +222,7 @@ protected:
   vtkKWSpinBoxWithLabel *PrescribedSliceSpacingEntry;
   vtkKWTopLevel *PrescribedSliceSpacingTopLevel;
   vtkKWPushButton *PrescribedSliceSpacingApplyButton;
+  vtkKWPushButton *PrescribedSliceSpacingCancelButton;
   
   int LightboxRows;
   int LightboxColumns;
