@@ -981,6 +981,10 @@ itcl::body SliceSWidget::isCompareView { } {
   set viewArrangement [$layout GetViewArrangement]
 
   if { $viewArrangement == 12 } {
+    set lname [$_sliceNode GetSingletonTag]
+    if { [string first "Compare" $lname] != 0 } {
+      return 0
+    } 
     return 1
   } else {
     return 0
