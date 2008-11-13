@@ -157,7 +157,7 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
               set renderNeeded [$cw setPosition $r $a $s]
 
               # only need to request a render if we are not jumping slices 
-              # and the cursor state changed
+              # and the cursor state or position changed
               if { $jumped == 0 && $renderNeeded == 1 } {
                 [[$cw cget -sliceGUI] GetSliceViewer] RequestRender
               } 
@@ -310,6 +310,8 @@ itcl::body CrosshairSWidget::updateCrosshair { } {
 
 itcl::body CrosshairSWidget::setPosition { r a s } {
 
+  set changed 0
+
   foreach {x y z } [rasToXYZ "$r $a $s"] {}
 
   # determine which renderer based on z position
@@ -318,22 +320,25 @@ itcl::body CrosshairSWidget::setPosition { r a s } {
   # remove the crosshair from the old renderer and add it to the new one
   if { [info command $_renderer] != ""} {
     $_renderer RemoveActor2D $o(crosshairActor)
+    set changed 1
   }
-
+  
   if { $k >= 0 && $k < [$_renderWidget GetNumberOfRenderers] } {
     set _renderer [$_renderWidget GetNthRenderer $k]
     if { [info command $_renderer] != ""} {
       $_renderer AddActor2D $o(crosshairActor)
+      set changed 1
     }
   }
   
   # position the actor
-  $o(crosshairActor) SetPosition $x $y
+  set oldPosition [$o(crosshairActor) GetPosition]
+  if { [lindex $oldPosition 0] != $x || [lindex $oldPosition 1] != $y } {
+    set changed 1
+    $o(crosshairActor) SetPosition $x $y
+  }
 
-  # turn the actor on/off depending on whether it is NEWLY visible or
-  # not (this is where we will also move the actor from viewport to
-  # viewport in the lightbox
-  set changed 0
+  # turn the actor on/off depending on whether it is NEWLY visible or not
   if { $z >= -0.5 && $z < [expr 0.5+[lindex [$_sliceNode GetDimensions] 2]-1]} {
     # cursor is visible on the displayed slice, check if this is a state change
     if { [$o(crosshairActor) GetVisibility] == 0} {
