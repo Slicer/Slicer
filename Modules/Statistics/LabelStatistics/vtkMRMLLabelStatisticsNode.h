@@ -31,7 +31,7 @@ class VTK_LABELSTATISTICS_EXPORT vtkMRMLLabelStatisticsNode : public vtkMRMLNode
   typedef struct LabelStatsEntry{
     int Label;
     int Count;
-    int Area;
+    int Volume;
     int Min;
     int Max;
     double Mean;

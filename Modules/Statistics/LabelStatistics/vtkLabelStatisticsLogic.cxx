@@ -103,7 +103,7 @@ void vtkLabelStatisticsLogic::Apply()
   hi = (int)(stataccum->GetMax())[0];
   stataccum->Delete();
 
-  std::string tmpString("Label\tCount\tArea\tMin\tMax\tMean\tStdDev\n");
+  std::string tmpString("Label\tCount\tVolume\tMin\tMax\tMean\tStdDev\n");
   this->LabelStatisticsNode->SetResultText(tmpString.c_str());
 
   for(int i = lo; i <= hi; i++ ) 
@@ -150,7 +150,7 @@ void vtkLabelStatisticsLogic::Apply()
       vtkMRMLLabelStatisticsNode::LabelStatsEntry entry;
       entry.Label = i;
       entry.Count = stat1->GetVoxelCount();
-      entry.Area = entry.Count * cubicMMPerVoxel;
+      entry.Volume = entry.Count * cubicMMPerVoxel;
       entry.Min = (int)(stat1->GetMin())[0];
       entry.Max = (int)(stat1->GetMax())[0];
       entry.Mean = (stat1->GetMean())[0];
@@ -179,7 +179,7 @@ void vtkLabelStatisticsLogic::Apply()
       {
       std::stringstream ss;
       std::string str;
-      ss << entry.Area;
+      ss << entry.Volume;
       ss >> str;
       tmpString.append(str);
       tmpString.append("\t");
