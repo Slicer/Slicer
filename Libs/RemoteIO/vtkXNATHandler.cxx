@@ -5,20 +5,19 @@
 vtkStandardNewMacro ( vtkXNATHandler );
 vtkCxxRevisionMacro ( vtkXNATHandler, "$Revision: 1.0 $" );
 
-/*------------------------------------------------------------------------------
+/*/------------------------------------------------------------------------------
 vtkXNATHandler* vtkXNATHandler::New()
 {
   // First try to create the object from the vtkObjectFactory
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkXNATHandler");
   if(ret)
     {
-    return (vtkXNATHandler*)ret;
+    return static_cast<vtkXNATHandler*>(ret);
     }
   // If the factory was unable to create the object, then create it here.
   return new vtkXNATHandler;
 }
 */
-
 
 //----------------------------------------------------------------------------
 vtkXNATHandler::vtkXNATHandler()

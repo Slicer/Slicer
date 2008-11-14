@@ -12,7 +12,7 @@ vtkSRBHandler* vtkSRBHandler::New()
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkSRBHandler");
   if(ret)
     {
-    return (vtkSRBHandler*)ret;
+    return static_cast<vtkSRBHandler*>(ret);
     }
   // If the factory was unable to create the object, then create it here.
   return new vtkSRBHandler;

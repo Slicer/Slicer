@@ -10,7 +10,7 @@ vtkHTTPHandler* vtkHTTPHandler::New()
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkHTTPHandler");
   if(ret)
     {
-    return (vtkHTTPHandler*)ret;
+    return static_cast<vtkHTTPHandler*>(ret);
     }
   // If the factory was unable to create the object, then create it here.
   return new vtkHTTPHandler;
