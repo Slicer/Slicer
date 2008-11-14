@@ -583,7 +583,7 @@ if(Slicer3_USE_BatchMake)
   subdirs( BatchMakeApplications )
 endif(Slicer3_USE_BatchMake)
 
-subdirs( Utah )
+#subdirs( Utah )
 
 if (Slicer3_SOURCE_DIR)
   # install each target in the production area (where it would appear in an 
