@@ -254,13 +254,22 @@ proc ClipModelApply {this} {
     set clip [$::ClipModel($this,clip) GetSelectedState]
     if { $clip == 0} {
         $::ClipModel($this,box) Off
-        return;
+        $::slicer3::ViewerWidget Render
+        return
+    }
+    
+    if { $clip == 1} {
+        $::ClipModel($this,box) On
+        $::slicer3::ViewerWidget Render
     }
     
     set mod [$::ClipModel($this,modelsSelect) GetSelected]
     set modOut [$::ClipModel($this,modelsOutputSelect) GetSelected]
+    puts "here"
+    puts $mod
     if { $mod == ""} {
         $::ClipModel($this,box) Off
+        $::slicer3::ViewerWidget Render
         return
     }
     if { $modOut == ""} {
