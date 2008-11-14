@@ -15,7 +15,7 @@ proc ClipModelTearDownGUI {this} {
     
     # nodeSelector  ;# disabled for now
     set widgets {
-        clip modelsSelect
+        clip interact modelsSelect
         modelsOutputSelect modelsFrame 
     }
     
@@ -112,12 +112,21 @@ proc ClipModelBuildGUI {this} {
     $::ClipModel($this,clip) SetBalloonHelpString "Apply clipping"
     pack [$::ClipModel($this,clip) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
     
+    set ::ClipModel($this,interact) [vtkKWCheckButton New]
+    $::ClipModel($this,interact) SetParent [$::ClipModel($this,modelsFrame) GetFrame]
+    $::ClipModel($this,interact) Create
+    $::ClipModel($this,interact) SetText "Clip While Interacting"
+    $::ClipModel($this,interact) SetSelectedState 0
+    $::ClipModel($this,interact) SetBalloonHelpString "Apply interactping"
+    pack [$::ClipModel($this,interact) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+    
     set ::ClipModel($this,init) ""
     
 }
 
 proc ClipModelAddGUIObservers {this} {
     $this AddObserverByNumber $::ClipModel($this,clip) 10000 
+    $this AddObserverByNumber $::ClipModel($this,interact) 10000 
     $this AddObserverByNumber $::ClipModel($this,modelsSelect) 11000  
     $this AddObserverByNumber $::ClipModel($this,modelsOutputSelect) 11000  
     $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
@@ -127,12 +136,28 @@ proc ClipModelAddGUIObservers {this} {
 proc ClipModelRemoveGUIObservers {this} {
     $this RemoveMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
     $this RemoveObserverByNumber $::ClipModel($this,clip) 10000
+    $this RemoveObserverByNumber $::ClipModel($this,interact) 10000
     $this RemoveObserverByNumber $::ClipModel($this,modelsSelect) 11000
     $this RemoveObserverByNumber $::ClipModel($this,modelsOutputSelect) 11000
 }
 
 proc ClipModelProcessGUIEvents {this caller event} {
     puts "in ClipModelProcessGUIEvents"
+    if { $caller == $::ClipModel($this,interact) } {
+        set interact [$::ClipModel($this,interact) GetSelectedState]
+        if { $interact == 0} {
+            $::ClipModel($this,box) RemoveObservers InteractionEvent
+            $::ClipModel($this,box) AddObserver InteractionEvent ClipModelRender
+        }
+        if { $interact == 1} {
+            $::ClipModel($this,box) RemoveObservers InteractionEvent
+            $::ClipModel($this,box) AddObserver InteractionEvent ClipModelClipModel
+        }
+        $::slicer3::ViewerWidget Render
+        return
+    }
+
+
     if { $caller == $::ClipModel($this,modelsSelect) } {
         set mod [$::ClipModel($this,modelsSelect) GetSelected]
         if { $mod != "" && [$mod GetPolyData] != ""} {
@@ -225,6 +250,8 @@ proc ClipModelProcessMRMLEvents {this callerID event} {
 proc ClipModelEnter {this} {
 }
 proc ClipModelExit {this} {
+    $::ClipModel($this,box) RemoveObservers EndInteractionEvent
+    $::ClipModel($this,box) RemoveObservers InteractionEvent
 }
 
 
@@ -238,7 +265,7 @@ proc ClipModelInit {this} {
         $::slicer3::ViewerWidget SetBoxWidgetInteractor
         
         $::ClipModel($this,box) AddObserver EndInteractionEvent ClipModelClipModel
-        $::ClipModel($this,box) AddObserver InteractionEvent ClipModelClipModel
+        $::ClipModel($this,box) AddObserver InteractionEvent ClipModelRender
         $::ClipModel($this,box) SetPriority 1 
         $::ClipModel($this,boxRep)  SetPlaceFactor  1.0
         
@@ -297,5 +324,10 @@ proc ClipModelClipModel {} {
     set this $::ClipModel(singleton)
     $::ClipModel($this,boxRep) GetPlanes $::ClipModel($this,planes)
     ClipModelApply $this
+    [[[$::slicer3::ViewerWidget GetMainViewer] GetRenderWindow] GetInteractor] ReInitialize
+}
+
+proc ClipModelRender {} {
+    $::slicer3::ViewerWidget Render
     [[[$::slicer3::ViewerWidget GetMainViewer] GetRenderWindow] GetInteractor] ReInitialize
 }
