@@ -73,7 +73,7 @@ int main( int argc, char *argv[] )
 
   confidenceConnected->SetMultiplier( multiplier );
   confidenceConnected->SetNumberOfIterations( iterations );
-  confidenceConnected->SetReplaceValue( 255 );
+  confidenceConnected->SetReplaceValue( labelvalue );
   confidenceConnected->SetInitialNeighborhoodRadius( neighborhood );
 
   if (seed.size() > 0)
