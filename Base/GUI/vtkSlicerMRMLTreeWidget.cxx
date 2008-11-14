@@ -182,7 +182,8 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
               }
             }
           }
-        if (node != NULL && node->IsA("vtkMRMLDisplayableNode") && !node->IsA("vtkMRMLVolumeNode") && !node->IsA("vtkMRMLTransformNode"))
+        if (node != NULL && node->IsA("vtkMRMLDisplayableNode") && !node->IsA("vtkMRMLVolumeNode") && !node->IsA("vtkMRMLTransformNode") &&
+          vtkMRMLDisplayableNode::SafeDownCast(node)->GetDisplayNode() != NULL )
           {
           sprintf(command, "ToggleVisibilityCallback {%s}", (const char *)callData);
           int index = this->ContextMenu->AddCheckButton("Toggle Visibility", this, command);
