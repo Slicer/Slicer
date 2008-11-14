@@ -142,7 +142,6 @@ proc ClipModelRemoveGUIObservers {this} {
 }
 
 proc ClipModelProcessGUIEvents {this caller event} {
-    puts "in ClipModelProcessGUIEvents"
     if { $caller == $::ClipModel($this,interact) } {
         set interact [$::ClipModel($this,interact) GetSelectedState]
         if { $interact == 0} {
@@ -162,7 +161,6 @@ proc ClipModelProcessGUIEvents {this caller event} {
         set mod [$::ClipModel($this,modelsSelect) GetSelected]
         if { $mod != "" && [$mod GetPolyData] != ""} {
             eval $::ClipModel($this,boxRep)  PlaceWidget [[$mod GetPolyData] GetBounds]
-            puts "Setting Box Bounds"
         }
     } 
     ClipModelApply $this
@@ -256,10 +254,8 @@ proc ClipModelExit {this} {
 
 
 proc ClipModelInit {this} {
-    puts "in ClipModelInit"
     set init  $::ClipModel($this,init)
     if { $init == ""} {
-        puts "init in ClipModelInit"
         set ::ClipModel($this,box) [$::slicer3::ViewerWidget GetBoxWidget]
         set ::ClipModel($this,boxRep) [$::slicer3::ViewerWidget GetBoxWidgetRepresentation]
         $::slicer3::ViewerWidget SetBoxWidgetInteractor
@@ -274,8 +270,6 @@ proc ClipModelInit {this} {
 }
 
 proc ClipModelApply {this} {
-    puts "in ClipModelApply"
-
     ClipModelInit $this
     
     set clip [$::ClipModel($this,clip) GetSelectedState]
@@ -292,8 +286,6 @@ proc ClipModelApply {this} {
     
     set mod [$::ClipModel($this,modelsSelect) GetSelected]
     set modOut [$::ClipModel($this,modelsOutputSelect) GetSelected]
-    puts "here"
-    puts $mod
     if { $mod == ""} {
         $::ClipModel($this,box) Off
         $::slicer3::ViewerWidget Render
@@ -306,7 +298,6 @@ proc ClipModelApply {this} {
     $::ClipModel($this,box) On
     $::ClipModel($this,clipper) SetInput [$mod GetPolyData]
     $::ClipModel($this,clipper) Update
-    puts "Updating Cliiping"
     set poly [$::ClipModel($this,clipper) GetOutput]
     $modOut SetAndObservePolyData $poly
     if {[$modOut GetDisplayNode] == ""} {
@@ -320,7 +311,6 @@ proc ClipModelApply {this} {
 }
 
 proc ClipModelClipModel {} {
-    puts "in ClipModelClipModel"
     set this $::ClipModel(singleton)
     $::ClipModel($this,boxRep) GetPlanes $::ClipModel($this,planes)
     ClipModelApply $this
