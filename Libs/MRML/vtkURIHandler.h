@@ -9,7 +9,8 @@ class VTK_MRML_EXPORT vtkURIHandler : public vtkObject
 {
   public:
   // The Usual vtk class functions
-  static vtkURIHandler *New() { return NULL; };
+  //static vtkURIHandler *New() { return NULL; };
+    static vtkURIHandler *New();
   vtkTypeRevisionMacro(vtkURIHandler, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
   
@@ -39,7 +40,7 @@ class VTK_MRML_EXPORT vtkURIHandler : public vtkObject
   // Description:
   // Determine whether protocol is appropriate for this handler.
   // NOTE: Subclasses should implement this method
-  virtual int CanHandleURI ( const char *uri ) = 0;
+  virtual int CanHandleURI ( const char *uri ) { return 0; };
 
   // Description:
   // This function writes the downloaded data in a buffered manner

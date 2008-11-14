@@ -2,7 +2,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkURIHandler.h"
 
-
+vtkStandardNewMacro ( vtkURIHandler );
 vtkCxxRevisionMacro ( vtkURIHandler, "$Revision: 1.0 $" );
 //----------------------------------------------------------------------------
 vtkURIHandler::vtkURIHandler()
