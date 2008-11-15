@@ -252,8 +252,8 @@ proc ClipModelProcessMRMLEvents {this callerID event} {
 proc ClipModelEnter {this} {
 }
 proc ClipModelExit {this} {
-    $::ClipModel($this,box) RemoveObservers EndInteractionEvent
-    $::ClipModel($this,box) RemoveObservers InteractionEvent
+    #$::ClipModel($this,box) RemoveObservers EndInteractionEvent
+    #$::ClipModel($this,box) RemoveObservers InteractionEvent
 }
 
 
@@ -289,7 +289,6 @@ proc ClipModelApply {this} {
     
     if { $clip == 1} {
         $::ClipModel($this,box) On
-        $::slicer3::ViewerWidget Render
     }
     
     set mod [$::ClipModel($this,modelsSelect) GetSelected]
@@ -305,7 +304,6 @@ proc ClipModelApply {this} {
         return
     }
     
-    $::ClipModel($this,box) On
     $::ClipModel($this,clipper) SetInput [$mod GetPolyData]
     $::ClipModel($this,clipper) Update
     #puts "Updating Cliiping"
