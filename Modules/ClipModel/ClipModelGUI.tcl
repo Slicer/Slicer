@@ -163,6 +163,7 @@ proc ClipModelProcessGUIEvents {this caller event} {
     if { $caller == $::ClipModel($this,modelsSelect) } {
         set mod [$::ClipModel($this,modelsSelect) GetSelected]
         if { $mod != "" && [$mod GetPolyData] != ""} {
+            eval $::ClipModel($this,planes)  SetBounds [[$mod GetPolyData] GetBounds]
             eval $::ClipModel($this,boxRep)  PlaceWidget [[$mod GetPolyData] GetBounds]
             #puts "Setting Box Bounds"
         }
