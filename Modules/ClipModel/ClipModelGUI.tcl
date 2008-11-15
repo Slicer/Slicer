@@ -290,6 +290,7 @@ proc ClipModelApply {this} {
     
     if { $clip == 1} {
         $::ClipModel($this,box) On
+        $::slicer3::ViewerWidget Render
     }
     
     set mod [$::ClipModel($this,modelsSelect) GetSelected]
