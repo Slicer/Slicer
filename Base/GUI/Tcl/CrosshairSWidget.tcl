@@ -146,11 +146,11 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
           $this setPosition $r $a $s
 
           # set other crosshairs to this ras
-          set itclobjects [itcl::find objects]
+          set itclobjects [itcl::find objects -class CrosshairSWidget]
 
           foreach cw $itclobjects {
             set jumped 0
-            if {[$cw isa CrosshairSWidget] && $cw != $this} {
+            if {$cw != $this} {
               # jump the slice if necessary
               if { [[[[$cw cget -sliceGUI] GetLogic] GetSliceCompositeNode] GetCrosshairBehavior] != 0 } {
                 [[[$cw cget -sliceGUI] GetLogic] GetSliceNode] JumpSlice $r $a $s
@@ -179,13 +179,11 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
         $_interactor ShowCursor
 
         # hide the crosshair
-        set itclobjects [itcl::find objects]
+        set itclobjects [itcl::find objects -class CrosshairSWidget]
         foreach cw $itclobjects {
-          if {[$cw isa CrosshairSWidget]} {
-            array set objs [$cw getObjects]
-            $objs(crosshairActor) VisibilityOff
-            [[$cw cget -sliceGUI] GetSliceViewer] RequestRender
-          }
+          array set objs [$cw getObjects]
+          $objs(crosshairActor) VisibilityOff
+          [[$cw cget -sliceGUI] GetSliceViewer] RequestRender
         }
         return
       }

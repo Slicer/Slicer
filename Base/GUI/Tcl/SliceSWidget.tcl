@@ -1013,13 +1013,11 @@ itcl::body SliceSWidget::isCompareView { } {
 itcl::body SliceSWidget::getSliceSWidgetForGUI {gui} {
     # find the SliceSWidget for sgui
     set found 0
-    set itclobjects [itcl::find objects]
+    set itclobjects [itcl::find objects -class SliceSWidget]
     foreach sw $itclobjects {
-      if {[$sw isa SliceSWidget]} {
-        if {[$sw cget -sliceGUI] == $gui} {
-          set found 1
-          break;
-        }
+      if {[$sw cget -sliceGUI] == $gui} {
+        set found 1
+        break;
       }
     }
 
