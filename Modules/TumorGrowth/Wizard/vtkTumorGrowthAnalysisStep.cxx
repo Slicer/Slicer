@@ -769,7 +769,8 @@ void vtkTumorGrowthAnalysisStep::SensitivityChangedCallback(int flag)
   // cout << "vtkTumorGrowthAnalysisStep::SensitivityChangedCallback" << endl;
   // Sensitivity has changed because of user interaction
   vtkMRMLTumorGrowthNode *mrmlNode = this->GetGUI()->GetNode();
-  if (!this->SensitivityMedium || !this->SensitivityLow ||  !this->SensitivityHigh || !mrmlNode || !this->GrowthLabel ) return;
+  if (!this->SensitivityMedium || !this->SensitivityLow ||  !this->SensitivityHigh || !mrmlNode || !this->GrowthLabel || !mrmlNode->GetAnalysis_Intensity_Flag()) return;
+
 
   double senValue = mrmlNode->GetAnalysis_Intensity_Sensitivity();
   // original values   int senValueList[3] = {0.1, 0.6, 1.0};
