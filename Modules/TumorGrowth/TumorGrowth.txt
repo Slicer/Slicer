@@ -1,2 +1,0 @@
-Name: Tumor Growth 
-GUIName: ChangeTracker
