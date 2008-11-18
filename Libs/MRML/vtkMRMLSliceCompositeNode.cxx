@@ -427,7 +427,7 @@ void vtkMRMLSliceCompositeNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLSliceCompositeNode *node = vtkMRMLSliceCompositeNode::SafeDownCast(anode);
 
-  this->DisableModifiedEventOn();
+  //this->DisableModifiedEventOn();
 
   this->SetBackgroundVolumeID(node->GetBackgroundVolumeID());
   this->SetForegroundVolumeID(node->GetForegroundVolumeID());
@@ -447,8 +447,8 @@ void vtkMRMLSliceCompositeNode::Copy(vtkMRMLNode *anode)
   this->SetCrosshairBehavior (node->GetCrosshairBehavior());
   this->SetCrosshairThickness (node->GetCrosshairThickness());
 
-  this->DisableModifiedEventOff();
-  this->InvokePendingModifiedEvent();
+  //this->DisableModifiedEventOff();
+  //this->InvokePendingModifiedEvent();
 }
 
 //----------------------------------------------------------------------------

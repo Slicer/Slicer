@@ -631,7 +631,7 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLSliceNode *node = vtkMRMLSliceNode::SafeDownCast(anode);
 
-  this->DisableModifiedEventOn();
+  //this->DisableModifiedEventOn();
 
   this->SetSliceVisible(node->GetSliceVisible());
   this->SliceToRAS->DeepCopy(node->GetSliceToRAS());
@@ -654,8 +654,8 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
     }
   this->UpdateMatrices();
 
-  this->DisableModifiedEventOff();
-  this->InvokePendingModifiedEvent();
+  //this->DisableModifiedEventOff();
+  //this->InvokePendingModifiedEvent();
 }
 
 //----------------------------------------------------------------------------
