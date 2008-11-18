@@ -21,6 +21,14 @@
 #include "vtkImageMedian3D.h"
 //#include "vtkSlicerApplication.h"
 
+// CommandLineModule support
+#include "vtkMRMLCommandLineModuleNode.h"
+#include "vtkCommandLineModuleGUI.h"
+#include "vtkCommandLineModuleLogic.h"
+#include "ModuleDescription.h"
+#include "itksys/DynamicLoader.hxx"
+#include <assert.h>
+
 #define ERROR_NODE_VTKID 0
 
 //----------------------------------------------------------------------------
@@ -76,6 +84,8 @@ vtkChangeTrackerLogic::vtkChangeTrackerLogic()
 
   // if set to zero then SaveVolume will not do anything 
   this->SaveVolumeFlag = 0;  
+
+  this->Scan2_RegisteredVolume = NULL;
 }
 
 
@@ -486,7 +496,15 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
 
   if (!debug) { 
     progressBar->SetValue(5.0/TimeLength);
-    app->Script("::ChangeTrackerTcl::Scan2ToScan1Registration_GUI Global");
+    if(this->ChangeTrackerNode->GetUseITK()){
+      // AF: at this point, registration must have completed
+      assert(this->ChangeTrackerNode->GetScan2_RegisteredRef());
+      this->ChangeTrackerNode->SetScan2_GlobalRef(
+        this->ChangeTrackerNode->GetScan2_RegisteredRef());
+    } else {
+      // AF: keep initial registration approach for validation
+      app->Script("::ChangeTrackerTcl::Scan2ToScan1Registration_GUI Global");
+    }
     progressBar->SetValue(25.0/TimeLength);
 
     //----------------------------------------------
@@ -960,3 +978,121 @@ void vtkChangeTrackerLogic::LinearResample (vtkMRMLVolumeNode* inputVolumeNode, 
   resliceFilter->Delete();
   totalTransform->Delete();
 }
+
+// AF >>>
+// Use LinearRegistration module to rigidly align input scans
+void vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
+  // following the Tcl example code in
+  // http://wiki.slicer.org/slicerWiki/index.php/Slicer3:Execution_Model_Documentation:Programmatic_Invocation
+  // ...
+
+  // Init some useful references
+  vtkCommandLineModuleGUI *moduleGUI = NULL;
+  vtkMRMLCommandLineModuleNode *moduleNode = NULL;
+  vtkCommandLineModuleLogic *moduleLogic = NULL;
+
+  vtkMRMLScene *scene = this->ChangeTrackerNode->GetScene();
+  vtkMRMLChangeTrackerNode *ctNode = this->ChangeTrackerNode;
+  vtkMRMLScalarVolumeNode *outputVolumeNode = NULL;
+  // should be nice to have the transform in the scene later
+  //vtkMRMLTransformNode *lrTransform = NULL;
+
+  moduleGUI = 
+    static_cast<vtkCommandLineModuleGUI*>(app->GetModuleGUIByName("Linear registration"));
+  if(!moduleGUI){
+    std::cerr << "Cannot find LinearRegistration module. Aborting." << std::endl;
+    assert(0);
+  }
+  moduleLogic = moduleGUI->GetLogic();
+
+  // Initialize GUI (?)
+  moduleGUI->Enter();
+  
+  moduleNode = 
+    static_cast<vtkMRMLCommandLineModuleNode*>(scene->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
+  if(!moduleNode){
+    std::cerr << "Cannot create LinearRegistration node. Aborting." << std::endl;
+    assert(0);
+  }
+
+  // Add node to the scene
+  scene->AddNode(moduleNode);
+  moduleNode->SetModuleDescription("Linear registration");
+
+  // Create output volume node
+  vtkMRMLScalarVolumeNode *scan1Node = 
+    static_cast<vtkMRMLScalarVolumeNode*>(scene->GetNodeByID(ctNode->GetScan1_Ref()));
+  outputVolumeNode = this->CreateVolumeNode(scan1Node, "Scan2_LinearRegistration");
+  // AF: this registeres Logic to get events from the output volume node
+  vtkSetAndObserveMRMLNodeMacro(this->Scan2_RegisteredVolume, outputVolumeNode);
+  ctNode->SetScan2_RegisteredRef(outputVolumeNode->GetID());
+
+  // Linear registration parameter setup
+  moduleNode->SetParameterAsString("FixedImageFileName", ctNode->GetScan1_Ref());
+  moduleNode->SetParameterAsString("MovingImageFileName", ctNode->GetScan2_Ref());
+  // AF: override the default settings for iterations to reduce time
+  // Comment from Kilian: since intra-subject registration is simpler than
+  // inter-subject, and default settings were for the general case, we can
+  // simplify this probably
+  moduleNode->SetParameterAsString("Iterations", "100,100,50,20");
+  moduleNode->SetParameterAsString("ResampledImageFileName", ctNode->GetScan2_RegisteredRef());
+
+  /*
+  Should the volume data be initialized?
+  vtkImageData* outputVolumeData = vtkImageData::New();
+  outputVolumeData->DeepCopy(scan1Node->GetImageData());
+  outputVolumeNode->SetAndObserveImageData(outputVolumeData);
+  outputVolumeNode->SetModifiedSinceRead(1);
+  outputVolumeData->Delete();
+  */
+
+  moduleGUI->SetCommandLineModuleNode(moduleNode);
+  moduleGUI->GetLogic()->SetCommandLineModuleNode(moduleNode);
+
+  // These are the extra steps, digged from
+  // Modules/CommandLineModule/vtkCommandLineModuleLogic.cxx
+  ModuleDescription moduleDesc = moduleNode->GetModuleDescription();
+  moduleLogic->SetTemporaryDirectory(app->GetTemporaryDirectory());
+  if(moduleDesc.GetTarget() == "Unknown"){
+    // Entry point is unknown
+    // "Linear registration" is shared object module, at least at this moment
+    assert(moduleDesc.GetType() == "SharedObjectModule");
+    typedef int (*ModuleEntryPoint)(int argc, char* argv[]);
+    itksys::DynamicLoader::LibraryHandle lib =
+      itksys::DynamicLoader::OpenLibrary(moduleDesc.GetLocation().c_str());
+    if(lib){
+      ModuleEntryPoint entryPoint = 
+        (ModuleEntryPoint) itksys::DynamicLoader::GetSymbolAddress(
+          lib, "ModuleEntryPoint");
+      if(entryPoint){
+        char entryPointAsText[256];
+        std::string entryPointAsString;
+
+        sprintf(entryPointAsText, "%p", entryPoint);
+        entryPointAsString = std::string("slicer:")+entryPointAsText;
+        moduleDesc.SetTarget(entryPointAsString);
+        moduleNode->SetModuleDescription(moduleDesc);      
+      } else {
+        std::cerr << "Failed to find entry point for Linear registration. Abort." << std::endl;
+        abort();
+      }
+    } else {
+      std::cerr << "Failed to locate module library. Abort." << std::endl;
+      abort();
+    }
+  }
+
+  moduleGUI->GetLogic()->Apply(moduleNode);
+  moduleNode->Delete(); // AF: is it right to delete this here?
+}
+
+void vtkChangeTrackerLogic::ProcessMRMLEvents(vtkObject* caller, 
+  unsigned long event, void *callData){
+  vtkMRMLScalarVolumeNode *callerNode = 
+    vtkMRMLScalarVolumeNode::SafeDownCast(caller);
+  if(callerNode && callerNode == this->Scan2_RegisteredVolume){
+//    this->ChangeTrackerNode->SetScan2LinearRegRef(callerNode->GetID());
+    this->ChangeTrackerNode->SetScan2_RegisteredReady(true);
+  }
+}
+// AF <<<

@@ -16,6 +16,9 @@ class vtkKWApplication;
 class vtkImageMathematics;
 class vtkImageIslandFilter;
 class vtkImageMedian3D;
+class vtkImageData;
+class vtkImageThreshold;
+class vtkImageSumOverVoxels;
 
 class VTK_CHANGETRACKER_EXPORT vtkChangeTrackerLogic : 
   public vtkSlicerModuleLogic
@@ -29,7 +32,8 @@ public:
  // pohl: I so not I follow example vtkGradnientAnisotrpoicDiffusionoFilterGUI
  // virtual void ProcessMrmlEvents ( vtkObject *caller, unsigned long event,
  //                                  void *callData ){};
- // void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData);
+ // AF: yes, need to observe MRML events to detect completion of registration
+  virtual void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData);
 
 
 
@@ -132,6 +136,10 @@ public:
                  vtkTransform* outputRASToInputRASTransform, double backgroundLevel);
 
 
+  // AF: do registration using "Linear registration" module
+  // For now, use this for global alignment of the input scans. In the future,
+  // use the same functionality for ROI
+  void DoITKRegistration(vtkSlicerApplication *app);
 
 private:
   vtkChangeTrackerLogic();
@@ -143,7 +151,6 @@ private:
   vtkSetStringMacro(ProgressCurrentAction);
   vtkSetMacro(ProgressGlobalFractionCompleted, double);
   vtkSetMacro(ProgressCurrentFractionCompleted, double);
-
 
   //
   // because the mrml nodes are very complicated for this module, we
@@ -186,6 +193,9 @@ private:
   vtkImageSumOverVoxels *Analysis_Intensity_ROITotal;
 
   int SaveVolumeFlag;
+
+  // AF: store the pointer to the Scan2 registered volume for MRML event handling
+  vtkMRMLScalarVolumeNode *Scan2_RegisteredVolume;
 };
 
 #endif

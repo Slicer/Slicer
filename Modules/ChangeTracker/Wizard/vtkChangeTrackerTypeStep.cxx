@@ -194,6 +194,19 @@ void vtkChangeTrackerTypeStep::ShowUserInterface()
     vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
     wizard_widget->GetCancelButton()->SetText("Analyze");
     // wizard_widget->GetCancelButton()->EnabledOff();
+    if(!node){
+      // No node? Should never get here. Don't know what to do.
+      cerr << "ChangeTracker: This is a bug. Wrong state -- should never be here. Abort." << endl;
+      abort();
+    } else {
+      // Linear registration has not yet finished, the button will be enabled
+      // upon completion
+      if(!node->GetScan2_RegisteredReady() && node->GetUseITK()){
+        wizard_widget->GetCancelButton()->EnabledOff();
+        wizard_widget->GetCancelButton()->SetBalloonHelpString("Please wait until initial alignment of scans is complete...");
+      }
+    }
+
   }
   
   this->CreateGridButton();
@@ -254,4 +267,13 @@ void vtkChangeTrackerTypeStep::RemoveResults()  {
   this->RenderRemove();
 }
 
-
+// AF: enable "Analyze" button in response to the completion of global
+// registration
+void vtkChangeTrackerTypeStep::UpdateGUI(){
+  vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
+  vtkMRMLChangeTrackerNode *node = this->GetGUI()->GetNode();
+  if(node->GetScan2_RegisteredReady() && node->GetUseITK()){
+    wizard_widget->GetCancelButton()->EnabledOn();
+    wizard_widget->GetCancelButton()->SetBaloonHelpString("Proceed with the analysis.");
+  }
+}

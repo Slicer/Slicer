@@ -239,7 +239,16 @@ void vtkChangeTrackerFirstScanStep::TransitionCallback(int Flag)
        }
        return;
      }
- 
+
+     // AF >>> If the input is in place, launch Linear registration in background
+     if(this->GetGUI()->GetNode()->GetUseITK()){
+       vtkSlicerApplication *app = 
+         vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication());
+       wizard_widget->GetCancelButton()->EnabledOff();
+       this->GetGUI()->GetLogic()->DoITKRegistration(app);
+     }
+     // AF <<<
+
      wizard_widget->GetCancelButton()->EnabledOn();
      wizard_widget->GetWizardWorkflow()->AttemptToGoToNextStep();
    } else {

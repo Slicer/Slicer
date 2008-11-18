@@ -86,6 +86,8 @@ vtkMRMLChangeTrackerNode::vtkMRMLChangeTrackerNode()
 
    this->Grid_Ref = NULL;
 
+   this->Scan2_RegisteredRef = NULL;
+
    this->Analysis_Intensity_Flag = 0;
    this->Analysis_Intensity_Sensitivity = 0.5;
    this->Analysis_Intensity_Ref = NULL;
@@ -95,6 +97,10 @@ vtkMRMLChangeTrackerNode::vtkMRMLChangeTrackerNode()
    this->Analysis_Deformable_SegmentationGrowth = 0.0;
    this->Analysis_Deformable_Ref = NULL;
 
+   // AF: by default, use ITK functionality -- it is faster, and appears to be
+   // more reliable
+   this->UseITK = true;
+   this->Scan2_RegisteredReady = false;
 }
 
 //----------------------------------------------------------------------------
@@ -157,6 +163,7 @@ void vtkMRMLChangeTrackerNode::WriteXML(ostream& of, int nIndent)
   }
   of << indent << " Analysis_Deformable_Flag=\""<< this->Analysis_Deformable_Flag  << "\"";
 
+  of << indent << " UseITK=\"" << this->UseITK << "\"";
 }
 
 //----------------------------------------------------------------------------
@@ -226,6 +233,21 @@ void vtkMRMLChangeTrackerNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >>  this->Analysis_Deformable_Flag; 
       }
+    else if(!strcmp(attName, "UseITK"))
+      {
+      vtksys_stl::stringstream ss;
+      ss << attValue;
+      ss >>  this->UseITK; 
+      }
+    // AF: should the intermediate volumes be stored here?
+    /*
+    else if(!strcmp(attName, "Scan2_RegisteredRef"))
+      {
+      vtksys_stl::stringstream ss;
+      ss << attValue;
+      ss >>  this->UseITK; 
+      }
+    */
     }
 }
 
@@ -247,6 +269,8 @@ void vtkMRMLChangeTrackerNode::Copy(vtkMRMLNode *anode)
   this->Analysis_Intensity_Flag = node->Analysis_Intensity_Flag; 
   this->Analysis_Intensity_Sensitivity = node->Analysis_Intensity_Sensitivity; 
   this->Analysis_Deformable_Flag = node->Analysis_Deformable_Flag; 
+  this->UseITK = node->UseITK;
+  // AF: why not all of the volume references are copied?
 }
 
 //----------------------------------------------------------------------------
@@ -264,6 +288,8 @@ void vtkMRMLChangeTrackerNode::PrintSelf(ostream& os, vtkIndent indent)
    (this->Scan1_SuperSampleRef ? this->Scan1_SuperSampleRef : "(none)") << "\n";
   os << indent << "Scan1_SegmentRef:     " << 
    (this->Scan1_SegmentRef ? this->Scan1_SegmentRef : "(none)") << "\n";
+  os << indent << "Scan2_RegisteredRef:  " <<
+    (this->Scan2_RegisteredRef ? this->Scan2_RegisteredRef : "(none)") << "\n";
   os << indent << "ROIMin:               "<< this->ROIMin[0] << " "<< this->ROIMin[1] << " "<< this->ROIMin[2] <<"\n";
   os << indent << "ROIMax:               "<< this->ROIMax[0] << " "<< this->ROIMax[1] << " "<< this->ROIMax[2] <<"\n";
   os << indent << "SegmentThresholdMin:     "<< this->SegmentThresholdMin << "\n";
@@ -272,8 +298,7 @@ void vtkMRMLChangeTrackerNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Analysis_Intensity_Sensitivity: "<< this->Analysis_Intensity_Sensitivity << "\n";
   os << indent << "Analysis_Deformable_Flag: "<< this->Analysis_Deformable_Flag << "\n";
   os << indent << "WorkingDir:           " <<  (this->WorkingDir ? this->WorkingDir : "(none)") << "\n";
-
+  os << indent << "UseITK:  " << this->UseITK << "\n";
+  os << indent << "Scan2_RegisteredReady: " << this->Scan2_RegisteredReady << "\n";
 }
-
-
 

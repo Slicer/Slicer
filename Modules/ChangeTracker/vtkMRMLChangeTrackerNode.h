@@ -14,16 +14,8 @@
 #ifndef __vtkMRMLChangeTrackerNode_h
 #define __vtkMRMLChangeTrackerNode_h
 
-#include "vtkMRML.h"
 #include "vtkMRMLNode.h"
-#include "vtkMRMLStorageNode.h"
-
-#include "vtkImageData.h"
-#include "vtkChangeTracker.h"
-
-class vtkImageData;
-class vtkImageThreshold;
-class vtkImageSumOverVoxels;
+#include "vtkChangeTracker.h" // EXPORT definitions
 
 class VTK_CHANGETRACKER_EXPORT vtkMRMLChangeTrackerNode : public vtkMRMLNode
 {
@@ -33,7 +25,7 @@ class VTK_CHANGETRACKER_EXPORT vtkMRMLChangeTrackerNode : public vtkMRMLNode
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
-  // Create instance of a GAD node.
+  // Create instance of a node.
   virtual vtkMRMLNode* CreateNodeInstance();
 
   // Description:
@@ -161,12 +153,23 @@ class VTK_CHANGETRACKER_EXPORT vtkMRMLChangeTrackerNode : public vtkMRMLNode
   vtkSetStringMacro(Analysis_Deformable_Ref);
   vtkGetStringMacro(Analysis_Deformable_Ref);
 
+  vtkGetMacro(UseITK, bool);
+  vtkSetMacro(UseITK, bool);
+
+  vtkGetStringMacro(Scan2_RegisteredRef);
+  vtkSetStringMacro(Scan2_RegisteredRef);
+
+  vtkSetMacro(Scan2_RegisteredReady, bool);
+  vtkGetMacro(Scan2_RegisteredReady, bool);
+
 protected:
   vtkMRMLChangeTrackerNode();
   ~vtkMRMLChangeTrackerNode();
   vtkMRMLChangeTrackerNode(const vtkMRMLChangeTrackerNode&);
   void operator=(const vtkMRMLChangeTrackerNode&);
 
+  // AF: this is a bit confusing, since "Ref" is actually a pointer to 
+  // the "ID" of a MRML node
   char* Scan1_Ref;
   char* Scan1_SuperSampleRef;
   char* Scan1_SegmentRef;
@@ -184,6 +187,10 @@ protected:
   char* Grid_Ref;
 
   char* WorkingDir;
+
+  // AF: keep the reference to the ITK registration result (will be done
+  // asynchronously)
+  char* Scan2_RegisteredRef;
 
   //BTX
   vtkstd::vector<int>  ROIMin; 
@@ -203,7 +210,13 @@ protected:
   int    Analysis_Deformable_Flag;
   double Analysis_Deformable_JacobianGrowth;
   double Analysis_Deformable_SegmentationGrowth;
-  
+
+  // AF: setting this will result in using ITK functionality for registration
+  // and such. Alternatively, Slicer2-inherited functionality will be used
+  // (Slicer2 stuff will need to stay, since we need to be able to validate 
+  // previous results)
+  bool UseITK;
+  bool Scan2_RegisteredReady;
 };
 
 #endif

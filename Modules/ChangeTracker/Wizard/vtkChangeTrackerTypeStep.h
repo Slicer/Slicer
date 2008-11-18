@@ -28,6 +28,9 @@ public:
   // We call this function in order to remove nodes when going backwards 
   virtual void RemoveResults();
 
+  // AF: necessary to handle global registration completion
+  virtual void UpdateGUI();
+
 protected:
   vtkChangeTrackerTypeStep();
   ~vtkChangeTrackerTypeStep();
