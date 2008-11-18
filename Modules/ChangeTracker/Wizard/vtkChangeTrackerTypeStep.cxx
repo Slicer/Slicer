@@ -274,6 +274,6 @@ void vtkChangeTrackerTypeStep::UpdateGUI(){
   vtkMRMLChangeTrackerNode *node = this->GetGUI()->GetNode();
   if(node->GetScan2_RegisteredReady() && node->GetUseITK()){
     wizard_widget->GetCancelButton()->EnabledOn();
-    wizard_widget->GetCancelButton()->SetBaloonHelpString("Proceed with the analysis.");
+    wizard_widget->GetCancelButton()->SetBalloonHelpString("Proceed with the analysis.");
   }
 }

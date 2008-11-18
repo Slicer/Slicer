@@ -1045,7 +1045,9 @@ void vtkImageIslandFilter::ExecuteData(vtkDataObject *)
     this->IslandROI->GetWholeExtent(islandExt);
     this->IslandROI->GetContinuousIncrements(islandExt, islandInc[0], islandInc[1], islandInc[2]);
     assert((islandExt[1] - islandExt[0] == inExt[1] - inExt[0]) && (islandExt[3] - islandExt[2] == inExt[3] - inExt[2]) && (islandExt[5] - islandExt[4] == inExt[5] - inExt[4])); 
-    assert(islandInc[0] == islandInc[1] == islandInc[2] == 0);
+    assert(islandInc[0] == 0);
+    assert(islandInc[1] == 0);
+    assert(islandInc[2] == 0);
     assert(VTK_SHORT == this->IslandROI->GetScalarType());
     islandROIPtr = (short*)this->IslandROI->GetScalarPointerForExtent(islandExt);
   }

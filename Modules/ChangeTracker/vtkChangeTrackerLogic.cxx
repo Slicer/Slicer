@@ -1022,7 +1022,7 @@ void vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
   // Create output volume node
   vtkMRMLScalarVolumeNode *scan1Node = 
     static_cast<vtkMRMLScalarVolumeNode*>(scene->GetNodeByID(ctNode->GetScan1_Ref()));
-  outputVolumeNode = this->CreateVolumeNode(scan1Node, "Scan2_LinearRegistration");
+  outputVolumeNode = this->CreateVolumeNode(scan1Node, (const char*)"Scan2_LinearRegistration");
   // AF: this registeres Logic to get events from the output volume node
   vtkSetAndObserveMRMLNodeMacro(this->Scan2_RegisteredVolume, outputVolumeNode);
   ctNode->SetScan2_RegisteredRef(outputVolumeNode->GetID());
