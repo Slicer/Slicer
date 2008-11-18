@@ -1349,12 +1349,17 @@ namespace eval ChangeTrackerTcl {
       # => necessary for eval cmd to work correctly 
       # got this from vtkCommandLineModule
       #
-      if {[info exists env(ITK_AUTOLOAD_PATH)] } {
-          set saveItkAutoLoadPath $env(ITK_AUTOLOAD_PATH)
-      } else {
-          set saveItkAutoLoadPath "" 
-      }
-      set env(ITK_AUTOLOAD_PATH) ""
+# AF: this has been changed by Kilian c/o AF
+#      if {[info exists env(ITK_AUTOLOAD_PATH)] } {
+#          set saveItkAutoLoadPath $env(ITK_AUTOLOAD_PATH)
+#      } else {
+#          set saveItkAutoLoadPath "" 
+#      }
+#      set env(ITK_AUTOLOAD_PATH) ""
+    if{[catch {set saveItkAutoLoadPath $env(ITK_AUTOLOAD_PATH)}]} {
+      set saveItkAutoLoadPath ""
+    }
+    set env(ITK_AUTOLOAD_PATH) ""
 
       # Print "[eval exec env]" 
  
