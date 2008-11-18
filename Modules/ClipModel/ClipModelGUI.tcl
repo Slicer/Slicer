@@ -121,7 +121,7 @@ proc ClipModelBuildGUI {this} {
     pack [$::ClipModel($this,interact) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
     
     set ::ClipModel($this,init) ""
-    
+    set ::ClipModel($this,oldOut) ""
 }
 
 proc ClipModelAddGUIObservers {this} {
@@ -159,7 +159,6 @@ proc ClipModelProcessGUIEvents {this caller event} {
         return
     }
 
-
     if { $caller == $::ClipModel($this,modelsSelect) } {
         set mod [$::ClipModel($this,modelsSelect) GetSelected]
         if { $mod != "" && [$mod GetPolyData] != ""} {
@@ -167,7 +166,31 @@ proc ClipModelProcessGUIEvents {this caller event} {
             eval $::ClipModel($this,boxRep)  PlaceWidget [[$mod GetPolyData] GetBounds]
             #puts "Setting Box Bounds"
         }
+    }
+
+    if { $caller == $::ClipModel($this,modelsOutputSelect) } {
+        set mod [$::ClipModel($this,modelsOutputSelect) GetSelected]
+        if { $mod != "" && $::ClipModel($this,oldOut) != "" && $mod != $::ClipModel($this,oldOut)} {
+            #puts "New output: copy polydata"
+            set poly [$::ClipModel($this,oldOut) GetPolyData]
+            set cpoly [vtkPolyData New]
+            $cpoly CopyStructure $poly
+            #$::ClipModel($this,oldOut) SetAndObservePolyData ""
+            $::ClipModel($this,oldOut) SetAndObservePolyData $cpoly
+            $cpoly Delete
+            $::ClipModel($this,oldOut) Register $this
+            $::slicer3::MRMLScene RemoveNode $::ClipModel($this,oldOut)
+            $::slicer3::MRMLScene AddNode $::ClipModel($this,oldOut)
+            $::ClipModel($this,oldOut) UnRegister $this
+
+            #$::slicer3::ViewerWidget Render
+
+            set ::ClipModel($this,oldOut) $mod
+            return
+        }
     } 
+
+
     ClipModelApply $this
     
     ClipModelUpdateMRML $this
@@ -311,13 +334,18 @@ proc ClipModelApply {this} {
     #puts "Updating Cliiping"
     set poly [$::ClipModel($this,clipper) GetOutput]
     $modOut SetAndObservePolyData $poly
+
+    #puts [$poly Print]
+
     if {[$modOut GetDisplayNode] == ""} {
         set dnode [vtkMRMLModelDisplayNode New]
-        $dnode SetColor 0.0 1.0 0.0
+         $dnode SetColor [expr rand ()] [expr rand ()] [expr rand ()]
         $::slicer3::MRMLScene AddNode $dnode
         $modOut SetAndObserveDisplayNodeID [$dnode GetID]
         $dnode Delete
     }
+
+    set ::ClipModel($this,oldOut) $modOut
     #ClipModelClipModel $this
 }
 
