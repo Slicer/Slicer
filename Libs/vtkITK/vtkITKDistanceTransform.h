@@ -16,64 +16,43 @@
 #define __vtkITKDistanceTransform_h
 
 
-#include "vtkITKImageToImageFilterUSF.h"
-#include "itkSignedMaurerDistanceMapImageFilter.h"
+#include "vtkITK.h"
+#include "vtkSimpleImageToImageFilter.h"
 
-class VTK_ITK_EXPORT vtkITKDistanceTransform : public vtkITKImageToImageFilterUSF
+class VTK_ITK_EXPORT vtkITKDistanceTransform : public vtkSimpleImageToImageFilter
 {
  public:
   static vtkITKDistanceTransform *New();
-  vtkTypeRevisionMacro(vtkITKDistanceTransform, vtkITKImageToImageFilterUSF);
+  vtkTypeRevisionMacro(vtkITKDistanceTransform, vtkSimpleImageToImageFilter);
+  void PrintSelf(ostream& os, vtkIndent indent);
 
-  bool GetSquaredDistance ()
-  {
-    DelegateITKOutputMacro(GetSquaredDistance) ;
-  };
+  // Output volume contains square of distance or actual distance
+  vtkGetMacro(SquaredDistance, int);
+  vtkSetMacro(SquaredDistance, int);
 
-  void SetSquaredDistance ( bool value )
-  {
-    DelegateITKInputMacro ( SetSquaredDistance, value );
-  };
+  // Pixels inside region positive
+  vtkGetMacro(InsideIsPositive, int);
+  vtkSetMacro(InsideIsPositive, int);
 
-  bool GetInsideIsPositive ()
-  {
-    DelegateITKOutputMacro(GetInsideIsPositive) ;
-  };
+  // Use image spacing when calculating distances
+  vtkGetMacro(UseImageSpacing, int);
+  vtkSetMacro(UseImageSpacing, int);
 
-  void SetInsideIsPositive ( bool value )
-  {
-    DelegateITKInputMacro ( SetInsideIsPositive, value );
-  };
-
-  bool GetUseImageSpacing ()
-  {
-    DelegateITKOutputMacro(GetUseImageSpacing) ;
-  };
-
-  void SetUseImageSpacing ( bool value )
-  {
-    DelegateITKInputMacro ( SetUseImageSpacing, value );
-  };
-
-  float GetBackgroundValue ()
-  {
-    DelegateITKOutputMacro(GetBackgroundValue) ;
-  };
-
-  void SetBackgroundValue ( bool value )
-  {
-    DelegateITKInputMacro ( SetBackgroundValue, value );
-  };
+  // Value of background
+  vtkGetMacro(BackgroundValue, double);
+  vtkSetMacro(BackgroundValue, double);
 
 
 protected:
-  //BTX
-  typedef itk::SignedMaurerDistanceMapImageFilter<Superclass::InputImageType,Superclass::OutputImageType> ImageFilterType;
-  vtkITKDistanceTransform() : Superclass ( ImageFilterType::New() ){};
-  ~vtkITKDistanceTransform() {};
-  ImageFilterType* GetImageFilterPointer() { return dynamic_cast<ImageFilterType*> ( m_Filter.GetPointer() ); }
+  vtkITKDistanceTransform();
+  ~vtkITKDistanceTransform();
 
-  //ETX
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
+
+  int SquaredDistance;
+  int InsideIsPositive;
+  int UseImageSpacing;
+  double BackgroundValue;
   
 private:
   vtkITKDistanceTransform(const vtkITKDistanceTransform&);  // Not implemented.
