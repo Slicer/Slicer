@@ -85,7 +85,6 @@ extern "C" {
 //#define FIDUCIALS_DEBUG
 //#define MODELS_DEBUG
 //#define REMOTEIO_DEBUG
-//#define TCLMODULES_DEBUG
 
 #define CAMERA_DEBUG
 
@@ -669,7 +668,8 @@ int Slicer3_main(int argc, char *argv[])
   //
   // ignore any modules specified on the command line
   //
-  vtkStringArray *ignoreModules = slicerApp->GetIgnoreModules();
+  vtkStringArray *ignoreModules = vtkStringArray::New();
+  ignoreModules->DeepCopy(slicerApp->GetIgnoreModules());
   std::vector<std::string>::const_iterator ignoreit = IgnoreModule.begin();
   while (ignoreit != IgnoreModule.end())
     {
@@ -2018,6 +2018,7 @@ int Slicer3_main(int argc, char *argv[])
     lmit++;
     }
 
+  ignoreModules->Delete();
 
 #ifndef MODELS_DEBUG
   modelsLogic->SetAndObserveMRMLScene ( NULL );
