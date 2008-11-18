@@ -1047,7 +1047,7 @@ void vtkMRMLScene::RemoveReferencedNodeID(const char *id, vtkMRMLNode *refrencin
 //------------------------------------------------------------------------------
 void vtkMRMLScene::RemoveNodeReferences(vtkMRMLNode *n) 
 {
-  if (n == NULL && n->GetID() == NULL)
+  if (n == NULL || n->GetID() == NULL)
     {
     vtkErrorMacro("RemoveNodeReferences: node is null or has null id, can't remove it");
     return;
