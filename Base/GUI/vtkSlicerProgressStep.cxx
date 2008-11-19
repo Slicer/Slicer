@@ -10,6 +10,7 @@
 #include "vtkKWWizardWidget.h"
 #include "vtkKWWizardWorkflow.h"
 #include "vtkKWProgressGauge.h"
+#include "vtkKWText.h"
 
 #include "vtkHTTPHandler.h"
 
@@ -33,6 +34,7 @@ vtkSlicerProgressStep::vtkSlicerProgressStep()
   this->SetDescription("Specify loadable module path.");
   this->WizardDialog = NULL;
   this->ProgressGauge = NULL;
+  this->Text = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -41,6 +43,10 @@ vtkSlicerProgressStep::~vtkSlicerProgressStep()
   if (this->ProgressGauge)
     {
     this->ProgressGauge->Delete();
+    }
+  if (this->Text)
+    {
+    this->Text->Delete();
     }
   this->SetWizardDialog(NULL);
 }
@@ -59,14 +65,29 @@ void vtkSlicerProgressStep::ShowUserInterface()
   vtkSlicerModulesWizardDialog *wizard_dialog = 
     dynamic_cast<vtkSlicerModulesWizardDialog*> (this->GetWizardDialog());
 
-  vtkKWWizardWidget *wizard_widget = 
-    wizard_dialog->GetWizardWidget();
+  vtkKWWizardWidget *wizard_widget = wizard_dialog->GetWizardWidget();
 
-  vtkStringArray *modules = wizard_dialog->GetModulesStep()->GetSelectedModules();
+  std::vector<ManifestEntry*> modules = wizard_dialog->GetModulesStep()->GetSelectedModules();
   
-  for (int i=0; i<modules->GetSize(); i++)
+  std::stringstream messg;
+  bool none = true;
+
+  for (unsigned int i=0; i<modules.size(); i++)
     {
-      Install(modules->GetValue(i));
+      if (modules[i]->Version.compare("source") == 0) {
+        this->InstallSource(modules[i]->URL);
+        messg << "Source install: " << modules[i]->Name << std::endl;
+        none = false;
+      } else {
+        this->Install(modules[i]->URL);
+        messg << "Binary install: " << modules[i]->Name << " " << modules[i]->URL << std::endl;
+        none = false;
+      }
+    }
+
+  if (none)
+    {
+      messg << "No modules installed" << std::endl;
     }
 
   if (!this->ProgressGauge)
@@ -78,9 +99,22 @@ void vtkSlicerProgressStep::ShowUserInterface()
     this->ProgressGauge->SetParent(wizard_widget->GetClientArea());
     this->ProgressGauge->Create();
     }
+  if (!this->Text)
+    {
+    this->Text = vtkKWText::New();
+    }
   
+  if (!this->Text->IsCreated())
+    {
+    this->Text->SetParent(wizard_widget->GetClientArea());
+    this->Text->SetEnabled(0);
+    this->Text->Create();
+    }
+
+  this->Text->SetText(messg.str().c_str());
+
   this->Script("pack %s -side top -expand y -fill none -anchor center", 
-               this->ProgressGauge->GetWidgetName());
+               this->Text->GetWidgetName());
 }
 
 //----------------------------------------------------------------------------
@@ -124,4 +158,20 @@ void vtkSlicerProgressStep::Install(const std::string& url)
 
   handler->Delete();
   
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerProgressStep::InstallSource(const std::string& url)
+{
+  vtksys_stl::string slicerHome;
+  vtksys::SystemTools::GetEnv("Slicer3_HOME", slicerHome);
+  
+  std::string slicerModulesSource = slicerHome;
+  slicerModulesSource += "/../Slicer3/Modules/loadablemodules.cmake";
+
+  std::ofstream ofs(slicerModulesSource.c_str(), std::ios::app);
+
+  ofs << "slicer_parse_module_url(\"" << url << "\")" << std::endl;
+
+  ofs.close();
 }

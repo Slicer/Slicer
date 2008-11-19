@@ -6,6 +6,7 @@
 
 class vtkSlicerModulesWizardDialog;
 class vtkKWProgressGauge;
+class vtkKWText;
 
 class vtkSlicerProgressStep : public vtkKWWizardStep
 {
@@ -29,6 +30,7 @@ protected:
   ~vtkSlicerProgressStep();
 
   vtkKWProgressGauge *ProgressGauge;
+  vtkKWText *Text;
   vtkSlicerModulesWizardDialog *WizardDialog;
 
 private:
@@ -37,6 +39,7 @@ private:
 
   //BTX
   void Install(const std::string& url);
+  void InstallSource(const std::string& url);
   //ETX
 };
 
