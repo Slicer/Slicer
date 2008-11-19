@@ -115,28 +115,27 @@ void vtkITKDistanceTransform::SimpleExecute(vtkImageData *input, vtkImageData *o
     {
 
 ////////// These types are not defined in itk ////////////
-#ifdef vtkTemplateMacroCase_ui64
-#undef vtkTemplateMacroCase_ui64
-# define vtkTemplateMacroCase_ui64(typeN, type, call)
-#endif
-#ifdef vtkTemplateMacroCase_si64
-#undef vtkTemplateMacroCase_si64
-# define vtkTemplateMacroCase_si64(typeN, type, call)
-#endif
-#ifdef vtkTemplateMacroCase_ll
-#undef vtkTemplateMacroCase_ll
-# define vtkTemplateMacroCase_ll(typeN, type, call)
-#endif
+#undef VTK_TYPE_USE_LONG_LONG
+#undef VTK_TYPE_USE___INT64
+
+#define CALL  vtkITKDistanceTransformExecute(this, input, output, static_cast<VTK_TT *>(inPtr), static_cast<VTK_TT *>(outPtr));
 
     void* inPtr = input->GetScalarPointer();
     void* outPtr = output->GetScalarPointer();
 
     switch (inScalars->GetDataType())
       {
-      vtkTemplateMacro(
-        vtkITKDistanceTransformExecute(this, input, output,
-            static_cast<VTK_TT *>(inPtr),
-            static_cast<VTK_TT *>(outPtr)));
+      vtkTemplateMacroCase(VTK_DOUBLE, double, CALL);                           \
+      vtkTemplateMacroCase(VTK_FLOAT, float, CALL);                             \
+      vtkTemplateMacroCase(VTK_LONG, long, CALL);                               \
+      vtkTemplateMacroCase(VTK_UNSIGNED_LONG, unsigned long, CALL);             \
+      vtkTemplateMacroCase(VTK_INT, int, CALL);                                 \
+      vtkTemplateMacroCase(VTK_UNSIGNED_INT, unsigned int, CALL);               \
+      vtkTemplateMacroCase(VTK_SHORT, short, CALL);                             \
+      vtkTemplateMacroCase(VTK_UNSIGNED_SHORT, unsigned short, CALL);           \
+      vtkTemplateMacroCase(VTK_CHAR, char, CALL);                               \
+      vtkTemplateMacroCase(VTK_SIGNED_CHAR, signed char, CALL);                 \
+      vtkTemplateMacroCase(VTK_UNSIGNED_CHAR, unsigned char, CALL);
       } //switch
     }
   else 
