@@ -3,9 +3,23 @@
 
 #include "vtkKWWizardDialog.h"
 
+#include <string>
+
 class vtkSlicerRepositoryStep;
 class vtkSlicerModulesStep;
 class vtkSlicerProgressStep;
+
+// Description:
+// An object to hold entry information.
+//BTX
+class ManifestEntry
+{
+public:
+  std::string Name;
+  std::string Version;
+  std::string URL;
+};
+//ETX
 
 class vtkSlicerModulesWizardDialog : public vtkKWWizardDialog
 {
@@ -34,8 +48,8 @@ protected:
   vtkSlicerProgressStep *ProgressStep;
 
 private:
-  vtkSlicerModulesWizardDialog(const vtkSlicerModulesWizardDialog&);   // Not implemented.
-  void operator=(const vtkSlicerModulesWizardDialog&);  // Not implemented.
+  vtkSlicerModulesWizardDialog(const vtkSlicerModulesWizardDialog&); // Not implemented.
+  void operator=(const vtkSlicerModulesWizardDialog&); // Not implemented.
 };
 
 #endif

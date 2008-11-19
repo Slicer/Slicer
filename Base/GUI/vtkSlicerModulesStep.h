@@ -10,6 +10,9 @@
 
 class vtkSlicerModulesWizardDialog;
 class vtkKWMultiColumnList;
+//BTX
+class ManifestEntry;
+//ETX
 
 class vtkSlicerModulesStep : public vtkKWWizardStep
 {
@@ -29,7 +32,9 @@ public:
   virtual void SetWizardDialog(vtkSlicerModulesWizardDialog*);
 
   /// Get a list of modules to install
-  vtkStringArray* GetSelectedModules();
+  //BTX
+  std::vector<ManifestEntry*> GetSelectedModules();
+  //ETX
 
 protected:
   vtkSlicerModulesStep();
@@ -37,28 +42,18 @@ protected:
 
   vtkKWMultiColumnList *ModulesMultiColumnList;
   vtkSlicerModulesWizardDialog *WizardDialog;
-  vtkStringArray* SelectedModules;
+  //BTX
+  std::vector<ManifestEntry*> Modules;
+  //ETX
 
 private:
-  vtkSlicerModulesStep(const vtkSlicerModulesStep&);   // Not implemented.
-  void operator=(const vtkSlicerModulesStep&);  // Not implemented.
-
-  // Description:
-  // An object to hold entry information.
-  //BTX
-  class ManifestEntry
-  {
-  public:
-    std::string Name;
-    std::string Version;
-    std::string URL;
-  };
-  //ETX
+  vtkSlicerModulesStep(const vtkSlicerModulesStep&); // Not implemented.
+  void operator=(const vtkSlicerModulesStep&); // Not implemented.
 
   // Description:
   // Helper method to turn a module manifest into a selectable list.
   //BTX
-  std::vector<ManifestEntry> ParseManifest(const std::string&);
+  std::vector<ManifestEntry*> ParseManifest(const std::string&);
   //ETX
 
 };

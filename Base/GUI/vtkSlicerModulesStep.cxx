@@ -24,8 +24,6 @@ vtkSlicerModulesStep::vtkSlicerModulesStep()
   this->SetDescription("Select a Slicer3 Loadable Module.");
   this->WizardDialog = NULL;
   this->ModulesMultiColumnList = NULL;
-  
-  this->SelectedModules = vtkStringArray::New();
 }
 
 //----------------------------------------------------------------------------
@@ -37,7 +35,12 @@ vtkSlicerModulesStep::~vtkSlicerModulesStep()
     }
   this->SetWizardDialog(NULL);
 
-  this->SelectedModules->Delete();
+  std::vector<ManifestEntry*>::iterator iter = this->Modules.begin();
+  while (iter != this->Modules.end())
+    {
+      delete (*iter);
+      iter++;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -86,7 +89,14 @@ void vtkSlicerModulesStep::ShowUserInterface()
 
     ifs.close();
 
-    std::vector<ManifestEntry> modules = this->ParseManifest(TXT);
+    std::vector<ManifestEntry*>::iterator iter = this->Modules.begin();
+    while (iter != this->Modules.end())
+      {
+        delete (*iter);
+        iter++;
+      }
+    
+    this->Modules = this->ParseManifest(TXT);
 
     delete[] TXT;
 
@@ -114,31 +124,31 @@ void vtkSlicerModulesStep::ShowUserInterface()
     col_index = this->ModulesMultiColumnList->AddColumn("URL");
 
     // Insert each module entry
-    
+
     const char* values[] = {"Skip", "Install"};
     
-    for (unsigned int i = 0; i < modules.size(); i++)
+    for (unsigned int i = 0; i < this->Modules.size(); i++)
       {
-        ManifestEntry module = modules[i];
-        this->ModulesMultiColumnList->InsertCellText(i, 0, module.Name.c_str());
-        this->ModulesMultiColumnList->InsertCellText(i, 2, module.Version.c_str());
+        ManifestEntry *module = this->Modules[i];
+        this->ModulesMultiColumnList->InsertCellText(i, 0, module->Name.c_str());
+        this->ModulesMultiColumnList->InsertCellText(i, 2, module->Version.c_str());
 
         this->ModulesMultiColumnList->SetCellWindowCommandToComboBoxWithValues(i, 3, 2, values);
         this->ModulesMultiColumnList->SetCellText(i, 3, "Skip");
-        this->ModulesMultiColumnList->InsertCellText(i, 4, module.URL.c_str());
+        this->ModulesMultiColumnList->InsertCellText(i, 4, module->URL.c_str());
       }
 
     }
-  
+
   this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
                this->ModulesMultiColumnList->GetWidgetName());
 }
 
 
 //----------------------------------------------------------------------------
-vtkStringArray* vtkSlicerModulesStep::GetSelectedModules()
+std::vector<ManifestEntry*> vtkSlicerModulesStep::GetSelectedModules()
 {
-  this->SelectedModules->Reset();
+  std::vector<ManifestEntry*> Selected;
 
   int nrows = this->ModulesMultiColumnList->GetNumberOfRows();
   for (int row=0; row<nrows; row++)
@@ -147,12 +157,12 @@ vtkStringArray* vtkSlicerModulesStep::GetSelectedModules()
       if (action.compare("Install") == 0)
         {
           std::string url(this->ModulesMultiColumnList->GetCellText(row, 4));
-          this->SelectedModules->InsertNextValue( url.c_str() );
+          Selected.push_back( new ManifestEntry(*this->Modules[row]) );
         }
 
     }
 
-  return this->SelectedModules;
+  return Selected;
 }
 
 //----------------------------------------------------------------------------
@@ -177,9 +187,9 @@ void vtkSlicerModulesStep::Validate()
 }
 
 //----------------------------------------------------------------------------
-std::vector<vtkSlicerModulesStep::ManifestEntry> vtkSlicerModulesStep::ParseManifest(const std::string& txt)
+std::vector<ManifestEntry*> vtkSlicerModulesStep::ParseManifest(const std::string& txt)
 {
-  std::vector<ManifestEntry> result;
+  std::vector<ManifestEntry*> result;
 
   if (txt.empty()) {
     return result;
@@ -189,7 +199,7 @@ std::vector<vtkSlicerModulesStep::ManifestEntry> vtkSlicerModulesStep::ParseMani
   std::string::size_type space = txt.find(" ", prev);
   std::string::size_type newline = txt.find("\n", prev);
 
-  ManifestEntry entry;
+  ManifestEntry* entry;
 
   // :NOTE: 20081003 tgl: Put in a sanity check of 10,000 to
   // prevent an infinite loop.  Get Out The Vote 2008!
@@ -197,20 +207,25 @@ std::vector<vtkSlicerModulesStep::ManifestEntry> vtkSlicerModulesStep::ParseMani
   int count = 0;
   while (space != std::string::npos && count < 10000)
     {
-      entry.URL = txt.substr(prev, space - prev);
+      entry = new ManifestEntry;
+
+      entry->URL = txt.substr(prev, space - prev);
 
       prev = space;
       space = txt.find(" ", space + 1);
 
-      entry.Version = txt.substr(prev, space - prev);
-      entry.Name = txt.substr(space, newline - space);
+      if (std::string::npos != space)
+        {
+          entry->Version = txt.substr(prev + 1, space - (prev + 1));
+          entry->Name = txt.substr(space, newline - space);
 
-      prev = newline + 1;
-      space = txt.find(" ", newline + 1);
-      newline = txt.find("\n", newline + 1);
+          prev = newline + 1;
+          space = txt.find(" ", newline + 1);
+          newline = txt.find("\n", newline + 1);
 
-      result.push_back(entry);
-      
+          result.push_back(entry);
+        }
+
       count++;
     }
 
