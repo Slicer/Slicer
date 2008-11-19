@@ -163,8 +163,8 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   // Connector Browser Frame
 
   vtkKWMultiColumnListWithScrollbars* ConnectorList;
-  vtkKWPushButton* AddConnectorButton;
-  vtkKWPushButton* DeleteConnectorButton;
+  vtkKWPushButton*     AddConnectorButton;
+  vtkKWPushButton*     DeleteConnectorButton;
 
   vtkKWEntry*          ConnectorNameEntry;
   vtkKWRadioButtonSet* ConnectorTypeButtonSet;
@@ -173,6 +173,8 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   vtkKWEntry*          ConnectorPortEntry;
 
   vtkKWCheckButton*    EnableAdvancedSettingButton;
+
+  vtkKWMenuButton*     ASConnectorListMenu;
   vtkKWMultiColumnListWithScrollbars* MrmlNodeList;
 
   vtkKWPushButton* AddDeviceNameButton;
@@ -266,8 +268,9 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   void operator = ( const vtkOpenIGTLinkIFGUI& ); //Not implemented.
   
   void BuildGUIForWizardFrame();
-  void BuildGUIForConnectorBrowserFrame ();
   void BuildGUIForHelpFrame();
+  void BuildGUIForConnectorBrowserFrame();
+  void BuildGUIForIOConfig();
   void BuildGUIForDeviceFrame();
   void BuildGUIForVisualizationControlFrame();
   
@@ -280,6 +283,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   //----------------------------------------------------------------
 
   void UpdateConnectorList(int updateLevel);
+  void UpdateConnectorMenu();
   void UpdateConnectorPropertyFrame(int i);
   void UpdateMrmlNodeListFrame(int con);
  public:

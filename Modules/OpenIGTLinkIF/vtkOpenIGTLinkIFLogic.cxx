@@ -78,6 +78,9 @@ vtkOpenIGTLinkIFLogic::vtkOpenIGTLinkIFLogic()
   this->SliceOrientation[1] = SLICE_RTIMAGE_INPLANE90;
   this->SliceOrientation[2] = SLICE_RTIMAGE_INPLANE;
 
+  //this->OutTransformMsg = igtl::TransformMessage::New();
+  //this->OutImageMsg = igtl::ImageMessage::New();
+
 }
 
 
@@ -189,7 +192,8 @@ int vtkOpenIGTLinkIFLogic::CheckConnectorsStatusUpdates()
 //---------------------------------------------------------------------------
 void vtkOpenIGTLinkIFLogic::AddConnector()
 {
-  this->AddConnector("connector");
+  //this->AddConnector("connector");
+  this->AddConnector(NULL);
 }
 
 
@@ -197,7 +201,16 @@ void vtkOpenIGTLinkIFLogic::AddConnector()
 void vtkOpenIGTLinkIFLogic::AddConnector(const char* name)
 {
   vtkIGTLConnector* connector = vtkIGTLConnector::New();
-  connector->SetName(name);
+  if (name == NULL)
+    {
+    char newname[128];
+    sprintf(newname, "Connector%d", (int)this->ConnectorList.size() + 1);
+    connector->SetName(newname);
+    }
+  else
+    {
+    connector->SetName(name);
+    }
   this->ConnectorList.push_back(connector);
   this->ConnectorPrevStateList.push_back(-1);
   connector->SetRestrictDeviceName(this->RestrictDeviceName);
@@ -234,7 +247,7 @@ void vtkOpenIGTLinkIFLogic::AddClientConnector(const char* name, const char* svr
 //---------------------------------------------------------------------------
 void vtkOpenIGTLinkIFLogic::DeleteConnector(int id)
 {
-  if (id >= 0 && id < this->ConnectorList.size())
+  if (id >= 0 && id < (int)this->ConnectorList.size())
     {
     this->ConnectorList[id]->Stop();
     this->ConnectorList[id]->Delete();
@@ -696,7 +709,7 @@ int  vtkOpenIGTLinkIFLogic::SetDeviceType(int id, const char* deviceName, const 
 //---------------------------------------------------------------------------
 void vtkOpenIGTLinkIFLogic::ProcessMRMLEvents(vtkObject * caller, unsigned long event, void * callData)
 {
-  //std::cerr << "void vtkOpenIGTLinkIFLogic::ProcessMRMLEvents() is called" << std::endl;
+  std::cerr << "void vtkOpenIGTLinkIFLogic::ProcessMRMLEvents() is called" << std::endl;
 
   if (caller != NULL)
     {
@@ -708,19 +721,24 @@ void vtkOpenIGTLinkIFLogic::ProcessMRMLEvents(vtkObject * caller, unsigned long 
       {
       vtkIGTLConnector* connector = *iter;
 
-      //std::cerr << "void vtkOpenIGTLinkIFLogic::ProcessMRMLEvents() Connector: "
-      //<< connector->GetName() << std::endl;
+      std::cerr << "void vtkOpenIGTLinkIFLogic::ProcessMRMLEvents() Connector: "
+                << connector->GetName() << std::endl;
 
       // NOTE: should add more strict device name and device type check here.
       
       if (strcmp(node->GetNodeTagName(), "LinearTransform") == 0)
         {
+        std::cerr << "sending ... " << std::endl;
         vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(node);
         vtkMatrix4x4* matrix = transformNode->GetMatrixTransformToParent();
 
-        igtl::TransformMessage::Pointer transMsg;
-        transMsg = igtl::TransformMessage::New();
-        transMsg->SetDeviceName(node->GetName());
+        //igtl::TransformMessage::Pointer OutTransformMsg;
+        if (this->OutTransformMsg.IsNull())
+          {
+          this->OutTransformMsg = igtl::TransformMessage::New();
+          }
+
+        this->OutTransformMsg->SetDeviceName(node->GetName());
 
         igtl::Matrix4x4 igtlmatrix;
 
@@ -744,47 +762,16 @@ void vtkOpenIGTLinkIFLogic::ProcessMRMLEvents(vtkObject * caller, unsigned long 
         igtlmatrix[2][3]  = matrix->GetElement(2, 3);
         igtlmatrix[3][3]  = matrix->GetElement(3, 3);
 
-        transMsg->SetMatrix(igtlmatrix);
-        transMsg->Pack();
-
-        /*
-        // build message body
-        igtl_float32 transform[12];
-
-        transform[0]  = matrix->GetElement(0, 0);
-        transform[1]  = matrix->GetElement(1, 0);
-        transform[2]  = matrix->GetElement(2, 0);
-        transform[3]  = matrix->GetElement(0, 1);
-        transform[4]  = matrix->GetElement(1, 1);
-        transform[5]  = matrix->GetElement(2, 1);
-        transform[6]  = matrix->GetElement(0, 2);
-        transform[7]  = matrix->GetElement(1, 2);
-        transform[8]  = matrix->GetElement(2, 2);
-        transform[9]  = matrix->GetElement(0, 3);
-        transform[10] = matrix->GetElement(1, 3);
-        transform[11] = matrix->GetElement(2, 3);
-
-        // build header
-        igtl_header header;
-        igtl_uint64 crc = crc64(0, 0, 0LL); // initial crc
-
-        header.version   = IGTL_HEADER_VERSION;
-        header.timestamp = 0;
-        header.body_size = IGTL_TRANSFORM_SIZE;
-        header.crc       = crc64((unsigned char*)transform, IGTL_TRANSFORM_SIZE, crc);
-        strncpy(header.name, "TRANSFORM", 12);
-        strncpy(header.device_name, node->GetName(), 20);
-
-        igtl_transform_convert_byte_order(transform);
-        igtl_header_convert_byte_order(&header);
-        */
+        this->OutTransformMsg->SetMatrix(igtlmatrix);
+        this->OutTransformMsg->Pack();
 
         int r; 
-        r = connector->SendData(transMsg->GetPackSize(), (unsigned char*)transMsg->GetPackPointer());
-        /*
-        r = connector->SendData(IGTL_HEADER_SIZE, (unsigned char*) &header);
-        r = connector->SendData(IGTL_TRANSFORM_SIZE, (unsigned char*) transform);
-        */
+        r = connector->SendData(this->OutTransformMsg->GetPackSize(),
+                                (unsigned char*)this->OutTransformMsg->GetPackPointer());
+        if (r == 0)
+          {
+          std::cerr << "ERROR: send data." << std::endl;
+          }
         
         }
       else if (strcmp(node->GetNodeTagName(), "Volume") == 0)
@@ -948,11 +935,11 @@ void vtkOpenIGTLinkIFLogic::UpdateMRMLScalarVolumeNode(igtl::MessageBase::Pointe
     char* bufPtr = (char*) imgMsg->GetScalarPointer();
     int sizei = size[0];
     int sizej = size[1];
-    int sizek = size[2];
+    //int sizek = size[2];
     int subsizei = svsize[0];
     
     int bg_i = svoffset[0];
-    int ed_i = bg_i + svsize[0];
+    //int ed_i = bg_i + svsize[0];
     int bg_j = svoffset[1];
     int ed_j = bg_j + svsize[1];
     int bg_k = svoffset[2];
@@ -1068,7 +1055,7 @@ void vtkOpenIGTLinkIFLogic::UpdateMRMLLinearTransformNode(igtl::MessageBase::Poi
 
   // Deserialize the transform data
   // If you want to skip CRC check, call Unpack() without argument.
-  int c = transMsg->Unpack(1);
+  //int c = transMsg->Unpack(1);
 
   vtkMRMLLinearTransformNode* transformNode;
   vtkMRMLScene* scene = this->GetApplicationLogic()->GetMRMLScene();
@@ -1285,9 +1272,9 @@ int vtkOpenIGTLinkIFLogic::UpdateSliceNodeByTransformNode(int sliceNodeNumber, c
     float tx = transform->GetElement(0, 0);
     float ty = transform->GetElement(1, 0);
     float tz = transform->GetElement(2, 0);
-    float sx = transform->GetElement(0, 1);
-    float sy = transform->GetElement(1, 1);
-    float sz = transform->GetElement(2, 1);
+    //float sx = transform->GetElement(0, 1);
+    //float sy = transform->GetElement(1, 1);
+    //float sz = transform->GetElement(2, 1);
     float nx = transform->GetElement(0, 2);
     float ny = transform->GetElement(1, 2);
     float nz = transform->GetElement(2, 2);

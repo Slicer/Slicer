@@ -249,6 +249,15 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   
 
   //----------------------------------------------------------------
+  // Massage classes
+  //----------------------------------------------------------------
+
+  //BTX
+  igtl::TransformMessage::Pointer OutTransformMsg;
+  igtl::ImageMessage::Pointer OutImageMsg;
+  //ETX
+
+  //----------------------------------------------------------------
   // Real-time image
   //----------------------------------------------------------------
   
@@ -274,7 +283,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
 
   int   SliceOrientation[3];
   
-
 
   //----------------------------------------------------------------
   // Locator
