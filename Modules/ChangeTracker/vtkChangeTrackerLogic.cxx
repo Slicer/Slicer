@@ -28,6 +28,7 @@
 #include "ModuleDescription.h"
 #include "itksys/DynamicLoader.hxx"
 #include <assert.h>
+#include "vtkMRMLLinearTransformNode.h"
 
 #define ERROR_NODE_VTKID 0
 
@@ -1051,7 +1052,15 @@ void vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
   outputVolumeNode = this->CreateVolumeNode(scan1Node, (const char*)"Scan2_LinearRegistration");
   // AF: this registeres Logic to get events from the output volume node
   vtkSetAndObserveMRMLNodeMacro(this->Scan2_RegisteredVolume, outputVolumeNode);
+  outputVolumeNode->Delete();
   ctNode->SetScan2_RegisteredRef(outputVolumeNode->GetID());
+
+  // Create output transform node
+  vtkMRMLLinearTransformNode *transformNode =
+    vtkMRMLLinearTransformNode::New();
+  assert(transformNode);
+  transformNode->SetName("Global_LRTransform");
+  scene->AddNode(transformNode);
 
   // Linear registration parameter setup
   moduleNode->SetParameterAsString("FixedImageFileName", ctNode->GetScan1_Ref());
@@ -1062,6 +1071,8 @@ void vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
   // simplify this probably
   moduleNode->SetParameterAsString("Iterations", "100,100,50,20");
   moduleNode->SetParameterAsString("ResampledImageFileName", ctNode->GetScan2_RegisteredRef());
+  moduleNode->SetParameterAsString("OutputTransform", transformNode->GetID());
+  transformNode->Delete();
 
   /*
   Should the volume data be initialized?
@@ -1165,8 +1176,16 @@ void vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
   // AF: do not need to observe events here -- synchronous execution
   vtkSetMRMLNodeMacro(this->Scan2_SuperSampleRegisteredVolume, outputVolumeNode);
   // AF: TODO Delete volume here?
+  outputVolumeNode->Delete();
   ctNode->SetScan2_LocalRef(outputVolumeNode->GetID());
   cerr << "Results of ROI registration will go here: " << ctNode->GetScan2_LocalRef() << endl;
+
+  // Create output transform node
+  vtkMRMLLinearTransformNode *transformNode =
+    vtkMRMLLinearTransformNode::New();
+  assert(transformNode);
+  transformNode->SetName("ROI_LRTransform");
+  scene->AddNode(transformNode);
 
   // Linear registration parameter setup
   moduleNode->SetParameterAsString("FixedImageFileName", ctNode->GetScan1_SuperSampleRef());
@@ -1183,6 +1202,8 @@ void vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
   moduleNode->SetParameterAsString("TranslationScale", "10");
   moduleNode->SetParameterAsString("Iterations", "100,100,50,20");
   moduleNode->SetParameterAsString("ResampledImageFileName", ctNode->GetScan2_LocalRef());
+  moduleNode->SetParameterAsString("OutputTransform", transformNode->GetID());
+  transformNode->Delete();
 
   cerr << "Fixed image: " << scene->GetNodeByID(ctNode->GetScan1_SuperSampleRef())->GetName() << endl;
   cerr << "Moving image: " << scene->GetNodeByID(ctNode->GetScan2_SuperSampleRef())->GetName() << endl;
