@@ -534,7 +534,7 @@ if {  [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [stri
 # Get and build netlib (blas and lapack)
 #
 
-if { [BuildThis $::NETLIB_TEST_FILE "netlib"] && !$::USE_SYSTEM_PYTHON && [string tolower $::USE_PYTHON] == "on" } {
+if { [BuildThis $::NETLIB_TEST_FILE "netlib"] && !$::USE_SYSTEM_PYTHON && [string tolower $::USE_SCIPY] == "on" } {
 
     file mkdir $::Slicer3_LIB/netlib
     file mkdir $::Slicer3_LIB/netlib-build
@@ -624,24 +624,28 @@ if {  [BuildThis $::NUMPY_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [strin
             set ::env(LD_LIBRARY_PATH) $::Slicer3_LIB/python-build/lib:$::env(LD_LIBRARY_PATH)
         }
 
-        set ::env(ATLAS) None
-        set ::env(BLAS) $::Slicer3_LIB/netlib-build/BLAS-build/libblas.a
-        set ::env(BLAS_SRC) $::Slicer3_LIB/netlib/BLAS
-        set ::env(LAPACK) $::Slicer3_LIB/netlib-build/lapack-build/liblapack.a
+        if { $::USE_SCIPY } {
+          set ::env(ATLAS) None
+          set ::env(BLAS) $::Slicer3_LIB/netlib-build/BLAS-build/libblas.a
+          set ::env(BLAS_SRC) $::Slicer3_LIB/netlib/BLAS
+          set ::env(LAPACK) $::Slicer3_LIB/netlib-build/lapack-build/liblapack.a
+        }
 
         cd $::Slicer3_LIB/python/numpy
         runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install
 
         # do scipy
 
-        # TODO: need to have a way to build the blas library...
-        cd $::Slicer3_LIB/python
-        runcmd $::SVN co $::SCIPY_TAG scipy
-        
-        cd $::Slicer3_LIB/python/scipy
-        
-        # turn off scipy - not clear how to get it to build on all platforms
-        runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install
+        if { $::USE_SCIPY } {
+          # TODO: need to have a way to build the blas library...
+          cd $::Slicer3_LIB/python
+          runcmd $::SVN co $::SCIPY_TAG scipy
+          
+          cd $::Slicer3_LIB/python/scipy
+          
+          # turn off scipy - not clear how to get it to build on all platforms
+          runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install
+        }
     }
 }
 
@@ -839,6 +843,7 @@ if { [BuildThis $::ITK_TEST_FILE "itk"] == 1 } {
         -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
         -DITK_USE_REVIEW:BOOL=ON \
         -DITK_USE_OPTIMIZED_REGISTRATION_METHODS:BOOL=ON \
+        -DITK_USE_TRANSFORM_IO_FACTORIES:BOOL=ON \
         -DBUILD_SHARED_LIBS:BOOL=ON \
         -DCMAKE_SKIP_RPATH:BOOL=OFF \
         -DBUILD_EXAMPLES:BOOL=OFF \
@@ -852,6 +857,7 @@ if { [BuildThis $::ITK_TEST_FILE "itk"] == 1 } {
         -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
         -DITK_USE_REVIEW:BOOL=ON \
         -DITK_USE_OPTIMIZED_REGISTRATION_METHODS:BOOL=ON \
+        -DITK_USE_TRANSFORM_IO_FACTORIES:BOOL=ON \
         -DBUILD_SHARED_LIBS:BOOL=ON \
         -DCMAKE_SKIP_RPATH:BOOL=ON \
         -DBUILD_EXAMPLES:BOOL=OFF \
