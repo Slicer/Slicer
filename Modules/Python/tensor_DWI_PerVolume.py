@@ -27,6 +27,7 @@ def Execute (inputVolume):
 
   inputVolume = scene.GetNodeByID(inputVolume)
   data = inputVolume.GetImageData().ToArray()
+  dims = inputVolume.GetImageData().GetDimensions()
 
   shapeD = data.shape
 
@@ -41,7 +42,7 @@ def Execute (inputVolume):
     r1.AddAndObserveDisplayNodeID(r11.GetName())
 
     imgD = slicer.vtkImageData()
-    imgD.SetDimensions(256, 256, 36)
+    imgD.SetDimensions(dims[0], dims[1], dims[2])
     imgD.SetScalarTypeToShort()
 
     org = inputVolume.GetOrigin()
