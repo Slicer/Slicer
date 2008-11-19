@@ -215,6 +215,8 @@ protected:
   // and such. Alternatively, Slicer2-inherited functionality will be used
   // (Slicer2 stuff will need to stay, since we need to be able to validate 
   // previous results)
+  // AF: TODO: these variables should NOT be in MRML node -- move this to
+  // Logic
   bool UseITK;
   bool Scan2_RegisteredReady;
 };

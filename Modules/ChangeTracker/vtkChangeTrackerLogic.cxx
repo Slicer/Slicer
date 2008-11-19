@@ -86,6 +86,9 @@ vtkChangeTrackerLogic::vtkChangeTrackerLogic()
   this->SaveVolumeFlag = 0;  
 
   this->Scan2_RegisteredVolume = NULL;
+  // AF: if you don't set initial pointers to NULL, and then try to add them
+  // to the scene, ObserverManager will try to unregister and segfault!
+  this->Scan2_SuperSampleRegisteredVolume = NULL;
 }
 
 
@@ -354,15 +357,16 @@ vtkMRMLScalarVolumeNode* vtkChangeTrackerLogic::CreateSuperSample(int ScanNum) {
 
   vtkMRMLVolumeNode* volumeNode = NULL;
   if (ScanNum > 1)  {
-    volumeNode = vtkMRMLVolumeNode::SafeDownCast(this->ChangeTrackerNode->GetScene()->GetNodeByID(this->ChangeTrackerNode->GetScan2_GlobalRef()));
+    volumeNode = vtkMRMLVolumeNode::SafeDownCast(
+      this->ChangeTrackerNode->GetScene()->GetNodeByID(this->ChangeTrackerNode->GetScan2_GlobalRef()));
   } else {
-    volumeNode = vtkMRMLVolumeNode::SafeDownCast(this->ChangeTrackerNode->GetScene()->GetNodeByID(this->ChangeTrackerNode->GetScan1_Ref()));
+    volumeNode = vtkMRMLVolumeNode::SafeDownCast(
+      this->ChangeTrackerNode->GetScene()->GetNodeByID(this->ChangeTrackerNode->GetScan1_Ref()));
   }
 
   if (!this->CheckROI(volumeNode)) {
-    cout << "Warning: vtkChangeTrackerLogic::CreateSuperSample: Scan " << ScanNum << " failed CheckROI" << endl;
+    vtkErrorMacro(<<"Warning: vtkChangeTrackerLogic::CreateSuperSample: Scan " << ScanNum << " failed CheckROI");
     return NULL;
-
   }
 
   // ---------------------------------
@@ -408,7 +412,8 @@ vtkMRMLScalarVolumeNode* vtkChangeTrackerLogic::CreateSuperSample(int ScanNum) {
   // Compute new origin
   vtkMatrix4x4 *ijkToRAS=vtkMatrix4x4::New();
   volumeNode->GetIJKToRASMatrix(ijkToRAS);
-  double newIJKOrigin[4] = {this->ChangeTrackerNode->GetROIMin(0),this->ChangeTrackerNode->GetROIMin(1), this->ChangeTrackerNode->GetROIMin(2), 1.0 };
+  double newIJKOrigin[4] = 
+    {this->ChangeTrackerNode->GetROIMin(0),this->ChangeTrackerNode->GetROIMin(1), this->ChangeTrackerNode->GetROIMin(2), 1.0 };
   double newRASOrigin[4];
   ijkToRAS->MultiplyPoint(newIJKOrigin,newRASOrigin);
   ijkToRAS->Delete();
@@ -417,8 +422,12 @@ vtkMRMLScalarVolumeNode* vtkChangeTrackerLogic::CreateSuperSample(int ScanNum) {
   // ---------------------------------
   // Now return results and clean up 
   char VolumeOutputName[1024];
-  if (ScanNum > 1) sprintf(VolumeOutputName, "TG_scan2_Global_SuperSampled");
-  else sprintf(VolumeOutputName, "TG_scan1_SuperSampled");
+
+  if (ScanNum > 1) 
+    sprintf(VolumeOutputName, "TG_scan2_Global_SuperSampled");
+  else 
+    sprintf(VolumeOutputName, "TG_scan1_SuperSampled");
+
   vtkMRMLScalarVolumeNode *VolumeOutputNode = this->CreateVolumeNode(volumeNode,VolumeOutputName);
   VolumeOutputNode->SetAndObserveImageData(ROISuperSampleFinal);
   VolumeOutputNode->SetSpacing(SuperSampleSpacing,SuperSampleSpacing,SuperSampleSpacing);  
@@ -509,18 +518,34 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
 
     //----------------------------------------------
     // Second step -> Save the outcome
-    if (!this->ChangeTrackerNode) {return 0;}
+    if (!this->ChangeTrackerNode) {
+      return 0;
+    }
     this->DeleteSuperSample(2);
     vtkMRMLScalarVolumeNode *outputNode = this->CreateSuperSample(2);
-    if (!outputNode) {return 0;} 
+
+    if (!outputNode) {
+      return 0;
+    } 
+
     this->ChangeTrackerNode->SetScan2_SuperSampleRef(outputNode->GetID());
     this->SaveVolume(app,outputNode);
     progressBar->SetValue(30.0/TimeLength);
 
     //----------------------------------------------
     // Kilian-Feb-08 you should first register and then normalize bc registration is not impacted by normalization 
-    app->Script("::ChangeTrackerTcl::Scan2ToScan1Registration_GUI Local"); 
-    progressBar->SetValue(50.0/TimeLength);
+    if(this->ChangeTrackerNode->GetUseITK()){
+      // AF: do local registration. It is probably not a good style to have a
+      // separate function for the similar functionality, but style is not the
+      // goal.
+      vtkSlicerApplication *app = vtkSlicerApplication::GetInstance();
+      vtkWarningMacro(<<"Local registration SlicerApplication ptr: " << app);
+      DoITKROIRegistration(app);
+      cerr << "ROI registration finished!\n";
+    } else {
+      app->Script("::ChangeTrackerTcl::Scan2ToScan1Registration_GUI Local"); 
+      progressBar->SetValue(50.0/TimeLength);
+    }
 
     app->Script("::ChangeTrackerTcl::HistogramNormalization_GUI"); 
     progressBar->SetValue(55.0/TimeLength);
@@ -986,6 +1011,7 @@ void vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
   // http://wiki.slicer.org/slicerWiki/index.php/Slicer3:Execution_Model_Documentation:Programmatic_Invocation
   // ...
 
+  vtkWarningMacro(<<"Global registration SlicerApplication ptr: " << app);
   // Init some useful references
   vtkCommandLineModuleGUI *moduleGUI = NULL;
   vtkMRMLCommandLineModuleNode *moduleNode = NULL;
@@ -1083,6 +1109,131 @@ void vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
   }
 
   moduleGUI->GetLogic()->Apply(moduleNode);
+  moduleNode->Delete(); // AF: is it right to delete this here?
+}
+
+// AF: registration of ROI
+void vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
+  // following the Tcl example code in
+  // http://wiki.slicer.org/slicerWiki/index.php/Slicer3:Execution_Model_Documentation:Programmatic_Invocation
+  // Also, see
+  // http://www.itk.org/pipermail/insight-users/2008-October/027734.html
+  // for a discussion on setting the number of histogram samples
+  // ...
+
+  // Init some useful references
+  vtkCommandLineModuleGUI *moduleGUI = NULL;
+  vtkMRMLCommandLineModuleNode *moduleNode = NULL;
+  vtkCommandLineModuleLogic *moduleLogic = NULL;
+
+  vtkMRMLScene *scene = this->ChangeTrackerNode->GetScene();
+  vtkMRMLChangeTrackerNode *ctNode = this->ChangeTrackerNode;
+  vtkMRMLScalarVolumeNode *outputVolumeNode = NULL;
+  // should be nice to have the transform in the scene later
+  //vtkMRMLTransformNode *lrTransform = NULL;
+  
+  // These should be initialized, but make sure this is true
+  assert(ctNode->GetScan1_SuperSampleRef());
+  assert(ctNode->GetScan2_SuperSampleRef());
+
+  moduleGUI = 
+    static_cast<vtkCommandLineModuleGUI*>(app->GetModuleGUIByName("Linear registration"));
+  if(!moduleGUI){
+    std::cerr << "Cannot find LinearRegistration module. Aborting." << std::endl;
+    assert(0);
+  }
+  moduleLogic = moduleGUI->GetLogic();
+
+  // Initialize GUI (?)
+  moduleGUI->Enter();
+  
+  moduleNode = 
+    static_cast<vtkMRMLCommandLineModuleNode*>(scene->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
+  if(!moduleNode){
+    std::cerr << "Cannot create LinearRegistration node. Aborting." << std::endl;
+    assert(0);
+  }
+
+  // Add node to the scene
+  scene->AddNode(moduleNode);
+  moduleNode->SetModuleDescription("Linear registration");
+
+  // Create output volume node
+  vtkMRMLScalarVolumeNode *scan2ROI = 
+    static_cast<vtkMRMLScalarVolumeNode*>(scene->GetNodeByID(ctNode->GetScan2_SuperSampleRef()));
+  outputVolumeNode = this->CreateVolumeNode(scan2ROI, (const char*)"TG_scan2_Local");
+  // AF: do not need to observe events here -- synchronous execution
+  vtkSetMRMLNodeMacro(this->Scan2_SuperSampleRegisteredVolume, outputVolumeNode);
+  // AF: TODO Delete volume here?
+  ctNode->SetScan2_LocalRef(outputVolumeNode->GetID());
+  cerr << "Results of ROI registration will go here: " << ctNode->GetScan2_LocalRef() << endl;
+
+  // Linear registration parameter setup
+  moduleNode->SetParameterAsString("FixedImageFileName", ctNode->GetScan1_SuperSampleRef());
+  moduleNode->SetParameterAsString("MovingImageFileName", ctNode->GetScan2_SuperSampleRef());
+  // AF: override the default settings for iterations to reduce time
+  // Comment from Kilian: since intra-subject registration is simpler than
+  // inter-subject, and default settings were for the general case, we can
+  // simplify this probably
+  //
+  // AF: With the defalt parameters for TranslationScale, registration
+  // produces empty image (uninitialized volume). 
+  // TODO: investigate why, and why there's no error
+  // reporting from registration about failure
+  moduleNode->SetParameterAsString("TranslationScale", "10");
+  moduleNode->SetParameterAsString("Iterations", "100,100,50,20");
+  moduleNode->SetParameterAsString("ResampledImageFileName", ctNode->GetScan2_LocalRef());
+
+  cerr << "Fixed image: " << scene->GetNodeByID(ctNode->GetScan1_SuperSampleRef())->GetName() << endl;
+  cerr << "Moving image: " << scene->GetNodeByID(ctNode->GetScan2_SuperSampleRef())->GetName() << endl;
+  cerr << "Registered image: " << scene->GetNodeByID(ctNode->GetScan2_LocalRef())->GetName() << endl;
+
+  /*
+  // Should the volume data be initialized?
+  vtkImageData* outputVolumeData = vtkImageData::New();
+  outputVolumeData->DeepCopy(scan1Node->GetImageData());
+  outputVolumeNode->SetAndObserveImageData(outputVolumeData);
+  outputVolumeNode->SetModifiedSinceRead(1);
+  outputVolumeData->Delete();
+  */
+
+  moduleGUI->SetCommandLineModuleNode(moduleNode);
+  moduleGUI->GetLogic()->SetCommandLineModuleNode(moduleNode);
+
+  // These are the extra steps, digged from
+  // Modules/CommandLineModule/vtkCommandLineModuleLogic.cxx
+  ModuleDescription moduleDesc = moduleNode->GetModuleDescription();
+  moduleLogic->SetTemporaryDirectory(app->GetTemporaryDirectory());
+  if(moduleDesc.GetTarget() == "Unknown"){
+    // Entry point is unknown
+    // "Linear registration" is shared object module, at least at this moment
+    assert(moduleDesc.GetType() == "SharedObjectModule");
+    typedef int (*ModuleEntryPoint)(int argc, char* argv[]);
+    itksys::DynamicLoader::LibraryHandle lib =
+      itksys::DynamicLoader::OpenLibrary(moduleDesc.GetLocation().c_str());
+    if(lib){
+      ModuleEntryPoint entryPoint = 
+        (ModuleEntryPoint) itksys::DynamicLoader::GetSymbolAddress(
+          lib, "ModuleEntryPoint");
+      if(entryPoint){
+        char entryPointAsText[256];
+        std::string entryPointAsString;
+
+        sprintf(entryPointAsText, "%p", entryPoint);
+        entryPointAsString = std::string("slicer:")+entryPointAsText;
+        moduleDesc.SetTarget(entryPointAsString);
+        moduleNode->SetModuleDescription(moduleDesc);      
+      } else {
+        std::cerr << "Failed to find entry point for Linear registration. Abort." << std::endl;
+        abort();
+      }
+    } else {
+      std::cerr << "Failed to locate module library. Abort." << std::endl;
+      abort();
+    }
+  }
+
+  moduleGUI->GetLogic()->ApplyAndWait(moduleNode);
   moduleNode->Delete(); // AF: is it right to delete this here?
 }
 

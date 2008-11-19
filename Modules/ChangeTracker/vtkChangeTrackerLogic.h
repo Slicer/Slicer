@@ -140,6 +140,7 @@ public:
   // For now, use this for global alignment of the input scans. In the future,
   // use the same functionality for ROI
   void DoITKRegistration(vtkSlicerApplication *app);
+  void DoITKROIRegistration(vtkSlicerApplication *app);
 
 private:
   vtkChangeTrackerLogic();
@@ -196,6 +197,7 @@ private:
 
   // AF: store the pointer to the Scan2 registered volume for MRML event handling
   vtkMRMLScalarVolumeNode *Scan2_RegisteredVolume;
+  vtkMRMLScalarVolumeNode *Scan2_SuperSampleRegisteredVolume;
 };
 
 #endif
