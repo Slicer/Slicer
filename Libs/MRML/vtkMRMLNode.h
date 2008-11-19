@@ -245,7 +245,7 @@ public:
   void SetAddToSceneNoModify(int value);
 
   // Description:
-  // Turn off generating InvokeEvent for set macros
+  // Turn on/off generating InvokeEvent for set macros
   vtkGetMacro(DisableModifiedEvent, int);
   void SetDisableModifiedEvent(int onOff)
     {
@@ -260,6 +260,12 @@ public:
     this->SetDisableModifiedEvent(0);
     }
 
+  // Description:
+  // overrides the vtkObject method so that all changes to the node which would normally 
+  // generate a ModifiedEvent can be grouped into an 'atomic' operation.  Typical usage
+  // would be to disable modified events, call a series of Set* operations, and then re-enable
+  // modified events and call InvokePendingModifiedEvent to invoke the event (if any of the Set*
+  // calls actually changed the values of the instance variables).
   virtual void Modified() 
     {
     if (!this->GetDisableModifiedEvent())
@@ -272,6 +278,9 @@ public:
       }
     }
 
+  // Description:
+  // Invokes any modified events that are 'pending', meaning they were generated
+  // while the DisableModifiedEvent flag was nonzero.
   void InvokePendingModifiedEvent ()
     {
     if ( this->ModifiedEventPending )
