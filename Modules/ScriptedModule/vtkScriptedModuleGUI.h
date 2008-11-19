@@ -87,6 +87,7 @@ public:
   // limitation in kwwidgets tcl wrapping)
   unsigned long AddObserverByNumber (vtkObject *observee, unsigned long event);
   unsigned long AddMRMLObserverByNumber (vtkObject *observee, unsigned long event);
+  void RemoveObserverByNumber (vtkObject *observee, unsigned long event);
   void RemoveMRMLObserverByNumber (vtkObject *observee, unsigned long event);
 
   vtkGetMacro(Language,int);
