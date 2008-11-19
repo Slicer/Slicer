@@ -709,7 +709,7 @@ int  vtkOpenIGTLinkIFLogic::SetDeviceType(int id, const char* deviceName, const 
 //---------------------------------------------------------------------------
 void vtkOpenIGTLinkIFLogic::ProcessMRMLEvents(vtkObject * caller, unsigned long event, void * callData)
 {
-  std::cerr << "void vtkOpenIGTLinkIFLogic::ProcessMRMLEvents() is called" << std::endl;
+  //std::cerr << "void vtkOpenIGTLinkIFLogic::ProcessMRMLEvents() is called" << std::endl;
 
   if (caller != NULL)
     {
@@ -721,8 +721,8 @@ void vtkOpenIGTLinkIFLogic::ProcessMRMLEvents(vtkObject * caller, unsigned long 
       {
       vtkIGTLConnector* connector = *iter;
 
-      std::cerr << "void vtkOpenIGTLinkIFLogic::ProcessMRMLEvents() Connector: "
-                << connector->GetName() << std::endl;
+      //std::cerr << "void vtkOpenIGTLinkIFLogic::ProcessMRMLEvents() Connector: "
+      //<< connector->GetName() << std::endl;
 
       // NOTE: should add more strict device name and device type check here.
       

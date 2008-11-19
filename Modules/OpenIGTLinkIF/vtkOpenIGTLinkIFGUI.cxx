@@ -831,20 +831,25 @@ void vtkOpenIGTLinkIFGUI::ProcessGUIEvents(vtkObject *caller,
   else if (this->AddDeviceNameButton == vtkKWPushButton::SafeDownCast(caller)
            && event == vtkKWPushButton::InvokedEvent)
     {
-    int selected = this->ConnectorList->GetWidget()->GetIndexOfFirstSelectedRow();
-    this->GetLogic()->AddDeviceToConnector(selected, "Unspecified", "Unspecified", 0);
+    //int selected = this->ConnectorList->GetWidget()->GetIndexOfFirstSelectedRow();
+    int con = this->CurrentMrmlNodeListID;
+    this->GetLogic()->AddDeviceToConnector(con, "Unspecified", "Unspecified", 0);
     //UpdateConnectorPropertyFrame(selected);
-    UpdateMrmlNodeListFrame(selected);
+    UpdateMrmlNodeListFrame(con);
     }
 
   else if (this->DeleteDeviceNameButton == vtkKWPushButton::SafeDownCast(caller)
            && event == vtkKWPushButton::InvokedEvent)
     {
-    //this->GetLogic()->AddConnector();
-    //int select = this->ConnectorList->GetWidget()->GetNumberOfRows() - 1;
-    //this->ConnectorList->GetWidget()->SelectSingleRow(select);
-    //UpdateConnectorPropertyFrame(select);
-    //UpdateMrmlNodeListFrame(select);
+    int con = this->CurrentMrmlNodeListID;
+    int row;
+    int col;
+    this->MrmlNodeList->GetWidget()->GetSelectedCells(&row, &col);
+    this->GetLogic()->DeleteDeviceFromConnector(con,
+                                                this->CurrentNodeListSelected[row].name.c_str(),
+                                                this->CurrentNodeListSelected[row].type.c_str(),
+                                                this->CurrentNodeListSelected[row].io);
+    UpdateMrmlNodeListFrame(con);
     }
 
   if (this->ASConnectorListMenu->GetMenu() == vtkKWMenu::SafeDownCast(caller) 
@@ -2263,8 +2268,6 @@ void vtkOpenIGTLinkIFGUI::UpdateConnectorPropertyFrame(int i)
 //---------------------------------------------------------------------------
 void vtkOpenIGTLinkIFGUI::UpdateMrmlNodeListFrame(int con)
 {
-  std::cerr << "con = " << con << std::endl;
-
   // if the connector has already chosen
   if (con == this->CurrentMrmlNodeListID)
     {
@@ -2293,9 +2296,6 @@ void vtkOpenIGTLinkIFGUI::UpdateMrmlNodeListFrame(int con)
   // Adjust the number of rows in the table
   int totalIOs = incoming->size() + outgoing->size() + unspecified->size();
   int numRows = this->MrmlNodeList->GetWidget()->GetNumberOfRows();
-
-  std::cerr << "Num rows = " << numRows << std::endl;
-  std::cerr << "Total IO = " << totalIOs << std::endl;
 
   if (totalIOs > numRows)
     {
@@ -2351,6 +2351,7 @@ void vtkOpenIGTLinkIFGUI::UpdateMrmlNodeListFrame(int con)
 
   row = 0;
   char item[256];
+  // List of incoming data
   for (iter = incoming->begin(); iter != incoming->end(); iter ++)
     {
     sprintf(item, "%s (%s)", iter->first.c_str(), iter->second.c_str());
@@ -2366,6 +2367,7 @@ void vtkOpenIGTLinkIFGUI::UpdateMrmlNodeListFrame(int con)
     row ++;
     }
 
+  // List of outgoing data
   for (iter = outgoing->begin(); iter != outgoing->end(); iter ++)
     {
     sprintf(item, "%s (%s)", iter->first.c_str(), iter->second.c_str());
@@ -2380,6 +2382,7 @@ void vtkOpenIGTLinkIFGUI::UpdateMrmlNodeListFrame(int con)
     row ++;
     }
 
+  // List of unspecified data
   for (iter = unspecified->begin(); iter != unspecified->end(); iter ++)
     {
     sprintf(item, "%s (%s)", iter->first.c_str(), iter->second.c_str());
@@ -2423,7 +2426,6 @@ int vtkOpenIGTLinkIFGUI::OnMrmlNodeListChanged(int row, int col, const char* ite
     {
     // Get current node info at (row, col)
     int index = this->MrmlNodeList->GetWidget()->GetCellWindowAsComboBox(row, 0)->GetValueIndex(item);
-    std::cerr << "INDEX == " << index << std::endl;
     if (index < 0 || index >= (int)this->CurrentNodeListAvailable.size())
       {
       // invalid index
@@ -2434,7 +2436,6 @@ int vtkOpenIGTLinkIFGUI::OnMrmlNodeListChanged(int row, int col, const char* ite
     
     if (origName != currName || origType != currType)
       {
-      std::cerr << "node name or type is changed" << std::endl;
       this->GetLogic()->DeleteDeviceFromConnector(this->CurrentMrmlNodeListID, origName.c_str(), origType.c_str(), origIo);
       this->GetLogic()->AddDeviceToConnector(this->CurrentMrmlNodeListID, currName.c_str(), currType.c_str(), origIo);
       this->CurrentNodeListSelected[row].name = currName;
@@ -2445,13 +2446,11 @@ int vtkOpenIGTLinkIFGUI::OnMrmlNodeListChanged(int row, int col, const char* ite
     {
     // Get curretn IO (in integer)
     const char* iostr[] = {"--", "IN", "OUT"}; // refer vtkOpenIGTLinkIFLogic::DEVICE_* 
-    std::cerr << "Selected: " << item << std::endl;
     int currIo = 0;
     for (currIo = 0; currIo < 3; currIo ++)
       {
       if (strcmp(iostr[currIo], item) == 0)
         {
-        std::cerr << "Selected2: " << iostr[currIo] << std::endl;
         break;
         }
       }
