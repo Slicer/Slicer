@@ -86,7 +86,7 @@ extern "C" {
 //#define MODELS_DEBUG
 //#define REMOTEIO_DEBUG
 
-#define CAMERA_DEBUG
+//#define CAMERA_DEBUG
 
 #include <LoadableModuleFactory.h>
 
@@ -1294,7 +1294,6 @@ int Slicer3_main(int argc, char *argv[])
   slicerApp->AddModuleGUI ( cameraGUI );
   cameraGUI->BuildGUI ( );
   cameraGUI->AddGUIObservers ( );
-  cameraGUI->UpdateCameraSelector();
 #endif
 
   // --- Slices module
