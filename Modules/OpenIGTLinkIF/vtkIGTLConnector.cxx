@@ -46,9 +46,11 @@ vtkIGTLConnector::vtkIGTLConnector()
   this->Mutex = vtkMutexLock::New();
   this->CircularBufferMutex = vtkMutexLock::New();
   this->RestrictDeviceName = 0;
-  this->IncomingDeviceList.clear();
-  this->OutgoingDeviceList.clear();
-  this->UnspecifiedDeviceList.clear();
+
+  this->DeviceInfoList.clear();
+  //this->IncomingDeviceIDList.clear();
+  //this->OutgoingDeviceIDList.clear();
+  //this->UnspecifiedDeviceIDList.clear();
 }
 
 //---------------------------------------------------------------------------
@@ -285,20 +287,20 @@ int vtkIGTLConnector::ReceiveController()
     // Check Device Name if device name is restricted
     if (this->RestrictDeviceName)
       {
-      if (this->IncomingDeviceList[std::string(headerMsg->GetDeviceName())] != headerMsg->GetDeviceType())
+      if (GetDeviceID(headerMsg->GetDeviceName(), headerMsg->GetDeviceType()) < 0) // not found on the list
         {
-        // The conbination of device name and type doesn't exist on the list
-        // just read and discad
         this->Skip(headerMsg->GetBodySizeToRead());
         continue;
-        
         }
       }
-    else
+    else  // if device name is not restricted:
       {
-      // if device name is not restricted:
-      if (this->IncomingDeviceList[std::string(headerMsg->GetDeviceName())] != headerMsg->GetDeviceType())
-        this->IncomingDeviceList[std::string(headerMsg->GetDeviceName())] = headerMsg->GetDeviceType();
+      // search on the list
+      if (GetDeviceID(headerMsg->GetDeviceName(), headerMsg->GetDeviceType()) < 0) // not found on the list
+        {
+        int id = RegisterNewDevice(headerMsg->GetDeviceName(), headerMsg->GetDeviceType());
+        RegisterDeviceIO(id, IO_INCOMING);
+        }
       }
     
     //----------------------------------------------------------------
@@ -320,6 +322,7 @@ int vtkIGTLConnector::ReceiveController()
     
     if (circBuffer && circBuffer->StartPush() != -1)
       {
+      std::cerr << "Pushing into the circular buffer." << std::endl;
       circBuffer->StartPush();
       
       igtl::MessageBase::Pointer buffer = circBuffer->GetPushBuffer();
@@ -429,4 +432,139 @@ vtkIGTLCircularBuffer* vtkIGTLConnector::GetCircularBuffer(std::string& key)
 }
 
 
+//---------------------------------------------------------------------------
+int vtkIGTLConnector::GetDeviceID(const char* deviceName, const char* deviceType)
+{
+  // returns -1 if no device found on the list
+  int id = -1;
+
+  DeviceInfoListType::iterator iter;
+
+  for (iter = this->DeviceInfoList.begin(); iter != this->DeviceInfoList.end(); iter ++)
+    {
+    if (iter->second.name == deviceName && iter->second.type == deviceType)
+      {
+      id = iter->first;
+      }
+    }
+
+  return id;
+}
+
+
+//---------------------------------------------------------------------------
+int vtkIGTLConnector::RegisterNewDevice(const char* deviceName, const char* deviceType, int io)
+{
+  int id  = GetDeviceID(deviceName, deviceType);
+  
+  if (id < 0) // if the device is not on the list
+    {
+    this->LastID ++;
+    id = this->LastID;
+
+    DeviceInfoType info;
+    info.name = deviceName;
+    info.type = deviceType;
+    info.io   = IO_UNSPECIFIED;
+    this->UnspecifiedDeviceIDSet.insert(id);
+    this->DeviceInfoList[id] = info;
+    }
+
+  RegisterDeviceIO(id, io);
+
+  return id;
+}
+
+
+//---------------------------------------------------------------------------
+int vtkIGTLConnector::UnregisterDevice(const char* deviceName, const char* deviceType, int io)
+{
+  // NOTE: If IO_UNSPECIFIED is specified as an 'io' parameter,
+  // the method will unregister deivce from both incoming and
+  // outgoing data list.
+  // return 1, if the device is removed from the device info list.
+
+  int id  = GetDeviceID(deviceName, deviceType);
+  DeviceInfoListType::iterator iter = this->DeviceInfoList.find(id);
+
+  if (iter != this->DeviceInfoList.end())
+    {
+    if (io == IO_UNSPECIFIED)
+      {
+      this->OutgoingDeviceIDSet.erase(id);
+      this->IncomingDeviceIDSet.erase(id);
+      this->UnspecifiedDeviceIDSet.erase(id);
+      }
+    if (io & IO_INCOMING)
+      {
+      this->IncomingDeviceIDSet.erase(id);
+      }
+    if (io & IO_OUTGOING)
+      {
+      this->IncomingDeviceIDSet.erase(id);
+      }
+    // search in device io lists 
+    if (this->OutgoingDeviceIDSet.find(id) == this->OutgoingDeviceIDSet.end() &&
+        this->IncomingDeviceIDSet.find(id) == this->IncomingDeviceIDSet.end() &&
+        this->UnspecifiedDeviceIDSet.find(id) == this->UnspecifiedDeviceIDSet.end())
+      {
+      this->DeviceInfoList.erase(iter);   // if not found, remove from device info list
+      return 1;
+      }
+    }
+
+  return 0;
+}
+
+
+//---------------------------------------------------------------------------
+int vtkIGTLConnector::UnregisterDevice(int id)
+{
+  DeviceInfoListType::iterator iter = this->DeviceInfoList.find(id);
+  if (iter != this->DeviceInfoList.end())
+    {
+    this->UnspecifiedDeviceIDSet.erase(id);
+    this->IncomingDeviceIDSet.erase(id);
+    this->OutgoingDeviceIDSet.erase(id);
+    this->DeviceInfoList.erase(iter);
+    return 1;
+    }
+  return 0;
+}
+
+
+//---------------------------------------------------------------------------
+int vtkIGTLConnector::RegisterDeviceIO(int id, int io)
+{
+  DeviceInfoListType::iterator iter = this->DeviceInfoList.find(id);
+
+  if (iter != this->DeviceInfoList.end()) // if id is on the list
+    {
+    if (io == IO_UNSPECIFIED)
+      {
+      iter->second.io = IO_UNSPECIFIED;
+      this->UnspecifiedDeviceIDSet.insert(id);
+      this->IncomingDeviceIDSet.erase(id);
+      this->OutgoingDeviceIDSet.erase(id);
+      }
+    else
+      {
+      if (io & IO_INCOMING)
+        {
+        iter->second.io |= IO_INCOMING;
+        this->UnspecifiedDeviceIDSet.erase(id);
+        this->IncomingDeviceIDSet.insert(id);
+        }
+      if (io & IO_OUTGOING)
+        {
+        iter->second.io |= IO_OUTGOING;
+        this->UnspecifiedDeviceIDSet.erase(id);
+        this->OutgoingDeviceIDSet.insert(id);
+        }
+      }
+    return 1;
+    }
+
+  return 0;
+}
 

@@ -18,6 +18,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <set>
 
 #include "vtkObject.h"
 #include "vtkOpenIGTLinkIFWin32Header.h" 
@@ -56,11 +57,28 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLConnector : public vtkObject
     STATE_CONNECTED,
     NUM_STATE
   };
+
+  enum {
+    IO_UNSPECIFIED = 0x00,
+    IO_INCOMING   = 0x01,
+    IO_OUTGOING   = 0x02,
+  };
   //ETX
   
   //BTX
-  typedef std::map<std::string, std::string> DeviceNameList; 
-  typedef std::map<std::string, vtkMRMLNode*> MRMLNodeList;
+  typedef struct {
+    std::string   name;
+    std::string   type;
+    int           io;
+    //vtkMRMLNode*  node;
+  } DeviceInfoType;
+
+  typedef std::map<int, DeviceInfoType> DeviceInfoListType;   // Device list:  index is referred as
+                                                              // a device id in the connector.
+  typedef std::set<int> DeviceIDSetType;
+
+  typedef std::map<std::string, std::string> DeviceNameList;  // will be obsoleted
+  typedef std::map<std::string, vtkMRMLNode*> MRMLNodeList;   // will be obsoleted
   //ETX
 
  public:
@@ -138,6 +156,21 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLConnector : public vtkObject
   // Device Lists
   //----------------------------------------------------------------
 
+  int GetDeviceID(const char* deviceName, const char* deviceType);
+  int RegisterNewDevice(const char* deviceName, const char* deviceType, int io=IO_UNSPECIFIED);
+  int UnregisterDevice(const char* deviceName, const char* deviceType, int io=IO_UNSPECIFIED);
+  int UnregisterDevice(int id);
+  int RegisterDeviceIO(int id, int io);
+
+  //BTX
+  DeviceInfoListType* GetDeviceInfoList()    { return &DeviceInfoList;         };
+  DeviceIDSetType*    GetIncomingDevice()    { return &IncomingDeviceIDSet;    }
+  DeviceIDSetType*    GetOutgoingDevice()    { return &OutgoingDeviceIDSet;    }
+  DeviceIDSetType*    GetUnspecifiedDevice() { return &UnspecifiedDeviceIDSet; }
+  //ETX
+
+  /** old stuff */
+  /*
   DeviceNameList* GetIncomingDeviceList() { return &IncomingDeviceList; };
   DeviceNameList* GetOutgoingDeviceList() { return &OutgoingDeviceList; };
 
@@ -145,6 +178,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLConnector : public vtkObject
   MRMLNodeList*   GetOutgoingMRMLNodeList() { return &OutgoingMRMLNodeList; };
 
   DeviceNameList* GetUnspecifiedDeviceList() { return &UnspecifiedDeviceList; };
+  */
 
 
  private:
@@ -189,12 +223,24 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLConnector : public vtkObject
   int     RestrictDeviceName;  // Flag to restrict incoming and outgoing data by device names
   //BTX
   // -- Device Name (same as MRML node) and data type (data type string defined in OpenIGTLink)
+
+  int                LastID;
+  DeviceInfoListType DeviceInfoList;
+
+  DeviceIDSetType   IncomingDeviceIDSet;
+  DeviceIDSetType   OutgoingDeviceIDSet;
+  DeviceIDSetType   UnspecifiedDeviceIDSet;
+
+  /** old stuff **/
+  /*
   DeviceNameList IncomingDeviceList;
   DeviceNameList OutgoingDeviceList;
   DeviceNameList UnspecifiedDeviceList;
 
   MRMLNodeList   IncomingMRMLNodeList;
   MRMLNodeList   OutgoingMRMLNodeList;
+  */
+
   //ETX
 
 };

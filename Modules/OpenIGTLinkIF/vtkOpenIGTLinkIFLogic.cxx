@@ -131,12 +131,16 @@ int vtkOpenIGTLinkIFLogic::Initialize()
 
 #ifdef BRP_DEVELOPMENT
 
+    int id;
+
     this->AddServerConnector("Robot", 18945);
-    AddDeviceToConnector(GetNumberOfConnectors()-1, "Robot",   "TRANSFORM", DEVICE_IN);
+    id = GetNumberOfConnectors()-1;
+    AddDeviceToConnector(id, "Robot",   "TRANSFORM", DEVICE_IN);
 
     this->AddServerConnector("Scanner", 18944);
-    AddDeviceToConnector(GetNumberOfConnectors()-1, "Robot",   "TRANSFORM", DEVICE_OUT);
-    AddDeviceToConnector(GetNumberOfConnectors()-1, "Scanner", "IMAGE", DEVICE_IN);
+    id = GetNumberOfConnectors()-1;
+    AddDeviceToConnector(id, "Robot",   "TRANSFORM", DEVICE_OUT);
+    AddDeviceToConnector(id, "Scanner", "IMAGE", DEVICE_IN);
 
 #endif //BRP_DEVELOPMENT
 
@@ -584,44 +588,36 @@ int  vtkOpenIGTLinkIFLogic::AddDeviceToConnector(int id, const char* deviceName,
 // io -- DEVICE_IN : incoming, DEVICE_OUT: outgoing
 {
 
+  std::cerr << "AddDeviceToConnector()   id = " << id << ", deviceName = " << deviceName << ", deviceType = " << deviceType << std::endl;
+
   vtkIGTLConnector* connector = GetConnector(id);
 
   if (connector)
     {
-    vtkIGTLConnector::DeviceNameList* devList;
-
-    if (io == DEVICE_IN)             // incoming
+    if (io == DEVICE_IN)
       {
-      devList = connector->GetIncomingDeviceList();
+      connector->RegisterNewDevice(deviceName, deviceType, vtkIGTLConnector::IO_INCOMING);
       }
-    else if (io == DEVICE_OUT)       // outgoing
+    else if (io == DEVICE_OUT)
       {
-      devList = connector->GetOutgoingDeviceList();
-      }
-    else //if (io == DEVICE_UNSPEC)  // unspecified
-      {
-      devList = connector->GetUnspecifiedDeviceList();
-      }
-
-    if ((*devList)[std::string(deviceName)] != deviceType)
-      {
-      (*devList)[std::string(deviceName)] = std::string(deviceType);
-      if (io == DEVICE_OUT)
-        {
-        //std::cerr << "registering device : " << deviceName << ", " << deviceType << std::endl;
-        RegisterDeviceEvent(connector,deviceName, deviceType);
-        }
-      return 1;
+      connector->RegisterNewDevice(deviceName, deviceType, vtkIGTLConnector::IO_OUTGOING);
+      RegisterDeviceEvent(connector,deviceName, deviceType);
       }
     else
       {
-      return 0;
+      connector->RegisterNewDevice(deviceName, deviceType);
       }
+    return 1;
     }
-
+  else
+    {
+    return 0;
+    }
+  
   return 1;
 
 }
+
 
 //---------------------------------------------------------------------------
 int  vtkOpenIGTLinkIFLogic::DeleteDeviceFromConnector(int id, const char* deviceName, const char* deviceType, int io)
@@ -630,81 +626,22 @@ int  vtkOpenIGTLinkIFLogic::DeleteDeviceFromConnector(int id, const char* device
 
   if (connector)
     {
-    vtkIGTLConnector::DeviceNameList* devList;
-    
-    if (io == DEVICE_IN)             // incoming
-      {
-      devList = connector->GetIncomingDeviceList();
-      }
-    else if (io == DEVICE_OUT)       // outgoing
-      {
-      devList = connector->GetOutgoingDeviceList();
-      }
-    else //if (io == DEVICE_UNSPEC)  // unspecified
-      {
-      devList = connector->GetUnspecifiedDeviceList();
-      }
-
-    // find the device name from the list
-    vtkIGTLConnector::DeviceNameList::iterator iter; 
-    iter = devList->find(std::string(deviceName));
-    if (iter != devList->end()) // TODO: check device type here 
+    int devid = connector->GetDeviceID(deviceName, deviceType);
+    if (devid >= 0) // the device is found in the list
       {
       UnRegisterDeviceEvent(connector, deviceName, deviceType);
-      devList->erase(iter);
       }
+
+    int param;
+    if (io == DEVICE_IN)          param = vtkIGTLConnector::IO_INCOMING;
+    else if (io == DEVICE_OUT)    param = vtkIGTLConnector::IO_OUTGOING;
+    else if (io == DEVICE_UNSPEC) param = vtkIGTLConnector::IO_UNSPECIFIED;
+    connector->UnregisterDevice(deviceName, deviceType, param);
     }
 
   return 1;
 
 }
-
-//---------------------------------------------------------------------------
-int  vtkOpenIGTLinkIFLogic::SetDeviceType(int id, const char* deviceName, const char* deviceType, int io)
-{
-  vtkIGTLConnector* connector = GetConnector(id);
-
-  if (connector)
-    {
-    vtkIGTLConnector::DeviceNameList* devList;
-    
-    if (io == DEVICE_IN)             // incoming
-      {
-      devList = connector->GetIncomingDeviceList();
-      }
-    else if (io == DEVICE_OUT)       // outgoing
-      {
-      devList = connector->GetOutgoingDeviceList();
-      }
-    else //if (io == DEVICE_UNSPEC)  // unspecified
-      {
-      devList = connector->GetUnspecifiedDeviceList();
-      }
-
-    // find the device name from the list
-    vtkIGTLConnector::DeviceNameList::iterator iter; 
-    iter = devList->find(std::string(deviceName));
-    if (iter != devList->end()) // TODO: check device type here 
-      {
-      const char* origDeviceType = iter->second.c_str();
-      if (io == DEVICE_OUT)
-        {
-        UnRegisterDeviceEvent(connector, deviceName, origDeviceType); 
-        }
-      
-      iter->second = std::string(deviceType);
-
-      if (io == DEVICE_OUT)
-        {
-        RegisterDeviceEvent(connector, deviceName, deviceType);
-        }
-      }
-    }
-
-  return 1;
-
-}
-
 
 //---------------------------------------------------------------------------
 void vtkOpenIGTLinkIFLogic::ProcessMRMLEvents(vtkObject * caller, unsigned long event, void * callData)
@@ -1055,10 +992,11 @@ void vtkOpenIGTLinkIFLogic::UpdateMRMLLinearTransformNode(igtl::MessageBase::Poi
 
   // Deserialize the transform data
   // If you want to skip CRC check, call Unpack() without argument.
-  //int c = transMsg->Unpack(1);
+  int c = transMsg->Unpack(1);
 
   vtkMRMLLinearTransformNode* transformNode;
   vtkMRMLScene* scene = this->GetApplicationLogic()->GetMRMLScene();
+
   vtkCollection* collection = scene->GetNodesByName(transMsg->GetDeviceName());
 
   if (collection->GetNumberOfItems() == 0)
@@ -1097,11 +1035,11 @@ void vtkOpenIGTLinkIFLogic::UpdateMRMLLinearTransformNode(igtl::MessageBase::Poi
   float py = matrix[1][3];
   float pz = matrix[2][3];
 
-  //vtkErrorMacro("matrix = ");
-  //vtkErrorMacro( << tx << ", " << ty << ", " << tz);
-  //vtkErrorMacro( << sx << ", " << sy << ", " << sz);
-  //vtkErrorMacro( << nx << ", " << ny << ", " << nz);
-  //vtkErrorMacro( << px << ", " << py << ", " << pz);
+  std::cerr << "matrix = " << std::endl;
+  std::cerr << tx << ", " << ty << ", " << tz << std::endl;
+  std::cerr << sx << ", " << sy << ", " << sz << std::endl;
+  std::cerr << nx << ", " << ny << ", " << nz << std::endl;
+  std::cerr << px << ", " << py << ", " << pz << std::endl;
   
   // set volume orientation
   vtkMatrix4x4* transform = vtkMatrix4x4::New();

@@ -152,8 +152,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   int  SetRestrictDeviceName(int f);
   int  AddDeviceToConnector(int id, const char* deviceName, const char* deviceType, int io);
   int  DeleteDeviceFromConnector(int id, const char* deviceName, const char* deviceType, int io);
-  int  SetDeviceType(int id, const char* deviceName, const char* deviceType, int io);
-
 
   //----------------------------------------------------------------
   // MRML Management

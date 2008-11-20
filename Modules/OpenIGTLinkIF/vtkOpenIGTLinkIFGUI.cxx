@@ -2287,14 +2287,20 @@ void vtkOpenIGTLinkIFGUI::UpdateMrmlNodeListFrame(int con)
 
   this->CurrentNodeListSelected.clear();
 
-  // Get Device List for incoming data
-  vtkIGTLConnector::DeviceNameList* incoming = connector->GetIncomingDeviceList();
-  vtkIGTLConnector::DeviceNameList* outgoing = connector->GetOutgoingDeviceList();
-  vtkIGTLConnector::DeviceNameList* unspecified = connector->GetUnspecifiedDeviceList();
-  vtkIGTLConnector::DeviceNameList::iterator iter;
+  vtkIGTLConnector::DeviceInfoListType* deviceList = connector->GetDeviceInfoList();
+
+  vtkIGTLConnector::DeviceIDSetType* incomingList    = connector->GetIncomingDevice();
+  vtkIGTLConnector::DeviceIDSetType* outgoingList    = connector->GetOutgoingDevice();
+  vtkIGTLConnector::DeviceIDSetType* unspecifiedList = connector->GetUnspecifiedDevice();
+
+  //// Get Device List for incoming data
+  //vtkIGTLConnector::DeviceNameList* incoming = connector->GetIncomingDeviceList();
+  //vtkIGTLConnector::DeviceNameList* outgoing = connector->GetOutgoingDeviceList();
+  //vtkIGTLConnector::DeviceNameList* unspecified = connector->GetUnspecifiedDeviceList();
+  //vtkIGTLConnector::DeviceNameList::iterator iter;
 
   // Adjust the number of rows in the table
-  int totalIOs = incoming->size() + outgoing->size() + unspecified->size();
+  int totalIOs = incomingList->size() + outgoingList->size() + unspecifiedList->size();
   int numRows = this->MrmlNodeList->GetWidget()->GetNumberOfRows();
 
   if (totalIOs > numRows)
@@ -2349,49 +2355,56 @@ void vtkOpenIGTLinkIFGUI::UpdateMrmlNodeListFrame(int con)
 
   this->CurrentNodeListSelected.resize(numRows);
 
+  vtkIGTLConnector::DeviceIDSetType::iterator iter;
+
   row = 0;
   char item[256];
   // List of incoming data
-  for (iter = incoming->begin(); iter != incoming->end(); iter ++)
+  for (iter = incomingList->begin(); iter != incomingList->end(); iter ++)
     {
-    sprintf(item, "%s (%s)", iter->first.c_str(), iter->second.c_str());
-
+    vtkIGTLConnector::DeviceInfoType devInfo = (*deviceList)[*iter];
+    sprintf(item, "%s (%s)", devInfo.name.c_str(), devInfo.type.c_str());
+      
     this->MrmlNodeList->GetWidget()->GetCellWindowAsComboBox(row, 0)->SetValue(item);
     //this->MrmlNodeList->GetWidget()->GetCellWindowAsComboBox(row, 1)->SetValue(iter->second.c_str());
     this->MrmlNodeList->GetWidget()->GetCellWindowAsComboBox(row, 1)->SetValue("IN");
-
-    this->CurrentNodeListSelected[row].name = std::string(iter->first.c_str());
-    this->CurrentNodeListSelected[row].type = std::string(iter->second.c_str());
+    
+    this->CurrentNodeListSelected[row].name = devInfo.name;
+    this->CurrentNodeListSelected[row].type = devInfo.type;
     this->CurrentNodeListSelected[row].io   = vtkOpenIGTLinkIFLogic::DEVICE_IN;//std::string("IN");
-
+  
     row ++;
     }
 
   // List of outgoing data
-  for (iter = outgoing->begin(); iter != outgoing->end(); iter ++)
+  for (iter = outgoingList->begin(); iter != outgoingList->end(); iter ++)
     {
-    sprintf(item, "%s (%s)", iter->first.c_str(), iter->second.c_str());
+    vtkIGTLConnector::DeviceInfoType devInfo = (*deviceList)[*iter];
+
+    sprintf(item, "%s (%s)", devInfo.name.c_str(), devInfo.type.c_str());
     this->MrmlNodeList->GetWidget()->GetCellWindowAsComboBox(row, 0)->SetValue(item);
     //this->MrmlNodeList->GetWidget()->GetCellWindowAsComboBox(row, 1)->SetValue(iter->second.c_str());
     this->MrmlNodeList->GetWidget()->GetCellWindowAsComboBox(row, 1)->SetValue("OUT");
-
-    this->CurrentNodeListSelected[row].name = std::string(iter->first.c_str());
-    this->CurrentNodeListSelected[row].type = std::string(iter->second.c_str());
+    
+    this->CurrentNodeListSelected[row].name = devInfo.name;
+    this->CurrentNodeListSelected[row].type = devInfo.type;
     this->CurrentNodeListSelected[row].io   = vtkOpenIGTLinkIFLogic::DEVICE_OUT; //std::string("OUT");
 
     row ++;
     }
 
   // List of unspecified data
-  for (iter = unspecified->begin(); iter != unspecified->end(); iter ++)
+  for (iter = unspecifiedList->begin(); iter != unspecifiedList->end(); iter ++)
     {
-    sprintf(item, "%s (%s)", iter->first.c_str(), iter->second.c_str());
+    vtkIGTLConnector::DeviceInfoType devInfo = (*deviceList)[*iter];
+
+    sprintf(item, "%s (%s)", devInfo.name.c_str(), devInfo.type.c_str());
     this->MrmlNodeList->GetWidget()->GetCellWindowAsComboBox(row, 0)->SetValue(item);
     //this->MrmlNodeList->GetWidget()->GetCellWindowAsComboBox(row, 1)->SetValue(iter->second.c_str());
     this->MrmlNodeList->GetWidget()->GetCellWindowAsComboBox(row, 1)->SetValue("--");
-
-    this->CurrentNodeListSelected[row].name = std::string(iter->first.c_str());
-    this->CurrentNodeListSelected[row].type = std::string(iter->first.c_str());
+    
+    this->CurrentNodeListSelected[row].name = devInfo.name;
+    this->CurrentNodeListSelected[row].type = devInfo.type;
     this->CurrentNodeListSelected[row].io   = vtkOpenIGTLinkIFLogic::DEVICE_UNSPEC; //std::string("--");
 
     row ++;
