@@ -145,14 +145,14 @@ try \
     xmlSwitch = xmlSwitchArg.getValue(); \
     processInformationAddressString = processInformationAddressStringArg.getValue(); \
       { /* Assignment for logoFiles */ \
-      for (unsigned int _i = 0; _i < logoFilesTemp.size(); _i++) \
+      for (unsigned int _i = 0; _i < (unsigned int)logoFilesTemp.size(); _i++) \
         { \
         std::vector<std::string> words; \
         std::vector<std::string> elements; \
         words.clear(); \
       std::string sep(","); \
         splitString(logoFilesTemp[_i], sep, words); \
-        for (unsigned int _j= 0; _j < words.size(); _j++) \
+        for (unsigned int _j= 0; _j < (unsigned int)words.size(); _j++) \
           { \
             logoFiles.push_back((words[_j].c_str())); \
           } \
@@ -169,14 +169,14 @@ if (echoSwitch) \
 { \
 std::cout << "Command Line Arguments" << std::endl; \
 std::cout << "    UseTCLAP: " << UseTCLAP << std::endl; \
-for (unsigned int _i= 0; _i < logoFilesTemp.size(); _i++) \
+for (unsigned int _i= 0; _i < (unsigned int)logoFilesTemp.size(); _i++) \
 { \
 std::cout << "logoFiles[" << _i << "]: "; \
 std::vector<std::string> words; \
 words.clear(); \
       std::string sep(","); \
 splitString(logoFilesTemp[_i], sep, words); \
-for (unsigned int _j= 0; _j < words.size(); _j++) \
+for (unsigned int _j= 0; _j < (unsigned int)words.size(); _j++) \
 { \
 std::cout <<  words[_j] << " "; \
 } \
