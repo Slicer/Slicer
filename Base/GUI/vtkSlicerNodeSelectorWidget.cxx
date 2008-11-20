@@ -434,7 +434,7 @@ void vtkSlicerNodeSelectorWidget::ProcessNewNodeCommand(const char *className, c
       return;
     }
     // Invoke a new node event giving an observer an opportunity to
-    // configure the node
+    // configure the node.
     this->InvokeEvent(vtkSlicerNodeSelectorWidget::NewNodeEvent, node);
 
     node->SetScene(this->MRMLScene);
@@ -474,6 +474,14 @@ void vtkSlicerNodeSelectorWidget::ProcessNewNodeCommand(const char *className, c
     // the ID is set in the call to AddNode
     //node->SetID(this->MRMLScene->GetUniqueIDByClass(className));
     retNode = this->MRMLScene->AddNode(node);
+
+    // Invoke a node added event giving an observer an opportunity to
+    // do something; this is *different* than just listening to the
+    // scene for added nodes. For example, nodes can be added when
+    // loading a scene. This event provides additional flexibility when
+    // something needs to be done when a node has been added *interactively*.
+    this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeAddedEvent, node);
+
     node->Delete();
     }
 
