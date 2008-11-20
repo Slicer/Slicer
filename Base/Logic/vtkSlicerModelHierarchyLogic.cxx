@@ -68,7 +68,7 @@ int vtkSlicerModelHierarchyLogic::UpdateModelToHierarchyMap()
       }
     this->ModelHierarchyNodesMTime = this->MRMLScene->GetSceneModifiedTime();
   }
-  return ModelHierarchyNodes.size();
+  return (int)ModelHierarchyNodes.size();
 }
 
 //---------------------------------------------------------------------------

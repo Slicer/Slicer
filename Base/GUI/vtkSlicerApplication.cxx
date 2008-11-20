@@ -1715,7 +1715,7 @@ void vtkSlicerApplication::ArrayToString(vtkStringArray *array, std::string sep,
       res = res + sep;
       }
     res = res + s;
-    len += (s.size()+1);
+    len += (int)(s.size()+1);
     }
   strcpy(string, res.c_str());
 }

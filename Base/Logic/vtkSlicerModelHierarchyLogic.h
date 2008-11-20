@@ -50,7 +50,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModelHierarchyLogic : public vtkSlic
   int GetNumberOfModelsInHierarchy()
     {
     this->UpdateModelToHierarchyMap();
-    return this->ModelHierarchyNodes.size();
+    return (int)this->ModelHierarchyNodes.size();
     };
 
 //BTX

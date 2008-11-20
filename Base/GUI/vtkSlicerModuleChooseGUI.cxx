@@ -37,15 +37,15 @@ splitString (const std::string &text,
              const std::string &separators,
              std::vector<std::string> &words)
 {
-  int n = text.length();
+  int n = (int)text.length();
   int start, stop;
-  start = text.find_first_not_of(separators);
+  start = (int)text.find_first_not_of(separators);
   while ((start >= 0) && (start < n))
     {
-    stop = text.find_first_of(separators, start);
+    stop = (int)text.find_first_of(separators, start);
     if ((stop < 0) || (stop > n)) stop = n;
     words.push_back(text.substr(start, stop - start));
-    start = text.find_first_not_of(separators, stop+1);
+    start = (int)text.find_first_not_of(separators, stop+1);
     }
 }
 
@@ -628,7 +628,7 @@ void vtkSlicerModuleChooseGUI::PopulateModuleSearchMenu ( const char *searchStri
 
   if ( searchString != NULL )
     {
-    int len = strlen ( searchString );
+    int len = (int)strlen ( searchString );
     // don't search until string has a couple of charaters in it to prevent a total avalanche.
     // play with this and see what seems good behavior.
       // convert search string to upper case for search
@@ -656,7 +656,7 @@ void vtkSlicerModuleChooseGUI::PopulateModuleSearchMenu ( const char *searchStri
             mname = m->GetUIPanel()->GetName();
             if ( mname != NULL)
               {
-              len = strlen ( mname );
+              len = (int)strlen ( mname );
               uc_mname = new char [ len +1 ];
               strcpy (uc_mname, mname );
               s = uc_mname;
@@ -671,7 +671,7 @@ void vtkSlicerModuleChooseGUI::PopulateModuleSearchMenu ( const char *searchStri
             cname = m->GetCategory();
             if ( cname != NULL )
               {
-              len = strlen (cname );
+              len = (int)strlen (cname );
               uc_cname = new char [len +1 ];
               strcpy (uc_cname, cname );
               s = uc_cname;

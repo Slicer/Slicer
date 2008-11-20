@@ -252,7 +252,7 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
   // -- now loop over any uri list and set the filenames
   dnode->GetNthStorageNode(storageNodeIndex)->ResetFileNameList();
   bool allCachedFilesExist = true;
-  for (unsigned int uriNum = 0; uriNum < dnode->GetNthStorageNode(storageNodeIndex)->GetNumberOfURIs(); uriNum++)
+  for (int uriNum = 0; uriNum < dnode->GetNthStorageNode(storageNodeIndex)->GetNumberOfURIs(); uriNum++)
     {
     const char *sourceN =  dnode->GetNthStorageNode(storageNodeIndex)->GetNthURI(uriNum);
     if (sourceN)
@@ -417,7 +417,7 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
 //  this->DebugOff();
 
   // loop over any other files in the storage node
-  for (unsigned int n = 0; n < dnode->GetNthStorageNode(storageNodeIndex)->GetNumberOfURIs(); n++)
+  for (int n = 0; n < dnode->GetNthStorageNode(storageNodeIndex)->GetNumberOfURIs(); n++)
     {
     const char *sourceN =  dnode->GetNthStorageNode(storageNodeIndex)->GetNthURI(n);
     const char *destN = dnode->GetNthStorageNode(storageNodeIndex)->GetNthFileName(n);

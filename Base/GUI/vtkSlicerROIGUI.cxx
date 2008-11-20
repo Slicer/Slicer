@@ -7,7 +7,6 @@
 #include "vtkSlicerModuleLogic.h"
 #include "vtkSlicerVisibilityIcons.h"
 #include "vtkSlicerModuleCollapsibleFrame.h"
-#include "vtkMRMLViewNode.h"
 
 #include "vtkKWMessage.h"
 #include "vtkKWMultiColumnList.h"

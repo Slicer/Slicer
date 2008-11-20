@@ -259,7 +259,7 @@ char* vtkSlicerSlicesGUI::GetFirstSliceGUILayoutName()
 int vtkSlicerSlicesGUI::GetNumberOfSliceGUI()
 { 
   if (this->InternalSliceGUIMap)
-    return (this->InternalSliceGUIMap->size());
+    return (int)(this->InternalSliceGUIMap->size());
   else
     return 0;
 }
