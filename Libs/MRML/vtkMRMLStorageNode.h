@@ -177,7 +177,7 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   // See how many file names were generated during ExecuteInformation
   int GetNumberOfFileNames()
   {
-    return this->FileNameList.size();
+    return (int)this->FileNameList.size();
   };
 
   // Description:
@@ -201,7 +201,7 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   // Return how many uri names this storage node holds in it's list
   int GetNumberOfURIs()
   {
-    return this->URIList.size();
+    return (int)this->URIList.size();
   }
 
   // Description:

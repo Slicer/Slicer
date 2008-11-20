@@ -255,11 +255,11 @@ public:
 
   // Description: 
   // returns number of undo steps in the history buffer
-  int GetNumberOfUndoLevels() { return this->UndoStack.size();};
+  int GetNumberOfUndoLevels() { return (int)this->UndoStack.size();};
   
   // Description: 
   // returns number of redo steps in the history buffer
-  int GetNumberOfRedoLevels() { return this->RedoStack.size();};
+  int GetNumberOfRedoLevels() { return (int)this->RedoStack.size();};
 
   // Description: 
   // Save current state in the undo buffer

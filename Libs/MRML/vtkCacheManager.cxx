@@ -145,7 +145,7 @@ void vtkCacheManager::SetRemoteCacheFreeBufferSize ( int val )
 void vtkCacheManager::SetRemoteCacheDirectory (const char *dir )
 {
   std::string dirstring = dir ;
-  int len = dirstring.size();
+  int len = (int)dirstring.size();
 
   if ( len > 0 )
     {

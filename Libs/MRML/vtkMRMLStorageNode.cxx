@@ -498,7 +498,7 @@ unsigned int vtkMRMLStorageNode::AddFileName( const char* filename )
     {
     this->FileNameList.push_back( filenamestr );
     }
-  return this->FileNameList.size();
+  return (unsigned int)this->FileNameList.size();
 }
 
 //----------------------------------------------------------------------------
@@ -544,7 +544,7 @@ unsigned int vtkMRMLStorageNode::AddURI( const char* filename )
 {
   std::string filenamestr (filename);
   this->URIList.push_back( filenamestr );
-  return this->URIList.size();
+  return (unsigned int)this->URIList.size();
 }
 
 //----------------------------------------------------------------------------

@@ -82,7 +82,7 @@ public:
 
   int GetNumberOfDisplayNodes()
     {
-    return this->DisplayNodeIDs.size();
+      return (int)this->DisplayNodeIDs.size();
     };
 
   const char *GetNthDisplayNodeID(int n)

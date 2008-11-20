@@ -477,7 +477,7 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkD
   unsigned int pos = 0;
   int gbeginpos =0;
   int gendpos = 0;
-  pos = keys.find(tag,pos);
+  pos = (unsigned int)keys.find(tag,pos);
   while ( pos < keys.size() )
     {
     num = keys.substr(pos+tag.size(),4);
@@ -499,7 +499,7 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkD
       do
         {
         gbeginpos++;
-        gendpos=value.find(" ",gbeginpos);
+        gendpos=(int)value.find(" ",gbeginpos);
         }
       while(gendpos==gbeginpos);
       g[i] = atof(value.substr(gbeginpos,gendpos).c_str());
@@ -525,7 +525,7 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkD
         factor->InsertNextValue(sqrt(g[0]*g[0]+g[1]*g[1]+g[2]*g[2]));
       }
     }
-   pos = keys.find(tag,pos+1);
+   pos = (unsigned int)keys.find(tag,pos+1);
   }
 
   grad->Modified();

@@ -384,7 +384,7 @@ inline void CmdLine::parse(int argc, char** argv)
 
   int requiredCount = 0;
 
-  for (int i = 0; static_cast<unsigned int>(i) < args.size(); i++)
+  for (int i = 0; static_cast<size_t>(i) < args.size(); i++)
     {
     bool matched = false;
     for (ArgListIterator it = _argList.begin(); it != _argList.end(); it++)
@@ -421,7 +421,7 @@ inline bool CmdLine::_emptyCombined(const std::string& s)
   if ( s[0] != Arg::flagStartChar() )
     return false;
 
-  for ( int i = 1; static_cast<unsigned int>(i) < s.length(); i++ )
+  for ( int i = 1; static_cast<size_t>(i) < s.length(); i++ )
     if ( s[i] != Arg::blankChar() )
       return false;
 

@@ -101,7 +101,7 @@ public:
 
   int GetNumberOfStorageNodes()
     {
-    return this->StorageNodeIDs.size();
+      return (int)this->StorageNodeIDs.size();
     };
 
   const char *GetNthStorageNodeID(int n)
