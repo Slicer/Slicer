@@ -426,7 +426,7 @@ namespace eval ChangeTrackerTcl {
 
     proc IntensityThresholding_Fct { INPUT SCAN1 THRESH_MIN THRESH_MAX OUTPUT} {
       # Eveyrthing outside below threhold is set to threshold
-      puts "IntensityThresholding_Fct $INPUT $SCAN1 $THRESH_MIN $THRESH_MAX $OUTPUT"
+      # puts "IntensityThresholding_Fct $INPUT $SCAN1 $THRESH_MIN $THRESH_MAX $OUTPUT"
       if { $INPUT != $SCAN1 } {
           set Scan1Range [[[$SCAN1 GetPointData] GetScalars] GetRange]
           set InputRange [[[$INPUT GetPointData] GetScalars] GetRange]
@@ -540,9 +540,6 @@ namespace eval ChangeTrackerTcl {
     }
   
     proc Analysis_Intensity_CMD {LOGIC SCAN1_ImageData SCAN1_SegmData SCAN2_ImageData AnalysisSensitivity ThresholdMin ThresholdMax } {
-        puts Analysis_Intensity_CMD
-        # Print "Analysis_Intensity_CMD $LOGIC $SCAN1_ImageData $SCAN1_SegmData $SCAN2_ImageData $AnalysisSensitivity"
-
         if {$ChangeTrackerTcl::newIntensityAnalysis} {
           set AnalysisScan1ByLower         [$LOGIC CreateAnalysis_Intensity_Scan1ByLower]
           set AnalysisScan1Range           [$LOGIC CreateAnalysis_Intensity_Scan1Range]
@@ -553,7 +550,7 @@ namespace eval ChangeTrackerTcl {
            set AnalysisScan1Range ""
            set AnalysisScan2ByLower ""
            set AnalysisScan2Range ""
-    }
+        }
         set AnalysisScanSubtract         [$LOGIC CreateAnalysis_Intensity_ScanSubtract]
         set AnalysisScanSubtractSmooth   [$LOGIC CreateAnalysis_Intensity_ScanSubtractSmooth]
         set AnalysisGrowthROI            [$LOGIC CreateAnalysis_Intensity_ROIGrowth]
@@ -744,8 +741,8 @@ namespace eval ChangeTrackerTcl {
      # than if we do not threshold we get too many false positive 
      
      if {$ChangeTrackerTcl::newIntensityAnalysis} {
-        set SCAN_MIN  [expr $ThresholdMin - 0.8*$FinalThreshold ] 
-        set SCAN_MAX  [expr $ThresholdMax + 0.8*$FinalThreshold ] 
+        set SCAN_MIN  [expr $ThresholdMin - $FinalThreshold ] 
+        set SCAN_MAX  [expr $ThresholdMax + $FinalThreshold ] 
         IntensityThresholding_DataFct $Scan1Data $SCAN_MIN $SCAN_MAX $AnalysisScan1ByLower $AnalysisScan1Range 
         IntensityThresholding_DataFct $Scan2Data $SCAN_MIN $SCAN_MAX $AnalysisScan2ByLower $AnalysisScan2Range 
         # Now we subtract the images from each other to determine residuum
@@ -772,7 +769,7 @@ namespace eval ChangeTrackerTcl {
          $AnalysisROINegativeBin SetOutValue 0
          # I have not found out why but without that factor seems to bias shrinkage
          # Partly we thrshold the outside intensities  
-       $AnalysisROINegativeBin ThresholdByLower  [expr -1.1 * $FinalThreshold]
+         $AnalysisROINegativeBin ThresholdByLower  $FinalThreshold
          $AnalysisROINegativeBin SetOutputScalarTypeToShort
        $AnalysisROINegativeBin Update
 
@@ -781,7 +778,7 @@ namespace eval ChangeTrackerTcl {
        $AnalysisROIPositiveBin  SetInput [$AnalysisGrowthROIIntensity GetOutput] 
          $AnalysisROIPositiveBin  SetInValue 1
          $AnalysisROIPositiveBin  SetOutValue 0
-         $AnalysisROIPositiveBin  ThresholdByUpper  $FinalThreshold
+         $AnalysisROIPositiveBin  ThresholdByUpper  $FinalThreshold 
          $AnalysisROIPositiveBin  SetOutputScalarTypeToShort
        $AnalysisROIPositiveBin Update
 
@@ -859,14 +856,15 @@ namespace eval ChangeTrackerTcl {
     } 
 
     proc Analysis_Intensity_UpdateThreshold_Fct {LOGIC  AnalysisSensitivity } {
-    if { $ChangeTrackerTcl::newIntensityAnalysis } {
-      set ThresholdValue [Analysis_Intensity_UpdateThreshold_His $AnalysisSensitivity] 
-    } else {
+       if { $ChangeTrackerTcl::newIntensityAnalysis } {
+         set ThresholdValue [Analysis_Intensity_UpdateThreshold_His $AnalysisSensitivity] 
+       
+       } else {
           set AnalysisMean           [$LOGIC GetAnalysis_Intensity_Mean ]
           set AnalysisVariance       [$LOGIC GetAnalysis_Intensity_Variance ]
           set ThresholdValue         [Analysis_Intensity_InverseStandardCumulativeDistribution $AnalysisSensitivity  $AnalysisMean $AnalysisVariance] 
           if { $ThresholdValue < 1 } { set ThresholdValue 1 }
-    }
+        }
         $LOGIC SetAnalysis_Intensity_Threshold $ThresholdValue
     }
 
