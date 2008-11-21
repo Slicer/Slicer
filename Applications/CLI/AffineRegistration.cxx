@@ -342,6 +342,7 @@ template<class T1, class T2> int DoIt2( int argc, char * argv[], const T1&, cons
   typename MetricType::Pointer  metric        = MetricType::New();
   metric->SetNumberOfHistogramBins ( HistogramBins );
   metric->SetNumberOfSpatialSamples( SpatialSamples );
+  metric->ReinitializeSeed(123);
   
   // Create the interpolator
   //
