@@ -61,8 +61,27 @@ main(int argc, char *argv[])
   LoadableModuleDescription module;
   LoadableModuleDescriptionParser parser;
 
-  // Read the TXT file
-  std::ifstream fin(InputTxt.c_str(),std::ios::in|std::ios::binary);
+  std::string input;
+  bool xml = false;
+
+  if (!InputTxt.empty())
+    {
+    input = InputTxt;
+    }
+  else if (!InputXml.empty())
+    {
+    xml = true;
+    input = InputXml;
+    }
+  else
+    {
+      std::cout << argv[0] << ": No input file specified, please use --InputTxt or --InputXml" << std::endl;
+      perror(argv[0]);
+      return EXIT_FAILURE;
+    }
+
+  // Read the input file
+  std::ifstream fin(input.c_str(),std::ios::in|std::ios::binary);
   if (fin.fail())
     {
     std::cerr << argv[0] << ": Cannot open " << InputTxt << " for input" << std::endl;
@@ -86,10 +105,21 @@ main(int argc, char *argv[])
     }
   std::cerr << std::endl;
 
-  if (parser.ParseText(TXT, module))
+  if (xml)
     {
-    std::cerr << "GenerateLM: One or more errors detected. Code generation aborted." << std::endl;
-    return EXIT_FAILURE;
+    if (parser.ParseXmlDescription(TXT, module))
+      {
+      std::cerr << "GenerateLM: One or more errors detected. Code generation aborted." << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
+  else
+    {
+    if (parser.ParseText(TXT, module))
+      {
+      std::cerr << "GenerateLM: One or more errors detected. Code generation aborted." << std::endl;
+      return EXIT_FAILURE;
+      }
     }
 
   // fixup information
@@ -128,7 +158,7 @@ main(int argc, char *argv[])
       }
     
     // make source cxx
-    std::string classname = itksys::SystemTools::GetFilenameWithoutExtension(InputTxt);
+    std::string classname = itksys::SystemTools::GetFilenameWithoutExtension(input);
 
     GenerateSourceIncludes(sout, classname, argc, argv);
     GenerateModuleDataSymbols(sout, module, classname);

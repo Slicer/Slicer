@@ -16,8 +16,15 @@ This implementation based on Bill Lorensen's GenerateCLP utility.
       <name>InputTxt</name>
       <label>Input Text</label>
       <channel>input</channel>
-      <description>Text file containing key:value description of module</description>
+      <description>Text file containing key:value entries describing the module</description>
       <longflag>--InputTxt</longflag>
+    </file>
+    <file>
+      <name>InputXml</name>
+      <label>Input Xml</label>
+      <channel>input</channel>
+      <description>XML-like file containing &lt;Key&gt;value&lt;/Key&gt; entries describing the module</description>
+      <longflag>--InputXml</longflag>
     </file>
     <file>
       <name>OutputHeader</name>

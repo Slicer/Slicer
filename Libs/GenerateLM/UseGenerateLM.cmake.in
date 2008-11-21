@@ -37,37 +37,73 @@ macro(GENERATELM SOURCES)
   # what is the filename without the extension
   get_filename_component(TMP_FILENAME ${ARGV1} NAME_WE)
   
+  # what is the filename extension
+  get_filename_component(TMP_EXT ${ARGV1} EXT)
+
   # the input file might be full path so handle that
   get_filename_component(TMP_FILEPATH ${ARGV1} PATH)
 
-  # compute the input filename
-  if (TMP_FILEPATH)
-    set(TMP_INPUT ${TMP_FILEPATH}/${TMP_FILENAME}.txt) 
-  else (TMP_FILEPATH)
-    set(TMP_INPUT ${CMAKE_CURRENT_SOURCE_DIR}/${TMP_FILENAME}.txt)
-  endif (TMP_FILEPATH)
+  if (TMP_EXT STREQUAL ".txt")
+    # compute the input filename
+    if (TMP_FILEPATH)
+      set(TMP_INPUT ${TMP_FILEPATH}/${TMP_FILENAME}.txt) 
+    else (TMP_FILEPATH)
+      set(TMP_INPUT ${CMAKE_CURRENT_SOURCE_DIR}/${TMP_FILENAME}.txt)
+    endif (TMP_FILEPATH)
 
-  # add custom command to output
-  add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.h
-    DEPENDS "${GENERATELM_EXE}" ${TMP_INPUT}
-    COMMAND "${GENERATELM_EXE}"
-    --InputTxt "${quote}${TMP_INPUT}${quote}" 
-    --OutputHeader "${quote}${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.h${quote}"
-    --OutputCxx "${quote}${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.cxx${quote}"
-    ${verbatim}
-    )
+    # add custom command to output
+    add_custom_command(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.h
+      DEPENDS "${GENERATELM_EXE}" ${TMP_INPUT}
+      COMMAND "${GENERATELM_EXE}"
+      --InputTxt "${quote}${TMP_INPUT}${quote}" 
+      --OutputHeader "${quote}${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.h${quote}"
+      --OutputCxx "${quote}${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.cxx${quote}"
+      ${verbatim}
+      )
 
-  # add custom command to output
-  add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.cxx
-    DEPENDS "${GENERATELM_EXE}" ${TMP_INPUT}
-    COMMAND "${GENERATELM_EXE}"
-    --InputTxt "${quote}${TMP_INPUT}${quote}" 
-    --OutputHeader "${quote}${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.h${quote}"
-    --OutputCxx "${quote}${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.cxx${quote}"
-    ${verbatim}
-    )
+    # add custom command to output
+    add_custom_command(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.cxx
+      DEPENDS "${GENERATELM_EXE}" ${TMP_INPUT}
+      COMMAND "${GENERATELM_EXE}"
+      --InputTxt "${quote}${TMP_INPUT}${quote}" 
+      --OutputHeader "${quote}${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.h${quote}"
+      --OutputCxx "${quote}${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.cxx${quote}"
+      ${verbatim}
+      )
+  endif (TMP_EXT STREQUAL ".txt")
+
+  if (TMP_EXT STREQUAL ".xml")
+    # compute the input filename
+    if (TMP_FILEPATH)
+      set(TMP_INPUT ${TMP_FILEPATH}/${TMP_FILENAME}.xml) 
+    else (TMP_FILEPATH)
+      set(TMP_INPUT ${CMAKE_CURRENT_SOURCE_DIR}/${TMP_FILENAME}.xml)
+    endif (TMP_FILEPATH)
+
+    # add custom command to output
+    add_custom_command(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.h
+      DEPENDS "${GENERATELM_EXE}" ${TMP_INPUT}
+      COMMAND "${GENERATELM_EXE}"
+      --InputXml "${quote}${TMP_INPUT}${quote}" 
+      --OutputHeader "${quote}${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.h${quote}"
+      --OutputCxx "${quote}${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.cxx${quote}"
+      ${verbatim}
+      )
+
+    # add custom command to output
+    add_custom_command(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.cxx
+      DEPENDS "${GENERATELM_EXE}" ${TMP_INPUT}
+      COMMAND "${GENERATELM_EXE}"
+      --InputXml "${quote}${TMP_INPUT}${quote}" 
+      --OutputHeader "${quote}${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.h${quote}"
+      --OutputCxx "${quote}${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.cxx${quote}"
+      ${verbatim}
+      )
+  endif (TMP_EXT STREQUAL ".xml")
 
   # mark the Lib.cxx file as a source file
 
