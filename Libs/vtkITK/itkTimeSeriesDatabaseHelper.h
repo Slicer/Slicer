@@ -285,7 +285,7 @@ namespace itk {
     /// Works like sprintf, but returns the resulting string in a 
     /// memory-safe manner.
     ///
-    string format_str(char* format, ...) const
+    string format_str(const char* format, ...) const
     {
       va_list arglist;
       va_start(arglist, format);

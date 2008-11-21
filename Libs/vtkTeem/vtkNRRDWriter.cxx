@@ -75,7 +75,7 @@ int vtkNRRDWriter::FillInputPortInformation(
 
 //----------------------------------------------------------------------------
 // Writes all the data from the input.
-void vtkNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &nrrdKind, size_t &numComp, int &vtkType, void **buffer)
+void vtkNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &kind, size_t &numComp, int &vtkType, void **buffer)
 {
 
   vtkDataArray *array;
@@ -89,28 +89,28 @@ void vtkNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &nrrdKind, 
     switch (numComp)
       {
       case 1:
-        nrrdKind = nrrdKindScalar;
+        kind = nrrdKindScalar;
         break;
       case 2:
-        nrrdKind = nrrdKindComplex;
+        kind = nrrdKindComplex;
         break;
       case 3:
-        nrrdKind = nrrdKindRGBColor;
+        kind = nrrdKindRGBColor;
         break;
       case 4:
-        nrrdKind = nrrdKindRGBAColor;
+        kind = nrrdKindRGBAColor;
         break;
       default:
         size_t numGrad = this->DiffusionGradients->GetNumberOfTuples();
         size_t numBValues = this->BValues->GetNumberOfTuples();
         if (numGrad == numBValues && numGrad == numComp && numGrad>6)
           {
-          nrrdKind = nrrdKindList;
+          kind = nrrdKindList;
           this->DiffusionWeigthedData = 1;
           }
         else
           {
-          nrrdKind = nrrdKindList;
+          kind = nrrdKindList;
           }
        }
      }
@@ -118,20 +118,20 @@ void vtkNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &nrrdKind, 
      {
      *buffer = array->GetVoidPointer(0);
      vtkType = array->GetDataType();
-     nrrdKind = nrrdKindVector;
+     kind = nrrdKindVector;
      }
    else if ((array = static_cast<vtkDataArray *> ( in->GetPointData()->GetNormals())))
      {
      *buffer = array->GetVoidPointer(0);
      vtkType = array->GetDataType();
-     nrrdKind = nrrdKindVector;
+     kind = nrrdKindVector;
      numComp = array->GetNumberOfComponents();
      }
    else if ((array = static_cast<vtkDataArray *> ( in->GetPointData()->GetTensors())))
      {
      *buffer = array->GetVoidPointer(0);
      vtkType = array->GetDataType();
-     nrrdKind = nrrdKind3DMatrix;
+     kind = nrrdKind3DMatrix;
      numComp = array->GetNumberOfComponents();
      }       
 } 

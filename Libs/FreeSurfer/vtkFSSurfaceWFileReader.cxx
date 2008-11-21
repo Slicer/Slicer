@@ -53,7 +53,7 @@ int vtkFSSurfaceWFileReader::ReadWFile()
   int vIndex;
   int vIndexFromFile;
   float fvalue;
-  float *scalars;
+  float *FSscalars;
   vtkFloatArray *output = this->scalars;
 
   // Do some basic sanity checks.
@@ -112,8 +112,8 @@ int vtkFSSurfaceWFileReader::ReadWFile()
   // scalars = (float*) calloc (numValues, sizeof(float));
   // make the array big enough to hold all vertices, calloc inits all values
   // to zero as a default
-  scalars = (float*) calloc (this->NumberOfVertices, sizeof(float));
-  if (scalars == NULL)
+  FSscalars = (float*) calloc (this->NumberOfVertices, sizeof(float));
+  if (FSscalars == NULL)
     {
     vtkErrorMacro(<<"vtkFSSurfaceWFileReader: error allocating " << this->NumberOfVertices << " floats!");
     return this->FS_ERROR_W_ALLOC;
@@ -154,7 +154,7 @@ int vtkFSSurfaceWFileReader::ReadWFile()
     
     // Set the value in the scalars array based on the index we read
     // in, not the index in our for loop.
-    scalars[vIndexFromFile] = fvalue;
+    FSscalars[vIndexFromFile] = fvalue;
     
     if (numValues < 10000 ||
         (vIndex % 100) == 0)
@@ -170,8 +170,8 @@ int vtkFSSurfaceWFileReader::ReadWFile()
   fclose (wFile);
 
   // Set the array in our output.
-  //output->SetArray (scalars, numValues, 0);
-  output->SetArray(scalars, this->NumberOfVertices, 0);
+  //output->SetArray (FSscalars, numValues, 0);
+  output->SetArray(FSscalars, this->NumberOfVertices, 0);
 
   return this->FS_ERROR_W_NONE;
 }

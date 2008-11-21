@@ -160,14 +160,14 @@ vtkPolyData *output = vtkPolyData::SafeDownCast(
   vtkFloatingPointType m0[3], m1[3], m2[3];
   vtkFloatingPointType v0[3], v1[3], v2[3];
   vtkDataArray *cellTensors;
-  vtkDataArray *cellScalars;
+  vtkDataArray *cellScalars = NULL;
   int pointCount;
   vtkTractographyPoint *sPrev, *sPrevPrev;
   vtkFloatingPointType kv1[3], kv2[3], ku1[3], ku2[3], kl1, kl2, kn[3], K;
   // set up working matrices
   v[0] = v0; v[1] = v1; v[2] = v2;
   m[0] = m0; m[1] = m1; m[2] = m2;
-  float stop;
+  float stop = 0.0;
   //static const float sqrt3halves = sqrt((float)3/2);
   int keepIntegrating;
 

@@ -262,7 +262,7 @@ void TimeSeriesDatabase<TPixel>::GenerateData()
 
   Size<3> CurrentBlock;
   // Now, read our data, caching as we go, in future, make this thread safe
-  Size<3> BlockSize = { TimeSeriesBlockSize, TimeSeriesBlockSize, TimeSeriesBlockSize };
+  Size<3> BlockSize = { {TimeSeriesBlockSize, TimeSeriesBlockSize, TimeSeriesBlockSize }};
   ImageRegion<3> BlockRegion;
   BlockRegion.SetSize ( BlockSize );
   // Fetch only the blocks we need
@@ -281,7 +281,7 @@ void TimeSeriesDatabase<TPixel>::GenerateData()
             std::cout << "Block Region: " << BR;
             std::cout << "Image Region: " << IR;
           }
-          Index<3> BlockIndex = { CurrentBlock[0] * TimeSeriesBlockSize,  CurrentBlock[1] * TimeSeriesBlockSize,  CurrentBlock[2] * TimeSeriesBlockSize };
+          Index<3> BlockIndex = {{ CurrentBlock[0] * TimeSeriesBlockSize,  CurrentBlock[1] * TimeSeriesBlockSize,  CurrentBlock[2] * TimeSeriesBlockSize }};
           BlockRegion.SetIndex ( BlockIndex );
           ImageRegionIterator<OutputImageType> it ( output, IR );
           it.GoToBegin();
@@ -425,7 +425,7 @@ void TimeSeriesDatabase<TPixel>::CreateFromFileArchetype ( const char* TSDFilena
     
     // Build and write our blocks
     TPixel buffer[TimeSeriesBlockSize*TimeSeriesBlockSize*TimeSeriesBlockSize];
-    Size<3> BlockSize = { TimeSeriesBlockSize, TimeSeriesBlockSize, TimeSeriesBlockSize };
+    Size<3> BlockSize = { {TimeSeriesBlockSize, TimeSeriesBlockSize, TimeSeriesBlockSize }};
     ImageRegion<3> BlockRegion;
     unsigned int m_BlocksPerImage[3];
     
@@ -453,7 +453,7 @@ void TimeSeriesDatabase<TPixel>::CreateFromFileArchetype ( const char* TSDFilena
                && ( ( CurrentBlock[2] * TimeSeriesBlockSize + TimeSeriesBlockSize ) < region.GetSize()[2] ) )
             {
             // Good we can use an iterator!
-            Index<3> BlockIndex = { CurrentBlock[0] * TimeSeriesBlockSize,  CurrentBlock[1] * TimeSeriesBlockSize,  CurrentBlock[2] * TimeSeriesBlockSize };
+            Index<3> BlockIndex = { {CurrentBlock[0] * TimeSeriesBlockSize,  CurrentBlock[1] * TimeSeriesBlockSize,  CurrentBlock[2] * TimeSeriesBlockSize }};
             BlockRegion.SetIndex ( BlockIndex );
             ImageRegionIteratorWithIndex<ImageType> it ( reader->GetOutput(), BlockRegion );
             it.GoToBegin();
@@ -471,18 +471,18 @@ void TimeSeriesDatabase<TPixel>::CreateFromFileArchetype ( const char* TSDFilena
             // Now we do it the hard way...
             Index<3> BlockIndex;
             Size<3> StartIndex, EndIndex;
-            for ( int i = 0; i < 3; i++ ) 
+            for ( int ii = 0; ii < 3; ii++ ) 
               {
-              StartIndex[i] = CurrentBlock[i]*TimeSeriesBlockSize;
-              EndIndex[i] = TSD_MIN ( StartIndex[i] + TimeSeriesBlockSize, region.GetSize()[i] );
+              StartIndex[ii] = CurrentBlock[ii]*TimeSeriesBlockSize;
+              EndIndex[ii] = TSD_MIN ( StartIndex[ii] + TimeSeriesBlockSize, region.GetSize()[ii] );
               }            
-            for ( int bz = StartIndex[2]; bz < EndIndex[2]; bz++ ) 
+            for ( unsigned int bz = StartIndex[2]; bz < EndIndex[2]; bz++ ) 
               {
               BlockIndex[2] = bz;
-              for ( int by = StartIndex[1]; by < EndIndex[1]; by++ ) 
+              for ( unsigned int by = StartIndex[1]; by < EndIndex[1]; by++ ) 
                 {
                 BlockIndex[1] = by;
-                for ( int bx = StartIndex[0]; bx < EndIndex[0]; bx++ ) 
+                for ( unsigned int bx = StartIndex[0]; bx < EndIndex[0]; bx++ ) 
                   {
                   // Put bx,by,bz into bx-xoff,by-yoff,bz-zoff
                   BlockIndex[0] = bx;
@@ -536,13 +536,13 @@ void TimeSeriesDatabase<TPixel>::CreateFromFileArchetype ( const char* TSDFilena
   b << "BlocksPerFile: " << BlocksPerFile << std::endl;
   b << "NumberOfFiles: " << Filenames.size() << std::endl;
   b << "Filenames: " << std::endl;
-  for ( int idx = 0; idx < db.size(); idx++ )
+  for ( ::size_t idx = 0; idx < db.size(); idx++ )
     {
     b << Filenames[idx] << std::endl;
     }
   // std::cout << b.str() << endl;
   db[0]->write ( b.str().c_str(), strlen ( b.str().c_str() ) );
-  for ( int idx = 0; idx < db.size(); idx++ )
+  for ( ::size_t idx = 0; idx < db.size(); idx++ )
     {
     db[idx]->flush();
     db[idx]->close();
@@ -597,7 +597,7 @@ TimeSeriesDatabase<TPixel>
     os << indent << "Database is open." << "\n";
     os << indent << "Blocks per file: " << this->m_BlocksPerFile << "\n";
     os << indent << "File names: " << "\n";
-    for ( int idx = 0; idx < this->m_DatabaseFileNames.size(); idx++ )
+    for ( ::size_t idx = 0; idx < this->m_DatabaseFileNames.size(); idx++ )
       {
       os << indent << this->m_DatabaseFileNames[idx] << "\n";
       }

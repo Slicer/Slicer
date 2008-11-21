@@ -51,7 +51,7 @@ int vtkFSSurfaceScalarReader::ReadFSScalars()
   int vIndex;
   int ivalue;
   float fvalue;
-  float *scalars;
+  float *FSscalars;
   vtkFloatArray *output = this->scalars;
 
   if (output == NULL)
@@ -106,7 +106,7 @@ int vtkFSSurfaceScalarReader::ReadFSScalars()
   }
   
   // Make our float array.
-  scalars = (float*) calloc (numValues, sizeof(float));
+  FSscalars = (float*) calloc (numValues, sizeof(float));
 
   // For each value, if it's a new style file read a float, otherwise
   // read a two byte int and divide it by 100. Add this value to the
@@ -127,7 +127,7 @@ int vtkFSSurfaceScalarReader::ReadFSScalars()
       fvalue = ivalue / 100.0;
     }
 
-    scalars[vIndex] = fvalue;
+    FSscalars[vIndex] = fvalue;
 
     if (numValues < 10000 ||
         (vIndex % 100) == 0)
@@ -144,7 +144,7 @@ int vtkFSSurfaceScalarReader::ReadFSScalars()
   fclose (scalarFile);
 
   // Set the array in our output.
-  output->SetArray (scalars, numValues, 0);
+  output->SetArray (FSscalars, numValues, 0);
 
   return 1;
 }

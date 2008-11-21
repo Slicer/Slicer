@@ -329,7 +329,7 @@ void vtkPreciseHyperStreamline::Execute()
   vtkPointData *pd=input->GetPointData();
   vtkDataArray *inScalars;
   vtkDataArray *inTensors;
-  vtkPreciseHyperPoint *sNext, *sPtr;
+  vtkPreciseHyperPoint *sNext = NULL, *sPtr;
   int i, ptId, iv, ix, iy;
   vtkFloatingPointType xNext[3];
   vtkCell *cell;

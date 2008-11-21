@@ -687,12 +687,12 @@ void
 vtkITKBSplineTransformHelperImpl<O>
 ::SetFixedParameters( double const* param, unsigned N )
 {
-  typename BSplineType::ParametersType parameters( N );
+  typename BSplineType::ParametersType params( N );
                                          
   for( unsigned int i=0; i<N; ++i )
-    parameters.SetElement( i, param[i] );
+    params.SetElement( i, param[i] );
 
-  BSpline->SetFixedParameters( parameters );
+  BSpline->SetFixedParameters( params );
 }
 
 

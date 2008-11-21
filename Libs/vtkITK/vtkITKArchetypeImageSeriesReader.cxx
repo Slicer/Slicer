@@ -1074,7 +1074,6 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
 
   long int iArchetypeSeriesUID = this->IndexSeriesInstanceUIDs[this->IndexArchetype];
   //long int iArchetypeContentTime = this->IndexContentTime[this->IndexArchetype];
-  long int iArchetypeTriggerTime = this->IndexTriggerTime[this->IndexArchetype];
   long int iArchetypeDiffusion = this->IndexDiffusionGradientOrientation[this->IndexArchetype];
   long int iArchetypeOrientation =  this->IndexImageOrientationPatient[this->IndexArchetype];
 
