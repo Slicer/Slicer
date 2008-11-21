@@ -1,2 +1,0 @@
-Name: QdecModule
-GUIName: QdecModule

@@ -91,7 +91,7 @@ vtk_wrap_tcl3(QueryAtlas QueryAtlas_TCL_SRCS "${QueryAtlas_SRCS}" "")
 # --------------------------------------------------------------------------
 # Add Loadable Module support
 
-generatelm(QueryAtlas_SRCS QueryAtlas.txt)
+generatelm(QueryAtlas_SRCS QueryAtlas.xml)
 
 # --------------------------------------------------------------------------
 # Build and install the library

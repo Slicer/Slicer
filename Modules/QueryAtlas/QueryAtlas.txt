@@ -1,3 +1,0 @@
-Name: QueryAtlas
-GUIName: QueryAtlas
-Dependency: QdecModule

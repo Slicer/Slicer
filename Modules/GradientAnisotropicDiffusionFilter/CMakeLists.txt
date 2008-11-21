@@ -73,7 +73,7 @@ vtk_wrap_tcl3(GradientAnisotropicDiffusionFilter
 # Add Loadable Module support
 
 generatelm(GradientAnisotropicDiffusionFilter_SRCS 
-  GradientAnisotropicDiffusionFilter.txt)
+  GradientAnisotropicDiffusionFilter.xml)
 
 # --------------------------------------------------------------------------
 # Build and install the library

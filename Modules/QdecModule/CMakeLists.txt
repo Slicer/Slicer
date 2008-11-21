@@ -54,7 +54,7 @@ vtk_wrap_tcl3(QdecModule QdecModule_TCL_SRCS "${QdecModule_SRCS}" "")
 # --------------------------------------------------------------------------
 # Add Loadable Module support
 
-generatelm(QdecModule_SRCS QdecModule.txt)
+generatelm(QdecModule_SRCS QdecModule.xml)
 
 # --------------------------------------------------------------------------
 # Build and install the library
