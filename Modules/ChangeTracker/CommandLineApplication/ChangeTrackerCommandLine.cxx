@@ -369,14 +369,18 @@ int main(int argc, char** argv)
       vtkMatrix4x4* matrix = vtkMatrix4x4::New(); 
    
       // this is simply for debugging right now 
-      std::string Dir = vtksys::SystemTools::GetFilenamePath(vtksys::SystemTools::CollapseFullPath(tgScan1.c_str())) + "-TG";
+      std::string Dir = vtksys::SystemTools::GetFilenamePath(vtksys::SystemTools::CollapseFullPath(tgScan1.c_str())) + "-TG-ITK";
       std::string Scan1SuperSampleFileName     = Dir + "/scan1_ROI_SuperSample.nhdr"; 
-      tgReadVolume(Scan1SuperSampleFileName.c_str(), Scan1SuperSample, matrix);
-
       std::string Scan1SegmentFileName         = Dir + "/scan1_ROI_SuperSample-Segment.nhdr";
-      tgReadVolume(Scan1SegmentFileName.c_str(), Scan1SegmentOutput, matrix);
+      std::string Scan2LocalFileName           = Dir + "/scan2_RegGlobal_ROI_SuperSample_NORM_RegLocal.nhdr"; 
 
-      std::string Scan2LocalFileName = Dir + "/scan2_RegGlobal_ROI_SuperSample_NORM_RegLocal.nhdr"; 
+      // For debugging
+      Scan1SuperSampleFileName     = Dir + "/TG_scan1_SuperSampled.nhdr"; 
+      Scan1SegmentFileName         = Dir + "/TG_scan1_Segment.nhdr";
+      Scan2LocalFileName           = Dir + "/TG_scan2_Local.nhdr"; 
+
+      tgReadVolume(Scan1SuperSampleFileName.c_str(), Scan1SuperSample, matrix);
+      tgReadVolume(Scan1SegmentFileName.c_str(), Scan1SegmentOutput, matrix);
       tgReadVolume(Scan2LocalFileName.c_str(), Scan2Local, matrix);
 
       matrix->Delete();
@@ -553,6 +557,17 @@ int main(int argc, char** argv)
       cout << "Analysis Intensity Growth: " <<  Analysis_Intensity_Growth  << " Super sample " << SuperSampleVol << endl;
       printf("Intensity Metric: %.3f mm^3 (%d Voxels)\n",  Analysis_Intensity_Growth *SuperSampleVol,int( Analysis_Intensity_Growth *SuperSampleRatio));
 
+
+      // Debug 
+      // char paramet[100];
+      // cout << "DEbug "<< endl;
+      // sprintf(paramet, " %f" ,tgSensitivity);
+      // cout << "Initial Threshold:" << logic->GetAnalysis_Intensity_Threshold()<< endl;
+      //  CMD = "::ChangeTrackerTcl::Analysis_Intensity_UpdateThreshold_Fct " + logicTcl + paramet; 
+      // app->Script(CMD.c_str());
+      // Analysis_Intensity_Growth  = logic->MeassureGrowth(tgThreshold[0], tgThreshold[1]);
+      // printf("Intensity Metric debug: %.3f mm^3 (%d Voxels)\n",  Analysis_Intensity_Growth *SuperSampleVol,int( Analysis_Intensity_Growth *SuperSampleRatio));
+      // cout << "Now Threshold:" << logic->GetAnalysis_Intensity_Threshold()<< endl;
     } 
 
     // 
