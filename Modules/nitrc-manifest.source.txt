@@ -1,0 +1,1 @@
+http://www.nitrc.org/plugins/scmsvn/viewcvs.php/trunk/Slicer3ExampleModules/Loadable/ExampleLoadableModule.xml?root=slicer3examples&view=co source Example Loadable Module
