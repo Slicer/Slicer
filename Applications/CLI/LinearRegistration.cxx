@@ -69,7 +69,7 @@ class ScheduleCommand : public itk::Command
     if ( m_Schedule < m_NumberOfIterations.size()-1 )
       {
       if ( optimizer->GetCurrentIteration()
-           >= this->m_NumberOfIterations[ m_Schedule ])
+           >= (int) this->m_NumberOfIterations[ m_Schedule ])
         {
         m_Schedule++;
         optimizer->SetLearningRate ( this->m_LearningRates[m_Schedule] );
@@ -438,14 +438,7 @@ template<class T1, class T2> int DoIt2( int argc, char * argv[], const T1&, cons
     return  EXIT_FAILURE ;
     }
 
-  // AF >>>
-  fprintf(stderr, "============= Registration completed\n");
-  // AF <<<
-
   transform->SetParameters ( registration->GetLastTransformParameters() );
-
-  fprintf(stderr, "Output transform: \n");
-  fprintf(stderr, "%s\n", (std::string(transform)).c_str());
 
   if (OutputTransform != "")
     {
