@@ -29,7 +29,7 @@
 #include "itksys/DynamicLoader.hxx"
 #include <assert.h>
 #include "vtkMRMLLinearTransformNode.h"
-
+#include "vtkNRRDWriter.h"
 #define ERROR_NODE_VTKID 0
 
 //----------------------------------------------------------------------------
@@ -745,40 +745,50 @@ double vtkChangeTrackerLogic::MeassureGrowth() {
  }
 
 double vtkChangeTrackerLogic::MeassureGrowth(int SegmentThreshMin, int SegmentThreshMax) {
-  
+   
   if (!this->Analysis_Intensity_ROINegativeBin || !this->Analysis_Intensity_ROIPositiveBin || !this->Analysis_Intensity_ROITotal) return -1;
-  // Not good programming because we have to change it also in corresponding place in tcl file 
-  int IntensityMin = SegmentThreshMin - this->Analysis_Intensity_Threshold -1 ;
-  int IntensityMax = SegmentThreshMax + this->Analysis_Intensity_Threshold +1 ;
+  int IntensityMin = SegmentThreshMin - this->Analysis_Intensity_Threshold ;
+  int IntensityMax = SegmentThreshMax + this->Analysis_Intensity_Threshold ;
+
+  // Biasing results - this is a hack right now 
+  // Used in in journal publication - for some reason the pipeline favors shrinkage over growth 
+  // ShrinkBias > 1 => less Shrinkage; ShrinkBias < 1 => more shrinkage  
+  float ShrinkBias = 1.1; 
+  float GrowthBias = 1.0; 
 
   if (this->Analysis_Intensity_Scan1ByLower) {
     this->Analysis_Intensity_Scan1ByLower->ThresholdByUpper(IntensityMin);
+    this->Analysis_Intensity_Scan1ByLower->SetOutValue(IntensityMin);
     this->Analysis_Intensity_Scan1ByLower->Update();
   }
   if ( this->Analysis_Intensity_Scan1Range ) {
     this->Analysis_Intensity_Scan1Range->ThresholdByLower(IntensityMax); 
+    this->Analysis_Intensity_Scan1Range->SetOutValue(IntensityMax);
     this->Analysis_Intensity_Scan1Range->Update();
-  }
+  } 
 
   if (this->Analysis_Intensity_Scan2ByLower) {
     this->Analysis_Intensity_Scan2ByLower->ThresholdByUpper(IntensityMin);
+    this->Analysis_Intensity_Scan2ByLower->SetOutValue(IntensityMin);
     this->Analysis_Intensity_Scan2ByLower->Update(); 
   }
 
   if (this->Analysis_Intensity_Scan2Range) {
     this->Analysis_Intensity_Scan2Range->ThresholdByLower(IntensityMax); 
+    this->Analysis_Intensity_Scan2Range->SetOutValue(IntensityMax);
     this->Analysis_Intensity_Scan2Range->Update();
   }
 
+  
   this->Analysis_Intensity_ScanSubtract->Update();
   this->Analysis_Intensity_ScanSubtractSmooth->Update();
   this->Analysis_Intensity_ROIGrowthInt->Update();
   this->Analysis_Intensity_ROIShrinkInt->Update();
 
   // See Corresponding comment in ChangeTrackerFct - reduces bias towards shrinkage
-  this->Analysis_Intensity_ROINegativeBin->ThresholdByLower(-1.1*this->Analysis_Intensity_Threshold); 
+  this->Analysis_Intensity_ROINegativeBin->ThresholdByLower(-ShrinkBias*this->Analysis_Intensity_Threshold); 
   this->Analysis_Intensity_ROINegativeBin->Update(); 
-  this->Analysis_Intensity_ROIPositiveBin->ThresholdByUpper(this->Analysis_Intensity_Threshold); 
+  this->Analysis_Intensity_ROIPositiveBin->ThresholdByUpper(GrowthBias*this->Analysis_Intensity_Threshold); 
   this->Analysis_Intensity_ROIPositiveBin->Update(); 
   this->Analysis_Intensity_ROIBinReal->Update();
   this->Analysis_Intensity_ROIBinAdd->Update();
@@ -832,6 +842,14 @@ vtkMRMLVolumeNode* vtkChangeTrackerLogic::LoadVolume(vtkSlicerApplication *app, 
    return volumesLogic->AddArchetypeVolume(fileName,volumeName,LabelMapFlag);
 }
 
+void vtkChangeTrackerLogic::VolumeWriter(const char* fileName, vtkImageData *Output) {
+    vtkNRRDWriter *iwriter = vtkNRRDWriter::New(); 
+    iwriter->SetInput(Output);
+    iwriter->SetFileName(fileName);
+    iwriter->Write();
+    iwriter->Delete();
+}
+ 
 
 
 
