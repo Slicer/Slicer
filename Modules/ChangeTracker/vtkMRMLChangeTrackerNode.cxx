@@ -89,7 +89,7 @@ vtkMRMLChangeTrackerNode::vtkMRMLChangeTrackerNode()
    this->Scan2_RegisteredRef = NULL;
 
    this->Analysis_Intensity_Flag = 0;
-   this->Analysis_Intensity_Sensitivity = 0.5;
+   this->Analysis_Intensity_Sensitivity = 0.96;
    this->Analysis_Intensity_Ref = NULL;
 
    this->Analysis_Deformable_Flag = 0;
