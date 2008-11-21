@@ -508,9 +508,12 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
     progressBar->SetValue(5.0/TimeLength);
     if(this->ChangeTrackerNode->GetUseITK()){
       // AF: at this point, registration must have completed
-      assert(this->ChangeTrackerNode->GetScan2_RegisteredRef());
+      //assert(this->ChangeTrackerNode->GetScan2_RegisteredRef());
+      DoITKRegistration(vtkSlicerApplication::GetInstance());
+      /*
       this->ChangeTrackerNode->SetScan2_GlobalRef(
         this->ChangeTrackerNode->GetScan2_RegisteredRef());
+      */
     } else {
       // AF: keep initial registration approach for validation
       app->Script("::ChangeTrackerTcl::Scan2ToScan1Registration_GUI Global");
@@ -539,10 +542,7 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
       // AF: do local registration. It is probably not a good style to have a
       // separate function for the similar functionality, but style is not the
       // goal.
-      vtkSlicerApplication *app = vtkSlicerApplication::GetInstance();
-      vtkWarningMacro(<<"Local registration SlicerApplication ptr: " << app);
-      DoITKROIRegistration(app);
-      cerr << "ROI registration finished!\n";
+      DoITKROIRegistration(vtkSlicerApplication::GetInstance());
     } else {
       app->Script("::ChangeTrackerTcl::Scan2ToScan1Registration_GUI Local"); 
       progressBar->SetValue(50.0/TimeLength);
@@ -1030,7 +1030,6 @@ void vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
   // http://wiki.slicer.org/slicerWiki/index.php/Slicer3:Execution_Model_Documentation:Programmatic_Invocation
   // ...
 
-  vtkWarningMacro(<<"Global registration SlicerApplication ptr: " << app);
   // Init some useful references
   vtkCommandLineModuleGUI *moduleGUI = NULL;
   vtkMRMLCommandLineModuleNode *moduleNode = NULL;
@@ -1065,13 +1064,39 @@ void vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
   moduleNode->SetModuleDescription("Linear registration");
 
   // Create output volume node
+  /*
   vtkMRMLScalarVolumeNode *scan1Node = 
     static_cast<vtkMRMLScalarVolumeNode*>(scene->GetNodeByID(ctNode->GetScan1_Ref()));
   outputVolumeNode = this->CreateVolumeNode(scan1Node, (const char*)"Scan2_LinearRegistration");
   // AF: this registeres Logic to get events from the output volume node
-  vtkSetAndObserveMRMLNodeMacro(this->Scan2_RegisteredVolume, outputVolumeNode);
+  //vtkSetAndObserveMRMLNodeMacro(this->Scan2_RegisteredVolume, outputVolumeNode);
+  vtkSetMRMLNodeMacro(this->Scan2_RegisteredVolume, outputVolumeNode);
   outputVolumeNode->Delete();
   ctNode->SetScan2_RegisteredRef(outputVolumeNode->GetID());
+  */
+
+  // AF: First, delete the previous output node. As translated from Tcl
+  // code...
+  /*
+       # -------------------------------------
+       # Delete output 
+       # -------------------------------------
+       set OUTPUT_NODE [$SCENE GetNodeByID [$NODE GetScan2_${TYPE}Ref]]
+       if {$OUTPUT_NODE != "" } {  
+           [$GUI GetMRMLScene] RemoveNode $OUTPUT_NODE 
+           $NODE SetScan2_${TYPE}Ref ""
+       }
+  */
+
+  vtkMRMLScalarVolumeNode *outputNode;
+  outputNode = static_cast<vtkMRMLScalarVolumeNode*>(scene->GetNodeByID(ctNode->GetScan2_GlobalRef()));
+  if(outputNode){
+    scene->RemoveNode(outputNode);
+    ctNode->SetScan2_GlobalRef("");
+  }
+
+  outputNode = CreateVolumeNode(static_cast<vtkMRMLVolumeNode*>(scene->GetNodeByID(ctNode->GetScan1_Ref())), 
+    "TG_scan2_Global");
 
   // Create output transform node
   vtkMRMLLinearTransformNode *transformNode =
@@ -1088,7 +1113,8 @@ void vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
   // inter-subject, and default settings were for the general case, we can
   // simplify this probably
   moduleNode->SetParameterAsString("Iterations", "100,100,50,20");
-  moduleNode->SetParameterAsString("ResampledImageFileName", ctNode->GetScan2_RegisteredRef());
+//  moduleNode->SetParameterAsString("ResampledImageFileName", ctNode->GetScan2_RegisteredRef());
+  moduleNode->SetParameterAsString("ResampledImageFileName", outputNode->GetID());
   moduleNode->SetParameterAsString("OutputTransform", transformNode->GetID());
   transformNode->Delete();
 
@@ -1137,7 +1163,11 @@ void vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
     }
   }
 
-  moduleGUI->GetLogic()->Apply(moduleNode);
+//  moduleGUI->GetLogic()->Apply(moduleNode);
+  moduleGUI->GetLogic()->ApplyAndWait(moduleNode);
+
+  ctNode->SetScan2_GlobalRef(outputNode->GetID());
+  this->SaveVolume(app, outputNode);
   moduleNode->Delete(); // AF: is it right to delete this here?
 }
 
@@ -1188,6 +1218,7 @@ void vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
   moduleNode->SetModuleDescription("Linear registration");
 
   // Create output volume node
+  /*
   vtkMRMLScalarVolumeNode *scan2ROI = 
     static_cast<vtkMRMLScalarVolumeNode*>(scene->GetNodeByID(ctNode->GetScan2_SuperSampleRef()));
   outputVolumeNode = this->CreateVolumeNode(scan2ROI, (const char*)"TG_scan2_Local");
@@ -1196,7 +1227,32 @@ void vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
   // AF: TODO Delete volume here?
   outputVolumeNode->Delete();
   ctNode->SetScan2_LocalRef(outputVolumeNode->GetID());
-  cerr << "Results of ROI registration will go here: " << ctNode->GetScan2_LocalRef() << endl;
+//  cerr << "Results of ROI registration will go here: " << ctNode->GetScan2_LocalRef() << endl;
+  */
+
+  // AF: First, delete the previous output node. As translated from Tcl
+  // code...
+  /*
+       # -------------------------------------
+       # Delete output 
+       # -------------------------------------
+       set OUTPUT_NODE [$SCENE GetNodeByID [$NODE GetScan2_${TYPE}Ref]]
+       if {$OUTPUT_NODE != "" } {  
+           [$GUI GetMRMLScene] RemoveNode $OUTPUT_NODE 
+           $NODE SetScan2_${TYPE}Ref ""
+       }
+  */
+
+  vtkMRMLScalarVolumeNode *outputNode;
+  outputNode = 
+    static_cast<vtkMRMLScalarVolumeNode*>(scene->GetNodeByID(ctNode->GetScan2_LocalRef()));
+  if(outputNode){
+    scene->RemoveNode(outputNode);
+    ctNode->SetScan2_LocalRef("");
+  }
+
+  outputNode = CreateVolumeNode(static_cast<vtkMRMLVolumeNode*>(scene->GetNodeByID(ctNode->GetScan1_Ref())), 
+    "TG_scan2_Local");
 
   // Create output transform node
   vtkMRMLLinearTransformNode *transformNode =
@@ -1219,13 +1275,14 @@ void vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
   // reporting from registration about failure
   moduleNode->SetParameterAsString("TranslationScale", "10");
   moduleNode->SetParameterAsString("Iterations", "100,100,50,20");
-  moduleNode->SetParameterAsString("ResampledImageFileName", ctNode->GetScan2_LocalRef());
+//  moduleNode->SetParameterAsString("ResampledImageFileName", ctNode->GetScan2_LocalRef());
+  moduleNode->SetParameterAsString("ResampledImageFileName", outputNode->GetID());
   moduleNode->SetParameterAsString("OutputTransform", transformNode->GetID());
   transformNode->Delete();
 
-  cerr << "Fixed image: " << scene->GetNodeByID(ctNode->GetScan1_SuperSampleRef())->GetName() << endl;
-  cerr << "Moving image: " << scene->GetNodeByID(ctNode->GetScan2_SuperSampleRef())->GetName() << endl;
-  cerr << "Registered image: " << scene->GetNodeByID(ctNode->GetScan2_LocalRef())->GetName() << endl;
+//  cerr << "Fixed image: " << scene->GetNodeByID(ctNode->GetScan1_SuperSampleRef())->GetName() << endl;
+//  cerr << "Moving image: " << scene->GetNodeByID(ctNode->GetScan2_SuperSampleRef())->GetName() << endl;
+//  cerr << "Registered image: " << scene->GetNodeByID(ctNode->GetScan2_LocalRef())->GetName() << endl;
 
   /*
   // Should the volume data be initialized?
@@ -1273,6 +1330,8 @@ void vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
   }
 
   moduleGUI->GetLogic()->ApplyAndWait(moduleNode);
+  ctNode->SetScan2_LocalRef(outputNode->GetID());
+  this->SaveVolume(app, outputNode);
   moduleNode->Delete(); // AF: is it right to delete this here?
 }
 

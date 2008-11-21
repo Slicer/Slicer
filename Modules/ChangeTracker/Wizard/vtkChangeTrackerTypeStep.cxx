@@ -201,10 +201,12 @@ void vtkChangeTrackerTypeStep::ShowUserInterface()
     } else {
       // Linear registration has not yet finished, the button will be enabled
       // upon completion
+      /*
       if(!node->GetScan2_RegisteredReady() && node->GetUseITK()){
         wizard_widget->GetCancelButton()->EnabledOff();
         wizard_widget->GetCancelButton()->SetBalloonHelpString("Please wait until initial alignment of scans is complete...");
       }
+      */
     }
 
   }
