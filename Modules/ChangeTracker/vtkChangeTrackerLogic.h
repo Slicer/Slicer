@@ -116,6 +116,7 @@ public:
   void SaveVolumeFileName(vtkMRMLVolumeNode *volNode, char* FileName);
 
   vtkMRMLVolumeNode* LoadVolume(vtkSlicerApplication *app, char* fileName, int LabelMapFlag,const char* volumeName);
+  void VolumeWriter(const char* fileName, vtkImageData *Output);
 
   void PrintResult(ostream& os, vtkSlicerApplication *app);
 
