@@ -329,6 +329,52 @@ LoadableModuleDescriptionParser::Parse( const std::string& xml, LoadableModuleDe
 }
 
 int
+LoadableModuleDescriptionParser::ParseXmlDescription( const std::string& xml, LoadableModuleDescription& description)
+{
+  int status = 0;
+  std::string::size_type pos = 0;
+  std::string::size_type lt = xml.find("<", pos);
+  std::string::size_type gt = xml.find(">", pos);
+  std::string::size_type newline = xml.find("\n", pos);
+  
+  int count = 0;
+  while (gt != std::string::npos && count < 5) {
+
+    std::string key(xml.substr(lt + 1, gt - (lt + 1)));
+
+    lt = xml.find("<", gt);
+
+    std::string value(xml.substr(gt + 1, lt - (gt + 1)));
+
+    std::transform(key.begin(), key.end(), key.begin(), (int(*)(int)) std::toupper);
+
+    trimLeadingAndTrailing(value);
+
+    if (key.compare("NAME") == 0) {
+      description.SetName(value);
+    } else if (key.compare("GUINAME") == 0) {
+      description.SetGUIName(value);
+    } else if (key.compare("DEPENDENCY") == 0) {
+      description.AddDependency(value);
+    }
+
+    pos = newline + 1;
+
+    lt = xml.find("<", pos);
+    gt = xml.find(">", pos);
+    newline = xml.find("\n", pos);
+
+    count++;
+  }
+
+  if (description.GetGUIName().empty()) {
+    description.SetGUIName(description.GetName());
+  }
+
+  return status;
+}
+
+int
 LoadableModuleDescriptionParser::ParseText( const std::string& txt, LoadableModuleDescription& description)
 {
   int status = 0;
