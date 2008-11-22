@@ -361,7 +361,7 @@ void vtkMRMLSliceNode::UpdateMatrices()
     xyToSlice->Delete();
     xyToRAS->Delete();
 
-    char *orientationString = "Reformat";
+    const char *orientationString = "Reformat";
     if ( this->SliceToRAS->GetElement(0, 0) == -1.0 &&
          this->SliceToRAS->GetElement(1, 0) ==  0.0 &&
          this->SliceToRAS->GetElement(2, 0) ==  0.0 &&

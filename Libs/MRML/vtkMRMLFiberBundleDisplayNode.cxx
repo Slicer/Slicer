@@ -180,13 +180,13 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkMRMLFiberBundleDisplayNode::GetD
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLFiberBundleDisplayNode::SetAndObserveDiffusionTensorDisplayPropertiesNodeID ( const char *ID )
+void vtkMRMLFiberBundleDisplayNode::SetAndObserveDiffusionTensorDisplayPropertiesNodeID ( const char *id )
 {
   // Stop observing any old node
   vtkSetAndObserveMRMLObjectMacro ( this->DiffusionTensorDisplayPropertiesNode, NULL );
 
   // Set the ID. This is the "ground truth" reference to the node.
-  this->SetDiffusionTensorDisplayPropertiesNodeID ( ID );
+  this->SetDiffusionTensorDisplayPropertiesNodeID ( id );
 
   // Get the node corresponding to the ID. This pointer is only to observe the object.
   vtkMRMLNode *cnode = this->GetDiffusionTensorDisplayPropertiesNode ( );

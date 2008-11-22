@@ -47,7 +47,7 @@ int vtkSRBHandler::CanHandleURI ( const char *uri )
   //--- speaks the correct protocol?
   //--- first guess is to look at the prefix up till the colon.
 
-  int index;
+  std::string::size_type index;
   std::string uriString (uri);
   std::string prefix;
 
@@ -125,7 +125,7 @@ void vtkSRBHandler::StageFileRead(const char * source, const char * destination)
   std::string cmd = std::string("Sget ");
 
   // strip off the srb:// at the front of source
-  int index;
+  std::string::size_type index;
   std::string quote ("\"");
   std::string sourceString (source);
   std::string prefix;
@@ -176,7 +176,7 @@ void vtkSRBHandler::StageFileWrite(const char * source, const char * destination
   cmd += quote + std::string(source) + quote;
   
   // strip off the srb:// at the front of destination
-  int index;
+  std::string::size_type index;
   std::string destinationString (destination);
   std::string prefix;
   if ( ( index = destinationString.find ( "srb://", 0 ) ) != std::string::npos )

@@ -86,11 +86,11 @@ extern __FILE    _iob[_NFILE];
 
 
 /* Standard input stream.  */
-slicerStream sstdin = {SLICER_STDIN, NULL, NULL};
+slicerStream sstdin = {SLICER_STDIN, NULL, {NULL}};
 /* Standard output stream.  */
-slicerStream sstdout = {SLICER_STDOUT, NULL, NULL};
+slicerStream sstdout = {SLICER_STDOUT, NULL, {NULL}};
 /* Standard error output stream.  */
-slicerStream sstderr = {SLICER_STDERR, NULL, NULL};
+slicerStream sstderr = {SLICER_STDERR, NULL, {NULL}};
 
 
 #ifdef fopen

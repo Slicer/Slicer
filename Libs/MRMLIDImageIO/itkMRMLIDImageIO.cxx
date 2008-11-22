@@ -186,7 +186,7 @@ MRMLIDImageIO
       {
       // normalize vectors
       m_Spacing[i] = 0;
-      for (int j=0; j<3; j++)
+      for (j=0; j<3; j++)
         {
         m_Spacing[i] += ijkToRas->GetElement(i,j)* ijkToRas->GetElement(i,j);
         }

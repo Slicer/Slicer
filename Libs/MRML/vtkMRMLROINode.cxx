@@ -274,9 +274,9 @@ void vtkMRMLROINode::SetXYZ(float X, float Y, float Z)
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLROINode::SetXYZ(float* XYZ)
+void vtkMRMLROINode::SetXYZ(float* xyz)
 {
-  this->SetXYZ(XYZ[0], XYZ[1], XYZ[2]);
+  this->SetXYZ(xyz[0], xyz[1], xyz[2]);
   return;
 }
 
@@ -292,9 +292,9 @@ void vtkMRMLROINode::SetRadiusXYZ(float RadiusX, float RadiusY, float RadiusZ)
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLROINode::SetRadiusXYZ(float* RadiusXYZ)
+void vtkMRMLROINode::SetRadiusXYZ(float* radiusXYZ)
 {
-  this->SetRadiusXYZ(RadiusXYZ[0], RadiusXYZ[1], RadiusXYZ[2]);
+  this->SetRadiusXYZ(radiusXYZ[0], radiusXYZ[1], radiusXYZ[2]);
   return;
 }
 
@@ -311,9 +311,9 @@ void vtkMRMLROINode::SetIJK(float I, float J, float K)
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLROINode::SetIJK(float* IJK)
+void vtkMRMLROINode::SetIJK(float* ijk)
 {
-  this->SetIJK(IJK[0], IJK[1], IJK[2]);
+  this->SetIJK(ijk[0], ijk[1], ijk[2]);
   this->Modified();
   return;
 }
@@ -332,8 +332,8 @@ void vtkMRMLROINode::SetRadiusIJK(float RadiusI, float RadiusJ, float RadiusK)
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLROINode::SetRadiusIJK(float* RadiusIJK)
+void vtkMRMLROINode::SetRadiusIJK(float* radiusIJK)
 {
-  this->SetRadiusIJK(RadiusIJK[0], RadiusIJK[1], RadiusIJK[2]);
+  this->SetRadiusIJK(radiusIJK[0], radiusIJK[1], radiusIJK[2]);
   return;
 }

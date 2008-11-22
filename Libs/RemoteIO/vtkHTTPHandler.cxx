@@ -88,7 +88,7 @@ int vtkHTTPHandler::CanHandleURI ( const char *uri )
   //--- speaks the correct protocol?
   //--- first guess is to look at the prefix up till the colon.
 
-  int index;
+  std::string::size_type index;
   std::string uriString (uri);
   std::string prefix;
 

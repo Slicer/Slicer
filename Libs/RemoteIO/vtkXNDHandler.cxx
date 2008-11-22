@@ -390,7 +390,7 @@ const char *vtkXNDHandler::PostMetadata ( const char *serverPath,
   else
     {
     size_t result = fread(post_data, 1, lSize, this->LocalFile);
-    if (result != lSize)
+    if (result != static_cast<size_t>(lSize))
       {
       vtkErrorMacro("PostMetadata: error reading contents of the metadatafile " << metaDataFileName <<", read " << result << " instead of " << lSize);
       }    
@@ -489,7 +489,7 @@ const char *vtkXNDHandler::PostMetadata ( const char *serverPath,
       {
       // read everything from it
       fseek(returnURIFile, 0, SEEK_END);
-      long lSize = ftell(returnURIFile);
+      lSize = ftell(returnURIFile);
       rewind(returnURIFile);
       // allocate the return body with an extra character, as we're going to
       // add the null character at the end to help with parsing
@@ -501,7 +501,7 @@ const char *vtkXNDHandler::PostMetadata ( const char *serverPath,
       else
         {
         size_t result = fread(returnURIBody, 1, lSize, returnURIFile);
-        if (result != lSize)
+        if (result != static_cast<size_t>(lSize))
           {
           vtkErrorMacro("PostMetadata: error reading contents of the returned uri file " << returnURIFileName <<", read " << result << " instead of " << lSize);
           fclose (returnURIFile);

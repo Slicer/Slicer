@@ -46,7 +46,7 @@ int vtkXNATHandler::CanHandleURI ( const char *uri )
   //--- speaks the correct protocol?
   //--- first guess is to look at the prefix up till the colon.
 
-  int index;
+  std::string::size_type index;
   std::string uriString (uri);
   std::string prefix;
 
@@ -125,7 +125,7 @@ void vtkXNATHandler::StageFileRead(const char * source,
   
 
   // strip off the xnat:// at the front of source
-  int index;
+  std::string::size_type index;
   std::string quote ("\"");
   std::string sourceString (source);
   std::string prefix;

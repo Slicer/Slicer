@@ -560,13 +560,17 @@ namespace itk
     switch( m_ComponentType )
       {
       case UCHAR:
-  TWrite( ofs, MRI_UCHAR); break;
+        TWrite( ofs, MRI_UCHAR); break;
       case INT:
-  TWrite( ofs, MRI_INT); break;
+        TWrite( ofs, MRI_INT); break;
       case FLOAT:
-  TWrite( ofs, MRI_FLOAT); break;
+        TWrite( ofs, MRI_FLOAT); break;
       case SHORT:
-  TWrite( ofs, MRI_SHORT); break;
+        TWrite( ofs, MRI_SHORT); break;
+      default:
+        itkExceptionMacro(
+          <<"MGHImageIO supports unsigned char, int, float and short");
+
       }
 
     // dof !?! -> default value = 1
@@ -592,7 +596,7 @@ namespace itk
     // transpose data before writing it
     std::vector<float> vBufRas;
     // transpose the matrix
-    for(unsigned int ui(0), count(0); ui < 3; ++ui)
+    for(unsigned int ui(0); ui < 3; ++ui)
       {
       for(unsigned int uj(0); uj<3; ++uj)
         {
@@ -656,13 +660,16 @@ namespace itk
     switch( m_ComponentType )
       {
       case UCHAR:
-  TWriteZ( file_p, MRI_UCHAR); break;
+        TWriteZ( file_p, MRI_UCHAR); break;
       case INT:
-  TWriteZ( file_p, MRI_INT); break;
+        TWriteZ( file_p, MRI_INT); break;
       case FLOAT:
-  TWriteZ( file_p, MRI_FLOAT); break;
+        TWriteZ( file_p, MRI_FLOAT); break;
       case SHORT:
-  TWriteZ( file_p, MRI_SHORT); break;
+        TWriteZ( file_p, MRI_SHORT); break;
+      default:
+        itkExceptionMacro(
+          <<"MGHImageIO supports unsigned char, int, float and short");
       } 
 
     // dof -> default value = 1
@@ -685,7 +692,7 @@ namespace itk
     // transpose data before writing it
     std::vector<float> vBufRas;
     // transpose the matrix
-    for(unsigned int ui(0), count(0); ui < 3; ++ui)
+    for(unsigned int ui(0); ui < 3; ++ui)
       {
       for(unsigned int uj(0); uj<3; ++uj)
         {
@@ -755,7 +762,7 @@ namespace itk
 
     this->SwapBytesIfNecessary(tempmemory,numvalues);
     
-    int result = gzwrite( fp, tempmemory, numbytes );
+    gzwrite( fp, tempmemory, numbytes );
 
     delete[] tempmemory;
 
@@ -858,12 +865,7 @@ namespace itk
   {
     const unsigned int numPixels =  m_Dimensions[0]
       * m_Dimensions[1] * m_Dimensions[2];
-    const unsigned long int numvalues = numPixels * m_NumberOfComponents;
-    const unsigned long int numbytes = this->GetComponentSize() * numvalues;
-    
-
     const unsigned int valueSize( this->GetComponentSize() );
-
     const unsigned int frameSize = numPixels * valueSize;
     
     const char* pSrc = (const char*)buffer;
@@ -892,6 +894,9 @@ namespace itk
       case SHORT: returnValue = sizeof(short); break;
       case INT:   returnValue = sizeof(int); break;
       case FLOAT: returnValue = sizeof(float); break;
+      default:
+        itkExceptionMacro(
+          <<"MGHImageIO supports unsigned char, int, float and short");
       }
     return returnValue;
   }

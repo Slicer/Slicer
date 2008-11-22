@@ -2030,8 +2030,8 @@ void vtkMRMLScene::AddReferencedNodes(vtkMRMLNode *node, vtkCollection *refNodes
   int n=0;
   for( n=0; n<nnodes; n++)
     {
-    vtkMRMLNode *rnode = this->ReferencingNodes[n];
-    if (rnode && rnode->GetID() && !strcmp(rnode->GetID(), node->GetID())) 
+    vtkMRMLNode *rrnode = this->ReferencingNodes[n];
+    if (rrnode && rrnode->GetID() && !strcmp(rrnode->GetID(), node->GetID())) 
       {
       ids.push_back(ReferencedIDs[n]);
       }

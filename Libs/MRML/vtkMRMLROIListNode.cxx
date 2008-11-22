@@ -202,10 +202,10 @@ void vtkMRMLROIListNode::ReadXMLAttributes(const char** atts)
       }
     else if (!strcmp(attName, "ROI"))
       {
-      vtkDebugMacro("ReadXMLAttributes: found a ROI list: " << (char*)attValue << endl);
+      vtkDebugMacro("ReadXMLAttributes: found a ROI list: " << attValue << endl);
       // need to add ROI and parse out the list of ROI points
       // assume ID is first, extract that part of the attValue
-      char *ROI = (char *)attValue;
+      char *ROI = const_cast<char *>(attValue);
       char *IDPtr;
       IDPtr = strstr (ROI,"ROINodeID ");
       vtkDebugMacro( "ReadXMLAttributes: Starting to parse out the ROI list, setting it up for tokenisation\n");

@@ -162,8 +162,8 @@ void vtkTagTable::AddUniqueTag ( const char *attribute, const char *value )
       {
       //--- otherwise...
       //--- add tag in a new column and deselect it
-      std::string val(value );
-      this->TagTable.insert (std::make_pair(att, val ));
+      std::string val2(value );
+      this->TagTable.insert (std::make_pair(att, val2 ));
       this->TagSelectionTable.insert ( std::make_pair(att, 0));      
       }
     }

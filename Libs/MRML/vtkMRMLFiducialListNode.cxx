@@ -247,10 +247,10 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
       }
       else if (!strcmp(attName, "fiducials"))
       {
-          vtkDebugMacro("ReadXMLAttributes: found a fiducials list: " << (char*)attValue << endl);          
+          vtkDebugMacro("ReadXMLAttributes: found a fiducials list: " << attValue << endl);          
           // need to add fiducials and parse out the list of fiducial points
           // assume labeltext is first, extract that part of the attValue
-          char *fiducials = (char *)attValue;
+          char *fiducials = const_cast<char *>(attValue);
           char *labelTextPtr;
           labelTextPtr = strstr (fiducials,"id ");
           vtkDebugMacro( "ReadXMLAttributes: Starting to parse out the fiducial list, setting it up for tokenisation\n");
