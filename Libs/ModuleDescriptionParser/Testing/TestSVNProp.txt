@@ -6,8 +6,8 @@ See License.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   Slicer3
-Module:    $HeadURL: $HeadURL$
-Date:      $Date$Date$
-Version:   $Revision: $Revision$
+Module:    $HeadURL$
+Date:      $Date$
+Version:   $Revision$
 
 ==========================================================================*/
