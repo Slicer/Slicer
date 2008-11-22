@@ -78,10 +78,12 @@ vtkChangeTrackerLogic::vtkChangeTrackerLogic()
   this->Analysis_Intensity_ROINegativeBin = NULL;
   this->Analysis_Intensity_ROIPositiveBin = NULL;
   this->Analysis_Intensity_ROIBinCombine  = NULL;
-  this->Analysis_Intensity_ROIBinReal     = NULL;
+  this->Analysis_Intensity_ROIPositiveBinReal = NULL;
+  this->Analysis_Intensity_ROINegativeBinReal = NULL;
   this->Analysis_Intensity_ROIBinAdd      = NULL;
   this->Analysis_Intensity_ROIBinDisplay  = NULL;
-  this->Analysis_Intensity_ROITotal       = NULL;
+  this->Analysis_Intensity_ROIGrowthVolume = NULL;
+  this->Analysis_Intensity_ROIShrinkVolume = NULL;
 
   // if set to zero then SaveVolume will not do anything 
   this->SaveVolumeFlag = 0;  
@@ -176,9 +178,14 @@ vtkChangeTrackerLogic::~vtkChangeTrackerLogic()
     this->Analysis_Intensity_ROIBinCombine = NULL;
   }
 
-  if (this->Analysis_Intensity_ROIBinReal) {
-    this->Analysis_Intensity_ROIBinReal->Delete();
-    this->Analysis_Intensity_ROIBinReal = NULL;
+  if (this->Analysis_Intensity_ROIPositiveBinReal) {
+    this->Analysis_Intensity_ROIPositiveBinReal->Delete();
+    this->Analysis_Intensity_ROIPositiveBinReal = NULL;
+  }
+
+  if (this->Analysis_Intensity_ROINegativeBinReal) {
+    this->Analysis_Intensity_ROINegativeBinReal->Delete();
+    this->Analysis_Intensity_ROINegativeBinReal = NULL;
   }
 
   if (this->Analysis_Intensity_ROIBinAdd) {
@@ -191,10 +198,16 @@ vtkChangeTrackerLogic::~vtkChangeTrackerLogic()
     this->Analysis_Intensity_ROIBinDisplay = NULL;
   }
 
-  if (this->Analysis_Intensity_ROITotal) {
-    this->Analysis_Intensity_ROITotal->Delete();
-    this->Analysis_Intensity_ROITotal = NULL;
+  if (this->Analysis_Intensity_ROIShrinkVolume) {
+    this->Analysis_Intensity_ROIShrinkVolume->Delete();
+    this->Analysis_Intensity_ROIShrinkVolume = NULL;
   }
+
+  if (this->Analysis_Intensity_ROIGrowthVolume) {
+    this->Analysis_Intensity_ROIGrowthVolume->Delete();
+    this->Analysis_Intensity_ROIGrowthVolume = NULL;
+  }
+
 
 }
 
@@ -699,11 +712,18 @@ vtkImageMathematics* vtkChangeTrackerLogic::CreateAnalysis_Intensity_ROIBinCombi
   return this->Analysis_Intensity_ROIBinCombine;
 }
 
-vtkImageIslandFilter* vtkChangeTrackerLogic::CreateAnalysis_Intensity_ROIBinReal() {
-  if (this->Analysis_Intensity_ROIBinReal) { this->Analysis_Intensity_ROIBinReal->Delete(); }
-  this->Analysis_Intensity_ROIBinReal = vtkImageIslandFilter::New();
-  return this->Analysis_Intensity_ROIBinReal;
+vtkImageIslandFilter* vtkChangeTrackerLogic::CreateAnalysis_Intensity_ROIPositiveBinReal() {
+  if (this->Analysis_Intensity_ROIPositiveBinReal) { this->Analysis_Intensity_ROIPositiveBinReal->Delete(); }
+  this->Analysis_Intensity_ROIPositiveBinReal = vtkImageIslandFilter::New();
+  return this->Analysis_Intensity_ROIPositiveBinReal;
 }
+
+vtkImageIslandFilter* vtkChangeTrackerLogic::CreateAnalysis_Intensity_ROINegativeBinReal() {
+  if (this->Analysis_Intensity_ROINegativeBinReal) { this->Analysis_Intensity_ROINegativeBinReal->Delete(); }
+  this->Analysis_Intensity_ROINegativeBinReal = vtkImageIslandFilter::New();
+  return this->Analysis_Intensity_ROINegativeBinReal;
+}
+
 
 vtkImageMathematics* vtkChangeTrackerLogic::CreateAnalysis_Intensity_ROIBinAdd() {
   if (this->Analysis_Intensity_ROIBinAdd) { this->Analysis_Intensity_ROIBinAdd->Delete(); }
@@ -717,36 +737,41 @@ vtkImageThreshold* vtkChangeTrackerLogic::CreateAnalysis_Intensity_ROIBinDisplay
   return this->Analysis_Intensity_ROIBinDisplay;
 }
 
-
-vtkImageSumOverVoxels* vtkChangeTrackerLogic::CreateAnalysis_Intensity_ROITotal() {
-  if (this->Analysis_Intensity_ROITotal) { this->Analysis_Intensity_ROITotal->Delete(); }
-  this->Analysis_Intensity_ROITotal = vtkImageSumOverVoxels::New();
-  return this->Analysis_Intensity_ROITotal;
+vtkImageSumOverVoxels* vtkChangeTrackerLogic::CreateAnalysis_Intensity_ROIGrowthVolume() {
+  if (this->Analysis_Intensity_ROIGrowthVolume) { this->Analysis_Intensity_ROIGrowthVolume->Delete(); }
+  this->Analysis_Intensity_ROIGrowthVolume = vtkImageSumOverVoxels::New();
+  return this->Analysis_Intensity_ROIGrowthVolume;
+}
+vtkImageSumOverVoxels* vtkChangeTrackerLogic::CreateAnalysis_Intensity_ROIShrinkVolume() {
+  if (this->Analysis_Intensity_ROIShrinkVolume) { this->Analysis_Intensity_ROIShrinkVolume->Delete(); }
+  this->Analysis_Intensity_ROIShrinkVolume = vtkImageSumOverVoxels::New();
+  return this->Analysis_Intensity_ROIShrinkVolume;
 }
 
-double vtkChangeTrackerLogic::GetAnalysis_Intensity_ROITotal_VoxelSum() {
-  return this->Analysis_Intensity_ROITotal->GetVoxelSum();
-}
-
-vtkImageData*  vtkChangeTrackerLogic::GetAnalysis_Intensity_ROIBinReal() { 
-  return (this->Analysis_Intensity_ROIBinReal ? this->Analysis_Intensity_ROIBinReal->GetOutput() : NULL);
+vtkImageData*  vtkChangeTrackerLogic::GetAnalysis_Intensity_ROIBinCombine() { 
+  return (this->Analysis_Intensity_ROIBinCombine ? this->Analysis_Intensity_ROIBinCombine->GetOutput() : NULL);
 }
 
 vtkImageData*  vtkChangeTrackerLogic::GetAnalysis_Intensity_ROIBinDisplay() { 
   return (this->Analysis_Intensity_ROIBinDisplay ? this->Analysis_Intensity_ROIBinDisplay->GetOutput() : NULL);
 }
 
-double vtkChangeTrackerLogic::MeassureGrowth() {
+void vtkChangeTrackerLogic::MeassureGrowth(double &Shrinkage, double &Growth) {
    if (this->ChangeTrackerNode) {
-     return this->MeassureGrowth(this->ChangeTrackerNode->GetSegmentThresholdMin(),this->ChangeTrackerNode->GetSegmentThresholdMax());
-   } 
-   cout << "Error: vtkChangeTrackerLogic::MeassureGrowth: No ChangeTrackerNode defined" << endl;
-   return 0.0;
+     this->MeassureGrowth(this->ChangeTrackerNode->GetSegmentThresholdMin(),this->ChangeTrackerNode->GetSegmentThresholdMax(),Shrinkage,Growth); 
+   }  else {
+     cout << "Error: vtkChangeTrackerLogic::MeassureGrowth: No ChangeTrackerNode defined" << endl;
+   }
  }
 
-double vtkChangeTrackerLogic::MeassureGrowth(int SegmentThreshMin, int SegmentThreshMax) {
+void vtkChangeTrackerLogic::MeassureGrowth(int SegmentThreshMin, int SegmentThreshMax,double &Shrinkage, double &Growth) {
    
-  if (!this->Analysis_Intensity_ROINegativeBin || !this->Analysis_Intensity_ROIPositiveBin || !this->Analysis_Intensity_ROITotal) return -1;
+  if (!this->Analysis_Intensity_ROINegativeBin || !this->Analysis_Intensity_ROIPositiveBin || !this->Analysis_Intensity_ROIShrinkVolume || !this->Analysis_Intensity_ROIGrowthVolume ) {
+    Shrinkage = 1 ;
+    Growth = -1;
+    return;
+
+  }
   int IntensityMin = SegmentThreshMin - this->Analysis_Intensity_Threshold ;
   int IntensityMax = SegmentThreshMax + this->Analysis_Intensity_Threshold ;
 
@@ -790,12 +815,17 @@ double vtkChangeTrackerLogic::MeassureGrowth(int SegmentThreshMin, int SegmentTh
   this->Analysis_Intensity_ROINegativeBin->Update(); 
   this->Analysis_Intensity_ROIPositiveBin->ThresholdByUpper(GrowthBias*this->Analysis_Intensity_Threshold); 
   this->Analysis_Intensity_ROIPositiveBin->Update(); 
-  this->Analysis_Intensity_ROIBinReal->Update();
+  this->Analysis_Intensity_ROIPositiveBinReal->Update();
+  this->Analysis_Intensity_ROINegativeBinReal->Update();
   this->Analysis_Intensity_ROIBinAdd->Update();
   this->Analysis_Intensity_ROIBinDisplay->Update();
-  this->Analysis_Intensity_ROITotal->Update(); 
+  this->Analysis_Intensity_ROIGrowthVolume->Update(); 
+  this->Analysis_Intensity_ROIShrinkVolume->Update(); 
 
-  return this->Analysis_Intensity_ROITotal->GetVoxelSum(); 
+  // cout << "BLUBB: Growth " <<  this->Analysis_Intensity_ROIGrowthVolume->GetVoxelSum() << " Shrink " << this->Analysis_Intensity_ROIShrinkVolume->GetVoxelSum() << " Total " <<  this->Analysis_Intensity_ROIGrowthVolume->GetVoxelSum() +  this->Analysis_Intensity_ROIShrinkVolume->GetVoxelSum() << " Total-original " << this->Analysis_Intensity_ROITotal->GetVoxelSum() << endl;
+  Shrinkage = this->Analysis_Intensity_ROIShrinkVolume->GetVoxelSum(); 
+  Growth = this->Analysis_Intensity_ROIGrowthVolume->GetVoxelSum(); 
+
 }
 
 void vtkChangeTrackerLogic::SaveVolume(vtkSlicerApplication *app, vtkMRMLVolumeNode *volNode) {
@@ -874,9 +904,16 @@ void vtkChangeTrackerLogic::PrintResult(ostream& os, vtkSlicerApplication *app)
     os  << "Analysis based on Intensity Pattern" << endl;
     os  << "  Sensitivity:      "<< this->ChangeTrackerNode->GetAnalysis_Intensity_Sensitivity() << "\n";
     app->Script("::ChangeTrackerTcl::Analysis_Intensity_UpdateThreshold_GUI"); 
-    double Growth = this->MeassureGrowth(); 
-    os  << "  Intensity Metric: "<<  floor(Growth*this->ChangeTrackerNode->GetSuperSampled_VoxelVolume()*1000)/1000.0 << "mm" << char(179) 
+    double Growth, Shrinkage;
+    this->MeassureGrowth(Shrinkage,Growth); 
+    double Total = Growth + Shrinkage;
+    os  << "  Intensity Metric: \n";
+    os <<  "    Shrinkage: " << floor(-Shrinkage*this->ChangeTrackerNode->GetSuperSampled_VoxelVolume()*1000)/1000.0 << "mm" << char(179) 
+       << " (" << int(-Shrinkage*this->ChangeTrackerNode->GetSuperSampled_RatioNewOldSpacing()) << " Voxels)" << "\n";
+    os <<  "    Growth: " << floor(Growth*this->ChangeTrackerNode->GetSuperSampled_VoxelVolume()*1000)/1000.0 << "mm" << char(179) 
        << " (" << int(Growth*this->ChangeTrackerNode->GetSuperSampled_RatioNewOldSpacing()) << " Voxels)" << "\n";
+    os <<  "    Total Change: " << floor(Total*this->ChangeTrackerNode->GetSuperSampled_VoxelVolume()*1000)/1000.0 << "mm" << char(179) 
+       << " (" << int(Total*this->ChangeTrackerNode->GetSuperSampled_RatioNewOldSpacing()) << " Voxels)" << "\n";
   }
   if (this->ChangeTrackerNode->GetAnalysis_Deformable_Flag()) {
     os  << "Analysis based on Deformable Map" << endl;
@@ -1037,7 +1074,6 @@ void vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
 
   vtkMRMLScene *scene = this->ChangeTrackerNode->GetScene();
   vtkMRMLChangeTrackerNode *ctNode = this->ChangeTrackerNode;
-  vtkMRMLScalarVolumeNode *outputVolumeNode = NULL;
   // should be nice to have the transform in the scene later
   //vtkMRMLTransformNode *lrTransform = NULL;
 
@@ -1065,6 +1101,7 @@ void vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
 
   // Create output volume node
   /*
+  vtkMRMLScalarVolumeNode *outputVolumeNode = NULL;
   vtkMRMLScalarVolumeNode *scan1Node = 
     static_cast<vtkMRMLScalarVolumeNode*>(scene->GetNodeByID(ctNode->GetScan1_Ref()));
   outputVolumeNode = this->CreateVolumeNode(scan1Node, (const char*)"Scan2_LinearRegistration");
@@ -1187,7 +1224,7 @@ void vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
 
   vtkMRMLScene *scene = this->ChangeTrackerNode->GetScene();
   vtkMRMLChangeTrackerNode *ctNode = this->ChangeTrackerNode;
-  vtkMRMLScalarVolumeNode *outputVolumeNode = NULL;
+  // vtkMRMLScalarVolumeNode *outputVolumeNode = NULL;
   // should be nice to have the transform in the scene later
   //vtkMRMLTransformNode *lrTransform = NULL;
   

@@ -70,8 +70,8 @@ public:
 
   // Main Growth Function 
   int AnalyzeGrowth(vtkSlicerApplication *application);
-  double MeassureGrowth(int ThreshMin, int ThreshMax);
-  double MeassureGrowth();
+  void MeassureGrowth(int ThreshMin, int ThreshMax, double &Shrinkage, double &Growth);
+  void MeassureGrowth(double &Shrinkage, double &Growth);
   void DeleteAnalyzeOutput(vtkSlicerApplication *app);
 
   vtkImageThreshold*    CreateAnalysis_Intensity_Scan1ByLower();
@@ -89,15 +89,17 @@ public:
   vtkImageThreshold*    CreateAnalysis_Intensity_ROINegativeBin();
   vtkImageThreshold*    CreateAnalysis_Intensity_ROIPositiveBin();
   vtkImageMathematics*  CreateAnalysis_Intensity_ROIBinCombine();
-  vtkImageIslandFilter* CreateAnalysis_Intensity_ROIBinReal();
-  vtkImageData   *GetAnalysis_Intensity_ROIBinReal();
+  vtkImageIslandFilter* CreateAnalysis_Intensity_ROINegativeBinReal();
+  vtkImageIslandFilter* CreateAnalysis_Intensity_ROIPositiveBinReal();
+
+  vtkImageData   *GetAnalysis_Intensity_ROIBinCombine();
 
   vtkImageMathematics* CreateAnalysis_Intensity_ROIBinAdd();
   vtkImageThreshold* CreateAnalysis_Intensity_ROIBinDisplay();
   vtkImageData   *GetAnalysis_Intensity_ROIBinDisplay();
 
-  vtkImageSumOverVoxels* CreateAnalysis_Intensity_ROITotal();
-  double GetAnalysis_Intensity_ROITotal_VoxelSum();
+  vtkImageSumOverVoxels* CreateAnalysis_Intensity_ROIShrinkVolume();
+  vtkImageSumOverVoxels* CreateAnalysis_Intensity_ROIGrowthVolume();
 
   vtkSetMacro(Analysis_Intensity_Mean,double);
   vtkGetMacro(Analysis_Intensity_Mean,double);
@@ -189,10 +191,12 @@ private:
   vtkImageThreshold     *Analysis_Intensity_ROINegativeBin;
   vtkImageThreshold     *Analysis_Intensity_ROIPositiveBin;
   vtkImageMathematics   *Analysis_Intensity_ROIBinCombine;
-  vtkImageIslandFilter  *Analysis_Intensity_ROIBinReal;
+  vtkImageIslandFilter  *Analysis_Intensity_ROINegativeBinReal;
+  vtkImageIslandFilter  *Analysis_Intensity_ROIPositiveBinReal;
   vtkImageMathematics   *Analysis_Intensity_ROIBinAdd;
   vtkImageThreshold     *Analysis_Intensity_ROIBinDisplay;
-  vtkImageSumOverVoxels *Analysis_Intensity_ROITotal;
+  vtkImageSumOverVoxels *Analysis_Intensity_ROIShrinkVolume;
+  vtkImageSumOverVoxels *Analysis_Intensity_ROIGrowthVolume;
 
   int SaveVolumeFlag;
 
