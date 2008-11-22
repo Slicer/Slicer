@@ -6,8 +6,8 @@ See License.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   Slicer3
-Module:    $HeadURL: http://svn.slicer.org/Slicer3/trunk/Libs/vtkITK/vtkITKArchetypeImageSeriesReader.h $
-Date:      $Date$
-Version:   $Revision: 7852 $
+Module:    $HeadURL: $HeadURL$
+Date:      $Date$Date$
+Version:   $Revision: $Revision$
 
 ==========================================================================*/
