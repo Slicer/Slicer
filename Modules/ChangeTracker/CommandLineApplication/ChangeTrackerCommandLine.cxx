@@ -510,7 +510,8 @@ int main(int argc, char** argv)
     tgVtkDefineMacro(Scan1Intensity,vtkImageData); 
     tgVtkDefineMacro(Scan2Intensity,vtkImageData); 
     double Analysis_Intensity_Growth = -1;
-
+    double Analysis_Intensity_Shrink = -1;
+    double Analysis_Intensity_Total = -1;   
 
     if (tgIntensityAnalysisFlag) { 
       cout << "=== Intensity Based Analysis ===" << endl;
@@ -551,12 +552,16 @@ int main(int argc, char** argv)
       app->Script(CMD.c_str());
 
       cout << "=========================" << endl;    
-      Analysis_Intensity_Growth  = logic->MeassureGrowth(tgThreshold[0], tgThreshold[1]);
+      logic->MeassureGrowth(tgThreshold[0], tgThreshold[1], Analysis_Intensity_Shrink, Analysis_Intensity_Growth);
+      Analysis_Intensity_Total = Analysis_Intensity_Growth + Analysis_Intensity_Shrink; 
       CMD = tg.WorkingDir + "/TG_Analysis_Intensity.nhdr";
-      tgWriteVolume(CMD.c_str(),supersampleMatrix,logic->GetAnalysis_Intensity_ROIBinReal());
-      cout << "Analysis Intensity Growth: " <<  Analysis_Intensity_Growth  << " Super sample " << SuperSampleVol << endl;
-      printf("Intensity Metric: %.3f mm^3 (%d Voxels)\n",  Analysis_Intensity_Growth *SuperSampleVol,int( Analysis_Intensity_Growth *SuperSampleRatio));
+      tgWriteVolume(CMD.c_str(),supersampleMatrix,logic->GetAnalysis_Intensity_ROIBinCombine());
+      cout << "Analysis Intensity: Shrinkage " << -Analysis_Intensity_Shrink << " Growth " << Analysis_Intensity_Growth << " Total " <<  Analysis_Intensity_Total << "Super sample " << SuperSampleVol << endl;
 
+      printf("Intensity Metric:\n");
+      printf("  Shrinkage: %.3f mm^3 (%d Voxels)\n", - Analysis_Intensity_Shrink *SuperSampleVol,int(- Analysis_Intensity_Shrink *SuperSampleRatio));
+      printf("  Growth: %.3f mm^3 (%d Voxels)\n",  Analysis_Intensity_Growth *SuperSampleVol,int( Analysis_Intensity_Growth *SuperSampleRatio));
+      printf("  Total change: %.3f mm^3 (%d Voxels)\n",  Analysis_Intensity_Total *SuperSampleVol,int( Analysis_Intensity_Total *SuperSampleRatio));
 
       // Debug 
       // char paramet[100];
@@ -625,8 +630,12 @@ int main(int argc, char** argv)
       if (tgIntensityAnalysisFlag) {
         outFile  << "Analysis based on Intensity Pattern" << "\n";
         outFile  << "  Sensitivity:      " << tgSensitivity << "\n";
-        outFile  << "  Intensity Metric: " << floor(Analysis_Intensity_Growth*SuperSampleVol*1000)/1000.0 << "mm^3 (" 
+        outFile  << "  Shrinkage:        " << floor(-Analysis_Intensity_Shrink *1000 *SuperSampleVol)/1000.0 << "mm^3 (" 
+         << int(-Analysis_Intensity_Shrink*SuperSampleRatio) << " Voxels)" << "\n";
+        outFile  << "  Growth:           " << floor(Analysis_Intensity_Growth *1000 *SuperSampleVol)/1000.0 << "mm^3 (" 
          << int(Analysis_Intensity_Growth*SuperSampleRatio) << " Voxels)" << "\n";
+        outFile  << "  Total Change:     " << floor(Analysis_Intensity_Total *1000 *SuperSampleVol)/1000.0 << "mm^3 (" 
+         << int(Analysis_Intensity_Total*SuperSampleRatio) << " Voxels)" << "\n";
       }
       if (tgDeformableAnalysisFlag) { 
         outFile  << "Analysis based on Deformable Map" << "\n";
