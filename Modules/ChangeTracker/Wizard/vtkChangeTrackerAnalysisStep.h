@@ -47,7 +47,14 @@ protected:
   vtkKWCheckButton  *SensitivityMedium;
   vtkKWCheckButton  *SensitivityHigh;
 
-  vtkKWLabel                 *GrowthLabel;
+  vtkKWFrame                *FrameIntensity;
+  vtkKWFrame                *FrameIntensityCol1;
+  vtkKWFrame                *FrameIntensityCol2;
+  vtkKWFrame                *FrameIntensityCol3;
+
+  vtkKWLabel                *IntensityLabel;
+  vtkKWLabel                *IntensityResultVolume;
+  vtkKWLabel                *IntensityResultVoxel;
 
   vtkKWFrameWithLabel       *FrameDeformable;
   vtkKWFrame                *FrameDeformableCol1;

@@ -39,7 +39,14 @@ vtkChangeTrackerAnalysisStep::vtkChangeTrackerAnalysisStep()
   this->SetDescription("Analysis of Tumor Growth"); 
   this->WizardGUICallbackCommand->SetCallback(vtkChangeTrackerAnalysisStep::WizardGUICallback);
 
-  this->GrowthLabel = NULL;
+  this->FrameIntensity = NULL;
+  this->FrameIntensityCol1 = NULL;
+  this->FrameIntensityCol2 = NULL;
+  this->FrameIntensityCol3 = NULL;
+
+  this->IntensityLabel = NULL;
+  this->IntensityResultVolume = NULL;
+  this->IntensityResultVoxel = NULL;
 
   this->ButtonsWorkingDir = NULL;
   this->ButtonsAnalysis = NULL;
@@ -60,7 +67,6 @@ vtkChangeTrackerAnalysisStep::vtkChangeTrackerAnalysisStep()
   this->SensitivityLow = NULL;
   this->SensitivityMedium = NULL;
   this->SensitivityHigh = NULL;
-
 
 }
 
@@ -135,10 +141,47 @@ vtkChangeTrackerAnalysisStep::~vtkChangeTrackerAnalysisStep()
       this->SensitivityHigh= NULL;
     }
 
-  if (this->GrowthLabel) 
+    if (this->FrameIntensity) 
     {
-      this->GrowthLabel->Delete();
-      this->GrowthLabel = NULL;
+      this->FrameIntensity->Delete();
+      this->FrameIntensity = NULL;
+    }
+
+    if (this->FrameIntensityCol1) 
+    {
+      this->FrameIntensityCol1->Delete();
+      this->FrameIntensityCol1 = NULL;
+    }
+
+    if (this->FrameIntensityCol2) 
+    {
+      this->FrameIntensityCol2->Delete();
+      this->FrameIntensityCol2 = NULL;
+    }
+
+    if (this->FrameIntensityCol3) 
+    {
+      this->FrameIntensityCol3->Delete();
+      this->FrameIntensityCol3 = NULL;
+    }
+
+
+  if (this->IntensityLabel) 
+    {
+      this->IntensityLabel->Delete();
+      this->IntensityLabel = NULL;
+    }
+
+  if (this->IntensityResultVolume) 
+    {
+      this->IntensityResultVolume->Delete();
+      this->IntensityResultVolume = NULL;
+    }
+
+  if (this->IntensityResultVoxel) 
+    {
+      this->IntensityResultVoxel->Delete();
+      this->IntensityResultVoxel = NULL;
     }
 
  if (this->FrameDeformable) 
@@ -503,16 +546,92 @@ void vtkChangeTrackerAnalysisStep::ShowUserInterface()
   // if (mrmlNode) this->SensitivityScale->SetValue(mrmlNode->GetAnalysis_Intensity_Sensitivity());
   // this->Script( "pack %s -side top -anchor nw -padx 2 -pady 2", this->SensitivityScale->GetWidgetName());
 
-  if (!this->GrowthLabel)
-    {
-    this->GrowthLabel = vtkKWLabel::New();
-    }
-  if (!this->GrowthLabel->IsCreated())
+
+  if (!this->FrameIntensity)
   {
-    this->GrowthLabel->SetParent(this->Frame->GetFrame());
-    this->GrowthLabel->Create();
+    this->FrameIntensity = vtkKWFrame::New();
   }
-  this->Script( "pack %s -side top -anchor nw -padx 2 -pady 2", this->GrowthLabel->GetWidgetName());
+  if (!this->FrameIntensity->IsCreated())
+  {
+      this->FrameIntensity->SetParent(this->Frame->GetFrame());
+      this->FrameIntensity->Create();
+  }
+  this->Script("pack %s -side top -anchor nw -fill x -padx 0 -pady 2", this->FrameIntensity->GetWidgetName());
+
+  if (!this->FrameIntensityCol1)
+  {
+    this->FrameIntensityCol1 = vtkKWFrame::New();
+  }
+  if (!this->FrameIntensityCol1->IsCreated())
+  {
+      this->FrameIntensityCol1->SetParent(this->FrameIntensity);
+      this->FrameIntensityCol1->Create();
+  }
+
+  if (!this->FrameIntensityCol2)
+  {
+    this->FrameIntensityCol2 = vtkKWFrame::New();
+  }
+  if (!this->FrameIntensityCol2->IsCreated())
+  {
+      this->FrameIntensityCol2->SetParent(this->FrameIntensity);
+      this->FrameIntensityCol2->Create();
+  }
+
+  if (!this->FrameIntensityCol3)
+  {
+    this->FrameIntensityCol3 = vtkKWFrame::New();
+  }
+  if (!this->FrameIntensityCol3->IsCreated())
+  {
+      this->FrameIntensityCol3->SetParent(this->FrameIntensity);
+      this->FrameIntensityCol3->Create();
+  }
+
+  this->Script("pack %s %s %s -side left -anchor nw -fill x -padx 0 -pady 0", this->FrameIntensityCol1->GetWidgetName(),this->FrameIntensityCol2->GetWidgetName(),this->FrameIntensityCol3->GetWidgetName());
+
+
+  if (!this->IntensityLabel)
+    {
+    this->IntensityLabel = vtkKWLabel::New();
+    }
+  if (!this->IntensityLabel->IsCreated())
+  {
+    this->IntensityLabel->SetParent(this->FrameIntensityCol1);
+    std::string CMD = "::ChangeTrackerTcl::RonsWishFlag";
+    int RonsWishFlag = atoi(this->Script(CMD.c_str()));
+    if (RonsWishFlag) {    
+      this->IntensityLabel->SetText("Shrinkage:\nGrowth:\nTotal Change:");
+    } else {
+      this->IntensityLabel->SetText("Total Change:");
+    }
+    this->IntensityLabel->Create();
+  }
+  this->Script( "pack %s -side top -anchor nw -padx 2 -pady 2", this->IntensityLabel->GetWidgetName());
+
+  if (!this->IntensityResultVolume)
+    {
+    this->IntensityResultVolume = vtkKWLabel::New();
+    }
+  if (!this->IntensityResultVolume->IsCreated())
+  {
+    this->IntensityResultVolume->SetParent(this->FrameIntensityCol2);
+    this->IntensityResultVolume->Create();
+  }
+  this->Script( "pack %s -side top -anchor ne -padx 2 -pady 2", this->IntensityResultVolume->GetWidgetName());
+
+
+  if (!this->IntensityResultVoxel)
+    {
+    this->IntensityResultVoxel = vtkKWLabel::New();
+    }
+  if (!this->IntensityResultVoxel->IsCreated())
+  {
+    this->IntensityResultVoxel->SetParent(this->FrameIntensityCol3);
+    this->IntensityResultVoxel->Create();
+  }
+  this->Script( "pack %s -side top -anchor ne -padx 2 -pady 2", this->IntensityResultVoxel->GetWidgetName());
+
 
 
   if (!this->FrameDeformable)
@@ -769,7 +888,7 @@ void vtkChangeTrackerAnalysisStep::SensitivityChangedCallback(int flag)
   // cout << "vtkChangeTrackerAnalysisStep::SensitivityChangedCallback" << endl;
   // Sensitivity has changed because of user interaction
   vtkMRMLChangeTrackerNode *mrmlNode = this->GetGUI()->GetNode();
-  if (!this->SensitivityMedium || !this->SensitivityLow ||  !this->SensitivityHigh || !mrmlNode || !this->GrowthLabel || !mrmlNode->GetAnalysis_Intensity_Flag()) return;
+  if (!this->SensitivityMedium || !this->SensitivityLow ||  !this->SensitivityHigh || !mrmlNode || !this->IntensityResultVoxel || !this->IntensityResultVolume || !mrmlNode->GetAnalysis_Intensity_Flag()) return;
 
   double senValue = mrmlNode->GetAnalysis_Intensity_Sensitivity();
   // original values   int senValueList[3] = {0.1, 0.6, 1.0};
@@ -813,14 +932,31 @@ void vtkChangeTrackerAnalysisStep::SensitivityChangedCallback(int flag)
   }
   
   vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication())->Script("::ChangeTrackerTcl::Analysis_Intensity_UpdateThreshold_GUI"); 
-  double Growth = this->GetGUI()->GetLogic()->MeassureGrowth();
+  double Shrinkage,Growth;
+  this->GetGUI()->GetLogic()->MeassureGrowth(Shrinkage, Growth);
+  double Total = Growth + Shrinkage;
   // show here 
   // cout << "Growth " << Growth << " " << this->SensitivityScale->GetValue() << endl;
   char TEXT[1024];
-  // cout << "---------- " << Growth << " " << mrmlNode->GetSuperSampled_VoxelVolume() << " " << mrmlNode->GetSuperSampled_RatioNewOldSpacing() << endl;;
-  sprintf(TEXT,"Intensity Metric: %.3f mm%c (%d Voxels)", Growth*mrmlNode->GetSuperSampled_VoxelVolume(),179,int(Growth*mrmlNode->GetSuperSampled_RatioNewOldSpacing()));
 
-  this->GrowthLabel->SetText(TEXT);
+  std::string CMD = "::ChangeTrackerTcl::RonsWishFlag";
+  int RonsWishFlag = atoi(this->Script(CMD.c_str()));
+
+
+  if (RonsWishFlag) {
+    sprintf(TEXT,"%.3f mm%c\n%.3f mm%c\n%.3f mm%c", -Shrinkage*mrmlNode->GetSuperSampled_VoxelVolume(),179,Growth*mrmlNode->GetSuperSampled_VoxelVolume(),179, Total*mrmlNode->GetSuperSampled_VoxelVolume(),179);
+  } else {
+    sprintf(TEXT,"%.3f mm%c", Total*mrmlNode->GetSuperSampled_VoxelVolume(),179);
+  }
+    this->IntensityResultVolume->SetText(TEXT);
+
+  if (RonsWishFlag) {
+     sprintf(TEXT,"(%d Voxels)\n(%d Voxels)\n(%d Voxels)", int(-Shrinkage*mrmlNode->GetSuperSampled_RatioNewOldSpacing()),int(Growth*mrmlNode->GetSuperSampled_RatioNewOldSpacing()),int(Total*mrmlNode->GetSuperSampled_RatioNewOldSpacing()));
+  } else {
+     sprintf(TEXT,"(%d Voxels)", int(Total*mrmlNode->GetSuperSampled_RatioNewOldSpacing()));
+  }
+
+  this->IntensityResultVoxel->SetText(TEXT);
   // Show updated results 
   vtkMRMLVolumeNode *analysisNode = vtkMRMLVolumeNode::SafeDownCast(mrmlNode->GetScene()->GetNodeByID(mrmlNode->GetAnalysis_Intensity_Ref()));
   if (analysisNode) analysisNode->Modified();
