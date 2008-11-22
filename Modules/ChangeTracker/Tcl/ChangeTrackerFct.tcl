@@ -19,6 +19,10 @@ if {0} { ;# comment
 # Remember to run make before executing script again so that this tcl script is copied over to slicer3-build directory 
 namespace eval ChangeTrackerTcl {
     variable newIntensityAnalysis 1
+    proc RonsWishFlag { } {
+    return 1
+    }
+
 
     # the region were we detect growth or shrinkage around the segmentation in square voxels 
     # 16 == 4 voxels 
@@ -145,8 +149,8 @@ namespace eval ChangeTrackerTcl {
      }
 
     proc HistogramNormalization_HistFct {SCAN SEGMENT} {
-    set HighIntensityRegion [vtkImageMathematics New]
-    $HighIntensityRegion SetInput1 $SEGMENT
+        set HighIntensityRegion [vtkImageMathematics New]
+        $HighIntensityRegion SetInput1 $SEGMENT
         $HighIntensityRegion SetInput2 $SCAN 
         $HighIntensityRegion SetOperationToMultiply
         $HighIntensityRegion Update 
@@ -154,8 +158,8 @@ namespace eval ChangeTrackerTcl {
         set SUM [vtkImageSumOverVoxels New]
         $SUM SetInput [$HighIntensityRegion GetOutput] 
         $SUM Update
-    set result [$SUM GetVoxelSum ]
-    $SUM Delete
+        set result [$SUM GetVoxelSum ]
+         $SUM Delete
         $HighIntensityRegion Delete
     return $result
     } 
@@ -524,14 +528,12 @@ namespace eval ChangeTrackerTcl {
         set VOLUMES_LOGIC [$VOLUMES_GUI GetLogic]
 
         set OUTPUT_NODE [$VOLUMES_LOGIC CreateLabelVolume $SCENE $SEGM_NODE "TG_Analysis_IntensityReal"]
-  
-        set IMAGE_DATA [$LOGIC GetAnalysis_Intensity_ROIBinReal]
-        $OUTPUT_NODE SetAndObserveImageData [$LOGIC GetAnalysis_Intensity_ROIBinReal]
-        $LOGIC SaveVolume $::slicer3::Application $OUTPUT_NODE
+        $OUTPUT_NODE SetAndObserveImageData [$LOGIC GetAnalysis_Intensity_ROIBinCombine]
+        # $LOGIC SaveVolume $::slicer3::Application $OUTPUT_NODE
 
         set OUTPUT_NODE [$VOLUMES_LOGIC CreateLabelVolume $SCENE $SEGM_NODE "TG_Analysis_IntensityDisplay"]
         $OUTPUT_NODE SetAndObserveImageData [$LOGIC GetAnalysis_Intensity_ROIBinDisplay]
-        $LOGIC SaveVolume $::slicer3::Application $OUTPUT_NODE
+        # $LOGIC SaveVolume $::slicer3::Application $OUTPUT_NODE
 
         $NODE SetAnalysis_Intensity_Ref [$OUTPUT_NODE GetID]
 
@@ -559,13 +561,17 @@ namespace eval ChangeTrackerTcl {
         set AnalysisGrowthROIIntensity    [$LOGIC CreateAnalysis_Intensity_ROIGrowthInt]
         set AnalysisShrinkROIIntensity    [$LOGIC CreateAnalysis_Intensity_ROIShrinkInt]
 
-        set AnalysisROINegativeBin    [$LOGIC CreateAnalysis_Intensity_ROINegativeBin]
-        set AnalysisROIPositiveBin    [$LOGIC CreateAnalysis_Intensity_ROIPositiveBin]
-        set AnalysisROIBinCombine     [$LOGIC CreateAnalysis_Intensity_ROIBinCombine]
-        set AnalysisROIBinReal        [$LOGIC CreateAnalysis_Intensity_ROIBinReal]
+        set AnalysisROINegativeBin     [$LOGIC CreateAnalysis_Intensity_ROINegativeBin]
+        set AnalysisROIPositiveBin     [$LOGIC CreateAnalysis_Intensity_ROIPositiveBin]
+        set AnalysisROIBinCombine      [$LOGIC CreateAnalysis_Intensity_ROIBinCombine]
+        set AnalysisROINegativeBinReal [$LOGIC CreateAnalysis_Intensity_ROINegativeBinReal]
+        set AnalysisROIPositiveBinReal [$LOGIC CreateAnalysis_Intensity_ROIPositiveBinReal]
+ 
         set AnalysisROIBinAdd         [$LOGIC CreateAnalysis_Intensity_ROIBinAdd]
         set AnalysisROIBinDisplay     [$LOGIC CreateAnalysis_Intensity_ROIBinDisplay]
-        set AnalysisROITotal          [$LOGIC CreateAnalysis_Intensity_ROITotal]
+        set AnalysisROIShrinkVolume   [$LOGIC CreateAnalysis_Intensity_ROIShrinkVolume]
+        set AnalysisROIGrowthVolume   [$LOGIC CreateAnalysis_Intensity_ROIGrowthVolume]
+      
        
 
         # -------------------------------------
@@ -576,8 +582,8 @@ namespace eval ChangeTrackerTcl {
                               $ThresholdMin $ThresholdMax $AnalysisScan1ByLower $AnalysisScan1Range  $AnalysisScan2ByLower \
                               $AnalysisScan2Range $AnalysisScanSubtract $AnalysisScanSubtractSmooth $AnalysisGrowthROI \
                              $AnalysisGrowthROIIntensity  $AnalysisShrinkROI $AnalysisShrinkROIIntensity $AnalysisROINegativeBin \
-                             $AnalysisROIPositiveBin $AnalysisROIBinCombine $AnalysisROIBinReal $AnalysisROIBinAdd \
-                             $AnalysisROIBinDisplay $AnalysisROITotal ]"
+                             $AnalysisROIPositiveBin $AnalysisROIBinCombine $AnalysisROINegativeBinReal $AnalysisROIPositiveBinReal $AnalysisROIBinAdd \
+                             $AnalysisROIBinDisplay $AnalysisROIShrinkVolume $AnalysisROIGrowthVolume ]"
 
         $LOGIC SetAnalysis_Intensity_Mean [lindex $result 0]
         $LOGIC SetAnalysis_Intensity_Variance [lindex $result 1]
@@ -602,8 +608,8 @@ namespace eval ChangeTrackerTcl {
  
     proc Analysis_Intensity_Fct { Scan1Data Scan1Segment Scan2Data AnalysisSensitivity ThresholdMin ThresholdMax AnalysisScan1ByLower AnalysisScan1Range 
                                   AnalysisScan2ByLower AnalysisScan2Range  AnalysisScanSubtract AnalysisScanSubtractSmooth AnalysisGrowthROI AnalysisGrowthROIIntensity 
-                                 AnalysisShrinkROI AnalysisShrinkROIIntensity AnalysisROINegativeBin AnalysisROIPositiveBin AnalysisROIBinCombine AnalysisROIBinReal  
-                                  AnalysisROIBinAdd AnalysisROIBinDisplay AnalysisROITotal } {
+                                 AnalysisShrinkROI AnalysisShrinkROIIntensity AnalysisROINegativeBin AnalysisROIPositiveBin AnalysisROIBinCombine AnalysisROINegativeBinReal AnalysisROIPositiveBinReal  
+                                  AnalysisROIBinAdd AnalysisROIBinDisplay AnalysisROIShrinkVolume AnalysisROIGrowthVolume } {
 
        
        # -----------------------------------------
@@ -773,33 +779,41 @@ namespace eval ChangeTrackerTcl {
          $AnalysisROINegativeBin SetOutputScalarTypeToShort
        $AnalysisROINegativeBin Update
 
+         # Include small island removal
+         $AnalysisROINegativeBinReal SetIslandMinSize 10
+         $AnalysisROINegativeBinReal SetInput [$AnalysisROINegativeBin GetOutput]
+         $AnalysisROINegativeBinReal SetNeighborhoodDim3D
+       $AnalysisROINegativeBinReal Update 
+
+       $AnalysisROIShrinkVolume  SetInput [$AnalysisROINegativeBinReal GetOutput]
+
+
        # Initializing tumor growth prediction
        # catch { ChangeTracker(FinalROIBin) Delete}
-       $AnalysisROIPositiveBin  SetInput [$AnalysisGrowthROIIntensity GetOutput] 
+         $AnalysisROIPositiveBin  SetInput [$AnalysisGrowthROIIntensity GetOutput] 
          $AnalysisROIPositiveBin  SetInValue 1
          $AnalysisROIPositiveBin  SetOutValue 0
          $AnalysisROIPositiveBin  ThresholdByUpper  $FinalThreshold 
          $AnalysisROIPositiveBin  SetOutputScalarTypeToShort
        $AnalysisROIPositiveBin Update
 
+       # Include small island removal
+         $AnalysisROIPositiveBinReal SetIslandMinSize 10
+         $AnalysisROIPositiveBinReal SetInput [$AnalysisROIPositiveBin GetOutput]
+         $AnalysisROIPositiveBinReal SetNeighborhoodDim3D
+       $AnalysisROIPositiveBinReal Update 
+
+       $AnalysisROIGrowthVolume SetInput [$AnalysisROIPositiveBinReal GetOutput]
+
        # vtkImageMathematics ChangeTracker(FinalROIBinReal) 
-         $AnalysisROIBinCombine  SetInput 0 [$AnalysisROIPositiveBin GetOutput] 
-         $AnalysisROIBinCombine  SetInput 1 [$AnalysisROINegativeBin GetOutput] 
+         $AnalysisROIBinCombine  SetInput 0 [$AnalysisROIPositiveBinReal GetOutput] 
+         $AnalysisROIBinCombine  SetInput 1 [$AnalysisROINegativeBinReal GetOutput] 
          $AnalysisROIBinCombine  SetOperationToAdd 
        $AnalysisROIBinCombine Update
 
-       # Include small island removal
-         $AnalysisROIBinReal SetIslandMinSize 10
-         $AnalysisROIBinReal SetInput [$AnalysisROIBinCombine GetOutput]
-         $AnalysisROIBinReal SetNeighborhoodDim3D
-       $AnalysisROIBinReal Update 
-
-       # vtkImageSumOverVoxels ChangeTracker(FinalROITotal) 
-
-         $AnalysisROITotal  SetInput [$AnalysisROIBinReal GetOutput]
 
        # Negative values are not shown in slicer 3 (for label maps) so I have to add values
-         $AnalysisROIBinAdd  SetInput [$AnalysisROIBinReal GetOutput] 
+         $AnalysisROIBinAdd  SetInput [$AnalysisROIBinCombine GetOutput] 
          $AnalysisROIBinAdd  SetOperationToAddConstant 
          $AnalysisROIBinAdd  SetConstantC 13 
        $AnalysisROIBinAdd Update
@@ -1191,14 +1205,14 @@ namespace eval ChangeTrackerTcl {
   }
 
   proc ReadASCIIFile {input} {
-     if {[catch {set fid [open $input r]} errmsg] == 1} {
+     if { [catch {set fid [open $input r]} errmsg] == 1} {
        puts $errmsg
        return ""
      }
 
      set file [read $fid]
 
-     if {[catch {close $fid} errorMessage]} {
+     if { [catch {close $fid} errorMessage]} {
        puts "Aborting due to : ${errorMessage}"
        exit 1
      }
@@ -1354,7 +1368,7 @@ namespace eval ChangeTrackerTcl {
 #          set saveItkAutoLoadPath "" 
 #      }
 #      set env(ITK_AUTOLOAD_PATH) ""
-    if{[catch {set saveItkAutoLoadPath $env(ITK_AUTOLOAD_PATH)}]} {
+    if {[catch {set saveItkAutoLoadPath $env(ITK_AUTOLOAD_PATH)}]} {
       set saveItkAutoLoadPath ""
     }
     set env(ITK_AUTOLOAD_PATH) ""
