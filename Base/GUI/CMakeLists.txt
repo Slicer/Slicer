@@ -131,6 +131,7 @@ set(SlicerBaseGUI_SRCS
   vtkSlicerRepositoryStep.cxx
   vtkSlicerModulesStep.cxx
   vtkSlicerProgressStep.cxx
+  vtkSlicerROIDisplayWidget.cxx
   # VTK Replacement classes
   vtkSlicerInteractorStyle.cxx
   vtkSlicerViewerInteractorStyle.cxx

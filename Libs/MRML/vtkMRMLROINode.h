@@ -50,6 +50,12 @@ public:
   void UpdateReferences();
 
   // Description:
+  // Indicates if the ROI is visible
+  vtkBooleanMacro(Visibility, int);
+  vtkGetMacro(Visibility, int);
+  vtkSetMacro(Visibility, int);
+
+  // Description:
   // Get/Set for ROI Position in RAS cooridnates
   // Note: The ROI Postion is the center of the ROI 
   void SetXYZ(float X, float Y, float Z);
@@ -93,7 +99,7 @@ protected:
   ~vtkMRMLROINode();
   vtkMRMLROINode(const vtkMRMLROINode&);
   void operator=(const vtkMRMLROINode&);
-
+  int Visibility;
   // Description:
   // The location of the ROI centroid in RAS space
   // Note: The ROI Postion is the center of the ROI 

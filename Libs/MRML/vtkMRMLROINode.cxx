@@ -58,6 +58,7 @@ vtkMRMLROINode::vtkMRMLROINode()
   this->SetID("");
   this->Selected = 0;
   this->VolumeNodeID = NULL;
+  this->Visibility = 1;
   return;
 }
 
@@ -109,6 +110,9 @@ void vtkMRMLROINode::WriteXML(ostream& of, int nIndent)
   of <<  " RadiusXYZ " 
     << this->RadiusXYZ[0] << " " << this->RadiusXYZ[1] << " " << this->RadiusXYZ[2];
   of << " Selected " << this->Selected;
+
+  of << " visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
+
 
   return;
 }
@@ -164,7 +168,20 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
       {
       this->SetLabelText(attValue);
       }
+    else if (!strcmp(attName, "visibility")) 
+      {
+      if (!strcmp(attValue,"true")) 
+        {
+        this->Visibility = 1;
+        }
+      else
+        {
+        this->Visibility = 0;
+        }
+      }
+ 
     }
+
   return;
 }
 
@@ -227,6 +244,9 @@ void vtkMRMLROINode::ReadXMLString(const char *keyValuePairs)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLROINode::Copy(vtkMRMLNode *anode)
 {
+  Superclass::Copy(anode);
+  this->DisableModifiedEventOn();
+
   //  vtkObject::Copy(anode);
   vtkMRMLROINode *node = (vtkMRMLROINode *) anode;
   this->SetXYZ(node->XYZ);
@@ -234,8 +254,11 @@ void vtkMRMLROINode::Copy(vtkMRMLNode *anode)
   this->SetLabelText(node->GetLabelText());
   this->SetID(node->ID);
   this->SetSelected(node->GetSelected());
+  this->SetVisibility(node->Visibility);
 
-  this->Modified();
+  this->DisableModifiedEventOff();
+  this->InvokePendingModifiedEvent();
+
   return;
 }
 
