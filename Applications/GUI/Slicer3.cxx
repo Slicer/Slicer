@@ -1,3 +1,16 @@
+/*=========================================================================
+
+Copyright Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+See License.txt
+or http://www.slicer.org/copyright/copyright.txt for details.
+
+Program:   Slicer3
+Module:    $HeadURL$
+Date:      $Date$
+Version:   $Revision$
+
+==========================================================================*/
 #include "vtkOpenGLRenderWindow.h"
 #include "vtkRenderWindow.h"
 
