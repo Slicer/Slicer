@@ -1,7 +1,8 @@
 #include "SparseFieldLevelSetContourCLP.h"
 #include <iostream>
 #include <vector>
-#include "vtkXMLPolyDataReader.h"
+#include "vtkPolyDataReader.h"
+#include "vtkPolyDataWriter.h"
 #include "vtkCellData.h"
 #include "vtkSmoothPolyDataFilter.h"
 #include "vtkPolyDataMapper.h"
@@ -21,10 +22,11 @@ using namespace std;
 MeshData* meshdata;
 SparseFieldLS* sfls;
 MeanCurvatureEnergy* energy;
+vtkPolyDataWriter* writer;
 bool LSready = false;
 bool done_init = false;
-int showLS = 1;
-int evolve_its = 1000;
+int showLS = 0;
+int evolve_its = 300;
 int mesh_smooth_its = 100;
 int H_smooth_its = 100;
 int adj_levels = 1;
@@ -37,7 +39,7 @@ PARSE_ARGS;
 cout<<OutputFilename.c_str()<<"\n";
 cout<<"Length of contour seeds: "<<ContourSeedPts.size()<<"\n";
 
-vtkXMLPolyDataReader* reader = vtkXMLPolyDataReader::New();
+vtkPolyDataReader* reader = vtkPolyDataReader::New();
 reader->SetFileName(InputSurface.c_str());
 reader->Update();
 
@@ -92,8 +94,14 @@ init_pts.push_back(4028);
 
 vector<int> C = InitPath( meshdata, init_pts );
 sfls = new SparseFieldLS( meshdata, C, energy );
-sfls->Evolve(evolve_its);
-int breakhere = 1;
+C = sfls->Evolve(evolve_its);
+meshdata->polydata;
+
+writer = vtkPolyDataWriter::New();
+writer->SetInput( meshdata->polydata );
+writer->SetFileName( OutputFilename.c_str() );
+int iRet = writer->Write();
+
 
 /*vtkMRMLScene* myScene = vtkMRMLScene::New();
 myScene->SetURL( OutputFilename.c_str() );

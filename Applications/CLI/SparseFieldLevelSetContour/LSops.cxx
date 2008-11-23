@@ -167,7 +167,7 @@ meshdata->polydata->Update();
 return ret;
 }
 
-void SparseFieldLS::Evolve(int its )
+vector<int> SparseFieldLS::Evolve(int its )
 {
 ii *= -1;
 double cfl = 0.15;
@@ -177,7 +177,7 @@ for( int its_ = 0; its_ < its; its_++ ) {
 
 if( L_z.size() == 0 ) {
 cout<<"Error, level set has vanished from surface \n";
-return;
+return L_z;
 }
 
 // How can this possibly be right if there are isolated L_z points
@@ -406,6 +406,6 @@ scalars2->Delete();
 meshdata->polydata->Update();
 
 
-
+return L_z;
 
 }

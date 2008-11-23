@@ -16,7 +16,7 @@ phi = vector<double>(data->MeanCurv.size());
 CleanLZ();
 InitSphere();
 }
-void Evolve( int iterations = 1 );
+vector<int> Evolve( int iterations = 1 );
 
 
 private:
