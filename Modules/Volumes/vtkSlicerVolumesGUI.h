@@ -124,7 +124,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     void CopyTagAndValues( vtkITKArchetypeImageSeriesReader* reader );
     //ETX
 
-    int GetNumberOfItemsInDictionary(); 
+    unsigned int GetNumberOfItemsInDictionary(); 
     bool HasKey( char* tag );
     const char* GetNthKey( unsigned int n );
     const char* GetNthValue( unsigned int n );

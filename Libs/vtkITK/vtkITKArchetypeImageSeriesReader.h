@@ -220,8 +220,8 @@ public:
 
   // Description:
   // Get number of scalars
-  vtkSetMacro(NumberOfComponents, int);
-  vtkGetMacro(NumberOfComponents, int);
+  vtkSetMacro(NumberOfComponents, unsigned int);
+  vtkGetMacro(NumberOfComponents, unsigned int);
 
   // Description:
   // Whether load in a single file or a series
@@ -254,7 +254,7 @@ public:
   void ParseDictionary();
   //ETX
 
-  int GetNumberOfItemsInDictionary(); 
+  unsigned int GetNumberOfItemsInDictionary(); 
   bool HasKey( char* tag );
   const char* GetNthKey( unsigned int n );
   const char* GetNthValue( unsigned int n );
@@ -349,32 +349,32 @@ public:
     }
 
   // get number of certain discriminators in the directory
-  int GetNumberOfSeriesInstanceUIDs()
+  unsigned int GetNumberOfSeriesInstanceUIDs()
     {
     return this->SeriesInstanceUIDs.size();
     }
 
-  int GetNumberOfContentTime()
+  unsigned int GetNumberOfContentTime()
     {
     return this->ContentTime.size();
     }
 
-  int GetNumberOfTriggerTime()
+  unsigned int GetNumberOfTriggerTime()
     {
     return this->TriggerTime.size();
     }
 
-  int GetNumberOfSliceLocation()
+  unsigned int GetNumberOfSliceLocation()
     {
     return this->SliceLocation.size();
     }
 
-  int GetNumberOfDiffusionGradientOrientation()
+  unsigned int GetNumberOfDiffusionGradientOrientation()
     {
     return this->DiffusionGradientOrientation.size();
     };
 
-  int GetNumberOfImageOrientationPatient()
+  unsigned int GetNumberOfImageOrientationPatient()
     {
     return this->ImageOrientationPatient.size();
     };
@@ -382,7 +382,7 @@ public:
   // check the existance of given discriminator
   int ExistSeriesInstanceUID( const char* SeriesInstanceUID )
     {
-    for (int k = 0; k < GetNumberOfSeriesInstanceUIDs(); k++)
+    for (unsigned int k = 0; k < GetNumberOfSeriesInstanceUIDs(); k++)
       {
       if ( this->SeriesInstanceUIDs[k].find(SeriesInstanceUID) != std::string::npos )
         {
@@ -394,7 +394,7 @@ public:
 
   int ExistContentTime( const char* contentTime )
     {
-      for (int k = 0; k < GetNumberOfContentTime(); k++)
+      for (unsigned int k = 0; k < GetNumberOfContentTime(); k++)
         {
         if ( this->ContentTime[k].find(contentTime) != std::string::npos )
           {
@@ -406,7 +406,7 @@ public:
 
   int ExistTriggerTime( const char* triggerTime )
     {
-      for (int k = 0; k < GetNumberOfTriggerTime(); k++)
+      for (unsigned int k = 0; k < GetNumberOfTriggerTime(); k++)
         {
         if ( this->TriggerTime[k].find(triggerTime) != std::string::npos )
           {
@@ -424,7 +424,7 @@ public:
         a += dgo[n]*dgo[n];
         }
       
-      for (int k = 0; k < GetNumberOfDiffusionGradientOrientation(); k++)
+      for (unsigned int k = 0; k < GetNumberOfDiffusionGradientOrientation(); k++)
         {
         float b = 0;
         float c = 0;
@@ -445,7 +445,7 @@ public:
 
   int ExistSliceLocation( float sliceLocation )
     {
-      for (int k = 0; k < GetNumberOfSliceLocation(); k++)
+      for (unsigned int k = 0; k < GetNumberOfSliceLocation(); k++)
         {
         if ( this->SliceLocation[k] == sliceLocation )
           {
@@ -469,7 +469,7 @@ public:
         directionCosine[k] /= a;
         }
       
-      for (int k = 0; k < GetNumberOfImageOrientationPatient(); k++)
+      for (unsigned int k = 0; k < GetNumberOfImageOrientationPatient(); k++)
         {
         std::vector<float> aVec = ImageOrientationPatient[k];
         a = sqrt( aVec[0]*aVec[0] + aVec[1]*aVec[1] + aVec[2]*aVec[2] );
@@ -490,7 +490,7 @@ public:
     }
   
   // methods to get N-th discriminator
-  const char* GetNthSeriesInstanceUID( int n )
+  const char* GetNthSeriesInstanceUID( unsigned int n )
     {
       if ( n >= this->GetNumberOfSeriesInstanceUIDs() )
         {
@@ -499,7 +499,7 @@ public:
       return this->SeriesInstanceUIDs[n].c_str();
     }
 
-  const char* GetNthContentTime( int n )
+  const char* GetNthContentTime( unsigned int n )
     {
       if ( n >= this->GetNumberOfContentTime() )
         {
@@ -508,7 +508,7 @@ public:
       return this->ContentTime[n].c_str();
     }
   
-  const char* GetNthTriggerTime( int n )
+  const char* GetNthTriggerTime( unsigned int n )
     {
       if ( n >= this->GetNumberOfTriggerTime() )
         {
@@ -517,7 +517,7 @@ public:
       return this->TriggerTime[n].c_str();
     }
 
-  float* GetNthDiffusionGradientOrientation( int n )
+  float* GetNthDiffusionGradientOrientation( unsigned int n )
     {
       if ( n >= this->GetNumberOfDiffusionGradientOrientation() )
         {
@@ -531,7 +531,7 @@ public:
       return dgo;
     }
 
-  float GetNthSliceLocation( int n )
+  float GetNthSliceLocation( unsigned int n )
     {
       if ( n >= this->GetNumberOfSliceLocation() )
         {
@@ -540,7 +540,7 @@ public:
       return this->SliceLocation[0];
     }
   
-  float* GetNthImageOrientationPatient( int n )
+  float* GetNthImageOrientationPatient( unsigned int n )
     {
       if ( n >= this->GetNumberOfImageOrientationPatient() )
         {
@@ -675,8 +675,8 @@ protected:
   int UseOrientationFromFile;
   int DataExtent[6];
 
-  int OutputScalarType;
-  int NumberOfComponents;
+  int          OutputScalarType;
+  unsigned int NumberOfComponents;
 
   double DefaultDataSpacing[3];
   double DefaultDataOrigin[3];

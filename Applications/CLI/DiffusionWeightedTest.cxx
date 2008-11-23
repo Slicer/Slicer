@@ -86,9 +86,9 @@ template<class PixelType> int DoIt( int argc, const char * argv[], PixelType )
 
             // try to find the b-value
 
-            int pos = itr->first.find("DWMRI_b-value");
+            int pos2 = itr->first.find("DWMRI_b-value");
 
-            if ( pos != -1 ) {
+            if ( pos2 != -1 ) {
               std::string tagvalue = entryvalue->GetMetaDataObjectValue();
               std::sscanf(tagvalue.c_str(), "%lf\n", &dBValue );
               iFoundBValue = 1;

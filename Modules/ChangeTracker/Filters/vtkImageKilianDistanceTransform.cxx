@@ -229,7 +229,7 @@ void vtkImageKilianDistanceTransformInitialize(vtkImageKilianDistanceTransform *
               
         for (idx0 = outMin0; idx0 <= outMax0; ++idx0)
           {
-        if( *inPtr0 != objectValue ) {
+          if( *inPtr0 != static_cast<T>(objectValue) ) {
           // If we calculate signed distance map also calculate the distance outside the object
               // At the end of the iteration we will then turn the inside negative  
           if (signedDistanceMap) {

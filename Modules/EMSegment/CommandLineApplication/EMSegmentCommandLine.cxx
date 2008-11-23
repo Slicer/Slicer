@@ -321,9 +321,9 @@ public:
   }
   
 #ifdef EM_CL_GUI
-  void SetProcessInformation(ModuleProcessInformation* ProcessInformation)
+  void SetProcessInformation(ModuleProcessInformation* processInformation)
   {
-    this->ProcessInformation = ProcessInformation;
+    this->ProcessInformation = processInformation;
   }
 
 private:

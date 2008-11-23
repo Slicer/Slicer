@@ -274,11 +274,11 @@ void vtkEMSegmentGUI::ProcessMRMLEvents(vtkObject *caller,
     && (event == vtkMRMLScene::NodeAddedEvent 
     || event == vtkMRMLScene::NodeRemovedEvent ) )
     {
-    vtkMRMLNode *node = (vtkMRMLNode*)(callData);
-    if (node != NULL && node->IsA("vtkMRMLEMSNode"))
+    vtkMRMLNode *mrmlNode = (vtkMRMLNode*)(callData);
+    if (mrmlNode != NULL && mrmlNode->IsA("vtkMRMLEMSNode"))
       {
       // current node removed
-      if(node == this->GetNode() && event == vtkMRMLScene::NodeRemovedEvent)
+      if(mrmlNode == this->GetNode() && event == vtkMRMLScene::NodeRemovedEvent)
         {
         vtkKWMessageDialog::PopupMessage( 
           this->GetApplication(), 
@@ -585,7 +585,7 @@ void vtkEMSegmentGUI::PopulateTestingData()
         //volume_logic->AddArchetypeVolume((char*)(fullName.c_str()), 1, 0, 
         //                                 filename.c_str()); 
         int loadingOption = 2;
-        volume_logic->AddArchetypeVolume((char*)(fullName.c_str()), filename.c_str(), loadingOption); 
+        volume_logic->AddArchetypeVolume(fullName.c_str(), filename.c_str(), loadingOption); 
 
         }
       }

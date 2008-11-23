@@ -414,7 +414,7 @@ void vtkSlicerVolumeFileHeaderWidget::Invoke ( )
     }
 }
 
-void vtkSlicerVolumeFileHeaderWidget::SetInfo(char * info)
+void vtkSlicerVolumeFileHeaderWidget::SetInfo(const char * info)
 {
   if (this->InfoLabel != NULL)
     {

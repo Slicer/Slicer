@@ -39,7 +39,7 @@ vtkCxxRevisionMacro (vtkSlicerVolumesGUI, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
 vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
-  {
+{
   this->Logic = NULL;
   this->VolumeNode = NULL;
   this->SelectedVolumeID = NULL;
@@ -83,11 +83,11 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
   NAMICLabel = NULL;
   NCIGTLabel = NULL;
   BIRNLabel = NULL;
-  }
+}
 
 //---------------------------------------------------------------------------
 vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
-  {
+{
   this->RemoveGUIObservers();
 
   if (this->SelectedVolumeID)
@@ -275,12 +275,12 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
   this->Built = false;
   this->SetLogic ( vtkObjectPointer (&this->Logic), NULL ); 
   vtkSetMRMLNodeMacro (this->VolumeNode, NULL );
-  }
+}
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::PrintSelf ( ostream& os, vtkIndent indent )
-  {
+{
   this->vtkObject::PrintSelf ( os, indent );
 
   os << indent << "SlicerVolumesGUI: " << this->GetClassName ( ) << "\n";
@@ -293,21 +293,21 @@ void vtkSlicerVolumesGUI::PrintSelf ( ostream& os, vtkIndent indent )
   os << indent << "SaveFrame: " << this->GetSaveFrame ( ) << "\n";
 
   if ( this->GetNumberOfItemsInDictionary() > 0 )
-  {
+    {
     os << indent << "Items in meta data: " << this->GetNumberOfItemsInDictionary() << "\n"; 
     for (unsigned int k = 0; k < this->GetNumberOfItemsInDictionary(); k++)
-    {
+      {
       os << indent << indent << k << ": Key: " << this->GetNthKey(k); 
       os << " -> Value: " << this->GetNthValue(k) << "\n"; 
+      }
     }
-  }
   // print widgets?
-  }
+}
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::RemoveGUIObservers ( )
-  {
+{
   if (this->VolumeSelectorWidget)
     {
     this->VolumeSelectorWidget->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent,  (vtkCommand *)this->GUICallbackCommand );
@@ -328,12 +328,12 @@ void vtkSlicerVolumesGUI::RemoveGUIObservers ( )
     {
     this->UseCompressionCheckButton->RemoveObservers ( vtkKWCheckButton::SelectedStateChangedEvent,  (vtkCommand *)this->GUICallbackCommand );
     }
-  }
+}
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::AddGUIObservers ( )
-  {
+{
   // Fill in
   // observer load volume button    
   this->VolumeSelectorWidget->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -341,14 +341,14 @@ void vtkSlicerVolumesGUI::AddGUIObservers ( )
   this->SaveVolumeButton->GetLoadSaveDialog()->AddObserver (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->UseCompressionCheckButton->AddObserver ( vtkKWCheckButton::SelectedStateChangedEvent,  (vtkCommand *)this->GUICallbackCommand );
-  }
+}
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData )
-  {
+{
   if (event == vtkKWCheckButton::SelectedStateChangedEvent && 
-    this->UseCompressionCheckButton == vtkKWCheckButton::SafeDownCast(caller))
+      this->UseCompressionCheckButton == vtkKWCheckButton::SafeDownCast(caller))
     {
     vtkMRMLVolumeNode *refNode = 
       vtkMRMLVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
@@ -387,7 +387,7 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
       }
     }
   if (this->VolumeFileHeaderWidget == vtkSlicerVolumeFileHeaderWidget::SafeDownCast(caller) && 
-    event == vtkSlicerVolumeFileHeaderWidget::FileHeaderOKEvent )
+      event == vtkSlicerVolumeFileHeaderWidget::FileHeaderOKEvent )
     {
     const char *fileName = this->LoadVolumeButton->GetWidget()->GetFileName();
     vtkKWMenuButton *mb = this->CenterImageMenu->GetWidget();
@@ -417,7 +417,7 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
     vtkMRMLVolumeHeaderlessStorageNode* snode = this->VolumeFileHeaderWidget->GetVolumeHeaderlessStorageNode();
 
     this->VolumeNode = volumeLogic->AddHeaderVolume( fileName, this->NameEntry->GetWidget()->GetValue(), 
-      snode, loadingOptions );
+                                                     snode, loadingOptions );
     return;
     }
   if (this->LoadVolumeButton->GetWidget()->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) && event == vtkKWTopLevel::WithdrawEvent )
@@ -439,7 +439,7 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
         }
       catch (vtkstd::exception &e) 
         {
-        e; // dummy access to avoid warning
+        e=e; // dummy access to avoid warning
         }
       reader->Delete();
       }
@@ -476,9 +476,9 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
 
       vtkKWMenuButton *orientMB = this->OrientImageMenu->GetWidget();
       if ( !strcmp (orientMB->GetValue(), "Use IJK") )
-      {
+        {
         loadingOptions += 16;
-      }
+        }
 
       std::string fileString(fileName);
       for (unsigned int i = 0; i < fileString.length(); i++)
@@ -541,7 +541,7 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
     return;
     }
   else if (this->VolumeSelectorWidget == vtkSlicerNodeSelectorWidget::SafeDownCast(caller) &&
-    event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
+           event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
     {
     vtkMRMLVolumeNode *volume = 
       vtkMRMLVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
@@ -574,37 +574,37 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
       }
     return;
     }
-  } 
+} 
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData )
-  {
+{
   if (event ==  vtkCommand::ProgressEvent) 
     {
     double progress = *((double *)callData);
     this->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetValue(100*progress);
     }
-  }
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData )
-  {
-  }
+{
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::CreateModuleEventBindings ( )
-  {
-  }
+{
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::ReleaseModuleEventBindings ( )
-  {
-  }
+{
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::Enter ( )
-  {
+{
   if ( this->Built == false )
     {
     this->BuildGUI();
@@ -613,31 +613,26 @@ void vtkSlicerVolumesGUI::Enter ( )
     }
   this->CreateModuleEventBindings();
   this->UpdateFramesFromMRML();
-  }
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::Exit ( )
-  {
+{
   this->ReleaseModuleEventBindings();
-  }
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
-  {
-
-  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-  //vtkWarningMacro(<< "this->VolumeDisplayWidget: " << this->VolumeDisplayWidget->GetTclName() << "; " << this->VolumeDisplayWidget->GetWidgetName() << endl);
+{
 
   vtkMRMLVolumeNode *refNode = 
     vtkMRMLVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
 
 
   // Update Display Widget according to the selected Volume Node
-  vtkSlicerVolumeDisplayWidget *oldDisplayWidget = this->VolumeDisplayWidget;
   vtkKWFrame *oldFrame = this->VolumeDisplayFrame;
 
   int tearDown = 0;
-  vtkKWFrame *frame = NULL;
   if (refNode != NULL)
     {
     if ( !strcmp(refNode->GetClassName(), "vtkMRMLScalarVolumeNode") || !strcmp(refNode->GetClassName(), "vtkMRMLVectorVolumeNode"))
@@ -784,7 +779,7 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
         }
       this->GradientFrame->EnabledOn();
       this->GradientFrame->SetAllowFrameToCollapse(1);
-       vtkMRMLDiffusionTensorVolumeNode *dtiNode = 
+      vtkMRMLDiffusionTensorVolumeNode *dtiNode = 
         vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(refNode);
       this->DiffusionEditorWidget->UpdateWidget(dtiNode);
       }
@@ -803,7 +798,7 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
     this->VolumeDisplayWidget->AddWidgetObservers();
     //this->VolumeDisplayWidget->UpdateWidgetFromMRML();
     this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -before %s",
-      this->VolumeDisplayFrame->GetWidgetName(), oldFrame->GetWidgetName());
+                 this->VolumeDisplayFrame->GetWidgetName(), oldFrame->GetWidgetName());
 
     // Unpack old VolumeDisplayWidget
     this->Script("pack forget %s", oldFrame->GetWidgetName());
@@ -845,21 +840,21 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
     }
 
   // update the image origin
-  }
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::TearDownGUI ( )
-  {
+{
   this->Exit();
   if ( this->Built )
     {
     this->RemoveGUIObservers();
     }
-  }
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::BuildGUI ( )
-  {
+{
 
   if (this->Built)
     {
@@ -914,7 +909,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->LoadFrame->SetLabelText("Load");
   this->LoadFrame->ExpandFrame();
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-    this->LoadFrame->GetWidgetName(), page->GetWidgetName());
+                this->LoadFrame->GetWidgetName(), page->GetWidgetName());
 
   // add a file browser 
   this->LoadVolumeButton = vtkKWLoadSaveButtonWithLabel::New ( );
@@ -926,7 +921,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->LoadVolumeButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes("{ {Volume} {*} }");
   this->LoadVolumeButton->GetWidget()->GetLoadSaveDialog()->RetrieveLastPathFromRegistry("OpenPath");
   app->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
-    this->LoadVolumeButton->GetWidgetName());
+              this->LoadVolumeButton->GetWidgetName());
 
   // volume name
   this->NameEntry = vtkKWEntryWithLabel::New();
@@ -937,7 +932,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->NameEntry->SetLabelText("Volume Name:");
   this->NameEntry->GetWidget()->SetValue ( "" );
   this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
-    this->NameEntry->GetWidgetName());
+               this->NameEntry->GetWidgetName());
 
   // center image button
   this->CenterImageMenu = vtkKWMenuButtonWithLabel::New();
@@ -950,7 +945,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->CenterImageMenu->GetWidget()->GetMenu()->AddRadioButton ( "From File");
   this->CenterImageMenu->GetWidget()->SetValue ( "From File" );
   this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
-    this->CenterImageMenu->GetWidgetName());
+               this->CenterImageMenu->GetWidgetName());
 
   // UseOrientationFromFile
   this->OrientImageMenu = vtkKWMenuButtonWithLabel::New();
@@ -963,7 +958,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->OrientImageMenu->GetWidget()->GetMenu()->AddRadioButton ( "From File");
   this->OrientImageMenu->GetWidget()->SetValue ( "From File" );
   this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
-    this->OrientImageMenu->GetWidgetName());
+               this->OrientImageMenu->GetWidgetName());
 
   // label map button (is this a label map?)
   this->LabelMapCheckButton = vtkKWCheckButton::New();
@@ -972,7 +967,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->LabelMapCheckButton->SelectedStateOff();
   this->LabelMapCheckButton->SetText("Label Map");
   this->Script("pack %s -side left -anchor nw -expand n -padx 2 -pady 2", 
-    this->LabelMapCheckButton->GetWidgetName());
+               this->LabelMapCheckButton->GetWidgetName());
 
   // Single File button (Do we load a file or a series?)
   this->SingleFileCheckButton = vtkKWCheckButton::New();
@@ -981,7 +976,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->SingleFileCheckButton->SelectedStateOff();
   this->SingleFileCheckButton->SetText("Single File");
   this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
-    this->SingleFileCheckButton->GetWidgetName());
+               this->SingleFileCheckButton->GetWidgetName());
 
   // Apply button
   this->ApplyButton = vtkKWPushButton::New();
@@ -990,7 +985,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->ApplyButton->SetText("Apply");
   this->ApplyButton->SetWidth(20);
   this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
-    this->ApplyButton->GetWidgetName());
+               this->ApplyButton->GetWidgetName());
 
   //  Volume to select
   this->VolumeSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
@@ -1004,7 +999,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->VolumeSelectorWidget->SetLabelText( "Active Volume: ");
   this->VolumeSelectorWidget->SetBalloonHelpString("Select a volume from the current scene.");
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-    this->VolumeSelectorWidget->GetWidgetName());
+               this->VolumeSelectorWidget->GetWidgetName());
 
   // ---
   // DISPLAY FRAME            
@@ -1014,7 +1009,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->DisplayFrame->SetLabelText ("Display");
   this->DisplayFrame->CollapseFrame ( );
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-    this->DisplayFrame->GetWidgetName(), page->GetWidgetName());
+                this->DisplayFrame->GetWidgetName(), page->GetWidgetName());
 
   // Create frame for each Volume type
 
@@ -1022,13 +1017,13 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->ScalarDisplayFrame->SetParent( this->DisplayFrame->GetFrame() );
   this->ScalarDisplayFrame->Create( );
   this->Script( "pack %s -in %s",
-    this->ScalarDisplayFrame->GetWidgetName(),this->DisplayFrame->GetFrame()->GetWidgetName());
+                this->ScalarDisplayFrame->GetWidgetName(),this->DisplayFrame->GetFrame()->GetWidgetName());
 
   this->LabelMapDisplayFrame = vtkKWFrame::New();
   this->LabelMapDisplayFrame->SetParent( this->DisplayFrame->GetFrame() );
   this->LabelMapDisplayFrame->Create( );
   this->Script( "pack %s -in %s",
-    this->LabelMapDisplayFrame->GetWidgetName(),this->DisplayFrame->GetFrame()->GetWidgetName());
+                this->LabelMapDisplayFrame->GetWidgetName(),this->DisplayFrame->GetFrame()->GetWidgetName());
 
   this->DWIDisplayFrame = vtkKWFrame::New();
   this->DWIDisplayFrame->SetParent( this->DisplayFrame->GetFrame() );
@@ -1055,7 +1050,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->GradientFrame->EnabledOff();
   this->GradientFrame->SetAllowFrameToCollapse(0);
   app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-    this->GradientFrame->GetWidgetName(), page->GetWidgetName());
+              this->GradientFrame->GetWidgetName(), page->GetWidgetName());
 
   this->DiffusionEditorWidget = vtkSlicerDiffusionEditorWidget::New();
   this->DiffusionEditorWidget->SetApplication((vtkSlicerApplication *)this->GetApplication());
@@ -1064,7 +1059,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->DiffusionEditorWidget->Create();
   this->DiffusionEditorWidget->AddWidgetObservers();
   app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s", 
-    this->DiffusionEditorWidget->GetWidgetName(), this->GradientFrame->GetFrame()->GetWidgetName());
+              this->DiffusionEditorWidget->GetWidgetName(), this->GradientFrame->GetFrame()->GetWidgetName());
 
   // ---
   // Info FRAME            
@@ -1074,7 +1069,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->InfoFrame->SetLabelText ("Info");
   this->InfoFrame->CollapseFrame ( );
   app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s", 
-    this->InfoFrame->GetWidgetName(), page->GetWidgetName());
+              this->InfoFrame->GetWidgetName(), page->GetWidgetName());
 
   this->VolumeHeaderWidget = vtkSlicerVolumeHeaderWidget::New();
   this->VolumeHeaderWidget->AddNodeSelectorWidgetOff();
@@ -1082,7 +1077,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->VolumeHeaderWidget->SetParent(this->InfoFrame->GetFrame());
   this->VolumeHeaderWidget->Create();
   app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-    this->VolumeHeaderWidget->GetWidgetName(), this->InfoFrame->GetFrame()->GetWidgetName());
+              this->VolumeHeaderWidget->GetWidgetName(), this->InfoFrame->GetFrame()->GetWidgetName());
 
   // ---
   // OPTION FRAME
@@ -1100,7 +1095,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->SaveFrame->SetLabelText ("Save");
   this->SaveFrame->CollapseFrame ( );
   app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-    this->SaveFrame->GetWidgetName(), page->GetWidgetName());
+              this->SaveFrame->GetWidgetName(), page->GetWidgetName());
 
   this->UseCompressionCheckButton = vtkKWCheckButton::New();
   this->UseCompressionCheckButton->SetParent(this->SaveFrame->GetFrame());
@@ -1108,7 +1103,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->UseCompressionCheckButton->SelectedStateOn();
   this->UseCompressionCheckButton->SetText("Use Compression");
   this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
-    this->UseCompressionCheckButton->GetWidgetName());
+               this->UseCompressionCheckButton->GetWidgetName());
 
   this->SaveVolumeButton = vtkKWLoadSaveButton::New ( );
   this->SaveVolumeButton->SetParent ( this->SaveFrame->GetFrame() );
@@ -1118,7 +1113,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->SaveVolumeButton->GetLoadSaveDialog()->SetFileTypes("{ {volume} {*.*} }");
   this->SaveVolumeButton->GetLoadSaveDialog()->RetrieveLastPathFromRegistry("OpenPath");
   app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
-    this->SaveVolumeButton->GetWidgetName());
+              this->SaveVolumeButton->GetWidgetName());
 
   this->VolumeFileHeaderWidget = vtkSlicerVolumeFileHeaderWidget::New();
   this->VolumeFileHeaderWidget->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow());
@@ -1128,15 +1123,15 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->VolumeFileHeaderWidget->SetInfo("The file format does not match standard volume formats.\n If you want to read it as binary data, fill the header and press Read.\n Otherwise, press Cancel");
 
   this->ProcessGUIEvents (this->VolumeSelectorWidget,
-    vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
+                          vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
 
   this->Built = true;
 
-  }
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::CreateScalarDisplayWidget ( )
-  {
+{
   if (this->scalarVDW == NULL)
     {
     this->scalarVDW = vtkSlicerScalarVolumeDisplayWidget::New ( );
@@ -1145,18 +1140,18 @@ void vtkSlicerVolumesGUI::CreateScalarDisplayWidget ( )
     //this->scalarVDW->AddMRMLObservers();
     this->scalarVDW->Create();
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-      scalarVDW->GetWidgetName(), this->ScalarDisplayFrame->GetWidgetName());
+                   scalarVDW->GetWidgetName(), this->ScalarDisplayFrame->GetWidgetName());
     }
-  }
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::CreateVectorDisplayWidget ( )
-  {
+{
   // TODO fill in
-  }
+}
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::CreateLabelMapDisplayWidget ( )
-  {
+{
   if (this->labelVDW == NULL)
     {
     this->labelVDW = vtkSlicerLabelMapVolumeDisplayWidget::New ( );
@@ -1165,13 +1160,13 @@ void vtkSlicerVolumesGUI::CreateLabelMapDisplayWidget ( )
     //this->labelVDW->AddMRMLObservers();
     this->labelVDW->Create();
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-      labelVDW->GetWidgetName(), this->LabelMapDisplayFrame->GetWidgetName());
+                   labelVDW->GetWidgetName(), this->LabelMapDisplayFrame->GetWidgetName());
     }
-  }
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::CreateDWIDisplayWidget ( )
-  {
+{
   if (this->dwiVDW == NULL)
     {
     this->dwiVDW = vtkSlicerDiffusionWeightedVolumeDisplayWidget::New( );
@@ -1180,13 +1175,13 @@ void vtkSlicerVolumesGUI::CreateDWIDisplayWidget ( )
     //this->dwiVDW->AddMRMLObservers();
     this->dwiVDW->Create();
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-      dwiVDW->GetWidgetName(), this->DWIDisplayFrame->GetWidgetName());
+                   dwiVDW->GetWidgetName(), this->DWIDisplayFrame->GetWidgetName());
     }
-  }
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::CreateDTIDisplayWidget ( )
-  {
+{
   if (this->dtiVDW == NULL)
     {
     this->dtiVDW = vtkSlicerDiffusionTensorVolumeDisplayWidget::New( );
@@ -1195,31 +1190,31 @@ void vtkSlicerVolumesGUI::CreateDTIDisplayWidget ( )
     //this->dtiVDW->AddMRMLObservers();
     this->dtiVDW->Create();
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-      dtiVDW->GetWidgetName(), this->DTIDisplayFrame->GetWidgetName());    
+                   dtiVDW->GetWidgetName(), this->DTIDisplayFrame->GetWidgetName());    
     }
-  }
+}
 
 
 void vtkSlicerVolumesGUI::CopyTagAndValues( vtkITKArchetypeImageSeriesReader* reader )
 {
-  int nItems = reader->GetNumberOfItemsInDictionary();
+  unsigned int nItems = reader->GetNumberOfItemsInDictionary();
   this->Tags.resize(0);
   this->TagValues.resize(0);
 
   if (nItems > 0)
-  {
-    for (unsigned int k = 0; k < nItems; k++)
     {
+    for (unsigned int k = 0; k < nItems; k++)
+      {
       this->Tags.push_back( reader->GetNthKey(k) );
       this->TagValues.push_back( reader->GetNthValue(k) );
+      }
     }
-  }
 
   return;
 }
 
 
-int vtkSlicerVolumesGUI::GetNumberOfItemsInDictionary()
+unsigned int vtkSlicerVolumesGUI::GetNumberOfItemsInDictionary()
 {
   return this->Tags.size();
 }
@@ -1228,31 +1223,31 @@ bool vtkSlicerVolumesGUI::HasKey( char* tag )
 {
   std::string tagstr( tag );
   for (unsigned int k = 0; k < this->GetNumberOfItemsInDictionary(); k++)
-  {
+    {
     std::string nthTag = this->GetNthKey( k );
     if (nthTag == tagstr)
-    {
+      {
       return true;
+      }
     }
-  }
   return false;
 }
 
 const char* vtkSlicerVolumesGUI::GetNthKey( unsigned int n )
 {
   if (n >= this->Tags.size())
-  {
+    {
     return NULL;
-  }
+    }
   return this->Tags[n].c_str();
 }
 
 const char* vtkSlicerVolumesGUI::GetNthValue( unsigned int n )
 {
   if (n >= this->TagValues.size())
-  {
+    {
     return NULL;
-  }
+    }
   return this->TagValues[n].c_str();
 }
 
@@ -1260,12 +1255,12 @@ const char* vtkSlicerVolumesGUI::GetTagValue( char* tag )
 {
   std::string tagstr (tag);
   for (unsigned int k = 0; k < this->Tags.size(); k++)
-  {
-    if (this->Tags[k] == tagstr)
     {
+    if (this->Tags[k] == tagstr)
+      {
       return this->TagValues[k].c_str();
+      }
     }
-  }
   return NULL;
 }
 

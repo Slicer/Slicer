@@ -470,12 +470,12 @@ int main( int argc, char * argv[] )
   
   // Print out the arguments (need to add --echo to the argument list 
   // 
-  std::vector<char *> vargs;
-  for (int vi=0; vi < argc; ++vi) vargs.push_back(argv[vi]);
-  vargs.push_back("--echo");
+  std::vector<char *> myVargs;
+  for (int vi=0; vi < argc; ++vi) myVargs.push_back(argv[vi]);
+  myVargs.push_back(const_cast<char *>("--echo"));
   
-  argc = vargs.size();
-  argv = &(vargs[0]);
+  argc = myVargs.size();
+  argv = &(myVargs[0]);
 
   PARSE_ARGS;
 

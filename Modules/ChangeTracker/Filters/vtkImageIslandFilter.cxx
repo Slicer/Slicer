@@ -173,31 +173,31 @@ template <class T> void IslandMemory<T>::CreateVariables () {
 
 template <class T> void IslandMemory<T>::SetSize(int NewSize, IslandMemory<T>* SetIsland, int MaxSize) {
   // cout << "IslandMemory<T>::SetSize " << NewSize << " old size : " << SetIsland->GetSize() << " ID: " << SetIsland->GetID()<< endl;
-  int  SetSize        = SetIsland->Size;
+  int  setSize        = SetIsland->Size;
 
-  if (SetSize == NewSize) return;
+  if (setSize == NewSize) return;
   // Last Element 
 
-  if ((SetIsland->Next == NULL) && (NewSize > SetSize)) {
+  if ((SetIsland->Next == NULL) && (NewSize > setSize)) {
     SetIsland->Size = NewSize;
     return;
   } 
 
   // Nothing needs to be changed
-  if ((MaxSize > -1) && (NewSize >  MaxSize) && (SetSize >  MaxSize)) {
+  if ((MaxSize > -1) && (NewSize >  MaxSize) && (setSize >  MaxSize)) {
     SetIsland->Size = NewSize;
     return;
   } 
 
-  T    SetLabel       = SetIsland->Label;
+  T    setLabel       = SetIsland->Label;
   int  SetStartVoxel  = SetIsland->StartVoxel;
   int  SetID          = SetIsland->ID;
   IslandMemory<T>* Ptr =  this->DeleteIsland(SetID);
   // Cannot be last element
   assert(Ptr);
   // cout << "ID " << SetID << endl;
-  if ((NewSize > SetSize) && (SetID > -1)) {
-    int result = Ptr->AddIsland(SetStartVoxel, NewSize, SetLabel, SetID,MaxSize); 
+  if ((NewSize > setSize) && (SetID > -1)) {
+    int result = Ptr->AddIsland(SetStartVoxel, NewSize, setLabel, SetID,MaxSize); 
     //assert(result > -1);
     if (!(result > -1))
       {
@@ -205,7 +205,7 @@ template <class T> void IslandMemory<T>::SetSize(int NewSize, IslandMemory<T>* S
       return;
       } 
   } else {
-    int result = this->AddIsland(SetStartVoxel, NewSize, SetLabel, SetID, MaxSize);
+    int result = this->AddIsland(SetStartVoxel, NewSize, setLabel, SetID, MaxSize);
     //assert( result > -1);
     if (!(result > -1))
       {
@@ -341,39 +341,39 @@ template <class T> IslandMemory<T>*  IslandMemoryGroup<T>::DeleteIsland(int DelI
   return NULL;
 }
 
-template <class T> IslandMemory<T>*  IslandMemoryGroup<T>::GetIsland(int GetID, int GetSize) {
+template <class T> IslandMemory<T>*  IslandMemoryGroup<T>::GetIsland(int getID, int getSize) {
      IslandMemoryGroup<T>* ptr = this; 
 
      // Have to look through everything
-     if (GetSize < 0) {
+     if (getSize < 0) {
        IslandMemory<T>* result = NULL;
        while(ptr && !result) {
-     result = ptr->List->GetIsland(GetID);
+     result = ptr->List->GetIsland(getID);
      ptr = ptr->Next;
        }
        return result;
      }
-     ptr = this->GetGroup(GetSize);
-     if (ptr) return ptr->List->GetIsland(GetID);
+     ptr = this->GetGroup(getSize);
+     if (ptr) return ptr->List->GetIsland(getID);
      return NULL;
 }
 
 template <class T> void IslandMemoryGroup<T>::SetSize(int NewSize, IslandMemory<T>* SetIsland) {
   // cout << "IslandMemoryGroup<T>::SetSize " << NewSize << " old size : " << SetIsland->GetSize() << " ID: " << SetIsland->GetID()<< endl;
 
-  int  SetSize        = SetIsland->GetSize();
-  if (SetSize == NewSize) return;
+  int  setSize        = SetIsland->GetSize();
+  if (setSize == NewSize) return;
   // Last Element 
-  if ((NewSize >  this->MaxSize) && (SetSize >  this->MaxSize)) {
+  if ((NewSize >  this->MaxSize) && (setSize >  this->MaxSize)) {
     SetIsland->SetSize(NewSize,SetIsland,this->MaxSize); 
     return;
   }
 
-  T    SetLabel       = SetIsland->GetLabel();
+  T    setLabel       = SetIsland->GetLabel();
   int  SetStartVoxel  = SetIsland->GetStartVoxel();
   int  SetID          = SetIsland->GetID();
-  this->DeleteIsland(SetID,SetSize);
-  this->AddIsland(SetStartVoxel, NewSize, SetLabel, SetID);
+  this->DeleteIsland(SetID,setSize);
+  this->AddIsland(SetStartVoxel, NewSize, setLabel, SetID);
 }
 
 template <class T> int IslandMemoryGroup<T>::PrintLine () {
@@ -819,9 +819,9 @@ static void vtkImageIslandFilterExecute(vtkImageIslandFilter *self, T *inPtr, in
 
 
   // Define type of island removal
-  int IslandInputLabelMin  = self->GetIslandInputLabelMin();
-  int IslandInputLabelMax  = self->GetIslandInputLabelMax();
-  int IslandInputLabelFlag = ((IslandInputLabelMax > -1)  && (IslandInputLabelMin > -1));
+  int islandInputLabelMin  = self->GetIslandInputLabelMin();
+  int islandInputLabelMax  = self->GetIslandInputLabelMax();
+  int IslandInputLabelFlag = ((islandInputLabelMax > -1)  && (islandInputLabelMin > -1));
   int IslandOutputLabel    = self->GetIslandOutputLabel();
   int IslandMinSize        = self->GetIslandMinSize();
   int PrintInformation = self->GetPrintInformation();
@@ -874,7 +874,7 @@ static void vtkImageIslandFilterExecute(vtkImageIslandFilter *self, T *inPtr, in
         }
         case IMAGEISLANDFILTER_STATIC: {
            // Only delete it if it is a certain lable and if activated - touching the ROI
-           if ((IslandInputLabelFlag  && ((T(IslandInputLabelMin) >  inPtr[index]) || (T(IslandInputLabelMax) <  inPtr[index])))
+           if ((IslandInputLabelFlag  && ((T(islandInputLabelMin) >  inPtr[index]) || (T(islandInputLabelMax) <  inPtr[index])))
                      || (IslandROIPtr && !*IslandROIPtr)) break;
 
            IslandCount ++;
@@ -900,7 +900,7 @@ static void vtkImageIslandFilterExecute(vtkImageIslandFilter *self, T *inPtr, in
   if (IslandRemovalType == IMAGEISLANDFILTER_STATIC) {
     // Already deleted all Islands 
     if (PrintInformation > IMAGEISLANDFILTER_PRINT_DISABLED) 
-    cout << "Deleted " << DeletedIslands << " from " << IslandCount << " between label " << IslandInputLabelMin << " and " << IslandInputLabelMax <<  endl;
+    cout << "Deleted " << DeletedIslands << " from " << IslandCount << " between label " << islandInputLabelMin << " and " << islandInputLabelMax <<  endl;
     delete VoxelStackMem;
     delete[] Checked;
     return;
@@ -930,7 +930,7 @@ static void vtkImageIslandFilterExecute(vtkImageIslandFilter *self, T *inPtr, in
 
     while (MemIslandPtr) {
       if (!IslandInputLabelFlag  || 
-          ((T(IslandInputLabelMin) <= MemIslandPtr->GetLabel()) && (MemIslandPtr->GetLabel() <=  T(IslandInputLabelMax)))) {
+          ((T(islandInputLabelMin) <= MemIslandPtr->GetLabel()) && (MemIslandPtr->GetLabel() <=  T(islandInputLabelMax)))) {
         IslandDeleteCount ++;
 
 #ifndef _WIN32  
@@ -1115,9 +1115,9 @@ static void vtkImageIslandFilter_GetMaxIslandSize(T* inPtr, int LabelMin , int L
 
 
 int vtkImageIslandFilter::GetMaxIslandSize(vtkImageData *InputData) {
-   int IslandInputLabelMin  = this->GetIslandInputLabelMin();
-   int IslandInputLabelMax  = this->GetIslandInputLabelMax();
-   if ((IslandInputLabelMax < 0 )  || (IslandInputLabelMin < 0 )) {
+   int islandInputLabelMin  = this->GetIslandInputLabelMin();
+   int islandInputLabelMax  = this->GetIslandInputLabelMax();
+   if ((islandInputLabelMax < 0 )  || (islandInputLabelMin < 0 )) {
      vtkErrorMacro(<< "vtkImageIslandFilter::GetMaxIslandSize: Define IslandInputLabelMax and IslandInputLabelMin before calling this function!");
      return -1;
    }
@@ -1127,7 +1127,7 @@ int vtkImageIslandFilter::GetMaxIslandSize(vtkImageData *InputData) {
    void* inPtr = InputData->GetScalarPointerForExtent(inExt);
    int result;
    switch (InputData->GetScalarType()) {
-      vtkTemplateMacro(vtkImageIslandFilter_GetMaxIslandSize((VTK_TT *)(inPtr), IslandInputLabelMin,  IslandInputLabelMax, inExt, result)); 
+      vtkTemplateMacro(vtkImageIslandFilter_GetMaxIslandSize((VTK_TT *)(inPtr), islandInputLabelMin,  islandInputLabelMax, inExt, result)); 
    default:
     vtkErrorMacro(<< "Execute: Unknown ScalarType");
     return -1;

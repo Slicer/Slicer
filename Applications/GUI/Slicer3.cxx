@@ -1,14 +1,14 @@
 /*=========================================================================
 
-Copyright Brigham and Women's Hospital (BWH) All Rights Reserved.
+  Program:   Slicer3
+  Language:  C++
+  Module:    $HeadURL$
+  Date:      $Date$
+  Version:   $Revision$
 
-See License.txt
-or http://www.slicer.org/copyright/copyright.txt for details.
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-Program:   Slicer3
-Module:    $HeadURL$
-Date:      $Date$
-Version:   $Revision$
+  See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 ==========================================================================*/
 #include "vtkOpenGLRenderWindow.h"

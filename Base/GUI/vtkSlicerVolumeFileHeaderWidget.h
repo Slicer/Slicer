@@ -63,7 +63,7 @@ public:
 
   // Description
   // set info string
-  void SetInfo(char * info);
+  void SetInfo(const char * info);
 
   // Description
   // Invoke the widget dialog

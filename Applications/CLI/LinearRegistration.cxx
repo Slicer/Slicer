@@ -94,7 +94,7 @@ class ScheduleCommand : public itk::Command
   }
   void Execute ( const itk::Object *caller, const itk::EventObject & event )
   {
-    itk::GradientDescentOptimizer* optimizer = (itk::GradientDescentOptimizer*)(caller);
+    itk::GradientDescentOptimizer * optimizer = (itk::GradientDescentOptimizer*)(caller);
 
     std::cout << optimizer->GetCurrentIteration() << "   ";
     //std::cout << optimizer->GetCurrentStepLength() << "   ";

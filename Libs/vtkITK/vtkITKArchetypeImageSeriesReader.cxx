@@ -699,9 +699,9 @@ void vtkITKArchetypeImageSeriesReader::AssembleNthVolume ( int n )
   this->FileNames.resize( 0 );
   // int nFiles = this->AllFileNames.size(); UNUSED
 
-  int nSlices = this->GetNumberOfSliceLocation();
+  unsigned int nSlices = this->GetNumberOfSliceLocation();
 
-  for (int k = 0; k < nSlices; k++)
+  for (unsigned int k = 0; k < nSlices; k++)
   {
     const char* name = GetNthFileName( 0, -1, -1, 0, k, 0, n );
     if (name == NULL)
@@ -992,7 +992,7 @@ void vtkITKArchetypeImageSeriesReader::ParseDictionary()
   }
 }
 
-int vtkITKArchetypeImageSeriesReader::GetNumberOfItemsInDictionary()
+unsigned int vtkITKArchetypeImageSeriesReader::GetNumberOfItemsInDictionary()
 {
   return this->Tags.size();
 }

@@ -66,7 +66,7 @@ public:
   int CheckROI(vtkMRMLVolumeNode* volumeNode);
 
   int CreateSuperSampleFct(vtkImageData *input, const int ROIMin[3], const int ROIMax[3], const double SuperSampleSpacing, vtkImageData *output);
-  vtkMRMLScalarVolumeNode* CreateVolumeNode(vtkMRMLVolumeNode *volumeNode, char *name);
+  vtkMRMLScalarVolumeNode* CreateVolumeNode(vtkMRMLVolumeNode *volumeNode, const char *name);
 
   // Main Growth Function 
   int AnalyzeGrowth(vtkSlicerApplication *application);

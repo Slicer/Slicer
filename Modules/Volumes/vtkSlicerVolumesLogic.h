@@ -94,7 +94,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerVolumesLogic : public vtkSlicerModuleLogic
   // Description:
   // Create a label map volume to match the given volume node and add it to
   // the scene
-  vtkMRMLScalarVolumeNode *CreateLabelVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, char *name);
+  vtkMRMLScalarVolumeNode *CreateLabelVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *name);
 
   // Description:
   // Create a deep copy of a volume and add it to the scene

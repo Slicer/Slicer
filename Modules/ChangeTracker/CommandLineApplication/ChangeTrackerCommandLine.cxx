@@ -370,18 +370,18 @@ int main(int argc, char** argv)
    
       // this is simply for debugging right now 
       std::string Dir = vtksys::SystemTools::GetFilenamePath(vtksys::SystemTools::CollapseFullPath(tgScan1.c_str())) + "-TG-ITK";
-      std::string Scan1SuperSampleFileName     = Dir + "/scan1_ROI_SuperSample.nhdr"; 
-      std::string Scan1SegmentFileName         = Dir + "/scan1_ROI_SuperSample-Segment.nhdr";
-      std::string Scan2LocalFileName           = Dir + "/scan2_RegGlobal_ROI_SuperSample_NORM_RegLocal.nhdr"; 
+      std::string scan1SuperSampleFileName     = Dir + "/scan1_ROI_SuperSample.nhdr"; 
+      std::string scan1SegmentFileName         = Dir + "/scan1_ROI_SuperSample-Segment.nhdr";
+      std::string scan2LocalFileName           = Dir + "/scan2_RegGlobal_ROI_SuperSample_NORM_RegLocal.nhdr"; 
 
       // For debugging
-      Scan1SuperSampleFileName     = Dir + "/TG_scan1_SuperSampled.nhdr"; 
-      Scan1SegmentFileName         = Dir + "/TG_scan1_Segment.nhdr";
-      Scan2LocalFileName           = Dir + "/TG_scan2_Local.nhdr"; 
+      scan1SuperSampleFileName     = Dir + "/TG_scan1_SuperSampled.nhdr"; 
+      scan1SegmentFileName         = Dir + "/TG_scan1_Segment.nhdr";
+      scan2LocalFileName           = Dir + "/TG_scan2_Local.nhdr"; 
 
-      tgReadVolume(Scan1SuperSampleFileName.c_str(), Scan1SuperSample, matrix);
-      tgReadVolume(Scan1SegmentFileName.c_str(), Scan1SegmentOutput, matrix);
-      tgReadVolume(Scan2LocalFileName.c_str(), Scan2Local, matrix);
+      tgReadVolume(scan1SuperSampleFileName.c_str(), Scan1SuperSample, matrix);
+      tgReadVolume(scan1SegmentFileName.c_str(), Scan1SegmentOutput, matrix);
+      tgReadVolume(scan2LocalFileName.c_str(), Scan2Local, matrix);
 
       matrix->Delete();
 

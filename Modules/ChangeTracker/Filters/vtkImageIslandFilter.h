@@ -59,9 +59,9 @@ public:
   int AddIsland(IslandMemory* NewIslandMem) {return this->AddIsland(NewIslandMem->StartVoxel, NewIslandMem->Size, NewIslandMem->Label, NewIslandMem->ID);}
   
   IslandMemory<T>* DeleteIsland(int DelID);
-  IslandMemory* GetIsland(int GetID) {
+  IslandMemory* GetIsland(int getID) {
      IslandMemory* Ptr = this; 
-     while ((Ptr) && (GetID != Ptr->ID)) Ptr = Ptr->Next;  
+     while ((Ptr) && (getID != Ptr->ID)) Ptr = Ptr->Next;  
      return Ptr;
   }
   IslandMemory* GetNext() {return this->Next;}
@@ -142,10 +142,10 @@ public:
     return result;
   }
 
-  IslandMemoryGroup* GetGroup(int GetSize) {
+  IslandMemoryGroup* GetGroup(int getSize) {
      IslandMemoryGroup<T>* ptr = this;
-     GetSize = (this->MaxSize < GetSize ? this->MaxSize : GetSize);
-     while(ptr && ptr->Size != GetSize) ptr = ptr->Next;
+     getSize = (this->MaxSize < getSize ? this->MaxSize : getSize);
+     while(ptr && ptr->Size != getSize) ptr = ptr->Next;
      return ptr;
   }
 

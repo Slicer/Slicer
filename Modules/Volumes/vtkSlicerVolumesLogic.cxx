@@ -853,7 +853,7 @@ int vtkSlicerVolumesLogic::SaveArchetypeVolume (const char* filename, vtkMRMLVol
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::CreateLabelVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, char *name)
+vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::CreateLabelVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *name)
 {
   if ( volumeNode == NULL ) 
     {

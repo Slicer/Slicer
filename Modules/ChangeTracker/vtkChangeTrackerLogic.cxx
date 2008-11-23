@@ -256,7 +256,7 @@ int vtkChangeTrackerLogic::CheckROI(vtkMRMLVolumeNode* volumeNode) {
 
 // Give another Volume as an example - creates a volume without anything in it 
 // copied from vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::CloneVolume without deep copy
-vtkMRMLScalarVolumeNode* vtkChangeTrackerLogic::CreateVolumeNode(vtkMRMLVolumeNode *volumeNode, char *name) {
+vtkMRMLScalarVolumeNode* vtkChangeTrackerLogic::CreateVolumeNode(vtkMRMLVolumeNode *volumeNode, const char *name) {
   if (!this->ChangeTrackerNode || !volumeNode ) 
     {
     return NULL;

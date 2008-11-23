@@ -217,7 +217,7 @@ int main(int argc, char** argv)
   std::string labelVolumeName = "Segmentation";
   vtkMRMLScalarVolumeNode* labelVolumeNode = 
     volumeLogic->CreateLabelVolume(mrmlScene, targetVolumeNode0, 
-                                   (char*) labelVolumeName.c_str());    
+                                   labelVolumeName.c_str());    
   std::cerr << "Setting output image in parameters..." << std::endl;
   mrmlManager->SetOutputVolumeMRMLID(labelVolumeNode->GetID());
 
