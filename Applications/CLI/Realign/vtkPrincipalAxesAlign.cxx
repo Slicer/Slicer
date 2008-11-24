@@ -7,8 +7,8 @@
 
   Program:   3D Slicer
   Module:    $RCSfile: vtkPrincipalAxesAlign.cxx,v $
-  Date:      $Date: 2006/03/06 21:07:33 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date$
+  Version:   $Revision$
 
 =========================================================================auto=*/
 #include "vtkPrincipalAxesAlign.h"
@@ -27,24 +27,32 @@ void vtkPrincipalAxesAlign::Execute()
   int i;
   // reset the intermediate arrays
   for(i =0;i<3;i++)
+    {
     Center[i] = 0;
+    }
 
   for(i =0;i<3;i++)
+    {
     for(int j = 0;j<3;j++)
+      {
       eigenvalueProblem[i][j] = 0;
-  
+      }
+    }
   for(i =0;i<3;i++)
+    {
     for(int j = 0;j<3;j++)
+      {
       eigenvalueProblemDiag[i][j] = 0;
-
+      }
+    }
 
   // compute the center
   for(vtkIdType j=0;j<input->GetNumberOfPoints();j++)
     {
-      x = input->GetPoint(j);
-      Center[0] += x[0];
-      Center[1] += x[1];
-      Center[2] += x[2];
+    x = input->GetPoint(j);
+    Center[0] += x[0];
+    Center[1] += x[1];
+    Center[2] += x[2];
     }
 
   Center[0] =   Center[0] / nr_points;
@@ -55,25 +63,38 @@ void vtkPrincipalAxesAlign::Execute()
   // using the symmetry of the result matrix
 
   for(i=0;i<3;i++)
+    {
     for(int j = i;j<3;j++)
+      {
       eigenvalueProblem[i][j] = - Center[i]*nr_points*Center[j];
-
+      }
+    }
 
   for(vtkIdType m=0;m< nr_points;m++)
     {
-      x = input->GetPoint(m);
-      for(int i=0;i<3;i++)
-    for(int j = i;j<3;j++)
-      eigenvalueProblemDiag[i][j] +=  x[i]*x[j];
+    x = input->GetPoint(m);
+    for(i=0;i<3;i++)
+      {
+      for(int j = i;j<3;j++)
+        {
+        eigenvalueProblemDiag[i][j] +=  x[i]*x[j];
+        }
+      }
     }
   for(i=0;i<3;i++)
+    {
     for(int j = i;j<3;j++)
+      {
       eigenvalueProblem[i][j] += eigenvalueProblemDiag[i][j];
-  
+      }
+    }
   for(i=0;i<3;i++)
+    {
     for(int j= 0;j<i;j++)
+      {
       eigenvalueProblem[i][j] = eigenvalueProblem[j][i];
-
+      }
+    }
   vtkMath::Jacobi(eigenvalueProblem,eigenvalues,eigenvectors);
 
   // update Axes
@@ -128,23 +149,23 @@ vtkPrincipalAxesAlign::vtkPrincipalAxesAlign()
   eigenvalueProblem = (double**)malloc(sizeof(double*)*3);
   int i;
   for(i = 0;i<3;i++)
-  {
+    {
     eigenvalueProblem[i] = (double*) malloc(3*sizeof(double));
     eigenvalueProblem[i][0] = eigenvalueProblem[i][1] = eigenvalueProblem[i][2] = 0.0;
-  }
+    }
   
   eigenvalueProblemDiag = (double**)malloc(sizeof(double*)*3);
   for(i = 0;i<3;i++)
-  {
+    {
     eigenvalueProblemDiag[i] = (double*) malloc(3*sizeof(double));
     eigenvalueProblemDiag[i][0] = eigenvalueProblemDiag[i][1] = eigenvalueProblemDiag[i][2] = 0.0;
-  }
+    }
   eigenvectors = (double**)malloc(sizeof(double*)*3);
   for(i = 0;i<3;i++)
-  {
+    {
     eigenvectors[i] = (double*) malloc(3*sizeof(double));
     eigenvectors[i][0] = eigenvectors[i][1] = eigenvectors[i][2] = 0.0;
-  }
+    }
   eigenvalues = (double*)malloc(sizeof(double)*3);
   eigenvalues[0] = eigenvalues[1] = eigenvalues[2] = 0.0;
 }
@@ -158,9 +179,9 @@ vtkPrincipalAxesAlign::~vtkPrincipalAxesAlign()
   
   for(int i = 0;i<3;i++)
     {
-      free(eigenvalueProblem[i]);
-      free(eigenvalueProblemDiag[i]);
-      free(eigenvectors[i]);
+    free(eigenvalueProblem[i]);
+    free(eigenvalueProblemDiag[i]);
+    free(eigenvectors[i]);
     }
   free(eigenvalueProblem);
   free(eigenvalueProblemDiag);
@@ -180,73 +201,73 @@ void vtkPrincipalAxesAlign::operator=(const vtkPrincipalAxesAlign&)
 
 void vtkPrincipalAxesAlign::PrintSelf(ostream& os, vtkIndent indent)
 {
-    int i;
+  int i;
     
-    this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os,indent);
 
-    os << indent << "Center: " << endl;
-    if (this->Center)
+  os << indent << "Center: " << endl;
+  if (this->Center)
     {
-        os << indent << this->Center[0] << " " << this->Center[1] << " " << this->Center[2] << endl;
+    os << indent << this->Center[0] << " " << this->Center[1] << " " << this->Center[2] << endl;
     } 
 
-    os << indent << "XAxis: " << endl;
-    if (this->XAxis)
+  os << indent << "XAxis: " << endl;
+  if (this->XAxis)
     {
-        os << indent << this->XAxis[0] << " " << this->XAxis[1] << " " << this->XAxis[2] << endl;
+    os << indent << this->XAxis[0] << " " << this->XAxis[1] << " " << this->XAxis[2] << endl;
     } 
 
-    os << indent << "YAxis: " << endl;
-    if (this->YAxis)
+  os << indent << "YAxis: " << endl;
+  if (this->YAxis)
     {
-        os << indent << this->YAxis[0] << " " << this->YAxis[1] << " " << this->YAxis[2] << endl;
+    os << indent << this->YAxis[0] << " " << this->YAxis[1] << " " << this->YAxis[2] << endl;
     } 
 
-    os << indent << "ZAxis: " << endl;
-    if (this->ZAxis)
+  os << indent << "ZAxis: " << endl;
+  if (this->ZAxis)
     {
-        os << indent <<  this->ZAxis[0] << " " << this->ZAxis[1] << " " << this->ZAxis[2] << endl;
+    os << indent <<  this->ZAxis[0] << " " << this->ZAxis[1] << " " << this->ZAxis[2] << endl;
     } 
 
-    os << indent << "eigenvalueProblem: " << endl;
-    if (this->eigenvalueProblem)
+  os << indent << "eigenvalueProblem: " << endl;
+  if (this->eigenvalueProblem)
     {
-        for (i = 0; i<3; i++)
+    for (i = 0; i<3; i++)
+      {
+      if (this->eigenvalueProblem[i])
         {
-            if (this->eigenvalueProblem[i])
-            {
-                os << indent << indent << i << ": " << this->eigenvalueProblem[i][0] << " " << this->eigenvalueProblem[i][1] << " " << this->eigenvalueProblem[i][2] << endl;
-            }
+        os << indent << indent << i << ": " << this->eigenvalueProblem[i][0] << " " << this->eigenvalueProblem[i][1] << " " << this->eigenvalueProblem[i][2] << endl;
         }
+      }
     } 
 
-    os << indent << "eigenvalueProblemDiag: " << endl;
-    if (this->eigenvalueProblemDiag)
+  os << indent << "eigenvalueProblemDiag: " << endl;
+  if (this->eigenvalueProblemDiag)
     {
-        for (i = 0; i<3; i++)
+    for (i = 0; i<3; i++)
+      {
+      if (this->eigenvalueProblemDiag[i])
         {
-            if (this->eigenvalueProblemDiag[i])
-            {
-                os << indent << indent << i << ": " << this->eigenvalueProblemDiag[i][0] << " " << this->eigenvalueProblemDiag[i][1] << " " << this->eigenvalueProblemDiag[i][2] << endl;
-            }
+        os << indent << indent << i << ": " << this->eigenvalueProblemDiag[i][0] << " " << this->eigenvalueProblemDiag[i][1] << " " << this->eigenvalueProblemDiag[i][2] << endl;
         }
+      }
     } 
 
-    os << indent << "eigenvectors: " << endl;
-    if (this->eigenvectors)
+  os << indent << "eigenvectors: " << endl;
+  if (this->eigenvectors)
     {
-        for (i = 0; i<3; i++)
+    for (i = 0; i<3; i++)
+      {
+      if (this->eigenvectors[i])
         {
-            if (this->eigenvectors[i])
-            {
-                os << indent << indent << i << ": " << this->eigenvectors[i][0] << " " << this->eigenvectors[i][1] << " " << this->eigenvectors[i][2] << endl;
-            }
+        os << indent << indent << i << ": " << this->eigenvectors[i][0] << " " << this->eigenvectors[i][1] << " " << this->eigenvectors[i][2] << endl;
         }
+      }
     } 
 
-    os << indent << "eigenvalues: " << endl;
-    if (this->eigenvalues)
+  os << indent << "eigenvalues: " << endl;
+  if (this->eigenvalues)
     {
-        os << indent << this->eigenvalues[0] << " " << this->eigenvalues[1] << " " << this->eigenvalues[2] << endl;
+    os << indent << this->eigenvalues[0] << " " << this->eigenvalues[1] << " " << this->eigenvalues[2] << endl;
     } 
 }

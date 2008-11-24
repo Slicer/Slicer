@@ -1,17 +1,16 @@
-/*=auto=========================================================================
+/*=========================================================================
 
-Portions (c) Copyright 2006 Brigham and Women's Hospital (BWH) All Rights Reserved.
+  Program:   Realign Volumes
+  Module:    $HeadURL$
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
 
-See Doc/copyright/copyright.txt
-or http://www.slicer.org/copyright/copyright.txt for details.
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-Program:   3D Slicer
-Module:    $RCSfile$
-Date:      $Date: 2007-05-03 15:51:25 -0400 (Thu, 03 May 2007) $
-Version:   $Revision: 3328 $
+  See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
-=========================================================================auto=*/
-
+==========================================================================*/
 #include "RealignCLP.h"
 #include "vtkITKArchetypeImageSeriesReader.h"
 #include "vtkITKArchetypeImageSeriesScalarReader.h"

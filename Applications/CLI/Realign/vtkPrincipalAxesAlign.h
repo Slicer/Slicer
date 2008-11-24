@@ -1,16 +1,16 @@
-/*=auto=========================================================================
+/*=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+  Program:   Realign Volumes
+  Module:    $HeadURL$
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
 
-  See Doc/copyright/copyright.txt
-  or http://www.slicer.org/copyright/copyright.txt for details.
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkPrincipalAxesAlign.h,v $
-  Date:      $Date: 2006/03/06 21:07:33 $
-  Version:   $Revision: 1.3 $
+  See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
-=========================================================================auto=*/
+==========================================================================*/
 #ifndef __vtk_principal_axes_align_h
 #define __vtk_principal_axes_align_h
 #include <vtkPolyDataToPolyDataFilter.h>
