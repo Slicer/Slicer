@@ -1,3 +1,16 @@
+/*=========================================================================
+
+  Program:   SparseFieldLevelSetContour
+  Module:    $HeadURL$
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
+
+==========================================================================*/
 #include "SparseFieldLevelSetContourCLP.h"
 #include <iostream>
 #include <vector>
@@ -17,8 +30,6 @@
 #include "LSops.h"
 #include "MeanCurvatureEnergy.h"
 
-using namespace std;
-
 MeshData* meshdata;
 SparseFieldLS* sfls;
 MeanCurvatureEnergy* energy;
@@ -33,75 +44,72 @@ int adj_levels = 1;
 
 int main(int argc, char* argv[] )
 {
-cout<<"starting...\n";
-PARSE_ARGS;
+  std::cout<<"starting...\n";
+  PARSE_ARGS;
 
-cout<<OutputFilename.c_str()<<"\n";
-cout<<"Length of contour seeds: "<<ContourSeedPts.size()<<"\n";
+  std::cout<<OutputFilename.c_str()<<"\n";
+  std::cout<<"Length of contour seeds: "<<ContourSeedPts.size()<<"\n";
 
-vtkPolyDataReader* reader = vtkPolyDataReader::New();
-reader->SetFileName(InputSurface.c_str());
-reader->Update();
+  vtkPolyDataReader* reader = vtkPolyDataReader::New();
+  reader->SetFileName(InputSurface.c_str());
+  reader->Update();
 
-vtkPolyData* polyDataInput = reader->GetOutput();
+  vtkPolyData* polyDataInput = reader->GetOutput();
 
-vtkSmoothPolyDataFilter* smoother = vtkSmoothPolyDataFilter::New();
-cout<<"Smoothing the surface...";
-smoother->SetNumberOfIterations( mesh_smooth_its );
+  vtkSmoothPolyDataFilter* smoother = vtkSmoothPolyDataFilter::New();
+  std::cout<<"Smoothing the surface...";
+  smoother->SetNumberOfIterations( mesh_smooth_its );
 
-smoother->SetInput( polyDataInput );
-smoother->Update();
-cout<<" done! \n ";
+  smoother->SetInput( polyDataInput );
+  smoother->Update();
+  std::cout<<" done! \n ";
 
 // Now we'll look at it.
-vtkPolyData* smooth_brain = smoother->GetOutput();
+  vtkPolyData* smooth_brain = smoother->GetOutput();
 
 // do the curvature computations / pre-processing
-meshdata = new MeshData();
-meshdata->polydata = smooth_brain;
-meshdata->smoothH_its = H_smooth_its;
-meshdata->adj_levels = adj_levels;
-meshdata->showLS = showLS;
-ComputeCurvatureData( meshdata );
-energy = new MeanCurvatureEnergy( meshdata );
+  meshdata = new MeshData();
+  meshdata->polydata = smooth_brain;
+  meshdata->smoothH_its = H_smooth_its;
+  meshdata->adj_levels = adj_levels;
+  meshdata->showLS = showLS;
+  ComputeCurvatureData( meshdata );
+  energy = new MeanCurvatureEnergy( meshdata );
 // assign some data from curvature computation to be the new colormap
-vtkFloatArray *scalars2 = vtkFloatArray::New();
-for( int i = 0; i < meshdata->MeanCurv.size(); i++ ) {
-scalars2->InsertTuple1(i, meshdata->MeanCurv[i] );
+  vtkFloatArray *scalars2 = vtkFloatArray::New();
+  for( ::size_t i = 0; i < meshdata->MeanCurv.size(); i++ )
+    {
+    scalars2->InsertTuple1(i, meshdata->MeanCurv[i] );
 //scalars2->InsertTuple1(i, meshdata->dkde2[i] );
-}
-smooth_brain->GetPointData()->SetScalars(scalars2);
-scalars2->Delete();
+    }
+  smooth_brain->GetPointData()->SetScalars(scalars2);
+  scalars2->Delete();
 
+  vtkPolyDataMapper* cubeMapper = vtkPolyDataMapper::New();
+  meshdata->mapper = cubeMapper;
 
-vtkPolyDataMapper* cubeMapper = vtkPolyDataMapper::New();
-meshdata->mapper = cubeMapper;
-
-cubeMapper->SetInput( smooth_brain );
-double dmin = meshdata->dkde2.min();
-double dmax = meshdata->dkde2.max();
-dmin = -2.0;
-dmax = 2.0;
+  cubeMapper->SetInput( smooth_brain );
+  double dmin = meshdata->dkde2.min();
+  double dmax = meshdata->dkde2.max();
+  dmin = -2.0;
+  dmax = 2.0;
 //cubeMapper->SetScalarRange(dmin, dmax );
-cubeMapper->SetScalarRange(meshdata->MeanCurv.min(), meshdata->MeanCurv.max() );
+  cubeMapper->SetScalarRange(meshdata->MeanCurv.min(), meshdata->MeanCurv.max() );
 
-vector<int> init_pts; // vector of poly data vertex indices that are seeds
-init_pts.push_back(1255);
-init_pts.push_back(1291);
-init_pts.push_back(4087);
-init_pts.push_back(4028);
+  vector<int> init_pts; // vector of poly data vertex indices that are seeds
+  init_pts.push_back(1255);
+  init_pts.push_back(1291);
+  init_pts.push_back(4087);
+  init_pts.push_back(4028);
 
 
-vector<int> C = InitPath( meshdata, init_pts );
-sfls = new SparseFieldLS( meshdata, C, energy );
-C = sfls->Evolve(evolve_its);
-meshdata->polydata;
+  vector<int> C = InitPath( meshdata, init_pts );
+  sfls = new SparseFieldLS( meshdata, C, energy );
+  C = sfls->Evolve(evolve_its);
 
-writer = vtkPolyDataWriter::New();
-writer->SetInput( meshdata->polydata );
-writer->SetFileName( OutputFilename.c_str() );
-int iRet = writer->Write();
-
+  writer = vtkPolyDataWriter::New();
+  writer->SetInput( meshdata->polydata );
+  writer->SetFileName( OutputFilename.c_str() );
 
 /*vtkMRMLScene* myScene = vtkMRMLScene::New();
 myScene->SetURL( OutputFilename.c_str() );
@@ -118,5 +126,5 @@ return EXIT_FAILURE;
 vtkPolyData* polyData = modelNode->GetPolyData();*/
 
 
-return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
