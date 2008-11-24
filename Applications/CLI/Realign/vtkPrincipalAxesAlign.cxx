@@ -1,16 +1,16 @@
-/*=auto=========================================================================
+/*=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
-
-  See Doc/copyright/copyright.txt
-  or http://www.slicer.org/copyright/copyright.txt for details.
-
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkPrincipalAxesAlign.cxx,v $
+  Program:   Realign Volumes
+  Module:    $HeadURL$
+  Language:  C++
   Date:      $Date$
   Version:   $Revision$
 
-=========================================================================auto=*/
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
+
+==========================================================================*/
 #include "vtkPrincipalAxesAlign.h"
 #include <vtkObjectFactory.h>
 #include <vtkPolyData.h>
@@ -20,7 +20,6 @@
 void vtkPrincipalAxesAlign::Execute()
 {
   vtkPolyData *input = (vtkPolyData *)this->Inputs[0];
-  vtkPolyData *output = this->GetOutput();
   vtkIdType nr_points = input->GetNumberOfPoints();
   vtkFloatingPointType* x ;
 
