@@ -1,11 +1,14 @@
 /*=========================================================================
 
   Program:   Registration stand-alone
-  Module:    $RCSfile: $
+  Module:    $HeadURL$
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
 
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 =========================================================================*/
 #include <stdio.h>
 #include <string.h>
@@ -47,28 +50,30 @@ class ScheduleCommand : public itk::Command
   /** Run-time type information (and related methods). */
   itkTypeMacro(ScheduleCommand,itk::Command);
 
-  void SetLearningRates ( std::vector<double> &LearningRates ) {
+  void SetLearningRates ( std::vector<double> &LearningRates )
+    {
     m_LearningRates = LearningRates;
-  }
-  void SetNumberOfIterations ( std::vector<int> &NumberOfIterations ) {
+    }
+  void SetNumberOfIterations ( std::vector<int> &NumberOfIterations )
+    {
     m_NumberOfIterations = NumberOfIterations;
     this->m_NextChange = NumberOfIterations[0];
-  }
+    }
   void SetSchedule ( std::vector<int> &NumberOfIterations,
                      std::vector<double> &LearningRates )
-  {
+    {
     this->SetNumberOfIterations(NumberOfIterations);
     this->SetLearningRates(LearningRates);
-  }
+    }
   void SetRegistration (itk::ProcessObject* reg)
     {
     m_Registration = reg; 
     }
   void DoExecute ( itk::GradientDescentOptimizer* optimizer ) 
-  {
+    {
     if ( m_Schedule < m_NumberOfIterations.size()-1 )
       {
-      if ( optimizer->GetCurrentIteration()
+      if ( static_cast<int>(optimizer->GetCurrentIteration())
            >= this->m_NumberOfIterations[ m_Schedule ])
         {
         m_Schedule++;
@@ -87,14 +92,14 @@ class ScheduleCommand : public itk::Command
 //                   << std::endl;
         }
       }
-  }
+    }
   void Execute ( itk::Object *caller, const itk::EventObject & event )
-  {
-      Execute( (const itk::Object *)caller, event);
-  }
+    {
+    Execute( (const itk::Object *)caller, event);
+    }
   void Execute ( const itk::Object *caller, const itk::EventObject & event )
-  {
-    itk::GradientDescentOptimizer* optimizer = (itk::GradientDescentOptimizer*)(caller);
+    {
+    itk::GradientDescentOptimizer* optimizer = (itk::GradientDescentOptimizer*)(const_cast<itk::Object *>(caller));
 
     std::cout << optimizer->GetCurrentIteration() << "   ";
     //std::cout << optimizer->GetCurrentStepLength() << "   ";
@@ -110,7 +115,7 @@ class ScheduleCommand : public itk::Command
       {
       this->DoExecute ( optimizer );
       }
-  }
+    }
   
  protected:
   std::vector<int> m_NumberOfIterations;
@@ -119,13 +124,11 @@ class ScheduleCommand : public itk::Command
   unsigned int m_NextChange;
   itk::ProcessObject::Pointer m_Registration;
   ScheduleCommand()
-  {
-  m_Schedule = 0;
-  m_Registration = 0;
-  }
-  ~ScheduleCommand()
-  {
-  }
+    {
+    m_Schedule = 0;
+    m_Registration = 0;
+    }
+  ~ScheduleCommand() {}
 };
         
 //typedef itk::OrientedImage<signed short, 3> Volume;
@@ -187,7 +190,7 @@ template<class T1, class T2> int DoIt2( int argc, char * argv[], const T1&, cons
     }
 
   typename MovingFileReaderType::Pointer movingReader = MovingFileReaderType::New();
-    movingReader->SetFileName ( MovingImageFileName.c_str() );
+  movingReader->SetFileName ( MovingImageFileName.c_str() );
 
   try
     {

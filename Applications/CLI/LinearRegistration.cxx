@@ -68,8 +68,8 @@ class ScheduleCommand : public itk::Command
   {
     if ( m_Schedule < m_NumberOfIterations.size()-1 )
       {
-      if ( optimizer->GetCurrentIteration()
-           >= (int) this->m_NumberOfIterations[ m_Schedule ])
+      if ( static_cast<int>(optimizer->GetCurrentIteration())
+           >= (this->m_NumberOfIterations[ m_Schedule ]))
         {
         m_Schedule++;
         optimizer->SetLearningRate ( this->m_LearningRates[m_Schedule] );
@@ -93,8 +93,8 @@ class ScheduleCommand : public itk::Command
       Execute( (const itk::Object *)caller, event);
   }
   void Execute ( const itk::Object *caller, const itk::EventObject & event )
-  {
-    itk::GradientDescentOptimizer * optimizer = (itk::GradientDescentOptimizer*)(caller);
+    {
+      itk::GradientDescentOptimizer * optimizer = (itk::GradientDescentOptimizer*)(const_cast<itk::Object *>(caller));
 
     std::cout << optimizer->GetCurrentIteration() << "   ";
     //std::cout << optimizer->GetCurrentStepLength() << "   ";

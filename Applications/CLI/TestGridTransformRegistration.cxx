@@ -1,10 +1,10 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Applications/CLI/BSplineDeformableRegistration.cxx $
+  Module:    $HeadURL$
   Language:  C++
-  Date:      $Date: 2008-04-01 15:25:23 -0400 (Tue, 01 Apr 2008) $
-  Version:   $Revision: 6348 $
+  Date:      $Date$
+  Version:   $Revision$
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -43,7 +43,7 @@
 #include <algorithm>
 
 
-template<class T> int DoIt( int argc, char * argv[], T )
+template<class T> int DoIt( int argc, const char * argv[], T )
 {
   PARSE_ARGS;
 
@@ -155,7 +155,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
     p[1] = 0;
     p[2] = 0;
 
-    for( unsigned x = 0; x < gridSize; ++x )
+    for( int x = 0; x < gridSize; ++x )
       {
       index[0] = x;
       grid->SetPixel( index, p );
@@ -189,17 +189,17 @@ template<class T> int DoIt( int argc, char * argv[], T )
   return EXIT_SUCCESS;
 }
 
-int main( int argc, char * argv[] )
+int main( int argc, const char * argv[] )
 {
   
   // Print out the arguments (need to add --echo to the argument list 
   // 
-  std::vector<char *> vargs;
-  for (int vi=0; vi < argc; ++vi) vargs.push_back(argv[vi]);
-  vargs.push_back("--echo");
+  std::vector<const char *> vargsNew;
+  for (int vi=0; vi < argc; ++vi) vargsNew.push_back(argv[vi]);
+  vargsNew.push_back("--echo");
   
-  argc = vargs.size();
-  argv = &(vargs[0]);
+  argc = vargsNew.size();
+  argv = &(vargsNew[0]);
 
   PARSE_ARGS;
 

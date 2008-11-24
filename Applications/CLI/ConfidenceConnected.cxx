@@ -1,7 +1,16 @@
 /*=========================================================================
 
+  Program:   Slicer3
+  Language:  C++
+  Module:    $HeadURL$
+  Date:      $Date$
+  Version:   $Revision$
 
-=========================================================================*/
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
+
+==========================================================================*/
 #if defined(_MSC_VER)
 #pragma warning ( disable : 4786 )
 #endif

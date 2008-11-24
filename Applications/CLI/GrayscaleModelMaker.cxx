@@ -70,7 +70,6 @@ int main(int argc, char * argv[])
     // vtk and helper variables
     vtkITKArchetypeImageSeriesReader* reader = NULL;
     vtkImageData * image;
-    vtkWindowedSincPolyDataFilter *smoother = NULL;
     vtkWindowedSincPolyDataFilter * smootherSinc = NULL;    
     vtkDecimatePro * decimator = NULL;
     vtkMarchingCubes * mcubes = NULL;

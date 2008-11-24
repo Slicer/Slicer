@@ -7,8 +7,8 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   3D Slicer
 Module:    $RCSfile$
-Date:      $Date: 2007-12-11 18:48:55 -0500 (Tue, 11 Dec 2007) $
-Version:   $Revision: 5168 $
+Date:      $Date$
+Version:   $Revision$
 
 =========================================================================auto=*/
 
@@ -141,23 +141,23 @@ int main(int argc, char * argv[])
     snd->SetFileName((rootDir + "/sphere.vtp").c_str());
     modelScene->AddNode(snd);
     
-    vtkMRMLModelDisplayNode *dnd = vtkMRMLModelDisplayNode::New();
-    dnd->SetPolyData(mnd->GetPolyData());
-    dnd->SetColor(0.8, 0.0, 0.0);
+    vtkMRMLModelDisplayNode *dnd1 = vtkMRMLModelDisplayNode::New();
+    dnd1->SetPolyData(mnd->GetPolyData());
+    dnd1->SetColor(0.8, 0.0, 0.0);
     // over ride from the color node
     if (colorNode != NULL)
       {
       double *rgba = colorNode->GetLookupTable()->GetTableValue(1);
       if (rgba != NULL)
         {
-        dnd->SetColor(rgba[0], rgba[1], rgba[2]);
+        dnd1->SetColor(rgba[0], rgba[1], rgba[2]);
         }
       }
-    dnd->SetVisibility(1);
-    modelScene->AddNode(dnd);
+    dnd1->SetVisibility(1);
+    modelScene->AddNode(dnd1);
 
     mnd->SetAndObserveStorageNodeID(snd->GetID());        
-    mnd->SetAndObserveDisplayNodeID(dnd->GetID());
+    mnd->SetAndObserveDisplayNodeID(dnd1->GetID());
 
     // force the storage node to write out its data
     snd->WriteData(mnd);
@@ -169,7 +169,7 @@ int main(int argc, char * argv[])
     mhnd->SetModelNodeID( mnd->GetID() );
 
     // clean up
-    dnd->Delete();
+    dnd1->Delete();
     snd->Delete();
     mnd->Delete();
     mhnd->Delete();
@@ -193,23 +193,23 @@ int main(int argc, char * argv[])
     snd->SetFileName((rootDir + "/cone.vtp").c_str());
     modelScene->AddNode(snd);
 
-    vtkMRMLModelDisplayNode *dnd = vtkMRMLModelDisplayNode::New();
-    dnd->SetPolyData(mnd->GetPolyData());
-    dnd->SetColor(0.0, 0.8, 0.0);
+    vtkMRMLModelDisplayNode *dnd2 = vtkMRMLModelDisplayNode::New();
+    dnd2->SetPolyData(mnd->GetPolyData());
+    dnd2->SetColor(0.0, 0.8, 0.0);
     // over ride from the color node
     if (colorNode != NULL)
       {
       double *rgba = colorNode->GetLookupTable()->GetTableValue(2);
       if (rgba != NULL)
         {
-        dnd->SetColor(rgba[0], rgba[1], rgba[2]);
+        dnd2->SetColor(rgba[0], rgba[1], rgba[2]);
         }
       }
-    dnd->SetVisibility(1);
-    modelScene->AddNode(dnd);
+    dnd2->SetVisibility(1);
+    modelScene->AddNode(dnd2);
 
     mnd->SetAndObserveStorageNodeID(snd->GetID());        
-    mnd->SetAndObserveDisplayNodeID(dnd->GetID());
+    mnd->SetAndObserveDisplayNodeID(dnd2->GetID());
 
     // force the storage node to write out its data
     snd->WriteData(mnd);
@@ -221,7 +221,7 @@ int main(int argc, char * argv[])
     mhnd->SetModelNodeID( mnd->GetID() );
     
     // clean up
-    dnd->Delete();
+    dnd2->Delete();
     snd->Delete();
     mnd->Delete();
     mhnd->Delete();
@@ -246,23 +246,23 @@ int main(int argc, char * argv[])
     snd->SetFileName((rootDir + "/cube.vtp").c_str());
     modelScene->AddNode(snd);
 
-    vtkMRMLModelDisplayNode *dnd = vtkMRMLModelDisplayNode::New();
-    dnd->SetPolyData(mnd->GetPolyData());
-    dnd->SetColor(0.0, 0.0, 0.8);
+    vtkMRMLModelDisplayNode *dnd3 = vtkMRMLModelDisplayNode::New();
+    dnd3->SetPolyData(mnd->GetPolyData());
+    dnd3->SetColor(0.0, 0.0, 0.8);
     // over ride from the color node
     if (colorNode != NULL)
       {
       double *rgba = colorNode->GetLookupTable()->GetTableValue(3);
       if (rgba != NULL)
         {
-        dnd->SetColor(rgba[0], rgba[1], rgba[2]);
+        dnd3->SetColor(rgba[0], rgba[1], rgba[2]);
         }
       }
-    dnd->SetVisibility(1);
-    modelScene->AddNode(dnd);
+    dnd3->SetVisibility(1);
+    modelScene->AddNode(dnd3);
 
     mnd->SetAndObserveStorageNodeID(snd->GetID());        
-    mnd->SetAndObserveDisplayNodeID(dnd->GetID());
+    mnd->SetAndObserveDisplayNodeID(dnd3->GetID());
 
     // force the storage node to write out its data
     snd->WriteData(mnd);
@@ -274,7 +274,7 @@ int main(int argc, char * argv[])
     mhnd->SetModelNodeID( mnd->GetID() );
 
     // clean up
-    dnd->Delete();
+    dnd3->Delete();
     snd->Delete();
     mnd->Delete();
     mhnd->Delete();
