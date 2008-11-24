@@ -66,7 +66,7 @@ int main(int argc, char * argv[])
       {
       std::cout << "The input volume is: " << InputVolume << std::endl;
       std::cout << "The labels are: " << std::endl;
-      for (int l = 0; l < Labels.size(); l++)
+      for (::size_t l = 0; l < Labels.size(); l++)
         {
         std::cout << "\tList element " << l << " = " << Labels[l] << std::endl;
         }
@@ -193,7 +193,6 @@ int main(int argc, char * argv[])
     vtkStripper * stripper = NULL;
     vtkPolyDataWriter * writer = NULL;
 
-    vtkSlicerColorLogic *colorLogic = NULL;
     // keep track of number of models that will be generated, for filter
     // watcher reporting
     float numModelsToGenerate = 1.0;
@@ -460,9 +459,9 @@ int main(int argc, char * argv[])
       
        
       cubes = vtkDiscreteMarchingCubes::New();
-      std::string comment = "Discrete Marching Cubes";
+      std::string comment1 = "Discrete Marching Cubes";
       vtkPluginFilterWatcher watchDMCubes(cubes,
-                                          comment.c_str(),
+                                          comment1.c_str(),
                                           CLPProcessInformation,
                                           1.0/numFilterSteps,
                                           currentFilterOffset/numFilterSteps);
@@ -505,9 +504,9 @@ int main(int argc, char * argv[])
         stream << "Joint Smooth All Models (";
         stream << numModelsToGenerate;
         stream << " to process)";
-        std::string comment = stream.str();
+        std::string comment2 = stream.str();
         vtkPluginFilterWatcher watchSmoother(smoother,
-                                             comment.c_str(),
+                                             comment2.c_str(),
                                              CLPProcessInformation,
                                              1.0/numFilterSteps,
                                              currentFilterOffset/numFilterSteps);
@@ -655,12 +654,12 @@ int main(int argc, char * argv[])
     else
       {      
       // just copy the list of labels into the new var
-      for (int i = 0; i < Labels.size(); i++)
+      for (::size_t i = 0; i < Labels.size(); i++)
         {
         loopLabels.push_back(Labels[i]);
         }
       }
-    for (int l = 0; l < loopLabels.size(); l++)
+    for (::size_t l = 0; l < loopLabels.size(); l++)
       {
       // get the label out of the vector
       int i = loopLabels[l];
@@ -779,9 +778,9 @@ int main(int argc, char * argv[])
       if (JointSmoothing == 0)
         {        
         imageThreshold = vtkImageThreshold::New();
-        std::string comment = "Threshold " + labelName;
+        std::string comment3 = "Threshold " + labelName;
         vtkPluginFilterWatcher watchImageThreshold(imageThreshold,
-                                                   comment.c_str(),
+                                                   comment3.c_str(),
                                                    CLPProcessInformation,
                                                    1.0/numFilterSteps,
                                                    currentFilterOffset/numFilterSteps);
@@ -818,9 +817,9 @@ int main(int argc, char * argv[])
         // use the output of the smoother
           
         threshold = vtkThreshold::New();
-        std::string comment = "Threshold " + labelName;
+        std::string comment4 = "Threshold " + labelName;
         vtkPluginFilterWatcher watchThreshold(threshold,
-                                              comment.c_str(),
+                                              comment4.c_str(),
                                               CLPProcessInformation,
                                               1.0/numFilterSteps,
                                               currentFilterOffset/numFilterSteps);
@@ -848,9 +847,9 @@ int main(int argc, char * argv[])
       if (JointSmoothing == 0)
         {
         mcubes = vtkMarchingCubes::New();
-        std::string comment = "Marching Cubes " + labelName;
+        std::string comment5 = "Marching Cubes " + labelName;
         vtkPluginFilterWatcher watchThreshold(mcubes,
-                                              comment.c_str(),
+                                              comment5.c_str(),
                                               CLPProcessInformation,
                                               1.0/numFilterSteps, 
                                               currentFilterOffset/numFilterSteps);
@@ -957,9 +956,9 @@ int main(int argc, char * argv[])
       // In switch from vtk 4 to vtk 5, vtkDecimate was deprecated from the Patented dir, use vtkDecimatePro
       // TODO: look at vtkQuadraticDecimation
       decimator = vtkDecimatePro::New();
-      std::string comment = "Decimate " + labelName;
+      std::string comment6 = "Decimate " + labelName;
       vtkPluginFilterWatcher watchImageThreshold(decimator,
-                                                 comment.c_str(),
+                                                 comment6.c_str(),
                                                  CLPProcessInformation,
                                                  1.0/numFilterSteps, 
                                                  currentFilterOffset/numFilterSteps);
@@ -1043,9 +1042,9 @@ int main(int argc, char * argv[])
           std::cout << "Determinant " << (transformIJKtoRAS->GetMatrix())->Determinant() << " is less than zero, reversing..." << endl;
           }
         reverser = vtkReverseSense::New();
-        std::string comment = "Reverse " + labelName;
+        std::string comment7 = "Reverse " + labelName;
         vtkPluginFilterWatcher watchReverser(reverser,
-                                             comment.c_str(),
+                                             comment7.c_str(),
                                              CLPProcessInformation,
                                              1.0/numFilterSteps, 
                                              currentFilterOffset/numFilterSteps);
@@ -1065,9 +1064,9 @@ int main(int argc, char * argv[])
           {
             
           smootherSinc = vtkWindowedSincPolyDataFilter::New();
-          std::string comment = "Smooth " + labelName;
+          std::string comment8 = "Smooth " + labelName;
           vtkPluginFilterWatcher watchSmoother(smootherSinc,
-                                               comment.c_str(),
+                                               comment8.c_str(),
                                                CLPProcessInformation,
                                                1.0/numFilterSteps, 
                                                currentFilterOffset/numFilterSteps);
@@ -1108,9 +1107,9 @@ int main(int argc, char * argv[])
         else 
           {
           smootherPoly = vtkSmoothPolyDataFilter::New();
-          std::string comment = "Smooth " + labelName;
+          std::string comment9 = "Smooth " + labelName;
           vtkPluginFilterWatcher watchSmoother(smootherPoly,
-                                               comment.c_str(),
+                                               comment9.c_str(),
                                                CLPProcessInformation,
                                                1.0/numFilterSteps, 
                                                currentFilterOffset/numFilterSteps);
@@ -1405,7 +1404,7 @@ int main(int argc, char * argv[])
     if (madeModels.size() > 0) 
       {
       std::cout << "Made models from labels:";
-      for (unsigned int i = 0; i < madeModels.size(); i++)
+      for (::size_t i = 0; i < madeModels.size(); i++)
         {
         std::cout << " " << madeModels[i];
         }
@@ -1414,7 +1413,7 @@ int main(int argc, char * argv[])
     if (skippedModels.size() > 0) 
       {
       std::cout << "Skipped making models from labels:";
-      for (unsigned int i = 0; i < skippedModels.size(); i++)
+      for (::size_t i = 0; i < skippedModels.size(); i++)
         {
         std::cout << " " << skippedModels[i];
         }

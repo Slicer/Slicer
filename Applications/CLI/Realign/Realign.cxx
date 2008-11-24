@@ -78,7 +78,7 @@ int main(int argc, char * argv[])
       std::cout << "The output volume is " << OutputVolume.c_str() << std::endl;
       std::cout << "The reference volume is " << ReferenceVolume.c_str() << std::endl;
       std::cout << "The ACPC fiducial list is " <<  std::endl;
-      int i;
+      ::size_t i;
       for (i = 0; i<ACPC.size(); i++)
         {
         std::cout << i << ": " << ACPC[i][0] << ", " << ACPC[i][1] << ", " << ACPC[i][2] << std::endl;
@@ -309,7 +309,6 @@ int main(int argc, char * argv[])
           {
           std::cout << "Doing ACPC, size = " << ACPC.size() << "\n";
           }
-        int y = ACPC.size();
         vtkFloatingPointType top = ACPC[0][2] - ACPC[1][2];
         vtkFloatingPointType bot = ACPC[0][1] - ACPC[1][1];
         vtkFloatingPointType tangent = atan(top/bot) * (180.0/(4.0*atan(1.0)));

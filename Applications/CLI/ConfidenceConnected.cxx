@@ -80,7 +80,7 @@ int main( int argc, char *argv[] )
     {
     InternalImageType::PointType lpsPoint;
     InternalImageType::IndexType index;
-    for (int i=0; i<seed.size(); ++i)
+    for (::size_t i=0; i<seed.size(); ++i)
       {
       // seeds come in ras, convert to lps
       lpsPoint[0] = -seed[i][0];  

@@ -94,7 +94,7 @@ const gdcm::DictEntry SiemensDictDiffusionMatrix( 0x0019, 0x1027, "FD", "6", "Di
 
 // add relevant private tags from other vendors
 
-const int SpaceDim = 3;
+const unsigned int SpaceDim = 3;
 typedef short PixelValueType;
 typedef itk::OrientedImage< PixelValueType, SpaceDim > VolumeType;
 typedef itk::ImageSeriesReader< VolumeType > ReaderType;
@@ -108,7 +108,7 @@ int main(int argc, char* argv[])
 
   PARSE_ARGS;
 
-  //////////////////////////////////////////////////  
+  //
   // 0a) read one slice and figure out vendor
   ImageIOType::Pointer gdcmIO = ImageIOType::New();
   gdcmIO->LoadPrivateTagsOn();
@@ -126,15 +126,15 @@ int main(int argc, char* argv[])
   sReader->SetImageIO( gdcmIO );
   sReader->SetFileName( filenames[0] );
   try
-  {
+    {
     sReader->Update();
-  }
+    }
   catch (itk::ExceptionObject &excp)
-  {
+    {
     std::cerr << "Exception thrown while reading the first file in the series" << std::endl;
     std::cerr << excp << std::endl;
     return EXIT_FAILURE;
-  }
+    }
 
   // check the tag 0008|0070 for vendor information
   itk::MetaDataDictionary sliceDict = sReader->GetMetaDataDictionary();
@@ -143,61 +143,61 @@ int main(int argc, char* argv[])
   itk::ExposeMetaData<std::string> ( sliceDict, "0008|0070", vendor );
   std::cout << vendor << std::endl;
 
-  //////////////////////////////////////////////////////////////////
+  //
   //  0b) Add private dictionary
   if ( vendor.find("GE") != std::string::npos )
-  {
+    {
     // for GE data
     gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(GEDictBValue);
     gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(GEDictXGradient);
     gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(GEDictYGradient);
     gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(GEDictZGradient);
-  }
+    }
   else if( vendor.find("SIEMENS") != std::string::npos )
-  {
+    {
     // for Siemens data
     gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(SiemensMosiacParameters);
     gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(SiemensDictNMosiac);
     gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(SiemensDictBValue);
     gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(SiemensDictDiffusionDirection);
     gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(SiemensDictDiffusionMatrix);
-  }
+    }
   else if( vendor.find("PHILIPS") != std::string::npos )
-  {
-  // for philips data
-  }
+    {
+    // for philips data
+    }
   else
-  {
+    {
     std::cerr << "Unrecognized vendor.\n" << std::endl;
-  }
+    }
 
-  //////////////////////////////////////////////////  
+  //
   // 1) Read the input series as an array of slices
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetImageIO( gdcmIO );
   reader->SetFileNames( filenames );
   try
-  {
+    {
     reader->Update();
-  }
+    }
   catch (itk::ExceptionObject &excp)
-  {
+    {
     std::cerr << "Exception thrown while reading the series" << std::endl;
     std::cerr << excp << std::endl;
     return EXIT_FAILURE;
-  }
+    }
 
-  /////////////////////////////////////////////////////
+  //
   // 2) Analyze the DICOM header to determine the 
   //    number of gradient directions, gradient
   //    vectors, and form volume based on this info
 
   ReaderType::DictionaryArrayRawPointer inputDict = reader->GetMetaDataDictionaryArray();
 
-  /// for debug. to check what tags have been exposed
+  // for debug. to check what tags have been exposed
   itk::MetaDataDictionary & debugDict = gdcmIO->GetMetaDataDictionary();
   std::vector<std::string> allKeys = debugDict.GetKeys();
-  for (int k = 0; k < allKeys.size(); k++)
+  for (::size_t k = 0; k < allKeys.size(); k++)
     {
 //     std::cout << allKeys[k] << std::endl;
     }
@@ -205,7 +205,7 @@ int main(int argc, char* argv[])
   // load in all public tags
   int nSlice = inputDict->size();   
   std::string tag;
-
+  
   tag.clear();
   itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0028|0010", tag );
   int nRows = atoi( tag.c_str() );
@@ -229,7 +229,6 @@ int main(int argc, char* argv[])
 
   tag.clear();
   itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0018|0050", tag );
-  float sliceThickness = atof( tag.c_str() );
 
   tag.clear();
   itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0018|0088", tag );
@@ -243,21 +242,21 @@ int main(int argc, char* argv[])
   // figure out the largest and smallest slice location. This does not
   // work for Siemens data since it is stored in mosaic format
   for (int k = 0; k < nSlice; k++)
-  {
+    {
     tag.clear();
     itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0020|1041",  tag);
     float sliceLocation = atof( tag.c_str() );
 
     if (sliceLocation > maxSliceLocation)
-    {
+      {
       maxSliceLocation = sliceLocation;
-    }
+      }
 
     if (sliceLocation < minSliceLocation)
-    {
+      {
       minSliceLocation = sliceLocation;
-    }
-  }    
+      }
+    }    
 
   // check ImageOrientationPatient and figure out Slice direction in
   // L-P-I (right-handed) system.
@@ -289,7 +288,7 @@ int main(int argc, char* argv[])
   // figure out slice order
   bool SliceOrderIS = true;
   if ( vendor.find("GE") != std::string::npos )
-  {
+    {
     float x0, y0, z0;
     float x1, y1, z1;
     tag.clear();
@@ -304,10 +303,10 @@ int main(int argc, char* argv[])
     x1 -= x0; y1 -= y0; z1 -= z0;
     x0 = x1*xSlice + y1*ySlice + z1*zSlice;
     if (x0 < 0)
-    {
-    SliceOrderIS = false;
+      {
+      SliceOrderIS = false;
+      }
     }
-  }
   else if ( vendor.find("SIEMENS") != std::string::npos )
     {
     // for siemens mosaic image, we have not figured out the slice
@@ -320,11 +319,11 @@ int main(int argc, char* argv[])
     }
   
   if (!SliceOrderIS)
-  {
+    {
     xSlice = -xSlice;
     ySlice = -ySlice;
     zSlice = -zSlice;
-  }
+    }
 
   int nSliceInVolume;
   int nVolume;
@@ -334,7 +333,7 @@ int main(int argc, char* argv[])
   int nMeasurement; 
   std::vector< int > idVolume;
   std::vector< vnl_vector_fixed<double, SpaceDim> > DiffusionVectors;
-  ////////////////////////////////////////////////////////////
+  //
   // vendor dependent tags.
   // read in gradient vectors and determin nBaseline and nMeasurement
 
@@ -481,7 +480,7 @@ int main(int argc, char* argv[])
 
     mMosaic = nRows/mMosaic;    // number of block rows in one dicom slice
     nMosaic = nCols/nMosaic;    // number of block columns in one
-                                // dicom slice
+    // dicom slice
     nRows /= mMosaic;
     nCols /= nMosaic;
 
@@ -519,7 +518,7 @@ int main(int argc, char* argv[])
     int colMosaic = 0;
     int slcMosaic = 0;
 
-    for (int k = 0; k < dmSize[2]; k++)
+    for (VolumeType::SizeType::SizeValueType k = 0; k < dmSize[2]; k++)
       {
       dmRegion.SetIndex(2, k);
       itk::ImageRegionIteratorWithIndex<VolumeType> dmIt( dmImage, dmRegion );
@@ -528,10 +527,10 @@ int main(int argc, char* argv[])
       int sliceIndex = k;
       
       int nBlockPerSlice = mMosaic*nMosaic;
-      int slcMosaic = sliceIndex/(nBlockPerSlice);
+      slcMosaic = sliceIndex/(nBlockPerSlice);
       sliceIndex -= slcMosaic*nBlockPerSlice;
-      int colMosaic = sliceIndex/mMosaic;
-      int rawMosaic = sliceIndex - mMosaic*colMosaic;
+      colMosaic = sliceIndex/mMosaic;
+      rawMosaic = sliceIndex - mMosaic*colMosaic;
       region.SetIndex( 0, rawMosaic*dmSize[0] );
       region.SetIndex( 1, colMosaic*dmSize[1] );
       region.SetIndex( 2, slcMosaic );
@@ -638,10 +637,10 @@ int main(int argc, char* argv[])
 
   // for measurement frame
   std::vector<std::vector<double> > msrFrame(SpaceDim);
-  for (unsigned int k=0; k < SpaceDim; k++) 
+  for (::size_t k=0; k < SpaceDim; k++) 
     {
     msrFrame[k].resize(SpaceDim);
-    for (unsigned int m=0; m < SpaceDim; m++)
+    for (::size_t m=0; m < SpaceDim; m++)
       {
       msrFrame[k][m] = 0;
       }
@@ -671,7 +670,7 @@ int main(int argc, char* argv[])
     std::ostringstream nrrdKeyStream("");
     nrrdKeyStream << "DWMRI_gradient_" << std::setw(4) << std::setfill('0') << k;
     itk::EncapsulateMetaData<std::string> ( nrrdMetaDictionary, nrrdKeyStream.str(), nrrdValueStream.str() );
-  }
+    }
 
 
   nrrdImage->SetMetaDataDictionary( nrrdMetaDictionary );
@@ -683,4 +682,3 @@ int main(int argc, char* argv[])
   
   return EXIT_SUCCESS;  
 }
-
