@@ -762,8 +762,11 @@ namespace itk
 
     this->SwapBytesIfNecessary(tempmemory,numvalues);
     
-    gzwrite( fp, tempmemory, numbytes );
-
+    unsigned long int result = ::gzwrite( fp, tempmemory, numbytes );
+    if (result != numbytes)
+      {
+      itkExceptionMacro( << " Failed to write " << numbytes << ", only wrote " << result);
+      }
     delete[] tempmemory;
 
         itk::MetaDataDictionary &thisDic=this->GetMetaDataDictionary();
