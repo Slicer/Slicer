@@ -1,3 +1,16 @@
+/*=========================================================================
+
+  Program:   Diffusion Applications
+  Module:    $HeadURL$
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
+
+==========================================================================*/
 #ifndef __itkMatrixExtended_txx
 #define __itkMatrixExtended_txx
 
@@ -25,8 +38,6 @@ MatrixExtended< T , NRows , NColumns >
 {
 }
 
-
-
 template< class T , unsigned int NRows , unsigned int NColumns >
 MatrixExtended< T , NRows , NColumns >
 ::MatrixExtended( const InternalMatrixType &matrix )
@@ -40,9 +51,9 @@ MatrixExtended< T , NRows , NColumns >
 ::operator MatrixExtended< C , NRowsC , NColumnsC > const()
 {
   MatrixExtended< C , NRowsC , NColumnsC > tmp ;
-  for( int i = 0 ; i < NRows ; i++ )
+  for( unsigned int i = 0 ; i < NRows ; i++ )
     {
-    for( int j = 0 ; j < NColumns ; j++ )
+    for( unsigned int j = 0 ; j < NColumns ; j++ )
       {
       tmp[ i ][ j ] = ( C ) ( *this ) [ i ][ j ] ;
       }
@@ -50,16 +61,14 @@ MatrixExtended< T , NRows , NColumns >
   return tmp ;
 }
 
-
-
 template< class T , unsigned int NRows , unsigned int NColumns >
 MatrixExtended< T , NRows , NColumns >
 MatrixExtended< T , NRows , NColumns >
 ::operator=( const Self & matrix )
 {
-  for( int i = 0 ; i < NRows ; i++ )
+  for( unsigned int i = 0 ; i < NRows ; i++ )
     {
-    for( int j = 0 ; j < NColumns ; j++ )
+    for( unsigned int j = 0 ; j < NColumns ; j++ )
       {
       ( *this ) [ i ][ j ] = matrix[ i ][ j ] ;
       }
@@ -72,9 +81,9 @@ MatrixExtended< T , NRows , NColumns >
 MatrixExtended< T , NRows , NColumns >
 ::operator=( const Superclass & matrix )
 {
-  for( int i = 0 ; i < NRows ; i++ )
+  for( unsigned int i = 0 ; i < NRows ; i++ )
     {
-    for( int j = 0 ; j < NColumns ; j++ )
+    for( unsigned int j = 0 ; j < NColumns ; j++ )
       {
       ( *this ) [ i ][ j ] = matrix[ i ][ j ] ;
       }
@@ -88,9 +97,9 @@ MatrixExtended< T , NRows , NColumns >
 MatrixExtended< T , NRows , NColumns >
 ::operator=( const InternalMatrixType & matrix )
 {
-  for( int i = 0 ; i < NRows ; i++ )
+  for( unsigned int i = 0 ; i < NRows ; i++ )
     {
-    for( int j = 0 ; j < NColumns ; j++ )
+    for( unsigned int j = 0 ; j < NColumns ; j++ )
       {
       ( *this ) [ i ][ j ] = matrix[ i ][ j ] ;
       }

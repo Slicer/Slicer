@@ -1,3 +1,16 @@
+/*=========================================================================
+
+  Program:   Diffusion Applications
+  Module:    $HeadURL$
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
+
+==========================================================================*/
 #ifndef __itkDiffusionTensor3DExtended_txx
 #define __itkDiffusionTensor3DExtended_txx
 
@@ -11,7 +24,9 @@ DiffusionTensor3DExtended< T >
 ::DiffusionTensor3DExtended( const Superclass &tensor )
 {
   for( int i = 0 ; i < 6 ; i++ )
-    { this->SetElement( i , tensor.GetElement( i ) ) ; }
+    {
+    this->SetElement( i , tensor.GetElement( i ) ) ;
+    }
 }
 
 

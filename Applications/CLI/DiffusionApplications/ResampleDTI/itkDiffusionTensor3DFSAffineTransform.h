@@ -1,3 +1,16 @@
+/*=========================================================================
+
+  Program:   Diffusion Applications
+  Module:    $HeadURL$
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
+
+==========================================================================*/
 #ifndef __itkDiffusionTensor3DFSAffineTransform_h
 #define __itkDiffusionTensor3DFSAffineTransform_h
 

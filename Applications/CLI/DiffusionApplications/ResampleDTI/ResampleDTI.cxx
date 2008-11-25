@@ -1,3 +1,16 @@
+/*=========================================================================
+
+  Program:   Diffusion Applications
+  Module:    $HeadURL$
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
+
+==========================================================================*/
 #include "itkDiffusionTensor3DResample.h"
 #include "itkDiffusionTensor3DRigidTransform.h"
 #include "itkDiffusionTensor3DFSAffineTransform.h"
@@ -55,7 +68,10 @@ struct parameters
 bool VectorIsNul( std::vector< double > vec )
 {
   bool zero = 1 ;
-  for( int i = 0 ; i < vec.size() ; i++ ) { if( vec[i] != 0 ) { zero = 0 ; } }
+  for( ::size_t i = 0 ; i < vec.size() ; i++ )
+    {
+    if( vec[i] != 0 ) { zero = 0 ; }
+    }
   return zero;
 }
 
@@ -66,102 +82,112 @@ void GetImageType( std::string fileName ,
 {
   typedef itk::Image< unsigned char , 3 > ImageType ;
   itk::ImageFileReader< ImageType >::Pointer imageReader =
-                             itk::ImageFileReader< ImageType >::New();
+    itk::ImageFileReader< ImageType >::New();
   imageReader->SetFileName( fileName.c_str() ) ;
   imageReader->UpdateOutputInformation() ;
   pixelType = imageReader->GetImageIO()->GetPixelType() ;
   componentType = imageReader->GetImageIO()->GetComponentType() ;
 }
 
-
-
-
 //Select which interpolator will be used
 template< class PixelType >
 typename itk::DiffusionTensor3DInterpolateImageFunction< PixelType >
 ::Pointer
 InterpolationType( std::string interpolationType ,
-                             std::string windowFunction ,
-                             unsigned int splineOrder )
+                   std::string windowFunction ,
+                   unsigned int splineOrder )
 {
   typedef itk::DiffusionTensor3DInterpolateImageFunction< PixelType >
-                                                             InterpolatorType ; 
+    InterpolatorType ; 
   typedef itk::DiffusionTensor3DNearestNeighborInterpolateFunction< PixelType >
-                                          NearestNeighborhoodInterpolatorType ;
+    NearestNeighborhoodInterpolatorType ;
   typedef itk::DiffusionTensor3DLinearInterpolateFunction< PixelType >
-                                                       LinearInterpolatorType ;
+    LinearInterpolatorType ;
   typedef itk::ConstantBoundaryCondition< itk::OrientedImage< PixelType,3 > >
-                                                        BoundaryConditionType ;
+    BoundaryConditionType ;
   typedef itk::Function::HammingWindowFunction< RADIUS > 
-                                                 HammingwindowFunctionType ;
+    HammingwindowFunctionType ;
   typedef itk::DiffusionTensor3DWindowedSincInterpolateImageFunction
-         < PixelType ,
-           RADIUS ,
-           HammingwindowFunctionType ,
-           BoundaryConditionType > HammingWindowedSincInterpolateFunctionType ;
+    < PixelType ,
+    RADIUS ,
+    HammingwindowFunctionType ,
+    BoundaryConditionType > HammingWindowedSincInterpolateFunctionType ;
   typedef itk::Function::CosineWindowFunction<RADIUS>
-                                    CosinewindowFunctionType ;
+    CosinewindowFunctionType ;
   typedef itk::DiffusionTensor3DWindowedSincInterpolateImageFunction
-          < PixelType ,
-            RADIUS ,
-            CosinewindowFunctionType ,
-            BoundaryConditionType > CosineWindowedSincInterpolateFunctionType ;
+    < PixelType ,
+    RADIUS ,
+    CosinewindowFunctionType ,
+    BoundaryConditionType > CosineWindowedSincInterpolateFunctionType ;
   typedef itk::Function::WelchWindowFunction< RADIUS >
-                                      WelchwindowFunctionType ;
+    WelchwindowFunctionType ;
   typedef itk::DiffusionTensor3DWindowedSincInterpolateImageFunction
-           < PixelType ,
-             RADIUS ,
-             WelchwindowFunctionType ,
-             BoundaryConditionType > WelchWindowedSincInterpolateFunctionType ;
+    < PixelType ,
+    RADIUS ,
+    WelchwindowFunctionType ,
+    BoundaryConditionType > WelchWindowedSincInterpolateFunctionType ;
   typedef itk::Function::LanczosWindowFunction< RADIUS >
-                                          LanczoswindowFunctionType ;
+    LanczoswindowFunctionType ;
   typedef itk::DiffusionTensor3DWindowedSincInterpolateImageFunction
-          < PixelType ,
-            RADIUS ,
-            LanczoswindowFunctionType ,
-            BoundaryConditionType > LanczosWindowedSincInterpolateFunctionType ;
+    < PixelType ,
+    RADIUS ,
+    LanczoswindowFunctionType ,
+    BoundaryConditionType > LanczosWindowedSincInterpolateFunctionType ;
   typedef itk::Function::BlackmanWindowFunction< RADIUS > 
-                                  BlackmanwindowFunctionType ;
+    BlackmanwindowFunctionType ;
   typedef itk::DiffusionTensor3DWindowedSincInterpolateImageFunction
-        < PixelType ,
-          RADIUS ,
-          BlackmanwindowFunctionType ,
-          BoundaryConditionType > BlackmanWindowedSincInterpolateFunctionType ;
+    < PixelType ,
+    RADIUS ,
+    BlackmanwindowFunctionType ,
+    BoundaryConditionType > BlackmanWindowedSincInterpolateFunctionType ;
   typedef itk::DiffusionTensor3DBSplineInterpolateImageFunction< PixelType >
-                                          BSplineInterpolateImageFunctionType ;
+    BSplineInterpolateImageFunctionType ;
   typedef typename InterpolatorType::Pointer InterpolatorTypePointer ;
   InterpolatorTypePointer interpol ;
   if( !interpolationType.compare( "nn" ) )//nearest neighborhood
-    { interpol = NearestNeighborhoodInterpolatorType::New() ; }
+    {
+    interpol = NearestNeighborhoodInterpolatorType::New() ;
+    }
   else if( !interpolationType.compare( "linear" ) )//linear
-    { interpol = LinearInterpolatorType::New() ; }
+    {
+    interpol = LinearInterpolatorType::New() ;
+    }
   else if( !interpolationType.compare( "ws" ) )//windowed sinc
-  {
+    {
     if( !windowFunction.compare( "h" ) ) //Hamming window
-      { interpol = HammingWindowedSincInterpolateFunctionType::New() ; }
+      {
+      interpol = HammingWindowedSincInterpolateFunctionType::New() ;
+      }
     else if( !windowFunction.compare( "c" ) )//cosine window
-      { interpol = CosineWindowedSincInterpolateFunctionType::New() ; }
+      {
+      interpol = CosineWindowedSincInterpolateFunctionType::New() ;
+      }
     else if( !windowFunction.compare( "w" ) ) //Welch window
-      { interpol = WelchWindowedSincInterpolateFunctionType::New() ; }
+      {
+      interpol = WelchWindowedSincInterpolateFunctionType::New() ;
+      }
     else if( !windowFunction.compare( "l" ) ) // Lanczos window
-      { interpol = LanczosWindowedSincInterpolateFunctionType::New() ; }
+      {
+      interpol = LanczosWindowedSincInterpolateFunctionType::New() ;
+      }
     else if( !windowFunction.compare( "b" ) ) // Blackman window
-      { interpol = BlackmanWindowedSincInterpolateFunctionType::New() ; }   
-  }
+      {
+      interpol = BlackmanWindowedSincInterpolateFunctionType::New() ;
+      }   
+    }
   else if( !interpolationType.compare( "bs" ) )//BSpline interpolation
     {
     typename BSplineInterpolateImageFunctionType::Pointer
-               bSplineInterpolator=BSplineInterpolateImageFunctionType::New() ;
+      bSplineInterpolator=BSplineInterpolateImageFunctionType::New() ;
     bSplineInterpolator->SetSplineOrder( splineOrder ) ;
     interpol = bSplineInterpolator ;
     }
   return interpol ;
 }
 
-
 void ReadTransform( parameters list , itk::TransformFileReader::Pointer &transformFile)
 {
- if( list.transformationFile.compare( "" ) )
+  if( list.transformationFile.compare( "" ) )
     {
     transformFile=itk::TransformFileReader::New() ;
     transformFile->SetFileName( list.transformationFile.c_str() ) ;
@@ -174,18 +200,18 @@ template< class PixelType >
 typename itk::DiffusionTensor3DTransform< PixelType >::Pointer
 SetTransform( parameters list , 
               typename itk::DiffusionTensor3DRead< PixelType >
-                          ::Pointer &reader ,itk::TransformFileReader::Pointer &transformFile )
+              ::Pointer &reader ,itk::TransformFileReader::Pointer &transformFile )
 {    
   typedef itk::DiffusionTensor3DTransform< PixelType > TransformType ;
   typedef itk::DiffusionTensor3DNonRigidTransform< PixelType >
-                                                     NonRigidTransformType ;
+    NonRigidTransformType ;
   typedef typename TransformType::Pointer TransformTypePointer ;
 
   typedef itk::DiffusionTensor3DRigidTransform< PixelType > RigidTransformType ;
   typedef itk::DiffusionTensor3DFSAffineTransform< PixelType >
-                                                 FSAffineTransformType ;
+    FSAffineTransformType ;
   typedef itk::DiffusionTensor3DPPDAffineTransform< PixelType >
-                                                PPDAffineTransformType ;
+    PPDAffineTransformType ;
   typename NonRigidTransformType::TransformType::Pointer nonRigidFile ;
   bool precisionChecking = 1 ;
   TransformTypePointer transform ;
@@ -200,53 +226,53 @@ SetTransform( parameters list ,
     list.rotationPoint.resize( 0 ) ;
     //size=transformFile->GetTransformList()->front()->GetParameters().GetSize() ;
     typename FSAffineTransformType::Superclass::AffineTransformType::Pointer
-       affinetransform = dynamic_cast< 
-         typename FSAffineTransformType::Superclass::AffineTransformType* >
-          ( transformFile->GetTransformList()->front().GetPointer() ) ;
+      affinetransform = dynamic_cast< 
+      typename FSAffineTransformType::Superclass::AffineTransformType* >
+      ( transformFile->GetTransformList()->front().GetPointer() ) ;
     if( affinetransform )//if affine transform
       {
       list.transformType.assign( "a" ) ;
       for( int i = 0 ; i < 3 ; i++ )
-             {
-             for( int j = 0 ; j < 3 ; j++)
-                {
-                list.transformMatrix.push_back(affinetransform->GetMatrix()[i][j]);
-                }
-             }
-            for(int i = 0 ; i < 3 ; i++)
-               {
-               list.transformMatrix.push_back(affinetransform->GetTranslation()[i]) ;
-               list.rotationPoint.push_back( affinetransform->GetCenter()[i] );
-               }
+        {
+        for( int j = 0 ; j < 3 ; j++)
+          {
+          list.transformMatrix.push_back(affinetransform->GetMatrix()[i][j]);
+          }
+        }
+      for(int i = 0 ; i < 3 ; i++)
+        {
+        list.transformMatrix.push_back(affinetransform->GetTranslation()[i]) ;
+        list.rotationPoint.push_back( affinetransform->GetCenter()[i] );
+        }
       }
     else
       {
       typename RigidTransformType::Rigid3DTransformType::Pointer
-         rigid3dtransform = dynamic_cast< 
-           typename RigidTransformType::Rigid3DTransformType* >
-             (transformFile->GetTransformList()->front().GetPointer() ) ;
+        rigid3dtransform = dynamic_cast< 
+        typename RigidTransformType::Rigid3DTransformType* >
+        (transformFile->GetTransformList()->front().GetPointer() ) ;
       if( rigid3dtransform )//if rigid3D transform
         {
         list.transformType.assign( "rt" ) ;
         precisionChecking = 0 ;
         for( int i = 0 ; i < 3 ; i++ )
-             {
-             for( int j = 0 ; j < 3 ; j++)
-                {
-                list.transformMatrix.push_back(rigid3dtransform->GetMatrix()[i][j]);
-                }
-             }
-            for(int i = 0 ; i < 3 ; i++)
-               {
-               list.transformMatrix.push_back(rigid3dtransform->GetTranslation()[i]) ;
-               list.rotationPoint.push_back( rigid3dtransform->GetCenter()[i] );
-               }
+          {
+          for( int j = 0 ; j < 3 ; j++)
+            {
+            list.transformMatrix.push_back(rigid3dtransform->GetMatrix()[i][j]);
+            }
+          }
+        for(int i = 0 ; i < 3 ; i++)
+          {
+          list.transformMatrix.push_back(rigid3dtransform->GetTranslation()[i]) ;
+          list.rotationPoint.push_back( rigid3dtransform->GetCenter()[i] );
+          }
         }
       else//if non-rigid
         {
         nonRigidFile = dynamic_cast<
-           typename NonRigidTransformType::TransformType* >
-              ( transformFile->GetTransformList()->front().GetPointer() ) ;
+          typename NonRigidTransformType::TransformType* >
+          ( transformFile->GetTransformList()->front().GetPointer() ) ;
         if(nonRigidFile)//if non rigid Transform loaded
           {
           list.transformType.assign( "nr" ) ;
@@ -291,24 +317,34 @@ SetTransform( parameters list ,
     if( list.centeredTransform )
       {
       typename itk::DiffusionTensor3DRead< PixelType >
-                  ::DiffusionImageType::IndexType index ;
+        ::DiffusionImageType::IndexType index ;
       typename itk::DiffusionTensor3DRead< PixelType >
-                  ::DiffusionImageType::SizeType sizeim
-                  = reader->GetOutput()->GetLargestPossibleRegion().GetSize() ;
+        ::DiffusionImageType::SizeType sizeim
+        = reader->GetOutput()->GetLargestPossibleRegion().GetSize() ;
       itk::Point< double , 3 > point ;
       itk::Point< double , 3 > pointOpposite ;
-      for( int i = 0 ; i < 3 ; i++ ) { index[ i ] = 0 ; }
-      reader->GetOutput()->TransformIndexToPhysicalPoint( index , point ) ;
-      for( int i = 0 ; i < 3 ; i++ ) { index[ i ] = sizeim[ i ] - 1 ; }
-      reader->GetOutput()->TransformIndexToPhysicalPoint( index ,
-                                                      pointOpposite ) ;
       for( int i = 0 ; i < 3 ; i++ )
-              { center[ i ] = ( point[ i ] + pointOpposite[ i ] )/2 ; }
+        {
+        index[ i ] = 0 ;
+        }
+      reader->GetOutput()->TransformIndexToPhysicalPoint( index , point ) ;
+      for( int i = 0 ; i < 3 ; i++ )
+        {
+        index[ i ] = sizeim[ i ] - 1 ;
+        }
+      reader->GetOutput()->TransformIndexToPhysicalPoint( index ,
+                                                          pointOpposite ) ;
+      for( int i = 0 ; i < 3 ; i++ )
+        {
+        center[ i ] = ( point[ i ] + pointOpposite[ i ] )/2 ;
+        }
       }
     else
       {
       for( int i = 0 ; i < 3 ; i++ )
-            { center[ i ] = list.rotationPoint[ i ] ; }
+        {
+        center[ i ] = list.rotationPoint[ i ] ;
+        }
       } 
     //Set the transform matrix  
     for( int i = 0 ; i < 3 ; i++ )
@@ -316,7 +352,7 @@ SetTransform( parameters list ,
       for( int j = 0 ; j< 3 ; j++ )
         {
         transformMatrix4x4[ i ][ j ]
-            = ( double ) list.transformMatrix[ i*3 + j  ] ;    
+          = ( double ) list.transformMatrix[ i*3 + j  ] ;    
         }
       translation[ i ] = ( double ) list.transformMatrix[ 9 + i ] ;
       }
@@ -370,7 +406,7 @@ SetTransform( parameters list ,
       else
         {
         typename PPDAffineTransformType::Pointer affineppd
-                           = PPDAffineTransformType::New() ;
+          = PPDAffineTransformType::New() ;
         affineppd->SetMatrix4x4( transformMatrix4x4 ) ;
         transform = affineppd ;
         }
@@ -379,16 +415,16 @@ SetTransform( parameters list ,
   else
     {
     typename NonRigidTransformType::Pointer nonRigid
-                          = NonRigidTransformType::New() ;
+      = NonRigidTransformType::New() ;
     nonRigid->SetTransform( nonRigidFile ) ;
     typename PPDAffineTransformType::Pointer affineppd
-                           = PPDAffineTransformType::New() ;
+      = PPDAffineTransformType::New() ;
     typename itk::DiffusionTensor3DAffineTransform<PixelType>::Pointer affine;
     affine=affineppd;
     nonRigid->SetAffineTransformType(affine);
     transform = nonRigid ;
     }
- return transform ;
+  return transform ;
 }
 
 
@@ -398,9 +434,9 @@ SetTransform( parameters list ,
 //Set Output parameters
 template< class PixelType >
 void SetOutputParameters(parameters list ,
-           typename itk::DiffusionTensor3DResample< PixelType , PixelType >
-                       ::Pointer &resampler ,
-           typename itk::DiffusionTensor3DRead< PixelType >::Pointer &reader )
+                         typename itk::DiffusionTensor3DResample< PixelType , PixelType >
+                         ::Pointer &resampler ,
+                         typename itk::DiffusionTensor3DRead< PixelType >::Pointer &reader )
 {
   typedef itk::DiffusionTensor3DResample< PixelType , PixelType > ResamplerType ;
   typedef itk::DiffusionTensor3DRead< PixelType > ReaderType ;
@@ -409,26 +445,26 @@ void SetOutputParameters(parameters list ,
   //is there a reference image to set the size, the orientation,
   // the spacing and the origin of the output image?
   if( list.referenceVolume.compare( "" ) )
-  {
-      readerReference = ReaderType::New() ;
-      readerReference->Update( list.referenceVolume.c_str() ) ;
-      if( !list.space.compare( "RAS" ) && list.transformationFile.compare( "" ) )
+    {
+    readerReference = ReaderType::New() ;
+    readerReference->Update( list.referenceVolume.c_str() ) ;
+    if( !list.space.compare( "RAS" ) && list.transformationFile.compare( "" ) )
       {
-          typename ReaderType::DiffusionImageType::PointType originReference ;
-          typename ReaderType::DiffusionImageType::DirectionType directionReference ;
-          originReference = readerReference->GetOutput()->GetOrigin() ;
-          directionReference = readerReference->GetOutput()->GetDirection();
-          originReference[0]=-originReference[0];
-          originReference[1]=-originReference[1];
-          itk::Matrix< double , 3 , 3 > ras ;
-          ras.SetIdentity() ;
-          ras[ 0 ][ 0 ] = -1 ;
-          ras[ 1 ][ 1 ] = -1 ;
-          directionReference=ras*directionReference;
-          readerReference->GetOutput()->SetOrigin( originReference ) ;
-          readerReference->GetOutput()->SetDirection( directionReference ) ; 
+      typename ReaderType::DiffusionImageType::PointType originReference ;
+      typename ReaderType::DiffusionImageType::DirectionType directionReference ;
+      originReference = readerReference->GetOutput()->GetOrigin() ;
+      directionReference = readerReference->GetOutput()->GetDirection();
+      originReference[0]=-originReference[0];
+      originReference[1]=-originReference[1];
+      itk::Matrix< double , 3 , 3 > ras ;
+      ras.SetIdentity() ;
+      ras[ 0 ][ 0 ] = -1 ;
+      ras[ 1 ][ 1 ] = -1 ;
+      directionReference=ras*directionReference;
+      readerReference->GetOutput()->SetOrigin( originReference ) ;
+      readerReference->GetOutput()->SetDirection( directionReference ) ; 
       }
-  }
+    }
   resampler->SetOutputParametersFromImage( reader->GetOutput() ) ;
   typename ResamplerType::OutputImageType::SpacingType m_Spacing ;
   typename ResamplerType::OutputImageType::PointType m_Origin ;
@@ -437,46 +473,68 @@ void SetOutputParameters(parameters list ,
   if( VectorIsNul( list.outputImageSpacing ) )
     {
     if( list.referenceVolume.compare( "" ) )
-       { m_Spacing = readerReference->GetOutput()->GetSpacing() ; }
+      {
+      m_Spacing = readerReference->GetOutput()->GetSpacing() ;
+      }
     else
-      { m_Spacing = reader->GetOutput()->GetSpacing() ; }
+      {
+      m_Spacing = reader->GetOutput()->GetSpacing() ;
+      }
     }
   else
     {
-    for( int i = 0 ; i < 3 ; i++ ) { m_Spacing[ i ] = list.outputImageSpacing[ i ] ; }
+    for( int i = 0 ; i < 3 ; i++ )
+      {
+      m_Spacing[ i ] = list.outputImageSpacing[ i ] ;
+      }
     }
   if( VectorIsNul( list.outputImageSize) ) 
     {
     if( list.referenceVolume.compare( "" ) )
-      { m_Size
+      {
+      m_Size
         = readerReference->GetOutput()->GetLargestPossibleRegion().GetSize() ;
       }
     else
-      { m_Size = reader->GetOutput()->GetLargestPossibleRegion().GetSize() ; }
+      {
+      m_Size = reader->GetOutput()->GetLargestPossibleRegion().GetSize() ;
+      }
     }
   else
     {
     for( int i = 0 ; i < 3 ; i++ ) 
-      { m_Size[ i ] = ( unsigned long ) list.outputImageSize[ i ] ; }
+      {
+      m_Size[ i ] = ( unsigned long ) list.outputImageSize[ i ] ;
+      }
     }
   if( list.outputImageOrigin.size() == 0 )
     {
     if( list.referenceVolume.compare( "" ) )
-      { m_Origin = readerReference->GetOutput()->GetOrigin() ; }
+      {
+      m_Origin = readerReference->GetOutput()->GetOrigin() ;
+      }
     else
-      { m_Origin = reader->GetOutput()->GetOrigin() ; }
+      {
+      m_Origin = reader->GetOutput()->GetOrigin() ;
+      }
     }
   else
     {
     for(int i = 0 ; i < 3 ; i++ )
-      { m_Origin[ i ] = list.outputImageOrigin[ i ] ; }
+      {
+      m_Origin[ i ] = list.outputImageOrigin[ i ] ;
+      }
     }
   if( VectorIsNul( list.directionMatrix ) )
     {
     if( list.referenceVolume.compare( "" ) )
-      { m_Direction = readerReference->GetOutput()->GetDirection() ; }
+      {
+      m_Direction = readerReference->GetOutput()->GetDirection() ;
+      }
     else
-      { m_Direction = reader->GetOutput()->GetDirection() ; }
+      {
+      m_Direction = reader->GetOutput()->GetDirection() ;
+      }
     }
   else
     {
@@ -493,7 +551,6 @@ void SetOutputParameters(parameters list ,
   resampler->SetOutputOrigin( m_Origin ) ;
   resampler->SetOutputDirection( m_Direction ) ; 
 }
-
 
 
 template< class PixelType > void RASLPS(typename itk::OrientedImage< itk::DiffusionTensor3D< PixelType > , 3 >::Pointer image)
@@ -521,9 +578,9 @@ template< class PixelType >
 int Do( parameters list )
 {
   try
-  {
+    {
     typedef itk::OrientedImage< itk::DiffusionTensor3D< PixelType > , 3 >
-                                                               InputImageType ;
+      InputImageType ;
     typename InputImageType::Pointer image;
     typedef itk::DiffusionTensor3DRead< PixelType > ReaderType ;
     typedef typename ReaderType::Pointer ReaderTypePointer ;
@@ -542,13 +599,13 @@ int Do( parameters list )
       { writer->SetNumberOfThreads( list.numberOfThread ) ; }
     writer->SetMetaDataDictionary( reader->GetMetaDataDictionary() ) ;
     typedef itk::DiffusionTensor3DInterpolateImageFunction< PixelType >
-                                                        InterpolatorType ; 
+      InterpolatorType ; 
     typedef typename InterpolatorType::Pointer InterpolatorTypePointer ;
     InterpolatorTypePointer interpol ;
     //Select interpolation type
     interpol=InterpolationType< PixelType > ( list.interpolationType ,
-                                            list.windowFunction ,
-                                            list.splineOrder ) ;
+                                              list.windowFunction ,
+                                              list.splineOrder ) ;
 
       
     //Select the transformation
@@ -584,7 +641,7 @@ int Do( parameters list )
               && transformFile->GetTransformList()->size() );
     //Tensors Corrections
     if( !list.correction.compare("zero") )
-    {
+      {
       typedef itk::DiffusionTensor3DZeroCorrectionFilter<InputImageType , InputImageType > ZeroCorrection;
       typename ZeroCorrection::Pointer zeroFilter;
       zeroFilter = ZeroCorrection::New();
@@ -593,9 +650,9 @@ int Do( parameters list )
         { zeroFilter->SetNumberOfThreads( list.numberOfThread ) ; }
       zeroFilter->Update();
       image = zeroFilter->GetOutput();
-    }
+      }
     else if( !list.correction.compare("abs") )
-    {
+      {
       typedef itk::DiffusionTensor3DAbsCorrectionFilter<InputImageType , InputImageType > AbsCorrection;
       typename AbsCorrection::Pointer absFilter;
       absFilter = AbsCorrection::New();
@@ -604,9 +661,9 @@ int Do( parameters list )
         { absFilter->SetNumberOfThreads( list.numberOfThread ) ; }
       absFilter->Update();
       image = absFilter->GetOutput();
-    }
+      }
     else if( !list.correction.compare("nearest") )
-    {
+      {
       typedef itk::DiffusionTensor3DNearestCorrectionFilter<InputImageType , InputImageType > NearestCorrection;
       typename NearestCorrection::Pointer nearestFilter;
       nearestFilter = NearestCorrection::New();
@@ -615,7 +672,7 @@ int Do( parameters list )
         { nearestFilter->SetNumberOfThreads( list.numberOfThread ) ; }
       nearestFilter->Update();
       image = nearestFilter->GetOutput();
-    }
+      }
     //Save result
     if( !list.space.compare( "RAS" ) &&  list.transformationFile.compare( "" ) )
       { RASLPS<PixelType>(image); }
@@ -627,7 +684,7 @@ int Do( parameters list )
   catch( itk::ExceptionObject & Except )
     {
     std::cerr<< "Main: Do: Exception caught!"
-           << std::endl ;
+             << std::endl ;
     std::cerr<< Except << std::endl ;
     return -1 ;
     }
@@ -665,10 +722,10 @@ int main( int argc , const char * argv[] )
   list.correction = correction ;
   //verify if all the vector parameters have the good length
   if( list.outputImageSpacing.size() != 3 || list.outputImageSize.size() != 3
-     || ( list.outputImageOrigin.size() != 3 
-          && list.outputImageOrigin.size() != 0 )
-     || list.directionMatrix.size() != 9 || rotationPoint.size() != 3
-     || list.transformMatrix.size() != 12 )
+      || ( list.outputImageOrigin.size() != 3 
+           && list.outputImageOrigin.size() != 0 )
+      || list.directionMatrix.size() != 9 || rotationPoint.size() != 3
+      || list.transformMatrix.size() != 12 )
     {
     std::cerr<< "Argument(s) having wrong size" << std::endl ;
     return -1 ;
@@ -680,41 +737,39 @@ int main( int argc , const char * argv[] )
   switch( componentType )
     {
     case itk::ImageIOBase::UCHAR :
-         return Do< unsigned char > ( list ) ;
-         break ;
+      return Do< unsigned char > ( list ) ;
+      break ;
     case itk::ImageIOBase::CHAR :
-         return Do< char > ( list ) ;
-         break ;
+      return Do< char > ( list ) ;
+      break ;
     case itk::ImageIOBase::USHORT :
-         return Do< unsigned short >( list ) ;
-         break ;
+      return Do< unsigned short >( list ) ;
+      break ;
     case itk::ImageIOBase::SHORT :
-         return Do< short > ( list ) ;
-         break ;
+      return Do< short > ( list ) ;
+      break ;
     case itk::ImageIOBase::UINT :
-         return Do< unsigned int > ( list ) ;
-         break ;
+      return Do< unsigned int > ( list ) ;
+      break ;
     case itk::ImageIOBase::INT :
-         return Do< int > ( list ) ;
-         break ;
+      return Do< int > ( list ) ;
+      break ;
     case itk::ImageIOBase::ULONG :
-         return Do< unsigned long > ( list ) ;
-         break ;
+      return Do< unsigned long > ( list ) ;
+      break ;
     case itk::ImageIOBase::LONG :
-         return Do< long > ( list ) ;
-         break ;
+      return Do< long > ( list ) ;
+      break ;
     case itk::ImageIOBase::FLOAT :
-         return Do< float > ( list ) ;
-         break ;
+      return Do< float > ( list ) ;
+      break ;
     case itk::ImageIOBase::DOUBLE :
-         return Do< double > ( list ) ;
-         break ;
+      return Do< double > ( list ) ;
+      break ;
     case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
     default :
-         std::cerr<< "unknown component type" << std::endl ;
-         break ;
+      std::cerr<< "unknown component type" << std::endl ;
+      break ;
     }
   return EXIT_SUCCESS ;
 }
-
-

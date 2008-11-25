@@ -1,3 +1,16 @@
+/*=========================================================================
+
+  Program:   Diffusion Applications
+  Module:    $HeadURL$
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
+
+==========================================================================*/
 #ifndef __itkDiffusionTensor3DInterpolateImageFunction_txx
 #define __itkDiffusionTensor3DInterpolateImageFunction_txx
 
@@ -30,7 +43,9 @@ DiffusionTensor3DInterpolateImageFunction< TData >
   index.Fill( 0 ) ;
   m_InputImage->TransformIndexToPhysicalPoint( index , m_Origin ) ;
   for( int i = 0 ; i < 3 ; i++ )
-    { index[ i ] = size[ i ] - 1 ; }
+    {
+    index[ i ] = size[ i ] - 1 ;
+    }
   m_InputImage->TransformIndexToPhysicalPoint( index , m_End ) ;
   double temp ;
   for( int i = 0 ; i < 3 ; i++ )

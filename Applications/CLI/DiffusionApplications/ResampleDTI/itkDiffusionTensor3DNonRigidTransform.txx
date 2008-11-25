@@ -1,3 +1,16 @@
+/*=========================================================================
+
+  Program:   Diffusion Applications
+  Module:    $HeadURL$
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
+
+==========================================================================*/
 #ifndef __itkDiffusionTensor3DNonRigidTransform_txx
 #define __itkDiffusionTensor3DNonRigidTransform_txx
 
@@ -20,11 +33,13 @@ DiffusionTensor3DNonRigidTransform< TData >
 ::EvaluateTensorPosition( const PointType &point )
 {
   if( m_Transform.IsNotNull() )
-    { return m_Transform->TransformPoint(point) ; }
+    {
+    return m_Transform->TransformPoint(point) ;
+    }
   else
     {
-    PointType point( 0 ) ;
-    return point ;
+    PointType zeroPoint( 0 ) ;
+    return zeroPoint ;
     }
 }
 
