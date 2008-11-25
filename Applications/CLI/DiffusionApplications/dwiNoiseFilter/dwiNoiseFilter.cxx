@@ -1,3 +1,16 @@
+/*=========================================================================
+
+  Program:   Diffusion Applications
+  Language:  C++
+  Module:    $HeadURL$
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
+
+==========================================================================*/
 #include <iostream>
 #include <algorithm>
 #include <string>
@@ -45,7 +58,6 @@ template<class PixelType> int DoIt( int argc, const char * argv[], PixelType )
 
   std::vector< CovariantVectorType > diffusionDirections;
 
-
   typedef itk::ImageFileReader<DiffusionImageType> FileReaderType;
   typename FileReaderType::Pointer reader = FileReaderType::New();
   reader->SetFileName( inputVolume.c_str() );
@@ -71,17 +83,16 @@ template<class PixelType> int DoIt( int argc, const char * argv[], PixelType )
 
   while( itr != end )
     {
-      itk::MetaDataObjectBase::Pointer entry = itr->second;
-      MetaDataStringType::Pointer entryvalue =
+    itk::MetaDataObjectBase::Pointer entry = itr->second;
+    MetaDataStringType::Pointer entryvalue =
       dynamic_cast<MetaDataStringType *>( entry.GetPointer() ) ;
       
-      if( entryvalue )
-        {
-  
-         int pos = itr->first.find("DWMRI_gradient");
+    if( entryvalue )
+      {
+      ::size_t pos = itr->first.find("DWMRI_gradient");
 
-      if ( pos != -1 ) {
-        
+      if ( pos != std::string::npos )
+        {
         std::string tagkey = itr->first;
         std::string tagvalue = entryvalue->GetMetaDataObjectValue();
         
@@ -89,50 +100,55 @@ template<class PixelType> int DoIt( int argc, const char * argv[], PixelType )
         std::sscanf(tagvalue.c_str(), "%lf %lf %lf\n", &dx[0], &dx[1], &dx[2]);
         diffusionDirections.push_back( (CovariantVectorType)(dx) );
 
-      } else {
+        }
+      else
+        {
 
         // try to find the b-value
 
-        int pos = itr->first.find("DWMRI_b-value");
+        ::size_t posB = itr->first.find("DWMRI_b-value");
         
-        if ( pos != -1 ) {
+        if ( posB != std::string::npos )
+          {
           std::string tagvalue = entryvalue->GetMetaDataObjectValue();
           std::sscanf(tagvalue.c_str(), "%lf\n", &dBValue );
           iFoundBValue = 1;
-        } else {
+          }
+        else
+          {
           //std::cout << itr->first << " " << entryvalue->GetMetaDataObjectValue() << std::endl;
+          }
         }
-
       }
-
       
-    }
-      
-      ++itr;
+    ++itr;
     }
   
   // find the first zero baseline image and use it for the noise estimation
 
-  int iNrOfDWIs = diffusionDirections.size();
-  int iFirstBaseline = -1;
+  ::size_t iNrOfDWIs = diffusionDirections.size();
+  ::size_t iFirstBaseline = std::string::npos;
 
-  for ( int iI=0; iI<iNrOfDWIs; iI++ ) {
+  for ( ::size_t iI=0; iI<iNrOfDWIs; iI++ )
+    {
 
-    if ( diffusionDirections[iI].GetNorm()==0 ) {
+    if ( diffusionDirections[iI].GetNorm()==0 )
+      {
       iFirstBaseline = iI;
       std::cout << "First baseline found at index = " << iFirstBaseline << std::endl;
       break;
+      }
+
     }
 
-  }
-
-  if ( iFirstBaseline<0 ) {
+  if ( iFirstBaseline == std::string::npos )
+    {
 
     std::cout << "Did not find an explicit baseline image." << std::endl;
     std::cout << "Treating the first volume as the baseline volume." << std::endl;
     iFirstBaseline = 0;
 
-  }
+    }
 
   typename ScalarImageType::SizeType indexRadiusE;
   typename ScalarImageType::SizeType indexRadiusF;
@@ -161,16 +177,22 @@ template<class PixelType> int DoIt( int argc, const char * argv[], PixelType )
   ricianFilter->SetHistogramResolutionFactor( dResFact );
   ricianFilter->SetMinimumNoiseSTD( dMinSTD );
   ricianFilter->SetMaximumNoiseSTD( dMaxSTD );
-  if ( bUseAbsoluteValue ) {
+  if ( bUseAbsoluteValue )
+    {
     ricianFilter->UseAbsoluteValueOn();
-  } else {
+    }
+  else 
+    {
     ricianFilter->UseAbsoluteValueOff();
-  }
-  if ( bWriteHistograms ) {
+    }
+  if ( bWriteHistograms )
+    {
     ricianFilter->WriteHistogramOn();
-  } else {
+    }
+  else
+    {
     ricianFilter->WriteHistogramOff();
-  }
+    }
   ricianFilter->SetFirstBaseline( iFirstBaseline );
   ricianFilter->Update();
 
@@ -204,15 +226,15 @@ template<class PixelType> int DoIt( int argc, const char * argv[], PixelType )
   try
     {
     nrrdWriter->Update();
-  }
+    }
   catch (itk::ExceptionObject e)
     {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << e << std::endl;
     return EXIT_FAILURE;
-  }
+    }
 
-    std::cout << "success = " << EXIT_SUCCESS << std::endl;
+  std::cout << "success = " << EXIT_SUCCESS << std::endl;
 
   return EXIT_SUCCESS;
 
@@ -227,54 +249,54 @@ int main( int argc, const char * argv[] )
   itk::ImageIOBase::IOComponentType componentType;
 
   //try
-   // {
-    itk::GetImageType (inputVolume, pixelType, componentType);
+  // {
+  itk::GetImageType (inputVolume, pixelType, componentType);
 
-    // This filter handles all types
+  // This filter handles all types
     
-    switch (componentType)
-      {
+  switch (componentType)
+    {
 #ifndef WIN32
-      case itk::ImageIOBase::UCHAR:
-        return DoIt( argc, argv, static_cast<unsigned char>(0));
-        break;
-      case itk::ImageIOBase::CHAR:
-        return DoIt( argc, argv, static_cast<char>(0));
-        break;
+    case itk::ImageIOBase::UCHAR:
+      return DoIt( argc, argv, static_cast<unsigned char>(0));
+      break;
+    case itk::ImageIOBase::CHAR:
+      return DoIt( argc, argv, static_cast<char>(0));
+      break;
 #endif
-      case itk::ImageIOBase::USHORT:
-        return DoIt( argc, argv, static_cast<unsigned short>(0));
-        break;
-      case itk::ImageIOBase::SHORT:
-        return DoIt( argc, argv, static_cast<short>(0));
-        break;
-      case itk::ImageIOBase::UINT:
-        return DoIt( argc, argv, static_cast<unsigned int>(0));
-        break;
-      case itk::ImageIOBase::INT:
-        return DoIt( argc, argv, static_cast<int>(0));
-        break;
+    case itk::ImageIOBase::USHORT:
+      return DoIt( argc, argv, static_cast<unsigned short>(0));
+      break;
+    case itk::ImageIOBase::SHORT:
+      return DoIt( argc, argv, static_cast<short>(0));
+      break;
+    case itk::ImageIOBase::UINT:
+      return DoIt( argc, argv, static_cast<unsigned int>(0));
+      break;
+    case itk::ImageIOBase::INT:
+      return DoIt( argc, argv, static_cast<int>(0));
+      break;
 #ifndef WIN32
-      case itk::ImageIOBase::ULONG:
-        return DoIt( argc, argv, static_cast<unsigned long>(0));
-        break;
-      case itk::ImageIOBase::LONG:
-        return DoIt( argc, argv, static_cast<long>(0));
-        break;
+    case itk::ImageIOBase::ULONG:
+      return DoIt( argc, argv, static_cast<unsigned long>(0));
+      break;
+    case itk::ImageIOBase::LONG:
+      return DoIt( argc, argv, static_cast<long>(0));
+      break;
 #endif
-      case itk::ImageIOBase::FLOAT:
-    std::cout << "FLOAT type not currently supported." << std::endl;
-    break;
-      case itk::ImageIOBase::DOUBLE:
-    std::cout << "DOUBLE type not currently supported." << std::endl;
-        break;
-      case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
-      default:
-        std::cout << "unknown component type" << std::endl;
-        break;
-      }
+    case itk::ImageIOBase::FLOAT:
+      std::cout << "FLOAT type not currently supported." << std::endl;
+      break;
+    case itk::ImageIOBase::DOUBLE:
+      std::cout << "DOUBLE type not currently supported." << std::endl;
+      break;
+    case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
+    default:
+      std::cout << "unknown component type" << std::endl;
+      break;
+    }
 
-    //}
+  //}
 
 
   /*catch( itk::ExceptionObject &excep)

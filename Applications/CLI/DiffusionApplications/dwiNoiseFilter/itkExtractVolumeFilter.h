@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: itkExtractVolumeFilter.h,v $
   Language:  C++
-  Date:      $Date: 2006/03/27 17:01:10 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date$
+  Version:   $Revision$
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -52,7 +52,7 @@ public:
   typedef SmartPointer<const Self>  ConstPointer;
 
   void SetVolumeNr( int iNr ) { iVolumeNr = iNr; std::cout << "Setting volume nr to " << iNr << std::endl; };
-  void SetMultiplyFactor( double dFactor ) { this->dFactor = dFactor; };
+  void SetMultiplyFactor( double factor ) { this->dFactor = factor; };
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

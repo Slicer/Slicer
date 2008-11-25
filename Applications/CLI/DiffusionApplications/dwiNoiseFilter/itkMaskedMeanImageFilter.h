@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: itkMaskedMeanImageFilter.h,v $
   Language:  C++
-  Date:      $Date: 2006/03/29 14:53:40 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date$
+  Version:   $Revision$
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -67,10 +67,10 @@ public:
   itkTypeMacro(MaskedMeanImageFilter, ImageToImageFilter);
   
   /** Set the number of filter iterations. */
-  itkSetMacro(MinimumNumberOfUsedVoxels, int );
+  itkSetMacro(MinimumNumberOfUsedVoxels, unsigned int );
 
   /** Get the number of iterations. */
-  itkGetMacro(MinimumNumberOfUsedVoxels, int );
+  itkGetMacro(MinimumNumberOfUsedVoxels, unsigned int );
 
   /** Image typedef support. */
   typedef typename InputImageType::PixelType InputPixelType;
@@ -126,7 +126,7 @@ private:
   void operator=(const Self&); //purposely not implemented
 
   InputSizeType m_Radius;
-  int m_MinimumNumberOfUsedVoxels;
+  unsigned int  m_MinimumNumberOfUsedVoxels;
 
 };
   

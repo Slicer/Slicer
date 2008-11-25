@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: itkExtractVolumeFilter.txx,v $
   Language:  C++
-  Date:      $Date: 2006/01/11 19:43:31 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date$
+  Version:   $Revision$
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -124,8 +124,6 @@ ExtractVolumeFilter< TInputImage, TOutputImage >
 
   ConstIteratorType nit( input, input->GetLargestPossibleRegion() );
   IteratorType it( output, output->GetLargestPossibleRegion() );
-
-  long int iCount = 0;
 
   for ( nit.GoToBegin(), it.GoToBegin(); !nit.IsAtEnd() && !it.IsAtEnd(); ++nit, ++it ) {
 
