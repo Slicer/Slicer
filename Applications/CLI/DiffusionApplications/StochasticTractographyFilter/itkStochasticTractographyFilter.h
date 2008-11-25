@@ -1,3 +1,16 @@
+/*=========================================================================
+
+  Program:   Diffusion Applications
+  Language:  C++
+  Module:    $HeadURL$
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
+
+==========================================================================*/
 #ifndef __itkStochasticTractographyFilter_h__
 #define __itkStochasticTractographyFilter_h__
 
@@ -226,14 +239,6 @@ protected:
   void CalculateTensorModelParameters( const DWIVectorImageType::PixelType& dwivalues,
     vnl_diag_matrix<double>& W,
     TensorModelParamType& tensormodelparams);
-  //these will be the same for every pixel in the image so
-  //go ahead and do a QR decomposition to optimize the
-  //LS fitting process for estimating the weighing matrix W
-  //in this case we solve instead:
-  //R*Beta = Q'logPhi
-  vnl_matrix< double >* m_A;
-  vnl_matrix< double >* m_AApinverse;   
-  
   void CalculateConstrainedModelParameters( const TensorModelParamType& tensormodelparams,
     ConstrainedModelParamType& constrainedmodelparams);
   
@@ -312,45 +317,61 @@ protected:
     TractOrientationContainerType::Element v_prev,
     TractOrientationContainerType::Element& v_curr);
   
+  unsigned int m_TotalTracts;
+  unsigned int m_MaxTractLength;
+
   GradientDirectionContainerType::ConstPointer m_Gradients;
   GradientDirectionContainerType::Pointer m_TransformedGradients;
   
   bValueContainerType::ConstPointer m_bValues;
-  MeasurementFrameType m_MeasurementFrame;
-  ProbabilityDistributionImageType::Pointer m_LikelihoodCachePtr;
-  LikelihoodCacheMutexImageType::Pointer m_LikelihoodCacheMutexImagePtr;
-  unsigned int m_MaxTractLength;
-  unsigned int m_TotalTracts;
 
   TractOrientationContainerType::ConstPointer   m_SampleDirections;
-  unsigned long m_MaxLikelihoodCacheSize;   //in Megabytes
-  unsigned long m_MaxLikelihoodCacheElements;  //in Elements (Voxels)
-  unsigned long m_CurrentLikelihoodCacheElements;
-  SimpleFastMutexLock m_LikelihoodCacheMutex;
+
+  //these will be the same for every pixel in the image so
+  //go ahead and do a QR decomposition to optimize the
+  //LS fitting process for estimating the weighing matrix W
+  //in this case we solve instead:
+  //R*Beta = Q'logPhi
+  vnl_matrix< double >* m_A;
+  vnl_matrix< double >* m_AApinverse;   
   
+  ProbabilityDistributionImageType::Pointer m_LikelihoodCachePtr;
+  unsigned long m_MaxLikelihoodCacheSize;   //in Megabytes
+  unsigned long m_CurrentLikelihoodCacheElements;
+
   double m_StepSize;
   double m_Gamma;
-  unsigned int m_ROILabel;
-  unsigned int m_TotalDelegatedTracts;
-  SimpleFastMutexLock m_TotalDelegatedTractsMutex;
+
   RealTimeClock::Pointer m_ClockPtr;
-  //unsigned long m_RandomSeed;
-  SimpleFastMutexLock m_OutputImageMutex;
-  
+  unsigned int m_TotalDelegatedTracts;
+
   TractContainerType::Pointer m_OutputContinuousTractContainer;
   SimpleFastMutexLock m_OutputContinuousTractContainerMutex;
   
   TractContainerType::Pointer m_OutputDiscreteTractContainer;
   SimpleFastMutexLock m_OutputDiscreteTractContainerMutex;
   
+  ProgressReporter* m_progress;
+
+  bool m_NearestNeighborInterpolation;
+  bool m_StreamlineTractography;
+  unsigned int m_ROILabel;
+
+  MeasurementFrameType m_MeasurementFrame;
+  LikelihoodCacheMutexImageType::Pointer m_LikelihoodCacheMutexImagePtr;
+
+  unsigned long m_MaxLikelihoodCacheElements;  //in Elements (Voxels)
+  SimpleFastMutexLock m_LikelihoodCacheMutex;
+  
+  SimpleFastMutexLock m_TotalDelegatedTractsMutex;
+  //unsigned long m_RandomSeed;
+  SimpleFastMutexLock m_OutputImageMutex;
+  
   OutputTensorImageType::Pointer m_OutputTensorImage;
   vnl_random m_RandomGenerator;
   
   std::vector< typename InputDWIImageType::IndexType > m_SeedIndices;
-  ProgressReporter* m_progress;
   
-  bool m_NearestNeighborInterpolation;
-  bool m_StreamlineTractography;
   bool m_RotateSampGrid;
   
   RotationImageType::Pointer m_RotationImagePtr;

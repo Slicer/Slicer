@@ -1,3 +1,16 @@
+/*=========================================================================
+
+  Program:   Diffusion Applications
+  Language:  C++
+  Module:    $HeadURL$
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
+
+==========================================================================*/
 #include "itkStochasticTractographyFilter.h"
 #include "itkVectorImage.h"
 #include "itkImageSeriesReader.h"  //this is needed for itk::ExposeMetaData()
@@ -20,7 +33,8 @@
 #include "vtkCleanPolyData.h"
 #include "itkXMLFilterWatcher.h"
 
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[])
+{
   PARSE_ARGS;
   //define the input/output types
   typedef itk::VectorImage< unsigned short int, 3 > DWIVectorImageType;
@@ -76,69 +90,85 @@ int main(int argc, char* argv[]){
   //dictit->second refers to the Value associated with that Key
   for(DictionaryIteratorType dictit = dictionary.Begin();
       dictit!=dictionary.End();
-      ++dictit){
-    if(dictit->first.find("DWMRI_gradient") != std::string::npos){
+      ++dictit)
+    {
+    if(dictit->first.find("DWMRI_gradient") != std::string::npos)
+      {
       std::string metaDataValue;
       itk::ExposeMetaData< std::string > (dictionary, dictit->first, metaDataValue);
       sscanf(metaDataValue.c_str(), "%lf %lf %lf\n", &g_i[0], &g_i[1], &g_i[2]);
       //normalize the gradient vector
       gradientsPtr->InsertElement( gradientsPtr->Size(), g_i.normalize() );
-    }
-    else if(dictit->first.find("DWMRI_b-value") != std::string::npos){
+      }
+    else if(dictit->first.find("DWMRI_b-value") != std::string::npos)
+      {
       std::string metaDataValue;
       itk::ExposeMetaData< std::string >(dictionary, dictit->first, metaDataValue);
       scaling_bValue = atof(metaDataValue.c_str());
-    }
-    else if(dictit->first.find("NRRD_measurement frame") != std::string::npos){
+      }
+    else if(dictit->first.find("NRRD_measurement frame") != std::string::npos)
+      {
       std::vector< std::vector < double > > metaDataValue;
       itk::ExposeMetaData< std::vector< std::vector<double> > >
         (dictionary, dictit->first, metaDataValue);
-      for(int i=0;i<3;i++){
+      for(int i=0;i<3;i++)
+        {
         for(int j=0;j<3;j++)
+          {
           measurement_frame(i,j) = metaDataValue[j][i];
+          }
+        }
+      }
+    else
+      {
+      std::cout << dictit->first << std::endl;
       }
     }
-    else{
-      std::cout << dictit->first << std::endl;
-    }
-  }
   
   //check to see if bValue, gradients, or measurement frame is missing
-  if(scaling_bValue == 0){
+  if(scaling_bValue == 0)
+    {
     std::cerr << "scaling_bValue should never be 0, possibly not found in Nrrd header\n";
     return EXIT_FAILURE;
-  }
-  else if(gradientsPtr->Size() == 0){
+    }
+  else if(gradientsPtr->Size() == 0)
+    {
     std::cerr <<"no gradients were found!";
     return EXIT_FAILURE;
-  }
-  else if(measurement_frame.size() == 0){
+    }
+  else if(measurement_frame.size() == 0)
+    {
     std::cerr <<"no measurement frame was found!";
     return EXIT_FAILURE;
-  }
+    }
  
   std::cout << scaling_bValue << std::endl;
   for(unsigned int i=0; i<gradientsPtr->Size(); i++)
     std::cout << gradientsPtr->GetElement(i) << std::endl;
   
-  for(unsigned int i=0; i<measurement_frame.rows(); i++){
-    for(unsigned int j=0; j<measurement_frame.columns(); j++){
+  for(unsigned int i=0; i<measurement_frame.rows(); i++)
+    {
+    for(unsigned int j=0; j<measurement_frame.columns(); j++)
+      {
       std::cout<<measurement_frame(i,j) << " ";
-    }
+      }
     std::cout << std::endl;
-  }
+    }
  
   //fill up bValue container with the scaling_bValue;
-  for(unsigned int i=0; i<gradientsPtr->Size() ;i++){
-    if(gradientsPtr->GetElement(i).squared_magnitude() == 0){
+  for(unsigned int i=0; i<gradientsPtr->Size() ;i++)
+    {
+    if(gradientsPtr->GetElement(i).squared_magnitude() == 0)
+      {
       bValuesPtr->InsertElement(i, 0);
-    }
-    else{
+      }
+    else
+      {
       //this matters in the calculations for the constrained model but not the tensor model
       //since a gradient direction of all zeros handles it
       bValuesPtr->InsertElement(i, scaling_bValue);
+      }
     }
-  }
   
   //setup the ROI image reader
   ROIImageReaderType::Pointer roireaderPtr = ROIImageReaderType::New();
@@ -151,10 +181,11 @@ int main(int argc, char* argv[]){
   wmpreader->Update();
   
   //optionally set the origins of these images to be the same as the DWI
-  if(recenteroriginswitch==true){
+  if(recenteroriginswitch==true)
+    {
     roireaderPtr->GetOutput()->SetOrigin( dwireaderPtr->GetOutput()->GetOrigin() );
     wmpreader->GetOutput()->SetOrigin( dwireaderPtr->GetOutput()->GetOrigin() );
-  }
+    }
   std::cout<<"DWI image origin:"<< dwireaderPtr->GetOutput()->GetOrigin() <<std::endl;
   std::cout<<"ROI image origin:"<< roireaderPtr->GetOutput()->GetOrigin() <<std::endl;
   std::cout<<"wmp image origin:"<< wmpreader->GetOutput()->GetOrigin() <<std::endl;
@@ -189,18 +220,21 @@ int main(int argc, char* argv[]){
   vtkCellArray* vtktractarray = vtkCellArray::New();
   STFilterType::TractContainerType::Pointer tractcontainer = NULL;
   
-  if(continuoustractsswitch){
+  if(continuoustractsswitch)
+    {
     points->SetDataTypeToFloat();
     //Get the resulting continuous IJK tracts
     tractcontainer = stfilterPtr->GetOutputContinuousTractContainer();
-  }
-  else{
+    }
+  else
+    {
     points->SetDataTypeToUnsignedShort();
     //Get the resulting discretized IJK tracts
     tractcontainer = stfilterPtr->GetOutputDiscreteTractContainer();
-  }
+    }
 
-  for(int i=0; i<tractcontainer->Size(); i++ ){
+  for(::size_t i=0; i<tractcontainer->Size(); i++ )
+    {
     STFilterType::TractContainerType::Element tract =
       tractcontainer->GetElement(i);
 
@@ -210,14 +244,15 @@ int main(int argc, char* argv[]){
     //create a new cell
     vtktractarray->InsertNextCell(vertexlist->Size());
 
-    for(int j=0; j<vertexlist->Size(); j++){
+    for(::size_t j=0; j<vertexlist->Size(); j++)
+      {
       STFilterType::TractContainerType::Element::ObjectType::VertexListType::Element vertex =
         vertexlist->GetElement(j);
           
       points->InsertNextPoint(vertex[0], vertex[1], vertex[2]);
       vtktractarray->InsertCellPoint(points->GetNumberOfPoints()-1);
-    }
-  }        
+      }
+    }        
   //finish up the vtk polydata
   vtktracts->SetPoints( points );
   vtktracts->SetLines( vtktractarray );

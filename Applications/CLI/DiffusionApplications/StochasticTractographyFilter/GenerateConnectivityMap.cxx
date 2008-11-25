@@ -1,3 +1,16 @@
+/*=========================================================================
+
+  Program:   Diffusion Applications
+  Language:  C++
+  Module:    $HeadURL$
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
+
+==========================================================================*/
 #include "itkVectorImage.h"
 #include "itkImageSeriesReader.h"  //this is needed for itk::ExposeMetaData()
 #include "itkImageFileReader.h"
@@ -16,7 +29,8 @@
 #include "vtkCellArray.h"
 #include "vtkPoints.h" 
 
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[])
+{
   PARSE_ARGS;
   //define the input/output types
   typedef itk::VectorImage< unsigned short int, 3 > DWIVectorImageType;
@@ -70,8 +84,10 @@ int main(int argc, char* argv[]){
   vtkPoints* points = tractsreader->GetOutput()->GetPoints();
   
   loadedtracts->InitTraversal();
-  while( loadedtracts->GetNextCell( npts, pts ) ){
-    for( int i=0; i<npts; i++ ){
+  while( loadedtracts->GetNextCell( npts, pts ) )
+    {
+    for( int i=0; i<npts; i++ )
+      {
       double* vertex = points->GetPoint( pts[i] );
                 
       index[0]=static_cast<long int>(vertex[0]);
@@ -80,13 +96,15 @@ int main(int argc, char* argv[]){
      
       BooleanImageType::PixelType& bimagepix = bimagePtr->GetPixel( index );
       CImageType::PixelType& cimagepix = cimagePtr->GetPixel( index );
-      if(bimagepix == false){ 
+      if(bimagepix == false)
+        { 
         bimagepix=true;
         cimagepix++;
+        }
       }
-    }
     //clear boolean image
-    for( int i=0; i<npts; i++ ){
+    for( int i=0; i<npts; i++ )
+      {
       double* vertex = points->GetPoint( pts[i] );
      
       index[0]=static_cast<long int>(vertex[0]);
@@ -95,8 +113,8 @@ int main(int argc, char* argv[]){
      
       BooleanImageType::PixelType& bimagepix = bimagePtr->GetPixel( index );
       bimagepix = false;
+      }
     }
-  }
 
   //Write the normalized connectivity map
   NormalizeCImageFilterType::Pointer ncifilterPtr = NormalizeCImageFilterType::New();
