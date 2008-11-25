@@ -43,7 +43,7 @@
 #include <algorithm>
 
 
-template<class T> int DoIt( int argc, const char * argv[], T )
+template<class T> int DoIt( int argc, char * argv[], T )
 {
   PARSE_ARGS;
 
@@ -189,14 +189,14 @@ template<class T> int DoIt( int argc, const char * argv[], T )
   return EXIT_SUCCESS;
 }
 
-int main( int argc, const char * argv[] )
+int main( int argc, char * argv[] )
 {
   
   // Print out the arguments (need to add --echo to the argument list 
   // 
-  std::vector<const char *> vargsNew;
+  std::vector<char *> vargsNew;
   for (int vi=0; vi < argc; ++vi) vargsNew.push_back(argv[vi]);
-  vargsNew.push_back("--echo");
+  vargsNew.push_back(const_cast<char *>("--echo"));
   
   argc = vargsNew.size();
   argv = &(vargsNew[0]);
