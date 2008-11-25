@@ -59,6 +59,7 @@ vtkMRMLTractographyFiducialSeedingNode::vtkMRMLTractographyFiducialSeedingNode()
    this->IntegrationStep = 0.5;
    this->SeedingRegionSize = 1.0;
    this->SeedingRegionStep = 1.0;
+   this->MaxNumberOfSeeds = 100;
    this->InputVolumeRef = NULL;
    this->InputFiducialRef = NULL;
    this->OutputFiberRef = NULL;
@@ -111,6 +112,11 @@ void vtkMRMLTractographyFiducialSeedingNode::WriteXML(ostream& of, int nIndent)
     std::stringstream ss;
     ss << this->SeedingRegionStep;
     of << indent << " SeedingRegionStep=\"" << ss.str() << "\"";
+  }  
+  {
+    std::stringstream ss;
+    ss << this->SeedingRegionStep;
+    of << indent << " MaxNumberOfSeeds=\"" << ss.str() << "\"";
   }
   {
     std::stringstream ss;
@@ -186,6 +192,12 @@ void vtkMRMLTractographyFiducialSeedingNode::ReadXMLAttributes(const char** atts
       ss << attValue;
       ss >> this->SeedingRegionStep;
       }
+    else if (!strcmp(attName, "MaxNumberOfSeeds")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->MaxNumberOfSeeds;
+      }
     else if (!strcmp(attName, "InputVolumeRef"))
       {
       this->SetInputVolumeRef(attValue);
@@ -210,6 +222,8 @@ void vtkMRMLTractographyFiducialSeedingNode::ReadXMLAttributes(const char** atts
 void vtkMRMLTractographyFiducialSeedingNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
+  this->DisableModifiedEventOn();
+
   vtkMRMLTractographyFiducialSeedingNode *node = (vtkMRMLTractographyFiducialSeedingNode *) anode;
 
   this->SetStoppingValue(node->StoppingValue);
@@ -218,9 +232,14 @@ void vtkMRMLTractographyFiducialSeedingNode::Copy(vtkMRMLNode *anode)
   this->SetIntegrationStep(node->IntegrationStep);
   this->SetSeedingRegionSize(node->SeedingRegionSize);
   this->SetSeedingRegionStep(node->SeedingRegionStep);
+  this->SetMaxNumberOfSeeds(node->MaxNumberOfSeeds);
   this->SetInputVolumeRef(node->InputVolumeRef);
   this->SetInputFiducialRef(node->InputFiducialRef);
   this->SetOutputFiberRef(node->OutputFiberRef);
+
+  this->DisableModifiedEventOff();
+  this->InvokePendingModifiedEvent();
+
 }
 
 //----------------------------------------------------------------------------
@@ -235,6 +254,7 @@ void vtkMRMLTractographyFiducialSeedingNode::PrintSelf(ostream& os, vtkIndent in
   os << indent << "IntegrationStep:   " << this->IntegrationStep << "\n";
   os << indent << "SeedingRegionSize:   " << this->SeedingRegionSize << "\n";
   os << indent << "SeedingRegionStep:   " << this->SeedingRegionStep << "\n";
+  os << indent << "MaxNumberOfSeeds:   " << this->MaxNumberOfSeeds << "\n";
   os << indent << "InputVolumeRef:   " << 
    (this->InputVolumeRef ? this->InputVolumeRef : "(none)") << "\n";
   os << indent << "InputFiducialRef:   " << 

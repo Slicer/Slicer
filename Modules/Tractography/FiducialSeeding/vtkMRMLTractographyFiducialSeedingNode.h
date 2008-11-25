@@ -85,6 +85,11 @@ class VTK_FIDUCIALSEEDING_EXPORT vtkMRMLTractographyFiducialSeedingNode : public
   vtkGetMacro(SeedingRegionStep, double);
   vtkSetMacro(SeedingRegionStep, double);
 
+  // Description:
+  // Get/Set Seeding max seeding size (module parameter)
+  vtkGetMacro(MaxNumberOfSeeds, int);
+  vtkSetMacro(MaxNumberOfSeeds, int);
+
   
   // Description:
   // Get/Set input volume MRML Id
@@ -119,7 +124,8 @@ protected:
   double IntegrationStep;
   double SeedingRegionSize;
   double SeedingRegionStep;
-  
+  int MaxNumberOfSeeds;
+
   char* InputVolumeRef;
   char* InputFiducialRef;
   char* OutputFiberRef;

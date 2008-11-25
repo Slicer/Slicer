@@ -23,6 +23,7 @@
 #include "vtkSeedTracts.h"
 #include "vtkMath.h"
 #include "vtkPointData.h"
+#include "vtkMaskPoints.h"
 
 #include "vtkMRMLTransformableNode.h"
 #include "vtkMRMLModelNode.h"
@@ -61,7 +62,8 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
                                                             double stoppingValue, 
                                                             double stoppingCurvature, 
                                                             double integrationStepLength,
-                                                            double regionSize, double sampleStep)
+                                                            double regionSize, double sampleStep,
+                                                            int maxNumberOfSeeds)
 {
   // 0. check inputs
   if (volumeNode == NULL || transformableNode == NULL || fiberNode == NULL ||
@@ -215,16 +217,24 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   // loop over points in the models
   if (modelNode) 
     {
-    int nf = modelNode->GetPolyData()->GetNumberOfPoints();
+    vtkMaskPoints *mp = vtkMaskPoints::New();
+    mp->SetInput(modelNode->GetPolyData());
+    mp->SetRandomMode(1);
+    mp->SetMaximumNumberOfPoints(maxNumberOfSeeds);
+    mp->Update();
+    vtkPolyData *mpoly = mp->GetOutput();
+
+    int nf = mpoly->GetNumberOfPoints();
     for (int f=0; f<nf; f++)
       {
-      double *xyzf = modelNode->GetPolyData()->GetPoint(f);
+      double *xyzf = mpoly->GetPoint(f);
 
       double *xyz = transFiducial->TransformDoublePoint(xyzf);
            
       //Run the thing
       seed->SeedStreamlineFromPoint(xyz[0], xyz[1], xyz[2]);
       }
+    mp->Delete();
     }
     
     

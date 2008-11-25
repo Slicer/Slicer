@@ -47,6 +47,8 @@ Version:   $Revision: 1.2 $
 #include "vtkKWMenuButtonWithLabel.h"
 #include "vtkKWScaleWithLabel.h"
 #include "vtkKWScale.h"
+#include "vtkKWEntryWithLabel.h"
+#include "vtkKWEntry.h"
 
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
@@ -84,6 +86,7 @@ vtkSlicerTractographyFiducialSeedingGUI::vtkSlicerTractographyFiducialSeedingGUI
   this->IntegrationStepLengthScale = vtkKWScaleWithLabel::New();
   this->RegionSizeScale = vtkKWScaleWithLabel::New();
   this->RegionSampleSizeScale = vtkKWScaleWithLabel::New();
+  this->MaxNumberOfSeedsEntry = vtkKWEntryWithLabel::New();
 
   this->TractographyFiducialSeedingNodeSelector = vtkSlicerNodeSelectorWidget::New();
 
@@ -169,6 +172,12 @@ vtkSlicerTractographyFiducialSeedingGUI::~vtkSlicerTractographyFiducialSeedingGU
     this->RegionSampleSizeScale->Delete();
     this->RegionSampleSizeScale = NULL;
   }
+    if ( this->MaxNumberOfSeedsEntry ) 
+  {
+    this->MaxNumberOfSeedsEntry->SetParent(NULL);
+    this->MaxNumberOfSeedsEntry->Delete();
+    this->MaxNumberOfSeedsEntry = NULL;
+  }
   
   if ( this->TractographyFiducialSeedingNodeSelector ) 
   {
@@ -224,6 +233,8 @@ void vtkSlicerTractographyFiducialSeedingGUI::AddGUIObservers ( )
   this->RegionSizeScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->RegionSampleSizeScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+ 
+  this->MaxNumberOfSeedsEntry->GetWidget()->AddObserver(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->TractographyFiducialSeedingNodeSelector->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
 
@@ -251,6 +262,8 @@ void vtkSlicerTractographyFiducialSeedingGUI::RemoveGUIObservers ( )
   this->RegionSizeScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->RegionSampleSizeScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  
+  this->MaxNumberOfSeedsEntry->GetWidget()->RemoveObservers(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->TractographyFiducialSeedingNodeSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
 
@@ -320,6 +333,15 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessGUIEvents ( vtkObject *call
     {
     this->CreateTracts();
     }
+  else if (event == vtkKWEntry::EntryValueChangedEvent && 
+          this->MaxNumberOfSeedsEntry->GetWidget() ==  vtkKWEntry::SafeDownCast(caller)) 
+    {
+    vtkMRMLTractographyFiducialSeedingNode* n = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(this->TractographyFiducialSeedingNodeSelector->GetSelected());
+    if (n == NULL || (n && n->GetMaxNumberOfSeeds() != this->MaxNumberOfSeedsEntry->GetWidget()->GetValueAsInt()) )
+      {
+      this->CreateTracts();
+      }
+    }
 
 }
 
@@ -358,6 +380,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::UpdateGUI ()
     this->IntegrationStepLengthScale->GetWidget()->SetValue(n->GetIntegrationStep());
     this->RegionSizeScale->GetWidget()->SetValue(n->GetSeedingRegionSize());
     this->RegionSampleSizeScale->GetWidget()->SetValue(n->GetSeedingRegionStep());
+    this->MaxNumberOfSeedsEntry->GetWidget()->SetValueAsInt(n->GetMaxNumberOfSeeds());
     }
 
   this->UpdatingGUI = 0;
@@ -412,6 +435,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::UpdateMRML ()
   n->SetIntegrationStep( this->IntegrationStepLengthScale->GetWidget()->GetValue() );
   n->SetSeedingRegionSize( this->RegionSizeScale->GetWidget()->GetValue() );
   n->SetSeedingRegionStep( this->RegionSampleSizeScale->GetWidget()->GetValue() );
+  n->SetMaxNumberOfSeeds( this->MaxNumberOfSeedsEntry->GetWidget()->GetValueAsInt() );
 
   this->UpdatingMRML = 0;
 
@@ -422,6 +446,10 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessMRMLEvents ( vtkObject *cal
                                             unsigned long event,
                                             void *callData ) 
 {
+  if (this->UpdatingMRML)
+    {
+    return;
+    }
   if (event == vtkMRMLScene::SceneCloseEvent)
     {
     vtkSetAndObserveMRMLNodeMacro( this->TractographyFiducialSeedingNode, NULL);
@@ -520,7 +548,9 @@ void vtkSlicerTractographyFiducialSeedingGUI:: CreateTracts()
                                                           this->StoppingCurvatureScale->GetWidget()->GetValue(),
                                                           this->IntegrationStepLengthScale->GetWidget()->GetValue(),
                                                           this->RegionSizeScale->GetWidget()->GetValue(),
-                                                          this->RegionSampleSizeScale->GetWidget()->GetValue());  
+                                                          this->RegionSampleSizeScale->GetWidget()->GetValue(),
+                                                          this->MaxNumberOfSeedsEntry->GetWidget()->GetValueAsInt()
+                                                          );  
 }
 
 //---------------------------------------------------------------------------
@@ -679,9 +709,17 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
   this->RegionSampleSizeScale->GetWidget()->SetRange(1,10);
   this->RegionSampleSizeScale->GetWidget()->SetResolution(0.5);
   this->RegionSampleSizeScale->GetWidget()->SetValue(0.5);
-  this->RegionSampleSizeScale->SetBalloonHelpString("Step between seedin samples in the fiducial regob=n");
+  this->RegionSampleSizeScale->SetBalloonHelpString("Step between seedin samples in the fiducial region");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->RegionSampleSizeScale->GetWidgetName() );
+
+  this->MaxNumberOfSeedsEntry->SetParent ( moduleFrame->GetFrame() );
+  this->MaxNumberOfSeedsEntry->Create ( );
+  this->MaxNumberOfSeedsEntry->SetLabelText("Maximum number of seeds");
+  this->MaxNumberOfSeedsEntry->GetWidget()->SetValueAsInt(100);
+  this->MaxNumberOfSeedsEntry->SetBalloonHelpString("Maximum number of seeds");
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+                 this->MaxNumberOfSeedsEntry->GetWidgetName() );
 
   this->SeedButton->SetParent(moduleFrame->GetFrame());
   this->SeedButton->Create();
