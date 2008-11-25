@@ -29,6 +29,7 @@
 #include "vtkSlicerBoxRepresentation.h"
 
 class vtkRenderWindowInteractor;
+class vtkSlicerViewerWidget;
 
 class vtkKWMessage;
 class vtkSlicerVisibilityIcons;
@@ -82,7 +83,7 @@ public:
   
   void SetBounds(double *bounds);
   
-  void SetInteractor(vtkRenderWindowInteractor *vtkRenderWindowInteractor);
+  void SetViewerWidget(vtkSlicerViewerWidget *ViewerWidget);
   
   // Description:
   // Get methods on class members ( no Set methods required. )
@@ -106,7 +107,7 @@ protected:
   
   vtkSlicerBoxWidget2 *BoxWidget;
   vtkSlicerBoxRepresentation *BoxWidgetRepresentation;
-  
+  vtkSlicerViewerWidget *ViewerWidget;
   
   // ROI position and Raidus scale
   vtkKWRange *XRange;
@@ -121,17 +122,6 @@ protected:
   vtkKWPushButton *VisibilityToggle;
   vtkSlicerVisibilityIcons *VisibilityIcons;
 
-  // ROI colour
-  vtkKWChangeColorButton *ROIColorButton;
-
-  // ROI selected ROI colour
-  vtkKWChangeColorButton *ROISelectedColorButton;
-
-  // text scale
-  vtkKWScaleWithEntry *ROITextScale;
-
-  // opacity
-  vtkKWScaleWithEntry *ROIOpacity;
 
   // interactive mode
   vtkKWCheckButtonWithLabel *InteractiveButton;

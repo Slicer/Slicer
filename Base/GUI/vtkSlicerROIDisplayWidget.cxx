@@ -2,7 +2,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkProperty.h"
 #include "vtkRenderWindowInteractor.h"
-
+#include "vtkSlicerViewerWidget.h"
 #include "vtkSlicerROIDisplayWidget.h"
 
 #include "vtkKWFrameWithLabel.h"
@@ -46,8 +46,8 @@ vtkSlicerROIDisplayWidget::vtkSlicerROIDisplayWidget ( )
     this->BoxWidgetRepresentation = vtkSlicerBoxRepresentation::New();
     this->BoxWidget->SetRepresentation(this->BoxWidgetRepresentation);
     this->BoxWidget->SetPriority(1);
-    this->BoxWidgetRepresentation->SetPlaceFactor( 1.25 );
-
+    this->BoxWidgetRepresentation->SetPlaceFactor( 1.0 );
+    this->ViewerWidget = NULL;
     this->ProcessingMRMLEvent = 0;
     this->ProcessingWidgetEvent = 0;
 
@@ -118,10 +118,13 @@ vtkSlicerROIDisplayWidget::~vtkSlicerROIDisplayWidget ( )
 
 //---------------------------------------------------------------------------
 void 
-vtkSlicerROIDisplayWidget::SetInteractor(vtkRenderWindowInteractor *interactor)
+vtkSlicerROIDisplayWidget::SetViewerWidget(vtkSlicerViewerWidget *ViewerWidget)
 {
+  this->ViewerWidget=ViewerWidget;
+  vtkRenderWindowInteractor *interactor=this->ViewerWidget->GetMainViewer()->GetRenderWindow()->GetInteractor();
   this->BoxWidget->SetInteractor(interactor);
 }
+
 
 
 //---------------------------------------------------------------------------
@@ -142,7 +145,14 @@ vtkSlicerROIDisplayWidget::GetInteractiveMode()
 void 
 vtkSlicerROIDisplayWidget::SetBounds(double *bounds)
 {
-  this->BoxWidgetRepresentation->PlaceWidget(bounds);
+  double b[6];
+  b[0] = bounds[0];
+  b[1] = bounds[3];
+  b[2] = bounds[1];
+  b[3] = bounds[4];
+  b[4] = bounds[2];
+  b[5] = bounds[5];
+  this->BoxWidgetRepresentation->PlaceWidget(b);
 }
 
 //---------------------------------------------------------------------------
@@ -179,13 +189,9 @@ void vtkSlicerROIDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
     return;
     }
 
-  if (!this->GetInteractiveMode() && (event == vtkKWScale::ScaleValueChangingEvent || 
-                                      event == vtkKWScale::ScaleValueStartChangingEvent) )
-    {
-    return;
-    }
   if (!this->GetInteractiveMode() && event == vtkCommand::InteractionEvent)
     {
+    this->ViewerWidget->Render();
     return;
     }
   
@@ -208,16 +214,30 @@ void vtkSlicerROIDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
     
     if (event == vtkKWPushButton::InvokedEvent && this->VisibilityToggle == vtkKWPushButton::SafeDownCast(caller))
       {
-      int vis = this->VisibilityToggle->GetState();
-      this->ROINode->SetVisibility(vis);
+      int vis = ROINode->GetVisibility();
+      if (vis) 
+        {
+        vis = 0;
+        }
+      else
+        {
+        vis = 1;
+        }
       if (vis)
         {
+        this->GetVisibilityToggle()->SetImageToIcon(
+              this->GetVisibilityIcons()->GetVisibleIcon());
+        this->ROINode->SetVisibility(1);
         this->BoxWidget->On();
         }
       else
         {
+        this->GetVisibilityToggle()->SetImageToIcon(
+          this->GetVisibilityIcons()->GetInvisibleIcon());
+        this->ROINode->SetVisibility(0);
         this->BoxWidget->Off();
         }
+      this->ViewerWidget->Render();
       }
     else if (event == vtkCommand::InteractionEvent || event == vtkCommand::EndInteractionEvent)
       {
@@ -226,15 +246,16 @@ void vtkSlicerROIDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
         reinterpret_cast<vtkSlicerBoxRepresentation*>(boxWidget->GetRepresentation());
       //boxRep->GetTransform(this->Transform);
       double* bounds = boxRep->GetBounds();
-      XRange->SetRange(bounds[0],bounds[3]);
-      YRange->SetRange(bounds[1],bounds[4]);
-      ZRange->SetRange(bounds[2],bounds[5]);
+      XRange->SetRange(bounds[0],bounds[1]);
+      YRange->SetRange(bounds[2],bounds[3]);
+      ZRange->SetRange(bounds[4],bounds[5]);
       
       this->ROINode->DisableModifiedEventOn();
       this->ROINode->SetXYZ(0.5*(bounds[3]+bounds[0]),0.5*(bounds[4]+bounds[1]),0.5*(bounds[5]+bounds[2]));
       this->ROINode->SetRadiusXYZ(0.5*(bounds[3]-bounds[0]),0.5*(bounds[4]-bounds[1]),0.5*(bounds[5]-bounds[2]));
       this->ROINode->DisableModifiedEventOff();
       this->ROINode->InvokePendingModifiedEvent();
+      this->ViewerWidget->Render();
       }
     else if (event == vtkKWScale::ScaleValueChangingEvent || 
              event == vtkKWScale::ScaleValueChangedEvent)
@@ -243,14 +264,18 @@ void vtkSlicerROIDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
       XRange->GetRange(bounds[0],bounds[3]);
       YRange->GetRange(bounds[1],bounds[4]);
       ZRange->GetRange(bounds[2],bounds[5]);
-      
-      this->ROINode->DisableModifiedEventOn();
-      this->ROINode->SetXYZ(0.5*(bounds[3]+bounds[0]),0.5*(bounds[4]+bounds[1]),0.5*(bounds[5]+bounds[2]));
-      this->ROINode->SetRadiusXYZ(0.5*(bounds[3]-bounds[0]),0.5*(bounds[4]-bounds[1]),0.5*(bounds[5]-bounds[2]));
-      this->ROINode->DisableModifiedEventOff();
-      this->ROINode->InvokePendingModifiedEvent();
-      
+
+      if (this->GetInteractiveMode() || 
+          event == vtkKWScale::ScaleValueChangedEvent )
+        {
+        this->ROINode->DisableModifiedEventOn();
+        this->ROINode->SetXYZ(0.5*(bounds[3]+bounds[0]),0.5*(bounds[4]+bounds[1]),0.5*(bounds[5]+bounds[2]));
+        this->ROINode->SetRadiusXYZ(0.5*(bounds[3]-bounds[0]),0.5*(bounds[4]-bounds[1]),0.5*(bounds[5]-bounds[2]));
+        this->ROINode->DisableModifiedEventOff();
+        this->ROINode->InvokePendingModifiedEvent();
+        }
       this->SetBounds(bounds);
+      this->ViewerWidget->Render();
       }
     }
   
@@ -300,10 +325,20 @@ void vtkSlicerROIDisplayWidget::UpdateWidget()
   XRange->SetRange(bounds[0],bounds[3]);
   YRange->SetRange(bounds[1],bounds[4]);
   ZRange->SetRange(bounds[2],bounds[5]);
-  this->SetBounds(bounds);
   
   int vis = this->ROINode->GetVisibility();
-  this->VisibilityToggle->SetState(vis);
+
+  if (vis > 0)
+    {
+    this->GetVisibilityToggle()->SetImageToIcon(
+      this->GetVisibilityIcons()->GetVisibleIcon());
+    }
+  else
+    {
+    this->GetVisibilityToggle()->SetImageToIcon(
+      this->GetVisibilityIcons()->GetInvisibleIcon());
+    }
+
   if (vis)
     {
     this->BoxWidget->On();
@@ -312,6 +347,8 @@ void vtkSlicerROIDisplayWidget::UpdateWidget()
     {
     this->BoxWidget->Off();
     }
+  this->SetBounds(bounds);
+  this->ViewerWidget->Render();
 }
 
 //---------------------------------------------------------------------------
@@ -352,15 +389,16 @@ void vtkSlicerROIDisplayWidget::CreateWidget ( )
   displayFrame->Create ( );
   //displayFrame->SetLabelText ("ROI Display");
   //displayFrame->ExpandFrame ( );
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  displayFrame->GetWidgetName());
 
   // XPosition frame
   vtkKWFrame *XPositionFrame = vtkKWFrame::New();
   XPositionFrame->SetParent ( displayFrame );
   XPositionFrame->Create ( );
-  this->Script ("pack %s -side top -anchor nw -fill x -pady 0 -in %s",
-    XPositionFrame->GetWidgetName());
+  this->Script ("pack %s -side top -anchor nw -expand y -fill x -pady 0 -in %s",
+                XPositionFrame->GetWidgetName(),
+                displayFrame->GetWidgetName());
 
   // x position label
   this->XLabel = vtkKWLabel::New();
@@ -375,22 +413,27 @@ void vtkSlicerROIDisplayWidget::CreateWidget ( )
   this->XRange->Create();
   this->XRange->SymmetricalInteractionOff();
   this->XRange->SetBalloonHelpString ( "Set Left-Right postion of the ROI BOX in RAS coordinates");
-  this->XRange->SetRange(-256.0, 256.0);
+  this->XRange->SetWholeRange(-100,100);
+  this->XRange->SetRange(-20,20);
   this->XRange->SetOrientationToHorizontal ();
   this->XRange->SetResolution(1);
   this->XRange->SetEntriesWidth(4);
 
-  this->Script("pack %s %s -side left -anchor w -padx 2 -pady 2 -in %s", 
-    this->XLabel->GetWidgetName(), this->XRange->GetWidgetName() );
+  this->Script("pack %s -side left -anchor w -padx 2 -pady 2 -in %s", 
+    this->XLabel->GetWidgetName(),
+    XPositionFrame->GetWidgetName());
+
+  this->Script("pack %s -side left -anchor w -expand y -fill x -padx 2 -pady 2 -in %s", 
+    this->XRange->GetWidgetName(),
+    XPositionFrame->GetWidgetName());
 
   // YPosition frame
   vtkKWFrame *YPositionFrame = vtkKWFrame::New();
   YPositionFrame->SetParent ( displayFrame );
   YPositionFrame->Create ( );
-  this->Script ("pack %s -side top -anchor nw -fill x -pady 0 -in %s",
-    YPositionFrame->GetWidgetName(),
-    displayFrame->GetWidgetName());
-
+  this->Script ("pack %s -side top -anchor nw -fill x -expand y -pady 0 -in %s",
+                YPositionFrame->GetWidgetName(),
+                displayFrame->GetWidgetName());
   // Y position label
   this->YLabel = vtkKWLabel::New();
   this->YLabel->SetParent ( YPositionFrame );
@@ -404,20 +447,27 @@ void vtkSlicerROIDisplayWidget::CreateWidget ( )
   this->YRange->Create();
   this->YRange->SymmetricalInteractionOff();
   this->YRange->SetBalloonHelpString ( "Set Posterior-Anterior postion of the ROI BOX in RAS coordinates");
-  this->YRange->SetRange(-256.0, 256.0);
+  this->YRange->SetWholeRange(-100,100);
+  this->YRange->SetRange(-20,20);
   this->YRange->SetOrientationToHorizontal ();
   this->YRange->SetResolution(1);
   this->YRange->SetEntriesWidth(4);
 
-  this->Script("pack %s %s -side left -anchor w -padx 2 -pady 2 -in %s", 
-    this->YLabel->GetWidgetName(), this->YRange->GetWidgetName() );
+  this->Script("pack %s -side left -anchor w -padx 2 -pady 2 -in %s", 
+    this->YLabel->GetWidgetName(),
+    YPositionFrame->GetWidgetName());
+
+  this->Script("pack %s -side left -anchor w -expand y -fill x -padx 2 -pady 2 -in %s", 
+    this->YRange->GetWidgetName(),
+    YPositionFrame->GetWidgetName());
 
   // ZPosition frame
   vtkKWFrame *ZPositionFrame = vtkKWFrame::New();
   ZPositionFrame->SetParent ( displayFrame );
   ZPositionFrame->Create ( );
-  this->Script ("pack %s -side top -anchor nw -fill x -pady 0 -in %s",
-               ZPositionFrame->GetWidgetName());
+  this->Script ("pack %s -side top -anchor nw -fill x -expand y -pady 0 -in %s",
+                ZPositionFrame->GetWidgetName(),
+                displayFrame->GetWidgetName());
   // Z position label
   this->ZLabel = vtkKWLabel::New();
   this->ZLabel->SetParent ( ZPositionFrame );
@@ -431,13 +481,19 @@ void vtkSlicerROIDisplayWidget::CreateWidget ( )
   this->ZRange->Create();
   this->ZRange->SymmetricalInteractionOff();
   this->ZRange->SetBalloonHelpString ( "Set Interior-Superior postion of the ROI BOX in RAS coordinates");
-  this->ZRange->SetRange(-256.0, 256.0);
+  this->ZRange->SetWholeRange(-100,100);
+  this->ZRange->SetRange(-20,20);
   this->ZRange->SetOrientationToHorizontal ();
   this->ZRange->SetResolution(1);
   this->ZRange->SetEntriesWidth(4);
 
-  this->Script("pack %s %s -side left -anchor w -padx 2 -pady 2 -in %s", 
-    this->ZLabel->GetWidgetName(), this->ZRange->GetWidgetName() );
+  this->Script("pack %s -side left -anchor w -padx 2 -pady 2 -in %s", 
+    this->ZLabel->GetWidgetName(),
+    ZPositionFrame->GetWidgetName());
+
+  this->Script("pack %s -side left -anchor w -expand y -fill x -padx 2 -pady 2 -in %s", 
+    this->ZRange->GetWidgetName(),
+    ZPositionFrame->GetWidgetName());
 
   
   // scale frame
@@ -465,10 +521,10 @@ void vtkSlicerROIDisplayWidget::CreateWidget ( )
   this->InteractiveButton->SetLabelText("Interactive Mode");
   this->InteractiveButton->SetBalloonHelpString("Enable interactive updates.");
 
-  this->Script("pack %s %s %s -side left -anchor w -padx 2 -pady 2 -in %s", 
+  this->Script("pack %s %s -side left -anchor w -padx 2 -pady 2 -in %s", 
                this->VisibilityToggle->GetWidgetName(), 
                this->InteractiveButton->GetWidgetName(),
-               this->ROITextScale->GetWidgetName(),scaleFrame->GetWidgetName() );
+               scaleFrame->GetWidgetName() );
 
   displayFrame->Delete ();
   scaleFrame->Delete ();

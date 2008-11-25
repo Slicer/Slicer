@@ -33,6 +33,7 @@ class vtkSlicerVisibilityIcons;
 class vtkKWChangeColorButton;
 class vtkKWScaleWithEntry;
 class vtkKWMenuButtonWithLabel;
+class vtkSlicerROIDisplayWidget;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerROIGUI : public vtkSlicerModuleGUI
 {
@@ -147,19 +148,7 @@ protected:
   vtkKWPushButton *RemoveROIListButton;
 
   // ROI position and Raidus scale
-  vtkKWScaleWithEntry * XPositionScale;
-  vtkKWScaleWithEntry * YPositionScale;
-  vtkKWScaleWithEntry * ZPositionScale;
-  vtkKWScaleWithEntry * XRadiusScale;
-  vtkKWScaleWithEntry * YRadiusScale;
-  vtkKWScaleWithEntry * ZRadiusScale;
-
-  vtkKWLabel *XPositionLabel;
-  vtkKWLabel *YPositionLabel;
-  vtkKWLabel *ZPositionLabel;
-  vtkKWLabel *XRadiusLabel;
-  vtkKWLabel *YRadiusLabel;
-  vtkKWLabel *ZRadiusLabel;
+  vtkSlicerROIDisplayWidget *ROIDisplayWidget;
 
   // ROI visibility
   vtkKWPushButton *VisibilityToggle;

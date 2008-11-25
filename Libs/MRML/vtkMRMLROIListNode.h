@@ -170,7 +170,12 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     // Syncronize the ROI position and radius in IJK 
     // coordinates according RAS coordinates
     void UpdateIJK();
-    
+
+    // Description:
+    // disallow access to the ROI box by outside classes, have them use
+    // SetNthROI
+    vtkMRMLROINode* GetNthROINode(int n);
+
   protected:
     vtkMRMLROIListNode();
     ~vtkMRMLROIListNode();
@@ -187,10 +192,6 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     double Color[3];
     double SelectedColor[3];
 
-    // Description:
-    // disallow access to the ROI box by outside classes, have them use
-    // SetNthROI
-    vtkMRMLROINode* GetNthROINode(int n);
 
     // Description:
     // Numbers relating to the 3D render of the ROI
