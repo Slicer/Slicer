@@ -1,20 +1,16 @@
 /*=========================================================================
 
   Program:   Extract Skeleton
-  Module:    $RCSfile: main.cxx,v $
+  Module:    $HeadURL$
   Language:  C++
-  Date:      $Date: 2007-07-10 11:35:36 -0400 (Tue, 10 Jul 2007) $
-  Version:   $Revision: 48 $
+  Date:      $Date$
+  Version:   $Revision$
 
-  Copyright (c) 2007 Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
+  See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
-=========================================================================*/
-
+==========================================================================*/
 #if defined(_MSC_VER)
 #pragma warning ( disable : 4786 )
 #endif

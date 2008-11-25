@@ -1,3 +1,16 @@
+/*=========================================================================
+
+  Program:   Extract Skeleton
+  Module:    $HeadURL$
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
+
+==========================================================================*/
 //  ===============================================
 //  SkelGraph.cc
 //  Graphs a Thinning-skeleton 
@@ -12,9 +25,6 @@
 
 #include "SkelGraph.h"
 
-
-static char msg[200];
-static char tmp_filename[1024];
 
 /*
 ===============================================
@@ -215,12 +225,12 @@ void SkelGraph::Extract_skel_graph(unsigned char *orig_image, int orig_dim[3])
                 ++act_neighbor; i++;
                 }
               // update ends of new branches with each other
-              for (int i = 0; i < num_nb; i++) {
-                for (int j = 0; j < num_nb; j++) {
-                  if (i != j) {
-                    if (! elems[i]->end_1_neighbors)
-                      elems[i]->end_1_neighbors = new list<int>();
-                    elems[i]->end_1_neighbors->push_back(elems[j]->branchID);
+              for (int ii = 0; ii < num_nb; ii++) {
+                for (int jj = 0; jj < num_nb; jj++) {
+                  if (ii != jj) {
+                    if (! elems[ii]->end_1_neighbors)
+                      elems[ii]->end_1_neighbors = new list<int>();
+                    elems[ii]->end_1_neighbors->push_back(elems[jj]->branchID);
                     }
                   }
                 }
@@ -662,7 +672,6 @@ void SkelGraph::get_valid_neighbors(point *act_point, list<point> * &neighbors)
 
   int pz = act_point->z - 1;
 
-  int nb = 0;
   for (int i = 0; i < 3; i++) {
     int py = act_point->y - 1;
     for (int j = 0; j < 3; j++) {
