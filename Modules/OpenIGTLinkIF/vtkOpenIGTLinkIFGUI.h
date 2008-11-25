@@ -29,6 +29,7 @@
 #include "vtkSlicerInteractorStyle.h"
 
 #include <string>
+#include <vector>
 
 class vtkKWPushButton;
 class vtkKWPushButtonSet;
@@ -44,6 +45,7 @@ class vtkKWEntryWithLabel;
 class vtkKWLoadSaveButtonWithLabel;
 class vtkKWMultiColumnListWithScrollbars;
 class vtkKWWizardWidget;
+class vtkKWTreeWithScrollbars;
 
 class vtkTransform;
 
@@ -74,9 +76,35 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
     UPDATE_PROPERTY_ALL    = 2,  // Update all properties for all items
     UPDATE_ALL             = 3,  // Update whole list (incl. changed number of items)
   };
-  
+
+  /*
+  enum {
+    IO_UNSPECIFIED = 0x00,
+    IO_INCOMING    = 0x01,
+    IO_OUTGOING    = 0x02,
+  };
+  */
+
+  enum {
+    NODE_NONE      = 0,
+    NODE_CONNECTOR = 1,
+    NODE_IO        = 2,
+    NODE_DEVICE    = 3
+  };
+
   static const char* ConnectorTypeStr[vtkIGTLConnector::NUM_TYPE];
   static const char* ConnectorStatusStr[vtkIGTLConnector::NUM_STATE];
+
+  typedef std::vector<int> ConnectorIDListType;
+  typedef struct {
+    std::string nodeName;
+    int         deviceID;
+    int         connectorID;
+    int         io;
+  } IOConfigNodeInfoType;
+
+  typedef std::list<IOConfigNodeInfoType> IOConfigNodeInfoListType;
+
   //ETX
 
  public:
@@ -172,13 +200,16 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   vtkKWEntry*          ConnectorAddressEntry;
   vtkKWEntry*          ConnectorPortEntry;
 
+
+  //----------------------------------------------------------------
+  // Data I/O Configuration frame
+
   vtkKWCheckButton*    EnableAdvancedSettingButton;
 
-  vtkKWMenuButton*     ASConnectorListMenu;
-  vtkKWMultiColumnListWithScrollbars* MrmlNodeList;
+  vtkKWTreeWithScrollbars* IOConfigTree;
+  vtkKWMenu *IOConfigContextMenu;
 
-  vtkKWPushButton* AddDeviceNameButton;
-  vtkKWPushButton* DeleteDeviceNameButton;  
+  vtkKWMultiColumnListWithScrollbars* MrmlNodeList;
 
   //----------------------------------------------------------------
   // Visualization Control Frame
@@ -194,9 +225,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   vtkKWCheckButton *ImagingControlCheckButton;
   vtkKWMenuButton  *ImagingMenu;
   
-  vtkKWPushButton  *StartScanButton;
-  vtkKWPushButton  *StopScanButton;
-
   vtkKWCheckButton *LocatorCheckButton;
 
   bool              IsSliceOrientationAdded;
@@ -239,10 +267,18 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   // Connector and MRML Node list management
   //----------------------------------------------------------------
 
-  int   CurrentMrmlNodeListID;  // raw number
+  ConnectorIDListType ConnectorIDList;
+
+  //int   CurrentMrmlNodeListID;  // row number
+  int   CurrentMrmlNodeListIndex; // row number
   //BTX
   vtkOpenIGTLinkIFLogic::IGTLMrmlNodeListType CurrentNodeListAvailable;
   vtkOpenIGTLinkIFLogic::IGTLMrmlNodeListType CurrentNodeListSelected;
+
+  IOConfigNodeInfoListType IOConfigTreeConnectorList;
+  IOConfigNodeInfoListType IOConfigTreeIOList;
+  IOConfigNodeInfoListType IOConfigTreeNodeList;
+
   //ETX
 
   //----------------------------------------------------------------
@@ -274,18 +310,27 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   void BuildGUIForDeviceFrame();
   void BuildGUIForVisualizationControlFrame();
   
-  int  ChangeWorkPhase(int phase, int fChangeWizard=0);
-  void ChangeSlicePlaneDriver(int slice, const char* driver);
+  void IOConfigTreeContextMenu(const char *callData);
+  int  IsIOConfigTreeLeafSelected(const char* callData, int* conID, int* devID, int* io);
+  void AddIOConfigContextMenuItem(int type, int conID, int devID, int io);
 
+  //virtual void AddNodeCallback(const char* conID, const char* io, const char* name, const char* type);
+ public:
+  virtual void AddNodeCallback(int conID, int io, const char* name, const char* type);
+  virtual void DeleteNodeCallback(int conID, int io, int devID);
+
+ private:
+  void ChangeSlicePlaneDriver(int slice, const char* driver);
+  
 
   //----------------------------------------------------------------
   // Connector List and Properties control
   //----------------------------------------------------------------
 
+  void UpdateIOConfigTree();
   void UpdateConnectorList(int updateLevel);
-  void UpdateConnectorMenu();
   void UpdateConnectorPropertyFrame(int i);
-  void UpdateMrmlNodeListFrame(int con);
+
  public:
   virtual int OnMrmlNodeListChanged(int row, int col, const char* item);
 };

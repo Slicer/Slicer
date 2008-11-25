@@ -48,9 +48,11 @@ vtkIGTLConnector::vtkIGTLConnector()
   this->RestrictDeviceName = 0;
 
   this->DeviceInfoList.clear();
-  //this->IncomingDeviceIDList.clear();
-  //this->OutgoingDeviceIDList.clear();
-  //this->UnspecifiedDeviceIDList.clear();
+  this->IncomingDeviceIDSet.clear();
+  this->OutgoingDeviceIDSet.clear();
+  this->UnspecifiedDeviceIDSet.clear();
+
+  this->LastID = -1;
 }
 
 //---------------------------------------------------------------------------
@@ -322,7 +324,7 @@ int vtkIGTLConnector::ReceiveController()
     
     if (circBuffer && circBuffer->StartPush() != -1)
       {
-      std::cerr << "Pushing into the circular buffer." << std::endl;
+      //std::cerr << "Pushing into the circular buffer." << std::endl;
       circBuffer->StartPush();
       
       igtl::MessageBase::Pointer buffer = circBuffer->GetPushBuffer();
@@ -501,7 +503,7 @@ int vtkIGTLConnector::UnregisterDevice(const char* deviceName, const char* devic
       }
     if (io & IO_OUTGOING)
       {
-      this->IncomingDeviceIDSet.erase(id);
+      this->OutgoingDeviceIDSet.erase(id);
       }
     // search in device io lists 
     if (this->OutgoingDeviceIDSet.find(id) == this->OutgoingDeviceIDSet.end() &&
@@ -568,3 +570,14 @@ int vtkIGTLConnector::RegisterDeviceIO(int id, int io)
   return 0;
 }
 
+//---------------------------------------------------------------------------
+vtkIGTLConnector::DeviceInfoType* vtkIGTLConnector::GetDeviceInfo(int id)
+{
+  DeviceInfoListType::iterator iter = this->DeviceInfoList.find(id);
+  if (iter != this->DeviceInfoList.end())
+    {
+    return &(iter->second);
+    }
+
+  return NULL;
+}

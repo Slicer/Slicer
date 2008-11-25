@@ -47,16 +47,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
 {
  public:
   //BTX
-  enum WorkPhase {
-    StartUp = 0,
-    Planning,
-    Calibration,
-    Targeting,
-    Manual,
-    Emergency,
-    NumPhases,
-  };
-
   enum {
     SLICE_DRIVER_USER    = 0,
     SLICE_DRIVER_LOCATOR = 1,
@@ -76,12 +66,30 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
     //SliceUpdateEvent        = 50002,
   };
 
-  enum {    // Device IO
-    DEVICE_UNSPEC           = 0,  // unspecified
-    DEVICE_IN               = 1,  // incoming
-    DEVICE_OUT              = 2   // outgoing
-  };
+  //enum {    // Device IO
+  //  DEVICE_UNSPEC           = 0,  // unspecified
+  //  DEVICE_IN               = 1,  // incoming
+  //  DEVICE_OUT              = 2   // outgoing
+  //};
 
+  typedef struct {
+    std::string name;
+    std::string type;
+    int io;
+  } IGTLMrmlNodeInfoType;
+
+  typedef struct {
+    int connectorID;
+    int deviceID;
+  } ConnectorAndDevicePairType;
+
+  typedef std::vector<IGTLMrmlNodeInfoType> IGTLMrmlNodeListType;
+
+  typedef std::vector<vtkIGTLConnector*>   ConnectorListType;
+  typedef std::map<int, vtkIGTLConnector*> ConnectorMapType;
+  typedef std::map<int, int>               ConnectorStateListType;
+  typedef std::map<vtkMRMLNode*, ConnectorListType> MRMLNodeAndConnectorTable;
+  typedef std::map<ConnectorAndDevicePairType, vtkMRMLNode*> IDToMRMLNodeMapType;
   //ETX
   
   // Work phase keywords used in NaviTrack (defined in BRPTPRInterface.h)
@@ -139,19 +147,22 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   void AddClientConnector(const char* name, const char* svrHostName, int port);
 
   // Delete connector
-  void DeleteConnector(int id);
+  void DeleteConnector(int index);
 
   int  GetNumberOfConnectors();
-  vtkIGTLConnector* GetConnector(int id);
+  vtkIGTLConnector* GetConnector(int index);
+  ConnectorMapType* GetConnectorMap();
+
   int  CheckConnectorsStatusUpdates();
   //int  ReadCircularBuffers();
 
   void ImportFromCircularBuffers();
-
+  
   // Device Name management          // io -- 0: unspecified, 1: incoming, 2: outgoing
   int  SetRestrictDeviceName(int f);
-  int  AddDeviceToConnector(int id, const char* deviceName, const char* deviceType, int io);
-  int  DeleteDeviceFromConnector(int id, const char* deviceName, const char* deviceType, int io);
+  int  AddDeviceToConnector(int conID, const char* deviceName, const char* deviceType, int io);
+  int  DeleteDeviceFromConnector(int conID, const char* deviceName, const char* deviceType, int io);
+  int  DeleteDeviceFromConnector(int conID, int devID, int io);
 
   //----------------------------------------------------------------
   // MRML Management
@@ -177,14 +188,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   void ProcCommand(const char* nodeName, int size, unsigned char* data);
 
   //BTX
-  typedef struct {
-    std::string name;
-    std::string type;
-    int io;
-  } IGTLMrmlNodeInfoType;
-
-  typedef std::vector<IGTLMrmlNodeInfoType> IGTLMrmlNodeListType;
-  
   void GetDeviceNamesFromMrml(IGTLMrmlNodeListType &list);
   //void GetDeviceTypes(std::vector<char*> &list);
   //ETX
@@ -215,6 +218,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   void                        UnRegisterDeviceEvent(vtkIGTLConnector* con,
                                                     const char* deviceName,
                                                     const char* deviceType);
+  void UnRegisterDeviceEvent(int conID, int devID);
   vtkCallbackCommand *DataCallbackCommand;
 
 
@@ -227,12 +231,12 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   //----------------------------------------------------------------
 
   //BTX
-  typedef std::vector<vtkIGTLConnector*> ConnectorListType;
-  ConnectorListType              ConnectorList;
-  std::vector<int>               ConnectorPrevStateList;
-
-  typedef std::map<vtkMRMLNode*, ConnectorListType> MRMLNodeAndConnectorTable;
+  ConnectorMapType                ConnectorList;
+  //std::vector<int>               ConnectorPrevStateList;
+  ConnectorStateListType           ConnectorPrevStateList;
+  int LastConnectorID;
   MRMLNodeAndConnectorTable      MRMLEventConnectorTable;
+  IDToMRMLNodeMapType              IDToMRMLNodeMap;
 
   //ETX
 

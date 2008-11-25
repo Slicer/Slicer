@@ -163,23 +163,12 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLConnector : public vtkObject
   int RegisterDeviceIO(int id, int io);
 
   //BTX
-  DeviceInfoListType* GetDeviceInfoList()    { return &DeviceInfoList;         };
-  DeviceIDSetType*    GetIncomingDevice()    { return &IncomingDeviceIDSet;    }
-  DeviceIDSetType*    GetOutgoingDevice()    { return &OutgoingDeviceIDSet;    }
-  DeviceIDSetType*    GetUnspecifiedDevice() { return &UnspecifiedDeviceIDSet; }
+  DeviceInfoType*     GetDeviceInfo(int id);
+  DeviceInfoListType* GetDeviceInfoList()    { return &(this->DeviceInfoList);        };
+  DeviceIDSetType*    GetIncomingDevice()    { return &(this->IncomingDeviceIDSet);   }
+  DeviceIDSetType*    GetOutgoingDevice()    { return &(this->OutgoingDeviceIDSet);   }
+  DeviceIDSetType*    GetUnspecifiedDevice() { return &(this->UnspecifiedDeviceIDSet);}
   //ETX
-
-  /** old stuff */
-  /*
-  DeviceNameList* GetIncomingDeviceList() { return &IncomingDeviceList; };
-  DeviceNameList* GetOutgoingDeviceList() { return &OutgoingDeviceList; };
-
-  MRMLNodeList*   GetIncomingMRMLNodeList() { return &IncomingMRMLNodeList; };
-  MRMLNodeList*   GetOutgoingMRMLNodeList() { return &OutgoingMRMLNodeList; };
-
-  DeviceNameList* GetUnspecifiedDeviceList() { return &UnspecifiedDeviceList; };
-  */
-
 
  private:
   //----------------------------------------------------------------
@@ -223,23 +212,12 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLConnector : public vtkObject
   int     RestrictDeviceName;  // Flag to restrict incoming and outgoing data by device names
   //BTX
   // -- Device Name (same as MRML node) and data type (data type string defined in OpenIGTLink)
-
   int                LastID;
   DeviceInfoListType DeviceInfoList;
 
   DeviceIDSetType   IncomingDeviceIDSet;
   DeviceIDSetType   OutgoingDeviceIDSet;
   DeviceIDSetType   UnspecifiedDeviceIDSet;
-
-  /** old stuff **/
-  /*
-  DeviceNameList IncomingDeviceList;
-  DeviceNameList OutgoingDeviceList;
-  DeviceNameList UnspecifiedDeviceList;
-
-  MRMLNodeList   IncomingMRMLNodeList;
-  MRMLNodeList   OutgoingMRMLNodeList;
-  */
 
   //ETX
 
