@@ -58,6 +58,29 @@ vtkIGTLConnector::vtkIGTLConnector()
 //---------------------------------------------------------------------------
 vtkIGTLConnector::~vtkIGTLConnector()
 {
+  this->CircularBufferMutex->Lock();
+  CircularBufferMap::iterator iter;
+  for (iter = this->Buffer.begin(); iter != this->Buffer.end(); iter ++)
+    {
+    iter->second->Delete();
+    }
+  this->Buffer.clear();
+  this->CircularBufferMutex->Unlock();
+  
+  if (this->Thread)
+    {
+    this->Thread->Delete();
+    }
+
+  if (this->Mutex)
+    {
+    this->Mutex->Delete();
+    }
+
+  if (this->CircularBufferMutex)
+    {
+    this->CircularBufferMutex->Delete();
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -307,7 +330,11 @@ int vtkIGTLConnector::ReceiveController()
     
     //----------------------------------------------------------------
     // Search Circular Buffer
-    
+
+    // TODO: 
+    // Currently, the circular buffer is selected by device name, but
+    // it should be selected by device name and device type.
+
     std::string key = headerMsg->GetDeviceName();
     CircularBufferMap::iterator iter = this->Buffer.find(key);
     if (iter == this->Buffer.end()) // First time to refer the device name
@@ -440,7 +467,7 @@ int vtkIGTLConnector::GetDeviceID(const char* deviceName, const char* deviceType
   // returns -1 if no device found on the list
   int id = -1;
 
-  DeviceInfoListType::iterator iter;
+  DeviceInfoMapType::iterator iter;
 
   for (iter = this->DeviceInfoList.begin(); iter != this->DeviceInfoList.end(); iter ++)
     {
@@ -487,7 +514,7 @@ int vtkIGTLConnector::UnregisterDevice(const char* deviceName, const char* devic
   // return 1, if the device is removed from the device info list.
 
   int id  = GetDeviceID(deviceName, deviceType);
-  DeviceInfoListType::iterator iter = this->DeviceInfoList.find(id);
+  DeviceInfoMapType::iterator iter = this->DeviceInfoList.find(id);
 
   if (iter != this->DeviceInfoList.end())
     {
@@ -522,7 +549,7 @@ int vtkIGTLConnector::UnregisterDevice(const char* deviceName, const char* devic
 //---------------------------------------------------------------------------
 int vtkIGTLConnector::UnregisterDevice(int id)
 {
-  DeviceInfoListType::iterator iter = this->DeviceInfoList.find(id);
+  DeviceInfoMapType::iterator iter = this->DeviceInfoList.find(id);
   if (iter != this->DeviceInfoList.end())
     {
     this->UnspecifiedDeviceIDSet.erase(id);
@@ -538,7 +565,7 @@ int vtkIGTLConnector::UnregisterDevice(int id)
 //---------------------------------------------------------------------------
 int vtkIGTLConnector::RegisterDeviceIO(int id, int io)
 {
-  DeviceInfoListType::iterator iter = this->DeviceInfoList.find(id);
+  DeviceInfoMapType::iterator iter = this->DeviceInfoList.find(id);
 
   if (iter != this->DeviceInfoList.end()) // if id is on the list
     {
@@ -573,7 +600,7 @@ int vtkIGTLConnector::RegisterDeviceIO(int id, int io)
 //---------------------------------------------------------------------------
 vtkIGTLConnector::DeviceInfoType* vtkIGTLConnector::GetDeviceInfo(int id)
 {
-  DeviceInfoListType::iterator iter = this->DeviceInfoList.find(id);
+  DeviceInfoMapType::iterator iter = this->DeviceInfoList.find(id);
   if (iter != this->DeviceInfoList.end())
     {
     return &(iter->second);

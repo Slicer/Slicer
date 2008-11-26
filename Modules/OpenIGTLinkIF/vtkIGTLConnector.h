@@ -73,12 +73,9 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLConnector : public vtkObject
     //vtkMRMLNode*  node;
   } DeviceInfoType;
 
-  typedef std::map<int, DeviceInfoType> DeviceInfoListType;   // Device list:  index is referred as
+  typedef std::map<int, DeviceInfoType> DeviceInfoMapType;   // Device list:  index is referred as
                                                               // a device id in the connector.
   typedef std::set<int> DeviceIDSetType;
-
-  typedef std::map<std::string, std::string> DeviceNameList;  // will be obsoleted
-  typedef std::map<std::string, vtkMRMLNode*> MRMLNodeList;   // will be obsoleted
   //ETX
 
  public:
@@ -164,7 +161,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLConnector : public vtkObject
 
   //BTX
   DeviceInfoType*     GetDeviceInfo(int id);
-  DeviceInfoListType* GetDeviceInfoList()    { return &(this->DeviceInfoList);        };
+  DeviceInfoMapType*  GetDeviceInfoList()    { return &(this->DeviceInfoList);        };
   DeviceIDSetType*    GetIncomingDevice()    { return &(this->IncomingDeviceIDSet);   }
   DeviceIDSetType*    GetOutgoingDevice()    { return &(this->OutgoingDeviceIDSet);   }
   DeviceIDSetType*    GetUnspecifiedDevice() { return &(this->UnspecifiedDeviceIDSet);}
@@ -213,7 +210,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLConnector : public vtkObject
   //BTX
   // -- Device Name (same as MRML node) and data type (data type string defined in OpenIGTLink)
   int                LastID;
-  DeviceInfoListType DeviceInfoList;
+  DeviceInfoMapType DeviceInfoList;
 
   DeviceIDSetType   IncomingDeviceIDSet;
   DeviceIDSetType   OutgoingDeviceIDSet;

@@ -66,12 +66,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
     //SliceUpdateEvent        = 50002,
   };
 
-  //enum {    // Device IO
-  //  DEVICE_UNSPEC           = 0,  // unspecified
-  //  DEVICE_IN               = 1,  // incoming
-  //  DEVICE_OUT              = 2   // outgoing
-  //};
-
   typedef struct {
     std::string name;
     std::string type;
@@ -84,11 +78,10 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   } ConnectorAndDevicePairType;
 
   typedef std::vector<IGTLMrmlNodeInfoType> IGTLMrmlNodeListType;
-
-  typedef std::vector<vtkIGTLConnector*>   ConnectorListType;
-  typedef std::map<int, vtkIGTLConnector*> ConnectorMapType;
-  typedef std::map<int, int>               ConnectorStateListType;
-  typedef std::map<vtkMRMLNode*, ConnectorListType> MRMLNodeAndConnectorTable;
+  typedef std::vector<vtkIGTLConnector*>    ConnectorListType;
+  typedef std::map<int, vtkIGTLConnector*>  ConnectorMapType;
+  typedef std::map<int, int>                ConnectorStateMapType;
+  typedef std::map<vtkMRMLNode*, ConnectorListType> MRMLNodeAndConnectorMapType;
   typedef std::map<ConnectorAndDevicePairType, vtkMRMLNode*> IDToMRMLNodeMapType;
   //ETX
   
@@ -118,7 +111,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   int  SetSliceDriver2() { return this->SliceDriver[2]; };
 
   vtkGetMacro ( Connection,              bool );
-
   vtkSetMacro ( EnableOblique,           bool );
   vtkGetMacro ( EnableOblique,           bool );
   vtkSetMacro ( FreezePlane,             bool );
@@ -149,16 +141,15 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   // Delete connector
   void DeleteConnector(int index);
 
-  int  GetNumberOfConnectors();
+  // Access connectors
+  int               GetNumberOfConnectors();
   vtkIGTLConnector* GetConnector(int index);
   ConnectorMapType* GetConnectorMap();
-
-  int  CheckConnectorsStatusUpdates();
-  //int  ReadCircularBuffers();
-
-  void ImportFromCircularBuffers();
+  int               CheckConnectorsStatusUpdates();
+  //int               ReadCircularBuffers();
+  void              ImportFromCircularBuffers();
   
-  // Device Name management          // io -- 0: unspecified, 1: incoming, 2: outgoing
+  // Device Name management
   int  SetRestrictDeviceName(int f);
   int  AddDeviceToConnector(int conID, const char* deviceName, const char* deviceType, int io);
   int  DeleteDeviceFromConnector(int conID, const char* deviceName, const char* deviceType, int io);
@@ -221,7 +212,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   void UnRegisterDeviceEvent(int conID, int devID);
   vtkCallbackCommand *DataCallbackCommand;
 
-
  private:
 
   int Initialized;
@@ -231,15 +221,13 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   //----------------------------------------------------------------
 
   //BTX
-  ConnectorMapType                ConnectorList;
-  //std::vector<int>               ConnectorPrevStateList;
-  ConnectorStateListType           ConnectorPrevStateList;
-  int LastConnectorID;
-  MRMLNodeAndConnectorTable      MRMLEventConnectorTable;
-  IDToMRMLNodeMapType              IDToMRMLNodeMap;
-
+  ConnectorMapType              ConnectorMap;
+  //std::vector<int>            ConnectorPrevStateList;
+  ConnectorStateMapType         ConnectorPrevStateList;
+  MRMLNodeAndConnectorMapType   MRMLEventConnectorMap;
+  IDToMRMLNodeMapType           IDToMRMLNodeMap;
   //ETX
-
+  int LastConnectorID;
   int RestrictDeviceName;
 
   //----------------------------------------------------------------
@@ -248,7 +236,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
 
   int MonitorFlag;
   int MonitorInterval;
-  
 
   //----------------------------------------------------------------
   // Massage classes
@@ -272,7 +259,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   vtkMRMLSliceNode *SliceNode[3];
 
   int   SliceDriver[3];
-  
+
   bool  ImagingControl;
   bool  NeedUpdateLocator;
 
@@ -285,7 +272,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
 
   int   SliceOrientation[3];
   
-
   //----------------------------------------------------------------
   // Locator
   //----------------------------------------------------------------

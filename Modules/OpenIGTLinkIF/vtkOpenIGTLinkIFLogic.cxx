@@ -65,7 +65,7 @@ vtkOpenIGTLinkIFLogic::vtkOpenIGTLinkIFLogic()
   this->DataCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
   this->DataCallbackCommand->SetCallback(vtkOpenIGTLinkIFLogic::DataCallback);
 
-  this->ConnectorList.clear();
+  this->ConnectorMap.clear();
   this->ConnectorPrevStateList.clear();
 
   this->EnableOblique = false;
@@ -79,7 +79,7 @@ vtkOpenIGTLinkIFLogic::vtkOpenIGTLinkIFLogic()
   this->SliceOrientation[2] = SLICE_RTIMAGE_INPLANE;
 
   this->LastConnectorID = -1;
-  this->ConnectorList.clear();
+  this->ConnectorMap.clear();
   this->ConnectorPrevStateList.clear();
 
   this->IDToMRMLNodeMap.clear();
@@ -186,13 +186,13 @@ int vtkOpenIGTLinkIFLogic::CheckConnectorsStatusUpdates()
 
   ConnectorMapType::iterator iter;
   //for (int i = 0; i < nCon; i ++)
-  for (iter = this->ConnectorList.begin(); iter != this->ConnectorList.end(); iter ++)
+  for (iter = this->ConnectorMap.begin(); iter != this->ConnectorMap.end(); iter ++)
     {
     int id = iter->first;
-    if (this->ConnectorPrevStateList[id] != this->ConnectorList[id]->GetState())
+    if (this->ConnectorPrevStateList[id] != this->ConnectorMap[id]->GetState())
       {
       updated = 1;
-      this->ConnectorPrevStateList[id] = this->ConnectorList[id]->GetState();
+      this->ConnectorPrevStateList[id] = this->ConnectorMap[id]->GetState();
       }
     }
 
@@ -220,7 +220,7 @@ void vtkOpenIGTLinkIFLogic::AddConnector(const char* name)
   if (name == NULL)
     {
     char newname[128];
-    //sprintf(newname, "Connector%d", (int)this->ConnectorList.size() + 1);
+    //sprintf(newname, "Connector%d", (int)this->ConnectorMap.size() + 1);
     sprintf(newname, "Connector%d", newID + 1);
     connector->SetName(newname);
     }
@@ -228,8 +228,8 @@ void vtkOpenIGTLinkIFLogic::AddConnector(const char* name)
     {
     connector->SetName(name);
     }
-  //this->ConnectorList.push_back(connector);
-  this->ConnectorList[newID] = connector;
+  //this->ConnectorMap.push_back(connector);
+  this->ConnectorMap[newID] = connector;
   //this->ConnectorPrevStateList.push_back(-1);
   this->ConnectorPrevStateList[newID] = -1;
   connector->SetRestrictDeviceName(this->RestrictDeviceName);
@@ -246,8 +246,8 @@ void vtkOpenIGTLinkIFLogic::AddServerConnector(const char* name, int port)
   connector->SetName(name);
   connector->SetType(vtkIGTLConnector::TYPE_SERVER);
   connector->SetServerPort(port);
-  //this->ConnectorList.push_back(connector);
-  this->ConnectorList[newID] = connector;
+  //this->ConnectorMap.push_back(connector);
+  this->ConnectorMap[newID] = connector;
   //this->ConnectorPrevStateList.push_back(-1);
   this->ConnectorPrevStateList[newID] = -1;
   connector->SetRestrictDeviceName(this->RestrictDeviceName);
@@ -265,8 +265,8 @@ void vtkOpenIGTLinkIFLogic::AddClientConnector(const char* name, const char* svr
   connector->SetType(vtkIGTLConnector::TYPE_CLIENT);
   connector->SetServerPort(port);
   connector->SetServerHostname(svrHostName);
-  //this->ConnectorList.push_back(connector);
-  this->ConnectorList[newID] = connector;
+  //this->ConnectorMap.push_back(connector);
+  this->ConnectorMap[newID] = connector;
   //this->ConnectorPrevStateList.push_back(-1);
   this->ConnectorPrevStateList[newID] = -1;
   connector->SetRestrictDeviceName(this->RestrictDeviceName);
@@ -276,17 +276,17 @@ void vtkOpenIGTLinkIFLogic::AddClientConnector(const char* name, const char* svr
 //---------------------------------------------------------------------------
 void vtkOpenIGTLinkIFLogic::DeleteConnector(int id)
 {
-  ConnectorMapType::iterator iter = this->ConnectorList.find(id);
+  ConnectorMapType::iterator iter = this->ConnectorMap.find(id);
 
-  //if (id >= 0 && id < (int)this->ConnectorList.size())
-  if (iter != this->ConnectorList.end()) // if id is on the list
+  //if (id >= 0 && id < (int)this->ConnectorMap.size())
+  if (iter != this->ConnectorMap.end()) // if id is on the list
     {
-    this->ConnectorList[id]->Stop();
-    this->ConnectorList[id]->Delete();
-    //this->ConnectorList.erase(this->ConnectorList.begin() + id);
-    this->ConnectorList.erase(iter);
+    this->ConnectorMap[id]->Stop();
+    this->ConnectorMap[id]->Delete();
+    //this->ConnectorMap.erase(this->ConnectorMap.begin() + id);
+    this->ConnectorMap.erase(iter);
     //this->ConnectorPrevStateList.erase(this->ConnectorPrevStateList.begin() + id);
-    ConnectorStateListType::iterator iter2 = this->ConnectorPrevStateList.find(id);
+    ConnectorStateMapType::iterator iter2 = this->ConnectorPrevStateList.find(id);
     if (iter2 != this->ConnectorPrevStateList.find(id))
       {
       this->ConnectorPrevStateList.erase(iter2);
@@ -297,18 +297,18 @@ void vtkOpenIGTLinkIFLogic::DeleteConnector(int id)
 //---------------------------------------------------------------------------
 int vtkOpenIGTLinkIFLogic::GetNumberOfConnectors()
 {
-  return this->ConnectorList.size();
+  return this->ConnectorMap.size();
 }
 
 
 vtkIGTLConnector* vtkOpenIGTLinkIFLogic::GetConnector(int id)
 {
-  ConnectorMapType::iterator iter = this->ConnectorList.find(id);
+  ConnectorMapType::iterator iter = this->ConnectorMap.find(id);
 
   //if (id >= 0 && id < GetNumberOfConnectors())
-  if (iter != this->ConnectorList.end())
+  if (iter != this->ConnectorMap.end())
     {
-    return this->ConnectorList[id];
+    return this->ConnectorMap[id];
     }
   else
     {
@@ -319,7 +319,7 @@ vtkIGTLConnector* vtkOpenIGTLinkIFLogic::GetConnector(int id)
 //---------------------------------------------------------------------------
 vtkOpenIGTLinkIFLogic::ConnectorMapType* vtkOpenIGTLinkIFLogic::GetConnectorMap()
 {
-  return &(this->ConnectorList);
+  return &(this->ConnectorMap);
 }
 
 
@@ -486,7 +486,7 @@ void vtkOpenIGTLinkIFLogic::RegisterDeviceEvent(vtkIGTLConnector* con, const cha
   
   // check if the connector exists in the table
 
-  ConnectorListType* list = &MRMLEventConnectorTable[srcNode];
+  ConnectorListType* list = &MRMLEventConnectorMap[srcNode];
   ConnectorListType::iterator iter;
   int found = 0;
   for (iter = list->begin(); iter != list->end(); iter ++)
@@ -578,7 +578,7 @@ void vtkOpenIGTLinkIFLogic::ImportFromCircularBuffers()
 {
   ConnectorMapType::iterator iter;
 
-  for (iter = this->ConnectorList.begin(); iter != this->ConnectorList.end(); iter ++)
+  for (iter = this->ConnectorMap.begin(); iter != this->ConnectorMap.end(); iter ++)
     {
     vtkIGTLConnector::NameListType nameList;
     //(*iter)->GetUpdatedBuffersList(nameList);
@@ -620,7 +620,7 @@ int vtkOpenIGTLinkIFLogic::SetRestrictDeviceName(int f)
   this->RestrictDeviceName = f;
 
   ConnectorMapType::iterator iter;
-  for (iter = this->ConnectorList.begin(); iter != this->ConnectorList.end(); iter ++)
+  for (iter = this->ConnectorMap.begin(); iter != this->ConnectorMap.end(); iter ++)
     {
     //(*iter)->SetRestrictDeviceName(f);
     iter->second->SetRestrictDeviceName(f);
@@ -715,7 +715,7 @@ void vtkOpenIGTLinkIFLogic::ProcessMRMLEvents(vtkObject * caller, unsigned long 
   if (caller != NULL)
     {
     vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(caller);
-    ConnectorListType* list = &MRMLEventConnectorTable[node];
+    ConnectorListType* list = &MRMLEventConnectorMap[node];
 
     ConnectorListType::iterator iter;
     for (iter = list->begin(); iter != list->end(); iter ++)
@@ -1053,6 +1053,11 @@ void vtkOpenIGTLinkIFLogic::UpdateMRMLLinearTransformNode(igtl::MessageBase::Poi
   // Deserialize the transform data
   // If you want to skip CRC check, call Unpack() without argument.
   int c = transMsg->Unpack(1);
+
+  if (!(c & igtl::MessageHeader::UNPACK_BODY)) // if CRC check fails
+    {
+    // TODO: error handling
+    }
 
   vtkMRMLLinearTransformNode* transformNode;
   vtkMRMLScene* scene = this->GetApplicationLogic()->GetMRMLScene();

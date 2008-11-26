@@ -24,7 +24,6 @@
 
 #define IGTLCB_CIRC_BUFFER_SIZE    3
 
-
 class vtkMutexLock;
 
 class VTK_OPENIGTLINKIF_EXPORT vtkIGTLCircularBuffer : public vtkObject
