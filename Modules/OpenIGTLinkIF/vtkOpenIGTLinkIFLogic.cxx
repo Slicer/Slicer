@@ -135,21 +135,6 @@ int vtkOpenIGTLinkIFLogic::Initialize()
     events->Delete();
     this->Initialized = 1;
 
-#ifdef BRP_DEVELOPMENT
-
-    int id;
-
-    this->AddServerConnector("Robot", 18945);
-    id = GetNumberOfConnectors()-1;
-    AddDeviceToConnector(id, "Robot",   "TRANSFORM", vtkIGTLConnector::IO_INCOMING);
-
-    this->AddServerConnector("Scanner", 18944);
-    id = GetNumberOfConnectors()-1;
-    AddDeviceToConnector(id, "Robot",   "TRANSFORM", vtkIGTLConnector::IO_OUTGOING);
-    AddDeviceToConnector(id, "Scanner", "IMAGE", vtkIGTLConnector::IO_INCOMING);
-
-#endif //BRP_DEVELOPMENT
-
     }
 
   return 1;
@@ -1440,26 +1425,6 @@ void vtkOpenIGTLinkIFLogic::GetDeviceNamesFromMrml(IGTLMrmlNodeListType &list)
     }
   
 }
-
-/*
-//---------------------------------------------------------------------------
-void vtkOpenIGTLinkIFLogic::GetDeviceTypes(std::vector<char*> &list)
-{
-  char* deviceTypes[] = {
-    "TRANSFORM",
-    "IMAGE",
-  };
-
-  list.clear();
-  
-  for (int i = 0; i < 2; i ++)
-    {
-    list.push_back(deviceTypes[i]);
-    }
-}
-
-*/
-
 
 
 

@@ -29,7 +29,6 @@ vtkCxxRevisionMacro(vtkIGTLCircularBuffer, "$Revision: 1.0 $");
 //---------------------------------------------------------------------------
 vtkIGTLCircularBuffer::vtkIGTLCircularBuffer()
 {
-
   this->Mutex = vtkMutexLock::New();
   this->Mutex->Lock();
   // Allocate Circular buffer for the new device
@@ -40,16 +39,12 @@ vtkIGTLCircularBuffer::vtkIGTLCircularBuffer()
     this->DeviceType[i] = "";
     this->Size[i]       = 0;
     this->Data[i]       = NULL;
-
-    
     this->Messages[i] = igtl::MessageBase::New();
     this->Messages[i]->InitPack();
-
     }
 
   this->UpdateFlag = 0;
   this->Mutex->Unlock();
-
 }
 
 
