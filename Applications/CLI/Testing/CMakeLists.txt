@@ -72,6 +72,20 @@ add_dependencies(${CLP}Test ${CLP}Lib)
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test ITKIO)
 
+# CheckerBoard tests
+add_test(CheckerBoardTest ${Slicer3_EXE} --launch CheckerBoardTest
+  --compare ${BASELINE}/CheckerBoardTest.nhdr
+  ${TEMP}/CheckerBoardTest.nhdr
+  CheckerBoardTest --checkerPattern 5 3 2
+  ${TEST_DATA}/CTHeadAxial.nhdr ${TEMP}/CheckerBoardTest.nhdr
+  )
+
+set (CLP CheckerBoard)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP}Lib)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO)
+
 # Median tests
 add_test(MedianImageFilterTest ${Slicer3_EXE} --launch MedianImageFilterTest
   --compare ${BASELINE}/MedianImageFilterTest.nhdr
