@@ -563,6 +563,8 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
     {
     vtkDebugMacro("Changing list glyph type to " << this->ListSymbolTypeMenu->GetWidget()->GetValue() << endl);
     activeFiducialListNode->SetGlyphTypeFromString(this->ListSymbolTypeMenu->GetWidget()->GetValue());
+    // hide the visibility column if it's a 3d symbol
+    this->MultiColumnList->GetWidget()->SetColumnVisibility(this->VisibilityColumn, !activeFiducialListNode->GlyphTypeIs3D());
     }
 
   
@@ -812,6 +814,12 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
       {
       deleteFlag = false;
       }
+
+    // if this fiducial list is using 3d glyphs, hide the visibility column,
+    // as the visibility can only be controlled on the 3d glyphs on a per list
+    // basis, not per point
+    this->MultiColumnList->GetWidget()->SetColumnVisibility(this->VisibilityColumn, !activeFiducialListNode->GlyphTypeIs3D());
+
     // a row for each point
         
     float *xyz;
@@ -985,6 +993,8 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
       {
       vtkDebugMacro("\t\tmenu value was " << this->ListSymbolTypeMenu->GetWidget()->GetValue() << endl);
       this->ListSymbolTypeMenu->GetWidget()->SetValue(glyphType);
+      // if it's a 3d glyph type, hide the visibility column
+      this->MultiColumnList->GetWidget()->SetColumnVisibility(this->VisibilityColumn, !activeFiducialListNode->GlyphTypeIs3D());
       }
     
     // text scale

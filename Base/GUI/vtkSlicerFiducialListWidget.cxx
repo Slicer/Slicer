@@ -1761,7 +1761,15 @@ void vtkSlicerFiducialListWidget::SetFiducialDisplayProperty(vtkMRMLFiducialList
       }
     else
       {
-      actor->SetVisibility(flist->GetNthFiducialVisibility(n));
+      if (!this->Use3DSymbolsMap[flist->GetID()])
+        {
+        actor->SetVisibility(flist->GetNthFiducialVisibility(n));
+        }
+      else
+        {
+        // if it's a 3d list, the actor actually controls the full list,
+        // there's no way right now to do a per point visibility.
+        }
       }
     }
 
