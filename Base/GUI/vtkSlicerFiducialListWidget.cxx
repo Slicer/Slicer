@@ -70,7 +70,31 @@ public:
           //std::cout << "point widget callback on interaction event, pid = " << FiducialIndex << ", setting xyz to " << x[0] << ", " << x[1] << ", " << x[2] << std::endl;
           //this->FiducialList->SetNthFiducialXYZ(this->FiducialIndex, x[0], x[1], x[2]);
           //std::cout << "point widget callback, fid = " << FiducialID.c_str() << ", setting  xyz to " << x[0] << ", " << x[1] << ", " << x[2] << std::endl;
-          this->FiducialList->SetFiducialXYZ(this->FiducialID, x[0], x[1], x[2]);
+          // does the fiducial list have a transform? if so, it's been applied
+          // to this point widget already, so undo it before setting the
+          // fiducial location
+          vtkMRMLTransformNode* tnode = this->FiducialList->GetParentTransformNode();
+          vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+          transformToWorld->Identity();
+          if (tnode != NULL && tnode->IsLinear())
+            {
+            vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+            lnode->GetMatrixTransformToWorld(transformToWorld);
+            }
+          //this->FiducialList->SetFiducialXYZ(this->FiducialID, x[0], x[1], x[2]);
+
+          // convert by the inverted parent transform
+          double  xyzw[4];
+          xyzw[0] = x[0];
+          xyzw[1] = x[1];
+          xyzw[2] = x[2];
+          xyzw[3] = 1.0;
+          double worldxyz[4], *worldp = &worldxyz[0];
+          transformToWorld->Invert();
+          transformToWorld->MultiplyPoint(xyzw, worldp);
+          this->FiducialList->SetFiducialXYZ(this->FiducialID, worldxyz[0], worldxyz[1], worldxyz[2]);
+          transformToWorld->Delete();
+          transformToWorld = NULL;
           }
         }
       }
@@ -1132,6 +1156,15 @@ void vtkSlicerFiducialListWidget::UpdateFiducialListFromMRML(vtkMRMLFiducialList
     int pointWidgetExists = 0;
 
    
+    // first get the list's transform node
+    vtkMRMLTransformNode* tnode = flist->GetParentTransformNode();
+    vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+    transformToWorld->Identity();
+    if (tnode != NULL && tnode->IsLinear())
+      {
+      vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+      lnode->GetMatrixTransformToWorld(transformToWorld);
+      }
     
     if (this->Use3DSymbolsMap[id])
       {
@@ -1233,15 +1266,6 @@ void vtkSlicerFiducialListWidget::UpdateFiducialListFromMRML(vtkMRMLFiducialList
       // do the updates for each point, point position, scalar map, text actor
       // text
 
-      // first get the list's transform node
-      vtkMRMLTransformNode* tnode = flist->GetParentTransformNode();
-      vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
-      transformToWorld->Identity();
-      if (tnode != NULL && tnode->IsLinear())
-        {
-        vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-        lnode->GetMatrixTransformToWorld(transformToWorld);
-        }
       for (int f=0; f<flist->GetNumberOfFiducials(); f++)
         {
         // get this point
@@ -1366,11 +1390,16 @@ void vtkSlicerFiducialListWidget::UpdateFiducialListFromMRML(vtkMRMLFiducialList
     for (int f=0; f<flist->GetNumberOfFiducials(); f++)
       {
       std::string fid = flist->GetNthFiducialID(f);
-      float *pos = flist->GetNthFiducialXYZ(f);
-    double x[3];
-    x[0] = pos[0];
-    x[1] = pos[1];
-    x[2] = pos[2];
+      float *xyz = flist->GetNthFiducialXYZ(f);
+      // convert by the parent transform
+      double  xyzw[4];
+      xyzw[0] = xyz[0];
+      xyzw[1] = xyz[1];
+      xyzw[2] = xyz[2];
+      xyzw[3] = 1.0;
+      double worldxyz[4], *worldp = &worldxyz[0];        
+      transformToWorld->MultiplyPoint(xyzw, worldp);
+      
     vtkPointWidget * pointWidget = NULL;
     pointWidget = vtkPointWidget::SafeDownCast(GetPointWidgetByID(fid.c_str()));
     if (pointWidget != NULL)
@@ -1412,11 +1441,11 @@ void vtkSlicerFiducialListWidget::UpdateFiducialListFromMRML(vtkMRMLFiducialList
       pointWidget->AddObserver(vtkCommand::InteractionEvent, myCallback);
       // clean up callback to avoid leaks
       myCallback->Delete();
-      pointWidget->PlaceWidget(x[0]-1, x[0]+1, x[1]-1, x[1]+1, x[2]-1, x[2]+1);
+      pointWidget->PlaceWidget(worldxyz[0]-1, worldxyz[0]+1, worldxyz[1]-1, worldxyz[1]+1, worldxyz[2]-1, worldxyz[2]+1);
       pointWidget->TranslationModeOn();
-      pointWidget->SetPosition(x);
+      pointWidget->SetPosition(worldxyz);
       pointWidget->EnabledOn();
-      vtkDebugMacro("UpdateFiducialsFromMRML: Putting new fiducial " << fid.c_str() << " in place: " << x[0] << "," << x[1] << "," << x[2]);
+      vtkDebugMacro("UpdateFiducialsFromMRML: Putting new fiducial " << fid.c_str() << " in place: " << worldxyz[0] << "," << worldxyz[1] << "," << worldxyz[2]);
       this->DisplayedPointWidgets[fid] = pointWidget;
       }
     this->UpdatePointWidget(flist, fid.c_str());
@@ -1497,6 +1526,8 @@ void vtkSlicerFiducialListWidget::UpdatePointWidget(vtkMRMLFiducialListNode *fli
   
   std::map< std::string, vtkPointWidget *>::iterator pointIter;
 
+ 
+    
   //std::string fidID = flist->GetNthFiducialID(f);
   pointIter = this->DisplayedPointWidgets.find(fidID);
   if (pointIter != this->DisplayedPointWidgets.end())
@@ -1504,13 +1535,31 @@ void vtkSlicerFiducialListWidget::UpdatePointWidget(vtkMRMLFiducialListNode *fli
     float *xyz = flist->GetNthFiducialXYZ(f);
     if (xyz)
       {
-      double pos[3];
-      pos[0] = xyz[0]; pos[1] = xyz[1]; pos[2] = xyz[2];
-      vtkDebugMacro("UpdatePointWidget: setting position for fid #" << f << ", id " << fidID << " to " << pos[0] << ", " << pos[1] << ", " << pos[2]);
+      // first get the list's transform node
+      vtkMRMLTransformNode* tnode = flist->GetParentTransformNode();
+      vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+      transformToWorld->Identity();
+      if (tnode != NULL && tnode->IsLinear())
+        {
+        vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+        lnode->GetMatrixTransformToWorld(transformToWorld);
+        }
+      // convert by the parent transform
+      double  xyzw[4];
+      xyzw[0] = xyz[0];
+      xyzw[1] = xyz[1];
+      xyzw[2] = xyz[2];
+      xyzw[3] = 1.0;
+      double worldxyz[4], *worldp = &worldxyz[0];        
+      transformToWorld->MultiplyPoint(xyzw, worldp);
+
+      vtkDebugMacro("UpdatePointWidget: setting position for fid #" << f << ", id " << fidID << " to " << worldxyz[0] << ", " << worldxyz[1] << ", " << worldxyz[2]);
       pointIter->second->SetInteractor(this->MainViewer->GetRenderWindowInteractor());
       // don't need to place it when updating it, just set position
-      pointIter->second->SetPosition(pos);
-      pointIter->second->EnabledOn();      
+      pointIter->second->SetPosition(worldxyz);
+      pointIter->second->EnabledOn();
+      transformToWorld->Delete();
+      transformToWorld = NULL;
       }
     else { vtkDebugMacro("UpdatePointWidget: null xyz"); }
     if (flist->GetVisibility() == 0 ||
@@ -1522,7 +1571,7 @@ void vtkSlicerFiducialListWidget::UpdatePointWidget(vtkMRMLFiducialListNode *fli
       }
     }
   else
-    { vtkDebugMacro("UpdatePointWidget: unable to find "<< f <<"th point with id " << fidID); } 
+    { vtkDebugMacro("UpdatePointWidget: unable to find "<< f <<"th point with id " << fidID); }
 }
 
 //---------------------------------------------------------------------------
