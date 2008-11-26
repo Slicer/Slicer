@@ -76,8 +76,8 @@ target_link_libraries(${CLP}Test ITKIO)
 add_test(CheckerBoardTest ${Slicer3_EXE} --launch CheckerBoardTest
   --compare ${BASELINE}/CheckerBoardTest.nhdr
   ${TEMP}/CheckerBoardTest.nhdr
-  CheckerBoardTest --checkerPattern 5 3 2
-  ${TEST_DATA}/CTHeadAxial.nhdr ${TEMP}/CheckerBoardTest.nhdr
+  CheckerBoardTest --checkerPattern 5,3,2
+  ${TEST_DATA}/CTHeadAxial.nhdr ${TEST_DATA}/CTHeadAxialDoubled.nhdr ${TEMP}/CheckerBoardTest.nhdr
   )
 
 set (CLP CheckerBoard)
