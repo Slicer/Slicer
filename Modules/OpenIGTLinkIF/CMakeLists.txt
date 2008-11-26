@@ -49,6 +49,7 @@ set(OpenIGTLinkIF_SRCS
   vtkIGTLCircularBuffer.cxx
   vtkIGTLToMRMLBase.cxx
   vtkIGTLToMRMLLinearTransform.cxx
+  vtkIGTLToMRMLImage.cxx
 )
 
 # --------------------------------------------------------------------------
