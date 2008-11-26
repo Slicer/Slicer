@@ -58,6 +58,20 @@ add_dependencies(${CLP}Test ${CLP}Lib)
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test ITKIO)
 
+# Add tests
+add_test(AddTest ${Slicer3_EXE} --launch AddTest
+  --compare ${BASELINE}/AddTest.nhdr
+  ${TEMP}/AddTest.nhdr
+  AddTest
+  ${TEST_DATA}/CTHeadAxial.nhdr ${TEST_DATA}/CTHeadAxial.nhdr ${TEMP}/AddTest.nhdr
+  )
+
+set (CLP Add)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP}Lib)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO)
+
 # Median tests
 add_test(MedianImageFilterTest ${Slicer3_EXE} --launch MedianImageFilterTest
   --compare ${BASELINE}/MedianImageFilterTest.nhdr
