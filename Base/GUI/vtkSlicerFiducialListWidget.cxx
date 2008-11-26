@@ -1276,7 +1276,7 @@ void vtkSlicerFiducialListWidget::UpdateFiducialListFromMRML(vtkMRMLFiducialList
         xyzw[1] = xyz[1];
         xyzw[2] = xyz[2];
         xyzw[3] = 1.0;
-        float worldxyz[4], *worldp = &worldxyz[0];        
+        float worldxyz[4], *worldp = &worldxyz[0];
         transformToWorld->MultiplyPoint(xyzw, worldp);
 
         // add this point to the list of points
@@ -1300,8 +1300,7 @@ void vtkSlicerFiducialListWidget::UpdateFiducialListFromMRML(vtkMRMLFiducialList
         this->UpdateTextActor(flist, f);
     
         }
-      transformToWorld->Delete();
-      transformToWorld = NULL;
+      
       // now update the actor that controls the full list
       this->SetFiducialDisplayProperty(flist, 0, actor, NULL);
       
@@ -1397,7 +1396,7 @@ void vtkSlicerFiducialListWidget::UpdateFiducialListFromMRML(vtkMRMLFiducialList
       xyzw[1] = xyz[1];
       xyzw[2] = xyz[2];
       xyzw[3] = 1.0;
-      double worldxyz[4], *worldp = &worldxyz[0];        
+      double worldxyz[4], *worldp = &worldxyz[0];
       transformToWorld->MultiplyPoint(xyzw, worldp);
       
     vtkPointWidget * pointWidget = NULL;
@@ -1450,7 +1449,8 @@ void vtkSlicerFiducialListWidget::UpdateFiducialListFromMRML(vtkMRMLFiducialList
       }
     this->UpdatePointWidget(flist, fid.c_str());
       }
-    
+    transformToWorld->Delete();
+    transformToWorld = NULL;
 }
 
 //---------------------------------------------------------------------------
@@ -1550,7 +1550,7 @@ void vtkSlicerFiducialListWidget::UpdatePointWidget(vtkMRMLFiducialListNode *fli
       xyzw[1] = xyz[1];
       xyzw[2] = xyz[2];
       xyzw[3] = 1.0;
-      double worldxyz[4], *worldp = &worldxyz[0];        
+      double worldxyz[4], *worldp = &worldxyz[0];
       transformToWorld->MultiplyPoint(xyzw, worldp);
 
       vtkDebugMacro("UpdatePointWidget: setting position for fid #" << f << ", id " << fidID << " to " << worldxyz[0] << ", " << worldxyz[1] << ", " << worldxyz[2]);
@@ -1783,7 +1783,7 @@ void vtkSlicerFiducialListWidget::SetFiducialDisplayProperty(vtkMRMLFiducialList
     }
 
   transformToWorld->Delete();
-  
+  transformToWorld = NULL;
   
   // don't update the actor's selected if it's 3d
   if (selected)
