@@ -84,6 +84,7 @@ vtkSlicerTractographyFiducialSeedingGUI::vtkSlicerTractographyFiducialSeedingGUI
   this->StoppingValueScale = vtkKWScaleWithLabel::New();
   this->StoppingCurvatureScale = vtkKWScaleWithLabel::New();
   this->IntegrationStepLengthScale = vtkKWScaleWithLabel::New();
+  this->MinimumPathLengthScale = vtkKWScaleWithLabel::New();
   this->RegionSizeScale = vtkKWScaleWithLabel::New();
   this->RegionSampleSizeScale = vtkKWScaleWithLabel::New();
   this->MaxNumberOfSeedsEntry = vtkKWEntryWithLabel::New();
@@ -160,6 +161,12 @@ vtkSlicerTractographyFiducialSeedingGUI::~vtkSlicerTractographyFiducialSeedingGU
     this->IntegrationStepLengthScale->Delete();
     this->IntegrationStepLengthScale = NULL;
   }
+    if ( this->MinimumPathLengthScale ) 
+  {
+    this->MinimumPathLengthScale->SetParent(NULL);
+    this->MinimumPathLengthScale->Delete();
+    this->MinimumPathLengthScale = NULL;
+  }
     if ( this->RegionSizeScale ) 
   {
     this->RegionSizeScale->SetParent(NULL);
@@ -229,6 +236,8 @@ void vtkSlicerTractographyFiducialSeedingGUI::AddGUIObservers ( )
   this->StoppingCurvatureScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->IntegrationStepLengthScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+  this->MinimumPathLengthScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->RegionSizeScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
@@ -258,6 +267,8 @@ void vtkSlicerTractographyFiducialSeedingGUI::RemoveGUIObservers ( )
   this->StoppingCurvatureScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->IntegrationStepLengthScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+  this->MinimumPathLengthScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
  
   this->RegionSizeScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
@@ -313,6 +324,27 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessGUIEvents ( vtkObject *call
     vtkMRMLTransformableNode *node = vtkMRMLTransformableNode::SafeDownCast(this->FiducialSelector->GetSelected());
     this->AddTransformableNodeObserver(node);
 
+    vtkMRMLFiducialListNode *fiducialListNode = vtkMRMLFiducialListNode::SafeDownCast(node);
+    vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(node);
+
+    if (fiducialListNode)
+      {
+      this->MaxNumberOfSeedsEntry->SetEnabled(0);
+      this->RegionSampleSizeScale->SetEnabled(1);
+      this->RegionSizeScale->SetEnabled(1);
+      this->RegionSizeScale->GetWidget()->SetValue(fiducialListNode->GetSymbolScale());
+      this->RegionSampleSizeScale->GetWidget()->SetValue(fiducialListNode->GetSymbolScale()/3.0);
+      }
+    else if (modelNode)
+      {
+      this->MaxNumberOfSeedsEntry->SetEnabled(1);
+      this->RegionSampleSizeScale->SetEnabled(0);
+      this->RegionSizeScale->SetEnabled(0);
+      }
+    else
+      {
+      return;
+      }
     this->CreateTracts();
     }
 
@@ -364,6 +396,24 @@ void vtkSlicerTractographyFiducialSeedingGUI::UpdateGUI ()
     s = this->GetMRMLScene()->GetNodeByID(n->GetInputFiducialRef());
     this->FiducialSelector->SetSelected(s);
 
+    vtkMRMLFiducialListNode *fiducialListNode = vtkMRMLFiducialListNode::SafeDownCast(s);
+    vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(s);
+
+    if (fiducialListNode)
+      {
+      this->MaxNumberOfSeedsEntry->SetEnabled(0);
+      this->RegionSampleSizeScale->SetEnabled(1);
+      this->RegionSizeScale->SetEnabled(1);
+      this->RegionSizeScale->GetWidget()->SetValue(fiducialListNode->GetSymbolScale());
+      this->RegionSampleSizeScale->GetWidget()->SetValue(fiducialListNode->GetSymbolScale()/3.0);
+      }
+    else if (modelNode)
+      {
+      this->MaxNumberOfSeedsEntry->SetEnabled(1);
+      this->RegionSampleSizeScale->SetEnabled(0);
+      this->RegionSizeScale->SetEnabled(0);
+      }
+
     s = this->GetMRMLScene()->GetNodeByID(n->GetOutputFiberRef());
     this->OutFiberSelector->SetSelected(s);
     
@@ -378,6 +428,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::UpdateGUI ()
     this->StoppingValueScale->GetWidget()->SetValue(n->GetStoppingValue());
     this->StoppingCurvatureScale->GetWidget()->SetValue(n->GetStoppingCurvature());
     this->IntegrationStepLengthScale->GetWidget()->SetValue(n->GetIntegrationStep());
+    this->MinimumPathLengthScale->GetWidget()->SetValue(n->GetMinimumPathLength());
     this->RegionSizeScale->GetWidget()->SetValue(n->GetSeedingRegionSize());
     this->RegionSampleSizeScale->GetWidget()->SetValue(n->GetSeedingRegionStep());
     this->MaxNumberOfSeedsEntry->GetWidget()->SetValueAsInt(n->GetMaxNumberOfSeeds());
@@ -433,6 +484,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::UpdateMRML ()
   n->SetStoppingValue(this->StoppingValueScale->GetWidget()->GetValue() );
   n->SetStoppingCurvature( this->StoppingCurvatureScale->GetWidget()->GetValue() );
   n->SetIntegrationStep( this->IntegrationStepLengthScale->GetWidget()->GetValue() );
+  n->SetMinimumPathLength( this->MinimumPathLengthScale->GetWidget()->GetValue() );
   n->SetSeedingRegionSize( this->RegionSizeScale->GetWidget()->GetValue() );
   n->SetSeedingRegionStep( this->RegionSampleSizeScale->GetWidget()->GetValue() );
   n->SetMaxNumberOfSeeds( this->MaxNumberOfSeedsEntry->GetWidget()->GetValueAsInt() );
@@ -547,6 +599,7 @@ void vtkSlicerTractographyFiducialSeedingGUI:: CreateTracts()
                                                           this->StoppingValueScale->GetWidget()->GetValue(),
                                                           this->StoppingCurvatureScale->GetWidget()->GetValue(),
                                                           this->IntegrationStepLengthScale->GetWidget()->GetValue(),
+                                                          this->MinimumPathLengthScale->GetWidget()->GetValue(),
                                                           this->RegionSizeScale->GetWidget()->GetValue(),
                                                           this->RegionSampleSizeScale->GetWidget()->GetValue(),
                                                           this->MaxNumberOfSeedsEntry->GetWidget()->GetValueAsInt()
@@ -692,6 +745,16 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
   this->IntegrationStepLengthScale->SetBalloonHelpString("Integration step size.");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->IntegrationStepLengthScale->GetWidgetName() );
+
+  this->MinimumPathLengthScale->SetParent ( moduleFrame->GetFrame() );
+  this->MinimumPathLengthScale->Create ( );
+  this->MinimumPathLengthScale->SetLabelText("Minimum Path Length (mm)");
+  this->MinimumPathLengthScale->GetWidget()->SetRange(0,200);
+  this->MinimumPathLengthScale->GetWidget()->SetResolution(1);
+  this->MinimumPathLengthScale->GetWidget()->SetValue(20);
+  this->MinimumPathLengthScale->SetBalloonHelpString("Path Length Threshold.");
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+                 this->MinimumPathLengthScale->GetWidgetName() );
 
   this->RegionSizeScale->SetParent ( moduleFrame->GetFrame() );
   this->RegionSizeScale->Create ( );

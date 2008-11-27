@@ -62,6 +62,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
                                                             double stoppingValue, 
                                                             double stoppingCurvature, 
                                                             double integrationStepLength,
+                                                            double mnimumPathLength,
                                                             double regionSize, double sampleStep,
                                                             int maxNumberOfSeeds)
 {
@@ -162,7 +163,8 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   seed->UseVtkHyperStreamlinePoints();
   vtkHyperStreamlineDTMRI *streamer=vtkHyperStreamlineDTMRI::New();
   seed->SetVtkHyperStreamlinePointsSettings(streamer);
- 
+  seed->SetMinimumPathLength(mnimumPathLength);
+
   //if (this->StoppingMode && std::string(this->StoppingMode) == std::string("LinearMeasurement"))
   if (stoppingMode && strcmp("Linear Measurement", stoppingMode) != 0)
     {
@@ -181,7 +183,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   streamer->SetStoppingThreshold(stoppingValue);
   streamer->SetRadiusOfCurvature(stoppingCurvature);
   streamer->SetStepLength(integrationStepLength);
-  
+
   // Temp fix to provide a scalar
   seed->GetInputTensorField()->GetPointData()->SetScalars(volumeNode->GetImageData()->GetPointData()->GetScalars());
   

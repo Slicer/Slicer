@@ -152,6 +152,7 @@ protected:
   vtkKWScaleWithLabel *StoppingValueScale;
   vtkKWScaleWithLabel *StoppingCurvatureScale;
   vtkKWScaleWithLabel *IntegrationStepLengthScale;
+  vtkKWScaleWithLabel *MinimumPathLengthScale;
 
   vtkKWScaleWithLabel *RegionSizeScale;
   vtkKWScaleWithLabel *RegionSampleSizeScale;

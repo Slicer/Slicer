@@ -90,6 +90,12 @@ class VTK_FIDUCIALSEEDING_EXPORT vtkMRMLTractographyFiducialSeedingNode : public
   vtkGetMacro(MaxNumberOfSeeds, int);
   vtkSetMacro(MaxNumberOfSeeds, int);
 
+  // Description
+  // Minimum length in mm for a path (otherwise the path will be deleted).
+  // Currently only used in SeedAndSaveStreamlinesInROI.
+  vtkGetMacro(MinimumPathLength,double);
+  vtkSetMacro(MinimumPathLength,double);
+ 
   
   // Description:
   // Get/Set input volume MRML Id
@@ -124,6 +130,7 @@ protected:
   double IntegrationStep;
   double SeedingRegionSize;
   double SeedingRegionStep;
+  double MinimumPathLength;
   int MaxNumberOfSeeds;
 
   char* InputVolumeRef;

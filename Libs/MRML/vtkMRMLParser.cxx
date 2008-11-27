@@ -107,7 +107,10 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
 
   if (this->NodeCollection)
     {
-    this->NodeCollection->vtkCollection::AddItem((vtkObject *)node);
+    if (node->GetAddToScene()) 
+      {
+      this->NodeCollection->vtkCollection::AddItem((vtkObject *)node);
+      }
     }
   else
     {

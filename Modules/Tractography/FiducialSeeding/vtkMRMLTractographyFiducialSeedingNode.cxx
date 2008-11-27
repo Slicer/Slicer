@@ -59,6 +59,7 @@ vtkMRMLTractographyFiducialSeedingNode::vtkMRMLTractographyFiducialSeedingNode()
    this->IntegrationStep = 0.5;
    this->SeedingRegionSize = 1.0;
    this->SeedingRegionStep = 1.0;
+   this->MinimumPathLength = 20.0;
    this->MaxNumberOfSeeds = 100;
    this->InputVolumeRef = NULL;
    this->InputFiducialRef = NULL;
@@ -103,6 +104,11 @@ void vtkMRMLTractographyFiducialSeedingNode::WriteXML(ostream& of, int nIndent)
     ss << this->IntegrationStep;
     of << indent << " IntegrationStep=\"" << ss.str() << "\"";
   }
+ {
+    std::stringstream ss;
+    ss << this->MinimumPathLength;
+    of << indent << " MinimumPathLength=\"" << ss.str() << "\"";
+  }
   {
     std::stringstream ss;
     ss << this->SeedingRegionSize;
@@ -113,9 +119,9 @@ void vtkMRMLTractographyFiducialSeedingNode::WriteXML(ostream& of, int nIndent)
     ss << this->SeedingRegionStep;
     of << indent << " SeedingRegionStep=\"" << ss.str() << "\"";
   }  
-  {
+   {
     std::stringstream ss;
-    ss << this->SeedingRegionStep;
+    ss << this->MaxNumberOfSeeds;
     of << indent << " MaxNumberOfSeeds=\"" << ss.str() << "\"";
   }
   {
@@ -180,6 +186,12 @@ void vtkMRMLTractographyFiducialSeedingNode::ReadXMLAttributes(const char** atts
       ss << attValue;
       ss >> this->IntegrationStep;
       }
+    else if (!strcmp(attName, "MinimumPathLength")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->MinimumPathLength;
+      }
     else if (!strcmp(attName, "SeedingRegionSize")) 
       {
       std::stringstream ss;
@@ -230,6 +242,7 @@ void vtkMRMLTractographyFiducialSeedingNode::Copy(vtkMRMLNode *anode)
   this->SetStoppingMode(node->StoppingMode);
   this->SetStoppingCurvature(node->StoppingCurvature);
   this->SetIntegrationStep(node->IntegrationStep);
+  this->SetMinimumPathLength(node->MinimumPathLength);
   this->SetSeedingRegionSize(node->SeedingRegionSize);
   this->SetSeedingRegionStep(node->SeedingRegionStep);
   this->SetMaxNumberOfSeeds(node->MaxNumberOfSeeds);
@@ -252,6 +265,7 @@ void vtkMRMLTractographyFiducialSeedingNode::PrintSelf(ostream& os, vtkIndent in
   os << indent << "StoppingMode:   " << this->StoppingMode << "\n";
   os << indent << "StoppingCurvature:   " << this->StoppingCurvature << "\n";
   os << indent << "IntegrationStep:   " << this->IntegrationStep << "\n";
+  os << indent << "MinimumPathLength:   " << this->MinimumPathLength << "\n";
   os << indent << "SeedingRegionSize:   " << this->SeedingRegionSize << "\n";
   os << indent << "SeedingRegionStep:   " << this->SeedingRegionStep << "\n";
   os << indent << "MaxNumberOfSeeds:   " << this->MaxNumberOfSeeds << "\n";

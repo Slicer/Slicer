@@ -445,7 +445,13 @@ void vtkSeedTracts::SeedStreamlineFromPoint(double x,
   // Force it to execute
   newStreamline->Update();
 
-  this->Streamlines->AddItem((vtkObject *)newStreamline);  
+  double length = (newStreamline->GetOutput()->GetNumberOfPoints() - 1) * 
+                        newStreamline->GetIntegrationStepLength();
+ 
+  if (length > this->MinimumPathLength)
+    {
+    this->Streamlines->AddItem((vtkObject *)newStreamline);  
+    }
   
   //newStreamline->Delete();
 }
