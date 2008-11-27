@@ -27,7 +27,6 @@ a
 #include "vtkCubeSource.h"
 #include "vtkActor.h"
 #include "vtkRenderer.h"
-#include "vtkCamera.h"
 #include "vtkPolyDataMapper.h"
 #include "vtkRenderWindow.h"
 

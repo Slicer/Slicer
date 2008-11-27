@@ -841,6 +841,10 @@ void vtkSlicerViewerWidget::UpdateCameraNode()
         }
       }
     }
+
+  this->UpdateAxis(); // make sure the axis follow the new camera
+
+  this->InvokeEvent(vtkSlicerViewerWidget::ActiveCameraChangedEvent, NULL);
 }
 
 //---------------------------------------------------------------------------
@@ -1018,11 +1022,13 @@ void vtkSlicerViewerWidget::CreateWidget ( )
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::UpdateFromMRML()
 {
-  this->UpdateAxis();
+  this->UpdateViewNode();
 
   this->AddCameraObservers();
   this->UpdateCameraNode();
+
   this->AddAxisActors();
+  this->UpdateAxis();
 
   this->UpdateClipSlicesFromMRML();
 

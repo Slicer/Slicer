@@ -196,6 +196,15 @@ public:
 
   void SetBoxWidgetInteractor();
 
+  // Description:
+  // Events
+  //BTX
+  enum
+  {
+    ActiveCameraChangedEvent   = 30000
+  };
+  //ETX
+
 protected:
   vtkSlicerViewerWidget();
   virtual ~vtkSlicerViewerWidget();
