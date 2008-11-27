@@ -278,6 +278,7 @@ void vtkMRMLFiducial::Copy(vtkObject *anode)
   this->SetLabelText(node->GetLabelText());
   this->SetSelected(node->GetSelected());
   this->SetVisibility(node->GetVisibility());
+
 }
 
 //----------------------------------------------------------------------------

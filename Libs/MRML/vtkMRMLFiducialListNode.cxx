@@ -326,26 +326,56 @@ void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
   this->SetLocked(node->Locked);
 
   // Copy all fiducials
-  this->RemoveAllFiducials();
+
+  // Try to see if nothing changed
+  bool modified = true;
+
   int numPoints = node->GetNumberOfFiducials();
-  for (int f=0; f < numPoints ; f++)
+  if (numPoints == this->GetNumberOfFiducials())
     {
-    // as remove them from the end of the list, the size of the list
-    // will shrink as the iterator f reduces
-    vtkMRMLFiducial *fid = vtkMRMLFiducial::SafeDownCast(node->FiducialList->vtkCollection::GetItemAsObject(f));
-    // can't just use AddFiducial, as it sets and increments a unique id
-    vtkMRMLFiducial *fidThis = vtkMRMLFiducial::New();
-    fidThis->Copy(fid);
-    // manual copy of id
-    fidThis->SetID(fid->GetID());
-    this->FiducialList->vtkCollection::AddItem(fidThis);
-    fidThis->Delete();
-    fidThis = NULL;
+    
+    for (int f=0; f < numPoints ; f++)
+      {
+      vtkMRMLFiducial *fid = vtkMRMLFiducial::SafeDownCast(node->FiducialList->vtkCollection::GetItemAsObject(f));
+      vtkMRMLFiducial *fidThis = vtkMRMLFiducial::SafeDownCast(this->FiducialList->vtkCollection::GetItemAsObject(f));
+      unsigned long mtime = fidThis->GetMTime();
+      fidThis->Copy(fid);
+      if (fidThis->GetMTime() > mtime || 
+          (fid->GetID() && fidThis->GetID() && !strcmp(fid->GetID(), fidThis->GetID())) )
+        {
+        break;
+        }
+      }
+     modified = false;
     }
-  // turn on modified events
-  this->DisableModifiedEventOff();
-  this->Modified();
-  this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, NULL);
+  if (modified)
+    {
+    this->RemoveAllFiducials();
+    for (int f=0; f < numPoints ; f++)
+      {
+      // as remove them from the end of the list, the size of the list
+      // will shrink as the iterator f reduces
+      vtkMRMLFiducial *fid = vtkMRMLFiducial::SafeDownCast(node->FiducialList->vtkCollection::GetItemAsObject(f));
+      // can't just use AddFiducial, as it sets and increments a unique id
+      vtkMRMLFiducial *fidThis = vtkMRMLFiducial::New();
+      fidThis->Copy(fid);
+      // manual copy of id
+      fidThis->SetID(fid->GetID());
+      this->FiducialList->vtkCollection::AddItem(fidThis);
+      fidThis->Delete();
+      fidThis = NULL;
+      }
+    // turn on modified events
+    this->DisableModifiedEventOff();
+    this->Modified();
+    this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, NULL);
+    }
+  else
+    {
+    this->DisableModifiedEventOff();
+    //this->InvokePendingModifiedEvent();
+    }
+
 }
 
 //----------------------------------------------------------------------------
