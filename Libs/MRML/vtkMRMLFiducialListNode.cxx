@@ -341,7 +341,7 @@ void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
       unsigned long mtime = fidThis->GetMTime();
       fidThis->Copy(fid);
       if (fidThis->GetMTime() > mtime || 
-          (fid->GetID() && fidThis->GetID() && !strcmp(fid->GetID(), fidThis->GetID())) )
+          (fid->GetID() && fidThis->GetID() && strcmp(fid->GetID(), fidThis->GetID())) )
         {
         break;
         }
