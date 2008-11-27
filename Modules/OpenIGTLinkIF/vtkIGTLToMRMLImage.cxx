@@ -17,6 +17,8 @@
 #include "vtkObjectFactory.h"
 #include "vtkIGTLToMRMLImage.h"
 
+#include "vtkSlicerColorLogic.h"
+
 #include "vtkImageData.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "igtlImageMessage.h"
@@ -44,61 +46,88 @@ void vtkIGTLToMRMLImage::PrintSelf(ostream& os, vtkIndent indent)
 
 
 //---------------------------------------------------------------------------
-vtkMRMLNode* vtkIGTLToMRMLImage::GetNewNode(const char* name)
+vtkMRMLNode* vtkIGTLToMRMLImage::CreateNewNode(vtkMRMLScene* scene, const char* name)
 {
-  vtkMRMLScalarVolumeNode* volumeNode;
 
-  volumeNode = vtkMRMLScalarVolumeNode::New();
-  volumeNode->SetName(name);
-  volumeNode->SetDescription("Received by OpenIGTLink");
-  
-  vtkImageData* imageData = vtkImageData::New();
-  //imageData->SetDimensions(size[0], size[1], size[2]);
-  imageData->SetDimensions(256, 256, 1); // default size is 256 x 256 x 1
-  imageData->SetNumberOfScalarComponents(1);
-  
-  // default is TYPE_UINT16
-  imageData->SetScalarTypeToShort();
+  vtkMRMLVolumeNode *volumeNode = NULL;
 
-  // Scalar type
-  //  TBD: Long might not be 32-bit in some platform.
-  /*
-  switch (scalarType)
+  //vtkMRMLVolumeDisplayNode *displayNode = NULL;
+  vtkMRMLScalarVolumeDisplayNode *displayNode = NULL;
+  vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::New();
+  vtkImageData* image = vtkImageData::New();
+  
+  float fov = 256.0;
+  image->SetDimensions(256, 256, 1);
+  image->SetExtent(0, 255, 0, 255, 0, 0 );
+  image->SetSpacing( fov/256, fov/256, 10 );
+  image->SetOrigin( -fov/2, -fov/2, -0.0 );
+  image->SetNumberOfScalarComponents(1);
+  image->SetScalarTypeToShort();
+  image->AllocateScalars();
+  
+  
+  short* dest = (short*) image->GetScalarPointer();
+  if (dest)
     {
-    case igtl::ImageMessage::TYPE_INT8:
-      imageData->SetScalarTypeToChar();
-      break;
-    case igtl::ImageMessage::TYPE_UINT8:
-      imageData->SetScalarTypeToUnsignedChar();
-      break;
-    case igtl::ImageMessage::TYPE_INT16:
-      imageData->SetScalarTypeToShort();
-      break;
-    case igtl::ImageMessage::TYPE_UINT16:
-      imageData->SetScalarTypeToUnsignedShort();
-      break;
-    case igtl::ImageMessage::TYPE_INT32:
-      imageData->SetScalarTypeToUnsignedLong();
-      break;
-    case igtl::ImageMessage::TYPE_UINT32:
-      imageData->SetScalarTypeToUnsignedLong();
-      break;
-    case igtl::ImageMessage::TYPE_FLOAT32:
-      imageData->SetScalarTypeToFloat();
-      break;
-    case igtl::ImageMessage::TYPE_FLOAT64:
-      imageData->SetScalarTypeToDouble();
-      break;
-    default:
-      //vtkErrorMacro ("Invalid Scalar Type\n");
-      break;
+    memset(dest, 0x00, 256*256*sizeof(short));
+    image->Update();
     }
+  
+  /*
+    vtkSlicerSliceLayerLogic *reslice = vtkSlicerSliceLayerLogic::New();
+    reslice->SetUseReslice(0);
   */
+  scalarNode->SetAndObserveImageData(image);
   
-  imageData->AllocateScalars();
-  volumeNode->SetAndObserveImageData(imageData);
-  imageData->Delete();
   
+  /* Based on the code in vtkSlicerVolumeLogic::AddHeaderVolume() */
+  //displayNode = vtkMRMLVolumeDisplayNode::New();
+  displayNode = vtkMRMLScalarVolumeDisplayNode::New();
+  scalarNode->SetLabelMap(0);
+  volumeNode = scalarNode;
+  
+  if (volumeNode != NULL)
+    {
+    volumeNode->SetName(name);
+    scene->SaveStateForUndo();
+    
+    vtkDebugMacro("Setting scene info");
+    volumeNode->SetScene(scene);
+    volumeNode->SetDescription("Received by OpenIGTLink");
+    
+    displayNode->SetScene(scene);
+    
+    
+    double range[2];
+    vtkDebugMacro("Set basic display info");
+    volumeNode->GetImageData()->GetScalarRange(range);
+    range[0] = 0.0;
+    range[1] = 256.0;
+    displayNode->SetLowerThreshold(range[0]);
+    displayNode->SetUpperThreshold(range[1]);
+    displayNode->SetWindow(range[1] - range[0]);
+    displayNode->SetLevel(0.5 * (range[1] - range[0]) );
+    
+    vtkDebugMacro("Adding node..");
+    scene->AddNode(displayNode);
+    
+    //displayNode->SetDefaultColorMap();
+    vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
+    displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
+    //colorLogic->Delete();
+    
+    volumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
+    
+    vtkDebugMacro("Name vol node "<<volumeNode->GetClassName());
+    vtkDebugMacro("Display node "<<displayNode->GetClassName());
+    
+    scene->AddNode(volumeNode);
+    vtkDebugMacro("Node added to scene");
+    }
+  
+  scalarNode->Delete();
+  displayNode->Delete();
+  image->Delete();
   return volumeNode;
 }
 
@@ -295,7 +324,7 @@ int vtkIGTLToMRMLImage::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNod
 
 
 //---------------------------------------------------------------------------
-int vtkIGTLToMRMLImage::MRMLToIGTL(int event, vtkMRMLNode* mrmlNode, int* size, void** igtlMsg)
+int vtkIGTLToMRMLImage::MRMLToIGTL(unsigned long event, vtkMRMLNode* mrmlNode, int* size, void** igtlMsg)
 {
   
   if (mrmlNode && event == vtkMRMLVolumeNode::ImageDataModifiedEvent)

@@ -17,6 +17,7 @@
 
 #include "vtkObject.h"
 #include "vtkOpenIGTLinkIFWin32Header.h" 
+#include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 #include "igtlMessageBase.h"
 
@@ -31,12 +32,13 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLToMRMLBase : public vtkObject
 
   virtual const char*  GetIGTLName() { return NULL; };
   virtual const char*  GetMRMLName() { return NULL; };
-  virtual vtkMRMLNode* GetNewNode(const char* name)  { return NULL; };
   virtual vtkIntArray* GetNodeEvents() { return NULL; };
+  virtual vtkMRMLNode* CreateNewNode(vtkMRMLScene* scene, const char* name)  { return NULL; };
+
   //BTX
   virtual int          IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNode* node) { return NULL; };
   //ETX
-  virtual int          MRMLToIGTL(int event, vtkMRMLNode* mrmlNode, int* size, void** igtlMsg) { return NULL; };
+  virtual int          MRMLToIGTL(unsigned long event, vtkMRMLNode* mrmlNode, int* size, void** igtlMsg) { return NULL; };
 
 
  protected:

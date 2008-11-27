@@ -22,7 +22,7 @@
 
 #include "igtlTransformMessage.h"
 
-class VTK_OPENIGTLINKIF_EXPORT vtkIGTLToMRMLLinearTransform : public vtkObject
+class VTK_OPENIGTLINKIF_EXPORT vtkIGTLToMRMLLinearTransform : public vtkIGTLToMRMLBase
 {
  public:
 
@@ -33,12 +33,13 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLToMRMLLinearTransform : public vtkObject
 
   virtual const char*  GetIGTLName() { return "TRANSFORM"; };
   virtual const char*  GetMRMLName() { return "LinearTransform"; };
-  virtual vtkMRMLNode* GetNewNode(const char* name);
   virtual vtkIntArray* GetNodeEvents();
+  virtual vtkMRMLNode* CreateNewNode(vtkMRMLScene* scene, const char* name);
+
   //BTX
   virtual int          IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNode* node);
   //ETX
-  virtual int          MRMLToIGTL(int event, vtkMRMLNode* mrmlNode, int* size, void** igtlMsg);
+  virtual int          MRMLToIGTL(unsigned long event, vtkMRMLNode* mrmlNode, int* size, void** igtlMsg);
 
 
  protected:

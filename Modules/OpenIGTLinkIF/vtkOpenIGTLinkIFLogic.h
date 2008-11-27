@@ -37,7 +37,12 @@
 #include "igtlImageMessage.h"
 #include "igtlTransformMessage.h"
 
+#include "vtkIGTLToMRMLBase.h"
+#include "vtkIGTLToMRMLLinearTransform.h"
+#include "vtkIGTLToMRMLImage.h"
+
 class vtkIGTLConnector;
+
 
 class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLogic 
 {
@@ -79,6 +84,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   typedef std::map<int, int>                ConnectorStateMapType;
   typedef std::map<vtkMRMLNode*, ConnectorListType> MRMLNodeAndConnectorMapType;
   typedef std::map<ConnectorAndDevicePairType, vtkMRMLNode*> IDToMRMLNodeMapType;
+  typedef std::list<vtkIGTLToMRMLBase*>     MessageConverterListType;
   //ETX
   
   // Work phase keywords used in NaviTrack (defined in BRPTPRInterface.h)
@@ -140,6 +146,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   // Access connectors
   int               GetNumberOfConnectors();
   vtkIGTLConnector* GetConnector(int index);
+  int               GetConnectorID(vtkIGTLConnector* con); // returns -1 if not exist
   ConnectorMapType* GetConnectorMap();
   int               CheckConnectorsStatusUpdates();
   //int               ReadCircularBuffers();
@@ -154,8 +161,10 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   //----------------------------------------------------------------
   // MRML Management
   //----------------------------------------------------------------
-
+  int  RegisterMessageConverter(vtkIGTLToMRMLBase* converter);
+  int  UnregisterMessageConverter(vtkIGTLToMRMLBase* converter);
   void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData);
+  vtkIGTLToMRMLBase* GetConverterByDeviceType(const char* deviceType);
 
   //BTX
   void UpdateMRMLScalarVolumeNode(igtl::MessageBase::Pointer ptr);
@@ -199,12 +208,12 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
 
   vtkMRMLVolumeNode*          AddVolumeNode(const char*);
   vtkMRMLLinearTransformNode* AddTransformNode(const char*);
-  void                        RegisterDeviceEvent(vtkIGTLConnector* con,
-                                                  const char* deviceName,
-                                                  const char* deviceType);
-  void                        UnRegisterDeviceEvent(vtkIGTLConnector* con,
-                                                    const char* deviceName,
-                                                    const char* deviceType);
+  int                        RegisterDeviceEvent(vtkIGTLConnector* con,
+                                                 const char* deviceName,
+                                                 const char* deviceType);
+  int                        UnRegisterDeviceEvent(vtkIGTLConnector* con,
+                                                   const char* deviceName,
+                                                   const char* deviceType);
   void UnRegisterDeviceEvent(int conID, int devID);
   vtkCallbackCommand *DataCallbackCommand;
 
@@ -222,9 +231,17 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   ConnectorStateMapType         ConnectorPrevStateList;
   MRMLNodeAndConnectorMapType   MRMLEventConnectorMap;
   IDToMRMLNodeMapType           IDToMRMLNodeMap;
+  MessageConverterListType      MessageConverterList;
   //ETX
+
   int LastConnectorID;
   int RestrictDeviceName;
+
+  //----------------------------------------------------------------
+  // IGTL-MRML converters
+  //----------------------------------------------------------------
+  vtkIGTLToMRMLLinearTransform* LinearTransformConverter;
+  vtkIGTLToMRMLImage*           ImageConverter;
 
   //----------------------------------------------------------------
   // Monitor Timer

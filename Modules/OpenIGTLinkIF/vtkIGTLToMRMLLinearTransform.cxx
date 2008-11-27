@@ -43,7 +43,7 @@ void vtkIGTLToMRMLLinearTransform::PrintSelf(ostream& os, vtkIndent indent)
 
 
 //---------------------------------------------------------------------------
-vtkMRMLNode* vtkIGTLToMRMLLinearTransform::GetNewNode(const char* name)
+vtkMRMLNode* vtkIGTLToMRMLLinearTransform::CreateNewNode(vtkMRMLScene* scene, const char* name)
 {
   vtkMRMLLinearTransformNode* transformNode;
 
@@ -56,6 +56,8 @@ vtkMRMLNode* vtkIGTLToMRMLLinearTransform::GetNewNode(const char* name)
   //transformNode->SetAndObserveImageData(transform);
   transformNode->ApplyTransform(transform);
   transform->Delete();
+
+  scene->AddNode(transformNode);  
 
   return transformNode;
 }
@@ -151,7 +153,7 @@ int vtkIGTLToMRMLLinearTransform::IGTLToMRML(igtl::MessageBase::Pointer buffer, 
 
 
 //---------------------------------------------------------------------------
-int vtkIGTLToMRMLLinearTransform::MRMLToIGTL(int event, vtkMRMLNode* mrmlNode, int* size, void** igtlMsg)
+int vtkIGTLToMRMLLinearTransform::MRMLToIGTL(unsigned long event, vtkMRMLNode* mrmlNode, int* size, void** igtlMsg)
 {
 
   if (mrmlNode && event == vtkMRMLTransformableNode::TransformModifiedEvent)
