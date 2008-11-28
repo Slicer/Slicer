@@ -345,8 +345,9 @@ void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
         {
         break;
         }
+
+      modified = false;
       }
-     modified = false;
     }
   if (modified)
     {
