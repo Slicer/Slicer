@@ -4,6 +4,7 @@
 #include "vtkKWWizardStep.h"
 
 class vtkSlicerModulesWizardDialog;
+class vtkKWCheckButton;
 class vtkKWRadioButtonSet;
 class vtkKWStateMachineInput;
 
@@ -25,6 +26,8 @@ public:
   enum 
   {
     RepositoryNITRC = 0,
+    RepositorySlicer,
+    RepositoryNAMICSandbox,
     RepositoryUnknown
   };
   //ETX
@@ -56,12 +59,14 @@ protected:
   ~vtkSlicerRepositoryStep();
 
   vtkKWRadioButtonSet *RepositoryRadioButtonSet;
+  vtkKWCheckButton *RepositoryCheckButton;
   vtkSlicerModulesWizardDialog *WizardDialog;
   vtkKWStateMachineInput *RepositoryValidationFailed;
 
 private:
-  vtkSlicerRepositoryStep(const vtkSlicerRepositoryStep&);   // Not implemented.
-  void operator=(const vtkSlicerRepositoryStep&);  // Not implemented.
+  vtkSlicerRepositoryStep(const vtkSlicerRepositoryStep&); // Not implemented.
+  void operator=(const vtkSlicerRepositoryStep&); // Not implemented.
+
 };
 
 #endif

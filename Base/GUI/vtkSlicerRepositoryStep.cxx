@@ -6,6 +6,7 @@
 #include "vtkKWWizardStep.h"
 #include "vtkKWWizardWidget.h"
 #include "vtkKWWizardWorkflow.h"
+#include "vtkKWCheckButton.h"
 #include "vtkKWRadioButtonSet.h"
 #include "vtkKWRadioButton.h"
 #include "vtkKWStateMachineInput.h"
@@ -14,6 +15,8 @@
 #include "vtkSlicerModulesWizardDialog.h"
 
 #include "vtkHTTPHandler.h"
+
+#include <itksys/SystemTools.hxx>
 
 #include <vtksys/ios/sstream>
 
@@ -28,6 +31,7 @@ vtkSlicerRepositoryStep::vtkSlicerRepositoryStep()
   this->SetDescription("Select a Slicer3 Loadable Module repository.");
   this->WizardDialog = NULL;
   this->RepositoryRadioButtonSet = NULL;
+  this->RepositoryCheckButton = NULL;
 
   this->RepositoryValidationFailed = vtkKWStateMachineInput::New();
   this->RepositoryValidationFailed->SetName("failed");
@@ -39,6 +43,10 @@ vtkSlicerRepositoryStep::~vtkSlicerRepositoryStep()
   if (this->RepositoryRadioButtonSet)
     {
     this->RepositoryRadioButtonSet->Delete();
+    }
+  if (this->RepositoryCheckButton)
+    {
+    this->RepositoryCheckButton->Delete();
     }
   this->SetWizardDialog(NULL);
 }
@@ -71,16 +79,44 @@ void vtkSlicerRepositoryStep::ShowUserInterface()
     vtkKWRadioButton *radiob;
 
     radiob = this->RepositoryRadioButtonSet->AddWidget(
+      vtkSlicerRepositoryStep::RepositoryNAMICSandbox);
+    radiob->SetText("NAMIC Sandbox");
+    radiob->SetCommand(wizard_widget, "Update");
+
+    radiob = this->RepositoryRadioButtonSet->AddWidget(
       vtkSlicerRepositoryStep::RepositoryNITRC);
     radiob->SetText("NITRC");
     radiob->SetCommand(wizard_widget, "Update");
+ 
+    radiob = this->RepositoryRadioButtonSet->AddWidget(
+      vtkSlicerRepositoryStep::RepositorySlicer);
+    radiob->SetText("Slicer.org");
+    radiob->SetCommand(wizard_widget, "Update");
 
     this->RepositoryRadioButtonSet->GetWidget(
-      vtkSlicerRepositoryStep::RepositoryNITRC)->Select();
+      vtkSlicerRepositoryStep::RepositoryNAMICSandbox)->Select();
     }
-  
+ 
   this->Script("pack %s -side top -expand y -fill none -anchor center", 
                this->RepositoryRadioButtonSet->GetWidgetName());
+
+  // checkbox to download possible sources, too
+
+  if (!this->RepositoryCheckButton)
+    {
+    this->RepositoryCheckButton = vtkKWCheckButton::New();
+    }
+  if (!this->RepositoryCheckButton->IsCreated())
+    {
+    this->RepositoryCheckButton->SetParent(wizard_widget->GetClientArea());
+    this->RepositoryCheckButton->Create();
+
+    this->RepositoryCheckButton->SetText("Just sources?");
+    
+    }
+
+  this->Script("pack %s -side top -anchor s -expand n -padx 2 -pady 2", 
+               this->RepositoryCheckButton->GetWidgetName());
 }
 
 //----------------------------------------------------------------------------
@@ -100,6 +136,16 @@ int vtkSlicerRepositoryStep::GetSelectedRepository()
       {
       return vtkSlicerRepositoryStep::RepositoryNITRC;
       }
+    if (this->RepositoryRadioButtonSet->GetWidget(
+          vtkSlicerRepositoryStep::RepositorySlicer)->GetSelectedState())
+      {
+      return vtkSlicerRepositoryStep::RepositorySlicer;
+      }
+    if (this->RepositoryRadioButtonSet->GetWidget(
+          vtkSlicerRepositoryStep::RepositoryNAMICSandbox)->GetSelectedState())
+      {
+      return vtkSlicerRepositoryStep::RepositoryNAMICSandbox;
+      }
     }
 
   return vtkSlicerRepositoryStep::RepositoryUnknown;
@@ -110,60 +156,89 @@ int vtkSlicerRepositoryStep::IsRepositoryValid()
 {
   int result = vtkSlicerRepositoryStep::RepositoryError;
   
-  vtkHTTPHandler *handler = vtkHTTPHandler::New();
+  std::string url("http://svn.slicer.org/Slicer3/trunk/Modules/"); 
 
+  vtkSlicerApplication *app = dynamic_cast<vtkSlicerApplication*> (this->GetApplication());
+
+  const char* tmp = app->GetTemporaryDirectory();
+  std::string tmpfile(tmp);
+  tmpfile += "/manifest.txt";
+
+  if (itksys::SystemTools::FileExists(tmpfile.c_str()))
+    {
+    itksys::SystemTools::RemoveFile(tmpfile.c_str());
+    }
+ 
   if (vtkSlicerRepositoryStep::RepositoryNITRC == this->GetSelectedRepository())
     {
+    url += "nitrc-manifest";
+    }
+  else if (vtkSlicerRepositoryStep::RepositorySlicer == this->GetSelectedRepository())
+    {
+    url += "slicer.org-manifest";
+    }
+  else if (vtkSlicerRepositoryStep::RepositoryNAMICSandbox == this->GetSelectedRepository())
+    {
+    url += "namicsandbox-manifest";
+    }
+  else
+    {
+    result = vtkSlicerRepositoryStep::RepositoryUnknown;
+    }
 
-      std::string url("http://svn.slicer.org/Slicer3/trunk/Modules/"); 
-
+  if (result != vtkSlicerRepositoryStep::RepositoryUnknown)
+    {
+    if (this->RepositoryCheckButton->GetSelectedState())
+      {
+      url += ".source.txt";
+      }
+    else
+      {
       // :NOTE: 20081021 tgl: Is there a better way?
 
 #if defined(_WIN32) || defined(__WIN32__)
-      url += "nitrc-manifest.win32.txt";
+      url += ".win32.txt";
 #else
 # if defined(linux) || defined(__linux)
-      url += "nitrc-manifest.linux.txt";
+      url += ".linux.txt";
 # else
 #  ifdef __APPLE__
-      url += "nitrc-manifest.darwin.txt";
+      url += ".darwin.txt";
 #  else
 #   if defined(sun) || defined(__sun)
 #    if defined(__SVR4) || defined(__svr4__)
-      url += "nitrc-manifest.solaris.txt";
+      url += ".solaris.txt";
 #    else
-      url += "nitrc-manifest.sunos.txt";
+      url += ".sunos.txt";
 #    endif
 #   else
-      url += "nitrc-manifest.txt";
+      url += ".txt";
 #   endif
 #  endif
 # endif
 #endif
 
-      if (0 == handler->CanHandleURI(url.c_str()))
-        {
-          result = vtkSlicerRepositoryStep::RepositoryConnectionError;
-        }
-      else
-        {
-          vtkSlicerApplication *app = dynamic_cast<vtkSlicerApplication*> (this->GetApplication());
-
-          const char* tmp = app->GetTemporaryDirectory();
-          std::string tmpfile(tmp);
-          tmpfile += "/manifest.txt";
-
-          handler->StageFileRead(url.c_str(), tmpfile.c_str());
-        }
-    }
-  else
-    {
-      result = vtkSlicerRepositoryStep::RepositoryUnknown;
     }
 
-  handler->Delete();
+    vtkHTTPHandler *handler = vtkHTTPHandler::New();
 
-  std::cout << "result: " << result << std::endl;
+    if (0 != handler->CanHandleURI(url.c_str()))
+      {
+      handler->StageFileRead(url.c_str(), tmpfile.c_str());
+      }
+ 
+    handler->Delete();
+
+    if (itksys::SystemTools::FileExists(tmpfile.c_str()))
+      {
+      result = vtkSlicerRepositoryStep::RepositoryIsValid;
+      }
+    else
+      {
+      result = vtkSlicerRepositoryStep::RepositoryConnectionError;
+      }
+
+    }
 
   return result;
 }
@@ -180,18 +255,13 @@ void vtkSlicerRepositoryStep::Validate()
   if (valid == vtkSlicerRepositoryStep::RepositoryConnectionError || 
       valid == vtkSlicerRepositoryStep::RepositoryError)
     {
-
-      std::cout << "ERROR, pushing validation failed" << std::endl;
       wizard_widget->SetErrorText("Could not connect to specified repository.");
       wizard_workflow->PushInput(this->GetRepositoryValidationFailed());
     }
   else
     {
-
       wizard_workflow->PushInput(vtkKWWizardStep::GetValidationSucceededInput());
-
     }
-
 
   wizard_workflow->ProcessInputs();
 }
