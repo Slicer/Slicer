@@ -40,6 +40,7 @@
 #include "vtkIGTLToMRMLBase.h"
 #include "vtkIGTLToMRMLLinearTransform.h"
 #include "vtkIGTLToMRMLImage.h"
+#include "vtkIGTLToMRMLPosition.h"
 
 class vtkIGTLConnector;
 
@@ -209,10 +210,10 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   int  RegisterDeviceEvent(vtkIGTLConnector* con,
                            const char* deviceName,
                            const char* deviceType);
-  int  UnRegisterDeviceEvent(vtkIGTLConnector* con,
+  int  UnregisterDeviceEvent(vtkIGTLConnector* con,
                              const char* deviceName,
                              const char* deviceType);
-  void UnRegisterDeviceEvent(int conID, int devID);
+  void UnregisterDeviceEvent(int conID, int devID);
   vtkCallbackCommand *DataCallbackCommand;
 
  private:
@@ -240,6 +241,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   //----------------------------------------------------------------
   vtkIGTLToMRMLLinearTransform* LinearTransformConverter;
   vtkIGTLToMRMLImage*           ImageConverter;
+  vtkIGTLToMRMLPosition*        PositionConverter;
 
   //----------------------------------------------------------------
   // Monitor Timer

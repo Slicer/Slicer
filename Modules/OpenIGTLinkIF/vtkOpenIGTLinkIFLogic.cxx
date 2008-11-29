@@ -91,9 +91,11 @@ vtkOpenIGTLinkIFLogic::vtkOpenIGTLinkIFLogic()
 
   // register default data types
   this->LinearTransformConverter = vtkIGTLToMRMLLinearTransform::New();
-  this->ImageConverter = vtkIGTLToMRMLImage::New();
+  this->ImageConverter           = vtkIGTLToMRMLImage::New();
+  this->PositionConverter        = vtkIGTLToMRMLPosition::New();
   RegisterMessageConverter(this->LinearTransformConverter);
   RegisterMessageConverter(this->ImageConverter);
+  RegisterMessageConverter(this->PositionConverter);
 
 }
 
@@ -111,6 +113,13 @@ vtkOpenIGTLinkIFLogic::~vtkOpenIGTLinkIFLogic()
     {
     UnregisterMessageConverter(this->ImageConverter);
     this->ImageConverter->Delete();
+    }
+
+  if (this->PositionConverter)
+    {
+    UnregisterMessageConverter(this->PositionConverter);
+
+    this->PositionConverter->Delete();
     }
 
   if (this->DataCallbackCommand)
@@ -414,7 +423,7 @@ int vtkOpenIGTLinkIFLogic::RegisterDeviceEvent(vtkIGTLConnector* con, const char
 
 
 //---------------------------------------------------------------------------
-int vtkOpenIGTLinkIFLogic::UnRegisterDeviceEvent(vtkIGTLConnector* con, const char* deviceName, const char* deviceType)
+int vtkOpenIGTLinkIFLogic::UnregisterDeviceEvent(vtkIGTLConnector* con, const char* deviceName, const char* deviceType)
 {
   if (con == NULL)
     {
@@ -591,18 +600,10 @@ int  vtkOpenIGTLinkIFLogic::DeleteDeviceFromConnector(int conID, const char* dev
       {
       if (io == vtkIGTLConnector::IO_OUTGOING)
         {
-        UnRegisterDeviceEvent(connector, deviceName, deviceType);
+        UnregisterDeviceEvent(connector, deviceName, deviceType);
         }
       connector->UnregisterDevice(deviceName, deviceType, io);
       }
-
-    /*
-    int param;
-    if (io == vtkIGTLConnector::IO_INCOMING)         param = vtkIGTLConnector::IO_INCOMING;
-    else if (io == vtkIGTLConnector::IO_OUTGOING)    param = vtkIGTLConnector::IO_OUTGOING;
-    else if (io == vtkIGTLConnector::IO_UNSPECIFIED) param = vtkIGTLConnector::IO_UNSPECIFIED;
-    */
-    //
     }
 
   return 1;
@@ -686,14 +687,19 @@ void vtkOpenIGTLinkIFLogic::ProcessMRMLEvents(vtkObject * caller, unsigned long 
         {
         if (strcmp(node->GetNodeTagName(), (*iter)->GetMRMLName()) == 0)
           {
-          int size;
-          void* igtlMsg;
-          (*iter)->MRMLToIGTL(event, node, &size, &igtlMsg);
-          int r = connector->SendData(size, (unsigned char*)igtlMsg);
-          if (r == 0)
+          // check if the name-type combination is on the list
+          if (connector->GetDeviceID(node->GetName(), (*iter)->GetIGTLName()) >= 0)
             {
-            // TODO: error handling
-            //std::cerr << "ERROR: send data." << std::endl;
+            //std::cerr << "SENDING " << (*iter)->GetIGTLName() << std::endl;
+            int size;
+            void* igtlMsg;
+            (*iter)->MRMLToIGTL(event, node, &size, &igtlMsg);
+            int r = connector->SendData(size, (unsigned char*)igtlMsg);
+            if (r == 0)
+              {
+              // TODO: error handling
+              //std::cerr << "ERROR: send data." << std::endl;
+              }
             }
           }
         }
@@ -1037,7 +1043,6 @@ void vtkOpenIGTLinkIFLogic::ProcCommand(const char* nodeName, int size, unsigned
 }
 
 //---------------------------------------------------------------------------
-//void vtkOpenIGTLinkIFLogic::GetDeviceNamesFromMrml(std::vector<char*> &list)
 void vtkOpenIGTLinkIFLogic::GetDeviceNamesFromMrml(IGTLMrmlNodeListType &list)
 {
 

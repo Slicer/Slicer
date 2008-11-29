@@ -50,6 +50,7 @@ set(OpenIGTLinkIF_SRCS
   vtkIGTLToMRMLBase.cxx
   vtkIGTLToMRMLLinearTransform.cxx
   vtkIGTLToMRMLImage.cxx
+  vtkIGTLToMRMLPosition.cxx
 )
 
 # --------------------------------------------------------------------------
