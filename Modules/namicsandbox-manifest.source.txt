@@ -1,0 +1,1 @@
+http://svn.na-mic.org/NAMICSandBox/trunk/LoadableModuleExample/trunk/ExampleLoadableModule.xml source Example Loadable Module
