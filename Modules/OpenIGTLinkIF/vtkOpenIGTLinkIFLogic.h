@@ -206,14 +206,12 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   void UpdateSliceDisplay();
   void UpdateLocator();
 
-  vtkMRMLVolumeNode*          AddVolumeNode(const char*);
-  vtkMRMLLinearTransformNode* AddTransformNode(const char*);
-  int                        RegisterDeviceEvent(vtkIGTLConnector* con,
-                                                 const char* deviceName,
-                                                 const char* deviceType);
-  int                        UnRegisterDeviceEvent(vtkIGTLConnector* con,
-                                                   const char* deviceName,
-                                                   const char* deviceType);
+  int  RegisterDeviceEvent(vtkIGTLConnector* con,
+                           const char* deviceName,
+                           const char* deviceType);
+  int  UnRegisterDeviceEvent(vtkIGTLConnector* con,
+                             const char* deviceName,
+                             const char* deviceType);
   void UnRegisterDeviceEvent(int conID, int devID);
   vtkCallbackCommand *DataCallbackCommand;
 
