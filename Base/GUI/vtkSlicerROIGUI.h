@@ -114,6 +114,15 @@ public:
   // Update the gui from the currently selected ROI node, called on Enter
   void UpdateGUI();
 
+
+protected:
+  vtkSlicerROIGUI ( );
+  virtual ~vtkSlicerROIGUI ( );
+
+  // Description:
+  // Which ROI  node are we displaying in this gui 
+  vtkSlicerNodeSelectorWidget* ROISelectorWidget;
+
   // Description:
   // Which ROI list node are we displaying in this gui 
   vtkSlicerNodeSelectorWidget* ROIListSelectorWidget;
@@ -122,17 +131,17 @@ public:
   // Which voliume node is associated with the ROI 
   vtkSlicerNodeSelectorWidget* VolumeNodeSelectorWidget;
 
-protected:
-  vtkSlicerROIGUI ( );
-  virtual ~vtkSlicerROIGUI ( );
-
-  // Description:
+ // Description:
   // Module logic and mrml pointers
   vtkSlicerROILogic *Logic;
 
   // Description:
   // The ID of the ROI node that is currently displayed in the GUI
   char *ROIListNodeID;
+
+  // Description:
+  // The ROI  node that is currently displayed in the GUI
+  vtkMRMLROIListNode *ROINode;
 
   // Description:
   // The ROI list node that is currently displayed in the GUI

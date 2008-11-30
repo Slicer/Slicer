@@ -11,11 +11,11 @@
 // Model nodes describe ROI data.  They indicate where the ROI is 
 // located and the size of the ROI
 
-class VTK_MRML_EXPORT vtkMRMLROINode : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLROINode : public vtkMRMLTransformableNode
 {
 public:
   static vtkMRMLROINode *New();
-  vtkTypeMacro(vtkMRMLROINode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLROINode,vtkMRMLTransformableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   //--------------------------------------------------------------------------
@@ -94,6 +94,13 @@ public:
 
   vtkGetStringMacro(VolumeNodeID);
   vtkSetStringMacro(VolumeNodeID);
+
+  // Description:
+  // transform utility functions
+  virtual bool CanApplyNonLinearTransforms() { return true; }
+  virtual void ApplyTransform(vtkMatrix4x4* transformMatrix);
+  virtual void ApplyTransform(vtkAbstractTransform* transform);
+
 protected:
   vtkMRMLROINode();
   ~vtkMRMLROINode();

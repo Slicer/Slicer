@@ -33,6 +33,8 @@ vtkSlicerROIGUI::vtkSlicerROIGUI ( )
   this->ROIListNodeID = NULL;
   //this->VolumeNodeID = NULL;
   this->ROIListNode = NULL;
+  this->ROINode = NULL;
+  this->ROISelectorWidget = NULL;
   this->ROIListSelectorWidget = NULL;
   this->VolumeNodeSelectorWidget = NULL;
   this->AddROIButton = NULL;
@@ -62,6 +64,7 @@ vtkSlicerROIGUI::~vtkSlicerROIGUI ( )
     delete [] this->VolumeNodeID;
     this->VolumeNodeID = NULL;
     }*/
+  vtkSetMRMLNodeMacro(this->ROINode, NULL);
   vtkSetMRMLNodeMacro(this->ROIListNode, NULL);
 
   if (this->ROIListSelectorWidget)
@@ -69,6 +72,12 @@ vtkSlicerROIGUI::~vtkSlicerROIGUI ( )
     this->ROIListSelectorWidget->SetParent(NULL);
     this->ROIListSelectorWidget->Delete();
     this->ROIListSelectorWidget = NULL;
+    }
+  if (this->ROISelectorWidget)
+    {
+    this->ROISelectorWidget->SetParent(NULL);
+    this->ROISelectorWidget->Delete();
+    this->ROISelectorWidget = NULL;
     }
   if ( this->VolumeNodeSelectorWidget )
     {
@@ -152,6 +161,8 @@ void vtkSlicerROIGUI::RemoveGUIObservers ( )
 {
   this->MultiColumnList->GetWidget()->RemoveObservers(vtkKWMultiColumnList::SelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand);
 
+  this->ROISelectorWidget->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);
+
   this->ROIListSelectorWidget->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);
 
   this->VolumeNodeSelectorWidget->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -179,6 +190,8 @@ void vtkSlicerROIGUI::RemoveGUIObservers ( )
 void vtkSlicerROIGUI::AddGUIObservers ( )
 {
   this->MultiColumnList->GetWidget()->AddObserver(vtkKWMultiColumnList::SelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+
+  this->ROISelectorWidget->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->ROIListSelectorWidget->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
 
@@ -220,6 +233,18 @@ void vtkSlicerROIGUI::ProcessGUIEvents ( vtkObject *caller,
                                         unsigned long event, void *callData )
   {
   // process ROI list node selector events
+  vtkSlicerNodeSelectorWidget *roiSelector = 
+    vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
+  if (roiSelector == this->ROISelectorWidget &&
+    event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent )
+    {
+    vtkMRMLROINode *roi =vtkMRMLROINode::SafeDownCast(this->ROISelectorWidget->GetSelected());
+    if (roi!= NULL)
+      {
+      this->ROIDisplayWidget->SetROINode(roi);
+      }
+    return;
+    }
   vtkSlicerNodeSelectorWidget *ROIListSelector = 
     vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
   if (ROIListSelector == this->ROIListSelectorWidget &&
@@ -928,14 +953,55 @@ void vtkSlicerROIGUI::BuildGUI ( )
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "ROI" );
   this->BuildHelpAndAboutFrame ( page, help, about );
 
+  // ---
+  // ROI FRAME
+  vtkSlicerModuleCollapsibleFrame *ROIFrame = vtkSlicerModuleCollapsibleFrame::New();
+  ROIFrame->SetParent( page );
+  ROIFrame->Create();
+  ROIFrame->SetLabelText("ROI Display");
+  ROIFrame->ExpandFrame();
+  app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+    ROIFrame->GetWidgetName(), this->UIPanel->GetPageWidget("ROI")->GetWidgetName());
+
+  // node selector
+  this->ROISelectorWidget = vtkSlicerNodeSelectorWidget::New();
+  this->ROISelectorWidget->SetParent(ROIFrame->GetFrame());
+  this->ROISelectorWidget->Create();
+  this->ROISelectorWidget->SetNodeClass("vtkMRMLROINode", NULL, NULL, NULL);
+  this->ROISelectorWidget->NewNodeEnabledOn();
+  this->ROISelectorWidget->SetMRMLScene(this->GetMRMLScene());
+  this->ROISelectorWidget->SetBorderWidth(2);
+  this->ROISelectorWidget->SetPadX(2);
+  this->ROISelectorWidget->SetPadY(2);
+  this->ROISelectorWidget->SetShowHidden(1);
+  //this->ROISelectorWidget->GetWidget()->IndicatorVisibilityOff();
+  this->ROISelectorWidget->GetWidget()->SetWidth(24);
+  this->ROISelectorWidget->SetLabelText( "ROI Select: ");
+  this->ROISelectorWidget->SetBalloonHelpString("Select a ROI from the current mrml scene.");
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                this->ROISelectorWidget->GetWidgetName(),
+                ROIFrame->GetFrame()->GetWidgetName() );
+
+  // display widgwt
+  this->ROIDisplayWidget = vtkSlicerROIDisplayWidget::New();
+  this->ROIDisplayWidget->SetParent ( ROIFrame->GetFrame() );
+  this->ROIDisplayWidget->Create();
+  this->ROIDisplayWidget->SetViewerWidget(this->GetApplicationGUI()->GetViewerWidget());
+
+  this->Script("pack %s -side left -anchor w -padx 2 -pady 2 -in %s", 
+               this->ROIDisplayWidget->GetWidgetName(),
+               ROIFrame->GetFrame()->GetWidgetName());
+
+
 
   // ---
   // LIST FRAME
   vtkSlicerModuleCollapsibleFrame *ROIListFrame = vtkSlicerModuleCollapsibleFrame::New();
   ROIListFrame->SetParent( page );
   ROIListFrame->Create();
-  ROIListFrame->SetLabelText("ROI List");
-  ROIListFrame->ExpandFrame();
+  ROIListFrame->SetLabelText("ROI List (DEPRICATED)");
+  //ROIListFrame->ExpandFrame();
+  ROIListFrame->CollapseFrame();
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
     ROIListFrame->GetWidgetName(), this->UIPanel->GetPageWidget("ROI")->GetWidgetName());
 
@@ -1058,8 +1124,9 @@ void vtkSlicerROIGUI::BuildGUI ( )
   vtkSlicerModuleCollapsibleFrame *displayFrame = vtkSlicerModuleCollapsibleFrame::New ( );
   displayFrame->SetParent ( page );
   displayFrame->Create ( );
-  displayFrame->SetLabelText ("Display");
-  displayFrame->ExpandFrame ( );
+  displayFrame->SetLabelText ("ROI List Display (DEPRICATED)");
+  //displayFrame->ExpandFrame ( );
+  displayFrame->CollapseFrame();
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
     displayFrame->GetWidgetName(),
     this->UIPanel->GetPageWidget("ROI")->GetWidgetName());
@@ -1071,17 +1138,6 @@ void vtkSlicerROIGUI::BuildGUI ( )
   app->Script ("pack %s -side top -anchor nw -fill x -pady 0 -in %s",
     XPositionFrame->GetWidgetName(),
     displayFrame->GetFrame()->GetWidgetName());
-
-  // display widgwt
-  this->ROIDisplayWidget = vtkSlicerROIDisplayWidget::New();
-  this->ROIDisplayWidget->SetParent ( XPositionFrame );
-  this->ROIDisplayWidget->Create();
-  this->ROIDisplayWidget->SetViewerWidget(this->GetApplicationGUI()->GetViewerWidget());
-
-  app->Script("pack %s -side left -anchor w -padx 2 -pady 2 -in %s", 
-    this->ROIDisplayWidget->GetWidgetName(),
-    XPositionFrame->GetWidgetName());
-
 
   // scale frame
   vtkKWFrame *scaleFrame = vtkKWFrame::New();
@@ -1161,6 +1217,7 @@ void vtkSlicerROIGUI::BuildGUI ( )
     colourFrame->GetWidgetName());
 
   buttonFrame->Delete ();
+  ROIFrame->Delete ();
   ROIListFrame->Delete ();
   displayFrame->Delete ();
   scaleFrame->Delete ();

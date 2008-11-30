@@ -6,6 +6,9 @@
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
 
+#include "vtkAbstractTransform.h"
+#include "vtkMath.h"
+
 #include "vtkMRMLROINode.h"
 #include "vtkMRMLScene.h"
 
@@ -59,6 +62,7 @@ vtkMRMLROINode::vtkMRMLROINode()
   this->Selected = 0;
   this->VolumeNodeID = NULL;
   this->Visibility = 1;
+  this->HideFromEditors = 0;
   return;
 }
 
@@ -360,3 +364,27 @@ void vtkMRMLROINode::SetRadiusIJK(float* radiusIJK)
   this->SetRadiusIJK(radiusIJK[0], radiusIJK[1], radiusIJK[2]);
   return;
 }
+
+//---------------------------------------------------------------------------
+void vtkMRMLROINode::ApplyTransform(vtkMatrix4x4* transformMatrix)
+{
+  double (*matrix)[4] = transformMatrix->Element;
+  float *xyzIn  = this->GetXYZ();
+  float xyzOut[3];
+
+  xyzOut[0] = matrix[0][0]*xyzIn[0] + matrix[0][1]*xyzIn[1] + matrix[0][2]*xyzIn[2] + matrix[0][3];
+  xyzOut[1] = matrix[1][0]*xyzIn[0] + matrix[1][1]*xyzIn[1] + matrix[1][2]*xyzIn[2] + matrix[1][3];
+  xyzOut[2] = matrix[2][0]*xyzIn[0] + matrix[2][1]*xyzIn[1] + matrix[2][2]*xyzIn[2] + matrix[2][3];
+
+  this->SetXYZ(xyzOut);
+
+}
+
+void vtkMRMLROINode::ApplyTransform(vtkAbstractTransform* transform)
+{
+  float *xyzIn  = this->GetXYZ();
+  float xyzOut[3];
+  transform->TransformPoint(xyzIn,xyzOut);
+  this->SetXYZ(xyzOut);
+}
+

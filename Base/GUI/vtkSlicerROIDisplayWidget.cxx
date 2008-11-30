@@ -418,12 +418,10 @@ void vtkSlicerROIDisplayWidget::CreateWidget ( )
   this->XRange->SetOrientationToHorizontal ();
   this->XRange->SetResolution(1);
   this->XRange->SetEntriesWidth(4);
+  this->XRange->SetWidth(120);
 
-  this->Script("pack %s -side left -anchor w -padx 2 -pady 2 -in %s", 
+  this->Script("pack %s %s -side left -anchor w -expand y -fill x -padx 2 -pady 2 -in %s", 
     this->XLabel->GetWidgetName(),
-    XPositionFrame->GetWidgetName());
-
-  this->Script("pack %s -side left -anchor w -expand y -fill x -padx 2 -pady 2 -in %s", 
     this->XRange->GetWidgetName(),
     XPositionFrame->GetWidgetName());
 
@@ -452,12 +450,10 @@ void vtkSlicerROIDisplayWidget::CreateWidget ( )
   this->YRange->SetOrientationToHorizontal ();
   this->YRange->SetResolution(1);
   this->YRange->SetEntriesWidth(4);
+  this->YRange->SetWidth(120);
 
-  this->Script("pack %s -side left -anchor w -padx 2 -pady 2 -in %s", 
+  this->Script("pack %s %s -side left -anchor w -expand y -fill x -padx 2 -pady 2 -in %s", 
     this->YLabel->GetWidgetName(),
-    YPositionFrame->GetWidgetName());
-
-  this->Script("pack %s -side left -anchor w -expand y -fill x -padx 2 -pady 2 -in %s", 
     this->YRange->GetWidgetName(),
     YPositionFrame->GetWidgetName());
 
@@ -486,12 +482,10 @@ void vtkSlicerROIDisplayWidget::CreateWidget ( )
   this->ZRange->SetOrientationToHorizontal ();
   this->ZRange->SetResolution(1);
   this->ZRange->SetEntriesWidth(4);
+  this->ZRange->SetWidth(120);
 
-  this->Script("pack %s -side left -anchor w -padx 2 -pady 2 -in %s", 
+  this->Script("pack %s %s -side left -anchor w -expand y -fill x -padx 2 -pady 2 -in %s", 
     this->ZLabel->GetWidgetName(),
-    ZPositionFrame->GetWidgetName());
-
-  this->Script("pack %s -side left -anchor w -expand y -fill x -padx 2 -pady 2 -in %s", 
     this->ZRange->GetWidgetName(),
     ZPositionFrame->GetWidgetName());
 

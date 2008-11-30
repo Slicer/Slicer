@@ -44,6 +44,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLNonlinearTransformNode.h"
+#include "vtkMRMLROINode.h"
 #include "vtkMRMLROIListNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
@@ -148,6 +149,10 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLFiducialListNode *fidln = vtkMRMLFiducialListNode::New(); 
   this->RegisterNodeClass( fidln );
   fidln->Delete();
+
+  vtkMRMLROINode *roin = vtkMRMLROINode::New(); 
+  this->RegisterNodeClass( roin );
+  roin->Delete();
 
   vtkMRMLROIListNode *roiln = vtkMRMLROIListNode::New(); 
   this->RegisterNodeClass( roiln );
