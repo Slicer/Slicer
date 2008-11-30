@@ -94,7 +94,7 @@ void vtkMRMLTransformableNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLTransformableNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLTransformNode *node = (vtkMRMLTransformNode *) anode;
+  vtkMRMLTransformableNode *node = (vtkMRMLTransformableNode *) anode;
   this->SetTransformNodeID(node->TransformNodeID);
 }
 
