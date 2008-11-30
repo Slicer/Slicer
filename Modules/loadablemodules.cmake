@@ -7,5 +7,3 @@
 set(CMAKE_MODULE_PATH ${Slicer3_SOURCE_DIR}/Utilities/BuildSystem/CMake)
 include(SlicerParseModule)
 include(SlicerDownloadModule)
-
-slicer_parse_module_url("http://svn.na-mic.org/NAMICSandBox/trunk/LoadableModuleExample/trunk/ExampleLoadableModule.xml")
