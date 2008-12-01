@@ -153,7 +153,7 @@ void vtkMRMLFiberBundleTubeDisplayNode::SetPolyData(vtkPolyData *glyphPolyData)
 //----------------------------------------------------------------------------
 vtkPolyData* vtkMRMLFiberBundleTubeDisplayNode::GetPolyData()
 {
-  if (this->TubeFilter &&  this->TensorToColor)
+  if (this->TubeFilter && this->TubeFilter->GetInput() && this->TensorToColor)
     {
     this->UpdatePolyDataPipeline();
     this->TubeFilter->Update();
@@ -260,7 +260,7 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
     this->TensorToColor->SetExtractScalar(0);
     }
     
-   if (this->GetScalarVisibility())
+  if ( this->GetScalarVisibility() && this->TubeFilter->GetInput() != NULL )
     {
     this->TensorToColor->Update();
     double *range = this->TensorToColor->GetOutput()->GetScalarRange();

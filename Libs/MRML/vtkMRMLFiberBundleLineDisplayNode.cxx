@@ -217,7 +217,7 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
     this->TensorToColor->SetExtractScalar(0);
     }
     
-   if (this->GetScalarVisibility())
+  if ( this->GetScalarVisibility() && this->TensorToColor->GetInput() != NULL )
     {
     this->TensorToColor->Update();
     double *range = this->TensorToColor->GetOutput()->GetScalarRange();

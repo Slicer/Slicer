@@ -266,7 +266,7 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
     this->ScalarVisibilityOff( );
     }
    
- if (this->GetScalarVisibility())
+ if ( this->GetScalarVisibility() && this->DiffusionTensorGlyphFilter->GetInput() != NULL )
   {
   this->DiffusionTensorGlyphFilter->Update();
   double *range = this->DiffusionTensorGlyphFilter->GetOutput()->GetScalarRange();
