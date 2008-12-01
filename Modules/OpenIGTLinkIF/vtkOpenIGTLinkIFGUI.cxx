@@ -623,6 +623,7 @@ void vtkOpenIGTLinkIFGUI::HandleMouseEvent(vtkSlicerInteractorStyle *style)
     {
     anno = appGUI->GetMainSliceGUI("Green")->GetSliceViewer()->GetRenderWidget()->GetCornerAnnotation();
     }
+  /*
   if (anno)
     {
     const char *rasText = anno->GetText(1);
@@ -657,6 +658,7 @@ void vtkOpenIGTLinkIFGUI::HandleMouseEvent(vtkSlicerInteractorStyle *style)
       
       }
     }
+  */
 }
 
 
