@@ -146,30 +146,25 @@ vtkOpenIGTLinkIFGUI::vtkOpenIGTLinkIFGUI ( )
   //----------------------------------------------------------------
   // Visualization Control Frame
   
-  this->FreezeImageCheckButton = NULL;
-  this->ObliqueCheckButton     = NULL;
-  this->SetLocatorModeButton   = NULL;
-  this->SetUserModeButton      = NULL;
-  this->RedSliceMenu           = NULL;
-  this->YellowSliceMenu        = NULL;
-  this->GreenSliceMenu         = NULL;
-
-  this->FreezeImageCheckButton = NULL;
-  this->LocatorCheckButton     = NULL;
-  this->LocatorSourceMenu      = NULL;
-  this->RealTimeImageSourceMenu      = NULL;
-  
-  this->ImagingMenu            = NULL;
+  this->FreezeImageCheckButton  = NULL;
+  this->ObliqueCheckButton      = NULL;
+  this->SetLocatorModeButton    = NULL;
+  this->SetUserModeButton       = NULL;
+  this->RedSliceMenu            = NULL;
+  this->YellowSliceMenu         = NULL;
+  this->GreenSliceMenu          = NULL;
+  this->FreezeImageCheckButton  = NULL;
+  this->LocatorCheckButton      = NULL;
+  this->LocatorSourceMenu       = NULL;
+  this->RealTimeImageSourceMenu = NULL;
+  this->ImagingMenu             = NULL;
 
 
   //----------------------------------------------------------------
   // Locator  (MRML)
-  this->CloseScene             = false;
-
+  this->CloseScene              = false;
   this->TimerFlag = 0;
-
   this->ConnectorIDList.clear();
-
   this->IOConfigTreeConnectorList.clear();
   this->IOConfigTreeIOList.clear();
   this->IOConfigTreeNodeList.clear();
@@ -1810,17 +1805,20 @@ void vtkOpenIGTLinkIFGUI::ChangeSlicePlaneDriver(int slice, const char* driver)
       {
       this->SliceNode0->SetOrientationToAxial();
       //this->SliceDriver0 = vtkOpenIGTLinkIFGUI::SLICE_DRIVER_USER;
-      this->GetLogic()->SetSliceDriver0(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_USER);
+      //this->GetLogic()->SetSliceDriver0(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_USER);
+      this->GetLogic()->SetSliceDriver(0, vtkOpenIGTLinkIFLogic::SLICE_DRIVER_USER);
       }
     else if (strcmp(driver, "Locator") == 0)
       {
       //this->SliceDriver0 = vtkOpenIGTLinkIFGUI::SLICE_DRIVER_LOCATOR;
-      this->GetLogic()->SetSliceDriver0(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_LOCATOR);
+      //this->GetLogic()->SetSliceDriver0(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_LOCATOR);
+      this->GetLogic()->SetSliceDriver(0, vtkOpenIGTLinkIFLogic::SLICE_DRIVER_LOCATOR);
       }
     else if (strcmp(driver, "RT Image") == 0)
       {
       //this->SliceDriver0 = vtkOpenIGTLinkIFGUI::SLICE_DRIVER_RTIMAGE;
-      this->GetLogic()->SetSliceDriver0(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_RTIMAGE);
+      //this->GetLogic()->SetSliceDriver0(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_RTIMAGE);
+      this->GetLogic()->SetSliceDriver(0, vtkOpenIGTLinkIFLogic::SLICE_DRIVER_RTIMAGE);
       }
     }
   else if (slice == vtkOpenIGTLinkIFGUI::SLICE_PLANE_YELLOW)
@@ -1830,17 +1828,20 @@ void vtkOpenIGTLinkIFGUI::ChangeSlicePlaneDriver(int slice, const char* driver)
       {
       this->SliceNode1->SetOrientationToSagittal();
       //this->SliceDriver1 = vtkOpenIGTLinkIFGUI::SLICE_DRIVER_USER;
-      this->GetLogic()->SetSliceDriver1(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_USER);
+      //this->GetLogic()->SetSliceDriver1(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_USER);
+      this->GetLogic()->SetSliceDriver(1, vtkOpenIGTLinkIFLogic::SLICE_DRIVER_USER);
       }
     else if (strcmp(driver, "Locator") == 0)
       {
       //this->SliceDriver1 = vtkOpenIGTLinkIFGUI::SLICE_DRIVER_LOCATOR;
-      this->GetLogic()->SetSliceDriver1(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_LOCATOR);
+      //this->GetLogic()->SetSliceDriver1(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_LOCATOR);
+      this->GetLogic()->SetSliceDriver(1, vtkOpenIGTLinkIFLogic::SLICE_DRIVER_LOCATOR);
       }
     else if (strcmp(driver, "RT Image") == 0)
       {
       //this->SliceDriver1 = vtkOpenIGTLinkIFGUI::SLICE_DRIVER_RTIMAGE;
-      this->GetLogic()->SetSliceDriver1(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_RTIMAGE);
+      //this->GetLogic()->SetSliceDriver1(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_RTIMAGE);
+      this->GetLogic()->SetSliceDriver(1, vtkOpenIGTLinkIFLogic::SLICE_DRIVER_RTIMAGE);
       }
     }
   else //if ( slice == vtkOpenIGTLinkIFGUI::SLICE_PLANE_GREEN )
@@ -1850,17 +1851,20 @@ void vtkOpenIGTLinkIFGUI::ChangeSlicePlaneDriver(int slice, const char* driver)
       {
       this->SliceNode2->SetOrientationToCoronal();
       //this->SliceDriver2 = vtkOpenIGTLinkIFGUI::SLICE_DRIVER_USER;
-      this->GetLogic()->SetSliceDriver2(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_USER);
+      //this->GetLogic()->SetSliceDriver2(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_USER);
+      this->GetLogic()->SetSliceDriver(2, vtkOpenIGTLinkIFLogic::SLICE_DRIVER_USER);
       }
     else if (strcmp(driver, "Locator") == 0)
       {
       //this->SliceDriver2 = vtkOpenIGTLinkIFGUI::SLICE_DRIVER_LOCATOR;
-      this->GetLogic()->SetSliceDriver2(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_LOCATOR);
+      //this->GetLogic()->SetSliceDriver2(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_LOCATOR);
+      this->GetLogic()->SetSliceDriver(2, vtkOpenIGTLinkIFLogic::SLICE_DRIVER_LOCATOR);
       }
     else if (strcmp(driver, "RT Image") == 0)
       {
       //this->SliceDriver2 = vtkOpenIGTLinkIFGUI::SLICE_DRIVER_RTIMAGE;
-      this->GetLogic()->SetSliceDriver2(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_RTIMAGE);
+      //this->GetLogic()->SetSliceDriver2(vtkOpenIGTLinkIFLogic::SLICE_DRIVER_RTIMAGE);
+      this->GetLogic()->SetSliceDriver(2, vtkOpenIGTLinkIFLogic::SLICE_DRIVER_RTIMAGE);
       }
     }
 

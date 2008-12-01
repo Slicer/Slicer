@@ -648,13 +648,6 @@ int vtkOpenIGTLinkIFLogic::SetLocatorDriver(const char* nodeID)
 
   if (node && strcmp(node->GetNodeTagName(), "LinearTransform") == 0)
     {
-    //vtkMRMLLinearTransformNode* transNode =
-    //vtkMRMLLinearTransformNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(nodeID));
-    //vtkMRMLNode *node = NULL; // TODO: is this OK?
-    //vtkIntArray* nodeEvents = vtkIntArray::New();
-    //nodeEvents->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
-    //vtkSetAndObserveMRMLNodeEventsMacro(node,transNode,nodeEvents);
-    //nodeEvents->Delete();
     this->LocatorDriverNodeID = nodeID;
     if (this->LocatorDriverFlag)
       {
@@ -721,54 +714,44 @@ int vtkOpenIGTLinkIFLogic::SetRealTimeImageSource(const char* nodeID)
 }
 
 
-////---------------------------------------------------------------------------
-//int vtkOpenIGTLinkIFLogic::SetSliceDriver(int index, const char* type, const char* name)
-//{
-//  ConnectorMapType::iterator iter;
-//  for (iter = this->ConnectorMap.begin(); iter != this->ConnectorMap.end(); iter ++)
-//    {
-//    int connectorID = iter->first;
-//    int deviceID = iter->second->GetDeviceID(name, type);
-//    SetSliceDriver(index, connectorID, deviceID);
-//    }
-//  return 1;
-//}
-//
-//
-//int vtkOpenIGTLinkIFLogic::SetSliceDriver(int index, int connectorID, int deviceID)
-//{
-//  if (index < 0 || index >= 3) 
-//    {
-//    // index is out of range
-//    return 0;
-//    }
-//
-//  ConnectorMapType::iterator iter = this->ConnectorMap.find(connectorID);
-//  if (iter != this->ConnectorMap.end()) // if the connector is found
-//    {
-//    vtkIGTLConnector::DeviceInfoType* devInfo = this->ConnectorMap[connectorID]->GetDeviceInfo(deviceID);
-//    if (devInfo == NULL)
-//      {
-//      return 0;
-//      }
-//    if (devInfo->type == "IMAGE")
-//      {
-//      this->SliceDriver[index] = SLICE_DRIVER_RTIMAGE;
-//      this->SliceDriverConnectorID[index] = connectorID;
-//      this->SliceDriverDeviceID[index] = deviceID;
-//      return 1;
-//      }
-//    else if (devInfo->type == "TRANSFORM" || devInfo->type == "POSITION")
-//      {
-//      this->SliceDriver[index] = SLICE_DRIVER_LOCATOR;
-//      this->SliceDriverConnectorID[index] = connectorID;
-//      this->SliceDriverDeviceID[index] = deviceID;
-//      return 1;
-//      }
-//    }
-//
-//  return 0;
-//}
+//---------------------------------------------------------------------------
+int vtkOpenIGTLinkIFLogic::SetSliceDriver(int index, int v)
+{
+  if (index < 0 || index >= 3)
+    {
+    return 0;
+    }
+
+  this->SliceDriver[index] = v;
+  if (v == SLICE_DRIVER_LOCATOR)
+    {
+    vtkMRMLLinearTransformNode* transNode =
+      vtkMRMLLinearTransformNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->LocatorDriverNodeID));
+    if (transNode)
+      {
+      vtkMRMLNode *node = NULL; // TODO: is this OK?
+      vtkIntArray* nodeEvents = vtkIntArray::New();
+      nodeEvents->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
+      vtkSetAndObserveMRMLNodeEventsMacro(node,transNode,nodeEvents);
+      nodeEvents->Delete();
+      }
+    }
+
+  return 1;
+}
+
+
+//---------------------------------------------------------------------------
+int vtkOpenIGTLinkIFLogic::GetSliceDriver(int index)
+{
+  if (index < 0 || index >= 3)
+    {
+    return -1;
+    }
+
+  return this->SliceDriver[index];
+    
+}
 
 //---------------------------------------------------------------------------
 int vtkOpenIGTLinkIFLogic::SetRestrictDeviceName(int f)
@@ -947,7 +930,34 @@ void vtkOpenIGTLinkIFLogic::ProcessMRMLEvents(vtkObject * caller, unsigned long 
       } // for (cliter)
 
     //---------------------------------------------------------------------------
-    // Real-time image
+    // Slice Driven by Locator
+    if (node && strcmp(node->GetID(), this->LocatorDriverNodeID.c_str()) == 0)
+      {
+      vtkMatrix4x4* transform = NULL;
+      for (int i = 0; i < 3; i ++)
+        {
+        if (this->SliceDriver[i] == SLICE_DRIVER_LOCATOR)
+          {
+          if (!transform)
+            {
+            vtkMRMLLinearTransformNode* transNode =    
+              vtkMRMLLinearTransformNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->LocatorDriverNodeID));
+            if (transNode)
+              {
+              transform = transNode->GetMatrixTransformToParent();
+              }
+            }
+          if (transform)
+            {
+            UpdateSliceNode(i, transform);
+            }
+          }
+        }
+      }
+
+      
+    //---------------------------------------------------------------------------
+    // Slice Driven by Real-time image
     if (strcmp(node->GetID(), this->RealTimeImageSourceNodeID.c_str()) == 0)
       {
       for (int i = 0; i < 3; i ++)
@@ -984,60 +994,7 @@ vtkIGTLToMRMLBase* vtkOpenIGTLinkIFLogic::GetConverterByDeviceType(const char* d
 
 
 //---------------------------------------------------------------------------
-void vtkOpenIGTLinkIFLogic::UpdateMRMLScalarVolumeNode(igtl::MessageBase::Pointer ptr)
-{
-  /*
-  px = px + cx;
-  py = py + cy;
-  pz = pz + cz;
-  */
-
-  //volumeNode->SetAndObserveImageData(imageData);
-
-  //----------------------------------------------------------------
-  // Slice Orientation
-  //----------------------------------------------------------------
-  
-  /*
-  for (int i = 0; i < 3; i ++)
-    {
-    if (this->SliceDriver[i] == SLICE_DRIVER_RTIMAGE)
-      {
-      UpdateSliceNode(i, nx, ny, nz, tx, ty, tz, px, py, pz);
-      }
-    else if (this->SliceDriver[i] == SLICE_DRIVER_LOCATOR)
-      {
-      UpdateSliceNodeByTransformNode(i, "Tracker");
-      }
-    }
-  */
-}
-
-
-//---------------------------------------------------------------------------
-void vtkOpenIGTLinkIFLogic::UpdateMRMLLinearTransformNode(igtl::MessageBase::Pointer ptr)
-{
-  /*
-  if (strcmp(transMsg->GetDeviceName(), "Tracker") == 0)
-    {
-    for (int i = 0; i < 3; i ++)
-      {
-      if (this->SliceDriver[i] == SLICE_DRIVER_LOCATOR)
-        {
-        UpdateSliceNodeByTransformNode(i, "Tracker");
-        }
-      }
-    }
-  */
-
-}
-
-//---------------------------------------------------------------------------
 void vtkOpenIGTLinkIFLogic::UpdateSliceNode(int sliceNodeNumber, vtkMatrix4x4* transform)
-//void vtkOpenIGTLinkIFLogic::UpdateSliceNode(int sliceNodeNumber,
-//                                         float nx, float ny, float nz,
-//                                         float tx, float ty, float tz,
-//                                         float px, float py, float pz)
 {
 
   // NOTES: In Slicer3 ver. 3.2 and higher, a slice orientation information in
@@ -1156,6 +1113,7 @@ void vtkOpenIGTLinkIFLogic::UpdateSliceNodeByImage(int sliceNodeNumber)
     vtkMRMLVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->RealTimeImageSourceNodeID));
 
   std::cerr << "vtkOpenIGTLinkIFLogic::UpdateSliceNodeByImage(int sliceNodeNumber) is called " << std::endl;
+
   if (volumeNode == NULL)
     {
     return;
@@ -1163,7 +1121,7 @@ void vtkOpenIGTLinkIFLogic::UpdateSliceNodeByImage(int sliceNodeNumber)
 
   vtkMatrix4x4* rtimgTransform = vtkMatrix4x4::New();
   volumeNode->GetRASToIJKMatrix(rtimgTransform);
-  rtimgTransform->Invert();
+  //rtimgTransform->Invert();
   
   float tx = rtimgTransform->GetElement(0, 0);
   float ty = rtimgTransform->GetElement(1, 0);
@@ -1196,8 +1154,9 @@ void vtkOpenIGTLinkIFLogic::UpdateSliceNodeByImage(int sliceNodeNumber)
   //py = py + cy;
   //pz = pz + cz;
   //UpdateSliceNode(i, nx, ny, nz, tx, ty, tz, px, py, pz);
-  
+
   // normalize
+
   float psi = sqrt(tx*tx + ty*ty + tz*tz);
   float psj = sqrt(sx*sx + sy*sy + sz*sz);
   float psk = sqrt(nx*nx + ny*ny + nz*nz);
@@ -1210,82 +1169,59 @@ void vtkOpenIGTLinkIFLogic::UpdateSliceNodeByImage(int sliceNodeNumber)
   float nnx = nx / psk;
   float nny = ny / psk;
   float nnz = nz / psk;
+
+  rtimgTransform->SetElement(0, 0, ntx);
+  rtimgTransform->SetElement(1, 0, nty);
+  rtimgTransform->SetElement(2, 0, ntz);
+  rtimgTransform->SetElement(0, 1, nsx);
+  rtimgTransform->SetElement(1, 1, nsy);
+  rtimgTransform->SetElement(2, 1, nsz);
+  rtimgTransform->SetElement(0, 2, nnx);
+  rtimgTransform->SetElement(1, 2, nny);
+  rtimgTransform->SetElement(2, 2, nnz);
   
+  /*
   float hfovi = psi * size[0] / 2.0;
   float hfovj = psj * size[1] / 2.0;
   //float hfovk = psk * imgheader->size[2] / 2.0;
   float hfovk = 0;
+  */
   
-  float cx = ntx * hfovi + nsx * hfovj + nnx * hfovk;
-  float cy = nty * hfovi + nsy * hfovj + nny * hfovk;
-  float cz = ntz * hfovi + nsz * hfovj + nnz * hfovk;
+  //float cx = ntx * hfovi + nsx * hfovj + nnx * hfovk;
+  //float cy = nty * hfovi + nsy * hfovj + nny * hfovk;
+  //float cz = ntz * hfovi + nsz * hfovj + nnz * hfovk;
   
-  rtimgTransform->SetElement(0, 3, px + cx);
-  rtimgTransform->SetElement(1, 3, py + cy);
-  rtimgTransform->SetElement(2, 3, pz + cz);
+  //rtimgTransform->SetElement(0, 3, px + cx);
+  //rtimgTransform->SetElement(1, 3, py + cy);
+  //rtimgTransform->SetElement(2, 3, pz + cz);
   
   UpdateSliceNode(sliceNodeNumber, rtimgTransform);
 
   rtimgTransform->Delete();
-  volumeNode->Delete();
+  //volumeNode->Delete();
 
 } 
-
-
-
-
-////---------------------------------------------------------------------------
-//int vtkOpenIGTLinkIFLogic::UpdateSliceNodeByTransformNode(int sliceNodeNumber, vtkMRMLLinearTransformNode* node)
-//{
-//
-//  if (this->FreezePlane)
-//    {
-//    return 1;
-//    }
-//
-//  vtkMatrix4x4* transform;
-//  //transform = transformNode->GetMatrixTransformToParent();
-//  transform = node->GetMatrixTransformToParent();
-//
-//  if (transform)
-//    {
-//    // set volume orientation
-//    float tx = transform->GetElement(0, 0);
-//    float ty = transform->GetElement(1, 0);
-//    float tz = transform->GetElement(2, 0);
-//    //float sx = transform->GetElement(0, 1);
-//    //float sy = transform->GetElement(1, 1);
-//    //float sz = transform->GetElement(2, 1);
-//    float nx = transform->GetElement(0, 2);
-//    float ny = transform->GetElement(1, 2);
-//    float nz = transform->GetElement(2, 2);
-//    float px = transform->GetElement(0, 3);
-//    float py = transform->GetElement(1, 3);
-//    float pz = transform->GetElement(2, 3);
-//
-//    UpdateSliceNode(sliceNodeNumber, nx, ny, nz, tx, ty, tz, px, py, pz);
-//
-//    }
-//
-//  return 1;
-//
-//}
 
 
 //---------------------------------------------------------------------------
 void vtkOpenIGTLinkIFLogic::CheckSliceNode()
 {
-
-  for (int i = 0; i < 3; i ++)
-    {
-    if (this->SliceNode[i] == NULL)
-      {
-      char nodename[36];
-      sprintf(nodename, "vtkMRMLSliceNode%d", i+1);
-      this->SliceNode[i] = vtkMRMLSliceNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(nodename));
-      }
-    }
   
+  if (this->SliceNode[0] == NULL)
+    {
+    this->SliceNode[0] = this->GetApplicationLogic()
+      ->GetSliceLogic("Red")->GetSliceNode();
+    }
+  if (this->SliceNode[1] == NULL)
+    {
+    this->SliceNode[1] = this->GetApplicationLogic()
+      ->GetSliceLogic("Yellow")->GetSliceNode();
+    }
+  if (this->SliceNode[2] == NULL)
+    {
+    this->SliceNode[2] = this->GetApplicationLogic()
+      ->GetSliceLogic("Green")->GetSliceNode();
+    }
 }
 
 

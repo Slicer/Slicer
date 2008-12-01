@@ -107,13 +107,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   vtkSetMacro ( NeedUpdateLocator,       bool );
   vtkGetMacro ( NeedUpdateLocator,       bool );
 
-  void SetSliceDriver0(int v) { this->SliceDriver[0] = v; };
-  void SetSliceDriver1(int v) { this->SliceDriver[1] = v; };
-  void SetSliceDriver2(int v) { this->SliceDriver[2] = v; };
-  int  GetSliceDriver0() { return this->SliceDriver[0]; };
-  int  GetSliceDriver1() { return this->SliceDriver[1]; };
-  int  GetSliceDriver2() { return this->SliceDriver[2]; };
-
   vtkGetMacro ( Connection,              bool );
   vtkSetMacro ( EnableOblique,           bool );
   vtkGetMacro ( EnableOblique,           bool );
@@ -169,23 +162,13 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData);
   vtkIGTLToMRMLBase* GetConverterByDeviceType(const char* deviceType);
 
-  //BTX
-  void UpdateMRMLScalarVolumeNode(igtl::MessageBase::Pointer ptr);
-  void UpdateMRMLLinearTransformNode(igtl::MessageBase::Pointer ptr);
-  //ETX
-
-  int SetLocatorDriver(const char* nodeID);
-  int EnableLocatorDriver(int i);
-  int SetRealTimeImageSource(const char* nodeID);
-  //int SetSliceDriver(int index, const char* type, const char* name);
-  //int SetSliceDriver(int index, int connectorID, int deviceID);
-  //void UpdateSliceNode(int sliceNodeNumber,
-  //                     float nx, float ny, float nz,
-  //                     float tx, float ty, float tz,
-  //                     float px, float py, float pz);
+  int  SetLocatorDriver(const char* nodeID);
+  int  EnableLocatorDriver(int i);
+  int  SetRealTimeImageSource(const char* nodeID);
+  int  SetSliceDriver(int index, int v);
+  int  GetSliceDriver(int index);
   void UpdateSliceNode(int sliceNodeNumber, vtkMatrix4x4* transform);
   void UpdateSliceNodeByImage(int sliceNodeNuber);
-  //int  UpdateSliceNodeByTransformNode(int sliceNodeNumber, vtkMRMLLinearTransformNode* node);
   void CheckSliceNode();
 
   vtkMRMLModelNode* SetVisibilityOfLocatorModel(const char* nodeName, int v);
