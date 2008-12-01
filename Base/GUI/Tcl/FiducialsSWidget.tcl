@@ -134,7 +134,7 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
               } else {
                 set jumpMode "one"
               }
-              if { [$_interactor GetShiftKey] } {
+              if { [$_interactor GetControlKey] } {
                 set direction -1
               } else {
                 set direction 1
@@ -346,6 +346,7 @@ proc FiducialsSWidget::AddFiducial { r a s } {
 # find the fiducial that is nth from the beginning in the 
 # current set of lists in the scene 
 # - uses namespace global index to keep track of next index
+# - increments/decrements after using the index so we start by jumping to 0th fid
 #
 proc FiducialsSWidget::JumpAllToNextFiducial { {direction 1} } {
   set sliceNode [$::slicer3::MRMLScene GetNthNodeByClass 0 "vtkMRMLSliceNode"]
@@ -354,24 +355,23 @@ proc FiducialsSWidget::JumpAllToNextFiducial { {direction 1} } {
 
 proc FiducialsSWidget::JumpToNextFiducial { sliceNode {jumpMode "all"} {direction 1} } {
 
-  # increment the fiducial
-  # index so we will cycle through.
-  #
+  # get the RAS location to jump to
   set scene [$sliceNode GetScene]
   set jumpIndex $::FiducialsSWidget::jumpFiducialIndex
   set jumpRAS [::FiducialsSWidget::GetNthFiducialRAS $scene $jumpIndex]
 
-  # handle wrap around if needed
-  # - note: doesn't wrap around from beginning to end, just end to beginning
-  if { $jumpRAS == "" } {
-    set jumpRAS [::FiducialsSWidget::GetNthFiducialRAS $scene 0]
-    set ::FiducialsSWidget::jumpFiducialIndex 1
-  } else {
-    incr ::FiducialsSWidget::jumpFiducialIndex $direction
-    if { $::FiducialsSWidget::jumpFiducialIndex < 0 } {
-      set ::FiducialsSWidget::jumpFiducialIndex 0
-    }
+  # increment the fiducial index so we will cycle through.
+  # handle wrap around if needed for next time
+  set nFids [::FiducialsSWidget::GetNumberOfFiducials $scene]
+  incr jumpIndex $direction
+  if { $jumpIndex >= $nFids } {
+    set jumpIndex 0
   }
+  if { $jumpIndex < 0 } {
+    set jumpIndex [expr $nFids - 1]
+  }
+  set ::FiducialsSWidget::jumpFiducialIndex $jumpIndex
+
 
   # now jump the slice(s)
   # - if the slice is linked, then jump all slices to it
@@ -381,6 +381,22 @@ proc FiducialsSWidget::JumpToNextFiducial { sliceNode {jumpMode "all"} {directio
       eval $sliceNode JumpAllSlices $jumpRAS
     }
   }
+}
+
+#
+# Get the total number of fiducials in the scene
+#
+proc FiducialsSWidget::GetNumberOfFiducials { scene } {
+
+  set nLists [$scene GetNumberOfNodesByClass "vtkMRMLFiducialListNode"]
+
+  set count 0
+  for {set i 0} {$i < $nLists} {incr i} {
+    set fidListNode [$scene GetNthNodeByClass $i "vtkMRMLFiducialListNode"]
+    set nFids [$fidListNode GetNumberOfFiducials]
+    set count [expr $count + $nFids]
+  }
+  return $count
 }
 
 #
