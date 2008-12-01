@@ -148,7 +148,7 @@ itcl::body LoadVolume::constructor {} {
   $::slicer3::Application RequestRegistry "OpenPath"
   set path [$::slicer3::Application GetRegistryHolder]
   if { [file exists $path] } {
-    after idle $o(browser) OpenDirectory $path
+    after idle $o(browser) OpenDirectory [list $path]
   }
 
   set fileTable [$o(browser) GetFileListTable]
