@@ -306,6 +306,8 @@ proc DistanceTransformModelProgressEventCallback {filter} {
     $mainWindow SetStatusText ""
     $progressGauge SetValue 0
   } else {
+    # TODO: this causes a tcl 'update' which re-triggers the module (possibly changing
+    # values while it is executing!  Talk about evil...
     #$mainWindow SetStatusText [$filter GetClassName]
     #$progressGauge SetValue [expr 100 * [$filter GetProgress]]
   }
@@ -370,26 +372,29 @@ proc DistanceTransformModelApply {this} {
   #
   $changeIn SetInput [$volumeNode GetImageData]
   eval $changeIn SetOutputSpacing [$volumeNode GetSpacing]
-  $resample SetInput [$changeIn GetOutput]
-  $resample SetAxisMagnificationFactor 0 $minFactor
-  $resample SetAxisMagnificationFactor 1 $minFactor
-  $resample SetAxisMagnificationFactor 2 $minFactor
+  $cast SetInput [$changeIn GetOutput]
   $cast SetOutputScalarTypeToFloat
-  $cast SetInput [$resample GetOutput]
+  $dt SetInput [$cast GetOutput]
   $dt SetSquaredDistance 0
   $dt SetUseImageSpacing 1
   $dt SetInsideIsPositive 0
-  $dt SetInput [$cast GetOutput]
   $changeOut SetInput [$dt GetOutput]
   $changeOut SetOutputSpacing 1 1 1
-  $cubes SetInput [$changeOut GetOutput]
+  $resample SetInput [$dt GetOutput]
+  $resample SetAxisMagnificationFactor 0 $minFactor
+  $resample SetAxisMagnificationFactor 1 $minFactor
+  $resample SetAxisMagnificationFactor 2 $minFactor
+  $cubes SetInput [$resample GetOutput]
   $cubes SetValue 0 $value
   $polyTransformFilter SetInput [$cubes GetOutput]
   $polyTransformFilter SetTransform $polyTransform
   set magFactor [expr 1.0 / $minFactor]
   $polyTransform Identity
   $polyTransform Concatenate $ijkToRAS
-  $polyTransform Scale $magFactor $magFactor $magFactor
+  foreach sp [$volumeNode GetSpacing] {
+    lappend invSpacing [expr 1. / $sp]
+  }
+  eval $polyTransform Scale $invSpacing
 
   #
   # set up progress observers
@@ -432,7 +437,6 @@ proc DistanceTransformModelApply {this} {
 
   $outVolumeNode SetAndObserveImageData [$changeOut GetOutput]
   $outVolumeNode SetIJKToRASMatrix $ijkToRAS
-  eval $outVolumeNode SetSpacing [[$resample GetOutput] GetSpacing]
   $ijkToRAS Delete
 
 
