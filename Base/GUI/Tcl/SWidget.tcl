@@ -250,10 +250,13 @@ itcl::body SWidget::getPixel { image i j k } {
     # directly access the scalars to get pixel value
     # - need to compensate because the increments already include the pixel size
     set scalars [[$image GetPointData] GetScalars]
+    if { $scalars == "" } {
+      set scalars [[$image GetPointData] GetTensors]
+    }
     foreach "w h d" [$image GetDimensions] {}
     set sliceSize [expr $w * $h]
     set idx [expr $i + $j*$w + $k*$sliceSize]
-    if { $scalars != "" && $n <= 4 } {
+    if { $scalars != "" && $n <= 9 } {
       set pixel [$scalars GetTuple$n $idx]
     } else {
       set pixel "Unknown"
