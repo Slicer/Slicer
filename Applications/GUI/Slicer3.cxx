@@ -98,6 +98,7 @@ extern "C" {
 //#define FIDUCIALS_DEBUG
 //#define MODELS_DEBUG
 //#define REMOTEIO_DEBUG
+//#define SCRIPTEDMODULE_DEBUG
 
 //#define CAMERA_DEBUG
 
@@ -492,14 +493,15 @@ int Slicer3_main(int argc, char *argv[])
   PyObject* v;
 
   std::string TkinitString = "import Tkinter, sys;"
+    "from os.path import join as j;"
     "tk = Tkinter.Tk();"
-    "sys.path.append ( \""
-    + slicerHome + "/" + Slicer3_INSTALL_LIB_DIR + "/SlicerBaseGUI/Python"
-    + "\" );\n"
-    "sys.path.append ( \""
-    + slicerHome + "/" + Slicer3_INSTALL_PLUGINS_BIN_DIR
-    + "\" );\n";
-  
+    "sys.path.append ( j('"
+    + slicerHome + "','" + Slicer3_INSTALL_LIB_DIR + "', 'SlicerBaseGUI', 'Python')"
+    + " );\n"
+    "sys.path.append ( j('"
+    + slicerHome + "','" + Slicer3_INSTALL_PLUGINS_BIN_DIR
+    + "') );\n";
+
   v = PyRun_String( TkinitString.c_str(),
                     Py_file_input,
                     PythonDictionary,
