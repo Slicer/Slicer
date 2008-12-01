@@ -156,7 +156,9 @@ vtkOpenIGTLinkIFGUI::vtkOpenIGTLinkIFGUI ( )
 
   this->FreezeImageCheckButton = NULL;
   this->LocatorCheckButton     = NULL;
-
+  this->LocatorSourceMenu      = NULL;
+  this->RealTimeImageSourceMenu      = NULL;
+  
   this->ImagingMenu            = NULL;
 
 
@@ -257,12 +259,24 @@ vtkOpenIGTLinkIFGUI::~vtkOpenIGTLinkIFGUI ( )
   //----------------------------------------------------------------
   // Etc Frame
 
+  if (this->LocatorSourceMenu)
+    {
+    this->LocatorSourceMenu->SetParent(NULL );
+    this->LocatorSourceMenu->Delete ( );
+    }
 
   if (this->LocatorCheckButton)
     {
     this->LocatorCheckButton->SetParent(NULL );
     this->LocatorCheckButton->Delete ( );
     }
+
+  if (this->RealTimeImageSourceMenu)
+    {
+    this->RealTimeImageSourceMenu->SetParent(NULL );
+    this->RealTimeImageSourceMenu->Delete ( );
+    }
+
 
 }
 
@@ -387,9 +401,21 @@ void vtkOpenIGTLinkIFGUI::RemoveGUIObservers ( )
     this->SetUserModeButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand );
     }
 
+  if (this->LocatorSourceMenu)
+    {
+    this->LocatorSourceMenu->GetMenu()
+      ->RemoveObserver((vtkCommand*)this->GUICallbackCommand);
+    }
+
   if (this->LocatorCheckButton)
     {
     this->LocatorCheckButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand );
+    }
+
+  if (this->RealTimeImageSourceMenu)
+    {
+    this->RealTimeImageSourceMenu->GetMenu()
+      ->RemoveObserver((vtkCommand*)this->GUICallbackCommand);
     }
 
   if (this->RedSliceMenu)
@@ -443,8 +469,8 @@ void vtkOpenIGTLinkIFGUI::AddGUIObservers ( )
   // MRML
 
   vtkIntArray* events = vtkIntArray::New();
-  //events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
-  //events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
   events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
   
   if (this->GetMRMLScene() != NULL)
@@ -514,6 +540,12 @@ void vtkOpenIGTLinkIFGUI::AddGUIObservers ( )
 
   this->LocatorCheckButton
     ->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+
+  this->LocatorSourceMenu->GetMenu()
+    ->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand*)this->GUICallbackCommand);
+
+  this->RealTimeImageSourceMenu->GetMenu()
+    ->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand*)this->GUICallbackCommand);
 
   this->RedSliceMenu->GetMenu()
     ->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand*)this->GUICallbackCommand);
@@ -846,11 +878,13 @@ void vtkOpenIGTLinkIFGUI::ProcessGUIEvents(vtkObject *caller,
       {
       if (checked)
         {
-        this->GetLogic()->SetVisibilityOfLocatorModel("IGTLocator", 1);
+        //this->GetLogic()->SetVisibilityOfLocatorModel("IGTLocator", 1);
+        this->GetLogic()->EnableLocatorDriver(1);
         }
       else
         {
-        this->GetLogic()->SetVisibilityOfLocatorModel("IGTLocator", 0);
+        //this->GetLogic()->SetVisibilityOfLocatorModel("IGTLocator", 0);
+        this->GetLogic()->EnableLocatorDriver(0);
         }
       }
     else
@@ -859,9 +893,23 @@ void vtkOpenIGTLinkIFGUI::ProcessGUIEvents(vtkObject *caller,
       }
     }
 
-  else if (this->RedSliceMenu->GetMenu() == vtkKWMenu::SafeDownCast(caller)
+  else if (this->LocatorSourceMenu->GetMenu() == vtkKWMenu::SafeDownCast(caller)
            && event == vtkKWMenu::MenuItemInvokedEvent)
     {
+    int selected = this->LocatorSourceMenu->GetMenu()->GetIndexOfSelectedItem();
+    this->GetLogic()->SetLocatorDriver(this->LocatorSourceList[selected].nodeID.c_str());
+    }
+
+  else if (this->RealTimeImageSourceMenu->GetMenu() == vtkKWMenu::SafeDownCast(caller)
+           && event == vtkKWMenu::MenuItemInvokedEvent)
+    {
+    int selected = this->RealTimeImageSourceMenu->GetMenu()->GetIndexOfSelectedItem();
+    this->GetLogic()->SetRealTimeImageSource(this->RealTimeImageSourceList[selected].nodeID.c_str());
+    }
+
+  else if (this->RedSliceMenu->GetMenu() == vtkKWMenu::SafeDownCast(caller)
+           && event == vtkKWMenu::MenuItemInvokedEvent)
+   {
     const char* selected = this->RedSliceMenu->GetValue();
     ChangeSlicePlaneDriver(vtkOpenIGTLinkIFGUI::SLICE_PLANE_RED, selected);
     }
@@ -970,6 +1018,11 @@ void vtkOpenIGTLinkIFGUI::ProcessMRMLEvents ( vtkObject *caller,
 {
   // Fill in
 
+  if (event == vtkMRMLScene::NodeAddedEvent|| event == vtkMRMLScene::NodeRemovedEvent)
+    {
+    UpdateLocatorSourceMenu();
+    UpdateRealTimeImageSourceMenu();
+    }
   if (event == vtkMRMLScene::SceneCloseEvent)
     {
     if (this->LocatorCheckButton != NULL && this->LocatorCheckButton->GetSelectedState())
@@ -1443,6 +1496,27 @@ void vtkOpenIGTLinkIFGUI::BuildGUIForVisualizationControlFrame ()
   displayFrame->SetLabelText("Locator Display");
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                displayFrame->GetWidgetName());
+
+  vtkKWFrame *nodeFrame = vtkKWFrame::New();
+  nodeFrame->SetParent(displayFrame->GetFrame());
+  nodeFrame->Create();
+  app->Script ( "pack %s -fill both -expand true",  
+                nodeFrame->GetWidgetName());
+
+  vtkKWLabel *nodeLabel = vtkKWLabel::New();
+  nodeLabel->SetParent(nodeFrame);
+  nodeLabel->Create();
+  //nodeLabel->SetWidth(20);
+  nodeLabel->SetText("Locator source: ");
+
+  this->LocatorSourceMenu = vtkKWMenuButton::New();
+  this->LocatorSourceMenu->SetParent(nodeFrame);
+  this->LocatorSourceMenu->Create();
+  this->LocatorSourceMenu->SetWidth(20);
+  UpdateLocatorSourceMenu();
+
+  app->Script("pack %s %s -side left -anchor w -fill x -padx 2 -pady 2", 
+              nodeLabel->GetWidgetName() , this->LocatorSourceMenu->GetWidgetName());
   
   this->LocatorCheckButton = vtkKWCheckButton::New();
   this->LocatorCheckButton->SetParent(displayFrame->GetFrame());
@@ -1452,11 +1526,10 @@ void vtkOpenIGTLinkIFGUI::BuildGUIForVisualizationControlFrame ()
   
   this->Script("pack %s -side left -anchor w -padx 2 -pady 2", 
                this->LocatorCheckButton->GetWidgetName());
-  
+
 
   // -----------------------------------------
   // Driver frame: Locator can drive slices 
-
 
   vtkKWFrameWithLabel *driverFrame = vtkKWFrameWithLabel::New();
   driverFrame->SetParent(visCtrlFrame->GetFrame());
@@ -1465,6 +1538,29 @@ void vtkOpenIGTLinkIFGUI::BuildGUIForVisualizationControlFrame ()
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                driverFrame->GetWidgetName());
   
+  // Source frame
+  vtkKWFrame *imageSourceFrame = vtkKWFrame::New();
+  imageSourceFrame->SetParent(driverFrame->GetFrame());
+  imageSourceFrame->Create();
+  app->Script("pack %s -side top -anchor nw -fill x -pady 1 -in %s",
+              imageSourceFrame->GetWidgetName(),
+              driverFrame->GetFrame()->GetWidgetName());
+  
+  vtkKWLabel *imageSourceLabel = vtkKWLabel::New();
+  imageSourceLabel->SetParent(imageSourceFrame);
+  imageSourceLabel->Create();
+  //nodeLabel->SetWidth(20);
+  imageSourceLabel->SetText("RT image source: ");
+
+  this->RealTimeImageSourceMenu = vtkKWMenuButton::New();
+  this->RealTimeImageSourceMenu->SetParent(imageSourceFrame);
+  this->RealTimeImageSourceMenu->Create();
+  this->RealTimeImageSourceMenu->SetWidth(20);
+  UpdateRealTimeImageSourceMenu();
+
+  app->Script("pack %s %s -side left -anchor w -fill x -padx 2 -pady 2", 
+              imageSourceLabel->GetWidgetName() , this->RealTimeImageSourceMenu->GetWidgetName());
+
   // slice frame
   vtkKWFrame *sliceFrame = vtkKWFrame::New();
   sliceFrame->SetParent(driverFrame->GetFrame());
@@ -1479,7 +1575,7 @@ void vtkOpenIGTLinkIFGUI::BuildGUIForVisualizationControlFrame ()
   
   this->RedSliceMenu = vtkKWMenuButton::New();
   this->RedSliceMenu->SetParent(sliceFrame);
- this->RedSliceMenu->Create();
+  this->RedSliceMenu->Create();
   this->RedSliceMenu->SetWidth(10);
   this->RedSliceMenu->SetBackgroundColor(color->SliceGUIRed);
   this->RedSliceMenu->SetActiveBackgroundColor(color->SliceGUIRed);
@@ -1767,6 +1863,54 @@ void vtkOpenIGTLinkIFGUI::ChangeSlicePlaneDriver(int slice, const char* driver)
     }
 
 }
+
+
+//---------------------------------------------------------------------------
+void vtkOpenIGTLinkIFGUI::UpdateLocatorSourceMenu()
+{
+
+  if (!this->LocatorSourceMenu)
+    {
+    return;
+    }
+  
+  this->GetLogic()->GetDeviceNamesFromMrml(this->LocatorSourceList, "LinearTransform");
+  vtkOpenIGTLinkIFLogic::IGTLMrmlNodeListType::iterator iter;
+  this->LocatorSourceMenu->GetMenu()->DeleteAllItems();
+  for (iter = this->LocatorSourceList.begin();
+       iter != this->LocatorSourceList.end();
+       iter ++)
+    {
+    char str[256];
+    sprintf(str, "%s (%s)", iter->name.c_str(), iter->type.c_str());
+    this->LocatorSourceMenu->GetMenu()->AddRadioButton(str);
+    }
+  
+}
+
+
+//---------------------------------------------------------------------------
+void vtkOpenIGTLinkIFGUI::UpdateRealTimeImageSourceMenu()
+{
+
+  if (!this->RealTimeImageSourceMenu)
+    {
+    return;
+    }
+  this->GetLogic()->GetDeviceNamesFromMrml(this->RealTimeImageSourceList, "Volume");
+  vtkOpenIGTLinkIFLogic::IGTLMrmlNodeListType::iterator iter;
+  this->RealTimeImageSourceMenu->GetMenu()->DeleteAllItems();
+  for (iter = this->RealTimeImageSourceList.begin();
+       iter != this->RealTimeImageSourceList.end();
+       iter ++)
+    {
+    char str[256];
+    sprintf(str, "%s (%s)", iter->name.c_str(), iter->type.c_str());
+    this->RealTimeImageSourceMenu->GetMenu()->AddRadioButton(str);
+    }
+  
+}
+
 
 //---------------------------------------------------------------------------
 void vtkOpenIGTLinkIFGUI::UpdateIOConfigTree()

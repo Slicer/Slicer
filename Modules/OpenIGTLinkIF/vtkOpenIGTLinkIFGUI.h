@@ -209,17 +209,15 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   int  IsIOConfigTreeLeafSelected(const char* callData, int* conID, int* devID, int* io);
   void AddIOConfigContextMenuItem(int type, int conID, int devID, int io);
   void ChangeSlicePlaneDriver(int slice, const char* driver);
-
-  //----------------------------------------------------------------
-  // Connector List and Properties control
-  //----------------------------------------------------------------
- private:
+  void SetLocatorSource(int selected);
+  void UpdateLocatorSourceMenu();
+  void UpdateRealTimeImageSourceMenu();
   void UpdateIOConfigTree();
   void UpdateConnectorList(int updateLevel);
   void UpdateConnectorPropertyFrame(int i);
 
- private:
 
+ private:
   //----------------------------------------------------------------
   // Timer
   //----------------------------------------------------------------
@@ -263,7 +261,9 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   vtkKWMenuButton  *GreenSliceMenu;
   vtkKWCheckButton *ImagingControlCheckButton;
   vtkKWMenuButton  *ImagingMenu;
-  
+
+  vtkKWMenuButton  *RealTimeImageSourceMenu;
+  vtkKWMenuButton  *LocatorSourceMenu;
   vtkKWCheckButton *LocatorCheckButton;
   bool              IsSliceOrientationAdded;
   // Module logic and mrml pointers
@@ -301,6 +301,8 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   //BTX
   vtkOpenIGTLinkIFLogic::IGTLMrmlNodeListType CurrentNodeListAvailable;
   vtkOpenIGTLinkIFLogic::IGTLMrmlNodeListType CurrentNodeListSelected;
+  vtkOpenIGTLinkIFLogic::IGTLMrmlNodeListType LocatorSourceList;
+  vtkOpenIGTLinkIFLogic::IGTLMrmlNodeListType RealTimeImageSourceList;
 
   IOConfigNodeInfoListType IOConfigTreeConnectorList;
   IOConfigNodeInfoListType IOConfigTreeIOList;

@@ -65,7 +65,6 @@ vtkMRMLNode* vtkIGTLToMRMLImage::CreateNewNode(vtkMRMLScene* scene, const char* 
   image->SetScalarTypeToShort();
   image->AllocateScalars();
   
-  
   short* dest = (short*) image->GetScalarPointer();
   if (dest)
     {
@@ -147,6 +146,15 @@ vtkIntArray* vtkIGTLToMRMLImage::GetNodeEvents()
 //---------------------------------------------------------------------------
 int vtkIGTLToMRMLImage::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNode* node)
 {
+
+  std::cerr << "int vtkIGTLToMRMLImage::IGTLToMRML() is called" << std::endl;
+
+  if (strcmp(node->GetNodeTagName(), "Volume") != 0)
+    {
+    std::cerr << "Invalid node!!!!" << std::endl;
+    return 0;
+    }
+
   // Create a message buffer to receive image data
   igtl::ImageMessage::Pointer imgMsg;
   imgMsg = igtl::ImageMessage::New();
@@ -181,6 +189,65 @@ int vtkIGTLToMRMLImage::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNod
   imgMsg->GetSubVolume(svsize, svoffset);
   imgMsg->GetMatrix(matrix);
 
+  // check if the IGTL data fits to the current MRML node
+  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node);
+  vtkImageData* imageData;
+  // Get vtk image from MRML node
+  imageData = volumeNode->GetImageData();
+  int dsize[3];
+  float dspacing[3];
+  int dscalarType;
+  imageData->GetDimensions(dsize);
+  dscalarType = imageData->GetScalarType();
+  if (dsize[0] != size[0] || dsize[1] != size[1] || dsize[2] != size[2] ||
+      scalarType != dscalarType)
+    {
+    std::cerr << "reallocating image data" << std::endl;
+    imageData->SetDimensions(size[0], size[1], size[2]);
+    imageData->SetExtent(0, size[0]-1, 0, size[1]-1, 0, size[2]-1);
+    imageData->SetOrigin(0, 0, 0);
+    imageData->SetSpacing(spacing[0], spacing[1], spacing[2]);
+    //imageData->SetScalarType(scalarType);
+    switch (scalarType)
+      {
+      case igtl::ImageMessage::TYPE_INT8:
+        imageData->SetScalarTypeToChar();
+        break;
+      case igtl::ImageMessage::TYPE_UINT8:
+        imageData->SetScalarTypeToUnsignedChar();
+        break;
+      case igtl::ImageMessage::TYPE_INT16:
+        imageData->SetScalarTypeToShort();
+        break;
+      case igtl::ImageMessage::TYPE_UINT16:
+        imageData->SetScalarTypeToUnsignedShort();
+        break;
+      case igtl::ImageMessage::TYPE_INT32:
+        imageData->SetScalarTypeToUnsignedLong();
+        break;
+      case igtl::ImageMessage::TYPE_UINT32:
+        imageData->SetScalarTypeToUnsignedLong();
+        break;
+      case igtl::ImageMessage::TYPE_FLOAT32:
+        imageData->SetScalarTypeToFloat();
+        break;
+      case igtl::ImageMessage::TYPE_FLOAT64:
+        imageData->SetScalarTypeToDouble();
+        break;
+      default:
+        //vtkErrorMacro ("Invalid Scalar Type\n");
+        break;
+      }
+    imageData->AllocateScalars();
+    volumeNode->SetAndObserveImageData(imageData);
+    }
+  else if (dspacing[0] != spacing[0] || dspacing[1] != spacing[1] || dspacing[2] != spacing[2])
+    {
+    imageData->SetOrigin(0, 0, 0);
+    imageData->SetSpacing(spacing[0], spacing[1], spacing[2]);
+    volumeNode->SetAndObserveImageData(imageData);
+    }
+
   float tx = matrix[0][0];
   float ty = matrix[1][0];
   float tz = matrix[2][0];
@@ -201,13 +268,6 @@ int vtkIGTLToMRMLImage::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNod
   vtkErrorMacro( << nx << ", " << ny << ", " << nz);
   vtkErrorMacro( << px << ", " << py << ", " << pz);
   */
-  
-  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node);
-  vtkImageData* imageData;
-  
-  // Get vtk image from MRML node
-  imageData = volumeNode->GetImageData();
-
 
   // TODO:
   // It should be checked here if the dimension of vtkImageData
@@ -270,39 +330,33 @@ int vtkIGTLToMRMLImage::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNod
   float nny = ny / psk;
   float nnz = nz / psk;
   
-  float hfovi = psi * size[0] / 2.0;
-  float hfovj = psj * size[1] / 2.0;
-  //float hfovk = psk * imgheader->size[2] / 2.0;
-  float hfovk = 0;
+  //float hfovi = psi * size[0] / 2.0;
+  //float hfovj = psj * size[1] / 2.0;
+  ////float hfovk = psk * size[2] / 2.0;
+  //float hfovk = 0;
 
-  float cx = ntx * hfovi + nsx * hfovj + nnx * hfovk;
-  float cy = nty * hfovi + nsy * hfovj + nny * hfovk;
-  float cz = ntz * hfovi + nsz * hfovj + nnz * hfovk;
-
-  px = px - cx;
-  py = py - cy;
-  pz = pz - cz;
-
+  //float cx = ntx * hfovi + nsx * hfovj + nnx * hfovk;
+  //float cy = nty * hfovi + nsy * hfovj + nny * hfovk;
+  //float cz = ntz * hfovi + nsz * hfovj + nnz * hfovk;
+  //px = px - cx;
+  //py = py - cy;
+  //pz = pz - cz;
 
   // set volume orientation
   vtkMatrix4x4* rtimgTransform = vtkMatrix4x4::New();
   rtimgTransform->Identity();
-  rtimgTransform->SetElement(0, 0, tx);
-  rtimgTransform->SetElement(1, 0, ty);
-  rtimgTransform->SetElement(2, 0, tz);
-  
-  rtimgTransform->SetElement(0, 1, sx);
-  rtimgTransform->SetElement(1, 1, sy);
-  rtimgTransform->SetElement(2, 1, sz);
-  
-  rtimgTransform->SetElement(0, 2, nx);
-  rtimgTransform->SetElement(1, 2, ny);
-  rtimgTransform->SetElement(2, 2, nz);
-
+  rtimgTransform->SetElement(0, 0, ntx);
+  rtimgTransform->SetElement(1, 0, nty);
+  rtimgTransform->SetElement(2, 0, ntz);
+  rtimgTransform->SetElement(0, 1, nsx);
+  rtimgTransform->SetElement(1, 1, nsy);
+  rtimgTransform->SetElement(2, 1, nsz);
+  rtimgTransform->SetElement(0, 2, nnx);
+  rtimgTransform->SetElement(1, 2, nny);
+  rtimgTransform->SetElement(2, 2, nnz);
   rtimgTransform->SetElement(0, 3, px);
   rtimgTransform->SetElement(1, 3, py);
   rtimgTransform->SetElement(2, 3, pz);
-
 
   rtimgTransform->Invert();
   volumeNode->SetRASToIJKMatrix(rtimgTransform);
