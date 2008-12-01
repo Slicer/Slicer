@@ -46,6 +46,8 @@ void vtkITKDistanceTransformExecute(vtkITKDistanceTransform *self, vtkImageData*
 
   int dims[3];
   input->GetDimensions(dims);
+  double spacing[3];
+  input->GetSpacing(spacing);
 
   // Wrap scalars into an ITK image
   // - mostly rely on defaults for spacing, origin etc for this filter
@@ -63,6 +65,7 @@ void vtkITKDistanceTransformExecute(vtkITKDistanceTransform *self, vtkImageData*
   region.SetSize(size);
   inImage->SetLargestPossibleRegion(region);
   inImage->SetBufferedRegion(region);
+  inImage->SetSpacing(spacing);
 
 
   // Calculate the distance transform
