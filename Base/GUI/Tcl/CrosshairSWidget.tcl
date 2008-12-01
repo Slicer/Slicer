@@ -111,6 +111,7 @@ itcl::configbody CrosshairSWidget::rgba {
 # handle interactor events
 #
 itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
+  # puts "$this $_sliceNode [$_sliceNode GetLayoutName] $caller $event"
 
   if { [info command $sliceGUI] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
@@ -148,11 +149,18 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
           # set other crosshairs to this ras
           set itclobjects [itcl::find objects -class CrosshairSWidget]
 
+          set logic [$sliceGUI GetLogic]
           foreach cw $itclobjects {
             set jumped 0
             if {$cw != $this} {
               # jump the slice if necessary
-              if { [[[[$cw cget -sliceGUI] GetLogic] GetSliceCompositeNode] GetCrosshairBehavior] != 0 } {
+              #
+              # use this line to jump based on behavior setting of other node
+              # set behavior [[[[$cw cget -sliceGUI] GetLogic] GetSliceCompositeNode] GetCrosshairBehavior]
+              # use this line to jump based on behavior setting on this node 
+              set behavior [$_sliceCompositeNode GetCrosshairBehavior]
+
+              if { $behavior != 0 } {
                 [[[$cw cget -sliceGUI] GetLogic] GetSliceNode] JumpSlice $r $a $s
                 set jumped 1
               } 
@@ -325,21 +333,22 @@ itcl::body CrosshairSWidget::setPosition { r a s } {
     }
 
     set _renderer [$_renderWidget GetNthRenderer $k]
-    if { [info command $_renderer] != ""} {
+    if { [info command $_renderer] != "" } {
       $_renderer AddActor2D $o(crosshairActor)
       set changed 1
     }
   }
   
-  # position the actor
+  # position the actor (but don't set "changed", causes too many renders)
   set oldPosition [$o(crosshairActor) GetPosition]
   if { [lindex $oldPosition 0] != $x || [lindex $oldPosition 1] != $y } {
-    set changed 1
+    # don't set "changed" just for moving the actor, it causes too
+    # many additional renders
     $o(crosshairActor) SetPosition $x $y
   } 
 
   # turn the actor on/off depending on whether it is NEWLY visible or not
-  if { $z >= -0.5 && $z < [expr 0.5+[lindex [$_sliceNode GetDimensions] 2]-1]} {
+  if { $k >= 0 && $k < [$_renderWidget GetNumberOfRenderers] } {
     # cursor is visible on the displayed slice, check if this is a state change
     if { [$o(crosshairActor) GetVisibility] == 0} {
       $o(crosshairActor) VisibilityOn
