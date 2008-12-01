@@ -14,6 +14,7 @@
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
+#include "vtkImageChangeInformation.h"
 #include <itksys/SystemTools.hxx> 
 #include <itksys/Directory.hxx> 
 
@@ -82,7 +83,16 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   vtkSeedTracts *seed = vtkSeedTracts::New();
   
   //1. Set Input
-  seed->SetInputTensorField(volumeNode->GetImageData());
+  
+  //Do scale IJK
+  double sp[3];
+  volumeNode->GetSpacing(sp);
+  vtkImageChangeInformation *ici = vtkImageChangeInformation::New();
+  ici->SetOutputSpacing(sp);
+  ici->SetInput(volumeNode->GetImageData());
+  ici->GetOutput()->Update();
+
+  seed->SetInputTensorField(ici->GetOutput());
   
   //2. Set Up matrices
   vtkMRMLTransformNode* vxformNode = volumeNode->GetParentTransformNode();
@@ -105,13 +115,6 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   TensorRASToIJK->DeepCopy(mat);
   mat->Delete();
 
-  //Do scale IJK
-  double sp[3];
-  double spold[3];
-  volumeNode->GetSpacing(sp);
-  // put spacing into image so that tractography knows about
-  volumeNode->GetImageData()->GetSpacing(spold);
-  volumeNode->GetImageData()->SetSpacing(sp);
 
   vtkTransform *trans = vtkTransform::New();
   trans->Identity();
@@ -275,10 +278,6 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
     fiberNode->SetAndObserveStorageNodeID(storageNode->GetID());
     }
 
-  // Restore the original spacing
-  volumeNode->GetImageData()->SetSpacing(spold);
-
-
   fiberNode->InvokeEvent(vtkMRMLFiberBundleNode::PolyDataModifiedEvent, NULL);
   
   volumeNode->SetModifiedSinceRead(0);
@@ -286,6 +285,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
 
   // Delete everything: Still trying to figure out what is going on
   outFibers->Delete();
+  ici->Delete();
   seed->Delete();
   TensorRASToIJK->Delete();
   TensorRASToIJKRotation->Delete();
