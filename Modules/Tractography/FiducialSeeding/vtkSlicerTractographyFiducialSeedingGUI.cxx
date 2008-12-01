@@ -203,6 +203,11 @@ vtkSlicerTractographyFiducialSeedingGUI::~vtkSlicerTractographyFiducialSeedingGU
     }
 }
 
+void vtkSlicerTractographyFiducialSeedingGUI::SetModuleLogic ( vtkSlicerLogic *logic )
+{
+  this->ModuleLogic = vtkSlicerTractographyFiducialSeedingLogic::SafeDownCast(logic);
+}
+
 //----------------------------------------------------------------------------
 void vtkSlicerTractographyFiducialSeedingGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
@@ -578,7 +583,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::AddTransformableNodeObserver(vtkMR
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerTractographyFiducialSeedingGUI:: CreateTracts()
+void vtkSlicerTractographyFiducialSeedingGUI::CreateTracts()
 {
   this->UpdateMRML();
   if ( this->SeedButton->GetSelectedState() == 0) 
@@ -594,7 +599,7 @@ void vtkSlicerTractographyFiducialSeedingGUI:: CreateTracts()
 
   if(volumeNode == NULL || fiducialListNode == NULL || fiberNode == NULL) return;
 
-  vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(volumeNode, fiducialListNode, fiberNode,
+  this->ModuleLogic->CreateTracts(volumeNode, fiducialListNode, fiberNode,
                                                           stopingMode.c_str(),
                                                           this->StoppingValueScale->GetWidget()->GetValue(),
                                                           this->StoppingCurvatureScale->GetWidget()->GetValue(),
@@ -762,7 +767,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
   this->RegionSizeScale->GetWidget()->SetRange(0,10);
   this->RegionSizeScale->GetWidget()->SetResolution(0.5);
   this->RegionSizeScale->GetWidget()->SetValue(1.0);
-  this->RegionSizeScale->SetBalloonHelpString("The size of the seeding region for each fiducail.");
+  this->RegionSizeScale->SetBalloonHelpString("The size of the seeding region for each fiducial.");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->RegionSizeScale->GetWidgetName() );
 

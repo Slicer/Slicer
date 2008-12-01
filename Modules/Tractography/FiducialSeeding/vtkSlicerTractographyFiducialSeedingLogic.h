@@ -32,6 +32,7 @@ class vtkMRMLDiffusionTensorVolumeNode;
 class vtkMRMLFiducialListNode;
 class vtkMRMLFiberBundleNode;
 class vtkMRMLTransformableNode;
+class vtkMaskPoints;
 
 class VTK_FIDUCIALSEEDING_EXPORT vtkSlicerTractographyFiducialSeedingLogic : public vtkSlicerModuleLogic 
 {
@@ -42,7 +43,7 @@ class VTK_FIDUCIALSEEDING_EXPORT vtkSlicerTractographyFiducialSeedingLogic : pub
   vtkTypeRevisionMacro(vtkSlicerTractographyFiducialSeedingLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  static int CreateTracts(vtkMRMLDiffusionTensorVolumeNode *volumeNode,
+  int CreateTracts(vtkMRMLDiffusionTensorVolumeNode *volumeNode,
                           vtkMRMLTransformableNode *fiducialListNode,
                           vtkMRMLFiberBundleNode *fiberNode,
                           const char * stoppinMode,
@@ -55,6 +56,8 @@ protected:
   ~vtkSlicerTractographyFiducialSeedingLogic();
   vtkSlicerTractographyFiducialSeedingLogic(const vtkSlicerTractographyFiducialSeedingLogic&);
   void operator=(const vtkSlicerTractographyFiducialSeedingLogic&);
+
+  vtkMaskPoints *MaskPoints;
 
 };
 

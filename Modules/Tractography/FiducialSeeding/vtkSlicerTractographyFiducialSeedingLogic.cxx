@@ -42,11 +42,13 @@ vtkStandardNewMacro(vtkSlicerTractographyFiducialSeedingLogic);
 //----------------------------------------------------------------------------
 vtkSlicerTractographyFiducialSeedingLogic::vtkSlicerTractographyFiducialSeedingLogic()
 {
+  this->MaskPoints = vtkMaskPoints::New();
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerTractographyFiducialSeedingLogic::~vtkSlicerTractographyFiducialSeedingLogic()
 {
+  this->MaskPoints->Delete();
 }
 
 
@@ -222,12 +224,11 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   // loop over points in the models
   if (modelNode) 
     {
-    vtkMaskPoints *mp = vtkMaskPoints::New();
-    mp->SetInput(modelNode->GetPolyData());
-    mp->SetRandomMode(1);
-    mp->SetMaximumNumberOfPoints(maxNumberOfSeeds);
-    mp->Update();
-    vtkPolyData *mpoly = mp->GetOutput();
+    this->MaskPoints->SetInput(modelNode->GetPolyData());
+    this->MaskPoints->SetRandomMode(1);
+    this->MaskPoints->SetMaximumNumberOfPoints(maxNumberOfSeeds);
+    this->MaskPoints->Update();
+    vtkPolyData *mpoly = this->MaskPoints->GetOutput();
 
     int nf = mpoly->GetNumberOfPoints();
     for (int f=0; f<nf; f++)
@@ -239,7 +240,6 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
       //Run the thing
       seed->SeedStreamlineFromPoint(xyz[0], xyz[1], xyz[2]);
       }
-    mp->Delete();
     }
     
     

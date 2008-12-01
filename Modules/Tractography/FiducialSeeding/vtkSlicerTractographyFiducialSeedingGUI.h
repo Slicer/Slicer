@@ -24,8 +24,9 @@
 #include "vtkSlicerTractographyFiducialSeeding.h"
 #include "vtkMRMLTractographyFiducialSeedingNode.h"
 
-class vtkKWFrame;
+class vtkSlicerTractographyFiducialSeedingLogic;
 class vtkSlicerNodeSelectorWidget;
+class vtkKWFrame;
 class vtkKWCheckButton;
 class vtkKWMenuButtonWithLabel;
 class vtkKWScaleWithLabel;
@@ -83,9 +84,8 @@ class VTK_FIDUCIALSEEDING_EXPORT vtkSlicerTractographyFiducialSeedingGUI : publi
   virtual void Exit ( ){};
 
   // Description:
-  // Override this method so that nothing will happen when called 
-  // by the LoadableModule code.
-   virtual void SetModuleLogic ( vtkSlicerLogic* ) { };
+  // set the logic for this GUI
+  virtual void SetModuleLogic ( vtkSlicerLogic* );
   
   // Description:
   // Type of anisotropy used to stop tractography.
@@ -168,6 +168,8 @@ protected:
 
   int UpdatingMRML;
   int UpdatingGUI;
+
+  vtkSlicerTractographyFiducialSeedingLogic *ModuleLogic;
 };
 
 #endif
