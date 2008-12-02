@@ -275,10 +275,10 @@ void SetOutputParameters(const parameters &list ,
   resampler->SetOutputDirection( m_Direction ) ; 
 }
 
-
+typedef itk::Transform<double,3,3>::Pointer Transform3DPointer;
 template<class PixelType>
 void CheckDWMRI(itk::MetaDataDictionary &dico ,
-                itk::Transform< double , 3 , 3 >::Pointer &transform ,
+                Transform3DPointer &transform ,
                 parameters list )
 {
   typedef std::vector< std::vector< double > > DoubleVectorType ;
