@@ -37,6 +37,7 @@ if(Slicer3_USE_NUMPY)
     ${PYTHON_INCLUDE_PATH}/../lib/site-packages/numpy/core/include/numpy
     ${PYTHON_INCLUDE_PATH}/../lib/site-packages/numpy/numarray/numpy
     ${PYTHON_INCLUDE_PATH}/../../lib/python2.5/site-packages/numpy/core/include/numpy
+    ${PYTHON_INCLUDE_PATH}/../../lib/site-packages/numpy/core/include/numpy
     [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.5\\InstallPath]/libs
     [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.4\\InstallPath]/libs
     [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.3\\InstallPath]/libs
@@ -44,7 +45,7 @@ if(Slicer3_USE_NUMPY)
     site-packages/numpy/core/include
     site-packages/numpy/core/include/numpy
     site-packages/numpy/numarray/numpy
-    DOC "Path to libnumarray.h for numpy module"
+    DOC "Path to arrayobject.h for numpy module"
     NO_SYSTEM_ENVIRONMENT_PATH
     )
 endif(Slicer3_USE_NUMPY)
