@@ -1063,7 +1063,12 @@ void vtkOpenIGTLinkIFLogic::UpdateSliceNodeByImage(int sliceNodeNumber)
   float nny = ny / psk;
   float nnz = nz / psk;
 
-  // shift the center
+  // Shift the center
+  // NOTE: The center of the image should be shifted due to different
+  // definitions of image origin between VTK (Slicer) and OpenIGTLink;
+  // OpenIGTLink image has its origin at the center, while VTK image
+  // has one at the corner.
+
   float hfovi = psi * size[0] / 2.0;
   float hfovj = psj * size[1] / 2.0;
   //float hfovk = psk * imgheader->size[2] / 2.0;
