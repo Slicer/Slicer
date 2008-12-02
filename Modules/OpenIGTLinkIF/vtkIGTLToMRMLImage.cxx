@@ -56,11 +56,13 @@ vtkMRMLNode* vtkIGTLToMRMLImage::CreateNewNode(vtkMRMLScene* scene, const char* 
   vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::New();
   vtkImageData* image = vtkImageData::New();
   
-  float fov = 256.0;
+  //float fov = 256.0;
   image->SetDimensions(256, 256, 1);
   image->SetExtent(0, 255, 0, 255, 0, 0 );
-  image->SetSpacing( fov/256, fov/256, 10 );
-  image->SetOrigin( -fov/2, -fov/2, -0.0 );
+  //image->SetSpacing( fov/256, fov/256, 10 );
+  image->SetSpacing(1.0, 1.0, 1.0);
+  //image->SetOrigin( fov/2, -fov/2, -0.0 );
+  image->SetOrigin(0.0, 0.0, 0.0);
   image->SetNumberOfScalarComponents(1);
   image->SetScalarTypeToShort();
   image->AllocateScalars();
@@ -147,11 +149,9 @@ vtkIntArray* vtkIGTLToMRMLImage::GetNodeEvents()
 int vtkIGTLToMRMLImage::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNode* node)
 {
 
-  std::cerr << "int vtkIGTLToMRMLImage::IGTLToMRML() is called" << std::endl;
-
   if (strcmp(node->GetNodeTagName(), "Volume") != 0)
     {
-    std::cerr << "Invalid node!!!!" << std::endl;
+    //std::cerr << "Invalid node!!!!" << std::endl;
     return 0;
     }
 
@@ -195,8 +195,8 @@ int vtkIGTLToMRMLImage::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNod
   // Get vtk image from MRML node
   imageData = volumeNode->GetImageData();
   int dsize[3];
-  float dspacing[3];
   int dscalarType;
+
   imageData->GetDimensions(dsize);
   dscalarType = imageData->GetScalarType();
   if (dsize[0] != size[0] || dsize[1] != size[1] || dsize[2] != size[2] ||
@@ -205,8 +205,8 @@ int vtkIGTLToMRMLImage::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNod
     std::cerr << "reallocating image data" << std::endl;
     imageData->SetDimensions(size[0], size[1], size[2]);
     imageData->SetExtent(0, size[0]-1, 0, size[1]-1, 0, size[2]-1);
-    imageData->SetOrigin(0, 0, 0);
-    imageData->SetSpacing(spacing[0], spacing[1], spacing[2]);
+    //imageData->SetOrigin(0.0, 0.0, 0.0);
+    //imageData->SetSpacing(1.0, 1.0, 1.0);
     //imageData->SetScalarType(scalarType);
     switch (scalarType)
       {
@@ -239,12 +239,6 @@ int vtkIGTLToMRMLImage::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNod
         break;
       }
     imageData->AllocateScalars();
-    volumeNode->SetAndObserveImageData(imageData);
-    }
-  else if (dspacing[0] != spacing[0] || dspacing[1] != spacing[1] || dspacing[2] != spacing[2])
-    {
-    imageData->SetOrigin(0, 0, 0);
-    imageData->SetSpacing(spacing[0], spacing[1], spacing[2]);
     volumeNode->SetAndObserveImageData(imageData);
     }
 
@@ -329,38 +323,43 @@ int vtkIGTLToMRMLImage::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNod
   float nnx = nx / psk;
   float nny = ny / psk;
   float nnz = nz / psk;
-  
-  //float hfovi = psi * size[0] / 2.0;
-  //float hfovj = psj * size[1] / 2.0;
-  ////float hfovk = psk * size[2] / 2.0;
-  //float hfovk = 0;
 
-  //float cx = ntx * hfovi + nsx * hfovj + nnx * hfovk;
-  //float cy = nty * hfovi + nsy * hfovj + nny * hfovk;
-  //float cz = ntz * hfovi + nsz * hfovj + nnz * hfovk;
-  //px = px - cx;
-  //py = py - cy;
-  //pz = pz - cz;
+  // shift the center
+  float hfovi = psi * size[0] / 2.0;
+  float hfovj = psj * size[1] / 2.0;
+  //float hfovk = psk * size[2] / 2.0;
+  float hfovk = 0;
+
+  float cx = ntx * hfovi + nsx * hfovj + nnx * hfovk;
+  float cy = nty * hfovi + nsy * hfovj + nny * hfovk;
+  float cz = ntz * hfovi + nsz * hfovj + nnz * hfovk;
+  px = px - cx;
+  py = py - cy;
+  pz = pz - cz;
 
   // set volume orientation
   vtkMatrix4x4* rtimgTransform = vtkMatrix4x4::New();
   rtimgTransform->Identity();
-  rtimgTransform->SetElement(0, 0, ntx);
-  rtimgTransform->SetElement(1, 0, nty);
-  rtimgTransform->SetElement(2, 0, ntz);
-  rtimgTransform->SetElement(0, 1, nsx);
-  rtimgTransform->SetElement(1, 1, nsy);
-  rtimgTransform->SetElement(2, 1, nsz);
-  rtimgTransform->SetElement(0, 2, nnx);
-  rtimgTransform->SetElement(1, 2, nny);
-  rtimgTransform->SetElement(2, 2, nnz);
+  rtimgTransform->SetElement(0, 0, ntx*spacing[0]);
+  rtimgTransform->SetElement(1, 0, nty*spacing[0]);
+  rtimgTransform->SetElement(2, 0, ntz*spacing[0]);
+  rtimgTransform->SetElement(0, 1, nsx*spacing[1]);
+  rtimgTransform->SetElement(1, 1, nsy*spacing[1]);
+  rtimgTransform->SetElement(2, 1, nsz*spacing[1]);
+  rtimgTransform->SetElement(0, 2, nnx*spacing[2]);
+  rtimgTransform->SetElement(1, 2, nny*spacing[2]);
+  rtimgTransform->SetElement(2, 2, nnz*spacing[2]);
   rtimgTransform->SetElement(0, 3, px);
   rtimgTransform->SetElement(1, 3, py);
   rtimgTransform->SetElement(2, 3, pz);
 
-  rtimgTransform->Invert();
-  volumeNode->SetRASToIJKMatrix(rtimgTransform);
+  //rtimgTransform->Invert();
+  //volumeNode->SetRASToIJKMatrix(rtimgTransform);
+  volumeNode->SetIJKToRASMatrix(rtimgTransform);
+  rtimgTransform->Delete();
   volumeNode->Modified();
+  volumeNode->InvokeEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent);
+
 
 //  if (lps) { // LPS coordinate
 //    vtkMatrix4x4* lpsToRas = vtkMatrix4x4::New();

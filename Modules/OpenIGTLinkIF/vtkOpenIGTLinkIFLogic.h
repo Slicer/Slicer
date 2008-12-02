@@ -146,7 +146,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   int               CheckConnectorsStatusUpdates();
   //int               ReadCircularBuffers();
   void              ImportFromCircularBuffers();
-  void              PostImportProcess(int connectorID, int deviceID, vtkMRMLNode* node);
   
   // Device Name management
   int  SetRestrictDeviceName(int f);

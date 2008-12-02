@@ -552,97 +552,6 @@ void vtkOpenIGTLinkIFLogic::ImportFromCircularBuffers()
 
 
 //---------------------------------------------------------------------------
-void vtkOpenIGTLinkIFLogic::PostImportProcess(int connectorID, int deviceID, vtkMRMLNode* node)
-{
-
-  for (int i = 0; i < 3; i ++)
-    {
-    if (this->SliceDriver[i] == SLICE_DRIVER_RTIMAGE)
-      {
-      vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node);
-      vtkMatrix4x4* rtimgTransform = vtkMatrix4x4::New();
-      volumeNode->GetRASToIJKMatrix(rtimgTransform);
-      rtimgTransform->Invert();
-      
-      float tx = rtimgTransform->GetElement(0, 0);
-      float ty = rtimgTransform->GetElement(1, 0);
-      float tz = rtimgTransform->GetElement(2, 0);
-      float sx = rtimgTransform->GetElement(0, 1);
-      float sy = rtimgTransform->GetElement(1, 1);
-      float sz = rtimgTransform->GetElement(2, 1);
-      float nx = rtimgTransform->GetElement(0, 2);
-      float ny = rtimgTransform->GetElement(1, 2);
-      float nz = rtimgTransform->GetElement(2, 2);
-      float px = rtimgTransform->GetElement(0, 3);
-      float py = rtimgTransform->GetElement(1, 3);
-      float pz = rtimgTransform->GetElement(2, 3);
-      
-      vtkImageData* imageData;
-      imageData = volumeNode->GetImageData();
-      int size[3];
-      imageData->GetDimensions(size);
-      
-      //if (lps) { // LPS coordinate
-      //  vtkMatrix4x4* lpsToRas = vtkMatrix4x4::New();
-      //  lpsToRas->Identity();
-      //  lpsToRas->SetElement(-1, 0,  0);
-      //  lpsToRas->SetElement(0, -1,  0);
-      //  lpsToRas->SetElement(0,  0,  1);
-      //  lpsToRas->Multiply4x4(lpsToRas, rtimgTransform, rtimgTransform);
-      //  lpsToRas->Delete();
-      //}
-      //px = px + cx;
-      //py = py + cy;
-      //pz = pz + cz;
-      //UpdateSliceNode(i, nx, ny, nz, tx, ty, tz, px, py, pz);
-      
-      // normalize
-      float psi = sqrt(tx*tx + ty*ty + tz*tz);
-      float psj = sqrt(sx*sx + sy*sy + sz*sz);
-      float psk = sqrt(nx*nx + ny*ny + nz*nz);
-      float ntx = tx / psi;
-      float nty = ty / psi;
-      float ntz = tz / psi;
-      float nsx = sx / psj;
-      float nsy = sy / psj;
-      float nsz = sz / psj;
-      float nnx = nx / psk;
-      float nny = ny / psk;
-      float nnz = nz / psk;
-      
-      float hfovi = psi * size[0] / 2.0;
-      float hfovj = psj * size[1] / 2.0;
-      //float hfovk = psk * imgheader->size[2] / 2.0;
-      float hfovk = 0;
-      
-      float cx = ntx * hfovi + nsx * hfovj + nnx * hfovk;
-      float cy = nty * hfovi + nsy * hfovj + nny * hfovk;
-      float cz = ntz * hfovi + nsz * hfovj + nnz * hfovk;
-      
-      rtimgTransform->SetElement(0, 3, px + cx);
-      rtimgTransform->SetElement(1, 3, py + cy);
-      rtimgTransform->SetElement(2, 3, pz + cz);
-      
-      UpdateSliceNode(i, rtimgTransform);
-      rtimgTransform->Delete();
-      
-      rtimgTransform->Delete();
-      volumeNode->Delete();
-      }
-    else if (this->SliceDriver[i] == SLICE_DRIVER_LOCATOR && !this->FreezePlane)
-      {
-      vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(node);
-      vtkMatrix4x4* transform = transformNode->GetMatrixTransformToParent();
-      UpdateSliceNode(i, transform);
-      transformNode->Delete();
-      transform->Delete();
-      }
-    
-    } // for
-}
-
-
-//---------------------------------------------------------------------------
 int vtkOpenIGTLinkIFLogic::SetLocatorDriver(const char* nodeID)
 {
   vtkMRMLLinearTransformNode* node =
@@ -707,7 +616,6 @@ int vtkOpenIGTLinkIFLogic::SetRealTimeImageSource(const char* nodeID)
     vtkSetAndObserveMRMLNodeEventsMacro(node,volNode,nodeEvents);
     nodeEvents->Delete();
     this->RealTimeImageSourceNodeID = nodeID;
-    std::cerr << "    this->RealTimeImageSourceNodeID = nodeID;" << std::endl;
     return 1;
     }
 
@@ -737,6 +645,7 @@ int vtkOpenIGTLinkIFLogic::SetSliceDriver(int index, int v)
       vtkSetAndObserveMRMLNodeEventsMacro(node,transNode,nodeEvents);
       nodeEvents->Delete();
       }
+    transNode->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent);
     }
 
   return 1;
@@ -892,7 +801,6 @@ int vtkOpenIGTLinkIFLogic::UnregisterMessageConverter(vtkIGTLToMRMLBase* convert
 //---------------------------------------------------------------------------
 void vtkOpenIGTLinkIFLogic::ProcessMRMLEvents(vtkObject * caller, unsigned long event, void * callData)
 {
-  std::cerr << "ProcessMRMLEvents() is called." << std::endl;
   if (caller != NULL)
     {
     vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(caller);
@@ -916,7 +824,6 @@ void vtkOpenIGTLinkIFLogic::ProcessMRMLEvents(vtkObject * caller, unsigned long 
           // check if the name-type combination is on the list
           if (connector->GetDeviceID(node->GetName(), (*iter)->GetIGTLName()) >= 0)
             {
-            //std::cerr << "SENDING " << (*iter)->GetIGTLName() << std::endl;
             int size;
             void* igtlMsg;
             (*iter)->MRMLToIGTL(event, node, &size, &igtlMsg);
@@ -1032,7 +939,7 @@ void vtkOpenIGTLinkIFLogic::UpdateSliceNode(int sliceNodeNumber, vtkMatrix4x4* t
     if (this->EnableOblique) // perpendicular
       {
       this->SliceOrientation[sliceNodeNumber] = SLICE_RTIMAGE_PERP;
-      this->SliceNode[sliceNodeNumber]->SetSliceToRASByNTP(nx, ny, nz, tx, ty, tz, px, py, pz, 2);
+      this->SliceNode[sliceNodeNumber]->SetSliceToRASByNTP(nx, ny, nz, tx, ty, tz, px, py, pz, 0);
       }
     else
       {
@@ -1045,7 +952,7 @@ void vtkOpenIGTLinkIFLogic::UpdateSliceNode(int sliceNodeNumber, vtkMatrix4x4* t
     if (this->EnableOblique) // In-Plane
       {
       this->SliceOrientation[sliceNodeNumber] = SLICE_RTIMAGE_INPLANE;
-      this->SliceNode[sliceNodeNumber]->SetSliceToRASByNTP(nx, ny, nz, tx, ty, tz, px, py, pz, 0);
+      this->SliceNode[sliceNodeNumber]->SetSliceToRASByNTP(nx, ny, nz, tx, ty, tz, px, py, pz, 1);
       }
     else
       {
@@ -1058,7 +965,7 @@ void vtkOpenIGTLinkIFLogic::UpdateSliceNode(int sliceNodeNumber, vtkMatrix4x4* t
     if (this->EnableOblique)  // In-Plane 90
       {
       this->SliceOrientation[sliceNodeNumber] = SLICE_RTIMAGE_INPLANE90;
-      this->SliceNode[sliceNodeNumber]->SetSliceToRASByNTP(nx, ny, nz, tx, ty, tz, px, py, pz, 1);
+      this->SliceNode[sliceNodeNumber]->SetSliceToRASByNTP(nx, ny, nz, tx, ty, tz, px, py, pz, 2);
       }
     else
       {
@@ -1073,15 +980,15 @@ void vtkOpenIGTLinkIFLogic::UpdateSliceNode(int sliceNodeNumber, vtkMatrix4x4* t
       {
       if (this->SliceOrientation[sliceNodeNumber] == SLICE_RTIMAGE_PERP)
         {
-        this->SliceNode[sliceNodeNumber]->SetSliceToRASByNTP(nx, ny, nz, tx, ty, tz, px, py, pz, 2);
+        this->SliceNode[sliceNodeNumber]->SetSliceToRASByNTP(nx, ny, nz, tx, ty, tz, px, py, pz, 0);
         }
       else if (this->SliceOrientation[sliceNodeNumber] == SLICE_RTIMAGE_INPLANE)
         {
-        this->SliceNode[sliceNodeNumber]->SetSliceToRASByNTP(nx, ny, nz, tx, ty, tz, px, py, pz, 0);
+        this->SliceNode[sliceNodeNumber]->SetSliceToRASByNTP(nx, ny, nz, tx, ty, tz, px, py, pz, 1);
         }
       else if (this->SliceOrientation[sliceNodeNumber] == SLICE_RTIMAGE_INPLANE90)
         {
-        this->SliceNode[sliceNodeNumber]->SetSliceToRASByNTP(nx, ny, nz, tx, ty, tz, px, py, pz, 1);
+        this->SliceNode[sliceNodeNumber]->SetSliceToRASByNTP(nx, ny, nz, tx, ty, tz, px, py, pz, 2);
         }
       }
     else
@@ -1092,11 +999,11 @@ void vtkOpenIGTLinkIFLogic::UpdateSliceNode(int sliceNodeNumber, vtkMatrix4x4* t
         }
       else if (this->SliceOrientation[sliceNodeNumber] == SLICE_RTIMAGE_INPLANE)
         {
-        this->SliceNode[sliceNodeNumber]->SetOrientationToCoronal();
+        this->SliceNode[sliceNodeNumber]->SetOrientationToSagittal();
         }
       else if (this->SliceOrientation[sliceNodeNumber] == SLICE_RTIMAGE_INPLANE90)
         {
-        this->SliceNode[sliceNodeNumber]->SetOrientationToSagittal();
+        this->SliceNode[sliceNodeNumber]->SetOrientationToCoronal();
         }
 
       this->SliceNode[sliceNodeNumber]->JumpSlice(px, py, pz);
@@ -1114,15 +1021,14 @@ void vtkOpenIGTLinkIFLogic::UpdateSliceNodeByImage(int sliceNodeNumber)
   vtkMRMLVolumeNode* volumeNode =
     vtkMRMLVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->RealTimeImageSourceNodeID));
 
-  std::cerr << "vtkOpenIGTLinkIFLogic::UpdateSliceNodeByImage(int sliceNodeNumber) is called " << std::endl;
-
   if (volumeNode == NULL)
     {
     return;
     }
 
   vtkMatrix4x4* rtimgTransform = vtkMatrix4x4::New();
-  volumeNode->GetRASToIJKMatrix(rtimgTransform);
+  //volumeNode->GetRASToIJKMatrix(rtimgTransform);
+  volumeNode->GetIJKToRASMatrix(rtimgTransform);
   //rtimgTransform->Invert();
   
   float tx = rtimgTransform->GetElement(0, 0);
@@ -1143,22 +1049,7 @@ void vtkOpenIGTLinkIFLogic::UpdateSliceNodeByImage(int sliceNodeNumber)
   int size[3];
   imageData->GetDimensions(size);
   
-  //if (lps) { // LPS coordinate
-  //  vtkMatrix4x4* lpsToRas = vtkMatrix4x4::New();
-  //  lpsToRas->Identity();
-  //  lpsToRas->SetElement(-1, 0,  0);
-  //  lpsToRas->SetElement(0, -1,  0);
-  //  lpsToRas->SetElement(0,  0,  1);
-  //  lpsToRas->Multiply4x4(lpsToRas, rtimgTransform, rtimgTransform);
-  //  lpsToRas->Delete();
-  //}
-  //px = px + cx;
-  //py = py + cy;
-  //pz = pz + cz;
-  //UpdateSliceNode(i, nx, ny, nz, tx, ty, tz, px, py, pz);
-
   // normalize
-
   float psi = sqrt(tx*tx + ty*ty + tz*tz);
   float psj = sqrt(sx*sx + sy*sy + sz*sz);
   float psk = sqrt(nx*nx + ny*ny + nz*nz);
@@ -1172,6 +1063,16 @@ void vtkOpenIGTLinkIFLogic::UpdateSliceNodeByImage(int sliceNodeNumber)
   float nny = ny / psk;
   float nnz = nz / psk;
 
+  // shift the center
+  float hfovi = psi * size[0] / 2.0;
+  float hfovj = psj * size[1] / 2.0;
+  //float hfovk = psk * imgheader->size[2] / 2.0;
+  float hfovk = 0;
+
+  float cx = ntx * hfovi + nsx * hfovj + nnx * hfovk;
+  float cy = nty * hfovi + nsy * hfovj + nny * hfovk;
+  float cz = ntz * hfovi + nsz * hfovj + nnz * hfovk;
+
   rtimgTransform->SetElement(0, 0, ntx);
   rtimgTransform->SetElement(1, 0, nty);
   rtimgTransform->SetElement(2, 0, ntz);
@@ -1181,21 +1082,9 @@ void vtkOpenIGTLinkIFLogic::UpdateSliceNodeByImage(int sliceNodeNumber)
   rtimgTransform->SetElement(0, 2, nnx);
   rtimgTransform->SetElement(1, 2, nny);
   rtimgTransform->SetElement(2, 2, nnz);
-  
-  /*
-  float hfovi = psi * size[0] / 2.0;
-  float hfovj = psj * size[1] / 2.0;
-  //float hfovk = psk * imgheader->size[2] / 2.0;
-  float hfovk = 0;
-  */
-  
-  //float cx = ntx * hfovi + nsx * hfovj + nnx * hfovk;
-  //float cy = nty * hfovi + nsy * hfovj + nny * hfovk;
-  //float cz = ntz * hfovi + nsz * hfovj + nnz * hfovk;
-  
-  //rtimgTransform->SetElement(0, 3, px + cx);
-  //rtimgTransform->SetElement(1, 3, py + cy);
-  //rtimgTransform->SetElement(2, 3, pz + cz);
+  rtimgTransform->SetElement(0, 3, px + cx);
+  rtimgTransform->SetElement(1, 3, py + cy);
+  rtimgTransform->SetElement(2, 3, pz + cz);
   
   UpdateSliceNode(sliceNodeNumber, rtimgTransform);
 
