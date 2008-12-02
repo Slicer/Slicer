@@ -986,9 +986,7 @@ void vtkSlicerROIGUI::BuildGUI ( )
   this->ROIDisplayWidget = vtkSlicerROIDisplayWidget::New();
   this->ROIDisplayWidget->SetParent ( ROIFrame->GetFrame() );
   this->ROIDisplayWidget->Create();
-  this->ROIDisplayWidget->SetViewerWidget(this->GetApplicationGUI()->GetViewerWidget());
-
-  this->Script("pack %s -side left -anchor w -padx 2 -pady 2 -in %s", 
+  this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s", 
                this->ROIDisplayWidget->GetWidgetName(),
                ROIFrame->GetFrame()->GetWidgetName());
 

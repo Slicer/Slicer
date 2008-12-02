@@ -27,7 +27,7 @@
 
 #include "vtkSlicerBoxWidget2.h"
 #include "vtkSlicerBoxRepresentation.h"
-
+#include "vtkSlicerViewerWidget.h"
 
 class vtkMRMLROINode;
 class vtkKWRenderWidget;
@@ -61,8 +61,8 @@ public:
   
   // Description:
   // Set/Get the main viewer, called by vtkSlicerApplicationGUI
-  vtkSetObjectMacro(MainViewer, vtkKWRenderWidget);
-  vtkGetObjectMacro(MainViewer, vtkKWRenderWidget);
+  vtkSetObjectMacro(MainViewerWidget, vtkSlicerViewerWidget);
+  vtkGetObjectMacro(MainViewerWidget, vtkSlicerViewerWidget);
   
   // Description:
   // Updates all roi's based on mrml nodes
@@ -80,11 +80,6 @@ public:
   // Description: 
   // Actually do a render (don't wait for idle)
   void Render();
-
-  // Description: 
-  // Used to track the fact that there is a idle task pending requesting a render
-  vtkSetMacro (RenderPending, int);
-  vtkGetMacro (RenderPending, int);
 
 
   // Description:
@@ -152,12 +147,8 @@ protected:
 
   // Description:
   // A pointer back to the main viewer, so that can render when update
-  vtkKWRenderWidget *MainViewer;
-  
-  // Description:
-  // A flag to avoid thread collisions when rendering
-  int RenderPending;
-
+  vtkSlicerViewerWidget *MainViewerWidget;
+ 
     
 private:
   

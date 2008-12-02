@@ -80,18 +80,11 @@ public:
   // Get/Set interactive mode (update while changing ROI range)
   void SetInteractiveMode(int val);
   int GetInteractiveMode();
-  
-  void SetBounds(double *bounds);
-  
-  void SetViewerWidget(vtkSlicerViewerWidget *ViewerWidget);
-  
+      
   // Description:
   // Get methods on class members ( no Set methods required. )
   vtkGetObjectMacro ( VisibilityToggle, vtkKWPushButton);
   vtkGetObjectMacro ( VisibilityIcons, vtkSlicerVisibilityIcons);
-
-  vtkGetObjectMacro ( BoxWidget, vtkSlicerBoxWidget2);
-  vtkGetObjectMacro ( BoxWidgetRepresentation, vtkSlicerBoxRepresentation);
   
 protected:
   vtkSlicerROIDisplayWidget ( );
@@ -104,11 +97,7 @@ protected:
   //void UpdateMRML();
   
   vtkMRMLROINode *ROINode;
-  
-  vtkSlicerBoxWidget2 *BoxWidget;
-  vtkSlicerBoxRepresentation *BoxWidgetRepresentation;
-  vtkSlicerViewerWidget *ViewerWidget;
-  
+    
   // ROI position and Raidus scale
   vtkKWRange *XRange;
   vtkKWRange *YRange;

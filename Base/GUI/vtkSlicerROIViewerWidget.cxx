@@ -8,6 +8,9 @@
 #include "vtkRenderer.h"
 #include "vtkRenderWindowInteractor.h"
 
+#include "vtkKWWidget.h"
+#include "vtkKWRenderWidget.h"
+
 #include "vtkSlicerROIViewerWidget.h"
 
 #include "vtkSlicerApplicationGUI.h"
@@ -18,8 +21,6 @@
 #include "vtkMRMLLinearTransformNode.h"
 
 
-#include "vtkKWWidget.h"
-#include "vtkKWRenderWidget.h"
 
 // for pick events
 #include "vtkSlicerViewerWidget.h"
@@ -41,13 +42,13 @@ public:
         //boxRep->GetTransform(this->Transform);
         double* bounds = boxRep->GetBounds();
         this->ROINode->DisableModifiedEventOn();
-        this->ROINode->SetXYZ(0.5*(bounds[3]+bounds[0]),0.5*(bounds[4]+bounds[1]),0.5*(bounds[5]+bounds[2]));
-        this->ROINode->SetRadiusXYZ(0.5*(bounds[3]-bounds[0]),0.5*(bounds[4]-bounds[1]),0.5*(bounds[5]-bounds[2]));
+        this->ROINode->SetXYZ(0.5*(bounds[1]+bounds[0]),0.5*(bounds[3]+bounds[2]),0.5*(bounds[5]+bounds[4]));
+        this->ROINode->SetRadiusXYZ(0.5*(bounds[1]-bounds[0]),0.5*(bounds[3]-bounds[2]),0.5*(bounds[5]-bounds[4]));
         this->ROINode->DisableModifiedEventOff();
         
-        this->ROIViewerWidget->SetProcessingWidgetEvent(1);
+       //this->ROIViewerWidget->SetProcessingWidgetEvent(1);
         this->ROINode->InvokePendingModifiedEvent();
-        this->ROIViewerWidget->SetProcessingWidgetEvent(0);
+       //this->ROIViewerWidget->SetProcessingWidgetEvent(0);
 
         }
       }
@@ -67,18 +68,17 @@ vtkSlicerROIViewerWidget::vtkSlicerROIViewerWidget ( )
 {
   vtkDebugMacro("vtkSlicerROIViewerWidget::Constructor");
   
-  this->MainViewer = NULL;
+  this->MainViewerWidget = NULL;
 
   this->ProcessingMRMLEvent = 0;
   this->ProcessingWidgetEvent = 0;
 
-  this->RenderPending = 0;
 }
 
 //---------------------------------------------------------------------------
 vtkSlicerROIViewerWidget::~vtkSlicerROIViewerWidget ( )
 {
-  this->SetMainViewer(NULL);
+  this->SetMainViewerWidget(NULL);
 
   this->RemoveMRMLObservers();
 
@@ -171,7 +171,7 @@ void vtkSlicerROIViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
            vtkMRMLROINode::SafeDownCast ( (vtkObjectBase *)callData ))
     {
       this->UpdateFromMRML();
-      this->Render();
+      this->RequestRender();
     }
   else if (callScene != NULL &&
            event == vtkMRMLScene::NodeRemovedEvent &&
@@ -188,7 +188,7 @@ void vtkSlicerROIViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
            event == vtkCommand::ModifiedEvent)
     {
     this->UpdateROIFromMRML(callerROINode);
-    this->Render();
+    this->RequestRender();
     }
   
   // if the roi transfrom was updated...
@@ -196,7 +196,7 @@ void vtkSlicerROIViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
            (callerROINode != NULL))
     {
     this->UpdateROIFromMRML(callerROINode);
-    this->Render();
+    this->RequestRender();
     }
   
   this->ProcessingMRMLEvent = 0;
@@ -205,20 +205,13 @@ void vtkSlicerROIViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerROIViewerWidget::RequestRender()
 {
-    if (this->GetRenderPending())
-    {
-    return;
-    }
-
-  this->SetRenderPending(1);
-  this->Script("after idle \"%s Render\"", this->GetTclName());
+  this->MainViewerWidget->RequestRender();
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerROIViewerWidget::Render()
 {
-  this->MainViewer->Render();
-  this->SetRenderPending(0);
+  this->MainViewerWidget->Render();
 }
 
 //---------------------------------------------------------------------------
@@ -267,7 +260,7 @@ void vtkSlicerROIViewerWidget::UpdateROIFromMRML(vtkMRMLROINode *roi)
     boxWidget->SetPriority(1);
     rep->SetPlaceFactor( 1.0 );
     
-    vtkRenderWindowInteractor *interactor = this->MainViewer->GetRenderWindow()->GetInteractor();
+    vtkRenderWindowInteractor *interactor = this->MainViewerWidget->GetMainViewer()->GetRenderWindow()->GetInteractor();
     boxWidget->SetInteractor(interactor);
     
     vtkBoxWidgetCallback *myCallback = vtkBoxWidgetCallback::New();

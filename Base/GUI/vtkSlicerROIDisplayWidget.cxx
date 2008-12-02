@@ -42,12 +42,6 @@ vtkSlicerROIDisplayWidget::vtkSlicerROIDisplayWidget ( )
 
     this->InteractiveButton = vtkKWCheckButtonWithLabel::New();
     
-    this->BoxWidget = vtkSlicerBoxWidget2::New();
-    this->BoxWidgetRepresentation = vtkSlicerBoxRepresentation::New();
-    this->BoxWidget->SetRepresentation(this->BoxWidgetRepresentation);
-    this->BoxWidget->SetPriority(1);
-    this->BoxWidgetRepresentation->SetPlaceFactor( 1.0 );
-    this->ViewerWidget = NULL;
     this->ProcessingMRMLEvent = 0;
     this->ProcessingWidgetEvent = 0;
 
@@ -107,24 +101,10 @@ vtkSlicerROIDisplayWidget::~vtkSlicerROIDisplayWidget ( )
     this->ZLabel = NULL;
     }
   
-  this->BoxWidget->SetRepresentation(NULL);
-  this->BoxWidgetRepresentation->Delete();
-  this->BoxWidget->Delete();
-
   vtkSetAndObserveMRMLNodeMacro(this->ROINode, NULL);
   this->SetMRMLScene ( NULL );
   
 }
-
-//---------------------------------------------------------------------------
-void 
-vtkSlicerROIDisplayWidget::SetViewerWidget(vtkSlicerViewerWidget *ViewerWidget)
-{
-  this->ViewerWidget=ViewerWidget;
-  vtkRenderWindowInteractor *interactor=this->ViewerWidget->GetMainViewer()->GetRenderWindow()->GetInteractor();
-  this->BoxWidget->SetInteractor(interactor);
-}
-
 
 
 //---------------------------------------------------------------------------
@@ -141,19 +121,6 @@ vtkSlicerROIDisplayWidget::GetInteractiveMode()
   return this->InteractiveButton->GetWidget()->GetSelectedState();
 }
 
-//---------------------------------------------------------------------------
-void 
-vtkSlicerROIDisplayWidget::SetBounds(double *bounds)
-{
-  double b[6];
-  b[0] = bounds[0];
-  b[1] = bounds[3];
-  b[2] = bounds[1];
-  b[3] = bounds[4];
-  b[4] = bounds[2];
-  b[5] = bounds[5];
-  this->BoxWidgetRepresentation->PlaceWidget(b);
-}
 
 //---------------------------------------------------------------------------
 void vtkSlicerROIDisplayWidget::PrintSelf ( ostream& os, vtkIndent indent )
@@ -189,12 +156,6 @@ void vtkSlicerROIDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
     return;
     }
 
-  if (!this->GetInteractiveMode() && event == vtkCommand::InteractionEvent)
-    {
-    this->ViewerWidget->Render();
-    return;
-    }
-  
   this->ProcessingWidgetEvent = event;
   
   
@@ -212,7 +173,8 @@ void vtkSlicerROIDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
   if (this->ROINode != NULL) 
     {
     
-    if (event == vtkKWPushButton::InvokedEvent && this->VisibilityToggle == vtkKWPushButton::SafeDownCast(caller))
+    if (event == vtkKWPushButton::InvokedEvent && 
+        this->VisibilityToggle == vtkKWPushButton::SafeDownCast(caller))
       {
       int vis = ROINode->GetVisibility();
       if (vis) 
@@ -228,34 +190,18 @@ void vtkSlicerROIDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
         this->GetVisibilityToggle()->SetImageToIcon(
               this->GetVisibilityIcons()->GetVisibleIcon());
         this->ROINode->SetVisibility(1);
-        this->BoxWidget->On();
         }
       else
         {
         this->GetVisibilityToggle()->SetImageToIcon(
           this->GetVisibilityIcons()->GetInvisibleIcon());
         this->ROINode->SetVisibility(0);
-        this->BoxWidget->Off();
         }
-      this->ViewerWidget->Render();
       }
-    else if (event == vtkCommand::InteractionEvent || event == vtkCommand::EndInteractionEvent)
+    else if (event == vtkKWCheckButton::SelectedStateChangedEvent && 
+            this->InteractiveButton->GetWidget() == vtkKWCheckButton::SafeDownCast(caller) )
       {
-      vtkSlicerBoxWidget2 *boxWidget = reinterpret_cast<vtkSlicerBoxWidget2*>(caller);
-      vtkSlicerBoxRepresentation *boxRep = 
-        reinterpret_cast<vtkSlicerBoxRepresentation*>(boxWidget->GetRepresentation());
-      //boxRep->GetTransform(this->Transform);
-      double* bounds = boxRep->GetBounds();
-      XRange->SetRange(bounds[0],bounds[1]);
-      YRange->SetRange(bounds[2],bounds[3]);
-      ZRange->SetRange(bounds[4],bounds[5]);
-      
-      this->ROINode->DisableModifiedEventOn();
-      this->ROINode->SetXYZ(0.5*(bounds[3]+bounds[0]),0.5*(bounds[4]+bounds[1]),0.5*(bounds[5]+bounds[2]));
-      this->ROINode->SetRadiusXYZ(0.5*(bounds[3]-bounds[0]),0.5*(bounds[4]-bounds[1]),0.5*(bounds[5]-bounds[2]));
-      this->ROINode->DisableModifiedEventOff();
-      this->ROINode->InvokePendingModifiedEvent();
-      this->ViewerWidget->Render();
+      this->ROINode->SetInteractiveMode(this->InteractiveButton->GetWidget()->GetSelectedState());
       }
     else if (event == vtkKWScale::ScaleValueChangingEvent || 
              event == vtkKWScale::ScaleValueChangedEvent)
@@ -274,10 +220,9 @@ void vtkSlicerROIDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
         this->ROINode->DisableModifiedEventOff();
         this->ROINode->InvokePendingModifiedEvent();
         }
-      this->SetBounds(bounds);
-      this->ViewerWidget->Render();
       }
-    }
+
+    }// if (this->ROINode != NULL) 
   
   
   this->ProcessingWidgetEvent = 0;
@@ -338,17 +283,7 @@ void vtkSlicerROIDisplayWidget::UpdateWidget()
     this->GetVisibilityToggle()->SetImageToIcon(
       this->GetVisibilityIcons()->GetInvisibleIcon());
     }
-
-  if (vis)
-    {
-    this->BoxWidget->On();
-    }
-  else
-    {
-    this->BoxWidget->Off();
-    }
-  this->SetBounds(bounds);
-  this->ViewerWidget->Render();
+  this->InteractiveButton->GetWidget()->SetSelectedState(this->ROINode->GetInteractiveMode());
 }
 
 //---------------------------------------------------------------------------
@@ -389,7 +324,7 @@ void vtkSlicerROIDisplayWidget::CreateWidget ( )
   displayFrame->Create ( );
   //displayFrame->SetLabelText ("ROI Display");
   //displayFrame->ExpandFrame ( );
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  displayFrame->GetWidgetName());
 
   // XPosition frame
@@ -535,9 +470,6 @@ void vtkSlicerROIDisplayWidget::CreateWidget ( )
 //---------------------------------------------------------------------------
 void vtkSlicerROIDisplayWidget::AddWidgetObservers ( )
 {
-  this->BoxWidget->AddObserver(vtkCommand::InteractionEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->BoxWidget->AddObserver(vtkCommand::EndInteractionEvent, (vtkCommand *)this->GUICallbackCommand);
-
   this->XRange->AddObserver(vtkKWRange::RangeValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand);
   this->XRange->AddObserver(vtkKWRange::RangeValueChangingEvent, (vtkCommand *)this->GUICallbackCommand);
   this->XRange->AddObserver(vtkKWRange::RangeValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -551,16 +483,12 @@ void vtkSlicerROIDisplayWidget::AddWidgetObservers ( )
   this->ZRange->AddObserver(vtkKWRange::RangeValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
 
   this->VisibilityToggle->AddObserver (vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-
+  this->InteractiveButton->GetWidget()->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerROIDisplayWidget::RemoveWidgetObservers ( )
 {
-
-  this->BoxWidget->RemoveObservers(vtkCommand::InteractionEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->BoxWidget->RemoveObservers(vtkCommand::EndInteractionEvent, (vtkCommand *)this->GUICallbackCommand);
-  
   this->XRange->RemoveObservers(vtkKWRange::RangeValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand);
   this->XRange->RemoveObservers(vtkKWRange::RangeValueChangingEvent, (vtkCommand *)this->GUICallbackCommand);
   this->XRange->RemoveObservers(vtkKWRange::RangeValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -574,5 +502,6 @@ void vtkSlicerROIDisplayWidget::RemoveWidgetObservers ( )
   this->ZRange->RemoveObservers(vtkKWRange::RangeValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
 
   this->VisibilityToggle->RemoveObservers (vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->InteractiveButton->GetWidget()->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
 }

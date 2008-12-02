@@ -67,6 +67,7 @@ a
 #include "vtkSlicerModulesWizardDialog.h"
 
 #include "vtkSlicerFiducialListWidget.h"
+#include "vtkSlicerROIViewerWidget.h"
 #include "vtkMRMLScene.h"
 
 #include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
@@ -146,6 +147,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
   //--- Main viewer
   this->ViewerWidget = NULL;
   this->FiducialListWidget = NULL;
+  this->ROIViewerWidget = NULL;
 
   // use STL::MAP to hold all main slice viewers
   this->SlicesGUI = NULL;
@@ -1532,6 +1534,14 @@ void vtkSlicerApplicationGUI::DestroyMain3DViewer ( )
       this->FiducialListWidget->Delete();
       this->FiducialListWidget = NULL;
       }
+    // Destroy roi widget
+    if ( this->ROIViewerWidget )
+      {
+      this->ROIViewerWidget->RemoveMRMLObservers ();
+      this->ROIViewerWidget->SetParent(NULL);
+      this->ROIViewerWidget->Delete();
+      this->ROIViewerWidget = NULL;
+      }
       
     // Destroy main 3D viewer
     //
@@ -1736,6 +1746,14 @@ void vtkSlicerApplicationGUI::CreateMain3DViewer ( int arrangementType )
     this->FiducialListWidget->SetAndObserveMRMLSceneEvents (this->MRMLScene, events );
     events->Delete();
     this->FiducialListWidget->UpdateFromMRML();
+
+    // add the roi widget
+    this->ROIViewerWidget = vtkSlicerROIViewerWidget::New();
+    this->ROIViewerWidget->SetApplication( app );
+    this->ROIViewerWidget->SetMainViewerWidget(this->ViewerWidget);
+    this->ROIViewerWidget->SetMRMLScene(this->MRMLScene);
+    this->ROIViewerWidget->Create();
+    this->ROIViewerWidget->UpdateFromMRML();
     }
 }
 

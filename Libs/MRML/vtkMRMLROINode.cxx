@@ -62,6 +62,7 @@ vtkMRMLROINode::vtkMRMLROINode()
   this->Selected = 0;
   this->VolumeNodeID = NULL;
   this->Visibility = 1;
+  this->InteractiveMode = 1;
   this->HideFromEditors = 0;
   return;
 }
@@ -116,6 +117,8 @@ void vtkMRMLROINode::WriteXML(ostream& of, int nIndent)
   of << " Selected " << this->Selected;
 
   of << " visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
+
+  of << " interactiveMode=\"" << (this->InteractiveMode ? "true" : "false") << "\"";
 
 
   return;
@@ -181,6 +184,17 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
       else
         {
         this->Visibility = 0;
+        }
+      }
+    else if (!strcmp(attName, "interactiveMode")) 
+      {
+      if (!strcmp(attValue,"true")) 
+        {
+        this->InteractiveMode = 1;
+        }
+      else
+        {
+        this->InteractiveMode = 0;
         }
       }
  
@@ -259,6 +273,7 @@ void vtkMRMLROINode::Copy(vtkMRMLNode *anode)
   this->SetID(node->ID);
   this->SetSelected(node->GetSelected());
   this->SetVisibility(node->Visibility);
+  this->SetInteractiveMode(node->InteractiveMode);
 
   this->DisableModifiedEventOff();
   this->InvokePendingModifiedEvent();

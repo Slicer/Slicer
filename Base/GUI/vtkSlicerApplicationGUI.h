@@ -54,6 +54,7 @@ class vtkKWLabel;
 class vtkKWDialog;
 class vtkSlicerMRMLSaveDataWidget;
 class vtkSlicerFiducialListWidget;
+class vtkSlicerROIViewerWidget;
 class vtkSlicerSlicesGUI;
 class vtkSlicerSlicesControlGUI;
 class vtkSlicerModulesWizardDialog;
@@ -104,6 +105,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // The Fiducial List Widget
     vtkGetObjectMacro (FiducialListWidget, vtkSlicerFiducialListWidget);
+
+    // Description:
+    // The ROI Viewer Widget
+    vtkGetObjectMacro (ROIViewerWidget, vtkSlicerROIViewerWidget);
 
     // Description:
     // Pointers to the SlicesGUI used by the ApplicationGUI.
@@ -323,7 +328,11 @@ protected:
     // Description:
     // Fiducial List Widget
     vtkSlicerFiducialListWidget *FiducialListWidget;
-    
+
+    // Description:
+    // ROI Viewer Widget
+    vtkSlicerROIViewerWidget *ROIViewerWidget;
+
     // Description:
     // Contains the state of the ApplicationGUI's layout
     vtkMRMLLayoutNode *GUILayoutNode;
