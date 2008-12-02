@@ -438,7 +438,7 @@ protected:
 
 
 template <unsigned int Dimension>
-void DemonsRegistrationFunction( arguments args )
+void DoDemonsRegistration( arguments args )
 {
    // Declare the types of the images (float or double only)
    typedef float PixelType;
@@ -936,10 +936,10 @@ int main( int argc, char *argv[] )
    switch ( imageIO->GetNumberOfDimensions() )
    {
    case 2:
-      DemonsRegistrationFunction<2>(args);
+      DoDemonsRegistration<2>(args);
       break;
    case 3:
-      DemonsRegistrationFunction<3>(args);
+      DoDemonsRegistration<3>(args);
       break;
    default:
       std::cerr << "Unsuported dimension" << std::endl;
