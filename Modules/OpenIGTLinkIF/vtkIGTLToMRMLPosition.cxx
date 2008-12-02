@@ -199,14 +199,14 @@ int vtkIGTLToMRMLPosition::MRMLToIGTL(unsigned long event, vtkMRMLNode* mrmlNode
     igtlmatrix[2][2]  = matrix->GetElement(2, 2);
     igtlmatrix[3][2]  = matrix->GetElement(3, 2);
     
-    //igtlmatrix[0][3]  = matrix->GetElement(0, 3);
-    //igtlmatrix[1][3]  = matrix->GetElement(1, 3);
-    //igtlmatrix[2][3]  = matrix->GetElement(2, 3);
+    igtlmatrix[0][3]  = matrix->GetElement(0, 3);
+    igtlmatrix[1][3]  = matrix->GetElement(1, 3);
+    igtlmatrix[2][3]  = matrix->GetElement(2, 3);
     igtlmatrix[3][3]  = matrix->GetElement(3, 3);
 
     float position[3];
     float quaternion[3];
-
+    
     position[0] = igtlmatrix[0][3];
     position[1] = igtlmatrix[1][3];
     position[2] = igtlmatrix[2][3];
