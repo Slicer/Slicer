@@ -343,6 +343,7 @@ void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
       if (fidThis->GetMTime() > mtime || 
           (fid->GetID() && fidThis->GetID() && strcmp(fid->GetID(), fidThis->GetID())) )
         {
+        modified = true;
         break;
         }
 
