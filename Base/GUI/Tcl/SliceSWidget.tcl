@@ -92,7 +92,7 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
 
   set node [[$sliceGUI GetLogic] GetSliceNode]
   $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
-#  $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node AnyEvent"
+  $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node AnyEvent"
 
   # put the other widgets last the events in this widget get natural
   # priority over the same event to a child widget
