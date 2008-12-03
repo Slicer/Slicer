@@ -66,9 +66,9 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
   this->FiducialLabelVisibility = 1;
   this->AnnotationSpace = vtkMRMLSliceCompositeNode::IJKAndRAS;
   this->AnnotationMode = vtkMRMLSliceCompositeNode::All;
-  this->CrosshairMode = vtkMRMLSliceCompositeNode::ShowSmallBasic;
+  this->CrosshairMode = vtkMRMLSliceCompositeNode::ShowIntersection;
   this->CrosshairBehavior = vtkMRMLSliceCompositeNode::Normal;
-  this->CrosshairThickness = vtkMRMLSliceCompositeNode::Medium;
+  this->CrosshairThickness = vtkMRMLSliceCompositeNode::Fine;
 }
 
 //----------------------------------------------------------------------------
@@ -393,9 +393,6 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
         {
         this->SetCrosshairBehavior ( vtkMRMLSliceCompositeNode::JumpSlice);
         }
-      }
-    else if (!strcmp (attName, "crosshairBehavior" ))
-      {
       if ( !strcmp (attValue, "Normal"))
         {
         this->SetCrosshairBehavior ( vtkMRMLSliceCompositeNode::Normal);
