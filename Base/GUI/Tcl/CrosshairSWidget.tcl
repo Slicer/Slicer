@@ -178,7 +178,9 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
       }
       "EnterEvent" {
         # hide the system cursor
-        $_interactor HideCursor
+        if { [$_sliceCompositeNode GetCrosshairMode] != 0 } {
+          $_interactor HideCursor
+        }
 
         return
       }
@@ -200,6 +202,13 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
 }
 
 itcl::body CrosshairSWidget::resetCrosshair { } {
+  # if the Crosshair mode is (now) NoCrosshair (which is 0), then show
+  # the system cursor. ResetCrosshair can be called by a change in
+  # MRML, "undo" or "scene load", which can circumvent the LeaveEvent
+  # turning the system cursor back on.
+  if { [$_sliceCompositeNode GetCrosshairMode] == 0 } {
+    $_interactor ShowCursor
+  }
 
   set idArray [$o(crosshairLines) GetData]
   $idArray Reset
