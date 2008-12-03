@@ -738,8 +738,11 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
     }
   if ( this->HasRegistryValue (2, "RunTime", vtkSlicerApplication::ApplicationLayoutTypeRegKey))
     {
+    // TODO: don't restore registry layout on windows because some configurations cause a startup crash
+#if !defined(WIN32)
     this->ApplicationLayoutType = this->GetIntRegistryValue(
         2, "RunTime", vtkSlicerApplication::ApplicationLayoutTypeRegKey);
+#endif
     }
 
    if (this->HasRegistryValue(
