@@ -84,6 +84,10 @@ itcl::body CrosshairSWidget::constructor {sliceGUI} {
   $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
   $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node AnyEvent"
 
+  # watch for a scene close event so that we can get the state of the
+  # crosshair back in sync with the SliceCompositeNode.  Scene close
+  # events do not call modified when resetting the SliceCompositeNodes
+  $::slicer3::Broker AddObservation $::slicer3::MRMLScene 66003 "$this processEvent $::slicer3::MRMLScene SceneCloseEvent"
 
   $this updateCrosshair
 }
@@ -125,6 +129,12 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
     $this updateCrosshair
     return
   }
+
+  if { $caller == $::slicer3::MRMLScene && $event == "SceneCloseEvent" } {
+    $this updateCrosshair
+    return
+  }
+
 
   if { [$_sliceCompositeNode GetCrosshairMode] == 0 } {
     # not using a crosshair, eject
@@ -187,8 +197,6 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
         if { [$_sliceCompositeNode GetCrosshairMode] != 0 } {
           $_interactor HideCursor
         }
-
-        # $this updateCrosshair
         return
       }
       "LeaveEvent" {
