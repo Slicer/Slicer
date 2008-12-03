@@ -1658,11 +1658,14 @@ void vtkSlicerSlicesControlGUI::BuildCrossHairMenu ( )
   this->CrossHairButton->GetMenu()->SetItemGroupName(item, "CrosshairMode" );
   
   item = this->CrossHairButton->GetMenu()->AddRadioButton ("Small basic" );
+
   this->CrossHairButton->GetMenu()->SetItemGroupName(item, "CrosshairMode" );
-  this->CrossHairButton->GetMenu()->SelectItem ("Small basic");
   
-  item = this->CrossHairButton->GetMenu()->AddRadioButton ("Small Basic + intersection" );
+  item = this->CrossHairButton->GetMenu()->AddRadioButton ("Small basic + intersection" );
   this->CrossHairButton->GetMenu()->SetItemGroupName(item, "CrosshairMode" );
+
+  this->CrossHairButton->GetMenu()->SelectItem ("Basic + intersection");
+
   
   this->CrossHairButton->GetMenu()->AddSeparator();
   item = this->CrossHairButton->GetMenu()->AddRadioButton ("Fine");
@@ -1674,7 +1677,7 @@ void vtkSlicerSlicesControlGUI::BuildCrossHairMenu ( )
   item = this->CrossHairButton->GetMenu()->AddRadioButton ("Thick");
   this->CrossHairButton->GetMenu()->SetItemGroupName(item, "CrosshairThickness" );
 
-  this->CrossHairButton->GetMenu()->SelectItem ("Medium");
+  this->CrossHairButton->GetMenu()->SelectItem ("Fine");
 
   
   this->CrossHairButton->GetMenu()->AddSeparator();
