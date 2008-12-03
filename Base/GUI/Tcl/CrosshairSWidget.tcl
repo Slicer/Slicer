@@ -71,7 +71,7 @@ itcl::body CrosshairSWidget::constructor {sliceGUI} {
 
   $::slicer3::Broker AddObservation $sliceGUI DeleteEvent "::SWidget::ProtectedDelete $this"
 
-  set events {  "MouseMoveEvent" "UserEvent" "EnterEvent" "LeaveEvent"}
+  set events {  "MouseMoveEvent" "UserEvent" "EnterEvent" "LeaveEvent" "ConfigureEvent"}
   foreach event $events {
     $::slicer3::Broker AddObservation $sliceGUI $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI $event"
   }
@@ -83,6 +83,7 @@ itcl::body CrosshairSWidget::constructor {sliceGUI} {
   set node [[$sliceGUI GetLogic] GetSliceCompositeNode]
   $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
   $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node AnyEvent"
+
 
   $this updateCrosshair
 }
@@ -134,6 +135,11 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
 
     switch $event {
 
+      "ConfigureEvent" {
+        # need to rebuild the crosshairs that span the whole window
+        $this updateCrosshair
+      }
+
       "MouseMoveEvent" {
           # update the actors...
           foreach {windowx windowy} [$_interactor GetEventPosition] {}
@@ -182,6 +188,7 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
           $_interactor HideCursor
         }
 
+        # $this updateCrosshair
         return
       }
       "LeaveEvent" {
