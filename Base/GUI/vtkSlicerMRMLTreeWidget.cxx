@@ -202,8 +202,19 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
     {
     if (event == vtkKWEntry::EntryValueChangedEvent) 
       {
+      //
+      // value changed events are generated for a wide variety of reasons - 
+      // so confirm that the selected node is the same one that was displayed
+      // in the node inspector and confirm that the name has actually changed before
+      // triggering events
+      //
+      char *inspectedNodeID = this->NodeID->GetWidget()->GetText();
+      const char *inspectedNodeNewName = entry->GetValue();
       vtkMRMLNode *node = this->GetSelectedNodeInTree();
-      if (node)
+
+      if ( node && 
+            !strcmp( node->GetID(), inspectedNodeID ) && 
+            strcmp( node->GetName(), inspectedNodeNewName ) )
         {
         node->SetName(entry->GetValue());
         this->UpdateTreeFromMRML();
