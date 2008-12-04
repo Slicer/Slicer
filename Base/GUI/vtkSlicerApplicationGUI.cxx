@@ -1961,14 +1961,22 @@ void vtkSlicerApplicationGUI::PackConventionalView ( )
       }
 
     vtkSlicerSliceGUI *g = NULL;
+
+    // Note that the top panel is Frame2 of the SecondarySplitFrame
+    // and the bottom panel is Frame1 of the SecondarySplitFrame
+    //
+    // The frame we create in the top frame is GridFrame1 while
+    // the frame we create in the bottom frame is GridFrame2.
+    //
+    // So be careful with the sense of 1 and 2.
     
-    if (this->ProcessingMRMLEvent)
-      {
-      // can't just modify the node because we'll never get
-      // ModifiedEvent on the node to change the visibilities
-      this->MainSlicerWindow->SetSecondaryPanelVisibility ( 1 );
-      }
-    this->GUILayoutNode->SetBottomPanelVisibility(1);
+    // Show the top panel
+    this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame2Visibility(1);
+
+    // Show the bottom panel
+    this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(1);
+    
+    // Pack
     this->ViewerWidget->PackWidget(this->MainSlicerWindow->GetViewFrame() );
 
     this->Script ( "pack %s -side top -fill both -expand y -padx 0 -pady 0 ", this->GridFrame2->GetWidgetName ( ) );
@@ -2012,11 +2020,16 @@ void vtkSlicerApplicationGUI::PackConventionalView ( )
 
     this->GetSlicesControlGUI()->RequestFOVEntriesUpdate();
     this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );
+
+    // finally, modify the layout node
+    layout->DisableModifiedEventOn();
+    layout->SetBottomPanelVisibility(1);
     int cur = layout->GetViewArrangement();
     if ( cur != vtkMRMLLayoutNode::SlicerLayoutConventionalView)
       {
       layout->SetViewArrangement ( vtkMRMLLayoutNode::SlicerLayoutConventionalView );
       }
+    layout->DisableModifiedEventOff();
     }
 }
 
@@ -2034,15 +2047,14 @@ void vtkSlicerApplicationGUI::PackOneUp3DView ( )
       {
       return;
       }
+
+    // Show the top panel
+    this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame2Visibility(1);
     
-    // Expose the main panel frame only
-    if (this->ProcessingMRMLEvent)
-      {
-      // can't just modify the node because we'll never get
-      // ModifiedEvent on the node to change the visibilities
-      this->MainSlicerWindow->SetSecondaryPanelVisibility ( 0 );
-      }
-    this->GUILayoutNode->SetBottomPanelVisibility( 0 );
+    // Hide the secondary panel
+    this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(0);
+
+    
     this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );      
     this->ViewerWidget->PackWidget(this->MainSlicerWindow->GetViewFrame() );
     
@@ -2054,11 +2066,16 @@ void vtkSlicerApplicationGUI::PackOneUp3DView ( )
     g->PackGUI(this->MainSlicerWindow->GetSecondaryPanelFrame());
     
     this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );
+
+    // finally modify the layout node
+    layout->DisableModifiedEventOn();
+    layout->SetBottomPanelVisibility( 0 );
     int cur = layout->GetViewArrangement();
     if ( cur != vtkMRMLLayoutNode::SlicerLayoutOneUp3DView )
       {
       layout->SetViewArrangement ( vtkMRMLLayoutNode::SlicerLayoutOneUp3DView );
       }
+    layout->DisableModifiedEventOff();
     }
 }
 
@@ -2078,17 +2095,16 @@ void vtkSlicerApplicationGUI::PackOneUpSliceView ( const char * whichSlice )
       return;
       }
 
-    // Expose the main panel frame only
-    if (this->ProcessingMRMLEvent)
-      {
-      // can't just modify the node because we'll never get
-      // ModifiedEvent on the node to change the visibilities
-      this->MainSlicerWindow->SetSecondaryPanelVisibility ( 0 );
-      }
-    this->GUILayoutNode->SetBottomPanelVisibility( 0 );
+    // Show the top panel
+    this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame2Visibility(1);
     
+    // Hide the secondary panel
+    this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(0);
+
+
     vtkSlicerSliceGUI *g;
-    int cur = layout->GetViewArrangement();    
+    int cur = layout->GetViewArrangement();
+    int newlayout = vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView;
     if ( !strcmp (whichSlice, "Red" ) )
       {
       g = this->SlicesGUI->GetSliceGUI("Red");
@@ -2097,10 +2113,7 @@ void vtkSlicerApplicationGUI::PackOneUpSliceView ( const char * whichSlice )
       g->PackGUI(NULL);
       g = this->SlicesGUI->GetSliceGUI("Green");
       g->PackGUI(NULL);
-      if ( cur != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView )
-        {
-        layout->SetViewArrangement ( vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView );
-        }
+      newlayout = vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView ;
       }
     else if ( !strcmp ( whichSlice, "Yellow" ) )
       {
@@ -2110,10 +2123,7 @@ void vtkSlicerApplicationGUI::PackOneUpSliceView ( const char * whichSlice )
       g->PackGUI( this->MainSlicerWindow->GetViewFrame());
       g = this->SlicesGUI->GetSliceGUI("Green");
       g->PackGUI(NULL);
-      if ( cur != vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView )
-        {
-        layout->SetViewArrangement ( vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView );
-        }
+      newlayout = vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView ;
       }
     else if ( !strcmp ( whichSlice, "Green" ) )
       {
@@ -2123,14 +2133,21 @@ void vtkSlicerApplicationGUI::PackOneUpSliceView ( const char * whichSlice )
       g->PackGUI(NULL);
       g = this->SlicesGUI->GetSliceGUI("Green");
       g->PackGUI( this->MainSlicerWindow->GetViewFrame());
-      if ( cur != vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView )
-        {
-        layout->SetViewArrangement ( vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView );
-        }
+      newlayout = vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView ;
       }
     
     //      this->ViewerWidget->PackWidget(this->MainSlicerWindow->GetViewFrame() );
+    this->GetSlicesControlGUI()->RequestFOVEntriesUpdate();
     this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );
+
+    // finally modify the layout node
+    layout->DisableModifiedEventOn();
+    layout->SetBottomPanelVisibility( 0 );
+    if ( cur != newlayout )
+      {
+      layout->SetViewArrangement ( newlayout );
+      }
+    layout->DisableModifiedEventOff();
     }
 }
 
@@ -2143,21 +2160,20 @@ void vtkSlicerApplicationGUI::PackFourUpView ( )
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
     vtkMRMLScene *scene = this->GetMRMLScene();
-    vtkMRMLLayoutNode *layout = this->GetGUILayoutNode ( );
+    vtkSlicerGUILayout *geom = app->GetDefaultGeometry ( );
+    vtkMRMLLayoutNode *layout = this->GetGUILayoutNode();
     if ( layout == NULL )
       {
       return;
       }
+
+    // Show the top panel
+    this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame2Visibility(1);
     
-    // Expose both the main panel frame and secondary panel frame
-    if (this->ProcessingMRMLEvent)
-      {
-      // can't just modify the node because we'll never get
-      // ModifiedEvent on the node to change the visibilities
-      this->MainSlicerWindow->SetSecondaryPanelVisibility ( 0 );
-      }
-    this->GUILayoutNode->SetBottomPanelVisibility( 0 );
-    
+    // Hide the secondary panel
+    this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(0);
+
+
     // Use this frame in MainSlicerWindow's ViewFrame to grid in the various viewers.
     this->Script ( "pack %s -side top -fill both -expand y -padx 0 -pady 0 ", this->GridFrame1->GetWidgetName ( ) );
     this->Script ("grid rowconfigure %s 0 -weight 1", this->GridFrame1->GetWidgetName() );
@@ -2172,13 +2188,19 @@ void vtkSlicerApplicationGUI::PackFourUpView ( )
     g->GridGUI( this->GetGridFrame1(), 1, 0 );
     g = this->SlicesGUI->GetSliceGUI("Green");
     g->GridGUI( this->GetGridFrame1(), 1, 1 );
-    
+
+    this->GetSlicesControlGUI()->RequestFOVEntriesUpdate();
     this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );
+
+    // finally modify the layout node
+    layout->DisableModifiedEventOn();
+    layout->SetBottomPanelVisibility( 0 );
     int cur = layout->GetViewArrangement();
     if ( cur != vtkMRMLLayoutNode::SlicerLayoutFourUpView )
       {
       layout->SetViewArrangement ( vtkMRMLLayoutNode::SlicerLayoutFourUpView );
       }
+    layout->DisableModifiedEventOff();
     }
 }
 
@@ -2202,13 +2224,12 @@ void vtkSlicerApplicationGUI::PackTabbed3DView ( )
       return;
       }
 
-    if (this->ProcessingMRMLEvent)
-      {
-      // can't just modify the node because we'll never get
-      // ModifiedEvent on the node to change the visibilities
-      this->MainSlicerWindow->SetSecondaryPanelVisibility ( 0 );
-      }
-    this->GUILayoutNode->SetBottomPanelVisibility( 0 );
+    // Show the top panel
+    this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame2Visibility(1);
+
+    // Hide the secondary panel
+    this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(0);
+
     
     vtkSlicerSliceGUI *g = this->SlicesGUI->GetSliceGUI("Red");
     g->PackGUI( this->MainSlicerWindow->GetSecondaryPanelFrame( ));
@@ -2225,14 +2246,19 @@ void vtkSlicerApplicationGUI::PackTabbed3DView ( )
     // so just hide it in this configuration, and expose
     // it again when the view configuration changes.
     this->MainSlicerWindow->GetViewNotebook()->HidePage ( "View");
-    
+
     // Tab the 3D view
     this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 1 );
+    
+    // finally modify the layout node
+    layout->DisableModifiedEventOn();
+    layout->SetBottomPanelVisibility( 0 );
     int cur = layout->GetViewArrangement();
     if ( cur != vtkMRMLLayoutNode::SlicerLayoutTabbed3DView )
       {
       layout->SetViewArrangement ( vtkMRMLLayoutNode::SlicerLayoutTabbed3DView );
       }
+    layout->DisableModifiedEventOff();
     }
   
 }
@@ -2252,14 +2278,12 @@ void vtkSlicerApplicationGUI::PackTabbedSliceView ( )
       return;
       }
     
+    // Show the top panel
+    this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame2Visibility(1);
+    
+    // Hide the secondary panel
+    this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(0);
 
-    if (this->ProcessingMRMLEvent)
-      {
-      // can't just modify the node because we'll never get
-      // ModifiedEvent on the node to change the visibilities
-      this->MainSlicerWindow->SetSecondaryPanelVisibility ( 0 );
-      }
-    this->GUILayoutNode->SetBottomPanelVisibility( 0 );
     
     this->MainSlicerWindow->GetViewNotebook()->AddPage("Red slice", NULL, NULL, this->ViewerPageTag );
     
@@ -2281,13 +2305,19 @@ void vtkSlicerApplicationGUI::PackTabbedSliceView ( )
     this->MainSlicerWindow->GetViewNotebook()->HidePage ( "View");
     //      this->ViewerWidget->PackWidget(this->MainSlicerWindow->GetViewFrame() );
     
+    this->GetSlicesControlGUI()->RequestFOVEntriesUpdate();
     // Tab the slices
     this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 1 );
+
+    // finally modify the layout node
+    layout->DisableModifiedEventOn();
+    layout->SetBottomPanelVisibility( 0 );
     int cur = layout->GetViewArrangement();
     if ( cur != vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView )
       {
       layout->SetViewArrangement ( vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView );
       }
+    layout->DisableModifiedEventOff();
     }
 }
 
@@ -2303,14 +2333,12 @@ void vtkSlicerApplicationGUI::PackCompareView()
     vtkMRMLLayoutNode *layout = this->GetGUILayoutNode ( );
     double x, y, z;
     
-    if (this->ProcessingMRMLEvent)
-      {
-      // can't just modify the node because we'll never get
-      // ModifiedEvent on the node to change the visibilities
-      this->MainSlicerWindow->SetSecondaryPanelVisibility ( 1 );
-      }
-    this->GUILayoutNode->SetBottomPanelVisibility( 1 );
+    // Show the top panel
+    this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame2Visibility(1);
     
+    // Show the secondary panel
+    this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(1);
+
     // setup the layout for Frame1
     this->Script ( "pack %s -side top -fill both -expand y -padx 0 -pady 0 ", this->GridFrame1->GetWidgetName ( ) );
     this->Script ("grid rowconfigure %s 0 -weight 1", this->GridFrame1->GetWidgetName() );
@@ -2426,13 +2454,17 @@ void vtkSlicerApplicationGUI::PackCompareView()
       }
 
     this->GetSlicesControlGUI()->RequestFOVEntriesUpdate();
-    
     this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );
+
+    // finally modify the layout node
+    layout->DisableModifiedEventOn();
+    layout->SetBottomPanelVisibility( 1 );
     int cur = layout->GetViewArrangement();
     if ( cur != vtkMRMLLayoutNode::SlicerLayoutCompareView )
       {
       layout->SetViewArrangement( vtkMRMLLayoutNode::SlicerLayoutCompareView );
       }
+    layout->DisableModifiedEventOff();
     }
 }
 
@@ -2843,5 +2875,9 @@ void vtkSlicerApplicationGUI::MainSplitFrameConfigureCallback(int width, int hei
 void vtkSlicerApplicationGUI::SecondarySplitFrameConfigureCallback(int width, int height)
 {
   // std::cout << "SecondarySplitFrameConfigureCallback" << std::endl;
+  // Disable modified event to avoid a crash when dragging split frame
+  // on a layout that only uses the top frame
+  this->GUILayoutNode->DisableModifiedEventOn();
   this->GUILayoutNode->SetSecondaryPanelSize( this->MainSlicerWindow->GetSecondarySplitFrame()->GetFrame1Size() );
+  this->GUILayoutNode->DisableModifiedEventOff();
 }
