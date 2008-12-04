@@ -989,7 +989,7 @@ int Slicer3_main(int argc, char *argv[])
   std::string userCachePath;
 
   // define a default cache for module information
-  defaultCachePath = slicerHome + "/" + Slicer3_INSTALL_PLUGINS_CACHE_DIR;
+  defaultCachePath = std::string(slicerApp->GetTemporaryDirectory()) + "/" + Slicer3_INSTALL_PLUGINS_CACHE_DIR;
   if (hasIntDir)
     {
     defaultCachePath += "/" + intDir;
@@ -1000,6 +1000,7 @@ int Slicer3_main(int argc, char *argv[])
     {
     userCachePath = slicerApp->GetModuleCachePath();
     }
+  slicerApp->SetModuleCachePath(userCachePath.c_str());
 
   // if user cache path is set and we can write to it, use it.
   // if user cache path is not set or we cannot write to it, try
