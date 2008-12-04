@@ -351,12 +351,16 @@ proc slicerd_sock_fileevent {sock} {
                 slicerd_parse_space_measurement_frame_and_setMF ::tcl_$sock \
                     $measurement_frame $space
                 ::tcl_$sock ReceiveImageDataTensors $sock
+                [$idata GetPointData] SetScalars ""
             } else { 
                 slicerd_parse_space_directions $node $space_origin $space_directions $space        
                 ::tcl_$sock ReceiveImageDataScalars $sock
             }
             fconfigure $sock -translation auto
             $node SetAndObserveImageData $idata
+            if {  [lindex $kinds 0] == "3D-masked-symmetric-matrix" } {
+               [[[$node GetImageData] GetPointData] GetTensors] SetName "NRRDImage"
+            }
             $idata Delete
 
             $::slicer3::MRMLScene AddNode $node
