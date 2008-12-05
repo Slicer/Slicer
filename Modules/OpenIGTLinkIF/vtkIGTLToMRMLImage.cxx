@@ -129,6 +129,7 @@ vtkMRMLNode* vtkIGTLToMRMLImage::CreateNewNode(vtkMRMLScene* scene, const char* 
   scalarNode->Delete();
   displayNode->Delete();
   image->Delete();
+
   return volumeNode;
 }
 
@@ -198,48 +199,54 @@ int vtkIGTLToMRMLImage::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNod
   int dscalarType;
 
   imageData->GetDimensions(dsize);
+
   dscalarType = imageData->GetScalarType();
   if (dsize[0] != size[0] || dsize[1] != size[1] || dsize[2] != size[2] ||
       scalarType != dscalarType)
     {
-    std::cerr << "reallocating image data" << std::endl;
-    imageData->SetDimensions(size[0], size[1], size[2]);
-    imageData->SetExtent(0, size[0]-1, 0, size[1]-1, 0, size[2]-1);
-    //imageData->SetOrigin(0.0, 0.0, 0.0);
-    //imageData->SetSpacing(1.0, 1.0, 1.0);
-    //imageData->SetScalarType(scalarType);
+
+    //imageData->Delete();
+    vtkImageData* newImageData = vtkImageData::New();
+    newImageData->SetDimensions(size[0], size[1], size[2]);
+    newImageData->SetExtent(0, size[0]-1, 0, size[1]-1, 0, size[2]-1);
+    newImageData->SetOrigin(0.0, 0.0, 0.0);
+    newImageData->SetSpacing(1.0, 1.0, 1.0);
+    newImageData->SetNumberOfScalarComponents(1);
+    //newImageData->SetScalarType(scalarType);
     switch (scalarType)
       {
       case igtl::ImageMessage::TYPE_INT8:
-        imageData->SetScalarTypeToChar();
+        newImageData->SetScalarTypeToChar();
         break;
       case igtl::ImageMessage::TYPE_UINT8:
-        imageData->SetScalarTypeToUnsignedChar();
+        newImageData->SetScalarTypeToUnsignedChar();
         break;
       case igtl::ImageMessage::TYPE_INT16:
-        imageData->SetScalarTypeToShort();
+        newImageData->SetScalarTypeToShort();
         break;
       case igtl::ImageMessage::TYPE_UINT16:
-        imageData->SetScalarTypeToUnsignedShort();
+        newImageData->SetScalarTypeToUnsignedShort();
         break;
       case igtl::ImageMessage::TYPE_INT32:
-        imageData->SetScalarTypeToUnsignedLong();
+        newImageData->SetScalarTypeToUnsignedLong();
         break;
       case igtl::ImageMessage::TYPE_UINT32:
-        imageData->SetScalarTypeToUnsignedLong();
+        newImageData->SetScalarTypeToUnsignedLong();
         break;
       case igtl::ImageMessage::TYPE_FLOAT32:
-        imageData->SetScalarTypeToFloat();
+        newImageData->SetScalarTypeToFloat();
         break;
       case igtl::ImageMessage::TYPE_FLOAT64:
-        imageData->SetScalarTypeToDouble();
+        newImageData->SetScalarTypeToDouble();
         break;
       default:
-        //vtkErrorMacro ("Invalid Scalar Type\n");
+        vtkErrorMacro ("Invalid Scalar Type\n");
         break;
       }
-    imageData->AllocateScalars();
-    volumeNode->SetAndObserveImageData(imageData);
+    newImageData->AllocateScalars();
+    volumeNode->SetAndObserveImageData(newImageData);
+    //imageData->Delete();
+    newImageData->Delete();
     }
 
   float tx = matrix[0][0];
@@ -255,13 +262,7 @@ int vtkIGTLToMRMLImage::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNod
   float py = matrix[1][3];
   float pz = matrix[2][3];
 
-  /*
-  vtkErrorMacro("matrix = ");
-  vtkErrorMacro( << tx << ", " << ty << ", " << tz);
-  vtkErrorMacro( << sx << ", " << sy << ", " << sz);
-  vtkErrorMacro( << nx << ", " << ny << ", " << nz);
-  vtkErrorMacro( << px << ", " << py << ", " << pz);
-  */
+  imageData = volumeNode->GetImageData();
 
   // TODO:
   // It should be checked here if the dimension of vtkImageData
