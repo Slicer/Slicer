@@ -35,6 +35,7 @@ if { [itcl::find class SliceSWidget] == "" } {
     variable _swidgets ""
 
     # methods
+    method createSliceModelSWidgets {} {}
     method resizeSliceNode {} {}
     method processEvent {{caller ""} {event ""}} {}
     method updateAnnotation {x y z r a s} {}
@@ -103,7 +104,9 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
   lappend _swidgets [CrosshairSWidget #auto $sliceGUI]
   lappend _swidgets [RegionsSWidget #auto $sliceGUI]
   lappend _swidgets [SlicePlaneSWidget #auto $sliceGUI]
- 
+
+  after idle $this createSliceModelSWidgets
+
 }
 
 
@@ -121,6 +124,19 @@ itcl::body SliceSWidget::destructor {} {
 # ------------------------------------------------------------------
 #                             METHODS
 # ------------------------------------------------------------------
+
+#
+# create a slice model intersection widget for every slice that is not this one
+#
+itcl::body SliceSWidget::createSliceModelSWidgets {} {
+  foreach sliceLogic [vtkSlicerSliceLogic ListInstances] {
+    if { $sliceLogic != [$sliceGUI GetLogic] } {
+      set mWidget [ModelSWidget #auto $sliceGUI]
+      $mWidget configure -modelID [[$sliceLogic GetSliceModelNode] GetID]
+      lappend _swidgets $mWidget
+    }
+  }
+}
 
 #
 # make sure the size of the slice matches the window size of the widget

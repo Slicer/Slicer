@@ -43,6 +43,7 @@ if { [itcl::find class ModelSWidget] == "" } {
     variable _currentPosition "0 0 0"
     variable _modelNode ""
     variable _modelNodeObservation ""
+    variable _sliceCompositeNode ""
 
     # methods
     method processEvent {{caller ""} {event ""}} {}
@@ -89,6 +90,7 @@ itcl::body ModelSWidget::constructor {sliceGUI} {
 
   set _startPosition "0 0 0"
   set _currentPosition "0 0 0"
+  set _sliceCompositeNode [[$sliceGUI GetLogic] GetSliceCompositeNode]
 
   $this processEvent
 
@@ -99,6 +101,9 @@ itcl::body ModelSWidget::constructor {sliceGUI} {
   set node [[$sliceGUI GetLogic] GetSliceNode]
   $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
   $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node AnyEvent"
+
+  $::slicer3::Broker AddObservation $_sliceCompositeNode DeleteEvent "::SWidget::ProtectedDelete $this"
+  $::slicer3::Broker AddObservation $_sliceCompositeNode AnyEvent "::SWidget::ProtectedCallback $this processEvent $_sliceCompositeNode AnyEvent"
 
 }
 
@@ -134,6 +139,23 @@ itcl::configbody ModelSWidget::modelID {
       $o(cutter) SetInput [$_modelNode GetPolyData]
     }
   }
+
+  #
+  # TODO: Map Model name to color (hard coded for slice models)
+  #
+  set colorName [lindex [$modelNode GetName] 0]
+  switch $colorName {
+    "Red" {
+      $this configure -color "1 0 0"
+    }
+    "Yellow" {
+      $this configure -color "1 1 0"
+    }
+    "Green" {
+      $this configure -color "0 1 0"
+    }
+  }
+
   $this highlight
   [$sliceGUI GetSliceViewer] RequestRender
 }
@@ -231,6 +253,8 @@ itcl::body ModelSWidget::highlight { } {
   $property SetOpacity $opacity
   $textProperty SetOpacity $opacity
 
+  return
+
   set _description ""
   switch $_actionState {
     "dragging" {
@@ -256,6 +280,12 @@ itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
     # self destruct
     itcl::delete object $this
     return
+  }
+
+  # TODO: this is specfic to slice model display - we'll need another control
+  # for model intersections
+  if { $caller == $_sliceCompositeNode } {
+    $this configure -visibility [$_sliceCompositeNode GetSliceIntersectionVisibility]
   }
 
   #
@@ -348,23 +378,4 @@ itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
   $this positionActors
   $o(cutter) Modified
   [$sliceGUI GetSliceViewer] RequestRender
-
-  set property [$o(actor) GetProperty]
-  $property SetColor 0 1 1
-  $property SetLineWidth 1
-  $property SetPointSize 5
 }
-
-proc ModelSWidget::ManyWidgetTest { sliceGUI } {
-
-  set s 0
-  for { set r -95. } { $r <= 95. } { set r [expr $r + 20] } {
-    puts [time {
-      for { set a -95. } { $a <= 95. } { set a [expr $a + 20] } {
-        set seedSWidget [ModelSWidget #auto $sliceGUI]
-        $seedSWidget place $r $a $s
-      }
-    }]
-  }
-}
-
