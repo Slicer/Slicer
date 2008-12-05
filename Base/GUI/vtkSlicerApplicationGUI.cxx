@@ -1719,7 +1719,7 @@ void vtkSlicerApplicationGUI::CreateMain3DViewer ( int arrangementType )
     //
     this->ViewerWidget = vtkSlicerViewerWidget::New ( );
     this->ViewerWidget->SetApplication( app );
-    this->ViewerWidget->SetParent(this->MainSlicerWindow->GetViewPanelFrame());
+    this->ViewerWidget->SetParent(this->MainSlicerWindow->GetViewFrame());
       
     // add events
     vtkIntArray *events = vtkIntArray::New();
@@ -1831,6 +1831,78 @@ void vtkSlicerApplicationGUI::RepackMainViewer ( int arrangementType, const char
   this->UnpackMainSliceViewers ( );
   this->UnpackMain3DViewer ( );
 
+  // Need to reset the weights, minsize, and pad on the grids to get
+  // the grids to resize back to the default size of 0,0
+  if ( this->GetApplication() != NULL )
+    {
+    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+    if (this->GridFrame1)
+      {
+      // don't want to resort to this line but it seems to be needed
+      // to clear out the slaves
+      app->Script("catch {grid forget [grid slaves %s]}",
+                  this->GridFrame1->GetWidgetName() );
+      
+      int i;
+      std::stringstream ss;
+      const char *size = app->Script("grid size %s",
+                                     this->GridFrame1->GetWidgetName());
+      // std::cout << size << std::endl;
+      ss << size;
+      int rows, cols;
+      ss >> cols;
+      ss >> rows;
+      // std::cout << "Cleaning (1) " << rows << ", " << cols << std::endl;
+
+      for (i=0; i < rows; ++i)
+        {
+        app->Script("grid rowconfigure %s %d -weight 0 -minsize 0 -pad 0",
+                    this->GridFrame1->GetWidgetName(), i);
+        }
+      for (i=0; i < cols; ++i)
+        {
+        app->Script("grid columnconfigure %s %d -weight 0 -minsize 0 -pad 0",
+                    this->GridFrame1->GetWidgetName(), i);
+        }
+      }
+    if (this->GridFrame2)
+      {
+      // don't want to resort to this line but it seems to be needed
+      // to clear out the slaves
+      app->Script("catch {grid forget [grid slaves %s]}",
+                  this->GridFrame2->GetWidgetName() );
+
+      int i;
+      std::stringstream ss;
+      const char *size = app->Script("grid size %s",
+                                     this->GridFrame2->GetWidgetName());
+      // std::cout << size << std::endl;
+      ss << size;
+      int rows, cols;
+      ss >> cols;
+      ss >> rows;
+      // std::cout << "Cleaning (2) " << rows << ", " << cols << std::endl;
+
+      for (i=0; i < rows; ++i)
+        {
+        app->Script("grid rowconfigure %s %d -weight 0 -minsize 0 -pad 0",
+                    this->GridFrame2->GetWidgetName(), i);
+        }
+      for (i=0; i < cols; ++i)
+        {
+        app->Script("grid columnconfigure %s %d -weight 0 -minsize 0 -pad 0",
+                    this->GridFrame2->GetWidgetName(), i);
+        }
+      }
+
+    // use these lines to print out any hold overs from ungridding.
+    // Size should be "0 0" and there should be no widgets listed
+//     app->Script("puts \"After forgetting size (1): [grid size %s] : [grid slaves %s]\"", this->GridFrame1->GetWidgetName ( ) , this->GridFrame1->GetWidgetName ( ) );
+//     app->Script("puts \"After forgetting size (2): [grid size %s] : [grid slaves %s]\"", this->GridFrame2->GetWidgetName ( ) , this->GridFrame2->GetWidgetName ( ) );
+    }
+    
+  
+
   // Since I can't find a way to re-title this main page titled "View",
   // we make sure it's visible, and then 'hide' it only when we want to
   // show tabs that say things other than "View".
@@ -1918,29 +1990,10 @@ void vtkSlicerApplicationGUI::UnpackMain3DViewer (  )
       {
       this->ViewerWidget->UnpackWidget ( );
       }
-    //wjp test
-    if ( this->GridFrame2 )
-      {
-      //--- TODO: figure out how to update the size of GridFrame2's
-      //--- grid after its slaves have been ungridded.
-      //--- For some reason, even tho all this master frame's slaves are
-      //--- being ungridded with the geometry management forgotten,
-      //--- the grid size still retains its old metrics. So if we used to
-      //--- have 3 compare view rows, and want only two the next time,
-      //--- these two will be packed into a 3x1 grid.
-      //--- So for now, we'll try to delete the frame, and create a fresh guy.
-      app->Script ("pack forget %s ", this->GridFrame2->GetWidgetName ( ) );
-      this->GridFrame2->SetParent ( NULL );
-      this->GridFrame2->Delete();
-      this->GridFrame2 = vtkKWFrame::New ( );
-      this->GridFrame2->SetParent ( this->MainSlicerWindow->GetSecondaryPanelFrame ( ) );
-      this->GridFrame2->Create ( );            
-      }
     if ( this->GridFrame1 )
       {
       app->Script ( "pack forget %s", this->GridFrame1->GetWidgetName() );
       }
-    //end wjp test
     }
 }
 
@@ -1979,7 +2032,7 @@ void vtkSlicerApplicationGUI::PackConventionalView ( )
     // Pack
     this->ViewerWidget->PackWidget(this->MainSlicerWindow->GetViewFrame() );
 
-    this->Script ( "pack %s -side top -fill both -expand y -padx 0 -pady 0 ", this->GridFrame2->GetWidgetName ( ) );
+    this->Script ( "pack %s -side top -fill both -expand 1 -padx 0 -pady 0 ", this->GridFrame2->GetWidgetName ( ) );
     this->Script ("grid columnconfigure %s 0 -weight 1", this->GridFrame2->GetWidgetName() );
     this->Script ("grid columnconfigure %s 1 -weight 1", this->GridFrame2->GetWidgetName() );
     this->Script ("grid columnconfigure %s 2 -weight 1", this->GridFrame2->GetWidgetName() );
@@ -2101,7 +2154,6 @@ void vtkSlicerApplicationGUI::PackOneUpSliceView ( const char * whichSlice )
     // Hide the secondary panel
     this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(0);
 
-
     vtkSlicerSliceGUI *g;
     int cur = layout->GetViewArrangement();
     int newlayout = vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView;
@@ -2109,28 +2161,16 @@ void vtkSlicerApplicationGUI::PackOneUpSliceView ( const char * whichSlice )
       {
       g = this->SlicesGUI->GetSliceGUI("Red");
       g->PackGUI( this->MainSlicerWindow->GetViewFrame());
-      g = this->SlicesGUI->GetSliceGUI("Yellow");
-      g->PackGUI(NULL);
-      g = this->SlicesGUI->GetSliceGUI("Green");
-      g->PackGUI(NULL);
       newlayout = vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView ;
       }
     else if ( !strcmp ( whichSlice, "Yellow" ) )
       {
-      g = this->SlicesGUI->GetSliceGUI("Red");
-      g->PackGUI(NULL);
       g = this->SlicesGUI->GetSliceGUI("Yellow");
       g->PackGUI( this->MainSlicerWindow->GetViewFrame());
-      g = this->SlicesGUI->GetSliceGUI("Green");
-      g->PackGUI(NULL);
       newlayout = vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView ;
       }
     else if ( !strcmp ( whichSlice, "Green" ) )
       {
-      g = this->SlicesGUI->GetSliceGUI("Red");
-      g->PackGUI(NULL);
-      g = this->SlicesGUI->GetSliceGUI("Yellow");
-      g->PackGUI(NULL);
       g = this->SlicesGUI->GetSliceGUI("Green");
       g->PackGUI( this->MainSlicerWindow->GetViewFrame());
       newlayout = vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView ;
@@ -2175,7 +2215,7 @@ void vtkSlicerApplicationGUI::PackFourUpView ( )
 
 
     // Use this frame in MainSlicerWindow's ViewFrame to grid in the various viewers.
-    this->Script ( "pack %s -side top -fill both -expand y -padx 0 -pady 0 ", this->GridFrame1->GetWidgetName ( ) );
+    this->Script ( "pack %s -side top -fill both -expand 1 -padx 0 -pady 0 ", this->GridFrame1->GetWidgetName ( ) );
     this->Script ("grid rowconfigure %s 0 -weight 1", this->GridFrame1->GetWidgetName() );
     this->Script ("grid rowconfigure %s 1 -weight 1", this->GridFrame1->GetWidgetName() );
     this->Script ("grid columnconfigure %s 0 -weight 1", this->GridFrame1->GetWidgetName() );
@@ -2340,10 +2380,10 @@ void vtkSlicerApplicationGUI::PackCompareView()
     this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(1);
 
     // setup the layout for Frame1
-    this->Script ( "pack %s -side top -fill both -expand y -padx 0 -pady 0 ", this->GridFrame1->GetWidgetName ( ) );
+    this->Script ( "pack %s -side top -fill both -expand 1 -padx 0 -pady 0 ", this->GridFrame1->GetWidgetName ( ) );
     this->Script ("grid rowconfigure %s 0 -weight 1", this->GridFrame1->GetWidgetName() );
-    this->Script ("grid columnconfigure %s 0 -weight 1", this->GridFrame1->GetWidgetName() );
-    this->Script ("grid columnconfigure %s 1 -weight 1", this->GridFrame1->GetWidgetName() );
+    this->Script ("grid columnconfigure %s 0 -weight 1 -uniform 1", this->GridFrame1->GetWidgetName() );
+    this->Script ("grid columnconfigure %s 1 -weight 1 -uniform 1", this->GridFrame1->GetWidgetName() );
     
     //--- CompareView puts the Red Slice GUI and 3D Viewer widget side by
     //--- side in a top row. Then, the requested compare view rows and cols
@@ -2356,17 +2396,8 @@ void vtkSlicerApplicationGUI::PackCompareView()
     g->GetSliceNode()->UpdateMatrices();
     
     //--TODO: when Compare view gets added into the vtkMRMLLayoutNode,
-    if (layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutFourUpView ||
-        layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutConventionalView)
-      {
-      this->ViewerWidget->GridSpanWidget ( this->GridFrame1, 0, 1, 2, 1 );
-      g->GridSpanGUI ( this->GetGridFrame1( ), 0, 0, 2, 1 );
-      }
-    else
-      {
-      this->ViewerWidget->GridSpanWidget ( this->GridFrame1, 0, 1, 2, 1 );
-      g->GridSpanGUI ( this->GetGridFrame1( ), 0, 0, 2, 1 );
-      }
+    this->ViewerWidget->GridWidget ( this->GridFrame1, 0, 1);
+    g->GridGUI ( this->GetGridFrame1( ), 0, 0 );
 
     // insert a number of new main slice viewers according to user's input
     char buf[20];
@@ -2393,8 +2424,8 @@ void vtkSlicerApplicationGUI::PackCompareView()
         }
       }
     
-  // configure the new layout
-    this->Script ( "pack %s -side top -fill both -expand y -padx 0 -pady 0 ", this->GridFrame2->GetWidgetName ( ) );
+    // configure the new layout
+    this->Script ( "pack %s -side top -fill both -expand 1 -padx 0 -pady 0 ", this->GridFrame2->GetWidgetName ( ) );
     this->Script ("grid columnconfigure %s 0 -weight 1", this->GridFrame2->GetWidgetName() );
     
     char *layoutname = NULL;
@@ -2422,7 +2453,7 @@ void vtkSlicerApplicationGUI::PackCompareView()
         }
       else
         {
-        g->GridSpanGUI( this->GetGridFrame2( ), ncount, 0, 1, 3 );
+        g->GridGUI( this->GetGridFrame2( ), ncount, 0 );
         g->GetSliceViewer()->SetWidth(geom->GetDefaultSliceGUIFrameWidth());
         this->Script ("grid rowconfigure %s %d -weight 1", this->GridFrame2->GetWidgetName(), ncount );
 
@@ -2721,7 +2752,7 @@ void vtkSlicerApplicationGUI::PopulateModuleChooseList ( )
 void vtkSlicerApplicationGUI::PackFirstSliceViewerFrame ( )
 {
 
-//    this->Script ("pack %s -side left  -expand y -fill both -padx 0 -pady 0", 
+//    this->Script ("pack %s -side left  -expand 1 -fill both -padx 0 -pady 0", 
 //    this->DefaultSlice0Frame->GetWidgetName( ) );
 }
 
