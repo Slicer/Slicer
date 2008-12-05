@@ -494,7 +494,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
       {
       // it's a list of uris
       int numURIs = fileList->GetNumberOfValues();
-      vtkWarningMacro("Have a list of " << numURIs << " uris that go along with the archetype");
+      vtkDebugMacro("Have a list of " << numURIs << " uris that go along with the archetype");
       vtkStdString thisURI;
       storageNode1->ResetURIList();
       storageNode2->ResetURIList();
@@ -514,14 +514,14 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     if (fileList != NULL)
       {
       int numFiles = fileList->GetNumberOfValues();
-      vtkWarningMacro("Have a list of " << numFiles << " files that go along with the archetype");
+      vtkDebugMacro("Have a list of " << numFiles << " files that go along with the archetype");
       vtkStdString thisFileName;
       storageNode1->ResetFileNameList();
       storageNode2->ResetFileNameList();
       for (int n = 0; n < numFiles; n++)
         {
         thisFileName = fileList->GetValue(n);
-        //vtkWarningMacro("\tfile " << n << " =  " << thisFileName);
+        //vtkDebugMacro("\tfile " << n << " =  " << thisFileName);
         storageNode1->AddFileName(thisFileName);
         storageNode2->AddFileName(thisFileName);
         }
