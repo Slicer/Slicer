@@ -1161,6 +1161,9 @@ void vtkSlicerSlicesControlGUI::ModifyCrossHairMode ( )
           }
         }      
 
+      cnode->SetSliceIntersectionVisibility( 
+        this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Slice Intersections") );
+
       // Crosshair thickness
       if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Fine") == 1)
         {
@@ -1690,6 +1693,11 @@ void vtkSlicerSlicesControlGUI::BuildCrossHairMenu ( )
   this->CrossHairButton->GetMenu()->SetItemGroupName(item, "JumpMode" );
   
   this->CrossHairButton->GetMenu()->SelectItem ( "Centered jumping" );
+
+  this->CrossHairButton->GetMenu()->AddSeparator();
+  this->CrossHairButton->GetMenu()->AddCheckButton ("Slice Intersections" );
+  this->CrossHairButton->GetMenu()->DeselectItem ( "Slice Intersections" );
+
   this->CrossHairButton->GetMenu()->AddSeparator ( );
   this->CrossHairButton->GetMenu()->AddCommand ("close");
 }
