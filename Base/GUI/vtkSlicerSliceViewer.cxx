@@ -72,7 +72,7 @@ vtkSlicerSliceViewer::vtkSlicerSliceViewer ( ) {
 //---------------------------------------------------------------------------
 vtkSlicerSliceViewer::~vtkSlicerSliceViewer ( ){
 
-  // clear the smart pointer managed lists
+    // clear the smart pointer managed lists
     this->ImageMapperVec.clear();
     this->HighlightActorVec.clear();
     
@@ -315,6 +315,8 @@ void vtkSlicerSliceViewer::ChangeLayout( int numberRows, int numberColumns )
         cells->InsertCellPoint( 0 );
         poly->SetPoints(points);
         poly->SetLines(cells);
+        points->Delete();
+        cells->Delete();
 
         vtkCoordinate *coordinate = vtkCoordinate::New();
         coordinate->SetCoordinateSystemToNormalizedViewport();
