@@ -44,7 +44,7 @@ subdirs(
    CommandLineModule
    Editor
    GradientAnisotropicDiffusionFilter
-   Meshing
+   #Meshing
    Python
 #   PythonGADScriptedModule
    QdecModule
