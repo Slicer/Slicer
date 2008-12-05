@@ -2039,38 +2039,18 @@ void vtkSlicerApplicationGUI::PackConventionalView ( )
     this->Script ("grid rowconfigure %s 0 -weight 1", this->GridFrame2->GetWidgetName() );
       
     //--- red slice viewer
-    g = this->SlicesGUI->GetSliceGUI("Red");            
-    if ( layout->GetNumberOfCompareViewRows() <= 0 )
-      {
-      g->GridSpanGUI ( this->GetGridFrame2(), 0, 0, 1, 1);
-      }
-    else
-      {
-      g->GridSpanGUI ( this->GetGridFrame2(), 0, 0, layout->GetNumberOfCompareViewRows(), 1);
-      }
+    g = this->SlicesGUI->GetSliceGUI("Red");
+    g->GridGUI( this->GridFrame2, 0, 0 );
 
     //--- yellow slice viewer
     g = this->SlicesGUI->GetSliceGUI("Yellow");
-    if ( layout->GetNumberOfCompareViewRows() <= 0 )
-      {
-      g->GridSpanGUI ( this->GetGridFrame2(), 0, 1, 1, 1);
-      }
-    else
-      {
-      g->GridSpanGUI ( this->GetGridFrame2(), 0, 1, layout->GetNumberOfCompareViewRows(), 1);
-      }
+    g->GridGUI( this->GridFrame2, 0, 1 );
 
     //--- green slice viewer
     g = this->SlicesGUI->GetSliceGUI("Green");
-    if ( layout->GetNumberOfCompareViewRows() <= 0 )
-      {
-      g->GridSpanGUI ( this->GetGridFrame2(), 0, 2, 1, 1);
-      }
-    else
-      {
-      g->GridSpanGUI ( this->GetGridFrame2(), 0, 2, layout->GetNumberOfCompareViewRows(), 1);
-      }
+    g->GridGUI( this->GridFrame2, 0, 2 );
 
+    
     this->GetSlicesControlGUI()->RequestFOVEntriesUpdate();
     this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );
 
