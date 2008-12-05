@@ -734,7 +734,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
   this->StoppingCurvatureScale->SetParent ( moduleFrame->GetFrame() );
   this->StoppingCurvatureScale->Create ( );
   this->StoppingCurvatureScale->SetLabelText("Stopping Track Curvature");
-  this->StoppingCurvatureScale->GetWidget()->SetRange(0,10);
+  this->StoppingCurvatureScale->GetWidget()->SetRange(0.01,10);
   this->StoppingCurvatureScale->GetWidget()->SetResolution(0.1);
   this->StoppingCurvatureScale->GetWidget()->SetValue(0.8);
   this->StoppingCurvatureScale->SetBalloonHelpString("Tractography will stop if radius of curvature becomes smaller than this number units are degrees per mm.");
