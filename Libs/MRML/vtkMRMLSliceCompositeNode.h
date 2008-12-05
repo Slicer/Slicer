@@ -128,6 +128,11 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   vtkSetMacro (FiducialLabelVisibility, int );  
 
   // Description:
+  // toggles visibility of intersections of other slices in the slice viewer
+  vtkGetMacro (SliceIntersectionVisibility, int );
+  vtkSetMacro (SliceIntersectionVisibility, int );  
+
+  // Description:
   // configures the annotations
   vtkGetMacro ( AnnotationSpace, int );
   vtkSetMacro ( AnnotationSpace, int );
@@ -225,6 +230,8 @@ protected:
   
   int FiducialVisibility;
   int FiducialLabelVisibility;
+
+  int SliceIntersectionVisibility;
   
   int AnnotationSpace;
   int AnnotationMode;

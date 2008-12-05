@@ -69,6 +69,7 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
   this->CrosshairMode = vtkMRMLSliceCompositeNode::ShowIntersection;
   this->CrosshairBehavior = vtkMRMLSliceCompositeNode::Normal;
   this->CrosshairThickness = vtkMRMLSliceCompositeNode::Fine;
+  this->SliceIntersectionVisibility = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -110,6 +111,7 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
   of << indent << " labelGrid=\"" << this->LabelGrid << "\"";
   of << indent << " fiducialVisibility=\"" << this->FiducialVisibility << "\"";
   of << indent << " fiducialLabelVisibility=\"" << this->FiducialLabelVisibility << "\"";
+  of << indent << " sliceIntersectionVisibility=\"" << this->SliceIntersectionVisibility << "\"";
   of << indent << " layoutName=\"" << this->GetLayoutName() << "\"";
 
   if ( this->AnnotationSpace == vtkMRMLSliceCompositeNode::XYZ)
@@ -317,6 +319,10 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
       {
       this->SetFiducialLabelVisibility( atoi(attValue) );
       }    
+    else if (!strcmp(attName, "sliceIntersectionVisibility")) 
+      {
+      this->SetSliceIntersectionVisibility( atoi(attValue) );
+      }    
    else if (!strcmp(attName, "layoutName")) 
       {
       this->SetLayoutName( attValue );
@@ -468,6 +474,7 @@ void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "LabelGrid: " << this->LabelGrid << "\n";
   os << indent << "FiducialVisibility: " << this->FiducialVisibility << "\n";
   os << indent << "FiducialLabelVisibility: " << this->FiducialLabelVisibility << "\n";
+  os << indent << "SliceIntersectionVisibility: " << this->SliceIntersectionVisibility << "\n";
   os << indent << "AnnotationSpace: " << this->AnnotationSpace << "\n";
   os << indent << "AnnotationMode: " << this->AnnotationMode << "\n";
   os << indent << "CrosshairMode: " << this->CrosshairMode << "\n";
