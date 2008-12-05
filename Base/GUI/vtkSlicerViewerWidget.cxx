@@ -665,6 +665,7 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
         {
         node->RemoveObservers(vtkMRMLCameraNode::ActiveTagModifiedEvent, 
                               this->MRMLCallbackCommand );
+        this->UpdateCameraNode();
         }
       }
     }

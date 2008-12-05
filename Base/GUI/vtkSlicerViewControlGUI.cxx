@@ -3691,17 +3691,29 @@ vtkMRMLViewNode *vtkSlicerViewControlGUI::GetActiveView ( )
 //---------------------------------------------------------------------------
 vtkMRMLCameraNode *vtkSlicerViewControlGUI::GetActiveCamera()
 {
-  if ( this->ApplicationGUI)
+  if (this->ApplicationGUI)
     {
-    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
-    // TODO: make sure we get active view here, not 0th view, when active cameras are available.
-    vtkMRMLCameraNode *cn = vtkMRMLCameraNode::SafeDownCast(p->GetMRMLScene()->GetNthNodeByClass ( 0, "vtkMRMLCameraNode"));
-    if ( cn != NULL )  
+    vtkSlicerApplicationGUI *p = 
+      vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI());    
+    vtkMRMLViewNode *vn = this->GetActiveView();
+    if (vn != NULL)
       {
-      return (cn );
+      std::vector<vtkMRMLNode*> cnodes;
+      int nnodes = 
+        p->GetMRMLScene()->GetNodesByClass("vtkMRMLCameraNode", cnodes);
+      for (int n = 0; n < nnodes; n++)
+        {
+        vtkMRMLCameraNode *node = vtkMRMLCameraNode::SafeDownCast(cnodes[n]);
+        if (node &&
+            node->GetActiveTag() && 
+            !strcmp(node->GetActiveTag(), vn->GetName()))
+          {
+          return node;
+          }
+        }
       }
     }
-  return ( NULL );
+  return (NULL);
 }
 
 
