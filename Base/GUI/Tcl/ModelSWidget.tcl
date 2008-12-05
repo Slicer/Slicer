@@ -91,6 +91,7 @@ itcl::body ModelSWidget::constructor {sliceGUI} {
   set _startPosition "0 0 0"
   set _currentPosition "0 0 0"
   set _sliceCompositeNode [[$sliceGUI GetLogic] GetSliceCompositeNode]
+  $this configure -visibility [$_sliceCompositeNode GetSliceIntersectionVisibility]
 
   $this processEvent
 
