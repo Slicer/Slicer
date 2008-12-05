@@ -137,6 +137,18 @@ install(DIRECTORY
   PATTERN ".svn" EXCLUDE
   )
 
+# custom install for slicerget/slicerput utility programs
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/Tcl/slicerget.tcl
+  ${Slicer3_INSTALL_BIN_DIR}/slicerget
+  COPYONLY
+  )
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/Tcl/slicerput.tcl
+  ${Slicer3_INSTALL_BIN_DIR}/slicerput 
+  COPYONLY
+  )
+
 # Testing
 
 file(GLOB MRMLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.mrml")
