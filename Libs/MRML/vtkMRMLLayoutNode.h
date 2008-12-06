@@ -86,7 +86,8 @@ public:
       SlicerLayoutTabbed3DView,
       SlicerLayoutTabbedSliceView,
       SlicerLayoutLightboxView,
-      SlicerLayoutCompareView
+      SlicerLayoutCompareView,
+      SlicerLayoutNone
     };
   //ETX
 

@@ -258,6 +258,8 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::TearDownViewers()
 {
+  this->UnpackMainViewer();
+
   this->DestroyMain3DViewer ( );
   this->DestroyMainSliceViewers ( );
 }
@@ -546,6 +548,10 @@ const char* vtkSlicerApplicationGUI::GetCurrentLayoutStringName ( )
       else if (layout == vtkMRMLLayoutNode::SlicerLayoutLightboxView )
         {
         return ( "Lightbox layout" );
+        }
+      else if (layout == vtkMRMLLayoutNode::SlicerLayoutNone )
+        {
+        return ( "None" );
         }
       else
         {
@@ -1488,23 +1494,17 @@ void vtkSlicerApplicationGUI::DestroyMainSliceViewers ( )
         g->RemoveGUIObservers();
         g->SetApplicationLogic(NULL);
 
-        if (layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutFourUpView)
-          g->UngridGUI();
-        else
-          g->UnpackGUI();
         g->Delete();
         g = NULL;
         }
       }
     if ( this->GridFrame1 )
       {
-      app->Script ("pack forget %s ", this->GridFrame1->GetWidgetName ( ) );
       this->GridFrame1->Delete ( );
       this->GridFrame1 = NULL;
       }
     if ( this->GridFrame2 )
       {
-      app->Script ("pack forget %s ", this->GridFrame2->GetWidgetName ( ) );
       this->GridFrame2->Delete ( );
       this->GridFrame2 = NULL;
       }
@@ -1548,14 +1548,6 @@ void vtkSlicerApplicationGUI::DestroyMain3DViewer ( )
     if ( this->ViewerWidget )
       {
       this->ViewerWidget->RemoveMRMLObservers ( );
-      if ( layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutFourUpView )
-        {
-        this->ViewerWidget->UngridWidget ( );
-        }
-      else
-        {
-        this->ViewerWidget->UnpackWidget ( );
-        }
       this->ViewerWidget->SetApplicationLogic ( NULL );
       this->ViewerWidget->SetParent ( NULL );
       this->ViewerWidget->Delete ( );
@@ -1621,8 +1613,8 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( int arrangementType)
     this->GridFrame1->Create ( );            
     this->GridFrame2->SetParent ( this->MainSlicerWindow->GetSecondaryPanelFrame ( ) );
     this->GridFrame2->Create ( );            
-    this->CreateMainSliceViewers ( arrangementType );
-    this->CreateMain3DViewer (arrangementType );
+    this->CreateMainSliceViewers ( );
+    this->CreateMain3DViewer ( );
     this->PackMainViewer ( arrangementType , NULL );
     }
 }
@@ -1641,7 +1633,7 @@ vtkSlicerSliceGUI* vtkSlicerApplicationGUI::GetMainSliceGUI(const char *layoutNa
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::CreateMainSliceViewers ( int arrangementType )
+void vtkSlicerApplicationGUI::CreateMainSliceViewers ( )
 {
   if ( this->GetApplication() != NULL )
     {
@@ -1651,64 +1643,52 @@ void vtkSlicerApplicationGUI::CreateMainSliceViewers ( int arrangementType )
     //
     // 3 Slice Viewers
     //
+
+    // Red
     vtkSlicerSliceGUI *g = vtkSlicerSliceGUI::New ( );
     this->SlicesGUI->AddSliceGUI("Red", g);
+    g->SetApplication(app);
+    g->SetApplicationLogic(this->ApplicationLogic);
+    if ( this->GetApplicationLogic()->GetSliceLogic("Red") )
+      {
+      g->SetAndObserveModuleLogic( this->GetApplicationLogic()->GetSliceLogic("Red") );
+      }
+    g->BuildGUI( this->MainSlicerWindow->GetMainSplitFrame( ), color->SliceGUIRed );
+    g->AddGUIObservers();
+    g->SetAndObserveMRMLScene( this->MRMLScene );
+
+    // Yellow
     g = vtkSlicerSliceGUI::New ( );
     this->SlicesGUI->AddSliceGUI("Yellow", g);
+    g->SetApplication(app);
+    g->SetApplicationLogic(this->ApplicationLogic);
+    if ( this->GetApplicationLogic()->GetSliceLogic("Yellow") )
+      {
+      g->SetAndObserveModuleLogic( this->GetApplicationLogic()->GetSliceLogic("Yellow") );
+      }
+    g->BuildGUI( this->MainSlicerWindow->GetMainSplitFrame( ), color->SliceGUIYellow );
+    g->AddGUIObservers();
+    g->SetAndObserveMRMLScene( this->MRMLScene );
+
+    // Green
     g = vtkSlicerSliceGUI::New ( );
     this->SlicesGUI->AddSliceGUI("Green", g);
-    if (this->SlicesGUI)
+    g->SetApplication(app);
+    g->SetApplicationLogic(this->ApplicationLogic);
+    if ( this->GetApplicationLogic()->GetSliceLogic("Green") )
       {
-      char *layoutname = NULL;
-      int nSliceGUI = this->SlicesGUI->GetNumberOfSliceGUI();
-      for (int i = 0; i < nSliceGUI; i++)
-        {
-        if (i == 0)
-          {
-          g = this->SlicesGUI->GetFirstSliceGUI();
-          layoutname = this->SlicesGUI->GetFirstSliceGUILayoutName();
-          }
-        else
-          {
-          g = this->SlicesGUI->GetNextSliceGUI(layoutname);
-          layoutname = this->SlicesGUI->GetNextSliceGUILayoutName(layoutname);
-          }
-        g->SetApplication(app);
-        g->SetApplicationLogic(this->ApplicationLogic);
-        
-        switch (layoutname[0])
-          {
-          case 'R':
-            //if ( this->MainSliceLogic0 )
-            //      g->SetAndObserveModuleLogic( this->MainSliceLogic0 );
-            if ( this->GetApplicationLogic()->GetSliceLogic("Red") )
-              g->SetAndObserveModuleLogic( this->GetApplicationLogic()->GetSliceLogic("Red") );
-            
-            g->BuildGUI( this->MainSlicerWindow->GetMainSplitFrame( ), color->SliceGUIRed );
-            break;
-          case 'Y':
-            if ( this->GetApplicationLogic()->GetSliceLogic("Yellow") )
-              g->SetAndObserveModuleLogic( this->GetApplicationLogic()->GetSliceLogic("Yellow") );
-            
-            g->BuildGUI( this->MainSlicerWindow->GetMainSplitFrame( ), color->SliceGUIYellow );
-            break;
-          case 'G':
-            if ( this->GetApplicationLogic()->GetSliceLogic("Green") )
-              g->SetAndObserveModuleLogic( this->GetApplicationLogic()->GetSliceLogic("Green") );
-            
-            g->BuildGUI( this->MainSlicerWindow->GetMainSplitFrame( ), color->SliceGUIGreen );
-            break;
-          }
-        g->AddGUIObservers();
-        g->SetAndObserveMRMLScene( this->MRMLScene );
-        }
+      g->SetAndObserveModuleLogic( this->GetApplicationLogic()->GetSliceLogic("Green") );
       }
+    g->BuildGUI( this->MainSlicerWindow->GetMainSplitFrame( ), color->SliceGUIGreen );
+    g->AddGUIObservers();
+    g->SetAndObserveMRMLScene( this->MRMLScene );
+
     }
-}
+ }
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::CreateMain3DViewer ( int arrangementType )
+void vtkSlicerApplicationGUI::CreateMain3DViewer ( )
 {
   if ( this->GetApplication() != NULL )
     {
@@ -1759,19 +1739,11 @@ void vtkSlicerApplicationGUI::CreateMain3DViewer ( int arrangementType )
 
 
 
-//---------------------------------------------------------------------------
+
 void vtkSlicerApplicationGUI::PackMainViewer ( int arrangmentType, const char *whichSlice)
 {
   if ( this->GetApplication() != NULL )
     {
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    // parent the sliceGUI  based on selected view arrangement & build
-
-    // jvm - if Slicer crashes when starting, try putting in this line
-    // to overrride the cached layout
-    
-    // arrangmentType = vtkMRMLLayoutNode::SlicerLayoutInitialView;
-    
       switch ( arrangmentType)
         {
         case vtkMRMLLayoutNode::SlicerLayoutInitialView:
@@ -1824,12 +1796,73 @@ void vtkSlicerApplicationGUI::PackMainViewer ( int arrangmentType, const char *w
     }
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::UnpackMainViewer ( )
+{
+  if ( this->GetApplication() != NULL )
+    {
+      vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+
+      switch (this->CurrentLayout)
+        {
+        case vtkMRMLLayoutNode::SlicerLayoutInitialView:
+          this->UnpackConventionalView ( );
+          break;
+        case vtkMRMLLayoutNode::SlicerLayoutConventionalView:
+          this->UnpackConventionalView ( );
+          break;
+        case vtkMRMLLayoutNode::SlicerLayoutFourUpView:
+          this->UnpackFourUpView ( );
+          break;
+        case vtkMRMLLayoutNode::SlicerLayoutOneUp3DView:
+          this->UnpackOneUp3DView ( );
+          break;
+        case vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView:
+            this->UnpackOneUpSliceView ();
+          break;
+        case vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView:
+          this->UnpackOneUpSliceView ();
+          break;
+        case vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView:
+          this->UnpackOneUpSliceView ();
+          break;
+        case vtkMRMLLayoutNode::SlicerLayoutOneUpSliceView:
+          this->UnpackOneUpSliceView ( );
+          break;
+        case vtkMRMLLayoutNode::SlicerLayoutTabbed3DView:
+          this->UnpackTabbed3DView ( );
+          break;
+        case vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView:
+          this->UnpackTabbedSliceView ( );
+          break;
+        case vtkMRMLLayoutNode::SlicerLayoutLightboxView:
+          this->UnpackLightboxView ( );
+          break;
+        case vtkMRMLLayoutNode::SlicerLayoutCompareView:
+          this->UnpackCompareView();
+          break;
+        default:
+          this->UnpackConventionalView ( );
+          break;
+        }
+
+      if ( this->GridFrame1 )
+        {
+          app->Script ( "pack forget %s", this->GridFrame1->GetWidgetName() );
+        }
+      if ( this->GridFrame2 )
+        {
+          app->Script ( "pack forget %s", this->GridFrame2->GetWidgetName() );
+        }
+    }
+  
+  this->CurrentLayout = vtkMRMLLayoutNode::SlicerLayoutNone;
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::RepackMainViewer ( int arrangementType, const char *whichSlice )
 {
-  this->UnpackMainSliceViewers ( );
-  this->UnpackMain3DViewer ( );
+  this->UnpackMainViewer();
 
   // Need to reset the weights, minsize, and pad on the grids to get
   // the grids to resize back to the default size of 0,0
@@ -1897,8 +1930,8 @@ void vtkSlicerApplicationGUI::RepackMainViewer ( int arrangementType, const char
 
     // use these lines to print out any hold overs from ungridding.
     // Size should be "0 0" and there should be no widgets listed
-//     app->Script("puts \"After forgetting size (1): [grid size %s] : [grid slaves %s]\"", this->GridFrame1->GetWidgetName ( ) , this->GridFrame1->GetWidgetName ( ) );
-//     app->Script("puts \"After forgetting size (2): [grid size %s] : [grid slaves %s]\"", this->GridFrame2->GetWidgetName ( ) , this->GridFrame2->GetWidgetName ( ) );
+//      app->Script("puts \"After forgetting size (1): [grid size %s] : [grid slaves %s]\"", this->GridFrame1->GetWidgetName ( ) , this->GridFrame1->GetWidgetName ( ) );
+//      app->Script("puts \"After forgetting size (2): [grid size %s] : [grid slaves %s]\"", this->GridFrame2->GetWidgetName ( ) , this->GridFrame2->GetWidgetName ( ) );
     }
     
   
@@ -1908,93 +1941,6 @@ void vtkSlicerApplicationGUI::RepackMainViewer ( int arrangementType, const char
   // show tabs that say things other than "View".
   this->MainSlicerWindow->GetViewNotebook()->ShowPage ( "View");
   this->PackMainViewer ( arrangementType, whichSlice );
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::UnpackMainSliceViewers (  )
-{
-  if ( this->GetApplication() != NULL )
-    {
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    vtkMRMLLayoutNode *layout = this->GetGUILayoutNode();
-    if ( layout == NULL )
-      {
-      return;
-      }
-
-    //
-    // Unpack or Ungrid main slice viewers
-    //
-    if (this->SlicesGUI)
-      {
-      vtkSlicerSliceGUI *g = NULL;
-      char *layoutname = NULL;
-      int nSliceGUI = this->SlicesGUI->GetNumberOfSliceGUI();
-      for (int i = 0; i < nSliceGUI; i++)
-        {
-        if (i == 0)
-          {
-          g = this->SlicesGUI->GetFirstSliceGUI();
-          layoutname = this->SlicesGUI->GetFirstSliceGUILayoutName();
-          }
-        else
-          {
-          g = this->SlicesGUI->GetNextSliceGUI(layoutname);
-          layoutname = this->SlicesGUI->GetNextSliceGUILayoutName (layoutname );
-          }
-        
-        //--- check the previous layout (one we are dismantling.)
-        //--- take the layout apart the same way we put it together.
-        if ( this->CurrentLayout == vtkMRMLLayoutNode::SlicerLayoutFourUpView ||
-             this->CurrentLayout == vtkMRMLLayoutNode::SlicerLayoutCompareView ||
-             this->CurrentLayout == vtkMRMLLayoutNode::SlicerLayoutConventionalView )
-          {
-          g->UngridGUI();
-          }
-        else
-          {
-          g->UnpackGUI();
-          }
-        }
-      }
-    if ( this->GridFrame2 )
-      {
-      app->Script ("pack forget %s ", this->GridFrame2->GetWidgetName ( ) );
-      }
-    }
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::UnpackMain3DViewer (  )
-{
-  if ( this->GetApplication() != NULL )
-    {
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
-    vtkMRMLLayoutNode *layout = this->GetGUILayoutNode ( );
-    if ( layout == NULL )
-      {
-      return;
-      }
-    
-    //
-    // 3D Viewer
-    //
-    this->MainSlicerWindow->GetViewNotebook()->RemovePagesMatchingTag ( this->ViewerPageTag );
-    if ( this->CurrentLayout == vtkMRMLLayoutNode::SlicerLayoutFourUpView )
-      {
-      this->ViewerWidget->UngridWidget ( );
-      }
-    else
-      {
-      this->ViewerWidget->UnpackWidget ( );
-      }
-    if ( this->GridFrame1 )
-      {
-      app->Script ( "pack forget %s", this->GridFrame1->GetWidgetName() );
-      }
-    }
 }
 
 
@@ -2028,6 +1974,9 @@ void vtkSlicerApplicationGUI::PackConventionalView ( )
 
     // Show the bottom panel
     this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(1);
+
+    // Don't use tabs
+    this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );
     
     // Pack
     this->ViewerWidget->PackWidget(this->MainSlicerWindow->GetViewFrame() );
@@ -2052,7 +2001,6 @@ void vtkSlicerApplicationGUI::PackConventionalView ( )
 
     
     this->GetSlicesControlGUI()->RequestFOVEntriesUpdate();
-    this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );
 
     // finally, modify the layout node
     layout->DisableModifiedEventOn();
@@ -2087,8 +2035,10 @@ void vtkSlicerApplicationGUI::PackOneUp3DView ( )
     // Hide the secondary panel
     this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(0);
 
-    
+    // Don't use tabs
     this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );      
+
+    // Pack
     this->ViewerWidget->PackWidget(this->MainSlicerWindow->GetViewFrame() );
     
     vtkSlicerSliceGUI *g = this->SlicesGUI->GetSliceGUI("Red");
@@ -2098,8 +2048,6 @@ void vtkSlicerApplicationGUI::PackOneUp3DView ( )
     g = this->SlicesGUI->GetSliceGUI("Green");
     g->PackGUI(this->MainSlicerWindow->GetSecondaryPanelFrame());
     
-    this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );
-
     // finally modify the layout node
     layout->DisableModifiedEventOn();
     layout->SetBottomPanelVisibility( 0 );
@@ -2134,6 +2082,10 @@ void vtkSlicerApplicationGUI::PackOneUpSliceView ( const char * whichSlice )
     // Hide the secondary panel
     this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(0);
 
+    // Don't use tabs
+    this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );
+
+    // Pack
     vtkSlicerSliceGUI *g;
     int cur = layout->GetViewArrangement();
     int newlayout = vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView;
@@ -2156,10 +2108,8 @@ void vtkSlicerApplicationGUI::PackOneUpSliceView ( const char * whichSlice )
       newlayout = vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView ;
       }
     
-    //      this->ViewerWidget->PackWidget(this->MainSlicerWindow->GetViewFrame() );
     this->GetSlicesControlGUI()->RequestFOVEntriesUpdate();
-    this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );
-
+   
     // finally modify the layout node
     layout->DisableModifiedEventOn();
     layout->SetBottomPanelVisibility( 0 );
@@ -2193,6 +2143,8 @@ void vtkSlicerApplicationGUI::PackFourUpView ( )
     // Hide the secondary panel
     this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(0);
 
+    // Don't use tabs
+    this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );
 
     // Use this frame in MainSlicerWindow's ViewFrame to grid in the various viewers.
     this->Script ( "pack %s -side top -fill both -expand 1 -padx 0 -pady 0 ", this->GridFrame1->GetWidgetName ( ) );
@@ -2210,8 +2162,7 @@ void vtkSlicerApplicationGUI::PackFourUpView ( )
     g->GridGUI( this->GetGridFrame1(), 1, 1 );
 
     this->GetSlicesControlGUI()->RequestFOVEntriesUpdate();
-    this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );
-
+   
     // finally modify the layout node
     layout->DisableModifiedEventOn();
     layout->SetBottomPanelVisibility( 0 );
@@ -2250,6 +2201,8 @@ void vtkSlicerApplicationGUI::PackTabbed3DView ( )
     // Hide the secondary panel
     this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(0);
 
+    // Use tabs
+    this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 1 );
     
     vtkSlicerSliceGUI *g = this->SlicesGUI->GetSliceGUI("Red");
     g->PackGUI( this->MainSlicerWindow->GetSecondaryPanelFrame( ));
@@ -2266,9 +2219,6 @@ void vtkSlicerApplicationGUI::PackTabbed3DView ( )
     // so just hide it in this configuration, and expose
     // it again when the view configuration changes.
     this->MainSlicerWindow->GetViewNotebook()->HidePage ( "View");
-
-    // Tab the 3D view
-    this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 1 );
     
     // finally modify the layout node
     layout->DisableModifiedEventOn();
@@ -2304,6 +2254,8 @@ void vtkSlicerApplicationGUI::PackTabbedSliceView ( )
     // Hide the secondary panel
     this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(0);
 
+    // Use tabs
+    this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 1 );
     
     this->MainSlicerWindow->GetViewNotebook()->AddPage("Red slice", NULL, NULL, this->ViewerPageTag );
     
@@ -2323,12 +2275,9 @@ void vtkSlicerApplicationGUI::PackTabbedSliceView ( )
     // so just hide it in this configuration, and expose
     // it again when the view configuration changes.
     this->MainSlicerWindow->GetViewNotebook()->HidePage ( "View");
-    //      this->ViewerWidget->PackWidget(this->MainSlicerWindow->GetViewFrame() );
-    
+     
     this->GetSlicesControlGUI()->RequestFOVEntriesUpdate();
-    // Tab the slices
-    this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 1 );
-
+ 
     // finally modify the layout node
     layout->DisableModifiedEventOn();
     layout->SetBottomPanelVisibility( 0 );
@@ -2359,7 +2308,10 @@ void vtkSlicerApplicationGUI::PackCompareView()
     // Show the secondary panel
     this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(1);
 
-    // setup the layout for Frame1
+    // Don't use tabs
+    this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );
+
+   // setup the layout for Frame1
     this->Script ( "pack %s -side top -fill both -expand 1 -padx 0 -pady 0 ", this->GridFrame1->GetWidgetName ( ) );
     this->Script ("grid rowconfigure %s 0 -weight 1", this->GridFrame1->GetWidgetName() );
     this->Script ("grid columnconfigure %s 0 -weight 1 -uniform 1", this->GridFrame1->GetWidgetName() );
@@ -2465,7 +2417,6 @@ void vtkSlicerApplicationGUI::PackCompareView()
       }
 
     this->GetSlicesControlGUI()->RequestFOVEntriesUpdate();
-    this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );
 
     // finally modify the layout node
     layout->DisableModifiedEventOn();
@@ -2477,6 +2428,218 @@ void vtkSlicerApplicationGUI::PackCompareView()
       }
     layout->DisableModifiedEventOff();
     }
+}
+
+void vtkSlicerApplicationGUI::UnpackConventionalView()
+{
+  if (this->ViewerWidget)
+    {
+    this->ViewerWidget->UnpackWidget();
+    }
+  
+  if (this->SlicesGUI)
+    {
+      vtkSlicerSliceGUI *g = NULL;
+      g = this->SlicesGUI->GetSliceGUI("Red");
+      if (g)
+        {
+          g->UngridGUI();
+        }
+      g = this->SlicesGUI->GetSliceGUI("Green");
+      if (g)
+        {
+          g->UngridGUI();
+        }
+      g = this->SlicesGUI->GetSliceGUI("Yellow");
+      if (g)
+        {
+          g->UngridGUI();
+        }
+    }
+}
+
+void vtkSlicerApplicationGUI::UnpackOneUp3DView()
+{
+  if (this->ViewerWidget)
+    {
+    this->ViewerWidget->UnpackWidget();
+    }
+  
+  if (this->SlicesGUI)
+    {
+      vtkSlicerSliceGUI *g = NULL;
+      g = this->SlicesGUI->GetSliceGUI("Red");
+      if (g)
+        {
+          g->UnpackGUI();
+        }
+      g = this->SlicesGUI->GetSliceGUI("Green");
+      if (g)
+        {
+          g->UnpackGUI();
+        }
+      g = this->SlicesGUI->GetSliceGUI("Yellow");
+      if (g)
+        {
+          g->UnpackGUI();
+        }
+    }
+}
+
+void vtkSlicerApplicationGUI::UnpackOneUpSliceView()
+{
+  if (this->SlicesGUI)
+    {
+      vtkSlicerSliceGUI *g = NULL;
+      if (this->CurrentLayout == vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView
+          || this->CurrentLayout == vtkMRMLLayoutNode::SlicerLayoutOneUpSliceView)
+        {
+          g = this->SlicesGUI->GetSliceGUI("Red");
+        }
+      else if (this->CurrentLayout == vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView)
+        {
+          g = this->SlicesGUI->GetSliceGUI("Green");
+        }
+      else if (this->CurrentLayout == vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView)
+        {
+          g = this->SlicesGUI->GetSliceGUI("Yellow");
+        }
+
+      if (g)
+        {
+          g->UnpackGUI();
+        }
+    }
+}
+
+void vtkSlicerApplicationGUI::UnpackFourUpView()
+{
+  if (this->ViewerWidget)
+    {
+    this->ViewerWidget->UngridWidget();
+    }
+  
+  if (this->SlicesGUI)
+    {
+      vtkSlicerSliceGUI *g = NULL;
+      g = this->SlicesGUI->GetSliceGUI("Red");
+      if (g)
+        {
+          g->UngridGUI();
+        }
+      g = this->SlicesGUI->GetSliceGUI("Green");
+      if (g)
+        {
+          g->UngridGUI();
+        }
+      g = this->SlicesGUI->GetSliceGUI("Yellow");
+      if (g)
+        {
+          g->UngridGUI();
+        }
+    }
+}
+
+void vtkSlicerApplicationGUI::UnpackTabbed3DView()
+{
+  //  this->MainSlicerWindow->GetViewNotebook()->RemovePagesMatchingTag ( this->ViewerPageTag );
+  this->MainSlicerWindow->GetViewNotebook()->RemovePage( "Current view" );
+
+  if (this->ViewerWidget)
+    {
+    this->ViewerWidget->UnpackWidget();
+    }
+  
+  if (this->SlicesGUI)
+    {
+      vtkSlicerSliceGUI *g = NULL;
+      g = this->SlicesGUI->GetSliceGUI("Red");
+      if (g)
+        {
+          g->UnpackGUI();
+        }
+      g = this->SlicesGUI->GetSliceGUI("Green");
+      if (g)
+        {
+          g->UnpackGUI();
+        }
+      g = this->SlicesGUI->GetSliceGUI("Yellow");
+      if (g)
+        {
+          g->UnpackGUI();
+        }
+    }
+}
+
+void vtkSlicerApplicationGUI::UnpackTabbedSliceView()
+{
+  this->MainSlicerWindow->GetViewNotebook()->RemovePage( "Red slice" );
+  this->MainSlicerWindow->GetViewNotebook()->RemovePage( "Yellow slice" );
+  this->MainSlicerWindow->GetViewNotebook()->RemovePage( "Green slice" );
+
+  if (this->SlicesGUI)
+    {
+      vtkSlicerSliceGUI *g = NULL;
+      g = this->SlicesGUI->GetSliceGUI("Red");
+      if (g)
+        {
+          g->UnpackGUI();
+        }
+      g = this->SlicesGUI->GetSliceGUI("Green");
+      if (g)
+        {
+          g->UnpackGUI();
+        }
+      g = this->SlicesGUI->GetSliceGUI("Yellow");
+      if (g)
+        {
+          g->UnpackGUI();
+        }
+    }
+}
+
+void vtkSlicerApplicationGUI::UnpackCompareView()
+{
+  if (this->ViewerWidget)
+    {
+    this->ViewerWidget->UngridWidget();
+    }
+  
+  if (this->SlicesGUI)
+    {
+      vtkSlicerSliceGUI *g = NULL;
+      g = this->SlicesGUI->GetSliceGUI("Red");
+      if (g)
+        {
+          g->UngridGUI();
+        }
+
+    int nSliceGUI = this->SlicesGUI->GetNumberOfSliceGUI();
+    char *layoutname = NULL;
+    for (int i = 0; i < nSliceGUI; i++)
+      {
+      if (i == 0)
+        {
+        g = this->SlicesGUI->GetFirstSliceGUI();
+        layoutname = this->SlicesGUI->GetFirstSliceGUILayoutName();
+        }
+      else
+        {
+        g = this->SlicesGUI->GetNextSliceGUI(layoutname);
+        layoutname = this->SlicesGUI->GetNextSliceGUILayoutName(layoutname);
+        }
+      
+      if ( strncmp(layoutname, "Compare", 7) == 0 )
+        {
+          g->UngridGUI();
+        }
+      }
+    }
+}
+
+void vtkSlicerApplicationGUI::UnpackLightboxView()
+{
+  // nothing implemented for this layout (pack or unpack)
 }
 
 //---------------------------------------------------------------------------

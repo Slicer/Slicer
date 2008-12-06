@@ -199,7 +199,15 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void PackTabbed3DView ( );
     virtual void PackTabbedSliceView ( );
     virtual void PackLightboxView ( );
-        virtual void PackCompareView();
+    virtual void PackCompareView();
+    virtual void UnpackConventionalView ( );
+    virtual void UnpackOneUp3DView ( );
+    virtual void UnpackOneUpSliceView ();
+    virtual void UnpackFourUpView ( );
+    virtual void UnpackTabbed3DView ( );
+    virtual void UnpackTabbedSliceView ( );
+    virtual void UnpackLightboxView ( );
+    virtual void UnpackCompareView();
 
     // Description:
     // Methods to manage Slice viewers
@@ -216,17 +224,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void BuildMainViewer ( int arrangementType);
 
     virtual void PackMainViewer (  int arrangementType, const char *whichSlice );
+    virtual void UnpackMainViewer ( );
 
-    virtual void CreateMain3DViewer ( int arrangementType );
-    virtual void CreateMainSliceViewers ( int arrangementType );
+    virtual void CreateMain3DViewer ( );
+    virtual void CreateMainSliceViewers ( );
 
     virtual void TearDownViewers ( );
     virtual void DestroyMain3DViewer ( );
     virtual void DestroyMainSliceViewers ( );
 
     virtual void RepackMainViewer ( int arrangementType, const char *whichSlice );
-    virtual void UnpackMain3DViewer (  );
-    virtual void UnpackMainSliceViewers ( );
 
     virtual void PopulateModuleChooseList ( );
     virtual void SetCurrentModuleToHome();
