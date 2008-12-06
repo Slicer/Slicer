@@ -156,7 +156,7 @@ set ::USE_NUMPY "ON"
 # - should be "true" or "false"
 set ::USE_SCIPY "false"
 # CMake Option for using OpenIGTLink library. Must be "OFF" or "ON", default is "OFF"
-set ::USE_OPENIGTLINK "OFF"
+set ::USE_OPENIGTLINK "ON"
  
 
 switch $::tcl_platform(os) {
