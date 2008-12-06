@@ -36,7 +36,9 @@ public:
     if (event == vtkCommand::InteractionEvent || event == vtkCommand::EndInteractionEvent)
       {
       vtkSlicerBoxWidget2 *boxWidget = reinterpret_cast<vtkSlicerBoxWidget2*>(caller);
-      if (boxWidget && this->ROINode)
+      if (boxWidget && this->ROINode && 
+          (this->ROINode->GetInteractiveMode() || 
+           (!this->ROINode->GetInteractiveMode() && event == vtkCommand::EndInteractionEvent)) )
         {
         vtkSlicerBoxRepresentation* boxRep = reinterpret_cast<vtkSlicerBoxRepresentation*>(boxWidget->GetRepresentation());
         //boxRep->GetTransform(this->Transform);
@@ -50,6 +52,11 @@ public:
         this->ROINode->InvokePendingModifiedEvent();
        //this->ROIViewerWidget->SetProcessingWidgetEvent(0);
 
+        }
+      else if (boxWidget && this->ROINode && 
+           (!this->ROINode->GetInteractiveMode() && event == vtkCommand::InteractionEvent) )
+        {
+        this->ROIViewerWidget->Render();
         }
       }
   }
@@ -268,7 +275,7 @@ void vtkSlicerROIViewerWidget::UpdateROIFromMRML(vtkMRMLROINode *roi)
     myCallback->ROINode = roi;
     myCallback->ROIViewerWidget = this;
     boxWidget->AddObserver(vtkCommand::EnableEvent, myCallback);
-    boxWidget->AddObserver(vtkCommand::StartInteractionEvent, myCallback);
+    boxWidget->AddObserver(vtkCommand::EndInteractionEvent, myCallback);
     boxWidget->AddObserver(vtkCommand::InteractionEvent, myCallback);
     myCallback->Delete();
     

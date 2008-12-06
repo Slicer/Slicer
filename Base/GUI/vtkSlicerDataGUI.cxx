@@ -115,7 +115,7 @@ void vtkSlicerDataGUI::AddGUIObservers ( )
 void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
                                           unsigned long event, void *callData )
 {
-  const char *moduleName;
+  const char *moduleName = NULL;
   vtkMRMLNode *node = (vtkMRMLNode *)callData;
   if (node->IsA("vtkMRMLVolumeNode"))
     {
@@ -133,8 +133,10 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
     {
     moduleName = "Fiducials";
     }
-
-  this->InvokeEvent(vtkSlicerModuleGUI::ModuleSelectedEvent, (void *)moduleName);
+  if (moduleName)
+    {
+    this->InvokeEvent(vtkSlicerModuleGUI::ModuleSelectedEvent, (void *)moduleName);
+    }
 }
 
 

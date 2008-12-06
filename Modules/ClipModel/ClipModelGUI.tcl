@@ -15,7 +15,7 @@ proc ClipModelTearDownGUI {this} {
     
     # nodeSelector  ;# disabled for now
     set widgets {
-        clip interact modelsSelect
+        clip displayWidget modelsSelect roiSelect
         modelsOutputSelect modelsFrame 
     }
     
@@ -34,7 +34,10 @@ proc ClipModelTearDownGUI {this} {
 }
 
 proc ClipModelBuildGUI {this} {
-    
+    set ::ClipModel($this,processingMRML) ""
+    set ::ClipModel($this,processingGUI) ""
+    set ::ClipModel($this,roiNode) ""
+
     if { [info exists ::ClipModel(singleton)] } {
         error "ClipModel singleton already created"
     }
@@ -67,7 +70,7 @@ proc ClipModelBuildGUI {this} {
     #
     # help frame
     #
-    set helptext "The ClipModel clips model by a box using a box widget."
+    set helptext "The ClipModel clips model by an ROI using a box widget."
     set abouttext "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details."
     $this BuildHelpAndAboutFrame $pageWidget $helptext $abouttext
     
@@ -80,7 +83,7 @@ proc ClipModelBuildGUI {this} {
     $::ClipModel($this,modelsFrame) Create
     $::ClipModel($this,modelsFrame) SetLabelText "Models"
     pack [$::ClipModel($this,modelsFrame) GetWidgetName] \
-        -side top -anchor nw -fill x -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
+        -side top -anchor nw -expand y -fill x -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
     
     set ::ClipModel($this,modelsSelect) [vtkSlicerNodeSelectorWidget New]
     $::ClipModel($this,modelsSelect) SetParent [$::ClipModel($this,modelsFrame) GetFrame]
@@ -91,7 +94,19 @@ proc ClipModelBuildGUI {this} {
     $::ClipModel($this,modelsSelect) UpdateMenu
     $::ClipModel($this,modelsSelect) SetLabelText "Source Model:"
     $::ClipModel($this,modelsSelect) SetBalloonHelpString "The Source Model to operate on"
-    pack [$::ClipModel($this,modelsSelect) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+    pack [$::ClipModel($this,modelsSelect) GetWidgetName] -side top -anchor w -padx 2 -pady 2 
+     
+    set ::ClipModel($this,roiSelect) [vtkSlicerNodeSelectorWidget New]
+    $::ClipModel($this,roiSelect) SetParent [$::ClipModel($this,modelsFrame) GetFrame]
+    $::ClipModel($this,roiSelect) Create
+    $::ClipModel($this,roiSelect) SetNodeClass "vtkMRMLROINode" "" "" ""
+    $::ClipModel($this,roiSelect) SetMRMLScene [[$this GetLogic] GetMRMLScene]
+    $::ClipModel($this,roiSelect) SetNoneEnabled 1
+    $::ClipModel($this,roiSelect) NewNodeEnabledOn
+    $::ClipModel($this,roiSelect) UpdateMenu
+    $::ClipModel($this,roiSelect) SetLabelText "Cropping ROI:"
+    $::ClipModel($this,roiSelect) SetBalloonHelpString "The ROI to use as cropping region"
+    pack [$::ClipModel($this,roiSelect) GetWidgetName] -side top -anchor w -padx 2 -pady 2 
     
     set ::ClipModel($this,modelsOutputSelect) [vtkSlicerNodeSelectorWidget New]
     $::ClipModel($this,modelsOutputSelect) SetParent [$::ClipModel($this,modelsFrame) GetFrame]
@@ -102,7 +117,7 @@ proc ClipModelBuildGUI {this} {
     $::ClipModel($this,modelsOutputSelect) UpdateMenu
     $::ClipModel($this,modelsOutputSelect) SetLabelText "Clipped Model:"
     $::ClipModel($this,modelsOutputSelect) SetBalloonHelpString "The target output model"
-    pack [$::ClipModel($this,modelsOutputSelect) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+    pack [$::ClipModel($this,modelsOutputSelect) GetWidgetName] -side top -anchor w -padx 2 -pady 2 
     
     set ::ClipModel($this,clip) [vtkKWCheckButton New]
     $::ClipModel($this,clip) SetParent [$::ClipModel($this,modelsFrame) GetFrame]
@@ -110,15 +125,14 @@ proc ClipModelBuildGUI {this} {
     $::ClipModel($this,clip) SetText "Clipping  Enabled"
     $::ClipModel($this,clip) SetSelectedState 0
     $::ClipModel($this,clip) SetBalloonHelpString "Apply clipping"
-    pack [$::ClipModel($this,clip) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+    pack [$::ClipModel($this,clip) GetWidgetName] -side top -anchor w -padx 2 -pady 2 
     
-    set ::ClipModel($this,interact) [vtkKWCheckButton New]
-    $::ClipModel($this,interact) SetParent [$::ClipModel($this,modelsFrame) GetFrame]
-    $::ClipModel($this,interact) Create
-    $::ClipModel($this,interact) SetText "Clip While Interacting"
-    $::ClipModel($this,interact) SetSelectedState 0
-    $::ClipModel($this,interact) SetBalloonHelpString "Apply interactping"
-    pack [$::ClipModel($this,interact) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+
+    set ::ClipModel($this,displayWidget) [vtkSlicerROIDisplayWidget New]
+    $::ClipModel($this,displayWidget) SetParent [$::ClipModel($this,modelsFrame) GetFrame]
+    $::ClipModel($this,displayWidget) Create
+    $::ClipModel($this,displayWidget) SetBalloonHelpString "Apply displayWidgeting"
+    pack [$::ClipModel($this,displayWidget) GetWidgetName] -side top -anchor w -expand y -fill x -padx 2 -pady 2 
     
     set ::ClipModel($this,init) ""
     set ::ClipModel($this,oldOut) ""
@@ -126,44 +140,45 @@ proc ClipModelBuildGUI {this} {
 
 proc ClipModelAddGUIObservers {this} {
     $this AddObserverByNumber $::ClipModel($this,clip) 10000 
-    $this AddObserverByNumber $::ClipModel($this,interact) 10000 
     $this AddObserverByNumber $::ClipModel($this,modelsSelect) 11000  
+    $this AddObserverByNumber $::ClipModel($this,roiSelect) 11000  
     $this AddObserverByNumber $::ClipModel($this,modelsOutputSelect) 11000  
-    $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
+    #$this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
     
 }
 
 proc ClipModelRemoveGUIObservers {this} {
-    $this RemoveMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
+    #$this RemoveMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
     $this RemoveObserverByNumber $::ClipModel($this,clip) 10000
-    $this RemoveObserverByNumber $::ClipModel($this,interact) 10000
     $this RemoveObserverByNumber $::ClipModel($this,modelsSelect) 11000
+    $this RemoveObserverByNumber $::ClipModel($this,roiSelect) 11000
     $this RemoveObserverByNumber $::ClipModel($this,modelsOutputSelect) 11000
 }
 
 proc ClipModelProcessGUIEvents {this caller event} {
     #puts "in ClipModelProcessGUIEvents"
-    if { $caller == $::ClipModel($this,interact) } {
-        set interact [$::ClipModel($this,interact) GetSelectedState]
-        if { $interact == 0} {
-            $::ClipModel($this,box) RemoveObservers InteractionEvent
-            $::ClipModel($this,box) AddObserver InteractionEvent ClipModelRender
-            $::ClipModel($this,box) RemoveObservers EndInteractionEvent
-            $::ClipModel($this,box) AddObserver EndInteractionEvent ClipModelClipModel
-        }
-        if { $interact == 1} {
-            $::ClipModel($this,box) RemoveObservers InteractionEvent
-            $::ClipModel($this,box) AddObserver InteractionEvent ClipModelClipModel
-        }
-        $::slicer3::ViewerWidget Render
+    if { $::ClipModel($this,processingMRML) != ""} {
         return
+    }
+
+    set ::ClipModel($this,processingGUI) 1
+
+    if { $caller == $::ClipModel($this,roiSelect) } {
+        set roi [$::ClipModel($this,roiSelect) GetSelected]
+        if { $::ClipModel($this,roiNode) != "" } {
+            $this RemoveMRMLObserverByNumber $::ClipModel($this,roiNode) 31
+        }
+        set ::ClipModel($this,roiNode) $roi
+        $this AddMRMLObserverByNumber $::ClipModel($this,roiNode) 31
+        $::ClipModel($this,displayWidget) SetROINode $roi
+        #puts "ROI node"
+        #puts [$::ClipModel($this,roiNode) Print]
     }
 
     if { $caller == $::ClipModel($this,modelsSelect) } {
         set mod [$::ClipModel($this,modelsSelect) GetSelected]
         if { $mod != "" && [$mod GetPolyData] != ""} {
             eval $::ClipModel($this,planes)  SetBounds [[$mod GetPolyData] GetBounds]
-            eval $::ClipModel($this,boxRep)  PlaceWidget [[$mod GetPolyData] GetBounds]
             #puts "Setting Box Bounds"
         }
     }
@@ -186,6 +201,8 @@ proc ClipModelProcessGUIEvents {this caller event} {
             #$::slicer3::ViewerWidget Render
 
             set ::ClipModel($this,oldOut) $mod
+
+             set ::ClipModel($this,processingGUI) ""
             return
         }
     } 
@@ -193,13 +210,16 @@ proc ClipModelProcessGUIEvents {this caller event} {
 
     ClipModelApply $this
     
-    ClipModelUpdateMRML $this
+    set ::ClipModel($this,processingGUI) ""
 }
 
 proc ClipModelRemoveLogicObservers {this} {
 }
 
 proc ClipModelRemoveMRMLNodeObservers {this} {
+    if { [info exists ::ClipModel($this,roiNode)] } {
+        $this RemoveMRMLObserverByNumber $::ClipModel($this,roiNode) 31
+    }
 }
 
 proc ClipModelProcessLogicEvents {this caller event} {
@@ -245,32 +265,35 @@ proc ClipModelGetParameterNode {} {
 }
 
 
-proc ClipModelGetLabel {} {
-    set node [ClipModelGetParameterNode]
-    if { [$node GetParameter "label"] == "" } {
-        $node SetParameter "label" 1
-    }
-    return [$node GetParameter "label"]
-}
-
-proc ClipModelSetLabel {index} {
-    set node [ClipModelGetParameterNode]
-    $node SetParameter "label" $index
-}
 
 #
 # MRML Event processing
 #
 
 proc ClipModelUpdateMRML {this} {
+    #set roi $::ClipModel($this,roiNode)
 }
 
 proc ClipModelProcessMRMLEvents {this callerID event} {
+    #puts "Processing MRML events"
+
+    if { $::ClipModel($this,processingGUI) != ""} {
+        return
+    }
     
-    set caller [[[$this GetLogic] GetMRMLScene] GetNodeByID $callerID]
+    set ::ClipModel($this,processingMRML) 1
+    
+    set caller [$::slicer3::MRMLScene GetNodeByID $callerID]
     if { $caller == "" } {
         return
     }
+    if { $caller != $::ClipModel($this,roiNode)} {
+        return
+    }
+    
+    ClipModelApply $this
+         
+    set ::ClipModel($this,processingMRML) ""
 }
 
 proc ClipModelEnter {this} {
@@ -286,15 +309,6 @@ proc ClipModelInit {this} {
     set init  $::ClipModel($this,init)
     if { $init == ""} {
         #puts "init in ClipModelInit"
-        set ::ClipModel($this,box) [$::slicer3::ViewerWidget GetBoxWidget]
-        set ::ClipModel($this,boxRep) [$::slicer3::ViewerWidget GetBoxWidgetRepresentation]
-        $::slicer3::ViewerWidget SetBoxWidgetInteractor
-        
-        $::ClipModel($this,box) AddObserver EndInteractionEvent ClipModelClipModel
-        $::ClipModel($this,box) AddObserver InteractionEvent ClipModelRender
-        $::ClipModel($this,box) SetPriority 1 
-        $::ClipModel($this,boxRep)  SetPlaceFactor  1.0
-        
         set ::ClipModel($this,init) "1"
     }
 }
@@ -306,14 +320,8 @@ proc ClipModelApply {this} {
     
     set clip [$::ClipModel($this,clip) GetSelectedState]
     if { $clip == 0} {
-        $::ClipModel($this,box) Off
         $::slicer3::ViewerWidget Render
         return
-    }
-    
-    if { $clip == 1} {
-        $::ClipModel($this,box) On
-        $::slicer3::ViewerWidget Render
     }
     
     set mod [$::ClipModel($this,modelsSelect) GetSelected]
@@ -321,7 +329,6 @@ proc ClipModelApply {this} {
     #puts "here"
     #puts $mod
     if { $mod == ""} {
-        $::ClipModel($this,box) Off
         $::slicer3::ViewerWidget Render
         return
     }
@@ -346,15 +353,21 @@ proc ClipModelApply {this} {
     }
 
     set ::ClipModel($this,oldOut) $modOut
-    #ClipModelClipModel $this
+    ClipModelClipModel $this
 }
 
-proc ClipModelClipModel {} {
+proc ClipModelClipModel {this} {
     #puts "in ClipModelClipModel"
-    set this $::ClipModel(singleton)
-    $::ClipModel($this,boxRep) GetPlanes $::ClipModel($this,planes)
-    ClipModelApply $this
-    [[[$::slicer3::ViewerWidget GetMainViewer] GetRenderWindow] GetInteractor] ReInitialize
+    set roi $::ClipModel($this,roiNode)
+    if { $roi == ""} {
+        #$::slicer3::ViewerWidget Render
+        return
+    }
+    foreach {rx ry rz} [$roi GetRadiusXYZ] {}
+    foreach {x y z} [$roi GetXYZ] {}
+    $::ClipModel($this,planes) SetBounds [expr $x-$rx] [expr $x+$rx] [expr $y-$ry] [expr $y+$ry] [expr $z-$rz] [expr $z+$rz]
+
+    ClipModelRender
 }
 
 proc ClipModelRender {} {
