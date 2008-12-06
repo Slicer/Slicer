@@ -20,11 +20,6 @@
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 
-
-
-// for pick events
-#include "vtkSlicerViewerWidget.h"
-
 class vtkBoxWidgetCallback : public vtkCommand
 {
 public:
