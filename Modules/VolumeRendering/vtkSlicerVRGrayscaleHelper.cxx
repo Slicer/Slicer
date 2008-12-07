@@ -2078,7 +2078,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessClippingModified(void)
         this->AdditionalClippingTransform->SetMatrix(matrix);
         this->InverseAdditionalClippingTransform->SetMatrix(matrix);
         this->InverseAdditionalClippingTransform->Inverse();
-        matrix->Delete();
+        //matrix->Delete();
     }
     //Otherwise go back to Identity;
     else
