@@ -286,9 +286,11 @@ void vtkSlicerSliceViewer::ChangeLayout( int numberRows, int numberColumns )
           mapper->SetColorLevel(127.5);
 
         this->ImageMapperVec.push_back( mapper );
+        mapper->Delete();
 
         vtkSmartPointer< vtkActor2D > actor2D = vtkActor2D::New();
           actor2D->SetMapper( mapper );
+        actor2D->Delete();
 
         vtkSmartPointer< vtkRenderer > renderer = vtkRenderer::New();
           renderer->SetBackground( 0.0, 0.0, 0.0 );
@@ -296,6 +298,7 @@ void vtkSlicerSliceViewer::ChangeLayout( int numberRows, int numberColumns )
           renderer->AddActor2D( actor2D );
 
         this->RenderWidget->AddRenderer( renderer );
+        renderer->Delete();
 
         // create a highlight actor (2D box around viewport) for each
         // viewport in the lightbox and hide them initially
