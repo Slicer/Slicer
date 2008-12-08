@@ -982,7 +982,10 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   // - this class turns on rendering explicitly when it's own
   //   Render() method is called.  This avoids redundant renders
   //   when, for example, the annotation is changed.
-  this->MainViewer->RenderStateOff();
+  //  TODO: this is disabled for until there is a way to observe 
+  //  for direct render requests to the renderer (so they can be placed
+  //  in the event queue)
+  //this->MainViewer->RenderStateOff();
 
   // make a Slicer viewer interactor style to process our events
   // look at the InteractorStyle to get our events
