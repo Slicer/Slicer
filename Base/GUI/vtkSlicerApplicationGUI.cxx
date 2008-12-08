@@ -1785,7 +1785,6 @@ void vtkSlicerApplicationGUI::CreateMain3DViewer()
     events->InsertNextValue(vtkCommand::ModifiedEvent);
     this->FiducialListWidget->SetAndObserveMRMLSceneEvents (this->MRMLScene, events );
     events->Delete();
-    this->FiducialListWidget->UpdateFromMRML();
     }
   
     // add the roi widget
@@ -1795,7 +1794,6 @@ void vtkSlicerApplicationGUI::CreateMain3DViewer()
     this->ROIViewerWidget->SetApplication( app );
     this->ROIViewerWidget->SetMRMLScene(this->MRMLScene);
     this->ROIViewerWidget->Create();
-    this->ROIViewerWidget->UpdateFromMRML();
     }
 
   this->UpdateActiveViewerWidgetDependencies();
@@ -1826,8 +1824,10 @@ void vtkSlicerApplicationGUI::UpdateActiveViewerWidgetDependencies()
   this->FiducialListWidget->SetMainViewer(
     active_viewer ? active_viewer->GetMainViewer() : NULL);
   this->FiducialListWidget->SetInteractorStyle(active_viewer ? vtkSlicerViewerInteractorStyle::SafeDownCast(active_viewer->GetMainViewer()->GetRenderWindowInteractor()->GetInteractorStyle()) : NULL);
+  this->FiducialListWidget->UpdateFromMRML();
   
   this->ROIViewerWidget->SetMainViewerWidget(active_viewer);
+  this->ROIViewerWidget->UpdateFromMRML();
 
 #ifndef VIEWCONTROL_DEBUG
   vtkSlicerViewControlGUI *vcGUI = this->GetViewControlGUI ( );
