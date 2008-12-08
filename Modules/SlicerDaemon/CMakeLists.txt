@@ -138,16 +138,18 @@ install(DIRECTORY
   )
 
 # custom install for slicerget/slicerput utility programs
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/Tcl/slicerget.tcl
-  ${Slicer3_INSTALL_BIN_DIR}/slicerget
-  COPYONLY
-  )
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/Tcl/slicerput.tcl
-  ${Slicer3_INSTALL_BIN_DIR}/slicerput 
-  COPYONLY
-  )
+# that can't work. ${Slicer3_INSTALL_BIN_DIR} is relative.
+# It's either a wrong CONFIGURE, or a should have been an INSTALL, who knows
+#configure_file(
+#  ${CMAKE_CURRENT_SOURCE_DIR}/Tcl/slicerget.tcl
+#  ${Slicer3_INSTALL_BIN_DIR}/slicerget
+#  COPYONLY
+#  )
+#configure_file(
+#  ${CMAKE_CURRENT_SOURCE_DIR}/Tcl/slicerput.tcl
+#  ${Slicer3_INSTALL_BIN_DIR}/slicerput 
+#  COPYONLY
+#  )
 
 # Testing
 
