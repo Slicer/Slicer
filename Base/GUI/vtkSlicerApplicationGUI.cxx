@@ -604,7 +604,14 @@ void vtkSlicerApplicationGUI::UpdateLayout ( )
   //--- repack the layout in main viewer if required.
   int target = this->GUILayoutNode->GetViewArrangement();
   
-  if ( target == vtkMRMLLayoutNode::SlicerLayoutConventionalView &&
+  if ( target == vtkMRMLLayoutNode::SlicerLayoutInitialView &&
+      this->GetCurrentLayout()!= vtkMRMLLayoutNode::SlicerLayoutInitialView )
+    {
+    mode = this->ApplicationToolbar->StopViewRockOrSpin();
+    this->RepackMainViewer (vtkMRMLLayoutNode::SlicerLayoutInitialView, NULL );
+    this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutInitialView );
+    }
+  else if ( target == vtkMRMLLayoutNode::SlicerLayoutConventionalView &&
       this->GetCurrentLayout()!= vtkMRMLLayoutNode::SlicerLayoutConventionalView )
     {
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
@@ -1043,6 +1050,7 @@ void vtkSlicerApplicationGUI::ProcessMRMLEvents ( vtkObject *caller,
     this->SceneClosing = true;
     //-- todo: is this right?
     //    this->SetAndObserveGUILayoutNode ( NULL );
+    this->UpdateMain3DViewers();
     }
   else if (scene != NULL &&
            scene == this->MRMLScene
@@ -1052,9 +1060,7 @@ void vtkSlicerApplicationGUI::ProcessMRMLEvents ( vtkObject *caller,
       vtkMRMLViewNode::SafeDownCast((vtkObjectBase *)callData);
     if (view_node)
       {
-      this->CreateMain3DViewer();
-      view_node->RemoveObservers(vtkMRMLViewNode::ActiveModifiedEvent, 
-                                 this->MRMLCallbackCommand );
+      this->OnViewNodeRemoved(view_node);
       }
     }
   else if (scene != NULL &&
@@ -1065,13 +1071,7 @@ void vtkSlicerApplicationGUI::ProcessMRMLEvents ( vtkObject *caller,
       vtkMRMLViewNode::SafeDownCast((vtkObjectBase *)callData);
     if (view_node)
       {
-      if (this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLViewNode") == 1)
-        {
-        view_node->SetActive(1);
-        }
-      this->CreateMain3DViewer();
-      view_node->AddObserver(vtkMRMLViewNode::ActiveModifiedEvent, 
-                             this->MRMLCallbackCommand );
+      this->OnViewNodeAdded(view_node);
       }
 
     //--- if node is new layout node, set and observe it.
@@ -1628,7 +1628,7 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( int arrangementType)
     this->GridFrame2->SetParent ( this->MainSlicerWindow->GetSecondaryPanelFrame ( ) );
     this->GridFrame2->Create ( );            
     this->CreateMainSliceViewers ( );
-    this->CreateMain3DViewer ( );
+    this->UpdateMain3DViewers ( );
     this->PackMainViewer ( arrangementType , NULL );
     }
 }
@@ -1697,7 +1697,7 @@ void vtkSlicerApplicationGUI::CreateMainSliceViewers ( )
  }
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::CreateMain3DViewer()
+void vtkSlicerApplicationGUI::UpdateMain3DViewers()
 {
   if (this->GetApplication() == NULL || !this->MRMLScene)
     {
@@ -1805,14 +1805,36 @@ void vtkSlicerApplicationGUI::CreateMain3DViewer()
     vtkMRMLViewNode *view_node = vtkMRMLViewNode::New();
     view_node->SetName(
       this->MRMLScene->GetUniqueNameByString(view_node->GetNodeTagName()));
+    this->MRMLScene->AddNode(view_node);
+    view_node->Delete();
     // This is driving me NUTS. Click on a view node in the scene tree,
     // delete it, then this code should take care of re-creating one
     // BUT NodeAddedEvent is NEVER triggered in ProcessMRMLEvents.
     // Why oh Why??? It is triggered when Slicer3 is started and a default
     // view is created by this very same code.
-    this->MRMLScene->AddNode(view_node);
-    view_node->Delete();
+    // Force that behavior by calling the code explicitly!
+    this->OnViewNodeAdded(view_node);
     }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::OnViewNodeAdded(vtkMRMLViewNode *view_node)
+{
+  view_node->AddObserver(vtkMRMLViewNode::ActiveModifiedEvent, 
+                         this->MRMLCallbackCommand );
+  if (this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLViewNode") == 1)
+    {
+    view_node->SetActive(1);
+    }
+  this->UpdateMain3DViewers();
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::OnViewNodeRemoved(vtkMRMLViewNode *view_node)
+{
+  view_node->RemoveObservers(vtkMRMLViewNode::ActiveModifiedEvent, 
+                             this->MRMLCallbackCommand );
+  this->UpdateMain3DViewers();
 }
 
 //---------------------------------------------------------------------------
@@ -1849,7 +1871,9 @@ void vtkSlicerApplicationGUI::UpdateActiveViewerWidgetDependencies()
     int old_ar = layout->GetViewArrangement();
     layout->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutNone);
     this->UpdateLayout();
-    layout->SetViewArrangement(old_ar);
+    layout->SetViewArrangement(
+      old_ar != vtkMRMLLayoutNode::SlicerLayoutNone 
+      ? old_ar : vtkMRMLLayoutNode::SlicerLayoutInitialView);
     // WHY THE HELL isn't *this* SetViewArrangement not triggering
     // ProcessMRMLEvents!!! Forcing with UpdateLayout()!!
     this->UpdateLayout();

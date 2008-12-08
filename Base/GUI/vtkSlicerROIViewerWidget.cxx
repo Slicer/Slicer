@@ -207,13 +207,19 @@ void vtkSlicerROIViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerROIViewerWidget::RequestRender()
 {
-  this->MainViewerWidget->RequestRender();
+  if (this->MainViewerWidget)
+    {
+    this->MainViewerWidget->RequestRender();
+    }
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerROIViewerWidget::Render()
 {
-  this->MainViewerWidget->Render();
+  if (this->MainViewerWidget)
+    {
+    this->MainViewerWidget->Render();
+    }
 }
 
 //---------------------------------------------------------------------------

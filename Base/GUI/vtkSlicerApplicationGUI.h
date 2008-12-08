@@ -228,7 +228,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void PackMainViewer (  int arrangementType, const char *whichSlice );
     virtual void UnpackMainViewer ( );
 
-    virtual void CreateMain3DViewer ( );
+    virtual void UpdateMain3DViewers ( );
     virtual void CreateMainSliceViewers ( );
 
     virtual void TearDownViewers ( );
@@ -382,6 +382,11 @@ protected:
     //ETX
 
   vtkSlicerModelHierarchyLogic *ModelHierarchyLogic;
+
+  // Description:
+  // Called when a view node has been added/removed to/from the scene
+  virtual void OnViewNodeAdded(vtkMRMLViewNode *node);
+  virtual void OnViewNodeRemoved(vtkMRMLViewNode *node);
      
  private:
 
