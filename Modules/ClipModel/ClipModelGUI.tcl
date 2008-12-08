@@ -217,8 +217,9 @@ proc ClipModelRemoveLogicObservers {this} {
 }
 
 proc ClipModelRemoveMRMLNodeObservers {this} {
-    if { [info exists ::ClipModel($this,roiNode)] } {
-        $this RemoveMRMLObserverByNumber $::ClipModel($this,roiNode) 31
+    if { [info exists ::ClipModel($this,roiNode)] 
+            && $::ClipModel($this,roiNode) != "" } {
+      $this RemoveMRMLObserverByNumber $::ClipModel($this,roiNode) 31
     }
 }
 
