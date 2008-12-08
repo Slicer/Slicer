@@ -507,7 +507,7 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
   if (button == this->GetVisibilityToggle()->GetWidget()  && event ==  vtkKWPushButton::InvokedEvent)
     {
         vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Visibility button event: " << event << ".\n");
-       // change the visibility
+       // change the visibility on the list
         activeFiducialListNode->SetVisibility( ! activeFiducialListNode->GetVisibility());
         // update the icon via  process mrml event that should get pushed
         //this->ProcessMRMLEvents(caller, event, callData); 
@@ -521,6 +521,18 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
           vn->SetFiducialsVisible ( activeFiducialListNode->GetVisibility());
           }
 */
+        // update the icon
+        if (this->GetVisibilityIcons() != NULL)
+          {
+          if (activeFiducialListNode->GetVisibility() > 0)
+            {
+            this->GetVisibilityToggle()->GetWidget()->SetImageToIcon(this->GetVisibilityIcons()->GetVisibleIcon());
+            }
+          else
+            {
+            this->GetVisibilityToggle()->GetWidget()->SetImageToIcon(this->GetVisibilityIcons()->GetInvisibleIcon());
+            }
+          }
     }
 
   // list colour
