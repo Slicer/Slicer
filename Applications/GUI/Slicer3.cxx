@@ -823,8 +823,12 @@ int Slicer3_main(int argc, char *argv[])
   vtkIntArray *appGUIEvents = vtkIntArray::New();
   appGUIEvents->InsertNextValue( vtkCommand::ModifiedEvent );
   appGUIEvents->InsertNextValue( vtkMRMLScene::NodeAddedEvent );
+  appGUIEvents->InsertNextValue( vtkMRMLScene::NodeRemovedEvent );
   appGUIEvents->InsertNextValue( vtkMRMLScene::SceneCloseEvent );
   appGUI->SetAndObserveMRMLSceneEvents ( scene, appGUIEvents );
+  // This above makes zilch sense. The app instance should be responsible for 
+  // adding the events it needs to function properly. How is an external
+  // object/method supposed to know that?
   appGUIEvents->Delete();
 
   slicerApp->SaveUserInterfaceGeometryOn();
@@ -1190,7 +1194,7 @@ int Slicer3_main(int argc, char *argv[])
   modelsGUI->SetAndObserveMRMLScene ( scene );
   modelsGUI->SetModuleLogic ( modelsLogic );
   modelsGUI->SetModelHierarchyLogic( modelHierarchyLogic );
-  appGUI->GetViewerWidget()->SetModelHierarchyLogic(modelHierarchyLogic);
+  appGUI->SetModelHierarchyLogic(modelHierarchyLogic);
   modelsGUI->SetGUIName( "Models" );
   modelsGUI->GetUIPanel()->SetName ( modelsGUI->GetGUIName ( ) );
   modelsGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
@@ -1497,9 +1501,9 @@ int Slicer3_main(int argc, char *argv[])
   name = transformsGUI->GetTclName();
   slicerApp->Script ("namespace eval slicer3 set TransformsGUI %s", name);
 
-  if ( appGUI->GetViewerWidget() )
+  if ( appGUI->GetActiveViewerWidget() )
     {
-    name = appGUI->GetViewerWidget()->GetTclName();
+    name = appGUI->GetActiveViewerWidget()->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set ViewerWidget %s", name);
     }
 

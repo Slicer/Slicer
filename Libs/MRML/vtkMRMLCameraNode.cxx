@@ -55,7 +55,7 @@ vtkMRMLCameraNode::vtkMRMLCameraNode()
 {
   //this->SingletonTag = const_cast<char *>("vtkMRMLCameraNode");
 
-  this->HideFromEditors = 1;
+  this->HideFromEditors = 0;
 
   this->ActiveTag = NULL;
   this->Camera = NULL;

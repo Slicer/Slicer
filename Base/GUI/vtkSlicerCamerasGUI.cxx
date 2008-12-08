@@ -100,13 +100,19 @@ void vtkSlicerCamerasGUI::ProcessGUIEvents(
   if (this->ViewSelectorWidget == 
       vtkSlicerNodeSelectorWidget::SafeDownCast(caller))
     {
-    vtkMRMLViewNode *selected_view_node = 
-      vtkMRMLViewNode::SafeDownCast(this->ViewSelectorWidget->GetSelected());
     if (event == vtkSlicerNodeSelectorWidget::NodeAddedEvent)
       {
+      vtkMRMLViewNode *added_view_node = 
+        vtkMRMLViewNode::SafeDownCast((vtkObject*)callData);
+      if (added_view_node)
+        {
+        added_view_node->SetActive(1);
+        }
       }
     else if (event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent)
       {
+      vtkMRMLViewNode *selected_view_node = 
+        vtkMRMLViewNode::SafeDownCast(this->ViewSelectorWidget->GetSelected());
       // We selected a new view, then update the camera selector to
       // reflect which camera this view is using.
       vtkMRMLCameraNode *found_camera_node = NULL;
@@ -194,7 +200,7 @@ void vtkSlicerCamerasGUI::BuildGUI()
 {
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   // Define your help text here.
-  const char *help = "**Camera Module:** Create or set active camera. ";
+  const char *help = "**Cameras Module:** Create new views and cameras. The camera menu can be used to set the active camera for the selected view. Switch the layout to \"Tabbed 3D Layout\" to access multiple views. The view selected in this layout becomes the active view and replaces the 3D view in all other layouts. WARNING: this is rather experimental at the moment (fiducials, IO/data, closing the scene are probably broken for new views). ";
   
   // ---
   // MODULE GUI FRAME 
@@ -211,7 +217,7 @@ void vtkSlicerCamerasGUI::BuildGUI()
     vtkSlicerModuleCollapsibleFrame::New();
   cameraHelpFrame->SetParent(page);
   cameraHelpFrame->Create();
-  cameraHelpFrame->CollapseFrame();
+  //cameraHelpFrame->CollapseFrame();
   cameraHelpFrame->SetLabelText("Help");
   app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
               cameraHelpFrame->GetWidgetName(), page->GetWidgetName());

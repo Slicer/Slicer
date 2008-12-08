@@ -1231,11 +1231,11 @@ const char* vtkSlicerApplication::GetTemporaryDirectory() const
       // error making sure that the dir exists
       std::cout << "vtkSlicerApplication::GetTemporaryDirectory: Unable to make temporary directory: '" << this->TemporaryDirectory << "'\n\tYou can change the Temporary Directory under View->Application Settings->Module Settings." << std::endl;
       // pop up a window if we've got something to set for the parent
-      if (this->ApplicationGUI && this->ApplicationGUI->GetViewerWidget())
+      if (this->ApplicationGUI)
         {
         std::string msg = std::string("ERROR\nUnable to make temporary directory: '") + std::string(this->TemporaryDirectory) + std::string("'\nYou can change the Temporary Directory under View->Application Settings->Module Settings.");
         vtkKWMessageDialog *message = vtkKWMessageDialog::New();
-        message->SetParent(this->ApplicationGUI->GetViewerWidget());
+        message->SetParent(this->ApplicationGUI->GetMainSlicerWindow());
         message->SetOptions(vtkKWMessageDialog::ErrorIcon);
         message->SetIcon();
         message->SetStyleToCancel();
@@ -1259,11 +1259,11 @@ const char* vtkSlicerApplication::GetTemporaryDirectory() const
         {
         std::cerr << "WARNING: Unable to write files in TemporaryDirectory: '" << this->TemporaryDirectory << "'" << std::endl;
         // pop up a window if we've got something to set for the parent
-        if (this->ApplicationGUI && this->ApplicationGUI->GetViewerWidget())
+        if (this->ApplicationGUI)
           {
           std::string msg = std::string("WARNING\nUnable to write files in TemporaryDirectory:\n'") + std::string(this->TemporaryDirectory) + std::string("'");
           vtkKWMessageDialog *message = vtkKWMessageDialog::New();
-          message->SetParent(this->ApplicationGUI->GetViewerWidget());
+          message->SetParent(this->ApplicationGUI->GetMainSlicerWindow());
           message->SetOptions(vtkKWMessageDialog::ErrorIcon);
           message->SetIcon();
           message->SetStyleToCancel();
@@ -1611,11 +1611,11 @@ const char* vtkSlicerApplication::GetRemoteCacheDirectory() const
       // error making sure that the dir exists
       std::cout << "vtkSlicerApplication::GetRemoteCacheDirectory: Unable to make remote cache directory: '" << this->RemoteCacheDirectory << "'\n\tYou can change the Remote Cache Directory under View->Application Settings->Remote Data Handling Settings." << std::endl;
       // pop up a window if we've got something to set for the parent
-      if (this->ApplicationGUI && this->ApplicationGUI->GetViewerWidget())
+      if (this->ApplicationGUI)
         {
         std::string msg = std::string("ERROR\nUnable to make  remote cache directory: '") + std::string(this->RemoteCacheDirectory) + std::string("'\nYou can change the Remote Cache Directory under View->Application Settings->Remote Data Handling Settings.");
         vtkKWMessageDialog *message = vtkKWMessageDialog::New();
-        message->SetParent(this->ApplicationGUI->GetViewerWidget());
+        message->SetParent(this->ApplicationGUI->GetMainSlicerWindow());
         message->SetOptions(vtkKWMessageDialog::ErrorIcon);
         message->SetIcon();
         message->SetStyleToCancel();
@@ -1639,11 +1639,11 @@ const char* vtkSlicerApplication::GetRemoteCacheDirectory() const
         {
         std::cerr << "WARNING: Unable to write files in RemoteCacheDirectory: '" << this->RemoteCacheDirectory << "'" << std::endl;
         // pop up a window if we've got something to set for the parent
-        if (this->ApplicationGUI && this->ApplicationGUI->GetViewerWidget())
+        if (this->ApplicationGUI)
           {
           std::string msg = std::string("WARNING\nUnable to write files in RemoteCacheDirectory:\n'") + std::string(this->RemoteCacheDirectory) + std::string("'");
           vtkKWMessageDialog *message = vtkKWMessageDialog::New();
-          message->SetParent(this->ApplicationGUI->GetViewerWidget());
+          message->SetParent(this->ApplicationGUI->GetMainSlicerWindow());
           message->SetOptions(vtkKWMessageDialog::ErrorIcon);
           message->SetIcon();
           message->SetStyleToCancel();

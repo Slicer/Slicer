@@ -44,6 +44,7 @@
 #include "vtkMRMLProceduralColorNode.h"
 
 #include "vtkSlicerModelHierarchyLogic.h"
+#include "vtkSlicerTheme.h"
 
 #include "vtkKWWidget.h"
 
@@ -812,6 +813,8 @@ void vtkSlicerViewerWidget::UpdateCameraNode()
     // no camera in the scene, create an active camera
     this->CameraNodeWasCreated = 1;
     camera_node = vtkMRMLCameraNode::New();
+    camera_node->SetName(
+      this->MRMLScene->GetUniqueNameByString(camera_node->GetNodeTagName()));
     camera_node->SetActiveTag(
       this->ViewNode ? this->ViewNode->GetName() : NULL);
     this->MRMLScene->AddNode(camera_node);
@@ -895,7 +898,13 @@ void vtkSlicerViewerWidget::RemoveCameraObservers()
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::UpdateViewNode()
 {
-  if (this->SceneClosing)
+#if 0
+  // This is not needed anymore, there is not one single vtkMRMLViewNode
+  // but multiple, therefore it's up to whoever created that widget
+  // to assign it the ViewNode properly, not this widget to pick the
+  // first one...
+
+  if (this->SceneClosing || !this->MRMLScene)
     {
     return;
     }
@@ -925,6 +934,7 @@ void vtkSlicerViewerWidget::UpdateViewNode()
       }
     this->SetAndObserveViewNode (node);
     }
+#endif
 }
 
 //---------------------------------------------------------------------------
@@ -945,6 +955,8 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   
   this->Superclass::CreateWidget();
 
+  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+
   this->ViewerFrame = vtkKWFrame::New ( );
   this->ViewerFrame->SetParent ( this->GetParent ( ) );
   this->ViewerFrame->Create ( );
@@ -962,6 +974,9 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   this->MainViewer = vtkKWRenderWidget::New ( );  
   this->MainViewer->SetParent (this->ViewerFrame );
   this->MainViewer->Create ( );
+
+  this->MainViewer->SetRendererBackgroundColor(
+    app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
 
   // tell the render widget not to respond to the Render() method
   // - this class turns on rendering explicitly when it's own

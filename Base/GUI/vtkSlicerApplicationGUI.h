@@ -58,6 +58,9 @@ class vtkSlicerROIViewerWidget;
 class vtkSlicerSlicesGUI;
 class vtkSlicerSlicesControlGUI;
 class vtkSlicerModulesWizardDialog;
+class vtkSlicerApplicationGUIInternals;
+class vtkMRMLViewNode;
+class vtkSlicerModelHierarchyLogic;
 
 // Description:
 // This class implements Slicer's main Application GUI.
@@ -71,30 +74,25 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     vtkTypeRevisionMacro ( vtkSlicerApplicationGUI, vtkSlicerComponentGUI );
     void PrintSelf ( ostream& os, vtkIndent indent );
 
-    vtkRenderWindowInteractor *GetRenderWindowInteractor() {
-        if (this->ViewerWidget == NULL ||
-            this->ViewerWidget->GetMainViewer() == NULL ||
-            this->ViewerWidget->GetMainViewer()->GetRenderWindow() == NULL)
-          {
-          return NULL;
-          }
-        else
-          {
-          return this->ViewerWidget->GetMainViewer()->GetRenderWindow()->GetInteractor();
-          }
-    };
+    // Description:
+    // Get Viewer Widget associated to a given view node
+    virtual int GetNumberOfViewerWidgets();
+    virtual vtkSlicerViewerWidget* GetNthViewerWidget(int idx);
+    virtual vtkSlicerViewerWidget* GetViewerWidgetForNode(vtkMRMLViewNode*);
 
     // Description:
-    // The main 3D Viewer Widget
-    vtkGetObjectMacro (ViewerWidget, vtkSlicerViewerWidget);
+    // Get the active 3D Viewer Widget
+    virtual vtkSlicerViewerWidget* GetActiveViewerWidget();
+
+    // Description:
+    // Get active render window interactor (the interactor of the
+    // active 3D viewer)
+    virtual vtkRenderWindowInteractor *GetActiveRenderWindowInteractor();
 
     // Description:
     // Get/Set the layout node
     vtkMRMLLayoutNode *GetGUILayoutNode ( );
-    void SetAndObserveGUILayoutNode ( vtkMRMLLayoutNode *node )
-        {
-        vtkSetAndObserveMRMLNodeMacro ( this->GUILayoutNode, node);
-        }
+    void SetAndObserveGUILayoutNode ( vtkMRMLLayoutNode *node );
     const char* GetCurrentLayoutStringName ( );
 
     vtkGetMacro (Built, bool);
@@ -140,13 +138,14 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Get the GUI containing widgets for controlling the Slice Views
     vtkGetObjectMacro ( SlicesControlGUI, vtkSlicerSlicesControlGUI );
     // Get the GUI containing the widgets to select modules.
-//    vtkGetObjectMacro ( ModuleChooseGUI, vtkSlicerModuleChooseGUI );
+    //    vtkGetObjectMacro ( ModuleChooseGUI, vtkSlicerModuleChooseGUI );
     // Get the GUI containing the widgets to display logos
     vtkGetObjectMacro ( LogoDisplayGUI, vtkSlicerLogoDisplayGUI );
     
     // Description:
     // Get the main slicer window.
     vtkGetObjectMacro ( MainSlicerWindow, vtkSlicerWindow );
+
     // Description:
     // Basic icons for the slicer application.
     vtkGetObjectMacro ( SlicerFoundationIcons, vtkSlicerFoundationIcons );
@@ -166,9 +165,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // Class's mediator methods for processing events invoked by
     // the Logic, MRML or GUI objects observed.
-    virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData );
-    virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event, void *callData );
-    virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
+    virtual void ProcessLogicEvents(
+      vtkObject *caller, unsigned long event, void *callData );
+    virtual void ProcessGUIEvents (
+      vtkObject *caller, unsigned long event, void *callData );
+    virtual void ProcessMRMLEvents (
+      vtkObject *caller, unsigned long event, void *callData );
 
     void ProcessLoadSceneCommand();
     void ProcessImportSceneCommand();
@@ -271,15 +273,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
 
     // Description:
     // Helper routine to set images for icons
-    //
-    void SetIconImage (vtkKWIcon *icon, vtkImageData *image)
-      {
-      int *dims = image->GetDimensions();
-      int nComps = image->GetNumberOfScalarComponents();
-      icon->SetImage ( static_cast <const unsigned char *> (image->GetScalarPointer()),
-                       dims[0], dims[1], nComps,
-                       dims[0] * dims[1] * nComps, vtkKWIcon::ImageOptionFlipVertical);
-      };
+    void SetIconImage (vtkKWIcon *icon, vtkImageData *image);
 
     virtual void UpdateRemoteIOConfigurationForRegistry();
 
@@ -294,16 +288,28 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     void MainSplitFrameConfigureCallback(int width, int height);
     void SecondarySplitFrameConfigureCallback(int width, int height);
   
+    // Description:
+    // DEPRECATED:, use GetActiveViewerWidget() instead.
+    virtual vtkSlicerViewerWidget* GetViewerWidget();
+
+    // Description:
+    // DEPRECATED:, use GetActiveRenderWindowInteractor() instead.
+    virtual vtkRenderWindowInteractor *GetRenderWindowInteractor();
+
+  // Description:
+  // get/set vtkSlicerModelHierarchyLogic
+  vtkGetObjectMacro( ModelHierarchyLogic, vtkSlicerModelHierarchyLogic );
+  vtkSetObjectMacro( ModelHierarchyLogic, vtkSlicerModelHierarchyLogic );
+
 protected:
     vtkSlicerApplicationGUI ( );
     virtual ~vtkSlicerApplicationGUI ( );
-
   
     // Description:
     // Main Slicer window
     vtkSlicerWindow *MainSlicerWindow;
 
-        // Description:
+    // Description:
     // Frames for the main Slicer UI panel    
     vtkKWFrame *TopFrame;
     vtkKWFrame *LogoFrame;
@@ -327,9 +333,6 @@ protected:
     vtkSlicerSlicesControlGUI *SlicesControlGUI;
     vtkSlicerLogoDisplayGUI *LogoDisplayGUI;
     
-    // Description:
-    // Main Slicer 3D Viewer
-    vtkSlicerViewerWidget *ViewerWidget;
     double MainRendererBBox[6];
 
     // Description:
@@ -368,8 +371,20 @@ protected:
     bool SceneClosing;
     bool Built;
     int CurrentLayout;
-      
+
+    // Description:
+    // If the active viewer widget has changed, update the dependencies
+    void UpdateActiveViewerWidgetDependencies();
+
+    // PIMPL Encapsulation for STL containers
+    //BTX
+    vtkSlicerApplicationGUIInternals *Internals;
+    //ETX
+
+  vtkSlicerModelHierarchyLogic *ModelHierarchyLogic;
+     
  private:
+
     vtkSlicerApplicationGUI ( const vtkSlicerApplicationGUI& ); // Not implemented.
     void operator = ( const vtkSlicerApplicationGUI& ); //Not implemented.
 }; 
