@@ -34,7 +34,7 @@ if { [itcl::find class ModelSWidget] == "" } {
     public variable movedCommand ""
     public variable movingCommand ""
     public variable color "1 0 0"
-    public variable opacity "1"
+    public variable opacity "0.5"
     public variable visibility "1"
     public variable text ""
     public variable textScale "1"
