@@ -28,10 +28,9 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${Slicer3_Libs_INCLUDE_DIRS}
   ${Slicer3_Base_INCLUDE_DIRS}
-  ${mimxCommon_SOURCE_DIR} ${mimxCommon_BINARY_DIR} 
-  ${MIMXCommon_SOURCE_DIR}../Adapter ${MIMXCommon_BINARY_DIR}../Adapter 
   ${MIMXAdapter_SOURCE_DIR} ${MIMXAdapter_BINARY_DIR} 
-  ${MIMXFilter_SOURCE_DIR} ${MIMXFilter_BINARY_DIR} 
+    ${MIMXFilter_SOURCE_DIR} ${MIMXFilter_BINARY_DIR} 
+  ${mimxCommon_SOURCE_DIR} ${mimxCommon_BINARY_DIR} 
   ${ITK_INCLUDE_DIR}
   )
 
