@@ -421,8 +421,11 @@ int vtkOpenIGTLinkIFLogic::RegisterDeviceEvent(vtkIGTLConnector* con, const char
   
   // register events
   vtkIntArray* nodeEvents = converter->GetNodeEvents();
-  vtkMRMLNode *node = NULL; // TODO: is this OK?
-  vtkSetAndObserveMRMLNodeEventsMacro(node,srcNode,nodeEvents);
+  if (nodeEvents)
+    {
+    vtkMRMLNode *node = NULL; // TODO: is this OK?
+    vtkSetAndObserveMRMLNodeEventsMacro(node,srcNode,nodeEvents);
+    }
 
   // TODO: node should be stored somewhere to stop event monitoring after deleting the MRML node.
   nodeEvents->Delete();
