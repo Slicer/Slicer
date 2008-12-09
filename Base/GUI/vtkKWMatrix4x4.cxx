@@ -57,6 +57,7 @@ vtkKWMatrix4x4::vtkKWMatrix4x4()
   //this->StartCommand = NULL;
   //this->EndCommand   = NULL;
 
+  this->Updating = 0;
   this->Matrix4x4 = NULL;
 
   this->MultiColumnList = vtkKWMultiColumnList::New();
@@ -133,11 +134,18 @@ void vtkKWMatrix4x4::CreateWidget()
 //----------------------------------------------------------------------------
 void vtkKWMatrix4x4::UpdateWidget()
 {
+  if ( this->Updating ) 
+    {
+    return;
+    }
+  this->Updating = 1;
+
   this->MultiColumnList->DeleteAllRows();
 
   if (this->Matrix4x4 == NULL)
     {
     this->MultiColumnList->InsertCellText(0, 0, "NULL");
+    this->Updating = 0;
     return;
     }
 
@@ -151,6 +159,8 @@ void vtkKWMatrix4x4::UpdateWidget()
       this->MultiColumnList->SetCellEditWindowToSpinBox(row, col);
       }
     }
+  this->Updating = 0;
+
   this->Modified();
 }
 //----------------------------------------------------------------------------
@@ -167,6 +177,11 @@ void vtkKWMatrix4x4::UpdateVTK()
     return;
     }
 
+  if ( this->Updating ) 
+    {
+    return;
+    }
+  this->Updating = 1;
 
   int row, col;
   for (row=0; row<4; row++)
@@ -176,6 +191,7 @@ void vtkKWMatrix4x4::UpdateVTK()
       this->Matrix4x4->SetElement(row, col, this->MultiColumnList->GetCellTextAsDouble(row, col));
       }
     }
+  this->Updating = 0;
 }
 
 //----------------------------------------------------------------------------

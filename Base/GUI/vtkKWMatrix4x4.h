@@ -90,6 +90,8 @@ private:
 
   vtkCallbackCommand *MRMLCallbackCommand;
 
+  int Updating;
+
 };
 
 #endif
