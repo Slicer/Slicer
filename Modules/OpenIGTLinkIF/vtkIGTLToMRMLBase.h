@@ -20,6 +20,8 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 #include "igtlMessageBase.h"
+#include <vector>
+#include <string>
 
 class VTK_OPENIGTLINKIF_EXPORT vtkIGTLToMRMLBase : public vtkObject
 {
@@ -30,10 +32,12 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLToMRMLBase : public vtkObject
   // NOTE: if you want to define a child class that can handle multiple types
   // of OpenIGTLink messages, override GetConverterType() method to return
   // TYPE_MULTI_IGTL_NAME.
+  //BTX
   enum {
     TYPE_NORMAL,            // supports only single IGTL message type (default)
     TYPE_MULTI_IGTL_NAMES,  // supports multiple IGTL message names (device types)
   };
+  //ETX
 
  public:
 
@@ -42,15 +46,15 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLToMRMLBase : public vtkObject
 
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  virtual int          GetConverterType { return TYPE_NORMAL; };
-  virtual const char*  GetIGTLName()    { return NULL;};
-  virtual const char*  GetMRMLName()    { return NULL;};
-  virtual vtkIntArray* GetNodeEvents()  { return NULL; };
+  virtual int          GetConverterType() { return TYPE_NORMAL; };
+  virtual const char*  GetIGTLName()      { return NULL;};
+  virtual const char*  GetMRMLName()      { return NULL;};
+  virtual vtkIntArray* GetNodeEvents()    { return NULL; };
   virtual vtkMRMLNode* CreateNewNode(vtkMRMLScene* scene, const char* name)  { return NULL; };
 
   // for TYPE_MULTI_IGTL_NAMES
   int                  GetNumberOfIGTLNames()   { return this->IGTLNames.size(); };
-  const char*          GetIGTLName(int index)   { return this->IGTLNames[index]; };
+  const char*          GetIGTLName(int index)   { return this->IGTLNames[index].c_str(); };
 
   //BTX
   virtual int          IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNode* node) { return 0; };
@@ -66,7 +70,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLToMRMLBase : public vtkObject
 
   //BTX
   // list of IGTL names (used only when the class supports multiple IGTL names)
-  std::vector<string>  IGTLNames;
+  std::vector<std::string>  IGTLNames;
   //ETX
 
   
