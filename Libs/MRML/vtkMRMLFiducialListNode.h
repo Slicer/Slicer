@@ -222,7 +222,7 @@ public:
 
   // Description:
   // When fiducial lists are locked, they cannot be manipulated using the interactive widgets
-  vtkSetMacro(Locked, int);
+  void SetLocked(int locked);
   vtkGetMacro(Locked, int);
 
   //BTX

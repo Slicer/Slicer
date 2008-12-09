@@ -1281,6 +1281,21 @@ void vtkMRMLFiducialListNode::SetVisibility(int visible)
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLFiducialListNode::SetLocked(int locked)
+{
+    if (this->Locked == locked)
+    {
+        return;
+    }
+    vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Locked to " << locked);
+    this->Locked = locked;
+   
+    // invoke a display modified event
+    this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+}
+
+
+//---------------------------------------------------------------------------
 void vtkMRMLFiducialListNode::SetOpacity(double opacity)
 {
     if (this->Opacity == opacity)
