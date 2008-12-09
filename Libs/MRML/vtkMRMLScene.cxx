@@ -417,6 +417,7 @@ void vtkMRMLScene::RemoveAllNodesExceptSingletons()
       //this->RemoveNode(removeNodes[i]);
       node = removeNodes[i];
       //node->Register(this);
+      node->RemoveAllObservers();
       this->CurrentScene->vtkCollection::RemoveItem(node);
       //this->InvokeEvent(this->NodeRemovedEvent,node);
       //node->UnRegister(this);
