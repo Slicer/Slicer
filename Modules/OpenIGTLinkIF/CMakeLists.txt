@@ -39,6 +39,13 @@ file(GLOB headers
   "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
   )
 
+install(FILES 
+  ${headers} 
+  "${CMAKE_CURRENT_BINARY_DIR}/vtkOpenIGTLinkIFConfigure.h"
+  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+  )
+
+
 # --------------------------------------------------------------------------
 # Sources
 

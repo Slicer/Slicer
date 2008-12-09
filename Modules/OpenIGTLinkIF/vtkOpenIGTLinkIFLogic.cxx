@@ -891,10 +891,25 @@ vtkIGTLToMRMLBase* vtkOpenIGTLinkIFLogic::GetConverterByDeviceType(const char* d
        iter != this->MessageConverterList.end();
        iter ++)
     {
-    if (strcmp((*iter)->GetIGTLName(), deviceType) == 0)
+    if ((*iter)->GetConverterType() == vtkIGTLToMRMLBase::TYPE_NORMAL)
       {
-      converter = *iter;
-      break;
+      if (strcmp((*iter)->GetIGTLName(), deviceType) == 0)
+        {
+        converter = *iter;
+        break;
+        }
+      }
+    else
+      {
+      int n = (*iter)->GetNumberOfIGTLNames();
+      for (int i = 0; i < n; i ++)
+        {
+        if (strcmp((*iter)->GetIGTLName(i), deviceType) == 0)
+          {
+          converter = *iter;
+          break;
+          }
+        }
       }
     }
 
