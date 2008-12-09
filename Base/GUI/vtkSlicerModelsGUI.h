@@ -103,7 +103,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
 
     // Description:
     // Methods describe behavior at module enter and exit.
-    virtual void Enter ( );
+    virtual void Enter ( vtkMRMLNode *node );
     virtual void Exit ( );
 
  protected:

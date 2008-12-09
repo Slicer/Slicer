@@ -56,7 +56,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerTransformsGUI : public vtkSlicerModule
     
     // Description:
     // Describe behavior at module startup and exit.
-    virtual void Enter ( );
+    virtual void Enter ( vtkMRMLNode *node );
     virtual void Exit ( );
 
  protected:

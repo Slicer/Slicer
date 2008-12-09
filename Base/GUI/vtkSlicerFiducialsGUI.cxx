@@ -1043,7 +1043,7 @@ void vtkSlicerFiducialsGUI::ReleaseModuleEventBindings ( )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerFiducialsGUI::Enter ( )
+void vtkSlicerFiducialsGUI::Enter ( vtkMRMLNode *node )
 {
   if ( this->Built == false )
     {
@@ -1051,8 +1051,14 @@ void vtkSlicerFiducialsGUI::Enter ( )
     this->Built = true;
     this->AddGUIObservers();
     }
-    this->CreateModuleEventBindings();
-    this->UpdateGUI();
+  this->CreateModuleEventBindings();
+  this->UpdateGUI();
+
+  vtkMRMLFiducialListNode *fiducialListNode = vtkMRMLFiducialListNode::SafeDownCast(node);
+  if ( fiducialListNode )
+    {
+    this->FiducialListSelectorWidget->SetSelected( fiducialListNode );
+    }
 }
 
 

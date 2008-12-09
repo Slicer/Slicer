@@ -151,7 +151,7 @@ void vtkSlicerTransformsGUI::ReleaseModuleEventBindings ( )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerTransformsGUI::Enter ( )
+void vtkSlicerTransformsGUI::Enter ( vtkMRMLNode *node )
 {
   if ( this->Built == false )
     {
@@ -159,7 +159,13 @@ void vtkSlicerTransformsGUI::Enter ( )
     this->Built = true;
     this->AddGUIObservers();
     }
-    this->CreateModuleEventBindings();
+  this->CreateModuleEventBindings();
+
+  vtkMRMLTransformNode *transformNode = vtkMRMLTransformNode::SafeDownCast(node);
+  if ( transformNode )
+    {
+    this->TransformEditorWidget->GetTransformEditSelectorWidget()->SetSelected( transformNode );
+    }
 }
 
 

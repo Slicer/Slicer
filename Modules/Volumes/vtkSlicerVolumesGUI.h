@@ -107,7 +107,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
 
     // Description:
     // Describe behavior at module startup and exit.
-    virtual void Enter ( );
+    virtual void Enter ( vtkMRMLNode *node );
     virtual void Exit ( );
 
     void CreateScalarDisplayWidget ( );

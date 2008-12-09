@@ -429,7 +429,7 @@ void vtkSlicerModelsGUI::ReleaseModuleEventBindings ( )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerModelsGUI::Enter ( )
+void vtkSlicerModelsGUI::Enter ( vtkMRMLNode *node )
 {
   if ( this->Built == false )
     {
@@ -437,7 +437,13 @@ void vtkSlicerModelsGUI::Enter ( )
     this->Built = true;
     this->AddGUIObservers();
     }
-    this->CreateModuleEventBindings();
+  this->CreateModuleEventBindings();
+
+  vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(node);
+  if ( modelNode )
+    {
+    this->ModelSelectorWidget->SetSelected( modelNode );
+    }
 }
 
 

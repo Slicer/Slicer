@@ -603,7 +603,7 @@ void vtkSlicerVolumesGUI::ReleaseModuleEventBindings ( )
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumesGUI::Enter ( )
+void vtkSlicerVolumesGUI::Enter ( vtkMRMLNode *node )
 {
   if ( this->Built == false )
     {
@@ -613,6 +613,12 @@ void vtkSlicerVolumesGUI::Enter ( )
     }
   this->CreateModuleEventBindings();
   this->UpdateFramesFromMRML();
+
+  vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);
+  if ( volumeNode )
+    {
+    this->VolumeSelectorWidget->SetSelected( volumeNode );
+    }
 }
 
 //---------------------------------------------------------------------------

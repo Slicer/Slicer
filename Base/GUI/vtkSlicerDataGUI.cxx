@@ -115,27 +115,10 @@ void vtkSlicerDataGUI::AddGUIObservers ( )
 void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
                                           unsigned long event, void *callData )
 {
-  const char *moduleName = NULL;
   vtkMRMLNode *node = (vtkMRMLNode *)callData;
-  if (node->IsA("vtkMRMLVolumeNode"))
+  if (node)
     {
-    moduleName = "Volumes";
-    }
-  else if (node->IsA("vtkMRMLModelNode"))
-    {
-    moduleName = "Models";
-    }
-  else if (node->IsA("vtkMRMLTransformNode"))
-    {
-    moduleName = "Transforms";
-    }
-  else if (node->IsA("vtkMRMLFiducialListNode"))
-    {
-    moduleName = "Fiducials";
-    }
-  if (moduleName)
-    {
-    this->InvokeEvent(vtkSlicerModuleGUI::ModuleSelectedEvent, (void *)moduleName);
+    this->InvokeEvent(vtkSlicerModuleGUI::ModuleSelectedEvent, node);
     }
 }
 

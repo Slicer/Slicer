@@ -269,7 +269,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
 
     // Description:
     // Raise module's panel.
+    // - use either the module name or a node
+    // - SelectModuleForNode has internal logic to map node types to modules
+    void SelectModule ( const char *moduleName, vtkMRMLNode *node );
     void SelectModule ( const char *moduleName );
+    void SelectModuleForNode ( vtkMRMLNode *node );
 
     // Description:
     // Helper routine to set images for icons

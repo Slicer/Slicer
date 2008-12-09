@@ -897,7 +897,7 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
 
   if (event == vtkSlicerModuleGUI::ModuleSelectedEvent) 
     {
-    this->SelectModule((const char*)callData);
+    this->SelectModuleForNode((vtkMRMLNode *)callData);
     return;
     }
 
@@ -1119,10 +1119,42 @@ void vtkSlicerApplicationGUI::Exit ( )
 }
 
 //---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::SelectModuleForNode ( vtkMRMLNode *node )
+{
+  const char *moduleName = NULL;
+  if (node->IsA("vtkMRMLVolumeNode"))
+    {
+    moduleName = "Volumes";
+    }
+  else if (node->IsA("vtkMRMLModelNode"))
+    {
+    moduleName = "Models";
+    }
+  else if (node->IsA("vtkMRMLTransformNode"))
+    {
+    moduleName = "Transforms";
+    }
+  else if (node->IsA("vtkMRMLFiducialListNode"))
+    {
+    moduleName = "Fiducials";
+    }
+  if (moduleName)
+    {
+    this->SelectModule(moduleName, node);
+    }
+}
+
+//---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::SelectModule ( const char *moduleName )
 {
+  this->SelectModule( moduleName, NULL );
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::SelectModule ( const char *moduleName, vtkMRMLNode *node )
+{
 #ifndef TOOLBAR_DEBUG
-  this->GetApplicationToolbar()->GetModuleChooseGUI()->SelectModule(moduleName);
+  this->GetApplicationToolbar()->GetModuleChooseGUI()->SelectModule(moduleName, node);
 #endif
 }
 

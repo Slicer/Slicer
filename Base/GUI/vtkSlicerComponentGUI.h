@@ -185,8 +185,13 @@ public:
   
   // Description:
   // functions that define and undefine module-specific behaviors.
+  // - a module can define either Enter() or Enter(node), where the latter
+  //   version selects the node on entry.  See 
+  //   vtkSlicerApplicationGUI::SelectModuleForNode for the 
+  //   (currently hard-coded) mapping of node types to module names.
   virtual void Enter ( ) { };
   virtual void Exit ( ) { };
+  virtual void Enter ( vtkMRMLNode* node ) { this->Enter(NULL); };
   
 protected:
   // GUI's interface to the application layer;

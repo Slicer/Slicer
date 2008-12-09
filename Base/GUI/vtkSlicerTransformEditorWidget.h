@@ -25,8 +25,8 @@
 #define __vtkSlicerTransformEditorWidget_h
 
 #include "vtkSlicerWidget.h"
+#include "vtkSlicerNodeSelectorWidget.h"
 
-class vtkSlicerNodeSelectorWidget;
 class vtkKWPushButton;
 class vtkKWMatrix4x4;
 class vtkKWScaleWithEntry;
@@ -68,6 +68,9 @@ public:
 
   void RotationChangedCallback(int axis, double value);
   void RotationChangingCallback(int axis, double value);
+
+  vtkGetObjectMacro (TransformEditSelectorWidget, vtkSlicerNodeSelectorWidget);
+  vtkSetObjectMacro (TransformEditSelectorWidget, vtkSlicerNodeSelectorWidget);
 
 
  protected:

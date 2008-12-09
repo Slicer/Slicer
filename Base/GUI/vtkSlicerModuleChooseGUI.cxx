@@ -340,9 +340,14 @@ void vtkSlicerModuleChooseGUI::PopulateHistoryListMenu  ( )
 }
 
 
-
 //---------------------------------------------------------------------------
 void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName )
+{
+  this->SelectModule( moduleName, NULL );
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName, vtkMRMLNode *node )
 {
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
   
@@ -366,7 +371,14 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName )
         vtkSlicerModuleGUI *currentModule = app->GetModuleGUIByName( moduleName );        
         if ( currentModule )
           {
-          currentModule->Enter ( );
+          if ( node )
+            {
+            currentModule->Enter ( node );
+            }
+          else
+            {
+            currentModule->Enter ( );
+            }
           
           this->RaiseModule ( moduleName );
           this->GetModuleNavigator()->AddModuleNameToHistoryList ( moduleName );

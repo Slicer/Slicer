@@ -9,6 +9,7 @@
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerComponentGUI.h"
 
+class vtkMRMLNode;
 class vtkSlicerApplicationGUI;
 class vtkSlicerModuleNavigationIcons;
 class vtkSlicerModuleNavigator;
@@ -60,7 +61,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleChooseGUI : public vtkSlicerComp
     void RaiseModule ( const char *moduleName );
     // Description:
     // Raise module's panel and add to navigation history.
+    // - optionally pass the selected node to the module 
     void SelectModule ( const char *moduleName );
+    void SelectModule ( const char *moduleName, vtkMRMLNode *node );
 
     // Description:
     // This method builds the Data module's GUI
