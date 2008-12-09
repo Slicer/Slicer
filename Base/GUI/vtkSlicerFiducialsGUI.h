@@ -67,7 +67,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkGetObjectMacro ( ListTextScale, vtkKWScaleWithEntry);
     vtkGetObjectMacro ( ListOpacity, vtkKWScaleWithEntry);
     vtkGetObjectMacro ( Logic, vtkSlicerFiducialsLogic);
-    
+    vtkGetObjectMacro ( LockToggle, vtkKWPushButtonWithLabel );
+
     // Description:
     // API for setting FiducialListNode, Logic and
     // for both setting and observing them.
@@ -234,6 +235,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // opacity
     vtkKWScaleWithEntry *ListOpacity;
 
+    // Description:
+    // list is locked or not (won't move when mouse over it)
+    vtkKWPushButtonWithLabel *LockToggle;
+    
     // Description:
     // display the points on the list
     vtkKWMultiColumnListWithScrollbars *MultiColumnList;

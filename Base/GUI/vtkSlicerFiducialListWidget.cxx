@@ -1475,7 +1475,7 @@ void vtkSlicerFiducialListWidget::UpdateFiducialListFromMRML(vtkMRMLFiducialList
       pointWidget->PlaceWidget(worldxyz[0]-1, worldxyz[0]+1, worldxyz[1]-1, worldxyz[1]+1, worldxyz[2]-1, worldxyz[2]+1);
       pointWidget->TranslationModeOn();
       pointWidget->SetPosition(worldxyz);
-      pointWidget->EnabledOn();
+      pointWidget->SetEnabled(!(flist->GetLocked()));
       vtkDebugMacro("UpdateFiducialsFromMRML: Putting new fiducial " << fid.c_str() << " in place: " << worldxyz[0] << "," << worldxyz[1] << "," << worldxyz[2]);
       this->DisplayedPointWidgets[fid] = pointWidget;
       }
@@ -1597,7 +1597,7 @@ void vtkSlicerFiducialListWidget::UpdatePointWidget(vtkMRMLFiducialListNode *fli
         }
       // don't need to place it when updating it, just set position
       pointIter->second->SetPosition(worldxyz);
-      pointIter->second->EnabledOn();
+      pointIter->second->SetEnabled(!(flist->GetLocked()));
       transformToWorld->Delete();
       transformToWorld = NULL;
       }
