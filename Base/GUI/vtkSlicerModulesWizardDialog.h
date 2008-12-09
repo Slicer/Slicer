@@ -26,6 +26,10 @@ class vtkSlicerModulesWizardDialog : public vtkKWWizardDialog
 public:
   static vtkSlicerModulesWizardDialog* New();
   vtkTypeRevisionMacro(vtkSlicerModulesWizardDialog,vtkKWWizardDialog);
+  
+  // Description:
+  // Loadable Modules specific OK will restart Slicer.
+  virtual void OK();
 
   // Description:
   // Access to the steps.

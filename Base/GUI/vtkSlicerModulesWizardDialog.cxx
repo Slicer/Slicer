@@ -28,6 +28,14 @@ vtkSlicerModulesWizardDialog::vtkSlicerModulesWizardDialog()
 }
 
 //----------------------------------------------------------------------------
+void vtkSlicerModulesWizardDialog::OK()
+{
+  this->Superclass::OK();
+
+  this->Script("exec $::env(Slicer3_HOME)/Slicer3 &; $::slicer3::Application SetPromptBeforeExit 0; exit");
+}
+
+//----------------------------------------------------------------------------
 void vtkSlicerModulesWizardDialog::CreateWidget()
 {
   // Check if already created
