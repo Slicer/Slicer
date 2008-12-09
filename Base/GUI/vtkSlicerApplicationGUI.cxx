@@ -174,7 +174,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
 
   this->SaveDataWidget = vtkSlicerMRMLSaveDataWidget::New();
 
-  this->ModulesWizardDialog = vtkSlicerModulesWizardDialog::New();
+  this->ModulesWizardDialog = NULL;
 
   //--- unique tag used to mark all view notebook pages
   //--- so that they can be identified and deleted when 
@@ -748,13 +748,23 @@ void vtkSlicerApplicationGUI::ProcessSaveSceneAsCommand()
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ShowModulesWizard()
 {
+  if (!this->ModulesWizardDialog)
+    {
+    this->ModulesWizardDialog = vtkSlicerModulesWizardDialog::New();
+    }
   if (!this->ModulesWizardDialog->IsCreated())
     {
-      this->ModulesWizardDialog->SetApplication( this->GetApplication() );
-      this->ModulesWizardDialog->Create();
+    this->ModulesWizardDialog->SetApplication( this->GetApplication() );
+    this->ModulesWizardDialog->Create();
     }
 
   this->ModulesWizardDialog->Invoke();  
+
+  if (this->ModulesWizardDialog)
+    {
+    this->ModulesWizardDialog->Delete();
+    this->ModulesWizardDialog = NULL;
+    }
 
   return;
 }    
