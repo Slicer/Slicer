@@ -42,6 +42,8 @@ vtkSlicerFiducialsGUI::vtkSlicerFiducialsGUI ( )
     this->RemoveFiducialButton = NULL;
     this->RemoveFiducialsInListButton = NULL;
     this->RemoveAllFiducialsButton = NULL;
+    this->LockAllFiducialsButton = NULL;
+    this->UnlockAllFiducialsButton = NULL;
     this->LockToggle = NULL;
     
     this->SelectAllFiducialsButton = NULL;
@@ -100,11 +102,24 @@ vtkSlicerFiducialsGUI::~vtkSlicerFiducialsGUI ( )
         this->RemoveFiducialButton->Delete ( );
         this->RemoveFiducialButton = NULL;
     }
-    if (this->RemoveAllFiducialsButton ) {
-        this->RemoveAllFiducialsButton->SetParent (NULL );
-        this->RemoveAllFiducialsButton->Delete ( );
-        this->RemoveAllFiducialsButton = NULL;
-    }
+    if (this->RemoveAllFiducialsButton )
+      {
+      this->RemoveAllFiducialsButton->SetParent (NULL );
+      this->RemoveAllFiducialsButton->Delete ( );
+      this->RemoveAllFiducialsButton = NULL;
+      }
+    if (this->LockAllFiducialsButton )
+      {
+      this->LockAllFiducialsButton->SetParent (NULL );
+      this->LockAllFiducialsButton->Delete ( );
+      this->LockAllFiducialsButton = NULL;
+      }
+    if (this->UnlockAllFiducialsButton )
+      {
+      this->UnlockAllFiducialsButton->SetParent (NULL );
+      this->UnlockAllFiducialsButton->Delete ( );
+      this->UnlockAllFiducialsButton = NULL;
+      }
 
     if (this->RemoveFiducialsInListButton ) {
         this->RemoveFiducialsInListButton->SetParent (NULL );
@@ -250,6 +265,8 @@ void vtkSlicerFiducialsGUI::RemoveGUIObservers ( )
     this->RemoveFiducialButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->RemoveFiducialsInListButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->RemoveAllFiducialsButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->LockAllFiducialsButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->UnlockAllFiducialsButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
     this->SelectAllFiducialsButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->DeselectAllFiducialsButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -285,6 +302,8 @@ void vtkSlicerFiducialsGUI::AddGUIObservers ( )
     this->RemoveFiducialButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     this->RemoveFiducialsInListButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     this->RemoveAllFiducialsButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->LockAllFiducialsButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->UnlockAllFiducialsButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
 
     this->SelectAllFiducialsButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->DeselectAllFiducialsButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -467,6 +486,36 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
             }
           }
         //--- TODO: now delete the node...
+    }
+  if (button == this->LockAllFiducialsButton && event == vtkKWPushButton::InvokedEvent)
+    {
+    vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Lock All Fiducials Button event: " << event << ".\n");
+    // save state for undo
+    this->MRMLScene->SaveStateForUndo();
+    numnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLFiducialListNode" );
+    for ( nn=0; nn<numnodes; nn++ )
+      {
+      flNode = vtkMRMLFiducialListNode::SafeDownCast (this->MRMLScene->GetNthNodeByClass ( nn, "vtkMRMLFiducialListNode" ));
+      if ( flNode != NULL )
+        {
+        flNode->SetLocked(1);
+        }
+      }
+    }
+  if (button == this->UnlockAllFiducialsButton && event == vtkKWPushButton::InvokedEvent)
+    {
+    vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Unlock All Fiducials Button event: " << event << ".\n");
+    // save state for undo
+    this->MRMLScene->SaveStateForUndo();
+    numnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLFiducialListNode" );
+    for ( nn=0; nn<numnodes; nn++ )
+      {
+      flNode = vtkMRMLFiducialListNode::SafeDownCast (this->MRMLScene->GetNthNodeByClass ( nn, "vtkMRMLFiducialListNode" ));
+      if ( flNode != NULL )
+        {
+        flNode->SetLocked(0);
+        }
+      }
     }
    if (button == this->SelectAllFiducialsButton && event == vtkKWPushButton::InvokedEvent)
      {
@@ -1208,10 +1257,30 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->RemoveAllFiducialsButton->SetReliefToFlat();
     this->RemoveAllFiducialsButton->SetBorderWidth ( 0 );
     this->RemoveAllFiducialsButton->SetBalloonHelpString("Remove all fiducial lists and the fiducials they contain.");
-    app->Script("pack %s %s %s -side left -anchor w -padx 4 -pady 2", 
+
+    // lock/unlock all fiducial lists
+    this->LockAllFiducialsButton = vtkKWPushButton::New ( );
+    this->LockAllFiducialsButton->SetParent ( allListsFrame );
+    this->LockAllFiducialsButton->Create ( );
+    this->LockAllFiducialsButton->SetImageToIcon ( this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerLockIcon() );
+    this->LockAllFiducialsButton->SetReliefToFlat();
+    this->LockAllFiducialsButton->SetBorderWidth ( 0 );
+    this->LockAllFiducialsButton->SetBalloonHelpString("Lock all fiducial lists.");
+
+    this->UnlockAllFiducialsButton = vtkKWPushButton::New ( );
+    this->UnlockAllFiducialsButton->SetParent ( allListsFrame );
+    this->UnlockAllFiducialsButton->Create ( );
+    this->UnlockAllFiducialsButton->SetImageToIcon ( this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerUnlockIcon() );
+    this->UnlockAllFiducialsButton->SetReliefToFlat();
+    this->UnlockAllFiducialsButton->SetBorderWidth ( 0 );
+    this->UnlockAllFiducialsButton->SetBalloonHelpString("Unlock all fiducial lists.");
+    
+    app->Script("pack %s %s %s %s %s -side left -anchor w -padx 4 -pady 2", 
                 this->SelectAllFiducialsButton->GetWidgetName(),
                 this->DeselectAllFiducialsButton->GetWidgetName(),
-                this->RemoveAllFiducialsButton->GetWidgetName());
+                this->RemoveAllFiducialsButton->GetWidgetName(),
+                this->LockAllFiducialsButton->GetWidgetName(),
+                this->UnlockAllFiducialsButton->GetWidgetName());
     
 
     // node selector

@@ -53,6 +53,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkGetObjectMacro ( AddFiducialButton, vtkKWPushButton);
     vtkGetObjectMacro ( RemoveFiducialButton, vtkKWPushButton);
     vtkGetObjectMacro ( RemoveAllFiducialsButton, vtkKWPushButton);
+    vtkGetObjectMacro ( LockAllFiducialsButton, vtkKWPushButton);
+    vtkGetObjectMacro ( UnlockAllFiducialsButton, vtkKWPushButton);
     vtkGetObjectMacro ( RemoveFiducialsInListButton, vtkKWPushButton);
     vtkGetObjectMacro ( SelectAllFiducialsButton, vtkKWPushButton);
     vtkGetObjectMacro ( SelectAllFiducialsInListButton, vtkKWPushButton);
@@ -195,6 +197,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // Description:
     // remove all fiducials on all lists
     vtkKWPushButton *RemoveAllFiducialsButton;
+    // Description:
+    // lock all fiducial lists
+    vtkKWPushButton *LockAllFiducialsButton;
+    // Description:
+    // unlock all fiducial lists
+    vtkKWPushButton *UnlockAllFiducialsButton;
     // Description:
     // select all fiducial points on this list
     vtkKWPushButton *SelectAllFiducialsInListButton;
