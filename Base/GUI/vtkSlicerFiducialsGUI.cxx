@@ -265,8 +265,8 @@ void vtkSlicerFiducialsGUI::RemoveGUIObservers ( )
     this->RemoveFiducialButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->RemoveFiducialsInListButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->RemoveAllFiducialsButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->LockAllFiducialsButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->UnlockAllFiducialsButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->LockAllFiducialsButton->GetWidget()->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->UnlockAllFiducialsButton->GetWidget()->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
     this->SelectAllFiducialsButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->DeselectAllFiducialsButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -302,8 +302,8 @@ void vtkSlicerFiducialsGUI::AddGUIObservers ( )
     this->RemoveFiducialButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     this->RemoveFiducialsInListButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     this->RemoveAllFiducialsButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-    this->LockAllFiducialsButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-    this->UnlockAllFiducialsButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->LockAllFiducialsButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->UnlockAllFiducialsButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
 
     this->SelectAllFiducialsButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->DeselectAllFiducialsButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -487,7 +487,7 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
           }
         //--- TODO: now delete the node...
     }
-  if (button == this->LockAllFiducialsButton && event == vtkKWPushButton::InvokedEvent)
+  if (button == this->LockAllFiducialsButton->GetWidget() && event == vtkKWPushButton::InvokedEvent)
     {
     vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Lock All Fiducials Button event: " << event << ".\n");
     // save state for undo
@@ -502,7 +502,7 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
         }
       }
     }
-  if (button == this->UnlockAllFiducialsButton && event == vtkKWPushButton::InvokedEvent)
+  if (button == this->UnlockAllFiducialsButton->GetWidget() && event == vtkKWPushButton::InvokedEvent)
     {
     vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Unlock All Fiducials Button event: " << event << ".\n");
     // save state for undo
@@ -754,32 +754,32 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
       if (event == vtkCommand::ModifiedEvent || event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent)
         {
         vtkDebugMacro("Modified or node added or removed event on the fiducial list node.\n");
-         if (node == NULL)
-           {
-            vtkDebugMacro("\tBUT: the node is null\n");
+        if (node == NULL)
+          {
+          vtkDebugMacro("\tBUT: the node is null\n");
+          return;
+          }
+        vtkDebugMacro("ProcessMRMLEvents: \t\tUpdating the GUI\n");
+        // update the table
+        SetGUIFromList(activeFiducialListNode);
         return;
         }
-      vtkDebugMacro("ProcessMRMLEvents: \t\tUpdating the GUI\n");
-      // update the table
-      SetGUIFromList(activeFiducialListNode);
-      return;
-      }
-    else if ( event == vtkMRMLFiducialListNode::FiducialModifiedEvent)
-      {
-      vtkDebugMacro("\tfiducial modified event on the active fiducial list.");
-      if (node == NULL)
+      else if ( event == vtkMRMLFiducialListNode::FiducialModifiedEvent)
         {
+        vtkDebugMacro("\tfiducial modified event on the active fiducial list.");
+        if (node == NULL)
+          {
+          return;
+          }
+        vtkDebugMacro("ProcessMRMLEvents: setting the gui from the acitve fid list node");
+        SetGUIFromList(activeFiducialListNode);
         return;
         }
-      vtkDebugMacro("ProcessMRMLEvents: setting the gui from the acitve fid list node");
-      SetGUIFromList(activeFiducialListNode);
-      return;
-      }
-    
       else if (event == vtkMRMLFiducialListNode::DisplayModifiedEvent)
-      {
-      vtkDebugMacro("vtkSlicerFiducialsGUI::ProcessMRMLEvents: DisplayModified event on the fiducial list node...\n");
-      }
+        {
+        vtkDebugMacro("vtkSlicerFiducialsGUI::ProcessMRMLEvents: DisplayModified event on the fiducial list node...\n");
+        this->SetGUIDisplayFrameFromList(activeFiducialListNode);
+        }
       } // end of events on the active fiducial list node
 
     if (node == vtkMRMLFiducialListNode::SafeDownCast(this->FiducialListSelectorWidget->GetSelected()) && event == vtkCommand::ModifiedEvent)
@@ -1003,6 +1003,12 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
       vtkErrorMacro ("vtkSlicerFiducialsGUI::SetGUIFromList: ERROR: no active fiducial list node in the gui class!\n");                
       return;
       }
+    this->SetGUIDisplayFrameFromList(activeFiducialListNode);
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerFiducialsGUI::SetGUIDisplayFrameFromList(vtkMRMLFiducialListNode * activeFiducialListNode)
+{
     vtkDebugMacro(<< "\tupdating the visibility button\n");
     if (this->GetVisibilityToggle() != NULL &&
         this->GetVisibilityIcons() != NULL)
@@ -1026,6 +1032,7 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
     if (this->GetApplicationGUI() &&
         this->GetApplicationGUI()->GetSlicerFoundationIcons())
       {
+      vtkDebugMacro("SetGUIDisplayFrameFromList: Updating lock toggle to " << activeFiducialListNode->GetLocked() );
       if (activeFiducialListNode->GetLocked() > 0)
         {
         this->GetLockToggle()->GetWidget()->SetImageToIcon(this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerLockIcon());
@@ -1117,8 +1124,6 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
       }
 }
 
-
-
 //---------------------------------------------------------------------------
 void vtkSlicerFiducialsGUI::CreateModuleEventBindings ( )
 {
@@ -1185,7 +1190,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->UIPanel->AddPage ( "Fiducials", "Fiducials", NULL );
     
     // Define your help text and build the help frame here.
-    const char *help = "The Fiducials Module creates and manages lists of Fiducial points. Click on the tool bar icon of an arrow pointing to a starburst fiducial to enter the 'place a new object mode', then click on 3D models or on 2D slices. You can also place fiducials while in 'tranform view' mode by positioning the mouse over a 2D slice plane in the Slice view windows (it must be the active window) and pressing the 'P' key. You can then click and drag the fiducial using the mouse in 'transform view' mode. 3D interactions are coming. You can reset the positions of the fiducials in the table below, and adjust selection (fiducials must be selected if they are to be passed into a command line module). To align slices with fiducials, move the fiducial while holding down the Control key. You can use the '`' key to jump to the next fiducial, Shift-` to jump backwards through the list. Use the backspace or delete key to delete a fiducial over which you are hovering in 2D.\nThe distance between the first two selected fiducials in the list will be computed automatically and appear in a label below the list of fiducials.";
+    const char *help = "The Fiducials Module creates and manages lists of Fiducial points. Click on the tool bar icon of an arrow pointing to a starburst fiducial to enter the 'place a new object mode', then click on 3D models or on 2D slices. You can also place fiducials while in 'tranform view' mode by positioning the mouse over a 2D slice plane in the Slice view windows (it must be the active window) and pressing the 'P' key. You can then click and drag the fiducial using the mouse in 'transform view' mode. You can reset the positions of the fiducials in the table below, and adjust selection (fiducials must be selected if they are to be passed into a command line module). To align slices with fiducials, move the fiducial while holding down the Control key. You can use the '`' key to jump to the next fiducial, Shift-` to jump backwards through the list. Use the backspace or delete key to delete a fiducial over which you are hovering in 2D.\nThe distance between the first two selected fiducials in the list will be computed automatically and appear in a label below the list of fiducials.";
     const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. ";
     vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Fiducials" );
     this->BuildHelpAndAboutFrame ( page, help, about );
@@ -1259,20 +1264,20 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->RemoveAllFiducialsButton->SetBalloonHelpString("Remove all fiducial lists and the fiducials they contain.");
 
     // lock/unlock all fiducial lists
-    this->LockAllFiducialsButton = vtkKWPushButton::New ( );
+    this->LockAllFiducialsButton = vtkKWPushButtonWithLabel::New ( );
     this->LockAllFiducialsButton->SetParent ( allListsFrame );
     this->LockAllFiducialsButton->Create ( );
-    this->LockAllFiducialsButton->SetImageToIcon ( this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerLockIcon() );
-    this->LockAllFiducialsButton->SetReliefToFlat();
-    this->LockAllFiducialsButton->SetBorderWidth ( 0 );
+    this->LockAllFiducialsButton->GetWidget()->SetWidth ( 4 );
+    this->LockAllFiducialsButton->GetWidget()->SetText ( "Lock");
+    //this->LockAllFiducialsButton->SetImageToIcon ( this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerLockIcon() );
     this->LockAllFiducialsButton->SetBalloonHelpString("Lock all fiducial lists.");
 
-    this->UnlockAllFiducialsButton = vtkKWPushButton::New ( );
+    this->UnlockAllFiducialsButton = vtkKWPushButtonWithLabel::New ( );
     this->UnlockAllFiducialsButton->SetParent ( allListsFrame );
     this->UnlockAllFiducialsButton->Create ( );
-    this->UnlockAllFiducialsButton->SetImageToIcon ( this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerUnlockIcon() );
-    this->UnlockAllFiducialsButton->SetReliefToFlat();
-    this->UnlockAllFiducialsButton->SetBorderWidth ( 0 );
+    this->UnlockAllFiducialsButton->GetWidget()->SetWidth(6);
+    this->UnlockAllFiducialsButton->GetWidget()->SetText ( "Unlock");
+    //this->UnlockAllFiducialsButton->SetImageToIcon ( this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerUnlockIcon() );
     this->UnlockAllFiducialsButton->SetBalloonHelpString("Unlock all fiducial lists.");
     
     app->Script("pack %s %s %s %s %s -side left -anchor w -padx 4 -pady 2", 

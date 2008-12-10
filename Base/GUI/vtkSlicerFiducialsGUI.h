@@ -53,8 +53,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkGetObjectMacro ( AddFiducialButton, vtkKWPushButton);
     vtkGetObjectMacro ( RemoveFiducialButton, vtkKWPushButton);
     vtkGetObjectMacro ( RemoveAllFiducialsButton, vtkKWPushButton);
-    vtkGetObjectMacro ( LockAllFiducialsButton, vtkKWPushButton);
-    vtkGetObjectMacro ( UnlockAllFiducialsButton, vtkKWPushButton);
+    vtkGetObjectMacro ( LockAllFiducialsButton, vtkKWPushButtonWithLabel);
+    vtkGetObjectMacro ( UnlockAllFiducialsButton, vtkKWPushButtonWithLabel);
     vtkGetObjectMacro ( RemoveFiducialsInListButton, vtkKWPushButton);
     vtkGetObjectMacro ( SelectAllFiducialsButton, vtkKWPushButton);
     vtkGetObjectMacro ( SelectAllFiducialsInListButton, vtkKWPushButton);
@@ -116,8 +116,14 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
 
     // Description:
     // Once know that the GUI has to be cleared and updated to show elements
-    // from a new list, use this call
+    // from a new list, use this call. It calls SetGUIDisplayFrameFromList.
     virtual void SetGUIFromList(vtkMRMLFiducialListNode * activeFiducialListNode);
+    // Description:
+    // If just the display frame elements need to be updated from the list
+    // (got a display modified event), call this method. The lock toggle is
+    // updated as changing the locked state on the list throws a displayed
+    // modified event.
+    virtual void SetGUIDisplayFrameFromList(vtkMRMLFiducialListNode * activeFiducialListNode);
     
     // Description:
     // Methods describe behavior at module enter and exit.
@@ -199,10 +205,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkKWPushButton *RemoveAllFiducialsButton;
     // Description:
     // lock all fiducial lists
-    vtkKWPushButton *LockAllFiducialsButton;
+    vtkKWPushButtonWithLabel *LockAllFiducialsButton;
     // Description:
     // unlock all fiducial lists
-    vtkKWPushButton *UnlockAllFiducialsButton;
+    vtkKWPushButtonWithLabel *UnlockAllFiducialsButton;
     // Description:
     // select all fiducial points on this list
     vtkKWPushButton *SelectAllFiducialsInListButton;
