@@ -674,8 +674,10 @@ void vtkSlicerTransformEditorWidget::UpdateTranslationSliders()
 {
    if (this->MatrixWidget->GetMatrix4x4() != NULL)
       {
+      this->ProcessingCallback = true;
       this->TranslationScaleLR->SetValue(this->MatrixWidget->GetMatrix4x4()->GetElement(0,3));
       this->TranslationScalePA->SetValue(this->MatrixWidget->GetMatrix4x4()->GetElement(1,3));
+      this->ProcessingCallback = false;
       this->TranslationScaleIS->SetValue(this->MatrixWidget->GetMatrix4x4()->GetElement(2,3));
       }
 }
