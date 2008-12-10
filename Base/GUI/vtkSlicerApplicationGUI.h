@@ -254,6 +254,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // making feature requests, and a script to upload
     // screenshots and a caption to slicer's visual blog.
     virtual void OpenTutorialsLink ();
+    virtual void OpenDocumentationLink ();
+    virtual void OpenPublicationsLink ();
     virtual void OpenBugLink ();
     virtual void OpenUsabilityLink ();
     virtual void OpenFeatureLink ();

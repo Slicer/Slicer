@@ -1401,6 +1401,12 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
   this->GetMainSlicerWindow()->GetHelpMenu()->InsertCommand (
                                                              this->GetMainSlicerWindow()->GetHelpMenuInsertPosition(),
                                                              "Browse tutorials (www)", NULL, "$::slicer3::ApplicationGUI OpenTutorialsLink");
+  this->GetMainSlicerWindow()->GetHelpMenu()->InsertCommand (
+                                                             this->GetMainSlicerWindow()->GetHelpMenuInsertPosition(),
+                                                             "Interface Documentation (www)", NULL, "$::slicer3::ApplicationGUI OpenDocumentationLink");
+  this->GetMainSlicerWindow()->GetHelpMenu()->InsertCommand (
+                                                             this->GetMainSlicerWindow()->GetHelpMenuInsertPosition(),
+                                                             "Slicer Publications (www)", NULL, "$::slicer3::ApplicationGUI OpenPublicationsLink");
   //
   // Feedback Menu
   //
@@ -1522,6 +1528,27 @@ void vtkSlicerApplicationGUI::OpenTutorialsLink ()
     app->OpenLink ("http://wiki.na-mic.org/Wiki/index.php/Slicer3.2:Training" );
     }
 }
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::OpenDocumentationLink ()
+{
+  if ( this->GetApplication() != NULL )
+    {
+    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+    app->OpenLink ("http://www.slicer.org/slicerWiki/index.php/Documentation" );
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::OpenPublicationsLink ()
+{
+  if ( this->GetApplication() != NULL )
+    {
+    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+    app->OpenLink ("http://www.slicer.org/publications" );
+    }
+}
+
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::OpenBugLink ()
 {
