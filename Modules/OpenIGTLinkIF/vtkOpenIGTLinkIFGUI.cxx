@@ -137,6 +137,7 @@ vtkOpenIGTLinkIFGUI::vtkOpenIGTLinkIFGUI ( )
 
   this->IOConfigTree = NULL;
   this->EnableAdvancedSettingButton = NULL;
+  this->IOConfigContextMenu = NULL;
 
   this->CurrentMrmlNodeListIndex = -1;
   this->CurrentNodeListAvailable.clear();

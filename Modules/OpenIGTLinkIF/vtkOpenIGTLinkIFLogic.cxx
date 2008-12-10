@@ -390,7 +390,7 @@ int vtkOpenIGTLinkIFLogic::RegisterDeviceEvent(vtkIGTLConnector* con, const char
   for (int i = 0; i < nItems; i ++)
     {
     vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(collection->GetItemAsObject(i));
-    if (strcmp(node->GetNodeTagName(), converter->GetMRMLName()) == 0)
+    if (converter->GetMRMLName() && strcmp(node->GetNodeTagName(), converter->GetMRMLName()) == 0)
       {
       srcNode = node;
       break;
@@ -511,7 +511,7 @@ void vtkOpenIGTLinkIFLogic::ImportFromCircularBuffers()
            iter ++)
         {
         vtkMRMLNode* node = NULL;
-        if (strcmp(buffer->GetDeviceType(), (*iter)->GetIGTLName()) == 0)
+        if ((*iter)->GetIGTLName() && strcmp(buffer->GetDeviceType(), (*iter)->GetIGTLName()) == 0)
           {
           vtkMRMLScene* scene = this->GetApplicationLogic()->GetMRMLScene();
           vtkCollection* collection = scene->GetNodesByName(buffer->GetDeviceName());
@@ -528,7 +528,7 @@ void vtkOpenIGTLinkIFLogic::ImportFromCircularBuffers()
               {
               node = vtkMRMLNode::SafeDownCast(collection->GetItemAsObject(i));
               // check if the node type is same
-              if (strcmp(node->GetNodeTagName(), (*iter)->GetMRMLName()) == 0)
+              if ((*iter)->GetMRMLName() && strcmp(node->GetNodeTagName(), (*iter)->GetMRMLName()) == 0)
                 {
                 found = i;
                 i = nCol; // loop end
@@ -830,7 +830,7 @@ void vtkOpenIGTLinkIFLogic::ProcessMRMLEvents(vtkObject * caller, unsigned long 
            iter != this->MessageConverterList.end();
            iter ++)
         {
-        if (strcmp(node->GetNodeTagName(), (*iter)->GetMRMLName()) == 0)
+        if ((*iter)->GetMRMLName() && strcmp(node->GetNodeTagName(), (*iter)->GetMRMLName()) == 0)
           {
           // check if the name-type combination is on the list
           if (connector->GetDeviceID(node->GetName(), (*iter)->GetIGTLName()) >= 0)
@@ -1267,19 +1267,22 @@ void vtkOpenIGTLinkIFLogic::GetDeviceNamesFromMrml(IGTLMrmlNodeListType &list)
        mcliter != this->MessageConverterList.end();
        mcliter ++)
     {
-    const char* className = this->GetMRMLScene()->GetClassNameByTag((*mcliter)->GetMRMLName());
-    const char* deviceTypeName = (*mcliter)->GetIGTLName();
-    std::vector<vtkMRMLNode*> nodes;
-    this->GetMRMLScene()->GetNodesByClass(className, nodes);
-    std::vector<vtkMRMLNode*>::iterator iter;
-    for (iter = nodes.begin(); iter != nodes.end(); iter ++)
+    if ((*mcliter)->GetMRMLName())
       {
-      IGTLMrmlNodeInfoType nodeInfo;
-      nodeInfo.name = (*iter)->GetName();
-      nodeInfo.type = deviceTypeName;
-      nodeInfo.io   = vtkIGTLConnector::IO_UNSPECIFIED;
-      nodeInfo.nodeID = (*iter)->GetID();
-      list.push_back(nodeInfo);
+      const char* className = this->GetMRMLScene()->GetClassNameByTag((*mcliter)->GetMRMLName());
+      const char* deviceTypeName = (*mcliter)->GetIGTLName();
+      std::vector<vtkMRMLNode*> nodes;
+      this->GetMRMLScene()->GetNodesByClass(className, nodes);
+      std::vector<vtkMRMLNode*>::iterator iter;
+      for (iter = nodes.begin(); iter != nodes.end(); iter ++)
+        {
+        IGTLMrmlNodeInfoType nodeInfo;
+        nodeInfo.name = (*iter)->GetName();
+        nodeInfo.type = deviceTypeName;
+        nodeInfo.io   = vtkIGTLConnector::IO_UNSPECIFIED;
+        nodeInfo.nodeID = (*iter)->GetID();
+        list.push_back(nodeInfo);
+        }
       }
     }
 
@@ -1297,7 +1300,7 @@ void vtkOpenIGTLinkIFLogic::GetDeviceNamesFromMrml(IGTLMrmlNodeListType &list, c
        mcliter != this->MessageConverterList.end();
        mcliter ++)
     {
-    if (strcmp((*mcliter)->GetMRMLName(), mrmlTagName) == 0)
+    if ((*mcliter)->GetMRMLName() && strcmp(mrmlTagName, (*mcliter)->GetMRMLName()) == 0)
       {
       const char* className = this->GetMRMLScene()->GetClassNameByTag(mrmlTagName);
       const char* deviceTypeName = (*mcliter)->GetIGTLName();
