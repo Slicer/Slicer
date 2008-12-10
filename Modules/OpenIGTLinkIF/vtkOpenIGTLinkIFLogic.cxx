@@ -767,13 +767,14 @@ int vtkOpenIGTLinkIFLogic::RegisterMessageConverter(vtkIGTLToMRMLBase* converter
 
   // Search the list and check if the same converter has already been registered.
   int found = 0;
+
   MessageConverterListType::iterator iter;
   for (iter = this->MessageConverterList.begin();
        iter != this->MessageConverterList.end();
        iter ++)
     {
-    if (strcmp(converter->GetIGTLName(), (*iter)->GetIGTLName()) == 0 &&
-        strcmp(converter->GetMRMLName(), (*iter)->GetMRMLName()) == 0)
+    if ((converter->GetIGTLName() && strcmp(converter->GetIGTLName(), (*iter)->GetIGTLName()) == 0) &&
+        (converter->GetMRMLName() && strcmp(converter->GetMRMLName(), (*iter)->GetMRMLName()) == 0))
       {
       found = 1;
       }
@@ -782,9 +783,16 @@ int vtkOpenIGTLinkIFLogic::RegisterMessageConverter(vtkIGTLToMRMLBase* converter
     {
     return 0;
     }
-
-  this->MessageConverterList.push_back(converter);
-  return 1;
+  
+  if (converter->GetIGTLName() && converter->GetMRMLName())
+    {
+    this->MessageConverterList.push_back(converter);
+    return 1;
+    }
+  else
+    {
+    return 0;
+    }
 }
 
 
