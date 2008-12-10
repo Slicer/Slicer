@@ -295,17 +295,26 @@ void vtkOpenIGTLinkIFGUI::RemoveGUIObservers ( )
 {
   vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
   
-  appGUI->GetMainSliceGUI("Red")->GetSliceViewer()->GetRenderWidget()
-    ->GetRenderWindowInteractor()->GetInteractorStyle()->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
-  appGUI->GetMainSliceGUI("Yellow")->GetSliceViewer()->GetRenderWidget()
-    ->GetRenderWindowInteractor()->GetInteractorStyle()->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
-  appGUI->GetMainSliceGUI("Green")->GetSliceViewer()->GetRenderWidget()
-    ->GetRenderWindowInteractor()->GetInteractorStyle()->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+  if ( appGUI && appGUI->GetMainSliceGUI("Red") )
+    {
+    appGUI->GetMainSliceGUI("Red")->GetSliceViewer()->GetRenderWidget()
+      ->GetRenderWindowInteractor()->GetInteractorStyle()->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
+  if ( appGUI && appGUI->GetMainSliceGUI("Yellow") )
+    {
+    appGUI->GetMainSliceGUI("Yellow")->GetSliceViewer()->GetRenderWidget()
+      ->GetRenderWindowInteractor()->GetInteractorStyle()->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
+  if ( appGUI && appGUI->GetMainSliceGUI("Yellow") )
+    {
+    appGUI->GetMainSliceGUI("Green")->GetSliceViewer()->GetRenderWidget()
+      ->GetRenderWindowInteractor()->GetInteractorStyle()->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
 
   //----------------------------------------------------------------
   // Connector Browser Frame
 
-  if (this->ConnectorList->GetWidget())
+  if (this->ConnectorList && this->ConnectorList->GetWidget())
     {
     this->ConnectorList->GetWidget()
       ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
