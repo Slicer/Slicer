@@ -29,7 +29,7 @@ include_directories(
   ${Slicer3_Libs_INCLUDE_DIRS}
   ${Slicer3_Base_INCLUDE_DIRS}
   ${MIMXAdapter_SOURCE_DIR} ${MIMXAdapter_BINARY_DIR} 
-    ${MIMXFilter_SOURCE_DIR} ${MIMXFilter_BINARY_DIR} 
+  ${MIMXFilter_SOURCE_DIR} ${MIMXFilter_BINARY_DIR} 
   ${mimxCommon_SOURCE_DIR} ${mimxCommon_BINARY_DIR} 
   ${ITK_INCLUDE_DIR}
   )

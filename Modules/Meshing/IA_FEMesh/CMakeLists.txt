@@ -97,7 +97,6 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
   ${KWWidgets_LIBRARIES} 
   mimxWidgets
   mimxMeshIO
-  mimxWidgets
   mimxFilter
   mimxCommon
   BuildingBlock
