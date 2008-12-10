@@ -784,7 +784,7 @@ int vtkOpenIGTLinkIFLogic::RegisterMessageConverter(vtkIGTLToMRMLBase* converter
     return 0;
     }
   
-  if (converter->GetIGTLName() && converter->GetMRMLName())
+  if (converter->GetIGTLName() || converter->GetMRMLName())
     {
     this->MessageConverterList.push_back(converter);
     return 1;
@@ -1269,16 +1269,24 @@ void vtkOpenIGTLinkIFLogic::GetDeviceNamesFromMrml(IGTLMrmlNodeListType &list)
     {
     if ((*mcliter)->GetMRMLName())
       {
-      const char* className = this->GetMRMLScene()->GetClassNameByTag((*mcliter)->GetMRMLName());
-      const char* deviceTypeName = (*mcliter)->GetIGTLName();
+      std::string className = this->GetMRMLScene()->GetClassNameByTag((*mcliter)->GetMRMLName());
+      std::string deviceTypeName;
+      if ((*mcliter)->GetIGTLName() != NULL)
+        {
+        deviceTypeName = (*mcliter)->GetIGTLName();
+        }
+      else
+        {
+        deviceTypeName = (*mcliter)->GetMRMLName();
+        }
       std::vector<vtkMRMLNode*> nodes;
-      this->GetMRMLScene()->GetNodesByClass(className, nodes);
+      this->GetApplicationLogic()->GetMRMLScene()->GetNodesByClass(className.c_str(), nodes);
       std::vector<vtkMRMLNode*>::iterator iter;
       for (iter = nodes.begin(); iter != nodes.end(); iter ++)
         {
         IGTLMrmlNodeInfoType nodeInfo;
         nodeInfo.name = (*iter)->GetName();
-        nodeInfo.type = deviceTypeName;
+        nodeInfo.type = deviceTypeName.c_str();
         nodeInfo.io   = vtkIGTLConnector::IO_UNSPECIFIED;
         nodeInfo.nodeID = (*iter)->GetID();
         list.push_back(nodeInfo);
