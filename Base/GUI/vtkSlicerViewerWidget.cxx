@@ -1471,11 +1471,15 @@ void vtkSlicerViewerWidget::Render()
     {
     this->UpdateFromMRML();
     }
-
+  // *** added code to check the RenderState and restore to whatever it
+  // was before the specific request to render, instead of just setting
+  // renderState to OFF.
+  int currentRenderState = this->MainViewer->GetRenderState();
   this->MainViewer->RenderStateOn();
   this->MainViewer->Render();
   vtkDebugMacro("vtkSlicerViewerWidget::Render called render" << endl);
-  this->MainViewer->RenderStateOff();
+  //this->MainViewer->RenderStateOff();
+  this->MainViewer->SetRenderState(currentRenderState);
   this->SetRenderPending(0);
 }
 
