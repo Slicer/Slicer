@@ -189,8 +189,8 @@ switch $::tcl_platform(os) {
           error "need to define system python path for $::tcl_platform(os)"
         }
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python
-        set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython25.so
-        set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python25
+        set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython2.5.so
+        set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python2.5
         set ::NETLIB_TEST_FILE $::Slicer3_LIB/netlib-build/BLAS-build/libblas.a
         set ::NUMPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/numpy/core/numeric.pyc
         set ::SCIPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/scipy/version.pyc

@@ -36,6 +36,7 @@ if(Slicer3_USE_NUMPY)
     ${PYTHON_INCLUDE_PATH}/../lib/
     ${PYTHON_INCLUDE_PATH}/../lib/site-packages/numpy/core/include/numpy
     ${PYTHON_INCLUDE_PATH}/../lib/site-packages/numpy/numarray/numpy
+    ${PYTHON_INCLUDE_PATH}/../lib/python2.5/site-packages/numpy/core/include/numpy
     ${PYTHON_INCLUDE_PATH}/../../lib/python2.5/site-packages/numpy/core/include/numpy
     ${PYTHON_INCLUDE_PATH}/../../lib/site-packages/numpy/core/include/numpy
     [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.5\\InstallPath]/libs
