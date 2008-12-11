@@ -125,12 +125,12 @@ vtkSlicerFiducialListWidget::vtkSlicerFiducialListWidget ( )
   // Create the 3d diamond glyphs
   vtkPoints * diamondGlyphPoints = vtkPoints::New();
   diamondGlyphPoints->SetNumberOfPoints(6);
-  diamondGlyphPoints->InsertPoint(0, 1, 0, 0);
-  diamondGlyphPoints->InsertPoint(1, 0, 1, 0);
-  diamondGlyphPoints->InsertPoint(2, 0, 0, 1);
-  diamondGlyphPoints->InsertPoint(3, -1, 0, 0);
-  diamondGlyphPoints->InsertPoint(4, 0, -1, 0);
-  diamondGlyphPoints->InsertPoint(5, 0, 0, -1);
+  diamondGlyphPoints->InsertPoint(0, 0.5, 0, 0);
+  diamondGlyphPoints->InsertPoint(1, 0, 0.5, 0);
+  diamondGlyphPoints->InsertPoint(2, 0, 0, 0.5);
+  diamondGlyphPoints->InsertPoint(3, -0.5, 0, 0);
+  diamondGlyphPoints->InsertPoint(4, 0, -0.5, 0);
+  diamondGlyphPoints->InsertPoint(5, 0, 0, -0.5);
 
   vtkCellArray * diamondGlyphPolys = vtkCellArray::New();
   diamondGlyphPolys->InsertNextCell( 4 );
@@ -174,7 +174,7 @@ vtkSlicerFiducialListWidget::vtkSlicerFiducialListWidget ( )
   diamondGlyphLines->Delete();
 
   this->SphereSource = vtkSphereSource::New();
-  this->SphereSource->SetRadius(0.3);
+  this->SphereSource->SetRadius(0.5);
   this->SphereSource->SetPhiResolution(10);
   this->SphereSource->SetThetaResolution(10);
 
