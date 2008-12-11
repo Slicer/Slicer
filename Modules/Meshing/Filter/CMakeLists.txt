@@ -26,6 +26,7 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR} ${MIMXCommon_BINARY_DIR})
 INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 VTK_WRAP_TCL3(MIMXFilter MIMXFilter_TCL_SRCS "${MIMXFilter_SRCS}" "")
 
+SET(LIB_NAME "mimxFilter")
 
 SET ( FILTER_SRCS 
     vtkMimxEdgeToStructuredGrid.cxx            
@@ -86,9 +87,9 @@ SET ( FILTER_SRCS
 )
 
 
-ADD_LIBRARY( mimxFilter ${FILTER_SRCS} )
+ADD_LIBRARY( ${LIB_NAME} ${FILTER_SRCS} )
 
-TARGET_LINK_LIBRARIES(mimxFilter
+TARGET_LINK_LIBRARIES(${LIB_NAME}
   vtkCommonTCL
   vtkImagingTCL
   vtkFilteringTCL
@@ -102,4 +103,9 @@ TARGET_LINK_LIBRARIES(mimxFilter
   ${KWWidgets_LIBRARIES}
   )
 
+install(TARGETS ${LIB_NAME}
+  RUNTIME DESTINATION ${Slicer3_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT Development
+  )
 

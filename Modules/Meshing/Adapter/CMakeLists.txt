@@ -41,9 +41,11 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR} ${MIMXAdapter_BINARY_DIR})
 INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 VTK_WRAP_TCL3(mimxAdapter MimxAdapter_TCL_SRCS "${MIMXAdapter_SRCS}" "")
 
-ADD_LIBRARY(mimxAdapter ${MIMXAdapter_SRCS} )
+SET(LIB_NAME "mimxAdapter")
 
-TARGET_LINK_LIBRARIES(mimxAdapter 
+ADD_LIBRARY(${LIB_NAME} ${MIMXAdapter_SRCS} )
+
+TARGET_LINK_LIBRARIES(${LIB_NAME} 
   vtkCommonTCL
   vtkImagingTCL
   vtkFilteringTCL
@@ -56,4 +58,9 @@ TARGET_LINK_LIBRARIES(mimxAdapter
   ITKAlgorithms
   )
 
-
+install(TARGETS ${LIB_NAME}
+  RUNTIME DESTINATION ${Slicer3_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT Development
+  )
+  
