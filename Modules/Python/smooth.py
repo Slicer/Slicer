@@ -1,5 +1,5 @@
 import numpy as np
-import scipy.signal as sciS
+#import scipy.signal as sciS
 
 def smooth(x,FWHM,dim):
 #
@@ -30,8 +30,9 @@ def smooth(x,FWHM,dim):
     x = np.reshape(x,(s[0], np.prod(s)/s[0]))
   
     # Perform 1D convolution
-    x = sciS.convolve2d(f,x,'same')
-  
+    #x = sciS.convolve2d(f,x,'same')
+    x = np.convolve(f.flatten(), x.flatten(), 'same')
+
     # Reshape and shift dims
     x = np.reshape(x,s)
     x = x.swapaxes(1,0)
