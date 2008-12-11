@@ -27,7 +27,7 @@ def smooth(x,FWHM,dim):
     s = x.shape
   
     ## Reshape data (Matlab specific)
-    x = np.reshape(x,(s[0], np.prod(s)/s[0]))
+    #x = np.reshape(x,(s[0], np.prod(s)/s[0]))
   
     # Perform 1D convolution
     #x = sciS.convolve2d(f,x,'same')
@@ -35,7 +35,7 @@ def smooth(x,FWHM,dim):
 
     # Reshape and shift dims
     x = np.reshape(x,s)
-    x = x.swapaxes(1,0)
-    x = x.swapaxes(2,1)
+    #x = x.swapaxes(1,0)
+    #x = x.swapaxes(2,1)
     
   return x
