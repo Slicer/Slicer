@@ -2,9 +2,9 @@
 
 #include "vtkObjectFactory.h"
 
-#include "vtkSlicerRepositoryStep.h"
+#include "vtkSlicerModulesConfigurationStep.h"
 #include "vtkSlicerModulesStep.h"
-#include "vtkSlicerProgressStep.h"
+#include "vtkSlicerModulesResultStep.h"
 
 #include "vtkKWApplication.h"
 #include "vtkKWWizardStep.h"
@@ -22,9 +22,9 @@ vtkCxxRevisionMacro(vtkSlicerModulesWizardDialog, "$Revision: 1.6 $");
 //----------------------------------------------------------------------------
 vtkSlicerModulesWizardDialog::vtkSlicerModulesWizardDialog()
 {
-  this->RepositoryStep    = NULL;
+  this->ModulesConfigurationStep    = NULL;
   this->ModulesStep    = NULL;
-  this->ProgressStep    = NULL;
+  this->ModulesResultStep    = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -54,14 +54,14 @@ void vtkSlicerModulesWizardDialog::CreateWidget()
   vtkKWWizardWidget *wizard_widget = this->GetWizardWidget();
 
   wizard_widget->GetTitleIconLabel()->SetImageToPredefinedIcon(
-    vtkKWIcon::IconCalculator);
+    vtkKWIcon::IconNetDrive);
 
-  // Add Repository step
+  // Add Configuration step
 
-  this->RepositoryStep = vtkSlicerRepositoryStep::New();
-  this->RepositoryStep->SetWizardDialog(this);
-  wizard_workflow->AddStep(this->RepositoryStep);
-  this->RepositoryStep->Delete();
+  this->ModulesConfigurationStep = vtkSlicerModulesConfigurationStep::New();
+  this->ModulesConfigurationStep->SetWizardDialog(this);
+  wizard_workflow->AddStep(this->ModulesConfigurationStep);
+  this->ModulesConfigurationStep->Delete();
 
   // Add Modules step
 
@@ -70,28 +70,17 @@ void vtkSlicerModulesWizardDialog::CreateWidget()
   wizard_workflow->AddNextStep(this->ModulesStep);
   this->ModulesStep->Delete();
 
-  // Add Progress step
+  // Add Result step
 
-  this->ProgressStep = vtkSlicerProgressStep::New();
-  this->ProgressStep->SetWizardDialog(this);
-  wizard_workflow->AddNextStep(this->ProgressStep);
-  this->ProgressStep->Delete();
-
-  // if repository validation failed, then go to the last step
-
-  wizard_workflow->AddInput(
-    this->RepositoryStep->GetRepositoryValidationFailed());
-  wizard_workflow->CreateNextTransition(
-    this->RepositoryStep,
-    this->RepositoryStep->GetRepositoryValidationFailed(),
-    this->ProgressStep);
-  wizard_workflow->CreateBackTransition(
-    this->RepositoryStep, this->ProgressStep);
+  this->ModulesResultStep = vtkSlicerModulesResultStep::New();
+  this->ModulesResultStep->SetWizardDialog(this);
+  wizard_workflow->AddNextStep(this->ModulesResultStep);
+  this->ModulesResultStep->Delete();
 
   // -----------------------------------------------------------------
   // Initial and finish step
 
-  wizard_workflow->SetFinishStep(this->ProgressStep);
+  wizard_workflow->SetFinishStep(this->ModulesResultStep);
   wizard_workflow->CreateGoToTransitionsToFinishStep();
-  wizard_workflow->SetInitialStep(this->RepositoryStep);
+  wizard_workflow->SetInitialStep(this->ModulesConfigurationStep);
 }

@@ -1,4 +1,4 @@
-#include "vtkSlicerProgressStep.h"
+#include "vtkSlicerModulesResultStep.h"
 #include "vtkSlicerModulesStep.h"
 
 #include "vtkStringArray.h"
@@ -24,11 +24,11 @@
 #include <vtksys/ios/sstream>
 
 //----------------------------------------------------------------------------
-vtkStandardNewMacro( vtkSlicerProgressStep );
-vtkCxxRevisionMacro(vtkSlicerProgressStep, "$Revision: 1.2 $");
+vtkStandardNewMacro( vtkSlicerModulesResultStep );
+vtkCxxRevisionMacro(vtkSlicerModulesResultStep, "$Revision: 1.2 $");
 
 //----------------------------------------------------------------------------
-vtkSlicerProgressStep::vtkSlicerProgressStep()
+vtkSlicerModulesResultStep::vtkSlicerModulesResultStep()
 {
   this->SetName("Progress");
   this->SetDescription("Specify loadable module path.");
@@ -38,7 +38,7 @@ vtkSlicerProgressStep::vtkSlicerProgressStep()
 }
 
 //----------------------------------------------------------------------------
-vtkSlicerProgressStep::~vtkSlicerProgressStep()
+vtkSlicerModulesResultStep::~vtkSlicerModulesResultStep()
 {
   if (this->ProgressGauge)
     {
@@ -52,13 +52,13 @@ vtkSlicerProgressStep::~vtkSlicerProgressStep()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerProgressStep::SetWizardDialog(vtkSlicerModulesWizardDialog *arg)
+void vtkSlicerModulesResultStep::SetWizardDialog(vtkSlicerModulesWizardDialog *arg)
 {
   this->WizardDialog = arg;
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerProgressStep::ShowUserInterface()
+void vtkSlicerModulesResultStep::ShowUserInterface()
 {
   this->Superclass::ShowUserInterface();
 
@@ -118,14 +118,14 @@ void vtkSlicerProgressStep::ShowUserInterface()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerProgressStep::HideUserInterface()
+void vtkSlicerModulesResultStep::HideUserInterface()
 {
   this->Superclass::HideUserInterface();
   this->GetWizardDialog()->GetWizardWidget()->ClearPage();
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerProgressStep::Validate()
+void vtkSlicerModulesResultStep::Validate()
 {
   vtkKWWizardWidget *wizard_widget = 
     this->GetWizardDialog()->GetWizardWidget();
@@ -138,7 +138,7 @@ void vtkSlicerProgressStep::Validate()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerProgressStep::Install(const std::string& url)
+void vtkSlicerModulesResultStep::Install(const std::string& url)
 {
   
   vtkHTTPHandler *handler = vtkHTTPHandler::New();
@@ -161,7 +161,7 @@ void vtkSlicerProgressStep::Install(const std::string& url)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerProgressStep::InstallSource(const std::string& url)
+void vtkSlicerModulesResultStep::InstallSource(const std::string& url)
 {
   vtksys_stl::string slicerHome;
   vtksys::SystemTools::GetEnv("Slicer3_HOME", slicerHome);

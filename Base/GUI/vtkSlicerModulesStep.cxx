@@ -57,7 +57,21 @@ void vtkSlicerModulesStep::ShowUserInterface()
   vtkKWWizardWidget *wizard_widget = 
     this->GetWizardDialog()->GetWizardWidget();
 
+  // left most column checkbox to select download
+  // radio button set along top: select all, deselect all
+
   // Show list of available modules for downloaded
+
+  // Script("Slicer3OpenLink %s") see QueryAtlas multi-column
+
+  // along bottom buttons to:
+  //-- download now
+  //-- uninstall (delete?)
+
+  // status bar or progress along bottom
+
+  // disable next until download or uninstall is selected (once? once
+  // after selection change?)
 
   if (!this->ModulesMultiColumnList)
     {
@@ -65,7 +79,6 @@ void vtkSlicerModulesStep::ShowUserInterface()
     }
   if (!this->ModulesMultiColumnList->IsCreated())
     {
-
 
     vtkSlicerApplication *app = dynamic_cast<vtkSlicerApplication*> (this->GetApplication());
     const char* tmp = app->GetTemporaryDirectory();
@@ -109,35 +122,14 @@ void vtkSlicerModulesStep::ShowUserInterface()
 
     int col_index;
 
-    col_index = this->ModulesMultiColumnList->AddColumn("Name");
-
-    col_index = this->ModulesMultiColumnList->AddColumn("Installed");
-    col_index = this->ModulesMultiColumnList->AddColumn("Available");
-    this->ModulesMultiColumnList->SetColumnAlignmentToCenter(col_index);
-
-    col_index = this->ModulesMultiColumnList->AddColumn("Action");
-    this->ModulesMultiColumnList->SetColumnWidth(col_index, 10);
-    this->ModulesMultiColumnList->SetColumnEditWindowToSpinBox(col_index);
-    this->ModulesMultiColumnList->SetColumnFormatCommandToEmptyOutput(col_index);
+    col_index = this->ModulesMultiColumnList->AddColumn("Select");
     this->ModulesMultiColumnList->ColumnEditableOn(col_index);
 
-    col_index = this->ModulesMultiColumnList->AddColumn("URL");
+    col_index = this->ModulesMultiColumnList->AddColumn("Name");
+    col_index = this->ModulesMultiColumnList->AddColumn("Result");
 
-    // Insert each module entry
-
-    const char* values[] = {"Skip", "Install"};
-    
-    for (unsigned int i = 0; i < this->Modules.size(); i++)
-      {
-        ManifestEntry *module = this->Modules[i];
-        this->ModulesMultiColumnList->InsertCellText(i, 0, module->Name.c_str());
-        this->ModulesMultiColumnList->InsertCellText(i, 2, module->Version.c_str());
-
-        this->ModulesMultiColumnList->SetCellWindowCommandToComboBoxWithValues(i, 3, 2, values);
-        this->ModulesMultiColumnList->SetCellText(i, 3, "Skip");
-        this->ModulesMultiColumnList->InsertCellText(i, 4, module->URL.c_str());
-      }
-
+    col_index = this->ModulesMultiColumnList->AddColumn("HomePage");
+    col_index = this->ModulesMultiColumnList->AddColumn("Binary URL");
     }
 
   this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 

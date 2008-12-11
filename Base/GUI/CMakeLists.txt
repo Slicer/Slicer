@@ -128,9 +128,9 @@ set(SlicerBaseGUI_SRCS
   vtkSlicerROIGUI.cxx
   vtkKWCheckBoxSelectionDialog.cxx
   vtkSlicerModulesWizardDialog.cxx
-  vtkSlicerRepositoryStep.cxx
+  vtkSlicerModulesConfigurationStep.cxx
   vtkSlicerModulesStep.cxx
-  vtkSlicerProgressStep.cxx
+  vtkSlicerModulesResultStep.cxx
   vtkSlicerROIDisplayWidget.cxx
   vtkSlicerROIViewerWidget.cxx
   # VTK Replacement classes

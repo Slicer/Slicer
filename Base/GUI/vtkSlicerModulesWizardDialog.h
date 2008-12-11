@@ -5,9 +5,9 @@
 
 #include <string>
 
-class vtkSlicerRepositoryStep;
+class vtkSlicerModulesConfigurationStep;
 class vtkSlicerModulesStep;
-class vtkSlicerProgressStep;
+class vtkSlicerModulesResultStep;
 
 // Description:
 // An object to hold entry information.
@@ -33,9 +33,9 @@ public:
 
   // Description:
   // Access to the steps.
-  vtkGetObjectMacro(RepositoryStep, vtkSlicerRepositoryStep);
+  vtkGetObjectMacro(ModulesConfigurationStep, vtkSlicerModulesConfigurationStep);
   vtkGetObjectMacro(ModulesStep, vtkSlicerModulesStep);
-  vtkGetObjectMacro(ProgressStep, vtkSlicerProgressStep);
+  vtkGetObjectMacro(ModulesResultStep, vtkSlicerModulesResultStep);
 
 protected:
   vtkSlicerModulesWizardDialog();
@@ -47,9 +47,9 @@ protected:
 
   // Description:
   // Steps
-  vtkSlicerRepositoryStep *RepositoryStep;
+  vtkSlicerModulesConfigurationStep *ModulesConfigurationStep;
   vtkSlicerModulesStep *ModulesStep;
-  vtkSlicerProgressStep *ProgressStep;
+  vtkSlicerModulesResultStep *ModulesResultStep;
 
 private:
   vtkSlicerModulesWizardDialog(const vtkSlicerModulesWizardDialog&); // Not implemented.

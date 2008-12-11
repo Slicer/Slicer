@@ -10,6 +10,7 @@
 
 class vtkSlicerModulesWizardDialog;
 class vtkKWMultiColumnList;
+class vtkKWCheckButton;
 //BTX
 class ManifestEntry;
 //ETX
@@ -55,6 +56,9 @@ private:
   //BTX
   std::vector<ManifestEntry*> ParseManifest(const std::string&);
   //ETX
+  
+  vtkKWCheckButton *DownloadButton;
+  vtkKWCheckButton *UninstallButton;
 
 };
 

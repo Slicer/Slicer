@@ -1,5 +1,5 @@
-#ifndef __vtkSlicerProgressStep_h
-#define __vtkSlicerProgressStep_h
+#ifndef __vtkSlicerModulesResultStep_h
+#define __vtkSlicerModulesResultStep_h
 
 #include <string>
 #include "vtkKWWizardStep.h"
@@ -8,11 +8,11 @@ class vtkSlicerModulesWizardDialog;
 class vtkKWProgressGauge;
 class vtkKWText;
 
-class vtkSlicerProgressStep : public vtkKWWizardStep
+class vtkSlicerModulesResultStep : public vtkKWWizardStep
 {
 public:
-  static vtkSlicerProgressStep* New();
-  vtkTypeRevisionMacro(vtkSlicerProgressStep,vtkKWWizardStep);
+  static vtkSlicerModulesResultStep* New();
+  vtkTypeRevisionMacro(vtkSlicerModulesResultStep,vtkKWWizardStep);
 
   // Description:
   // Show/hide the UI, validate the step.
@@ -26,16 +26,16 @@ public:
   virtual void SetWizardDialog(vtkSlicerModulesWizardDialog*);
 
 protected:
-  vtkSlicerProgressStep();
-  ~vtkSlicerProgressStep();
+  vtkSlicerModulesResultStep();
+  ~vtkSlicerModulesResultStep();
 
   vtkKWProgressGauge *ProgressGauge;
   vtkKWText *Text;
   vtkSlicerModulesWizardDialog *WizardDialog;
 
 private:
-  vtkSlicerProgressStep(const vtkSlicerProgressStep&);   // Not implemented.
-  void operator=(const vtkSlicerProgressStep&);  // Not implemented.
+  vtkSlicerModulesResultStep(const vtkSlicerModulesResultStep&);   // Not implemented.
+  void operator=(const vtkSlicerModulesResultStep&);  // Not implemented.
 
   //BTX
   void Install(const std::string& url);
