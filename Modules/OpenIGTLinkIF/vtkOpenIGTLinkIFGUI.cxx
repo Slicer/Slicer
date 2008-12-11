@@ -249,8 +249,59 @@ vtkOpenIGTLinkIFGUI::~vtkOpenIGTLinkIFGUI ( )
     this->ImagingMenu->Delete();
     }
 
+
   this->IsSliceOrientationAdded = false;
 
+  //----------------------------------------------------------------
+  // Connector List Frame
+
+  if ( this->ConnectorList )
+    {
+    this->ConnectorList->SetParent(NULL);
+    this->ConnectorList->Delete();
+    }
+
+  if ( this->ConnectorTypeButtonSet )
+    {
+    this->ConnectorTypeButtonSet->SetParent(NULL);
+    this->ConnectorTypeButtonSet->Delete();
+    }
+
+  if ( this->ConnectorNameEntry )
+    {
+    this->ConnectorNameEntry->SetParent(NULL);
+    this->ConnectorNameEntry->Delete();
+    }
+
+  if ( this->AddConnectorButton )
+    {
+    this->AddConnectorButton->SetParent(NULL);
+    this->AddConnectorButton->Delete();
+    }
+
+  if ( this->DeleteConnectorButton )
+    {
+    this->DeleteConnectorButton->SetParent(NULL);
+    this->DeleteConnectorButton->Delete();
+    }
+
+  if ( this->ConnectorStatusCheckButton )
+    {
+    this->ConnectorStatusCheckButton->SetParent(NULL);
+    this->ConnectorStatusCheckButton->Delete();
+    }
+
+  if ( this->ConnectorAddressEntry )
+    {
+    this->ConnectorAddressEntry->SetParent(NULL);
+    this->ConnectorAddressEntry->Delete();
+    }
+
+  if ( this->ConnectorPortEntry )
+    {
+    this->ConnectorPortEntry->SetParent(NULL);
+    this->ConnectorPortEntry->Delete();
+    }
 
   //----------------------------------------------------------------
   // Etc Frame
@@ -1213,6 +1264,8 @@ void vtkOpenIGTLinkIFGUI::BuildGUIForConnectorBrowserFrame ()
   app->Script ("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                conBrowsFrame->GetWidgetName(), page->GetWidgetName());
 
+  conBrowsFrame->Delete();
+
   // -----------------------------------------
   // Connector List Frame
   
@@ -1222,6 +1275,9 @@ void vtkOpenIGTLinkIFGUI::BuildGUIForConnectorBrowserFrame ()
   listFrame->SetLabelText ("Connectors");
   app->Script ( "pack %s -fill both -expand true",  
                 listFrame->GetWidgetName());
+
+  listFrame->Delete();
+
 
   this->ConnectorList = vtkKWMultiColumnListWithScrollbars::New();
   this->ConnectorList->SetParent(listFrame->GetFrame());
@@ -1253,6 +1309,8 @@ void vtkOpenIGTLinkIFGUI::BuildGUIForConnectorBrowserFrame ()
   vtkKWFrame *listButtonsFrame = vtkKWFrame::New();
   listButtonsFrame->SetParent(listFrame->GetFrame());
   listButtonsFrame->Create();
+
+  listButtonsFrame->Delete();
 
   app->Script ("pack %s %s -fill both -expand true",  
                //app->Script( "pack %s %s -side left -anchor nw -expand n -padx 2 -pady 2",
@@ -1302,9 +1360,12 @@ void vtkOpenIGTLinkIFGUI::BuildGUIForConnectorBrowserFrame ()
   this->ConnectorNameEntry->Create();
   this->ConnectorNameEntry->SetWidth(18);
 
+
   app->Script("pack %s %s -side left -anchor w -fill x -padx 2 -pady 2", 
               nameLabel->GetWidgetName() , this->ConnectorNameEntry->GetWidgetName());
   
+  nameLabel->Delete();
+  nameFrame->Delete();
 
   // Connector Property -- Connector type (server or client)
   vtkKWFrame *typeFrame = vtkKWFrame::New();
@@ -1335,6 +1396,8 @@ void vtkOpenIGTLinkIFGUI::BuildGUIForConnectorBrowserFrame ()
   app->Script("pack %s %s -side left -anchor w -fill x -padx 2 -pady 2", 
               typeLabel->GetWidgetName() , this->ConnectorTypeButtonSet->GetWidgetName());
 
+  typeFrame->Delete();
+
   // Connector Property -- Connector type (server or client)
   vtkKWFrame *statusFrame = vtkKWFrame::New();
   statusFrame->SetParent(controlFrame->GetFrame());
@@ -1357,6 +1420,9 @@ void vtkOpenIGTLinkIFGUI::BuildGUIForConnectorBrowserFrame ()
   app->Script("pack %s %s -side left -anchor w -fill x -padx 2 -pady 2", 
               statusLabel->GetWidgetName() , this->ConnectorStatusCheckButton->GetWidgetName());
 
+  statusFrame->Delete();
+  statusLabel->Delete();
+
   vtkKWFrame *addressFrame = vtkKWFrame::New();
   addressFrame->SetParent(controlFrame->GetFrame());
   addressFrame->Create();
@@ -1377,6 +1443,8 @@ void vtkOpenIGTLinkIFGUI::BuildGUIForConnectorBrowserFrame ()
   app->Script("pack %s %s -side left -anchor w -fill x -padx 2 -pady 2", 
               addressLabel->GetWidgetName() , this->ConnectorAddressEntry->GetWidgetName());
   
+  addressFrame->Delete();
+  addressLabel->Delete();
 
   vtkKWFrame *portFrame = vtkKWFrame::New();
   portFrame->SetParent(controlFrame->GetFrame());
@@ -1399,6 +1467,9 @@ void vtkOpenIGTLinkIFGUI::BuildGUIForConnectorBrowserFrame ()
   app->Script("pack %s %s -side left -anchor w -fill x -padx 2 -pady 2", 
               portLabel->GetWidgetName() , this->ConnectorPortEntry->GetWidgetName());
 
+  portFrame->Delete();
+  portLabel->Delete();
+  controlFrame->Delete();
 
 }
 
@@ -1416,6 +1487,8 @@ void vtkOpenIGTLinkIFGUI::BuildGUIForIOConfig()
   ioConfigFrame->CollapseFrame();
   app->Script ("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                ioConfigFrame->GetWidgetName(), page->GetWidgetName());
+
+  ioConfigFrame->Delete();
 
   // -----------------------------------------
   // Data I/O Configurations
