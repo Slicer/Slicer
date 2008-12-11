@@ -489,14 +489,14 @@ def sendVolume(vol, c, log='report.log', isDti=False):
      c.send('dimensions ' + str(shape[0]) + ' ' + str(shape[1]) + ' ' + str(shape[2]) + '\n')
      ack = c.recv(SIZE)
      
-     if isDwi:
-         f.write("Shape : %s\n" % str(shape[3]))
-         for i in range(shape[3]):
-             c.send(data[..., i].tostring())
-             if i < shape[3] - 1:
-                 ack = c.recv(SIZE)
-     else:
-         c.send(data.tostring())
+  if isDwi:
+     f.write("Shape : %s\n" % str(shape[3]))
+     for i in range(shape[3]):
+          c.send(data[..., i].tostring())
+          if i < shape[3] - 1:
+              ack = c.recv(SIZE)
+  else:
+     c.send(data.tostring())
 
 
   f.write("completed\n")
@@ -671,12 +671,6 @@ def Execute (inputVolume0, inputVolume1, inputVolume2, inputVolume3,  reportfile
 
   s.send('modeEnabled ' + str(int(modeEnabled)) + '\n')
   ack = s.recv(SIZE)
-
-  #s.send('infTensThres ' + str(infTensThres) + '\n')
-  #ack = s.recv(SIZE)
-
-  #s.send('supTensThres ' + str(supTensThres) + '\n')
-  #ack = s.recv(SIZE)
 
   # stochastic tracto
   s.send('stEnabled ' + str(int(stEnabled)) + '\n')
