@@ -2048,7 +2048,11 @@ vtkSlicerViewerWidget* vtkSlicerApplicationGUI::GetActiveViewerWidget()
       }
     }
 
-  return NULL;
+  // no active found, alright, use first one, if any
+  // Legacy support, the active flag on the vtkMRMLViewNode was saved, but not
+  // used. Sadly, it was saved as "false", which means that now that this flag
+  // is supported, snapshots start disabling the view! Try to work around this.
+  return this->GetNthViewerWidget(0); 
 }
 #if 1
 //---------------------------------------------------------------------------
