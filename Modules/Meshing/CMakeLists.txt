@@ -16,10 +16,10 @@ endif(NOT Slicer3_SOURCE_DIR)
 # --------------------------------------------------------------------------
 subdirs(
   IO
+  Adapter
   Common
   Filter
   #CommandLine
-  Adapter
   Mesh
   BuildingBlock
   Widgets
