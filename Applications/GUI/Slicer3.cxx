@@ -1356,7 +1356,9 @@ int Slicer3_main(int argc, char *argv[])
 #if !defined(COMMANDLINE_DEBUG) && (defined(Slicer3_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
   std::vector<std::string> moduleNames;
   std::vector<std::string>::const_iterator mit;
-  if ( slicerApp->GetLoadCommandLineModules() && !NoModules )
+  if ( slicerApp->GetLoadCommandLineModules() 
+        && !NoModules
+        && (ignoreModules->LookupValue("CLI") < 0) )
     {
     // --- Scan for command line and shared object modules
     //
@@ -1932,12 +1934,7 @@ int Slicer3_main(int argc, char *argv[])
   while (lmit != loadableModuleNames.end()) 
     {
     LoadableModuleDescription desc = loadableModuleFactory.GetModuleDescription(*lmit);
-
-    if (ignoreModules->LookupValue(desc.GetName().c_str()) < 0)
-      {
-      desc.GetGUIPtr()->Delete();
-
-      }
+    desc.GetGUIPtr()->Delete();
     lmit++;
     }
 
@@ -2026,13 +2023,11 @@ int Slicer3_main(int argc, char *argv[])
     {
     LoadableModuleDescription desc = loadableModuleFactory.GetModuleDescription(*lmit);
 
-    if (ignoreModules->LookupValue(desc.GetName().c_str()) < 0)
+    vtkSlicerModuleLogic* logic = desc.GetLogicPtr();
+    if ( logic )
       {
-      vtkSlicerModuleLogic* logic = desc.GetLogicPtr();
-
       logic->SetAndObserveMRMLScene( NULL );
       logic->Delete();
-
       }
     lmit++;
     }
