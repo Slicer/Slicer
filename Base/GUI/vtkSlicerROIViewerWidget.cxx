@@ -6,6 +6,7 @@
 #include "vtkCollection.h"
 #include "vtkTransform.h"
 #include "vtkRenderer.h"
+#include "vtkProperty.h"
 #include "vtkRenderWindowInteractor.h"
 
 #include "vtkKWWidget.h"
@@ -36,8 +37,47 @@ public:
            (!this->ROINode->GetInteractiveMode() && event == vtkCommand::EndInteractionEvent)) )
         {
         vtkSlicerBoxRepresentation* boxRep = reinterpret_cast<vtkSlicerBoxRepresentation*>(boxWidget->GetRepresentation());
-        //boxRep->GetTransform(this->Transform);
-        double* bounds = boxRep->GetBounds();
+        double* bounds1 = boxRep->GetBounds();
+        double bounds[6];
+
+        vtkMRMLTransformNode* tnode = this->ROINode->GetParentTransformNode();
+        if (tnode != NULL && tnode->IsLinear())
+          {
+          vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+          transformToWorld->Identity();
+          vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+          lnode->GetMatrixTransformToWorld(transformToWorld);
+          transformToWorld->Invert();
+          double p[4];
+          p[3] = 0;
+          int i;
+          for (i=0; i<3; i++)
+            {
+            p[i] = bounds1[2*i];
+            }
+          double *xyz = transformToWorld->MultiplyDoublePoint(p);
+          bounds[0] = xyz[0];
+          bounds[2] = xyz[1];
+          bounds[4] = xyz[2];
+
+          for (i=0; i<3; i++)
+            {
+            p[i] = bounds1[2*i+1];
+            }
+          xyz = transformToWorld->MultiplyDoublePoint(p);
+          bounds[1] = xyz[0];
+          bounds[3] = xyz[1];
+          bounds[5] = xyz[2];
+          transformToWorld->Delete();
+          }
+        else
+          {
+          for (int i=0; i<6; i++)
+            {
+            bounds[i] = bounds1[i];
+            }
+          }
+
         this->ROINode->DisableModifiedEventOn();
         this->ROINode->SetXYZ(0.5*(bounds[1]+bounds[0]),0.5*(bounds[3]+bounds[2]),0.5*(bounds[5]+bounds[4]));
         this->ROINode->SetRadiusXYZ(0.5*(bounds[1]-bounds[0]),0.5*(bounds[3]-bounds[2]),0.5*(bounds[5]-bounds[4]));
@@ -267,7 +307,8 @@ void vtkSlicerROIViewerWidget::UpdateROIFromMRML(vtkMRMLROINode *roi)
     boxWidget->SetRepresentation(rep);
     boxWidget->SetPriority(1);
     rep->SetPlaceFactor( 1.0 );
-    
+    rep->GetSelectedHandleProperty()->SetColor(0.2,0.6,0.15);
+
     vtkRenderWindowInteractor *interactor = this->MainViewerWidget->GetMainViewer()->GetRenderWindow()->GetInteractor();
     boxWidget->SetInteractor(interactor);
     
@@ -294,32 +335,7 @@ void vtkSlicerROIViewerWidget::UpdateROIFromMRML(vtkMRMLROINode *roi)
     bounds[  i] = xyz[i]-rxyz[i];
     bounds[3+i] = xyz[i]+rxyz[i];
     }
-  
-  // first get the list's transform node
-  vtkMRMLTransformNode* tnode = roi->GetParentTransformNode();
-  vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
-  transformToWorld->Identity();
-  if (tnode != NULL && tnode->IsLinear())
-    {
-    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    lnode->GetMatrixTransformToWorld(transformToWorld);
-    }
-  /***
-   // get this point
-   float *xyz = roi->GetNthROIXYZ(f);
-   // convert by the parent transform
-   float xyzw[4];
-   xyzw[0] = xyz[0];
-   xyzw[1] = xyz[1];
-   xyzw[2] = xyz[2];
-   xyzw[3] = 1.0;
-   float worldxyz[4], *worldp = &worldxyz[0];        
-   transformToWorld->MultiplyPoint(xyzw, worldp);
-  ***/
-  
-  transformToWorld->Delete();
-  transformToWorld = NULL;
-  
+
   if (rep) 
     {
     double b[6];
@@ -340,7 +356,75 @@ void vtkSlicerROIViewerWidget::UpdateROIFromMRML(vtkMRMLROINode *roi)
     {
     boxWidget->EnabledOff();
     }
+
+  this->UpdateROITransform(roi);
+
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerROIViewerWidget::UpdateROITransform(vtkMRMLROINode *roi)
+{
+  if (roi == NULL)
+    {
+    vtkWarningMacro("UpdateROIFromMRML: null input list!");
+    return;
+    }
   
+  this->AddMRMLROIObservers(roi);
+  
+  std::string roiID = std::string(roi->GetID());
+  
+  vtkSlicerBoxWidget2 *boxWidget = this->GetBoxWidgetByID(roi->GetID());
+  
+  vtkSlicerBoxRepresentation *rep = NULL;
+
+  if (!boxWidget)
+    {
+    // create one
+    boxWidget = vtkSlicerBoxWidget2::New();
+    rep = vtkSlicerBoxRepresentation::New();
+    boxWidget->SetRepresentation(rep);
+    boxWidget->SetPriority(1);
+    rep->SetPlaceFactor( 1.0 );
+    rep->GetSelectedHandleProperty()->SetColor(0.2,0.6,0.15);
+
+    vtkRenderWindowInteractor *interactor = this->MainViewerWidget->GetMainViewer()->GetRenderWindow()->GetInteractor();
+    boxWidget->SetInteractor(interactor);
+    
+    vtkBoxWidgetCallback *myCallback = vtkBoxWidgetCallback::New();
+    
+    myCallback->ROINode = roi;
+    myCallback->ROIViewerWidget = this;
+    boxWidget->AddObserver(vtkCommand::EnableEvent, myCallback);
+    boxWidget->AddObserver(vtkCommand::EndInteractionEvent, myCallback);
+    boxWidget->AddObserver(vtkCommand::InteractionEvent, myCallback);
+    myCallback->Delete();
+    
+    this->DisplayedBoxWidgets[roiID] = boxWidget;
+    }
+
+  rep = vtkSlicerBoxRepresentation::SafeDownCast(boxWidget->GetRepresentation());
+
+  // get the ROI's transform node
+  vtkMRMLTransformNode* tnode = roi->GetParentTransformNode();
+  if (tnode != NULL && tnode->IsLinear())
+    {
+    vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+    transformToWorld->Identity();
+    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+    lnode->GetMatrixTransformToWorld(transformToWorld);
+
+    vtkTransform *xform = vtkTransform::New();
+    xform->Identity();
+    xform->SetMatrix(transformToWorld);
+    rep->SetTransform(xform);
+
+    xform->Delete();
+    transformToWorld->Delete();
+
+    boxWidget->InvokeEvent(vtkCommand::EndInteractionEvent);
+    }
+
   //this->Render();
 }
 

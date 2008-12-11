@@ -24,6 +24,30 @@ vtkCxxRevisionMacro ( vtkSlicerROIDisplayWidget, "$Revision: 1.0 $");
 //---------------------------------------------------------------------------
 vtkSlicerROIDisplayWidget::vtkSlicerROIDisplayWidget ( )
 {
+    //Set Standard Clipping Colors
+    ColorsClippingHandles[0][0]=1;
+    ColorsClippingHandles[0][1]=0;
+    ColorsClippingHandles[0][2]=1;
+
+    ColorsClippingHandles[1][0]=1;
+    ColorsClippingHandles[1][1]=0;
+    ColorsClippingHandles[1][2]=0;
+
+    ColorsClippingHandles[2][0]=1;
+    ColorsClippingHandles[2][1]=1;
+    ColorsClippingHandles[2][2]=1;
+
+    ColorsClippingHandles[3][0]=.89;
+    ColorsClippingHandles[3][1]=.6;
+    ColorsClippingHandles[3][2]=.07;
+
+    ColorsClippingHandles[4][0]=0;
+    ColorsClippingHandles[4][1]=0;
+    ColorsClippingHandles[4][2]=1;
+
+    ColorsClippingHandles[5][0]=0;
+    ColorsClippingHandles[5][1]=0;
+    ColorsClippingHandles[5][2]=0;
 
     this->ROINode = NULL;
 
@@ -353,6 +377,8 @@ void vtkSlicerROIDisplayWidget::CreateWidget ( )
   this->XRange->SetResolution(1);
   this->XRange->SetEntriesWidth(4);
   this->XRange->SetWidth(120);
+  this->XRange->SetSlider1Color(this->ColorsClippingHandles[0]);
+  this->XRange->SetSlider1Color(this->ColorsClippingHandles[1]);
 
   this->Script("pack %s %s -side left -anchor w -expand y -fill x -padx 2 -pady 2 -in %s", 
     this->XLabel->GetWidgetName(),
@@ -385,6 +411,8 @@ void vtkSlicerROIDisplayWidget::CreateWidget ( )
   this->YRange->SetResolution(1);
   this->YRange->SetEntriesWidth(4);
   this->YRange->SetWidth(120);
+  this->YRange->SetSlider1Color(this->ColorsClippingHandles[2]);
+  this->YRange->SetSlider1Color(this->ColorsClippingHandles[3]);
 
   this->Script("pack %s %s -side left -anchor w -expand y -fill x -padx 2 -pady 2 -in %s", 
     this->YLabel->GetWidgetName(),
@@ -417,6 +445,8 @@ void vtkSlicerROIDisplayWidget::CreateWidget ( )
   this->ZRange->SetResolution(1);
   this->ZRange->SetEntriesWidth(4);
   this->ZRange->SetWidth(120);
+  this->ZRange->SetSlider1Color(this->ColorsClippingHandles[4]);
+  this->ZRange->SetSlider1Color(this->ColorsClippingHandles[5]);
 
   this->Script("pack %s %s -side left -anchor w -expand y -fill x -padx 2 -pady 2 -in %s", 
     this->ZLabel->GetWidgetName(),

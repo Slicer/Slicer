@@ -71,7 +71,11 @@ public:
   // Description:
   // Updates an roi's based on mrml nodes
   void UpdateROIFromMRML(vtkMRMLROINode *roi);
-  
+
+  // Description:
+  // Updates an roi's based on transform of the ROI to World
+  void UpdateROITransform(vtkMRMLROINode *roi);
+
   // Description: 
   // Post a request for a render -- won't be done until the system is
   // idle, and then only once....

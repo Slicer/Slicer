@@ -116,6 +116,11 @@ protected:
   
   int ProcessingMRMLEvent;
   int ProcessingWidgetEvent;
+
+   // Description:
+   // Colors of the six clipping handles
+   double ColorsClippingHandles[6][3];
+
 private:
   vtkSlicerROIDisplayWidget ( const vtkSlicerROIDisplayWidget& ); // Not implemented.
   void operator = ( const vtkSlicerROIDisplayWidget& ); //Not implemented.
