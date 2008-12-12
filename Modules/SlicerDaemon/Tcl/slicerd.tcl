@@ -121,7 +121,7 @@ proc slicerd_sock_fileevent {sock} {
             set n [$::slicer3::MRMLScene GetNumberOfNodesByClass vtkMRMLVolumeNode]
             for {set i 0} {$i < $n} {incr i} {
                 set node [$::slicer3::MRMLScene GetNthNodeByClass $i vtkMRMLVolumeNode]
-                puts -nonewline $sock "$i \"[$node GetID] [$node GetName]\" "
+                puts -nonewline $sock "$i [$node GetID] [$node GetName] "
             }
             puts $sock ""
             flush $sock
@@ -159,6 +159,7 @@ proc slicerd_sock_fileevent {sock} {
             } 
             
             set isTensor 0
+            set isVector 0
 
             # find out if we are dealing with a tensor or a scalar volume
             if { [$node GetClassName] eq "vtkMRMLDiffusionTensorVolumeNode" } {
@@ -166,6 +167,13 @@ proc slicerd_sock_fileevent {sock} {
             } else {
                 # If we are not dealing with tensor, assuming scalar data
                 set isTensor 0
+            }
+
+            if { [$node GetClassName] eq "vtkMRMLDiffusionWeightedVolumeNode" } {
+                set isVector 1
+            } else {
+                # If we are not dealing with tensor, assuming scalar data
+                set isVector 0
             }
             
             # calculate the space directions and origin
@@ -192,7 +200,7 @@ proc slicerd_sock_fileevent {sock} {
             # TODO: should add direction cosines and label_map status
             set im [$node GetImageData]
             
-            if {$isTensor} {
+            if {$isTensor || $isVector} {
                 # get the measurement frame
                 catch "::slicerd::measurement_frame_matrix Delete"
                 
@@ -210,10 +218,12 @@ proc slicerd_sock_fileevent {sock} {
                                            [::slicerd::measurement_frame_matrix GetElement 0 2]\
                                            [::slicerd::measurement_frame_matrix GetElement 1 2]\
                                            [::slicerd::measurement_frame_matrix GetElement 2 2] ]
-                
-                set tensors [[$im GetPointData] GetTensors]
             }
             
+            if {$isTensor} {
+               set tensors [[$im GetPointData] GetTensors]
+            }
+
             puts stderr "image $volid" 
             puts stderr "name [$node GetName]"
             puts stderr "scalar_type [$im GetScalarType]" 
@@ -223,6 +233,11 @@ proc slicerd_sock_fileevent {sock} {
                 puts stderr "dimensions [$tensors GetNumberOfComponents] [$im GetDimensions]"
                 puts stderr "space_directions none $space_directions"
                 puts stderr "kinds 3D-masked-symmetric-matrix space space space"
+                puts stderr "measurement_frame $measurement_frame"
+            } elseif {$isVector} {
+                puts stderr "dimensions [$im GetNumberOfScalarComponents] [$im GetDimensions]"
+                puts stderr "space_directions (0.0, 0.0, 0.0) $space_directions"
+                puts stderr "kinds vector space space space"
                 puts stderr "measurement_frame $measurement_frame"
             } else {
                 puts stderr "dimensions [$im GetDimensions]"
@@ -238,6 +253,8 @@ proc slicerd_sock_fileevent {sock} {
             if {$isTensor} {
                 # for now a tensor that is exported always has 7 values
                 puts $sock "dimensions 7 [$im GetDimensions]"
+            } elseif {$isVector} {
+                puts $sock "dimensions [$im GetNumberOfScalarComponents] [$im GetDimensions]"    
             } else {
                 puts $sock "dimensions [$im GetDimensions]" 
             }
@@ -247,6 +264,10 @@ proc slicerd_sock_fileevent {sock} {
             if {$isTensor} {
                 puts $sock "space_directions none $space_directions"
                 puts $sock "kinds 3D-masked-symmetric-matrix space space space"
+                puts $sock "measurement_frame $measurement_frame"
+            } elseif {$isVector} {
+                puts $sock "space_directions (0.0, 0.0, 0.0) $space_directions"
+                puts $sock "kinds vector space space space"
                 puts $sock "measurement_frame $measurement_frame"
             } else {
                 puts $sock "space_directions $space_directions"
@@ -321,6 +342,13 @@ proc slicerd_sock_fileevent {sock} {
                 set  measurement_frame [lrange $measurement_frame 1 end]
                 set dimensions [lrange $dimensions 1 end]
                 set node [vtkMRMLDiffusionTensorVolumeNode New]
+                set displayNode [vtkMRMLDiffusionTensorVolumeDisplayNode New]
+                $displayNode SetAutoWindowLevel 1
+                $displayNode SetDefaultColorMap
+                $::slicer3::MRMLScene AddNodeNoNotify $displayNode
+                $node AddAndObserveDisplayNodeID [$displayNode GetID]
+                $displayNode AddSliceGlyphDisplayNodes $node
+
                 puts "SlicerDaemon: Assume you want to put a tensor volume."
             } else {
                 puts "SlicerDaemon: Assume you want to put a scalar volume."
