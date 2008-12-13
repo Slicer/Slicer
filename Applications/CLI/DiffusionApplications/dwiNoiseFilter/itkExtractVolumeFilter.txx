@@ -25,126 +25,21 @@ namespace itk
 {
 
 
-template <class TInputImage, class TOutputImage>
-void
-ExtractVolumeFilter<TInputImage,TOutputImage>
-::GenerateInputRequestedRegion()
-{
-  
-  Superclass::GenerateInputRequestedRegion();
-
-  // get pointer to the input
-
-  typename Superclass::InputImagePointer  inputPtr  = 
-    const_cast< TInputImage * >( this->GetInput());
-
-  if ( !inputPtr )
-    {
-      return;
-    }
-
-
-  const TOutputImage * outputPtr = this->GetOutput();
-  if ( !outputPtr )
-    {
-      return;
-    }
-
-  OutputImageRegionType outputRegion;
-  
-  OutputImageSizeType output_sz =
-    outputPtr->GetLargestPossibleRegion().GetSize();
-
-  OutputImageIndexType output_idx =
-    outputPtr->GetLargestPossibleRegion().GetIndex();  
-
-  // compute the requested region
-
-  InputImageRegionType inputRegion;
-  
-  InputImageSizeType input_sz = output_sz;
-  InputImageIndexType input_idx =output_idx;
-  
-  inputRegion.SetSize( input_sz );
-  inputRegion.SetIndex( input_idx );
-  inputPtr->SetRequestedRegion( inputRegion );
-
-}
-
-template <class TInputImage, class TOutputImage>
-void
-ExtractVolumeFilter<TInputImage, TOutputImage>
-::GenerateOutputInformation()
-{
-
-  Superclass::GenerateOutputInformation();
-
-  const TInputImage * inputPtr = this->GetInput();
-  if( !inputPtr )
-    {
-    return;
-    }
-
-  // Compute the new region size.
-  OutputImageRegionType outputRegion;
-  OutputImageIndexType   idx;
-
-  InputImageSizeType input_sz =
-    inputPtr->GetLargestPossibleRegion().GetSize();
-
-  InputImageIndexType input_idx =
-    inputPtr->GetLargestPossibleRegion().GetIndex();
-
-  // output will have dimensions that are multiplied by the I and the J tilings
-
-  OutputImageSizeType output_sz = input_sz;
-
-  idx = input_idx;
-
-  outputRegion.SetSize( output_sz );
-  outputRegion.SetIndex( idx );
-
-  this->GetOutput()->SetRegions( outputRegion );
-  this->GetOutput()->SetLargestPossibleRegion( outputRegion );
-  this->GetOutput()->Allocate();
-
-}
-
 template< class TInputImage, class TOutputImage>
-void
-ExtractVolumeFilter< TInputImage, TOutputImage >
-::GenerateData()
+void ExtractVolumeFilter< TInputImage, TOutputImage >
+::ThreadedGenerateData( const OutputImageRegionType& outputRegionForThread, int threadId )
 {
-  typedef itk::ImageRegionConstIterator< TInputImage > ConstIteratorType;
-  typedef itk::ImageRegionIterator< TOutputImage > IteratorType;
-
-  // Get the input and output
-  typename OutputImageType::Pointer       output = this->GetOutput();
-  typename  InputImageType::ConstPointer  input  = this->GetInput();
-
-  ConstIteratorType nit( input, input->GetLargestPossibleRegion() );
-  IteratorType it( output, output->GetLargestPossibleRegion() );
-
-  for ( nit.GoToBegin(), it.GoToBegin(); !nit.IsAtEnd() && !it.IsAtEnd(); ++nit, ++it ) {
-
-    OutputPixelType dVal = static_cast<OutputPixelType>(dFactor*((nit.Get())[iVolumeNr]));
-
-    it.Set( dVal );
-
+  // Allocate images:
+  typename OutputImageType::Pointer     output = this->GetOutput();
+  typename InputImageType::ConstPointer input  = this->GetInput();
+  // Iterators:
+  itk::ImageRegionConstIterator<InputImageType> bit = itk::ImageRegionConstIterator<InputImageType>( input, outputRegionForThread );
+  itk::ImageRegionIterator<OutputImageType>     it  = itk::ImageRegionIterator<OutputImageType>( output, outputRegionForThread );
+  // Initiallise max and min:
+  for( bit.GoToBegin(),it.GoToBegin(); !bit.IsAtEnd(); ++bit,++it ){
+    double current = m_Factor * static_cast<double>( bit.Get()[m_VolumeNr] );
+    it.Set( static_cast<OutputPixelType>(current) );
   }
-
-}
-
-/**
- * Standard "PrintSelf" method
- */
-template< class TInputImage, class TOutputImage>
-void
-ExtractVolumeFilter< TInputImage, TOutputImage >
-::PrintSelf(std::ostream& os, Indent indent) const
-{
-  Superclass::PrintSelf( os, indent );
-
 }
 
 } // end namespace itk

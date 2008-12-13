@@ -2,9 +2,9 @@
 
   Program:   Diffusion Applications
   Language:  C++
-  Module:    $HeadURL$
-  Date:      $Date$
-  Version:   $Revision$
+  Module:    $HeadURL: http://svn.slicer.org/Slicer3/trunk/Applications/CLI/DiffusionApplications/dwiNoiseFilter/dwiNoiseFilter.cxx $
+  Date:      $Date: 2008-11-25 18:46:58 +0100 (Tue, 25 Nov 2008) $
+  Version:   $Revision: 7972 $
 
   Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
 
@@ -33,8 +33,11 @@
 
 #include "itkCastImageFilter.h"
 
+#include "itkOtsuStatistics.h"
+#include "itkOtsuThreshold.h"
+#include "itkComputeRestrictedHistogram.h"
 
-#include "dwiNoiseFilterCLP.h"
+#include "jointLMMSECLP.h"
 
 #define DIMENSION 3
 
@@ -80,7 +83,7 @@ template<class PixelType> int DoIt( int argc, const char * argv[], PixelType )
   
   double dBValue = 1000;
   int iFoundBValue = 0;
-
+  unsigned int channels = 0;
   while( itr != end )
     {
     itk::MetaDataObjectBase::Pointer entry = itr->second;
@@ -99,7 +102,7 @@ template<class PixelType> int DoIt( int argc, const char * argv[], PixelType )
         double dx[DIMENSION];
         std::sscanf(tagvalue.c_str(), "%lf %lf %lf\n", &dx[0], &dx[1], &dx[2]);
         diffusionDirections.push_back( (CovariantVectorType)(dx) );
-
+        ++channels;
         }
       else
         {
@@ -169,20 +172,82 @@ template<class PixelType> int DoIt( int argc, const char * argv[], PixelType )
   typedef itk::LMMSEVectorImageFilter<DiffusionImageType,DoubleDiffusionImageType> RicianLMMSEImageFilterType; 
   typename RicianLMMSEImageFilterType::Pointer ricianFilter = RicianLMMSEImageFilterType::New();
   ricianFilter->SetInput( reader->GetOutput() );
-  ricianFilter->SetIterations( iIterations );
-  ricianFilter->SetRadiusFiltering( indexRadiusF );
-  ricianFilter->SetRadiusEstimation( indexRadiusE );
-  ricianFilter->SetMinimumNumberOfUsedVoxelsEstimation( iMinimumNumberOfUsedVoxelsE );
-  ricianFilter->SetMinimumNumberOfUsedVoxelsFiltering( iMinimumNumberOfUsedVoxelsF );
-  ricianFilter->SetHistogramResolutionFactor( dResFact );
-  ricianFilter->SetMinimumNoiseSTD( dMinSTD );
-  ricianFilter->SetMaximumNoiseSTD( dMaxSTD );
-  if ( bUseAbsoluteValue )
-    ricianFilter->SetUseAbsoluteValue(true);
-  else 
-    ricianFilter->SetUseAbsoluteValue(false);
-  ricianFilter->SetFirstBaseline( iFirstBaseline );
-  ricianFilter->SetChannels( reader->GetOutput()->GetVectorLength() );
+  ricianFilter->SetRadius( indexRadiusF );
+  ricianFilter->SetUseAbsoluteValue(false);
+  ricianFilter->SetKeepValue(true);
+  ricianFilter->SetMinimumNumberOfUsedVoxelsFiltering( 5 );
+  typename RicianLMMSEImageFilterType::GradientType grad;
+  unsigned int nDWI = 0;
+  unsigned int nBaselines = 0;
+  std::vector<int> pDWI;
+  std::vector<int> pBaselines;
+  for( unsigned int iI=0; iI<channels; ++iI ){
+    float norm = diffusionDirections[iI].GetNorm();
+    if( norm>1e-3 ){
+    grad[0] = diffusionDirections[iI][0]/norm;
+    grad[1] = diffusionDirections[iI][1]/norm;
+    grad[2] = diffusionDirections[iI][2]/norm;
+    ricianFilter->AddGradientDirection( grad );
+    ++nDWI;
+    pDWI.push_back( iI );
+    }
+  else{
+    ++nBaselines;
+    pBaselines.push_back( iI );
+  }
+  }
+  ricianFilter->SetNDWI( nDWI );
+  ricianFilter->SetNBaselines( nBaselines );
+  unsigned int* indicator = new unsigned int[nDWI];
+  for( unsigned int iI=0; iI<nDWI; ++iI )
+    indicator[iI] = pDWI[iI];
+  ricianFilter->SetDWI( indicator );
+  delete[] indicator;
+  indicator = new unsigned int[nBaselines];
+  for( unsigned int iI=0; iI<nBaselines; ++iI )
+        indicator[iI] = pBaselines[iI];
+  ricianFilter->SetBaselines( indicator );
+  delete[] indicator;
+  if( iNumNeighbors==0 )
+  iNumNeighbors = nDWI;
+  ricianFilter->SetNeighbours( iNumNeighbors );
+//======================================================================================================
+// Noise estimation
+  typedef itk::Image<float,DiffusionImageType::ImageDimension>           NoiseImageType;
+  typedef itk::OtsuStatistics<DiffusionImageType,NoiseImageType>         StatsType;
+  typedef typename StatsType::Pointer                                    StatsPointer;
+  typedef itk::OtsuThreshold<NoiseImageType,NoiseImageType>              ThresholdType;
+  typedef typename ThresholdType::Pointer                                ThresholdPointer;
+  typedef itk::ComputeRestrictedHistogram<NoiseImageType,NoiseImageType> HistogramType;
+  typedef typename HistogramType::Pointer                                HistogramPointer;
+  StatsPointer     stats     = StatsType::New();
+  ThresholdPointer threshold = ThresholdType::New();
+  HistogramPointer histogram = HistogramType::New();
+  stats->SetInput( reader->GetOutput() );
+  typename StatsType::IndicatorType ind( 1 );
+  ind[0] = iFirstBaseline;
+  stats->SetIndicator( ind );
+  stats->SetRadius( indexRadiusE );
+  stats->SetChannels( channels );
+  stats->SetUseNeighborhoodBaselines();
+  stats->Update();
+  threshold->SetMin( stats->GetMin() );
+  threshold->SetMax( stats->GetMax() );
+  threshold->SetW( 2.0f );
+  threshold->SetBins( 2048 );
+  threshold->SetInput( stats->GetOutput() );
+  threshold->Update();
+  double th = threshold->GetThreshold();
+  histogram->SetInput( stats->GetOutput() );
+  histogram->SetMin(  2.0f );
+  histogram->SetMax(   th  );
+  histogram->SetBins( 256 );
+  histogram->Update();
+  double sigma  = histogram->GetMode();
+  sigma *= sqrt(2/M_PI);
+  std::cout << "The estimated noise is: " << sigma << std::endl;
+//======================================================================================================
+  ricianFilter->SetSigma( sigma );
   ricianFilter->Update();
 
   std::cout << "number of components per pixel" << ricianFilter->GetOutput()->GetNumberOfComponentsPerPixel() << std::endl;

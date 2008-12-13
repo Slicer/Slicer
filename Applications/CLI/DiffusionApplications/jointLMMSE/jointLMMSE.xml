@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Filtering.DWI</category>
+  <title>Joint Rician LMMSE Image Filter</title>
+  <description>
+    Filters a set of diffusion weighted images in the mean squared error sense using a Rician noise model. The N closest gradient directions to the direction being processed are filtered together to improve the results. The noise parameter is automatically estimated (noise estimation improved but slower). A complete description of the algorithm may be found in "DWI filtering using joint information for DTI and HARDI", by Antonio Tristan Vega and Santiago Aja-Fernandez (under review).
+</description>
+  <version>0.1.1.$Revision: 1 $(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Antonio Tristan Vega, Santiago Aja Fernandez. University of Valladolid (SPAIN). Partially founded by grant number TEC2007-67073/TCM from the Comision Interministerial de Ciencia y Tecnologia (Spain).
+  </contributor>
+  <parameters>
+    <label>DWI Noise Removal Parameters</label>
+    <description>Parameters for Joint Rician LMMSE image filter</description>
+
+
+    <integer-vector>
+      <name>iRadiusEstimation</name>
+      <label>Estimation Radius</label>
+      <longflag>--re</longflag>
+      <description>Estimation radius.</description>
+      <default>2,2,1</default>
+    </integer-vector>
+
+    <integer-vector>
+      <name>iRadiusFiltering</name>
+      <label>Filtering Radius</label>
+      <longflag>--rf</longflag>
+      <description>Filtering radius.</description>
+      <default>2,2,1</default>
+    </integer-vector>
+
+    <integer>
+      <name>iNumNeighbors</name>
+      <label>Number of neighboring gradients</label>
+      <longflag>--ng</longflag>
+      <description>The number of the closest gradients that are used to jointly filter a given gradient direction (0 to use all).</description>
+      <default>0</default>
+    </integer>
+
+
+
+  </parameters>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image type="diffusion-weighted">
+      <name>inputVolume</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input DWI volume.</description>
+    </image>
+    <image type="diffusion-weighted">
+      <name>outputVolume</name>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>Output DWI volume.</description>
+    </image>
+
+  </parameters>
+
+</executable>

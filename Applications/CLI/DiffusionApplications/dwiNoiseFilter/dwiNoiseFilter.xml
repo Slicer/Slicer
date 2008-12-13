@@ -3,12 +3,12 @@
   <category>Filtering.DWI</category>
   <title>Rician LMMSE Image Filter</title>
   <description>
-    Filters a set of diffusion weighted images in the mean squared error sense using a Rician noise model. The noise parameter is automatically estimated.
+    Filters a set of diffusion weighted images in the mean squared error sense using a Rician noise model. The noise parameter is automatically estimated. New version using ITK pipelines and multi-threading.
 </description>
-  <version>0.0.1.$Revision: 1 $(alpha)</version>
+  <version>0.1.1.$Revision: 1 $(alpha)</version>
   <documentation-url></documentation-url>
   <license></license>
-  <contributor>Santiago Aja Fernandez and Marc Niethammer</contributor>
+  <contributor>Antonio Tristan Vega, Santiago Aja Fernandez and Marc Niethammer. Partially founded by grant number TEC2007-67073/TCM from the Comision Interministerial de Ciencia y Tecnologia (Spain).</contributor>
 
   <parameters>
     <label>DWI Noise Removal Parameters</label>
@@ -21,9 +21,9 @@
       <description>Number of iterations for the noise removal filter.</description>
       <default>1</default>
       <constraints>
-	<minimum>0</minimum>
-	<maximum>25</maximum>
-	<step>1</step>
+  <minimum>0</minimum>
+  <maximum>25</maximum>
+  <step>1</step>
       </constraints>
     </integer>
 
@@ -91,13 +91,6 @@
       <default>true</default>
     </boolean>
 
-    <boolean>
-      <name>bWriteHistograms</name>
-      <label>Write histograms.</label>
-      <longflag>--wh</longflag>
-      <description>Writes the computed histogram information to hist_???.dat</description>
-      <default>false</default>
-    </boolean>
 
   </parameters>
 

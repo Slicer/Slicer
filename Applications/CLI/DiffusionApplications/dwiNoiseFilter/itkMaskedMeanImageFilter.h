@@ -40,52 +40,42 @@ namespace itk
  * \ingroup IntensityImageFilters
  */
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT MaskedMeanImageFilter :
-    public ImageToImageFilter< TInputImage, TOutputImage >
+class ITK_EXPORT MaskedMeanImageFilter : public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
-  /** Extract dimension from input and output image. */
-  itkStaticConstMacro(InputImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
-  itkStaticConstMacro(OutputImageDimension, unsigned int,
-                      TOutputImage::ImageDimension);
-
   /** Convenient typedefs for simplifying declarations. */
-  typedef TInputImage InputImageType;
-  typedef TOutputImage OutputImageType;
-
+  typedef TInputImage                           InputImageType;
+  typedef TOutputImage                          OutputImageType;
+  typedef typename InputImageType::Pointer      InputImagePointer;
+  typedef typename InputImageType::ConstPointer InputImageConstPointer;
+  typedef typename OutputImageType::Pointer     OutputImagePointer;
+  
   /** Standard class typedefs. */
-  typedef MaskedMeanImageFilter Self;
+  typedef MaskedMeanImageFilter                                Self;
   typedef ImageToImageFilter< InputImageType, OutputImageType> Superclass;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
+  typedef SmartPointer<Self>                                   Pointer;
+  typedef SmartPointer<const Self>                             ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(MaskedMeanImageFilter, ImageToImageFilter);
+  itkTypeMacro( MaskedMeanImageFilter, ImageToImageFilter );
   
-  /** Set the number of filter iterations. */
-  itkSetMacro(MinimumNumberOfUsedVoxels, unsigned int );
-
-  /** Get the number of iterations. */
-  itkGetMacro(MinimumNumberOfUsedVoxels, unsigned int );
+  /** Set and get the minimum number of samples for reliable estimates. */
+  itkSetMacro( MinimumNumberOfUsedVoxels, int );
+  itkGetMacro( MinimumNumberOfUsedVoxels, int );
 
   /** Image typedef support. */
-  typedef typename InputImageType::PixelType InputPixelType;
-  typedef typename OutputImageType::PixelType OutputPixelType;
+  typedef typename InputImageType::PixelType               InputPixelType;
+  typedef typename OutputImageType::PixelType              OutputPixelType;
   typedef typename NumericTraits<InputPixelType>::RealType InputRealType;
-  
-  typedef typename InputImageType::RegionType InputImageRegionType;
-  typedef typename OutputImageType::RegionType OutputImageRegionType;
+  typedef typename InputImageType::RegionType              InputImageRegionType;
+  typedef typename OutputImageType::RegionType             OutputImageRegionType;
+  typedef typename InputImageType::SizeType                InputSizeType;
 
-  typedef typename InputImageType::SizeType InputSizeType;
-
-  /** Set the radius of the neighborhood used to compute the mean. */
+  /** Set and get the radius of the neighborhood used to compute the mean. */
   itkSetMacro(Radius, InputSizeType);
-
-  /** Get the radius of the neighborhood used to compute the mean */
   itkGetConstReferenceMacro(Radius, InputSizeType);
   
   /** MaskedMeanImageFilter needs a larger input requested region than
@@ -95,19 +85,10 @@ public:
    *
    * \sa ImageToImageFilter::GenerateInputRequestedRegion() */
   virtual void GenerateInputRequestedRegion() throw(InvalidRequestedRegionError);
-
-#ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
-  itkConceptMacro(InputHasNumericTraitsCheck,
-                  (Concept::HasNumericTraits<InputPixelType>));
-  /** End concept checking */
-#endif
-
 protected:
   MaskedMeanImageFilter();
   virtual ~MaskedMeanImageFilter() {}
-  void PrintSelf(std::ostream& os, Indent indent) const;
-
+  void PrintSelf( std::ostream& os, Indent indent) const;
   /** MaskedMeanImageFilter can be implemented as a multithreaded filter.
    * Therefore, this implementation provides a ThreadedGenerateData()
    * routine which is called for each processing thread. The output
@@ -118,15 +99,13 @@ protected:
    *
    * \sa ImageToImageFilter::ThreadedGenerateData(),
    *     ImageToImageFilter::GenerateData() */
-  void ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread,
-                            int threadId );
-
+  void ThreadedGenerateData( const OutputImageRegionType& outputRegionForThread, int threadId );
 private:
-  MaskedMeanImageFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  MaskedMeanImageFilter(const Self&); // purposely not implemented
+  void operator=(const Self&);        // purposely not implemented
 
   InputSizeType m_Radius;
-  unsigned int  m_MinimumNumberOfUsedVoxels;
+  int           m_MinimumNumberOfUsedVoxels;
 
 };
   
