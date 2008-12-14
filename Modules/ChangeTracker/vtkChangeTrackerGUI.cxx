@@ -334,34 +334,11 @@ void vtkChangeTrackerGUI::BuildGUI()
 
   // -----------------------------------------------------------------------
   // Help
-
-  vtkSlicerModuleCollapsibleFrame *help_frame = 
-    vtkSlicerModuleCollapsibleFrame::New();
-  help_frame->SetParent(module_page);
-  help_frame->Create();
-  help_frame->CollapseFrame();
-  help_frame->SetLabelText("Help");
-  help_frame->Delete();
-
-  app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-              help_frame->GetWidgetName(), 
-              module_page->GetWidgetName());
+ 
+  char* help_text = "ChangeTracker allows to detect subtle changes in pathology. The change is quantified in mm^3 for growth/shrinkage, and is also visualized with tumor changes color-coded. The module documentation can be found at <a>http://slicer.spl.harvard.edu/slicerWiki/index.php/Modules:ChangeTracker-Documentation</a>.";
+  char* ack_text = "ChangTracker has been developed and supported by Kilian Pohl, Ender Konukoglu, Andriy Fedorov and Slicer community. Development of this module was supported through the funding from Brain Science Foundation <a>http://www.brainsciencefoundation.org/</a>";
+  this->BuildHelpAndAboutFrame(module_page, help_text, ack_text);
   
-  // configure the parent classes help text widget
-
-  this->HelpText->SetParent(help_frame->GetFrame());
-  this->HelpText->Create();
-  this->HelpText->SetHorizontalScrollbarVisibility(0);
-  this->HelpText->SetVerticalScrollbarVisibility(1);
-  this->HelpText->GetWidget()->SetText(help);
-  this->HelpText->GetWidget()->SetReliefToFlat();
-  this->HelpText->GetWidget()->SetWrapToWord();
-  this->HelpText->GetWidget()->ReadOnlyOn();
-  this->HelpText->GetWidget()->QuickFormattingOn();
-
-  app->Script("pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
-              this->HelpText->GetWidgetName());
-
   // -----------------------------------------------------------------------
   // Define Wizard with the order of the steps
 
