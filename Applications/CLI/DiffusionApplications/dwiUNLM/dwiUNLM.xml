@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Filtering.DWI</category>
+  <title>Unbiased Non Local Means filter for DWI</title>
+  <description>
+    Filters a set of diffusion weighted images using Unbiased Non Local Means for Rician noise. It exploits not only the spatial redundancy, but the redundancy in similar gradient directions as well; it takes into account the N closest gradient directions to the direction being processed (a maximum of 5 gradient directions is allowed to keep a reasonable computational load, since we do not use neither similarity maps nor block-wise implementation). The noise parameter is automatically estimated. A complete description of the algorithm may be found in "DWI filtering using joint information for DTI and HARDI", by Antonio Tristan Vega and Santiago Aja-Fernandez (under review).
+</description>
+  <version>0.0.1.$Revision: 1 $(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Antonio Tristan Vega, Santiago Aja Fernandez. University of Valladolid (SPAIN). Partially founded by grant number TEC2007-67073/TCM from the Comision Interministerial de Ciencia y Tecnologia (Spain).
+  </contributor>
+  <parameters>
+    <label>UNLM for DWI Noise Removal Parameters</label>
+    <description>Parameters for UNLM image filter</description>
+
+
+    <integer-vector>
+      <name>iRadiusSearch</name>
+      <label>Search radius</label>
+      <longflag>--rs</longflag>
+      <description>The algorithm search for similar voxels in a neighborhood of this size (larger sizes than the default one are extremely slow).</description>
+      <default>3,3,1</default>
+    </integer-vector>
+
+    <integer-vector>
+      <name>iRadiusComp</name>
+      <label>Comparison radius</label>
+      <longflag>--rc</longflag>
+      <description>Similarity between blocks is measured using windows of this size.</description>
+      <default>1,1,1</default>
+    </integer-vector>
+
+    <float>
+      <name>iH</name>
+      <label>h parameter</label>
+      <longflag>--hp</longflag>
+      <description>This parameter is related to noise; the larger the parameter, the more agressive the filtering. Should be near 1, and only values between 0.8 and 1.2 are allowed</description>
+      <default>1.0</default>
+    </float>
+
+    <integer>
+      <name>iNumNeighbors</name>
+      <label>Number of neighboring gradients</label>
+      <longflag>--ng</longflag>
+      <description>The number of the closest gradients that are used to jointly filter a given gradient direction (a maximum of 5 is allowed).</description>
+      <default>0</default>
+    </integer>
+
+    <integer-vector>
+      <name>iRadiusEstimation</name>
+      <label>Noise Estimation Radius</label>
+      <longflag>--re</longflag>
+      <description>A neighborhood of this size is used to compute the statistics for noise estimation.</description>
+      <default>2,2,1</default>
+    </integer-vector>
+
+
+  </parameters>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image type="diffusion-weighted">
+      <name>inputVolume</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input DWI volume.</description>
+    </image>
+    <image type="diffusion-weighted">
+      <name>outputVolume</name>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>Output DWI volume.</description>
+    </image>
+
+  </parameters>
+
+</executable>
