@@ -6,6 +6,8 @@
 #include "vtkMRMLNode.h"
 #include "vtkMRMLTransformableNode.h"
 
+class vtkPlanes;
+
 // .NAME vtkMRMLROINode - MRML node to represent a 3D ROI.
 // .SECTION Description
 // Model nodes describe ROI data.  They indicate where the ROI is 
@@ -64,27 +66,27 @@ public:
   // Description:
   // Get/Set for ROI Position in RAS cooridnates
   // Note: The ROI Postion is the center of the ROI 
-  void SetXYZ(float X, float Y, float Z);
-  void SetXYZ(float* XYZ);
-  vtkGetVectorMacro(XYZ,float,3);
+  void SetXYZ(double X, double Y, double Z);
+  void SetXYZ(double* XYZ);
+  vtkGetVectorMacro(XYZ,double,3);
 
   // Description:
   // Get/Set for radius of the ROI in RAS cooridnates
-  void SetRadiusXYZ(float RadiusX, float RadiusY, float RadiusZ);
-  void SetRadiusXYZ(float* RadiusXYZ);
-  vtkGetVectorMacro(RadiusXYZ,float,3);
+  void SetRadiusXYZ(double RadiusX, double RadiusY, double RadiusZ);
+  void SetRadiusXYZ(double* RadiusXYZ);
+  vtkGetVectorMacro(RadiusXYZ,double,3);
 
   // Description:
   // Get/Set for ROI Position in IJK cooridnates
-  void SetIJK(float I, float J, float K);
-  void SetIJK(float* IJK);
-  vtkGetVectorMacro(IJK,float,3);
+  void SetIJK(double I, double J, double K);
+  void SetIJK(double* IJK);
+  vtkGetVectorMacro(IJK,double,3);
 
   // Description:
   // Get/Set for radius of the ROI in IJK cooridnates
-  void SetRadiusIJK(float RadiusI, float RadiusJ, float RadiusK);
-  void SetRadiusIJK(float* RadiusIJK);
-  vtkGetVectorMacro(RadiusIJK,float,3);
+  void SetRadiusIJK(double RadiusI, double RadiusJ, double RadiusK);
+  void SetRadiusIJK(double* RadiusIJK);
+  vtkGetVectorMacro(RadiusIJK,double,3);
 
   // Description:
   // Get/Set for LabelText
@@ -107,6 +109,10 @@ public:
   virtual void ApplyTransform(vtkMatrix4x4* transformMatrix);
   virtual void ApplyTransform(vtkAbstractTransform* transform);
 
+  // Description
+  // get transformed planes for the ROI region
+  void GetTransformedPlanes(vtkPlanes *planes);
+
 protected:
   vtkMRMLROINode();
   ~vtkMRMLROINode();
@@ -118,17 +124,17 @@ protected:
   // Description:
   // The location of the ROI centroid in RAS space
   // Note: The ROI Postion is the center of the ROI 
-  float XYZ[3];  
+  double XYZ[3];  
   // Description:
   // The raidus of  of the ROI box in RAS space
-  float RadiusXYZ[3];
+  double RadiusXYZ[3];
   // Description:
   // The location of the ROI centroid in IJK space
   // Note: The ROI Postion is the center of the ROI 
-  float IJK[3];  
+  double IJK[3];  
   // Description:
   // The radius of the ROI box in IJK space
-  float RadiusIJK[3];
+  double RadiusIJK[3];
 
   char *ID;
   char *LabelText;

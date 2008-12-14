@@ -481,7 +481,7 @@ void vtkMRMLROIListNode::SetOpacity(double opacity)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLROIListNode::SetNthROIXYZ(int n, float x, float y, float z)
+int vtkMRMLROIListNode::SetNthROIXYZ(int n, double x, double y, double z)
 {
   vtkMRMLROINode *node = this->GetNthROINode(n);
   if (node == NULL)
@@ -530,7 +530,7 @@ int vtkMRMLROIListNode::SetNthROIXYZ(int n, float x, float y, float z)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLROIListNode::SetNthROIIJK(int n, float i, float j, float k)
+int vtkMRMLROIListNode::SetNthROIIJK(int n, double i, double j, double k)
 {
   vtkMRMLROINode *node = this->GetNthROINode(n);
   if (node == NULL)
@@ -578,12 +578,12 @@ int vtkMRMLROIListNode::SetNthROIIJK(int n, float i, float j, float k)
 }
 
 //----------------------------------------------------------------------------
-float * vtkMRMLROIListNode::GetNthROIXYZ(int n)
+double * vtkMRMLROIListNode::GetNthROIXYZ(int n)
 {
   vtkMRMLROINode *node = this->GetNthROINode(n);
   if (node != NULL)
     {
-    float * xyz = node->GetXYZ();
+    double * xyz = node->GetXYZ();
     node = NULL;
     return xyz;
     }
@@ -594,12 +594,12 @@ float * vtkMRMLROIListNode::GetNthROIXYZ(int n)
 }
 
 //----------------------------------------------------------------------------
-float * vtkMRMLROIListNode::GetNthROIIJK(int n)
+double * vtkMRMLROIListNode::GetNthROIIJK(int n)
 {
   vtkMRMLROINode *node = this->GetNthROINode(n);
   if (node != NULL)
     {
-    float * ijk = node->GetIJK();
+    double * ijk = node->GetIJK();
     node = NULL;
     return ijk;
     }
@@ -610,7 +610,7 @@ float * vtkMRMLROIListNode::GetNthROIIJK(int n)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLROIListNode::SetNthROIRadiusXYZ(int n, float Radiusx, float Radiusy, float Radiusz)
+int vtkMRMLROIListNode::SetNthROIRadiusXYZ(int n, double Radiusx, double Radiusy, double Radiusz)
 {
   vtkMRMLROINode *node = this->GetNthROINode(n);
   if (node == NULL)
@@ -642,7 +642,7 @@ int vtkMRMLROIListNode::SetNthROIRadiusXYZ(int n, float Radiusx, float Radiusy, 
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLROIListNode::SetNthROIRadiusIJK(int n, float Radiusi, float Radiusj, float Radiusk)
+int vtkMRMLROIListNode::SetNthROIRadiusIJK(int n, double Radiusi, double Radiusj, double Radiusk)
 {
   vtkMRMLROINode *node = this->GetNthROINode(n);
   if (node == NULL)
@@ -675,12 +675,12 @@ int vtkMRMLROIListNode::SetNthROIRadiusIJK(int n, float Radiusi, float Radiusj, 
 }
 
 //----------------------------------------------------------------------------
-float * vtkMRMLROIListNode::GetNthROIRadiusXYZ(int n)
+double * vtkMRMLROIListNode::GetNthROIRadiusXYZ(int n)
 {
   vtkMRMLROINode *node = this->GetNthROINode(n);
   if (node != NULL)
     {
-    float * Radiusxyz = node->GetRadiusXYZ();
+    double * Radiusxyz = node->GetRadiusXYZ();
     node = NULL;
     return Radiusxyz;
     }
@@ -691,12 +691,12 @@ float * vtkMRMLROIListNode::GetNthROIRadiusXYZ(int n)
 }
 
 //----------------------------------------------------------------------------
-float * vtkMRMLROIListNode::GetNthROIRadiusIJK(int n)
+double * vtkMRMLROIListNode::GetNthROIRadiusIJK(int n)
 {
   vtkMRMLROINode *node = this->GetNthROINode(n);
   if (node != NULL)
     {
-    float * Radiusijk = node->GetRadiusIJK();
+    double * Radiusijk = node->GetRadiusIJK();
     node = NULL;
     return Radiusijk;
     }
@@ -848,9 +848,9 @@ void vtkMRMLROIListNode::UpdateIJK()
     {
     for (int n = 0; n < numROIs; ++n)
       {
-      float *xyz = this->GetNthROIXYZ(n);
+      double *xyz = this->GetNthROIXYZ(n);
       this->SetNthROIXYZ(n, xyz[0], xyz[1], xyz[2]);
-      float *Radiusxzy = this->GetNthROIRadiusXYZ(n);
+      double *Radiusxzy = this->GetNthROIRadiusXYZ(n);
       this->SetNthROIRadiusXYZ(n, Radiusxzy[0], Radiusxzy[1], Radiusxzy[2]);
       }
     }

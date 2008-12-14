@@ -949,8 +949,8 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
               {
               for (int i=0; i < regions->GetNumberOfROIs(); ++i)
                 {
-                float *pt;
-                float *Radius;
+                double *pt;
+                double *Radius;
                 std::ostrstream roiAsString;
 
                 if (regions->GetNthROISelected(i))

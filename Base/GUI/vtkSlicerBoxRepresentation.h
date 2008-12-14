@@ -185,6 +185,14 @@ public:
   // further.
   void SetInteractionState(int state);
 
+  // Description:
+  // get the center of the box
+  void GetCenter(double center[]);
+
+  // Description:
+  // get 3 extents along sides of the box 
+  void GetExtents(double bounds[]);
+
 protected:
   vtkSlicerBoxRepresentation();
   ~vtkSlicerBoxRepresentation();

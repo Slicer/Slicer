@@ -976,6 +976,8 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
   this->RemoveNodeReferences(n);
   this->RemoveReferencesToNode(n);
   
+  n->RemoveAllObservers();
+
   this->CurrentScene->vtkCollection::RemoveItem((vtkObject *)n);
   this->InvokeEvent(this->NodeRemovedEvent, n);
   n->UnRegister(this);
@@ -1001,6 +1003,8 @@ void vtkMRMLScene::RemoveNodeNoNotify(vtkMRMLNode *n)
   
   this->RemoveNodeReferences(n);
   this->RemoveReferencesToNode(n);
+
+  n->RemoveAllObservers();
 
   this->CurrentScene->vtkCollection::RemoveItem((vtkObject *)n);
   

@@ -439,8 +439,8 @@ void vtkSlicerROIGUI::ProcessGUIEvents ( vtkObject *caller,
       vtkMRMLROINode *roi = activeROIListNode->GetNthROINode(row[0]);
       this->ROIDisplayWidget->SetROINode(roi);
 
-      float *xyz;
-      float *Radiusxyz;
+      double *xyz;
+      double *Radiusxyz;
      
       if(ActiveVolumeNodeID ==NULL)
         {
@@ -657,8 +657,8 @@ void vtkSlicerROIGUI::SetGUIFromList(vtkMRMLROIListNode * activeROIListNode)
 
 
   // a row for each point
-  float *xyz;
-  float *Radiusxyz;
+  double *xyz;
+  double *Radiusxyz;
 
   for (int row = 0; row < numPoints; row++)
     {
@@ -800,8 +800,8 @@ void vtkSlicerROIGUI::SetGUIFromList(vtkMRMLROIListNode * activeROIListNode)
     {
     int row[1];
     this->MultiColumnList->GetWidget()->GetSelectedRows(row);
-    //float* xyz;
-    //float* Radiusxyz;
+    //double* xyz;
+    //double* Radiusxyz;
     if (ActiveVolumeNodeID == NULL)
       {
       xyz = activeROIListNode->GetNthROIXYZ(row[0]);
@@ -1256,8 +1256,8 @@ void vtkSlicerROIGUI::UpdateElement(int row, int col, char * str)
     else if (col >= this->XColumn && col <= this->RadiusZColumn)
       {
       // get the current xyz
-      float * xyz;
-      float * Radiusxyz;
+      double * xyz;
+      double * Radiusxyz;
       if (ActiveVolumeNodeID == NULL)
         {
         xyz = activeROIListNode->GetNthROIXYZ(row);
@@ -1270,7 +1270,7 @@ void vtkSlicerROIGUI::UpdateElement(int row, int col, char * str)
         }
      
       // now set the new one
-      float newCoordinate = atof(str);
+      double newCoordinate = atof(str);
       if (col == this->XColumn) 
         { 
         if (ActiveVolumeNodeID == NULL)

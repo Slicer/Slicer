@@ -748,6 +748,35 @@ void vtkSlicerBoxRepresentation::PlaceWidget(double bds[6])
 }
 
 //----------------------------------------------------------------------------
+void vtkSlicerBoxRepresentation::GetCenter(double center[])
+{
+  double *pts =
+    static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(0);
+  double *p14 = pts + 3*14;
+    for (int i=0; i<3; i++)
+    {
+    center[i] = p14[i];
+    }
+
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerBoxRepresentation::GetExtents(double bounds[])
+{
+  double *pts =
+     static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(0);
+  double *p0 = pts;
+  double *p1 = pts + 3*1;
+  double *p2 = pts + 3*3;
+  double *p3 = pts + 3*4;
+
+  bounds[0] = sqrt( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
+  bounds[1] = sqrt( (p2[0]-p0[0])*(p2[0]-p0[0]) + (p2[1]-p0[1])*(p2[1]-p0[1]) + (p2[2]-p0[2])*(p2[2]-p0[2]) );
+  bounds[2] = sqrt( (p3[0]-p0[0])*(p3[0]-p0[0]) + (p3[1]-p0[1])*(p3[1]-p0[1]) + (p3[2]-p0[2])*(p3[2]-p0[2]) );
+
+}
+
+//----------------------------------------------------------------------------
 void vtkSlicerBoxRepresentation::GetTransform(vtkTransform *t)
 {
   double *pts =

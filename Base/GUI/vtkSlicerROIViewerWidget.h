@@ -33,7 +33,7 @@ class vtkMRMLROINode;
 class vtkKWRenderWidget;
 class vtkTransform;
 class vtkCollection;
-
+class vtkBoxWidgetCallback;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerROIViewerWidget : public vtkSlicerWidget
 {
@@ -91,6 +91,11 @@ public:
   vtkSlicerBoxWidget2 *GetBoxWidgetByID (const char *id);
 
   // Description:
+  // return the current box widget callback corresponding to a given MRML ID
+
+  vtkBoxWidgetCallback *GetBoxWidgetCallbackByID (const char *id);
+
+  // Description:
   // Remove all the box widgets from the scene and memory
   void RemoveBoxWidgets();
 
@@ -141,6 +146,7 @@ protected:
   
   //BTX
   std::map<std::string, vtkSlicerBoxWidget2*> DisplayedBoxWidgets; 
+  std::map<std::string, vtkBoxWidgetCallback*> DisplayedBoxWidgetCallbacks; 
   //ETX
   
   // Description:

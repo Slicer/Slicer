@@ -364,9 +364,11 @@ proc ClipModelClipModel {this} {
         #$::slicer3::ViewerWidget Render
         return
     }
-    foreach {rx ry rz} [$roi GetRadiusXYZ] {}
-    foreach {x y z} [$roi GetXYZ] {}
-    $::ClipModel($this,planes) SetBounds [expr $x-$rx] [expr $x+$rx] [expr $y-$ry] [expr $y+$ry] [expr $z-$rz] [expr $z+$rz]
+    #foreach {rx ry rz} [$roi GetRadiusXYZ] {}
+    #foreach {x y z} [$roi GetXYZ] {}
+    #$::ClipModel($this,planes) SetBounds [expr $x-$rx] [expr $x+$rx] [expr $y-$ry] [expr $y+$ry] [expr $z-$rz] [expr $z+$rz]
+
+    $roi GetTransformedPlanes $::ClipModel($this,planes)
 
     ClipModelRender
 }

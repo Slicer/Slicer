@@ -37,8 +37,10 @@ public:
            (!this->ROINode->GetInteractiveMode() && event == vtkCommand::EndInteractionEvent)) )
         {
         vtkSlicerBoxRepresentation* boxRep = reinterpret_cast<vtkSlicerBoxRepresentation*>(boxWidget->GetRepresentation());
-        double* bounds1 = boxRep->GetBounds();
-        double bounds[6];
+        double extents[3];
+        double center[3];
+        boxRep->GetExtents(extents);
+        boxRep->GetCenter(center);
 
         vtkMRMLTransformNode* tnode = this->ROINode->GetParentTransformNode();
         if (tnode != NULL && tnode->IsLinear())
@@ -48,44 +50,29 @@ public:
           vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
           lnode->GetMatrixTransformToWorld(transformToWorld);
           transformToWorld->Invert();
+          
           double p[4];
-          p[3] = 0;
+          p[3] = 1;
           int i;
           for (i=0; i<3; i++)
             {
-            p[i] = bounds1[2*i];
+            p[i] = center[i];
             }
           double *xyz = transformToWorld->MultiplyDoublePoint(p);
-          bounds[0] = xyz[0];
-          bounds[2] = xyz[1];
-          bounds[4] = xyz[2];
-
           for (i=0; i<3; i++)
             {
-            p[i] = bounds1[2*i+1];
-            }
-          xyz = transformToWorld->MultiplyDoublePoint(p);
-          bounds[1] = xyz[0];
-          bounds[3] = xyz[1];
-          bounds[5] = xyz[2];
-          transformToWorld->Delete();
-          }
-        else
-          {
-          for (int i=0; i<6; i++)
-            {
-            bounds[i] = bounds1[i];
+            center[i] = xyz[i];
             }
           }
 
         this->ROINode->DisableModifiedEventOn();
-        this->ROINode->SetXYZ(0.5*(bounds[1]+bounds[0]),0.5*(bounds[3]+bounds[2]),0.5*(bounds[5]+bounds[4]));
-        this->ROINode->SetRadiusXYZ(0.5*(bounds[1]-bounds[0]),0.5*(bounds[3]-bounds[2]),0.5*(bounds[5]-bounds[4]));
+        this->ROINode->SetXYZ(center[0], center[1], center[2] );
+        this->ROINode->SetRadiusXYZ(0.5*extents[0], 0.5*extents[1], 0.5*extents[2] );
         this->ROINode->DisableModifiedEventOff();
         
-       //this->ROIViewerWidget->SetProcessingWidgetEvent(1);
+        this->ROIViewerWidget->SetProcessingWidgetEvent(1);
         this->ROINode->InvokePendingModifiedEvent();
-       //this->ROIViewerWidget->SetProcessingWidgetEvent(0);
+        this->ROIViewerWidget->SetProcessingWidgetEvent(0);
 
         }
       else if (boxWidget && this->ROINode && 
@@ -272,6 +259,22 @@ void vtkSlicerROIViewerWidget::UpdateFromMRML()
     return;
     }
 
+  // remove not used boxes
+  std::map<std::string, vtkSlicerBoxWidget2*>::iterator iter;
+  std::map<std::string, vtkSlicerBoxWidget2*> temp;
+  for (iter = this->DisplayedBoxWidgets.begin(); iter != this->DisplayedBoxWidgets.end(); iter++)
+    {
+    if (scene->GetNodeByID(iter->first.c_str()) != NULL)
+      {
+      temp[iter->first] = iter->second;
+      }
+    else
+      {
+      this->RemoveBoxWidget(iter->second);
+      }
+    }
+  this->DisplayedBoxWidgets = temp;
+
   int nnodes = scene->GetNumberOfNodesByClass("vtkMRMLROINode");
   for (int n=0; n<nnodes; n++)
     {
@@ -321,14 +324,15 @@ void vtkSlicerROIViewerWidget::UpdateROIFromMRML(vtkMRMLROINode *roi)
     boxWidget->AddObserver(vtkCommand::InteractionEvent, myCallback);
     myCallback->Delete();
     
+    //this->DisplayedBoxWidgetCallbacks[roiID] = myCallback;
     this->DisplayedBoxWidgets[roiID] = boxWidget;
     }
 
   rep = vtkSlicerBoxRepresentation::SafeDownCast(boxWidget->GetRepresentation());
 
   // update widget from mrml
-  float *xyz = roi->GetXYZ();
-  float *rxyz = roi->GetRadiusXYZ();
+  double *xyz = roi->GetXYZ();
+  double *rxyz = roi->GetRadiusXYZ();
   double bounds[6];
   for (int i=0; i<3; i++)
     {
@@ -399,7 +403,8 @@ void vtkSlicerROIViewerWidget::UpdateROITransform(vtkMRMLROINode *roi)
     boxWidget->AddObserver(vtkCommand::EndInteractionEvent, myCallback);
     boxWidget->AddObserver(vtkCommand::InteractionEvent, myCallback);
     myCallback->Delete();
-    
+
+    //this->DisplayedBoxWidgetCallbacks[roiID] = myCallback;    
     this->DisplayedBoxWidgets[roiID] = boxWidget;
     }
 
@@ -449,6 +454,27 @@ vtkSlicerROIViewerWidget::GetBoxWidgetByID (const char *id)
     return (NULL);
     }
 }
+//---------------------------------------------------------------------------
+vtkBoxWidgetCallback *
+vtkSlicerROIViewerWidget::GetBoxWidgetCallbackByID (const char *id)
+{  
+  if ( !id )      
+    {
+    return (NULL);
+    }
+  std::string sid = id;
+  
+  std::map< std::string, vtkBoxWidgetCallback *>::iterator iter;
+  iter = this->DisplayedBoxWidgetCallbacks.find(sid);
+  if (iter != this->DisplayedBoxWidgetCallbacks.end())
+    {
+    return (iter->second);
+    }
+  else
+    {
+    return (NULL);
+    }
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerROIViewerWidget::RemoveBoxWidgets()
@@ -464,8 +490,22 @@ void vtkSlicerROIViewerWidget::RemoveBoxWidgets()
       this->RemoveBoxWidget(boxWidget);
       }
     }
+
+  std::map< std::string, vtkBoxWidgetCallback *>::iterator citer;
+  for (citer = this->DisplayedBoxWidgetCallbacks.begin();
+       citer != this->DisplayedBoxWidgetCallbacks.end();
+       citer++)
+    {
+    if (citer->second != NULL)
+      {
+      vtkBoxWidgetCallback* boxWidgetCallback = citer->second;
+      boxWidgetCallback->Delete();
+      }
+    }
   
   this->DisplayedBoxWidgets.clear();
+  this->DisplayedBoxWidgetCallbacks.clear();
+
 }
 
 //---------------------------------------------------------------------------
@@ -486,6 +526,14 @@ void vtkSlicerROIViewerWidget::RemoveBoxWidget(const char *roiID)
     {
     vtkWarningMacro("RemoveBoxWidget: couldn't find point widget");
     }
+
+  vtkBoxWidgetCallback* boxWidgetCallback = this->GetBoxWidgetCallbackByID(roiID);
+  if  (boxWidgetCallback)
+    {
+    boxWidgetCallback->Delete();
+    this->DisplayedBoxWidgetCallbacks.erase(std::string(roiID));
+    }
+
 }
 
 //---------------------------------------------------------------------------

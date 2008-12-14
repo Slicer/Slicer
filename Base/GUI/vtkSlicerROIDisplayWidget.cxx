@@ -281,8 +281,8 @@ void vtkSlicerROIDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
 
 void vtkSlicerROIDisplayWidget::UpdateWidget()
 {
-  float *xyz = this->ROINode->GetXYZ();
-  float *rxyz = this->ROINode->GetRadiusXYZ();
+  double *xyz = this->ROINode->GetXYZ();
+  double *rxyz = this->ROINode->GetRadiusXYZ();
   double bounds[6];
   for (int i=0; i<3; i++)
     {
@@ -378,7 +378,7 @@ void vtkSlicerROIDisplayWidget::CreateWidget ( )
   this->XRange->SetEntriesWidth(4);
   this->XRange->SetWidth(120);
   this->XRange->SetSlider1Color(this->ColorsClippingHandles[0]);
-  this->XRange->SetSlider1Color(this->ColorsClippingHandles[1]);
+  this->XRange->SetSlider2Color(this->ColorsClippingHandles[1]);
 
   this->Script("pack %s %s -side left -anchor w -expand y -fill x -padx 2 -pady 2 -in %s", 
     this->XLabel->GetWidgetName(),
@@ -412,7 +412,7 @@ void vtkSlicerROIDisplayWidget::CreateWidget ( )
   this->YRange->SetEntriesWidth(4);
   this->YRange->SetWidth(120);
   this->YRange->SetSlider1Color(this->ColorsClippingHandles[2]);
-  this->YRange->SetSlider1Color(this->ColorsClippingHandles[3]);
+  this->YRange->SetSlider2Color(this->ColorsClippingHandles[3]);
 
   this->Script("pack %s %s -side left -anchor w -expand y -fill x -padx 2 -pady 2 -in %s", 
     this->YLabel->GetWidgetName(),
@@ -446,7 +446,7 @@ void vtkSlicerROIDisplayWidget::CreateWidget ( )
   this->ZRange->SetEntriesWidth(4);
   this->ZRange->SetWidth(120);
   this->ZRange->SetSlider1Color(this->ColorsClippingHandles[4]);
-  this->ZRange->SetSlider1Color(this->ColorsClippingHandles[5]);
+  this->ZRange->SetSlider2Color(this->ColorsClippingHandles[5]);
 
   this->Script("pack %s %s -side left -anchor w -expand y -fill x -padx 2 -pady 2 -in %s", 
     this->ZLabel->GetWidgetName(),

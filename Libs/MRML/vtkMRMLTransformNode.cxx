@@ -97,7 +97,7 @@ void vtkMRMLTransformNode::GetTransformToWorld(vtkGeneralTransform* transformToW
     transformToWorld->Identity();
     }
 
-  transformToWorld->Concatenate(this->TransformToParent);
+  transformToWorld->Concatenate(this->GetTransformToParent());
 
   vtkMRMLTransformNode *parent = this->GetParentTransformNode();
   if (parent != NULL) 

@@ -57,21 +57,21 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     // Description:
     // Get/Set for Nth ROI node Position in RAS cooridnates
     // Note: The ROI Postion is the center of the ROI 
-    int SetNthROIXYZ(int n, float x, float y, float z);
-    float *GetNthROIXYZ(int n);
+    int SetNthROIXYZ(int n, double x, double y, double z);
+    double *GetNthROIXYZ(int n);
     // Description:
     // Get/Set for Nth radius of the ROI in RAS cooridnates
-    int SetNthROIRadiusXYZ(int n, float Radiusx, float Radiusy, float Radiusz);
-    float *GetNthROIRadiusXYZ(int n);
+    int SetNthROIRadiusXYZ(int n, double Radiusx, double Radiusy, double Radiusz);
+    double *GetNthROIRadiusXYZ(int n);
     // Description:
     // Get/Set for Nth ROI node Position in IJK cooridnates
     // Note: The ROI Postion is the center of the ROI 
-    int SetNthROIIJK(int n, float i, float j, float k);
-    float *GetNthROIIJK(int n);
+    int SetNthROIIJK(int n, double i, double j, double k);
+    double *GetNthROIIJK(int n);
     // Description:
     // Get/Set for Nth radius of the ROI in IJK cooridnates
-    int SetNthROIRadiusIJK(int n, float Radiusi, float Radiusj, float Radiusk);
-    float *GetNthROIRadiusIJK(int n);
+    int SetNthROIRadiusIJK(int n, double Radiusi, double Radiusj, double Radiusk);
+    double *GetNthROIRadiusIJK(int n);
 
     // Description:
     // Get/Set for label text of the Nth ROI  

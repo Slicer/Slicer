@@ -5,12 +5,19 @@
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
+#include "vtkPlanes.h"
+#include "vtkTransform.h"
+#include "vtkDataArray.h"
+#include "vtkDoubleArray.h"
 
 #include "vtkAbstractTransform.h"
 #include "vtkMath.h"
+#include "vtkMatrix4x4.h"
 
 #include "vtkMRMLROINode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLTransformNode.h"
+#include "vtkMRMLLinearTransformNode.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLROINode* vtkMRMLROINode::New()
@@ -305,7 +312,7 @@ void vtkMRMLROINode::ProcessMRMLEvents ( vtkObject *caller,
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLROINode::SetXYZ(float X, float Y, float Z)
+void vtkMRMLROINode::SetXYZ(double X, double Y, double Z)
 {
   this->XYZ[0] = X;
   this->XYZ[1] = Y;
@@ -316,14 +323,14 @@ void vtkMRMLROINode::SetXYZ(float X, float Y, float Z)
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLROINode::SetXYZ(float* xyz)
+void vtkMRMLROINode::SetXYZ(double* xyz)
 {
   this->SetXYZ(xyz[0], xyz[1], xyz[2]);
   return;
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLROINode::SetRadiusXYZ(float RadiusX, float RadiusY, float RadiusZ)
+void vtkMRMLROINode::SetRadiusXYZ(double RadiusX, double RadiusY, double RadiusZ)
 { 
   this->RadiusXYZ[0] = RadiusX;
   this->RadiusXYZ[1] = RadiusY;
@@ -334,14 +341,14 @@ void vtkMRMLROINode::SetRadiusXYZ(float RadiusX, float RadiusY, float RadiusZ)
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLROINode::SetRadiusXYZ(float* radiusXYZ)
+void vtkMRMLROINode::SetRadiusXYZ(double* radiusXYZ)
 {
   this->SetRadiusXYZ(radiusXYZ[0], radiusXYZ[1], radiusXYZ[2]);
   return;
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLROINode::SetIJK(float I, float J, float K)
+void vtkMRMLROINode::SetIJK(double I, double J, double K)
 {
   this->IJK[0] = I;
   this->IJK[1] = J;
@@ -353,7 +360,7 @@ void vtkMRMLROINode::SetIJK(float I, float J, float K)
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLROINode::SetIJK(float* ijk)
+void vtkMRMLROINode::SetIJK(double* ijk)
 {
   this->SetIJK(ijk[0], ijk[1], ijk[2]);
   this->Modified();
@@ -361,7 +368,7 @@ void vtkMRMLROINode::SetIJK(float* ijk)
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLROINode::SetRadiusIJK(float RadiusI, float RadiusJ, float RadiusK)
+void vtkMRMLROINode::SetRadiusIJK(double RadiusI, double RadiusJ, double RadiusK)
 {
   this->RadiusIJK[0] = RadiusI;
   this->RadiusIJK[1] = RadiusJ;
@@ -374,7 +381,7 @@ void vtkMRMLROINode::SetRadiusIJK(float RadiusI, float RadiusJ, float RadiusK)
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLROINode::SetRadiusIJK(float* radiusIJK)
+void vtkMRMLROINode::SetRadiusIJK(double* radiusIJK)
 {
   this->SetRadiusIJK(radiusIJK[0], radiusIJK[1], radiusIJK[2]);
   return;
@@ -384,8 +391,8 @@ void vtkMRMLROINode::SetRadiusIJK(float* radiusIJK)
 void vtkMRMLROINode::ApplyTransform(vtkMatrix4x4* transformMatrix)
 {
   double (*matrix)[4] = transformMatrix->Element;
-  float *xyzIn  = this->GetXYZ();
-  float xyzOut[3];
+  double *xyzIn  = this->GetXYZ();
+  double xyzOut[3];
 
   xyzOut[0] = matrix[0][0]*xyzIn[0] + matrix[0][1]*xyzIn[1] + matrix[0][2]*xyzIn[2] + matrix[0][3];
   xyzOut[1] = matrix[1][0]*xyzIn[0] + matrix[1][1]*xyzIn[1] + matrix[1][2]*xyzIn[2] + matrix[1][3];
@@ -397,9 +404,121 @@ void vtkMRMLROINode::ApplyTransform(vtkMatrix4x4* transformMatrix)
 
 void vtkMRMLROINode::ApplyTransform(vtkAbstractTransform* transform)
 {
-  float *xyzIn  = this->GetXYZ();
-  float xyzOut[3];
+  double *xyzIn  = this->GetXYZ();
+  double xyzOut[3];
   transform->TransformPoint(xyzIn,xyzOut);
   this->SetXYZ(xyzOut);
 }
 
+
+#define VTK_AVERAGE(a,b,c) \
+  c[0] = (a[0] + b[0])/2.0; \
+  c[1] = (a[1] + b[1])/2.0; \
+  c[2] = (a[2] + b[2])/2.0;
+
+void vtkMRMLROINode::GetTransformedPlanes(vtkPlanes *planes)
+{
+  double bounds[6];
+  int i;
+
+  for (i=0; i<3; i++)
+    {
+    bounds[2*i  ] = this->XYZ[i] - this->RadiusXYZ[i];
+    bounds[2*i+1] = this->XYZ[i] + this->RadiusXYZ[i];
+    }
+  vtkPoints *boxPoints = vtkPoints::New(VTK_DOUBLE);
+  boxPoints->SetNumberOfPoints(8);
+
+  boxPoints->SetPoint(0, bounds[0], bounds[2], bounds[4]);
+  boxPoints->SetPoint(1, bounds[1], bounds[2], bounds[4]);
+  boxPoints->SetPoint(2, bounds[1], bounds[3], bounds[4]);
+  boxPoints->SetPoint(3, bounds[0], bounds[3], bounds[4]);
+  boxPoints->SetPoint(4, bounds[0], bounds[2], bounds[5]);
+  boxPoints->SetPoint(5, bounds[1], bounds[2], bounds[5]);
+  boxPoints->SetPoint(6, bounds[1], bounds[3], bounds[5]);
+  boxPoints->SetPoint(7, bounds[0], bounds[3], bounds[5]);
+
+  vtkPoints *points = vtkPoints::New(VTK_DOUBLE);
+  points->SetNumberOfPoints(6);
+
+  double *pts =
+     static_cast<vtkDoubleArray *>(boxPoints->GetData())->GetPointer(0);
+  double *p0 = pts;
+  double *p1 = pts + 3*1;
+  double *p2 = pts + 3*2;
+  double *p3 = pts + 3*3;
+  //double *p4 = pts + 3*4;
+  double *p5 = pts + 3*5;
+  double *p6 = pts + 3*6;
+  double *p7 = pts + 3*7;
+  double x[3];
+
+  VTK_AVERAGE(p0,p7,x);
+  points->SetPoint(0, x);
+  VTK_AVERAGE(p1,p6,x);
+  points->SetPoint(1, x);
+  VTK_AVERAGE(p0,p5,x);
+  points->SetPoint(2, x);
+  VTK_AVERAGE(p2,p7,x);
+  points->SetPoint(3, x);
+  VTK_AVERAGE(p1,p3,x);
+  points->SetPoint(4, x);
+  VTK_AVERAGE(p5,p7,x);
+  points->SetPoint(5, x);
+
+  planes->SetPoints(points);
+
+    
+  vtkDoubleArray *normals = vtkDoubleArray::New();
+  normals->SetNumberOfComponents(3);
+  normals->SetNumberOfTuples(6);
+
+  p0 = pts;
+  double *px = pts + 3*1;
+  double *py = pts + 3*3;
+  double *pz = pts + 3*4;
+
+  double N[6][3];
+  for (i=0; i<3; i++)
+    {
+    N[0][i] = p0[i] - px[i];
+    N[2][i] = p0[i] - py[i];
+    N[4][i] = p0[i] - pz[i];
+    }
+  vtkMath::Normalize(N[0]);
+  vtkMath::Normalize(N[2]);
+  vtkMath::Normalize(N[4]);
+  for (i=0; i<3; i++)
+    {
+    N[1][i] = -N[0][i];
+    N[3][i] = -N[2][i];
+    N[5][i] = -N[4][i];
+    }
+  for (i=0; i<6; i++)
+    {
+    normals->SetTuple3(i, N[i][0], N[i][1], N[i][2]);
+    }
+  planes->SetNormals(normals);
+
+  
+  normals->Delete();
+  boxPoints->Delete();  
+  points->Delete();  
+
+  vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
+  if (tnode != NULL) // && tnode->IsLinear())
+    {
+    //vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+    //transformToWorld->Identity();
+    //vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+    //lnode->GetMatrixTransformToWorld(transformToWorld);
+
+    vtkGeneralTransform *transform = vtkGeneralTransform::New();
+    tnode->GetTransformToWorld(transform);
+   
+    transform->Inverse();
+    planes->SetTransform(transform);
+  }
+  planes->Modified();
+
+}
