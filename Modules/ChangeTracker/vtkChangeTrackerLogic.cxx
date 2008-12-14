@@ -1080,7 +1080,7 @@ void vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
   moduleGUI = 
     static_cast<vtkCommandLineModuleGUI*>(app->GetModuleGUIByName("Linear registration"));
   if(!moduleGUI){
-    std::cerr << "Cannot find LinearRegistration module. Aborting." << std::endl;
+    std::cerr << "Cannot find Rigid registration module. Aborting." << std::endl;
     assert(0);
   }
   moduleLogic = moduleGUI->GetLogic();
@@ -1091,13 +1091,13 @@ void vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
   moduleNode = 
     static_cast<vtkMRMLCommandLineModuleNode*>(scene->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
   if(!moduleNode){
-    std::cerr << "Cannot create LinearRegistration node. Aborting." << std::endl;
+    std::cerr << "Cannot create Rigid registration node. Aborting." << std::endl;
     assert(0);
   }
 
   // Add node to the scene
   scene->AddNode(moduleNode);
-  moduleNode->SetModuleDescription("Linear registration");
+  moduleNode->SetModuleDescription("Rigid registration");
 
   // Create output volume node
   /*
@@ -1191,7 +1191,7 @@ void vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
         moduleDesc.SetTarget(entryPointAsString);
         moduleNode->SetModuleDescription(moduleDesc);      
       } else {
-        std::cerr << "Failed to find entry point for Linear registration. Abort." << std::endl;
+        std::cerr << "Failed to find entry point for Rigid registration. Abort." << std::endl;
         abort();
       }
     } else {
@@ -1233,9 +1233,9 @@ void vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
   assert(ctNode->GetScan2_SuperSampleRef());
 
   moduleGUI = 
-    static_cast<vtkCommandLineModuleGUI*>(app->GetModuleGUIByName("Linear registration"));
+    static_cast<vtkCommandLineModuleGUI*>(app->GetModuleGUIByName("Rigid registration"));
   if(!moduleGUI){
-    std::cerr << "Cannot find LinearRegistration module. Aborting." << std::endl;
+    std::cerr << "Cannot find Rigid registration module. Aborting." << std::endl;
     assert(0);
   }
   moduleLogic = moduleGUI->GetLogic();
@@ -1246,13 +1246,13 @@ void vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
   moduleNode = 
     static_cast<vtkMRMLCommandLineModuleNode*>(scene->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
   if(!moduleNode){
-    std::cerr << "Cannot create LinearRegistration node. Aborting." << std::endl;
+    std::cerr << "Cannot create Rigid registration node. Aborting." << std::endl;
     assert(0);
   }
 
   // Add node to the scene
   scene->AddNode(moduleNode);
-  moduleNode->SetModuleDescription("Linear registration");
+  moduleNode->SetModuleDescription("Rigid registration");
 
   // Create output volume node
   /*
@@ -1357,7 +1357,7 @@ void vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
         moduleDesc.SetTarget(entryPointAsString);
         moduleNode->SetModuleDescription(moduleDesc);      
       } else {
-        std::cerr << "Failed to find entry point for Linear registration. Abort." << std::endl;
+        std::cerr << "Failed to find entry point for Rigid registration. Abort." << std::endl;
         abort();
       }
     } else {
