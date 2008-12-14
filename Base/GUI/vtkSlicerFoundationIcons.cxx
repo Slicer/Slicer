@@ -77,6 +77,8 @@ vtkSlicerFoundationIcons::vtkSlicerFoundationIcons ( )
   this->SlicerCompositeIcon = vtkKWIcon::New();
   this->SlicerLockIcon = vtkKWIcon::New();
   this->SlicerUnlockIcon = vtkKWIcon::New();
+  this->SlicerFoundOnDiskIcon = vtkKWIcon::New();
+  this->SlicerNotFoundOnDiskIcon = vtkKWIcon::New();
 
   this->AssignImageDataToIcons ( );
 }
@@ -426,6 +428,16 @@ vtkSlicerFoundationIcons::~vtkSlicerFoundationIcons ( )
     this->SlicerUnlockIcon->Delete();
     this->SlicerUnlockIcon = NULL;
     }
+  if ( this->SlicerFoundOnDiskIcon )
+    {
+    this->SlicerFoundOnDiskIcon->Delete();
+    this->SlicerFoundOnDiskIcon = NULL;    
+    }
+  if ( this->SlicerNotFoundOnDiskIcon )
+    {
+    this->SlicerNotFoundOnDiskIcon->Delete();
+    this->SlicerNotFoundOnDiskIcon = NULL;    
+    }
 }
 
 
@@ -773,6 +785,17 @@ void vtkSlicerFoundationIcons::AssignImageDataToIcons ( )
                                     image_SlicerUnlock_height,
                                     image_SlicerUnlock_pixel_size,
                                     image_SlicerUnlock_length, 0);
+  this->SlicerFoundOnDiskIcon->SetImage (image_SlicerFoundOnDisk,
+                                         image_SlicerFoundOnDisk_width,
+                                         image_SlicerFoundOnDisk_height,
+                                         image_SlicerFoundOnDisk_pixel_size,
+                                         image_SlicerFoundOnDisk_length, 0);
+  this->SlicerNotFoundOnDiskIcon->SetImage (image_SlicerNotFoundOnDisk,
+                                         image_SlicerNotFoundOnDisk_width,
+                                         image_SlicerNotFoundOnDisk_height,
+                                         image_SlicerNotFoundOnDisk_pixel_size,
+                                         image_SlicerNotFoundOnDisk_length, 0);
+
 }
 
 
@@ -851,4 +874,6 @@ void vtkSlicerFoundationIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "SlicerCompositeIcon: " << this->GetSlicerCompositeIcon() << "\n";
     os << indent << "SlicerLockIcon: " << this->GetSlicerLockIcon() << "\n";
     os << indent << "SlicerUnlockIcon: " << this->GetSlicerUnlockIcon() << "\n";
+    os << indent << "SlicerFoundOnDiskIcon: " << this->GetSlicerFoundOnDiskIcon() << "\n";
+    os << indent << "SlicerNotFoundOnDiskIcon: " << this->GetSlicerNotFoundOnDiskIcon() << "\n";
 }

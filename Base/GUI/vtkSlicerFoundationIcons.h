@@ -47,6 +47,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFoundationIcons : public vtkSlicerIcon
     vtkGetObjectMacro ( SlicerLoadIcon, vtkKWIcon );
     vtkGetObjectMacro ( SlicerDownloadIcon, vtkKWIcon );
     vtkGetObjectMacro ( SlicerUploadIcon, vtkKWIcon );
+    vtkGetObjectMacro ( SlicerFoundOnDiskIcon, vtkKWIcon );
+    vtkGetObjectMacro ( SlicerNotFoundOnDiskIcon, vtkKWIcon );
     vtkGetObjectMacro ( SlicerPlayerPauseIcon, vtkKWIcon );
     vtkGetObjectMacro ( SlicerPlayerPingPongIcon, vtkKWIcon );
     vtkGetObjectMacro ( SlicerPlayerBackwardIcon, vtkKWIcon );
@@ -120,6 +122,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFoundationIcons : public vtkSlicerIcon
     vtkKWIcon *SlicerLoadIcon;
     vtkKWIcon *SlicerUploadIcon;
     vtkKWIcon *SlicerDownloadIcon;
+    vtkKWIcon *SlicerFoundOnDiskIcon;
+    vtkKWIcon *SlicerNotFoundOnDiskIcon;
     vtkKWIcon *SlicerPlayerPauseIcon;
     vtkKWIcon *SlicerPlayerPingPongIcon;
     vtkKWIcon *SlicerPlayerBackwardIcon;
