@@ -55,6 +55,10 @@ public:
   // vtkGetObjectMacro(AnatomicalStructureStep, vtkChangeTrackerAnatomicalStructureStep);
 
   // Description:
+  // Events that this module GUI will observe. CLIENT MUST DELETE!
+  virtual vtkIntArray* NewObservableEvents();
+
+  // Description:
   // Create widgets
   virtual void BuildGUI();
 
@@ -163,7 +167,6 @@ private:
   vtkSlicerSliceLogic *SliceLogic;
   vtkKWScaleWithEntry *SliceController_OffsetScale;
   vtkCallbackCommand *SliceLogicCallbackCommand;
-
 };
 
 #endif

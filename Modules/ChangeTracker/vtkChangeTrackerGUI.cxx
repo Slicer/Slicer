@@ -137,21 +137,20 @@ void vtkChangeTrackerGUI::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os, indent);
 }
 
-//---------------------------------------------------------------------------
-void vtkChangeTrackerGUI::AddGUIObservers() 
+//----------------------------------------------------------------------------
+vtkIntArray*  vtkChangeTrackerGUI::NewObservableEvents()
 {
-  // observe when nodes are added or removed from the scene
-  vtkIntArray* events = vtkIntArray::New();
+  vtkIntArray *events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
   events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
-  
-  if (this->GetMRMLScene() != NULL)
-    {
-    this->SetAndObserveMRMLSceneEvents(this->GetMRMLScene(), events);
-    }
-  events->Delete();
+  // Slicer3.cxx calls delete on events
+  return events;
+}
 
+//---------------------------------------------------------------------------
+void vtkChangeTrackerGUI::AddGUIObservers() 
+{
   // Here nothing happens normally other bc the individual pannels are not created yet and the one for the first step is already created 
   // - add if clause so that same event is not added twice 
   // The wizrad creates them once they are shown on the gui for the first time - and does not delete them afterwards - strange 
@@ -309,7 +308,8 @@ void vtkChangeTrackerGUI::ProcessMRMLEvents(vtkObject *caller,
 
   // Make sure that if Scan*_ref are defined before volumes rae loaded then this proparly updates the GUIs after Volumes are loaded 
   // Should do the same for NodeRemoveEvent -> update References correctly - currently not done 
-  if ((event == vtkMRMLScene::NodeAddedEvent)  && this->FirstScanStep) {
+  if ((event == vtkMRMLScene::NodeAddedEvent)  && this->FirstScanStep && this->Node)
+    {
     if (this->Node->GetScan1_Ref() && (strcmp(this->Node->GetScan1_Ref(),"") != 0) && !this->FirstScanStep->GetFirstVolumeMenuButton()->GetSelected()) {
       this->FirstScanStep->UpdateGUI();
     } else if (this->Node->GetScan2_Ref() && (strcmp(this->Node->GetScan2_Ref(),"") != 0) && !this->FirstScanStep->GetSecondVolumeMenuButton()->GetSelected()) {
