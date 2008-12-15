@@ -245,8 +245,7 @@ void vtkSlicerTractographyDisplayGUI::BuildGUI ( )
 
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     // Define your help text here.
-    const char *help = "**Tractography Module:** Load, save and adjust display parameters of fiber bundles. ";
-  
+    
     // ---
     // MODULE GUI FRAME 
     // configure a page for a model loading UI for now.
@@ -256,28 +255,11 @@ void vtkSlicerTractographyDisplayGUI::BuildGUI ( )
     this->UIPanel->AddPage ( "Tractography", "Tractography", NULL );
     
     // HELP FRAME
-    vtkSlicerModuleCollapsibleFrame *modHelpFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-    modHelpFrame->SetParent ( this->UIPanel->GetPageWidget ( "Tractography" ) );
-    modHelpFrame->Create ( );
-    modHelpFrame->CollapseFrame ( );
-    modHelpFrame->SetLabelText ("Help");
-    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  modHelpFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Tractography")->GetWidgetName());
-
-    // configure the parent classes help text widget
-    this->HelpText->SetParent ( modHelpFrame->GetFrame() );
-    this->HelpText->Create ( );
-    this->HelpText->SetHorizontalScrollbarVisibility ( 0 );
-    this->HelpText->SetVerticalScrollbarVisibility ( 1 );
-    this->HelpText->GetWidget()->SetText ( help );
-    this->HelpText->GetWidget()->SetReliefToFlat ( );
-    this->HelpText->GetWidget()->SetWrapToWord ( );
-    this->HelpText->GetWidget()->ReadOnlyOn ( );
-    this->HelpText->GetWidget()->QuickFormattingOn ( );
-    this->HelpText->GetWidget()->SetBalloonHelpString ( "" );
-    app->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
-                  this->HelpText->GetWidgetName ( ) );
-
+    const char *help = "**Tractography Module:** Load, save and adjust display parameters of fiber bundles. ";
+    const char *about = "Tractography Module: ";
+      
+    this->BuildHelpAndAboutFrame ( this->UIPanel->GetPageWidget ( "Tractography" ), help, about);
+        
     // ---
     // LOAD FRAME            
     vtkSlicerModuleCollapsibleFrame *modLoadFrame = vtkSlicerModuleCollapsibleFrame::New ( );
@@ -378,9 +360,8 @@ void vtkSlicerTractographyDisplayGUI::BuildGUI ( )
       "OpenPath");
      app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
                 this->SaveTractographyButton->GetWidgetName());
-    
+
     modLoadFrame->Delete ( );
-    modHelpFrame->Delete ( );
     modDisplayFrame->Delete ( );
     modelSaveFrame->Delete();
 }
