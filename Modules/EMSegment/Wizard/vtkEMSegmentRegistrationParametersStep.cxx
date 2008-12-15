@@ -35,30 +35,35 @@ vtkEMSegmentRegistrationParametersStep::~vtkEMSegmentRegistrationParametersStep(
 {
   if (this->RegistrationParametersAtlasImageMenuButton)
     {
+    this->RegistrationParametersAtlasImageMenuButton->SetParent(NULL);
     this->RegistrationParametersAtlasImageMenuButton->Delete();
     this->RegistrationParametersAtlasImageMenuButton = NULL;
     }
 
   if (this->RegistrationParametersAffineMenuButton)
     {
+    this->RegistrationParametersAffineMenuButton->SetParent(NULL);
     this->RegistrationParametersAffineMenuButton->Delete();
     this->RegistrationParametersAffineMenuButton = NULL;
     }
 
   if (this->RegistrationParametersDeformableMenuButton)
     {
+    this->RegistrationParametersDeformableMenuButton->SetParent(NULL);
     this->RegistrationParametersDeformableMenuButton->Delete();
     this->RegistrationParametersDeformableMenuButton = NULL;
     }
 
   if (this->RegistrationParametersInterpolationMenuButton)
     {
+    this->RegistrationParametersInterpolationMenuButton->SetParent(NULL);
     this->RegistrationParametersInterpolationMenuButton->Delete();
     this->RegistrationParametersInterpolationMenuButton = NULL;
     }
 
   if (this->RegistrationParametersFrame)
     {
+    this->RegistrationParametersFrame->SetParent(NULL);
     this->RegistrationParametersFrame->Delete();
     this->RegistrationParametersFrame = NULL;
     }
