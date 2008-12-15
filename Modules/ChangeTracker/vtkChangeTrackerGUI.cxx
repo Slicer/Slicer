@@ -26,7 +26,7 @@
 #include "vtkKWLabel.h"
 #include "vtkSlicerSliceControllerWidget.h"
 
-// #include "CSAILLogo.h"
+#include "ImageData/BSFLogo.h"
 #include "vtkKWIcon.h"
 
 vtkCxxSetObjectMacro(vtkChangeTrackerGUI,Node,vtkMRMLChangeTrackerNode);
@@ -64,13 +64,15 @@ vtkChangeTrackerGUI::vtkChangeTrackerGUI()
   this->SliceController_OffsetScale = NULL;
   this->SliceLogicCallbackCommand= NULL;
 
-//  vtkKWIcon* logo = vtkKWIcon::New();
-//   logo->SetImage(image_CSAILLogo,
-//                 image_CSAILLogo_width, image_CSAILLogo_height,
-//                 image_CSAILLogo_pixel_size, image_CSAILLogo_length,
-//                 0);
-//  this->Logo = logo;
-//  logo->Delete();
+  // Logo setup. To prepare the header file with the logo information, use
+  // KWConvertImageToHeader tool supplied with KWWidgets, with --zlib option.
+  vtkKWIcon* logo = vtkKWIcon::New();
+  logo->SetImage(image_bsf_logo,
+                 image_bsf_logo_width, image_bsf_logo_height,
+                 image_bsf_logo_pixel_size, image_bsf_logo_length,
+                 0);
+  this->Logo = logo;
+  logo->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -324,21 +326,31 @@ void vtkChangeTrackerGUI::BuildGUI()
 
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
 
-  const char *help = "**ChangeTracker Module:** **Under Construction** ";
-  
   this->Logic->RegisterMRMLNodesWithScene();
 
   this->UIPanel->AddPage("ChangeTracker", "ChangeTracker", NULL);
   vtkKWWidget *module_page = 
     this->UIPanel->GetPageWidget("ChangeTracker");
 
+
   // -----------------------------------------------------------------------
   // Help
  
-  char* help_text = "ChangeTracker allows to detect subtle changes in pathology. The change is quantified in mm^3 for growth/shrinkage, and is also visualized with tumor changes color-coded. The module documentation can be found at <a>http://slicer.spl.harvard.edu/slicerWiki/index.php/Modules:ChangeTracker-Documentation</a>.";
-  char* ack_text = "ChangTracker has been developed and supported by Kilian Pohl, Ender Konukoglu, Andriy Fedorov and Slicer community. Development of this module was supported through the funding from Brain Science Foundation <a>http://www.brainsciencefoundation.org/</a>";
+  const char* help_text = "ChangeTracker allows to detect subtle changes in pathology. The change is quantified in mm^3 for growth/shrinkage, and is also visualized with tumor changes color-coded. The module documentation can be found at <a>http://slicer.spl.harvard.edu/slicerWiki/index.php/Modules:ChangeTracker-Documentation</a>.";
+  const char* ack_text = "ChangTracker has been developed and supported by Kilian Pohl, Ender Konukoglu, Andriy Fedorov and Slicer community. Development of this module was supported through the funding from Brain Science Foundation <a>http://www.brainsciencefoundation.org/</a>";
   this->BuildHelpAndAboutFrame(module_page, help_text, ack_text);
-  
+
+  // Show the logo
+  if (this->GetLogo())
+  {
+    vtkKWLabel *logoLabel = vtkKWLabel::New();
+    logoLabel->SetParent( this->GetLogoFrame() );
+    logoLabel->Create();
+    logoLabel->SetImageToIcon( this->GetLogo() );
+    app->Script("pack %s", logoLabel->GetWidgetName() );
+    logoLabel->Delete();
+  }
+ 
   // -----------------------------------------------------------------------
   // Define Wizard with the order of the steps
 
