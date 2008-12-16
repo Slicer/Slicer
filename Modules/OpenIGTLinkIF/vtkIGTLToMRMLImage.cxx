@@ -330,10 +330,10 @@ int vtkIGTLToMRMLImage::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNod
   // definitions of image origin between VTK (Slicer) and OpenIGTLink;
   // OpenIGTLink image has its origin at the center, while VTK image
   // has one at the corner.
-  float hfovi = psi * size[0] / 2.0;
-  float hfovj = psj * size[1] / 2.0;
-  //float hfovk = psk * size[2] / 2.0;
-  float hfovk = 0;
+  float hfovi = psi * (size[0]-1) / 2.0;
+  float hfovj = psj * (size[1]-1) / 2.0;
+  float hfovk = psk * (size[2]-1) / 2.0;
+  //float hfovk = 0;
 
   float cx = ntx * hfovi + nsx * hfovj + nnx * hfovk;
   float cy = nty * hfovi + nsy * hfovj + nny * hfovk;
