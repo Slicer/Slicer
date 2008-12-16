@@ -104,3 +104,33 @@ def CalculateFA(lda):
   FA = 1/sqrt(3)*sqrt(((lda[..., 0]-lda[..., 1])**2 + (lda[..., 1]-lda[..., 2])**2 + (lda[..., 0]-lda[..., 2])**2) / (lda[..., 0]**2 + lda[..., 1]**2 + lda[..., 2]**2 + eps))
  
   return FA
+
+# lda must 3,3 - diag with l0, l1, l2
+def CalculateFA0(lda):
+
+  eps = finfo(float).eps 
+  
+  # Calulate FA
+  #FA =  
+ 
+  return FA
+
+# lda must 3,3 - diag with l0, l1, l2
+def CalculateTrace0(lda):
+
+  eps = finfo(float).eps 
+  
+  # Calulate FA
+  #TRACE = 
+ 
+  return TRACE
+
+# lda must 3,3 - diag with l0, l1, l2
+def CalculateMode0(lda):
+
+  eps = finfo(float).eps 
+  
+  # Calulate FA
+  #MODE = 
+ 
+  return MODE
