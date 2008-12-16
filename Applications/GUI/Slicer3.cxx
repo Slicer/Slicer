@@ -1151,8 +1151,11 @@ int Slicer3_main(int argc, char *argv[])
           
       events = gui->NewObservableEvents();
       gui->SetAndObserveMRMLSceneEvents(scene, events);
-      events->Delete();
-          
+      if (events)
+        {
+        events->Delete();
+        }
+
       logic->SetApplicationLogic(appLogic);
       logic->SetModuleLocation(desc.GetLocation().c_str());
 
