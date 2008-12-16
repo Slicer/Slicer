@@ -1596,6 +1596,8 @@ void vtkSlicerViewerWidget::RemoveMRMLObservers()
   //this->RemoveFiducialObservers();
 
   this->SetAndObserveMRMLScene(NULL);
+  this->SetAndObserveViewNode (NULL);
+  this->SetAndObserveCameraNode(NULL);
 }
 
 //---------------------------------------------------------------------------
