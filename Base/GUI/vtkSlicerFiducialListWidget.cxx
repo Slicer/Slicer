@@ -1529,7 +1529,20 @@ void vtkSlicerFiducialListWidget::UpdateTextActor(vtkMRMLFiducialListNode *flist
       this->MainViewer->AddViewProp ( textActor );
       }
     }
-  vtext->SetText(flist->GetNthFiducialLabelText(f));
+  // do some magic to offset the text string far enough from the glyph so that
+  // they don't overlap, using extra spaces at the start of the text string
+  std::string textString = std::string("");
+  float denom = (flist->GetTextScale() - 1.0 < 1.0) ? (1.0) : (flist->GetTextScale() - 1.0);
+  int numSpaces = (int)ceil((flist->GetSymbolScale() * 1.25) / denom);
+  for (int i = 0; i < numSpaces; i++)
+    {
+    textString += std::string(" ");
+    }
+  vtkDebugMacro("NumSpaces = " << numSpaces << ", symbol scale = " << flist->GetSymbolScale() << ", text scale = " << flist->GetTextScale());
+
+  // now add on the label text
+  textString += std::string(flist->GetNthFiducialLabelText(f));
+  vtext->SetText(textString.c_str());
 
   // set the display properties on just the text actor
   this->SetFiducialDisplayProperty(flist, f, NULL, textActor);
