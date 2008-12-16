@@ -37,6 +37,7 @@ class vtkKWMenu;
 class vtkKWTreeWithScrollbars;
 class vtkKWEntryWithLabel;
 class vtkKWLabelWithLabel;
+class vtkKWCheckButtonWithLabel;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerMRMLTreeWidget : public vtkSlicerWidget
 {
@@ -115,6 +116,8 @@ private:
   
   vtkKWTreeWithScrollbars *TreeWidget;
   vtkKWMenu *ContextMenu;
+
+  vtkKWCheckButtonWithLabel  *ShowIDButton;
 
   vtkKWLabelWithLabel *NodeID;
   vtkKWEntryWithLabel *NodeName;

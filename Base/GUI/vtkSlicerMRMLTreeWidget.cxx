@@ -14,6 +14,8 @@
 #include "vtkKWTkUtilities.h"
 #include "vtkKWTree.h"
 #include "vtkKWTreeWithScrollbars.h"
+#include "vtkKWCheckButton.h"
+#include "vtkKWCheckButtonWithLabel.h"
 
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLLinearTransformNode.h"
@@ -36,6 +38,7 @@ vtkSlicerMRMLTreeWidget::vtkSlicerMRMLTreeWidget ( )
   this->ContextMenu = NULL;
   this->NodeID = NULL;
   this->NodeName = NULL;
+  this->ShowIDButton = NULL;
 }
 
 
@@ -68,6 +71,13 @@ vtkSlicerMRMLTreeWidget::~vtkSlicerMRMLTreeWidget ( )
     this->NodeName->Delete();
     this->NodeName = NULL;
     }
+
+  if (this->ShowIDButton)
+    {
+    this->ShowIDButton->Delete();
+    this->ShowIDButton = NULL;
+    }
+
   this->ClearCutNodes();
 }
 
@@ -223,6 +233,12 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
       }
 
     }
+  else if (event == vtkKWCheckButton::SelectedStateChangedEvent && 
+          this->ShowIDButton->GetWidget() == vtkKWCheckButton::SafeDownCast(caller) )
+    {
+    this->UpdateTreeFromMRML();
+    }
+
 } 
 
 //---------------------------------------------------------------------------
@@ -467,6 +483,12 @@ void vtkSlicerMRMLTreeWidget::RemoveWidgetObservers ( )
       vtkKWTree::RightClickOnNodeEvent, 
       (vtkCommand *)this->GUICallbackCommand);  
     }
+
+  if (this->ShowIDButton)
+    {
+    this->ShowIDButton->GetWidget()->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+
   if (this->NodeName)
     {
     this->NodeName->GetWidget()->RemoveObservers(  vtkKWEntry::EntryValueChangedEvent,
@@ -526,6 +548,16 @@ void vtkSlicerMRMLTreeWidget::CreateWidget ( )
   tree->AddObserver(
     vtkKWTree::RightClickOnNodeEvent, 
     (vtkCommand *)this->GUICallbackCommand);
+
+
+  this->ShowIDButton = vtkKWCheckButtonWithLabel::New();
+  this->ShowIDButton->SetParent ( frame->GetFrame() );
+  this->ShowIDButton->Create ( );
+  this->ShowIDButton->SetLabelText("Display MRML ID's");
+  this->ShowIDButton->SetBalloonHelpString("Display MRML ID's.");
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill both -padx 2 -pady 2",
+                 this->ShowIDButton->GetWidgetName());
+  this->ShowIDButton->GetWidget()->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->UpdateTreeFromMRML();
 
@@ -638,9 +670,12 @@ void vtkSlicerMRMLTreeWidget::AddNodeToTree(vtkMRMLNode *node)
   vtksys_stl::string node_text(node->GetName());
   if (node_text.size())
     {
-    node_text += " (";
-    node_text += ID;
-    node_text += ")";
+    if (this->ShowIDButton && this->ShowIDButton->GetWidget()->GetSelectedState())
+      {
+      node_text += " (";
+      node_text += ID;
+      node_text += ")";
+      }
     }
   else
     {
