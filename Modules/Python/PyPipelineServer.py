@@ -8,6 +8,8 @@ import nrrd
 reload(nrrd)
 import slicerd
 reload(slicerd)
+import smooth as sm
+reload(sm)
 import TensorEval as tensC
 reload(tensC)
 import TensorEval2 as tens
@@ -64,6 +66,7 @@ class PipelineHandler(asyncore.dispatcher):
         self.roiA               = nrrd.nrrd()
         self.roiB               = nrrd.nrrd()
         self.wm                 = nrrd.nrrd()
+        self.ten                = nrrd.nrrd()
 
         self.res                = numpy.empty(0)
 
@@ -113,6 +116,7 @@ class PipelineHandler(asyncore.dispatcher):
                          self.roiA.setImage(roiAR)
                          logger.info("RoiA : %s:%s:%s" % (roiAR.shape[0], roiAR.shape[1], roiAR.shape[2]))
 
+          isInRoiB = False
           if self.params.hasKey('roiB'):
                   if dscene.has_key(self.params.get('roiB')[0]):
                         if self.params.get('roiB')[0] != self.params.get('roiA')[0]:
@@ -121,24 +125,70 @@ class PipelineHandler(asyncore.dispatcher):
                               roiBR = roiBR.reshape(shpD[2], shpD[1], shpD[0])
                               roiBR = roiBR.swapaxes(2,0)
                               self.roiB.setImage(roiBR)
+                              isInRoiB = True      
                               logger.info("RoiB : %s:%s:%s" % (roiBR.shape[0], roiBR.shape[1], roiBR.shape[2]))
-
+         
+          isInWM = False
           if self.params.hasKey('wm'):
                   if dscene.has_key(self.params.get('wm')[0]):
-                        if self.params.get('wm')[0] != self.params.get('roiA')[0]:
-                              self.wm = s.get(int(dscene[self.params.get('wm')[0]]))
-                              wmR = numpy.fromstring(self.wm.getImage(), 'uint16')
-                              wmR = wmR.reshape(shpD[2], shpD[1], shpD[0])
-                              wmR = wmR.swapaxes(2,0)
-                              self.wm.setImage(wmR)
-                              logger.info("WM : %s:%s:%s" % (wmR.shape[0], wmR.shape[1], wmR.shape[2]))
+                        if not dscene.has_key(self.params.get('roiB')[0]):
+                              if self.params.get('wm')[0] != self.params.get('roiA')[0]: 
+                                 self.wm = s.get(int(dscene[self.params.get('wm')[0]]))
+                                 wmR = numpy.fromstring(self.wm.getImage(), 'uint16')
+                                 wmR = wmR.reshape(shpD[2], shpD[1], shpD[0])
+                                 wmR = wmR.swapaxes(2,0)
+                                 self.wm.setImage(wmR)
+                                 isInWM = True
+                                 logger.info("WM : %s:%s:%s" % (wmR.shape[0], wmR.shape[1], wmR.shape[2]))
+                        else:
+                              if self.params.get('wm')[0] != self.params.get('roiB')[0] and self.params.get('wm')[0] != self.params.get('roiA')[0]:
+                                 self.wm = s.get(int(dscene[self.params.get('wm')[0]]))
+                                 wmR = numpy.fromstring(self.wm.getImage(), 'uint16')
+                                 wmR = wmR.reshape(shpD[2], shpD[1], shpD[0])
+                                 wmR = wmR.swapaxes(2,0)
+                                 self.wm.setImage(wmR)
+                                 isInWM = True                                 
+                                 logger.info("WM : %s:%s:%s" % (wmR.shape[0], wmR.shape[1], wmR.shape[2]))
+
+          isInTensor = False
+          if self.params.hasKey('tensor'):
+                  if dscene.has_key(self.params.get('tensor')[0]):
+                        if not dscene.has_key(self.params.get('roiB')[0]) and not dscene.has_key(self.params.get('wm')[0]):
+                              if self.params.get('tensor')[0] != self.params.get('roiA')[0]:
+                                 self.ten = s.get(int(dscene[self.params.get('tensor')[0]]))
+                                 tenR = numpy.fromstring(self.ten.getImage(), 'float32')
+                                 tenR = wmR.reshape(shpD[2], shpD[1], shpD[0], 7) # is a tensor
+                                 tenR = wmR.swapaxes(2,0)
+                                 self.ten.setImage(tenR)
+                                 isInTensor= True
+                                 logger.info("TEN : %s:%s:%s:%s" % (tenR.shape[0], tenR.shape[1], tenR.shape[2], 7))
+                        elif dscene.has_key(self.params.get('roiB')[0]) and not dscene.has_key(self.params.get('wm')[0]):
+                              if self.params.get('tensor')[0] != self.params.get('roiB')[0] and \
+                                             self.params.get('tensor')[0] != self.params.get('roiA')[0]:
+                                 self.ten = s.get(int(dscene[self.params.get('tensor')[0]]))
+                                 tenR = numpy.fromstring(self.ten.getImage(), 'float32')
+                                 tenR = wmR.reshape(shpD[2], shpD[1], shpD[0], 7) # is a tensor
+                                 tenR = wmR.swapaxes(2,0)
+                                 self.ten.setImage(tenR)
+                                 isInTensor= True
+                                 logger.info("TEN : %s:%s:%s:%s" % (tenR.shape[0], tenR.shape[1], tenR.shape[2], 7))
+                        else:
+                              if self.params.get('tensor')[0] != self.params.get('roiB')[0] and \
+                                             self.params.get('tensor')[0] != self.params.get('roiA')[0] and \
+                                             self.params.get('tensor')[0] != self.params.get('wm')[0]:
+                                 self.ten = s.get(int(dscene[self.params.get('tensor')[0]]))
+                                 tenR = numpy.fromstring(self.ten.getImage(), 'float32')
+                                 tenR = wmR.reshape(shpD[2], shpD[1], shpD[0], 7) # is a tensor
+                                 tenR = wmR.swapaxes(2,0)
+                                 self.ten.setImage(tenR)
+                                 isInTensor= True
+                                 logger.info("TEN : %s:%s:%s:%s" % (tenR.shape[0], tenR.shape[1], tenR.shape[2], 7))
+
 
           logger.info("Input volumes loaded!")
 
           # values per default
           smoothEnabled = False
-          stdDev = [1., 1. ,1.]
-          radFactors = [1.5, 1.5, 1.5]
 
           otsuEnabled = False
           infOtsuThres = 200
@@ -192,6 +242,14 @@ class PipelineHandler(asyncore.dispatcher):
                     modeEnabled = bool(int(self.params.get('modeEnabled')[0]))
 
           # can handle normally
+          FWHM = numpy.ones((3), 'float')
+          if self.params.hasKey('FWHM'):
+                    FWHM[0] = float(self.params.get('FWHM')[0])
+                    FWHM[1] = float(self.params.get('FWHM')[1])
+                    FWHM[2] = float(self.params.get('FWHM')[2])
+                    logger.debug("FWHM: %s:%s:%s" % (FWHM[0], FWHM[1], FWHM[2]) )
+
+
           if self.params.hasKey('infOtsuThres'):
                     infOtsuThres = int(self.params.get('infOtsuThres')[0])
                     logger.debug("infOtsuThres: %s" % infOtsuThres)
@@ -240,6 +298,15 @@ class PipelineHandler(asyncore.dispatcher):
                     probMode = self.params.get('probMode')[0]
                     logger.debug("probMode: %s" % probMode)
 
+          if self.params.hasKey('lengthEnabled'):
+                    lengthEnabled = self.params.get('lengthEnabled')[0]
+                    logger.debug("lengthEnabled: %s" % lengthEnabled)
+
+          if self.params.hasKey('lengthClass'):
+                    lengthClass = self.params.get('lengthClass')[0]
+                    logger.debug("lengthClass: %s" % lengthClass)
+          
+
 
           ngrads = b.shape[0]
           G = G.reshape((ngrads,3))
@@ -260,14 +327,23 @@ class PipelineHandler(asyncore.dispatcher):
 
           logger.info("Tensor flag : %s" % str(tensEnabled))
 
+          if smoothEnabled:
+                    for k in range(shpD[3]):
+                        data[:,:,:,k] = sm.smooth(data[...,k], FWHM, numpy.array([ numpy.abs(i2r[0,0]), numpy.abs(i2r[1,1]), numpy.abs(i2r[2,2]) ],'float'))
+
           if tensEnabled:
-                    logger.info("Compute tensor")
-                    timeS1 = time.time()
-                    EV, lV, xVTensor, otsu, wm, arts = tens.EvaluateTensorS0(data, G.T, b.T, otsuEnabled, wmEnabled, artsEnabled, bLine,\
+                    if not isInTensor:
+                       logger.info("Compute tensor")
+                       timeS1 = time.time()
+                       if not isInWM: # give our own white matter mask (e.g. freesurfer)
+                          EV, lV, xVTensor, xMTensor, otsu, wm, arts = tens.EvaluateTensorS0(data, G.T, b.T, otsuEnabled, wmEnabled, artsEnabled, bLine,\
                                   infOtsuThres, supOtsuThres,\
                                   infWMThres, supWMThres, infARTSThres, supARTSThres)
-
-                    logger.info("Compute tensor in %s sec" % str(time.time()-timeS1))
+                       else:
+                          EV, lV, xVTensor, xMTensor, otsu, wm, arts = tens.EvaluateTensorS0(data, G.T, b.T, otsuEnabled, wmEnabled, artsEnabled, bLine,\
+                                  infOtsuThres, supOtsuThres,\
+                                  infWMThres, supWMThres, infARTSThres, supARTSThres, self.wm.getImage())
+                       logger.info("Compute tensor in %s sec" % str(time.time()-timeS1))
 
                     if faEnabled:
                          faMap = tensC.CalculateFA(lV)
@@ -284,7 +360,12 @@ class PipelineHandler(asyncore.dispatcher):
                          logger.info("Track fibers in %s sec" % str(time.time()-timeS2))
 
                          if cmEnabled:
-                              cm = track.ConnectFibers(paths, maxLength, shpD)
+                            if probMode=='rough':
+                               cm = track.ConnectFibers0(paths, maxLength, shpD, lengthEnabled,  lengthClass)
+                            elif probMode=='cumulative':
+                               cm = track.ConnectFibers1(paths, maxLength, shpD, lengthEnabled,  lengthClass)
+                            else:
+                               cm = track.ConnectFibers2(paths, maxLength, shpD, lengthEnabled,  lengthClass)
 
 
           elif stEnabled:
@@ -299,7 +380,12 @@ class PipelineHandler(asyncore.dispatcher):
                      logger.info("Track fibers without prior tensor estimation in %s sec" % str(time.time()-timeS3))
 
                      if cmEnabled:
-                         cm = track.ConnectFibers(paths, maxLength, shpD)
+                         if probMode=='rough':
+                            cm = track.ConnectFibers0(paths, maxLength, shpD, lengthEnabled,  lengthClass)
+                         elif probMode=='cumulative':
+                            cm = track.ConnectFibers1(paths, maxLength, shpD, lengthEnabled,  lengthClass)
+                         else:
+                            cm = track.ConnectFibers2(paths, maxLength, shpD, lengthEnabled,  lengthClass)
           else:
                      logger.info("No pipeline to execute!")
 
@@ -322,6 +408,7 @@ class PipelineHandler(asyncore.dispatcher):
           if tensEnabled:
                      xVTensor = xVTensor.swapaxes(2,0)
                      s.putD(xVTensor, dims, org, i2r, mu, 'tensor')
+                     s.putD(xMTensor, dims, org, i2r, mu, 'tensor_diag')
 
                      if faEnabled:
                           faMap = faMap.swapaxes(2,0)
@@ -350,8 +437,10 @@ class PipelineHandler(asyncore.dispatcher):
         tmp = data[1:]
         self.params.set(data[0], tmp)
         logger.info("param id: %s" % data[0])
-        logger.info("param value: %s" % self.params.get(data[0]))
-
+        if (len(self.params.get(data[0]))==3):
+            logger.info("param value: %s:%s:%s" % (self.params.get(data[0])[0], self.params.get(data[0])[1], self.params.get(data[0])[2]) )
+        else:
+            logger.info("param value: %s" % self.params.get(data[0]))
 
    def set_data(self, data):
 
