@@ -1,12 +1,12 @@
 import logging
 import time
 from numpy import finfo, sqrt, exp, dot, log, cos, arccos, pi
-from numpy import reshape, vstack, hstack, ones, zeros, squeeze, newaxis, max, min
+from numpy import reshape, vstack, hstack, ones, zeros, squeeze, newaxis, max, min, empty, array
 from numpy import linalg, diag
 
 logger                   = logging.getLogger(__name__)
 
-def EvaluateTensorS0(dataD, G, b, ofilter=False, wFilter=False, aFilter=False, baseline=0, oMin=100, oMax=1000, wmMin=0, wmMax=1000, aMin=0, aMax=100):
+def EvaluateTensorS0(dataD, G, b, ofilter=False, wFilter=False, aFilter=False, baseline=0, oMin=100, oMax=1000, wmMin=0, wmMax=1000, aMin=0, aMax=100, wmI=empty(0, 'float32')):
 
    eps = finfo(float).eps
   
@@ -20,10 +20,15 @@ def EvaluateTensorS0(dataD, G, b, ofilter=False, wFilter=False, aFilter=False, b
    lT  = zeros((dataD.shape[0], dataD.shape[1], dataD.shape[2], 3) , 'float32')
    ET  = zeros((dataD.shape[0], dataD.shape[1], dataD.shape[2], 3, 3), 'float32' )
    xVTensor = zeros((dataD.shape[0], dataD.shape[1], dataD.shape[2], 7), 'float32')
+   xMTensor = zeros((dataD.shape[0], dataD.shape[1], dataD.shape[2], 7), 'float32')
 
    otsu =  ones((dataD.shape[0], dataD.shape[1], dataD.shape[2]), 'uint16' )
    wm =  ones((dataD.shape[0], dataD.shape[1], dataD.shape[2]), 'uint16' )
    arts =  ones((dataD.shape[0], dataD.shape[1], dataD.shape[2]), 'uint16' )
+
+   isInWM = False
+   if wmI!=empty(0, 'float32'):
+      isInWM = True 
 
    filter = ofilter
    logger.info("Filtering : %s" % str(filter))
@@ -53,10 +58,12 @@ def EvaluateTensorS0(dataD, G, b, ofilter=False, wFilter=False, aFilter=False, b
                              hstack([xTensor[2], xTensor[4], xTensor[5]]), 
                              hstack([xTensor[3], xTensor[5], xTensor[6]]) ]))         # E = eigenvectors
                      
+                     xMTensor[ i, j, k, :] = array([0.,  l[0], 0., 0., l[1], 0., l[2]], 'float32')
                      lT[i, j, k, :] = l[:]
                      ET[i, j, k, ...] = E[...]  
               else:
                      xVTensor[ i, j, k, :] = zeros((7))
+                     xMTensor[ i, j, k, :] = zeros((7))
                      lT[i, j, k, :] = zeros((1, 3))
                      ET[i, j, k, ...] = zeros((3, 3)) 
  
@@ -84,8 +91,12 @@ def EvaluateTensorS0(dataD, G, b, ofilter=False, wFilter=False, aFilter=False, b
                 if ofilter:
                    computeTensor = bool(otsu[i, j, k])
 
-                if wFilter: # enforce wm if used
-                   computeTensor = bool(wm[i, j, k])
+                if wFilter:
+                   if not isInWM: # enforce wm if used
+                      computeTensor = bool(wm[i, j, k])
+                   else:
+                      computeTensor = bool(wmI[i, j, k])
+           
 
                 if computeTensor: # set a threshold (otsu)
                    y = squeeze(dataD[i, j, k, :]+eps)
@@ -104,11 +115,13 @@ def EvaluateTensorS0(dataD, G, b, ofilter=False, wFilter=False, aFilter=False, b
                    l,E = linalg.eig(vstack([hstack([xTensor[1], xTensor[2], xTensor[3]]),            
                                   hstack([xTensor[2], xTensor[4], xTensor[5]]), 
                                   hstack([xTensor[3], xTensor[5], xTensor[6]]) ]))         # E = eigenvectors
-
+                   
+                   xMTensor[ i, j, k, :] = array([0.,  l[0], 0., 0., l[1], 0., l[2]], 'float32')
                    lT[i, j, k, :] = l[:]
                    ET[i, j, k, ...] = E[...]  
                 else:
                    xVTensor[ i, j, k, :] = zeros((7))
+                   xMTensor[ i, j, k, :] = zeros((7))
                    lT[i, j, k, :] = zeros((1, 3))
                    ET[i, j, k, ...] = zeros((3, 3))
 
@@ -116,7 +129,7 @@ def EvaluateTensorS0(dataD, G, b, ofilter=False, wFilter=False, aFilter=False, b
      logger.info("Time for tensor, slice %d : %s sec" % (k, str(time.time()-time1))) 
    #
    logger.info("Total time for tensor : %s sec" % str(time.time()-time2))
-   return  ET, lT, xVTensor, otsu, wm, arts
+   return  ET, lT, xVTensor, xMTensor, otsu, wm, arts
 
 
 def EvaluateTensorS1(dataD, G, b, coord):
