@@ -322,8 +322,8 @@ def  TrackFiber40(data, vectors, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTenso
 
   return paths
 
-# compute connectivity maps
-def ConnectFibers(paths, steps, shp):
+# compute connectivity maps - rough
+def ConnectFibers0(paths, steps, shp, isLength=False, lengthMode='uThird'):
 
   nPaths = len(paths) 
   logger.info("Number of paths  = %s" % str(nPaths))
@@ -344,7 +344,98 @@ def ConnectFibers(paths, steps, shp):
     for i in range(nPaths):
       for s in range(steps):
         if ( not (all(paths[i][1][:,s])==0)) and ((round(paths[i][1][0,s])<shp[0]) and (round(paths[i][1][1,s])<shp[1]) and (round(paths[i][1][2,s])<shp[2])):
-          cm[round(paths[i][1][0,s])][round(paths[i][1][1,s])][round(paths[i][1][2,s])]+=1
+           if not isLength:
+              cm[round(paths[i][1][0,s])][round(paths[i][1][1,s])][round(paths[i][1][2,s])]=1
+           else:
+              if lengthMode == 'dThird':
+                  if paths[i][4][0,0] < round(float(lTh.max())/3):
+                      cm[round(paths[i][1][0,s])][round(paths[i][1][1,s])][round(paths[i][1][2,s])]=1
+              elif lengthMode == 'mThird':
+                  if round(float(lTh.max())/3) < paths[i][4][0,0] < round(2.0*float(lTh.max())/3):
+                      cm[round(paths[i][1][0,s])][round(paths[i][1][1,s])][round(paths[i][1][2,s])]=1
+              else:
+                  if round(2.0*float(lTh.max())/3) < paths[i][4][0,0]:
+                      cm[round(paths[i][1][0,s])][round(paths[i][1][1,s])][round(paths[i][1][2,s])]=1  
+  except:
+    logger.info( "Index : %s:%s:%s" %   (str(round(paths[i][1][0,s])), str(round(paths[i][1][1,s])), str(round(paths[i][1][2,s]))) ) 
+
+  return cm
+
+# summative
+def ConnectFibers1(paths, steps, shp, isLength=False, lengthMode='uThird'):
+
+  nPaths = len(paths) 
+  logger.info("Number of paths  = %s" % str(nPaths))
+
+  avg = 0
+  lTh = numpy.zeros((1, nPaths), 'uint16')
+  for i in range(nPaths):
+    avg += paths[i][4][0,0]
+    lTh[0,i] =  paths[i][4][0,0]
+
+  logger.info("Length tracks average : %s" % str(avg/nPaths))
+  logger.info("Max length : %s" % str(lTh.max()))
+
+  cm = numpy.zeros((shp[0], shp[1], shp[2]), 'uint32')
+  
+  try: 
+
+    for i in range(nPaths):
+      for s in range(steps):
+        if ( not (all(paths[i][1][:,s])==0)) and ((round(paths[i][1][0,s])<shp[0]) and (round(paths[i][1][1,s])<shp[1]) and (round(paths[i][1][2,s])<shp[2])):
+           if not isLength:
+              cm[round(paths[i][1][0,s])][round(paths[i][1][1,s])][round(paths[i][1][2,s])]+=1
+           else:
+              if lengthMode == 'dThird':
+                  if paths[i][4][0,0] < round(float(lTh.max())/3):
+                      cm[round(paths[i][1][0,s])][round(paths[i][1][1,s])][round(paths[i][1][2,s])]+=1
+              elif lengthMode == 'mThird':
+                  if round(float(lTh.max())/3) < paths[i][4][0,0] < round(2.0*float(lTh.max())/3):
+                      cm[round(paths[i][1][0,s])][round(paths[i][1][1,s])][round(paths[i][1][2,s])]+=1
+              else:
+                  if round(2.0*float(lTh.max())/3) < paths[i][4][0,0]:
+                      cm[round(paths[i][1][0,s])][round(paths[i][1][1,s])][round(paths[i][1][2,s])]+=1  
+
+  except:
+    logger.info( "Index : %s:%s:%s" %   (str(round(paths[i][1][0,s])), str(round(paths[i][1][1,s])), str(round(paths[i][1][2,s]))) ) 
+
+  return cm
+
+# discriminative
+def ConnectFibers2(paths, steps, shp, isLength=False, lengthMode='uThird'):
+
+  nPaths = len(paths) 
+  logger.info("Number of paths  = %s" % str(nPaths))
+
+  avg = 0
+  lTh = numpy.zeros((1, nPaths), 'uint16')
+  for i in range(nPaths):
+    avg += paths[i][4][0,0]
+    lTh[0,i] =  paths[i][4][0,0]
+
+  logger.info("Length tracks average : %s" % str(avg/nPaths))
+  logger.info("Max length : %s" % str(lTh.max()))
+
+  cm = numpy.zeros((shp[0], shp[1], shp[2]), 'uint32')
+  
+  try: 
+
+    for i in range(nPaths):
+      for s in range(steps):
+        if ( not (all(paths[i][1][:,s])==0)) and ((round(paths[i][1][0,s])<shp[0]) and (round(paths[i][1][1,s])<shp[1]) and (round(paths[i][1][2,s])<shp[2])):
+           if not isLength:
+              cm[round(paths[i][1][0,s])][round(paths[i][1][1,s])][round(paths[i][1][2,s])]+=paths[i][4][0,0]
+           else:
+              if lengthMode == 'dThird':
+                  if paths[i][4][0,0] < round(float(lTh.max())/3):
+                      cm[round(paths[i][1][0,s])][round(paths[i][1][1,s])][round(paths[i][1][2,s])]+=paths[i][4][0,0]
+              elif lengthMode == 'mThird':
+                  if round(float(lTh.max())/3) < paths[i][4][0,0] < round(2.0*float(lTh.max())/3):
+                      cm[round(paths[i][1][0,s])][round(paths[i][1][1,s])][round(paths[i][1][2,s])]+=paths[i][4][0,0]
+              else:
+                  if round(2.0*float(lTh.max())/3) < paths[i][4][0,0]:
+                      cm[round(paths[i][1][0,s])][round(paths[i][1][1,s])][round(paths[i][1][2,s])]+=paths[i][4][0,0]  
+
 
   except:
     logger.info( "Index : %s:%s:%s" %   (str(round(paths[i][1][0,s])), str(round(paths[i][1][1,s])), str(round(paths[i][1][2,s]))) ) 
