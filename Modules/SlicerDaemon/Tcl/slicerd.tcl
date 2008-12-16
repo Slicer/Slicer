@@ -343,6 +343,10 @@ proc slicerd_sock_fileevent {sock} {
                 set dimensions [lrange $dimensions 1 end]
                 set node [vtkMRMLDiffusionTensorVolumeNode New]
                 set displayNode [vtkMRMLDiffusionTensorVolumeDisplayNode New]
+                #$displayNode SetWindow 0
+                #$displayNode SetLevel 0
+                #$displayNode SetUpperThreshold 0 
+                #$displayNode SetLowerThreshold 0
                 $displayNode SetAutoWindowLevel 1
                 $displayNode SetDefaultColorMap
                 $::slicer3::MRMLScene AddNodeNoNotify $displayNode
