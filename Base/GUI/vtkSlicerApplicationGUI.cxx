@@ -2004,7 +2004,7 @@ void vtkSlicerApplicationGUI::DestroyMain3DViewer ( )
 //---------------------------------------------------------------------------
 int vtkSlicerApplicationGUI::GetNumberOfViewerWidgets()
 {
-  return this->Internals->ViewerWidgets.size();
+  return (int)this->Internals->ViewerWidgets.size();
 }
  
 //---------------------------------------------------------------------------
@@ -2440,7 +2440,6 @@ void vtkSlicerApplicationGUI::PackOneUpSliceView ( const char * whichSlice )
     {
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
-    vtkMRMLScene *scene = this->GetMRMLScene();
     vtkMRMLLayoutNode *layout = this->GetGUILayoutNode ( );
     if ( layout == NULL )
       {
@@ -2499,7 +2498,6 @@ void vtkSlicerApplicationGUI::PackFourUpView ( )
     {
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
-    vtkMRMLScene *scene = this->GetMRMLScene();
     vtkSlicerGUILayout *geom = app->GetDefaultGeometry ( );
     vtkMRMLLayoutNode *layout = this->GetGUILayoutNode();
     if ( layout == NULL )
@@ -2553,12 +2551,10 @@ void vtkSlicerApplicationGUI::PackFourUpView ( )
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::PackTabbed3DView ( )
 {
-
   if ( this->GetApplication() != NULL )
     {
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
-    vtkMRMLScene *scene = this->GetMRMLScene();
     vtkSlicerGUILayout *geom = app->GetDefaultGeometry ( );
     vtkMRMLLayoutNode *layout = this->GetGUILayoutNode ( );
     if ( layout == NULL )
@@ -2632,7 +2628,6 @@ void vtkSlicerApplicationGUI::PackTabbedSliceView ( )
     {
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
-    vtkMRMLScene *scene = this->GetMRMLScene();
     vtkMRMLLayoutNode *layout = this->GetGUILayoutNode ( );
     if ( layout == NULL )
       {
@@ -3052,7 +3047,6 @@ void vtkSlicerApplicationGUI::AddMainSliceGUI(const char *layoutName)
     {
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
-    vtkMRMLScene *scene = this->GetMRMLScene();
     vtkMRMLLayoutNode *layout = this->GetGUILayoutNode ( );
     if ( layout == NULL )
       {
