@@ -7,6 +7,45 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
   <documentation-url></documentation-url>
   <contributor>Julien von Siebenthal</contributor>
  
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+
+    <image type = "diffusion-weighted" >
+      <name>inputVol0</name>
+      <longflag>inputVol0</longflag>
+      <label>Input DWI Volume</label>
+      <channel>input</channel>
+      <description>Input DWI volume</description>
+    </image>
+
+    <image type = "scalar" >
+      <name>inputVol1</name>
+      <longflag>inputVol1</longflag>
+      <label>Input ROI Volume (Region A)</label>
+      <channel>input</channel>
+      <description>Input ROI volume for region A</description>
+    </image>
+    
+    <image type = "scalar" >
+      <name>inputVol2</name>
+      <longflag>inputVol2</longflag>
+      <label>Input ROI Volume (Region B)</label>
+      <channel>input</channel>
+      <description>Input ROI volume for region B</description>
+    </image>
+
+    <image type = "scalar" >
+      <name>inputVol3</name>
+      <longflag>inputVol3</longflag>
+      <label>Input WM Volume</label>
+      <channel>input</channel>
+      <description>Input WM volume</description>
+    </image>
+
+  </parameters>
+
   <parameters>
     <label>Smoothing Parameters</label>
     <description>Parameters for volume smoothing</description>
@@ -19,19 +58,11 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
     </boolean>
     
     <double-vector>
-      <name>stdDev</name>
-      <longflag>stdDev</longflag>
-      <description>Standard deviations in pixel units (ordered as IJK coordinates)</description>
-      <label>Standard deviations</label>
+      <name>FWHM</name>
+      <longflag>FWHM</longflag>
+      <description>Full width half mean</description>
+      <label>FWHM</label>
       <default>1,1,1</default>
-    </double-vector>
-
-    <double-vector>
-      <name>radFactors</name>
-      <longflag>radFactors</longflag>
-      <description>Radius factors (in standard deviation units) for clamping the Gaussian kernel to zero</description>
-      <label>Radius factors</label>
-      <default>1.5,1.5,1.5</default>
     </double-vector>
 
   </parameters>
@@ -121,13 +152,14 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
   <parameters>
     <label>Tensor Parameters</label>
     <description>Parameters for tensor computation</description>
-    <boolean>
+    
+    <!-- <boolean>
       <name>tensEnabled</name>
       <longflag>tensEnabled</longflag>
       <description>Toggle tensor</description>
       <label>Enabled</label>
       <default>false</default>
-    </boolean>
+    </boolean> -->
 
     <integer>
       <name>bLine</name>
@@ -185,13 +217,13 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
     Parameters for the Stochastic Tractography algorithm
     </description>
     
-    <boolean>
+    <!-- <boolean>
       <name>stEnabled</name>
       <longflag>stEnabled</longflag>
       <description>Toggle st</description>
       <label>Enabled</label>
       <default>false</default>
-    </boolean>
+    </boolean> -->
        
     <integer>
       <name>totalTracts</name>
@@ -288,57 +320,35 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
       </description>
       <label>Computation Mode</label>
       <default>cumulative</default>
+      <element>rough</element>
       <element>cumulative</element>
       <element>discriminative</element>
     </string-enumeration>
 
+    <boolean>
+      <name>lengthEnabled</name>
+      <longflag>lengthEnabled</longflag>
+      <description>Toggle length</description>
+      <label>Length Based</label>
+      <default>false</default>
+    </boolean>
     
-  </parameters>
+    <string-enumeration>
+      <name>lengthClass</name>
+      <longflag>lengthClass</longflag>
+      <description>Length ownership mode from tracts: 
+              dThird: first interval of length (1 to Totlength/3)
+              mThird: second interval of length (Totlength/3 to 2*Totlength/3)
+              uThird: third interval of length (2*Totlength/3 to Totlength)
+      </description>
+      <label>Length Class</label>
+      <default>uThird</default>
+      <element>dThird</element>
+      <element>mThird</element>
+      <element>uThird</element>
+    </string-enumeration>
 
-  <parameters>
-    <label>IO</label>
-    <description>Input/output parameters</description>
-
-    <image type="diffusion-weighted">
-      <name>inputVolume0</name>
-      <label>Input DWI Volume</label>
-      <channel>input</channel>
-      <index>0</index>
-      <description>Input DWI volume</description>
-    </image>
-
-    <image type="scalar">
-      <name>inputVolume1</name>
-      <label>Input ROI Volume (Region A)</label>
-      <channel>input</channel>
-      <index>1</index>
-      <description>Input ROI volume for region A</description>
-    </image>
-
-    <image type="scalar">
-      <name>inputVolume2</name>
-      <label>Input ROI Volume (Region B)</label>
-      <channel>input</channel>
-      <index>2</index>
-      <description>Input ROI volume for region B</description>
-    </image>
-
-    <image type="scalar">
-      <name>inputVolume3</name>
-      <label>Input WM Volume</label>
-      <channel>input</channel>
-      <index>3</index>
-      <description>Input WM volume</description>
-    </image>
-
-    <file>
-      <name>reportfilename</name>
-      <label>Report File</label>
-      <channel>output</channel>
-      <index>4</index>
-      <description>report file</description>
-    </file>
-
+    
   </parameters>
 
 </executable>
@@ -361,12 +371,11 @@ numpy_vtk_types = { 'int8':'2', 'uint8':'3', 'int16':'4',  'uint16':'5',  'int32
 SIZE = 1024
 
 ##
-def sendVolume(vol, c, log='report.log', isDti=False):
+def sendVolume(vol, c, isDti=False):
 
   Slicer = __import__ ( "Slicer" )
   slicer = Slicer.slicer
 
-  f = open(log,'w+')
        
   name = vol.GetName()
   data = numpy.empty(0)
@@ -378,15 +387,10 @@ def sendVolume(vol, c, log='report.log', isDti=False):
   shape = data.shape
   dtype = data.dtype
 
-  f.write( "\nSession send : %s\n" % str(time.time()))
-  f.write( "Shape : %s:%s:%s\n" % (shape[0], shape[1], shape[2]))
-  f.write( "Type : %s\n" % dtype)
 
   org = vol.GetOrigin()
-  f.write( "origin : %s:%s:%s\n" % (org[0], org[1], org[2]) )
 
   spa = vol.GetSpacing()
-  f.write( "spacing : %s:%s:%s\n" % (spa[0], spa[1], spa[2]) )
  
   I2R = numpy.zeros((4,4), 'float')
   R2I = numpy.zeros((4,4), 'float')
@@ -490,7 +494,6 @@ def sendVolume(vol, c, log='report.log', isDti=False):
      ack = c.recv(SIZE)
      
   if isDwi:
-     f.write("Shape : %s\n" % str(shape[3]))
      for i in range(shape[3]):
           c.send(data[..., i].tostring())
           if i < shape[3] - 1:
@@ -498,26 +501,16 @@ def sendVolume(vol, c, log='report.log', isDti=False):
   else:
      c.send(data.tostring())
 
-
-  f.write("completed\n")
-  f.close()
-
   return shape, dtype
 
 ##
 def recvVolume( shape, dtype, c, log='report.log', isDti=False):
 
-  f = open(log,'w')
 
   ack = c.recv(SIZE)
-        
-  f.write( "\nSession recv : %s\n" % str(time.time()))
-  f.write( "Buffer after pipeline : %s\n" % ack)
 
 
   size = int(numpy_sizes[vtk_types[ int(numpy_vtk_types[ str(dtype) ]) ]])
-  f.write( "Size data before : %s\n" % size)
-
 
   if len(shape) == 4:
        size = size * int(shape[2]) * int(shape[1]) * int(shape[0]) * int(shape[3])
@@ -527,8 +520,6 @@ def recvVolume( shape, dtype, c, log='report.log', isDti=False):
        size = size * int(shape[2]) * int(shape[1]) * int(shape[0])
   else:
        return
-
-  f.write( "Size data after : %s\n" % size)
 
   c.send('get\n')
      
@@ -547,46 +538,72 @@ def recvVolume( shape, dtype, c, log='report.log', isDti=False):
   else:
        return
 
-  f.write( "data : %s:%s:%s\n" % (test.shape[0], test.shape[1], test.shape[2]))
-  f.close()
-
   return test
 
 
-def Execute (inputVolume0, inputVolume1, inputVolume2, inputVolume3,  reportfilename,\
-        smoothEnabled, stdDev, radFactors,\
-        otsuEnabled, infOtsuThres, supOtsuThres,\
-        wmEnabled, infWMThres, supWMThres, artsEnabled, infARTSThres, supARTSThres,\
-        tensEnabled, bLine, tensMode, faEnabled, traceEnabled, modeEnabled,\
-        stEnabled, totalTracts, maxLength, stepSize, spaceEnabled, stopEnabled, fa,\
-        cmEnabled, probMode ):
+def Execute (\
+             smoothEnabled,\
+             FWHM,\
+             otsuEnabled,\
+             infOtsuThres,\
+             supOtsuThres,\
+             wmEnabled,\
+             infWMThres,\
+             supWMThres,\
+             artsEnabled,\
+             infARTSThres,\
+             supARTSThres,\
+             bLine,\
+             tensMode,\
+             faEnabled,\
+             traceEnabled,\
+             modeEnabled,\
+             totalTracts,\
+             maxLength,\
+             stepSize,\
+             spaceEnabled,\
+             stopEnabled,\
+             fa,\
+             cmEnabled,\
+             probMode,\
+             lengthEnabled,\
+             lengthClass,\
+             inputVol0 = "",\
+             inputVol1 = "",\
+             inputVol2 = "",\
+             inputVol3 = ""
+             ):
 
   Slicer = __import__ ( "Slicer" )
   slicer = Slicer.slicer
   scene = slicer.MRMLScene
 
+  if not inputVol0 and not inputVol1:
+      return
 
-  dwi = scene.GetNodeByID(inputVolume0)
-  roiA = scene.GetNodeByID(inputVolume1)
-  roiB = scene.GetNodeByID(inputVolume2)
-  wm = scene.GetNodeByID(inputVolume3)
+  dwi = scene.GetNodeByID(inputVol0)
 
-  if not dwi or not roiA:
-     return
+  roiA = scene.GetNodeByID(inputVol1)
 
-
-  dwiName = dwi.GetName()
-  roiAName = roiA.GetName() 
 
   roiBName = ""
   wmName = ""
+  #tenName = ""
 
-  if roiB:
-     roiBName = roiB.GetName()
-  
-  if wm:
-     wmName = wm.GetName()
+  dwiName = dwi.GetName()
+  roiAName = roiA.GetName()
 
+  if inputVol2:
+      roiB = scene.GetNodeByID(inputVol2)
+      roiBName = roiB.GetName()
+
+  if inputVol3: 
+      wm = scene.GetNodeByID(inputVol3)
+      wmName = wm.GetName()
+
+  #if inputVol4:
+  #    ten = scene.GetNodeByID(inputVol4)
+  #    tenName = ten.GetName()
 
 
   s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -606,22 +623,23 @@ def Execute (inputVolume0, inputVolume1, inputVolume2, inputVolume3,  reportfile
   s.send('roiA ' + str(roiAName) + '\n')
   ack = s.recv(SIZE)
 
-  if roiB:
+  if roiBName:
      s.send('roiB ' + str(roiBName) + '\n')
      ack = s.recv(SIZE)
 
-  if wm:
+  if wmName:
      s.send('wm ' + str(wmName) + '\n')
      ack = s.recv(SIZE)
+
+  #if tenName:
+  #   s.send('tensor ' + str(tenName) + '\n')
+  #   ack = s.recv(SIZE)
 
   # smoothing
   s.send('smoothEnabled ' + str(int(smoothEnabled)) + '\n')
   ack = s.recv(SIZE)
 
-  s.send('stdDev ' + str(stdDev[0]) + ' ' + str(stdDev[1]) + ' ' + str(stdDev[2]) + '\n')
-  ack = s.recv(SIZE)
-
-  s.send('radFactors ' + str(radFactors[0]) + ' ' + str(radFactors[1]) + ' ' + str(radFactors[2]) + '\n')
+  s.send('stdDev ' + str(FWHM[0]) + ' ' + str(FWHM[1]) + ' ' + str(FWHM[2]) + '\n')
   ack = s.recv(SIZE)
 
   # otsu
@@ -654,7 +672,7 @@ def Execute (inputVolume0, inputVolume1, inputVolume2, inputVolume3,  reportfile
   ack = s.recv(SIZE)
 
   # tensor
-  s.send('tensEnabled ' + str(int(tensEnabled)) + '\n')
+  s.send('tensEnabled ' + str(int(True)) + '\n')
   ack = s.recv(SIZE)
 
   s.send('bLine ' + str(bLine) + '\n')
@@ -673,7 +691,7 @@ def Execute (inputVolume0, inputVolume1, inputVolume2, inputVolume3,  reportfile
   ack = s.recv(SIZE)
 
   # stochastic tracto
-  s.send('stEnabled ' + str(int(stEnabled)) + '\n')
+  s.send('stEnabled ' + str(int(True)) + '\n')
   ack = s.recv(SIZE)
 
   s.send('totalTracts ' + str(totalTracts) + '\n')
@@ -701,10 +719,16 @@ def Execute (inputVolume0, inputVolume1, inputVolume2, inputVolume3,  reportfile
   s.send('probMode ' + str(probMode) + '\n')
   ack = s.recv(SIZE)
 
+  s.send('lengthEnabled ' + str(int(lengthEnabled)) + '\n')
+  ack = s.recv(SIZE)
+
+  s.send('lengthClass ' + str(lengthClass) + '\n')
+  ack = s.recv(SIZE)
+
   s.send('data\n')
   ack = s.recv(SIZE)
 
-  sendVolume(dwi, s, reportfilename)
+  sendVolume(dwi, s)
 
   s.close()  
 
