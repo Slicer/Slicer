@@ -186,13 +186,16 @@ void vtkObserverManager::AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events
       {
       observer = this;
       }
-    for (int i=0; i<events->GetNumberOfTuples(); i++)
+    if (events)
       {
-
-      vtkObservation *observation = broker->AddObservation (nodePtr, events->GetValue(i), observer, this->CallbackCommand );
-      unsigned long tag = observation->GetEventTag();
-
-      objTags->InsertNextValue(tag);
+      for (int i=0; i<events->GetNumberOfTuples(); i++)
+        {
+        
+        vtkObservation *observation = broker->AddObservation (nodePtr, events->GetValue(i), observer, this->CallbackCommand );
+        unsigned long tag = observation->GetEventTag();
+        
+        objTags->InsertNextValue(tag);
+        }
       }
     }
 
