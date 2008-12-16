@@ -61,6 +61,7 @@ vtkMRMLTractographyFiducialSeedingNode::vtkMRMLTractographyFiducialSeedingNode()
    this->SeedingRegionStep = 1.0;
    this->MinimumPathLength = 20.0;
    this->MaxNumberOfSeeds = 100;
+   this->SeedSelectedFiducials = 0;
    this->InputVolumeRef = NULL;
    this->InputFiducialRef = NULL;
    this->OutputFiberRef = NULL;
@@ -124,6 +125,9 @@ void vtkMRMLTractographyFiducialSeedingNode::WriteXML(ostream& of, int nIndent)
     ss << this->MaxNumberOfSeeds;
     of << indent << " MaxNumberOfSeeds=\"" << ss.str() << "\"";
   }
+    
+  of << indent << " seedSelectedFiducials=\"" << (this->SeedSelectedFiducials ? "true" : "false") << "\"";
+
   {
     std::stringstream ss;
     if ( this->InputVolumeRef )
@@ -210,6 +214,17 @@ void vtkMRMLTractographyFiducialSeedingNode::ReadXMLAttributes(const char** atts
       ss << attValue;
       ss >> this->MaxNumberOfSeeds;
       }
+    else if (!strcmp(attName, "seedSelectedFiducials")) 
+      {
+     if (!strcmp(attValue,"true")) 
+        {
+        this->SeedSelectedFiducials = 1;
+        }
+      else
+        {
+        this->SeedSelectedFiducials = 0;
+        }
+      }
     else if (!strcmp(attName, "InputVolumeRef"))
       {
       this->SetInputVolumeRef(attValue);
@@ -246,6 +261,7 @@ void vtkMRMLTractographyFiducialSeedingNode::Copy(vtkMRMLNode *anode)
   this->SetSeedingRegionSize(node->SeedingRegionSize);
   this->SetSeedingRegionStep(node->SeedingRegionStep);
   this->SetMaxNumberOfSeeds(node->MaxNumberOfSeeds);
+  this->SetSeedSelectedFiducials(node->SeedSelectedFiducials);
   this->SetInputVolumeRef(node->InputVolumeRef);
   this->SetInputFiducialRef(node->InputFiducialRef);
   this->SetOutputFiberRef(node->OutputFiberRef);
@@ -269,6 +285,7 @@ void vtkMRMLTractographyFiducialSeedingNode::PrintSelf(ostream& os, vtkIndent in
   os << indent << "SeedingRegionSize:   " << this->SeedingRegionSize << "\n";
   os << indent << "SeedingRegionStep:   " << this->SeedingRegionStep << "\n";
   os << indent << "MaxNumberOfSeeds:   " << this->MaxNumberOfSeeds << "\n";
+  os << indent << "SeedSelectedFiducials:   " << this->SeedSelectedFiducials << "\n";
   os << indent << "InputVolumeRef:   " << 
    (this->InputVolumeRef ? this->InputVolumeRef : "(none)") << "\n";
   os << indent << "InputFiducialRef:   " << 

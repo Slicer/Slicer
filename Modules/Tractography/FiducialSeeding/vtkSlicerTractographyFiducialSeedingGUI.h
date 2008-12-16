@@ -158,6 +158,7 @@ protected:
   vtkKWScaleWithLabel *RegionSampleSizeScale;
   vtkKWEntryWithLabel *MaxNumberOfSeedsEntry;
   
+  vtkKWCheckButton *SeedSelectedFiducialsButton;
   vtkKWCheckButton *SeedButton;
 
   vtkSlicerNodeSelectorWidget* TractographyFiducialSeedingNodeSelector;

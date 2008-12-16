@@ -96,6 +96,12 @@ class VTK_FIDUCIALSEEDING_EXPORT vtkMRMLTractographyFiducialSeedingNode : public
   vtkGetMacro(MinimumPathLength,double);
   vtkSetMacro(MinimumPathLength,double);
  
+  // Description:
+  // Specifies whether seed only from selected fiducials
+  vtkBooleanMacro(SeedSelectedFiducials, int);
+  vtkGetMacro(SeedSelectedFiducials, int);
+  vtkSetMacro(SeedSelectedFiducials, int);
+
   
   // Description:
   // Get/Set input volume MRML Id
@@ -132,6 +138,7 @@ protected:
   double SeedingRegionStep;
   double MinimumPathLength;
   int MaxNumberOfSeeds;
+  int SeedSelectedFiducials;
 
   char* InputVolumeRef;
   char* InputFiducialRef;

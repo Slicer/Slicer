@@ -80,6 +80,7 @@ vtkSlicerTractographyFiducialSeedingGUI::vtkSlicerTractographyFiducialSeedingGUI
   this->OutFiberSelector = vtkSlicerNodeSelectorWidget::New();
   this->FiducialSelector = vtkSlicerNodeSelectorWidget::New();
   this->SeedButton  = vtkKWCheckButton::New();
+  this->SeedSelectedFiducialsButton  = vtkKWCheckButton::New();
   this->StoppingModeMenu = vtkKWMenuButtonWithLabel::New();
   this->StoppingValueScale = vtkKWScaleWithLabel::New();
   this->StoppingCurvatureScale = vtkKWScaleWithLabel::New();
@@ -149,43 +150,52 @@ vtkSlicerTractographyFiducialSeedingGUI::~vtkSlicerTractographyFiducialSeedingGU
     this->StoppingValueScale->Delete();
     this->StoppingValueScale = NULL;
   }
-    if ( this->StoppingCurvatureScale) 
+  if ( this->StoppingCurvatureScale) 
   {
     this->StoppingCurvatureScale->SetParent(NULL);
     this->StoppingCurvatureScale->Delete();
     this->StoppingCurvatureScale = NULL;
   }
-    if ( this->IntegrationStepLengthScale ) 
+  if ( this->IntegrationStepLengthScale ) 
   {
     this->IntegrationStepLengthScale->SetParent(NULL);
     this->IntegrationStepLengthScale->Delete();
     this->IntegrationStepLengthScale = NULL;
   }
-    if ( this->MinimumPathLengthScale ) 
+  if ( this->MinimumPathLengthScale ) 
   {
     this->MinimumPathLengthScale->SetParent(NULL);
     this->MinimumPathLengthScale->Delete();
     this->MinimumPathLengthScale = NULL;
   }
-    if ( this->RegionSizeScale ) 
+  if ( this->RegionSizeScale ) 
   {
     this->RegionSizeScale->SetParent(NULL);
     this->RegionSizeScale->Delete();
     this->RegionSizeScale = NULL;
   }
-    if ( this->RegionSampleSizeScale ) 
+  
+  if ( this->RegionSampleSizeScale ) 
   {
     this->RegionSampleSizeScale->SetParent(NULL);
     this->RegionSampleSizeScale->Delete();
     this->RegionSampleSizeScale = NULL;
   }
-    if ( this->MaxNumberOfSeedsEntry ) 
+  
+  if ( this->MaxNumberOfSeedsEntry ) 
   {
     this->MaxNumberOfSeedsEntry->SetParent(NULL);
     this->MaxNumberOfSeedsEntry->Delete();
     this->MaxNumberOfSeedsEntry = NULL;
   }
-  
+
+  if ( this->SeedSelectedFiducialsButton ) 
+  {
+    this->SeedSelectedFiducialsButton->SetParent(NULL);
+    this->SeedSelectedFiducialsButton->Delete();
+    this->SeedSelectedFiducialsButton = NULL;
+  }
+
   if ( this->TractographyFiducialSeedingNodeSelector ) 
   {
     this->TractographyFiducialSeedingNodeSelector->SetParent(NULL);
@@ -234,8 +244,10 @@ void vtkSlicerTractographyFiducialSeedingGUI::AddGUIObservers ( )
 
   this->FiducialSelector->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand ); 
   
+  this->SeedSelectedFiducialsButton->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand ); 
+
   this->SeedButton->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand ); 
-  
+
   this->StoppingValueScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->StoppingCurvatureScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -264,6 +276,8 @@ void vtkSlicerTractographyFiducialSeedingGUI::RemoveGUIObservers ( )
   this->OutFiberSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
 
   this->FiducialSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+
+  this->SeedSelectedFiducialsButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand ); 
 
   this->SeedButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand ); 
 
@@ -318,6 +332,15 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessGUIEvents ( vtkObject *call
       createFiber = message->Invoke();
       message->Delete();
       }
+
+    vtkMRMLTransformableNode *node = vtkMRMLTransformableNode::SafeDownCast(this->FiducialSelector->GetSelected());
+    if (node) 
+      {
+      std::string name = std::string(node->GetName())+ std::string("_FiberTracts");
+      fiberNode->SetName(name.c_str());
+      this->OutFiberSelector->UpdateMenu();
+      }
+
     if (createFiber)
       {
       this->CreateTracts();
@@ -337,6 +360,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessGUIEvents ( vtkObject *call
       this->MaxNumberOfSeedsEntry->SetEnabled(0);
       this->RegionSampleSizeScale->SetEnabled(1);
       this->RegionSizeScale->SetEnabled(1);
+      this->SeedSelectedFiducialsButton->SetEnabled(1);
       this->RegionSizeScale->GetWidget()->SetValue(fiducialListNode->GetSymbolScale());
       this->RegionSampleSizeScale->GetWidget()->SetValue(fiducialListNode->GetSymbolScale()/3.0);
       }
@@ -345,6 +369,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessGUIEvents ( vtkObject *call
       this->MaxNumberOfSeedsEntry->SetEnabled(1);
       this->RegionSampleSizeScale->SetEnabled(0);
       this->RegionSizeScale->SetEnabled(0);
+      this->SeedSelectedFiducialsButton->SetEnabled(0);
       }
     else
       {
@@ -362,6 +387,11 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessGUIEvents ( vtkObject *call
     }
 
   else if ( this->SeedButton == vtkKWCheckButton::SafeDownCast(caller) &&
+          event == vtkKWCheckButton::SelectedStateChangedEvent ) 
+    {
+    this->CreateTracts();
+    }
+  else if ( this->SeedSelectedFiducialsButton == vtkKWCheckButton::SafeDownCast(caller) &&
           event == vtkKWCheckButton::SelectedStateChangedEvent ) 
     {
     this->CreateTracts();
@@ -437,6 +467,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::UpdateGUI ()
     this->RegionSizeScale->GetWidget()->SetValue(n->GetSeedingRegionSize());
     this->RegionSampleSizeScale->GetWidget()->SetValue(n->GetSeedingRegionStep());
     this->MaxNumberOfSeedsEntry->GetWidget()->SetValueAsInt(n->GetMaxNumberOfSeeds());
+    this->SeedSelectedFiducialsButton->SetSelectedState(n->GetSeedSelectedFiducials());
     }
 
   this->UpdatingGUI = 0;
@@ -493,6 +524,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::UpdateMRML ()
   n->SetSeedingRegionSize( this->RegionSizeScale->GetWidget()->GetValue() );
   n->SetSeedingRegionStep( this->RegionSampleSizeScale->GetWidget()->GetValue() );
   n->SetMaxNumberOfSeeds( this->MaxNumberOfSeedsEntry->GetWidget()->GetValueAsInt() );
+  n->SetSeedSelectedFiducials( this->SeedSelectedFiducialsButton->GetSelectedState() );
 
   this->UpdatingMRML = 0;
 
@@ -607,8 +639,8 @@ void vtkSlicerTractographyFiducialSeedingGUI::CreateTracts()
                                                           this->MinimumPathLengthScale->GetWidget()->GetValue(),
                                                           this->RegionSizeScale->GetWidget()->GetValue(),
                                                           this->RegionSampleSizeScale->GetWidget()->GetValue(),
-                                                          this->MaxNumberOfSeedsEntry->GetWidget()->GetValueAsInt()
-                                                          );  
+                                                          this->MaxNumberOfSeedsEntry->GetWidget()->GetValueAsInt(),
+                                                          this->SeedSelectedFiducialsButton->GetSelectedState());  
 }
 
 //---------------------------------------------------------------------------
@@ -780,6 +812,14 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
   this->RegionSampleSizeScale->SetBalloonHelpString("Step between seedin samples in the fiducial region");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->RegionSampleSizeScale->GetWidgetName() );
+
+  this->SeedSelectedFiducialsButton->SetParent(moduleFrame->GetFrame());
+  this->SeedSelectedFiducialsButton->Create();
+  this->SeedSelectedFiducialsButton->SelectedStateOn();
+  this->SeedSelectedFiducialsButton->SetText("Seed Selected Fiducials");
+  this->Script(
+    "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+    this->SeedSelectedFiducialsButton->GetWidgetName());
 
   this->MaxNumberOfSeedsEntry->SetParent ( moduleFrame->GetFrame() );
   this->MaxNumberOfSeedsEntry->Create ( );
