@@ -167,7 +167,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // Called when the selected state of some fids have changed, to update the
     // measurement label
     void UpdateMeasurementLabel();
-    
+
+    // Description:
+    // when right click on a row in the fid list, call this to jump the slices
+    // to that point in RAS.
+    void JumpSlicesCallback(int row, int col, int x, int y);
  protected:
     vtkSlicerFiducialsGUI ( );
     virtual ~vtkSlicerFiducialsGUI ( );

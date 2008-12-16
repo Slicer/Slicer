@@ -1190,7 +1190,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->UIPanel->AddPage ( "Fiducials", "Fiducials", NULL );
     
     // Define your help text and build the help frame here.
-    const char *help = "The Fiducials Module creates and manages lists of Fiducial points. Click on the tool bar icon of an arrow pointing to a starburst fiducial to enter the 'place a new object mode', then click on 3D models or on 2D slices. You can also place fiducials while in 'tranform view' mode by positioning the mouse over a 2D slice plane in the Slice view windows (it must be the active window) and pressing the 'P' key. You can then click and drag the fiducial using the mouse in 'transform view' mode. You can reset the positions of the fiducials in the table below, and adjust selection (fiducials must be selected if they are to be passed into a command line module). To align slices with fiducials, move the fiducial while holding down the Control key. You can use the '`' key to jump to the next fiducial, Shift-` to jump backwards through the list. Use the backspace or delete key to delete a fiducial over which you are hovering in 2D.\nThe distance between the first two selected fiducials in the list will be computed automatically and appear in a label below the list of fiducials.";
+    const char *help = "The Fiducials Module creates and manages lists of Fiducial points. <a>http://www.slicer.org/slicerWiki/index.php/Modules:Fiducials-Documentation</a>.\nClick on the tool bar icon of an arrow pointing to a starburst fiducial to enter the 'place a new object mode', then click on 3D models or on 2D slices.\nYou can also place fiducials while in 'tranform view' mode by positioning the mouse over a 2D slice plane in the Slice view windows (it must be the active window) and pressing the 'P' key. You can then click and drag the fiducial using the mouse in 'transform view' mode.\nYou can reset the positions of the fiducials in the table below, and adjust selection (fiducials must be selected if they are to be passed into a command line module).\nTo align slices with fiducials, move the fiducial while holding down the Control key.\nYou can right click in a row to align slices to that fiducial, or in the 2d slice windows you can use the '`' key to jump to the next fiducial, Shift-` to jump backwards through the list.\nUse the backspace or delete key to delete a fiducial over which you are hovering in 2D.\nThe distance between the first two selected fiducials in the list will be computed automatically and appear in a label below the list of fiducials.";
     const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. ";
     vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Fiducials" );
     this->BuildHelpAndAboutFrame ( page, help, about );
@@ -1453,7 +1453,8 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     
     app->Script ( "pack %s -fill both -expand true", this->MultiColumnList->GetWidgetName());
     this->MultiColumnList->GetWidget()->SetCellUpdatedCommand(this, "UpdateElement");
-
+    // set up the right click jump slices to that fiducial point call back
+    this->MultiColumnList->GetWidget()->SetRightClickCommand(this, "JumpSlicesCallback");
     //---
     // Point-to-Point measurement
     //---
@@ -1745,6 +1746,7 @@ void vtkSlicerFiducialsGUI::SetFiducialListNodeID (char * id)
       this->ApplicationLogic->GetSelectionNode()->SetActiveFiducialListID( this->FiducialListNodeID );
       }
 }
+
 //---------------------------------------------------------------------------
 void vtkSlicerFiducialsGUI::UpdateMeasurementLabel()
 {
@@ -1794,4 +1796,43 @@ void vtkSlicerFiducialsGUI::UpdateMeasurementLabel()
       }
     }
   this->MeasurementLabel->SetText(newLabel.c_str());
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerFiducialsGUI::JumpSlicesCallback(int row, int col, int x, int y)
+
+{
+  double r = 0.0l, a = 0.0l, s = 0.0l;
+  if (this->MultiColumnList == NULL)
+    {
+    return;
+    }
+  if ((row >= 0) && (row < this->MultiColumnList->GetWidget()->GetNumberOfRows()) && (this->MRMLScene != NULL))
+    {
+    // get the position of the fid in that row
+    r = this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row, this->XColumn);
+    a = this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row, this->YColumn);
+    s = this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row, this->ZColumn);
+    vtkDebugMacro("JumpSlicesCallback: row = " << row << ", jumping to " << r << ", " << a << ", " << s);
+    // JumpAllSlices only jumps the other slices, so call JumpSlice first to
+    // get all of them
+    //this->Script("[[$::slicer3::SlicesGUI GetFirstSliceGUI] GetSliceNode] JumpSlice %f %f %f", r, a, s);
+    //this->Script("[[$::slicer3::SlicesGUI GetFirstSliceGUI] GetSliceNode] JumpAllSlices %f %f %f", r, a, s);
+
+    vtkMRMLSliceNode *node= NULL;
+    int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLSliceNode");
+    for (int n=0; n<nnodes; n++)
+      {
+      node = vtkMRMLSliceNode::SafeDownCast (
+          this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLSliceNode"));
+      if ( node != NULL )
+        {
+        node->JumpSlice(r, a, s);
+        }
+      }
+    }
+  else
+    {
+    vtkWarningMacro("JumpSlicesCallback: row " << row << " out of range of 0 to " << this->MultiColumnList->GetWidget()->GetNumberOfRows() - 1);
+    }
 }
