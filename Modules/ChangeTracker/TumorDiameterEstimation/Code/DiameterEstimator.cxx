@@ -245,9 +245,9 @@ ImageType::IndexType FindLargestAreaSlice(ImageType::Pointer image){
   sliceAcc[1] = new double[size[1]];
   sliceAcc[2] = new double[size[2]];
 
-  bzero(sliceAcc[0], sizeof(double)*size[0]);
-  bzero(sliceAcc[1], sizeof(double)*size[1]);
-  bzero(sliceAcc[2], sizeof(double)*size[2]);
+  memset(sliceAcc[0], 0, sizeof(double)*size[0]);
+  memset(sliceAcc[1], 0, sizeof(double)*size[1]);
+  memset(sliceAcc[2], 0, sizeof(double)*size[2]);
 
   IteratorType it(image, image->GetLargestPossibleRegion());
   for(it.GoToBegin();!it.IsAtEnd();++it){
