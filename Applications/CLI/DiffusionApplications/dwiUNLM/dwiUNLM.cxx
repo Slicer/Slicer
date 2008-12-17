@@ -18,6 +18,11 @@
 #include <itkImage.h>
 #include <itkVector.h>
 #include <itkVectorImage.h>
+
+#ifdef _WIN32
+// to pick up M_SQRT2 and other nice things...
+#define _USE_MATH_DEFINES
+#endif
 #include <math.h>
 
 #include "itkPluginUtilities.h"
