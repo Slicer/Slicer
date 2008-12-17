@@ -206,7 +206,7 @@ void vtkMRMLCameraNode::Copy(vtkMRMLNode *anode)
   this->SetViewUp(node->GetViewUp());
   this->SetParallelProjection(node->GetParallelProjection());
   this->SetParallelScale(node->GetParallelScale());
-  //this->SetActiveTag(node->GetActiveTag());
+  //this->ActiveTag = node->GetActiveTag();
 }
 
 //----------------------------------------------------------------------------

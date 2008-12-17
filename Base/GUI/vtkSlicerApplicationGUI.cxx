@@ -1036,7 +1036,7 @@ void vtkSlicerApplicationGUI::ProcessMRMLEvents ( vtkObject *caller,
 
   if (event == vtkMRMLViewNode::ActiveModifiedEvent)
     {
-    this->UpdateActiveViewerWidgetDependencies();
+    this->UpdateActiveViewerWidgetDependencies(this->GetActiveViewerWidget());
     }
 
   if (scene != NULL &&
@@ -1054,12 +1054,21 @@ void vtkSlicerApplicationGUI::ProcessMRMLEvents ( vtkObject *caller,
     }
   else if (scene != NULL &&
            scene == this->MRMLScene &&
+           event == vtkMRMLScene::SceneClosingEvent )
+    {
+    this->SceneClosing = true;
+    // scene closing, let's try to release all the dependencies
+    this->UpdateActiveViewerWidgetDependencies(NULL);
+    }
+  else if (scene != NULL &&
+           scene == this->MRMLScene &&
            event == vtkMRMLScene::SceneCloseEvent )
     {
     // is the scene closing?
     this->SceneClosing = true;
     //-- todo: is this right?
     //    this->SetAndObserveGUILayoutNode ( NULL );
+    // scene closed, let's update the layout
     this->UpdateMain3DViewers();
     }
   else if (scene != NULL &&
@@ -1848,6 +1857,7 @@ void vtkSlicerApplicationGUI::UpdateMain3DViewers()
     // his/her own FiducialListWidget instance...
     vtkIntArray *events = vtkIntArray::New();
     events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+    events->InsertNextValue(vtkMRMLScene::SceneClosingEvent);
     events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
     events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
     events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
@@ -1865,7 +1875,7 @@ void vtkSlicerApplicationGUI::UpdateMain3DViewers()
     this->ROIViewerWidget->Create();
     }
 
-  this->UpdateActiveViewerWidgetDependencies();
+  this->UpdateActiveViewerWidgetDependencies(this->GetActiveViewerWidget());
 
   // No 3D view node, let's add one for convenience
 
@@ -1907,10 +1917,8 @@ void vtkSlicerApplicationGUI::OnViewNodeRemoved(vtkMRMLViewNode *view_node)
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::UpdateActiveViewerWidgetDependencies()
+void vtkSlicerApplicationGUI::UpdateActiveViewerWidgetDependencies(vtkSlicerViewerWidget *active_viewer)
 {
-  vtkSlicerViewerWidget *active_viewer = this->GetActiveViewerWidget();
-
   this->FiducialListWidget->SetViewerWidget(active_viewer);
   this->FiducialListWidget->SetMainViewer(
     active_viewer ? active_viewer->GetMainViewer() : NULL);
@@ -3061,6 +3069,7 @@ void vtkSlicerApplicationGUI::AddMainSliceGUI(const char *layoutName)
       vtkIntArray *events = vtkIntArray::New();
       events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
       events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+      events->InsertNextValue(vtkMRMLScene::SceneClosingEvent);
       events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
       events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
 

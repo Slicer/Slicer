@@ -601,6 +601,7 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     this->RemoveModelProps();
     this->RemoveHierarchyObservers(1);
     this->RemoveModelObservers(1);
+    this->RemoveCameraObservers();
     this->UpdateFromMRMLRequested = 1;
     this->RequestRender();
     this->UpdateFromMRML();
@@ -610,6 +611,30 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
   else 
     {
     this->SceneClosing = false;
+    }
+
+  if (event == vtkMRMLScene::SceneRestoredEvent )
+    {
+    // Backward compatibility change: all scenes saved so far do have 
+    // camera nodes with an empty or false active tag. Restoring a snapshot
+    // will invalidate the current active camera. Try to catch that
+    // by grabbing the first available camera. Sounds like a hack, but
+    // too  much time was wasted on this thing.
+    if (this->ViewNode)
+      {
+      vtkMRMLCameraNode *camera_node = this->CameraNode;
+      if (!camera_node)
+        {
+        camera_node = vtkMRMLCameraNode::SafeDownCast(
+          this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLCameraNode"));
+        camera_node->SetActiveTag(this->ViewNode->GetName());
+        }
+      else if (!camera_node->GetActiveTag())
+        {
+        camera_node->SetActiveTag(this->ViewNode->GetName());
+        }
+      }
+    this->UpdateFromMRML();
     }
 
   if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene && 
@@ -785,9 +810,10 @@ void vtkSlicerViewerWidget::UpdateCameraNode()
     {
     std::vector<vtkMRMLNode*> cnodes;
     int nnodes = this->MRMLScene->GetNodesByClass("vtkMRMLCameraNode", cnodes);
+    vtkMRMLCameraNode *node = NULL;
     for (int n = 0; n < nnodes; n++)
       {
-      vtkMRMLCameraNode *node = vtkMRMLCameraNode::SafeDownCast(cnodes[n]);
+      node = vtkMRMLCameraNode::SafeDownCast(cnodes[n]);
       if (node &&
           node->GetActiveTag() && 
           !strcmp(node->GetActiveTag(), this->ViewNode->GetName()))
@@ -1029,6 +1055,7 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneRestoredEvent);
   this->SetAndObserveMRMLSceneEvents(this->MRMLScene, events);
   events->Delete();
 

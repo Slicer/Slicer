@@ -380,7 +380,7 @@ protected:
 
     // Description:
     // If the active viewer widget has changed, update the dependencies
-    void UpdateActiveViewerWidgetDependencies();
+    void UpdateActiveViewerWidgetDependencies(vtkSlicerViewerWidget*);
 
     // PIMPL Encapsulation for STL containers
     //BTX
