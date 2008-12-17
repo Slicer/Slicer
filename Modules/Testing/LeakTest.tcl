@@ -95,26 +95,36 @@ proc runSlicer { {doNotIgnore ""} } {
         file rename [file root $sm].ignore [file root $sm].py
     }
   }
+  puts "\n\n"
   
   return $ret
 }
 
 # run with all modules turned off
-puts "\n\nignoring all"
+puts "--------------------------------------------------------------------------------"
+puts "ignoring all"
+puts "--------------------------------------------------------------------------------"
 runSlicer $::modules
 
+puts "--------------------------------------------------------------------------------"
 puts "ignoring none"
+puts "--------------------------------------------------------------------------------"
 runSlicer ""
 
 # sequentially enable only one module at a time
 foreach m $::modules {
-  puts "\n\nnot ignoring $m"
+  puts "--------------------------------------------------------------------------------"
+  puts "not ignoring $m"
+  puts "--------------------------------------------------------------------------------"
   set ::RESULTS($m) [runSlicer $m]
 }
 
 foreach m $::scriptedModules {
-  puts "\n\nnot ignoring $m"
+  puts "--------------------------------------------------------------------------------"
+  puts "not ignoring $m"
+  puts "--------------------------------------------------------------------------------"
   set ::RESULTS($m) [runSlicer $m]
 }
 
+puts "--------------------------------------------------------------------------------"
 puts [parray ::RESULTS]
