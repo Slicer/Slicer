@@ -1207,45 +1207,22 @@ void vtkOpenIGTLinkIFGUI::BuildGUI ( )
 void vtkOpenIGTLinkIFGUI::BuildGUIForHelpFrame ()
 {
 
-  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-
-  vtkKWWidget *page = this->UIPanel->GetPageWidget ( "OpenIGTLinkIF" );
-
-  // Define your help text here.
-  const char *help = 
-    "The **OpenIGTLink Module** helps you to manage OpenIGTLink connections:"
-    " OpenIGTLink is an open network protocol for communication among software / hardware "
-    " for image-guided therapy, e.g. robot-navigation and imager-viewer connections."
-    " The information of the OpenIGTLink protocol can be found at http://wiki.na-mic.org/Wiki/index.php/OpenIGTLink ."
-    " The module is designed and implemented by Junichi Tokuda for Brigham and Women's Hospital."
-    " This work is supported by NCIGT, NA-MIC and BRP Prostate robot project.";
-
   // ----------------------------------------------------------------
   // HELP FRAME         
   // ----------------------------------------------------------------
-  vtkSlicerModuleCollapsibleFrame *OpenIGTLinkHelpFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-  OpenIGTLinkHelpFrame->SetParent ( page );
-  OpenIGTLinkHelpFrame->Create ( );
-  OpenIGTLinkHelpFrame->CollapseFrame ( );
-  OpenIGTLinkHelpFrame->SetLabelText ("Help");
-  app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                OpenIGTLinkHelpFrame->GetWidgetName(), page->GetWidgetName());
-    
-  // configure the parent classes help text widget
-  this->HelpText->SetParent ( OpenIGTLinkHelpFrame->GetFrame() );
-  this->HelpText->Create ( );
-  this->HelpText->SetHorizontalScrollbarVisibility ( 0 );
-  this->HelpText->SetVerticalScrollbarVisibility ( 1 );
-  this->HelpText->GetWidget()->SetText ( help );
-  this->HelpText->GetWidget()->SetReliefToFlat ( );
-  this->HelpText->GetWidget()->SetWrapToWord ( );
-  this->HelpText->GetWidget()->ReadOnlyOn ( );
-  this->HelpText->GetWidget()->QuickFormattingOn ( );
-  this->HelpText->GetWidget()->SetBalloonHelpString ( "" );
-  app->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
-                this->HelpText->GetWidgetName ( ) );
 
-  OpenIGTLinkHelpFrame->Delete();
+  // Define your help text here.
+  const char *help = 
+    "**The OpenIGTLink Interface Module** helps you to manage OpenIGTLink connections:"
+    "OpenIGTLink is an open network protocol for communication among software / hardware "
+    "for image-guided therapy. See "
+    "<a>http://www.slicer.org/slicerWiki/index.php/Modules:OpenIGTLinkIF</a> for details.";
+  const char *about =
+    "The module is designed and implemented by Junichi Tokuda for Brigham and Women's Hospital."
+    "This work is supported by NCIGT, NA-MIC and BRP \"Enabling Technologies for MRI-Guided Prostate Intervention\" project.";
+
+  vtkKWWidget *page = this->UIPanel->GetPageWidget ( "OpenIGTLinkIF" );
+  this->BuildHelpAndAboutFrame (page, help, about);
 
 }
 
