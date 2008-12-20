@@ -622,9 +622,12 @@ if (Slicer3_SOURCE_DIR)
     GrayscaleGrindPeakImageFilterLib
     HistogramMatching
     HistogramMatchingLib
+    RigidRegistration
+    RigidRegistrationLib
     LinearRegistration
     LinearRegistrationLib
     AffineRegistration
+    AffineRegistrationLib
     BSplineDeformableRegistration
     BSplineDeformableRegistrationLib
     TestGridTransformRegistration
