@@ -796,6 +796,12 @@ int Slicer3_main(int argc, char *argv[])
   vtkEventBroker::GetInstance()->SetScriptHandler( Slicer3_BrokerScriptHandler ); 
   vtkEventBroker::GetInstance()->SetEventModeToSynchronous(); 
 
+  if ( EventLog != "" )
+    {
+    vtkEventBroker::GetInstance()->SetLogFileName(EventLog.c_str()); 
+    vtkEventBroker::GetInstance()->SetEventLogging(1);
+    }
+
 
   // Create MRML scene
   vtkMRMLScene *scene = vtkMRMLScene::New();

@@ -84,6 +84,13 @@
       <label>Module to Ignore</label>
       </string>
 
+      <string multiple="false">
+      <name>EventLog</name>
+      <longflag>--event_log</longflag>
+      <description>Specify File to Log Event Broker mediated invocations</description>
+      <label>Event Log File Name</label>
+      </string>
+
       <boolean>
       <name>Daemon</name>
       <longflag>--daemon</longflag>
