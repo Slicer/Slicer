@@ -156,10 +156,6 @@ protected:
   void RemoveFiducialProps();
 
   // Description:
-  // Update the fiducials' camera to the mainviewer's active camera
-  void UpdateFiducialsCamera();
-
-  // Description:
   // Removes observers that this widget placed on the fiducial lists in the
   // mrml tree
   void RemoveFiducialObservers();

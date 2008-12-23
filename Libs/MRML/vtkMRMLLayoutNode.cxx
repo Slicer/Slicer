@@ -44,7 +44,7 @@ vtkMRMLLayoutNode::vtkMRMLLayoutNode()
   this->GUIPanelVisibility = 1;
   this->BottomPanelVisibility = 1;
   this->GUIPanelLR = 0;
-  this->ViewArrangement = vtkMRMLLayoutNode::SlicerLayoutNone;
+  this->ViewArrangement = -1;
   this->NumberOfCompareViewRows = 0;
   this->NumberOfCompareViewColumns = 0;
   this->NumberOfCompareViewLightboxRows = 1;
@@ -165,11 +165,6 @@ void vtkMRMLLayoutNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLLayoutNode::SetViewArrangement ( int arrNew )
 {
-  if (this->ViewArrangement == arrNew)
-    {
-    return;
-    }
-
   this->ViewArrangement = arrNew;
   this->Modified();
 }

@@ -52,8 +52,7 @@ vtkMRMLNode* vtkMRMLViewNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLViewNode::vtkMRMLViewNode()
 {
-  //this->SingletonTag = const_cast<char *>("vtkMRMLViewNode");
-  this->HideFromEditors = 0;
+  this->SingletonTag = const_cast<char *>("vtkMRMLViewNode");
 
   this->Active = 0;
   this->BoxVisible = 1;
@@ -83,11 +82,7 @@ vtkMRMLViewNode::~vtkMRMLViewNode()
 {
 }
 
-//----------------------------------------------------------------------------
-const char* vtkMRMLViewNode::GetNodeTagName() 
-{
-  return "View"; 
-}
+
 
 //----------------------------------------------------------------------------
 void vtkMRMLViewNode::SetRenderMode ( int m )
@@ -636,7 +631,7 @@ void vtkMRMLViewNode::Copy(vtkMRMLNode *anode)
   this->SetStereoType ( node->GetStereoType ( ) );
   this->SetRenderMode ( node->GetRenderMode() );
   this->SetBackgroundColor ( node->GetBackgroundColor ( ) );
-  //this->SetActive(node->GetActive());
+  this->SetActive(node->GetActive());
 }
 
 //----------------------------------------------------------------------------
@@ -667,34 +662,14 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
      << this->BackgroundColor[2] <<"\n";
 }
 
-//---------------------------------------------------------------------------
-void vtkMRMLViewNode::SetActive(int _arg) 
-{
-  if (this->Active == _arg) 
-    { 
-    return;
-    }
-
-  if (_arg)
-    {
-    this->RemoveActiveFlagInScene();
-    }
-
-  this->Active = _arg;
-
-  this->Modified();
-
-  this->InvokeEvent(vtkMRMLViewNode::ActiveModifiedEvent, NULL);
-}
 
 //----------------------------------------------------------------------------
-void vtkMRMLViewNode::RemoveActiveFlagInScene()
+void vtkMRMLViewNode::MakeOthersInActive()
 {
   if (this->Scene == NULL)
     {
     return;
     }
-
   vtkMRMLViewNode *node = NULL;
   int nnodes = this->Scene->GetNumberOfNodesByClass("vtkMRMLViewNode");
   for (int n=0; n<nnodes; n++)

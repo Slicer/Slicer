@@ -54,10 +54,25 @@ public:
   virtual const char* GetNodeTagName() {return "Camera";};
 
   // Description:
-  // Set the camera active tag, i.e. the tag for which object (view) this
-  // camera is active.
-  vtkGetStringMacro(ActiveTag);
-  virtual void SetActiveTag(const char *);
+  // Indicates if the camera is active
+  vtkGetMacro(Active, int);
+
+  // Description:
+  // Make this camera node active/inactive 
+  // NOTE it makes sure that only one node is active in the scene
+  void SetActive(int active) 
+  {
+    if (active == this->Active)
+      {
+      return;
+      }
+    if (active == 1) 
+      {
+      this->MakeOthersInActive();
+      }
+    this->Active = active;
+    this->Modified();
+  };
 
   // Description:
   // vtkCamera
@@ -138,16 +153,6 @@ public:
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
-
-  // Description:
-  // Events
-  //BTX
-  enum
-  {
-    ActiveTagModifiedEvent = 30000
-  };
-  //ETX
-
 protected:
   vtkMRMLCameraNode();
   ~vtkMRMLCameraNode();
@@ -159,8 +164,8 @@ protected:
   void SetAndObserveCamera(vtkCamera *camera);
   vtkCamera *Camera;
 
-  void RemoveActiveTagInScene(const char *tag);
-  char *ActiveTag;
+  void MakeOthersInActive();
+  int Active;
 };
 
 #endif

@@ -92,7 +92,7 @@ void vtkChangeTrackerStep::RenderRemove() {
     if (this->GetGUI()) {
       vtkSlicerApplicationGUI *applicationGUI = this->GetGUI()->GetApplicationGUI();
       if (applicationGUI) {  
-        vtkSlicerViewerWidget *viewerWidget  = applicationGUI->GetActiveViewerWidget();
+        vtkSlicerViewerWidget *viewerWidget  = applicationGUI->GetViewerWidget();
         if (viewerWidget) {
           vtkKWRenderWidget* mainViewer = viewerWidget->GetMainViewer();
           if (mainViewer) {
@@ -434,7 +434,5 @@ void vtkChangeTrackerStep::CreateRender(vtkMRMLVolumeNode *volumeNode, int RayCa
 
   this->Render_Volume->PokeMatrix(this->Render_OrientationMatrix);
   
-  vtkSlicerViewerWidget *active_viewer = 
-    this->GetGUI()->GetApplicationGUI()->GetActiveViewerWidget();
-  active_viewer->GetMainViewer()->AddViewProp(this->Render_Volume);
+  this->GetGUI()->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->Render_Volume);
 }

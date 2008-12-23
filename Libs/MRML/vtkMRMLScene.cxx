@@ -372,14 +372,12 @@ void vtkMRMLScene::Clear(int removeSingletons)
     this->RemoveAllNodesExceptSingletons();
     this->ClearReferencedNodeID();
     this->ResetNodes();
-    // See comment below
-    //    this->InvokeEvent(this->SceneCloseEvent, NULL);
+    this->InvokeEvent(this->SceneCloseEvent, NULL);
     }
   else
     {
     this->CurrentScene->RemoveAllItems();
-    // See comment below
-    //  this->InvokeEvent(this->SceneCloseEvent, NULL);
+    this->InvokeEvent(this->SceneCloseEvent, NULL);
     }
   
   this->ClearReferencedNodeID();
@@ -392,15 +390,6 @@ void vtkMRMLScene::Clear(int removeSingletons)
 
   this->Modified();
   this->SetUndoOn();
-
-  // Unless I'm wrong, this should be at the very end. SceneClosingEvent
-  // is the event that gives a "chance" to objects to release resources.
-  // SceneCloseEvent however means, we are done. At this point it seems
-  // logical objects are free to create new objects/nodes, for example
-  // to create a few new scene once the current one has been close.
-  // Therefore, it should be put at the end, certainly after UniqueIDByClass
-  // has been cleared
-  this->InvokeEvent(this->SceneCloseEvent, NULL);
 }
 
 //------------------------------------------------------------------------------
@@ -572,15 +561,11 @@ int vtkMRMLScene::Connect()
   this->RemoveAllNodesExceptSingletons();
   this->ClearReferencedNodeID();
 
-  // see vtkMRMLScene::Clear on why it was moved
-  //this->InvokeEvent(this->SceneCloseEvent, NULL);
+  this->InvokeEvent(this->SceneCloseEvent, NULL);
 
   this->ClearUndoStack ( );
   this->ClearRedoStack ( );
   this->UniqueIDByClass.clear();
-
-  // see vtkMRMLScene::Clear on why it was moved
-  this->InvokeEvent(this->SceneCloseEvent, NULL);
 
   if ( this->GetUserTagTable() != NULL )
     {

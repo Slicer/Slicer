@@ -441,12 +441,7 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
 
             //Try to keep navigation Render online
             //this->GetApplicationGUI()->GetViewControlGUI()->GetEnableDisableNavButton()->SelectedStateOff();
-            vtkSlicerViewerWidget *active_viewer = 
-              this->GetApplicationGUI()->GetActiveViewerWidget();
-            if (active_viewer)
-              {
-              active_viewer->GetMainViewer()->GetRenderWindowInteractor()->Disable();
-              }
+            this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Disable();
 
             vtkMRMLScalarVolumeNode *selectedImageData=vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected());
             //Add observer to trigger update of transform
@@ -459,10 +454,7 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
 
             //update previous:
             this->PreviousNS_ImageData=this->NS_ImageData->GetSelected()->GetID();//only when not "None"
-            if (active_viewer)
-              {
-              active_viewer->GetMainViewer()->GetRenderWindowInteractor()->Enable();
-              }
+            this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Enable();
             if (this->Helper)
             {
               this->Helper->WithdrawProgressDialog();

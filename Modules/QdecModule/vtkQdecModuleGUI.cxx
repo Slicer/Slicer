@@ -1448,16 +1448,15 @@ void vtkQdecModuleGUI::Init(void)
     }
   
   // get the viewer widget
-  vtkSlicerViewerWidget *active_viewer = appGUI->GetActiveViewerWidget();
-  this->SetViewerWidget(active_viewer);
+  this->SetViewerWidget(appGUI->GetViewerWidget());
 
   // get the interactor style, to set up plotting events
-  if (active_viewer != NULL &&
-      active_viewer->GetMainViewer() != NULL &&
-      active_viewer->GetMainViewer()->GetRenderWindowInteractor() != NULL &&
-      active_viewer->GetMainViewer()->GetRenderWindowInteractor()->GetInteractorStyle() != NULL)
+  if (appGUI->GetViewerWidget() != NULL &&
+      appGUI->GetViewerWidget()->GetMainViewer() != NULL &&
+      appGUI->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor() != NULL &&
+      appGUI->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->GetInteractorStyle() != NULL)
     {
-    this->SetInteractorStyle(vtkSlicerViewerInteractorStyle::SafeDownCast(active_viewer->GetMainViewer()->GetRenderWindowInteractor()->GetInteractorStyle()));
+    this->SetInteractorStyle(vtkSlicerViewerInteractorStyle::SafeDownCast(appGUI->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->GetInteractorStyle()));
     }
   else
     {

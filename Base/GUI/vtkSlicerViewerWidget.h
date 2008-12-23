@@ -196,15 +196,6 @@ public:
 
   void SetBoxWidgetInteractor();
 
-  // Description:
-  // Events
-  //BTX
-  enum
-  {
-    ActiveCameraChangedEvent   = 30000
-  };
-  //ETX
-
 protected:
   vtkSlicerViewerWidget();
   virtual ~vtkSlicerViewerWidget();
@@ -238,7 +229,7 @@ protected:
   void AddAxisActors();
   void UpdateAxis();
 
-  int UpdateClipSlicesFromMRML();
+  int UpdateClipSlicesFormMRML();
 
   void CheckModelHierarchies();
   void AddHierarchiyObservers();
@@ -256,9 +247,6 @@ protected:
   int GetDisplayedModelsVisibility(vtkMRMLDisplayNode *model);
 
   void RemoveDisplayable(vtkMRMLDisplayableNode* model);
-
-  void AddCameraObservers();
-  void RemoveCameraObservers();
 
   vtkMRMLDisplayNode*  GetHierarchyDisplayNode(vtkMRMLDisplayableNode *model);
   
@@ -306,8 +294,6 @@ protected:
   vtkSlicerModelHierarchyLogic *ModelHierarchyLogic;
 
   vtkMRMLCameraNode *CameraNode;
-  int CameraNodeWasCreated;
-
   vtkMRMLViewNode *ViewNode;
 
   bool SceneClosing;

@@ -29,6 +29,7 @@
 #include "vtkSlicerBoxRepresentation.h"
 
 class vtkRenderWindowInteractor;
+class vtkSlicerViewerWidget;
 
 class vtkKWMessage;
 class vtkSlicerVisibilityIcons;
