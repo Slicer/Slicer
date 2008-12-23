@@ -106,7 +106,6 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
   this->BoxWidget = vtkSlicerBoxWidget2::New();
   this->BoxWidgetRepresentation = vtkSlicerBoxRepresentation::New();
   this->BoxWidget->SetRepresentation(this->BoxWidgetRepresentation);
-
 }
 
 

@@ -64,6 +64,11 @@ public:
   vtkTypeRevisionMacro(vtkSlicerViewerWidget,vtkSlicerWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  
+  virtual void Register(vtkObject *o) { Superclass::Register(o); };
+  virtual void UnRegister(vtkObject *o) { Superclass::UnRegister(o); };
+
+
   // Description:
   // Get/Set the Clip Nodes
   vtkGetObjectMacro ( ClipModelsNode, vtkMRMLClipModelsNode );

@@ -1789,7 +1789,6 @@ void vtkSlicerApplicationGUI::CreateMain3DViewer ( )
     // add the fiducial list widget
     this->FiducialListWidget = vtkSlicerFiducialListWidget::New();
     this->FiducialListWidget->SetApplication( app );
-    this->FiducialListWidget->SetMainViewer(this->ViewerWidget->GetMainViewer());
     this->FiducialListWidget->SetViewerWidget(this->ViewerWidget);
     this->FiducialListWidget->SetInteractorStyle(vtkSlicerViewerInteractorStyle::SafeDownCast(this->ViewerWidget->GetMainViewer()->GetRenderWindowInteractor()->GetInteractorStyle()));
     this->FiducialListWidget->Create();

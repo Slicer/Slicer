@@ -76,11 +76,6 @@ public:
   vtkSetObjectMacro(SphereSource, vtkSphereSource);
   
   // Description:
-  // Set/Get the main viewer, called by vtkSlicerApplicationGUI
-  vtkSetObjectMacro(MainViewer, vtkKWRenderWidget);
-  vtkGetObjectMacro(MainViewer, vtkKWRenderWidget);
-  
-  // Description:
   // Updates Actors based on fiducials in the scene
   // Calls RemoveFiducialProps then UpdateFiducialsFromMRML
   void UpdateFromMRML();
@@ -345,10 +340,6 @@ protected:
   // A collection of the vtkGlyph3Ds that are used for display
   //vtkCollection * Glyph3DList;
 
-  // Description:
-  // A pointer back to the main viewer, so that can render when update
-  // fiducial display characteristics
-  vtkKWRenderWidget *MainViewer;
   // Description:
   // A flag to avoid thread collisions when rendering
   int RenderPending;
