@@ -45,7 +45,7 @@
 #include "jointLMMSECLP.h"
 
 #define DIMENSION 3
-
+#define dwiPI 3.141592653589793
 
 template<class PixelType> int DoIt( int argc, const char * argv[], PixelType )
 {
@@ -249,7 +249,7 @@ template<class PixelType> int DoIt( int argc, const char * argv[], PixelType )
   histogram->SetBins( 256 );
   histogram->Update();
   double sigma  = histogram->GetMode();
-  sigma *= sqrt(2/M_PI);
+  sigma *= sqrt(2/dwiPI);
   std::cout << "The estimated noise is: " << sigma << std::endl;
 //======================================================================================================
   ricianFilter->SetSigma( sigma );
