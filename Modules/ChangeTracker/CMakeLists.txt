@@ -83,7 +83,7 @@ set(ChangeTracker_SRCS
 subdirs(DeformableMetric CommandLineApplication) 
 
 # Tools for diameter estimation
-subdirs(TumorDiameterEstimation CommandLineApplication)
+subdirs(TumorDiameterEstimation)
 
 # Abstract/pure virtual classes
 
