@@ -1,6 +1,10 @@
+import logging
+import time
 from numpy import finfo, sqrt, exp, dot, log, cos, arccos, pi
-from numpy import reshape, vstack, hstack
+from numpy import reshape, vstack, hstack, eye
 from numpy import linalg
+
+logger                   = logging.getLogger(__name__)
 
 # mu0 = intensity with no diffusion weighting (b=0)
 # T = tensor
@@ -100,8 +104,8 @@ def CalculateFA(lda):
 
   eps = finfo(float).eps 
   
-  # Calulate FA
-  FA = 1/sqrt(3)*sqrt(((lda[..., 0]-lda[..., 1])**2 + (lda[..., 1]-lda[..., 2])**2 + (lda[..., 0]-lda[..., 2])**2) / (lda[..., 0]**2 + lda[..., 1]**2 + lda[..., 2]**2 + eps))
+  # Calulate FA - correct in FA0
+  FA = 1./sqrt(3)*sqrt(((lda[..., 0]-lda[..., 1])**2 + (lda[..., 1]-lda[..., 2])**2 + (lda[..., 0]-lda[..., 2])**2) / (lda[..., 0]**2 + lda[..., 1]**2 + lda[..., 2]**2 + eps))
  
   return FA
 
@@ -110,27 +114,33 @@ def CalculateFA0(lda):
 
   eps = finfo(float).eps 
   
-  # Calulate FA
-  #FA =  
+  # Calulate FA - correct in FA0
+  FA = 1./sqrt(2)*sqrt(((lda[..., 0]-lda[..., 1])**2 + (lda[..., 1]-lda[..., 2])**2 + (lda[..., 0]-lda[..., 2])**2) / (lda[..., 0]**2 + lda[..., 1]**2 + lda[..., 2]**2 + eps))
  
   return FA
+
 
 # lda must 3,3 - diag with l0, l1, l2
 def CalculateTrace0(lda):
 
   eps = finfo(float).eps 
   
-  # Calulate FA
-  #TRACE = 
+  # Calulate TRACE
+  TRACE = sqrt(lda[..., 0]**2 + lda[..., 1]**2 + lda[..., 2]**2 + eps)
  
-  return TRACE
+  logger.info("Trace shape : %s:%s:%s" % (TRACE.shape[0], TRACE.shape[1], TRACE.shape[2]))
+
+  return TRACE 
 
 # lda must 3,3 - diag with l0, l1, l2
 def CalculateMode0(lda):
 
   eps = finfo(float).eps 
   
-  # Calulate FA
-  #MODE = 
- 
+  # Calulate MODE
+  MODEx = (lda[..., 0] + lda[..., 1] + lda[..., 2]) / sqrt((lda[..., 0]-lda[..., 1])**2 + (lda[..., 1]-lda[..., 2])**2 + (lda[..., 0]-lda[..., 2])**2 + eps)
+  MODE = sqrt(2) * MODEx*MODEx*MODEx
+  
+  logger.info("Mode shape : %s:%s:%s" % (MODE.shape[0], MODE.shape[1], MODE.shape[2]))
+
   return MODE
