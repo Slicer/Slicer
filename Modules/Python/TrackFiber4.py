@@ -198,9 +198,9 @@ def  TrackFiber40(data, vectors, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTenso
 
   logger.info("Spacing : %s:%s:%s" % (str(spa[0]), str(spa[1]), str(spa[2])) )
 
-  dr = spa[0]/numpy.linalg.norm(spa)  
-  da = spa[1]/numpy.linalg.norm(spa) 
-  ds = spa[2]/numpy.linalg.norm(spa) 
+  dr = numpy.abs(spa[0]/numpy.linalg.norm(spa))  
+  da = numpy.abs(spa[1]/numpy.linalg.norm(spa)) 
+  ds = numpy.abs(spa[2]/numpy.linalg.norm(spa)) 
 
 # Uniform prior distribution of the direction of the first step
   StartPrior = numpy.ones((1, vectors.shape[1]), 'float')
