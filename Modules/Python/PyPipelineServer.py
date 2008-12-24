@@ -34,7 +34,7 @@ logging.basicConfig(level=logging.INFO, format="%(created)-15s %(msecs)d %(level
 
 logger                  = logging.getLogger(__name__)
 BACKLOG                 = 5
-SIZE                    = 1024
+SIZE                    = 4096
 
 
 class PipelineHandler(asyncore.dispatcher):
@@ -131,7 +131,7 @@ class PipelineHandler(asyncore.dispatcher):
           isInWM = False
           if self.params.hasKey('wm'):
                   if dscene.has_key(self.params.get('wm')[0]):
-                        if not dscene.has_key(self.params.get('roiB')[0]):
+                          if not dscene.has_key(self.params.get('roiB')[0]):
                               if self.params.get('wm')[0] != self.params.get('roiA')[0]: 
                                  self.wm = s.get(int(dscene[self.params.get('wm')[0]]))
                                  wmR = numpy.fromstring(self.wm.getImage(), 'uint16')
@@ -140,7 +140,7 @@ class PipelineHandler(asyncore.dispatcher):
                                  self.wm.setImage(wmR)
                                  isInWM = True
                                  logger.info("WM : %s:%s:%s" % (wmR.shape[0], wmR.shape[1], wmR.shape[2]))
-                        else:
+                          else:
                               if self.params.get('wm')[0] != self.params.get('roiB')[0] and self.params.get('wm')[0] != self.params.get('roiA')[0]:
                                  self.wm = s.get(int(dscene[self.params.get('wm')[0]]))
                                  wmR = numpy.fromstring(self.wm.getImage(), 'uint16')
@@ -308,7 +308,8 @@ class PipelineHandler(asyncore.dispatcher):
           
 
 
-          ngrads = b.shape[0]
+          ngrads = shpD[3] #b.shape[0]
+          logger.info("Number of gradients : %s" % str(ngrads) )
           G = G.reshape((ngrads,3))
           b = b.reshape((ngrads,1))
           i2r = i2r.reshape((4,4))
@@ -346,7 +347,12 @@ class PipelineHandler(asyncore.dispatcher):
                        logger.info("Compute tensor in %s sec" % str(time.time()-timeS1))
 
                     if faEnabled:
-                         faMap = tensC.CalculateFA(lV)
+                         faMap = tensC.CalculateFA0(lV)
+                    if traceEnabled:
+                         trMap = tensC.CalculateTrace0(lV)
+                    if modeEnabled:
+                         moMap = tensC.CalculateMode0(lV)
+
 
                     if stEnabled:
                          logger.info("Track fibers")
@@ -392,31 +398,54 @@ class PipelineHandler(asyncore.dispatcher):
 
           logger.info("Connect tract")
 
+          dateT = str(int(round(time.time())))
+
+
           # use slicer daemon to send back results
           if tensEnabled and artsEnabled:
                   arts = arts.swapaxes(2,0)
-                  s.putS(arts, dims, org, i2r, 'arts')
+                  tmp= 'arts_' + dateT
+                  s.putS(arts, dims, org, i2r, tmp)
 
           if tensEnabled and otsuEnabled:
                   otsu = otsu.swapaxes(2,0)
-                  s.putS(otsu, dims, org, i2r, 'otsu')
+                  tmp= 'otsu_' + dateT
+                  s.putS(otsu, dims, org, i2r, tmp)
 
           if tensEnabled and wmEnabled:
                   wm = wm.swapaxes(2,0)
-                  s.putS(wm, dims, org, i2r, 'wm')
+                  tmp= 'wm_' + dateT
+                  s.putS(wm, dims, org, i2r, tmp)
 
           if tensEnabled:
                      xVTensor = xVTensor.swapaxes(2,0)
-                     s.putD(xVTensor, dims, org, i2r, mu, 'tensor')
-                     s.putD(xMTensor, dims, org, i2r, mu, 'tensor_diag')
+                     tmp= 'tensor_' + dateT
+                     s.putD(xVTensor, dims, org, i2r, mu, tmp)
+                     tmp= 'tensor_diag_' + dateT
+                     s.putD(xMTensor, dims, org, i2r, mu, tmp)
 
                      if faEnabled:
                           faMap = faMap.swapaxes(2,0)
-                          s.putS(faMap, dims, org, i2r, 'fa')
+                          tmp= 'fa_' + dateT
+                          s.putS(faMap, dims, org, i2r, tmp)
+
+                     if traceEnabled:
+                          trMap = trMap.swapaxes(2,0)
+                          tmp= 'trace_' + dateT
+                          s.putS(trMap, dims, org, i2r, tmp)
+
+
+                     if modeEnabled:
+                          moMap = moMap.swapaxes(2,0)
+                          tmp= 'mode_' + dateT
+                          s.putS(moMap, dims, org, i2r, tmp)
+
+
 
           if cmEnabled:
                     cm = cm.swapaxes(2,0)
-                    s.putS(cm, dims, org, i2r, 'cm')
+                    tmp= 'cm_' + dateT
+                    s.putS(cm, dims, org, i2r, tmp)
 
           logger.debug("pipeline data shape end : %s:%s:%s:%s" %  (shpD[0], shpD[1], shpD[2], shpD[3]))
 
