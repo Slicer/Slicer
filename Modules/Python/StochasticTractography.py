@@ -368,7 +368,7 @@ numpy_nrrd_names = { 'int8':'char', 'uint8':'unsigned char', 'int16':'short',  '
 
 numpy_vtk_types = { 'int8':'2', 'uint8':'3', 'int16':'4',  'uint16':'5',  'int32':'6',  'uint32':'7',  'float32':'10',  'float64':'11' }
 
-SIZE = 1024
+SIZE = 4096 
 
 ##
 def sendVolume(vol, c, isDti=False):
