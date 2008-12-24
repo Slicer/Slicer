@@ -149,7 +149,7 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
   vtkRendering
   ITKCommon
   ITKBasicFilters
-  ITKIO
+#  ITKIO
   ITKAlgorithms
   ${KWWidgets_LIBRARIES}
   #mimxAdapter
