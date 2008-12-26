@@ -1538,17 +1538,25 @@ void vtkSlicerFiducialListWidget::UpdateTextActor(vtkMRMLFiducialListNode *flist
       mainViewer->AddViewProp ( textActor );
       }
     }
-  // do some magic to offset the text string far enough from the glyph so that
+  // offset the text string far enough from the glyph so that
   // they don't overlap, using extra spaces at the start of the text string
   std::string textString = std::string("");
-  float denom = (flist->GetTextScale() - 1.0 < 1.0) ? (1.0) : (flist->GetTextScale() - 1.0);
-  int numSpaces = (int)ceil((flist->GetSymbolScale() * 1.25) / denom);
-  for (int i = 0; i < numSpaces; i++)
+  // we need to offset the text by glyphScale * glyphRadius in mm (currently
+  // 0.5) divided by the text scale (the text scale is set by the fid list
+  // TextScale)
+  float denom = flist->GetTextScale();
+  if (denom != 0.0)
     {
-    textString += std::string(" ");
+    // the glyph radius is .5 but that scale factor moves the text a bit too
+    // far away, so move it into the numerator as a multiplier factor
+    // of 2 and reduce it a bit to 1.75
+    int numSpaces = (int)ceil((flist->GetSymbolScale() * 1.75) / denom);
+    for (int i = 0; i < numSpaces; i++)
+      {
+      textString += std::string(" ");
+      }
+    vtkDebugMacro("NumSpaces = " << numSpaces << ", symbol scale = " << flist->GetSymbolScale() << ", text scale = " << flist->GetTextScale());
     }
-  vtkDebugMacro("NumSpaces = " << numSpaces << ", symbol scale = " << flist->GetSymbolScale() << ", text scale = " << flist->GetTextScale());
-
   // now add on the label text
   textString += std::string(flist->GetNthFiducialLabelText(f));
   vtext->SetText(textString.c_str());
