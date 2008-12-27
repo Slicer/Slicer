@@ -339,10 +339,12 @@ static void InformationMessage(const char *msg)
   vtkSlicerApplication::GetInstance()->InformationMessage(msg);
 }
 
+#if 0
 static void DebugMessage(const char *msg)
 {
   vtkSlicerApplication::GetInstance()->DebugMessage(msg);
 }
+#endif
 
 static void SplashMessage(const char *msg)
 {

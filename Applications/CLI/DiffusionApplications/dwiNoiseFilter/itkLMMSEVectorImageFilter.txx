@@ -86,19 +86,19 @@ void LMMSEVectorImageFilter< TInputImage, TOutputImage>
     // Compute the statistics:
     if( !stats->GetReady() )
       itkExceptionMacro( << "Could not compute the statistics!!!" );
-    double mean = stats->GetMean();
-    double std  = stats->GetStd();
-    double min  = stats->GetMin();
-    double max  = stats->GetMax();
+    double smean = stats->GetMean();
+    double std   = stats->GetStd();
+    double min   = stats->GetMin();
+    double max   = stats->GetMax();
     // Confidence factor for the std:
     double SFac = 2.0;
     // Compute the limits in the histogram:
-    double dMin = mean - SFac*std - 0.5;
+    double dMin = smean - SFac*std - 0.5;
     if ( dMin<min )
       dMin = min-0.5;
     if ( dMin<=0 )
       dMin = 0;
-    double dMax = mean + SFac*std;
+    double dMax = smean + SFac*std;
     if ( dMax>max )
       dMax = max;
     // Create the minipipeline to compute the histogram:

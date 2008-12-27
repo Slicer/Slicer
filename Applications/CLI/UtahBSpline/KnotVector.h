@@ -135,24 +135,24 @@ class KnotVector{
 
 //Non-inline implementations 
 template <typename T>
-KnotVector<T>::KnotVector(T *knots, int length, int degree) {
-  this->knots = new T[length];
-  for(int i=0; i < length; i++){
-    this->knots[i] = knots[i];
+KnotVector<T>::KnotVector(T *knts, int len, int deg) {
+  this->knots = new T[len];
+  for(int i=0; i < len; i++){
+    this->knots[i] = knts[i];
   }
-  this->length = length;
-  this->degree = degree;
-  lower = (int)ceil((degree+1) / 2.0);
-  upper = (int)floor((degree+1) / 2.0);
+  this->length = len;
+  this->degree = deg;
+  lower = (int)ceil((deg+1) / 2.0);
+  upper = (int)floor((deg+1) / 2.0);
 
-  n = length - degree - 2;
-  for (int i = 1; i < length; i++) {
-    if (knots[i - 1] > knots[i]) {
+  n = len - deg - 2;
+  for (int i = 1; i < len; i++) {
+    if (knots[i - 1] > knts[i]) {
       throw "Not a valid knot vector";                
     }
   }  
-  left = new T[degree + 1];
-  right = new T[degree + 1];
+  left = new T[deg + 1];
+  right = new T[deg + 1];
 
 }
 

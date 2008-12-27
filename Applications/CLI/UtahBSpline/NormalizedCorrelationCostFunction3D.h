@@ -392,7 +392,7 @@ NormalizedCorrelationCostFunction3D<TPrecision>::f(){
         int nP = 0;
         for(int l=-1; l<2; l++){
           for(int m = -1; m<2; m++){
-            for(int n = -1; n<2; n++){
+            for(n = -1; n<2; n++){
 
               if(l == 0 && n == 0 && m == 0){
                   continue;
@@ -545,9 +545,9 @@ NormalizedCorrelationCostFunction3D<TPrecision>::gradf(vnl_vector<double> &g){
           vind = q - svIt.Get() + j;
           wind = r - swIt.Get() + k;
 
-          TPrecision *bfu = bfuIt.Get();
-          TPrecision *bfv = bfvIt.Get();
-          TPrecision *bfw = bfwIt.Get();
+          bfu = bfuIt.Get();
+          bfv = bfvIt.Get();
+          bfw = bfwIt.Get();
 
 
           TPrecision bf = 2 * diffIt.Get() * bfu[uind] * bfv[vind] * bfw[wind];

@@ -34,12 +34,12 @@ class ParametricImageTransformation3D{
       useMask = false;
     };
 
-    void SetImage(ImagePointer image){  this->image = image; };
+    void SetImage(ImagePointer img){  this->image = img; };
     
-    void SetMaskImage(ImagePointer maskImage) { 
-      this->maskImage = maskImage; 
+    void SetMaskImage(ImagePointer maskImg) { 
+      this->maskImage = maskImg; 
       CastFilterPointer castFilter = CastFilter::New();
-      castFilter->SetInput(maskImage);
+      castFilter->SetInput(maskImg);
       castFilter->Update();
       transformedMaskImage = castFilter->GetOutput();
     };
@@ -52,13 +52,13 @@ class ParametricImageTransformation3D{
       //useMask = use;
     };
 
-    void SetRange(const ImageRegion &range){ this->range = range;
-      std::cout << range << std::endl; };
+    void SetRange(const ImageRegion &rng){ this->range = rng;
+      std::cout << rng << std::endl; };
     
     ImageRegion GetRange(){ return range; };
     
-    void SetParametric(TParametric &surface){ 
-      this->surface = surface; 
+    void SetParametric(TParametric &surf){ 
+      this->surface = surf; 
     };
     
     TParametric &GetParametric(){ return surface; };
@@ -78,12 +78,12 @@ class ParametricImageTransformation3D{
 
     //Operators
     ParametricImageTransformation3D<TParametric>& operator=(const ParametricImageTransformation3D<TParametric>& rhs){
-       surface = rhs.surface;
-       image = rhs.image;
-       maskImage = rhs.maskImage;
-       transformedMaskImage = rhs.transformedMaskImage;
-       range = rhs.range;
-       useMask = rhs.useMask;
+       this->surface = rhs.surface;
+       this->image = rhs.image;
+       this->maskImage = rhs.maskImage;
+       this->transformedMaskImage = rhs.transformedMaskImage;
+       this->range = rhs.range;
+       this->useMask = rhs.useMask;
     };
 
 

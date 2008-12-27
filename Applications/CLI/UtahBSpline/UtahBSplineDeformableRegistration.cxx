@@ -92,7 +92,7 @@ ImageRegion findBoundingBox(ImagePointer maskImage){
   for(maskIt.GoToBegin(); !maskIt.IsAtEnd(); ++maskIt){
     if(maskIt.Get() != 0){
       ImageIndex tmp = maskIt.GetIndex();
-      for(int i = 0; i < Image::GetImageDimension(); i++){
+      for(unsigned int i = 0; i < Image::GetImageDimension(); i++){
         if(maxIndex[i] < tmp[i]){
           maxIndex[i] = tmp[i];
         }
@@ -107,7 +107,7 @@ ImageRegion findBoundingBox(ImagePointer maskImage){
 
   ImageIndex boundsIndex;
   ImageSize boundsSize;
-  for(int i = 0; i < Image::GetImageDimension(); i++){
+  for(unsigned int i = 0; i < Image::GetImageDimension(); i++){
     boundsSize[i] = (maxIndex[i]  - minIndex[i]);
     boundsIndex[i] = minIndex[i] - boundsSize[i]/2;
     boundsSize[i] *= 2;
@@ -115,7 +115,7 @@ ImageRegion findBoundingBox(ImagePointer maskImage){
 
   ImageRegion maxRegion = maskImage->GetLargestPossibleRegion();
   ImageSize maxSize = maxRegion.GetSize();
-  for(int i = 0; i < Image::GetImageDimension();  i++){
+  for(unsigned int i = 0; i < Image::GetImageDimension();  i++){
     if(boundsIndex[i] < 0){
       boundsIndex[i] = 0;
     }
@@ -306,12 +306,12 @@ int main( int argc, char * argv[] )
   
   // Print out the arguments (need to add --echo to the argument list 
   // 
-  std::vector<char *> vargs;
-  for (int vi=0; vi < argc; ++vi) vargs.push_back(argv[vi]);
-  vargs.push_back("--echo");
+  std::vector<char *> vargs1;
+  for (int vi=0; vi < argc; ++vi) vargs1.push_back(argv[vi]);
+  vargs1.push_back(const_cast<char *>("--echo"));
   
-  argc = vargs.size();
-  argv = &(vargs[0]);
+  argc = vargs1.size();
+  argv = &(vargs1[0]);
 
   PARSE_ARGS;
 

@@ -568,7 +568,7 @@ BSplineImageToImageRegistrationMethod< TImage >
   this->ResampleControlGrid( levelNumberOfControlPoints, levelParameters );
 
   /* Perform registration at each level */
-  for(unsigned int level=0; level<this->m_NumberOfLevels; level++)
+  for(level=0; level<this->m_NumberOfLevels; level++)
     {
     if( this->GetReportProgress() )
       {

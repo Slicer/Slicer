@@ -96,7 +96,7 @@ void vtkMimxSTLSource::ClosestPointDistanceMap(vtkMimxSTLSource* Target)
   vtkIdType CellId;
   int SubId;
   double x[3], ClosestPoint[3];
-  double dist,distmax,cumdist = 0.0;
+  double dist,distmax = 0.0,cumdist = 0.0;
   ofstream FileOutput;
   FileOutput.open("out.txt",std::ios::out);
   for(int i=0; i <this->PolyData->GetNumberOfPoints(); i++)
@@ -204,7 +204,7 @@ void vtkMimxSTLSource::ClosestPointDistanceMapGrayScale(vtkMimxSTLSource* Target
   vtkIdType CellId;
   int SubId;
   double x[3], ClosestPoint[3];
-  double dist,distmax,cumdist = 0.0;
+  double dist,distmax = 0.0,cumdist = 0.0;
   ofstream FileOutput;
   FileOutput.open("out.txt",std::ios::out);
   for(int i=0; i <this->PolyData->GetNumberOfPoints(); i++)

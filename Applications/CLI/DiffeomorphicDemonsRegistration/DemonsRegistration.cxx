@@ -226,21 +226,21 @@ public:
       unsigned int iter = -1;
       double metricbefore = -1.0;
       
-      if ( const DiffeomorphicDemonsRegistrationFilterType * filter = 
+      if ( const DiffeomorphicDemonsRegistrationFilterType * filter1 = 
            dynamic_cast< const DiffeomorphicDemonsRegistrationFilterType * >( object ) )
       {
-         iter = filter->GetElapsedIterations() - 1;
-         metricbefore = filter->GetMetric();
+         iter = filter1->GetElapsedIterations() - 1;
+         metricbefore = filter1->GetMetric();
          deffield = const_cast<DiffeomorphicDemonsRegistrationFilterType *>
-            (filter)->GetDeformationField();
+            (filter1)->GetDeformationField();
       }
-      else if ( const FastSymmetricForcesDemonsRegistrationFilterType * filter = 
+      else if ( const FastSymmetricForcesDemonsRegistrationFilterType * filter2 = 
            dynamic_cast< const FastSymmetricForcesDemonsRegistrationFilterType * >( object ) )
       {
-         iter = filter->GetElapsedIterations() - 1;
-         metricbefore = filter->GetMetric();
+         iter = filter2->GetElapsedIterations() - 1;
+         metricbefore = filter2->GetMetric();
          deffield = const_cast<FastSymmetricForcesDemonsRegistrationFilterType *>
-            (filter)->GetDeformationField();
+            (filter2)->GetDeformationField();
       }
       else if ( const MultiResRegistrationFilterType * multiresfilter = 
            dynamic_cast< const MultiResRegistrationFilterType * >( object ) )

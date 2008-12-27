@@ -471,7 +471,7 @@ bool LMMSEVectorImageFilter<TInputImage, TOutput>
     iterm[col] *= scale;
     // Now, we may perform gaussian elimination for each row:
     for( unsigned int row=col+1; row<K; ++row ){ // For each row
-      double scale = matrix[row][col]; // This is the scale, since input[col][col] = 1.
+      scale = matrix[row][col]; // This is the scale, since input[col][col] = 1.
       // Once again, for each column, we add the corresponding scaled
       // version of the pivoting element; however, in the input matrix,
       // values at the left of this column are assumed to be already zero:

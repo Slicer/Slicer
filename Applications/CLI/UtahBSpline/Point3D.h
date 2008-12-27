@@ -20,10 +20,10 @@ class Point3D{
     };
 
 
-    void Set(T x, T y, T z){
-      this->x = x;
-      this->y = y;
-      this->z = z;
+    void Set(T xx, T yy, T zz){
+      this->x = xx;
+      this->y = yy;
+      this->z = zz;
     };
 
 
