@@ -60,11 +60,11 @@ typedef itk::LineIterator<ImageType> LineIteratorType;
 
 typedef itk::Rigid3DTransform<double> TransformType;
 typedef itk::LookAtTransformInitializer<TransformType,ImageType> 
-  TransformInitializerType;
+TransformInitializerType;
 typedef itk::ResampleImageFilter<ImageType,ImageType>
-  ResampleFilterType;
+ResampleFilterType;
 typedef itk::NearestNeighborInterpolateImageFunction<ImageType>
-  InterpolatorType;
+InterpolatorType;
 typedef itk::PadImageFilter<ImageType,ImageType> PadderType;
 typedef itk::PasteImageFilter<ImageType> PasterType;
 
@@ -77,9 +77,10 @@ typedef pair<double,PtPairType3D> DistPtPairType3D;
 
 struct DistPtPairSort
 {
-     bool operator()(DistPtPairType p0, DistPtPairType p1) { 
-       return p0.first>p1.first;
-     }
+  bool operator()(DistPtPairType p0, DistPtPairType p1)
+  { 
+    return p0.first>p1.first;
+  }
 };
 
 ImageType::IndexType FindLargestAreaSlice(ImageType::Pointer image);
@@ -87,11 +88,11 @@ ImageType::IndexType FindLargestAreaSliceAlongDirection(ImageType::Pointer image
 double PtDistanceSquared(Point2DType, Point2DType);
 double PtDistance(Point2DType p0, Point2DType p1);
 double EstimateDiameterBresenham(ImageType2D::Pointer, ImageType2D::IndexType, 
-  ImageType2D::IndexType, double);
+                                 ImageType2D::IndexType, double);
 //ImageType::Pointer RealignVolume(ImageType::Pointer, ImageType::IndexType,
 //  ImageType::IndexType, ImageType::IndexType);
 ImageType::Pointer RealignVolume(ImageType::Pointer, ImageType::PointType,
-  ImageType::PointType, TransformType::Pointer&);
+                                 ImageType::PointType, TransformType::Pointer&);
 ImageType::Pointer PadImage(ImageType::Pointer);
 void FindBoundaryPoints(ImageType2D::Pointer,vector<ImageType2D::PointType>&);
 double FindMaxDiameterTuple(ImageType2D::Pointer, vector<ImageType2D::PointType>&, DistPtPairType&);
@@ -99,10 +100,10 @@ double GetMaxDiameterEstimate(ImageType::Pointer, DistPtPairType3D&);
 void UpdateImageWithDiameter(ImageType::Pointer, ImageType::PointType, ImageType::PointType);
 void SaveImage(ImageType::Pointer image, const char* name);
 double FindMaxDiameterTupleThruPoint(ImageType2D::Pointer, 
-  vector<ImageType2D::PointType>&, ImageType2D::PointType,
-  DistPtPairType &maxDiameterTuple);
+                                     vector<ImageType2D::PointType>&, ImageType2D::PointType,
+                                     DistPtPairType &maxDiameterTuple);
 ImageType2D::PointType FindProjectionPoint2D(ImageType2D::PointType,
-  ImageType2D::PointType, ImageType2D::PointType);
+                                             ImageType2D::PointType, ImageType2D::PointType);
 
 int main( int argc, char ** argv )
 {
@@ -129,12 +130,12 @@ int main( int argc, char ** argv )
   // I believe the reason is in the handling of the boundary during nei
   // iterator traversal
   image = PadImage(image);
-    {
-      WriterType::Pointer writer = WriterType::New();
-      writer->SetFileName("padded.nhdr");
-      writer->SetInput(image);
-      writer->Update();
-    }
+  {
+  WriterType::Pointer writer = WriterType::New();
+  writer->SetFileName("padded.nhdr");
+  writer->SetInput(image);
+  writer->Update();
+  }
    
   DistPtPairType3D maxDiameterTuple;
   double maxDiameterEstimate;
@@ -182,7 +183,7 @@ int main( int argc, char ** argv )
 
   TransformType::Pointer transform = TransformType::New();
   ImageType::Pointer realignedImage = RealignVolume(image, maxDiameterTuple.second.first,
-    maxDiameterTuple.second.second, transform);
+                                                    maxDiameterTuple.second.second, transform);
   ImageType::PointType mdPt0, mdPt1;
   mdPt0 = transform->TransformPoint(maxDiameterTuple.second.first);
   mdPt1 = transform->TransformPoint(maxDiameterTuple.second.second);
@@ -204,12 +205,15 @@ int main( int argc, char ** argv )
   ExtractorType::Pointer extractor2 = ExtractorType::New();
   extractor2->SetInput(realignedImage);
   extractor2->SetExtractionRegion(extractionRegion);
-  try{
+  try
+    {
     extractor2->Update();
-  }catch(itk::ExceptionObject &e){
+    }
+  catch(itk::ExceptionObject &e)
+    {
     cout << "Exception in extractor2: " << e << endl;
     abort();
-  }
+    }
   
   ImageType2D::Pointer slice2 = extractor2->GetOutput();
   vector<ImageType2D::PointType> boundaryPts;
@@ -218,7 +222,6 @@ int main( int argc, char ** argv )
   // Here search for the max diameter is a bit different, because the diameter
   // segment has to intersect the first diameter we have already estimated
   ImageType2D::PointType intersectionPt;
-  ImageType2D::IndexType intersectionIdx;
 
   intersectionPt[0] = mdPt0[0];
   intersectionPt[1] = mdPt0[1];
@@ -311,7 +314,7 @@ int main( int argc, char ** argv )
 //  FindMaxDiameterTupleOrtho(slice, boundaryPoints, maxDiameterTuple2, 
 //    intersectionPt);
 
-    /*
+  /*
 //  if(outputFilename){
     WriterType::Pointer writer2 = WriterType::New();
     writer2->SetInput(realignedImage);
@@ -319,10 +322,11 @@ int main( int argc, char ** argv )
     writer2->Update();
 //  }*/
  
-  return 0;
+    return 0;
 }
 
-ImageType::IndexType FindLargestAreaSlice(ImageType::Pointer image){
+ImageType::IndexType FindLargestAreaSlice(ImageType::Pointer image)
+{
   ImageType::SizeType size = image->GetLargestPossibleRegion().GetSize();
   unsigned i, j;
   double* sliceAcc[3];
@@ -338,14 +342,16 @@ ImageType::IndexType FindLargestAreaSlice(ImageType::Pointer image){
   memset(sliceAcc[2], 0, sizeof(double)*size[2]);
 
   IteratorType it(image, image->GetLargestPossibleRegion());
-  for(it.GoToBegin();!it.IsAtEnd();++it){
-    if(it.Get()){
+  for(it.GoToBegin();!it.IsAtEnd();++it)
+    {
+    if(it.Get())
+      {
       ImageType::IndexType idx = it.GetIndex();
       sliceAcc[0][idx[0]]++;
       sliceAcc[1][idx[1]]++;
       sliceAcc[2][idx[2]]++;
+      }
     }
-  }
 
   ImageType::IndexType maxAreaIdx;
   double maxArea = 0;
@@ -357,17 +363,20 @@ ImageType::IndexType FindLargestAreaSlice(ImageType::Pointer image){
   for(i=0;i<size[2];i++)
     sliceAcc[2][i] *= spacing[0]*spacing[1];
 
-  for(i=0;i<3;i++){
-    for(j=0;j<size[i];j++){
-      if(sliceAcc[i][j]>maxArea){
+  for(i=0;i<3;i++)
+    {
+    for(j=0;j<size[i];j++)
+      {
+      if(sliceAcc[i][j]>maxArea)
+        {
         maxAreaIdx[0] = 0;
         maxAreaIdx[1] = 0;
         maxAreaIdx[2] = 0;
         maxAreaIdx[i] = j;
         maxArea = sliceAcc[i][j];
+        }
       }
     }
-  }
 
   delete [] sliceAcc[0];
   delete [] sliceAcc[1];
@@ -375,15 +384,16 @@ ImageType::IndexType FindLargestAreaSlice(ImageType::Pointer image){
 
   // TODO: convert this in physical units
   cout << "Max segmentation slice area is " << maxArea 
-    << ", slice extraction index: " << maxAreaIdx << endl;
+       << ", slice extraction index: " << maxAreaIdx << endl;
   cout << "(non-zero component of slice extraction index defines \
     the direction and slice within this direction)" << endl;
   return maxAreaIdx;
 }
 
-ImageType::IndexType FindLargestAreaSliceAlongDirection(ImageType::Pointer image, int dir){
+ImageType::IndexType FindLargestAreaSliceAlongDirection(ImageType::Pointer image, int dir)
+{
   ImageType::SizeType size = image->GetLargestPossibleRegion().GetSize();
-  unsigned i, j;
+  unsigned j;
   double* sliceAcc;
   ImageType::SpacingType spacing = image->GetSpacing();
 
@@ -393,88 +403,102 @@ ImageType::IndexType FindLargestAreaSliceAlongDirection(ImageType::Pointer image
   memset(sliceAcc, 0, sizeof(double)*size[dir]);
 
   IteratorType it(image, image->GetLargestPossibleRegion());
-  for(it.GoToBegin();!it.IsAtEnd();++it){
-    if(it.Get()){
+  for(it.GoToBegin();!it.IsAtEnd();++it)
+    {
+    if(it.Get())
+      {
       ImageType::IndexType idx = it.GetIndex();
       sliceAcc[idx[dir]]++;
+      }
     }
-  }
 
   ImageType::IndexType maxAreaIdx;
   double maxArea = 0;
 
   // find pixel area in the direction of interest
   double pixelArea;
-  switch(dir){
-  case 0: pixelArea = spacing[1]*spacing[2]; break;
-  case 1: pixelArea = spacing[0]*spacing[2]; break;
-  case 2: pixelArea = spacing[0]*spacing[1]; break;
-  }
+  switch(dir)
+    {
+    case 0: pixelArea = spacing[1]*spacing[2]; break;
+    case 1: pixelArea = spacing[0]*spacing[2]; break;
+    case 2: pixelArea = spacing[0]*spacing[1]; break;
+    }
 
   maxAreaIdx[0] = 0;
   maxAreaIdx[1] = 0;
   maxAreaIdx[2] = 0;
 
-  for(j=0;j<size[dir];j++){
-    if(sliceAcc[j]>maxArea){
+  for(j=0;j<size[dir];j++)
+    {
+    if(sliceAcc[j]>maxArea)
+      {
       maxAreaIdx[dir] = j;
       maxArea = sliceAcc[j];
+      }
     }
-  }
 
   maxArea *= pixelArea;
   delete [] sliceAcc;
 
   // TODO: convert this in physical units
   cout << "Max segmentation slice area is " << maxArea 
-    << ", slice extraction index: " << maxAreaIdx << endl;
+       << ", slice extraction index: " << maxAreaIdx << endl;
   cout << "(non-zero component of slice extraction index defines \
     the direction and slice within this direction)" << endl;
   return maxAreaIdx;
 }
 
-double PtDistanceSquared(Point2DType p0, Point2DType p1){
+double PtDistanceSquared(Point2DType p0, Point2DType p1)
+{
   return (p0[0]-p1[0])*(p0[0]-p1[0])+
     (p0[1]-p1[1])*(p0[1]-p1[1]);
 }
 
-double PtDistance(Point2DType p0, Point2DType p1){
+double PtDistance(Point2DType p0, Point2DType p1)
+{
   return sqrt((p0[0]-p1[0])*(p0[0]-p1[0])+
-    (p0[1]-p1[1])*(p0[1]-p1[1]));
+              (p0[1]-p1[1])*(p0[1]-p1[1]));
 }
 
 // Use Bresenham line iterator to find the diameter segments that are outside
 // the binary segmentation, and update the initial estimate accodingly
 double EstimateDiameterBresenham(ImageType2D::Pointer slice, 
-  ImageType2D::IndexType idx0, ImageType2D::IndexType idx1, 
-  double currentDiameter){
+                                 ImageType2D::IndexType idx0, ImageType2D::IndexType idx1, 
+                                 double currentDiameter)
+{
   bool outside = false;
   LineIteratorType2D lit(slice, idx0, idx1);
   ImageType2D::IndexType outsideIdx0, outsideIdx1;
-  for(lit.GoToBegin();!lit.IsAtEnd();++lit){
-    if(!lit.Get()){
-      if(!outside){
+  for(lit.GoToBegin();!lit.IsAtEnd();++lit)
+    {
+    if(!lit.Get())
+      {
+      if(!outside)
+        {
         outside = true;
         outsideIdx0 = lit.GetIndex();
+        }
       }
-    }
-    if(lit.Get()){
-      if(outside){
+    if(lit.Get())
+      {
+      if(outside)
+        {
         ImageType2D::PointType pt0, pt1;
         outsideIdx1 = lit.GetIndex();
         slice->TransformIndexToPhysicalPoint(outsideIdx0, pt0);
         slice->TransformIndexToPhysicalPoint(outsideIdx1, pt1);
         currentDiameter -= PtDistance(pt0, pt1);
         outside = false;
+        }
       }
     }
-  }
   return currentDiameter;
 }
 
 ImageType::Pointer RealignVolume(ImageType::Pointer inputImage, 
-  ImageType::PointType pt0, ImageType::PointType pt1,
-  TransformType::Pointer &transform){
+                                 ImageType::PointType pt0, ImageType::PointType pt1,
+                                 TransformType::Pointer &transform)
+{
 
   TransformInitializerType::Pointer tInit =
     TransformInitializerType::New();
@@ -513,9 +537,10 @@ ImageType::Pointer RealignVolume(ImageType::Pointer inputImage,
 }
 
 ImageType::Pointer RealignVolume(ImageType::Pointer inputImage, 
-  ImageType::IndexType extractionIndex, 
-  ImageType::IndexType idx0, ImageType::IndexType idx1,
-  TransformType::Pointer &transform){
+                                 ImageType::IndexType extractionIndex, 
+                                 ImageType::IndexType idx0, ImageType::IndexType idx1,
+                                 TransformType::Pointer &transform)
+{
 
   TransformInitializerType::Pointer tInit =
     TransformInitializerType::New();
@@ -605,7 +630,8 @@ ImageType::Pointer RealignVolume(ImageType::Pointer inputImage,
   return resampler->GetOutput();
 }
 
-ImageType::Pointer PadImage(ImageType::Pointer image){
+ImageType::Pointer PadImage(ImageType::Pointer image)
+{
 
   ImageType::Pointer paddedImage = ImageType::New();
   ImageType::RegionType region = image->GetLargestPossibleRegion();
@@ -632,19 +658,21 @@ ImageType::Pointer PadImage(ImageType::Pointer image){
   paddedImage->FillBuffer(0);
   paddedImage->SetSpacing(image->GetSpacing());
 
-  for(index[0];index[0]<size[0];index[0]++){
+  for(index[0];index[0]<static_cast<long>(size[0]);index[0]++)
+    {
     index[1] = 0;
-    for(index[1];index[1]<size[1];index[1]++){
+    for(index[1];index[1]<static_cast<long>(size[1]);index[1]++)
+      {
       index[2] = 0;
-      for(index[2];index[2]<size[2];index[2]++){
-        ImageType::IndexType newIndex;
+      for(index[2];index[2]<static_cast<long>(size[2]);index[2]++)
+        {
         newIndex[0] = index[0]+size[0]/4;
         newIndex[1] = index[1]+size[1]/4;
         newIndex[2] = index[2]+size[2]/4;
         paddedImage->SetPixel(newIndex, image->GetPixel(index));
+        }
       }
     }
-  }
 
   return paddedImage;
 
@@ -700,39 +728,44 @@ ImageType::Pointer PadImage(ImageType::Pointer image){
 }
 
 // Get the boundary pixels
-void FindBoundaryPoints(ImageType2D::Pointer slice,vector<ImageType2D::PointType>& boundaryPts){
+void FindBoundaryPoints(ImageType2D::Pointer slice,vector<ImageType2D::PointType>& boundaryPts)
+{
   boundaryPts.clear();
   int i;
   NeiIteratorType::RadiusType neiRadius;
   neiRadius.Fill(1);
   NeiIteratorType neiIt(neiRadius, slice, slice->GetLargestPossibleRegion());
-  for(neiIt.GoToBegin();!neiIt.IsAtEnd();++neiIt){
+  for(neiIt.GoToBegin();!neiIt.IsAtEnd();++neiIt)
+    {
     if(neiIt.GetPixel(4)==0)
       continue;
     for(i=0;i<9;i++)
-      if(neiIt.GetPixel(i)==0){
+      if(neiIt.GetPixel(i)==0)
+        {
         ImageType2D::PointType boundaryPt;
         ImageType2D::IndexType boundaryIdx;
         neiIt.SetPixel(4, neiIt.GetPixel(4)*4);
         slice->TransformIndexToPhysicalPoint(neiIt.GetIndex(), boundaryPt);
         slice->TransformPhysicalPointToIndex(boundaryPt, boundaryIdx);
         /*
-        if(neiIt.GetIndex() != boundaryIdx){
+        if(neiIt.GetIndex() != boundaryIdx)
+{
           cout << "Conversion failure: " << endl;
           cout << "Input index: " << neiIt.GetIndex() << endl;
           cout << "Output point: " << boundaryPt << endl;
           cout << "Output index: " << boundaryIdx << endl;
           abort();
         }*/
-        boundaryPts.push_back(boundaryPt);
-        break;
-      }
-  }
+           boundaryPts.push_back(boundaryPt);
+           break;
+        }
+    }
 }
 
 double FindMaxDiameterTuple(ImageType2D::Pointer slice, 
-  vector<ImageType2D::PointType> &boundaryPts,
-  DistPtPairType &maxDiameterTuple){
+                            vector<ImageType2D::PointType> &boundaryPts,
+                            DistPtPairType &maxDiameterTuple)
+{
   int numBoundaryPts = boundaryPts.size();
   int i, j;
   vector<DistPtPairType> distPtVector;
@@ -742,18 +775,21 @@ double FindMaxDiameterTuple(ImageType2D::Pointer slice,
   // Find all distance combinations, excluding duplicates
   double maxDist = 0;
   PtPairType maxDiameterPair;
-  for(i=0;i<numBoundaryPts;i++){
-    for(j=i+1;j<numBoundaryPts;j++){
+  for(i=0;i<numBoundaryPts;i++)
+    {
+    for(j=i+1;j<numBoundaryPts;j++)
+      {
       double dist;
       dist = PtDistance(boundaryPts[i],boundaryPts[j]);
       distPtVector.push_back(
         DistPtPairType(dist,PtPairType(boundaryPts[i],boundaryPts[j])));
-      if(dist>maxDist){
+      if(dist>maxDist)
+        {
         maxDiameterPair = PtPairType(boundaryPts[i],boundaryPts[j]);
         maxDist = dist;
+        }
       }
     }
-  }
 
   // sort them by the estimated diameter
   sort(distPtVector.begin(), distPtVector.end(), DistPtPairSort());
@@ -774,7 +810,8 @@ double FindMaxDiameterTuple(ImageType2D::Pointer slice,
   i = 0;
   int tupleCnt = distPtVector.size();
   for(vector<DistPtPairType>::const_iterator pIt = distPtVector.begin();
-    pIt!=distPtVector.end();++pIt,++i){
+      pIt!=distPtVector.end();++pIt,++i)
+    {
 
     double currentDiameter;
 
@@ -785,22 +822,24 @@ double FindMaxDiameterTuple(ImageType2D::Pointer slice,
     
     // if the current estimate is larger than the distance between the next
     // tuple of points, then we have the largest diameter possible
-    if(currentDiameter > diameterEstimate){
+    if(currentDiameter > diameterEstimate)
+      {
       diameterEstimate = currentDiameter;
       maxDiameterTuple = *pIt;
-    }
+      }
 
     if(i>tupleCnt-1)
       if(diameterEstimate > (*(pIt+1)).first)
         break;
-  }
+    }
   
   return diameterEstimate;
 }
 
 double FindMaxDiameterTupleThruPoint(ImageType2D::Pointer slice, 
-  vector<ImageType2D::PointType> &boundaryPts, ImageType2D::PointType centerPt,
-  DistPtPairType &maxDiameterTuple){
+                                     vector<ImageType2D::PointType> &boundaryPts, ImageType2D::PointType centerPt,
+                                     DistPtPairType &maxDiameterTuple)
+{
   int numBoundaryPts = boundaryPts.size();
   int i, j;
   vector<DistPtPairType> distPtVector;
@@ -808,8 +847,10 @@ double FindMaxDiameterTupleThruPoint(ImageType2D::Pointer slice,
   // Find all distance combinations, excluding duplicates
   double maxDist = 0;
   PtPairType maxDiameterPair;
-  for(i=0;i<numBoundaryPts;i++){
-    for(j=i+1;j<numBoundaryPts;j++){
+  for(i=0;i<numBoundaryPts;i++)
+    {
+    for(j=i+1;j<numBoundaryPts;j++)
+      {
       double dist;
 
       ImageType2D::PointType projectionPt;
@@ -822,12 +863,13 @@ double FindMaxDiameterTupleThruPoint(ImageType2D::Pointer slice,
       dist = PtDistance(boundaryPts[i],boundaryPts[j]);
       distPtVector.push_back(
         DistPtPairType(dist,PtPairType(boundaryPts[i],boundaryPts[j])));
-      if(dist>maxDist){
+      if(dist>maxDist)
+        {
         maxDiameterPair = PtPairType(boundaryPts[i],boundaryPts[j]);
         maxDist = dist;
+        }
       }
     }
-  }
 
   // sort them by the estimated diameter
   sort(distPtVector.begin(), distPtVector.end(), DistPtPairSort());
@@ -848,7 +890,8 @@ double FindMaxDiameterTupleThruPoint(ImageType2D::Pointer slice,
   i = 0;
   int tupleCnt = distPtVector.size();
   for(vector<DistPtPairType>::const_iterator pIt = distPtVector.begin();
-    pIt!=distPtVector.end();++pIt,++i){
+      pIt!=distPtVector.end();++pIt,++i)
+    {
 
     double currentDiameter;
 
@@ -859,20 +902,22 @@ double FindMaxDiameterTupleThruPoint(ImageType2D::Pointer slice,
     
     // if the current estimate is larger than the distance between the next
     // tuple of points, then we have the largest diameter possible
-    if(currentDiameter > diameterEstimate){
+    if(currentDiameter > diameterEstimate)
+      {
       diameterEstimate = currentDiameter;
       maxDiameterTuple = *pIt;
-    }
+      }
 
     if(i>tupleCnt-1)
       if(diameterEstimate > (*(pIt+1)).first)
         break;
-  }
+    }
   
   return diameterEstimate;
 }
 
-double GetMaxDiameterEstimate(ImageType::Pointer image, DistPtPairType3D& maxDiameterTuple3D){
+double GetMaxDiameterEstimate(ImageType::Pointer image, DistPtPairType3D& maxDiameterTuple3D)
+{
   ImageType::IndexType extractionIndex = FindLargestAreaSlice(image);
   ImageType::RegionType extractionRegion;
   ImageType::SizeType extractionSize = image->GetLargestPossibleRegion().GetSize();
@@ -891,19 +936,23 @@ double GetMaxDiameterEstimate(ImageType::Pointer image, DistPtPairType3D& maxDia
   ExtractorType::Pointer extractor = ExtractorType::New();
   extractor->SetInput(image);
   extractor->SetExtractionRegion(extractionRegion);
-  try{
+  try
+    {
     extractor->Update();
-  }catch(itk::ExceptionObject &e){
+    }
+  catch(itk::ExceptionObject &e)
+    {
     cout << "Exception in extractor: " << e << endl;
     abort();
-  }
+    }
 
   ImageType2D::Pointer slice = extractor->GetOutput();
-    if(1){
-      WriterType2D::Pointer writer = WriterType2D::New();
-      writer->SetFileName("slice.mha");
-      writer->SetInput(slice);
-      writer->Update();
+  if(1)
+    {
+    WriterType2D::Pointer writer = WriterType2D::New();
+    writer->SetFileName("slice.mha");
+    writer->SetInput(slice);
+    writer->Update();
     }
   
 
@@ -919,16 +968,20 @@ double GetMaxDiameterEstimate(ImageType::Pointer image, DistPtPairType3D& maxDia
   cout << "Updated max diameter estimate: " << diameterEstimate << endl;
   
   ImageType::PointType maxDiameterPt0, maxDiameterPt1;
-  for(i=0,j=0;i<3;i++){
-    if(extractionIndex[i]){
+  for(i=0,j=0;i<3;i++)
+    {
+    if(extractionIndex[i])
+      {
       maxDiameterPt0[i] = extractionPoint[i];
       maxDiameterPt1[i] = extractionPoint[i];
-    } else {
+      }
+    else
+      {
       maxDiameterPt0[i] = maxDiameterTuple.second.first[j];
       maxDiameterPt1[i] = maxDiameterTuple.second.second[j];
       j++;
+      }
     }
-  }
 
   maxDiameterTuple3D.first = diameterEstimate;
   maxDiameterTuple3D.second.first = maxDiameterPt0;
@@ -937,7 +990,8 @@ double GetMaxDiameterEstimate(ImageType::Pointer image, DistPtPairType3D& maxDia
   return diameterEstimate;
 }
 
-void UpdateImageWithDiameter(ImageType::Pointer image, ImageType::PointType pt0, ImageType::PointType pt1){
+void UpdateImageWithDiameter(ImageType::Pointer image, ImageType::PointType pt0, ImageType::PointType pt1)
+{
   ImageType::IndexType idx0, idx1;
 
   image->TransformPhysicalPointToIndex(pt0, idx0);
@@ -949,7 +1003,8 @@ void UpdateImageWithDiameter(ImageType::Pointer image, ImageType::PointType pt0,
       lit.Set(lit.Get()+80);
 }
 
-void SaveImage(ImageType::Pointer image, const char* name){
+void SaveImage(ImageType::Pointer image, const char* name)
+{
   WriterType::Pointer writer1 = WriterType::New();
   writer1->SetInput(image);
   writer1->SetFileName(name);
@@ -959,7 +1014,8 @@ void SaveImage(ImageType::Pointer image, const char* name){
 // Project point p2 on the (p0,p1) line
 // from http://local.wasp.uwa.edu.au/~pbourke/geometry/pointline/
 ImageType2D::PointType FindProjectionPoint2D(ImageType2D::PointType p0,
-  ImageType2D::PointType p1, ImageType2D::PointType p2){
+                                             ImageType2D::PointType p1, ImageType2D::PointType p2)
+{
   ImageType2D::PointType projectionPt;
   double u;
 
