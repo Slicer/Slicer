@@ -56,7 +56,8 @@ int main(int argc, char *argv[])
   for( si1.GoToBegin(), si2.GoToBegin(); !si1.IsAtEnd(); ++si1, ++si2)
     {
       index = si1.GetIndex();
-      if( (index[2] > 1) && (index[2] < size[2] - 2) )
+      if( (index[2] > 1) &&
+          (index[2] < static_cast<SegImageType::IndexType::IndexValueType>(size[2]) - 2) )
     {// I'm getting rid of the first and last two slices because
       // the demons registration algorithm doesn't handle boundaries
       // correctly.
@@ -70,7 +71,8 @@ int main(int argc, char *argv[])
   for( si1.GoToBegin(), si2.GoToBegin(); !si1.IsAtEnd(); ++si1, ++si2 )
     {
       index = si1.GetIndex();
-      if( (index[2] > 1) && (index[2] < size[2] - 2) )
+      if( (index[2] > 1) &&
+          (index[2] < static_cast<SegImageType::IndexType::IndexValueType>(size[2]) - 2) )
     {// I'm getting rid of the first and last two slices because
       // the demons registration algorithm doesn't handle boundaries
       // correctly.
