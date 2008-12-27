@@ -203,7 +203,7 @@ vtkMimxBoundingBoxWidget::vtkMimxBoundingBoxWidget()
 //              this->PWCallback, 0.0);
   for(i=0; i <8; i++)
     {
-    (vtkMimxModPointWidget*) (this->PointWidget->GetItemAsObject(i))
+    ((vtkMimxModPointWidget*) (this->PointWidget->GetItemAsObject(i)))
       ->AddObserver(vtkCommand::InteractionEvent,this->PWCallback, 0.0);
     }
   this->CurrentHandle = NULL;
@@ -499,7 +499,7 @@ void vtkMimxBoundingBoxWidget::OnLeftButtonDown()
     {
     this->InvokeEvent(vtkCommand::StartInteractionEvent,NULL);
     this->State = vtkMimxBoundingBoxWidget::MovingHandle;
-    this->HighlightHandle(path->GetFirstNode()->GetProp());
+    this->HighlightHandle(path->GetFirstNode()->GetViewProp());
     this->EnablePointWidget();
     forward = this->ForwardEvent(vtkCommand::LeftButtonPressEvent);
     }

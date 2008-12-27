@@ -407,7 +407,7 @@ void vtkMimxPolyDataWidget::OnLeftButtonDown()
     {
     this->InvokeEvent(vtkCommand::StartInteractionEvent,NULL);
     this->State = vtkMimxPolyDataWidget::MovingHandle;
-    this->HighlightHandle(path->GetFirstNode()->GetProp());
+    this->HighlightHandle(path->GetFirstNode()->GetViewProp());
     this->EnablePointWidget();
     forward = this->ForwardEvent(vtkCommand::LeftButtonPressEvent);
     }
@@ -824,7 +824,7 @@ void vtkMimxPolyDataWidget::SetInput(vtkPolyData* polydata)
 
   for(int i=0; i < PolyData->GetPoints()->GetNumberOfPoints(); i++)
     {
-    (vtkMimxPolyDataWidget*) (this->PointWidget->GetItemAsObject(i))
+    ((vtkMimxPolyDataWidget*) (this->PointWidget->GetItemAsObject(i)))
       ->AddObserver(vtkCommand::InteractionEvent,this->PWCallback, 0.0);
     }
   this->PositionHandles();

@@ -545,7 +545,7 @@ void vtkMimxUnstructuredGridWidget::Execute(vtkMimxUnstructuredGridWidget *Self)
 
   for(int i=0; i < Self->UGrid->GetNumberOfPoints(); i++)
     {
-    (vtkMimxModPointWidget*) (Self->PointWidget->GetItemAsObject(i))
+    ((vtkMimxModPointWidget*) (Self->PointWidget->GetItemAsObject(i)))
       ->AddObserver(vtkCommand::InteractionEvent,Self->PWCallback, 0.0);
     }
   Self->PositionHandles(Self);
