@@ -447,7 +447,7 @@ void vtkSlicerMeasurementFrameWidget::CreateWidget( )
 
   //fill default angles in combobox
   const char *angleValues [] = {"+90", "-90", "+180", "-180", "+30", "-30"};
-  for (int i=0; i<sizeof(angleValues)/sizeof(angleValues[0]); i++)
+  for (size_t i=0; i<sizeof(angleValues)/sizeof(angleValues[0]); i++)
     {
     this->AngleCombobox->AddValue(angleValues[i]);
     }

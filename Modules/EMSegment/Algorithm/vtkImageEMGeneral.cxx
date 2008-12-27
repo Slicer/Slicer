@@ -666,7 +666,7 @@ int vtkImageEMGeneral::CalculateGaussLookupTable(double *GaussLookupTable,double
       F1 = ValueVec[1]*ValueVec[1]*InvCovMatrix[1][1];
       F2 = ValueVec[1]*(InvCovMatrix[0][1] + InvCovMatrix[1][0]);
       }
-      for(int i=0 ; i< TableSize; i++) {
+      for(i=0 ; i< TableSize; i++) {
     GaussLookupTable[GaussTableIndex] = vtkImageEMGeneral::FastGaussMulti(InvSqrtDetCovMatrix, 
                                 F1 + ValueTable[0][i]*(F2 + InvCovMatrix[0][0]*ValueTable[0][i]), NumberOfInputImages);
     GaussTableIndex ++;

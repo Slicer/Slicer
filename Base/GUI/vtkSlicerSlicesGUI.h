@@ -53,15 +53,15 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesGUI : public vtkSlicerModuleGUI
   int GetNumberOfSliceGUI();
   vtkSlicerSliceGUI* GetFirstSliceGUI ();
   vtkSlicerSliceGUI* GetNextSliceGUI(const char *previouslayoutName);
-  char* GetFirstSliceGUILayoutName();
-  char* GetNextSliceGUILayoutName(const char *previouslayoutName);
+  const char* GetFirstSliceGUILayoutName();
+  const char* GetNextSliceGUILayoutName(const char *previouslayoutName);
 
   // Description:
   // More traditional VTK style access methods.  Uses a linear time
   // walk of the data structures. Use the GetFirst/GetNext methods if
   // there are a lot of slice guis
   vtkSlicerSliceGUI* GetNthSliceGUI(int n);
-  char *GetNthSliceGUILayoutName(int n);
+  const char *GetNthSliceGUILayoutName(int n);
   
   // Description:
   // Build the SlicesGUI's UIPanel and three main SliceGUIs 

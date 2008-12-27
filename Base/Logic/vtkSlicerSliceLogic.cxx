@@ -431,14 +431,14 @@ void vtkSlicerSliceLogic::SetSliceCompositeNode(vtkMRMLSliceCompositeNode *slice
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceLogic::SetBackgroundLayer(vtkSlicerSliceLayerLogic *BackgroundLayer)
+void vtkSlicerSliceLogic::SetBackgroundLayer(vtkSlicerSliceLayerLogic *backgroundLayer)
 {
   if (this->BackgroundLayer)
     {
     this->BackgroundLayer->SetAndObserveMRMLScene( NULL );
     this->BackgroundLayer->Delete();
     }
-  this->BackgroundLayer = BackgroundLayer;
+  this->BackgroundLayer = backgroundLayer;
 
   if (this->BackgroundLayer)
     {
@@ -461,14 +461,14 @@ void vtkSlicerSliceLogic::SetBackgroundLayer(vtkSlicerSliceLayerLogic *Backgroun
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceLogic::SetForegroundLayer(vtkSlicerSliceLayerLogic *ForegroundLayer)
+void vtkSlicerSliceLogic::SetForegroundLayer(vtkSlicerSliceLayerLogic *foregroundLayer)
 {
   if (this->ForegroundLayer)
     {
     this->ForegroundLayer->SetAndObserveMRMLScene( NULL );
     this->ForegroundLayer->Delete();
     }
-  this->ForegroundLayer = ForegroundLayer;
+  this->ForegroundLayer = foregroundLayer;
 
   if (this->ForegroundLayer)
     {
@@ -491,14 +491,14 @@ void vtkSlicerSliceLogic::SetForegroundLayer(vtkSlicerSliceLayerLogic *Foregroun
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceLogic::SetLabelLayer(vtkSlicerSliceLayerLogic *LabelLayer)
+void vtkSlicerSliceLogic::SetLabelLayer(vtkSlicerSliceLayerLogic *labelLayer)
 {
   if (this->LabelLayer)
     {
     this->LabelLayer->SetAndObserveMRMLScene( NULL );
     this->LabelLayer->Delete();
     }
-  this->LabelLayer = LabelLayer;
+  this->LabelLayer = labelLayer;
 
   if (this->LabelLayer)
     {
@@ -521,9 +521,9 @@ void vtkSlicerSliceLogic::SetLabelLayer(vtkSlicerSliceLayerLogic *LabelLayer)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceLogic::SetForegroundOpacity(double ForegroundOpacity)
+void vtkSlicerSliceLogic::SetForegroundOpacity(double foregroundOpacity)
 {
-  this->ForegroundOpacity = ForegroundOpacity;
+  this->ForegroundOpacity = foregroundOpacity;
 
   if ( this->Blend->GetOpacity(1) != this->ForegroundOpacity )
     {
@@ -533,9 +533,9 @@ void vtkSlicerSliceLogic::SetForegroundOpacity(double ForegroundOpacity)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceLogic::SetLabelOpacity(double LabelOpacity)
+void vtkSlicerSliceLogic::SetLabelOpacity(double labelOpacity)
 {
-  this->LabelOpacity = LabelOpacity;
+  this->LabelOpacity = labelOpacity;
 
   if ( this->Blend->GetOpacity(2) != this->LabelOpacity )
     {

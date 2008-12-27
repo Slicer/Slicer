@@ -128,7 +128,7 @@ int vtkSlicerFiberBundleLogic::AddFiberBundles (const char* dirname, const char*
         {
         std::string fullPath = std::string(dir.GetPath())
             + "/" + filename;
-        if (this->AddFiberBundle((char *)fullPath.c_str()) == NULL) 
+        if (this->AddFiberBundle(fullPath.c_str()) == NULL) 
           {
           res = 0;
           }
@@ -158,7 +158,7 @@ int vtkSlicerFiberBundleLogic::AddFiberBundles (const char* dirname, std::vector
           {
           std::string fullPath = std::string(dir.GetPath())
               + "/" + filename;
-          if (this->AddFiberBundle((char *)fullPath.c_str()) == NULL) 
+          if (this->AddFiberBundle(fullPath.c_str()) == NULL) 
             {
             res = 0;
             }

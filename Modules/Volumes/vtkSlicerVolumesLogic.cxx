@@ -286,7 +286,6 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
   displayNode->SetInterpolate(interpolate);
   
   bool useURI = false;
-  vtksys_stl::string name;
   const char *localFile;
 
   if (this->GetMRMLScene() &&

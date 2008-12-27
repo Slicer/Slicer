@@ -111,7 +111,7 @@ vtkSlicerViewControlGUI::vtkSlicerViewControlGUI ( )
   this->FOVBoxActor = NULL;
 
   //Enable/Disable navigation window
-  this->EnableDisableNavButton;
+  this->EnableDisableNavButton = NULL;
   
   this->ViewNode = NULL;
   this->RedSliceNode = NULL;
@@ -1110,10 +1110,8 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
     if ( app != NULL )
       {
       vtkKWCheckButton *b = vtkKWCheckButton::SafeDownCast ( caller );
-      vtkKWRadioButton *r = vtkKWRadioButton::SafeDownCast ( caller );
       vtkKWPushButton *p = vtkKWPushButton::SafeDownCast ( caller );
       vtkKWMenu *m = vtkKWMenu::SafeDownCast ( caller );
-      vtkKWScale *s = vtkKWScale::SafeDownCast ( caller );
       vtkSlicerInteractorStyle *istyle = vtkSlicerInteractorStyle::SafeDownCast ( caller );
       vtkSlicerViewerInteractorStyle *vstyle = vtkSlicerViewerInteractorStyle::SafeDownCast ( caller );
 
@@ -1142,22 +1140,22 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
 
       // Make requested changes to the ViewNode      
       // save state for undo
-      if ( (m == this->StereoButton->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent) ||
-           (m == this->VisibilityButton->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent) ||
-           (m == this->StereoButton->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent) ||
-           (m == this->ScreenGrabButton->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent) ||           
-           (m == this->SelectSceneSnapshotMenuButton->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent) ||
-           (m == this->SelectSceneSnapshotMenuButton->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent) ||
-           (p == this->CenterButton) && (event == vtkKWPushButton::InvokedEvent) ||                      
-           (p == this->OrthoButton) && (event == vtkKWPushButton::InvokedEvent) ||                      
-           (p == this->PitchButton) && (event == vtkKWPushButton::InvokedEvent) ||
-           (p == this->RollButton) && (event == vtkKWPushButton::InvokedEvent) ||
-           (p == this->YawButton) && (event == vtkKWPushButton::InvokedEvent) ||
-           (p == this->SceneSnapshotButton) && (event == vtkKWPushButton::InvokedEvent) ||
-           (p == this->ZoomInButton) && (event == vtkKWPushButton::InvokedEvent) ||
-           (p == this->ZoomOutButton) && (event == vtkKWPushButton::InvokedEvent) ||
-           (b == this->SpinButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent) ||                      
-           (b == this->RockButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent ) )
+      if ( (m == this->StereoButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent) ||
+           (m == this->VisibilityButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent) ||
+           (m == this->StereoButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent) ||
+           (m == this->ScreenGrabButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent) ||           
+           (m == this->SelectSceneSnapshotMenuButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent) ||
+           (m == this->SelectSceneSnapshotMenuButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent) ||
+           (p == this->CenterButton && event == vtkKWPushButton::InvokedEvent) ||                      
+           (p == this->OrthoButton && event == vtkKWPushButton::InvokedEvent) ||                      
+           (p == this->PitchButton && event == vtkKWPushButton::InvokedEvent) ||
+           (p == this->RollButton && event == vtkKWPushButton::InvokedEvent) ||
+           (p == this->YawButton && event == vtkKWPushButton::InvokedEvent) ||
+           (p == this->SceneSnapshotButton && event == vtkKWPushButton::InvokedEvent) ||
+           (p == this->ZoomInButton && event == vtkKWPushButton::InvokedEvent) ||
+           (p == this->ZoomOutButton && event == vtkKWPushButton::InvokedEvent) ||
+           (b == this->SpinButton && event == vtkKWCheckButton::SelectedStateChangedEvent) ||                      
+           (b == this->RockButton && event == vtkKWCheckButton::SelectedStateChangedEvent ) )
         {
         if ( m == this->ScreenGrabButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
           {
@@ -2025,9 +2023,6 @@ void vtkSlicerViewControlGUI::MainViewSetFocalPoint ( double x, double y, double
     vtkMRMLViewNode *vn = this->GetActiveView();
     if ( vn != NULL )
       {
-      double fov = vn->GetFieldOfView ( );
-      double widefov = fov*3;
-    
       vtkMRMLCameraNode *cn = this->GetActiveCamera();
       if ( cn != NULL )
         {
@@ -2048,7 +2043,6 @@ void vtkSlicerViewControlGUI::MainViewRock ( )
 {
   if ( this->ApplicationGUI )
     {
-    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
     vtkMRMLViewNode *vn = this->GetActiveView();
     if ( vn != NULL )
       {
@@ -2105,7 +2099,6 @@ void vtkSlicerViewControlGUI::MainViewSpin ( )
 {
   if ( this->ApplicationGUI )
     {
-    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
     vtkMRMLViewNode *vn = this->GetActiveView();
     if ( vn != NULL )  
       {
@@ -2764,7 +2757,6 @@ void vtkSlicerViewControlGUI::ProcessMRMLEvents ( vtkObject *caller,
 
 
 
-  vtkMRMLScene *scene = vtkMRMLScene::SafeDownCast ( caller );
   if ( this->GetMRMLScene() == NULL )
     {
     vtkErrorWithObjectMacro ( this, << "*********MRMLCallback called recursively?" << endl);
@@ -2775,8 +2767,8 @@ void vtkSlicerViewControlGUI::ProcessMRMLEvents ( vtkObject *caller,
 
   // has a node been added or deleted?
   if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
-       && (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent )
-       || (event == vtkMRMLScene::SceneCloseEvent) || (event == vtkMRMLScene::NewSceneEvent ) )       
+       && ((event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent )
+           || (event == vtkMRMLScene::SceneCloseEvent) || (event == vtkMRMLScene::NewSceneEvent ) ) )
     {
     this->UpdateFromMRML();
     this->UpdateNavigationWidgetViewActors ( );
@@ -2897,7 +2889,6 @@ void vtkSlicerViewControlGUI::ViewControlACallback ( )
   // where A-vector is wrt camera view vector.
    if ( this->ApplicationGUI)
      {
-     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
      vtkMRMLViewNode *vn = this->GetActiveView();
      if ( vn != NULL )  
        {
@@ -2920,7 +2911,6 @@ void vtkSlicerViewControlGUI::ViewControlPCallback ( )
 {
    if ( this->ApplicationGUI)
      {
-     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
      vtkMRMLViewNode *vn = this->GetActiveView();
      if ( vn != NULL )  
        {
@@ -2943,7 +2933,6 @@ void vtkSlicerViewControlGUI::ViewControlSCallback ( )
 {
    if ( this->ApplicationGUI)
      {
-     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
      vtkMRMLViewNode *vn = this->GetActiveView();
      if ( vn != NULL )  
        {
@@ -2966,7 +2955,6 @@ void vtkSlicerViewControlGUI::ViewControlICallback ( )
 {
   if ( this->ApplicationGUI)
     {
-    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
     vtkMRMLViewNode *vn = this->GetActiveView();
     if ( vn != NULL )  
       {
@@ -2990,7 +2978,6 @@ void vtkSlicerViewControlGUI::ViewControlRCallback ( )
 {
   if ( this->ApplicationGUI)
     {
-    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
     vtkMRMLViewNode *vn = this->GetActiveView();
     if ( vn != NULL )  
       {
@@ -3014,7 +3001,6 @@ void vtkSlicerViewControlGUI::ViewControlLCallback ( )
 {
   if ( this->ApplicationGUI)
     {
-    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
     vtkMRMLViewNode *vn = this->GetActiveView();
     if ( vn != NULL )  
       {
@@ -3036,7 +3022,6 @@ void vtkSlicerViewControlGUI::ViewControlLCallback ( )
 void vtkSlicerViewControlGUI::EnterViewAxisACallback ( ) {
   if ( this->ApplicationGUI)
     {
-    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
     vtkMRMLViewNode *vn = this->GetActiveView();
     if ( vn != NULL )  
       {
@@ -3065,7 +3050,6 @@ void vtkSlicerViewControlGUI::LeaveViewAxisACallback ( ) {
 void vtkSlicerViewControlGUI::EnterViewAxisPCallback ( ) {
   if ( this->ApplicationGUI)
     {
-    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
     vtkMRMLViewNode *vn = this->GetActiveView();
     if ( vn != NULL )  
       {
@@ -3093,7 +3077,6 @@ void vtkSlicerViewControlGUI::LeaveViewAxisPCallback ( ) {
 void vtkSlicerViewControlGUI::EnterViewAxisRCallback ( ) {
   if ( this->ApplicationGUI)
     {
-    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
     vtkMRMLViewNode *vn = this->GetActiveView();
     if ( vn != NULL )  
       {
@@ -3122,7 +3105,6 @@ void vtkSlicerViewControlGUI::LeaveViewAxisRCallback ( ) {
 void vtkSlicerViewControlGUI::EnterViewAxisLCallback ( ) {
   if ( this->ApplicationGUI)
     {
-    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
     vtkMRMLViewNode *vn = this->GetActiveView();
     if ( vn != NULL )  
       {
@@ -3151,7 +3133,6 @@ void vtkSlicerViewControlGUI::LeaveViewAxisLCallback ( ) {
 void vtkSlicerViewControlGUI::EnterViewAxisSCallback ( ) {
   if ( this->ApplicationGUI)
     {
-    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
     vtkMRMLViewNode *vn = this->GetActiveView();
     if ( vn != NULL )  
       {
@@ -3179,7 +3160,6 @@ void vtkSlicerViewControlGUI::LeaveViewAxisSCallback ( ) {
 void vtkSlicerViewControlGUI::EnterViewAxisICallback ( ) {
   if ( this->ApplicationGUI)
     {
-    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
     vtkMRMLViewNode *vn = this->GetActiveView();
     if ( vn != NULL )  
       {
@@ -3752,7 +3732,6 @@ void vtkSlicerViewControlGUI::UpdateMainViewerInteractorStyles ( )
 void vtkSlicerViewControlGUI::CheckAbort(void)
 {
     int pending=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetEventPending();
-    int pendingGUI=vtkKWTkUtilities::CheckForPendingInteractionEvents(this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow());
     if(pending!=0)//||pendingGUI!=0)
     {
         this->NavigationWidget->GetRenderWindow()->SetAbortRender(1);

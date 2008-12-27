@@ -158,8 +158,8 @@ void vtkMRMLEMSVolumeCollectionNode::Copy(vtkMRMLNode *rhs)
 
 void vtkMRMLEMSVolumeCollectionNode::CloneVolumes(const vtkMRMLNode *rhs)
 {
-  vtkMRMLEMSVolumeCollectionNode* node = 
-    (vtkMRMLEMSVolumeCollectionNode*) rhs;
+  const vtkMRMLEMSVolumeCollectionNode* node = 
+    (const vtkMRMLEMSVolumeCollectionNode*) rhs;
 
   this->KeyToVolumeNodeIDMap  = node->KeyToVolumeNodeIDMap;
   this->VolumeNodeIDToKeyMap  = node->VolumeNodeIDToKeyMap;

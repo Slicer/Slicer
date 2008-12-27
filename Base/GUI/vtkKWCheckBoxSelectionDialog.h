@@ -52,7 +52,7 @@ public:
 
   // Description:
   // Add entry name
-  void AddEntry(char *Label, int selected);
+  void AddEntry(const char *Label, int selected);
 
   // Description:
   // Clear all entries

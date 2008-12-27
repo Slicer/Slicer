@@ -626,7 +626,6 @@ void vtkMimxExtractEdgeWidget::ExtractEdge()
         vtkIdList* pointlist = edgecell->GetPointIds();
         vtkIdType pt1 = pointlist->GetId(0);
         vtkIdType pt2 = pointlist->GetId(1);
-        bool status = false;
         edgelist->InsertNextCell(2);
         edgelist->InsertCellPoint(pt1);
         edgelist->InsertCellPoint(pt2);
@@ -687,9 +686,9 @@ void vtkMimxExtractEdgeWidget::PlaceWidget(double bounds[6])
 {
 
 }
-void vtkMimxExtractEdgeWidget::SetInput(vtkDataSet *Input)
+void vtkMimxExtractEdgeWidget::SetInput(vtkDataSet *aInput)
 {
-  this->UGrid = vtkUnstructuredGrid::SafeDownCast(Input);
+  this->UGrid = vtkUnstructuredGrid::SafeDownCast(aInput);
   this->Initialize();
   this->InputActor = NULL;
 }

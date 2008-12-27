@@ -877,7 +877,6 @@ void vtkEMSegmentAnatomicalStructureStep::SelectedColorChangedCallback(vtkObject
 
   int rowInLabelEntry = self->AnatomicalNodeIntensityLabelEntry->GetWidget()->GetValueAsInt();
   int rowInColumnList = self->GetIntensityLabelEntryValueOfFirstSelectedRow();
-  int rowInmrmlManager= mrmlManager->GetTreeNodeIntensityLabel(sel_vol_id);
 
   if (rowInLabelEntry == rowInColumnList)
     {

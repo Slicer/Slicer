@@ -170,7 +170,6 @@ void vtkGradientAnisotropicDiffusionFilterGUI::ProcessGUIEvents ( vtkObject *cal
 {
 
   vtkKWScaleWithEntry *s = vtkKWScaleWithEntry::SafeDownCast(caller);
-  vtkKWMenu *v = vtkKWMenu::SafeDownCast(caller);
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast(caller);
   vtkSlicerNodeSelectorWidget *selector = vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
 

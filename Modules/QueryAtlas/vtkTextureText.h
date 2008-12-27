@@ -56,8 +56,6 @@ class vtkRenderer;
 #define VTK_TEXT_TOP_RIGHT     (2)
 #define VTK_TEXT_TOP_LEFT      (3)
 
-static vtkFloatingPointType sAutoLeading = 1.0;  // 120 %  ?
-
 // characterPosition - small utility storage class
 
 //BTX

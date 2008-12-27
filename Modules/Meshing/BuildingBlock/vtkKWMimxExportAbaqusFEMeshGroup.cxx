@@ -74,24 +74,24 @@ vtkKWMimxExportAbaqusFEMeshGroup::vtkKWMimxExportAbaqusFEMeshGroup()
 vtkKWMimxExportAbaqusFEMeshGroup::~vtkKWMimxExportAbaqusFEMeshGroup()
 {
   if (this->ObjectListComboBox)
-     this->ObjectListComboBox->Delete();
+    this->ObjectListComboBox->Delete();
   if (this->FileBrowserDialog)
-          this->FileBrowserDialog->Delete();
+    this->FileBrowserDialog->Delete();
   if (this->HeaderInformationText)
-          this->HeaderInformationText->Delete();
-        if (this->ComponentFrame)
-          this->ComponentFrame->Delete();
-        if (this->UserNameEntry)
-          this->UserNameEntry->Delete();
- }
+    this->HeaderInformationText->Delete();
+  if (this->ComponentFrame)
+    this->ComponentFrame->Delete();
+  if (this->UserNameEntry)
+    this->UserNameEntry->Delete();
+}
 //----------------------------------------------------------------------------
 void vtkKWMimxExportAbaqusFEMeshGroup::CreateWidget()
 {
   if(this->IsCreated())
-  {
-  vtkErrorMacro("class already created");
+    {
+    vtkErrorMacro("class already created");
     return;
-  }
+    }
 
   this->Superclass::CreateWidget();
   
@@ -103,7 +103,7 @@ void vtkKWMimxExportAbaqusFEMeshGroup::CreateWidget()
     this->MainFrame->GetWidgetName());
 
   if (!this->ObjectListComboBox)        
-     this->ObjectListComboBox = vtkKWComboBoxWithLabel::New();
+    this->ObjectListComboBox = vtkKWComboBoxWithLabel::New();
   ObjectListComboBox->SetParent(this->MainFrame);
   ObjectListComboBox->Create();
   ObjectListComboBox->SetLabelText("Mesh : ");
@@ -112,15 +112,15 @@ void vtkKWMimxExportAbaqusFEMeshGroup::CreateWidget()
     "pack %s -side top -anchor nw -expand y -padx 2 -pady 6 -fill x", 
     ObjectListComboBox->GetWidgetName());
 
-   if (!this->UserNameEntry)    
+  if (!this->UserNameEntry)    
     this->UserNameEntry = vtkKWEntryWithLabel::New();
   this->UserNameEntry->SetParent(this->MainFrame);
   this->UserNameEntry->Create();
   this->UserNameEntry->SetLabelPositionToLeft( );
   this->UserNameEntry->SetLabelText("Created By:");
   this->GetApplication()->Script(
-          "pack %s -side top -anchor n -padx 2 -pady 2", 
-          this->UserNameEntry->GetWidgetName());
+    "pack %s -side top -anchor n -padx 2 -pady 2", 
+    this->UserNameEntry->GetWidgetName());
           
   if (!this->HeaderInformationText)     
     this->HeaderInformationText = vtkKWTextWithScrollbarsWithLabel::New();
@@ -129,8 +129,8 @@ void vtkKWMimxExportAbaqusFEMeshGroup::CreateWidget()
   this->HeaderInformationText->SetLabelPositionToTop( );
   this->HeaderInformationText->SetLabelText("Model Description");
   this->GetApplication()->Script(
-          "pack %s -side top -anchor nw -expand y -padx 2 -pady 6 -fill x", 
-          this->HeaderInformationText->GetWidgetName());
+    "pack %s -side top -anchor nw -expand y -padx 2 -pady 6 -fill x", 
+    this->HeaderInformationText->GetWidgetName());
     
   this->ApplyButton->SetParent(this->MainFrame);
   this->ApplyButton->Create();
@@ -139,8 +139,8 @@ void vtkKWMimxExportAbaqusFEMeshGroup::CreateWidget()
   //this->ApplyButton->SetText("Apply");
   this->ApplyButton->SetCommand(this, "ExportAbaqusFEMeshApplyCallback");
   this->GetApplication()->Script(
-          "pack %s -side left -anchor nw -expand y -padx 5 -pady 6", 
-          this->ApplyButton->GetWidgetName());
+    "pack %s -side left -anchor nw -expand y -padx 5 -pady 6", 
+    this->ApplyButton->GetWidgetName());
 
   this->CancelButton->SetParent(this->MainFrame);
   this->CancelButton->Create();
@@ -156,87 +156,87 @@ void vtkKWMimxExportAbaqusFEMeshGroup::CreateWidget()
 //----------------------------------------------------------------------------
 void vtkKWMimxExportAbaqusFEMeshGroup::Update()
 {
-        this->UpdateEnableState();
+  this->UpdateEnableState();
 }
 //---------------------------------------------------------------------------
 void vtkKWMimxExportAbaqusFEMeshGroup::UpdateEnableState()
 {
-        this->UpdateObjectLists();
-        this->Superclass::UpdateEnableState();
+  this->UpdateObjectLists();
+  this->Superclass::UpdateEnableState();
 }
 //----------------------------------------------------------------------------
 int vtkKWMimxExportAbaqusFEMeshGroup::ExportAbaqusFEMeshApplyCallback()
 {
-        vtkMimxErrorCallback *callback = this->GetMimxMainWindow()->GetErrorCallback();
-        callback->SetState(0);
+  vtkMimxErrorCallback *callback = this->GetMimxMainWindow()->GetErrorCallback();
+  callback->SetState(0);
   if(!strcmp(this->ObjectListComboBox->GetWidget()->GetValue(),""))
-  {
-          callback->ErrorMessage("FE mesh selection required");
-          return 0;
-  }
+    {
+    callback->ErrorMessage("FE mesh selection required");
+    return 0;
+    }
   vtkKWComboBox *combobox = this->ObjectListComboBox->GetWidget();
-    const char *name = combobox->GetValue();
+  const char *name = combobox->GetValue();
 
-        int num = combobox->GetValueIndex(name);
-        if(num < 0 || num > combobox->GetNumberOfValues()-1)
-        {
-                callback->ErrorMessage("Choose valid FE Mesh");
-                combobox->SetValue("");
-                return 0;
-        }
+  int num = combobox->GetValueIndex(name);
+  if(num < 0 || num > combobox->GetNumberOfValues()-1)
+    {
+    callback->ErrorMessage("Choose valid FE Mesh");
+    combobox->SetValue("");
+    return 0;
+    }
 
   vtkUnstructuredGrid *ugrid = vtkMimxMeshActor::SafeDownCast(
-          this->FEMeshList->GetItem(combobox->GetValueIndex(name)))->GetDataSet();
-  const char *filename = this->FEMeshList->GetItem(combobox->GetValueIndex(name))->GetFileName();
-        if(!this->FileBrowserDialog)
-        {
-                this->FileBrowserDialog = vtkKWLoadSaveDialog::New() ;
-                this->FileBrowserDialog->SaveDialogOn();
-                this->FileBrowserDialog->SetApplication(this->GetApplication());
+    this->FEMeshList->GetItem(combobox->GetValueIndex(name)))->GetDataSet();
+  const char *filename0 = this->FEMeshList->GetItem(combobox->GetValueIndex(name))->GetFileName();
+  if(!this->FileBrowserDialog)
+    {
+    this->FileBrowserDialog = vtkKWLoadSaveDialog::New() ;
+    this->FileBrowserDialog->SaveDialogOn();
+    this->FileBrowserDialog->SetApplication(this->GetApplication());
 //              dialog->SetParent(this->RenderWidget->GetParentTopLevel()) ;
-                this->FileBrowserDialog->Create();
-                this->FileBrowserDialog->RetrieveLastPathFromRegistry("LastPath");
-                this->FileBrowserDialog->SetTitle ("Save FE Mesh (Abaqus File format)");
-                this->FileBrowserDialog->SetFileTypes ("{{INP files} {.inp}}");
-                this->FileBrowserDialog->SetDefaultExtension (".inp");
-        }
-        this->FileBrowserDialog->SetInitialFileName(filename);
-        this->FileBrowserDialog->RetrieveLastPathFromRegistry("LastPath");
-        this->FileBrowserDialog->Invoke();
-        if(this->FileBrowserDialog->GetStatus() == vtkKWDialog::StatusOK)
-        {
-                if(this->FileBrowserDialog->GetFileName())
-                {
-                        const char *filename = FileBrowserDialog->GetFileName();
-                        this->GetApplication()->SetRegistryValue(
-                                1, "RunTime", "LastPath", vtksys::SystemTools::GetFilenamePath( filename ).c_str());
-                        this->FileBrowserDialog->SaveLastPathToRegistry("LastPath");
+    this->FileBrowserDialog->Create();
+    this->FileBrowserDialog->RetrieveLastPathFromRegistry("LastPath");
+    this->FileBrowserDialog->SetTitle ("Save FE Mesh (Abaqus File format)");
+    this->FileBrowserDialog->SetFileTypes ("{{INP files} {.inp}}");
+    this->FileBrowserDialog->SetDefaultExtension (".inp");
+    }
+  this->FileBrowserDialog->SetInitialFileName(filename0);
+  this->FileBrowserDialog->RetrieveLastPathFromRegistry("LastPath");
+  this->FileBrowserDialog->Invoke();
+  if(this->FileBrowserDialog->GetStatus() == vtkKWDialog::StatusOK)
+    {
+    if(this->FileBrowserDialog->GetFileName())
+      {
+      const char *filename = FileBrowserDialog->GetFileName();
+      this->GetApplication()->SetRegistryValue(
+        1, "RunTime", "LastPath", vtksys::SystemTools::GetFilenamePath( filename ).c_str());
+      this->FileBrowserDialog->SaveLastPathToRegistry("LastPath");
                         
-                        int precision = this->GetMimxMainWindow()->GetABAQUSPrecision();
+      int precision = this->GetMimxMainWindow()->GetABAQUSPrecision();
 
-                        vtkMimxAbaqusFileWriter *writer = vtkMimxAbaqusFileWriter::New();
-                        writer->SetHeaderInformation( 
-                                this->HeaderInformationText->GetWidget()->GetWidget()->GetText() );
-                        writer->SetUserName( this->UserNameEntry->GetWidget()->GetValue() );
-                        writer->SetFileName( filename );
-                        writer->SetPrecision( precision );
-                        writer->SetInput(ugrid);
-                        writer->AddObserver(vtkCommand::ErrorEvent, callback, 1.0);
-                        writer->Update();
-                        writer->RemoveObserver(callback);
-                        if(callback->GetState())
-                        {
-                                writer->Delete();
-                                return 0;
-                        }
-                        writer->Delete();               
-                        
-                        this->GetMimxMainWindow()->SetStatusText("Exported Abaqus Mesh");
-                        
-                        return 1;
-                }
-        }
+      vtkMimxAbaqusFileWriter *writer = vtkMimxAbaqusFileWriter::New();
+      writer->SetHeaderInformation( 
+        this->HeaderInformationText->GetWidget()->GetWidget()->GetText() );
+      writer->SetUserName( this->UserNameEntry->GetWidget()->GetValue() );
+      writer->SetFileName( filename );
+      writer->SetPrecision( precision );
+      writer->SetInput(ugrid);
+      writer->AddObserver(vtkCommand::ErrorEvent, callback, 1.0);
+      writer->Update();
+      writer->RemoveObserver(callback);
+      if(callback->GetState())
+        {
+        writer->Delete();
         return 0;
+        }
+      writer->Delete();               
+                        
+      this->GetMimxMainWindow()->SetStatusText("Exported Abaqus Mesh");
+                        
+      return 1;
+      }
+    }
+  return 0;
 }
 //----------------------------------------------------------------------------
 void vtkKWMimxExportAbaqusFEMeshGroup::PrintSelf(ostream& os, vtkIndent indent)
@@ -249,12 +249,12 @@ void vtkKWMimxExportAbaqusFEMeshGroup::ExportAbaqusFEMeshCancelCallback()
 //  this->MainFrame->UnpackChildren();
   this->GetApplication()->Script("pack forget %s", this->MainFrame->GetWidgetName());
   this->MenuGroup->SetMenuButtonsEnabled(1);
-    this->GetMimxMainWindow()->GetMainUserInterfacePanel()->SetEnabled(1);
+  this->GetMimxMainWindow()->GetMainUserInterfacePanel()->SetEnabled(1);
 }
 //------------------------------------------------------------------------------
 void vtkKWMimxExportAbaqusFEMeshGroup::UpdateObjectLists()
 {
-        this->UpdateMeshComboBox( this->ObjectListComboBox->GetWidget() );
+  this->UpdateMeshComboBox( this->ObjectListComboBox->GetWidget() );
 /*      
         this->ObjectListComboBox->GetWidget()->DeleteAllValues();
         

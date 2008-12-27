@@ -40,6 +40,8 @@ Authors: Michael McKenna, David Small, Steve Pieper.
 #include "vtkRectangle.h"
 
 
+static vtkFloatingPointType sAutoLeading = 1.0;  // 120 %  ?
+
 short vtkTextureText::sDefaultTextAlignment = VTK_TEXT_ALIGNMENT_FLUSH_LEFT;
 
 

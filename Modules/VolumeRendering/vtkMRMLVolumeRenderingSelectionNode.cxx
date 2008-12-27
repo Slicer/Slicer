@@ -52,7 +52,7 @@ vtkMRMLNode* vtkMRMLVolumeRenderingSelectionNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLVolumeRenderingSelectionNode::vtkMRMLVolumeRenderingSelectionNode()
 {
-  this->SingletonTag = "vtkMRMLVolumeRenderingSelectionNode";
+  this->SingletonTag = const_cast<char *>("vtkMRMLVolumeRenderingSelectionNode");
   this->HideFromEditors = 1;
   this->ActiveVolumeID = NULL;
   this->ActiveVolumeRenderingID = NULL;

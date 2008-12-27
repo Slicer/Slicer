@@ -68,8 +68,8 @@ void vtkMimxActorBase::SetUniqueId( const char *Id)
 
 void vtkMimxActorBase::SetFoundationName(const char *created)
 {
-        strcpy(this->FoundationName, created);
-        strcpy(this->FileName, created);
+  strcpy(this->FoundationName, created);
+  strcpy(this->FileName, created);
 }
 
 void vtkMimxActorBase::PrintSelf(ostream& os, vtkIndent indent)
@@ -77,14 +77,14 @@ void vtkMimxActorBase::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os,indent);
 }
 
-void vtkMimxActorBase::SetObjectName(const char* FileName, vtkIdType &Count)
+void vtkMimxActorBase::SetObjectName(const char* aFileName, vtkIdType &Count)
 {
-        char tempbuffer[1024];
-        strcpy(tempbuffer, this->FoundationName);
-        strcat(tempbuffer, "_");
-    strcat(tempbuffer, FileName);
-    char buffer[10];
-    sprintf(buffer, "%d", Count);
-    strcat(tempbuffer, buffer);
-    strcpy(this->FileName, tempbuffer);
+  char tempbuffer[1024];
+  strcpy(tempbuffer, this->FoundationName);
+  strcat(tempbuffer, "_");
+  strcat(tempbuffer, aFileName);
+  char buffer[10];
+  sprintf(buffer, "%d", Count);
+  strcat(tempbuffer, buffer);
+  strcpy(this->FileName, tempbuffer);
 }

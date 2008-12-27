@@ -307,13 +307,13 @@ void vtkEMSegmentIntensityNormalizationStep::ShowUserInterface()
   this->NormalizationMaxSmoothingWidthEntry->SetEnabled(0);
   this->NormalizationRelativeMaxVoxelScale->SetEnabled(0);
 
-  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  if (!mrmlManager)
+  vtkEMSegmentMRMLManager *mrmlManager0 = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager0)
     {
     return;
     }
   this->NormalizationTargetVolumeMenuButton->SetEnabled(
-    mrmlManager->GetTargetNumberOfSelectedVolumes() ? parent->GetEnabled() : 0);
+    mrmlManager0->GetTargetNumberOfSelectedVolumes() ? parent->GetEnabled() : 0);
 
   if(this->NormalizationTargetVolumeMenuButton->GetEnabled())
     {

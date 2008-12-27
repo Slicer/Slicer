@@ -65,7 +65,7 @@ vtkMimxExtractMultipleFaceWidget::vtkMimxExtractMultipleFaceWidget()
   //int i;
 
   // Control orientation of normals
- /* this->InsideOut = 0;
+  /* this->InsideOut = 0;
   this->OutlineFaceWires = 0;
   this->OutlineCursorWires = 1;*/
 
@@ -83,7 +83,7 @@ vtkMimxExtractMultipleFaceWidget::vtkMimxExtractMultipleFaceWidget()
   
   // Construct connectivity for the faces. These are used to perform
   // the picking.
- /* vtkIdType pts[4];
+  /* vtkIdType pts[4];
   vtkCellArray *cells = vtkCellArray::New();
   cells->Allocate(cells->EstimateSize(6,4));
   pts[0] = 3; pts[1] = 0; pts[2] = 4; pts[3] = 7;
@@ -162,7 +162,7 @@ vtkMimxExtractMultipleFaceWidget::vtkMimxExtractMultipleFaceWidget()
   //Manage the picking stuff
   this->FacePicker = vtkCellPicker::New();
   this->FacePicker->SetTolerance(0.001);
- /* for (i=0; i<7; i++)
+  /* for (i=0; i<7; i++)
     {
     this->HandlePicker->AddPickList(this->Handle[i]);
     }*/
@@ -210,7 +210,7 @@ vtkMimxExtractMultipleFaceWidget::~vtkMimxExtractMultipleFaceWidget()
   
   this->FacePicker->Delete();
   this->FacePoints->Delete();
- /* this->HexPicker->Delete();
+  /* this->HexPicker->Delete();
 
   this->Transform->Delete();
   
@@ -243,8 +243,8 @@ void vtkMimxExtractMultipleFaceWidget::SetEnabled(int enabling)
     if ( ! this->CurrentRenderer )
       {
       this->SetCurrentRenderer(this->Interactor->FindPokedRenderer(
-        this->Interactor->GetLastEventPosition()[0],
-        this->Interactor->GetLastEventPosition()[1]));
+                                 this->Interactor->GetLastEventPosition()[0],
+                                 this->Interactor->GetLastEventPosition()[1]));
       if (this->CurrentRenderer == NULL)
         {
         return;
@@ -273,8 +273,8 @@ void vtkMimxExtractMultipleFaceWidget::SetEnabled(int enabling)
     // Add the various actors
     // Add the outline
     this->CurrentRenderer->AddActor(this->FaceActor);
-        if(this->InputActor)
-                this->CurrentRenderer->RemoveActor(this->InputActor);
+    if(this->InputActor)
+      this->CurrentRenderer->RemoveActor(this->InputActor);
 
     this->InvokeEvent(vtkCommand::EnableEvent,NULL);
     }
@@ -295,8 +295,8 @@ void vtkMimxExtractMultipleFaceWidget::SetEnabled(int enabling)
 
     // turn off the outline
     this->CurrentRenderer->RemoveActor(this->FaceActor);
-        if(this->InputActor)
-                this->CurrentRenderer->AddActor(this->InputActor);
+    if(this->InputActor)
+      this->CurrentRenderer->AddActor(this->InputActor);
  
     this->InvokeEvent(vtkCommand::DisableEvent,NULL);
     this->SetCurrentRenderer(NULL);
@@ -307,9 +307,9 @@ void vtkMimxExtractMultipleFaceWidget::SetEnabled(int enabling)
 }
 
 void vtkMimxExtractMultipleFaceWidget::ProcessEvents(vtkObject* vtkNotUsed(object), 
-                                 unsigned long event,
-                                 void* clientdata, 
-                                 void* vtkNotUsed(calldata))
+                                                     unsigned long event,
+                                                     void* clientdata, 
+                                                     void* vtkNotUsed(calldata))
 {
   vtkMimxExtractMultipleFaceWidget* self = reinterpret_cast<vtkMimxExtractMultipleFaceWidget *>( clientdata );
 
@@ -362,46 +362,46 @@ void vtkMimxExtractMultipleFaceWidget::OnLeftButtonDown()
   this->FacePicker->Pick(X,Y,0.0,this->CurrentRenderer);
   path = this->FacePicker->GetPath();
   if ( path != NULL )
-  {
+    {
     this->State = vtkMimxExtractMultipleFaceWidget::Moving;
     vtkIdType PickedCell = this->FacePicker->GetCellId();
-        vtkIntArray *intarray = vtkIntArray::SafeDownCast(
-                this->FacePolyData->GetCellData()->GetScalars());
+    vtkIntArray *intarray = vtkIntArray::SafeDownCast(
+      this->FacePolyData->GetCellData()->GetScalars());
     if(PickedCell != -1)
-    {
-                if(intarray->GetValue(PickedCell))
-                {
-                        intarray->SetValue(PickedCell, 0);
-                }
-                else
-                {
-                        intarray->SetValue(PickedCell, 1);
-                }
+      {
+      if(intarray->GetValue(PickedCell))
+        {
+        intarray->SetValue(PickedCell, 0);
+        }
+      else
+        {
+        intarray->SetValue(PickedCell, 1);
+        }
 //        this->FacePolyData->GetCellPoints(PickedCell,this->FacePoints);
-          //
-          this->FacePoints->Initialize();
-          for (int i=0; i<this->FacePolyData->GetNumberOfCells(); i++)
+      //
+      this->FacePoints->Initialize();
+      for (int i=0; i<this->FacePolyData->GetNumberOfCells(); i++)
+        {
+        if(intarray->GetValue(i))
           {
-                  if(intarray->GetValue(i))
-                  {
-                          vtkIdList *idlist = vtkIdList::New();
-                          this->FacePolyData->GetCellPoints(i,idlist);
-                          int ptlist[4];
-                          for (int j=0; j<4; j++)
-                          {
-                                  ptlist[j] = idlist->GetId(j);
-                          }
-                          this->FacePoints->InsertNextTupleValue(ptlist);
-                  }
+          vtkIdList *idlist = vtkIdList::New();
+          this->FacePolyData->GetCellPoints(i,idlist);
+          int ptlist[4];
+          for (int j=0; j<4; j++)
+            {
+            ptlist[j] = idlist->GetId(j);
+            }
+          this->FacePoints->InsertNextTupleValue(ptlist);
           }
-          this->FacePolyData->Modified();
+        }
+      this->FacePolyData->Modified();
+      }
     }
-  }
   else
-  {
+    {
     this->State = vtkMimxExtractMultipleFaceWidget::Outside;
     return;
-  }
+    }
   this->EventCallbackCommand->SetAbortFlag(1);
   this->StartInteraction();
   this->InvokeEvent(vtkCommand::StartInteractionEvent, NULL);
@@ -417,7 +417,7 @@ void vtkMimxExtractMultipleFaceWidget::OnLeftButtonUp()
     }
 
   this->State = vtkMimxExtractMultipleFaceWidget::Start;
- /* this->HighlightFace(this->HighlightHandle(NULL));
+  /* this->HighlightFace(this->HighlightHandle(NULL));
   this->SizeHandles();*/
 
   //this->EventCallbackCommand->SetAbortFlag(1);
@@ -657,9 +657,9 @@ void vtkMimxExtractMultipleFaceWidget::ExtractFace()
   this->FaceScalars->Initialize();
   this->FaceScalars->SetNumberOfValues(this->FacePolyData->GetNumberOfCells());
   for (int i=0; i<this->FacePolyData->GetNumberOfCells(); i++)
-  {
-          this->FaceScalars->SetValue(i, 0);
-  }
+    {
+    this->FaceScalars->SetValue(i, 0);
+    }
   this->FacePolyData->GetCellData()->SetScalars(this->FaceScalars);
   this->FacePolyData->Modified();
   this->FacePolyData->BuildLinks();
@@ -670,7 +670,7 @@ void vtkMimxExtractMultipleFaceWidget::ExtractFace()
 void vtkMimxExtractMultipleFaceWidget::Initialize()
 {
   if(this->UGrid)
-  {
+    {
     // if the input data changes
     if(this->FacePolyData->GetPoints())
       this->FacePolyData->GetPoints()->Delete();
@@ -680,7 +680,7 @@ void vtkMimxExtractMultipleFaceWidget::Initialize()
     this->ExtractFace();
     this->FacePicker->AddPickList(this->FaceActor);
     this->FacePicker->PickFromListOn();
-  }
+    }
 }
 
 void vtkMimxExtractMultipleFaceWidget::OnRightButtonUp()
@@ -692,9 +692,9 @@ void vtkMimxExtractMultipleFaceWidget::PlaceWidget(double bounds[6])
 {
 
 }
-void vtkMimxExtractMultipleFaceWidget::SetInput(vtkDataSet *Input)
+void vtkMimxExtractMultipleFaceWidget::SetInput(vtkDataSet *aInput)
 {
-  this->UGrid = vtkUnstructuredGrid::SafeDownCast(Input);
+  this->UGrid = vtkUnstructuredGrid::SafeDownCast(aInput);
   this->Initialize();
   this->InputActor = NULL;
 }

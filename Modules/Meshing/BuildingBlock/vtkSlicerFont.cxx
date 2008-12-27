@@ -152,7 +152,7 @@ int vtkSlicerFont::IsValidFontSize( const char *str )
 
   
 //---------------------------------------------------------------------------
-char *vtkSlicerFont::GetFontAsFamily(char *fontstring)
+const char *vtkSlicerFont::GetFontAsFamily(const char *fontstring)
 {
     // parses out the font string and returns the css version of the family
     return "Adobe,Helvetica,sans-serif";

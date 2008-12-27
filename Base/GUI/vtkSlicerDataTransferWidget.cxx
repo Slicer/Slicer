@@ -55,12 +55,12 @@ vtkSlicerDataTransferWidget::vtkSlicerDataTransferWidget(void)
 void vtkSlicerDataTransferWidget::DisplayRunningAnimation()
 {
 
-  vtkSlicerApplication *app = NULL;
+  vtkSlicerApplication *app0 = NULL;
   vtkSlicerApplicationGUI *appGUI = NULL;
-  app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
-  if ( app != NULL )
+  app0 = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
+  if ( app0 != NULL )
     {
-    appGUI = app->GetApplicationGUI();
+    appGUI = app0->GetApplicationGUI();
     }
   if ( appGUI != NULL )
     {

@@ -497,7 +497,6 @@ const char* vtkSlicerApplicationGUI::GetCurrentLayoutStringName ( )
 {
   if ( this->GetApplication() != NULL )
     {
-    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication ( ));
     if ( this->GetGUILayoutNode() != NULL )
       {
       int layout = this->GetGUILayoutNode()->GetViewArrangement ();
@@ -777,7 +776,7 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
         if (this->SlicesGUI)
           {
             vtkSlicerSliceGUI *g = NULL;
-            char *layoutname = NULL;
+            const char *layoutname = NULL;
             int nSliceGUI = this->SlicesGUI->GetNumberOfSliceGUI();
             for (int i = 0; i < nSliceGUI; i++)
               {
@@ -833,7 +832,7 @@ void vtkSlicerApplicationGUI::RemoveGUIObservers ( )
   if (this->SlicesGUI)
     {
     vtkSlicerSliceGUI *g = NULL;
-    char *layoutname = NULL;
+    const char *layoutname = NULL;
     int nSliceGUI = this->SlicesGUI->GetNumberOfSliceGUI();
     for (int i = 0; i < nSliceGUI; i++)
       {
@@ -876,7 +875,7 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
         // So for now, the GUI is controlling the GUI instead of going thru the logic.
         //---
 
-  vtkKWLoadSaveDialog *filebrowse = vtkKWLoadSaveDialog::SafeDownCast(caller);
+  vtkKWLoadSaveDialog::SafeDownCast(caller);
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
   vtkSlicerMRMLSaveDataWidget *saveDataWidget = vtkSlicerMRMLSaveDataWidget::SafeDownCast(caller);
 
@@ -896,8 +895,6 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
     {
     }
 
-  vtkSlicerSliceControllerWidget *controller_caller = 
-    vtkSlicerSliceControllerWidget::SafeDownCast(caller);
   if (caller)
     {
     if (event == vtkSlicerSliceControllerWidget::ExpandEvent) 
@@ -905,7 +902,7 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
       if (this->SlicesGUI)
         {
         vtkSlicerSliceGUI *g = NULL;
-        char *layoutname = NULL;
+        const char *layoutname = NULL;
         int nSliceGUI = this->SlicesGUI->GetNumberOfSliceGUI();
         for (int i = 0; i < nSliceGUI; i++)
           {
@@ -929,7 +926,7 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
       if (this->SlicesGUI)
         {
         vtkSlicerSliceGUI *g = NULL;
-        char *layoutname = NULL;
+        const char *layoutname = NULL;
         int nSliceGUI = this->SlicesGUI->GetNumberOfSliceGUI();
         for (int i = 0; i < nSliceGUI; i++)
           {
@@ -1532,7 +1529,6 @@ void vtkSlicerApplicationGUI::DestroyMainSliceViewers ( )
 
   if ( this->GetApplication() != NULL )
     {
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     vtkMRMLLayoutNode *layout = this->GetGUILayoutNode ( );
     if ( layout == NULL )
       {
@@ -1545,7 +1541,7 @@ void vtkSlicerApplicationGUI::DestroyMainSliceViewers ( )
     if (this->SlicesGUI)
       {
       vtkSlicerSliceGUI *g = NULL;
-      char *layoutname = NULL;
+      const char *layoutname = NULL;
       int nSliceGUI = this->SlicesGUI->GetNumberOfSliceGUI();
       for (int i = 0; i < nSliceGUI; i++)
         {
@@ -1589,7 +1585,6 @@ void vtkSlicerApplicationGUI::DestroyMain3DViewer ( )
 
   if ( this->GetApplication() != NULL )
     {
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     vtkMRMLLayoutNode *layout = this->GetGUILayoutNode ( );
     if ( layout == NULL )
       {
@@ -1633,15 +1628,13 @@ void vtkSlicerApplicationGUI::DisplayMainSlicerWindow ( )
 {
   if ( this->GetApplication() != NULL )
     {
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-      
     this->MainSlicerWindow->Display ( );
-    int w = this->MainSlicerWindow->GetWidth ( );
-    int h = this->MainSlicerWindow->GetHeight ( );
-    int vh = app->GetDefaultGeometry()->GetDefault3DViewerHeight();
-    int sh = app->GetDefaultGeometry()->GetDefaultSliceGUIFrameHeight();
-    int sfh = this->MainSlicerWindow->GetSecondarySplitFrame()->GetFrame1Size();
-    int sf2h = this->MainSlicerWindow->GetSecondarySplitFrame()->GetFrame2Size();
+//     int w = this->MainSlicerWindow->GetWidth ( );
+//     int h = this->MainSlicerWindow->GetHeight ( );
+//     int vh = app->GetDefaultGeometry()->GetDefault3DViewerHeight();
+//     int sh = app->GetDefaultGeometry()->GetDefaultSliceGUIFrameHeight();
+//     int sfh = this->MainSlicerWindow->GetSecondarySplitFrame()->GetFrame1Size();
+//     int sf2h = this->MainSlicerWindow->GetSecondarySplitFrame()->GetFrame2Size();
       
     // pop up a warning dialog here if the computer's
     // display resolution in x is less than 1000 pixels.
@@ -1675,10 +1668,6 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( int arrangementType)
 
   if ( this->GetApplication() != NULL )
     {
-    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
-    vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
-    vtkSlicerWindow *win = this->MainSlicerWindow;
-        
     this->GridFrame1->SetParent ( this->MainSlicerWindow->GetViewFrame ( ) );
     this->GridFrame1->Create ( );            
     this->GridFrame2->SetParent ( this->MainSlicerWindow->GetSecondaryPanelFrame ( ) );
@@ -1763,7 +1752,7 @@ void vtkSlicerApplicationGUI::CreateMain3DViewer ( )
   if ( this->GetApplication() != NULL )
     {
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
+
     //
     // Make 3D Viewer
     //
@@ -2018,10 +2007,6 @@ void vtkSlicerApplicationGUI::PackConventionalView ( )
 {
   if ( this->GetApplication() != NULL )
     {
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
-    vtkMRMLScene *scene = this->GetMRMLScene();
-    vtkSlicerGUILayout *geom = app->GetDefaultGeometry ( );
     vtkMRMLLayoutNode *layout = this->GetGUILayoutNode();
     if ( layout == NULL )
       {
@@ -2089,9 +2074,6 @@ void vtkSlicerApplicationGUI::PackOneUp3DView ( )
 {
   if ( this->GetApplication() != NULL )
     {
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
-    vtkMRMLScene *scene = this->GetMRMLScene();
     vtkMRMLLayoutNode *layout = this->GetGUILayoutNode ( );
     if ( layout == NULL )
       {
@@ -2136,9 +2118,6 @@ void vtkSlicerApplicationGUI::PackOneUpSliceView ( const char * whichSlice )
 {
   if ( this->GetApplication() != NULL && whichSlice != NULL)
     {
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
-    vtkMRMLScene *scene = this->GetMRMLScene();
     vtkMRMLLayoutNode *layout = this->GetGUILayoutNode ( );
     if ( layout == NULL )
       {
@@ -2196,10 +2175,6 @@ void vtkSlicerApplicationGUI::PackFourUpView ( )
 {
   if ( this->GetApplication() != NULL )
     {
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
-    vtkMRMLScene *scene = this->GetMRMLScene();
-    vtkSlicerGUILayout *geom = app->GetDefaultGeometry ( );
     vtkMRMLLayoutNode *layout = this->GetGUILayoutNode();
     if ( layout == NULL )
       {
@@ -2254,10 +2229,6 @@ void vtkSlicerApplicationGUI::PackTabbed3DView ( )
   // TODO: implement multi-tabbed ViewerWidgets
   if ( this->GetApplication() != NULL )
     {
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
-    vtkMRMLScene *scene = this->GetMRMLScene();
-    vtkSlicerGUILayout *geom = app->GetDefaultGeometry ( );
     vtkMRMLLayoutNode *layout = this->GetGUILayoutNode ( );
     if ( layout == NULL )
       {
@@ -2308,9 +2279,6 @@ void vtkSlicerApplicationGUI::PackTabbedSliceView ( )
   // TODO: implement this and add an icon on the toolbar for it
   if ( this->GetApplication() != NULL )
     {
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
-    vtkMRMLScene *scene = this->GetMRMLScene();
     vtkMRMLLayoutNode *layout = this->GetGUILayoutNode ( );
     if ( layout == NULL )
       {
@@ -2366,7 +2334,6 @@ void vtkSlicerApplicationGUI::PackCompareView()
   if ( this->GetApplication() != NULL )
     {
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
     vtkSlicerGUILayout *geom = app->GetDefaultGeometry ( );
     vtkMRMLLayoutNode *layout = this->GetGUILayoutNode ( );
     double x, y, z;
@@ -2411,15 +2378,15 @@ void vtkSlicerApplicationGUI::PackCompareView()
       //--- and triggering the SliceControllerWidget's event path.
       int numRows = layout->GetNumberOfCompareViewLightboxRows();
       int numColumns = layout->GetNumberOfCompareViewLightboxColumns();
-      vtkSlicerSliceGUI *g = this->SlicesGUI->GetSliceGUI(buf);
-      if (g != NULL)
+      vtkSlicerSliceGUI *g0 = this->SlicesGUI->GetSliceGUI(buf);
+      if (g0 != NULL)
         {
         //--- go thru node to set lightbox rows and columns
-        if ( g->GetLogic() != NULL )
+        if ( g0->GetLogic() != NULL )
           {
-          if ( g->GetLogic()->GetSliceNode() != NULL )
+          if ( g0->GetLogic()->GetSliceNode() != NULL )
             {
-            g->GetLogic()->GetSliceNode()->SetLayoutGrid ( numRows, numColumns );
+            g0->GetLogic()->GetSliceNode()->SetLayoutGrid ( numRows, numColumns );
             }
           }
         }
@@ -2429,7 +2396,7 @@ void vtkSlicerApplicationGUI::PackCompareView()
     this->Script ( "pack %s -side top -fill both -expand 1 -padx 0 -pady 0 ", this->GridFrame2->GetWidgetName ( ) );
     this->Script ("grid columnconfigure %s 0 -weight 1", this->GridFrame2->GetWidgetName() );
     
-    char *layoutname = NULL;
+    const char *layoutname = NULL;
     int nSliceGUI = this->SlicesGUI->GetNumberOfSliceGUI();
     int ncount = 0;
     for (int i = 0; i < nSliceGUI; i++)
@@ -2462,7 +2429,7 @@ void vtkSlicerApplicationGUI::PackCompareView()
           {
           // no volume assigned. use the background of Red viewer for
           // first compare viewer, the foreground of Red Viewer for
-          // second compare viewer, and rest like the first
+          // bsecond compare viewer, and rest like the first
           vtkSlicerSliceGUI *red = this->SlicesGUI->GetSliceGUI("Red");
           if ((ncount == 0 || ncount > 2) && red && red->GetLogic()->GetSliceCompositeNode()->GetBackgroundVolumeID())
             {
@@ -2684,7 +2651,7 @@ void vtkSlicerApplicationGUI::UnpackCompareView()
         }
 
     int nSliceGUI = this->SlicesGUI->GetNumberOfSliceGUI();
-    char *layoutname = NULL;
+    const char *layoutname = NULL;
     for (int i = 0; i < nSliceGUI; i++)
       {
       if (i == 0)
@@ -2718,7 +2685,6 @@ void vtkSlicerApplicationGUI::AddMainSliceGUI(const char *layoutName)
     {
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
-    vtkMRMLScene *scene = this->GetMRMLScene();
     vtkMRMLLayoutNode *layout = this->GetGUILayoutNode ( );
     if ( layout == NULL )
       {
@@ -2820,7 +2786,7 @@ void vtkSlicerApplicationGUI::ConfigureMainSliceViewers ( )
   if (this->SlicesGUI)
     {
     vtkSlicerSliceGUI *g = NULL;
-    char *layoutname = NULL;
+    const char *layoutname = NULL;
     int nSliceGUI = this->SlicesGUI->GetNumberOfSliceGUI();
     for (int i = 0; i < nSliceGUI; i++)
       {
@@ -2861,7 +2827,7 @@ void vtkSlicerApplicationGUI::AddMainSliceViewerObservers ( )
   if (this->SlicesGUI)
     {
     vtkSlicerSliceGUI *g = NULL;
-    char *layoutname = NULL;
+    const char *layoutname = NULL;
     int nSliceGUI = this->SlicesGUI->GetNumberOfSliceGUI();
     for (int i = 0; i < nSliceGUI; i++)
       {
@@ -2889,7 +2855,7 @@ void vtkSlicerApplicationGUI::RemoveMainSliceViewerObservers ( )
   if (this->SlicesGUI)
     {
       vtkSlicerSliceGUI *g = NULL;
-      char *layoutname = NULL;
+      const char *layoutname = NULL;
       int nSliceGUI = this->SlicesGUI->GetNumberOfSliceGUI();
       for (int i = 0; i < nSliceGUI; i++)
         {

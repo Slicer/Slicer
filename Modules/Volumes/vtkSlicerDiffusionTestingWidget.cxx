@@ -754,7 +754,7 @@ void vtkSlicerDiffusionTestingWidget::CreateWidget( )
     this->GlyphVisibilityLabel->GetWidgetName());
 
   //create glyph visibility buttons
-  char* glyphNames[] = {"Red", "Yellow", "Green"};
+  const char* glyphNames[] = {"Red", "Yellow", "Green"};
   for (int i=0; i<3; i++)
     {   
     this->GlyphVisibilityButton[i] = vtkKWPushButtonWithLabel::New();

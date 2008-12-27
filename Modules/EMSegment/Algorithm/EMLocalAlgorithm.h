@@ -74,9 +74,9 @@ public:
    int Initialize(vtkImageEMLocalSegmenter *vtk_filter, T **ProbDataPtrStart,float** initInputVector, short *initROI, float **initw_m, char *initLevelName, 
                 float initGlobalRegInvRotation[9], float initGlobalRegInvTranslation[3], int initRegistrationType, int DataType);
 
-   EMLocalAlgorithm(vtkImageEMLocalSegmenter *vtk_filter, T **ProbDataPtrStart,float** initInputVector, short *initROI, float **initw_m, char *initLevelName, 
+   EMLocalAlgorithm(vtkImageEMLocalSegmenter *vtk_filter, T **aProbDataPtrStart,float** initInputVector, short *initROI, float **initw_m, char *initLevelName, 
                  float initGlobalRegInvRotation[9], float initGlobalRegInvTranslation[3], int initRegistrationType, int DataType, int &SuccessFlag) {
-     SuccessFlag = this->Initialize(vtk_filter, ProbDataPtrStart, initInputVector, initROI, initw_m, initLevelName, initGlobalRegInvRotation, initGlobalRegInvTranslation, 
+     SuccessFlag = this->Initialize(vtk_filter, aProbDataPtrStart, initInputVector, initROI, initw_m, initLevelName, initGlobalRegInvRotation, initGlobalRegInvTranslation, 
                           initRegistrationType, DataType);
    }
    ~EMLocalAlgorithm();

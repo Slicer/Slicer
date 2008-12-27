@@ -779,21 +779,21 @@ void vtkSlicerModuleChooseGUI::Populate( )
 
       // first, put the uncategorized modules
       int index;
-      ModuleSet::iterator mit;
-      mit = categoryToModuleName["None"].begin();
+      ModuleSet::iterator mit0;
+      mit0 = categoryToModuleName["None"].begin();
 
       typedef std::map<std::string, std::string > AllMap;
       AllMap allMap;
       
-      while (mit != categoryToModuleName["None"].end())
+      while (mit0 != categoryToModuleName["None"].end())
         {
         std::stringstream methodString;
-        methodString << "SelectModule \"" << (*mit).c_str() << "\"";
+        methodString << "SelectModule \"" << (*mit0).c_str() << "\"";
         this->GetModulesMenuButton()->GetMenu( )
-          ->AddRadioButton( (*mit).c_str(), this,
+          ->AddRadioButton( (*mit0).c_str(), this,
                         methodString.str().c_str() );
-        allMap[(*mit).c_str()] = methodString.str();
-        ++mit;
+        allMap[(*mit0).c_str()] = methodString.str();
+        ++mit0;
         }
       this->GetModulesMenuButton()->GetMenu()->AddSeparator();
 

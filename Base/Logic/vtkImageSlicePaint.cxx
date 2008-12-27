@@ -286,10 +286,10 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
               }
             intMaskIJK[2] = 0;
 
-            void *ptr = self->GetMaskImage()->GetScalarPointer ( 
+            void *ptr1 = self->GetMaskImage()->GetScalarPointer ( 
                             intMaskIJK[0], intMaskIJK[1], intMaskIJK[2] );
 
-            if ( ptr == NULL ) 
+            if ( ptr1 == NULL ) 
               {
               int dimensions[3];
               self->GetMaskImage()->GetDimensions(dimensions);

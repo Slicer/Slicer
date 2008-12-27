@@ -42,7 +42,7 @@ PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <assert.h>
 
 //------------------------------------------------------------------------------
-vtkImageMeanIntensityNormalization* vtkImageMeanIntensityNormalization::New()
+                                                                   vtkImageMeanIntensityNormalization* vtkImageMeanIntensityNormalization::New()
 {
   // First try to create the object from the vtkObjectFactory
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkImageMeanIntensityNormalization");
@@ -51,8 +51,8 @@ vtkImageMeanIntensityNormalization* vtkImageMeanIntensityNormalization::New()
   return new vtkImageMeanIntensityNormalization;
 }
 
-//----------------------------------------------------------------------------
-vtkImageMeanIntensityNormalization::vtkImageMeanIntensityNormalization()
+                                                                 //----------------------------------------------------------------------------
+                                                                   vtkImageMeanIntensityNormalization::vtkImageMeanIntensityNormalization()
 {
   this->NormValue = -1; 
   this->NormType  = INTENSITY_NORM_UNDEFINED; 
@@ -71,9 +71,12 @@ void vtkImageMeanIntensityNormalization::ComputeInputUpdateExtent(int inExt[6], 
 }
 
 //----------------------------------------------------------------------------
-void vtkImageMeanIntensityNormalization::PrintSelf(ostream& os, vtkIndent indent) { }
+void vtkImageMeanIntensityNormalization::PrintSelf(ostream& os, vtkIndent indent)
+{
+}
 
-int* vtkImageMeanIntensityNormalization::InitializeHistogram(vtkImageAccumulate *HIST, vtkImageData *Input, int &HistMin, int &HistMax) {
+int* vtkImageMeanIntensityNormalization::InitializeHistogram(vtkImageAccumulate *HIST, vtkImageData *Input, int &HistMin, int &HistMax)
+{
   // 1. Detect extrema 
   HIST->SetInput(Input);
   HIST->SetComponentSpacing(1,1,1);
@@ -98,69 +101,79 @@ int* vtkImageMeanIntensityNormalization::InitializeHistogram(vtkImageAccumulate 
 
 // Determines the index in the Histogram at which point the sum over the number of voxels with lower or equal the index is smaller than NumMaxVoxel 
 // e.g. 99 % of all voxels  
-int vtkImageMeanIntensityNormalization::DetermineFilterMax(int *HIST_Ptr, const int HIST_Length, const int FilterNumMaxVoxels) {
-    int VoxelCount =0;
-    int FilterHistogramMax = 0;
+int vtkImageMeanIntensityNormalization::DetermineFilterMax(int *HIST_Ptr, const int HIST_Length, const int FilterNumMaxVoxels)
+{
+  int VoxelCount =0;
+  int FilterHistogramMax = 0;
     
-    while ((FilterHistogramMax < HIST_Length) && (VoxelCount <  FilterNumMaxVoxels)) {
-      VoxelCount += (*HIST_Ptr ++); 
-      FilterHistogramMax ++;
+  while ((FilterHistogramMax < HIST_Length) && (VoxelCount <  FilterNumMaxVoxels))
+    {
+    VoxelCount += (*HIST_Ptr ++); 
+    FilterHistogramMax ++;
     }
-    return FilterHistogramMax;
+  return FilterHistogramMax;
 }
 
-void vtkImageMeanIntensityNormalization::SmoothHistogram(const int* Input , const int InputLength, const int SmoothWidth, int &MaxIndex, int* Output) {
-   float InverseSmoothWidth = 1.0 / float(SmoothWidth);
-   MaxIndex =  InputLength - SmoothWidth;
-   memset(Output,0, sizeof(int)*MaxIndex);
+void vtkImageMeanIntensityNormalization::SmoothHistogram(const int* Input , const int InputLength, const int SmoothWidth, int &MaxIndex, int* Output)
+{
+  float InverseSmoothWidth = 1.0 / float(SmoothWidth);
+  MaxIndex =  InputLength - SmoothWidth;
+  memset(Output,0, sizeof(int)*MaxIndex);
 
-   for (int k = 0; k <= SmoothWidth; k++ ) {
-     *Output += *Input;
-     for (int i = 1; i <= k ; i++) Output[i] += *Input;
-     Input ++;
-   }
-   *Output = int(*Output * InverseSmoothWidth);
-   Output++;
+  for (int k = 0; k <= SmoothWidth; k++ )
+    {
+    *Output += *Input;
+    for (int i = 1; i <= k ; i++) Output[i] += *Input;
+    Input ++;
+    }
+  *Output = int(*Output * InverseSmoothWidth);
+  Output++;
 
-   for (int x = 1; x < MaxIndex; x ++ ) {
-     for (int i = 0; i <= SmoothWidth ; i++) Output[i] += *Input;
-     *Output = int(*Output * InverseSmoothWidth);
-     Output++;
-     Input++; 
-   }
+  for (int x = 1; x < MaxIndex; x ++ )
+    {
+    for (int i = 0; i <= SmoothWidth ; i++) Output[i] += *Input;
+    *Output = int(*Output * InverseSmoothWidth);
+    Output++;
+    Input++; 
+    }
 }
 
-int vtkImageMeanIntensityNormalization::DetermineFilterMin(const int* HIST_PTR, const int HIST_Length) {
+int vtkImageMeanIntensityNormalization::DetermineFilterMin(const int* HIST_PTR, const int HIST_Length)
+{
 
   int *HIST_SMOOTH_Ptr    = new int[ HIST_Length];
 
   int iter = 1;
   int result = -1;
   int SmoothWidthPara = this->InitialHistogramSmoothingWidth; 
-  while ((SmoothWidthPara <= this->MaxHistogramSmoothingWidth) && (result < 0)) { 
+  while ((SmoothWidthPara <= this->MaxHistogramSmoothingWidth) && (result < 0))
+    { 
     int SmoothWidth = HIST_Length / SmoothWidthPara;
     int HIST_SMOOTH_Length;
-    if (this->PrintInfo) {
+    if (this->PrintInfo)
+      {
       std::cerr << "  " << iter << ". Histogram Smoothing" << endl;
       std::cerr << "     Width:         " << SmoothWidth  << endl;
       iter++;
-    }
-
+      }
+    
     this->SmoothHistogram(HIST_PTR,HIST_Length, SmoothWidth, HIST_SMOOTH_Length, HIST_SMOOTH_Ptr);
     result = this->DetermineFirstValey(HIST_SMOOTH_Ptr,HIST_SMOOTH_Length);
     SmoothWidthPara ++;
-  }
-  if (result < 0) { 
+    }
+  if (result < 0)
+    { 
     vtkErrorMacro(<< "Lower bound of image could not properly derermined");
     result = 0;
-  }
+    }
 
   delete[] HIST_SMOOTH_Ptr;
   return result;
 }
 
 
-int vtkImageMeanIntensityNormalization::DetermineFirstValey(const int *SmoothHistogram,const int SmoothHistogramLength) {
+int vtkImageMeanIntensityNormalization::DetermineFirstValey(const int *aSmoothHistogram,const int aSmoothHistogramLength)
+{
   // Define the lower intensity value for calculating the mean of the historgram
   // - When through is set we reached the first minimum after the first peak which defines the lower bound of the intensity 
   //   value considered for calculating the Expected value of the histogram 
@@ -168,45 +181,50 @@ int vtkImageMeanIntensityNormalization::DetermineFirstValey(const int *SmoothHis
   int LowerBound = 0;    
   // Detect first peak
   // => We considere this area noise (or background) and therefore exclude it for the definition of the normalization factor  
-  while ((LowerBound < SmoothHistogramLength) && (SmoothHistogram[LowerBound] <=  SmoothHistogram[LowerBound + 1])) LowerBound++;
-  if (LowerBound >= SmoothHistogramLength -3) {
+  while ((LowerBound < aSmoothHistogramLength) && (aSmoothHistogram[LowerBound] <=  aSmoothHistogram[LowerBound + 1])) LowerBound++;
+  if (LowerBound >= aSmoothHistogramLength -3)
+    {
     vtkErrorMacro(<< "Lower bound of image could not properly derermined");
     return -1;
-  }
+    }
 
   LowerBound++;
   // Detect next valey:
   // Sefines the lower bound of the intensity value considered for calculating the Expected value of the histogram 
-  int MaxIndex = SmoothHistogramLength - 2;
+  int MaxIndex = aSmoothHistogramLength - 2;
   while ((LowerBound < MaxIndex) && 
-         (SmoothHistogram[LowerBound] >=  SmoothHistogram[LowerBound + 1] 
-          || SmoothHistogram[LowerBound+1] >= SmoothHistogram[LowerBound+2] 
-          || SmoothHistogram[LowerBound+2] >=  SmoothHistogram[LowerBound+3])) 
-  {
+         (aSmoothHistogram[LowerBound] >=  aSmoothHistogram[LowerBound + 1] 
+          || aSmoothHistogram[LowerBound+1] >= aSmoothHistogram[LowerBound+2] 
+          || aSmoothHistogram[LowerBound+2] >= aSmoothHistogram[LowerBound+3])) 
+    {
     LowerBound++;
-  }
+    }
 
-  if  (LowerBound == MaxIndex) {
+  if  (LowerBound == MaxIndex)
+    {
     return -1;
-  }
+    }
   return LowerBound;
 }
 
 
-void vtkImageMeanIntensityNormalization::MeanMRI(vtkImageData *Input, vtkImageData *Output) {
+void vtkImageMeanIntensityNormalization::MeanMRI(vtkImageData *Input, vtkImageData *Output)
+{
 
   // -------------------------------------
   // Check if input is set correctly 
   // -------------------------------------
-  if (this->InitialHistogramSmoothingWidth > this->MaxHistogramSmoothingWidth) {
+  if (this->InitialHistogramSmoothingWidth > this->MaxHistogramSmoothingWidth) 
+    {
     vtkErrorMacro(<< "HistogramSmoothingWidth is not correctly set");
     return;
-  }
+    }
 
-  if ((this->RelativeMaxVoxelNum <= 0) || (this->RelativeMaxVoxelNum  > 1)) {
+  if ((this->RelativeMaxVoxelNum <= 0) || (this->RelativeMaxVoxelNum  > 1))
+    {
     vtkErrorMacro(<< "RelativeMaxIntensityValue is not set correctly");
     return;
-  }
+    }
 
   // -------------------------------------
   //  Initialize Variables
@@ -228,22 +246,23 @@ void vtkImageMeanIntensityNormalization::MeanMRI(vtkImageData *Input, vtkImageDa
   int* HIST_PTR;
 
   {
-    int INPUT_EXTENT[6];
-    Input->GetExtent(INPUT_EXTENT);
-    NumVoxels = (INPUT_EXTENT[1] - INPUT_EXTENT[0] + 1) * (INPUT_EXTENT[3] - INPUT_EXTENT[2] + 1) * (INPUT_EXTENT[5] - INPUT_EXTENT[4] + 1);
+  int INPUT_EXTENT[6];
+  Input->GetExtent(INPUT_EXTENT);
+  NumVoxels = (INPUT_EXTENT[1] - INPUT_EXTENT[0] + 1) * (INPUT_EXTENT[3] - INPUT_EXTENT[2] + 1) * (INPUT_EXTENT[5] - INPUT_EXTENT[4] + 1);
   }
 
   // Define Histogram
   HIST = vtkImageAccumulate::New();
   HIST_PTR = this->InitializeHistogram(HIST,Input, ImageIntensityMin, ImageIntensityMax);
 
-  if (this->PrintInfo) {
+  if (this->PrintInfo)
+    {
     std::cerr << "vtkImageMeanIntensityNormalization::MeanMRI " << endl;
     std::cerr << "Histogram Parameters:" << endl;
     std::cerr << "  Image Intensity Min: " <<  ImageIntensityMin << " Max: " << ImageIntensityMax << endl;
     std::cerr << "  Initial Histogram Smoothig Width: " << this->InitialHistogramSmoothingWidth << endl;
     std::cerr << "  Maximum Histogram Smoothig Width: " << this->MaxHistogramSmoothingWidth << endl;
-  }
+    }
 
   // Go through Histogram and detect intensity value which combines NumVoxels * this->RelativeMaxVoxelNum
   // => Cut of the tail of the the histogram
@@ -260,12 +279,13 @@ void vtkImageMeanIntensityNormalization::MeanMRI(vtkImageData *Input, vtkImageDa
   ImageIntensityMean = 0;
   NumVoxels = 0;
   HIST_PTR += FilterHistogramMin;
-  for (int x = FilterHistogramMin; x <= FilterHistogramMax; x++) {
+  for (int x = FilterHistogramMin; x <= FilterHistogramMax; x++)
+    {
     int val = *HIST_PTR ++;
     // we have to add ImageIntensityMin bc we do not start histogram anymore at 0 !
     ImageIntensityMean += double(x + ImageIntensityMin)*val;
     NumVoxels += val;
-  }
+    }
   ImageIntensityMean = ImageIntensityMean / double(NumVoxels);
   assert(ImageIntensityMean);
   ImageIntensityCorrectionRatio = NormValue/ImageIntensityMean;
@@ -280,14 +300,15 @@ void vtkImageMeanIntensityNormalization::MeanMRI(vtkImageData *Input, vtkImageDa
   CORRECTED->Update();
   Output->DeepCopy(CORRECTED->GetOutput());
 
-  if (this->PrintInfo) {
+  if (this->PrintInfo)
+    {
     std::cerr << "Bounds for Expected Value Calculation:" << endl;
     std::cerr << "  Lower Bound: " << FilterHistogramMin + ImageIntensityMin << endl;
     std::cerr << "  Upper Bound: " << FilterHistogramMax + ImageIntensityMin << endl;
     std::cerr << "Results of Filter:" << endl;
     std::cerr << "  Expect Image Intensity: " << ImageIntensityMean << endl;
     std::cerr << "  Normalization Factor:   " << ImageIntensityCorrectionRatio << endl;
-  }
+    }
 
   // -------------------------------------
   //  Clean up  
@@ -320,7 +341,7 @@ void vtkImageMeanIntensityNormalization::ExecuteData(vtkDataObject *)
   int outExt[6];
   // Necessary  for VTK
   this->ComputeInputUpdateExtent(inExt,outExt);
- // vtk4
+  // vtk4
   vtkImageData *inData  = this->GetInput();
   vtkImageData *outData = this->GetOutput();
   outData->SetExtent(this->GetOutput()->GetWholeExtent());
@@ -330,20 +351,23 @@ void vtkImageMeanIntensityNormalization::ExecuteData(vtkDataObject *)
   // vtk4
   vtkDebugMacro(<< "Execute: inData = " << inData << ", outData = " << outData);
  
-  if (inData == NULL) {
+  if (inData == NULL)
+    {
     vtkErrorMacro(<< "Input " << 0 << " must be specified.");
     return;
-  }
+    }
 
-  if (inData->GetNumberOfScalarComponents() != 1) {
-     vtkErrorMacro(<< "Number Of Scalar Components for Input has to be 1.");
-     return;
-  }
-
-  switch (this->NormType) {
-    case INTENSITY_NORM_MEAN_MRI :  this->MeanMRI(inData,outData); break;
-   default:
-    vtkErrorMacro(<< "Execute: Unknown Normalization Type");
+  if (inData->GetNumberOfScalarComponents() != 1)
+    {
+    vtkErrorMacro(<< "Number Of Scalar Components for Input has to be 1.");
     return;
-  }
+    }
+
+  switch (this->NormType)
+    {
+    case INTENSITY_NORM_MEAN_MRI :  this->MeanMRI(inData,outData); break;
+    default:
+      vtkErrorMacro(<< "Execute: Unknown Normalization Type");
+      return;
+    }
 }

@@ -822,7 +822,6 @@ void vtkSlicerToolbarGUI::SetLayoutMenubuttonValueToCurrentLayout ()
 {
   if ( this->GetApplication() != NULL )
     {
-    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication ( ));
     if ( this->GetApplicationGUI()->GetGUILayoutNode() != NULL )
       {
       int layout = this->GetApplicationGUI()->GetGUILayoutNode()->GetViewArrangement ();

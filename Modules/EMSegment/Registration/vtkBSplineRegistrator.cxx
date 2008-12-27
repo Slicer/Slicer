@@ -499,8 +499,8 @@ RegisterImagesInternal3()
     case vtkBSplineRegistrator::MutualInformation:
       {
       typedef itk::MattesMutualInformationImageToImageMetric<
-      ITKImageType, ITKImageType>   MetricType;
-      typename MetricType::Pointer    metric  = MetricType::New();
+        ITKImageType, ITKImageType>   MMetricType;
+      typename MMetricType::Pointer    metric  = MMetricType::New();
       metric->ReinitializeSeed(0);
       metric->SetNumberOfHistogramBins(50);
       metric->
@@ -518,8 +518,8 @@ RegisterImagesInternal3()
     case vtkBSplineRegistrator::CrossCorrelation:
       {
       typedef itk::NormalizedCorrelationImageToImageMetric<
-        ITKImageType, ITKImageType>   MetricType;
-      typename MetricType::Pointer    metric  = MetricType::New();
+        ITKImageType, ITKImageType>   MMetricType;
+      typename MMetricType::Pointer    metric  = MMetricType::New();
       multiResRegistration->SetMetric(metric);
       std::cerr << "   Metric: NCC" << std::endl;
       std::cerr << "   Sampling Ratio: 1 (NOT IMPLEMENTED FOR NCC) " 
@@ -528,9 +528,9 @@ RegisterImagesInternal3()
       }
     case vtkBSplineRegistrator::MeanSquaredError:
       {
-      typedef itk::MeanSquaresImageToImageMetric<
-        ITKImageType, ITKImageType>   MetricType;
-      typename MetricType::Pointer    metric  = MetricType::New();
+      typedef itk::MeanSquaresImageToImageMetric<ITKImageType, ITKImageType>
+        MMetricType;
+      typename MMetricType::Pointer    metric  = MMetricType::New();
       multiResRegistration->SetMetric(metric);
       std::cerr << "   Metric: MSE" << std::endl;
 

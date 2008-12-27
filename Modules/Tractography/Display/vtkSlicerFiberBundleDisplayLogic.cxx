@@ -297,7 +297,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateLineModel ( )
 
       //this->LineModelDisplayNode->GetColorModeForFiberLines();
       // set display properties according to the tensor-specific display properties node
-      vtkMRMLDiffusionTensorDisplayPropertiesNode * DiffusionTensorDisplayNode = fiberBundleDisplayNode->GetDiffusionTensorDisplayPropertiesNode( );
+//      vtkMRMLDiffusionTensorDisplayPropertiesNode * DiffusionTensorDisplayNode = fiberBundleDisplayNode->GetDiffusionTensorDisplayPropertiesNode( );
 
       // TO DO: need filter to calculate FA, average FA, etc. as requested
 

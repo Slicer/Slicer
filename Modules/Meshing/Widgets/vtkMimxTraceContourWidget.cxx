@@ -64,7 +64,7 @@ vtkMimxTraceContourWidget::vtkMimxTraceContourWidget()
   //int i;
 
   // Control orientation of normals
- /* this->InsideOut = 0;
+  /* this->InsideOut = 0;
   this->OutlineFaceWires = 0;
   this->OutlineCursorWires = 1;*/
 
@@ -91,7 +91,7 @@ vtkMimxTraceContourWidget::vtkMimxTraceContourWidget()
   
   // Construct connectivity for the faces. These are used to perform
   // the picking.
- /* vtkIdType pts[4];
+  /* vtkIdType pts[4];
   vtkCellArray *cells = vtkCellArray::New();
   cells->Allocate(cells->EstimateSize(6,4));
   pts[0] = 3; pts[1] = 0; pts[2] = 4; pts[3] = 7;
@@ -170,7 +170,7 @@ vtkMimxTraceContourWidget::vtkMimxTraceContourWidget()
   //Manage the picking stuff
   this->PointPicker = vtkPointPicker::New();
   this->PointPicker->SetTolerance(0.01);
- /* for (i=0; i<7; i++)
+  /* for (i=0; i<7; i++)
     {
     this->HandlePicker->AddPickList(this->Handle[i]);
     }*/
@@ -220,7 +220,7 @@ vtkMimxTraceContourWidget::~vtkMimxTraceContourWidget()
   //delete [] this->HandleGeometry;
   
   this->PointPicker->Delete();
- /* this->HexPicker->Delete();
+  /* this->HexPicker->Delete();
 
   this->Transform->Delete();
   
@@ -231,7 +231,7 @@ vtkMimxTraceContourWidget::~vtkMimxTraceContourWidget()
   this->OutlineProperty->Delete();
   this->SelectedOutlineProperty->Delete();*/
   if(this->ContourIdList)
-          this->ContourIdList->Delete();
+    this->ContourIdList->Delete();
 }
 
 void vtkMimxTraceContourWidget::SetEnabled(int enabling)
@@ -254,8 +254,8 @@ void vtkMimxTraceContourWidget::SetEnabled(int enabling)
     if ( ! this->CurrentRenderer )
       {
       this->SetCurrentRenderer(this->Interactor->FindPokedRenderer(
-        this->Interactor->GetLastEventPosition()[0],
-        this->Interactor->GetLastEventPosition()[1]));
+                                 this->Interactor->GetLastEventPosition()[0],
+                                 this->Interactor->GetLastEventPosition()[1]));
       if (this->CurrentRenderer == NULL)
         {
         return;
@@ -284,9 +284,9 @@ void vtkMimxTraceContourWidget::SetEnabled(int enabling)
     // Add the various actors
     // Add the outline
     this->CurrentRenderer->AddActor(this->FaceActor);
-        this->CurrentRenderer->AddActor(this->ContourActor);
-        if(this->InputActor)
-                this->CurrentRenderer->RemoveActor(this->InputActor);
+    this->CurrentRenderer->AddActor(this->ContourActor);
+    if(this->InputActor)
+      this->CurrentRenderer->RemoveActor(this->InputActor);
     //this->CurrentRenderer->AddActor(this->HexOutline);
     //this->HexActor->SetProperty(this->OutlineProperty);
     //this->HexOutline->SetProperty(this->OutlineProperty);
@@ -296,7 +296,7 @@ void vtkMimxTraceContourWidget::SetEnabled(int enabling)
     //this->HexFace->SetProperty(this->FaceProperty);
 
     // turn on the handles
-  /*  for (int j=0; j<7; j++)
+    /*  for (int j=0; j<7; j++)
       {
       this->CurrentRenderer->AddActor(this->Handle[j]);
       this->Handle[j]->SetProperty(this->HandleProperty);
@@ -321,16 +321,16 @@ void vtkMimxTraceContourWidget::SetEnabled(int enabling)
 
     // turn off the outline
     this->CurrentRenderer->RemoveActor(this->FaceActor);
-        this->CurrentRenderer->RemoveActor(this->ContourActor);
-        if(this->InputActor)
-                this->CurrentRenderer->AddActor(this->InputActor);
- //   this->CurrentRenderer->RemoveActor(this->HexOutline);
+    this->CurrentRenderer->RemoveActor(this->ContourActor);
+    if(this->InputActor)
+      this->CurrentRenderer->AddActor(this->InputActor);
+    //   this->CurrentRenderer->RemoveActor(this->HexOutline);
 
     // turn off the hex face
 //    this->CurrentRenderer->RemoveActor(this->HexFace);
 
     // turn off the handles
- /*   for (int i=0; i<7; i++)
+    /*   for (int i=0; i<7; i++)
       {
       this->CurrentRenderer->RemoveActor(this->Handle[i]);
       }*/
@@ -344,9 +344,9 @@ void vtkMimxTraceContourWidget::SetEnabled(int enabling)
 }
 
 void vtkMimxTraceContourWidget::ProcessEvents(vtkObject* vtkNotUsed(object), 
-                                 unsigned long event,
-                                 void* clientdata, 
-                                 void* vtkNotUsed(calldata))
+                                              unsigned long event,
+                                              void* clientdata, 
+                                              void* vtkNotUsed(calldata))
 {
   vtkMimxTraceContourWidget* self = reinterpret_cast<vtkMimxTraceContourWidget *>( clientdata );
 
@@ -399,39 +399,39 @@ void vtkMimxTraceContourWidget::OnLeftButtonDown()
   this->PointPicker->Pick(X,Y,0.0,this->CurrentRenderer);
   path = this->PointPicker->GetPath();
   if ( path != NULL )
-  {
+    {
     this->State = vtkMimxTraceContourWidget::Moving;
     vtkIdType PickedPoint = this->PointPicker->GetPointId();
     if(PickedPoint != -1)
-    {
-                vtkIdList *idlist = vtkIdList::New();
-                this->FacePolyData->GetPointCells(PickedPoint, idlist);
-                if(idlist->GetNumberOfIds() > 0)
-                {
-                        if(this->ContourIdList->IsId(PickedPoint) == -1)
-                        {
-                                this->ContourPoints->InsertNextPoint(
-                                        this->FacePolyData->GetPoint(PickedPoint));
-                                this->ContourPoints->Modified();
-                                this->ContourIdList->InsertNextId(PickedPoint);
-                                if(this->ContourPoints->GetNumberOfPoints() > 1)
-                                {
-                                        this->ContourPolyData->GetLines()->InsertNextCell(2);
-                                        this->ContourPolyData->GetLines()->InsertCellPoint(
-                                                this->ContourPoints->GetNumberOfPoints()-2);
-                                        this->ContourPolyData->GetLines()->InsertCellPoint(
-                                                this->ContourPoints->GetNumberOfPoints()-1);
-                                        this->ContourPolyData->Modified();
-                                }
-                        }
-                }
-     }
-  }
+      {
+      vtkIdList *idlist = vtkIdList::New();
+      this->FacePolyData->GetPointCells(PickedPoint, idlist);
+      if(idlist->GetNumberOfIds() > 0)
+        {
+        if(this->ContourIdList->IsId(PickedPoint) == -1)
+          {
+          this->ContourPoints->InsertNextPoint(
+            this->FacePolyData->GetPoint(PickedPoint));
+          this->ContourPoints->Modified();
+          this->ContourIdList->InsertNextId(PickedPoint);
+          if(this->ContourPoints->GetNumberOfPoints() > 1)
+            {
+            this->ContourPolyData->GetLines()->InsertNextCell(2);
+            this->ContourPolyData->GetLines()->InsertCellPoint(
+              this->ContourPoints->GetNumberOfPoints()-2);
+            this->ContourPolyData->GetLines()->InsertCellPoint(
+              this->ContourPoints->GetNumberOfPoints()-1);
+            this->ContourPolyData->Modified();
+            }
+          }
+        }
+      }
+    }
   else
-  {
+    {
     this->State = vtkMimxTraceContourWidget::Outside;
     return;
-  }
+    }
   this->EventCallbackCommand->SetAbortFlag(1);
   this->StartInteraction();
   this->InvokeEvent(vtkCommand::StartInteractionEvent, NULL);
@@ -447,7 +447,7 @@ void vtkMimxTraceContourWidget::OnLeftButtonUp()
     }
 
   this->State = vtkMimxTraceContourWidget::Start;
- /* this->HighlightFace(this->HighlightHandle(NULL));
+  /* this->HighlightFace(this->HighlightHandle(NULL));
   this->SizeHandles();*/
 
   this->EventCallbackCommand->SetAbortFlag(1);
@@ -694,7 +694,7 @@ void vtkMimxTraceContourWidget::ExtractFace()
 void vtkMimxTraceContourWidget::Initialize()
 {
   if(this->UGrid)
-  {
+    {
     // if the input data changes
     if(this->FacePolyData->GetPoints())
       this->FacePolyData->GetPoints()->Delete();
@@ -704,24 +704,24 @@ void vtkMimxTraceContourWidget::Initialize()
     this->ExtractFace();
     this->PointPicker->AddPickList(this->FaceActor);
     this->PointPicker->PickFromListOn();
-        if(this->ContourPoints)
-        {
-                this->ContourPoints->Delete();
-        }
-        this->ContourPoints = vtkPoints::New();
-        if(this->ContourPolyData->GetPolys())
-        {
-                this->ContourPolyData->GetPolys()->Delete();
-        }
-        this->ContourPolyData->Initialize();
-        this->ContourPolyData->SetPoints(this->ContourPoints);
-        vtkCellArray *cellarray = vtkCellArray::New();
-        this->ContourPolyData->SetLines(cellarray);
-        cellarray->Delete();
-        if(this->ContourIdList)
-                this->ContourIdList->Delete();
-        this->ContourIdList = vtkIdList::New();
-  }
+    if(this->ContourPoints)
+      {
+      this->ContourPoints->Delete();
+      }
+    this->ContourPoints = vtkPoints::New();
+    if(this->ContourPolyData->GetPolys())
+      {
+      this->ContourPolyData->GetPolys()->Delete();
+      }
+    this->ContourPolyData->Initialize();
+    this->ContourPolyData->SetPoints(this->ContourPoints);
+    vtkCellArray *cellarray = vtkCellArray::New();
+    this->ContourPolyData->SetLines(cellarray);
+    cellarray->Delete();
+    if(this->ContourIdList)
+      this->ContourIdList->Delete();
+    this->ContourIdList = vtkIdList::New();
+    }
 }
 
 void vtkMimxTraceContourWidget::OnRightButtonUp()
@@ -733,9 +733,9 @@ void vtkMimxTraceContourWidget::PlaceWidget(double bounds[6])
 {
 
 }
-void vtkMimxTraceContourWidget::SetInput(vtkDataSet *Input)
+void vtkMimxTraceContourWidget::SetInput(vtkDataSet *aInput)
 {
-  this->UGrid = vtkUnstructuredGrid::SafeDownCast(Input);
+  this->UGrid = vtkUnstructuredGrid::SafeDownCast(aInput);
   this->Initialize();
   this->InputActor = NULL;
 }

@@ -201,14 +201,14 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
   node->SaveWithSceneOff();
   node->SetScene(this->GetMRMLScene());
   // make a storage node
-  vtkMRMLColorTableStorageNode *colorStorageNode = vtkMRMLColorTableStorageNode::New();
-  colorStorageNode->SaveWithSceneOff();
+  vtkMRMLColorTableStorageNode *colorStorageNode1 = vtkMRMLColorTableStorageNode::New();
+  colorStorageNode1->SaveWithSceneOff();
   if (this->GetMRMLScene())
     {
-    this->GetMRMLScene()->AddNode(colorStorageNode);
-    node->SetAndObserveStorageNodeID(colorStorageNode->GetID());
+    this->GetMRMLScene()->AddNode(colorStorageNode1);
+    node->SetAndObserveStorageNodeID(colorStorageNode1->GetID());
     }
-  colorStorageNode->Delete();
+  colorStorageNode1->Delete();
   
   vtkDebugMacro("Adding FreeSurfer Labels file node");
   std::string colorFileName;
@@ -252,14 +252,14 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
   node->SaveWithSceneOff();
   node->SetScene(this->GetMRMLScene());
   // make a storage node
-  colorStorageNode = vtkMRMLColorTableStorageNode::New();
-  colorStorageNode->SaveWithSceneOff();
+  colorStorageNode1 = vtkMRMLColorTableStorageNode::New();
+  colorStorageNode1->SaveWithSceneOff();
   if (this->GetMRMLScene())
     {
-    this->GetMRMLScene()->AddNode(colorStorageNode);
-    node->SetAndObserveStorageNodeID(colorStorageNode->GetID());
+    this->GetMRMLScene()->AddNode(colorStorageNode1);
+    node->SetAndObserveStorageNodeID(colorStorageNode1->GetID());
     }
-  colorStorageNode->Delete();
+  colorStorageNode1->Delete();
   node->SetName("FSSurfaceLabels");
   if (basicFSNode->GetSurfaceLabelsFileName() == NULL)
     {
@@ -300,14 +300,14 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
     node->SaveWithSceneOff();
     node->SetScene(this->GetMRMLScene());
     // make a storage node
-    vtkMRMLColorTableStorageNode *colorStorageNode = vtkMRMLColorTableStorageNode::New();
-    colorStorageNode->SaveWithSceneOff();
+    vtkMRMLColorTableStorageNode *colorStorageNode2 = vtkMRMLColorTableStorageNode::New();
+    colorStorageNode2->SaveWithSceneOff();
     if (this->GetMRMLScene())
       {
-      this->GetMRMLScene()->AddNode(colorStorageNode);
-      node->SetAndObserveStorageNodeID(colorStorageNode->GetID());
+      this->GetMRMLScene()->AddNode(colorStorageNode2);
+      node->SetAndObserveStorageNodeID(colorStorageNode2->GetID());
       }
-    colorStorageNode->Delete();
+    colorStorageNode2->Delete();
     node->GetStorageNode()->SetFileName(this->ColorFiles[i].c_str());
     node->SetName(vtksys::SystemTools::GetFilenameName(node->GetStorageNode()->GetFileName()).c_str());
     if (node->GetStorageNode()->ReadData(node))

@@ -177,7 +177,7 @@ int vtkSlicerColor::SetColor (double *color1, double *color2 ) {
 int vtkSlicerColor::SetColor(double * color,
                                double r, double g, double b) {
     
-    if ( (r==color[0]) && (g==color[1]) && (b==color[2]) ||
+  if ( ((r==color[0]) && (g==color[1]) && (b==color[2])) ||
          (r<0.0 || r>1.0) || (g<0.0 || g>1.0) || (b<0.0 || b>1.0)) {
         return 0;
     }
@@ -192,7 +192,9 @@ int vtkSlicerColor::SetColor(double * color,
 char *vtkSlicerColor::GetColorAsHex(double *color)
 {
     sprintf(this->HexColor, "%X%X%X",
-            color[0]*16.0, color[1]*16.0, color[2]*16.0);
+            static_cast<unsigned int>(color[0]*16.0),
+            static_cast<unsigned int>(color[1]*16.0),
+            static_cast<unsigned int>(color[2]*16.0));
     return this->HexColor;
 }
 

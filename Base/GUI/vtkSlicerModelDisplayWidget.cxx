@@ -197,10 +197,12 @@ void vtkSlicerModelDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
   
   this->ProcessingWidgetEvent = event;
  
-  if (this->ModelDisplayNode != NULL && 
-    !(vtkKWSurfaceMaterialPropertyWidget::SafeDownCast(caller) == this->SurfaceMaterialPropertyWidget && event == this->SurfaceMaterialPropertyWidget->GetPropertyChangedEvent()) &&
-    !(vtkKWScale::SafeDownCast(caller) == this->OpacityScale->GetWidget() && event == vtkKWScale::ScaleValueChangingEvent) &&
-    !(vtkKWScale::SafeDownCast(caller) == this->OpacityScale->GetWidget() && event == vtkKWScale::ScaleValueChangedEvent))
+   if (this->ModelDisplayNode != NULL && 
+       (!(vtkKWSurfaceMaterialPropertyWidget::SafeDownCast(caller) == this->SurfaceMaterialPropertyWidget && static_cast<int>(event) == this->SurfaceMaterialPropertyWidget->GetPropertyChangedEvent()))
+       &&
+       (!(vtkKWScale::SafeDownCast(caller) == this->OpacityScale->GetWidget() && static_cast<int>(event) == vtkKWScale::ScaleValueChangingEvent))
+       &&
+       (!(vtkKWScale::SafeDownCast(caller) == this->OpacityScale->GetWidget() && static_cast<int>(event) == vtkKWScale::ScaleValueChangedEvent)))
     {
     if (this->MRMLScene->GetNodeByID(this->ModelDisplayNode->GetID()))
       {
@@ -281,8 +283,8 @@ void vtkSlicerModelDisplayWidget::UpdateMRML()
       {
       vtkMRMLColorNode *color =
         vtkMRMLColorNode::SafeDownCast(this->ColorSelectorWidget->GetSelected());
-      if (color != NULL &&
-          this->ModelDisplayNode->GetColorNodeID() == NULL ||
+      if ((color != NULL &&
+           this->ModelDisplayNode->GetColorNodeID() == NULL) ||
           strcmp(this->ModelDisplayNode->GetColorNodeID(), color->GetID()) != 0)
         {
         // there's a change, set it

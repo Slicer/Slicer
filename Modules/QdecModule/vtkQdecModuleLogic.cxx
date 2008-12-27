@@ -53,7 +53,7 @@ vtkQdecModuleLogic::vtkQdecModuleLogic()
     vtksys_stl::string slicerHome;
     if (!vtksys::SystemTools::GetEnv("Slicer3_HOME", slicerHome))
       {
-      this->PlotTclScript = "/lib/Qdec/vtkFreeSurferReaders.tcl";
+      this->PlotTclScript = const_cast<char *>("/lib/Qdec/vtkFreeSurferReaders.tcl");
       vtkDebugMacro("Can't find Slicer3_HOME env var, using plot tcl script path = " << this->GetPlotTclScript());
       }
     else

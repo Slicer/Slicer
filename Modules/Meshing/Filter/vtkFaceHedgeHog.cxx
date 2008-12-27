@@ -64,7 +64,7 @@ int vtkFaceHedgeHog::RequestData(
   int i;
   vtkIdType pts[2];
   vtkCellArray *newLines;
-  double x[3], v[3], center[3];
+  double v[3], center[3];
   double newX[3];
   vtkPointData *outputPD = output->GetPointData();
   

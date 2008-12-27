@@ -51,9 +51,6 @@ int vtkSlicerNodeSelectorVolumeRenderingWidget::AddAditionalNodes()
     vtkMRMLNode *oldSelectedNode = this->GetSelected();
     this->ClearMenu();
 
-    vtkKWMenuButton *mb = this->GetWidget()->GetWidget();
-    vtkKWMenu *m = mb->GetMenu();
-
     //I think i don't need this because Presets cannot be added
     int count = 0;
     vtkMRMLNode *node = NULL;
@@ -107,7 +104,7 @@ int vtkSlicerNodeSelectorVolumeRenderingWidget::AddAditionalNodes()
     }
     else
     {
-        char *name = "";
+    const char *name = "";
         if (this->NoneEnabled)
         {
             name = "None";

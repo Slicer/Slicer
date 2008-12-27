@@ -72,7 +72,7 @@ public:
     vtkGetStringMacro(FontDirectory);
     
     // use a method, that adds a trailing '/' if necessary
-    void SetFontDirectory(char *dirname);
+    void SetFontDirectory(const char *dirname);
 
 
     vtkGetObjectMacro(TextureText, vtkTextureText);

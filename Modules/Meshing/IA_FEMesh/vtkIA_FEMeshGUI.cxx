@@ -69,7 +69,7 @@ vtkIA_FEMeshGUI* vtkIA_FEMeshGUI::New()
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkIA_FEMeshGUI");
   if(ret)
     {
-      return (vtkIA_FEMeshGUI*)ret;
+    return (vtkIA_FEMeshGUI*)ret;
     }
   // If the factory was unable to create the object, then create it here.
   return new vtkIA_FEMeshGUI;
@@ -80,23 +80,23 @@ vtkIA_FEMeshGUI* vtkIA_FEMeshGUI::New()
 vtkIA_FEMeshGUI::vtkIA_FEMeshGUI()
 {
 
-    this->Logic = NULL;
+  this->Logic = NULL;
 //    this->MimxMainNotebook = NULL;
 //    this->ViewProperties = NULL;
 //    this->DoUndoTree = NULL;
 //    this->MainUserInterfacePanel = NULL;
 //    this->DisplayPropertyDialog = NULL;
 
-    // try to load supporting libraries dynamically.  This is needed
-    // since the toplevel is a loadable module but the other libraries
-    // didn't get loaded
-    Tcl_Interp* interp = this->GetApplication()->GetMainInterp();
-    Mimxcommon_Init(interp);
-    Buildingblock_Init(interp);
+  // try to load supporting libraries dynamically.  This is needed
+  // since the toplevel is a loadable module but the other libraries
+  // didn't get loaded
+  Tcl_Interp* interp = this->GetApplication()->GetMainInterp();
+  Mimxcommon_Init(interp);
+  Buildingblock_Init(interp);
     
-    this->SavedBoxState = 0;
-    this->SavedAxisLabelState = 0;
-    this->SavedLayoutEnumeration = 0;
+  this->SavedBoxState = 0;
+  this->SavedAxisLabelState = 0;
+  this->SavedLayoutEnumeration = 0;
 
 }
 
@@ -122,7 +122,7 @@ void vtkIA_FEMeshGUI::PrintSelf(ostream& os, vtkIndent indent)
 void vtkIA_FEMeshGUI::AddGUIObservers ( )
 {
 
-    //this->ApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  //this->ApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -130,18 +130,16 @@ void vtkIA_FEMeshGUI::AddGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkIA_FEMeshGUI::RemoveGUIObservers ( )
 {
-    // Fill in
-    //this->ApplyButton->RemoveObservers ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  // Fill in
+  //this->ApplyButton->RemoveObservers ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->GUICallbackCommand );
 }
 
 //---------------------------------------------------------------------------
 void vtkIA_FEMeshGUI::ProcessGUIEvents ( vtkObject *caller,
-                                           unsigned long event,
-                                           void *callData )
+                                         unsigned long event,
+                                         void *callData )
 {
-  char tempstr[256], commandStr[128];
-  vtkKWMenu *m = vtkKWMenu::SafeDownCast(caller);
-  vtkKWPushButton *b = vtkKWPushButton::SafeDownCast(caller);
+//  vtkKWPushButton *b = vtkKWPushButton::SafeDownCast(caller);
 
   cout << "FE callback received!" << endl;
 //
@@ -156,8 +154,8 @@ void vtkIA_FEMeshGUI::ProcessGUIEvents ( vtkObject *caller,
 
 //---------------------------------------------------------------------------
 void vtkIA_FEMeshGUI::ProcessMrmlEvents ( vtkObject *caller,
-                                            unsigned long event,
-                                            void *callData )
+                                          unsigned long event,
+                                          void *callData )
 {
   /**
   vtkMRMLIA_FEMeshNode* node = dynamic_cast<vtkMRMLIA_FEMeshNode *> (this->ApplicationLogic->GetMRMLScene()->GetNextNodeByClass("vtkMRMLIA_FEMeshNode"));
@@ -202,19 +200,19 @@ void vtkIA_FEMeshGUI::BuildGUI ( )
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s -fill both",
                 moduleFrame->GetWidgetName(), this->UIPanel->GetPageWidget("IA_FEMesh")->GetWidgetName());
    
-   // Create the MIMX Main Window.  This is a composite widget which serves as the top of the independent
-   // meshing application.  This widget is created and the slicer render window and KWWindow are passed so that
-   // widgets created below here are controllable through slicer's interface.
+  // Create the MIMX Main Window.  This is a composite widget which serves as the top of the independent
+  // meshing application.  This widget is created and the slicer render window and KWWindow are passed so that
+  // widgets created below here are controllable through slicer's interface.
   
-   this->MeshingUI = vtkKWMimxMainWindow::New();
-   this->MeshingUI->SetRenderWidget( this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer() );
-   this->MeshingUI->SetMainWindow( this->GetApplicationGUI()->GetMainSlicerWindow() );
-   this->MeshingUI->SetParent( moduleFrame );
-   this->MeshingUI->Create();
-   app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s -fill both",
-           this->MeshingUI->GetWidgetName(), moduleFrame->GetFrame()->GetWidgetName());
+  this->MeshingUI = vtkKWMimxMainWindow::New();
+  this->MeshingUI->SetRenderWidget( this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer() );
+  this->MeshingUI->SetMainWindow( this->GetApplicationGUI()->GetMainSlicerWindow() );
+  this->MeshingUI->SetParent( moduleFrame );
+  this->MeshingUI->Create();
+  app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s -fill both",
+              this->MeshingUI->GetWidgetName(), moduleFrame->GetFrame()->GetWidgetName());
 
-   this->MeshingUI->CustomApplicationSettingsModuleEntry();
+  this->MeshingUI->CustomApplicationSettingsModuleEntry();
 
 }
 
@@ -222,39 +220,39 @@ void vtkIA_FEMeshGUI::BuildGUI ( )
 
 // Description:
 // Describe behavior at module startup and exit.
- void vtkIA_FEMeshGUI::Enter ( )
- {
-     // get pointers to the current scene.  
-    //vtkMRMLScene *SlicerScene = vtkMRMLScene::GetActiveScene();
-    vtkMRMLViewNode *viewnode = this->GetApplicationGUI()->GetViewControlGUI()->GetActiveView();
-    vtkMRMLLayoutNode *layoutnode = this->GetApplicationGUI()->GetGUILayoutNode();
-    this->SavedBoxState = viewnode->GetBoxVisible();
-    this->SavedAxisLabelState = viewnode->GetAxisLabelsVisible();
-    this->SavedLayoutEnumeration = layoutnode->GetViewArrangement();
-    viewnode->GetBackgroundColor(this->SavedBackgroundColor);
-    // add the specific application settings for this module here
-    viewnode->SetBoxVisible(0);
-    viewnode->SetAxisLabelsVisible(0);
-    double blackBackground[3]; blackBackground[0]=blackBackground[1]=blackBackground[2] = 0.0;
-    viewnode->SetBackgroundColor(blackBackground);
-    layoutnode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUp3DView);    
-    this->MeshingUI->AddOrientationAxis();
-    this->MeshingUI->CustomApplicationSettingsModuleEntry();
+void vtkIA_FEMeshGUI::Enter ( )
+{
+  // get pointers to the current scene.  
+  //vtkMRMLScene *SlicerScene = vtkMRMLScene::GetActiveScene();
+  vtkMRMLViewNode *viewnode = this->GetApplicationGUI()->GetViewControlGUI()->GetActiveView();
+  vtkMRMLLayoutNode *layoutnode = this->GetApplicationGUI()->GetGUILayoutNode();
+  this->SavedBoxState = viewnode->GetBoxVisible();
+  this->SavedAxisLabelState = viewnode->GetAxisLabelsVisible();
+  this->SavedLayoutEnumeration = layoutnode->GetViewArrangement();
+  viewnode->GetBackgroundColor(this->SavedBackgroundColor);
+  // add the specific application settings for this module here
+  viewnode->SetBoxVisible(0);
+  viewnode->SetAxisLabelsVisible(0);
+  double blackBackground[3]; blackBackground[0]=blackBackground[1]=blackBackground[2] = 0.0;
+  viewnode->SetBackgroundColor(blackBackground);
+  layoutnode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUp3DView);    
+  this->MeshingUI->AddOrientationAxis();
+  this->MeshingUI->CustomApplicationSettingsModuleEntry();
        
- }
+}
  
  
  
- void vtkIA_FEMeshGUI::Exit ( )
- {
-     // restore the MRML Scene state
-     vtkMRMLViewNode *viewnode = this->GetApplicationGUI()->GetViewControlGUI()->GetActiveView();
-     vtkMRMLLayoutNode *layoutnode = this->GetApplicationGUI()->GetGUILayoutNode();
-     // remove the specific application settings for this module here
-     layoutnode->SetViewArrangement(this->SavedLayoutEnumeration);
-     viewnode->SetBoxVisible(this->SavedBoxState);
-     viewnode->SetAxisLabelsVisible(this->SavedAxisLabelState);
-     viewnode->SetBackgroundColor(this->SavedBackgroundColor);
-     this->MeshingUI->RemoveOrientationAxis();    
-     this->MeshingUI->CustomApplicationSettingsModuleExit();
- }
+void vtkIA_FEMeshGUI::Exit ( )
+{
+  // restore the MRML Scene state
+  vtkMRMLViewNode *viewnode = this->GetApplicationGUI()->GetViewControlGUI()->GetActiveView();
+  vtkMRMLLayoutNode *layoutnode = this->GetApplicationGUI()->GetGUILayoutNode();
+  // remove the specific application settings for this module here
+  layoutnode->SetViewArrangement(this->SavedLayoutEnumeration);
+  viewnode->SetBoxVisible(this->SavedBoxState);
+  viewnode->SetAxisLabelsVisible(this->SavedAxisLabelState);
+  viewnode->SetBackgroundColor(this->SavedBackgroundColor);
+  this->MeshingUI->RemoveOrientationAxis();    
+  this->MeshingUI->CustomApplicationSettingsModuleExit();
+}

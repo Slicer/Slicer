@@ -273,7 +273,6 @@ void vtkSlicerXNATPermissionPrompterWidget::CreatePrompter(const char *messageTe
   static const unsigned int  image_XNATLogo_height         = 60;
   static const unsigned int  image_XNATLogo_pixel_size     = 3;
   static const unsigned long image_XNATLogo_length         = 5848;
-  static const unsigned long image_XNATLogo_decoded_length = 26280;
 
   static const unsigned char image_XNATLogo[] = 
     "eNrtnAlUVNX/wK+iuKBQiuCCUhqY2vJH1FLKpQT5p6QppebSduqfigoSYJppHMV+/78lRV"

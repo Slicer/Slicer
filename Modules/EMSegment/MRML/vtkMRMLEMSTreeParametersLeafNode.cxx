@@ -105,6 +105,7 @@ void vtkMRMLEMSTreeParametersLeafNode::ReadXMLAttributes(const char** attrs)
   //
   // we assume an even number of attrs
   //
+  unsigned int i;
   const char* key;
   const char* val;
   while (*attrs != NULL)
@@ -149,7 +150,7 @@ void vtkMRMLEMSTreeParametersLeafNode::ReadXMLAttributes(const char** attrs)
       {
       // remove visual row seperators
       std::string valStr(val);
-      for (unsigned int i = 0; i < valStr.size(); ++i)
+      for (i = 0; i < valStr.size(); ++i)
         {
         if (valStr[i] == '|')
           {
@@ -176,7 +177,7 @@ void vtkMRMLEMSTreeParametersLeafNode::ReadXMLAttributes(const char** attrs)
         }
 
       // copy data
-      unsigned int i = 0;
+      i = 0;
       for (unsigned int r = 0; r < this->GetNumberOfTargetInputChannels(); ++r)
         {
         for (unsigned int c = 0; c<this->GetNumberOfTargetInputChannels(); ++c)
@@ -353,7 +354,7 @@ MoveNthTargetInputChannel(int fromIndex, int toIndex)
 
   for (unsigned int i = 0; i < this->NumberOfTargetInputChannels; ++i)
     {
-    double movingParam = this->LogCovariance[i][fromIndex];
+    movingParam = this->LogCovariance[i][fromIndex];
     this->LogCovariance[i].erase(this->LogCovariance[i].begin() + fromIndex);
     this->LogCovariance[i].insert(this->LogCovariance[i].begin() + toIndex, 
                                   movingParam);

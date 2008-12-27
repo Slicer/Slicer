@@ -1005,7 +1005,7 @@ void vtkSlicerApplicationSettingsInterface::ModulesSelectionCallback()
         {
         load = 0;
         }
-      this->LoadModulesSelector->AddEntry((char *)module.c_str(), load);
+      this->LoadModulesSelector->AddEntry(module.c_str(), load);
       }
     this->LoadModulesSelector->Invoke();
 

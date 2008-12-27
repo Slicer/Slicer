@@ -34,7 +34,7 @@ vtkSlicerInteractorStyle::vtkSlicerInteractorStyle()
   this->ShiftKey = 0;
   this->CtrlKey = 0;
   this->Char = '\0';
-  this->KeySym = (char *) "";
+  this->KeySym = const_cast<char *>("");
   this->Button = 0;
 }
 

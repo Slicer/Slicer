@@ -70,8 +70,8 @@ int vtkMimxPlanarTrilinearInterpolation::RequestData(
   output->CopyStructure( input );
 
   if (input == NULL || input->GetPoints() == NULL)
-        {
-        return 1;
+    {
+    return 1;
     }
   numPts = input->GetPoints()->GetNumberOfPoints();
 
@@ -92,45 +92,44 @@ int vtkMimxPlanarTrilinearInterpolation::RequestData(
 
   
   // Generate the internal nodes of a solid from the known nodes on each face
-  int count = 0;
-        for(int j=1; j < this->JDiv-1; j++)
-          {
-          for(int i = 1; i < this->IDiv-1; i++)
-                {       
-                double pt[3];        
-        // Get the Current Point
-        points->GetPoint(j*this->IDiv+i,pt);
-                 cout << j*this->IDiv+i<<endl;    
-        // Get the I Bounds
-        double x0[3], x1[3];
-        points->GetPoint(j*this->IDiv,x0);
-        points->GetPoint((j+1)*this->IDiv+ -1,x1);
-                 cout <<  j*this->IDiv<<endl;
-                 cout <<  (j+1)*this->IDiv+ -1<<endl;
-        // Get the J Bounds
-        double y0[3], y1[3];
-        points->GetPoint(i,y0);
-        points->GetPoint(this->IDiv*(this->JDiv-1)+i,y1);
-                 cout <<  i<<endl;
-                 cout <<  this->IDiv*(this->JDiv-1)+i<<endl;
+  for(int j=1; j < this->JDiv-1; j++)
+    {
+    for(int i = 1; i < this->IDiv-1; i++)
+      {       
+      double pt[3];        
+      // Get the Current Point
+      points->GetPoint(j*this->IDiv+i,pt);
+      cout << j*this->IDiv+i<<endl;    
+      // Get the I Bounds
+      double x0[3], x1[3];
+      points->GetPoint(j*this->IDiv,x0);
+      points->GetPoint((j+1)*this->IDiv+ -1,x1);
+      cout <<  j*this->IDiv<<endl;
+      cout <<  (j+1)*this->IDiv+ -1<<endl;
+      // Get the J Bounds
+      double y0[3], y1[3];
+      points->GetPoint(i,y0);
+      points->GetPoint(this->IDiv*(this->JDiv-1)+i,y1);
+      cout <<  i<<endl;
+      cout <<  this->IDiv*(this->JDiv-1)+i<<endl;
  
-                double x[3], y[3];
-                int m;
-                for (m=0; m <3; m++)
-                {
-                        x[m] = x0[m] + (x1[m] - x0[m])*static_cast<double>(i)/static_cast<double>(this->IDiv-1);
-                }
-                for (m=0; m <3; m++)
-                {
-                        y[m] = y0[m] + (y1[m] - y0[m])*static_cast<double>(j)/static_cast<double>(this->JDiv-1);
-                }
+      double x[3], y[3];
+      int m;
+      for (m=0; m <3; m++)
+        {
+        x[m] = x0[m] + (x1[m] - x0[m])*static_cast<double>(i)/static_cast<double>(this->IDiv-1);
+        }
+      for (m=0; m <3; m++)
+        {
+        y[m] = y0[m] + (y1[m] - y0[m])*static_cast<double>(j)/static_cast<double>(this->JDiv-1);
+        }
                                 
-        double interp[3];
-                for (m =0; m<3; m++)
-                {
-                        interp[m] = (x[m]+y[m])/2.0;
-                }
-        /* Debug Printing
+      double interp[3];
+      for (m =0; m<3; m++)
+        {
+        interp[m] = (x[m]+y[m])/2.0;
+        }
+      /* Debug Printing
          * std::// cout << "Division " << this->IDiv << " " << this->JDiv << " " << this->KDiv << std::endl;
          * std::// cout << "Index " << k*this->IDiv*this->JDiv+j*this->IDiv+i << std::endl;
          * std::// cout << "Loc " << i << " " << j << " " << k << std::endl;
@@ -143,9 +142,9 @@ int vtkMimxPlanarTrilinearInterpolation::RequestData(
          * std::// cout << "New Point  " << interp[0] << " " << interp[1] << " " << interp[2] << std::endl;
          * std::// cout << "Distance " << distanceI << " " << distanceJ << " " << distanceK << std::endl;
          */
-                points->SetPoint(j*this->IDiv+i,interp);
-                }
-          }
+      points->SetPoint(j*this->IDiv+i,interp);
+      }
+    }
 
   output->SetPoints(points);
   points->Delete();

@@ -94,7 +94,7 @@ vtkSlicerNodeSelectorWidget::~vtkSlicerNodeSelectorWidget()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerNodeSelectorWidget::SetMRMLScene( vtkMRMLScene *MRMLScene)
+void vtkSlicerNodeSelectorWidget::SetMRMLScene( vtkMRMLScene *aMRMLScene)
 {
   if ( this->MRMLScene )
     {
@@ -104,7 +104,7 @@ void vtkSlicerNodeSelectorWidget::SetMRMLScene( vtkMRMLScene *MRMLScene)
     //    this->MRMLScene->Delete();
     }
   
-  this->MRMLScene = MRMLScene;
+  this->MRMLScene = aMRMLScene;
 
   if ( this->MRMLScene )
     {
@@ -272,9 +272,6 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
 
   this->ClearMenu();
 
-  vtkKWMenuButton *mb = this->GetWidget()->GetWidget();
-  vtkKWMenu *m = mb->GetMenu();
-
   int count = 0;
   int c=0;
 
@@ -392,7 +389,7 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
     }
   else
     {
-    char *name = "";
+    const char *name = "";
     if (this->NoneEnabled)
       {
       name = "None";
@@ -423,8 +420,6 @@ void vtkSlicerNodeSelectorWidget::ProcessNewNodeCommand(const char *className, c
 {
   vtkMRMLNode *node = NULL;
   vtkMRMLNode *retNode = NULL;
-  vtkKWMenuButton *mb = this->GetWidget()->GetWidget();
-  vtkKWMenu *m = mb->GetMenu();
 
   if (className)
     {

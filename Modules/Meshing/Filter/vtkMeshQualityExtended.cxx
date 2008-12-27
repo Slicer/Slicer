@@ -221,7 +221,7 @@ int vtkMeshQualityExtended::RequestData(
       break;
     default:
       vtkWarningMacro( "Bad TriangleQualityMeasure ("
-        << this->GetTriangleQualityMeasure() << "), using RadiusRatio instead");
+                       << this->GetTriangleQualityMeasure() << "), using RadiusRatio instead");
       TriangleQuality = TriangleRadiusRatio;
       break;
     }
@@ -264,7 +264,7 @@ int vtkMeshQualityExtended::RequestData(
     case VTK_QUALITY_STRETCH:
       QuadQuality = QuadStretch;
       break;
-    //case VTK_QUALITY_MIN_ANGLE:
+      //case VTK_QUALITY_MIN_ANGLE:
     case VTK_QUALITY_MAX_ANGLE:
       QuadQuality = QuadMaxAngle;
       break;
@@ -306,7 +306,7 @@ int vtkMeshQualityExtended::RequestData(
       break;
     default:
       vtkWarningMacro( "Bad QuadQualityMeasure ("
-        << this->GetQuadQualityMeasure() << "), using EdgeRatio instead");
+                       << this->GetQuadQualityMeasure() << "), using EdgeRatio instead");
       QuadQuality = QuadEdgeRatio;
       break;
     }
@@ -369,7 +369,7 @@ int vtkMeshQualityExtended::RequestData(
       break;
     default:
       vtkWarningMacro( "Bad TetQualityMeasure ("
-        << this->GetTetQualityMeasure() << "), using RadiusRatio instead");
+                       << this->GetTetQualityMeasure() << "), using RadiusRatio instead");
       TetQuality = TetRadiusRatio;
       break;
     }
@@ -444,7 +444,7 @@ int vtkMeshQualityExtended::RequestData(
       break;
     default:
       vtkWarningMacro( "Bad HexQualityMeasure ("
-        << this->GetTetQualityMeasure() << "), using MaxAspectFrobenius instead");
+                       << this->GetTetQualityMeasure() << "), using MaxAspectFrobenius instead");
       HexQuality = HexMaxAspectFrobenius;
       break;
     }
@@ -528,11 +528,12 @@ int vtkMeshQualityExtended::RequestData(
       }
     else
       {
-      for ( int i = 0; i < 5; ++i ) {
-        triAreaTuple[i]  = 0;
-        quadAreaTuple[i] = 0;
-        tetVolTuple[i]   = 0;
-        hexVolTuple[i]   = 0;
+      for ( int i = 0; i < 5; ++i )
+ {
+      triAreaTuple[i]  = 0;
+      quadAreaTuple[i] = 0;
+      tetVolTuple[i]   = 0;
+      hexVolTuple[i]   = 0;
       }
       for ( vtkIdType c = 0; c < N; ++c )
         {
@@ -540,78 +541,78 @@ int vtkMeshQualityExtended::RequestData(
         cell = out->GetCell( c );
         switch ( cell->GetCellType() )
           {
-        case VTK_TRIANGLE:
-          a = TriangleArea( cell );
-          if ( a > triAreaTuple[2] )
-            {
-            if ( triAreaTuple[0] == triAreaTuple[2] )
-              { // min == max => min has not been set
+          case VTK_TRIANGLE:
+            a = TriangleArea( cell );
+            if ( a > triAreaTuple[2] )
+              {
+              if ( triAreaTuple[0] == triAreaTuple[2] )
+                { // min == max => min has not been set
+                triAreaTuple[0] = a;
+                }
+              triAreaTuple[2] = a;
+              }
+            else if ( a < triAreaTuple[0] )
+              {
               triAreaTuple[0] = a;
               }
-            triAreaTuple[2] = a;
-            }
-          else if ( a < triAreaTuple[0] )
-            {
-            triAreaTuple[0] = a;
-            }
-          triAreaTuple[1] += a;
-          triAreaTuple[3] += a * a;
-          ntri++;
-          break;
-        case VTK_QUAD:
-          a = QuadArea( cell );
-          if ( a > quadAreaTuple[2] )
-            {
-            if ( quadAreaTuple[0] == quadAreaTuple[2] )
-              { // min == max => min has not been set
+            triAreaTuple[1] += a;
+            triAreaTuple[3] += a * a;
+            ntri++;
+            break;
+          case VTK_QUAD:
+            a = QuadArea( cell );
+            if ( a > quadAreaTuple[2] )
+              {
+              if ( quadAreaTuple[0] == quadAreaTuple[2] )
+                { // min == max => min has not been set
+                quadAreaTuple[0] = a;
+                }
+              quadAreaTuple[2] = a;
+              }
+            else if ( a < quadAreaTuple[0] )
+              {
               quadAreaTuple[0] = a;
               }
-            quadAreaTuple[2] = a;
-            }
-          else if ( a < quadAreaTuple[0] )
-            {
-            quadAreaTuple[0] = a;
-            }
-          quadAreaTuple[1] += a;
-          quadAreaTuple[3] += a * a;
-          nqua++;
-          break;
-        case VTK_TETRA:
-          v = TetVolume( cell );
-          if ( v > tetVolTuple[2] )
-            {
-            if ( tetVolTuple[0] == tetVolTuple[2] )
-              { // min == max => min has not been set
+            quadAreaTuple[1] += a;
+            quadAreaTuple[3] += a * a;
+            nqua++;
+            break;
+          case VTK_TETRA:
+            v = TetVolume( cell );
+            if ( v > tetVolTuple[2] )
+              {
+              if ( tetVolTuple[0] == tetVolTuple[2] )
+                { // min == max => min has not been set
+                tetVolTuple[0] = v;
+                }
+              tetVolTuple[2] = v;
+              }
+            else if ( v < tetVolTuple[0] )
+              {
               tetVolTuple[0] = v;
               }
-            tetVolTuple[2] = v;
-            }
-          else if ( v < tetVolTuple[0] )
-            {
-            tetVolTuple[0] = v;
-            }
-          tetVolTuple[1] += v;
-          tetVolTuple[3] += v * v;
-          ntet++;
-          break;
-        case VTK_HEXAHEDRON:
-          v = HexVolume( cell );
-          if ( v > hexVolTuple[2] )
-            {
-            if ( hexVolTuple[0] == hexVolTuple[2] )
-              { // min == max => min has not been set
+            tetVolTuple[1] += v;
+            tetVolTuple[3] += v * v;
+            ntet++;
+            break;
+          case VTK_HEXAHEDRON:
+            v = HexVolume( cell );
+            if ( v > hexVolTuple[2] )
+              {
+              if ( hexVolTuple[0] == hexVolTuple[2] )
+                { // min == max => min has not been set
+                hexVolTuple[0] = v;
+                }
+              hexVolTuple[2] = v;
+              }
+            else if ( v < hexVolTuple[0] )
+              {
               hexVolTuple[0] = v;
               }
-            hexVolTuple[2] = v;
-            }
-          else if ( v < hexVolTuple[0] )
-            {
-            hexVolTuple[0] = v;
-            }
-          hexVolTuple[1] += v;
-          hexVolTuple[3] += v * v;
-          nhex++;
-          break;
+            hexVolTuple[1] += v;
+            hexVolTuple[3] += v * v;
+            nhex++;
+            break;
           }
         }
       triAreaTuple[4]  = ntri;
@@ -673,90 +674,90 @@ int vtkMeshQualityExtended::RequestData(
       V = 0.;
       switch ( cell->GetCellType() )
         {
-      case VTK_TRIANGLE:
-        if ( this->CellNormals )
-          this->CellNormals->GetTuple( c, vtkMeshQuality::CurrentTriNormal );
-        q = TriangleQuality( cell );
-        if ( q > qtriM )
-          {
-          if ( qtrim > qtriM )
+        case VTK_TRIANGLE:
+          if ( this->CellNormals )
+            this->CellNormals->GetTuple( c, vtkMeshQuality::CurrentTriNormal );
+          q = TriangleQuality( cell );
+          if ( q > qtriM )
+            {
+            if ( qtrim > qtriM )
+              {
+              qtrim = q;
+              }
+            qtriM = q;
+            }
+          else if ( q < qtrim )
             {
             qtrim = q;
             }
-          qtriM = q;
-          }
-        else if ( q < qtrim )
-          {
-          qtrim = q;
-          }
-        Eqtri += q;
-        Eqtri2 += q * q;
-        ++ ntri;
-        break;
-      case VTK_QUAD:
-        q = QuadQuality( cell );
-        if ( q > qquaM )
-          {
-          if ( qquam > qquaM )
+          Eqtri += q;
+          Eqtri2 += q * q;
+          ++ ntri;
+          break;
+        case VTK_QUAD:
+          q = QuadQuality( cell );
+          if ( q > qquaM )
+            {
+            if ( qquam > qquaM )
+              {
+              qquam = q;
+              }
+            qquaM = q;
+            }
+          else if ( q < qquam )
             {
             qquam = q;
             }
-          qquaM = q;
-          }
-        else if ( q < qquam )
-          {
-          qquam = q;
-          }
-        Eqqua += q;
-        Eqqua2 += q * q;
-        ++ nqua;
-        break;
-      case VTK_TETRA:
-        q = TetQuality( cell );
-        if ( q > qtetM )
-          {
-          if ( qtetm > qtetM )
+          Eqqua += q;
+          Eqqua2 += q * q;
+          ++ nqua;
+          break;
+        case VTK_TETRA:
+          q = TetQuality( cell );
+          if ( q > qtetM )
+            {
+            if ( qtetm > qtetM )
+              {
+              qtetm = q;
+              }
+            qtetM = q;
+            }
+          else if ( q < qtetm )
             {
             qtetm = q;
             }
-          qtetM = q;
-          }
-        else if ( q < qtetm )
-          {
-          qtetm = q;
-          }
-        Eqtet += q;
-        Eqtet2 += q * q;
-        ++ ntet;
-        if ( this->Volume )
-          {
-          V = TetVolume( cell );
-          if ( ! this->CompatibilityMode )
+          Eqtet += q;
+          Eqtet2 += q * q;
+          ++ ntet;
+          if ( this->Volume )
             {
-            volume->SetTuple1( 0, V );
+            V = TetVolume( cell );
+            if ( ! this->CompatibilityMode )
+              {
+              volume->SetTuple1( 0, V );
+              }
             }
-          }
-        break;
-      case VTK_HEXAHEDRON:
-        q = HexQuality( cell );
-        if ( q > qhexM )
-          {
-          if ( qhexm > qhexM )
+          break;
+        case VTK_HEXAHEDRON:
+          q = HexQuality( cell );
+          if ( q > qhexM )
+            {
+            if ( qhexm > qhexM )
+              {
+              qhexm = q;
+              }
+            qhexM = q;
+            }
+          else if ( q < qhexm )
             {
             qhexm = q;
             }
-          qhexM = q;
-          }
-        else if ( q < qhexm )
-          {
-          qhexm = q;
-          }
-        Eqhex += q;
-        Eqhex2 += q * q;
-        ++ nhex;
-        break;
-      default:
-        q = 0.;
+          Eqhex += q;
+          Eqhex2 += q * q;
+          ++ nhex;
+          break;
+        default:
+          q = 0.;
         }
 
       if ( this->SaveCellQuality )
@@ -883,8 +884,7 @@ double vtkMeshQualityExtended::TriangleEdgeCollapse( vtkCell* cell)
   p->GetPoint(1, p1);
   p->GetPoint(2, p2);
 
-  double a[3],b[3],c[3],d[3],e[3],f[3];
-  double g[3],h[3],i[3],j[3],k[3],l[3];
+  double a[3],b[3],c[3];
  
   a[0] = fabs( p2[0] - p0[0] );
   a[1] = fabs( p2[1] - p0[1] );
@@ -973,7 +973,6 @@ double vtkMeshQualityExtended::TetEdgeCollapse( vtkCell* cell)
   p->GetPoint(3, p3);
 
   double a[3],b[3],c[3],d[3],e[3],f[3];
-  double g[3],h[3],i[3],j[3],k[3],l[3];
 
   a[0] = fabs( p3[0] - p0[0] );
   a[1] = fabs( p3[1] - p0[1] );
@@ -1149,8 +1148,7 @@ double vtkMeshQualityExtended::TriangleAngleOutOfBounds( vtkCell* cell)
   p->GetPoint(1, p1);
   p->GetPoint(2, p2);
 
-  double a[3],b[3],c[3],d[3],e[3],f[3];
-  double g[3],h[3],i[3],j[3],k[3],l[3];
+  double a[3],b[3],c[3],d[3];
 
   a[0] = p1[0] - p0[0];
   a[1] = p1[1] - p0[1];
@@ -1189,15 +1187,15 @@ double vtkMeshQualityExtended::TriangleAngleOutOfBounds( vtkCell* cell)
   
 
   for (int i=0; i<3; i++) 
-  {
-    // if the absolute value of the dot-product is greater than 0.707 then
-        // the angle is either less than 45 or greater than 135
-    if ( (angle[i] > 0.0) && (angle[i] < 0.866025404) )
     {
-          // this is an element is out of the range 30-90
-          return -1.0;
+    // if the absolute value of the dot-product is greater than 0.707 then
+    // the angle is either less than 45 or greater than 135
+    if ( (angle[i] > 0.0) && (angle[i] < 0.866025404) )
+      {
+      // this is an element is out of the range 30-90
+      return -1.0;
+      }
     }
-  }
   // all angles were within range, so return a high-quality value for this element
   return 1.0;
 }
@@ -1260,15 +1258,15 @@ double vtkMeshQualityExtended::QuadAngleOutOfBounds( vtkCell* cell)
   
 
   for (int i=0; i<4; i++) 
-  {
-    // if the absolute value of the dot-product is greater than 0.707 then
-        // the angle is either less than 45 or greater than 135
-    if (fabs(angle[i]) > 0.707)
     {
-          // this is an element that has low quality, so return 0
-          return -1.0;
+    // if the absolute value of the dot-product is greater than 0.707 then
+    // the angle is either less than 45 or greater than 135
+    if (fabs(angle[i]) > 0.707)
+      {
+      // this is an element that has low quality, so return 0
+      return -1.0;
+      }
     }
-  }
   // all angles were within range, so return a high-quality value for this element
   return 1.0;
 }
@@ -1344,22 +1342,22 @@ double vtkMeshQualityExtended::TetAngleOutOfBounds( vtkCell* cell)
   angle[8] = (vtkMath::Dot(f,c));
 
   for (int i=0; i<8; i++) 
-  {
+    {
     std::cout << " Angle " << i << ": " << angle[i];
-  }
+    }
   std::cout << std::endl;
   
   
   for (int i=0; i<8; i++) 
-  {
-    // if the absolute value of the dot-product is greater than 0.707 then
-        // the angle is either less than 45 or greater than 135
-    if ( (angle[i] > 0.0) && (angle[i] < 0.866025404) )
     {
-          // this is an element that has low quality, so return 0
-          return -1.0;
+    // if the absolute value of the dot-product is greater than 0.707 then
+    // the angle is either less than 45 or greater than 135
+    if ( (angle[i] > 0.0) && (angle[i] < 0.866025404) )
+      {
+      // this is an element that has low quality, so return 0
+      return -1.0;
+      }
     }
-  }
   // all angles were within range, so return a high-quality value for this element
   return 1.0;
 }
@@ -1502,17 +1500,17 @@ double vtkMeshQualityExtended::HexAngleOutOfBounds( vtkCell* cell)
   angle[22] = (vtkMath::Dot(h,l));
   angle[23] = (vtkMath::Dot(h,k));
 
-  for (int i=0; i<24; i++) 
-  {
-    // if the absolute value of the dot-product is greater than 0.707 then
-        // the angle is either less than 45 or greater than 135
-    if (fabs(angle[i]) > 0.707)
+  for (int ii=0; ii<24; ii++) 
     {
+    // if the absolute value of the dot-product is greater than 0.707 then
+    // the angle is either less than 45 or greater than 135
+    if (fabs(angle[ii]) > 0.707)
+      {
       //cout << "Found a small / big angle !!" << endl;
-          // this is an element that has low quality, so return 0
-          return -1.0;
+      // this is an element that has low quality, so return 0
+      return -1.0;
+      }
     }
-  }
   // all angles were within range, so return a high-quality value for this element
   return 1.0;
 }

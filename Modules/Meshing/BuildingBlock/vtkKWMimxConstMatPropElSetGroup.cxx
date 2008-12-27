@@ -93,38 +93,38 @@ vtkKWMimxConstMatPropElSetGroup::vtkKWMimxConstMatPropElSetGroup()
 vtkKWMimxConstMatPropElSetGroup::~vtkKWMimxConstMatPropElSetGroup()
 {
   if(this->ObjectListComboBox)
-     this->ObjectListComboBox->Delete();
+    this->ObjectListComboBox->Delete();
   if(this->ElementSetComboBox)
-          this->ElementSetComboBox->Delete();
+    this->ElementSetComboBox->Delete();
   if(this->YoungsModulusEntry)
-          this->YoungsModulusEntry->Delete();
+    this->YoungsModulusEntry->Delete();
   if(this->PoissonsRatioEntry)
-          this->PoissonsRatioEntry->Delete();
-        if (this->ComponentFrame)
-          this->ComponentFrame->Delete();
-        if (this->DefineElSetButton)
-          this->DefineElSetButton->Delete();
-        if (this->DefineElementSetDialog)
-          this->DefineElementSetDialog->Delete();
-        if(this->ViewOptionsButton)
-                this->ViewOptionsButton->Delete();
-        if(this->ViewOptionsGroup)
-                this->ViewOptionsGroup->Delete();
+    this->PoissonsRatioEntry->Delete();
+  if (this->ComponentFrame)
+    this->ComponentFrame->Delete();
+  if (this->DefineElSetButton)
+    this->DefineElSetButton->Delete();
+  if (this->DefineElementSetDialog)
+    this->DefineElementSetDialog->Delete();
+  if(this->ViewOptionsButton)
+    this->ViewOptionsButton->Delete();
+  if(this->ViewOptionsGroup)
+    this->ViewOptionsGroup->Delete();
 }
 //----------------------------------------------------------------------------
 void vtkKWMimxConstMatPropElSetGroup::CreateWidget()
 {
   if(this->IsCreated())
-  {
+    {
     vtkErrorMacro("class already created");
     return;
-  }
+    }
 
   this->Superclass::CreateWidget();
   if(!this->ObjectListComboBox) 
-  {
-     this->ObjectListComboBox = vtkKWComboBoxWithLabel::New();
-  }
+    {
+    this->ObjectListComboBox = vtkKWComboBoxWithLabel::New();
+    }
   this->MainFrame->SetParent(this->GetParent());
   this->MainFrame->Create();
   //this->MainFrame->SetLabelText("Constant Material Properties");
@@ -150,7 +150,7 @@ void vtkKWMimxConstMatPropElSetGroup::CreateWidget()
   ObjectListComboBox->GetWidget()->ReadOnlyOn();
   ObjectListComboBox->GetWidget()->SetCommand(this, "SelectionChangedCallback");
   ObjectListComboBox->GetWidget()->SetBalloonHelpString(
-          "List of Finite element meshes containing material property information");
+    "List of Finite element meshes containing material property information");
   this->GetApplication()->Script(
     "pack %s -side top -anchor nw -expand y -padx 2 -pady 6 -fill x", 
     ObjectListComboBox->GetWidgetName());
@@ -169,11 +169,11 @@ void vtkKWMimxConstMatPropElSetGroup::CreateWidget()
   this->DefineElSetButton->SetImageToIcon( defineElSetIcon );
   this->DefineElSetButton->SetReliefToFlat( );
   this->GetApplication()->Script(
-        "pack %s -side top -anchor n -padx 2 -pady 6", 
-        this->DefineElSetButton->GetWidgetName());
+    "pack %s -side top -anchor n -padx 2 -pady 6", 
+    this->DefineElSetButton->GetWidgetName());
   // for element set listing
   if ( !this->ElementSetComboBox )      
-          this->ElementSetComboBox = vtkKWComboBoxWithLabel::New();
+    this->ElementSetComboBox = vtkKWComboBoxWithLabel::New();
   ElementSetComboBox->SetParent(this->MainFrame);
   ElementSetComboBox->Create();
   ElementSetComboBox->SetLabelText("Element Set : ");
@@ -181,32 +181,32 @@ void vtkKWMimxConstMatPropElSetGroup::CreateWidget()
   ElementSetComboBox->GetWidget()->ReadOnlyOn();
   this->ElementSetComboBox->GetWidget()->SetCommand(this, "ElementSetChangedCallback");
   this->GetApplication()->Script(
-          "pack %s -side top -anchor nw -expand y -padx 2 -pady 6 -fill x", 
-          ElementSetComboBox->GetWidgetName());
+    "pack %s -side top -anchor nw -expand y -padx 2 -pady 6 -fill x", 
+    ElementSetComboBox->GetWidgetName());
 
   //Young's modulus
   if (!this->YoungsModulusEntry)
-          this->YoungsModulusEntry = vtkKWEntryWithLabel::New();
+    this->YoungsModulusEntry = vtkKWEntryWithLabel::New();
   this->YoungsModulusEntry->SetParent(this->MainFrame);
   this->YoungsModulusEntry->Create();
   this->YoungsModulusEntry->SetLabelWidth(15);
   this->YoungsModulusEntry->SetLabelText("Modulus : ");
   this->YoungsModulusEntry->GetWidget()->SetRestrictValueToDouble();
   this->GetApplication()->Script(
-          "pack %s -side top -anchor nw -expand y -padx 2 -pady 6 -fill x", 
-          this->YoungsModulusEntry->GetWidgetName());
+    "pack %s -side top -anchor nw -expand y -padx 2 -pady 6 -fill x", 
+    this->YoungsModulusEntry->GetWidgetName());
 
   // Poisson's ratio
   if (!this->PoissonsRatioEntry)
-          this->PoissonsRatioEntry = vtkKWEntryWithLabel::New();
+    this->PoissonsRatioEntry = vtkKWEntryWithLabel::New();
   this->PoissonsRatioEntry->SetParent(this->MainFrame);
   this->PoissonsRatioEntry->Create();
   this->PoissonsRatioEntry->SetLabelWidth(15);
   this->PoissonsRatioEntry->SetLabelText("Poisson's Ratio : ");
   this->PoissonsRatioEntry->GetWidget()->SetRestrictValueToDouble();
   this->GetApplication()->Script(
-          "pack %s -side top -anchor nw -expand y -padx 2 -pady 6 -fill x", 
-          this->PoissonsRatioEntry->GetWidgetName());
+    "pack %s -side top -anchor nw -expand y -padx 2 -pady 6 -fill x", 
+    this->PoissonsRatioEntry->GetWidgetName());
 
   this->ApplyButton->SetParent(this->MainFrame);
   this->ApplyButton->Create();
@@ -215,8 +215,8 @@ void vtkKWMimxConstMatPropElSetGroup::CreateWidget()
   //this->ApplyButton->SetText("Apply");
   this->ApplyButton->SetCommand(this, "ConstMatPropElSetApplyCallback");
   this->GetApplication()->Script(
-          "pack %s -side left -anchor nw -expand y -padx 5 -pady 2", 
-          this->ApplyButton->GetWidgetName());
+    "pack %s -side left -anchor nw -expand y -padx 5 -pady 2", 
+    this->ApplyButton->GetWidgetName());
 
   this->CancelButton->SetParent(this->MainFrame);
   this->CancelButton->Create();
@@ -231,123 +231,123 @@ void vtkKWMimxConstMatPropElSetGroup::CreateWidget()
 //----------------------------------------------------------------------------
 void vtkKWMimxConstMatPropElSetGroup::Update()
 {
-        this->UpdateEnableState();
+  this->UpdateEnableState();
 }
 //---------------------------------------------------------------------------
 void vtkKWMimxConstMatPropElSetGroup::UpdateEnableState()
 {
-        this->UpdateObjectLists();
-        this->Superclass::UpdateEnableState();
+  this->UpdateObjectLists();
+  this->Superclass::UpdateEnableState();
 }
 //----------------------------------------------------------------------------
 int vtkKWMimxConstMatPropElSetGroup::ConstMatPropElSetApplyCallback()
 {
-        vtkMimxErrorCallback *callback = this->GetMimxMainWindow()->GetErrorCallback();
-        if(!strcmp(this->ObjectListComboBox->GetWidget()->GetValue(),""))
-        {
-                callback->ErrorMessage("FE Mesh selection required");
-                return 0;
-        }
+  vtkMimxErrorCallback *callback = this->GetMimxMainWindow()->GetErrorCallback();
+  if(!strcmp(this->ObjectListComboBox->GetWidget()->GetValue(),""))
+    {
+    callback->ErrorMessage("FE Mesh selection required");
+    return 0;
+    }
 
   vtkKWComboBox *combobox = this->ObjectListComboBox->GetWidget();
   const char *name = combobox->GetValue();
   strcpy(this->meshName, name);
   
-        int num = combobox->GetValueIndex(name);
-        if(num < 0 || num > combobox->GetNumberOfValues()-1)
-        {
-                callback->ErrorMessage("Choose valid FE Mesh");
-                combobox->SetValue("");
-                return 0;
-        }
+  int num = combobox->GetValueIndex(name);
+  if(num < 0 || num > combobox->GetNumberOfValues()-1)
+    {
+    callback->ErrorMessage("Choose valid FE Mesh");
+    combobox->SetValue("");
+    return 0;
+    }
 
-        float youngsmodulus = this->YoungsModulusEntry->GetWidget()->GetValueAsDouble();
-        float poissonsratio = this->PoissonsRatioEntry->GetWidget()->GetValueAsDouble();
+  float youngsModulus = this->YoungsModulusEntry->GetWidget()->GetValueAsDouble();
+  float poissonsratio = this->PoissonsRatioEntry->GetWidget()->GetValueAsDouble();
 
-        if(youngsmodulus < 0)
-        {
-                callback->ErrorMessage("Young's Modulus cannot be < 0");
-                return 0;
-        }
+  if(youngsModulus < 0)
+    {
+    callback->ErrorMessage("Young's Modulus cannot be < 0");
+    return 0;
+    }
 
-        if(poissonsratio < -1.0)
-        {
-                callback->ErrorMessage("poissons ratio value should be >= -1.0");
-                return 0;
-        }
+  if(poissonsratio < -1.0)
+    {
+    callback->ErrorMessage("poissons ratio value should be >= -1.0");
+    return 0;
+    }
         
-        vtkMimxMeshActor *meshActor = vtkMimxMeshActor::SafeDownCast(
-                this->FEMeshList->GetItem(combobox->GetValueIndex(name)));
+  vtkMimxMeshActor *meshActor = vtkMimxMeshActor::SafeDownCast(
+    this->FEMeshList->GetItem(combobox->GetValueIndex(name)));
   vtkUnstructuredGrid *ugrid = vtkMimxMeshActor::SafeDownCast(
-          this->FEMeshList->GetItem(combobox->GetValueIndex(name)))->GetDataSet();
+    this->FEMeshList->GetItem(combobox->GetValueIndex(name)))->GetDataSet();
         
   const char *elementsetname = this->ElementSetComboBox->GetWidget()->GetValue();
   strcpy(this->elementSetName, elementsetname);
   
   if(!strcmp(elementsetname,""))
-  {
-          callback->ErrorMessage("Choose valid element set name");
-          return 0;
-  }
+    {
+    callback->ErrorMessage("Choose valid element set name");
+    return 0;
+    }
   
   /* If both Fields are empty then clear out the values */
   std::string youngStr = this->YoungsModulusEntry->GetWidget()->GetValue();
   std::string poissonStr = this->PoissonsRatioEntry->GetWidget()->GetValue();
   if ((youngStr == "") && (poissonStr == ""))
-  {
-          std::string propName = this->elementSetName;
-          propName += "_Constant_Youngs_Modulus";
-          ugrid->GetFieldData()->RemoveArray( propName.c_str() );
+    {
+    std::string propName = this->elementSetName;
+    propName += "_Constant_Youngs_Modulus";
+    ugrid->GetFieldData()->RemoveArray( propName.c_str() );
 
-          vtkIntArray *cellArray = vtkIntArray::SafeDownCast(ugrid->GetCellData()->GetArray(this->elementSetName));
-          vtkDoubleArray *youngsmodulus = vtkDoubleArray::SafeDownCast(ugrid->GetCellData()->GetArray("Youngs_Modulus"));       
-          if (cellArray && youngsmodulus)
+    vtkIntArray *cellArray = vtkIntArray::SafeDownCast(ugrid->GetCellData()->GetArray(this->elementSetName));
+    vtkDoubleArray *youngsmodulus = vtkDoubleArray::SafeDownCast(ugrid->GetCellData()->GetArray("Youngs_Modulus"));       
+    if (cellArray && youngsmodulus)
+      {
+      int numCells = ugrid->GetNumberOfCells();
+      for (int i=0; i< numCells; i++)
+        {
+        if (cellArray->GetValue(i))
           {
-                  int numCells = ugrid->GetNumberOfCells();
-                  for (int i=0; i< numCells; i++)
-                  {
-                        if (cellArray->GetValue(i))
-                        {
-                          youngsmodulus->SetValue(i, -9999);
-                        }
-                  }
+          youngsmodulus->SetValue(i, -9999);
           }
+        }
+      }
 
-          propName = this->elementSetName;
-          propName += "_Constant_Poissons_Ratio";
-          ugrid->GetFieldData()->RemoveArray( propName.c_str() );
+    propName = this->elementSetName;
+    propName += "_Constant_Poissons_Ratio";
+    ugrid->GetFieldData()->RemoveArray( propName.c_str() );
 
-          this->YoungsModulusEntry->SetEnabled( 0 );
-          this->PoissonsRatioEntry->SetEnabled( 0 );
-          this->GetMimxMainWindow()->SetStatusText("Cleared user defined material properties");
+    this->YoungsModulusEntry->SetEnabled( 0 );
+    this->PoissonsRatioEntry->SetEnabled( 0 );
+    this->GetMimxMainWindow()->SetStatusText("Cleared user defined material properties");
 
-          return 1;
-  }
+    return 1;
+    }
 
   std::string checkPropName;
   checkPropName = this->elementSetName;
   checkPropName += "_Image_Based_Material_Property";
   
   vtkDoubleArray *matarray = vtkDoubleArray::SafeDownCast( ugrid->GetCellData()->GetArray(checkPropName.c_str()) );
-        if( matarray )
-        {
-                vtkKWMessageDialog *Dialog = vtkKWMessageDialog::New();
-                Dialog->SetStyleToYesNo();
-                Dialog->SetApplication(this->GetApplication());
-                Dialog->Create();
-                Dialog->SetTitle("Your Attention Please!");
-                Dialog->SetText("An image-based material property has already been assigned to this element set. Would you like to overwrite?");
-                Dialog->Invoke();
-                if(Dialog->GetStatus() == vtkKWMessageDialog::StatusCanceled)
-                {
-                        Dialog->Delete();
-                        return 1;
-                }
-                Dialog->Delete();
-                ugrid->GetCellData()->RemoveArray( checkPropName.c_str() );
-        }
+  if( matarray )
+    {
+    vtkKWMessageDialog *Dialog = vtkKWMessageDialog::New();
+    Dialog->SetStyleToYesNo();
+    Dialog->SetApplication(this->GetApplication());
+    Dialog->Create();
+    Dialog->SetTitle("Your Attention Please!");
+    Dialog->SetText("An image-based material property has already been assigned to this element set. Would you like to overwrite?");
+    Dialog->Invoke();
+    if(Dialog->GetStatus() == vtkKWMessageDialog::StatusCanceled)
+      {
+      Dialog->Delete();
+      return 1;
+      }
+    Dialog->Delete();
+    ugrid->GetCellData()->RemoveArray( checkPropName.c_str() );
+    }
 
-        meshActor->StoreConstantMaterialProperty(elementsetname, youngsmodulus);
+  meshActor->StoreConstantMaterialProperty(elementsetname, youngsModulus);
   meshActor->StoreConstantPoissonsRatio(elementsetname, poissonsratio);
   this->YoungsModulusEntry->SetEnabled( 0 );
   this->PoissonsRatioEntry->SetEnabled( 0 );
@@ -363,25 +363,25 @@ void vtkKWMimxConstMatPropElSetGroup::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkKWMimxConstMatPropElSetGroup::ConstMatPropElSetCancelCallback()
 {
-        this->CancelStatus = 1;
-        if(this->ViewOptionsGroup)
-        {
-                this->ViewOptionsGroup->DeselectAllButtons();
-                this->ViewOptionsGroup->Withdraw();
-        }
-    this->GetApplication()->Script("pack forget %s", this->MainFrame->GetWidgetName());
-    this->MenuGroup->SetMenuButtonsEnabled(1);
-    this->GetMimxMainWindow()->GetMainUserInterfacePanel()->SetEnabled(1);
-        this->CancelStatus = 0;
-        strcpy(this->objectSelectionPrevious, "");
-        strcpy(this->elementSetSelectionPrevious, "");
+  this->CancelStatus = 1;
+  if(this->ViewOptionsGroup)
+    {
+    this->ViewOptionsGroup->DeselectAllButtons();
+    this->ViewOptionsGroup->Withdraw();
+    }
+  this->GetApplication()->Script("pack forget %s", this->MainFrame->GetWidgetName());
+  this->MenuGroup->SetMenuButtonsEnabled(1);
+  this->GetMimxMainWindow()->GetMainUserInterfacePanel()->SetEnabled(1);
+  this->CancelStatus = 0;
+  strcpy(this->objectSelectionPrevious, "");
+  strcpy(this->elementSetSelectionPrevious, "");
 }
 //-----------------------------------------------------------------------------
 void vtkKWMimxConstMatPropElSetGroup::UpdateObjectLists()
 {
-        this->UpdateMeshComboBox( this->ObjectListComboBox->GetWidget() );
+  this->UpdateMeshComboBox( this->ObjectListComboBox->GetWidget() );
         
-        /*
+  /*
         this->ObjectListComboBox->GetWidget()->DeleteAllValues();
         
         int defaultItem = -1;
@@ -420,156 +420,155 @@ void vtkKWMimxConstMatPropElSetGroup::UpdateObjectLists()
     ObjectListComboBox->GetWidget()->SetValue("");
         }
         */
-        this->SelectionChangedCallback(ObjectListComboBox->GetWidget()->GetValue());
+  this->SelectionChangedCallback(ObjectListComboBox->GetWidget()->GetValue());
 }
 //--------------------------------------------------------------------------------
 void vtkKWMimxConstMatPropElSetGroup::SelectionChangedCallback(const char *Selection)
 {
-        if(this->CancelStatus)  return;
-        if(!strcmp(Selection,""))
-        {
-                this->DefineElSetButton->SetStateToDisabled();
-                return;
-        }
-        if(!strcmp(this->objectSelectionPrevious, Selection))
-        {
-                return;
-        }
-        //this->RemovePreviousSelectionDisplay();
-        strcpy(this->objectSelectionPrevious,Selection);
+  if(this->CancelStatus)  return;
+  if(!strcmp(Selection,""))
+    {
+    this->DefineElSetButton->SetStateToDisabled();
+    return;
+    }
+  if(!strcmp(this->objectSelectionPrevious, Selection))
+    {
+    return;
+    }
+  //this->RemovePreviousSelectionDisplay();
+  strcpy(this->objectSelectionPrevious,Selection);
 
-        vtkKWComboBox *combobox = this->ObjectListComboBox->GetWidget();
-        vtkMimxMeshActor *meshActor = vtkMimxMeshActor::SafeDownCast(
-                this->FEMeshList->GetItem(combobox->GetValueIndex(Selection)));
-        vtkUnstructuredGrid *ugrid = meshActor->GetDataSet();
+  vtkKWComboBox *combobox = this->ObjectListComboBox->GetWidget();
+  vtkMimxMeshActor *meshActor = vtkMimxMeshActor::SafeDownCast(
+    this->FEMeshList->GetItem(combobox->GetValueIndex(Selection)));
+  vtkUnstructuredGrid *ugrid = meshActor->GetDataSet();
 
-        // populate the element set list
-        this->ElementSetComboBox->GetWidget()->DeleteAllValues();
-        int i;
-        vtkStringArray *strarray = vtkStringArray::SafeDownCast(
-                ugrid->GetFieldData()->GetAbstractArray("Element_Set_Names"));
+  // populate the element set list
+  this->ElementSetComboBox->GetWidget()->DeleteAllValues();
+  int i;
+  vtkStringArray *strarray = vtkStringArray::SafeDownCast(
+    ugrid->GetFieldData()->GetAbstractArray("Element_Set_Names"));
 
-        int numarrrays = strarray->GetNumberOfValues();
+  int numarrrays = strarray->GetNumberOfValues();
 
-        for (i=0; i<numarrrays; i++)
-        {
-                this->ElementSetComboBox->GetWidget()->AddValue(
-                        strarray->GetValue(i));
-        }
-        this->ElementSetComboBox->GetWidget()->SetValue( strarray->GetValue(0) );
-        strcpy(this->elementSetSelectionPrevious, "");
-        if(this->ViewOptionsGroup)
-        {
-                this->ViewOptionsGroup->SetMeshActor(meshActor);
-        }
-        if(this->DefineElementSetDialog)
-        {
-                this->DefineElementSetDialog->SetMeshActor(meshActor);
-                this->DefineElementSetDialog->ResetState();
-        }
-        this->ElementSetChangedCallback(this->ElementSetComboBox->GetWidget()->GetValue());
+  for (i=0; i<numarrrays; i++)
+    {
+    this->ElementSetComboBox->GetWidget()->AddValue(
+      strarray->GetValue(i));
+    }
+  this->ElementSetComboBox->GetWidget()->SetValue( strarray->GetValue(0) );
+  strcpy(this->elementSetSelectionPrevious, "");
+  if(this->ViewOptionsGroup)
+    {
+    this->ViewOptionsGroup->SetMeshActor(meshActor);
+    }
+  if(this->DefineElementSetDialog)
+    {
+    this->DefineElementSetDialog->SetMeshActor(meshActor);
+    this->DefineElementSetDialog->ResetState();
+    }
+  this->ElementSetChangedCallback(this->ElementSetComboBox->GetWidget()->GetValue());
 }
 //-------------------------------------------------------------------------------------
 void vtkKWMimxConstMatPropElSetGroup::ElementSetChangedCallback(const char *Selection)
 {
-        if(this->CancelStatus)  return;
-        vtkMimxErrorCallback *callback = this->GetMimxMainWindow()->GetErrorCallback();
-        if(!strcmp(Selection,""))
-        {
-                callback->ErrorMessage("Element Set Selection Required");
-                return;
-        }
+  if(this->CancelStatus)  return;
+  vtkMimxErrorCallback *callback = this->GetMimxMainWindow()->GetErrorCallback();
+  if(!strcmp(Selection,""))
+    {
+    callback->ErrorMessage("Element Set Selection Required");
+    return;
+    }
 
-    this->DefineElSetButton->SetStateToNormal();
+  this->DefineElSetButton->SetStateToNormal();
   
-        // get the femesh
-        vtkKWComboBox *combobox = this->ObjectListComboBox->GetWidget();
+  // get the femesh
+  vtkKWComboBox *combobox = this->ObjectListComboBox->GetWidget();
 //      const char *elSetName = this->ElementSetComboBox->GetWidget()->GetValue();
-        vtkMimxMeshActor *meshActor = vtkMimxMeshActor::SafeDownCast(
-                this->FEMeshList->GetItem(combobox->GetValueIndex(
-                ObjectListComboBox->GetWidget()->GetValue())));
-        vtkUnstructuredGrid *ugrid = meshActor->GetDataSet();
+  vtkMimxMeshActor *meshActor = vtkMimxMeshActor::SafeDownCast(
+    this->FEMeshList->GetItem(combobox->GetValueIndex(
+                                ObjectListComboBox->GetWidget()->GetValue())));
+  vtkUnstructuredGrid *ugrid = meshActor->GetDataSet();
         
 //      meshActor->HideMesh();
-        char young[256];
-        strcpy(young, Selection);
-        strcat(young, "_Constant_Youngs_Modulus");
+  char young[256];
+  strcpy(young, Selection);
+  strcat(young, "_Constant_Youngs_Modulus");
 
-        char poisson[256];
-        strcpy(poisson, Selection);
-        strcat(poisson, "_Constant_Poissons_Ratio");
+  char poisson[256];
+  strcpy(poisson, Selection);
+  strcat(poisson, "_Constant_Poissons_Ratio");
 
-        // check if the field data exists.
-        vtkDoubleArray *Earray = vtkDoubleArray::SafeDownCast(
-                ugrid->GetFieldData()->GetArray(young));        
+  // check if the field data exists.
+  vtkDoubleArray *Earray = vtkDoubleArray::SafeDownCast(
+    ugrid->GetFieldData()->GetArray(young));        
 
-        vtkFloatArray *Nuarray = vtkFloatArray::SafeDownCast(
-                ugrid->GetFieldData()->GetArray(poisson));      
+  vtkFloatArray *Nuarray = vtkFloatArray::SafeDownCast(
+    ugrid->GetFieldData()->GetArray(poisson));      
 
-        float youngsmodulus;
-        float poissonsratio;
-        if(Earray)
-        {
-                youngsmodulus = Earray->GetValue(0);
-                this->YoungsModulusEntry->GetWidget()->SetValueAsDouble(youngsmodulus);
-        }
-        else
-        {
-                this->YoungsModulusEntry->GetWidget()->SetValue("");
-        }
-        if(Nuarray)
-        {
-                poissonsratio = Nuarray->GetValue(0);
-                this->PoissonsRatioEntry->GetWidget()->SetValueAsDouble(poissonsratio);
-        }
-        else{
-                this->PoissonsRatioEntry->GetWidget()->SetValue("");
-        }
-        if(this->ViewOptionsGroup)
-        {
-                meshActor->ShowHideAllElementSets(0);
-                this->ViewOptionsGroup->SetElementSetName(Selection);
-                this->ViewOptionsGroup->Update();
-        }
-        this->GetMimxMainWindow()->GetRenderWidget()->Render();
+  float youngsmodulus;
+  float poissonsratio;
+  if(Earray)
+    {
+    youngsmodulus = Earray->GetValue(0);
+    this->YoungsModulusEntry->GetWidget()->SetValueAsDouble(youngsmodulus);
+    }
+  else
+    {
+    this->YoungsModulusEntry->GetWidget()->SetValue("");
+    }
+  if(Nuarray)
+    {
+    poissonsratio = Nuarray->GetValue(0);
+    this->PoissonsRatioEntry->GetWidget()->SetValueAsDouble(poissonsratio);
+    }
+  else{
+  this->PoissonsRatioEntry->GetWidget()->SetValue("");
+  }
+  if(this->ViewOptionsGroup)
+    {
+    meshActor->ShowHideAllElementSets(0);
+    this->ViewOptionsGroup->SetElementSetName(Selection);
+    this->ViewOptionsGroup->Update();
+    }
+  this->GetMimxMainWindow()->GetRenderWidget()->Render();
         
-        this->YoungsModulusEntry->SetEnabled( 1 );
+  this->YoungsModulusEntry->SetEnabled( 1 );
   this->PoissonsRatioEntry->SetEnabled( 1 );
 }
 //----------------------------------------------------------------------------
 void vtkKWMimxConstMatPropElSetGroup::DefineElementSetCallback()
 {
-        vtkMimxErrorCallback *callback = this->GetMimxMainWindow()->GetErrorCallback();
+  vtkMimxErrorCallback *callback = this->GetMimxMainWindow()->GetErrorCallback();
         
-        if(!strcmp(this->ObjectListComboBox->GetWidget()->GetValue(),""))
-        {
-                callback->ErrorMessage("Mesh must be selected");
-                return;
-        }
+  if(!strcmp(this->ObjectListComboBox->GetWidget()->GetValue(),""))
+    {
+    callback->ErrorMessage("Mesh must be selected");
+    return;
+    }
 
   vtkKWComboBox *combobox = this->ObjectListComboBox->GetWidget();
   const char *name = combobox->GetValue();
   
-        int num = combobox->GetValueIndex(name);
-        if(num < 0 || num > combobox->GetNumberOfValues()-1)
-        {
-                callback->ErrorMessage("Invalid Mesh was selected");
-                combobox->SetValue("");
-                return;
-        }
-        vtkMimxMeshActor *meshActor = vtkMimxMeshActor::SafeDownCast(
-                this->FEMeshList->GetItem(combobox->GetValueIndex(name)));
+  int num = combobox->GetValueIndex(name);
+  if(num < 0 || num > combobox->GetNumberOfValues()-1)
+    {
+    callback->ErrorMessage("Invalid Mesh was selected");
+    combobox->SetValue("");
+    return;
+    }
+  vtkMimxMeshActor *meshActor = vtkMimxMeshActor::SafeDownCast(
+    this->FEMeshList->GetItem(combobox->GetValueIndex(name)));
                 
-        if (!this->DefineElementSetDialog)
-        {
-          this->DefineElementSetDialog = vtkKWMimxDefineElSetGroup::New();
-          this->DefineElementSetDialog->SetApplication( this->GetApplication() );
-          this->DefineElementSetDialog->SetMimxMainWindow( this->GetMimxMainWindow() );
-          this->DefineElementSetDialog->Create();
-        }
-        this->DefineElementSetDialog->SetMeshActor( meshActor );
-        this->DefineElementSetDialog->SetElementSetCombobox(this->ElementSetComboBox->GetWidget());
-        this->DefineElementSetDialog->Display();
+  if (!this->DefineElementSetDialog)
+    {
+    this->DefineElementSetDialog = vtkKWMimxDefineElSetGroup::New();
+    this->DefineElementSetDialog->SetApplication( this->GetApplication() );
+    this->DefineElementSetDialog->SetMimxMainWindow( this->GetMimxMainWindow() );
+    this->DefineElementSetDialog->Create();
+    }
+  this->DefineElementSetDialog->SetMeshActor( meshActor );
+  this->DefineElementSetDialog->SetElementSetCombobox(this->ElementSetComboBox->GetWidget());
+  this->DefineElementSetDialog->Display();
 }
 //--------------------------------------------------------------------------------------------
-

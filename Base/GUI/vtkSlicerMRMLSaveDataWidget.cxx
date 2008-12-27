@@ -224,7 +224,6 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
       void **data = static_cast< void ** >(callData);
       int* row = static_cast< int* >(data[0]);
       int* col = static_cast< int* >(data[1]);
-      const char* text = static_cast< const char* >(data[2]);
 
       this->UpdateDataTableCell(*row, *col);
       }
@@ -325,7 +324,6 @@ int vtkSlicerMRMLSaveDataWidget::SaveMarkedData()
   vtkIntArray* arrayRows = vtkIntArray::New();
   arrayRows->SetNumberOfComponents(1);
   int nrows = this->MultiColumnList->GetWidget()->GetNumberOfRows();
-  int numNotWrite = 0;
   for (int row=0; row<nrows; row++)
     {
     if (!this->IsSceneRow(row) &&

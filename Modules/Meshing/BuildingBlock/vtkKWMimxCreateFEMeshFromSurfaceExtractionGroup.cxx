@@ -102,10 +102,10 @@ vtkKWMimxCreateFEMeshFromSurfaceExtractionGroup::~vtkKWMimxCreateFEMeshFromSurfa
 void vtkKWMimxCreateFEMeshFromSurfaceExtractionGroup::CreateWidget()
 {
   if(this->IsCreated())
-  {
+    {
     vtkErrorMacro("class already created");
     return;
-  }
+    }
 
   this->Superclass::CreateWidget();
   this->MainFrame->SetParent(this->GetParent());
@@ -116,7 +116,7 @@ void vtkKWMimxCreateFEMeshFromSurfaceExtractionGroup::CreateWidget()
     this->MainFrame->GetWidgetName());
 
   if (!this->ComponentFrame)    
-     this->ComponentFrame = vtkKWFrameWithLabel::New();
+    this->ComponentFrame = vtkKWFrameWithLabel::New();
   this->ComponentFrame->SetParent(this->MainFrame);
   this->ComponentFrame->Create();
   this->ComponentFrame->SetLabelText("Mesh");
@@ -144,8 +144,8 @@ void vtkKWMimxCreateFEMeshFromSurfaceExtractionGroup::CreateWidget()
   this->ApplyButton->SetImageToIcon( this->GetMimxMainWindow()->GetApplyButtonIcon() );
   this->ApplyButton->SetCommand(this, "CreateFEMeshFromSurfaceExtractionApplyCallback");
   this->GetApplication()->Script(
-          "pack %s -side left -anchor nw -expand y -padx 5 -pady 6", 
-          this->ApplyButton->GetWidgetName());
+    "pack %s -side left -anchor nw -expand y -padx 5 -pady 6", 
+    this->ApplyButton->GetWidgetName());
 
   this->CancelButton->SetParent(this->MainFrame);
   this->CancelButton->Create();
@@ -154,106 +154,106 @@ void vtkKWMimxCreateFEMeshFromSurfaceExtractionGroup::CreateWidget()
   this->CancelButton->SetCommand(this, "CreateFEMeshFromSurfaceExtractionCancelCallback");
   this->GetApplication()->Script(
     "pack %s -side right -anchor ne -expand n -padx 5 -pady 6", 
-          this->CancelButton->GetWidgetName());
+    this->CancelButton->GetWidgetName());
 
 }
 //----------------------------------------------------------------------------
 void vtkKWMimxCreateFEMeshFromSurfaceExtractionGroup::Update()
 {
-        this->UpdateEnableState();
+  this->UpdateEnableState();
 }
 //---------------------------------------------------------------------------
 void vtkKWMimxCreateFEMeshFromSurfaceExtractionGroup::UpdateEnableState()
 {
-        this->UpdateObjectLists();
-        this->Superclass::UpdateEnableState();
+  this->UpdateObjectLists();
+  this->Superclass::UpdateEnableState();
 }
 //----------------------------------------------------------------------------
 int vtkKWMimxCreateFEMeshFromSurfaceExtractionGroup::CreateFEMeshFromSurfaceExtractionApplyCallback()
 {
-        vtkMimxErrorCallback *callback = this->GetMimxMainWindow()->GetErrorCallback();
-        if(!strcmp(this->ObjectListComboBox->GetWidget()->GetValue(),""))
-        {
-                callback->ErrorMessage("FE Mesh not selected");
-                return 0;
-        }
-                vtkKWComboBox *combobox = this->ObjectListComboBox->GetWidget();
-                const char *name = combobox->GetValue();
+  vtkMimxErrorCallback *callback = this->GetMimxMainWindow()->GetErrorCallback();
+  if(!strcmp(this->ObjectListComboBox->GetWidget()->GetValue(),""))
+    {
+    callback->ErrorMessage("FE Mesh not selected");
+    return 0;
+    }
+  vtkKWComboBox *combobox = this->ObjectListComboBox->GetWidget();
+  const char *name = combobox->GetValue();
 
-                int num = combobox->GetValueIndex(name);
-                if(num < 0 || num > combobox->GetNumberOfValues()-1)
-                {
-                        callback->ErrorMessage("Choose valid FE Mesh");
-                        combobox->SetValue("");
-                        return 0;
-                }
+  int num = combobox->GetValueIndex(name);
+  if(num < 0 || num > combobox->GetNumberOfValues()-1)
+    {
+    callback->ErrorMessage("Choose valid FE Mesh");
+    combobox->SetValue("");
+    return 0;
+    }
 
-                vtkUnstructuredGrid *ugrid = vtkMimxMeshActor::SafeDownCast(this->FEMeshList
-                        ->GetItem(combobox->GetValueIndex(name)))->GetDataSet();
-                vtkGeometryFilter *geofil = vtkGeometryFilter::New();
-                geofil->SetInput(ugrid);
-                geofil->Update();
-                vtkCellTypes *celltypes = vtkCellTypes::New();
-                geofil->GetOutput()->GetCellTypes(celltypes);
-                int i;
-                for(i =0; i < celltypes->GetNumberOfTypes(); i++)
-                {
-                        if(celltypes->GetCellType(i) != 9)
-                        {
-                                callback->ErrorMessage("Extracted mesh should contain only quadrilaterals");
-                                celltypes->Delete();
-                                geofil->Delete();
-                                return 0;
-                        }
-                }
-                vtkUnstructuredGrid *unstgrid = vtkUnstructuredGrid::New();
+  vtkUnstructuredGrid *ugrid = vtkMimxMeshActor::SafeDownCast(this->FEMeshList
+                                                              ->GetItem(combobox->GetValueIndex(name)))->GetDataSet();
+  vtkGeometryFilter *geofil = vtkGeometryFilter::New();
+  geofil->SetInput(ugrid);
+  geofil->Update();
+  vtkCellTypes *celltypes = vtkCellTypes::New();
+  geofil->GetOutput()->GetCellTypes(celltypes);
+  int i;
+  for(i =0; i < celltypes->GetNumberOfTypes(); i++)
+    {
+    if(celltypes->GetCellType(i) != 9)
+      {
+      callback->ErrorMessage("Extracted mesh should contain only quadrilaterals");
+      celltypes->Delete();
+      geofil->Delete();
+      return 0;
+      }
+    }
+  vtkUnstructuredGrid *unstgrid = vtkUnstructuredGrid::New();
 
-                unstgrid->SetPoints(geofil->GetOutput()->GetPoints());
-                unstgrid->Allocate(geofil->GetOutput()->GetNumberOfCells());
+  unstgrid->SetPoints(geofil->GetOutput()->GetPoints());
+  unstgrid->Allocate(geofil->GetOutput()->GetNumberOfCells());
 
-                vtkIdList * unstIdlist = vtkIdList ::New();
+  vtkIdList * unstIdlist = vtkIdList ::New();
 
-                for (int i = 0; i<geofil->GetOutput()->GetNumberOfCells(); i++)
-                {
-                        geofil->GetOutput()->GetCellPoints(i,unstIdlist);
-                        unstgrid->InsertNextCell(9,unstIdlist);
-                        unstIdlist->Initialize();
-                }
-                unstIdlist->Delete();
-                geofil->Delete();
+  for (i = 0; i<geofil->GetOutput()->GetNumberOfCells(); i++)
+    {
+    geofil->GetOutput()->GetCellPoints(i,unstIdlist);
+    unstgrid->InsertNextCell(9,unstIdlist);
+    unstIdlist->Initialize();
+    }
+  unstIdlist->Delete();
+  geofil->Delete();
                 
-                vtkMimxMeshActor *meshActor = vtkMimxMeshActor::New();
-                this->FEMeshList->AppendItem(meshActor);
-                meshActor->SetDataSet( unstgrid );
-                meshActor->SetRenderer( this->GetMimxMainWindow()->GetRenderWidget()->GetRenderer() );
-                meshActor->SetInteractor( this->GetMimxMainWindow()->GetRenderWidget()->GetRenderWindowInteractor() );
+  vtkMimxMeshActor *meshActor = vtkMimxMeshActor::New();
+  this->FEMeshList->AppendItem(meshActor);
+  meshActor->SetDataSet( unstgrid );
+  meshActor->SetRenderer( this->GetMimxMainWindow()->GetRenderWidget()->GetRenderer() );
+  meshActor->SetInteractor( this->GetMimxMainWindow()->GetRenderWidget()->GetRenderWindowInteractor() );
                                 
-                unstgrid->Delete();
-                if(ugrid->GetPointData()->GetArray("Node_Numbers"))
-                {
-                        vtkIntArray *nodenumbers = vtkIntArray::New();
-                        nodenumbers->DeepCopy(ugrid->GetPointData()->GetArray("Node_Numbers"));
-                        nodenumbers->SetName("Node_Numbers");
-                        vtkMimxMeshActor::SafeDownCast(this->FEMeshList->GetItem(
-                                this->FEMeshList->GetNumberOfItems()-1))->GetDataSet()->
-                                GetPointData()->AddArray(nodenumbers);
-                        nodenumbers->Delete();
-                }
-                this->Count++;
-                vtkMimxMeshActor::SafeDownCast(this->FEMeshList->GetItem(
-                        this->FEMeshList->GetNumberOfItems()-1))->SetObjectName("Extract_Surface_",Count);
-                //vtkMimxMeshActor::SafeDownCast(this->FEMeshList->GetItem(
-                //      this->FEMeshList->GetNumberOfItems()-1))->GetDataSet()->Modified();
-                //this->GetMimxMainWindow()->GetRenderWidget()->AddViewProp(
-                //      this->FEMeshList->GetItem(this->FEMeshList->GetNumberOfItems()-1)->GetActor());
-                this->GetMimxMainWindow()->GetRenderWidget()->Render();
-                this->GetMimxMainWindow()->GetRenderWidget()->ResetCamera();
-                this->GetMimxMainWindow()->GetViewProperties()->AddObjectList(
-                        this->FEMeshList->GetItem(this->FEMeshList->GetNumberOfItems()-1));
+  unstgrid->Delete();
+  if(ugrid->GetPointData()->GetArray("Node_Numbers"))
+    {
+    vtkIntArray *nodenumbers = vtkIntArray::New();
+    nodenumbers->DeepCopy(ugrid->GetPointData()->GetArray("Node_Numbers"));
+    nodenumbers->SetName("Node_Numbers");
+    vtkMimxMeshActor::SafeDownCast(this->FEMeshList->GetItem(
+                                     this->FEMeshList->GetNumberOfItems()-1))->GetDataSet()->
+      GetPointData()->AddArray(nodenumbers);
+    nodenumbers->Delete();
+    }
+  this->Count++;
+  vtkMimxMeshActor::SafeDownCast(this->FEMeshList->GetItem(
+                                   this->FEMeshList->GetNumberOfItems()-1))->SetObjectName("Extract_Surface_",Count);
+  //vtkMimxMeshActor::SafeDownCast(this->FEMeshList->GetItem(
+  //      this->FEMeshList->GetNumberOfItems()-1))->GetDataSet()->Modified();
+  //this->GetMimxMainWindow()->GetRenderWidget()->AddViewProp(
+  //      this->FEMeshList->GetItem(this->FEMeshList->GetNumberOfItems()-1)->GetActor());
+  this->GetMimxMainWindow()->GetRenderWidget()->Render();
+  this->GetMimxMainWindow()->GetRenderWidget()->ResetCamera();
+  this->GetMimxMainWindow()->GetViewProperties()->AddObjectList(
+    this->FEMeshList->GetItem(this->FEMeshList->GetNumberOfItems()-1));
                 
-                this->GetMimxMainWindow()->SetStatusText("Created Mesh");
+  this->GetMimxMainWindow()->SetStatusText("Created Mesh");
                 
-                return 1;
+  return 1;
 }
 //----------------------------------------------------------------------------
 void vtkKWMimxCreateFEMeshFromSurfaceExtractionGroup::PrintSelf(ostream& os, vtkIndent indent)
@@ -263,15 +263,15 @@ void vtkKWMimxCreateFEMeshFromSurfaceExtractionGroup::PrintSelf(ostream& os, vtk
 //----------------------------------------------------------------------------
 void vtkKWMimxCreateFEMeshFromSurfaceExtractionGroup::CreateFEMeshFromSurfaceExtractionCancelCallback()
 {
-        this->GetApplication()->Script("pack forget %s", this->MainFrame->GetWidgetName());
-        this->MenuGroup->SetMenuButtonsEnabled(1);
-        this->GetMimxMainWindow()->GetMainUserInterfacePanel()->SetEnabled(1);
+  this->GetApplication()->Script("pack forget %s", this->MainFrame->GetWidgetName());
+  this->MenuGroup->SetMenuButtonsEnabled(1);
+  this->GetMimxMainWindow()->GetMainUserInterfacePanel()->SetEnabled(1);
 }
 //----------------------------------------------------------------------------------------
 void vtkKWMimxCreateFEMeshFromSurfaceExtractionGroup::UpdateObjectLists()
 {
-        this->UpdateMeshComboBox( this->ObjectListComboBox->GetWidget() );
-        /*
+  this->UpdateMeshComboBox( this->ObjectListComboBox->GetWidget() );
+  /*
         this->ObjectListComboBox->GetWidget()->DeleteAllValues();
         
         int defaultItem = -1;
@@ -298,7 +298,7 @@ void vtkKWMimxCreateFEMeshFromSurfaceExtractionGroup::UpdateObjectLists()
 //------------------------------------------------------------------------------
 void vtkKWMimxCreateFEMeshFromSurfaceExtractionGroup::CreateFEMeshFromSurfaceExtractionDoneCallback()
 {
-        if(this->CreateFEMeshFromSurfaceExtractionApplyCallback())
-                this->CreateFEMeshFromSurfaceExtractionCancelCallback();
+  if(this->CreateFEMeshFromSurfaceExtractionApplyCallback())
+    this->CreateFEMeshFromSurfaceExtractionCancelCallback();
 }
 //---------------------------------------------------------------------------------

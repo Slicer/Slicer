@@ -146,7 +146,7 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::SetDiffusionTensorVolumeN
       {
       std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode* > displayNodes = displayNode->GetSliceGlyphDisplayNodes(this->DiffusionTensorVolumeNode);
       this->GlyphDisplayNodes.clear();
-      for( int i = 0 ; i<displayNodes.size(); i++ )
+      for( size_t i = 0 ; i<displayNodes.size(); i++ )
       {
         vtkMRMLDiffusionTensorVolumeSliceDisplayNode* dtVolumeSliceDisplayNode = vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SafeDownCast( displayNodes[i] );
         if (dtVolumeSliceDisplayNode)
@@ -456,7 +456,7 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::CreateWidget ( )
   */
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
     this->DisplayFrame->GetWidgetName() );  
-  char* sliceNames[] = {"Red", "Yellow", "Green"};
+  const char* sliceNames[] = {"Red", "Yellow", "Green"};
   for (i=0; i<3; i++)
     {
     this->VisibilityButton[i] = vtkKWCheckButtonWithLabel::New();

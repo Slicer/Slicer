@@ -181,8 +181,6 @@ void vtkSlicerSliceGUI::ProcessGUIEvents ( vtkObject *caller,
 {
   vtkKWRenderWidget *rw = 
         vtkKWRenderWidget::SafeDownCast (caller);
-  vtkKWGenericRenderWindowInteractor *rwi = 
-        vtkKWGenericRenderWindowInteractor::SafeDownCast (caller);
   vtkSlicerInteractorStyle *iStyle = 
         vtkSlicerInteractorStyle::SafeDownCast (caller);
 
@@ -266,7 +264,7 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
                                  snode->GetLayoutGridColumns() );
       }
 
-    vtkKWRenderWidget *rw = sliceViewer->GetRenderWidget ();
+//    vtkKWRenderWidget *rw = sliceViewer->GetRenderWidget ();
     //sliceViewer->GetImageMapper()->SetInput ( sliceLogic->GetImageData( ) );
 
 //     if ( sliceLogic->GetImageData() != NULL )
@@ -329,7 +327,7 @@ void vtkSlicerSliceGUI::ProcessMRMLEvents ( vtkObject *caller,
     vtkSlicerSliceLogic *sliceLogic = this->GetLogic ( );
 
     vtkSlicerSliceViewer *sliceViewer = this->GetSliceViewer( );
-    vtkKWRenderWidget *rw = sliceViewer->GetRenderWidget ();
+    // vtkKWRenderWidget *rw = sliceViewer->GetRenderWidget ();
     // add poly data (glyphs)
     vtkPolyDataCollection *PolyDataCollection = vtkPolyDataCollection::New();
     vtkCollection *LookupTableCollection = vtkCollection::New();

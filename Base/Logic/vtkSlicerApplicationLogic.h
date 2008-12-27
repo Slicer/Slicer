@@ -1,16 +1,16 @@
-/*=auto=========================================================================
+/*=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+  Program:   Slicer3 Application Logic
+  Module:    $HeadURL$
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
 
-  See Doc/copyright/copyright.txt
-  or http://www.slicer.org/copyright/copyright.txt for details.
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkSlicerApplicationLogic.h,v $
-  Date:      $Date: 2006/01/08 04:48:05 $
-  Version:   $Revision: 1.45 $
+  See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
-=========================================================================auto=*/
+==========================================================================*/
 // .NAME vtkSlicerApplicationLogic - the main logic to manage the application
 // .SECTION Description
 // The Main entry point for the slicer3 application.

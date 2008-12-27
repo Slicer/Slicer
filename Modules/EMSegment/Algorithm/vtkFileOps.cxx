@@ -159,7 +159,7 @@ int vtkFileOps::fileIsCompressed(const char *fname, char **newFileName)
 
   char *p = (char *)NULL;
   char *lastSlash = (char *)NULL;
-  int fileIsCompressed = 0;
+  int aFileIsCompressed = 0;
 
   char *dontcarename = NULL;
 
@@ -189,7 +189,7 @@ int vtkFileOps::fileIsCompressed(const char *fname, char **newFileName)
       }
     }
     /* File does not exist, but a compressed version does */
-    fileIsCompressed = 1;
+    aFileIsCompressed = 1;
   } else {
     /* File does exist : Is it compressed ? */
     /* If the file name ends in .gz or .Z it is probably compressed */
@@ -197,7 +197,7 @@ int vtkFileOps::fileIsCompressed(const char *fname, char **newFileName)
     lastSlash = strrchr(fname, '/');
     if ( (p != NULL) && ((lastSlash == NULL) || (lastSlash < p))  &&
         ((strcmp(p, ".gz") == 0) || (strcmp(p, ".Z") == 0)) ) {
-      fileIsCompressed = 1;
+      aFileIsCompressed = 1;
     }
     if ( (*newFileName) != NULL) {
       free(*newFileName);
@@ -208,7 +208,7 @@ int vtkFileOps::fileIsCompressed(const char *fname, char **newFileName)
   if (dontcarename != NULL) {
     free(dontcarename);
   }
-  return fileIsCompressed;
+  return aFileIsCompressed;
 #endif
   return 0;
 }

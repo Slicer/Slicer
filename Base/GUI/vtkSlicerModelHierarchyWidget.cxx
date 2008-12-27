@@ -348,9 +348,9 @@ void vtkSlicerModelHierarchyWidget::AllVisibilityCallback(int visibility)
     // chnage children visibility 
     std::vector< vtkMRMLModelHierarchyNode *> childrenNodes;
     this->ModelHierarchyLogic->GetHierarchyChildrenNodes(hnode, childrenNodes);
-    for (unsigned int i=0; i<childrenNodes.size(); i++)
+    for (unsigned int ii=0; ii<childrenNodes.size(); ii++)
       {
-      vtkMRMLModelHierarchyNode *cnode = childrenNodes[i];
+      vtkMRMLModelHierarchyNode *cnode = childrenNodes[ii];
       vtkMRMLDisplayNode *cdnode = cnode->GetDisplayNode();
       if (cdnode)
         {
@@ -403,9 +403,9 @@ void vtkSlicerModelHierarchyWidget::HierarchyVisibilityCallback(const char *id)
       // chnage children visibility 
       std::vector< vtkMRMLModelHierarchyNode *> childrenNodes;
       this->ModelHierarchyLogic->GetHierarchyChildrenNodes(hnode, childrenNodes);
-      for (unsigned int i=0; i<childrenNodes.size(); i++)
+      for (unsigned int ii=0; ii<childrenNodes.size(); ii++)
         {
-        vtkMRMLModelHierarchyNode *cnode = childrenNodes[i];
+        vtkMRMLModelHierarchyNode *cnode = childrenNodes[ii];
         vtkMRMLDisplayNode *cdnode = cnode->GetDisplayNode();
         if (cdnode)
           {
@@ -976,8 +976,8 @@ void vtkSlicerModelHierarchyWidget::AddNodeToTree(vtkMRMLNode *node)
     return;
     }
 
-  if (!node->IsA("vtkMRMLModelNode") && !node->IsA("vtkMRMLModelHierarchyNode") || 
-    (node->IsA("vtkMRMLModelNode") && node->GetHideFromEditors()))
+  if ((!node->IsA("vtkMRMLModelNode") && !node->IsA("vtkMRMLModelHierarchyNode")) || 
+      ((node->IsA("vtkMRMLModelNode") && node->GetHideFromEditors())))
    {
     return;
    }

@@ -41,8 +41,8 @@ char *vtkTextureFontManager::sDefaultFreetypeFileName = "ARIAL.TTF";
 
 // TODO - this is not a good unix font dir default - not really a good arial name, either
 
-char *vtkTextureFontManager::sDefaultFreetypeDirectory = "/projects/mrrobot/nicole/cvs/Source/slicer2/Modules/vtkKinematics/cxx/";
-char *vtkTextureFontManager::sDefaultFreetypeFileName = "arir____.ttf";
+char *vtkTextureFontManager::sDefaultFreetypeDirectory = const_cast<char *>("/projects/mrrobot/nicole/cvs/Source/slicer2/Modules/vtkKinematics/cxx/");
+char *vtkTextureFontManager::sDefaultFreetypeFileName = const_cast<char *>("arir____.ttf");
 #endif
 
 

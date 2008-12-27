@@ -88,7 +88,6 @@ void vtkMRMLQueryAtlasNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLQueryAtlasNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLQueryAtlasNode *node = (vtkMRMLQueryAtlasNode *) anode;
 }
 
 //----------------------------------------------------------------------------

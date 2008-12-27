@@ -161,7 +161,6 @@ void vtkSlicerPermissionPrompterWidget::CreatePrompter (const char *messageText,
   static const unsigned int  image_LogoBlank_height         = 100;
   static const unsigned int  image_LogoBlank_pixel_size     = 3;
   static const unsigned long image_LogoBlank_length         = 72;
-  static const unsigned long image_LogoBlank_decoded_length = 30000;
   static const unsigned char image_LogoBlank[] = 
     "eNrtwTEBAAAAwqD+qWcJT6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4Gu3vBnQ"
     "==";
@@ -235,7 +234,8 @@ int vtkSlicerPermissionPrompterWidget::Prompt( const char *message )
         this->SetPassword ( this->GetPasswordFromWidget() );
         this->SetRemember ( this->GetRememberStatusFromWidget() );
         this->DestroyPrompter();        
-        if (  this->GetUsername() == "" || this->GetPassword() == "" )
+        if (  strcmp(this->GetUsername(),"") == 0 ||
+              strcmp(this->GetPassword(),"") == 0)
           {
           //--- return -1 if not enough info was provided
           return -1;

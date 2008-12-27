@@ -115,7 +115,7 @@ int vtkSlicerStyle::SetColor ( double * c1, double * c2)
 int vtkSlicerStyle::SetColor ( double * color,
                                double r, double g, double b ) {
 
-  if ( (r==color[0]) && (g==color[1]) && (b==color[2]) ||
+  if ( ((r==color[0]) && (g==color[1]) && (b==color[2])) ||
        (r<0.0 || r>1.0) || (g<0.0 || g>1.0) || (b<0.0 || b>1.0)) {
   return 0;
   }

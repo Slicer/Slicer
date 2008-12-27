@@ -137,7 +137,6 @@ void vtkQueryAtlasSearchTermWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                          unsigned long event, void *callData )
 {
 
-  vtkKWMultiColumnList *ml = vtkKWMultiColumnList::SafeDownCast ( caller );
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller);
   int row[100];
   int numRows;

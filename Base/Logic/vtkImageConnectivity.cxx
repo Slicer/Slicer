@@ -77,21 +77,21 @@ const char* vtkImageConnectivity::GetFunctionString()
 // recursive_copy
 //************************************************************************
 
-int connect(int, size_t *, char *, char, size_t *, size_t *);
+int connect(unsigned int, size_t *, char *, char, size_t *, size_t *);
 static void recursive_copy(int, size_t);
 
 static size_t *g_axis_len, *g_outimagep, num_stride_index_bits;
 static char *g_inimagep, g_inbackground;
 
 int connect(
-     int rank,
+     unsigned int rank,
      size_t *axis_len,
      char *inimage,
      char inbackground,
      size_t *outimage,
      size_t *num_components) /* set to NULL if not interested */
 {
-  int i;
+  unsigned int i;
   register unsigned int axisv;
   size_t data_len;
   register size_t label, *outimagep, *outimage_end, *imagep, *new_imagep, boundary_mask_start, component_mask, axis_mask;
@@ -225,7 +225,7 @@ static void vtkImageConnectivityExecute(vtkImageConnectivity *self,
   size_t conSeedLabel, i, idx, dz;
   int rank;
   size_t *axis_len=NULL;
-  short bg = self->GetBackground();
+  unsigned short bg = self->GetBackground();
   short bgMask = 0;
   short fgMask = 1;
   char inbackground = (char)bgMask;

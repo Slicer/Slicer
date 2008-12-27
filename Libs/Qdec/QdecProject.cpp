@@ -933,7 +933,7 @@ int QdecProject::GenerateMappedLabelForAllSubjects
       status += "'...";
       iProgressUpdateGUI->UpdateProgressMessage( status.c_str() );
       iProgressUpdateGUI->UpdateProgressPercent
-        ( (float)nStep++ * stepIncrement );
+        ( (double)nStep++ * stepIncrement );
     }
     char* sCommand = strdup( ssCommand.str().c_str() );
     printf( "\n----------------------------------------------------------\n" );

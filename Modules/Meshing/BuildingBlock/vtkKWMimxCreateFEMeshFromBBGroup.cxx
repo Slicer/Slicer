@@ -1230,8 +1230,8 @@ int vtkKWMimxCreateFEMeshFromBBGroup::CreateMeshFromBuildingBlock(vtkPolyData *p
     }
     
     this->InitializeMeshFieldData(mesh, nodeSetName, elementSetName, nodeNumber, elementNumber);
-    const char *elementSetName = this->NodeElementNumbersGroup->GetElementSetNameEntry()->GetValue();
-    this->AddMeshToDisplay(mesh, meshPrefix.c_str(), FoundationName, elementSetName);
+    const char *elementSetName1 = this->NodeElementNumbersGroup->GetElementSetNameEntry()->GetValue();
+    this->AddMeshToDisplay(mesh, meshPrefix.c_str(), FoundationName, elementSetName1);
     this->BBCount++;
     smooth->Delete();           
     recalc->Delete();   
@@ -1574,8 +1574,8 @@ int vtkKWMimxCreateFEMeshFromBBGroup::ExtractSurfaceMesh(vtkMimxMeshActor *MeshA
                         unsgrid->GetFieldData()->AddArray(intarray);
                         intarray->Delete();
                 }
-                const char *elementSetName = this->NodeElementNumbersGroup->GetElementSetNameEntry()->GetValue();
-                this->AddMeshToDisplay(unsgrid, "Mesh_Extract-", FoundationName, elementSetName);       
+                const char *elementSetName1 = this->NodeElementNumbersGroup->GetElementSetNameEntry()->GetValue();
+                this->AddMeshToDisplay(unsgrid, "Mesh_Extract-", FoundationName, elementSetName1);       
                 this->ExtractCount++;
                 this->GetMimxMainWindow()->SetStatusText("Created Extracted Mesh");
                 this->UpdateObjectLists();

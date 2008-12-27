@@ -106,7 +106,6 @@ int vtkFiniteElementMeshList::AppendItem(vtkMimxMeshActor* actor)
 vtkMimxMeshActor* vtkFiniteElementMeshList::GetItem(vtkIdType id)
 {
     //return this->InternalMimxObjectList->GetItem(id);
-    vtkMimxMeshActor* returnNode;
      
   // first fetch the MRML node that has been requested
   vtkMRMLFiniteElementMeshNode* requestedMrmlNode = 

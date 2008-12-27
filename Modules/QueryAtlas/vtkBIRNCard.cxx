@@ -87,7 +87,7 @@ void vtkBIRNCard::CreateCard() {
     sprintf(filename, "%sColor.txt", dir);
     char *colorString= LoadString(filename);
     vtkFloatingPointType r, g, b;
-    sscanf(colorString, "%f %f %f", &r, &g, &b);
+    sscanf(colorString, "%lf %lf %lf", &r, &g, &b);
     SetBoxEdgeColor(r / 255., g / 255., b / 255.);
 
     // v44 - thicker edge

@@ -297,14 +297,14 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       vtkSlicerModelsLogic* modelLogic = this->Logic;
 
-      vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-      dialog->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
-      dialog->SetStyleToMessage();
-      std::string msg = std::string("Reading *.vtk from models directory ") + std::string(fileName);
-      dialog->SetText(msg.c_str());
-      dialog->Create ( );
-      dialog->Invoke();
-      dialog->Delete();
+      vtkKWMessageDialog *dialog0 = vtkKWMessageDialog::New();
+      dialog0->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
+      dialog0->SetStyleToMessage();
+      std::string msg0 = std::string("Reading *.vtk from models directory ") + std::string(fileName);
+      dialog0->SetText(msg0.c_str());
+      dialog0->Create ( );
+      dialog0->Invoke();
+      dialog0->Delete();
       
       if (modelLogic->AddModels( fileName, ".vtk") == 0)
         {

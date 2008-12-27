@@ -67,8 +67,9 @@ class ModuleWidgetMap : public std::map<std::string, vtkSmartPointer<vtkKWCoreWi
 void
 splitFilenames (const std::string& text, vtkStringArray *words)
 {
-  int n = text.length();
-  int start, stop, startq, stopq;
+  size_t n = text.length();
+  size_t start, stop;
+  size_t startq, stopq;
   bool quoted;
   std::string comma(",");
   std::string quote("\"");
@@ -613,33 +614,33 @@ void vtkCommandLineModuleGUI::UpdateMRML ()
         for (int i=0; i < numberOfFiles; ++i)
           {
           // get a filename
-          std::string n
+          std::string nthName
             = lsb->GetWidget()->GetLoadSaveDialog()->GetNthFileName(i);
 
           // quote it as needed (if multiple filenames and a filename
           // contains a comma and is not already quoted, then quote it)
           if (lsb->GetWidget()->GetLoadSaveDialog()->GetMultipleSelection())
             {
-            int s1, len;
-            len = n.length();
-            s1 = n.find_first_of(",");
+            size_t s1, len;
+            len = nthName.length();
+            s1 = nthName.find_first_of(",");
             if (s1 > 0 && s1 < len)
               {
               // filename contains a comma
-              int q1, qn;
-              q1 = n.find_first_of("\"");
-              qn = n.find_last_of("\"");
+              size_t q1, qn;
+              q1 = nthName.find_first_of("\"");
+              qn = nthName.find_last_of("\"");
               if (q1 != 0 && qn != len-1)
                 {
                 // first and last character in name are not quotes, so
                 // quote
-                n = std::string("\"") + n + "\"";
+                nthName = std::string("\"") + nthName + "\"";
                 }
               }
             }
           
           // add it to the list
-          names = names + n;
+          names = names + nthName;
           if (i < numberOfFiles-1)  // comma after all but last
             {
             names = names + ",";

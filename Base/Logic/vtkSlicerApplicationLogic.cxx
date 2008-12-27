@@ -1,17 +1,16 @@
-/*=auto=========================================================================
+/*=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+  Program:   Slicer3 Application Logic
+  Module:    $HeadURL$
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
 
-  See Doc/copyright/copyright.txt
-  or http://www.slicer.org/copyright/copyright.txt for details.
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkSlicerApplicationLogic.cxx,v $
-  Date:      $Date: 2006/01/06 17:56:48 $
-  Version:   $Revision: 1.58 $
+  See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
-=========================================================================auto=*/
-
+==========================================================================*/
 #include "vtkObjectFactory.h"
 #include "vtkSmartPointer.h"
 #include "vtkStringArray.h"
@@ -1342,14 +1341,14 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       {
       try
         {
-        vtkMRMLStorableNode *storableNode = 
+        vtkMRMLStorableNode *storableNode1 = 
           vtkMRMLStorableNode::SafeDownCast(nd);
-        if ( storableNode && storableNode->GetStorageNode() == NULL  &&
+        if ( storableNode1 && storableNode1->GetStorageNode() == NULL  &&
              !storageNodeExists)
           {
           vtkDebugMacro("ProcessReadNodeData: found a storable node's storage node, it didn't exist already, adding the storage node " << storageNode->GetID());
           this->MRMLScene->AddNode( storageNode );
-          storableNode->SetAndObserveStorageNodeID( storageNode->GetID() );
+          storableNode1->SetAndObserveStorageNodeID( storageNode->GetID() );
           }
         vtkDebugMacro("ProcessReadNodeData: about to call read data, storage node's read state is " << storageNode->GetReadStateAsString());
         if (useURI)
@@ -1499,8 +1498,6 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     if (displayNode)
       {
       displayNode->SetDefaultColorMap();
-      vtkMRMLVolumeNode *vnd = vtkMRMLVolumeNode::SafeDownCast(nd);
-      vtkMRMLScalarVolumeDisplayNode *svdnd = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode);
       } 
     if (svnd) 
       {
@@ -1665,16 +1662,16 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
           // location
           smnd->SetModifiedSinceRead(1); 
           // get display node BEFORE we add nodes to the target scene
-          vtkMRMLDisplayNode *sdnd = smnd->GetDisplayNode();
+          vtkMRMLDisplayNode *sdnd1 = smnd->GetDisplayNode();
           
           vtkMRMLNode *tmodel = this->MRMLScene->CopyNode(smnd);
           vtkMRMLStorableNode::SafeDownCast(tmodel)->SetAndObserveStorageNodeID(NULL);
           vtkMRMLModelNode *mnd = vtkMRMLModelNode::SafeDownCast( tmodel );
           tmhnd->SetModelNodeID( mnd->GetID() );
 
-          if (sdnd)
+          if (sdnd1)
             {
-            vtkMRMLNode *tdnd = this->MRMLScene->CopyNode(sdnd);
+            vtkMRMLNode *tdnd = this->MRMLScene->CopyNode(sdnd1);
             mnd->SetAndObserveDisplayNodeID( tdnd->GetID() );
             }
           }
@@ -1709,34 +1706,34 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
                 {
                 // get the model and display node BEFORE we add nodes
                 // to the target scene
-                vtkMRMLModelNode *smnd = mhnd->GetModelNode();
-                vtkMRMLDisplayNode *sdnd = mhnd->GetDisplayNode();
+                vtkMRMLModelNode *smnd1 = mhnd->GetModelNode();
+                vtkMRMLDisplayNode *sdnd1 = mhnd->GetDisplayNode();
                 
                 vtkMRMLNode *tchild = this->MRMLScene->CopyNode(mhnd);
                 vtkMRMLModelHierarchyNode *tcmhd
                   = vtkMRMLModelHierarchyNode::SafeDownCast( tchild );
                 tcmhd->SetParentNodeID( tmhnd->GetID() );
                 
-                if (smnd)
+                if (smnd1)
                   {
                   // set it as modified
-                  smnd->SetModifiedSinceRead(1);
+                  smnd1->SetModifiedSinceRead(1);
                   // get display node BEFORE we add nodes to the target scene
-                  vtkMRMLDisplayNode *sdnd = smnd->GetDisplayNode();
+                  vtkMRMLDisplayNode *sdnd2 = smnd1->GetDisplayNode();
 
-                  vtkMRMLNode *tmodel = this->MRMLScene->CopyNode(smnd);
+                  vtkMRMLNode *tmodel = this->MRMLScene->CopyNode(smnd1);
                   vtkMRMLStorableNode::SafeDownCast(tmodel)->SetAndObserveStorageNodeID(NULL);
                   vtkMRMLModelNode *mnd =vtkMRMLModelNode::SafeDownCast(tmodel);
                   tcmhd->SetModelNodeID( mnd->GetID() );
 
-                  if (sdnd)
+                  if (sdnd2)
                     {
-                    vtkMRMLNode *tdnd = this->MRMLScene->CopyNode(sdnd);
+                    vtkMRMLNode *tdnd = this->MRMLScene->CopyNode(sdnd2);
                     mnd->SetAndObserveDisplayNodeID( tdnd->GetID() );
                     }
                   }
                 
-                if (sdnd)
+                if (sdnd1)
                   {
                   vtkMRMLNode *tdnd = this->MRMLScene->CopyNode(sdnd);
                   tcmhd->SetAndObserveDisplayNodeID( tdnd->GetID() );

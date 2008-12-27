@@ -244,13 +244,13 @@ vtkSlicerSliceGUI* vtkSlicerSlicesGUI::GetFirstSliceGUI ()
     return NULL;
 }
 
-char* vtkSlicerSlicesGUI::GetFirstSliceGUILayoutName()
+const char* vtkSlicerSlicesGUI::GetFirstSliceGUILayoutName()
 {
   if (this->InternalSliceGUIMap)
     {
     SliceGUIMap::const_iterator git;
     git = this->InternalSliceGUIMap->begin();
-    return ((char *)(*git).first.c_str());
+    return ((*git).first.c_str());
     }
   else
     return NULL;
@@ -281,7 +281,7 @@ vtkSlicerSliceGUI* vtkSlicerSlicesGUI::GetNextSliceGUI(const char *layoutName)
     return NULL;
 }
 
-char* vtkSlicerSlicesGUI::GetNextSliceGUILayoutName(const char *layoutName)
+const char* vtkSlicerSlicesGUI::GetNextSliceGUILayoutName(const char *layoutName)
 {
   if (this->InternalSliceGUIMap)
     {
@@ -290,7 +290,7 @@ char* vtkSlicerSlicesGUI::GetNextSliceGUILayoutName(const char *layoutName)
     git++;
 
     if ( git != gend)
-      return ((char *)(*git).first.c_str());
+      return ((*git).first.c_str());
     else
       return NULL;
     }
@@ -298,7 +298,7 @@ char* vtkSlicerSlicesGUI::GetNextSliceGUILayoutName(const char *layoutName)
     return NULL;
 }
 
-char* vtkSlicerSlicesGUI::GetNthSliceGUILayoutName(int n)
+const char* vtkSlicerSlicesGUI::GetNthSliceGUILayoutName(int n)
 {
   if (this->InternalSliceGUIMap && n >= 0 && n < (int)(*this->InternalSliceGUIMap).size())
     {
@@ -308,7 +308,7 @@ char* vtkSlicerSlicesGUI::GetNthSliceGUILayoutName(int n)
       {
       }
 
-    return ((char *)(*git).first.c_str());
+    return ((*git).first.c_str());
     }
   else
     {

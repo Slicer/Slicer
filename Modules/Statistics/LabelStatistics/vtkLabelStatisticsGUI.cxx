@@ -460,7 +460,7 @@ void vtkLabelStatisticsGUI::SetPrimarySelectionTclProcedures( )
         set currentSelection $text; \
         selection handle -selection CLIPBOARD \".\"  primaryTransfer;           \
         selection own -selection CLIPBOARD -command lostSelection \".\"; }";
-  //selection handle -selection PRIMARY \".\"  primaryTransfer;         \
+  //selection handle -selection PRIMARY \".\"  primaryTransfer;
   //     selection own -selection PRIMARY -command lostSelection \".\"; }";
   
   Tcl_Eval( interp, cmd.c_str() );

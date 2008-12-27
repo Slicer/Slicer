@@ -63,7 +63,6 @@ int vtkMimxIntervertebralDiscAbaqusWriter::RequestData(
     // get the info objects
     vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
         vtkInformation *bboxInfo = inputVector[1]->GetInformationObject(0);
-    vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
     // get the input and output
     vtkDataSet *input = vtkDataSet::SafeDownCast(

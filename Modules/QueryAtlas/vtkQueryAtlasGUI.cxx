@@ -1074,7 +1074,6 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
   vtkKWMenu *m = vtkKWMenu::SafeDownCast ( caller );
   vtkKWCheckButton *c = vtkKWCheckButton::SafeDownCast ( caller );
-  vtkKWListBox *lb = vtkKWListBox::SafeDownCast ( caller );
   vtkKWEntry *e  = vtkKWEntry::SafeDownCast ( caller);
   vtkSlicerNodeSelectorWidget *sel = vtkSlicerNodeSelectorWidget::SafeDownCast ( caller );
   vtkQueryAtlasSearchTermWidget *stw = vtkQueryAtlasSearchTermWidget::SafeDownCast (caller );
@@ -1591,7 +1590,7 @@ void vtkQueryAtlasGUI::LoadXcedeCatalogCallback ( )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::AutoWinLevThreshStatisticsVolume ( vtkMRMLScalarVolumeNode *vnode )
 {
-  int i;
+  size_t i;
   double win, level, upT, lowT;
 
   vtkWarningMacro("AutoWinLevThreshStatisticsVolume: aborting...");
@@ -2045,8 +2044,8 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
   if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
        && (event == vtkMRMLScene::NodeAddedEvent ))
     {
-    vtkMRMLScalarVolumeNode *node = vtkMRMLScalarVolumeNode::SafeDownCast ( (vtkObjectBase *)callData );
     /*
+    vtkMRMLScalarVolumeNode *node = vtkMRMLScalarVolumeNode::SafeDownCast ( (vtkObjectBase *)callData );
       if ( node != NULL )
       {
       //--- apply ballpark threshold if the node appears to be a statistics volume.
@@ -2146,10 +2145,7 @@ void vtkQueryAtlasGUI::AddMRMLObservers()
 void vtkQueryAtlasGUI::BuildGUI ( )
 {
 
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   // Define your help text here.
-
-
     
     // ---
     // MODULE GUI FRAME 
@@ -2367,8 +2363,6 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::BuildGeneralAnnotateFrame ( )
 {
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
-
   this->BasicAnnotateButton = vtkKWPushButtonWithLabel::New ( );
   this->BasicAnnotateButton->SetParent ( this->GeneralFrame );
   this->BasicAnnotateButton->Create();
@@ -3311,7 +3305,6 @@ void vtkQueryAtlasGUI::AccumulatedResultsSelectionCommandCallback ( )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::BuildDisplayAndNavigationGUI ( )
 {
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "QueryAtlas" );
     // -------------------------------------------------------------------------------------------------
     // ---
@@ -3534,8 +3527,6 @@ void vtkQueryAtlasGUI::BuildLoaderContextButtons ( vtkKWFrame *parent )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::BuildLoaderContextFrames ( vtkKWFrame *parent )
 {
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    
     this->FIPSFSFrame = vtkKWFrame::New();
     this->FIPSFSFrame->SetParent ( parent );
     this->FIPSFSFrame->Create();

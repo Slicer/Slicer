@@ -35,17 +35,16 @@ using namespace std;
 // }
 
 #include "vtkNRRDWriter.h" 
-static void VolumeWriter (vtkImageData *DATA, char* fileName) {
-  char blub[1024];
-  sprintf(blub,"/home/pohl/temp/3_%s.nhdr", fileName);
-  cout << "Write " << blub << endl;  
-  vtkNRRDWriter *iwriter =  vtkNRRDWriter::New();
-  iwriter->SetInput(DATA);
-  iwriter->SetFileName(blub);
-  iwriter->Write();
-  iwriter->Delete();
-}
-
+// static void VolumeWriter (vtkImageData *DATA, char* fileName) {
+//   char blub[1024];
+//   sprintf(blub,"/home/pohl/temp/3_%s.nhdr", fileName);
+//   cout << "Write " << blub << endl;  
+//   vtkNRRDWriter *iwriter =  vtkNRRDWriter::New();
+//   iwriter->SetInput(DATA);
+//   iwriter->SetFileName(blub);
+//   iwriter->Write();
+//   iwriter->Delete();
+// }
 
 void  _Print(vtkImageData *DATA,::ostream& os, vtkIndent indent)  {
   // DATA->PrintSelf(os,indent.GetNextIndent());

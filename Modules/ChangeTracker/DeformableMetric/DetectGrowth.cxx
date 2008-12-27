@@ -9,12 +9,12 @@ int main(int argc, char *argv[])
 { 
   if( argc < 4 )
     {
-      std::cerr << "Missing Parameters " << std::endl;
-      std::cerr << "Usage: " << argv[0];
-      std::cerr << " <Deformation field (inverse)> " ;
-      std::cerr << " <Initial Time Segmentation> " ;
-      std::cerr << " <Output file name>" << std::endl;
-      return 1;
+    std::cerr << "Missing Parameters " << std::endl;
+    std::cerr << "Usage: " << argv[0];
+    std::cerr << " <Deformation field (inverse)> " ;
+    std::cerr << " <Initial Time Segmentation> " ;
+    std::cerr << " <Output file name>" << std::endl;
+    return 1;
     }
 
   const unsigned int Dimension=3;
@@ -52,11 +52,11 @@ int main(int argc, char *argv[])
   jacFilter->Update();
   
   if (0) {
-    typedef itk::ImageFileWriter< JacImageType > WriterType;
-    WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName("deneme-jacobian-det.mha");
-    writer->SetInput( jacFilter->GetOutput() );
-    writer->Update();
+  typedef itk::ImageFileWriter< JacImageType > WriterType;
+  WriterType::Pointer writer = WriterType::New();
+  writer->SetFileName("deneme-jacobian-det.mha");
+  writer->SetInput( jacFilter->GetOutput() );
+  writer->Update();
   }
 
   typedef itk::ImageRegionConstIterator< JacImageType > JacImageIteratorType;
@@ -75,17 +75,17 @@ int main(int argc, char *argv[])
   
   for( ji.GoToBegin(), si.GoToBegin(); !ji.IsAtEnd(); ++ji, ++si )
     {
-      index = si.GetIndex();
-      if( (index[2] > 1) && (index[2] < size[2] - 2) )
-    {// I'm getting rid of the first and last two slices because
+    index = si.GetIndex();
+    if( (index[2] > 1) && (index[2] < static_cast<long>(size[2]) - 2) )
+      {// I'm getting rid of the first and last two slices because
       // the demons registration algorithm doesn't handle boundaries
       // correctly.
       if( si.Get() > 0 )
         {
-          numVox++;
-          jacDetSum = jacDetSum + ji.Get();
+        numVox++;
+        jacDetSum = jacDetSum + ji.Get();
         }
-    }
+      }
      
     }
   
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
   
   FILE* fp = fopen( argv[3],"w" );
   fprintf( fp, "%lf  %lf\n", (jacDetSum - numVox)*spacing[0]*spacing[1]*spacing[2],
-       (jacDetSum - numVox) );
+           (jacDetSum - numVox) );
   fclose(fp);
 
   return(0);

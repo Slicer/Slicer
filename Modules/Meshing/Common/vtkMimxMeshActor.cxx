@@ -86,19 +86,19 @@ vtkMimxMeshActor::vtkMimxMeshActor()
 {
   this->ElementShrinkFactor = 1.0;
   this->DataType = ACTOR_FE_MESH;
-        this->ElementSetName = NULL;
-        this->IsVisible = true;
-        this->ElementSetDisplayList.clear();
-        this->DisplayMode = vtkMimxMeshActor::DisplayMesh;
-        this->DisplayType = vtkMimxMeshActor::DisplaySurfaceAndOutline;
-        this->NumberOfElementSets = 0;
-        this->Interactor = NULL;
-        this->Renderer = NULL;
-        this->CuttingPlaneEnabled = false;
-        this->LegendPrecision = 3;
-        this->TextColor[0] = this->TextColor[1] = this->TextColor[2] = 1.0;
+  this->ElementSetName = NULL;
+  this->IsVisible = true;
+  this->ElementSetDisplayList.clear();
+  this->DisplayMode = vtkMimxMeshActor::DisplayMesh;
+  this->DisplayType = vtkMimxMeshActor::DisplaySurfaceAndOutline;
+  this->NumberOfElementSets = 0;
+  this->Interactor = NULL;
+  this->Renderer = NULL;
+  this->CuttingPlaneEnabled = false;
+  this->LegendPrecision = 3;
+  this->TextColor[0] = this->TextColor[1] = this->TextColor[2] = 1.0;
         
-        /* Setup the Pipeline for the Mesh */
+  /* Setup the Pipeline for the Mesh */
   vtkPoints *points = vtkPoints::New();
   this->UnstructuredGrid = vtkUnstructuredGrid::New();
   this->UnstructuredGrid->SetPoints(points);
@@ -115,7 +115,7 @@ vtkMimxMeshActor::vtkMimxMeshActor()
   this->Actor = vtkActor::New();
   this->Actor->SetMapper(this->UnstructuredGridMapper);
         
-        /* Setup the Pipeline for the Wireframe */
+  /* Setup the Pipeline for the Wireframe */
   this->OutlineGeometryFilter = vtkGeometryFilter::New();
   this->OutlineGeometryFilter->SetInput( this->UnstructuredGrid );
 
@@ -172,13 +172,13 @@ vtkMimxMeshActor::vtkMimxMeshActor()
   this->CuttingPlane = vtkPlane::New();
   
   this->ClipPlaneGeometryFilter = vtkExtractGeometry::New();
-        this->ClipPlaneGeometryFilter->SetInput( this->UnstructuredGrid );
+  this->ClipPlaneGeometryFilter->SetInput( this->UnstructuredGrid );
         
-        /* This is used for Scale Display */
-        //
-        this->lutFilter = vtkLookupTable::New();
-    this->BlueToRedLookUpTable();
-        this->LegendActor = vtkScalarBarActor::New();
+  /* This is used for Scale Display */
+  //
+  this->lutFilter = vtkLookupTable::New();
+  this->BlueToRedLookUpTable();
+  this->LegendActor = vtkScalarBarActor::New();
   vtkTextProperty *textProperty = this->LegendActor->GetTitleTextProperty();
   textProperty->SetFontFamilyToArial();
   textProperty->SetColor( TextColor );
@@ -208,16 +208,16 @@ vtkMimxMeshActor::vtkMimxMeshActor()
 //----------------------------------------------------------------------------------------
 vtkMimxMeshActor::~vtkMimxMeshActor()
 {
-        this->UnstructuredGrid->Delete();
-        this->UnstructuredGridMapper->Delete();
-        this->Actor->Delete();
-        this->OutlineMapper->Delete();
-        this->OutlineActor->Delete();
-        this->InteriorMapper->Delete();
-        this->InteriorActor->Delete();
-        this->ShrinkFilter->Delete();
-        if(this->PointSetOfNodeSet)
-                this->PointSetOfNodeSet->Delete();
+  this->UnstructuredGrid->Delete();
+  this->UnstructuredGridMapper->Delete();
+  this->Actor->Delete();
+  this->OutlineMapper->Delete();
+  this->OutlineActor->Delete();
+  this->InteriorMapper->Delete();
+  this->InteriorActor->Delete();
+  this->ShrinkFilter->Delete();
+  if(this->PointSetOfNodeSet)
+    this->PointSetOfNodeSet->Delete();
 }
 
 //----------------------------------------------------------------------------------------
@@ -233,63 +233,63 @@ void vtkMimxMeshActor::SetDataSet(vtkUnstructuredGrid *mesh)
   // add node and element set names list
   vtkFieldData *fielddata = this->UnstructuredGrid->GetFieldData();
   if ( fielddata )
-  {
-          vtkStringArray *stringarray = vtkStringArray::SafeDownCast(
-                  fielddata->GetAbstractArray("Element_Set_Names"));
-          if (! stringarray )
-          {
-                  stringarray = vtkStringArray::New();
-                  stringarray->SetName("Element_Set_Names");
-                  stringarray->SetNumberOfTuples(0);
-                  this->UnstructuredGrid->GetFieldData()->AddArray(stringarray);
-                  stringarray->Delete();
-          }
-          stringarray = vtkStringArray::SafeDownCast(
-                  fielddata->GetAbstractArray("Element_Set_Names"));
-          // create an element set out of the initial input if no element set is present
-          if(!stringarray->GetNumberOfTuples())
-          {
-                  vtkIntArray *scalararray = vtkIntArray::New();
-                  scalararray->SetName("Initial_Elements");
-                  stringarray->InsertNextValue("Initial_Elements");
-                  int numCells = this->UnstructuredGrid->GetNumberOfCells();
-                  scalararray->SetNumberOfValues(numCells);
-                  int i;
-                  for (i=0; i<numCells; i++)
-                  {
-                          scalararray->SetValue(i,1);
-                  }
-                  this->UnstructuredGrid->GetCellData()->AddArray(scalararray);
-                  scalararray->Delete();
-          }
-          vtkStringArray *nodesetnamearray = vtkStringArray::SafeDownCast(
-                  fielddata->GetAbstractArray("Node_Set_Names"));
-          if (! nodesetnamearray )
-          {
-                  nodesetnamearray = vtkStringArray::New();
-                  nodesetnamearray->SetName("Node_Set_Names");
-                  stringarray->SetNumberOfTuples(0);
-                  this->UnstructuredGrid->GetFieldData()->AddArray(nodesetnamearray);
-                  nodesetnamearray->Delete();
-          }
-          nodesetnamearray = vtkStringArray::SafeDownCast(
-                  fielddata->GetAbstractArray("Node_Set_Names"));
-          if(!nodesetnamearray->GetNumberOfTuples())
-          {
-                  vtkIntArray *scalararray = vtkIntArray::New();
-                  scalararray->SetName("Initial_Nodes");
-                  nodesetnamearray->InsertNextValue("Initial_Nodes");
-                  int numNodes = this->UnstructuredGrid->GetNumberOfPoints();
-                  scalararray->SetNumberOfValues(numNodes);
-                  int i;
-                  for (i=0; i<numNodes; i++)
-                  {
-                          scalararray->SetValue(i,1);
-                  }
-                  this->UnstructuredGrid->GetPointData()->AddArray(scalararray);
-                  scalararray->Delete();
-          }
-  }
+    {
+    vtkStringArray *stringarray = vtkStringArray::SafeDownCast(
+      fielddata->GetAbstractArray("Element_Set_Names"));
+    if (! stringarray )
+      {
+      stringarray = vtkStringArray::New();
+      stringarray->SetName("Element_Set_Names");
+      stringarray->SetNumberOfTuples(0);
+      this->UnstructuredGrid->GetFieldData()->AddArray(stringarray);
+      stringarray->Delete();
+      }
+    stringarray = vtkStringArray::SafeDownCast(
+      fielddata->GetAbstractArray("Element_Set_Names"));
+    // create an element set out of the initial input if no element set is present
+    if(!stringarray->GetNumberOfTuples())
+      {
+      vtkIntArray *scalararray = vtkIntArray::New();
+      scalararray->SetName("Initial_Elements");
+      stringarray->InsertNextValue("Initial_Elements");
+      int numCells = this->UnstructuredGrid->GetNumberOfCells();
+      scalararray->SetNumberOfValues(numCells);
+      int i;
+      for (i=0; i<numCells; i++)
+        {
+        scalararray->SetValue(i,1);
+        }
+      this->UnstructuredGrid->GetCellData()->AddArray(scalararray);
+      scalararray->Delete();
+      }
+    vtkStringArray *nodesetnamearray = vtkStringArray::SafeDownCast(
+      fielddata->GetAbstractArray("Node_Set_Names"));
+    if (! nodesetnamearray )
+      {
+      nodesetnamearray = vtkStringArray::New();
+      nodesetnamearray->SetName("Node_Set_Names");
+      stringarray->SetNumberOfTuples(0);
+      this->UnstructuredGrid->GetFieldData()->AddArray(nodesetnamearray);
+      nodesetnamearray->Delete();
+      }
+    nodesetnamearray = vtkStringArray::SafeDownCast(
+      fielddata->GetAbstractArray("Node_Set_Names"));
+    if(!nodesetnamearray->GetNumberOfTuples())
+      {
+      vtkIntArray *scalararray = vtkIntArray::New();
+      scalararray->SetName("Initial_Nodes");
+      nodesetnamearray->InsertNextValue("Initial_Nodes");
+      int numNodes = this->UnstructuredGrid->GetNumberOfPoints();
+      scalararray->SetNumberOfValues(numNodes);
+      int i;
+      for (i=0; i<numNodes; i++)
+        {
+        scalararray->SetValue(i,1);
+        }
+      this->UnstructuredGrid->GetPointData()->AddArray(scalararray);
+      scalararray->Delete();
+      }
+    }
   //
 
   //
@@ -299,229 +299,229 @@ void vtkMimxMeshActor::SetDataSet(vtkUnstructuredGrid *mesh)
   scalararray->SetNumberOfValues(numCells);
   int i;
   for (i=0; i<numCells; i++)
-  {
-          scalararray->SetValue(i,i);
-  }
+    {
+    scalararray->SetValue(i,i);
+    }
   this->UnstructuredGrid->GetCellData()->AddArray(scalararray);
   scalararray->Delete();
-   this->UnstructuredGrid->GetCellData()->SetActiveAttribute(
-           "mimxCellScalars", vtkDataSetAttributes::SCALARS);
-   this->UnstructuredGridMapper->SetScalarVisibility(0);
+  this->UnstructuredGrid->GetCellData()->SetActiveAttribute(
+    "mimxCellScalars", vtkDataSetAttributes::SCALARS);
+  this->UnstructuredGridMapper->SetScalarVisibility(0);
   this->UnstructuredGrid->Modified();
   this->CreateElementSetList();
 
   //
   vtkDataArray *dataarray = this->UnstructuredGrid->GetCellData()->GetArray("Element_Numbers");
   if(!dataarray)
-  {
-          vtkIntArray *elementarray = vtkIntArray::New();
-          elementarray->SetName("Element_Numbers");
-          elementarray->SetNumberOfValues(numCells);
-          for (i=0; i<numCells; i++)
-          {
-                  elementarray->SetValue(i, i+1);
-          }
-          this->UnstructuredGrid->GetCellData()->AddArray(elementarray);
-          elementarray->Delete();
-  }
+    {
+    vtkIntArray *elementarray = vtkIntArray::New();
+    elementarray->SetName("Element_Numbers");
+    elementarray->SetNumberOfValues(numCells);
+    for (i=0; i<numCells; i++)
+      {
+      elementarray->SetValue(i, i+1);
+      }
+    this->UnstructuredGrid->GetCellData()->AddArray(elementarray);
+    elementarray->Delete();
+    }
   //
   int numNodes = this->UnstructuredGrid->GetNumberOfPoints();
   dataarray = this->UnstructuredGrid->GetPointData()->GetArray("Node_Numbers");
   if(!dataarray)
-  {
-          vtkIntArray *nodearray = vtkIntArray::New();
-          nodearray->SetNumberOfValues(numNodes);
-          nodearray->SetName("Node_Numbers");
-          for (i=0; i<numNodes; i++)
-          {
-                  nodearray->SetValue(i, i+1);
-          }
-          this->UnstructuredGrid->GetPointData()->AddArray(nodearray);
-          nodearray->Delete();
-  }
+    {
+    vtkIntArray *nodearray = vtkIntArray::New();
+    nodearray->SetNumberOfValues(numNodes);
+    nodearray->SetName("Node_Numbers");
+    for (i=0; i<numNodes; i++)
+      {
+      nodearray->SetValue(i, i+1);
+      }
+    this->UnstructuredGrid->GetPointData()->AddArray(nodearray);
+    nodearray->Delete();
+    }
   //check for the element types
   vtkCellTypes *cellTypes = vtkCellTypes::New();
   this->UnstructuredGrid->GetCellTypes(cellTypes);
   if(cellTypes->GetNumberOfTypes() == 1)
-  {
-          if(cellTypes->GetCellType(0) == VTK_QUAD || cellTypes->GetCellType(0) == VTK_TRIANGLE)
-          {
-                  this->MeshType = vtkMimxMeshActor::SurfaceMesh;
-          }
-          else
-          {
-                  this->MeshType = vtkMimxMeshActor::VolumeMesh;
-          }
-  }
+    {
+    if(cellTypes->GetCellType(0) == VTK_QUAD || cellTypes->GetCellType(0) == VTK_TRIANGLE)
+      {
+      this->MeshType = vtkMimxMeshActor::SurfaceMesh;
+      }
+    else
+      {
+      this->MeshType = vtkMimxMeshActor::VolumeMesh;
+      }
+    }
   else
-  {
-          this->MeshType = vtkMimxMeshActor::MixedMesh;
-  }
+    {
+    this->MeshType = vtkMimxMeshActor::MixedMesh;
+    }
 }
 
 
 //----------------------------------------------------------------------------------
 void vtkMimxMeshActor::DeleteNodeSet(const char *Name)
 {
-        vtkFieldData *fielddata = this->UnstructuredGrid->GetFieldData();
-        vtkPointData *pointdata = this->UnstructuredGrid->GetPointData();
+  vtkFieldData *fielddata = this->UnstructuredGrid->GetFieldData();
+  vtkPointData *pointdata = this->UnstructuredGrid->GetPointData();
 
-        vtkStringArray *stringarray = vtkStringArray::SafeDownCast(
-                fielddata->GetAbstractArray("Node_Set_Names"));
+  vtkStringArray *stringarray = vtkStringArray::SafeDownCast(
+    fielddata->GetAbstractArray("Node_Set_Names"));
 
-        if(!stringarray)        return;
+  if(!stringarray)        return;
 
-        vtkDataArray *datasetarray;
+  vtkDataArray *datasetarray;
 
-        datasetarray = pointdata->GetArray(Name);
-        if(datasetarray)        pointdata->RemoveArray(Name);
+  datasetarray = pointdata->GetArray(Name);
+  if(datasetarray)        pointdata->RemoveArray(Name);
         
-        // for displacement related field data
-        char DispX[256], DispY[256], DispZ[256];
+  // for displacement related field data
+  char DispX[256], DispY[256], DispZ[256];
 
-        strcpy(DispX, Name);
-        strcpy(DispY, Name);
-        strcpy(DispZ, Name);
+  strcpy(DispX, Name);
+  strcpy(DispY, Name);
+  strcpy(DispZ, Name);
 
-        strcat(DispX, "_Displacement_X");
-        strcat(DispY, "_Displacement_Y");
-        strcat(DispZ, "_Displacement_Z");
+  strcat(DispX, "_Displacement_X");
+  strcat(DispY, "_Displacement_Y");
+  strcat(DispZ, "_Displacement_Z");
 
-        datasetarray = fielddata->GetArray(DispX);
-        if(datasetarray)        fielddata->RemoveArray(DispX);
+  datasetarray = fielddata->GetArray(DispX);
+  if(datasetarray)        fielddata->RemoveArray(DispX);
 
-        datasetarray = fielddata->GetArray(DispY);
-        if(datasetarray)        fielddata->RemoveArray(DispY);
+  datasetarray = fielddata->GetArray(DispY);
+  if(datasetarray)        fielddata->RemoveArray(DispY);
 
-        datasetarray = fielddata->GetArray(DispZ);
-        if(datasetarray)        fielddata->RemoveArray(DispZ);
+  datasetarray = fielddata->GetArray(DispZ);
+  if(datasetarray)        fielddata->RemoveArray(DispZ);
 
-        // for Force related field data
-        char ForceX[256], ForceY[256], ForceZ[256];
+  // for Force related field data
+  char ForceX[256], ForceY[256], ForceZ[256];
 
-        strcpy(ForceX, Name);
-        strcpy(ForceY, Name);
-        strcpy(ForceZ, Name);
+  strcpy(ForceX, Name);
+  strcpy(ForceY, Name);
+  strcpy(ForceZ, Name);
 
-        strcat(ForceX, "_Force_X");
-        strcat(ForceY, "_Force_Y");
-        strcat(ForceZ, "_Force_Z");
+  strcat(ForceX, "_Force_X");
+  strcat(ForceY, "_Force_Y");
+  strcat(ForceZ, "_Force_Z");
 
-        datasetarray = fielddata->GetArray(ForceX);
-        if(datasetarray)        fielddata->RemoveArray(ForceX);
+  datasetarray = fielddata->GetArray(ForceX);
+  if(datasetarray)        fielddata->RemoveArray(ForceX);
 
-        datasetarray = fielddata->GetArray(ForceY);
-        if(datasetarray)        fielddata->RemoveArray(ForceY);
+  datasetarray = fielddata->GetArray(ForceY);
+  if(datasetarray)        fielddata->RemoveArray(ForceY);
 
-        datasetarray = fielddata->GetArray(ForceZ);
-        if(datasetarray)        fielddata->RemoveArray(ForceZ);
+  datasetarray = fielddata->GetArray(ForceZ);
+  if(datasetarray)        fielddata->RemoveArray(ForceZ);
 
-        // for Rotation related field data
-        char RotationX[256], RotationY[256], RotationZ[256];
+  // for Rotation related field data
+  char RotationX[256], RotationY[256], RotationZ[256];
 
-        strcpy(RotationX, Name);
-        strcpy(RotationY, Name);
-        strcpy(RotationZ, Name);
+  strcpy(RotationX, Name);
+  strcpy(RotationY, Name);
+  strcpy(RotationZ, Name);
 
-        strcat(RotationX, "_Rotation_X");
-        strcat(RotationY, "_Rotation_Y");
-        strcat(RotationZ, "_Rotation_Z");
+  strcat(RotationX, "_Rotation_X");
+  strcat(RotationY, "_Rotation_Y");
+  strcat(RotationZ, "_Rotation_Z");
 
-        datasetarray = fielddata->GetArray(RotationX);
-        if(datasetarray)        fielddata->RemoveArray(RotationX);
+  datasetarray = fielddata->GetArray(RotationX);
+  if(datasetarray)        fielddata->RemoveArray(RotationX);
 
-        datasetarray = fielddata->GetArray(RotationY);
-        if(datasetarray)        fielddata->RemoveArray(RotationY);
+  datasetarray = fielddata->GetArray(RotationY);
+  if(datasetarray)        fielddata->RemoveArray(RotationY);
 
-        datasetarray = fielddata->GetArray(RotationZ);
-        if(datasetarray)        fielddata->RemoveArray(RotationZ);
+  datasetarray = fielddata->GetArray(RotationZ);
+  if(datasetarray)        fielddata->RemoveArray(RotationZ);
 
-        // for Moment related field data
-        char MomentX[256], MomentY[256], MomentZ[256];
+  // for Moment related field data
+  char MomentX[256], MomentY[256], MomentZ[256];
 
-        strcpy(MomentX, Name);
-        strcpy(MomentY, Name);
-        strcpy(MomentZ, Name);
+  strcpy(MomentX, Name);
+  strcpy(MomentY, Name);
+  strcpy(MomentZ, Name);
 
-        strcat(MomentX, "_Moment_X");
-        strcat(MomentY, "_Moment_Y");
-        strcat(MomentZ, "_Moment_Z");
+  strcat(MomentX, "_Moment_X");
+  strcat(MomentY, "_Moment_Y");
+  strcat(MomentZ, "_Moment_Z");
 
-        datasetarray = fielddata->GetArray(MomentX);
-        if(datasetarray)        fielddata->RemoveArray(MomentX);
+  datasetarray = fielddata->GetArray(MomentX);
+  if(datasetarray)        fielddata->RemoveArray(MomentX);
 
-        datasetarray = fielddata->GetArray(MomentY);
-        if(datasetarray)        fielddata->RemoveArray(MomentY);
+  datasetarray = fielddata->GetArray(MomentY);
+  if(datasetarray)        fielddata->RemoveArray(MomentY);
 
-        datasetarray = fielddata->GetArray(MomentZ);
-        if(datasetarray)        fielddata->RemoveArray(MomentZ);
+  datasetarray = fielddata->GetArray(MomentZ);
+  if(datasetarray)        fielddata->RemoveArray(MomentZ);
 
-        vtkStringArray *temparray = vtkStringArray::New();
-        temparray->DeepCopy(stringarray);
-        stringarray->Initialize();
-        int i;
+  vtkStringArray *temparray = vtkStringArray::New();
+  temparray->DeepCopy(stringarray);
+  stringarray->Initialize();
+  int i;
 
-        for (i=0; i<temparray->GetNumberOfTuples(); i++)
-        {
-                if(strcmp(temparray->GetValue(i), Name))
-                {
-                        stringarray->InsertNextValue(temparray->GetValue(i));
-                }
-        }
-        temparray->Delete();
+  for (i=0; i<temparray->GetNumberOfTuples(); i++)
+    {
+    if(strcmp(temparray->GetValue(i), Name))
+      {
+      stringarray->InsertNextValue(temparray->GetValue(i));
+      }
+    }
+  temparray->Delete();
 }
 //----------------------------------------------------------------------------------
 void vtkMimxMeshActor::DeleteElementSet(const char *Name)
 {
-        vtkFieldData *fielddata = this->UnstructuredGrid->GetFieldData();
-        vtkCellData *celldata = this->UnstructuredGrid->GetCellData();
+  vtkFieldData *fielddata = this->UnstructuredGrid->GetFieldData();
+  vtkCellData *celldata = this->UnstructuredGrid->GetCellData();
 
-        vtkStringArray *stringarray = vtkStringArray::SafeDownCast(
-                fielddata->GetAbstractArray("Element_Set_Names"));
+  vtkStringArray *stringarray = vtkStringArray::SafeDownCast(
+    fielddata->GetAbstractArray("Element_Set_Names"));
 
-        if(!stringarray)        return;
+  if(!stringarray)        return;
 
-        vtkDataArray *datasetarray;
+  vtkDataArray *datasetarray;
         
-        datasetarray = celldata->GetArray(Name);
-        if(datasetarray)        celldata->RemoveArray(Name);
+  datasetarray = celldata->GetArray(Name);
+  if(datasetarray)        celldata->RemoveArray(Name);
 
-        char Young[256];
-        strcpy(Young, Name);
-        strcat(Young, "_Constant_Youngs_Modulus");
-        datasetarray = fielddata->GetArray(Young);
-        if(datasetarray)        fielddata->RemoveArray(Young);
+  char Young[256];
+  strcpy(Young, Name);
+  strcat(Young, "_Constant_Youngs_Modulus");
+  datasetarray = fielddata->GetArray(Young);
+  if(datasetarray)        fielddata->RemoveArray(Young);
 
-        char Poisson[256];
-        strcpy(Poisson, Name);
-        strcat(Poisson, "_Constant_Poissons_Ratio");
-        datasetarray = fielddata->GetArray(Poisson);
-        if(datasetarray)        fielddata->RemoveArray(Poisson);
+  char Poisson[256];
+  strcpy(Poisson, Name);
+  strcat(Poisson, "_Constant_Poissons_Ratio");
+  datasetarray = fielddata->GetArray(Poisson);
+  if(datasetarray)        fielddata->RemoveArray(Poisson);
         
-        char ImageBased[256];
-        strcpy(ImageBased, Name);
-        strcat(ImageBased, "_Image_Based_Material_Property");
-        datasetarray = celldata->GetArray(ImageBased);
-        if(datasetarray)        celldata->RemoveArray(ImageBased);
+  char ImageBased[256];
+  strcpy(ImageBased, Name);
+  strcat(ImageBased, "_Image_Based_Material_Property");
+  datasetarray = celldata->GetArray(ImageBased);
+  if(datasetarray)        celldata->RemoveArray(ImageBased);
         
-        strcat(ImageBased, "_ReBin");
-        datasetarray = celldata->GetArray(ImageBased);
-        if(datasetarray)        celldata->RemoveArray(ImageBased);
+  strcat(ImageBased, "_ReBin");
+  datasetarray = celldata->GetArray(ImageBased);
+  if(datasetarray)        celldata->RemoveArray(ImageBased);
 
-        vtkStringArray *temparray = vtkStringArray::New();
-        temparray->DeepCopy(stringarray);
-        stringarray->Initialize();
-        int i;
+  vtkStringArray *temparray = vtkStringArray::New();
+  temparray->DeepCopy(stringarray);
+  stringarray->Initialize();
+  int i;
 
-        for (i=0; i<temparray->GetNumberOfTuples(); i++)
-        {
-                if(strcmp(temparray->GetValue(i), Name))
-                {
-                        stringarray->InsertNextValue(temparray->GetValue(i));
-                }
-        }
-        temparray->Delete();
-        this->DeleteElementSetListItem(Name);
+  for (i=0; i<temparray->GetNumberOfTuples(); i++)
+    {
+    if(strcmp(temparray->GetValue(i), Name))
+      {
+      stringarray->InsertNextValue(temparray->GetValue(i));
+      }
+    }
+  temparray->Delete();
+  this->DeleteElementSetListItem(Name);
 }
 
 //----------------------------------------------------------------------------------
@@ -529,7 +529,7 @@ void vtkMimxMeshActor::SetDisplayMode( int mode )
 {
 
   switch ( mode )
-  {
+    {
     case vtkMimxMeshActor::DisplayMesh:
       this->DisplayMode = mode;
       UpdateElementSetDisplay();
@@ -540,7 +540,7 @@ void vtkMimxMeshActor::SetDisplayMode( int mode )
       UpdateMeshDisplay();
       UpdateElementSetDisplay();
       break;
-  }
+    }
   
 }
 
@@ -554,9 +554,9 @@ int vtkMimxMeshActor::GetDisplayMode( )
 void vtkMimxMeshActor::UpdateMeshDisplay()
 {
   if ((this->DisplayMode == vtkMimxMeshActor::DisplayMesh) && (this->IsVisible == true))
-  {
-    switch ( this->DisplayType )
     {
+    switch ( this->DisplayType )
+      {
       case vtkMimxMeshActor::DisplaySurface:
         this->Actor->SetVisibility( 1 );
         //this->InteriorActor->SetVisibility( 1 );
@@ -572,14 +572,14 @@ void vtkMimxMeshActor::UpdateMeshDisplay()
         //this->InteriorActor->SetVisibility( 1 );
         this->OutlineActor->SetVisibility( 1 );
         break;
+      }
     }
-  }
   else
-  {
+    {
     this->Actor->SetVisibility( 0 );
     this->InteriorActor->SetVisibility( 0 );
     this->OutlineActor->SetVisibility( 0 );
-  }
+    }
     
 }
 
@@ -589,14 +589,14 @@ void vtkMimxMeshActor::UpdateElementSetDisplay()
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin(); it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     if (( currentSet->IsVisible == true ) && 
         (this->DisplayMode == vtkMimxMeshActor::DisplayElementSets)  &&
         (this->IsVisible == true) )
-    {
-      switch ( currentSet->DisplayType )
       {
+      switch ( currentSet->DisplayType )
+        {
         case vtkMimxMeshActor::DisplaySurface:
           currentSet->SurfaceActor->SetVisibility( 1 );
           //currentSet->InteriorActor->SetVisibility( 1 );
@@ -612,15 +612,15 @@ void vtkMimxMeshActor::UpdateElementSetDisplay()
           //currentSet->InteriorActor->SetVisibility( 1 );
           currentSet->OutlineActor->SetVisibility( 1 );
           break;
+        }
       }
-    }
     else
-    {
+      {
       currentSet->SurfaceActor->SetVisibility( 0 );
       currentSet->InteriorActor->SetVisibility( 0 );
       currentSet->OutlineActor->SetVisibility( 0 );
+      }
     }
-  }
   
 }
 
@@ -628,13 +628,13 @@ void vtkMimxMeshActor::UpdateElementSetDisplay()
 void vtkMimxMeshActor::SetMeshDisplayType( int type)
 {
   switch ( type )
-  {
+    {
     case vtkMimxMeshActor::DisplaySurface:
     case vtkMimxMeshActor::DisplayOutline:
     case vtkMimxMeshActor::DisplaySurfaceAndOutline:
       this->DisplayType = type;
       break;
-  }
+    }
   UpdateElementSetDisplay();
   UpdateMeshDisplay();
 }
@@ -695,13 +695,13 @@ double vtkMimxMeshActor::GetMeshShrinkFactor( )
 //----------------------------------------------------------------------------------
 void vtkMimxMeshActor::SetMeshShrinkFactor(double shrinkFactor)
 {
-        if ((this->Actor->GetProperty()->GetOpacity() != 1.0) && (shrinkFactor == 1.0) && (!this->CuttingPlaneEnabled))
-                this->UnstructuredGridMapper->SetInput(this->UnstructuredGrid);
-        else
-                this->UnstructuredGridMapper->SetInput(this->ShrinkFilter->GetOutput());
-        this->UnstructuredGridMapper->Modified();
+  if ((this->Actor->GetProperty()->GetOpacity() != 1.0) && (shrinkFactor == 1.0) && (!this->CuttingPlaneEnabled))
+    this->UnstructuredGridMapper->SetInput(this->UnstructuredGrid);
+  else
+    this->UnstructuredGridMapper->SetInput(this->ShrinkFilter->GetOutput());
+  this->UnstructuredGridMapper->Modified();
                 
-        this->ElementShrinkFactor = shrinkFactor;
+  this->ElementShrinkFactor = shrinkFactor;
   this->ShrinkFilter->SetShrinkFactor( shrinkFactor );
   this->Actor->Modified();
 }
@@ -734,11 +734,11 @@ void vtkMimxMeshActor::GetMeshColor(double rgb[3])
 //----------------------------------------------------------------------------------
 void vtkMimxMeshActor::SetMeshOpacity(double opacity)
 {
-        if ((opacity != 1.0) && (this->ElementShrinkFactor == 1.0) && (!this->CuttingPlaneEnabled))
-                this->UnstructuredGridMapper->SetInput(this->UnstructuredGrid);
-        else
-                this->UnstructuredGridMapper->SetInput(this->ShrinkFilter->GetOutput());
-        this->UnstructuredGridMapper->Modified();
+  if ((opacity != 1.0) && (this->ElementShrinkFactor == 1.0) && (!this->CuttingPlaneEnabled))
+    this->UnstructuredGridMapper->SetInput(this->UnstructuredGrid);
+  else
+    this->UnstructuredGridMapper->SetInput(this->ShrinkFilter->GetOutput());
+  this->UnstructuredGridMapper->Modified();
 
   this->Actor->GetProperty()->SetOpacity( opacity );
   this->Actor->Modified();
@@ -760,9 +760,9 @@ void vtkMimxMeshActor::SetMeshScalarVisibility(bool visibility)
 //----------------------------------------------------------------------------------
 bool vtkMimxMeshActor::GetMeshScalarVisibility( )
 {
-        bool visibility = false;
-        if(this->UnstructuredGridMapper->GetScalarVisibility( ))        visibility = true;
-        return visibility;
+  bool visibility = false;
+  if(this->UnstructuredGridMapper->GetScalarVisibility( ))        visibility = true;
+  return visibility;
 }
 
 //----------------------------------------------------------------------------------
@@ -774,28 +774,28 @@ void vtkMimxMeshActor::SetMeshLegendVisibility(bool visible)
 //----------------------------------------------------------------------------------
 void vtkMimxMeshActor::SetElementSetLegendVisibility(std::string setName, bool visible)
 {
-        this->HideAllElementSetLegends();
-        std::list<MeshDisplayProperty*>::iterator it;
+  this->HideAllElementSetLegends();
+  std::list<MeshDisplayProperty*>::iterator it;
 
-        for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-        {
-                MeshDisplayProperty *currentSet = *it;
+  for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
+    {
+    MeshDisplayProperty *currentSet = *it;
 
-                if (setName == currentSet->name)
-                {
-                        currentSet->LegendActor->SetVisibility(static_cast<int>(visible));
-                        this->Renderer->AddViewProp(currentSet->LegendActor);
-                        currentSet->LegendActor->Modified();
-                        break;
-                }
-        }
+    if (setName == currentSet->name)
+      {
+      currentSet->LegendActor->SetVisibility(static_cast<int>(visible));
+      this->Renderer->AddViewProp(currentSet->LegendActor);
+      currentSet->LegendActor->Modified();
+      break;
+      }
+    }
 }
 //----------------------------------------------------------------------------------
 bool vtkMimxMeshActor::GetMeshLegendVisibility( )
 {
-        bool visibility = false;
-        if(this->LegendActor->GetVisibility( ) )        visibility = true;
-        return visibility;
+  bool visibility = false;
+  if(this->LegendActor->GetVisibility( ) )        visibility = true;
+  return visibility;
 }
 
 //----------------------------------------------------------------------------------
@@ -821,15 +821,15 @@ void vtkMimxMeshActor::EnableMeshCuttingPlane( )
   this->CuttingPlaneWidget->UpdatePlacement( );
   this->CuttingPlaneWidget->PlaceWidget();
   if(this->Renderer)
-  {
-          vtkCamera *camera = Renderer->GetActiveCamera();
-          double normal[3];
-          camera->GetViewPlaneNormal(normal);
-          if(this->InvertCuttingPlane)
-                this->CuttingPlaneWidget->SetNormal(-normal[0], -normal[1], -normal[2]);
-          else
-                this->CuttingPlaneWidget->SetNormal(normal[0], normal[1], normal[2]);
-  }
+    {
+    vtkCamera *camera = Renderer->GetActiveCamera();
+    double normal[3];
+    camera->GetViewPlaneNormal(normal);
+    if(this->InvertCuttingPlane)
+      this->CuttingPlaneWidget->SetNormal(-normal[0], -normal[1], -normal[2]);
+    else
+      this->CuttingPlaneWidget->SetNormal(normal[0], normal[1], normal[2]);
+    }
   this->CuttingPlaneWidget->SetEnabled( 1 );
   this->CuttingPlaneWidget->GetPlane( this->CuttingPlane );
   this->CuttingPlaneEnabled = true;
@@ -851,32 +851,32 @@ void vtkMimxMeshActor::DisableMeshCuttingPlane( )
   this->InteriorShrinkFilter->SetInput( this->UnstructuredGrid );
   
   if ((this->Actor->GetProperty()->GetOpacity( ) != 1.0) && (this->ElementShrinkFactor == 1.0) && (!this->CuttingPlaneEnabled))
-                this->UnstructuredGridMapper->SetInput(this->UnstructuredGrid);
-        else
-                this->UnstructuredGridMapper->SetInput(this->ShrinkFilter->GetOutput());
-        this->UnstructuredGridMapper->Modified();
+    this->UnstructuredGridMapper->SetInput(this->UnstructuredGrid);
+  else
+    this->UnstructuredGridMapper->SetInput(this->ShrinkFilter->GetOutput());
+  this->UnstructuredGridMapper->Modified();
         
 }
 //----------------------------------------------------------------------------------
 void vtkMimxMeshActor::SetInvertCuttingPlane( bool invert )
 {
-        if(this->InvertCuttingPlane != static_cast<int> ( invert ))
-        {
-                this->InvertCuttingPlane = static_cast<int> ( invert );
-                double normal[3];
-                this->CuttingPlaneWidget->GetNormal(normal);
-                this->CuttingPlaneWidget->SetNormal(-normal[0], -normal[1], -normal[2]);
-                this->CuttingPlaneWidget->GetPlane(this->CuttingPlane);
-                this->ClipPlaneGeometryFilter->Modified();
-                this->ClipPlaneGeometryFilter->Update();
-        }
+  if(this->InvertCuttingPlane != static_cast<int> ( invert ))
+    {
+    this->InvertCuttingPlane = static_cast<int> ( invert );
+    double normal[3];
+    this->CuttingPlaneWidget->GetNormal(normal);
+    this->CuttingPlaneWidget->SetNormal(-normal[0], -normal[1], -normal[2]);
+    this->CuttingPlaneWidget->GetPlane(this->CuttingPlane);
+    this->ClipPlaneGeometryFilter->Modified();
+    this->ClipPlaneGeometryFilter->Update();
+    }
 }
 //----------------------------------------------------------------------------------
 bool vtkMimxMeshActor::GetInvertCuttingPlane( )
 {
-        bool visibility = false;
-        if(this->InvertCuttingPlane)    visibility = true;
-        return visibility; 
+  bool visibility = false;
+  if(this->InvertCuttingPlane)    visibility = true;
+  return visibility; 
 }
 
 //----------------------------------------------------------------------------------
@@ -907,22 +907,22 @@ void vtkMimxMeshActor::SetElementSetDisplayType( std::string setName, int type )
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     
     if (setName == currentSet->name)
-    {
-      switch ( type )
       {
+      switch ( type )
+        {
         case vtkMimxMeshActor::DisplaySurface:
         case vtkMimxMeshActor::DisplayOutline:
         case vtkMimxMeshActor::DisplaySurfaceAndOutline:
           currentSet->DisplayType = type;
           break;
-      }
+        }
       break;
+      }
     }
-  }
   UpdateMeshDisplay();
   UpdateElementSetDisplay();
 }
@@ -934,14 +934,14 @@ int vtkMimxMeshActor::GetElementSetDisplayType( std::string setName )
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     
     if (setName == currentSet->name)
-    {
+      {
       return currentSet->DisplayType;
+      }
     }
-  }
   return vtkMimxMeshActor::DisplaySurfaceAndOutline;
 }
 
@@ -952,14 +952,14 @@ void vtkMimxMeshActor::GetElementSetOutlineColor(std::string setName, double &re
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     if (setName == currentSet->name)
-    {
+      {
       currentSet->OutlineActor->GetProperty()->GetColor(red, green, blue);
       return;
+      }
     }
-  }
   red = green = blue = 0.0;
   return;
 }
@@ -970,14 +970,14 @@ void vtkMimxMeshActor::GetElementSetOutlineColor(std::string setName, double rgb
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     if (setName == currentSet->name)
-    {
+      {
       currentSet->OutlineActor->GetProperty()->GetColor(rgb);
       return;
+      }
     }
-  }
   rgb[0] = rgb[1] = rgb[2] = 0.0;
   return;
 }
@@ -988,17 +988,17 @@ void vtkMimxMeshActor::SetElementSetOutlineColor(std::string setName, double red
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     
     if (setName == currentSet->name)
-    {
+      {
       currentSet->OutlineActor->GetProperty()->SetColor(red, green, blue);
       currentSet->OutlineActor->GetProperty()->SetEdgeColor(red, green, blue);
       currentSet->OutlineActor->Modified();
       return;
+      }
     }
-  }
 }
 
 //----------------------------------------------------------------------------------
@@ -1013,14 +1013,14 @@ double vtkMimxMeshActor::GetElementSetShrinkFactor( std::string setName )
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     
     if (setName == currentSet->name)
-    {
+      {
       return currentSet->ShrinkFilter->GetShrinkFactor();
+      }
     }
-  }
   
   return 0.0;
 }
@@ -1031,16 +1031,16 @@ void vtkMimxMeshActor::SetElementSetShrinkFactor(std::string setName, double shr
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     
     if (setName == currentSet->name)
-    {
+      {
       currentSet->ShrinkFilter->SetShrinkFactor( shrinkFactor );
       currentSet->SurfaceActor->Modified();
       return;
+      }
     }
-  }
 }
 
 //----------------------------------------------------------------------------------
@@ -1049,16 +1049,16 @@ void vtkMimxMeshActor::SetElementSetColor(std::string setName, double red, doubl
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     
     if (setName == currentSet->name)
-    {
+      {
       currentSet->SurfaceActor->GetProperty()->SetColor(red, green, blue);
       currentSet->SurfaceActor->Modified();
       return;
+      }
     }
-  }
 }
 
 //----------------------------------------------------------------------------------
@@ -1073,15 +1073,15 @@ void vtkMimxMeshActor::GetElementSetColor(std::string setName, double &red, doub
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     
     if (setName == currentSet->name)
-    {
+      {
       currentSet->SurfaceActor->GetProperty()->GetColor(red, green, blue);
       return;
+      }
     }
-  }
   red = green = blue = 0.0;
   return;  
 }
@@ -1092,15 +1092,15 @@ void vtkMimxMeshActor::GetElementSetColor(std::string setName, double rgb[3])
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     
     if (setName == currentSet->name)
-    {
+      {
       currentSet->SurfaceActor->GetProperty()->GetColor(rgb);
       return;
+      }
     }
-  }
   rgb[0] = rgb[1] = rgb[2] = 0.0;
   return;
 }
@@ -1111,16 +1111,16 @@ void vtkMimxMeshActor::SetElementSetOpacity(std::string setName, double opacity)
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     
     if (setName == currentSet->name)
-    {
+      {
       currentSet->SurfaceActor->GetProperty()->SetOpacity( opacity );
       currentSet->SurfaceActor->Modified();
       return;
+      }
     }
-  }
 }
 
 //----------------------------------------------------------------------------------
@@ -1129,14 +1129,14 @@ double vtkMimxMeshActor::GetElementSetOpacity( std::string setName )
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     
     if (setName == currentSet->name)
-    {
+      {
       return currentSet->SurfaceActor->GetProperty()->GetOpacity( );
+      }
     }
-  }
   
   return 0.0;
 }
@@ -1147,16 +1147,16 @@ void vtkMimxMeshActor::ShowElementSet( std::string setName )
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     
     if (setName == currentSet->name)
-    {
+      {
       currentSet->IsVisible = true;
-          this->SetDisplayMode(vtkMimxMeshActor::DisplayElementSets);
+      this->SetDisplayMode(vtkMimxMeshActor::DisplayElementSets);
       break;
-    }
-  } 
+      }
+    } 
   UpdateMeshDisplay();
   UpdateElementSetDisplay();
 }
@@ -1167,15 +1167,15 @@ void vtkMimxMeshActor::HideElementSet( std::string setName )
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     
     if (setName == currentSet->name)
-    {
+      {
       currentSet->IsVisible = false;
       break;
+      }
     }
-  }
   
   UpdateMeshDisplay();
   UpdateElementSetDisplay();
@@ -1183,15 +1183,15 @@ void vtkMimxMeshActor::HideElementSet( std::string setName )
 //----------------------------------------------------------------------------------
 void vtkMimxMeshActor::HideAllElementSets( )
 {
-        std::list<MeshDisplayProperty*>::iterator it;
+  std::list<MeshDisplayProperty*>::iterator it;
 
-        for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-        {
-                MeshDisplayProperty *currentSet = *it;
-                currentSet->IsVisible = false;
-        }
-        UpdateMeshDisplay();
-        UpdateElementSetDisplay();
+  for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
+    {
+    MeshDisplayProperty *currentSet = *it;
+    currentSet->IsVisible = false;
+    }
+  UpdateMeshDisplay();
+  UpdateElementSetDisplay();
 }
 //----------------------------------------------------------------------------------
 bool vtkMimxMeshActor::GetElementSetVisibility( std::string setName )
@@ -1199,15 +1199,15 @@ bool vtkMimxMeshActor::GetElementSetVisibility( std::string setName )
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     
     if (setName == currentSet->name)
-    {
+      {
       return currentSet->IsVisible;
       break;
+      }
     }
-  }
   return false;
 }
 
@@ -1217,16 +1217,16 @@ void vtkMimxMeshActor::SetElementSetOutlineRadius( std::string setName, double r
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     
     if (setName == currentSet->name)
-    {
+      {
       currentSet->TubeFilter->SetRadius(radius/100.0);
       currentSet->OutlineActor->Modified();
       break;
-    }
-  }  
+      }
+    }  
 }
 
 //----------------------------------------------------------------------------------
@@ -1235,15 +1235,15 @@ double vtkMimxMeshActor::GetElementSetOutlineRadius( std::string setName )
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     
     if (setName == currentSet->name)
-    {
+      {
       return currentSet->TubeFilter->GetRadius();
       break;
+      }
     }
-  }
   
   return 0.0;
 }
@@ -1252,7 +1252,7 @@ double vtkMimxMeshActor::GetElementSetOutlineRadius( std::string setName )
 void vtkMimxMeshActor::CreateElementSetList( )
 {
   while (!ElementSetDisplayList.empty())
-  {
+    {
     MeshDisplayProperty *currentSet = ElementSetDisplayList.front();
     if (currentSet->SurfaceActor) currentSet->SurfaceActor->Delete();
     if (currentSet->OutlineActor) currentSet->OutlineActor->Delete();
@@ -1261,27 +1261,27 @@ void vtkMimxMeshActor::CreateElementSetList( )
     if (currentSet->OutlineMapper) currentSet->OutlineMapper->Delete();
     if (currentSet->InteriorMapper) currentSet->InteriorMapper->Delete();
     if (currentSet->ShrinkFilter) currentSet->ShrinkFilter->Delete();
-        if (currentSet->LegendActor)  currentSet->LegendActor->Delete();
-        if (currentSet->lutFilter) currentSet->lutFilter->Delete();
+    if (currentSet->LegendActor)  currentSet->LegendActor->Delete();
+    if (currentSet->lutFilter) currentSet->lutFilter->Delete();
     ElementSetDisplayList.pop_front();
-  }
+    }
   
   this->NumberOfElementSets = 0;
   vtkFieldData *fielddata = this->UnstructuredGrid->GetFieldData();
   if ( fielddata )
-  {
-        vtkStringArray *stringarray = vtkStringArray::SafeDownCast(
-                fielddata->GetAbstractArray("Element_Set_Names"));
-        if ( stringarray )
+    {
+    vtkStringArray *stringarray = vtkStringArray::SafeDownCast(
+      fielddata->GetAbstractArray("Element_Set_Names"));
+    if ( stringarray )
+      {
+      this->NumberOfElementSets = stringarray->GetNumberOfValues();
+      for (int i=0;i<stringarray->GetNumberOfValues();i++)
         {
-        this->NumberOfElementSets = stringarray->GetNumberOfValues();
-        for (int i=0;i<stringarray->GetNumberOfValues();i++)
-        {
-          vtkStdString name = stringarray->GetValue(i);  
-          AddElementSetListItem( name );
+        vtkStdString name = stringarray->GetValue(i);  
+        AddElementSetListItem( name );
         }
-        }
-        }
+      }
+    }
 }
 
 //----------------------------------------------------------------------------------
@@ -1290,11 +1290,11 @@ void vtkMimxMeshActor::DeleteElementSetListItem( std::string setName )
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     
     if (setName == currentSet->name)
-    {
+      {
       if (currentSet->SurfaceActor) currentSet->SurfaceActor->Delete();
       if (currentSet->OutlineActor) currentSet->OutlineActor->Delete();
       if (currentSet->InteriorActor) currentSet->InteriorActor->Delete();
@@ -1304,8 +1304,8 @@ void vtkMimxMeshActor::DeleteElementSetListItem( std::string setName )
       if (currentSet->ShrinkFilter) currentSet->ShrinkFilter->Delete();
       ElementSetDisplayList.erase(it);
       return;
+      }
     }
-  }
 }
 
 //----------------------------------------------------------------------------------
@@ -1317,13 +1317,13 @@ void vtkMimxMeshActor::AddElementSetListItem( std::string setName )
   elementSetProperty->DisplayType = vtkMimxMeshActor::DisplaySurfaceAndOutline;
   
   /* Extract Cells */
-        vtkCellData *celldata = this->UnstructuredGrid->GetCellData();
+  vtkCellData *celldata = this->UnstructuredGrid->GetCellData();
   vtkIntArray *datasetarray = vtkIntArray::SafeDownCast(celldata->GetArray(setName.c_str()));
   vtkIdList *cellIds = vtkIdList::New();
   for (int i=0;i<datasetarray->GetNumberOfTuples();i++)
-  {
+    {
     if (datasetarray->GetValue(i) > 0 ) cellIds->InsertNextId(i);
-  }
+    }
   elementSetProperty->ExtractCellsFilter = vtkExtractCells::New();
   elementSetProperty->ExtractCellsFilter->SetInput( this->UnstructuredGrid );
   elementSetProperty->ExtractCellsFilter->SetCellList( cellIds );
@@ -1410,14 +1410,14 @@ void vtkMimxMeshActor::AddElementSetListItem( std::string setName )
   elementSetProperty->LegendActor->SetVisibility( 0 );
 
   if(this->Renderer)
-  {
-          this->Renderer->AddViewProp(elementSetProperty->SurfaceActor);
-          this->Renderer->AddViewProp(elementSetProperty->OutlineActor);
-          this->Renderer->AddViewProp(elementSetProperty->InteriorActor);
-          elementSetProperty->SurfaceActor->SetVisibility(0);
-          elementSetProperty->OutlineActor->SetVisibility(0);
-          elementSetProperty->InteriorActor->SetVisibility(0);
-  }
+    {
+    this->Renderer->AddViewProp(elementSetProperty->SurfaceActor);
+    this->Renderer->AddViewProp(elementSetProperty->OutlineActor);
+    this->Renderer->AddViewProp(elementSetProperty->InteriorActor);
+    elementSetProperty->SurfaceActor->SetVisibility(0);
+    elementSetProperty->OutlineActor->SetVisibility(0);
+    elementSetProperty->InteriorActor->SetVisibility(0);
+    }
   /* Add the Display to the List */
   if (ElementSetDisplayList.size() == 0)
     elementSetProperty->IsVisible = true;
@@ -1436,12 +1436,12 @@ void vtkMimxMeshActor::SetRenderer(vtkRenderer *renderer)
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  { 
+    { 
     MeshDisplayProperty *currentSet = *it;
     this->Renderer->AddViewProp(currentSet->SurfaceActor);
     this->Renderer->AddViewProp(currentSet->OutlineActor);
     this->Renderer->AddViewProp(currentSet->InteriorActor);
-  }
+    }
   
   UpdateElementSetDisplay();
   UpdateMeshDisplay(); 
@@ -1485,15 +1485,15 @@ void vtkMimxMeshActor::SetLegendRange(double min, double max)
 }
 //---------------------------------------------------------------------------------
 void vtkMimxMeshActor::SetElementSetLegendRange(double min, double max, 
-                                                                                                MeshDisplayProperty *currentSet)
+                                                MeshDisplayProperty *currentSet)
 {
-        if(!currentSet) return;
-        currentSet->lutFilter->SetTableRange(min, max);
-        currentSet->lutFilter->ForceBuild();
-        currentSet->SurfaceMapper->SetScalarRange(min, max);
-        currentSet->SurfaceMapper->Modified();
-        currentSet->LegendActor->SetLookupTable(currentSet->lutFilter);
-        currentSet->LegendActor->Modified();
+  if(!currentSet) return;
+  currentSet->lutFilter->SetTableRange(min, max);
+  currentSet->lutFilter->ForceBuild();
+  currentSet->SurfaceMapper->SetScalarRange(min, max);
+  currentSet->SurfaceMapper->Modified();
+  currentSet->LegendActor->SetLookupTable(currentSet->lutFilter);
+  currentSet->LegendActor->Modified();
 }
 
 //----------------------------------------------------------------------------------
@@ -1502,36 +1502,36 @@ void vtkMimxMeshActor::SetAllElementSetScalarName( std::string scalarName )
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     
     double *range = ComputeElementSetScalarRange(currentSet->name.c_str(), scalarName.c_str());
-        if ( range ) this->GenerateElementSetMapperLookUpTable(currentSet->name.c_str(), scalarName.c_str(), range);
+    if ( range ) this->GenerateElementSetMapperLookUpTable(currentSet->name.c_str(), scalarName.c_str(), range);
         
-        currentSet->SurfaceActor->Modified();
+    currentSet->SurfaceActor->Modified();
     currentSet->LegendActor->SetTitle( scalarName.c_str() );
-  }
+    }
 }
 
 //----------------------------------------------------------------------------------
 void vtkMimxMeshActor::SetElementSetScalarName(std::string setName, std::string scalarName)
 {
-        std::list<MeshDisplayProperty*>::iterator it;
+  std::list<MeshDisplayProperty*>::iterator it;
         
-        MeshDisplayProperty *currentSet;
-        for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-        {
-                currentSet = *it;
-                if (setName == currentSet->name)
-                {
-                        double *range = ComputeElementSetScalarRange(setName.c_str(), scalarName.c_str());
-          if ( range ) this->GenerateElementSetMapperLookUpTable(setName.c_str(), scalarName.c_str(), range);
+  MeshDisplayProperty *currentSet;
+  for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
+    {
+    currentSet = *it;
+    if (setName == currentSet->name)
+      {
+      double *range = ComputeElementSetScalarRange(setName.c_str(), scalarName.c_str());
+      if ( range ) this->GenerateElementSetMapperLookUpTable(setName.c_str(), scalarName.c_str(), range);
         
-                currentSet->SurfaceActor->Modified();
+      currentSet->SurfaceActor->Modified();
       currentSet->LegendActor->SetTitle( scalarName.c_str() );
-                  break;
-                }
-        }
+      break;
+      }
+    }
 }
 
 //----------------------------------------------------------------------------------
@@ -1546,24 +1546,24 @@ void vtkMimxMeshActor::EnableElementSetCuttingPlane( std::string setName )
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     
     if (setName == currentSet->name)
-    {
+      {
       this->ClipPlaneGeometryFilter->SetInput( currentSet->ExtractCellsFilter->GetOutput() );
       this->CuttingPlaneWidget->UpdatePlacement( );
       this->CuttingPlaneWidget->PlaceWidget();
-          if(this->Renderer)
-          {
-                  vtkCamera *camera = Renderer->GetActiveCamera();
-                  double normal[3];
-                  camera->GetViewPlaneNormal(normal);
-                  if(this->InvertCuttingPlane)
-                          this->CuttingPlaneWidget->SetNormal(-normal[0], -normal[1], -normal[2]);
-                  else
-                          this->CuttingPlaneWidget->SetNormal(normal[0], normal[1], normal[2]);
-          }
+      if(this->Renderer)
+        {
+        vtkCamera *camera = Renderer->GetActiveCamera();
+        double normal[3];
+        camera->GetViewPlaneNormal(normal);
+        if(this->InvertCuttingPlane)
+          this->CuttingPlaneWidget->SetNormal(-normal[0], -normal[1], -normal[2]);
+        else
+          this->CuttingPlaneWidget->SetNormal(normal[0], normal[1], normal[2]);
+        }
       this->CuttingPlaneWidget->SetEnabled( 1 );
       this->CuttingPlaneWidget->GetPlane( this->CuttingPlane );
       this->CuttingPlaneEnabled = true;
@@ -1572,8 +1572,8 @@ void vtkMimxMeshActor::EnableElementSetCuttingPlane( std::string setName )
       currentSet->GeometryFilter->SetInput( this->ClipPlaneGeometryFilter->GetOutput() );
       currentSet->InteriorShrinkFilter->SetInput( this->ClipPlaneGeometryFilter->GetOutput() );
       break;
-    }
-  }  
+      }
+    }  
 }
 
 //----------------------------------------------------------------------------------
@@ -1582,11 +1582,11 @@ void vtkMimxMeshActor::DisableElementSetCuttingPlane( std::string setName )
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     
     if (setName == currentSet->name)
-    {
+      {
       this->CuttingPlaneWidget->SetEnabled( 0 );
       this->CuttingPlaneEnabled = false;
       this->ClipPlaneGeometryFilter->SetInput( this->UnstructuredGrid );
@@ -1596,8 +1596,8 @@ void vtkMimxMeshActor::DisableElementSetCuttingPlane( std::string setName )
       currentSet->InteriorShrinkFilter->SetInput( currentSet->ExtractCellsFilter->GetOutput() );
       this->Actor->Modified();
       break;
-    }
-  }  
+      }
+    }  
 }
 //----------------------------------------------------------------------------------
 void vtkMimxMeshActor::SetAllElementSetScalarVisibility( bool visibility )
@@ -1605,12 +1605,12 @@ void vtkMimxMeshActor::SetAllElementSetScalarVisibility( bool visibility )
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     
     currentSet->SurfaceMapper->SetScalarVisibility(static_cast<int>(visibility));
     currentSet->SurfaceActor->Modified();
-  }
+    }
 }
 //----------------------------------------------------------------------------------
 void vtkMimxMeshActor::SetElementSetScalarVisibility(std::string setName, bool visibility)
@@ -1618,16 +1618,16 @@ void vtkMimxMeshActor::SetElementSetScalarVisibility(std::string setName, bool v
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     
     if (setName == currentSet->name)
-    {
+      {
       currentSet->SurfaceMapper->SetScalarVisibility(static_cast<int>(visibility));
       currentSet->SurfaceActor->Modified();
       break;
+      }
     }
-  }
 }
 //----------------------------------------------------------------------------------
 bool vtkMimxMeshActor::GetElementSetScalarVisibility( std::string setName )
@@ -1635,17 +1635,17 @@ bool vtkMimxMeshActor::GetElementSetScalarVisibility( std::string setName )
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     
     if (setName == currentSet->name)
-    {
-                bool visibility = false;
-                if(currentSet->SurfaceMapper->GetScalarVisibility( ))   visibility = true;
-                return visibility; 
+      {
+      bool visibility = false;
+      if(currentSet->SurfaceMapper->GetScalarVisibility( ))   visibility = true;
+      return visibility; 
       break;
+      }
     }
-  }
   return false;
 
 }
@@ -1653,418 +1653,416 @@ bool vtkMimxMeshActor::GetElementSetScalarVisibility( std::string setName )
 //----------------------------------------------------------------------------------
 void vtkMimxMeshActor::DeleteBoundaryConditionStep(int StepNum)
 {
-        int i,j;
-        if(StepNum < 1) return;
-        vtkUnstructuredGrid *ugrid = this->UnstructuredGrid;
-        vtkIntArray *boundCond = vtkIntArray::SafeDownCast(
-                ugrid->GetFieldData()->GetArray("Boundary_Condition_Number_Of_Steps"));
-        if(!boundCond)  return;
-        int numSteps = boundCond->GetValue(0);
-        if(StepNum > numSteps)  return;
+  int i,j;
+  if(StepNum < 1) return;
+  vtkUnstructuredGrid *ugrid = this->UnstructuredGrid;
+  vtkIntArray *boundCond = vtkIntArray::SafeDownCast(
+    ugrid->GetFieldData()->GetArray("Boundary_Condition_Number_Of_Steps"));
+  if(!boundCond)  return;
+  int numSteps = boundCond->GetValue(0);
+  if(StepNum > numSteps)  return;
         
-        char charStepNum[10];
-        sprintf(charStepNum, "%d", StepNum);
+  char charStepNum0[10];
+  sprintf(charStepNum0, "%d", StepNum);
 
-        vtkStringArray *nodesetnamestring = vtkStringArray::SafeDownCast(
-                ugrid->GetFieldData()->GetAbstractArray("Node_Set_Names"));
-        if(!nodesetnamestring)  return;
+  vtkStringArray *nodesetnamestring = vtkStringArray::SafeDownCast(
+    ugrid->GetFieldData()->GetAbstractArray("Node_Set_Names"));
+  if(!nodesetnamestring)  return;
 
-        vtkStringArray *elementsetnamestring = vtkStringArray::SafeDownCast(
-                ugrid->GetFieldData()->GetAbstractArray("Element_Set_Names"));
+  vtkStringArray *elementsetnamestring = vtkStringArray::SafeDownCast(
+    ugrid->GetFieldData()->GetAbstractArray("Element_Set_Names"));
 
-        vtkFloatArray *floatarray;
-        char Concatenate[256];
-        vtkFieldData *fieldData = ugrid->GetFieldData();
+  vtkFloatArray *floatarray;
+  vtkFieldData *fieldData = ugrid->GetFieldData();
 
-        char stepParameters[128];
-        sprintf(stepParameters, "Step_%d_%s", StepNum, "Input_Parameters");
-        if(fieldData->GetAbstractArray(stepParameters)) fieldData->RemoveArray(stepParameters);
+  char stepParameters0[128];
+  sprintf(stepParameters0, "Step_%d_%s", StepNum, "Input_Parameters");
+  if(fieldData->GetAbstractArray(stepParameters0)) fieldData->RemoveArray(stepParameters0);
 
-        char subHeading[128];
-        sprintf(subHeading, "Step_%d_%s", StepNum, "SubHeading");
-        if(fieldData->GetAbstractArray(subHeading))             fieldData->RemoveArray(subHeading);
+  char subHeading0[128];
+  sprintf(subHeading0, "Step_%d_%s", StepNum, "SubHeading");
+  if(fieldData->GetAbstractArray(subHeading0))             fieldData->RemoveArray(subHeading0);
 
-        for(i=0; i<nodesetnamestring->GetNumberOfValues(); i++)
-        {
-                const char* nodesetname =  nodesetnamestring->GetValue(i);
+  for(i=0; i<nodesetnamestring->GetNumberOfValues(); i++)
+    {
+    const char* nodesetname =  nodesetnamestring->GetValue(i);
 
-                Concatenate[256];
-                this->ConcatenateStrings("Step", charStepNum, nodesetname, "Force", "X", Concatenate);
-                floatarray = vtkFloatArray::SafeDownCast(
-                        ugrid->GetFieldData()->GetArray(Concatenate));
-                if(floatarray)
-                {
-                        fieldData->RemoveArray(Concatenate);
-                }
-                //
-                Concatenate[256];
-                this->ConcatenateStrings("Step", charStepNum, nodesetname, "Force", "Y", Concatenate);
-                floatarray = vtkFloatArray::SafeDownCast(
-                        ugrid->GetFieldData()->GetArray(Concatenate));
-                if(floatarray)
-                {
-                        fieldData->RemoveArray(Concatenate);
-                }
-                //
-                Concatenate[256];
-                this->ConcatenateStrings("Step", charStepNum, nodesetname, "Force", "Z", Concatenate);
-                floatarray = vtkFloatArray::SafeDownCast(
-                        ugrid->GetFieldData()->GetArray(Concatenate));
-                if(floatarray)
-                {
-                        fieldData->RemoveArray(Concatenate);
-                }
-                //
-                Concatenate[256];
-                this->ConcatenateStrings("Step", charStepNum, nodesetname, "Displacement", "X", Concatenate);
-                floatarray = vtkFloatArray::SafeDownCast(
-                        ugrid->GetFieldData()->GetArray(Concatenate));
-                if(floatarray)
-                {
-                        fieldData->RemoveArray(Concatenate);
-                }
-                //
-                Concatenate[256];
-                this->ConcatenateStrings("Step", charStepNum, nodesetname, "Displacement", "Y", Concatenate);
-                floatarray = vtkFloatArray::SafeDownCast(
-                        ugrid->GetFieldData()->GetArray(Concatenate));
-                if(floatarray)
-                {
-                        fieldData->RemoveArray(Concatenate);
-                }
-                //
-                Concatenate[256];
-                this->ConcatenateStrings("Step", charStepNum, nodesetname, "Displacement", "Z", Concatenate);
-                floatarray = vtkFloatArray::SafeDownCast(
-                        ugrid->GetFieldData()->GetArray(Concatenate));
-                if(floatarray)
-                {
-                        fieldData->RemoveArray(Concatenate);
-                }
-                //
-                Concatenate[256];
-                this->ConcatenateStrings("Step", charStepNum, nodesetname, "Rotation", "X", Concatenate);
-                floatarray = vtkFloatArray::SafeDownCast(
-                        ugrid->GetFieldData()->GetArray(Concatenate));
-                if(floatarray)
-                {
-                        fieldData->RemoveArray(Concatenate);
-                }
-                //
-                Concatenate[256];
-                this->ConcatenateStrings("Step", charStepNum, nodesetname, "Rotation", "Y", Concatenate);
-                floatarray = vtkFloatArray::SafeDownCast(
-                        ugrid->GetFieldData()->GetArray(Concatenate));
-                if(floatarray)
-                {
-                        fieldData->RemoveArray(Concatenate);
-                }
-                //
-                Concatenate[256];
-                this->ConcatenateStrings("Step", charStepNum, nodesetname, "Rotation", "Z", Concatenate);
-                floatarray = vtkFloatArray::SafeDownCast(
-                        ugrid->GetFieldData()->GetArray(Concatenate));
-                if(floatarray)
-                {
-                        fieldData->RemoveArray(Concatenate);
-                }
-                //
-                Concatenate[256];
-                this->ConcatenateStrings("Step", charStepNum, nodesetname, "Moment", "X", Concatenate);
-                floatarray = vtkFloatArray::SafeDownCast(
-                        ugrid->GetFieldData()->GetArray(Concatenate));
-                if(floatarray)
-                {
-                        fieldData->RemoveArray(Concatenate);
-                }
-                //
-                Concatenate[256];
-                this->ConcatenateStrings("Step", charStepNum, nodesetname, "Moment", "Y", Concatenate);
-                floatarray = vtkFloatArray::SafeDownCast(
-                        ugrid->GetFieldData()->GetArray(Concatenate));
-                if(floatarray)
-                {
-                        fieldData->RemoveArray(Concatenate);
-                }
-                //
-                Concatenate[256];
-                this->ConcatenateStrings("Step", charStepNum, nodesetname, "Moment", "Z", Concatenate);
-                floatarray = vtkFloatArray::SafeDownCast(
-                        ugrid->GetFieldData()->GetArray(Concatenate));
-                if(floatarray)
-                {
-                        fieldData->RemoveArray(Concatenate);
-                }
-                // for all the node print and output statements
-                char nodePrint[128];
-                sprintf(nodePrint, "Step_%d_%s_%s_%s", StepNum, "Node_Set", nodesetname, "Print");
-                if(fieldData->GetAbstractArray(nodePrint))      fieldData->RemoveArray(nodePrint);
+    char Concatenate1[256];
+    this->ConcatenateStrings("Step", charStepNum0, nodesetname, "Force", "X", Concatenate1);
+    floatarray = vtkFloatArray::SafeDownCast(
+      ugrid->GetFieldData()->GetArray(Concatenate1));
+    if(floatarray)
+      {
+      fieldData->RemoveArray(Concatenate1);
+      }
+    //
+    char Concatenate2[256];
+    this->ConcatenateStrings("Step", charStepNum0, nodesetname, "Force", "Y", Concatenate2);
+    floatarray = vtkFloatArray::SafeDownCast(
+      ugrid->GetFieldData()->GetArray(Concatenate2));
+    if(floatarray)
+      {
+      fieldData->RemoveArray(Concatenate2);
+      }
+    //
+    char Concatenate3[256];
+    this->ConcatenateStrings("Step", charStepNum0, nodesetname, "Force", "Z", Concatenate3);
+    floatarray = vtkFloatArray::SafeDownCast(
+      ugrid->GetFieldData()->GetArray(Concatenate3));
+    if(floatarray)
+      {
+      fieldData->RemoveArray(Concatenate3);
+      }
+    //
+    char Concatenate4[256];
+    this->ConcatenateStrings("Step", charStepNum0, nodesetname, "Displacement", "X", Concatenate4);
+    floatarray = vtkFloatArray::SafeDownCast(
+      ugrid->GetFieldData()->GetArray(Concatenate4));
+    if(floatarray)
+      {
+      fieldData->RemoveArray(Concatenate4);
+      }
+    //
+    char Concatenate5[256];
+    this->ConcatenateStrings("Step", charStepNum0, nodesetname, "Displacement", "Y", Concatenate5);
+    floatarray = vtkFloatArray::SafeDownCast(
+      ugrid->GetFieldData()->GetArray(Concatenate5));
+    if(floatarray)
+      {
+      fieldData->RemoveArray(Concatenate5);
+      }
+    //
+    char Concatenate6[256];
+    this->ConcatenateStrings("Step", charStepNum0, nodesetname, "Displacement", "Z", Concatenate6);
+    floatarray = vtkFloatArray::SafeDownCast(
+      ugrid->GetFieldData()->GetArray(Concatenate6));
+    if(floatarray)
+      {
+      fieldData->RemoveArray(Concatenate6);
+      }
+    //
+    char Concatenate7[256];
+    this->ConcatenateStrings("Step", charStepNum0, nodesetname, "Rotation", "X", Concatenate7);
+    floatarray = vtkFloatArray::SafeDownCast(
+      ugrid->GetFieldData()->GetArray(Concatenate7));
+    if(floatarray)
+      {
+      fieldData->RemoveArray(Concatenate7);
+      }
+    //
+    char Concatenate8[256];
+    this->ConcatenateStrings("Step", charStepNum0, nodesetname, "Rotation", "Y", Concatenate8);
+    floatarray = vtkFloatArray::SafeDownCast(
+      ugrid->GetFieldData()->GetArray(Concatenate8));
+    if(floatarray)
+      {
+      fieldData->RemoveArray(Concatenate8);
+      }
+    //
+    char Concatenate9[256];
+    this->ConcatenateStrings("Step", charStepNum0, nodesetname, "Rotation", "Z", Concatenate9);
+    floatarray = vtkFloatArray::SafeDownCast(
+      ugrid->GetFieldData()->GetArray(Concatenate9));
+    if(floatarray)
+      {
+      fieldData->RemoveArray(Concatenate9);
+      }
+    //
+    char Concatenate10[256];
+    this->ConcatenateStrings("Step", charStepNum0, nodesetname, "Moment", "X", Concatenate10);
+    floatarray = vtkFloatArray::SafeDownCast(
+      ugrid->GetFieldData()->GetArray(Concatenate10));
+    if(floatarray)
+      {
+      fieldData->RemoveArray(Concatenate10);
+      }
+    //
+    char Concatenate11[256];
+    this->ConcatenateStrings("Step", charStepNum0, nodesetname, "Moment", "Y", Concatenate11);
+    floatarray = vtkFloatArray::SafeDownCast(
+      ugrid->GetFieldData()->GetArray(Concatenate11));
+    if(floatarray)
+      {
+      fieldData->RemoveArray(Concatenate11);
+      }
+    //
+    char Concatenate12[256];
+    this->ConcatenateStrings("Step", charStepNum0, nodesetname, "Moment", "Z", Concatenate12);
+    floatarray = vtkFloatArray::SafeDownCast(
+      ugrid->GetFieldData()->GetArray(Concatenate12));
+    if(floatarray)
+      {
+      fieldData->RemoveArray(Concatenate12);
+      }
+    // for all the node print and output statements
+    char nodePrint[128];
+    sprintf(nodePrint, "Step_%d_%s_%s_%s", StepNum, "Node_Set", nodesetname, "Print");
+    if(fieldData->GetAbstractArray(nodePrint))      fieldData->RemoveArray(nodePrint);
 
-                char nodeOutput[128];
-                sprintf(nodeOutput, "Step_%d_%s_%s_%s", StepNum, "Node_Set", nodesetname, "Output");
-                if(fieldData->GetAbstractArray(nodeOutput))     fieldData->RemoveArray(nodeOutput);
-        }
-        //
-        for (i=0; i<elementsetnamestring->GetNumberOfValues(); i++)
-        {
-                const char *elementsetname = elementsetnamestring->GetValue(i);
-                char elementPrint[128];
-                sprintf(elementPrint, "Step_%d_%s_%s_%s", StepNum, "Element_Set", elementsetname, "Print");
-                if(fieldData->GetAbstractArray(elementPrint))   fieldData->RemoveArray(elementPrint);
+    char nodeOutput[128];
+    sprintf(nodeOutput, "Step_%d_%s_%s_%s", StepNum, "Node_Set", nodesetname, "Output");
+    if(fieldData->GetAbstractArray(nodeOutput))     fieldData->RemoveArray(nodeOutput);
+    }
+  //
+  for (i=0; i<elementsetnamestring->GetNumberOfValues(); i++)
+    {
+    const char *elementsetname = elementsetnamestring->GetValue(i);
+    char elementPrint[128];
+    sprintf(elementPrint, "Step_%d_%s_%s_%s", StepNum, "Element_Set", elementsetname, "Print");
+    if(fieldData->GetAbstractArray(elementPrint))   fieldData->RemoveArray(elementPrint);
 
-                char elementOutput[128];
-                sprintf(elementOutput, "Step_%d_%s_%s_%s", StepNum, "Element_Set", elementsetname, "Output");
-                if(fieldData->GetAbstractArray(elementOutput))  fieldData->RemoveArray(elementOutput);
-        }
-        // loop through all the higher numbered steps to change the step numbers
-        for (j=StepNum+1; j<=numSteps;j++)
-        {
-                stepParameters[128];
-                sprintf(stepParameters, "Step_%d_%s", j, "Input_Parameters");
-                char stepParametersNew[128];
-                sprintf(stepParametersNew, "Step_%d_%s", j-1, "Input_Parameters");
-                if(fieldData->GetAbstractArray(stepParameters)) fieldData->GetAbstractArray(stepParameters)->SetName(stepParametersNew);
+    char elementOutput[128];
+    sprintf(elementOutput, "Step_%d_%s_%s_%s", StepNum, "Element_Set", elementsetname, "Output");
+    if(fieldData->GetAbstractArray(elementOutput))  fieldData->RemoveArray(elementOutput);
+    }
+  // loop through all the higher numbered steps to change the step numbers
+  for (j=StepNum+1; j<=numSteps;j++)
+    {
+    char stepParameters[128];
+    sprintf(stepParameters, "Step_%d_%s", j, "Input_Parameters");
+    char stepParametersNew[128];
+    sprintf(stepParametersNew, "Step_%d_%s", j-1, "Input_Parameters");
+    if(fieldData->GetAbstractArray(stepParameters)) fieldData->GetAbstractArray(stepParameters)->SetName(stepParametersNew);
 
-                subHeading[128];
-                sprintf(subHeading, "Step_%d_%s", j, "SubHeading");
-                char subHeadingNew[128];
-                sprintf(subHeadingNew, "Step_%d_%s", j-1, "SubHeading");
-                if(fieldData->GetAbstractArray(subHeading))             fieldData->GetAbstractArray(subHeading)->SetName(subHeadingNew);
+    char subHeading[128];
+    sprintf(subHeading, "Step_%d_%s", j, "SubHeading");
+    char subHeadingNew[128];
+    sprintf(subHeadingNew, "Step_%d_%s", j-1, "SubHeading");
+    if(fieldData->GetAbstractArray(subHeading))             fieldData->GetAbstractArray(subHeading)->SetName(subHeadingNew);
 
-                charStepNum[10];
-                char charStepNumNew[10];
-                sprintf(charStepNum, "%d", j);
-                sprintf(charStepNumNew, "%d", j-1);
-                //itoa(j, charStepNum, 10);
-                //itoa(j-1, charStepNumNew, 10);
-                char ConcatenateNew[256];
-                for(i=0; i<nodesetnamestring->GetNumberOfValues(); i++)
-                {
-                        const char* nodesetname =  nodesetnamestring->GetValue(i);
+    char charStepNum[10];
+    char charStepNumNew[10];
+    sprintf(charStepNum, "%d", j);
+    sprintf(charStepNumNew, "%d", j-1);
+    //itoa(j, charStepNum, 10);
+    //itoa(j-1, charStepNumNew, 10);
+    for(i=0; i<nodesetnamestring->GetNumberOfValues(); i++)
+      {
+      const char* nodesetname =  nodesetnamestring->GetValue(i);
                         
-                        Concatenate[256];
-                        ConcatenateNew[256];
-                        this->ConcatenateStrings("Step", charStepNum, nodesetname, "Force", "X", Concatenate);
-                        this->ConcatenateStrings("Step", charStepNumNew, nodesetname, "Force", "X", ConcatenateNew);
-                        floatarray = vtkFloatArray::SafeDownCast(
-                                ugrid->GetFieldData()->GetArray(Concatenate));
-                        if(floatarray)
-                        {
-                                floatarray->SetName(ConcatenateNew);
-                        }
-                        //
-                        Concatenate[256];
-                        ConcatenateNew[256];
-                        this->ConcatenateStrings("Step", charStepNum, nodesetname, "Force", "Y", Concatenate);
-                        this->ConcatenateStrings("Step", charStepNumNew, nodesetname, "Force", "Y", ConcatenateNew);
-                        floatarray = vtkFloatArray::SafeDownCast(
-                                ugrid->GetFieldData()->GetArray(Concatenate));
-                        if(floatarray)
-                        {
-                                floatarray->SetName(ConcatenateNew);
-                        }
-                        //
-                        Concatenate[256];
-                        ConcatenateNew[256];
-                        this->ConcatenateStrings("Step", charStepNum, nodesetname, "Force", "Z", Concatenate);
-                        this->ConcatenateStrings("Step", charStepNumNew, nodesetname, "Force", "Z", ConcatenateNew);
-                        floatarray = vtkFloatArray::SafeDownCast(
-                                ugrid->GetFieldData()->GetArray(Concatenate));
-                        if(floatarray)
-                        {
-                                floatarray->SetName(ConcatenateNew);
-                        }
-                        //
-                        Concatenate[256];
-                        ConcatenateNew[256];
-                        this->ConcatenateStrings("Step", charStepNum, nodesetname, "Displacement", "X", Concatenate);
-                        this->ConcatenateStrings("Step", charStepNumNew, nodesetname, "Displacement", "X", ConcatenateNew);
-                        floatarray = vtkFloatArray::SafeDownCast(
-                                ugrid->GetFieldData()->GetArray(Concatenate));
-                        if(floatarray)
-                        {
-                                floatarray->SetName(ConcatenateNew);
-                        }
-                        //
-                        Concatenate[256];
-                        ConcatenateNew[256];
-                        this->ConcatenateStrings("Step", charStepNum, nodesetname, "Displacement", "Y", Concatenate);
-                        this->ConcatenateStrings("Step", charStepNumNew, nodesetname, "Displacement", "Y", ConcatenateNew);
-                        floatarray = vtkFloatArray::SafeDownCast(
-                                ugrid->GetFieldData()->GetArray(Concatenate));
-                        if(floatarray)
-                        {
-                                floatarray->SetName(ConcatenateNew);
-                        }
-                        //
-                        Concatenate[256];
-                        ConcatenateNew[256];
-                        this->ConcatenateStrings("Step", charStepNum, nodesetname, "Displacement", "Z", Concatenate);
-                        this->ConcatenateStrings("Step", charStepNumNew, nodesetname, "Displacement", "Z", ConcatenateNew);
-                        floatarray = vtkFloatArray::SafeDownCast(
-                                ugrid->GetFieldData()->GetArray(Concatenate));
-                        if(floatarray)
-                        {
-                                floatarray->SetName(ConcatenateNew);
-                        }
-                        //
-                        Concatenate[256];
-                        ConcatenateNew[256];
-                        this->ConcatenateStrings("Step", charStepNum, nodesetname, "Rotation", "X", Concatenate);
-                        this->ConcatenateStrings("Step", charStepNumNew, nodesetname, "Rotation", "X", ConcatenateNew);
-                        floatarray = vtkFloatArray::SafeDownCast(
-                                ugrid->GetFieldData()->GetArray(Concatenate));
-                        if(floatarray)
-                        {
-                                floatarray->SetName(ConcatenateNew);
-                        }
-                        //
-                        Concatenate[256];
-                        ConcatenateNew[256];
-                        this->ConcatenateStrings("Step", charStepNum, nodesetname, "Rotation", "Y", Concatenate);
-                        this->ConcatenateStrings("Step", charStepNumNew, nodesetname, "Rotation", "Y", ConcatenateNew);
-                        floatarray = vtkFloatArray::SafeDownCast(
-                                ugrid->GetFieldData()->GetArray(Concatenate));
-                        if(floatarray)
-                        {
-                                floatarray->SetName(ConcatenateNew);
-                        }
-                        //
-                        Concatenate[256];
-                        ConcatenateNew[256];
-                        this->ConcatenateStrings("Step", charStepNum, nodesetname, "Rotation", "Z", Concatenate);
-                        this->ConcatenateStrings("Step", charStepNumNew, nodesetname, "Rotation", "Z", ConcatenateNew);
-                        floatarray = vtkFloatArray::SafeDownCast(
-                                ugrid->GetFieldData()->GetArray(Concatenate));
-                        if(floatarray)
-                        {
-                                floatarray->SetName(ConcatenateNew);
-                        }
-                        //
-                        Concatenate[256];
-                        ConcatenateNew[256];
-                        this->ConcatenateStrings("Step", charStepNum, nodesetname, "Moment", "X", Concatenate);
-                        this->ConcatenateStrings("Step", charStepNumNew, nodesetname, "Moment", "X", ConcatenateNew);
-                        floatarray = vtkFloatArray::SafeDownCast(
-                                ugrid->GetFieldData()->GetArray(Concatenate));
-                        if(floatarray)
-                        {
-                                floatarray->SetName(ConcatenateNew);
-                        }
-                        //
-                        Concatenate[256];
-                        ConcatenateNew[256];
-                        this->ConcatenateStrings("Step", charStepNum, nodesetname, "Moment", "Y", Concatenate);
-                        this->ConcatenateStrings("Step", charStepNumNew, nodesetname, "Moment", "Y", ConcatenateNew);
-                        floatarray = vtkFloatArray::SafeDownCast(
-                                ugrid->GetFieldData()->GetArray(Concatenate));
-                        if(floatarray)
-                        {
-                                floatarray->SetName(ConcatenateNew);
-                        }
-                        //
-                        Concatenate[256];
-                        ConcatenateNew[256];
-                        this->ConcatenateStrings("Step", charStepNum, nodesetname, "Moment", "Z", Concatenate);
-                        this->ConcatenateStrings("Step", charStepNumNew, nodesetname, "Moment", "Z", ConcatenateNew);
-                        floatarray = vtkFloatArray::SafeDownCast(
-                                ugrid->GetFieldData()->GetArray(Concatenate));
-                        if(floatarray)
-                        {
-                                floatarray->SetName(ConcatenateNew);
-                        }
-                        // for all the node print and output statements
-                        char nodePrint[128];
-                        sprintf(nodePrint, "Step_%d_%s_%s_%s", j, "Node_Set", nodesetname, "Print");
-                        char nodePrintNew[128];
-                        sprintf(nodePrintNew, "Step_%d_%s_%s_%s", j-1, "Node_Set", nodesetname, "Print");
-                        if(fieldData->GetAbstractArray(nodePrint))      fieldData->GetAbstractArray(nodePrint)->SetName(nodePrintNew);
-
-                        char nodeOutput[128];
-                        sprintf(nodeOutput, "Step_%d_%s_%s_%s", j, "Node_Set", nodesetname, "Output");
-                        char nodeOutputNew[128];
-                        sprintf(nodeOutputNew, "Step_%d_%s_%s_%s", j-1, "Node_Set", nodesetname, "Output");
-                        if(fieldData->GetAbstractArray(nodeOutput))     fieldData->GetAbstractArray(nodeOutput)->SetName(nodeOutputNew);
-                }
-                for (i=0; i<elementsetnamestring->GetNumberOfValues(); i++)
-                {
-                        const char *elementsetname = elementsetnamestring->GetValue(i);
-                        char elementPrint[128];
-                        sprintf(elementPrint, "Step_%d_%s_%s_%s", j, "Element_Set", elementsetname, "Print");
-                        char elementPrintNew[128];
-                        sprintf(elementPrintNew, "Step_%d_%s_%s_%s", j-1, "Element_Set", elementsetname, "Print");
-                        if(fieldData->GetAbstractArray(elementPrint))   fieldData->GetAbstractArray(elementPrint)->SetName(elementPrintNew);
-
-                        char elementOutput[128];
-                        sprintf(elementOutput, "Step_%d_%s_%s_%s", j, "Element_Set", elementsetname, "Output");
-                        char elementOutputNew[128];
-                        sprintf(elementOutputNew, "Step_%d_%s_%s_%s", j-1, "Element_Set", elementsetname, "Output");
-                        if(fieldData->GetAbstractArray(elementOutput))  fieldData->GetAbstractArray(elementOutput)->SetName(elementOutputNew);
-                }
+      char Concatenate13[256];
+      char ConcatenateNew13[256];
+      this->ConcatenateStrings("Step", charStepNum, nodesetname, "Force", "X", Concatenate13);
+      this->ConcatenateStrings("Step", charStepNumNew, nodesetname, "Force", "X", ConcatenateNew13);
+      floatarray = vtkFloatArray::SafeDownCast(
+        ugrid->GetFieldData()->GetArray(Concatenate13));
+      if(floatarray)
+        {
+        floatarray->SetName(ConcatenateNew13);
         }
-        boundCond->SetValue(0, numSteps-1);
+      //
+      char Concatenate14[256];
+      char ConcatenateNew14[256];
+      this->ConcatenateStrings("Step", charStepNum, nodesetname, "Force", "Y", Concatenate14);
+      this->ConcatenateStrings("Step", charStepNumNew, nodesetname, "Force", "Y", ConcatenateNew14);
+      floatarray = vtkFloatArray::SafeDownCast(
+        ugrid->GetFieldData()->GetArray(Concatenate14));
+      if(floatarray)
+        {
+        floatarray->SetName(ConcatenateNew14);
+        }
+      //
+      char Concatenate15[256];
+      char ConcatenateNew15[256];
+      this->ConcatenateStrings("Step", charStepNum, nodesetname, "Force", "Z", Concatenate15);
+      this->ConcatenateStrings("Step", charStepNumNew, nodesetname, "Force", "Z", ConcatenateNew15);
+      floatarray = vtkFloatArray::SafeDownCast(
+        ugrid->GetFieldData()->GetArray(Concatenate15));
+      if(floatarray)
+        {
+        floatarray->SetName(ConcatenateNew15);
+        }
+      //
+      char Concatenate16[256];
+      char ConcatenateNew16[256];
+      this->ConcatenateStrings("Step", charStepNum, nodesetname, "Displacement", "X", Concatenate16);
+      this->ConcatenateStrings("Step", charStepNumNew, nodesetname, "Displacement", "X", ConcatenateNew16);
+      floatarray = vtkFloatArray::SafeDownCast(
+        ugrid->GetFieldData()->GetArray(Concatenate16));
+      if(floatarray)
+        {
+        floatarray->SetName(ConcatenateNew16);
+        }
+      //
+      char Concatenate17[256];
+      char ConcatenateNew17[256];
+      this->ConcatenateStrings("Step", charStepNum, nodesetname, "Displacement", "Y", Concatenate17);
+      this->ConcatenateStrings("Step", charStepNumNew, nodesetname, "Displacement", "Y", ConcatenateNew17);
+      floatarray = vtkFloatArray::SafeDownCast(
+        ugrid->GetFieldData()->GetArray(Concatenate17));
+      if(floatarray)
+        {
+        floatarray->SetName(ConcatenateNew17);
+        }
+      //
+      char Concatenate18[256];
+      char ConcatenateNew18[256];
+      this->ConcatenateStrings("Step", charStepNum, nodesetname, "Displacement", "Z", Concatenate18);
+      this->ConcatenateStrings("Step", charStepNumNew, nodesetname, "Displacement", "Z", ConcatenateNew18);
+      floatarray = vtkFloatArray::SafeDownCast(
+        ugrid->GetFieldData()->GetArray(Concatenate18));
+      if(floatarray)
+        {
+        floatarray->SetName(ConcatenateNew18);
+        }
+      //
+      char Concatenate19[256];
+      char ConcatenateNew19[256];
+      this->ConcatenateStrings("Step", charStepNum, nodesetname, "Rotation", "X", Concatenate19);
+      this->ConcatenateStrings("Step", charStepNumNew, nodesetname, "Rotation", "X", ConcatenateNew19);
+      floatarray = vtkFloatArray::SafeDownCast(
+        ugrid->GetFieldData()->GetArray(Concatenate19));
+      if(floatarray)
+        {
+        floatarray->SetName(ConcatenateNew19);
+        }
+      //
+      char Concatenate20[256];
+      char ConcatenateNew20[256];
+      this->ConcatenateStrings("Step", charStepNum, nodesetname, "Rotation", "Y", Concatenate20);
+      this->ConcatenateStrings("Step", charStepNumNew, nodesetname, "Rotation", "Y", ConcatenateNew20);
+      floatarray = vtkFloatArray::SafeDownCast(
+        ugrid->GetFieldData()->GetArray(Concatenate20));
+      if(floatarray)
+        {
+        floatarray->SetName(ConcatenateNew20);
+        }
+      //
+      char Concatenate21[256];
+      char ConcatenateNew21[256];
+      this->ConcatenateStrings("Step", charStepNum, nodesetname, "Rotation", "Z", Concatenate21);
+      this->ConcatenateStrings("Step", charStepNumNew, nodesetname, "Rotation", "Z", ConcatenateNew21);
+      floatarray = vtkFloatArray::SafeDownCast(
+        ugrid->GetFieldData()->GetArray(Concatenate21));
+      if(floatarray)
+        {
+        floatarray->SetName(ConcatenateNew21);
+        }
+      //
+      char Concatenate22[256];
+      char ConcatenateNew22[256];
+      this->ConcatenateStrings("Step", charStepNum, nodesetname, "Moment", "X", Concatenate22);
+      this->ConcatenateStrings("Step", charStepNumNew, nodesetname, "Moment", "X", ConcatenateNew22);
+      floatarray = vtkFloatArray::SafeDownCast(
+        ugrid->GetFieldData()->GetArray(Concatenate22));
+      if(floatarray)
+        {
+        floatarray->SetName(ConcatenateNew22);
+        }
+      //
+      char Concatenate23[256];
+      char ConcatenateNew23[256];
+      this->ConcatenateStrings("Step", charStepNum, nodesetname, "Moment", "Y", Concatenate23);
+      this->ConcatenateStrings("Step", charStepNumNew, nodesetname, "Moment", "Y", ConcatenateNew23);
+      floatarray = vtkFloatArray::SafeDownCast(
+        ugrid->GetFieldData()->GetArray(Concatenate23));
+      if(floatarray)
+        {
+        floatarray->SetName(ConcatenateNew23);
+        }
+      //
+      char Concatenate24[256];
+      char ConcatenateNew24[256];
+      this->ConcatenateStrings("Step", charStepNum, nodesetname, "Moment", "Z", Concatenate24);
+      this->ConcatenateStrings("Step", charStepNumNew, nodesetname, "Moment", "Z", ConcatenateNew24);
+      floatarray = vtkFloatArray::SafeDownCast(
+        ugrid->GetFieldData()->GetArray(Concatenate24));
+      if(floatarray)
+        {
+        floatarray->SetName(ConcatenateNew24);
+        }
+      // for all the node print and output statements
+      char nodePrint[128];
+      sprintf(nodePrint, "Step_%d_%s_%s_%s", j, "Node_Set", nodesetname, "Print");
+      char nodePrintNew[128];
+      sprintf(nodePrintNew, "Step_%d_%s_%s_%s", j-1, "Node_Set", nodesetname, "Print");
+      if(fieldData->GetAbstractArray(nodePrint))      fieldData->GetAbstractArray(nodePrint)->SetName(nodePrintNew);
+
+      char nodeOutput[128];
+      sprintf(nodeOutput, "Step_%d_%s_%s_%s", j, "Node_Set", nodesetname, "Output");
+      char nodeOutputNew[128];
+      sprintf(nodeOutputNew, "Step_%d_%s_%s_%s", j-1, "Node_Set", nodesetname, "Output");
+      if(fieldData->GetAbstractArray(nodeOutput))     fieldData->GetAbstractArray(nodeOutput)->SetName(nodeOutputNew);
+      }
+    for (i=0; i<elementsetnamestring->GetNumberOfValues(); i++)
+      {
+      const char *elementsetname = elementsetnamestring->GetValue(i);
+      char elementPrint[128];
+      sprintf(elementPrint, "Step_%d_%s_%s_%s", j, "Element_Set", elementsetname, "Print");
+      char elementPrintNew[128];
+      sprintf(elementPrintNew, "Step_%d_%s_%s_%s", j-1, "Element_Set", elementsetname, "Print");
+      if(fieldData->GetAbstractArray(elementPrint))   fieldData->GetAbstractArray(elementPrint)->SetName(elementPrintNew);
+
+      char elementOutput[128];
+      sprintf(elementOutput, "Step_%d_%s_%s_%s", j, "Element_Set", elementsetname, "Output");
+      char elementOutputNew[128];
+      sprintf(elementOutputNew, "Step_%d_%s_%s_%s", j-1, "Element_Set", elementsetname, "Output");
+      if(fieldData->GetAbstractArray(elementOutput))  fieldData->GetAbstractArray(elementOutput)->SetName(elementOutputNew);
+      }
+    }
+  boundCond->SetValue(0, numSteps-1);
 }
 //----------------------------------------------------------------------------------
 void vtkMimxMeshActor::ConcatenateStrings(const char* Step, const char* Num, 
-                        const char* NodeSetName, const char* Type, const char* Direction, char *Name)
+                                          const char* NodeSetName, const char* Type, const char* Direction, char *Name)
 {
-        strcpy(Name, Step);
-        strcat(Name, "_");
-        strcat(Name,Num);
-        strcat(Name, "_");
-        strcat(Name, NodeSetName);
-        strcat(Name, "_");
-        strcat(Name,Type);
-        strcat(Name, "_");
-        strcat(Name, Direction);
+  strcpy(Name, Step);
+  strcat(Name, "_");
+  strcat(Name,Num);
+  strcat(Name, "_");
+  strcat(Name, NodeSetName);
+  strcat(Name, "_");
+  strcat(Name,Type);
+  strcat(Name, "_");
+  strcat(Name, Direction);
 }
 //----------------------------------------------------------------------------------
 void vtkMimxMeshActor::ChangeElementSetNumbers(const char *ElSetName, int StartEleNum)
 {
-        vtkCellData *cellData = this->UnstructuredGrid->GetCellData();
-        vtkDataArray *dataArray = cellData->GetArray(ElSetName);
-        if(!dataArray)  return;
-        vtkIntArray *elsetValues = vtkIntArray::SafeDownCast(dataArray);
-        if(!elsetValues)        return;
-        vtkDataArray *elementNumbers = cellData->GetArray("Element_Numbers");
-        if(!elementNumbers)     return;
-        vtkIntArray *elementNumbersInt = vtkIntArray::SafeDownCast(elementNumbers);
-        if(!elementNumbersInt)  return;
+  vtkCellData *cellData = this->UnstructuredGrid->GetCellData();
+  vtkDataArray *dataArray = cellData->GetArray(ElSetName);
+  if(!dataArray)  return;
+  vtkIntArray *elsetValues = vtkIntArray::SafeDownCast(dataArray);
+  if(!elsetValues)        return;
+  vtkDataArray *elementNumbers = cellData->GetArray("Element_Numbers");
+  if(!elementNumbers)     return;
+  vtkIntArray *elementNumbersInt = vtkIntArray::SafeDownCast(elementNumbers);
+  if(!elementNumbersInt)  return;
 
-        int i;
-        int numCells = this->UnstructuredGrid->GetNumberOfCells();
-        for (i=0; i<numCells; i++)
-        {
-                int belongs = elsetValues->GetValue(i);
-                if(belongs)
-                {
-                        elementNumbersInt->SetValue(i, StartEleNum++);
-                }
-        }
+  int i;
+  int numCells = this->UnstructuredGrid->GetNumberOfCells();
+  for (i=0; i<numCells; i++)
+    {
+    int belongs = elsetValues->GetValue(i);
+    if(belongs)
+      {
+      elementNumbersInt->SetValue(i, StartEleNum++);
+      }
+    }
 }
 //----------------------------------------------------------------------------------
 void vtkMimxMeshActor::ChangeNodeSetNumbers(const char *NodeSetName, int StartNodeNum)
 {
-        vtkPointData *pointData = this->UnstructuredGrid->GetPointData();
-        vtkDataArray *dataArray = pointData->GetArray(NodeSetName);
-        if(!dataArray)  return;
-        vtkIntArray *nodesetValues = vtkIntArray::SafeDownCast(dataArray);
-        if(!nodesetValues)      return;
-        vtkDataArray *nodeNumbers = pointData->GetArray("Node_Numbers");
-        if(!nodeNumbers)        return;
-        vtkIntArray *nodeNumbersInt = vtkIntArray::SafeDownCast(nodeNumbers);
-        if(!nodeNumbersInt)     return;
+  vtkPointData *pointData = this->UnstructuredGrid->GetPointData();
+  vtkDataArray *dataArray = pointData->GetArray(NodeSetName);
+  if(!dataArray)  return;
+  vtkIntArray *nodesetValues = vtkIntArray::SafeDownCast(dataArray);
+  if(!nodesetValues)      return;
+  vtkDataArray *nodeNumbers = pointData->GetArray("Node_Numbers");
+  if(!nodeNumbers)        return;
+  vtkIntArray *nodeNumbersInt = vtkIntArray::SafeDownCast(nodeNumbers);
+  if(!nodeNumbersInt)     return;
 
-        int i;
-        int numPoints = this->UnstructuredGrid->GetNumberOfPoints();
-        for (i=0; i<numPoints; i++)
-        {
-                int belongs = nodesetValues->GetValue(i);
-                if(belongs)
-                {
-                        nodeNumbersInt->SetValue(i, StartNodeNum++);
-                }
-        }
+  int i;
+  int numPoints = this->UnstructuredGrid->GetNumberOfPoints();
+  for (i=0; i<numPoints; i++)
+    {
+    int belongs = nodesetValues->GetValue(i);
+    if(belongs)
+      {
+      nodeNumbersInt->SetValue(i, StartNodeNum++);
+      }
+    }
 }
 
 //----------------------------------------------------------------------------------
@@ -2095,323 +2093,323 @@ void vtkMimxMeshActor::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------------
 void vtkMimxMeshActor::CalculateAverageEdgeLength()
 {
-        if(!this->UnstructuredGrid)     return;
-        int numNodes, numCells;
-        numNodes = this->UnstructuredGrid->GetNumberOfPoints();
-        numCells = this->UnstructuredGrid->GetNumberOfCells();
-        if(!numCells || !numNodes)      return;
+  if(!this->UnstructuredGrid)     return;
+  int numNodes, numCells;
+  numNodes = this->UnstructuredGrid->GetNumberOfPoints();
+  numCells = this->UnstructuredGrid->GetNumberOfCells();
+  if(!numCells || !numNodes)      return;
 
-        double cumdist = 0.0;
-        vtkUnstructuredGrid *ugrid = this->UnstructuredGrid;
-        int i,j;
-        int count = 0;
-        for (i=0; i<numCells; i++)
-        {
-                vtkCell *cell = ugrid->GetCell(i);
-                for (j=0; j<cell->GetNumberOfEdges(); j++)
-                {
-                        vtkCell *edge = cell->GetEdge(j);
-                        vtkIdList *ptids = edge->GetPointIds();
-                        int pt1 = ptids->GetId(0);
-                        int pt2 = ptids->GetId(1);
-                        double p1[3], p2[3];
-                        ugrid->GetPoint(pt1, p1);       ugrid->GetPoint(pt2, p2);
-                        cumdist = cumdist + sqrt(vtkMath::Distance2BetweenPoints(p1, p2));
-                        count ++;
-                }
-        }
-        this->AverageEdgeLength = cumdist/count;
-        this->IsAverageEdgeLengthCalculated = 1;
+  double cumdist = 0.0;
+  vtkUnstructuredGrid *ugrid = this->UnstructuredGrid;
+  int i,j;
+  int count = 0;
+  for (i=0; i<numCells; i++)
+    {
+    vtkCell *cell = ugrid->GetCell(i);
+    for (j=0; j<cell->GetNumberOfEdges(); j++)
+      {
+      vtkCell *edge = cell->GetEdge(j);
+      vtkIdList *ptids = edge->GetPointIds();
+      int pt1 = ptids->GetId(0);
+      int pt2 = ptids->GetId(1);
+      double p1[3], p2[3];
+      ugrid->GetPoint(pt1, p1);       ugrid->GetPoint(pt2, p2);
+      cumdist = cumdist + sqrt(vtkMath::Distance2BetweenPoints(p1, p2));
+      count ++;
+      }
+    }
+  this->AverageEdgeLength = cumdist/count;
+  this->IsAverageEdgeLengthCalculated = 1;
 }
 //----------------------------------------------------------------------------------
 vtkPointSet* vtkMimxMeshActor::GetPointSetOfNodeSet(const char* NodeSetName)
 {
-        if(!this->UnstructuredGrid->GetPointData()->GetArray(NodeSetName))      return NULL;
-        vtkIntArray *intarray = vtkIntArray::SafeDownCast(
-                this->UnstructuredGrid->GetPointData()->GetArray(NodeSetName));
+  if(!this->UnstructuredGrid->GetPointData()->GetArray(NodeSetName))      return NULL;
+  vtkIntArray *intarray = vtkIntArray::SafeDownCast(
+    this->UnstructuredGrid->GetPointData()->GetArray(NodeSetName));
 
-        vtkPoints *points = vtkPoints::New();
-        if(!this->PointSetOfNodeSet)    this->PointSetOfNodeSet = vtkUnstructuredGrid::New();
-        else    this->PointSetOfNodeSet->Initialize();
+  vtkPoints *points = vtkPoints::New();
+  if(!this->PointSetOfNodeSet)    this->PointSetOfNodeSet = vtkUnstructuredGrid::New();
+  else    this->PointSetOfNodeSet->Initialize();
         
-        int numPoints = this->UnstructuredGrid->GetNumberOfPoints();
+  int numPoints = this->UnstructuredGrid->GetNumberOfPoints();
 
-        for (int i=0; i<numPoints; i++)
-        {
-                if(intarray->GetValue(i))
-                {
-                        points->InsertNextPoint(this->UnstructuredGrid->GetPoint(i));
-                }
-        }
-        this->PointSetOfNodeSet->SetPoints(points);
-        points->Delete();
-        return this->PointSetOfNodeSet;
+  for (int i=0; i<numPoints; i++)
+    {
+    if(intarray->GetValue(i))
+      {
+      points->InsertNextPoint(this->UnstructuredGrid->GetPoint(i));
+      }
+    }
+  this->PointSetOfNodeSet->SetPoints(points);
+  points->Delete();
+  return this->PointSetOfNodeSet;
 }
 //-----------------------------------------------------------------------------------
 void vtkMimxMeshActor::StoreConstantMaterialProperty(
-        const char* ElSetName, double YoungMod)
+  const char* ElSetName, double YoungMod)
 {
-        int i;
+  int i;
 
-        char imagebased[256];
-        strcpy(imagebased, ElSetName);
-        strcat(imagebased, "_Image_Based_Material_Property");
+  char imagebased[256];
+  strcpy(imagebased, ElSetName);
+  strcat(imagebased, "_Image_Based_Material_Property");
 
-        vtkUnstructuredGrid *ugrid = this->UnstructuredGrid;
+  vtkUnstructuredGrid *ugrid = this->UnstructuredGrid;
 
-        vtkIntArray *intarray = vtkIntArray::SafeDownCast(
-                ugrid->GetCellData()->GetArray(ElSetName));
-        if(!intarray)   return;
-        vtkDoubleArray *matarray = vtkDoubleArray::SafeDownCast(
-                ugrid->GetCellData()->GetArray(imagebased));
+  vtkIntArray *intarray = vtkIntArray::SafeDownCast(
+    ugrid->GetCellData()->GetArray(ElSetName));
+  if(!intarray)   return;
+  vtkDoubleArray *matarray = vtkDoubleArray::SafeDownCast(
+    ugrid->GetCellData()->GetArray(imagebased));
 
-        if(matarray)
-        {
-                ugrid->GetCellData()->RemoveArray(imagebased);
-                strcat(imagebased, "_ReBin");
+  if(matarray)
+    {
+    ugrid->GetCellData()->RemoveArray(imagebased);
+    strcat(imagebased, "_ReBin");
 
-                matarray = vtkDoubleArray::SafeDownCast(ugrid->GetCellData()->GetArray(imagebased));
+    matarray = vtkDoubleArray::SafeDownCast(ugrid->GetCellData()->GetArray(imagebased));
 
-                if(matarray)    ugrid->GetCellData()->RemoveArray(imagebased);
-        }
+    if(matarray)    ugrid->GetCellData()->RemoveArray(imagebased);
+    }
 
-        matarray = vtkDoubleArray::SafeDownCast(ugrid->GetCellData()->GetArray("Youngs_Modulus"));
-        int numCells = ugrid->GetNumberOfCells();
-        if(!matarray)
-        {
-                matarray = vtkDoubleArray::New();
-                matarray->SetNumberOfValues(numCells);
-                matarray->SetName("Youngs_Modulus");
-                for (i=0; i<numCells; i++)
-                {
-                        matarray->SetValue(i, -9999);
-                }
-                ugrid->GetCellData()->AddArray(matarray);
-                matarray->Delete();
-        }
-        matarray = vtkDoubleArray::SafeDownCast(ugrid->GetCellData()->GetArray("Youngs_Modulus"));
+  matarray = vtkDoubleArray::SafeDownCast(ugrid->GetCellData()->GetArray("Youngs_Modulus"));
+  int numCells = ugrid->GetNumberOfCells();
+  if(!matarray)
+    {
+    matarray = vtkDoubleArray::New();
+    matarray->SetNumberOfValues(numCells);
+    matarray->SetName("Youngs_Modulus");
+    for (i=0; i<numCells; i++)
+      {
+      matarray->SetValue(i, -9999);
+      }
+    ugrid->GetCellData()->AddArray(matarray);
+    matarray->Delete();
+    }
+  matarray = vtkDoubleArray::SafeDownCast(ugrid->GetCellData()->GetArray("Youngs_Modulus"));
         
-        for (i=0; i< numCells; i++)
-        {
-                if(intarray->GetValue(i))
-                        matarray->SetValue(i, YoungMod);
-        }
+  for (i=0; i< numCells; i++)
+    {
+    if(intarray->GetValue(i))
+      matarray->SetValue(i, YoungMod);
+    }
 
-        char young[256];
-        strcpy(young, ElSetName);
-        strcat(young, "_Constant_Youngs_Modulus");
+  char young[256];
+  strcpy(young, ElSetName);
+  strcat(young, "_Constant_Youngs_Modulus");
 
-        vtkDoubleArray *Earray = vtkDoubleArray::SafeDownCast(
-                ugrid->GetFieldData()->GetArray(young));        
+  vtkDoubleArray *Earray = vtkDoubleArray::SafeDownCast(
+    ugrid->GetFieldData()->GetArray(young));        
 
-        if(Earray)
-        {
-                Earray->SetValue(0, YoungMod);
-        }
-        else
-        {
-                Earray = vtkDoubleArray::New();
-                Earray->SetName(young);
-                Earray->InsertNextValue(YoungMod);
-                ugrid->GetFieldData()->AddArray(Earray);
-                Earray->Delete();
-        }
+  if(Earray)
+    {
+    Earray->SetValue(0, YoungMod);
+    }
+  else
+    {
+    Earray = vtkDoubleArray::New();
+    Earray->SetName(young);
+    Earray->InsertNextValue(YoungMod);
+    ugrid->GetFieldData()->AddArray(Earray);
+    Earray->Delete();
+    }
 }
 //------------------------------------------------------------------------------------
 void vtkMimxMeshActor::StoreImageBasedMaterialProperty(const char *ElSetName)
 {
-        vtkUnstructuredGrid *ugrid = this->UnstructuredGrid;
-        char str[256];
-        int i;
-        strcpy(str, ElSetName);
-        strcat(str, "_Image_Based_Material_Property");
-        vtkDoubleArray *matarray = vtkDoubleArray::SafeDownCast(
-                ugrid->GetCellData()->GetArray(str));
-        if(!matarray)   return;
+  vtkUnstructuredGrid *ugrid = this->UnstructuredGrid;
+  char str[256];
+  int i;
+  strcpy(str, ElSetName);
+  strcat(str, "_Image_Based_Material_Property");
+  vtkDoubleArray *matarray = vtkDoubleArray::SafeDownCast(
+    ugrid->GetCellData()->GetArray(str));
+  if(!matarray)   return;
 
-        vtkIntArray *intarray = vtkIntArray::SafeDownCast(
-                ugrid->GetCellData()->GetArray(ElSetName));
-        if(!intarray)   return;
+  vtkIntArray *intarray = vtkIntArray::SafeDownCast(
+    ugrid->GetCellData()->GetArray(ElSetName));
+  if(!intarray)   return;
 
-        vtkDoubleArray *youngsmodulus = vtkDoubleArray::SafeDownCast(
-                ugrid->GetCellData()->GetArray("Youngs_Modulus"));
-        int numCells = ugrid->GetNumberOfCells();
-        if(!youngsmodulus)
-        {
-                youngsmodulus = vtkDoubleArray::New();
-                youngsmodulus->SetNumberOfValues(numCells);
-                youngsmodulus->SetName("Youngs_Modulus");
-                for (i=0; i<numCells; i++)
-                {
-                        youngsmodulus->SetValue(i, -9999);
-                }
-                ugrid->GetCellData()->AddArray(youngsmodulus);
-                youngsmodulus->Delete();
-        }
-        youngsmodulus = vtkDoubleArray::SafeDownCast(ugrid->GetCellData()->GetArray("Youngs_Modulus")); 
+  vtkDoubleArray *youngsmodulus = vtkDoubleArray::SafeDownCast(
+    ugrid->GetCellData()->GetArray("Youngs_Modulus"));
+  int numCells = ugrid->GetNumberOfCells();
+  if(!youngsmodulus)
+    {
+    youngsmodulus = vtkDoubleArray::New();
+    youngsmodulus->SetNumberOfValues(numCells);
+    youngsmodulus->SetName("Youngs_Modulus");
+    for (i=0; i<numCells; i++)
+      {
+      youngsmodulus->SetValue(i, -9999);
+      }
+    ugrid->GetCellData()->AddArray(youngsmodulus);
+    youngsmodulus->Delete();
+    }
+  youngsmodulus = vtkDoubleArray::SafeDownCast(ugrid->GetCellData()->GetArray("Youngs_Modulus")); 
 
-        for (i=0; i< numCells; i++)
-        {
-                if(intarray->GetValue(i))
-                        youngsmodulus->SetValue(i, matarray->GetValue(i));
-        }
+  for (i=0; i< numCells; i++)
+    {
+    if(intarray->GetValue(i))
+      youngsmodulus->SetValue(i, matarray->GetValue(i));
+    }
 }
 //-------------------------------------------------------------------------------------
 void vtkMimxMeshActor::StoreConstantPoissonsRatio(
-        const char *ElSetName, double PoissonRatio)
+  const char *ElSetName, double PoissonRatio)
 {
-        char poisson[256];
-        strcpy(poisson, ElSetName);
-        strcat(poisson, "_Constant_Poissons_Ratio");
+  char poisson[256];
+  strcpy(poisson, ElSetName);
+  strcat(poisson, "_Constant_Poissons_Ratio");
 
-        vtkUnstructuredGrid *ugrid = this->UnstructuredGrid;
+  vtkUnstructuredGrid *ugrid = this->UnstructuredGrid;
 
-        vtkFloatArray *Nuarray = vtkFloatArray::SafeDownCast(
-                ugrid->GetFieldData()->GetArray(poisson));
+  vtkFloatArray *Nuarray = vtkFloatArray::SafeDownCast(
+    ugrid->GetFieldData()->GetArray(poisson));
 
-        if(Nuarray)
-        {
-                Nuarray->SetValue(0, PoissonRatio);
-        }
-        else
-        {
-                Nuarray = vtkFloatArray::New();
-                Nuarray->SetName(poisson);
-                Nuarray->InsertNextValue(PoissonRatio);
-                ugrid->GetFieldData()->AddArray(Nuarray);
-                Nuarray->Delete();
-        }
+  if(Nuarray)
+    {
+    Nuarray->SetValue(0, PoissonRatio);
+    }
+  else
+    {
+    Nuarray = vtkFloatArray::New();
+    Nuarray->SetName(poisson);
+    Nuarray->InsertNextValue(PoissonRatio);
+    ugrid->GetFieldData()->AddArray(Nuarray);
+    Nuarray->Delete();
+    }
 }
 //-------------------------------------------------------------------------------------
 void vtkMimxMeshActor::StoreImageBasedMaterialPropertyReBin(const char *ElSetName)
 {
-        vtkUnstructuredGrid *ugrid = this->UnstructuredGrid;
-        char str[256];
-        int i;
-        strcpy(str, ElSetName);
-        strcat(str, "_Image_Based_Material_Property_ReBin");
-        vtkDoubleArray *matarray = vtkDoubleArray::SafeDownCast(
-                ugrid->GetCellData()->GetArray(str));
-        if(!matarray)   return;
+  vtkUnstructuredGrid *ugrid = this->UnstructuredGrid;
+  char str[256];
+  int i;
+  strcpy(str, ElSetName);
+  strcat(str, "_Image_Based_Material_Property_ReBin");
+  vtkDoubleArray *matarray = vtkDoubleArray::SafeDownCast(
+    ugrid->GetCellData()->GetArray(str));
+  if(!matarray)   return;
 
-        vtkIntArray *intarray = vtkIntArray::SafeDownCast(
-                ugrid->GetCellData()->GetArray(ElSetName));
-        if(!intarray)   return;
+  vtkIntArray *intarray = vtkIntArray::SafeDownCast(
+    ugrid->GetCellData()->GetArray(ElSetName));
+  if(!intarray)   return;
 
-        vtkDoubleArray *youngsmodulus = vtkDoubleArray::SafeDownCast(
-                ugrid->GetCellData()->GetArray("Youngs_Modulus"));
-        int numCells = ugrid->GetNumberOfCells();
-        if(!youngsmodulus)
-        {
-                youngsmodulus = vtkDoubleArray::New();
-                youngsmodulus->SetNumberOfValues(numCells);
-                youngsmodulus->SetName("Youngs_Modulus");
-                for (i=0; i<numCells; i++)
-                {
-                        matarray->SetValue(i, -9999);
-                }
-                ugrid->GetCellData()->AddArray(youngsmodulus);
-                youngsmodulus->Delete();
-        }
-        youngsmodulus = vtkDoubleArray::SafeDownCast(ugrid->GetCellData()->GetArray("Youngs_Modulus")); 
+  vtkDoubleArray *youngsmodulus = vtkDoubleArray::SafeDownCast(
+    ugrid->GetCellData()->GetArray("Youngs_Modulus"));
+  int numCells = ugrid->GetNumberOfCells();
+  if(!youngsmodulus)
+    {
+    youngsmodulus = vtkDoubleArray::New();
+    youngsmodulus->SetNumberOfValues(numCells);
+    youngsmodulus->SetName("Youngs_Modulus");
+    for (i=0; i<numCells; i++)
+      {
+      matarray->SetValue(i, -9999);
+      }
+    ugrid->GetCellData()->AddArray(youngsmodulus);
+    youngsmodulus->Delete();
+    }
+  youngsmodulus = vtkDoubleArray::SafeDownCast(ugrid->GetCellData()->GetArray("Youngs_Modulus")); 
 
-        for (i=0; i< numCells; i++)
-        {
-                if(intarray->GetValue(i))
-                        youngsmodulus->SetValue(i, matarray->GetValue(i));
-        }
+  for (i=0; i< numCells; i++)
+    {
+    if(intarray->GetValue(i))
+      youngsmodulus->SetValue(i, matarray->GetValue(i));
+    }
 }
 //-------------------------------------------------------------------------------------
 double* vtkMimxMeshActor::ComputeElementSetScalarRange(
-        const char* ElSetName, const char* ArrayName)
+  const char* ElSetName, const char* ArrayName)
 {
-        double* range = new double[2];
-        double min = VTK_FLOAT_MAX;
-        double max = VTK_FLOAT_MIN;
+  double* range = new double[2];
+  double min = VTK_FLOAT_MAX;
+  double max = VTK_FLOAT_MIN;
 
-        vtkUnstructuredGrid *ugrid = this->UnstructuredGrid;
+  vtkUnstructuredGrid *ugrid = this->UnstructuredGrid;
 
-        vtkDoubleArray *doublearray = vtkDoubleArray::SafeDownCast(
-                ugrid->GetCellData()->GetArray(ArrayName));
-        if(!doublearray)        return NULL;
+  vtkDoubleArray *doublearray = vtkDoubleArray::SafeDownCast(
+    ugrid->GetCellData()->GetArray(ArrayName));
+  if(!doublearray)        return NULL;
 
-        vtkIntArray *intarray = vtkIntArray::SafeDownCast(
-                ugrid->GetCellData()->GetArray(ElSetName));
+  vtkIntArray *intarray = vtkIntArray::SafeDownCast(
+    ugrid->GetCellData()->GetArray(ElSetName));
 
-        if(!intarray)   return NULL;
+  if(!intarray)   return NULL;
 
-        int i;
-        int numCells = ugrid->GetNumberOfCells();
-        for (i=0; i<numCells; i++)
+  int i;
+  int numCells = ugrid->GetNumberOfCells();
+  for (i=0; i<numCells; i++)
+    {
+    if(intarray->GetValue(i))
+      {
+      double val = doublearray->GetValue(i);
+      if(val != -9999)
         {
-                if(intarray->GetValue(i))
-                {
-                        double val = doublearray->GetValue(i);
-                        if(val != -9999)
-                        {
-                                if(val > max)   max = val;
-                                if(val < min)   min = val;
-                        }
-                }
+        if(val > max)   max = val;
+        if(val < min)   min = val;
         }
-        range[0] = min;
-        range[1] = max;
-        return range;
+      }
+    }
+  range[0] = min;
+  range[1] = max;
+  return range;
 }
 //--------------------------------------------------------------------------------------
 double* vtkMimxMeshActor::ComputeMeshScalarRange(const char* ArrayName)
 {
-        double* range = new double[2];
-        double min = VTK_FLOAT_MAX;
-        double max = VTK_FLOAT_MIN;
+  double* range = new double[2];
+  double min = VTK_FLOAT_MAX;
+  double max = VTK_FLOAT_MIN;
  
-        vtkUnstructuredGrid *ugrid = this->UnstructuredGrid;
+  vtkUnstructuredGrid *ugrid = this->UnstructuredGrid;
 
-        vtkDoubleArray *doublearray = vtkDoubleArray::SafeDownCast(
-                ugrid->GetCellData()->GetArray(ArrayName));
-        if(!doublearray)        
+  vtkDoubleArray *doublearray = vtkDoubleArray::SafeDownCast(
+    ugrid->GetCellData()->GetArray(ArrayName));
+  if(!doublearray)        
+    {
+    range[0] = min;
+    range[1] = max;
+    return range;
+    }
+  int i;
+  int numCells = ugrid->GetNumberOfCells();
+  for (i=0; i<numCells; i++)
+    {
+    double val = doublearray->GetValue(i);
+    if(val != -9999)
+      {
+      if(this->MeshType == vtkMimxMeshActor::MixedMesh)
         {
-        range[0] = min;
-        range[1] = max;
-        return range;
-  }
-        int i;
-        int numCells = ugrid->GetNumberOfCells();
-        for (i=0; i<numCells; i++)
-        {
-                double val = doublearray->GetValue(i);
-                if(val != -9999)
-                {
-                        if(this->MeshType == vtkMimxMeshActor::MixedMesh)
-                        {
-                                if(this->UnstructuredGrid->GetCellType(i) != VTK_QUAD &&
-                                        this->UnstructuredGrid->GetCellType(i) != VTK_TRIANGLE)
-                                {
-                                        if(val > max)   max = val;
-                                        if(val < min)   min = val;
-                                }
-                        }
-                        else
-                        {
-                                if(val > max)   max = val;
-                                if(val < min)   min = val;
-                        }
-                }
+        if(this->UnstructuredGrid->GetCellType(i) != VTK_QUAD &&
+           this->UnstructuredGrid->GetCellType(i) != VTK_TRIANGLE)
+          {
+          if(val > max)   max = val;
+          if(val < min)   min = val;
+          }
         }
-        range[0] = min;
-        range[1] = max;
-        return range;
+      else
+        {
+        if(val > max)   max = val;
+        if(val < min)   min = val;
+        }
+      }
+    }
+  range[0] = min;
+  range[1] = max;
+  return range;
 }
 //--------------------------------------------------------------------------------------
 void vtkMimxMeshActor::ShowHideAllElementSets(bool Show)
 {
- std::list<MeshDisplayProperty*>::iterator it;
+  std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     currentSet->IsVisible = Show;
-  }
+    }
   
   UpdateMeshDisplay();
   UpdateElementSetDisplay();
@@ -2419,36 +2417,36 @@ void vtkMimxMeshActor::ShowHideAllElementSets(bool Show)
 //-------------------------------------------------------------------------------------
 void vtkMimxMeshActor::SetElementSetScalarRangeFromCompleteMesh(const char *setName, const char* scalarName)
 {
-        double* range;
-        range = this->ComputeMeshScalarRange(scalarName);
+  double* range;
+  range = this->ComputeMeshScalarRange(scalarName);
 
-        MeshDisplayProperty *currentSet = GetMeshDisplayProperty(setName);
-        if(!currentSet) return;
+  MeshDisplayProperty *currentSet = GetMeshDisplayProperty(setName);
+  if(!currentSet) return;
 
-        this->SetElementSetLegendRange(range[0], range[1], currentSet);
+  this->SetElementSetLegendRange(range[0], range[1], currentSet);
 
 //      currentSet->ShrinkFilter->Modified();
-        currentSet->LegendActor->SetTitle( scalarName);
-        this->Renderer->AddViewProp(currentSet->SurfaceActor);
-        this->Renderer->AddViewProp(currentSet->OutlineActor);
-        this->Renderer->AddViewProp(currentSet->LegendActor);
-        currentSet->LegendActor->SetVisibility(0);
+  currentSet->LegendActor->SetTitle( scalarName);
+  this->Renderer->AddViewProp(currentSet->SurfaceActor);
+  this->Renderer->AddViewProp(currentSet->OutlineActor);
+  this->Renderer->AddViewProp(currentSet->LegendActor);
+  currentSet->LegendActor->SetVisibility(0);
 }
 //-------------------------------------------------------------------------------------
 void vtkMimxMeshActor::SetElementSetScalarRangeFromElementSet(const char *setName, const char* scalarName)
 {
-        double* range;
-        range = this->ComputeElementSetScalarRange(setName, scalarName);
-        MeshDisplayProperty *currentSet = GetMeshDisplayProperty(setName);
-        if(!currentSet) return;
-        this->SetElementSetLegendRange(range[0], range[1], currentSet);
+  double* range;
+  range = this->ComputeElementSetScalarRange(setName, scalarName);
+  MeshDisplayProperty *currentSet = GetMeshDisplayProperty(setName);
+  if(!currentSet) return;
+  this->SetElementSetLegendRange(range[0], range[1], currentSet);
 
 //      currentSet->ShrinkFilter->Modified();
-        currentSet->LegendActor->SetTitle( scalarName);
-        this->Renderer->AddViewProp(currentSet->SurfaceActor);
-        this->Renderer->AddViewProp(currentSet->OutlineActor);
-        this->Renderer->AddViewProp(currentSet->LegendActor);
-        currentSet->LegendActor->SetVisibility(0);
+  currentSet->LegendActor->SetTitle( scalarName);
+  this->Renderer->AddViewProp(currentSet->SurfaceActor);
+  this->Renderer->AddViewProp(currentSet->OutlineActor);
+  this->Renderer->AddViewProp(currentSet->LegendActor);
+  currentSet->LegendActor->SetVisibility(0);
 }
 //-------------------------------------------------------------------------------------
 MeshDisplayProperty* vtkMimxMeshActor::GetMeshDisplayProperty(const char *setName)
@@ -2456,507 +2454,506 @@ MeshDisplayProperty* vtkMimxMeshActor::GetMeshDisplayProperty(const char *setNam
   std::list<MeshDisplayProperty*>::iterator it;
   
   for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-  {
+    {
     MeshDisplayProperty *currentSet = *it;
     
     if (setName == currentSet->name)
-    {
+      {
       return currentSet;
+      }
     }
-  }
   return NULL;
 }
 //-------------------------------------------------------------------------------------
 void vtkMimxMeshActor::HideAllElementSetLegends()
 {
-        std::list<MeshDisplayProperty*>::iterator it;
+  std::list<MeshDisplayProperty*>::iterator it;
 
-        for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
-        {
-                MeshDisplayProperty *currentSet = *it;
-                this->Renderer->RemoveViewProp(currentSet->LegendActor);
-                currentSet->LegendActor->SetVisibility(0);
-                currentSet->LegendActor->Modified();
-        }
+  for ( it=this->ElementSetDisplayList.begin() ; it != this->ElementSetDisplayList.end(); it++ )
+    {
+    MeshDisplayProperty *currentSet = *it;
+    this->Renderer->RemoveViewProp(currentSet->LegendActor);
+    currentSet->LegendActor->SetVisibility(0);
+    currentSet->LegendActor->Modified();
+    }
 }
 //----------------------------------------------------------------------------------------
 void vtkMimxMeshActor::GenerateMeshMapperLookUpTable(const char *ArrayName, double *range)
 {
-        // lookuptable for the data
-        vtkUnstructuredGrid *ugrid = this->UnstructuredGrid;
-        vtkDoubleArray *matarray = vtkDoubleArray::SafeDownCast(ugrid->GetCellData()->GetArray(ArrayName));
-        int numCells = ugrid->GetNumberOfCells();
-        int i;
-        if(!matarray)
-        {
-                matarray = vtkDoubleArray::New();
-                matarray->SetNumberOfValues(numCells);
-                matarray->SetName(ArrayName);
-                for (i=0; i<numCells; i++)
-                {
-                        matarray->SetValue(i, -9999);
-                }
-                ugrid->GetCellData()->AddArray(matarray);
-                matarray->Delete();
-                range[0] = VTK_FLOAT_MAX;
-                range[1] = VTK_FLOAT_MIN;
-        }
-        matarray = vtkDoubleArray::SafeDownCast(ugrid->GetCellData()->GetArray(ArrayName));
+  // lookuptable for the data
+  vtkUnstructuredGrid *ugrid = this->UnstructuredGrid;
+  vtkDoubleArray *matarray = vtkDoubleArray::SafeDownCast(ugrid->GetCellData()->GetArray(ArrayName));
+  int numCells = ugrid->GetNumberOfCells();
+  int i;
+  if(!matarray)
+    {
+    matarray = vtkDoubleArray::New();
+    matarray->SetNumberOfValues(numCells);
+    matarray->SetName(ArrayName);
+    for (i=0; i<numCells; i++)
+      {
+      matarray->SetValue(i, -9999);
+      }
+    ugrid->GetCellData()->AddArray(matarray);
+    matarray->Delete();
+    range[0] = VTK_FLOAT_MAX;
+    range[1] = VTK_FLOAT_MIN;
+    }
+  matarray = vtkDoubleArray::SafeDownCast(ugrid->GetCellData()->GetArray(ArrayName));
                 
-        if(range[0] == VTK_FLOAT_MAX && range[1] == VTK_FLOAT_MIN)
-        {
-                range[0] = 0.0; range[1] = 0.0;
-        }
-        vtkLookupTable* Lut = vtkLookupTable::New();
-        if(this->ColorRangeType == vtkMimxMeshActor::BlueToRed)
-        {
-                this->BlueToRedLookUpTable();
-                this->MapperBlueToRedLookUpTable(Lut, ArrayName, range);
-        }
-        else{
-                this->RedToBlueLookUpTable();
-                this->MapperRedToBlueLookUpTable(Lut, ArrayName, range);
-        }
-        Lut->SetTableRange(0,numCells-1);
-        this->UnstructuredGridMapper->SetLookupTable(Lut);
-        this->UnstructuredGridMapper->SetScalarRange(0,numCells-1);
-        Lut->Delete();
+  if(range[0] == VTK_FLOAT_MAX && range[1] == VTK_FLOAT_MIN)
+    {
+    range[0] = 0.0; range[1] = 0.0;
+    }
+  vtkLookupTable* Lut = vtkLookupTable::New();
+  if(this->ColorRangeType == vtkMimxMeshActor::BlueToRed)
+    {
+    this->BlueToRedLookUpTable();
+    this->MapperBlueToRedLookUpTable(Lut, ArrayName, range);
+    }
+  else{
+  this->RedToBlueLookUpTable();
+  this->MapperRedToBlueLookUpTable(Lut, ArrayName, range);
+  }
+  Lut->SetTableRange(0,numCells-1);
+  this->UnstructuredGridMapper->SetLookupTable(Lut);
+  this->UnstructuredGridMapper->SetScalarRange(0,numCells-1);
+  Lut->Delete();
 
-        this->lutFilter->SetTableRange(range[0], range[1]);
-        this->lutFilter->Modified();
-        this->LegendActor->SetLookupTable(this->lutFilter);
-        //this->LegendActor->SetTitle(ArrayName);
-        this->IsVisible = true;
-        this->SetDisplayMode(vtkMimxMeshActor::DisplayMesh);
-        this->UpdateMeshDisplay();
+  this->lutFilter->SetTableRange(range[0], range[1]);
+  this->lutFilter->Modified();
+  this->LegendActor->SetLookupTable(this->lutFilter);
+  //this->LegendActor->SetTitle(ArrayName);
+  this->IsVisible = true;
+  this->SetDisplayMode(vtkMimxMeshActor::DisplayMesh);
+  this->UpdateMeshDisplay();
 }
 //----------------------------------------------------------------------------------------------------
 void vtkMimxMeshActor::GenerateElementSetMapperLookUpTable(
-        const char *ElementSetname, const char *ArrayName, double *range)
+  const char *ElementSetname, const char *ArrayName, double *range)
 {
-        // lookuptable for the data
-        vtkUnstructuredGrid *ugrid = this->UnstructuredGrid;
-        vtkIntArray *ElsetArray = vtkIntArray::SafeDownCast(ugrid->GetCellData()->GetArray(ElementSetname));
-        vtkDoubleArray *matarray = vtkDoubleArray::SafeDownCast(ugrid->GetCellData()->GetArray(ArrayName));
-        int numCells = ugrid->GetNumberOfCells();
-        int i;
-        if(!matarray)
-        {
-                matarray = vtkDoubleArray::New();
-                matarray->SetNumberOfValues(numCells);
-                matarray->SetName(ArrayName);
-                for (i=0; i<numCells; i++)
-                {
-                        matarray->SetValue(i, -9999);
-                }
-                ugrid->GetCellData()->AddArray(matarray);
-                matarray->Delete();
-        }
-        matarray = vtkDoubleArray::SafeDownCast(ugrid->GetCellData()->GetArray(ArrayName));
+  // lookuptable for the data
+  vtkUnstructuredGrid *ugrid = this->UnstructuredGrid;
+  vtkDoubleArray *matarray = vtkDoubleArray::SafeDownCast(ugrid->GetCellData()->GetArray(ArrayName));
+  int numCells = ugrid->GetNumberOfCells();
+  int i;
+  if(!matarray)
+    {
+    matarray = vtkDoubleArray::New();
+    matarray->SetNumberOfValues(numCells);
+    matarray->SetName(ArrayName);
+    for (i=0; i<numCells; i++)
+      {
+      matarray->SetValue(i, -9999);
+      }
+    ugrid->GetCellData()->AddArray(matarray);
+    matarray->Delete();
+    }
+  matarray = vtkDoubleArray::SafeDownCast(ugrid->GetCellData()->GetArray(ArrayName));
 
-        MeshDisplayProperty *currentSet = GetMeshDisplayProperty(ElementSetname);
-        if(!currentSet) return;
+  MeshDisplayProperty *currentSet = GetMeshDisplayProperty(ElementSetname);
+  if(!currentSet) return;
 
-        if(range[0] == VTK_FLOAT_MAX && range[1] == VTK_FLOAT_MIN)
-        {
-                range[0] = 0.0; range[1] = 0.0;
-        }
+  if(range[0] == VTK_FLOAT_MAX && range[1] == VTK_FLOAT_MIN)
+    {
+    range[0] = 0.0; range[1] = 0.0;
+    }
 
-        vtkLookupTable* Lut = vtkLookupTable::New();
-        if(this->ColorRangeType == vtkMimxMeshActor::BlueToRed)
-        {
-                this->BlueToRedLookUpTable();
-                this->MapperBlueToRedLookUpTable(Lut, ArrayName, range);
-        }
-        else{
-                this->RedToBlueLookUpTable();
-                this->MapperRedToBlueLookUpTable(Lut, ArrayName, range);
-        }
-        Lut->SetTableRange(0,numCells-1);
-        currentSet->SurfaceMapper->SetLookupTable(Lut);
-        currentSet->SurfaceMapper->SetScalarRange(0,numCells-1);
-        currentSet->SurfaceMapper->SetScalarVisibility(1);
-        currentSet->SurfaceMapper->Modified();
-        currentSet->SurfaceMapper->Update();
-        Lut->Delete();
-        this->lutFilter->SetTableRange(range[0], range[1]);
-        this->lutFilter->Modified();
-        this->LegendActor->SetLookupTable(this->lutFilter);
-        this->LegendActor->SetTitle(ArrayName);
-        this->LegendActor->Modified();
+  vtkLookupTable* Lut = vtkLookupTable::New();
+  if(this->ColorRangeType == vtkMimxMeshActor::BlueToRed)
+    {
+    this->BlueToRedLookUpTable();
+    this->MapperBlueToRedLookUpTable(Lut, ArrayName, range);
+    }
+  else{
+  this->RedToBlueLookUpTable();
+  this->MapperRedToBlueLookUpTable(Lut, ArrayName, range);
+  }
+  Lut->SetTableRange(0,numCells-1);
+  currentSet->SurfaceMapper->SetLookupTable(Lut);
+  currentSet->SurfaceMapper->SetScalarRange(0,numCells-1);
+  currentSet->SurfaceMapper->SetScalarVisibility(1);
+  currentSet->SurfaceMapper->Modified();
+  currentSet->SurfaceMapper->Update();
+  Lut->Delete();
+  this->lutFilter->SetTableRange(range[0], range[1]);
+  this->lutFilter->Modified();
+  this->LegendActor->SetLookupTable(this->lutFilter);
+  this->LegendActor->SetTitle(ArrayName);
+  this->LegendActor->Modified();
 }
 //----------------------------------------------------------------------------------------------------------------
 void vtkMimxMeshActor::RedToBlueLookUpTable()
 {
-        this->lutFilter->SetNumberOfColors(100);
-        this->lutFilter->Build();
-        double red = 1.0;
-        double green = 0.0;
-        double blue = 0.0;
-        int i;
-        for (i=0; i<50; i++)
-        {
-                double maxc;
-                if(green > red) maxc = green;
-                else    maxc = red;
-                double factor = 1.0/maxc;
-                this->lutFilter->SetTableValue(i, red*factor,green*factor,blue*factor,1.0);
-                green = green + 0.02;
-                red = red - 0.02;
-        }
-        for (i=50; i<100; i++)
-        {
-                double maxc;
-                if(green > blue)        maxc = green;
-                else    maxc = blue;
-                double factor = 1.0/maxc;
-                this->lutFilter->SetTableValue(i, red*factor,green*factor,blue*factor,1.0);
-                green = green - 0.02;
-                blue = blue + 0.02;
-        }
-        this->ColorRangeType = vtkMimxMeshActor::RedToBlue;
-        this->lutFilter->Modified();
+  this->lutFilter->SetNumberOfColors(100);
+  this->lutFilter->Build();
+  double red = 1.0;
+  double green = 0.0;
+  double blue = 0.0;
+  int i;
+  for (i=0; i<50; i++)
+    {
+    double maxc;
+    if(green > red) maxc = green;
+    else    maxc = red;
+    double factor = 1.0/maxc;
+    this->lutFilter->SetTableValue(i, red*factor,green*factor,blue*factor,1.0);
+    green = green + 0.02;
+    red = red - 0.02;
+    }
+  for (i=50; i<100; i++)
+    {
+    double maxc;
+    if(green > blue)        maxc = green;
+    else    maxc = blue;
+    double factor = 1.0/maxc;
+    this->lutFilter->SetTableValue(i, red*factor,green*factor,blue*factor,1.0);
+    green = green - 0.02;
+    blue = blue + 0.02;
+    }
+  this->ColorRangeType = vtkMimxMeshActor::RedToBlue;
+  this->lutFilter->Modified();
 }
 //-----------------------------------------------------------------------------------------------------------------
 void vtkMimxMeshActor::BlueToRedLookUpTable()
 {
-        this->lutFilter->SetNumberOfColors(100);
-        this->lutFilter->Build();
-        double red = 0.0;
-        double green = 0.0;
-        double blue = 1.0;
-        int i;
-        for (i=0; i<50; i++)
-        {
-                double maxc;
-                if(green > blue)        maxc = green;
-                else    maxc = blue;
-                double factor = 1.0/maxc;
-                this->lutFilter->SetTableValue(i, red*factor,green*factor,blue*factor,1.0);
-                green = green + 0.02;
-                blue = blue - 0.02;
-        }
-        for (i=50; i<100; i++)
-        {
-                double maxc;
-                if(green > red) maxc = green;
-                else    maxc = red;
-                double factor = 1.0/maxc;
-                this->lutFilter->SetTableValue(i, red*factor,green*factor,blue*factor,1.0);
-                green = green - 0.02;
-                red = red + 0.02;
-        }
-        this->ColorRangeType = vtkMimxMeshActor::BlueToRed;
-        this->lutFilter->Modified();
+  this->lutFilter->SetNumberOfColors(100);
+  this->lutFilter->Build();
+  double red = 0.0;
+  double green = 0.0;
+  double blue = 1.0;
+  int i;
+  for (i=0; i<50; i++)
+    {
+    double maxc;
+    if(green > blue)        maxc = green;
+    else    maxc = blue;
+    double factor = 1.0/maxc;
+    this->lutFilter->SetTableValue(i, red*factor,green*factor,blue*factor,1.0);
+    green = green + 0.02;
+    blue = blue - 0.02;
+    }
+  for (i=50; i<100; i++)
+    {
+    double maxc;
+    if(green > red) maxc = green;
+    else    maxc = red;
+    double factor = 1.0/maxc;
+    this->lutFilter->SetTableValue(i, red*factor,green*factor,blue*factor,1.0);
+    green = green - 0.02;
+    red = red + 0.02;
+    }
+  this->ColorRangeType = vtkMimxMeshActor::BlueToRed;
+  this->lutFilter->Modified();
 }
 //-----------------------------------------------------------------------------------------------------------------
 void vtkMimxMeshActor::MapperBlueToRedLookUpTable(vtkLookupTable *Lut, const char *ArrayName, double *range)
 {
-        int i;
-        int numCells = this->UnstructuredGrid->GetNumberOfCells();
-        Lut->SetNumberOfColors(numCells);
-        Lut->Build();
+  int i;
+  int numCells = this->UnstructuredGrid->GetNumberOfCells();
+  Lut->SetNumberOfColors(numCells);
+  Lut->Build();
 
-        vtkDoubleArray *matarray = vtkDoubleArray::SafeDownCast(
-                this->UnstructuredGrid->GetCellData()->GetArray(ArrayName));
+  vtkDoubleArray *matarray = vtkDoubleArray::SafeDownCast(
+    this->UnstructuredGrid->GetCellData()->GetArray(ArrayName));
 
-        double max = range[1];
-        double min = range[0];
-        double mean = min + (max-min)/2.0;
-        double mag = (range[1] - range[0])/2.0;
+  double max = range[1];
+  double min = range[0];
+  double mean = min + (max-min)/2.0;
+  double mag = (range[1] - range[0])/2.0;
 
-        if(range[0] == 0 && range[1] == 0)
+  if(range[0] == 0 && range[1] == 0)
+    {
+    for(i=0; i<numCells; i++)
+      {
+      if(this->MeshType == vtkMimxMeshActor::MixedMesh)
         {
-                for(i=0; i<numCells; i++)
-                {
-                        if(this->MeshType == vtkMimxMeshActor::MixedMesh)
-                        {
-                                if(this->UnstructuredGrid->GetCellType(i) != VTK_QUAD &&
-                                        this->UnstructuredGrid->GetCellType(i) != VTK_TRIANGLE)
-                                {
-                                        double dist = matarray->GetValue(i);
-                                        if(dist == -9999)
-                                        {
-                                                Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
-                                        }
-                                        else
-                                                Lut->SetTableValue(i,1.0,1.0,1.0,1.0);
-                                }
-                                else
-                                {
-                                        Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
-                                }
-                        }
-                        else
-                        {
-                                double dist = matarray->GetValue(i);
-                                if(dist == -9999)
-                                {
-                                        Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
-                                }
-                                else
-                                        Lut->SetTableValue(i,1.0,1.0,1.0,1.0);
-                        }
-                }
-        }
+        if(this->UnstructuredGrid->GetCellType(i) != VTK_QUAD &&
+           this->UnstructuredGrid->GetCellType(i) != VTK_TRIANGLE)
+          {
+          double dist = matarray->GetValue(i);
+          if(dist == -9999)
+            {
+            Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
+            }
+          else
+            Lut->SetTableValue(i,1.0,1.0,1.0,1.0);
+          }
         else
-        {
-                if(range[0] == range[1])
-                {
-                        for(i=0; i<numCells; i++)
-                        {
-                                if(this->MeshType == vtkMimxMeshActor::MixedMesh)
-                                {
-                                        if(this->UnstructuredGrid->GetCellType(i) != VTK_QUAD &&
-                                                this->UnstructuredGrid->GetCellType(i) != VTK_TRIANGLE)
-                                        {
-                                                double dist = matarray->GetValue(i);
-                                                if(dist == -9999)
-                                                {
-                                                        Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
-                                                }
-                                                else
-                                                        Lut->SetTableValue(i,0.0,0.0,1.0,1.0);
-                                        }
-                                        else
-                                        {
-                                                Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
-                                        }
-                                }
-                                else
-                                {
-                                        double dist = matarray->GetValue(i);
-                                        if(dist == -9999)
-                                        {
-                                                Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
-                                        }
-                                        else
-                                                Lut->SetTableValue(i,0.0,0.0,1.0,1.0);
-                                }
-                        }
-                }
-                else
-                {
-                        for(i=0; i <numCells; i++)
-                        {
-                                if(this->MeshType == vtkMimxMeshActor::MixedMesh && (
-                                        this->UnstructuredGrid->GetCellType(i) == VTK_QUAD ||
-                                        this->UnstructuredGrid->GetCellType(i) == VTK_TRIANGLE))
-                                {
-                                        Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
-                                }
-                                else
-                                {
-                                double dist = matarray->GetValue(i);
-                                if(dist == -9999)
-                                {
-                                        Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
-                                }
-                                else
-                                {
-                                        double red, green, blue, factor;
-                                        if(dist < min)
-                                        {
-                                                red = 0.0;
-                                                green = 0.0;
-                                                blue = 0.0;
-                                                factor = 1.0;
-                                        }
-                                        else if(dist <= mean)
-                                        {
-                                                red = 0.0;
-                                                green = (1.0 - (mean-dist)/mag);
-                                                blue = (mean-dist)/mag;
-                                                double maxc;
-                                                if(green > blue)        maxc = green;
-                                                else    maxc = blue;
-                                                factor = 1.0/maxc;
-                                        }
-                                        else if(dist > max)
-                                        {
-                                                red = 1.0;
-                                                green = 1.0;
-                                                blue = 1.0;
-                                                factor = 1.0;
-                                        }
-                                        else
-                                        {
-                                                red = (dist-mean)/mag;
-                                                green = (1.0 - (dist-mean)/mag);
-                                                blue = 0.0;
-                                                double maxc;
-                                                if(green > red) maxc = green;
-                                                else    maxc = red;
-                                                factor = 1.0/maxc;
-                                        }
-                                        Lut->SetTableValue( i, red*factor, green*factor, blue*factor, 1.0);
-                                }
-                                }
-                        }
-                }
+          {
+          Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
+          }
         }
+      else
+        {
+        double dist = matarray->GetValue(i);
+        if(dist == -9999)
+          {
+          Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
+          }
+        else
+          Lut->SetTableValue(i,1.0,1.0,1.0,1.0);
+        }
+      }
+    }
+  else
+    {
+    if(range[0] == range[1])
+      {
+      for(i=0; i<numCells; i++)
+        {
+        if(this->MeshType == vtkMimxMeshActor::MixedMesh)
+          {
+          if(this->UnstructuredGrid->GetCellType(i) != VTK_QUAD &&
+             this->UnstructuredGrid->GetCellType(i) != VTK_TRIANGLE)
+            {
+            double dist = matarray->GetValue(i);
+            if(dist == -9999)
+              {
+              Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
+              }
+            else
+              Lut->SetTableValue(i,0.0,0.0,1.0,1.0);
+            }
+          else
+            {
+            Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
+            }
+          }
+        else
+          {
+          double dist = matarray->GetValue(i);
+          if(dist == -9999)
+            {
+            Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
+            }
+          else
+            Lut->SetTableValue(i,0.0,0.0,1.0,1.0);
+          }
+        }
+      }
+    else
+      {
+      for(i=0; i <numCells; i++)
+        {
+        if(this->MeshType == vtkMimxMeshActor::MixedMesh && (
+             this->UnstructuredGrid->GetCellType(i) == VTK_QUAD ||
+             this->UnstructuredGrid->GetCellType(i) == VTK_TRIANGLE))
+          {
+          Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
+          }
+        else
+          {
+          double dist = matarray->GetValue(i);
+          if(dist == -9999)
+            {
+            Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
+            }
+          else
+            {
+            double red, green, blue, factor;
+            if(dist < min)
+              {
+              red = 0.0;
+              green = 0.0;
+              blue = 0.0;
+              factor = 1.0;
+              }
+            else if(dist <= mean)
+              {
+              red = 0.0;
+              green = (1.0 - (mean-dist)/mag);
+              blue = (mean-dist)/mag;
+              double maxc;
+              if(green > blue)        maxc = green;
+              else    maxc = blue;
+              factor = 1.0/maxc;
+              }
+            else if(dist > max)
+              {
+              red = 1.0;
+              green = 1.0;
+              blue = 1.0;
+              factor = 1.0;
+              }
+            else
+              {
+              red = (dist-mean)/mag;
+              green = (1.0 - (dist-mean)/mag);
+              blue = 0.0;
+              double maxc;
+              if(green > red) maxc = green;
+              else    maxc = red;
+              factor = 1.0/maxc;
+              }
+            Lut->SetTableValue( i, red*factor, green*factor, blue*factor, 1.0);
+            }
+          }
+        }
+      }
+    }
 }
 //-----------------------------------------------------------------------------------------------------------------
 void vtkMimxMeshActor::MapperRedToBlueLookUpTable(vtkLookupTable *Lut, const char *ArrayName, double *range)
 {
-        int i;
-        int numCells = this->UnstructuredGrid->GetNumberOfCells();
-        Lut->SetNumberOfColors(numCells);
-        Lut->Build();
+  int i;
+  int numCells = this->UnstructuredGrid->GetNumberOfCells();
+  Lut->SetNumberOfColors(numCells);
+  Lut->Build();
 
-        vtkDoubleArray *matarray = vtkDoubleArray::SafeDownCast(
-                this->UnstructuredGrid->GetCellData()->GetArray(ArrayName));
+  vtkDoubleArray *matarray = vtkDoubleArray::SafeDownCast(
+    this->UnstructuredGrid->GetCellData()->GetArray(ArrayName));
 
-        double max = range[1];
-        double min = range[0];
-        double mean = min + (max-min)/2.0;
-        double mag = (range[1] - range[0])/2.0;
+  double max = range[1];
+  double min = range[0];
+  double mean = min + (max-min)/2.0;
+  double mag = (range[1] - range[0])/2.0;
 
-        if(range[0] == 0 && range[1] == 0)
+  if(range[0] == 0 && range[1] == 0)
+    {
+    for(i=0; i<numCells; i++)
+      {
+      if(this->MeshType == vtkMimxMeshActor::MixedMesh)
         {
-                for(i=0; i<numCells; i++)
-                {
-                        if(this->MeshType == vtkMimxMeshActor::MixedMesh)
-                        {
-                                if(this->UnstructuredGrid->GetCellType(i) != VTK_QUAD &&
-                                        this->UnstructuredGrid->GetCellType(i) != VTK_TRIANGLE)
-                                {
-                                        double dist = matarray->GetValue(i);
-                                        if(dist == -9999)
-                                        {
-                                                Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
-                                        }
-                                        else
-                                                Lut->SetTableValue(i,1.0,1.0,1.0,1.0);
-                                }
-                                else
-                                {
-                                        Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
-                                }
-                        }
-                        else
-                        {
-                                double dist = matarray->GetValue(i);
-                                if(dist == -9999)
-                                {
-                                        Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
-                                }
-                                else
-                                        Lut->SetTableValue(i,1.0,1.0,1.0,1.0);
-                        }
-                }
-        }
+        if(this->UnstructuredGrid->GetCellType(i) != VTK_QUAD &&
+           this->UnstructuredGrid->GetCellType(i) != VTK_TRIANGLE)
+          {
+          double dist = matarray->GetValue(i);
+          if(dist == -9999)
+            {
+            Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
+            }
+          else
+            Lut->SetTableValue(i,1.0,1.0,1.0,1.0);
+          }
         else
-        {
-                if(range[0] == range[1])
-                {
-                        for(i=0; i<numCells; i++)
-                        {
-                                if(this->MeshType == vtkMimxMeshActor::MixedMesh)
-                                {
-                                        if(this->UnstructuredGrid->GetCellType(i) != VTK_QUAD &&
-                                                this->UnstructuredGrid->GetCellType(i) != VTK_TRIANGLE)
-                                        {
-                                                double dist = matarray->GetValue(i);
-                                                if(dist == -9999)
-                                                {
-                                                        Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
-                                                }
-                                                else
-                                                        Lut->SetTableValue(i,1.0,0.0,0.0,1.0);
-                                        }
-                                        else
-                                        {
-                                                Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
-                                        }
-                                }
-                                else
-                                {
-                                        double dist = matarray->GetValue(i);
-                                        if(dist == -9999)
-                                        {
-                                                Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
-                                        }
-                                        else
-                                                Lut->SetTableValue(i,1.0,0.0,0.0,1.0);
-                                }
-                        }
-                }
-                else
-                {
-                        for(i=0; i <numCells; i++)
-                        {
-                                if(this->MeshType == vtkMimxMeshActor::MixedMesh && (
-                                        this->UnstructuredGrid->GetCellType(i) == VTK_QUAD ||
-                                        this->UnstructuredGrid->GetCellType(i) == VTK_TRIANGLE))
-                                {
-                                        Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
-                                }
-                                else
-                                {
-
-                                double dist = matarray->GetValue(i);
-                                if(dist == -9999)
-                                {
-                                        Lut->SetTableValue(i,1.0,1.0,1.0,1.0);
-                                }
-                                else
-                                {
-                                        double red, green, blue, factor;
-                                        if(dist < min)
-                                        {
-                                                red = 0.0;
-                                                green = 0.0;
-                                                blue = 0.0;
-                                                factor = 1.0;
-                                        }
-                                        else if(dist <= mean)
-                                        {
-                                                red = (mean-dist)/mag;
-                                                green = (1.0 - (mean-dist)/mag);
-                                                blue = 0.0;
-                                                double maxc;
-                                                if(green > red) maxc = green;
-                                                else    maxc = red;
-                                                factor = 1.0/maxc;
-                                        }
-                                        else if(dist > max)
-                                        {
-                                                red = 1.0;
-                                                green = 1.0;
-                                                blue = 1.0;
-                                                factor = 1.0;
-                                        }
-                                        else
-                                        {
-                                                blue = (dist-mean)/mag;
-                                                green = (1.0 - (dist-mean)/mag);
-                                                red = 0.0;
-                                                double maxc;
-                                                if(green > blue)        maxc = green;
-                                                else    maxc = blue;
-                                                factor = 1.0/maxc;
-                                        }
-                                        Lut->SetTableValue( i, red*factor, green*factor, blue*factor, 1.0);
-                                }
-                        }
-                        }
-                }
+          {
+          Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
+          }
         }
+      else
+        {
+        double dist = matarray->GetValue(i);
+        if(dist == -9999)
+          {
+          Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
+          }
+        else
+          Lut->SetTableValue(i,1.0,1.0,1.0,1.0);
+        }
+      }
+    }
+  else
+    {
+    if(range[0] == range[1])
+      {
+      for(i=0; i<numCells; i++)
+        {
+        if(this->MeshType == vtkMimxMeshActor::MixedMesh)
+          {
+          if(this->UnstructuredGrid->GetCellType(i) != VTK_QUAD &&
+             this->UnstructuredGrid->GetCellType(i) != VTK_TRIANGLE)
+            {
+            double dist = matarray->GetValue(i);
+            if(dist == -9999)
+              {
+              Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
+              }
+            else
+              Lut->SetTableValue(i,1.0,0.0,0.0,1.0);
+            }
+          else
+            {
+            Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
+            }
+          }
+        else
+          {
+          double dist = matarray->GetValue(i);
+          if(dist == -9999)
+            {
+            Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
+            }
+          else
+            Lut->SetTableValue(i,1.0,0.0,0.0,1.0);
+          }
+        }
+      }
+    else
+      {
+      for(i=0; i <numCells; i++)
+        {
+        if(this->MeshType == vtkMimxMeshActor::MixedMesh && (
+             this->UnstructuredGrid->GetCellType(i) == VTK_QUAD ||
+             this->UnstructuredGrid->GetCellType(i) == VTK_TRIANGLE))
+          {
+          Lut->SetTableValue(i,0.5,0.5,0.5,1.0);
+          }
+        else
+          {
+
+          double dist = matarray->GetValue(i);
+          if(dist == -9999)
+            {
+            Lut->SetTableValue(i,1.0,1.0,1.0,1.0);
+            }
+          else
+            {
+            double red, green, blue, factor;
+            if(dist < min)
+              {
+              red = 0.0;
+              green = 0.0;
+              blue = 0.0;
+              factor = 1.0;
+              }
+            else if(dist <= mean)
+              {
+              red = (mean-dist)/mag;
+              green = (1.0 - (mean-dist)/mag);
+              blue = 0.0;
+              double maxc;
+              if(green > red) maxc = green;
+              else    maxc = red;
+              factor = 1.0/maxc;
+              }
+            else if(dist > max)
+              {
+              red = 1.0;
+              green = 1.0;
+              blue = 1.0;
+              factor = 1.0;
+              }
+            else
+              {
+              blue = (dist-mean)/mag;
+              green = (1.0 - (dist-mean)/mag);
+              red = 0.0;
+              double maxc;
+              if(green > blue)        maxc = green;
+              else    maxc = blue;
+              factor = 1.0/maxc;
+              }
+            Lut->SetTableValue( i, red*factor, green*factor, blue*factor, 1.0);
+            }
+          }
+        }
+      }
+    }
 }
 //-----------------------------------------------------------------------------------------------------------------
 void vtkMimxMeshActor::SetColorRangeType(int RangeType, const char *ArrayName, 
-                                                                                 const char *ElementSetName, double *Range)
+                                         const char *aElementSetName, double *Range)
 {
-        this->ColorRangeType = RangeType;
-        if(this->DisplayMode == vtkMimxMeshActor::DisplayMesh)
-        {
-                this->GenerateMeshMapperLookUpTable(ArrayName, Range);
-        }
-        else
-        {
-                this->GenerateElementSetMapperLookUpTable(ElementSetName, ArrayName, Range);
-        }
+  this->ColorRangeType = RangeType;
+  if(this->DisplayMode == vtkMimxMeshActor::DisplayMesh)
+    {
+    this->GenerateMeshMapperLookUpTable(ArrayName, Range);
+    }
+  else
+    {
+    this->GenerateElementSetMapperLookUpTable(aElementSetName, ArrayName, Range);
+    }
 }
 //-----------------------------------------------------------------------------------------------------------------
 void vtkMimxMeshActor::SetLegendTitle(const char *title)
@@ -2972,9 +2969,8 @@ const char *vtkMimxMeshActor::GetLegendTitle( )
 void vtkMimxMeshActor::SetLegendPrecision(int precision)
 {
   this->LegendPrecision = precision;
-  int mantissa = 8-precision;
-        char labelformat[20];
-        sprintf(labelformat,"%%6.%df",precision);
+  char labelformat[20];
+  sprintf(labelformat,"%%6.%df",precision);
   this->LegendActor->SetLabelFormat( labelformat );
 }
 //-----------------------------------------------------------------------------------------------------------------
@@ -2990,79 +2986,79 @@ void vtkMimxMeshActor::GetCurrentScalarRange( double *range )
 //------------------------------------------------------------------------------------------------------------------
 void vtkMimxMeshActor::AppendNodeSet(const char *NodeSetName, vtkIdList *NodeList)
 {
-        vtkIntArray *intArray = vtkIntArray::SafeDownCast(
-                this->UnstructuredGrid->GetPointData()->GetArray(NodeSetName));
-        if(!intArray)   return;
-        int i;
-        for (i=0; i<intArray->GetNumberOfTuples(); i++)
-        {
-                if(NodeList->IsId(i) != -1)     intArray->SetValue(i, 1);
-        }
+  vtkIntArray *intArray = vtkIntArray::SafeDownCast(
+    this->UnstructuredGrid->GetPointData()->GetArray(NodeSetName));
+  if(!intArray)   return;
+  int i;
+  for (i=0; i<intArray->GetNumberOfTuples(); i++)
+    {
+    if(NodeList->IsId(i) != -1)     intArray->SetValue(i, 1);
+    }
 }
 //--------------------------------------------------------------------------------------------------------------------
 void vtkMimxMeshActor::AppendElementSet(const char *ElSetName, vtkIdList *ElementList)
 {
-        vtkIntArray *intArray = vtkIntArray::SafeDownCast(
-                this->UnstructuredGrid->GetCellData()->GetArray(ElSetName));
-        if(!intArray)   return;
-        int i;
-        for (i=0; i<intArray->GetNumberOfTuples(); i++)
-        {
-                if(ElementList->IsId(i) != -1)  intArray->SetValue(i, 1);
-        }
-        this->DeleteElementSetListItem(ElSetName);
-        this->AddElementSetListItem(ElSetName);
+  vtkIntArray *intArray = vtkIntArray::SafeDownCast(
+    this->UnstructuredGrid->GetCellData()->GetArray(ElSetName));
+  if(!intArray)   return;
+  int i;
+  for (i=0; i<intArray->GetNumberOfTuples(); i++)
+    {
+    if(ElementList->IsId(i) != -1)  intArray->SetValue(i, 1);
+    }
+  this->DeleteElementSetListItem(ElSetName);
+  this->AddElementSetListItem(ElSetName);
 }
 //--------------------------------------------------------------------------------------------------------------------
-void vtkMimxMeshActor::AddReferenceNode(const char *ElementSetName)
+void vtkMimxMeshActor::AddReferenceNode(const char *aElementSetName)
 {
-        vtkStringArray *stringarray = vtkStringArray::SafeDownCast(
-                this->UnstructuredGrid->GetFieldData()->GetAbstractArray("Node_Set_Names"));
-        int i;
-        char refnode[64];
-        strcpy(refnode, this->FoundationName), strcat(refnode, "_RN");
-        if(this->UnstructuredGrid->GetFieldData()->GetAbstractArray("Reference_Node_Parameters"))       return;
+  vtkStringArray *stringarray = vtkStringArray::SafeDownCast(
+    this->UnstructuredGrid->GetFieldData()->GetAbstractArray("Node_Set_Names"));
+  int i;
+  char refnode[64];
+  strcpy(refnode, this->FoundationName), strcat(refnode, "_RN");
+  if(this->UnstructuredGrid->GetFieldData()->GetAbstractArray("Reference_Node_Parameters"))       return;
 
-        vtkStringArray *refnodearray = vtkStringArray::New();
-        refnodearray->InsertNextValue(refnode);
-        refnodearray->InsertNextValue(ElementSetName);
-        refnodearray->SetName("Reference_Node_Parameters");
-        this->UnstructuredGrid->GetFieldData()->AddArray(refnodearray);
-        refnodearray->Delete();
+  vtkStringArray *refnodearray = vtkStringArray::New();
+  refnodearray->InsertNextValue(refnode);
+  refnodearray->InsertNextValue(aElementSetName);
+  refnodearray->SetName("Reference_Node_Parameters");
+  this->UnstructuredGrid->GetFieldData()->AddArray(refnodearray);
+  refnodearray->Delete();
 
-        for (i=0; i<stringarray->GetNumberOfTuples(); i++)
-        {
-                vtkIntArray *intarray = vtkIntArray::SafeDownCast(
-                        this->UnstructuredGrid->GetPointData()->GetArray(stringarray->GetValue(i)));
-                intarray->InsertNextValue(0);
-        }
-        vtkIntArray *nodenumbers = vtkIntArray::SafeDownCast(this->UnstructuredGrid->GetPointData()->GetArray("Node_Numbers"));
-        int nodenummax;
-        nodenummax = nodenumbers->GetValue(0);
-        for (i=1; i<nodenumbers->GetNumberOfTuples(); i++)
-        {
-                if(nodenumbers->GetValue(i) > nodenummax)
-                        nodenummax = nodenumbers->GetValue(i);
-        }
-        nodenumbers->InsertNextValue(nodenummax+1);
-        // create a new nodeset array;
-        // position of the reference node
-        double bounds[6];
-        this->UnstructuredGrid->GetBounds(bounds);
-        double pts[3];
-        pts[0] = (bounds[0] +bounds[1])/2.0;
-        pts[1] = (bounds[2] +bounds[3])/2.0;
-        pts[2] = (bounds[4] +bounds[5])/2.0;
-        this->UnstructuredGrid->GetPoints()->InsertNextPoint(pts);
-        vtkIntArray *nodeset = vtkIntArray::New();
-        nodeset->SetName(refnode);
-        for (i=0; i<this->UnstructuredGrid->GetNumberOfPoints()-1; i++)
-        {
-                nodeset->InsertNextValue(0);
-        }
-        nodeset->InsertNextValue(1);
-        this->UnstructuredGrid->GetPointData()->AddArray(nodeset);
-        nodeset->Delete();
-        stringarray->InsertNextValue(refnode);
+  for (i=0; i<stringarray->GetNumberOfTuples(); i++)
+    {
+    vtkIntArray *intarray = vtkIntArray::SafeDownCast(
+      this->UnstructuredGrid->GetPointData()->GetArray(stringarray->GetValue(i)));
+    intarray->InsertNextValue(0);
+    }
+  vtkIntArray *nodenumbers = vtkIntArray::SafeDownCast(this->UnstructuredGrid->GetPointData()->GetArray("Node_Numbers"));
+  int nodenummax;
+  nodenummax = nodenumbers->GetValue(0);
+  for (i=1; i<nodenumbers->GetNumberOfTuples(); i++)
+    {
+    if(nodenumbers->GetValue(i) > nodenummax)
+      nodenummax = nodenumbers->GetValue(i);
+    }
+  nodenumbers->InsertNextValue(nodenummax+1);
+  // create a new nodeset array;
+  // position of the reference node
+  double bounds[6];
+  this->UnstructuredGrid->GetBounds(bounds);
+  double pts[3];
+  pts[0] = (bounds[0] +bounds[1])/2.0;
+  pts[1] = (bounds[2] +bounds[3])/2.0;
+  pts[2] = (bounds[4] +bounds[5])/2.0;
+  this->UnstructuredGrid->GetPoints()->InsertNextPoint(pts);
+  vtkIntArray *nodeset = vtkIntArray::New();
+  nodeset->SetName(refnode);
+  for (i=0; i<this->UnstructuredGrid->GetNumberOfPoints()-1; i++)
+    {
+    nodeset->InsertNextValue(0);
+    }
+  nodeset->InsertNextValue(1);
+  this->UnstructuredGrid->GetPointData()->AddArray(nodeset);
+  nodeset->Delete();
+  stringarray->InsertNextValue(refnode);
 }
 //--------------------------------------------------------------------------------------------------------------------

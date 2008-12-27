@@ -104,7 +104,7 @@ vtkTextureFont *vtkFontParameters::RequestTextureFont() {
 }
 
 
-void vtkFontParameters::SetFontDirectory(char *dirname) {
+void vtkFontParameters::SetFontDirectory(const char *dirname) {
     // allocate an extra char, in case we need to add an extra '/'
     this->FontDirectory = (char *)malloc(strlen(dirname) + 2);
     strcpy(this->FontDirectory, dirname);

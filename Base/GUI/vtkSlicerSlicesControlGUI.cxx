@@ -244,33 +244,33 @@ void vtkSlicerSlicesControlGUI::TearDownGUI ( )
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesControlGUI::PrintSelf ( ostream& os, vtkIndent indent )
 {
-    this->vtkObject::PrintSelf ( os, indent );
-    os << indent << "SlicerSlicesControlGUI: " << this->GetClassName ( ) << "\n";
-    os << indent << "SliceFadeScale: " << this->GetSliceFadeScale ( ) << "\n";
-    os << indent << "ShowFgButton: " << this->GetShowFgButton ( ) << "\n";
-    os << indent << "ShowBgButton: " << this->GetShowBgButton ( ) << "\n";
-    os << indent << "ToggleFgBgButton: " << this->GetToggleFgBgButton ( ) << "\n";
-    os << indent << "LabelOpacityButton: " << this->GetLabelOpacityButton ( ) << "\n";
-    os << indent << "LabelOpacityScale: " << this->GetLabelOpacityScale ( ) << "\n";
-    os << indent << "LabelOpacityToggleButton: " << this->GetLabelOpacityToggleButton() << "\n";
-    os << indent << "LabelOpacityTopLevel: " << this->GetLabelOpacityTopLevel ( ) << "\n";
+  this->vtkObject::PrintSelf ( os, indent );
+  os << indent << "SlicerSlicesControlGUI: " << this->GetClassName ( ) << "\n";
+  os << indent << "SliceFadeScale: " << this->GetSliceFadeScale ( ) << "\n";
+  os << indent << "ShowFgButton: " << this->GetShowFgButton ( ) << "\n";
+  os << indent << "ShowBgButton: " << this->GetShowBgButton ( ) << "\n";
+  os << indent << "ToggleFgBgButton: " << this->GetToggleFgBgButton ( ) << "\n";
+  os << indent << "LabelOpacityButton: " << this->GetLabelOpacityButton ( ) << "\n";
+  os << indent << "LabelOpacityScale: " << this->GetLabelOpacityScale ( ) << "\n";
+  os << indent << "LabelOpacityToggleButton: " << this->GetLabelOpacityToggleButton() << "\n";
+  os << indent << "LabelOpacityTopLevel: " << this->GetLabelOpacityTopLevel ( ) << "\n";
 
 //    os << indent << "GridButton: " << this->GetGridButton ( ) << "\n";
-    os << indent << "CompositingButton: " << this->GetCompositingButton ( ) << "\n";
-    os << indent << "AnnotationButton: " << this->GetAnnotationButton ( ) << "\n";
-    os << indent << "SpatialUnitsButton: " << this->GetSpatialUnitsButton ( ) << "\n";
-    os << indent << "CrossHairButton: " << this->GetCrossHairButton ( ) << "\n";
-    os << indent << "FitToWindowButton: " << this->GetFitToWindowButton ( ) << "\n";
-    os << indent << "FeaturesVisibleButton: " << this->GetFeaturesVisibleButton ( ) << "\n";
-    os << indent << "SlicesControlIcons: " << this->GetSlicesControlIcons ( ) << "\n";
-    os << indent << "FieldOfViewButton: " << this->GetFieldOfViewButton () << "\n";
+  os << indent << "CompositingButton: " << this->GetCompositingButton ( ) << "\n";
+  os << indent << "AnnotationButton: " << this->GetAnnotationButton ( ) << "\n";
+  os << indent << "SpatialUnitsButton: " << this->GetSpatialUnitsButton ( ) << "\n";
+  os << indent << "CrossHairButton: " << this->GetCrossHairButton ( ) << "\n";
+  os << indent << "FitToWindowButton: " << this->GetFitToWindowButton ( ) << "\n";
+  os << indent << "FeaturesVisibleButton: " << this->GetFeaturesVisibleButton ( ) << "\n";
+  os << indent << "SlicesControlIcons: " << this->GetSlicesControlIcons ( ) << "\n";
+  os << indent << "FieldOfViewButton: " << this->GetFieldOfViewButton () << "\n";
 #ifndef FOV_ENTRIES_DEBUG
-    os << indent << "FieldOfViewTopLevel: " << this->GetFieldOfViewTopLevel ( ) << "\n";
-    os << indent << "RedFOVEntry: " << this->GetRedFOVEntry ( ) << "\n";
-    os << indent << "YellowFOVEntry: " << this->GetYellowFOVEntry ( ) << "\n";    
-    os << indent << "GreenFOVEntry: " << this->GetGreenFOVEntry ( ) << "\n";
+  os << indent << "FieldOfViewTopLevel: " << this->GetFieldOfViewTopLevel ( ) << "\n";
+  os << indent << "RedFOVEntry: " << this->GetRedFOVEntry ( ) << "\n";
+  os << indent << "YellowFOVEntry: " << this->GetYellowFOVEntry ( ) << "\n";    
+  os << indent << "GreenFOVEntry: " << this->GetGreenFOVEntry ( ) << "\n";
 #endif
-    os << indent << "ApplicationGUI: " << this->GetApplicationGUI ( ) << "\n";
+  os << indent << "ApplicationGUI: " << this->GetApplicationGUI ( ) << "\n";
   os << indent << "RedSliceNode: " << this->GetRedSliceNode(  ) << "\n";
   os << indent << "GreenSliceNode: " << this->GetGreenSliceNode(  ) << "\n";    
   os << indent << "YellowSliceNode: " << this->GetYellowSliceNode(  ) << "\n";    
@@ -327,26 +327,26 @@ void vtkSlicerSlicesControlGUI::UpdateSliceGUIInteractorStyles ( )
     this->SetGreenSliceEvents(NULL );
 
     this->SetRedSliceEvents( vtkSlicerInteractorStyle::SafeDownCast(
-                                                                 this->GetApplicationGUI()->
-                                                                 GetMainSliceGUI("Red")->
-                                                                 GetSliceViewer()->
-                                                                 GetRenderWidget()->
-                                                                 GetRenderWindowInteractor()->
-                                                                 GetInteractorStyle() ));
+                               this->GetApplicationGUI()->
+                               GetMainSliceGUI("Red")->
+                               GetSliceViewer()->
+                               GetRenderWidget()->
+                               GetRenderWindowInteractor()->
+                               GetInteractorStyle() ));
     this->SetYellowSliceEvents( vtkSlicerInteractorStyle::SafeDownCast(
-                                                                 this->GetApplicationGUI()->
-                                                                 GetMainSliceGUI("Yellow")->
-                                                                 GetSliceViewer()->
-                                                                 GetRenderWidget()->
-                                                                 GetRenderWindowInteractor()->
-                                                                 GetInteractorStyle() ));
+                                  this->GetApplicationGUI()->
+                                  GetMainSliceGUI("Yellow")->
+                                  GetSliceViewer()->
+                                  GetRenderWidget()->
+                                  GetRenderWindowInteractor()->
+                                  GetInteractorStyle() ));
     this->SetGreenSliceEvents( vtkSlicerInteractorStyle::SafeDownCast(
-                                                                 this->GetApplicationGUI()->
-                                                                 GetMainSliceGUI("Green")->
-                                                                 GetSliceViewer()->
-                                                                 GetRenderWidget()->
-                                                                 GetRenderWindowInteractor()->
-                                                                 GetInteractorStyle() ));
+                                 this->GetApplicationGUI()->
+                                 GetMainSliceGUI("Green")->
+                                 GetSliceViewer()->
+                                 GetRenderWidget()->
+                                 GetRenderWindowInteractor()->
+                                 GetInteractorStyle() ));
     this->AddSliceEventObservers();
     }
 }
@@ -368,7 +368,7 @@ void vtkSlicerSlicesControlGUI::UpdateSlicesFromMRML()
   for (int n=0; n<nnodes; n++)
     {
     node = vtkMRMLSliceNode::SafeDownCast (
-          this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLSliceNode"));
+      this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLSliceNode"));
     if (!strcmp(node->GetLayoutName(), "Red"))
       {
       nodeRed = node;
@@ -390,13 +390,13 @@ void vtkSlicerSlicesControlGUI::UpdateSlicesFromMRML()
     vtkSetAndObserveMRMLNodeMacro(this->RedSliceNode, nodeRed);
     }
   if (nodeGreen != this->GreenSliceNode)
-   {
-   vtkSetAndObserveMRMLNodeMacro(this->GreenSliceNode, nodeGreen);
-   }
+    {
+    vtkSetAndObserveMRMLNodeMacro(this->GreenSliceNode, nodeGreen);
+    }
   if (nodeYellow != this->YellowSliceNode)
-   {
-   vtkSetAndObserveMRMLNodeMacro(this->YellowSliceNode, nodeYellow);
-   }
+    {
+    vtkSetAndObserveMRMLNodeMacro(this->YellowSliceNode, nodeYellow);
+    }
 
   // tidy up.
   nodeRed = NULL;
@@ -464,7 +464,7 @@ void vtkSlicerSlicesControlGUI::AddGUIObservers ( )
 
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesControlGUI::ProcessGUIEvents ( vtkObject *caller,
-                                          unsigned long event, void *callData )
+                                                   unsigned long event, void *callData )
 {
 
   
@@ -476,54 +476,54 @@ void vtkSlicerSlicesControlGUI::ProcessGUIEvents ( vtkObject *caller,
 
   if ( this->GetApplicationGUI() != NULL )
     {
-      vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
-      vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( p->GetApplication() );
-      if ( app != NULL )
+    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( p->GetApplication() );
+    if ( app != NULL )
+      {
+      // Process the Fade scale and button
+      // -- set save state when manipulation starts
+      // -- toggle the value if needed
+      // -- adjust the Opacity of every composite node on every event
+      if ( (scale == this->SliceFadeScale && event == vtkKWScale::ScaleValueStartChangingEvent) ||
+           (pushb == this->ToggleFgBgButton && event == vtkKWPushButton::InvokedEvent) ||
+           (pushb == this->ShowFgButton && event == vtkKWPushButton::InvokedEvent) ||
+           (pushb == this->ShowBgButton && event == vtkKWPushButton::InvokedEvent ))
         {
-          // Process the Fade scale and button
-          // -- set save state when manipulation starts
-          // -- toggle the value if needed
-          // -- adjust the Opacity of every composite node on every event
-          if ( scale == this->SliceFadeScale && event == vtkKWScale::ScaleValueStartChangingEvent ||
-               pushb == this->ToggleFgBgButton && event == vtkKWPushButton::InvokedEvent ||
-               pushb == this->ShowFgButton && event == vtkKWPushButton::InvokedEvent ||
-               pushb == this->ShowBgButton && event == vtkKWPushButton::InvokedEvent )
-            {
-              if (p->GetMRMLScene()) 
-                {
-                  p->GetMRMLScene()->SaveStateForUndo();
-                }
-            }
+        if (p->GetMRMLScene()) 
+          {
+          p->GetMRMLScene()->SaveStateForUndo();
+          }
+        }
 
-          if ( scale == this->SliceFadeScale && event == vtkKWScale::ScaleValueChangingEvent ||
-               pushb == this->ToggleFgBgButton && event == vtkKWPushButton::InvokedEvent ||
-               pushb == this->ShowFgButton && event == vtkKWPushButton::InvokedEvent ||
-               pushb == this->ShowBgButton && event == vtkKWPushButton::InvokedEvent )
-            {
+      if ( (scale == this->SliceFadeScale && event == vtkKWScale::ScaleValueChangingEvent) ||
+           (pushb == this->ToggleFgBgButton && event == vtkKWPushButton::InvokedEvent) ||
+           (pushb == this->ShowFgButton && event == vtkKWPushButton::InvokedEvent) ||
+           (pushb == this->ShowBgButton && event == vtkKWPushButton::InvokedEvent) )
+        {
 
-            if ( pushb == this->ShowFgButton && event == vtkKWPushButton::InvokedEvent )
-              {
-                  this->SliceFadeScale->SetValue( 1.0 );
-              }
-            if ( pushb == this->ShowBgButton && event == vtkKWPushButton::InvokedEvent )
-              {
-                  this->SliceFadeScale->SetValue( 0.0 );
-              }
-            if ( pushb == this->ToggleFgBgButton && event == vtkKWPushButton::InvokedEvent ) 
-                {
-                  // it seems like this following statement should be handled
-                  // in ProcessMRMLEvents, after the Composite node changes, no?
-                  this->SliceFadeScale->SetValue( 1.0 - this->SliceFadeScale->GetValue() );
-                }
-              int i, nnodes = p->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-              vtkMRMLSliceCompositeNode *cnode;
-              for (i = 0; i < nnodes; i++)
-                {
-                  cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
-                                                                   p->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
-                  cnode->SetForegroundOpacity( this->SliceFadeScale->GetValue() );
-                }
-            }
+        if ( pushb == this->ShowFgButton && event == vtkKWPushButton::InvokedEvent )
+          {
+          this->SliceFadeScale->SetValue( 1.0 );
+          }
+        if ( pushb == this->ShowBgButton && event == vtkKWPushButton::InvokedEvent )
+          {
+          this->SliceFadeScale->SetValue( 0.0 );
+          }
+        if ( pushb == this->ToggleFgBgButton && event == vtkKWPushButton::InvokedEvent ) 
+          {
+          // it seems like this following statement should be handled
+          // in ProcessMRMLEvents, after the Composite node changes, no?
+          this->SliceFadeScale->SetValue( 1.0 - this->SliceFadeScale->GetValue() );
+          }
+        int i, nnodes = p->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+        vtkMRMLSliceCompositeNode *cnode;
+        for (i = 0; i < nnodes; i++)
+          {
+          cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
+            p->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+          cnode->SetForegroundOpacity( this->SliceFadeScale->GetValue() );
+          }
+        }
 
       // has interaction occured in the slice viewers?
       if ( istyle == this->RedSliceEvents || istyle == this->YellowSliceEvents || istyle == this->GreenSliceEvents)
@@ -594,7 +594,7 @@ void vtkSlicerSlicesControlGUI::ProcessGUIEvents ( vtkObject *caller,
           for (i = 0; i < nnodes; i++)
             {
             cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
-                                                             p->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+              p->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
             if ( cnode )
               {
               p->GetMRMLScene()->SaveStateForUndo( cnode );
@@ -611,7 +611,7 @@ void vtkSlicerSlicesControlGUI::ProcessGUIEvents ( vtkObject *caller,
         for (i = 0; i < nnodes; i++)
           {
           cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
-                                                           p->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+            p->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
           cnode->SetLabelOpacity( this->LabelOpacityScale->GetValue() );
           }
         }
@@ -674,7 +674,7 @@ void vtkSlicerSlicesControlGUI::ProcessGUIEvents ( vtkObject *caller,
         {
         this->ModifyVisibility( );
         }
-       //
+      //
       // Update the label opacity toggle button to match the logic state
       //
       if (this->LabelOpacityScale->GetValue() > 0)
@@ -685,7 +685,7 @@ void vtkSlicerSlicesControlGUI::ProcessGUIEvents ( vtkObject *caller,
         {
         this->LabelOpacityToggleButton->SetImageToIcon(this->GetVisibilityIcons()->GetInvisibleIcon ( ));
         }
-        }
+      }
     }
 }
 
@@ -763,7 +763,6 @@ void vtkSlicerSlicesControlGUI::FitFOVToBackground( double fov, int viewer )
   if ( this->GetApplicationGUI() != NULL )
     {
     vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
-    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( appGUI->GetApplication() );
     if ( appGUI != NULL )
       {
       vtkMRMLSliceNode *sliceNode = NULL;
@@ -894,12 +893,12 @@ void vtkSlicerSlicesControlGUI::ModifySpatialUnitsMode ( )
     for (int i = 0; i < nnodes; i++)
       {
       cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
-             appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+        appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
       if ( cnode )
         {
         nodes->AddItem (cnode );
         }
-    }
+      }
     this->MRMLScene->SaveStateForUndo ( nodes );
     nodes->Delete ( );
 
@@ -907,7 +906,7 @@ void vtkSlicerSlicesControlGUI::ModifySpatialUnitsMode ( )
     for (int i = 0; i < nnodes; i++)
       {
       cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
-             appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+        appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
       if ( this->GetSpatialUnitsButton()->GetMenu()->GetItemSelectedState("XYZ") == 1 )
         {
         if ( cnode->GetAnnotationSpace() != vtkMRMLSliceCompositeNode::XYZ)
@@ -1013,12 +1012,12 @@ void vtkSlicerSlicesControlGUI::ModifyVisibility ( )
     for (int i = 0; i < nnodes; i++)
       {
       cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
-             appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+        appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
       if ( cnode )
         {
         nodes->AddItem (cnode );
         }
-    }
+      }
     this->MRMLScene->SaveStateForUndo ( nodes );
 
 
@@ -1028,7 +1027,7 @@ void vtkSlicerSlicesControlGUI::ModifyVisibility ( )
     for (int i = 0; i < nnodes; i++)
       {
       cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
-                                                       appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+        appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
       
       state =  this->GetFeaturesVisibleButton()->GetMenu()->GetItemSelectedState("Fiducial points");
       if ( cnode->GetFiducialVisibility () != state )
@@ -1054,7 +1053,7 @@ void vtkSlicerSlicesControlGUI::ModifyVisibility ( )
       if ( cnode->GetLabelGrid ( ) != state )
         {
         cnode->SetLabelGrid ( state );
-         }
+        }
       }
     }
 
@@ -1079,12 +1078,12 @@ void vtkSlicerSlicesControlGUI::ModifyCrossHairMode ( )
     for (int i = 0; i < nnodes; i++)
       {
       cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
-             appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+        appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
       if ( cnode )
         {
         nodes->AddItem (cnode );
         }
-    }
+      }
     this->MRMLScene->SaveStateForUndo ( nodes );
     nodes->Delete ( );
 
@@ -1092,7 +1091,7 @@ void vtkSlicerSlicesControlGUI::ModifyCrossHairMode ( )
     for (int i = 0; i < nnodes; i++)
       {
       cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
-                                                       appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+        appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
 
       // Crosshair mode
       if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("No crosshair") == 1 )
@@ -1195,12 +1194,12 @@ void vtkSlicerSlicesControlGUI::ModifyCrossHairMode ( )
     for (int i = 0; i < snnodes; i++)
       {
       snode = vtkMRMLSliceNode::SafeDownCast (
-             appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceNode" ) );
+        appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceNode" ) );
       if ( snode )
         {
         snodes->AddItem (snode );
         }
-    }
+      }
     this->MRMLScene->SaveStateForUndo ( snodes );
     snodes->Delete ( );
 
@@ -1246,12 +1245,12 @@ void vtkSlicerSlicesControlGUI::ModifyAnnotationMode ( )
     for (int i = 0; i < nnodes; i++)
       {
       cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
-             appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+        appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
       if ( cnode )
         {
         nodes->AddItem (cnode );
         }
-    }
+      }
     this->MRMLScene->SaveStateForUndo ( nodes );
     nodes->Delete ( );
 
@@ -1259,19 +1258,19 @@ void vtkSlicerSlicesControlGUI::ModifyAnnotationMode ( )
     for (int i = 0; i < nnodes; i++)
       {
       cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
-             appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+        appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
       if ( this->GetAnnotationButton()->GetMenu()->GetItemSelectedState("None") == 1)
         {
         if ( cnode->GetAnnotationMode() != vtkMRMLSliceCompositeNode::NoAnnotation )
           {
-        cnode->SetAnnotationMode ( vtkMRMLSliceCompositeNode::NoAnnotation );
+          cnode->SetAnnotationMode ( vtkMRMLSliceCompositeNode::NoAnnotation );
           }
         }
       else if (this->GetAnnotationButton()->GetMenu()->GetItemSelectedState( "Show all") == 1)
         {
         if ( cnode->GetAnnotationMode() != vtkMRMLSliceCompositeNode::All )
           {
-        cnode->SetAnnotationMode ( vtkMRMLSliceCompositeNode::All );
+          cnode->SetAnnotationMode ( vtkMRMLSliceCompositeNode::All );
           }
         }
       else if (this->GetAnnotationButton()->GetMenu()->GetItemSelectedState( "Show label values only") == 1)
@@ -1308,12 +1307,12 @@ void vtkSlicerSlicesControlGUI::ModifyCompositingMode ( )
     for (int i = 0; i < nnodes; i++)
       {
       cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
-             appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+        appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
       if ( cnode )
         {
         nodes->AddItem (cnode );
         }
-    }
+      }
     this->MRMLScene->SaveStateForUndo ( nodes );
     nodes->Delete ( );
 
@@ -1321,19 +1320,19 @@ void vtkSlicerSlicesControlGUI::ModifyCompositingMode ( )
     for (int i = 0; i < nnodes; i++)
       {
       cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
-             appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+        appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
       if ( this->GetCompositingButton()->GetMenu()->GetItemSelectedState("Alpha blend") == 1)
         {
         if ( cnode->GetCompositing() != vtkMRMLSliceCompositeNode::Alpha )
           {
-        cnode->SetCompositing ( vtkMRMLSliceCompositeNode::Alpha );
+          cnode->SetCompositing ( vtkMRMLSliceCompositeNode::Alpha );
           }
         }
       else if (this->GetCompositingButton()->GetMenu()->GetItemSelectedState( "Add") == 1)
         {
         if ( cnode->GetCompositing() != vtkMRMLSliceCompositeNode::Add )
           {
-        cnode->SetCompositing ( vtkMRMLSliceCompositeNode::Add );
+          cnode->SetCompositing ( vtkMRMLSliceCompositeNode::Add );
           }
         }
       else if (this->GetCompositingButton()->GetMenu()->GetItemSelectedState( "Subtract") == 1)
@@ -1359,62 +1358,62 @@ void vtkSlicerSlicesControlGUI::FitSlicesToBackground ( )
     
   // find the sliceGUI for this controller
   if ( this->GetApplication() )
-  {
-          app = vtkSlicerApplication::SafeDownCast (this->GetApplication());
-          ssgui = vtkSlicerSlicesGUI::SafeDownCast ( app->GetModuleGUIByName ("Slices") );
-          if ( ssgui != NULL )
+    {
+    app = vtkSlicerApplication::SafeDownCast (this->GetApplication());
+    ssgui = vtkSlicerSlicesGUI::SafeDownCast ( app->GetModuleGUIByName ("Slices") );
+    if ( ssgui != NULL )
+      {
+      // First save all SliceNodes for undo:
+      const char *layoutname = NULL;
+      vtkCollection *nodes = vtkCollection::New();
+      int nSliceGUI = ssgui->GetNumberOfSliceGUI();
+      for (int i = 0; i < nSliceGUI; i++)
+        {
+        if (i == 0)
           {
-                  // First save all SliceNodes for undo:
-                  char *layoutname = NULL;
-                  vtkCollection *nodes = vtkCollection::New();
-                  int nSliceGUI = ssgui->GetNumberOfSliceGUI();
-                  for (int i = 0; i < nSliceGUI; i++)
-                  {
-                          if (i == 0)
-                          {
-                                  sgui = ssgui->GetFirstSliceGUI();
-                                  layoutname = ssgui->GetFirstSliceGUILayoutName();
-                          }
-                          else
-                          {
-                                  sgui = ssgui->GetNextSliceGUI(layoutname);
-                                  layoutname = ssgui->GetNextSliceGUILayoutName(layoutname);
-                          }
-                          nodes->AddItem ( sgui->GetSliceNode ( ) );
-                  }
-                  this->MRMLScene->SaveStateForUndo ( nodes );
-                  nodes->Delete ( );
+          sgui = ssgui->GetFirstSliceGUI();
+          layoutname = ssgui->GetFirstSliceGUILayoutName();
+          }
+        else
+          {
+          sgui = ssgui->GetNextSliceGUI(layoutname);
+          layoutname = ssgui->GetNextSliceGUILayoutName(layoutname);
+          }
+        nodes->AddItem ( sgui->GetSliceNode ( ) );
+        }
+      this->MRMLScene->SaveStateForUndo ( nodes );
+      nodes->Delete ( );
 
-                  // Now fit all Slices to background
-                  int w, h;
-                  for (int i = 0; i < nSliceGUI; i++)
-                  {
-                          if (i == 0)
-                          {
-                                  sgui = ssgui->GetFirstSliceGUI();
-                                  layoutname = ssgui->GetFirstSliceGUILayoutName();
-                          }
-                          else
-                          {
-                                  sgui = ssgui->GetNextSliceGUI(layoutname);
-                                  layoutname = ssgui->GetNextSliceGUILayoutName(layoutname);
-                          }
-                          //w = sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidth();
-                          //h = sgui->GetSliceViewer()->GetRenderWidget ( )->GetHeight();
-                          sscanf(
-                                  this->Script("winfo width %s", 
-                                  sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
-                                  "%d", &w);
-                          sscanf(
-                                  this->Script("winfo height %s", 
-                                  sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
-                                  "%d", &h);
-                          sgui->GetLogic()->FitSliceToAll ( w, h );
-                          sgui->GetSliceNode()->UpdateMatrices( );
-                          this->RequestFOVEntriesUpdate();
-                  }
+      // Now fit all Slices to background
+      int w, h;
+      for (int i = 0; i < nSliceGUI; i++)
+        {
+        if (i == 0)
+          {
+          sgui = ssgui->GetFirstSliceGUI();
+          layoutname = ssgui->GetFirstSliceGUILayoutName();
+          }
+        else
+          {
+          sgui = ssgui->GetNextSliceGUI(layoutname);
+          layoutname = ssgui->GetNextSliceGUILayoutName(layoutname);
+          }
+        //w = sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidth();
+        //h = sgui->GetSliceViewer()->GetRenderWidget ( )->GetHeight();
+        sscanf(
+          this->Script("winfo width %s", 
+                       sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
+          "%d", &w);
+        sscanf(
+          this->Script("winfo height %s", 
+                       sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
+          "%d", &h);
+        sgui->GetLogic()->FitSliceToAll ( w, h );
+        sgui->GetSliceNode()->UpdateMatrices( );
+        this->RequestFOVEntriesUpdate();
+        }
 
-                  //ssgui->GetSliceGUICollection()->InitTraversal();
+      //ssgui->GetSliceGUICollection()->InitTraversal();
       //sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
       //vtkCollection *nodes = vtkCollection::New();
       //while ( sgui != NULL )
@@ -1453,7 +1452,7 @@ void vtkSlicerSlicesControlGUI::FitSlicesToBackground ( )
 
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesControlGUI::ProcessLogicEvents ( vtkObject *caller,
-                                            unsigned long event, void *callData )
+                                                     unsigned long event, void *callData )
 {
 
 }
@@ -1463,7 +1462,7 @@ void vtkSlicerSlicesControlGUI::ProcessLogicEvents ( vtkObject *caller,
 
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesControlGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, void *callData )
+                                                    unsigned long event, void *callData )
 {
   if (this->ProcessingMRMLEvent != 0 )
     {
@@ -1489,9 +1488,6 @@ void vtkSlicerSlicesControlGUI::ProcessMRMLEvents ( vtkObject *caller,
     this->SceneClosing = false;
     }
 
-  vtkMRMLSliceNode *slnode = vtkMRMLSliceNode::SafeDownCast ( caller );
-
-  
   // update FOV entry widgets to match node, if
   // we're not interactively zooming the slices.
   // (too slow to track MRML during interaction)
@@ -1598,13 +1594,13 @@ void vtkSlicerSlicesControlGUI::FOVEntriesUpdate ( )
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesControlGUI::Enter ( )
 {
-    // Fill in
+  // Fill in
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesControlGUI::Exit ( )
 {
-    // Fill in
+  // Fill in
 }
 
 
@@ -1749,7 +1745,7 @@ void vtkSlicerSlicesControlGUI::BuildSpacesMenu ( )
 void vtkSlicerSlicesControlGUI::PopUpFieldOfViewEntries ( )
 {
 #ifndef FOV_ENTRIES_DEBUG
-    if ( !this->FieldOfViewButton || !this->FieldOfViewButton->IsCreated())
+  if ( !this->FieldOfViewButton || !this->FieldOfViewButton->IsCreated())
     {
     return;
     }
@@ -2080,8 +2076,3 @@ void vtkSlicerSlicesControlGUI::BuildGUI ( vtkKWFrame *appF )
     }
 
 }
-
-
-
-
-

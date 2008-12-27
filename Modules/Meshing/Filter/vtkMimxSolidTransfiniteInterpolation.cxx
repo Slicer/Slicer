@@ -67,13 +67,12 @@ int vtkMimxSolidTransfiniteInterpolation::RequestData(
   vtkPoints *points;
   vtkIdType numPts;
 
-  vtkImagePlaneWidget* imagepl = vtkImagePlaneWidget::New();
   // First, copy the input to the output as a starting point
   output->CopyStructure( input );
 
   if (input == NULL || input->GetPoints() == NULL)
-        {
-        return 1;
+    {
+    return 1;
     }
   numPts = input->GetPoints()->GetNumberOfPoints();
 
@@ -98,15 +97,14 @@ int vtkMimxSolidTransfiniteInterpolation::RequestData(
   double shapeK = 1.0/(this->KDiv - 1.0);
   
   //    generate the internal nodes of a solid with the 6 surfaces known
-  int count = 0;
   for(int k = 1; k < this->KDiv-1; k++)
-  {
-          for(int j=1; j < this->JDiv-1; j++)
-          {
-                  for(int i = 1; i < this->IDiv-1; i++)
-                  {
-                          interp[0] = 0.0;      interp[1] = 0.0; interp[2] = 0.0;
-                          double x[3];
+    {
+    for(int j=1; j < this->JDiv-1; j++)
+      {
+      for(int i = 1; i < this->IDiv-1; i++)
+        {
+        interp[0] = 0.0;      interp[1] = 0.0; interp[2] = 0.0;
+        double x[3];
 ////                      this->mPoints->GetPoint(this->NodeIndex[i][0][0],x);
 //                        points->GetPoint(i,x);
 //                        ////cout <<i<<"  ";
@@ -231,116 +229,116 @@ int vtkMimxSolidTransfiniteInterpolation::RequestData(
 //                  //  ////cout<<k*this->IDiv*this->JDiv+j*this->IDiv+i<<"  "<< interp[0]<<"  "
 //                                //<<interp[1]<<"  "<<interp[2]<<std::endl;
 
-                        int m;
+        int m;
 
-                        points->GetPoint(k*this->JDiv*this->IDiv+i,x);
+        points->GetPoint(k*this->JDiv*this->IDiv+i,x);
 //                      //cout <<k*this->JDiv*this->IDiv+i<<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] + (1.0-shapeJ*j)*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] + (1.0-shapeJ*j)*x[m];
 
-                        points->GetPoint(k*this->JDiv*this->IDiv+ this->IDiv*(this->JDiv-1)+i,x);
+        points->GetPoint(k*this->JDiv*this->IDiv+ this->IDiv*(this->JDiv-1)+i,x);
 //                      //cout <<k*this->JDiv*this->IDiv+ this->IDiv*(this->JDiv-1)+i<<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] + shapeJ*j*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] + shapeJ*j*x[m];
 
-                        points->GetPoint(k*this->JDiv*this->IDiv+this->IDiv*j,x);
+        points->GetPoint(k*this->JDiv*this->IDiv+this->IDiv*j,x);
 //                      //cout <<k*this->JDiv*this->IDiv+this->IDiv*j<<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] + (1.0-shapeI*i)*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] + (1.0-shapeI*i)*x[m];
 
-                        points->GetPoint(k*this->JDiv*this->IDiv+this->IDiv*j+this->IDiv-1,x);
+        points->GetPoint(k*this->JDiv*this->IDiv+this->IDiv*j+this->IDiv-1,x);
 //                      //cout << k*this->JDiv*this->IDiv+this->IDiv*j+this->IDiv-1<<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] + shapeI*i*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] + shapeI*i*x[m];
 
-                        points->GetPoint(j*this->IDiv+i,x);
+        points->GetPoint(j*this->IDiv+i,x);
 //                      //cout <<j*this->IDiv+i<<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] + (1.0-shapeK*k)*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] + (1.0-shapeK*k)*x[m];
 
-                        points->GetPoint((this->KDiv-1)*this->JDiv*this->IDiv+j*this->IDiv+i,x);
+        points->GetPoint((this->KDiv-1)*this->JDiv*this->IDiv+j*this->IDiv+i,x);
 //                      //cout <<(this->KDiv-1)*this->JDiv*this->IDiv+j*this->IDiv+i<<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] + shapeK*k*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] + shapeK*k*x[m];
 
-                        points->GetPoint(i,x);
+        points->GetPoint(i,x);
 //                      //cout <<i<<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] - (1.0 - shapeK*k)*(1.0 - shapeJ*j)*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] - (1.0 - shapeK*k)*(1.0 - shapeJ*j)*x[m];
 
-                        points->GetPoint(this->JDiv*this->IDiv*(this->KDiv-1)+i,x);
+        points->GetPoint(this->JDiv*this->IDiv*(this->KDiv-1)+i,x);
 //                      //cout<<this->JDiv*this->IDiv*(this->KDiv-1)+i<<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] - (shapeK*k)*(1.0 - shapeJ*j)*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] - (shapeK*k)*(1.0 - shapeJ*j)*x[m];
 
-                        points->GetPoint(this->JDiv*this->IDiv-this->IDiv+i,x);
+        points->GetPoint(this->JDiv*this->IDiv-this->IDiv+i,x);
 //                      //cout<<this->JDiv*this->IDiv-this->IDiv+i<<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] - (1.0 - shapeK*k)*(shapeJ*j)*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] - (1.0 - shapeK*k)*(shapeJ*j)*x[m];
 
-                        points->GetPoint(this->JDiv*this->IDiv*this->KDiv -this->IDiv+i,x);
+        points->GetPoint(this->JDiv*this->IDiv*this->KDiv -this->IDiv+i,x);
 //                      //cout<<this->JDiv*this->IDiv*this->KDiv -this->IDiv+i<<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] - (shapeK*k)*(shapeJ*j)*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] - (shapeK*k)*(shapeJ*j)*x[m];
 
-                        points->GetPoint(j*this->IDiv , x);
+        points->GetPoint(j*this->IDiv , x);
 //                      //cout<<j*this->IDiv<<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] - (1.0 - shapeI*i)*(1.0 - shapeK*k)*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] - (1.0 - shapeI*i)*(1.0 - shapeK*k)*x[m];
 
-                        points->GetPoint(this->IDiv*this->JDiv*(this->KDiv-1) + j*this->IDiv,x);
+        points->GetPoint(this->IDiv*this->JDiv*(this->KDiv-1) + j*this->IDiv,x);
 //                      //cout<< this->IDiv*this->JDiv*(this->KDiv-1) + j*this->IDiv<<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] - (1.0 - shapeI*i)*(shapeK*k)*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] - (1.0 - shapeI*i)*(shapeK*k)*x[m];
 
-                        points->GetPoint(this->IDiv*this->JDiv*(this->KDiv-1) + (j+1)*this->IDiv-1,x);
+        points->GetPoint(this->IDiv*this->JDiv*(this->KDiv-1) + (j+1)*this->IDiv-1,x);
 //                      //cout << this->IDiv*this->JDiv*(this->KDiv-1) + (j+1)*this->IDiv-1<<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] - (shapeI*i)*(shapeK*k)*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] - (shapeI*i)*(shapeK*k)*x[m];
 
-                        points->GetPoint(this->IDiv*(j+1)-1,x);
+        points->GetPoint(this->IDiv*(j+1)-1,x);
 //                      //cout<<this->IDiv*(j+1)-1<<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] - (shapeI*i)*(1.0 - shapeK*k)*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] - (shapeI*i)*(1.0 - shapeK*k)*x[m];
 
-                        points->GetPoint(this->IDiv*this->JDiv*k , x);
+        points->GetPoint(this->IDiv*this->JDiv*k , x);
 //                      //cout<<this->IDiv*this->JDiv*k <<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] - (1.0 - shapeI*i)*(1.0 - shapeJ*j)*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] - (1.0 - shapeI*i)*(1.0 - shapeJ*j)*x[m];
 
-                        points->GetPoint(this->IDiv*this->JDiv*k + this->IDiv*(this->JDiv-1),x);
+        points->GetPoint(this->IDiv*this->JDiv*k + this->IDiv*(this->JDiv-1),x);
 //                      //cout<<this->IDiv*this->JDiv*k + this->IDiv*(this->JDiv-1)<<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] - (1.0 - shapeI*i)*(shapeJ*j)*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] - (1.0 - shapeI*i)*(shapeJ*j)*x[m];
 
-                        points->GetPoint(this->IDiv*this->JDiv*(k+1)-1,x);
+        points->GetPoint(this->IDiv*this->JDiv*(k+1)-1,x);
 //                      //cout<<this->IDiv*this->JDiv*(k+1)-1<<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] - (shapeI*i)*(shapeJ*j)*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] - (shapeI*i)*(shapeJ*j)*x[m];
 
-                        points->GetPoint(this->IDiv*this->JDiv*k+ this->IDiv-1,x);
+        points->GetPoint(this->IDiv*this->JDiv*k+ this->IDiv-1,x);
 //                      //cout<<this->IDiv*this->JDiv*k+ this->IDiv-1<<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] - (shapeI*i)*(1.0 - shapeJ*j)*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] - (shapeI*i)*(1.0 - shapeJ*j)*x[m];
 
-                        points->GetPoint(0,x);
+        points->GetPoint(0,x);
 //                      //cout <<"0"<<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] + (1.0 - shapeI*i)*(1.0 - shapeJ*j)*(1.0 - shapeK*k)*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] + (1.0 - shapeI*i)*(1.0 - shapeJ*j)*(1.0 - shapeK*k)*x[m];
 
-                        points->GetPoint(this->IDiv-1,x);
+        points->GetPoint(this->IDiv-1,x);
 //                      //cout<< this->IDiv-1<<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] + (shapeI*i)*(1.0 - shapeJ*j)*(1.0 - shapeK*k)*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] + (shapeI*i)*(1.0 - shapeJ*j)*(1.0 - shapeK*k)*x[m];
 
-                        points->GetPoint(this->IDiv*this->JDiv*(this->KDiv-1)+this->IDiv-1,x);
+        points->GetPoint(this->IDiv*this->JDiv*(this->KDiv-1)+this->IDiv-1,x);
 //                      //cout<<this->IDiv*this->JDiv*(this->KDiv-1)+this->IDiv-1<<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] + (shapeI*i)*(1.0 - shapeJ*j)*(shapeK*k)*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] + (shapeI*i)*(1.0 - shapeJ*j)*(shapeK*k)*x[m];
 
-                        points->GetPoint(this->IDiv*this->JDiv-1,x);
+        points->GetPoint(this->IDiv*this->JDiv-1,x);
 //                      //cout<<this->IDiv*this->JDiv-1<<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] + (shapeI*i)*(shapeJ*j)*(1.0 - shapeK*k)*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] + (shapeI*i)*(shapeJ*j)*(1.0 - shapeK*k)*x[m];
 
-                        points->GetPoint(this->IDiv*this->JDiv*this->KDiv-1,x);
+        points->GetPoint(this->IDiv*this->JDiv*this->KDiv-1,x);
 //                      //cout<<this->IDiv*this->JDiv*this->KDiv-1<<endl;
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] + (shapeI*i)*(shapeJ*j)*(shapeK*k)*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] + (shapeI*i)*(shapeJ*j)*(shapeK*k)*x[m];
 
-                        points->GetPoint(this->IDiv*this->JDiv*(this->KDiv-1),x);
+        points->GetPoint(this->IDiv*this->JDiv*(this->KDiv-1),x);
 //                      //cout<<this->IDiv*this->JDiv*(this->KDiv-1)<<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] + (1.0 - shapeI*i)*(1.0 - shapeJ*j)*(shapeK*k)*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] + (1.0 - shapeI*i)*(1.0 - shapeJ*j)*(shapeK*k)*x[m];
 
-                        points->GetPoint(this->IDiv*(this->JDiv-1),x);
+        points->GetPoint(this->IDiv*(this->JDiv-1),x);
 //                      //cout <<this->IDiv*(this->JDiv-1)<<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] + (1.0 - shapeI*i)*(shapeJ*j)*(1.0 - shapeK*k)*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] + (1.0 - shapeI*i)*(shapeJ*j)*(1.0 - shapeK*k)*x[m];
 
-                        points->GetPoint(this->IDiv*this->JDiv*this->KDiv-this->IDiv,x);
+        points->GetPoint(this->IDiv*this->JDiv*this->KDiv-this->IDiv,x);
 //                      //cout<<this->IDiv*this->JDiv*this->KDiv-this->IDiv<<"  ";
-                        for (m = 0; m <3; m++)  interp[m] = interp[m] + (1.0 - shapeI*i)*(shapeJ*j)*(shapeK*k)*x[m];
+        for (m = 0; m <3; m++)  interp[m] = interp[m] + (1.0 - shapeI*i)*(shapeJ*j)*(shapeK*k)*x[m];
 
-                        points->SetPoint(k*this->IDiv*this->JDiv+j*this->IDiv+i,interp);
-                  }
-          }
-  }
+        points->SetPoint(k*this->IDiv*this->JDiv+j*this->IDiv+i,interp);
+        }
+      }
+    }
 
   output->SetPoints(points);
   points->Delete();

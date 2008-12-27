@@ -261,9 +261,9 @@ int vtkTextureFont::CreateFont()
         zero_array(bgAlpha, tex_width * tex_height);
 
         //copyArrayOffset(bgAlpha, buffer, tex_width, tex_height, 0, 0);
-        for (int x = -params->GetStyleBorderSize(); x <= params->GetStyleBorderSize(); x++) {
-            for (int y = -params->GetStyleBorderSize(); y <= params->GetStyleBorderSize(); y++) {
-                mattArrayOffset(bgAlpha, bgIntensity, buffer, 0, tex_width, tex_height, x, y);
+        for (int xx = -params->GetStyleBorderSize(); xx <= params->GetStyleBorderSize(); xx++) {
+            for (int yy = -params->GetStyleBorderSize(); yy <= params->GetStyleBorderSize(); yy++) {
+                mattArrayOffset(bgAlpha, bgIntensity, buffer, 0, tex_width, tex_height, xx, yy);
             }
         }
 

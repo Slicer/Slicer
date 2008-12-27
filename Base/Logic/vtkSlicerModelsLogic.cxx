@@ -78,7 +78,7 @@ int vtkSlicerModelsLogic::AddModels (const char* dirname, const char* suffix )
         {
         std::string fullPath = std::string(dir.GetPath())
             + "/" + filename;
-        if (this->AddModel((char *)fullPath.c_str()) == NULL) 
+        if (this->AddModel(fullPath.c_str()) == NULL) 
           {
           res = 0;
           }

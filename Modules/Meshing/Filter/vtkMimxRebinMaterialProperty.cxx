@@ -76,7 +76,7 @@ vtkMimxRebinMaterialProperty::vtkMimxRebinMaterialProperty()
 }
 
 int vtkMimxRebinMaterialProperty::FillInputPortInformation(
-    int,
+  int,
   vtkInformation *info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkUnstructuredGrid");
@@ -101,7 +101,7 @@ int vtkMimxRebinMaterialProperty::RequestData(
   vtkUnstructuredGrid *in = vtkUnstructuredGrid::SafeDownCast(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
   vtkUnstructuredGrid* out = vtkUnstructuredGrid::SafeDownCast(
-      outInfo->Get(vtkDataObject::DATA_OBJECT()));
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
   
 
   out->DeepCopy( in );
@@ -114,8 +114,8 @@ int vtkMimxRebinMaterialProperty::RequestData(
   strcat(str, "_Image_Based_Material_Property");
 
   vtkDoubleArray *materialPropertyArray = vtkDoubleArray::SafeDownCast(
-          in->GetCellData()->GetArray(str));
-          /*NULL;*/
+    in->GetCellData()->GetArray(str));
+  /*NULL;*/
   //vtkAbstractArray *tmpArray = gridFieldData->GetAbstractArray("Material_Properties");
   //if (tmpArray->IsA("vtkDoubleArray"))
   //  {
@@ -123,20 +123,20 @@ int vtkMimxRebinMaterialProperty::RequestData(
   //  }
 
   if(!this->ElementSetName)
-  {
-          vtkErrorMacro(<<"Set the Element Set Name for which material properties need to be binned");
-  }
+    {
+    vtkErrorMacro(<<"Set the Element Set Name for which material properties need to be binned");
+    }
   if ( materialPropertyArray == NULL)
-  {
+    {
     vtkErrorMacro(<< "vtkRebinMaterialProperty::RequestData - Grid does not contain Material_Properties data");
     return 0;
-  }
+    }
   
   if ( this->NumberOfHistogramBins <= 0 )
-  {
+    {
     vtkErrorMacro(<< "vtkRebinMaterialProperty::RequestData - Invalid number of histogram bins specified");
     return 0;
-  } 
+    } 
   
   /* Determine the Histogram Bins - 1) From user or 2) from the data */
   if ( ! this->GeneratePropertyBins )
@@ -150,46 +150,46 @@ int vtkMimxRebinMaterialProperty::RequestData(
     }
   else
     {
-        int i;
+    int i;
     if ( this->ComputeMaxBin )
+      {
+      for (i=0; i<materialPropertyArray->GetNumberOfTuples(); i++)
         {
-                for (i=0; i<materialPropertyArray->GetNumberOfTuples(); i++)
-                {
-                        if(materialPropertyArray->GetValue(i) >= 0.0)
-                        {
-                                this->BinUpperBound = materialPropertyArray->GetValue(i);
-                                break;
-                        }
-                }
+        if(materialPropertyArray->GetValue(i) >= 0.0)
+          {
+          this->BinUpperBound = materialPropertyArray->GetValue(i);
+          break;
+          }
         }
-        //
-        if ( this->ComputeMinBin )
+      }
+    //
+    if ( this->ComputeMinBin )
+      {
+      for (i=0; i<materialPropertyArray->GetNumberOfTuples(); i++)
         {
-                for (i=0; i<materialPropertyArray->GetNumberOfTuples(); i++)
-                {
-                        if(materialPropertyArray->GetValue(i) >= 0.0)
-                        {
-                                this->BinLowerBound = materialPropertyArray->GetValue(i);
-                                break;
-                        }
-                }
+        if(materialPropertyArray->GetValue(i) >= 0.0)
+          {
+          this->BinLowerBound = materialPropertyArray->GetValue(i);
+          break;
+          }
         }
+      }
 
-    for (int i=0;i<materialPropertyArray->GetNumberOfTuples();i++)
-    {
-                  double tmpValue = materialPropertyArray->GetValue(i);
-                  if(tmpValue >= 0.0)
-                  {
-                          if ( this->ComputeMaxBin && (this->BinUpperBound < tmpValue) )
-                                {
-                                this->BinUpperBound = tmpValue;
-                                }
-                          if ( this->ComputeMinBin && (this->BinLowerBound > tmpValue) )
-                                {
-                                this->BinLowerBound = tmpValue;
-                                }
-                  }
+    for (i=0;i<materialPropertyArray->GetNumberOfTuples();i++)
+      {
+      double tmpValue = materialPropertyArray->GetValue(i);
+      if(tmpValue >= 0.0)
+        {
+        if ( this->ComputeMaxBin && (this->BinUpperBound < tmpValue) )
+          {
+          this->BinUpperBound = tmpValue;
+          }
+        if ( this->ComputeMinBin && (this->BinLowerBound > tmpValue) )
+          {
+          this->BinLowerBound = tmpValue;
+          }
         }
+      }
     ComputeHistogramBins( ); 
     }
     
@@ -209,7 +209,7 @@ int vtkMimxRebinMaterialProperty::RequestData(
   strcat(str,"_ReBin");
 
   vtkDoubleArray *RebinArray = vtkDoubleArray::SafeDownCast(
-          out->GetCellData()->GetArray(str));
+    out->GetCellData()->GetArray(str));
 
   if(RebinArray)        out->GetCellData()->RemoveArray(str);
 
@@ -220,42 +220,42 @@ int vtkMimxRebinMaterialProperty::RequestData(
   for (int i=0;i<binPropertyArray->GetNumberOfTuples();i++)
     {
     double currentMaterialProperty = materialPropertyArray->GetValue(i);
-        if(currentMaterialProperty >= 0.0)
+    if(currentMaterialProperty >= 0.0)
+      {
+      if ( currentMaterialProperty <= this->BinLowerBound )
         {
-    if ( currentMaterialProperty <= this->BinLowerBound )
-      {
-      // Clamp Material Properties to lower bound
-      binPropertyArray->SetValue( i, this->BinLowerBound );
-      }
-    else if ( currentMaterialProperty >= this->BinUpperBound )
-      {
-      // Clamp Material Properties to upper bound
-      binPropertyArray->SetValue( i, this->BinUpperBound );
+        // Clamp Material Properties to lower bound
+        binPropertyArray->SetValue( i, this->BinLowerBound );
+        }
+      else if ( currentMaterialProperty >= this->BinUpperBound )
+        {
+        // Clamp Material Properties to upper bound
+        binPropertyArray->SetValue( i, this->BinUpperBound );
+        }
+      else
+        {
+        // Assign Material Properties based on the histogram
+        for ( int k = 0; k < this->NumberOfHistogramBins-1; k++ )
+          {
+          if ( ( currentMaterialProperty >= histogramArray->GetValue(k) ) &&
+               ( currentMaterialProperty <= histogramArray->GetValue(k+1)) )
+            {
+            if(fabs(currentMaterialProperty - histogramArray->GetValue(k)) > 
+               fabs(currentMaterialProperty - histogramArray->GetValue(k+1)))
+              binPropertyArray->SetValue( i, histogramArray->GetValue(k+1) );
+            else
+              binPropertyArray->SetValue( i, histogramArray->GetValue(k));
+            break;
+            } 
+          }
+        }
       }
     else
       {
-      // Assign Material Properties based on the histogram
-      for ( int k = 0; k < this->NumberOfHistogramBins-1; k++ )
-        {
-        if ( ( currentMaterialProperty >= histogramArray->GetValue(k) ) &&
-             ( currentMaterialProperty <= histogramArray->GetValue(k+1)) )
-          {
-                          if(fabs(currentMaterialProperty - histogramArray->GetValue(k)) > 
-                                  fabs(currentMaterialProperty - histogramArray->GetValue(k+1)))
-                                        binPropertyArray->SetValue( i, histogramArray->GetValue(k+1) );
-                          else
-                                  binPropertyArray->SetValue( i, histogramArray->GetValue(k));
-                          break;
-          } 
-        }
+      binPropertyArray->SetValue( i, -9999 );
       }
-        }
-        else
-        {
-                binPropertyArray->SetValue( i, -9999 );
-        }
     }
- // out->GetCellData()->AddArray(materialPropertyArray) ; 
+  // out->GetCellData()->AddArray(materialPropertyArray) ; 
   out->GetCellData()->AddArray(binPropertyArray);
   binPropertyArray->Delete();
 
@@ -268,20 +268,17 @@ void vtkMimxRebinMaterialProperty::ComputeHistogramBins(  )
   this->PropertyTable = vtkTable::New();
   
   if ( this->NumberOfHistogramBins > 1 )
-  {
+    {
     vtkDoubleArray *histogramArray = vtkDoubleArray::New();
     histogramArray->SetName("Histogram");
     
     double binSize = ( this->BinUpperBound - this->BinLowerBound ) /
-          static_cast<double>( this->NumberOfHistogramBins - 1);
+      static_cast<double>( this->NumberOfHistogramBins - 1);
     for ( int i = 0; i < this->NumberOfHistogramBins; i++ )
-    {
-                double val = this->BinLowerBound + 
-                        static_cast<double> ( i )* binSize;
+      {
       histogramArray->InsertValue( i, this->BinLowerBound + 
-          static_cast<double> ( i )* binSize );
-    } 
+                                   static_cast<double> ( i )* binSize );
+      } 
     this->PropertyTable->AddColumn( histogramArray );
-  }
+    }
 }
-

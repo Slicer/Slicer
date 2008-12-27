@@ -631,7 +631,7 @@ void EMLocalAlgorithm<T>::Print_M_StepRegistrationToFile(int iter, float Registr
 //----------------------------------------------------------------------------
 // Shape 
 template <class T>
-float EMLocalAlgorithm<T>::PrintShapeData(float **PCAShapeParameters, int iter , int PrintSimulatingFlag) {
+float EMLocalAlgorithm<T>::PrintShapeData(float **aPCAShapeParameters, int iter , int PrintSimulatingFlag) {
   if (this->ShapeParameters->PCAShapeModelType == EMSEGMENT_PCASHAPE_APPLY) return 0.0;
   // std::cerr << "Total " << this->PCATotalNumOfShapeParameters << endl;
   double *parameters = new double[this->PCATotalNumOfShapeParameters];
@@ -639,7 +639,7 @@ float EMLocalAlgorithm<T>::PrintShapeData(float **PCAShapeParameters, int iter ,
   // std::cerr << "Start Printing Shape Data " << endl;
   for (int i = 0 ; i < this->NumTotalTypeCLASS; i++) {
     for (int k = 0 ; k < this->PCANumberOfEigenModes[i]; k++) {
-      parameters[ShapeIndex] = double(PCAShapeParameters[i][k]);
+      parameters[ShapeIndex] = double(aPCAShapeParameters[i][k]);
       ShapeIndex ++;
     }
     if (this->PCAShapeModelType == EMSEGMENT_PCASHAPE_DEPENDENT) ShapeIndex = 0;

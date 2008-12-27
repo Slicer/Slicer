@@ -87,7 +87,7 @@ void vtkKWCheckBoxSelectionDialog::PrintSelf ( ostream& os, vtkIndent indent )
 
 
 //---------------------------------------------------------------------------
-void vtkKWCheckBoxSelectionDialog::AddEntry(char *label, int selected)
+void vtkKWCheckBoxSelectionDialog::AddEntry(const char *label, int selected)
 {
   this->Create();
 

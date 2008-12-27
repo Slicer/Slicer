@@ -71,8 +71,8 @@ int vtkFreetypeRasterizer::LoadFont(char *fontname)
 
     // check if freetype library has been initialized
     if (sLibrary == NULL) {
-        int sError = FT_Init_FreeType(&sLibrary);
-        if (sError) {
+        int sError0 = FT_Init_FreeType(&sLibrary);
+        if (sError0) {
             vtkErrorMacro("vtkFreetypeRasterizer: ERROR: during freetype library initialization.\n");
             this->mError = 1;
             return this->mError;

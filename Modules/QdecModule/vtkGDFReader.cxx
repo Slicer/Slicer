@@ -386,7 +386,7 @@ int vtkGDFReader::ReadHeader(const char *filename, int flag)
             }
           else if (strncasecmp(line, "ResidualFWHM", 12) == 0)
             {
-            sscanf(line, "%*s %g", &this->ResidualFWHM);
+            sscanf(line, "%*s %lg", &this->ResidualFWHM);
             }
           else if (strncasecmp(line, "DeMeanFlag", 10) == 0)
             {
@@ -405,7 +405,7 @@ int vtkGDFReader::ReadHeader(const char *filename, int flag)
   {
       vtkDebugMacro(<<"Default Variable is null, setting it to first variable " 
         << this->VariablesVec[0].c_str());
-      this->DefaultVariable = (char *)this->VariablesVec[0].c_str();
+      this->DefaultVariable = const_cast<char *>(this->VariablesVec[0].c_str());
       this->DefaultVariableIndex = 0;
   }
   
@@ -427,7 +427,7 @@ const char *vtkGDFReader::GetNthClassLabel(int n)
     vtkDebugMacro(<< "GetNthClassLabel\n");
     if (n < (int)this->ClassesVec.size())
     {
-        return (char *)this->ClassesVec[n][0].c_str();
+        return this->ClassesVec[n][0].c_str();
     }
     else
     {
@@ -443,7 +443,7 @@ const char *vtkGDFReader::GetNthClassMarker(int n)
     vtkDebugMacro(<< "GetNthClassMarker\n");
     if (n < (int)this->ClassesVec.size())
     {
-        return (char *)this->ClassesVec[n][1].c_str();
+        return this->ClassesVec[n][1].c_str();
     }
     else
     {
@@ -460,7 +460,7 @@ const char *vtkGDFReader::GetNthClassColor(int n)
     vtkDebugMacro(<< "GetNthClassColor\n");
     if (n < (int)this->ClassesVec.size())
     {
-        return (char *)this->ClassesVec[n][2].c_str();
+        return this->ClassesVec[n][2].c_str();
     }
     else
     {

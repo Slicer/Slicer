@@ -4,10 +4,10 @@ include_regular_expression("^.*$")
 
 include_directories( ${MimxMeshing_SOURCE_DIR}/Filter 
   ${MimxMeshing_BINARY_DIR}/Filter 
+  ${MimxMeshing_SOURCE_DIR}/Mesh
   ${MimxMeshing_SOURCE_DIR}/IO 
   ${MimxMeshing_BINARY_DIR}/IO) 
 
-if( NOT DISABLE_CXX_TESTING )
   if(ITK_BINARY_DIR)
     if(TCL_TCLSH)
       add_test(PrintSelf-BasicFilters ${TCL_TCLSH}
@@ -40,7 +40,3 @@ if( NOT DISABLE_CXX_TESTING )
     vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon 
     ITKIO ITKBasicFilters ITKCommon itkvnl_algo itkvnl)
   add_test(itkImageToVtkUnstructuredGridTest ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/itkImageToVtkUnstructuredGridTest)
-
-
-
-endif( NOT DISABLE_CXX_TESTING )

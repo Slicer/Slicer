@@ -687,8 +687,6 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
       // if the node is already cached with an actor process only this one
       // if it was not visible and is still not visible do nothing
       std::vector< vtkMRMLDisplayNode *> dnodes = this->GetDisplayNode(modelNode);
-      vtkMRMLDisplayNode *hdnode = this->GetHierarchyDisplayNode(modelNode);
- 
       bool updateModel = false;
       bool updateMRML = false;
       for (unsigned int i=0; i<dnodes.size(); i++)
@@ -1429,8 +1427,8 @@ void vtkSlicerViewerWidget::RemoveModelProps()
         }
       else 
         {
-        if (clipIter->second && !this->ClippingOn ||
-          this->ClippingOn && clipIter->second != clipModel)
+        if ((clipIter->second && !this->ClippingOn) ||
+            (this->ClippingOn && clipIter->second != clipModel))
           {
           this->MainViewer->RemoveViewProp(iter->second);
           removedIDs.push_back(iter->first);

@@ -433,7 +433,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessMRMLEvents ( vtkObject *caller,
 
   vtkDataIOManager *dm = vtkDataIOManager::SafeDownCast ( caller );
   vtkCacheManager *cm = vtkCacheManager::SafeDownCast ( caller );
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication());
+  vtkSlicerApplication *app0 = vtkSlicerApplication::SafeDownCast (this->GetApplication());
   
   vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: Processing mrml events...");
   if ( dm == this->DataIOManager && dm != NULL )
@@ -446,7 +446,6 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessMRMLEvents ( vtkObject *caller,
       }
     else if ( event == vtkDataIOManager::TransferUpdateEvent )
       {
-      vtkDataTransfer *dt = reinterpret_cast < vtkDataTransfer*> (callData);
       this->UpdateEntireGUI();
       }
     else if ( event == vtkDataIOManager::RemoteReadEvent )
@@ -465,7 +464,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessMRMLEvents ( vtkObject *caller,
         }
       }
     }
-  else if ( cm == this->CacheManager && cm != NULL && this->DataIOManager != NULL && app != NULL)
+  else if ( cm == this->CacheManager && cm != NULL && this->DataIOManager != NULL && app0 != NULL)
     {
     if ( event == vtkCacheManager::CacheLimitExceededEvent )
       {
@@ -473,9 +472,9 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessMRMLEvents ( vtkObject *caller,
       }
     else if ( event == vtkCacheManager::SettingsUpdateEvent )
       {
-      this->CacheDirectoryButton->GetWidget()->GetLoadSaveDialog()->SetFileName( app->GetRemoteCacheDirectory() );
-      this->CacheLimitSpinBox->GetWidget()->SetValue(app->GetRemoteCacheLimit() );
-      this->CacheFreeBufferSizeSpinBox->GetWidget()->SetValue( app->GetRemoteCacheFreeBufferSize() );
+      this->CacheDirectoryButton->GetWidget()->GetLoadSaveDialog()->SetFileName( app0->GetRemoteCacheDirectory() );
+      this->CacheLimitSpinBox->GetWidget()->SetValue(app0->GetRemoteCacheLimit() );
+      this->CacheFreeBufferSizeSpinBox->GetWidget()->SetValue( app0->GetRemoteCacheFreeBufferSize() );
       }
     else if ( event == vtkCacheManager::InsufficientFreeBufferEvent )
       {
@@ -615,7 +614,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateOverviewPanel()
   if ( this->CacheManager != NULL )
     {
     //---CacheSize:
-    sprintf ( txt, "" );
+    sprintf ( txt, "%s", "" );
     if ( this->CacheManager->GetRemoteCacheDirectory() != NULL )
       {      
       sz = this->CacheManager->ComputeCacheSize(this->CacheManager->GetRemoteCacheDirectory(), 0);
@@ -635,7 +634,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateOverviewPanel()
 
       //---CacheFree:
       sz = this->CacheManager->GetFreeCacheSpaceRemaining();
-      sprintf ( txt, "" );
+      sprintf ( txt, "%s", "" );
       if ( sz < 0 )
         {
         sprintf ( txt, "(%dMB --FULL!)", static_cast<int>( floor(sz)));
@@ -904,9 +903,6 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
     }
   if ( appGUI != NULL )
     {
-
-    int label_width = 10;
-    
     this->ManagerTopLevel = vtkKWTopLevel::New();
     this->ManagerTopLevel->SetApplication ( app );
     vtksys_stl::string title = "Cache & Remote Data I/O Manager Window";

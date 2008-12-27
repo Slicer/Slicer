@@ -126,7 +126,6 @@ void vtkMRMLNullDisplayNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLNullDisplayNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLNullDisplayNode *node = (vtkMRMLNullDisplayNode *) anode;
 }
 
 //----------------------------------------------------------------------------

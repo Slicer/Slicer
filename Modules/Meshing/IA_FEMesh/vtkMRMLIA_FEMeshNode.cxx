@@ -149,7 +149,7 @@ void vtkMRMLIA_FEMeshNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLIA_FEMeshNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLIA_FEMeshNode *node = (vtkMRMLIA_FEMeshNode *) anode;
+//  vtkMRMLIA_FEMeshNode *node = (vtkMRMLIA_FEMeshNode *) anode;
 
 //  this->SetConductance(node->Conductance);
 //  this->SetNumberOfIterations(node->NumberOfIterations);

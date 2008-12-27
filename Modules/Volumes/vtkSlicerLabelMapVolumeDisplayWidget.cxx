@@ -134,8 +134,6 @@ void vtkSlicerLabelMapVolumeDisplayWidget::UpdateWidgetFromMRML ()
 {
   vtkDebugMacro("UpdateWidgetFromMRML");
   
-  vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
-
   // check to see if the color selector widget has it's mrml scene set (it
   // could have been set to null)
   if ( this->ColorSelectorWidget )

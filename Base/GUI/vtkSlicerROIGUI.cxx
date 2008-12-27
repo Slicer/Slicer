@@ -1347,16 +1347,16 @@ void vtkSlicerROIGUI::UpdateElement(int row, int col, char * str)
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerROIGUI::SetROIListNode (vtkMRMLROIListNode *ROIListNode)
+void vtkSlicerROIGUI::SetROIListNode (vtkMRMLROIListNode *aROIListNode)
 {
-  if (ROIListNode == NULL)
+  if (aROIListNode == NULL)
     {
     vtkErrorMacro ("ERROR: SetROIListNode - list node is null.\n");
     return;
     }
   // save the ID
   vtkDebugMacro("setting the ROI list node id to " << ROIListNode->GetID());
-  this->SetROIListNodeID(ROIListNode->GetID());
+  this->SetROIListNodeID(aROIListNode->GetID());
   if (this->ROIListNode && this->ROIListNode->GetNthROINode(0))
     {
     this->ROIDisplayWidget->SetROINode(ROIListNode->GetNthROINode(0));

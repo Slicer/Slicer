@@ -74,7 +74,7 @@ vtkMimxPlaceLocalAxesWidget::vtkMimxPlaceLocalAxesWidget()
   //int i;
 
   // Control orientation of normals
- /* this->InsideOut = 0;
+  /* this->InsideOut = 0;
   this->OutlineCellWires = 0;
   this->OutlineCursorWires = 1;*/
 
@@ -92,7 +92,7 @@ vtkMimxPlaceLocalAxesWidget::vtkMimxPlaceLocalAxesWidget()
   
   // Construct connectivity for the Cells. These are used to perform
   // the picking.
- /* vtkIdType pts[4];
+  /* vtkIdType pts[4];
   vtkCellArray *cells = vtkCellArray::New();
   cells->Allocate(cells->EstimateSize(6,4));
   pts[0] = 3; pts[1] = 0; pts[2] = 4; pts[3] = 7;
@@ -171,7 +171,7 @@ vtkMimxPlaceLocalAxesWidget::vtkMimxPlaceLocalAxesWidget()
   //Manage the picking stuff
   this->CellPicker = vtkCellPicker::New();
   this->CellPicker->SetTolerance(0.001);
- /* for (i=0; i<7; i++)
+  /* for (i=0; i<7; i++)
     {
     this->HandlePicker->AddPickList(this->Handle[i]);
     }*/
@@ -222,7 +222,7 @@ vtkMimxPlaceLocalAxesWidget::~vtkMimxPlaceLocalAxesWidget()
   //delete [] this->HandleGeometry;
   
   this->CellPicker->Delete();
- /* this->HexPicker->Delete();
+  /* this->HexPicker->Delete();
 
   this->Transform->Delete();
   
@@ -234,7 +234,7 @@ vtkMimxPlaceLocalAxesWidget::~vtkMimxPlaceLocalAxesWidget()
   this->SelectedOutlineProperty->Delete();*/
 //  this->PickedCells->Delete();
   if(this->LocalAxesActor)
-          this->LocalAxesActor->Delete();
+    this->LocalAxesActor->Delete();
 }
 
 void vtkMimxPlaceLocalAxesWidget::SetEnabled(int enabling)
@@ -257,8 +257,8 @@ void vtkMimxPlaceLocalAxesWidget::SetEnabled(int enabling)
     if ( ! this->CurrentRenderer )
       {
       this->SetCurrentRenderer(this->Interactor->FindPokedRenderer(
-        this->Interactor->GetLastEventPosition()[0],
-        this->Interactor->GetLastEventPosition()[1]));
+                                 this->Interactor->GetLastEventPosition()[0],
+                                 this->Interactor->GetLastEventPosition()[1]));
       if (this->CurrentRenderer == NULL)
         {
         return;
@@ -266,7 +266,7 @@ void vtkMimxPlaceLocalAxesWidget::SetEnabled(int enabling)
       }
 
     this->Enabled = 1;
-        this->PickedCell = -1;
+    this->PickedCell = -1;
 
     // listen to the following events
     vtkRenderWindowInteractor *i = this->Interactor;
@@ -288,10 +288,10 @@ void vtkMimxPlaceLocalAxesWidget::SetEnabled(int enabling)
     // Add the various actors
     // Add the outline
 //      this->CellActor->GetProperty()->SetLineWidth(3.0);
-        this->CellActor->GetProperty()->SetRepresentationToWireframe();
+    this->CellActor->GetProperty()->SetRepresentationToWireframe();
     this->CurrentRenderer->AddActor(this->CellActor);
-        if(this->InputActor)
-                this->CurrentRenderer->RemoveActor(this->InputActor);
+    if(this->InputActor)
+      this->CurrentRenderer->RemoveActor(this->InputActor);
     //this->CurrentRenderer->AddActor(this->HexOutline);
     //this->HexActor->SetProperty(this->OutlineProperty);
     //this->HexOutline->SetProperty(this->OutlineProperty);
@@ -301,7 +301,7 @@ void vtkMimxPlaceLocalAxesWidget::SetEnabled(int enabling)
     //this->HexCell->SetProperty(this->CellProperty);
 
     // turn on the handles
-  /*  for (int j=0; j<7; j++)
+    /*  for (int j=0; j<7; j++)
       {
       this->CurrentRenderer->AddActor(this->Handle[j]);
       this->Handle[j]->SetProperty(this->HandleProperty);
@@ -326,17 +326,17 @@ void vtkMimxPlaceLocalAxesWidget::SetEnabled(int enabling)
 
     // turn off the outline
     this->CurrentRenderer->RemoveActor(this->CellActor);
-        if(this->InputActor)
-                this->CurrentRenderer->AddActor(this->InputActor);
-        if(this->LocalAxesActor)
-                this->CurrentRenderer->RemoveViewProp(this->LocalAxesActor);
- //   this->CurrentRenderer->RemoveActor(this->HexOutline);
+    if(this->InputActor)
+      this->CurrentRenderer->AddActor(this->InputActor);
+    if(this->LocalAxesActor)
+      this->CurrentRenderer->RemoveViewProp(this->LocalAxesActor);
+    //   this->CurrentRenderer->RemoveActor(this->HexOutline);
 
     // turn off the hex Cell
 //    this->CurrentRenderer->RemoveActor(this->HexCell);
 
     // turn off the handles
- /*   for (int i=0; i<7; i++)
+    /*   for (int i=0; i<7; i++)
       {
       this->CurrentRenderer->RemoveActor(this->Handle[i]);
       }*/
@@ -350,9 +350,9 @@ void vtkMimxPlaceLocalAxesWidget::SetEnabled(int enabling)
 }
 
 void vtkMimxPlaceLocalAxesWidget::ProcessEvents(vtkObject* vtkNotUsed(object), 
-                                 unsigned long event,
-                                 void* clientdata, 
-                                 void* vtkNotUsed(calldata))
+                                                unsigned long event,
+                                                void* clientdata, 
+                                                void* vtkNotUsed(calldata))
 {
   vtkMimxPlaceLocalAxesWidget* self = reinterpret_cast<vtkMimxPlaceLocalAxesWidget *>( clientdata );
 
@@ -405,14 +405,14 @@ void vtkMimxPlaceLocalAxesWidget::OnLeftButtonDown()
   this->CellPicker->Pick(X,Y,0.0,this->CurrentRenderer);
   path = this->CellPicker->GetPath();
   if ( path != NULL )
-  {
+    {
     this->State = vtkMimxPlaceLocalAxesWidget::Moving;
     this->PickedCell = this->CellPicker->GetCellId();
 //      this->PickedCells->SetNumberOfIds(1);
 //      this->PickedCells->SetId(0,PickedCell);
     if(this->PickedCell != -1)
-    {
- /*     if(this->CellDataSet->GetCellData()->GetScalars())
+      {
+      /*     if(this->CellDataSet->GetCellData()->GetScalars())
       {
         this->CellDataSet->GetCellData()->GetScalars()->Delete();
       }*/
@@ -420,65 +420,65 @@ void vtkMimxPlaceLocalAxesWidget::OnLeftButtonDown()
       intarray->SetNumberOfValues(this->CellDataSet->GetNumberOfCells());
       this->CellDataSet->GetCellData()->SetScalars(intarray);
       for(int i=0; i < this->CellDataSet->GetNumberOfCells(); i++)  intarray->SetValue(i,0.0);
-       intarray->SetValue(this->PickedCell,1.0);
+      intarray->SetValue(this->PickedCell,1.0);
       intarray->Delete();
-          vtkLookupTable *lut = vtkLookupTable::New();
-          lut->SetNumberOfColors(2);
-          lut->Build();
-          lut->SetTableValue(0, 1.0, 1.0, 1.0, 1.0);
-          lut->SetTableValue(1, 0.0, 1.0, 0.0, 1.0);
-          lut->SetTableRange(0,1);
-          this->CellMapper->SetLookupTable(lut);
-          this->CellMapper->SetScalarRange(0,1);
-          lut->Delete();
+      vtkLookupTable *lut = vtkLookupTable::New();
+      lut->SetNumberOfColors(2);
+      lut->Build();
+      lut->SetTableValue(0, 1.0, 1.0, 1.0, 1.0);
+      lut->SetTableValue(1, 0.0, 1.0, 0.0, 1.0);
+      lut->SetTableRange(0,1);
+      this->CellMapper->SetLookupTable(lut);
+      this->CellMapper->SetScalarRange(0,1);
+      lut->Delete();
 
-          if(this->LocalAxesActor)
-          {
-                  this->CurrentRenderer->RemoveViewProp(this->LocalAxesActor);
-                this->LocalAxesActor->Delete();
-                this->LocalAxesActor = NULL;
-          }
-          this->LocalAxesActor = vtkLocalAxesActor::New();
-          this->LocalAxesActor->SetXAxisLabelText("Rx");
-        this->LocalAxesActor->SetYAxisLabelText("Gy");
-        this->LocalAxesActor->SetZAxisLabelText("Bz");
-          vtkIdList *ptids = vtkIdList::New();
-          this->UGrid->GetCellPoints(this->PickedCell, ptids);
-          this->LocalAxesActor->SetOrigin(UGrid->GetPoint(ptids->GetId(0)));
-          vtkPoints *points = vtkPoints::New();
-          points->SetNumberOfPoints(3);
-          points->SetPoint(0, UGrid->GetPoint(ptids->GetId(3)));
-          points->SetPoint(1, UGrid->GetPoint(ptids->GetId(4)));
-          points->SetPoint(2, UGrid->GetPoint(ptids->GetId(1)));
-          this->LocalAxesActor->SetAxesPoints(points);
-          points->Delete();
-          ptids->Delete();
-          this->CurrentRenderer->AddViewProp(this->LocalAxesActor);
-          vtkIntArray *meshseed = vtkIntArray::SafeDownCast(
-                  this->UGrid->GetCellData()->GetArray("Mesh_Seed"));
-          if(meshseed)
-          {
-                  if(this->XMeshSeed && this->YMeshSeed && this->ZMeshSeed && 
-                     this->SelectionTypeWidget->GetWidget()->GetMenu()->GetItemSelectedState(1))
-                  {
-                          int dim[3];
-                        meshseed->GetTupleValue(this->PickedCell, dim);
-                        this->XMeshSeed->GetWidget()->SetValueAsInt(dim[0]-1);
-                        this->YMeshSeed->GetWidget()->SetValueAsInt(dim[1]-1);
-                        this->ZMeshSeed->GetWidget()->SetValueAsInt(dim[2]-1);
-                        this->XMeshSeed->SetEnabled(1);
-                        this->YMeshSeed->SetEnabled(1);
-                        this->ZMeshSeed->SetEnabled(1);
-                  }
-          }
-
+      if(this->LocalAxesActor)
+        {
+        this->CurrentRenderer->RemoveViewProp(this->LocalAxesActor);
+        this->LocalAxesActor->Delete();
+        this->LocalAxesActor = NULL;
         }
-  }
+      this->LocalAxesActor = vtkLocalAxesActor::New();
+      this->LocalAxesActor->SetXAxisLabelText("Rx");
+      this->LocalAxesActor->SetYAxisLabelText("Gy");
+      this->LocalAxesActor->SetZAxisLabelText("Bz");
+      vtkIdList *ptids = vtkIdList::New();
+      this->UGrid->GetCellPoints(this->PickedCell, ptids);
+      this->LocalAxesActor->SetOrigin(UGrid->GetPoint(ptids->GetId(0)));
+      vtkPoints *points = vtkPoints::New();
+      points->SetNumberOfPoints(3);
+      points->SetPoint(0, UGrid->GetPoint(ptids->GetId(3)));
+      points->SetPoint(1, UGrid->GetPoint(ptids->GetId(4)));
+      points->SetPoint(2, UGrid->GetPoint(ptids->GetId(1)));
+      this->LocalAxesActor->SetAxesPoints(points);
+      points->Delete();
+      ptids->Delete();
+      this->CurrentRenderer->AddViewProp(this->LocalAxesActor);
+      vtkIntArray *meshseed = vtkIntArray::SafeDownCast(
+        this->UGrid->GetCellData()->GetArray("Mesh_Seed"));
+      if(meshseed)
+        {
+        if(this->XMeshSeed && this->YMeshSeed && this->ZMeshSeed && 
+           this->SelectionTypeWidget->GetWidget()->GetMenu()->GetItemSelectedState(1))
+          {
+          int dim[3];
+          meshseed->GetTupleValue(this->PickedCell, dim);
+          this->XMeshSeed->GetWidget()->SetValueAsInt(dim[0]-1);
+          this->YMeshSeed->GetWidget()->SetValueAsInt(dim[1]-1);
+          this->ZMeshSeed->GetWidget()->SetValueAsInt(dim[2]-1);
+          this->XMeshSeed->SetEnabled(1);
+          this->YMeshSeed->SetEnabled(1);
+          this->ZMeshSeed->SetEnabled(1);
+          }
+        }
+
+      }
+    }
   else
-  {
+    {
     this->State = vtkMimxPlaceLocalAxesWidget::Outside;
     return;
-  }
+    }
   this->EventCallbackCommand->SetAbortFlag(1);
   this->StartInteraction();
   this->InvokeEvent(vtkCommand::StartInteractionEvent, NULL);
@@ -494,7 +494,7 @@ void vtkMimxPlaceLocalAxesWidget::OnLeftButtonUp()
     }
 
   this->State = vtkMimxPlaceLocalAxesWidget::Start;
- /* this->HighlightCell(this->HighlightHandle(NULL));
+  /* this->HighlightCell(this->HighlightHandle(NULL));
   this->SizeHandles();*/
 
   this->EventCallbackCommand->SetAbortFlag(1);
@@ -728,15 +728,15 @@ int vtkMimxPlaceLocalAxesWidget::GetMeshSeedX()
 {
   int dim[3];
   vtkIntArray *meshseed = vtkIntArray::SafeDownCast(
-                  this->UGrid->GetCellData()->GetArray("Mesh_Seed"));
-        if (meshseed)
-        {
+    this->UGrid->GetCellData()->GetArray("Mesh_Seed"));
+  if (meshseed)
+    {
     meshseed->GetTupleValue(this->PickedCell, dim);
-  }
+    }
   else
-  {
+    {
     dim[0] = dim[1] = dim[2] = 0;
-  }
+    }
   return dim[0];
 }
 
@@ -744,15 +744,15 @@ int vtkMimxPlaceLocalAxesWidget::GetMeshSeedY()
 {
   int dim[3];
   vtkIntArray *meshseed = vtkIntArray::SafeDownCast(
-                  this->UGrid->GetCellData()->GetArray("Mesh_Seed"));
-        if (meshseed)
-        {
+    this->UGrid->GetCellData()->GetArray("Mesh_Seed"));
+  if (meshseed)
+    {
     meshseed->GetTupleValue(this->PickedCell, dim);
-  }
+    }
   else
-  {
+    {
     dim[0] = dim[1] = dim[2] = 0;
-  }
+    }
   return dim[1];
 }
 
@@ -760,29 +760,29 @@ int vtkMimxPlaceLocalAxesWidget::GetMeshSeedZ()
 {
   int dim[3];
   vtkIntArray *meshseed = vtkIntArray::SafeDownCast(
-                  this->UGrid->GetCellData()->GetArray("Mesh_Seed"));
-        if (meshseed)
-        {
+    this->UGrid->GetCellData()->GetArray("Mesh_Seed"));
+  if (meshseed)
+    {
     meshseed->GetTupleValue(this->PickedCell, dim);
-  }
+    }
   else
-  {
+    {
     dim[0] = dim[1] = dim[2] = 0;
-  }
+    }
   return dim[2];
 }
 
 void vtkMimxPlaceLocalAxesWidget::Initialize()
 {
   if(this->UGrid)
-  {
+    {
     // if the input data changes
     this->CellDataSet->SetPoints(this->UGrid->GetPoints());
-        this->CellDataSet->SetCells(12, this->UGrid->GetCells());
-        this->CellActor->Modified();
+    this->CellDataSet->SetCells(12, this->UGrid->GetCells());
+    this->CellActor->Modified();
     this->CellPicker->AddPickList(this->CellActor);
     this->CellPicker->PickFromListOn();
-  }
+    }
 }
 
 void vtkMimxPlaceLocalAxesWidget::OnRightButtonUp()
@@ -794,9 +794,9 @@ void vtkMimxPlaceLocalAxesWidget::PlaceWidget(double bounds[6])
 {
 
 }
-void vtkMimxPlaceLocalAxesWidget::SetInput(vtkDataSet *Input)
+void vtkMimxPlaceLocalAxesWidget::SetInput(vtkDataSet *aInput)
 {
-  this->UGrid = vtkUnstructuredGrid::SafeDownCast(Input);
+  this->UGrid = vtkUnstructuredGrid::SafeDownCast(aInput);
   this->Initialize();
   this->InputActor = NULL;
 }

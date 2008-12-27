@@ -497,33 +497,45 @@ int vtkImageEMLocalSuperClass::GetProbDataIncYandZ(int* ProbDataIncY,int* ProbDa
   return index;
 } 
 //------------------------------------------------------------------------------
-void vtkImageEMLocalSuperClass::GetRegistrationClassSpecificParameterList(int *RegistrationIndependentSubClassFlag, int *RegistrationClassSpecificRegistrationFlag,int &NumParaSets) {
+void vtkImageEMLocalSuperClass::GetRegistrationClassSpecificParameterList(int *aRegistrationIndependentSubClassFlag, int *aRegistrationClassSpecificRegistrationFlag,int &NumParaSets) {
 
-  if (this->RegistrationType != EMSEGMENT_REGISTRATION_CLASS_ONLY) NumParaSets = 1; 
-  else NumParaSets = 0;
-
-  for (int i = 0; i < this->NumClasses; i++) {
-    if  (this->ClassListType[i] == SUPERCLASS) {
-      RegistrationIndependentSubClassFlag[i] = ((vtkImageEMLocalSuperClass*) this->ClassList[i])->GetRegistrationIndependentSubClassFlag();
-      std::cerr << "Registration Indepdent Sub Class Flag  " << i << ": " << ( (RegistrationIndependentSubClassFlag[i] == 1) ? "On" : "Off" ) << endl;
-      RegistrationClassSpecificRegistrationFlag[i] = ((vtkImageEMLocalSuperClass*) this->ClassList[i])->GetRegistrationClassSpecificRegistrationFlag();
-    } else {
-      RegistrationIndependentSubClassFlag[i] = 0;
-      RegistrationClassSpecificRegistrationFlag[i] = ((vtkImageEMLocalClass*) this->ClassList[i])->GetRegistrationClassSpecificRegistrationFlag();
+  if (this->RegistrationType != EMSEGMENT_REGISTRATION_CLASS_ONLY)
+    {
+    NumParaSets = 1; 
     }
+  else
+    {
+    NumParaSets = 0;
+    }
+  for (int i = 0; i < this->NumClasses; i++)
+    {
+    if  (this->ClassListType[i] == SUPERCLASS)
+      {
+      aRegistrationIndependentSubClassFlag[i] = ((vtkImageEMLocalSuperClass*) this->ClassList[i])->GetRegistrationIndependentSubClassFlag();
+      std::cerr << "Registration Indepdent Sub Class Flag  " << i << ": " << ( (aRegistrationIndependentSubClassFlag[i] == 1) ? "On" : "Off" ) << endl;
+      aRegistrationClassSpecificRegistrationFlag[i] = ((vtkImageEMLocalSuperClass*) this->ClassList[i])->GetRegistrationClassSpecificRegistrationFlag();
+    }
+    else
+      {
+      aRegistrationIndependentSubClassFlag[i] = 0;
+      aRegistrationClassSpecificRegistrationFlag[i] = ((vtkImageEMLocalClass*) this->ClassList[i])->GetRegistrationClassSpecificRegistrationFlag();
+      }
     // Only add a new parameter set if the registration includes strucutre specific registration and structure specific registration is activated 
-    if (RegistrationType > EMSEGMENT_REGISTRATION_GLOBAL_ONLY) {
+    if (RegistrationType > EMSEGMENT_REGISTRATION_GLOBAL_ONLY)
+      {
       std::cerr << "Registration Class Specific Registration Flag " << i << ": "  ;
-      if (RegistrationClassSpecificRegistrationFlag[i] && (i || !GenerateBackgroundProbability)) {
-    NumParaSets ++;
-    std::cerr << "On " << endl;
-      } else {
-    std::cerr << "Off " << endl;
+      if (aRegistrationClassSpecificRegistrationFlag[i] && (i || !GenerateBackgroundProbability))
+        {
+        NumParaSets ++;
+        std::cerr << "On " << endl;
+        }
+      else
+        {
+        std::cerr << "Off " << endl;
+        }
       }
     }
-  }
-} 
-
+}
 
 
 //------------------------------------------------------------------------------

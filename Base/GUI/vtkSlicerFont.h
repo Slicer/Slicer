@@ -34,7 +34,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFont : public vtkObject
 
   virtual int IsValidFontFamily(const char *str);
   virtual int GetNumberOfFontFamilies();
-  char *GetFontAsFamily(char *fontstring);
+  const char *GetFontAsFamily(const char *fontstring);
   const char *GetFontFamily(int i)
   {
     return (FontFamilies[i].c_str());

@@ -71,8 +71,8 @@ int vtkMimxSolidTrilinearInterpolation::RequestData(
   output->CopyStructure( input );
 
   if (input == NULL || input->GetPoints() == NULL)
-        {
-        return 1;
+    {
+    return 1;
     }
   numPts = input->GetPoints()->GetNumberOfPoints();
 
@@ -93,60 +93,59 @@ int vtkMimxSolidTrilinearInterpolation::RequestData(
 
   
   // Generate the internal nodes of a solid from the known nodes on each face
-  int count = 0;
   for(int k = 1; k < this->KDiv-1; k++)
     {
-        for(int j=1; j < this->JDiv-1; j++)
-          {
-          for(int i = 1; i < this->IDiv-1; i++)
-                {       
-                double pt[3];        
+    for(int j=1; j < this->JDiv-1; j++)
+      {
+      for(int i = 1; i < this->IDiv-1; i++)
+        {       
+        double pt[3];        
         // Get the Current Point
         points->GetPoint(k*this->JDiv*this->IDiv+j*this->IDiv+i,pt);
-                // cout <<  k*this->JDiv*this->IDiv+j*this->IDiv+i<<endl;    
+        // cout <<  k*this->JDiv*this->IDiv+j*this->IDiv+i<<endl;    
         // Get the I Bounds
         double x0[3], x1[3];
         points->GetPoint(k*this->JDiv*this->IDiv+i,x0);
         points->GetPoint(k*this->JDiv*this->IDiv+ this->IDiv*(this->JDiv-1)+i,x1);
-                // cout <<  k*this->JDiv*this->IDiv+i<<endl;
-                // cout <<  k*this->JDiv*this->IDiv+ this->IDiv*(this->JDiv-1)+i<<endl;
+        // cout <<  k*this->JDiv*this->IDiv+i<<endl;
+        // cout <<  k*this->JDiv*this->IDiv+ this->IDiv*(this->JDiv-1)+i<<endl;
         // Get the J Bounds
         double y0[3], y1[3];
         points->GetPoint(k*this->JDiv*this->IDiv+this->IDiv*j,y0);
         points->GetPoint(k*this->JDiv*this->IDiv+this->IDiv*j+this->IDiv-1,y1);
-                // cout <<  k*this->JDiv*this->IDiv+this->IDiv*j<<endl;
-                // cout <<  k*this->JDiv*this->IDiv+this->IDiv*j+this->IDiv-1<<endl;
+        // cout <<  k*this->JDiv*this->IDiv+this->IDiv*j<<endl;
+        // cout <<  k*this->JDiv*this->IDiv+this->IDiv*j+this->IDiv-1<<endl;
         
         // Get the K Bounds
         double z0[3], z1[3];
         points->GetPoint(j*this->IDiv+i,z0);
         points->GetPoint((this->KDiv-1)*this->JDiv*this->IDiv+j*this->IDiv+i,z1);
-                // cout <<  j*this->IDiv+i<<endl;
-                // cout <<  (this->KDiv-1)*this->JDiv*this->IDiv+j*this->IDiv+i<<endl;        
-                /* 
+        // cout <<  j*this->IDiv+i<<endl;
+        // cout <<  (this->KDiv-1)*this->JDiv*this->IDiv+j*this->IDiv+i<<endl;        
+        /* 
                  * HACK: The code required swapping the following order 
                  * This should be verified with Kiran 
                  */
-                double x[3], y[3], z[3];
-                int m;
-                for (m=0; m <3; m++)
-                {
-                        x[m] = x0[m] + (x1[m] - x0[m])*static_cast<double>(j)/static_cast<double>(this->JDiv-1);
-                }
-                for (m=0; m <3; m++)
-                {
-                        y[m] = y0[m] + (y1[m] - y0[m])*static_cast<double>(i)/static_cast<double>(this->IDiv-1);
-                }
-                for (m=0; m <3; m++)
-                {
-                        z[m] = z0[m] + (z1[m] - z0[m])*static_cast<double>(k)/static_cast<double>(this->KDiv-1);
-                }
+        double x[3], y[3], z[3];
+        int m;
+        for (m=0; m <3; m++)
+          {
+          x[m] = x0[m] + (x1[m] - x0[m])*static_cast<double>(j)/static_cast<double>(this->JDiv-1);
+          }
+        for (m=0; m <3; m++)
+          {
+          y[m] = y0[m] + (y1[m] - y0[m])*static_cast<double>(i)/static_cast<double>(this->IDiv-1);
+          }
+        for (m=0; m <3; m++)
+          {
+          z[m] = z0[m] + (z1[m] - z0[m])*static_cast<double>(k)/static_cast<double>(this->KDiv-1);
+          }
                                 
         double interp[3];
-                for (m =0; m<3; m++)
-                {
-                        interp[m] = (x[m]+y[m]+z[m])/3.0;
-                }
+        for (m =0; m<3; m++)
+          {
+          interp[m] = (x[m]+y[m]+z[m])/3.0;
+          }
         /* Debug Printing
          * std::// cout << "Division " << this->IDiv << " " << this->JDiv << " " << this->KDiv << std::endl;
          * std::// cout << "Index " << k*this->IDiv*this->JDiv+j*this->IDiv+i << std::endl;
@@ -160,9 +159,9 @@ int vtkMimxSolidTrilinearInterpolation::RequestData(
          * std::// cout << "New Point  " << interp[0] << " " << interp[1] << " " << interp[2] << std::endl;
          * std::// cout << "Distance " << distanceI << " " << distanceJ << " " << distanceK << std::endl;
          */
-                points->SetPoint(k*this->IDiv*this->JDiv+j*this->IDiv+i,interp);
-                }
-          }
+        points->SetPoint(k*this->IDiv*this->JDiv+j*this->IDiv+i,interp);
+        }
+      }
     }
 
   output->SetPoints(points);
@@ -176,4 +175,3 @@ void vtkMimxSolidTrilinearInterpolation::PrintSelf(ostream& os, vtkIndent indent
 {
   this->Superclass::PrintSelf(os,indent);
 }
-
