@@ -529,12 +529,12 @@ int vtkMeshQualityExtended::RequestData(
     else
       {
       for ( int i = 0; i < 5; ++i )
- {
-      triAreaTuple[i]  = 0;
-      quadAreaTuple[i] = 0;
-      tetVolTuple[i]   = 0;
-      hexVolTuple[i]   = 0;
-      }
+        {
+        triAreaTuple[i]  = 0;
+        quadAreaTuple[i] = 0;
+        tetVolTuple[i]   = 0;
+        hexVolTuple[i]   = 0;
+        }
       for ( vtkIdType c = 0; c < N; ++c )
         {
         double a, v; // area and volume
@@ -1148,7 +1148,7 @@ double vtkMeshQualityExtended::TriangleAngleOutOfBounds( vtkCell* cell)
   p->GetPoint(1, p1);
   p->GetPoint(2, p2);
 
-  double a[3],b[3],c[3],d[3];
+  double a[3],b[3],c[3];
 
   a[0] = p1[0] - p0[0];
   a[1] = p1[1] - p0[1];
@@ -1177,13 +1177,13 @@ double vtkMeshQualityExtended::TriangleAngleOutOfBounds( vtkCell* cell)
   // for  < 30 or > 90, The Cos 30 = 0.866025404 and Cos 90 = 0 
 
   // corner 0 - by Point 0
-  angle[0] = (vtkMath::Dot(a,d));
+  angle[0] = (vtkMath::Dot(a,c));
   
   // corner 1
-  angle[1] = (vtkMath::Dot(b,c));
+  angle[1] = (vtkMath::Dot(b,a));
   
   // corner 2
-  angle[2] = (vtkMath::Dot(c,d));
+  angle[2] = (vtkMath::Dot(c,b));
   
 
   for (int i=0; i<3; i++) 
