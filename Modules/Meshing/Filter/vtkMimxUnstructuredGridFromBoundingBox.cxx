@@ -93,7 +93,8 @@ int vtkMimxUnstructuredGridFromBoundingBox::RequestData(
   // to store all the morphed structured grids
   vtkCollection *sgridcollection = vtkCollection::New(); 
   // morph all the structured grids and store
-  for (int i=0; i < bbox->GetNumberOfCells(); i++)
+  int i;
+  for (i=0; i < bbox->GetNumberOfCells(); i++)
     {
     sgridcollection->AddItem((vtkObject*)vtkStructuredGrid::New());
 
@@ -150,7 +151,7 @@ int vtkMimxUnstructuredGridFromBoundingBox::RequestData(
       //mergecells->Delete();
       //bboxtosgrid->Delete();
       //***************************************************************************************
-          int dim[3],i, j, m, k;
+          int dim[3], j, m, k;
   int numele = 0;
   int numnode = 0;
   for(i=0; i <sgridcollection->GetNumberOfItems(); i++)
