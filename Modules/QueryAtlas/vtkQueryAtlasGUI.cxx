@@ -1864,8 +1864,8 @@ void vtkQueryAtlasGUI::UpdateScalarOverlayMenu ( )
 void vtkQueryAtlasGUI::DisplayScalarOverlay ( )
 {
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication() );
-  vtkQdecModuleLogic *qLogic;
-  vtkSlicerModelsLogic *mLogic;
+  vtkQdecModuleLogic *qLogic = NULL;
+  vtkSlicerModelsLogic *mLogic = NULL;
   if ( app )
     {
     if ( vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule")) != NULL )

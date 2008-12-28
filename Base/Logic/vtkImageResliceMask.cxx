@@ -420,6 +420,9 @@ int vtkImageResliceMask::RequestUpdateExtent(
       zAxis[i] = matrix->GetElement(i,2);
       origin[i] = matrix->GetElement(i,3);
       }
+    inInvSpacing[0] = 1.0;
+    inInvSpacing[1] = 1.0;
+    inInvSpacing[2] = 1.0;
     }
   else
     {

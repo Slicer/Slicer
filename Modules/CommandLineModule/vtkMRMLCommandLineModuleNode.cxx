@@ -146,7 +146,7 @@ void vtkMRMLCommandLineModuleNode::ReadXMLAttributes(const char** atts)
   std::string moduleVersion;
 
   const char **tatts = atts;
-  const char *attName;
+  const char *attName = NULL;
   const char *attValue;
   while (*tatts)
     {

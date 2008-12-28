@@ -325,12 +325,12 @@ int main(int argc, char* argv[])
     zSlice = -zSlice;
     }
 
-  int nSliceInVolume;
-  int nVolume;
+  int nSliceInVolume = 0;
+  int nVolume = 0;
 
-  float bValue;
+  float bValue = 0.0;
   int nBaseline = 0;
-  int nMeasurement; 
+  int nMeasurement = 0; 
   std::vector< int > idVolume;
   std::vector< vnl_vector_fixed<double, SpaceDim> > DiffusionVectors;
   //

@@ -126,7 +126,7 @@ int main(int argc, char * argv[])
   
     // vtk vars
     vtkITKArchetypeImageSeriesReader* reader = NULL;
-    vtkImageData *image;
+    vtkImageData *image = NULL;
 
     // set up filter watcher
     float numFilterSteps = 2.0;

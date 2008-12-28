@@ -703,8 +703,8 @@ int CountVertsOnMesh( vtkPolyData* poly )
   faces->SetTraversalLocation(0);
   for( int i = 0; i < faces->GetNumberOfCells(); i++ )
     {
-    vtkIdType numpts;
-    vtkIdType* ptsIds;
+    vtkIdType numpts = 0;
+    vtkIdType* ptsIds = NULL;
     //faces->GetCell(i, numpts, ptsIds );
     faces->GetNextCell(numpts, ptsIds );
     for( int k = 0; k < numpts; k++ )

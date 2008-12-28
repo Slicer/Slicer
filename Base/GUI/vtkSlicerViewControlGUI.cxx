@@ -2349,7 +2349,7 @@ void vtkSlicerViewControlGUI::MainViewRotateAround ( const char *axis )
   // vector along which to translate camera
   double q[3];
   // angular offset from axis to rotate around.
-  double theta;
+  double theta = 0.0;
   double dot;
 
   if ( this->ApplicationGUI)

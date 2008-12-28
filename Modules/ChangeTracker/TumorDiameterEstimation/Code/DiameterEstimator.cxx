@@ -377,7 +377,7 @@ ImageType::IndexType FindLargestAreaSliceAlongDirection(ImageType::Pointer image
   double maxArea = 0;
 
   // find pixel area in the direction of interest
-  double pixelArea;
+  double pixelArea = 0.0;
   switch(dir)
     {
     case 0: pixelArea = spacing[1]*spacing[2]; break;

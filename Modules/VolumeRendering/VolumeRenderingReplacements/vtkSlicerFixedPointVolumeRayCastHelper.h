@@ -945,6 +945,7 @@
   T *dptr;                                              \
   unsigned int oldSPos[3];                              \
                                                         \
+  oldSPos[1] = oldSPos[2] = 0;                          \
   oldSPos[0] = (pos[0] >> VTKKW_FP_SHIFT) + 1;          \
                                                         \
   unsigned int w1X, w1Y, w1Z;                           \
@@ -961,6 +962,7 @@
   T *dptr;                                                      \
   unsigned int oldSPos[3];                                      \
                                                                 \
+  oldSPos[1] = oldSPos[2] = 0;                                  \
   oldSPos[0] = (pos[0] >> VTKKW_FP_SHIFT) + 1;                  \
                                                                 \
   unsigned int w1X, w1Y, w1Z;                                   \
@@ -1006,6 +1008,7 @@
   T *dptr;                                              \
   unsigned int oldSPos[3];                              \
                                                         \
+  oldSPos[1] = oldSPos[2] = 0;                          \
   oldSPos[0] = (pos[0] >> VTKKW_FP_SHIFT) + 1;          \
                                                         \
   unsigned int w1X, w1Y, w1Z;                           \
@@ -1039,6 +1042,7 @@
   T *dptr;                                                      \
   unsigned int oldSPos[3];                                      \
                                                                 \
+  oldSPos[1] = oldSPos[2] = 0;                                  \
   oldSPos[0] = (pos[0] >> VTKKW_FP_SHIFT) + 1;                  \
                                                                 \
   unsigned int w1X, w1Y, w1Z;                                   \

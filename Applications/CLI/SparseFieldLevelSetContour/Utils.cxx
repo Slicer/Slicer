@@ -15,7 +15,7 @@
 
 void Crash()
 {
-  void* foo;
+  void* foo = 0;
   free( foo );
 }
 

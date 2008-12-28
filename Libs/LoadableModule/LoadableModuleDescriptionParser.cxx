@@ -29,13 +29,13 @@
  * Utility procedures for strings
  *********************/
 
+/*
 static bool
 startsWithValidVariableChar(std::string &s)
 {
   return (s.find_first_of("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") == 0);
 }
 
-/*
 static bool
 validVariable(std::string &s)
 {

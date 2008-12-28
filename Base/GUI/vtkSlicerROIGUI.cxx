@@ -615,8 +615,8 @@ void vtkSlicerROIGUI::SetGUIFromList(vtkMRMLROIListNode * activeROIListNode)
   int numPoints = activeROIListNode->GetNumberOfROIs();
   bool deleteFlag = true;
   //Used to set the selected cell and update the xyz position scalewidget
-  int CurrentSeletedRow;
-  int CurrentSeletedCol;
+  int CurrentSeletedRow = 0;
+  int CurrentSeletedCol = 0;
   int* LastSeletedRow = new int[1];
   int* LastSeletedCol = new int[1];
   if (numPoints == 1)

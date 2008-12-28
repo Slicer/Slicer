@@ -636,7 +636,7 @@ void vtkSlicerModuleChooseGUI::PopulateModuleSearchMenu ( const char *searchStri
   ModuleSet matchingModuleNames;
 
   const char *mname, *cname;
-  char *uc_mname, *uc_cname;
+  char *uc_mname = NULL, *uc_cname = NULL;
 
   if ( searchString != NULL )
     {

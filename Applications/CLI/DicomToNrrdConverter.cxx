@@ -423,9 +423,9 @@ int main(int argc, char* argv[])
     yCol *= yRes;
     zCol *= yRes;
 
-    int mMosaic;   // number of raws in each mosaic block;
-    int nMosaic;   // number of columns in each mosaic block
-    int nSliceInVolume;
+    int mMosaic = 0;   // number of raws in each mosaic block;
+    int nMosaic = 0;   // number of columns in each mosaic block
+    int nSliceInVolume = 0;
 
     // figure out slice order and mosaic arrangement.
     if ( vendor.find("GE") != std::string::npos ||
@@ -542,7 +542,7 @@ int main(int argc, char* argv[])
 
     orthoSliceSpacing = fabs(zSlice);
 
-    int nVolume;
+    int nVolume = 0;
 
     std::vector<float> bValues(0);
     float maxBvalue = 0;

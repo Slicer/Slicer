@@ -297,6 +297,7 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
 
   seed[0] = m_Seed[0];
   seed[1] = m_Seed[1];
+  pix.Fill(0);
   pix[0]  = m_Seed[0];
   pix[1]  = m_Seed[1];
 

@@ -1514,7 +1514,7 @@ void vtkSlicerFiducialListWidget::UpdateTextActor(vtkMRMLFiducialListNode *flist
     }
       
   vtkVectorText *vtext = vtkVectorText::New();
-  vtkPolyDataMapper *textMapper;
+  vtkPolyDataMapper *textMapper = NULL;
   vtkFollower *textActor;
   if (textActorExists)
     {

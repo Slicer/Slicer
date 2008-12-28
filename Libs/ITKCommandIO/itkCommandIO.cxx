@@ -879,7 +879,7 @@ void CommandIO::Write( const void* buffer)
         if (1 == sscanf(keyField + strlen(field), "[%d]", &axi)
             && axi + baseDim < nrrd->dim)
           {
-          double thickness;  // local for Borland
+          double thickness = 0.0;  // local for Borland
           ExposeMetaData<double>(thisDic, *keyIt, thickness);
           nrrd->axis[axi+baseDim].thickness = thickness;
           }

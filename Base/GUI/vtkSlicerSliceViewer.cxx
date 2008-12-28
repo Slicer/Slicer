@@ -272,7 +272,7 @@ void vtkSlicerSliceViewer::ChangeLayout( int numberRows, int numberColumns )
     float viewportHeight = 1.0/float(numberRows);
 
     // arrange the renderers from top to bottom and left to right
-    vtkCamera *cam;
+    vtkCamera *cam = NULL;
     float xMin, yMin;
     bool first = true;
     for ( int r=0; r<numberRows; r++ )

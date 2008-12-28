@@ -42,7 +42,7 @@ void MeshEnergy::GetNormals2( const vector<int>& C, const vector<double>& phi,
 // note: none of the neighbors of L_z should
 // be more than 2 in absolute value...
     double maxE = val.max();
-    int jMax;
+    int jMax = 0;
     for( ::size_t ii = 0; ii < val.size(); ii++ )
       {
       if (val[ii] == maxE)

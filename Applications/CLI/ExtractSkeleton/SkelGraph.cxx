@@ -366,8 +366,8 @@ void SkelGraph::Extract_max_axis_in_graph()
       //cout << "A " << act_pos_id  << endl;
 
       for (int i = 0; i < 2; i++) {
-        list<int> * cont_end;
-        point * cont_end_point;
+        list<int> * cont_end = NULL;
+        point * cont_end_point = NULL;
         if (i == 0) {
           cont_end = act_node->end_2_neighbors;
           cont_end_point = act_node->end_2_point;
@@ -390,7 +390,7 @@ void SkelGraph::Extract_max_axis_in_graph()
               // update entries of neighbour
               // since act_point->x - pt->x is either [-1,0,1] -> abs == ^2 
               // add distance between branches to length at preceding branch
-              point * cont_neigh_point;
+              point * cont_neigh_point = NULL;
               act_neighbor->acc_length = act_node->acc_length;
               // determine connection costs -> since we do not know which one is the
               // corresponding endpoint of the neighbour, we have to try out and take
