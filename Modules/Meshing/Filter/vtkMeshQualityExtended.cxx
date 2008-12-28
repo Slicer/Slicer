@@ -1248,13 +1248,13 @@ double vtkMeshQualityExtended::QuadAngleOutOfBounds( vtkCell* cell)
   angle[0] = (vtkMath::Dot(a,d));
   
   // corner 1
-  angle[3] = (vtkMath::Dot(b,a));
+  angle[1] = (vtkMath::Dot(b,a));
     
   //corner 2 by point 2 
-  angle[6] = (vtkMath::Dot(c,b));
+  angle[2] = (vtkMath::Dot(c,b));
   
   // corner 3
-  angle[9] = (vtkMath::Dot(d,c));
+  angle[3] = (vtkMath::Dot(d,c));
   
 
   for (int i=0; i<4; i++) 
