@@ -87,10 +87,6 @@ int CountVertsOnMesh( vtkPolyData* poly );
 
 void SmoothCurvature( MeshData* meshdata );
 
-void SmoothGradCurvature( MeshData* meshdata );
-
-void ComputeGradCurvature( MeshData* meshdata );
-
 void ComputeGradCurvatureTangentPlane( MeshData* meshdata );
 
 vector<int> InitPath( MeshData* meshdata, vector<int> pts);

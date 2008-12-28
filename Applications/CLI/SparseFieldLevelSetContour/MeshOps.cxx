@@ -20,9 +20,6 @@ void ComputeCurvatureData( MeshData* meshdata )
   int numverts = verts->GetNumberOfPoints();
 
   meshdata->MeanCurv = valarray<double>( numverts );
-  meshdata->dkdx = valarray<double>( numverts );
-  meshdata->dkdy = valarray<double>( numverts );
-  meshdata->dkdz = valarray<double>( numverts );
   meshdata->dkde2 = valarray<double>( numverts );
   meshdata->dkde1 = valarray<double>( numverts );
   meshdata->nx = valarray<double>( numverts );
@@ -39,11 +36,7 @@ void ComputeCurvatureData( MeshData* meshdata )
 // not be something crazy like +2, -400
 
   SmoothCurvature( meshdata );
-  ComputeGradCurvature( meshdata );
   ComputeGradCurvatureTangentPlane( meshdata );
-  SmoothGradCurvature( meshdata );
-
-
 
 }
 
@@ -69,160 +62,6 @@ void SmoothCurvature( MeshData* meshdata )
       tempK[k] = sumK;
       }
     meshdata->MeanCurv = tempK;
-    }
-  
-}
-
-void SmoothGradCurvature( MeshData* meshdata )
-{
-  std::cout<<"Smoothing gradient of curvature...\n";
-  int iterations = 3;
-  vtkPoints*    verts = meshdata->polydata->GetPoints();
-  int numverts = verts->GetNumberOfPoints();
-  valarray<double> tempx = meshdata->dkdx;
-  valarray<double> tempy = meshdata->dkdy;
-  valarray<double> tempz = meshdata->dkdz;
-  for( int i = 0; i < iterations; i++ )
-    {
-
-    for( int k = 0; k < numverts; k++ )
-      {
-      double sumx = 0.0;
-      double sumy = 0.0;
-      double sumz = 0.0;
-      ::size_t numneigh = meshdata->adjimm[k].myNeighbs.size();
-      for( ::size_t j = 0; j < numneigh; j++ )
-        {
-        int idx = meshdata->adjimm[k].myNeighbs[j];
-        sumx += meshdata->dkdx[idx];
-        sumy += meshdata->dkdy[idx];
-        sumz += meshdata->dkdz[idx];
-        }
-      sumx = sumx / numneigh;
-      sumy = sumy / numneigh;
-      sumz = sumz / numneigh;
-      tempx[k] = sumx;
-      tempy[k] = sumy;
-      tempz[k] = sumz;
-      }
-    meshdata->dkdx = tempx;
-    meshdata->dkdy = tempy;
-    meshdata->dkdz = tempz;
-    }
-}
-
-void ComputeGradCurvature( MeshData* meshdata )
-{
-
-  vtkPoints*    verts = meshdata->polydata->GetPoints();
-  int numverts = verts->GetNumberOfPoints();
-
-  double thispt[3];
-  double thatpt[3];
-
-  int mode = 3;
-
-  if( mode == 1 )
-    {
-    for( int i = 0; i < numverts; i++ )
-      {
-      ::size_t numneigh = meshdata->adjimm[i].myNeighbs.size();
-      verts->GetPoint( i, thispt );
-      double thisH = meshdata->MeanCurv[i];
-      double dx = 0.0;
-      double dy = 0.0;
-      double dz = 0.0;
-      int maxIdx = -1;
-      double maxH = -1e9;
-      double thatH = thisH;
-      for( ::size_t j = 0; j < numneigh; j++ )
-        {
-        int idx = meshdata->adjimm[i].myNeighbs[j];
-//if( idx == i ) continue;
-        verts->GetPoint( idx, thatpt );
-        thatH = meshdata->MeanCurv[idx];
-        if( thatH > maxH )
-          {
-          maxH = thatH;
-          maxIdx = idx;
-          dx = thatpt[0] - thispt[0];
-          dy = thatpt[1] - thispt[1];
-          dz = thatpt[2] - thispt[2];
-          }
-        }
-      double dH = thatH - thisH; // drop the dx ????
-      meshdata->dkdx[i] = dH/dx; // / numneigh;
-      meshdata->dkdy[i] = dH/dy; // / numneigh;
-      meshdata->dkdz[i] = dH/dz; // / numneigh;
-      }
-    }
-  if( mode == 2 )
-    {
-    for( int i = 0; i < numverts; i++ )
-      {
-      ::size_t numneigh = meshdata->adjimm[i].myNeighbs.size();
-      verts->GetPoint( i, thispt );
-      double thisH = meshdata->MeanCurv[i];
-      double dx = 0.0;
-      double dy = 0.0;
-      double dz = 0.0;
-      for( ::size_t j = 0; j < numneigh; j++ )
-        {
-        int idx = meshdata->adjimm[i].myNeighbs[j];
-        if( idx == i )
-          {
-          continue;
-          }
-        verts->GetPoint( idx, thatpt );
-        double thatH = meshdata->MeanCurv[idx];
-        if( abs(thatpt[0]-thispt[0]) > 1e-5  )
-          {
-          dx += (thatH - thisH)/( thatpt[0] - thispt[0] );
-          }
-        if( abs(thatpt[1]-thispt[1]) > 1e-5  )
-          {
-          dy += (thatH - thisH)/( thatpt[1] - thispt[1] );
-          }
-        if( abs(thatpt[2]-thispt[2]) > 1e-5  )
-          {
-          dz += (thatH - thisH)/( thatpt[2] - thispt[2] );
-          }
-        }
-      meshdata->dkdx[i] = dx / numneigh;
-      meshdata->dkdy[i] = dy / numneigh;
-      meshdata->dkdz[i] = dz / numneigh;
-      }
-    }
-  if( mode == 3 )
-    { 
-    for( int i = 0; i < numverts; i++ )
-      {
-      ::size_t numneigh = meshdata->adjimm[i].myNeighbs.size();
-      verts->GetPoint( i, thispt );
-      double thisH = meshdata->MeanCurv[i];
-      double dx = 0.0;
-      double dy = 0.0;
-      double dz = 0.0;
-      double div = 0;
-      for( ::size_t j = 0; j < numneigh; j++ )
-        {
-        int idx = meshdata->adjimm[i].myNeighbs[j];
-        if( idx == i )
-          {
-          continue;
-          }
-        verts->GetPoint( idx, thatpt );
-        double thatH = meshdata->MeanCurv[idx];
-        double thenorm = sqrt( pow( thispt[0] - thatpt[0],2.0 ) + pow( thispt[1] - thatpt[1],2.0 ) + pow( thispt[2] - thatpt[2], 2.0 ) );
-        dx += (thatH - thisH)*( thatpt[0] - thispt[0] ) ;
-        dy += (thatH - thisH)*( thatpt[1] - thispt[1] ) ;
-        dz += (thatH - thisH)*( thatpt[2] - thispt[2] ) ;
-        div += thenorm;
-        }
-      meshdata->dkdx[i] = dx / div;
-      meshdata->dkdy[i] = dy / div;
-      meshdata->dkdz[i] = dz / div;
-      }
     }
   
 }
