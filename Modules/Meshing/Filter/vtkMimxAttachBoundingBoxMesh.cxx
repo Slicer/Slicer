@@ -1010,7 +1010,7 @@ int vtkMimxAttachBoundingBoxMesh::GetClosestContour(
   vtkUnstructuredGrid* BBox, 
   vtkIdList* PointIdList)
 {
-  int closestcontour;
+  int closestcontour = 0;
   double distance;
   double distancemin = 1e10;
   for (int i=0; i < Patch->GetNumberOfContours(); i++)

@@ -90,7 +90,7 @@ int vtkMimxBoundingBoxToStructuredGrids::RequestData(
 //      need to find out how to write a filter with one input and multiple outputs
 //  creation of the output is a temporary arrangement
   vtkIdType npts;
-  vtkIdType *pts;
+  vtkIdType *pts = NULL;
   // travese through all the cells
   input->GetCells()->InitTraversal();
   // traverse through all the structured hexahedral mesh

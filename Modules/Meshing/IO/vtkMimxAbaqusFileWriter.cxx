@@ -394,7 +394,7 @@ void vtkMimxAbaqusFileWriter::WriteElementSets( ostream& os, vtkUnstructuredGrid
     const char *arrayname = stringarray->GetValue(i);
     os << "*ELSET, ELSET=" << arrayname << ", GENERATE" << std::endl;
     // loop through all the nodes in the node set
-    int firstelement, lastelement, currelement;
+    int firstelement = 0, lastelement = 0, currelement = 0;
     if(numberOfElements > 1)
       {
       for (j=0; j<numberOfElements; j++)
@@ -952,7 +952,7 @@ void vtkMimxAbaqusFileWriter::WriteNodeSets(ostream& os, vtkUnstructuredGrid *gr
     const char *arrayname = stringarray->GetValue(i);
     os << "*NSET, NSET=" << arrayname << ", GENERATE" << std::endl;
     // loop through all the nodes in the node set
-    int firstnode, lastnode, currnode;
+    int firstnode = 0, lastnode = 0, currnode = 0;
     if(numberOfNodes > 1)
       {
       for (j=0; j<numberOfNodes; j++)
@@ -1076,7 +1076,7 @@ void vtkMimxAbaqusFileWriter::WriteRepeatingMaterialProperties(
       int numberOfElements = storearray->GetNumberOfIds();
       os << "*ELSET, ELSET=" << ElementSetName<<"_"<< i+1 << ", GENERATE" << std::endl;
       // loop through all the nodes in the node set
-      int firstelement, lastelement, currelement;
+      int firstelement = 0, lastelement = 0, currelement = 0;
       if(numberOfElements > 1)
         {
         for (j=0; j<numberOfElements; j++)

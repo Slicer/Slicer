@@ -454,7 +454,7 @@ void vtkMimxSelectPointsWidget::ComputeSelectedPointIds(
   vtkDataSet *ExtractedUGrid, vtkMimxSelectPointsWidget *self)
 {
   int i;
-  vtkPoints *polypoints;
+  vtkPoints *polypoints = NULL;
   if(ExtractedUGrid->GetDataObjectType() == VTK_POLY_DATA)
     polypoints = vtkPolyData::SafeDownCast(ExtractedUGrid)->GetPoints();
 
@@ -1145,7 +1145,7 @@ void vtkMimxSelectPointsWidget::SetInput(vtkUnstructuredGrid *Ugrid)
 void vtkMimxSelectPointsWidget::UpdateExtractedGlyphDisplay(vtkDataSet *Ugrid, 
                                                             vtkMimxSelectPointsWidget *self)
 {
-  vtkPoints *points;
+  vtkPoints *points = NULL;
   if(Ugrid->GetDataObjectType() == VTK_POLY_DATA)
     points = vtkPolyData::SafeDownCast(Ugrid)->GetPoints();
 
@@ -1186,7 +1186,7 @@ void vtkMimxSelectPointsWidget::ComputeExtractedPointIds(
   vtkDataSet *ExtractedUGrid, vtkMimxSelectPointsWidget *self)
 {
   int i;
-  vtkPoints *polypoints;
+  vtkPoints *polypoints = NULL;
   if(ExtractedUGrid->GetDataObjectType() == VTK_POLY_DATA)
     polypoints = vtkPolyData::SafeDownCast(ExtractedUGrid)->GetPoints();
 

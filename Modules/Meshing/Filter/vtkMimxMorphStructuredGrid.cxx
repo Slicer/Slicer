@@ -1147,7 +1147,7 @@ void vtkMimxMorphStructuredGrid::ProjectVertex(
   double dist,aClosestPoint[3],x[3];
   vtkIdType CellId;
   int SubId;
-  int pointnum;
+  int pointnum = 0;
 
   switch (VertNum)
     {

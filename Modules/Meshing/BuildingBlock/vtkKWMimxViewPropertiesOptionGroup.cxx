@@ -300,7 +300,7 @@ void vtkKWMimxViewPropertiesOptionGroup::DeselectAllButtons()
 //-------------------------------------------------------------------------------
 void vtkKWMimxViewPropertiesOptionGroup::ColorModeCallback(int mode)
 {
-        int RangeType;
+        int RangeType = 0;
         switch (mode)
         {
           case 1: RangeType = vtkMimxMeshActor::RedToBlue; break;

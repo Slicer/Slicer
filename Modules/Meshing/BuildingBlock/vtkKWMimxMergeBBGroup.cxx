@@ -201,8 +201,8 @@ int vtkKWMimxMergeBBGroup::MergeBBApplyCallback()
         vtkMimxErrorCallback *callback = this->GetMimxMainWindow()->GetErrorCallback();
         callback->SetState(0);
 
-        int i, count_value;
-        vtkUnstructuredGrid *singleugrid;       
+        int i, count_value = 0;
+        vtkUnstructuredGrid *singleugrid = NULL;       
         if(MultiColumnList->GetWidget()->GetNumberOfRows() > 0)
         {
                 int count = 0;

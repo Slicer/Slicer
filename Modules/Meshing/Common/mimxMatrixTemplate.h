@@ -209,9 +209,9 @@ T& CMatrix<T>::operator= (const CMatrix& matarg)
 template <class T>
 void CMatrix<T>::ErrorHandler (int nErrorCode, int nR, int nC) const
 {
-        int errorLevel = FATAL;
 
 #if _DEBUG
+        int errorLevel = FATAL;
         errorLevel = NOTFATAL;
         switch (nErrorCode)
         {
@@ -231,8 +231,8 @@ void CMatrix<T>::ErrorHandler (int nErrorCode, int nR, int nC) const
                         cerr << "Matrix::Incompatible matrices.\n";
                 break;
         }
-#endif
         assert (errorLevel == NOTFATAL);
+#endif
 }
 
 

@@ -117,8 +117,8 @@ void vtkMimxGenerateHexahedronMesh::ProjectVertices(vtkPolyData *polydata)
 // function to generate rectilinear mesh, there are duplicate nodes at the common faces
 void vtkMimxGenerateHexahedronMesh::GenerateRectilinearHexahedronMesh()
 {
-  vtkIdType npts;
-  vtkIdType *pts;
+  vtkIdType npts = 0;
+  vtkIdType *pts = NULL;
   // travese through all the cells
   this->GetInput()->GetCells()->InitTraversal();
   // traverse through all the structured hexahedral mesh
@@ -202,7 +202,7 @@ void vtkMimxGenerateHexahedronMesh::MorphRectilinearHexahedronMesh(vtkPolyData* 
   vtkGeometryFilter *geofil = vtkGeometryFilter::New();
   geofil->SetInput(this->GetInput());
   geofil->Update();
-  vtkIdList *idlist ;//= vtkIdList::New();
+  vtkIdList *idlist = NULL;//= vtkIdList::New();
   vtkIdList *idlistedge = vtkIdList::New();
   idlistedge->SetNumberOfIds(12);
   vtkIdList *idlistface = vtkIdList::New();
@@ -1011,7 +1011,7 @@ void vtkMimxGenerateHexahedronMesh::BuildMeshSeedLinks()
       currpar->PeerNext = NULL;
       currpar->Parent = NULL;
       currpar->Child = NULL;
-      Node *currchild;
+      Node *currchild = NULL;
       Node *currparpar = currpar;
       Node *currpeerprev;
       if(neigh_cell_list->GetNumberOfIds() !=0)

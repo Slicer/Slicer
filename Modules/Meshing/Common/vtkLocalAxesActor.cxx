@@ -213,7 +213,7 @@ void vtkLocalAxesActor::ShallowCopy(vtkProp *prop)
   vtkLocalAxesActor *a = vtkLocalAxesActor::SafeDownCast(prop);
 
   if ( a != NULL )
-  {
+    {
     this->SetAxisLabels( a->GetAxisLabels() );
     this->SetXAxisLabelText( a->GetXAxisLabelText() );
     this->SetYAxisLabelText( a->GetYAxisLabelText() );
@@ -228,7 +228,7 @@ void vtkLocalAxesActor::ShallowCopy(vtkProp *prop)
     this->SetShaftType( a->GetShaftType() );
     this->SetUserDefinedTip( a->GetUserDefinedTip() );
     this->SetUserDefinedShaft( a->GetUserDefinedShaft() );
-  }
+    }
   
   // Now do superclass
   this->vtkProp3D::ShallowCopy(prop);
@@ -276,8 +276,6 @@ int vtkLocalAxesActor::RenderOpaqueGeometry(vtkViewport *vp)
 
 }
 
-
-
 int vtkLocalAxesActor::RenderTranslucentGeometry(vtkViewport *vp)
 {
 
@@ -288,16 +286,14 @@ int vtkLocalAxesActor::RenderTranslucentGeometry(vtkViewport *vp)
   return renderedSomething;
 }
 
-
-
 int vtkLocalAxesActor::RenderOverlay(vtkViewport *vp)
 {
   int renderedSomething = 0;
 
   if ( !this->AxisLabels )
-  {
+    {
     return renderedSomething;
-  }
+    }
 
   this->UpdateProps();
 
@@ -308,8 +304,6 @@ int vtkLocalAxesActor::RenderOverlay(vtkViewport *vp)
   renderedSomething = (renderedSomething > 0)?(1):(0);
   return renderedSomething;
 }
-
-
 
 void vtkLocalAxesActor::ReleaseGraphicsResources(vtkWindow *win)
 
@@ -328,8 +322,6 @@ void vtkLocalAxesActor::ReleaseGraphicsResources(vtkWindow *win)
   this->ZAxisLabel->ReleaseGraphicsResources( win );
 }
 
-
-
 void vtkLocalAxesActor::GetBounds(double bounds[6])
 {
   double *bds = this->GetBounds();
@@ -341,8 +333,6 @@ void vtkLocalAxesActor::GetBounds(double bounds[6])
   bounds[5] = bds[5];
 }
 
-
-
 // Get the bounds for this Actor as (Xmin,Xmax,Ymin,Ymax,Zmin,Zmax).
 double *vtkLocalAxesActor::GetBounds()
 {
@@ -350,175 +340,91 @@ double *vtkLocalAxesActor::GetBounds()
   int i;
 
   this->XAxisShaft->GetBounds(this->Bounds);
- // this->X
+  // this->X
 
   this->YAxisShaft->GetBounds(bounds);
   for (i=0; i<3; i++)
     {
-
     this->Bounds[2*i+1] =
-
       (bounds[2*i+1]>this->Bounds[2*i+1])?(bounds[2*i+1]):(this->Bounds[2*i+1]);
-
     }
-
-
 
   this->ZAxisShaft->GetBounds(bounds);
-
   for (i=0; i<3; i++)
-
     {
-
     this->Bounds[2*i+1] = 
-
       (bounds[2*i+1]>this->Bounds[2*i+1])?(bounds[2*i+1]):(this->Bounds[2*i+1]);    
-
     }
-
-
 
   this->XAxisTip->GetBounds(bounds);
-
   for (i=0; i<3; i++)
-
     {
-
     this->Bounds[2*i+1] = 
-
       (bounds[2*i+1]>this->Bounds[2*i+1])?(bounds[2*i+1]):(this->Bounds[2*i+1]);    
-
     }
-
-
 
   this->YAxisTip->GetBounds(bounds);
-
   for (i=0; i<3; i++)
-
     {
-
     this->Bounds[2*i+1] = 
-
       (bounds[2*i+1]>this->Bounds[2*i+1])?(bounds[2*i+1]):(this->Bounds[2*i+1]);    
-
     }
-
-
 
   this->ZAxisTip->GetBounds(bounds);
-
   for (i=0; i<3; i++)
-
     {
-
     this->Bounds[2*i+1] = 
-
       (bounds[2*i+1]>this->Bounds[2*i+1])?(bounds[2*i+1]):(this->Bounds[2*i+1]);    
-
     }
 
-
-
   double dbounds[6];
-
   (vtkPolyDataMapper::SafeDownCast(this->YAxisShaft->GetMapper()))->
-
     GetInput()->GetBounds( dbounds );
 
-  
-
   for (i=0; i<3; i++)
-
     {
-
     this->Bounds[2*i+1] = 
-
       (dbounds[2*i+1]>this->Bounds[2*i+1])?(dbounds[2*i+1]):(this->Bounds[2*i+1]);    
-
     }
 
   return this->Bounds;
-
 }
-
-
 
 unsigned long int vtkLocalAxesActor::GetMTime()
-
 {
-
   unsigned long mTime = this->Superclass::GetMTime();
-
   return mTime;
-
 }
-
-
 
 unsigned long int vtkLocalAxesActor::GetRedrawMTime()
-
 {
-
   unsigned long mTime = this->GetMTime();
-
   return mTime;
-
 }
-
-
 
 void vtkLocalAxesActor::SetShaftType( int type )
-
 {
-
   if ( this->ShaftType != type )
-
     {
-
     if (type < vtkLocalAxesActor::CYLINDER_SHAFT || \
-
         type > vtkLocalAxesActor::USER_DEFINED_SHAFT)
-
       {
-
       vtkErrorMacro( "Undefined axes shaft type." );
-
       return;
-
       }
-
-
 
     if ( type == vtkLocalAxesActor::USER_DEFINED_SHAFT && \
-
          this->UserDefinedShaft == NULL)
-
       {
-
       vtkErrorMacro( "Set the user defined shaft before changing the type." );
-
       return;
-
       }
 
-
-
     this->ShaftType = type;
-
-
-
     this->Modified();
-
-
-
     this->UpdateProps();
-
     }
-
 }
-
-
 
 void vtkLocalAxesActor::SetTipType( int type )
 
@@ -604,31 +510,31 @@ void vtkLocalAxesActor::UpdateProps()
 
 
 
-      (vtkPolyDataMapper::SafeDownCast(this->XAxisShaft->GetMapper()))->
+  (vtkPolyDataMapper::SafeDownCast(this->XAxisShaft->GetMapper()))->
 
-        SetInput( this->XLineSource->GetOutput() );
+    SetInput( this->XLineSource->GetOutput() );
 
-          (vtkPolyDataMapper::SafeDownCast(this->YAxisShaft->GetMapper()))->
+  (vtkPolyDataMapper::SafeDownCast(this->YAxisShaft->GetMapper()))->
 
-                  SetInput( this->YLineSource->GetOutput() );
+    SetInput( this->YLineSource->GetOutput() );
 
-          (vtkPolyDataMapper::SafeDownCast(this->ZAxisShaft->GetMapper()))->
+  (vtkPolyDataMapper::SafeDownCast(this->ZAxisShaft->GetMapper()))->
 
-                  SetInput( this->ZLineSource->GetOutput() );
+    SetInput( this->ZLineSource->GetOutput() );
 
 
 
-      (vtkPolyDataMapper::SafeDownCast(this->XAxisTip->GetMapper()))->
+  (vtkPolyDataMapper::SafeDownCast(this->XAxisTip->GetMapper()))->
 
-        SetInput( this->XConeSource->GetOutput() );
+    SetInput( this->XConeSource->GetOutput() );
 
-          (vtkPolyDataMapper::SafeDownCast(this->YAxisTip->GetMapper()))->
+  (vtkPolyDataMapper::SafeDownCast(this->YAxisTip->GetMapper()))->
 
-                  SetInput( this->YConeSource->GetOutput() );
+    SetInput( this->YConeSource->GetOutput() );
 
-          (vtkPolyDataMapper::SafeDownCast(this->ZAxisTip->GetMapper()))->
+  (vtkPolyDataMapper::SafeDownCast(this->ZAxisTip->GetMapper()))->
 
-                  SetInput( this->ZConeSource->GetOutput() );
+    SetInput( this->ZConeSource->GetOutput() );
 
  
 
@@ -808,7 +714,7 @@ void vtkLocalAxesActor::SetAxesPoints(vtkPoints *axespoints)
 
 {
 
-        this->AxesPoints->Initialize();
+  this->AxesPoints->Initialize();
 
 /*      this->AxesPoints->SetNumberOfPoints(3);
 
@@ -820,169 +726,169 @@ void vtkLocalAxesActor::SetAxesPoints(vtkPoints *axespoints)
 
         }*/
 
-        this->AxesPoints->DeepCopy(axespoints);
+  this->AxesPoints->DeepCopy(axespoints);
 
-        // compute parameters for the cylinder, cone and sphere.
+  // compute parameters for the cylinder, cone and sphere.
 
-        // computation will be on the shortest length of the 3 given
+  // computation will be on the shortest length of the 3 given
 
-        // axes.
+  // axes.
 
-        double length;
+  double length = 0.0;
 
-        for(int i = 0; i < 3; i++)
+  for(int i = 0; i < 3; i++)
+
+    {
+
+
+
+    if(i==0)        length = vtkMath::Distance2BetweenPoints(
+
+      this->GetOrigin(), this->AxesPoints->GetPoint(i));
+
+    else
+
+      {
+
+      if(length > vtkMath::Distance2BetweenPoints(
+
+           this->GetOrigin(), this->AxesPoints->GetPoint(i)))
 
         {
 
+        length = vtkMath::Distance2BetweenPoints(
 
-
-                if(i==0)        length = vtkMath::Distance2BetweenPoints(
-
-                        this->GetOrigin(), this->AxesPoints->GetPoint(i));
-
-                else
-
-                {
-
-                        if(length > vtkMath::Distance2BetweenPoints(
-
-                                this->GetOrigin(), this->AxesPoints->GetPoint(i)))
-
-                        {
-
-                                length = vtkMath::Distance2BetweenPoints(
-
-                                        this->GetOrigin(), this->AxesPoints->GetPoint(i));
-
-                        }
-
-                }
+          this->GetOrigin(), this->AxesPoints->GetPoint(i));
 
         }
 
-        length = sqrt(length);
+      }
 
+    }
 
+  length = sqrt(length);
 
-        this->CylinderRadius = 0.1*length;
 
-        this->ConeRadius = 0.05*length;
 
-        this->SphereRadius = 0.2*length;
+  this->CylinderRadius = 0.1*length;
 
+  this->ConeRadius = 0.05*length;
 
+  this->SphereRadius = 0.2*length;
 
-        // this->ConeSource->SetDirection( 0, 1, 0 );
 
-        // this->ConeSource->SetHeight( 1.0 );
 
-        this->XLineSource->SetPoint1(this->GetOrigin());
+  // this->ConeSource->SetDirection( 0, 1, 0 );
 
-        this->YLineSource->SetPoint1(this->GetOrigin());
+  // this->ConeSource->SetHeight( 1.0 );
 
-        this->ZLineSource->SetPoint1(this->GetOrigin());
+  this->XLineSource->SetPoint1(this->GetOrigin());
 
+  this->YLineSource->SetPoint1(this->GetOrigin());
 
+  this->ZLineSource->SetPoint1(this->GetOrigin());
 
-        this->XLineSource->SetPoint2(
 
-                this->AxesPoints->GetPoint(0));
 
-        this->YLineSource->SetPoint2(
+  this->XLineSource->SetPoint2(
 
-                this->AxesPoints->GetPoint(1));
+    this->AxesPoints->GetPoint(0));
 
-        this->ZLineSource->SetPoint2(
+  this->YLineSource->SetPoint2(
 
-                this->AxesPoints->GetPoint(2));
+    this->AxesPoints->GetPoint(1));
 
+  this->ZLineSource->SetPoint2(
 
+    this->AxesPoints->GetPoint(2));
 
-        this->XConeSource->SetCenter(
 
-                this->AxesPoints->GetPoint(0));
 
-        this->YConeSource->SetCenter(
+  this->XConeSource->SetCenter(
 
-                this->AxesPoints->GetPoint(1));
+    this->AxesPoints->GetPoint(0));
 
-        this->ZConeSource->SetCenter(
+  this->YConeSource->SetCenter(
 
-                this->AxesPoints->GetPoint(2));
+    this->AxesPoints->GetPoint(1));
 
+  this->ZConeSource->SetCenter(
 
+    this->AxesPoints->GetPoint(2));
 
-        this->XConeSource->SetHeight(0.3*length);
 
-        this->YConeSource->SetHeight(0.3*length);
 
-        this->ZConeSource->SetHeight(0.3*length);
+  this->XConeSource->SetHeight(0.3*length);
 
+  this->YConeSource->SetHeight(0.3*length);
 
+  this->ZConeSource->SetHeight(0.3*length);
 
-        double pt1[3], pt2[3];
 
-        double distance1, distance2, distance3;
 
-        this->GetOrigin(pt1);
+  double pt1[3], pt2[3];
 
-        this->AxesPoints->GetPoint(0,pt2);
+  double distance1, distance2, distance3;
 
-        distance1 = sqrt(vtkMath::Distance2BetweenPoints(pt1,pt2));
+  this->GetOrigin(pt1);
 
-        this->XConeSource->SetDirection((pt2[0]-pt1[0])/
+  this->AxesPoints->GetPoint(0,pt2);
 
-                distance1, (pt2[1]-pt1[1])/distance1, (pt2[2]-pt1[2])/distance1);
+  distance1 = sqrt(vtkMath::Distance2BetweenPoints(pt1,pt2));
 
+  this->XConeSource->SetDirection((pt2[0]-pt1[0])/
 
+                                  distance1, (pt2[1]-pt1[1])/distance1, (pt2[2]-pt1[2])/distance1);
 
-        this->XAxisLabel->SetAttachmentPoint( pt2[0]+0.4*length*(pt2[0]-pt1[0])/
 
-                distance1, pt2[1]+0.4*length*(pt2[1]-pt1[1])/
 
-                distance1,pt2[2]+0.4*length*(pt2[2]-pt1[2])/distance1);
+  this->XAxisLabel->SetAttachmentPoint( pt2[0]+0.4*length*(pt2[0]-pt1[0])/
 
+                                        distance1, pt2[1]+0.4*length*(pt2[1]-pt1[1])/
 
+                                        distance1,pt2[2]+0.4*length*(pt2[2]-pt1[2])/distance1);
 
-        this->AxesPoints->GetPoint(1,pt2);
 
-        distance2 = sqrt(vtkMath::Distance2BetweenPoints(pt1,pt2));
 
-        this->YConeSource->SetDirection((pt2[0]-pt1[0])/
+  this->AxesPoints->GetPoint(1,pt2);
 
-                distance2, (pt2[1]-pt1[1])/distance2, (pt2[2]-pt1[2])/distance2);
+  distance2 = sqrt(vtkMath::Distance2BetweenPoints(pt1,pt2));
 
+  this->YConeSource->SetDirection((pt2[0]-pt1[0])/
 
+                                  distance2, (pt2[1]-pt1[1])/distance2, (pt2[2]-pt1[2])/distance2);
 
-        this->YAxisLabel->SetAttachmentPoint( pt2[0]+0.4*length*(pt2[0]-pt1[0])/
 
-                distance2, pt2[1]+0.4*length*(pt2[1]-pt1[1])/
 
-                distance2,pt2[2]+0.4*length*(pt2[2]-pt1[2])/distance2);
+  this->YAxisLabel->SetAttachmentPoint( pt2[0]+0.4*length*(pt2[0]-pt1[0])/
 
+                                        distance2, pt2[1]+0.4*length*(pt2[1]-pt1[1])/
 
+                                        distance2,pt2[2]+0.4*length*(pt2[2]-pt1[2])/distance2);
 
-        this->AxesPoints->GetPoint(2,pt2);
 
-        distance3 = sqrt(vtkMath::Distance2BetweenPoints(pt1,pt2));
 
-        this->ZConeSource->SetDirection((pt2[0]-pt1[0])/
+  this->AxesPoints->GetPoint(2,pt2);
 
-                distance3, (pt2[1]-pt1[1])/distance3, (pt2[2]-pt1[2])/distance3);
+  distance3 = sqrt(vtkMath::Distance2BetweenPoints(pt1,pt2));
 
-        this->ZAxisLabel->SetAttachmentPoint( pt2[0]+0.4*length*(pt2[0]-pt1[0])/
+  this->ZConeSource->SetDirection((pt2[0]-pt1[0])/
 
-                distance3, pt2[1]+0.4*length*(pt2[1]-pt1[1])/
+                                  distance3, (pt2[1]-pt1[1])/distance3, (pt2[2]-pt1[2])/distance3);
 
-                distance3,pt2[2]+0.4*length*(pt2[2]-pt1[2])/distance3);
+  this->ZAxisLabel->SetAttachmentPoint( pt2[0]+0.4*length*(pt2[0]-pt1[0])/
 
-        this->XAxisLabel->GetCaptionTextProperty()->SetFontSize(8);
-        this->XAxisLabel->GetCaptionTextProperty()->SetColor(1,0,0);
+                                        distance3, pt2[1]+0.4*length*(pt2[1]-pt1[1])/
 
-        this->YAxisLabel->GetCaptionTextProperty()->SetFontSize(static_cast<int>(0.05*length));
-        this->YAxisLabel->GetCaptionTextProperty()->SetColor(0,1,0);
+                                        distance3,pt2[2]+0.4*length*(pt2[2]-pt1[2])/distance3);
 
-        this->ZAxisLabel->GetCaptionTextProperty()->SetFontSize(static_cast<int>(0.075*length));
-        this->ZAxisLabel->GetCaptionTextProperty()->SetColor(0,0,1);
+  this->XAxisLabel->GetCaptionTextProperty()->SetFontSize(8);
+  this->XAxisLabel->GetCaptionTextProperty()->SetColor(1,0,0);
+
+  this->YAxisLabel->GetCaptionTextProperty()->SetFontSize(static_cast<int>(0.05*length));
+  this->YAxisLabel->GetCaptionTextProperty()->SetColor(0,1,0);
+
+  this->ZAxisLabel->GetCaptionTextProperty()->SetFontSize(static_cast<int>(0.075*length));
+  this->ZAxisLabel->GetCaptionTextProperty()->SetColor(0,0,1);
 }
 

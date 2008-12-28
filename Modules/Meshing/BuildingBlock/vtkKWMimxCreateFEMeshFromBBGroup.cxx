@@ -571,8 +571,8 @@ int vtkKWMimxCreateFEMeshFromBBGroup::CreateFEMeshFromBBApplyCallback()
   int surfaceIndex = -1;
   int meshIndex = -1;
   
-  const char *surfacefoundationname;
-  const char *meshfoundationname;
+  const char *surfacefoundationname = "";
+  const char *meshfoundationname = "";
   if ( strcmp(this->TypeMenuButton->GetValue(), "Building Block" ) == 0)
   { 
     if(!strcmp(this->SurfaceListComboBox->GetWidget()->GetValue(),""))

@@ -336,7 +336,7 @@ void vtkKWMimxViewProperties::UpdateVisibilityList()
 void vtkKWMimxViewProperties::DeleteObjectList(int DataType, int Position)
 {
         // match the position from one list to the other
-        int i, currpos;
+        int i, currpos = 0;
         int poscount = 0;
 
         for(i=0; i< this->ObjectList->GetNumberOfItems(); i++)

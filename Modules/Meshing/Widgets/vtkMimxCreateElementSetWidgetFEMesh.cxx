@@ -1267,7 +1267,7 @@ int vtkMimxCreateElementSetWidgetFEMesh::ComputeOriginalCellNumber(
 
   //      if ((PtIds->GetNumberOfIds() == 8) /*|| (PtIds->GetNumberOfIds() == 4)*/)
 
-  int numPtIds;
+  int numPtIds = 0;
   switch (this->MeshType)
     {
     case VTK_HEXAHEDRON: numPtIds = 8; break;

@@ -154,7 +154,7 @@ void vtkMimxUnstructuredGridActor::BuildMeshSeedLinks()
       currpar->PeerNext = NULL;
       currpar->Parent = NULL;
       currpar->Child = NULL;
-      Node *currchild;
+      Node *currchild = NULL;
       Node *currparpar = currpar;
       Node *currpeerprev;
       if(neigh_cell_list->GetNumberOfIds() !=0)

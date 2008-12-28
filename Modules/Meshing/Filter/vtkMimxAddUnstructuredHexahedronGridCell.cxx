@@ -180,7 +180,7 @@ int vtkMimxAddUnstructuredHexahedronGridCell::RequestData(
   idlistnew->SetNumberOfIds(8);
   // copy the meshseed values for the newly created mesh
   vtkIntArray *meshseedarray = NULL;
-  vtkIntArray *inputmeshseed;
+  vtkIntArray *inputmeshseed = NULL;
   if(input->GetCellData()->GetArray("Mesh_Seed"))
     {
     meshseedarray = vtkIntArray::New();
