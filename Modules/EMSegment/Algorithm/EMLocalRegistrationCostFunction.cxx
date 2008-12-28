@@ -410,7 +410,7 @@ inline void EMLocalRegistrationCostFunction::CostFunction_Sum_WeightxProbability
   char* ROI_ProbData_MAP      = (this->ROI_ProbData ?  this->ROI_ProbData->MAP : NULL); 
  
   // Function Specific Variables 
-  double SubClassAlignedProbability;
+  double SubClassAlignedProbability = 0.0;
   double SumOverAlignedProbData; 
   double SumOverWeightsAndAlignedProbData;
 
@@ -419,9 +419,9 @@ inline void EMLocalRegistrationCostFunction::CostFunction_Sum_WeightxProbability
   int    NumOfWeightsGreaterZero;
   int ClassIndex;
 
-  float targetX;
-  float targetY;
-  float targetZ;
+  float targetX = 0.0;
+  float targetY = 0.0;
+  float targetZ = 0.0;
  
   double VoxelResult;
   // -----------------------------------------------------------
