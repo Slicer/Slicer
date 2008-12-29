@@ -1278,7 +1278,7 @@ double vtkMeshQualityExtended::QuadAngleOutOfBounds( vtkCell* cell)
 double vtkMeshQualityExtended::TetAngleOutOfBounds( vtkCell* cell)
 {
   double p0[3],p1[3],p2[3],p3[3];
-  double angle[8];
+  double angle[9];
 
   vtkPoints *p = cell->GetPoints();
   p->GetPoint(0, p0);
