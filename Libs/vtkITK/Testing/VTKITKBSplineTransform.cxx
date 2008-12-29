@@ -70,8 +70,10 @@ int main( int, char** )
     typedef itkBSplineType::ParametersType ParametersType;
     ParametersType parameters( numberOfParameters );
 
+#ifndef NDEBUG
     const unsigned int numberOfNodes = numberOfParameters / 3;
     assert( numberOfNodes == 7 * 8 * 7 );
+#endif
 
     std::cout << " number of parameters = " << numberOfParameters << std::endl;
 
