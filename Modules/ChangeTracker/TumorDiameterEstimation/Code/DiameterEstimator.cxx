@@ -339,7 +339,7 @@ ImageType::IndexType FindLargestAreaSlice(ImageType::Pointer image)
 
 double FindMaskVolume(ImageType::Pointer image)
 {
-  double volume;
+  double volume = 0.0;
   ImageType::SpacingType spacing = image->GetSpacing();
 
   IteratorType it(image, image->GetLargestPossibleRegion());
