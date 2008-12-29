@@ -111,7 +111,9 @@ inline void EMLocalShapeCostFunction_CalculateCostFunction(EMLocalShapeCostFunct
   // }
 
 
+#ifndef NDEBUG
   int ROI_MaxZ = Shape->GetROI_MaxZ();
+#endif
   int ROI_MaxY = Shape->GetROI_MaxY();
   int ROI_MaxX = Shape->GetROI_MaxX();
   vtkNotUsed(int ROI_MinZ = Shape->GetROI_MinZ(););
