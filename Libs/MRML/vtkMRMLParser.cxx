@@ -52,7 +52,7 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
       std::stringstream ss(attValue);
       std::string kwd = "";
       std::string val = "";
-      unsigned int i;
+      std::string::size_type i;
       while (!ss.eof())
         {
         std::string tags;
@@ -60,7 +60,7 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
         //--- now pull apart individual tags
         if ( tags.c_str() != NULL )
           {
-          i = (unsigned int)tags.find("=");
+          i = tags.find("=");
           if ( i != std::string::npos)
             {
             kwd = tags.substr(0, i);

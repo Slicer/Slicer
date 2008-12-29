@@ -15,6 +15,7 @@ public:
     step = 1;
     verbose = 0;
   };
+  virtual ~GradientDescent(){};
 
   void Minimize(vnl_cost_function &f, const vnl_vector<double> &xStart){
     double currentf = 0;

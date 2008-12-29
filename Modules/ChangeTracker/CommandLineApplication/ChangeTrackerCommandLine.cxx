@@ -85,7 +85,7 @@ class tgCMDLineStructure {
     this->interp = init;
   } 
 
-  ~tgCMDLineStructure() {
+  virtual ~tgCMDLineStructure() {
     if (this->Scan1Data) {
       Scan1Data->Delete();
       this->Scan1Data = NULL;

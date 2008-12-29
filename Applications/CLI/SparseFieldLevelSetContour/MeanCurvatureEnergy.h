@@ -20,7 +20,7 @@ class MeanCurvatureEnergy : public MeshEnergy
 {
 public:
 MeanCurvatureEnergy( MeshData* data ) {meshdata = data;}
-~MeanCurvatureEnergy( ) {}
+virtual ~MeanCurvatureEnergy( ) {}
 
 double eval_energy( const vector<int>& C );
 valarray<double> getforce( const vector<int>& C);

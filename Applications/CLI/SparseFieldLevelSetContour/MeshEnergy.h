@@ -21,7 +21,7 @@ class MeshEnergy
 public:
 MeshEnergy() { }
 MeshEnergy( const MeshEnergy & );
-~MeshEnergy() { }
+virtual ~MeshEnergy() { }
 // evaluate energy at every point indexed by C
 virtual double eval_energy( const vector<int>& C ) = 0;
 

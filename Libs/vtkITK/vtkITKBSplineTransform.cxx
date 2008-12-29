@@ -8,6 +8,7 @@ class vtkITKBSplineTransformHelper
 public:
   typedef itk::Array<double> ParametersType;
   typedef vtkITKBSplineTransform::BulkTransformType BulkTransformType;
+  virtual ~vtkITKBSplineTransformHelper() {};
   virtual unsigned GetOrder() const = 0;
   virtual unsigned int GetNumberOfParameters() const = 0;
   virtual void SetParameters( ParametersType const& ) = 0;

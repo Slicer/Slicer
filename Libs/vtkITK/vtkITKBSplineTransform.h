@@ -123,7 +123,7 @@ public:
 
 protected:
   vtkITKBSplineTransform();
-  ~vtkITKBSplineTransform();
+  virtual ~vtkITKBSplineTransform();
 
   void ForwardTransformPoint( const float in[3], float out[3] );
   void ForwardTransformPoint( const double in[3], double out[3] );

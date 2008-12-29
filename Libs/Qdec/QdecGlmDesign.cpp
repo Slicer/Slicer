@@ -845,7 +845,7 @@ int QdecGlmDesign::GenerateContrasts ( )
       if (contrast.size() != nreg )
         {
         fprintf(stderr,
-                "ERROR: QdecGlmDesign::GenerateContrasts: contrast size %d != %d\n", contrast.size(), nreg);
+                "ERROR: QdecGlmDesign::GenerateContrasts: contrast size %lu != %d\n", (unsigned long) contrast.size(), nreg);
         return -1;
         }
       int a = 2*nthvar;
@@ -889,7 +889,7 @@ int QdecGlmDesign::GenerateContrasts ( )
       if (contrast.size() != nreg )
         {
         fprintf(stderr,
-                "ERROR: QdecGlmDesign::GenerateContrasts: contrast size %d != %d\n", contrast.size(), nreg);
+                "ERROR: QdecGlmDesign::GenerateContrasts: contrast size %lu != %d\n", (unsigned long) contrast.size(), nreg);
         return -1;
         }
 
@@ -963,7 +963,7 @@ int QdecGlmDesign::GenerateContrasts ( )
       if (contrast.size() != nreg )
         {
         fprintf(stderr,
-                "ERROR: QdecGlmDesign::GenerateContrasts: contrast size %d != %d\n", contrast.size(), nreg);
+                "ERROR: QdecGlmDesign::GenerateContrasts: contrast size %lu != %d\n", (unsigned long) contrast.size(), nreg);
         return -1;
         }
       int a = 4*nthvar;
@@ -1005,7 +1005,7 @@ int QdecGlmDesign::GenerateContrasts ( )
       if (contrast.size() != nreg )
         {
         fprintf(stderr,
-                "ERROR: QdecGlmDesign::GenerateContrasts: contrast size %d != %d\n", contrast.size(), nreg);
+                "ERROR: QdecGlmDesign::GenerateContrasts: contrast size %lu != %d\n", (unsigned long) contrast.size(), nreg);
         return -1;
         }
       int a = 4*nthvar;
@@ -1049,7 +1049,7 @@ int QdecGlmDesign::GenerateContrasts ( )
       if (contrast.size() != nreg )
         {
         fprintf(stderr,
-                "ERROR: QdecGlmDesign::GenerateContrasts: contrast size %d != %d\n", contrast.size(), nreg);
+                "ERROR: QdecGlmDesign::GenerateContrasts: contrast size %lu != %d\n", (unsigned long) contrast.size(), nreg);
         return -1;
         }
       int a = 4*nthvar;
@@ -1093,7 +1093,7 @@ int QdecGlmDesign::GenerateContrasts ( )
       if (contrast.size() != nreg )
         {
         fprintf(stderr,
-                "ERROR: QdecGlmDesign::GenerateContrasts: contrast size %d != %d\n", contrast.size(), nreg);
+                "ERROR: QdecGlmDesign::GenerateContrasts: contrast size %lu != %d\n", (unsigned long) contrast.size(), nreg);
         return -1;
         }
       int a = 4*nthvar;
