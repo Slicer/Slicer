@@ -11,7 +11,7 @@
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 ==========================================================================*/
-#include "../../../Slicer3-build/Applications/CLI/SparseFieldLevelSetContour/SparseFieldLevelSetContourCLP.h"
+#include "SparseFieldLevelSetContourCLP.h"
 #include <iostream>
 #include <vector>
 #include "vtkPolyDataReader.h"
