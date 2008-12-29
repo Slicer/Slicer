@@ -656,7 +656,11 @@ double FindMaxDiameterTuple(ImageType2D::Pointer slice,
   
   // Find all distance combinations, excluding duplicates
   double maxDist = 0;
-  Point2DPair maxDiameterPair;
+
+  Point2D zeroPoint;
+  zeroPoint.Fill(0.0);
+
+  Point2DPair maxDiameterPair = Point2DPair(zeroPoint,zeroPoint);
   for(i=0;i<numBoundaryPts;i++)
     {
     for(j=i+1;j<numBoundaryPts;j++)
@@ -726,7 +730,11 @@ double FindMaxDiameterTupleThruPoint(ImageType2D::Pointer slice,
 
   // Find all distance combinations, excluding duplicates
   double maxDist = 0;
-  Point2DPair maxDiameterPair;
+
+  Point2D zeroPoint;
+  zeroPoint.Fill(0.0);
+
+  Point2DPair maxDiameterPair = Point2DPair(zeroPoint,zeroPoint);
   for(i=0;i<numBoundaryPts;i++)
     {
     for(j=i+1;j<numBoundaryPts;j++)
