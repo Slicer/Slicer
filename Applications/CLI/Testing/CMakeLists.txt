@@ -367,4 +367,356 @@ add_dependencies(${CLP}Test ${CLP}Lib)
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test ITKIO)
 
+##################################
+# AffineRegistration tests
+add_test(AffineRegistrationTest ${Slicer3_EXE} --launch AffineRegistrationTest
+  AffineRegistrationTest  --help
+  )
 
+set (CLP AffineRegistration)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKNumerics ITKIO)
+
+##################################
+# ConfidenceConnected tests
+add_test(ConfidenceConnectedTest ${Slicer3_EXE} --launch ConfidenceConnectedTest
+  ConfidenceConnectedTest --help
+  )
+
+set (CLP ConfidenceConnected)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO)
+
+##################################
+# CurvatureAnisotropicDiffusion tests
+add_test(CurvatureAnisotropicDiffusionTest ${Slicer3_EXE} --launch CurvatureAnisotropicDiffusionTest
+  CurvatureAnisotropicDiffusionTest  --help
+  )
+
+set (CLP CurvatureAnisotropicDiffusion)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO)
+
+##################################
+# DicomToNrrdConverter tests
+add_test(DicomToNrrdConverterTest ${Slicer3_EXE} --launch DicomToNrrdConverterTest
+  DicomToNrrdConverterTest --help
+  )
+
+set (CLP DicomToNrrdConverter)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO)
+
+##################################
+# DiffusionTensorEstimation tests
+add_test(DiffusionTensorEstimationTest ${Slicer3_EXE} --launch DiffusionTensorEstimationTest
+  DiffusionTensorEstimationTest --help
+  )
+
+set (CLP DiffusionTensorEstimation)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries (${CLP}Test ITKBasicFilters MRML vtkTeem SlicerBaseLogic)
+include_directories(
+  ${vtkITK_SOURCE_DIR} 
+  ${vtkITK_BINARY_DIR} 
+  ${MRML_SOURCE_DIR} ${MRML_BINARY_DIR} 
+  ${vtkTeem_SOURCE_DIR}  ${vtkTeem_BINARY_DIR})
+
+##################################
+# DiffusionTensorMathematics tests
+add_test(DiffusionTensorMathematicsTest ${Slicer3_EXE} --launch DiffusionTensorMathematicsTest
+  DiffusionTensorMathematicsTest --help
+  )
+
+set (CLP DiffusionTensorMathematics)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries (${CLP}Test ITKBasicFilters MRML vtkTeem SlicerBaseLogic)
+
+##################################
+# DiffusionTensorTest tests
+add_test(DiffusionTensorTest ${Slicer3_EXE} --launch DiffusionTensorTest
+  DiffusionTensorTest --help
+  )
+
+set (CLP DiffusionTensorTest)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO)
+
+##################################
+# DiffusionWeightedTest tests
+add_test(DiffusionWeightedTestTest ${Slicer3_EXE} --launch DiffusionWeightedTestTest
+  DiffusionWeightedTestTest --help
+  )
+
+set (CLP DiffusionWeightedTest)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO)
+
+##################################
+# DWIDicomLoad tests
+add_test(DWIDicomLoadTest ${Slicer3_EXE} --launch DWIDicomLoadTest
+  DWIDicomLoadTest --help
+  )
+
+set (CLP DWIDicomLoad)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO)
+
+##################################
+# ExecutionModelTour tests
+add_test(ExecutionModelTourTest ${Slicer3_EXE} --launch ExecutionModelTourTest
+  ExecutionModelTourTest --help
+  )
+
+set (CLP ExecutionModelTour)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO ITKBasicFilters MRML)
+
+##################################
+# FreesurferSurfaceSectionExtraction tests
+add_test(FreesurferSurfaceSectionExtractionTest ${Slicer3_EXE} --launch FreesurferSurfaceSectionExtractionTest
+  FreesurferSurfaceSectionExtractionTest --help
+  )
+
+set (CLP FreesurferSurfaceSectionExtraction)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO)
+
+##################################
+# GradientAnisotropicDiffusion tests
+add_test(GradientAnisotropicDiffusionTest ${Slicer3_EXE} --launch GradientAnisotropicDiffusionTest
+  GradientAnisotropicDiffusionTest --help
+  )
+
+set (CLP GradientAnisotropicDiffusion)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO)
+
+##################################
+# GrayscaleFillHoleImageFilter tests
+add_test(GrayscaleFillHoleImageFilterTest ${Slicer3_EXE} --launch GrayscaleFillHoleImageFilterTest
+  GrayscaleFillHoleImageFilterTest --help
+  )
+
+set (CLP GrayscaleFillHoleImageFilter)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO)
+
+##################################
+# GrayscaleGrindPeakImageFilter tests
+add_test(GrayscaleGrindPeakImageFilterTest ${Slicer3_EXE} --launch GrayscaleGrindPeakImageFilterTest
+  GrayscaleGrindPeakImageFilterTest --help
+  )
+
+set (CLP GrayscaleGrindPeakImageFilter)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO)
+
+##################################
+# GrayscaleModelMaker tests
+add_test(GrayscaleModelMakerTest ${Slicer3_EXE} --launch GrayscaleModelMakerTest
+  GrayscaleModelMakerTest --help
+  )
+
+set (CLP GrayscaleModelMaker)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test
+  vtkITK vtkImaging vtkGraphics vtkIO
+  ITKIO
+  ModuleDescriptionParser
+  SlicerBaseCLI
+)
+
+##################################
+# HistogramMatching tests
+add_test(HistogramMatchingTest ${Slicer3_EXE} --launch HistogramMatchingTest
+  HistogramMatchingTest --help
+  )
+
+set (CLP HistogramMatching)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO ITKBasicFilters ITKStatistics)
+
+##################################
+# ImageLabelCombine tests
+add_test(ImageLabelCombineTest ${Slicer3_EXE} --launch ImageLabelCombineTest
+  ImageLabelCombineTest --help
+  )
+
+set (CLP ImageLabelCombine)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test  vtkITK vtkImaging vtkGraphics vtkIO vtkTeem)
+
+##################################
+# ImageReadDicomWrite tests
+add_test(ImageReadDicomWriteTest ${Slicer3_EXE} --launch ImageReadDicomWriteTest
+  ImageReadDicomWriteTest --help
+  )
+
+set (CLP ImageReadDicomWrite)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO ITKBasicFilters)
+
+##################################
+# LabelMapSmoothing tests
+add_test(LabelMapSmoothingTest ${Slicer3_EXE} --launch LabelMapSmoothingTest
+  LabelMapSmoothingTest --help
+  )
+
+set (CLP LabelMapSmoothing)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO ITKAlgorithms ITKBasicFilters)
+
+##################################
+# ModelMaker tests
+add_test(ModelMakerTest ${Slicer3_EXE} --launch ModelMakerTest
+  ModelMakerTest --help
+  )
+
+set (CLP ModelMaker)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test
+  vtkITK vtkImaging vtkGraphics vtkIO
+  ITKIO
+  ModuleDescriptionParser
+  MRML
+  SlicerBaseLogic
+  SlicerBaseCLI
+  )
+
+##################################
+# MultipleModelsExample tests
+add_test(MultipleModelsExampleTest ${Slicer3_EXE} --launch MultipleModelsExampleTest
+  MultipleModelsExampleTest --help
+  )
+
+set (CLP MultipleModelsExample)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test
+  vtkITK vtkImaging vtkGraphics vtkIO
+  ITKIO
+  ModuleDescriptionParser
+  MRML
+  SlicerBaseLogic
+  SlicerBaseCLI
+  )
+
+##################################
+# OtsuThresholdImageFilter tests
+add_test(OtsuThresholdImageFilterTest ${Slicer3_EXE} --launch OtsuThresholdImageFilterTest
+  OtsuThresholdImageFilterTest --help
+  )
+
+set (CLP OtsuThresholdImageFilter)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO ITKBasicFilters)
+
+##################################
+# OtsuThresholdSegmentation tests
+add_test(OtsuThresholdSegmentationTest ${Slicer3_EXE} --launch OtsuThresholdSegmentationTest
+  OtsuThresholdSegmentationTest --help
+)
+
+set (CLP OtsuThresholdSegmentation)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO ITKBasicFilters)
+
+##################################
+# ProbeVolumeWithModel tests
+add_test(ProbeVolumeWithModelTest ${Slicer3_EXE} --launch ProbeVolumeWithModelTest
+  ProbeVolumeWithModelTest --help
+  )
+
+set (CLP ProbeVolumeWithModel)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test  ITKBasicFilters MRML vtkTeem)
+
+##################################
+# ResampleVolume2 tests
+add_test(ResampleVolume2Test ${Slicer3_EXE} --launch ResampleVolume2Test
+  ResampleVolume2Test --help
+  )
+
+set (CLP ResampleVolume2)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test  ITKIO ITKBasicFilters)
+
+##################################
+# ResampleVolume tests
+add_test(ResampleVolumeTest ${Slicer3_EXE} --launch ResampleVolumeTest
+  ResampleVolumeTest --help
+  )
+
+set (CLP ResampleVolume)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO)
+
+##################################
+# RigidRegistration tests
+add_test(RigidRegistrationTest ${Slicer3_EXE} --launch RigidRegistrationTest
+  RigidRegistrationTest --help
+  )
+
+set (CLP RigidRegistration)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO)
+
+##################################
+# Subtract tests
+add_test(SubtractTest ${Slicer3_EXE} --launch SubtractTest
+  SubtractTest --help
+  )
+
+set (CLP Subtract)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test  ITKIO ITKBasicFilters)
+
+##################################
+# VotingBinaryHoleFillingImageFilter tests
+add_test(VotingBinaryHoleFillingImageFilterTest ${Slicer3_EXE} --launch VotingBinaryHoleFillingImageFilterTest
+  VotingBinaryHoleFillingImageFilterTest --help
+  )
+
+set (CLP VotingBinaryHoleFillingImageFilter)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO ITKBasicFilters)
+
+##################################
+# ZeroCrossingBasedEdgeDetectionImageFilter tests
+add_test(ZeroCrossingBasedEdgeDetectionImageFilterTest ${Slicer3_EXE} --launch ZeroCrossingBasedEdgeDetectionImageFilterTest
+  ZeroCrossingBasedEdgeDetectionImageFilterTest --help
+  )
+
+set (CLP ZeroCrossingBasedEdgeDetectionImageFilter)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO ITKBasicFilters)
