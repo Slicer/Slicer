@@ -758,7 +758,10 @@ vtkImageData*  vtkChangeTrackerLogic::GetAnalysis_Intensity_ROIBinDisplay() {
 
 void vtkChangeTrackerLogic::MeassureGrowth(double &Shrinkage, double &Growth) {
    if (this->ChangeTrackerNode) {
-     this->MeassureGrowth(this->ChangeTrackerNode->GetSegmentThresholdMin(),this->ChangeTrackerNode->GetSegmentThresholdMax(),Shrinkage,Growth); 
+   this->MeassureGrowth(
+     static_cast<int>(this->ChangeTrackerNode->GetSegmentThresholdMin()),
+     static_cast<int>(this->ChangeTrackerNode->GetSegmentThresholdMax()),
+     Shrinkage, Growth); 
    }  else {
      cout << "Error: vtkChangeTrackerLogic::MeassureGrowth: No ChangeTrackerNode defined" << endl;
    }

@@ -700,7 +700,7 @@ void vtkKWMimxEditBBMeshSeedGroup::ShowMeshSeedCallback(int State)
                 this->ColorCodeMeshSeedActor = vtkMimxColorCodeMeshSeedActor::New();
                 this->ColorCodeMeshSeedActor->SetLabelTextColor( this->GetMimxMainWindow()->GetTextColor() );
                 this->ColorCodeMeshSeedActor->SetLineWidth(
-                        ugridactor->GetActor()->GetProperty()->GetLineWidth()*2.0);
+                  ugridactor->GetActor()->GetProperty()->GetLineWidth()*2);
                 this->ColorCodeMeshSeedActor->SetInput(ugrid);
                 this->GetMimxMainWindow()->GetRenderWidget()->
                         AddViewProp(this->ColorCodeMeshSeedActor->GetMeshSeedActor());

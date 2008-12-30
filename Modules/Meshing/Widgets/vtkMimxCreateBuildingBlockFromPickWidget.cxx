@@ -374,14 +374,14 @@ void vtkMimxCreateBuildingBlockFromPickWidget::CrtlLeftButtonUpCallback(vtkAbstr
     
     if (self->PickX0 > self->PickX1)
     {
-      double tmp;
+      vtkIdType tmp;
       tmp = self->PickX0;
       self->PickX0 = self->PickX1;
       self->PickX1 = tmp;
     }
     if (self->PickY0 < self->PickY1)
     {
-      double tmp;
+      vtkIdType tmp;
       tmp = self->PickY0;
       self->PickY0 = self->PickY1;
       self->PickY1 = tmp;

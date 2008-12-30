@@ -873,7 +873,7 @@ double vtkKWMimxDefineElSetGroup::GetExtrusionLength()
 //-------------------------------------------------------------------------------------------
 int vtkKWMimxDefineElSetGroup::GetNumberOfDivisions()
 {
-        int numdivisions = 0.0;
+        int numdivisions = 0;
         if(this->NumberOfDivisionsEntry)
         {
                 numdivisions = this->NumberOfDivisionsEntry->GetWidget()->GetValueAsInt();

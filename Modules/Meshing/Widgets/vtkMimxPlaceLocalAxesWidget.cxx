@@ -419,8 +419,8 @@ void vtkMimxPlaceLocalAxesWidget::OnLeftButtonDown()
       vtkIntArray *intarray = vtkIntArray::New();
       intarray->SetNumberOfValues(this->CellDataSet->GetNumberOfCells());
       this->CellDataSet->GetCellData()->SetScalars(intarray);
-      for(int i=0; i < this->CellDataSet->GetNumberOfCells(); i++)  intarray->SetValue(i,0.0);
-      intarray->SetValue(this->PickedCell,1.0);
+      for(int i=0; i < this->CellDataSet->GetNumberOfCells(); i++)  intarray->SetValue(i,0);
+      intarray->SetValue(this->PickedCell,1);
       intarray->Delete();
       vtkLookupTable *lut = vtkLookupTable::New();
       lut->SetNumberOfColors(2);

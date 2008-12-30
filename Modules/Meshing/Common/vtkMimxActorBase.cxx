@@ -84,7 +84,7 @@ void vtkMimxActorBase::SetObjectName(const char* aFileName, vtkIdType &Count)
   strcat(tempbuffer, "_");
   strcat(tempbuffer, aFileName);
   char buffer[10];
-  sprintf(buffer, "%d", Count);
+  sprintf(buffer, "%ld", (long) Count);
   strcat(tempbuffer, buffer);
   strcpy(this->FileName, tempbuffer);
 }

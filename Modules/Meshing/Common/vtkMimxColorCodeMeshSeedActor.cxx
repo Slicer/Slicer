@@ -47,7 +47,7 @@ vtkMimxColorCodeMeshSeedActor::vtkMimxColorCodeMeshSeedActor()
   this->Input = NULL;
   this->MeshSeedActor = NULL;
   this->ScalarBarActor = NULL;
-  this->LineWidth = 1.0; 
+  this->LineWidth = 1; 
   TextColor[0] = TextColor[1] = TextColor[2] = 1.0;
 }
 

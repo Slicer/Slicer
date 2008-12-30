@@ -151,8 +151,8 @@ void vtkLabelStatisticsLogic::Apply()
       entry.Label = i;
       entry.Count = stat1->GetVoxelCount();
       entry.Volume = entry.Count * cubicMMPerVoxel;
-      entry.Min = (int)(stat1->GetMin())[0];
-      entry.Max = (int)(stat1->GetMax())[0];
+      entry.Min = static_cast<int>((stat1->GetMin())[0]);
+      entry.Max = static_cast<int>((stat1->GetMax())[0]);
       entry.Mean = (stat1->GetMean())[0];
       entry.StdDev = (stat1->GetStandardDeviation())[0];
       
