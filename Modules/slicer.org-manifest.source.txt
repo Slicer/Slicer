@@ -1,2 +1,0 @@
-http://viewvc.slicer.org/viewcvs.cgi/trunk/Utilities/BuildSystem/Modules/TestModule1/TestModule1.xml?view=co source Test Module 1
-http://viewvc.slicer.org/viewcvs.cgi/trunk/Utilities/BuildSystem/Modules/TestModule2/TestModule2.xml?view=co source Test Module 2
