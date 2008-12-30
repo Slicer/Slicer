@@ -728,7 +728,7 @@ template< class PixelType > int Rotate( parameters list )
 }
 
 
-int main( int argc , const char * argv[] )
+int main( int argc , char * argv[] )
 {
   PARSE_ARGS ;
   parameters list ;
