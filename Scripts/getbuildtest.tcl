@@ -44,6 +44,7 @@ proc Usage { {msg ""} } {
     set msg "$msg\n   --verbose : optional, print out lots of stuff, for debugging"
     set msg "$msg\n   --rpm : optional, specify CPack RPM generator for packaging"
     set msg "$msg\n   --deb : optional, specify CPack DEB generator for packaging"
+    set msg "$msg\n   -e --extend : optional, build external modules using the extend script"
     puts stderr $msg
 }
 
@@ -62,6 +63,7 @@ set ::GETBUILDTEST(verbose) "false"
 set ::GETBUILDTEST(buildList) ""
 set ::GETBUILDTEST(cpack-generator) ""
 set ::GETBUILDTEST(rpm-spec) ""
+set ::GETBUILDTEST(extend) "false"
 
 set strippedargs ""
 set argc [llength $argv]
@@ -144,6 +146,10 @@ for {set i 0} {$i < $argc} {incr i} {
         }
         "--deb" {
             set ::GETBUILDTEST(cpack-generator) "DEB"
+        }
+        "--extend" -
+        "-e" {
+            set ::GETBUILDTEST(extend) "true"
         }
         "--help" -
         "-h" {
@@ -519,11 +525,12 @@ if {$::GETBUILDTEST(upload) == "true"} {
     } else {
         puts "See http://www.na-mic.org/Slicer/Download, in the $::GETBUILDTEST(uploadFlag) directory, for the uploaded file."
     }
-
-    #else {
-    #    if {$::GETBUILDTEST(verbose)} {
-    #    puts "Not uploading $scpfile"
-    #    }
-    #}
-
 }
+
+if { $::GETBUILDTEST(extend) == "true" } {
+  # build the slicer3 extensions
+  cd $::Slicer3_HOME
+  set cmd "sh ./Scripts/extend.tcl"
+  eval runcmd $cmd
+}
+
