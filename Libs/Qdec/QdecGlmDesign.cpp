@@ -785,7 +785,7 @@ int QdecGlmDesign::GenerateContrasts ( )
       if (contrast.size() != nreg )
         {
         fprintf(stderr,
-                "ERROR: QdecGlmDesign::GenerateContrasts: contrast size %d != %d\n", contrast.size(), nreg);
+                "ERROR: QdecGlmDesign::GenerateContrasts: contrast size %lu != %d\n", (unsigned long) contrast.size(), nreg);
         return -1;
         }
       contrast[nthc] = 1;
