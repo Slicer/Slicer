@@ -57,7 +57,6 @@ vtkMRMLNode* vtkMRMLColorTableNode::CreateNodeInstance()
 vtkMRMLColorTableNode::vtkMRMLColorTableNode()
 {
 
-  this->Name = NULL;
   this->SetName("");
   this->LookupTable = NULL;
   this->LastAddedColor = -1;
