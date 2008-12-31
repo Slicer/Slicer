@@ -5,10 +5,10 @@
 
 class vtkSlicerModulesWizardDialog;
 class vtkKWRadioButtonSet;
-class vtkKWLabel;
+class vtkKWLabelWithLabel;
 class vtkKWLoadSaveButtonWithLabel;
 class vtkKWCheckButton;
-class vtkKWSpinBoxWithLabel;
+class vtkKWComboBoxWithLabel;
 
 class vtkSlicerModulesConfigurationStep : public vtkKWWizardStep
 {
@@ -45,12 +45,11 @@ protected:
   ~vtkSlicerModulesConfigurationStep();
 
   vtkSlicerModulesWizardDialog *WizardDialog;
-  vtkKWLabel *Icon;
-  vtkKWLabel *Label;
+  vtkKWLabelWithLabel *Header;
   vtkKWRadioButtonSet *ActionRadioButtonSet;
   vtkKWLoadSaveButtonWithLabel *CacheDirectoryButton;
   vtkKWCheckButton *TrashButton;
-  vtkKWSpinBoxWithLabel *SearchLocationBox;
+  vtkKWComboBoxWithLabel *SearchLocationBox;
 
 private:
   vtkSlicerModulesConfigurationStep(const vtkSlicerModulesConfigurationStep&); // Not implemented.
