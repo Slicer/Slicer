@@ -734,6 +734,12 @@ void vtkSlicerApplicationSettingsInterface::Create()
 
   // --------------------------------------------------------------
   // Color file paths
+  vtkKWLabel *colorFilePathsLabel = vtkKWLabel::New();
+  colorFilePathsLabel->SetParent(moduleScrollFrame->GetFrame());
+  colorFilePathsLabel->Create();
+  colorFilePathsLabel->SetText("User defined color file paths:");
+  tk_cmd << "pack " << colorFilePathsLabel->GetWidgetName() << " -side top -anchor w -expand no -fill x  -padx 2 -pady 2" << endl;
+  
   if (!this->ColorFilePathsPresetSelector)
     {
     this->ColorFilePathsPresetSelector = vtkKWDirectoryPresetSelector::New();
@@ -763,6 +769,7 @@ void vtkSlicerApplicationSettingsInterface::Create()
          << "  -side top -anchor w -expand no -fill x -padx 2 -pady 2" << endl;
 
 
+  colorFilePathsLabel->Delete();
   moduleScrollFrame->Delete();
   
   // --------------------------------------------------------------
