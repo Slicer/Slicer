@@ -547,9 +547,9 @@ void vtkSlicerColorLogic::FindColorFiles()
     vtkDebugMacro("\nFindColorFiles: got user color file paths = " << this->UserColorFilePaths);
     // parse out the list, breaking at delimiter strings
 #ifdef WIN32
-    char *delim = ";";
+    const char *delim = ";";
 #else
-    char *delim = ":";
+    const char *delim = ":";
 #endif
     char *ptr = strtok(this->UserColorFilePaths, delim);
     while (ptr != NULL)
