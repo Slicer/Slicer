@@ -95,10 +95,19 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerColorLogic : public vtkSlicerLogic
   void FindColorFiles();
 
   // Description:
+  // Add a file to the ColorFiles list, checking first for null, duplicates
+  void AddColorFile(const char *fileName);
+  
+  // Description:
   // load in a color file and add the name to the names list, creating a
   // storage node
   vtkMRMLColorNode * LoadColorFile(const char *fileName);
-  
+
+  // Description:
+  // Get/Set the user defined paths where to look for extra colour files
+  vtkGetStringMacro(UserColorFilePaths);
+  vtkSetStringMacro(UserColorFilePaths);
+
 protected:
   vtkSlicerColorLogic();
   ~vtkSlicerColorLogic();
@@ -112,6 +121,11 @@ protected:
   //BTX
   std::vector<std::string> ColorFiles;
   //ETX
+  // Description:
+  // a string holding delimiter separated (; on win32, : else) paths where to
+  // look for extra colour files, set from the return value of
+  // vtkSlicerApplication::GetColorFilePaths
+  char *UserColorFilePaths;
 };
 
 #endif

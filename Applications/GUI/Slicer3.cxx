@@ -1154,12 +1154,11 @@ int Slicer3_main(int argc, char *argv[])
       events->Delete();
           
       events = gui->NewObservableEvents();
-      gui->SetAndObserveMRMLSceneEvents(scene, events);
-      if (events)
+      if (events != NULL)
         {
+        gui->SetAndObserveMRMLSceneEvents(scene, events);
         events->Delete();
         }
-
       logic->SetApplicationLogic(appLogic);
       logic->SetModuleLocation(desc.GetLocation().c_str());
 
@@ -1257,6 +1256,9 @@ int Slicer3_main(int argc, char *argv[])
   colorEvents->InsertNextValue( vtkMRMLScene::SceneCloseEvent );
   colorLogic->SetAndObserveMRMLSceneEvents ( scene,  colorEvents);
   colorEvents->Delete();
+  // set the user defined color paths, it will be used by the add default
+  // color nodes call
+  colorLogic->SetUserColorFilePaths(slicerApp->GetColorFilePaths());
   // this should be triggered somehow by a new scene event, but for now,
   // call it explicitly
   colorLogic->AddDefaultColorNodes();

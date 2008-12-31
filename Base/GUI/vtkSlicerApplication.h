@@ -95,7 +95,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   //BTX
   static const char *ConfirmDeleteRegKey;
   static const char *ModulePathsRegKey;
+  static const char *ColorFilePathsRegKey;
   static const char *PotentialModulePathsRegKey;
+  static const char *PotentialColorFilePathsRegKey;
   static const char *ModuleCachePathRegKey;
   static const char *TemporaryDirectoryRegKey;
   static const char *WebBrowserRegKey;
@@ -161,6 +163,14 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // actually be "d:/foo/bar").
   void SetPotentialModulePaths(const char *paths);
   const char* GetPotentialModulePaths() const;
+
+  // Description:
+  // Set/Get the potential search paths for color files
+  // based on SetPotentialModulePaths
+  void SetColorFilePaths(const char *paths);
+  const char *GetColorFilePaths() const;
+  void SetPotentialColorFilePaths(const char *paths);
+  const char* GetPotentialColorFilePaths() const;
 
   // Description:
   // Set/Get the cache path for modules.
@@ -368,7 +378,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
 
   char ConfirmDelete[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char ModulePaths[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  char ColorFilePaths[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char PotentialModulePaths[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  char PotentialColorFilePaths[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char ModuleCachePath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char WebBrowser [vtkKWRegistryHelper::RegistryKeyValueSizeMax ];
   char Unzip [vtkKWRegistryHelper::RegistryKeyValueSizeMax ];
@@ -403,6 +415,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   int RemoteCacheLimit;
   int RemoteCacheFreeBufferSize;
 
+
+  // Description:
+  // print out local vars
+  void PrintSelf ( ostream& os, vtkIndent indent );
   
 private:
   vtkSlicerApplication ( const vtkSlicerApplication& ); // Not implemented.

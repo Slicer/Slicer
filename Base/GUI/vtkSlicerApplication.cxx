@@ -56,6 +56,8 @@
 
 const char *vtkSlicerApplication::ModulePathsRegKey = "ModulePaths";
 const char *vtkSlicerApplication::PotentialModulePathsRegKey = "PotentialModulePaths";
+const char *vtkSlicerApplication::ColorFilePathsRegKey = "ColorFilePaths";
+const char *vtkSlicerApplication::PotentialColorFilePathsRegKey = "PotentialColorFilePaths";
 const char *vtkSlicerApplication::ModuleCachePathRegKey = "ModuleCachePath";
 const char *vtkSlicerApplication::TemporaryDirectoryRegKey = "TemporaryDirectory";
 const char *vtkSlicerApplication::WebBrowserRegKey = "WebBrowser";
@@ -212,6 +214,8 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     
     strcpy(this->ModulePaths, "");
     strcpy(this->PotentialModulePaths, "");
+    strcpy(this->ColorFilePaths, "");
+    strcpy(this->PotentialColorFilePaths, "");
     strcpy(this->ModuleCachePath, "");
     strcpy ( this->HomeModule, "");
     this->LoadCommandLineModules = 1;
@@ -631,6 +635,14 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
     }
 
   if (this->HasRegistryValue(
+    2, "RunTime", vtkSlicerApplication::PotentialColorFilePathsRegKey))
+    {
+    this->GetRegistryValue(
+      2, "RunTime", vtkSlicerApplication::PotentialColorFilePathsRegKey,
+      this->PotentialColorFilePaths);
+    }
+
+  if (this->HasRegistryValue(
     2, "RunTime", vtkSlicerApplication::ModulePathsRegKey))
     {
     this->GetRegistryValue(
@@ -638,6 +650,15 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
       temp_reg_value);
     // Use SetModulePaths so that PotentialModulePaths is updated too
     this->SetModulePaths(temp_reg_value); 
+    }
+  if (this->HasRegistryValue(
+    2, "RunTime", vtkSlicerApplication::ColorFilePathsRegKey))
+    {
+    this->GetRegistryValue(
+      2, "RunTime", vtkSlicerApplication::ColorFilePathsRegKey,
+      temp_reg_value);
+    // Use SetColorFilePaths so that PotentialColorFilePaths is updated too
+    this->SetColorFilePaths(temp_reg_value); 
     }
 
   if (this->HasRegistryValue(
@@ -859,8 +880,16 @@ void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
     this->PotentialModulePaths);
 
   this->SetRegistryValue(
+    2, "RunTime", vtkSlicerApplication::PotentialColorFilePathsRegKey, "%s", 
+    this->PotentialColorFilePaths);
+
+  this->SetRegistryValue(
     2, "RunTime", vtkSlicerApplication::ModulePathsRegKey, "%s", 
     this->ModulePaths);
+
+  this->SetRegistryValue(
+    2, "RunTime", vtkSlicerApplication::ColorFilePathsRegKey, "%s", 
+    this->ColorFilePaths);
 
   this->SetRegistryValue(
     2, "RunTime", vtkSlicerApplication::ModuleCachePathRegKey, "%s", 
@@ -1098,6 +1127,71 @@ void vtkSlicerApplication::SetPotentialModulePaths(const char* paths)
 const char* vtkSlicerApplication::GetPotentialModulePaths() const
 {
   return this->PotentialModulePaths;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::SetColorFilePaths(const char* paths)
+{
+#if WIN32
+  const char delim = ';';
+#else
+  const char delim = ':';
+#endif
+  if (paths)
+    {
+    if (strcmp(this->ColorFilePaths, paths) != 0
+        && strlen(paths) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
+      {
+      strcpy(this->ColorFilePaths, paths);      
+      char *str = new char [strlen(this->PotentialColorFilePaths) + 1];
+      strcpy(str, this->PotentialColorFilePaths);
+      int count = vtkKWDirectoryPresetSelector::
+        UpdatePresetDirectoriesFromEnabledPresetDirectories(
+          &str, '|', this->ColorFilePaths, delim);
+      if (count)
+        {
+        strcpy(this->PotentialColorFilePaths, str);       
+        }
+      delete [] str;
+      this->Modified();
+      // let the colour module know?
+      }
+    }
+}
+//----------------------------------------------------------------------------
+const char* vtkSlicerApplication::GetColorFilePaths() const
+{
+  return this->ColorFilePaths;
+}
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::SetPotentialColorFilePaths(const char* paths)
+{
+#if WIN32
+  const char delim = ';';
+#else
+  const char delim = ':';
+#endif
+  if (paths)
+    {
+    if (strcmp(this->PotentialColorFilePaths, paths) != 0
+        && strlen(paths) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
+      {
+      strcpy(this->PotentialColorFilePaths, paths);
+      char *str = NULL;
+      vtkKWDirectoryPresetSelector::
+        GetEnabledPresetDirectoriesFromPresetDirectories(
+          &str, delim, this->PotentialColorFilePaths, '|');
+      strcpy(this->ColorFilePaths, str ? str : "");
+      delete [] str;
+      this->Modified();
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+const char* vtkSlicerApplication::GetPotentialColorFilePaths() const
+{
+  return this->PotentialColorFilePaths;
 }
 
 //----------------------------------------------------------------------------
@@ -1721,4 +1815,63 @@ void vtkSlicerApplication::ArrayToString(vtkStringArray *array, std::string sep,
     len += (int)(s.size()+1);
     }
   strcpy(string, res.c_str());
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::PrintSelf ( ostream& os, vtkIndent indent )
+{
+  this->Superclass::PrintSelf ( os, indent );
+
+  vtkIndent nextIndent = indent.GetNextIndent();
+  
+  os << indent << "Registry:\n";
+  os << nextIndent << "ConfirmDelete: " << ConfirmDelete << "\n";
+  os << nextIndent << "ModulePaths: " << ModulePaths << "\n";
+  os << nextIndent << "ColorFilePaths: " << ColorFilePaths << "\n";
+  os << nextIndent << "PotentialModulePaths: " << PotentialModulePaths << "\n";
+  os << nextIndent << "PotentialColorFilePaths: " << PotentialColorFilePaths << "\n";
+  os << nextIndent << "ModuleCachePath: " << ModuleCachePath << "\n";
+  os << nextIndent << "WebBrowser: " << WebBrowser << "\n";
+  os << nextIndent << "Unzip: " << Unzip << "\n";
+  os << nextIndent << "Zip: " << Zip << "\n";
+  os << nextIndent << "Rm: " << Rm << "\n";
+  os << nextIndent << "TemporaryDirectory: " << TemporaryDirectory << "\n";
+  os << nextIndent << "HomeModule: " << HomeModule << "\n";
+  os << nextIndent << "ApplicationFontSize: " << ApplicationFontSize << "\n";
+  os << nextIndent << "ApplicationFontFamily: " << ApplicationFontFamily << "\n";
+  os << nextIndent << "IgnoreModuleNames: " << IgnoreModuleNames << "\n";
+
+  os << nextIndent << "ApplicationWindowWidth: " << ApplicationWindowWidth << "\n";
+  os << nextIndent << "ApplicationWindowHeight: " << ApplicationWindowHeight << "\n";
+  os << nextIndent << "ApplicationSlicesFrameHeight: " << ApplicationSlicesFrameHeight << "\n";
+  os << nextIndent << "ApplicationLayoutType: " << ApplicationLayoutType << "\n";
+
+  os << nextIndent << "RegistryHolder: " << RegistryHolder << "\n";
+
+  os << indent << "Ignore Modules: \n";
+  for (int i = 0; i < IgnoreModules->GetNumberOfValues(); i++)
+    {
+    os << nextIndent << i << " " << IgnoreModules->GetValue(i).c_str() << "\n";
+    }
+  os << indent << "LoadableModules: \n";
+  for (int i = 0; i < LoadableModules->GetNumberOfValues(); i++)
+    {
+    os << nextIndent << i << " " << LoadableModules->GetValue(i).c_str() << "\n";
+    }
+
+  os << indent << "Flags: \n";
+  os << nextIndent << "LoadModules: " << LoadModules << "\n";
+  os << nextIndent << "LoadCommandLineModules: " << LoadCommandLineModules <<  "\n";
+  os << nextIndent << "EnableDaemon: " << EnableDaemon <<  "\n";
+
+  os << indent << "Remote I/O:\n";
+  os << nextIndent << "EnableAsynchronousIO: " << EnableAsynchronousIO<< "\n";
+  os << nextIndent << "EnableForceRedownload: " << EnableForceRedownload <<  "\n";
+  os << nextIndent << "EnableRemoteCacheOverwriting: " << EnableRemoteCacheOverwriting <<  "\n";
+  os << nextIndent << "RemoteCacheDirectory: " << RemoteCacheDirectory <<  "\n";
+  os << nextIndent << "RemoteCacheLimit: " << RemoteCacheLimit <<  "\n";
+  os << nextIndent << "RemoteCacheFreeBufferSize: " << RemoteCacheFreeBufferSize <<  "\n";
+
+  os << indent << "UseSplashScreen: " << UseSplashScreen <<  "\n";
+  os << indent << "StereoEnabled: " << StereoEnabled <<  "\n";
 }

@@ -19,7 +19,6 @@ class vtkKWSpinBoxWithLabel;
 class vtkKWDirectoryPresetSelector;
 class vtkKWCheckBoxSelectionDialog;
 class vtkKWPushButton;
-
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationSettingsInterface
   : public vtkKWApplicationSettingsInterface
 {
@@ -89,7 +88,12 @@ public:
   // Description:
   // Set the amount of space in the cache directory that should remain free
   virtual void RemoteCacheFreeBufferSizeCallback(int size);
-  
+
+  // Callbacks for the colour application settings. Internal, do not use.
+  virtual int ColorFilePathsAddCallback();
+  virtual void ColorFilePathsHasChangedCallback(int id);
+  virtual void ColorFilePathsRemovedCallback();
+
 protected:
   vtkSlicerApplicationSettingsInterface();
   ~vtkSlicerApplicationSettingsInterface();
@@ -106,6 +110,7 @@ private:
   vtkKWFrameWithLabel *FontSettingsFrame;
   vtkKWEntryWithLabel *HomeModuleEntry;
   vtkKWDirectoryPresetSelector *ModulePathsPresetSelector;
+  vtkKWDirectoryPresetSelector *ColorFilePathsPresetSelector;
   vtkKWLoadSaveButtonWithLabel *ModuleCachePathButton;
   vtkKWLoadSaveButtonWithLabel *TemporaryDirectoryButton;
   vtkKWLoadSaveButtonWithLabel *BrowserSelectButton;

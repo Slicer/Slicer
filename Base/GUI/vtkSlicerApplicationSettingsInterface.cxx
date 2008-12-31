@@ -40,6 +40,7 @@ vtkSlicerApplicationSettingsInterface::vtkSlicerApplicationSettingsInterface()
     
   this->ModuleSettingsFrame = NULL;
   this->ModulePathsPresetSelector = NULL;
+  this->ColorFilePathsPresetSelector = NULL;
   this->ModuleCachePathButton = NULL;
   this->HomeModuleEntry = NULL;
   this->TemporaryDirectoryButton = NULL;
@@ -108,6 +109,12 @@ vtkSlicerApplicationSettingsInterface::~vtkSlicerApplicationSettingsInterface()
     {
     this->ModulePathsPresetSelector->Delete();
     this->ModulePathsPresetSelector = 0;
+    }
+
+  if (this->ColorFilePathsPresetSelector)
+    {
+    this->ColorFilePathsPresetSelector->Delete();
+    this->ColorFilePathsPresetSelector = 0;
     }
 
   if (this->ModuleCachePathButton)
@@ -533,10 +540,17 @@ void vtkSlicerApplicationSettingsInterface::Create()
   tk_cmd << "pack " << this->ModuleSettingsFrame->GetWidgetName()
          << " -side top -anchor nw -fill x -padx 2 -pady 2 " 
          << " -in " << page->GetWidgetName() << endl;
-  
+
   frame = this->ModuleSettingsFrame->GetFrame();
 
 
+  vtkKWFrameWithScrollbar *moduleScrollFrame = vtkKWFrameWithScrollbar::New();
+  moduleScrollFrame->SetParent ( frame );
+  moduleScrollFrame->Create();
+  moduleScrollFrame->VerticalScrollbarVisibilityOn();
+  moduleScrollFrame->HorizontalScrollbarVisibilityOn();
+  this->Script ( "pack %s -side top -anchor nw -padx 2 -pady 2 -expand n -fill x",
+                 moduleScrollFrame->GetWidgetName()); 
   
 
   // --------------------------------------------------------------
@@ -546,7 +560,7 @@ void vtkSlicerApplicationSettingsInterface::Create()
     {
     this->LoadModulesCheckButton = vtkKWCheckButton::New();
     }
-  this->LoadModulesCheckButton->SetParent(frame);
+  this->LoadModulesCheckButton->SetParent(moduleScrollFrame->GetFrame());
   this->LoadModulesCheckButton->Create();
   this->LoadModulesCheckButton->SetText(
     "Load Modules");
@@ -566,7 +580,7 @@ void vtkSlicerApplicationSettingsInterface::Create()
     {
     this->ModulesSelectionButton = vtkKWPushButton::New();
     }
-  this->ModulesSelectionButton->SetParent(frame);
+  this->ModulesSelectionButton->SetParent(moduleScrollFrame->GetFrame()); //frame);
   this->ModulesSelectionButton->Create();
   this->ModulesSelectionButton->SetText(
     "Select Modules...");
@@ -586,7 +600,7 @@ void vtkSlicerApplicationSettingsInterface::Create()
     {
     this->LoadModulesSelector = vtkKWCheckBoxSelectionDialog::New();
     }
-  this->LoadModulesSelector->SetParent(frame);
+  this->LoadModulesSelector->SetParent(moduleScrollFrame->GetFrame()); //frame);
   this->LoadModulesSelector->SetEntryColumnName("Module");
   this->LoadModulesSelector->SetBoxColumnName("Load");
   this->LoadModulesSelector->SetTitle("Select modules to load");
@@ -600,7 +614,7 @@ void vtkSlicerApplicationSettingsInterface::Create()
     {
     this->LoadCommandLineModulesCheckButton = vtkKWCheckButton::New();
     }
-  this->LoadCommandLineModulesCheckButton->SetParent(frame);
+  this->LoadCommandLineModulesCheckButton->SetParent(moduleScrollFrame->GetFrame()); //frame);
   this->LoadCommandLineModulesCheckButton->Create();
   this->LoadCommandLineModulesCheckButton->SetText(
     "Load Command-Line Plugins");
@@ -619,7 +633,7 @@ void vtkSlicerApplicationSettingsInterface::Create()
     {
     this->HomeModuleEntry = vtkKWEntryWithLabel::New ( );
     }
-  this->HomeModuleEntry->SetParent ( frame );
+  this->HomeModuleEntry->SetParent (moduleScrollFrame->GetFrame());
   this->HomeModuleEntry->Create ( );  
   this->HomeModuleEntry->SetLabelText( "Home Module:" );
   this->HomeModuleEntry->SetLabelWidth(label_width);
@@ -639,7 +653,7 @@ void vtkSlicerApplicationSettingsInterface::Create()
     this->ModuleCachePathButton = vtkKWLoadSaveButtonWithLabel::New();
     }
 
-  this->ModuleCachePathButton->SetParent(frame);
+  this->ModuleCachePathButton->SetParent(moduleScrollFrame->GetFrame()); //frame);
   this->ModuleCachePathButton->Create();
   this->ModuleCachePathButton->SetLabelText("Module Cache Path:");
   this->ModuleCachePathButton->SetLabelWidth(label_width);
@@ -666,7 +680,7 @@ void vtkSlicerApplicationSettingsInterface::Create()
     this->TemporaryDirectoryButton = vtkKWLoadSaveButtonWithLabel::New();
     }
 
-  this->TemporaryDirectoryButton->SetParent(frame);
+  this->TemporaryDirectoryButton->SetParent(moduleScrollFrame->GetFrame()); //frame);
   this->TemporaryDirectoryButton->Create();
   this->TemporaryDirectoryButton->SetLabelText("Temporary Directory:");
   this->TemporaryDirectoryButton->SetLabelWidth(label_width);
@@ -693,7 +707,7 @@ void vtkSlicerApplicationSettingsInterface::Create()
     this->ModulePathsPresetSelector = vtkKWDirectoryPresetSelector::New();
     }
 
-  this->ModulePathsPresetSelector->SetParent(frame);
+  this->ModulePathsPresetSelector->SetParent(moduleScrollFrame->GetFrame()); //frame);
   this->ModulePathsPresetSelector->Create();
   this->ModulePathsPresetSelector->SetPresetAddCommand(
     this, "ModulePathsAddCallback");
@@ -712,12 +726,45 @@ void vtkSlicerApplicationSettingsInterface::Create()
   this->ModulePathsPresetSelector->UniqueDirectoriesOn();
 
   std::string help_str;
-  help_str = help_str + "Click on the \"Add a preset\" button to add one or more new user module paths. A typical Module path ends with " + Slicer3_INSTALL_MODULES_LIB_DIR + ", whereas a Plugins/CLP path ends with " + Slicer3_INSTALL_PLUGINS_LIB_DIR + ".";
+  help_str = help_str + "Click on the \"Add a preset\" button to add one or more new user\nmodule paths. A typical Module path ends with " + Slicer3_INSTALL_MODULES_LIB_DIR + ",\nwhereas a Plugins/CLP path ends with " + Slicer3_INSTALL_PLUGINS_LIB_DIR + ".";
   this->ModulePathsPresetSelector->SetHelpLabelText(help_str.c_str());
 
   tk_cmd << "pack " << this->ModulePathsPresetSelector->GetWidgetName()
          << "  -side top -anchor w -expand no -fill x -padx 2 -pady 2" << endl;
 
+  // --------------------------------------------------------------
+  // Color file paths
+  if (!this->ColorFilePathsPresetSelector)
+    {
+    this->ColorFilePathsPresetSelector = vtkKWDirectoryPresetSelector::New();
+    }
+
+  this->ColorFilePathsPresetSelector->SetParent(moduleScrollFrame->GetFrame());
+  this->ColorFilePathsPresetSelector->Create();
+  this->ColorFilePathsPresetSelector->SetPresetAddCommand(
+    this, "ColorFilePathsAddCallback");
+  this->ColorFilePathsPresetSelector->SetPresetHasChangedCommand(
+    this, "ColorFilePathsHasChangedCallback");
+  this->ColorFilePathsPresetSelector->SetPresetRemovedCommand(
+    this, "ColorFilePathsRemovedCallback");
+
+  this->ColorFilePathsPresetSelector->SetBorderWidth(2);
+  this->ColorFilePathsPresetSelector->SetReliefToGroove();
+  this->ColorFilePathsPresetSelector->SetPadX(2);
+  this->ColorFilePathsPresetSelector->SetPadY(2);
+  this->ColorFilePathsPresetSelector->SetHelpLabelVisibility(1);
+  this->ColorFilePathsPresetSelector->SetListHeight(6);
+  this->ColorFilePathsPresetSelector->UniqueDirectoriesOn();
+
+  help_str = "Click on the \"Add a preset\" button to add one or more new user color file\npaths. The directory will be searched for color files with names ending in\n.txt (for now, csv coming later). You have to restart Slicer to load the new\nfiles after setting the paths the first time.\nColor files have one color per line:\nlabel\tname\tR\tG\tB\tA\nlabel is an integer, name a string, and RGBA are 0-255.\nA = 255 for opaque.";
+  this->ColorFilePathsPresetSelector->SetHelpLabelText(help_str.c_str());
+
+  tk_cmd << "pack " << this->ColorFilePathsPresetSelector->GetWidgetName()
+         << "  -side top -anchor w -expand no -fill x -padx 2 -pady 2" << endl;
+
+
+  moduleScrollFrame->Delete();
+  
   // --------------------------------------------------------------
   // Remote Data Handling settings : main frame
 
@@ -1075,6 +1122,7 @@ void vtkSlicerApplicationSettingsInterface::ModulePathsRemovedCallback()
     str = NULL;
     this->ModulePathsPresetSelector->GetPresetDirectoriesToDelimitedString(
       &str, '|');
+    vtkWarningMacro("ModulePathsRemovedCallback: setting potential module paths to '" << (str == NULL ? "null" : str) << "'");
     app->SetPotentialModulePaths(str);
     delete [] str;
     }
@@ -1365,6 +1413,10 @@ void vtkSlicerApplicationSettingsInterface::Update()
       this->ModuleCachePathButton->GetWidget()
         ->GetLoadSaveDialog()->SetLastPath(app->GetModuleCachePath());
       }
+    if (this->ColorFilePathsPresetSelector)
+      {
+      this->ColorFilePathsPresetSelector->AddPresetDirectoriesFromDelimitedString( app->GetPotentialColorFilePaths(), '|');
+      }
     if ( this->FontSizeButtons )
       {
       if ( !(strcmp(app->GetApplicationFontSize(), "small" )))
@@ -1458,4 +1510,37 @@ void vtkSlicerApplicationSettingsInterface::Update()
         ->SetValue(app->GetRemoteCacheFreeBufferSize());
       }
     }  
+}
+
+//----------------------------------------------------------------------------
+int vtkSlicerApplicationSettingsInterface::ColorFilePathsAddCallback()
+{
+  int id = this->ColorFilePathsPresetSelector->AddDirectoryCallback();
+  this->ColorFilePathsRemovedCallback();
+  return id;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationSettingsInterface::ColorFilePathsHasChangedCallback(int)
+{
+  this->ColorFilePathsRemovedCallback();
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationSettingsInterface::ColorFilePathsRemovedCallback()
+{
+  vtkSlicerApplication *app
+    = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  if (app)
+    {
+    // Store the setting in the application object
+    char *str;
+    
+    str = NULL;
+    this->ColorFilePathsPresetSelector->GetPresetDirectoriesToDelimitedString(
+      &str, '|');
+    vtkWarningMacro("ColorFilePathsRemovedCallback: setting potential color files to '" << (str == NULL ? "null" : str) << "'");
+    app->SetPotentialColorFilePaths(str);
+    delete [] str;
+    }
 }
