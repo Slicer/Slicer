@@ -14,18 +14,9 @@
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 
-// to get at the colour logic to set a default color node
-#include "vtkKWApplication.h"
-#include "vtkSlicerApplication.h"
-#include "vtkSlicerModuleGUI.h"
-#include "vtkSlicerColorGUI.h"
-#include "vtkSlicerColorLogic.h"
-
 // for scalars
 #include "vtkPointData.h"
 #include "vtkCellData.h"
-
-//#include "vtkMRMLColorProceduralFreeSurferNode.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerModelDisplayWidget );

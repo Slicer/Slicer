@@ -14,14 +14,7 @@
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
 
-// to get at the colour logic to set a default color node
-#include "vtkKWApplication.h"
-#include "vtkSlicerApplication.h"
-#include "vtkSlicerModuleGUI.h"
-#include "vtkSlicerColorGUI.h"
-#include "vtkSlicerColorLogic.h"
 #include "vtkSlicerFoundationIcons.h"
-#include "vtkMRMLScalarVolumeNode.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerSceneSnapshotWidget );
