@@ -44,7 +44,6 @@ public:
   // Get methods on class members ( no Set methods required. )
   vtkGetObjectMacro ( ColorNodeTypeLabel, vtkKWLabel);
   vtkGetObjectMacro ( NumberOfColorsLabel, vtkKWLabel);
-  vtkGetObjectMacro ( AddColorButton, vtkKWPushButton);
   vtkGetObjectMacro ( MultiColumnList, vtkKWMultiColumnListWithScrollbars );
 
   //Description:
@@ -154,10 +153,6 @@ public:
   // The the color node that is currently displayed in the widget
   vtkMRMLColorNode *ColorNode;
   
-  // Description:
-  // button to add a colour to a user defined table
-  vtkKWPushButton *AddColorButton;
-
   // Description:
   // select a colour node to display
   vtkSlicerNodeSelectorWidget* ColorSelectorWidget;

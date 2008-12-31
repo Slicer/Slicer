@@ -42,8 +42,6 @@ vtkSlicerColorDisplayWidget::vtkSlicerColorDisplayWidget ( )
 
     this->NumberOfColorsLabel = NULL;
 
-    this->AddColorButton = NULL;
-
     this->ShowOnlyNamedColorsCheckButton = NULL;
 
     this->SelectedColorLabel = NULL;
@@ -84,13 +82,6 @@ vtkSlicerColorDisplayWidget::~vtkSlicerColorDisplayWidget ( )
     this->NumberOfColorsLabel->SetParent (NULL);
     this->NumberOfColorsLabel->Delete();
     this->NumberOfColorsLabel = NULL;
-    }
-
-  if (this->AddColorButton)
-    {
-    this->AddColorButton->SetParent(NULL);
-    this->AddColorButton->Delete();
-    this->AddColorButton = NULL;
     }
 
   if (this->ShowOnlyNamedColorsCheckButton)
@@ -273,23 +264,6 @@ void vtkSlicerColorDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
     return;
     }
 
-  // 
-  // save state for undo?
-//  this->MRMLScene->SaveStateForUndo();
-
-  vtkKWPushButton *button = vtkKWPushButton::SafeDownCast(caller);
-  if (button == this->AddColorButton  && event ==  vtkKWPushButton::InvokedEvent)
-    {
-    vtkDebugMacro("vtkSlicerColorDisplayWidget: ProcessGUIEvent: Add Color Button event: " << event << ".\n");
-    // if it's a colour table type node
-    if (vtkMRMLColorTableNode::SafeDownCast(activeColorNode) != NULL)
-      {
-      // save state for undo
-      this->MRMLScene->SaveStateForUndo(activeColorNode);
-    
-      vtkMRMLColorTableNode::SafeDownCast(activeColorNode)->AddColor("new", 0.0, 0.0, 0.0);
-      }
-    }
   this->UpdateMRML();
 } 
 
@@ -492,6 +466,9 @@ void vtkSlicerColorDisplayWidget::UpdateWidget()
         if (colour != NULL)
           {
           this->MultiColumnList->GetWidget()->SetCellBackgroundColor(thisRow, this->ColourColumn, colour);
+          // also set it to be the selected cell background color so that the
+          // color box is not lost when the row is selected
+          this->MultiColumnList->GetWidget()->SetCellSelectionBackgroundColor(thisRow, this->ColourColumn, colour);
           }
         else
           {
@@ -545,7 +522,6 @@ void vtkSlicerColorDisplayWidget::UpdateMRML()
 //---------------------------------------------------------------------------
 void vtkSlicerColorDisplayWidget::RemoveWidgetObservers ( ) {
   this->ColorSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->AddColorButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->ShowOnlyNamedColorsCheckButton->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,
                                                         (vtkCommand *)this->GUICallbackCommand);
   this->MultiColumnList->GetWidget()->RemoveObservers(vtkKWMultiColumnList::SelectionChangedEvent,
@@ -682,13 +658,6 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
                buttonFrame->GetWidgetName(),
                displayFrame->GetWidgetName());
   
-  // a button to add a new colour
-  this->AddColorButton = vtkKWPushButton::New();
-  this->AddColorButton->SetParent( buttonFrame);
-  this->AddColorButton->Create();
-  this->AddColorButton->SetText("Add a Color");
-  this->AddColorButton->SetBalloonHelpString("Add a colour to a user defined list");
-
   // a checkbutton to only show the valid colours (useful for the SPL atlas
   // table which skips ranges)
   this->ShowOnlyNamedColorsCheckButton = vtkKWCheckButton::New();
@@ -698,11 +667,7 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
   this->ShowOnlyNamedColorsCheckButton->SetText("Show Only Named Colors");
   
   // pack the buttons
-/* leave the add color button out for now, TODO: add in editing of the tables
-   app->Script("pack %s -side top -anchor w -padx 4 -pady 2 -in %s", 
-   this->AddColorButton->GetWidgetName(),
-   buttonFrame->GetWidgetName());
-*/
+
   // pack the checkbutton
   app->Script("pack %s -side top -anchor w -padx 4 -pady 2 -in %s",
               this->ShowOnlyNamedColorsCheckButton->GetWidgetName(),
@@ -713,7 +678,6 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
     
   // add observers
   this->ColorSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
-  this->AddColorButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->ShowOnlyNamedColorsCheckButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->AddObserver(vtkSlicerColorDisplayWidget::ColorIDModifiedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->MultiColumnList->GetWidget()->AddObserver(vtkKWMultiColumnList::SelectionChangedEvent,
@@ -822,7 +786,6 @@ void vtkSlicerColorDisplayWidget::SetSelectedColorIndex(int index)
 
 void vtkSlicerColorDisplayWidget::UpdateEnableState(void)
 {
-    this->PropagateEnableState(this->AddColorButton);
     this->PropagateEnableState(this->ColorSelectorWidget);
     this->PropagateEnableState(this->ColorNodeTypeLabel);
     this->PropagateEnableState(this->NumberOfColorsLabel);
