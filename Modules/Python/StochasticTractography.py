@@ -68,7 +68,7 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
   </parameters>
 
   <parameters>
-    <label>Otsu Mask Parameters</label>
+    <label>Otsu-like Mask Parameters</label>
     <description>Parameters for otsu</description>
     <boolean>
       <name>otsuEnabled</name>
@@ -81,7 +81,7 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
     <integer>
       <name>infOtsuThres</name>
       <longflag>infOtsuThres</longflag>
-      <label>Inferior Otsu threshold</label>
+      <label>Inferior Otsu-like threshold</label>
       <description>Inferior Otsu threshold </description>
       <default>0</default>
     </integer>
@@ -89,7 +89,7 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
     <integer>
       <name>supOtsuThres</name>
       <longflag>supOtsuThres</longflag>
-      <label>Superior Otsu threshold</label>
+      <label>Superior Otsu-like threshold</label>
       <description>Superior Otsu threshold </description>
       <default>1000</default>
     </integer>
@@ -153,14 +153,6 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
     <label>Tensor Parameters</label>
     <description>Parameters for tensor computation</description>
     
-    <!-- <boolean>
-      <name>tensEnabled</name>
-      <longflag>tensEnabled</longflag>
-      <description>Toggle tensor</description>
-      <label>Enabled</label>
-      <default>false</default>
-    </boolean> -->
-
     <integer>
       <name>bLine</name>
       <longflag>bLine</longflag>
@@ -168,20 +160,6 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
       <description>Baseline </description>
       <default>0</default>
     </integer>
-
-
-    <string-enumeration>
-      <name>tensMode</name>
-      <longflag>tensMode</longflag>
-      <description>Tensor mode: 
-              Lapack decomposition : use Lapack methods for eigenvalues decomposition
-              Cardano decomposition : use Cardano methods for eigenvalues decomposition
-      </description>
-      <label>Tensor Mode</label>
-      <default>lapack</default>
-      <element>lapack</element>
-      <element>cardano</element>
-    </string-enumeration>
 
     <boolean>
       <name>faEnabled</name>
@@ -314,9 +292,10 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
     <string-enumeration>
       <name>probMode</name>
       <longflag>probMode</longflag>
-      <description>Probability computation mode from tracts: 
-              cumulative: tracts are summed by voxel independently
-              discriminative: tracts are summed by voxel depending on their length ownership
+      <description>Probability computation mode from tracts:
+              rough: voxel is counted only for the first fiber going through 
+              cumulative: voxel is counted for each fiber going through 
+              discriminative: voxel is counted for each fiber going through based on their length ownership
       </description>
       <label>Computation Mode</label>
       <default>cumulative</default>
@@ -325,6 +304,14 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
       <element>discriminative</element>
     </string-enumeration>
 
+    <boolean>
+      <name>normEnabled</name>
+      <longflag>normEnabled</longflag>
+      <description>Normalize frequency of fibers per voxel</description>
+      <label>Normalize</label>
+      <default>false</default>
+    </boolean>
+    
     <boolean>
       <name>lengthEnabled</name>
       <longflag>lengthEnabled</longflag>
@@ -554,7 +541,6 @@ def Execute (\
              infARTSThres,\
              supARTSThres,\
              bLine,\
-             tensMode,\
              faEnabled,\
              traceEnabled,\
              modeEnabled,\
@@ -566,6 +552,7 @@ def Execute (\
              fa,\
              cmEnabled,\
              probMode,\
+             normEnabled,\
              lengthEnabled,\
              lengthClass,\
              inputVol0 = "",\
@@ -678,8 +665,8 @@ def Execute (\
   s.send('bLine ' + str(bLine) + '\n')
   ack = s.recv(SIZE)
 
-  s.send('tensMode ' + str(tensMode) + '\n')
-  ack = s.recv(SIZE)
+  #s.send('tensMode ' + str(tensMode) + '\n')
+  #ack = s.recv(SIZE)
 
   s.send('faEnabled ' + str(int(faEnabled)) + '\n')
   ack = s.recv(SIZE)
@@ -720,6 +707,9 @@ def Execute (\
   ack = s.recv(SIZE)
 
   s.send('lengthEnabled ' + str(int(lengthEnabled)) + '\n')
+  ack = s.recv(SIZE)
+
+  s.send('normEnabled ' + str(int(normEnabled)) + '\n')
   ack = s.recv(SIZE)
 
   s.send('lengthClass ' + str(lengthClass) + '\n')
