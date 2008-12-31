@@ -107,10 +107,16 @@ vtkIA_FEMeshGUI::~vtkIA_FEMeshGUI()
   if (this->Logic != NULL)
     {
     this->Logic->Delete();
-
     }
-
+  
+  // tear down the KWMimxWindow instance used to hold the GUI for the meshing
+  // module 
+  if (this->MeshingUI != NULL)
+    {
+    this->MeshingUI->Delete();
+    }
 }
+
 
 //----------------------------------------------------------------------------
 void vtkIA_FEMeshGUI::PrintSelf(ostream& os, vtkIndent indent)
