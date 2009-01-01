@@ -26,7 +26,7 @@
       <longflag>--variance</longflag>
       <description>The variance used by the Discrete Gaussian Image Filter.</description>
       <label>Variance</label>
-      <default>0</default>
+      <default>9</default>
     </float>
 
         <float>
@@ -36,7 +36,7 @@
                 Value must be between 0 and 1. 
                 </description>
                 <label>Maximum Error</label>
-                <default>0</default>
+                <default>.001</default>
         </float>
 
   </parameters>
