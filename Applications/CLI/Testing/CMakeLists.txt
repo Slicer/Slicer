@@ -382,7 +382,7 @@ target_link_libraries(${CLP}Test ITKNumerics ITKIO)
 # ConfidenceConnected tests
 add_test(ConfidenceConnectedTest ${Slicer3_EXE} --launch ConfidenceConnectedTest
   --compare ${BASELINE}/ConfidenceConnectedTest.nhdr
-  ${TEMP}/ConfidenceConnectedTest.nhdr
+            ${TEMP}/ConfidenceConnectedTest.nhdr
   ConfidenceConnectedTest
     --smoothingIterations 1
     --timestep 0.0625
@@ -403,7 +403,14 @@ target_link_libraries(${CLP}Test ITKIO)
 ##################################
 # CurvatureAnisotropicDiffusion tests
 add_test(CurvatureAnisotropicDiffusionTest ${Slicer3_EXE} --launch CurvatureAnisotropicDiffusionTest
-  CurvatureAnisotropicDiffusionTest  --help
+  --compare ${BASELINE}/CurvatureAnisotropicDiffusionTest.nhdr
+            ${TEMP}/CurvatureAnisotropicDiffusionTest.nhdr
+  CurvatureAnisotropicDiffusionTest
+    --conductance 2
+    --timeStep 0.0625
+    --iterations 2
+    ${TEST_DATA}/MRHeadResampled.nhdr
+    ${TEMP}/CurvatureAnisotropicDiffusionTest.nhdr
   )
 
 set (CLP CurvatureAnisotropicDiffusion)
