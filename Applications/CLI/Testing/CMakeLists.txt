@@ -381,7 +381,18 @@ target_link_libraries(${CLP}Test ITKNumerics ITKIO)
 ##################################
 # ConfidenceConnected tests
 add_test(ConfidenceConnectedTest ${Slicer3_EXE} --launch ConfidenceConnectedTest
-  ConfidenceConnectedTest --help
+  --compare ${BASELINE}/ConfidenceConnectedTest.nhdr
+  ${TEMP}/ConfidenceConnectedTest.nhdr
+  ConfidenceConnectedTest
+    --smoothingIterations 1
+    --timestep 0.0625
+    --iterations 5
+    --multiplier 2.5
+    --neighborhood 1
+    --labelvalue 2
+    --seed 9.71622,-8.1,14.2189 --seed -12.9459,-8.1,18.577
+    ${TEST_DATA}/MRHeadResampled.nhdr
+    ${TEMP}/ConfidenceConnectedTest.nhdr
   )
 
 set (CLP ConfidenceConnected)
