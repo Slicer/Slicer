@@ -741,6 +741,8 @@ target_link_libraries(${CLP}Test  ITKIO ITKBasicFilters)
 ##################################
 # VotingBinaryHoleFillingImageFilter tests
 add_test(VotingBinaryHoleFillingImageFilterTest ${Slicer3_EXE} --launch VotingBinaryHoleFillingImageFilterTest
+  --compare ${BASELINE}/VotingBinaryHoleFillingImageFilterTest.nhdr
+            ${TEMP}/VotingBinaryHoleFillingImageFilterTest.nhdr
   VotingBinaryHoleFillingImageFilterTest
     --radius 3,3,3 
     --majorityThreshold 1
