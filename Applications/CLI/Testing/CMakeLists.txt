@@ -625,7 +625,6 @@ add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test
   vtkITK vtkImaging vtkGraphics vtkIO
-  ITKIO
   ModuleDescriptionParser
   MRML
   SlicerBaseLogic
@@ -643,7 +642,6 @@ add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test
   vtkITK vtkImaging vtkGraphics vtkIO
-  ITKIO
   ModuleDescriptionParser
   MRML
   SlicerBaseLogic
