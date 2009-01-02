@@ -422,7 +422,9 @@ target_link_libraries(${CLP}Test ITKIO)
 ##################################
 # DicomToNrrdConverter tests
 add_test(DicomToNrrdConverterTest ${Slicer3_EXE} --launch DicomToNrrdConverterTest
-  DicomToNrrdConverterTest --help
+  DicomToNrrdConverterTest
+    ${TEST_DATA}/CTHeadAxialDicom
+    ${TEMP} CTHeadAxialFromDicom.nhdr
   )
 
 set (CLP DicomToNrrdConverter)
@@ -596,7 +598,24 @@ target_link_libraries(${CLP}Test  vtkITK vtkImaging vtkGraphics vtkIO vtkTeem)
 ##################################
 # ImageReadDicomWrite tests
 add_test(ImageReadDicomWriteTest ${Slicer3_EXE} --launch ImageReadDicomWriteTest
-  ImageReadDicomWriteTest --help
+  --compare ${BASELINE}/ImageReadDicomWriteTest.dcm
+            ${TEMP}/CTHeadAxialDicom40.dcm
+  ImageReadDicomWriteTest
+    --patientName Austrialian
+    --patientID 8775070
+    --patientComments "A volunteer"
+    --studyID 123456
+    --studyDate 20090102
+    --studyComments Resampled
+    --studyDescription None
+    --modality CT
+    --manufacturer "GE Medical Systems"
+    --model CT8800
+    --seriesNumber 123456
+    --seriesDescription None
+    --dicomDirectory ${TEMP}
+    --dicomPrefix CTHeadAxialDicom
+    ${TEST_DATA}/CTHeadAxial.nhdr
   )
 
 set (CLP ImageReadDicomWrite)
