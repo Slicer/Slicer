@@ -28,6 +28,7 @@ set(Slicer3_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
 
 set(BASELINE "${Slicer3_SOURCE_DIR}/Testing/Data/Baseline/CLI")
 set(TEST_DATA "${Slicer3_SOURCE_DIR}/Testing/Data/Input")
+set(MRML_TEST_DATA "${Slicer3_SOURCE_DIR}/Libs/MRML/Testing/TestData")
 set(TEMP "${Slicer3_BINARY_DIR}/Testing/Temporary")
 
 set(MRML_DATA "${Slicer3_HOME}/share/MRML/Testing/TestData")
@@ -616,8 +617,14 @@ target_link_libraries(${CLP}Test ITKIO ITKAlgorithms ITKBasicFilters)
 
 ##################################
 # ModelMaker tests
+
+CONFIGURE_FILE(${TEST_DATA}/ModelMakerTest.mrml
+    ${TEMP}/ModelMakerTest.mrml IMMEDIATE) 
 add_test(ModelMakerTest ${Slicer3_EXE} --launch ModelMakerTest
-  ModelMakerTest --help
+  ModelMakerTest
+    --labels 2
+    --modelSceneFile ${TEMP}/ModelMakerTest.mrml\#vtkMRMLModelHierarchyNode1
+    ${MRML_TEST_DATA}/helix-roi-lable2.nrrd
   )
 
 set (CLP ModelMaker)
@@ -662,7 +669,13 @@ target_link_libraries(${CLP}Test ITKIO ITKBasicFilters)
 ##################################
 # OtsuThresholdSegmentation tests
 add_test(OtsuThresholdSegmentationTest ${Slicer3_EXE} --launch OtsuThresholdSegmentationTest
-  OtsuThresholdSegmentationTest --help
+  OtsuThresholdSegmentationTest
+    --brightObjects
+    --numberOfBins 128
+    --faceConnected
+    --minimumObjectSize 1000
+   ${TEST_DATA}/CTHeadResampled.nhdr
+   ${TEMP}/OtsuThresholdImageFilterTest.nhdr 
 )
 
 set (CLP OtsuThresholdSegmentation)
@@ -728,7 +741,13 @@ target_link_libraries(${CLP}Test  ITKIO ITKBasicFilters)
 ##################################
 # VotingBinaryHoleFillingImageFilter tests
 add_test(VotingBinaryHoleFillingImageFilterTest ${Slicer3_EXE} --launch VotingBinaryHoleFillingImageFilterTest
-  VotingBinaryHoleFillingImageFilterTest --help
+  VotingBinaryHoleFillingImageFilterTest
+    --radius 3,3,3 
+    --majorityThreshold 1
+    --background 0
+    --foreground 1
+   ${TEST_DATA}/CTHeadResampledOtsuSegmented.nhdr
+   ${TEMP}/VotingBinaryHoleFillingImageFilterTest.nhdr
   )
 
 set (CLP VotingBinaryHoleFillingImageFilter)
@@ -739,7 +758,11 @@ target_link_libraries(${CLP}Test ITKIO ITKBasicFilters)
 ##################################
 # ZeroCrossingBasedEdgeDetectionImageFilter tests
 add_test(ZeroCrossingBasedEdgeDetectionImageFilterTest ${Slicer3_EXE} --launch ZeroCrossingBasedEdgeDetectionImageFilterTest
-  ZeroCrossingBasedEdgeDetectionImageFilterTest --help
+  --compare ${BASELINE}/ZeroCrossingBasedEdgeDetectionImageFilterTest.nhdr
+            ${TEMP}/ZeroCrossingBasedEdgeDetectionImageFilterTest.nhdr
+  ZeroCrossingBasedEdgeDetectionImageFilterTest
+    ${TEST_DATA}/CTHeadResampled.nhdr
+    ${TEMP}/ZeroCrossingBasedEdgeDetectionImageFilterTest.nhdr
   )
 
 set (CLP ZeroCrossingBasedEdgeDetectionImageFilter)
