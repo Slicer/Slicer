@@ -669,6 +669,8 @@ target_link_libraries(${CLP}Test ITKIO ITKBasicFilters)
 ##################################
 # OtsuThresholdSegmentation tests
 add_test(OtsuThresholdSegmentationTest ${Slicer3_EXE} --launch OtsuThresholdSegmentationTest
+  --compare ${BASELINE}/OtsuThresholdImageFilterTest.nhdr 
+            ${TEMP}/OtsuThresholdImageFilterTest.nhdr 
   OtsuThresholdSegmentationTest
     --brightObjects
     --numberOfBins 128
