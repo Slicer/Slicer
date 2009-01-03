@@ -545,7 +545,11 @@ target_link_libraries(${CLP}Test ITKIO)
 ##################################
 # GrayscaleFillHoleImageFilter tests
 add_test(GrayscaleFillHoleImageFilterTest ${Slicer3_EXE} --launch GrayscaleFillHoleImageFilterTest
-  GrayscaleFillHoleImageFilterTest --help
+  --compare ${BASELINE}/GrayscaleFillHoleTest.nhdr
+            ${TEMP}/GrayscaleFillHoleTest.nhdr
+  GrayscaleFillHoleImageFilterTest
+    ${TEST_DATA}/MRHeadResampled.nhdr
+    ${TEMP}/GrayscaleFillHoleTest.nhdr
   )
 
 set (CLP GrayscaleFillHoleImageFilter)
@@ -556,7 +560,11 @@ target_link_libraries(${CLP}Test ITKIO)
 ##################################
 # GrayscaleGrindPeakImageFilter tests
 add_test(GrayscaleGrindPeakImageFilterTest ${Slicer3_EXE} --launch GrayscaleGrindPeakImageFilterTest
-  GrayscaleGrindPeakImageFilterTest --help
+  --compare ${BASELINE}/GrayscaleGrindPeakTest.nhdr
+            ${TEMP}/GrayscaleGrindPeakTest.nhdr
+  GrayscaleGrindPeakImageFilterTest
+    ${TEST_DATA}/MRHeadResampled.nhdr
+    ${TEMP}/GrayscaleGrindPeakTest.nhdr
   )
 
 set (CLP GrayscaleGrindPeakImageFilter)
@@ -567,7 +575,15 @@ target_link_libraries(${CLP}Test ITKIO)
 ##################################
 # GrayscaleModelMaker tests
 add_test(GrayscaleModelMakerTest ${Slicer3_EXE} --launch GrayscaleModelMakerTest
-  GrayscaleModelMakerTest --help
+  GrayscaleModelMakerTest
+    --threshold 300
+    --name CTFace
+    --smooth 15
+    --decimate 0.95
+    --splitnormals
+    --pointnormals
+    ${TEST_DATA}/CTHeadAxial.nhdr
+    ${TEMP}GrayscaleModelMakerTest.vtp
   )
 
 set (CLP GrayscaleModelMaker)
