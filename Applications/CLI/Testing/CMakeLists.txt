@@ -656,7 +656,15 @@ target_link_libraries(${CLP}Test ITKIO ITKBasicFilters)
 ##################################
 # LabelMapSmoothing tests
 add_test(LabelMapSmoothingTest ${Slicer3_EXE} --launch LabelMapSmoothingTest
-  LabelMapSmoothingTest --help
+  --compare ${BASELINE}/LabelMapSmoothingTest.nhdr
+            ${TEMP}/LabelMapSmoothingTest.nhdr
+  LabelMapSmoothingTest
+    --labelToSmooth 1
+    --numberOfIterations 50
+    --maxRMSError 0.01
+    --gaussianSigma 3
+   ${TEST_DATA}/CTHeadResampledOtsuSegmented.nhdr
+   ${TEMP}/LabelMapSmoothingTest.nhdr
   )
 
 set (CLP LabelMapSmoothing)
@@ -759,7 +767,13 @@ target_link_libraries(${CLP}Test  ITKIO ITKBasicFilters)
 ##################################
 # ResampleVolume tests
 add_test(ResampleVolumeTest ${Slicer3_EXE} --launch ResampleVolumeTest
-  ResampleVolumeTest --help
+  --compare ${BASELINE}/ResampleVolumeTest.nhdr
+            ${TEMP}/ResampleVolumeTest.nhdr
+  ResampleVolumeTest
+    --spacing 5,5,5
+    --interpolation linear
+   ${TEST_DATA}/MRHeadResampled.nhdr 
+   ${TEMP}/ResampleVolumeTest.nhdr
   )
 
 set (CLP ResampleVolume)
