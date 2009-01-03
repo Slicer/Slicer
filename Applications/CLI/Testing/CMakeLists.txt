@@ -527,7 +527,14 @@ target_link_libraries(${CLP}Test ITKIO)
 ##################################
 # GradientAnisotropicDiffusion tests
 add_test(GradientAnisotropicDiffusionTest ${Slicer3_EXE} --launch GradientAnisotropicDiffusionTest
-  GradientAnisotropicDiffusionTest --help
+  --compare ${BASELINE}/GradientAnisotropicDiffusionTest.nhdr
+            ${TEMP}/GradientAnisotropicDiffusionTest.nhdr
+  GradientAnisotropicDiffusionTest
+    --conductance 2
+    --timeStep 0.0625
+    --iterations 2
+    ${TEST_DATA}/MRHeadResampled.nhdr
+    ${TEMP}/GradientAnisotropicDiffusionTest.nhdr
   )
 
 set (CLP GradientAnisotropicDiffusion)
@@ -576,7 +583,14 @@ target_link_libraries(${CLP}Test
 ##################################
 # HistogramMatching tests
 add_test(HistogramMatchingTest ${Slicer3_EXE} --launch HistogramMatchingTest
-  HistogramMatchingTest --help
+  --compare ${BASELINE}/HistogramMatchingTest.nhdr
+            ${TEMP}/HistogramMatchingTest.nhdr
+  HistogramMatchingTest
+    --numberOfHistogramLevels 64
+    --numberOfMatchPoints 10
+    ${TEST_DATA}/CTHeadAxial.nhdr
+    ${TEST_DATA}/MRHeadResampled.nhdr
+    ${TEMP}/HistogramMatchingTest.nhdr
   )
 
 set (CLP HistogramMatching)
@@ -751,7 +765,12 @@ target_link_libraries(${CLP}Test  ITKIO ITKBasicFilters ITKNumerics)
 ##################################
 # Subtract tests
 add_test(SubtractTest ${Slicer3_EXE} --launch SubtractTest
-  SubtractTest --help
+  --compare ${BASELINE}/SubtractTest.nhdr
+            ${TEMP}/SubtractTest.nhdr
+  SubtractTest
+    ${TEST_DATA}/CTHeadAxial.nhdr
+    ${TEST_DATA}/CTHeadAxialDoubled.nhdr
+    ${TEMP}/SubtractTest.nhdr
   )
 
 set (CLP Subtract)
