@@ -460,7 +460,7 @@ static PyObject* SlicerPython_vtkObjectAddObserver(PyObject* self, PyObject* arg
 #else
   command->SetCallbackCodeString(codeString);
 #endif
-  eventTag = obj->AddObserver(vtkCommand::LeftButtonPressEvent,command);
+  eventTag = obj->AddObserver(vtkCommand::GetEventIdFromString(eventName),command);
   command->Delete();
 
   return PyInt_FromLong((long)eventTag);
