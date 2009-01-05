@@ -66,8 +66,9 @@ static NPY_TYPES getNumpyDataTypeFromVTKDataType( int dataType, bool& success )
     return t;
 }
 
+
 // Should look like vtkImageDataToArray interp imagedata
-static PyObject* SlicerPython_ToArray ( PyObject* self, PyObject* args )
+static PyObject* SlicerPython_vtkImageDataToArray ( PyObject* self, PyObject* args )
 {
   long addr;
   char *name;
@@ -115,7 +116,7 @@ static PyObject* SlicerPython_ToArray ( PyObject* self, PyObject* args )
   return array;
 }
 
-static PyObject* SlicerPythonArray_ToVtkImageData ( PyObject* self, PyObject* args )
+static PyObject* SlicerPython_ArrayTovtkImageData ( PyObject* self, PyObject* args )
 {
   long addr;
   char *name;
@@ -234,7 +235,7 @@ static PyObject* SlicerPythonArray_ToVtkImageData ( PyObject* self, PyObject* ar
 }
 
 // Should look like vtkDataArrayToArray interp imagedata
-static PyObject* SlicerPythonVtkDataArray_ToArray ( PyObject* self, PyObject* args )
+static PyObject* SlicerPython_vtkDataArrayToArray ( PyObject* self, PyObject* args )
 {
   long addr;
   char *name;
@@ -277,7 +278,7 @@ static PyObject* SlicerPythonVtkDataArray_ToArray ( PyObject* self, PyObject* ar
   return array;
 } 
 
-static PyObject* SlicerPythonArray_ToVtkDataArray ( PyObject* self, PyObject* args )
+static PyObject* SlicerPython_ArrayTovtkDataArray ( PyObject* self, PyObject* args )
 {
   long addr;
   char *name;
@@ -357,12 +358,127 @@ static PyObject* SlicerPythonArray_ToVtkDataArray ( PyObject* self, PyObject* ar
   return Py_None;
 }
 
+//#define STRING_CALLBACKS
+
+class vtkSlicerPythonCommand : public vtkCommand
+{
+public:
+  static vtkSlicerPythonCommand *New() 
+  { 
+    return new vtkSlicerPythonCommand; 
+  }
+
+  void Execute(vtkObject *caller, unsigned long event, void *callData)
+  {
+//std::cout<<"Execute!"<<std::endl;
+//std::cout<<PyString_AsString(PyObject_Str(this->CallbackCodeObject))<<std::endl;
+#ifndef STRING_CALLBACKS
+    PyObject_CallFunction(this->CallbackCodeObject,NULL);
+#else
+    PyRun_SimpleString(this->CallbackCodeString);
+#endif
+  }
+
+#ifndef STRING_CALLBACKS
+  void SetCallbackCodeObject(PyObject* callbackCodeObject)
+  {
+    this->CallbackCodeObject = callbackCodeObject;
+  }  
+
+  PyObject* GetCallbackCodeObject()
+  {
+    return this->CallbackCodeObject;
+  }
+#else
+  void SetCallbackCodeString(char* callbackCodeString)
+  {
+    this->CallbackCodeString = callbackCodeString;
+  }  
+
+  const char* GetCallbackCodeString()
+  {
+    return this->CallbackCodeString;
+  }
+#endif
+
+protected:
+  vtkSlicerPythonCommand() 
+  {
+    this->CallbackCodeObject = NULL;
+  }
+  ~vtkSlicerPythonCommand()
+  {
+    if (this->CallbackCodeObject && Py_IsInitialized())
+      {
+      Py_DECREF(this->CallbackCodeObject);
+      }
+    this->CallbackCodeObject = NULL;
+  }
+
+#ifndef STRING_CALLBACKS
+  PyObject* CallbackCodeObject;
+#else
+  char* CallbackCodeString;
+#endif
+};
+
+static PyObject* SlicerPython_vtkObjectAddObserver(PyObject* self, PyObject* args)
+{
+  long addr;
+  char *objName;
+  char *eventName;
+#ifndef STRING_CALLBACKS
+  PyObject* codeObject;
+  if (!PyArg_ParseTuple(args,"lssO:_slicer_vtkObjectAddObserver",&addr,&objName,&eventName,&codeObject))
+#else
+  char *codeString;
+  if (!PyArg_ParseTuple(args,"lsss:_slicer_vtkObjectAddObserver",&addr,&objName,&eventName,&codeString))
+#endif
+    {
+    return NULL;
+    }
+  Tcl_Interp* interp;
+  interp = (Tcl_Interp*) addr;
+
+#ifndef STRING_CALLBACKS
+ Py_INCREF(codeObject);
+#endif
+
+  vtkObject *obj;
+  int error = 0;
+  obj = (vtkObject*)(vtkTclGetPointerFromObject(objName,(char*)"vtkObject",interp,error));
+  if (error)
+    {
+    // Raise an error
+    return PyErr_Format(PyExc_TypeError,"Could not find vtkObject");
+    }
+
+  unsigned long eventTag = 0;
+  vtkSlicerPythonCommand* command = vtkSlicerPythonCommand::New();
+#ifndef STRING_CALLBACKS
+  command->SetCallbackCodeObject(codeObject);
+#else
+  command->SetCallbackCodeString(codeString);
+#endif
+  eventTag = obj->AddObserver(vtkCommand::LeftButtonPressEvent,command);
+  command->Delete();
+
+  return PyInt_FromLong((long)eventTag);
+
+//std::cout<<"Outside "<<PyString_AsString(PyObject_Str(codeObject))<<std::endl;
+//  PyObject_CallFunction(codeObject,NULL);
+
+//  Py_INCREF(Py_None);
+//  return Py_None;
+}
+
 static PyMethodDef moduleMethods[] =
 {
-  {"vtkImageDataToArray", SlicerPython_ToArray, METH_VARARGS, NULL},
-  {"vtkDataArrayToArray", SlicerPythonVtkDataArray_ToArray, METH_VARARGS, NULL},
-  {"ArrayTovtkImageData", SlicerPythonArray_ToVtkImageData, METH_VARARGS, NULL},
-  {"ArrayTovtkDataArray", SlicerPythonArray_ToVtkDataArray, METH_VARARGS, NULL},
+  {"vtkImageDataToArray", SlicerPython_vtkImageDataToArray, METH_VARARGS, NULL},
+  {"vtkDataArrayToArray", SlicerPython_vtkDataArrayToArray, METH_VARARGS, NULL},
+  {"ArrayTovtkImageData", SlicerPython_ArrayTovtkImageData, METH_VARARGS, NULL},
+  {"ArrayTovtkDataArray", SlicerPython_ArrayTovtkDataArray, METH_VARARGS, NULL},
+  {"vtkObjectAddObserver", SlicerPython_vtkObjectAddObserver, METH_VARARGS, NULL},
 //  {"vtkMatrix4x4ToArray", SlicerPythonVtkDataArray_ToArray, METH_VARARGS, NULL},
   {NULL, NULL, 0, NULL}
 };

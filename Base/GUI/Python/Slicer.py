@@ -185,18 +185,31 @@ def __vtkDataArray_FromArray (self,numpyArray,dimensionality=3):
         print e
         raise
 
+def __vtkObject_AddObserver (self,eventName,callback):
+    return _slicer.vtkObjectAddObserver(tk.tk.interpaddr(),self.GetTclName(),eventName,callback)
+
 def CreateClass(name):
     if SlicerClassDict.has_key(name):
         return SlicerClassDict[name]
-    fooName = 'foo'
-    i = 0
-    while tk.tk.eval('info exists %s%d' % (fooName,i)) == '1':
-        i += 1
-    fooName = '%s%d' % (fooName,i)
-    tk.tk.eval('set %s [%s New]' % (fooName,name))
-    methods = tk.tk.eval('$%s ListMethods' % fooName)
-    tk.tk.eval('$%s Delete' % fooName)
-    tk.tk.call(*string.split('unset %s' % fooName))
+
+    instances = tk.tk.eval('%s ListInstances' % name).split()
+    if not instances:
+        fooName = 'foo'
+        i = 0
+        while tk.tk.eval('info exists %s%d' % (fooName,i)) == '1':
+            i += 1
+        fooName = '%s%d' % (fooName,i)
+        tk.tk.eval('set %s [%s New]' % (fooName,name))
+        methods = tk.tk.eval('$%s ListMethods' % fooName)
+        tk.tk.eval('$%s Delete' % fooName)
+        tk.tk.call(*string.split('unset %s' % fooName))
+    else:
+        firstInstance = instances[0]
+        if tk.tk.eval('info command %s' % firstInstance):
+            methods = tk.tk.eval('%s ListMethods' % firstInstance)
+        else: 
+            methods = tk.tk.eval('$%s ListMethods' % firstInstance)
+
     methodLines = methods.split('\n')
     dirtyMethodNames = [classMethods.strip('\n').split('\n') for classMethods in methods.split('Methods from')][1:]
     classNames = [className.split()[2][:-1] for className in methodLines if className.find('Methods from') != -1]
@@ -218,12 +231,15 @@ def CreateClass(name):
         if className == 'vtkDataArray':
             methodDict['ToArray'] = __vtkDataArray_ToArray
             methodDict['FromArray'] = __vtkDataArray_FromArray
+        if className == 'vtkObject':
+            methodDict['AddObserver'] = __vtkObject_AddObserver
         for methodName in classDict[className]:
             if methodName in ('New','Delete'):
                 continue
             ownWrapperLine = ''
             if methodName in ('NewInstance','CreateNodeByClass','CreateInstance','CreateNodeInstance'):
-                ownWrapperLine = 'value.OwnWrapper = True;'
+                #ownWrapperLine = 'value.OwnWrapper = True;'
+                ownWrapperLine = 'value.OwnWrapper = True; slicer.addInstance(value.SlicerWrapper);'
             exec('def %s(self,*a): aTcl = self.__convertArgumentList(a); value = self.SlicerWrapper.__getattr__("%s")(*aTcl); %s return value' % (methodName,methodName,ownWrapperLine))
             exec('methodDict["%s"] = %s' % (methodName,methodName))
         global ClassObj
@@ -264,10 +280,12 @@ class Slicer(object):
         return self.callTk(*string.split(inString))
 
     def addInstance(self,instance):
-        self.instances.append(instance.obj)
+        #self.instances.append(instance.obj)
+        pass
 
     def removeInstance(self,instance):
-        self.instances.remove(instance.obj)
+        #self.instances.remove(instance.obj)
+        pass
 
     # deleteInstances should be called by slicer before Py_Finalize() to unreference
     # all the instances created here
@@ -302,6 +320,12 @@ class Slicer(object):
     def ListVolumeNodes(self):
         return ListVolumeNodes()
 
+    def ListNodes(self):
+        return ListNodes()
+
+    def ListNodesByClass(self,nodeClass):
+        return ListNodesByClass(nodeClass)
+
 
 slicer = Slicer()
 
@@ -334,6 +358,13 @@ class Plugin(object):
                 raise Exception("Plugin: " + self.name + " requires a MRML Node as a positional arg: found " + str(args[ii]) + " instead")
             paramName = self.module.GetParameterName(pargs[ii][0],pargs[ii][1])
             self.module.SetParameterAsString(paramName,args[ii])
+            #n = args[ii]
+            #if not isinstance(n,CreateClass('vtkMRMLNode')):
+            #    self.module = None
+            #    raise Exception("Plugin: " + self.name + " requires a MRML Node as a positional arg: found " + type(args[ii]) + " instead")
+            #paramName = self.module.GetParameterName(pargs[ii][0],pargs[ii][1])
+            #self.module.SetParameterAsString(paramName,args[ii].GetID())
+
 
         # Append empty nodes to the end...
         outputNodeIDs = []
@@ -403,6 +434,7 @@ def TestPluginClass():
     if len(vn) > 0:
         name = vn.keys()[0]
         p.Execute(vn[name].GetID(),vn[name].GetID())
+        #p.Execute(vn[name],vn[name])
 
 def GetRegisteredPlugins ():
     n = slicer.MRMLScene.CreateNodeByClass('vtkMRMLCommandLineModuleNode')
@@ -435,16 +467,29 @@ def CallPlugin ( name, *args, **keywords ):
 # .vtkSlicerWindow3.vtkKWFrame12.vtkKWSplitFrame49.vtkKWFrame325.vtkSlicerSliceViewer378
 # (RelWithDebInfo) 8 % 
 
-def ListVolumeNodes():
-    """Returns a dictionary containing the index and
-    vtkMRMLVolumeNodes currently loaded by Slicer"""
+def ListNodesByClass(nodeClass):
     nodes = {}
     scene = slicer.MRMLScene
-    count = scene.GetNumberOfNodesByClass ('vtkMRMLVolumeNode')
-    for idx in range (count):
-        node = scene.GetNthNodeByClass(idx,'vtkMRMLVolumeNode')
+    count = scene.GetNumberOfNodesByClass(nodeClass)
+    for idx in range(count):
+        node = scene.GetNthNodeByClass(idx,nodeClass)
         nodes[node.GetName()] = node
     return nodes
+
+def ListNodes():
+    nodes = {}
+    scene = slicer.MRMLScene
+    count = scene.GetNumberOfNodes()
+    for idx in range(count):
+        node = scene.GetNthNode(idx)
+        nodes[node.GetName()] = node
+    return nodes
+
+def ListVolumeNodes():
+    #"""Returns a dictionary containing the name and
+    #vtkMRMLVolumeNodes currently loaded by Slicer"""
+    return ListNodesByClass('vtkMRMLVolumeNode')
+
 
 def ParseArgs ( ModuleArgs, ArgTags, ArgFlags, ArgMultiples ):
     """This is a helper function to strip off all the flags
