@@ -403,21 +403,21 @@ target_link_libraries(${CLP}Test ITKIO)
 
 ##################################
 # CurvatureAnisotropicDiffusion tests
-add_test(CurvatureAnisotropicDiffusionTest ${Slicer3_EXE} --launch CurvatureAnisotropicDiffusionTest
-  --compare ${BASELINE}/CurvatureAnisotropicDiffusionTest.nhdr
-            ${TEMP}/CurvatureAnisotropicDiffusionTest.nhdr
-  CurvatureAnisotropicDiffusionTest
-    --conductance 2
-    --timeStep 0.0625
-    --iterations 2
-    ${TEST_DATA}/MRHeadResampled.nhdr
-    ${TEMP}/CurvatureAnisotropicDiffusionTest.nhdr
-  )
-
 set (CLP CurvatureAnisotropicDiffusion)
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test ITKIO)
+
+add_test(${CLP}Test ${Slicer3_EXE} --launch ${CLP}Test
+  --compare ${BASELINE}/${CLP}Test.nhdr
+            ${TEMP}/${CLP}Test.nhdr
+  ${CLP}Test
+    --conductance 2
+    --timeStep 0.0625
+    --iterations 2
+    ${TEST_DATA}/MRHeadResampled.nhdr
+    ${TEMP}/${CLP}Test.nhdr
+  )
 
 ##################################
 # DicomToNrrdConverter tests
@@ -715,7 +715,14 @@ target_link_libraries(${CLP}Test
 ##################################
 # OtsuThresholdImageFilter tests
 add_test(OtsuThresholdImageFilterTest ${Slicer3_EXE} --launch OtsuThresholdImageFilterTest
-  OtsuThresholdImageFilterTest --help
+  --compare ${BASELINE}/OtsuThresholdImageFilterTest.nhdr 
+            ${TEMP}/OtsuThresholdImageFilterTest.nhdr 
+  OtsuThresholdImageFilterTest
+    --insideValue 0
+    --outsideValue 255
+    --numberOfBins 128 
+   ${TEST_DATA}/CTHeadResampled.nhdr
+   ${TEMP}/OtsuThresholdImageFilterTest.nhdr 
   )
 
 set (CLP OtsuThresholdImageFilter)
@@ -726,15 +733,15 @@ target_link_libraries(${CLP}Test ITKIO ITKBasicFilters)
 ##################################
 # OtsuThresholdSegmentation tests
 add_test(OtsuThresholdSegmentationTest ${Slicer3_EXE} --launch OtsuThresholdSegmentationTest
-  --compare ${BASELINE}/OtsuThresholdImageFilterTest.nhdr 
-            ${TEMP}/OtsuThresholdImageFilterTest.nhdr 
+  --compare ${BASELINE}/OtsuThresholdSegmentationTest.nhdr 
+            ${TEMP}/OtsuThresholdSegmentationTest.nhdr 
   OtsuThresholdSegmentationTest
     --brightObjects
     --numberOfBins 128
     --faceConnected
     --minimumObjectSize 1000
    ${TEST_DATA}/CTHeadResampled.nhdr
-   ${TEMP}/OtsuThresholdImageFilterTest.nhdr 
+   ${TEMP}/OtsuThresholdSegmentationTest.nhdr 
 )
 
 set (CLP OtsuThresholdSegmentation)
