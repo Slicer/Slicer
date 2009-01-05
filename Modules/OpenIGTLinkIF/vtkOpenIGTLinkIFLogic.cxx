@@ -6,9 +6,9 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $HeadURL: $
-  Date:      $Date: $
-  Version:   $Revision: $
+  Module:    $HeadURL$
+  Date:      $Date$
+  Version:   $Revision$
 
 ==========================================================================*/
 
@@ -40,7 +40,7 @@
 //#include "igtl_image.h"
 //#include "igtl_transform.h"
 
-vtkCxxRevisionMacro(vtkOpenIGTLinkIFLogic, "$Revision: 1.9.12.1 $");
+vtkCxxRevisionMacro(vtkOpenIGTLinkIFLogic, "$Revision$");
 vtkStandardNewMacro(vtkOpenIGTLinkIFLogic);
 
 //---------------------------------------------------------------------------

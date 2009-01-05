@@ -6,9 +6,9 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $HeadURL: $
-  Date:      $Date: $
-  Version:   $Revision: $
+  Module:    $HeadURL$
+  Date:      $Date$
+  Version:   $Revision$
 
 ==========================================================================*/
 
@@ -23,7 +23,7 @@
 #include "igtlMessageBase.h"
 
 vtkStandardNewMacro(vtkIGTLCircularBuffer);
-vtkCxxRevisionMacro(vtkIGTLCircularBuffer, "$Revision: 1.0 $");
+vtkCxxRevisionMacro(vtkIGTLCircularBuffer, "$Revision$");
 
 
 //---------------------------------------------------------------------------
