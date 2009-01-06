@@ -57,6 +57,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerFiducialsLogic : public vtkSlicerLog
   int AddFiducialSelected (float x, float y, float z, int selected);
 
   // Description:
+  // Load a fiducial list from file, returns NULL on failure
+  vtkMRMLFiducialListNode *LoadFiducialList(const char *path);
+
+  // Description:
   // Update logic state when MRML scene changes
   void ProcessMRMLEvents(); 
     

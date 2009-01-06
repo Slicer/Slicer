@@ -34,6 +34,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLFiducialListNode.h"
+#include "vtkMRMLFiducialListStorageNode.h"
 #include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
 #include "vtkMRMLFreeSurferModelStorageNode.h"
 #include "vtkMRMLGridTransformNode.h"
@@ -149,6 +150,10 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLFiducialListNode *fidln = vtkMRMLFiducialListNode::New(); 
   this->RegisterNodeClass( fidln );
   fidln->Delete();
+
+  vtkMRMLFiducialListStorageNode *fidlsn = vtkMRMLFiducialListStorageNode::New();
+  this->RegisterNodeClass(fidlsn);
+  fidlsn->Delete();
 
   vtkMRMLROINode *roin = vtkMRMLROINode::New(); 
   this->RegisterNodeClass( roin );
@@ -1381,6 +1386,18 @@ void vtkMRMLScene::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << "Number Of Nodes for class " << className.c_str() << " : " << this->GetNumberOfNodesByClass(className.c_str()) << "\n";
     }
   this->UserTagTable->PrintSelf(os, indent);
+
+  os << indent << "Registered node classes:\n";
+  for (int n = 0; n < this->RegisteredNodeClasses.size(); n++)
+    {
+    os << indent.GetNextIndent() << "Class name = " << this->RegisteredNodeClasses[n]->GetClassName() << endl;
+    if (this->RegisteredNodeClasses[n]->IsA("vtkMRMLStorageNode"))
+      {
+      vtkMRMLStorageNode *snode = vtkMRMLStorageNode::SafeDownCast(this->RegisteredNodeClasses[n]);
+      const char *exts = snode->GetDefaultWriteFileExtension();
+      os << indent.GetNextIndent().GetNextIndent() << "Default write extension = " << (exts != NULL ? exts : "NULL") << endl;
+      }
+   }
 }
 
 

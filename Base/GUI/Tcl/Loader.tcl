@@ -116,6 +116,7 @@ if { [itcl::find class Loader] == "" } {
     variable _modelExtensions ".vtk .vtp .g .stl .orig .inflated .sphere .white .smoothwm .pial"
     variable _qdecExtensions ".qdec"
     variable _xcedeExtensions ".xcat"
+    variable _fiducialExtensions ".fcsv"
     variable _observerRecords ""
     variable _cleanupDirs ""
     variable browserResult ""
@@ -448,6 +449,9 @@ itcl::body Loader::add { paths } {
         } elseif { [lsearch $_qdecExtensions $ext] != -1 } {
           $this addRow $path "QDEC"
           $this status ""
+        } elseif { [lsearch $_fiducialExtensions $ext] != -1 } {
+          $this addRow $path "FiducialList"
+          $this status ""
         } else {
           $this status "Cannot read file $path"
         }
@@ -522,6 +526,14 @@ itcl::body Loader::apply { } {
           } else {
               $this errorDialog "QDEC module not present, cannot open $path"
           }
+        }
+        "FiducialList" {
+           set node [[$::slicer3::FiducialsGUI GetLogic] LoadFiducialList $path]
+           if { $node == "" } {
+              $this errorDialog "Could not open $path"
+            } else {
+              $node SetName $name
+            }  
         }
       }
     }

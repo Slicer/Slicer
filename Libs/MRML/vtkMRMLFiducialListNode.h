@@ -29,13 +29,14 @@
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLFiducial.h"
-#include "vtkMRMLTransformableNode.h"
+#include "vtkMRMLStorableNode.h"
+#include "vtkMRMLFiducialListStorageNode.h"
 
-class VTK_MRML_EXPORT vtkMRMLFiducialListNode : public vtkMRMLTransformableNode
+class VTK_MRML_EXPORT vtkMRMLFiducialListNode : public vtkMRMLStorableNode
 {
 public:
   static vtkMRMLFiducialListNode *New();
-  vtkTypeMacro(vtkMRMLFiducialListNode,vtkMRMLTransformableNode);
+  vtkTypeMacro(vtkMRMLFiducialListNode,vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
   
   //--------------------------------------------------------------------------
@@ -165,6 +166,9 @@ public:
   // Description:
   // Add a fiducial point to the list x, y, z
   int AddFiducialWithXYZ(float x, float y, float z, int selected);
+  // Description:
+  // Add a fiducial point to the list with a label, x,y,z, selected flag, visibility
+  int AddFiducialWithLabelXYZSelectedVisibility(const char *label, float x, float y, float z, int selected, int visibility);
 
   // Description:
   // remove the passed in fiducial from the list
@@ -268,6 +272,13 @@ public:
   virtual bool CanApplyNonLinearTransforms() { return true; }
   virtual void ApplyTransform(vtkMatrix4x4* transformMatrix);
   virtual void ApplyTransform(vtkAbstractTransform* transform);
+  
+  // Description:
+  // Create default storage node or NULL if does not have one
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
+    {
+      return vtkMRMLFiducialListStorageNode::New();
+    };
 
 protected:
   vtkMRMLFiducialListNode();

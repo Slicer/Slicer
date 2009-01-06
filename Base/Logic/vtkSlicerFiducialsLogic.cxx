@@ -74,6 +74,7 @@ void vtkSlicerFiducialsLogic::AddFiducialListSelected()
     node->Delete();
     }
 }
+
 //----------------------------------------------------------------------------
 vtkMRMLFiducialListNode *vtkSlicerFiducialsLogic::AddFiducialList()
 {
@@ -196,4 +197,33 @@ int vtkSlicerFiducialsLogic::AddFiducial(float x, float y, float z)
     vtkErrorMacro("FiducialsLogic: no selection node to pick which list to which to add a fiducial\n");
     return -1;
     }
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLFiducialListNode *vtkSlicerFiducialsLogic::LoadFiducialList(const char* path)
+{
+  this->GetMRMLScene()->SaveStateForUndo();
+  
+  vtkMRMLNode *node = 
+    this->GetMRMLScene()->CreateNodeByClass("vtkMRMLFiducialListNode");
+  if (node == NULL)
+    {
+    return NULL;
+    }
+
+  // the name is set after reading the file
+
+  this->GetMRMLScene()->AddNode(node); 
+
+  vtkMRMLFiducialListNode *listNode = vtkMRMLFiducialListNode::SafeDownCast(node);
+
+  vtkMRMLStorageNode *snode = listNode->CreateDefaultStorageNode();
+  snode->SetFileName(path);
+  this->GetMRMLScene()->AddNode(snode);
+  
+
+  listNode->SetAndObserveStorageNodeID(snode->GetID());
+  snode->ReadData(listNode);
+
+  return listNode; //vtkMRMLFiducialListNode::SafeDownCast(node);
 }

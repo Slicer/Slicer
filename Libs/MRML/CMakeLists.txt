@@ -97,6 +97,7 @@ set(MRML_SRCS
   vtkMRMLFiberBundleDisplayNode.cxx
   vtkMRMLFiducial.cxx
   vtkMRMLFiducialListNode.cxx
+  vtkMRMLFiducialListStorageNode.cxx
   vtkMRMLFreeSurferModelOverlayStorageNode.cxx
   vtkMRMLFreeSurferModelStorageNode.cxx    
   vtkMRMLFreeSurferProceduralColorNode.cxx
