@@ -317,6 +317,7 @@ foreach s3ext $::EXTEND(s3extFiles) {
   cd $::Slicer3_EXT/$ext(name)-build
   runcmd $::CMAKE \
     -DSlicer3_DIR:PATH=$::Slicer3_BUILD \
+    -DBUILD_AGAINST_SLICER3:BOOL=ON \
     -DCMAKE_INSTALL_PREFIX:PATH=$::Slicer3_EXT/$ext(name)-install \
     $ext(srcDir)
 
