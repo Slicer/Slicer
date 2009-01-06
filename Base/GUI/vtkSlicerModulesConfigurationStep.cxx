@@ -3,10 +3,9 @@
 #include "vtkObjectFactory.h"
 
 #include "vtkKWApplication.h"
-#include "vtkKWCheckButton.h"
 #include "vtkKWIcon.h"
 #include "vtkKWLabel.h"
-#include "vtkKWLabelWithLabel.h"
+#include "vtkKWLoadSaveButton.h"
 #include "vtkKWLoadSaveButtonWithLabel.h"
 #include "vtkKWRadioButton.h"
 #include "vtkKWRadioButtonSet.h"
@@ -15,6 +14,8 @@
 #include "vtkKWWizardStep.h"
 #include "vtkKWWizardWidget.h"
 #include "vtkKWWizardWorkflow.h"
+#include "vtkKWPushButton.h"
+#include "vtkKWStateMachineInput.h"
 
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerModulesWizardDialog.h"
@@ -32,22 +33,32 @@ vtkCxxRevisionMacro(vtkSlicerModulesConfigurationStep, "$Revision: 1.0 $");
 //----------------------------------------------------------------------------
 vtkSlicerModulesConfigurationStep::vtkSlicerModulesConfigurationStep()
 {
-  this->SetName("Modules Management Wizard");
+  this->SetName("Extensions Management Wizard");
   this->WizardDialog = NULL;
 
-  this->Header = NULL;
+  this->HeaderIcon = NULL;
+  this->HeaderText = NULL;
   this->ActionRadioButtonSet = NULL;
   this->CacheDirectoryButton = NULL;
   this->TrashButton = NULL;
   this->SearchLocationBox = NULL;
+
+  this->SelectedRepositoryURL = "NULL";
+
+  this->RepositoryValidationFailed = vtkKWStateMachineInput::New();
+  this->RepositoryValidationFailed->SetName("failed");
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerModulesConfigurationStep::~vtkSlicerModulesConfigurationStep()
 {
-  if (this->Header)
+  if (this->HeaderIcon)
     {
-    this->Header->Delete();
+    this->HeaderIcon->Delete();
+    }
+  if (this->HeaderText)
+    {
+    this->HeaderText->Delete();
     }
   if (this->ActionRadioButtonSet)
     {
@@ -87,17 +98,28 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
   vtkKWWizardWidget *wizard_widget = 
     this->GetWizardDialog()->GetWizardWidget();
 
-  if (!this->Header)
+  if (!this->HeaderIcon)
     {
-    this->Header = vtkKWLabelWithLabel::New();
+    this->HeaderIcon = vtkKWLabel::New();
     }
 
-  if (this->Header->IsCreated())
+  if (!this->HeaderIcon->IsCreated())
     {
-    this->Header->SetParent( wizard_widget->GetClientArea() );
-    this->Header->Create();
-    this->Header->SetLabelText("This wizard lets you search for modules to add to 3D Slicer,\ndownload and install them, and uninstall existing modules.");
-    this->Header->GetWidget()->SetImageToPredefinedIcon(vtkKWIcon::IconConnection);
+    this->HeaderIcon->SetParent( wizard_widget->GetClientArea() );
+    this->HeaderIcon->Create();
+    this->HeaderIcon->SetImageToPredefinedIcon(vtkKWIcon::IconConnection);
+    }
+
+  if (!this->HeaderText)
+    {
+    this->HeaderText = vtkKWLabel::New();
+    }
+
+  if (!this->HeaderText->IsCreated())
+    {
+    this->HeaderText->SetParent( wizard_widget->GetClientArea() );
+    this->HeaderText->Create();
+    this->HeaderText->SetText("This wizard lets you search for extensions to add to 3D Slicer,\ndownload and install them, and uninstall existing extensions.");
     }
 
   if (!this->ActionRadioButtonSet)
@@ -114,17 +136,16 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     radiob = this->ActionRadioButtonSet->AddWidget(
       vtkSlicerModulesConfigurationStep::ActionInstall);
     radiob->SetText("Install");
-    radiob->SetCommand(wizard_widget, "Update");
 
     radiob = this->ActionRadioButtonSet->AddWidget(
       vtkSlicerModulesConfigurationStep::ActionUninstall);
     radiob->SetText("Uninstall");
-    radiob->SetCommand(wizard_widget, "Update");
+    radiob->SetCommand(this, "ActionRadioButtonSetChangedCallback");
  
     radiob = this->ActionRadioButtonSet->AddWidget(
       vtkSlicerModulesConfigurationStep::ActionEither);
     radiob->SetText("Either");
-    radiob->SetCommand(wizard_widget, "Update");
+    radiob->SetCommand(this, "ActionRadioButtonSetChangedCallback");
 
     this->ActionRadioButtonSet->GetWidget(
       vtkSlicerModulesConfigurationStep::ActionInstall)->Select();
@@ -145,7 +166,7 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
 
   if (!this->TrashButton)
     {
-    this->TrashButton = vtkKWCheckButton::New();
+    this->TrashButton = vtkKWPushButton::New();
     }
   if (!this->TrashButton->IsCreated())
     {
@@ -163,21 +184,68 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     this->SearchLocationBox->SetParent( wizard_widget->GetClientArea() );
     this->SearchLocationBox->Create();
     this->SearchLocationBox->SetLabelText("Where to search:");
-    this->SearchLocationBox->GetWidget()->SetValue("ext.slicer.org/ext");
     }
  
-  this->Script("pack %s -side top -expand y -anchor center",
-               this->Header->GetWidgetName());
-
   this->Script("pack %s %s -side top -expand y -anchor center",
-               this->CacheDirectoryButton->GetWidgetName(),
-               this->TrashButton->GetWidgetName());
+               this->HeaderIcon->GetWidgetName(),
+               this->HeaderText->GetWidgetName());
   
   this->Script("pack %s -side top -expand y -anchor center", 
                this->ActionRadioButtonSet->GetWidgetName());
 
+  this->Script("pack %s %s -side top -expand y -anchor center",
+               this->CacheDirectoryButton->GetWidgetName(),
+               this->TrashButton->GetWidgetName());
+ 
   this->Script("pack %s -side top -expand y -anchor center", 
                this->SearchLocationBox->GetWidgetName());
+
+  this->Update();
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerModulesConfigurationStep::Update()
+{
+  vtkSlicerApplication *app
+    = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+
+  if (app)
+    {
+      if (this->CacheDirectoryButton)
+        {
+        this->CacheDirectoryButton->GetWidget()->TrimPathFromFileNameOff();
+        this->CacheDirectoryButton->GetWidget()
+          ->SetText(app->GetTemporaryDirectory());
+        this->CacheDirectoryButton->GetWidget()
+          ->GetLoadSaveDialog()->SetLastPath(app->GetTemporaryDirectory());
+        }
+
+      if (this->SearchLocationBox)
+        {
+        std::string platform;
+
+#ifdef __APPLE__
+        platform = "darwin-x86";
+#endif
+
+        std::string build_date;
+
+        // :TODO: 20090105 tgl: Get build date from build system. Rather,
+        // have build system specify build date as a macro/global
+        // constant.
+
+        build_date = "2008-12-30";
+
+        std::string ext_slicer_org("http://ext.slicer.org/ext/");
+        ext_slicer_org += build_date;
+        ext_slicer_org += "/";
+        ext_slicer_org += platform;
+        
+        this->SelectedRepositoryURL = ext_slicer_org;
+        
+        this->SearchLocationBox->GetWidget()->SetValue(this->SelectedRepositoryURL.c_str());
+        }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -188,15 +256,84 @@ void vtkSlicerModulesConfigurationStep::HideUserInterface()
 }
 
 //----------------------------------------------------------------------------
+int vtkSlicerModulesConfigurationStep::ActionRadioButtonSetChangedCallback()
+{
+  int result = 0;
+
+  if (vtkSlicerModulesConfigurationStep::ActionUninstall == this->GetSelectedAction())
+    {
+    this->CacheDirectoryButton->EnabledOff();
+    this->TrashButton->EnabledOff();
+    this->SearchLocationBox->EnabledOff();      
+    }
+  else
+    {
+    this->CacheDirectoryButton->EnabledOn();
+    this->TrashButton->EnabledOn();
+    this->SearchLocationBox->EnabledOn();      
+    }
+
+  return result;
+}
+
+//----------------------------------------------------------------------------
+int vtkSlicerModulesConfigurationStep::IsRepositoryValid()
+{
+  int result = 1;
+  
+  if (vtkSlicerModulesConfigurationStep::ActionInstall == this->GetSelectedAction() ||
+      vtkSlicerModulesConfigurationStep::ActionEither == this->GetSelectedAction())
+    {      
+    std::string url = this->SearchLocationBox->GetWidget()->GetValue();
+      
+    vtkSlicerApplication *app = dynamic_cast<vtkSlicerApplication*> (this->GetApplication());
+
+    const char* tmp = app->GetTemporaryDirectory();
+    std::string tmpfile(tmp);
+    tmpfile += "/manifest.html";
+
+    if (itksys::SystemTools::FileExists(tmpfile.c_str()))
+      {
+      itksys::SystemTools::RemoveFile(tmpfile.c_str());
+      }
+
+    vtkHTTPHandler *handler = vtkHTTPHandler::New();
+      
+    if (0 != handler->CanHandleURI(url.c_str()))
+      {
+      handler->StageFileRead(url.c_str(), tmpfile.c_str());
+      }
+ 
+    handler->Delete();
+      
+    if (itksys::SystemTools::FileExists(tmpfile.c_str()) &&
+        itksys::SystemTools::FileLength(tmpfile.c_str()) > 0)
+      {
+      result = 0;
+      }
+
+    }
+
+  return result;
+}
+
+//----------------------------------------------------------------------------
 void vtkSlicerModulesConfigurationStep::Validate()
 {
-  vtkKWWizardWorkflow *wizard_workflow = 
-    this->GetWizardDialog()->GetWizardWidget()->GetWizardWorkflow();
+  vtkKWWizardWidget *wizard_widget = this->GetWizardDialog()->GetWizardWidget();
 
-  // This step always validates
+  vtkKWWizardWorkflow *wizard_workflow = wizard_widget->GetWizardWorkflow();
 
-  wizard_workflow->PushInput(
-    vtkKWWizardStep::GetValidationSucceededInput());
+  int valid = this->IsRepositoryValid();
+  if (0 == valid)
+    {
+    wizard_workflow->PushInput(vtkKWWizardStep::GetValidationSucceededInput());
+    }
+  else
+    {
+    wizard_widget->SetErrorText("Could not connect to specified repository, check network connection.");
+    wizard_workflow->PushInput(this->GetRepositoryValidationFailed());
+    }
 
   wizard_workflow->ProcessInputs();
 }
@@ -206,18 +343,15 @@ int vtkSlicerModulesConfigurationStep::GetSelectedAction()
 {
   if (this->ActionRadioButtonSet)
     {
-    if (this->ActionRadioButtonSet->GetWidget(
-          vtkSlicerModulesConfigurationStep::ActionInstall)->GetSelectedState())
+    if (this->ActionRadioButtonSet->GetWidget(vtkSlicerModulesConfigurationStep::ActionInstall)->GetSelectedState())
       {
       return vtkSlicerModulesConfigurationStep::ActionInstall;
       }
-    if (this->ActionRadioButtonSet->GetWidget(
-          vtkSlicerModulesConfigurationStep::ActionUninstall)->GetSelectedState())
+    if (this->ActionRadioButtonSet->GetWidget(vtkSlicerModulesConfigurationStep::ActionUninstall)->GetSelectedState())
       {
       return vtkSlicerModulesConfigurationStep::ActionUninstall;
       }
-    if (this->ActionRadioButtonSet->GetWidget(
-          vtkSlicerModulesConfigurationStep::ActionEither)->GetSelectedState())
+    if (this->ActionRadioButtonSet->GetWidget(vtkSlicerModulesConfigurationStep::ActionEither)->GetSelectedState())
       {
       return vtkSlicerModulesConfigurationStep::ActionEither;
       }
