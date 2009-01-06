@@ -334,9 +334,9 @@ foreach s3ext $::EXTEND(s3extFiles) {
   cd $::Slicer3_EXT/$ext(name)-build
   if { $::EXTEND(test-type) != "" } {
     if { $isWindows } {
-      catch runcmd $::MAKE $ext(name).sln /build $::VTK_BUILD_TYPE /project $::EXTEND(test-type)
+      catch "runcmd $::MAKE $ext(name).sln /build $::VTK_BUILD_TYPE /project $::EXTEND(test-type)" errorVal
     } else {
-      catch runcmd $::MAKE $::EXTEND(test-type)
+      catch "runcmd $::MAKE $::EXTEND(test-type)" errorVal
     }
   }
 
