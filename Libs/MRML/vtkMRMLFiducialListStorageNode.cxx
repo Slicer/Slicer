@@ -233,6 +233,10 @@ int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
             ptr = strtok(NULL, ",");
             }
           int fidIndex = fiducialListNode->AddFiducialWithLabelXYZSelectedVisibility(label.c_str(), x, y, z, sel, vis);
+          if (fidIndex == -1)
+            {
+            vtkErrorMacro("Error adding fiducial to list, label = " << label.c_str());
+            }
              }
         }
       }
@@ -315,7 +319,8 @@ int vtkMRMLFiducialListStorageNode::WriteData(vtkMRMLNode *refNode)
   for (int i = 0; i < fiducialListNode->GetNumberOfFiducials(); i++)
     {
     float *xyz = fiducialListNode->GetNthFiducialXYZ(i);
-    float *xyzw = fiducialListNode->GetNthFiducialOrientation(i);
+    // for now, skip orientation
+    //float *xyzw = fiducialListNode->GetNthFiducialOrientation(i);
     const char *label = fiducialListNode->GetNthFiducialLabelText(i);
     int sel = fiducialListNode->GetNthFiducialSelected(i);
     int vis = fiducialListNode->GetNthFiducialVisibility(i);
