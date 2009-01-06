@@ -305,14 +305,6 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
     </string-enumeration>
 
     <boolean>
-      <name>normEnabled</name>
-      <longflag>normEnabled</longflag>
-      <description>Normalize frequency of fibers per voxel</description>
-      <label>Normalize</label>
-      <default>false</default>
-    </boolean>
-    
-    <boolean>
       <name>lengthEnabled</name>
       <longflag>lengthEnabled</longflag>
       <description>Toggle length</description>
@@ -552,7 +544,6 @@ def Execute (\
              fa,\
              cmEnabled,\
              probMode,\
-             normEnabled,\
              lengthEnabled,\
              lengthClass,\
              inputVol0 = "",\
@@ -707,9 +698,6 @@ def Execute (\
   ack = s.recv(SIZE)
 
   s.send('lengthEnabled ' + str(int(lengthEnabled)) + '\n')
-  ack = s.recv(SIZE)
-
-  s.send('normEnabled ' + str(int(normEnabled)) + '\n')
   ack = s.recv(SIZE)
 
   s.send('lengthClass ' + str(lengthClass) + '\n')
