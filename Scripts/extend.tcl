@@ -334,10 +334,15 @@ foreach s3ext $::EXTEND(s3extFiles) {
   cd $::Slicer3_EXT/$ext(name)-build
   if { $::EXTEND(test-type) != "" } {
     if { $isWindows } {
-      catch "runcmd $::MAKE $ext(name).sln /build $::VTK_BUILD_TYPE /project $::EXTEND(test-type)" errorVal
+      set ret [catch "runcmd $::MAKE $ext(name).sln /build $::VTK_BUILD_TYPE /project $::EXTEND(test-type)" res]
     } else {
-      catch "runcmd $::MAKE $::EXTEND(test-type)" errorVal
+      set ret [catch "runcmd $::MAKE $::EXTEND(test-type)" res]
     }
+  }
+
+  if { $ret } {
+    puts stderr "ERROR building $::ext(name)"
+    puts stderr $res
   }
 
   # run the install target
