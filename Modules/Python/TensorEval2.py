@@ -11,8 +11,7 @@ def EvaluateTensorS0(dataD, G, b, ofilter=False, wFilter=False, aFilter=False, b
    eps = finfo(float).eps
   
    A = ones( (dataD.shape[3], 7) )
-
-   # evaluate time on algo
+   
    time0=time.time() 
    for k in range(dataD.shape[3]):
      A[k, :] = [1, -b[0,k]*G[0,k]**2, -2*b[0,k]*G[0,k]*G[1,k], -2*b[0,k]*G[0,k]*G[2,k], -b[0, k]*G[1,k]**2, -2*b[0,k]*G[1,k]*G[2,k], -b[0,k]*G[2,k]**2]
