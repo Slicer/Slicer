@@ -19,13 +19,6 @@ class PythonGADScriptedModuleGUI(ScriptedModuleGUI):
         self.ApplyButton = slicer.vtkKWPushButton()
     
     def Destructor(self):
-#        del self.GadNodeSelector
-#        del self.ConductanceScale
-#        del self.TimeStepScale
-#        del self.NumberOfIterationsScale
-#        del self.VolumeSelector 
-#        del self.OutVolumeSelector
-#        del self.ApplyButton
         pass
     
     def RemoveMRMLNodeObservers(self):
@@ -52,6 +45,12 @@ class PythonGADScriptedModuleGUI(ScriptedModuleGUI):
         
         self.ApplyButtonTag = self.AddObserverByNumber(self.ApplyButton,vtkKWPushButton_InvokedEvent)
 
+        #interactor = slicer.ApplicationGUI.GetRenderWindowInteractor()
+        #self.LeftButtonReleaseTag = interactor.AddObserver("LeftButtonReleaseEvent",self.TestCallback)
+
+        #sliceInteractor = slicer.ApplicationGUI.GetMainSliceGUI("Red").GetSliceViewer().GetRenderWidget().GetRenderWindowInteractor()
+        #self.SliceLeftButtonReleaseTag = sliceInteractor.AddObserver("LeftButtonReleaseEvent",self.TestCallback2)
+       
     def RemoveGUIObservers(self):
         self.RemoveObserver(self.ConductanceScaleChangingTag)
         self.RemoveObserver(self.ConductanceScaleChangedTag)
@@ -69,6 +68,9 @@ class PythonGADScriptedModuleGUI(ScriptedModuleGUI):
         self.RemoveObserver(self.GadNodeSelectorSelectedTag)
         
         self.RemoveObserver(self.ApplyButtonTag)
+
+        #self.RemoveObserver(self.LeftButtonReleaseTag)
+        #self.RemoveObserver(self.SliceLeftButtonReleaseTag)
 
     def ProcessGUIEvents(self,caller,event):
         if caller == self.ConductanceScale and event == vtkKWScale_ScaleValueChangedEvent:
@@ -90,11 +92,30 @@ class PythonGADScriptedModuleGUI(ScriptedModuleGUI):
             self.UpdateMRML()
             self.Apply()
 
+    def TestCallback(self):
+        dialog = slicer.vtkKWMessageDialog()
+        dialog.SetParent(slicer.ApplicationGUI.GetMainSlicerWindow())
+        dialog.SetMasterWindow(slicer.ApplicationGUI.GetMainSlicerWindow())
+        dialog.SetStyleToMessage()
+        dialog.SetText("TestCallback")
+        dialog.Create()
+        dialog.Invoke()
+
+    def TestCallback2(self):
+        dialog = slicer.vtkKWMessageDialog()
+        dialog.SetParent(slicer.ApplicationGUI.GetMainSlicerWindow())
+        dialog.SetMasterWindow(slicer.ApplicationGUI.GetMainSlicerWindow())
+        dialog.SetStyleToMessage()
+        dialog.SetText("TestCallback2")
+        dialog.Create()
+        dialog.Invoke()
+
     def Apply(self):
+
         if not self.GetScriptedModuleNode():
           slicer.Application.ErrorMessage("No input ScriptedModuleNode found")
           return
-    
+
         scriptedModuleNode = self.GetScriptedModuleNode()
     
         inVolume = scriptedModuleNode.GetParameter('InputVolumeRef')
@@ -159,7 +180,7 @@ class PythonGADScriptedModuleGUI(ScriptedModuleGUI):
                 self.TimeStepScale.SetValue(timeStep)
 
     def ProcessMRMLEvents(self,caller,event):
-        if self.GetScriptedModuleNode() == caller:
+        if caller == self.GetScriptedModuleNode():
             self.UpdateGUI()
 
     def BuildGUI(self):
