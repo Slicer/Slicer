@@ -1388,7 +1388,7 @@ void vtkMRMLScene::PrintSelf(ostream& os, vtkIndent indent)
   this->UserTagTable->PrintSelf(os, indent);
 
   os << indent << "Registered node classes:\n";
-  for (int n = 0; n < this->RegisteredNodeClasses.size(); n++)
+  for (unsigned int n = 0; n < this->RegisteredNodeClasses.size(); n++)
     {
     os << indent.GetNextIndent() << "Class name = " << this->RegisteredNodeClasses[n]->GetClassName() << endl;
     if (this->RegisteredNodeClasses[n]->IsA("vtkMRMLStorageNode"))
@@ -1400,7 +1400,25 @@ void vtkMRMLScene::PrintSelf(ostream& os, vtkIndent indent)
    }
 }
 
+//------------------------------------------------------------------------------
+int vtkMRMLScene::GetNumberOfRegisteredNodeClasses()
+{
+  return this->RegisteredNodeClasses.size();
+}
 
+//------------------------------------------------------------------------------
+vtkMRMLNode *vtkMRMLScene::GetNthRegisteredNodeClass(int n)
+{
+  if (n >= 0 && n < this->GetNumberOfRegisteredNodeClasses())
+    {
+    return this->RegisteredNodeClasses[n];
+    }
+  else
+    {
+    vtkErrorMacro("GetNthRegisteredNodeClass: index " << n << " out of bounds 0 - " << this->GetNumberOfRegisteredNodeClasses());
+    return NULL;
+    }
+}
 
 
 //------------------------------------------------------------------------------

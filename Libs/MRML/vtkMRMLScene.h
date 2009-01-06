@@ -208,6 +208,15 @@ public:
   // returns list of names
   const char* GetNodeClasses();
   
+  // Description:
+  // Get the number of registered node classes (is probably greater than the current number 
+  // of nodes instantiated in the scene) 
+  int GetNumberOfRegisteredNodeClasses();
+  // Description:
+  // Get the nth registered node class, returns NULL if n is out of the range 0-GetNumberOfRegisteredNodeClasses
+  // Useful for iterating through nodes to find all the possible storage nodes.
+  vtkMRMLNode * GetNthRegisteredNodeClass(int n);
+
   const char* GetUniqueNameByString(const char* className);
   // Description:
   // Explore the MRML tree to find the next unique index for use as an ID,
