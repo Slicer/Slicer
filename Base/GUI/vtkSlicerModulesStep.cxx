@@ -433,7 +433,7 @@ void vtkSlicerModulesStep::DownloadInstallExtension(const std::string& Extension
       std::string file(slicerHome + std::string("/") + Slicer3_INSTALL_MODULES_LIB_DIR + std::string("/") + zipname);
 
       std::string tmpdir(tmp);
-      tmpdr += "/";
+      tmpdir += "/";
       tmpdir += "extension";
 
       app->Script("$::Loader::Mount %s %s", tmpfile.c_str(), tmpdir.c_str());
