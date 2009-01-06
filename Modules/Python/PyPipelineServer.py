@@ -462,7 +462,7 @@ class PipelineHandler(asyncore.dispatcher):
                     return data[0] # data (ready to get DWI)
             else:
                     return data[0] # init
-       
+
         tmp = data[1:]
         self.params.set(data[0], tmp)
         logger.info("param id: %s" % data[0])
