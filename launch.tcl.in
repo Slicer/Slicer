@@ -441,7 +441,9 @@ proc launch_SetPaths {} {
     #
     set ::env(TCLLIBPATH) "$::env(VTK_DIR)/Wrapping/Tcl $::env(TCLLIBPATH)"
     set ::env(TCLLIBPATH) "$::env(KWWidgets_DIR)/Wrapping/Tcl $::env(TCLLIBPATH)"
+    if { [info exists ::env(OpenIGTLink_DIR] } {
     set ::env(TCLLIBPATH) "$::env(OpenIGTLink_DIR)/Wrapping/Tcl $::env(TCLLIBPATH)"
+    }
     set ::env(TCLLIBPATH) "$::env(Slicer3_HOME)/Base/Wrapping/Tcl/vtkSlicerBase $::env(TCLLIBPATH)"
     set ::env(TCLLIBPATH) "$::env(TCL_DIR)/lib/itcl@INCR_TCL_VERSION_DOT@ $::env(TCLLIBPATH)"
     set ::env(TCLLIBPATH) "$::env(TCL_DIR)/lib/itk@INCR_TCL_VERSION_DOT@ $::env(TCLLIBPATH)"
