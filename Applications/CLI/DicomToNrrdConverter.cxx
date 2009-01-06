@@ -349,9 +349,11 @@ int main(int argc, char* argv[])
 
     tag.clear();
     itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0028|0010", tag );
+    // number of rows is the number of pixels in the second dimension 
     int nRows = atoi( tag.c_str() );
 
     tag.clear();
+    // number of columns is the number of pixels in the first dimension 
     itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0028|0011", tag );
     int nCols = atoi( tag.c_str() );
 
@@ -828,7 +830,8 @@ int main(int argc, char* argv[])
       // need to check
       header << "space: right-anterior-superior" << std::endl;
 
-      header << "sizes: " << nRows << " " << nCols << " " << nSliceInVolume << " " << nVolume << std::endl;
+      // in nrrd, size array is the number of pixels in 1st, 2nd, 3rd, ... dimensions
+      header << "sizes: " << nCols << " " << nRows << " " << nSliceInVolume << " " << nVolume << std::endl;
       header << "thicknesses:  NaN  NaN " << sliceSpacing << " NaN" << std::endl;
 
       // need to check
