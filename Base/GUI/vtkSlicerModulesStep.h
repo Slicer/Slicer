@@ -7,10 +7,12 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 class vtkSlicerModulesWizardDialog;
 class vtkKWMultiColumnList;
-class vtkKWCheckButton;
+class vtkKWPushButton;
+class vtkKWLabel;
 //BTX
 class ManifestEntry;
 //ETX
@@ -37,14 +39,31 @@ public:
   std::vector<ManifestEntry*> GetSelectedModules();
   //ETX
 
+  // Description:
+  // Callbacks for extensions configuration actions.
+  // Description:
+  // Select all extensions from the repository.
+  void SelectAll();
+  // Description:
+  // Select no extensions from the repository.
+  void SelectNone();
+  // Description:
+  // Download and install selected extensions.
+  void DownloadInstall();
+  // Description:
+  // Uninstall selected extensions.
+  void Uninstall();
+
 protected:
   vtkSlicerModulesStep();
   ~vtkSlicerModulesStep();
 
-  vtkKWMultiColumnList *ModulesMultiColumnList;
-  vtkSlicerModulesWizardDialog *WizardDialog;
   //BTX
   std::vector<ManifestEntry*> Modules;
+  //ETX
+
+  //BTX
+  std::map<std::string, std::string> Messages;
   //ETX
 
 private:
@@ -57,8 +76,26 @@ private:
   std::vector<ManifestEntry*> ParseManifest(const std::string&);
   //ETX
   
-  vtkKWCheckButton *DownloadButton;
-  vtkKWCheckButton *UninstallButton;
+  vtkKWLabel *HeaderText;
+  vtkKWPushButton *SelectAllButton;
+  vtkKWPushButton *SelectNoneButton;
+  vtkKWMultiColumnList *ModulesMultiColumnList;
+  vtkKWPushButton *DownloadButton;
+  vtkKWPushButton *UninstallButton;
+
+  vtkSlicerModulesWizardDialog *WizardDialog;
+
+  // Description:
+  // Helper method for dowlonad and install
+  //BTX
+  void DownloadInstallExtension(const std::string& ExtensionBinaryURL);
+  //ETX
+
+  // Description:
+  // Helper method for dowlonad and install
+  //BTX
+  void UninstallExtension(const std::string& ExtensionName);
+  //ETX
 
 };
 
