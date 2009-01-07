@@ -9,6 +9,7 @@
 #include "vtkKWWizardWorkflow.h"
 #include "vtkKWLabel.h"
 #include "vtkKWMultiColumnList.h"
+#include "vtkKWFrame.h"
 
 #include "vtkHTTPHandler.h"
 
@@ -26,8 +27,7 @@ vtkCxxRevisionMacro(vtkSlicerModulesStep, "$Revision: 1.2 $");
 //----------------------------------------------------------------------------
 vtkSlicerModulesStep::vtkSlicerModulesStep()
 {
-  this->SetName("Extension");
-  this->SetDescription("Select a Slicer3 Extension.");
+  this->SetName("Extension Management Wizard");
   this->HeaderText = NULL;
   this->SelectAllButton = NULL;
   this->SelectNoneButton = NULL;
@@ -93,23 +93,28 @@ void vtkSlicerModulesStep::ShowUserInterface()
   vtkKWWizardWidget *wizard_widget = 
     this->GetWizardDialog()->GetWizardWidget();
 
-  // left most column checkbox to select download
-  // radio button set along top: select all, deselect all
+  vtkSlicerApplication *app =
+    dynamic_cast<vtkSlicerApplication*> (this->GetApplication());
 
-  // Show list of available modules for downloaded
+  vtkKWFrame *f1 = vtkKWFrame::New();
+  vtkKWFrame *f2 = vtkKWFrame::New();
+  vtkKWFrame *f3 = vtkKWFrame::New();
+  vtkKWFrame *f4 = vtkKWFrame::New();
 
-  // Script("Slicer3OpenLink %s") see QueryAtlas multi-column
+  f1->SetParent( wizard_widget->GetClientArea() );
+  f1->Create();
+  f2->SetParent( wizard_widget->GetClientArea() );
+  f2->Create();
+  f3->SetParent( wizard_widget->GetClientArea() );
+  f3->Create();
+  f4->SetParent( wizard_widget->GetClientArea() );
+  f4->Create();
 
-  // along bottom buttons to:
-  //-- download now
-  //-- uninstall (delete?)
-
-  // status bar or progress along bottom
-
-  // disable next until download or uninstall is selected (once? once
-  // after selection change?)
-
-  vtkSlicerApplication *app = dynamic_cast<vtkSlicerApplication*> (this->GetApplication());
+  this->Script("pack %s %s %s %s -side top",
+               f1->GetWidgetName(),
+               f2->GetWidgetName(),
+               f3->GetWidgetName(),
+               f4->GetWidgetName());
 
   if (!this->HeaderText)
     {
@@ -117,7 +122,7 @@ void vtkSlicerModulesStep::ShowUserInterface()
     }
   if (!this->HeaderText->IsCreated())
     {
-    this->HeaderText->SetParent( wizard_widget->GetClientArea() );
+    this->HeaderText->SetParent( f1 );
     this->HeaderText->Create();
     this->HeaderText->SetText(this->Messages["READY"].c_str());
     }
@@ -128,7 +133,7 @@ void vtkSlicerModulesStep::ShowUserInterface()
     }
   if (!this->SelectAllButton->IsCreated())
     {
-    this->SelectAllButton->SetParent( wizard_widget->GetClientArea() );
+    this->SelectAllButton->SetParent( f2 );
     this->SelectAllButton->Create();
 
     this->SelectAllButton->SetText("Select All");
@@ -142,7 +147,7 @@ void vtkSlicerModulesStep::ShowUserInterface()
     }
   if (!this->SelectNoneButton->IsCreated())
     {
-    this->SelectNoneButton->SetParent( wizard_widget->GetClientArea() );
+    this->SelectNoneButton->SetParent( f2 );
     this->SelectNoneButton->Create();
     
     this->SelectNoneButton->SetText("Select None");
@@ -189,7 +194,7 @@ void vtkSlicerModulesStep::ShowUserInterface()
 
     delete[] HTML;
 
-    this->ModulesMultiColumnList->SetParent(wizard_widget->GetClientArea());
+    this->ModulesMultiColumnList->SetParent( f3 );
     this->ModulesMultiColumnList->Create();
     this->ModulesMultiColumnList->SetBalloonHelpString(
       "A list of available extensions.");
@@ -201,6 +206,7 @@ void vtkSlicerModulesStep::ShowUserInterface()
     col_index = this->ModulesMultiColumnList->AddColumn("Select");
     this->ModulesMultiColumnList->SetColumnEditWindowToCheckButton(col_index);
     this->ModulesMultiColumnList->ColumnEditableOn(col_index);
+    this->ModulesMultiColumnList->SetColumnFormatCommandToEmptyOutput(col_index);
     
     col_index = this->ModulesMultiColumnList->AddColumn("Status");
     col_index = this->ModulesMultiColumnList->AddColumn("Name");
@@ -229,7 +235,7 @@ void vtkSlicerModulesStep::ShowUserInterface()
     }
   if (!this->DownloadButton->IsCreated())
     {
-    this->DownloadButton->SetParent( wizard_widget->GetClientArea() );
+    this->DownloadButton->SetParent( f4 );
     this->DownloadButton->Create();
     this->DownloadButton->SetText("Download & Install");
     this->DownloadButton->SetCommand(this, "DownloadInstall");
@@ -241,25 +247,30 @@ void vtkSlicerModulesStep::ShowUserInterface()
     }
   if (!this->UninstallButton->IsCreated())
     {
-    this->UninstallButton->SetParent( wizard_widget->GetClientArea() );
+    this->UninstallButton->SetParent( f4 );
     this->UninstallButton->Create();
     this->UninstallButton->SetText("Uninstall");
     this->UninstallButton->SetCommand(this, "Uninstall");
     }
 
-  this->Script("pack %s -side top -anchor nw -expand y -padx 2 -pady 2", 
+  this->Script("pack %s -side top -pady 10", 
                this->HeaderText->GetWidgetName());
 
-  this->Script("pack %s %s -side top -anchor nw -expand y -padx 2 -pady 2", 
+  this->Script("pack %s %s -side left -anchor w -pady 2", 
                this->SelectAllButton->GetWidgetName(),
                this->SelectNoneButton->GetWidgetName());
 
-  this->Script("pack %s -side top -anchor nw -expand y -padx 2 -pady 2", 
+  this->Script("pack %s -side left", 
                this->ModulesMultiColumnList->GetWidgetName());
 
-  this->Script("pack %s %s -side top -anchor nw -expand y -padx 2 -pady 2", 
+  this->Script("pack %s %s -side left -anchor w -pady 2", 
                this->DownloadButton->GetWidgetName(),
                this->UninstallButton->GetWidgetName());
+
+  f1->Delete();
+  f2->Delete();
+  f3->Delete();
+  f4->Delete();
 
 }
 
@@ -269,7 +280,7 @@ void vtkSlicerModulesStep::SelectAll()
   int nrows = this->ModulesMultiColumnList->GetNumberOfRows();
   for (int row=0; row<nrows; row++)
     {
-      this->ModulesMultiColumnList->SetCellTextAsInt(row, 0, 1);
+      this->ModulesMultiColumnList->SelectCell(row, 0);
     }
 }
 
@@ -279,7 +290,7 @@ void vtkSlicerModulesStep::SelectNone()
   int nrows = this->ModulesMultiColumnList->GetNumberOfRows();
   for (int row=0; row<nrows; row++)
     {
-      this->ModulesMultiColumnList->SetCellTextAsInt(row, 0, 0);
+      this->ModulesMultiColumnList->DeselectCell(row, 0);
     }
 }
 
@@ -299,6 +310,7 @@ void vtkSlicerModulesStep::DownloadInstall()
       if (1 == this->ModulesMultiColumnList->GetCellTextAsInt(row, 0))
         {
           this->ModulesMultiColumnList->SetCellImageToIcon(row, 1, wait);
+          this->Script("update idletasks");
           this->DownloadInstallExtension(this->ModulesMultiColumnList->GetCellText(row, 6));
           this->ModulesMultiColumnList->SetCellImageToIcon(row, 1, done);
         }
@@ -436,7 +448,7 @@ void vtkSlicerModulesStep::DownloadInstallExtension(const std::string& Extension
       tmpdir += "/";
       tmpdir += "extension";
 
-      app->Script("$::Loader::Mount %s %s", tmpfile.c_str(), tmpdir.c_str());
+      app->Script("package require vfs; eval $::_fixed_zip_code; vfs::zip::Mount %s %s", tmpfile.c_str(), tmpdir.c_str());
     }
 
   handler->Delete();
