@@ -37,6 +37,13 @@ public:
   vtkGetObjectMacro(ModulesStep, vtkSlicerModulesStep);
   vtkGetObjectMacro(ModulesResultStep, vtkSlicerModulesResultStep);
 
+  // Description:
+  // Get/Set the repository used to query for extensions.
+  //BTX
+  std::string GetSelectedRepositoryURL() { return this->SelectedRepositoryURL; };
+  void SetSelectedRepositoryURL(const std::string& url) { this->SelectedRepositoryURL = url; };
+  //ETX
+
 protected:
   vtkSlicerModulesWizardDialog();
   ~vtkSlicerModulesWizardDialog() {};
@@ -50,6 +57,10 @@ protected:
   vtkSlicerModulesConfigurationStep *ModulesConfigurationStep;
   vtkSlicerModulesStep *ModulesStep;
   vtkSlicerModulesResultStep *ModulesResultStep;
+
+  //BTX
+  std::string SelectedRepositoryURL;
+  //ETX
 
 private:
   vtkSlicerModulesWizardDialog(const vtkSlicerModulesWizardDialog&); // Not implemented.

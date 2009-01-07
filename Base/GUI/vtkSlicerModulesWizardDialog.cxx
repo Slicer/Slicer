@@ -2,6 +2,7 @@
 
 #include "vtkObjectFactory.h"
 
+#include "vtkSlicerApplication.h"
 #include "vtkSlicerModulesConfigurationStep.h"
 #include "vtkSlicerModulesStep.h"
 #include "vtkSlicerModulesResultStep.h"
@@ -25,6 +26,8 @@ vtkSlicerModulesWizardDialog::vtkSlicerModulesWizardDialog()
   this->ModulesConfigurationStep    = NULL;
   this->ModulesStep    = NULL;
   this->ModulesResultStep    = NULL;
+
+  this->SelectedRepositoryURL = "NULL";
 }
 
 //----------------------------------------------------------------------------
