@@ -763,7 +763,23 @@ target_link_libraries(${CLP}Test  ITKBasicFilters MRML vtkTeem)
 ##################################
 # ResampleVolume2 tests
 add_test(ResampleVolume2Test ${Slicer3_EXE} --launch ResampleVolume2Test
-  ResampleVolume2Test --help
+  --compare 
+    ${TEST_DATA}/MRHeadResampled.nhdr
+    ${TEMP}/ResampleVolume2Test.nhdr
+  ResampleVolume2Test
+    --Reference ${TEST_DATA}/MRHeadResampled.nhdr
+    --number_of_thread 0
+    --transform_matrix 1,0,0,0,1,0,0,0,1,0,0,0
+    --transform rt
+    --space LPS
+    --interpolation linear
+    --window_function c
+    --spline_order 3
+    --spacing 0,0,0
+    --size 0,0,0
+    --direction_matrix 0,0,0,0,0,0,0,0,0
+    ${TEST_DATA}/MRHeadResampled.nhdr
+    ${TEMP}/ResampleVolume2Test.nhdr
   )
 
 set (CLP ResampleVolume2)
