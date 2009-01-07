@@ -16,6 +16,7 @@
 #include "vtkKWWizardWorkflow.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWStateMachineInput.h"
+#include "vtkKWFrame.h"
 
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerModulesWizardDialog.h"
@@ -98,6 +99,21 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
   vtkKWWizardWidget *wizard_widget = 
     this->GetWizardDialog()->GetWizardWidget();
 
+  vtkKWFrame *f1 = vtkKWFrame::New();
+  f1->SetParent( wizard_widget->GetClientArea() );
+  f1->Create();
+  vtkKWFrame *f2 = vtkKWFrame::New();
+  f2->SetParent( wizard_widget->GetClientArea() );
+  f2->Create();
+  vtkKWFrame *f3 = vtkKWFrame::New();
+  f3->SetParent( wizard_widget->GetClientArea() );
+  f3->Create();
+
+  this->Script("pack %s %s %s -side top -pady 5",
+               f1->GetWidgetName(),
+               f2->GetWidgetName(),
+               f3->GetWidgetName());
+
   if (!this->HeaderIcon)
     {
     this->HeaderIcon = vtkKWLabel::New();
@@ -105,7 +121,7 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
 
   if (!this->HeaderIcon->IsCreated())
     {
-    this->HeaderIcon->SetParent( wizard_widget->GetClientArea() );
+    this->HeaderIcon->SetParent( f1 );
     this->HeaderIcon->Create();
     this->HeaderIcon->SetImageToPredefinedIcon(vtkKWIcon::IconConnection);
     }
@@ -117,7 +133,7 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
 
   if (!this->HeaderText->IsCreated())
     {
-    this->HeaderText->SetParent( wizard_widget->GetClientArea() );
+    this->HeaderText->SetParent( f1 );
     this->HeaderText->Create();
     this->HeaderText->SetText("This wizard lets you search for extensions to add to 3D Slicer,\ndownload and install them, and uninstall existing extensions.");
     }
@@ -128,14 +144,15 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     }
   if (!this->ActionRadioButtonSet->IsCreated())
     {
-    this->ActionRadioButtonSet->SetParent(wizard_widget->GetClientArea());
+    this->ActionRadioButtonSet->SetParent( f2 );
     this->ActionRadioButtonSet->Create();
 
     vtkKWRadioButton *radiob;
 
     radiob = this->ActionRadioButtonSet->AddWidget(
       vtkSlicerModulesConfigurationStep::ActionInstall);
-    radiob->SetText("Install");
+    radiob->SetText("Find & Install");
+    //    radiob->SetCommand(this, "ActionRadioButtonSetChangedCallback");
 
     radiob = this->ActionRadioButtonSet->AddWidget(
       vtkSlicerModulesConfigurationStep::ActionUninstall);
@@ -153,15 +170,18 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     this->ActionRadioButtonSet->PackHorizontallyOn();
   }
 
+  int label_width = 25;
+
   if (!this->CacheDirectoryButton)
     {
     this->CacheDirectoryButton = vtkKWLoadSaveButtonWithLabel::New();
     }
   if (!this->CacheDirectoryButton->IsCreated())
     {
-    this->CacheDirectoryButton->SetParent( wizard_widget->GetClientArea() );
+    this->CacheDirectoryButton->SetParent( f3 );
     this->CacheDirectoryButton->Create();
     this->CacheDirectoryButton->SetLabelText("Download (cache) directory:");
+    this->CacheDirectoryButton->SetLabelWidth(label_width);
     }
 
   if (!this->TrashButton)
@@ -170,7 +190,7 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     }
   if (!this->TrashButton->IsCreated())
     {
-    this->TrashButton->SetParent( wizard_widget->GetClientArea() );
+    this->TrashButton->SetParent( f3 );
     this->TrashButton->Create();
     this->TrashButton->SetImageToPredefinedIcon(vtkKWIcon::IconTrashcan);
     }
@@ -181,24 +201,34 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     }
   if (!this->SearchLocationBox->IsCreated())
     {
-    this->SearchLocationBox->SetParent( wizard_widget->GetClientArea() );
+    this->SearchLocationBox->SetParent( f3 );
     this->SearchLocationBox->Create();
     this->SearchLocationBox->SetLabelText("Where to search:");
+    this->SearchLocationBox->SetLabelWidth(label_width);
     }
  
-  this->Script("pack %s %s -side top -expand y -anchor center",
+  this->Script("pack %s %s -side left", 
                this->HeaderIcon->GetWidgetName(),
                this->HeaderText->GetWidgetName());
   
-  this->Script("pack %s -side top -expand y -anchor center", 
+  this->Script("pack %s -side left -pady 20", 
                this->ActionRadioButtonSet->GetWidgetName());
 
-  this->Script("pack %s %s -side top -expand y -anchor center",
-               this->CacheDirectoryButton->GetWidgetName(),
+  this->Script("grid %s -row 0 -column 0 -sticky e -padx 5 -pady 5",
+               this->CacheDirectoryButton->GetWidgetName());
+
+  this->Script("grid %s -row 0 -column 1 -sticky e -padx 5 -pady 5",
                this->TrashButton->GetWidgetName());
  
-  this->Script("pack %s -side top -expand y -anchor center", 
+  this->Script("grid %s -row 1 -column 0 -columnspan 2 -sticky e -padx 5 -pady 5",
                this->SearchLocationBox->GetWidgetName());
+
+  this->Script("grid columnconfigure %s 0 -weight 1",
+               f3->GetWidgetName());
+
+  f1->Delete();
+  f2->Delete();
+  f3->Delete();
 
   this->Update();
 }
