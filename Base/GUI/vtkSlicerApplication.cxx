@@ -530,7 +530,7 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
   GetTempPath(vtkKWRegistryHelper::RegistryKeyValueSizeMax,
               this->TemporaryDirectory);
 #else
-  strcpy(this->TemporaryDirectory, "/tmp");
+  strcpy(this->TemporaryDirectory, "/var/tmp");
 #endif
 
 
