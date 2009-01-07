@@ -18,6 +18,7 @@ class vtkRenderer;
 class vtkSlicerVolumeTextureMapper3D;
 class vtkTimerLog;
 class vtkSlicerFixedPointVolumeRayCastMapper;
+class vtkSlicerGPURayCastVolumeTextureMapper3D;
 class vtkKWMenuButtonWithSpinButtonsWithLabel;
 class vtkKWScaleWithLabel;
 class vtkKWCheckButtonWithLabel;
@@ -271,7 +272,17 @@ protected:
     // Description:
     // Enable/Disable Ray Cast Mapping
     vtkKWCheckButtonWithLabel *CB_RayCast;
+    
+    // added by yanling
+    // Description:
+    // Enable/Disable GPU Ray Cast Mapping
+    vtkKWCheckButtonWithLabel *CB_GPURayCast;
 
+    // added by yanling
+    // Description:
+    // Enable/Disable MIP GPU Ray Cast Mapping
+    vtkKWCheckButtonWithLabel *CB_GPURayCastMIP;
+    
     // Description:
     // Add interactive frame rates to ray cast mapping
     vtkKWCheckButtonWithLabel *CB_InteractiveFrameRate;
@@ -279,6 +290,11 @@ protected:
     // Description:
     // Adjust the frame for interactive rendering methods
     vtkKWScaleWithLabel *SC_Framerate;
+    
+    // added by yanling
+    // Description:
+    // Adjust the steps for interactive gpu ray casting rendering methods
+    vtkKWScaleWithLabel *SC_Raysteps;
 
     // Description:
     // Update the quality check boxes ( e.g. ensure that one cb is always enabled etc.)
@@ -410,6 +426,11 @@ protected:
     // Description:
     // The hardware accelerated texture mapper.
     vtkSlicerVolumeTextureMapper3D *MapperTexture;    
+    
+    // added by yanling
+        // Description:
+    // The hardware accelerated gpu ray cast mapper.
+    vtkSlicerGPURayCastVolumeTextureMapper3D *MapperGPURaycast;
 
     // Description:
     // The software accelerated software mapper

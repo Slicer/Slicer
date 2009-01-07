@@ -43,6 +43,8 @@ set(VolumeRenderingReplacements_SRCS
   vtkSlicerVolumeTextureMapper3D.cxx
   vtkSlicerOpenGLVolumeTextureMapper3D.cxx
   vtkSlicerVolumeRenderingFactory.cxx
+  #GPU Ray Cast stuff
+  vtkSlicerGPURayCastVolumeTextureMapper3D.cxx
   #Ray Cast stuff
   vtkSlicerFixedPointRayCastImage.cxx
   vtkSlicerFixedPointVolumeRayCastCompositeGOHelper.cxx
