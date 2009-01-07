@@ -77,6 +77,11 @@ vtkEventBroker::~vtkEventBroker()
     this->CloseLogFile();
     this->EventLoggingOff();
     }
+
+  if( vtkEventBroker::Instance == this )
+    {
+    vtkEventBroker::Instance = NULL;
+    }
 }
 
 
