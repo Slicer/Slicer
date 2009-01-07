@@ -1658,6 +1658,25 @@ int Slicer3_main(int argc, char *argv[])
 #endif
 #endif
 
+  if ( EvalPython != "" )
+    {
+#if defined(Slicer3_USE_PYTHON)
+    if ( !NoModules )
+      {
+      std::string pythonCmd = EvalPython + "\n";
+      v = PyRun_String( EvalPython.c_str(),
+                        Py_file_input,
+                        PythonDictionary,PythonDictionary);    
+      if (v == NULL)
+        {
+        PyErr_Print(); 
+        }
+      slicerApp->Delete();
+      return ( v == NULL ? EXIT_FAILURE : EXIT_SUCCESS );
+      }
+#endif
+    }
+
   //
   // create the three main slice viewers after slicesGUI is created
   //
@@ -1702,6 +1721,23 @@ int Slicer3_main(int argc, char *argv[])
     tclCmd += "regsub -all {,\\.} $::SLICER(exec) \";\" ::SLICER(exec); ";
     tclCmd += "after idle eval $::SLICER(exec);";
     res = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
+    }
+
+  if ( ExecPython != "" )
+    {
+#if defined(Slicer3_USE_PYTHON)
+    if ( !NoModules )
+      {
+      std::string pythonCmd = ExecPython + "\n";
+      v = PyRun_String( ExecPython.c_str(),
+                        Py_file_input,
+                        PythonDictionary,PythonDictionary);    
+      if (v == NULL)
+        {
+        PyErr_Print(); 
+        }
+      }
+#endif
     }
 
   //

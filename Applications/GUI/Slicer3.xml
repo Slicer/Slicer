@@ -204,6 +204,20 @@
       <label>Some code to execute (don't load slicer)</label>
       </string>
 
+      <string>
+      <name>ExecPython</name>
+      <longflag>--execpython</longflag>
+      <description>Some Python code to execute after slicer loads. (note: cannot specify scene after --exec)</description>
+      <label>Some code to execute after slicer loads</label>
+      </string>
+
+      <string>
+      <name>EvalPython</name>
+      <longflag>--evalpython</longflag>
+      <description>Like --exec, but doesn't load slicer first</description>
+      <label>Some code to execute (don't load slicer)</label>
+      </string>
+
       <boolean>
       <name>Stereo</name>
       <longflag>--stereo</longflag>
