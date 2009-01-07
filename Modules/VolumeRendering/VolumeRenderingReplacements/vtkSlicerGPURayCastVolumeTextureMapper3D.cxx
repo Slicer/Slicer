@@ -3,12 +3,16 @@
   Program:   Visualization Toolkit
   Module:    $RCSfile: vtkSlicerGPURayCastVolumeTextureMapper3D.h,v $
 
-  Copyright (c) Yanling Liu, ABCC, SAIC-Frederick, NCI-Frederick
-  All rights reserved.
+   Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notice for more information.
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Program:   vtkSlicerGPURayCastVolumeTextureMapper3D
+  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/ $
+  Date:      $Date: 2009-01-07 09:26:53 -0500 (Tue, 30 Jan 2009) $
+  Version:   $Revision:  $
+
 
 =========================================================================*/
 #include <string.h>

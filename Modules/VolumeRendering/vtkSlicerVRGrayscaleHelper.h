@@ -273,12 +273,12 @@ protected:
     // Enable/Disable Ray Cast Mapping
     vtkKWCheckButtonWithLabel *CB_RayCast;
     
-    // added by yanling
+    // added for GPGPU raycast
     // Description:
     // Enable/Disable GPU Ray Cast Mapping
     vtkKWCheckButtonWithLabel *CB_GPURayCast;
 
-    // added by yanling
+    // added for GPGPU raycast
     // Description:
     // Enable/Disable MIP GPU Ray Cast Mapping
     vtkKWCheckButtonWithLabel *CB_GPURayCastMIP;
@@ -291,7 +291,7 @@ protected:
     // Adjust the frame for interactive rendering methods
     vtkKWScaleWithLabel *SC_Framerate;
     
-    // added by yanling
+    // added for GPGPU raycast
     // Description:
     // Adjust the steps for interactive gpu ray casting rendering methods
     vtkKWScaleWithLabel *SC_Raysteps;
@@ -427,7 +427,7 @@ protected:
     // The hardware accelerated texture mapper.
     vtkSlicerVolumeTextureMapper3D *MapperTexture;    
     
-    // added by yanling
+    // added for GPGPU raycast
         // Description:
     // The hardware accelerated gpu ray cast mapper.
     vtkSlicerGPURayCastVolumeTextureMapper3D *MapperGPURaycast;

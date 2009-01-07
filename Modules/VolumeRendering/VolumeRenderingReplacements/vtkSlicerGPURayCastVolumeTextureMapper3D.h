@@ -2,13 +2,17 @@
 
   Program:   Visualization Toolkit
   Module:    $RCSfile: vtkSlicerGPURayCastVolumeTextureMapper3D.h,v $
+  
+   Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-  Copyright (c) Yanling Liu, ABCC, SAIC-Frederick, NCI-Frederick
-  All rights reserved.
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notice for more information.
+  Program:   GPGPU Ray Cast Mapper 
+  Module:    $HeadURL: $
+  Date:      $Date: 2009-01-07  $
+  Version:   $Revision:  $
+
 
 =========================================================================*/
 // .NAME vtkSlicerGPURayCastVolumeTextureMapper3D - concrete implementation of 3D volume texture mapping
