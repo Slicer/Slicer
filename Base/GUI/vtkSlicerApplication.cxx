@@ -1429,21 +1429,24 @@ void vtkSlicerApplication::ProcessDisplayMessage()
     this->DisplayMessageQueueLock->Unlock();
 
     // post the message
-    if (record.first == "Error")
+    if (vtkSlicerApplication::GetInstance()->CreateLogDialog())
       {
-      vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddErrorRecord( record.second.c_str() );
-      }
-    else if (record.first == "Warning")
-      {
-      vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddWarningRecord( record.second.c_str() );
-      }
-    else if (record.first == "Information")
-      {
-      vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddInformationRecord( record.second.c_str() );
-      }
-    else if (record.first == "Debug")
-      {
-      vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddDebugRecord( record.second.c_str() );
+      if (record.first == "Error")
+        {
+        vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddErrorRecord( record.second.c_str() );
+        }
+      else if (record.first == "Warning")
+        {
+        vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddWarningRecord( record.second.c_str() );
+        }
+      else if (record.first == "Information")
+        {
+        vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddInformationRecord( record.second.c_str() );
+        }
+      else if (record.first == "Debug")
+        {
+        vtkSlicerApplication::GetInstance()->GetLogDialog()->GetLogWidget()->AddDebugRecord( record.second.c_str() );
+        }
       }
     }
 
