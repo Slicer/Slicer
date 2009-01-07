@@ -5,8 +5,8 @@
 #include "vtkKWWizardStep.h"
 
 class vtkSlicerModulesWizardDialog;
-class vtkKWProgressGauge;
-class vtkKWText;
+class vtkKWPushButton;
+class vtkKWLabel;
 
 class vtkSlicerModulesResultStep : public vtkKWWizardStep
 {
@@ -29,18 +29,15 @@ protected:
   vtkSlicerModulesResultStep();
   ~vtkSlicerModulesResultStep();
 
-  vtkKWProgressGauge *ProgressGauge;
-  vtkKWText *Text;
+  vtkKWLabel *HeaderText;
+  vtkKWPushButton *RestartButton;
+  vtkKWPushButton *LaterButton;
   vtkSlicerModulesWizardDialog *WizardDialog;
 
 private:
   vtkSlicerModulesResultStep(const vtkSlicerModulesResultStep&);   // Not implemented.
   void operator=(const vtkSlicerModulesResultStep&);  // Not implemented.
 
-  //BTX
-  void Install(const std::string& url);
-  void InstallSource(const std::string& url);
-  //ETX
 };
 
 #endif

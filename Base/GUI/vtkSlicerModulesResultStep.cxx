@@ -9,8 +9,8 @@
 #include "vtkKWWizardStep.h"
 #include "vtkKWWizardWidget.h"
 #include "vtkKWWizardWorkflow.h"
-#include "vtkKWProgressGauge.h"
-#include "vtkKWText.h"
+#include "vtkKWPushButton.h"
+#include "vtkKWLabel.h"
 
 #include "vtkHTTPHandler.h"
 
@@ -30,23 +30,27 @@ vtkCxxRevisionMacro(vtkSlicerModulesResultStep, "$Revision: 1.2 $");
 //----------------------------------------------------------------------------
 vtkSlicerModulesResultStep::vtkSlicerModulesResultStep()
 {
-  this->SetName("Progress");
-  this->SetDescription("Specify loadable module path.");
+  this->SetName("Extension Managament Wizard");
   this->WizardDialog = NULL;
-  this->ProgressGauge = NULL;
-  this->Text = NULL;
+  this->HeaderText = NULL;
+  this->RestartButton = NULL;
+  this->LaterButton = NULL;
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerModulesResultStep::~vtkSlicerModulesResultStep()
 {
-  if (this->ProgressGauge)
+  if (this->HeaderText)
     {
-    this->ProgressGauge->Delete();
+    this->HeaderText->Delete();
     }
-  if (this->Text)
+  if (this->RestartButton)
     {
-    this->Text->Delete();
+    this->RestartButton->Delete();
+    }
+  if (this->LaterButton)
+    {
+    this->LaterButton->Delete();
     }
   this->SetWizardDialog(NULL);
 }
@@ -67,54 +71,45 @@ void vtkSlicerModulesResultStep::ShowUserInterface()
 
   vtkKWWizardWidget *wizard_widget = wizard_dialog->GetWizardWidget();
 
-  std::vector<ManifestEntry*> modules = wizard_dialog->GetModulesStep()->GetSelectedModules();
-  
-  std::stringstream messg;
-  bool none = true;
-
-  for (unsigned int i=0; i<modules.size(); i++)
+  if (!this->HeaderText)
     {
-      if (modules[i]->Version.compare("source") == 0) {
-        this->InstallSource(modules[i]->URL);
-        messg << "Source install: " << modules[i]->Name << std::endl;
-        none = false;
-      } else {
-        this->Install(modules[i]->URL);
-        messg << "Binary install: " << modules[i]->Name << " " << modules[i]->URL << std::endl;
-        none = false;
-      }
+    this->HeaderText = vtkKWLabel::New();
+    } 
+  if (!this->HeaderText->IsCreated())
+    {
+    this->HeaderText->SetParent( wizard_widget->GetClientArea() );
+    this->HeaderText->Create();
+    this->HeaderText->SetText("Choose to restart 3D Slicer now to incorporate these\nextensions changes immediately. Restarting later will make\nthe changes next time the software starts up.");
     }
 
-  if (none)
+  if (!this->RestartButton)
     {
-      messg << "No modules installed" << std::endl;
+    this->RestartButton = vtkKWPushButton::New();
+    }
+  if (!this->RestartButton->IsCreated())
+    {
+    this->RestartButton->SetParent( wizard_widget->GetClientArea() );
+    this->RestartButton->Create();
+    this->RestartButton->SetText("Restart 3D Slicer now");
     }
 
-  if (!this->ProgressGauge)
+  if (!this->LaterButton)
     {
-    this->ProgressGauge = vtkKWProgressGauge::New();
+    this->LaterButton = vtkKWPushButton::New();
     }
-  if (!this->ProgressGauge->IsCreated())
+  if (!this->LaterButton->IsCreated())
     {
-    this->ProgressGauge->SetParent(wizard_widget->GetClientArea());
-    this->ProgressGauge->Create();
+    this->LaterButton->SetParent( wizard_widget->GetClientArea() );
+    this->LaterButton->Create();
+    this->LaterButton->SetText("Restart later");
     }
-  if (!this->Text)
-    {
-    this->Text = vtkKWText::New();
-    }
-  
-  if (!this->Text->IsCreated())
-    {
-    this->Text->SetParent(wizard_widget->GetClientArea());
-    this->Text->SetEnabled(0);
-    this->Text->Create();
-    }
-
-  this->Text->SetText(messg.str().c_str());
 
   this->Script("pack %s -side top -expand y -fill none -anchor center", 
-               this->Text->GetWidgetName());
+               this->HeaderText->GetWidgetName());
+
+  this->Script("pack %s %s -side top -expand y -fill none -anchor center", 
+               this->RestartButton->GetWidgetName(),
+               this->LaterButton->GetWidgetName());
 }
 
 //----------------------------------------------------------------------------
@@ -137,41 +132,3 @@ void vtkSlicerModulesResultStep::Validate()
   wizard_workflow->ProcessInputs();
 }
 
-//----------------------------------------------------------------------------
-void vtkSlicerModulesResultStep::Install(const std::string& url)
-{
-  
-  vtkHTTPHandler *handler = vtkHTTPHandler::New();
-
-  if (0 != handler->CanHandleURI(url.c_str()))
-    {
-      std::string::size_type pos = url.rfind("/");
-      std::string libname = url.substr(pos);
-      
-      vtksys_stl::string slicerHome;
-      vtksys::SystemTools::GetEnv("Slicer3_HOME", slicerHome);
-
-      std::string file(slicerHome + std::string("/") + Slicer3_INSTALL_MODULES_LIB_DIR + std::string("/") + libname);
-
-      handler->StageFileRead(url.c_str(), file.c_str());
-    }
-
-  handler->Delete();
-  
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerModulesResultStep::InstallSource(const std::string& url)
-{
-  vtksys_stl::string slicerHome;
-  vtksys::SystemTools::GetEnv("Slicer3_HOME", slicerHome);
-  
-  std::string slicerModulesSource = slicerHome;
-  slicerModulesSource += "/../Slicer3/Modules/loadablemodules.cmake";
-
-  std::ofstream ofs(slicerModulesSource.c_str(), std::ios::app);
-
-  ofs << "slicer_parse_module_url(\"" << url << "\")" << std::endl;
-
-  ofs.close();
-}
