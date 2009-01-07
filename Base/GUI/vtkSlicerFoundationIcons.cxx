@@ -9,6 +9,8 @@ vtkCxxRevisionMacro ( vtkSlicerFoundationIcons, "$Revision: 1.0 $");
 //---------------------------------------------------------------------------
 vtkSlicerFoundationIcons::vtkSlicerFoundationIcons ( )
 {
+  this->SlicerSelectAllIcon = vtkKWIcon::New();
+  this->SlicerDeselectAllIcon = vtkKWIcon::New();  
   this->SlicerTableIcon = vtkKWIcon::New();
   this->SlicerMoreOptionsIcon = vtkKWIcon::New();
   this->SlicerGoIcon = vtkKWIcon::New();
@@ -88,6 +90,16 @@ vtkSlicerFoundationIcons::vtkSlicerFoundationIcons ( )
 vtkSlicerFoundationIcons::~vtkSlicerFoundationIcons ( )
 {
 
+  if (this->SlicerSelectAllIcon)
+    {
+    this->SlicerSelectAllIcon->Delete();
+    this->SlicerSelectAllIcon = NULL;    
+    }
+  if (this->SlicerDeselectAllIcon )
+    {
+    this->SlicerDeselectAllIcon->Delete();
+    this->SlicerDeselectAllIcon = NULL;    
+    }
   if ( this->SlicerTableIcon )
     {
     this->SlicerTableIcon->Delete();
@@ -444,7 +456,18 @@ vtkSlicerFoundationIcons::~vtkSlicerFoundationIcons ( )
 //---------------------------------------------------------------------------
 void vtkSlicerFoundationIcons::AssignImageDataToIcons ( )
 {
-    // SliceVisibleIcon
+
+  this->SlicerSelectAllIcon->SetImage (image_SlicerSelectAll,
+                                       image_SlicerSelectAll_width,
+                                       image_SlicerSelectAll_height,
+                                       image_SlicerSelectAll_pixel_size,
+                                       image_SlicerSelectAll_length, 0);
+  this->SlicerDeselectAllIcon->SetImage (image_SlicerDeselectAll,
+                                       image_SlicerDeselectAll_width,
+                                       image_SlicerDeselectAll_height,
+                                       image_SlicerDeselectAll_pixel_size,
+                                       image_SlicerDeselectAll_length, 0);
+
   this->SlicerTableIcon->SetImage ( image_SlicerTable,
                                     image_SlicerTable_width,
                                     image_SlicerTable_height,
@@ -806,6 +829,8 @@ void vtkSlicerFoundationIcons::PrintSelf ( ostream& os, vtkIndent indent )
     this->vtkObject::PrintSelf ( os, indent );
 
     os << indent << "SlicerFoundationIcons: " << this->GetClassName ( ) << "\n";
+    os << indent << "SlicerSelectAllIcon: " << this->GetSlicerSelectAllIcon() << "\n";
+    os << indent << "SlicerDeselectAllIcon: " << this->GetSlicerDeselectAllIcon() << "\n";
     os << indent << "SlicerTableIcon: " << this->GetSlicerTableIcon() << "\n";
     os << indent << "SlicerMoreOptionsIcon: " << this->GetSlicerMoreOptionsIcon() << "\n";
     os << indent << "SlicerGoIcon: " << this->GetSlicerGoIcon() << "\n";

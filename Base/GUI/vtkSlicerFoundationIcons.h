@@ -14,6 +14,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFoundationIcons : public vtkSlicerIcon
     vtkTypeRevisionMacro (vtkSlicerFoundationIcons, vtkSlicerIcons );
     void PrintSelf ( ostream& os, vtkIndent indent );
 
+    vtkGetObjectMacro ( SlicerSelectAllIcon, vtkKWIcon );
+    vtkGetObjectMacro ( SlicerDeselectAllIcon, vtkKWIcon );
     vtkGetObjectMacro ( SlicerTableIcon, vtkKWIcon );
     vtkGetObjectMacro ( SlicerMoreOptionsIcon, vtkKWIcon);
     vtkGetObjectMacro ( SlicerGoIcon, vtkKWIcon );
@@ -90,6 +92,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFoundationIcons : public vtkSlicerIcon
  protected:
     vtkSlicerFoundationIcons ( );
     virtual ~vtkSlicerFoundationIcons ( );
+    vtkKWIcon *SlicerSelectAllIcon;
+    vtkKWIcon *SlicerDeselectAllIcon;
     vtkKWIcon *SlicerTableIcon;
     vtkKWIcon *SlicerGoIcon;
     vtkKWIcon *SlicerGoing0Icon;

@@ -13,6 +13,36 @@ static const unsigned char image_SlicerBlank[] =
 
 /* 
  * Resource generated for file:
+ *    SelectAll.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerSelectAll_width          = 21;
+static const unsigned int  image_SlicerSelectAll_height         = 21;
+static const unsigned int  image_SlicerSelectAll_pixel_size     = 3;
+static const unsigned long image_SlicerSelectAll_length         = 200;
+static const unsigned long image_SlicerSelectAll_decoded_length = 1323;
+
+static const unsigned char image_SlicerSelectAll[] = 
+  "eNpjYKAU/CcXwLX7kA7QtKOZvG3HbqziEIBV++IdF4Bo3tYL7TPX4TIWj/aWGeuB2rvnbm"
+  "JkZKzvW4im/amgIH7tQHbrtFVAMq24cf7mU6TanlTQANE7d+OJRdvPkWr7zHUnZOSUF249"
+  "u2jbucUY2gnajksZMbbjiV8ybMeMd4J+H413GsU7fu2U5HdKShtKAAB+filJ";
+
+/* 
+ * Resource generated for file:
+ *    DeselectAll.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerDeselectAll_width          = 21;
+static const unsigned int  image_SlicerDeselectAll_height         = 21;
+static const unsigned int  image_SlicerDeselectAll_pixel_size     = 3;
+static const unsigned long image_SlicerDeselectAll_length         = 92;
+static const unsigned long image_SlicerDeselectAll_decoded_length = 1323;
+
+static const unsigned char image_SlicerDeselectAll[] = 
+  "eNpjYKAU/CcXwLX7kA7QtGM1H784mvYtp58iI+pqfyooOIxtxx/y+G3HE790sH003mkX7/"
+  "i1U5LfKSltKAEAZxVY5w==";
+
+
+/* 
+ * Resource generated for file:
  *    SlicerCancel.png (zlib, base64) (image file)
  */
 static const unsigned int  image_SlicerCancel_width          = 21;
