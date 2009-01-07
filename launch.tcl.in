@@ -469,9 +469,10 @@ proc launch_SplashScreen {} {
   if { $::LAUNCH(showSplash) } {
 
     if { [catch "package require Tk"] } {
-      # if we can't open Tk, there's 
-      puts "\nWarning: cannot open DISPLAY.  This is likely to be an X Server issue."
-      puts "Slicer will attempt to launch, but may fail.\n"
+      # if we can't open Tk, there's
+      # Removing this warning for now -- it seems to confuse more people than it helps 
+      #puts "\nWarning: cannot open DISPLAY.  This is likely to be an X Server issue."
+      #puts "Slicer will attempt to launch, but may fail.\n"
       set $::LAUNCH(showSplash) 0
       return
     }
