@@ -313,6 +313,7 @@ void vtkSlicerModulesStep::SelectNone()
 //----------------------------------------------------------------------------
 void vtkSlicerModulesStep::DownloadInstall()
 {
+  this->GetWizardDialog()->GetWizardWidget()->CancelButtonVisibilityOff();
 
   this->HeaderText->SetText(this->Messages["DOWNLOAD"].c_str());
 
@@ -341,6 +342,8 @@ void vtkSlicerModulesStep::DownloadInstall()
     }
 
   this->HeaderText->SetText(this->Messages["FINISHED"].c_str());
+
+  this->GetWizardDialog()->GetWizardWidget()->CancelButtonVisibilityOn();
 }
 
 //----------------------------------------------------------------------------
@@ -468,7 +471,7 @@ UnzipPackage(const std::string& zipfile,
   if (!unzip.empty())
     {
     std::stringstream cmd;
-    cmd << unzip << " " << zipfile << " -d " << target;
+    cmd << unzip << " -o " << zipfile << " -d " << target;
     if (!system(cmd.str().c_str()))
       {
       result = true;
@@ -482,6 +485,8 @@ UnzipPackage(const std::string& zipfile,
 bool vtkSlicerModulesStep::DownloadInstallExtension(const std::string& ExtensionName,
                                                     const std::string& ExtensionBinaryURL)
 {
+  this->UninstallExtension(ExtensionName);
+
   bool result = false;
 
   vtkHTTPHandler *handler = vtkHTTPHandler::New();
