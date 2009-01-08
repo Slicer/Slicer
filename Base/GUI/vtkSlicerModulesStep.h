@@ -10,7 +10,7 @@
 #include <map>
 
 class vtkSlicerModulesWizardDialog;
-class vtkKWMultiColumnList;
+class vtkKWMultiColumnListWithScrollbars;
 class vtkKWPushButton;
 class vtkKWLabel;
 //BTX
@@ -79,7 +79,7 @@ private:
   vtkKWLabel *HeaderText;
   vtkKWPushButton *SelectAllButton;
   vtkKWPushButton *SelectNoneButton;
-  vtkKWMultiColumnList *ModulesMultiColumnList;
+  vtkKWMultiColumnListWithScrollbars *ModulesMultiColumnList;
   vtkKWPushButton *DownloadButton;
   vtkKWPushButton *UninstallButton;
 
@@ -88,13 +88,14 @@ private:
   // Description:
   // Helper method for dowlonad and install
   //BTX
-  void DownloadInstallExtension(const std::string& ExtensionBinaryURL);
+  bool DownloadInstallExtension(const std::string& ExtensionName,
+                                const std::string& ExtensionBinaryURL);
   //ETX
 
   // Description:
   // Helper method for dowlonad and install
   //BTX
-  void UninstallExtension(const std::string& ExtensionName);
+  bool UninstallExtension(const std::string& ExtensionName);
   //ETX
 
 };
