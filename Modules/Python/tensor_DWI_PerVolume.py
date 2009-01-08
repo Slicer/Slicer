@@ -25,44 +25,52 @@ def Execute (inputVolume):
   slicer = Slicer.slicer
   scene = slicer.MRMLScene
 
+
   inputVolume = scene.GetNodeByID(inputVolume)
   data = inputVolume.GetImageData().ToArray()
   dims = inputVolume.GetImageData().GetDimensions()
 
+  grad = slicer.vtkDoubleArray()
+  grad = inputVolume.GetDiffusionGradients()
+  G = grad.ToArray()
+
   shapeD = data.shape
 
-# for each gradient generate associated volume
-#
+  bId = 0
   for i in range(shapeD[3]):
-    dvol1 = data[..., i]
-    r1 = slicer.vtkMRMLScalarVolumeNode()
-    r11 = slicer.vtkMRMLScalarVolumeDisplayNode()
-    scene.AddNode(r11)
+     if G[i,0] == 0 and  G[i,1] == 0 and  G[i,2] == 0:
+        bId = i
+        break
+<F12>
+  dvol1 = data[..., bId]
+  r1 = slicer.vtkMRMLScalarVolumeNode()
+  r11 = slicer.vtkMRMLScalarVolumeDisplayNode()
+  scene.AddNode(r11)
 
-    r1.AddAndObserveDisplayNodeID(r11.GetName())
+  r1.AddAndObserveDisplayNodeID(r11.GetName())
 
-    imgD = slicer.vtkImageData()
-    imgD.SetDimensions(dims[0], dims[1], dims[2])
-    imgD.SetScalarTypeToShort()
+  imgD = slicer.vtkImageData()
+  imgD.SetDimensions(dims[0], dims[1], dims[2])
+  imgD.SetScalarTypeToShort()
 
-    org = inputVolume.GetOrigin()
-    spa = inputVolume.GetSpacing()
+  org = inputVolume.GetOrigin()
+  spa = inputVolume.GetSpacing()
 
-    mat = slicer.vtkMatrix4x4()
-    inputVolume.GetIJKToRASMatrix(mat)
+  mat = slicer.vtkMatrix4x4()
+  inputVolume.GetIJKToRASMatrix(mat)
 
-    r1.SetAndObserveImageData(imgD)
-    r1.SetIJKToRASMatrix(mat)
-    r1.SetOrigin(org[0], org[1], org[2])
-    r1.SetSpacing(spa[0], spa[1], spa[2])
+  r1.SetAndObserveImageData(imgD)
+  r1.SetIJKToRASMatrix(mat)
+  r1.SetOrigin(org[0], org[1], org[2])
+  r1.SetSpacing(spa[0], spa[1], spa[2])
 
-    scene.AddNode(r1)
+  scene.AddNode(r1)
 
-    tmp = r1.GetImageData().ToArray()
-    tmp[:] = dvol1[:]
+  tmp = r1.GetImageData().ToArray()
+  tmp[:] = dvol1[:]
 
-    r1.GetDisplayNode().SetDefaultColorMap()
-    r1.Modified()
+  r1.GetDisplayNode().SetDefaultColorMap()
+  r1.Modified()
 
   return
 
