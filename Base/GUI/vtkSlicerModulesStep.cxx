@@ -111,7 +111,7 @@ void vtkSlicerModulesStep::ShowUserInterface()
   f4->SetParent( wizard_widget->GetClientArea() );
   f4->Create();
 
-  this->Script("pack %s %s %s %s -side top",
+  this->Script("pack %s %s %s %s -side top -anchor w",
                f1->GetWidgetName(),
                f2->GetWidgetName(),
                f3->GetWidgetName(),
@@ -265,10 +265,10 @@ void vtkSlicerModulesStep::ShowUserInterface()
     this->UninstallButton->SetCommand(this, "Uninstall");
     }
 
-  this->Script("pack %s -side top -pady 10", 
+  this->Script("pack %s -side top -pady 2", 
                this->HeaderText->GetWidgetName());
 
-  this->Script("pack %s %s -side left -anchor w -pady 2", 
+  this->Script("pack %s %s -side left -anchor w -pady 5", 
                this->SelectAllButton->GetWidgetName(),
                this->SelectNoneButton->GetWidgetName());
 
@@ -509,6 +509,17 @@ bool vtkSlicerModulesStep::DownloadInstallExtension(const std::string& Extension
     if (UnzipPackage(tmpfile, libdir, tmpdir))
       {
       result = true;
+      std::string paths = app->GetModulePaths();
+      std::cout << "paths: :" << paths << std::endl;
+#if WIN32
+      const char delim = ';';
+#else
+      const char delim = ':';
+#endif
+      paths += delim;
+      paths += libdir;
+      app->SetModulePaths(paths.c_str());
+      std::cout << "paths: :" << app->GetModulePaths() << std::endl;
       }
     else
       {
@@ -540,6 +551,26 @@ bool vtkSlicerModulesStep::UninstallExtension(const std::string& ExtensionName)
     if (!itksys::SystemTools::FileExists(libdir.c_str()))
       {
       result = true;
+
+      std::string paths = app->GetModulePaths();
+      std::cout << "paths: :" << paths << std::endl;
+#if WIN32
+      std::string delim = ";;";
+#else
+      std::string delim = "::";
+#endif
+      
+      std::string::size_type pos = paths.find(libdir.c_str());
+      paths.erase(pos, libdir.size());
+
+      std::cout << "paths: :" << app->GetModulePaths() << std::endl;
+      
+      pos = paths.find(delim);
+      paths.erase(pos, 2);
+      
+      app->SetModulePaths(paths.c_str());
+      std::cout << "paths: :" << app->GetModulePaths() << std::endl;
+
       }
 
     }
