@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Filtering</category>
+  <title>Threshold Image</title>
+  <description>
+Threshold an image.\n
+Set image values to a user-specified outside value if they are below, above, or between simple threshold values.\n
+ThresholdAbove: The values greater than or equal to the threshold value are set to OutsideValue.\n
+ThresholdBelow: The values less than or equal to the threshold value are set to OutsideValue.\n
+ThresholdOutside: The values outside the range Lower-Upper are set to OutsideValue.\n
+Although all image types are supported on input, only signed types are produced.\n
+</description>
+  <version>0.1.0.$Revision: 2104 $(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Nicole Aucoin</contributor>
+<acknowledgements>
+This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+</acknowledgements>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image>
+      <name>InputVolume</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input volume</description>
+    </image>
+    <image>
+      <name>OutputVolume</name>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>Thresholded input volume</description>
+    </image>
+  </parameters>
+  <parameters>
+    <label>Filter Settings</label>
+    <integer>
+      <name>ThresholdValue</name>
+      <label>Threshold Value</label>
+      <flag>-t</flag>
+      <longflag>--threshold</longflag>
+      <description>Threshold value</description>
+      <default>128</default>
+    </integer>
+    <integer>
+      <name>Lower</name>
+      <label>Lower</label>
+      <flag>-l</flag>
+      <longflag>--lower</longflag>
+      <description>Lower threshold value</description>
+      <default>1</default>
+    </integer>
+    <integer>
+      <name>Upper</name>
+      <label>Upper</label>
+      <flag>-u</flag>
+      <longflag>--upper</longflag>
+      <description>Upper threshold value</description>
+      <default>200</default>
+    </integer>
+    <integer>
+      <name>OutsideValue</name>
+      <label>Outside Value</label>
+      <flag>-v</flag>
+      <longflag>--outsidevalue</longflag>
+      <description>Set the voxels to this value if they fall outside the threshold range</description>
+      <default>0</default>
+    </integer>
+    <string-enumeration>
+      <name>ThresholdType</name>
+      <label>Threshold Type</label>
+      <description>What kind of threshold to perform. If Outside is selected, uses Upper and Lower values. If Below is selected, uses the ThresholdValue, if Above is selected, uses the
+    ThresholdValue.</description>
+      <longflag>--thresholdtype</longflag>
+      <default>Outside</default>
+      <element>Below</element>
+      <element>Above</element>
+      <element>Outside</element>
+    </string-enumeration>  
+  </parameters>
+</executable>

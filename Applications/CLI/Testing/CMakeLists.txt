@@ -73,6 +73,20 @@ add_dependencies(${CLP}Test ${CLP}Lib)
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test ITKIO)
 
+# Threshold tests
+add_test(ThresholdTest ${Slicer3_EXE} --launch ThresholdTest
+  --compare ${BASELINE}/ThresholdTest.nhdr
+  ${TEMP}/ThresholdTest.nhdr
+  ThresholdTest --upper 3800 --lower 1400 --outsidevalue 0 --thresholdtype Outside
+  ${TEST_DATA}/CTHeadAxial.nhdr ${TEMP}/ThresholdTest.nhdr
+  )
+
+set (CLP Threshold)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP}Lib)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO)
+
 # CheckerBoard tests
 add_test(CheckerBoardTest ${Slicer3_EXE} --launch CheckerBoardTest
   --compare ${BASELINE}/CheckerBoardTest.nhdr
