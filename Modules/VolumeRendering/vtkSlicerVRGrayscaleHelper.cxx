@@ -1171,7 +1171,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         atext->Delete();
 
         this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
-        this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Enable();
         return;
     }
         vtkSlicerNodeSelectorWidget *callerNS=vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
