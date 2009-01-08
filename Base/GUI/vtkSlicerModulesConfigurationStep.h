@@ -55,12 +55,7 @@ public:
   // Description:
   // Callbacks
   virtual int ActionRadioButtonSetChangedCallback();
-
-  // Description:
-  // Get the repository used to query for extensions.
-  //BTX
-  std::string GetSelectedRepositoryURL() { return this->SelectedRepositoryURL; };
-  //ETX
+  virtual void CacheDirectoryCallback();
 
 protected:
   vtkSlicerModulesConfigurationStep();
@@ -74,10 +69,6 @@ protected:
   vtkKWPushButton *TrashButton;
   vtkKWComboBoxWithLabel *SearchLocationBox;
   vtkKWStateMachineInput *RepositoryValidationFailed;
-
-  //BTX
-  std::string SelectedRepositoryURL;
-  //ETX
 
 private:
   vtkSlicerModulesConfigurationStep(const vtkSlicerModulesConfigurationStep&); // Not implemented.

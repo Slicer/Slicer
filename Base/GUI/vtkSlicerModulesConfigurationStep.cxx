@@ -44,8 +44,6 @@ vtkSlicerModulesConfigurationStep::vtkSlicerModulesConfigurationStep()
   this->TrashButton = NULL;
   this->SearchLocationBox = NULL;
 
-  this->SelectedRepositoryURL = "NULL";
-
   this->RepositoryValidationFailed = vtkKWStateMachineInput::New();
   this->RepositoryValidationFailed->SetName("failed");
 }
@@ -84,10 +82,6 @@ vtkSlicerModulesConfigurationStep::~vtkSlicerModulesConfigurationStep()
 //----------------------------------------------------------------------------
 void vtkSlicerModulesConfigurationStep::SetWizardDialog(vtkSlicerModulesWizardDialog *arg)
 {
-  if (this->WizardDialog)
-    {
-    this->WizardDialog->Delete();
-    }
   this->WizardDialog = arg;
 }
 
@@ -152,7 +146,7 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     radiob = this->ActionRadioButtonSet->AddWidget(
       vtkSlicerModulesConfigurationStep::ActionInstall);
     radiob->SetText("Find & Install");
-    //    radiob->SetCommand(this, "ActionRadioButtonSetChangedCallback");
+    radiob->SetCommand(this, "ActionRadioButtonSetChangedCallback");
 
     radiob = this->ActionRadioButtonSet->AddWidget(
       vtkSlicerModulesConfigurationStep::ActionUninstall);
@@ -163,9 +157,6 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
       vtkSlicerModulesConfigurationStep::ActionEither);
     radiob->SetText("Either");
     radiob->SetCommand(this, "ActionRadioButtonSetChangedCallback");
-
-    this->ActionRadioButtonSet->GetWidget(
-      vtkSlicerModulesConfigurationStep::ActionInstall)->Select();
 
     this->ActionRadioButtonSet->PackHorizontallyOn();
   }
@@ -182,6 +173,7 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     this->CacheDirectoryButton->Create();
     this->CacheDirectoryButton->SetLabelText("Download (cache) directory:");
     this->CacheDirectoryButton->SetLabelWidth(label_width);
+    this->CacheDirectoryButton->GetWidget()->SetCommand(this, "CacheDirectoryCallback");
     }
 
   if (!this->TrashButton)
@@ -236,45 +228,44 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
 //----------------------------------------------------------------------------
 void vtkSlicerModulesConfigurationStep::Update()
 {
-  vtkSlicerApplication *app
-    = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  vtkSlicerApplication *app = dynamic_cast<vtkSlicerApplication*> (this->GetApplication());
 
   if (app)
     {
-      if (this->CacheDirectoryButton)
-        {
-        this->CacheDirectoryButton->GetWidget()->TrimPathFromFileNameOff();
-        this->CacheDirectoryButton->GetWidget()
-          ->SetText(app->GetTemporaryDirectory());
-        this->CacheDirectoryButton->GetWidget()
-          ->GetLoadSaveDialog()->SetLastPath(app->GetTemporaryDirectory());
-        }
+    if (this->CacheDirectoryButton)
+      {
+      this->CacheDirectoryButton->GetWidget()->TrimPathFromFileNameOff();
+      this->CacheDirectoryButton->GetWidget()->SetText(app->GetModuleCachePath());
+      this->CacheDirectoryButton->GetWidget()->GetLoadSaveDialog()->SetLastPath(app->GetModuleCachePath());
+      }
+    }
 
-      if (this->SearchLocationBox)
-        {
-        std::string platform;
+  if (this->SearchLocationBox)
+    {
+    vtksys_stl::string platform;
+    vtksys::SystemTools::GetEnv("BUILD", platform);
 
-#ifdef __APPLE__
-        platform = "darwin-x86";
-#endif
+    std::string build_date;
 
-        std::string build_date;
+    // :TODO: 20090105 tgl: Get build date from build system. Rather,
+    // have build system specify build date as a macro/global
+    // constant.
 
-        // :TODO: 20090105 tgl: Get build date from build system. Rather,
-        // have build system specify build date as a macro/global
-        // constant.
+    build_date = "2008-12-30";
 
-        build_date = "2008-12-30";
-
-        std::string ext_slicer_org("http://ext.slicer.org/ext/");
-        ext_slicer_org += build_date;
-        ext_slicer_org += "/";
-        ext_slicer_org += platform;
+    std::string ext_slicer_org("http://ext.slicer.org/ext/");
+    ext_slicer_org += build_date;
+    ext_slicer_org += "/";
+    ext_slicer_org += platform;
         
-        this->SelectedRepositoryURL = ext_slicer_org;
+    this->GetWizardDialog()->SetSelectedRepositoryURL( ext_slicer_org );
         
-        this->SearchLocationBox->GetWidget()->SetValue(this->SelectedRepositoryURL.c_str());
-        }
+    this->SearchLocationBox->GetWidget()->SetValue(this->GetWizardDialog()->GetSelectedRepositoryURL().c_str());
+    }
+
+  if (this->ActionRadioButtonSet)
+    {
+    this->ActionRadioButtonSet->GetWidget(vtkSlicerModulesConfigurationStep::ActionInstall)->Select();
     }
 }
 
@@ -292,15 +283,21 @@ int vtkSlicerModulesConfigurationStep::ActionRadioButtonSetChangedCallback()
 
   if (vtkSlicerModulesConfigurationStep::ActionUninstall == this->GetSelectedAction())
     {
-    this->CacheDirectoryButton->EnabledOff();
-    this->TrashButton->EnabledOff();
-    this->SearchLocationBox->EnabledOff();      
+    if (this->CacheDirectoryButton)
+      this->CacheDirectoryButton->EnabledOff();
+    if (this->TrashButton)
+      this->TrashButton->EnabledOff();
+    if (this->SearchLocationBox)
+      this->SearchLocationBox->EnabledOff();      
     }
   else
     {
-    this->CacheDirectoryButton->EnabledOn();
-    this->TrashButton->EnabledOn();
-    this->SearchLocationBox->EnabledOn();      
+    if (this->CacheDirectoryButton)
+      this->CacheDirectoryButton->EnabledOn();
+    if (this->TrashButton)
+      this->TrashButton->EnabledOn();
+    if (this->SearchLocationBox)
+      this->SearchLocationBox->EnabledOn();     
     }
 
   return result;
@@ -388,5 +385,18 @@ int vtkSlicerModulesConfigurationStep::GetSelectedAction()
     }
 
   return vtkSlicerModulesConfigurationStep::ActionUnknown;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerModulesConfigurationStep::CacheDirectoryCallback()
+{
+  vtkSlicerApplication *app
+    = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+
+  if (app)
+    {
+      // Store the setting in the application object
+      app->SetModuleCachePath(this->CacheDirectoryButton->GetWidget()->GetLoadSaveDialog()->GetFileName());
+    }
 }
 
