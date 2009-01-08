@@ -77,6 +77,7 @@ vtkSlicerModulesConfigurationStep::~vtkSlicerModulesConfigurationStep()
     }
 
   this->SetWizardDialog(NULL);
+  this->RepositoryValidationFailed->Delete();
 }
 
 //----------------------------------------------------------------------------
