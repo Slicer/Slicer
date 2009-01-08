@@ -36,11 +36,6 @@ public:
   vtkGetObjectMacro(WizardDialog, vtkSlicerModulesWizardDialog);
   virtual void SetWizardDialog(vtkSlicerModulesWizardDialog*);
 
-  /// Get a list of modules to install
-  //BTX
-  std::vector<ManifestEntry*> GetSelectedModules();
-  //ETX
-
   // Description:
   // Callbacks for extensions configuration actions.
   // Description:
@@ -55,6 +50,23 @@ public:
   // Description:
   // Uninstall selected extensions.
   void Uninstall();
+
+  // Description:
+  // Get/Set status code for module
+  //BTX
+  enum
+  {
+    StatusSuccess = 0,
+    StatusWait,
+    StatusCancelled,
+    StatusError,
+    StatusFoundOnDisk,
+    StatusNotFoundOnDisk,
+    StatusUnknown
+  };
+  //ETX
+  virtual int GetStatus(int row_index);
+  virtual void SetStatus(int row_index, int status);
 
 protected:
   vtkSlicerModulesStep();

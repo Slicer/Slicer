@@ -252,6 +252,8 @@ void vtkSlicerModulesStep::ShowUserInterface()
     this->ModulesMultiColumnList->SetColumnFormatCommandToEmptyOutput(col_index);
     
     col_index = this->ModulesMultiColumnList->AddColumn("Status");
+    this->ModulesMultiColumnList->SetColumnFormatCommandToEmptyOutput(col_index);
+
     col_index = this->ModulesMultiColumnList->AddColumn("Name");
     col_index = this->ModulesMultiColumnList->AddColumn("Category");
     col_index = this->ModulesMultiColumnList->AddColumn("Description");
@@ -274,11 +276,11 @@ void vtkSlicerModulesStep::ShowUserInterface()
 
       if (itksys::SystemTools::FileExists(moddir.c_str()))
         {
-        this->ModulesMultiColumnList->SetCellImageToIcon(i, 1, app->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerFoundOnDiskIcon());
+        this->SetStatus(i, StatusFoundOnDisk);
         }
       else
         {
-        this->ModulesMultiColumnList->SetCellImageToIcon(i, 1, app->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerNotFoundOnDiskIcon());
+        this->SetStatus(i, StatusNotFoundOnDisk);
         }
       }
     }
@@ -307,10 +309,10 @@ void vtkSlicerModulesStep::ShowUserInterface()
     this->UninstallButton->SetCommand(this, "Uninstall");
     }
 
-  this->Script("pack %s -side top -pady 2", 
+  this->Script("pack %s -side top -pady 2 -anchor center", 
                this->HeaderText->GetWidgetName());
 
-  this->Script("pack %s %s -side left -anchor w -pady 5", 
+  this->Script("pack %s %s -side left -anchor w -pady 2", 
                this->SelectAllButton->GetWidgetName(),
                this->SelectNoneButton->GetWidgetName());
 
@@ -328,7 +330,10 @@ void vtkSlicerModulesStep::SelectAll()
   int nrows = this->ModulesMultiColumnList->GetNumberOfRows();
   for (int row=0; row<nrows; row++)
     {
-    this->ModulesMultiColumnList->SetCellText(row, 0, "1");
+    if (StatusFoundOnDisk != this->GetStatus(row))
+      {
+      this->ModulesMultiColumnList->SetCellText(row, 0, "1");
+      }
     }
 
   this->ModulesMultiColumnList->RefreshAllRowsWithWindowCommand(0);
@@ -353,26 +358,20 @@ void vtkSlicerModulesStep::DownloadInstall()
 
   this->HeaderText->SetText(this->Messages["DOWNLOAD"].c_str());
 
-  vtkSlicerApplication *app = dynamic_cast<vtkSlicerApplication*> (this->GetApplication());
-  vtkKWIcon *done = app->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerDoneIcon();
-  vtkKWIcon *wait = app->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerWaitIcon();
-  vtkKWIcon *error = app->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerErrorIcon();
-
   int nrows = this->ModulesMultiColumnList->GetNumberOfRows();
   for (int row=0; row<nrows; row++)
     {
       if (1 == this->ModulesMultiColumnList->GetCellTextAsInt(row, 0))
         {
-          this->ModulesMultiColumnList->SetCellImageToIcon(row, 1, wait);
-          this->Script("update idletasks");
+          this->SetStatus(row, StatusWait);
           if (this->DownloadInstallExtension(this->ModulesMultiColumnList->GetCellText(row, 2),
                                              this->ModulesMultiColumnList->GetCellText(row, 6)))
             {
-            this->ModulesMultiColumnList->SetCellImageToIcon(row, 1, done);
+            this->SetStatus(row, StatusSuccess);
             }
           else
             {
-            this->ModulesMultiColumnList->SetCellImageToIcon(row, 1, error);
+            this->SetStatus(row, StatusError);
             }
         }
     }
@@ -385,29 +384,82 @@ void vtkSlicerModulesStep::DownloadInstall()
 //----------------------------------------------------------------------------
 void vtkSlicerModulesStep::Uninstall()
 {
-  vtkSlicerApplication *app = dynamic_cast<vtkSlicerApplication*> (this->GetApplication());
-  vtkKWIcon *done = app->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerDoneIcon();
-  vtkKWIcon *wait = app->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerWaitIcon();
-  vtkKWIcon *error = app->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerErrorIcon();
-
   int nrows = this->ModulesMultiColumnList->GetNumberOfRows();
   for (int row=0; row<nrows; row++)
     {
     if (1 == this->ModulesMultiColumnList->GetCellTextAsInt(row, 0))
       {
-      this->ModulesMultiColumnList->SetCellImageToIcon(row, 1, wait);
-      this->Script("update idletasks");
+      this->SetStatus(row, StatusWait);
       if (this->UninstallExtension(this->ModulesMultiColumnList->GetCellText(row, 2)))
         {
-        this->ModulesMultiColumnList->SetCellImageToIcon(row, 1, done);
+        this->SetStatus(row, StatusSuccess);
         }
       else
         {
-        this->ModulesMultiColumnList->SetCellImageToIcon(row, 1, error);
+        this->SetStatus(row, StatusError);
         }
       }
     }
 
+}
+
+//----------------------------------------------------------------------------
+int vtkSlicerModulesStep::GetStatus(int row_index)
+{
+  int result = StatusUnknown;
+
+  int nrows = this->ModulesMultiColumnList->GetNumberOfRows();
+  if (row_index < nrows)
+    {
+    result = this->ModulesMultiColumnList->GetCellTextAsInt(row_index, 1);
+    }
+
+  return result;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerModulesStep::SetStatus(int row_index, int status)
+{
+  int nrows = this->ModulesMultiColumnList->GetNumberOfRows();
+  if (row_index < nrows)
+    {
+    this->ModulesMultiColumnList->SetCellTextAsInt(row_index, 1, status);
+
+    vtkSlicerApplication *app = dynamic_cast<vtkSlicerApplication*> (this->GetApplication()); 
+    
+    switch (status)
+      {
+      case StatusSuccess: {
+        vtkKWIcon *done = app->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerDoneIcon();
+        this->ModulesMultiColumnList->SetCellImageToIcon(row_index, 1, done);
+        } break;
+      case StatusWait: {
+        vtkKWIcon *wait = app->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerWaitIcon();
+        this->ModulesMultiColumnList->SetCellImageToIcon(row_index, 1, wait);
+        } break;
+      case StatusCancelled: {
+        vtkKWIcon *cancelled = app->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerCancelledIcon();
+        this->ModulesMultiColumnList->SetCellImageToIcon(row_index, 1, cancelled);
+        } break;
+      case StatusError: {
+        vtkKWIcon *error = app->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerErrorIcon();
+        this->ModulesMultiColumnList->SetCellImageToIcon(row_index, 1, error);
+        } break;
+      case StatusFoundOnDisk: {
+        vtkKWIcon *foundondisk = app->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerFoundOnDiskIcon();
+        this->ModulesMultiColumnList->SetCellImageToIcon(row_index, 1, foundondisk);
+        } break;
+      case StatusNotFoundOnDisk: {
+        vtkKWIcon *notfoundondisk = app->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerNotFoundOnDiskIcon();
+        this->ModulesMultiColumnList->SetCellImageToIcon(row_index, 1, notfoundondisk);
+        } break;
+      case StatusUnknown: default:
+        // ??
+        break;
+      }
+    }
+
+  this->Script("update idletasks");
 }
 
 //----------------------------------------------------------------------------
