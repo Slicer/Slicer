@@ -1403,8 +1403,8 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShader()
                 "                       alpha = pixelColor.w;                                                                                                           \n"
                 "               }                                                                                                                                                               \n"
                 "                "
-                "               // disable lighting since some laptop gpus get confused?
-                "               // uncomment two lines below to re-enable lighting                                                                                                                                                \n"
+                "                                                                                                                                       \n"
+                "               // uncomment two lines below to re-enable lighting                                                                                                               \n"
                 "               if (ParaMatrix[2][3] > 0.0)//need shading?                                                                              \n"
                 "                       pixelColor *= directionalLight(maxScalarCoord);                                                         \n"
                 "       }                                                                                                                                                                       \n"
