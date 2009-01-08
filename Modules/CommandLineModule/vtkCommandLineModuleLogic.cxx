@@ -225,8 +225,10 @@ vtkCommandLineModuleLogic
 
   if (tag == "image")
     {
+    bool imageIsScalar = strcmp(this->MRMLScene->GetNodeByID(name.c_str())->GetClassName(),"vtkMRMLScalarVolumeNode") == 0;
+
     if ( ( commandType == CommandLineModule )
-         || (type != "scalar" && type != "label"))
+         || !imageIsScalar)
       {
       // If running an executable or running a shared memory module
       // but the image type is non-scalar...
