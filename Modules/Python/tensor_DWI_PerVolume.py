@@ -1,7 +1,7 @@
 XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Python Modules</category>
-  <title>Python Extract DWI Volume</title>
+  <title>Python Extract Baseline DWI Volume</title>
   <description>Python module</description>
   <version>0.1.0.$Revision: 1892 $(alpha)</version>
   <documentation-url></documentation-url>
@@ -41,7 +41,7 @@ def Execute (inputVolume):
      if G[i,0] == 0 and  G[i,1] == 0 and  G[i,2] == 0:
         bId = i
         break
-<F12>
+  
   dvol1 = data[..., bId]
   r1 = slicer.vtkMRMLScalarVolumeNode()
   r11 = slicer.vtkMRMLScalarVolumeDisplayNode()
