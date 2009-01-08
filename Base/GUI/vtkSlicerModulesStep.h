@@ -10,7 +10,7 @@
 #include <map>
 
 class vtkSlicerModulesWizardDialog;
-class vtkKWMultiColumnListWithScrollbars;
+class vtkKWMultiColumnList;
 class vtkKWPushButton;
 class vtkKWLabel;
 //BTX
@@ -79,7 +79,7 @@ private:
   vtkKWLabel *HeaderText;
   vtkKWPushButton *SelectAllButton;
   vtkKWPushButton *SelectNoneButton;
-  vtkKWMultiColumnListWithScrollbars *ModulesMultiColumnList;
+  vtkKWMultiColumnList *ModulesMultiColumnList;
   vtkKWPushButton *DownloadButton;
   vtkKWPushButton *UninstallButton;
 
