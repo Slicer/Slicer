@@ -352,7 +352,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // Entry point to the interpreter that can be used 
   // by an external application tro trigger
   // performance analysis
-  const char *TraceScript (const char * script) {return (this->Script(script));};
+  // Also entry point for KWWidget callbacks that need to execute
+  // an arbitrary script with arguments
+  const char *TraceScript (const char *script) {return (this->Script(script));};
+  const char *Eval (const char *script) {return (this->Script(script));};
+  const char *Eval (const char *script, const char *args) {return (this->Script("%s %s", script, args));};
 
  protected:
   vtkSlicerApplication ( );
