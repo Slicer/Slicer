@@ -18,6 +18,7 @@
 // This class implements Slicer's Color GUI
 //
 class vtkSlicerColorDisplayWidget;
+class vtkSlicerColorEditWidget;
 class vtkKWMessage;
 class vtkKWPushButton;
 class vtkKWLoadSaveButtonWithLabel;
@@ -89,11 +90,20 @@ protected:
     // Description:
     // the widget that displays the colour node
     vtkSlicerColorDisplayWidget *ColorDisplayWidget;
+
+    // Description:
+    // the widget that allows the user to edit a color node
+    vtkSlicerColorEditWidget *ColorEditWidget;
+
+    // Description:
+    // Acknowledgement icons
     vtkKWLabel *NACLabel;
     vtkKWLabel *NAMICLabel;
     vtkKWLabel *NCIGTLabel;
     vtkKWLabel *BIRNLabel;
 
+    // Description:
+    // Trigger loading a color file
     vtkKWLoadSaveButtonWithLabel *LoadColorFileButton;
     
 private:

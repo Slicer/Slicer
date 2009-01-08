@@ -19,6 +19,7 @@
 #include "vtkKWMenuButton.h"
 
 #include "vtkSlicerColorDisplayWidget.h"
+#include "vtkSlicerColorEditWidget.h"
 
 #include "vtkKWMessageDialog.h"
 
@@ -43,6 +44,7 @@ vtkSlicerColorGUI::vtkSlicerColorGUI ( )
   NCIGTLabel = NULL;
   BIRNLabel = NULL;
   this->ColorDisplayWidget = NULL;
+  this->ColorEditWidget = NULL;
   this->LoadColorFileButton = NULL;
 }
 
@@ -58,6 +60,13 @@ vtkSlicerColorGUI::~vtkSlicerColorGUI ( )
     this->ColorDisplayWidget->SetParent(NULL);
     this->ColorDisplayWidget->Delete ( );
     }
+
+  if (this->ColorEditWidget ) 
+    {
+    this->ColorEditWidget->SetParent(NULL);
+    this->ColorEditWidget->Delete ( );
+    }
+
   if ( this->NACLabel )
     {
     this->NACLabel->SetParent ( NULL );
@@ -107,6 +116,12 @@ void vtkSlicerColorGUI::RemoveGUIObservers ( )
     {
     this->LoadColorFileButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers ( vtkKWTopLevel::WithdrawEvent,  (vtkCommand *)this->GUICallbackCommand );
     }
+  /*
+  if (this->GetApplication())
+    {
+    this->GetApplication()->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+  */
 }
 
 
@@ -115,6 +130,15 @@ void vtkSlicerColorGUI::AddGUIObservers ( )
 {
   vtkDebugMacro("vtkSlicerColorGUI: AddGUIObservers\n");
   this->LoadColorFileButton->GetWidget()->GetLoadSaveDialog()->AddObserver (vtkKWTopLevel::WithdrawEvent , (vtkCommand *)this->GUICallbackCommand );
+
+  /*
+  if (this->GetApplication() != NULL)
+    {
+    // watch the application for modified events as they may signal the user set
+    // color file paths changing
+    this->GetApplication()->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+  */
 }
 
 
@@ -140,6 +164,19 @@ void vtkSlicerColorGUI::ProcessGUIEvents ( vtkObject *caller,
         node->Delete();
         }
       this->LoadColorFileButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+      }
+    return;
+    }
+  vtkSlicerApplication *app  = vtkSlicerApplication::SafeDownCast(caller);
+  if (this->GetApplication() == app && app != NULL &&
+      event == vtkCommand::ModifiedEvent)
+    {
+    // the application was modified, get the color files directories
+    // pass it on to the color logic
+    if (this->GetLogic() != NULL)
+      {
+      std::cout << "ProcessGUIEvents: passing possibly modified color file paths to color logic\n";
+      this->GetLogic()->SetUserColorFilePaths(app->GetColorFilePaths());
       }
     }
 }
@@ -217,7 +254,7 @@ void vtkSlicerColorGUI::BuildGUI ( )
   this->UIPanel->AddPage ( "Color", "Color", NULL );
   
   // Define your help text and build the help frame here.
-  const char *help = "The Color Module manages color look up tables.\nTables are used by mappers to translate between an integer and a colour value for display of models and volumes.\nSlicer supports three kinds of tables:\n1. Continuous scales, like the greyscale table.\n2. Parametric tables, defined by an equation, such as the FMRIPA table.\n3. Discreet tables, such as those read in from a file.\nUsers are only allowed to edit User type tables. TODO: allow copy from a standard one.";
+  const char *help = "The Color Module manages color look up tables.\nTables are used by mappers to translate between an integer and a colour value for display of models and volumes.\nSlicer supports three kinds of tables:\n1. Continuous scales, like the greyscale table.\n2. Parametric tables, defined by an equation, such as the FMRIPA table.\n3. Discrete tables, such as those read in from a file.\nYou can specify a file from which to read color files using the View -> Application Settings window, Module Settings frame.\nUsers are only allowed to edit User type tables. Use the Edit frame to create a new color table, and save it to a file.\nTODO: allow copy from a standard one.";
   const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. ";
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Color" );
   this->BuildHelpAndAboutFrame ( page, help, about );
@@ -277,6 +314,7 @@ void vtkSlicerColorGUI::BuildGUI ( )
   displayFrame->Create ( );
   displayFrame->SetLabelText ("Display");
   displayFrame->ExpandFrame ( );
+  //displayFrame->CollapseFrame();
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                 displayFrame->GetWidgetName(),
                 this->UIPanel->GetPageWidget("Color")->GetWidgetName());
@@ -289,7 +327,28 @@ void vtkSlicerColorGUI::BuildGUI ( )
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                 this->ColorDisplayWidget->GetWidgetName(), 
                 displayFrame->GetFrame()->GetWidgetName());
+
+  // --
+  // EDIT FRAME
+  vtkSlicerModuleCollapsibleFrame *editFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+  editFrame->SetParent (page);
+  editFrame->Create();
+  editFrame->SetLabelText("Edit");
+  app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+              editFrame->GetWidgetName(),
+              this->UIPanel->GetPageWidget("Color")->GetWidgetName());
+  editFrame->CollapseFrame();
   
+  // color editing widget
+  this->ColorEditWidget = vtkSlicerColorEditWidget::New ( );
+  this->ColorEditWidget->SetMRMLScene(this->GetMRMLScene() );
+  this->ColorEditWidget->SetParent ( editFrame->GetFrame() );
+  this->ColorEditWidget->Create ( );
+  app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                this->ColorEditWidget->GetWidgetName(), 
+                editFrame->GetFrame()->GetWidgetName());
+
+  editFrame->Delete();
   displayFrame->Delete ( );
   loadFrame->Delete();
 }

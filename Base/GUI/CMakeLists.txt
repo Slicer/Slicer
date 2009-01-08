@@ -116,6 +116,7 @@ set(SlicerBaseGUI_SRCS
   vtkSlicerFiducialListWidget.cxx
   vtkSlicerModelDisplayWidget.cxx
   vtkSlicerColorDisplayWidget.cxx
+  vtkSlicerColorEditWidget.cxx
   vtkSlicerMRMLSaveDataWidget.cxx
   vtkSlicerClipModelsWidget.cxx
   vtkSlicerParameterWidget.cxx
