@@ -435,8 +435,12 @@ target_link_libraries(${CLP}Test ITKIO)
 ##################################
 # DiffusionTensorEstimation tests
 add_test(DiffusionTensorEstimationTest ${Slicer3_EXE} --launch DiffusionTensorEstimationTest
-  DiffusionTensorEstimationTest --help
-  )
+  DiffusionTensorEstimationTest
+    --otsuomegathreshold 0.5
+    ${MRML_TEST_DATA}/helix-DWI.nhdr
+    ${TEMP}/DiffusionTensorEstimationTest_dti.nhdr
+    ${TEMP}/DiffusionTensorEstimationTest_baseline.nhdr
+    ${TEMP}/DiffusionTensorEstimationTest_otsu.nhdr  )
 
 set (CLP DiffusionTensorEstimation)
 add_executable(${CLP}Test ${CLP}Test.cxx)
