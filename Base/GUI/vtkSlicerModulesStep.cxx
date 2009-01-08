@@ -224,7 +224,6 @@ void vtkSlicerModulesStep::ShowUserInterface()
         HTML[len] = '\n';
       }
 
-
     ifs.close();
 
     std::vector<ManifestEntry*>::iterator iter = this->Modules.begin();
@@ -366,7 +365,7 @@ void vtkSlicerModulesStep::DownloadInstall()
         {
           this->ModulesMultiColumnList->SetCellImageToIcon(row, 1, wait);
           this->Script("update idletasks");
-          if (this->DownloadInstallExtension(this->ModulesMultiColumnList->GetCellText(row, 1),
+          if (this->DownloadInstallExtension(this->ModulesMultiColumnList->GetCellText(row, 2),
                                              this->ModulesMultiColumnList->GetCellText(row, 6)))
             {
             this->ModulesMultiColumnList->SetCellImageToIcon(row, 1, done);
@@ -398,7 +397,7 @@ void vtkSlicerModulesStep::Uninstall()
       {
       this->ModulesMultiColumnList->SetCellImageToIcon(row, 1, wait);
       this->Script("update idletasks");
-      if (this->UninstallExtension(this->ModulesMultiColumnList->GetCellText(row, 3)))
+      if (this->UninstallExtension(this->ModulesMultiColumnList->GetCellText(row, 2)))
         {
         this->ModulesMultiColumnList->SetCellImageToIcon(row, 1, done);
         }
@@ -470,6 +469,7 @@ std::vector<ManifestEntry*> vtkSlicerModulesStep::ParseManifest(const std::strin
       
       zip = txt.find(key, zip + 1);
       dash = txt.find("-", zip);
+      atag = txt.find("</a>", zip);
 
       result.push_back(entry);
       }
@@ -539,7 +539,13 @@ bool vtkSlicerModulesStep::DownloadInstallExtension(const std::string& Extension
       
     handler->StageFileRead(ExtensionBinaryURL.c_str(), tmpfile.c_str());
 
-    std::string libdir(std::string(app->GetModuleCachePath()) + std::string("/") + ExtensionName);
+    std::string cachedir = app->GetModuleCachePath();
+    if (cachedir.empty())
+      {
+        cachedir = Slicer3_INSTALL_MODULES_LIB_DIR;
+      }
+
+    std::string libdir(cachedir + std::string("/") + ExtensionName);
 
     std::string tmpdir(std::string(app->GetTemporaryDirectory()) + std::string("/extension"));
 
@@ -547,16 +553,19 @@ bool vtkSlicerModulesStep::DownloadInstallExtension(const std::string& Extension
       {
       result = true;
       std::string paths = app->GetModulePaths();
-      std::cout << "paths: :" << paths << std::endl;
+
 #if WIN32
       const char delim = ';';
 #else
       const char delim = ':';
 #endif
-      paths += delim;
+      if (!paths.empty())
+        {
+        paths += delim;
+        }
+
       paths += libdir;
       app->SetModulePaths(paths.c_str());
-      std::cout << "paths: :" << app->GetModulePaths() << std::endl;
       }
     else
       {
@@ -578,7 +587,18 @@ bool vtkSlicerModulesStep::UninstallExtension(const std::string& ExtensionName)
 
   if (app)
     {
-    std::string libdir(std::string(app->GetModuleCachePath()) + std::string("/") + ExtensionName);
+
+    // :BUG: 20090108 tgl: Not guaranteed that the install of the
+    // module will be under Slicer3_INSTALL_MODULES_LIB_DIR if
+    // ModuelCachePath is empty.
+
+    std::string cachedir = app->GetModuleCachePath();
+    if (cachedir.empty())
+      {
+        cachedir = Slicer3_INSTALL_MODULES_LIB_DIR;
+      }
+
+    std::string libdir(cachedir + std::string("/") + ExtensionName);
     
     if (itksys::SystemTools::FileExists(libdir.c_str()))
       {
@@ -590,7 +610,7 @@ bool vtkSlicerModulesStep::UninstallExtension(const std::string& ExtensionName)
       result = true;
 
       std::string paths = app->GetModulePaths();
-      std::cout << "paths: :" << paths << std::endl;
+
 #if WIN32
       std::string delim = ";;";
 #else
@@ -603,8 +623,6 @@ bool vtkSlicerModulesStep::UninstallExtension(const std::string& ExtensionName)
         paths.erase(pos, libdir.size());
         }
 
-      std::cout << "paths: :" << app->GetModulePaths() << std::endl;
-      
       pos = paths.find(delim);
       
       if (std::string::npos != pos)
@@ -613,7 +631,6 @@ bool vtkSlicerModulesStep::UninstallExtension(const std::string& ExtensionName)
         }    
 
       app->SetModulePaths(paths.c_str());
-      std::cout << "paths: :" << app->GetModulePaths() << std::endl;
 
       }
 
