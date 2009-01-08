@@ -227,6 +227,11 @@ void vtkMRMLStorableNode::UpdateScene(vtkMRMLScene *scene)
 {
   Superclass::UpdateScene(scene);
 
+  if (!this->AddToScene) 
+    {
+    return;
+    }
+
   vtkDebugMacro("UpdateScene: going through the storage node ids: " <<  this->StorageNodeIDs.size());
   for (unsigned int i=0; i < this->StorageNodeIDs.size(); i++)
     {

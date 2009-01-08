@@ -52,7 +52,7 @@ class VTK_MRML_EXPORT vtkMRMLSceneSnapshotNode : public vtkMRMLNode
 
   // Description:
   // Updates scene nodes 
-  virtual void UpdateScene(vtkMRMLScene *) {};
+  virtual void UpdateScene(vtkMRMLScene *scene);
 
   // Description:
   // Updates internal nodes 
@@ -70,6 +70,8 @@ class VTK_MRML_EXPORT vtkMRMLSceneSnapshotNode : public vtkMRMLNode
   // Description:
   // Restore content of the scene from the node
   void RestoreScene();
+
+  vtkGetObjectMacro ( Nodes, vtkMRMLScene );
 
 protected:
   vtkMRMLSceneSnapshotNode();

@@ -46,6 +46,10 @@ public:
   virtual const char* GetNodeTagName() {return "ModelDisplay";};
 
   // Description:
+  // Copy the node's attributes to this object
+  virtual void Copy(vtkMRMLNode *node);
+
+  // Description:
   // Set and observe poly data for this model
   vtkGetObjectMacro(PolyData, vtkPolyData);
   vtkSetObjectMacro(PolyData, vtkPolyData);

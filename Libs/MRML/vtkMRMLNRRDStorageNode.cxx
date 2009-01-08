@@ -131,7 +131,7 @@ void vtkMRMLNRRDStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
 
 int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
 {
-  if ( !this->GetAddToScene() || !refNode->GetAddToScene() )
+  if ( !refNode->GetAddToScene() )
   {
     return 1;
   }

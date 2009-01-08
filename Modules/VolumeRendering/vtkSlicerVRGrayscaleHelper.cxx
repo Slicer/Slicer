@@ -152,7 +152,7 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->PB_PauseResume=NULL;
     this->RenderingPaused=0;
     this->VI_PauseResume=NULL;
-
+  this->BW_Clipping_Widget = NULL;
 
     this->UpdateingGUI = 0;
 }
@@ -1158,9 +1158,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         //Do we do that
         this->RenderPlane=1;
 
-
-
-        //Delete everything we have done
+       //Delete everything we have done
         image->Delete();
         imageData->Delete();
         components->Delete();
@@ -1171,9 +1169,10 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         polyMapper->Delete();
         actor->Delete();
         atext->Delete();
+
+        this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
         this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
         return;
-
     }
         vtkSlicerNodeSelectorWidget *callerNS=vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
     if (eid==vtkSlicerNodeSelectorWidget::NodeSelectedEvent&&callerNS==this->NS_TransformNode)

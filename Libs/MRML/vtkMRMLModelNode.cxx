@@ -72,6 +72,13 @@ vtkMRMLModelNode::~vtkMRMLModelNode()
 {
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLModelNode::Copy(vtkMRMLNode *anode)
+{
+  Superclass::Copy(anode);
+  vtkMRMLModelNode *node = (vtkMRMLModelNode *) anode;
+}
+
 //-----------------------------------------------------------
 void vtkMRMLModelNode::UpdateScene(vtkMRMLScene *scene)
 {

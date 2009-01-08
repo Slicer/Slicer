@@ -1997,10 +1997,24 @@ int vtkMRMLScene::IsFilePathRelative(const char * filepath)
 }
 
 //------------------------------------------------------------------------------
+const char* vtkMRMLScene::GetChangedID(const char* id)
+{
+  std::map< std::string, std::string>::const_iterator iter = this->ReferencedIDChanges.find(std::string(id));
+  if (iter == this->ReferencedIDChanges.end())
+    {
+    return NULL;
+    }
+  else
+    {
+    return iter->second.c_str();
+    }
+}
+
+//------------------------------------------------------------------------------
 void vtkMRMLScene::UpdateNodeReferences()
 {
   std::map< std::string, std::string>::const_iterator iterChanged;
-  std::map< std::string, vtkMRMLNode*>::const_iterator iterNodes;
+  //std::map< std::string, vtkMRMLNode*>::const_iterator iterNodes;
   vtkMRMLNode *node;
   int i;
 
@@ -2014,8 +2028,11 @@ void vtkMRMLScene::UpdateNodeReferences()
       {
       if (iterChanged->first == referencedIDs[i])
         {
-        node = referencingNodes[i];
-        node->UpdateReferenceID(iterChanged->first.c_str(), iterChanged->second.c_str());
+        node = this->GetNodeByID(referencingNodes[i]->GetID());
+        if (node)
+          {
+          node->UpdateReferenceID(iterChanged->first.c_str(), iterChanged->second.c_str());
+          }
         }
     }
     this->ReferencedIDs = referencedIDs;
@@ -2034,7 +2051,7 @@ void vtkMRMLScene::UpdateNodeReferences(vtkCollection* checkNodes)
     return;
     }
   std::map< std::string, std::string>::const_iterator iterChanged;
-  std::map< std::string, vtkMRMLNode*>::const_iterator iterNodes;
+  //std::map< std::string, vtkMRMLNode*>::const_iterator iterNodes;
   vtkMRMLNode *node;
   int i;
 
@@ -2103,6 +2120,33 @@ vtkCollection* vtkMRMLScene::GetReferencedNodes(vtkMRMLNode *node)
     this->AddReferencedNodes(node, nodes);
     }
   return nodes;
+}
+
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::CopyNodeReferences(vtkMRMLScene *scene)
+{
+  this->ReferencedIDChanges = scene->ReferencedIDChanges;
+  this->ReferencedIDs = scene->ReferencedIDs;
+  this->ReferencingNodes = scene->ReferencingNodes;
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::UpdateNodeChangedIDs()
+{
+  std::map< std::string, std::string>::const_iterator iterChanged;
+  vtkMRMLNode *node;
+
+  for (iterChanged = this->ReferencedIDChanges.begin(); iterChanged != this->ReferencedIDChanges.end(); iterChanged++) 
+    {
+    node = this->GetNodeByID(iterChanged->first.c_str());
+    if (node)
+      {
+      node->UpdateID(iterChanged->second.c_str());
+      }
+    }
+  this->NodeIDsMTime = 0;
+  this->UpdateNodeIDs();
 }
 
 //------------------------------------------------------------------------------

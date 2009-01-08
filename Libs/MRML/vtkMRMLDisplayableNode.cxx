@@ -96,12 +96,18 @@ void vtkMRMLDisplayableNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLDisplayableNode::UpdateReferenceID(const char *oldID, const char *newID)
 { 
   Superclass::UpdateReferenceID(oldID, newID);
+  bool modified = false;
   for (unsigned int i=0; i<this->DisplayNodeIDs.size(); i++)
     {
     if ( std::string(oldID) == this->DisplayNodeIDs[i])
       {
       this->SetNthDisplayNodeID(i, newID);
+      modified = true;
       }
+    }
+  if (modified)
+    {
+    this->Modified();
     }
 }
 //----------------------------------------------------------------------------
@@ -149,10 +155,12 @@ void vtkMRMLDisplayableNode::UpdateScene(vtkMRMLScene *scene)
   
   for (unsigned int i=0; i<this->DisplayNodes.size(); i++)
     {
-    if (this->DisplayNodes[i])
-      {
-      this->DisplayNodes[i]->Delete();
-      }
+    this->SetAndObserveNthDisplayNodeID(i, NULL);
+
+    //if (this->DisplayNodes[i])
+    //  {
+    //  this->DisplayNodes[i]->Delete();
+    // }
     }
   this->DisplayNodes.clear();
 

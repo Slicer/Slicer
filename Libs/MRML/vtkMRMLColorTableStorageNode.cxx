@@ -115,7 +115,7 @@ void vtkMRMLColorTableStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
 int vtkMRMLColorTableStorageNode::ReadData(vtkMRMLNode *refNode)
 {
   // do not read if if we are not in the scene (for example inside snapshot)
-  if ( !this->GetAddToScene() || !refNode->GetAddToScene() )
+  if ( !refNode->GetAddToScene() )
     {
     return 1;
     }

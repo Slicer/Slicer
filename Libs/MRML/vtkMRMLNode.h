@@ -215,8 +215,13 @@ public:
   
   // Description:
   // ID use by other nodes to reference this node in XML
-//  vtkSetStringMacro(ID);
+  //vtkSetStringMacro(ID);
   vtkGetStringMacro(ID);
+
+  void UpdateID(const char *newID)
+    {
+    this->SetID(newID);
+    };
 
   // Description:
   // Tag that make this node a singleton in the scene

@@ -111,6 +111,13 @@ public:
   const char* GetTagByClassName(const char *className);
 
   // Description:
+  // return collection of nodes
+  vtkCollection* GetCurrentScene()
+    {
+    return this->CurrentScene;
+    };
+
+  // Description:
   // Called by another class to request that the node's id be set to the given
   // string
   // If the id is not in use, set it, otherwise, useit as a base for a unique
@@ -305,6 +312,19 @@ public:
 
   void RemoveReferencesToNode(vtkMRMLNode *node);
 
+  void UpdateNodeReferences();
+
+  void UpdateNodeReferences(vtkCollection* chekNodes);
+
+  void CopyNodeReferences(vtkMRMLScene *scene);
+
+  void UpdateNodeChangedIDs();
+
+  // Description: 
+  // get the new id of the node that is different from one in the mrml file
+  // or NULL if id has not changed
+  const char* GetChangedID(const char* id);
+
   // Description: 
   // Return collection of all nodes referenced directly or indirectly by a node.
   vtkCollection* GetReferencedNodes(vtkMRMLNode *node);
@@ -448,9 +468,6 @@ protected:
   std::string ErrorMessage;
   //ETX
   
-  void UpdateNodeReferences();
-  void UpdateNodeReferences(vtkCollection* chekNodes);
-
   void UpdateNodeIDs();
 
   unsigned long NodeIDsMTime;

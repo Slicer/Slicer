@@ -49,6 +49,10 @@ public:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Model";};
 
+ // Description:
+  // Copy the node's attributes to this object
+  virtual void Copy(vtkMRMLNode *node);
+
   void UpdateScene(vtkMRMLScene *scene);
 
   // Description:

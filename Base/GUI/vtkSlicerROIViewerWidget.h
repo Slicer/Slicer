@@ -61,7 +61,11 @@ public:
   
   // Description:
   // Set/Get the main viewer, called by vtkSlicerApplicationGUI
-  vtkSetObjectMacro(MainViewerWidget, vtkSlicerViewerWidget);
+  void SetMainViewerWidget(vtkSlicerViewerWidget *viewer)
+    {
+    this->MainViewerWidget = viewer;
+    };
+
   vtkGetObjectMacro(MainViewerWidget, vtkSlicerViewerWidget);
   
   // Description:
