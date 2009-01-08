@@ -91,6 +91,7 @@ void vtkSlicerModulesResultStep::ShowUserInterface()
     this->RestartButton->SetParent( wizard_widget->GetClientArea() );
     this->RestartButton->Create();
     this->RestartButton->SetText("Restart 3D Slicer now");
+    this->RestartButton->SetCommand(this, "RestartButtonCallback");
     }
 
   if (!this->LaterButton)
@@ -102,6 +103,7 @@ void vtkSlicerModulesResultStep::ShowUserInterface()
     this->LaterButton->SetParent( wizard_widget->GetClientArea() );
     this->LaterButton->Create();
     this->LaterButton->SetText("Restart later");
+    this->LaterButton->SetCommand(this, "LaterButtonCallback");
     }
 
   this->Script("pack %s -side top -expand y -fill none -anchor center", 
@@ -132,3 +134,14 @@ void vtkSlicerModulesResultStep::Validate()
   wizard_workflow->ProcessInputs();
 }
 
+//----------------------------------------------------------------------------
+void vtkSlicerModulesResultStep::RestartButtonCallback()
+{
+  this->GetWizardDialog()->GetWidget()->GetOKButton()->Select();
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerModulesResultStep::LaterButtonCallback()
+{
+  this->GetWizardDialog()->GetWidget()->GetCancelButton()->Select();
+}

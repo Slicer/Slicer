@@ -25,6 +25,11 @@ public:
   vtkGetObjectMacro(WizardDialog, vtkSlicerModulesWizardDialog);
   virtual void SetWizardDialog(vtkSlicerModulesWizardDialog*);
 
+  // Description:
+  // callbacks
+  virtual void RestartButtonCallback();
+  virtual void LaterButtonCallback();
+
 protected:
   vtkSlicerModulesResultStep();
   ~vtkSlicerModulesResultStep();
