@@ -12,6 +12,7 @@ class vtkKWPushButton;
 class vtkKWRadioButtonSet;
 class vtkKWStateMachineInput;
 class vtkSlicerModulesWizardDialog;
+class vtkKWFrame;
 
 class vtkSlicerModulesConfigurationStep : public vtkKWWizardStep
 {
@@ -62,6 +63,9 @@ protected:
   ~vtkSlicerModulesConfigurationStep();
 
   vtkSlicerModulesWizardDialog *WizardDialog;
+  vtkKWFrame *Frame1;
+  vtkKWFrame *Frame2;
+  vtkKWFrame *Frame3;
   vtkKWLabel *HeaderIcon;
   vtkKWLabel *HeaderText;
   vtkKWRadioButtonSet *ActionRadioButtonSet;

@@ -13,6 +13,8 @@ class vtkSlicerModulesWizardDialog;
 class vtkKWMultiColumnList;
 class vtkKWPushButton;
 class vtkKWLabel;
+class vtkKWFrame;
+
 //BTX
 class ManifestEntry;
 //ETX
@@ -75,7 +77,12 @@ private:
   //BTX
   std::vector<ManifestEntry*> ParseManifest(const std::string&);
   //ETX
-  
+
+  vtkKWFrame *Frame1;
+  vtkKWFrame *Frame2;
+  vtkKWFrame *Frame3;
+  vtkKWFrame *Frame4;
+
   vtkKWLabel *HeaderText;
   vtkKWPushButton *SelectAllButton;
   vtkKWPushButton *SelectNoneButton;

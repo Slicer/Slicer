@@ -29,6 +29,10 @@ vtkCxxRevisionMacro(vtkSlicerModulesStep, "$Revision: 1.2 $");
 vtkSlicerModulesStep::vtkSlicerModulesStep()
 {
   this->SetName("Extension Management Wizard");
+  this->Frame1 = NULL;
+  this->Frame2 = NULL;
+  this->Frame3 = NULL;
+  this->Frame4 = NULL;
   this->HeaderText = NULL;
   this->SelectAllButton = NULL;
   this->SelectNoneButton = NULL;
@@ -45,6 +49,22 @@ vtkSlicerModulesStep::vtkSlicerModulesStep()
 //----------------------------------------------------------------------------
 vtkSlicerModulesStep::~vtkSlicerModulesStep()
 {
+  if (this->Frame1)
+    {
+    this->Frame1->Delete();
+    }
+  if (this->Frame2)
+    {
+    this->Frame2->Delete();
+    }
+  if (this->Frame3)
+    {
+    this->Frame3->Delete();
+    }
+  if (this->Frame4)
+    {
+    this->Frame4->Delete();
+    }
   if (this->HeaderText)
     {
     this->HeaderText->Delete();
@@ -97,25 +117,48 @@ void vtkSlicerModulesStep::ShowUserInterface()
   vtkSlicerApplication *app =
     dynamic_cast<vtkSlicerApplication*> (this->GetApplication());
 
-  vtkKWFrame *f1 = vtkKWFrame::New();
-  vtkKWFrame *f2 = vtkKWFrame::New();
-  vtkKWFrame *f3 = vtkKWFrame::New();
-  vtkKWFrame *f4 = vtkKWFrame::New();
-
-  f1->SetParent( wizard_widget->GetClientArea() );
-  f1->Create();
-  f2->SetParent( wizard_widget->GetClientArea() );
-  f2->Create();
-  f3->SetParent( wizard_widget->GetClientArea() );
-  f3->Create();
-  f4->SetParent( wizard_widget->GetClientArea() );
-  f4->Create();
+  if (!this->Frame1)
+    {
+    this->Frame1 = vtkKWFrame::New();
+    }
+  if (!this->Frame1->IsCreated())
+    {
+    this->Frame1->SetParent( wizard_widget->GetClientArea() );
+    this->Frame1->Create();
+    }
+  if (!this->Frame2)
+    {
+    this->Frame2 = vtkKWFrame::New();
+    }
+  if (!this->Frame2->IsCreated())
+    {
+    this->Frame2->SetParent( wizard_widget->GetClientArea() );
+    this->Frame2->Create();
+    }
+  if (!this->Frame3)
+    {
+    this->Frame3 = vtkKWFrame::New();
+    }
+  if (!this->Frame3->IsCreated())
+    {
+    this->Frame3->SetParent( wizard_widget->GetClientArea() );
+    this->Frame3->Create();
+    }
+  if (!this->Frame4)
+    {
+    this->Frame4 = vtkKWFrame::New();
+    }
+  if (!this->Frame4->IsCreated())
+    {
+    this->Frame4->SetParent( wizard_widget->GetClientArea() );
+    this->Frame4->Create();
+    }
 
   this->Script("pack %s %s %s %s -side top -anchor w",
-               f1->GetWidgetName(),
-               f2->GetWidgetName(),
-               f3->GetWidgetName(),
-               f4->GetWidgetName());
+               this->Frame1->GetWidgetName(),
+               this->Frame2->GetWidgetName(),
+               this->Frame3->GetWidgetName(),
+               this->Frame4->GetWidgetName());
 
   if (!this->HeaderText)
     {
@@ -123,7 +166,7 @@ void vtkSlicerModulesStep::ShowUserInterface()
     }
   if (!this->HeaderText->IsCreated())
     {
-    this->HeaderText->SetParent( f1 );
+    this->HeaderText->SetParent( this->Frame1 );
     this->HeaderText->Create();
     this->HeaderText->SetText(this->Messages["READY"].c_str());
     }
@@ -134,7 +177,7 @@ void vtkSlicerModulesStep::ShowUserInterface()
     }
   if (!this->SelectAllButton->IsCreated())
     {
-    this->SelectAllButton->SetParent( f2 );
+    this->SelectAllButton->SetParent( this->Frame2 );
     this->SelectAllButton->Create();
 
     this->SelectAllButton->SetText("Select All");
@@ -148,7 +191,7 @@ void vtkSlicerModulesStep::ShowUserInterface()
     }
   if (!this->SelectNoneButton->IsCreated())
     {
-    this->SelectNoneButton->SetParent( f2 );
+    this->SelectNoneButton->SetParent( this->Frame2 );
     this->SelectNoneButton->Create();
     
     this->SelectNoneButton->SetText("Select None");
@@ -195,7 +238,7 @@ void vtkSlicerModulesStep::ShowUserInterface()
 
     delete[] HTML;
 
-    this->ModulesMultiColumnList->SetParent( f3 );
+    this->ModulesMultiColumnList->SetParent( this->Frame3 );
     this->ModulesMultiColumnList->Create();
     this->ModulesMultiColumnList->SetBalloonHelpString(
       "A list of available extensions.");
@@ -247,7 +290,7 @@ void vtkSlicerModulesStep::ShowUserInterface()
     }
   if (!this->DownloadButton->IsCreated())
     {
-    this->DownloadButton->SetParent( f4 );
+    this->DownloadButton->SetParent( this->Frame4 );
     this->DownloadButton->Create();
     this->DownloadButton->SetText("Download & Install");
     this->DownloadButton->SetCommand(this, "DownloadInstall");
@@ -259,7 +302,7 @@ void vtkSlicerModulesStep::ShowUserInterface()
     }
   if (!this->UninstallButton->IsCreated())
     {
-    this->UninstallButton->SetParent( f4 );
+    this->UninstallButton->SetParent( this->Frame4 );
     this->UninstallButton->Create();
     this->UninstallButton->SetText("Uninstall");
     this->UninstallButton->SetCommand(this, "Uninstall");
@@ -278,12 +321,6 @@ void vtkSlicerModulesStep::ShowUserInterface()
   this->Script("pack %s %s -side left -anchor w -pady 2", 
                this->DownloadButton->GetWidgetName(),
                this->UninstallButton->GetWidgetName());
-
-  f1->Delete();
-  f2->Delete();
-  f3->Delete();
-  f4->Delete();
-
 }
 
 //----------------------------------------------------------------------------
@@ -561,13 +598,20 @@ bool vtkSlicerModulesStep::UninstallExtension(const std::string& ExtensionName)
 #endif
       
       std::string::size_type pos = paths.find(libdir.c_str());
-      paths.erase(pos, libdir.size());
+      if (std::string::npos != pos)
+        {
+        paths.erase(pos, libdir.size());
+        }
 
       std::cout << "paths: :" << app->GetModulePaths() << std::endl;
       
       pos = paths.find(delim);
-      paths.erase(pos, 2);
       
+      if (std::string::npos != pos)
+        {
+        paths.erase(pos, 2);
+        }    
+
       app->SetModulePaths(paths.c_str());
       std::cout << "paths: :" << app->GetModulePaths() << std::endl;
 

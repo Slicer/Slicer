@@ -1,5 +1,6 @@
 #include "vtkSlicerModulesConfigurationStep.h"
 
+#include "vtkSlicerConfigure.h"
 #include "vtkObjectFactory.h"
 
 #include "vtkKWApplication.h"
@@ -37,6 +38,10 @@ vtkSlicerModulesConfigurationStep::vtkSlicerModulesConfigurationStep()
   this->SetName("Extensions Management Wizard");
   this->WizardDialog = NULL;
 
+  this->Frame1 = NULL;
+  this->Frame2 = NULL;
+  this->Frame3 = NULL;
+
   this->HeaderIcon = NULL;
   this->HeaderText = NULL;
   this->ActionRadioButtonSet = NULL;
@@ -51,6 +56,18 @@ vtkSlicerModulesConfigurationStep::vtkSlicerModulesConfigurationStep()
 //----------------------------------------------------------------------------
 vtkSlicerModulesConfigurationStep::~vtkSlicerModulesConfigurationStep()
 {
+  if (this->Frame1)
+    {
+    this->Frame1->Delete();
+    }
+  if (this->Frame2)
+    {
+    this->Frame2->Delete();
+    }
+  if (this->Frame3)
+    {
+    this->Frame3->Delete();
+    }
   if (this->HeaderIcon)
     {
     this->HeaderIcon->Delete();
@@ -94,20 +111,38 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
   vtkKWWizardWidget *wizard_widget = 
     this->GetWizardDialog()->GetWizardWidget();
 
-  vtkKWFrame *f1 = vtkKWFrame::New();
-  f1->SetParent( wizard_widget->GetClientArea() );
-  f1->Create();
-  vtkKWFrame *f2 = vtkKWFrame::New();
-  f2->SetParent( wizard_widget->GetClientArea() );
-  f2->Create();
-  vtkKWFrame *f3 = vtkKWFrame::New();
-  f3->SetParent( wizard_widget->GetClientArea() );
-  f3->Create();
+  if (!this->Frame1)
+    {
+    this->Frame1 = vtkKWFrame::New();
+    }
+  if (!this->Frame1->IsCreated())
+    {
+    this->Frame1->SetParent( wizard_widget->GetClientArea() );
+    this->Frame1->Create();
+    }
+  if (!this->Frame2)
+    {
+    this->Frame2 = vtkKWFrame::New();
+    }
+  if (!this->Frame2->IsCreated())
+    {
+    this->Frame2->SetParent( wizard_widget->GetClientArea() );
+    this->Frame2->Create();
+    }
+  if (!this->Frame3)
+    {
+    this->Frame3 = vtkKWFrame::New();
+    }
+  if (!this->Frame3->IsCreated())
+    {
+    this->Frame3->SetParent( wizard_widget->GetClientArea() );
+    this->Frame3->Create();
+    }
 
   this->Script("pack %s %s %s -side top -pady 5",
-               f1->GetWidgetName(),
-               f2->GetWidgetName(),
-               f3->GetWidgetName());
+               this->Frame1->GetWidgetName(),
+               this->Frame2->GetWidgetName(),
+               this->Frame3->GetWidgetName());
 
   if (!this->HeaderIcon)
     {
@@ -116,7 +151,7 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
 
   if (!this->HeaderIcon->IsCreated())
     {
-    this->HeaderIcon->SetParent( f1 );
+    this->HeaderIcon->SetParent( this->Frame1 );
     this->HeaderIcon->Create();
     this->HeaderIcon->SetImageToPredefinedIcon(vtkKWIcon::IconConnection);
     }
@@ -128,7 +163,7 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
 
   if (!this->HeaderText->IsCreated())
     {
-    this->HeaderText->SetParent( f1 );
+    this->HeaderText->SetParent( this->Frame1 );
     this->HeaderText->Create();
     this->HeaderText->SetText("This wizard lets you search for extensions to add to 3D Slicer,\ndownload and install them, and uninstall existing extensions.");
     }
@@ -139,7 +174,7 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     }
   if (!this->ActionRadioButtonSet->IsCreated())
     {
-    this->ActionRadioButtonSet->SetParent( f2 );
+    this->ActionRadioButtonSet->SetParent( this->Frame2 );
     this->ActionRadioButtonSet->Create();
 
     vtkKWRadioButton *radiob;
@@ -170,7 +205,7 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     }
   if (!this->CacheDirectoryButton->IsCreated())
     {
-    this->CacheDirectoryButton->SetParent( f3 );
+    this->CacheDirectoryButton->SetParent( this->Frame3 );
     this->CacheDirectoryButton->Create();
     this->CacheDirectoryButton->SetLabelText("Download (cache) directory:");
     this->CacheDirectoryButton->SetLabelWidth(label_width);
@@ -183,7 +218,7 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     }
   if (!this->TrashButton->IsCreated())
     {
-    this->TrashButton->SetParent( f3 );
+    this->TrashButton->SetParent( this->Frame3 );
     this->TrashButton->Create();
     this->TrashButton->SetImageToPredefinedIcon(vtkKWIcon::IconTrashcan);
     }
@@ -194,7 +229,7 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     }
   if (!this->SearchLocationBox->IsCreated())
     {
-    this->SearchLocationBox->SetParent( f3 );
+    this->SearchLocationBox->SetParent( this->Frame3 );
     this->SearchLocationBox->Create();
     this->SearchLocationBox->SetLabelText("Where to search:");
     this->SearchLocationBox->SetLabelWidth(label_width);
@@ -217,11 +252,7 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
                this->SearchLocationBox->GetWidgetName());
 
   this->Script("grid columnconfigure %s 0 -weight 1",
-               f3->GetWidgetName());
-
-  f1->Delete();
-  f2->Delete();
-  f3->Delete();
+               this->Frame3->GetWidgetName());
 
   this->Update();
 }
@@ -246,13 +277,9 @@ void vtkSlicerModulesConfigurationStep::Update()
     vtksys_stl::string platform;
     vtksys::SystemTools::GetEnv("BUILD", platform);
 
-    std::string build_date;
+    // :TODO: 20090108 tgl: Uncomment and use macro for "real" use.
 
-    // :TODO: 20090105 tgl: Get build date from build system. Rather,
-    // have build system specify build date as a macro/global
-    // constant.
-
-    build_date = "2008-12-30";
+    std::string build_date("2009-01-07"); // Slicer3_VERSION_PATCH);
 
     std::string ext_slicer_org("http://ext.slicer.org/ext/");
     ext_slicer_org += build_date;
@@ -342,7 +369,7 @@ int vtkSlicerModulesConfigurationStep::IsRepositoryValid()
 
     }
 
-  return result;
+  return 0;//result;
 }
 
 //----------------------------------------------------------------------------
@@ -396,8 +423,8 @@ void vtkSlicerModulesConfigurationStep::CacheDirectoryCallback()
 
   if (app)
     {
-      // Store the setting in the application object
-      app->SetModuleCachePath(this->CacheDirectoryButton->GetWidget()->GetLoadSaveDialog()->GetFileName());
+    // Store the setting in the application object
+    app->SetModuleCachePath(this->CacheDirectoryButton->GetWidget()->GetLoadSaveDialog()->GetFileName());
     }
 }
 
