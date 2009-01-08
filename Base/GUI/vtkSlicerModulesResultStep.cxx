@@ -137,11 +137,11 @@ void vtkSlicerModulesResultStep::Validate()
 //----------------------------------------------------------------------------
 void vtkSlicerModulesResultStep::RestartButtonCallback()
 {
-  this->GetWizardDialog()->GetWidget()->GetOKButton()->Select();
+  this->GetWizardDialog()->OK();
 }
 
 //----------------------------------------------------------------------------
 void vtkSlicerModulesResultStep::LaterButtonCallback()
 {
-  this->GetWizardDialog()->GetWidget()->GetCancelButton()->Select();
+  this->GetWizardDialog()->Cancel();
 }
