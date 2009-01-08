@@ -30,6 +30,7 @@ public:
   virtual void ShowUserInterface();
   virtual void HideUserInterface();
   virtual void Validate();
+  virtual void Update();
 
   // Description:
   // Set/Get the wizard widget this step should install its UI in.
@@ -101,6 +102,7 @@ private:
   vtkKWMultiColumnList *ModulesMultiColumnList;
   vtkKWPushButton *DownloadButton;
   vtkKWPushButton *UninstallButton;
+  vtkKWPushButton *StopButton;
 
   vtkSlicerModulesWizardDialog *WizardDialog;
 
@@ -117,6 +119,14 @@ private:
   bool UninstallExtension(const std::string& ExtensionName);
   //ETX
 
+  // Description:
+  // Helper method for adding extensions to the column list
+  //BTX
+  void InsertExtension(int Index,
+                       const std::string& ExtensionName,
+                       const std::string& URL,
+                       const std::string& CacheDir);
+  //ETX
 };
 
 #endif
