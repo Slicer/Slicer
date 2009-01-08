@@ -159,7 +159,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolum
   
   //do automatic performance control
   //If draw time is too long, reduce ray steps by half
-  if (this->TimeToDraw >= 0.25)
+  if (this->TimeToDraw >= 1.0)
   {
       this->RaySteps *= 0.5f;
       vtkErrorMacro( "Requested too high ray steps (reduce by half automatically now). Please reduce desired ray steps." );
