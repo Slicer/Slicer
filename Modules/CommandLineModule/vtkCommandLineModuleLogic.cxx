@@ -1527,8 +1527,8 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     // Now, call Python properly.  For the moment, make a big string...
     // ...later we'll want to do this through the Python API
     std::string ExecuteModuleString =
-      "import sys;\n"
-      "import Slicer;\n"
+      "import sys\n"
+      "import Slicer\n"
       "import inspect\n"
       "ModuleName = \"" + node0->GetModuleDescription().GetTarget() + "\"\n"
       "ModuleArgs = []\n"
@@ -1536,6 +1536,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       "ArgFlags = []\n"
       "ArgMultiples = []\n";
 
+    //cout<<"-----------------------Individial command line items---------------------"<<endl;
     // Now add the individual command line items
     for (std::vector<std::string>::size_type i=1; i < commandLineAsString.size(); ++i)
       {
@@ -1569,12 +1570,12 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
 
 #ifdef Slicer3_USE_PYTHON    
     PyObject* v;
-      
     v = PyRun_String(
       ExecuteModuleString.c_str(),
       Py_file_input,
       (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()),
       (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()));
+
     if (v == NULL || PyErr_Occurred())
       {
       node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);

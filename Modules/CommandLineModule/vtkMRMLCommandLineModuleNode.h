@@ -115,6 +115,11 @@ class VTK_COMMANDLINEMODULE_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRML
     {this->SetParameterAsDouble(std::string(name), value);}
   void SetParameterAsFloat(const char *name, const float value)
     {this->SetParameterAsFloat(std::string(name), value);}
+  const char* GetParameterAsString(const char* name) const 
+  {
+    std::string stringName = name;
+    return this->GetParameterAsString(stringName).c_str();
+  }
   int GetNumberOfRegisteredModules ();
   void AbortProcess () { 
     this->GetModuleDescription().GetProcessInformation()->Abort = 1; 
@@ -123,6 +128,7 @@ class VTK_COMMANDLINEMODULE_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRML
   void SetModuleDescription ( const char *name ) { this->SetModuleDescription ( this->GetRegisteredModuleDescription ( name ) ); }
   const char* GetModuleVersion () { return this->GetModuleDescription().GetVersion().c_str(); };
   const char* GetModuleTitle () { return this->GetModuleDescription().GetTitle().c_str(); };
+  const char* GetModuleTarget () { return this->GetModuleDescription().GetTarget().c_str(); };
   unsigned int GetNumberOfParameterGroups () { return this->GetModuleDescription().GetParameterGroups().size(); }
   unsigned int GetNumberOfParametersInGroup ( unsigned int group ) { 
     if ( group >= this->GetModuleDescription().GetParameterGroups().size() ) { return 0; }
