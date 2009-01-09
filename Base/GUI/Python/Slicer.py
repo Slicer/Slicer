@@ -342,6 +342,8 @@ class Plugin(object):
         self.module = slicer.MRMLScene.CreateNodeByClass("vtkMRMLCommandLineModuleNode")
         self.module.SetModuleDescription(self.name)
         pargs = self.__FindPositionalArguments()
+        #print 'Positional', str(pargs)
+        #print 'Args', str(args)
         diff = len(pargs) - len(args)
         if diff < 0:
             self.module = None
@@ -390,13 +392,15 @@ class Plugin(object):
             newargs.append(node)
             outputNodeIDs.append(node.GetID())
             paramName = self.module.GetParameterName(pargs[idx][0],pargs[idx][1])
-            print 'Setting: ' + paramName + ' to ' + node.GetName()
+            print 'Setting: ' + paramName + ' to ' + node.GetID()
             self.module.SetParameterAsString(paramName,node.GetID())
 
         # Now set the keyword args
         for key in keywords.keys():
             print 'Setting: ' + str(key) + ' = ' + str(keywords[key])
             self.module.SetParameterAsString(key,str(keywords[key]))
+
+        #FIXME: ApplyAndWait doesn't work for Python modules - take the Execute route
 
         # And finally, execute the plugin
         logic = slicer.vtkCommandLineModuleLogic()
@@ -418,14 +422,12 @@ class Plugin(object):
         args = {}
         for group in range(self.module.GetNumberOfParameterGroups()):
             for arg in range(self.module.GetNumberOfParametersInGroup(group)):
-                print self.module.GetParameterIndex(group,arg)
+                #print 'Parameter index', self.module.GetParameterIndex(group,arg)
                 if self.module.GetParameterIndex(group,arg) != []:
-                    print self.module.GetParameterIndex(group,arg)
+                    #print self.module.GetParameterIndex(group,arg)
                     args[int(self.module.GetParameterIndex(group,arg))] = (group,arg)
         keys = args.keys()
         keys.sort()
-        print keys
-        print args
         return args
 
 def TestPluginClass():
@@ -519,6 +521,7 @@ def ParseArgs ( ModuleArgs, ArgTags, ArgFlags, ArgMultiples ):
     FlagArgs = {}
     PositionalArgs = []
 
+    #print "ModuleArgs", ModuleArgs
     while len (ModuleArgs) != 0:
         arg = ModuleArgs.pop(0)
         print "Looking at: ", arg
@@ -538,6 +541,8 @@ def ParseArgs ( ModuleArgs, ArgTags, ArgFlags, ArgMultiples ):
             PositionalArgs.append(CastArg(arg,ArgTags.pop(0)))
             while len(ModuleArgs) != 0:
                 PositionalArgs.append(CastArg(ModuleArgs.pop(0),ArgTags.pop(0)))
+    #print "FlagArgs", FlagArgs
+    #print "PositionalArgs", PositionalArgs
 
     return FlagArgs, PositionalArgs
 
