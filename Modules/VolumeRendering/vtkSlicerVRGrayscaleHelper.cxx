@@ -13,7 +13,7 @@
 #include "vtkSlicerBoxRepresentation.h"
 #include "vtkSlicerVisibilityIcons.h"
 #include "vtkSlicerVRMenuButtonColorMode.h"
-
+ 
 //VTK
 #include "vtkObjectFactory.h"
 #include "vtkVolume.h"
@@ -498,6 +498,10 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
         this->CB_RayCast->GetWidget()->SetSelectedState(this->Gui->GetApplication()->GetIntRegistryValue(2,"VolumeRendering","CB_RayCast"));
     }
     //added for GPGPU raycast
+    if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","CB_GPURayCastShading"))
+    {
+        this->CB_GPURayCastShading->GetWidget()->SetSelectedState(this->Gui->GetApplication()->GetIntRegistryValue(2,"VolumeRendering","CB_GPURayCastShading"));
+    }
     if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","CB_GPURayCast"))
     {
         this->CB_GPURayCast->GetWidget()->SetSelectedState(this->Gui->GetApplication()->GetIntRegistryValue(2,"VolumeRendering","CB_GPURayCast"));
@@ -549,8 +553,10 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
         this->CB_GPURayCast->GetWidget()->SetSelectedState(0);    
         this->CB_GPURayCast->EnabledOff();
         this->SC_Raysteps->EnabledOff();
-                this->CB_GPURayCastMIP->GetWidget()->SetSelectedState(0);    
+        this->CB_GPURayCastMIP->GetWidget()->SetSelectedState(0);    
         this->CB_GPURayCastMIP->EnabledOff();
+        this->CB_GPURayCastShading->EnabledOff();
+    
         errorText->Delete();
     }
     
@@ -742,7 +748,18 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         if(callerObjectCheckButton==this->CB_GPURayCast->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
         {
                 if (this->CB_GPURayCast->GetWidget()->GetSelectedState())
-                        this->Volume->SetMapper(this->MapperGPURaycast);
+                {
+                    this->Volume->SetMapper(this->MapperGPURaycast);
+                    this->CB_GPURayCastMIP->EnabledOn();
+                    this->CB_GPURayCastShading->EnabledOn();
+                    this->SC_Raysteps->EnabledOn();
+                }
+                else
+                {
+                    this->CB_GPURayCastMIP->EnabledOff();
+                    this->CB_GPURayCastShading->EnabledOff();
+                    this->SC_Raysteps->EnabledOff();
+                }
 
                 this->UpdateQualityCheckBoxes();
                 return;
@@ -757,7 +774,16 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
                 this->UpdateQualityCheckBoxes();
                 return;
         }
-        
+        if(callerObjectCheckButton==this->CB_GPURayCastShading->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
+        {
+                if (this->CB_GPURayCastShading->GetWidget()->GetSelectedState())
+                        this->MapperGPURaycast->SetShadingOn();
+                else
+                        this->MapperGPURaycast->SetShadingOff();
+                        
+                this->UpdateQualityCheckBoxes();
+                return;
+        }
     if(callerObjectCheckButton==this->CB_TextureLow->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
     {
         this->ScheduleMask[0]=callerObjectCheckButton->GetSelectedState();
@@ -2158,26 +2184,41 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->CB_GPURayCast->SetParent(this->MappersFrame->GetFrame());
     this->CB_GPURayCast->Create();
     this->CB_GPURayCast->SetBalloonHelpString("Enable GPU ray cast rendering. ");
-    this->CB_GPURayCast->SetLabelText("Use GPU Raycast   ");
+    this->CB_GPURayCast->SetLabelText("Use GPU ray cast   ");
     this->CB_GPURayCast->SetLabelWidth(labelWidth);
     this->CB_GPURayCast->GetWidget()->SetSelectedState(0);
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
         this->CB_GPURayCast->GetWidgetName() );
     this->CB_GPURayCast->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
 
-        //added for GPGPU raycast    
+    //added for GPGPU raycast    
     //enable/disable gpu ray casting MIP rendering
     this->CB_GPURayCastMIP=vtkKWCheckButtonWithLabel::New();
     this->CB_GPURayCastMIP->SetParent(this->MappersFrame->GetFrame());
     this->CB_GPURayCastMIP->Create();
-    this->CB_GPURayCastMIP->SetBalloonHelpString("Enable GPU ray cast MIP rendering. ");
-    this->CB_GPURayCastMIP->SetLabelText("Use GPU Raycast MIP");
+    this->CB_GPURayCastMIP->SetBalloonHelpString("Enable MIP rendering in GPU ray cast. ");
+    this->CB_GPURayCastMIP->SetLabelText("Use MIP in GPU Raycast");
     this->CB_GPURayCastMIP->SetLabelWidth(labelWidth);
     this->CB_GPURayCastMIP->GetWidget()->SetSelectedState(0);
+    this->CB_GPURayCastMIP->EnabledOff();
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
         this->CB_GPURayCastMIP->GetWidgetName() );
     this->CB_GPURayCastMIP->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
-        
+    
+    //added for GPGPU raycast    
+    //enable/disable gpu ray casting shading
+    this->CB_GPURayCastShading=vtkKWCheckButtonWithLabel::New();
+    this->CB_GPURayCastShading->SetParent(this->MappersFrame->GetFrame());
+    this->CB_GPURayCastShading->Create();
+    this->CB_GPURayCastShading->SetBalloonHelpString("Enable shading in GPU ray cast. May not supported by some video cards.");
+    this->CB_GPURayCastShading->SetLabelText("Enable Shading");
+    this->CB_GPURayCastShading->SetLabelWidth(labelWidth);
+    this->CB_GPURayCastShading->GetWidget()->SetSelectedState(0);
+    this->CB_GPURayCastShading->EnabledOff();
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+        this->CB_GPURayCastShading->GetWidgetName() );
+    this->CB_GPURayCastShading->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
+
     //added for GPGPU raycast
     //ray steps
     this->SC_Raysteps=vtkKWScaleWithLabel::New();
@@ -2190,6 +2231,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->SC_Raysteps->GetWidget()->SetResolution(10);
     this->SC_Raysteps->GetWidget()->SetValue(120);
     this->SC_Raysteps->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+    this->SC_Raysteps->EnabledOff();
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
         this->SC_Raysteps->GetWidgetName() );
 
