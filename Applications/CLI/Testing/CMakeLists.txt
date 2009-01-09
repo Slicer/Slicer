@@ -482,8 +482,8 @@ target_link_libraries (${CLP}Test ITKBasicFilters MRML vtkTeem SlicerBaseLogic)
 
 ##################################
 # DiffusionTensorTest tests
-add_test(DiffusionTensorTest ${Slicer3_EXE} --launch DiffusionTensorTest
-DiffusionTensorTest --help
+add_test(DiffusionTensorTestTest ${Slicer3_EXE} --launch DiffusionTensorTestTest
+DiffusionTensorTestTest --help
 )
 
 set (CLP DiffusionTensorTest)
