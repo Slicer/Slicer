@@ -471,7 +471,7 @@ include_directories(
 add_test(DiffusionTensorMathematicsTest ${Slicer3_EXE} --launch DiffusionTensorMathematicsTest
   DiffusionTensorMathematicsTest
     --enumeration FractionalAnisotropy
-    ${MRML_TEST_DATA}/helix-DWI.nhdr
+    ${MRML_TEST_DATA}/helix-DTI.nhdr
     ${TEMP}/DiffusionTensorMathematicsTest.nhdr
   )
 
@@ -482,15 +482,15 @@ target_link_libraries (${CLP}Test ITKBasicFilters MRML vtkTeem SlicerBaseLogic)
 
 ##################################
 # DiffusionTensorTest tests
-#add_test(DiffusionTensorTest ${Slicer3_EXE} --launch DiffusionTensorTest
-#DiffusionTensorTest --help
-#)
-#
-#set (CLP DiffusionTensorTest)
-#add_executable(${CLP}Test ${CLP}Test.cxx)
-#add_dependencies(${CLP}Test ${CLP})
-#target_link_libraries(${CLP}Test ITKIO)
-#
+add_test(DiffusionTensorTest ${Slicer3_EXE} --launch DiffusionTensorTest
+DiffusionTensorTest --help
+)
+
+set (CLP DiffusionTensorTest)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO)
+
 ##################################
 # DiffusionWeightedTest tests
 add_test(DiffusionWeightedTestTest ${Slicer3_EXE} --launch DiffusionWeightedTestTest
