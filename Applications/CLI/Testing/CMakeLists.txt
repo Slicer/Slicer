@@ -469,7 +469,10 @@ include_directories(
 ##################################
 # DiffusionTensorMathematics tests
 add_test(DiffusionTensorMathematicsTest ${Slicer3_EXE} --launch DiffusionTensorMathematicsTest
-  DiffusionTensorMathematicsTest --help
+  DiffusionTensorMathematicsTest
+    --enumeration FractionalAnisotropy
+    ${MRML_TEST_DATA}/helix-DWI.nhdr
+    ${TEMP}/DiffusionTensorMathematicsTest.nhdr
   )
 
 set (CLP DiffusionTensorMathematics)
