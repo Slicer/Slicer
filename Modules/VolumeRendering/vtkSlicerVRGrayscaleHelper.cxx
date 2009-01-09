@@ -372,7 +372,7 @@ void vtkSlicerVRGrayscaleHelper::InitializePipelineNewCurrentNode()
     autoname<<"autoVisualization";
     autoname<<this->Gui->GetNS_ImageData()->GetSelected()->GetName();
     this->Gui->GetCurrentNode()->SetName(autoname.str().c_str());
-    this->Gui->GetLogic()->GetMRMLScene()->InvokeEvent(vtkMRMLScene::NodeAddedEvent);
+    //this->Gui->GetLogic()->GetMRMLScene()->InvokeEvent(vtkMRMLScene::NodeAddedEvent);
     vtkKWHistogram *histogram=this->Histograms->GetHistogramWithName("0");
     if(histogram==NULL)
     {
@@ -430,7 +430,7 @@ void vtkSlicerVRGrayscaleHelper::InitializePipelineNewCurrentNode()
     this->Gui->GetCurrentNode()->CroppingEnabledOff();
 
     vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
-    vtkMRMLScalarVolumeNode *volumeNode=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected());
+    //vtkMRMLScalarVolumeNode *volumeNode=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected());
     vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
     double pointA[4];
     double pointB[4];
@@ -836,7 +836,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     }
 
     //TODO not the right place for this
-    vtkRenderWindow *callerRen=vtkRenderWindow::SafeDownCast(caller);
+    //vtkRenderWindow *callerRen=vtkRenderWindow::SafeDownCast(caller);
     if(caller==this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::AbortCheckEvent)
     {
         this->CheckAbort();
@@ -981,7 +981,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         //Stage 2
         if(this->CurrentStage==2)
         {
-            vtkRenderWindowInteractor *interactor=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetInteractor();
+            //vtkRenderWindowInteractor *interactor=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetInteractor();
             if(this->ButtonDown&&this->CB_InteractiveFrameRate->GetWidget()->GetSelectedState())
             {
 

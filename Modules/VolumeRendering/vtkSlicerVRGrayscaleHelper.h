@@ -282,6 +282,13 @@ protected:
     // Description:
     // Enable/Disable MIP GPU Ray Cast Mapping
     vtkKWCheckButtonWithLabel *CB_GPURayCastMIP;
+
+    // added for GPGPU raycast
+    // Description:
+    // Enable/Disable shading in GPU Ray Cast Mapping
+    // some graphics card may have problem to access more than one 3D texture 
+    // in shader program so it would be safe to turn off shading by default
+    vtkKWCheckButtonWithLabel *CB_GPURayCastShading;
     
     // Description:
     // Add interactive frame rates to ray cast mapping

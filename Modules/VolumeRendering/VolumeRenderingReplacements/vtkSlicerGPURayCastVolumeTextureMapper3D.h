@@ -55,20 +55,23 @@ public:
   // Description:
   // Overall alpha for volume rendering result
   // Used for blending volume rendering with polygons
-  // Default value: 0.85
+  // Default value: 1.0
   vtkSetMacro(GlobalAlpha, float);
   vtkGetMacro(GlobalAlpha, float);
   
   // Description:
-  // MIP rendering
-  // only works on one component volumes
+  // Enable/Disable Shading
+  void SetShadingOn();
+  void SetShadingOff();
+  
+  // Description:
+  // Enable/Disable clipping
   vtkSetMacro(Clipping, int);  
   vtkGetMacro(Clipping,int);
   vtkBooleanMacro(Clipping,int);
   
   // Description:
   // MIP rendering
-  // only works on one component volumes
   vtkSetMacro(MIPRendering, int);  
   vtkGetMacro(MIPRendering,int);
   vtkBooleanMacro(MIPRendering,int);
@@ -122,7 +125,8 @@ protected:
   int              RayCastSupported;
   
   int              MIPRendering;
-  int                      Clipping;
+  int              Clipping;
+  int              Shading;
 
   GLuint           Volume1Index;
   GLuint           Volume2Index;
@@ -141,10 +145,10 @@ protected:
   
   float            RaySteps;
   float            DesiredRaySteps;
-  float                    GlobalAlpha;
+  float            GlobalAlpha;
   
   void Initialize();
-  void InitializeRayCast(vtkVolume* pVol);
+  void InitializeRayCast();
   
   void RenderGLSL(vtkRenderer *pRen, vtkVolume *pVol);
 
@@ -165,6 +169,7 @@ protected:
   
   void LoadVertexShader();
   void LoadFragmentShader();
+  void LoadNoShadingFragmentShader();
   void LoadRayCastProgram();
   
   // Description:
@@ -181,6 +186,8 @@ private:
   
   void PrintGLErrorString();
   void PrintFragmentShaderInfoLog();
+
+  int ReloadShaderFlag;
 };
 
 
