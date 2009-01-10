@@ -482,11 +482,13 @@ target_link_libraries (${CLP}Test ITKBasicFilters MRML vtkTeem SlicerBaseLogic)
 
 ##################################
 # DiffusionTensorTest tests
-add_test(DiffusionTensorTestTest ${Slicer3_EXE} --launch DiffusionTensorTestTest
-DiffusionTensorTestTest --help
+set (CLP DiffusionTensorTest)
+add_test(${CLP}Test ${Slicer3_EXE} --launch ${CLP}Test
+  ${CLP}Test
+    ${MRML_TEST_DATA}/helix-DTI.nhdr
+    ${TEMP}/DiffusionTensorTestTest.nhdr
 )
 
-set (CLP DiffusionTensorTest)
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test ITKIO)
@@ -494,7 +496,9 @@ target_link_libraries(${CLP}Test ITKIO)
 ##################################
 # DiffusionWeightedTest tests
 add_test(DiffusionWeightedTestTest ${Slicer3_EXE} --launch DiffusionWeightedTestTest
-  DiffusionWeightedTestTest --help
+  DiffusionWeightedTestTest
+    ${MRML_TEST_DATA}/helix-DWI.nhdr
+    ${TEMP}/DiffusionWeightedTestTest.nhdr
   )
 
 set (CLP DiffusionWeightedTest)
