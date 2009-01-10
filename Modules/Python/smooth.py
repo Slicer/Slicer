@@ -1,5 +1,9 @@
+import logging
+import time
 import numpy as np
 #import scipy.signal as sciS
+
+logger                   = logging.getLogger(__name__)
 
 def smooth(x,FWHM,dim):
 #
@@ -17,7 +21,8 @@ def smooth(x,FWHM,dim):
 # to a 2D matrix so that the convolutions can be performed
 # in the first dimension (Matlab convention)
   for k in range(x.ndim):
-  
+    time0=time.time() 
+
     # Create 1D filter kernel
     sigma = FWHM[k]/dim[k]/2.35          # sigma in voxel units
     l = np.floor(3*sigma+1)
@@ -26,16 +31,12 @@ def smooth(x,FWHM,dim):
 
     s = x.shape
   
-    ## Reshape data (Matlab specific)
-    #x = np.reshape(x,(s[0], np.prod(s)/s[0]))
-  
     # Perform 1D convolution
     #x = sciS.convolve2d(f,x,'same')
     x = np.convolve(f.flatten(), x.flatten(), 'same')
 
     # Reshape and shift dims
     x = np.reshape(x,s)
-    #x = x.swapaxes(1,0)
-    #x = x.swapaxes(2,1)
+    logger.info("Time for smoothing slice %i : %s sec" % (k, str(time.time()-time0)))
     
   return x
