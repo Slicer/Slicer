@@ -502,6 +502,7 @@ class Plugin(object):
         logic.SetAndObserveMRMLScene(slicer.MRMLScene)
         logic.SetApplicationLogic(slicer.ApplicationGUI.GetApplicationLogic())
         logic.SetTemporaryDirectory(slicer.Application.GetTemporaryDirectory())
+        logic.LazyEvaluateModuleTarget(self.module)
         print "Apply and Wait"
         logic.ApplyAndWait(self.module)
 
