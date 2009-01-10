@@ -1488,6 +1488,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     std::ostringstream cerrstringstream;
     std::streambuf* origcoutrdbuf = std::cout.rdbuf();
     std::streambuf* origcerrrdbuf = std::cerr.rdbuf();
+    int returnValue = 0;
     try
       {
       if (this->RedirectModuleStreams)
@@ -1499,7 +1500,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
 
       // run the module
       if ( entryPoint != NULL ) {
-        (*entryPoint)(commandLineAsString.size(), command);
+        returnValue = (*entryPoint)(commandLineAsString.size(), command);
       }
 
       // report the output
@@ -1555,6 +1556,18 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
       this->GetApplicationLogic()->RequestModified( node0 );
 
+      std::cout.rdbuf( origcoutrdbuf );
+      std::cerr.rdbuf( origcerrrdbuf );
+      }
+    // Check the return status of the module
+    if (returnValue)
+      {
+      std::stringstream information;
+      information << node0->GetModuleDescription().GetTitle()
+                  << " returned " << returnValue << " which probably indicates an error." << std::endl;
+      vtkErrorMacro( << information.str().c_str() );
+      node0->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
+      this->GetApplicationLogic()->RequestModified( node0 );
       std::cout.rdbuf( origcoutrdbuf );
       std::cerr.rdbuf( origcerrrdbuf );
       }
