@@ -336,17 +336,22 @@ void  vtkChangeTrackerStep::SliceCallback() {
 /// For Rendering results
 void vtkChangeTrackerStep::ChangeRender_BandPassFilter(double min, double max) {
   double* imgRange  =   this->Render_Image->GetPointData()->GetScalars()->GetRange();
+  
   this->Render_Filter->RemoveAllPoints();
   this->Render_Filter->AddPoint(imgRange[0], 0.0);
-  this->Render_Filter->AddPoint(min - 1, 0.0);
-  this->Render_Filter->AddPoint(min, 1);
-  this->Render_Filter->AddPoint(max, 1);
+  this->Render_Filter->AddPoint(min - .1, 0.0);
+  this->Render_Filter->AddPoint(min, 1., .5, 1.);
+  this->Render_Filter->AddPoint(min+0.1, 0.);
+  this->Render_Filter->AddPoint(max-0.1, 0.);
+  this->Render_Filter->AddPoint(max, 1., .5, 1.);
   if (max < imgRange[1]) { 
-    this->Render_Filter->AddPoint(max + 1, 0);
-    if (max+1 < imgRange[1]) { 
+    this->Render_Filter->AddPoint(max + .1, 0.);
+    if (max+.1 < imgRange[1]) { 
+      this->Render_Filter->AddPoint(max+.1, 0.);
       this->Render_Filter->AddPoint(imgRange[1], 0);
     }
   }
+  this->Render_Filter->ClampingOff();
 }
 
 void vtkChangeTrackerStep::SetRender_BandPassFilter(double min, double max, float colorMin[3], float colorMax[3]) {
@@ -355,7 +360,7 @@ void vtkChangeTrackerStep::SetRender_BandPassFilter(double min, double max, floa
   this->Render_ColorMapping->RemoveAllPoints();
   // Two different colors did not work 
   this->Render_ColorMapping->AddRGBPoint(min, colorMin[0], colorMin[1], colorMin[2]);
-  this->Render_ColorMapping->AddRGBPoint(max, colorMin[0], colorMin[1], colorMin[2]);
+  this->Render_ColorMapping->AddRGBPoint(max, colorMax[0], colorMax[1], colorMax[2]);
 }
 
 void vtkChangeTrackerStep::SetRender_HighPassFilter(double min, float colorMin[3], float colorMax[3]) {
@@ -418,7 +423,7 @@ void vtkChangeTrackerStep::CreateRender(vtkMRMLVolumeNode *volumeNode, int RayCa
   this->Render_VolumeProperty->SetSpecularPower(40.0);
   this->Render_VolumeProperty->SetScalarOpacity(this->Render_Filter);
   this->Render_VolumeProperty->SetColor( this->Render_ColorMapping );
-  this->Render_VolumeProperty->SetInterpolationTypeToLinear();
+  this->Render_VolumeProperty->SetInterpolationTypeToNearest();
   this->Render_VolumeProperty->ShadeOn();
 
   this->Render_OrientationMatrix = vtkMatrix4x4::New();

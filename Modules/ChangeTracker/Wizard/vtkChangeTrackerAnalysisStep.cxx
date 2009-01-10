@@ -409,12 +409,14 @@ void vtkChangeTrackerAnalysisStep::ShowUserInterface()
   if (node) { 
     vtkMRMLVolumeNode *volumeSampleNode = vtkMRMLVolumeNode::SafeDownCast(node->GetScene()->GetNodeByID(node->GetScan1_SuperSampleRef()));
     vtkMRMLVolumeNode *volumeAnalysisNode = NULL;
-    float colorMax[3] = {0.0 , 0.0, 0.8 };
+    // TODO: use color LUT
+    float colorMax[3] = {0.8 , 0.0, 0.0 };
+    float colorMin[3] = {0.0 , 0.8, 0.0 };
 
     if (node->GetAnalysis_Intensity_Flag()) {
       volumeAnalysisNode = vtkMRMLVolumeNode::SafeDownCast(node->GetScene()->GetNodeByID(node->GetAnalysis_Intensity_Ref()));
       this->CreateRender(volumeAnalysisNode, 1);
-      this->SetRender_BandPassFilter(12, 14, colorMax, colorMax);
+      this->SetRender_BandPassFilter(12, 14, colorMin, colorMax);
 
     } else if (node->GetAnalysis_Deformable_Flag()) {
       volumeAnalysisNode = vtkMRMLVolumeNode::SafeDownCast(node->GetScene()->GetNodeByID(node->GetAnalysis_Deformable_Ref()));
