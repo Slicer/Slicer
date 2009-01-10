@@ -344,7 +344,7 @@ switch $::tcl_platform(os) {
         set ::FORTRAN_COMPILER "gfortran"
         set ::CMAKE $::CMAKE_PATH/bin/cmake
         set numCPUs [lindex [exec grep processor /proc/cpuinfo | wc] 0]
-        set ::MAKE "make -j [expr $numCPUs * 2]"
+        set ::MAKE "make -j [expr $numCPUs]"
         set ::SERIAL_MAKE "make"
     }
     "Darwin" {
