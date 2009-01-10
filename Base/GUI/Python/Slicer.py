@@ -329,78 +329,173 @@ class Slicer(object):
 
 slicer = Slicer()
 
-
-
-
-
 class Plugin(object):
     """Class to interface with Slicer3 plugins"""
+
     def __init__ (self, name):
         idx = GetRegisteredPlugins().index(name)
         self.name = name
+
     def Execute ( self, *args, **keywords ):
+
         self.module = slicer.MRMLScene.CreateNodeByClass("vtkMRMLCommandLineModuleNode")
         self.module.SetModuleDescription(self.name)
+
         pargs = self.__FindPositionalArguments()
-        #print 'Positional', str(pargs)
-        #print 'Args', str(args)
         diff = len(pargs) - len(args)
         if diff < 0:
             self.module = None
             raise Exception ( "Plugin: " + self.name + " requires " + str(len(pargs)) + "arguments, " + str(len(args)) + " given" )
-
         arglen = len(args)
+
+        if self.module.GetModuleType() == "PythonModule":
+            moduleName = self.module.GetModuleTarget()
+            executeArgs = {}
+            outputNodes = []
+            # Set the positional arguments
+            for ii in range(len(args)):
+                # Make sure we can lookup a MRML Node
+                #node = slicer.MRMLScene.GetNodeByID(args[ii])
+                node = args[ii]
+                if not node.IsA('vtkMRMLNode'):
+                    self.module = None
+                    raise Exception("Plugin: " + self.name + " requires a MRML Node as a positional arg: found " + str(args[ii]) + " instead")
+                paramName = self.module.GetParameterName(pargs[ii][0],pargs[ii][1])
+                executeArgs[paramName] = node.GetID()
+            for ii in range(diff):
+                idx = arglen + ii
+                parameterTag = self.module.GetParameterTag(pargs[ii][0],pargs[ii][1])
+                parameterType = self.module.GetParameterType(pargs[ii][0],pargs[ii][1])
+                if parameterTag == "image": 
+                    if parameterType == "label":
+                        className = "vtkMRMLScalarVolumeNode"
+                    elif parameterType == "vector":
+                        className = "vtkMRMLVectorVolumeNode"
+                    elif parameterType == "tensor":
+                        className = "vtkMRMLDiffusionTensorVolumeNode"
+                    elif parameterType == "diffusion-weighted":
+                        className = "vtkMRMLDiffusionWeightedVolumeNode"
+                    else:
+                        className = "vtkMRMLScalarVolumeNode"
+                elif parameterTag == "geometry":
+                    if parameterType == "fiberbundle":
+                        className = "vtkMRMLFiberBundleNode"
+                    else:
+                        className = "vtkMRMLModelNode"
+                elif parameterTag == "transform":
+                    className = "vtkMRMLTransformNode"
+                node = slicer.MRMLScene.CreateNodeByClass(className)
+                node.SetScene(slicer.MRMLScene)
+                node.SetName(slicer.MRMLScene.GetUniqueNameByString(className))
+                slicer.MRMLScene.AddNode(node)
+                paramName = self.module.GetParameterName(pargs[idx][0],pargs[idx][1])
+                executeArgs[paramName] = node.GetID()
+                outputNodes.append(node)
+            for entry in keywords:
+                executeArgs[entry] = keywords[entry]
+            module = __import__(moduleName)
+            reload(module)
+            print "Calling %s plugin with the following arguments" % self.name
+            print executeArgs
+            module.Execute(**executeArgs)
+            return outputNodes
 
         # Set the positional arguments
         for ii in range(len(args)):
             # Make sure we can lookup a MRML Node
-            n = slicer.MRMLScene.GetNodeByID(args[ii])
-            if n == []:
+            node = args[ii]
+            if not node.IsA('vtkMRMLNode'):
                 self.module = None
                 raise Exception("Plugin: " + self.name + " requires a MRML Node as a positional arg: found " + str(args[ii]) + " instead")
-            paramName = self.module.GetParameterName(pargs[ii][0],pargs[ii][1])
-            self.module.SetParameterAsString(paramName,args[ii])
-            #n = args[ii]
-            #if not isinstance(n,CreateClass('vtkMRMLNode')):
+            #n = slicer.MRMLScene.GetNodeByID(args[ii])
+            #if n == []:
             #    self.module = None
-            #    raise Exception("Plugin: " + self.name + " requires a MRML Node as a positional arg: found " + type(args[ii]) + " instead")
-            #paramName = self.module.GetParameterName(pargs[ii][0],pargs[ii][1])
-            #self.module.SetParameterAsString(paramName,args[ii].GetID())
-
+            #    raise Exception("Plugin: " + self.name + " requires a MRML Node as a positional arg: found " + str(args[ii]) + " instead")
+            paramName = self.module.GetParameterName(pargs[ii][0],pargs[ii][1])
+            self.module.SetParameterAsString(paramName,node.GetID())
 
         # Append empty nodes to the end...
-        outputNodeIDs = []
-        newargs = list(args)
+        outputNodes = []
         for ii in range(diff):
             # Check type
             idx = arglen + ii
-            t = self.module.GetParameterTag(pargs[ii][0],pargs[ii][1])
-            if t == "label":
-                c = "vtkMRMLScalarVolumeNode"
-            elif t == "vector":
-                c = "vtkMRMLVectorVolumeNode"
-            elif t == "tensor":
-                c = "vtkMRMLDiffusionTensorVolumeNode"
-            elif t == "diffusion-weighted":
-                c = "vtkMRMLDiffusionWeightedVolumeNode"
-            else:
-                c = "vtkMRMLScalarVolumeNode"
-            node = slicer.MRMLScene.CreateNodeByClass(c)
+            parameterTag = self.module.GetParameterTag(pargs[ii][0],pargs[ii][1])
+            parameterType = self.module.GetParameterType(pargs[ii][0],pargs[ii][1])
+            if parameterTag == "image": 
+                if parameterType == "label":
+                    className = "vtkMRMLScalarVolumeNode"
+                elif parameterType == "vector":
+                    className = "vtkMRMLVectorVolumeNode"
+                elif parameterType == "tensor":
+                    className = "vtkMRMLDiffusionTensorVolumeNode"
+                elif parameterType == "diffusion-weighted":
+                    className = "vtkMRMLDiffusionWeightedVolumeNode"
+                else:
+                    className = "vtkMRMLScalarVolumeNode"
+            elif parameterTag == "geometry":
+                if parameterType == "fiberbundle":
+                    className = "vtkMRMLFiberBundleNode"
+                else:
+                    className = "vtkMRMLModelNode"
+            elif parameterTag == "transform":
+                className = "vtkMRMLTransformNode"
+            node = slicer.MRMLScene.CreateNodeByClass(className)
             node.SetScene(slicer.MRMLScene)
-            node.SetName(slicer.MRMLScene.GetUniqueNameByString(c))
+            node.SetName(slicer.MRMLScene.GetUniqueNameByString(className+"A"))
             slicer.MRMLScene.AddNode(node)
-            newargs.append(node)
-            outputNodeIDs.append(node.GetID())
+            outputNodes.append(node)
             paramName = self.module.GetParameterName(pargs[idx][0],pargs[idx][1])
             print 'Setting: ' + paramName + ' to ' + node.GetID()
             self.module.SetParameterAsString(paramName,node.GetID())
 
         # Now set the keyword args
         for key in keywords.keys():
-            print 'Setting: ' + str(key) + ' = ' + str(keywords[key])
-            self.module.SetParameterAsString(key,str(keywords[key]))
-
-        #FIXME: ApplyAndWait doesn't work for Python modules - take the Execute route
+            parameterTag = None
+            tagFound = False
+            for group in range(self.module.GetNumberOfParameterGroups()):
+                for arg in range(self.module.GetNumberOfParametersInGroup(group)):
+                    if key == self.module.GetParameterLongFlag(group,arg):
+                        parameterTag = self.module.GetParameterTag(group,arg)
+                        tagFound = True
+                        break
+                if tagFound:
+                    break
+            if not tagFound:
+                raise Exception("Plugin: invalid tag " + key)
+            fiducialList = None
+            if parameterTag == "point":
+                className = "vtkMRMLFiducialListNode"
+                fiducialList = slicer.MRMLScene.CreateNodeByClass(className)
+                fiducialList.SetScene(slicer.MRMLScene)
+                fiducialList.SetName(slicer.MRMLScene.GetUniqueNameByString(className+"A"))
+                slicer.MRMLScene.AddNode(fiducialList)
+                points = []
+                parameterValue = keywords[key]
+                if parameterValue.__class__ in [list,tuple]:
+                    if parameterValue and parameterValue.__class__ in [list,tuple]:
+                        points = [point for point in parameterValue]
+                    else:
+                        points = [parameterValue]
+                for point in points:
+                    fid = fiducialList.AddFiducial()
+                    fiducialList.SetNthFiducialXYZ(fid,*point)
+                fiducialList.SetAllFiducialsSelected(1)
+                self.module.SetParameterAsString(key,fiducialList.GetID())
+            else:
+                parameterValue = keywords[key]
+                if parameterValue.__class__ in [list,tuple]:
+                    if parameterValue and parameterValue[0].__class__ in [list,tuple]:
+                        for parameterValueElem in parameterValue:
+                            parameterValueString = ','.join([str(el) for el in parameterValueElem])
+                            print 'Setting: ' + str(key) + ' = ' + parameterValueString
+                            self.module.SetParameterAsString(key,parameterValueString)
+                    else:
+                        parameterValueString = ','.join([str(el) for el in parameterValue])
+                        print 'Setting: ' + str(key) + ' = ' + parameterValueString
+                        self.module.SetParameterAsString(key,parameterValueString)
+                else:
+                    print 'Setting: ' + str(key) + ' = ' + str(parameterValue)
+                    self.module.SetParameterAsString(key,str(parameterValue))
 
         # And finally, execute the plugin
         logic = slicer.vtkCommandLineModuleLogic()
@@ -415,7 +510,7 @@ class Plugin(object):
             raise Exception ( "Plugin faild with status: " + status )
        
         # Else return sucessfully!
-        return outputNodeIDs
+        return outputNodes
 
     def __FindPositionalArguments ( self ):
         """Find and return a list of (group,arg) tuples of the positional arguments"""
