@@ -68,8 +68,8 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
   </parameters>
 
   <parameters>
-    <label>Otsu-like Mask Parameters</label>
-    <description>Parameters for otsu</description>
+    <label>Brain Mask Parameters</label>
+    <description>Parameters for brain mask (otsu-like)</description>
     <boolean>
       <name>otsuEnabled</name>
       <longflag>otsuEnabled</longflag>
@@ -83,7 +83,7 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
       <longflag>infOtsuThres</longflag>
       <label>Inferior Otsu-like threshold</label>
       <description>Inferior Otsu threshold </description>
-      <default>0</default>
+      <default>150</default>
     </integer>
 
     <integer>
@@ -91,9 +91,33 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
       <longflag>supOtsuThres</longflag>
       <label>Superior Otsu-like threshold</label>
       <description>Superior Otsu threshold </description>
-      <default>1000</default>
+      <default>2500</default>
     </integer>
-    
+
+    <boolean>
+      <name>artsEnabled</name>
+      <longflag>artsEnabled</longflag>
+      <description>Toggle artefacts removal</description>
+      <label>Artefacts removal</label>
+      <default>false</default>
+    </boolean>
+
+    <integer>
+      <name>infARTSThres</name>
+      <longflag>infARTSThres</longflag>
+      <label>Inferior artefacts threshold</label>
+      <description>Inferior artefacts threshold </description>
+      <default>0</default>
+    </integer>
+
+    <integer>
+      <name>supARTSThres</name>
+      <longflag>supARTSThres</longflag>
+      <label>Superior artefacts threshold</label>
+      <description>Superior artefacts threshold </description>
+      <default>150</default>
+    </integer>
+
   </parameters>
 
   <parameters>
@@ -123,43 +147,11 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
       <default>1000</default>
      </integer>
 
-     <boolean>
-      <name>artsEnabled</name>
-      <longflag>artsEnabled</longflag>
-      <description>Toggle artefacts removal</description>
-      <label>Artefacts removal</label>
-      <default>false</default>
-     </boolean>
-
-     <integer>
-      <name>infARTSThres</name>
-      <longflag>infARTSThres</longflag>
-      <label>Inferior artefacts threshold</label>
-      <description>Inferior artefacts threshold </description>
-      <default>0</default>
-     </integer>
-
-     <integer>
-      <name>supARTSThres</name>
-      <longflag>supARTSThres</longflag>
-      <label>Superior artefacts threshold</label>
-      <description>Superior artefacts threshold </description>
-      <default>150</default>
-     </integer>
-
   </parameters>
   
   <parameters>
     <label>Tensor Parameters</label>
     <description>Parameters for tensor computation</description>
-    
-    <integer>
-      <name>bLine</name>
-      <longflag>bLine</longflag>
-      <label>Baseline</label>
-      <description>Baseline </description>
-      <default>0</default>
-    </integer>
 
     <boolean>
       <name>faEnabled</name>
@@ -532,7 +524,6 @@ def Execute (\
              artsEnabled,\
              infARTSThres,\
              supARTSThres,\
-             bLine,\
              faEnabled,\
              traceEnabled,\
              modeEnabled,\
@@ -653,6 +644,7 @@ def Execute (\
   s.send('tensEnabled ' + str(int(True)) + '\n')
   ack = s.recv(SIZE)
 
+  bLine = 0
   s.send('bLine ' + str(bLine) + '\n')
   ack = s.recv(SIZE)
 
