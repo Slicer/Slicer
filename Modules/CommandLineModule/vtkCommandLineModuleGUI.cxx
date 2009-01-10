@@ -54,7 +54,6 @@ Version:   $Revision$
 #include "vtkStringArray.h"
 
 #include "itkNumericTraits.h"
-#include "itksys/DynamicLoader.hxx" 
 
 // Private implementaton of an std::map
 class ModuleWidgetMap : public std::map<std::string, vtkSmartPointer<vtkKWCoreWidget> > {};
@@ -445,41 +444,8 @@ void vtkCommandLineModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     this->Logic->SetTemporaryDirectory( ((vtkSlicerApplication*)this->GetApplication())->GetTemporaryDirectory() );
 
     // Lazy evaluation of module target
-    if (this->ModuleDescriptionObject.GetTarget() == "Unknown")
-      {
-      // What about python targets?
-      if (this->ModuleDescriptionObject.GetType() == "SharedObjectModule")
-        {
-        typedef int (*ModuleEntryPoint)(int argc, char* argv[]);
-        
-        itksys::DynamicLoader::LibraryHandle lib
-          = itksys::DynamicLoader::OpenLibrary(this->ModuleDescriptionObject.GetLocation().c_str());
-        if ( lib )
-          {
-          ModuleEntryPoint entryPoint
-            = (ModuleEntryPoint)itksys::DynamicLoader::GetSymbolAddress(lib, "ModuleEntryPoint");
+    this->Logic->LazyEvaluateModuleTarget(this->ModuleDescriptionObject);
 
-          if (entryPoint)
-            {
-            char entryPointAsText[256];
-            std::string entryPointAsString;
-            
-            sprintf(entryPointAsText, "%p", entryPoint);
-            entryPointAsString = std::string("slicer:") + entryPointAsText;
-            
-            this->ModuleDescriptionObject.SetTarget( entryPointAsString );
-            }
-          else
-            {
-            // can't find entry point, eject.
-            itksys::DynamicLoader::CloseLibrary(lib);
-
-            vtkErrorMacro(<< "Cannot find entry point for " << this->ModuleDescriptionObject.GetLocation() << "\nCannot run module." );
-            return;
-            }
-          }
-        }
-      }
     // make sure the entry point is set on the node
     this->GetCommandLineModuleNode()->GetModuleDescription()
       .SetTarget( this->ModuleDescriptionObject.GetTarget() );

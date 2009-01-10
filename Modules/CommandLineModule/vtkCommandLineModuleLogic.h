@@ -61,6 +61,12 @@ public:
   const char *GetTemporaryDirectory() const
     { return this->TemporaryDirectory.c_str(); }
 
+//BTX
+  void LazyEvaluateModuleTarget(ModuleDescription& moduleDescriptionObject);
+//ETX
+  void LazyEvaluateModuleTarget(vtkMRMLCommandLineModuleNode* node) 
+    { this->LazyEvaluateModuleTarget(node->GetModuleDescription()); }
+
 protected:
   //BTX
   std::string ConstructTemporaryFileName(const std::string& tag,

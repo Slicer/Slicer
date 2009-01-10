@@ -46,6 +46,7 @@ Version:   $Revision: 1.2 $
 #include "itksys/Process.h"
 #include "itksys/SystemTools.hxx"
 #include "itksys/RegularExpression.hxx"
+#include "itksys/DynamicLoader.hxx" 
 
 #include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
@@ -358,6 +359,45 @@ void vtkCommandLineModuleLogic::Apply ( vtkMRMLCommandLineModuleNode* node )
   
   task->Delete();
 
+}
+
+// Static method for lazy evaluation of module target
+void vtkCommandLineModuleLogic::LazyEvaluateModuleTarget(ModuleDescription& moduleDescriptionObject)
+{
+  if (moduleDescriptionObject.GetTarget() == "Unknown")
+    {
+    if (moduleDescriptionObject.GetType() == "SharedObjectModule")
+      {
+      typedef int (*ModuleEntryPoint)(int argc, char* argv[]);
+      
+      itksys::DynamicLoader::LibraryHandle lib
+        = itksys::DynamicLoader::OpenLibrary(moduleDescriptionObject.GetLocation().c_str());
+      if ( lib )
+        {
+        ModuleEntryPoint entryPoint
+          = (ModuleEntryPoint)itksys::DynamicLoader::GetSymbolAddress(lib, "ModuleEntryPoint");
+
+        if (entryPoint)
+          {
+          char entryPointAsText[256];
+          std::string entryPointAsString;
+          
+          sprintf(entryPointAsText, "%p", entryPoint);
+          entryPointAsString = std::string("slicer:") + entryPointAsText;
+          
+          moduleDescriptionObject.SetTarget( entryPointAsString );
+          }
+        else
+          {
+          // can't find entry point, eject.
+          itksys::DynamicLoader::CloseLibrary(lib);
+
+          vtkErrorMacro(<< "Cannot find entry point for " << moduleDescriptionObject.GetLocation() << "\nCannot run module." );
+          return;
+          }
+        }
+      }
+    }
 }
 
 //
