@@ -67,6 +67,5 @@ vtkMRMLModelDisplayNode::~vtkMRMLModelDisplayNode()
 void vtkMRMLModelDisplayNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLModelDisplayNode *node = (vtkMRMLModelDisplayNode *) anode;
 }
 
