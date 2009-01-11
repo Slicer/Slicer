@@ -49,7 +49,7 @@ int main (int argc, char *argv[])
     return EXIT_FAILURE;
     }
   
-  vtkSmartPointer<vtkMRMLScene> scene = vtkMRMLScene::New();
+  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
   scene->SetURL( transform1Filename.c_str() );
   scene->Import();
 
