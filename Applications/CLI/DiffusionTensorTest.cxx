@@ -35,4 +35,6 @@ int main( int argc, char * argv[] )
   writer->SetInput( reader->GetOutput() );
 
   writer->Update();
+
+  return EXIT_SUCCESS;
 }
