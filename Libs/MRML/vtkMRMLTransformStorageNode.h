@@ -78,7 +78,7 @@ class VTK_MRML_EXPORT vtkMRMLTransformStorageNode : public vtkMRMLStorageNode
   // Return a default file extension for writting
   virtual const char* GetDefaultWriteFileExtension()
     {
-    return "xfrm";
+    return "tfm";
     };
 
 protected:
