@@ -94,10 +94,18 @@ if { [file exists $::env(Slicer3_HOME)/bin/vtk$ext] } {
 
 if { $installed } {
 
+
   # if installed, everything is in the local tree
   set ::Slicer3_REAL $::Slicer3_HOME/bin/Slicer3-real$ext
 
   set ::env(SANDBOX_BIN_DIR)   ""
+
+  # additional system libs
+
+  set ::env(X11_LIB_DIR) ""
+  if { $::env(BUILD) == $::SOLARIS } {
+    set ::env(X11_LIB_DIR) /usr/X11/lib
+  }
 
   # 3rd party toolkits
 
@@ -185,6 +193,14 @@ if { $installed } {
     set ::Slicer3_REAL $::Slicer3_HOME/bin/Slicer3-real
   }
   set ::env(SANDBOX_BIN_DIR)   ""
+
+
+  # additional system libs
+
+  set ::env(X11_LIB_DIR) ""
+  if { $::env(BUILD) == $::SOLARIS } {
+    set ::env(X11_LIB_DIR) /usr/X11/lib
+  }
 
   # 3rd party toolkits
 
@@ -361,6 +377,7 @@ proc launch_SetPaths {} {
             set ::env(LD_LIBRARY_PATH) $::env(Slicer3_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(Slicer3_PLUGINS_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(Slicer3_MODULES_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(X11_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(PATH) "$::env(PATH):$::env(Teem_DIR)"
             set ::env(PATH) "$::env(Slicer3_BIN_DIR):$::env(PATH)"
             set ::env(PATH) "$::env(Slicer3_PLUGINS_DIR):$::env(PATH)"
