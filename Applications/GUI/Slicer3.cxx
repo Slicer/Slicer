@@ -685,7 +685,7 @@ int Slicer3_main(int argc, char *argv[])
   //
   // ignore any modules specified on the command line
   //
-  vtkStringArray *ignoreModules = vtkStringArray::New();
+  vtkSmartPointer<vtkStringArray> ignoreModules = vtkSmartPointer<vtkStringArray>::New();
   ignoreModules->DeepCopy(slicerApp->GetIgnoreModules());
   std::vector<std::string>::const_iterator ignoreit = IgnoreModule.begin();
   while (ignoreit != IgnoreModule.end())
@@ -1117,7 +1117,8 @@ int Slicer3_main(int argc, char *argv[])
   std::vector<std::string>::const_iterator lmit =
     loadableModuleNames.begin();
   
-  vtkStringArray *loadableModules = vtkStringArray::New();
+  vtkSmartPointer<vtkStringArray> loadableModules =
+    vtkSmartPointer<vtkStringArray>::New();
 
   while (lmit != loadableModuleNames.end())
     {
@@ -1180,7 +1181,6 @@ int Slicer3_main(int argc, char *argv[])
     }
   
   slicerApp->SetLoadableModules(loadableModules);
-  loadableModules->Delete();
 
   // ADD INDIVIDUAL MODULES
   // (these require appGUI to be built):
@@ -2077,8 +2077,6 @@ int Slicer3_main(int argc, char *argv[])
       }
     lmit++;
     }
-
-  ignoreModules->Delete();
 
 #ifndef MODELS_DEBUG
   modelsLogic->SetAndObserveMRMLScene ( NULL );
