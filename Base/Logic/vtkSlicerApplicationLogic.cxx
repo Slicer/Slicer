@@ -429,6 +429,8 @@ void vtkSlicerApplicationLogic::PropagateVolumeSelection(int fit)
     {
     cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
             this->MRMLScene->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+    if(!cnode->GetDoPropagateVolumeSelection())
+      continue;
     cnode->SetBackgroundVolumeID( ID );
     cnode->SetLabelVolumeID( labelID );
     }

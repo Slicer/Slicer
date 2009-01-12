@@ -70,6 +70,7 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
   this->CrosshairBehavior = vtkMRMLSliceCompositeNode::Normal;
   this->CrosshairThickness = vtkMRMLSliceCompositeNode::Fine;
   this->SliceIntersectionVisibility = 0;
+  this->DoPropagateVolumeSelection = true;
 }
 
 //----------------------------------------------------------------------------
@@ -195,6 +196,7 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
     of << indent << " crosshairThickness=\"" << "Thick" << "\"";
     }
 
+  of << indent << " doPropagateVolumeSelection=\"" << (int)this->DoPropagateVolumeSelection << "\"";
 }
 
 //-----------------------------------------------------------
@@ -419,6 +421,10 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
         this->SetCrosshairThickness (vtkMRMLSliceCompositeNode::Thick);
         }
       }
+    else if(!strcmp (attName, "doPropagateVolumeSelection" ))
+      {
+      this->SetDoPropagateVolumeSelection(atoi(attValue));
+      }
     }
 }
 
@@ -449,7 +455,7 @@ void vtkMRMLSliceCompositeNode::Copy(vtkMRMLNode *anode)
   this->SetCrosshairMode ( node->GetCrosshairMode() );
   this->SetCrosshairBehavior (node->GetCrosshairBehavior());
   this->SetCrosshairThickness (node->GetCrosshairThickness());
-
+  this->SetDoPropagateVolumeSelection (node->GetDoPropagateVolumeSelection());
   //this->DisableModifiedEventOff();
   //this->InvokePendingModifiedEvent();
 }
@@ -480,6 +486,7 @@ void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "CrosshairMode: " << this->CrosshairMode << "\n";
   os << indent << "CrosshairBehavior: " << this->CrosshairBehavior << "\n";
   os << indent << "CrosshairThickness: " << this->CrosshairThickness << "\n";
+  os << indent << "DoPropagateVolumeSelection: " << this->DoPropagateVolumeSelection << "\n";
 }
 
 //----------------------------------------------------------------------------

@@ -151,6 +151,12 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   void SetCrosshairToMedium() { this->SetCrosshairThickness(2); }
   void SetCrosshairToThick() { this->SetCrosshairThickness(3); }
   
+  // Description:
+  // configures the behavior of PropagateVolumeSelection(): 
+  // if set to false, the background/label for slice views
+  // will not be reset. Default value is true
+  vtkSetMacro (DoPropagateVolumeSelection, bool );
+  vtkGetMacro (DoPropagateVolumeSelection, bool );
   
   // Description:
   // Name of the layout
@@ -240,6 +246,7 @@ protected:
   int CrosshairThickness;
   int CrosshairBehavior;
 
+  bool DoPropagateVolumeSelection;
 };
 
 #endif
