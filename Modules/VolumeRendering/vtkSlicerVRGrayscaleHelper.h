@@ -298,11 +298,6 @@ protected:
     // Adjust the frame for interactive rendering methods
     vtkKWScaleWithLabel *SC_Framerate;
     
-    // added for GPGPU raycast
-    // Description:
-    // Adjust the steps for interactive gpu ray casting rendering methods
-    vtkKWScaleWithLabel *SC_Raysteps;
-
     // Description:
     // Update the quality check boxes ( e.g. ensure that one cb is always enabled etc.)
     void UpdateQualityCheckBoxes(void);
