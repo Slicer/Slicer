@@ -67,8 +67,8 @@ vtkSlicerGPURayCastVolumeTextureMapper3D::vtkSlicerGPURayCastVolumeTextureMapper
   this->RayCastProgram           =  0;
   this->RayCastSupported         =  0;
   this->RenderWindow         = NULL;
-  this->RaySteps             = 120.0f;
-  this->DesiredRaySteps          = 120.0f;
+  this->RaySteps             = 100.0f;
+  this->Framerate            = 1.0f;
   this->GlobalAlpha          = 1.0f;
 }
 
@@ -160,15 +160,24 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolum
     }
   
   //do automatic performance control
-  //If draw time is too long, reduce ray steps by half
-  if (this->TimeToDraw >= 1.0)
+    if(this->Framerate <= 0.0f)
+        this->Framerate = 1.0f;
+
+  if (this->TimeToDraw <= 0.25/this->Framerate)//increase ray steps for better quality when possible
+  {
+      this->RaySteps *= 3.5f;
+  }
+  else if (this->TimeToDraw <= 0.5/this->Framerate)
+  {
+      this->RaySteps *= 1.75f;
+  }
+  else if (this->TimeToDraw <= 0.75/this->Framerate)
+  {
+      this->RaySteps += 25.0f;
+  }
+  else if (this->TimeToDraw >= 1.0/this->Framerate)//reduce ray steps to ensure performance
   {
       this->RaySteps *= 0.5f;
-      vtkErrorMacro( "Requested too high ray steps (reduce by half automatically now). Please reduce desired ray steps." );
-  }
-  else if (this->TimeToDraw <= 0.04)//increase ray steps for better quality when it's really fast
-  {
-      this->RaySteps = (this->RaySteps + 50.0f) > this->DesiredRaySteps ? this->DesiredRaySteps : (this->RaySteps + 50.0f);
   }
   
 //  printf("ray step: %f, fps: %f\n", this->RaySteps, 1.0/this->TimeToDraw);

@@ -47,10 +47,9 @@ public:
   static vtkSlicerGPURayCastVolumeTextureMapper3D *New();
 
   // Description:
-  // Ray traversal interval distance = 1.0/RaySteps
-  // Default value: 120.0
-  vtkSetMacro(DesiredRaySteps, float);
-  vtkGetMacro(DesiredRaySteps, float);
+  // Desired frame rate
+  vtkSetMacro(Framerate, float);
+  vtkGetMacro(Framerate, float);
 
   // Description:
   // Overall alpha for volume rendering result
@@ -144,7 +143,7 @@ protected:
   GLfloat          ParaMatrix[16];//4x4 matrix uniform for ray casting parameters
   
   float            RaySteps;
-  float            DesiredRaySteps;
+  float            Framerate;
   float            GlobalAlpha;
   
   void Initialize();
