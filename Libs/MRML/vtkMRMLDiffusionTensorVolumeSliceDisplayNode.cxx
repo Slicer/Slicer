@@ -199,7 +199,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetPolyData(vtkPolyData *glyp
 vtkPolyData* vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetPolyData()
 {
  // if (this->DiffusionTensorGlyphFilter && this->Visibility != 0)
-  if (this->DiffusionTensorGlyphFilter)
+  if ( this->DiffusionTensorGlyphFilter && this->DiffusionTensorGlyphFilter->GetInput() != NULL )
     {
     this->UpdatePolyDataPipeline();
     this->DiffusionTensorGlyphFilter->Update();
