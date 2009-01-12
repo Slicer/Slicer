@@ -469,6 +469,38 @@ void vtkChangeTrackerAnalysisStep::ShowUserInterface()
       applicationGUI->GetMainSliceGUI("Red")->GetSliceController()->GetOffsetScale()->SetValue(oldSliceSetting[0]);
       applicationGUI->GetMainSliceGUI("Yellow")->GetSliceController()->GetOffsetScale()->SetValue(oldSliceSetting[1]);
       applicationGUI->GetMainSliceGUI("Green")->GetSliceController()->GetOffsetScale()->SetValue(oldSliceSetting[2]);
+
+      // Initialize CompareView layout
+      applicationGUI->GetGUILayoutNode()->SetNumberOfCompareViewRows(2);
+      applicationGUI->GetGUILayoutNode()->SetNumberOfCompareViewColumns(1);
+      applicationGUI->GetGUILayoutNode()->SetNumberOfCompareViewLightboxRows(1);
+      applicationGUI->GetGUILayoutNode()->SetNumberOfCompareViewLightboxColumns(4);
+      applicationGUI->GetGUILayoutNode()->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutCompareView);
+
+      vtkSlicerSliceGUI *cv0GUI, *cv1GUI;
+      
+      cv0GUI = applicationGUI->GetMainSliceGUI("Compare0");
+      cv1GUI = applicationGUI->GetMainSliceGUI("Compare1");
+
+      if(cv0GUI && cv1GUI)
+        {
+        vtkMRMLSliceCompositeNode *cv0, *cv1;
+        cv0 = applicationGUI->GetMainSliceGUI("Compare0")->GetLogic()->GetSliceCompositeNode();
+        cv1 = applicationGUI->GetMainSliceGUI("Compare1")->GetLogic()->GetSliceCompositeNode();
+        cv0->SetDoPropagateVolumeSelection(false);
+        cv1->SetDoPropagateVolumeSelection(false);
+
+        cv0->SetBackgroundVolumeID( node->GetScan1_SuperSampleRef() );
+        cv1->SetBackgroundVolumeID( node->GetScan2_NormedRef() );
+
+        cv0->SetLabelVolumeID( "" );
+        cv1->SetLabelVolumeID( "" );
+
+        cv0->SetForegroundVolumeID( volumeAnalysisNode->GetID() );
+        cv1->SetForegroundVolumeID( "" );
+
+        applicationLogic->PropagateVolumeSelection(1);
+      }
     } 
   }
 
