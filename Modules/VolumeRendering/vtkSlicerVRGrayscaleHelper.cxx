@@ -96,7 +96,6 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->CB_GPURayCastMIP=NULL;
     this->CB_InteractiveFrameRate=NULL;
     this->SC_Framerate=NULL;
-    this->SC_Raysteps=NULL;
     this->SVP_VolumeProperty=NULL;
     this->MappersFrame=NULL;
 
@@ -479,11 +478,10 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
     this->MapperTexture->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
     this->Volume->SetMapper(this->MapperTexture);
  
-        vtkErrorMacro("init gpu");   
     //added for GPGPU raycast
-        //create the raycast mapper
-        this->MapperGPURaycast=vtkSlicerGPURayCastVolumeTextureMapper3D::New();
-        this->MapperGPURaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
+    //create the raycast mapper
+    this->MapperGPURaycast=vtkSlicerGPURayCastVolumeTextureMapper3D::New();
+    this->MapperGPURaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
 
     //Also take care about Ray Cast
     this->MapperRaycast=vtkSlicerFixedPointVolumeRayCastMapper::New();
@@ -521,10 +519,7 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
     if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","SC_FrameRate"))
     {
         this->SC_Framerate->GetWidget()->SetValue(this->Gui->GetApplication()->GetFloatRegistryValue(2,"VolumeRendering","SC_FrameRate"));
-    }
-    if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","SC_Raysteps"))
-    {
-        this->SC_Raysteps->GetWidget()->SetValue(this->Gui->GetApplication()->GetFloatRegistryValue(2,"VolumeRendering","SC_Raysteps"));
+        this->MapperGPURaycast->SetFramerate(this->SC_Framerate->GetWidget()->GetValue());
     }
     if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","CB_InteractiveFrameRate"))
     {
@@ -537,11 +532,11 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
     //otherwise show textmessage
     int supportTexture=this->MapperTexture->IsRenderSupported(this->Gui->GetCurrentNode()->GetVolumeProperty());
 
-        int supportGPURayCast = this->MapperGPURaycast->IsRenderSupported(this->Gui->GetCurrentNode()->GetVolumeProperty());
+    int supportGPURayCast = this->MapperGPURaycast->IsRenderSupported(this->Gui->GetCurrentNode()->GetVolumeProperty());
         
-        // added for GPGPU raycast
-        // GPU raycast >> texture mapping >> software raycast
-        if (!supportGPURayCast)
+    // added for GPGPU raycast
+    // GPU raycast >> texture mapping >> software raycast
+    if (!supportGPURayCast)
     {
         vtkKWLabel *errorText=vtkKWLabel::New();
         errorText->SetParent(this->MappersFrame->GetFrame());
@@ -552,7 +547,6 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
 
         this->CB_GPURayCast->GetWidget()->SetSelectedState(0);    
         this->CB_GPURayCast->EnabledOff();
-        this->SC_Raysteps->EnabledOff();
         this->CB_GPURayCastMIP->GetWidget()->SetSelectedState(0);    
         this->CB_GPURayCastMIP->EnabledOff();
         this->CB_GPURayCastShading->EnabledOff();
@@ -591,11 +585,11 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
 
     
     //added for GPGPU raycast
-        //hook up the gpu mapper
-        this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+    //hook up the gpu mapper
+    this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-        this->MapperGPURaycast->AddObserver(vtkCommand::ProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+    this->MapperGPURaycast->AddObserver(vtkCommand::ProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
 
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
     //Only needed if using performance enhancement
@@ -630,7 +624,7 @@ void vtkSlicerVRGrayscaleHelper::UpdateRendering()
     vtkImageData *input= vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
         
         //added for GPGPU raycast
-        if (this->MapperGPURaycast->GetInput() != input)
+    if (this->MapperGPURaycast->GetInput() != input)
       {
       this->MapperGPURaycast->SetInput(input);
       }
@@ -752,13 +746,11 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
                     this->Volume->SetMapper(this->MapperGPURaycast);
                     this->CB_GPURayCastMIP->EnabledOn();
                     this->CB_GPURayCastShading->EnabledOn();
-                    this->SC_Raysteps->EnabledOn();
                 }
                 else
                 {
                     this->CB_GPURayCastMIP->EnabledOff();
                     this->CB_GPURayCastShading->EnabledOff();
-                    this->SC_Raysteps->EnabledOff();
                 }
 
                 this->UpdateQualityCheckBoxes();
@@ -819,12 +811,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     {
         this->GoalLowResTime=1./callerObjectSC->GetValue();
         this->MapperRaycast->SetManualInteractiveRate(this->GoalLowResTime);
-        this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
-        return;
-    }
-    if(callerObjectSC==this->SC_Raysteps->GetWidget()&&eid==vtkKWScale::ScaleValueChangedEvent)
-    {
-        this->MapperGPURaycast->SetDesiredRaySteps(callerObjectSC->GetValue());
+        this->MapperGPURaycast->SetFramerate(callerObjectSC->GetValue());//added by yanling
         this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
         return;
     }
@@ -2146,7 +2133,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->CB_RayCast->SetParent(this->MappersFrame->GetFrame());
     this->CB_RayCast->Create();
     this->CB_RayCast->SetBalloonHelpString("Enable highest quality software rendering. If you encouter problems with other method, this method shoul still work.");
-    this->CB_RayCast->SetLabelText("Use Raycast      ");
+    this->CB_RayCast->SetLabelText("Use Software Raycast");
     this->CB_RayCast->SetLabelWidth(labelWidth);
     this->CB_RayCast->GetWidget()->SetSelectedState(1);
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
@@ -2157,23 +2144,23 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->CB_InteractiveFrameRate->SetParent(this->MappersFrame->GetFrame());
     this->CB_InteractiveFrameRate->Create();
     this->CB_InteractiveFrameRate->SetBalloonHelpString("Enable low quality software rendering. Use together with check box above");
-    this->CB_InteractiveFrameRate->SetLabelText("Raycast interactive?!");
+    this->CB_InteractiveFrameRate->SetLabelText("Raycast interactive");
     this->CB_InteractiveFrameRate->SetLabelWidth(labelWidth);
     this->CB_InteractiveFrameRate->EnabledOff();
-    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->CB_InteractiveFrameRate->GetWidgetName() );
-    this->CB_InteractiveFrameRate->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
+    //commented out by yanling, this check button is never used
+//    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->CB_InteractiveFrameRate->GetWidgetName() );
+//    this->CB_InteractiveFrameRate->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
 
     //Framerate
     this->SC_Framerate=vtkKWScaleWithLabel::New();
     this->SC_Framerate->SetParent(this->MappersFrame->GetFrame());
     this->SC_Framerate->Create();
-    this->SC_Framerate->SetBalloonHelpString("Influence the speed of interactive rendering methods. 20 very fast, 1 slow but higher quality.");
+    this->SC_Framerate->SetBalloonHelpString("Influence performance and quality of volume rendering. 20 very fast, 1 slow but higher quality.");
     this->SC_Framerate->SetLabelText("FPS (Interactive):");
     this->SC_Framerate->SetLabelWidth(labelWidth);
     this->SC_Framerate->GetWidget()->SetRange(1,20);
     this->SC_Framerate->GetWidget()->SetResolution(1);
     this->SC_Framerate->GetWidget()->SetValue(1./this->GoalLowResTime);
-    this->SC_Framerate->SetBalloonHelpString("set frames per sec for lowest resolution rendering");
     this->SC_Framerate->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
         this->SC_Framerate->GetWidgetName() );
@@ -2183,7 +2170,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->CB_GPURayCast=vtkKWCheckButtonWithLabel::New();
     this->CB_GPURayCast->SetParent(this->MappersFrame->GetFrame());
     this->CB_GPURayCast->Create();
-    this->CB_GPURayCast->SetBalloonHelpString("Enable GPU ray cast rendering. ");
+    this->CB_GPURayCast->SetBalloonHelpString("Enable GPU Raycast rendering. ");
     this->CB_GPURayCast->SetLabelText("Use GPU ray cast   ");
     this->CB_GPURayCast->SetLabelWidth(labelWidth);
     this->CB_GPURayCast->GetWidget()->SetSelectedState(0);
@@ -2218,22 +2205,6 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
         this->CB_GPURayCastShading->GetWidgetName() );
     this->CB_GPURayCastShading->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
-
-    //added for GPGPU raycast
-    //ray steps
-    this->SC_Raysteps=vtkKWScaleWithLabel::New();
-    this->SC_Raysteps->SetParent(this->MappersFrame->GetFrame());
-    this->SC_Raysteps->Create();
-    this->SC_Raysteps->SetBalloonHelpString("Influence the speed/quality of GPU ray casting. 100 very fast, 1000 slow but higher quality.");
-    this->SC_Raysteps->SetLabelText("Desired Ray Steps");
-    this->SC_Raysteps->SetLabelWidth(labelWidth);
-    this->SC_Raysteps->GetWidget()->SetRange(100,1000);
-    this->SC_Raysteps->GetWidget()->SetResolution(10);
-    this->SC_Raysteps->GetWidget()->SetValue(120);
-    this->SC_Raysteps->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-    this->SC_Raysteps->EnabledOff();
-    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-        this->SC_Raysteps->GetWidgetName() );
 
 }
 void vtkSlicerVRGrayscaleHelper::DestroyPerformance(void)
@@ -2286,13 +2257,6 @@ void vtkSlicerVRGrayscaleHelper::DestroyPerformance(void)
         this->CB_TextureHigh->SetParent(NULL);
         this->CB_TextureHigh->Delete();
         this->CB_TextureHigh=NULL;
-    }
-    if(this->SC_Raysteps!=NULL)
-    {
-        this->SC_Raysteps->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-        this->SC_Raysteps->SetParent(NULL);
-        this->SC_Raysteps->Delete();
-        this->SC_Raysteps=NULL;
     }
     if(this->SC_Framerate!=NULL)
     {
