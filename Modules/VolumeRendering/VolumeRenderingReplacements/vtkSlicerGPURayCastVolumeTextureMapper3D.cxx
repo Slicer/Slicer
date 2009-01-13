@@ -169,18 +169,22 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolum
   }
   else if (this->TimeToDraw <= 0.5/this->Framerate)
   {
-      this->RaySteps *= 1.75f;
+      this->RaySteps *= 1.25f;
   }
   else if (this->TimeToDraw <= 0.75/this->Framerate)
   {
       this->RaySteps += 25.0f;
   }
-  else if (this->TimeToDraw >= 1.0/this->Framerate)//reduce ray steps to ensure performance
+  else if (this->TimeToDraw >= 1.15/this->Framerate)//reduce ray steps to ensure performance
   {
-      this->RaySteps *= 0.5f;
+      this->RaySteps *= 0.8f;
   }
   
-//  printf("ray step: %f, fps: %f\n", this->RaySteps, 1.0/this->TimeToDraw);
+  // add clamp
+  if (this->RaySteps >= 500.0) this->RaySteps = 500.0;
+  if (this->RaySteps <= 10.0)  this->RaySteps = 10.0;
+  printf("ray step: %f, fps: %f\n", this->RaySteps, 1.0/this->TimeToDraw);
+
 }
 
 //needs to be cleaned, 2008/10/20, Yanling Liu
