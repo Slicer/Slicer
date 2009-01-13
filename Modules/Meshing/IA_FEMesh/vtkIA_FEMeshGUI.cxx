@@ -147,7 +147,7 @@ void vtkIA_FEMeshGUI::ProcessGUIEvents ( vtkObject *caller,
 {
 //  vtkKWPushButton *b = vtkKWPushButton::SafeDownCast(caller);
 
-  cout << "FE callback received!" << endl;
+  //cout << "FE callback received!" << endl;
 //
   // process events on the object menu
 //  if (b == this->ApplyButton && event == vtkKWPushButton::InvokedEvent )

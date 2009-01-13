@@ -652,6 +652,9 @@ int vtkKWMimxEvaluateMeshQualityGroup::DistortedElementDialogSaveCallback()
 //----------------------------------------------------------------------------
 int vtkKWMimxEvaluateMeshQualityGroup::EvaluateMeshQualityCancelCallback()
 {
+  //cout << "got to EvaluateMeshQualityCancelCallback " << endl;
+  //cout << "" << endl;
+  
   this->GetApplication()->Script("pack forget %s", this->MainFrame->GetWidgetName());
   this->MenuGroup->SetMenuButtonsEnabled(1);
   this->GetMimxMainWindow()->GetMainUserInterfacePanel()->SetEnabled(1);

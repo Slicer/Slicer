@@ -37,8 +37,15 @@ vtkFiniteElementMeshList::vtkFiniteElementMeshList()
 
 vtkFiniteElementMeshList::~vtkFiniteElementMeshList() 
 {
+    // need to delete all actors in the list, so there are no dangling references to 
+    // the renderwindow.  Delete off of the front of the list
+    int NumberOfItemsInList = this->GetNumberOfItems();
+    for (int i; i=0; i<NumberOfItemsInList)
+    {
+        this->RemoveItem(1);
+        vtkDebugMacro("deleting Mesh Actor");
+    }
 
- 
 }
 
 // save reference to the scene to be used for storage 

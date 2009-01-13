@@ -170,17 +170,21 @@ vtkKWMimxMainWindow::vtkKWMimxMainWindow()
 //----------------------------------------------------------------------------
 vtkKWMimxMainWindow::~vtkKWMimxMainWindow()
 {
-        if (this->AxesRenderer) 
-                this->AxesRenderer->Delete();
+        if (this->AxesRenderer)
+        { 
+
+            this->RemoveOrientationAxis();
+            this->AxesRenderer->Delete();
+        }
         if (this->PVAxesActor)
           this->PVAxesActor->Delete();
-  if (this->CallbackCommand)
-    this->CallbackCommand->Delete();
+        if (this->CallbackCommand)
+          this->CallbackCommand->Delete();
         if (this->ErrorCallback)
           this->ErrorCallback->Delete();
         // Is this needed now???
-        //if(this->MainWindow)
-        //      this->MainWindow->Delete();
+        if(this->MainWindow)
+              this->MainWindow->Delete();
         if(this->RenderWidget)
                 this->RenderWidget->Delete();
         if(this->ViewProperties)
