@@ -147,7 +147,6 @@ itcl::body SliceSWidget::resizeSliceNode {} {
   if { $_layers(background,node) != "" } {
     set logic [$sliceGUI GetLogic]
     set sliceSpacing [$logic GetLowestVolumeSliceSpacing]
-
     $this configure -sliceStep [lindex $sliceSpacing 2]
   }
 
@@ -161,11 +160,9 @@ itcl::body SliceSWidget::resizeSliceNode {} {
   set pokedRenderer [$_renderWidget GetRenderer]  
   foreach {w h} [$pokedRenderer GetSize] {}
 
+
   foreach {nodeW nodeH nodeD} [$_sliceNode GetDimensions] {}
   foreach {nodefovx nodefovy nodefovz} [$_sliceNode GetFieldOfView] {}
-  if { $w == $nodeW && $h == $nodeH && [expr abs($sliceStep - ($nodefovz / (1. * $nodeD)))] < $epsilon} {
-    return
-  }
 
   if { $windoww == "10" && $windowh == "10" } {
     puts "ignoring bogus resize"
@@ -193,6 +190,17 @@ itcl::body SliceSWidget::resizeSliceNode {} {
        set fovx [expr $nodefovx * $scaling0 / $scaling1]
        set fovy $nodefovy
        set fovz [expr $sliceStep * $nodeD]
+    }
+
+    set windowAspect [expr $h / (1. * $w)]
+    set planeAspect [expr $fovy / (1. * $fovx)]
+    if { $windowAspect != $planeAspect } {
+      set fovx [expr $fovy / $windowAspect]
+    }
+
+    if { $fovx == $nodefovx && $fovy == $nodefovy && $fovz == $nodefovz &&
+          $w == $nodeW && $h == $nodeH && [expr abs($sliceStep - ($nodefovz / (1. * $nodeD)))] < $epsilon} {
+      return
     }
 
     $_sliceNode DisableModifiedEventOn
