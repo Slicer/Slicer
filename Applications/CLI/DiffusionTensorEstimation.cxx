@@ -35,21 +35,25 @@ int main( int argc, char * argv[] )
 
   PARSE_ARGS;
     {
-    //vtkNRRDReader *reader = vtkNRRDReader::New();
-    vtkSmartPointer<vtkNRRDReader> reader = vtkNRRDReader::New();
+    vtkSmartPointer<vtkNRRDReader> reader =
+      vtkSmartPointer<vtkNRRDReader>::New();
     reader->SetFileName(inputVolume.c_str());
     reader->Update();
 
-    vtkSmartPointer<vtkDoubleArray> bValues = vtkDoubleArray::New();
-    vtkSmartPointer<vtkDoubleArray> grads = vtkDoubleArray::New();
-    vtkSmartPointer<vtkMRMLNRRDStorageNode> helper = vtkMRMLNRRDStorageNode::New();
+    vtkSmartPointer<vtkDoubleArray> bValues =
+      vtkSmartPointer<vtkDoubleArray>::New();
+    vtkSmartPointer<vtkDoubleArray> grads =
+      vtkSmartPointer<vtkDoubleArray>::New();
+    vtkSmartPointer<vtkMRMLNRRDStorageNode> helper =
+      vtkSmartPointer<vtkMRMLNRRDStorageNode>::New();
 
     if ( !helper->ParseDiffusionInformation(reader,grads,bValues) )
       {
       std::cerr << argv[0] << ": Error parsing Diffusion information" << std::endl;
       return EXIT_FAILURE;
       }
-    vtkSmartPointer<vtkTeemEstimateDiffusionTensor> estim = vtkTeemEstimateDiffusionTensor::New();
+    vtkSmartPointer<vtkTeemEstimateDiffusionTensor> estim =
+      vtkSmartPointer<vtkTeemEstimateDiffusionTensor>::New();
 
     estim->SetInput(reader->GetOutput());
     estim->SetNumberOfGradients(grads->GetNumberOfTuples());
@@ -58,9 +62,11 @@ int main( int argc, char * argv[] )
 
     // Compute Transformation that brings the gradients to ijk
     // double *sp = reader->GetOutput()->GetSpacing();
-    vtkSmartPointer<vtkMatrix4x4> mf = vtkMatrix4x4::New();
+    vtkSmartPointer<vtkMatrix4x4> mf =
+      vtkSmartPointer<vtkMatrix4x4>::New();
     mf->DeepCopy(reader->GetMeasurementFrameMatrix());
-    vtkSmartPointer<vtkMatrix4x4> rasToIjkRotation = vtkMatrix4x4::New();
+    vtkSmartPointer<vtkMatrix4x4> rasToIjkRotation =
+      vtkSmartPointer<vtkMatrix4x4>::New();
     rasToIjkRotation->DeepCopy(reader->GetRasToIjkMatrix());
 
     //Set Translation to zero
@@ -83,7 +89,8 @@ int main( int argc, char * argv[] )
         }  
       }
 
-    vtkSmartPointer<vtkTransform> trans = vtkTransform::New();
+    vtkSmartPointer<vtkTransform> trans =
+      vtkSmartPointer<vtkTransform>::New();
     trans->PostMultiply();
     trans->SetMatrix(mf);
     trans->Concatenate(rasToIjkRotation);
@@ -109,14 +116,15 @@ int main( int argc, char * argv[] )
 
     //compute tenor mask
 
-    vtkSmartPointer<vtkITKNewOtsuThresholdImageFilter> otsu = vtkITKNewOtsuThresholdImageFilter::New();
+    vtkSmartPointer<vtkITKNewOtsuThresholdImageFilter> otsu =
+      vtkSmartPointer<vtkITKNewOtsuThresholdImageFilter>::New();
     otsu->SetInput(estim->GetBaseline());
     otsu->SetOmega (1 + otsuOmegaThreshold);
     otsu->SetOutsideValue(1);
     otsu->SetInsideValue(0);
     otsu->Update();
 
-    vtkImageData *mask = vtkImageData::New();
+    vtkSmartPointer<vtkImageData> mask = vtkSmartPointer<vtkImageData>::New();
     mask->DeepCopy(otsu->GetOutput());
 
     int *dims = mask->GetDimensions();
@@ -124,12 +132,14 @@ int main( int argc, char * argv[] )
     int py = dims[1]/2;
     int pz = dims[2]/2;
 
-    vtkSmartPointer<vtkImageCast> cast = vtkImageCast::New();
+    vtkSmartPointer<vtkImageCast> cast =
+      vtkSmartPointer<vtkImageCast>::New();
     cast->SetInput(mask);
     cast->SetOutputScalarTypeToUnsignedChar();
     cast->Update();
 
-    vtkSmartPointer<vtkImageSeedConnectivity> con = vtkImageSeedConnectivity::New();
+    vtkSmartPointer<vtkImageSeedConnectivity> con =
+      vtkSmartPointer<vtkImageSeedConnectivity>::New();
     con->SetInput(cast->GetOutput());
     con->SetInputConnectValue(1);
     con->SetOutputConnectedValue(1);
@@ -137,13 +147,15 @@ int main( int argc, char * argv[] )
     con->AddSeed(px, py, pz);
     con->Update();
 
-    vtkSmartPointer<vtkImageCast> cast1 = vtkImageCast::New();
+    vtkSmartPointer<vtkImageCast> cast1 =
+      vtkSmartPointer<vtkImageCast>::New();
     cast1->SetInput(con->GetOutput());
     cast1->SetOutputScalarTypeToShort();
     cast1->Update();
 
 
-    vtkSmartPointer<vtkImageConnectivity> conn = vtkImageConnectivity::New();
+    vtkSmartPointer<vtkImageConnectivity> conn =
+      vtkSmartPointer<vtkImageConnectivity>::New();
     if (removeIslands)  
       {
       conn->SetBackground(1);
@@ -159,9 +171,10 @@ int main( int argc, char * argv[] )
     // Maks tensor
     //TODO: fix tenosr mask
     /**/
-    //vtkSmartPointer<vtkTensorMask> tensorMask = vtkTensorMask::New();
-    vtkTensorMask *tensorMask = vtkTensorMask::New();
-    vtkSmartPointer<vtkImageCast> cast2 = vtkImageCast::New();
+    vtkSmartPointer<vtkTensorMask> tensorMask =
+      vtkSmartPointer<vtkTensorMask>::New();
+    vtkSmartPointer<vtkImageCast> cast2 =
+      vtkSmartPointer<vtkImageCast>::New();
     cast2->SetOutputScalarTypeToUnsignedChar();
     if (applyMask)
       {  
@@ -183,7 +196,8 @@ int main( int argc, char * argv[] )
     /**/
 
     //Save tensor
-    vtkSmartPointer<vtkNRRDWriter> writer = vtkNRRDWriter::New();
+    vtkSmartPointer<vtkNRRDWriter> writer =
+      vtkSmartPointer<vtkNRRDWriter>::New();
     tensorImage->GetPointData()->SetScalars(NULL);
     writer->SetInput(tensorImage);
     writer->SetFileName( outputTensor.c_str() );
@@ -198,7 +212,8 @@ int main( int argc, char * argv[] )
     writer->Write();
 
     //Save baseline
-    vtkSmartPointer<vtkNRRDWriter> writer2 = vtkNRRDWriter::New();
+    vtkSmartPointer<vtkNRRDWriter> writer2 =
+      vtkSmartPointer<vtkNRRDWriter>::New();
     writer2->SetInput(estim->GetBaseline());
     writer2->SetFileName( outputBaseline.c_str() );
     writer2->UseCompressionOn();
@@ -206,7 +221,8 @@ int main( int argc, char * argv[] )
     writer2->Write();
 
     //Save mask
-    vtkSmartPointer<vtkNRRDWriter> writer3 = vtkNRRDWriter::New();
+    vtkSmartPointer<vtkNRRDWriter> writer3 =
+      vtkSmartPointer<vtkNRRDWriter>::New();
     if (removeIslands)  
       {
       writer3->SetInput(conn->GetOutput());
@@ -220,114 +236,6 @@ int main( int argc, char * argv[] )
     writer3->SetIJKToRASMatrix( reader->GetRasToIjkMatrix() );
     writer3->Write();
 
-    //clean up
-    if (reader)
-      {  
-      reader->Delete();
-      reader = NULL;
-      }
-    if (estim)
-      {
-      estim->SetInput(NULL);
-      estim->Delete();
-      estim = NULL;
-      }
-    if (otsu)
-      {
-      otsu->SetInput(NULL);
-      otsu->Delete();
-      otsu = NULL;
-      }
-    if (cast)
-      {
-      cast->SetInput(NULL);
-      cast->Delete();
-      cast = NULL;
-      }
-    if (cast1)
-      {
-      cast1->SetInput(NULL);
-      cast1->Delete();
-      cast1 = NULL;
-      }
-    if (cast2)
-      {
-      cast2->SetInput(NULL);
-      cast2->Delete();
-      cast2 = NULL;
-      }
-    if (con)
-      {
-      con->SetInput(NULL);
-      con->Delete();
-      con = NULL;
-      }
-    if (conn)
-      {
-      conn->SetInput(NULL);
-      conn->Delete();
-      conn = NULL;
-      }
-    if (writer)
-      {
-      writer->SetInput(NULL);
-      writer->Delete();
-      writer = NULL;
-      }
-    if (writer2)
-      {
-      writer2->SetInput(NULL);
-      writer2->Delete();
-      writer2 = NULL;
-      }
-    if (writer3)
-      {
-      writer3->SetInput(NULL);
-      writer3->Delete();
-      writer3 = NULL;
-      }
-    if (trans)
-      {
-      trans->SetInput(NULL);
-      trans->Delete();
-      trans = NULL;
-      }
-    if (tensorMask)
-      {
-      tensorMask->SetInput(NULL);
-      tensorMask->Delete();
-      tensorMask = NULL;
-      }
-    if (mask)
-      {
-      mask->Delete();
-      mask = NULL;
-      }
-    if (bValues)
-      {
-      bValues->Delete();
-      bValues = NULL;
-      }
-    if (grads)
-      {
-      grads->Delete();
-      grads = NULL;
-      } 
-    if (helper)
-      {
-      helper->Delete();
-      helper = NULL;
-      } 
-    if (rasToIjkRotation)
-      {
-      rasToIjkRotation->Delete();
-      rasToIjkRotation = NULL;
-      }
-    if (mf)
-      {
-      mf->Delete();
-      mf = NULL;
-      }
     }
 
     return EXIT_SUCCESS;
