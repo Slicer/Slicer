@@ -1111,9 +1111,9 @@ int main(int argc, char** argv)
   if (verbose) std::cerr << "Cleaning up...";
   mrmlScene->Clear(true);
   mrmlScene->Delete();
-  vtkEventBroker::GetInstance()->Delete(); 
   emLogic->SetAndObserveMRMLScene(NULL);
   emLogic->Delete();
+  vtkEventBroker::GetInstance()->Delete(); 
   if (verbose) std::cerr << "DONE" << std::endl;
 
   return segmentationSucceeded ? EXIT_SUCCESS : EXIT_FAILURE;  

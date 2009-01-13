@@ -387,9 +387,10 @@ int main(int argc, char** argv)
   ijkToras->Delete();
   mrmlScene->Clear(1);
   mrmlScene->Delete();
-  vtkEventBroker::GetInstance()->Delete(); 
   emLogic->SetAndObserveMRMLScene(NULL);
   emLogic->Delete();
+
+  vtkEventBroker::GetInstance()->Delete(); 
   std::cerr << "DONE" << std::endl;
   return EXIT_SUCCESS;
 }
