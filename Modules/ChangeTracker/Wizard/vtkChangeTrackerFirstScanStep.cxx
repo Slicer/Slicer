@@ -168,6 +168,9 @@ void vtkChangeTrackerFirstScanStep::ShowUserInterface()
   this->AddGUIObservers();
   this->UpdateGUI();
 
+  vtkSlicerApplicationGUI *applicationGUI     = this->GetGUI()->GetApplicationGUI();
+  applicationGUI->GetGUILayoutNode()->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutFourUpView);
+
   {
     vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();  
     wizard_widget->BackButtonVisibilityOff();

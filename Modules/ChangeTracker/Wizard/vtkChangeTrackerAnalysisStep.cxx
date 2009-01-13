@@ -474,7 +474,7 @@ void vtkChangeTrackerAnalysisStep::ShowUserInterface()
       applicationGUI->GetGUILayoutNode()->SetNumberOfCompareViewRows(2);
       applicationGUI->GetGUILayoutNode()->SetNumberOfCompareViewColumns(1);
       applicationGUI->GetGUILayoutNode()->SetNumberOfCompareViewLightboxRows(1);
-      applicationGUI->GetGUILayoutNode()->SetNumberOfCompareViewLightboxColumns(4);
+      applicationGUI->GetGUILayoutNode()->SetNumberOfCompareViewLightboxColumns(5);
       applicationGUI->GetGUILayoutNode()->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutCompareView);
 
       vtkSlicerSliceGUI *cv0GUI, *cv1GUI;
