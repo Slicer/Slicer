@@ -3343,7 +3343,7 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
     // update the slice spacing mode if required
     int modeIndex = this->MoreMenuButton->GetMenu()->GetIndexOfItem ("Slice spacing mode" );
     vtkKWMenu *smenu = this->MoreMenuButton->GetMenu()->GetItemCascade(modeIndex);
-    if ((snode->GetSliceSpacingMode() == vtkMRMLSliceNode::AutomaticSliceSpacingMode))
+    if (smenu && (snode->GetSliceSpacingMode() == vtkMRMLSliceNode::AutomaticSliceSpacingMode))
       {
       if (smenu->GetItemSelectedState("Automatic") == 0 )
         {
@@ -3351,7 +3351,7 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
         }
       this->MoreMenuButton->GetMenu()->SetItemImageToIcon(modeIndex, this->SliceControlIcons->GetAutomaticSliceSpacingModeIcon());
       }
-    else if ((snode->GetSliceSpacingMode() == vtkMRMLSliceNode::PrescribedSliceSpacingMode))
+    else if (smenu && (snode->GetSliceSpacingMode() == vtkMRMLSliceNode::PrescribedSliceSpacingMode))
       {
       if (smenu->GetItemSelectedState("Manual") == 0)
         {
