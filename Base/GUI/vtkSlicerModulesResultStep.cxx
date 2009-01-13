@@ -32,6 +32,8 @@ vtkSlicerModulesResultStep::vtkSlicerModulesResultStep()
 {
   this->SetName("Extension Managament Wizard");
   this->WizardDialog = NULL;
+  this->Frame1 = NULL;
+  this->Frame2 = NULL;
   this->HeaderText = NULL;
   this->RestartButton = NULL;
   this->LaterButton = NULL;
@@ -40,6 +42,14 @@ vtkSlicerModulesResultStep::vtkSlicerModulesResultStep()
 //----------------------------------------------------------------------------
 vtkSlicerModulesResultStep::~vtkSlicerModulesResultStep()
 {
+  if (this->Frame1)
+    {
+    this->Frame1->Delete();
+    }
+  if (this->Frame2)
+    {
+    this->Frame2->Delete();
+    }
   if (this->HeaderText)
     {
     this->HeaderText->Delete();
@@ -71,13 +81,37 @@ void vtkSlicerModulesResultStep::ShowUserInterface()
 
   vtkKWWizardWidget *wizard_widget = wizard_dialog->GetWizardWidget();
 
+  if (!this->Frame1)
+    {
+    this->Frame1 = vtkKWFrame::New();
+    }
+  if (!this->Frame1->IsCreated())
+    {
+    this->Frame1->SetParent( wizard_widget->GetClientArea() );
+    this->Frame1->Create();
+    }
+
+  if (!this->Frame2)
+    {
+    this->Frame2 = vtkKWFrame::New();
+    }
+  if (!this->Frame2->IsCreated())
+    {
+    this->Frame2->SetParent( wizard_widget->GetClientArea() );
+    this->Frame2->Create();
+    }
+
+  this->Script("pack %s %s -side top -pady 5",
+               this->Frame1->GetWidgetName(),
+               this->Frame2->GetWidgetName());
+
   if (!this->HeaderText)
     {
     this->HeaderText = vtkKWLabel::New();
     } 
   if (!this->HeaderText->IsCreated())
     {
-    this->HeaderText->SetParent( wizard_widget->GetClientArea() );
+    this->HeaderText->SetParent( this->Frame1 );
     this->HeaderText->Create();
     this->HeaderText->SetText("Choose to restart 3D Slicer now to incorporate these\nextensions changes immediately. Restarting later will make\nthe changes next time the software starts up.");
     }
@@ -88,7 +122,7 @@ void vtkSlicerModulesResultStep::ShowUserInterface()
     }
   if (!this->RestartButton->IsCreated())
     {
-    this->RestartButton->SetParent( wizard_widget->GetClientArea() );
+    this->RestartButton->SetParent( this->Frame2 );
     this->RestartButton->Create();
     this->RestartButton->SetText("Restart 3D Slicer now");
     this->RestartButton->SetCommand(this, "RestartButtonCallback");
@@ -100,7 +134,7 @@ void vtkSlicerModulesResultStep::ShowUserInterface()
     }
   if (!this->LaterButton->IsCreated())
     {
-    this->LaterButton->SetParent( wizard_widget->GetClientArea() );
+    this->LaterButton->SetParent( this->Frame2 );
     this->LaterButton->Create();
     this->LaterButton->SetText("Restart later");
     this->LaterButton->SetCommand(this, "LaterButtonCallback");
@@ -109,9 +143,15 @@ void vtkSlicerModulesResultStep::ShowUserInterface()
   this->Script("pack %s -side top -expand y -fill none -anchor center", 
                this->HeaderText->GetWidgetName());
 
-  this->Script("pack %s %s -side top -expand y -fill none -anchor center", 
+  this->Script("pack %s %s -side left -expand y -fill none -padx 10 -anchor center", 
                this->RestartButton->GetWidgetName(),
                this->LaterButton->GetWidgetName());
+
+  this->GetWizardDialog()->GetWizardWidget()->BackButtonVisibilityOff();
+  this->GetWizardDialog()->GetWizardWidget()->NextButtonVisibilityOff();
+  this->GetWizardDialog()->GetWizardWidget()->OKButtonVisibilityOff();
+  this->GetWizardDialog()->GetWizardWidget()->CancelButtonVisibilityOff();
+
 }
 
 //----------------------------------------------------------------------------

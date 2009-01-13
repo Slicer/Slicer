@@ -7,6 +7,7 @@
 class vtkSlicerModulesWizardDialog;
 class vtkKWPushButton;
 class vtkKWLabel;
+class vtkKWFrame;
 
 class vtkSlicerModulesResultStep : public vtkKWWizardStep
 {
@@ -34,6 +35,8 @@ protected:
   vtkSlicerModulesResultStep();
   ~vtkSlicerModulesResultStep();
 
+  vtkKWFrame *Frame1;
+  vtkKWFrame *Frame2;
   vtkKWLabel *HeaderText;
   vtkKWPushButton *RestartButton;
   vtkKWPushButton *LaterButton;
