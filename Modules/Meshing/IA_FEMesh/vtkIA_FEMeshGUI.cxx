@@ -110,11 +110,12 @@ vtkIA_FEMeshGUI::~vtkIA_FEMeshGUI()
     }
   
   // tear down the KWMimxWindow instance used to hold the GUI for the meshing
-  // module 
+  // module.  The renderWidget has to be released so that Slicer can close down cleanly 
   if (this->MeshingUI != NULL)
-    {
-    this->MeshingUI->Delete();
-    }
+  {
+      if (this->MeshingUI->GetRenderWidget() != NULL) this->MeshingUI->GetRenderWidget()->Delete();
+      this->MeshingUI->Delete();
+  }
 }
 
 
