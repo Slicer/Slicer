@@ -37,9 +37,9 @@ vtkFiniteElementBuildingBlockList::~vtkFiniteElementBuildingBlockList()
     // need to delete all actors in the list, so there are no dangling references to 
     // the renderwindow.  Delete off of the front of the list
     int NumberOfItemsInList = this->GetNumberOfItems();
-    for (int i; i=0; i<NumberOfItemsInList)
+    for (int i=0; i<NumberOfItemsInList; i++)
     {
-        this->RemoveItem(1);
+        this->RemoveItem(0);
         vtkDebugMacro("deleting BBox Actor");
     }
 }
