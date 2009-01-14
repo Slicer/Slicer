@@ -314,6 +314,7 @@ void vtkKWMimxCreateFEMeshFromBBGroup::CreateWidget()
   this->GetApplication()->Script(
     "grid %s -row 0 -column 1 -sticky nw -padx 2 -pady 2", 
     this->HexMeshButton->GetWidgetName()); 
+  hexIcon->Delete();
   
   vtkKWIcon *tetIcon = vtkKWIcon::New();
   tetIcon->SetImage(    image_mimxTet, 
@@ -333,6 +334,7 @@ void vtkKWMimxCreateFEMeshFromBBGroup::CreateWidget()
   this->GetApplication()->Script(
     "grid %s -row 0 -column 2 -sticky nw -padx 2 -pady 2", 
     this->TetMeshButton->GetWidgetName());
+  tetIcon->Delete();
   
   vtkKWIcon *quadIcon = vtkKWIcon::New();
   quadIcon->SetImage(   image_mimxQuad, 
@@ -351,6 +353,7 @@ void vtkKWMimxCreateFEMeshFromBBGroup::CreateWidget()
   this->GetApplication()->Script(
     "grid %s -row 1 -column 1 -sticky nw -padx 2 -pady 2", 
     this->QuadMeshButton->GetWidgetName()); 
+  quadIcon->Delete();
   
   vtkKWIcon *triIcon = vtkKWIcon::New();
   triIcon->SetImage(    image_mimxTri, 
@@ -370,7 +373,7 @@ void vtkKWMimxCreateFEMeshFromBBGroup::CreateWidget()
   this->GetApplication()->Script(
     "grid %s -row 1 -column 2 -sticky nw -padx 2 -pady 2", 
     this->TriMeshButton->GetWidgetName());
-        
+  triIcon->Delete();        
   
   if (!this->TypeMenuButton)    
                 this->TypeMenuButton = vtkKWMenuButton::New();
@@ -531,7 +534,7 @@ void vtkKWMimxCreateFEMeshFromBBGroup::CreateWidget()
   this->GetApplication()->Script(
           "pack %s -side left -anchor nw -expand y -padx 5 -pady 6", 
           this->ApplyButton->GetWidgetName());
-
+  extrudeIcon->Delete();
 
   this->CancelButton->SetParent(this->MainFrame);
   this->CancelButton->Create();
@@ -993,7 +996,7 @@ void vtkKWMimxCreateFEMeshFromBBGroup::VolumetricMeshExtrudeCallback()
                         image_mimxExtrudeElements_height, 
                         image_mimxExtrudeElements_pixel_size); 
   this->SelectButton->SetImageToIcon( extrudeIcon );
-  
+  extrudeIcon->Delete();  
   this->InterpolationMenuButton->Unpack();
         this->MeshImprovementFrame->Unpack();   
   this->ApplyButton->SetStateToDisabled();
@@ -1046,6 +1049,7 @@ void vtkKWMimxCreateFEMeshFromBBGroup::SurfaceMeshExtractCallback()
   this->SelectButton->SetImageToIcon( extractIcon );
   this->MeshImprovementFrame->Unpack(); 
   this->ApplyButton->SetStateToDisabled();
+  extractIcon->Delete();
 }      
 //---------------------------------------------------------------------------------
 void vtkKWMimxCreateFEMeshFromBBGroup::SmoothFEMeshCallback(int state)

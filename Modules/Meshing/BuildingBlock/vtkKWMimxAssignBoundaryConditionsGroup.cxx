@@ -342,6 +342,15 @@ vtkKWMimxAssignBoundaryConditionsGroup::~vtkKWMimxAssignBoundaryConditionsGroup(
     this->ButtonFrame->Delete();
   if (this->AmplitudeTypeMenu)
     this->AmplitudeTypeMenu->Delete();
+  if (this->ActorCollection)
+    {
+    this->ActorCollection->Delete();
+    }
+  if (this->GlyphCollection)
+    {
+    this->GlyphCollection->Delete();
+    }
+
 }
 //----------------------------------------------------------------------------
 void vtkKWMimxAssignBoundaryConditionsGroup::CreateWidget()
@@ -403,6 +412,7 @@ void vtkKWMimxAssignBoundaryConditionsGroup::CreateWidget()
   this->GetApplication()->Script(
     "pack %s -side top -anchor n -expand y -padx 2 -pady 6",
     this->DefineNodeSetPushButton->GetWidgetName());
+  defineNodeSetIcon->Delete();
   this->DefineNodeSetPushButton->SetEnabled( 0 );
     
   if (!this->StepNotebook)
@@ -445,6 +455,7 @@ void vtkKWMimxAssignBoundaryConditionsGroup::CreateWidget()
   this->GetApplication()->Script(
     "pack %s -side right -anchor ne -expand y -padx 2 -pady 2",
     this->AddStepPushButton->GetWidgetName());
+  addStepIcon->Delete();
 
   vtkKWIcon *deleteStepIcon = vtkKWIcon::New();
   deleteStepIcon->SetImage(  image_mimxDeleteStep, 
@@ -463,6 +474,7 @@ void vtkKWMimxAssignBoundaryConditionsGroup::CreateWidget()
   this->GetApplication()->Script(
     "pack %s -side left -anchor nw -expand y -padx 2 -pady 2",
     this->DeleteStepPushButton->GetWidgetName());
+  deleteStepIcon->Delete();
      
   if (!this->SubHeadingFrame)
     this->SubHeadingFrame = vtkKWFrame::New();
@@ -690,6 +702,7 @@ void vtkKWMimxAssignBoundaryConditionsGroup::CreateWidget()
   this->GetApplication()->Script(
     "pack %s -side left -anchor w -expand n -padx 2 -pady 2", 
     this->ViewBoundaryConditionsButton->GetWidgetName());
+  viewBCIcon->Delete();
 #endif
 
   if (!this->GlyphFrame)    
@@ -766,6 +779,7 @@ void vtkKWMimxAssignBoundaryConditionsGroup::CreateWidget()
   this->GetApplication()->Script(
     "pack %s -side top -anchor n -expand y -padx 2 -pady 6",
     this->DefineControlPushButton->GetWidgetName());
+  stepDefIcon->Delete();
   this->BoundaryConditionActor->SetRenderer( this->GetMimxMainWindow()->GetRenderWidget()->GetRenderer() );
   
 }
@@ -2151,8 +2165,11 @@ void vtkKWMimxAssignBoundaryConditionsGroup::ComputeBoundaryCondRepresentation(
     arrowSourceX->Delete();
     coneSourceX->Delete();
     glyphMapperX->Delete();
+    vectorarray->Delete();
     actorGroup->AddItem(GlyphActorX);
     glyphGroup->AddItem(GlyphX);
+    GlyphActorX->Delete();
+    GlyphX->Delete();
     }
 
   if(ugrid->GetFieldData()->GetArray(boundnameY))
@@ -2234,6 +2251,8 @@ void vtkKWMimxAssignBoundaryConditionsGroup::ComputeBoundaryCondRepresentation(
     pointSetY->Delete();
     actorGroup->AddItem(GlyphActorY);
     glyphGroup->AddItem(GlyphY);
+    GlyphActorY->Delete();
+    GlyphY->Delete();
     }
 
   if(ugrid->GetFieldData()->GetArray(boundnameZ))
@@ -2310,15 +2329,20 @@ void vtkKWMimxAssignBoundaryConditionsGroup::ComputeBoundaryCondRepresentation(
     GlyphActorZ->SetMapper(glyphMapperZ);
     GlyphActorZ->GetProperty()->SetColor(0.0, 0.0, 1.0);
     arrowSourceZ->Delete();
+    coneSourceZ->Delete();
     glyphMapperZ->Delete();
     pointSetZ->Delete();
     vectorarray->Delete();
     actorGroup->AddItem(GlyphActorZ);
     glyphGroup->AddItem(GlyphZ);
+    GlyphActorZ->Delete();
+    GlyphZ->Delete();
     }
 
   this->ActorCollection->AddItem(actorGroup);
   this->GlyphCollection->AddItem(glyphGroup);
+  actorGroup->Delete();
+  glyphGroup->Delete();
 }
 //----------------------------------------------------------------------------
 void vtkKWMimxAssignBoundaryConditionsGroup::ShowBoundaryConditionRepresentation(int ConditionNum)
@@ -2711,12 +2735,15 @@ void vtkKWMimxAssignBoundaryConditionsGroup::ModifyBoundaryConditionActor(
 
         GlyphActorX->SetMapper(glyphMapperX);
         GlyphActorX->GetProperty()->SetColor(1.0, 0.0, 0.0);
+        vectorarray->Delete();
         pointSetX->Delete();
         arrowSourceX->Delete();
         coneSourceX->Delete();
         glyphMapperX->Delete();
         actorGroup->AddItem(GlyphActorX);
         glyphGroup->AddItem(GlyphX);
+        GlyphActorX->Delete();
+        GlyphX->Delete();
         }
 
       if(ugrid->GetFieldData()->GetArray(boundnameY))
@@ -2797,6 +2824,8 @@ void vtkKWMimxAssignBoundaryConditionsGroup::ModifyBoundaryConditionActor(
         pointSetY->Delete();
         actorGroup->AddItem(GlyphActorY);
         glyphGroup->AddItem(GlyphY);
+        GlyphActorY->Delete();
+        GlyphY->Delete();
         }
 
       if(ugrid->GetFieldData()->GetArray(boundnameZ))
@@ -2872,11 +2901,14 @@ void vtkKWMimxAssignBoundaryConditionsGroup::ModifyBoundaryConditionActor(
         GlyphActorZ->SetMapper(glyphMapperZ);
         GlyphActorZ->GetProperty()->SetColor(0.0, 0.0, 1.0);
         arrowSourceZ->Delete();
+        coneSourceZ->Delete();
         glyphMapperZ->Delete();
         pointSetZ->Delete();
         vectorarray->Delete();
         actorGroup->AddItem(GlyphActorZ);
         glyphGroup->AddItem(GlyphZ);
+        GlyphActorZ->Delete();
+        GlyphZ->Delete();
         }
       }    
     this->ShowBoundaryConditionRepresentation(i);
@@ -3394,6 +3426,7 @@ void vtkKWMimxAssignBoundaryConditionsGroup::StepControlCallback()
                                    this->ElementSetOutputApplyButton->GetWidgetName() ); 
     }
   this->OutputElementSetChangedCallback(this->ElementSetMenu->GetWidget()->GetValue());
+
   /**************************************************************/
   if (!this->StepControlCancelButton)
     {
@@ -3406,9 +3439,10 @@ void vtkKWMimxAssignBoundaryConditionsGroup::StepControlCallback()
     this->GetApplication()->Script("pack %s -side top -anchor n -padx 2 -pady 2",
                                    this->StepControlCancelButton->GetWidgetName() ); 
     }
-
+  
   this->AssignValuesToStepWindow(this->GetNotebookStep());
   this->StepControlDialog->Display();
+  applyIcon->Delete();
   return;
 }
 //---------------------------------------------------------------------------------------------------------

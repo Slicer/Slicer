@@ -279,96 +279,98 @@ void vtkKWMimxCreateFEMeshElementSetGroup::UpdateEnableState()
 //----------------------------------------------------------------------------
 int vtkKWMimxCreateFEMeshElementSetGroup::CreateElementSetApplyCallback()
 {
-        vtkMimxErrorCallback *callback = this->GetMimxMainWindow()->GetErrorCallback();
-        if(!strcmp(this->ObjectListComboBox->GetWidget()->GetValue(),""))
-        {
-                callback->ErrorMessage("FEMesh selection required");
-                return 0;
-        }
+  vtkMimxErrorCallback *callback = this->GetMimxMainWindow()->GetErrorCallback();
+  if(!strcmp(this->ObjectListComboBox->GetWidget()->GetValue(),""))
+    {
+    callback->ErrorMessage("FEMesh selection required");
+    return 0;
+    }
 
-        vtkKWComboBox *combobox = this->ObjectListComboBox->GetWidget();
-        const char *name = combobox->GetValue();
+  vtkKWComboBox *combobox = this->ObjectListComboBox->GetWidget();
+  const char *name = combobox->GetValue();
+  
+  int num = combobox->GetValueIndex(name);
+  if(num < 0 || num > combobox->GetNumberOfValues()-1)
+    {
+    callback->ErrorMessage("Choose valid FE Mesh");
+    combobox->SetValue("");
+    return 0;
+    }
+  
+  vtkMimxMeshActor *ugridactor = vtkMimxMeshActor::
+    SafeDownCast(this->FEMeshList->GetItem(combobox->GetValueIndex(name)));
+  vtkUnstructuredGrid *ugrid = ugridactor->GetDataSet();
+  
+  if (!this->SelectCellsWidget)
+    {
+    callback->ErrorMessage("Selection of elements should be made");
+    return 0;
+    }
+  vtkIdList *idlist = this->SelectCellsWidget->GetSelectedCellIds();
+  if(idlist->GetNumberOfIds() == 0)
+    {
+    callback->ErrorMessage("Number of elements selected is 0");
+    return 0;
+    }
+  const char *elementset = this->ElementSetNameEntry->GetWidget()->GetValue();
+  if(!strcmp(elementset, ""))
+    {
+    callback->ErrorMessage("Enter the element set name");
+    return 0;
+    }
+  
+  if(ugrid->GetCellData()->GetArray(elementset))
+    {
+    vtkKWMessageDialog *KWMessageDialog = vtkKWMessageDialog::New();
+    KWMessageDialog->SetStyleToOkCancel();
+    KWMessageDialog->SetApplication(this->GetApplication());
+    KWMessageDialog->Create();
+    KWMessageDialog->SetTitle("Your Atttention Please.!");
+    KWMessageDialog->SetText("Element Set with the name already exists. Would you like to overwrite the existing Element Set");
+    KWMessageDialog->Invoke();
+    if(KWMessageDialog->GetStatus() == vtkKWDialog::StatusCanceled)
+      {
+      return 0;
+      }
+    else
+      {
+      ugridactor->DeleteElementSet(elementset);
+      }
+    }
+  int i;
+  vtkIntArray *elementarray = vtkIntArray::New();
+  elementarray->SetNumberOfValues(ugrid->GetNumberOfCells());
+  
+  for (i=0; i<ugrid->GetNumberOfCells(); i++)
+    {
+    elementarray->SetValue(i, 0);
+    }
 
-        int num = combobox->GetValueIndex(name);
-        if(num < 0 || num > combobox->GetNumberOfValues()-1)
-        {
-                callback->ErrorMessage("Choose valid FE Mesh");
-                combobox->SetValue("");
-                return 0;
-        }
-
-        vtkMimxMeshActor *ugridactor = vtkMimxMeshActor::
-                SafeDownCast(this->FEMeshList->GetItem(combobox->GetValueIndex(name)));
-        vtkUnstructuredGrid *ugrid = ugridactor->GetDataSet();
-
-        if (!this->SelectCellsWidget)
-        {
-                callback->ErrorMessage("Selection of elements should be made");
-                return 0;
-        }
-        vtkIdList *idlist = this->SelectCellsWidget->GetSelectedCellIds();
-        if(idlist->GetNumberOfIds() == 0)
-        {
-                callback->ErrorMessage("Number of elements selected is 0");
-                return 0;
-        }
-        const char *elementset = this->ElementSetNameEntry->GetWidget()->GetValue();
-        if(!strcmp(elementset, ""))
-        {
-                callback->ErrorMessage("Enter the element set name");
-                return 0;
-        }
-
-        if(ugrid->GetCellData()->GetArray(elementset))
-        {
-                vtkKWMessageDialog *KWMessageDialog = vtkKWMessageDialog::New();
-                KWMessageDialog->SetStyleToOkCancel();
-                KWMessageDialog->SetApplication(this->GetApplication());
-                KWMessageDialog->Create();
-                KWMessageDialog->SetTitle("Your Atttention Please.!");
-                KWMessageDialog->SetText("Element Set with the name already exists. Would you like to overwrite the existing Element Set");
-                KWMessageDialog->Invoke();
-                if(KWMessageDialog->GetStatus() == vtkKWDialog::StatusCanceled)
-                {
-                        return 0;
-                }
-                else
-                {
-                        ugridactor->DeleteElementSet(elementset);
-                }
-        }
-        int i;
-        vtkIntArray *elementarray = vtkIntArray::New();
-        elementarray->SetNumberOfValues(ugrid->GetNumberOfCells());
-
-        for (i=0; i<ugrid->GetNumberOfCells(); i++) {
-                elementarray->SetValue(i, 0);
-        }
-
-        for (i=0; i<ugrid->GetNumberOfCells(); i++)
-        {
-                if(idlist->IsId(i) != -1)
-                {
-                        elementarray->SetValue(i,1);
-                }
-        }
-        elementarray->SetName(elementset);
-        ugrid->GetCellData()->AddArray(elementarray);
-
-        vtkStringArray *stringarray = vtkStringArray::SafeDownCast(
-                ugrid->GetFieldData()->GetAbstractArray("Element_Set_Names"));
-        if (! stringarray )
-        {
-          stringarray = vtkStringArray::New();
-          stringarray->SetName("Element_Set_Names");
-          ugrid->GetFieldData()->AddArray( stringarray );
-        }
-        stringarray->InsertNextValue(elementset);
-        elementarray->Delete();
+  for (i=0; i<ugrid->GetNumberOfCells(); i++)
+    {
+    if(idlist->IsId(i) != -1)
+      {
+      elementarray->SetValue(i,1);
+      }
+    }
+  elementarray->SetName(elementset);
+  ugrid->GetCellData()->AddArray(elementarray);
+  
+  vtkStringArray *stringarray = vtkStringArray::SafeDownCast(
+    ugrid->GetFieldData()->GetAbstractArray("Element_Set_Names"));
+  if (! stringarray )
+    {
+    stringarray = vtkStringArray::New();
+    stringarray->SetName("Element_Set_Names");
+    ugrid->GetFieldData()->AddArray( stringarray );
+    stringarray->Delete();
+    }
+  stringarray->InsertNextValue(elementset);
+  elementarray->Delete();
         
-        this->GetMimxMainWindow()->SetStatusText("Created Element Set");
+  this->GetMimxMainWindow()->SetStatusText("Created Element Set");
         
-        return 1;
+  return 1;
 }
 //----------------------------------------------------------------------------
 void vtkKWMimxCreateFEMeshElementSetGroup::PrintSelf(ostream& os, vtkIndent indent)

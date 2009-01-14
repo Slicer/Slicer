@@ -171,6 +171,8 @@ void vtkKWMimxConstMatPropElSetGroup::CreateWidget()
   this->GetApplication()->Script(
     "pack %s -side top -anchor n -padx 2 -pady 6", 
     this->DefineElSetButton->GetWidgetName());
+  defineElSetIcon->Delete();
+
   // for element set listing
   if ( !this->ElementSetComboBox )      
     this->ElementSetComboBox = vtkKWComboBoxWithLabel::New();

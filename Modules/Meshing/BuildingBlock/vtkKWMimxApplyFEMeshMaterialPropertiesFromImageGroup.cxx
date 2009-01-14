@@ -244,7 +244,7 @@ void vtkKWMimxApplyFEMeshMaterialPropertiesFromImageGroup::CreateWidget()
   this->GetApplication()->Script(
         "pack %s -side top -anchor n -padx 2 -pady 6", 
         this->DefineElSetButton->GetWidgetName());
-        
+  defineElSetIcon->Delete();        
   
   if (!this->ElementSetComboBox)    
       this->ElementSetComboBox = vtkKWComboBoxWithLabel::New();
@@ -290,7 +290,7 @@ void vtkKWMimxApplyFEMeshMaterialPropertiesFromImageGroup::CreateWidget()
   this->GetApplication()->Script(
         "pack %s -side top -anchor n -padx 2 -pady 6", 
         this->DefineConversionButton->GetWidgetName());
-          
+  equationIcon->Delete();          
   
   vtkKWIcon *binIcon = vtkKWIcon::New();
   binIcon->SetImage(    image_mimxBin, 
@@ -310,6 +310,7 @@ void vtkKWMimxApplyFEMeshMaterialPropertiesFromImageGroup::CreateWidget()
   this->GetApplication()->Script(
    "pack %s -side top -anchor nw -expand n -padx 2 -pady 6", 
    this->BinCheckButton->GetWidgetName());
+  binIcon->Delete();
   
   if ( !this->BinFrame )
     this->BinFrame = vtkKWFrameWithLabel::New();
@@ -487,10 +488,10 @@ int vtkKWMimxApplyFEMeshMaterialPropertiesFromImageGroup::
         Dialog->SetText("A user-defined material property has already been assigned to this element set. Would you like to overwrite?");
         Dialog->Invoke();
         if(Dialog->GetStatus() == vtkKWMessageDialog::StatusCanceled)
-        {
-            Dialog->Delete();
-            return 1;
-        }
+          {
+          Dialog->Delete();
+          return 1;
+          }
         Dialog->Delete();
         ugrid->GetFieldData()->RemoveArray( young );
     }
@@ -924,6 +925,7 @@ int vtkKWMimxApplyFEMeshMaterialPropertiesFromImageGroup::DefineConversionCallba
     //this->EquationLabel->SetText( "E = a + bp^c" );
     this->GetApplication()->Script("pack %s -side top -anchor n -padx 2 -pady 2",
                 this->EquationLabel->GetWidgetName() );    
+    equationIcon->Delete();
   }
   
   if (!this->ImageConstantA)

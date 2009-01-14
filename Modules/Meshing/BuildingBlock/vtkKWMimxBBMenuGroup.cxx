@@ -75,15 +75,15 @@ vtkKWMimxBBMenuGroup::vtkKWMimxBBMenuGroup()
 //----------------------------------------------------------------------------
 vtkKWMimxBBMenuGroup::~vtkKWMimxBBMenuGroup()
 {
-   if (this->BBoxList) 
-   {
-     for (int i=0; i < this->BBoxList->GetNumberOfItems(); i++) 
-     {
-        vtkMimxUnstructuredGridActor::SafeDownCast(
+  if (this->BBoxList) 
+    {
+    for (int i=0; i < this->BBoxList->GetNumberOfItems(); i++) 
+      {
+      vtkMimxUnstructuredGridActor::SafeDownCast(
         this->BBoxList->GetItem(i))->Delete();
       }
     this->BBoxList->Delete();
- }
+    }
 
   if (this->OperationMenuButton)
     this->OperationMenuButton->Delete();
@@ -92,7 +92,7 @@ vtkKWMimxBBMenuGroup::~vtkKWMimxBBMenuGroup()
   if(this->EditBB)
     this->EditBB->Delete();
   if(this->SaveVTKBBGroup)
-      this->SaveVTKBBGroup->Delete();
+    this->SaveVTKBBGroup->Delete();
   if(this->DeleteObjectGroup)
     this->DeleteObjectGroup->Delete();
 }
@@ -100,67 +100,67 @@ vtkKWMimxBBMenuGroup::~vtkKWMimxBBMenuGroup()
 //----------------------------------------------------------------------------
 void vtkKWMimxBBMenuGroup::CreateWidget()
 {
-    if(this->IsCreated())
+  if(this->IsCreated())
     {
-       vtkErrorMacro("class already created");
-       return;
+    vtkErrorMacro("class already created");
+    return;
     }
-    this->Superclass::CreateWidget();
+  this->Superclass::CreateWidget();
         
   // Main Frame 
   if(!this->MainFrame)
-     this->MainFrame = vtkKWFrame::New();
+    this->MainFrame = vtkKWFrame::New();
   this->MainFrame->SetParent(this->GetParent());
   this->MainFrame->Create();
   this->GetApplication()->Script(
     "pack %s -side top -anchor nw -expand n -padx 2 -pady 6 -fill x", 
     this->MainFrame->GetWidgetName());
 
-        // Operations Menu
-        if(!this->OperationMenuButton)  
+  // Operations Menu
+  if(!this->OperationMenuButton)  
     this->OperationMenuButton = vtkKWMenuButtonWithLabel::New();
-    this->OperationMenuButton->SetParent(this->MainFrame);
-    this->OperationMenuButton->Create();
-        this->OperationMenuButton->SetBorderWidth(0);
-        this->OperationMenuButton->SetReliefToGroove();
-        this->OperationMenuButton->SetPadX(2);
-        this->OperationMenuButton->SetPadY(2);
-        this->OperationMenuButton->GetWidget()->SetWidth(40);
-        this->GetApplication()->Script("pack %s -side top -anchor n -padx 2 -pady 15", 
-                this->OperationMenuButton->GetWidgetName());
+  this->OperationMenuButton->SetParent(this->MainFrame);
+  this->OperationMenuButton->Create();
+  this->OperationMenuButton->SetBorderWidth(0);
+  this->OperationMenuButton->SetReliefToGroove();
+  this->OperationMenuButton->SetPadX(2);
+  this->OperationMenuButton->SetPadY(2);
+  this->OperationMenuButton->GetWidget()->SetWidth(40);
+  this->GetApplication()->Script("pack %s -side top -anchor n -padx 2 -pady 15", 
+                                 this->OperationMenuButton->GetWidgetName());
         
-        this->OperationMenuButton->GetWidget()->GetMenu()->AddRadioButton(
-                "Create",this, "CreateBBFromBoundsCallback");
   this->OperationMenuButton->GetWidget()->GetMenu()->AddRadioButton(
-                "Load",this, "LoadVTKBBCallback");
-        this->OperationMenuButton->GetWidget()->GetMenu()->AddRadioButton(
+    "Create",this, "CreateBBFromBoundsCallback");
+  this->OperationMenuButton->GetWidget()->GetMenu()->AddRadioButton(
+    "Load",this, "LoadVTKBBCallback");
+  this->OperationMenuButton->GetWidget()->GetMenu()->AddRadioButton(
     "Build/Edit",this, "EditBBCallback");
   this->OperationMenuButton->GetWidget()->GetMenu()->AddRadioButton(
-                "Delete",this, "DeleteBBCallback");
-        this->OperationMenuButton->GetWidget()->GetMenu()->AddRadioButton(
-                "Save",this, "SaveVTKBBCallback");
+    "Delete",this, "DeleteBBCallback");
+  this->OperationMenuButton->GetWidget()->GetMenu()->AddRadioButton(
+    "Save",this, "SaveVTKBBCallback");
         
-        // Set the default value for the menu
-        this->OperationMenuButton->GetWidget()->SetValue( "Create" );   
+  // Set the default value for the menu
+  this->OperationMenuButton->GetWidget()->SetValue( "Create" );   
 }
 
 //----------------------------------------------------------------------------
 void vtkKWMimxBBMenuGroup::Update()
 {
-        this->UpdateEnableState();
+  this->UpdateEnableState();
 }
 
 //----------------------------------------------------------------------------
 void vtkKWMimxBBMenuGroup::UpdateEnableState()
 {
-        this->Superclass::UpdateEnableState();
+  this->Superclass::UpdateEnableState();
 }
 
 //----------------------------------------------------------------------------
 void vtkKWMimxBBMenuGroup::LoadVTKBBCallback()
 {
   vtkKWMimxLoadBBGroup *loadBlockGroup = vtkKWMimxLoadBBGroup::New();
-        loadBlockGroup->SetParent( this->GetParent() );
+  loadBlockGroup->SetParent( this->GetParent() );
   loadBlockGroup->SetBBoxList(this->BBoxList);
   loadBlockGroup->SetDoUndoTree(this->DoUndoTree);
   loadBlockGroup->SetMenuGroup(this);
@@ -185,7 +185,7 @@ void vtkKWMimxBBMenuGroup::PrintSelf(ostream& os, vtkIndent indent)
 void vtkKWMimxBBMenuGroup::CreateBBFromBoundsCallback()
 {
   if (!this->CreateBBFromBounds)
-  {
+    {
     this->CreateBBFromBounds = vtkKWMimxCreateBBFromBoundsGroup::New();
     this->CreateBBFromBounds->SetApplication(this->GetApplication());
     this->CreateBBFromBounds->SetParent( this->GetParent() );
@@ -197,39 +197,39 @@ void vtkKWMimxBBMenuGroup::CreateBBFromBoundsCallback()
     this->CreateBBFromBounds->SetViewProperties(
       this->GetMimxMainWindow()->GetViewProperties());
     this->CreateBBFromBounds->SetMenuGroup(this);
-   }
-   else
-   {
-           this->CreateBBFromBounds->UpdateObjectLists();
-   }
+    }
+  else
+    {
+    this->CreateBBFromBounds->UpdateObjectLists();
+    }
    
-   this->GetMimxMainWindow()->GetMainUserInterfacePanel()->SetEnabled(0);
-   this->SetMenuButtonsEnabled(0);
-   this->GetApplication()->Script("pack %s -side top -anchor nw -expand n -padx 0 -pady 2 -fill x", 
-        this->CreateBBFromBounds->GetMainFrame()->GetWidgetName()); 
- }
+  this->GetMimxMainWindow()->GetMainUserInterfacePanel()->SetEnabled(0);
+  this->SetMenuButtonsEnabled(0);
+  this->GetApplication()->Script("pack %s -side top -anchor nw -expand n -padx 0 -pady 2 -fill x", 
+                                 this->CreateBBFromBounds->GetMainFrame()->GetWidgetName()); 
+}
 
 //-----------------------------------------------------------------------------
 void vtkKWMimxBBMenuGroup::EditBBCallback()
 {
   if (!this->EditBB)
-  {
-          this->EditBB = vtkKWMimxEditBBGroup::New();
+    {
+    this->EditBB = vtkKWMimxEditBBGroup::New();
 
-          this->EditBB->SetApplication(this->GetApplication());
-          this->EditBB->SetParent( this->GetParent() );
-          this->EditBB->SetBBoxList(this->BBoxList);
-          this->EditBB->SetDoUndoTree(this->DoUndoTree);
-          this->EditBB->SetMimxMainWindow(this->GetMimxMainWindow());
-          this->EditBB->Create();
-          this->EditBB->SetViewProperties(
-                  this->GetMimxMainWindow()->GetViewProperties());
-          this->EditBB->SetMenuGroup(this);
-  }
+    this->EditBB->SetApplication(this->GetApplication());
+    this->EditBB->SetParent( this->GetParent() );
+    this->EditBB->SetBBoxList(this->BBoxList);
+    this->EditBB->SetDoUndoTree(this->DoUndoTree);
+    this->EditBB->SetMimxMainWindow(this->GetMimxMainWindow());
+    this->EditBB->Create();
+    this->EditBB->SetViewProperties(
+      this->GetMimxMainWindow()->GetViewProperties());
+    this->EditBB->SetMenuGroup(this);
+    }
   else
-  {
-          this->EditBB->UpdateObjectLists();
-  }
+    {
+    this->EditBB->UpdateObjectLists();
+    }
   this->SetMenuButtonsEnabled(0);
   this->GetMimxMainWindow()->GetMainUserInterfacePanel()->SetEnabled(0);
 
@@ -241,89 +241,89 @@ void vtkKWMimxBBMenuGroup::EditBBCallback()
 //-----------------------------------------------------------------------------
 void vtkKWMimxBBMenuGroup::SaveVTKBBCallback()
 {
-        if(!this->SaveVTKBBGroup)
-        {
-                this->SaveVTKBBGroup = vtkKWMimxSaveVTKBBGroup::New();
-                this->SaveVTKBBGroup->SetParent( this->GetParent() );
-                this->SaveVTKBBGroup->SetBBoxList(this->BBoxList);
-                this->SaveVTKBBGroup->SetMenuGroup(this);
-                this->SaveVTKBBGroup->SetMimxMainWindow(this->GetMimxMainWindow());
-                this->SaveVTKBBGroup->Create();
-        }
-        else
-        {
-                this->SaveVTKBBGroup->UpdateObjectLists();
-        }
-        this->SetMenuButtonsEnabled(0);
-        this->GetMimxMainWindow()->GetMainUserInterfacePanel()->SetEnabled(0);
+  if(!this->SaveVTKBBGroup)
+    {
+    this->SaveVTKBBGroup = vtkKWMimxSaveVTKBBGroup::New();
+    this->SaveVTKBBGroup->SetParent( this->GetParent() );
+    this->SaveVTKBBGroup->SetBBoxList(this->BBoxList);
+    this->SaveVTKBBGroup->SetMenuGroup(this);
+    this->SaveVTKBBGroup->SetMimxMainWindow(this->GetMimxMainWindow());
+    this->SaveVTKBBGroup->Create();
+    }
+  else
+    {
+    this->SaveVTKBBGroup->UpdateObjectLists();
+    }
+  this->SetMenuButtonsEnabled(0);
+  this->GetMimxMainWindow()->GetMainUserInterfacePanel()->SetEnabled(0);
 
-        this->GetApplication()->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 5 -fill x", 
-                this->SaveVTKBBGroup->GetMainFrame()->GetWidgetName());
+  this->GetApplication()->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 5 -fill x", 
+                                 this->SaveVTKBBGroup->GetMainFrame()->GetWidgetName());
 }
 
 //---------------------------------------------------------------------------------------
 void vtkKWMimxBBMenuGroup::DeleteBBCallback()
 {
-        if(!this->DeleteObjectGroup)
-        {
-                this->DeleteObjectGroup = vtkKWMimxDeleteObjectGroup::New();
-                this->DeleteObjectGroup->SetParent( this->GetParent() );
-                this->DeleteObjectGroup->SetFEMeshList(NULL);
-                this->DeleteObjectGroup->SetBBoxList(this->BBoxList);
-                this->DeleteObjectGroup->SetDoUndoTree(this->DoUndoTree);
-                this->DeleteObjectGroup->SetSurfaceList(NULL);          
-                this->DeleteObjectGroup->SetMenuGroup(this);
-                this->DeleteObjectGroup->SetViewProperties(
-                        this->GetMimxMainWindow()->GetViewProperties());
-                this->DeleteObjectGroup->SetMimxMainWindow(this->GetMimxMainWindow());
-                this->DeleteObjectGroup->Create();
-        }
-        else
-        {
-                this->DeleteObjectGroup->SetViewProperties(
-                        this->GetMimxMainWindow()->GetViewProperties());
-                this->DeleteObjectGroup->SetFEMeshList(NULL);
-                this->DeleteObjectGroup->SetBBoxList(this->BBoxList);
-                this->DeleteObjectGroup->SetDoUndoTree(this->DoUndoTree);
-                this->DeleteObjectGroup->SetSurfaceList(NULL);          
-                this->DeleteObjectGroup->UpdateObjectLists();
-        }
-        this->GetMimxMainWindow()->GetMainUserInterfacePanel()->SetEnabled(0);
-        this->SetMenuButtonsEnabled(0);
+  if(!this->DeleteObjectGroup)
+    {
+    this->DeleteObjectGroup = vtkKWMimxDeleteObjectGroup::New();
+    this->DeleteObjectGroup->SetParent( this->GetParent() );
+    this->DeleteObjectGroup->SetFEMeshList(NULL);
+    this->DeleteObjectGroup->SetBBoxList(this->BBoxList);
+    this->DeleteObjectGroup->SetDoUndoTree(this->DoUndoTree);
+    this->DeleteObjectGroup->SetSurfaceList(NULL);          
+    this->DeleteObjectGroup->SetMenuGroup(this);
+    this->DeleteObjectGroup->SetViewProperties(
+      this->GetMimxMainWindow()->GetViewProperties());
+    this->DeleteObjectGroup->SetMimxMainWindow(this->GetMimxMainWindow());
+    this->DeleteObjectGroup->Create();
+    }
+  else
+    {
+    this->DeleteObjectGroup->SetViewProperties(
+      this->GetMimxMainWindow()->GetViewProperties());
+    this->DeleteObjectGroup->SetFEMeshList(NULL);
+    this->DeleteObjectGroup->SetBBoxList(this->BBoxList);
+    this->DeleteObjectGroup->SetDoUndoTree(this->DoUndoTree);
+    this->DeleteObjectGroup->SetSurfaceList(NULL);          
+    this->DeleteObjectGroup->UpdateObjectLists();
+    }
+  this->GetMimxMainWindow()->GetMainUserInterfacePanel()->SetEnabled(0);
+  this->SetMenuButtonsEnabled(0);
 
-        this->DeleteObjectGroup->GetObjectListComboBox()->SetLabelText("Building Block: ");
-        this->GetApplication()->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 5 -fill x", 
-                this->DeleteObjectGroup->GetMainFrame()->GetWidgetName());
+  this->DeleteObjectGroup->GetObjectListComboBox()->SetLabelText("Building Block: ");
+  this->GetApplication()->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 5 -fill x", 
+                                 this->DeleteObjectGroup->GetMainFrame()->GetWidgetName());
 }
 
 //--------------------------------------------------------------------------------
 void vtkKWMimxBBMenuGroup::UpdateObjectLists()
 {
-        if(this->CreateBBFromBounds)
-                this->CreateBBFromBounds->UpdateObjectLists();
-        if(this->EditBB)
-                this->EditBB->UpdateObjectLists();
-        if(this->SaveVTKBBGroup)
-                this->SaveVTKBBGroup->UpdateObjectLists();
-        if(this->DeleteObjectGroup)
-                this->DeleteObjectGroup->UpdateObjectLists();
+  if(this->CreateBBFromBounds)
+    this->CreateBBFromBounds->UpdateObjectLists();
+  if(this->EditBB)
+    this->EditBB->UpdateObjectLists();
+  if(this->SaveVTKBBGroup)
+    this->SaveVTKBBGroup->UpdateObjectLists();
+  if(this->DeleteObjectGroup)
+    this->DeleteObjectGroup->UpdateObjectLists();
 }
 
 //------------------------------------------------------------------------------------------
 int vtkKWMimxBBMenuGroup::CheckCellTypesInUgrid(vtkUnstructuredGrid *Input)
 {
-        vtkCellTypes *celltypes = vtkCellTypes::New();
-        Input->GetCellTypes(celltypes);
-        int i;
-        for(i =0; i < celltypes->GetNumberOfTypes(); i++)
-        {
-                if(celltypes->GetCellType(i) != 12)
-                {
-                        celltypes->Delete();
-                        return 0;
-                }
-        }
-        celltypes->Delete();
-        return 1;
+  vtkCellTypes *celltypes = vtkCellTypes::New();
+  Input->GetCellTypes(celltypes);
+  int i;
+  for(i =0; i < celltypes->GetNumberOfTypes(); i++)
+    {
+    if(celltypes->GetCellType(i) != 12)
+      {
+      celltypes->Delete();
+      return 0;
+      }
+    }
+  celltypes->Delete();
+  return 1;
 }
 //------------------------------------------------------------------------------------------
