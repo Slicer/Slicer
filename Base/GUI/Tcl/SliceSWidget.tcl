@@ -335,7 +335,9 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   #
   # check that the window size is correct for the node and resize if needed
   #
-  $this resizeSliceNode
+  if { $caller != $_sliceNode } {
+    $this resizeSliceNode
+  }
 
 
   switch $event {
