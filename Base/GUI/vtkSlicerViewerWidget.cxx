@@ -1720,6 +1720,7 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLDisplayableNode *mode
             texture->Delete();
             }
           actor->GetTexture()->SetInput(dnode->GetTextureImageData());
+          actor->GetProperty()->SetColor(1., 1., 1.);
           }
         else
           {
