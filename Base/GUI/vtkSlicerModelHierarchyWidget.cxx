@@ -359,10 +359,14 @@ void vtkSlicerModelHierarchyWidget::AllVisibilityCallback(int visibility)
       vtkMRMLModelNode *mnode = cnode->GetModelNode();
       if (mnode)
         {
-        vtkMRMLDisplayNode *mdnode = mnode->GetDisplayNode();
-        if (mdnode)
+        int ndnodes = mnode->GetNumberOfDisplayNodes();
+        for (int d=0; d<ndnodes; d++)
           {
-          mdnode->SetVisibility(visibility);
+          vtkMRMLDisplayNode *dnode = mnode->GetNthDisplayNode(d);
+          if (dnode)
+            {
+            dnode->SetVisibility(visibility);
+            }
           }
         }
       } //for
@@ -374,10 +378,14 @@ void vtkSlicerModelHierarchyWidget::AllVisibilityCallback(int visibility)
   for (unsigned int i=0; i<hnodes.size(); i++)
     {
     vtkMRMLModelNode *hnode = vtkMRMLModelNode::SafeDownCast(hnodes[i]);
-    vtkMRMLDisplayNode *dnode = hnode->GetDisplayNode();
-    if (dnode)
+    int ndnodes = hnode->GetNumberOfDisplayNodes();
+    for (int d=0; d<ndnodes; d++)
       {
-      dnode->SetVisibility(visibility);
+      vtkMRMLDisplayNode *dnode = hnode->GetNthDisplayNode(d);
+      if (dnode)
+        {
+        dnode->SetVisibility(visibility);
+        }
       }
    }
 }
@@ -411,13 +419,18 @@ void vtkSlicerModelHierarchyWidget::HierarchyVisibilityCallback(const char *id)
           {
           cdnode->SetVisibility(visibility);
           }
+
         vtkMRMLModelNode *mnode = cnode->GetModelNode();
         if (mnode)
           {
-          vtkMRMLDisplayNode *mdnode = mnode->GetDisplayNode();
-          if (mdnode)
+          int ndnodes = mnode->GetNumberOfDisplayNodes();
+          for (int d=0; d<ndnodes; d++)
             {
-            mdnode->SetVisibility(visibility);
+            vtkMRMLDisplayNode *dnode = mnode->GetNthDisplayNode(d);
+            if (dnode)
+              {
+              dnode->SetVisibility(visibility);
+              }
             }
           }
         } //for
@@ -435,11 +448,15 @@ void vtkSlicerModelHierarchyWidget::ModelVisibilityCallback(const char *id)
     if (node != NULL)
       {
       vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast(node);
-      vtkMRMLDisplayNode *dnode = mnode->GetDisplayNode();
-      if (dnode)
+      int ndnodes = mnode->GetNumberOfDisplayNodes();
+      for (int d=0; d<ndnodes; d++)
         {
-        int visibility = dnode->GetVisibility();
-        dnode->SetVisibility((int)(!visibility));
+        vtkMRMLDisplayNode *dnode = mnode->GetNthDisplayNode(d);
+        if (dnode)
+          {
+          int visibility = dnode->GetVisibility();
+          dnode->SetVisibility((int)(!visibility));
+          }
         }
       }
     }
