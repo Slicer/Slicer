@@ -149,6 +149,12 @@ class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
   vtkSetMacro(Clipping, int);
 
   // Description:
+  // Specifies whether to show model intersections on slice planes
+  vtkBooleanMacro(SliceIntersectionVisibility, int);
+  vtkGetMacro(SliceIntersectionVisibility, int);
+  vtkSetMacro(SliceIntersectionVisibility, int);
+
+  // Description:
   // Indicates whether to cull (not render) the backface of the surface
   vtkBooleanMacro(BackfaceCulling, int);
   vtkGetMacro(BackfaceCulling, int);
@@ -246,6 +252,7 @@ protected:
   // Booleans
   int Visibility;
   int Clipping;
+  int SliceIntersectionVisibility;
   int BackfaceCulling;
   int ScalarVisibility;
   int VectorVisibility;

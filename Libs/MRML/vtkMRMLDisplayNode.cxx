@@ -38,6 +38,7 @@ vtkMRMLDisplayNode::vtkMRMLDisplayNode()
   this->Opacity = 1.0;
   this->Visibility = 1;
   this->Clipping = 0;
+  this->SliceIntersectionVisibility = 0;
   this->BackfaceCulling = 1;
   this->ScalarVisibility = 0;
   this->VectorVisibility = 0;
@@ -119,6 +120,8 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
   of << indent << " visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
 
   of << indent << " clipping=\"" << (this->Clipping ? "true" : "false") << "\"";
+
+  of << indent << " sliceIntersectionVisibility=\"" << (this->SliceIntersectionVisibility ? "true" : "false") << "\"";
 
   of << indent << " backfaceCulling=\"" << (this->BackfaceCulling ? "true" : "false") << "\"";
 
@@ -254,6 +257,17 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
         this->Clipping = 0;
         }
      }
+    else if (!strcmp(attName, "sliceIntersectionVisibility")) 
+      {
+      if (!strcmp(attValue,"true")) 
+        {
+        this->SliceIntersectionVisibility = 1;
+        }
+      else
+        {
+        this->SliceIntersectionVisibility = 0;
+        }
+     }
     else if (!strcmp(attName, "backfaceCulling")) 
       {
       if (!strcmp(attValue,"true")) 
@@ -356,6 +370,7 @@ void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetAutoScalarRange(node->AutoScalarRange);
   this->SetBackfaceCulling(node->BackfaceCulling);
   this->SetClipping(node->Clipping);
+  this->SetSliceIntersectionVisibility(node->SliceIntersectionVisibility);
   this->SetAndObserveTextureImageData(node->TextureImageData);
   this->SetColorNodeID(node->ColorNodeID);
   this->SetActiveScalarName(node->ActiveScalarName);
@@ -388,6 +403,7 @@ void vtkMRMLDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "AutoScalarRange:   " << this->AutoScalarRange << "\n";
   os << indent << "BackfaceCulling:   " << this->BackfaceCulling << "\n";
   os << indent << "Clipping:          " << this->Clipping << "\n";
+  os << indent << "SliceIntersectionVisibility:          " << this->SliceIntersectionVisibility << "\n";
 
   os << "ScalarRange:\n";
   for (idx = 0; idx < 2; ++idx)
