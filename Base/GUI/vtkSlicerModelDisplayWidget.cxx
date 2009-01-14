@@ -38,6 +38,7 @@ vtkSlicerModelDisplayWidget::vtkSlicerModelDisplayWidget ( )
     this->ScalarMenu = NULL;
     this->ColorSelectorWidget = NULL;
     this->ClippingButton = NULL;
+    this->SliceIntersectionVisibilityButton = NULL;
     this->BackfaceCullingButton = NULL;
     this->OpacityScale = NULL;
     this->SurfaceMaterialPropertyWidget = NULL;
@@ -92,6 +93,12 @@ vtkSlicerModelDisplayWidget::~vtkSlicerModelDisplayWidget ( )
     this->ClippingButton->SetParent(NULL);
     this->ClippingButton->Delete();
     this->ClippingButton = NULL;
+    }
+  if (this->SliceIntersectionVisibilityButton)
+    {
+    this->SliceIntersectionVisibilityButton->SetParent(NULL);
+    this->SliceIntersectionVisibilityButton->Delete();
+    this->SliceIntersectionVisibilityButton = NULL;
     }
    if (this->BackfaceCullingButton)
     {
@@ -284,6 +291,7 @@ void vtkSlicerModelDisplayWidget::UpdateMRML()
         }
       }
     this->ModelDisplayNode->SetClipping(this->ClippingButton->GetWidget()->GetSelectedState());
+    this->ModelDisplayNode->SetSliceIntersectionVisibility(this->SliceIntersectionVisibilityButton->GetWidget()->GetSelectedState());
     this->ModelDisplayNode->SetBackfaceCulling(this->BackfaceCullingButton->GetWidget()->GetSelectedState());
     this->ModelDisplayNode->SetOpacity(this->OpacityScale->GetWidget()->GetValue());
     if (this->SurfaceMaterialPropertyWidget->GetProperty() == NULL)
@@ -432,6 +440,7 @@ void vtkSlicerModelDisplayWidget::UpdateWidget()
     this->ColorSelectorWidget->SetSelected(NULL);
     }
   this->ClippingButton->GetWidget()->SetSelectedState(this->ModelDisplayNode->GetClipping());
+  this->SliceIntersectionVisibilityButton->GetWidget()->SetSelectedState(this->ModelDisplayNode->GetSliceIntersectionVisibility());
   this->BackfaceCullingButton->GetWidget()->SetSelectedState(this->ModelDisplayNode->GetBackfaceCulling());
   this->OpacityScale->GetWidget()->SetValue(this->ModelDisplayNode->GetOpacity());
   if (this->SurfaceMaterialPropertyWidget->GetProperty() == NULL)
@@ -490,6 +499,7 @@ void vtkSlicerModelDisplayWidget::RemoveWidgetObservers ( ) {
   this->ScalarVisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ScalarMenu->GetWidget()->GetMenu()->RemoveObservers(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->ClippingButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SliceIntersectionVisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->BackfaceCullingButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->OpacityScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -606,6 +616,14 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->ClippingButton->GetWidgetName() );
 
+  this->SliceIntersectionVisibilityButton = vtkKWCheckButtonWithLabel::New();
+  this->SliceIntersectionVisibilityButton->SetParent ( modelDisplayFrame );
+  this->SliceIntersectionVisibilityButton->Create ( );
+  this->SliceIntersectionVisibilityButton->SetLabelText("Slice Intersections Visible");
+  this->SliceIntersectionVisibilityButton->SetBalloonHelpString("Show model intersection on slice planes.");
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+                 this->SliceIntersectionVisibilityButton->GetWidgetName() );
+
   this->BackfaceCullingButton = vtkKWCheckButtonWithLabel::New();
   this->BackfaceCullingButton->SetParent ( modelDisplayFrame );
   this->BackfaceCullingButton->Create ( );
@@ -652,6 +670,7 @@ void vtkSlicerModelDisplayWidget::CreateWidget ( )
   this->ScalarVisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ScalarMenu->GetWidget()->GetMenu()->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->ClippingButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SliceIntersectionVisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->BackfaceCullingButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->ChangeColorButton->AddObserver(vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
