@@ -183,7 +183,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolum
   // add clamp
   if (this->RaySteps >= 500.0) this->RaySteps = 500.0;
   if (this->RaySteps <= 10.0)  this->RaySteps = 10.0;
-  printf("ray step: %f, fps: %f\n", this->RaySteps, 1.0/this->TimeToDraw);
+  //printf("ray step: %f, fps: %f\n", this->RaySteps, 1.0/this->TimeToDraw);
 
 }
 
