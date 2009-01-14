@@ -224,7 +224,7 @@ itcl::body SliceSWidget::resizeSliceNode {} {
 
     set windowAspect [expr $h / (1. * $w)]
     set planeAspect [expr $fovy / (1. * $fovx)]
-    if { $windowAspect != $planeAspect } {
+    if { [expr $windowAspect != $planeAspect] } {
       set fovx [expr $fovy / $windowAspect]
     }
 
