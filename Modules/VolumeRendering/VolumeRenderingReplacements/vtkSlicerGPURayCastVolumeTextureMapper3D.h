@@ -171,6 +171,8 @@ protected:
   void LoadNoShadingFragmentShader();
   void LoadRayCastProgram();
   
+  void PerformanceControl();
+  
   // Description:
   // Check if we can support this texture size.
   int IsTextureSizeSupported( int size[3] );
