@@ -81,6 +81,7 @@ vtkIA_FEMeshGUI::vtkIA_FEMeshGUI()
 {
 
   this->Logic = NULL;
+  this->MeshingUI = NULL;
 //    this->MimxMainNotebook = NULL;
 //    this->ViewProperties = NULL;
 //    this->DoUndoTree = NULL;
