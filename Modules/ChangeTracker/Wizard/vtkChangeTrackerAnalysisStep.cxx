@@ -409,24 +409,32 @@ void vtkChangeTrackerAnalysisStep::ShowUserInterface()
   if (node) { 
     vtkMRMLVolumeNode *volumeSampleNode = vtkMRMLVolumeNode::SafeDownCast(node->GetScene()->GetNodeByID(node->GetScan1_SuperSampleRef()));
     vtkMRMLVolumeNode *volumeAnalysisNode = NULL;
-    // TODO: use color LUT
-    float colorMax[3] = {0.8 , 0.0, 0.0 };
-    float colorMin[3] = {0.0 , 0.8, 0.0 };
-    double colorMax_d[3], colorMin_d[3];
 
     if (node->GetAnalysis_Intensity_Flag()) {
       volumeAnalysisNode = vtkMRMLVolumeNode::SafeDownCast(node->GetScene()->GetNodeByID(node->GetAnalysis_Intensity_Ref()));
-      this->CreateRender(volumeAnalysisNode, 1);
-      // Colors for volume rendering are the same as those used for label
-      // volume display. These are stored in the color lut associated with the
-      // volume node.
-      // TODO: watch display node and update volume rendering in case lut is
-      // modified (see the code in 
-      // Modules/Volumes/vtkSlicerLabelMapVolumeDisplayWidget.cxx)
+    } else if (node->GetAnalysis_Deformable_Flag()) {
+      volumeAnalysisNode = vtkMRMLVolumeNode::SafeDownCast(node->GetScene()->GetNodeByID(node->GetAnalysis_Deformable_Ref()));
+    } else {
+      volumeAnalysisNode = vtkMRMLVolumeNode::SafeDownCast(node->GetScene()->GetNodeByID(node->GetScan2_LocalRef()));
+    }
+
+    // Colors for volume rendering are the same as those used for label
+    // volume display. These are stored in the color lut associated with the
+    // volume node.
+    // TODO: watch display node and update volume rendering in case lut is
+    // modified (see the code in 
+    // Modules/Volumes/vtkSlicerLabelMapVolumeDisplayWidget.cxx)
+    if(node->GetAnalysis_Intensity_Flag() || node->GetAnalysis_Deformable_Flag())
+      {
       vtkMRMLVolumeDisplayNode *display = 
         vtkMRMLVolumeDisplayNode::SafeDownCast(volumeAnalysisNode->GetDisplayNode());
       vtkMRMLColorNode *color = display->GetColorNode();
       vtkLookupTable *color_lut = color->GetLookupTable();
+      
+      float colorMax[3] = {0.8 , 0.0, 0.0 };
+      float colorMin[3] = {0.0 , 0.8, 0.0 };
+      double colorMax_d[3], colorMin_d[3];
+
       color_lut->GetColor(12., colorMin_d);
       color_lut->GetColor(14., colorMax_d);
       colorMin[0] = (float) colorMin_d[0];
@@ -435,17 +443,10 @@ void vtkChangeTrackerAnalysisStep::ShowUserInterface()
       colorMax[0] = (float) colorMax_d[0];
       colorMax[1] = (float) colorMax_d[1];
       colorMax[2] = (float) colorMax_d[2];
-      this->SetRender_BandPassFilter(12, 14, colorMin, colorMax);
 
-    } else if (node->GetAnalysis_Deformable_Flag()) {
-      volumeAnalysisNode = vtkMRMLVolumeNode::SafeDownCast(node->GetScene()->GetNodeByID(node->GetAnalysis_Deformable_Ref()));
-      // this->CreateRender(volumeAnalysisNode);
-      // this->SetRender_HighPassFilter(10);
       this->CreateRender(volumeAnalysisNode, 1);
-      this->SetRender_HighPassFilter(12,colorMax, colorMax);
-    } else {
-      volumeAnalysisNode = vtkMRMLVolumeNode::SafeDownCast(node->GetScene()->GetNodeByID(node->GetScan2_LocalRef()));
-    }
+      this->SetRender_BandPassFilter(12, 14, colorMin, colorMax);
+      }
 
     if (volumeSampleNode && volumeAnalysisNode) {
       vtkSlicerApplicationLogic *applicationLogic = this->GetGUI()->GetLogic()->GetApplicationLogic();
