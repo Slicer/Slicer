@@ -386,6 +386,10 @@ void vtkSlicerSliceLogic::ProcessLogicEvents()
     if ( modelDisplayNode )
       {
       modelDisplayNode->SetVisibility( this->SliceNode->GetSliceVisible() );
+      if ( this->SliceCompositeNode != NULL )
+        {
+        modelDisplayNode->SetSliceIntersectionVisibility( this->SliceCompositeNode->GetSliceIntersectionVisibility() );
+        }
       }
     }
 
@@ -633,7 +637,18 @@ void vtkSlicerSliceLogic::UpdatePipeline()
         }
       }
 
-
+    // update the slice intersection visibility to track the composite node setting
+    if ( this->SliceModelNode )
+      {
+      vtkMRMLModelDisplayNode *modelDisplayNode = this->SliceModelNode->GetModelDisplayNode();
+      if ( modelDisplayNode )
+        {
+        if ( this->SliceCompositeNode != NULL )
+          {
+          modelDisplayNode->SetSliceIntersectionVisibility( this->SliceCompositeNode->GetSliceIntersectionVisibility() );
+          }
+        }
+      }
 
     // Now update the image blend with the background and foreground and label
     // -- layer 0 opacity is ignored, but since not all inputs may be non-null, 
@@ -853,7 +868,7 @@ void vtkSlicerSliceLogic::CreateSliceModel()
     }
 
   if ( this->SliceModelNode == NULL) 
-  {
+    {
     this->SliceModelNode = vtkMRMLModelNode::New();
     this->SliceModelNode->SetScene(this->GetMRMLScene());
     this->SliceModelNode->SetHideFromEditors(1);
@@ -874,11 +889,34 @@ void vtkSlicerSliceLogic::CreateSliceModel()
     this->SliceModelDisplayNode->SetVisibility(0);
     this->SliceModelDisplayNode->SetOpacity(1);
     this->SliceModelDisplayNode->SetColor(1,1,1);
+    // try to auto-set the colors based on the slice name
+    // cannot use the vtkSlicerColor class since it is in the GUI
+    // TODO: need a better mapping than this
+    // 
+    if (this->Name != NULL)
+      {
+      if ( !strcmp(this->Name, "Red") )
+        {
+        this->SliceModelDisplayNode->SetColor(0.952941176471, 0.290196078431, 0.2);
+        }
+      if ( !strcmp(this->Name, "Green") )
+        {
+        this->SliceModelDisplayNode->SetColor(0.43137254902, 0.690196078431, 0.294117647059);
+        }
+      if ( !strcmp(this->Name, "Yellow") )
+        {
+        this->SliceModelDisplayNode->SetColor(0.929411764706, 0.835294117647, 0.298039215686);
+        }
+      }
     this->SliceModelDisplayNode->SetAmbient(1);
     this->SliceModelDisplayNode->SetBackfaceCulling(0);
     this->SliceModelDisplayNode->SetDiffuse(0);
     this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->ExtractModelTexture->GetOutput());
     this->SliceModelDisplayNode->SetSaveWithScene(0);
+    // Turn slice intersection off by default - there is a higher level GUI control
+    // in the SliceCompositeNode that tells if slices should be enabled for a given
+    // slice viewer
+    this->SliceModelDisplayNode->SetSliceIntersectionVisibility(0);
 
     std::string name = std::string(this->Name) + " Volume Slice";
     this->SliceModelNode->SetName (name.c_str());
@@ -889,7 +927,7 @@ void vtkSlicerSliceLogic::CreateSliceModel()
     this->SliceModelTransformNode->SetHideFromEditors(1);
     this->SliceModelTransformNode->SetSelectable(0);
     this->SliceModelTransformNode->SetSaveWithScene(0);
-  }
+    }
 
   if (this->SliceModelNode != NULL && this->MRMLScene->GetNodeByID( this->GetSliceModelNode()->GetID() ) == NULL )
     {
@@ -904,7 +942,8 @@ void vtkSlicerSliceLogic::CreateSliceModel()
   // update the description to refer back to the slice and composite nodes
   // TODO: this doesn't need to be done unless the ID change, but it needs
   // to happen after they have been set, so do it every event for now
-  if ( this->SliceModelNode != NULL ) {
+  if ( this->SliceModelNode != NULL ) 
+    {
     char description[256];
     std::stringstream ssD;
     vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
@@ -920,7 +959,7 @@ void vtkSlicerSliceLogic::CreateSliceModel()
 
     ssD.getline(description,256);
     this->SliceModelNode->SetDescription(description);
-  }
+    }
 }
 
 
