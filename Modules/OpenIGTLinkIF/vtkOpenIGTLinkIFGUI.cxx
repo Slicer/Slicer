@@ -154,7 +154,6 @@ vtkOpenIGTLinkIFGUI::vtkOpenIGTLinkIFGUI ( )
   this->RedSliceMenu            = NULL;
   this->YellowSliceMenu         = NULL;
   this->GreenSliceMenu          = NULL;
-  this->FreezeImageCheckButton  = NULL;
   this->LocatorCheckButton      = NULL;
   this->LocatorSourceMenu       = NULL;
   this->RealTimeImageSourceMenu = NULL;
@@ -178,7 +177,7 @@ vtkOpenIGTLinkIFGUI::~vtkOpenIGTLinkIFGUI ( )
 
   if (this->DataManager)
     {
-    // If we don't set the scence to NULL for DataManager,
+    // If we don't set the scene to NULL for DataManager,
     // Slicer will report a lot leak when it is closed.
     this->DataManager->SetMRMLScene(NULL);
     this->DataManager->Delete();
@@ -192,8 +191,12 @@ vtkOpenIGTLinkIFGUI::~vtkOpenIGTLinkIFGUI ( )
     this->DataCallbackCommand->Delete();
     }
 
-  this->RemoveGUIObservers();
-
+  // If Logic is NULL, then we only instatiated the class and never used
+  // it, e.g. --ignore_module
+  if (this->Logic)
+    {
+    this->RemoveGUIObservers();
+    }
 
   this->SetModuleLogic ( NULL );
 
@@ -201,6 +204,11 @@ vtkOpenIGTLinkIFGUI::~vtkOpenIGTLinkIFGUI ( )
   //----------------------------------------------------------------
   // Visualization Control Frame
 
+  if (this->EnableAdvancedSettingButton)
+    {
+    this->EnableAdvancedSettingButton->SetParent(NULL );
+    this->EnableAdvancedSettingButton->Delete ( );
+    }
   if (this->FreezeImageCheckButton)
     {
     this->FreezeImageCheckButton->SetParent(NULL );
@@ -324,7 +332,17 @@ vtkOpenIGTLinkIFGUI::~vtkOpenIGTLinkIFGUI ( )
     this->RealTimeImageSourceMenu->Delete ( );
     }
 
+  if (this->IOConfigContextMenu)
+    {
+    this->IOConfigContextMenu->SetParent(NULL);
+    this->IOConfigContextMenu->Delete();
+    }
 
+  if (this->IOConfigTree)
+    {
+    this->IOConfigTree->SetParent(NULL);
+    this->IOConfigTree->Delete();
+    }
 }
 
 
@@ -438,34 +456,15 @@ void vtkOpenIGTLinkIFGUI::RemoveGUIObservers ( )
   //----------------------------------------------------------------
   // Visualization Control Frame
 
-  if (this->FreezeImageCheckButton)
+  if (this->LocatorCheckButton)
     {
-    this->FreezeImageCheckButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand );
-    }
-  if (this->ObliqueCheckButton)
-    {
-    this->ObliqueCheckButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand );
-    }
-
-  if (this->SetLocatorModeButton)
-    {
-    this->SetLocatorModeButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand );
-    }
-
-  if (this->SetUserModeButton)
-    {
-    this->SetUserModeButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand );
+    this->LocatorCheckButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand );
     }
 
   if (this->LocatorSourceMenu)
     {
     this->LocatorSourceMenu->GetMenu()
       ->RemoveObserver((vtkCommand*)this->GUICallbackCommand);
-    }
-
-  if (this->LocatorCheckButton)
-    {
-    this->LocatorCheckButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand );
     }
 
   if (this->RealTimeImageSourceMenu)
@@ -489,6 +488,25 @@ void vtkOpenIGTLinkIFGUI::RemoveGUIObservers ( )
     this->GreenSliceMenu->GetMenu()
       ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
+  if (this->FreezeImageCheckButton)
+    {
+    this->FreezeImageCheckButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand );
+    }
+  if (this->ObliqueCheckButton)
+    {
+    this->ObliqueCheckButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand );
+    }
+
+  if (this->SetLocatorModeButton)
+    {
+    this->SetLocatorModeButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand );
+    }
+
+  if (this->SetUserModeButton)
+    {
+    this->SetUserModeButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand );
+    }
+
   if (this->ImagingMenu)
     {
     this->ImagingMenu->GetMenu()
@@ -1446,8 +1464,8 @@ void vtkOpenIGTLinkIFGUI::BuildGUIForConnectorBrowserFrame ()
 
   portFrame->Delete();
   portLabel->Delete();
+  typeLabel->Delete();
   controlFrame->Delete();
-
 }
 
 //---------------------------------------------------------------------------
@@ -1527,6 +1545,10 @@ void vtkOpenIGTLinkIFGUI::BuildGUIForIOConfig()
   app->Script("pack %s %s -side left -anchor w -fill x -padx 2 -pady 2", 
               enableASLabel->GetWidgetName() , this->EnableAdvancedSettingButton->GetWidgetName());
 
+  enableASFrame->Delete();
+  enableASLabel->Delete();
+  advancedSettingFrame->Delete();
+  treeFrame->Delete();
 }
 
 
@@ -1710,12 +1732,15 @@ void vtkOpenIGTLinkIFGUI::BuildGUIForVisualizationControlFrame ()
                this->FreezeImageCheckButton->GetWidgetName(),
                this->ObliqueCheckButton->GetWidgetName());
 
-  displayFrame->Delete();
-  driverFrame->Delete();
+  nodeLabel->Delete();
+  nodeFrame->Delete();
   modeFrame->Delete();
   sliceFrame->Delete();
   visCtrlFrame->Delete();
-
+  driverFrame->Delete();
+  imageSourceFrame->Delete();
+  imageSourceLabel->Delete();
+  displayFrame->Delete();
 }
 
 
