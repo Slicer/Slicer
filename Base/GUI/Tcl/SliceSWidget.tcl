@@ -35,7 +35,7 @@ if { [itcl::find class SliceSWidget] == "" } {
     variable _swidgets ""
 
     # methods
-    method createSliceModelSWidgets {} {}
+    method updateModelSWidgets {} {}
     method resizeSliceNode {} {}
     method processEvent {{caller ""} {event ""}} {}
     method updateAnnotation {x y z r a s} {}
@@ -95,6 +95,10 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
   $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
   $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node AnyEvent"
 
+  # observe NodeAdded events from the MRML scene to create
+  # model intersection displays as needed
+  $::slicer3::Broker AddObservation $::slicer3::MRMLScene 66000 "::SWidget::ProtectedCallback $this processEvent $::slicer3::MRMLScene"
+
   # put the other widgets last the events in this widget get natural
   # priority over the same event to a child widget
   lappend _swidgets [FiducialsSWidget #auto $sliceGUI]
@@ -104,8 +108,6 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
   lappend _swidgets [CrosshairSWidget #auto $sliceGUI]
   lappend _swidgets [RegionsSWidget #auto $sliceGUI]
   lappend _swidgets [SlicePlaneSWidget #auto $sliceGUI]
-
-  after idle $this createSliceModelSWidgets
 
 }
 
@@ -126,14 +128,42 @@ itcl::body SliceSWidget::destructor {} {
 # ------------------------------------------------------------------
 
 #
-# create a slice model intersection widget for every slice that is not this one
+# create a slice model intersection widget for every model node that does
+# not already have one.  Also delete old ones.
 #
-itcl::body SliceSWidget::createSliceModelSWidgets {} {
-  foreach sliceLogic [vtkSlicerSliceLogic ListInstances] {
-    if { $sliceLogic != [$sliceGUI GetLogic] } {
+itcl::body SliceSWidget::updateModelSWidgets {} {
+
+  array set msws ""
+  # build look up table for current models
+  set modelSWidgets [itcl::find objects -class ModelSWidget]
+  foreach msw $modelSWidgets {
+    set id [$msw cget -modelID]
+    set gui [$msw cget -sliceGUI]
+    set msws($gui,$id) $msw 
+  }
+
+  # loop through models and create any needed new widgets
+  # - also keep track of used ones so we know which ones to delete later
+  set usedModelSWidgets ""
+  set nModels [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLModelNode"]
+  for {set n 0} {$n < $nModels} {incr n} {
+    set mNode [$::slicer3::MRMLScene GetNthNodeByClass $n "vtkMRMLModelNode"]
+    set id [$mNode GetID]
+    if { ![info exists msws($sliceGUI,$id)] } {
       set mWidget [ModelSWidget #auto $sliceGUI]
-      $mWidget configure -modelID [[$sliceLogic GetSliceModelNode] GetID]
+      $mWidget configure -modelID $id
       lappend _swidgets $mWidget
+    } else {
+      lappend usedModelSWidgets $msws($sliceGUI,$id)
+    }
+  }
+
+  # delete any of the widgets that no longer correspond to a model that is in the scene
+  foreach msw $modelSWidgets {
+    if { [lsearch $usedModelSWidgets $msw] == -1 } {
+      if { [$msw cget -sliceGUI] == $sliceGUI } {
+        itcl::delete object $msw
+      }
     }
   }
 }
@@ -226,6 +256,12 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
 
   if { [info command $_sliceNode] == "" } {
     # somehow our slice node is corrupted - we need to bail out
+    return
+  }
+
+  # MRML Scene update probably means we need to create a new model intersection SWidget
+  if { $caller == $::slicer3::MRMLScene } {
+    $this updateModelSWidgets
     return
   }
 

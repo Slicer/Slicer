@@ -33,7 +33,6 @@ if { [itcl::find class ModelSWidget] == "" } {
     public variable modelID ""
     public variable movedCommand ""
     public variable movingCommand ""
-    public variable color "1 0 0"
     public variable opacity "0.5"
     public variable visibility "1"
     public variable text ""
@@ -43,6 +42,7 @@ if { [itcl::find class ModelSWidget] == "" } {
     variable _currentPosition "0 0 0"
     variable _modelNode ""
     variable _modelNodeObservation ""
+    variable _modelDisplayNodeObservation ""
     variable _sliceCompositeNode ""
 
     # methods
@@ -95,14 +95,18 @@ itcl::body ModelSWidget::constructor {sliceGUI} {
 
   $this processEvent
 
+  # observe the slice GUI for user input events
   $::slicer3::Broker AddObservation $sliceGUI DeleteEvent "::SWidget::ProtectedDelete $this"
   foreach event {LeftButtonPressEvent LeftButtonReleaseEvent MouseMoveEvent} {
     $::slicer3::Broker AddObservation $sliceGUI $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI $event"
   }
+
+  # observe the slice node for direct manipulations of MRML
   set node [[$sliceGUI GetLogic] GetSliceNode]
   $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
   $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node AnyEvent"
 
+  # observe the composite node for slice plane visibility requests
   $::slicer3::Broker AddObservation $_sliceCompositeNode DeleteEvent "::SWidget::ProtectedDelete $this"
   $::slicer3::Broker AddObservation $_sliceCompositeNode AnyEvent "::SWidget::ProtectedCallback $this processEvent $_sliceCompositeNode AnyEvent"
 
@@ -127,6 +131,13 @@ itcl::body ModelSWidget::destructor {} {
 itcl::configbody ModelSWidget::modelID {
   # find the model node
   set modelNode [$::slicer3::MRMLScene GetNodeByID $modelID]
+  if { $modelNode == "" } {
+    error "no node for id $modelID"
+  }
+  set displayNode [$modelNode GetDisplayNode]
+  if { $displayNode == "" } {
+    error "no display node for id $modelID"
+  }
 
   # remove observation from old node and add to new node
   # then set input to pipeline
@@ -134,34 +145,19 @@ itcl::configbody ModelSWidget::modelID {
     if { $_modelNodeObservation != "" } {
       $::slicer3::Broker RemoveObservation $_modelNodeObservation
     }
+    if { $_modelDisplayNodeObservation != "" } {
+      $::slicer3::Broker RemoveObservation $_modelDisplayNodeObservation
+    }
     set _modelNode $modelNode
     if { $_modelNode != "" } {
-      set _modelNodeObservation [$::slicer3::Broker AddObservation $_modelNode AnyEvent "::SWidget::ProtectedCallback $this processEvent $_modelNode AnyEvent"]
       $o(cutter) SetInput [$_modelNode GetPolyData]
+      set _modelNodeObservation [$::slicer3::Broker AddObservation $_modelNode AnyEvent "::SWidget::ProtectedCallback $this processEvent $_modelNode AnyEvent"]
+      if { $displayNode != "" } {
+        set _modelDisplayNodeObservation [$::slicer3::Broker AddObservation $displayNode AnyEvent "::SWidget::ProtectedCallback $this processEvent $displayNode AnyEvent"]
+      }
     }
   }
 
-  #
-  # TODO: Map Model name to color (hard coded for slice models)
-  #
-  set colorName [lindex [$modelNode GetName] 0]
-  switch $colorName {
-    "Red" {
-      $this configure -color "1 0 0"
-    }
-    "Yellow" {
-      $this configure -color "1 1 0"
-    }
-    "Green" {
-      $this configure -color "0 1 0"
-    }
-  }
-
-  $this highlight
-  [$sliceGUI GetSliceViewer] RequestRender
-}
-
-itcl::configbody ModelSWidget::color {
   $this highlight
   [$sliceGUI GetSliceViewer] RequestRender
 }
@@ -248,9 +244,22 @@ itcl::body ModelSWidget::highlight { } {
   $o(actor) SetVisibility $visibility
   $o(textActor) SetVisibility $visibility
 
+  #
+  # TODO: Map Model name to color (hard coded for slice models, otherwise
+  # extracted from the display node)
+  #
+  set color "0.5 0.5 0.5"
+  set modelNode [$::slicer3::MRMLScene GetNodeByID $modelID]
+  if { $modelNode != "" } {
+    set displayNode [$modelNode GetDisplayNode]
+    if { $displayNode != "" } {
+      set color [$displayNode GetColor]
+    }
+  }
+
   eval $property SetColor $color
   eval $textProperty SetColor $color
-  $property SetLineWidth 1
+  $property SetLineWidth 3
   $property SetOpacity $opacity
   $textProperty SetOpacity $opacity
 
@@ -276,6 +285,7 @@ itcl::body ModelSWidget::highlight { } {
 
 itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
 
+
   if { [info command $sliceGUI] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
     # self destruct
@@ -283,10 +293,13 @@ itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
     return
   }
 
-  # TODO: this is specfic to slice model display - we'll need another control
-  # for model intersections
-  if { $caller == $_sliceCompositeNode } {
-    $this configure -visibility [$_sliceCompositeNode GetSliceIntersectionVisibility]
+  # control visibility based on ModelDisplayNode
+  if { $_modelNode != "" } { 
+    $o(cutter) SetInput [$_modelNode GetPolyData]
+    set displayNode [$_modelNode GetDisplayNode]
+    if { $caller == $displayNode } {
+      $this configure -visibility [$displayNode GetSliceIntersectionVisibility]
+    }
   }
 
   #
@@ -319,7 +332,6 @@ itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
   }
   eval $o(plane) SetNormal $norm
   eval $o(plane) SetOrigin $origin
-
 
   set grabID [$sliceGUI GetGrabID]
   if { ! ($grabID == "" || $grabID == $this) } {
