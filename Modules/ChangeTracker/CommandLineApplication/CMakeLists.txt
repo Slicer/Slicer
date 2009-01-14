@@ -52,4 +52,7 @@ target_link_libraries(
 
 slicer3_install_plugins(${CLP_MODULE})
 
+slicer3_enable_plugins_testing()
 
+set(Slicer3_DIR ${Slicer3_BINARY_DIR})
+slicer3_add_plugins_test(${CLP_MODULE}TestHelp ${CLP_MODULE} --help)
