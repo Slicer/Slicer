@@ -438,7 +438,17 @@ std::string vtkMRMLStorageNode::GetFullNameFromFileName()
   
   if (this->SceneRootDir != NULL && this->Scene->IsFilePathRelative(this->GetFileName())) 
     {
-    fullName = std::string(this->SceneRootDir) + std::string(this->GetFileName());
+    // use the system tools to join the two paths and then collapse them
+    vtksys_stl::vector<vtksys_stl::string> rootComponents;
+    vtksys::SystemTools::SplitPath(this->SceneRootDir, rootComponents);
+    vtksys_stl::vector<vtksys_stl::string> fileComponents;
+    vtksys::SystemTools::SplitPath(this->GetFileName(), fileComponents);
+    for (unsigned int p = 0; p < fileComponents.size(); p++)
+      {
+      rootComponents.push_back(fileComponents[p]);
+      }
+    vtksys_stl::string expandedName = vtksys::SystemTools::JoinPath(rootComponents);
+    fullName = vtksys::SystemTools::CollapseFullPath(expandedName.c_str());
     }
   else 
     {

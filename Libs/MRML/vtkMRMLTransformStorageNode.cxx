@@ -144,15 +144,7 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
   
   vtkMRMLTransformNode *transformNode = dynamic_cast <vtkMRMLTransformNode *> (refNode);
 
-  std::string fullName;
-  if (this->SceneRootDir != NULL && this->Scene->IsFilePathRelative(this->GetFileName())) 
-    {
-    fullName = std::string(this->SceneRootDir) + std::string(this->GetFileName());
-    }
-  else 
-    {
-    fullName = std::string(this->GetFileName());
-    }
+  std::string fullName = this->GetFullNameFromFileName(); 
   if (fullName == std::string("")) 
     {
     vtkErrorMacro("ReadData: File name not specified");
@@ -664,15 +656,7 @@ int vtkMRMLTransformStorageNode::WriteData(vtkMRMLNode *refNode)
   
   //vtkMRMLTransformNode *transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
   
-  std::string fullName;
-  if (this->SceneRootDir != NULL && this->Scene->IsFilePathRelative(this->GetFileName())) 
-    {
-    fullName = std::string(this->SceneRootDir) + std::string(this->GetFileName());
-    }
-  else 
-    {
-    fullName = std::string(this->GetFileName());
-    }  
+  std::string fullName =  this->GetFullNameFromFileName();
   if (fullName == std::string("")) 
     {
     vtkErrorMacro("vtkMRMLTransformNode: File name not specified");
