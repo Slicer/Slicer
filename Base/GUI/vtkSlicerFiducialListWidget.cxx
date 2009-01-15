@@ -1636,8 +1636,9 @@ void vtkSlicerFiducialListWidget::UpdatePointWidget(vtkMRMLFiducialListNode *fli
       transformToWorld = NULL;
       }
     else { vtkDebugMacro("UpdatePointWidget: null xyz"); }
+    // 3d symbols can't do per point visibility
     if (flist->GetVisibility() == 0 ||
-        flist->GetNthFiducialVisibility(f) == 0)
+        (!this->Use3DSymbolsMap[flist->GetID()] && flist->GetNthFiducialVisibility(f) == 0))
       {
       // Point is not visible, disabling point widget
       vtkDebugMacro("UpdatePointWidget: Point is not visible, disabling point widget");
@@ -1873,7 +1874,11 @@ void vtkSlicerFiducialListWidget::SetFiducialDisplayProperty(vtkMRMLFiducialList
       }
     else
       {
-      textActor->SetVisibility(flist->GetNthFiducialVisibility(n));
+      // right now only non 3D symbols can have per point visibility
+      if (!this->Use3DSymbolsMap[flist->GetID()])
+        {
+        textActor->SetVisibility(flist->GetNthFiducialVisibility(n));
+        }
       }
     }
 
