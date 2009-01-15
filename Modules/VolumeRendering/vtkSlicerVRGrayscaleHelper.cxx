@@ -94,6 +94,8 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->CB_RayCast=NULL;
     this->CB_GPURayCast=NULL;
     this->CB_GPURayCastMIP=NULL;
+    this->CB_GPURayCastShading=NULL;
+    this->CB_GPURayCastLargeVolume=NULL;
     this->CB_InteractiveFrameRate=NULL;
     this->SC_Framerate=NULL;
     this->SVP_VolumeProperty=NULL;
@@ -365,6 +367,7 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingGUI *gui)
     this->CreatePerformance();
     this->CreateCropping();
 }
+
 void vtkSlicerVRGrayscaleHelper::InitializePipelineNewCurrentNode()
 {
     std::stringstream autoname;
@@ -623,7 +626,7 @@ void vtkSlicerVRGrayscaleHelper::UpdateRendering()
     //Update mapper
     vtkImageData *input= vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
         
-        //added for GPGPU raycast
+    //added for GPGPU raycast
     if (this->MapperGPURaycast->GetInput() != input)
       {
       this->MapperGPURaycast->SetInput(input);
@@ -671,7 +674,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         this->MapperTexture->SetClippingPlanes(planes);
         this->MapperRaycast->SetClippingPlanes(planes);
 
-                //added for GPGPU raycast
+        //added for GPGPU raycast
         this->MapperGPURaycast->SetClippingPlanes(planes);
         this->MapperGPURaycast->ClippingOn();
         
@@ -724,9 +727,6 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
                 this->RA_Cropping[i]->SetRange(pointA[i],pointB[i]);
             }
 
-            
-            
-
             vertices->Delete();
             //transform->Delete();
         }
@@ -739,43 +739,65 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     
     // added for GPGPU raycast
     // if using gpu ray cast, by pass/ignore all other volume rendering pathes
-        if(callerObjectCheckButton==this->CB_GPURayCast->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
+    if(callerObjectCheckButton==this->CB_GPURayCast->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
+    {
+        if (this->CB_GPURayCast->GetWidget()->GetSelectedState())
         {
-                if (this->CB_GPURayCast->GetWidget()->GetSelectedState())
-                {
-                    this->Volume->SetMapper(this->MapperGPURaycast);
-                    this->CB_GPURayCastMIP->EnabledOn();
-                    this->CB_GPURayCastShading->EnabledOn();
-                }
-                else
-                {
-                    this->CB_GPURayCastMIP->EnabledOff();
-                    this->CB_GPURayCastShading->EnabledOff();
-                }
+            this->Volume->SetMapper(this->MapperGPURaycast);
+            this->CB_GPURayCastMIP->EnabledOn();
+            this->CB_GPURayCastShading->EnabledOn();
+        }
+        else
+        {
+            this->CB_GPURayCastMIP->EnabledOff();
+            this->CB_GPURayCastShading->EnabledOff();
+        }
 
-                this->UpdateQualityCheckBoxes();
-                return;
-        }
-        if(callerObjectCheckButton==this->CB_GPURayCastMIP->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
-        {
-                if (this->CB_GPURayCastMIP->GetWidget()->GetSelectedState())
-                        this->MapperGPURaycast->MIPRenderingOn();
-                else
-                        this->MapperGPURaycast->MIPRenderingOff();
+        this->UpdateQualityCheckBoxes();
+        return;
+    }
+    if(callerObjectCheckButton==this->CB_GPURayCastMIP->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
+    {
+        if (this->CB_GPURayCastMIP->GetWidget()->GetSelectedState())
+            this->MapperGPURaycast->MIPRenderingOn();
+        else
+            this->MapperGPURaycast->MIPRenderingOff();
                         
-                this->UpdateQualityCheckBoxes();
-                return;
-        }
-        if(callerObjectCheckButton==this->CB_GPURayCastShading->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
-        {
-                if (this->CB_GPURayCastShading->GetWidget()->GetSelectedState())
-                        this->MapperGPURaycast->SetShadingOn();
-                else
-                        this->MapperGPURaycast->SetShadingOff();
+        this->UpdateQualityCheckBoxes();
+        return;
+    }
+    if(callerObjectCheckButton==this->CB_GPURayCastShading->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
+    {
+        if (this->CB_GPURayCastShading->GetWidget()->GetSelectedState())
+            this->MapperGPURaycast->ShadingOn();
+        else
+            this->MapperGPURaycast->ShadingOff();
                         
-                this->UpdateQualityCheckBoxes();
-                return;
-        }
+        this->UpdateQualityCheckBoxes();
+        return;
+    }
+    if(callerObjectCheckButton==this->CB_GPURayCastMIP->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
+    {
+        if (this->CB_GPURayCastMIP->GetWidget()->GetSelectedState())
+            this->MapperGPURaycast->MIPRenderingOn();
+        else
+            this->MapperGPURaycast->MIPRenderingOff();
+                        
+        this->UpdateQualityCheckBoxes();
+        return;
+    }
+    if(callerObjectCheckButton==this->CB_GPURayCastLargeVolume->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
+    {
+        if (this->CB_GPURayCastLargeVolume->GetWidget()->GetSelectedState())
+            this->MapperGPURaycast->LargeVolumeSizeOn();
+        else
+            this->MapperGPURaycast->LargeVolumeSizeOff();
+                        
+        this->UpdateQualityCheckBoxes();
+        return;
+    }
+    
+    
     if(callerObjectCheckButton==this->CB_TextureLow->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
     {
         this->ScheduleMask[0]=callerObjectCheckButton->GetSelectedState();
@@ -2163,7 +2185,20 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->SC_Framerate->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
         this->SC_Framerate->GetWidgetName() );
-        
+    
+    //added for GPGPU raycast    
+    //enable/disable large volume
+    this->CB_GPURayCastLargeVolume=vtkKWCheckButtonWithLabel::New();
+    this->CB_GPURayCastLargeVolume->SetParent(this->MappersFrame->GetFrame());
+    this->CB_GPURayCastLargeVolume->Create();
+    this->CB_GPURayCastLargeVolume->SetBalloonHelpString("Enable this only if you are really confident about your graphics card. To use large volume, enable this before selecting GPU ray cast.");
+    this->CB_GPURayCastLargeVolume->SetLabelText("Use Large Volume");
+    this->CB_GPURayCastLargeVolume->SetLabelWidth(labelWidth);
+    this->CB_GPURayCastLargeVolume->GetWidget()->SetSelectedState(0);
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+        this->CB_GPURayCastLargeVolume->GetWidgetName() );
+    this->CB_GPURayCastLargeVolume->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
+
     //added for GPGPU raycast    
     //enable/disable gpu ray casting
     this->CB_GPURayCast=vtkKWCheckButtonWithLabel::New();
@@ -2204,8 +2239,8 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
         this->CB_GPURayCastShading->GetWidgetName() );
     this->CB_GPURayCastShading->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
-
 }
+
 void vtkSlicerVRGrayscaleHelper::DestroyPerformance(void)
 {
     //Save old values to registry

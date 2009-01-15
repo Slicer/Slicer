@@ -290,6 +290,11 @@ protected:
     // in shader program so it would be safe to turn off shading by default
     vtkKWCheckButtonWithLabel *CB_GPURayCastShading;
     
+    // added for GPGPU raycast
+    // Description:
+    // Enable/Disable large volume size usage
+    vtkKWCheckButtonWithLabel *CB_GPURayCastLargeVolume;
+    
     // Description:
     // Add interactive frame rates to ray cast mapping
     vtkKWCheckButtonWithLabel *CB_InteractiveFrameRate;

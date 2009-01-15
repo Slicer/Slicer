@@ -60,8 +60,14 @@ public:
   
   // Description:
   // Enable/Disable Shading
-  void SetShadingOn();
-  void SetShadingOff();
+  void ShadingOn();
+  void ShadingOff();
+  
+  // Description:
+  // Enable/Disable large volume size usage
+  vtkSetMacro(LargeVolumeSize, int);  
+  vtkGetMacro(LargeVolumeSize,int);
+  vtkBooleanMacro(LargeVolumeSize,int);
   
   // Description:
   // Enable/Disable clipping
@@ -126,6 +132,7 @@ protected:
   int              MIPRendering;
   int              Clipping;
   int              Shading;
+  int              LargeVolumeSize;
 
   GLuint           Volume1Index;
   GLuint           Volume2Index;

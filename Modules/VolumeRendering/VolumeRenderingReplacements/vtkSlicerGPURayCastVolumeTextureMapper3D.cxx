@@ -56,6 +56,7 @@ vtkSlicerGPURayCastVolumeTextureMapper3D::vtkSlicerGPURayCastVolumeTextureMapper
   this->Clipping             =  0;
   this->Shading              =  0;
   this->ReloadShaderFlag     =  0;
+  this->LargeVolumeSize      =  0;
 
   this->Volume1Index         =  0;
   this->Volume2Index         =  0;
@@ -809,8 +810,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupFourDependentTextures(
     vtkgl::Uniform1i(loc, 4);
 }
 
-int  vtkSlicerGPURayCastVolumeTextureMapper3D::IsRenderSupported(
-  vtkVolumeProperty *property )
+int  vtkSlicerGPURayCastVolumeTextureMapper3D::IsRenderSupported(vtkVolumeProperty *property )
 {
   if ( !this->Initialized )
     {
@@ -1001,7 +1001,9 @@ int vtkSlicerGPURayCastVolumeTextureMapper3D::IsTextureSizeSupported( int size[3
 {
   if ( this->GetInput()->GetNumberOfScalarComponents() < 4 )
     {
-    if ( size[0]*size[1]*size[2] > 128*256*256 )//need to test graphics memory to determine volume size
+    long maxSize = this->LargeVolumeSize ? 512*512*512 : 128*256*256;
+            
+    if ( size[0]*size[1]*size[2] > maxSize )//need to test graphics memory to determine volume size
       {
       return 0;
       }
@@ -1720,13 +1722,13 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::PrintFragmentShaderInfoLog()
     }
 }
 
-void vtkSlicerGPURayCastVolumeTextureMapper3D::SetShadingOff()
+void vtkSlicerGPURayCastVolumeTextureMapper3D::ShadingOff()
 {
     this->Shading = 0;
     this->ReloadShaderFlag = 1;
 }
 
-void vtkSlicerGPURayCastVolumeTextureMapper3D::SetShadingOn()
+void vtkSlicerGPURayCastVolumeTextureMapper3D::ShadingOn()
 {
     this->Shading = 1;
     this->ReloadShaderFlag = 1;
