@@ -276,7 +276,7 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
           $seedSWidget configure -movedCommand "$this seedMovedCallback $seedSWidget $fidListNode $f"
           $seedSWidget configure -movingCommand "$this seedMovingCallback $seedSWidget $fidListNode $f"
           $seedSWidget configure -glyph $glyphType
-          $seedSWidget configure -scale [$fidListNode GetSymbolScale]
+          $seedSWidget configure -scale [expr 2. * [$fidListNode GetSymbolScale]]
           $seedSWidget configure -color [$fidListNode GetColor]
           $seedSWidget configure -selectedColor [$fidListNode GetSelectedColor]
           $seedSWidget configure -opacity [$fidListNode GetOpacity]
