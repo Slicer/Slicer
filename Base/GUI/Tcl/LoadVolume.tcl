@@ -106,6 +106,13 @@ if { [itcl::find class LoadVolume] == "" } {
 # ------------------------------------------------------------------
 itcl::body LoadVolume::constructor {} {
 
+  if { [info command vtkSlicerVolumesGUI] == "" } {
+    $this errorDialog "The Volumes module is not available in the current process."
+    after idle itcl::delete object $this
+    return
+  }
+
+
   #
   # make the toplevel 
   #
@@ -706,8 +713,13 @@ itcl::body LoadVolume::selectArchetype { path name {optionsName ""} } {
 
 itcl::body LoadVolume::errorDialog { errorText } {
   set dialog [vtkKWMessageDialog New]
-  $dialog SetParent $o(toplevel)
-  $dialog SetMasterWindow $o(toplevel)
+  if { [info exists o(toplevel)] } {
+    set parent $o(toplevel)
+  } else {
+    set parent [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+  }
+  $dialog SetParent $parent
+  $dialog SetMasterWindow $parent
   $dialog SetStyleToMessage
   $dialog SetText $errorText
   $dialog Create
