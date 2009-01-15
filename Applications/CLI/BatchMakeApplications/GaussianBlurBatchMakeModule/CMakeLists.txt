@@ -126,7 +126,7 @@ if(BatchMake_DIR)
       "${BatchMake_WRAPPED_APPLICATION_DIR}/bmSliceExtractor.bmm"
       "${BatchMake_WRAPPED_APPLICATION_DIR}/bmGridSend.bmm"
       "${BatchMake_WRAPPED_APPLICATION_DIR}/bmGridStore.bmm"
-      "${BatchMake_WRAPPED_APPLICATION_DIR}/${Slicer3BatchMakeModule}.bmm")
+      "${BatchMake_WRAPPED_APPLICATION_DIR}/${Slicer3ExeModule}.bmm")
     install(FILES ${RUNTIME_SUPPORT_FILES} 
       DESTINATION ${Slicer3_INSTALL_PLUGINS_SHARE_DIR}/${PROJECT_NAME})
 
