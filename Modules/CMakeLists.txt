@@ -55,8 +55,6 @@ subdirs(
    SlicerDaemon
    Statistics
    Tractography
-#   TumorGrowth
-   ChangeTracker # AF: refactoring TumorGrowth...
    VolumeRendering
 #  WFEngineModule  <- can't work with 2.6 and Win32??
 #  MRAblation <- not working either
@@ -65,6 +63,7 @@ subdirs(
    DistanceTransformModel
    ClipModel
    #VolumeRenderingCuda
+   ModelIntoLabelVolume
   )
 
 if(Slicer3_USE_OPENIGTLINK)
