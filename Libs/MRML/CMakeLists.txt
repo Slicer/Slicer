@@ -153,6 +153,8 @@ set(MRML_SRCS
   vtkURIHandler.cxx
   vtkTagTableCollection.cxx
   vtkTagTable.cxx
+  vtkMRMLVolumePropertyNode.cxx
+  vtkMRMLVolumePropertyStorageNode.cxx
   # Note: when you add new node types, add
   # register code to the vtkMRMLScene constructor
   )
