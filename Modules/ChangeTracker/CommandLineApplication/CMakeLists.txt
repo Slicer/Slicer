@@ -49,10 +49,11 @@ target_link_libraries(
   ITKCommon 
   vtkTeem
   )
+# this is needed to set up testing
+add_library(${CLP_MODULE}Lib SHARED ${${CLP_MODULE}_SOURCE})
+set_target_properties (${CLP_MODULE}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
+slicer3_set_plugins_output_path(${CLP_MODULE}Lib)
+target_link_libraries(${CLP_MODULE} ChangeTracker ITKIO ITKCommon vtkTeem)
+  
 
 slicer3_install_plugins(${CLP_MODULE})
-
-slicer3_enable_plugins_testing()
-
-set(Slicer3_DIR ${Slicer3_BINARY_DIR})
-slicer3_add_plugins_test(${CLP_MODULE}TestHelp ${CLP_MODULE} --help)

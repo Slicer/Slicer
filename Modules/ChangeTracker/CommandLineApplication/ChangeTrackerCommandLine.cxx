@@ -21,6 +21,8 @@
 
 #include <vtksys/SystemTools.hxx>
 
+#define USE_ITK_REGISTRATION 1
+
 // Go to Slicer3-build/lib/Slicer3/Plugins/ChangeTrackerCommandLine
 // ./ChangeTrackerCommandLine --sensitivity 0.5 --threshold 100,277 --roi_min 73,135,92 --roi_max 95,165,105 --intensity_analysis --deformable_analysis --scan1 /data/local/BrainScienceFoundation/Demo/07-INRIA/data/SILVA/2006-spgr.nhdr --scan2 /data/local/BrainScienceFoundation/Demo/07-INRIA/data/SILVA/2007-spgr-scan1.nhdr
 //
@@ -221,8 +223,10 @@ int tgRegisterAG(vtkKWApplication *app, Tcl_Interp *interp, vtkImageData* Target
   CMD = "::ChangeTrackerReg::ResampleAG_GUI " + std::string(SourceResPadOutputTcl) + " " + TargetTcl + " " +  TransformTcl + " " + Output;
   app->Script(CMD.c_str());
    
+  /* Fedorov: no transform output
   CMD = "::ChangeTrackerReg::WriteTransformationAG "  +  TransformTcl + " " + WorkingDir;
   app->Script(CMD.c_str());
+  */
 
   Transform->Delete();
   SourceResPad->Delete();
@@ -264,15 +268,18 @@ int main(int argc, char** argv)
     Vtkteem_Init(interp);
     Vtkitk_Init(interp);
 
+    /* AF: this should be set automagically, since the test is invoked via
+     * Slicer --launch
     // SLICER_HOME
     if (tgSetSLICER_HOME(argv)) {
       cout << "Error: Cannot find executable" << endl;
       return EXIT_FAILURE; 
     }
+    */
 
     // When I include the following line I get the leak message 
-    // vtkSlicerApplication *app   = vtkSlicerApplication::GetInstance();
-    vtkKWApplication *app   = vtkKWApplication::New();
+    vtkSlicerApplication *app   = vtkSlicerApplication::GetInstance();
+    //vtkKWApplication *app   = vtkKWApplication::New();
 
     vtkChangeTrackerLogic  *logic = vtkChangeTrackerLogic::New();
     logic->SetModuleName("ChangeTracker");
@@ -284,7 +291,7 @@ int main(int argc, char** argv)
     // -------------------------------------
     tgCMDLineStructure tg(interp);   
     // Create Working Directory 
-    tg.SetWorkingDir(app,tgScan1.c_str()); 
+    tg.SetWorkingDir(app,tgOutput.c_str()); 
 
     tgVtkDefineMacro(Scan2LocalNormalized,vtkImageData);
     tgVtkDefineMacro(Scan2Local,vtkImageData); 
@@ -295,23 +302,40 @@ int main(int argc, char** argv)
     tgVtkDefineMacro(Scan2SuperSample,vtkImageData); 
     tgVtkDefineMacro(Scan2Global,vtkImageData); 
 
-    if (tg.SetScan1Data(tgScan1.c_str())) return EXIT_FAILURE;
-    if (tg.SetScan2Data(tgScan2.c_str())) return EXIT_FAILURE;
+    if (tg.SetScan1Data(tgScan1.c_str())) 
+      {
+      cerr << "ERROR: Failed to read Scan 1" << endl;
+      return EXIT_FAILURE;
+      }
+
+    if (tg.SetScan2Data(tgScan2.c_str())) 
+      {
+      cerr << "ERROR: Failed to read Scan 2" << endl;
+      return EXIT_FAILURE;
+      }
+
+    if (TerminationStep && tgOutput=="")
+      {
+      cerr << "ERROR: non-zero termination step implies non-empty output image" << endl;
+      return EXIT_FAILURE;
+      }
     
-    if (!tg.Scan1Data || !tg.Scan2Data ) {
-      cout << "ERROR: --scan1 and --scan2 have to be defined" << endl;
+    if (!tg.Scan1Data || !tg.Scan2Data ) 
+      {
+      cerr << "ERROR: --scan1 and --scan2 have to be defined" << endl;
       return EXIT_FAILURE; 
-    }
+      }
        
     if ((tgROIMin.size() != 3) || (tgROIMax.size() != 3) ) {
-      cout << "ERROR: --ROIMin or --ROIMax are not corretly defined!" << endl;
+      cerr << "ERROR: --ROIMin or --ROIMax are not corretly defined!" << endl;
       return EXIT_FAILURE; 
     }
 
+    /*
     std::string Scan1SuperSampleFileName = tg.WorkingDir + "/TG_scan1_SuperSampled.nhdr";
     std::string Scan2LocalNormalizedFileName = tg.WorkingDir + "/TG_scan2_norm.nhdr";
     std::string Scan1SegmentFileName = tg.WorkingDir + "/TG_scan1_Segment.nhdr";
-   
+    */
   
 
     // Necessary for creating matrix with correct origin
@@ -393,18 +417,57 @@ int main(int argc, char** argv)
        if (1) {
          // -------------------------------------
          cout << "=== Global Rigid Registration ===" << endl;
-    
-         if (tgRegisterAG(app, interp,  tg.Scan1Data, tg.Scan1DataTcl,  tg.Scan2Data , tg.GetWorkingDir(), Scan2GlobalTcl)) return EXIT_FAILURE;
-   
-         std::string CMD = "catch { exec mv " + tg.WorkingDir + "/LinearRegistration.txt " + tg.WorkingDir + "/GlobalLinearRegistration.txt }";
-         app->Script(CMD.c_str());
-   
-         CMD = "catch { ::ChangeTrackerReg::DeleteTransformAG }";
-         app->Script(CMD.c_str());
-   
-         CMD = tg.WorkingDir + "/TG_scan2_Global.nhdr";
-         tgWriteVolume(CMD.c_str(),tg.Scan1Matrix,Scan2Global);    
-          
+         if(USE_ITK_REGISTRATION)
+           {
+           // paths should be set up, because we are in the
+           // Slicer3-initialized environment
+           std::ostringstream cmdStream;
+           std::string Scan2Global_fname = std::string(tg.GetWorkingDir())+std::string("/Scan2_Global.nrrd");
+//           cmdStream << "env > /tmp/slicer_env.txt";
+           
+           cmdStream << "${Slicer3_HOME}/Slicer3 --launch RigidRegistration --iterations 100,100,50,20" <<
+             " --fixedsmoothingfactor 0 --movingsmoothingfactor 0" <<
+             " --histogrambins 30 --spatialsamples 10000 --learningrate 0.01,0.005,0.0005,0.0002" <<
+             " --translationscale 100 --resampledmovingfilename " << 
+             Scan2Global_fname << " --outputtransform " <<
+             tg.GetWorkingDir() << "/Global_transform.txt " <<
+             tgScan1.c_str() << " " << tgScan2.c_str() << " >& " <<
+             tg.GetWorkingDir() << "/global_reg_output.txt" << std::endl;
+
+           cout << "Running registration: " << cmdStream.str() << endl;
+           if(system(cmdStream.str().c_str())!=EXIT_SUCCESS)
+             {
+             cerr << "ERROR: Rigid registration failed" << endl;
+             return EXIT_FAILURE;
+             }
+           
+           // Read back the registration result
+           vtkMatrix4x4* matrix = vtkMatrix4x4::New();
+           tgReadVolume(Scan2Global_fname.c_str(), Scan2Global, matrix);
+           matrix->Delete();
+           /*
+           if (!app->Script(cmdStream.str().c_str()))
+             {
+             cerr << "ERROR: Failed to perform global ITK registration" << endl;
+             return EXIT_FAILURE;
+             }*/
+           } 
+           
+         else 
+           {
+           if (tgRegisterAG(app, interp,  tg.Scan1Data, tg.Scan1DataTcl,  tg.Scan2Data , tg.GetWorkingDir(), Scan2GlobalTcl)) 
+             {
+             cerr << "ERROR: tgRegisterAG failed" << endl;
+             return EXIT_FAILURE;
+             }
+           }
+
+         if(TerminationStep == 1)
+           {
+           tgWriteVolume(tgOutput.c_str(), tg.Scan1Matrix, Scan2Global);
+           return EXIT_SUCCESS;
+           }
+         
        } else {
          cout << "Debugging - jump over global registration" << endl;
          Scan2Global->DeepCopy(tg.Scan1Data);
@@ -421,24 +484,25 @@ int main(int argc, char** argv)
          cout << "=== Define ROI for each scan ===" << endl;
     
          if (logic->CreateSuperSampleFct(tg.Scan1Data,ROIMin, ROIMax, SuperSampleSpacing,Scan1SuperSample)) {
-          cout << "ERROR: Could not super sample scan1 " << endl;
+          cerr << "ERROR: Could not super sample scan1 " << endl;
           return EXIT_FAILURE; 
          }
    
          //
          // Finally save results 
          // 
-         tgWriteVolume(Scan1SuperSampleFileName.c_str(),supersampleMatrix,Scan1SuperSample);
+         //tgWriteVolume(tgOutput.c_str(),supersampleMatrix,Scan1SuperSample);
+         //tgWriteVolume(Scan1SuperSampleFileName.c_str(),supersampleMatrix,Scan1SuperSample);
    
          // -------------------------------------
          // Resample Scan2 
    
          if (logic->CreateSuperSampleFct(Scan2Global,ROIMin, ROIMax, SuperSampleSpacing,Scan2SuperSample)) {
-          cout << "ERROR: Could not super sample scan1 " << endl;
+          cerr << "ERROR: Could not super sample scan1 " << endl;
           return EXIT_FAILURE; 
          }
           std::string NAME = tg.WorkingDir + "/TG_scan2_Global_SuperSampled.nhdr";
-          tgWriteVolume(NAME.c_str(),supersampleMatrix, Scan2SuperSample);    
+          //tgWriteVolume(NAME.c_str(),supersampleMatrix, Scan2SuperSample);    
        } else {
           cout << "Debugging - jump over super sampling" << endl;      
        }
@@ -455,8 +519,9 @@ int main(int argc, char** argv)
          vtkChangeTrackerLogic::DefinePreSegment(Scan1SuperSample,range,Scan1PreSegment);
          vtkChangeTrackerLogic::DefineSegment(Scan1PreSegment->GetOutput(),Scan1Segment);
    
-         tgWriteVolume(Scan1SegmentFileName.c_str(),supersampleMatrix,Scan1Segment->GetOutput());
-     Scan1SegmentOutput->DeepCopy(Scan1Segment->GetOutput());
+         //tgWriteVolume(tgOutput.c_str(),supersampleMatrix,Scan1Segment->GetOutput());
+         //tgWriteVolume(Scan1SegmentFileName.c_str(),supersampleMatrix,Scan1Segment->GetOutput());
+         Scan1SegmentOutput->DeepCopy(Scan1Segment->GetOutput());
        }
 
         // 
@@ -466,16 +531,50 @@ int main(int argc, char** argv)
        if (1) {
          // -------------------------------------
          cout << "=== Local Rigid Registration ===" << endl;
-        
-         if (tgRegisterAG( app, interp, Scan1SuperSample, Scan1SuperSampleTcl, Scan2SuperSample, tg.GetWorkingDir(), Scan2LocalTcl)) return EXIT_FAILURE;
-         std::string CMD = "catch { exec mv " + tg.WorkingDir + "/LinearRegistration.txt " + tg.WorkingDir + "/LocalLinearRegistration.txt }";
-         app->Script(CMD.c_str());
-   
-         CMD = "catch { ::ChangeTrackerReg::DeleteTransformAG }";
-         app->Script(CMD.c_str());
+         
+         if(USE_ITK_REGISTRATION)
+           {
+           std::ostringstream cmdStream;
+           std::string Scan2Local_fname = std::string(tg.GetWorkingDir())+std::string("/Scan2_Local.nrrd");
+           std::string Scan1Resampled_fname = std::string(tg.GetWorkingDir())+"/Scan1_resampled.nrrd";
+           std::string Scan2Resampled_fname = std::string(tg.GetWorkingDir())+"/Scan2_resampled.nrrd";
+           tgWriteVolume(Scan1Resampled_fname.c_str(), supersampleMatrix, Scan1SuperSample);
+           tgWriteVolume(Scan2Resampled_fname.c_str(), supersampleMatrix, Scan2SuperSample);
+           cmdStream << "${Slicer3_HOME}/Slicer3 --launch RigidRegistration --iterations 100,100,50,20" <<
+             " --fixedsmoothingfactor 0 --movingsmoothingfactor 0" <<
+             " --histogrambins 30 --spatialsamples 10000 --learningrate 0.01,0.005,0.0005,0.0002" <<
+             " --translationscale 10 --resampledmovingfilename " << 
+             Scan2Local_fname << " --outputtransform " <<
+             tg.GetWorkingDir() << "/Local_transform.txt " <<
+             Scan1Resampled_fname << " " << Scan2Resampled_fname << " >& " <<
+             tg.GetWorkingDir() << "/local_reg_output.txt" << std::endl;
 
-         std::string Scan2LocalFileName = tg.WorkingDir + "/TG_scan2_Local.nhdr"; 
-         tgWriteVolume(Scan2LocalFileName.c_str(),supersampleMatrix,Scan2Local);
+           cout << "Running registration: " << cmdStream.str() << endl;
+           if(system(cmdStream.str().c_str())!=EXIT_SUCCESS)
+             {
+             cerr << "ERROR: Rigid registration failed" << endl;
+             return EXIT_FAILURE;
+             }
+           
+           // Read back the registration result
+           vtkMatrix4x4* matrix = vtkMatrix4x4::New();
+           tgReadVolume(Scan2Local_fname.c_str(), Scan2Local, matrix);
+           matrix->Delete();
+
+           } 
+         else 
+           {
+           if (tgRegisterAG( app, interp, Scan1SuperSample, Scan1SuperSampleTcl, Scan2SuperSample, tg.GetWorkingDir(), Scan2LocalTcl)) return EXIT_FAILURE;
+           std::string CMD = "catch { exec mv " + tg.WorkingDir + "/LinearRegistration.txt " + tg.WorkingDir + "/LocalLinearRegistration.txt }";
+           app->Script(CMD.c_str());
+
+           CMD = "catch { ::ChangeTrackerReg::DeleteTransformAG }";
+           app->Script(CMD.c_str());
+
+           std::string Scan2LocalFileName = tg.WorkingDir + "/TG_scan2_Local.nhdr"; 
+           tgWriteVolume(tgOutput.c_str(),supersampleMatrix,Scan2Local);
+           //tgWriteVolume(Scan2LocalFileName.c_str(),supersampleMatrix,Scan2Local);
+           }
    
        } else {
         cout << "Debugging - jump over local registration" << endl;
@@ -495,7 +594,8 @@ int main(int argc, char** argv)
           std::string CMD = "::ChangeTrackerTcl::HistogramNormalization_FCT " + Scan1SuperSampleTcl + " " + Scan1SegmentOutputTcl + " " 
                                                                             + Scan2LocalTcl + " " + Scan2LocalNormalizedTcl;
           app->Script(CMD.c_str()); 
-          tgWriteVolume(Scan2LocalNormalizedFileName.c_str(),supersampleMatrix, Scan2LocalNormalized);
+          tgWriteVolume(tgOutput.c_str(),supersampleMatrix, Scan2LocalNormalized);
+          //tgWriteVolume(Scan2LocalNormalizedFileName.c_str(),supersampleMatrix, Scan2LocalNormalized);
     }
    
     //
@@ -583,6 +683,7 @@ int main(int argc, char** argv)
 
     if (tgDeformableAnalysisFlag ) { 
 
+      /* FIXME
       std::string SCAN1_TO_SCAN2_SEGM_NAME           = tg.WorkingDir + "/TG_Deformable_Scan1SegmentationAlignedToScan2.nhdr";
       std::string SCAN1_TO_SCAN2_DEFORM_NAME         = tg.WorkingDir + "/TG_Deformable_Deformation.mha";
       std::string SCAN1_TO_SCAN2_DEFORM_INVERSE_NAME = tg.WorkingDir + "/TG_Deformable_Deformation_Inverse.mha";
@@ -606,6 +707,7 @@ int main(int argc, char** argv)
       CMD =  "lindex [::ChangeTrackerTcl::ReadASCIIFile " + ANALYSIS_JACOBIAN_FILE +"] 0";
       Analysis_JACO_Growth = atof(app->Script(CMD.c_str()));
       cout << "Jacobian Result: " << Analysis_JACO_Growth << endl;
+      */
     } 
 
     // 
