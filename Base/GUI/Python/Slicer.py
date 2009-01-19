@@ -186,6 +186,8 @@ def __vtkDataArray_FromArray (self,numpyArray,dimensionality=3):
         raise
 
 def __vtkObject_AddObserver (self,eventName,callback):
+    if type(eventName) == int:
+        return _slicer.vtkObjectAddObserverWithId(tk.tk.interpaddr(),self.GetTclName(),eventName,callback)
     return _slicer.vtkObjectAddObserver(tk.tk.interpaddr(),self.GetTclName(),eventName,callback)
 
 def CreateClass(name):

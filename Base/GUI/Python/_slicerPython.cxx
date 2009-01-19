@@ -472,6 +472,56 @@ static PyObject* SlicerPython_vtkObjectAddObserver(PyObject* self, PyObject* arg
 //  return Py_None;
 }
 
+static PyObject* SlicerPython_vtkObjectAddObserverWithId(PyObject* self, PyObject* args)
+{
+  long addr;
+  char *objName;
+  unsigned long eventId;
+#ifndef STRING_CALLBACKS
+  PyObject* codeObject;
+  if (!PyArg_ParseTuple(args,"lskO:_slicer_vtkObjectAddObserver",&addr,&objName,&eventId,&codeObject))
+#else
+  char *codeString;
+  if (!PyArg_ParseTuple(args,"lsks:_slicer_vtkObjectAddObserver",&addr,&objName,&eventId,&codeString))
+#endif
+    {
+    return NULL;
+    }
+  Tcl_Interp* interp;
+  interp = (Tcl_Interp*) addr;
+
+#ifndef STRING_CALLBACKS
+ Py_INCREF(codeObject);
+#endif
+
+  vtkObject *obj;
+  int error = 0;
+  obj = (vtkObject*)(vtkTclGetPointerFromObject(objName,(char*)"vtkObject",interp,error));
+  if (error)
+    {
+    // Raise an error
+    return PyErr_Format(PyExc_TypeError,"Could not find vtkObject");
+    }
+
+  unsigned long eventTag = 0;
+  vtkSlicerPythonCommand* command = vtkSlicerPythonCommand::New();
+#ifndef STRING_CALLBACKS
+  command->SetCallbackCodeObject(codeObject);
+#else
+  command->SetCallbackCodeString(codeString);
+#endif
+  eventTag = obj->AddObserver(eventId,command);
+  command->Delete();
+
+  return PyInt_FromLong((long)eventTag);
+
+//std::cout<<"Outside "<<PyString_AsString(PyObject_Str(codeObject))<<std::endl;
+//  PyObject_CallFunction(codeObject,NULL);
+
+//  Py_INCREF(Py_None);
+//  return Py_None;
+}
+
 static PyMethodDef moduleMethods[] =
 {
   {"vtkImageDataToArray", SlicerPython_vtkImageDataToArray, METH_VARARGS, NULL},
@@ -479,6 +529,7 @@ static PyMethodDef moduleMethods[] =
   {"ArrayTovtkImageData", SlicerPython_ArrayTovtkImageData, METH_VARARGS, NULL},
   {"ArrayTovtkDataArray", SlicerPython_ArrayTovtkDataArray, METH_VARARGS, NULL},
   {"vtkObjectAddObserver", SlicerPython_vtkObjectAddObserver, METH_VARARGS, NULL},
+  {"vtkObjectAddObserverWithId", SlicerPython_vtkObjectAddObserverWithId, METH_VARARGS, NULL},
 //  {"vtkMatrix4x4ToArray", SlicerPythonVtkDataArray_ToArray, METH_VARARGS, NULL},
   {NULL, NULL, 0, NULL}
 };
