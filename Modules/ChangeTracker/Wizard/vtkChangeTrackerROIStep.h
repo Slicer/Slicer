@@ -13,6 +13,8 @@ class vtkMRMLScalarVolumeNode;
 class vtkMRMLChangeTrackerNode;
 class vtkKWLabel;
 class vtkImageRectangularSource;
+class vtkMRMLROINode;
+class vtkObserverManager;
 
 class VTK_CHANGETRACKER_EXPORT vtkChangeTrackerROIStep : public vtkChangeTrackerStep
 {
@@ -41,6 +43,8 @@ public:
   // Description:
   // Callback functions for buttons
   void ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData);
+  // Process MRML events to get changes from ROI widget
+  void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
   void AddGUIObservers();
   void RemoveGUIObservers();
 
@@ -98,6 +102,8 @@ private:
   vtkImageRectangularSource *ROILabelMap;
   int ROIHideFlag; 
 
+  vtkMRMLROINode *roiNode;
+  vtkObserverManager *MRMLObserverManager; // to process events from roi node
 };
 
 #endif

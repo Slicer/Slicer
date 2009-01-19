@@ -18,7 +18,10 @@
 #include "vtkSlicerSliceControllerWidget.h"
 #include "vtkKWScale.h"
 
-#include "vtkKWMatrixWidget.h"
+//#include "vtkKWMatrixWidget.h"
+#include "vtkMRMLROINode.h"
+#include <sstream>
+#include "vtkObserverManager.h"
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkChangeTrackerROIStep);
@@ -48,6 +51,9 @@ vtkChangeTrackerROIStep::vtkChangeTrackerROIStep()
   this->ROILabelMapNode = NULL;
   this->ROILabelMap     = NULL;
   this->ROIHideFlag     = 0; 
+
+  this->roiNode = NULL;
+  this->MRMLObserverManager = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -136,6 +142,17 @@ vtkChangeTrackerROIStep::~vtkChangeTrackerROIStep()
 
   if (this->ROILabelMapNode || this->ROILabelMap) this->ROIMapRemove();
 
+  if(this->roiNode)
+  {
+    this->roiNode->Delete();
+    this->roiNode = NULL;
+  }
+
+  if(this->MRMLObserverManager)
+    {
+    this->MRMLObserverManager->Delete();
+    this->MRMLObserverManager = NULL;
+    }
 }
 
 void vtkChangeTrackerROIStep::DeleteSuperSampleNode() 
@@ -151,6 +168,47 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
   // Display Scan1, Delete Super Sampled and Grid  
   // ----------------------------------------
   this->DeleteSuperSampleNode();
+
+  // debugging compareview
+  if(false){
+    vtkMRMLChangeTrackerNode* node = this->GetGUI()->GetNode();
+//    vtkSlicerApplicationLogic *applicationLogic = this->GetGUI()->GetLogic()->GetApplicationLogic();
+//    applicationLogic->GetSelectionNode()->SetActiveVolumeID(volumeSampleNode->GetID());
+
+    vtkSlicerApplicationGUI *applicationGUI     = this->GetGUI()->GetApplicationGUI();
+
+
+    double oldSliceSetting[3];
+    oldSliceSetting[0] = double(applicationGUI->GetMainSliceGUI("Red")->GetSliceController()->GetOffsetScale()->GetValue());
+    oldSliceSetting[1] = double(applicationGUI->GetMainSliceGUI("Yellow")->GetSliceController()->GetOffsetScale()->GetValue());
+    oldSliceSetting[2] = double(applicationGUI->GetMainSliceGUI("Green")->GetSliceController()->GetOffsetScale()->GetValue());
+//SetBackgroundVolumeID( node->GetScan1_Ref());
+    // set the layout to CompareView
+    applicationGUI->GetGUILayoutNode()->SetNumberOfCompareViewRows(2);
+    applicationGUI->GetGUILayoutNode()->SetNumberOfCompareViewColumns(1);
+    applicationGUI->GetGUILayoutNode()->SetNumberOfCompareViewLightboxRows(1);
+    applicationGUI->GetGUILayoutNode()->SetNumberOfCompareViewLightboxColumns(4);
+    applicationGUI->GetGUILayoutNode()->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutCompareView);
+
+    cout << "Compare0 node: " << applicationGUI->GetMainSliceGUI("Compare0")->GetLogic()->GetSliceCompositeNode() << endl;
+    cout << "Compare1 node: " << applicationGUI->GetMainSliceGUI("Compare1")->GetLogic()->GetSliceCompositeNode() << endl;
+
+    applicationGUI->GetMainSliceGUI("Compare0")->GetLogic()->GetSliceCompositeNode()->SetBackgroundVolumeID( node->GetScan1_Ref());
+    cerr << "Setting Compare0 background volume id to: " << node->GetScan1_Ref() << endl;
+    cerr << "Current Compare0 background volume id: " << 
+      applicationGUI->GetMainSliceGUI("Compare0")->GetLogic()->GetSliceCompositeNode()->GetBackgroundVolumeID() << endl;
+
+    applicationGUI->GetMainSliceGUI("Compare1")->GetLogic()->GetSliceCompositeNode()->SetBackgroundVolumeID( node->GetScan2_Ref());
+    cerr << "Setting Compare1 background volume id to: " << node->GetScan2_Ref() << endl;
+    cerr << "Current Compare1 background volume id: " << 
+      applicationGUI->GetMainSliceGUI("Compare1")->GetLogic()->GetSliceCompositeNode()->GetBackgroundVolumeID() << endl;
+
+    applicationGUI->GetMainSliceGUI("Compare0")->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID( "" );
+    applicationGUI->GetMainSliceGUI("Compare1")->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID( "" );
+    this->Script("proc CTsetid {cnodeid vnodeid} { set cnode [$::slicer3::MRMLScene GetNodeByID $cnodeid]; $cnode SetReferenceBackgroundVolumeID $vnodeid}");
+    this->Script("after idle CTsetid %s %s",  applicationGUI->GetMainSliceGUI("Compare0")->GetLogic()->GetSliceCompositeNode()->GetID(), node->GetScan1_Ref());
+    this->Script("after idle CTsetid %s %s",  applicationGUI->GetMainSliceGUI("Compare1")->GetLogic()->GetSliceCompositeNode()->GetID(), node->GetScan2_Ref());
+  }
 
   vtkMRMLChangeTrackerNode* node = this->GetGUI()->GetNode();
   int dimensions[3]={1,1,1};
@@ -381,6 +439,26 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
    wizard_widget->BackButtonVisibilityOn();
    wizard_widget->GetCancelButton()->EnabledOn();
   }
+
+  // Create ROI MRML node
+  // see Base/GUI/vtkSlicerNodeSelectorWidget.cxx:ProcessNewNodeCommand
+  vtkMRMLScene *scene = node->GetScene();
+  
+  vtkMRMLROINode *roi = 
+    static_cast<vtkMRMLROINode*>(scene->CreateNodeByClass("vtkMRMLROINode"));
+  if(roi==NULL)
+  {
+    cout << "Failed to create ROI node" << endl;
+  } 
+  else
+  {
+    this->roiNode = roi;
+    roiNode->SetName("ChangeTrackerROI");
+    scene->AddNode(roiNode);
+    roiNode->SetVisibility(0);
+  }
+  
+
   // Very Important 
   this->AddGUIObservers();
   // Keep seperate bc GUIObserver is also called from vtkChangeTrackerGUI ! 
@@ -566,6 +644,31 @@ void vtkChangeTrackerROIStep::ROIMapUpdate() {
   this->ROILabelMap->SetSize(size);
   this->ROILabelMap->Update();
   this->ROILabelMapNode->Modified();
+
+  // Update the roiNode
+  if(roiNode)
+    {
+    double pointRAS[4], pointIJK[4];
+    double radius[3];
+    vtkMatrix4x4 *ijkToras = vtkMatrix4x4::New();
+    vtkMRMLVolumeNode *volumeNode = 
+      vtkMRMLVolumeNode::SafeDownCast(Node->GetScene()->GetNodeByID(Node->GetScan1_Ref()));
+    volumeNode->GetIJKToRASMatrix(ijkToras);
+    pointIJK[0] = (double)center[0];
+    pointIJK[1] = (double)center[1];
+    pointIJK[2] = (double)center[2];
+    pointIJK[3] = 1.;
+    ijkToras->MultiplyPoint(pointIJK,pointRAS);
+    
+    radius[0] = volumeNode->GetSpacing()[0]*(double)size[0]/2.;
+    radius[1] = volumeNode->GetSpacing()[1]*(double)size[1]/2.;
+    radius[2] = volumeNode->GetSpacing()[2]*(double)size[2]/2.;
+
+    roiNode->SetXYZ(pointRAS[0], pointRAS[1], pointRAS[2]);
+    roiNode->SetRadiusXYZ(radius[0], radius[1], radius[2]);
+    roiNode->Modified();
+
+    }
 }
 
 
@@ -663,11 +766,10 @@ void vtkChangeTrackerROIStep::ROIMapRemove() {
   }
 }
 
-
-
-
-void vtkChangeTrackerROIStep::RetrieveInteractorIJKCoordinates(vtkSlicerSliceGUI *sliceGUI, vtkRenderWindowInteractor *rwi,int coords[3]) {
-
+void vtkChangeTrackerROIStep::RetrieveInteractorIJKCoordinates(vtkSlicerSliceGUI *sliceGUI, 
+                                                               vtkRenderWindowInteractor *rwi,
+                                                               int coords[3]) 
+{
   coords[0] = coords[1] = coords[2] = -1;
   vtkMRMLChangeTrackerNode* Node = this->GetGUI()->GetNode();
   if (!Node) {
@@ -719,6 +821,7 @@ void vtkChangeTrackerROIStep::RetrieveInteractorIJKCoordinates(vtkSlicerSliceGUI
   //cout << "Dimen: " << dimensions[0] << " " << dimensions[1] << " " << dimensions[2] << " " <<  endl;
 
 }
+
 void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData) {
 
   if (event == vtkKWPushButton::InvokedEvent) {
@@ -728,12 +831,15 @@ void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long 
       if (this->ROILabelMapNode) {
         this->ButtonsShow->SetText("Show VOI");
         this->ROIMapRemove();
-    this->ROIHideFlag = 1;
-
+        this->ROIHideFlag = 1;
+        if (roiNode)
+          roiNode->SetVisibility(0);
       } else { 
         if (this->ROIMapShow()) { 
           this->ButtonsShow->SetText("Hide VOI");
         }
+//        if (roiNode)
+//          roiNode->SetVisibility(1);
       }
     }
     if (this->ButtonsReset && (button == this->ButtonsReset)) 
@@ -776,6 +882,11 @@ void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long 
 }
 
 
+void vtkChangeTrackerROIStep::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData) {
+  if(event == vtkCommand::ModifiedEvent){
+    cout << "MRML Modified event received" << endl;
+  }
+}
 
 //----------------------------------------------------------------------------
 void vtkChangeTrackerROIStep::TransitionCallback() 
@@ -805,6 +916,9 @@ void vtkChangeTrackerROIStep::TransitionCallback()
 
        // Remove blue ROI screen 
        this->ROIMapRemove();
+       
+       // remove the ROI widget
+       roiNode->SetVisibility(0);
 
        this->GUI->GetWizardWidget()->GetWizardWorkflow()->AttemptToGoToNextStep();
      } else {
