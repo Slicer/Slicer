@@ -43,7 +43,6 @@ vtkSlicerModulesStep::vtkSlicerModulesStep()
   this->UninstallButton = NULL;
   this->StopButton = NULL;
   this->WizardDialog = NULL;
-  this->ActionTaken = vtkSlicerModulesStep::ActionIsEmpty;
 
   this->Messages["READY"] = "Select extensions, then click uninstall to remove them from\nyour version of 3D Slicer, or click download to retrieve them.";
   this->Messages["DOWNLOAD"] = "Download in progress... Clicking the cancel button will stop\nthe process after the current extension operation is finished.";
@@ -343,16 +342,6 @@ void vtkSlicerModulesStep::Update()
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerModulesStep::IsActionValid()
-{
-  if (this->ActionTaken != vtkSlicerModulesStep::ActionIsEmpty) {
-    return 1;
-  }
-  
-  return 0;
-}
-
-//----------------------------------------------------------------------------
 void vtkSlicerModulesStep::InsertExtension(int Index,
                                            const std::string& ExtensionName,
                                            const std::string& URL,
@@ -429,8 +418,6 @@ void vtkSlicerModulesStep::DownloadInstall()
 
   this->HeaderText->SetText(this->Messages["FINISHED"].c_str());
 
-  this->ActionTaken = vtkSlicerModulesStep::ActionIsDownloadInstall;
-
   this->GetWizardDialog()->GetWizardWidget()->CancelButtonVisibilityOn();
 }
 
@@ -454,7 +441,6 @@ void vtkSlicerModulesStep::Uninstall()
       }
     }
 
-  this->ActionTaken = vtkSlicerModulesStep::ActionIsUninstall;
 }
 
 //----------------------------------------------------------------------------
@@ -526,20 +512,12 @@ void vtkSlicerModulesStep::HideUserInterface()
 //----------------------------------------------------------------------------
 void vtkSlicerModulesStep::Validate()
 {
-  vtkKWWizardWidget *wizard_widget = 
-    this->GetWizardDialog()->GetWizardWidget();
-    
-  vtkKWWizardWorkflow *wizard_workflow = wizard_widget->GetWizardWorkflow();
+  vtkKWWizardWorkflow *wizard_workflow = 
+    this->GetWizardDialog()->GetWizardWidget()->GetWizardWorkflow();
 
-  if (this->IsActionValid())
-    {
-    wizard_workflow->PushInput(vtkKWWizardStep::GetValidationSucceededInput());
-    }
-  else
-    {
-    wizard_widget->SetErrorText("No action taken! Choose download & install or uninstall to continue.");
-    wizard_workflow->PushInput(vtkKWWizardStep::GetValidationFailedInput());
-    }
+  // This step always validates
+
+  wizard_workflow->PushInput(vtkKWWizardStep::GetValidationSucceededInput());
 
   wizard_workflow->ProcessInputs();
 }
