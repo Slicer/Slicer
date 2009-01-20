@@ -292,8 +292,6 @@ class Slicer(object):
     # deleteInstances should be called by slicer before Py_Finalize() to unreference
     # all the instances created here
     def deleteInstances(self):
-        if len(self.instances) == 0:
-            print "Slicer.py: No hanging instances to delete."
         for i in self.instances:
             tk.tk.eval("%s Delete" % i)
 
