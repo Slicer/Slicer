@@ -104,6 +104,7 @@ private:
 
   vtkMRMLROINode *roiNode;
   vtkObserverManager *MRMLObserverManager; // to process events from roi node
+  bool roiUpdateGuard;
 };
 
 #endif

@@ -53,7 +53,7 @@ vtkChangeTrackerROIStep::vtkChangeTrackerROIStep()
   this->ROIHideFlag     = 0; 
 
   this->roiNode = NULL;
-  this->MRMLObserverManager = NULL;
+  this->roiUpdateGuard = false;
 }
 
 //----------------------------------------------------------------------------
@@ -148,11 +148,6 @@ vtkChangeTrackerROIStep::~vtkChangeTrackerROIStep()
     this->roiNode = NULL;
   }
 
-  if(this->MRMLObserverManager)
-    {
-    this->MRMLObserverManager->Delete();
-    this->MRMLObserverManager = NULL;
-    }
 }
 
 void vtkChangeTrackerROIStep::DeleteSuperSampleNode() 
@@ -440,23 +435,21 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
    wizard_widget->GetCancelButton()->EnabledOn();
   }
 
-  // Create ROI MRML node
-  // see Base/GUI/vtkSlicerNodeSelectorWidget.cxx:ProcessNewNodeCommand
-  vtkMRMLScene *scene = node->GetScene();
-  
-  vtkMRMLROINode *roi = 
-    static_cast<vtkMRMLROINode*>(scene->CreateNodeByClass("vtkMRMLROINode"));
-  if(roi==NULL)
-  {
-    cout << "Failed to create ROI node" << endl;
-  } 
-  else
-  {
+ 
+  if(!this->roiNode)
+    {
+    // Create ROI MRML node
+    // see Base/GUI/vtkSlicerNodeSelectorWidget.cxx:ProcessNewNodeCommand
+    vtkMRMLScene *scene = node->GetScene();
+    vtkMRMLROINode *roi = 
+      static_cast<vtkMRMLROINode*>(scene->CreateNodeByClass("vtkMRMLROINode"));
+    scene->AddNode(roi);
+    roi->SetName("ChangeTrackerROI");
+    roi->SetVisibility(0);
+    this->GetGUI()->ObserveMRMLROINode(roi);
     this->roiNode = roi;
-    roiNode->SetName("ChangeTrackerROI");
-    scene->AddNode(roiNode);
-    roiNode->SetVisibility(0);
-  }
+    roi->Delete();
+    }
   
 
   // Very Important 
@@ -637,17 +630,23 @@ void vtkChangeTrackerROIStep::ROIMapUpdate() {
 
   vtkMRMLChangeTrackerNode* Node      =  this->GetGUI()->GetNode();
   if (!this->ROILabelMapNode || !this->ROILabelMap || !Node || !this->ROICheck()) return;
+  int size[3]   = {Node->GetROIMax(0) - Node->GetROIMin(0) + 1, 
+                   Node->GetROIMax(1) - Node->GetROIMin(1) + 1, 
+                   Node->GetROIMax(2) - Node->GetROIMin(2) + 1};
 
-  int size[3]   = {Node->GetROIMax(0) - Node->GetROIMin(0) + 1, Node->GetROIMax(1) - Node->GetROIMin(1) + 1, Node->GetROIMax(2) - Node->GetROIMin(2) + 1};
-  int center[3] = {(Node->GetROIMax(0) + Node->GetROIMin(0))/2 ,(Node->GetROIMax(1) + Node->GetROIMin(1))/2, (Node->GetROIMax(2) + Node->GetROIMin(2))/2};
+  int center[3] = {(Node->GetROIMax(0) + Node->GetROIMin(0))/2,
+                   (Node->GetROIMax(1) + Node->GetROIMin(1))/2, 
+                   (Node->GetROIMax(2) + Node->GetROIMin(2))/2};
+
   this->ROILabelMap->SetCenter(center);
   this->ROILabelMap->SetSize(size);
   this->ROILabelMap->Update();
   this->ROILabelMapNode->Modified();
 
   // Update the roiNode
-  if(roiNode)
+  if(roiNode && !roiUpdateGuard)
     {
+    roiUpdateGuard = true;
     double pointRAS[4], pointIJK[4];
     double radius[3];
     vtkMatrix4x4 *ijkToras = vtkMatrix4x4::New();
@@ -659,7 +658,8 @@ void vtkChangeTrackerROIStep::ROIMapUpdate() {
     pointIJK[2] = (double)center[2];
     pointIJK[3] = 1.;
     ijkToras->MultiplyPoint(pointIJK,pointRAS);
-    
+    ijkToras->Delete();
+
     radius[0] = volumeNode->GetSpacing()[0]*(double)size[0]/2.;
     radius[1] = volumeNode->GetSpacing()[1]*(double)size[1]/2.;
     radius[2] = volumeNode->GetSpacing()[2]*(double)size[2]/2.;
@@ -667,7 +667,7 @@ void vtkChangeTrackerROIStep::ROIMapUpdate() {
     roiNode->SetXYZ(pointRAS[0], pointRAS[1], pointRAS[2]);
     roiNode->SetRadiusXYZ(radius[0], radius[1], radius[2]);
     roiNode->Modified();
-
+    roiUpdateGuard = false;
     }
 }
 
@@ -838,7 +838,8 @@ void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long 
         if (this->ROIMapShow()) { 
           this->ButtonsShow->SetText("Hide VOI");
         }
-//        if (roiNode)
+// FIXME: when feature complete
+//        if (roiNode)  
 //          roiNode->SetVisibility(1);
       }
     }
@@ -883,9 +884,55 @@ void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long 
 
 
 void vtkChangeTrackerROIStep::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData) {
-  if(event == vtkCommand::ModifiedEvent){
-    cout << "MRML Modified event received" << endl;
-  }
+//  if(event == vtkCommand::ModifiedEvent){
+    vtkMRMLROINode *roiCaller = vtkMRMLROINode::SafeDownCast(caller);
+    if(roiCaller && roiCaller == roiNode && event == vtkCommand::ModifiedEvent && !roiUpdateGuard)
+      {
+      roiUpdateGuard = true;
+      vtkMRMLChangeTrackerNode* ctNode = this->GetGUI()->GetNode();
+      // update roi to correspond to ROI widget
+      double *roiXYZ = roiCaller->GetXYZ();
+      double *roiRadiusXYZ = roiCaller->GetRadiusXYZ();
+
+      double bbox0ras[4], bbox1ras[4];
+      double bbox0ijk[4], bbox1ijk[4];
+
+      // ROI bounding box in RAS coordinates
+      bbox0ras[0] = roiXYZ[0]-roiRadiusXYZ[0];
+      bbox0ras[1] = roiXYZ[1]-roiRadiusXYZ[1];
+      bbox0ras[2] = roiXYZ[2]-roiRadiusXYZ[2];
+      bbox0ras[3] = 1.;
+      bbox1ras[0] = roiXYZ[0]+roiRadiusXYZ[0];
+      bbox1ras[1] = roiXYZ[1]+roiRadiusXYZ[1];
+      bbox1ras[2] = roiXYZ[2]+roiRadiusXYZ[2];
+      bbox1ras[3] = 1.;
+      
+      vtkMatrix4x4 *rasToijk = vtkMatrix4x4::New();
+      vtkMRMLVolumeNode *volumeNode = 
+        vtkMRMLVolumeNode::SafeDownCast(ctNode->GetScene()->GetNodeByID(ctNode->GetScan1_Ref()));
+      volumeNode->GetRASToIJKMatrix(rasToijk);
+      rasToijk->MultiplyPoint(bbox0ras,bbox0ijk);
+      rasToijk->MultiplyPoint(bbox1ras,bbox1ijk);
+      rasToijk->Delete();
+      for(int i=0;i<3;i++)
+        {
+        double tmp;
+        if(bbox0ijk[i]>bbox1ijk[i])
+          {
+          tmp = bbox0ijk[i];
+          bbox0ijk[i] = bbox1ijk[i];
+          bbox1ijk[i] = tmp;
+          }
+        }
+      ctNode->SetROIMin(0, bbox0ijk[0]);
+      ctNode->SetROIMax(0, bbox1ijk[0]);
+      ctNode->SetROIMin(1, bbox0ijk[1]);
+      ctNode->SetROIMax(1, bbox1ijk[1]);
+      ctNode->SetROIMin(2, bbox0ijk[2]);
+      ctNode->SetROIMax(2, bbox1ijk[2]);
+      this->ROIMapUpdate();
+      roiUpdateGuard = false;
+      }
 }
 
 //----------------------------------------------------------------------------

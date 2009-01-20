@@ -28,6 +28,8 @@
 
 #include "ImageData/BSFLogo.h"
 #include "vtkKWIcon.h"
+#include "vtkMRMLROINode.h"
+#include <assert.h>
 
 vtkCxxSetObjectMacro(vtkChangeTrackerGUI,Node,vtkMRMLChangeTrackerNode);
 vtkCxxSetObjectMacro(vtkChangeTrackerGUI,Logic,vtkChangeTrackerLogic);
@@ -289,6 +291,15 @@ void vtkChangeTrackerGUI::ProcessMRMLEvents(vtkObject *caller,
                                        unsigned long event,
                                        void *callData) 
 {
+  vtkMRMLROINode* roiCaller = vtkMRMLROINode::SafeDownCast(caller);
+  if(roiCaller && this->roiNode == roiCaller)
+    {
+    // need to route the event to the ROI step, since it cannot handle events
+    // directly
+    if(this->ROIStep)
+      this->ROIStep->ProcessMRMLEvents(caller, event, callData);
+    return;
+    }
 
   // cout << "============ vtkChangeTrackerGUI::ProcessMRMLEvents Start ========== " << caller->GetClassName() << " " << event << endl;
   if (event == vtkMRMLScene::SceneCloseEvent ) {
@@ -623,10 +634,15 @@ void  vtkChangeTrackerGUI::SliceLogicCallback(vtkObject *caller, unsigned long e
 }
 
 void vtkChangeTrackerGUI::PropagateVolumeSelection() {
+   cerr << "PropagateVolumeSelection called" << endl;
    vtkSlicerApplicationLogic *applicationLogic = this->Logic->GetApplicationLogic();
    applicationLogic->PropagateVolumeSelection( 0 );
    if (!this->SliceLogic) return;
    this->SliceLogic->GetSliceCompositeNode()->SetReferenceBackgroundVolumeID(this->Node->GetScan1_Ref());
    this->SliceLogic->FitSliceToVolume(vtkMRMLVolumeNode::SafeDownCast(Node->GetScene()->GetNodeByID(this->Node->GetScan1_Ref())),250,250); 
    this->SliceLogic->SetSliceOffset(this->SliceController_OffsetScale->GetValue());
+}
+
+void vtkChangeTrackerGUI::ObserveMRMLROINode(vtkMRMLROINode* roi){
+    vtkSetAndObserveMRMLNodeMacro(this->roiNode, roi);
 }
