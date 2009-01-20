@@ -73,6 +73,12 @@ public:
     // Copy the node's attributes to this object
     virtual void Copy(vtkMRMLNode *node);
 
+    // Description:
+    // Finds the storage node and read the data
+    virtual void UpdateScene(vtkMRMLScene *scene){
+       Superclass::UpdateScene(scene);
+    };
+
     //Description;
     //Copy only the paramterset (like Volume Propertys, Piecewiesefunctions etc. as deep copy,but no references etc.)
     void CopyParameterset(vtkMRMLNode *node);
@@ -83,7 +89,7 @@ public:
 
     // Description:
     // 
-    virtual void UpdateScene(vtkMRMLScene *scene);
+
     virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData);
 
     // Description:
@@ -91,6 +97,11 @@ public:
     virtual bool CanApplyNonLinearTransforms() { return false; }
     virtual void ApplyTransform(vtkMatrix4x4* transformMatrix) {};
     virtual void ApplyTransform(vtkAbstractTransform* transform) {};
+
+    // Description:
+    // Create default storage node or NULL if does not have one
+    virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
+
 
 protected:
     // Description:

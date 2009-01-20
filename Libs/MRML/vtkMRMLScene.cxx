@@ -64,6 +64,7 @@ Version:   $Revision: 1.18 $
 #include "vtkURIHandler.h"
 #include "vtkMRMLLayoutNode.h"
 #include "vtkMRMLVolumePropertyNode.h"
+#include "vtkMRMLVolumePropertyStorageNode.h"
 
 #ifdef MRML_USE_vtkTeem
 #include "vtkMRMLNRRDStorageNode.h"
@@ -320,6 +321,10 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLVolumePropertyNode *vpn = vtkMRMLVolumePropertyNode::New();
   this->RegisterNodeClass( vpn );
   vpn->Delete();
+
+  vtkMRMLVolumePropertyStorageNode *vpsn = vtkMRMLVolumePropertyStorageNode::New();
+  this->RegisterNodeClass( vpsn );
+  vpsn->Delete();
 
 }
 

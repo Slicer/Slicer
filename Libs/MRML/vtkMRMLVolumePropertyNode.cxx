@@ -1,6 +1,8 @@
-#include "vtkMRMLVolumePropertyNode.h"
 #include "vtkMRMLNode.h"
+#include "vtkMRMLVolumePropertyNode.h"
+#include "vtkMRMLVolumePropertyStorageNode.h"
 #include "vtkPiecewiseFunction.h"
+
 #include <vector>
 #include <iostream>
 #include <sstream>
@@ -219,11 +221,6 @@ void vtkMRMLVolumePropertyNode::PrintSelf(ostream& os, vtkIndent indent)
 
 //-----------------------------------------------------------
 
-void vtkMRMLVolumePropertyNode::UpdateScene(vtkMRMLScene *scene)
-{
-    Superclass::UpdateScene(scene);
-}
-
 
 //---------------------------------------------------------------------------
 void vtkMRMLVolumePropertyNode::ProcessMRMLEvents ( vtkObject *caller,
@@ -314,3 +311,7 @@ void vtkMRMLVolumePropertyNode::GetColorTransferFunctionFromString(std::string s
 
 }
 
+vtkMRMLStorageNode* vtkMRMLVolumePropertyNode::CreateDefaultStorageNode()
+{
+  return vtkMRMLVolumePropertyStorageNode::New();
+}

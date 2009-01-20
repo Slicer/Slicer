@@ -118,7 +118,7 @@ int vtkMRMLVolumePropertyStorageNode::ReadData(vtkMRMLNode *refNode)
     return 0;
     }
   
-  vtkMRMLVolumePropertyNode *transformNode = dynamic_cast <vtkMRMLVolumePropertyNode *> (refNode);
+  vtkMRMLVolumePropertyNode *vpNode = dynamic_cast <vtkMRMLVolumePropertyNode *> (refNode);
 
   std::string fullName = this->GetFullNameFromFileName(); 
   if (fullName == std::string("")) 
@@ -128,6 +128,50 @@ int vtkMRMLVolumePropertyStorageNode::ReadData(vtkMRMLNode *refNode)
     }
 
   int result = 1;
+
+  std::ifstream ifs;
+#ifdef _WIN32
+  ifs.open(fullName.c_str(), ios::binary | ios::in);
+#else
+  ifs.open(fullName.c_str(), ios::in);
+#endif
+  if ( !ifs )
+    {
+    vtkErrorMacro("Cannot open volume property file: " << fullName);
+    return 0;
+    }
+  char line[1024];
+
+  ifs.getline(line, 1024);
+  std::string sline(line);
+  if (!sline.empty()) 
+    {
+    vtkPiecewiseFunction *scalarOpacity=vtkPiecewiseFunction::New();
+    vpNode->GetPiecewiseFunctionFromString(sline, scalarOpacity), 
+    vpNode->GetVolumeProperty()->SetScalarOpacity(scalarOpacity);
+    scalarOpacity->Delete();
+    }
+
+  ifs.getline(line, 1024);
+  sline = line;
+  if (!sline.empty()) 
+    {
+    vtkPiecewiseFunction *gradientOpacity=vtkPiecewiseFunction::New();
+    vpNode->GetPiecewiseFunctionFromString(sline, gradientOpacity);
+    vpNode->GetVolumeProperty()->SetGradientOpacity(gradientOpacity);
+    gradientOpacity->Delete();
+    }
+
+  ifs.getline(line, 1024);
+  sline = line;
+  if (!sline.empty()) 
+    {
+    vtkColorTransferFunction *colorTransfer=vtkColorTransferFunction::New();
+    vpNode->GetColorTransferFunctionFromString(sline, colorTransfer);
+    vpNode->GetVolumeProperty()->SetColor(colorTransfer);
+    colorTransfer->Delete();
+    }
+  ifs.close();
 
   this->SetReadStateIdle();
    
@@ -144,14 +188,39 @@ int vtkMRMLVolumePropertyStorageNode::WriteData(vtkMRMLNode *refNode)
     return 0;
     }
   
-  //vtkMRMLTransformNode *transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
+  if (!refNode->IsA("vtkMRMLVolumePropertyNode") ) 
+    {
+    //vtkErrorMacro("Reference node is not a vtkMRMLVolumePropertyNode");
+    return 0;
+    }
+
+  vtkMRMLVolumePropertyNode *vpNode = vtkMRMLVolumePropertyNode::SafeDownCast(refNode);
   
+
   std::string fullName =  this->GetFullNameFromFileName();
   if (fullName == std::string("")) 
     {
     vtkErrorMacro("vtkMRMLTransformNode: File name not specified");
     return 0;
     }
+
+  std::ofstream ofs;
+#ifdef _WIN32
+  ofs.open(fullName.c_str(), ios::binary | ios::out);
+#else
+  ofs.open(fullName.c_str(), ios::out);
+#endif
+
+  if ( !ofs )
+    {
+    vtkErrorMacro("Cannot open volume property file: " << fullName);
+    return 0;
+    }
+  ofs << vpNode->GetPiecewiseFunctionString(vpNode->GetVolumeProperty()->GetScalarOpacity())  << "\"";
+  ofs << vpNode->GetPiecewiseFunctionString(vpNode->GetVolumeProperty()->GetGradientOpacity())<< "\"";
+  ofs << vpNode->GetColorTransferFunctionString(vpNode->GetVolumeProperty()->GetRGBTransferFunction())<< "\"";
+
+  ofs.close();
 
   int result =1;
   return result;

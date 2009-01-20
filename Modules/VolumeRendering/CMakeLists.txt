@@ -44,6 +44,7 @@ install(FILES
 set(VolumeRendering_SRCS
   vtkVolumeRenderingGUI.cxx
   vtkVolumeRenderingLogic.cxx
+  vtkMRMLVolumeRenderingParametersNode.cxx
   vtkMRMLVolumeRenderingNode.cxx
   vtkMRMLVolumeRenderingSelectionNode.cxx
   vtkSlicerNodeSelectorVolumeRenderingWidget.cxx
