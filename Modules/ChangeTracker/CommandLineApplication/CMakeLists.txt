@@ -47,6 +47,7 @@ target_link_libraries(
   ChangeTracker
   ITKIO 
   ITKCommon 
+  vtkCommon
   vtkTeem
   )
 # this is needed to set up testing
