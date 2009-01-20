@@ -77,10 +77,10 @@ proc runSlicer { {doNotIgnore ""} } {
   puts ""
   if { $ret } {
     puts "****** Error when not ignoring $doNotIgnore"
-    puts $res
   } else {
     puts "-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/ NO ERRORS"
   }
+  puts $res
 
   # restore ignored scripted modules
   puts -nonewline "restoring: "
