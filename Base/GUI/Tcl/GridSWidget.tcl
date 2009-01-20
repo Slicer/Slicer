@@ -102,7 +102,7 @@ itcl::body GridSWidget::destructor {} {
 #
 itcl::body GridSWidget::processEvent { {caller ""} {event ""} } {
 
-  if { [info command $sliceGUI] == "" } {
+  if { [info command $sliceGUI] == "" || [$sliceGUI GetLogic] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
     # self destruct
     ::SWidget::ProtectedDelete $this

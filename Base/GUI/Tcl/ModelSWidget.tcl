@@ -132,11 +132,13 @@ itcl::configbody ModelSWidget::modelID {
   # find the model node
   set modelNode [$::slicer3::MRMLScene GetNodeByID $modelID]
   if { $modelNode == "" } {
-    error "no node for id $modelID"
+    #error "no node for id $modelID"
+    return
   }
   set displayNode [$modelNode GetDisplayNode]
   if { $displayNode == "" } {
-    error "no display node for id $modelID"
+    #error "no display node for id $modelID"
+    return
   }
 
   # remove observation from old node and add to new node
@@ -245,8 +247,7 @@ itcl::body ModelSWidget::highlight { } {
   $o(textActor) SetVisibility $visibility
 
   #
-  # TODO: Map Model name to color (hard coded for slice models, otherwise
-  # extracted from the display node)
+  # set color (extracted from the display node)
   #
   set color "0.5 0.5 0.5"
   set modelNode [$::slicer3::MRMLScene GetNodeByID $modelID]
@@ -286,7 +287,7 @@ itcl::body ModelSWidget::highlight { } {
 itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
 
 
-  if { [info command $sliceGUI] == "" } {
+  if { [info command $sliceGUI] == "" || [$sliceGUI GetLogic] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
     # self destruct
     itcl::delete object $this

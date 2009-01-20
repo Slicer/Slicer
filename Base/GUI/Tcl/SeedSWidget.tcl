@@ -281,7 +281,7 @@ itcl::body SeedSWidget::highlight { } {
 
 itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
 
-  if { [info command $sliceGUI] == "" } {
+  if { [info command $sliceGUI] == "" || [$sliceGUI GetLogic] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
     # self destruct
     itcl::delete object $this

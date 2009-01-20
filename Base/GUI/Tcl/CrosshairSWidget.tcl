@@ -118,7 +118,7 @@ itcl::configbody CrosshairSWidget::rgba {
 itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
   # puts "$this $_sliceNode [$_sliceNode GetLayoutName] $caller $event"
 
-  if { [info command $sliceGUI] == "" } {
+  if { [info command $sliceGUI] == "" || [$sliceGUI GetLogic] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
     # self destruct
     ::SWidget::ProtectedDelete $this
@@ -195,7 +195,7 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
       "EnterEvent" {
         # hide the system cursor
         if { [$_sliceCompositeNode GetCrosshairMode] != 0 } {
-          $_interactor HideCursor
+          #$_interactor HideCursor
         }
         return
       }

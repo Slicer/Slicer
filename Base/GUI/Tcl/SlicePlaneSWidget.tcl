@@ -63,7 +63,6 @@ itcl::body SlicePlaneSWidget::constructor {sliceGUI} {
     $::slicer3::Broker AddObservation $sliceGUI $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI $event"
   }
 
-  #set o(plane) [vtkNew vtkImplicitPlaneWidget]
   set o(planeWidget) [vtkNew vtkImplicitPlaneWidget2]
   set o(planeRepresentation) [vtkNew vtkImplicitPlaneRepresentation]
   $o(planeWidget) SetRepresentation $o(planeRepresentation)
@@ -186,7 +185,7 @@ itcl::body SlicePlaneSWidget::processEvent { {caller ""} {event ""} } {
 
 itcl::body SlicePlaneSWidget::updateNodeFromWidget {sliceNode planeRepresentation} {
 
- # puts "updateNodeFromWidget, plane normal = [$planeRepresentation GetNormal]"
+  #puts "$this: updateNodeFromWidget, plane normal = [$planeRepresentation GetNormal]"
   set sliceToRAS [$sliceNode GetSliceToRAS]
 
   # zero out current translation

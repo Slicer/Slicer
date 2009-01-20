@@ -195,7 +195,7 @@ itcl::body SliceSWidget::resizeSliceNode {} {
   foreach {nodefovx nodefovy nodefovz} [$_sliceNode GetFieldOfView] {}
 
   if { $windoww == "10" && $windowh == "10" } {
-    puts "ignoring bogus resize"
+    #puts "ignoring bogus resize"
   } else {
     set scaling0 [expr $w / (1. * $nodeW)]
     set scaling1 [expr $h / (1. * $nodeH)]
@@ -247,7 +247,7 @@ itcl::body SliceSWidget::resizeSliceNode {} {
 itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   # puts "$this $_sliceNode [$_sliceNode GetLayoutName] $caller $event"
 
-  if { [info command $sliceGUI] == "" } {
+  if { [info command $sliceGUI] == "" || [$sliceGUI GetLogic] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
     # self destruct
     ::SWidget::ProtectedDelete $this
