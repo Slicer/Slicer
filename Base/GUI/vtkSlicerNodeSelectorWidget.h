@@ -139,7 +139,10 @@ public:
 
   // Description:
   // Reflect the state of the mrml scene in the menu
+  // - UpdateMenu only updates if widget is mapped
+  // - UnconditionalUpdateMenu updates even if not mapped
   void UpdateMenu();
+  void UnconditionalUpdateMenu();
 
   // Description:
   // Remove all menu entries
