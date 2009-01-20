@@ -17,6 +17,7 @@
 #include "vtkSlicerDiffusionWeightedVolumeDisplayWidget.h"
 #include "vtkSlicerDiffusionTensorVolumeDisplayWidget.h"
 #include "vtkSlicerScalarVolumeDisplayWidget.h"
+#include "vtkSlicerVectorVolumeDisplayWidget.h"
 #include "vtkSlicerLabelMapVolumeDisplayWidget.h"
 #include "vtkSlicerDiffusionEditorWidget.h"
 
@@ -164,6 +165,7 @@ protected:
 
     vtkKWFrame *LabelMapDisplayFrame;
     vtkKWFrame *ScalarDisplayFrame;
+    vtkKWFrame *VectorDisplayFrame;
     vtkKWFrame *DWIDisplayFrame;
     vtkKWFrame *DTIDisplayFrame;
     vtkKWFrame *VolumeDisplayFrame;
@@ -173,6 +175,7 @@ protected:
     vtkSlicerVolumeDisplayWidget *VolumeDisplayWidget;
     vtkSlicerLabelMapVolumeDisplayWidget *labelVDW;
     vtkSlicerScalarVolumeDisplayWidget *scalarVDW;
+    vtkSlicerVectorVolumeDisplayWidget *vectorVDW;
     vtkSlicerDiffusionWeightedVolumeDisplayWidget *dwiVDW;
     vtkSlicerDiffusionTensorVolumeDisplayWidget *dtiVDW;
     vtkSlicerVolumeHeaderWidget *VolumeHeaderWidget;

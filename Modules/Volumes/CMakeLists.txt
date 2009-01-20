@@ -58,6 +58,7 @@ set(Volumes_SRCS
   vtkSlicerVolumeDisplayWidget.cxx
   vtkSlicerLabelMapVolumeDisplayWidget.cxx
   vtkSlicerScalarVolumeDisplayWidget.cxx
+  vtkSlicerVectorVolumeDisplayWidget.cxx
   vtkSlicerDiffusionWeightedVolumeDisplayWidget.cxx
   vtkSlicerDiffusionTensorVolumeDisplayWidget.cxx
   vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget.cxx

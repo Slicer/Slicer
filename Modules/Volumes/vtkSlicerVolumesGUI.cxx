@@ -50,6 +50,7 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
   this->VolumeHeaderWidget = NULL;
   this->VolumeDisplayWidget = NULL;
   this->scalarVDW = NULL;
+  this->vectorVDW = NULL;
   this->labelVDW = NULL;
   this->dwiVDW = NULL;
   this->dtiVDW = NULL;
@@ -64,6 +65,7 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
 
   this->ScalarDisplayFrame = NULL;
   this->LabelMapDisplayFrame = NULL;
+  this->VectorDisplayFrame = NULL;
   this->DWIDisplayFrame = NULL;
   this->DTIDisplayFrame = NULL;
   this->VolumeDisplayFrame = NULL;
@@ -161,6 +163,12 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     this->labelVDW->SetParent(NULL );
     this->labelVDW->Delete ( );
     }
+  if (this->vectorVDW)
+    {
+    this->vectorVDW->RemoveMRMLObservers();
+    this->vectorVDW->SetParent(NULL );
+    this->vectorVDW->Delete ( );
+    }
   if (this->scalarVDW)
     {
     this->scalarVDW->RemoveMRMLObservers();
@@ -188,6 +196,11 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     {
     this->ScalarDisplayFrame->SetParent(NULL );
     this->ScalarDisplayFrame->Delete( );
+    }
+  if (this->VectorDisplayFrame)
+    {
+    this->VectorDisplayFrame->SetParent(NULL );
+    this->VectorDisplayFrame->Delete( );
     }
   if (this->DWIDisplayFrame)
     {
@@ -735,19 +748,17 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
       }
     else if ( !strcmp(refNode->GetClassName(), "vtkMRMLVectorVolumeNode"))
       {
-      /* TODO: 
-      if (this->VolumeDisplayWidget != vectorVDW)
-      {
-      if (this->VolumeDisplayWidget != NULL)
-      {
-      this->VolumeDisplayWidget->TearDownWidget();
-      }
-      tearDown = 1;
-      this->CreateVectorDisplayWidget();
-      this->VolumeDisplayWidget = this->vectorVDW;
-      this->VolumeDisplayFrame = this->VectorDisplayFrame;
-      }
-      */
+      if (this->VolumeDisplayWidget == NULL || this->VolumeDisplayWidget != vectorVDW)
+        {
+        if (this->VolumeDisplayWidget != NULL)
+          {
+          this->VolumeDisplayWidget->TearDownWidget();
+          }
+        tearDown = 1;
+        this->CreateVectorDisplayWidget();
+        this->VolumeDisplayWidget = this->vectorVDW;
+        this->VolumeDisplayFrame = this->VectorDisplayFrame;
+        }
       }
     else if ( !strcmp(refNode->GetClassName(), "vtkMRMLDiffusionWeightedVolumeNode"))
       {
@@ -1031,6 +1042,12 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->Script( "pack %s -in %s",
                 this->LabelMapDisplayFrame->GetWidgetName(),this->DisplayFrame->GetFrame()->GetWidgetName());
 
+  this->VectorDisplayFrame = vtkKWFrame::New();
+  this->VectorDisplayFrame->SetParent( this->DisplayFrame->GetFrame() );
+  this->VectorDisplayFrame->Create( );
+  this->Script( "pack %s -in %s",
+                this->VectorDisplayFrame->GetWidgetName(),this->DisplayFrame->GetFrame()->GetWidgetName());
+
   this->DWIDisplayFrame = vtkKWFrame::New();
   this->DWIDisplayFrame->SetParent( this->DisplayFrame->GetFrame() );
   this->DWIDisplayFrame->Create( );
@@ -1153,7 +1170,16 @@ void vtkSlicerVolumesGUI::CreateScalarDisplayWidget ( )
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::CreateVectorDisplayWidget ( )
 {
-  // TODO fill in
+  if (this->vectorVDW == NULL)
+    {
+    this->vectorVDW = vtkSlicerVectorVolumeDisplayWidget::New( );
+    this->vectorVDW->SetParent( this->VectorDisplayFrame );
+    this->vectorVDW->SetMRMLScene(this->GetMRMLScene());
+    //this->vectorVDW->AddMRMLObservers();
+    this->vectorVDW->Create();
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                   vectorVDW->GetWidgetName(), this->VectorDisplayFrame->GetWidgetName());
+    }
 }
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::CreateLabelMapDisplayWidget ( )

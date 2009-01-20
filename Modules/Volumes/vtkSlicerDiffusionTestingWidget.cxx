@@ -426,7 +426,7 @@ void vtkSlicerDiffusionTestingWidget::RunDWI()
   // create a command line module node
   vtkMRMLCommandLineModuleNode *tensorCLM = vtkMRMLCommandLineModuleNode::SafeDownCast(
     this->MRMLScene->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
-  this->MRMLScene->AddNode (tensorCLM);
+  this->MRMLScene->AddNodeNoNotify (tensorCLM);
 
   // set its name  
   tensorCLM->SetModuleDescription("Diffusion Tensor Estimation");
@@ -448,7 +448,7 @@ void vtkSlicerDiffusionTestingWidget::RunDWI()
     this->MRMLScene->CreateNodeByClass("vtkMRMLScalarVolumeNode"));
   baselineNodeCLM->SetScene(this->GetMRMLScene());
   baselineNodeCLM->SetName(nodeName1.str().c_str());
-  this->MRMLScene->AddNode(baselineNodeCLM);
+  this->MRMLScene->AddNodeNoNotify(baselineNodeCLM);
 
   std::stringstream nodeName2;
   nodeName2 << "DiffusionEditor_" << this->NumberOfTensorEstimations <<"._" << "ThresholdMask";
@@ -457,7 +457,7 @@ void vtkSlicerDiffusionTestingWidget::RunDWI()
     this->MRMLScene->CreateNodeByClass("vtkMRMLScalarVolumeNode"));
   maskNodeCLM->SetScene(this->GetMRMLScene());
   maskNodeCLM->SetName(nodeName2.str().c_str());
-  this->MRMLScene->AddNode(maskNodeCLM);
+  this->MRMLScene->AddNodeNoNotify(maskNodeCLM);
 
   std::stringstream nodeName3;
   nodeName3 << "DiffusionEditor_" << this->NumberOfTensorEstimations <<"._" << "TensorNode";
@@ -466,7 +466,7 @@ void vtkSlicerDiffusionTestingWidget::RunDWI()
     this->MRMLScene->CreateNodeByClass("vtkMRMLDiffusionTensorVolumeNode"));
   tensorNodeCLM->SetScene(this->GetMRMLScene());
   tensorNodeCLM->SetName(nodeName3.str().c_str());
-  this->MRMLScene->AddNode(tensorNodeCLM);
+  this->MRMLScene->AddNodeNoNotify(tensorNodeCLM);
 
   tensorNodeCLM->SetBaselineNodeID(baselineNodeCLM->GetID());
   tensorNodeCLM->SetMaskNodeID(maskNodeCLM->GetID());
