@@ -957,6 +957,23 @@ int Slicer3_main(int argc, char *argv[])
   // installation or build tree) to the user paths
   modulePaths = userModulePaths + PathSep + defaultModulePaths;
 
+  // add module path to the shared library load path so that modules can
+  // be executed when they depend on their on libs
+#ifdef __APPLE__
+  char *pathVar = "DYLD_LIBRARY_PATH";
+#elif _WIN32
+  char *pathVar = "PATH";
+#else
+  char *pathVar = "LD_LIBRARY_PATH";
+#endif
+
+  std::string sharedLibPath;
+  vtksys::SystemTools::GetEnv(pathVar, sharedLibPath);
+  sharedLibPath = std::string(pathVar) + "=" + sharedLibPath + PathSep + modulePaths;
+  vtkKWApplication::PutEnv(const_cast <char *> (sharedLibPath.c_str()));
+  std::string newSharedLibPath;
+  vtksys::SystemTools::GetEnv(pathVar, newSharedLibPath);
+
   vtksys_stl::vector<vtksys_stl::string> modulePathsList;
   vtksys::SystemTools::Split(modulePaths.c_str(), modulePathsList, PathSep[0]);
   vtksys_stl::vector<vtksys_stl::string>::iterator module_paths_it;
