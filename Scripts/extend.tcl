@@ -326,7 +326,7 @@ foreach s3ext $::EXTEND(s3extFiles) {
   if { $isWindows } {
     runcmd $::MAKE $ext(name).sln /build $::VTK_BUILD_TYPE /project ALL_BUILD
   } else {
-    runcmd $::MAKE
+    eval runcmd $::MAKE
   }
 
   # run the tests
@@ -336,7 +336,7 @@ foreach s3ext $::EXTEND(s3extFiles) {
     if { $isWindows } {
       set ret [catch "runcmd $::MAKE $ext(name).sln /build $::VTK_BUILD_TYPE /project $::EXTEND(test-type)" res]
     } else {
-      set ret [catch "runcmd $::MAKE $::EXTEND(test-type)" res]
+      set ret [catch "eval runcmd $::MAKE $::EXTEND(test-type)" res]
     }
   }
 
@@ -350,14 +350,21 @@ foreach s3ext $::EXTEND(s3extFiles) {
   if { $isWindows } {
     runcmd $::MAKE $ext(name).sln /build $::VTK_BUILD_TYPE /project INSTALL
   } else {
-    runcmd $::MAKE install
+    eval runcmd $::MAKE install
   }
 
   # make the zip file
   # - TODO: first, write a config file that describes the build machine
-  cd $::Slicer3_EXT/$ext(name)-install/lib/Slicer3/Plugins
-  set ext(zipFileName) $::Slicer3_EXT/$ext(name)-install/lib/Slicer3/Plugins/$ext(name)-$ext(date)-$::env(BUILD).zip 
-  runcmd zip -r9 $ext(zipFileName) $ext(name)
+  set dir $::Slicer3_EXT/$ext(name)-install/lib/Slicer3
+  foreach dirType {Modules Plugins} {
+    if { [file exists $dir/$dirType] } {
+      set dir $dir/$dirType
+      break
+    }
+  }
+  cd $dir
+  set ext(zipFileName) $dir/$ext(name)-$ext(date)-$::env(BUILD).zip 
+  runcmd zip -r9 $ext(zipFileName) .
 
   # upload it
   # - read zip file into 'data' variable
