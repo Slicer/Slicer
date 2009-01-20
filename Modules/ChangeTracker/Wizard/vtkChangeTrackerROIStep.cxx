@@ -924,12 +924,12 @@ void vtkChangeTrackerROIStep::ProcessMRMLEvents(vtkObject *caller, unsigned long
           bbox1ijk[i] = tmp;
           }
         }
-      ctNode->SetROIMin(0, bbox0ijk[0]);
-      ctNode->SetROIMax(0, bbox1ijk[0]);
-      ctNode->SetROIMin(1, bbox0ijk[1]);
-      ctNode->SetROIMax(1, bbox1ijk[1]);
-      ctNode->SetROIMin(2, bbox0ijk[2]);
-      ctNode->SetROIMax(2, bbox1ijk[2]);
+      ctNode->SetROIMin(0, (int)bbox0ijk[0]);
+      ctNode->SetROIMax(0, (int)bbox1ijk[0]);
+      ctNode->SetROIMin(1, (int)bbox0ijk[1]);
+      ctNode->SetROIMax(1, (int)bbox1ijk[1]);
+      ctNode->SetROIMin(2, (int)bbox0ijk[2]);
+      ctNode->SetROIMax(2, (int)bbox1ijk[2]);
       this->ROIMapUpdate();
       roiUpdateGuard = false;
       }

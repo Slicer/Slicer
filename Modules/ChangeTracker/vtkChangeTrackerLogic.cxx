@@ -775,8 +775,8 @@ void vtkChangeTrackerLogic::MeassureGrowth(int SegmentThreshMin, int SegmentThre
     return;
 
   }
-  int IntensityMin = SegmentThreshMin - this->Analysis_Intensity_Threshold ;
-  int IntensityMax = SegmentThreshMax + this->Analysis_Intensity_Threshold ;
+  int IntensityMin = SegmentThreshMin - (int) this->Analysis_Intensity_Threshold ;
+  int IntensityMax = SegmentThreshMax + (int) this->Analysis_Intensity_Threshold ;
 
   // Biasing results - this is a hack right now 
   // Used in in journal publication - for some reason the pipeline favors shrinkage over growth 
