@@ -104,7 +104,7 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
       return
   }
 
-  if { [info command $sliceGUI] == "" } {
+  if { [info command $sliceGUI] == "" || [$sliceGUI GetLogic] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
     # self destruct
     ::SWidget::ProtectedDelete $this
