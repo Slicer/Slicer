@@ -113,6 +113,7 @@ void vtkSlicerNodeSelectorWidget::SetMRMLScene( vtkMRMLScene *aMRMLScene)
     this->MRMLScene->AddObserver( vtkMRMLScene::NodeRemovedEvent, this->MRMLCallbackCommand );
     this->MRMLScene->AddObserver( vtkMRMLScene::NewSceneEvent, this->MRMLCallbackCommand );
     this->MRMLScene->AddObserver( vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand );
+    this->MRMLScene->AddObserver( vtkMRMLScene::SceneEditedEvent, this->MRMLCallbackCommand );
     this->SetBinding ( "<Map>", this, "UpdateMenu");
     }
 
