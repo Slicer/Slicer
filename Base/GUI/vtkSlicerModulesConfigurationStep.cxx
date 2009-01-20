@@ -277,9 +277,7 @@ void vtkSlicerModulesConfigurationStep::Update()
     vtksys_stl::string platform;
     vtksys::SystemTools::GetEnv("BUILD", platform);
 
-    // :TODO: 20090108 tgl: Uncomment and use macro for "real" use.
-
-    std::string build_date("2009-01-07"); // Slicer3_VERSION_PATCH);
+    std::string build_date(Slicer3_VERSION_PATCH);
 
     std::string ext_slicer_org("http://ext.slicer.org/ext/");
     ext_slicer_org += build_date;
