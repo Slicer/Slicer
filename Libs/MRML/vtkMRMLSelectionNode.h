@@ -65,10 +65,16 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   // on which it is based is a special case in vtk's parser).
 
   // Description:
-  // the ID of a MRMLVolumeNode
+  // the ID of a MRMLVolumeNode (typically background)
   vtkGetStringMacro (ActiveVolumeID);
   vtkSetReferenceStringMacro (ActiveVolumeID);
   void SetReferenceActiveVolumeID (char *id) { this->SetActiveVolumeID(id); };
+
+  // Description:
+  // the ID of a MRMLVolumeNode (typically foreground)
+  vtkGetStringMacro (SecondaryVolumeID);
+  vtkSetReferenceStringMacro (SecondaryVolumeID);
+  void SetReferenceSecondaryVolumeID (char *id) { this->SetSecondaryVolumeID(id); };
 
   // Description:
   // the ID of a MRMLVolumeNode
@@ -113,6 +119,7 @@ protected:
   void operator=(const vtkMRMLSelectionNode&);
 
   char *ActiveVolumeID;
+  char *SecondaryVolumeID;
   char *ActiveLabelVolumeID;
   char *ActiveFiducialListID;
   char *ActiveROIListID;

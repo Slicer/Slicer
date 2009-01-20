@@ -55,6 +55,7 @@ vtkMRMLSelectionNode::vtkMRMLSelectionNode()
   this->SingletonTag = const_cast<char *>("vtkMRMLSelectionNode");
 
   this->ActiveVolumeID = NULL;
+  this->SecondaryVolumeID = NULL;
   this->ActiveLabelVolumeID = NULL;
   this->ActiveFiducialListID = NULL;
   this->ActiveROIListID  =NULL;
@@ -70,6 +71,11 @@ vtkMRMLSelectionNode::~vtkMRMLSelectionNode()
     {
     delete [] this->ActiveVolumeID;
     this->ActiveVolumeID = NULL;
+    }
+  if (this->SecondaryVolumeID)
+    {
+    delete [] this->SecondaryVolumeID;
+    this->SecondaryVolumeID = NULL;
     }
   if (this->ActiveLabelVolumeID)
     {
@@ -111,6 +117,7 @@ void vtkMRMLSelectionNode::WriteXML(ostream& of, int nIndent)
   vtkIndent indent(nIndent);
 
   of << indent << " activeVolumeID=\"" << (this->ActiveVolumeID ? this->ActiveVolumeID : "NULL") << "\"";
+  of << indent << " secondaryVolumeID=\"" << (this->SecondaryVolumeID ? this->SecondaryVolumeID : "NULL") << "\"";
   of << indent << " activeLabelVolumeID=\"" << (this->ActiveLabelVolumeID ? this->ActiveLabelVolumeID : "NULL") << "\"";
   of << indent << " activeFiducialListID=\"" << (this->ActiveFiducialListID ? this->ActiveFiducialListID : "NULL") << "\"";
   of << indent << " activeROIListID=\"" << (this->ActiveROIListID ? this->ActiveROIListID : "NULL") << "\"";
@@ -126,6 +133,10 @@ void vtkMRMLSelectionNode::UpdateReferenceID(const char *oldID, const char *newI
   if (this->ActiveVolumeID && !strcmp(oldID, this->ActiveVolumeID))
     {
     this->SetActiveVolumeID(newID);
+    }
+  if (this->SecondaryVolumeID && !strcmp(oldID, this->SecondaryVolumeID))
+    {
+    this->SetSecondaryVolumeID(newID);
     }
   if (this->ActiveLabelVolumeID && !strcmp(oldID, this->ActiveLabelVolumeID))
     {
@@ -158,6 +169,10 @@ void vtkMRMLSelectionNode::UpdateReferences()
   if (this->ActiveVolumeID != NULL && this->Scene->GetNodeByID(this->ActiveVolumeID) == NULL)
     {
     this->SetActiveVolumeID(NULL);
+    }
+  if (this->SecondaryVolumeID != NULL && this->Scene->GetNodeByID(this->SecondaryVolumeID) == NULL)
+    {
+    this->SetSecondaryVolumeID(NULL);
     }
   if (this->ActiveLabelVolumeID != NULL && this->Scene->GetNodeByID(this->ActiveLabelVolumeID) == NULL)
     {
@@ -198,6 +213,11 @@ void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
       this->SetActiveVolumeID(attValue);
       //this->Scene->AddReferencedNodeID(this->ActiveVolumeID, this);
       }
+    if (!strcmp(attName, "secondaryVolumeID")) 
+      {
+      this->SetSecondaryVolumeID(attValue);
+      //this->Scene->AddReferencedNodeID(this->ActiveVolumeID, this);
+      }
     if (!strcmp(attName, "activeLabelVolumeID")) 
       {
       this->SetActiveLabelVolumeID(attValue);
@@ -236,6 +256,7 @@ void vtkMRMLSelectionNode::Copy(vtkMRMLNode *anode)
   vtkMRMLSelectionNode *node = vtkMRMLSelectionNode::SafeDownCast(anode);
 
   this->SetActiveVolumeID(node->GetActiveVolumeID());
+  this->SetSecondaryVolumeID(node->GetActiveVolumeID());
   this->SetActiveLabelVolumeID(node->GetActiveLabelVolumeID());
   this->SetActiveFiducialListID(node->GetActiveFiducialListID());
   this->SetActiveCameraID (node->GetActiveCameraID());
@@ -249,6 +270,7 @@ void vtkMRMLSelectionNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
 
   os << "ActiveVolumeID: " << ( (this->ActiveVolumeID) ? this->ActiveVolumeID : "None" ) << "\n";
+  os << "SecondaryVolumeID: " << ( (this->SecondaryVolumeID) ? this->SecondaryVolumeID : "None" ) << "\n";
   os << "ActiveLabelVolumeID: " << ( (this->ActiveLabelVolumeID) ? this->ActiveLabelVolumeID : "None" ) << "\n";
   os << "ActiveFiducialListID: " << ( (this->ActiveFiducialListID) ? this->ActiveFiducialListID : "None" ) << "\n";
   os << "ActiveCameraID: " << ( (this->ActiveCameraID) ? this->ActiveCameraID : "None" ) << "\n";
