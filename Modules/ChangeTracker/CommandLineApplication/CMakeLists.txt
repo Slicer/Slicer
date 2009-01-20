@@ -50,6 +50,7 @@ target_link_libraries(
   vtkCommon
   vtkTeem
   )
+slicer3_install_plugins(${CLP_MODULE})
 
 # this is needed to set up testing
 add_library(${CLP_MODULE}Lib SHARED ${${CLP_MODULE}_SOURCE})
@@ -63,6 +64,4 @@ target_link_libraries(
   vtkCommon
   vtkTeem
   )
-  
-
-slicer3_install_plugins(${CLP_MODULE})
+slicer3_install_plugins(${CLP_MODULE}Lib)
