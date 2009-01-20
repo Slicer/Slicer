@@ -80,8 +80,6 @@ itcl::body SlicePlaneSWidget::constructor {sliceGUI} {
   $o(planeRepresentation) PlaceWidget -100 100 -100 100 -100 100
 
   $::slicer3::Broker AddObservation $o(planeWidget) AnyEvent "::SWidget::ProtectedCallback $this processEvent $o(planeWidget) AnyEvent"
-#  $::slicer3::Broker AddObservation $o(planeWidget) AnyEvent "$this processEvent $o(planeWidget) AnyEvent"
-
 }
 
 
@@ -104,7 +102,7 @@ itcl::body SlicePlaneSWidget::processEvent { {caller ""} {event ""} } {
       return
   }
 
-  if { [info command $sliceGUI] == "" } {
+  if { [info command $sliceGUI] == "" || [$sliceGUI GetLogic] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
     # self destruct
     ::SWidget::ProtectedDelete $this
