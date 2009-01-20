@@ -1301,7 +1301,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
   this->MainSlicerWindow->GetEditMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
 
 #ifdef Slicer3_USE_PYTHON
-  i = this->MainSlicerWindow->GetWindowMenu()->AddCommand ( "Python console", NULL, "$::slicer3::ApplicationGUI PythonConsole" );
+  i = this->MainSlicerWindow->GetWindowMenu()->AddCommand ( "Python Interactor", NULL, "$::slicer3::ApplicationGUI PythonConsole" );
   this->MainSlicerWindow->GetWindowMenu()->SetItemAccelerator ( i, "Ctrl+P");
   this->MainSlicerWindow->GetWindowMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
 #endif
@@ -1433,6 +1433,39 @@ void vtkSlicerApplicationGUI::PythonConsole (  )
 #endif
 }
 
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::PythonCommand ( char *cmd )
+{
+  
+#ifdef Slicer3_USE_PYTHON
+  PyObject* d = 
+    (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary());
+  if ( d == NULL )
+    {
+    vtkSlicerApplication::GetInstance()->RequestDisplayMessage ( "Error", "Failed to startup python interpreter: dictionary null" );
+    return;
+    }
+    
+  PyObject* v = PyRun_StringFlags ( cmd,
+                                    Py_file_input,
+                                    d,
+                                    d,
+                                    NULL);
+
+  if (v == NULL)
+    {
+    PyErr_Print();
+    vtkSlicerApplication::GetInstance()->RequestDisplayMessage ( "Error", "Python Fail" );
+    return;
+    }
+  Py_DECREF ( v );
+  if (Py_FlushLine())
+    {
+    PyErr_Clear();
+    }
+#endif
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::SetCurrentModuleToHome (  )
