@@ -250,6 +250,18 @@ std::string vtkSlicerNodeSelectorWidget::FindEntryName(vtkMRMLNode *node)
 //----------------------------------------------------------------------------
 void vtkSlicerNodeSelectorWidget::UpdateMenu()
 {
+
+  if (this->IsCreated() == 0 || this->IsMapped() == 0)
+    {
+    return;
+    }
+  
+  this->UnconditionalUpdateMenu();
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerNodeSelectorWidget::UnconditionalUpdateMenu()
+{
   if ( !this || !this->MRMLScene )
     {
     return;
@@ -260,11 +272,6 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
     return;
     }
 
-  if (this->IsCreated() == 0 || this->IsMapped() == 0)
-    {
-    return;
-    }
-  
   NodeID_to_EntryName.clear();
 
   vtkMRMLNode *oldSelectedNode = this->GetSelected();
