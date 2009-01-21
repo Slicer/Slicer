@@ -634,7 +634,6 @@ void  vtkChangeTrackerGUI::SliceLogicCallback(vtkObject *caller, unsigned long e
 }
 
 void vtkChangeTrackerGUI::PropagateVolumeSelection() {
-   cerr << "PropagateVolumeSelection called" << endl;
    vtkSlicerApplicationLogic *applicationLogic = this->Logic->GetApplicationLogic();
    applicationLogic->PropagateVolumeSelection( 0 );
    if (!this->SliceLogic) return;
