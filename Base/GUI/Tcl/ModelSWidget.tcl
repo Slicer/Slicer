@@ -96,8 +96,11 @@ itcl::body ModelSWidget::constructor {sliceGUI} {
   $this processEvent
 
   # observe the slice GUI for user input events
+  # TODO: no mouse events until we start interacting with the slice nodes
   $::slicer3::Broker AddObservation $sliceGUI DeleteEvent "::SWidget::ProtectedDelete $this"
-  foreach event {LeftButtonPressEvent LeftButtonReleaseEvent MouseMoveEvent} {
+  #set events {LeftButtonPressEvent LeftButtonReleaseEvent MouseMoveEvent}
+  set events ""
+  foreach event $events {
     $::slicer3::Broker AddObservation $sliceGUI $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI $event"
   }
 
