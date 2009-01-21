@@ -253,11 +253,12 @@ void vtkChangeTrackerSegmentationStep::PreSegmentScan1Define() {
   // ------------------------------
   this->PreSegmentNode = volumesLogic->CreateLabelVolume(Node->GetScene(),volumeNode, "TG_Scan1_PreSegment");
   this->PreSegmentNode->SetAndObserveImageData(this->PreSegment->GetOutput());
-  applicationGUI->GetMainSliceGUI("Red")->GetSliceController()->GetForegroundSelector()->SetSelected(this->PreSegmentNode);
-  applicationGUI->GetMainSliceGUI("Yellow")->GetSliceController()->GetForegroundSelector()->SetSelected(this->PreSegmentNode);
-  applicationGUI->GetMainSliceGUI("Green")->GetSliceController()->GetForegroundSelector()->SetSelected(this->PreSegmentNode);
+  
+  applicationGUI->GetMainSliceGUI("Red")->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID(this->PreSegmentNode->GetID());
+  applicationGUI->GetMainSliceGUI("Yellow")->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID(this->PreSegmentNode->GetID());
+  applicationGUI->GetMainSliceGUI("Green")->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID(this->PreSegmentNode->GetID());
+
   applicationGUI->GetSlicesControlGUI()->GetSliceFadeScale()->SetValue(0.6);
-  applicationLogic->PropagateVolumeSelection();
   // ------------------------------------
   // Show Segmentation through 3D Volume Rendering
   // ------------------------------------
