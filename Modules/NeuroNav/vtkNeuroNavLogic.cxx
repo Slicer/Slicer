@@ -235,6 +235,36 @@ void vtkNeuroNavLogic::UpdateTransformNodeByName(const char *name)
 }
 
 
+void vtkNeuroNavLogic::UpdateFiducialSeeding(const char *name)
+{
+  if (name)
+    {
+    this->GetApplicationLogic()->GetMRMLScene()->SaveStateForUndo();
+
+    vtkMRMLScene* scene = this->GetApplicationLogic()->GetMRMLScene();
+    vtkCollection* collection = scene->GetNodesByName(name);
+
+    if (collection != NULL && collection->GetNumberOfItems() == 0)
+      {
+      // the node name does not exist in the MRML tree
+      return;
+      }
+
+    vtkMRMLFiducialListNode *flist = vtkMRMLFiducialListNode::SafeDownCast(collection->GetItemAsObject(0));
+    if (flist == NULL)
+      {
+      vtkDebugMacro("NeuroNavLogic: the fiducial list node doesn't exist.");
+      return;
+      }
+    float *xyz = flist->GetNthFiducialXYZ(0); 
+    cout << "befor: " << xyz[0] << "  " << xyz[1] << "  " << xyz[2] << endl;
+//    cout << "before: " << xyz[0] << "  " << xyz[1] << "  " << xyz[2] << endl;
+//    this->GetCurrentPosition(&xyz[0], &xyz[1], &xyz[2]);
+    flist->SetNthFiducialXYZ(0, 20, 10, 30); 
+    }
+}
+
+
 void vtkNeuroNavLogic::UpdateDisplay(int sliceNo1, int sliceNo2, int sliceNo3)
 {
   if (! this->OriginalTrackerNode)

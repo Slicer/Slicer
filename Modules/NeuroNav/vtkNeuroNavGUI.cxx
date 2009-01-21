@@ -69,6 +69,7 @@ vtkNeuroNavGUI::vtkNeuroNavGUI ( )
   this->Logic = NULL;
 
   this->LocatorCheckButton = NULL;
+  this->TractographyCheckButton = NULL;
   this->HandleCheckButton = NULL;
   this->GuideCheckButton = NULL;
 
@@ -82,6 +83,7 @@ vtkNeuroNavGUI::vtkNeuroNavGUI ( )
   this->GreenSliceMenu = NULL;
 
   this->TransformNodeNameEntry = NULL;
+  this->FiducialListNodeNameEntry = NULL;
 
   this->PatCoordinatesEntry = NULL;
   this->SlicerCoordinatesEntry = NULL;
@@ -111,6 +113,11 @@ vtkNeuroNavGUI::~vtkNeuroNavGUI ( )
     {
     this->LocatorCheckButton->SetParent(NULL );
     this->LocatorCheckButton->Delete ( );
+    }
+  if (this->TractographyCheckButton)
+    {
+    this->TractographyCheckButton->SetParent(NULL );
+    this->TractographyCheckButton->Delete ( );
     }
   if (this->HandleCheckButton)
     {
@@ -165,7 +172,11 @@ vtkNeuroNavGUI::~vtkNeuroNavGUI ( )
     this->TransformNodeNameEntry->SetParent(NULL);
     this->TransformNodeNameEntry->Delete();
     }
-
+  if (this->FiducialListNodeNameEntry)
+    {
+    this->FiducialListNodeNameEntry->SetParent(NULL);
+    this->FiducialListNodeNameEntry->Delete();
+    }
   if (this->PatCoordinatesEntry)
     {
     this->PatCoordinatesEntry->SetParent(NULL );
@@ -691,8 +702,6 @@ void vtkNeuroNavGUI::ProcessTimerEvents()
 
     const char *nodeName = this->TransformNodeNameEntry->GetWidget()->GetValue();
     this->GetLogic()->UpdateTransformNodeByName(nodeName);
-
-
     int checked = this->FreezeCheckButton->GetSelectedState(); 
     if (!checked)
       {
@@ -715,6 +724,15 @@ void vtkNeuroNavGUI::ProcessTimerEvents()
       this->GetLogic()->UpdateDisplay(sn1, sn2, sn3);
       }
 
+
+    // Tractography seeding
+    checked = this->TractographyCheckButton->GetSelectedState(); 
+    if (checked)
+    {
+    const char *nodeName2 = this->FiducialListNodeNameEntry->GetWidget()->GetValue();
+    this->GetLogic()->UpdateFiducialSeeding(nodeName2);
+    }
+ 
     vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(), 
                                          this->TimerInterval,
                                          this, "ProcessTimerEvents");        
@@ -1023,9 +1041,9 @@ void vtkNeuroNavGUI::BuildGUIForTrackingFrame ()
   this->TransformNodeNameEntry = vtkKWEntryWithLabel::New();
   this->TransformNodeNameEntry->SetParent(displayFrame->GetFrame());
   this->TransformNodeNameEntry->Create();
-  this->TransformNodeNameEntry->SetWidth(25);
-  this->TransformNodeNameEntry->SetLabelWidth(19);
-  this->TransformNodeNameEntry->SetLabelText("Transform Node Name:");
+  this->TransformNodeNameEntry->SetWidth(40);
+  this->TransformNodeNameEntry->SetLabelWidth(30);
+  this->TransformNodeNameEntry->SetLabelText("Input (Transform) Node Name:");
   this->TransformNodeNameEntry->GetWidget()->SetValue ( "Tracker" );
   this->Script(
                "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
@@ -1061,6 +1079,37 @@ void vtkNeuroNavGUI::BuildGUIForTrackingFrame ()
 
   this->Script("pack %s -side left -anchor w -padx 2 -pady 2", 
                this->LocatorCheckButton->GetWidgetName());
+
+
+  // Tractography frame: Options to tractography display 
+  // -----------------------------------------
+  vtkKWFrameWithLabel *tractographyFrame = vtkKWFrameWithLabel::New ( );
+  tractographyFrame->SetParent ( trackingFrame->GetFrame() );
+  tractographyFrame->Create ( );
+  tractographyFrame->SetLabelText ("Tractography Seeding");
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 tractographyFrame->GetWidgetName() );
+
+
+  this->FiducialListNodeNameEntry = vtkKWEntryWithLabel::New();
+  this->FiducialListNodeNameEntry->SetParent(tractographyFrame->GetFrame());
+  this->FiducialListNodeNameEntry->Create();
+  this->FiducialListNodeNameEntry->SetWidth(40);
+  this->FiducialListNodeNameEntry->SetLabelWidth(30);
+  this->FiducialListNodeNameEntry->SetLabelText("Fiducial List Node Name:");
+  this->FiducialListNodeNameEntry->GetWidget()->SetValue ( "L" );
+  this->Script(
+               "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+               this->FiducialListNodeNameEntry->GetWidgetName());
+
+  this->TractographyCheckButton = vtkKWCheckButton::New();
+  this->TractographyCheckButton->SetParent(tractographyFrame->GetFrame());
+  this->TractographyCheckButton->Create();
+  this->TractographyCheckButton->SelectedStateOff();
+  this->TractographyCheckButton->SetText("Fiducial Seeding");
+
+  this->Script("pack %s -side left -anchor w -padx 2 -pady 2", 
+               this->TractographyCheckButton->GetWidgetName());
 
 
   // Driver frame: Locator can drive slices 
@@ -1161,6 +1210,7 @@ void vtkNeuroNavGUI::BuildGUIForTrackingFrame ()
 
   trackingFrame->Delete();
   displayFrame->Delete();
+  tractographyFrame->Delete();
   driverFrame->Delete();
   modeFrame->Delete();
   sliceFrame->Delete();

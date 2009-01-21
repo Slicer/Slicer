@@ -125,6 +125,7 @@ public:
   void UpdateTransformNodeByName(const char *name);
   int PerformPatientToImageRegistration();
 
+  void UpdateFiducialSeeding(const char *name);
 
 protected:
 
@@ -201,6 +202,7 @@ private:
 
   // updated transform after patient to image registration
   vtkMRMLLinearTransformNode *UpdatedTrackerNode;
+
 };
 
 #endif

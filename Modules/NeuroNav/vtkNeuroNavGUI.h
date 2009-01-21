@@ -96,6 +96,7 @@ protected:
   virtual ~vtkNeuroNavGUI ( );
 
   vtkKWCheckButton *LocatorCheckButton;
+  vtkKWCheckButton *TractographyCheckButton;
   vtkKWCheckButton *HandleCheckButton;
   vtkKWCheckButton *GuideCheckButton;
 
@@ -109,6 +110,9 @@ protected:
   vtkKWMenuButton *GreenSliceMenu;
 
   vtkKWEntryWithLabel *TransformNodeNameEntry;
+  vtkKWEntryWithLabel *FiducialListNodeNameEntry;
+
+ 
 
   vtkKWEntryWithLabel *PatCoordinatesEntry;
   vtkKWEntryWithLabel *SlicerCoordinatesEntry;
