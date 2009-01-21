@@ -726,17 +726,11 @@ int vtkChangeTrackerROIStep::ROIMapShow() {
   oldSliceSetting[1] = double(applicationGUI->GetMainSliceGUI("Yellow")->GetSliceController()->GetOffsetScale()->GetValue());
   oldSliceSetting[2] = double(applicationGUI->GetMainSliceGUI("Green")->GetSliceController()->GetOffsetScale()->GetValue());
 
-  //applicationGUI->GetMainSliceGUI("Red")->GetSliceController()->GetBackgroundSelector()->SetSelected(volumeNode);
-  applicationGUI->GetMainSliceGUI("Red")->GetSliceController()->GetForegroundSelector()->SetSelected(this->ROILabelMapNode);
-
-  //applicationGUI->GetMainSliceGUI("Yellow")->GetSliceController()->GetBackgroundSelector()->SetSelected(volumeNode);
-  applicationGUI->GetMainSliceGUI("Yellow")->GetSliceController()->GetForegroundSelector()->SetSelected(this->ROILabelMapNode);
-
-  //applicationGUI->GetMainSliceGUI("Green")->GetSliceController()->GetBackgroundSelector()->SetSelected(volumeNode);
-  applicationGUI->GetMainSliceGUI("Green")->GetSliceController()->GetForegroundSelector()->SetSelected(this->ROILabelMapNode);
+  applicationGUI->GetMainSliceGUI("Red")->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID(this->ROILabelMapNode->GetID());
+  applicationGUI->GetMainSliceGUI("Yellow")->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID(this->ROILabelMapNode->GetID());
+  applicationGUI->GetMainSliceGUI("Green")->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID(this->ROILabelMapNode->GetID());
 
   applicationGUI->GetSlicesControlGUI()->GetSliceFadeScale()->SetValue(0.6);
-  applicationLogic->PropagateVolumeSelection();
 
   // Reset to original slice location 
   applicationGUI->GetMainSliceGUI("Red")->GetSliceController()->GetOffsetScale()->SetValue(oldSliceSetting[0]);
