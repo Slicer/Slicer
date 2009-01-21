@@ -20,7 +20,7 @@
 #endif
 
 #ifdef Slicer3_USE_NUMPY
-#include <arrayobject.h>
+#include "arrayobject.h"
 #endif
 
 
@@ -171,7 +171,7 @@ static PyObject* SlicerPython_ArrayTovtkImageData ( PyObject* self, PyObject* ar
   npy_intp* dim_ptrs = PyArray_DIMS(array);
 
   int dims[3];
-  dims[0] = dims[1] = dims[2] = 0.0;
+  dims[0] = dims[1] = dims[2] = 0;
   int numberOfComponents = 1;
 
   if (dimensionality == 2)
