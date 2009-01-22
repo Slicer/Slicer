@@ -256,11 +256,9 @@ void vtkNeuroNavLogic::UpdateFiducialSeeding(const char *name)
       vtkDebugMacro("NeuroNavLogic: the fiducial list node doesn't exist.");
       return;
       }
-    float *xyz = flist->GetNthFiducialXYZ(0); 
-    cout << "befor: " << xyz[0] << "  " << xyz[1] << "  " << xyz[2] << endl;
-//    cout << "before: " << xyz[0] << "  " << xyz[1] << "  " << xyz[2] << endl;
-//    this->GetCurrentPosition(&xyz[0], &xyz[1], &xyz[2]);
-    flist->SetNthFiducialXYZ(0, 20, 10, 30); 
+    float x, y, z;
+    this->GetCurrentPosition(&x, &y, &z);
+    flist->SetNthFiducialXYZ(0, x, y, z); 
     }
 }
 
