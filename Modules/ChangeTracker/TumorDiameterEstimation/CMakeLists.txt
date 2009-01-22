@@ -14,6 +14,6 @@ endif(NOT Slicer3_SOURCE_DIR)
 
 include_directories(Code/LookAt)
 add_executable(DiameterEstimator Code/DiameterEstimator.cxx)
-slicer3_set_plugins_output_path(${CLP})
+#slicer3_set_plugins_output_path(${CLP})
 target_link_libraries(DiameterEstimator ITKCommon ITKIO)
-slicer3_install_plugins(DiameterEstimator)
+#slicer3_install_plugins(DiameterEstimator)
