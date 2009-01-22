@@ -705,7 +705,7 @@ int vtkChangeTrackerROIStep::ROIMapShow() {
   //  set volumesLogic [$::slicer3::VolumesGUI GetLogic]
   vtkSlicerApplication *application   = vtkSlicerApplication::SafeDownCast(this->GetApplication());
   vtkSlicerApplicationGUI *applicationGUI = this->GetGUI()->GetApplicationGUI();
-  vtkSlicerApplicationLogic *applicationLogic = this->GetGUI()->GetLogic()->GetApplicationLogic();
+//  vtkSlicerApplicationLogic *applicationLogic = this->GetGUI()->GetLogic()->GetApplicationLogic();
 
   vtkSlicerVolumesGUI  *volumesGUI    = vtkSlicerVolumesGUI::SafeDownCast(application->GetModuleGUIByName("Volumes")); 
   vtkSlicerVolumesLogic *volumesLogic = volumesGUI->GetLogic();
@@ -730,7 +730,9 @@ int vtkChangeTrackerROIStep::ROIMapShow() {
   applicationGUI->GetMainSliceGUI("Yellow")->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID(this->ROILabelMapNode->GetID());
   applicationGUI->GetMainSliceGUI("Green")->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID(this->ROILabelMapNode->GetID());
 
-  applicationGUI->GetSlicesControlGUI()->GetSliceFadeScale()->SetValue(0.6);
+  applicationGUI->GetMainSliceGUI("Red")->GetLogic()->GetSliceCompositeNode()->SetForegroundOpacity(0.6);
+  applicationGUI->GetMainSliceGUI("Yellow")->GetLogic()->GetSliceCompositeNode()->SetForegroundOpacity(0.6);
+  applicationGUI->GetMainSliceGUI("Green")->GetLogic()->GetSliceCompositeNode()->SetForegroundOpacity(0.6);
 
   // Reset to original slice location 
   applicationGUI->GetMainSliceGUI("Red")->GetSliceController()->GetOffsetScale()->SetValue(oldSliceSetting[0]);

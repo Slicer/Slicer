@@ -462,7 +462,6 @@ void vtkChangeTrackerAnalysisStep::ShowUserInterface()
       applicationGUI->GetMainSliceGUI("Red")->GetSliceController()->GetForegroundSelector()->SetSelected(volumeAnalysisNode);
       applicationGUI->GetMainSliceGUI("Yellow")->GetSliceController()->GetForegroundSelector()->SetSelected(volumeAnalysisNode);
       applicationGUI->GetMainSliceGUI("Green")->GetSliceController()->GetForegroundSelector()->SetSelected(volumeAnalysisNode);
-      applicationGUI->GetSlicesControlGUI()->GetSliceFadeScale()->SetValue(0.6);
 
       applicationLogic->PropagateVolumeSelection();
 
@@ -499,6 +498,8 @@ void vtkChangeTrackerAnalysisStep::ShowUserInterface()
 
         cv0->SetForegroundVolumeID( volumeAnalysisNode->GetID() );
         cv1->SetForegroundVolumeID( "" );
+
+        cv0->SetForegroundOpacity(0.6);
 
         applicationLogic->PropagateVolumeSelection(1);
       }
