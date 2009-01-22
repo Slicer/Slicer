@@ -66,6 +66,8 @@ vtkChangeTrackerGUI::vtkChangeTrackerGUI()
   this->SliceController_OffsetScale = NULL;
   this->SliceLogicCallbackCommand= NULL;
 
+  this->roiNode = NULL;
+
   // Logo setup. To prepare the header file with the logo information, use
   // KWConvertImageToHeader tool supplied with KWWidgets, with --zlib option.
   vtkKWIcon* logo = vtkKWIcon::New();
