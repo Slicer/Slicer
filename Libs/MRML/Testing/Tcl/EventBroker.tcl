@@ -5,8 +5,8 @@
 #
 
 proc EventBrokerTmpDir {} {
-  if { [file isdirectory g:/tmp] } {
-    return g:/tmp
+  if { [file isdirectory g:/tmp/broker] } {
+    return g:/tmp/broker
   }
   return $::env(Slicer3_HOME)/Testing/Temporary
 }
@@ -56,9 +56,15 @@ proc EventBrokerLoadSampleScene { {sceneFileName ""} } {
 
 }
 
+proc EventBrokerEnterVolumes {} {
+  set toolbar [$::slicer3::ApplicationGUI GetApplicationToolbar]
+  [$toolbar GetModuleChooseGUI] SelectModule "Volumes"
+}
+
 proc EventBrokerTests {} {
 
   EventBrokerLogCommand "$::slicer3::MRMLScene Modified" scenemod.dot
   EventBrokerLogCommand "EventBrokerLoadSampleScene" sceneload.dot
+  EventBrokerLogCommand "EventBrokerEnterVolumes" entervolumes.dot
   puts $::slicer3::Broker
 }
