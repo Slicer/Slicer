@@ -1047,6 +1047,47 @@ if { [BuildThis $::OPENIGTLINK_TEST_FILE "openigtlink"] == 1 && [string tolower 
   }
 }
 
+
+################################################################################
+# Get and build BatchMake
+#
+#
+
+if { ![file exists $::BatchMake_TEST_FILE] || $::GENLIB(update) } {
+    cd $::Slicer3_LIB
+
+    runcmd $::CVS -d :pserver:anoncvs:@batchmake.org:/cvsroot/BatchMake co -r $::BatchMake_TAG BatchMake
+
+    file mkdir $::Slicer3_LIB/BatchMake-build
+    cd $::Slicer3_LIB/BatchMake-build
+
+    runcmd $::CMAKE \
+        -G$GENERATOR \
+        -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+        -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF \
+        -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
+        -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
+        -DBUILD_SHARED_LIBS:BOOL=OFF \
+        -DBUILD_TESTING:BOOL=OFF \
+        -DUSE_FLTK:BOOL=OFF \
+        -DDASHBOARD_SUPPORT:BOOL=ON \
+        -DGRID_SUPPORT:BOOL=ON \
+        -DUSE_SPLASHSCREEN:BOOL=OFF \
+        -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
+        ../BatchMake
+
+    if {$isWindows} {
+        if { $MSVC6 } {
+            runcmd $::MAKE BatchMake.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
+        } else {
+            runcmd $::MAKE BatchMake.SLN /build  $::VTK_BUILD_TYPE
+        }
+    } else {
+        eval runcmd $::MAKE
+    }
+}
+
+
 ################################################################################
 # Get and build SLICERLIBCURL (slicerlibcurl)
 #

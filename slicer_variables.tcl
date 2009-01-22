@@ -85,6 +85,7 @@ set ::LAPACK_TAG http://svn.slicer.org/Slicer3-lib-mirrors/trunk/netlib/lapack-3
 set ::NUMPY_TAG "http://svn.scipy.org/svn/numpy/branches/1.1.x"
 #set ::SCIPY_TAG "http://svn.scipy.org/svn/scipy/trunk"
 set ::SCIPY_TAG "http://svn.scipy.org/svn/scipy/branches/0.6.x"
+set ::BatchMake_TAG "HEAD"
 set ::SLICERLIBCURL_TAG "HEAD"
 # set TCL_VERSION to "tcl" to get 8.4, otherwise use tcl85 get 8.5
 set ::TCL_VERSION tcl
@@ -137,6 +138,8 @@ set ::CMAKE_PATH $::Slicer3_LIB/CMake-build
 set ::SOV_BINARY_DIR ""
 set ::XVNC_EXECUTABLE " "
 set ::OpenIGTLink_DIR $::Slicer3_LIB/OpenIGTLink-build 
+set ::BatchMake_SRC_DIR $::Slicer3_LIB/BatchMake
+set ::BatchMake_BUILD_DIR $::Slicer3_LIB/BatchMake-build
 set ::SLICERLIBCURL_SRC_DIR $::Slicer3_LIB/cmcurl
 set ::SLICERLIBCURL_BUILD_DIR $::Slicer3_LIB/cmcurl-build
 
@@ -206,6 +209,7 @@ switch $::tcl_platform(os) {
         set ::TK_EVENT_PATCH $::Slicer3_HOME/tkEventPatch.diff
         set ::env(VTK_BUILD_SUBDIR) $::VTK_BUILD_SUBDIR
         set ::OPENIGTLINK_TEST_FILE $::OpenIGTLink_DIR/bin/libOpenIGTLink.$shared_lib_ext
+        set ::BatchMake_TEST_FILE $::BatchMake_BUILD_DIR/bin/BatchMake
         set ::SLICERLIBCURL_TEST_FILE $::SLICERLIBCURL_BUILD_DIR/bin/libslicerlibcurl.$shared_lib_ext
         set ::IWIDGETS_TEST_FILE $::TCL_LIB_DIR/iwidgets4.0.1/iwidgets.tcl
         set ::BLT_TEST_FILE $::TCL_BIN_DIR/bltwish24
@@ -246,6 +250,7 @@ switch $::tcl_platform(os) {
         set ::TK_EVENT_PATCH $::Slicer3_HOME/tkEventPatch.diff
         set ::env(VTK_BUILD_SUBDIR) $::VTK_BUILD_SUBDIR
         set ::OPENIGTLINK_TEST_FILE $::OpenIGTLink_DIR/bin/libOpenIGTLink.$shared_lib_ext
+        set ::BatchMake_TEST_FILE $::BatchMake_BUILD_DIR/bin/BatchMake
         set ::SLICERLIBCURL_TEST_FILE $::SLICERLIBCURL_BUILD_DIR/bin/libslicerlibcurl.a
 
     }
@@ -279,6 +284,7 @@ switch $::tcl_platform(os) {
         set ::TK_EVENT_PATCH $::Slicer3_HOME/tkEventPatch.diff
         set ::env(VTK_BUILD_SUBDIR) $::VTK_BUILD_SUBDIR
         set ::OPENIGTLINK_TEST_FILE $::OpenIGTLink_DIR/bin/libOpenIGTLink.$shared_lib_ext
+        set ::BatchMake_TEST_FILE $::BatchMake_BUILD_DIR/bin/BatchMake
         set ::SLICERLIBCURL_TEST_FILE $::SLICERLIBCURL_BUILD_DIR/bin/libslicerlibcurl.a
 
     }
@@ -313,6 +319,7 @@ switch $::tcl_platform(os) {
         set ::VTK_TCLSH $::TCL_BIN_DIR/tclsh84.exe
         set ::ITK_TEST_FILE $::ITK_BINARY_PATH/bin/$::VTK_BUILD_TYPE/ITKCommon.dll
         set ::OPENIGTLINK_TEST_FILE $::OpenIGTLink_DIR/bin/$::VTK_BUILD_TYPE/OpenIGTLink.lib
+        set ::BatchMake_TEST_FILE $::BatchMake_BUILD_DIR/bin/$::VTK_BUILD_TYPE/BatchMake.lib
         set ::SLICERLIBCURL_TEST_FILE $::SLICERLIBCURL_BUILD_DIR/bin/$::VTK_BUILD_TYPE/slicerlibcurl.lib
     }
     default {

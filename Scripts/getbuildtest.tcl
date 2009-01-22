@@ -422,6 +422,8 @@ runcmd $::CMAKE \
         -DKWWidgets_DIR:FILEPATH=$Slicer3_LIB/KWWidgets-build \
         -DTeem_DIR:FILEPATH=$Slicer3_LIB/teem-build \
         -DOpenIGTLink_DIR:FILEPATH=$Slicer3_LIB/OpenIGTLink-build \
+        -DBatchMake_DIR:FILEPATH=$Slicer3_LIB/BatchMake-build \
+        -DSlicer3_USE_BatchMake=ON \
         -DINCR_TCL_LIBRARY:FILEPATH=$::INCR_TCL_LIB \
         -DINCR_TK_LIBRARY:FILEPATH=$::INCR_TK_LIB \
         -DSlicer3_USE_PYTHON=$::USE_PYTHON \

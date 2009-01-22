@@ -128,6 +128,11 @@ if { $installed } {
   set ::env(OpenIGTLink_LIB_DIR)  $::env(Slicer3_HOME)/lib/OpenIGTLink
   set ::env(OpenIGTLink_BIN_DIR)  $::env(Slicer3_HOME)/bin
 
+  set ::env(BatchMake_DIR)      $::env(Slicer3_HOME)/lib/BatchMake
+  set ::env(BatchMake_LIB_DIR)  $::env(Slicer3_HOME)/lib/BatchMake
+  set ::env(BatchMake_BIN_DIR)  $::env(Slicer3_HOME)/bin
+  set ::env(bmModuleDescriptionParser_DIR)        $::env(Slicer3_HOME)/lib/bmModuleDescriptionParser
+
 
   # Slicer3 Libs
 
@@ -164,6 +169,7 @@ if { $installed } {
   set ::ITK_BUILD_SUBDIR  ""
   set ::Teem_BUILD_SUBDIR  ""
   set ::OpenIGTLink_BUILD_SUBDIR  ""
+  set ::BatchMake_BUILD_SUBDIR  ""
 
   if {$::env(BUILD) == $::WINDOWS} {
     foreach buildType {"." Debug RelWithDebInfo Release MinSizeRel} {
@@ -187,6 +193,9 @@ if { $installed } {
       }
       if { [file exists "@OpenIGTLink_DIR@/bin/$buildType/OpenIGTLink.dll"] } {
         set ::OpenIGTLink_BUILD_SUBDIR $buildType
+      }
+      if { [file exists "@BatchMake_DIR@/bin/$buildType/BatchMake.dll"] } {
+        set ::BatchMake_BUILD_SUBDIR $buildType
       }
     }
   } else {
@@ -227,6 +236,11 @@ if { $installed } {
   set ::env(OpenIGTLink_DIR)      [file normalize "@OpenIGTLink_DIR@"]
   set ::env(OpenIGTLink_LIB_DIR)  [file normalize "@OpenIGTLink_DIR@/bin/$::OpenIGTLink_BUILD_SUBDIR"]
   set ::env(OpenIGTLink_BIN_DIR)  [file normalize "@OpenIGTLink_DIR@/bin/$::OpenIGTLink_BUILD_SUBDIR"]
+
+  set ::env(BatchMake_DIR)      [file normalize "@BatchMake_DIR@"]
+  set ::env(BatchMake_LIB_DIR)  [file normalize "@BatchMake_DIR@/bin/$::BatchMake_BUILD_SUBDIR"]
+  set ::env(BatchMake_BIN_DIR)  [file normalize "@BatchMake_DIR@/bin/$::BatchMake_BUILD_SUBDIR"]
+  set ::env(bmModuleDescriptionParser_DIR) $::env(BatchMake_BIN_DIR)
 
 
   # Slicer3 Libs
@@ -353,6 +367,8 @@ proc launch_SetPaths {} {
             set ::env(LD_LIBRARY_PATH) $::env(VTK_BIN_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(KWWidgets_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(OpenIGTLink_LIB_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(BatchMake_LIB_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(bmModuleDescriptionParser_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(ITK_BIN_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(TCL_DIR)/lib:$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(TCL_DIR)/lib/itcl@INCR_TCL_VERSION_DOT@:$::env(LD_LIBRARY_PATH)
@@ -387,6 +403,8 @@ proc launch_SetPaths {} {
             set ::env(DYLD_LIBRARY_PATH) $::env(VTK_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(KWWidgets_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(OpenIGTLink_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(BatchMake_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(bmModuleDescriptionParser_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(ITK_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(TCL_DIR)/lib:$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(TCL_DIR)/lib/itcl@INCR_TCL_VERSION_DOT@:$::env(DYLD_LIBRARY_PATH)
@@ -420,6 +438,8 @@ proc launch_SetPaths {} {
             set ::env(Path) $::env(VTK_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(KWWidgets_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(OpenIGTLink_BIN_DIR)\;$::env(Path)
+            set ::env(Path) $::env(BatchMake_BIN_DIR)\;$::env(Path)
+            set ::env(Path) $::env(bmModuleDescriptionParser_DIR)\;$::env(Path)
             set ::env(Path) $::env(ITK_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(TCL_DIR)/bin\;$::env(Path)
             set ::env(Path) $::env(TCL_DIR)/lib/itcl@INCR_TCL_VERSION_DOT@\;$::env(Path)
@@ -459,7 +479,7 @@ proc launch_SetPaths {} {
     set ::env(TCLLIBPATH) "$::env(VTK_DIR)/Wrapping/Tcl $::env(TCLLIBPATH)"
     set ::env(TCLLIBPATH) "$::env(KWWidgets_DIR)/Wrapping/Tcl $::env(TCLLIBPATH)"
     if { [info exists ::env(OpenIGTLink_DIR] } {
-    set ::env(TCLLIBPATH) "$::env(OpenIGTLink_DIR)/Wrapping/Tcl $::env(TCLLIBPATH)"
+      set ::env(TCLLIBPATH) "$::env(OpenIGTLink_DIR)/Wrapping/Tcl $::env(TCLLIBPATH)"
     }
     set ::env(TCLLIBPATH) "$::env(Slicer3_HOME)/Base/Wrapping/Tcl/vtkSlicerBase $::env(TCLLIBPATH)"
     set ::env(TCLLIBPATH) "$::env(TCL_DIR)/lib/itcl@INCR_TCL_VERSION_DOT@ $::env(TCLLIBPATH)"
