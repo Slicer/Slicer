@@ -423,7 +423,7 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
       }
     else if(!strcmp (attName, "doPropagateVolumeSelection" ))
       {
-      this->SetDoPropagateVolumeSelection(atoi(attValue));
+      this->SetDoPropagateVolumeSelection(atoi(attValue)?true:false);
       }
     }
 }
