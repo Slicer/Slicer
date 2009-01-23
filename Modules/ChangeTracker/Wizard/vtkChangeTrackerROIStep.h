@@ -98,6 +98,9 @@ private:
 
   void DeleteSuperSampleNode();
 
+  void MRMLUpdateROINodeFromROI();
+  void MRMLUpdateROIFromROINode();
+
   vtkMRMLScalarVolumeNode *ROILabelMapNode;
   vtkImageRectangularSource *ROILabelMap;
   int ROIHideFlag; 

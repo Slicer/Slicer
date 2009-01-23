@@ -647,25 +647,7 @@ void vtkChangeTrackerROIStep::ROIMapUpdate() {
   if(roiNode && !roiUpdateGuard)
     {
     roiUpdateGuard = true;
-    double pointRAS[4], pointIJK[4];
-    double radius[3];
-    vtkMatrix4x4 *ijkToras = vtkMatrix4x4::New();
-    vtkMRMLVolumeNode *volumeNode = 
-      vtkMRMLVolumeNode::SafeDownCast(Node->GetScene()->GetNodeByID(Node->GetScan1_Ref()));
-    volumeNode->GetIJKToRASMatrix(ijkToras);
-    pointIJK[0] = (double)center[0];
-    pointIJK[1] = (double)center[1];
-    pointIJK[2] = (double)center[2];
-    pointIJK[3] = 1.;
-    ijkToras->MultiplyPoint(pointIJK,pointRAS);
-    ijkToras->Delete();
-
-    radius[0] = volumeNode->GetSpacing()[0]*(double)size[0]/2.;
-    radius[1] = volumeNode->GetSpacing()[1]*(double)size[1]/2.;
-    radius[2] = volumeNode->GetSpacing()[2]*(double)size[2]/2.;
-
-    roiNode->SetXYZ(pointRAS[0], pointRAS[1], pointRAS[2]);
-    roiNode->SetRadiusXYZ(radius[0], radius[1], radius[2]);
+    MRMLUpdateROINodeFromROI();
     roiNode->Modified();
     roiUpdateGuard = false;
     }
@@ -827,11 +809,16 @@ void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long 
       if (this->ROILabelMapNode) {
         this->ButtonsShow->SetText("Show VOI");
         this->ROIMapRemove();
+        roiNode->SetVisibility(0);
         this->ROIHideFlag = 1;
-        if (roiNode)
+        if (roiNode) 
+          {
+//          this->Render_Filter->RemoveAllPoints();
           roiNode->SetVisibility(0);
+          }
       } else { 
         if (this->ROIMapShow()) { 
+          roiNode->SetVisibility(1);
           this->ButtonsShow->SetText("Hide VOI");
         }
 // FIXME: when feature complete
@@ -841,11 +828,15 @@ void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long 
     }
     if (this->ButtonsReset && (button == this->ButtonsReset)) 
     { 
-      this->ROIReset();
       if (this->ROILabelMapNode) {
         this->ButtonsShow->SetText("Show VOI");
         this->ROIMapRemove();
+        if (this->roiNode) 
+          {
+          roiNode->SetVisibility(0);
+          }
       }
+      this->ROIReset();
     }
     return;
   }
@@ -872,7 +863,12 @@ void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long 
     this->RetrieveInteractorIJKCoordinates(sliceGUI, rwi, ijkCoords);
     this->ROIUpdateWithNewSample(ijkCoords);
     if (!this->ROILabelMapNode && !this->ROIHideFlag && this->ROICheck()) {
-      if (this->ROIMapShow()) this->ButtonsShow->SetText("Hide VOI");
+      if (this->ROIMapShow()) 
+        {
+        MRMLUpdateROINodeFromROI();
+        roiNode->SetVisibility(1);
+        this->ButtonsShow->SetText("Hide VOI");
+        }
     }
   }  
   // Define SHOW Button 
@@ -885,50 +881,94 @@ void vtkChangeTrackerROIStep::ProcessMRMLEvents(vtkObject *caller, unsigned long
     if(roiCaller && roiCaller == roiNode && event == vtkCommand::ModifiedEvent && !roiUpdateGuard)
       {
       roiUpdateGuard = true;
-      vtkMRMLChangeTrackerNode* ctNode = this->GetGUI()->GetNode();
-      // update roi to correspond to ROI widget
-      double *roiXYZ = roiCaller->GetXYZ();
-      double *roiRadiusXYZ = roiCaller->GetRadiusXYZ();
-
-      double bbox0ras[4], bbox1ras[4];
-      double bbox0ijk[4], bbox1ijk[4];
-
-      // ROI bounding box in RAS coordinates
-      bbox0ras[0] = roiXYZ[0]-roiRadiusXYZ[0];
-      bbox0ras[1] = roiXYZ[1]-roiRadiusXYZ[1];
-      bbox0ras[2] = roiXYZ[2]-roiRadiusXYZ[2];
-      bbox0ras[3] = 1.;
-      bbox1ras[0] = roiXYZ[0]+roiRadiusXYZ[0];
-      bbox1ras[1] = roiXYZ[1]+roiRadiusXYZ[1];
-      bbox1ras[2] = roiXYZ[2]+roiRadiusXYZ[2];
-      bbox1ras[3] = 1.;
-      
-      vtkMatrix4x4 *rasToijk = vtkMatrix4x4::New();
-      vtkMRMLVolumeNode *volumeNode = 
-        vtkMRMLVolumeNode::SafeDownCast(ctNode->GetScene()->GetNodeByID(ctNode->GetScan1_Ref()));
-      volumeNode->GetRASToIJKMatrix(rasToijk);
-      rasToijk->MultiplyPoint(bbox0ras,bbox0ijk);
-      rasToijk->MultiplyPoint(bbox1ras,bbox1ijk);
-      rasToijk->Delete();
-      for(int i=0;i<3;i++)
-        {
-        double tmp;
-        if(bbox0ijk[i]>bbox1ijk[i])
-          {
-          tmp = bbox0ijk[i];
-          bbox0ijk[i] = bbox1ijk[i];
-          bbox1ijk[i] = tmp;
-          }
-        }
-      ctNode->SetROIMin(0, (int)bbox0ijk[0]);
-      ctNode->SetROIMax(0, (int)bbox1ijk[0]);
-      ctNode->SetROIMin(1, (int)bbox0ijk[1]);
-      ctNode->SetROIMax(1, (int)bbox1ijk[1]);
-      ctNode->SetROIMin(2, (int)bbox0ijk[2]);
-      ctNode->SetROIMax(2, (int)bbox1ijk[2]);
+      MRMLUpdateROIFromROINode();
       this->ROIMapUpdate();
       roiUpdateGuard = false;
       }
+}
+
+// Propagate ROI changes in ChangeTracker MRML to ROINode MRML
+void vtkChangeTrackerROIStep::MRMLUpdateROIFromROINode()
+{
+  vtkMRMLChangeTrackerNode* ctNode = this->GetGUI()->GetNode();
+  // update roi to correspond to ROI widget
+  double *roiXYZ = roiNode->GetXYZ();
+  double *roiRadiusXYZ = roiNode->GetRadiusXYZ();
+
+  double bbox0ras[4], bbox1ras[4];
+  double bbox0ijk[4], bbox1ijk[4];
+
+  // ROI bounding box in RAS coordinates
+  bbox0ras[0] = roiXYZ[0]-roiRadiusXYZ[0];
+  bbox0ras[1] = roiXYZ[1]-roiRadiusXYZ[1];
+  bbox0ras[2] = roiXYZ[2]-roiRadiusXYZ[2];
+  bbox0ras[3] = 1.;
+  bbox1ras[0] = roiXYZ[0]+roiRadiusXYZ[0];
+  bbox1ras[1] = roiXYZ[1]+roiRadiusXYZ[1];
+  bbox1ras[2] = roiXYZ[2]+roiRadiusXYZ[2];
+  bbox1ras[3] = 1.;
+
+  vtkMatrix4x4 *rasToijk = vtkMatrix4x4::New();
+  vtkMRMLVolumeNode *volumeNode = 
+    vtkMRMLVolumeNode::SafeDownCast(ctNode->GetScene()->GetNodeByID(ctNode->GetScan1_Ref()));
+  volumeNode->GetRASToIJKMatrix(rasToijk);
+  rasToijk->MultiplyPoint(bbox0ras,bbox0ijk);
+  rasToijk->MultiplyPoint(bbox1ras,bbox1ijk);
+  rasToijk->Delete();
+  for(int i=0;i<3;i++)
+    {
+    double tmp;
+    if(bbox0ijk[i]>bbox1ijk[i])
+      {
+      tmp = bbox0ijk[i];
+      bbox0ijk[i] = bbox1ijk[i];
+      bbox1ijk[i] = tmp;
+      }
+    }
+  ctNode->SetROIMin(0, (int)bbox0ijk[0]);
+  ctNode->SetROIMax(0, (int)bbox1ijk[0]);
+  ctNode->SetROIMin(1, (int)bbox0ijk[1]);
+  ctNode->SetROIMax(1, (int)bbox1ijk[1]);
+  ctNode->SetROIMin(2, (int)bbox0ijk[2]);
+  ctNode->SetROIMax(2, (int)bbox1ijk[2]);
+  
+  this->ROIX->SetRange(bbox0ijk[0], bbox1ijk[0]);
+  this->ROIY->SetRange(bbox0ijk[1], bbox1ijk[1]);
+  this->ROIZ->SetRange(bbox0ijk[2], bbox1ijk[2]);
+}
+
+// Propagate changes in ROINode MRML to ChangeTracker ROI MRML
+void vtkChangeTrackerROIStep::MRMLUpdateROINodeFromROI()
+{
+  vtkMRMLChangeTrackerNode* Node      =  this->GetGUI()->GetNode();
+  if (!this->ROILabelMapNode || !this->ROILabelMap || !Node || !this->ROICheck()) return;
+  int size[3]   = {Node->GetROIMax(0) - Node->GetROIMin(0) + 1, 
+                   Node->GetROIMax(1) - Node->GetROIMin(1) + 1, 
+                   Node->GetROIMax(2) - Node->GetROIMin(2) + 1};
+
+  int center[3] = {(Node->GetROIMax(0) + Node->GetROIMin(0))/2,
+                   (Node->GetROIMax(1) + Node->GetROIMin(1))/2, 
+                   (Node->GetROIMax(2) + Node->GetROIMin(2))/2};
+
+  double pointRAS[4], pointIJK[4];
+  double radius[3];
+  vtkMatrix4x4 *ijkToras = vtkMatrix4x4::New();
+  vtkMRMLVolumeNode *volumeNode = 
+    vtkMRMLVolumeNode::SafeDownCast(Node->GetScene()->GetNodeByID(Node->GetScan1_Ref()));
+  volumeNode->GetIJKToRASMatrix(ijkToras);
+  pointIJK[0] = (double)center[0];
+  pointIJK[1] = (double)center[1];
+  pointIJK[2] = (double)center[2];
+  pointIJK[3] = 1.;
+  ijkToras->MultiplyPoint(pointIJK,pointRAS);
+  ijkToras->Delete();
+
+  radius[0] = volumeNode->GetSpacing()[0]*(double)size[0]/2.;
+  radius[1] = volumeNode->GetSpacing()[1]*(double)size[1]/2.;
+  radius[2] = volumeNode->GetSpacing()[2]*(double)size[2]/2.;
+
+  roiNode->SetXYZ(pointRAS[0], pointRAS[1], pointRAS[2]);
+  roiNode->SetRadiusXYZ(radius[0], radius[1], radius[2]);
 }
 
 //----------------------------------------------------------------------------
@@ -961,7 +1001,8 @@ void vtkChangeTrackerROIStep::TransitionCallback()
        this->ROIMapRemove();
        
        // remove the ROI widget
-       roiNode->SetVisibility(0);
+       if (roiNode)
+         roiNode->SetVisibility(0);
 
        this->GUI->GetWizardWidget()->GetWizardWorkflow()->AttemptToGoToNextStep();
      } else {
