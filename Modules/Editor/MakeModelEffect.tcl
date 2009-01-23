@@ -180,6 +180,7 @@ itcl::body MakeModelEffect::buildOptions {} {
   set o(goToModelMaker) [vtkNew vtkKWPushButton]
   $o(goToModelMaker) SetParent [$this getOptionsFrame]
   $o(goToModelMaker) Create
+  $o(goToModelMaker) SetCommand $o(goToModelMaker) HasFocus ;# noop - observer used instead
   $o(goToModelMaker) SetText "Go To Model Maker"
   $o(goToModelMaker) SetBalloonHelpString "The Model Maker interface contains a whole range of options for building sets of models and controlling the parameters."
   pack [$o(goToModelMaker) GetWidgetName] \
@@ -278,6 +279,7 @@ itcl::body MakeModelEffect::tearDownOptions { } {
 itcl::body MakeModelEffect::goToModelMaker { } {
   set toolbar [$::slicer3::ApplicationGUI GetApplicationToolbar]
   [$toolbar GetModuleChooseGUI] SelectModule "Model Maker"
+  update
   after idle ::EffectSWidget::RemoveAll
 }
 

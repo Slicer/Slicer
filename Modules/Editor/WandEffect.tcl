@@ -49,6 +49,24 @@ if { [itcl::find class WandEffect] == "" } {
 #                        CONSTRUCTOR/DESTRUCTOR
 # ------------------------------------------------------------------
 itcl::body WandEffect::constructor {sliceGUI} {
+  set _scopeOptions "visible"
+
+  set o(lut) [vtkNew vtkLookupTable]
+  set o(mapToColors) [vtkNew vtkImageMapToColors]
+  $o(mapToColors) SetLookupTable $o(lut)
+
+  set o(mapper) [vtkNew vtkImageMapper]
+  $o(mapper) SetColorWindow 255
+  $o(mapper) SetColorLevel 128
+  $o(mapper) SetInput [$o(mapToColors) GetOutput]
+  set o(actor) [vtkNew vtkActor2D]
+  $o(actor) SetMapper $o(mapper)
+  $o(mapper) RenderToRectangleOn
+
+  [$_renderWidget GetRenderer] AddActor2D $o(actor)
+  lappend _actors $o(actor)
+
+  $this configure -scope "visible"
 }
 
 itcl::body WandEffect::destructor {} {
@@ -127,83 +145,49 @@ itcl::body WandEffect::apply {} {
 
 itcl::body WandEffect::preview {} {
 
-
-  # first try to undo - removes last apply
-  $this undoLastApply
-
   # 
   # get the event position to use as a seed
+  #
   foreach {x y} [$_interactor GetEventPosition] {}
-  $this queryLayers $x $y
 
   #
   # create pipeline as needed
+  #
   if { ![info exists o(wandFilter)] } {
     set o(wandFilter) [vtkNew vtkITKWandImageFilter]
   }
 
   $o(wandFilter) SetInput [$this getInputBackground]
-  $o(wandFilter) SetSeed $_layers(background,i) $_layers(background,j) $_layers(background,k) 
+  eval $o(wandFilter) SetSeed [$this getLayerIJK background $x $y]
   $o(wandFilter) SetDynamicRangePercentage $percentage
-
-
-  set extents [[$this getInputBackground] GetExtent]
-  set ijkToXY [vtkMatrix4x4 New]
-  $ijkToXY DeepCopy [[$_layers(background,logic) GetXYToIJKTransform] GetMatrix]
-  $ijkToXY Invert
-
-
-  # figure out which plane to use
-  # - transform the slice's extents into xy bounds for use with the Labeler
-  #
-  foreach {i0 j0 k0 l0} [$_layers(background,xyToIJK) MultiplyPoint $x $y 0 1] {}
-  set x1 [expr $x + 1]; set y1 [expr $y + 1]
-  foreach {i1 j1 k1 l1} [$_layers(background,xyToIJK) MultiplyPoint $x1 $y1 0 1] {}
-
-  #
-  # Note there seems to be a bug (ITK smart pointer crash)
-  # for some slice planes.  This Effect is disabled in EditBox for now.
-  #
-puts "orig extents: $extents"
-  if { $i0 == $i1 } { 
-    $o(wandFilter) SetPlaneToJK
-    set extents [lreplace $extents 0 1 $i0 $i0]
-  }
-  if { $j0 == $j1 } {
-    $o(wandFilter) SetPlaneToIK
-    set extents [lreplace $extents 2 3 $j0 $j0]
-  }
-  if { $k0 == $k1 } { 
-    $o(wandFilter) SetPlaneToIJ
-    set extents [lreplace $extents 4 5 $k0 $k0]
-  }
-
-  foreach {ilo ihi jlo jhi klo khi} $extents {}
-puts "extents: $extents"
-  set xylo [$ijkToXY MultiplyPoint $ilo $jlo $klo 1]
-  set xyhi [$ijkToXY MultiplyPoint $ihi $jhi $khi 1]
-  foreach {xlo ylo zlo wlo} $xylo {}
-  foreach {xhi yhi zhi whi} $xyhi {}
-  if { $xlo > $xhi } { set tmp $xhi; set xhi $xlo; set xlo $tmp }
-  if { $ylo > $yhi } { set tmp $yhi; set yhi $ylo; set ylo $tmp }
-  set bounds "$xlo $xhi $ylo $yhi 0 0"
-puts "bounds: $bounds"
-  $ijkToXY Delete
-
 
   $this setProgressFilter $o(wandFilter) "Magic Wand Connected Components"
   $o(wandFilter) Update
 
-  puts "$this applyImageMask \
-    [$_sliceNode GetXYToRAS]  \
-    [ $o(wandFilter) GetOutput] \
-    $bounds"
-return
 
-  $this applyImageMask \
-    [$_sliceNode GetXYToRAS]  \
-    [ $o(wandFilter) GetOutput] \
-    $bounds
+  $o(lut) SetTableValue 0  0 0 0 0
+  eval $o(lut) SetTableValue 255  [EditorGetPaintColor ""]
+  $o(mapToColors) SetInput [$o(wandFilter) GetOutput]
+
+  foreach {windoww windowh} [[$_interactor GetRenderWindow] GetSize] {}
+  #$o(actor) SetDisplayExtent 0 [expr $windoww-1] 0 [expr $windowh-1] 0 1
+
+
+  $this positionCursor
+  [$sliceGUI GetSliceViewer] RequestRender
+
+  #
+  # viewer window...
+  #
+  if { [info command wandViewer] == "" } {
+    vtkImageViewer wandViewer
+  }
+  wandViewer SetColorWindow 255
+  wandViewer SetColorLevel 128
+  wandViewer SetInput [$o(mapToColors) GetOutput]
+  wandViewer Render
+
+  return
 
 }
   
