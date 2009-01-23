@@ -490,12 +490,22 @@ proc launch_SetPaths {} {
     #
     # add the default search locations for python packages
     #
+    if {$::env(BUILD) == $::WINDOWS} {
+      set SEP ";"
+    } else {
+      set SEP ":"
+    }
     set ::env(PYTHONHOME) "$::env(PYTHON_DIR)"
-    set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.5:$::env(PYTHONPATH)"
-    set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.5/site-packages:$::env(PYTHONPATH)"
-    set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.5/lib-tk:$::env(PYTHONPATH)"
-    set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.5/test:$::env(PYTHONPATH)"
-    set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.5/site-packages/numpy/lib:$::env(PYTHONPATH)"
+    set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib$SEP$::env(PYTHONPATH)"
+    set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/site-packages$SEP$::env(PYTHONPATH)"
+    set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/lib-tk$SEP$::env(PYTHONPATH)"
+    set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/test$SEP$::env(PYTHONPATH)"
+    set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/site-packages/numpy/lib$SEP$::env(PYTHONPATH)"
+    set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.5$SEP$::env(PYTHONPATH)"
+    set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.5/site-packages$SEP$::env(PYTHONPATH)"
+    set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.5/lib-tk$SEP$::env(PYTHONPATH)"
+    set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.5/test$SEP$::env(PYTHONPATH)"
+    set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.5/site-packages/numpy/lib$SEP$::env(PYTHONPATH)"
 }
 
 #
