@@ -975,7 +975,11 @@ if { [BuildThis $::Teem_TEST_FILE "teem"] == 1 } {
           if { $::GENLIB(test-type) == "" } {
             runcmd $::MAKE teem.SLN /build  $::VTK_BUILD_TYPE
           } else {
-            runcmd $::MAKE teem.SLN /build  $::VTK_BUILD_TYPE $::GENLIB(test-type)
+            runcmd $::MAKE teem.SLN /build  $::VTK_BUILD_TYPE
+
+            # - only Release mode is being built by ctest in spite of explicit request for debug...
+            # running ctest through visual studio is broken in cmake2.4, so run ctest directly
+            runcmd $::CMAKE_PATH/bin/ctest -D $::GENLIB(test-type) -C $::VTK_BUILD_TYPE
           }
         }
       } else {
