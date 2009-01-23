@@ -312,7 +312,6 @@ void vtkMRMLTensorVolumeNode::CalculateAutoLevels(vtkMRMLScalarVolumeDisplayNode
 
   if (displayNode != NULL ) 
     {
-    imageDataScalar = NULL;
     if (this->AssignAttributeTensorsFromScalars == NULL)
       {
       this->AssignAttributeTensorsFromScalars = vtkAssignAttribute::New();
@@ -323,7 +322,8 @@ void vtkMRMLTensorVolumeNode::CalculateAutoLevels(vtkMRMLScalarVolumeDisplayNode
       }
     this->AssignAttributeTensorsFromScalars->Assign(vtkDataSetAttributes::TENSORS, vtkDataSetAttributes::SCALARS, vtkAssignAttribute::POINT_DATA);  
     
-    this->DTIMathematics->SetInput(imageDataScalar);
+    this->AssignAttributeTensorsFromScalars->SetInput(imageDataScalar);
+    this->DTIMathematics->SetInput(this->AssignAttributeTensorsFromScalars->GetOutput());
     this->DTIMathematics->SetOperation(displayNode->GetScalarInvariant());
     this->DTIMathematics->Update();
     imageDataScalar = this->DTIMathematics->GetOutput();
