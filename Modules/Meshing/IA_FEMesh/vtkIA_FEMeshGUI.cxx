@@ -82,6 +82,7 @@ vtkIA_FEMeshGUI::vtkIA_FEMeshGUI()
 
   this->Logic = NULL;
   this->MeshingUI = NULL;
+    this->MeshingUI = NULL;
 //    this->MimxMainNotebook = NULL;
 //    this->ViewProperties = NULL;
 //    this->DoUndoTree = NULL;
@@ -104,6 +105,11 @@ vtkIA_FEMeshGUI::vtkIA_FEMeshGUI()
 //----------------------------------------------------------------------------
 vtkIA_FEMeshGUI::~vtkIA_FEMeshGUI()
 {
+
+  if (this->MeshingUI != NULL)
+    {
+    this->MeshingUI->Delete();
+    }
 
   if (this->Logic != NULL)
     {
@@ -207,6 +213,7 @@ void vtkIA_FEMeshGUI::BuildGUI ( )
   moduleFrame->ExpandFrame ( );
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s -fill both",
                 moduleFrame->GetWidgetName(), this->UIPanel->GetPageWidget("IA_FEMesh")->GetWidgetName());
+  moduleFrame->Delete();
    
   // Create the MIMX Main Window.  This is a composite widget which serves as the top of the independent
   // meshing application.  This widget is created and the slicer render window and KWWindow are passed so that

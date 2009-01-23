@@ -54,6 +54,8 @@ class VTK_IA_FEMesh_EXPORT vtkIA_FEMeshGUI : public vtkSlicerModuleGUI
   vtkTypeMacro(vtkIA_FEMeshGUI,vtkSlicerModuleGUI);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  virtual void Register(vtkObject *o) { Superclass::Register(o); };
+  virtual void UnRegister(vtkObject *o) { Superclass::UnRegister(o); };
 
 
    // Description: Get/Set MRML node
@@ -92,7 +94,7 @@ class VTK_IA_FEMesh_EXPORT vtkIA_FEMeshGUI : public vtkSlicerModuleGUI
 
 protected:
   vtkIA_FEMeshGUI();
-  ~vtkIA_FEMeshGUI();
+  virtual ~vtkIA_FEMeshGUI();
   vtkIA_FEMeshGUI(const vtkIA_FEMeshGUI&);
   void operator=(const vtkIA_FEMeshGUI&);
 
