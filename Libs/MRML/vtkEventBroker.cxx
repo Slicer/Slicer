@@ -55,6 +55,8 @@ vtkEventBroker::vtkEventBroker()
 {
   this->EventMode = vtkEventBroker::Synchronous;
   this->EventLogging = 0;
+  this->EventNestingLevel = 0;
+  this->TimerLog = vtkTimerLog::New();
   this->CompressCallData = 0;
   this->LogFileName = NULL;
   this->ScriptHandler = NULL;
@@ -76,6 +78,11 @@ vtkEventBroker::~vtkEventBroker()
     {
     this->CloseLogFile();
     this->EventLoggingOff();
+    }
+
+  if (this->TimerLog)
+    {
+    this->TimerLog->Delete();
     }
 
   if( vtkEventBroker::Instance == this )
@@ -140,7 +147,7 @@ void vtkEventBroker::AttachObservation ( vtkObservation *observation )
   tag = observation->GetSubject()->AddObserver( vtkCommand::DeleteEvent, observation->GetObservationCallbackCommand() );
   observation->SetSubjectDeleteEventTag( tag );
 
-  if ( observation->GetObserver() != NULL )
+  if ( observation->GetObserver() != NULL && (observation->GetSubject() != observation->GetObserver()) )
     {
     // there may be no Oberserver (e.g. for a Script)
     tag = observation->GetObserver()->AddObserver( vtkCommand::DeleteEvent, observation->GetObservationCallbackCommand() );
@@ -356,12 +363,13 @@ std::vector< vtkObservation *> vtkEventBroker::GetObservations (vtkObject *subje
 std::vector< vtkObservation *> vtkEventBroker::GetObservationsForSubjectByTag (vtkObject *subject, unsigned long tag)
 {
   // find matching observations to remove
+  // - all tags match 0
   std::vector< vtkObservation *> observationList;
   std::vector< vtkObservation *>::iterator obsIter; 
   for(obsIter=this->Observations.begin(); obsIter != this->Observations.end(); obsIter++)  
     {
-    if ( (*obsIter)->GetSubject() == subject &&
-         (*obsIter)->GetEventTag() == tag )
+    if ( ( (*obsIter)->GetSubject() == subject ) &&
+         ( (tag == 0) || ((*obsIter)->GetEventTag() == tag) ) )
       {
       observationList.push_back( *obsIter );
       }
@@ -455,6 +463,7 @@ int vtkEventBroker::GenerateGraphFile ( const char *graphFile )
           << vtkCommand::GetStringFromEventId( observation->GetEvent() )
           << "\" ];\n" ;
       }
+    file.flush();
     }
 
 
@@ -508,6 +517,12 @@ void vtkEventBroker::LogEvent ( vtkObservation *observation )
   if ( this->EventLogging && observation != NULL )
     {
 
+    // indent to indicate nesting
+    for (int i = 0; i < this->EventNestingLevel; i++)
+      {
+      this->LogFile << " ";
+      }
+
     eventStringPointer = vtkCommand::GetStringFromEventId( observation->GetEvent() );
     if ( !strcmp (eventStringPointer, "NoEvent") )
       {
@@ -536,6 +551,14 @@ void vtkEventBroker::LogEvent ( vtkObservation *observation )
           << eventStringPointer
           << "\" ];\n" ;
       }
+
+    // indent to indicate nesting
+    for (int i = 0; i < this->EventNestingLevel; i++)
+      {
+      this->LogFile << " ";
+      }
+    this->LogFile << " # " << observation->GetLastElapsedTime() << " seconds \n";
+
     this->LogFile.flush();
     }
 }
@@ -651,8 +674,9 @@ void vtkEventBroker::InvokeObservation ( vtkObservation *observation, void *call
 {
   // TODO record the timing before and after invocation
  
-  // Write the to the log file if enabled
-  this->LogEvent (observation);
+  this->EventNestingLevel++;
+
+  double startTime = this->TimerLog->GetUniversalTime();
 
   if ( observation->GetScript() != NULL )
     {
@@ -668,6 +692,15 @@ void vtkEventBroker::InvokeObservation ( vtkObservation *observation, void *call
                                       callData );
     observation->Delete();
     }
+
+  double elapsedTime = this->TimerLog->GetUniversalTime() - startTime;
+  observation->SetTotalElapsedTime (observation->GetTotalElapsedTime() + elapsedTime);
+  observation->SetLastElapsedTime (elapsedTime);
+
+  // Write the to the log file if enabled
+  this->LogEvent (observation);
+
+  this->EventNestingLevel--;
 
 }
 
@@ -714,6 +747,7 @@ void vtkEventBroker::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "NumberOfQueueObservations: " << this->GetNumberOfQueuedObservations() << "\n";
   os << indent << "EventMode: " << this->GetEventModeAsString() << "\n";
   os << indent << "EventLogging: " << this->EventLogging << "\n";
+  os << indent << "EventNestingLevel: " << this->EventNestingLevel << "\n";
   os << indent << "LogFileName: " <<
     (this->LogFileName ? this->LogFileName : "(none)") << "\n";
 }

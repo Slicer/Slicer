@@ -30,6 +30,7 @@
 
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
+#include "vtkTimerLog.h"
 
 #include "vtkMRML.h"
 
@@ -48,6 +49,9 @@ class VTK_MRML_EXPORT vtkEventBroker : public vtkObject
   // The Usual vtk class functions
   vtkTypeRevisionMacro(vtkEventBroker,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
+
+  virtual void Register(vtkObject *o) { Superclass::Register(o); };
+  virtual void UnRegister(vtkObject *o) { Superclass::UnRegister(o); };
 
   // Description:
   // This is a singleton pattern New.  There will only be ONE
@@ -95,6 +99,7 @@ class VTK_MRML_EXPORT vtkEventBroker : public vtkObject
   // Description:
   // Remove all observations that match
   // - various signatures provided as helpers
+  // - when specifying the tag, a 0 matches all tags
   //BTX
   void RemoveObservations (std::vector< vtkObservation *>observations);
   //ETX
@@ -129,9 +134,6 @@ class VTK_MRML_EXPORT vtkEventBroker : public vtkObject
 
   //// Event Logging
   
-  //
-  // TODO: these are not implemented yet
-  //
   // Description:
   // Turn on event tracing (requires TraceFile)
   vtkBooleanMacro (EventLogging, int);
@@ -139,9 +141,20 @@ class VTK_MRML_EXPORT vtkEventBroker : public vtkObject
   vtkGetMacro (EventLogging, int);
 
   // Description:
+  // Current level of indent (event nesting) 
+  // shows what is called by what when in synchronous mode
+  vtkSetMacro (EventNestingLevel, int);
+  vtkGetMacro (EventNestingLevel, int);
+
+  // Description:
   // File to write event logs to when EventLoging is turned on
   vtkSetStringMacro (LogFileName);
   vtkGetStringMacro (LogFileName);
+
+  // Description:
+  // Timer log class for calculating elapsed time for event invocations
+  vtkSetObjectMacro (TimerLog, vtkTimerLog);
+  vtkGetObjectMacro (TimerLog, vtkTimerLog);
 
   // Description:
   // Open and close the log file
@@ -249,7 +262,9 @@ protected:
   //ETX
 
   int EventLogging;
+  int EventNestingLevel;
   char *LogFileName;
+  vtkTimerLog *TimerLog;
 
   int EventMode;
   int CompressCallData;

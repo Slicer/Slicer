@@ -39,6 +39,9 @@ vtkObservation::vtkObservation()
   this->ObservationCallbackCommand = vtkCallbackCommand::New();
   this->ObservationCallbackCommand->SetCallback( vtkEventBroker::Callback ); 
   this->ObservationCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
+
+  this->LastElapsedTime = 0.0;
+  this->TotalElapsedTime = 0.0;
 }
 
 //----------------------------------------------------------------------------
@@ -90,4 +93,7 @@ void vtkObservation::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "EventTag: " << this->EventTag << "\n";
   os << indent << "SubjectDeleteEventTag: " << this->SubjectDeleteEventTag << "\n";
   os << indent << "ObserverDeleteEventTag: " << this->ObserverDeleteEventTag << "\n";
+
+  os << indent << "LastElapsedTime: " << this->LastElapsedTime << "\n";
+  os << indent << "TotalElapsedTime: " << this->TotalElapsedTime << "\n";
 }

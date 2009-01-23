@@ -77,6 +77,14 @@ class VTK_MRML_EXPORT vtkObservation : public vtkObject
   vtkGetMacro (ObserverDeleteEventTag, unsigned long);
   vtkSetMacro (ObserverDeleteEventTag, unsigned long);
 
+  // Description
+  // Elapsed time of last invocation and total elaspsed time
+  // (in synchronous mode, elapsed time include children)
+  vtkGetMacro (LastElapsedTime, double);
+  vtkSetMacro (LastElapsedTime, double);
+  vtkGetMacro (TotalElapsedTime, double);
+  vtkSetMacro (TotalElapsedTime, double);
+
   //BTX
   std::deque<void *> *GetCallDataList() {return &(this->CallDataList);};
   //ETX
@@ -138,6 +146,10 @@ protected:
   unsigned long EventTag;
   unsigned long SubjectDeleteEventTag;
   unsigned long ObserverDeleteEventTag;
+
+  double LastElapsedTime;
+  double TotalElapsedTime;
+
 };
 
 #endif

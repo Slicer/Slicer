@@ -432,6 +432,7 @@ void vtkMRMLScene::RemoveAllNodesExceptSingletons()
       //this->RemoveNode(removeNodes[i]);
       node = removeNodes[i];
       //node->Register(this);
+      vtkEventBroker::GetInstance()->RemoveObservationsForSubjectByTag( node, 0 );
       node->RemoveAllObservers();
       this->CurrentScene->vtkCollection::RemoveItem(node);
       //this->InvokeEvent(this->NodeRemovedEvent,node);
@@ -991,6 +992,7 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
   this->RemoveNodeReferences(n);
   this->RemoveReferencesToNode(n);
   
+  vtkEventBroker::GetInstance()->RemoveObservationsForSubjectByTag( n, 0 );
   n->RemoveAllObservers();
 
   this->CurrentScene->vtkCollection::RemoveItem((vtkObject *)n);
@@ -1019,6 +1021,7 @@ void vtkMRMLScene::RemoveNodeNoNotify(vtkMRMLNode *n)
   this->RemoveNodeReferences(n);
   this->RemoveReferencesToNode(n);
 
+  vtkEventBroker::GetInstance()->RemoveObservationsForSubjectByTag( n, 0 );
   n->RemoveAllObservers();
 
   this->CurrentScene->vtkCollection::RemoveItem((vtkObject *)n);
