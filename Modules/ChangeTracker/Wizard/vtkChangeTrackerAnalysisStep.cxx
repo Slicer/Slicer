@@ -445,7 +445,7 @@ void vtkChangeTrackerAnalysisStep::ShowUserInterface()
       colorMax[2] = (float) colorMax_d[2];
 
       this->CreateRender(volumeAnalysisNode, 1);
-      this->SetRender_BandPassFilter(12, 14, colorMin, colorMax);
+      this->SetRender_PulsePassFilter(12, 14, colorMin, colorMax);
       }
 
     if (volumeSampleNode && volumeAnalysisNode) {

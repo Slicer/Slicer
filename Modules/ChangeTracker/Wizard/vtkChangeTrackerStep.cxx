@@ -341,8 +341,8 @@ void vtkChangeTrackerStep::ChangeRender_BandPassFilter(double min, double max) {
   this->Render_Filter->AddPoint(imgRange[0], 0.0);
   this->Render_Filter->AddPoint(min - .1, 0.0);
   this->Render_Filter->AddPoint(min, 1., .5, 1.);
-  this->Render_Filter->AddPoint(min+0.1, 0.);
-  this->Render_Filter->AddPoint(max-0.1, 0.);
+//  this->Render_Filter->AddPoint(min+0.1, 0.);
+//  this->Render_Filter->AddPoint(max-0.1, 0.);
   this->Render_Filter->AddPoint(max, 1., .5, 1.);
   if (max < imgRange[1]) { 
     this->Render_Filter->AddPoint(max + .1, 0.);
@@ -361,6 +361,32 @@ void vtkChangeTrackerStep::SetRender_BandPassFilter(double min, double max, floa
   // Two different colors did not work 
   this->Render_ColorMapping->AddRGBPoint(min, colorMin[0], colorMin[1], colorMin[2]);
   this->Render_ColorMapping->AddRGBPoint(max, colorMax[0], colorMax[1], colorMax[2]);
+}
+
+// Set the opacity to show only the two specified levels of intensity
+void vtkChangeTrackerStep::SetRender_PulsePassFilter(double p0, double p1, float color_p0[3], float color_p1[3]) {
+  double* imgRange  =   this->Render_Image->GetPointData()->GetScalars()->GetRange();
+  
+  this->Render_Filter->RemoveAllPoints();
+  this->Render_Filter->AddPoint(imgRange[0], 0.0);
+  this->Render_Filter->AddPoint(p0-.1, 0.0);
+  this->Render_Filter->AddPoint(p0, 1., .5, 1.);
+  this->Render_Filter->AddPoint(p0+0.1, 0.);
+  this->Render_Filter->AddPoint(p1-0.1, 0.);
+  this->Render_Filter->AddPoint(p1, 1., .5, 1.);
+  if (p1 < imgRange[1]) { 
+    this->Render_Filter->AddPoint(p1+.1, 0.);
+    if (p1+.1 < imgRange[1]) { 
+      this->Render_Filter->AddPoint(p1+.1, 0.);
+      this->Render_Filter->AddPoint(imgRange[1], 0);
+    }
+  }
+  this->Render_Filter->ClampingOff();
+
+  this->Render_ColorMapping->RemoveAllPoints();
+  // Two different colors did not work 
+  this->Render_ColorMapping->AddRGBPoint(p0, color_p0[0], color_p0[1], color_p0[2]);
+  this->Render_ColorMapping->AddRGBPoint(p1, color_p1[0], color_p1[1], color_p1[2]);
 }
 
 void vtkChangeTrackerStep::SetRender_HighPassFilter(double min, float colorMin[3], float colorMax[3]) {

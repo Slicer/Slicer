@@ -101,6 +101,7 @@ protected:
   void ChangeRender_BandPassFilter(double min, double max); 
   void SetRender_HighPassFilter(double min, float colorMin[3], float colorMax[3]);
   void SetRender_BandStopFilter(double min, double max, float colorMin[3], float colorMax[3]);
+  void SetRender_PulsePassFilter(double p0, double p1, float color_p0[3], float color_p1[3]);
   void RenderRemove();
   void CreateRender(vtkMRMLVolumeNode *volumeNode, int RayCastFlag);
 
