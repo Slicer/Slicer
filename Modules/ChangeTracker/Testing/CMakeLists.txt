@@ -56,7 +56,7 @@ add_test(ChangeTrackerCL_Help
 add_test(ChangeTrackerCL_TestGlobalReg
          ${Slicer3_BINARY_DIR}/Slicer3 --launch
          ChangeTrackerTest
-         --compare ${TEST_DATA}/MRMeningioma0.nrrd ${TEST_DATA}/MRMeningioma1.nrrd
+#         --compare ${TEST_DATA}/MRMeningioma0.nrrd ${TEST_DATA}/MRMeningioma1.nrrd
          ChangeTrackerTest
          --sensitivity 0.96
          --threshold 140,441
@@ -65,6 +65,6 @@ add_test(ChangeTrackerCL_TestGlobalReg
          --intensity_analysis
          --scan1 ${TEST_DATA}/MRMeningioma0.nrrd
          --scan2 ${TEST_DATA}/MRMeningioma1.nrrd
-         --terminationstep 0
+         --terminationstep 1
          --output ${TEMP}/output.nrrd
         )

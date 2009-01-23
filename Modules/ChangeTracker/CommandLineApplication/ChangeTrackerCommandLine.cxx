@@ -431,14 +431,23 @@ int main(int argc, char** argv)
              " --translationscale 100 --resampledmovingfilename " << 
              Scan2Global_fname << " --outputtransform " <<
              tg.GetWorkingDir() << "/Global_transform.txt " <<
-             tgScan1.c_str() << " " << tgScan2.c_str() << " >& " <<
-             tg.GetWorkingDir() << "/global_reg_output.txt" << std::endl;
+             tgScan1.c_str() << " " << tgScan2.c_str();
+             // << " >& " << tg.GetWorkingDir() << "/global_reg_output.txt" << std::endl;
 
            cout << "Running registration: " << cmdStream.str() << endl;
            if(system(cmdStream.str().c_str())!=EXIT_SUCCESS)
              {
              cerr << "ERROR: Rigid registration failed" << endl;
              return EXIT_FAILURE;
+             }
+           else
+             {
+             // print the registration transform for debugging
+             std::ostringstream cmdStream;
+             cerr << "Global transform ========>" << endl;
+             cmdStream << "cat " << tg.GetWorkingDir() << "/Global_transform.txt";
+             system(cmdStream.str().c_str());
+             cerr << "==========================" << endl;
              }
            
            // Read back the registration result
@@ -546,8 +555,8 @@ int main(int argc, char** argv)
              " --translationscale 10 --resampledmovingfilename " << 
              Scan2Local_fname << " --outputtransform " <<
              tg.GetWorkingDir() << "/Local_transform.txt " <<
-             Scan1Resampled_fname << " " << Scan2Resampled_fname << " >& " <<
-             tg.GetWorkingDir() << "/local_reg_output.txt" << std::endl;
+             Scan1Resampled_fname << " " << Scan2Resampled_fname;
+             // << " >& " << tg.GetWorkingDir() << "/local_reg_output.txt" << std::endl;
 
            cout << "Running registration: " << cmdStream.str() << endl;
            if(system(cmdStream.str().c_str())!=EXIT_SUCCESS)
@@ -555,6 +564,16 @@ int main(int argc, char** argv)
              cerr << "ERROR: Rigid registration failed" << endl;
              return EXIT_FAILURE;
              }
+           else
+             {
+             // print the registration transform for debugging
+             std::ostringstream cmdStream;
+             cerr << "Local transform ========>" << endl;
+             cmdStream << "cat " << tg.GetWorkingDir() << "/Local_transform.txt";
+             system(cmdStream.str().c_str());
+             cerr << "=========================" << endl;
+             }
+
            
            // Read back the registration result
            vtkMatrix4x4* matrix = vtkMatrix4x4::New();

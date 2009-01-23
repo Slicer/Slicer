@@ -41,7 +41,7 @@ generateclp(
 # Build and install the exe
 
 add_executable(${CLP_MODULE} ${${CLP_MODULE}_SOURCE})
-slicer3_set_plugins_output_path(${CLP_MODULE})
+#slicer3_set_plugins_output_path(${CLP_MODULE})
 target_link_libraries(
   ${CLP_MODULE}
   ChangeTracker
@@ -50,7 +50,7 @@ target_link_libraries(
   vtkCommon
   vtkTeem
   )
-slicer3_install_plugins(${CLP_MODULE})
+#slicer3_install_plugins(${CLP_MODULE})
 
 # this is needed to set up testing
 add_library(${CLP_MODULE}Lib SHARED ${${CLP_MODULE}_SOURCE})
