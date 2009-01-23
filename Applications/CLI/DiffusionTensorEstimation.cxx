@@ -39,6 +39,11 @@ int main( int argc, char * argv[] )
       vtkSmartPointer<vtkNRRDReader>::New();
     reader->SetFileName(inputVolume.c_str());
     reader->Update();
+    if ( reader->GetReadStatus() )
+      {
+      std::cerr << argv[0] << ": Error reading Diffusion file" << std::endl;
+      return EXIT_FAILURE;
+      }
 
     vtkSmartPointer<vtkDoubleArray> bValues =
       vtkSmartPointer<vtkDoubleArray>::New();
@@ -109,7 +114,6 @@ int main( int argc, char * argv[] )
       {
       estim->SetEstimationMethodToNLS();
       }
-
     estim->Update();
     vtkImageData *tensorImage = estim->GetOutput();
     tensorImage->GetPointData()->SetScalars(NULL);
