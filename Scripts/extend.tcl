@@ -313,18 +313,26 @@ foreach s3ext $::EXTEND(s3extFiles) {
     continue
   }
 
+  if { $isWindows } {
+    set make [file attributes $::MAKE -shortname]
+    set makeCmd "$make $ext(name).sln /build $::VTK_BUILD_TYPE /project ALL_BUILD"
+  } else {
+    set makeCmd $::MAKE
+  }
+
   # configure project and make
   cd $::Slicer3_EXT/$ext(name)-build
   runcmd $::CMAKE \
     -DSlicer3_DIR:PATH=$::Slicer3_BUILD \
     -DBUILD_AGAINST_SLICER3:BOOL=ON \
+    -DMAKECOMMAND:STRING=$makeCmd \
     -DCMAKE_INSTALL_PREFIX:PATH=$::Slicer3_EXT/$ext(name)-install \
     $ext(srcDir)
 
   # build the project
   cd $::Slicer3_EXT/$ext(name)-build
   if { $isWindows } {
-    runcmd $::MAKE $ext(name).sln /build $::VTK_BUILD_TYPE /project ALL_BUILD
+    runcmd "$::MAKE" $ext(name).sln /build $::VTK_BUILD_TYPE /project ALL_BUILD
   } else {
     eval runcmd $::MAKE
   }
