@@ -38,7 +38,7 @@ set(TEMP "${Slicer3_BINARY_DIR}/Testing/Temporary")
 set(MRML_DATA "${Slicer3_HOME}/share/MRML/Testing/TestData")
 
 add_executable(ChangeTrackerTest ChangeTrackerTest.cxx)
-add_dependencies(ChangeTrackerTest ChangeTrackerLib)
+add_dependencies(ChangeTrackerTest ChangeTrackerCommandLineLib)
 add_dependencies(ChangeTrackerTest ChangeTrackerCommandLine)
 target_link_libraries(ChangeTrackerTest 
                       ChangeTracker
