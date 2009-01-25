@@ -245,7 +245,7 @@ void  _Print(vtkImageData *DATA,::ostream& os)  {
 }
 
 
-int main(int argc, char** argv)
+int main(int argc, char* argv[])
 {
   //
   // parse arguments using the CLP system; this creates variables.
