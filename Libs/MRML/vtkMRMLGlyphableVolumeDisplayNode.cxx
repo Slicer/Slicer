@@ -157,8 +157,17 @@ void vtkMRMLGlyphableVolumeDisplayNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
   vtkMRMLGlyphableVolumeDisplayNode *node = (vtkMRMLGlyphableVolumeDisplayNode *) anode;
+  
+  int disableModify = this->GetDisableModifiedEvent();
+  this->DisableModifiedEventOn();
 
- this->SetGlyphColorNodeID(node->GlyphColorNodeID);
+  this->SetGlyphColorNodeID(node->GlyphColorNodeID);
+
+  this->SetDisableModifiedEvent(disableModify);
+  if (!disableModify)
+    {
+    this->InvokePendingModifiedEvent();
+    }
 
 }
 

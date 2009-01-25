@@ -270,6 +270,8 @@ void vtkMRMLScalarVolumeDisplayNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLScalarVolumeDisplayNode *node = (vtkMRMLScalarVolumeDisplayNode *) anode;
   
+  int disableModify = this->GetDisableModifiedEvent();
+
   this->DisableModifiedEventOn();
 
   this->SetAutoWindowLevel(node->AutoWindowLevel);
@@ -281,8 +283,11 @@ void vtkMRMLScalarVolumeDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetLowerThreshold(node->LowerThreshold);
   this->SetInterpolate(node->Interpolate);
   
-  this->DisableModifiedEventOff();
-  this->InvokePendingModifiedEvent();
+  this->SetDisableModifiedEvent(disableModify);
+  if (!disableModify)
+    {
+    this->InvokePendingModifiedEvent();
+    }
 }
 
 //----------------------------------------------------------------------------

@@ -345,6 +345,7 @@ void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLDisplayNode *node = (vtkMRMLDisplayNode *) anode;
 
+  int disableModify = this->GetDisableModifiedEvent();
   this->DisableModifiedEventOn();
 
   // Strings
@@ -375,8 +376,11 @@ void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetColorNodeID(node->ColorNodeID);
   this->SetActiveScalarName(node->ActiveScalarName);
 
-  this->DisableModifiedEventOff();
-  this->InvokePendingModifiedEvent();
+  this->SetDisableModifiedEvent(disableModify);
+  if (!disableModify)
+    {
+    this->InvokePendingModifiedEvent();
+    }
 
 }
 

@@ -151,9 +151,18 @@ void vtkMRMLVectorVolumeDisplayNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
   vtkMRMLVectorVolumeDisplayNode *node = (vtkMRMLVectorVolumeDisplayNode *) anode;
+  
+  int disableModify = this->GetDisableModifiedEvent();
+  this->DisableModifiedEventOn();
 
   this->SetScalarMode(node->ScalarMode);
   this->SetGlyphMode(node->GlyphMode);
+
+  this->SetDisableModifiedEvent(disableModify);
+  if (!disableModify)
+    {
+    this->InvokePendingModifiedEvent();
+    }
 }
 
 //----------------------------------------------------------------------------
