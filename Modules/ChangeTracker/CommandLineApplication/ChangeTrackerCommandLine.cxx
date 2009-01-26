@@ -165,21 +165,37 @@ void tgWriteVolume(const char *fileName, vtkMatrix4x4 *export_matrix, vtkImageDa
  // iwriter->Delete();
 }
 
-
-int tgSetSLICER_HOME(char** argv)  
+vtksys_stl::string tgGetSLICER_HOME(char** argv)  
 { 
-  vtksys_stl::string slicerHome;
+  vtksys_stl::string slicerHome = "";
   if ( !vtksys::SystemTools::GetEnv("Slicer3_HOME", slicerHome) )
   {
     std::string programPath;
     std::string errorMessage;
+    if ( !vtksys::SystemTools::FindProgramPath(argv[0], programPath, errorMessage) ) return slicerHome;
+
+    slicerHome = vtksys::SystemTools::GetFilenamePath(programPath.c_str()) + "/../../../";
+  } 
+  return slicerHome;
+}
+
+int tgSetSLICER_HOME(char** argv)  
+{ 
+  vtksys_stl::string slicerHome = "";
+  if ( !vtksys::SystemTools::GetEnv("Slicer3_HOME", slicerHome) )
+  {
+    std::string programPath;
+    std::string errorMessage;
+
     if ( !vtksys::SystemTools::FindProgramPath(argv[0], programPath, errorMessage) ) return 1;
 
     std::string homeEnv = "Slicer3_HOME=";
     homeEnv += vtksys::SystemTools::GetFilenamePath(programPath.c_str()) + "/../../../";
    
-    // cout << "Set environment: " << homeEnv.c_str() << endl;
+    cout << "Set environment: " << homeEnv.c_str() << endl;
     vtkKWApplication::PutEnv(const_cast <char *> (homeEnv.c_str()));
+  } else {
+    cout << "Slicer3_HOME found: " << slicerHome << endl;
   }
   return 0;
 }
@@ -268,14 +284,15 @@ int main(int argc, char* argv[])
     Vtkteem_Init(interp);
     Vtkitk_Init(interp);
 
-    /* AF: this should be set automagically, since the test is invoked via
-     * Slicer --launch
     // SLICER_HOME
-    if (tgSetSLICER_HOME(argv)) {
+    cout << "Setting SLICER home: " << endl;
+    vtksys_stl::string slicerHome = tgGetSLICER_HOME(argv);
+    if(!slicerHome.size())
+    {
       cout << "Error: Cannot find executable" << endl;
       return EXIT_FAILURE; 
     }
-    */
+    cout << "Slicer home is " << slicerHome << endl;
 
     // When I include the following line I get the leak message 
     vtkSlicerApplication *app   = vtkSlicerApplication::GetInstance();
@@ -425,7 +442,8 @@ int main(int argc, char* argv[])
            std::string Scan2Global_fname = std::string(tg.GetWorkingDir())+std::string("/Scan2_Global.nrrd");
 //           cmdStream << "env > /tmp/slicer_env.txt";
            
-           cmdStream << "${Slicer3_HOME}/Slicer3 --launch RigidRegistration --iterations 100,100,50,20" <<
+           cmdStream << slicerHome << 
+             "/Slicer3 --launch RigidRegistration --iterations 100,100,50,20" <<
              " --fixedsmoothingfactor 0 --movingsmoothingfactor 0" <<
              " --histogrambins 30 --spatialsamples 10000 --learningrate 0.01,0.005,0.0005,0.0002" <<
              " --translationscale 100 --resampledmovingfilename " << 
@@ -549,7 +567,8 @@ int main(int argc, char* argv[])
            std::string Scan2Resampled_fname = std::string(tg.GetWorkingDir())+"/Scan2_resampled.nrrd";
            tgWriteVolume(Scan1Resampled_fname.c_str(), supersampleMatrix, Scan1SuperSample);
            tgWriteVolume(Scan2Resampled_fname.c_str(), supersampleMatrix, Scan2SuperSample);
-           cmdStream << "${Slicer3_HOME}/Slicer3 --launch RigidRegistration --iterations 100,100,50,20" <<
+           cmdStream << slicerHome <<
+             "/Slicer3 --launch RigidRegistration --iterations 100,100,50,20" <<
              " --fixedsmoothingfactor 0 --movingsmoothingfactor 0" <<
              " --histogrambins 30 --spatialsamples 10000 --learningrate 0.01,0.005,0.0005,0.0002" <<
              " --translationscale 10 --resampledmovingfilename " << 
