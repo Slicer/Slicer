@@ -3,7 +3,7 @@
 #
 
 #
-# intersect a model and volume, creating a new label map
+# intersect a model and volume, creating a new label map and returning it
 # labelValue is the integer value to place in the voxels of the output label volume, default 2
 # labelVolumeName is what to name your new volume, if not set, uses the model and volume names to create a new name
 # intensityFlag if set to 1, place the intensity in the output label map volume (will produce a random colour display), default 0
@@ -12,10 +12,10 @@ proc ModelIntoLabelVolumeIntersect { modelNode volumeNode {labelValue 2} {labelV
     
   if {$modelNode == ""} {
       puts "You must select a model first"
-      return -1
+      return
   } elseif {$volumeNode == ""} {
       puts "You must select a reference volume first"
-      return -1
+      return
   } 
 
   set deleteMt 1
@@ -153,7 +153,7 @@ proc ModelIntoLabelVolumeIntersect { modelNode volumeNode {labelValue 2} {labelV
       $Mt Delete
   }
 
-  return 1
+  return $labelmapVolumeNode
 }
 
 #

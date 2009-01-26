@@ -300,15 +300,12 @@ proc ModelIntoLabelVolumeApply {this} {
           puts "ERROR subdividing model!"
           return
       } 
-      ModelIntoLabelVolumeIntersect $newModelNode $volumeNode $labelValue $labelVolumeName $intensityFlag $matrixNode
+      set labelmapVolumeNode [ModelIntoLabelVolumeIntersect $newModelNode $volumeNode $labelValue $labelVolumeName $intensityFlag $matrixNode]
   } else {
-      ModelIntoLabelVolumeIntersect $modelNode $volumeNode $labelValue $labelVolumeName $intensityFlag $matrixNode
+      set labelmapVolumeNode [ModelIntoLabelVolumeIntersect $modelNode $volumeNode $labelValue $labelVolumeName $intensityFlag $matrixNode]
   }
-  # get the new label map
-  set nodeList [$::slicer3::MRMLScene GetNodesByName $labelVolumeName]
-  set labelmapVolumeNode [$nodeList GetItemAsObject 0]
   if {$labelmapVolumeNode == ""} {
-      puts "ERROR: can't find a new label map with name $labelVolumeName"
+      puts "ERROR: can't find a new label map volume."
       return
   }
   # set the new label map to be active
