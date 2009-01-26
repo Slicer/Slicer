@@ -1071,7 +1071,7 @@ void vtkChangeTrackerROIStep::ROIIntensityMinMaxUpdate(vtkImageData* image, doub
       {
       for(;ijk[2]<ctNode->GetROIMax(2);ijk[2]++)
         {
-        double intensity;
+        double intensity = 0;
 
         switch (image->GetScalarType())
              {
@@ -1115,6 +1115,9 @@ void vtkChangeTrackerROIStep::ROIIntensityMinMaxUpdate(vtkImageData* image, doub
                 double *intensityPtr = (double*)image->GetScalarPointer(ijk[0], ijk[1], ijk[2]);
                 intensity = (double)(*intensityPtr);
                 break;}
+              default:{
+                cerr << "Unknown scalar type" << endl;
+              }
              }
         if(intensityMin>intensity)
           intensityMin = intensity;
