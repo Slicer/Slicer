@@ -15,7 +15,7 @@ proc ModelIntoLabelVolumeTearDownGUI {this} {
   # nodeSelector  ;# disabled for now
   set widgets {
     run modelsSelect
-    volumesSelect labelValueEntry intensity labelVolumeName settingsFrame 
+    volumesSelect labelValueEntry intensity subdivide labelVolumeName settingsFrame 
   }
 
   foreach w $widgets {
@@ -61,7 +61,7 @@ proc ModelIntoLabelVolumeBuildGUI {this} {
   #
   # help frame
   #
-  set helptext "The ModelIntoLabelVolume is a scripted module in Tcl. It intersects a model with a reference volume and creates an output label map volume with the model vertices labelled with the given label value. This is useful once tracts have been generated to turn them into a label volume. If the intensity option is checked, it will use the voxel values from the reference volume (you can change the output label volume to use the grey colour node).<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:ModelIntoLabelVolume-Documentation</a>"
+  set helptext "The ModelIntoLabelVolume is a scripted module in Tcl. It intersects a model with a reference volume and creates an output label map volume with the model vertices labelled with the given label value. This is useful once tracts have been generated to turn them into a label volume. If the intensity option is checked, it will use the voxel values from the reference volume (you can change the output label volume to use the grey colour node). If the subdivide option is  set to 1, subdivide the input model into a new one with more vertices to get a more detailed output label map.<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:ModelIntoLabelVolume-Documentation</a>"
   set abouttext "Contributed by Nicole Aucoin, SPL, BWH (Ron Kikinis). This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details."
   $this BuildHelpAndAboutFrame $pageWidget $helptext $abouttext
 
@@ -125,6 +125,15 @@ proc ModelIntoLabelVolumeBuildGUI {this} {
     $::ModelIntoLabelVolume($this,intensity) SetSelectedState 0
     $::ModelIntoLabelVolume($this,intensity) SetBalloonHelpString "Use the intensity value from the reference volume, overrides the label value and produces a more colourful output until you change the colour node on the label volume to grey"
     pack [$::ModelIntoLabelVolume($this,intensity) GetWidgetName] -side top -anchor w -padx 2 -pady 2 
+
+  # subdivide the input model into a new one with more vertices?
+  set ::ModelIntoLabelVolume($this,subdivide) [vtkKWCheckButton New]
+    $::ModelIntoLabelVolume($this,subdivide) SetParent [$::ModelIntoLabelVolume($this,settingsFrame) GetFrame]
+    $::ModelIntoLabelVolume($this,subdivide) Create
+    $::ModelIntoLabelVolume($this,subdivide) SetText "Subdivide Model"
+    $::ModelIntoLabelVolume($this,subdivide) SetSelectedState 0
+    $::ModelIntoLabelVolume($this,subdivide) SetBalloonHelpString "Subdivide the input model using the vtkButterflySubdivisionFilter. WARNING: not fully tested on any but basic mrml model nodes. Copies the first display node over to the new model node. Useful to get a more filled in output label map if resampling the reference volume doesn't work."
+    pack [$::ModelIntoLabelVolume($this,subdivide) GetWidgetName] -side top -anchor w -padx 2 -pady 2 
 
   # apply button
   set ::ModelIntoLabelVolume($this,run) [vtkKWPushButton New]
@@ -255,27 +264,22 @@ proc ModelIntoLabelVolumeExit {this} {
 
 proc ModelIntoLabelVolumeApply {this} {
 
-  set debug 0
-
   set modelNode [$::ModelIntoLabelVolume($this,modelsSelect) GetSelected]
   set labelValue [[$::ModelIntoLabelVolume($this,labelValueEntry) GetWidget] GetValueAsInt]
   set labelVolumeName [[$::ModelIntoLabelVolume($this,labelVolumeName) GetWidget] GetValue]
   set volumeNode [$::ModelIntoLabelVolume($this,volumesSelect)  GetSelected]
-  set matrixNode ""
-  set deleteMt 1
   set intensityFlag [$::ModelIntoLabelVolume($this,intensity) GetSelectedState]
+  set subdivideFlag [$::ModelIntoLabelVolume($this,subdivide) GetSelectedState]
 
-  if {$labelVolumeName == ""} {
-      set labelVolumeName "[$modelNode GetName]-[$volumeNode GetName]"
-  }
-
+  set matrixNode ""
+ 
   if {$modelNode == ""} {
       set msg "You must select a model first"
   } elseif {$volumeNode == ""} {
       set msg "You must select a reference volume first"
   } else {
       set msg ""
-      # set msg "Working on model [$modelNode GetName], ref vol = [$volumeNode GetName], label value = $labelValue, label volume name = $labelVolumeName, intensityFlag = $intensityFlag"
+      # set msg "Working on model [$modelNode GetName], ref vol = [$volumeNode GetName], label value = $labelValue, label volume name = $labelVolumeName, intensityFlag = $intensityFlag, subdivideFlag = $subdivideFlag"
   }
   if {$msg != ""} {
       set dialog [vtkKWMessageDialog New]
@@ -288,124 +292,27 @@ proc ModelIntoLabelVolumeApply {this} {
       $dialog Delete
       return
   }
-  # clone the reference volume into a label map
-  set volumesLogic [$::slicer3::VolumesGUI GetLogic]
-  set labelmapVolumeNode [$volumesLogic CreateLabelVolume $::slicer3::MRMLScene $volumeNode $labelVolumeName]
 
-  # now get the volume's matrix
-  catch "Mrasijk Delete"
-  vtkMatrix4x4 Mrasijk
-  # get the volume's RAS to ijk matrix
-  $volumeNode GetRASToIJKMatrix Mrasijk 
-
-  # for now use an identity transform, later can pass one in
-  catch "IdMatrix Delete"
-  set Mt [vtkMatrix4x4 IdMatrix]
-  if {$matrixNode != ""} {
-      $matrixNode GetMatrixTransformToWorld $Mt
-      set deleteMt 0
+  # subdivide the model node?
+  if {$subdivideFlag} {
+      set newModelNode [ModelIntoLabelVolumeLogicSubdivideModel [$modelNode GetName]] 
+      if {$newModelNode == ""} {
+          puts "ERROR subdividing model!"
+          return
+      } 
+      ModelIntoLabelVolumeIntersect $newModelNode $volumeNode $labelValue $labelVolumeName $intensityFlag $matrixNode
+  } else {
+      ModelIntoLabelVolumeIntersect $modelNode $volumeNode $labelValue $labelVolumeName $intensityFlag $matrixNode
   }
-
-  # now loop over the points, transform them and write them out
-  puts "Transforming RAS vtkPolydata points in IJK"
-  set numPoints [[$modelNode GetPolyData] GetNumberOfPoints]
-  set foundNumPoints 0
-
-  # Get the vertex points out of the model and transform them
-  for {set p 0} {$p < $numPoints} {incr p} {
-      # get the coordinate points
-      scan [[$modelNode GetPolyData] GetPoint $p] "%f %f %f" a b c
-
-      # multiply by the transform matrix   ( Mt = Identity matrix)
-      set transformPoint [$Mt MultiplyPoint $a $b $c 1]
-      
-      # multiply by the RAS to IJK matrix from the volume
-      set ijkPoint [Mrasijk MultiplyPoint [lindex $transformPoint 0] [lindex $transformPoint 1] [lindex $transformPoint 2] [lindex $transformPoint 3]]
-      #set ijkPoint [$Mt MultiplyPoint [lindex $transformPoint 0] [lindex $transformPoint 1] [lindex $transformPoint 2] [lindex $transformPoint 3]]
-      ##################### Modif Sonia 2 ############################
-        # Transform the IJK (float) into integers
-      set i   [lindex $ijkPoint 0]
-      set i0   [expr int($i)]
-
-      set tmp [expr abs($i - $i0)]
-      if {$tmp > 0.5} {
-          set i [expr $i0 +1 ]
-      } else {
-          set i $i0
-      }
-      set j   [lindex $ijkPoint 1]
-      set j0   [expr int($j)]
-      
-      set tmp [expr abs($j - $j0)]
-      if {$tmp > 0.5} {
-          set j [expr $j0 +1 ]
-      } else {
-          set j $j0
-      }
-      set k   [lindex $ijkPoint 2]
-      set k0   [expr int($k)]
-      
-      set tmp [expr abs($k - $k0)]
-      if {$tmp > 0.5} {
-          set k [expr $k0 +1 ]
-      } else {
-          set k $k0
-      }
-      ##################################################################
-      
-      # get the voxelID corresponding to the ijk location
-      # set voxelPointID [[Volume($volumeID,vol) GetOutput] FindPoint [lindex $ijkPoint 0] [lindex $ijkPoint 1] [lindex $ijkPoint 2]]
-      
-      # Set the intensity to the corresponding voxel in the labelmapvolume
-      #set voxeloutPointID [[Volume($labelmapvolumeID,vol) GetOutput] FindPoint [lindex $ijkPoint 0] [lindex $ijkPoint 1] [lindex $ijkPoint 2]]
-      
-      # set voxeloutPointID [[$labelmapVolumeNode GetImageData] FindPoint [expr $i * 2.0] [expr $j * 2.0] [expr  $k * 2.0] ]
-      set voxeloutPointID [[$labelmapVolumeNode GetImageData] FindPoint $i $j $k]
-      if {$voxeloutPointID < 0} {
-          puts "Unable to find volume point id for $ijkPoint"
-      } else {
-          if {$intensityFlag == 0} {
-              [[ [$labelmapVolumeNode GetImageData] GetPointData] GetScalars] SetTuple1 $voxeloutPointID $labelValue
-          } else {
-              # the voxelID corresponding to the ijk locations
-              set voxelPointID [[$volumeNode GetImageData] FindPoint [lindex $ijkPoint 0] [lindex $ijkPoint 1] [lindex $ijkPoint 2]]
-              
-              if {$voxelPointID < 0} {
-                  puts "Unable to find volume point id for $ijkPoint"
-              } else {
-                  
-                  # read the intensity from the FA map
-                  set intensity [[[[$volumeNode GetImageData] GetPointData] GetScalars] GetTuple1 $voxelPointID]
-                  # and set it
-                  [[ [$labelmapVolumeNode GetImageData] GetPointData] GetScalars] SetTuple1 $voxeloutPointID $intensity
-              }
-          }
-          
-          if {$debug && $p < 5} {
-              # print out the first point's values
-              puts "Point number $p:"
-              puts "Dvtk =\n\t$a $b $c 1"
-              puts "Mt * Dvtk =\n\t$transformPoint"
-              puts "IJK Point is : Mvtk * Mt * Dvtk =\n\t$ijkPoint"
-              if {$intensityFlag != 0} {
-                  puts "Intensity = $intensity"
-              }
-              
-          }          
-          incr foundNumPoints
-      }
+  # get the new label map
+  set nodeList [$::slicer3::MRMLScene GetNodesByName $labelVolumeName]
+  set labelmapVolumeNode [$nodeList GetItemAsObject 0]
+  if {$labelmapVolumeNode == ""} {
+      puts "ERROR: can't find a new label map with name $labelVolumeName"
+      return
   }
-
   # set the new label map to be active
   [$::slicer3::ApplicationLogic GetSelectionNode] SetReferenceActiveVolumeID [$volumeNode GetID]
   [$::slicer3::ApplicationLogic GetSelectionNode] SetReferenceActiveLabelVolumeID [$labelmapVolumeNode GetID]
   $::slicer3::ApplicationLogic PropagateVolumeSelection 0
-    
-  # clean up  
-  Mrasijk Delete
-    if {$deleteMt} {
-      # only delete it if it's our declared identity, otherwise it's a pointer to 
-      # a Slicer variable
-      $Mt Delete
-  }
 }
