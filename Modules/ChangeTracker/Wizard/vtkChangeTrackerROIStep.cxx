@@ -22,6 +22,9 @@
 #include "vtkMRMLROINode.h"
 #include <sstream>
 #include "vtkObserverManager.h"
+#include "vtkFixedPointVolumeRayCastMapper.h"
+#include "vtkVolumeTextureMapper3D.h"
+#include "vtkPiecewiseFunction.h"
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkChangeTrackerROIStep);
@@ -449,6 +452,8 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
     this->GetGUI()->ObserveMRMLROINode(roi);
     this->roiNode = roi;
     roi->Delete();
+    InitROIRender();
+    ResetROIRender();
     }
   
 
@@ -810,15 +815,12 @@ void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long 
         this->ButtonsShow->SetText("Show VOI");
         this->ROIMapRemove();
         roiNode->SetVisibility(0);
+        ResetROIRender();
         this->ROIHideFlag = 1;
-        if (roiNode) 
-          {
-//          this->Render_Filter->RemoveAllPoints();
-          roiNode->SetVisibility(0);
-          }
       } else { 
         if (this->ROIMapShow()) { 
           roiNode->SetVisibility(1);
+          UpdateROIRender();
           this->ButtonsShow->SetText("Hide VOI");
         }
 // FIXME: when feature complete
@@ -831,10 +833,8 @@ void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long 
       if (this->ROILabelMapNode) {
         this->ButtonsShow->SetText("Show VOI");
         this->ROIMapRemove();
-        if (this->roiNode) 
-          {
-          roiNode->SetVisibility(0);
-          }
+        roiNode->SetVisibility(0);
+        ResetROIRender();
       }
       this->ROIReset();
     }
@@ -870,6 +870,7 @@ void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long 
         this->ButtonsShow->SetText("Hide VOI");
         }
     }
+    UpdateROIRender();
   }  
   // Define SHOW Button 
 }
@@ -883,6 +884,7 @@ void vtkChangeTrackerROIStep::ProcessMRMLEvents(vtkObject *caller, unsigned long
       roiUpdateGuard = true;
       MRMLUpdateROIFromROINode();
       this->ROIMapUpdate();
+      UpdateROIRender();
       roiUpdateGuard = false;
       }
 }
@@ -1003,6 +1005,7 @@ void vtkChangeTrackerROIStep::TransitionCallback()
        // remove the ROI widget
        if (roiNode)
          roiNode->SetVisibility(0);
+       ResetROIRender();
 
        this->GUI->GetWizardWidget()->GetWizardWorkflow()->AttemptToGoToNextStep();
      } else {
@@ -1026,4 +1029,158 @@ void  vtkChangeTrackerROIStep::HideUserInterface()
 void vtkChangeTrackerROIStep::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
+}
+
+void vtkChangeTrackerROIStep::ROIIntensityMinMaxUpdate(vtkImageData* image, double &intensityMin, double &intensityMax)
+{
+  if(!this->ROICheck())
+  {
+    cerr << "ROI check failed" << endl;
+    return;
+  }
+
+  vtkMRMLChangeTrackerNode* ctNode = this->GetGUI()->GetNode();
+  if(
+    ctNode->GetROIMax(0)-ctNode->GetROIMin(0)<=0 ||
+    ctNode->GetROIMax(1)-ctNode->GetROIMin(1)<=0 ||
+    ctNode->GetROIMax(2)-ctNode->GetROIMin(2)<=0)
+    {
+    return;
+    }
+
+  // take a sparse sample of the ROI intensity, with 10 samples in each
+  // dimension
+  int ijk[3];
+  int iInc, jInc, kInc;
+  intensityMin = 1e10;
+  intensityMax = -1.;
+
+//  iInc = (ctNode->GetROIMax(0)-ctNode->GetROIMin(0))/3;
+//  jInc = (ctNode->GetROIMax(1)-ctNode->GetROIMin(1))/3;
+//  kInc = (ctNode->GetROIMax(2)-ctNode->GetROIMin(2))/3;
+  iInc = 1;
+  jInc = 1;
+  kInc = 1;
+  ijk[0] = ctNode->GetROIMin(0);
+  ijk[1] = ctNode->GetROIMin(1);
+  ijk[2] = ctNode->GetROIMin(2);
+
+  for(;ijk[0]<ctNode->GetROIMax(0);ijk[0]++)
+    {
+    for(;ijk[1]<ctNode->GetROIMax(1);ijk[1]++)
+      {
+      for(;ijk[2]<ctNode->GetROIMax(2);ijk[2]++)
+        {
+        double intensity;
+
+        switch (image->GetScalarType())
+             {
+              case VTK_CHAR:{
+                char *intensityPtr = (char*)image->GetScalarPointer(ijk[0], ijk[1], ijk[2]);
+                intensity = (double)(*intensityPtr);
+                break;}
+              case VTK_UNSIGNED_CHAR:{
+                unsigned char *intensityPtr = (unsigned char*)image->GetScalarPointer(ijk[0], ijk[1], ijk[2]);
+                intensity = (double)(*intensityPtr);
+                break;}
+              case VTK_SHORT:{
+                short *intensityPtr = (short*)image->GetScalarPointer(ijk[0], ijk[1], ijk[2]);
+                intensity = (double)(*intensityPtr);
+                break;}
+              case VTK_UNSIGNED_SHORT:{
+                unsigned short *intensityPtr = (unsigned short*)image->GetScalarPointer(ijk[0], ijk[1], ijk[2]);
+                intensity = (double)(*intensityPtr);
+                break;}
+              case VTK_INT:{
+                int *intensityPtr = (int*)image->GetScalarPointer(ijk[0], ijk[1], ijk[2]);
+                intensity = (double)(*intensityPtr);
+                break;}
+              case VTK_UNSIGNED_INT:{
+                unsigned int *intensityPtr = (unsigned int*)image->GetScalarPointer(ijk[0], ijk[1], ijk[2]);
+                intensity = (double)(*intensityPtr);
+                break;}
+              case VTK_LONG:{
+                long *intensityPtr = (long*)image->GetScalarPointer(ijk[0], ijk[1], ijk[2]);
+                intensity = (double)(*intensityPtr);
+                break;}
+              case VTK_UNSIGNED_LONG:{
+                unsigned long *intensityPtr = (unsigned long*)image->GetScalarPointer(ijk[0], ijk[1], ijk[2]);
+                intensity = (double)(*intensityPtr);
+                break;}
+              case VTK_FLOAT:{
+                float *intensityPtr = (float*)image->GetScalarPointer(ijk[0], ijk[1], ijk[2]);
+                intensity = (double)(*intensityPtr);
+                break;}
+              case VTK_DOUBLE:{
+                double *intensityPtr = (double*)image->GetScalarPointer(ijk[0], ijk[1], ijk[2]);
+                intensity = (double)(*intensityPtr);
+                break;}
+             }
+        if(intensityMin>intensity)
+          intensityMin = intensity;
+        if(intensityMax<intensity)
+          intensityMax = intensity;
+        }
+      }
+    }
+
+  cerr << "ROI Intensity min: " << intensityMin << endl;
+  cerr << "ROI Intensity max: " << intensityMax << endl;
+}
+
+void vtkChangeTrackerROIStep::InitROIRender()
+{ 
+  if(this->roiNode)
+    {
+    vtkMRMLChangeTrackerNode* Node = this->GetGUI()->GetNode();
+    vtkMRMLVolumeNode* volumeNode =  
+      vtkMRMLVolumeNode::SafeDownCast(Node->GetScene()->GetNodeByID(Node->GetScan1_Ref()));
+    if(volumeNode)
+      {
+      CreateRender(volumeNode, 0);
+      }
+    }
+}
+
+void vtkChangeTrackerROIStep::UpdateROIRender()
+{
+  vtkMRMLChangeTrackerNode* node = this->GetGUI()->GetNode();
+  vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast(node->GetScene()->GetNodeByID(node->GetScan1_Ref()));
+  if(volumeNode)
+    {
+    float color0[3] = { 0.8, 0.8, 0.0 };
+    float color1[3] = { 0.8, 0.8, 0.0 };
+    double intensityMin, intensityMax;
+    
+    double* imgRange  =   volumeNode->GetImageData()->GetPointData()->GetScalars()->GetRange();
+    intensityMin = imgRange[0];
+    intensityMax = imgRange[1];
+    this->ROIIntensityMinMaxUpdate(volumeNode->GetImageData(), intensityMin, intensityMax);
+    this->SetRender_HighPassFilter((intensityMax+intensityMin)*.5, color0, color1);
+
+    if(this->Render_RayCast_Mapper)
+      {
+      this->Render_Mapper->SetCroppingRegionPlanes(node->GetROIMin(0), node->GetROIMax(0),
+                                                   node->GetROIMin(1), node->GetROIMax(1),
+                                                   node->GetROIMin(2), node->GetROIMax(2));
+      this->Render_Mapper->CroppingOn();
+      this->GetGUI()->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+      }
+
+    if(this->Render_Mapper)
+      {
+      // !!!  Cropping region is defined in voxel coordinates !!!
+      this->Render_Mapper->SetCroppingRegionPlanes(node->GetROIMin(0), node->GetROIMax(0),
+                                                   node->GetROIMin(1), node->GetROIMax(1),
+                                                   node->GetROIMin(2), node->GetROIMax(2));
+        
+      this->Render_Mapper->CroppingOn();
+      this->GetGUI()->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+      }
+    }
+}
+
+void vtkChangeTrackerROIStep::ResetROIRender()
+{
+  this->Render_Filter->RemoveAllPoints();
 }

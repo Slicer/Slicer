@@ -101,6 +101,11 @@ private:
   void MRMLUpdateROINodeFromROI();
   void MRMLUpdateROIFromROINode();
 
+  void ROIIntensityMinMaxUpdate(vtkImageData* image, double &intensityMin, double &intensityMax);
+  void InitROIRender();
+  void UpdateROIRender();
+  void ResetROIRender();
+
   vtkMRMLScalarVolumeNode *ROILabelMapNode;
   vtkImageRectangularSource *ROILabelMap;
   int ROIHideFlag; 
