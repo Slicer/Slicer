@@ -1126,9 +1126,6 @@ void vtkChangeTrackerROIStep::ROIIntensityMinMaxUpdate(vtkImageData* image, doub
         }
       }
     }
-
-  cerr << "ROI Intensity min: " << intensityMin << endl;
-  cerr << "ROI Intensity max: " << intensityMax << endl;
 }
 
 void vtkChangeTrackerROIStep::InitROIRender()
