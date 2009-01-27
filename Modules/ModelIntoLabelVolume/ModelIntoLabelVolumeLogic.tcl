@@ -20,6 +20,8 @@ proc ModelIntoLabelVolumeIntersect { modelNode volumeNode {labelValue 2} {labelV
 
   set deleteMt 1
   set debug 0
+  set progress 0.0
+  set progressGauge [[$::slicer3::ApplicationGUI GetMainSlicerWindow] GetProgressGauge]
 
   if {$labelVolumeName == ""} {
       set labelVolumeName "[$modelNode GetName]-[$volumeNode GetName]"
@@ -54,6 +56,11 @@ proc ModelIntoLabelVolumeIntersect { modelNode volumeNode {labelValue 2} {labelV
   }
   # Get the vertex points out of the model and transform them
   for {set p 0} {$p < $numPoints} {incr p} {
+
+      # update progress
+      if {[expr $p % 100] == 0} {
+          $progressGauge SetValue [expr ($p * 1.0 / $numPoints) * 100.0]
+      }
       # get the coordinate points
       scan [[$modelNode GetPolyData] GetPoint $p] "%f %f %f" a b c
 
@@ -140,6 +147,7 @@ proc ModelIntoLabelVolumeIntersect { modelNode volumeNode {labelValue 2} {labelV
       }
   }
   # end of looping over model points
+  $progressGauge SetValue 0.0
 
   # clean up  
   if {$debug} {
