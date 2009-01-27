@@ -979,7 +979,7 @@ if { [BuildThis $::Teem_TEST_FILE "teem"] == 1 } {
 
             # - only Release mode is being built by ctest in spite of explicit request for debug...
             # running ctest through visual studio is broken in cmake2.4, so run ctest directly
-            runcmd $::CMAKE_PATH/bin/ctest -D $::GENLIB(test-type) -C $::VTK_BUILD_TYPE
+            # runcmd $::CMAKE_PATH/bin/ctest -D $::GENLIB(test-type) -C $::VTK_BUILD_TYPE
           }
         }
       } else {
