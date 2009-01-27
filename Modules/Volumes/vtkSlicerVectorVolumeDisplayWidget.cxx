@@ -357,7 +357,7 @@ void vtkSlicerVectorVolumeDisplayWidget::UpdateWidgetFromMRML ()
       this->WindowLevelThresholdEditor->SetThresholdType(vtkKWWindowLevelThresholdEditor::ThresholdManual);
       }
      
-    this->WindowLevelThresholdEditor->SetProcessCallbacks(0);
+    this->WindowLevelThresholdEditor->SetProcessCallbacks(1);
 
     // set the color node selector to reflect the volume's color node
     this->ColorSelectorWidget->SetSelected(displayNode->GetColorNode());
