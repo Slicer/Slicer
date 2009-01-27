@@ -449,8 +449,8 @@ int main(int argc, char* argv[])
              " --translationscale 100 --resampledmovingfilename " << 
              Scan2Global_fname << " --outputtransform " <<
              tg.GetWorkingDir() << "/Global_transform.txt " <<
-             tgScan1.c_str() << " " << tgScan2.c_str() <<
-             " >& " << tg.GetWorkingDir() << "/global_reg_output.txt" << std::endl;
+             tgScan1.c_str() << " " << tgScan2.c_str();
+             //" >& " << tg.GetWorkingDir() << "/global_reg_output.txt" << std::endl;
 
            cout << "Running registration: " << cmdStream.str() << endl;
            if(system(cmdStream.str().c_str())!=EXIT_SUCCESS)
@@ -492,7 +492,8 @@ int main(int argc, char* argv[])
          if(TerminationStep == 1)
            {
            tgWriteVolume(tgOutput.c_str(), tg.Scan1Matrix, Scan2Global);
-           return EXIT_SUCCESS;
+           return EXIT_FAILURE;
+           //return EXIT_SUCCESS;
            }
          
        } else {
@@ -574,8 +575,8 @@ int main(int argc, char* argv[])
              " --translationscale 10 --resampledmovingfilename " << 
              Scan2Local_fname << " --outputtransform " <<
              tg.GetWorkingDir() << "/Local_transform.txt " <<
-             Scan1Resampled_fname << " " << Scan2Resampled_fname <<
-             " >& " << tg.GetWorkingDir() << "/local_reg_output.txt" << std::endl;
+             Scan1Resampled_fname << " " << Scan2Resampled_fname;
+             //" >& " << tg.GetWorkingDir() << "/local_reg_output.txt" << std::endl;
 
            cout << "Running registration: " << cmdStream.str() << endl;
            if(system(cmdStream.str().c_str())!=EXIT_SUCCESS)
@@ -821,5 +822,7 @@ int main(int argc, char* argv[])
     cout << "default exception"; 
     return EXIT_FAILURE;
     }
-  return EXIT_SUCCESS;  
+  return EXIT_FAILURE;  
+  // always fail, because otherwise dashboard output is truncated, and I cannot debug problems with registration
+  //return EXIT_SUCCESS;  
 }
