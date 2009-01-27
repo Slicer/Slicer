@@ -337,6 +337,8 @@ void vtkSlicerVectorVolumeDisplayWidget::UpdateWidgetFromMRML ()
   
   if (displayNode != NULL && this->WindowLevelThresholdEditor) 
     {
+    this->WindowLevelThresholdEditor->SetProcessCallbacks(0);
+
     this->WindowLevelThresholdEditor->SetWindowLevel(
           displayNode->GetWindow(), displayNode->GetLevel() );
     this->WindowLevelThresholdEditor->SetThreshold(
@@ -354,6 +356,9 @@ void vtkSlicerVectorVolumeDisplayWidget::UpdateWidgetFromMRML ()
       {
       this->WindowLevelThresholdEditor->SetThresholdType(vtkKWWindowLevelThresholdEditor::ThresholdManual);
       }
+     
+    this->WindowLevelThresholdEditor->SetProcessCallbacks(0);
+
     // set the color node selector to reflect the volume's color node
     this->ColorSelectorWidget->SetSelected(displayNode->GetColorNode());
     this->InterpolateButton->SetSelectedState( displayNode->GetInterpolate()  );

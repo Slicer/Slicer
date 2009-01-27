@@ -53,6 +53,9 @@ vtkKWWindowLevelThresholdEditor::vtkKWWindowLevelThresholdEditor()
   this->TransferFunction = vtkColorTransferFunction::New();
   this->ColorTransferFunctionEditor->SetColorTransferFunction(this->TransferFunction);
   this->TransferFunction->Delete();
+  
+  this->ProcessCallbacks = 1;
+  
 }
 
 //----------------------------------------------------------------------------
@@ -539,6 +542,11 @@ void vtkKWWindowLevelThresholdEditor::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::ProcessWindowLevelCommand(double min, double max)
 {
+  if (!this->ProcessCallbacks)
+    {
+    return;
+    }
+
   double range[2];
   range[0] = min;
   range[1] = max;
@@ -570,6 +578,11 @@ void vtkKWWindowLevelThresholdEditor::ProcessWindowLevelCommand(double min, doub
 //----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::ProcessWindowLevelStartCommand(double min, double max)
 {
+  if (!this->ProcessCallbacks)
+    {
+    return;
+    }
+
   double range[2];
   range[0] = min;
   range[1] = max;
@@ -589,6 +602,11 @@ void vtkKWWindowLevelThresholdEditor::ProcessWindowLevelStartCommand(double min,
 //----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::ProcessThresholdCommand(double min, double max)
 {
+  if (!this->ProcessCallbacks)
+    {
+    return;
+    }
+
   double *range = this->ThresholdRange->GetRange();
   if (range[0] != min || range[1] != max)
     {
@@ -602,6 +620,11 @@ void vtkKWWindowLevelThresholdEditor::ProcessThresholdCommand(double min, double
 //----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::ProcessThresholdStartCommand(double min, double max)
 {
+  if (!this->ProcessCallbacks)
+    {
+    return;
+    }
+
   double range[2];
   range[0] = min;
   range[1] = max;
@@ -616,6 +639,11 @@ void vtkKWWindowLevelThresholdEditor::ProcessThresholdStartCommand(double min, d
 //----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::ProcessWindowEntryCommand(double window)
 {
+  if (!this->ProcessCallbacks)
+    {
+    return;
+    }
+
   vtkDebugMacro("ProcessWindowEntryCommand: win = " << window);
   
   double *wrange = this->WindowLevelRange->GetRange();
@@ -641,6 +669,11 @@ void vtkKWWindowLevelThresholdEditor::ProcessWindowEntryCommand(double window)
 //----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::ProcessLevelEntryCommand(double level)
 {
+  if (!this->ProcessCallbacks)
+    {
+    return;
+    }
+
   vtkDebugMacro("ProcessLevelEntryCommand: level = " << level);
   
   double *wrange = this->WindowLevelRange->GetRange();
@@ -732,6 +765,10 @@ void vtkKWWindowLevelThresholdEditor::SetThresholdType(int value)
 //----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::ProcessButtonsCommand()
 {
+  if (!this->ProcessCallbacks)
+    {
+    return;
+    }
   vtkDebugMacro("ProcessButtonsCommand: calling update auto levels");
   this->UpdateAutoLevels();
   this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, NULL);
@@ -740,6 +777,11 @@ void vtkKWWindowLevelThresholdEditor::ProcessButtonsCommand()
 //----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::ProcessCheckButtonCommand(int state)
 {
+  if (!this->ProcessCallbacks)
+    {
+    return;
+    }
+
   vtkDebugMacro("ProcessCheckButtonCommand: invoking value changed event");
   this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, NULL);
 }

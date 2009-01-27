@@ -389,6 +389,8 @@ void vtkSlicerDiffusionWeightedVolumeDisplayWidget::UpdateWidgetFromMRML ()
   // Adjust widget from display Node
   if (displayNode != NULL  && this->WindowLevelThresholdEditor != NULL) 
     {
+    this->WindowLevelThresholdEditor->SetProcessCallbacks(0);
+
     this->WindowLevelThresholdEditor->SetWindowLevel(
           displayNode->GetWindow(), displayNode->GetLevel() );
     this->WindowLevelThresholdEditor->SetThreshold(
@@ -406,6 +408,9 @@ void vtkSlicerDiffusionWeightedVolumeDisplayWidget::UpdateWidgetFromMRML ()
       {
       this->WindowLevelThresholdEditor->SetThresholdType(vtkKWWindowLevelThresholdEditor::ThresholdManual);
       }
+
+    this->WindowLevelThresholdEditor->SetProcessCallbacks(1);
+
     // set the color node selector to reflect the volume's color node
     this->ColorSelectorWidget->SetSelected(displayNode->GetColorNode());
     this->DiffusionSelectorWidget->GetScale()->SetValue(displayNode->GetDiffusionComponent());

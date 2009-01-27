@@ -423,6 +423,7 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::UpdateWidgetFromMRML ()
   
   if (displayNode != NULL) 
     {
+    this->WindowLevelThresholdEditor->SetProcessCallbacks(0);
 
     this->WindowLevelThresholdEditor->SetWindowLevel(
           displayNode->GetWindow(), displayNode->GetLevel() );
@@ -441,6 +442,9 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::UpdateWidgetFromMRML ()
       {
       this->WindowLevelThresholdEditor->SetThresholdType(vtkKWWindowLevelThresholdEditor::ThresholdManual);
       }
+
+     this->WindowLevelThresholdEditor->SetProcessCallbacks(1);
+
     // set the color node selector to reflect the volume's color node
     this->ColorSelectorWidget->SetSelected(displayNode->GetColorNode());
     this->InterpolateButton->SetSelectedState( displayNode->GetInterpolate()  );

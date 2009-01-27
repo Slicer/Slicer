@@ -86,6 +86,12 @@ public:
   //virtual void SetEndCommand(vtkObject *object, const char *method);
 
   // Description:
+  // Describes if the node is hidden
+  vtkGetMacro(ProcessCallbacks, int);
+  vtkSetMacro(ProcessCallbacks, int);
+  vtkBooleanMacro(ProcessCallbacks, int);
+
+  // Description:
   // TODO: access internal widgets
   //vtkKWRange* GetXRange() { return this->Range[0]; };
   void ProcessButtonsCommand();
@@ -138,6 +144,8 @@ protected:
   //char *StartCommand;
   //char *EndCommand;
 
+  int ProcessCallbacks;
+  
 
 private:
   vtkKWWindowLevelThresholdEditor(const vtkKWWindowLevelThresholdEditor&); // Not implemented
