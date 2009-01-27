@@ -42,6 +42,7 @@ add_dependencies(ChangeTrackerTest ChangeTrackerCommandLineLib)
 add_dependencies(ChangeTrackerTest ChangeTrackerCommandLine)
 target_link_libraries(ChangeTrackerTest 
                       ChangeTracker
+                      ChangeTrackerCommandLineLib
                       ITKIO 
                       ITKCommon 
                       vtkTeem
@@ -59,9 +60,9 @@ add_test(ChangeTrackerCL_TestGlobalReg
 #         --compare ${TEST_DATA}/MRMeningioma0.nrrd ${TEST_DATA}/MRMeningioma1.nrrd
          ChangeTrackerTest
          --sensitivity 0.96
-         --threshold 140,441
-         --roi_min 145,172,75
-         --roi_max 185,207,92
+         --threshold 145,411
+         --roi_min 107,68,59
+         --roi_max 153,123,94
          --intensity_analysis
          --scan1 ${TEST_DATA}/MRMeningioma0.nrrd
          --scan2 ${TEST_DATA}/MRMeningioma1.nrrd
@@ -75,9 +76,9 @@ add_test(ChangeTrackerCL_TestFull_Intensity
 #         --compare ${TEST_DATA}/MRMeningioma0.nrrd ${TEST_DATA}/MRMeningioma1.nrrd
          ChangeTrackerTest
          --sensitivity 0.96
-         --threshold 140,441
-         --roi_min 145,172,75
-         --roi_max 185,207,92
+         --threshold 145,411
+         --roi_min 107,68,59
+         --roi_max 153,123,94
          --intensity_analysis
          --scan1 ${TEST_DATA}/MRMeningioma0.nrrd
          --scan2 ${TEST_DATA}/MRMeningioma1.nrrd
