@@ -86,9 +86,19 @@ vtkMRMLFiducialListNode *vtkSlicerFiducialsLogic::AddFiducialList()
     {
     return NULL;
     }
-  const char *name;
-  name = this->MRMLScene->GetTagByClassName("vtkMRMLFiducialListNode");
-//  node->SetName(this->MRMLScene->GetUniqueNameByString(name));
+  // set up a storage node
+  vtkMRMLStorableNode *storableNode = vtkMRMLStorableNode::SafeDownCast(node);
+  if (storableNode)
+    {
+    vtkMRMLStorageNode *snode = storableNode->CreateDefaultStorageNode();
+    if (snode)
+      {
+      snode->SetScene(this->GetMRMLScene());
+      this->GetMRMLScene()->AddNode(snode);
+      storableNode->SetAndObserveStorageNodeID(snode->GetID());
+      storableNode->ModifiedSinceReadOn();
+      }
+    }
   node->SetName(this->MRMLScene->GetUniqueNameByString("L"));
   this->GetMRMLScene()->AddNode(node); 
   return vtkMRMLFiducialListNode::SafeDownCast(node);
