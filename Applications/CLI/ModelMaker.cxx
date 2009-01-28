@@ -91,20 +91,34 @@ int main(int argc, char * argv[])
     std::string sceneFilename;
     std::string modelHierarchyID;
 
-    if (ModelSceneFile.size() == 0)
+    if (InputVolume.size() == 0)
       {
-      std::cerr << "ERROR: no model hierarchy node defined!" << endl;
+      std::cerr << "ERROR: no input volume defined!" << endl;
       return EXIT_FAILURE;
       }
     
-    loc = ModelSceneFile[0].find_last_of("#");
-    if (loc != std::string::npos)
+    if (ModelSceneFile.size() == 0)
       {
-      sceneFilename = std::string(ModelSceneFile[0].begin(),
-                                  ModelSceneFile[0].begin() + loc);
-      loc++;
-      
-      modelHierarchyID = std::string(ModelSceneFile[0].begin()+loc, ModelSceneFile[0].end());
+      // make one up from the input volume's name
+      sceneFilename = vtksys::SystemTools::GetFilenameWithoutExtension(InputVolume) + std::string(".mrml");
+      std::cerr << "ERROR: no model scene defined! Using " << sceneFilename << endl;
+      }
+    else
+      {
+      loc = ModelSceneFile[0].find_last_of("#");
+      if (loc != std::string::npos)
+        {
+        sceneFilename = std::string(ModelSceneFile[0].begin(),
+                                    ModelSceneFile[0].begin() + loc);
+        loc++;
+        
+        modelHierarchyID = std::string(ModelSceneFile[0].begin()+loc, ModelSceneFile[0].end());
+        }
+      else
+        {
+        // the passed in file is missing a model hierarchy node, work around it
+        sceneFilename = ModelSceneFile[0];
+        }
       }
 
     if (debug)
@@ -129,7 +143,7 @@ int main(int argc, char * argv[])
 
     modelScene->SetURL(sceneFilename.c_str());
     modelScene->Import();
-   
+    
     if (debug)
       {
       std::cout << "Imported model scene file " << sceneFilename.c_str() << std::endl;
@@ -137,17 +151,27 @@ int main(int argc, char * argv[])
  
     // make sure we have a model hierarchy node
     vtkMRMLNode *rnd = modelScene->GetNodeByID( modelHierarchyID );
-    
+    vtkMRMLModelHierarchyNode *rtnd;
     if (!rnd)
       {
       std::cerr << "Error: no model hierarchy node at ID \""
-                << modelHierarchyID << "\"" << std::endl;
-      return EXIT_FAILURE;
+                << modelHierarchyID << "\", creating one" << std::endl;
+//      return EXIT_FAILURE;
+      rtnd = vtkMRMLModelHierarchyNode::New();
+      modelScene->AddNode(rtnd);      
+      // now get it again as a mrml node so can add things under it
+      rnd =  modelScene->GetNodeByID(rtnd->GetID());
+      // delete the new hiearachy node, scene sill points to it
+      rtnd->Delete();
       }
-    else { if (debug) { std::cout << "Got model hierarchy node " << rnd->GetID() << std::endl; } }    
-
-    vtkMRMLModelHierarchyNode *rtnd = vtkMRMLModelHierarchyNode::SafeDownCast(rnd);
-  
+    else
+      {
+      if (debug)
+        {
+        std::cout << "Got model hierarchy node " << rnd->GetID() << std::endl;
+        }
+      rtnd = vtkMRMLModelHierarchyNode::SafeDownCast(rnd);
+      }  
     LabelAnatomyContainer labelToAnatomy;
 
     vtkMRMLColorTableNode *colorNode = NULL;
@@ -1419,11 +1443,11 @@ int main(int argc, char * argv[])
         }
       std::cout << endl;
       }
-    if (ModelSceneFile[0] != "")
+    if (sceneFilename != "")
       {
       if (debug)
         {
-        std::cout << "Writing to model scene output file: " << ModelSceneFile[0].c_str();
+        std::cout << "Writing to model scene output file: " << sceneFilename.c_str();
         std::cout << ", to url: " << modelScene->GetURL() << std::endl;
         }
       // take out the colour nodes first
@@ -1436,6 +1460,7 @@ int main(int argc, char * argv[])
         modelScene->RemoveNode(colorNode);
         }
       modelScene->Commit();
+      std::cout << "Load the scene file " << sceneFilename.c_str() << " to see your models\n";
       }
     
     // Clean up
