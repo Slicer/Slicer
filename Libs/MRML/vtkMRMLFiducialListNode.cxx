@@ -1084,9 +1084,11 @@ void vtkMRMLFiducialListNode::RemoveFiducial(vtkMRMLFiducial *o)
       pointIDStr = o->GetID();
       }
     this->FiducialList->vtkCollection::RemoveItem(o);
-    // let interested observers know that a fiducial was removed
-    this->InvokeEvent(vtkMRMLScene::NodeRemovedEvent, (void*)&pointIDStr);
-    //this->Modified();
+    if (!this->GetDisableModifiedEvent())
+      {
+      // let interested observers know that a fiducial was removed
+      this->InvokeEvent(vtkMRMLScene::NodeRemovedEvent, (void*)&pointIDStr);
+      }
 }
 
 //----------------------------------------------------------------------------
@@ -1095,9 +1097,11 @@ void vtkMRMLFiducialListNode::RemoveFiducial(int i)
   vtkMRMLFiducial *node = this->GetNthFiducial(i);
   std::string pointIDStr = node->GetID();
   this->FiducialList->vtkCollection::RemoveItem(i);
-  this->InvokeEvent(vtkMRMLScene::NodeRemovedEvent, (void*)&pointIDStr);
+  if (!this->GetDisableModifiedEvent())
+    {
+    this->InvokeEvent(vtkMRMLScene::NodeRemovedEvent, (void*)&pointIDStr);
+    }
   node = NULL;
-  // this->Modified();
 }
 
 //----------------------------------------------------------------------------
@@ -1111,9 +1115,12 @@ void vtkMRMLFiducialListNode::RemoveAllFiducials()
       vtkMRMLFiducial *fid = vtkMRMLFiducial::SafeDownCast(this->FiducialList->vtkCollection::GetItemAsObject(f));
       std::string pointIDStr = fid->GetID();
       this->FiducialList->vtkCollection::RemoveItem(f);
-      // need to throw a node removed event since the fiducial list widget is
-      // watching for them for each point
-      this->InvokeEvent(vtkMRMLScene::NodeRemovedEvent, (void*)&pointIDStr);
+      if (!this->GetDisableModifiedEvent())
+        {
+        // need to throw a node removed event since the fiducial list widget is
+        // watching for them for each point
+        this->InvokeEvent(vtkMRMLScene::NodeRemovedEvent, (void*)&pointIDStr);
+        }
       if (fid != NULL)
         {
         //fid->Delete();
@@ -1206,11 +1213,11 @@ void vtkMRMLFiducialListNode::SetColor(double r, double g, double b)
     this->Color[1] = g;
     this->Color[2] = b;
 
-    // invoke a modified event
-    // this->Modified();
-    
-    // invoke a display modified event
-    this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+    if (!this->GetDisableModifiedEvent())
+      {
+      // invoke a display modified event
+      this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+      }
 }
 
 //---------------------------------------------------------------------------
@@ -1227,11 +1234,11 @@ void vtkMRMLFiducialListNode::SetSelectedColor(double r, double g, double b)
     this->SelectedColor[1] = g;
     this->SelectedColor[2] = b;
 
-    // invoke a modified event
-    // this->Modified();
-    
-    // invoke a display modified event
-    this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+    if (!this->GetDisableModifiedEvent())
+      {
+      // invoke a display modified event
+      this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+      }
 }
 
 //---------------------------------------------------------------------------
@@ -1258,11 +1265,11 @@ void vtkMRMLFiducialListNode::SetTextScale(double scale)
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting TextScale to " << scale);
     this->TextScale = scale;
    
-    // invoke a modified event
-    // this->Modified();
-    
-    // invoke a display modified event
-    this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+    if (!this->GetDisableModifiedEvent())
+      {
+      // invoke a display modified event
+      this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+      }
 }
 
 //---------------------------------------------------------------------------
@@ -1275,11 +1282,11 @@ void vtkMRMLFiducialListNode::SetSymbolScale(double scale)
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting SymbolScale to " << scale);
     this->SymbolScale = scale;
    
-    // invoke a modified event
-    // this->Modified();
-    
-    // invoke a display modified event
-    this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+    if (!this->GetDisableModifiedEvent())
+      {
+      // invoke a display modified event
+      this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+      }
 }
 
 //---------------------------------------------------------------------------
@@ -1305,11 +1312,11 @@ void vtkMRMLFiducialListNode::SetGlyphType(int type)
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting GlyphType to " << type);
   this->GlyphType = type;
   
-  // invoke a modified event
-  // this->Modified();
-  
-  // invoke a display modified event
-  this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+  if (!this->GetDisableModifiedEvent())
+      {
+      // invoke a display modified event
+      this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+      }
 }
 
 //---------------------------------------------------------------------------
@@ -1321,12 +1328,12 @@ void vtkMRMLFiducialListNode::SetVisibility(int visible)
     }
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Visibility to " << visible);
     this->Visibility = visible;
-   
-    // invoke a modified event
-    // this->Modified();
-    
-    // invoke a display modified event
-    this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+
+    if (!this->GetDisableModifiedEvent())
+      {
+      // invoke a display modified event
+      this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+      }
 }
 
 //---------------------------------------------------------------------------
@@ -1338,11 +1345,14 @@ void vtkMRMLFiducialListNode::SetLocked(int locked)
     }
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Locked to " << locked);
     this->Locked = locked;
-   
-    // invoke a display modified event
-    this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
-}
 
+    if (!this->GetDisableModifiedEvent())
+      {
+      // invoke a display modified event
+      this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+      }
+}
+    
 
 //---------------------------------------------------------------------------
 void vtkMRMLFiducialListNode::SetOpacity(double opacity)
@@ -1354,11 +1364,11 @@ void vtkMRMLFiducialListNode::SetOpacity(double opacity)
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Opacity to " << opacity);
     this->Opacity = opacity;
    
-    // invoke a modified event
-    // this->Modified();
-    
-    // invoke a display modified event
-    this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+    if (!this->GetDisableModifiedEvent())
+      {
+      // invoke a display modified event
+      this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+      }
 }
 
 //---------------------------------------------------------------------------
