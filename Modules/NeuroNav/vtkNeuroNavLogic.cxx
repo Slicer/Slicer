@@ -246,14 +246,14 @@ void vtkNeuroNavLogic::UpdateFiducialSeeding(const char *name)
 
     if (collection != NULL && collection->GetNumberOfItems() == 0)
       {
-      // the node name does not exist in the MRML tree
+      vtkErrorMacro("NeuroNavLogic: The node name: (" << name << ") does not exist in the MRML tree");
       return;
       }
 
     vtkMRMLFiducialListNode *flist = vtkMRMLFiducialListNode::SafeDownCast(collection->GetItemAsObject(0));
     if (flist == NULL)
       {
-      vtkDebugMacro("NeuroNavLogic: the fiducial list node doesn't exist.");
+      vtkErrorMacro("NeuroNavLogic: The fiducial list node doesn't exist.");
       return;
       }
     float x, y, z;
