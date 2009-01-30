@@ -83,6 +83,8 @@ protected:
   vtkKWPushButton          *GridButton;
 
   void CreateResetButton(); 
+  void CenterRYGSliceViews(double pointX, double pointY, double pointZ);
+
   vtkKWPushButton          *ResetButton;
 
   void CreateSliceButton(); 

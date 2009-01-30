@@ -25,6 +25,7 @@
 #include "vtkFixedPointVolumeRayCastMapper.h"
 #include "vtkVolumeTextureMapper3D.h"
 #include "vtkPiecewiseFunction.h"
+#include "vtkSlicerROIDisplayWidget.h"
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkChangeTrackerROIStep);
@@ -56,6 +57,7 @@ vtkChangeTrackerROIStep::vtkChangeTrackerROIStep()
   this->ROIHideFlag     = 0; 
 
   this->roiNode = NULL;
+  this->roiWidget = NULL;
   this->roiUpdateGuard = false;
 }
 
@@ -151,6 +153,11 @@ vtkChangeTrackerROIStep::~vtkChangeTrackerROIStep()
     this->roiNode = NULL;
   }
 
+  if(this->roiWidget)
+    {
+    this->roiWidget->Delete();
+    this->roiWidget = NULL;
+    }
 }
 
 void vtkChangeTrackerROIStep::DeleteSuperSampleNode() 
@@ -277,7 +284,7 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
     {
       this->FrameROI->SetParent(this->Frame->GetFrame());
     this->FrameROI->Create();
-    this->FrameROI->SetLabelText("Manual");
+    this->FrameROI->SetLabelText("ROI Widget controls");
     // this->FrameROI->CollapseFrame();
   }
 
@@ -291,7 +298,7 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
     this->ButtonsShow->SetParent(this->FrameButtons);
     this->ButtonsShow->Create();
     this->ButtonsShow->SetWidth(CHANGETRACKER_MENU_BUTTON_WIDTH);
-    this->ButtonsShow->SetText("Show VOI");
+    this->ButtonsShow->SetText("Show render");
     this->ButtonsShow->SetBalloonHelpString("Show/hide VOI in image viewer"); 
   }
 
@@ -309,6 +316,7 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
   this->Script("pack %s %s -side left -anchor nw -expand n -padx 2 -pady 2", 
                 this->ButtonsShow->GetWidgetName(),this->ButtonsReset->GetWidgetName());
 
+  
   if (!this->FrameROIX)
     {
     this->FrameROIX = vtkKWFrame::New();
@@ -408,7 +416,7 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
 
     }
 
- if (!this->ROIZ)
+  if (!this->ROIZ)
     {
     this->ROIZ = vtkKWRange::New();
     }
@@ -425,10 +433,11 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
     }
 
 
-  this->Script("pack %s %s %s -side top -anchor nw -padx 0 -pady 3",this->FrameROIX->GetWidgetName(),this->FrameROIY->GetWidgetName(),this->FrameROIZ->GetWidgetName());
-  this->Script("pack %s %s -side left -anchor nw -padx 2 -pady 0",this->LabelROIX->GetWidgetName(),this->ROIX->GetWidgetName());
-  this->Script("pack %s %s -side left -anchor nw -padx 2 -pady 0",this->LabelROIY->GetWidgetName(),this->ROIY->GetWidgetName());
-  this->Script("pack %s %s -side left -anchor nw -padx 2 -pady 0",this->LabelROIZ->GetWidgetName(),this->ROIZ->GetWidgetName());
+//  this->Script("pack %s %s %s -side top -anchor nw -padx 0 -pady 3",this->FrameROIX->GetWidgetName(),this->FrameROIY->GetWidgetName(),this->FrameROIZ->GetWidgetName());
+//  this->Script("pack %s %s -side left -anchor nw -padx 2 -pady 0",this->LabelROIX->GetWidgetName(),this->ROIX->GetWidgetName());
+//  this->Script("pack %s %s -side left -anchor nw -padx 2 -pady 0",this->LabelROIY->GetWidgetName(),this->ROIY->GetWidgetName());
+//  this->Script("pack %s %s -side left -anchor nw -padx 2 -pady 0",this->LabelROIZ->GetWidgetName(),this->ROIZ->GetWidgetName());
+  
 
   // Set it up so it has default value from MRML file 
   this->ROIUpdateWithNode();
@@ -437,7 +446,6 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
    wizard_widget->BackButtonVisibilityOn();
    wizard_widget->GetCancelButton()->EnabledOn();
   }
-
  
   if(!this->roiNode)
     {
@@ -454,8 +462,21 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
     roi->Delete();
     InitROIRender();
     ResetROIRender();
+    this->MRMLUpdateROIFromROINode();
     }
   
+  if (!this->roiWidget)
+    {
+    this->roiWidget = vtkSlicerROIDisplayWidget::New();
+    }
+  if (!this->roiWidget->IsCreated())
+    {
+    this->roiWidget->SetParent(this->FrameROI->GetFrame());
+    this->roiWidget->Create();
+    this->roiWidget->SetROINode(roiNode);
+    }
+  this->Script("pack %s -side top -anchor nw -padx 2 -pady 3 -fill x",
+               this->roiWidget->GetWidgetName());
 
   // Very Important 
   this->AddGUIObservers();
@@ -581,6 +602,11 @@ void vtkChangeTrackerROIStep::ROIReset() {
   if (this->ROIX) this->ROIX->SetRange(-1,-1);
   if (this->ROIY) this->ROIY->SetRange(-1,-1);
   if (this->ROIZ) this->ROIZ->SetRange(-1,-1);
+  if(this->roiNode){
+    this->roiNode->SetXYZ(0., 0., 0.);
+    this->roiNode->SetRadiusXYZ(10., 10., 10.);
+    this->roiNode->SetVisibility(0);
+  }
   this->ROIHideFlag = 0;
 }
 
@@ -745,7 +771,7 @@ void vtkChangeTrackerROIStep::ROIMapRemove() {
 
   // Needs to be done otherwise when going backwards field is not correctly defined   
   if (this->ButtonsShow && this->ButtonsShow->IsCreated())  {
-    this->ButtonsShow->SetText("Show VOI");
+    this->ButtonsShow->SetText("Show render");
   }
 }
 
@@ -812,16 +838,16 @@ void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long 
     if (this->ButtonsShow && (button == this->ButtonsShow)) 
     { 
       if (this->ROILabelMapNode) {
-        this->ButtonsShow->SetText("Show VOI");
+        this->ButtonsShow->SetText("Show render");
         this->ROIMapRemove();
-        roiNode->SetVisibility(0);
+//        roiNode->SetVisibility(0);
         ResetROIRender();
         this->ROIHideFlag = 1;
       } else { 
         if (this->ROIMapShow()) { 
-          roiNode->SetVisibility(1);
+//          roiNode->SetVisibility(1);
           UpdateROIRender();
-          this->ButtonsShow->SetText("Hide VOI");
+          this->ButtonsShow->SetText("Hide render");
         }
 // FIXME: when feature complete
 //        if (roiNode)  
@@ -831,12 +857,13 @@ void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long 
     if (this->ButtonsReset && (button == this->ButtonsReset)) 
     { 
       if (this->ROILabelMapNode) {
-        this->ButtonsShow->SetText("Show VOI");
+        this->ButtonsShow->SetText("Show render");
         this->ROIMapRemove();
         roiNode->SetVisibility(0);
         ResetROIRender();
       }
       this->ROIReset();
+      this->MRMLUpdateROIFromROINode();
     }
     return;
   }
@@ -861,13 +888,14 @@ void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long 
     }
     int ijkCoords[3];
     this->RetrieveInteractorIJKCoordinates(sliceGUI, rwi, ijkCoords);
+//    this->ResetROICenter(ijkCoords);
     this->ROIUpdateWithNewSample(ijkCoords);
     if (!this->ROILabelMapNode && !this->ROIHideFlag && this->ROICheck()) {
       if (this->ROIMapShow()) 
         {
         MRMLUpdateROINodeFromROI();
         roiNode->SetVisibility(1);
-        this->ButtonsShow->SetText("Hide VOI");
+        this->ButtonsShow->SetText("Hide render");
         }
     }
     UpdateROIRender();
@@ -881,11 +909,15 @@ void vtkChangeTrackerROIStep::ProcessMRMLEvents(vtkObject *caller, unsigned long
     vtkMRMLROINode *roiCaller = vtkMRMLROINode::SafeDownCast(caller);
     if(roiCaller && roiCaller == roiNode && event == vtkCommand::ModifiedEvent && !roiUpdateGuard)
       {
+
       roiUpdateGuard = true;
       MRMLUpdateROIFromROINode();
       this->ROIMapUpdate();
-      UpdateROIRender();
       roiUpdateGuard = false;
+
+      double *roiXYZ = roiNode->GetXYZ();
+      vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication());
+      app->GetApplicationGUI()->GetViewControlGUI()->MainViewSetFocalPoint(roiXYZ[0], roiXYZ[1], roiXYZ[2]);
       }
 }
 
@@ -934,9 +966,9 @@ void vtkChangeTrackerROIStep::MRMLUpdateROIFromROINode()
   ctNode->SetROIMin(2, (int)bbox0ijk[2]);
   ctNode->SetROIMax(2, (int)bbox1ijk[2]);
   
-  this->ROIX->SetRange(bbox0ijk[0], bbox1ijk[0]);
-  this->ROIY->SetRange(bbox0ijk[1], bbox1ijk[1]);
-  this->ROIZ->SetRange(bbox0ijk[2], bbox1ijk[2]);
+//  this->ROIX->SetRange(bbox0ijk[0], bbox1ijk[0]);
+//  this->ROIY->SetRange(bbox0ijk[1], bbox1ijk[1]);
+//  this->ROIZ->SetRange(bbox0ijk[2], bbox1ijk[2]);
 }
 
 // Propagate changes in ROINode MRML to ChangeTracker ROI MRML
@@ -1035,7 +1067,6 @@ void vtkChangeTrackerROIStep::ROIIntensityMinMaxUpdate(vtkImageData* image, doub
 {
   if(!this->ROICheck())
   {
-    cerr << "ROI check failed" << endl;
     return;
   }
 
@@ -1183,4 +1214,24 @@ void vtkChangeTrackerROIStep::UpdateROIRender()
 void vtkChangeTrackerROIStep::ResetROIRender()
 {
   this->Render_Filter->RemoveAllPoints();
+}
+
+void vtkChangeTrackerROIStep::ResetROICenter(int *center)
+{
+  vtkMRMLChangeTrackerNode* Node      =  this->GetGUI()->GetNode();
+  double pointRAS[4], pointIJK[4];
+  vtkMatrix4x4 *ijkToras = vtkMatrix4x4::New();
+  vtkMRMLVolumeNode *volumeNode = 
+    vtkMRMLVolumeNode::SafeDownCast(Node->GetScene()->GetNodeByID(Node->GetScan1_Ref()));
+  volumeNode->GetIJKToRASMatrix(ijkToras);
+  pointIJK[0] = (double)center[0];
+  pointIJK[1] = (double)center[1];
+  pointIJK[2] = (double)center[2];
+  pointIJK[3] = 1.;
+  ijkToras->MultiplyPoint(pointIJK,pointRAS);
+  ijkToras->Delete();
+
+  roiNode->SetXYZ(pointRAS[0], pointRAS[1], pointRAS[2]);
+
+  CenterRYGSliceViews(pointRAS[0], pointRAS[1], pointRAS[2]);
 }

@@ -467,3 +467,11 @@ void vtkChangeTrackerStep::CreateRender(vtkMRMLVolumeNode *volumeNode, int RayCa
   
   this->GetGUI()->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->Render_Volume);
 }
+
+void vtkChangeTrackerStep::CenterRYGSliceViews(double ptX, double ptY, double ptZ) 
+{
+      vtkSlicerApplicationGUI *applicationGUI     = this->GetGUI()->GetApplicationGUI();
+      applicationGUI->GetMainSliceGUI("Red")->GetSliceController()->GetOffsetScale()->SetValue(ptZ);
+      applicationGUI->GetMainSliceGUI("Yellow")->GetSliceController()->GetOffsetScale()->SetValue(ptX);
+      applicationGUI->GetMainSliceGUI("Green")->GetSliceController()->GetOffsetScale()->SetValue(ptY);
+}

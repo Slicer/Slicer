@@ -15,6 +15,7 @@ class vtkKWLabel;
 class vtkImageRectangularSource;
 class vtkMRMLROINode;
 class vtkObserverManager;
+class vtkSlicerROIDisplayWidget;
 
 class VTK_CHANGETRACKER_EXPORT vtkChangeTrackerROIStep : public vtkChangeTrackerStep
 {
@@ -100,6 +101,7 @@ private:
 
   void MRMLUpdateROINodeFromROI();
   void MRMLUpdateROIFromROINode();
+  void ResetROICenter(int *ijkCoords);
 
   void ROIIntensityMinMaxUpdate(vtkImageData* image, double &intensityMin, double &intensityMax);
   void InitROIRender();
@@ -111,6 +113,7 @@ private:
   int ROIHideFlag; 
 
   vtkMRMLROINode *roiNode;
+  vtkSlicerROIDisplayWidget *roiWidget;
   vtkObserverManager *MRMLObserverManager; // to process events from roi node
   bool roiUpdateGuard;
 };

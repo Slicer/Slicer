@@ -501,7 +501,10 @@ void vtkChangeTrackerAnalysisStep::ShowUserInterface()
 
         cv0->SetForegroundOpacity(0.6);
 
-        applicationLogic->PropagateVolumeSelection(1);
+//        applicationLogic->PropagateVolumeSelection(1);
+
+//        applicationGUI->GetMainSliceGUI("Compare0")->GetSliceController()->LinkAllSlices();
+        applicationGUI->GetMainSliceGUI("Compare0")->GetSliceController()->FitSliceToBackground();
       }
     } 
   }
