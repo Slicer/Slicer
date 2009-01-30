@@ -871,6 +871,7 @@ void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long 
   vtkSlicerInteractorStyle *s = vtkSlicerInteractorStyle::SafeDownCast(caller);
   if (s && event == vtkCommand::LeftButtonPressEvent)
   {
+    cerr << "Mouse clicked event" << endl;
     // Retrieve Coordinates and update ROI
     int index = 0; 
     vtkSlicerSliceGUI *sliceGUI = vtkSlicerApplicationGUI::SafeDownCast(
@@ -1003,6 +1004,7 @@ void vtkChangeTrackerROIStep::MRMLUpdateROINodeFromROI()
 
   roiNode->SetXYZ(pointRAS[0], pointRAS[1], pointRAS[2]);
   roiNode->SetRadiusXYZ(radius[0], radius[1], radius[2]);
+  roiNode->Modified();
 }
 
 //----------------------------------------------------------------------------
