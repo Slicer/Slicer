@@ -122,15 +122,15 @@ void vtkMRMLDiffusionImageVolumeNode::ReadXMLAttributes(const char** atts)
 
     if (!strcmp(attName, "baselineNodeRef"))
       {
-        ss>>this->BaselineNodeID;
+      this->SetBaselineNodeID(attValue);
       }
     if (!strcmp(attName, "diffusionWeightedNodeRef"))
       {
-        ss>>this->DiffusionWeightedNodeID;
+      this->SetDiffusionWeightedNodeID(attValue);
       }
     if (!strcmp(attName, "maskNodeRef"))
       {
-        ss>>this->MaskNodeID;
+      this->SetMaskNodeID(attValue);
       }
   }      
 
