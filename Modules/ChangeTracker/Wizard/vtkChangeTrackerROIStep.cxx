@@ -460,11 +460,12 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
     this->GetGUI()->ObserveMRMLROINode(roi);
     this->roiNode = roi;
     roi->Delete();
-    InitROIRender();
-    ResetROIRender();
-    this->MRMLUpdateROIFromROINode();
     }
-  
+
+  InitROIRender();
+  ResetROIRender();
+  this->MRMLUpdateROIFromROINode();
+ 
   if (!this->roiWidget)
     {
     this->roiWidget = vtkSlicerROIDisplayWidget::New();
@@ -914,6 +915,8 @@ void vtkChangeTrackerROIStep::ProcessMRMLEvents(vtkObject *caller, unsigned long
       roiUpdateGuard = true;
       MRMLUpdateROIFromROINode();
       this->ROIMapUpdate();
+      if(this->Render_Filter->GetSize())
+        this->UpdateROIRender();
       roiUpdateGuard = false;
 
       double *roiXYZ = roiNode->GetXYZ();
