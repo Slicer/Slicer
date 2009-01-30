@@ -85,7 +85,7 @@ set ::LAPACK_TAG http://svn.slicer.org/Slicer3-lib-mirrors/trunk/netlib/lapack-3
 set ::NUMPY_TAG "http://svn.scipy.org/svn/numpy/branches/1.1.x"
 #set ::SCIPY_TAG "http://svn.scipy.org/svn/scipy/trunk"
 set ::SCIPY_TAG "http://svn.scipy.org/svn/scipy/branches/0.6.x"
-set ::BatchMake_TAG "BatchMake-1-0-7"
+set ::BatchMake_TAG "BatchMake-1-0-8"
 set ::SLICERLIBCURL_TAG "HEAD"
 # set TCL_VERSION to "tcl" to get 8.4, otherwise use tcl85 get 8.5
 set ::TCL_VERSION tcl
