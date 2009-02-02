@@ -189,12 +189,23 @@ void vtkIA_FEMeshGUI::BuildGUI ( )
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
 
   this->UIPanel->AddPage ( "IA_FEMesh", "IA_FEMesh", NULL );
+  
   // ---
   // MODULE GUI FRAME
   // configure a page for a volume loading UI for now.
   // later, switch on the modulesButton in the SlicerControlGUI
   // ---
-  this->BuildHelpAndAboutFrame(this->UIPanel->GetPageWidget ( "IA_FEMesh" ), "Help", "About");
+  const char* help = "IA-FEMesh is a multi-block approach for the generation of finite element models. Mesh generation initiates from an existing surface. Building blocks can be placed around the structure of interest which are then projected onto the surface to create a solid mesh. The module documentation can be found at <a>http://slicer.spl.harvard.edu/slicerWiki/index.php/Modules:IA-FEMesh-Documentation</a>.";
+  
+  std::string about = "IA-FEMesh is developed by the Musculoskeletal Imaging, Modelling and Experimentation (MIMX) Program\n";
+  about += "Center for Computer Aided Design\n";
+  about += "The University of Iowa\nIowa City, IA 52242.\n";
+  about += "<a>http://www.ccad.uiowa.edu/mimx/</a>\n\n";
+  about += "Software developers include Nicole Grosland, Vincent Magnotta, Kiran Shivanna, Curtis Lisle, and Steve Pieper.\n\n";
+  about += "This work was funded by awards R21EB001501 and R01EB005973 from the National Institute of Biomedical Imaging";
+  about += " and Bioengineering, National Institutes of Health.";
+  
+  this->BuildHelpAndAboutFrame(this->UIPanel->GetPageWidget ( "IA_FEMesh" ), help, about.c_str() );
 
   // HELP FRAME
 //  vtkKWFrameWithLabel *helpFrame = vtkKWFrameWithLabel::New ( );
