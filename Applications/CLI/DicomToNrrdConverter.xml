@@ -22,26 +22,18 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
     <description>Input/output parameters</description>
 
     <directory>
-      <name>inputDicom</name>
-      <label>Dicom Directory</label>
+      <name>inputDicomDirectory</name>
+      <label>Input Dicom Directory</label>
       <channel>input</channel>
       <index>0</index>
       <description>Directory holding Dicom series</description>
     </directory>
 
-    <directory>
-      <name>outputDir</name>
-      <label>Output Directory</label>
+    <string>
+      <name>outputVolume</name>
+      <label>Nrrd header file(.nhdr)</label>
       <channel>output</channel>
       <index>1</index>
-      <description>Directory holding output nrrd files</description>
-    </directory>
-
-    <string>
-      <name>outputFileName</name>
-      <label>Nrrd header (.nhdr)</label>
-      <channel>output</channel>
-      <index>2</index>
       <description>Nrrd header file name</description>
     </string>
   </parameters>
