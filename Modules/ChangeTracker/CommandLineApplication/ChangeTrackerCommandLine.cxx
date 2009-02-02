@@ -267,6 +267,9 @@ int main(int argc, char* argv[])
   // parse arguments using the CLP system; this creates variables.
   PARSE_ARGS;
 
+  // needed to tell CTest not to truncate the console output
+  cout << "CTEST_FULL_OUTPUT" << endl;
+
   try { 
 
     // -------------------------------------
@@ -492,8 +495,7 @@ int main(int argc, char* argv[])
          if(TerminationStep == 1)
            {
            tgWriteVolume(tgOutput.c_str(), tg.Scan1Matrix, Scan2Global);
-           return EXIT_FAILURE;
-           //return EXIT_SUCCESS;
+           return EXIT_SUCCESS;
            }
          
        } else {
@@ -822,7 +824,5 @@ int main(int argc, char* argv[])
     cout << "default exception"; 
     return EXIT_FAILURE;
     }
-  return EXIT_FAILURE;  
-  // always fail, because otherwise dashboard output is truncated, and I cannot debug problems with registration
-  //return EXIT_SUCCESS;  
+  return EXIT_SUCCESS;  
 }
