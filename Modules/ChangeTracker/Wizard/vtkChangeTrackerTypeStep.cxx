@@ -254,7 +254,29 @@ void vtkChangeTrackerTypeStep::TransitionCallback( )
   Node->SetAnalysis_Deformable_Flag(this->TypeJacobianCheckButton->GetSelectedState());
 
   vtkChangeTrackerLogic* Logic = this->GetGUI()->GetLogic();
-  if (!Logic->AnalyzeGrowth(vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication()))) return;
+
+  int analysisReturnStatus =
+    Logic->AnalyzeGrowth(vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication()));
+
+  if(analysisReturnStatus){
+    std::string errorMessage;
+    switch(analysisReturnStatus){
+    case ERR_GLOBAL_REG:
+      errorMessage = "ERROR: Failed to align input scans!";
+      break;
+    case ERR_LOCAL_REG:
+      errorMessage = "ERROR: Failed to align ROI!";
+      break;
+    default:
+      errorMessage = "ERROR: Other error during analysis";
+    }
+    vtkKWMessageDialog::PopupMessage(this->GUI->GetApplication(),
+                                     this->GUI->GetApplicationGUI()->GetMainSlicerWindow(),
+                                     "ChangeTracker",
+                                     errorMessage.c_str(),
+                                     vtkKWMessageDialog::ErrorIcon);
+    return;
+  }
 
   this->RemoveResults();  
   wizard_workflow->AttemptToGoToNextStep();

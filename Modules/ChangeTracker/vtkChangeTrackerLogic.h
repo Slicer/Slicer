@@ -8,6 +8,10 @@
 
 #include <string>
 
+#define ERR_OTHER      -1
+#define ERR_GLOBAL_REG -2
+#define ERR_LOCAL_REG  -3
+
 class vtkMRMLScene;
 class vtkMRMLScalarNode;
 class vtkMRMLVolumeNode;
@@ -142,8 +146,8 @@ public:
   // AF: do registration using "Linear registration" module
   // For now, use this for global alignment of the input scans. In the future,
   // use the same functionality for ROI
-  void DoITKRegistration(vtkSlicerApplication *app);
-  void DoITKROIRegistration(vtkSlicerApplication *app);
+  int DoITKRegistration(vtkSlicerApplication *app);
+  int DoITKROIRegistration(vtkSlicerApplication *app);
 
 private:
   vtkChangeTrackerLogic();

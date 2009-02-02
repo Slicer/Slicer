@@ -224,7 +224,11 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
       applicationLogic->GetSelectionNode()->SetActiveVolumeID(volumeNode->GetID());
       applicationLogic->PropagateVolumeSelection(); 
       if (!volumeNode->GetImageData()) {
-     vtkKWMessageDialog::PopupMessage(this->GetGUI()->GetApplication(), this->GetGUI()->GetApplicationGUI()->GetMainSlicerWindow(),"Change Tracker", "No image data associated with Scan 1", vtkKWMessageDialog::ErrorIcon);
+     vtkKWMessageDialog::PopupMessage(this->GetGUI()->GetApplication(), 
+                                      this->GetGUI()->GetApplicationGUI()->GetMainSlicerWindow(),
+                                      "Change Tracker", 
+                                      "No image data associated with Scan 1", 
+                                      vtkKWMessageDialog::ErrorIcon);
      return;
       }
       memcpy(dimensions,volumeNode->GetImageData()->GetDimensions(),sizeof(int)*3);
@@ -690,7 +694,11 @@ int vtkChangeTrackerROIStep::ROIMapShow() {
   // -----
   // Initialize
   if (!this->ROICheck()) {
-    vtkKWMessageDialog::PopupMessage(this->GUI->GetApplication(), this->GUI->GetApplicationGUI()->GetMainSlicerWindow(),"Change Tracker", "Please define VOI correctly before pressing button", vtkKWMessageDialog::ErrorIcon);
+    vtkKWMessageDialog::PopupMessage(this->GUI->GetApplication(), 
+                                     this->GUI->GetApplicationGUI()->GetMainSlicerWindow(),
+                                     "Change Tracker", 
+                                     "Please define VOI correctly before pressing button", 
+                                     vtkKWMessageDialog::ErrorIcon);
     return 0;
   }
 
@@ -833,7 +841,7 @@ void vtkChangeTrackerROIStep::RetrieveInteractorIJKCoordinates(vtkSlicerSliceGUI
 }
 
 void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData) {
-
+  
   if (event == vtkKWPushButton::InvokedEvent) {
     vtkKWPushButton *button = vtkKWPushButton::SafeDownCast(caller);
     if (this->ButtonsShow && (button == this->ButtonsShow)) 
@@ -872,7 +880,7 @@ void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long 
   vtkSlicerInteractorStyle *s = vtkSlicerInteractorStyle::SafeDownCast(caller);
   if (s && event == vtkCommand::LeftButtonPressEvent)
   {
-    cerr << "Mouse clicked event" << endl;
+    //cerr << "Mouse clicked event" << endl;
     // Retrieve Coordinates and update ROI
     int index = 0; 
     vtkSlicerSliceGUI *sliceGUI = vtkSlicerApplicationGUI::SafeDownCast(
@@ -911,7 +919,7 @@ void vtkChangeTrackerROIStep::ProcessMRMLEvents(vtkObject *caller, unsigned long
     vtkMRMLROINode *roiCaller = vtkMRMLROINode::SafeDownCast(caller);
     if(roiCaller && roiCaller == roiNode && event == vtkCommand::ModifiedEvent && !roiUpdateGuard)
       {
-
+      
       roiUpdateGuard = true;
       MRMLUpdateROIFromROINode();
       this->ROIMapUpdate();
@@ -922,6 +930,7 @@ void vtkChangeTrackerROIStep::ProcessMRMLEvents(vtkObject *caller, unsigned long
       double *roiXYZ = roiNode->GetXYZ();
       vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication());
       app->GetApplicationGUI()->GetViewControlGUI()->MainViewSetFocalPoint(roiXYZ[0], roiXYZ[1], roiXYZ[2]);
+//      cerr << "Resetting focal point to " << roiXYZ[0] << ", " << roiXYZ[1] << ", " << roiXYZ[2] << endl;
       }
 }
 
@@ -1046,11 +1055,19 @@ void vtkChangeTrackerROIStep::TransitionCallback()
 
        this->GUI->GetWizardWidget()->GetWizardWorkflow()->AttemptToGoToNextStep();
      } else {
-       vtkKWMessageDialog::PopupMessage(this->GUI->GetApplication(), this->GUI->GetApplicationGUI()->GetMainSlicerWindow(),"Change Tracker", "Could not proceed to next step - scan1 might have disappeared", vtkKWMessageDialog::ErrorIcon); 
+       vtkKWMessageDialog::PopupMessage(this->GUI->GetApplication(), 
+                                        this->GUI->GetApplicationGUI()->GetMainSlicerWindow(),
+                                        "Change Tracker", 
+                                        "Could not proceed to next step - scan1 might have disappeared", 
+                                        vtkKWMessageDialog::ErrorIcon); 
      }
      // ---------------------------------
    } else {     
-     vtkKWMessageDialog::PopupMessage(this->GUI->GetApplication(), this->GUI->GetApplicationGUI()->GetMainSlicerWindow(),"Change Tracker", "Please define VOI correctly before proceeding", vtkKWMessageDialog::ErrorIcon);
+     vtkKWMessageDialog::PopupMessage(this->GUI->GetApplication(), 
+                                      this->GUI->GetApplicationGUI()->GetMainSlicerWindow(),
+                                      "Change Tracker", 
+                                      "Please define VOI correctly before proceeding", 
+                                      vtkKWMessageDialog::ErrorIcon);
    }
 }
 

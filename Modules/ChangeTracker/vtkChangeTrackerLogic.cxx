@@ -522,11 +522,8 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
     if(this->ChangeTrackerNode->GetUseITK()){
       // AF: at this point, registration must have completed
       //assert(this->ChangeTrackerNode->GetScan2_RegisteredRef());
-      DoITKRegistration(vtkSlicerApplication::GetInstance());
-      /*
-      this->ChangeTrackerNode->SetScan2_GlobalRef(
-        this->ChangeTrackerNode->GetScan2_RegisteredRef());
-      */
+      if(DoITKRegistration(vtkSlicerApplication::GetInstance()))
+        return ERR_GLOBAL_REG;
     } else {
       // AF: keep initial registration approach for validation
       app->Script("::ChangeTrackerTcl::Scan2ToScan1Registration_GUI Global");
@@ -536,13 +533,13 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
     //----------------------------------------------
     // Second step -> Save the outcome
     if (!this->ChangeTrackerNode) {
-      return 0;
+      return ERR_OTHER;
     }
     this->DeleteSuperSample(2);
     vtkMRMLScalarVolumeNode *outputNode = this->CreateSuperSample(2);
 
     if (!outputNode) {
-      return 0;
+      return ERR_OTHER;
     } 
 
     this->ChangeTrackerNode->SetScan2_SuperSampleRef(outputNode->GetID());
@@ -555,7 +552,8 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
       // AF: do local registration. It is probably not a good style to have a
       // separate function for the similar functionality, but style is not the
       // goal.
-      DoITKROIRegistration(vtkSlicerApplication::GetInstance());
+      if(DoITKROIRegistration(vtkSlicerApplication::GetInstance()))
+        return ERR_LOCAL_REG;
     } else {
       app->Script("::ChangeTrackerTcl::Scan2ToScan1Registration_GUI Local"); 
       progressBar->SetValue(50.0/TimeLength);
@@ -576,7 +574,7 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
         this->ChangeTrackerNode->SetScan2_NormedRef(tmp->GetID());
       } else {
          cout << "Error: Could not load " << fileName << endl;
-         return 0;
+         return ERR_OTHER;
       }
     }
     } else {
@@ -588,7 +586,7 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
         this->ChangeTrackerNode->SetScan2_LocalRef(tmp->GetID());
       } else {
          cout << "Error: Could not load " << fileName << endl;
-         return 0;
+         return ERR_OTHER;
       }
       }
     }
@@ -596,11 +594,14 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
 
 
   if (this->ChangeTrackerNode->GetAnalysis_Intensity_Flag()) { 
-    if (!atoi(app->Script("::ChangeTrackerTcl::IntensityThresholding_GUI 1"))) return 0; 
+    if (!atoi(app->Script("::ChangeTrackerTcl::IntensityThresholding_GUI 1"))) 
+      return ERR_OTHER; 
     progressBar->SetValue(60.0/TimeLength);
-    if (!atoi(app->Script("::ChangeTrackerTcl::IntensityThresholding_GUI 2"))) return 0; 
+    if (!atoi(app->Script("::ChangeTrackerTcl::IntensityThresholding_GUI 2"))) 
+      return ERR_OTHER; 
     progressBar->SetValue(65.0/TimeLength);
-    if (!atoi(app->Script("::ChangeTrackerTcl::Analysis_Intensity_GUI"))) return 0; 
+    if (!atoi(app->Script("::ChangeTrackerTcl::Analysis_Intensity_GUI"))) 
+      return ERR_OTHER; 
     progressBar->SetValue(80.0/TimeLength);
    } 
   if (this->ChangeTrackerNode->GetAnalysis_Deformable_Flag()) {
@@ -613,17 +614,18 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
           this->ChangeTrackerNode->SetAnalysis_Deformable_Ref(tmp->GetID());
         } else {
          cout << "Error: Could not load " << fileName << endl;
-         return 0;
+         return ERR_OTHER;
         }
       }
     } else {
-      if (!atoi(app->Script("::ChangeTrackerTcl::Analysis_Deformable_GUI"))) return 0; 
+      if (!atoi(app->Script("::ChangeTrackerTcl::Analysis_Deformable_GUI"))) 
+        return ERR_OTHER; 
       progressBar->SetValue(100);
     }
   }
   // cout << "=== End ANALYSIS ===" << endl;
 
-  return 1;
+  return 0;
 }
 
 void vtkChangeTrackerLogic::RegisterMRMLNodesWithScene() {
@@ -1065,7 +1067,7 @@ void vtkChangeTrackerLogic::LinearResample (vtkMRMLVolumeNode* inputVolumeNode, 
 
 // AF >>>
 // Use LinearRegistration module to rigidly align input scans
-void vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
+int vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
   // following the Tcl example code in
   // http://wiki.slicer.org/slicerWiki/index.php/Slicer3:Execution_Model_Documentation:Programmatic_Invocation
   // ...
@@ -1081,10 +1083,9 @@ void vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
   //vtkMRMLTransformNode *lrTransform = NULL;
 
   moduleGUI = 
-    static_cast<vtkCommandLineModuleGUI*>(app->GetModuleGUIByName("Linear registration"));
+    static_cast<vtkCommandLineModuleGUI*>(app->GetModuleGUIByName("Rigid registration"));
   if(!moduleGUI){
-    std::cerr << "Cannot find Rigid registration module. Aborting." << std::endl;
-    assert(0);
+    return -1;
   }
   moduleLogic = moduleGUI->GetLogic();
 
@@ -1094,39 +1095,12 @@ void vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
   moduleNode = 
     static_cast<vtkMRMLCommandLineModuleNode*>(scene->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
   if(!moduleNode){
-    std::cerr << "Cannot create Rigid registration node. Aborting." << std::endl;
-    assert(0);
+    return -2;
   }
 
   // Add node to the scene
   scene->AddNode(moduleNode);
   moduleNode->SetModuleDescription("Rigid registration");
-
-  // Create output volume node
-  /*
-  vtkMRMLScalarVolumeNode *outputVolumeNode = NULL;
-  vtkMRMLScalarVolumeNode *scan1Node = 
-    static_cast<vtkMRMLScalarVolumeNode*>(scene->GetNodeByID(ctNode->GetScan1_Ref()));
-  outputVolumeNode = this->CreateVolumeNode(scan1Node, (const char*)"Scan2_LinearRegistration");
-  // AF: this registeres Logic to get events from the output volume node
-  //vtkSetAndObserveMRMLNodeMacro(this->Scan2_RegisteredVolume, outputVolumeNode);
-  vtkSetMRMLNodeMacro(this->Scan2_RegisteredVolume, outputVolumeNode);
-  outputVolumeNode->Delete();
-  ctNode->SetScan2_RegisteredRef(outputVolumeNode->GetID());
-  */
-
-  // AF: First, delete the previous output node. As translated from Tcl
-  // code...
-  /*
-       # -------------------------------------
-       # Delete output 
-       # -------------------------------------
-       set OUTPUT_NODE [$SCENE GetNodeByID [$NODE GetScan2_${TYPE}Ref]]
-       if {$OUTPUT_NODE != "" } {  
-           [$GUI GetMRMLScene] RemoveNode $OUTPUT_NODE 
-           $NODE SetScan2_${TYPE}Ref ""
-       }
-  */
 
   vtkMRMLScalarVolumeNode *outputNode;
   outputNode = static_cast<vtkMRMLScalarVolumeNode*>(scene->GetNodeByID(ctNode->GetScan2_GlobalRef()));
@@ -1158,15 +1132,6 @@ void vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
   moduleNode->SetParameterAsString("OutputTransform", transformNode->GetID());
   transformNode->Delete();
 
-  /*
-  Should the volume data be initialized?
-  vtkImageData* outputVolumeData = vtkImageData::New();
-  outputVolumeData->DeepCopy(scan1Node->GetImageData());
-  outputVolumeNode->SetAndObserveImageData(outputVolumeData);
-  outputVolumeNode->SetModifiedSinceRead(1);
-  outputVolumeData->Delete();
-  */
-
   moduleGUI->SetCommandLineModuleNode(moduleNode);
   moduleGUI->GetLogic()->SetCommandLineModuleNode(moduleNode);
 
@@ -1194,25 +1159,29 @@ void vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
         moduleDesc.SetTarget(entryPointAsString);
         moduleNode->SetModuleDescription(moduleDesc);      
       } else {
-        std::cerr << "Failed to find entry point for Rigid registration. Abort." << std::endl;
-        abort();
+        //std::cerr << "Failed to find entry point for Rigid registration. Abort." << std::endl;
+        return -3;
       }
     } else {
-      std::cerr << "Failed to locate module library. Abort." << std::endl;
-      abort();
+      //std::cerr << "Failed to locate module library. Abort." << std::endl;
+      return -4;
     }
   }
 
 //  moduleGUI->GetLogic()->Apply(moduleNode);
   moduleGUI->GetLogic()->ApplyAndWait(moduleNode);
+  if(moduleNode->GetStatus() != vtkMRMLCommandLineModuleNode::Completed)
+    return -5;
 
   ctNode->SetScan2_GlobalRef(outputNode->GetID());
   this->SaveVolume(app, outputNode);
   moduleNode->Delete(); // AF: is it right to delete this here?
+
+  return 0;
 }
 
 // AF: registration of ROI
-void vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
+int vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
   // following the Tcl example code in
   // http://wiki.slicer.org/slicerWiki/index.php/Slicer3:Execution_Model_Documentation:Programmatic_Invocation
   // Also, see
@@ -1238,8 +1207,8 @@ void vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
   moduleGUI = 
     static_cast<vtkCommandLineModuleGUI*>(app->GetModuleGUIByName("Rigid registration"));
   if(!moduleGUI){
-    std::cerr << "Cannot find Rigid registration module. Aborting." << std::endl;
-    assert(0);
+    //std::cerr << "Cannot find Rigid registration module. Aborting." << std::endl;
+    return -1;
   }
   moduleLogic = moduleGUI->GetLogic();
 
@@ -1249,8 +1218,8 @@ void vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
   moduleNode = 
     static_cast<vtkMRMLCommandLineModuleNode*>(scene->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
   if(!moduleNode){
-    std::cerr << "Cannot create Rigid registration node. Aborting." << std::endl;
-    assert(0);
+    //std::cerr << "Cannot create Rigid registration node. Aborting." << std::endl;
+    return -2;
   }
 
   // Add node to the scene
@@ -1258,31 +1227,8 @@ void vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
   moduleNode->SetModuleDescription("Rigid registration");
 
   // Create output volume node
-  /*
-  vtkMRMLScalarVolumeNode *scan2ROI = 
-    static_cast<vtkMRMLScalarVolumeNode*>(scene->GetNodeByID(ctNode->GetScan2_SuperSampleRef()));
-  outputVolumeNode = this->CreateVolumeNode(scan2ROI, (const char*)"TG_scan2_Local");
-  // AF: do not need to observe events here -- synchronous execution
-  vtkSetMRMLNodeMacro(this->Scan2_SuperSampleRegisteredVolume, outputVolumeNode);
-  // AF: TODO Delete volume here?
-  outputVolumeNode->Delete();
-  ctNode->SetScan2_LocalRef(outputVolumeNode->GetID());
-//  cerr << "Results of ROI registration will go here: " << ctNode->GetScan2_LocalRef() << endl;
-  */
-
   // AF: First, delete the previous output node. As translated from Tcl
   // code...
-  /*
-       # -------------------------------------
-       # Delete output 
-       # -------------------------------------
-       set OUTPUT_NODE [$SCENE GetNodeByID [$NODE GetScan2_${TYPE}Ref]]
-       if {$OUTPUT_NODE != "" } {  
-           [$GUI GetMRMLScene] RemoveNode $OUTPUT_NODE 
-           $NODE SetScan2_${TYPE}Ref ""
-       }
-  */
-
   vtkMRMLScalarVolumeNode *outputNode;
   outputNode = 
     static_cast<vtkMRMLScalarVolumeNode*>(scene->GetNodeByID(ctNode->GetScan2_LocalRef()));
@@ -1320,19 +1266,6 @@ void vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
   moduleNode->SetParameterAsString("OutputTransform", transformNode->GetID());
   transformNode->Delete();
 
-//  cerr << "Fixed image: " << scene->GetNodeByID(ctNode->GetScan1_SuperSampleRef())->GetName() << endl;
-//  cerr << "Moving image: " << scene->GetNodeByID(ctNode->GetScan2_SuperSampleRef())->GetName() << endl;
-//  cerr << "Registered image: " << scene->GetNodeByID(ctNode->GetScan2_LocalRef())->GetName() << endl;
-
-  /*
-  // Should the volume data be initialized?
-  vtkImageData* outputVolumeData = vtkImageData::New();
-  outputVolumeData->DeepCopy(scan1Node->GetImageData());
-  outputVolumeNode->SetAndObserveImageData(outputVolumeData);
-  outputVolumeNode->SetModifiedSinceRead(1);
-  outputVolumeData->Delete();
-  */
-
   moduleGUI->SetCommandLineModuleNode(moduleNode);
   moduleGUI->GetLogic()->SetCommandLineModuleNode(moduleNode);
 
@@ -1360,19 +1293,25 @@ void vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
         moduleDesc.SetTarget(entryPointAsString);
         moduleNode->SetModuleDescription(moduleDesc);      
       } else {
-        std::cerr << "Failed to find entry point for Rigid registration. Abort." << std::endl;
-        abort();
+        // std::cerr << "Failed to find entry point for Rigid registration. Abort." << std::endl;
+        return -3;
       }
     } else {
-      std::cerr << "Failed to locate module library. Abort." << std::endl;
-      abort();
+      //std::cerr << "Failed to locate module library. Abort." << std::endl;
+      return -4;
     }
   }
 
   moduleGUI->GetLogic()->ApplyAndWait(moduleNode);
+
+  if(moduleNode->GetStatus() != vtkMRMLCommandLineModuleNode::Completed)
+    return -5;
+
   ctNode->SetScan2_LocalRef(outputNode->GetID());
   this->SaveVolume(app, outputNode);
   moduleNode->Delete(); // AF: is it right to delete this here?
+
+  return 0;
 }
 
 void vtkChangeTrackerLogic::ProcessMRMLEvents(vtkObject* caller, 
