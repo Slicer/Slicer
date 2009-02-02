@@ -1678,6 +1678,7 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLDisplayableNode *mode
               // WHY need this, does not show glyph colors otherwise
               //actor->GetMapper()->SetScalarModeToUsePointFieldData();
              // }
+            actor->GetMapper()->SetScalarModeToUsePointData();            
             actor->GetMapper()->SetColorModeToMapScalars();            
             }
           else
