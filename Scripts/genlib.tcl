@@ -1001,7 +1001,7 @@ if { [BuildThis $::Teem_TEST_FILE "teem"] == 1 } {
 if { [BuildThis $::OPENIGTLINK_TEST_FILE "openigtlink"] == 1 && [string tolower $::USE_OPENIGTLINK] == "on" } {
     cd $Slicer3_LIB
 
-    runcmd $::SVN co http://svn.na-mic.org/NAMICSandBox/trunk/OpenIGTLink OpenIGTLink
+    runcmd $::SVN co $::OpenIGTLink_TAG OpenIGTLink
 
     if {$::GENLIB(buildit)} {
       file mkdir $Slicer3_LIB/OpenIGTLink-build

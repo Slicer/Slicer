@@ -87,6 +87,7 @@ set ::NUMPY_TAG "http://svn.scipy.org/svn/numpy/branches/1.1.x"
 set ::SCIPY_TAG "http://svn.scipy.org/svn/scipy/branches/0.6.x"
 set ::BatchMake_TAG "BatchMake-1-0-8"
 set ::SLICERLIBCURL_TAG "HEAD"
+set ::OpenIGTLink_TAG "http://svn.na-mic.org/NAMICSandBox/branches/OpenIGTLink-1-0"
 # set TCL_VERSION to "tcl" to get 8.4, otherwise use tcl85 get 8.5
 set ::TCL_VERSION tcl
 #set ::TCL_VERSION tcl85
