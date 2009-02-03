@@ -195,7 +195,7 @@ void vtkIA_FEMeshGUI::BuildGUI ( )
   // configure a page for a volume loading UI for now.
   // later, switch on the modulesButton in the SlicerControlGUI
   // ---
-  const char* help = "IA-FEMesh is a multi-block approach for the generation of finite element models. Mesh generation initiates from an existing surface. Building blocks can be placed around the structure of interest which are then projected onto the surface to create a solid mesh. The module documentation can be found at <a>http://slicer.spl.harvard.edu/slicerWiki/index.php/Modules:IA-FEMesh-Documentation</a>.";
+  const char* help = "IA-FEMesh is a multi-block approach for the generation of finite element models. Mesh generation initiates from an existing surface. Building blocks can be placed around the structure of interest which are then projected onto the surface to create a solid mesh. The module documentation can be found at <a>http://slicer.spl.harvard.edu/slicerWiki/index.php/Modules:IA_FEMesh-Documentation-3.4</a>.";
   
   std::string about = "IA-FEMesh is developed by the Musculoskeletal Imaging, Modelling and Experimentation (MIMX) Program\n";
   about += "Center for Computer Aided Design\n";
