@@ -282,6 +282,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
     vtkMRMLFiberBundleStorageNode *storageNode = vtkMRMLFiberBundleStorageNode::New();
     fiberNode->GetScene()->AddNodeNoNotify(storageNode);
     fiberNode->SetAndObserveStorageNodeID(storageNode->GetID());
+    storageNode->Delete();
     }
 
   fiberNode->InvokeEvent(vtkMRMLFiberBundleNode::PolyDataModifiedEvent, NULL);
