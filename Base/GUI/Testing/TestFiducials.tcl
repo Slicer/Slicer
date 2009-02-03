@@ -18,12 +18,16 @@ proc TestFiducial {} {
     if { [$fiducialList GetNthFiducialLabelText $f] != "RenameTest$f" } {
       error "fiducial name didn't change ($f)"
     }
-    if { [string trimright [$fiducialList GetNthFiducialXYZ $f] ".0"] != "$tenf $tenf $tenf" } {
-      error "fiducial XYZ didn't change ($f) (XYZ is [$fiducialList GetNthFiducialXYZ $f] not $tenf $tenf $tenf)"
-    }
-    if { [string trim [$fiducialList GetNthFiducialOrientation $f]] != "$f $f $f 1" } {
-        error "fiducial OrientationWXYZ didn't change ($f) (WXYZ is [$fiducialList GetNthFiducialOrientation $f] not $f $f $f 1)"
-    }
+    foreach coord [$fiducialList GetNthFiducialXYZ $f] {
+      if { [expr $coord != $tenf] } {
+        error "fiducial XYZ didn't change ($f) ($coord is not $tenf)"
+      }
+    } 
+    foreach coord [lrange [$fiducialList GetNthFiducialOrientation $f] 0 2] {
+      if { [expr $coord != $f] } {
+        error "fiducial orientation didn't change ($f) ($coord is not $f)"
+      }
+    } 
     update
   }
 
