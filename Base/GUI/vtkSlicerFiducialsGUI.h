@@ -70,7 +70,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkGetObjectMacro ( ListOpacity, vtkKWScaleWithEntry);
     vtkGetObjectMacro ( Logic, vtkSlicerFiducialsLogic);
     vtkGetObjectMacro ( LockToggle, vtkKWPushButtonWithLabel );
-
+    vtkGetObjectMacro ( MoveSelectedFiducialUpButton, vtkKWPushButton );
+    vtkGetObjectMacro ( MoveSelectedFiducialDownButton, vtkKWPushButton );
+    
     // Description:
     // API for setting FiducialListNode, Logic and
     // for both setting and observing them.
@@ -225,6 +227,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // Description:
     // deselects all fiducial point in all lists.
     vtkKWPushButton *DeselectAllFiducialsButton;
+
+    // Description:
+    // moves the selected fiducial up/down in the list.
+    vtkKWPushButton *MoveSelectedFiducialUpButton;
+    vtkKWPushButton *MoveSelectedFiducialDownButton;
 
     // Description:
     // list visibility, overrides individual point visibility

@@ -54,6 +54,9 @@ vtkSlicerFiducialsGUI::vtkSlicerFiducialsGUI ( )
     this->VisibilityToggle = NULL;
     this->VisibilityIcons = NULL;
 
+    this->MoveSelectedFiducialUpButton = NULL;
+    this->MoveSelectedFiducialDownButton = NULL;
+    
     this->ListColorButton = NULL;
     this->ListSelectedColorButton = NULL;
     this->ListSymbolScale = NULL;
@@ -207,6 +210,19 @@ vtkSlicerFiducialsGUI::~vtkSlicerFiducialsGUI ( )
         this->ListOpacity = NULL;
     }
 
+    if (this->MoveSelectedFiducialUpButton)
+      {
+      this->MoveSelectedFiducialUpButton->SetParent(NULL);
+      this->MoveSelectedFiducialUpButton->Delete();
+      this->MoveSelectedFiducialUpButton = NULL;
+      }
+    if (this->MoveSelectedFiducialDownButton)
+      {
+      this->MoveSelectedFiducialDownButton->SetParent(NULL);
+      this->MoveSelectedFiducialDownButton->Delete();
+      this->MoveSelectedFiducialDownButton = NULL;
+      }
+    
     if (this->MultiColumnList) {
       this->MultiColumnList->SetParent(NULL);
       this->MultiColumnList->Delete();
@@ -273,7 +289,8 @@ void vtkSlicerFiducialsGUI::RemoveGUIObservers ( )
     this->SelectAllFiducialsInListButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->DeselectAllFiducialsInListButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->LockToggle->GetWidget()->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    
+    this->MoveSelectedFiducialUpButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->MoveSelectedFiducialDownButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->VisibilityToggle->GetWidget()->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ListColorButton->RemoveObservers (vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     this->ListSelectedColorButton->RemoveObservers (vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -310,7 +327,8 @@ void vtkSlicerFiducialsGUI::AddGUIObservers ( )
     this->SelectAllFiducialsInListButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->DeselectAllFiducialsInListButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->LockToggle->GetWidget()->AddObserver (vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-    
+    this->MoveSelectedFiducialUpButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->MoveSelectedFiducialDownButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->VisibilityToggle->GetWidget()->AddObserver (vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     this->ListColorButton->AddObserver (vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ListSelectedColorButton->AddObserver (vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -610,6 +628,46 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
             }
           }
     }
+  if (button == this->MoveSelectedFiducialUpButton && event == vtkKWPushButton::InvokedEvent)
+     {
+     vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Move Selected Fiducial Up Button event: " << event << ".\n");
+     // get the index of the selected fiducial
+     int selectedIndex =  this->MultiColumnList->GetWidget()->GetIndexOfFirstSelectedRow();
+     if (selectedIndex == -1)
+       {
+       vtkErrorMacro("Select a fiducial first...");
+       }
+     else
+       {
+       // save state for undo
+       this->MRMLScene->SaveStateForUndo();
+       int newIndex = activeFiducialListNode->MoveFiducialUp(selectedIndex);
+       if (newIndex == -1)
+         {
+         vtkErrorMacro("Failed to move fiducial " << selectedIndex << " up");
+         }
+       }
+     }
+  if (button == this->MoveSelectedFiducialDownButton && event == vtkKWPushButton::InvokedEvent)
+     {
+     vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Move Selected Fiducial Down Button event: " << event << ".\n");
+     // get the index of the selected fiducial
+     int selectedIndex =  this->MultiColumnList->GetWidget()->GetIndexOfFirstSelectedRow();
+     if (selectedIndex == -1)
+       {
+       vtkErrorMacro("Select a fiducial first...");
+       }
+     else
+       {
+       // save state for undo
+       this->MRMLScene->SaveStateForUndo();
+       int newIndex = activeFiducialListNode->MoveFiducialDown(selectedIndex);
+       if (newIndex == -1)
+         {
+         vtkErrorMacro("Failed to move fiducial " << selectedIndex << " down");
+         }
+       }
+     }
 
   // list colour
   vtkKWChangeColorButton *colorButton = vtkKWChangeColorButton::SafeDownCast(caller);
@@ -1372,7 +1430,24 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->RemoveFiducialsInListButton->SetBorderWidth ( 0 );
     this->RemoveFiducialsInListButton->SetBalloonHelpString("Remove all fiducial points from this fiducial list.");
 
-    // visibility
+    // add buttons to move the selected fiducial up or down
+    this->MoveSelectedFiducialUpButton = vtkKWPushButton::New();
+    this->MoveSelectedFiducialUpButton->SetParent ( buttonFrame );
+    this->MoveSelectedFiducialUpButton->Create ( );
+    this->MoveSelectedFiducialUpButton->SetImageToIcon ( this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerPreviousIcon() );
+    this->MoveSelectedFiducialUpButton->SetReliefToFlat();
+    this->MoveSelectedFiducialUpButton->SetBorderWidth ( 0 );
+    this->MoveSelectedFiducialUpButton->SetBalloonHelpString("Move the selected fiducial point one spot up in the list.");
+
+    this->MoveSelectedFiducialDownButton = vtkKWPushButton::New();
+    this->MoveSelectedFiducialDownButton->SetParent ( buttonFrame );
+    this->MoveSelectedFiducialDownButton->Create ( );
+    this->MoveSelectedFiducialDownButton->SetImageToIcon ( this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerNextIcon() );
+    this->MoveSelectedFiducialDownButton->SetReliefToFlat();
+    this->MoveSelectedFiducialDownButton->SetBorderWidth ( 0 );
+    this->MoveSelectedFiducialDownButton->SetBalloonHelpString("Move the selected fiducial point one spot down in the list.");
+    
+    // lock or unlock this list so it can't be moved in the viewer windows
     this->LockToggle = vtkKWPushButtonWithLabel::New();
     this->LockToggle->SetParent ( buttonFrame );
     this->LockToggle->Create ( );
@@ -1389,12 +1464,14 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
       }
     this->LockToggle->SetBalloonHelpString ( "Toggles fiducial list locked state. When the list is locked, points cannot be moved using the mouse.");
     
-    app->Script("pack %s %s %s %s %s %s -side left -anchor w -padx 4 -pady 2", 
+    app->Script("pack %s %s %s %s %s %s %s %s -side left -anchor w -padx 4 -pady 2", 
                 this->AddFiducialButton->GetWidgetName(),
                 this->SelectAllFiducialsInListButton->GetWidgetName(),
                 this->DeselectAllFiducialsInListButton->GetWidgetName(),
                 this->RemoveFiducialButton->GetWidgetName(),
                 this->RemoveFiducialsInListButton->GetWidgetName(),
+                this->MoveSelectedFiducialUpButton->GetWidgetName(),
+                this->MoveSelectedFiducialDownButton->GetWidgetName(),
                 this->LockToggle->GetWidgetName());
 
     //---
