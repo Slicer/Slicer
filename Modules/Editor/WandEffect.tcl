@@ -37,6 +37,7 @@ if { [itcl::find class WandEffect] == "" } {
     method processEvent {{caller ""} {event ""}} {}
     method preview {} {}
     method apply {} {}
+    method apply3D {} {}
     method buildOptions {} {}
     method updateMRMLFromGUI {} {}
     method setMRMLDefaults { } {}
@@ -50,23 +51,7 @@ if { [itcl::find class WandEffect] == "" } {
 # ------------------------------------------------------------------
 itcl::body WandEffect::constructor {sliceGUI} {
   set _scopeOptions "visible"
-
-  set o(lut) [vtkNew vtkLookupTable]
-  set o(mapToColors) [vtkNew vtkImageMapToColors]
-  $o(mapToColors) SetLookupTable $o(lut)
-
-  set o(mapper) [vtkNew vtkImageMapper]
-  $o(mapper) SetColorWindow 255
-  $o(mapper) SetColorLevel 128
-  $o(mapper) SetInput [$o(mapToColors) GetOutput]
-  set o(actor) [vtkNew vtkActor2D]
-  $o(actor) SetMapper $o(mapper)
-  $o(mapper) RenderToRectangleOn
-
-  [$_renderWidget GetRenderer] AddActor2D $o(actor)
-  lappend _actors $o(actor)
-
-  $this configure -scope "visible"
+  $this configure -scope $_scopeOptions
 }
 
 itcl::body WandEffect::destructor {} {
@@ -110,6 +95,9 @@ itcl::body WandEffect::processEvent { {caller ""} {event ""} } {
             set percentage [$node GetParameter "Wand,percentage"] 
             $node SetParameter "Wand,percentage" [expr $percentage + 0.01]
           }
+          "3" {
+            $this apply3D
+          }
         }
       } else {
         # puts "wand ignoring $key"
@@ -140,7 +128,27 @@ itcl::body WandEffect::apply {} {
     return
   }
 
-  $this postApply
+  $this applyPolyMask [$o(wandIJKToXY) GetOutput]
+}
+
+itcl::body WandEffect::apply3D {} {
+
+  $this errorDialog "no 3d mode defined yet"
+
+  if { 0 } {
+
+    if { ![info exists o(tracing3DFilter)] } {
+      set o(tracing3DFilter) [vtkNew vtkITKLevelTracing3DImageFilter]
+    }
+
+    $o(tracing3DFilter) SetInput [$this getInputBackground]
+    $o(tracing3DFilter) SetSeed $_layers(background,i) $_layers(background,j) $_layers(background,k) 
+
+    $_layers(label,node) SetAndObserveImageData [$o(tracing3DFilter) GetOutput] 
+    $_layers(label,node) Modified
+
+    $o(tracing3DFilter) Update
+  }
 }
 
 itcl::body WandEffect::preview {} {
@@ -154,38 +162,76 @@ itcl::body WandEffect::preview {} {
   # create pipeline as needed
   #
   if { ![info exists o(wandFilter)] } {
+
     set o(wandFilter) [vtkNew vtkITKWandImageFilter]
+
+    set o(wandMarching) [vtkNew vtkMarchingSquares]
+    $o(wandMarching) SetInput [$o(wandFilter) GetOutput]
+    $o(wandMarching) SetNumberOfContours 1
+    $o(wandMarching) SetValue 0 1
+
+    set o(ijkToXY) [vtkNew vtkTransform]
+    set o(wandIJKToXY) [vtkNew vtkTransformPolyDataFilter]
+    $o(wandIJKToXY) SetTransform $o(ijkToXY)
+    $o(wandIJKToXY) SetInput [$o(wandMarching) GetOutput]
+
+    set o(wandMapper) [vtkNew vtkPolyDataMapper2D]
+    set o(wandActor) [vtkNew vtkActor2D]
+    $o(wandActor) SetMapper $o(wandMapper)
+    $o(wandMapper) SetInput [$o(wandIJKToXY) GetOutput]
+    set property [$o(wandActor) GetProperty]
+    $property SetColor [expr 107/255.] [expr 190/255.] [expr 99/255.]
+    $property SetLineWidth 1
+    [$_renderWidget GetRenderer] AddActor2D $o(wandActor)
+    lappend _actors $o(wandActor)
   }
 
   $o(wandFilter) SetInput [$this getInputBackground]
+
   eval $o(wandFilter) SetSeed [$this getLayerIJK background $x $y]
   $o(wandFilter) SetDynamicRangePercentage $percentage
 
   $this setProgressFilter $o(wandFilter) "Magic Wand Connected Components"
   $o(wandFilter) Update
 
-
-  $o(lut) SetTableValue 0  0 0 0 0
-  eval $o(lut) SetTableValue 255  [EditorGetPaintColor ""]
-  $o(mapToColors) SetInput [$o(wandFilter) GetOutput]
-
   foreach {windoww windowh} [[$_interactor GetRenderWindow] GetSize] {}
-  #$o(actor) SetDisplayExtent 0 [expr $windoww-1] 0 [expr $windowh-1] 0 1
+  foreach {w h d} [[$o(wandFilter) GetOutput] GetDimensions] {}
 
+  set ijkToXY $_layers(background,xyToIJK)
+  $ijkToXY Invert
+  [$o(ijkToXY) GetMatrix] DeepCopy $ijkToXY
+
+  set scaler [vtkMatrix4x4 New]
+  $scaler Identity
+  $scaler SetElement 0 0 [expr $windoww / $w]
+  $scaler SetElement 1 1 [expr $windowh / $h]
+  $scaler SetElement 0 3 [$ijkToXY GetElement 0 3]
+  $scaler SetElement 1 3 [$ijkToXY GetElement 1 3]
+  $scaler SetElement 2 3 [$ijkToXY GetElement 2 3]
+  #$o(ijkToXY) SetMatrix $scaler
+  $scaler Delete
 
   $this positionCursor
   [$sliceGUI GetSliceViewer] RequestRender
 
+  [$o(wandMarching) GetOutput] Update
+  puts "marching [[$o(wandMarching) GetOutput] GetBounds]"
+
+  [$o(wandIJKToXY) GetOutput] Update
+  puts "transformed: [[$o(wandIJKToXY) GetOutput] GetBounds]"
+
   #
   # viewer window...
   #
-  if { [info command wandViewer] == "" } {
-    vtkImageViewer wandViewer
+  if { 1 } {
+    if { [info command wandViewer] == "" } {
+      vtkImageViewer wandViewer
+    }
+    wandViewer SetColorWindow 2
+    wandViewer SetColorLevel 1
+    wandViewer SetInput [$o(wandFilter) GetOutput]
+    wandViewer Render
   }
-  wandViewer SetColorWindow 255
-  wandViewer SetColorLevel 128
-  wandViewer SetInput [$o(mapToColors) GetOutput]
-  wandViewer Render
 
   return
 
