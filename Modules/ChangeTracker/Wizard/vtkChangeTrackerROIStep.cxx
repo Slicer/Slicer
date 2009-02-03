@@ -31,6 +31,14 @@
 vtkStandardNewMacro(vtkChangeTrackerROIStep);
 vtkCxxRevisionMacro(vtkChangeTrackerROIStep, "$Revision: 1.2 $");
 
+#ifndef max
+#define max(a,b)            (((a) > (b)) ? (a) : (b))
+#endif
+
+#ifndef min
+#define min(a,b)            (((a) < (b)) ? (a) : (b))
+#endif
+
 //----------------------------------------------------------------------------
 vtkChangeTrackerROIStep::vtkChangeTrackerROIStep()
 {
@@ -474,12 +482,34 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
     {
     this->roiWidget = vtkSlicerROIDisplayWidget::New();
     }
+
   if (!this->roiWidget->IsCreated())
     {
+    vtkMRMLChangeTrackerNode* Node = this->GetGUI()->GetNode();
+    vtkSlicerSliceLogic *sliceLogic = this->GetGUI()->GetSliceLogic();
+    vtkMRMLVolumeNode* volumeNode =  vtkMRMLVolumeNode::SafeDownCast(Node->GetScene()->GetNodeByID(Node->GetScan1_Ref()));
+    double rasDimensions[3];
+    double rasCenter[3];
+    double rasBounds[6];
+
+    sliceLogic->GetVolumeRASBox(volumeNode, rasDimensions, rasCenter);
+
+    rasBounds[0] = min(rasCenter[0]-rasDimensions[0]/2.,rasCenter[0]+rasDimensions[0]/2.);
+    rasBounds[1] = min(rasCenter[1]-rasDimensions[1]/2.,rasCenter[1]+rasDimensions[1]/2.);
+    rasBounds[2] = min(rasCenter[2]-rasDimensions[2]/2.,rasCenter[2]+rasDimensions[2]/2.);
+    rasBounds[3] = max(rasCenter[0]-rasDimensions[0]/2.,rasCenter[0]+rasDimensions[0]/2.);
+    rasBounds[4] = max(rasCenter[1]-rasDimensions[1]/2.,rasCenter[1]+rasDimensions[1]/2.);
+    rasBounds[5] = max(rasCenter[2]-rasDimensions[2]/2.,rasCenter[2]+rasDimensions[2]/2.);
+    
     this->roiWidget->SetParent(this->FrameROI->GetFrame());
+    this->roiWidget->SetXRangeExtent(rasBounds[0],rasBounds[3]);
+    this->roiWidget->SetYRangeExtent(rasBounds[1],rasBounds[4]);
+    this->roiWidget->SetZRangeExtent(rasBounds[2],rasBounds[5]);
+
     this->roiWidget->Create();
     this->roiWidget->SetROINode(roiNode);
     }
+
   this->Script("pack %s -side top -anchor nw -padx 2 -pady 3 -fill x",
                this->roiWidget->GetWidgetName());
 
@@ -880,7 +910,6 @@ void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long 
   vtkSlicerInteractorStyle *s = vtkSlicerInteractorStyle::SafeDownCast(caller);
   if (s && event == vtkCommand::LeftButtonPressEvent)
   {
-    //cerr << "Mouse clicked event" << endl;
     // Retrieve Coordinates and update ROI
     int index = 0; 
     vtkSlicerSliceGUI *sliceGUI = vtkSlicerApplicationGUI::SafeDownCast(
