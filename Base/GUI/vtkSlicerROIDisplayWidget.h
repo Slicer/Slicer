@@ -85,6 +85,12 @@ public:
   // Get methods on class members ( no Set methods required. )
   vtkGetObjectMacro ( VisibilityToggle, vtkKWPushButton);
   vtkGetObjectMacro ( VisibilityIcons, vtkSlicerVisibilityIcons);
+
+  // Description:
+  // Get/Set individual range extents for the ROI position
+  void SetXRangeExtent(double r0, double r1);
+  void SetYRangeExtent(double r0, double r1);
+  void SetZRangeExtent(double r0, double r1);
   
 protected:
   vtkSlicerROIDisplayWidget ( );
@@ -121,6 +127,12 @@ protected:
    // Description:
    // Colors of the six clipping handles
    double ColorsClippingHandles[6][3];
+
+   // Description:
+   // Values for the extent of each of the scales
+   double XRangeExtent[2];
+   double YRangeExtent[2];
+   double ZRangeExtent[2];
 
 private:
   vtkSlicerROIDisplayWidget ( const vtkSlicerROIDisplayWidget& ); // Not implemented.

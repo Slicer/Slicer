@@ -69,6 +69,12 @@ vtkSlicerROIDisplayWidget::vtkSlicerROIDisplayWidget ( )
     this->ProcessingMRMLEvent = 0;
     this->ProcessingWidgetEvent = 0;
 
+    this->XRangeExtent[0] = -100;
+    this->XRangeExtent[1] = 100;
+    this->YRangeExtent[0] = -100;
+    this->YRangeExtent[1] = 100;
+    this->ZRangeExtent[0] = -100;
+    this->ZRangeExtent[1] = 100;
 }
 
 
@@ -325,6 +331,26 @@ void vtkSlicerROIDisplayWidget::RemoveMRMLObservers ( )
     }
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerROIDisplayWidget::SetXRangeExtent(double r0, double r1)
+{
+  XRangeExtent[0] = r0;
+  XRangeExtent[1] = r1;
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerROIDisplayWidget::SetYRangeExtent(double r0, double r1)
+{
+  YRangeExtent[0] = r0;
+  YRangeExtent[1] = r1;
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerROIDisplayWidget::SetZRangeExtent(double r0, double r1)
+{
+  ZRangeExtent[0] = r0;
+  ZRangeExtent[1] = r1;
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerROIDisplayWidget::CreateWidget ( )
@@ -372,8 +398,9 @@ void vtkSlicerROIDisplayWidget::CreateWidget ( )
   this->XRange->Create();
   this->XRange->SymmetricalInteractionOff();
   this->XRange->SetBalloonHelpString ( "Set Left-Right postion of the ROI BOX in RAS coordinates");
-  this->XRange->SetWholeRange(-100,100);
-  this->XRange->SetRange(-20,20);
+  this->XRange->SetWholeRange(XRangeExtent[0],XRangeExtent[1]);
+  this->XRange->SetRange(XRangeExtent[0]+(XRangeExtent[1]-XRangeExtent[0])*.4,
+                         XRangeExtent[0]+(XRangeExtent[1]-XRangeExtent[0])*.6);
   this->XRange->SetOrientationToHorizontal ();
   this->XRange->SetResolution(1);
   this->XRange->SetEntriesWidth(4);
@@ -406,8 +433,9 @@ void vtkSlicerROIDisplayWidget::CreateWidget ( )
   this->YRange->Create();
   this->YRange->SymmetricalInteractionOff();
   this->YRange->SetBalloonHelpString ( "Set Posterior-Anterior postion of the ROI BOX in RAS coordinates");
-  this->YRange->SetWholeRange(-100,100);
-  this->YRange->SetRange(-20,20);
+  this->YRange->SetWholeRange(YRangeExtent[0],YRangeExtent[1]);
+  this->YRange->SetRange(YRangeExtent[0]+(YRangeExtent[1]-YRangeExtent[0])*.4,
+                         YRangeExtent[0]+(YRangeExtent[1]-YRangeExtent[0])*.6);
   this->YRange->SetOrientationToHorizontal ();
   this->YRange->SetResolution(1);
   this->YRange->SetEntriesWidth(4);
@@ -440,8 +468,9 @@ void vtkSlicerROIDisplayWidget::CreateWidget ( )
   this->ZRange->Create();
   this->ZRange->SymmetricalInteractionOff();
   this->ZRange->SetBalloonHelpString ( "Set Interior-Superior postion of the ROI BOX in RAS coordinates");
-  this->ZRange->SetWholeRange(-100,100);
-  this->ZRange->SetRange(-20,20);
+  this->ZRange->SetWholeRange(ZRangeExtent[0],ZRangeExtent[1]);
+  this->ZRange->SetRange(ZRangeExtent[0]+(ZRangeExtent[1]-ZRangeExtent[0])*.4,
+                         ZRangeExtent[0]+(ZRangeExtent[1]-ZRangeExtent[0])*.6);
   this->ZRange->SetOrientationToHorizontal ();
   this->ZRange->SetResolution(1);
   this->ZRange->SetEntriesWidth(4);
