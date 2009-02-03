@@ -272,7 +272,7 @@ void vtkMRMLColorNode::SetType(int type)
 //---------------------------------------------------------------------------
 void vtkMRMLColorNode::SetNamesFromColors()
 {
-  vtkErrorMacro("Subclass has not defined this method.");
+  vtkErrorMacro("Subclass has not defined SetNamesFromColors.");
 }
 
 //---------------------------------------------------------------------------
