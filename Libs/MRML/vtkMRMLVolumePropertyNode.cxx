@@ -34,18 +34,18 @@ vtkMRMLNode* vtkMRMLVolumePropertyNode::CreateNodeInstance(void)
 
 vtkMRMLVolumePropertyNode::vtkMRMLVolumePropertyNode(void)
 {   
-    this->VolumeProperty=vtkVolumeProperty::New();
-
+    this->VolumeProperty = NULL;
+    vtkVolumeProperty *node  = vtkVolumeProperty::New();
+    vtkSetAndObserveMRMLObjectMacro(this->VolumeProperty, node);
+    node->Delete();
     this->HideFromEditors = 1;
-
 }
 
 vtkMRMLVolumePropertyNode::~vtkMRMLVolumePropertyNode(void)
 {
     if(this->VolumeProperty)
     {
-        this->VolumeProperty->Delete();
-        this->VolumeProperty=NULL;
+      vtkSetAndObserveMRMLObjectMacro(this->VolumeProperty, NULL);
     }
 }
 void vtkMRMLVolumePropertyNode::WriteXML(ostream& of, int nIndent)
@@ -228,6 +228,7 @@ void vtkMRMLVolumePropertyNode::ProcessMRMLEvents ( vtkObject *caller,
                                                     void *callData )
 {
     Superclass::ProcessMRMLEvents(caller, event, callData);
+    this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
     return;
 }
 

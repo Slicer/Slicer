@@ -23,6 +23,10 @@
 #include "vtkMRML.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
+#include "vtkMRMLROINode.h"
+#include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLVolumePropertyNode.h"
+
 #include "vtkVolumeRendering.h"
 
 #include "vtkMatrix4x4.h"
@@ -61,25 +65,41 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
   // when the node is deleted in the scene
   virtual void UpdateReferences();
 
-  // Note: the SetReferenceActive* routines are added because
-  // the vtkSetReferenceStringMacro is not wrapped (vtkSetStringMacro
-  // on which it is based is a special case in vtk's parser).
+  // Description:
+  // Observe the reference transform node
+  virtual void UpdateScene(vtkMRMLScene *scene);
+
+  virtual void ProcessMRMLEvents ( vtkObject *caller, 
+                                   unsigned long event, 
+                                   void *callData);
 
   // Description:
   // the ID of a MRMLVolumeNode
   vtkGetStringMacro (VolumeNodeID);
-  vtkSetReferenceStringMacro (VolumeNodeID);
+  void SetAndObserveVolumeNodeID(const char *volumeNodeID);
+
+  // Description:
+  // Associated transform MRML node
+  vtkMRMLVolumeNode* GetVolumeNode();
 
   // Description:
   // the ID of a parameter MRMLVolumePropertyNode
   vtkGetStringMacro (VolumePropertyNodeID);
-  vtkSetReferenceStringMacro (VolumePropertyNodeID);
+  void SetAndObserveVolumePropertyNodeID(const char *volumePropertyNodeID);
   
+  // Description:
+  // Associated transform MRML node
+  vtkMRMLVolumePropertyNode* GetVolumePropertyNode();
+
   // Description:
   // the ID of a parameter MRMLROINode
   vtkGetStringMacro (ROINodeID);
-  vtkSetReferenceStringMacro (ROINodeID);
-  
+  void SetAndObserveROINodeID(const char *rOINodeID);
+
+  // Description:
+  // Associated transform MRML node
+  vtkMRMLROINode* GetROINode();
+
   // Description:
   // Is cropping enabled?
   vtkSetMacro(CroppingEnabled,int);
@@ -93,9 +113,17 @@ protected:
   void operator=(const vtkMRMLVolumeRenderingParametersNode&);
 
   char *VolumeNodeID;
+  vtkSetReferenceStringMacro(VolumeNodeID);
+  vtkMRMLVolumeNode* VolumeNode;
+
   char *VolumePropertyNodeID;
+  vtkSetReferenceStringMacro(VolumePropertyNodeID);
+  vtkMRMLVolumePropertyNode* VolumePropertyNode;
+
   char *ROINodeID;
-  
+  vtkSetReferenceStringMacro(ROINodeID);
+  vtkMRMLROINode* ROINode;
+
   int CroppingEnabled;
 
 };

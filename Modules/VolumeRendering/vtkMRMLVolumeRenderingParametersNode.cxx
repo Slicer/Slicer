@@ -52,9 +52,16 @@ vtkMRMLNode* vtkMRMLVolumeRenderingParametersNode::CreateNodeInstance()
 vtkMRMLVolumeRenderingParametersNode::vtkMRMLVolumeRenderingParametersNode()
 {
   this->HideFromEditors = 1;
+
   this->VolumeNodeID = NULL;
+  this->VolumeNode = NULL;
+
   this->VolumePropertyNodeID = NULL;
+  this->VolumePropertyNode = NULL;
+
   this->ROINodeID = NULL;
+  this->ROINode = NULL;
+
   this->CroppingEnabled = 0;
   
 }
@@ -64,18 +71,16 @@ vtkMRMLVolumeRenderingParametersNode::~vtkMRMLVolumeRenderingParametersNode()
 {
   if (this->VolumeNodeID)
     {
-    delete [] this->VolumeNodeID;
-    this->VolumeNodeID = NULL;
+    SetAndObserveVolumeNodeID(NULL);
     }
+
   if (this->VolumePropertyNodeID)
     {
-    delete [] this->VolumePropertyNodeID;
-    this->VolumePropertyNodeID = NULL;
+    SetAndObserveVolumePropertyNodeID(NULL);
     }
   if (this->ROINodeID)
     {
-    delete [] this->ROINodeID;
-    this->ROINodeID = NULL;
+    SetAndObserveROINodeID(NULL);
     }  
 }
 //----------------------------------------------------------------------------
@@ -130,15 +135,15 @@ void vtkMRMLVolumeRenderingParametersNode::UpdateReferenceID(const char *oldID, 
 {
   if (this->VolumeNodeID && !strcmp(oldID, this->VolumeNodeID))
     {
-    this->SetVolumeNodeID(newID);
+    this->SetAndObserveVolumeNodeID(newID);
     }
   if (this->ROINodeID && !strcmp(oldID, this->ROINodeID))
     {
-    this->SetROINodeID(newID);
+    this->SetAndObserveROINodeID(newID);
     }
   if (this->VolumePropertyNodeID && !strcmp(oldID, this->VolumePropertyNodeID))
     {
-    this->SetVolumePropertyNodeID(newID);
+    this->SetAndObserveVolumePropertyNodeID(newID);
     }
 }
 
@@ -149,15 +154,15 @@ void vtkMRMLVolumeRenderingParametersNode::UpdateReferences()
 
   if (this->VolumeNodeID != NULL && this->Scene->GetNodeByID(this->VolumeNodeID) == NULL)
     {
-    this->SetVolumeNodeID(NULL);
+    this->SetAndObserveVolumeNodeID(NULL);
     }
   if (this->ROINodeID != NULL && this->Scene->GetNodeByID(this->ROINodeID) == NULL)
     {
-    this->SetROINodeID(NULL);
+    this->SetAndObserveROINodeID(NULL);
     }  
   if (this->VolumePropertyNodeID != NULL && this->Scene->GetNodeByID(this->VolumePropertyNodeID) == NULL)
     {
-    this->SetVolumePropertyNodeID(NULL);
+    this->SetAndObserveVolumePropertyNodeID(NULL);
     }
 }
 
@@ -178,6 +183,112 @@ void vtkMRMLVolumeRenderingParametersNode::Copy(vtkMRMLNode *anode)
   this->DisableModifiedEventOff();
   this->InvokePendingModifiedEvent();
   
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingParametersNode::SetAndObserveVolumeNodeID(const char *volumeNodeID)
+{
+  vtkSetAndObserveMRMLObjectMacro(this->VolumeNode, NULL);
+
+  this->SetVolumeNodeID(volumeNodeID);
+
+  vtkMRMLVolumeNode *node = this->GetVolumeNode();
+
+  vtkSetAndObserveMRMLObjectMacro(this->VolumeNode, node);
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLVolumeNode* vtkMRMLVolumeRenderingParametersNode::GetVolumeNode()
+{
+  if (this->VolumeNodeID == NULL) 
+    {
+    vtkSetAndObserveMRMLObjectMacro(this->VolumeNode, NULL);
+    }
+  else if (this->GetScene() && this->VolumeNodeID != NULL &&
+           ((this->VolumeNode != NULL && strcmp(this->VolumeNode->GetID(), this->VolumeNodeID)) ||
+            (this->VolumeNode = NULL)) )
+    {
+    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->VolumeNodeID);
+    vtkSetAndObserveMRMLObjectMacro(this->VolumeNode, vtkMRMLVolumeNode::SafeDownCast(snode));
+    }
+  return this->VolumeNode;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingParametersNode::SetAndObserveVolumePropertyNodeID(const char *VolumePropertyNodeID)
+{
+  vtkSetAndObserveMRMLObjectMacro(this->VolumePropertyNode, NULL);
+
+  this->SetVolumePropertyNodeID(VolumePropertyNodeID);
+
+  vtkMRMLVolumePropertyNode *node = this->GetVolumePropertyNode();
+
+  vtkSetAndObserveMRMLObjectMacro(this->VolumePropertyNode, node);
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLVolumePropertyNode* vtkMRMLVolumeRenderingParametersNode::GetVolumePropertyNode()
+{
+  if (this->VolumePropertyNodeID == NULL) 
+    {
+    vtkSetAndObserveMRMLObjectMacro(this->VolumePropertyNode, NULL);
+    }
+  else if (this->GetScene() && this->VolumePropertyNodeID != NULL &&
+           ((this->VolumePropertyNode != NULL && strcmp(this->VolumePropertyNode->GetID(), this->VolumePropertyNodeID)) ||
+            (this->VolumePropertyNode = NULL)) )
+    {
+    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->VolumePropertyNodeID);
+    vtkSetAndObserveMRMLObjectMacro(this->VolumePropertyNode, vtkMRMLVolumePropertyNode::SafeDownCast(snode));
+    }
+  return this->VolumePropertyNode;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingParametersNode::SetAndObserveROINodeID(const char *ROINodeID)
+{
+  vtkSetAndObserveMRMLObjectMacro(this->ROINode, NULL);
+
+  this->SetROINodeID(ROINodeID);
+
+  vtkMRMLROINode *node = this->GetROINode();
+
+  vtkSetAndObserveMRMLObjectMacro(this->ROINode, node);
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLROINode* vtkMRMLVolumeRenderingParametersNode::GetROINode()
+{
+  if (this->ROINodeID == NULL) 
+    {
+    vtkSetAndObserveMRMLObjectMacro(this->ROINode, NULL);
+    }
+  else if (this->GetScene() && this->ROINodeID != NULL &&
+           ((this->ROINode != NULL && strcmp(this->ROINode->GetID(), this->ROINodeID)) ||
+            (this->ROINode = NULL)) )
+    {
+    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->ROINodeID);
+    vtkSetAndObserveMRMLObjectMacro(this->ROINode, vtkMRMLROINode::SafeDownCast(snode));
+    }
+  return this->ROINode;
+}
+
+//-----------------------------------------------------------
+void vtkMRMLVolumeRenderingParametersNode::UpdateScene(vtkMRMLScene *scene)
+{
+  Superclass::UpdateScene(scene);
+  this->SetAndObserveVolumeNodeID(this->VolumeNodeID);
+  this->SetAndObserveVolumePropertyNodeID(this->VolumePropertyNodeID);
+  this->SetAndObserveROINodeID(this->ROINodeID);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingParametersNode::ProcessMRMLEvents ( vtkObject *caller,
+                                                    unsigned long event, 
+                                                    void *callData )
+{
+    Superclass::ProcessMRMLEvents(caller, event, callData);
+    this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
+    return;
 }
 
 //----------------------------------------------------------------------------

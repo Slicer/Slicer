@@ -3,6 +3,7 @@
 #include "vtkObject.h"
 
 #include "vtkMRMLVolumeRenderingNode.h"
+#include "vtkMRMLVolumeRenderingParametersNode.h"
 
 bool vtkVolumeRenderingLogic::First = true;
 
@@ -43,6 +44,10 @@ void vtkVolumeRenderingLogic::RegisterNodes()
       vtkMRMLVolumeRenderingNode *vrNode=vtkMRMLVolumeRenderingNode::New();
       this->MRMLScene->RegisterNodeClass(vrNode);
       vrNode->Delete();
+
+      vtkMRMLVolumeRenderingParametersNode *vrpNode=vtkMRMLVolumeRenderingParametersNode::New();
+      this->MRMLScene->RegisterNodeClass(vrpNode);
+      vrpNode->Delete();
       
       vtkMRMLVolumeRenderingSelectionNode *vrsNode=vtkMRMLVolumeRenderingSelectionNode::New();
       this->MRMLScene->RegisterNodeClass(vrsNode);
