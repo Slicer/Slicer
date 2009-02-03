@@ -540,6 +540,7 @@ void vtkSlicerROIViewerWidget::RemoveBoxWidget(vtkSlicerBoxWidget2* boxWidget)
 {
   vtkSlicerBoxRepresentation* rep = reinterpret_cast<vtkSlicerBoxRepresentation*>(boxWidget->GetRepresentation());
   
+  vtkEventBroker::GetInstance()->RemoveObservationsForSubjectByTag( boxWidget, 0 );
   boxWidget->RemoveAllObservers();
   
   boxWidget->SetRepresentation(NULL);
