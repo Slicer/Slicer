@@ -126,7 +126,7 @@ vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
   vtkSetMRMLNodeMacro(this->GreenSliceNode, NULL);
   vtkSetMRMLNodeMacro(this->YellowSliceNode, NULL);
 
-  this->RemoveAllObservers();
+  //this->RemoveAllObservers();
   
   if (this->MainViewer)
     {
