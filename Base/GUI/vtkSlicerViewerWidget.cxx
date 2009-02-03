@@ -894,6 +894,20 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   // window corruption on some linux boxes:
   //this->MainViewer = vtkSlicerRenderWidget::New ( );  
   this->MainViewer = vtkKWRenderWidget::New ( );  
+  
+  // added to enable active/passive stereo mode.  If user started slicer with --stereo
+  // command line option, then stereo might be enabled sometime during this session.  Therefore
+  // we need to request the correct OpenGL visual BEFORE the window is opened.  Quadbuffered
+  // stereo has to be requested before the first Render() call on the window.
+  
+  if (vtkSlicerApplication::GetInstance()->GetStereoEnabled())
+    {
+      vtkDebugMacro("Opening Stereo Capable Window");
+      vtkRenderWindow* renWin = this->MainViewer->GetRenderWindow();
+      renWin->SetStereoCapableWindow(1);
+      renWin->SetStereoTypeToCrystalEyes();
+    }
+  
   this->MainViewer->SetParent (this->ViewerFrame );
   this->MainViewer->Create ( );
 
