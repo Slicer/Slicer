@@ -20,6 +20,7 @@
 #include "vtkMRMLColorNode.h"
 #include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLFreeSurferProceduralColorNode.h"
+#include "vtkMRMLdGEMRICProceduralColorNode.h"
 #include "vtkMRMLProceduralColorNode.h"
 #include "vtkColorTransferFunction.h"
 
@@ -306,6 +307,35 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
   basicFSNode->Delete();
   node->Delete();
 
+  // add the dGEMRIC nodes
+  vtkDebugMacro("AddDefaultColorNodes: adding dGEMRIC nodes");
+  vtkMRMLdGEMRICProceduralColorNode *basicdGEMRICNode = vtkMRMLdGEMRICProceduralColorNode::New();
+  for (int i = basicdGEMRICNode->GetFirstType(); i <= basicdGEMRICNode->GetLastType(); i++)
+    {
+    vtkMRMLdGEMRICProceduralColorNode *node = vtkMRMLdGEMRICProceduralColorNode::New();
+    node->SetType(i);
+    node->SaveWithSceneOff();
+    if (node->GetTypeAsString() == NULL)
+      {
+      vtkWarningMacro("Node type as string is null");      
+      node->SetName("NoName");
+      }
+    else
+      {
+      vtkDebugMacro("Got node type as string " << node->GetTypeAsString());
+      node->SetName(node->GetTypeAsString());
+      }
+    const char *id = this->GetDefaultdGEMRICColorNodeID(i);
+    node->SetSingletonTag(id);
+    if (this->GetMRMLScene()->GetNodeByID(id) == NULL)
+      {
+      this->GetMRMLScene()->RequestNodeID(node, id);        
+      this->GetMRMLScene()->AddNode(node);
+      }
+    node->Delete();
+    }
+  basicdGEMRICNode->Delete();
+  
   //  file based labels
   // first check for any new ones
   this->FindColorFiles();
@@ -418,6 +448,22 @@ void vtkSlicerColorLogic::RemoveDefaultColorNodes()
     this->GetMRMLScene()->RemoveNode(node);
     }
 
+  // remove the dGEMRIC nodes
+  vtkMRMLdGEMRICProceduralColorNode *basicdGEMRICNode = vtkMRMLdGEMRICProceduralColorNode::New();
+  vtkMRMLdGEMRICProceduralColorNode *dGEMRICnode;
+  for (int i = basicdGEMRICNode->GetFirstType(); i <= basicdGEMRICNode->GetLastType(); i++)
+    {
+    basicdGEMRICNode->SetType(i);
+    const char* id = this->GetDefaultdGEMRICColorNodeID(i);
+    vtkDebugMacro("vtkSlicerColorLogic::RemoveDefaultColorNodes: trying to find node with id " << id << endl);
+    dGEMRICnode =  vtkMRMLdGEMRICProceduralColorNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
+    if (dGEMRICnode != NULL)
+      {
+      this->GetMRMLScene()->RemoveNode(dGEMRICnode);
+      }
+    }
+  basicdGEMRICNode->Delete();
+
   // remove the file based labels node
   for (unsigned int i = 0; i < this->ColorFiles.size(); i++)
     {
@@ -452,6 +498,18 @@ const char * vtkSlicerColorLogic::GetDefaultFreeSurferColorNodeID(int type)
   vtkMRMLFreeSurferProceduralColorNode *basicNode = vtkMRMLFreeSurferProceduralColorNode::New();
   basicNode->SetType(type);
 
+  id = basicNode->GetTypeAsIDString();
+  basicNode->Delete();
+
+  return (id);
+}
+
+//----------------------------------------------------------------------------
+const char * vtkSlicerColorLogic::GetDefaultdGEMRICColorNodeID(int type)
+{
+  const char *id;
+  vtkMRMLdGEMRICProceduralColorNode *basicNode = vtkMRMLdGEMRICProceduralColorNode::New();
+  basicNode->SetType(type);
   id = basicNode->GetTypeAsIDString();
   basicNode->Delete();
 

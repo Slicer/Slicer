@@ -62,6 +62,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerColorLogic : public vtkSlicerLogic
   const char * GetDefaultFreeSurferColorNodeID(int type);
 
   // Description:
+  // Return the default dGEMRIC color node id for a given type
+  const char * GetDefaultdGEMRICColorNodeID(int type);
+
+  // Description:
   // Return a default color node id for a freesurfer label map volume
   const char * GetDefaultFreeSurferLabelMapColorNodeID();
   
