@@ -155,6 +155,7 @@ set(MRML_SRCS
   vtkTagTable.cxx
   vtkMRMLVolumePropertyNode.cxx
   vtkMRMLVolumePropertyStorageNode.cxx
+  vtkMRMLdGEMRICProceduralColorNode.cxx
   # Note: when you add new node types, add
   # register code to the vtkMRMLScene constructor
   )
