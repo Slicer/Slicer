@@ -280,6 +280,13 @@ public:
       return vtkMRMLFiducialListStorageNode::New();
     };
 
+  // Description:
+  // move a fiducial point in the collection, one up/down
+  // returns -1 on failure (current index is out of bounds, the fid is already
+  // at the top or bottom of the list), the new fiducial index on success
+  int MoveFiducialUp(int fidIndex);
+  int MoveFiducialDown(int fidIndex);
+  
 protected:
   vtkMRMLFiducialListNode();
   ~vtkMRMLFiducialListNode();

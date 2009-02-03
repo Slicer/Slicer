@@ -1470,3 +1470,89 @@ int vtkMRMLFiducialListNode::GetFiducialIndex(std::string fiducialID)
     }
   return -1;
 }
+
+//---------------------------------------------------------------------------
+int vtkMRMLFiducialListNode::MoveFiducialUp(int fidIndex)
+{
+  int newIndex = -1;
+  if (fidIndex < 0 || fidIndex >= this->GetNumberOfFiducials())
+    {
+    vtkErrorMacro("MoveFiducialUp: invalid fiducial index " << fidIndex << ", out of range 0-" << this->GetNumberOfFiducials() - 1);
+    return newIndex;
+    }
+
+  // is it already at the top of the list?
+  if (fidIndex == 0)
+    {
+    vtkWarningMacro("MoveFiducialUp: fiducial is already at the top of the list, not moving it");
+    return newIndex;
+    }
+
+  // get this fiducial and the one above
+  vtkMRMLFiducial *thisFid = this->GetNthFiducial(fidIndex);
+  vtkMRMLFiducial *fidAbove = this->GetNthFiducial(fidIndex - 1);
+  if (thisFid == NULL || fidAbove == NULL)
+    {
+    vtkErrorMacro("MoveFiducialUp: Failed to get both fiducial " << fidIndex << " and " << fidIndex-1);
+    return newIndex;
+    }
+  newIndex = fidIndex - 1;
+  // make a copy to avoid memory corruption
+  vtkMRMLFiducial *copyFidAbove = vtkMRMLFiducial::New();
+  copyFidAbove->Copy(fidAbove);
+  // now replace the one above with this one
+  this->FiducialList->ReplaceItem(newIndex, thisFid);
+  // and replace this one withthe one that was above
+  this->FiducialList->ReplaceItem(fidIndex, copyFidAbove);
+
+  // this causes a seg fault, but getting a leak...
+  // fidAbove->Delete();
+  
+  this->Modified();
+  
+  return newIndex;
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLFiducialListNode::MoveFiducialDown(int fidIndex)
+{
+  int newIndex = -1;
+  if (fidIndex < 0 || fidIndex >= this->GetNumberOfFiducials())
+    {
+    vtkErrorMacro("MoveFiducialDown: invalid fiducial index " << fidIndex << ", out of range 0-" << this->GetNumberOfFiducials() - 1);
+    return newIndex;
+    }
+
+  // is it already at the bottom of the list?
+  if (fidIndex == this->GetNumberOfFiducials() - 1)
+    {
+    vtkWarningMacro("MoveFiducialDown: fiducial is already at the bottom of the list, not moving it.");
+    return newIndex;
+    }
+
+  // get this fiducial and the one below it
+  vtkMRMLFiducial *thisFid = this->GetNthFiducial(fidIndex);
+  vtkMRMLFiducial *fidBelow = this->GetNthFiducial(fidIndex + 1);
+  
+  if (thisFid == NULL || fidBelow == NULL)
+    {
+    vtkErrorMacro("MoveFiducialUp: Failed to get both fiducial " << fidIndex << " and " << fidIndex+1);
+    return newIndex;
+    }
+  // make copy to avoid memory corruption
+  vtkMRMLFiducial *copyFidBelow = vtkMRMLFiducial::New();
+  copyFidBelow->Copy(fidBelow);
+  
+  newIndex = fidIndex + 1;
+  // now replace the one below with this one
+  this->FiducialList->ReplaceItem(newIndex, thisFid);
+  // and replace this one with the one that was below it
+  this->FiducialList->ReplaceItem(fidIndex, copyFidBelow);
+
+  // leak w/o, seg fault with
+  // fidBelow->Delete();
+  
+  this->Modified();
+  
+  return newIndex;
+}
