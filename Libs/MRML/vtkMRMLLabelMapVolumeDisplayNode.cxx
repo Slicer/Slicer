@@ -21,7 +21,7 @@ Version:   $Revision: 1.2 $
 
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLScene.h"
-
+#include "vtkMRMLProceduralColorNode.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLLabelMapVolumeDisplayNode* vtkMRMLLabelMapVolumeDisplayNode::New()
@@ -91,10 +91,18 @@ void vtkMRMLLabelMapVolumeDisplayNode::UpdateImageDataPipeline()
 {
   Superclass::UpdateImageDataPipeline();
 
-  vtkLookupTable *lookupTable = NULL;
+  vtkScalarsToColors *lookupTable = NULL;
   if (this->GetColorNode())
     {
     lookupTable = this->GetColorNode()->GetLookupTable();
+    if (lookupTable == NULL)
+      {
+      if (vtkMRMLProceduralColorNode::SafeDownCast(this->GetColorNode()) != NULL)
+        {
+        vtkDebugMacro("UpdateImageDataPipeline: getting a color transfer function");
+        lookupTable = (vtkScalarsToColors*)(vtkMRMLProceduralColorNode::SafeDownCast(this->GetColorNode())->GetColorTransferFunction());
+        }
+      }
     }
 
   if (lookupTable != this->MapToColors->GetLookupTable())

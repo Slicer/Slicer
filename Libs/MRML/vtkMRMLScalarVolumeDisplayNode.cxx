@@ -21,6 +21,7 @@ Version:   $Revision: 1.2 $
 
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLProceduralColorNode.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLScalarVolumeDisplayNode* vtkMRMLScalarVolumeDisplayNode::New()
@@ -116,10 +117,18 @@ void vtkMRMLScalarVolumeDisplayNode::UpdateImageDataPipeline()
 {
   Superclass::UpdateImageDataPipeline();
 
-  vtkLookupTable *lookupTable = NULL;
+  vtkScalarsToColors *lookupTable = NULL;
   if (this->GetColorNode())
     {
     lookupTable = this->GetColorNode()->GetLookupTable();
+    if (lookupTable == NULL)
+      {
+      if (vtkMRMLProceduralColorNode::SafeDownCast(this->GetColorNode()) != NULL)
+        {
+        vtkDebugMacro("UpdateImageDataPipeline: getting color transfer function");
+        lookupTable = (vtkScalarsToColors*)(vtkMRMLProceduralColorNode::SafeDownCast(this->GetColorNode())->GetColorTransferFunction());
+        }
+      }
     }
 
   if ( this->MapToColors && (lookupTable != this->MapToColors->GetLookupTable()) )
