@@ -27,7 +27,7 @@
 
 
 class vtkColorTransferFunction;
-class vtkMRMLStorageNodel;
+class vtkMRMLStorageNode;
 
 class VTK_MRML_EXPORT vtkMRMLProceduralColorNode : public vtkMRMLColorNode
 {
@@ -101,6 +101,10 @@ public:
     {
     return Superclass::CreateDefaultStorageNode();
     };
+
+  // Description:
+  // set up some names, going from the points defined in the transfer function
+  void SetNamesFromColors();
   
 protected:
   vtkMRMLProceduralColorNode();

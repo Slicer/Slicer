@@ -151,3 +151,34 @@ int vtkMRMLProceduralColorNode::ReadFile()
   vtkWarningMacro("Subclass didn't define ReadFile!");
   return 0;
 }
+
+
+//---------------------------------------------------------------------------
+void vtkMRMLProceduralColorNode::SetNamesFromColors()
+{
+  // stop gap, get the transfer function's points and use them
+  if (this->ColorTransferFunction == NULL)
+    {
+    return;
+    }
+  int numPoints = this->ColorTransferFunction->GetSize();
+  // reset the names
+  this->Names.clear();
+  this->Names.resize(numPoints);
+  for (int i = 0; i < numPoints; i++)
+    {
+    double r = 0.0, g = 0.0, b = 0.0;
+    r = this->ColorTransferFunction->GetRedValue(i);
+    g = this->ColorTransferFunction->GetGreenValue(i);
+    b = this->ColorTransferFunction->GetBlueValue(i);
+    std::stringstream ss;
+    ss << "R=";
+    ss << r;
+    ss << " G=";
+    ss << g;
+    ss << " B=";
+    ss << b;
+    this->SetColorName(i, ss.str().c_str());
+    }
+   this->NamesInitialisedOn();
+}
