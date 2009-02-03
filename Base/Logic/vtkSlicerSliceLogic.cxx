@@ -24,6 +24,7 @@
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
+#include "vtkMRMLProceduralColorNode.h"
 
 #include "vtkSlicerSliceLogic.h"
 
@@ -1482,9 +1483,16 @@ void vtkSlicerSliceLogic::AddSliceGlyphs(vtkSlicerSliceLayerLogic *layerLogic)
           if (poly)
             {
             this->PolyDataCollection->AddItem(poly);
-            if (dnode->GetColorNode() && dnode->GetColorNode()->GetLookupTable()) 
+            if (dnode->GetColorNode())
               {
-              this->LookupTableCollection->AddItem(dnode->GetColorNode()->GetLookupTable());
+              if (dnode->GetColorNode()->GetLookupTable()) 
+                {
+                this->LookupTableCollection->AddItem(dnode->GetColorNode()->GetLookupTable());
+                }
+              else if (vtkMRMLProceduralColorNode::SafeDownCast(dnode->GetColorNode())->GetColorTransferFunction())
+                {
+                this->LookupTableCollection->AddItem((vtkScalarsToColors*)(vtkMRMLProceduralColorNode::SafeDownCast(dnode->GetColorNode())->GetColorTransferFunction()));
+                }
               }
             }
             break;
