@@ -217,7 +217,7 @@ vtkPolyData* vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetPolyData()
 vtkPolyData* vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetPolyDataTransformedToSlice()
 {
 
-  if (this->DiffusionTensorGlyphFilter && this->Visibility != 0)
+  if ( this->DiffusionTensorGlyphFilter && this->Visibility != 0 && this->GetDiffusionTensorDisplayPropertiesNode() )
     {
     this->UpdatePolyDataPipeline();
     this->DiffusionTensorGlyphFilter->Update();
