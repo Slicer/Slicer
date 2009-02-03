@@ -1759,9 +1759,10 @@ int vtkMRMLColorTableNode::GetNumberOfColors()
 //---------------------------------------------------------------------------
 void vtkMRMLColorTableNode::AddColor(const char *name, double r, double g, double b)
 {
- if (this->GetType() != this->User)
+ if (this->GetType() != this->User &&
+     this->GetType() != this->File)
     {
-      vtkErrorMacro("vtkMRMLColorTableNode::AddColor: ERROR: can't add a colour if not a user defined colour table, reset the type first to User\n");
+      vtkErrorMacro("vtkMRMLColorTableNode::AddColor: ERROR: can't add a colour if not a user defined colour table, reset the type first to User or File\n");
       return;
     }
  this->LastAddedColor++;
