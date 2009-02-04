@@ -731,6 +731,8 @@ int Slicer3_main(int argc, char *argv[])
     tclCmd += "eval $::SLICER(eval);";
     int returnCode = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
     Slicer3_Tcl_Eval( interp, "update" );
+    // -- event broker: free the singleton instance
+    vtkEventBroker::GetInstance()->Delete(); 
     slicerApp->Delete();
     return ( returnCode );
     }
