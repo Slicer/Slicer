@@ -26,7 +26,10 @@ vtkDataTransfer::~vtkDataTransfer()
    
   this->SourceURI = NULL;
   this->DestinationURI = NULL;
-  this->SetHandler (NULL);
+  if ( this->Handler != NULL )
+    {
+    this->SetHandler (NULL);
+    }
   this->TransferStatus = vtkDataTransfer::Ready;
   this->TransferID = -1;
   this->TransferType = vtkDataTransfer::Unspecified;
