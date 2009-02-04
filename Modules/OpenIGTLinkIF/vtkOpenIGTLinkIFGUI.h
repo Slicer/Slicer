@@ -112,6 +112,10 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   vtkTypeRevisionMacro ( vtkOpenIGTLinkIFGUI, vtkSlicerModuleGUI );
   void PrintSelf (ostream& os, vtkIndent indent );
   
+  // Description: 
+  // Get the categorization of the module.
+  const char *GetCategory() const { return "IGT"; }
+
   //SendDATANavitrack
   // Description:    
   // Get methods on class members (no Set methods required)
