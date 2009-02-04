@@ -169,6 +169,7 @@ vtkMimxMeshActor::vtkMimxMeshActor()
   this->CuttingPlaneWidget->GetPlaneProperty()->SetColor(0.2,0.2,0);
   this->CuttingPlaneWidget->GetPlaneProperty()->SetOpacity(0.2);
   this->CuttingPlaneWidget->GetSelectedPlaneProperty()->SetOpacity(0.2);  
+  this->CuttingPlaneWidget->SetHandleSize(0.02);
   this->CuttingPlane = vtkPlane::New();
   
   this->ClipPlaneGeometryFilter = vtkExtractGeometry::New();

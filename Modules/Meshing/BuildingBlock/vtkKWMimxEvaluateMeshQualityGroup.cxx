@@ -652,14 +652,19 @@ int vtkKWMimxEvaluateMeshQualityGroup::DistortedElementDialogSaveCallback()
 //----------------------------------------------------------------------------
 int vtkKWMimxEvaluateMeshQualityGroup::EvaluateMeshQualityCancelCallback()
 {
-  //cout << "got to EvaluateMeshQualityCancelCallback " << endl;
-  //cout << "" << endl;
+  cout << "got to EvaluateMeshQualityCancelCallback " << endl;
+  cout << "meshname:(" << this->meshName << "), length=" << strlen(this->meshName) << endl;
+  cout << "" << endl;
   
   this->GetApplication()->Script("pack forget %s", this->MainFrame->GetWidgetName());
   this->MenuGroup->SetMenuButtonsEnabled(1);
   this->GetMimxMainWindow()->GetMainUserInterfacePanel()->SetEnabled(1);
   
   vtkKWComboBox *combobox = this->MeshListComboBox->GetWidget();
+  
+  // clear out the scalar visibility options and restore the GUI to the mode outside
+  // of the quality rendering.  This logic is gated to prevent crashes in the case there
+  // is not mesh in the pipeline.
   
   if ( strlen(this->meshName) )
   {    
@@ -670,12 +675,12 @@ int vtkKWMimxEvaluateMeshQualityGroup::EvaluateMeshQualityCancelCallback()
     meshActor->SetMeshLegendVisibility(false);
     meshActor->DisableMeshCuttingPlane( );
   }
+  
   this->GetMimxMainWindow()->GetRenderWidget()->Render(); 
-  strcpy(this->meshName, "");  
-  strcpy(this->qualityName, "");
-  this->QualityTypeButton->GetWidget()->SetValue("");
+ 
   if(this->ViewOptionsGroup)
           this->ViewOptionsGroup->Withdraw();
+   
   return 1;
 }
 
