@@ -12,6 +12,14 @@
 #------------------------------------------------------------------------------
 proc XcedeCatalogImport { xcedeFile } {
 
+    #--- get all current slice nodes and save their orientations.
+    #--- these things are saved and restored with a MRML scene,
+    #--- but are not represented in an xcat. So we can at least
+    #--- restore the current state of each slice viewer after the
+    #--- the MRML scene is cleared, and the node->Reset() call
+    #--- has been made (which sets all orientations to Axial).
+
+    
     #--- create a parser and parse the file
     set parser [vtkXMLDataParser New]
     $parser SetFileName $xcedeFile
