@@ -478,7 +478,7 @@ void vtkSlicerApplicationGUI::ProcessCloseSceneCommand()
   vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
   dialog->SetParent ( this->MainSlicerWindow );
   dialog->SetStyleToOkCancel();
-  dialog->SetText("Are you sure you want to close scene?");
+  dialog->SetText("Are you sure you want to close the scene?");
   dialog->Create ( );
   if (dialog->Invoke())
     {
