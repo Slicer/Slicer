@@ -223,74 +223,18 @@ int vtkMRMLColorTableStorageNode::ReadData(vtkMRMLNode *refNode)
       } 
     for (unsigned int i = 0; i < lines.size(); i++)
       {
-      
       std::stringstream ss;
-      //ss << lines[i];
+      ss << lines[i];
       int id;
-      std::string name = "";
+      std::string name;
       double r, g, b, a;
-      /*
-        ss >> id;
+      ss >> id;
       ss >> name;
       ss >> r;
       ss >> g;
       ss >> b;
       ss >> a;
-      */
-      //if (!this->GetDebug())
-        {
-      char *linei = (char *)lines[i].c_str();
-      char *ptr = strtok(linei, " ");
       
-      // first is the id
-      if (ptr != NULL)
-        {
-        vtkDebugMacro("ptr = " << ptr);
-        id = atoi(ptr);
-        vtkDebugMacro("id = " << id);
-        }
-      // now deal with a name that may have spaces
-      ptr = strtok(NULL, " ");
-      bool isInt = false;
-      name += std::string(ptr);
-      vtkDebugMacro("name = " << name.c_str());
-      std::string numbers = "0123456789";
-      while (ptr != NULL && !isInt)
-        {
-        ptr = strtok(NULL, " ");
-        if (ptr != NULL)
-          {
-          std::string stringToken = std::string(ptr);
-          // does the string have anything that's not a number in it? 
-          if (stringToken.find_first_not_of(numbers) != std::string::npos)
-            {
-            // yes, add it to the name
-            name = name + std::string(" ") + stringToken;
-            }
-          else
-            {
-            // no, it's all numbers, so stop
-            isInt = true;
-            }
-          }
-        }
-      r = atoi(ptr);
-      ptr = strtok(NULL, " ");
-      if (ptr != NULL)
-        {
-        g = atoi(ptr);
-        ptr = strtok(NULL, " ");
-        if (ptr != NULL)
-          {
-          b = atoi(ptr);
-          ptr = strtok(NULL, " ");
-          if (ptr != NULL)
-            {
-            a = atoi(ptr);
-            }
-          }
-        }
-        }
       // the file values are 0-255, colour look up table needs 0-1
       r = r / 255.0;
       g = g / 255.0;
