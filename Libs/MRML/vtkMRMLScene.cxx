@@ -2222,7 +2222,12 @@ vtkURIHandler * vtkMRMLScene::FindURIHandlerByName(const char *name)
       return NULL;
       }
     u = vtkURIHandler::SafeDownCast(object);
-    if ( u && ( !strcmp (u->GetName(), name ) ) )
+    if ( u == NULL )
+      {
+      vtkErrorMacro("FindURIHandlerByName: Got NULL URIHandler from URIHandlerCollection." );
+      return NULL;
+      }
+    if (  !strcmp (u->GetName(), name ) )
       {
       vtkDebugMacro("FindURIHandlerByName: found a handler with name " << name << " at index " << i << " in the handler collection");
       return u;
