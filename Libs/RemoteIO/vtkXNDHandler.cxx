@@ -1,10 +1,13 @@
 #include "itksys/Process.h"
 #include "itksys/SystemTools.hxx"
 #include "vtkXNDHandler.h"
-#include <iterator>
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <sstream>
+#include <iterator>
+#include <map>
+#include <vector>
 
 vtkStandardNewMacro ( vtkXNDHandler );
 vtkCxxRevisionMacro ( vtkXNDHandler, "$Revision: 1.0 $" );
@@ -90,6 +93,48 @@ void vtkXNDHandler::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf ( os, indent );
 }
 
+
+
+//----------------------------------------------------------------------------
+
+//  curl commands for doing various xnat desktop things:
+//  #-check for tags
+//  curl http://localhost:8081/tags
+//
+//  #add a tag
+//  curl -X POST 'http://localhost:8081/tags?NewTag1&NewTag2'
+//
+//  #delete a tag
+//  curl -X DELETE 'http://localhost:8081/tags?NewTag1'
+//
+//  #create a tagged data entry
+//  curl -X POST -H "Content-Type: application/x-xnat-metadata+xml" -H "Content-Disposition: x-xnat-metadata; filename=\"demo-howto\"" -d @demo/sample-metadata/cardiac-text.xml http://localhost:8000/data
+//  # returns url, which is an empty file
+//  # http://localhost:8000/data/demo-sample-project/subj02/CT/demo-howto
+//
+//  #add some data
+//  curl -T XNAT-FileServer-HOWTO.txt http://localhost:8000/data/demo-sample-project/subj02/CT/demo-howto
+//
+//  # can get metadata with:
+//  curl http://localhost:8000/data/demo-sample-project/subj02/CT/demo-howto?part=metadata
+//
+//  # can search for this in the database:
+//  curl http://localhost:8000/search
+//
+//  # can search for modalities:
+//  curl http://localhost:8000/search??modality
+//
+//  # can search for all resources by modality:
+//  curl http://localhost:8000/search?modality=CT
+//
+//  # can get just the resource 
+//  curl 'http://localhost:8000/search?modality=CT&no-metadata'
+//
+//  # now you can use the URIs found using search commands 
+//  # to download the actual data
+//  # http://localhost:8000/data/demo-sample-project/subj02/CT/demo-howto
+//
+//----------------------------------------------------------------------------
 
 
 //--- for downloading
@@ -198,7 +243,7 @@ void vtkXNDHandler::StageFileWrite(const char *source,
     vtkErrorMacro("\t\tsource = " << source << ", destination = " << destination);
     }
    
-  this->CloseTransfer();
+   this->CloseTransfer();
   if (post_data)
     {
     free(post_data);
@@ -207,9 +252,99 @@ void vtkXNDHandler::StageFileWrite(const char *source,
 
 
 
+//----------------------------------------------------------------------------
+int vtkXNDHandler::PostTag ( const char *svr, const char *label,
+                             const char *temporaryResponseFileName)
+{
+
+  const char *hostname = this->GetHostName();
+  if ( hostname == NULL )
+    {
+    vtkErrorMacro("PostTag: null host name");
+    return 0;
+    }
+  if ( svr == NULL )
+    {
+    vtkErrorMacro ("PostTag: got a null server.");
+    return 0;
+    }
+  if ( label == NULL )
+    {
+    vtkErrorMacro ("PostTag: got a null tag to add.");
+    return 0;
+    }
+  if (temporaryResponseFileName == NULL)
+    {
+    vtkErrorMacro("PostTag: temporaryResponseFileName is null.");
+    return 0;
+    }
+
+  std::stringstream ssuri;
+  ssuri << svr;
+  ssuri << "/tags?";
+  std::string tmp = ssuri.str();
+  const char *uri = tmp.c_str();  
+
+  //--- create tag postfields
+  std::stringstream ss;
+  ss << label;
+  std::string tmp2 = ss.str();
+  const char *pf = tmp2.c_str();
+
+  this->InitTransfer();
+  
+  //-- configure the curl handle
+  curl_easy_setopt(this->CurlHandle, CURLOPT_POST, 1);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_VERBOSE, true);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_URL, uri);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_POSTFIELDS, pf );  
+  curl_easy_setopt(this->CurlHandle, CURLOPT_FOLLOWLOCATION, true);
+  
+  // then need to set up a local file for capturing the return uri from the
+  // post
+  const char *responseFileName = temporaryResponseFileName;
+  FILE *responseFile = fopen(responseFileName, "wb");
+  if (responseFile == NULL)
+    {
+    vtkErrorMacro("PostMetadata: unable to open a local file caled " << responseFileName << " to write out to for capturing the uri");
+    }
+  else
+    {
+    // for windows
+    curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEFUNCTION, NULL); // write_callback);
+    curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEDATA, responseFile);
+    vtkWarningMacro("PostMetadata: writing error response to" << responseFileName << "\n");
+    }
+  
+  CURLcode retval = curl_easy_perform(this->CurlHandle);
+
+  if (retval == CURLE_OK)
+    {
+    vtkDebugMacro("PostTag: successful return from curl");
+    }
+  else
+    {
+    const char *stringError = curl_easy_strerror(retval);
+    vtkErrorMacro("PostTag: error running curl: " << stringError);
+    return 0;
+    }
+
+  this->CloseTransfer();
+
+  if (this->LocalFile)
+    {
+    fclose(this->LocalFile);
+    }
+  if (responseFile)
+    {
+    fclose(responseFile);
+    }
+  
+  return 1;
+}
 
 //----------------------------------------------------------------------------
-int vtkXNDHandler::PostMetadataTest ( const char *serverPath,
+int vtkXNDHandler::PostMetadata( const char *serverPath,
                                       const char *headerFileName,
                                       const char *dataFileName,
                                       const char *metaDataFileName,
@@ -323,228 +458,79 @@ int vtkXNDHandler::PostMetadataTest ( const char *serverPath,
 
 
 
-//--- No longer used. PostMetadataTest method above used instead.
+
+
+
+
 //----------------------------------------------------------------------------
-const char *vtkXNDHandler::PostMetadata ( const char *serverPath,
-                                          const char *metaDataFileName,
-                                          const char *dataFileName,
-                                          const char *temporaryResponseFileName)
+int vtkXNDHandler::DeleteResource ( const char *uri, const char *temporaryResponseFileName )
 {
-  const char *response = NULL;
-  
-  // serverPath will contain $srv/data, for instance http://localhost:8081/data
-  // metaDataFileName is a filename of a file that has metadata in it.
-  // dataFileName is the name of the file for which we are uploading metadata
-  // temporaryResponseFileName is the name of the file into which
-  // the server response to the POST is sent. This file is parsed for error or uri.
-  if ( serverPath == NULL )
+  int result;
+  if (uri == NULL )
     {
-    vtkErrorMacro("PostMetadata: serverPath is null.");
-    return response;
-    }
-  if (metaDataFileName == NULL)
-    {
-    vtkErrorMacro("PostMetadata: metaDataFileName is null.");
-    return response;
-    }
-  if (dataFileName == NULL)
-    {
-    vtkErrorMacro("PostMetadata: dataFileName is null.");
-    return response;
-    }
-  if (temporaryResponseFileName == NULL)
-    {
-    vtkErrorMacro("PostMetadata: temporaryResponseFileName is null.");
-    return response;
+    vtkErrorMacro("vtkXNDHander::DeleteResource: uri is NULL!");
+    return ( 0);
     }
 
+  this->InitTransfer( );
 
-  
-  const char *hostname = this->GetHostName();
-  if ( hostname == NULL )
-    {
-    vtkErrorMacro("PostMetadata: null host name");
-    return response;
-    }
-
-  this->LocalFile = fopen(metaDataFileName, "r");
-  if (this->LocalFile == NULL)
-    {
-    vtkErrorMacro("PostMetadata: unable to open meta data file " << metaDataFileName);
-    return response;
-    }
-
-  
-  // read all the stuff in the file into a buffer
-  fseek(this->LocalFile, 0, SEEK_END);
-  long lSize = ftell(this->LocalFile);
-  rewind(this->LocalFile);
-
-  // allocate memory
-  char *post_data = NULL;
-  post_data = (char*)malloc(sizeof(char)*lSize);
-  if (post_data == NULL)
-    {
-    vtkErrorMacro("PostMetadata: unable to allocate a buffer to read from meta data file, size = " << lSize);
-    }
-  else
-    {
-    size_t result = fread(post_data, 1, lSize, this->LocalFile);
-    if (result != static_cast<size_t>(lSize))
-      {
-      vtkErrorMacro("PostMetadata: error reading contents of the metadatafile " << metaDataFileName <<", read " << result << " instead of " << lSize);
-      }    
-    }
-  this->InitTransfer();
-
-
-  std::string dataFileNameString = std::string(dataFileName);
-  std::string header1 = "Content-Type: application/x-xnat-metadata+xml";
-  std::string header2 = "Content-Disposition: x-xnat-metadata; filename=\"" + dataFileNameString + "\"";
-  vtkDebugMacro("header1= '" << header1.c_str() << "', header2= '" << header2.c_str() << "'");
-  
-  curl_easy_setopt(this->CurlHandle, CURLOPT_HEADERFUNCTION, NULL);
-  struct curl_slist *cl = NULL;
-  // append the list of headers to the curl list
-  cl = curl_slist_append(cl, header1.c_str());
-  cl = curl_slist_append(cl, header2.c_str());
-  curl_easy_setopt(this->CurlHandle, CURLOPT_HTTPHEADER, cl);
-
-  curl_easy_setopt(this->CurlHandle, CURLOPT_POST, 1);
-  
-  // use the headers
-  curl_easy_setopt(this->CurlHandle, CURLOPT_HEADER, true);
-  
-  // set the uri, will usually be $SERVER/data
-  curl_easy_setopt(this->CurlHandle, CURLOPT_URL, serverPath);
+  //--- not sure what config options we need...
+  curl_easy_setopt(this->CurlHandle, CURLOPT_CUSTOMREQUEST, "DELETE");
+  curl_easy_setopt(this->CurlHandle, CURLOPT_URL, uri);
   curl_easy_setopt(this->CurlHandle, CURLOPT_FOLLOWLOCATION, true);
-  if (post_data)
+  curl_easy_setopt(this->CurlHandle, CURLOPT_VERBOSE, true);
+
+  // then need to set up a local file for capturing any return xml
+  const char *responseFileName = temporaryResponseFileName;
+  FILE *responseFile = fopen(responseFileName, "wb");
+  if (responseFile == NULL)
     {
-    curl_easy_setopt(this->CurlHandle, CURLOPT_POSTFIELDS, post_data);
-    curl_easy_setopt(this->CurlHandle, CURLOPT_POSTFIELDSIZE, strlen(post_data));
-    }
-  else
-    {
-    // use this to read the local file
-    curl_easy_setopt(this->CurlHandle, CURLOPT_READFUNCTION, xnd_read_callback);
-    curl_easy_setopt(this->CurlHandle, CURLOPT_READDATA, this->LocalFile);
-    }
-  
-  // then need to set up a local file for capturing the return uri from the
-  // post
-  const char *returnURIFileName = temporaryResponseFileName;
-  FILE *returnURIFile = fopen(returnURIFileName, "w");
-  if (returnURIFile == NULL)
-    {
-    vtkErrorMacro("PostMetadata: unable to open a local file caled " << returnURIFileName << " to write out to for capturing the uri");
+    vtkErrorMacro("vtkXNDHandler::DeleteResource unable to open a local file caled " << responseFileName << " to write out to for capturing the uri");
     }
   else
     {
     // for windows
     curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEFUNCTION, NULL); // write_callback);
-    curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEDATA, returnURIFile);
+    curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEDATA, responseFile);
+    vtkWarningMacro("vtkXNDHandler::DeleteResource writing error response to" << responseFileName << "\n");
     }
-//# post metadata for file
-//uri=`eval curl $DOCDATA1$file$DOCDATA2 $SERVER/data`
-//echo "$uri"
-
+  
   CURLcode retval = curl_easy_perform(this->CurlHandle);
 
   if (retval == CURLE_OK)
     {
-    vtkDebugMacro("PostMetadata: successful return from curl");
-    }
-   else
-    {
-    const char *stringError = curl_easy_strerror(retval);
-    vtkErrorMacro("PostMetadata: error running curl: " << stringError);
-    }
-
-  curl_slist_free_all(cl);
-  
-  this->CloseTransfer();
-
-  if (this->LocalFile)
-    {
-    fclose(this->LocalFile);
-    }
-  if (post_data)
-    {
-    free(post_data);
-    }
-  if (returnURIFile)
-    {
-    fclose(returnURIFile);
-    }
-  // now read from it
-  if (retval == CURLE_OK)
-    {
-    vtkDebugMacro("PostMetadata: trying to parse the uri out from " << returnURIFileName);
-    returnURIFile = fopen(returnURIFileName, "r");
-    if (returnURIFile == NULL)
-      {
-      vtkErrorMacro("PostMetadata: unable to open " << returnURIFileName << " to parse out the uri");
-      }
-    else
-      {
-      // read everything from it
-      fseek(returnURIFile, 0, SEEK_END);
-      lSize = ftell(returnURIFile);
-      rewind(returnURIFile);
-      // allocate the return body with an extra character, as we're going to
-      // add the null character at the end to help with parsing
-      char *returnURIBody = (char*)malloc(sizeof(char)*(lSize+1));
-      if (returnURIBody == NULL)
-        {
-        vtkErrorMacro("PostMetadata: unable to allocate buffer for contents of returned uri file, size = " << lSize);
-        }
-      else
-        {
-        size_t result = fread(returnURIBody, 1, lSize, returnURIFile);
-        if (result != static_cast<size_t>(lSize))
-          {
-          vtkErrorMacro("PostMetadata: error reading contents of the returned uri file " << returnURIFileName <<", read " << result << " instead of " << lSize);
-          fclose (returnURIFile);
-          return (response);
-          }
-        // add the null character at the end since it's in utf8 format and
-        // we're doing some magic here (don't use string.find, it won't work)
-         returnURIBody[lSize] = '\0';
-        // get the first instance of the uri
-        const char *http = "http://";
-        char *httpPointer1 = strstr(returnURIBody, http);
-        // find the second uri, past the first one
-        char *httpPointer2 = strstr(httpPointer1+7, http);
-        if (httpPointer2 != NULL)
-          {
-          vtkDebugMacro("PostMetadata: strstr found a string pointer = '" << httpPointer2 << "'");
-          std::string responseString = std::string(httpPointer2);
-          response = responseString.c_str();          
-          }
-        else
-          {
-          vtkErrorMacro ("PostMetadata: can't find a (second) uri in the response file " << returnURIFileName);
-          }
-        }
-      free(returnURIBody);
-      }
+    result = 1;
+    vtkDebugMacro("vtkXNDHandler::DeleteResource successful return from curl");
     }
   else
     {
-    vtkErrorMacro("PostMetadata: posting failed, not trying to return the uri");
+    if (retval == CURLE_BAD_FUNCTION_ARGUMENT)
+      {
+      result = 0;
+      vtkErrorMacro("vtkXNDHandler::DeleteResource bad function argument to curl, did you init CurlHandle?");
+      }
+    else if (retval == CURLE_OUT_OF_MEMORY)
+      {
+      result = 0;
+      vtkErrorMacro("vtkXNDHandler::DeleteResource curl ran out of memory!");
+      }
+    else
+      {
+      result = 0;
+      const char *returnString = curl_easy_strerror(retval);
+      vtkErrorMacro("vtkXNDHandler::DeleteResource error running curl: " << returnString);
+      }
     }
-
-  if (returnURIFile)
+  this->CloseTransfer();
+  fclose(this->LocalFile);
+  if (responseFile)
     {
-    fclose(returnURIFile);
+    fclose(responseFile);
     }
-  // return a uri as a string.
-  vtkWarningMacro("PostMetaData: returning response string '" << response << "'");
-  return response;
+
+  //--- if result = 1, delete response went fine. Otherwise, problem with delete.
+  return ( result );
 }
-
-
-
 
 
 

@@ -36,17 +36,15 @@ class VTK_RemoteIO_EXPORT vtkXNDHandler : public vtkHTTPHandler
   virtual void StageFileRead(const char * source,
                              const char * destination);
 
+  int PostTag (const char *svr,  const char *label, const char *temporaryResponseFileName);
+  
   // Description:
   // serverPath will contain $srv/data, for instance http://localhost:8081/data
   // metaDataFileName is a filename of a file that has metadata in it.
   // dataFileName is the name of the file for which we are uploading metadata
   // temporaryResponseFileName is the name of the file into which
   // the server response to the POST is sent. This file is parsed for error or uri.
-  const char* PostMetadata ( const char *serverPath,
-                             const char *metaDataFileName,
-                             const char *dataFileName,
-                             const char *temporaryResponseFileName);
-  int PostMetadataTest ( const char *serverPath,
+  int PostMetadata ( const char *serverPath,
                          const char *headerFileName,
                          const char *dataFileName,
                          const char *metaDataFileName,
@@ -61,6 +59,8 @@ class VTK_RemoteIO_EXPORT vtkXNDHandler : public vtkHTTPHandler
   virtual const char *QueryServer ( const char *uri, const char *destination);
   const char *GetXMLDeclaration();
   const char *GetNameSpace();
+
+  virtual int DeleteResource ( const char *uri, const char *temporaryResponseFileName); 
 
  private:
   char *HostName;
