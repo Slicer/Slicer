@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-<title>SFLS SulciSeg</title>
+<title>Gyri Contour Segmentation</title>
+  <category>Segmentation</category>
+  <version>0.1 (alpha)</version>
+  <documentation-url></documentation-url>
 <description>Sparse-Field Levelset Sulci Segmentation. Given some initial points in polydata will construct a contour and evolve it to high mean-curvature areas, returning the interior region indices.</description>
   <parameters>
   
@@ -34,7 +37,7 @@
    </parameters>
   
   <contributor>
-  Peter Karasev, pkarasev@gatech.edu
+  Peter Karasev, pkarasev@gatech.edu, Allen Tannenbaum tannenba@ece.gatech.edu
   </contributor>
   <documentation-url>
   http://www.google.com
