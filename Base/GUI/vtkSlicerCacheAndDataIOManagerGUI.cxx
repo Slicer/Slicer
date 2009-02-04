@@ -444,6 +444,11 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessMRMLEvents ( vtkObject *caller,
       this->AddNewDataTransfer ( dt );
       this->UpdateEntireGUI();
       }
+    else if ( event == vtkDataIOManager::DisplayManagerWindowEvent )
+      {
+      this->DisplayManagerWindow();
+      this->Script ("update idletasks");
+      }
     else if ( event == vtkDataIOManager::TransferUpdateEvent )
       {
       this->UpdateEntireGUI();
@@ -559,6 +564,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::SetAndObserveDataIOManager( vtkDataIOMan
   events->InsertNextValue( vtkDataIOManager::LocalWriteEvent);
   events->InsertNextValue ( vtkDataIOManager::NewTransferEvent );
   events->InsertNextValue( vtkDataIOManager::TransferUpdateEvent);
+  events->InsertNextValue( vtkDataIOManager::DisplayManagerWindowEvent);
   events->InsertNextValue( vtkDataIOManager::SettingsUpdateEvent);
   vtkSetAndObserveMRMLNodeEventsMacro ( this->DataIOManager, iomanager, events );
   events->Delete();
