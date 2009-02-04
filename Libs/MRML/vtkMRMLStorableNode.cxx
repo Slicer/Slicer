@@ -453,6 +453,13 @@ void vtkMRMLStorableNode::ProcessMRMLEvents ( vtkObject *caller,
       // read?
       }
     }
+
+  if (this == vtkMRMLStorableNode::SafeDownCast(caller) &&
+      event  ==  vtkCommand::ModifiedEvent)
+    {
+    this->ModifiedSinceReadOn();
+    }
+  
   return;
 }
 

@@ -70,11 +70,14 @@ vtkMRMLFiducial::~vtkMRMLFiducial()
 //----------------------------------------------------------------------------
 void vtkMRMLFiducial::WriteXML(ostream& of, int nIndent)
 {
+  // this is encapsulated in the fiducial list storage node
+  /*
   // Write all attributes, since the parsing of the string is dependent on the
   // order here
   
   //Superclass::WriteXML(of, nIndent);
 
+  
     // now that it's not a first class node, write it out simply
     if (this->ID != NULL)
     {
@@ -96,7 +99,7 @@ void vtkMRMLFiducial::WriteXML(ostream& of, int nIndent)
   
   of << " selected " << this->Selected;
   of << " visibility " << this->Visibility;
-  
+  */  
 }
 
 //----------------------------------------------------------------------------

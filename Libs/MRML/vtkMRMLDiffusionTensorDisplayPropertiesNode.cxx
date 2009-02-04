@@ -88,6 +88,8 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode::vtkMRMLDiffusionTensorDisplayProper
   this->GlyphSource = NULL;
   this->UpdateGlyphSource();
 
+  // set the type to user
+  this->SetTypeToUser();
 }
 
 //----------------------------------------------------------------------------
