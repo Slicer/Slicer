@@ -76,6 +76,8 @@ vtkSlicerFoundationIcons::vtkSlicerFoundationIcons ( )
   this->SlicerFiducialsSelectNoneIcon = vtkKWIcon::New();
   this->SlicerFiducialsSelectAllInListIcon = vtkKWIcon::New();
   this->SlicerFiducialsSelectNoneInListIcon = vtkKWIcon::New();
+  this->SlicerFiducialsUpIcon = vtkKWIcon::New();
+  this->SlicerFiducialsDownIcon = vtkKWIcon::New();
   this->SlicerCompositeIcon = vtkKWIcon::New();
   this->SlicerLockIcon = vtkKWIcon::New();
   this->SlicerUnlockIcon = vtkKWIcon::New();
@@ -424,6 +426,16 @@ vtkSlicerFoundationIcons::~vtkSlicerFoundationIcons ( )
     {
     this->SlicerFiducialsSelectNoneInListIcon->Delete();
     this->SlicerFiducialsSelectNoneInListIcon = NULL;
+    }
+  if ( this->SlicerFiducialsDownIcon)
+    {
+    this->SlicerFiducialsDownIcon->Delete();
+    this->SlicerFiducialsDownIcon = NULL;    
+    }
+  if ( this->SlicerFiducialsUpIcon)
+    {
+    this->SlicerFiducialsUpIcon->Delete();
+    this->SlicerFiducialsUpIcon = NULL;    
     }
   if ( this->SlicerCompositeIcon )
     {
@@ -793,6 +805,16 @@ void vtkSlicerFoundationIcons::AssignImageDataToIcons ( )
                                                  image_SlicerFiducialsSelectNoneInList_height,
                                                  image_SlicerFiducialsSelectNoneInList_pixel_size,
                                                  image_SlicerFiducialsSelectNoneInList_length, 0);
+  this->SlicerFiducialsDownIcon->SetImage ( image_SlicerFiducialsDown,
+                                   image_SlicerFiducialsDown_width,
+                                   image_SlicerFiducialsDown_height,
+                                   image_SlicerFiducialsDown_pixel_size,
+                                   image_SlicerFiducialsDown_length, 0);
+  this->SlicerFiducialsUpIcon->SetImage ( image_SlicerFiducialsUp,
+                                   image_SlicerFiducialsUp_width,
+                                   image_SlicerFiducialsUp_height,
+                                   image_SlicerFiducialsUp_pixel_size,
+                                   image_SlicerFiducialsUp_length, 0);
   this->SlicerCompositeIcon->SetImage ( image_SlicerComposite,
                                         image_SlicerComposite_width,
                                         image_SlicerComposite_height,
@@ -896,6 +918,8 @@ void vtkSlicerFoundationIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "SlicerFiducialsSelectNoneIcon: " << this->GetSlicerFiducialsSelectNoneIcon() << "\n";
     os << indent << "SlicerFiducialsSelectAllInListIcon: " << this->GetSlicerFiducialsSelectAllIcon() << "\n";
     os << indent << "SlicerFiducialsSelectNoneInListIcon: " << this->GetSlicerFiducialsSelectNoneIcon() << "\n";
+    os << indent << "SlicerFiducialsDownIcon: " << this->GetSlicerFiducialsDownIcon() << "\n";
+    os << indent << "SlicerFiducialsUpIcon: " << this->GetSlicerFiducialsUpIcon() << "\n";
     os << indent << "SlicerCompositeIcon: " << this->GetSlicerCompositeIcon() << "\n";
     os << indent << "SlicerLockIcon: " << this->GetSlicerLockIcon() << "\n";
     os << indent << "SlicerUnlockIcon: " << this->GetSlicerUnlockIcon() << "\n";

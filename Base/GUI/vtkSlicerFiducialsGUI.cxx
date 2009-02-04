@@ -1434,7 +1434,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->MoveSelectedFiducialUpButton = vtkKWPushButton::New();
     this->MoveSelectedFiducialUpButton->SetParent ( buttonFrame );
     this->MoveSelectedFiducialUpButton->Create ( );
-    this->MoveSelectedFiducialUpButton->SetImageToIcon ( this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerPreviousIcon() );
+    this->MoveSelectedFiducialUpButton->SetImageToIcon ( this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerFiducialsUpIcon() );
     this->MoveSelectedFiducialUpButton->SetReliefToFlat();
     this->MoveSelectedFiducialUpButton->SetBorderWidth ( 0 );
     this->MoveSelectedFiducialUpButton->SetBalloonHelpString("Move the selected fiducial point one spot up in the list.");
@@ -1442,7 +1442,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->MoveSelectedFiducialDownButton = vtkKWPushButton::New();
     this->MoveSelectedFiducialDownButton->SetParent ( buttonFrame );
     this->MoveSelectedFiducialDownButton->Create ( );
-    this->MoveSelectedFiducialDownButton->SetImageToIcon ( this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerNextIcon() );
+    this->MoveSelectedFiducialDownButton->SetImageToIcon ( this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerFiducialsDownIcon() );
     this->MoveSelectedFiducialDownButton->SetReliefToFlat();
     this->MoveSelectedFiducialDownButton->SetBorderWidth ( 0 );
     this->MoveSelectedFiducialDownButton->SetBalloonHelpString("Move the selected fiducial point one spot down in the list.");
