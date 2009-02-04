@@ -49,7 +49,7 @@ subdirs(
 #   PythonGADScriptedModule
    QdecModule
    QueryAtlas
-#   FetchMI
+   FetchMI
    ScriptedModule
    ScriptedModuleExample
    SlicerDaemon
