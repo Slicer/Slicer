@@ -56,6 +56,8 @@ protected:
   vtkKWFrame                        *FrameButtons;
   vtkKWFrame                        *FrameBlank;
   vtkSlicerModuleCollapsibleFrame   *FrameROI;
+  // keep this for backward compatibility
+  vtkSlicerModuleCollapsibleFrame   *FrameROIIJK;
 
   vtkKWFrame                        *FrameROIX;
   vtkKWFrame                        *FrameROIY;
