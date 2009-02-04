@@ -293,7 +293,7 @@ proc launch_ParseArgs {argv} {
 
   set argv0 [lindex $::argv 0]
   set argv1 [lindex $::argv 1]
-  switch -- $argv0 {
+  switch -glob -- $argv0 {
     "--launch" {
       if { $argv1 == "" } {
         error "--launch requires argument of program to run"
@@ -306,6 +306,7 @@ proc launch_ParseArgs {argv} {
           set ::LAUNCH(showSplash) 0
       }
     }
+    "*.slicer" -
     "--launch-script" {
       set ::argv [lreplace $::argv 0 1]
       uplevel #0 source $argv1
