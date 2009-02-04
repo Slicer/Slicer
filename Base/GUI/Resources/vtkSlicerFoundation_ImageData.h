@@ -143,19 +143,25 @@ static const unsigned char image_SlicerCancelled[] =
 static const unsigned int  image_SlicerCleanUp_width          = 21;
 static const unsigned int  image_SlicerCleanUp_height         = 21;
 static const unsigned int  image_SlicerCleanUp_pixel_size     = 3;
-static const unsigned long image_SlicerCleanUp_length         = 620;
+static const unsigned long image_SlicerCleanUp_length         = 1028;
 static const unsigned long image_SlicerCleanUp_decoded_length = 1323;
 
 static const unsigned char image_SlicerCleanUp[] = 
-  "eNqdVE1LAlEU1RHtDwVtWrWKDFq0iSByUasCoS9a1cZMIUxoYSBRqFAZZSRuqhGhqKZyUZ"
-  "CLIYyKqLEvJaEW40xHH/N8OpbZ5XK5c945c9+7980YDGUzlozjOJPJZDabmzSzWCxAuJIZ"
-  "dKb+12rKxfRjaFtw+PixOd7uTiAiX4sKdw+ZuvJw7NwbFCLx60vx5TX3KWUVRORAgO/sJX"
-  "+RL4WPwrvivfRBHvNfao9HRiQGHKuhyHFNOepiVVHKLx/yy10uGZEiWAUnup+skuO82But"
-  "S0p3OIpyRLoBsgdv8IT0AWMicvQKp6McKavaFmTnZuEgpSAiB0INzPXoKStHb9EfqoVkIi"
-  "DfZJT3vIqIHAh9A5jORZ7dPKaDDpPV1cPCsF8OJIqlb58VRORAgBMCmOCzcsy3oHVtZEVG"
-  "OddWhQMBTghggv9Tdev008C8NOitcCDA9dWNurP3z6baR8+s4xUOBDg9O/jF1mlytvMzy6"
-  "lW24begdPOg8/K2blfpXO9k7GWbg/rQIBrcxfAZ+VVt+5CfLO74219vubOKUTkQOitA5NI"
-  "WLn+zlcZufPgUMRY74vDjNgvjtZt9HsHQs5bV97o36b8r/ubs/YNve6Ygg==";
+  "eNqNVGtIU2EYdhvaL3/UXwmpfkhWipElDUHsSnhhDXIVgmk48kextExJME3MbF21i4lpsq"
+  "h0q1i2xDFRtFoT3A9Fth8jphsz5nJzl+M8l5558nTaLHr5OHy87/M87+V7OXFxv02wakKh"
+  "UCQSxcfHb1izhIQEeISrFhdjTIzRNE1RFEmSK2uGOzzw82Hr0oEBOBwOEwRx+i7p9/sDgU"
+  "AoFFpeXoafr7AuHVnABaVZTUpvkm26Fbfbvbi46PP5IAiFf9AhjlLB1XymCm+Qh65FFEwW"
+  "v8PhcDqdEIECV0AUnS0bdXo8nvvvyRNKUv44QlcZvDMzM7Ozs/AjyrXAp7NciCNFw2uqrJ"
+  "1UjVBGK/1okILIs48eKKAGtgBWAc/E0dmWl5aWugxURQfZqae+exm3j7G76da3ZFV3+NXI"
+  "D6vV6nK5gAESeI7OthwMBofMZGU3iey6SdrhYbxBxuaiNV+o2hdk/cvwkMlts9kwSSCB54"
+  "qHFN7F6/U29QUudNG3tbRqlHljZAbNTN8nRjVKN/TRlT30nXeBqakptAAk8BydndjCwoKs"
+  "6ZuiM3RVRdSpiCvPics9RE1v5F7bS5zvCJW02EwmEwoAEng+HesxPz8vPjtQ3DJXqnSeuf"
+  "XHKVM6TzbP5coHxsbGLBYLkMBH9nyVjkYwELxs9qm2Y1Vf86snC2rM/JNXbc67ZBRL64eH"
+  "h6enp4EEXhBDzzlenZ7XJC7V5sh1OeUffh25Tlw2kHa0PmVfkcFgQPt/ozfeUyfvPLL9cM"
+  "MeaXuWrCNL9jSr6EmG5MFeSWvyjtySc3XrZud6R1+y8sbNKfu3pBfuOqDILLiedvDitt2S"
+  "ranZ0mKFVqsdHx/neufT2cljqhMTExU1D1Mz8xM3JgmEosRNSRliiaJWqdFo9Ho9otzkBT"
+  "HvjqqwnEajEUjkUqvV/f39+OIOD/yIAhP17tzWQdZutwODLKgTnWJW+OIOD/yIAhO1ddzO"
+  "oyNEoY8K0SOmhDnjizs88CMKDLvzUX8twf8dvv0ERMxtRg==";
 
 /* 
  * Resource generated for file:
