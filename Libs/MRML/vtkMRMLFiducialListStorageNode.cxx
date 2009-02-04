@@ -52,6 +52,8 @@ vtkMRMLNode* vtkMRMLFiducialListStorageNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLFiducialListStorageNode::vtkMRMLFiducialListStorageNode()
 {
+  // mark it modified since read so that it will trigger a save 
+  this->ModifiedSinceReadOn();
 }
 
 //----------------------------------------------------------------------------
@@ -121,7 +123,7 @@ int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
     }
 
   vtkDebugMacro("Reading Fiducial list data");
-  // test whether refNode is a valid node to hold a color table
+  // test whether refNode is a valid node to hold a fiducial list
   if ( !( refNode->IsA("vtkMRMLFiducialListNode"))
      ) 
     {
@@ -163,6 +165,7 @@ int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
     vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID() << " to a fiducial list node");
     return 0;
     }
+
   // open the file for reading input
   fstream fstr;
 
@@ -173,6 +176,15 @@ int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
     // clear out the list
     fiducialListNode->RemoveAllFiducials();
     char line[1024];
+    // default column ordering for fiducial info
+    // first pass: line will have label,x,y,z,selected,visible
+    int labelColumn = 0;
+    int xColumn = 1;
+    int yColumn = 2;
+    int zColumn = 3;
+    int selColumn = 4;
+    int visColumn = 5;
+    int numColumns = 6;
     // save the valid lines in a vector, parse them once know the max id
     std::vector<std::string>lines;
     while (fstr.good())
@@ -182,8 +194,177 @@ int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
       // does it start with a #?
       if (line[0] == '#')
         {
-        vtkDebugMacro("Comment line, skipping:\n\"" << line << "\"");
+        vtkDebugMacro("Comment line, checking:\n\"" << line << "\"");
         // TODO: parse out the display node settings
+        // if there's a space after the hash, try to find options
+        if (line[1] == ' ')
+          {
+          vtkDebugMacro("Have a possible option in line " << line);
+          std::string lineString = std::string(line);
+          if (lineString.find("# numPoints = ") != std::string::npos)
+            {
+            vtkDebugMacro("Skipping numPoints");
+            }
+          else if (lineString.find("# name = ") != std::string::npos)
+            {
+            std::string str = lineString.substr(9,std::string::npos);
+            vtkDebugMacro("Getting name, substr = " << str);
+            fiducialListNode->SetName(str.c_str());
+            }
+          else if (lineString.find("# symbolScale = ") != std::string::npos)
+            {
+            std::string str = lineString.substr(16,std::string::npos);
+            vtkDebugMacro("Getting symbolScale, substr = " << str);
+            float scale = atof(str.c_str());
+            fiducialListNode->SetSymbolScale(scale);
+            }
+          else if (lineString.find("# symbolType = ") != std::string::npos)
+            {
+            std::string str = lineString.substr(15,std::string::npos);
+            vtkDebugMacro("Getting symbolType, substr = " << str);
+            int t = atoi(str.c_str());
+            fiducialListNode->SetGlyphType(t);
+            }
+          else if (lineString.find("# visibility = ") != std::string::npos)
+            {
+            std::string str = lineString.substr(15,std::string::npos);
+            vtkDebugMacro("Getting visibility, substr = " << str);
+            int vis = atoi(str.c_str());
+            fiducialListNode->SetVisibility(vis);
+            }
+          else if (lineString.find("# textScale = ") != std::string::npos)
+            {
+            std::string str = lineString.substr(14, std::string::npos);
+            vtkDebugMacro("Getting textScale, substr = " << str.c_str());
+            float scale = atof(str.c_str());
+            fiducialListNode->SetTextScale(scale);
+            }
+          else if (lineString.find("# color = ") != std::string::npos ||
+                   lineString.find("# selectedColor = ") != std::string::npos)
+            {
+            std::string str = lineString.substr(10, std::string::npos);
+            vtkDebugMacro("Getting color, substr = " << str.c_str());
+            // the rgb values are separated by commas
+            float r = 0.0, g = 0.0, b = 0.0;
+            char *ptr;
+            char *colours = (char *)(str.c_str());
+            ptr = strtok(colours, ",");
+            if (ptr != NULL)
+              {
+              r = atof(ptr);
+              }
+            ptr = strtok(NULL, ",");
+            if (ptr != NULL)
+              {
+              g = atof(ptr);
+              }
+            ptr = strtok(NULL, ",");
+            if (ptr != NULL)
+              {
+              b = atof(ptr);
+              }
+            // now set the correct value
+            if (lineString.find("# color = ") != std::string::npos)
+              {
+              fiducialListNode->SetColor(r,g,b);
+              }
+            else
+              {
+              fiducialListNode->SetSelectedColor(r,g,b);
+              }
+            }
+          else if (lineString.find("# opacity = ") != std::string::npos)
+            {
+            std::string str = lineString.substr(12, std::string::npos);
+            vtkDebugMacro("Getting opacity, substr = " << str.c_str());
+            float val = atof(str.c_str());
+            fiducialListNode->SetOpacity(val);
+            }
+          else if (lineString.find("# ambient = ") != std::string::npos)
+            {
+            std::string str = lineString.substr(12, std::string::npos);
+            vtkDebugMacro("Getting ambient, substr = " << str.c_str());
+            float val = atof(str.c_str());
+            fiducialListNode->SetAmbient(val);
+            }
+          else if (lineString.find("# diffuse = ") != std::string::npos)
+            {
+            std::string str = lineString.substr(12, std::string::npos);
+            vtkDebugMacro("Getting diffuse, substr = " << str.c_str());
+            float val = atof(str.c_str());
+            fiducialListNode->SetDiffuse(val);
+            }
+          else if (lineString.find("# specular = ") != std::string::npos)
+            {
+            std::string str = lineString.substr(13, std::string::npos);
+            vtkDebugMacro("Getting specular, substr = " << str.c_str());
+            float val = atof(str.c_str());
+            fiducialListNode->SetSpecular(val);
+            }
+          else if (lineString.find("# power = ") != std::string::npos)
+            {
+            std::string str = lineString.substr(10, std::string::npos);
+            vtkDebugMacro("Getting power, substr = " << str.c_str());
+            float val = atof(str.c_str());
+            fiducialListNode->SetPower(val);
+            }
+          else if (lineString.find("# opacity = ") != std::string::npos)
+            {
+            std::string str = lineString.substr(12, std::string::npos);
+            vtkDebugMacro("Getting opacity, substr = " << str.c_str());
+            float val = atof(str.c_str());
+            fiducialListNode->SetOpacity(val);
+            }
+          else if (lineString.find("# locked = ") != std::string::npos)
+            {
+            std::string str = lineString.substr(10, std::string::npos);
+            vtkDebugMacro("Getting locked, substr = " << str.c_str());
+            int val = atoi(str.c_str());
+            fiducialListNode->SetLocked(val);
+            }
+          else if (lineString.find("# columns = ") != std::string::npos)
+            {
+            std::string str = lineString.substr(12, std::string::npos);
+            vtkDebugMacro("Getting column order for the fids, substr = " << str.c_str());
+            // reset all of them
+            labelColumn = -1, xColumn = -1, yColumn = -1, zColumn = -1, selColumn = -1, visColumn = -1;
+            int columnNumber = 0;
+            char *columns = (char *)str.c_str();
+            char *ptr = strtok(columns, ",");
+            while (ptr != NULL)
+              {
+              if (strcmp(ptr, "label") == 0)
+                {
+                labelColumn = columnNumber;
+                }
+              else if (strcmp(ptr, "x") == 0)
+                {
+                xColumn = columnNumber;
+                }
+              else if (strcmp(ptr, "y") == 0)
+                {
+                yColumn = columnNumber;
+                }
+              else if (strcmp(ptr, "z") == 0)
+                {
+                zColumn = columnNumber;
+                }
+              else if (strcmp(ptr, "sel") == 0)
+                {
+                selColumn = columnNumber;
+                }
+              else if (strcmp(ptr, "vis" ) == 0)
+                {
+                visColumn = columnNumber;
+                }
+              ptr = strtok(NULL, ",");
+              columnNumber++;
+              }
+            // set the total number of columns
+            numColumns = columnNumber;
+            vtkDebugMacro("Got " << numColumns << " columns, label = " << labelColumn << ", x = " << xColumn << ", y = " << yColumn << ", z = " << zColumn << ", sel = " <<  selColumn << ", vis = " << visColumn);
+            }
+          }
         }
       else
         {
@@ -195,63 +376,67 @@ int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
         else
           {
           vtkDebugMacro("got a line: \n\"" << line << "\"");
-          // first pass: line will have label,x,y,z,selected,visible
-          // TODO: parse out the header line
           char *ptr;
           ptr = strtok(line, ",");
           std::string label = std::string("");
           double x = 0.0, y = 0.0, z = 0.0;
           int sel = 1, vis = 1;
-          if (ptr != NULL)
+          int columnNumber = 0;
+          while (columnNumber < numColumns)
             {
-            label = std::string(ptr);
-            ptr = strtok(NULL, ",");
-            }
-          if (ptr != NULL)
-            {
-            x = atof(ptr);
-            ptr = strtok(NULL, ",");
-            }
-          if (ptr != NULL)
-            {
-            y = atof(ptr);
-            ptr = strtok(NULL, ",");
-            }
-          if (ptr != NULL)
-            {
-            z = atof(ptr);
-            ptr = strtok(NULL, ",");
-            }
-          if (ptr != NULL)
-            {
-            sel = atoi(ptr);
-            ptr = strtok(NULL, ",");
-            }
-          if (ptr != NULL)
-            {
-            vis = atoi(ptr);
-            ptr = strtok(NULL, ",");
-            }
+            if (ptr != NULL)
+              {
+              if (columnNumber == labelColumn)
+                {
+                label = std::string(ptr);
+                }
+              else if (columnNumber == xColumn)
+                {
+                x = atof(ptr);
+                }
+              else if (columnNumber == yColumn)
+                {
+                y = atof(ptr);
+                }
+              else if (columnNumber == zColumn)
+                {
+                z = atof(ptr);
+                }
+              else if (columnNumber == selColumn)
+                {
+                sel = atoi(ptr);
+                }
+              else if (columnNumber == visColumn)
+                {
+                vis = atoi(ptr);
+                }
+              }
+              ptr = strtok(NULL, ",");
+              columnNumber++;
+            } // end while over columns          
           int fidIndex = fiducialListNode->AddFiducialWithLabelXYZSelectedVisibility(label.c_str(), x, y, z, sel, vis);
           if (fidIndex == -1)
             {
             vtkErrorMacro("Error adding fiducial to list, label = " << label.c_str());
             }
-             }
+          } // point line
         }
       }
     fstr.close();
     }
   else
     {
-    vtkErrorMacro("ERROR opening colour file " << this->FileName << endl);
+    vtkErrorMacro("ERROR opening fiducials file " << this->FileName << endl);
     return 0;
     }
   
   this->SetReadStateIdle();
   
-  // make sure that the color node points to this storage node
+  // make sure that the list node points to this storage node
   fiducialListNode->SetAndObserveStorageNodeID(this->GetID());
+
+  // mark it modified since read
+  fiducialListNode->ModifiedSinceReadOn();
   
   return 1;
 }
@@ -269,7 +454,7 @@ int vtkMRMLFiducialListStorageNode::WriteData(vtkMRMLNode *refNode)
 
   if (this->GetFileName() == NULL) 
     {
-    vtkErrorMacro("ReadData: file name is not set");
+    vtkErrorMacro("WriteData: file name is not set");
     return 0;
     }
 
@@ -289,7 +474,7 @@ int vtkMRMLFiducialListStorageNode::WriteData(vtkMRMLNode *refNode)
 
   if (fiducialListNode == NULL)
     {
-    vtkErrorMacro("WriteData: unable to cast input node " << refNode->GetID() << " to a known color table node");
+    vtkErrorMacro("WriteData: unable to cast input node " << refNode->GetID() << " to a known fiducial list node");
     return 0;
     }
 
@@ -306,16 +491,25 @@ int vtkMRMLFiducialListStorageNode::WriteData(vtkMRMLNode *refNode)
 
   // put down a header
   of << "# Fiducial List file " << (this->GetFileName() != NULL ? this->GetFileName() : "null") << endl;
+  of << "# name = " << fiducialListNode->GetName() << endl;
   of << "# numPoints = " << fiducialListNode->GetNumberOfFiducials() << endl;
   of << "# symbolScale = " << fiducialListNode->GetSymbolScale() << endl;
+  of << "# symbolType = " << fiducialListNode->GetGlyphType() << endl;
   of << "# visibility = " << fiducialListNode->GetVisibility() << endl;
   of << "# textScale = " << fiducialListNode->GetTextScale() << endl;
   double *colour = fiducialListNode->GetColor();
   of << "# color = " << colour[0] << "," << colour[1] << "," << colour[2] << endl;
   colour = fiducialListNode->GetSelectedColor();
   of << "# selectedColor = " << colour[0] << "," << colour[1] << "," << colour[2] << endl;
+  of << "# opacity = " << fiducialListNode->GetOpacity() << endl;
+  of << "# ambient = " << fiducialListNode->GetAmbient() << endl;
+  of << "# diffuse = " << fiducialListNode->GetDiffuse() << endl;
+  of << "# specular = " << fiducialListNode->GetSpecular() << endl;
+  of << "# power = " << fiducialListNode->GetPower() << endl;
+  of << "# locked = " << fiducialListNode->GetLocked() << endl;
   
-  of << "#label,x,y,z,sel,vis" << endl;
+  // if change the ones being included, make sure to update the parsing in ReadData
+  of << "# columns = label,x,y,z,sel,vis" << endl;
   for (int i = 0; i < fiducialListNode->GetNumberOfFiducials(); i++)
     {
     float *xyz = fiducialListNode->GetNthFiducialXYZ(i);
