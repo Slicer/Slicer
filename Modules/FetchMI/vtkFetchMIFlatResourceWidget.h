@@ -5,7 +5,10 @@
 #include "vtkFetchMIWin32Header.h"
 #include "vtkFetchMIMulticolumnWidget.h"
 #include "vtkFetchMILogic.h"
-
+#include "vtkSlicerFoundationIcons.h"
+#include "vtkSlicerApplication.h"
+#include "vtkSlicerApplicationGUI.h"
+#include "vtkSlicerWindow.h"
 class vtkKWPushButton;
 class vtkFetchMIIcons;
 
@@ -21,9 +24,11 @@ public:
   // Get methods on class members ( no Set methods required. )
   vtkGetObjectMacro ( SelectAllButton, vtkKWPushButton);
   vtkGetObjectMacro ( DeselectAllButton, vtkKWPushButton);
+  vtkGetObjectMacro ( HelpButton, vtkKWPushButton );
   vtkGetObjectMacro ( ClearAllButton, vtkKWPushButton);
   vtkGetObjectMacro ( ClearSelectedButton, vtkKWPushButton);
   vtkGetObjectMacro ( DownloadSelectedButton, vtkKWPushButton );
+  vtkGetObjectMacro ( DeleteButton, vtkKWPushButton );
   vtkGetObjectMacro ( FetchMIIcons, vtkFetchMIIcons );
   vtkGetObjectMacro ( Logic, vtkFetchMILogic );
   vtkSetObjectMacro ( Logic, vtkFetchMILogic );
@@ -56,6 +61,11 @@ public:
   // remove observers on color node
   virtual void RemoveMRMLObservers ( );
 
+
+// Description:
+  // Display a window that has tips on using the interface.
+  virtual void RaiseHelpWindow();
+  
   // Description:
   // Selection methods
   virtual void SelectAllItems();
@@ -69,11 +79,19 @@ public:
   virtual int GetNumberOfSelectedItems();
   virtual const char *GetNthSelectedSlicerDataType(int n);
   virtual const char *GetNthSelectedURI(int n);
-  virtual int GetRowForAttribute(const char *att );
+  virtual int GetRowForURI(const char *uri );
+  virtual void SetStatusText (const char *txt);
 
   // Description:
   // editing callback for the multicolumn list
   void RightClickListCallback(int row, int col, int x, int y);
+
+  //BTX
+  enum
+    {
+      DeleteResourceEvent = 11000,
+    };
+  //ETX
   
  protected:
   vtkFetchMIFlatResourceWidget();
@@ -81,8 +99,10 @@ public:
 
   // Custom buttons and icons
   vtkKWPushButton *DownloadSelectedButton;
+  vtkKWPushButton *DeleteButton;
   vtkKWPushButton *SelectAllButton;
   vtkKWPushButton *DeselectAllButton;
+  vtkKWPushButton *HelpButton;
   vtkKWPushButton *ClearAllButton;
   vtkKWPushButton *ClearSelectedButton;
   vtkFetchMIIcons *FetchMIIcons;

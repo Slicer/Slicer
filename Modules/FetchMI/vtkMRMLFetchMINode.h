@@ -24,12 +24,24 @@ class VTK_FETCHMI_EXPORT vtkMRMLFetchMINode : public vtkMRMLNode
   vtkSetObjectMacro ( SlicerDataTypes, vtkStringArray );
   vtkGetObjectMacro ( ResourceDescription, vtkTagTable );
   vtkGetObjectMacro ( TagTableCollection, vtkTagTableCollection );
+  vtkGetObjectMacro ( SelectedTagTable, vtkTagTable );
+
+  // Description:
+  // This method sets the SelectedServer, the SelectedTagTable,
+  // and the ServiceType, then invokes an vtkMRMLFetchMINode::SelectedServerModifiedEvent 
+  // Developers: as new servers are supported, add them in this method.
+  void SetServer ( const char* );
+
   vtkGetStringMacro ( SelectedServer );
   vtkSetStringMacro ( SelectedServer );
-  void SetServer ( const char* );
+
+  // Description:
+  // This method sets the service type without invoking
+  // an event on the node.
+  void SetServiceType ( const char* );
   vtkGetStringMacro ( SelectedServiceType );
   vtkSetStringMacro ( SelectedServiceType );
-  void SetServiceType ( const char* );
+
   vtkGetStringMacro ( ErrorMessage);
   vtkSetStringMacro ( ErrorMessage);
 
@@ -74,10 +86,15 @@ class VTK_FETCHMI_EXPORT vtkMRMLFetchMINode : public vtkMRMLNode
   // contains uri and SlicerDataType from queries
   vtkTagTable *ResourceDescription;
 
+
+  // contains a tag table from each type of webservice.
   vtkTagTableCollection *TagTableCollection;
   char *SelectedServer;
   char *SelectedServiceType;
   char *ErrorMessage;
+  // contains currently selected tag table
+  vtkTagTable *SelectedTagTable;
+  
   vtkStringArray *SlicerDataTypes;
   
   //BTX
@@ -93,8 +110,10 @@ class VTK_FETCHMI_EXPORT vtkMRMLFetchMINode : public vtkMRMLNode
       TagsModifiedEvent,
       ResourceResponseReadyEvent,
       TagResponseReadyEvent,
+      TagValueResponseReadyEvent,
       SaveSelectionEvent,
       RemoteIOErrorEvent,
+      RemoteIODirectoryErrorEvent,
       RemoteIOErrorChoiceEvent,
     };
   //ETX

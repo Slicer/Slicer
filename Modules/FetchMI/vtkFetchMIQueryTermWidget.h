@@ -5,6 +5,10 @@
 #include "vtkFetchMIWin32Header.h"
 #include "vtkFetchMIMulticolumnWidget.h"
 #include "vtkFetchMILogic.h"
+#include <string>
+#include <vector>
+#include <map>
+#include <iterator>
 
 class vtkKWPushButton;
 class vtkFetchMIIcons;
@@ -19,19 +23,33 @@ public:
 
   // Description:
   // Get methods on class members ( no Set methods required. )
-  vtkGetObjectMacro ( AddNewButton, vtkKWPushButton);
   vtkGetObjectMacro ( SelectAllButton, vtkKWPushButton);
   vtkGetObjectMacro ( DeselectAllButton, vtkKWPushButton);
+  vtkGetObjectMacro ( HelpButton, vtkKWPushButton );
   vtkGetObjectMacro ( ClearAllButton, vtkKWPushButton);
   vtkGetObjectMacro ( ClearSelectedButton, vtkKWPushButton);
   vtkGetObjectMacro ( SearchButton, vtkKWPushButton );
+  vtkGetObjectMacro ( RefreshButton, vtkKWPushButton );
   vtkGetObjectMacro ( FetchMIIcons, vtkFetchMIIcons );
   vtkGetObjectMacro ( Logic, vtkFetchMILogic );
   vtkSetObjectMacro ( Logic, vtkFetchMILogic );
+  vtkGetMacro ( InPopulateWidget, int );
+  vtkSetMacro ( InPopulateWidget, int );
   
   // Description:
-  // Method to add a new keyword value pair to the tag list
+  // not used. New method AddNewTagForQuery is used instead.
   virtual void AddNewItem ( const char *keyword, const char *value);
+  
+  //BTX
+  // Description:
+  // Method to add a new keyword and list of possible values to the tag list
+  virtual void AddNewTagForQuery ( const char *keyword,
+                            std::vector<std::string> values );
+  //ETX
+
+  // Description:
+  // Method to add all metadata known by the selected webservice in one shot.
+  virtual void PopulateFromServer ( );
 
   // Description:
   // returns the row number of that attribute.
@@ -65,6 +83,7 @@ public:
   virtual void SelectRow ( int i );
   virtual void SelectAllItems();
   virtual void DeselectAllItems();
+  virtual void SetStatusText(const char *txt);
 
   // Description:
   // Methods to operate on selected items.
@@ -75,7 +94,8 @@ public:
   virtual int GetNumberOfSelectedItems();
   virtual const char *GetNthSelectedAttribute(int n);
   virtual const char *GetNthSelectedValue(int n);
-  
+  virtual void SelectValueOfItem(int i, const char *val );
+
   //BTX
   enum
     {
@@ -93,19 +113,25 @@ public:
   virtual ~vtkFetchMIQueryTermWidget();
 
   // Custom buttons and icons
-  vtkKWPushButton *AddNewButton;
   vtkKWPushButton *SelectAllButton;
   vtkKWPushButton *DeselectAllButton;
   vtkKWPushButton *ClearAllButton;
   vtkKWPushButton *ClearSelectedButton;
   vtkKWPushButton *SearchButton;
+  vtkKWPushButton *HelpButton;
+  vtkKWPushButton *RefreshButton;
   vtkFetchMIIcons *FetchMIIcons;
   vtkFetchMILogic *Logic;
+  int InPopulateWidget;
 
   // Description:
   // Create the widget.
   virtual void CreateWidget();
 
+  // Description:
+  // Display a window that has tips on using the interface.
+  virtual void RaiseHelpWindow();
+  
   // Description:
   // Update the widget from MRML
   void UpdateWidget();

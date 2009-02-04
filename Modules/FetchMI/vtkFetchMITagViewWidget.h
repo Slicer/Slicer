@@ -41,11 +41,15 @@ public:
   void SetTagTitle ( const char *title );
 
 
+
 // Description:
   // Internal Callbacks. do not use.
   void DisplayTagViewWindow ( );
   void DestroyTagViewWindow ( );
   
+  void Bind ( );
+  void UnBind ( );
+
  protected:
   vtkFetchMITagViewWidget();
   virtual ~vtkFetchMITagViewWidget();
@@ -54,8 +58,6 @@ public:
   // Create the widget.
   virtual void CreateWidget();
 
-  void Bind ( );
-  void UnBind ( );
 
   vtkKWTopLevel *TagViewWindow;
   vtkKWPushButton *CloseButton;

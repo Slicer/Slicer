@@ -22,7 +22,6 @@ vtkFetchMIDescribeDataWidget::vtkFetchMIDescribeDataWidget ( )
 {
 
     this->AddNewButton = NULL;
-    this->CopyTagsButton = NULL;
     this->ShowTagsButton = NULL;
     this->SelectAllButton = NULL;
     this->DeselectAllButton = NULL;
@@ -70,12 +69,6 @@ vtkFetchMIDescribeDataWidget::~vtkFetchMIDescribeDataWidget ( )
     this->ClearSelectedButton->Delete();
     this->ClearSelectedButton = NULL;    
     }
-  if ( this->CopyTagsButton )
-    {
-    this->CopyTagsButton->SetParent ( NULL );
-    this->CopyTagsButton->Delete();
-    this->CopyTagsButton = NULL;    
-    }
   if ( this->ShowTagsButton)
     {
     this->ShowTagsButton->SetParent ( NULL );    
@@ -103,7 +96,6 @@ void vtkFetchMIDescribeDataWidget::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "vtkFetchMIDescribeDataWidget: " << this->GetClassName ( ) << "\n";
     os << indent << "AddNewButton: " << this->GetAddNewButton() << "\n";
     os << indent << "ShowTagsButton: " << this->GetShowTagsButton() << "\n";
-    os << indent << "CopyTagsButton: " << this->GetCopyTagsButton() << "\n";
     os << indent << "SelectAllButton: " << this->GetSelectAllButton() << "\n";
     os << indent << "ClearSelectedButton: " << this->GetClearSelectedButton() << "\n";
     os << indent << "ClearAllButton: " << this->GetClearAllButton() << "\n";
@@ -184,7 +176,6 @@ void vtkFetchMIDescribeDataWidget::RemoveWidgetObservers ( ) {
   this->GetAddNewButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GetClearSelectedButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->GetSelectAllButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GetCopyTagsButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -195,7 +186,6 @@ void vtkFetchMIDescribeDataWidget::AddWidgetObservers ( ) {
   this->GetAddNewButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GetClearSelectedButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->GetSelectAllButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GetCopyTagsButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -261,14 +251,6 @@ void vtkFetchMIDescribeDataWidget::CreateWidget ( )
   this->AddNewButton->SetImageToIcon ( this->FetchMIIcons->GetAddNewIcon() );
   this->AddNewButton->SetBalloonHelpString ( "Add new user tag" );
 
-  this->CopyTagsButton = vtkKWPushButton::New();
-  this->CopyTagsButton->SetParent (bFrame);
-  this->CopyTagsButton->Create();
-  this->CopyTagsButton->SetBorderWidth ( 0 );
-  this->CopyTagsButton->SetReliefToFlat();  
-  this->CopyTagsButton->SetImageToIcon ( this->FetchMIIcons->GetCopyTagsIcon() );
-  this->CopyTagsButton->SetBalloonHelpString ( "Add selected terms from query panel" );
-
   this->SelectAllButton = vtkKWPushButton::New();
   this->SelectAllButton->SetParent (bFrame);
   this->SelectAllButton->Create();
@@ -301,9 +283,8 @@ void vtkFetchMIDescribeDataWidget::CreateWidget ( )
   this->DeselectAllButton->SetImageToIcon ( this->FetchMIIcons->GetDeselectAllIcon() );
   this->DeselectAllButton->SetBalloonHelpString ( "Deselect all tags in list" );
 
-  this->Script ("pack %s %s %s %s %s %s -side left -anchor c -expand n -padx 3 -pady 2",
+  this->Script ("pack %s %s %s %s %s -side left -anchor c -expand n -padx 3 -pady 2",
                this->AddNewButton->GetWidgetName(),
-               this->CopyTagsButton->GetWidgetName(),
                this->SelectAllButton->GetWidgetName(),
                this->DeselectAllButton->GetWidgetName(),
                this->ClearSelectedButton->GetWidgetName(),

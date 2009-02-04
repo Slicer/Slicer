@@ -33,12 +33,6 @@ vtkFetchMITagViewWidget::~vtkFetchMITagViewWidget ( )
     this->CloseButton->Delete();
     this->CloseButton = NULL;
     }
-  if ( this->TagViewWindow )
-    {
-    this->TagViewWindow->SetParent ( NULL );
-    this->TagViewWindow->Delete();
-    this->TagViewWindow = NULL;
-    }
   if ( this->TitleLabel )
     {
     this->TitleLabel->SetParent ( NULL );
@@ -50,6 +44,12 @@ vtkFetchMITagViewWidget::~vtkFetchMITagViewWidget ( )
     this->TextBox->SetParent ( NULL );
     this->TextBox->Delete();
     this->TextBox = NULL;
+    }
+  if ( this->TagViewWindow )
+    {
+    this->TagViewWindow->SetParent ( NULL );
+    this->TagViewWindow->Delete();
+    this->TagViewWindow = NULL;
     }
 }
 
@@ -100,8 +100,6 @@ void vtkFetchMITagViewWidget::DestroyTagViewWindow ( )
     return;
     }
   this->TagViewWindow->Withdraw();
-  this->UnBind();
-  this->Delete();
 }
 
 
@@ -115,7 +113,6 @@ void vtkFetchMITagViewWidget::DisplayTagViewWindow ( )
     }
   this->TagViewWindow->DeIconify();
   this->TagViewWindow->Raise();
-  this->Script ( "puts \"raising toplevel\""); 
 }
 
 
@@ -153,7 +150,7 @@ void vtkFetchMITagViewWidget::CreateWidget ( )
     this->TagViewWindow->Create();
     this->TagViewWindow->SetBorderWidth ( 2 );
     this->TagViewWindow->SetReliefToFlat ( );
-    this->TagViewWindow->SetDisplayPositionToPointer();
+    this->TagViewWindow->SetDisplayPositionToMasterWindowCenterFirst();
     this->TagViewWindow->SetTitle("Tag Viewer");
     this->TagViewWindow->SetSize ( 300, 350 );
     this->TagViewWindow->Withdraw();

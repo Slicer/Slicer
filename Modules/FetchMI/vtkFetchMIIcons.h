@@ -22,17 +22,18 @@ class vtkFetchMIIcons : public vtkSlicerIcons
     vtkGetObjectMacro ( SearchIcon, vtkKWIcon );
     vtkGetObjectMacro ( DownloadIcon, vtkKWIcon );
     vtkGetObjectMacro (UploadIcon, vtkKWIcon );
-    vtkGetObjectMacro (CopyTagsIcon, vtkKWIcon );
     vtkGetObjectMacro (ApplyTagsIcon, vtkKWIcon );
-    vtkGetObjectMacro (TagTableIcon, vtkKWIcon );
-    vtkGetObjectMacro (QueryTagsIcon, vtkKWIcon );
+    vtkGetObjectMacro (RemoveTagsIcon, vtkKWIcon );
     vtkGetObjectMacro (ShowDataTagsIcon, vtkKWIcon );
+    vtkGetObjectMacro (RefreshServerIcon, vtkKWIcon );
+    vtkGetObjectMacro (HelpIcon, vtkKWIcon );
     
     void AssignImageDataToIcons ( );
     
  protected:
     vtkFetchMIIcons ( );
     ~vtkFetchMIIcons ( );
+    vtkKWIcon *HelpIcon;
     vtkKWIcon *AddNewIcon;
     vtkKWIcon *DeleteAllIcon;
     vtkKWIcon *DeleteSelectedIcon;
@@ -41,11 +42,10 @@ class vtkFetchMIIcons : public vtkSlicerIcons
     vtkKWIcon *SearchIcon;
     vtkKWIcon *DownloadIcon;
     vtkKWIcon *UploadIcon;
-    vtkKWIcon *CopyTagsIcon;
     vtkKWIcon *ApplyTagsIcon;
-    vtkKWIcon *TagTableIcon;
-    vtkKWIcon *QueryTagsIcon;
+    vtkKWIcon *RemoveTagsIcon;
     vtkKWIcon *ShowDataTagsIcon;
+    vtkKWIcon *RefreshServerIcon;
     
  private:
     vtkFetchMIIcons (const vtkFetchMIIcons&); // Not implemented

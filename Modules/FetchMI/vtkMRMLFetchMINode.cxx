@@ -13,6 +13,16 @@
 //------------------------------------------------------------------------------
 vtkCxxRevisionMacro ( vtkMRMLFetchMINode, "$Revision: 1.0 $");
 
+//----------------------------------------------------------------------------
+//--- a word about language:
+//--- Methods and vars in this module assume that:
+//--- "Tag" means a metadata element comprised of an "attribute" (or "keyword") and "value".
+//--- Tags may have an attribute with many possible values.
+//--- Sometimes "Tag" is used to mean "attribute".
+//--- we'll change this eventually to be "Tagname"
+//----------------------------------------------------------------------------
+
+
 //------------------------------------------------------------------------------
 vtkMRMLFetchMINode* vtkMRMLFetchMINode::New()
 {
@@ -53,8 +63,11 @@ vtkMRMLFetchMINode::vtkMRMLFetchMINode()
 
    this->ErrorMessage = NULL;
    this->SelectedServer = NULL; 
-   this->SelectedServiceType = NULL; 
+   this->SelectedServiceType = NULL;
+   this->SelectedTagTable = NULL;
    
+   //--- This contains list of uris and their slice data types.
+   //--- Add additional SlicerDataTypes here as appropriate.
    this->ResourceDescription = vtkTagTable::New();
    this->SlicerDataTypes = vtkStringArray::New();
    this->SlicerDataTypes->InsertValue ( 0, "MRML");
@@ -66,7 +79,7 @@ vtkMRMLFetchMINode::vtkMRMLFetchMINode()
    this->SlicerDataTypes->InsertValue ( 6, "DWIVolume");
    this->SlicerDataTypes->InsertValue ( 7, "UnstructuredGrid");
 
-   //--- initialize tag table with default tags for
+   //--- Initialize tag table with default tags for
    //--- Slicer-friendly services
    //--- fBIRN HID web services
    vtkHIDTagTable *hid_tt = vtkHIDTagTable::New();
@@ -78,6 +91,7 @@ vtkMRMLFetchMINode::vtkMRMLFetchMINode()
    xnd_tt->Initialize();
    this->TagTableCollection->AddTableByName (xnd_tt, "XNDTags" );
    xnd_tt->Delete();
+   //--- Add others here as we support them...
 }
 
 
@@ -175,9 +189,9 @@ void vtkMRMLFetchMINode::SetKnownServers ( )
 {
    //--- add all known servers
   this->AddNewServer ( "http://xnd.slicer.org:8000");
-  this->AddNewServer ( "http://bobby.bwh.harvard.edu:8000" );
   this->AddNewServer ( "http://localhost:8081" );
-  this->AddNewServer ( "https://loci.ucsd.edu/hid" );
+  // Hide this guy until his functionality is built out.
+  //  this->AddNewServer ( "https://loci.ucsd.edu/hid" );
   this->InvokeEvent (vtkMRMLFetchMINode::KnownServersModifiedEvent );
 }
 
@@ -195,15 +209,23 @@ void vtkMRMLFetchMINode::SetServer ( const char *s)
   if ( !(strcmp(s, "https://loci.ucsd.edu/hid" ) ))
     {
     this->SetServiceType ( "HID" );
+    if ( this->GetTagTableCollection() )
+      {
+      this->SelectedTagTable = this->GetTagTableCollection()->FindTagTableByName ("HIDTags");
+      }
     }
   else
     {
     //--- for now assume it's xnd if not hid.
     this->SetServiceType ( "XND" );
+    if ( this->GetTagTableCollection() )
+      {
+      this->SelectedTagTable = this->GetTagTableCollection()->FindTagTableByName ("XNDTags");
+      }
     }
-
   this->InvokeEvent ( vtkMRMLFetchMINode::SelectedServerModifiedEvent );
 }
+
 
 
 //----------------------------------------------------------------------------
