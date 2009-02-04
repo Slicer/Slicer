@@ -22,6 +22,7 @@
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
+#include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
 #include "vtkMRMLProceduralColorNode.h"
@@ -1467,7 +1468,7 @@ void vtkSlicerSliceLogic::AddSliceGlyphs(vtkSlicerSliceLayerLogic *layerLogic)
 {
  if (layerLogic && layerLogic->GetVolumeNode()) 
     {
-    vtkMRMLDiffusionTensorVolumeNode *volumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast (layerLogic->GetVolumeNode());
+    vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast (layerLogic->GetVolumeNode());
     vtkMRMLGlyphableVolumeDisplayNode *displayNode = vtkMRMLGlyphableVolumeDisplayNode::SafeDownCast( layerLogic->GetVolumeNode()->GetDisplayNode() );
     if (displayNode)
       {
@@ -1514,7 +1515,7 @@ std::vector< vtkMRMLDisplayNode*> vtkSlicerSliceLogic::GetPolyDataDisplayNodes()
     vtkSlicerSliceLayerLogic *layerLogic = layerLogics[i];
     if (layerLogic && layerLogic->GetVolumeNode()) 
       {
-      vtkMRMLDiffusionTensorVolumeNode *volumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast (layerLogic->GetVolumeNode());
+      vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast (layerLogic->GetVolumeNode());
       vtkMRMLGlyphableVolumeDisplayNode *displayNode = vtkMRMLGlyphableVolumeDisplayNode::SafeDownCast( layerLogic->GetVolumeNode()->GetDisplayNode() );
       if (displayNode)
         {
