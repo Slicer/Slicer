@@ -114,10 +114,14 @@ proc FetchMIWriteMetadataForNode_XND { metadataFilename docdecFilename nodeID } 
         $t AddOrUpdateTag "SlicerDataType" "unknown"
     }
 
-    set fgui  $::slicer3::FetchMIGUI
-    set t [ $::slicer3::MRMLScene GetUserTagTable ]
-    $t AddOrUpdateTag "SlicerDataType" "MRML"
-    set num [$t GetNumberOfTags ]
+#---
+    # i think this is a bug block -- copied and pasted in. but wrong.
+    # test with it commented out and delete if it's truly junk.
+#    set fgui  $::slicer3::FetchMIGUI
+#    set t [ $::slicer3::MRMLScene GetUserTagTable ]
+#    $t AddOrUpdateTag "SlicerDataType" "MRML"
+#    set num [$t GetNumberOfTags ]
+#---
 
     #--- get declaration
     set f [ open $docdecFilename r ]
@@ -168,6 +172,7 @@ proc FetchMIParseMetadataPostResponse_XND {  responseFilename  } {
     set fgui  $::slicer3::FetchMIGUI
     set f [ open $responseFilename r ]
     set found 0
+
     #--- look for a second uri in response
     while { [gets $f line] >= 0 }  {
         if { [string first "http://" $line ] == 0 } {
