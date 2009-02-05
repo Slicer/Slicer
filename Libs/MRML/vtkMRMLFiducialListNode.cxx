@@ -1538,8 +1538,8 @@ int vtkMRMLFiducialListNode::MoveFiducialUp(int fidIndex)
   // and replace this one withthe one that was above
   this->FiducialList->ReplaceItem(fidIndex, copyFidAbove);
 
-  // Delete causes a seg fault, but getting a leak...
-  //fidAbove->Delete();
+  // it's held onto by the collection now
+  copyFidAbove->Delete();
 
   this->ModifiedSinceReadOn();
   
@@ -1584,8 +1584,8 @@ int vtkMRMLFiducialListNode::MoveFiducialDown(int fidIndex)
   // and replace this one with the one that was below it
   this->FiducialList->ReplaceItem(fidIndex, copyFidBelow);
 
-  // leak w/o, seg fault with Delete
-  // fidBelow->Delete();
+  // it's held onto by the collection now
+  copyFidBelow->Delete(); 
   
   this->Modified();
   this->ModifiedSinceReadOn();
