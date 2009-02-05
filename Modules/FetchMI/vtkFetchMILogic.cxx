@@ -721,7 +721,7 @@ void vtkFetchMILogic::QueryServerForResources ( )
         //--- and a value, and both are not "", "NULL" or "no values found"
         //--- etc.
         int num = t->GetNumberOfTags();
-        int firsttag = 1;
+
         for ( int i =0; i<num; i++)
           {
           att = t->GetTagAttribute(i);
