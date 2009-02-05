@@ -646,6 +646,15 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
          {
          vtkErrorMacro("Failed to move fiducial " << selectedIndex << " up");
          }
+       else
+         {
+         // adjust the selection so that the same fid is still selected
+         // first get the selected cell (no mult selections)
+         int rows[1], cols[1];
+         this->MultiColumnList->GetWidget()->GetSelectedCells(rows, cols);
+         this->MultiColumnList->GetWidget()->DeselectRow(selectedIndex);
+         this->MultiColumnList->GetWidget()->SelectCell(newIndex, cols[0]);
+         }
        }
      }
   if (button == this->MoveSelectedFiducialDownButton && event == vtkKWPushButton::InvokedEvent)
@@ -665,6 +674,15 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
        if (newIndex == -1)
          {
          vtkErrorMacro("Failed to move fiducial " << selectedIndex << " down");
+         }
+       else
+         {
+         // adjust the selection so that the same fid is still selected
+         // first get the selected cell (no mult selections)
+         int rows[1], cols[1];
+         this->MultiColumnList->GetWidget()->GetSelectedCells(rows, cols);
+         this->MultiColumnList->GetWidget()->DeselectRow(selectedIndex);
+         this->MultiColumnList->GetWidget()->SelectCell(newIndex, cols[0]);
          }
        }
      }
