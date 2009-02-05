@@ -22,7 +22,7 @@
 
 #include "igtlCoordinateMessage.h"
 
-class VTK_OPENIGTLINKIF_EXPORT vtkIGTLToMRMLCoordinate : public vtkIGTLToMRMLBase
+class VTK_PROSTATENAV_EXPORT vtkIGTLToMRMLCoordinate : public vtkIGTLToMRMLBase
 {
  public:
 

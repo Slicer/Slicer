@@ -24,7 +24,7 @@
 #include "igtlMoveToMessage.h"
 #include "igtlSetZFrameMessage.h"
 
-class VTK_OPENIGTLINKIF_EXPORT vtkIGTLToMRMLBrpRobotCommand : public vtkIGTLToMRMLBase
+class VTK_PROSTATENAV_EXPORT vtkIGTLToMRMLBrpRobotCommand : public vtkIGTLToMRMLBase
 {
  public:
 

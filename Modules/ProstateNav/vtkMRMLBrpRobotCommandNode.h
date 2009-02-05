@@ -34,7 +34,7 @@
 class vtkCallbackCommand;
 class vtkSphereSource;
 
-class VTK_MRML_EXPORT vtkMRMLBrpRobotCommandNode : public vtkMRMLNode
+class VTK_PROSTATENAV_EXPORT vtkMRMLBrpRobotCommandNode : public vtkMRMLNode
 {
  public:
   static vtkMRMLBrpRobotCommandNode *New();
