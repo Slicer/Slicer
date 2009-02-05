@@ -1,16 +1,35 @@
+if not 'tk' in locals().keys():
+  from __main__ import tk
+
 import Tkinter
 import Console
+
+import os
 import string
-from __main__ import tk
 import _slicer
 
+IPython=False
+
+
 def StartConsole():
+  try:
+    import ipTk
+    reload(ipTk)
+    top = Tkinter.Toplevel ( tk )
+    os.environ['HOME']=os.getcwd()
+    s=ipTk.IPythonView(top, banner="3D Slicer IPython console\n")
+    s.master.title("3D Slicer 3.3 alpha IPython console")
+    s.config(background="black")
+    s.config(foreground="gray")
+    s.config(insertbackground="gray")
+    s.pack(fill=Tkinter.BOTH, expand=1)
+  except ImportError:
     top = Tkinter.Toplevel ( tk )
     c = Console.Console(parent=top,dict={})
     c.dict["console"] = c
     c.pack(fill=Tkinter.BOTH, expand=1)
     c.master.title("Python Console v%s" % Console.VERSION)
-    return
+  return
 
 def TkCall(commandString):
     tk.tk.call(*commandString.split())
