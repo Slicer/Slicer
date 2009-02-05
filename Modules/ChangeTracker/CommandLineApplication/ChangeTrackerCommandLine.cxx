@@ -271,7 +271,6 @@ int main(int argc, char* argv[])
   cout << "CTEST_FULL_OUTPUT" << endl;
 
   try { 
-
     // -------------------------------------
     // Initialize TCL  Script
     // -------------------------------------
@@ -281,7 +280,8 @@ int main(int argc, char* argv[])
       cout << "Error: InitializeTcl failed" << endl;
       return EXIT_FAILURE; 
     }
-  
+    vtkKWApplication *app   = vtkKWApplication::New();
+
     // This is necessary to load in ChangeTracker package in TCL interp.
     Changetracker_Init(interp);
     Vtkteem_Init(interp);
@@ -297,9 +297,6 @@ int main(int argc, char* argv[])
     }
     cout << "Slicer home is " << slicerHome << endl;
 
-    // When I include the following line I get the leak message 
-    vtkSlicerApplication *app   = vtkSlicerApplication::GetInstance();
-    //vtkKWApplication *app   = vtkKWApplication::New();
 
     vtkChangeTrackerLogic  *logic = vtkChangeTrackerLogic::New();
     logic->SetModuleName("ChangeTracker");
@@ -818,11 +815,16 @@ int main(int argc, char* argv[])
     supersampleMatrix->Delete();
     logic->Delete();
     app->Delete();
+    
+    logic = NULL;
+    app = NULL;
   } 
   catch (...) 
     { 
     cout << "default exception"; 
     return EXIT_FAILURE;
     }
+
+
   return EXIT_SUCCESS;  
 }
