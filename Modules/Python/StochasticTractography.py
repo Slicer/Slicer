@@ -2,10 +2,13 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Python Modules</category>
   <title>Python Stochastic Tractography</title>
-  <description>Python module</description>
+  <description>
+    This module implements stochastic tractography. For more information please refer to the following link
+       http://www.na-mic.org/Wiki/index.php/Python_Stochastic_Tractography_Tutorial
+  </description>
   <version>0.1.0.$Revision: 1892 $(alpha)</version>
-  <documentation-url></documentation-url>
-  <contributor>Julien von Siebenthal</contributor>
+  <documentation-url>http://www.na-mic.org/Wiki/index.php/Python_Stochastic_Tractography_Tutorial</documentation-url>
+  <contributor>Julien von Siebenthal (jvs@bwh.harvard.edu) </contributor>
  
 
   <parameters>
@@ -47,7 +50,7 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
   </parameters>
 
   <parameters>
-    <label>Smoothing Parameters</label>
+    <label>Smoothing</label>
     <description>Parameters for volume smoothing</description>
     <boolean>
       <name>smoothEnabled</name>
@@ -60,73 +63,20 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
     <double-vector>
       <name>FWHM</name>
       <longflag>FWHM</longflag>
-      <description>Full width half mean</description>
-      <label>FWHM</label>
+      <description>Full width half maximum</description>
+      <label>Gaussian FWHM</label>
       <default>1,1,1</default>
     </double-vector>
 
   </parameters>
 
   <parameters>
-    <label>Brain Mask Parameters</label>
-    <description>Parameters for brain mask (otsu-like)</description>
-    <boolean>
-      <name>otsuEnabled</name>
-      <longflag>otsuEnabled</longflag>
-      <description>Toggle otsu</description>
-      <label>Enabled</label>
-      <default>false</default>
-    </boolean>
-    
-    <integer>
-      <name>infOtsuThres</name>
-      <longflag>infOtsuThres</longflag>
-      <label>Inferior Otsu-like threshold</label>
-      <description>Inferior Otsu threshold </description>
-      <default>150</default>
-    </integer>
-
-    <integer>
-      <name>supOtsuThres</name>
-      <longflag>supOtsuThres</longflag>
-      <label>Superior Otsu-like threshold</label>
-      <description>Superior Otsu threshold </description>
-      <default>2500</default>
-    </integer>
-
-    <boolean>
-      <name>artsEnabled</name>
-      <longflag>artsEnabled</longflag>
-      <description>Toggle artefacts removal</description>
-      <label>Artefacts removal</label>
-      <default>false</default>
-    </boolean>
-
-    <integer>
-      <name>infARTSThres</name>
-      <longflag>infARTSThres</longflag>
-      <label>Inferior artefacts threshold</label>
-      <description>Inferior artefacts threshold </description>
-      <default>0</default>
-    </integer>
-
-    <integer>
-      <name>supARTSThres</name>
-      <longflag>supARTSThres</longflag>
-      <label>Superior artefacts threshold</label>
-      <description>Superior artefacts threshold </description>
-      <default>150</default>
-    </integer>
-
-  </parameters>
-
-  <parameters>
-     <label>White Matter Mask Parameters</label>
-     <description>Parameters for wm</description>
+     <label>Brain Mask</label>
+     <description>Parameters for brain mask</description>
      <boolean>
       <name>wmEnabled</name>
       <longflag>wmEnabled</longflag>
-      <description>Toggle wm</description>
+      <description>Toggle brain mask</description>
       <label>Enabled</label>
       <default>false</default>
      </boolean>
@@ -134,24 +84,33 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
      <integer>
       <name>infWMThres</name>
       <longflag>infWMThres</longflag>
-      <label>Inferior WM threshold</label>
-      <description>Inferior WM threshold </description>
+      <label>Lower Brain threshold</label>
+      <description>Lower Brain threshold </description>
       <default>400</default>
      </integer>
 
      <integer>
       <name>supWMThres</name>
       <longflag>supWMThres</longflag>
-      <label>Superior WM threshold</label>
-      <description>Superior WM threshold </description>
+      <label>Higher Brain threshold</label>
+      <description>Higher Brain threshold </description>
       <default>1000</default>
      </integer>
 
   </parameters>
   
   <parameters>
-    <label>Tensor Parameters</label>
-    <description>Parameters for tensor computation</description>
+    <label>Diffusion Tensor</label>
+    <description>Parameters for diffusion tensor</description>
+    
+    <boolean>
+      <name>cmEnabled</name>
+      <longflag>cmEnabled</longflag>
+      <description>Toggle DTI based tractography (tensor and connectivity)</description>
+      <label>Enabled</label>
+      <default>true</default>
+    </boolean>
+
 
     <boolean>
       <name>faEnabled</name>
@@ -181,19 +140,11 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
 
   <parameters>
     <label>
-    Stochastic Tractography Parameters
+    Tractography
     </label>
     <description>
-    Parameters for the Stochastic Tractography algorithm
+    Parameters tractography algorithm
     </description>
-    
-    <!-- <boolean>
-      <name>stEnabled</name>
-      <longflag>stEnabled</longflag>
-      <description>Toggle st</description>
-      <label>Enabled</label>
-      <default>false</default>
-    </boolean> -->
        
     <integer>
       <name>totalTracts</name>
@@ -265,35 +216,27 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
     
   </parameters>
 
-   <parameters>
+  <parameters>
     <label>
-    Connectivity Map Parameters
+    Connectivity Map
     </label>
     <description>
     Parameters for computing connectivity maps
     </description>
 
-    <boolean>
-      <name>cmEnabled</name>
-      <longflag>cmEnabled</longflag>
-      <description>Toggle cm</description>
-      <label>Enabled</label>
-      <default>false</default>
-    </boolean>
-
     <string-enumeration>
       <name>probMode</name>
       <longflag>probMode</longflag>
       <description>Probability computation mode from tracts:
-              rough: voxel is counted only for the first fiber going through 
+              binary: voxel is counted only for the first fiber going through 
               cumulative: voxel is counted for each fiber going through 
-              discriminative: voxel is counted for each fiber going through based on their length ownership
+              weighted: voxel is counted for each fiber going through based on their length ownership
       </description>
       <label>Computation Mode</label>
       <default>cumulative</default>
-      <element>rough</element>
+      <element>binary</element>
       <element>cumulative</element>
-      <element>discriminative</element>
+      <element>weighted</element>
     </string-enumeration>
 
     <boolean>
@@ -515,15 +458,9 @@ def recvVolume( shape, dtype, c, log='report.log', isDti=False):
 def Execute (\
              smoothEnabled,\
              FWHM,\
-             otsuEnabled,\
-             infOtsuThres,\
-             supOtsuThres,\
              wmEnabled,\
              infWMThres,\
              supWMThres,\
-             artsEnabled,\
-             infARTSThres,\
-             supARTSThres,\
              faEnabled,\
              traceEnabled,\
              modeEnabled,\
@@ -611,17 +548,7 @@ def Execute (\
   s.send('stdDev ' + str(FWHM[0]) + ' ' + str(FWHM[1]) + ' ' + str(FWHM[2]) + '\n')
   ack = s.recv(SIZE)
 
-  # otsu
-  s.send('otsuEnabled ' + str(int(otsuEnabled)) + '\n')
-  ack = s.recv(SIZE)
-
-  s.send('infOtsuThres ' + str(infOtsuThres) + '\n')
-  ack = s.recv(SIZE)
-
-  s.send('supOtsuThres ' + str(supOtsuThres) + '\n')
-  ack = s.recv(SIZE)
-
-  # wm
+  # brain
   s.send('wmEnabled ' + str(int(wmEnabled)) + '\n')
   ack = s.recv(SIZE)
 
@@ -631,15 +558,6 @@ def Execute (\
   s.send('supWMThres ' + str(supWMThres) + '\n')
   ack = s.recv(SIZE)
 
-  s.send('artsEnabled ' + str(int(artsEnabled)) + '\n')
-  ack = s.recv(SIZE)
-
-  s.send('infARTSThres ' + str(infARTSThres) + '\n')
-  ack = s.recv(SIZE)
-
-  s.send('supARTSThres ' + str(supARTSThres) + '\n')
-  ack = s.recv(SIZE)
-
   # tensor
   s.send('tensEnabled ' + str(int(True)) + '\n')
   ack = s.recv(SIZE)
@@ -647,9 +565,6 @@ def Execute (\
   bLine = 0
   s.send('bLine ' + str(bLine) + '\n')
   ack = s.recv(SIZE)
-
-  #s.send('tensMode ' + str(tensMode) + '\n')
-  #ack = s.recv(SIZE)
 
   s.send('faEnabled ' + str(int(faEnabled)) + '\n')
   ack = s.recv(SIZE)
