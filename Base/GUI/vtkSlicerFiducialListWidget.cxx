@@ -56,8 +56,16 @@ public:
   { return new vtkPointWidgetCallback; }
   virtual void Execute(vtkObject *caller, unsigned long event, void*)
   {
+    // save the scene for undo if it's the start of an interaction event
+    if (event == vtkCommand::StartInteractionEvent)
+      {
+      if (this->FiducialList && this->FiducialList->GetScene())
+        {
+        this->FiducialList->GetScene()->SaveStateForUndo(this->FiducialList);
+        }
+      }
     // only update the position if it's an interaction event
-    if (event == vtkCommand::InteractionEvent)
+    else if (event == vtkCommand::InteractionEvent)
       {
       vtkPointWidget *pointWidget = reinterpret_cast<vtkPointWidget*>(caller);
       if (pointWidget)
