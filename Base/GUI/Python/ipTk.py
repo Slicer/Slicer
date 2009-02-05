@@ -319,7 +319,7 @@ class TkConsoleView(Tkinter.Text):
 
   def processKeyPress(self,event):
 
-    if self.debug or True:
+    if self.debug:
         print "processKeyPress got key: %s" % event.char
         print "processKeyPress INSERT: %s" % self.index(Tkinter.INSERT)
         print "processKeyPress END: %s" % self.index(Tkinter.END)
