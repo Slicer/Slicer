@@ -257,7 +257,7 @@ class TkConsoleView(Tkinter.Text):
 
 
   def changeLine(self, text):
-    self.delete(self.line_start,"%s lineend" % self.line_start)
+    self.delete(self.line_start,Tkinter.END)
     self.write(text, True)
     self.see(Tkinter.END)
 
