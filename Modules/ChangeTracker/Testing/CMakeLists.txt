@@ -48,6 +48,9 @@ target_link_libraries(ChangeTrackerTest
                       vtkTeem
                      )
 
+SET(CTEST_CUSTOM_MAXIMUM_PASSED_TEST_OUTPUT_SIZE 0)
+SET(CTEST_CUSTOM_MAXIMUM_FAILED_TEST_OUTPUT_SIZE 0)
+
 add_test(ChangeTrackerCL_Help
          ${Slicer3_BINARY_DIR}/Slicer3 --launch
          ChangeTrackerTest 
