@@ -21,18 +21,20 @@ def smooth(x,FWHM,dim):
 # to a 2D matrix so that the convolutions can be performed
 # in the first dimension (Matlab convention)
   for k in range(x.ndim):
-
     # Create 1D filter kernel
-    sigma = FWHM[k]/dim[k]/2.35          # sigma in voxel units
+    sigma = FWHM[k]/abs(dim[k])/2.35          # sigma in voxel units
     l = np.floor(3*sigma+1)
-    f = np.exp(-np.arange(-l,l+1)[:, np.newaxis]**2/(2*sigma**2))
+    f = np.exp(-np.arange(-l,l+1)**2/(2*sigma**2))
     f = f/np.sum(f)
+    
+    #f = f[:, np.newaxis]
 
     s = x.shape
-  
+    x = np.reshape(x,(s[0], s[1]*s[2]))
+
     # Perform 1D convolution
     #x = sciS.convolve2d(f,x,'same')
-    x = np.convolve(f.flatten(), x.flatten(), 'same')
+    x = np.convolve(f, x.flatten(), 'same')
 
     # Reshape and shift dims
     x = np.reshape(x,s)
