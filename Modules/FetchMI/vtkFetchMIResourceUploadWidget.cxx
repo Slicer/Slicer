@@ -465,7 +465,6 @@ void vtkFetchMIResourceUploadWidget::ProcessWidgetEvents ( vtkObject *caller, un
                 this->SetCurrentTagAttribute ( this->SelectTagMenuButton->GetMenu()->GetItemLabel(i) );
                 // and get the index of the selected value -- if user is
                 // choosing to add a new value, no item will be selected.
-                int foundval = 0;
                 for ( int j=0; j < c->GetNumberOfItems(); j++ )
                   {
                   if ( c->GetItemSelectedState (j) == 1 )

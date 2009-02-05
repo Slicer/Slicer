@@ -451,7 +451,7 @@ void vtkFetchMIGUI::RequestUpload ( )
 
   std::vector<std::string> tmpSelected;
   int tmp = this->Logic->GetSceneSelected();
-  for ( int i=0; i< this->Logic->SelectedStorableNodeIDs.size(); i++)
+  for ( unsigned int i=0; i< this->Logic->SelectedStorableNodeIDs.size(); i++)
     {
     tmpSelected.push_back(this->Logic->SelectedStorableNodeIDs[i] );
     }
@@ -520,7 +520,7 @@ void vtkFetchMIGUI::RequestUpload ( )
       if ( iter->first.c_str() != NULL &&  (strcmp (iter->first.c_str(), "" ) ) )
         {
         int returnval = handler->PostTag ( svr, iter->first.c_str(),this->Logic->GetTemporaryResponseFileName() );
-        if ( returnval = 0 )
+        if ( returnval == 0 )
           {
           vtkErrorMacro ("vtkFetchMIGUI:RequestUpload: couldn't add new tag to server.");
           return;
@@ -696,7 +696,7 @@ void vtkFetchMIGUI::RequestUpload ( )
   //--- RESET SELECTION STATE
   this->Logic->SceneSelected = tmp;
   this->Logic->SelectedStorableNodeIDs.clear();
-  for ( int i=0; i< tmpSelected.size(); i++)
+  for ( unsigned int i=0; i< tmpSelected.size(); i++)
     {
     this->Logic->SelectedStorableNodeIDs.push_back(tmpSelected[i] );
     }
@@ -941,9 +941,9 @@ void vtkFetchMIGUI::UpdateSceneTableFromMRML()
 void vtkFetchMIGUI::AddVolumeNodes()
 {
 
-  vtkMRMLNode *node;
-  vtkMRMLStorableNode *stnode;
-  vtkTagTable *t;
+  vtkMRMLNode *node=NULL;
+  vtkMRMLStorableNode *stnode=NULL;
+  vtkTagTable *t=NULL;
   
   int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLVolumeNode");
   int n;
@@ -1493,7 +1493,6 @@ void vtkFetchMIGUI::RestoreSelectedValuesForTagsFromMRML()
       const char *val;
       int i, j;
       int numTags = t->GetNumberOfTags();
-      int numValues = 0;
       int widgetRow = 0;
       // For each tag in mrml, get the attribute, and value.
       for (i=0; i < numTags; i++ )
@@ -2176,8 +2175,8 @@ void vtkFetchMIGUI::RemoveTagFromSelectedData()
   
   int j;
   int dnum;
-  vtkMRMLStorableNode *node;
-  vtkTagTable *t;
+  vtkMRMLStorableNode *node = NULL;
+  vtkTagTable *t = NULL;
   std::string att = this->TaggedDataList->GetCurrentTagAttribute();
   std::string val = this->TaggedDataList->GetCurrentTagValue();
 
