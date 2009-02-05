@@ -511,8 +511,9 @@ void vtkFetchMIQueryTermWidget::AddNewTagForQuery ( const char *keyword, std::ve
   // check to see if term is unique before adding it
   // if NOT unique, keep its index.
   int unique = 1;
+  int tagindex;
   int n = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
-  for ( int tagindex=0; tagindex<n; tagindex++ )
+  for ( tagindex=0; tagindex<n; tagindex++ )
     {
     if ( !strcmp (this->GetMultiColumnList()->GetWidget()->GetCellText(tagindex, 1), keyword ) )
       {
