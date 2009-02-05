@@ -2659,7 +2659,7 @@ void vtkFetchMILogic::AddModifiedNode( const char *nodeID)
   unsigned int z = this->ModifiedNodes.size();
   int unique = 1;
 
-  for (int i=0; i < z; i++ )
+  for (unsigned int i=0; i < z; i++ )
     {
     if ( !(strcmp(this->ModifiedNodes[i].c_str(), nodeID )))
       {
@@ -2679,7 +2679,7 @@ void vtkFetchMILogic::AddModifiedNode( const char *nodeID)
 void vtkFetchMILogic::RemoveModifiedNode( const char *nodeID)
 {
   unsigned int z = this->ModifiedNodes.size();
-  for (int i=0; i < z; i++ )
+  for (unsigned int i=0; i < z; i++ )
     {
     if ( !(strcmp(this->ModifiedNodes[i].c_str(), nodeID )))
       {
@@ -2705,7 +2705,7 @@ void vtkFetchMILogic::AddSelectedStorableNode( const char *nodeID)
   unsigned int z = this->SelectedStorableNodeIDs.size();
   int unique = 1;
 
-  for (int i=0; i < z; i++ )
+  for (unsigned int i=0; i < z; i++ )
     {
     if ( !(strcmp(this->SelectedStorableNodeIDs[i].c_str(), nodeID )))
       {
@@ -2725,7 +2725,7 @@ void vtkFetchMILogic::AddSelectedStorableNode( const char *nodeID)
 void vtkFetchMILogic::RemoveSelectedStorableNode( const char *nodeID)
 {
   unsigned int z = this->SelectedStorableNodeIDs.size();
-  for (int i=0; i < z; i++ )
+  for (unsigned int i=0; i < z; i++ )
     {
     if ( !(strcmp(this->SelectedStorableNodeIDs[i].c_str(), nodeID )))
       {
