@@ -149,9 +149,9 @@ void vtkFetchMILogic::DeselectNode( const char *nodeID)
 {
   std::string s;
   std::vector<std::string>tmp;
-  int n = this->SelectedStorableNodeIDs.size();
+  unsigned int n = this->SelectedStorableNodeIDs.size();
   // copy all elements but one marked for delete to a temporary vector
-  for ( int i = 0; i < n; i++ )
+  for ( unsigned int i = 0; i < n; i++ )
     {
     s = this->SelectedStorableNodeIDs[i];
     if ( (strcmp ( s.c_str(), nodeID )) )
@@ -163,7 +163,7 @@ void vtkFetchMILogic::DeselectNode( const char *nodeID)
   // clear the vector and copy in new elements
   n = tmp.size();
   this->SelectedStorableNodeIDs.clear();
-  for ( int i = 0; i < n; i++ )
+  for ( unsigned int i = 0; i < n; i++ )
     {
     this->SelectedStorableNodeIDs.push_back ( tmp[i] );
     }
@@ -177,8 +177,8 @@ void vtkFetchMILogic::SelectNode( const char *nodeID)
   int unique = 1;
   std::string s;
 
-  int n = this->SelectedStorableNodeIDs.size();
-  for ( int i = 0; i < n; i++ )
+  unsigned int n = this->SelectedStorableNodeIDs.size();
+  for ( unsigned int i = 0; i < n; i++ )
     {
     s = this->SelectedStorableNodeIDs[i];
     if ( !(strcmp ( s.c_str(), nodeID )) )
@@ -1789,7 +1789,7 @@ void vtkFetchMILogic::AddUniqueValueForTag ( const char *tagname, const char *va
   if ( tagFound )
     {
     int valFound = 0;
-    for (int i=0; i < iter->second.size(); i++ )
+    for (unsigned int i=0; i < iter->second.size(); i++ )
       {
       if ( ! (strcmp(iter->second[i].c_str(), val)) )
         {
@@ -1811,7 +1811,7 @@ void vtkFetchMILogic::AddUniqueValueForTag ( const char *tagname, const char *va
 int vtkFetchMILogic::GetNumberOfTagValues( const char *tagname)
 {
 
-  int numValues = 0;
+  unsigned int numValues = 0;
   std::map<std::string, std::vector<std::string> >::iterator iter;
   for ( iter = this->AllValuesForAllTagsOnServer.begin();
         iter != this->AllValuesForAllTagsOnServer.end();
@@ -1819,7 +1819,7 @@ int vtkFetchMILogic::GetNumberOfTagValues( const char *tagname)
     {
     if ( ! (strcmp (iter->first.c_str(), tagname ) ) )
       {
-      int numValues = iter->second.size();
+      numValues = iter->second.size();
       break;
       }
     }
@@ -1829,7 +1829,7 @@ int vtkFetchMILogic::GetNumberOfTagValues( const char *tagname)
     }
   else
     {
-    return (numValues);
+    return ((int) numValues);
     }
 }
 
@@ -1838,7 +1838,7 @@ int vtkFetchMILogic::GetNumberOfTagValues( const char *tagname)
 int vtkFetchMILogic::GetNumberOfTagsOnServer ( )
 {
 
-  int numTags = this->AllValuesForAllTagsOnServer.size();
+  unsigned int numTags = this->AllValuesForAllTagsOnServer.size();
   return ( numTags );
 
 }
@@ -1873,7 +1873,6 @@ const char * vtkFetchMILogic::GetNthTagAttribute ( int n)
 const char * vtkFetchMILogic::GetNthValueForTag(const char *tagname, int n)
 {
 
-  int numValues = 0;
   std::map<std::string, std::vector<std::string> >::iterator iter;
   for ( iter = this->AllValuesForAllTagsOnServer.begin();
         iter != this->AllValuesForAllTagsOnServer.end();
@@ -1881,7 +1880,7 @@ const char * vtkFetchMILogic::GetNthValueForTag(const char *tagname, int n)
     {
     if ( ! (strcmp (iter->first.c_str(), tagname ) ) )
       {
-      if ( n <= iter->second.size()-1 )
+      if ( n <= (int)(iter->second.size()-1) )
         {
         return ( iter->second[n].c_str() );
         }
@@ -2149,7 +2148,7 @@ int vtkFetchMILogic::TestForRequiredTags ( )
         {
         return 0;
         }
-      for ( int i=0; i < this->FetchMINode->RequiredXNDTags.size(); i++ )
+      for ( unsigned int i=0; i < this->FetchMINode->RequiredXNDTags.size(); i++ )
         {
         if ( t->CheckTableForTag (this->FetchMINode->RequiredXNDTags[i].c_str()) < 0 )
           {
@@ -2159,7 +2158,7 @@ int vtkFetchMILogic::TestForRequiredTags ( )
       }
 
     //--- and look at each node.
-    for ( int n=0; n < this->SelectedStorableNodeIDs.size(); n++)
+    for ( unsigned int n=0; n < this->SelectedStorableNodeIDs.size(); n++)
       {
       const char *nodeID = this->SelectedStorableNodeIDs[n].c_str();
       vtkMRMLStorableNode *node = vtkMRMLStorableNode::SafeDownCast ( this->MRMLScene->GetNodeByID (nodeID));
@@ -2170,7 +2169,7 @@ int vtkFetchMILogic::TestForRequiredTags ( )
           {
           return 0;
           }
-        for ( int i=0; i < this->FetchMINode->RequiredXNDTags.size(); i++ )
+        for ( unsigned int i=0; i < this->FetchMINode->RequiredXNDTags.size(); i++ )
           {
           if ( t->CheckTableForTag (this->FetchMINode->RequiredXNDTags[i].c_str()) < 0 )
             {
@@ -2657,7 +2656,7 @@ void vtkFetchMILogic::ClearModifiedNodes()
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::AddModifiedNode( const char *nodeID)
 {
-  int z = this->ModifiedNodes.size();
+  unsigned int z = this->ModifiedNodes.size();
   int unique = 1;
 
   for (int i=0; i < z; i++ )
@@ -2679,7 +2678,7 @@ void vtkFetchMILogic::AddModifiedNode( const char *nodeID)
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::RemoveModifiedNode( const char *nodeID)
 {
-  int z = this->ModifiedNodes.size();
+  unsigned int z = this->ModifiedNodes.size();
   for (int i=0; i < z; i++ )
     {
     if ( !(strcmp(this->ModifiedNodes[i].c_str(), nodeID )))
@@ -2703,7 +2702,7 @@ void vtkFetchMILogic::ClearSelectedStorableNodes ()
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::AddSelectedStorableNode( const char *nodeID)
 {
-  int z = this->SelectedStorableNodeIDs.size();
+  unsigned int z = this->SelectedStorableNodeIDs.size();
   int unique = 1;
 
   for (int i=0; i < z; i++ )
@@ -2725,7 +2724,7 @@ void vtkFetchMILogic::AddSelectedStorableNode( const char *nodeID)
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::RemoveSelectedStorableNode( const char *nodeID)
 {
-  int z = this->SelectedStorableNodeIDs.size();
+  unsigned int z = this->SelectedStorableNodeIDs.size();
   for (int i=0; i < z; i++ )
     {
     if ( !(strcmp(this->SelectedStorableNodeIDs[i].c_str(), nodeID )))
@@ -2859,7 +2858,7 @@ void vtkFetchMILogic::SetCacheFileNamesAndXNDHandler(vtkXNDHandler *handler)
       // reset the file list
       storageNode->ResetFileNameList();
       // now add the new ones back in
-      for (int filenum = 0; filenum < CacheFileNameList.size(); filenum++)
+      for (unsigned int filenum = 0; filenum < CacheFileNameList.size(); filenum++)
         {
         vtkDebugMacro("SetCacheFileNamesAndURIHandler: adding file name " << CacheFileNameList[filenum] << " to storage node " << storageNode->GetID());
         storageNode->AddFileName(CacheFileNameList[filenum].c_str());
