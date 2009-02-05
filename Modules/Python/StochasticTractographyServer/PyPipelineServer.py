@@ -233,10 +233,10 @@ class PipelineHandler(asyncore.dispatcher):
 
           # can handle normally
           FWHM = numpy.ones((3), 'float')
-          if self.params.hasKey('FWHM'):
-                    FWHM[0] = float(self.params.get('FWHM')[0])
-                    FWHM[1] = float(self.params.get('FWHM')[1])
-                    FWHM[2] = float(self.params.get('FWHM')[2])
+          if self.params.hasKey('stdDev'):
+                    FWHM[0] = float(self.params.get('stdDev')[0])
+                    FWHM[1] = float(self.params.get('stdDev')[1])
+                    FWHM[2] = float(self.params.get('stdDev')[2])
                     logger.debug("FWHM: %s:%s:%s" % (FWHM[0], FWHM[1], FWHM[2]) )
 
 
