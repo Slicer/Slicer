@@ -268,7 +268,7 @@ int main(int argc, char* argv[])
   PARSE_ARGS;
 
   // needed to tell CTest not to truncate the console output
-  cout << "CTEST_FULL_OUTPUT" << endl;
+  cout << endl << "ctest needs: CTEST_FULL_OUTPUT" << endl;
 
   try { 
     // -------------------------------------
@@ -696,10 +696,10 @@ int main(int argc, char* argv[])
       tgWriteVolume(CMD.c_str(),supersampleMatrix,logic->GetAnalysis_Intensity_ROIBinCombine());
       cout << "Analysis Intensity: Shrinkage " << -Analysis_Intensity_Shrink << " Growth " << Analysis_Intensity_Growth << " Total " <<  Analysis_Intensity_Total << "Super sample " << SuperSampleVol << endl;
 
-      printf("Intensity Metric:\n");
-      printf("  Shrinkage: %.3f mm^3 (%d Voxels)\n", - Analysis_Intensity_Shrink *SuperSampleVol,int(- Analysis_Intensity_Shrink *SuperSampleRatio));
-      printf("  Growth: %.3f mm^3 (%d Voxels)\n",  Analysis_Intensity_Growth *SuperSampleVol,int( Analysis_Intensity_Growth *SuperSampleRatio));
-      printf("  Total change: %.3f mm^3 (%d Voxels)\n",  Analysis_Intensity_Total *SuperSampleVol,int( Analysis_Intensity_Total *SuperSampleRatio));
+      cout << "Intensity Metric:\n" << endl;
+      cout << "  Shrinkage: " << - Analysis_Intensity_Shrink *SuperSampleVol << " mm^3 (" << int(- Analysis_Intensity_Shrink *SuperSampleRatio) << " Voxels)" << endl;
+      cout << "  Growth: " << Analysis_Intensity_Growth *SuperSampleVol << " mm^3 (" << int( Analysis_Intensity_Growth *SuperSampleRatio) << " Voxels)" << endl;
+      cout << "  Total change: " << Analysis_Intensity_Total *SuperSampleVol << " mm^3 (" << int( Analysis_Intensity_Total *SuperSampleRatio) << "Voxels)" << endl;
 
       // Debug 
       // char paramet[100];
