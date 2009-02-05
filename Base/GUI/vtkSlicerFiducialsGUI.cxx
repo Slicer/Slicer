@@ -422,316 +422,324 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
         return;
         }
   }
-  // save state for undo
-  this->MRMLScene->SaveStateForUndo(activeFiducialListNode);
-
   vtkKWPushButton *button = vtkKWPushButton::SafeDownCast(caller);
-  if (button == this->AddFiducialButton  && event ==  vtkKWPushButton::InvokedEvent)
+  if (button != NULL && event ==  vtkKWPushButton::InvokedEvent)
     {
-     vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Add Fiducial Button event: " << event << ".\n");
-     // save state for undo
-     this->MRMLScene->SaveStateForUndo();
-
-     // add a fiducial, get the index of the new fiducial
-     int modelIndex = activeFiducialListNode->AddFiducial();
-     if ( modelIndex < 0 ) 
-       {
-       // TODO: generate an error...
-       vtkErrorMacro ("ERROR adding a new fiducial point\n");
-       return;
-       }
-    }
-  if (button == this->RemoveFiducialButton && event == vtkKWPushButton::InvokedEvent)
-    {
-        vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Remove Fiducial Button event: " << event << ".\n");
-        // check to see if should confirm
-        const char * confirmDelete = ((vtkSlicerApplication *)this->GetApplication())->GetConfirmDelete();
-        int confirmDeleteFlag = 0;
-        if (confirmDelete != NULL &&
-            strncmp(confirmDelete, "1", 1) == 0)
-        {
-            vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: confirm delete flag is 1\n");
-            confirmDeleteFlag = 1;
-        }
-        else
-        {
-            vtkDebugMacro("Not confirming deletes, confirmDelete = '" << confirmDelete << "'\n");
-        }
-        // save state for undo
-        this->MRMLScene->SaveStateForUndo();
-        
-        // get the row that was last selected
-        int numRows = this->MultiColumnList->GetWidget()->GetNumberOfSelectedRows();
-        if (numRows == 1)
-        {
-            int row[1];
-            this->MultiColumnList->GetWidget()->GetSelectedRows(row);
-
-            if (confirmDeleteFlag)
-            {
-                // confirm that really want to remove this fiducial
-                std::cout << "Removing fiducial " << row[0] << endl;
-            }
-            
-            // then remove that fiducial by index
-            activeFiducialListNode->RemoveFiducial(row[0]);
-        }
-        else
-        {
-            vtkErrorMacro ("Selected rows (" << numRows << ") not 1, just pick one to delete for now\n");
-            return;
-        }
-    }
-  if (button == this->RemoveFiducialsInListButton && event == vtkKWPushButton::InvokedEvent)
-    {
-        vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Remove Fiducials In List Button event: " << event << ".\n");
-        // save state for undo
-        this->MRMLScene->SaveStateForUndo();
-        activeFiducialListNode->RemoveAllFiducials();
-    }
-  if (button == this->RemoveAllFiducialsButton && event == vtkKWPushButton::InvokedEvent)
-    {
-        vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Remove Fiducials Button event: " << event << ".\n");
-        // save state for undo
-        this->MRMLScene->SaveStateForUndo();
-        numnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLFiducialListNode" );
-        for ( nn=0; nn<numnodes; nn++ )
-          {
-          flNode = vtkMRMLFiducialListNode::SafeDownCast (this->MRMLScene->GetNthNodeByClass ( nn, "vtkMRMLFiducialListNode" ));
-          if ( flNode != NULL )
-            {
-            flNode->RemoveAllFiducials();
-            }
-          }
-        //--- TODO: now delete the node...
-    }
-  if (button == this->LockAllFiducialsButton->GetWidget() && event == vtkKWPushButton::InvokedEvent)
-    {
-    vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Lock All Fiducials Button event: " << event << ".\n");
-    // save state for undo
-    this->MRMLScene->SaveStateForUndo();
-    numnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLFiducialListNode" );
-    for ( nn=0; nn<numnodes; nn++ )
+    if (button == this->AddFiducialButton)
       {
-      flNode = vtkMRMLFiducialListNode::SafeDownCast (this->MRMLScene->GetNthNodeByClass ( nn, "vtkMRMLFiducialListNode" ));
-      if ( flNode != NULL )
+      vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Add Fiducial Button event: " << event << ".\n");
+      // save state for undo
+      this->MRMLScene->SaveStateForUndo(activeFiducialListNode);
+
+      // add a fiducial, get the index of the new fiducial
+      int modelIndex = activeFiducialListNode->AddFiducial();
+      if ( modelIndex < 0 ) 
         {
-        flNode->SetLocked(1);
+        // TODO: generate an error...
+        vtkErrorMacro ("ERROR adding a new fiducial point\n");
+        return;
         }
       }
-    }
-  if (button == this->UnlockAllFiducialsButton->GetWidget() && event == vtkKWPushButton::InvokedEvent)
-    {
-    vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Unlock All Fiducials Button event: " << event << ".\n");
-    // save state for undo
-    this->MRMLScene->SaveStateForUndo();
-    numnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLFiducialListNode" );
-    for ( nn=0; nn<numnodes; nn++ )
+    else if (button == this->RemoveFiducialButton)
       {
-      flNode = vtkMRMLFiducialListNode::SafeDownCast (this->MRMLScene->GetNthNodeByClass ( nn, "vtkMRMLFiducialListNode" ));
-      if ( flNode != NULL )
+      vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Remove Fiducial Button event: " << event << ".\n");
+      // check to see if should confirm
+      const char * confirmDelete = ((vtkSlicerApplication *)this->GetApplication())->GetConfirmDelete();
+      int confirmDeleteFlag = 0;
+      if (confirmDelete != NULL &&
+          strncmp(confirmDelete, "1", 1) == 0)
         {
-        flNode->SetLocked(0);
-        }
-      }
-    }
-   if (button == this->SelectAllFiducialsButton && event == vtkKWPushButton::InvokedEvent)
-     {
-     vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Select all Fiducials Button event: " << event << ".\n");
-     // save state for undo
-     this->MRMLScene->SaveStateForUndo();
-     //TODO: for all fiducial lists:
-     numnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLFiducialListNode" );
-     for ( nn=0; nn<numnodes; nn++ )
-       {
-       flNode = vtkMRMLFiducialListNode::SafeDownCast (this->MRMLScene->GetNthNodeByClass ( nn, "vtkMRMLFiducialListNode" ));
-       if ( flNode != NULL )
-         {
-         flNode->SetAllFiducialsSelected(1);
-         }
-       }
-     }
-   if (button == this->DeselectAllFiducialsButton && event == vtkKWPushButton::InvokedEvent)
-     {
-     vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Deselect all Fiducials Button event: " << event << ".\n");
-     // save state for undo
-     this->MRMLScene->SaveStateForUndo();
-     numnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLFiducialListNode" );
-     for ( nn=0; nn<numnodes; nn++ )
-       {
-       flNode = vtkMRMLFiducialListNode::SafeDownCast (this->MRMLScene->GetNthNodeByClass ( nn, "vtkMRMLFiducialListNode" ));
-       if ( flNode != NULL )
-         {
-         flNode->SetAllFiducialsSelected(0);
-         }
-       }
-     }
-   if (button == this->SelectAllFiducialsInListButton && event == vtkKWPushButton::InvokedEvent)
-     {
-     vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Select Fiducials In List Button event: " << event << ".\n");
-     // save state for undo
-     this->MRMLScene->SaveStateForUndo();
-     activeFiducialListNode->SetAllFiducialsSelected(1);
-     }
-   if (button == this->DeselectAllFiducialsInListButton && event == vtkKWPushButton::InvokedEvent)
-     {
-     vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Deselect all Fiducials In List Button event: " << event << ".\n");
-     // save state for undo
-     this->MRMLScene->SaveStateForUndo();
-     activeFiducialListNode->SetAllFiducialsSelected(0);
-     }
-   if (button == this->GetLockToggle()->GetWidget() && event ==  vtkKWPushButton::InvokedEvent)
-    {
-    activeFiducialListNode->SetLocked( ! activeFiducialListNode->GetLocked());
-    // update the icon
-    if (this->GetApplicationGUI() &&
-        this->GetApplicationGUI()->GetSlicerFoundationIcons())
-      {
-      if (activeFiducialListNode->GetLocked() > 0)
-        {
-        this->GetLockToggle()->GetWidget()->SetImageToIcon(this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerLockIcon());
+        vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: confirm delete flag is 1\n");
+        confirmDeleteFlag = 1;
         }
       else
         {
-        this->GetLockToggle()->GetWidget()->SetImageToIcon(this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerUnlockIcon());
+        vtkDebugMacro("Not confirming deletes, confirmDelete = '" << confirmDelete << "'\n");
+        }
+      // save state for undo
+      this->MRMLScene->SaveStateForUndo(activeFiducialListNode);
+      
+      // get the row that was last selected
+      int numRows = this->MultiColumnList->GetWidget()->GetNumberOfSelectedRows();
+      if (numRows == 1)
+        {
+        int row[1];
+        this->MultiColumnList->GetWidget()->GetSelectedRows(row);
+        
+        if (confirmDeleteFlag)
+          {
+          // confirm that really want to remove this fiducial
+          std::cout << "Removing fiducial " << row[0] << endl;
+          }
+        
+        // then remove that fiducial by index
+        activeFiducialListNode->RemoveFiducial(row[0]);
+        }
+      else
+        {
+        vtkErrorMacro ("Selected rows (" << numRows << ") not 1, just pick one to delete for now\n");
+        return;
         }
       }
-    }
-   
-  if (button == this->GetVisibilityToggle()->GetWidget()  && event ==  vtkKWPushButton::InvokedEvent)
-    {
-        vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Visibility button event: " << event << ".\n");
-       // change the visibility on the list
-        activeFiducialListNode->SetVisibility( ! activeFiducialListNode->GetVisibility());
-        // update the icon via  process mrml event that should get pushed
-        //this->ProcessMRMLEvents(caller, event, callData); 
+    else if (button == this->RemoveFiducialsInListButton)
+      {
+      vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Remove Fiducials In List Button event: " << event << ".\n");
+      // save state for undo
+      this->MRMLScene->SaveStateForUndo(activeFiducialListNode);
+      activeFiducialListNode->RemoveAllFiducials();
+      }
+    else if (button == this->RemoveAllFiducialsButton)
+      {
+      vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Remove Fiducials Button event: " << event << ".\n");
+      // save state for undo
+      this->MRMLScene->SaveStateForUndo();
+      numnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLFiducialListNode" );
+      for ( nn=0; nn<numnodes; nn++ )
+        {
+        flNode = vtkMRMLFiducialListNode::SafeDownCast (this->MRMLScene->GetNthNodeByClass ( nn, "vtkMRMLFiducialListNode" ));
+        if ( flNode != NULL )
+          {
+          flNode->RemoveAllFiducials();
+          }
+        }
+      //--- TODO: now delete the node...
+      }
+    else if (button == this->LockAllFiducialsButton->GetWidget())
+      {
+      vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Lock All Fiducials Button event: " << event << ".\n");
+      // save state for undo
+      this->MRMLScene->SaveStateForUndo();
+      numnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLFiducialListNode" );
+      for ( nn=0; nn<numnodes; nn++ )
+        {
+        flNode = vtkMRMLFiducialListNode::SafeDownCast (this->MRMLScene->GetNthNodeByClass ( nn, "vtkMRMLFiducialListNode" ));
+        if ( flNode != NULL )
+          {
+          flNode->SetLocked(1);
+          }
+        }
+      }
+    else if (button == this->UnlockAllFiducialsButton->GetWidget())
+      {
+      vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Unlock All Fiducials Button event: " << event << ".\n");
+      // save state for undo
+      this->MRMLScene->SaveStateForUndo();
+      numnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLFiducialListNode" );
+      for ( nn=0; nn<numnodes; nn++ )
+        {
+        flNode = vtkMRMLFiducialListNode::SafeDownCast (this->MRMLScene->GetNthNodeByClass ( nn, "vtkMRMLFiducialListNode" ));
+        if ( flNode != NULL )
+          {
+          flNode->SetLocked(0);
+          }
+        }
+      }
+    else if (button == this->SelectAllFiducialsButton)
+      {
+      vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Select all Fiducials Button event: " << event << ".\n");
+      // save state for undo
+      this->MRMLScene->SaveStateForUndo();
+      numnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLFiducialListNode" );
+      for ( nn=0; nn<numnodes; nn++ )
+        {
+        flNode = vtkMRMLFiducialListNode::SafeDownCast (this->MRMLScene->GetNthNodeByClass ( nn, "vtkMRMLFiducialListNode" ));
+        if ( flNode != NULL )
+          {
+          flNode->SetAllFiducialsSelected(1);
+          }
+        }
+      }
+    else if (button == this->DeselectAllFiducialsButton)
+      {
+      vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Deselect all Fiducials Button event: " << event << ".\n");
+      // save state for undo
+      this->MRMLScene->SaveStateForUndo();
+      numnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLFiducialListNode" );
+      for ( nn=0; nn<numnodes; nn++ )
+        {
+        flNode = vtkMRMLFiducialListNode::SafeDownCast (this->MRMLScene->GetNthNodeByClass ( nn, "vtkMRMLFiducialListNode" ));
+        if ( flNode != NULL )
+          {
+          flNode->SetAllFiducialsSelected(0);
+          }
+        }
+      }
+    else if (button == this->SelectAllFiducialsInListButton)
+      {
+      vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Select Fiducials In List Button event: " << event << ".\n");
+      // save state for undo
+      this->MRMLScene->SaveStateForUndo(activeFiducialListNode);
+      activeFiducialListNode->SetAllFiducialsSelected(1);
+      }
+    else if (button == this->DeselectAllFiducialsInListButton)
+      {
+      vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Deselect all Fiducials In List Button event: " << event << ".\n");
+      // save state for undo
+      this->MRMLScene->SaveStateForUndo(activeFiducialListNode);
+      activeFiducialListNode->SetAllFiducialsSelected(0);
+      }
+    else if (button == this->GetLockToggle()->GetWidget())
+      {
+      // save state for undo
+      this->MRMLScene->SaveStateForUndo(activeFiducialListNode);
+      activeFiducialListNode->SetLocked( ! activeFiducialListNode->GetLocked());
+      // update the icon
+      if (this->GetApplicationGUI() &&
+          this->GetApplicationGUI()->GetSlicerFoundationIcons())
+        {
+        if (activeFiducialListNode->GetLocked() > 0)
+          {
+          this->GetLockToggle()->GetWidget()->SetImageToIcon(this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerLockIcon());
+          }
+        else
+          {
+          this->GetLockToggle()->GetWidget()->SetImageToIcon(this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerUnlockIcon());
+          }
+        }
+      }
+    else if (button == this->GetVisibilityToggle()->GetWidget())
+      {
+      // save state for undo
+      this->MRMLScene->SaveStateForUndo(activeFiducialListNode);
+      vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Visibility button event: " << event << ".\n");
+      // change the visibility on the list
+      activeFiducialListNode->SetVisibility( ! activeFiducialListNode->GetVisibility());
 /*
-        // update the fiducial visibility parameter in the view node too.
-        // TODO: when there are multiple views, use active view instead of 0th.
-        vtkMRMLViewNode *vn = vtkMRMLViewNode::SafeDownCast(
-                                                            this->GetMRMLScene()->GetNthNodeByClass ( 0, "vtkMRMLViewNode"));
-        if (vn != NULL )
-          {
-          vn->SetFiducialsVisible ( activeFiducialListNode->GetVisibility());
-          }
+      // update the fiducial visibility parameter in the view node too.
+      // TODO: when there are multiple views, use active view instead of 0th.
+      vtkMRMLViewNode *vn = vtkMRMLViewNode::SafeDownCast(
+      this->GetMRMLScene()->GetNthNodeByClass ( 0, "vtkMRMLViewNode"));
+      if (vn != NULL )
+      {
+      vn->SetFiducialsVisible ( activeFiducialListNode->GetVisibility());
+      }
 */
-        // update the icon
-        if (this->GetVisibilityIcons() != NULL)
+      // update the icon
+      if (this->GetVisibilityIcons() != NULL)
+        {
+        if (activeFiducialListNode->GetVisibility() > 0)
           {
-          if (activeFiducialListNode->GetVisibility() > 0)
-            {
-            this->GetVisibilityToggle()->GetWidget()->SetImageToIcon(this->GetVisibilityIcons()->GetVisibleIcon());
-            }
-          else
-            {
-            this->GetVisibilityToggle()->GetWidget()->SetImageToIcon(this->GetVisibilityIcons()->GetInvisibleIcon());
-            }
+          this->GetVisibilityToggle()->GetWidget()->SetImageToIcon(this->GetVisibilityIcons()->GetVisibleIcon());
           }
-    }
-  if (button == this->MoveSelectedFiducialUpButton && event == vtkKWPushButton::InvokedEvent)
-     {
-     vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Move Selected Fiducial Up Button event: " << event << ".\n");
-     // get the index of the selected fiducial
-     int selectedIndex =  this->MultiColumnList->GetWidget()->GetIndexOfFirstSelectedRow();
-     if (selectedIndex == -1)
-       {
-       vtkErrorMacro("Select a fiducial first...");
-       }
-     else
-       {
-       // save state for undo
-       this->MRMLScene->SaveStateForUndo();
-       int newIndex = activeFiducialListNode->MoveFiducialUp(selectedIndex);
-       if (newIndex == -1)
-         {
-         vtkErrorMacro("Failed to move fiducial " << selectedIndex << " up");
-         }
-       else
-         {
-         // adjust the selection so that the same fid is still selected
-         // first get the selected cell (no mult selections)
-         int rows[1], cols[1];
-         this->MultiColumnList->GetWidget()->GetSelectedCells(rows, cols);
-         this->MultiColumnList->GetWidget()->DeselectRow(selectedIndex);
-         this->MultiColumnList->GetWidget()->SelectCell(newIndex, cols[0]);
-         }
-       }
-     }
-  if (button == this->MoveSelectedFiducialDownButton && event == vtkKWPushButton::InvokedEvent)
-     {
-     vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Move Selected Fiducial Down Button event: " << event << ".\n");
-     // get the index of the selected fiducial
-     int selectedIndex =  this->MultiColumnList->GetWidget()->GetIndexOfFirstSelectedRow();
-     if (selectedIndex == -1)
-       {
-       vtkErrorMacro("Select a fiducial first...");
-       }
-     else
-       {
-       // save state for undo
-       this->MRMLScene->SaveStateForUndo();
-       int newIndex = activeFiducialListNode->MoveFiducialDown(selectedIndex);
-       if (newIndex == -1)
+        else
+          {
+          this->GetVisibilityToggle()->GetWidget()->SetImageToIcon(this->GetVisibilityIcons()->GetInvisibleIcon());
+          }
+        }
+      }
+    else if (button == this->MoveSelectedFiducialUpButton)
+      {
+      vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Move Selected Fiducial Up Button event: " << event << ".\n");
+      // get the index of the selected fiducial
+      int selectedIndex =  this->MultiColumnList->GetWidget()->GetIndexOfFirstSelectedRow();
+      if (selectedIndex == -1)
+        {
+        vtkErrorMacro("Select a fiducial first...");
+        }
+      else
+        {
+        // save state for undo
+        this->MRMLScene->SaveStateForUndo(activeFiducialListNode);
+        int newIndex = activeFiducialListNode->MoveFiducialUp(selectedIndex);
+        if (newIndex == -1)
+          {
+          vtkErrorMacro("Failed to move fiducial " << selectedIndex << " up");
+          }
+        else
+          {
+          // adjust the selection so that the same fid is still selected
+          // first get the selected cell (no mult selections)
+          int rows[1], cols[1];
+          this->MultiColumnList->GetWidget()->GetSelectedCells(rows, cols);
+          this->MultiColumnList->GetWidget()->DeselectRow(selectedIndex);
+          this->MultiColumnList->GetWidget()->SelectCell(newIndex, cols[0]);
+          }
+        }
+      }
+    else if (button == this->MoveSelectedFiducialDownButton)
+      {
+      vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Move Selected Fiducial Down Button event: " << event << ".\n");
+      // get the index of the selected fiducial
+      int selectedIndex =  this->MultiColumnList->GetWidget()->GetIndexOfFirstSelectedRow();
+      if (selectedIndex == -1)
+        {
+        vtkErrorMacro("Select a fiducial first...");
+        }
+      else
+        {
+        // save state for undo
+        this->MRMLScene->SaveStateForUndo(activeFiducialListNode);
+        int newIndex = activeFiducialListNode->MoveFiducialDown(selectedIndex);
+        if (newIndex == -1)
          {
          vtkErrorMacro("Failed to move fiducial " << selectedIndex << " down");
          }
-       else
-         {
-         // adjust the selection so that the same fid is still selected
-         // first get the selected cell (no mult selections)
-         int rows[1], cols[1];
-         this->MultiColumnList->GetWidget()->GetSelectedCells(rows, cols);
-         this->MultiColumnList->GetWidget()->DeselectRow(selectedIndex);
-         this->MultiColumnList->GetWidget()->SelectCell(newIndex, cols[0]);
-         }
-       }
-     }
+        else
+          {
+          // adjust the selection so that the same fid is still selected
+          // first get the selected cell (no mult selections)
+          int rows[1], cols[1];
+          this->MultiColumnList->GetWidget()->GetSelectedCells(rows, cols);
+          this->MultiColumnList->GetWidget()->DeselectRow(selectedIndex);
+          this->MultiColumnList->GetWidget()->SelectCell(newIndex, cols[0]);
+          }
+        }
+      }
+    }
 
   // list colour
   vtkKWChangeColorButton *colorButton = vtkKWChangeColorButton::SafeDownCast(caller);
-  if (colorButton == this->ListColorButton && event == vtkKWChangeColorButton::ColorChangedEvent)
-  {
+  if (colorButton != NULL && event == vtkKWChangeColorButton::ColorChangedEvent)
+    {
+    if (colorButton == this->ListColorButton)
+      {
+      // save state for undo
+      this->MRMLScene->SaveStateForUndo(activeFiducialListNode);
       vtkDebugMacro("ProcessGUIEvents: list colour button change event\n");
-       // change the colour
+      // change the colour
       activeFiducialListNode->SetColor(this->ListColorButton->GetColor());
-        // this->ProcessMRMLEvents(caller, event, callData); 
-
-  }
-  if (colorButton == this->ListSelectedColorButton && event == vtkKWChangeColorButton::ColorChangedEvent)
-  {
+      }
+    else if (colorButton == this->ListSelectedColorButton)
+      {
+      // save state for undo
+      this->MRMLScene->SaveStateForUndo(activeFiducialListNode);
       vtkDebugMacro("ProcessGUIEvents: list selected colour button change event\n");
       // change the selected colour
       activeFiducialListNode->SetSelectedColor(this->ListSelectedColorButton->GetColor());
-  }
+      }
+    }
   
   // list symbol and text sizes
   vtkKWScaleWithEntry *scale = vtkKWScaleWithEntry::SafeDownCast(caller);
-  if (scale == this->ListSymbolScale && event == vtkKWScale::ScaleValueChangedEvent)
-  {
-     activeFiducialListNode->SetSymbolScale(this->ListSymbolScale->GetValue());
-      // this->ProcessMRMLEvents(caller, event, callData);                                                     
-  }
-  else if (scale == this->ListTextScale && event == vtkKWScale::ScaleValueChangedEvent)
-  {
+  if (scale != NULL && event == vtkKWScale::ScaleValueChangedEvent)
+    {
+    // save state for undo
+    this->MRMLScene->SaveStateForUndo(activeFiducialListNode);
+    if (scale == this->ListSymbolScale)
+      {
+      activeFiducialListNode->SetSymbolScale(this->ListSymbolScale->GetValue());
+      }
+    else if (scale == this->ListTextScale)
+      {
       activeFiducialListNode->SetTextScale(this->ListTextScale->GetValue());
-      // this->ProcessMRMLEvents(caller, event, callData); 
-  }
-  else if (scale == this->ListOpacity && event == vtkKWScale::ScaleValueChangedEvent)
-  {
+      }
+    else if (scale == this->ListOpacity)
+      {
       activeFiducialListNode->SetOpacity(this->ListOpacity->GetValue());
-  }
-
+      }
+    }
   // list symbol type
   if (this->ListSymbolTypeMenu->GetWidget()->GetMenu() ==  vtkKWMenu::SafeDownCast(caller) &&
       event == vtkKWMenu::MenuItemInvokedEvent)
     {
+    // save state for undo
+    this->MRMLScene->SaveStateForUndo(activeFiducialListNode);
     vtkDebugMacro("Changing list glyph type to " << this->ListSymbolTypeMenu->GetWidget()->GetValue() << endl);
     activeFiducialListNode->SetGlyphTypeFromString(this->ListSymbolTypeMenu->GetWidget()->GetValue());
     // hide the visibility column if it's a 3d symbol
     this->MultiColumnList->GetWidget()->SetColumnVisibility(this->VisibilityColumn, !activeFiducialListNode->GlyphTypeIs3D());
     }
 
-  
   return;
 }
 
