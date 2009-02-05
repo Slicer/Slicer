@@ -122,7 +122,6 @@ class IterableIPShell:
 
   def _getPrefixedHistory(self, prefix):
     try:
-      sys.stdout.flush()
       prefixedHistory = filter( lambda s:s.startswith(prefix), self.IP.user_ns['In'] )
       rv = prefixedHistory[self.history_level].strip('\n')
     except IndexError:
@@ -245,8 +244,7 @@ class TkConsoleView(Tkinter.Text):
       self.tag_add('notouch',self.start_mark,"%s-1c" % Tkinter.INSERT)
 
     self.mark_unset(self.start_mark)
-    #jmht self.scroll_mark_onscreen(self.mark)
-
+    self.yview('moveto',1)
 
   def showBanner(self,banner):
     """Print the supplied banner on starting the shell"""
@@ -261,6 +259,8 @@ class TkConsoleView(Tkinter.Text):
   def changeLine(self, text):
     self.delete(self.line_start,"%s lineend" % self.line_start)
     self.write(text, True)
+    self.see(Tkinter.END)
+
 
   def getCurrentLine(self):
 
@@ -280,7 +280,6 @@ class TkConsoleView(Tkinter.Text):
     if text:
       self.write('\n')
     self.showPrompt(self.prompt)
-    #self.mark_set(self.line_start,Tkinter.END) #jmht don't need this as showprompt sets mark
 
   def _setBindings(self):
     """ Bind the keys we require.
@@ -293,6 +292,9 @@ class TkConsoleView(Tkinter.Text):
     self.bind("<Down>",self.processDownPress)
     self.bind("<Tab>",self.processTabPress)
     self.bind("<BackSpace>",self.processBackSpacePress)
+    self.bind("<Home>",self.processHomePress)
+    self.bind("<Right>",self.processRightPress)
+    self.bind("<Left>",self.processLeftPress)
 
   def isEditable(self):
     """ Scan the notouch tag range in pairs and see if the INSERT index falls
@@ -317,10 +319,10 @@ class TkConsoleView(Tkinter.Text):
 
   def processKeyPress(self,event):
 
-    if self.debug:
-        print >>self.o,"processKeyPress got key: %s" % event.char
-        print >>self.o,"processKeyPress INSERT: %s" % self.index(Tkinter.INSERT)
-        print >>self.o,"processKeyPress END: %s" % self.index(Tkinter.END)
+    if self.debug or True:
+        print "processKeyPress got key: %s" % event.char
+        print "processKeyPress INSERT: %s" % self.index(Tkinter.INSERT)
+        print "processKeyPress END: %s" % self.index(Tkinter.END)
 
     if not self.isEditable():
             # Move cursor mark to start of line
@@ -334,16 +336,32 @@ class TkConsoleView(Tkinter.Text):
     if not self.isEditable():
             return "break"
 
+  def processRightPress(self,event):
+    if not self.isEditable():
+            return "break"
+
+  def processLeftPress(self,event):
+    if not self.isEditable():
+            return "break"
+
   def processEnterPress(self,event):
+    self.mark_set( Tkinter.INSERT, Tkinter.END )
     self._processLine()
     return "break" # Need break to stop the other bindings being called
 
   def processUpPress(self,event):
-    self.changeLine(self.historyBack( self.getCurrentLine().strip('\n') ))
+#    self.changeLine(self.historyBack( self.getCurrentLine().strip('\n') ))
+    self.changeLine(self.historyBack())
+    self.mark_set(Tkinter.INSERT,Tkinter.END)
     return "break"
 
   def processDownPress(self,event):
-    self.changeLine(self.historyForward( self.getCurrentLine().strip('\n') ))
+#    self.changeLine(self.historyForward( self.getCurrentLine().strip('\n') ))
+    self.changeLine(self.historyForward())
+    self.mark_set(Tkinter.INSERT, Tkinter.END )
+    return "break"
+
+  def processHomePress(self,event):
     return "break"
 
   def processTabPress(self,event):
@@ -359,6 +377,7 @@ class TkConsoleView(Tkinter.Text):
             self.changeLine(completed)
     else:
             self.changeLine(completed)
+    self.mark_set(Tkinter.INSERT,Tkinter.END)
     return "break"
 
 
@@ -393,6 +412,7 @@ class IPythonView(TkConsoleView, IterableIPShell):
     if rv: rv = rv.strip('\n')
     self.showReturned(rv)
     self.cout.truncate(0)
+
 
 if __name__ == "__main__":
     from __main__ import tk
