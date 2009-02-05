@@ -242,8 +242,16 @@ int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
           else if (lineString.find("# color = ") != std::string::npos ||
                    lineString.find("# selectedColor = ") != std::string::npos)
             {
-            std::string str = lineString.substr(10, std::string::npos);
-            vtkDebugMacro("Getting color, substr = " << str.c_str());
+            std::string str;
+            if (lineString.find("# color = ") != std::string::npos)
+              {
+              str = lineString.substr(10, std::string::npos);
+              }
+            else
+              {
+              str = lineString.substr(18, std::string::npos);
+              }
+            vtkDebugMacro("Getting colors, substr = " << str.c_str());
             // the rgb values are separated by commas
             float r = 0.0, g = 0.0, b = 0.0;
             char *ptr;
