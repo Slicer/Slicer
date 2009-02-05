@@ -197,13 +197,15 @@ int vtkProstateNavLogic::Enter()
   vtkMRMLModelNode*  modelNode =
     vtkMRMLModelNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->ZFrameModelNodeID.c_str()));
   
-  vtkMRMLDisplayNode* displayNode = modelNode->GetDisplayNode();
-  displayNode->SetVisibility(0);
-  modelNode->Modified();
-  this->MRMLScene->Modified();
+  if (modelNode)
+    {
+    vtkMRMLDisplayNode* displayNode = modelNode->GetDisplayNode();
+    displayNode->SetVisibility(0);
+    modelNode->Modified();
+    this->MRMLScene->Modified();
 
-  modelNode->SetAndObserveTransformNodeID(this->ZFrameTransformNodeID.c_str());
-
+    modelNode->SetAndObserveTransformNodeID(this->ZFrameTransformNodeID.c_str());
+    }
 
   std::cerr << "Robot = " <<  this->RobotCommandNodeID << std::endl;
   std::cerr << "Target = " <<  this->RobotTargetNodeID  << std::endl;
