@@ -18,6 +18,9 @@
 #ifndef __vtkMRMLBrpRobotCommandNode_h
 #define __vtkMRMLBrpRobotCommandNode_h
 
+
+#include "vtkProstateNavWin32Header.h"
+
 #include "vtkPolyData.h" 
 
 #include "vtkMRML.h"

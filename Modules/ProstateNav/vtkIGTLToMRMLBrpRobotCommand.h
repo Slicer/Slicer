@@ -16,7 +16,7 @@
 #define __vtkIGTLToMRMLBrpRobotCommand_h
 
 #include "vtkObject.h"
-#include "vtkOpenIGTLinkIFWin32Header.h" 
+#include "vtkProstateNavWin32Header.h"
 #include "vtkMRMLNode.h"
 #include "vtkIGTLToMRMLBase.h"
 
