@@ -236,5 +236,7 @@ vtkMRMLFiducialListNode *vtkSlicerFiducialsLogic::LoadFiducialList(const char* p
   listNode->SetAndObserveStorageNodeID(snode->GetID());
   snode->ReadData(listNode);
 
+  snode->Delete();
+  
   return listNode; //vtkMRMLFiducialListNode::SafeDownCast(node);
 }
