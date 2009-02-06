@@ -57,6 +57,8 @@ vtkSlicerGPURayCastVolumeTextureMapper3D::vtkSlicerGPURayCastVolumeTextureMapper
   this->Shading              =  0;
   this->ReloadShaderFlag     =  0;
   this->LargeVolumeSize      =  0;
+  
+  this->AdaptiveFPS          =  1;//enable adaptive framerate control by default
 
   this->Volume1Index         =  0;
   this->Volume2Index         =  0;
@@ -160,14 +162,33 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolum
     this->TimeToDraw = 0.0001;
     }
   
-  this->PerformanceControl();
+  if (this->AdaptiveFPS)//adjust ray steps based on requrestd frame rate
+    this->AdaptivePerformanceControl();
+  else//use fixed ray steps
+    this->PerformanceControl();
+    
   //printf("ray step: %f, fps: %f\n", this->RaySteps, 1.0/this->TimeToDraw);
 
 }
 
 void vtkSlicerGPURayCastVolumeTextureMapper3D::PerformanceControl()
 {
+  int dim[3];
+  this->GetVolumeDimensions(dim);
     
+  float maxRaysteps = dim[0];
+  maxRaysteps = maxRaysteps > dim[1] ? maxRaysteps : dim[1];  
+  maxRaysteps = maxRaysteps > dim[2] ? maxRaysteps : dim[2];  
+  
+  maxRaysteps *= 4.0f;
+  
+  maxRaysteps = maxRaysteps < 1050.0f ? 1050.0f : maxRaysteps;//ensure high sampling rate on low resolution volumes
+  
+  this->RaySteps = maxRaysteps;
+}
+
+void vtkSlicerGPURayCastVolumeTextureMapper3D::AdaptivePerformanceControl()
+{
   //do automatic performance control
   if(this->Framerate <= 0.0f)
     this->Framerate = 1.0f;
@@ -184,7 +205,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::PerformanceControl()
   {
     this->RaySteps += 25.0f;
   }
-  else if (this->TimeToDraw > 1.0/this->Framerate)//reduce ray steps to ensure performance
+  else if (this->TimeToDraw > 1.5/this->Framerate)//reduce ray steps to ensure performance
   {
     this->RaySteps *= 0.75f;
   }
@@ -195,7 +216,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::PerformanceControl()
   float maxRaysteps = dim[0];
   maxRaysteps = maxRaysteps > dim[1] ? maxRaysteps : dim[1];  
   maxRaysteps = maxRaysteps > dim[2] ? maxRaysteps : dim[2];  
-  maxRaysteps *= 2.0f; //make sure we have enough sampling rate to recover details
+  maxRaysteps *= 2.5f; //make sure we have enough sampling rate to recover details
   
   maxRaysteps = maxRaysteps < 1050.0f ? 1050.0f : maxRaysteps;//ensure high sampling rate on low resolution volumes
   

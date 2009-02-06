@@ -70,6 +70,12 @@ public:
   vtkBooleanMacro(LargeVolumeSize,int);
   
   // Description:
+  // Enable/Disable large volume size usage
+  vtkSetMacro(AdaptiveFPS, int);  
+  vtkGetMacro(AdaptiveFPS,int);
+  vtkBooleanMacro(AdaptiveFPS,int);
+  
+  // Description:
   // Enable/Disable clipping
   vtkSetMacro(Clipping, int);  
   vtkGetMacro(Clipping,int);
@@ -133,6 +139,7 @@ protected:
   int              Clipping;
   int              Shading;
   int              LargeVolumeSize;
+  int              AdaptiveFPS;
 
   GLuint           Volume1Index;
   GLuint           Volume2Index;
@@ -177,7 +184,8 @@ protected:
   void LoadFragmentShader();
   void LoadNoShadingFragmentShader();
   void LoadRayCastProgram();
-  
+
+  void AdaptivePerformanceControl();  
   void PerformanceControl();
   
   // Description:
