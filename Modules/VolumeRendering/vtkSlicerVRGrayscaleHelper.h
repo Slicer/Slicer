@@ -295,6 +295,11 @@ protected:
     // Enable/Disable large volume size usage
     vtkKWCheckButtonWithLabel *CB_GPURayCastLargeVolume;
     
+    // added for GPGPU raycast
+    // Description:
+    // Enable/Disable adaptive framerate control
+    vtkKWCheckButtonWithLabel *CB_GPURayCastAdaptiveFPS;
+    
     // Description:
     // Add interactive frame rates to ray cast mapping
     vtkKWCheckButtonWithLabel *CB_InteractiveFrameRate;

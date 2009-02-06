@@ -95,6 +95,7 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->CB_GPURayCast=NULL;
     this->CB_GPURayCastMIP=NULL;
     this->CB_GPURayCastShading=NULL;
+    this->CB_GPURayCastAdaptiveFPS=NULL;
     this->CB_GPURayCastLargeVolume=NULL;
     this->CB_InteractiveFrameRate=NULL;
     this->SC_Framerate=NULL;
@@ -503,6 +504,10 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
     {
         this->CB_GPURayCastShading->GetWidget()->SetSelectedState(this->Gui->GetApplication()->GetIntRegistryValue(2,"VolumeRendering","CB_GPURayCastShading"));
     }
+    if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","CB_GPURayCastAdaptiveFPS"))
+    {
+        this->CB_GPURayCastAdaptiveFPS->GetWidget()->SetSelectedState(this->Gui->GetApplication()->GetIntRegistryValue(2,"VolumeRendering","CB_GPURayCastAdaptiveFPS"));
+    }
     if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","CB_GPURayCast"))
     {
         this->CB_GPURayCast->GetWidget()->SetSelectedState(this->Gui->GetApplication()->GetIntRegistryValue(2,"VolumeRendering","CB_GPURayCast"));
@@ -553,6 +558,7 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
         this->CB_GPURayCastMIP->GetWidget()->SetSelectedState(0);    
         this->CB_GPURayCastMIP->EnabledOff();
         this->CB_GPURayCastShading->EnabledOff();
+        this->CB_GPURayCastAdaptiveFPS->EnabledOff();
     
         errorText->Delete();
     }
@@ -746,11 +752,13 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             this->Volume->SetMapper(this->MapperGPURaycast);
             this->CB_GPURayCastMIP->EnabledOn();
             this->CB_GPURayCastShading->EnabledOn();
+            this->CB_GPURayCastAdaptiveFPS->EnabledOn();
         }
         else
         {
             this->CB_GPURayCastMIP->EnabledOff();
             this->CB_GPURayCastShading->EnabledOff();
+            this->CB_GPURayCastAdaptiveFPS->EnabledOff();
         }
 
         this->UpdateQualityCheckBoxes();
@@ -772,6 +780,16 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             this->MapperGPURaycast->ShadingOn();
         else
             this->MapperGPURaycast->ShadingOff();
+                        
+        this->UpdateQualityCheckBoxes();
+        return;
+    }
+    if(callerObjectCheckButton==this->CB_GPURayCastAdaptiveFPS->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
+    {
+        if (this->CB_GPURayCastAdaptiveFPS->GetWidget()->GetSelectedState())
+            this->MapperGPURaycast->AdaptiveFPSOn();
+        else
+            this->MapperGPURaycast->AdaptiveFPSOff();
                         
         this->UpdateQualityCheckBoxes();
         return;
@@ -2179,7 +2197,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->SC_Framerate->SetBalloonHelpString("Influence performance and quality of volume rendering. 20 very fast, 1 slow but higher quality.");
     this->SC_Framerate->SetLabelText("FPS (Interactive):");
     this->SC_Framerate->SetLabelWidth(labelWidth);
-    this->SC_Framerate->GetWidget()->SetRange(1,20);
+    this->SC_Framerate->GetWidget()->SetRange(1,20); 
     this->SC_Framerate->GetWidget()->SetResolution(1);
     this->SC_Framerate->GetWidget()->SetValue(1./this->GoalLowResTime);
     this->SC_Framerate->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
@@ -2239,6 +2257,20 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
         this->CB_GPURayCastShading->GetWidgetName() );
     this->CB_GPURayCastShading->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
+    
+    //added for GPGPU raycast    
+    //enable/disable adaptive frame rate control
+    this->CB_GPURayCastAdaptiveFPS=vtkKWCheckButtonWithLabel::New();
+    this->CB_GPURayCastAdaptiveFPS->SetParent(this->MappersFrame->GetFrame());
+    this->CB_GPURayCastAdaptiveFPS->Create();
+    this->CB_GPURayCastAdaptiveFPS->SetBalloonHelpString("Adaptive framerate control for performance/quality balance.");
+    this->CB_GPURayCastAdaptiveFPS->SetLabelText("Adaptive Framerate");
+    this->CB_GPURayCastAdaptiveFPS->SetLabelWidth(labelWidth);
+    this->CB_GPURayCastAdaptiveFPS->GetWidget()->SetSelectedState(1);
+    this->CB_GPURayCastAdaptiveFPS->EnabledOff();
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+        this->CB_GPURayCastAdaptiveFPS->GetWidgetName() );
+    this->CB_GPURayCastAdaptiveFPS->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
 }
 
 void vtkSlicerVRGrayscaleHelper::DestroyPerformance(void)
