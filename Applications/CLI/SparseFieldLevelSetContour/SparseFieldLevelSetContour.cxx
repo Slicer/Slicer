@@ -37,7 +37,7 @@ vtkPolyDataWriter* writer;
 bool LSready = false;
 bool done_init = false;
 int showLS = 0;
-int evolve_its = 500; // how many evolution iterations to take
+int evolve_its = 10; // how many evolution iterations to take
 int mesh_smooth_its = 100; // how many times to smooth the input mesh
 int H_smooth_its = 100; // how many times to average the curvature
 int adj_levels = 1; // number of levels into the adjacency tree to look
@@ -74,7 +74,7 @@ int main(int argc, char* argv[] )
 
 // Now we'll look at it.
   vtkPolyData* smooth_brain = smoother->GetOutput();
-
+  //polyDataInput->Delete();
 // do the curvature computations / pre-processing
   meshdata = new MeshData();
   meshdata->polydata = smooth_brain;
@@ -151,6 +151,15 @@ int main(int argc, char* argv[] )
   writer->SetFileName( OutputFilename.c_str() );
   writer->Write();
   // The result is contained in the scalar colormap of the output.
+
+  delete energy;
+  delete meshdata;
+  reader->Delete();
+  cubeMapper->Delete();  
+  writer->Delete();
+  smoother->Delete();
+  //smooth_brain->Delete();
+  delete sfls;
 
   return EXIT_SUCCESS;
 }
