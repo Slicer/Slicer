@@ -256,6 +256,13 @@ public:
     void CustomApplicationSettingsModuleEntry();
     void CustomApplicationSettingsModuleExit();
     
+    // clear and display the objects from the lists.  This is used when the 
+    // module is entered and exited, so the actors don't display in the slicer
+    // window when we are not in the module.  This traverses the list and stores
+    // state in the MRML nodes. 
+    void SaveVisibilityStateOfObjectLists(void);
+    void RestoreVisibilityStateOfObjectLists(void);
+    
   // Widgets that must be public
   vtkKWRenderWidget *RenderWidget;
         vtkRenderer *AxesRenderer;
@@ -311,19 +318,18 @@ private:
   char ApplicationFontSize [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char ApplicationFontFamily [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   bool AutoSaveFlag;
-        int  AutoSaveTime;
-        char AutoSaveDirectory[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
-        bool AutoSaveWorkDirFlag; 
-        char WorkingDirectory[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
-        char DateTimeString[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
-        char SaveDirectory[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
-        double AverageElementLength;
-        int ABAQUSPrecision;
-        
-        double TextColor[3];
-        double BackgroundColor[3];
-        
-        bool StandAloneApplication;            
+  int  AutoSaveTime;
+  char AutoSaveDirectory[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  bool AutoSaveWorkDirFlag; 
+  char WorkingDirectory[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  char DateTimeString[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  char SaveDirectory[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  double AverageElementLength;
+  int ABAQUSPrecision;
+  double TextColor[3];
+  double BackgroundColor[3];     
+  bool StandAloneApplication;            
+
 };
 void updateAxis(vtkObject* caller, unsigned long , void* arg, void* );
 

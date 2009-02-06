@@ -67,7 +67,11 @@ class VTK_MIMXCOMMON_EXPORT vtkMRMLFiniteElementBuildingBlockNode : public vtkMR
   // *** svoid   SetFileName(char* value) {this->actor->SetFileName(value);}   
   char*  GetFileName(void)      {return this->actor->GetFileName();} 
   void   SetFilePath(char* value) {this->actor->SetFilePath(value);}   
-  char*  GetFilePath(void)      {return this->actor->GetFilePath();} 
+  char*  GetFilePath(void)      {return this->actor->GetFilePath();}
+  
+  void SetSavedVisibilityState(bool state) {this->savedVisibilityState = state;}
+  bool GetSavedVisibilityState(void) {return this->savedVisibilityState;}  
+
  
 protected:
   vtkMRMLFiniteElementBuildingBlockNode();
@@ -75,8 +79,12 @@ protected:
   vtkMRMLFiniteElementBuildingBlockNode(const vtkMRMLFiniteElementBuildingBlockNode&);
   void operator=(const vtkMRMLFiniteElementBuildingBlockNode&);
 
- 
+  
   vtkMimxUnstructuredGridActor *actor;
+  
+  // remember whether this node was on or off when IA_FEMesh was onscreen.  The state is stored here
+  // during module exit and checked during module entry. 
+  bool savedVisibilityState;
 };
 
 #endif

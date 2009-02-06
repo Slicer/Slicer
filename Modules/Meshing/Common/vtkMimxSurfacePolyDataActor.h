@@ -64,7 +64,12 @@ public:
 // void SetDataType(int){};
  //vtkSetMacro(PolyData, vtkPolyData*);
  //vtkGetMacro(PolyData, vtkPolyData*);
-  // Description:   
+ 
+  // added to support slicer integration
+  void SaveVisibility(void);
+  void RestoreVisibility(void);
+  void Hide();
+  void Show();
   
   // *** moved to public so can be instantiated by FESurface list factory
   vtkMimxSurfacePolyDataActor();
@@ -79,6 +84,7 @@ private:
   double FillColor[3];
         double OutlineColor[3];
         int DisplayType;
+        bool SavedVisibility;
 };
 
 #endif

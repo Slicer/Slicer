@@ -76,6 +76,13 @@ public:
  void SetDisplayType( int mode );
  int  GetDisplayType();
   
+ // added to support slicer integration
+ void SaveVisibility(void);
+ void RestoreVisibility(void);
+ void Hide();
+ void Show();
+
+
 protected:
   vtkMimxUnstructuredGridActor();
   ~vtkMimxUnstructuredGridActor();
@@ -106,6 +113,7 @@ private:
         double FillColor[3];
         double OutlineColor[3];
         int DisplayType;
+        bool SavedVisibility;
   vtkMimxUnstructuredGridActor(const vtkMimxUnstructuredGridActor&);  // Not implemented.
   void operator=(const vtkMimxUnstructuredGridActor&);  // Not implemented.
 };

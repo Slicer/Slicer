@@ -99,6 +99,7 @@ vtkIA_FEMeshGUI::vtkIA_FEMeshGUI()
   this->SavedBoxState = 0;
   this->SavedAxisLabelState = 0;
   this->SavedLayoutEnumeration = 0;
+  this->FirstEntryToModule=true;
 
 }
 
@@ -264,7 +265,15 @@ void vtkIA_FEMeshGUI::Enter ( )
   layoutnode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUp3DView);    
   this->MeshingUI->AddOrientationAxis();
   this->MeshingUI->CustomApplicationSettingsModuleEntry();
-       
+  
+  // restore the state of object visibility depending on how they were when exiting the module
+  // This is gated to happen only after returning to the module.  Not the first time, when the 
+  // lists aren't initialized yet. 
+  
+  if (this->FirstEntryToModule)
+    this->FirstEntryToModule=false;  
+  else
+    this->MeshingUI->RestoreVisibilityStateOfObjectLists(); 
 }
  
  
@@ -281,4 +290,6 @@ void vtkIA_FEMeshGUI::Exit ( )
   viewnode->SetBackgroundColor(this->SavedBackgroundColor);
   this->MeshingUI->RemoveOrientationAxis();    
   this->MeshingUI->CustomApplicationSettingsModuleExit();
+  // save the state of object visibility so we can restore later
+  this->MeshingUI->SaveVisibilityStateOfObjectLists();
 }

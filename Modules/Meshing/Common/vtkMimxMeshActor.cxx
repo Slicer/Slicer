@@ -886,6 +886,23 @@ bool vtkMimxMeshActor::GetMeshVisibility()
   return this->IsVisible;
 }
 
+
+//----------------------------------------------------------------------------------
+void vtkMimxMeshActor::SaveMeshVisibility()
+{
+  this->SavedVisibility =  this->IsVisible;
+}
+
+//----------------------------------------------------------------------------------
+void vtkMimxMeshActor::RestoreMeshVisibility()
+{
+  if (this->SavedVisibility)
+   this->ShowMesh(); 
+  else
+    this->HideMesh();
+}
+
+
 //----------------------------------------------------------------------------------
 void vtkMimxMeshActor::ShowMesh()
 {

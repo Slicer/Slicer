@@ -104,11 +104,14 @@ void vtkMRMLFiniteElementMeshDisplayNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes not equal to their defaults
   
-  Superclass::WriteXML(of, nIndent);
-
-  vtkIndent indent(nIndent);
-
-  //of << indent << " shrinkFactor =\"" << this->ShrinkFactor << "\"";
+  Superclass::WriteXML(of, nIndent);  
+  of << " ";
+   vtkIndent indent(nIndent);
+//   {
+//     std::stringstream ss;
+//     ss << this->actor->GetDataType();
+//     of << indent << " savedVisibilityState =\"" << this->savedVisibilityState << "\"";
+//   }
 }
 
 
@@ -121,12 +124,14 @@ void vtkMRMLFiniteElementMeshDisplayNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
+  int intAttribute;
+  
   while (*atts != NULL) 
     {
     attName = *(atts++);
     attValue = *(atts++);
 
- 
+
     }  
 }
 

@@ -1347,3 +1347,11 @@ void vtkMimxUnstructuredGridActor::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os,indent);
 }
 //----------------------------------------------------------------------------------------
+
+
+// added to support slicer integration
+void vtkMimxUnstructuredGridActor::SaveVisibility(void) {this->SavedVisibility = this->Actor->GetVisibility();}
+void vtkMimxUnstructuredGridActor::RestoreVisibility(void) {this->Actor->SetVisibility(this->SavedVisibility);}
+void vtkMimxUnstructuredGridActor::Hide() {this->Actor->SetVisibility(0);}
+void vtkMimxUnstructuredGridActor::Show() {this->Actor->SetVisibility(1);}
+

@@ -164,7 +164,9 @@ vtkKWMimxMainWindow::vtkKWMimxMainWindow()
         this->BackgroundColor[0] = this->BackgroundColor[1] = this->BackgroundColor[2] = 0.0;
         
         /* The default is a standalone application */
-        this->StandAloneApplication = false;           
+        this->StandAloneApplication = false;  
+        
+
 }
 
 //----------------------------------------------------------------------------
@@ -1388,3 +1390,24 @@ void vtkKWMimxMainWindow::ForceWidgetRedraw ( )
   //this->MainFrame->ExpandFrame( );
 }
 //----------------------------------------------------------------------------------------------
+
+
+// clear and display the objects from the lists.  This is used when the 
+ // module is entered and exited, so the actors don't display in the slicer
+ // window when we are not in the module.  This traverses the list and stores
+ // state in the MRML nodes. 
+
+ void  vtkKWMimxMainWindow::SaveVisibilityStateOfObjectLists(void)
+ {
+   // pass the request on down to the appropriate tabs
+   if(this->MainUserInterfacePanel != NULL)
+         this->MainUserInterfacePanel->SaveVisibilityStateOfObjectLists();
+ }
+ 
+ void  vtkKWMimxMainWindow::RestoreVisibilityStateOfObjectLists(void)
+ {
+   if(this->MainUserInterfacePanel != NULL)
+          this->MainUserInterfacePanel->RestoreVisibilityStateOfObjectLists();
+ }
+ 
+ 

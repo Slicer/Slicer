@@ -118,6 +118,7 @@ protected:
   int SavedAxisLabelState;
   int SavedLayoutEnumeration;
   double SavedBackgroundColor[3];
+  bool FirstEntryToModule;
 
 };
 

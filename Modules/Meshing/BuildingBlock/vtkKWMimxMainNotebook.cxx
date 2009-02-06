@@ -46,6 +46,10 @@ PURPOSE.  See the above copyright notices for more information.
 #include "vtkKWMimxMainUserInterfacePanel.h"
 #include "vtkKWMimxSurfaceMenuGroup.h"
 
+#include "vtkFESurfaceList.h"
+#include "vtkFiniteElementBuildingBlockList.h"
+#include "vtkFiniteElementMeshList.h"
+
 
 // define the option types
 #define VTK_KW_OPTION_NONE         0
@@ -275,3 +279,95 @@ void vtkKWMimxMainNotebook::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "DoUndoTree: " << this->DoUndoTree << endl;
 }
 //----------------------------------------------------------------------------
+
+// The next two methods were added to the slicer integrated version of the code.  This saves the state
+// of each object in the list, with regard to visibility.  Visibility can then be temporarily turned off
+// and restored later.  This way the objects in the IA_FEMesh objects lists can be removed from the slicer
+// viewer when exiting the module, and state can be returned after re-entering the module. 
+
+void vtkKWMimxMainNotebook::SaveVisibilityStateOfObjectLists(void)
+{
+    
+  if (this->FEMeshMenuGroup->GetFEMeshList())
+    {
+      int count = this->FEMeshMenuGroup->GetFEMeshList()->GetNumberOfItems();
+      for (int i=0;i<count;i++)
+        {
+          // record the visibility state of the actor, then hide it
+          if (this->FEMeshMenuGroup->GetFEMeshList()->GetItem(i))
+            {
+              vtkMimxMeshActor::SafeDownCast(this->FEMeshMenuGroup->GetFEMeshList()->GetItem(i))->SaveMeshVisibility();
+              vtkMimxMeshActor::SafeDownCast(this->FEMeshMenuGroup->GetFEMeshList()->GetItem(i))->HideMesh();
+            }
+        }
+    }
+    // repeat for surface list
+  if (this->SurfaceMenuGroup->GetSurfaceList())
+     {
+       int count = this->SurfaceMenuGroup->GetSurfaceList()->GetNumberOfItems();
+       for (int i=0;i<count;i++)
+         {
+           // record the visibility state of the actor, then hide it
+           if (this->SurfaceMenuGroup->GetSurfaceList()->GetItem(i))
+             {
+               vtkMimxSurfacePolyDataActor::SafeDownCast(this->SurfaceMenuGroup->GetSurfaceList()->GetItem(i))->SaveVisibility();
+               vtkMimxSurfacePolyDataActor::SafeDownCast(this->SurfaceMenuGroup->GetSurfaceList()->GetItem(i))->Hide();
+             }
+         }
+     }
+
+    // repeat for bblock list
+    if (this->BBMenuGroup->GetBBoxList())
+      {
+        int count = this->BBMenuGroup->GetBBoxList()->GetNumberOfItems();
+        for (int i=0;i<count;i++)
+          {
+            // record the visibility state of the actor, then hide it
+            if (this->BBMenuGroup->GetBBoxList()->GetItem(i))
+              {
+                vtkMimxUnstructuredGridActor::SafeDownCast(this->BBMenuGroup->GetBBoxList()->GetItem(i))->SaveVisibility();
+                vtkMimxUnstructuredGridActor::SafeDownCast(this->BBMenuGroup->GetBBoxList()->GetItem(i))->Hide();
+              }
+          }
+      }
+}
+
+void vtkKWMimxMainNotebook::RestoreVisibilityStateOfObjectLists(void)
+{
+  // traverse mesh list and restore all objects to their previous state   
+  if (this->FEMeshMenuGroup->GetFEMeshList())
+    {
+      int count = this->FEMeshMenuGroup->GetFEMeshList()->GetNumberOfItems();
+      for (int i=0;i<count;i++)
+        {
+          // if the mesh had been turned on last time we were in this module, then restore
+          if (this->FEMeshMenuGroup->GetFEMeshList()->GetItem(i)) 
+            vtkMimxMeshActor::SafeDownCast(this->FEMeshMenuGroup->GetFEMeshList()->GetItem(i))->RestoreMeshVisibility();
+        }
+    }
+    // repeat for surface list
+    if (this->SurfaceMenuGroup->GetSurfaceList())
+     {
+       int count = this->SurfaceMenuGroup->GetSurfaceList()->GetNumberOfItems();
+       for (int i=0;i<count;i++)
+         {
+           // if the mesh had been turned on last time we were in this module, then restore
+           if (this->SurfaceMenuGroup->GetSurfaceList()->GetItem(i)) 
+             vtkMimxSurfacePolyDataActor::SafeDownCast(this->SurfaceMenuGroup->GetSurfaceList()->GetItem(i))->RestoreVisibility();
+         }
+     }   
+     // repeat for bblock list
+    if (this->BBMenuGroup->GetBBoxList())
+      {
+        int count = this->BBMenuGroup->GetBBoxList()->GetNumberOfItems();
+        for (int i=0;i<count;i++)
+          {
+            // if the mesh had been turned on last time we were in this module, then restore
+            if (this->BBMenuGroup->GetBBoxList()->GetItem(i)) 
+              vtkMimxUnstructuredGridActor::SafeDownCast(this->BBMenuGroup->GetBBoxList()->GetItem(i))->RestoreVisibility();
+          }
+      }   
+
+  
+}
+

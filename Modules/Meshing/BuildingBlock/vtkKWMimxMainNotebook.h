@@ -62,6 +62,10 @@ public:
   vtkGetObjectMacro(BBMenuGroup, vtkKWMimxBBMenuGroup);
   vtkSetObjectMacro(DoUndoTree, vtkLinkedListWrapperTree);
   
+  // save and restore the visibility state of all objects managed by the notebook tabs
+  void SaveVisibilityStateOfObjectLists(void);
+  void RestoreVisibilityStateOfObjectLists(void);
+  
 protected:
         vtkKWMimxMainNotebook();
         ~vtkKWMimxMainNotebook();

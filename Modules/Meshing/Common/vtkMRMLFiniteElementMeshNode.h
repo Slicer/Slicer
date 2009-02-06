@@ -57,6 +57,9 @@ class VTK_MIMXCOMMON_EXPORT vtkMRMLFiniteElementMeshNode : public vtkMRMLUnstruc
    char*  GetFileName(void)      {return this->actor->GetFileName();} 
    void   SetFilePath(char* value) {this->actor->SetFilePath(value);}   
    char*  GetFilePath(void)      {return this->actor->GetFilePath();} 
+   
+   void SetSavedVisibilityState(bool state) {this->savedVisibilityState = state;}
+   bool GetSavedVisibilityState(void) {return this->savedVisibilityState;}  
   
 protected:
   vtkMRMLFiniteElementMeshNode();
@@ -66,6 +69,10 @@ protected:
 
   // store the state inside an actor, so it can share with the local list
   vtkMimxMeshActor* actor;
+  
+  // remember whether this node was on or off when IA_FEMesh was onscreen.  The state is stored here
+  // during module exit and checked during module entry. 
+  bool savedVisibilityState;
 };
 
 #endif

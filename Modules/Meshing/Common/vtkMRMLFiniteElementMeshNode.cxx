@@ -88,6 +88,11 @@ void vtkMRMLFiniteElementMeshNode::WriteXML(ostream& of, int nIndent)
     ss << this->actor->GetFilePath();
     of << indent << " FilePath=\"" << ss.str() << "\"";
   }
+  {
+    std::stringstream ss;
+    ss << this->GetSavedVisibilityState();
+    of << indent << " savedVisibilityState =\"" << this->savedVisibilityState << "\"";
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -127,6 +132,13 @@ void vtkMRMLFiniteElementMeshNode::ReadXMLAttributes(const char** atts)
        ss << attValue;
        ss >> StringAttribute;
        this->SetFilePath(StringAttribute);
+       }
+     else if (!strcmp(attName, "savedVisibilityState")) 
+       {
+       std::stringstream ss;
+       ss << attValue;
+       ss >> intAttribute;
+       this->SetSavedVisibilityState(intAttribute);
        }
      }
 }

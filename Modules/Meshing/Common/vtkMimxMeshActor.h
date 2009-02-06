@@ -62,6 +62,7 @@ class VTK_MIMXCOMMON_EXPORT MeshDisplayProperty
 public:
   std::string name;
   bool IsVisible;
+
   int DisplayType;
   vtkLookupTable *lutFilter; 
   vtkExtractCells *ExtractCellsFilter;
@@ -165,6 +166,8 @@ public:
   void HideMesh();
   void HideAllElementSets();
   bool GetMeshVisibility();
+  void SaveMeshVisibility();
+  void RestoreMeshVisibility();
   
   // Description:
   // Setting legend formatting for scalar display
@@ -386,6 +389,7 @@ private:
   vtkLookupTable *lutFilter;
   double ElementShrinkFactor;
   bool IsVisible;
+  bool SavedVisibility;    // use for enter/exit of module
         char *ElementSetName;
         int DisplayMode;
         int DisplayType;

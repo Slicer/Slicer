@@ -84,7 +84,10 @@ class VTK_MIMXCOMMON_EXPORT vtkMRMLFESurfaceNode : public vtkMRMLModelNode
   void   SetFilePath(char* value) {this->actor->SetFilePath(value);}   
   char*  GetFilePath(void)      {return this->actor->GetFilePath();} 
   
-protected:
+  void SetSavedVisibilityState(bool state) {this->savedVisabilityState = state;}
+  bool GetSavedVisibilityState(void) {return this->savedVisabilityState;}  
+
+  protected:
   vtkMRMLFESurfaceNode();
   ~vtkMRMLFESurfaceNode();
   vtkMRMLFESurfaceNode(const vtkMRMLFESurfaceNode&);
@@ -94,6 +97,10 @@ protected:
 //  char *FileName;
 //  char *FilePath;
   vtkMimxSurfacePolyDataActor* actor;
+  
+  // remember whether this node was on or off when IA_FEMesh was onscreen.  The state is stored here
+  // during module exit and checked during module entry. 
+  bool savedVisabilityState;
 };
 
 #endif
