@@ -281,8 +281,8 @@ class TkConsoleView(Tkinter.Text):
       if self.debug:
           print "adding notouch between %s : %s" % ( self.index(self.start_mark),\
                                                      self.index(Tkinter.INSERT) )
-      self.tag_add('notouch',self.start_mark,Tkinter.INSERT)
-      #self.tag_add('notouch',self.start_mark,"%s-1c" % Tkinter.INSERT)
+      #self.tag_add('notouch',self.start_mark,Tkinter.INSERT)
+      self.tag_add('notouch',self.start_mark,"%s-1c" % Tkinter.INSERT)
 
     self.mark_unset(self.start_mark)
     self.yview('moveto',1)
