@@ -14,6 +14,8 @@ available under the terms of the BSD which accompanies this distribution, and
 is available at U{http://www.opensource.org/licenses/bsd-license.php}
 """
 
+#__all__ = [ 'TkConsoleView', 'IPythonView', 'ansi_colors' ]
+
 import re
 import sys
 import os
@@ -23,8 +25,39 @@ import Tkinter
 
 # Ipython-specific imports.
 import IPython
+from IPython.completer import Completer, IPCompleter
 from IPython.frontend.linefrontendbase import common_prefix
-from IPython.frontend.prefilterfrontend import PrefilterFrontEnd
+
+class Basic_Completer( Completer ):
+  def __init__(self,namespace=None,global_namespace=None):
+    Completer.__init__(self, namespace, global_namespace )
+    self.matchers = [ self.global_matches ]
+                    
+
+  def complete(self, text, state, line_buffer = None):
+        """Return the next possible completion for 'text'.
+
+        This is called successively with state == 0, 1, 2, ... until it
+        returns None.  The completion should begin with 'text'.
+
+        """
+        if self.use_main_ns:
+            self.namespace = __main__.__dict__
+            
+        if text.startswith('~'):
+            text = os.path.expanduser(text)
+        if state == 0:
+            if "." in text:
+                self.matches = self.attr_matches(text)
+            else:
+                self.matches = []
+                for matcher in self.matchers:
+                  self.matches.extend( matcher(text) )
+        try:
+            return self.matches[state]
+        except IndexError:
+            return None    
+
 
 class IterableIPShell:
   def __init__(self,argv=None,user_ns=None,user_global_ns=None,
@@ -48,10 +81,17 @@ class IterableIPShell:
     self.term = IPython.genutils.IOTerm(cin=cin, cout=cout, cerr=cerr)
     os.environ['TERM'] = 'dumb'
     excepthook = sys.excepthook
+
     self.IP = IPython.Shell.make_IPython(argv,user_ns=user_ns,
                                          user_global_ns=user_global_ns,
                                          embedded=True,
                                          shell_class=IPython.Shell.InteractiveShell)
+
+    try:
+      import readline
+    except ImportError:
+      completer = Basic_Completer( self.IP.user_ns, self.IP.user_global_ns )
+      self.IP.Completer = completer
 
     self.IP.set_hook('shell_hook',lambda ip,cmd: self.shell(self.IP.var_expand(cmd),
                                             header='IPython system call: ',
@@ -154,6 +194,7 @@ class IterableIPShell:
       input.close()
 
 
+
 ansi_colors =  {'0;30': 'Black',
                 '0;31': 'Red',
                 '0;32': 'Green',
@@ -240,8 +281,8 @@ class TkConsoleView(Tkinter.Text):
       if self.debug:
           print "adding notouch between %s : %s" % ( self.index(self.start_mark),\
                                                      self.index(Tkinter.INSERT) )
-
-      self.tag_add('notouch',self.start_mark,"%s-1c" % Tkinter.INSERT)
+      self.tag_add('notouch',self.start_mark,Tkinter.INSERT)
+      #self.tag_add('notouch',self.start_mark,"%s-1c" % Tkinter.INSERT)
 
     self.mark_unset(self.start_mark)
     self.yview('moveto',1)
