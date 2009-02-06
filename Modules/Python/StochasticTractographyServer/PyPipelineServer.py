@@ -107,6 +107,8 @@ class PipelineHandler(asyncore.dispatcher):
           logger.info("scene : %s" % dscene)
 
           # currently there is a bug in the GUI of slicer python - do not load if three times the same volume 
+          
+          isInRoiA = False
           if self.params.hasKey('roiA'):
                   if dscene.has_key(self.params.get('roiA')[0]):
                          self.roiA = s.get(int(dscene[self.params.get('roiA')[0]]))
@@ -114,6 +116,7 @@ class PipelineHandler(asyncore.dispatcher):
                          roiAR = roiAR.reshape(shpD[2], shpD[1], shpD[0]) # because come from Slicer - will not send them back so swap them one for all
                          roiAR = roiAR.swapaxes(2,0)
                          self.roiA.setImage(roiAR)
+                         isInRoiA = True
                          logger.info("RoiA : %s:%s:%s" % (roiAR.shape[0], roiAR.shape[1], roiAR.shape[2]))
 
           isInRoiB = False
@@ -190,7 +193,6 @@ class PipelineHandler(asyncore.dispatcher):
           # values per default
           smoothEnabled = False
 
-
           wmEnabled = True
           infWMThres = 300
           supWMThres = 900
@@ -240,8 +242,6 @@ class PipelineHandler(asyncore.dispatcher):
                     logger.debug("FWHM: %s:%s:%s" % (FWHM[0], FWHM[1], FWHM[2]) )
 
 
-
-
           if self.params.hasKey('infWMThres'):
                     infWMThres = int(self.params.get('infWMThres')[0])
                     logger.debug("infWMThres: %s" % infWMThres)
@@ -256,7 +256,6 @@ class PipelineHandler(asyncore.dispatcher):
           if self.params.hasKey('tensMode'):
                     tensMode = self.params.get('tensMode')[0]
                     logger.debug("tensMode: %s" % tensMode)
-
 
 
           if self.params.hasKey('totalTracts'):
@@ -294,19 +293,6 @@ class PipelineHandler(asyncore.dispatcher):
           mu = mu.reshape((4,4))
 
           r2i = numpy.linalg.inv(i2r)
-
-          logger.info("Search ROI")
-          roiP = cmpV.march0InVolume(self.roiA.getImage())
-
-          shpR = roiP.shape
-          logger.info("ROI dimension : %s:%s" % (str(shpR[0]), str(shpR[1])))
-          
-          monoP = False  
-          blocksize = totalTracts
-          IJKstartpoints = []
-
-          IJKstartpoints.append(numpy.tile(roiP,( blocksize, 1)))
-          monoP = True
 
 
           # correctly express gradients into RAS space
@@ -347,24 +333,74 @@ class PipelineHandler(asyncore.dispatcher):
                     
                     logger.info("Track fibers")
                     if not stopEnabled:
-                         fa = 0.0
+                        fa = 0.0
 
-                    timeS2 = time.time()
+                    if isInRoiA:
+                        # ROI A
+                        logger.info("Search ROI A")
+                        roiP = cmpV.march0InVolume(self.roiA.getImage())
+
+                        shpR = roiP.shape
+                        logger.info("ROI A dimension : %s:%s" % (str(shpR[0]), str(shpR[1])))
+          
+                        monoP = False  
+                        blocksize = totalTracts
+                        IJKstartpoints = []
+
+                        IJKstartpoints.append(numpy.tile(roiP,( blocksize, 1)))
+                        monoP = True
+                        ##
+
+                        timeS2 = time.time()
 
                          
-                    paths = track.TrackFiber40(data, vects.vectors.T, b.T, G.T, IJKstartpoints[0].T, r2i, i2r,\
+                        paths = track.TrackFiber40(data, vects.vectors.T, b.T, G.T, IJKstartpoints[0].T, r2i, i2r,\
                                   lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
 
-                    logger.info("Track fibers in %s sec" % str(time.time()-timeS2))
+                        logger.info("Track fibers in %s sec" % str(time.time()-timeS2))
 
-                    logger.info("Connect tract")
+                        logger.info("Connect tract")
 
-                    if probMode=='binary':
+                        if probMode=='binary':
                             cm = track.ConnectFibers0(paths, maxLength, shpD, lengthEnabled,  lengthClass)
-                    elif probMode=='cumulative':
+                        elif probMode=='cumulative':
                             cm = track.ConnectFibers1(paths, maxLength, shpD, lengthEnabled,  lengthClass)
-                    else:
+                        else:
                             cm = track.ConnectFibers2(paths, maxLength, shpD, lengthEnabled,  lengthClass)
+
+                    if isInRoiB:
+                        # ROI B
+                        logger.info("Search ROI B")
+                        roiP2 = cmpV.march0InVolume(self.roiB.getImage())
+
+                        shpR2 = roiP2.shape
+                        logger.info("ROI B dimension : %s:%s" % (str(shpR2[0]), str(shpR2[1])))
+          
+                        monoP2 = False  
+                        blocksize2 = totalTracts
+                        IJKstartpoints2 = []
+
+                        IJKstartpoints2.append(numpy.tile(roiP2,( blocksize2, 1)))
+                        monoP2 = True
+                        ##
+
+                        timeS3 = time.time()
+
+                         
+                        paths2 = track.TrackFiber40(data, vects.vectors.T, b.T, G.T, IJKstartpoints2[0].T, r2i, i2r,\
+                                  lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
+
+                        logger.info("Track fibers in %s sec" % str(time.time()-timeS3))
+
+                        logger.info("Connect tract")
+
+                        if probMode=='binary':
+                            cm2 = track.ConnectFibers0(paths2, maxLength, shpD, lengthEnabled,  lengthClass)
+                        elif probMode=='cumulative':
+                            cm2 = track.ConnectFibers1(paths2, maxLength, shpD, lengthEnabled,  lengthClass)
+                        else:
+                            cm2 = track.ConnectFibers2(paths2, maxLength, shpD, lengthEnabled,  lengthClass)
+
 
           else:
                      logger.info("No tractography to execute!")
@@ -400,15 +436,31 @@ class PipelineHandler(asyncore.dispatcher):
                           tmp= 'trace_' + dateT
                           s.putS(trMap, dims, org, i2r, tmp)
 
-
                      if modeEnabled:
                           moMap = moMap.swapaxes(2,0)
                           tmp= 'mode_' + dateT
                           s.putS(moMap, dims, org, i2r, tmp)
-          
-                     cm = cm.swapaxes(2,0)
-                     tmp= 'cm_' + dateT
-                     s.putS(cm, dims, org, i2r, tmp)
+
+                     if isInRoiA:
+                          cm = cm.swapaxes(2,0)
+                          tmp= 'cmA_' + dateT
+                          s.putS(cm, dims, org, i2r, tmp)
+
+                     if isInRoiB:
+                          cm2 = cm2.swapaxes(2,0)
+                          tmp= 'cmB_' + dateT
+                          s.putS(cm2, dims, org, i2r, tmp)
+
+                     if isInRoiA and isInRoiB:
+                          cm1a2 = cm[...]*cm2[...]/2.0
+                          tmp= 'cmAandB_' + dateT
+                          s.putS(cm1a2, dims, org, i2r, tmp)
+
+                          cm1o2 = cm[...]+cm2[...]
+                          tmp= 'cmAorB_' + dateT
+                          s.putS(cm1o2, dims, org, i2r, tmp)
+
+
 
           logger.debug("pipeline data shape end : %s:%s:%s:%s" %  (shpD[0], shpD[1], shpD[2], shpD[3]))
 
