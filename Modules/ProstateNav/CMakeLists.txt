@@ -55,7 +55,7 @@ file(GLOB headers
 
 install(FILES 
   ${headers} 
-  "${CMAKE_CURRENT_BINARY_DIR}/vktProstateNavConfigure.h"
+  "${CMAKE_CURRENT_BINARY_DIR}/vtkProstateNavConfigure.h"
   DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
 
