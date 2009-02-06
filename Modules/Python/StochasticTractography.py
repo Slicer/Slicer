@@ -484,20 +484,20 @@ def Execute (\
   slicer = Slicer.slicer
   scene = slicer.MRMLScene
 
-  if not inputVol0 and not inputVol1:
+  if not inputVol0:
       return
 
   dwi = scene.GetNodeByID(inputVol0)
+  dwiName = dwi.GetName()
 
-  roiA = scene.GetNodeByID(inputVol1)
 
-
+  roiAName = ""
   roiBName = ""
   wmName = ""
-  #tenName = ""
 
-  dwiName = dwi.GetName()
-  roiAName = roiA.GetName()
+  if inputVol1:
+      roiA = scene.GetNodeByID(inputVol1)
+      roiAName = roiA.GetName()
 
   if inputVol2:
       roiB = scene.GetNodeByID(inputVol2)
@@ -526,8 +526,9 @@ def Execute (\
   s.send('dwi ' + str(dwiName) + '\n')
   ack = s.recv(SIZE)
 
-  s.send('roiA ' + str(roiAName) + '\n')
-  ack = s.recv(SIZE)
+  if roiAName:
+     s.send('roiA ' + str(roiAName) + '\n')
+     ack = s.recv(SIZE)
 
   if roiBName:
      s.send('roiB ' + str(roiBName) + '\n')
@@ -616,6 +617,12 @@ def Execute (\
   sendVolume(dwi, s)
 
   s.close()  
+
+  inputVol0 = ""
+  inputVol1 = ""
+  inputVol2 = ""
+  inputVol3 = ""
+
 
   return
 
