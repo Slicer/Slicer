@@ -185,6 +185,8 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller
 
     if ( displayNode )
       {
+      displayNode->DisableModifiedEventOn();
+
       if (displayNode->GetAutoWindowLevel() != this->WindowLevelThresholdEditor->GetAutoWindowLevel() ||
         this->WindowLevelThresholdEditor->GetAutoWindowLevel())
         {
@@ -208,7 +210,6 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller
                                                        displayNode->GetUpperThreshold());
         }
 
-      displayNode->DisableModifiedEventOn();
       displayNode->SetAutoWindowLevel(this->WindowLevelThresholdEditor->GetAutoWindowLevel());
       if (thresholdType == vtkKWWindowLevelThresholdEditor::ThresholdOff) 
         {

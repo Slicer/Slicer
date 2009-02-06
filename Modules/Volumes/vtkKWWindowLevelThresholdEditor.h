@@ -36,6 +36,8 @@
 #include "vtkKWWindow.h"
 #include "vtkKWRange.h"
 #include "vtkKWEntry.h"
+#include "vtkKWCheckButton.h"
+
 #include "vtkKWColorTransferFunctionEditor.h"
 #include "vtkKWHistogram.h"
 #include "vtkImageExtractComponents.h"
@@ -85,11 +87,14 @@ public:
   //virtual void SetStartCommand(vtkObject *object, const char *method);
   //virtual void SetEndCommand(vtkObject *object, const char *method);
 
-  // Description:
-  // Describes if the node is hidden
   vtkGetMacro(ProcessCallbacks, int);
   vtkSetMacro(ProcessCallbacks, int);
   vtkBooleanMacro(ProcessCallbacks, int);
+
+  // Description: 
+  // The number of changes between the transfer function updates
+  vtkGetMacro(UpdateTransferFunctionPeriod, int);
+  vtkSetMacro(UpdateTransferFunctionPeriod, int);
 
   // Description:
   // TODO: access internal widgets
@@ -105,7 +110,10 @@ public:
   void ProcessThresholdCommand(double min, double max);
 
   void ProcessWindowLevelStartCommand(double min, double max);
+  void ProcessWindowLevelEndCommand(double min, double max);
+
   void ProcessThresholdStartCommand(double min, double max);
+  void ProcessThresholdEndCommand(double min, double max);
 
 //BTX
    enum
@@ -145,6 +153,9 @@ protected:
   //char *EndCommand;
 
   int ProcessCallbacks;
+
+  int UpdateTransferFunctionPeriod;
+  int UpdateTransferFunctionCount;
   
 
 private:
@@ -166,6 +177,7 @@ private:
   vtkKWEntry *LevelEntry;
   vtkKWEntry *WindowEntry;
   vtkKWRange *ThresholdRange;
+  vtkKWCheckButton *UpdateTransferFunctionButton;
 };
 
 #endif

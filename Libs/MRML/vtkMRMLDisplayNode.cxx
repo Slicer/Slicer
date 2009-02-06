@@ -533,7 +533,10 @@ void vtkMRMLDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
     {
     this->UpdatePolyDataPipeline();
     this->UpdateImageDataPipeline();
-    this->Modified();
+    if (this != caller) 
+      {
+      this->Modified();
+      }
     }
 }
 

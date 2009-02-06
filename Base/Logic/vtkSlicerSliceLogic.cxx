@@ -353,9 +353,6 @@ void vtkSlicerSliceLogic::ProcessLogicEvents()
     pt[1] = dims[1];
     points->SetPoint(3, pt);
 #else
-    // set the transform for the slice model for use by an image actor in the viewer
-    this->SliceModelTransformNode->GetMatrixTransformToParent()->Identity();
-
     // set the plane corner point for use in a model
     double inPt[4]={0,0,0,1};
     double outPt[4];
@@ -873,6 +870,8 @@ void vtkSlicerSliceLogic::CreateSliceModel()
     {
     this->SliceModelNode = vtkMRMLModelNode::New();
     this->SliceModelNode->SetScene(this->GetMRMLScene());
+    this->SliceModelNode->SetDisableModifiedEvent(1);
+
     this->SliceModelNode->SetHideFromEditors(1);
     this->SliceModelNode->SetSelectable(0);
     this->SliceModelNode->SetSaveWithScene(0);
@@ -883,10 +882,13 @@ void vtkSlicerSliceLogic::CreateSliceModel()
     planeSource->GetOutput()->Update();
     this->SliceModelNode->SetAndObservePolyData(planeSource->GetOutput());
     planeSource->Delete();
+    this->SliceModelNode->SetDisableModifiedEvent(0);
 
     // create display node and set texture
     this->SliceModelDisplayNode = vtkMRMLModelDisplayNode::New();
     this->SliceModelDisplayNode->SetScene(this->GetMRMLScene());
+    this->SliceModelDisplayNode->SetDisableModifiedEvent(1);
+
     this->SliceModelDisplayNode->SetPolyData(this->SliceModelNode->GetPolyData());
     this->SliceModelDisplayNode->SetVisibility(0);
     this->SliceModelDisplayNode->SetOpacity(1);
@@ -915,6 +917,8 @@ void vtkSlicerSliceLogic::CreateSliceModel()
     this->SliceModelDisplayNode->SetDiffuse(0);
     this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->ExtractModelTexture->GetOutput());
     this->SliceModelDisplayNode->SetSaveWithScene(0);
+    this->SliceModelDisplayNode->SetDisableModifiedEvent(0);
+
     // Turn slice intersection off by default - there is a higher level GUI control
     // in the SliceCompositeNode that tells if slices should be enabled for a given
     // slice viewer
@@ -926,9 +930,16 @@ void vtkSlicerSliceLogic::CreateSliceModel()
     // make the xy to RAS transform
     this->SliceModelTransformNode = vtkMRMLLinearTransformNode::New();
     this->SliceModelTransformNode->SetScene(this->GetMRMLScene());
+    this->SliceModelTransformNode->SetDisableModifiedEvent(1);
+
     this->SliceModelTransformNode->SetHideFromEditors(1);
     this->SliceModelTransformNode->SetSelectable(0);
     this->SliceModelTransformNode->SetSaveWithScene(0);
+    // set the transform for the slice model for use by an image actor in the viewer
+    this->SliceModelTransformNode->GetMatrixTransformToParent()->Identity();
+
+    this->SliceModelTransformNode->SetDisableModifiedEvent(0);
+
     }
 
   if (this->SliceModelNode != NULL && this->MRMLScene->GetNodeByID( this->GetSliceModelNode()->GetID() ) == NULL )
