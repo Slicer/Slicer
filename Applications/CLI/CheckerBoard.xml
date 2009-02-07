@@ -10,7 +10,7 @@
 Create a checkerboard volume of two images.
   </description>
   <version>0.1.0.$Revision$(alpha)</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:Checkerboard-Documentation-3.4</documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:CheckerBoard-Documentation-3.4</documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>
 <acknowledgements>
