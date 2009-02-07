@@ -6,7 +6,7 @@
 Orients an output volume. Rearranges the slices in a volume accoording to the selected orientation. The resulting volume will cover the original volume.
 </description>
   <version>0.1.0.$Revision$(alpha)</version>
-  <documentation-url></documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:orientImages-Documentation-3.4</documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>
 <acknowledgements>

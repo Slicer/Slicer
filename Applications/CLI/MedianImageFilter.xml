@@ -15,7 +15,7 @@ pixel as the statistical median of the neighborhood of values around the
 corresponding input pixel.
   </description>
   <version>0.1.0.$Revision$(alpha)</version>
-  <documentation-url></documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:MedianFilter-Documentation-3.4</documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>
   <acknowledgements>This command module was derived from Insight/Examples/Filtering/MedianImageFilter (copyright) Insight Software Consortium</acknowledgements>

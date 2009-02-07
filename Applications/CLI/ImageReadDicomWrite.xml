@@ -4,7 +4,7 @@
   <title>Create a DICOM Series</title>
   <description>Create a DICOM Series</description>
   <version>0.1.0.$Revision$(alpha)</version>
-  <documentation-url></documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:imageReadDicomWrite-Documentation-3.4</documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>
   <acknowledgements>This command module was derived from Insight/Examples (copyright) Insight Software Consortium</acknowledgements>

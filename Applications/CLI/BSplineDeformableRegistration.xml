@@ -4,7 +4,7 @@
   <title>Deformable BSpline registration</title>
   <description>Registers two images together using BSpline transform and mutual information.</description>
   <version>0.1.0.$Revision$(alpha)</version>
-  <documentation-url></documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:DeformableB-SplineRegistration-Documentation-3.4</documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>
 <acknowledgements>

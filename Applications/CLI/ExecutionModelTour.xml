@@ -4,7 +4,7 @@
   <title>Execution Model Tour</title>
   <description>Shows one of each type of parameter.</description>
   <version>0.1.0.$Revision$(alpha)</version>
-  <documentation-url></documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:ExecutionModelTour-Documentation-3.4</documentation-url>
   <license></license>
   <contributor>Daniel Blezek, Bill Lorensen</contributor>
 <acknowledgements>
