@@ -958,8 +958,16 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
   this->UIPanel->AddPage ( title.c_str(), title.c_str(), NULL );
 
   // Build the Help and About frame
+  std::string moduleHelp = this->ModuleDescriptionObject.GetDescription();
+  if (this-ModuleDescriptionObject.GetDocumentationURL().size() >0)
+    {
+    moduleHelp += "\n For more detailed documentation see: ";
+    moduleHelp += "<a>";
+    moduleHelp += this->ModuleDescriptionObject.GetDocumentationURL();
+    moduleHelp += "</a>";
+    }
   this->BuildHelpAndAboutFrame(this->UIPanel->GetPageWidget ( title.c_str() ),
-                    this->ModuleDescriptionObject.GetDescription().c_str(),
+                    moduleHelp.c_str(),
                     (this->ModuleDescriptionObject.GetAcknowledgements()
                      + "\n\n" + 
                      this->ModuleDescriptionObject.GetContributor()).c_str());
