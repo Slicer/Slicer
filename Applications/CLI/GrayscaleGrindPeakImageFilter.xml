@@ -32,6 +32,8 @@ somewhat superfluous but is provided as a convenience.
 Geodesic morphology and the Fillhole algorithm is described in
 Chapter 6 of Pierre Soille's book "Morphological Image Analysis:
 Principles and Applications", Second Edition, Springer, 2003.
+
+A companion filter, Grayscale Fill Hole, fills holesves peaks in grayscale images.
   </description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:GreyscaleGrindPeak-Documentation-3.4</documentation-url>

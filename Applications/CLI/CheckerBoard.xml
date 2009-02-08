@@ -7,7 +7,12 @@
   CheckerBoard Filter
   </title>
   <description>
-Create a checkerboard volume of two images.
+Create a checkerboard volume of two volumes. The output volume will show
+the two inputs alternating according to the user supplied
+checkerPattern. This filter is often used to compare the results of
+image registration. Note that the second input is resampled to the
+same origin, spacing and direction before it is composed with the
+first input. The  scalar type of the output volume will be the same as the input image scalar type.
   </description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:CheckerBoard-Documentation-3.4</documentation-url>
@@ -23,7 +28,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
     <integer-vector>
       <name>checkerPattern</name>
       <longflag>--checkerPattern</longflag>
-      <description>The number of checkers in each dimension</description>
+      <description>The pattern of input 1 and input 2 in the output image. The user can specify the number of checkers in each dimension. A checkerPattern of 2,2,1 means that images will alternate in every other checker in the first two dimensions. The same pattern will be used in the 3rd dimension.</description>
       <label>Checker Pattern</label>
       <default>2,2,2</default>
     </integer-vector>

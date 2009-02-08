@@ -9,11 +9,16 @@
   <description>
 This filter creates a binary thresholded image that separates an
 image into foreground and background components. The filter
-computes the threshold using the algorthm described in "xxx",
-applies that threshold to the input image using the
-BinaryThresholdImageFilter. The NumberOfHistogram bins can be set
+calculates the optimum threshold separating those two classes so that their combined spread (intra-class variance) is minimal (see http://en.wikipedia.org/wiki/Otsu%27s_method).
+Then the filter applies that threshold to the input image using the
+itkBinaryThresholdImageFilter. The NumberOfHistogram bins can be set
 for the Otsu Calculator. The insideValue and outsideValue can be set
 for the BinaryThresholdImageFilter.
+The filter produces a labeled volume.
+
+The original reference is:
+N.Otsu, ‘‘A threshold selection method from gray level histograms,’’
+IEEE Trans.Syst.ManCybern.SMC-9,62–66 1979.
   </description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:OtsuThreshold-Documentation-3.4</documentation-url>
@@ -44,7 +49,7 @@ for the BinaryThresholdImageFilter.
     <integer>
       <name>numberOfBins</name>
       <longflag>--numberOfBins</longflag>
-      <description>The number of bins in the histogram</description>
+      <description>The number of bins in the histogram.</description>
       <label>Number of Histogram Bins</label>
       <default>128</default>
     </integer>

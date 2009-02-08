@@ -18,7 +18,7 @@ of this filter and the original image (and perhaps threshold the
 difference above a small value), you'll obtain a map of the local
 minima.
 
-This filter uses the GrayscaleGeodesicErodeImageFilter.  It provides
+This filter uses the itkGrayscaleGeodesicErodeImageFilter.  It provides
 its own input as the "mask" input to the geodesic erosion.  The
 "marker" image for the geodesic erosion is constructed such that
 boundary pixels match the boundary pixels of the input image and the
@@ -27,6 +27,8 @@ interior pixels are set to the maximum pixel value in the input image.
 Geodesic morphology and the Fillhole algorithm is described in Chapter
 6 of Pierre Soille's book "Morphological Image Analysis: Principles
 and Applications", Second Edition, Springer, 2003.
+
+A companion filter, Grayscale Grind Peak, removes peaks in grayscale images.
   </description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:GreyscaleFillHole-Documentation-3.4</documentation-url>
