@@ -677,6 +677,7 @@ void vtkEventBroker::InvokeObservation ( vtkObservation *observation, void *call
   this->EventNestingLevel++;
 
   double startTime = this->TimerLog->GetUniversalTime();
+  bool observationDeleted = false;
 
   if ( observation->GetScript() != NULL )
     {
@@ -690,16 +691,22 @@ void vtkEventBroker::InvokeObservation ( vtkObservation *observation, void *call
                                       observation->GetSubject(),
                                       observation->GetEvent(),
                                       callData );
+    if (observation->GetReferenceCount() == 1)
+      {
+      observationDeleted = true;
+      }
     observation->Delete();
     }
 
-  double elapsedTime = this->TimerLog->GetUniversalTime() - startTime;
-  observation->SetTotalElapsedTime (observation->GetTotalElapsedTime() + elapsedTime);
-  observation->SetLastElapsedTime (elapsedTime);
+  if (!observationDeleted)
+    {
+    double elapsedTime = this->TimerLog->GetUniversalTime() - startTime;
+    observation->SetTotalElapsedTime (observation->GetTotalElapsedTime() + elapsedTime);
+    observation->SetLastElapsedTime (elapsedTime);
 
-  // Write the to the log file if enabled
-  this->LogEvent (observation);
-
+    // Write the to the log file if enabled
+    this->LogEvent (observation);
+    }
   this->EventNestingLevel--;
 
 }
