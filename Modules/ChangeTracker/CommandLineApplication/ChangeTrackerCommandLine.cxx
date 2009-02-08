@@ -472,6 +472,7 @@ int main(int argc, char* argv[])
            vtkMatrix4x4* matrix = vtkMatrix4x4::New();
            tgReadVolume(Scan2Global_fname.c_str(), Scan2Global, matrix);
            matrix->Delete();
+           matrix = NULL;
            /*
            if (!app->Script(cmdStream.str().c_str()))
              {
@@ -492,6 +493,20 @@ int main(int argc, char* argv[])
          if(TerminationStep == 1)
            {
            tgWriteVolume(tgOutput.c_str(), tg.Scan1Matrix, Scan2Global);
+
+           // Clean up
+           // Delete all instances
+           if (Scan2Local)       Scan2Local->Delete();
+           if (Scan2LocalNormalized)  Scan2LocalNormalized->Delete();
+           if (Scan1PreSegment)  Scan1PreSegment->Delete();
+           if (Scan1Segment)     Scan1Segment->Delete();
+           if (Scan1SuperSample) Scan1SuperSample->Delete();
+           if (Scan2SuperSample) Scan2SuperSample->Delete();
+           if (Scan2Global)      Scan2Global->Delete();
+           if (Scan1SegmentOutput) Scan1SegmentOutput->Delete();
+           supersampleMatrix->Delete();
+           logic->Delete();
+           app->Delete();
            return EXIT_SUCCESS;
            }
          
