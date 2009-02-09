@@ -28,6 +28,31 @@ import IPython
 from IPython.completer import Completer, IPCompleter
 from IPython.frontend.linefrontendbase import common_prefix
 
+
+def slicer_matches( text ):
+        """Compute matches when text is a slicer MRMLNode 
+        """
+        sys.stdout.write('Slicer comp')
+        sys.stdout.flush()
+        try:
+          from Slicer import slicer
+        except ImportError:
+          return []
+
+        ids = map( lambda l:l.GetID(), slicer.ListNodes().values() )
+
+        n = len(text)
+
+        matches = []
+        match_append = matches.append
+
+        for id in ids:
+          if id[:n] == text:
+            match_append(id)
+
+        return matches
+
+
 class Basic_Completer( Completer ):
   def __init__(self,namespace=None,global_namespace=None):
     Completer.__init__(self, namespace, global_namespace )
@@ -92,6 +117,10 @@ class IterableIPShell:
     except ImportError:
       completer = Basic_Completer( self.IP.user_ns, self.IP.user_global_ns )
       self.IP.Completer = completer
+
+
+    self.IP.Completer.slicer_matches = slicer_matches
+    self.IP.Completer.matchers.append( self.IP.Completer.slicer_matches )
 
     self.IP.set_hook('shell_hook',lambda ip,cmd: self.shell(self.IP.var_expand(cmd),
                                             header='IPython system call: ',
