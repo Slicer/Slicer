@@ -53,9 +53,11 @@ target_link_libraries(
 #slicer3_install_plugins(${CLP_MODULE})
 
 # this is needed to set up testing
+# AF: command line ChangeTracker is only for batch use right now
+# -- binary and lib are installed in bin, not pluins
 add_library(${CLP_MODULE}Lib SHARED ${${CLP_MODULE}_SOURCE})
 set_target_properties (${CLP_MODULE}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-slicer3_set_plugins_output_path(${CLP_MODULE}Lib)
+#slicer3_set_plugins_output_path(${CLP_MODULE}Lib)
 target_link_libraries(
   ${CLP_MODULE}Lib
   ChangeTracker
@@ -64,4 +66,4 @@ target_link_libraries(
   vtkCommon
   vtkTeem
   )
-slicer3_install_plugins(${CLP_MODULE}Lib)
+#slicer3_install_plugins(${CLP_MODULE}Lib)
