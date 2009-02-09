@@ -1724,7 +1724,8 @@ void vtkSlicerFiducialsGUI::UpdateElement(int row, int col, char * str)
                 vtkErrorMacro ("UpdateElement: ERROR: No Fiducial List, add one first!\n");
                 return;
             }
-        
+            // save list for undo
+            this->MRMLScene->SaveStateForUndo(activeFiducialListNode);
             // now update the requested value
             if (col == this->NameColumn)
             {
