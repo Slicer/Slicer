@@ -1,5 +1,6 @@
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
+#include "vtkTriangleFilter.h"
 #include "vtkMassProperties.h"
 #include "vtkPolyData.h"
 #include "vtkPointData.h"
@@ -39,7 +40,9 @@ vtkSlicerModelInfoWidget::vtkSlicerModelInfoWidget ( )
   
   this->FileNameEntry = NULL;
 
+  this->Triangles = vtkTriangleFilter::New();
   this->MassProps = vtkMassProperties::New();
+  this->MassProps->SetInput( this->Triangles->GetOutput() );
 
   this->UpdatingFromMRML = 0;
 }
@@ -96,6 +99,7 @@ vtkSlicerModelInfoWidget::~vtkSlicerModelInfoWidget ( )
     vtkSetAndObserveMRMLNodeMacro(this->ModelNode, NULL);
     }
 
+  this->Triangles->Delete();
   this->MassProps->Delete();
 }
 
@@ -218,7 +222,7 @@ void vtkSlicerModelInfoWidget::UpdateWidgetFromMRML ()
     vtkPolyData *poly = modelNode->GetPolyData();
     if (poly)
       {
-      this->MassProps->SetInput(poly);
+      this->Triangles->SetInput(poly);
       this->MassProps->Update();
       this->AreaEntry->GetWidget()->SetValueAsDouble(this->MassProps->GetSurfaceArea());
       this->VolumeEntry->GetWidget()->SetValueAsDouble(this->MassProps->GetVolume());
@@ -229,6 +233,16 @@ void vtkSlicerModelInfoWidget::UpdateWidgetFromMRML ()
       this->NumCellScalarsEntry->GetWidget()->SetValueAsInt(poly->GetCellData()->GetNumberOfComponents());
 
       }
+    }
+  else
+    {
+    this->AreaEntry->GetWidget()->SetValueAsDouble(0.);
+    this->VolumeEntry->GetWidget()->SetValueAsDouble(0.);
+
+    this->NumCellsEntry->GetWidget()->SetValueAsInt(0);
+    this->NumPointsEntry->GetWidget()->SetValueAsInt(0);
+    this->NumPointScalarsEntry->GetWidget()->SetValueAsInt(0);
+    this->NumCellScalarsEntry->GetWidget()->SetValueAsInt(0);
     }
 
   vtkMRMLStorageNode *storageNode = this->GetModelStorageNode();

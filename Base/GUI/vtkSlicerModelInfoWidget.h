@@ -35,6 +35,7 @@
 
 class vtkKWPushButtonWithLabel;
 class vtkMassProperties;
+class vtkTriangleFilter;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelInfoWidget : public vtkSlicerWidget
 {
@@ -107,6 +108,7 @@ protected:
 
   vtkKWEntryWithLabel *FileNameEntry;
 
+  vtkTriangleFilter *Triangles;
   vtkMassProperties *MassProps;
 private:
 
