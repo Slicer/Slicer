@@ -432,6 +432,7 @@ class TkConsoleView(Tkinter.Text):
     return "break"
 
   def processHomePress(self,event):
+    self.mark_set(Tkinter.INSERT, self.line_start)
     return "break"
 
   def processTabPress(self,event):
