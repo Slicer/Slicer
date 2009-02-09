@@ -34,6 +34,7 @@ proc Usage { {msg ""} } {
     set msg "$msg\n   -u --update : does a cvs/svn update on each lib"
     set msg "$msg\n   --no-slicer-update : don't update slicer source (does not effect libs)"
     set msg "$msg\n   --build-dir : override default build directory"
+    set msg "$msg\n   --doc-dir : override default documentation directory"
     set msg "$msg\n   --version-patch : set the patch string for the build (used by installer)"
     set msg "$msg\n                   : default: version-patch is the current date"
     set msg "$msg\n   --tag : same as version-patch"
@@ -52,6 +53,7 @@ set ::GETBUILDTEST(clean) "false"
 set ::GETBUILDTEST(update) ""
 set ::GETBUILDTEST(no-slicer-update) ""
 set ::GETBUILDTEST(build-dir) ""
+set ::GETBUILDTEST(doc-dir) ""
 set ::GETBUILDTEST(release) ""
 set ::GETBUILDTEST(test-type) "Experimental"
 set ::GETBUILDTEST(version-patch) ""
@@ -95,6 +97,14 @@ for {set i 0} {$i < $argc} {incr i} {
                 Usage "Missing build-dir argument"
             } else {
                 set ::GETBUILDTEST(build-dir) [lindex $argv $i]
+            }
+        }
+        "--doc-dir" {
+            incr i
+            if { $i == $argc } {
+                Usage "Missing doc-dir argument"
+            } else {
+                set ::GETBUILDTEST(doc-dir) [lindex $argv $i]
             }
         }
         "-t" -
@@ -237,15 +247,25 @@ if { $::GETBUILDTEST(build-dir) == ""} {
         # use an enviornment variables so slicer-variables.tcl can see them
         set ::env(Slicer3_LIB) $::Slicer3_HOME/../Slicer3-lib
         set ::env(Slicer3_BUILD) $::Slicer3_HOME/../Slicer3-build
-        # use an environment variable so doxygen can use it
-        set ::env(Slicer3_DOC) $::Slicer3_HOME/../Slicer3-doc
 } else {
         # use an enviornment variables so slicer-variables.tcl can see them
         set ::env(Slicer3_LIB) $::GETBUILDTEST(build-dir)/Slicer3-lib
         set ::env(Slicer3_BUILD) $::GETBUILDTEST(build-dir)/Slicer3-build
-        # use an environment variable so doxygen can use it
-        set ::env(Slicer3_DOC) $::GETBUILDTEST(build-dir)/Slicer3-doc
 }
+
+if { $::GETBUILDTEST(doc-dir) == ""} {
+    # check if there's an environment variable
+    if { [info exists ::env(Slicer3_DOC)] == 1 } {
+        set ::GETBUILDTEST(doc-dir) $::env(Slicer3_DOC)
+    } else {
+        # set an default value
+        set ::GETBUILDTEST(doc-dir)  $::Slicer3_HOME/../Slicer3-doc
+    }
+}
+# set an environment variable so doxygen can use it
+set ::env(Slicer3_DOC) $::GETBUILDTEST(doc-dir)
+
+
 set Slicer3_LIB $::env(Slicer3_LIB) 
 set Slicer3_BUILD $::env(Slicer3_BUILD) 
 
