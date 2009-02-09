@@ -862,7 +862,6 @@ void vtkChangeTrackerLogic::SaveVolumeForce(vtkSlicerApplication *app, vtkMRMLVo
  {
    char fileName[1024];
    this->SaveVolumeFileName(volNode,fileName);
-   cout << "vtkChangeTrackerLogic::SaveVolume: Saving File :" << fileName << endl;
    if (!volumesLogic->SaveArchetypeVolume( fileName, volNode ) )  {
      cout << "Error: Could no save file " << endl;
    }
