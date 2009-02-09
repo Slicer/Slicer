@@ -42,44 +42,23 @@ vtkChangeTrackerFirstScanStep::~vtkChangeTrackerFirstScanStep() {
 void vtkChangeTrackerFirstScanStep::UpdateMRML() 
 {
   vtkMRMLChangeTrackerNode* node = this->GetGUI()->GetNode();
-  if (!node) { return; }
+  if (!node) 
+    return; 
 
   if (this->VolumeMenuButton && this->VolumeMenuButton->GetSelected() ) 
   {
     node->SetScan1_Ref(this->VolumeMenuButton->GetSelected()->GetID());
     vtkMRMLVolumeNode *VolNode = vtkMRMLVolumeNode::SafeDownCast(this->VolumeMenuButton->GetSelected());
 
-    if (!VolNode && !VolNode->GetStorageNode() && !VolNode->GetStorageNode()->GetFileName()) {return; }    
+    if (!VolNode && !VolNode->GetStorageNode() && !VolNode->GetStorageNode()->GetFileName()) 
+      return;
 
-    char CMD[2024];
-    vtkSlicerApplication *application   = vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication());
-    std::string FilePath = vtksys::SystemTools::GetParentDirectory(VolNode->GetStorageNode()->GetFileName()) + "-TG";
-
-    // Check if it is a relative path !
-    sprintf(CMD,"file pathtype %s",FilePath.c_str()); 
-    if (strcmp(application->Script(CMD),"absolute")) {
-      FilePath = vtksys::SystemTools::GetParentDirectory(VolNode->GetScene()->GetURL()) + FilePath;
-    }
-
-    sprintf(CMD,"file normalize %s",FilePath.c_str()); 
-    FilePath = application->Script(CMD);
-
-    sprintf(CMD,"file isdirectory %s",FilePath.c_str()); 
-    if (!atoi(application->Script(CMD))) { 
-      sprintf(CMD,"file mkdir %s",FilePath.c_str()); 
-      application->Script(CMD); 
-    }
-    // Check if it path
-    sprintf(CMD,"file writable %s",FilePath.c_str());
-
-    if (!atoi(application->Script(CMD))) {
-      FilePath = application->GetTemporaryDirectory();
-    } 
-
-    if (!node->GetWorkingDir() || strcmp(FilePath.c_str(),node->GetWorkingDir())) {
-        node->SetWorkingDir(FilePath.c_str());
-    }
-  
+    if(!node->GetWorkingDir())
+      {
+      vtkSlicerApplication *application   = vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication());
+      std::string FilePath = application->GetTemporaryDirectory();
+      node->SetWorkingDir(FilePath.c_str());
+      }
   }
 
   if (this->SecondVolumeMenuButton && this->SecondVolumeMenuButton->GetSelected() ) {
