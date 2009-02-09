@@ -363,8 +363,12 @@ int vtkIGTLToMRMLImage::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNod
   volumeNode->SetIJKToRASMatrix(rtimgTransform);
   rtimgTransform->Delete();
   volumeNode->Modified();
-  volumeNode->InvokeEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent);
 
+  // The following line is Necessary to update volume rendering
+  // in VolumeRenderingCuda (Suggested by Nicholas Herlambang)
+  volumeNode->GetImageData()->Modified();
+
+  volumeNode->InvokeEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent);
 
 //  if (lps) { // LPS coordinate
 //    vtkMatrix4x4* lpsToRas = vtkMatrix4x4::New();
