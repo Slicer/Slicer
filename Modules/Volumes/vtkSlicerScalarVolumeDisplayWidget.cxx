@@ -186,16 +186,38 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller
     if ( displayNode )
       {
       displayNode->DisableModifiedEventOn();
+      vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
+      vtkMRMLScalarVolumeNode *svolumeNode = NULL;
+      if (volumeNode)
+      {
+        svolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode);
+      }
 
-      if (displayNode->GetAutoWindowLevel() != this->WindowLevelThresholdEditor->GetAutoWindowLevel() ||
-        this->WindowLevelThresholdEditor->GetAutoWindowLevel())
+      if (displayNode->GetAutoWindowLevel() != this->WindowLevelThresholdEditor->GetAutoWindowLevel() )
         {
         // Auto is turned on
         // this will cause window/level recompute in the display node
         displayNode->SetAutoWindowLevel(this->WindowLevelThresholdEditor->GetAutoWindowLevel());
 
         //update sliders with recomputed values
-        this->WindowLevelThresholdEditor->SetWindowLevel(displayNode->GetWindow(), displayNode->GetLevel());
+        svolumeNode->CalculateScalarAutoLevels(displayNode);
+
+        this->WindowLevelThresholdEditor->SetWindowLevel(
+              displayNode->GetWindow(), displayNode->GetLevel() );
+        }
+
+      if ( this->WindowLevelThresholdEditor->GetThresholdType() == vtkKWWindowLevelThresholdEditor::ThresholdAuto &&
+           !displayNode->GetAutoThreshold())
+        {
+        // Auto is turned on
+        // this will cause window/level recompute in the display node
+        displayNode->SetAutoThreshold(1);
+
+        //update sliders with recomputed values
+        svolumeNode->CalculateScalarAutoLevels(displayNode);
+
+        this->WindowLevelThresholdEditor->SetThreshold(
+              displayNode->GetLowerThreshold(), displayNode->GetUpperThreshold() );
         }
 
       int thresholdType = this->WindowLevelThresholdEditor->GetThresholdType();
