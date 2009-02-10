@@ -407,8 +407,9 @@ void vtkVolumeRenderingCudaGUI::ProcessGUIEvents ( vtkObject *caller, unsigned l
 
   else if (caller == this->NS_ImageData)
     {
-      if(this->ImageData!=NULL){
-        this->ImageData->RemoveObservers(vtkCommand::ModifiedEvent, (vtkCommand*)this->MRMLCallbackCommand);
+      if(this->SelectedImageData!=NULL){
+       //this->ImageData->RemoveObservers(vtkCommand::ModifiedEvent, (vtkCommand*)this->MRMLCallbackCommand);
+       //this->SelectedImageData->RemoveObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand*)this->MRMLCallbackCommand );
         this->DeleteMapper();
       }
       
@@ -416,7 +417,8 @@ void vtkVolumeRenderingCudaGUI::ProcessGUIEvents ( vtkObject *caller, unsigned l
       if (this->SelectedImageData != NULL && this->SelectedImageData->GetImageData() != NULL)
         {
           this->ImageData=this->SelectedImageData->GetImageData();
-          this->ImageData->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand*)this->MRMLCallbackCommand );
+         this->SelectedImageData->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand*)this->MRMLCallbackCommand );
+          //this->ImageData->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand*)this->MRMLCallbackCommand );
           
           this->CreateMapper();
           this->SelectedImageData->GetImageData()->SetSpacing(this->SelectedImageData->GetSpacing());
@@ -555,10 +557,35 @@ void vtkVolumeRenderingCudaGUI::ProcessMRMLEvents ( vtkObject *caller, unsigned 
         this->ScheduleRender();
       }
     }
-  }
+  }/*
   else if(caller == this->ImageData){
     if(this->CudaMapper!=NULL){
       this->CudaMapper->SetInput(this->ImageData);
+      if(this->RenderScheduled==false){
+        this->RenderScheduled = true;
+        this->ScheduleRender();
+      }
+    }
+  }
+   */
+
+  else if(caller == this->SelectedImageData){
+    if(this->CudaMapper!=NULL){
+      this->CudaMapper->SetInput(this->SelectedImageData->GetImageData());
+      /*
+      if(this->SelectedImageData->GetParentTransformNode()){
+       vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
+       this->SelectedImageData->GetParentTransformNode()->GetMatrixTransformToWorld(matrix);
+       this->CudaMapper->SetTransformationMatrix(matrix);
+       matrix->Delete();
+      }
+      */
+
+      vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
+      this->SelectedImageData->GetIJKToRASMatrix(matrix);
+      this->CudaMapper->SetOrientationMatrix(matrix);
+      matrix->Delete();
+      
       if(this->RenderScheduled==false){
         this->RenderScheduled = true;
         this->ScheduleRender();
