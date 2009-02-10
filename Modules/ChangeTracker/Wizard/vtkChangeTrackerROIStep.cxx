@@ -1231,7 +1231,7 @@ void vtkChangeTrackerROIStep::UpdateROIRender()
     intensityMin = imgRange[0];
     intensityMax = imgRange[1];
     this->ROIIntensityMinMaxUpdate(volumeNode->GetImageData(), intensityMin, intensityMax);
-    this->SetRender_HighPassFilter((intensityMax+intensityMin)*.5, color0, color1);
+    this->SetRender_BandPassFilter((intensityMax+intensityMin)*.5, intensityMax-1, color0, color1);
 
     if(this->Render_RayCast_Mapper)
       {
