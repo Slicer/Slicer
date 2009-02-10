@@ -14,9 +14,6 @@
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkSlicerClipModelsWidget.h"
 
-//#include "vtkSlicerModelsLogic.h"
-//#include "vtkMRMLModelNode.h"
-
 #include "vtkKWLoadSaveButton.h"
 #include "vtkKWLoadSaveDialog.h"
 #include "vtkKWLoadSaveButtonWithLabel.h"
@@ -30,6 +27,8 @@ class vtkSlicerModelDisplayWidget;
 class vtkSlicerModelHierarchyWidget;
 class vtkSlicerModelInfoWidget;
 class vtkSlicerModuleCollapsibleFrame;
+//class vtkSlicerViewerWidget;
+//class vtkSlicerViewerInteractorStyle;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
 {
@@ -107,7 +106,22 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
     virtual void Enter ( ) { this->Enter(NULL); };
     virtual void Exit ( );
 
- protected:
+    // Description:
+    // Get/Set the main slicer viewer widget, for picking
+//    vtkGetObjectMacro(ViewerWidget, vtkSlicerViewerWidget);
+//    virtual void SetViewerWidget(vtkSlicerViewerWidget *viewerWidget);
+    
+    // Description:
+    // Get/Set the slicer interactorstyle, for picking
+//    vtkGetObjectMacro(InteractorStyle, vtkSlicerViewerInteractorStyle);
+//    virtual void SetInteractorStyle(vtkSlicerViewerInteractorStyle *interactorStyle);
+
+    // Description:
+    // subclass setting the application gui, so can set the viewer widget and
+    // interactor style
+//    virtual void Init ( );
+
+protected:
     vtkSlicerModelsGUI ( );
     virtual ~vtkSlicerModelsGUI ( );
 
@@ -119,8 +133,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
     vtkKWLoadSaveButtonWithLabel *LoadModelButton;
     vtkKWLoadSaveButtonWithLabel *LoadScalarsButton;
     vtkKWLoadSaveButtonWithLabel *LoadModelDirectoryButton;
-    vtkKWLoadSaveButton *SaveModelButton;
-    vtkSlicerNodeSelectorWidget* ModelSelectorWidget;
     vtkSlicerNodeSelectorWidget* ModelDisplaySelectorWidget;
     vtkKWLabel *NACLabel;
     vtkKWLabel *NAMICLabel;
@@ -141,7 +153,15 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
 
     vtkSlicerModuleCollapsibleFrame *ModelDisplayFrame;
 
- private:
+    // Description:
+    // A pointer back to the viewer widget, useful for picking
+//    vtkSlicerViewerWidget *ViewerWidget;
+    
+    // Description:
+    // A pointer to the interactor style, useful for picking
+//    vtkSlicerViewerInteractorStyle *InteractorStyle;
+
+private:
     vtkSlicerModelsGUI ( const vtkSlicerModelsGUI& ); // Not implemented.
     void operator = ( const vtkSlicerModelsGUI& ); //Not implemented.
 };
