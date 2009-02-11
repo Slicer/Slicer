@@ -31,3 +31,31 @@ install(
   DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}
   )
 
+
+# --------------------------------------------------------------------------
+# Testing
+
+if(BUILD_TESTING)
+  add_test(ModelIntoLabelVolumeTest ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --no-splash --script ${CMAKE_CURRENT_SOURCE_DIR}/Testing/ModelIntoLabelVolumeTest.tcl)
+endif(BUILD_TESTING)
+
+# --------------------------------------------------------------------------
+# Install the testing data
+
+file(GLOB_RECURSE TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.tcl")
+
+foreach(file 
+    ${TCLFILES}
+    )
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/${file}
+    COPYONLY
+    )
+endforeach(file) 
+
+install(DIRECTORY
+  Testing/TestData
+  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Testing COMPONENT Development
+  PATTERN ".svn" EXCLUDE
+  )
