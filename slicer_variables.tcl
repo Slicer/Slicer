@@ -153,8 +153,9 @@ if {$::env(BUILD) == $::WINDOWS} {
 } else {
   set ::USE_PYTHON "ON"
 }
+
 # CMake option for numerical Python, only matters if Python is on
-set ::USE_NUMPY "ON"
+set ::USE_NUMPY "OFF"
 # getbuildtest option for SCIPY - also build support libraries (blas and lapack) needed for scipy
 # - should be off except for experimentation (does not work on all plaftorms - requires fortran)
 # - should be "true" or "false"
@@ -307,11 +308,15 @@ switch $::tcl_platform(os) {
         if { $::USE_SYSTEM_PYTHON } {
           error "need to define system python path for $::tcl_platform(os)"
         }
-        set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python.exe
-        set ::PYTHON_LIB $::PYTHON_BIN_DIR/Libs/python25.lib
+        #set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python.exe
+        #set ::PYTHON_LIB $::PYTHON_BIN_DIR/Libs/python25.lib
+        set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/PCbuild/python.exe
+        set ::PYTHON_LIB $::PYTHON_BIN_DIR/PCbuild/python25.lib
+
         set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include
+
         set ::NETLIB_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/numpy/core/numeric.pyc
-        set ::NUMPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/numpy/core/numeric.pyc
+        set ::NUMPY_TEST_FILE $::PYTHON_BIN_DIR/lib/site-packages/numpy/core/numeric.pyc
         set ::SCIPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/scipy/version.pyc
         set ::VTK_TEST_FILE $::VTK_DIR/bin/$::VTK_BUILD_TYPE/vtk.exe
         set ::KWWidgets_TEST_FILE $::KWWidgets_BUILD_DIR/bin/$::env(VTK_BUILD_SUBDIR)/KWWidgets.lib
@@ -420,6 +425,7 @@ switch $::tcl_platform(os) {
             set ::GENERATOR "Visual Studio 7 .NET 2003" 
             set ::MAKE "c:/Program\ Files/Microsoft\ Visual\ Studio\ .NET 2003/Common7/IDE/devenv"
             set ::COMPILER_PATH "c:/Program\ Files/Microsoft\ Visual\ Studio\ .NET 2003/Vc7/bin"
+            set ::MSSDK_PATH "C:\Program Files\Microsoft Visual Studio .NET 2003\Vc7\PlatformSDK"
         }
 
         #
@@ -432,6 +438,7 @@ switch $::tcl_platform(os) {
             set ::GENERATOR "Visual Studio 8 2005" 
             set ::MAKE "c:/Program Files/Microsoft Visual Studio 8/Common7/IDE/VCExpress.exe"
             set ::COMPILER_PATH "c:/Program Files/Microsoft Visual Studio 8/VC/bin"
+            error "*****\n MSSDK_PATH value not known for this compiler - \nLook at settings for Visual Studio 7.1 and 2008 for possible locations of the SDK include and library files.  \ncontact slicer-devel@bwh.harvard.edu for more instructions or to report correct path for this compiler."
         }
 
 
@@ -439,6 +446,7 @@ switch $::tcl_platform(os) {
             set ::GENERATOR "Visual Studio 8 2005" 
             set ::MAKE "c:/Program Files/Microsoft Visual Studio 8/Common7/IDE/devenv.exe"
             set ::COMPILER_PATH "c:/Program Files/Microsoft Visual Studio 8/VC/bin"
+            error "*****\n MSSDK_PATH value not known for this compiler - \nLook at settings for Visual Studio 7.1 and 2008 for possible locations of the SDK include and library files.  \ncontact slicer-devel@bwh.harvard.edu for more instructions or to report correct path for this compiler."
         }
 
         if { [file exists "c:/Program Files (x86)/Microsoft Visual Studio 8/Common7/IDE/devenv.exe"] } {
@@ -446,6 +454,7 @@ switch $::tcl_platform(os) {
             set ::GENERATOR "Visual Studio 8 2005"   ;# do NOT use the 64 bit target
             set ::MAKE "c:/Program Files (x86)/Microsoft Visual Studio 8/Common7/IDE/devenv.exe"
             set ::COMPILER_PATH "c:/Program Files (x86)/Microsoft Visual Studio 8/VC/bin"
+            error "*****\n MSSDK_PATH value not known for this compiler - \nLook at settings for Visual Studio 7.1 and 2008 for possible locations of the SDK include and library files.  \ncontact slicer-devel@bwh.harvard.edu for more instructions or to report correct path for this compiler."
         }
         #
         ## for Visual Studio 9
@@ -453,13 +462,14 @@ switch $::tcl_platform(os) {
             set ::GENERATOR "Visual Studio 9 2008" 
             set ::MAKE "c:/Program Files/Microsoft Visual Studio 9.0/Common7/IDE/VCExpress.exe"
             set ::COMPILER_PATH "c:/Program Files/Microsoft Visual Studio 9.0/VC/bin"
-        
+            set ::MSSDK_PATH "c:/Program Files/Microsoft SDKs/Windows/v6.0A"
         }
 
         if { [file exists "c:/Program Files (x86)/Microsoft Visual Studio 9.0/Common7/IDE/devenv.exe"] } {
             set ::GENERATOR "Visual Studio 9 2008"
             set ::MAKE "c:/Program Files (x86)/Microsoft Visual Studio 9.0/Common7/IDE/devenv.exe"
             set ::COMPILER_PATH "c:/Program Files (x86)/Microsoft Visual Studio 9.0/VC/bin"
+            set ::MSSDK_PATH "c:/Program Files/Microsoft SDKs/Windows/v6.0A"
         }
 
 
@@ -467,6 +477,7 @@ switch $::tcl_platform(os) {
             set ::GENERATOR "Visual Studio 9 2008"
             set ::MAKE "c:/Program Files/Microsoft Visual Studio 9.0/Common7/IDE/devenv.exe"
             set ::COMPILER_PATH "c:/Program Files/Microsoft Visual Studio 9.0/VC/bin"
+            set ::MSSDK_PATH "c:/Program Files/Microsoft SDKs/Windows/v6.0A"
         }
 
         set ::COMPILER "cl"

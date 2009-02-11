@@ -32,6 +32,9 @@ set(include_dirs
 if(LoadableModule_USE_PYTHON)
   # Python requires a pointer to the Slicer Application
   set(include_dirs ${include_dirs} ${PYTHON_INCLUDE_PATH})
+  if(WIN32)
+    set(include_dirs ${include_dirs} ${PYTHON_INCLUDE_PATH}/../PC)
+  endif(WIN32)
 endif(LoadableModule_USE_PYTHON)
 
 include_directories(${include_dirs})

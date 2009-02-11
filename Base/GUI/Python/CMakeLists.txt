@@ -15,6 +15,10 @@ include_directories(
   ${SlicerBase_BINARY_DIR}
   )
 
+if(WIN32)
+  include_directories(${PYTHON_INCLUDE_PATH}/../PC)
+endif(WIN32)
+
 if(Slicer3_USE_NUMPY)
   include_directories(
     ${PYTHON_NUMPY}

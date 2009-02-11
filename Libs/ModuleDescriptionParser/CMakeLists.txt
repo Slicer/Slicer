@@ -28,6 +28,9 @@ set(include_dirs
 
 if(ModuleDescriptionParser_USE_PYTHON)
   set(include_dirs ${include_dirs} ${PYTHON_INCLUDE_PATH})
+  if(WIN32)
+    set(include_dirs ${include_dirs} ${PYTHON_INCLUDE_PATH}/../PC)
+  endif(WIN32)
 endif(ModuleDescriptionParser_USE_PYTHON)
 
 include_directories(${include_dirs})

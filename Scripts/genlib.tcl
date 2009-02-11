@@ -181,6 +181,17 @@ proc runcmd {args} {
     } 
 }
 
+# helper proc to edit a file in place (cross platform)
+proc replaceStringInFile {fileName oldString newString} {
+  set fp [open $fileName "r"]
+  set contents [read $fp]
+  close $fp
+  regsub -all $oldString $contents $newString contents
+  set fp [open $fileName "w"]
+  puts $fp $contents
+  close $fp
+}
+
 
 ################################################################################
 # First, set up the directory
@@ -492,14 +503,34 @@ if { [BuildThis $::BLT_TEST_FILE "blt"] == 1 } {
 #
 
 if {  [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [string tolower $::USE_PYTHON] == "on" } {
-
-    file mkdir $::Slicer3_LIB/python
-    file mkdir $::Slicer3_LIB/python-build
-    cd $::Slicer3_LIB
-
     if { $isWindows } {
-      runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Binaries/Windows/python-build python-build
+
+      file mkdir $::Slicer3_LIB/python
+      cd $::Slicer3_LIB
+
+      runcmd $::SVN co $::PYTHON_TAG python-build
+      cd $Slicer3_LIB/python-build
+
+      # point the tkinter build file to the slicer tcl-build 
+      replaceStringInFile "PCbuild/_tkinter.vcproj" "tcltk" "tcl-build"
+
+      runcmd $::MAKE PCbuild/pcbuild.sln /Upgrade
+      runcmd $::MAKE PCbuild/pcbuild.sln /out buildlog.txt /build Release
+
+      # fix distutils to ignore it's hardcoded python version info
+      replaceStringInFile Lib/distutils/msvccompiler.py "raise DistutilsPlatformError," "print"
+
+      
+      # TODO: copy the lib so that numpy and slicer can find it easily
+      # - perhaps we need an installer step here
+      file copy -force $::Slicer3_LIB/python-build/PCbuild/python25.lib $::Slicer3_LIB/python-build/Lib/python25.lib 
+
     } else {
+
+        file mkdir $::Slicer3_LIB/python
+        file mkdir $::Slicer3_LIB/python-build
+        cd $::Slicer3_LIB
+
         cd $Slicer3_LIB/python
         runcmd $::SVN co $::PYTHON_TAG
         cd $Slicer3_LIB/python/release25-maint
@@ -512,6 +543,7 @@ if {  [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [stri
         runcmd ./configure --prefix=$Slicer3_LIB/python-build --with-tcl=$Slicer3_LIB/tcl-build --enable-shared
         eval runcmd $::MAKE
         puts [catch "eval runcmd $::SERIAL_MAKE install" res] ;# try twice - it probably fails first time...
+
         if { $isDarwin } {
             # Special Slicer hack to build and install the .dylib
             file mkdir $::Slicer3_LIB/python-build/lib/
@@ -546,7 +578,7 @@ if { [BuildThis $::NETLIB_TEST_FILE "netlib"] && !$::USE_SYSTEM_PYTHON && [strin
     runcmd $::SVN co $::BLAS_TAG BLAS
 
     if { $isWindows } {
-        # windows binary already checked out
+        # don't build these - they won't work here
     } else {
 
         cd $::Slicer3_LIB/netlib-build/BLAS-build
@@ -614,7 +646,33 @@ if {  [BuildThis $::NUMPY_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [strin
     }
 
     if { $isWindows } {
-        # windows binary already checked out
+
+        # prepare the environment for numpy build script
+        regsub -all ":" [file dirname $::MAKE] "" devenvdir
+        regsub -all ":" $::COMPILER_PATH "" vcbindir
+        set ::env(PATH) /cygdrive/$devenvdir:/cygdrive/$vcbindir:$::env(PATH)
+        set ::env(PATH) $::Slicer3_LIB/python-build/PCbuild:$::env(PATH)
+        set ::env(INCLUDE) [file dirname $::COMPILER_PATH]/include
+        set ::env(INCLUDE) $::MSSDK_PATH/Include\;$::env(INCLUDE)
+        set ::env(LIB) $::MSSDK_PATH/Lib\;[file dirname $::COMPILER_PATH]/lib
+
+        cd $::Slicer3_LIB/python/numpy
+        runcmd $::Slicer3_LIB/python-build/PCbuild/python.exe ./setup.py --verbose install
+
+        # numpy dlls do not have embeded manifests by default, need to add them here
+        # - only required for newer versions of visual studio.  Assume that
+        #   if the mt command doesn't exists, there are no manifests
+        set mt $::MSSDK_PATH/Bin/mt.exe
+        if { [file exists $mt] } {
+          set libprefix $::Slicer3_LIB/python-build/Lib/site-packages/numpy
+          foreach lib {core fft lib linalg numarray random} {
+            set pyds [glob -nocomplain $libprefix/$lib/*.pyd]
+            foreach pyd $pyds {
+              runcmd $mt -manifest $pyd.manifest -outputresource:$pyd\;2
+            }
+          }
+        }
+
     } else {
         if { $isDarwin } {
             if { ![info exists ::env(DYLD_LIBRARY_PATH)] } { set ::env(DYLD_LIBRARY_PATH) "" }
@@ -764,7 +822,7 @@ if { [BuildThis $::VTK_TEST_FILE "vtk"] == 1 } {
         if { $MSVC6 } {
             runcmd $::MAKE VTK.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
         } else {
-            runcmd $::MAKE VTK.SLN /build  $::VTK_BUILD_TYPE
+            runcmd $::MAKE VTK.SLN /out buildlog.txt /build  $::VTK_BUILD_TYPE
         }
       } else {
         eval runcmd $::MAKE 
@@ -813,7 +871,7 @@ if { [BuildThis $::KWWidgets_TEST_FILE "kwwidgets"] == 1 } {
         if { $MSVC6 } {
             runcmd $::MAKE KWWidgets.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
         } else {
-            runcmd $::MAKE KWWidgets.SLN /build  $::VTK_BUILD_TYPE
+            runcmd $::MAKE KWWidgets.SLN /out buildlog.txt /build  $::VTK_BUILD_TYPE
         }
       } else {
         eval runcmd $::MAKE 
@@ -870,7 +928,7 @@ if { [BuildThis $::ITK_TEST_FILE "itk"] == 1 } {
         if { $MSVC6 } {
             runcmd $::MAKE ITK.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
         } else {
-            runcmd $::MAKE ITK.SLN /build  $::VTK_BUILD_TYPE
+            runcmd $::MAKE ITK.SLN /out buildlog.txt /build  $::VTK_BUILD_TYPE
         }
       } else {
         eval runcmd $::MAKE 
@@ -880,9 +938,7 @@ if { [BuildThis $::ITK_TEST_FILE "itk"] == 1 } {
     set fp1 [open "$Slicer3_LIB/Insight-build/Utilities/nifti/niftilib/cmake_install.cmake" r]
     set fp2 [open "$Slicer3_LIB/Insight-build/Utilities/nifti/znzlib/cmake_install.cmake" r]
     set data1 [read $fp1]
-#    puts "data1 is $data1"
     set data2 [read $fp2]
-#    puts "data2 is $data2"
 
     close $fp1
     close $fp2
@@ -896,9 +952,7 @@ if { [BuildThis $::ITK_TEST_FILE "itk"] == 1 } {
     set fw2 [open "$Slicer3_LIB/Insight-build/Utilities/nifti/znzlib/cmake_install.cmake" w]
 
     puts -nonewline $fw1 $data1
-#    puts "data1out is $data1"
     puts -nonewline $fw2 $data2
-#    puts "data2out is $data2"
  
     close $fw1
     close $fw2
@@ -973,9 +1027,9 @@ if { [BuildThis $::Teem_TEST_FILE "teem"] == 1 } {
             runcmd $::MAKE teem.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
         } else {
           if { $::GENLIB(test-type) == "" } {
-            runcmd $::MAKE teem.SLN /build  $::VTK_BUILD_TYPE
+            runcmd $::MAKE teem.SLN /out buildlog.txt /build  $::VTK_BUILD_TYPE
           } else {
-            runcmd $::MAKE teem.SLN /build  $::VTK_BUILD_TYPE
+            runcmd $::MAKE teem.SLN /out buildlog.txt /build  $::VTK_BUILD_TYPE
 
             # - only Release mode is being built by ctest in spite of explicit request for debug...
             # running ctest through visual studio is broken in cmake2.4, so run ctest directly
@@ -1040,7 +1094,7 @@ if { [BuildThis $::OPENIGTLINK_TEST_FILE "openigtlink"] == 1 && [string tolower 
         if { $MSVC6 } {
             runcmd $::MAKE OpenIGTLink.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
         } else {
-            runcmd $::MAKE OpenIGTLink.SLN /build  $::VTK_BUILD_TYPE
+            runcmd $::MAKE OpenIGTLink.SLN /out buildlog.txt /build  $::VTK_BUILD_TYPE
         }
       } else {
         # Running this cmake again will populate those CMake variables 
@@ -1084,7 +1138,7 @@ if { ![file exists $::BatchMake_TEST_FILE] || $::GENLIB(update) } {
         if { $MSVC6 } {
             runcmd $::MAKE BatchMake.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
         } else {
-            runcmd $::MAKE BatchMake.SLN /build  $::VTK_BUILD_TYPE
+            runcmd $::MAKE BatchMake.SLN /out buildlog.txt /build  $::VTK_BUILD_TYPE
         }
     } else {
         eval runcmd $::MAKE
@@ -1130,7 +1184,7 @@ if {$isSolaris} {
         if { $MSVC6 } {
             runcmd $::MAKE SLICERLIBCURL.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
         } else {
-            runcmd $::MAKE SLICERLIBCURL.SLN /build  $::VTK_BUILD_TYPE
+            runcmd $::MAKE SLICERLIBCURL.SLN /out buildlog.txt /build  $::VTK_BUILD_TYPE
         }
       } else {
         eval runcmd $::MAKE

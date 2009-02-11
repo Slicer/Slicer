@@ -188,6 +188,9 @@ install(TARGETS ${lib_name}
 
 if(Slicer3_USE_PYTHON AND PYTHON_INCLUDE_PATH)
   include_directories(${PYTHON_INCLUDE_PATH})
+  if(WIN32)
+    include_directories(${PYTHON_INCLUDE_PATH}/../PC)
+  endif(WIN32)
   if(WIN32 AND PYTHON_DEBUG_LIBRARIES)
     target_link_libraries(${lib_name}
       debug ${PYTHON_DEBUG_LIBRARIES}

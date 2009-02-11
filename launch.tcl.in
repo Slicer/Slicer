@@ -226,7 +226,7 @@ if { $installed } {
   set ::env(TCL_LIBRARY)        "$::env(TCL_DIR)/lib/tcl@TCL_TK_VERSION_DOT@"
 
   if {$::env(BUILD) == $::WINDOWS} {
-    set ::env(PYTHON_DIR)         [file normalize [file dirname "@PYTHON_INCLUDE_PATH@"]]
+    set ::env(PYTHON_DIR)         [file normalize [file dirname "@PYTHON_INCLUDE_PATH@"]/PCbuild]
   } else {
     set ::env(PYTHON_DIR)         [file normalize [file dirname [file dirname "@PYTHON_INCLUDE_PATH@"]]]
   }
@@ -493,6 +493,7 @@ proc launch_SetPaths {} {
     #
     if {$::env(BUILD) == $::WINDOWS} {
       set SEP ";"
+      set ::env(PYTHON_DIR) "$::env(PYTHON_DIR)/.."
     } else {
       set SEP ":"
     }
