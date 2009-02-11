@@ -99,33 +99,34 @@ vtkMRMLROINode::~vtkMRMLROINode()
 void vtkMRMLROINode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes not equal to their defaults
-  //Superclass::WriteXML(of, nIndent);
+  Superclass::WriteXML(of, nIndent);
 
-  //vtkIndent indent(nIndent);
+  vtkIndent indent(nIndent);
 
   if (this->ID != NULL) 
     {
-    of <<  " ROINodeID " << this->ID;
+    of << indent << " ID=\"" << this->ID << "\"";
     }
   if (this->VolumeNodeID != NULL)
     {
-    of << " VolumeNodeID " << this->VolumeNodeID;
+    of << indent << " VolumeNodeID=\"" << this->VolumeNodeID << "\"";
     }
   if (this->LabelText != NULL)
     {
-    of << " Labeltext " << this->LabelText;
+    of << indent << " LabelText=\"" << this->LabelText << "\"";
     }
 
-  of <<  " XYZ " 
-    << this->XYZ[0] << " " << this->XYZ[1] << " " << this->XYZ[2];
+  of << indent << " XYZ=\"" 
+    << this->XYZ[0] << " " << this->XYZ[1] << " " << this->XYZ[2] << "\"";
 
-  of <<  " RadiusXYZ " 
-    << this->RadiusXYZ[0] << " " << this->RadiusXYZ[1] << " " << this->RadiusXYZ[2];
-  of << " Selected " << this->Selected;
+  of << indent << " RadiusXYZ=\"" 
+    << this->RadiusXYZ[0] << " " << this->RadiusXYZ[1] << " " << this->RadiusXYZ[2] << "\"";
 
-  of << " visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
+  of << indent << " Selected=\"" << (this->Selected ? "true" : "false") << "\"";
 
-  of << " interactiveMode=\"" << (this->InteractiveMode ? "true" : "false") << "\"";
+  of << indent << " Visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
+
+  of << indent << " InteractiveMode=\"" << (this->InteractiveMode ? "true" : "false") << "\"";
 
 
   return;
@@ -164,11 +165,16 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
         this->RadiusXYZ[i] = val;
         }
       }
-    if (!strcmp(attName, "Selected")) 
+    if (!strcmp(attName, "Selected"))       
       {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->Selected;
+      if (!strcmp(attValue,"true")) 
+        {
+        this->Selected = 1;
+        }
+      else
+        {
+        this->Selected = 0;
+        }
       }
     else if (!strcmp(attName, "ROINodeID")) 
       {
@@ -182,7 +188,7 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
       {
       this->SetLabelText(attValue);
       }
-    else if (!strcmp(attName, "visibility")) 
+    else if (!strcmp(attName, "Visibility")) 
       {
       if (!strcmp(attValue,"true")) 
         {
@@ -193,7 +199,7 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
         this->Visibility = 0;
         }
       }
-    else if (!strcmp(attName, "interactiveMode")) 
+    else if (!strcmp(attName, "InteractiveMode")) 
       {
       if (!strcmp(attValue,"true")) 
         {
