@@ -436,8 +436,8 @@ add_test(${CLP}Test ${Slicer3_EXE} --launch ${CLP}Test
 # DicomToNrrdConverter tests
 add_test(DicomToNrrdConverterTest ${Slicer3_EXE} --launch DicomToNrrdConverterTest
   DicomToNrrdConverterTest
-    ${TEST_DATA}/CTHeadAxialDicom
-    ${TEMP}/CTHeadAxialFromDicom.nhdr
+    ${TEST_DATA}/DWIDicom
+    ${TEMP}/DWIDicom.nhdr
   )
 
 set (CLP DicomToNrrdConverter)
