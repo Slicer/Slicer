@@ -318,9 +318,16 @@ if { ![file exists $Slicer3_BUILD] } {
     file mkdir $Slicer3_BUILD
 }
 
-if { $::GETBUILDTEST(doxy) && ![file exists $::env(Slicer3_DOC)] } {
-    puts "Making documentation directory  $::env(Slicer3_DOC)"
-    file mkdir $::env(Slicer3_DOC)
+if { $::GETBUILDTEST(doxy) } {
+    if {[file exists $::env(Slicer3_DOC)] } {
+        # force removal of the old dir
+        puts "Clearing out old documentation directory $::env(Slicer3_DOC)"
+        file delete -force  $::env(Slicer3_DOC)
+    }
+    if {![file exists $::env(Slicer3_DOC)] } {
+        puts "Making documentation directory  $::env(Slicer3_DOC)"
+        file mkdir $::env(Slicer3_DOC)
+    }
 }
 
 
