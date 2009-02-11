@@ -42,7 +42,7 @@ class VTK_CHANGETRACKER_EXPORT vtkMRMLChangeTrackerNode : public vtkMRMLNode
 
   // Description:
   // Get unique node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "ChangeTracker";};
+  virtual const char* GetNodeTagName() {return "TGParameters";};
 
   // ------------------------------
   // -- First Step 
