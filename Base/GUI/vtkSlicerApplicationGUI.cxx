@@ -1443,11 +1443,10 @@ void vtkSlicerApplicationGUI::PythonCommand ( char *cmd )
     (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary());
   if ( d == NULL )
     {
-    vtkSlicerApplication::GetInstance()->RequestDisplayMessage ( "Error", "Failed to startup python interpreter: dictionary null" );
+    vtkSlicerApplication::GetInstance()->RequestDisplayMessage ( "Error", "Failed to startup python interpreter (command): dictionary null" );
     return;
     }
     
-  /* not used (because it didn't work).  but how to make it work?
   std::string cmdString =  std::string ( "import sys;\n" );
               cmdString += std::string ( "try:\n" );
               cmdString += std::string (    cmd ) + std::string ( ";\n" );
@@ -1456,18 +1455,7 @@ void vtkSlicerApplicationGUI::PythonCommand ( char *cmd )
               cmdString += std::string ( "sys.stdout.flush();\n" );
               cmdString += std::string ( "sys.stderr.flush();\n" );
 
-  PyObject* v = PyRun_StringFlags ( cmdString.c_str(),
-                                    Py_file_input,
-                                    d,
-                                    d,
-                                    NULL);
-  */
-
-  PyObject* v = PyRun_StringFlags ( cmd,
-                                    Py_file_input,
-                                    d,
-                                    d,
-                                    NULL);
+  PyObject* v = PyRun_String ( cmd, Py_file_input, d, d);
 
   if (v == NULL)
     {

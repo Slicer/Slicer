@@ -374,6 +374,49 @@ void vtkScriptedModuleGUI::TearDownGUI ( )
 }
 
 //---------------------------------------------------------------------------
+void vtkScriptedModuleGUI::Invoke (char* method, char* args ) 
+{
+  if (this->Language == vtkScriptedModuleGUI::Tcl)
+    {
+    if (this->GetApplication())
+      {
+      this->GetApplication()->Script("%sTearDownGUI %s", 
+        this->GetModuleName(), this->GetTclName());
+      }
+    }
+  else if (this->Language == vtkScriptedModuleGUI::Python)
+    {
+#ifdef Slicer3_USE_PYTHON
+    std::stringstream pythonCommand;
+
+    if (args == NULL) 
+      {
+      // no args, just plain method call
+      pythonCommand << "SlicerScriptedModuleInfo.Modules['" << this->GetModuleName() << "']['gui']." << method << "()\n";
+      }
+    else 
+      {
+      pythonCommand << "SlicerScriptedModuleInfo.Modules['" << this->GetModuleName() << "']['gui']." << method << "("<< args <<")\n";
+      }
+
+    if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
+      {
+      PyErr_Print();
+      }
+#endif
+    } 
+}
+
+//---------------------------------------------------------------------------
+void vtkScriptedModuleGUI::Invoke (char* method) 
+{
+
+  // no args
+  this->Invoke(method, NULL);
+
+}
+
+//---------------------------------------------------------------------------
 void vtkScriptedModuleGUI::Enter ( ) 
 {
   if (this->Language == vtkScriptedModuleGUI::Tcl)

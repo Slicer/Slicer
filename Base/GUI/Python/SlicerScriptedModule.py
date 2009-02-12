@@ -61,12 +61,12 @@ class SlicerScriptedModuleImporter(object):
             uiPanel.Create()
             slicer.Application.AddModuleGUI(gui)
             logic.Initialize()
-            gui.BuildGUI()
-            gui.AddGUIObservers()
             self.Modules[moduleName] = {
                 'logic': logic,
                 'gui': gui
                 }
+            gui.BuildGUI()
+            gui.AddGUIObservers()
         
     def TearDownAllGUI(self):
         for moduleName in self.Modules:

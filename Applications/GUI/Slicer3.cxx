@@ -1636,6 +1636,9 @@ int Slicer3_main(int argc, char *argv[])
 
 #ifdef Slicer3_USE_PYTHON
 
+  vtkSlicerApplication::GetInstance()->InitializePython(
+    (void*)PythonModule, (void*)PythonDictionary);
+
   if ( !NoModules )
     {
     slicerApp->SplashMessage("Initializing Python Scripted Modules...");
@@ -1844,10 +1847,6 @@ int Slicer3_main(int argc, char *argv[])
     {
     appGUI->SelectModule("Data");
     }
-#ifdef Slicer3_USE_PYTHON
-  vtkSlicerApplication::GetInstance()->InitializePython(
-    (void*)PythonModule, (void*)PythonDictionary);
-#endif    
 
   //
   // Run!  - this will return when the user exits

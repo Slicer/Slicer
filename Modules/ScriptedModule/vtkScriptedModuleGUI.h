@@ -79,6 +79,11 @@ public:
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, 
                                   void *callData);
   // Description:
+  // Calls the passed method of the parentClass
+  virtual void Invoke (char* method, char* args );
+  virtual void Invoke (char* method);// Description:
+
+  // Description:
   // Describe behavior at module startup and exit.
   virtual void Enter ( );
   virtual void Exit ( );
