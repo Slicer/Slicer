@@ -67,6 +67,7 @@ vtkMRMLVectorVolumeDisplayNode::vtkMRMLVectorVolumeDisplayNode()
  // - for now just pass on RGB
 
  this->ShiftScale->SetOutputScalarTypeToUnsignedChar();
+ this->ShiftScale->SetClampOverflow(1);
 
  this->ExtractIntensity->SetInput( this->RGBToHSI->GetOutput() );
  this->ExtractIntensity->SetComponents( 2 );
