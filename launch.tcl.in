@@ -122,7 +122,11 @@ if { $installed } {
 
   set ::env(TCL_DIR)            $::env(Slicer3_HOME)/lib/TclTk
   set ::env(TCL_LIBRARY)        "$::env(TCL_DIR)/lib/tcl@TCL_TK_VERSION_DOT@"
-  set ::env(PYTHON_DIR)         $::env(Slicer3_HOME)/lib/Python
+  if {$::env(BUILD) == $::WINDOWS} {
+    set ::env(PYTHON_DIR)         $::env(Slicer3_HOME)/lib/Python/PCbuild
+  } else {
+    set ::env(PYTHON_DIR)         $::env(Slicer3_HOME)/lib/Python
+  }
 
   set ::env(OpenIGTLink_DIR)      $::env(Slicer3_HOME)/lib/OpenIGTLink
   set ::env(OpenIGTLink_LIB_DIR)  $::env(Slicer3_HOME)/lib/OpenIGTLink
