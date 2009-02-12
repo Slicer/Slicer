@@ -487,7 +487,7 @@ if { $isWindows } {
         }
 
         if { $::GETBUILDTEST(pack) == "true" } {
-            runcmd $::MAKE Slicer3.SLN /build $::VTK_BUILD_TYPE /project PACKAGE
+            runcmd $::MAKE Slicer3.SLN /out packlog.txt /build $::VTK_BUILD_TYPE /project PACKAGE
         }
     }
 } else {
