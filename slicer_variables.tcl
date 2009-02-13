@@ -147,12 +147,8 @@ set ::SLICERLIBCURL_BUILD_DIR $::Slicer3_LIB/cmcurl-build
 
 # getbuildtest Option for build using system Python, should be "true" or "false"
 set ::USE_SYSTEM_PYTHON "false"
-# CMake option for Python, must be "off" on "on", default is "off"
-if {$::env(BUILD) == $::WINDOWS} {
-  set ::USE_PYTHON "OFF"
-} else {
-  set ::USE_PYTHON "ON"
-}
+# CMake option for Python, must be "OFF" on "ON", default is "ON"
+set ::USE_PYTHON "ON"
 
 # CMake option for numerical Python, only matters if Python is on
 set ::USE_NUMPY "OFF"
