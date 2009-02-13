@@ -330,7 +330,7 @@ void vtkChangeTrackerSegmentationStep::ThresholdRangeChangedCallback(double min 
 
   // 3D Render 
   this->ChangeRender_BandPassFilter(min,max);
-  //  applicationGUI->GetViewerWidget()->GetMainViewer()->RequestRender();
+  this->GetGUI()->GetApplicationGUI()->GetViewerWidget()->RequestRender();
 
 
   // set GUI  [$::slicer3::Application GetModuleGUIByName "ChangeTracker"]
