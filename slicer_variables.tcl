@@ -434,7 +434,7 @@ switch $::tcl_platform(os) {
             set ::GENERATOR "Visual Studio 8 2005" 
             set ::MAKE "c:/Program Files/Microsoft Visual Studio 8/Common7/IDE/VCExpress.exe"
             set ::COMPILER_PATH "c:/Program Files/Microsoft Visual Studio 8/VC/bin"
-            error "*****\n MSSDK_PATH value not known for this compiler - \nLook at settings for Visual Studio 7.1 and 2008 for possible locations of the SDK include and library files.  \ncontact slicer-devel@bwh.harvard.edu for more instructions or to report correct path for this compiler."
+            set ::MSSDK_PATH "C:\Program Files\Microsoft Platform SDK"
         }
 
 
@@ -442,7 +442,7 @@ switch $::tcl_platform(os) {
             set ::GENERATOR "Visual Studio 8 2005" 
             set ::MAKE "c:/Program Files/Microsoft Visual Studio 8/Common7/IDE/devenv.exe"
             set ::COMPILER_PATH "c:/Program Files/Microsoft Visual Studio 8/VC/bin"
-            error "*****\n MSSDK_PATH value not known for this compiler - \nLook at settings for Visual Studio 7.1 and 2008 for possible locations of the SDK include and library files.  \ncontact slicer-devel@bwh.harvard.edu for more instructions or to report correct path for this compiler."
+            set ::MSSDK_PATH "C:\Program Files\Microsoft Platform SDK"
         }
 
         if { [file exists "c:/Program Files (x86)/Microsoft Visual Studio 8/Common7/IDE/devenv.exe"] } {
@@ -450,7 +450,7 @@ switch $::tcl_platform(os) {
             set ::GENERATOR "Visual Studio 8 2005"   ;# do NOT use the 64 bit target
             set ::MAKE "c:/Program Files (x86)/Microsoft Visual Studio 8/Common7/IDE/devenv.exe"
             set ::COMPILER_PATH "c:/Program Files (x86)/Microsoft Visual Studio 8/VC/bin"
-            error "*****\n MSSDK_PATH value not known for this compiler - \nLook at settings for Visual Studio 7.1 and 2008 for possible locations of the SDK include and library files.  \ncontact slicer-devel@bwh.harvard.edu for more instructions or to report correct path for this compiler."
+            error "*****\n MSSDK_PATH value not known for this compiler - \nLook at settings for other Visual Studio 2005 configuration for possible locations of the SDK include and library files.  \ncontact slicer-devel@bwh.harvard.edu for more instructions or to report correct path for this compiler."
         }
         #
         ## for Visual Studio 9
