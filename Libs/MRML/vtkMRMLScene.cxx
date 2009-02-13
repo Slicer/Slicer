@@ -639,18 +639,19 @@ int vtkMRMLScene::Import()
       if (node->GetAddToScene())
         {
         node->UpdateScene(this);
-        if (this->GetErrorCode() == 1)
-          {
-          vtkErrorMacro("Import: error updating node " << node->GetID());
-          // TODO: figure out the best way to deal with an error (encountering
-          // it when fail to read a file), removing a node isn't quite right
-          // (nodes are still in the scene when save it later)
-          // this->RemoveNode(node);
-          // this->SetErrorCode(0);
-          }
         }
       }
-   
+
+    if (this->GetErrorCode() == 1)
+      {
+      //vtkErrorMacro("Import: error updating node " << node->GetID());
+      // TODO: figure out the best way to deal with an error (encountering
+      // it when fail to read a file), removing a node isn't quite right
+      // (nodes are still in the scene when save it later)
+      // this->RemoveNode(node);
+      // this->SetErrorCode(0);
+      }
+
     // send one NodeAddedEvent event per class
     std::map<std::string, vtkMRMLNode *>::iterator iter; 
     for(iter = nodesAddedByClass.begin(); iter != nodesAddedByClass.end(); iter++)
