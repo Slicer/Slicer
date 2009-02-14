@@ -1024,6 +1024,8 @@ void vtkChangeTrackerROIStep::MRMLUpdateROINodeFromROI()
   vtkMatrix4x4 *ijkToras = vtkMatrix4x4::New();
   vtkMRMLVolumeNode *volumeNode = 
     vtkMRMLVolumeNode::SafeDownCast(Node->GetScene()->GetNodeByID(Node->GetScan1_Ref()));
+  if(!volumeNode)
+    return;
   volumeNode->GetIJKToRASMatrix(ijkToras);
   pointIJK[0] = (double)center[0];
   pointIJK[1] = (double)center[1];
