@@ -55,6 +55,7 @@
 
 #include "itkIdentityTransform.h"
 #include "itkLinearInterpolateImageFunction.h"
+#include "itkWindowedSincInterpolateImageFunction.h"
 
 #include <string>
 #include "ResampleVolumeCLP.h"
@@ -76,7 +77,15 @@ template<class T> int DoIt( int argc, char * argv[], T )
   typedef itk::IdentityTransform< double, InputDimension >
     TransformType;
   typedef itk::LinearInterpolateImageFunction< InputImageType, double >
-    InterpolatorType;
+    LinearInterpolatorType;
+#define RADIUS 3
+
+  typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS, itk::Function::HammingWindowFunction<RADIUS> > HammingInterpolatorType;
+  typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS, itk::Function::CosineWindowFunction<RADIUS> > CosineInterpolatorType;
+  typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS, itk::Function::WelchWindowFunction<RADIUS> > WelchInterpolatorType;
+  typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS, itk::Function::LanczosWindowFunction<RADIUS> > LanczosInterpolatorType;
+  typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS, itk::Function::BlackmanWindowFunction<RADIUS> > BlackmanInterpolatorType;
+
   typedef itk::ResampleImageFilter< InputImageType, InputImageType >
     ResampleFilterType;
   typedef itk::ImageFileWriter< OutputImageType >
@@ -101,7 +110,12 @@ template<class T> int DoIt( int argc, char * argv[], T )
 
 ////////////////////////////////////////////////  
 // 2) Resample the series
-  typename InterpolatorType::Pointer interpolator = InterpolatorType::New();
+  typename LinearInterpolatorType::Pointer linearInterpolator = LinearInterpolatorType::New();
+  typename HammingInterpolatorType::Pointer hammingInterpolator = HammingInterpolatorType::New();
+  typename CosineInterpolatorType::Pointer cosineInterpolator = CosineInterpolatorType::New();
+  typename WelchInterpolatorType::Pointer welchInterpolator = WelchInterpolatorType::New();
+  typename LanczosInterpolatorType::Pointer lanczosInterpolator = LanczosInterpolatorType::New();
+  typename BlackmanInterpolatorType::Pointer blackmanInterpolator = BlackmanInterpolatorType::New();
 
   typename TransformType::Pointer transform = TransformType::New();
   transform->SetIdentity();
@@ -141,7 +155,35 @@ template<class T> int DoIt( int argc, char * argv[], T )
 
     resampler->SetInput( reader->GetOutput() );
     resampler->SetTransform( transform );
-    resampler->SetInterpolator( interpolator );
+    if (interpolationType == "linear")
+      {
+      resampler->SetInterpolator( linearInterpolator );
+      }
+    else if (interpolationType == "hammingWindow")
+      {
+      resampler->SetInterpolator( hammingInterpolator );
+      }
+    else if (interpolationType == "cosineWindow")
+      {
+      resampler->SetInterpolator( cosineInterpolator );
+      }
+    else if (interpolationType == "welchWindow")
+      {
+      resampler->SetInterpolator( welchInterpolator );
+      }
+    else if (interpolationType == "lanczosWindow")
+      {
+      resampler->SetInterpolator( lanczosInterpolator );
+      }
+    else if (interpolationType == "blackmanWindow")
+      {
+      resampler->SetInterpolator( blackmanInterpolator );
+      }
+    else
+      {
+      resampler->SetInterpolator( linearInterpolator );
+      }
+
     resampler->SetOutputOrigin ( reader->GetOutput()->GetOrigin());
     resampler->SetOutputSpacing ( outputSpacing );
     resampler->SetOutputDirection ( reader->GetOutput()->GetDirection());
