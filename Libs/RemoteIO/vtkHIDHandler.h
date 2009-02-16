@@ -21,9 +21,6 @@ class VTK_RemoteIO_EXPORT vtkHIDHandler : public vtkHTTPHandler
   vtkTypeRevisionMacro(vtkHIDHandler, vtkHTTPHandler);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  vtkGetStringMacro (HostName);
-  vtkSetStringMacro (HostName);
-
  // Description:
   // To prevent XND handler from capturing any non-xnd requests
   // that start with http://, this test will fail. The handler must be
@@ -46,7 +43,6 @@ class VTK_RemoteIO_EXPORT vtkHIDHandler : public vtkHTTPHandler
   virtual const char *QueryServer ( const char *uri, const char *destination);
 
  private:
-  char *HostName;
 
  protected:
   vtkHIDHandler();

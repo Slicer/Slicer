@@ -21,9 +21,6 @@ class VTK_RemoteIO_EXPORT vtkXNDHandler : public vtkHTTPHandler
   vtkTypeRevisionMacro(vtkXNDHandler, vtkHTTPHandler);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  vtkGetStringMacro (HostName);
-  vtkSetStringMacro (HostName);
-
   // Description:
   // To prevent XND handler from capturing any non-xnd requests
   // that start with http://, this test will fail. The handler must be
@@ -63,7 +60,6 @@ class VTK_RemoteIO_EXPORT vtkXNDHandler : public vtkHTTPHandler
   virtual int DeleteResource ( const char *uri, const char *temporaryResponseFileName); 
 
  private:
-  char *HostName;
 
  protected:
   vtkXNDHandler();

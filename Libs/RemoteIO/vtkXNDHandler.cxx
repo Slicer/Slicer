@@ -72,18 +72,12 @@ size_t xnd_ProgressCallback(FILE* outputFile, double dltotal, double dlnow, doub
 //----------------------------------------------------------------------------
 vtkXNDHandler::vtkXNDHandler()
 {
-  this->HostName = NULL;
 }
 
 
 //----------------------------------------------------------------------------
 vtkXNDHandler::~vtkXNDHandler()
 {
-  if ( this->HostName )
-    {
-    delete [] this->HostName;
-    this->HostName = NULL;
-    }
 }
 
 
@@ -306,14 +300,13 @@ int vtkXNDHandler::PostTag ( const char *svr, const char *label,
   FILE *responseFile = fopen(responseFileName, "wb");
   if (responseFile == NULL)
     {
-    vtkErrorMacro("PostMetadata: unable to open a local file caled " << responseFileName << " to write out to for capturing the uri");
+    vtkErrorMacro("PostTag: unable to open a local file caled " << responseFileName << " to write out to for capturing the uri");
     }
   else
     {
     // for windows
     curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEFUNCTION, NULL); // write_callback);
     curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEDATA, responseFile);
-    vtkWarningMacro("PostMetadata: writing error response to" << responseFileName << "\n");
     }
   
   CURLcode retval = curl_easy_perform(this->CurlHandle);
@@ -492,7 +485,6 @@ int vtkXNDHandler::DeleteResource ( const char *uri, const char *temporaryRespon
     // for windows
     curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEFUNCTION, NULL); // write_callback);
     curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEDATA, responseFile);
-    vtkWarningMacro("vtkXNDHandler::DeleteResource writing error response to" << responseFileName << "\n");
     }
   
   CURLcode retval = curl_easy_perform(this->CurlHandle);
