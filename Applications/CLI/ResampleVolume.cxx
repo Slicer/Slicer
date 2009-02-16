@@ -56,6 +56,7 @@
 #include "itkIdentityTransform.h"
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkNearestNeighborInterpolateImageFunction.h"
+#include "itkBSplineInterpolateImageFunction.h"
 #include "itkWindowedSincInterpolateImageFunction.h"
 
 #include <string>
@@ -81,6 +82,8 @@ template<class T> int DoIt( int argc, char * argv[], T )
     LinearInterpolatorType;
   typedef itk::NearestNeighborInterpolateImageFunction< InputImageType, double >
     NearestNeighborInterpolatorType;
+  typedef itk::BSplineInterpolateImageFunction< InputImageType, double >
+    BSplineInterpolatorType;
 #define RADIUS 3
 
   typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS, itk::Function::HammingWindowFunction<RADIUS> > HammingInterpolatorType;
@@ -115,6 +118,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
 // 2) Resample the series
   typename LinearInterpolatorType::Pointer linearInterpolator = LinearInterpolatorType::New();
   typename NearestNeighborInterpolatorType::Pointer nearestNeighborInterpolator = NearestNeighborInterpolatorType::New();
+  typename BSplineInterpolatorType::Pointer bsplineInterpolator = BSplineInterpolatorType::New();
   typename HammingInterpolatorType::Pointer hammingInterpolator = HammingInterpolatorType::New();
   typename CosineInterpolatorType::Pointer cosineInterpolator = CosineInterpolatorType::New();
   typename WelchInterpolatorType::Pointer welchInterpolator = WelchInterpolatorType::New();
@@ -166,6 +170,10 @@ template<class T> int DoIt( int argc, char * argv[], T )
     else if (interpolationType == "nearestNeighbor")
       {
       resampler->SetInterpolator( nearestNeighborInterpolator );
+      }
+    else if (interpolationType == "bspline")
+      {
+      resampler->SetInterpolator( bsplineInterpolator );
       }
     else if (interpolationType == "hamming")
       {
