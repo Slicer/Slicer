@@ -18,18 +18,21 @@ vtkCxxRevisionMacro(vtkTagTable, "$Revision: 1.9.12.1 $");
 vtkTagTable::vtkTagTable()
 {
   this->Name = NULL;
+  this->RestoreSelectionState = 0;
 }
 
 
 //----------------------------------------------------------------------------
 vtkTagTable::~vtkTagTable()
 {
+  this->RestoreSelectionState = 0;
   if ( this->Name )
     {
     delete [] this->Name;
     }
   this->TagTable.clear();
   this->TagSelectionTable.clear();
+
 }
 
 
@@ -40,8 +43,10 @@ void vtkTagTable::PrintSelf(ostream& os, vtkIndent indent)
   std::map <std::string, int>::iterator iter2;
   
   Superclass::PrintSelf ( os, indent );
-  
+
   os << indent << "Name = " << (this->GetName() == 0 ? "(none)" : this->GetName()) << "\n";
+
+  os << indent << "RestoreSelectionState = " << this->GetRestoreSelectionState() << "\n";
 
   iter = this->TagTable.begin();
 
@@ -128,6 +133,37 @@ void vtkTagTable::AddOrUpdateTag ( const char *attribute, const char *value, int
     }
 }
 
+
+
+//----------------------------------------------------------------------------
+void vtkTagTable::Copy( vtkTagTable *t)
+{
+  std::string att;
+  std::string val;
+  int selected;
+  if ( t != NULL )
+    {
+    this->ClearTagTable();
+    this->SetName ( t->GetName() );
+    for ( int i=0; i < t->GetNumberOfTags(); i++ )
+      {
+      att.clear();
+      val.clear();
+      att = t->GetTagAttribute(i);
+      val = t->GetTagValue(i);
+      selected = t->IsTagSelected ( att.c_str() );
+      this->AddUniqueTag ( att.c_str(), val.c_str() );
+      if ( selected )
+        {
+        this->SelectTag ( att.c_str() );
+        }
+      else
+        {
+        this->DeselectTag ( att.c_str() );
+        }
+      }
+    }
+}
 
 
 

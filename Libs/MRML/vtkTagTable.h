@@ -21,6 +21,9 @@ class VTK_MRML_EXPORT vtkTagTable : public vtkObject
   // Get the vtkTable that contains user-defined attribute/value pairs.
   vtkGetStringMacro ( Name );
   vtkSetStringMacro ( Name );
+
+  vtkGetMacro ( RestoreSelectionState, int);
+  vtkSetMacro ( RestoreSelectionState, int);
   
   // Description:
   // Method that sets up default and required tags for a service.
@@ -78,6 +81,9 @@ class VTK_MRML_EXPORT vtkTagTable : public vtkObject
   // Description:
   // Convenience method that returns the number of tags in TagTable.
   virtual int GetNumberOfTags ( );
+
+  // Description:
+  virtual void Copy( vtkTagTable *t);
   
   //BTX
   // describes attribute value pairs
@@ -88,6 +94,7 @@ class VTK_MRML_EXPORT vtkTagTable : public vtkObject
 
  private:
   char *Name;
+  int RestoreSelectionState;
 
  protected:
   vtkTagTable();
