@@ -128,6 +128,14 @@ void vtkMRMLScalarVolumeNode::Copy(vtkMRMLNode *anode)
 }
 
 //-----------------------------------------------------------
+void vtkMRMLScalarVolumeNode::UpdateScene(vtkMRMLScene *scene)
+{
+  Superclass::UpdateScene(scene);
+
+  this->CalculateAutoLevels();
+}
+
+//-----------------------------------------------------------
 void vtkMRMLScalarVolumeNode::CreateNoneNode(vtkMRMLScene *scene)
 {
   vtkMRMLScalarVolumeNode *n = vtkMRMLScalarVolumeNode::New();

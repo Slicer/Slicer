@@ -198,6 +198,7 @@ void vtkMRMLSceneSnapshotNode::UpdateSnapshotScene(vtkMRMLScene *)
       }
     }
 
+  /**
   // update nodes in the snapshot
   for (n=0; n<nnodesSanpshot; n++) 
     {
@@ -207,6 +208,7 @@ void vtkMRMLSceneSnapshotNode::UpdateSnapshotScene(vtkMRMLScene *)
       node->SetAddToSceneNoModify(1);
       }
     }
+    ***/
 }
 
 //----------------------------------------------------------------------------
@@ -236,6 +238,8 @@ void vtkMRMLSceneSnapshotNode::StoreScene()
       vtkMRMLNode *newNode = node->CreateNodeInstance();
       newNode->CopyWithoutModifiedEvent(node);
       newNode->SetScene(this->Nodes);
+      newNode->SetAddToSceneNoModify(0);
+
       this->Nodes->GetCurrentScene()->vtkCollection::AddItem((vtkObject *)newNode);
       //--- Try deleting copy after collection has a reference to it,
       //--- in order to eliminate debug leaks..
@@ -279,8 +283,10 @@ void vtkMRMLSceneSnapshotNode::RestoreScene()
         snapshotMap[node->GetID()] = node;
         }
       ***/
-
-      snapshotMap[node->GetID()] = node;
+      if (node->GetID()) 
+        {
+        snapshotMap[node->GetID()] = node;
+        }
       }
     }
   std::vector<vtkMRMLNode*> removedNodes;
@@ -322,6 +328,7 @@ void vtkMRMLSceneSnapshotNode::RestoreScene()
       if (snode)
         {
         snode->SetScene(this->Scene);
+        // to prevent copying of default info if not stored in sanpshot
         snode->CopyWithSingleModifiedEvent(node);
         // to prevent reading data on UpdateScene()
         snode->SetAddToSceneNoModify(0);
@@ -350,12 +357,6 @@ void vtkMRMLSceneSnapshotNode::RestoreScene()
       }
     }
 
-  // reset AddToScene in the scene
-  for (n=0; n<nnodesScene; n++) 
-    {
-    node->SetAddToSceneNoModify(1);
-    }
- 
   // reset AddToScene
   for (n=0; n < nnodesSanpshot; n++) 
     {

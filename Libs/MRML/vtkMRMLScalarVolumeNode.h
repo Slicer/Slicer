@@ -61,6 +61,10 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
   virtual const char* GetNodeTagName() {return "Volume";};
 
   // Description:
+  // Finds the storage node and read the data
+  virtual void UpdateScene(vtkMRMLScene *scene);
+
+  // Description:
   // Indicates if this volume is a label map, which is the output of 
   // segmentation that labels each voxel according to its tissue type.  
   // The alternative is a gray-level or color image.

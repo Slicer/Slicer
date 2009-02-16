@@ -154,15 +154,22 @@ void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
   vtkMRMLVolumeNode *node = (vtkMRMLVolumeNode *) anode;
 
   // Matrices
-  for(int i=0; i<3; i++) 
+
+  // workaround the problem when no spacing/origin/orientation is specified in the snapshots
+  // don't overwrite good values with defaults
+  if (node->GetAddToScene())
     {
-    this->Origin[i] = node->Origin[i];
-    this->Spacing[i] = node->Spacing[i];
-    for(int j=0; j<3; j++) 
+    for(int i=0; i<3; i++) 
       {
-      this->IJKToRASDirections[i][j] = node->IJKToRASDirections[i][j];
+      this->Origin[i] = node->Origin[i];
+      this->Spacing[i] = node->Spacing[i];
+      for(int j=0; j<3; j++) 
+        {
+        this->IJKToRASDirections[i][j] = node->IJKToRASDirections[i][j];
+        }
       }
     }
+
   int modified = anode->GetModifiedSinceRead();
   //unsigned long mtime = anode->GetMTime(); UNUSED
 
