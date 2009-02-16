@@ -10,6 +10,8 @@
 #include "vtkHIDTagTable.h"
 #include "vtkXNDTagTable.h"
 
+
+
 //------------------------------------------------------------------------------
 vtkCxxRevisionMacro ( vtkMRMLFetchMINode, "$Revision: 1.0 $");
 
@@ -57,18 +59,17 @@ vtkMRMLFetchMINode::vtkMRMLFetchMINode()
    this->HideFromEditors = true;
 
    this->TagTableCollection = vtkTagTableCollection::New();
-   this->SetKnownServers();
-
-   this->SetRequiredTags();
 
    this->ErrorMessage = NULL;
    this->SelectedServer = NULL; 
    this->SelectedServiceType = NULL;
    this->SelectedTagTable = NULL;
-   
+
    //--- This contains list of uris and their slice data types.
-   //--- Add additional SlicerDataTypes here as appropriate.
+   //--- NOTE TO DEVELOPERS: add new node types here
+   //--- as appropriate.
    this->ResourceDescription = vtkTagTable::New();
+   this->ResourceDescription->SetName ( "ResourceDescription");
    this->SlicerDataTypes = vtkStringArray::New();
    this->SlicerDataTypes->InsertValue ( 0, "MRML");
    this->SlicerDataTypes->InsertValue ( 1, "ScalarVolume");
@@ -81,17 +82,33 @@ vtkMRMLFetchMINode::vtkMRMLFetchMINode()
 
    //--- Initialize tag table with default tags for
    //--- Slicer-friendly services
+   //--- NOTE TO DEVELOPERS: add new tag tables for new 
+   //--- webservices in the following method, and give each tag
+   //--- table a unique name.
+   this->AddTagTablesForWebServices();
+   
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLFetchMINode::AddTagTablesForWebServices ( )
+{
+
    //--- fBIRN HID web services
    vtkHIDTagTable *hid_tt = vtkHIDTagTable::New();
    hid_tt->Initialize();
-   this->TagTableCollection->AddTableByName ( hid_tt, "HIDTags" );
+   this->TagTableCollection->AddTableByName ( hid_tt, "HID" );
    hid_tt->Delete();
+   
    //--- XNAT Desktop web services
+   //--- here we have one table for all instances of xnat desktop
+   //--- webservices so that users need not re-define tags to mark up
+   //--- data for different remost hosts; just use the same table as a
+   //--- metadata dictionary for all.
    vtkXNDTagTable *xnd_tt = vtkXNDTagTable::New();
    xnd_tt->Initialize();
-   this->TagTableCollection->AddTableByName (xnd_tt, "XNDTags" );
+   this->TagTableCollection->AddTableByName (xnd_tt, "XND" );
    xnd_tt->Delete();
-   //--- Add others here as we support them...
 }
 
 
@@ -103,6 +120,10 @@ vtkMRMLFetchMINode::~vtkMRMLFetchMINode()
     {
     this->SlicerDataTypes->Delete();
     this->SlicerDataTypes = NULL;
+    }
+  if ( this->SelectedTagTable )
+    {
+    this->SetSelectedTagTable ( NULL );
     }
   if ( this->TagTableCollection != NULL )
     {
@@ -135,18 +156,69 @@ vtkMRMLFetchMINode::~vtkMRMLFetchMINode()
 //----------------------------------------------------------------------------
 void vtkMRMLFetchMINode::WriteXML(ostream& of, int nIndent)
 {
+/*
   Superclass::WriteXML(of, nIndent);
 
   // Write all MRML node attributes into output stream
   vtkIndent indent(nIndent);
 
+  if ( this->ErrorMessage != NULL )
+    {
+    of << " errorMessage=\"" << this->GetErrorMessage() << "\"";
+    }
+  if ( this->SelectedServer != NULL )
+    {
+    of << " selectedServer=\"" << this->GetSelectedServer() << "\"";     
+    }
+  if ( this->SelectedServiceType != NULL )
+    {
+    of << " selectedServiceType=\"" << this->GetSelectedServiceType() << "\"";     
+    }
+  if ( this->TagTableCollection != NULL )
+    {
+    int m;
+    int n = this->TagTableCollection->GetNumberOfItems();
+    for ( int i=0; i < n; i++ )
+      {
 
+      vtkTagTable *t = vtkTagTable::SafeDownCast (this->TagTableCollection->GetItemAsObject ( i));
+      if ( t != NULL )
+        {
+        of << " tagTableName=\"" << this->t->GetName() << "\"";
+        m = t->GetNumberOfTags();
+        of << " numberOfTags=\"" << m << "\"";
+        of << " tags= \"";
+        for ( j=0; j < m; j++ )
+          {
+          // attribute, value, selection state.
+          of << t->GetAttributeForTag ( j ) << " " <<  t->GetValueForTag (j ) << " " << t->IsTagSelected ( t->GetAttributeForTag ( j)) << " ";
+          }
+        of << "\"";        
+        }
+      }
+      }
+
+  if ( this->ResourceDescription != NULL )
+    {
+    of << " tagTableName=\"" << this->t->GetName() << "\"";
+    m = t->GetNumberOfTags();
+    of << " numberOfTags=\"" << m << "\"";
+    of << " tags= \"";
+    for ( j=0; j < m; j++ )
+      {
+      of << " attribute=\"" << t->GetAttributeForTag ( j ) << "\"";
+      of << " value=\"" << t->GetValueForTag (j ) << "\"";
+      os << " selected=\"" << t->IsTagSelected ( t->GetAttributeForTag ( j)) << "\"";
+      }
+    }
+*/
 }
 
 
 //----------------------------------------------------------------------------
 void vtkMRMLFetchMINode::ReadXMLAttributes(const char** atts)
 {
+/*
   // cout << "vtkMRMLFetchMINode::ReadXMLAttributes(const char** atts)" << endl;
   vtkMRMLNode::ReadXMLAttributes(atts);
 
@@ -157,43 +229,82 @@ void vtkMRMLFetchMINode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "FETCHMI"))
+    if (!strcmp(attName, "errorMessage"))
       {
+      std::stringstream ss;
+      std::string s;
+      ss << attValue;
+      ss >> s;
+      vtkDebugMacro ( "Setting the errormessage to " << s.c_str() << "\n");
+      this->SetErrorMessage ( s.c_str() );
+      }
+    else if (!strcmp(attName, "selectedServer"))
+      {
+      std::stringstream ss;
+      std::string s;
+      ss << attValue;
+      ss >> s;
+      vtkDebugMacro ( "Setting the selectedServer to " << s.c_str() << "\n");
+      this->SetSelectedServer ( s.c_str() );
+      }
+    else if (!strcmp(attName, "selectedServiceType"))
+      {
+      std::stringstream ss;
+      std::string s;
+      ss << attValue;
+      ss >> s;
+      vtkDebugMacro ( "Setting the selectedServiceType to " << s.c_str() << "\n");
+      this->SetSelectedServiceType ( s.c_str() );
+      }
+    else if (!strcmp(attName, "tagTableName"))
+      {
+      std::stringstream ss;
+      std::string s;
+      std::string att;
+      std::string val;
+      int selected;
+      if (!strcmp(attValue, "ResourceDescription" ))
+        {
+        if ( this->ResourceDescription )
+          {
+          ss << attValue;
+          ss >> s;
+          vtkDebugMacro ( "Setting tagTableName to " << s.c_str() << "\n");
+          this->ResourceDescription->SetName ( s.c_str() );
+          //--- serialize the tags
+          }
+        }
+      else if (!strcmp(attValue, "" ))
+        {
+        //--- add to tag table collection
+        ss << attValue;
+        ss >> s;
+        vtkDebugMacro ( "Setting tagTableName to " << s.c_str() << "\n");
+        this->ResourceDescription->SetName ( s.c_str() );
+        if ( this->GetTagTableCollection() )
+          {
+          int n = this->GetTagTableCollection()->GetNumberOfItems();
+          for ( int i=0; i < n; i++ )
+            {
+            vtkTagTable *t = vtkTagTable::SafeDownCast( this->GetTagTableCollection()->GetItemAsObject (i));
+            if (t != NULL )
+              {
+              if ( !strcmp (t->GetName(), s.c_str() ))
+                {
+                //--- serialize the tags into this table.
+
+                }
+              }
+            }
+          }
+        }
       }
     }
+*/
 }
 
 
 
-
-
-
-//----------------------------------------------------------------------------
-void vtkMRMLFetchMINode::SetRequiredTags ( )
-{
-  //--- for xnat desktop
-  this->AddRequiredXNDTag ( "Experiment" );
-  this->AddRequiredXNDTag ( "Project" );
-  this->AddRequiredXNDTag ( "Scan" );
-  this->AddRequiredXNDTag ( "Subject" );  
-  this->AddRequiredXNDTag ( "Modality" );
-  this->AddRequiredXNDTag ( "SlicerDataType" );
-}
-
-
-
-
-
-//----------------------------------------------------------------------------
-void vtkMRMLFetchMINode::SetKnownServers ( )
-{
-   //--- add all known servers
-  this->AddNewServer ( "http://xnd.slicer.org:8000");
-  this->AddNewServer ( "http://localhost:8081" );
-  // Hide this guy until his functionality is built out.
-  //  this->AddNewServer ( "https://loci.ucsd.edu/hid" );
-  this->InvokeEvent (vtkMRMLFetchMINode::KnownServersModifiedEvent );
-}
 
 
 
@@ -203,12 +314,16 @@ void vtkMRMLFetchMINode::SetServer ( const char *s)
   if (s == NULL)
     {
     vtkErrorMacro("SetServer: can't select a null server.");
+    this->SetSelectedServer (NULL);
     return;
     }
+
   this->SetSelectedServer (s);
   if ( !(strcmp(s, "https://loci.ucsd.edu/hid" ) ))
     {
+    //--- should we set a handler here too?
     this->SetServiceType ( "HID" );
+    this->SetSelectedServer (NULL);
     if ( this->GetTagTableCollection() )
       {
       this->SelectedTagTable = this->GetTagTableCollection()->FindTagTableByName ("HIDTags");
@@ -217,12 +332,15 @@ void vtkMRMLFetchMINode::SetServer ( const char *s)
   else
     {
     //--- for now assume it's xnd if not hid.
+    //--- should we set a handler here too?
     this->SetServiceType ( "XND" );
     if ( this->GetTagTableCollection() )
       {
-      this->SelectedTagTable = this->GetTagTableCollection()->FindTagTableByName ("XNDTags");
+      this->SelectedTagTable = this->GetTagTableCollection()->FindTagTableByName ("XND");
       }
     }
+
+  //--- trigger GUI and Logic to update.
   this->InvokeEvent ( vtkMRMLFetchMINode::SelectedServerModifiedEvent );
 }
 
@@ -235,68 +353,6 @@ void vtkMRMLFetchMINode::SetServiceType ( const char *s)
 }
 
 
-//----------------------------------------------------------------------------
-void vtkMRMLFetchMINode::AddRequiredXNDTag ( const char *tag )
-{
-  int unique = 1;
-  std::string s;
-
-  if (tag == NULL)
-    {
-    vtkErrorMacro("AddRequiredXNDTag: can't add  a null tag!");
-    return;
-    }
-  
-  int n = this->RequiredXNDTags.size();
-  for ( int i = 0; i < n; i++ )
-    {
-    s = RequiredXNDTags[i];
-    if ( !(strcmp ( s.c_str(), tag)) )
-      {
-      unique = 0;
-      break;
-      }
-    }
-    //--- add the server tag if it's not already here.
-    if ( unique )
-      {
-      this->RequiredXNDTags.push_back ( std::string ( tag ) );
-      }
-
-}
-
-
-
-//----------------------------------------------------------------------------
-void vtkMRMLFetchMINode::AddNewServer ( const char *name )
-{
-
-  int unique = 1;
-  std::string s;
-
-  if (name == NULL)
-    {
-    vtkErrorMacro("AddNewServer: can't add a null server name.");
-    return;
-    }
-  
-  int n = this->KnownServers.size();
-  for ( int i = 0; i < n; i++ )
-    {
-    s = KnownServers[i];
-    if ( !(strcmp ( s.c_str(), name)) )
-      {
-      unique = 0;
-      break;
-      }
-    }
-    //--- add the server name if it's not already here.
-    if ( unique )
-      {
-      this->KnownServers.push_back ( std::string ( name ) );
-      this->InvokeEvent ( vtkMRMLFetchMINode::KnownServersModifiedEvent );
-      }
-}
 
 
 
@@ -325,11 +381,65 @@ void vtkMRMLFetchMINode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLFetchMINode *node = (vtkMRMLFetchMINode *) anode;
 
+  this->SetErrorMessage ( node->GetErrorMessage() );
+  this->SetSelectedTagTable ( node->GetSelectedTagTable() );
   this->SetSelectedServer(node->GetSelectedServer());
   this->SetSelectedServiceType(node->GetSelectedServiceType());
 
-  // TODO: loop through known servers
+  //--- copy resource description.
+  if ( node->GetResourceDescription() == NULL )
+    {
+    }
+  if ( this->GetResourceDescription() == NULL )
+    {
+    //--- try to allocate.
+    this->ResourceDescription = vtkTagTable::New();
+    this->ResourceDescription->SetName ( "ResourceDescription" );
+    }
+  if ( this->GetResourceDescription() == NULL )
+    {
+    vtkErrorMacro( "Copy: got a null Resource description in the node to copy to." );
+    return;
+    }
+  this->ResourceDescription->Copy ( node->GetResourceDescription() );
+
+
+  //--- copy contents of tag tables to new node.
+  if ( node->GetTagTableCollection() == NULL )
+    {
+    vtkErrorMacro( "Copy: got a null TagTableCollection in the node to copy from." );
+    return;
+    }
+  if ( this->GetTagTableCollection() == NULL)
+    {
+    //--- try to allocate and set up.
+    this->TagTableCollection = vtkTagTableCollection::New();
+    this->AddTagTablesForWebServices();
+    }
+  if ( this->GetTagTableCollection() == NULL )
+    {
+    vtkErrorMacro( "Copy: got a null TagTableCollection in the node to copy to." );
+    return;
+    }
+  if ( this->GetTagTableCollection()->GetNumberOfItems() !=
+       node->GetTagTableCollection()->GetNumberOfItems ( ) )
+    {
+    vtkErrorMacro( "Copy: got different numbers of tag tables in the copy from and to nodes.");
+    return;
+    }
+
+  for (int i=0; i < node->GetTagTableCollection()->GetNumberOfItems(); i++ )
+    {
+    vtkTagTable *destT = vtkTagTable::SafeDownCast ( this->GetTagTableCollection()->GetItemAsObject(i) );
+    vtkTagTable *srcT = vtkTagTable::SafeDownCast ( node->GetTagTableCollection()->GetItemAsObject(i) );
+    if ( srcT != NULL && destT != NULL )
+      {
+      //--- copy all metadata from the source table into the dest.
+      destT->Copy( srcT );
+      }
+    }
 }
+
 
 //----------------------------------------------------------------------------
 void vtkMRMLFetchMINode::PrintSelf(ostream& os, vtkIndent indent)
@@ -337,11 +447,6 @@ void vtkMRMLFetchMINode::PrintSelf(ostream& os, vtkIndent indent)
   
   vtkMRMLNode::PrintSelf(os,indent);
   os << indent << "TagTableCollection: " << this->GetTagTableCollection() << "\n";
-  int n = this->KnownServers.size();
-  for ( int i = 0; i < n; i++ )
-    {
-    os << indent << "KnownServers[" << i << "] = " << this->KnownServers[i] << "\n";
-    }
   os << indent << "SelectedServer: " << (this->SelectedServer == NULL ? "null" :  this->SelectedServer) << "\n";
   os << indent << "SelectedServiceType: " << (this->SelectedServiceType == NULL ? "null" : this->SelectedServiceType) << "\n";
   os << indent << "ErrorMessage: " << this->GetErrorMessage() << "\n";

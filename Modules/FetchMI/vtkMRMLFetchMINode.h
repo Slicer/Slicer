@@ -5,6 +5,7 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
+
 #include "vtkTagTable.h"
 #include "vtkTagTableCollection.h"
 
@@ -23,8 +24,10 @@ class VTK_FETCHMI_EXPORT vtkMRMLFetchMINode : public vtkMRMLNode
   vtkGetObjectMacro ( SlicerDataTypes, vtkStringArray );
   vtkSetObjectMacro ( SlicerDataTypes, vtkStringArray );
   vtkGetObjectMacro ( ResourceDescription, vtkTagTable );
+
   vtkGetObjectMacro ( TagTableCollection, vtkTagTableCollection );
   vtkGetObjectMacro ( SelectedTagTable, vtkTagTable );
+  vtkSetObjectMacro ( SelectedTagTable, vtkTagTable );
 
   // Description:
   // This method sets the SelectedServer, the SelectedTagTable,
@@ -61,44 +64,37 @@ class VTK_FETCHMI_EXPORT vtkMRMLFetchMINode : public vtkMRMLNode
   // Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Set all default web servers
-  virtual void SetKnownServers ( );
   
-  virtual void SetRequiredTags();
-  virtual void AddRequiredXNDTag(const char *);
   
   // Description:
   // Get unique node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "FetchMI"; };
 
-  virtual void AddNewServer ( const char *name );
-  virtual  int GetNumberOfKnownServers () {
-  return KnownServers.size();
-  }
-  virtual const char *GetNthServer ( int ind ) {
-  return KnownServers[ind].c_str();
-  }
-  
   virtual void RaiseErrorEvent ();
   virtual void RaiseErrorChoice ();
   
   // contains uri and SlicerDataType from queries
   vtkTagTable *ResourceDescription;
 
+  // Description:
+  // This method adds a tag table to contain metadata
+  // for each new web service type. DEVELOPERS NOTE:
+  // as new web services are added, this method should
+  // be extended.
+  void AddTagTablesForWebServices();
 
   // contains a tag table from each type of webservice.
   vtkTagTableCollection *TagTableCollection;
+  // contains currently selected tag table
+  vtkTagTable *SelectedTagTable;
+
   char *SelectedServer;
   char *SelectedServiceType;
   char *ErrorMessage;
-  // contains currently selected tag table
-  vtkTagTable *SelectedTagTable;
-  
+
   vtkStringArray *SlicerDataTypes;
   
   //BTX
-  std::vector<std::string> KnownServers;
   std::vector<std::string> RequiredXNDTags;
   //ETX
 

@@ -7,22 +7,35 @@
 
 #include "vtkObjectFactory.h"
 
-#include "vtkFetchMILogic.h"
-#include "vtkFetchMI.h"
+#include "vtkMRMLScene.h"
+#include "vtkCacheManager.h"
+#include "vtkMRMLVolumeArchetypeStorageNode.h"
+#include "vtkMRMLFreeSurferModelStorageNode.h"
+#include "vtkMRMLNode.h"
+#include "vtkMRMLStorableNode.h"
+#include "vtkMRMLStorageNode.h"
+#include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLUnstructuredGridNode.h"
+#include "vtkMRMLUnstructuredGridStorageNode.h"
+#include "vtkMRMLModelStorageNode.h"
+#include "vtkMRMLFreeSurferModelStorageNode.h"
+#include "vtkMRMLNRRDStorageNode.h"
+#include "vtkMRMLVolumeArchetypeStorageNode.h"
+#include "vtkMRMLDiffusionTensorVolumeNode.h"
+#include "vtkMRMLDiffusionWeightedVolumeNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
 
 #include "vtkHTTPHandler.h"
 #include "vtkHIDHandler.h"
 #include "vtkXNDHandler.h"
 #include "vtkXMLDataParser.h"
 
-#include "vtkMRMLScene.h"
-#include "vtkCacheManager.h"
-#include "vtkSlicerApplication.h"
+#include "vtkFetchMILogic.h"
+#include "vtkFetchMI.h"
 
-#include "vtkMRMLVolumeArchetypeStorageNode.h"
-#include "vtkMRMLFreeSurferModelStorageNode.h"
-#include "vtkMRMLNode.h"
-#include "vtkMRMLStorableNode.h"
+#include "vtkFetchMIWriterXND.h"
+#include "vtkFetchMIParserXND.h"
+#include "vtkFetchMIClientCallerXND.h"
 
 #include "vtkKWMessageDialog.h"
 
@@ -59,20 +72,71 @@ vtkFetchMILogic::vtkFetchMILogic()
   this->SceneTags = vtkTagTable::New();
   this->SaveSceneDescription = 1;
   this->SceneSelected = 1;
-  this->CurrentURI = NULL;
-  this->CurrentQuery = NULL;
   this->ResourceQuery = 0;
   this->TagAttributesQuery = 0;
   this->TagValuesQuery = 0;
   this->ErrorChecking = 0;
   this->ParsingError = 0;
-  this->RestoreTagSelectionState = 0;
+ 
+  this->ServerCollection = vtkFetchMIServerCollection::New();
+  this->CurrentServer = NULL;
+  this->ReservedURI = NULL;
 
   // Temporary vars used for parsing xml.
-  this->NumberOfElements = 0;
   this->NumberOfTagsOnServer = 0;
 //  this->DebugOn();
 
+   //--- Initialize the XML writer collection with writers for all known services.
+   //--- Extend here as we support new web services.
+   vtkFetchMIWriterXND *xndw = vtkFetchMIWriterXND::New();
+   vtkFetchMIParserXND *xndp = vtkFetchMIParserXND::New();
+   vtkFetchMIClientCallerXND *xndc = vtkFetchMIClientCallerXND::New();
+
+   //--- Add all known servers and set their service type.
+   //--- Extend here as we support new web services.
+   const char *IDString = "XND";
+   const char *HandlerString = "XNDHandler";
+   vtkFetchMIServer *s1 = vtkFetchMIServer::New();
+   s1->SetParser ( xndp );
+   s1->SetWriter ( xndw );
+   s1->SetClientCaller ( xndc );
+   s1->SetName ( "http://xnd.slicer.org:8000" );
+   s1->SetServiceType ( IDString);
+   s1->SetURIHandlerName ( HandlerString);
+   s1->SetTagTableName ( IDString);
+   this->ServerCollection->AddItem ( s1 );
+   s1->Delete();
+   
+   vtkFetchMIServer *s2 = vtkFetchMIServer::New();
+   s2->SetParser ( xndp);
+   s2->SetWriter ( xndw);
+   s2->SetClientCaller (xndc);
+   s2->SetName ( "http://localhost:8081");
+   s2->SetServiceType ( IDString);
+   s2->SetURIHandlerName ( HandlerString);
+   s2->SetTagTableName ( IDString);
+   this->ServerCollection->AddItem ( s2 );
+   s2->Delete();
+
+   /*
+   IDString = "HID";
+   HandlerString = "HIDHandler";
+   vtkFetchMIServer *s3 = vtkFetchMIServer::New();
+   s3->SetName ( "https://loci.ucsd.edu/hid");
+   s3->SetServiceType ( IDString );
+   s3->SetURIHandlerName ( HandlerString);
+   s3->SetTagTableName ( IDString);
+   this->ServerCollection->AddItem ( s3 );
+   s3->Delete();
+   */
+   xndw->Delete();
+   xndp->Delete();
+   xndc->Delete();
+   
+   if ( this->FetchMINode != NULL )
+     {
+     this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::KnownServersModifiedEvent );
+     }
 }
 
 
@@ -82,6 +146,27 @@ vtkFetchMILogic::vtkFetchMILogic()
 vtkFetchMILogic::~vtkFetchMILogic()
 { 
   this->ClearExistingTagsForQuery();
+  if ( this->ServerCollection != NULL )
+    {
+    int num = this->ServerCollection->GetNumberOfItems();
+    for ( int i=0; i < num; i++ )
+      {
+      vtkFetchMIServer *s = vtkFetchMIServer::SafeDownCast (this->ServerCollection->GetItemAsObject (i) );
+      s->SetParser ( NULL );
+      s->SetWriter ( NULL );
+      s->SetClientCaller ( NULL );
+      s->SetURIHandlerName ( NULL );
+      s->SetURIHandler ( NULL );
+      }
+    this->ServerCollection->RemoveAllItems();
+    this->ServerCollection->Delete();
+    this->ServerCollection = NULL;
+    }
+  if ( this->ReservedURI != NULL )
+    {
+    delete [] this->ReservedURI;
+    this->ReservedURI = NULL;
+    }
   this->SetFetchMINode(NULL);
   this->SceneTags->Delete();
   this->ResourceQuery = 0;
@@ -89,20 +174,748 @@ vtkFetchMILogic::~vtkFetchMILogic()
   this->TagValuesQuery = 0;
   this->ErrorChecking = 0;
   this->ParsingError = 0;
-  this->RestoreTagSelectionState = 0;  
-
-  if ( this->CurrentURI != NULL )
-    {
-    delete [] this->CurrentURI;
-    this->CurrentURI = NULL;
-    }
-  if ( this->CurrentQuery != NULL )
-    {
-    delete [] this->CurrentQuery;
-    this->CurrentQuery = NULL;
-    }
   
 }
+
+//----------------------------------------------------------------------------
+void vtkFetchMILogic::InitializeInformatics ( )
+{
+  this->CreateTemporaryFiles();
+  this->SetHandlersOnServers();
+}
+
+
+
+
+//----------------------------------------------------------------------------
+void vtkFetchMILogic::SetHandlersOnServers ( )
+{
+  if ( this->MRMLScene == NULL )
+    {
+    vtkErrorMacro ( "SetHandlersOnServers got NULL MRMLScene.");
+    return;
+    }
+  if ( this->ServerCollection == NULL )
+    {
+    vtkErrorMacro ( "SetHandlersOnServers got a NULL Server Collection." );
+    return;
+    }
+
+  int num = this->ServerCollection->GetNumberOfItems();
+  for ( int i=0; i < num; i++ )
+    {
+    vtkFetchMIServer *s = vtkFetchMIServer::SafeDownCast ( this->ServerCollection->GetItemAsObject ( i ) );
+    vtkURIHandler *handler = vtkURIHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( s->GetURIHandlerName() ));
+    s->SetURIHandler ( handler );
+    }
+}
+
+
+
+//----------------------------------------------------------------------------
+void vtkFetchMILogic::CreateTemporaryFiles ( )
+{
+  // This method creates three temporary filenames, using the cache dir, one
+  // for holding http from server responses to queries, one
+  // for holding xml metadata created for XNAT Desktop uploads,
+  // and one for holding mrml scenes downloaded to cache.
+
+  if ( this->GetMRMLScene() != NULL )
+    {
+    if ( this->GetMRMLScene()->GetCacheManager() != NULL )
+      {
+      if ( this->GetMRMLScene()->GetCacheManager()->GetRemoteCacheDirectory() != NULL )
+        {
+        this->XMLDirName = this->GetMRMLScene()->GetCacheManager()->GetRemoteCacheDirectory();
+        if ( this->XMLDirName.c_str() != NULL )
+          {
+          if (vtksys::SystemTools::FileIsDirectory( this->XMLDirName.c_str() ))
+            {
+            //--- for now, create temporary query response file in cache dir.
+            std::vector<std::string> pathComponents;
+            vtksys::SystemTools::SplitPath( this->XMLDirName.c_str(), pathComponents);
+            // now add the new file name to the end of the path
+            pathComponents.push_back("FetchMI_QueryResponse.xml");
+            this->HTTPResponseFileName = vtksys::SystemTools::JoinPath(pathComponents);
+            vtkDebugMacro ( "HTTPResponseFileName = " << this->HTTPResponseFileName );
+
+            //--- for now, create temporary xml metadata description file in
+            //--- cache dir.
+            pathComponents.pop_back();
+            pathComponents.push_back("FetchMI_UploadMetadata.xml");
+            this->XMLUploadFileName =  vtksys::SystemTools::JoinPath(pathComponents);
+            vtkDebugMacro ( "XMLUploadFileName = " << this->XMLUploadFileName );
+
+            //--- for now, create temporary xml response file in
+            //--- cache dir.
+            pathComponents.pop_back();
+            pathComponents.push_back("FetchMI_TemporaryResponse.xml");
+            this->TemporaryResponseFileName =  vtksys::SystemTools::JoinPath(pathComponents);
+            vtkDebugMacro ( "TemporaryResponseFileName = " << this->TemporaryResponseFileName );
+
+            //--- for now, create temporary xml document description in
+            //--- cache dir.
+            pathComponents.pop_back();
+            pathComponents.push_back("FetchMI_DocumentDeclaration.xml");
+            this->DocumentDeclarationFileName =  vtksys::SystemTools::JoinPath(pathComponents);
+            vtkDebugMacro ( "XMLDocumentDeclarationFileName = " << this->DocumentDeclarationFileName );
+            
+            //--- for now, create temporary xml header in
+            //--- cache dir.
+            pathComponents.pop_back();
+            pathComponents.push_back("FetchMI_UploadHeader.xml");
+            this->HeaderFileName =  vtksys::SystemTools::JoinPath(pathComponents);
+            vtkDebugMacro ( "XMLHeaderFileName = " << this->HeaderFileName );
+
+            //--- for now, create temporary cache file where downloaded mrml files go.
+            pathComponents.pop_back();
+            pathComponents.push_back("FetchMI_MRMLCache.xml");
+            this->MRMLCacheFileName = vtksys::SystemTools::JoinPath(pathComponents);
+            vtkDebugMacro ( "MRMLCacheFileName = " << this->MRMLCacheFileName );
+
+            // Wendy: do we need to touch these files, or just create the file names?
+            }
+          }
+        }
+      else
+        {
+        vtkWarningMacro ("RemoteCacheDirectory is not set! Creating files in current dir");
+        this->HTTPResponseFileName = std::string("FetchMI_QueryResponse.xml");
+        this->XMLUploadFileName = std::string("FetchMI_UploadMetadata.xml");
+        this->MRMLCacheFileName = std::string("FetchMI_MRMLCache.xml");
+        this->TemporaryResponseFileName = std::string ("FetchMI_TemporaryResponse.xml");
+        }
+      }
+    }
+}
+
+
+
+//----------------------------------------------------------------------------
+const char *vtkFetchMILogic::GetServiceTypeForServer ( const char *svc )
+{
+  if ( this->ServerCollection )
+    {
+    vtkFetchMIServer *s = this->ServerCollection->FindServerByName ( svc );
+    if ( s )
+      {
+      return ( s->GetServiceType() );
+      }
+    }
+  return (NULL);
+}
+
+
+//----------------------------------------------------------------------------
+void vtkFetchMILogic::AddNewServer (const char *name,
+                                    const char *type,
+                                    const char *URIHandlerName,
+                                    const char *TagTableName )
+
+{
+  if ( name == NULL )
+    {
+    vtkErrorMacro ( "vtkFetchMILogic::AddNewServer: got NULL Server name.");
+    return;
+    }
+  if ( URIHandlerName == NULL )
+    {
+    vtkErrorMacro ( "vtkFetchMILogic::AddNewServer: got NULL URIHandler name.");
+    return;
+    }
+  if ( TagTableName == NULL )
+    {
+    vtkErrorMacro ( "vtkFetchMILogic::AddNewServer: got NULL TagTable name");
+    return;
+    }
+  // Developers note: extend this check as new service types are added.
+  if ( !(strcmp(type, "XND")))
+    {
+    vtkFetchMIServer *s1 = vtkFetchMIServer::New();
+    vtkFetchMIWriterXND *xndw = vtkFetchMIWriterXND::New();
+    vtkFetchMIParserXND *xndp = vtkFetchMIParserXND::New();
+    vtkFetchMIClientCallerXND *xndc = vtkFetchMIClientCallerXND::New();
+    s1->SetName ( name );
+    s1->SetServiceType ( type );
+    s1->SetParser ( xndp);
+    s1->SetWriter (xndw);
+    s1->SetClientCaller ( xndc);
+    s1->SetURIHandlerName ( URIHandlerName );
+    s1->SetTagTableName ( TagTableName );
+    this->ServerCollection->AddItem ( s1 );
+    s1->Delete();
+    xndw->Delete();
+    xndp->Delete();
+    xndc->Delete();
+    if ( this->FetchMINode != NULL )
+      {
+      this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::KnownServersModifiedEvent );
+      }
+    }
+  else
+    {
+    vtkErrorMacro ( "Server is of unknown or unsupported type." );
+    return;
+    }
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkFetchMILogic::RequestResourceUpload ( )
+{
+  if ( this->GetMRMLScene() == NULL )
+    {
+    vtkErrorMacro ( "RequestResourceUpload: MRMLScene is NULL.");
+    return;
+    }
+  if ( this->GetFetchMINode() == NULL )
+    {
+    vtkErrorMacro ( "RequestResourceUpload: FetchMINode is NULL.");
+    return;
+    }
+  if ( this->GetCurrentServer() == NULL )
+    {
+    vtkErrorMacro ( "RequestResourceUpload:Got null server.");
+    return;    
+    }
+
+
+  int retval;
+  
+
+  //--- Temporary Save All
+  //--- SAVE ORIGINAL RESOURCE SELECTION STATE
+  //--- TODO: figure out how to upload individual resources.
+  //--- For now, override selection state reflected by GUI--
+  //--- select everything, so we upload scene + all data.
+  //--- then restores GUI selection state reflected by GUI.
+  std::vector<std::string> tmpSelected;
+  int tmp = this->GetSceneSelected();
+  for ( unsigned int i=0; i< this->SelectedStorableNodeIDs.size(); i++)
+    {
+    tmpSelected.push_back(this->SelectedStorableNodeIDs[i] );
+    }
+
+  //--- Get all storables in the scene
+  this->SceneSelected=1;
+  this->SelectedStorableNodeIDs.clear();      
+  int n;
+  vtkMRMLNode *node = NULL;
+  vtkMRMLStorableNode *stnode = NULL;
+  //---Volumes
+  int nnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLVolumeNode");
+  for (n=0; n<nnodes; n++ )
+    {
+    node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLVolumeNode");
+    if ( node->GetHideFromEditors() )
+      {
+      continue;
+      }
+    vtkMRMLVolumeNode *vnode = vtkMRMLVolumeNode::SafeDownCast(node);
+    if (vnode != NULL )
+      {
+      vtkMRMLStorageNode *snode = vnode->GetStorageNode();
+      if ( snode)
+        {
+        this->SelectedStorableNodeIDs.push_back ( node->GetID() );
+        }
+      }
+    }
+  //---Models
+  nnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLModelNode");
+  for (n=0; n<nnodes; n++ )
+    {
+    node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLModelNode");
+    if ( node->GetHideFromEditors() )
+      {
+      continue;
+      }
+    vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast(node);
+    if (mnode != NULL )
+      {
+      vtkMRMLStorageNode *snode = mnode->GetStorageNode();
+      if ( snode)
+        {
+        this->SelectedStorableNodeIDs.push_back ( node->GetID() );
+        }
+      }
+    }
+  //--- UnstructuredGrids
+  nnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLUnstructuredGridNode");
+  for (n=0; n<nnodes; n++ )
+    {
+    node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLUnstructuredGridNode");
+    if ( node->GetHideFromEditors() )
+      {
+      continue;
+      }
+    vtkMRMLUnstructuredGridNode *mnode = vtkMRMLUnstructuredGridNode::SafeDownCast(node);
+    if (mnode != NULL )
+      {
+      vtkMRMLStorageNode *snode = mnode->GetStorageNode();
+      if ( snode)
+        {
+        this->SelectedStorableNodeIDs.push_back ( node->GetID() );
+        }
+      }
+    }
+
+  retval = this->CheckStorageNodeFileNames();
+  if ( retval == 0 )
+    {
+    //--- TODO: put up save-stuff message dialog
+    std::string msg = "Some files have been modified since read. Please save all unsaved data to local disk first to ensure some safe copy exists.";
+    this->FetchMINode->SetErrorMessage (msg.c_str() );
+    this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
+    return;
+    }
+
+  //---
+  //--- Set filename on all storable nodes to include the cache path
+  //--- so they are saved to cache prior to upload.
+  //--- And set their write state to idle to ready them
+  //--- for the remoteIO pipeline.
+  this->SetIdleWriteStateOnSelectedResources ();
+  this->SetCacheFileNamesOnSelectedResources();
+  //--- wjp test
+  if ( this->GetCurrentServer()->GetURIHandler() == NULL )
+    {
+    vtkErrorMacro ( "RequestResourceUpload: Got a NULL URIHandler." );
+    return;
+    }
+  vtkURIHandler *handler = this->GetCurrentServer()->GetURIHandler();
+  this->SetURIHandlerOnSelectedResources( handler );
+  const char *svrName = this->GetCurrentServer()->GetName();
+  if ( svrName == NULL || !(strcmp(svrName, "" ) ) )
+    {
+    vtkErrorMacro ( "RequestResourceUpload: Got a NULL Server name." );
+    return;
+    }
+  handler->SetHostName(svrName);
+  //--- end wjp test
+
+  //---
+  //--- request the upload
+  //---
+  const char *svctype = this->GetCurrentServer()->GetServiceType();
+  if ( !strcmp (svctype, "XND"))
+    {
+    this->RequestResourceUploadToXND ( );
+    }
+
+  //--- RESET SELECTION STATE
+  this->SceneSelected = tmp;
+  this->SelectedStorableNodeIDs.clear();
+  for ( unsigned int i=0; i< tmpSelected.size(); i++)
+    {
+    this->SelectedStorableNodeIDs.push_back(tmpSelected[i] );
+    }
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkFetchMILogic::RequestResourceUploadToXND ( )
+{
+  //--- if Handler is XND, need to add any new metadata to server first.
+  int retval;
+  
+  if ( this->GetCurrentServer() == NULL )
+    {
+    vtkErrorMacro ( "RequestResourceUploadToXND:Got null server.");
+    return;    
+    }
+  const char *svrName = this->GetCurrentServer()->GetName();
+  const char *svctype = this->GetCurrentServer()->GetServiceType();
+
+  if ( strcmp(svctype, "XND"))
+    {
+    vtkErrorMacro ( "RequestResourceUploadToXND:Got unknown web service type");
+    return;
+    }
+  //--- Safely downcast the handler
+  const char *hname = this->GetCurrentServer()->GetURIHandlerName();
+  vtkXNDHandler *handler = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( hname ));
+  if ( handler == NULL )
+    {
+    vtkErrorMacro ("RequestResourceUploadToXND: Null URIHandler. ");
+    return;
+    }
+  //--- Make sure all files have the right uri handler set.
+
+/* wjp test */
+//  this->SetURIHandlerOnSelectedResources(handler);
+//  handler->SetHostName(svrName);
+/* end wjp test */
+
+  //--- write the XML doc description and header info
+  this->WriteDocumentDeclaration();
+  //--- create all new tags to the server.
+
+  std::map<std::string, std::vector<std::string> >::iterator iter;  
+  for ( iter = this->CurrentServerMetadata.begin();
+        iter != this->CurrentServerMetadata.end();
+        iter++ )
+    {
+    if ( iter->first.c_str() != NULL &&  (strcmp (iter->first.c_str(), "" ) ) )
+      {
+        int returnval = handler->PostTag ( svrName, iter->first.c_str(),this->GetTemporaryResponseFileName() );
+        if ( returnval == 0 )
+          {
+          vtkErrorMacro ("vtkFetchMIGUI:RequestResourceUploadToXND: couldn't add new tag to server.");
+          std::string msg = "Error adding new tags. Aborting remaining upload. Please check your network connection or whether the selected server is down.";
+          this->FetchMINode->SetErrorMessage (msg.c_str() );
+          this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
+          return;
+          }
+        //--- TODO: add error checking here...
+        //--- look for complaints in this->GetTemporaryResponseFileName()
+        }
+      }
+
+    //---
+    //--- for each storable node:
+    //--- generate metadata in utf-8 format (in gui)
+    //--- post metadata (in logic)
+    //--- parse metadata and set URIs (in gui)
+    vtkMRMLStorableNode *storableNode;
+    for (unsigned int n = 0; n < this->SelectedStorableNodeIDs.size(); n++)
+      {
+      std::string nodeID = this->SelectedStorableNodeIDs[n];
+      vtkDebugMacro("RequestResourceUploadToXND: generating metadata for selected storable node " << nodeID.c_str());
+      storableNode = vtkMRMLStorableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID( nodeID.c_str() ));
+      // for each storage node
+      int numStorageNodes = storableNode->GetNumberOfStorageNodes();
+      vtkMRMLStorageNode *storageNode;
+      for (int i = 0; i < numStorageNodes; i++)
+        {
+        storageNode = storableNode->GetNthStorageNode(i);
+        if ( storageNode == NULL )
+          {
+          vtkErrorMacro ( "RequestResourceUploadtoXND: got NULL StorageNode.");
+          continue;
+          }
+        //--- empty out the URIList from past uploads/downloads in the storage node.
+        storageNode->ResetURIList();
+        vtkDebugMacro("RequestResourceUploadToXND: have storage node " << i << ", calling write metadata for upload with id " << nodeID.c_str() << " and file name " << storageNode->GetFileName());
+
+        //--- write header and metadata
+        const char *snodeFileName = storageNode->GetFileName();
+        vtksys_stl::string vtkFileName = vtksys::SystemTools::GetFilenameName ( snodeFileName );
+        const char *strippedFileName = vtkFileName.c_str();
+        retval = this->WriteMetadataForUpload(nodeID.c_str());
+        if ( retval == 0 )
+          {
+          std::string msg = "Error writing metadata for upload. Aborting remaining upload. Please check your network connection or whether the selected server is down.";
+          this->FetchMINode->SetErrorMessage (msg.c_str() );
+          this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
+          return;
+          }
+
+        //--- post and parse response
+        this->PostMetadataToXND(handler, strippedFileName);
+        this->SetReservedURI ( NULL );
+        this->GetCurrentServer()->GetParser()->ParseMetadataPostResponse(this->GetTemporaryResponseFileName());
+        const char *uri = this->GetCurrentServer()->GetParser()->GetResponse();
+        this->SetReservedURI ( uri );
+        if (uri == NULL)
+          {
+          storageNode->SetURI(NULL);
+          storageNode->ResetURIList();
+          this->DeselectNode(nodeID.c_str());
+          // bail out of the rest of the storage nodes
+          i = numStorageNodes;
+          std::string msg = "Server did not return a valid uri for " + std::string(strippedFileName) + ". Aborting remaining upload. Please check your network connection or whether the selected server is down.\n";
+          this->FetchMINode->SetErrorMessage (msg.c_str() );
+          this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
+          // for now, decrement the node number, since DeselectNode removes an
+          // element from the list we're iterating over
+          return;
+          }
+        else
+          {
+          vtkDebugMacro("RequestResourceUploadToXND: parsed out a return metadatauri : " << uri);
+          // Set each storable node's URI, where they'll be saved in the final post of data
+          // via the PostStorableNodes() method.
+          storageNode->SetURI(uri);
+          /*
+          //--- Since the FileNameList has node->GetFileName
+          //--- as its first entry, let's do the parallel thing and
+          //--- add node->GetURI as the first entry of the URIList.
+          //--- Don't do this for now; this will impact backward
+          //--- compatibility across mrml scenes. But Discuss with Nicole.
+          storageNode->AddURI(storageNode->GetURI());
+          */
+
+          // now deal with the rest of the files in the storage node
+          int numFiles = storageNode->GetNumberOfFileNames();
+          //--- the storageNode's FileName is repeated in its
+          //--- FileListMember0 *if* there are multiple files for the dataset.
+          //--- So, if there are multiple files, we don't want to repeat the
+          //--- metadatapost and uri-provisioning for the first file name.
+          //--- For that reason, we start the loop over the rest of the
+          //--- files in the storage node at 1, skipping 0.
+          if ( numFiles > 0 )
+            {
+            for (int filenum = 1; filenum < numFiles; filenum++)
+              {
+              //--- write header and metadata
+              const char *nodeFileName = storageNode->GetNthFileName(filenum);
+              vtkFileName = vtksys::SystemTools::GetFilenameName ( nodeFileName );
+              strippedFileName = vtkFileName.c_str();
+              retval = this->WriteMetadataForUpload(nodeID.c_str());
+              if ( retval == 0 )
+                {
+                std::string msg = "Error writing metadata for upload. Aborting remaining upload. Please check your network connection or whether the selected server is down.";
+                this->FetchMINode->SetErrorMessage (msg.c_str() );
+                this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
+                return;
+                }
+
+              //--- post and parse response
+              this->PostMetadataToXND(handler, strippedFileName);
+              this->SetReservedURI ( NULL );
+              this->GetCurrentServer()->GetParser()->ParseMetadataPostResponse(this->GetTemporaryResponseFileName());
+              const char *uri = this->GetCurrentServer()->GetParser()->GetResponse();
+              this->SetReservedURI ( uri );
+              if (uri == NULL)
+                {
+                //--- TODO: clean up filenames now. they are set to cache path.
+                //--- fill up errormessage and invoke event via the node.
+                vtkErrorMacro("RequestResourceUploadToXND:  error parsing uri from post meta data call for file # " << filenum); //, response = " << metadataResponse);
+                storageNode->SetURI(NULL);
+                storageNode->ResetURIList();
+                std::string msg = "Error encountered while uploading " + std::string(storageNode->GetNthFileName(filenum)) + " to remote host. Aborting remaining upload. Please check your network connection or whether the selected server is down.\n";
+                this->FetchMINode->SetErrorMessage (msg.c_str() );
+                this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
+                //--- TODO: manage upload failure properly.
+                //--- would like to keep track of uris for files in filenamelist
+                //--- and delete them from server if any one of them fails so we
+                //--- don't have a messy partial upload.
+                //--- For now, bail out and leave dirty pile of data on server.
+                return;
+                }
+              else
+                {
+                vtkDebugMacro("RequestResourceUploadToXND: parsed out a return metadatauri : " << uri << ", adding it to storage node " << storageNode->GetID());
+                // then save it in the storage node
+                storageNode->AddURI(uri);
+                }         
+              }
+            }
+          }
+        }
+      }
+
+    //--- Now all storable nodes have their metadata written and uris set.
+    //--- post data (in logic pass3)
+   if ( this->PostStorableNodes() == 0)
+     {
+     std::string msg = "Error encountered while uploading data files to remote host. Aborting remaining upload. Please check your network connection or whether the selected server is down.\n";
+     this->FetchMINode->SetErrorMessage (msg.c_str() );
+     this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
+     return;
+     }
+
+    if ( this->SceneSelected )
+      {
+      //--- explicitly write the scene to cache (uri already points to cache)
+      this->MRMLScene->Commit();
+
+      //--- write header and metadata
+      const char *sceneFileName =this->GetMRMLScene()->GetURL();
+      vtksys_stl::string vtkFileName = vtksys::SystemTools::GetFilenameName (  sceneFileName );
+      const char *strippedFileName = vtkFileName.c_str();
+      retval = this->WriteMetadataForUpload("MRMLScene");
+      if (retval == 0 )
+        {
+        std::string msg = "Error encountered while uploading MRML Scene description to remote host. Aborting remaining upload. Please check your network connection or whether the selected server is down.\n";
+        this->FetchMINode->SetErrorMessage (msg.c_str() );
+        this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
+        return;
+        }
+      //--- generate scene metatdata (in gui)
+      this->PostMetadataToXND(handler, strippedFileName);
+      this->SetReservedURI ( NULL );
+      this->GetCurrentServer()->GetParser()->ParseMetadataPostResponse(this->GetTemporaryResponseFileName());
+      const char *uri = this->GetCurrentServer()->GetParser()->GetResponse();
+      this->SetReservedURI ( uri );
+      if ( uri != NULL )
+        {
+        // set particular XND host in the XNDhandler
+        handler->SetHostName(svrName);
+        handler->StageFileWrite(sceneFileName, uri);
+        }
+      else
+        {
+        vtkErrorMacro("RequestResourceUploadToXND: unable to parse out response from posting metadata for mrml scene, uri is null. ");
+        return;
+        }
+      }
+}
+
+
+
+//----------------------------------------------------------------------------
+void vtkFetchMILogic::RequestResourceUploadToHID ( )
+{
+}
+
+
+
+//----------------------------------------------------------------------------
+int vtkFetchMILogic::PostMetadataToXND ( vtkXNDHandler *handler, const char *dataFilename )
+{
+  // return 1 if OK, 0 if not.
+  int returnval = 0;
+  
+  if ( handler == NULL )
+    {
+    vtkErrorMacro ( "FetchMILogic: PostMetadataToXND got a NULL handler" );
+    return (returnval);
+    }
+  if (this->FetchMINode == NULL )
+    {
+    vtkErrorMacro ( "FetchMILogic: PostMetadataToXND got a NULL FetchMINode" );
+    return ((returnval));
+    }
+  if (this->GetXMLUploadFileName() == NULL)
+    {
+    vtkErrorMacro ( "FetchMILogic: PostMetadataToXND Got NULL file for Metadata upload.");
+    return (returnval);
+    }
+  if ( this->GetXMLHeaderFileName() == NULL )
+    {
+    vtkErrorMacro ( "FetchMILogic: PostMetadataToXND Got NULL file for Metadata upload.");
+    return (returnval);    
+    }
+  if (this->GetTemporaryResponseFileName() == NULL)
+    {
+    vtkErrorMacro ( "FetchMILogic: PostMetadataToXND got NULL file for Metadata upload.");
+    return (returnval);
+    }
+  if ( this->CurrentServer == NULL )
+    {
+    vtkErrorMacro ( "FetchMILogic: PostMetadataToXND got NULL server.");
+    return (returnval);
+    }
+
+  // set particular XND host in the XNDhandler
+  std::string svr = this->GetCurrentServer()->GetName();
+  if (svr.c_str() == NULL || !(strcmp(svr.c_str(), "") ))
+    {
+    vtkErrorMacro ("vtkFetchMILogic: Null or empty server name." );
+    return (returnval);
+    }
+  std::string::size_type index =  svr.find("://", 0);
+  if ( index  != std::string::npos)
+    {
+    std::string hostname = svr.substr( index+3, std::string::npos );
+    handler->SetHostName(hostname.c_str());
+    }
+     
+  
+  // set the post destination for data being described
+  std::stringstream ss;
+  ss << svr.c_str();
+  ss << "/data";
+  returnval = handler->PostMetadata ( ss.str().c_str(), this->GetXMLHeaderFileName(), dataFilename, this->GetXMLUploadFileName(), this->GetTemporaryResponseFileName() );
+  return (returnval);
+}
+
+
+
+
+//---------------------------------------------------------------------------
+int vtkFetchMILogic::WriteDocumentDeclaration ( )
+{
+  if ( this->GetXMLDocumentDeclarationFileName() == NULL )
+    {
+    vtkErrorMacro ("WriteDocumentDeclaration: got null Document Declaration filename" );
+    return 0;
+    }
+  this->GetCurrentServer()->GetWriter()->SetDocumentDeclarationFilename ( this->GetXMLDocumentDeclarationFileName() );
+  this->GetCurrentServer()->GetWriter()->WriteDocumentDeclaration ( );
+  return 1;
+}
+
+
+//---------------------------------------------------------------------------
+int vtkFetchMILogic::WriteMetadataForUpload (const char *nodeID )
+{
+  //  return 1 if ok, 0 if not.
+  if ( this->FetchMINode == NULL) 
+    {
+    vtkErrorMacro ( "WriteMetadataForUpload: FetchMINode is NULL.");
+    return 0;
+    }
+  if (this->MRMLScene == NULL )
+    {
+    vtkErrorMacro ( "WriteMetadataForUpload has null MRMLScene." );
+    return 0;        
+    }
+  const char *metadataFilename = this->GetXMLUploadFileName();
+  if ( metadataFilename == NULL )
+    {
+    vtkErrorMacro ("WriteMetadataForUpload: got null filename" );
+    return 0;
+    }
+  const char *declarationFilename = this->GetXMLDocumentDeclarationFileName();
+  if ( declarationFilename == NULL )
+    {
+    vtkErrorMacro ("WriteMetadataForUpload: got null filename" );
+    return 0;
+    }
+
+  //--- configure the Writer
+  this->GetCurrentServer()->GetWriter()->SetMetadataFilename( this->GetXMLUploadFileName() );
+  this->GetCurrentServer()->GetWriter()->SetDocumentDeclarationFilename ( this->GetXMLDocumentDeclarationFileName() );
+
+  //--- write either the Scene's metadata if nodeID = MRMLScene or the node's metadata.
+  if ( !(strcmp (nodeID, "MRMLScene" )))
+    {
+    this->GetCurrentServer()->GetWriter()->WriteMetadataForScene (this->GetMRMLScene());
+    }
+  else
+    {
+    this->GetCurrentServer()->GetWriter()->WriteMetadataForNode (nodeID, this->GetMRMLScene());
+    }
+  return 1;
+}
+
+
+
+//----------------------------------------------------------------------------
+void vtkFetchMILogic::SetFetchMINode( vtkMRMLFetchMINode *node )
+{
+  if ( node != this->FetchMINode )
+    {
+    vtkIntArray *events = vtkIntArray::New();
+    events->InsertNextValue ( vtkMRMLFetchMINode::SelectedServerModifiedEvent );
+    vtkSetAndObserveMRMLNodeEventsMacro ( this->FetchMINode, node, events );
+    events->Delete();
+    }
+}
+
+
+//----------------------------------------------------------------------------
+void vtkFetchMILogic::ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData )
+{
+  if ( this->FetchMINode == NULL )
+    {
+    vtkErrorMacro ( "FetchMILogic::ProcessMRMLEvents: got null FetchMINode." );
+    return;
+    }
+  vtkMRMLFetchMINode* node = vtkMRMLFetchMINode::SafeDownCast ( caller );
+
+  //--- Note to developers: expand logic here as new services are added.
+  if ( node == this->FetchMINode && event == vtkMRMLFetchMINode::SelectedServerModifiedEvent )
+    {
+    this->CurrentServer = this->GetServerCollection()->FindServerByName ( this->FetchMINode->GetSelectedServer() );
+    }
+}
+
 
 
 
@@ -122,8 +935,6 @@ void vtkFetchMILogic::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "ResourceQuery: " << this->GetResourceQuery() << "\n";
   os << indent << "TagAttributesQuery: " << this->GetTagAttributesQuery() << "\n";
   os << indent << "TagValuesQuery: " << this->GetTagValuesQuery() << "\n";
-  os << indent << "CurrentQuery: " << (this->GetCurrentQuery() == NULL ? "null" : this->GetCurrentQuery()) << "\n";
-  os << indent << "CurrentURI: " << (this->GetCurrentURI() == NULL ? "null" : this->GetCurrentURI()) << "\n";
   os << indent << "Selected Storable Node IDs:\n";
   for (unsigned int i = 0; i < this->SelectedStorableNodeIDs.size(); i++)
     {
@@ -138,8 +949,6 @@ void vtkFetchMILogic::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "SceneSelected: " << this->SceneSelected << "\n";
 
   os << indent << "SceneTags: (TBD)\n";
-
-  os << indent << "NumberOfElements: " << this->NumberOfElements << "\n";
 
 }
 
@@ -274,21 +1083,30 @@ void vtkFetchMILogic::QueryServerForTags ( )
     return;
     }
   
-  const char *svr = this->GetFetchMINode()->GetSelectedServer();
-  const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
-  if ( (svr == NULL) || (svctype== NULL ))
+  if ( this->CurrentServer == NULL )
     {
-    vtkErrorMacro ("vtkFetchMILogic: Null server or servicetype" );
+    vtkErrorMacro ( "vtkFetchMILogic: CurrentServer is NULL.");
     return;
     }
-          
-  //--- Always reset the current Query to empty string before query.
-  this->SetCurrentQuery(NULL);
+
+  const char *svr = this->GetCurrentServer()->GetName();
+  if ( svr == NULL || !(strcmp(svr, "") ) )
+    {
+    vtkErrorMacro ("vtkFetchMILogic: Null or empty server name." );
+    return;
+    }
+  const char *svctype = this->GetCurrentServer()->GetServiceType();          
+  if (! this->ServerCollection->IsKnownServiceType(svctype) )
+    {
+    vtkErrorMacro ( "QueryServerForTags:Got unknown web service type");
+    return;
+    }
+
   //--- Always reset the number of known tags on the server to 0 before query.
   this->NumberOfTagsOnServer = 0;
 
   //--- do the right thing based on which kind of webservice:
-  if ( !(strcmp ("HID", svctype )) )
+  if ( !(strcmp(this->CurrentServer->GetServiceType(), "HID")))
     {
     //--- HID
     vtkHIDHandler *h = vtkHIDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "HIDHandler" ));
@@ -300,10 +1118,11 @@ void vtkFetchMILogic::QueryServerForTags ( )
       // h->QueryServer ( uri, responseFile );
       }
     }
-  else if ( !(strcmp ("XND", svctype)) )
+  else if ( !(strcmp(this->CurrentServer->GetServiceType(), "XND")))
     {
     //--- XND
-    vtkXNDHandler *h = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XNDHandler" ));
+    const char *hname = this->GetCurrentServer()->GetURIHandlerName();
+    vtkXNDHandler *h = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( hname ));
     if ( h )
       {
       //--- Check local file to receive response.
@@ -316,10 +1135,32 @@ void vtkFetchMILogic::QueryServerForTags ( )
         const char *errorString = h->QueryServer ( q.str().c_str(), this->GetHTTPResponseFileName() );
         if ( !strcmp(errorString, "OK" ))
           {
-          //--- clear out container holding all tags and their values on server.
-          this->ClearExistingTagsForQuery ( );
           //--- then parse new tags into the container.
           this->ParseTagQueryResponse ( );
+          // check to see if "SlicerDataType" is an existing tag on the server.
+          // if not, then post it.
+          if ( ! this->IsTagOnServer ( "SlicerDataType" ) )
+            {
+            const char *svrName = this->GetCurrentServer()->GetName();
+            if ( svrName != NULL )
+              {
+              h->SetHostName ( svrName );
+              int returnval = h->PostTag ( svrName, "SlicerDataType", this->GetTemporaryResponseFileName() );
+              // if it was added successfully, then add it to our list of tags.
+              // otherwise return an error message.
+              if ( returnval )
+                {
+                this->AddUniqueTag ( "SlicerDataType" );
+                }
+              else
+                {
+                std::string msg = "Web service doesn't know about the SlicerDataType tag, which will make it impossible to up/download data. Slicer failed to successfully post this new tag. Please check your network connection, or whether the server is down.";
+                this->FetchMINode->SetErrorMessage (msg.c_str() );
+                this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
+                return;
+                }
+              }
+            }
           }
         }
       else
@@ -351,19 +1192,27 @@ void vtkFetchMILogic::QueryServerForTagValues ( )
     return;
     }
   
-  const char *svr = this->GetFetchMINode()->GetSelectedServer();
-  const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
-  if ( (svr == NULL) || (svctype== NULL ))
+  if ( this->CurrentServer == NULL )
     {
-    vtkErrorMacro ("vtkFetchMILogic: Null server or servicetype" );
+    vtkErrorMacro ( "vtkFetchMILogic: CurrentServer is NULL.");
+    return;
+    }
+
+  const char *svr = this->GetCurrentServer()->GetName();
+  if (svr == NULL || !(strcmp(svr, "") ) )
+    {
+    vtkErrorMacro ("vtkFetchMILogic: Null or empty server name." );
+    return;
+    }
+  const char *svctype = this->GetCurrentServer()->GetServiceType();
+  if ( !this->ServerCollection->IsKnownServiceType(svctype) )
+    {
+    vtkErrorMacro ( "QueryServerForTagValues:Got unknown web service type");
     return;
     }
 
 
-  //--- Always reset the current Query to empty string before query
-  this->SetCurrentQuery(NULL);
-  
-  if ( !(strcmp ("HID", svctype )) )
+  if ( !(strcmp(svctype, "HID")))
     {
     //--- HID
     vtkHIDHandler *h = vtkHIDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "HIDHandler" ));
@@ -373,37 +1222,42 @@ void vtkFetchMILogic::QueryServerForTagValues ( )
       // h->QueryServer ( uri, responseFile );
       }
     }
-  else if ( !(strcmp ("XND", svctype)) )
+  else if ( !(strcmp(svctype, "XND")))
     {
     //--- XND
-    vtkXNDHandler *h = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XNDHandler" ));
+    const char *hname = this->GetCurrentServer()->GetURIHandlerName();
+    vtkXNDHandler *h = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( hname ));
     // for each tag attribute in the tag table, get all values represented in the DB.
-    if (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XNDTags" ) != NULL)
+    if (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XND" ) != NULL)
       {
-      vtkXNDTagTable *t = vtkXNDTagTable::SafeDownCast ( this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XNDTags" ));
+      vtkXNDTagTable *t = vtkXNDTagTable::SafeDownCast ( this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XND" ));
       if ( t != NULL )
         {
-        const char *att;
-        int i;
+        std::string att;
+        std::string query;
         // For each tag, get the attribute, and then
         // Ask server for all values for that attribute.
         // Parse the response from the server.
         // Invoke an event on the node that will be caught by GUI
         // In GUI, the value menus for each attribute will be updated
         // to show all current values for each tag in the DB.
-        for (i=0; i < this->GetNumberOfTagsOnServer(); i++ )
+        std::map<std::string, std::vector<std::string> >::iterator iter;
+        for ( iter = this->CurrentServerMetadata.begin();
+              iter != this->CurrentServerMetadata.end();
+              iter++ )
           {
-          att = t->GetTagAttribute(i);
+          att.clear();
+          att = iter->first.c_str();
           std::stringstream q;
           q << svr;
           q << "/search??";
-          q << att;
-          const char *errorString = h->QueryServer ( q.str().c_str(), this->GetHTTPResponseFileName() );
+          q << att.c_str();
+          query = q.str();
+          const char *errorString = h->QueryServer ( query.c_str(), this->GetHTTPResponseFileName() );
           if ( !strcmp(errorString, "OK" ))
             {
             //--- clear out the container for values for this tagname.
-            this->ClearExistingValuesForTag ( att );
-            this->ParseTagValuesQueryResponse ( );
+            this->ParseValuesForTagQueryResponse ( att.c_str() );
             //--- and Update MRML's tagtable. make sure
             //--- each tag's value is in the logic's new list.
             //--- if so, leave it selected. otherwise, reset
@@ -431,24 +1285,36 @@ void vtkFetchMILogic::QueryServerForTagValues ( )
 void vtkFetchMILogic::UpdateMRMLQueryTags()
 {
 
-  const char *svr = this->GetFetchMINode()->GetSelectedServer();
-  const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
-  if ( (svr == NULL) || (svctype== NULL ))
+  if ( this->CurrentServer == NULL )
     {
-    vtkErrorMacro ("vtkFetchMILogic: Null server or servicetype" );
+    vtkErrorMacro ( "vtkFetchMILogic: CurrentServer is NULL.");
     return;
     }
+
+  const char *svr = this->GetCurrentServer()->GetName();
+  if (svr == NULL || !(strcmp(svr, "") ) )
+    {
+    vtkErrorMacro ("vtkFetchMILogic: Null or empty server name." );
+    return;
+    }
+  const char  *svctype = this->GetCurrentServer()->GetServiceType();
+  if (! this->ServerCollection->IsKnownServiceType(svctype) )
+    {
+    vtkErrorMacro ( "UpdateMRMLQueryTags:Got unknown web service type");
+    return;
+    }
+
   //--
     //--- Make sure MRML tag table is compatible with logic's
     //--- list of tags on server.
     //--- For each tag in MRML's tagtable, get the old value.
-    //--- Find that tag in the logic's AllValuesForAllTagsOnServer.
+    //--- Find that tag in the logic's CurrentServerMetadata.
     //--- if it's present, then keep its value in MRML.
     //--- if it's not present, then replace the tag's value in MRML
     //--- with the first value in the logic's list.
   //--
 
-  if ( !(strcmp ("HID", svctype )) )
+  if ( !(strcmp(svctype, "HID")))
     {
     //--- HID
     vtkHIDTagTable* t = vtkHIDTagTable::SafeDownCast (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "HIDTags" ));
@@ -457,10 +1323,10 @@ void vtkFetchMILogic::UpdateMRMLQueryTags()
       //--- TODO: not sure how this will work with HID yet.
       }
     }
-  else if ( !(strcmp ("XND", svctype)) )
+  else if ( !(strcmp(svctype, "XND")))
     {
     //--- XND
-    vtkXNDTagTable* t = vtkXNDTagTable::SafeDownCast (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XNDTags" ));
+    vtkXNDTagTable* t = vtkXNDTagTable::SafeDownCast (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XND" ));
     std::map<std::string, std::vector<std::string> >::iterator iter;
     const char *att;
     const char *val;
@@ -474,8 +1340,8 @@ void vtkFetchMILogic::UpdateMRMLQueryTags()
         //--- find matching tag in AllValuesForTag
         att = t->GetTagAttribute ( i );
         int foundAtt = 0;
-        for ( iter = this->AllValuesForAllTagsOnServer.begin();
-              iter != this->AllValuesForAllTagsOnServer.end();
+        for ( iter = this->CurrentServerMetadata.begin();
+              iter != this->CurrentServerMetadata.end();
               iter++ )
           {
           if ( !strcmp(iter->first.c_str(),att ))
@@ -522,41 +1388,54 @@ int vtkFetchMILogic::DeleteResourceFromServer ( const char *uri )
 {
   int retval = 1;
 
+  if ( this->CurrentServer == NULL )
+    {
+    vtkErrorMacro ( "vtkFetchMILogic: CurrentServer is NULL.");
+    return 0;
+    }
+
   // check for which server
   // send delete request.
-  const char *svr = this->GetFetchMINode()->GetSelectedServer();
-  const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
+  const char *svr = this->GetCurrentServer()->GetName();
+  if (svr == NULL || !(strcmp(svr, "") ) )
+    {
+    vtkErrorMacro ("vtkFetchMILogic: Null or empty server name." );
+    return 0;
+    }
+  const char *svctype = this->GetCurrentServer()->GetServiceType();
+  if (! this->ServerCollection->IsKnownServiceType(svctype) )
+    {
+    vtkErrorMacro ( "DeleteResourceFromServer: Got unknown web service type");
+    return 0;
+    }
+
   if ( this->GetFetchMINode() == NULL )
     {
     vtkErrorMacro ( "vtkFetchMILogic: FetchMINode is NULL.");
     return 0;
     }
 
-  if ( (svr == NULL) || (svctype== NULL ))
-    {
-    vtkErrorMacro ("vtkFetchMILogic: Null server or servicetype. Set server before querying." );
-    return 0;
-    }
   // put up wait dialog...
   // now update the resource list in the GUI.
-  if ( !(strcmp ("HID", svctype )) )
+  if ( !(strcmp(svctype, "HID")))
     {
     //---
     //--- HID
     //---
     vtkHIDHandler *h = vtkHIDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "HIDHandler" ));
-    vtkHIDTagTable* t = vtkHIDTagTable::SafeDownCast (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "HIDTags" ));
+    vtkHIDTagTable* t = vtkHIDTagTable::SafeDownCast (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "HID" ));
     if ( h && t )
       {
       }
     }
-  else if ( !(strcmp ("XND", svctype)) )
+  else if ( !(strcmp(svctype, "XND")))
     {
     //---
     //--- XND
     //---
-    vtkXNDHandler *h = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XNDHandler" ));
-    vtkXNDTagTable* t = vtkXNDTagTable::SafeDownCast (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XNDTags" ));
+    const char *hname = this->GetCurrentServer()->GetURIHandlerName();
+    vtkXNDHandler *h = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( hname ));
+    vtkXNDTagTable* t = vtkXNDTagTable::SafeDownCast (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XND" ));
     if ( h && t )
       {
       //--- Check local file to receive response.
@@ -584,29 +1463,36 @@ void vtkFetchMILogic::QueryServerForResources ( )
     return;
     }
   
-  const char *svr = this->GetFetchMINode()->GetSelectedServer();
-  const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
-  if ( (svr == NULL) || (svctype== NULL ))
+  if ( this->CurrentServer == NULL )
     {
-    vtkErrorMacro ("vtkFetchMILogic: Null server or servicetype. Set server before querying." );
+    vtkErrorMacro ( "vtkFetchMILogic: CurrentServer is NULL.");
     return;
     }
 
+  const char *svr = this->GetCurrentServer()->GetName();
+  if (svr == NULL || !(strcmp(svr, "") ) )
+    {
+    vtkErrorMacro ("vtkFetchMILogic: Null or empty server name." );
+    return;
+    }
+  const char *svctype = this->GetCurrentServer()->GetServiceType();
+  if (! this->ServerCollection->IsKnownServiceType(svctype) )
+    {
+    vtkErrorMacro ( "QueryServerForResources: Got unknown web service type");
+    return;
+    }
 
   std::string att;
   std::string val;
   std::stringstream q;
   
-  //--- Always reset the current Query to empty string
-  this->SetCurrentQuery(NULL);
-  
-  if ( !(strcmp ("HID", svctype )) )
+  if ( !(strcmp(svctype, "HID")))
     {
     //---
     //--- HID
     //---
     vtkHIDHandler *h = vtkHIDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "HIDHandler" ));
-    vtkHIDTagTable* t = vtkHIDTagTable::SafeDownCast (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "HIDTags" ));
+    vtkHIDTagTable* t = vtkHIDTagTable::SafeDownCast (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "HID" ));
     if ( h && t )
       {
       //--- Check local file to receive response.
@@ -699,14 +1585,14 @@ void vtkFetchMILogic::QueryServerForResources ( )
         }
       }
     }
-
-  else if ( !(strcmp ("XND", svctype)) )
+  else if ( !(strcmp(svctype, "XND")))
     {
     //---
     //--- XND
     //---
-    vtkXNDHandler *h = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XNDHandler" ));
-    vtkXNDTagTable* t = vtkXNDTagTable::SafeDownCast (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XNDTags" ));
+    const char *hname = this->GetCurrentServer()->GetURIHandlerName();
+    vtkXNDHandler *h = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( hname ));
+    vtkXNDTagTable* t = vtkXNDTagTable::SafeDownCast (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XND" ));
     if ( h && t )
       {
       //--- Check local file to receive response.
@@ -771,174 +1657,7 @@ void vtkFetchMILogic::QueryServerForResources ( )
 
 
 
-//----------------------------------------------------------------------------
-void vtkFetchMILogic::GetNumberOfXMLElements( vtkXMLDataElement *element )
-{
-  if (element ==  NULL )
-    {
-    vtkErrorMacro ( "vtkFetchMILogic: GetNumberOfXMLElements called with null vtkXMLDataElement.");
-    return;
-    }
 
-  this->NumberOfElements++;
-  int nnested = element->GetNumberOfNestedElements();
-  for ( int i=0; i < nnested; i++ )
-    {
-    vtkXMLDataElement *e = element->GetNestedElement ( i );
-    if ( e != NULL )
-      {
-      this->GetNumberOfXMLElements( e );
-      }
-    }
-}
-
-
-
-
-
-//----------------------------------------------------------------------------
-void vtkFetchMILogic::GetXMLElement( vtkXMLDataElement *element )
-{
-  if (element ==  NULL )
-    {
-    vtkErrorMacro ( "vtkFetchMILogic: GetXMLElement called with null vtkXMLDataElement.");
-    return;
-    }
-  if ( this->GetFetchMINode() == NULL )
-    {
-    vtkErrorMacro ( "vtkFetchMILogic: FetchMINode is NULL.");
-    return;
-    }
-
-  const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
-  if ( !(strcmp (svctype, "XND")))
-    {
-    this->GetXNDXMLEntry ( element );
-    }
-  else if ( !(strcmp(svctype, "HID")))
-    {
-    this->GetHIDXMLEntry ( element );
-    }
-  
-  int nnested = element->GetNumberOfNestedElements();
-  for ( int i=0; i < nnested; i++)
-    {
-    vtkXMLDataElement *nestedElement = element->GetNestedElement ( i );
-    if (nestedElement != NULL )
-      {
-      this->GetXMLElement (nestedElement);
-      }
-    }
-
-}
-
-
-
-
-//----------------------------------------------------------------------------
-void vtkFetchMILogic::GetHIDXMLEntry( vtkXMLDataElement *element )
-{
-
-  if (element ==  NULL )
-    {
-    vtkErrorMacro ( "vtkFetchMILogic: GetXMLEntry called with null vtkXMLDataElement.");
-    return;
-    }
-
-  const char *name = element->GetName();
-  const char *attName;
-  int numAtts;
-  const char *value;
-  const char *dtype = "unknown";
-
-  if ( name == NULL )
-    {
-    return;
-    }
-  if ( this->GetFetchMINode() == NULL )
-    {
-    vtkErrorMacro ( "vtkFetchMILogic: FetchMINode is NULL.");
-    return;
-    }
-
-  // check to see if this is an item of interest.
-  // do different things based on what elements we find.
-  //---
-  // TAGS
-  //---
-  if ( (!(strcmp(name, "ul" ))) ||
-       (!(strcmp(name, "UL" ))) )
-    {
-    // see if the attribute in this tag is called Label, and if its value is SlicerDataType
-    numAtts = element->GetNumberOfAttributes();
-    for ( int i=0; i < numAtts; i++ )
-      {
-      attName = element->GetAttributeName(i);        
-      value = element->GetAttributeValue(i);
-      if ( attName != NULL && value != NULL )
-        {            
-        if ( (!strcmp(value, "mrml" )) ||
-             (!strcmp(value, "MRML")) )
-          {
-          //=== if this says 1, then good. if 3, then we can simplify ths metod.
-          int nnested = element->GetNumberOfNestedElements();
-          vtkXMLDataElement *nnestedElement = element;
-          for ( int j=0; j < nnested; j++)
-            {
-            nnestedElement = nnestedElement->GetNestedElement ( j );
-            if ( nnestedElement == NULL )
-              {
-              break;
-              }
-            name = nnestedElement->GetName();
-            if ( name != NULL )
-              {
-              if ( !(strcmp (name, "li" )) ||
-                   !(strcmp (name, "LI" )) )
-                {
-                //--- go in deeper.
-                int nnnested = nnestedElement->GetNumberOfNestedElements();
-                vtkXMLDataElement *nnnestedElement = nnestedElement;
-                for ( int k=0; k < nnnested; k++ )
-                  {
-                  nnnestedElement = nnnestedElement->GetNestedElement ( k );
-                  if ( nnnestedElement == NULL )
-                    {
-                    break;
-                    }
-                  name = nnnestedElement->GetName();
-                  int numatts2 = nnnestedElement->GetNumberOfAttributes();
-                  for (int n=0; n<numatts2; n++)
-                    {
-                    if ( name != NULL )
-                      {
-                      if ( !(strcmp (name, "a" )) ||
-                           !(strcmp (name, "A" )) )
-                        {
-                        attName = nnnestedElement->GetAttributeName(n);        
-                        value = nnnestedElement->GetAttributeValue(n);
-                        if ( attName != NULL && value != NULL )
-                          {
-                          if ( !(strcmp(attName, "href")) ||
-                               !(strcmp(attName, "HREF")))
-                            {
-                            this->SetCurrentURI(value);
-                            this->FetchMINode->GetResourceDescription()->AddOrUpdateTag ( this->CurrentURI, dtype, 0 );
-                            break;
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-}
 
 
 
@@ -972,389 +1691,16 @@ int vtkFetchMILogic::CheckValidSlicerDataType ( const char *dtype)
 
 
 
-
 //----------------------------------------------------------------------------
-void vtkFetchMILogic::GetXNDXMLEntry( vtkXMLDataElement *element )
+void vtkFetchMILogic::ParseValuesForTagQueryResponse ( const char *att )
 {
-
-  if (element ==  NULL )
+  if ( this->GetCurrentServer()->GetParser () )
     {
-    vtkErrorMacro ( "vtkFetchMILogic: GetXMLEntry called with null vtkXMLDataElement.");
-    return;
-    }
-
-  const char *name = element->GetName();
-
-  if ( name == NULL )
-    {
-    return;
-    }
-  if ( this->GetFetchMINode() == NULL )
-    {
-    vtkErrorMacro ( "vtkFetchMILogic: FetchMINode is NULL.");
-    return;
-    }
-
-  const char *attName;
-  int numAtts;
-  const char *value;
-  const char *dtype = "unknown";
-  const char *tagValue;
-  vtkXMLDataElement *nestedElement;
-
-
-  // check to see if this is an item of interest.
-  // process appropriately, based on what elements we find.
-
-  //---
-  // THE QUERY -- not all things produce a query attribute in the xml... get in case we want it...
-  //---
-  if ( !(strcmp(name, "SearchResults" )) )
-    {
-    // parse the xml file and put the Query into this->CurrentQuery
-    // NOTE: we don't yet use this because some queries don't return an XML element named
-    // "SearchResults", like the query for tags. If all responses contained this element, then
-    // we could use it to parse in more targetted way.
-    numAtts = element->GetNumberOfAttributes();
-    for ( int j=0; j < numAtts; j++ )
-      {
-      attName = element->GetAttributeName(j);        
-      value = element->GetAttributeValue(j);
-      if ( attName != NULL && value != NULL )
-        {
-        if ( !strcmp (attName, "Query"))
-          {
-          this->SetCurrentQuery (value);
-          }
-        }
-      }
-    }
-
-  //---
-  //--- ERROR CHECKING
-  //---
-  if ( this->ErrorChecking)
-    {
-    if ((!(strcmp(name, "title" ))) ||
-        (!(strcmp(name, "Title" ))) )
-      {
-      std::string errorString = element->GetCharacterData();
-      std::string target = "error";
-      size_t found = errorString.find ( target );
-      if ( found != std::string::npos)
-        {
-        this->ParsingError = 1;
-        }
-      target = "Error";
-      if ( found != std::string::npos)
-        {
-        this->ParsingError = 1;
-        }
-      target = "ERROR";
-      if ( found != std::string::npos)
-        {
-        this->ParsingError = 1;
-        }
-      }
-    }
-
-  
-  //---
-  // RESOURCES have nested uris and tags (attribute/value pairs)
-  // ONLY get these if the ResourceQuery flag is on. Otherwise query was
-  // for tags or tag values, so ignore.
-  //---
-  if ( this->ResourceQuery )
-    {    
-    if ((!(strcmp(name, "resource" ))) ||
-        (!(strcmp(name, "Resource" ))) ||
-        (!(strcmp(name, "RESOURCE" ))) )
-      {
-      // parse the xml file and put result into ResourceDescription table.
-      // looking for the SlicerDataType to pair with uri
-      this->SetCurrentURI (NULL);
-      int nnested = element->GetNumberOfNestedElements();
-
-      //--- get uri
-      for ( int i=0; i < nnested; i++)
-        {
-        nestedElement = element->GetNestedElement ( i );
-        if (nestedElement == NULL)
-          {
-          break;
-          }
-
-        if (!(strcmp(nestedElement->GetName(), "uri")) ||
-            !(strcmp(nestedElement->GetName(), "Uri")) ||
-            !(strcmp(nestedElement->GetName(), "URI")) )            
-          {
-          value = nestedElement->GetCharacterData();
-          if ( value != NULL )
-            {
-            this->SetCurrentURI(value);
-            this->FetchMINode->GetResourceDescription()->AddOrUpdateTag ( this->CurrentURI, dtype, 0 );        
-            }
-          }
-
-        //--- get data type
-        if (((!(strcmp(nestedElement->GetName(), "tag" ))) ||
-             (!(strcmp(nestedElement->GetName(), "Tag" ))) ||
-             (!(strcmp(nestedElement->GetName(), "TAG" )))) &&
-            ( this->CurrentURI != NULL ) )
-          {
-          // see if the attribute in this tag is called Label, and if its value is SlicerDataType
-          numAtts = nestedElement->GetNumberOfAttributes();
-          for ( int j=0; j < numAtts; j++ )
-            {
-            attName = nestedElement->GetAttributeName(j);        
-            value = nestedElement->GetAttributeValue(j);
-            if ( attName != NULL && value != NULL )
-              {            
-              if ( !strcmp(value, "SlicerDataType" ) )
-                {
-                // if yes, then get the nested Value Element          
-                int nnested2 = nestedElement->GetNumberOfNestedElements();
-                vtkXMLDataElement *nested2Element = nestedElement;
-                for ( int k=0; k < nnested2; k++)
-                  {
-                  nested2Element = nestedElement->GetNestedElement ( k );
-                  if ( nested2Element == NULL )
-                    {
-                    break;
-                    }
-                  value = nested2Element->GetName();
-                  if ( value != NULL )
-                    {
-                    if ( !(strcmp (value, "Value" )) ||
-                         !(strcmp (value, "value" )) )
-                      {
-                      dtype = nested2Element->GetCharacterData();              
-                      //now pair it up with CurrentURI and add to ResourceDescription.
-                      this->FetchMINode->GetResourceDescription()->AddOrUpdateTag ( this->CurrentURI, dtype, 0 );
-                      this->SetCurrentURI (NULL);
-                      break;              
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-
-  //---
-  // TAGS -- expect to find a list of elements called label containing tag attribute names.
-  //---
-  if (  this->TagAttributesQuery )
-    {
-    if ( (!(strcmp(name, "Label" ))) ||
-         (!(strcmp(name, "label" ))) )
-      {
-      // parse the xml file and put result into node's XND tag table.
-      // and into logic's AllValuesForAllTags map.
-      value = element->GetCharacterData();
-      vtkXNDTagTable* t = vtkXNDTagTable::SafeDownCast (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XNDTags" ));
-      //--- we are choosing to set SlicerDataType a default
-      //--- value of 'MRML' in the XNDTagTable.
-      //--- This promotes tagging of scenes with a
-      //--- consistent attribute/value, and searching for scenes
-      //--- with that consistent tag.
-      if ( t != NULL && value != NULL )
-        {
-        //--- add to logic's map of tag attributes and all values
-        this->AddUniqueTag ( value );
-        //--- Add to node's tag table of tag attributes.
-        //--- Keep selection status if we are just refreshing the
-        //--- SAME server's metadata, and tag's already present.
-        //--- If a NEW server has been selected, then RestoreTagSelectionState = 0
-        //--- and we should just call AddOrUpdate with the new tag.
-        //---
-        //--- NOTE: this behavior may be friendly or annoying;
-        //--- not sure. If we don't want to restore the tag's
-        //--- selected state, then just get rid of the check on
-        //--- RestoreTagSelectionState and always call AddOrUpdateTag
-        //---
-        if ( this->GetRestoreTagSelectionState() )
-          {
-//            if ( t->IsTagSelected(value) <= 0 )            
-          if ( t->CheckTableForTag(value) < 0 )
-            {
-            //--- no need to update tag value or selected state.
-            t->AddOrUpdateTag ( value, "no values found", 0 );
-            }
-          }
-        else
-          {
-          //--- otherwise leave tag attribute, value, selected state as is.
-          t->AddOrUpdateTag ( value, "no values found", 0 );
-          }
-        }
-      }
-    }
-
-  
-    //---
-    // TAG VALUES -- expect long list of resources with nested
-    // uris that we ignore here, and then the target list of tag
-    // VALUEs for a given ATTRIBUTE at end.
-    //---
-    //--- Look for this guy:
-    //---<Tag Label="ATTRIBUTE">
-    //---<Value>VALUE_1</Value>
-    //---<Value>VALUE_2</Value>
-    //---</Tag>
-    //---
-  if ( this->TagValuesQuery )
-    {
-    if (((!(strcmp(name, "tag" ))) ||
-         (!(strcmp(name, "Tag" ))) ||
-         (!(strcmp(name, "TAG" )))) )
-      {
-      numAtts = element->GetNumberOfAttributes();
-      for ( int j=0; j < numAtts; j++ )
-        {
-        attName = element->GetAttributeName(j);        
-        value = element->GetAttributeValue(j);
-        if ( attName != NULL && value != NULL )
-          {
-          if ( !strcmp(attName, "Label" ))
-            {
-            //--- get all nested values.
-            int numnested = element->GetNumberOfNestedElements();
-            vtkXMLDataElement *nestedElement;
-            //--- get tag value
-            for ( int i=0; i < numnested; i++)
-              {
-              nestedElement = element->GetNestedElement ( i );
-              if (nestedElement != NULL)
-                {
-                if (!(strcmp(nestedElement->GetName(), "Value")) ||
-                    !(strcmp(nestedElement->GetName(), "value")) )
-                  {
-                  tagValue = nestedElement->GetCharacterData();
-                  this->AddUniqueValueForTag ( value, tagValue );
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-}
-
-
-
-//----------------------------------------------------------------------------
-void vtkFetchMILogic::ParseTagValuesQueryResponse ( )
-{
-    
-  vtkDebugMacro ("--------------------Parsing tag values query response.");
-  if ( this->GetHTTPResponseFileName() != NULL )
-    {
-    //--- TODOCheck document namespace and make sure it
-    //--- agrees with the current svctype.
-    }
-  else
-    {
-    vtkErrorMacro ( "vtkFetchMILogic: No XMLResponse filename is set." );
-    return;
-    }
-
-  //--- TODO: distinguish these better.... 
-  const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
-  if ( !(strcmp ("HID", svctype )) )
-    {
-    //--- HID
-    }
-  else if ( !(strcmp ("XND", svctype)) )
-    {
-    //--- XND
-    if ( this->GetHTTPResponseFileName() != NULL )
-      {
-      //--- check for file.
-      vtkXMLDataParser *parser = vtkXMLDataParser::New();
-      parser->SetFileName ( this->GetHTTPResponseFileName() );
-      parser->SetIgnoreCharacterData ( 0 );
-      int retval = parser->Parse();
-      //--- throw an error event if parsing failed.
-      if ( retval == 0 )
-        {
-        if ( parser )
-          {
-          parser->Delete();
-          }
-        this->FetchMINode->SetErrorMessage ("Unable to parse tag value query response.");
-        this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
-        return;
-        }
-
-      //--- first check for errors
-      this->NumberOfElements = 0;
-      vtkXMLDataElement *root = parser->GetRootElement();
-      this->ErrorChecking = 1;
-      this->ParsingError = 0;
-      if ( root != NULL )
-        {
-        this->GetNumberOfXMLElements( root );
-        if ( this->NumberOfElements > 0 )
-          {
-          root = parser->GetRootElement();
-          this->GetXMLElement ( root );
-          }
-        this->ErrorChecking = 0;
-        if ( this->ParsingError )
-          {
-          this->FetchMINode->SetErrorMessage ("The server returned an error response to the query for its tags.");
-          this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );          
-          if ( parser )
-            {
-            parser->Delete();
-            }
-          this->ParsingError = 0;
-          return;
-          }
-        }
-
-      //--- Turn TagValuesQuery ON so parser knows what to parse
-      this->TagValuesQuery = 1;
-      //---
-      this->NumberOfElements = 0;
-      root = parser->GetRootElement();
-      if ( root != NULL )
-        {
-        this->GetNumberOfXMLElements( root );
-        if ( this->NumberOfElements > 0 )
-          {
-          root = parser->GetRootElement();
-          this->GetXMLElement ( root );
-          }
-        }
-      else
-        {
-        // let user know the parsing didn't go well.
-        this->FetchMINode->SetErrorMessage ("Unable to parse tag query response. Displayed list of tags has not been updated.");
-        this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );          
-        }
-      if ( parser )
-        {
-        parser->Delete();
-        }
-
-      //--- Turn TagValuesQuery OFF
-      this->TagValuesQuery = 0;
-      //---
-
-      //--- clear response file contents: better way?
-      FILE *fptr = fopen(this->GetHTTPResponseFileName(), "w");    
-      if ( fptr)
-        {
-        fclose ( fptr);
-        }
-      }      
+    this->GetCurrentServer()->GetParser()->SetFetchMINode ( this->FetchMINode );
+    this->ClearExistingValuesForTag ( att );
+    this->GetCurrentServer()->GetParser()->ParseValuesForAttributeQueryResponse ( this->GetHTTPResponseFileName(), att );
+    this->RefreshValuesForTag ( att );
+    this->GetCurrentServer()->GetParser()->SetFetchMINode ( NULL );
     }
 }
 
@@ -1364,149 +1710,13 @@ void vtkFetchMILogic::ParseTagValuesQueryResponse ( )
 void vtkFetchMILogic::ParseTagQueryResponse ( )
 {
 
-  vtkDebugMacro ("--------------------Parsing tag query response.");
-  if ( this->GetFetchMINode() == NULL )
+  if ( this->GetCurrentServer()->GetParser() )
     {
-    vtkErrorMacro ( "vtkFetchMILogic: FetchMINode is NULL.");
-    return;
-    }
-
-  if ( this->FetchMINode->GetTagTableCollection() == NULL )
-    {
-    vtkErrorMacro ( "vtkFetchMILogic: FetchMINode's TagTableCollection is NULL.");
-    return;
-    }
-
-  this->FetchMINode->SetErrorMessage ( NULL );
-  const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
-  if ( svctype == NULL )
-    {
-    vtkErrorMacro ("vtkFetchMILogic: Null server or servicetype" );
-    return;
-    }
-    
-  if ( this->GetHTTPResponseFileName() != NULL )
-    {
-    //--- TODOCheck document namespace and make sure it
-    //--- agrees with the current svctype.
-    }
-  else
-    {
-    vtkErrorMacro ( "vtkFetchMILogic: No XMLResponse filename is set." );
-    return;
-    }
-    
-  //--- TODO: distinguish these better.... 
-  if ( !(strcmp ("HID", svctype )) )
-    {
-    //--- HID
-    vtkHIDTagTable *t = vtkHIDTagTable::SafeDownCast ( this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "HIDTags" ));
-    //--- if no need to keep tag selection state around, then
-    //--- clear out mrml tag table to be refilled by this query.
-    if ( t != NULL )
-      {
-      if ( this->GetRestoreTagSelectionState() == 0 )
-        {
-          t->ClearTagTable();
-          }
-      }
-
-    }
-  else if ( !(strcmp ("XND", svctype)) )
-    {
-    //--- XND
-    //--- look at xml file to see if there's an error message
-    //--- parse the error and fill the node's error message.
-    //--- if no, parse response into table.
-    vtkXNDTagTable *t = vtkXNDTagTable::SafeDownCast ( this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XNDTags" ));
-
-    if ( t != NULL && this->GetHTTPResponseFileName() != NULL )
-      {
-      //--- check for file.
-      vtkXMLDataParser *parser = vtkXMLDataParser::New();
-      parser->SetFileName ( this->GetHTTPResponseFileName() );
-      parser->SetIgnoreCharacterData ( 0 );
-      int retval = parser->Parse();
-      if ( retval == 0 )
-        {
-        parser->Delete();
-        this->FetchMINode->SetErrorMessage ("Unable to parse tag query response.");
-        this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
-        return;
-        }
-
-      //--- first check for errors
-      this->NumberOfElements = 0;
-      vtkXMLDataElement *root = parser->GetRootElement();
-      this->ErrorChecking = 1;
-      this->ParsingError = 0;
-      if ( root != NULL )
-        {
-        this->GetNumberOfXMLElements( root );
-        if ( this->NumberOfElements > 0 )
-          {
-          root = parser->GetRootElement();
-          this->GetXMLElement ( root );
-          }
-        this->ErrorChecking = 0;
-        if ( this->ParsingError )
-          {
-          this->FetchMINode->SetErrorMessage ("The server returned an error response to the query for all known values for its tags.");
-          this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );          
-          if ( parser )
-            {
-            parser->Delete();
-            }
-          this->ParsingError = 0;
-          return;
-          }
-        }
-
-      //--- If no need to keep tag selection state around, then
-      //--- clear out mrml tag table to be refilled by this query.
-      if ( this->GetRestoreTagSelectionState() == 0 )
-        {
-        t->ClearTagTable();
-        }
-      
-      //--- Turn TagAttributesQuery ON to help in pulling out XML elements.
-      this->TagAttributesQuery = 1;
-      //---
-
-      this->NumberOfElements = 0;
-      root = parser->GetRootElement();
-      if ( root != NULL )
-        {
-        this->GetNumberOfXMLElements( root );
-        if ( this->NumberOfElements > 0 )
-          {
-          //--- If response is good, parse response into table.
-          root = parser->GetRootElement();
-          this->GetXMLElement ( root );
-          }
-        }
-      else
-        {
-        // let user know the parsing didn't go well.
-        this->FetchMINode->SetErrorMessage ("Unable to parse tag query response. Displayed list of tags has not been updated.");
-        this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );          
-        }
-      if ( parser )
-        {
-        parser->Delete();
-        }
-
-      //--- Turn TagAttributesQuery OFF
-      this->TagAttributesQuery = 0;
-      //---
-
-      //--- clear response file contents: better way?
-      FILE *fptr = fopen(this->GetHTTPResponseFileName(), "w");    
-      if ( fptr)
-        {
-        fclose ( fptr);
-        }
-      }
+    this->GetCurrentServer()->GetParser()->SetFetchMINode ( this->FetchMINode );
+    this->ClearExistingTagsForQuery ( );
+    this->GetCurrentServer()->GetParser()->ParseMetadataQueryResponse( this->GetHTTPResponseFileName() );
+    this->RefreshTags();
+    this->GetCurrentServer()->GetParser()->SetFetchMINode ( NULL );
     }
 }
 
@@ -1515,191 +1725,80 @@ void vtkFetchMILogic::ParseTagQueryResponse ( )
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::ParseResourceQueryResponse ( )
 {
-  if ( this->GetFetchMINode() == NULL )
+  if ( this->GetCurrentServer()->GetParser() )
     {
-    vtkErrorMacro ( "vtkFetchMILogic: FetchMINode is NULL.");
-    return;
+    this->GetCurrentServer()->GetParser()->SetFetchMINode ( this->FetchMINode );
+    this->GetCurrentServer()->GetParser()->ParseResourceQueryResponse( this->GetHTTPResponseFileName() );
+    this->GetCurrentServer()->GetParser()->SetFetchMINode ( NULL );
     }
 
-  this->FetchMINode->SetErrorMessage(NULL );
-  const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
-  if ( svctype == NULL )
-    {
-    vtkErrorMacro ("vtkFetchMILogic: Null server or servicetype" );
-    return;
-    }
-
-  if ( this->GetHTTPResponseFileName() != NULL )
-    {
-    //--- TODOCheck document namespace and make sure it
-    //--- agrees with the current svctype.
-    }
-  else
-    {
-    vtkErrorMacro ( "vtkFetchMILogic: No XMLResponse filename is set." );
-    return;
-    }
+}
 
 
-  if ( (this->FetchMINode->GetResourceDescription() != NULL) && (this->GetHTTPResponseFileName() != NULL) )
+
+
+
+//----------------------------------------------------------------------------
+void vtkFetchMILogic::RefreshTags()
+{
+  this->ClearExistingTagsForQuery();
+  //--- copy parser's tags to Logic.
+  std::map<std::string, std::vector<std::string> >::iterator iter;
+  for ( iter = this->GetCurrentServer()->GetParser()->MetadataInformation.begin();
+        iter != this->GetCurrentServer()->GetParser()->MetadataInformation.end();
+        iter++ )
     {
-    //--- check for file.
-    vtkXMLDataParser *parser = vtkXMLDataParser::New();
-    parser->SetFileName ( this->GetHTTPResponseFileName() );
-    parser->SetIgnoreCharacterData ( 0 );
-    int retval = parser->Parse();
-    if ( retval == 0 )
+    if ( (iter->first.c_str() != NULL) && (strcmp(iter->first.c_str(), "" )) )
       {
-      parser->Delete();
-      this->FetchMINode->SetErrorMessage("Unable to parse resource query response.");
-      this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
-      return;
+      this->AddUniqueTag (iter->first.c_str() );
       }
-
-    //--- first check for errors
-    this->NumberOfElements = 0;
-    vtkXMLDataElement *root = parser->GetRootElement();
-    this->ErrorChecking = 1;
-    this->ParsingError = 0;
-    if ( root != NULL )
+    for (int i=0; i < iter->second.size(); i++ )
       {
-      this->GetNumberOfXMLElements( root );
-      if ( this->NumberOfElements > 0 )
+      if ( (iter->second[i].c_str() != NULL) && (strcmp(iter->second[i].c_str(), "")) )
         {
-        root = parser->GetRootElement();
-        this->GetXMLElement ( root );
+        this->AddUniqueValueForTag ( iter->first.c_str(), iter->second[i].c_str() );
         }
-      this->ErrorChecking = 0;
-      if ( this->ParsingError )
+      }
+    }
+}
+
+
+
+//----------------------------------------------------------------------------
+void vtkFetchMILogic::RefreshValuesForTag( const char *tagname )
+{
+  this->ClearExistingValuesForTag(tagname);
+
+  if ( this->FetchMINode != NULL )
+    {
+    if ( this->FetchMINode->GetTagTableCollection() != NULL )
+      {
+      vtkXNDTagTable *t = vtkXNDTagTable::SafeDownCast ( this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XND" ));
+      if ( t != NULL )
         {
-        this->FetchMINode->SetErrorMessage ("The server returned an error response to the query for matching resources.");
-        this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );          
-        if ( parser )
+        //--- copy parser's values for this attribute to Logic
+        std::map<std::string, std::vector<std::string> >::iterator iter;
+        for ( iter = this->GetCurrentServer()->GetParser()->MetadataInformation.begin();
+              iter != this->GetCurrentServer()->GetParser()->MetadataInformation.end();
+              iter++ )
           {
-          parser->Delete();
+          if ( !(strcmp (iter->first.c_str(), tagname) ) )
+            {
+            for (int i=0; i < iter->second.size(); i++ )
+              {
+              if ( (iter->second[i].c_str() != NULL) && (strcmp(iter->second[i].c_str(), "")) )
+                {
+                this->AddUniqueValueForTag ( iter->first.c_str(), iter->second[i].c_str() );
+                // and update the tag table we'll use to tag data.
+                t->AddOrUpdateTag (iter->first.c_str(), iter->second[i].c_str() );
+                }
+              }
+            }
           }
-        this->ParsingError = 0;
-        return;
         }
       }
-
-    //--- make sure ResourceQuery is ON to enable parsing of URIs.
-    this->ResourceQuery = 1;
-    //---
-
-    this->NumberOfElements = 0;
-    root = parser->GetRootElement();
-    if ( root != NULL )
-      {
-      this->GetNumberOfXMLElements( root );
-      if ( this->NumberOfElements > 0 )
-        {
-        //--- If response is good, parse response into table.
-        root = parser->GetRootElement();
-        this->GetXMLElement ( root );
-        }
-      }
-    else
-      {
-      // let user know the parsing didn't go well.
-      this->FetchMINode->SetErrorMessage("Unable to parse tag resource response.");
-      this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );          
-      }
-    if ( parser )
-      {
-      parser->Delete();
-      }
-
-    //--- make sure ResourceQuery is OFF 
-    this->ResourceQuery = 0;
-    //---
-    
-    //--- clear response file contents: better way?
-    FILE *fptr = fopen(this->GetHTTPResponseFileName(), "w");    
-    if ( fptr)
-      {
-      fclose ( fptr);
-      }
-    this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::ResourceResponseReadyEvent );
     }
 }
-
-
-
-//----------------------------------------------------------------------------
-int vtkFetchMILogic::PostMetadataToXND ( vtkXNDHandler *handler, const char *dataFilename )
-{
-  // return 1 if OK, 0 if not.
-  int returnval = 0;
-  
-  if ( handler == NULL )
-    {
-    vtkErrorMacro ( "FetchMILogic: PostMetadataToXND got a NULL handler" );
-    return returnval;
-    }
-  if (this->FetchMINode == NULL )
-    {
-    vtkErrorMacro ( "FetchMILogic: PostMetadataToXND got a NULL FetchMINode" );
-    return returnval;
-    }
-  if (this->GetXMLUploadFileName() == NULL)
-    {
-    vtkErrorMacro ( "FetchMILogic: PostMetadataToXND Got NULL file for Metadata upload.");
-    return returnval;
-    }
-  if ( this->GetXMLHeaderFileName() == NULL )
-    {
-    vtkErrorMacro ( "FetchMILogic: PostMetadataToXND Got NULL file for Metadata upload.");
-    return returnval;    
-    }
-  if (this->GetTemporaryResponseFileName() == NULL)
-    {
-    vtkErrorMacro ( "FetchMILogic: PostMetadataToXND got NULL file for Metadata upload.");
-    return returnval;
-    }
-
-  // set particular XND host in the XNDhandler
-  std::string svr = this->GetFetchMINode()->GetSelectedServer();
-  std::string::size_type index =  svr.find("://", 0);
-  if ( index  != std::string::npos)
-    {
-    std::string hostname = svr.substr( index+3, std::string::npos );
-    handler->SetHostName(hostname.c_str());
-    }
-     
-  
-  // set the post destination for data being described
-  std::stringstream ss;
-  ss << svr.c_str();
-  ss << "/data";
-  returnval = handler->PostMetadata ( ss.str().c_str(), this->GetXMLHeaderFileName(), dataFilename, this->GetXMLUploadFileName(), this->GetTemporaryResponseFileName() );
-  return (returnval);
-}
-
-
-
-
-
-//----------------------------------------------------------------------------
-const char * vtkFetchMILogic::ParsePostMetadataResponse ( const char *response)
-{
-  // check to see if response starts with http://, if so, return it as is
-  if (response == NULL )
-    {
-    return ( NULL );
-    }
-  if (!strncmp(response, "http://", 7))
-    {
-//    response = this->Script("string trim %s", response );
-    return response;
-    }
-  else
-    {
-    return ( NULL );
-    }
-}
-
-
 
 
 
@@ -1708,13 +1807,16 @@ void vtkFetchMILogic::ClearExistingTagsForQuery ( )
 {
 
   std::map<std::string, std::vector<std::string> >::iterator iter;
-  for ( iter = this->AllValuesForAllTagsOnServer.begin();
-        iter != this->AllValuesForAllTagsOnServer.end();
+  for ( iter = this->CurrentServerMetadata.begin();
+        iter != this->CurrentServerMetadata.end();
         iter++ )
     {
     iter->second.clear();
     }
-  this->AllValuesForAllTagsOnServer.clear();
+  this->CurrentServerMetadata.clear();
+
+  // enforce that SlicerDataType always be present.
+//  this->AddUniqueTag ( "SlicerDataType" );
 }
 
 
@@ -1724,8 +1826,8 @@ void vtkFetchMILogic::ClearExistingValuesForTag ( const char *tagname )
 
   //--- first find the tag, then clear all the values.
   std::map<std::string, std::vector<std::string> >::iterator iter;
-  for ( iter = this->AllValuesForAllTagsOnServer.begin();
-        iter != this->AllValuesForAllTagsOnServer.end();
+  for ( iter = this->CurrentServerMetadata.begin();
+        iter != this->CurrentServerMetadata.end();
         iter++ )
     {
     if ( !(strcmp (iter->first.c_str(), tagname) ) )
@@ -1744,8 +1846,8 @@ void vtkFetchMILogic::AddUniqueTag ( const char *tagname )
   //--- search thru vector of strings to see if we can find the tag.
   int unique = 1;
   std::map<std::string, std::vector<std::string> >::iterator iter;
-  for ( iter = this->AllValuesForAllTagsOnServer.begin();
-        iter != this->AllValuesForAllTagsOnServer.end();
+  for ( iter = this->CurrentServerMetadata.begin();
+        iter != this->CurrentServerMetadata.end();
         iter++ )
     {
     if ( ! (strcmp (iter->first.c_str(), tagname ) ) )
@@ -1763,7 +1865,7 @@ void vtkFetchMILogic::AddUniqueTag ( const char *tagname )
     std::vector<std::string> v;
     v.clear();
     // create an entry for it in the map.
-    this->AllValuesForAllTagsOnServer.insert ( std::make_pair (tagname, v ));
+    this->CurrentServerMetadata.insert ( std::make_pair (tagname, v ));
     }
 }
 
@@ -1774,8 +1876,8 @@ void vtkFetchMILogic::AddUniqueValueForTag ( const char *tagname, const char *va
   //--- search thru vector of strings for tag to see if we can find the tag.
   int tagFound = 0;
   std::map<std::string, std::vector<std::string> >::iterator iter;
-  for ( iter = this->AllValuesForAllTagsOnServer.begin();
-        iter != this->AllValuesForAllTagsOnServer.end();
+  for ( iter = this->CurrentServerMetadata.begin();
+        iter != this->CurrentServerMetadata.end();
         iter++ )
     {
     if ( ! (strcmp (iter->first.c_str(), tagname ) ) )
@@ -1813,8 +1915,8 @@ int vtkFetchMILogic::GetNumberOfTagValues( const char *tagname)
 
   unsigned int numValues = 0;
   std::map<std::string, std::vector<std::string> >::iterator iter;
-  for ( iter = this->AllValuesForAllTagsOnServer.begin();
-        iter != this->AllValuesForAllTagsOnServer.end();
+  for ( iter = this->CurrentServerMetadata.begin();
+        iter != this->CurrentServerMetadata.end();
         iter++ )
     {
     if ( ! (strcmp (iter->first.c_str(), tagname ) ) )
@@ -1838,7 +1940,7 @@ int vtkFetchMILogic::GetNumberOfTagValues( const char *tagname)
 int vtkFetchMILogic::GetNumberOfTagsOnServer ( )
 {
 
-  unsigned int numTags = this->AllValuesForAllTagsOnServer.size();
+  unsigned int numTags = this->CurrentServerMetadata.size();
   return ( numTags );
 
 }
@@ -1851,8 +1953,8 @@ const char * vtkFetchMILogic::GetNthTagAttribute ( int n)
 
   int cnt = 0;
   std::map<std::string, std::vector<std::string> >::iterator iter;
-  for ( iter = this->AllValuesForAllTagsOnServer.begin();
-        iter != this->AllValuesForAllTagsOnServer.end();
+  for ( iter = this->CurrentServerMetadata.begin();
+        iter != this->CurrentServerMetadata.end();
         iter++ )
     {
     if ( cnt < n )
@@ -1874,8 +1976,8 @@ const char * vtkFetchMILogic::GetNthValueForTag(const char *tagname, int n)
 {
 
   std::map<std::string, std::vector<std::string> >::iterator iter;
-  for ( iter = this->AllValuesForAllTagsOnServer.begin();
-        iter != this->AllValuesForAllTagsOnServer.end();
+  for ( iter = this->CurrentServerMetadata.begin();
+        iter != this->CurrentServerMetadata.end();
         iter++ )
     {
     if ( ! (strcmp (iter->first.c_str(), tagname ) ) )
@@ -1893,6 +1995,21 @@ const char * vtkFetchMILogic::GetNthValueForTag(const char *tagname, int n)
   return NULL;
 }
 
+//----------------------------------------------------------------------------
+int vtkFetchMILogic::IsTagOnServer ( const char *tagname )
+{
+  std::map<std::string, std::vector<std::string> >::iterator iter;
+  for ( iter = this->CurrentServerMetadata.begin();
+        iter != this->CurrentServerMetadata.end();
+        iter++ )
+    {
+    if ( ! (strcmp (iter->first.c_str(), tagname ) ) )
+      {
+      return 1;
+      }
+    }
+  return 0;
+}
 
 
 
@@ -1937,6 +2054,11 @@ int vtkFetchMILogic::WriteMetadataForUpload ( const char *filename, const char *
     vtkErrorMacro ( "vtkFetchMILogic: WriteMetadataForUpload has null MRMLScene." );
     return 0;        
     }  
+  if ( this->CurrentServer == NULL )
+    {
+    vtkErrorMacro ( "vtkFetchMILogic: WriteMetadataForUpload has null server.");
+    return 0;        
+    }
 
   ofstream file;
   // open the file for writing.
@@ -1952,21 +2074,29 @@ int vtkFetchMILogic::WriteMetadataForUpload ( const char *filename, const char *
     }
 
 
-//  const char *svr = this->GetFetchMINode()->GetSelectedServer();
-  const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
-  const char *att;
-  const char *val;
-
-  if ( svctype == NULL )
+/*
+  const char *svr = this->GetCurrentServer()->GetName();
+  if (svr == NULL || !(strcmp(svr, "") ) )
     {
-    vtkErrorMacro ("vtkFetchMILogic: Null server or servicetype" );
+    vtkErrorMacro ("vtkFetchMILogic: Null or empty server name." );
+    return;
+    }
+*/
+  const char *svctype = this->GetCurrentServer()->GetServiceType();
+  if (! this->ServerCollection->IsKnownServiceType(svctype) )
+    {
+    vtkErrorMacro ( "WriteMetadataForUpload: Got unknown web service type");
     return 0;
     }
 
-  if ( !(strcmp(svctype, "XND" )))
+  const char *att;
+  const char *val;
+
+  if ( !(strcmp(svctype, "XND")))
     {
     // doing a SafeDownCast in FindURIHandlerByName  was causing a crash...
-/*    vtkURIHandler *uriHandler = this->GetMRMLScene()->FindURIHandlerByName ( "XNDHandler" );
+//    const char *hname = this->GetCurrentServer()->GetURIHandlerName();
+/*    vtkURIHandler *uriHandler = this->GetMRMLScene()->FindURIHandlerByName ( hname );
     if (uriHandler == NULL)
       {
       vtkErrorMacro ( "vtkFetchMILogic: WriteMetadataForUpload got a null URIHandler." );
@@ -2119,21 +2249,28 @@ int vtkFetchMILogic::TestForRequiredTags ( )
     return 0;
     }
 
-  const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
-  if ( svctype == NULL )
+  if ( this->CurrentServer == NULL )
     {
-    vtkErrorMacro ("vtkFetchMILogic: Null server or servicetype" );
+    vtkErrorMacro ( "vtkFetchMILogic: CurrentServer is NULL.");
+    return 0;
+    }
+
+  const char *svctype = this->GetCurrentServer()->GetServiceType();          
+  if (! this->ServerCollection->IsKnownServiceType(svctype) )
+    {
+    vtkErrorMacro ( "TestForRequiredTags: Got unknown web service type");
     return 0;
     }
   
-  if ( !(strcmp ("HID", svctype )) )
+  if ( !(strcmp(svctype, "HID")))
     {
     //no-op
     }
-  if ( !(strcmp ("XND", svctype )) )
+  if ( !(strcmp(svctype, "XND")))
     {
     //--- check scene and all selected nodes.
     //---Required tags: experiment, project, subject, scan, modality, SlicerDataType.
+    //--- this may change!
     vtkTagTable *t;
     if ( this->SceneSelected )
       {
@@ -2164,7 +2301,7 @@ int vtkFetchMILogic::TestForRequiredTags ( )
       vtkMRMLStorableNode *node = vtkMRMLStorableNode::SafeDownCast ( this->MRMLScene->GetNodeByID (nodeID));
       if ( node != NULL )
         {
-        t = this->FetchMINode->GetTagTableCollection()->FindTagTableByName ("XNDTags");
+        t = this->FetchMINode->GetTagTableCollection()->FindTagTableByName ("XND");
         if ( t == NULL )
           {
           return 0;
@@ -2199,12 +2336,19 @@ int vtkFetchMILogic::RequestResourceDownload ( const char *uri, const char *slic
     return -1;
     }
 
-  const char *svctype = this->GetFetchMINode()->GetSelectedServiceType();
-  if ( svctype == NULL )
+  if ( this->CurrentServer == NULL )
     {
-    vtkErrorMacro ("vtkFetchMILogic: Null server or servicetype" );
+    vtkErrorMacro ( "vtkFetchMILogic: CurrentServer is NULL.");
     return -1;
     }
+
+  const char *svctype = this->GetCurrentServer()->GetServiceType();          
+  if (! this->ServerCollection->IsKnownServiceType(svctype) )
+    {
+    vtkErrorMacro ( "RequestResourceDownload: Got unknown web service type");
+    return -1;
+    }
+
   
   if ( uri == NULL || slicerDataType == NULL )
     {
@@ -2238,11 +2382,11 @@ int vtkFetchMILogic::RequestResourceDownload ( const char *uri, const char *slic
   if ( !(strcmp(slicerDataType, "MRML")))
     {
     //--- check all known webservices to see which is selected
-    if ( !(strcmp ("XND", svctype )) )
+    if ( !(strcmp(svctype, "XND")))
       {
       this->RequestSceneDownloadFromXND( uri );
       }
-    if ( !(strcmp ("HID", svctype )) )
+    if ( !(strcmp(svctype, "HID")))
       {
       this->RequestSceneDownloadFromHID( uri );
       }
@@ -2250,11 +2394,11 @@ int vtkFetchMILogic::RequestResourceDownload ( const char *uri, const char *slic
   else 
     {
     //--- check all known webservices to see which is selected
-    if ( !(strcmp ("XND", svctype )) )
+    if ( !(strcmp(svctype, "XND")))
       {
       this->RequestResourceDownloadFromXND( uri, slicerDataType );
       }
-    if ( !(strcmp ("HID", svctype )) )
+    if ( !(strcmp(svctype, "HID")))
       {
       this->RequestResourceDownloadFromHID( uri, slicerDataType );
       }
@@ -2342,7 +2486,8 @@ void vtkFetchMILogic::RequestResourceDownloadFromXND ( const char *uri, const ch
     }
 
   
-  vtkXNDHandler *handler = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XNDHandler" ));
+  const char *hname = this->GetCurrentServer()->GetURIHandlerName();
+  vtkXNDHandler *handler = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( hname ));
   if ( handler == NULL )
     {
     vtkErrorMacro ("vtkFetchMILogic::RequestResourceDownloadFromXND: Null URIHandler. ");
@@ -2362,17 +2507,12 @@ void vtkFetchMILogic::RequestResourceDownloadFromXND ( const char *uri, const ch
     vtkDebugMacro("vtkFetchMILogic::RequestResourceDownloadFromXND: new uri string = " << uriString.c_str());
     }
     
-  if ( !(strcmp(slicerDataType, "ScalarVolume" )))
+  if ( !(strcmp(slicerDataType, "LabelMap" )))
     {
     // is it a label map?
-    /*
-    vtkSlicerVolumesLogic *volumesLogic = vtkSlicerVolumesGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Volumes"))->GetLogic();
-    if (volumesLogic)
-      {
-      int loadingOptions = 0 || 8;
-      volumesLogic->AddArchetypeVolume(uriString.c_str(), "XNDVolume", loadingOptions);
-      }
-    */
+    }
+  if ( !(strcmp(slicerDataType, "ScalarVolume" )))
+    {
     //--- create the node, assume scalar
     vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::New();
     vtkMRMLScalarVolumeDisplayNode  *sdisplayNode = NULL;
@@ -2428,17 +2568,10 @@ void vtkFetchMILogic::RequestResourceDownloadFromXND ( const char *uri, const ch
     }
   
   // get the models logic
-  /*
-    if ( !(strcmp(slicerDataType, "VTKModel" ) ||
-    !(strcmp(slicerDataType, "FreeSurferModel" )) )
+  if ( !(strcmp(slicerDataType, "VTKModel" ) ||
+         !(strcmp(slicerDataType, "FreeSurferModel" )) ) )
     {
-    vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Models"))->GetLogic();
-    if (modelsLogic)
-    {
-    modelsLogic->AddNode(uriString.c_str());
     }
-    }
-  */
   if ( !(strcmp(slicerDataType, "VTKModel" )))
     {
     //--- create the node
@@ -2547,6 +2680,11 @@ void vtkFetchMILogic::RequestSceneDownloadFromHID ( const char *uri)
     vtkErrorMacro ("vtkFetchMILogic::RequestResourceDownloadFromHID: Null FetchMI node. ");
     return;
     }
+  if ( this->CurrentServer == NULL )
+    {
+    vtkErrorMacro ("vtkFetchMILogic::RequestResourceDownloadFromHID: Null server.");
+    return;
+    }
 
   vtkHIDHandler *handler = vtkHIDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "HIDHandler" ));
   if ( handler == NULL )
@@ -2560,7 +2698,12 @@ void vtkFetchMILogic::RequestSceneDownloadFromHID ( const char *uri)
 
   // currently have to pass a host name
   // TODO: test this!
-  std::string svr = this->GetFetchMINode()->GetSelectedServer();
+  std::string svr = this->GetCurrentServer()->GetName();
+  if (svr.c_str() == NULL || !(strcmp(svr.c_str(), "") ) )
+    {
+    vtkErrorMacro ("vtkFetchMILogic: Null or empty server name." );
+    return;
+    }
   std::string hostname;
   std::string::size_type index;
   if ( (index = svr.find("://", 0)) != std::string::npos)
@@ -2602,8 +2745,14 @@ void vtkFetchMILogic::RequestSceneDownloadFromXND ( const char *uri )
     vtkErrorMacro ("vtkFetchMILogic::RequestSceneDownloadFromXND: Null FetchMI node. ");
     return;
     }
+  if ( this->CurrentServer == NULL )
+    {
+    vtkErrorMacro ("vtkFetchMILogic::RequestSceneDownloadFromXND: Null server.");
+    return;
+    }
 
-  vtkXNDHandler *handler = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( "XNDHandler" ));
+    const char *hname = this->GetCurrentServer()->GetURIHandlerName();
+  vtkXNDHandler *handler = vtkXNDHandler::SafeDownCast (this->GetMRMLScene()->FindURIHandlerByName ( hname ));
   if ( handler == NULL )
     {
     vtkErrorMacro ("vtkFetchMILogic::RequestSceneDownloadFromXND: Null URIHandler. ");
@@ -2615,7 +2764,12 @@ void vtkFetchMILogic::RequestSceneDownloadFromXND ( const char *uri )
 
   // currently have to pass a host name
   // TODO: test this!
-  std::string svr = this->GetFetchMINode()->GetSelectedServer();
+  std::string svr = this->GetCurrentServer()->GetName();
+  if (svr.c_str() == NULL || !(strcmp(svr.c_str(), "") ) )
+    {
+    vtkErrorMacro ("vtkFetchMILogic: Null or empty server name." );
+    return;
+    }
   std::string hostname;
   std::string::size_type index;
   index = svr.find("://", 0);
@@ -2764,27 +2918,21 @@ int vtkFetchMILogic::CheckStorageNodeFileNames()
 }
 
 //----------------------------------------------------------------------------
-void vtkFetchMILogic::SetCacheFileNamesAndXNDHandler(vtkXNDHandler *handler)
+void vtkFetchMILogic::SetCacheFileNamesOnSelectedResources ( )
 {
   //---
   // Get all selected storable nodes from this->SelectedStorableNodeIDs;
   // (This vector of strings is populated by the GUI when upload button is
   // selected)
   //---
-
-  if ( handler == NULL )
+  if ( this->GetMRMLScene() == NULL )
     {
-    vtkErrorMacro ("vtkFetchMILogic::SetCacheFileNamesAndURIHandler: Null URIHandler. ");
-    return;
-    }
-    if ( this->GetMRMLScene() == NULL )
-    {
-    vtkErrorMacro ("vtkFetchMILogic::SetCacheFileNamesAndURIHandler: Null scene. ");
+    vtkErrorMacro ("vtkFetchMILogic::SetCacheFileNamesOnSelectedResources Null scene. ");
     return;
     }
   if ( this->GetFetchMINode() == NULL )
     {
-    vtkErrorMacro ("vtkFetchMILogic::SetCacheFileNamesAndURIHandler: Null FetchMI node. ");
+    vtkErrorMacro ("vtkFetchMILogic::SetCacheFileNamesOnSelectedResources Null FetchMI node. ");
     return;
     }
 
@@ -2798,8 +2946,9 @@ void vtkFetchMILogic::SetCacheFileNamesAndXNDHandler(vtkXNDHandler *handler)
     vtksys_stl::string sceneFileName = this->GetMRMLScene()->GetURL();
     vtksys_stl::string vtkFileName = vtksys::SystemTools::GetFilenameName (sceneFileName );
     const char *mrmlFileName = vtkFileName.c_str();
-    if ( !mrmlFileName || (!strcmp(mrmlFileName, "" )) )
+    if ( mrmlFileName== NULL || (!strcmp(mrmlFileName, "" )) )
       {
+      // this mimics what SlicerMRMLSaveDataWidget does.
       mrmlFileName = "SlicerScene1.mrml";
       }
     
@@ -2808,7 +2957,7 @@ void vtkFetchMILogic::SetCacheFileNamesAndXNDHandler(vtkXNDHandler *handler)
     // set the new url
     vtksys_stl::string tmp = vtksys::SystemTools::JoinPath(pathComponents);
     mrmlFileName = tmp.c_str();
-    vtkDebugMacro("RequestResourceUploadToXND: setting scene url to " << mrmlFileName);
+    vtkDebugMacro("vtkFetchMILogic::SetCacheFileNamesOnSelectedResources setting scene url to " << mrmlFileName);
     this->GetMRMLScene()->SetURL(mrmlFileName);
     }
 
@@ -2837,7 +2986,7 @@ void vtkFetchMILogic::SetCacheFileNamesAndXNDHandler(vtkXNDHandler *handler)
       pathComponents.pop_back();
       pathComponents.push_back(filename);
       // set it
-      vtkDebugMacro("SetCacheFileNamesAndURIHandler: setting file name " << vtksys::SystemTools::JoinPath(pathComponents).c_str() << " to storage node " << storageNode->GetID());
+      vtkDebugMacro("SetCacheFileNamesOnSelectedResources setting file name " << vtksys::SystemTools::JoinPath(pathComponents).c_str() << " to storage node " << storageNode->GetID());
       vtksys_stl::string tmp = vtksys::SystemTools::JoinPath(pathComponents);
       storageNode->SetFileName( tmp.c_str() );
       //--- If the node is a multivolume, set the filename and all FileListMembers to
@@ -2851,7 +3000,7 @@ void vtkFetchMILogic::SetCacheFileNamesAndXNDHandler(vtkXNDHandler *handler)
         nthFilename =  vtkFileName.c_str();
         pathComponents.pop_back();
         pathComponents.push_back(nthFilename);
-        vtkDebugMacro("SetCacheFileNamesAndURIHandler: adding file name " << vtksys::SystemTools::JoinPath(pathComponents).c_str() << " to list of new file names");
+        vtkDebugMacro("SetCacheFileNamesOnSelectedResources adding file name " << vtksys::SystemTools::JoinPath(pathComponents).c_str() << " to list of new file names");
         vtksys_stl::string ttmp = vtksys::SystemTools::JoinPath(pathComponents);
         CacheFileNameList.push_back(ttmp.c_str());
         }
@@ -2860,7 +3009,7 @@ void vtkFetchMILogic::SetCacheFileNamesAndXNDHandler(vtkXNDHandler *handler)
       // now add the new ones back in
       for (unsigned int filenum = 0; filenum < CacheFileNameList.size(); filenum++)
         {
-        vtkDebugMacro("SetCacheFileNamesAndURIHandler: adding file name " << CacheFileNameList[filenum] << " to storage node " << storageNode->GetID());
+        vtkDebugMacro("SetCacheFileNamesOnSelectedResources adding file name " << CacheFileNameList[filenum] << " to storage node " << storageNode->GetID());
         storageNode->AddFileName(CacheFileNameList[filenum].c_str());
         }
       //--- Write the file (or multivolume set of files) to cache.
@@ -2869,8 +3018,7 @@ void vtkFetchMILogic::SetCacheFileNamesAndXNDHandler(vtkXNDHandler *handler)
       //--- If this fails, error message and return.
       
       //--- Set the URIHandler on the storage node
-      vtkDebugMacro("SetCacheFileNamesAndURIHandler: setting handler on storage node " << (storageNode->GetID() == NULL ? "(null)" : storageNode->GetID()));
-      storageNode->SetURIHandler(handler);
+      vtkDebugMacro("SetCacheFileNamesOnSelectedResources setting handler on storage node " << (storageNode->GetID() == NULL ? "(null)" : storageNode->GetID()));
       // *NOTE: make sure to see that DataIOManagerLogic (or whatever) checks to see
       // if the URIHandler is set before calling CanHandleURI() on all scene handlers,
       // and if not, fix this logic to use the storage node's handler as set.
@@ -2880,8 +3028,82 @@ void vtkFetchMILogic::SetCacheFileNamesAndXNDHandler(vtkXNDHandler *handler)
 }
 
 
+
 //----------------------------------------------------------------------------
-void vtkFetchMILogic::PostStorableNodesToXND()
+void vtkFetchMILogic::SetIdleWriteStateOnSelectedResources ( )
+{
+    if ( this->GetMRMLScene() == NULL )
+    {
+    vtkErrorMacro ("vtkFetchMILogic::SetIdleWriteStateOnSelectedResources: Null scene. ");
+    return;
+    }
+
+  //--- storable nodes
+  vtkMRMLStorableNode *storableNode;
+  for (unsigned int n = 0; n < this->SelectedStorableNodeIDs.size(); n++)
+    {
+    storableNode = vtkMRMLStorableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID( this->SelectedStorableNodeIDs[n] ));
+    // for each storage node
+    int numStorageNodes = storableNode->GetNumberOfStorageNodes();
+    vtkMRMLStorageNode *storageNode;
+    for (int i = 0; i < numStorageNodes; i++)
+      {
+      storageNode = storableNode->GetNthStorageNode(i);
+      storageNode->SetWriteStateIdle();
+      }
+    }
+}
+
+
+//----------------------------------------------------------------------------
+void vtkFetchMILogic::SetURIHandlerOnSelectedResources(vtkURIHandler *handler)
+{
+  //---
+  // Get all selected storable nodes from this->SelectedStorableNodeIDs;
+  // (This vector of strings is populated by the GUI when upload button is
+  // selected) Set handler.
+  //---
+
+  if ( handler == NULL )
+    {
+    vtkErrorMacro ("vtkFetchMILogic::SetURIHandlerOnSelectedResources: Null URIHandler. ");
+    return;
+    }
+    if ( this->GetMRMLScene() == NULL )
+    {
+    vtkErrorMacro ("vtkFetchMILogic::SetURIHandlerOnSelectedResources: Null scene. ");
+    return;
+    }
+  if ( this->GetFetchMINode() == NULL )
+    {
+    vtkErrorMacro ("vtkFetchMILogic::SetURIHandlerOnSelectedResources: Null FetchMI node. ");
+    return;
+    }
+  
+  //--- scene
+  if ( this->SceneSelected )
+    {
+    }
+
+  //--- storable nodes
+  vtkMRMLStorableNode *storableNode;
+  for (unsigned int n = 0; n < this->SelectedStorableNodeIDs.size(); n++)
+    {
+    storableNode = vtkMRMLStorableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID( this->SelectedStorableNodeIDs[n] ));
+    // for each storage node
+    int numStorageNodes = storableNode->GetNumberOfStorageNodes();
+    vtkMRMLStorageNode *storageNode;
+    for (int i = 0; i < numStorageNodes; i++)
+      {
+      storageNode = storableNode->GetNthStorageNode(i);
+      storageNode->SetURIHandler(handler);
+      }
+    }
+}
+
+
+//----------------------------------------------------------------------------
+int  vtkFetchMILogic::PostStorableNodes()
 {
   // Get all selected storable nodes from this->SelectedStorableNodeIDs;
   // FOR EACH FILENAME & FILELISTMEMBER IN EACH SELECTED NODE with valid uri:
@@ -2902,103 +3124,23 @@ void vtkFetchMILogic::PostStorableNodesToXND()
       if (storageNode->GetURIHandler() == NULL)
         {
         //  we set it to null on error above
-        vtkWarningMacro("RequestResourceUploadToXND: not writing on storage node " << i);
+        vtkWarningMacro("PostStorableNodes: not writing on storage node " << i);
+        return ( 0 );
         }
       else
         {
-        vtkDebugMacro("RequestResourceUploadToXND: caling write data on storage node " << i << ": " << storageNode->GetID());
+        vtkDebugMacro("PostStorableNodes: calling write data on storage node " << i << ": " << storageNode->GetID());
         if (!storageNode->WriteData(storableNode))
           {
-          vtkErrorMacro("RequestResourceUploadToXND: WriteData call failed on storage node " << storageNode->GetID() << " for node " << storableNode->GetName());
+          vtkErrorMacro("PostStorableNodes: WriteData call failed on storage node " << storageNode->GetID() << " for node " << storableNode->GetName());
+          return ( 0 );
           }
         }
       }
     }
+  return ( 1 );
 }
 
 
-
-//----------------------------------------------------------------------------
-//----------------------------------------------------------------------------
-
-
-
-
-//----------------------------------------------------------------------------
-void vtkFetchMILogic::CreateTemporaryFiles ( )
-{
-  // This method creates three temporary filenames, using the cache dir, one
-  // for holding http from server responses to queries, one
-  // for holding xml metadata created for XNAT Desktop uploads,
-  // and one for holding mrml scenes downloaded to cache.
-
-  if ( this->GetMRMLScene() != NULL )
-    {
-    if ( this->GetMRMLScene()->GetCacheManager() != NULL )
-      {
-      if ( this->GetMRMLScene()->GetCacheManager()->GetRemoteCacheDirectory() != NULL )
-        {
-        this->XMLDirName = this->GetMRMLScene()->GetCacheManager()->GetRemoteCacheDirectory();
-        if ( this->XMLDirName.c_str() != NULL )
-          {
-          if (vtksys::SystemTools::FileIsDirectory( this->XMLDirName.c_str() ))
-            {
-            //--- for now, create temporary query response file in cache dir.
-            std::vector<std::string> pathComponents;
-            vtksys::SystemTools::SplitPath( this->XMLDirName.c_str(), pathComponents);
-            // now add the new file name to the end of the path
-            pathComponents.push_back("FetchMI_QueryResponse.xml");
-            this->HTTPResponseFileName = vtksys::SystemTools::JoinPath(pathComponents);
-            vtkDebugMacro ( "HTTPResponseFileName = " << this->HTTPResponseFileName );
-
-            //--- for now, create temporary xml metadata description file in
-            //--- cache dir.
-            pathComponents.pop_back();
-            pathComponents.push_back("FetchMI_UploadMetadata.xml");
-            this->XMLUploadFileName =  vtksys::SystemTools::JoinPath(pathComponents);
-            vtkDebugMacro ( "XMLUploadFileName = " << this->XMLUploadFileName );
-
-            //--- for now, create temporary xml response file in
-            //--- cache dir.
-            pathComponents.pop_back();
-            pathComponents.push_back("FetchMI_TemporaryResponse.xml");
-            this->TemporaryResponseFileName =  vtksys::SystemTools::JoinPath(pathComponents);
-            vtkDebugMacro ( "TemporaryResponseFileName = " << this->TemporaryResponseFileName );
-
-            //--- for now, create temporary xml document description in
-            //--- cache dir.
-            pathComponents.pop_back();
-            pathComponents.push_back("FetchMI_DocumentDeclaration.xml");
-            this->DocumentDeclarationFileName =  vtksys::SystemTools::JoinPath(pathComponents);
-            vtkDebugMacro ( "XMLDocumentDeclarationFileName = " << this->DocumentDeclarationFileName );
-            
-            //--- for now, create temporary xml header in
-            //--- cache dir.
-            pathComponents.pop_back();
-            pathComponents.push_back("FetchMI_UploadHeader.xml");
-            this->HeaderFileName =  vtksys::SystemTools::JoinPath(pathComponents);
-            vtkDebugMacro ( "XMLHeaderFileName = " << this->HeaderFileName );
-
-            //--- for now, create temporary cache file where downloaded mrml files go.
-            pathComponents.pop_back();
-            pathComponents.push_back("FetchMI_MRMLCache.xml");
-            this->MRMLCacheFileName = vtksys::SystemTools::JoinPath(pathComponents);
-            vtkDebugMacro ( "MRMLCacheFileName = " << this->MRMLCacheFileName );
-
-            // Wendy: do we need to touch these files, or just create the file names?
-            }
-          }
-        }
-      else
-        {
-        vtkWarningMacro ("RemoteCacheDirectory is not set! Creating files in current dir");
-        this->HTTPResponseFileName = std::string("FetchMI_QueryResponse.xml");
-        this->XMLUploadFileName = std::string("FetchMI_UploadMetadata.xml");
-        this->MRMLCacheFileName = std::string("FetchMI_MRMLCache.xml");
-        this->TemporaryResponseFileName = std::string ("FetchMI_TemporaryResponse.xml");
-        }
-      }
-    }
-}
 
 

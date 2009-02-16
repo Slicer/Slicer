@@ -44,8 +44,6 @@ class VTK_FETCHMI_EXPORT vtkFetchMIGUI : public vtkSlicerModuleGUI
   this->SetLogic(reinterpret_cast<vtkFetchMILogic*> (logic)); 
   }
 
-  vtkGetStringMacro (ReservedURI);
-  vtkSetStringMacro (ReservedURI);
   vtkGetStringMacro (DataDirectoryName);
   vtkSetStringMacro (DataDirectoryName);
 
@@ -134,8 +132,8 @@ protected:
   
   // Description:
   // If the selected server is re-selected, then the
-  // Logic's RestoreTagSelectionState variable is set, and
-  // Logic repopulates its list of available Tags and
+  // appropriate tagtable's RestoreSelectionState variable is
+  // set, and Logic repopulates its list of available Tags and
   // values for query. This method restores
   // the values that a user had previously selected
   // for tags in the GUI as a user convenience.
@@ -150,11 +148,7 @@ protected:
   void AddVolumeNodes();
   void AddModelNodes();
   void AddUnstructuredGridNodes();
-  void RequestUpload();
 
-  int WriteMetadataForUpload_XND (const char *ID);
-  void WriteDocumentDeclaration_XND ( );
-  const char* ParseMetadataPostResponse ( );
 
   // Description:
   // Apply/remove current  tag to selected data.
@@ -195,7 +189,6 @@ protected:
   vtkFetchMITagViewWidget *TagViewer;
   vtkFetchMIIcons *FetchMIIcons;
 
-  char *ReservedURI;
   char *DataDirectoryName;
   int UpdatingGUI;
   int UpdatingMRML;

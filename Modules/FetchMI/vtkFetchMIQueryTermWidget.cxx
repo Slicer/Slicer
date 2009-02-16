@@ -146,6 +146,18 @@ void vtkFetchMIQueryTermWidget::ProcessWidgetEvents ( vtkObject *caller,
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
   vtkKWMultiColumnList *l = vtkKWMultiColumnList::SafeDownCast( caller );
   
+  if ( this->Logic == NULL )
+    {
+    vtkErrorMacro ( "vtkFetchMIQueryTermWidget::ProcessWidgetEvents: got NULL logic." );
+    return;
+    }
+  if ( this->Logic->GetFetchMINode() == NULL )
+    {
+    vtkErrorMacro ( "vtkFetchMIQueryTermWidget::ProcessWidgetEvents: got NULL FetchMINode." );
+    return;
+    }
+
+  
   if ( this->IsCreated() )
     {
     if ( (l == this->GetMultiColumnList()->GetWidget()) && (event == vtkKWMultiColumnList::CellUpdatedEvent) )
@@ -177,23 +189,29 @@ void vtkFetchMIQueryTermWidget::ProcessWidgetEvents ( vtkObject *caller,
       }
     else if ( b == this->RefreshButton )
       {
-      if ( this->Logic->GetFetchMINode() != NULL )
+      if ( this->Logic->GetCurrentServer() != NULL )
         {
         //--- check the node's selected server for tags.
-        if ( (this->Logic->GetFetchMINode()->GetSelectedServer() != NULL) )
+        const char *ttname = this->Logic->GetCurrentServer()->GetTagTableName();
           {
-            this->Logic->SetRestoreTagSelectionState(1);
-            //--- this queries server for tags
-            vtkDebugMacro ("--------------------GUI event refreshing Query.");
-            this->SetStatusText ("Querying selected server for metadata..." );
-            this->Logic->QueryServerForTags();
-            this->SetStatusText ( "Querying selected server for metadata......." );
-            this->Logic->QueryServerForTagValues( );
-            this->SetStatusText ( "Querying selected server for metadata.......done." );
-            // TODO: temporary fix for HID which we are
-            // not yet querying for available tags. Just
-            // repopulate from default tags in FetchMINode
-            this->SetStatusText ( "");
+          if ( this->Logic->GetFetchMINode()->GetTagTableCollection() )
+            {
+            vtkTagTable *t = this->Logic->GetFetchMINode()->GetTagTableCollection()->FindTagTableByName ( ttname );
+            if ( t != NULL )
+              {
+              t->SetRestoreSelectionState(1);
+              //--- this queries server for tags
+              this->SetStatusText ("Querying selected server for metadata..." );
+              this->Logic->QueryServerForTags();
+              this->SetStatusText ( "Querying selected server for metadata......." );
+              this->Logic->QueryServerForTagValues( );
+              this->SetStatusText ( "Querying selected server for metadata.......done." );
+              // TODO: temporary fix for HID which we are
+              // not yet querying for available tags. Just
+              // repopulate from default tags in FetchMINode
+              this->SetStatusText ( "");
+              }
+            }
           }
         }
       }
@@ -481,8 +499,8 @@ void vtkFetchMIQueryTermWidget::PopulateFromServer ( )
   //--- block any update events until done.
   this->DeleteAllItems( );
   std::map<std::string, std::vector<std::string> >::iterator iter;
-  for ( iter = this->Logic->AllValuesForAllTagsOnServer.begin();
-        iter != this->Logic->AllValuesForAllTagsOnServer.end();
+  for ( iter = this->Logic->CurrentServerMetadata.begin();
+        iter != this->Logic->CurrentServerMetadata.end();
         iter++ )
     {
     this->AddNewTagForQuery ( iter->first.c_str(), iter->second );

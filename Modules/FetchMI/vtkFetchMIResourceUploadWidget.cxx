@@ -1000,9 +1000,13 @@ void vtkFetchMIResourceUploadWidget::PopulateTagMenuButtonCallback ()
     vtkErrorMacro ("vtkFetchMIResourceUploadWidget: PopulateTagMenuButtonCallback got NULL FetchMINode.");
     return;
     }
+  if ( this->Logic->GetCurrentServer() == NULL )
+    {
+    vtkErrorMacro ("vtkFetchMIResourceUploadWidget: PopulateTagMenuButtonCallback got NULL server.");
+    return;
+    }
   
-  const char *svr = this->Logic->GetFetchMINode()->GetSelectedServer();
-  const char *svctype = this->Logic->GetFetchMINode()->GetSelectedServiceType();
+  const char *svr = this->Logic->GetCurrentServer()->GetName();
   int attIndex;
   int valIndex;
 
@@ -1027,16 +1031,18 @@ void vtkFetchMIResourceUploadWidget::PopulateTagMenuButtonCallback ()
 
       //--- Now repopulate.
 
-        this->SetCurrentTagAttribute ( NULL );
-        this->SetCurrentTagValue ( NULL );
+      this->SetCurrentTagAttribute ( NULL );
+      this->SetCurrentTagValue ( NULL );
 
-      // What if there are no tags, either because a server hasn't
+      // TODO: What if there are no tags, either because a server hasn't
       // been selected, or it has but no tags were found for it.
       // (unlikely i think...) but whatever.
-      if ( this->Logic->AllValuesForAllTagsOnServer.size() <= 0 )
+      // For now, try populating from the node's tagtable rather than
+      // the logic's table. 
+      if ( this->Logic->CurrentServerMetadata.size() <= 0 )
         {
         // check to see if there's a server selected.
-        if ( svr == NULL || svctype == NULL )
+        if ( svr == NULL || !(strcmp(svr, "" )) )
           {
           vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
           dialog->SetParent (this->GetParent() );
@@ -1049,12 +1055,11 @@ void vtkFetchMIResourceUploadWidget::PopulateTagMenuButtonCallback ()
           return;
           }
         }
-
       // populate with tags, and options to add new ones.
       std::map<std::string, std::vector<std::string> >::iterator iter;
       int cascadeCount = 0;
-      for (  iter = this->Logic->AllValuesForAllTagsOnServer.begin();
-            iter != this->Logic->AllValuesForAllTagsOnServer.end();
+      for (  iter = this->Logic->CurrentServerMetadata.begin();
+            iter != this->Logic->CurrentServerMetadata.end();
             iter++ )
         {
         if ( iter->first.c_str() == NULL )
@@ -1076,6 +1081,7 @@ void vtkFetchMIResourceUploadWidget::PopulateTagMenuButtonCallback ()
               }
             }
           }
+
         vm->AddSeparator();
         //--- the window should raise with the corresponding tag selected in the menu.
         //--- that tag gets set in ProcessGUIEvents, on the TaggedDataList->CurrentTagAttribute.
@@ -1243,7 +1249,7 @@ void vtkFetchMIResourceUploadWidget::ShowTagViewCallback( )
 void vtkFetchMIResourceUploadWidget::ResetCurrentTagLabel ( )
 {
   this->CurrentTagLabel->SetForegroundColor ( 0.7, 0.7, 0.7 );
-  this->CurrentTagLabel->SetText ( "Tag: (No tag currently selected)" );
+  this->CurrentTagLabel->SetText ( "Selected Tag: (none)" );
 }
 
 
