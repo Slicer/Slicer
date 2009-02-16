@@ -2,13 +2,18 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Python Modules</category>
   <title>Python Stochastic Tractography</title>
-  <description>
-    This module implements stochastic tractography. For more information please refer to the following link
-       http://www.na-mic.org/Wiki/index.php/Python_Stochastic_Tractography_Tutorial
+  <description> This module implements stochastic tractography. For more information please refer to the following link 
+
+www.na-mic.org/Wiki/index.php/Python_Stochastic_Tractography_Tutorial
   </description>
   <version>0.1.0.$Revision: 1892 $(alpha)</version>
-  <documentation-url>http://www.na-mic.org/Wiki/index.php/Python_Stochastic_Tractography_Tutorial</documentation-url>
-  <contributor>Julien von Siebenthal (jvs@bwh.harvard.edu) </contributor>
+  <documentation-url></documentation-url>
+  <contributor> Developer: Julien de Siebenthal (PNL) (jvs@bwh.harvard.edu)
+Supervisors: Marek Kubicki (PNL), Carl-Fredrik Westin (LMI) and Sylvain Bouix (PNL)
+ </contributor>
+ <acknowledgements>
+Grants: National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149 (Ron Kikinis, Marek Kubicki)
+ </acknowledgements>
  
 
   <parameters>
@@ -155,7 +160,7 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
       <constraints>
         <minimum>1</minimum>
         <maximum>1000</maximum>
-        <step>10</step>
+        <step>1</step>
       </constraints>
     </integer>
 
@@ -168,7 +173,7 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
       <constraints>
         <minimum>10</minimum>
         <maximum>1000</maximum>
-        <step>10</step>
+        <step>1</step>
       </constraints>
     </integer>
     
@@ -206,7 +211,7 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
       <longflag>fa</longflag>
       <description>Stopping criteria as fractional anisotropy</description>
       <label>FA</label>
-      <default>0.1</default>
+      <default>0.0</default>
       <constraints>
         <minimum>0.0</minimum>
         <maximum>1.0</maximum>
@@ -275,12 +280,15 @@ import os
 
 
 vtk_types = { 2:numpy.int8, 3:numpy.uint8, 4:numpy.int16,  5:numpy.uint16,  6:numpy.int32,  7:numpy.uint32,  10:numpy.float32,  11:numpy.float64 }
-
 numpy_sizes = { numpy.int8:1, numpy.uint8:1, numpy.int16:2,  numpy.uint16:2,  numpy.int32:4,  numpy.uint32:4,  numpy.float32:4,  numpy.float64:8 }
-
 numpy_nrrd_names = { 'int8':'char', 'uint8':'unsigned char', 'int16':'short',  'uint16':'ushort',  'int32':'int',  'uint32':'uint',  'float32':'float',  'float64':'double' }
-
 numpy_vtk_types = { 'int8':'2', 'uint8':'3', 'int16':'4',  'uint16':'5',  'int32':'6',  'uint32':'7',  'float32':'10',  'float64':'11' }
+
+#vtk_types = { 2:numpy.int8, 3:numpy.uint8, 4:numpy.int16,  5:numpy.uint16,  6:numpy.int32,  7:numpy.uint32,  10:numpy.float32 }
+#numpy_sizes = { numpy.int8:1, numpy.uint8:1, numpy.int16:2,  numpy.uint16:2,  numpy.int32:4,  numpy.uint32:4,  numpy.float32:4 }
+#numpy_nrrd_names = { 'int8':'char', 'uint8':'unsigned char', 'int16':'short',  'uint16':'ushort',  'int32':'int',  'uint32':'uint',  'float32':'float' }
+#numpy_vtk_types = { 'int8':'2', 'uint8':'3', 'int16':'4',  'uint16':'5',  'int32':'6',  'uint32':'7',  'float32':'10' }
+
 
 SIZE = 4096 
 
@@ -298,8 +306,13 @@ def sendVolume(vol, c, isDti=False):
   else:
       data = vol.GetImageData().GetPointData().GetTensors().ToArray()
   
+  data = data.astype('uint16')
+
   shape = data.shape
   dtype = data.dtype
+
+  #print 'Data shape : ', shape
+  #print 'Data type : ', dtype
 
 
   org = vol.GetOrigin()
@@ -341,7 +354,6 @@ def sendVolume(vol, c, isDti=False):
   c.send(I2R.tostring())
   ack = c.recv(SIZE)
 
-
   c.send('components 1\n')
   ack = c.recv(SIZE)
 
@@ -354,10 +366,14 @@ def sendVolume(vol, c, isDti=False):
      grad = slicer.vtkDoubleArray()
      grad = vol.GetDiffusionGradients()
      G = grad.ToArray()
+     G = G.astype('float')
+     #print 'G type : ', G.dtype
 
      bval = slicer.vtkDoubleArray()
      bval = vol.GetBValues()
      b = bval.ToArray()
+     b = b.astype('float')
+     #print 'b type : ', b.dtype
 
      M2R = numpy.zeros((4,4), 'float')
      
