@@ -299,17 +299,13 @@ void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
         {
         this->URIHandler = this->Scene->FindURIHandler(this->URI);
         }
-      else
-        {
-        vtkWarningMacro("StageReadData: using the already set uri handler: " << this->URIHandler->GetName());
-        }
       if (this->URIHandler != NULL)
         {
         vtkDebugMacro("StageReadData: got a URI Handler");
         }
       else
         {
-        vtkErrorMacro("StageReadData: unable to get a URI handler for " << this->URI << ", resetting stage to ready");
+        vtkErrorMacro("StageReadData: unable to get a URI handler for " << this->URI << ", resetting stage to idle");
         this->SetReadStateIdle();
         return;
         }
@@ -368,10 +364,6 @@ void vtkMRMLStorageNode::StageWriteData ( vtkMRMLNode *refNode )
        if (this->URIHandler == NULL)
          {
          this->URIHandler = this->Scene->FindURIHandler(this->URI);
-         }
-       else
-         {
-         vtkWarningMacro("StageWriteData: using the already set uri handler: " << this->URIHandler->GetName());
          }
        if (this->URIHandler != NULL)
          {
