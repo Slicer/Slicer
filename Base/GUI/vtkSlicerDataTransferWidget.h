@@ -63,6 +63,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferWidget : public vtkSlicerW
     virtual void AddWidgetObservers();
     virtual void RemoveWidgetObservers();
 
+    virtual int ComputeSizeOnDisk ();
+
     // Description:
     // Method to propagate events generated in GUI to logic / mrml.
     void ProcessWidgetEvents(vtkObject *caller, unsigned long event, void *callData);

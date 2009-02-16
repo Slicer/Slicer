@@ -152,6 +152,75 @@ void vtkSlicerDataTransferWidget::DisplayRunningAnimation()
 
 
 
+//---------------------------------------------------------------------------
+int vtkSlicerDataTransferWidget::ComputeSizeOnDisk ()
+{
+  if ( this->DataIOManager == NULL )
+    {
+    vtkErrorMacro ( "ComputeSizeOnDisk: DataIOManager is NULL" );
+    return -1;
+    }
+  if ( this->DataIOManager->GetCacheManager() == NULL )
+    {
+    vtkErrorMacro ( "ComputeSizeOnDisk: CacheManager is NULL" );
+    return -1;
+    }
+  if ( this->DataIOManager->GetCacheManager()->GetRemoteCacheDirectory() == NULL )
+    {
+    vtkErrorMacro ( "ComputeSizeOnDisk: Got Empty or NULL RemoteCacheDirectory." );
+    return -1;
+    }
+  if ( this->DataTransfer == NULL )
+    {
+    vtkErrorMacro ( "ComputeSizeOnDisk: got NULL DataTransfer." );
+    return -1;
+    }
+  
+  std::ifstream f;
+  if ( this->DataTransfer->GetTransferType() == vtkDataTransfer::RemoteDownload )
+    {
+    if ( this->DataTransfer->GetDestinationURI() )
+      {
+      f.open(this->DataTransfer->GetDestinationURI(), std::ios_base::binary | std::ios_base::in);
+      }
+    }
+  else if (this->DataTransfer->GetTransferType() == vtkDataTransfer::LocalSave )
+    {
+    if ( this->DataTransfer->GetDestinationURI() )
+      {
+      f.open(this->DataTransfer->GetDestinationURI(), std::ios_base::binary | std::ios_base::in);
+      }
+    }
+  else if ( this->DataTransfer->GetTransferType() == vtkDataTransfer::RemoteUpload )
+    {
+    if ( this->DataTransfer->GetSourceURI() )
+      {
+      f.open(this->DataTransfer->GetSourceURI(), std::ios_base::binary | std::ios_base::in);
+      }
+    }
+  else if ( this->DataTransfer->GetTransferType() == vtkDataTransfer::LocalLoad )
+    {
+    if ( this->DataTransfer->GetSourceURI() )
+      {
+      f.open(this->DataTransfer->GetSourceURI(), std::ios_base::binary | std::ios_base::in);
+      }
+    }
+
+  if (!f.good() || f.eof() || !f.is_open())
+    {
+    this->DataTransfer->SetSizeOnDisk(-1);
+    return ( this->DataTransfer->GetSizeOnDisk() );
+    }
+
+  f.seekg(0, std::ios_base::beg);
+  std::ifstream::pos_type begin_pos = f.tellg();
+  f.seekg(0, std::ios_base::end);
+
+  this->DataTransfer->SetSizeOnDisk ( static_cast<int>(f.tellg() - begin_pos) );
+  f.close();
+  return ( this->DataTransfer->GetSizeOnDisk() );
+}
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerDataTransferWidget::PrintSelf (ostream& os, vtkIndent indent)
@@ -708,7 +777,8 @@ void vtkSlicerDataTransferWidget::UpdateInformationText( )
     return;
     }
 
-  char *cmd = new char [1024];
+  char *cmd1 = new char [1024];
+  char *cmd2 = new char [1024];
   std::string infoString;
 
   vtkDebugMacro ("vtkSlicerDataTransferWidget: updating information text.");  
@@ -730,9 +800,14 @@ void vtkSlicerDataTransferWidget::UpdateInformationText( )
   infoString += this->DataTransfer->GetDestinationURI();
   infoString += "\n";  
   
+  this->ComputeSizeOnDisk();
+  infoString += "**Size on disk (in bytes): **";
+  sprintf( cmd1, "%d \n",this->DataTransfer->GetSizeOnDisk() );
+  infoString += cmd1;  
+
   infoString += "**Data transfer ID: **";
-  sprintf ( cmd, "%d \n", this->DataTransfer->GetTransferID() );
-  infoString += cmd;
+  sprintf ( cmd2, "%d \n", this->DataTransfer->GetTransferID() );
+  infoString += cmd2;
 
   infoString += "**Destination MRMLNode ID: **";
   infoString += this->DataTransfer->GetTransferNodeID();
@@ -740,7 +815,8 @@ void vtkSlicerDataTransferWidget::UpdateInformationText( )
 
   this->InformationText->GetWidget()->SetText( infoString.c_str());
 
-  delete [] cmd;
+  delete [] cmd1;
+  delete [] cmd2;
 
 }
 
