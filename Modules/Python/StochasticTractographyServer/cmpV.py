@@ -37,8 +37,8 @@ def cmpV3(a, b, fa, flag=True):
 
   print 'd shape : ', d.shape
 
-  c1 = zeros((a.shape[1], a.shape[2]), dtype = float)
-  c2 = zeros((a.shape[1], a.shape[2]), dtype = uint16)
+  c1 = zeros((a.shape[1], a.shape[2]), 'float32')
+  c2 = zeros((a.shape[1], a.shape[2]), 'uint16')
   
   print 'c1 shape : ', c1.shape
   print 'c2 shape : ', c2.shape
@@ -150,16 +150,23 @@ def genArray(arrayD):
 #  ard[item[0]][item[1]][item[2]]=1 
 
 def setOne(ard, item):
-  ard[item[0]] [item[1]] [item[2]]=1
+  if ard.ndim == 3:
+    ard[item[0]] [item[1]] [item[2]]=1
+  elif ard.ndim == 2:
+    ard[item[0]] [item[1]]=1
+ 
 
 def setValue(ard, aval, item):
-  ard[item[0]] [item[1]] [item[2]]=aval[item[0]] [item[1]] [item[2]]
+  if ard.ndim == 3:
+   ard[item[0]] [item[1]] [item[2]]=aval[item[0]] [item[1]] [item[2]]
+  elif ard.ndim == 2:
+   ard[item[0]] [item[1]]=aval[item[0]] [item[1]]
 
 
 
 def createI2Vol(indX, shp):
-  if len(shp)!=3:
-    return
+  #if len(shp)!=3 or len(shp)!=2:
+  #  return
 
   arD = zeros((shp), dtype=uint16)
   [setOne(arD, item) for item in indX]  
@@ -167,8 +174,8 @@ def createI2Vol(indX, shp):
   return arD
 
 def createV2Vol(indX, aval, shp):
-  if len(shp)!=3:
-    return
+  #if len(shp)!=3 or len(shp)!=2:
+  #  return
 
   arD = zeros((shp), dtype=uint16)
   [setValue(arD, aval, item) for item in indX]  
@@ -188,8 +195,8 @@ def findIndX(arrayD, minVal, maxVal, flag = False):
 def intersectIndX(ar1, ar2):
   return (ar1.flatten()*ar2.flatten()).reshape(ar1.shape)
  
-def testZeroes(ar):
-  return transpose(ar.nonzero())
+#def testZeroes(ar):
+#  return transpose(ar.nonzero())
 
 #  (lambda  x: basD[x[0]]  [x[1]] [x[2]] ) ([0,0,0])
 
