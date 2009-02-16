@@ -36,7 +36,18 @@ void vtkXNDTagTable::Initialize( )
 {
 
   this->ClearTagTable();
-  this->AddOrUpdateTag ( "SlicerDataType", "MRML" );
+
+  // Default Tags for XNAT Desktop
+  this->AddUniqueTag ( "Experiment", "none" );
+  this->AddUniqueTag ( "Project", "none" );
+  this->AddUniqueTag ( "Scan", "none");
+  this->AddUniqueTag ( "Subject", "none");  
+  this->AddUniqueTag ( "Modality", "none");
+
+  // Tags required for Slicer
+  this->AddUniqueTag ( "SlicerDataType", "MRML" );
+  this->SelectTag ( "SlicerDataType");
+  
 }
 
 
