@@ -16,6 +16,8 @@ public:
   vtkTagTable * FindTagTableByName ( const char *name );
   void AddTableByName ( vtkTagTable *t, const char *name );
   void DeleteTableByName ( const char *name );
+  void ClearAllTagTables ( );
+  void SetRestoreSelectionStateForAllTables ( int val);
 
   // Description:
   // Add a Tag Table to the list.

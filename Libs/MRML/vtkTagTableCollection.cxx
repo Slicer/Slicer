@@ -27,6 +27,11 @@ vtkTagTableCollection::~vtkTagTableCollection ( )
 //---------------------------------------------------------------------------
 void vtkTagTableCollection::AddTableByName ( vtkTagTable *t, const char *name )
 {
+  if ( name == NULL )
+    {
+    vtkErrorMacro ( "vtkTagTableCollection::AddTableByName got NULL name." );
+    return;
+    }
   t->SetName ( name );
   this->vtkCollection::AddItem (t);
 }
@@ -35,6 +40,12 @@ void vtkTagTableCollection::AddTableByName ( vtkTagTable *t, const char *name )
 //---------------------------------------------------------------------------
 void vtkTagTableCollection::DeleteTableByName ( const char *name )
 {
+
+  if ( name == NULL )
+    {
+    vtkErrorMacro ( "vtkTagTableCollection::DeleteTableByName got NULL name." );
+    return;
+    }
   vtkTagTable *t;
   for ( int i=0; i < this->GetNumberOfItems(); i++ )
     {
@@ -51,10 +62,50 @@ void vtkTagTableCollection::DeleteTableByName ( const char *name )
     }
 }
 
+//---------------------------------------------------------------------------
+void vtkTagTableCollection::SetRestoreSelectionStateForAllTables ( int val )
+{
+  if ( val != 1 && val != 0 )
+    {
+    vtkWarningMacro ( "vtkTagTableColleciton::SetRestoreSelectionSTateForAllTables: got inappropriate value for state (not 1 or 0)." );
+    return;
+    }
+  vtkTagTable *t;
+  for ( int i=0; i < this->GetNumberOfItems(); i++ )
+    {
+    t = vtkTagTable::SafeDownCast (this->GetItemAsObject(i));
+    if ( t != NULL )
+      {
+      t->SetRestoreSelectionState ( val );
+      }
+    }
+}
 
 //---------------------------------------------------------------------------
-vtkTagTable *vtkTagTableCollection::FindTagTableByName (const char *name ) {
+void vtkTagTableCollection::ClearAllTagTables ( )
+{
+  vtkTagTable *t;
+  for ( int i=0; i < this->GetNumberOfItems(); i++ )
+    {
+    t = vtkTagTable::SafeDownCast (this->GetItemAsObject(i));
+    if ( t != NULL )
+      {
+      t->ClearTagTable();
+      }
+    }
+}
 
+
+
+//---------------------------------------------------------------------------
+vtkTagTable *vtkTagTableCollection::FindTagTableByName (const char *name )
+{
+
+  if ( name == NULL )
+    {
+    vtkErrorMacro ( "vtkTagTableCollection::FindTagTableByName got NULL name." );
+    return NULL;
+    }
   vtkTagTable *t;
   for ( int i=0; i < this->GetNumberOfItems(); i++ )
     {
