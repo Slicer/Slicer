@@ -6,9 +6,9 @@
 #include "vtkMRMLStorableNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkCommand.h"
+#include <vtksys/SystemTools.hxx>
 
 #include "itksys/Process.h"
-#include "itksys/SystemTools.hxx"
 #include "itksys/RegularExpression.hxx"
 
 #include <algorithm>
@@ -486,10 +486,6 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
 
 
 
-
-
-
-
 //----------------------------------------------------------------------------
 int vtkDataIOManagerLogic::QueueWrite ( vtkMRMLNode *node )
 {
@@ -552,77 +548,119 @@ int vtkDataIOManagerLogic::QueueWrite ( vtkMRMLNode *node )
     return 0;
     }
 
-  // this may just have to be GetFileName()
-  const char *source = dnode->GetNthStorageNode(storageNodeIndex)->GetFileName();
-  const char *dest = dnode->GetNthStorageNode(storageNodeIndex)->GetURI();
-  vtkDebugMacro("QueueWrite: got the source " << source << " and dest " << dest);
-  
-  // don't need to check the cache manager
-
-  //--- Otherwise, just do the data transfer 
-  //---
-  //--- construct and add a record of the transfer
-  //--- which includes the ID of associated node
-  vtkDataTransfer *transfer = vtkDataTransfer::New();
-  if ( transfer == NULL )
+  // Get the number of filenames and URIs associated with this storage node.
+  // (assuming they should be equal)
+  int numFiles = dnode->GetNthStorageNode(storageNodeIndex)->GetNumberOfFileNames();
+  int numURIs = dnode->GetNthStorageNode(storageNodeIndex)->GetNumberOfURIs();
+  //--- Note: the storageNode's FileName is repeated in its FileList, as
+  //--- FileListMember0 *if* there are multiple files for the dataset.
+  //--- However, the storageNode's URI is *not* repeated in its URIList
+  //--- as URIListMember0. Would be nice if these things were the same.
+  //--- but for now, respect the implementation: the URIList will be one
+  //--- entity shorter than the FileNameList.
+  if ( numFiles != (numURIs+1) )
     {
-    vtkErrorMacro("QueueWrite: failed to add new data transfer");
-    return 0;
+    vtkErrorMacro("QueueWrite: Storage node has different number of FileNames and URIs.");
+    return 0;    
     }
-  transfer->SetTransferID ( this->GetDataIOManager()->GetUniqueTransferID() );
-  transfer->SetTransferNodeID ( node->GetID() );
-  transfer->SetSourceURI ( source );
-  transfer->SetDestinationURI ( dest );
-  transfer->SetHandler ( handler );
-  transfer->SetTransferType ( vtkDataTransfer::RemoteUpload );
-  transfer->SetTransferStatus ( vtkDataTransfer::Idle );
-  transfer->SetCancelRequested ( 0 );
-  this->AddNewDataTransfer ( transfer, node );
-  
-  vtkDebugMacro("QueueWrite: asynchronous enabled = " << this->GetDataIOManager()->GetEnableAsynchronousIO());
-  
-  if ( this->GetDataIOManager()->GetEnableAsynchronousIO() )
+  std::string src;
+  std::string dst;
+  if ( numFiles == 0 )
     {
-    vtkDebugMacro("QueueWrite: Schedule an ASYNCHRONOUS data transfer");
-    //---
-    //--- Schedule an ASYNCHRONOUS data transfer
-    //---
-    vtkSlicerTask *task = vtkSlicerTask::New();
-    task->SetTypeToNetworking();
+    //--- numFiles will be 0 if there's just one file in the storage node.
+    //--- (no additional files in the list.)
+    //--- adjust numFiles so we move thru the loop below at least once.
+    src = dnode->GetNthStorageNode(storageNodeIndex)->GetFileName();
+    dst = dnode->GetNthStorageNode(storageNodeIndex)->GetURI();
+    numFiles =1;
+    }
 
-    // Pass the current data transfer, which has a pointer 
-    // to the associated mrml node, as client data to the task.
-    if ( !task )
+  std::vector<std::string> pathComponents;
+
+
+  // schedule the write of each
+  for ( int n=0; n < numFiles; n++ )
+    {    
+    if ( n == 0 )
       {
-      transfer->Delete();
+      //--- here we need to join the cache path to the filename.
+
+      src = dnode->GetNthStorageNode(storageNodeIndex)->GetFileName();
+      dst = dnode->GetNthStorageNode(storageNodeIndex)->GetURI();
+      }
+    else
+      {
+      src.clear();
+      dst.clear();
+      pathComponents.clear();
+      vtksys::SystemTools::SplitPath( cm->GetRemoteCacheDirectory(), pathComponents);
+      pathComponents.push_back (dnode->GetNthStorageNode(storageNodeIndex)->GetNthFileName(n) );
+      src = vtksys::SystemTools::JoinPath(pathComponents);
+      dst = dnode->GetNthStorageNode(storageNodeIndex)->GetNthURI(n-1);
+      }
+    //--- Construct and add a record of the transfer
+    //--- which includes the ID of associated node
+    vtkDataTransfer *transfer = vtkDataTransfer::New();
+    if ( transfer == NULL )
+      {
+      vtkErrorMacro("QueueWrite: failed to add new data transfer");
       return 0;
       }
-    transfer->SetTransferStatus ( vtkDataTransfer::Pending );
-    task->SetTaskFunction(this, (vtkSlicerTask::TaskFunctionPointer)
-                          &vtkDataIOManagerLogic::ApplyTransfer, transfer);
+    transfer->SetTransferID ( this->GetDataIOManager()->GetUniqueTransferID() );
+    transfer->SetTransferNodeID ( node->GetID() );
+    transfer->SetSourceURI ( src.c_str() );
+    transfer->SetDestinationURI ( dst.c_str() );
+    transfer->SetHandler ( handler );
+    transfer->SetTransferType ( vtkDataTransfer::RemoteUpload );
+    transfer->SetTransferStatus ( vtkDataTransfer::Idle );
+    transfer->SetCancelRequested ( 0 );
+    this->AddNewDataTransfer ( transfer, node );
   
-    // Schedule the transfer
-    if ( ! this->GetApplicationLogic()->ScheduleTask( task ) )
+    vtkDebugMacro("QueueWrite: asynchronous enabled = " << this->GetDataIOManager()->GetEnableAsynchronousIO());
+  
+    if ( this->GetDataIOManager()->GetEnableAsynchronousIO() )
       {
-      transfer->SetTransferStatus( vtkDataTransfer::CompletedWithErrors);
+      vtkDebugMacro("QueueWrite: Schedule an ASYNCHRONOUS data transfer");
+      //---
+      //--- Schedule an ASYNCHRONOUS data transfer
+      //---
+      vtkSlicerTask *task = vtkSlicerTask::New();
+      task->SetTypeToNetworking();
+
+      // Pass the current data transfer, which has a pointer 
+      // to the associated mrml node, as client data to the task.
+      if ( !task )
+        {
+        transfer->Delete();
+        return 0;
+        }
+      transfer->SetTransferStatus ( vtkDataTransfer::Pending );
+      task->SetTaskFunction(this, (vtkSlicerTask::TaskFunctionPointer)
+                            &vtkDataIOManagerLogic::ApplyTransfer, transfer);
+  
+      // Schedule the transfer
+      if ( ! this->GetApplicationLogic()->ScheduleTask( task ) )
+        {
+        transfer->SetTransferStatus( vtkDataTransfer::CompletedWithErrors);
+        task->Delete();
+        return 0;      
+        }
       task->Delete();
-      return 0;      
       }
-    task->Delete();
+    else
+      {
+      vtkDebugMacro("QueueWrite: Schedule a SYNCHRONOUS data transfer");
+      //---
+      //--- Execute a SYNCHRONOUS data transfer
+      //---
+      transfer->SetTransferStatus( vtkDataTransfer::Running);
+      this->ApplyTransfer ( transfer );
+      transfer->SetTransferStatus( vtkDataTransfer::Completed);
+      // now set the node's storage node state to ready
+      dnode->GetNthStorageNode(storageNodeIndex)->SetWriteStateTransferDone();
+      }
+    transfer->Delete();
     }
-  else
-    {
-    vtkDebugMacro("QueueWrite: Schedule a SYNCHRONOUS data transfer");
-    //---
-    //--- Execute a SYNCHRONOUS data transfer
-    //---
-    transfer->SetTransferStatus( vtkDataTransfer::Running);
-    this->ApplyTransfer ( transfer );
-    transfer->SetTransferStatus( vtkDataTransfer::Completed);
-    // now set the node's storage node state to ready
-    dnode->GetNthStorageNode(storageNodeIndex)->SetWriteStateTransferDone();
-    }
-  transfer->Delete();
   return 1;
 }
 
