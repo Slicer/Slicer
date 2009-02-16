@@ -30,7 +30,7 @@ def EvaluateTensorC(dataD, G, b):
 
   # --- Estimate tensor components ---
   # Construct A-matrix
-  A = ones((dataD.shape[0], 7))
+  A = ones((dataD.shape[0], 7), 'float')
 
   for k in range(dataD.shape[0]):
     A[k, :] = [1, -b[0,k]*G[0,k]**2, -2*b[0,k]*G[0,k]*G[1,k], -2*b[0,k]*G[0,k]*G[2,k], -b[0,k]*G[1,k]**2, -2*b[0,k]*G[1,k]*G[2,k], -b[0,k]*G[2,k]**2]
