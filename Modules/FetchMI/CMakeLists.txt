@@ -49,9 +49,20 @@ set(FetchMI_SRCS
   vtkFetchMIMulticolumnWidget.cxx
   vtkFetchMIQueryTermWidget.cxx
   vtkFetchMIFlatResourceWidget.cxx
-  vtkFetchMIDescribeDataWidget.cxx
   vtkFetchMIResourceUploadWidget.cxx
   vtkFetchMITagViewWidget.cxx
+  vtkFetchMIParser.cxx
+  vtkFetchMIParserHID.cxx
+  vtkFetchMIParserXND.cxx
+  vtkFetchMIParserCollection.cxx
+  vtkFetchMIWriter.cxx
+  vtkFetchMIWriterXND.cxx
+  vtkFetchMIWriterCollection.cxx
+  vtkFetchMIClientCaller.cxx
+  vtkFetchMIClientCallerXND.cxx
+  vtkFetchMIClientCallerCollection.cxx
+  vtkFetchMIServer.cxx
+  vtkFetchMIServerCollection.cxx
   )
 
 # --------------------------------------------------------------------------

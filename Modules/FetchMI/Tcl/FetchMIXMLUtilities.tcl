@@ -1,5 +1,6 @@
 
 #----------------------------------------------------------------------------------------------------
+#--- NO LONGER USED. moved to FetchMILogic's Writer
 #----------------------------------------------------------------------------------------------------
 proc FetchMIWriteDocumentDeclaration_XND { filename } {
 
@@ -17,6 +18,7 @@ proc FetchMIWriteDocumentDeclaration_XND { filename } {
 
 
 #----------------------------------------------------------------------------------------------------
+#--- NO LONGER USED. moved to FetchMILogic's Writer
 #----------------------------------------------------------------------------------------------------
 proc FetchMIWriteXMLHeader_XND { headerFilename  dataFilename } {
 
@@ -39,6 +41,7 @@ proc FetchMIWriteXMLHeader_XND { headerFilename  dataFilename } {
 
 
 #----------------------------------------------------------------------------------------------------
+#--- NO LONGER USED. moved to FetchMILogic's Writer
 #----------------------------------------------------------------------------------------------------
 proc FetchMIWriteMetadataForScene_XND {  metadataFilename docdecFilename } {
 
@@ -91,6 +94,7 @@ proc FetchMIWriteMetadataForScene_XND {  metadataFilename docdecFilename } {
 
 
 #----------------------------------------------------------------------------------------------------
+#--- NO LONGER USED. moved to FetchMILogic's Writer
 #----------------------------------------------------------------------------------------------------
 proc FetchMIWriteMetadataForNode_XND { metadataFilename docdecFilename nodeID } {
 
@@ -166,6 +170,7 @@ proc FetchMIWriteMetadataForNode_XND { metadataFilename docdecFilename nodeID } 
 
 
 #----------------------------------------------------------------------------------------------------
+#--- NO LONGER USED. moved to FetchMILogic's Parser
 #----------------------------------------------------------------------------------------------------
 proc FetchMIParseMetadataPostResponse_XND {  responseFilename  } {
 
