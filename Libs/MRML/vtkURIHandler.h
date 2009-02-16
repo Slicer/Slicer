@@ -14,6 +14,9 @@ class VTK_MRML_EXPORT vtkURIHandler : public vtkObject
   vtkTypeRevisionMacro(vtkURIHandler, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
   
+  vtkGetStringMacro (HostName);
+  vtkSetStringMacro (HostName);
+
   // Description:
   // virtual methods to be defined in subclasses.
   // (Maybe these should be defined to handle default file operations)
@@ -93,6 +96,8 @@ class VTK_MRML_EXPORT vtkURIHandler : public vtkObject
   FILE *LocalFile;
   char *Prefix;
   char *Name;
+  char *HostName;
+
 };
 
 #endif
