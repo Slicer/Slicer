@@ -45,6 +45,11 @@ class VTK_MRML_EXPORT vtkMRMLVolumeArchetypeStorageNode : public vtkMRMLStorageN
   virtual int ReadData(vtkMRMLNode *refNode);
 
   // Description:
+  // Do a temp write to update the file list in this storage node with all
+  // file names that are written when write out the ref node
+  int UpdateFileList(vtkMRMLNode *refNode);
+  
+  // Description:
   // Write data from a  referenced node
   // NOTE: Subclasses should implement this method
   virtual int WriteData(vtkMRMLNode *refNode);
