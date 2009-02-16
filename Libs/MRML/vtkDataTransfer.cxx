@@ -1,5 +1,7 @@
 #include "vtkDataTransfer.h"
-
+#include <iostream>
+#include <fstream>
+#include <vtksys/SystemTools.hxx>
 
 vtkStandardNewMacro ( vtkDataTransfer );
 vtkCxxRevisionMacro ( vtkDataTransfer, "$Revision: 1.0 $" );
@@ -17,6 +19,7 @@ vtkDataTransfer::vtkDataTransfer()
   this->Progress = 0;
   this->CancelRequested = 0;
   this->TransferCached = 0;
+  this->SizeOnDisk = 0;
 }
 
 
@@ -37,6 +40,7 @@ vtkDataTransfer::~vtkDataTransfer()
   this->Progress = 0;
   this->CancelRequested = 0;
   this->TransferCached = 0;
+  this->SizeOnDisk = 0;
 }
 
 
@@ -56,6 +60,8 @@ void vtkDataTransfer::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "TransferType: " << this->GetTransferType() << "\n";
   os << indent << "TransferNodeID: " << this->GetTransferNodeID() << "\n";
   os << indent << "Progress: " << this->GetProgress() << "\n";
+  os << indent << "SizeOnDisk: " << this->GetSizeOnDisk() << "\n";
 }
+
 
 

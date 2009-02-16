@@ -24,6 +24,8 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
   vtkSetMacro ( TransferType, int );
   vtkGetMacro ( TransferID, int );
   vtkSetMacro ( TransferID, int );
+  vtkGetMacro ( SizeOnDisk, int );
+  vtkSetMacro ( SizeOnDisk, int );
   vtkGetStringMacro ( TransferNodeID);
   vtkSetStringMacro ( TransferNodeID);  
   vtkGetMacro ( Progress, int );
@@ -115,6 +117,7 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
   int TransferID;
   int TransferType;
   int TransferCached;
+  int SizeOnDisk;
   char* TransferNodeID;
   int Progress;
   int CancelRequested;
