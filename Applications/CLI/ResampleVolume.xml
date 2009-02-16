@@ -3,7 +3,7 @@
   <category>Filtering</category>
   <title>Resample Volume</title>
   <description>
-Resampling an image is a very important task in image analysis.It is
+Resampling an image is an important task in image analysis.It is
 especially important in the frame of image registration. This module
 implements image resampling through the use of itk Transforms. This
 module uses an Identity Transform. The resampling is controlled by the
@@ -12,9 +12,11 @@ pixel/grid coordinates. It is quite important to ensure that image
 spacing is properly set on the images involved. The interpolator is
 required since the mapping from one space to the other will often
 require evaluation of the intensity of the image at non-grid
-positions. Two interpolators are avaliable: linear and sinc. The sinc
-interpolator, although more precise, is much slower than the liner
-interpolator.
+positions. Several interpolators are available: linear, nearest
+neighbor and five flavors of sinc. The sinc interpolators, although
+more precise, are much slower than the linear and nearest neighbor
+interpolator. To resample label volumnes, nearest neighbor
+interpolation should be used exclusively.
 </description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:ResampleVolume-Documentation-3.4</documentation-url>
@@ -41,10 +43,11 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <name>interpolationType</name>
       <flag>-i</flag>
       <longflag>--interpolation</longflag>
-      <description>Sampling algorithm (linear or windowed sinc). There are several sinc algorithms available as described in the following publication: Erik H. W. Meijering, Wiro J. Niessen, Josien P. W. Pluim, Max A. Viergever: Quantitative Comparison of Sinc-Approximating Kernels for Medical Image Interpolation. MICCAI 1999, pp. 210-217. Each window has a radius of 3;
+      <description>Sampling algorithm (linear, nearest neighbor  or windowed sinc). There are several sinc algorithms available as described in the following publication: Erik H. W. Meijering, Wiro J. Niessen, Josien P. W. Pluim, Max A. Viergever: Quantitative Comparison of Sinc-Approximating Kernels for Medical Image Interpolation. MICCAI 1999, pp. 210-217. Each window has a radius of 3;
 </description>
       <label>Interpolation</label>
       <element>linear</element>
+      <element>nearestNeighbor</element>
       <element>hamming</element>
       <element>cosine</element>'
       <element>welch</element>

@@ -55,6 +55,7 @@
 
 #include "itkIdentityTransform.h"
 #include "itkLinearInterpolateImageFunction.h"
+#include "itkNearestNeighborInterpolateImageFunction.h"
 #include "itkWindowedSincInterpolateImageFunction.h"
 
 #include <string>
@@ -78,6 +79,8 @@ template<class T> int DoIt( int argc, char * argv[], T )
     TransformType;
   typedef itk::LinearInterpolateImageFunction< InputImageType, double >
     LinearInterpolatorType;
+  typedef itk::NearestNeighborInterpolateImageFunction< InputImageType, double >
+    NearestNeighborInterpolatorType;
 #define RADIUS 3
 
   typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS, itk::Function::HammingWindowFunction<RADIUS> > HammingInterpolatorType;
@@ -111,6 +114,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
 ////////////////////////////////////////////////  
 // 2) Resample the series
   typename LinearInterpolatorType::Pointer linearInterpolator = LinearInterpolatorType::New();
+  typename NearestNeighborInterpolatorType::Pointer nearestNeighborInterpolator = NearestNeighborInterpolatorType::New();
   typename HammingInterpolatorType::Pointer hammingInterpolator = HammingInterpolatorType::New();
   typename CosineInterpolatorType::Pointer cosineInterpolator = CosineInterpolatorType::New();
   typename WelchInterpolatorType::Pointer welchInterpolator = WelchInterpolatorType::New();
@@ -159,23 +163,27 @@ template<class T> int DoIt( int argc, char * argv[], T )
       {
       resampler->SetInterpolator( linearInterpolator );
       }
-    else if (interpolationType == "hammingWindow")
+    else if (interpolationType == "nearestNeighbor")
+      {
+      resampler->SetInterpolator( nearestNeighborInterpolator );
+      }
+    else if (interpolationType == "hamming")
       {
       resampler->SetInterpolator( hammingInterpolator );
       }
-    else if (interpolationType == "cosineWindow")
+    else if (interpolationType == "cosine")
       {
       resampler->SetInterpolator( cosineInterpolator );
       }
-    else if (interpolationType == "welchWindow")
+    else if (interpolationType == "welch")
       {
       resampler->SetInterpolator( welchInterpolator );
       }
-    else if (interpolationType == "lanczosWindow")
+    else if (interpolationType == "lanczos")
       {
       resampler->SetInterpolator( lanczosInterpolator );
       }
-    else if (interpolationType == "blackmanWindow")
+    else if (interpolationType == "blackman")
       {
       resampler->SetInterpolator( blackmanInterpolator );
       }
