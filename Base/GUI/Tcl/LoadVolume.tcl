@@ -9,19 +9,13 @@ if {0} { ;# comment
 
 # TODO : 
   - part of this should be split out into logic helper methods
-  - this could be reimplemented in C++ pretty easily
-  - it would be nice if vtkITKArchetype* could be used
-    to tell us the filenames for a given archetype without
-    actually reading.  That would allow the add method
-    to be intelligent about dicom files and other series
-
+  - this could be reimplemented in C++ pretty easily (ha ha!)
 }
 #
 #########################################################
 
 
 namespace eval LoadVolume {
-
   # 
   # utility to bring up the current window or create a new one
   # - optional path is added to dialog
@@ -39,6 +33,67 @@ namespace eval LoadVolume {
   }
 }
 
+namespace eval LoadVolume set FindSubfiles_Abort 0
+namespace eval LoadVolume set FindSubfiles_Depth 0
+namespace eval LoadVolume {
+  # 
+  # utility to find all files in all subdirectories of a given directory
+  # - optional command for progress and interrupt (accept 0 or "" as okay to continue)
+  # - uses global variable to unwind after abort
+  # - operates recusively
+  #
+  proc FindSubfiles { dir {progressCmd ""} } {
+    set ::LoadVolume::FindSubfiles_Abort 0
+    incr ::LoadVolume::FindSubfiles_Depth
+    if { $::LoadVolume::FindSubfiles_Depth > 100 } {
+      puts stderr "FindSubfiles: too many nested levels - possible link loop?"
+      return ""
+    }
+    set files ""
+    set entries [glob -nocomplain $dir/*]
+    foreach e $entries {
+      if { $progressCmd != "" } {
+        set ret [eval $progressCmd $e]
+        update ;# TODO: this update should be in the progressCmd itself
+        if { $ret != "" && $ret != 0} {
+          set ::LoadVolume::FindSubfiles_Abort 1
+          return $files
+        }
+      }
+      if { [file isdirectory $e] } {
+        set files [concat $files [::LoadVolume::FindSubfiles $e $progressCmd]]
+        if { $::LoadVolume::FindSubfiles_Abort } {
+          return $files
+        }
+      } else {
+        lappend files $e
+      }
+    }
+    return $files
+  }
+}
+
+
+namespace eval LoadVolume {
+  # 
+  # math utilities for processing dicom volumes
+  #
+  proc Cross {x0 x1 x2  y0 y1 y2} {
+    set Zx [expr $x1 * $y2 - $x2 * $y1]
+    set Zy [expr $x2 * $y0 - $x0 * $y2]
+    set Zz [expr $x0 * $y1 - $x1 * $y0];
+    return "$Zx $Zy $Zz"
+  }
+
+  proc Difference {x0 x1 x2  y0 y1 y2} {
+    return [list [expr $x0 - $y0] [expr $x1 - $y1] [expr $x2 - $y2]]
+  }
+
+  proc Dot {x0 x1 x2  y0 y1 y2} {
+    return [expr $x0 * $y0 + $x1 * $y1 + $x2 * $y2]
+  }
+}
+
 
 #
 # The partent class definition - define if needed (not when re-sourcing)
@@ -47,16 +102,13 @@ if { [itcl::find class LoadVolume] == "" } {
 
   itcl::class LoadVolume {
 
-    constructor  {} {
-    }
+    constructor  {} {}
+    destructor {}
 
-    destructor {
-      vtkDelete  
-    }
-
+    # visibility of extra column of hex in the dicom table
     public variable showGroupElement 0
 
-    variable _vtkObjects ""
+    variable _vtkObjects "" ;# internal list of object to delete
 
     variable o ;# array of the objects for this widget, for convenient access
 
@@ -74,12 +126,16 @@ if { [itcl::find class LoadVolume] == "" } {
     method apply {} {}
     method status { message } {}
     method errorDialog {errorText} {}
+    method yesNoDialog {yesNoText} {}
     method loadDICOMDictionary {} {}
     method parseDICOMHeader {fileName arrayName} {}
     method populateDICOMTable {fileName} {}
     method parseDICOMDirectory {directoryName arrayName} {}
+    method organizeDICOMSeries {arrayName} {}
     method populateDICOMTree {directoryName arrayName} {}
     method safeNodeName {name} {}
+    method saveGeometry {} {}
+    method loadGeometry {} {}
 
     method objects {} {return [array get o]}
 
@@ -121,7 +177,7 @@ itcl::body LoadVolume::constructor {} {
   $o(toplevel) SetTitle "Add Volume"
   $o(toplevel) SetMasterWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
   $o(toplevel) SetDisplayPositionToMasterWindowCenter
-  $o(toplevel) ModalOn
+  #$o(toplevel) ModalOn
   $o(toplevel) Create
 
   # delete this instance when the window is closed
@@ -134,13 +190,13 @@ itcl::body LoadVolume::constructor {} {
   set o(topFrame) [vtkNew vtkKWFrame]
   $o(topFrame) SetParent $o(toplevel)
   $o(topFrame) Create
-  pack [$o(topFrame) GetWidgetName] -side top -anchor nw -fill x
+  pack [$o(topFrame) GetWidgetName] -side top -anchor nw -fill both -expand true
 
   #
   # table frame
   # - for browser and dicom info
   #
-  set o(tableFrame) [vtkNew vtkKWFrame]
+  set o(tableFrame) [vtkNew vtkKWSplitFrame]
   $o(tableFrame) SetParent $o(topFrame)
   $o(tableFrame) Create
   pack [$o(tableFrame) GetWidgetName] -side top -anchor nw -fill x
@@ -149,14 +205,9 @@ itcl::body LoadVolume::constructor {} {
   # the file browser widget
   #
   set o(browser) [vtkNew vtkKWFileBrowserWidget]
-  $o(browser) SetParent $o(tableFrame)
+  $o(browser) SetParent [$o(tableFrame) GetFrame1]
   $o(browser) Create
 
-  $::slicer3::Application RequestRegistry "OpenPath"
-  set path [$::slicer3::Application GetRegistryHolder]
-  if { [file exists $path] } {
-    after idle $o(browser) OpenDirectory [list $path]
-  }
 
   set fileTable [$o(browser) GetFileListTable]
   $fileTable SetSelectionModeToSingle
@@ -196,19 +247,31 @@ itcl::body LoadVolume::constructor {} {
   # the dicom frame
   #
   set o(dicom) [vtkNew vtkKWFrameWithLabel]
-  $o(dicom) SetParent $o(tableFrame)
+  $o(dicom) SetParent [$o(tableFrame) GetFrame2]
   $o(dicom) SetLabelText "DICOM Information"
   $o(dicom) Create
+
+  set o(dicomSplit) [vtkNew vtkKWSplitFrame]
+  $o(dicomSplit) SetParent [$o(dicom) GetFrame]
+  $o(dicomSplit) SetOrientationToVertical
+  $o(dicomSplit) Create
 
   pack \
     [$o(browser) GetWidgetName] \
     [$o(dicom) GetWidgetName] -side left -anchor w -padx 2 -pady 2 -expand true -fill both
 
   pack \
+    [$o(dicomSplit) GetWidgetName] \
+    -side top -anchor e -padx 2 -pady 2 -expand true -fill both
+
+  pack \
     [$o(tableFrame) GetWidgetName] \
+    -side top -anchor e -padx 2 -pady 2 -expand true -fill both
+
+  pack \
     [$o(path) GetWidgetName] \
     [$o(options) GetWidgetName] \
-    -side top -anchor e -padx 2 -pady 2 -expand true -fill both
+    -side top -anchor e -padx 2 -pady 2 -expand false -fill x
 
   $o(browser) SetWidth 800
 
@@ -328,21 +391,20 @@ itcl::body LoadVolume::constructor {} {
   # dicom file is selected
   #
   set o(dicomParse) [vtkNew vtkKWPushButton]
-  $o(dicomParse) SetParent [$o(dicom) GetFrame]
+  $o(dicomParse) SetParent [$o(dicomSplit) GetFrame2]
   $o(dicomParse) Create
   $o(dicomParse) SetText "Parse Directory"
   $o(dicomParse) SetBalloonHelpString "Parse the current directory to select series to load as volume"
   set tag [$o(dicomParse) AddObserver ModifiedEvent "$this processEvent $o(dicomParse)"]
   lappend _observerRecords [list $o(dicomParse) $tag]
   $o(dicomParse) SetCommand $o(dicomParse) Modified
-  $o(dicomParse) SetStateToDisabled
 
   #
   # the listbox of dicom info
   #
 
   set o(dicomList) [vtkNew vtkKWMultiColumnListWithScrollbars]
-  $o(dicomList) SetParent [$o(dicom) GetFrame]
+  $o(dicomList) SetParent [$o(dicomSplit) GetFrame1]
   $o(dicomList) Create
   $o(dicomList) SetHeight 4
   set w [$o(dicomList) GetWidget]
@@ -374,7 +436,7 @@ itcl::body LoadVolume::constructor {} {
   # SeriesSelection Tree
   #
   set o(dicomTree) [vtkNew vtkKWTreeWithScrollbars]
-  $o(dicomTree) SetParent [$o(dicom) GetFrame]
+  $o(dicomTree) SetParent [$o(dicomSplit) GetFrame2]
   [$o(dicomTree) GetWidget] SetSelectionModeToSingle
   $o(dicomTree) Create
 
@@ -389,9 +451,25 @@ itcl::body LoadVolume::constructor {} {
   pack [$o(dicomList) GetWidgetName] -side bottom -anchor e -padx 2 -pady 2 -expand true -fill both
 
   #
-  # pop up the dialog
+  # pop up the dialog and set size
+  # - unfortunately, need to use 'update' to force some of the 
+  #   geometry calculations before state can be fully restored.
+  #   This is too bad since it causes some flashes, but having the state 
+  #   restored correctly is worth it.
   #
   $o(toplevel) Display
+  $this loadGeometry
+  update
+  after idle $this loadGeometry
+
+  #
+  # if there was a previously open directory, restore it
+  #
+  $::slicer3::Application RequestRegistry "OpenPath"
+  set path [$::slicer3::Application GetRegistryHolder]
+  if { [file exists $path] } {
+    after idle $o(browser) OpenDirectory [list $path]
+  }
 }
 
 
@@ -405,10 +483,39 @@ itcl::body LoadVolume::destructor {} {
     }
   }
 
+  $this saveGeometry 
+
   $this vtkDelete
 
 }
 
+#
+# save and restore the size, location, and splitframe 
+# layout.  Use the registry.
+#
+itcl::body LoadVolume::saveGeometry {} {
+  set geo(toplevel) [$o(toplevel) GetGeometry]
+  set geo(tableFramePosition) [$o(tableFrame) GetSeparatorPosition]
+  set geo(dicomSplitPosition) [$o(dicomSplit) GetSeparatorPosition]
+  $::slicer3::Application SetRegistry "LoadVolumeGeometry" [array get geo]
+}
+
+itcl::body LoadVolume::loadGeometry {} {
+  $::slicer3::Application RequestRegistry "LoadVolumeGeometry"
+  array set geo [$::slicer3::Application GetRegistryHolder]
+  if { ![info exists geo(toplevel)] } {
+    set geo(toplevel) 900x800+200+200
+  }
+  if { ![info exists geo(tableFramePosition)] } {
+    set geo(tableFramePosition) 0.7
+  }
+  if { ![info exists geo(dicomSplitPosition)] } {
+    set geo(dicomSplitPosition) 0.5
+  }
+  $o(toplevel) SetGeometry $geo(toplevel) 
+  $o(tableFrame) SetSeparatorPosition $geo(tableFramePosition) 
+  $o(dicomSplit) SetSeparatorPosition $geo(dicomSplitPosition) 
+}
 
 #
 # load the items from the list box
@@ -606,11 +713,11 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
         set series [lindex $_dicomTree($patient,$study,series) 0]
         set seriesNode series-[$this safeNodeName $series]
       }
+      series-*-file* {
+        set seriesNode [$t GetNodeParent $selection]
+      }
       series* {
         set seriesNode $selection
-      }
-      file* {
-        set seriesNode [$t GetNodeParent $selection]
       }
       default {
         errorDialog "can't parse selection \"$selection\""
@@ -618,17 +725,22 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
     }
 
     $t SelectSingleNode $seriesNode
-    $t SeeNode $seriesNode
 
-    set archetypeNode [lindex [$t GetNodeChildren $seriesNode] 0]
-    # - extract file name from node name
-    set archetype [$t GetNodeText $archetypeNode]
-    set openParen [string last ( $archetype]
-    set closeParen [string last ) $archetype]
-    if { $openParen != -1 && $closeParen != -1 } {
-      set archetype [string range $archetype [expr $openParen + 1] [expr $closeParen - 1]]
+    # extract the file list corresponding to the selection (it is all the files in the selected series)
+    # - the archetype file is the first one in the list
+    set fileList ""
+    foreach fileNode [$t GetNodeChildren $seriesNode] {
+      # - extract file name from node name
+      set nodeText [$t GetNodeText $fileNode]
+      set openParen [string last ( $nodeText]
+      set closeParen [string last ) $nodeText]
+      if { $openParen != -1 && $closeParen != -1 } {
+        set fileName [string range $nodeText [expr $openParen + 1] [expr $closeParen - 1]]
+      }
+      lappend fileList $fileName
     }
 
+    set archetype [lindex $fileList 0]
 
     # - strip extra info from end of node text to get series name
     set seriesName [$t GetNodeText $seriesNode]
@@ -636,7 +748,14 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
     if { $paren != -1 } {
       set seriesName [string range $seriesName 0 [expr $paren -1]]
     }
+
     $this selectArchetype $archetype $seriesName
+
+    # set the file list corresponding to the selection (it is all the files in the selected series)
+    set _dicomSeriesFileList $fileList
+
+    $t OpenNode $seriesNode
+    $t SeeNode $selection
 
     return
   }
@@ -672,6 +791,7 @@ itcl::body LoadVolume::selectArchetype { path name {optionsName ""} } {
     }
   }
   
+  $directoryExplorer ClearSelection
   $directoryExplorer SelectDirectory $directoryName
   $fileTable ClearSelection
   $fileTable SelectFileName $path
@@ -698,11 +818,16 @@ itcl::body LoadVolume::selectArchetype { path name {optionsName ""} } {
 
     # look for the rest of the series and set the file names list 
     # as an instance variable to be used if the user selects apply
+    # - use the first series that contains the archetype 
+    # - when the file is selected from the tree, then the tree needs
+    #   to set the series itself (this code doesn't know, since a file
+    #   can be in multiple series)
     set _dicomSeriesFileList ""
     set fileLists [array names _dicomTree *files]
     foreach fileList $fileLists {
       if { [lsearch $_dicomTree($fileList) $path] != -1 } {
         set _dicomSeriesFileList $_dicomTree($fileList)
+        break
       }
     }
   }
@@ -725,6 +850,23 @@ itcl::body LoadVolume::errorDialog { errorText } {
   $dialog Create
   $dialog Invoke
   $dialog Delete
+}
+
+itcl::body LoadVolume::yesNoDialog { yesNoText } {
+  set dialog [vtkKWMessageDialog New]
+  if { [info exists o(toplevel)] } {
+    set parent $o(toplevel)
+  } else {
+    set parent [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+  }
+  $dialog SetParent $parent
+  $dialog SetMasterWindow $parent
+  $dialog SetStyleToYesNo
+  $dialog SetText $yesNoText
+  $dialog Create
+  set response [$dialog Invoke]
+  $dialog Delete
+  return $response
 }
 
 itcl::body LoadVolume::status { message } {
@@ -791,10 +933,8 @@ itcl::body LoadVolume::populateDICOMTable {fileName} {
 
   $this parseDICOMHeader $fileName header
   if { $fileName == "" || ![file exists $fileName] || !$header(isDICOM) } {
-    $o(dicomParse) SetStateToDisabled
     return
   }
-  $o(dicomParse) SetStateToNormal
   set w [$o(dicomList) GetWidget] 
 
   set firstKeys { 
@@ -882,9 +1022,12 @@ itcl::body LoadVolume::safeNodeName {name} {
   set len [string length $name]
   for {set n 0} {$n < $len} {incr n} {
     set c [string index $name $n]
-    if { ![string is alnum $c] } {
+    if { ![string is ascii $c] || ![string is alnum $c]} {
       scan $c "%c" value
       set c [format %%%02x $value]
+    }
+    if { [string is space $c] } {
+      set c "+"
     }
     set newname $newname$c
   }
@@ -916,8 +1059,8 @@ itcl::body LoadVolume::populateDICOMTree {directoryName arrayName} {
         if { $fileCount == 1 } {set countString "file" } else { set countString "files" }
         $t AddNode $studyNode $seriesNode "$series ($fileCount $countString)"
         foreach file $tree($patient,$study,$series,files) {
-          set fileNode file-[$this safeNodeName $file]
-          $t AddNode $seriesNode $fileNode "[file tail $file]  ($file)"
+          set fileNode $seriesNode-file-[$this safeNodeName $file]
+          $t AddNode $seriesNode $fileNode "[file tail $file] ($file)"
         }
       }
     }
@@ -935,6 +1078,8 @@ itcl::body LoadVolume::parseDICOMDirectory {directoryName arrayName} {
   $progressDialog SetMessageText "Starting..."
   $progressDialog SetDisplayPositionToMasterWindowCenter
   $progressDialog Create
+  $progressDialog SetSize 300 75
+  $progressDialog ModalOn
   $progressDialog Display
 
   set PATIENT "0010|0010"
@@ -942,6 +1087,24 @@ itcl::body LoadVolume::parseDICOMDirectory {directoryName arrayName} {
   set SERIES "0008|103e"
 
   set files [glob -nocomplain $directoryName/*]
+  set subdirs ""
+  foreach f $files {
+    if { [file isdirectory $f] } {
+      lappend subdirs $f
+    }
+  }
+
+  set parseSubdirs 0
+  if { $subdirs != "" } {
+    set t "Directory\n$directoryName\nContains subdirectories.\n\nWould you like to also parse them?"
+    set parseSubdirs [$this yesNoDialog $t]
+  }
+
+  # accumulate a list of all subdirs
+  if { $parseSubdirs } {
+    set files [::LoadVolume::FindSubfiles $directoryName "$progressDialog SetMessageText "]
+  }
+
   set totalFiles [llength $files]
   set fileCount 0
 
@@ -956,14 +1119,19 @@ itcl::body LoadVolume::parseDICOMDirectory {directoryName arrayName} {
     $progressDialog UpdateProgress $progress
     update
 
+
     $this parseDICOMHeader $f header
 
     foreach key "patient study series" {
       set tag [set [string toupper $key]]
       if { ![info exists header($tag,value)] } {
-        set $key "Unknown"
+        set $key "Unknown[string totitle $key]" ;# missing group/element in header
+      } elseif { $header($tag,value) == "" } {
+        # one of the keys has an empty string value - create a dummy
+        # TODO: could be using UIDs
+        set $key "Unnamed[string totitle $key]"
       } else {
-        set $key $header($tag,value)
+        set $key $header($tag,value) ;# normal tag value
       }
     }
 
@@ -979,7 +1147,12 @@ itcl::body LoadVolume::parseDICOMDirectory {directoryName arrayName} {
       lappend tree($patient,$study,series) $series
     }
     lappend tree($patient,$study,$series,files) $f
+    set tree($f,header) [array get header]
   }
+
+  $progressDialog SetMessageText "Organizing Files..."
+  $progressDialog UpdateProgress $progress
+  $this organizeDICOMSeries tree
 
   $progressDialog SetParent ""
   $progressDialog SetMasterWindow ""
@@ -989,4 +1162,118 @@ itcl::body LoadVolume::parseDICOMDirectory {directoryName arrayName} {
   set dicomCache [DICOMCache #auto]
   $dicomCache setTreeForDirectory $tree(directoryName) tree
   itcl::delete object $dicomCache
+}
+
+#
+# Organize a dicom study into coherent and correctly ordered volues
+# corresponding to the series information
+#
+itcl::body LoadVolume::organizeDICOMSeries {arrayName} {
+
+  upvar $arrayName tree
+
+  #
+  # Here, subdivide series if they have different 
+  # diffusion gradents, orientations, content timings, etc.
+  # The difficulty is that different modalities (and vendors?) put
+  # files together into the same series that slicer would consider
+  # distinct volumes and in some cases these can contradict.
+  # The approach here is to have multiple "virtual" series that 
+  # divide the data in different ways and let the user select
+  # the desired one.
+  #
+  #  SliceLocation                  0020|1041
+  # 
+
+  set subSeriesSpecs {
+    SeriesInstanceUID              0020|000E
+    ContentTime                    0008|0033
+    TriggerTime                    0018|1060
+    DiffusionGradientOrientation   0018|9089 
+    ImageOrientationPatient        0020|0037
+  }
+
+  foreach patient $tree(patients) {
+    foreach study $tree($patient,studies) {
+      foreach series $tree($patient,$study,series) {
+
+        # first, look for subseries within this series
+        array unset subSeriesValues
+        array set subSeriesValues ""
+        foreach {name tag} $subSeriesSpecs {
+          foreach f $tree($patient,$study,$series,files) {
+            array set header $tree($f,header)
+            if { ![info exists header($tag,value)] } {
+              set value "Unknown"
+            } else {
+              set value $header($tag,value)
+            }
+            lappend subSeriesValues($name,$value,files) $f
+          }
+        }
+
+
+        # second, for any specs that have more than one value, create a new
+        # virtual series
+        foreach {name tag} $subSeriesSpecs {
+          set subSeries [array names subSeriesValues $name*files]
+          if { [llength $subSeries] > 1 } {
+            foreach sub $subSeries {
+              foreach {name value files} [split $sub ","] {}
+              set newSeries "$series for $name $value"
+              lappend tree($patient,$study,series) $newSeries
+              set tree($patient,$study,$newSeries,files) $subSeriesValues($sub)
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+
+  #
+  # sort each series by Instance Number
+  #
+  set POSITION "0020|0032"
+  set ORIENTATION "0020|0037"
+
+  foreach patient $tree(patients) {
+    foreach study $tree($patient,studies) {
+      foreach series $tree($patient,$study,series) {
+        #
+        # use the first file to get the ImageOrientationPatient for the 
+        # series and calculate the scan direction (assumed to be perpendicular
+        # to the acquisition plane)
+        # - note: DICOM uses backslashes as delimeters, use regsub to make lists
+        #
+        set refFile [lindex $tree($patient,$study,$series,files) 0]
+        array set refHeader $tree($refFile,header)
+        set refOrientation $refHeader($ORIENTATION,value)
+        regsub -all "\\\\" $refOrientation " " sliceAxes
+        set scanAxis [eval ::LoadVolume::Cross $sliceAxes]
+        set refPosition $refHeader($POSITION,value)
+        regsub -all "\\\\" $refPosition " " scanOrigin
+
+        #
+        # for each file in series, calculate the distance along
+        # the scan axis, sort files by this
+        #
+        set origFiles $tree($patient,$study,$series,files)
+        set sortList ""
+        foreach f $origFiles {
+          array set header $tree($f,header)
+          regsub -all "\\\\" $header($POSITION,value) " " pos
+          set vec [eval ::LoadVolume::Difference $pos $scanOrigin]
+          set dist [eval ::LoadVolume::Dot $vec $scanAxis]
+          lappend sortList [list $f $dist]
+        }
+        set sortedFiles [lsort -real -index 1 $sortList]
+        set tree($patient,$study,$series,files) ""
+        foreach element $sortedFiles {
+          lappend tree($patient,$study,$series,files) [lindex $element 0]
+        }
+      }
+    }
+  }
 }

@@ -143,6 +143,8 @@ itcl::body DICOMCache::setTreeForDirectory { dirName treeName } {
 #
 # given a directory name, fill in the tree information from the 
 # cache if it exists
+# - look for an ancestor directory that exists in the cache
+#   and use it (but only if it includes this dirName in it's parse info)
 #
 itcl::body DICOMCache::getTreeForDirectory { dirName treeName } {
 
@@ -150,6 +152,28 @@ itcl::body DICOMCache::getTreeForDirectory { dirName treeName } {
   array unset tree
   array set tree ""
   $this fillCatalog
+
+  set ancestorDir ""
+  foreach dirPart [file split $dirName] {
+    set ancestorDir [file join $ancestorDir $dirPart]
+    set testFileName [$this getTreeFileName $ancestorDir]
+    if { [info exists _catalog($ancestorDir)] } {
+      array set testTree [DICOMCache::cat $_catalog($ancestorDir)]
+      foreach fileList [array names testTree *files] {
+        set filedir [file dirname [lindex $testTree($fileList) 0]]
+        if { $filedir == $dirName } {
+          # here we found an ancestor directory that has been parsed and includes
+          # information about the directory that is requested - so return this one
+          set dirName $ancestorDir
+          break
+        }
+      }
+    }
+    if { $dirName == $ancestorDir } {
+      break
+    }
+  }
+  
   set fileName [$this getTreeFileName $dirName]
   if { [info exists _catalog($dirName)] } {
     array set tree [DICOMCache::cat $_catalog($dirName)]
