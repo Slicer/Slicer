@@ -764,7 +764,11 @@ void vtkSlicerFiducialListWidget::ProcessMRMLEvents ( vtkObject *caller,
       }
     else
       {
-      vtkDebugMacro("ProcessMRMLEvents: fiducial modified, no point id given, calling update from mrml");
+      vtkDebugMacro("ProcessMRMLEvents: fiducial modified event on list " << callerList->GetName() << ", no point id given, calling update from mrml");
+      // this may be an undo that deleted a point from the list, since the
+      // point widgets are ad hoc right now, remove any widgets that don't
+      // appear in a list
+      this->RemoveExtraPointWidgets(callerList);
       this->UpdateFromMRML();
       }
     }
@@ -2153,4 +2157,42 @@ void vtkSlicerFiducialListWidget::AddObserversToFiducialList(vtkMRMLFiducialList
     {
     flist->AddObserver( vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand );
     }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerFiducialListWidget::RemoveExtraPointWidgets(vtkMRMLFiducialListNode *flistToCheck)
+{
+  if (flistToCheck == NULL ||
+      this->DisplayedPointWidgets.size() == 0 ||
+      this->MRMLScene == NULL)
+    {
+    return;
+    }
+  // for now, we can't reliably tell which fid list each display point widget
+  // is associated with, so check all of them
+  std::map< std::string, vtkPointWidget *>::iterator pointIter;
+  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLFiducialListNode");
+  for(pointIter=this->DisplayedPointWidgets.begin(); pointIter != this->DisplayedPointWidgets.end(); pointIter++) 
+    {
+    bool inAList = false;
+    // for each list
+    for (int n=0; n<nnodes; n++)
+      {
+      vtkMRMLFiducialListNode *flist = vtkMRMLFiducialListNode::SafeDownCast(this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLFiducialListNode"));
+      if (flist->GetFiducialIndex(pointIter->first.c_str()) != -1)
+        {
+        inAList = true;
+        break;
+        }
+      }
+    if (!inAList)
+      {
+      vtkDebugMacro("RemoveExtraPointWidgets: displayed point widget with id " << pointIter->first << " is not in any list, removing it");
+      RemovePointWidget(pointIter->first.c_str());
+      }
+    else
+      {
+      vtkDebugMacro("RemovePointWidget: found displayed point widget with id " << pointIter->first);
+      }
+    } // end loop over all the displayed point widgets
 }

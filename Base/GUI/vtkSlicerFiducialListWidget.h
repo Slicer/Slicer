@@ -123,6 +123,13 @@ public:
   // Description:
   // Remove all the point widgets for this list
   void RemovePointWidgetsForList(vtkMRMLFiducialListNode *flist);
+
+  // Description:
+  // Make sure that the list of point widgets doesn't have any extra point
+  // widgets in it, check through the known fid lists to match up widgets with
+  // fiducials and remove an extra widgets
+  void RemoveExtraPointWidgets(vtkMRMLFiducialListNode *flist);
+
 protected:
   vtkSlicerFiducialListWidget();
   virtual ~vtkSlicerFiducialListWidget();
