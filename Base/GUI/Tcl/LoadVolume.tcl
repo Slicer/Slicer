@@ -53,7 +53,7 @@ namespace eval LoadVolume {
     set entries [glob -nocomplain $dir/*]
     foreach e $entries {
       if { $progressCmd != "" } {
-        set ret [eval $progressCmd $e]
+        set ret [eval $progressCmd \"$e\"]
         update ;# TODO: this update should be in the progressCmd itself
         if { $ret != "" && $ret != 0} {
           set ::LoadVolume::FindSubfiles_Abort 1
