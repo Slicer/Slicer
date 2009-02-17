@@ -330,6 +330,7 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
   vtkKWProgressDialog *progressDialog = vtkKWProgressDialog::New();
   progressDialog->SetParent( this->MainSlicerWindow );
   progressDialog->SetMasterWindow( this->MainSlicerWindow );
+  progressDialog->SetDisplayPositionToMasterWindowCenter();
   progressDialog->Create();
 
   if ( fileName ) 
