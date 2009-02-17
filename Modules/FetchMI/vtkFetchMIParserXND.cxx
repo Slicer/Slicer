@@ -177,7 +177,7 @@ int vtkFetchMIParserXND::ParseMetadataPostResponse( const char *filename )
     }
 
   int found = 0;
-  int pos;
+  unsigned int pos;
   while ( !pfile.eof() )
     {
     line.clear();

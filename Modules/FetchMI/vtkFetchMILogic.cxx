@@ -402,7 +402,6 @@ void vtkFetchMILogic::RequestResourceUpload ( )
   this->SelectedStorableNodeIDs.clear();      
   int n;
   vtkMRMLNode *node = NULL;
-  vtkMRMLStorableNode *stnode = NULL;
   //---Volumes
   int nnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLVolumeNode");
   for (n=0; n<nnodes; n++ )
@@ -1752,7 +1751,7 @@ void vtkFetchMILogic::RefreshTags()
       {
       this->AddUniqueTag (iter->first.c_str() );
       }
-    for (int i=0; i < iter->second.size(); i++ )
+    for (unsigned int i=0; i < iter->second.size(); i++ )
       {
       if ( (iter->second[i].c_str() != NULL) && (strcmp(iter->second[i].c_str(), "")) )
         {
@@ -1784,7 +1783,7 @@ void vtkFetchMILogic::RefreshValuesForTag( const char *tagname )
           {
           if ( !(strcmp (iter->first.c_str(), tagname) ) )
             {
-            for (int i=0; i < iter->second.size(); i++ )
+            for (unsigned int i=0; i < iter->second.size(); i++ )
               {
               if ( (iter->second[i].c_str() != NULL) && (strcmp(iter->second[i].c_str(), "")) )
                 {
