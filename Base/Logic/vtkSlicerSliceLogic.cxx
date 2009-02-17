@@ -1029,13 +1029,6 @@ void vtkSlicerSliceLogic::GetVolumeRASBox(vtkMRMLVolumeNode *volumeNode, double 
   //   (IJK space always has origin at first pixel)
   //
   vtkMatrix4x4 *ijkToRAS = vtkMatrix4x4::New();
-  int dimensions[3];
-  volumeImage->GetDimensions(dimensions);
-  double doubleDimensions[4], rasHDimensions[4], rasHCenter[4];
-  doubleDimensions[0] = dimensions[0] - 1;
-  doubleDimensions[1] = dimensions[1] - 1;
-  doubleDimensions[2] = dimensions[2] - 1;
-  doubleDimensions[3] = 0;
   volumeNode->GetIJKToRASMatrix (ijkToRAS);
   vtkMRMLTransformNode *transformNode = volumeNode->GetParentTransformNode();
   if ( transformNode )
@@ -1045,22 +1038,50 @@ void vtkSlicerSliceLogic::GetVolumeRASBox(vtkMRMLVolumeNode *volumeNode, double 
     vtkMatrix4x4::Multiply4x4 (rasToRAS, ijkToRAS, ijkToRAS);
     rasToRAS->Delete();
     }
-  ijkToRAS->MultiplyPoint( doubleDimensions, rasHDimensions );
-  doubleDimensions[0] = (dimensions[0]-1)/2.;
-  doubleDimensions[1] = (dimensions[1]-1)/2.;
-  doubleDimensions[2] = (dimensions[2]-1)/2.;
-  doubleDimensions[3] = 1.;
-  ijkToRAS->MultiplyPoint( doubleDimensions, rasHCenter );
+
+  int dimensions[3];
+  int i,j,k;
+  volumeImage->GetDimensions(dimensions);
+  double doubleDimensions[4], rasHDimensions[4];
+  double minBounds[3], maxBounds[3];
+
+  for ( i=0; i<3; i++) 
+    {
+    minBounds[i] = 1.0e10;
+    maxBounds[i] = -1.0e10;
+    }
+  for ( i=0; i<2; i++) 
+    {
+    for ( j=0; j<2; j++) 
+      {
+      for ( k=0; k<2; k++) 
+        {
+        doubleDimensions[0] = i*(dimensions[0] - 1);
+        doubleDimensions[1] = j*(dimensions[1] - 1);
+        doubleDimensions[2] = k*(dimensions[2] - 1);
+        doubleDimensions[3] = 1;
+        ijkToRAS->MultiplyPoint( doubleDimensions, rasHDimensions );
+        for (int n=0; n<3; n++) {
+          if (rasHDimensions[n] < minBounds[n])
+            {
+            minBounds[n] = rasHDimensions[n];
+            }
+          if (rasHDimensions[n] > maxBounds[n])
+            {
+            maxBounds[n] = rasHDimensions[n];
+            }
+          }
+        }
+      }
+    }
+  
+   for ( i=0; i<3; i++) 
+    {
+    rasDimensions[i] = maxBounds[i] - minBounds[i];
+    rasCenter[i] = 0.5*(maxBounds[i] + minBounds[i]);
+    }
+
   ijkToRAS->Delete();
-
-  // ignore homogeneous coordinate
-  rasDimensions[0] = rasHDimensions[0];
-  rasDimensions[1] = rasHDimensions[1];
-  rasDimensions[2] = rasHDimensions[2];
-  rasCenter[0] = rasHCenter[0];
-  rasCenter[1] = rasHCenter[1];
-  rasCenter[2] = rasHCenter[2];
-
 }
 
 // Get the size of the volume, transformed to RAS space
