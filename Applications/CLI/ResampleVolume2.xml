@@ -214,6 +214,14 @@
       <label>Direction Matrix</label>
       <default>0,0,0,0,0,0,0,0,0</default>
     </double-vector>
+    <double>
+      <name>defaultPixelValue</name>
+      <flag>-p</flag>
+      <longflag>--default_pixel_value</longflag>
+      <description>Default pixel value for samples falling outside of the input region</description>
+      <label>Default Pixel Value</label>
+      <default>0</default>
+    </double>
 </parameters>
 
 

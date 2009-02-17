@@ -61,6 +61,7 @@ struct parameters
   std::vector< double > outputImageSize ;
   std::vector< float > outputImageOrigin ;
   std::vector< double > directionMatrix ;
+  double defaultPixelValue;
 } ;
 
 
@@ -273,6 +274,7 @@ void SetOutputParameters(const parameters &list ,
   resampler->SetSize( m_Size ) ;
   resampler->SetOutputOrigin( m_Origin ) ;
   resampler->SetOutputDirection( m_Direction ) ; 
+  resampler->SetDefaultPixelValue( static_cast<PixelType> (list.defaultPixelValue) );
 }
 
 typedef itk::Transform<double,3,3>::Pointer Transform3DPointer;
@@ -750,6 +752,7 @@ int main( int argc , char * argv[] )
   list.outputImageSize = outputImageSize ;
   list.outputImageOrigin = outputImageOrigin ;
   list.directionMatrix = directionMatrix ;
+  list.defaultPixelValue = defaultPixelValue ;
   if( list.transformMatrix.size() != 12 || list.rotationPoint.size() != 3 )
     {
     std::cerr<<"Argument(s) having wrong size"<<std::endl ;
