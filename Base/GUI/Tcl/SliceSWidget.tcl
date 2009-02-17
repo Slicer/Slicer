@@ -97,7 +97,8 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
 
   # observe NodeAdded events from the MRML scene to create
   # model intersection displays as needed
-  $::slicer3::Broker AddObservation $::slicer3::MRMLScene 66000 "::SWidget::ProtectedCallback $this processEvent $::slicer3::MRMLScene"
+  set NodeAddedEvent 66000
+  $::slicer3::Broker AddObservation $::slicer3::MRMLScene $NodeAddedEvent "::SWidget::ProtectedCallback $this processEvent $::slicer3::MRMLScene NodeAddedEvent"
 
   # put the other widgets last the events in this widget get natural
   # priority over the same event to a child widget
@@ -245,7 +246,6 @@ itcl::body SliceSWidget::resizeSliceNode {} {
 # handle interactor events
 #
 itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
-  # puts "$this $_sliceNode [$_sliceNode GetLayoutName] $caller $event"
 
   if { [info command $sliceGUI] == "" || [$sliceGUI GetLogic] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
@@ -260,9 +260,8 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   }
 
   # MRML Scene update probably means we need to create a new model intersection SWidget
-  if { $caller == $::slicer3::MRMLScene } {
+  if { $caller == $::slicer3::MRMLScene && $event == "NodeAddedEvent" } {
     $this updateModelSWidgets
-    return
   }
 
   #
@@ -338,7 +337,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   if { $caller != $_sliceNode } {
     $this resizeSliceNode
   }
-
 
   switch $event {
 
