@@ -128,7 +128,10 @@ itcl::body WandEffect::apply {} {
     return
   }
 
+  $this configure -polygonDebugViewer 1
+
   $this applyPolyMask [$o(wandIJKToXY) GetOutput]
+  puts "applied!"
 }
 
 itcl::body WandEffect::apply3D {} {
@@ -153,11 +156,6 @@ itcl::body WandEffect::apply3D {} {
 
 itcl::body WandEffect::preview {} {
 
-  # 
-  # get the event position to use as a seed
-  #
-  foreach {x y} [$_interactor GetEventPosition] {}
-
   #
   # create pipeline as needed
   #
@@ -170,10 +168,16 @@ itcl::body WandEffect::preview {} {
     $o(wandMarching) SetNumberOfContours 1
     $o(wandMarching) SetValue 0 1
 
+    set o(stripper) [vtkNew vtkStripper]
+    $o(stripper) SetInput [$o(wandMarching) GetOutput]
+
+    set o(cleaner) [vtkNew vtkCleanPolyData]
+    $o(cleaner) SetInput [$o(stripper) GetOutput]
+
     set o(ijkToXY) [vtkNew vtkTransform]
     set o(wandIJKToXY) [vtkNew vtkTransformPolyDataFilter]
     $o(wandIJKToXY) SetTransform $o(ijkToXY)
-    $o(wandIJKToXY) SetInput [$o(wandMarching) GetOutput]
+    $o(wandIJKToXY) SetInput [$o(cleaner) GetOutput]
 
     set o(wandMapper) [vtkNew vtkPolyDataMapper2D]
     set o(wandActor) [vtkNew vtkActor2D]
@@ -186,30 +190,49 @@ itcl::body WandEffect::preview {} {
     lappend _actors $o(wandActor)
   }
 
-  $o(wandFilter) SetInput [$this getInputBackground]
+  # 
+  # get the event position to use as a seed
+  #
+  foreach {x y} [$_interactor GetEventPosition] {}
+  foreach {windoww windowh} [[$_interactor GetRenderWindow] GetSize] {}
 
-  eval $o(wandFilter) SetSeed [$this getLayerIJK background $x $y]
+  if { $x < 0 || $y < 0 || $x > $windoww || $y > $windowh } {
+    puts "bad event position $x, $y not in $windoww $windowh"
+    return
+  }
+
+  $o(wandFilter) SetInput [$this getInputBackground]
+  foreach {w h d} [[$o(wandFilter) GetInput] GetDimensions] {}
+
+  set visibleToWindow [vtkMatrix4x4 New]
+  $visibleToWindow Identity
+  $visibleToWindow SetElement 0 0 [expr $windoww / $w]
+  $visibleToWindow SetElement 1 1 [expr $windowh / $h]
+  #$visibleToWindow SetElement 0 3 [$ijkToXY GetElement 0 3]
+  #$visibleToWindow SetElement 1 3 [$ijkToXY GetElement 1 3]
+  #$visibleToWindow SetElement 2 3 [$ijkToXY GetElement 2 3]
+
+  $visibleToWindow Invert
+  set seed [$visibleToWindow MultiplyPoint $x $y 0 1]
+  $visibleToWindow Invert
+  set seedx [expr int([lindex $seed 0])]
+  set seedy [expr int([lindex $seed 1])]
+  puts "$o(wandFilter) SetSeed $seedx $seedy 0"
+  $o(wandFilter) SetSeed $seedx $seedy 0
+  puts "wand $x $y ($seed)"
+  if { $seedx < 0 || $seedy < 0 || $seedx > $w || $seedy > $h } {
+    puts "seed out of visible range"
+    puts "wand $x $y ($seed)"
+    return
+  }
+
   $o(wandFilter) SetDynamicRangePercentage $percentage
 
-  $this setProgressFilter $o(wandFilter) "Magic Wand Connected Components"
+  $o(ijkToXY) SetMatrix $visibleToWindow
   $o(wandFilter) Update
 
-  foreach {windoww windowh} [[$_interactor GetRenderWindow] GetSize] {}
-  foreach {w h d} [[$o(wandFilter) GetOutput] GetDimensions] {}
 
-  set ijkToXY $_layers(background,xyToIJK)
-  $ijkToXY Invert
-  [$o(ijkToXY) GetMatrix] DeepCopy $ijkToXY
-
-  set scaler [vtkMatrix4x4 New]
-  $scaler Identity
-  $scaler SetElement 0 0 [expr $windoww / $w]
-  $scaler SetElement 1 1 [expr $windowh / $h]
-  $scaler SetElement 0 3 [$ijkToXY GetElement 0 3]
-  $scaler SetElement 1 3 [$ijkToXY GetElement 1 3]
-  $scaler SetElement 2 3 [$ijkToXY GetElement 2 3]
-  #$o(ijkToXY) SetMatrix $scaler
-  $scaler Delete
+  $visibleToWindow Delete
 
   $this positionCursor
   [$sliceGUI GetSliceViewer] RequestRender
@@ -219,6 +242,7 @@ itcl::body WandEffect::preview {} {
 
   [$o(wandIJKToXY) GetOutput] Update
   puts "transformed: [[$o(wandIJKToXY) GetOutput] GetBounds]"
+  puts ""
 
   #
   # viewer window...
