@@ -512,7 +512,12 @@ int vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNode)
   // make a new dir to write temporary stuff out to
   // get the cache dir and make a subdir in it.
   vtksys_stl::vector<vtksys_stl::string> pathComponents;
-  vtksys::SystemTools::SplitPath(this->GetScene()->GetCacheManager()->GetRemoteCacheDirectory(), pathComponents);
+  if (this->GetScene() &&
+      this->GetScene()->GetCacheManager() &&
+      this->GetScene()->GetCacheManager()->GetRemoteCacheDirectory())
+    {
+    vtksys::SystemTools::SplitPath(this->GetScene()->GetCacheManager()->GetRemoteCacheDirectory(), pathComponents);
+    }
   pathComponents.push_back(std::string("TempWrite"));
   std::string tempDir = vtksys::SystemTools::JoinPath(pathComponents);
   vtkWarningMacro("UpdateFileList: deleting and then re-creating temp dir "<< tempDir.c_str());
@@ -532,9 +537,13 @@ int vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNode)
   writer->SetUseCompression(this->GetUseCompression());
   if(this->WriteFileFormat)
     {
-    writer->SetImageIOClassName(
-      this->GetScene()->GetDataIOManager()->GetFileFormatHelper()->
-      GetClassNameFromFormatString(this->WriteFileFormat));
+    if (this->GetScene() &&
+        this->GetScene()->GetDataIOManager() &&
+        this->GetScene()->GetDataIOManager()->GetFileFormatHelper())
+      {
+      writer->SetImageIOClassName(this->GetScene()->GetDataIOManager()->GetFileFormatHelper()->
+                                  GetClassNameFromFormatString(this->WriteFileFormat));
+      }
     }
 
   // set volume attributes
