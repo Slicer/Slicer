@@ -71,7 +71,7 @@ itcl::body EditBox::findEffects { {path ""} } {
     ImplicitCube ImplicitEllipse ImplicitRectangle 
     Draw RemoveIslands ConnectedComponents 
     ThresholdBucket ThresholdPaintLabel SaveIsland SlurpColor Paint
-    DefaultTool LevelTracing MakeModel
+    DefaultTool LevelTracing MakeModel Wand
   }
 
   # effects that operate from the menu
