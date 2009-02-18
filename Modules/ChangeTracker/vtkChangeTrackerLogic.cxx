@@ -1066,6 +1066,7 @@ void vtkChangeTrackerLogic::LinearResample (vtkMRMLVolumeNode* inputVolumeNode, 
 
 // AF >>>
 // Use LinearRegistration module to rigidly align input scans
+#if 0
 int vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
   // following the Tcl example code in
   // http://wiki.slicer.org/slicerWiki/index.php/Slicer3:Execution_Model_Documentation:Programmatic_Invocation
@@ -1178,42 +1179,85 @@ int vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
 
   return 0;
 }
+#endif
 
-// AF: registration of ROI
-int vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
-  // following the Tcl example code in
-  // http://wiki.slicer.org/slicerWiki/index.php/Slicer3:Execution_Model_Documentation:Programmatic_Invocation
-  // Also, see
-  // http://www.itk.org/pipermail/insight-users/2008-October/027734.html
-  // for a discussion on setting the number of histogram samples
-  // ...
+int vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
 
   // Init some useful references
-  vtkCommandLineModuleGUI *moduleGUI = NULL;
   vtkMRMLCommandLineModuleNode *moduleNode = NULL;
   vtkCommandLineModuleLogic *moduleLogic = NULL;
 
   vtkMRMLScene *scene = this->ChangeTrackerNode->GetScene();
   vtkMRMLChangeTrackerNode *ctNode = this->ChangeTrackerNode;
-  // vtkMRMLScalarVolumeNode *outputVolumeNode = NULL;
-  // should be nice to have the transform in the scene later
-  //vtkMRMLTransformNode *lrTransform = NULL;
+
+  moduleLogic = vtkCommandLineModuleLogic::New();
   
-  // These should be initialized, but make sure this is true
+  moduleNode = 
+    static_cast<vtkMRMLCommandLineModuleNode*>(scene->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
+  if(!moduleNode){
+    return -2;
+  }
+
+  moduleNode->SetModuleDescription("Rigid registration");
+
+  vtkMRMLScalarVolumeNode *outputNode;
+  outputNode = static_cast<vtkMRMLScalarVolumeNode*>(scene->GetNodeByID(ctNode->GetScan2_GlobalRef()));
+  if(outputNode){
+    scene->RemoveNode(outputNode);
+    ctNode->SetScan2_GlobalRef("");
+  }
+
+  outputNode = CreateVolumeNode(static_cast<vtkMRMLVolumeNode*>(scene->GetNodeByID(ctNode->GetScan1_Ref())), 
+    "TG_scan2_Global");
+
+  // Create output transform node
+  vtkMRMLLinearTransformNode *transformNode =
+    vtkMRMLLinearTransformNode::New();
+  transformNode->SetName("Global_LRTransform");
+  scene->AddNode(transformNode);
+  transformNode->Delete();
+
+  // Linear registration parameter setup
+  moduleNode->SetParameterAsString("FixedImageFileName", ctNode->GetScan1_Ref());
+  moduleNode->SetParameterAsString("MovingImageFileName", ctNode->GetScan2_Ref());
+  moduleNode->SetParameterAsString("Iterations", "100,100,50,20");
+  moduleNode->SetParameterAsString("ResampledImageFileName", outputNode->GetID());
+  moduleNode->SetParameterAsString("OutputTransform", transformNode->GetID());
+
+  moduleLogic->SetAndObserveMRMLScene(scene);
+  moduleLogic->SetApplicationLogic(app->GetApplicationGUI()->GetApplicationLogic());
+  moduleLogic->SetTemporaryDirectory(app->GetTemporaryDirectory());
+  moduleLogic->LazyEvaluateModuleTarget(moduleNode);
+  ModuleDescription moduleDesc = moduleNode->GetModuleDescription();
+  if(moduleDesc.GetTarget() == "Unknown")
+    return -4;  // failed to find registration module
+
+  moduleLogic->ApplyAndWait(moduleNode);
+  if(moduleNode->GetStatus() != vtkMRMLCommandLineModuleNode::Completed)
+    return -5;
+
+  ctNode->SetScan2_GlobalRef(outputNode->GetID());
+  moduleLogic->SetAndObserveMRMLScene(NULL);
+  moduleLogic->Delete();
+  moduleNode->Delete();
+
+  return 0;
+}
+
+
+// AF: registration of ROI
+int vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
+  vtkMRMLCommandLineModuleNode *moduleNode = NULL;
+  vtkCommandLineModuleLogic *moduleLogic = NULL;
+
+  vtkMRMLScene *scene = this->ChangeTrackerNode->GetScene();
+  vtkMRMLChangeTrackerNode *ctNode = this->ChangeTrackerNode;
+
   assert(ctNode->GetScan1_SuperSampleRef());
   assert(ctNode->GetScan2_SuperSampleRef());
 
-  moduleGUI = 
-    static_cast<vtkCommandLineModuleGUI*>(app->GetModuleGUIByName("Rigid registration"));
-  if(!moduleGUI){
-    //std::cerr << "Cannot find Rigid registration module. Aborting." << std::endl;
-    return -1;
-  }
-  moduleLogic = moduleGUI->GetLogic();
 
-  // Initialize GUI (?)
-  moduleGUI->Enter();
-  
+  moduleLogic = vtkCommandLineModuleLogic::New(); 
   moduleNode = 
     static_cast<vtkMRMLCommandLineModuleNode*>(scene->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
   if(!moduleNode){
@@ -1221,13 +1265,8 @@ int vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
     return -2;
   }
 
-  // Add node to the scene
-  scene->AddNode(moduleNode);
   moduleNode->SetModuleDescription("Rigid registration");
 
-  // Create output volume node
-  // AF: First, delete the previous output node. As translated from Tcl
-  // code...
   vtkMRMLScalarVolumeNode *outputNode;
   outputNode = 
     static_cast<vtkMRMLScalarVolumeNode*>(scene->GetNodeByID(ctNode->GetScan2_LocalRef()));
@@ -1240,75 +1279,38 @@ int vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
     "TG_scan2_Local");
 
   // Create output transform node
+  // TODO: check whether the transform has been created, delete/reuse if yes
   vtkMRMLLinearTransformNode *transformNode =
     vtkMRMLLinearTransformNode::New();
-  assert(transformNode);
   transformNode->SetName("ROI_LRTransform");
   scene->AddNode(transformNode);
 
   // Linear registration parameter setup
   moduleNode->SetParameterAsString("FixedImageFileName", ctNode->GetScan1_SuperSampleRef());
   moduleNode->SetParameterAsString("MovingImageFileName", ctNode->GetScan2_SuperSampleRef());
-  // AF: override the default settings for iterations to reduce time
-  // Comment from Kilian: since intra-subject registration is simpler than
-  // inter-subject, and default settings were for the general case, we can
-  // simplify this probably
-  //
-  // AF: With the defalt parameters for TranslationScale, registration
-  // produces empty image (uninitialized volume). 
-  // TODO: investigate why, and why there's no error
-  // reporting from registration about failure
   moduleNode->SetParameterAsString("TranslationScale", "10");
   moduleNode->SetParameterAsString("Iterations", "100,100,50,20");
-//  moduleNode->SetParameterAsString("ResampledImageFileName", ctNode->GetScan2_LocalRef());
   moduleNode->SetParameterAsString("ResampledImageFileName", outputNode->GetID());
   moduleNode->SetParameterAsString("OutputTransform", transformNode->GetID());
-  transformNode->Delete();
 
-  moduleGUI->SetCommandLineModuleNode(moduleNode);
-  moduleGUI->GetLogic()->SetCommandLineModuleNode(moduleNode);
-
-  // These are the extra steps, digged from
-  // Modules/CommandLineModule/vtkCommandLineModuleLogic.cxx
-  ModuleDescription moduleDesc = moduleNode->GetModuleDescription();
+  moduleLogic->SetAndObserveMRMLScene(scene);
+  moduleLogic->SetApplicationLogic(app->GetApplicationGUI()->GetApplicationLogic());
   moduleLogic->SetTemporaryDirectory(app->GetTemporaryDirectory());
-  if(moduleDesc.GetTarget() == "Unknown"){
-    // Entry point is unknown
-    // "Linear registration" is shared object module, at least at this moment
-    assert(moduleDesc.GetType() == "SharedObjectModule");
-    typedef int (*ModuleEntryPoint)(int argc, char* argv[]);
-    itksys::DynamicLoader::LibraryHandle lib =
-      itksys::DynamicLoader::OpenLibrary(moduleDesc.GetLocation().c_str());
-    if(lib){
-      ModuleEntryPoint entryPoint = 
-        (ModuleEntryPoint) itksys::DynamicLoader::GetSymbolAddress(
-          lib, "ModuleEntryPoint");
-      if(entryPoint){
-        char entryPointAsText[256];
-        std::string entryPointAsString;
+  moduleLogic->LazyEvaluateModuleTarget(moduleNode);
 
-        sprintf(entryPointAsText, "%p", entryPoint);
-        entryPointAsString = std::string("slicer:")+entryPointAsText;
-        moduleDesc.SetTarget(entryPointAsString);
-        moduleNode->SetModuleDescription(moduleDesc);      
-      } else {
-        // std::cerr << "Failed to find entry point for Rigid registration. Abort." << std::endl;
-        return -3;
-      }
-    } else {
-      //std::cerr << "Failed to locate module library. Abort." << std::endl;
-      return -4;
-    }
-  }
+  ModuleDescription moduleDesc = moduleNode->GetModuleDescription();
+  if(moduleDesc.GetTarget() == "Unknown")
+    return -4;  // failed to find registration module
 
-  moduleGUI->GetLogic()->ApplyAndWait(moduleNode);
+  moduleLogic->ApplyAndWait(moduleNode);
 
   if(moduleNode->GetStatus() != vtkMRMLCommandLineModuleNode::Completed)
     return -5;
 
   ctNode->SetScan2_LocalRef(outputNode->GetID());
-  this->SaveVolume(app, outputNode);
-  moduleNode->Delete(); // AF: is it right to delete this here?
+  moduleLogic->SetAndObserveMRMLScene(NULL);
+  moduleLogic->Delete();
+  moduleNode->Delete();
 
   return 0;
 }

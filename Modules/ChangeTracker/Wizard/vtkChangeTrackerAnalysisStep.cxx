@@ -25,6 +25,7 @@
 #include "vtkImageConstantPad.h"
 #include "vtkKWLoadSaveButtonWithLabel.h"
 #include "vtkKWLoadSaveButton.h"
+#include "vtkRenderer.h"
 
 #include <vtksys/SystemTools.hxx>
 
@@ -459,11 +460,11 @@ void vtkChangeTrackerAnalysisStep::ShowUserInterface()
       oldSliceSetting[1] = double(applicationGUI->GetMainSliceGUI("Yellow")->GetSliceController()->GetOffsetScale()->GetValue());
       oldSliceSetting[2] = double(applicationGUI->GetMainSliceGUI("Green")->GetSliceController()->GetOffsetScale()->GetValue());
 
-      applicationGUI->GetMainSliceGUI("Red")->GetSliceController()->GetForegroundSelector()->SetSelected(volumeAnalysisNode);
-      applicationGUI->GetMainSliceGUI("Yellow")->GetSliceController()->GetForegroundSelector()->SetSelected(volumeAnalysisNode);
-      applicationGUI->GetMainSliceGUI("Green")->GetSliceController()->GetForegroundSelector()->SetSelected(volumeAnalysisNode);
+//      applicationGUI->GetMainSliceGUI("Red")->GetSliceController()->GetForegroundSelector()->SetSelected(volumeAnalysisNode);
+//      applicationGUI->GetMainSliceGUI("Yellow")->GetSliceController()->GetForegroundSelector()->SetSelected(volumeAnalysisNode);
+//      applicationGUI->GetMainSliceGUI("Green")->GetSliceController()->GetForegroundSelector()->SetSelected(volumeAnalysisNode);
 
-      applicationLogic->PropagateVolumeSelection();
+//      applicationLogic->PropagateVolumeSelection();
 
       // Return to original slice position 
       applicationGUI->GetMainSliceGUI("Red")->GetSliceController()->GetOffsetScale()->SetValue(oldSliceSetting[0]);
@@ -477,34 +478,49 @@ void vtkChangeTrackerAnalysisStep::ShowUserInterface()
       applicationGUI->GetGUILayoutNode()->SetNumberOfCompareViewLightboxColumns(5);
       applicationGUI->GetGUILayoutNode()->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutCompareView);
 
-      vtkSlicerSliceGUI *cv0GUI, *cv1GUI;
+      vtkSlicerSliceGUI *cv0GUI, *cv1GUI, *redGUI;
       
       cv0GUI = applicationGUI->GetMainSliceGUI("Compare0");
       cv1GUI = applicationGUI->GetMainSliceGUI("Compare1");
+      redGUI = applicationGUI->GetMainSliceGUI("Red");
 
       if(cv0GUI && cv1GUI)
         {
-        vtkMRMLSliceCompositeNode *cv0, *cv1;
-        cv0 = applicationGUI->GetMainSliceGUI("Compare0")->GetLogic()->GetSliceCompositeNode();
-        cv1 = applicationGUI->GetMainSliceGUI("Compare1")->GetLogic()->GetSliceCompositeNode();
-        cv0->SetDoPropagateVolumeSelection(false);
-        cv1->SetDoPropagateVolumeSelection(false);
+        vtkMRMLSliceCompositeNode *cv0SliceCompositeNode, *cv1SliceCompositeNode;
+        vtkSlicerSliceControllerWidget *cv0SliceControllerWidget, *cv1SliceControllerWidget;
+        vtkSlicerSliceLogic *cv0SliceLogic, *cv1SliceLogic;
+        cv0SliceCompositeNode = cv0GUI->GetLogic()->GetSliceCompositeNode();
+        cv1SliceCompositeNode = cv1GUI->GetLogic()->GetSliceCompositeNode();
+        cv0SliceLogic = cv0GUI->GetLogic();
+        cv1SliceLogic = cv1GUI->GetLogic();
+        cv0SliceControllerWidget = cv0GUI->GetSliceController();
+        cv1SliceControllerWidget = cv1GUI->GetSliceController();
+//        cv0->SetDoPropagateVolumeSelection(false);
+//        cv1->SetDoPropagateVolumeSelection(false);
 
-        cv0->SetBackgroundVolumeID( node->GetScan1_SuperSampleRef() );
-        cv1->SetBackgroundVolumeID( node->GetScan2_NormedRef() );
+        cv0SliceCompositeNode->SetBackgroundVolumeID( node->GetScan1_SuperSampleRef() );
+        cv1SliceCompositeNode->SetBackgroundVolumeID( node->GetScan2_NormedRef() );
 
-        cv0->SetLabelVolumeID( "" );
-        cv1->SetLabelVolumeID( "" );
+        cv0SliceCompositeNode->SetLabelVolumeID( "" );
+        cv1SliceCompositeNode->SetLabelVolumeID( "" );
 
-        cv0->SetForegroundVolumeID( volumeAnalysisNode->GetID() );
-        cv1->SetForegroundVolumeID( "" );
+        cv0SliceCompositeNode->SetForegroundVolumeID( volumeAnalysisNode->GetID() );
+        cv1SliceCompositeNode->SetForegroundVolumeID( "" );
 
-        cv0->SetForegroundOpacity(0.6);
+        cv0SliceCompositeNode->SetForegroundOpacity(0.6);
 
-//        applicationLogic->PropagateVolumeSelection(1);
-
-//        applicationGUI->GetMainSliceGUI("Compare0")->GetSliceController()->LinkAllSlices();
-        applicationGUI->GetMainSliceGUI("Compare0")->GetSliceController()->FitSliceToBackground();
+        // this is the right way to fit slice to background in this scenario,
+        // according to Steve
+        // Background is not set yet here, so fit can only be done after MRML
+        // processing has been completed
+//        this->Script("proc Fit2Bg {sGUIName} { set GUI [$::slicer3::ApplicationGUI GetMainSliceGUI $sGUIName]; [$GUI GetSliceController] FitSliceToBackground}");
+        this->Script("update");
+        cv0GUI->GetSliceController()->FitSliceToBackground();
+        cv1GUI->GetSliceController()->FitSliceToBackground();
+        redGUI->GetSliceController()->FitSliceToBackground();
+//        this->Script("after idle Fit2Bg Compare0");
+//        this->Script("after idle Fit2Bg Compare1");
+//        this->Script("after idle Fit2Bg Red");
       }
     } 
   }
@@ -901,7 +917,7 @@ void vtkChangeTrackerAnalysisStep::ShowUserInterface()
   this->CreateSliceButton();
   this->AddGUIObservers();
   this->SensitivityChangedCallback(-1);
-  this->GetGUI()->PropagateVolumeSelection();
+//  this->GetGUI()->PropagateVolumeSelection();
 }
 
 
