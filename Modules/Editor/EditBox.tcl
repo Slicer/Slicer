@@ -71,7 +71,7 @@ itcl::body EditBox::findEffects { {path ""} } {
     ImplicitCube ImplicitEllipse ImplicitRectangle 
     Draw RemoveIslands ConnectedComponents 
     ThresholdBucket ThresholdPaintLabel SaveIsland SlurpColor Paint
-    DefaultTool LevelTracing Wand MakeModel
+    DefaultTool LevelTracing MakeModel
   }
 
   # effects that operate from the menu
@@ -99,7 +99,7 @@ itcl::body EditBox::findEffects { {path ""} } {
     LabelVisibilityOff LabelVisibilityOn 
     SnapToGridOff SnapToGridOn
     InterpolateLabels LabelOpacity
-    ToggleLabelOutline Watershed Redo
+    ToggleLabelOutline Watershed Wand Redo
   }
 
 
