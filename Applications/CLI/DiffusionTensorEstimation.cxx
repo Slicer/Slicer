@@ -177,6 +177,7 @@ int main( int argc, char * argv[] )
     /**/
     vtkSmartPointer<vtkTensorMask> tensorMask =
       vtkSmartPointer<vtkTensorMask>::New();
+    tensorMask->SetNumberOfThreads(1);
     vtkSmartPointer<vtkImageCast> cast2 =
       vtkSmartPointer<vtkImageCast>::New();
     cast2->SetOutputScalarTypeToUnsignedChar();
