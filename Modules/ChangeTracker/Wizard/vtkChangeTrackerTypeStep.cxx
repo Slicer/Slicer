@@ -25,7 +25,7 @@ vtkCxxRevisionMacro(vtkChangeTrackerTypeStep, "$Revision: 1.2 $");
 vtkChangeTrackerTypeStep::vtkChangeTrackerTypeStep()
 {
   this->SetName("4/4. Define Metric"); 
-  this->SetDescription("We provide several metrics to measure growth."); 
+  this->SetDescription("We provide several metrics to measure growth"); 
   this->WizardGUICallbackCommand->SetCallback(vtkChangeTrackerTypeStep::WizardGUICallback);
 
   this->FrameTypeIntensity = NULL;

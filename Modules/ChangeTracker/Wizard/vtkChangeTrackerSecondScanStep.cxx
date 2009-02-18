@@ -18,7 +18,7 @@ vtkCxxRevisionMacro(vtkChangeTrackerSecondScanStep, "$Revision: 1.0 $");
 vtkChangeTrackerSecondScanStep::vtkChangeTrackerSecondScanStep()
 {
   this->SetName("4/4. Define Second Scan");
-  this->SetDescription("Select second scan of patient.");
+  this->SetDescription("Select second scan of patient");
   this->WizardGUICallbackCommand->SetCallback(vtkChangeTrackerSecondScanStep::WizardGUICallback);
 }
 

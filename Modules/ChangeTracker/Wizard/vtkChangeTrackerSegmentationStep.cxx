@@ -31,7 +31,7 @@ vtkCxxRevisionMacro(vtkChangeTrackerSegmentationStep, "$Revision: 1.2 $");
 vtkChangeTrackerSegmentationStep::vtkChangeTrackerSegmentationStep()
 {
   this->SetName("3/4. Identify Tumor in First Scan"); 
-  this->SetDescription("Move slider to outline boundary of tumor."); 
+  this->SetDescription("Move slider to outline boundary of tumor"); 
 
   this->ThresholdFrame = NULL;
   this->ThresholdRange = NULL;

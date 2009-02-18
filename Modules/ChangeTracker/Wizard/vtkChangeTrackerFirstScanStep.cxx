@@ -24,7 +24,7 @@ vtkCxxRevisionMacro(vtkChangeTrackerFirstScanStep, "$Revision: 1.0 $");
 vtkChangeTrackerFirstScanStep::vtkChangeTrackerFirstScanStep()
 {
   this->SetName("1/4. Define Scans");
-  this->SetDescription("Select first and second scan of patient.");
+  this->SetDescription("Select first and second scan of patient");
   this->WizardGUICallbackCommand->SetCallback(vtkChangeTrackerFirstScanStep::WizardGUICallback);
   this->SecondVolumeMenuButton = NULL;
 }

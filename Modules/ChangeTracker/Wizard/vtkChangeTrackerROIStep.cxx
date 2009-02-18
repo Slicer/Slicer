@@ -43,7 +43,7 @@ vtkCxxRevisionMacro(vtkChangeTrackerROIStep, "$Revision: 1.2 $");
 vtkChangeTrackerROIStep::vtkChangeTrackerROIStep()
 {
   this->SetName("2/4. Define Volume of Interest"); 
-  this->SetDescription("Define VOI by clicking left mouse button around the tumor or moving sliders"); 
+  this->SetDescription("Click left mouse button around the tumor or move sliders"); 
   this->WizardGUICallbackCommand->SetCallback(vtkChangeTrackerROIStep::WizardGUICallback);
 
   this->FrameButtons    = NULL;
