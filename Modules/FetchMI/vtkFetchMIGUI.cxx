@@ -690,7 +690,7 @@ void vtkFetchMIGUI::AddModelNodes()
   int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLModelNode");
   int n;
   int row = this->TaggedDataList->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
-  const char *dtype;
+  const char *dtype = "VTKModel";
   
   for (n=0; n<nnodes; n++)
     {
@@ -746,11 +746,6 @@ void vtkFetchMIGUI::AddModelNodes()
         dtype = "FreeSurferModel";
         }
       }
-    else
-      {
-      dtype = "VTKModel";
-      }
-
 
     this->TaggedDataList->AddNewItem ( node->GetID(), dtype );
 
