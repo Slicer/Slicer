@@ -205,6 +205,7 @@ def Execute (inputVolumeID, outputTensorID, outputBaselineID="",\
 # Maks tensor
 #TODO: fix tenosr mask
   tensorMask = slicer.vtkTensorMask()
+  tensorMask.SetNumberOfThreads(1)
   cast2 = slicer.vtkImageCast()
   cast2.SetOutputScalarTypeToUnsignedChar()
   if maskV == True:
