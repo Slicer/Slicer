@@ -495,6 +495,8 @@ void vtkChangeTrackerAnalysisStep::ShowUserInterface()
         cv1SliceLogic = cv1GUI->GetLogic();
         cv0SliceControllerWidget = cv0GUI->GetSliceController();
         cv1SliceControllerWidget = cv1GUI->GetSliceController();
+
+        cv0SliceControllerWidget->UnlinkAllSlices();
 //        cv0->SetDoPropagateVolumeSelection(false);
 //        cv1->SetDoPropagateVolumeSelection(false);
 
@@ -518,9 +520,8 @@ void vtkChangeTrackerAnalysisStep::ShowUserInterface()
         cv0GUI->GetSliceController()->FitSliceToBackground();
         cv1GUI->GetSliceController()->FitSliceToBackground();
         redGUI->GetSliceController()->FitSliceToBackground();
-//        this->Script("after idle Fit2Bg Compare0");
-//        this->Script("after idle Fit2Bg Compare1");
-//        this->Script("after idle Fit2Bg Red");
+
+        cv0SliceControllerWidget->LinkAllSlices();
       }
     } 
   }
