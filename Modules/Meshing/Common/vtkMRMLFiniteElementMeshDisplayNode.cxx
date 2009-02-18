@@ -124,7 +124,7 @@ void vtkMRMLFiniteElementMeshDisplayNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  int intAttribute;
+  //int intAttribute;
   
   while (*atts != NULL) 
     {
