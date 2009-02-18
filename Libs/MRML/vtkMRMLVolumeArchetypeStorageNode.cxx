@@ -518,16 +518,20 @@ int vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNode)
     {
     vtksys::SystemTools::SplitPath(this->GetScene()->GetCacheManager()->GetRemoteCacheDirectory(), pathComponents);
     }
+  else
+    {
+    vtkWarningMacro("UpdateFileList: Unable to get remote cache dir, using current dir for temp dir.");
+    }
   pathComponents.push_back(std::string("TempWrite"));
   std::string tempDir = vtksys::SystemTools::JoinPath(pathComponents);
-  vtkWarningMacro("UpdateFileList: deleting and then re-creating temp dir "<< tempDir.c_str());
+  vtkDebugMacro("UpdateFileList: deleting and then re-creating temp dir "<< tempDir.c_str());
   vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
   vtksys::SystemTools::MakeDirectory(tempDir.c_str());
   
   // make a new name,
   pathComponents.push_back(vtksys::SystemTools::GetFilenameName(oldName));
   std::string tempName = vtksys::SystemTools::JoinPath(pathComponents);
-  vtkWarningMacro("UpdateFileList: new archetype file name = " << tempName.c_str());
+  vtkDebugMacro("UpdateFileList: new archetype file name = " << tempName.c_str());
 
   // set up the writer and write
   vtkITKImageWriter *writer = vtkITKImageWriter::New();
@@ -566,7 +570,7 @@ int vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNode)
   // look through the new dir and populate the file list, minus the new dir
   vtksys::Directory dir;
   dir.Load(tempDir.c_str());
-  vtkWarningMacro("UpdateFileList: tempdir " << tempDir.c_str() << " has " << dir.GetNumberOfFiles() << " in it");
+  vtkDebugMacro("UpdateFileList: tempdir " << tempDir.c_str() << " has " << dir.GetNumberOfFiles() << " in it");
   size_t fileNum;
   for (fileNum = 0; fileNum <  dir.GetNumberOfFiles(); ++fileNum)
     {
@@ -574,12 +578,12 @@ int vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNode)
     if (strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)),".") &&
         strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)),".."))
       {
-      vtkWarningMacro("UpdateFileList: adding file number " << fileNum << ", " << dir.GetFile(static_cast<unsigned long>(fileNum)));
+      vtkDebugMacro("UpdateFileList: adding file number " << fileNum << ", " << dir.GetFile(static_cast<unsigned long>(fileNum)));
       this->AddFileName(dir.GetFile(static_cast<unsigned long>(fileNum)));
       }
     }
   // restore the old file name
-  vtkWarningMacro("UpdateFileList: resetting file name to " << oldName.c_str());
+  vtkDebugMacro("UpdateFileList: resetting file name to " << oldName.c_str());
   this->SetFileName(oldName.c_str());
 
   // clean up directory??
