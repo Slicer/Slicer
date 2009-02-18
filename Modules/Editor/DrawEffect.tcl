@@ -201,6 +201,14 @@ itcl::body DrawEffect::apply {} {
     return
   }
 
+  # first, close the polyline back to the first point
+  set lines [$o(polyData) GetLines]
+  set idArray [$lines GetData]
+  set p [$idArray GetTuple1 1]
+  $idArray InsertNextTuple1 $p
+  $idArray SetTuple1 0 [expr [$idArray GetNumberOfTuples] - 1]
+
+
   $this applyPolyMask $o(polyData)
   $this resetPolyData
 }
