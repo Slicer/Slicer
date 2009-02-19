@@ -235,6 +235,8 @@ void vtkChangeTrackerSegmentationStep::PreSegmentScan1Define() {
 
   vtkSlicerApplication      *application      =  vtkSlicerApplication::SafeDownCast(this->GetApplication()); 
   vtkSlicerApplicationGUI   *applicationGUI   = this->GetGUI()->GetApplicationGUI();
+  // availability of Volumes module has been verified in the first step of the
+  // wizard
   vtkSlicerVolumesLogic     *volumesLogic      = (vtkSlicerVolumesGUI::SafeDownCast(application->GetModuleGUIByName("Volumes")))->GetLogic();
 
   if (this->PreSegment || this->PreSegmentNode) this->PreSegmentScan1Remove();

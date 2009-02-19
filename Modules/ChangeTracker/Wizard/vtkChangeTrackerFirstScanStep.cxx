@@ -203,6 +203,16 @@ void vtkChangeTrackerFirstScanStep::TransitionCallback(int Flag)
 
    vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
 
+   vtkSlicerApplication *application = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+   vtkSlicerModuleGUI *volumesGUI = application->GetModuleGUIByName("Volumes");
+   if(volumesGUI == NULL){
+     vtkKWMessageDialog::PopupMessage(this->GetGUI()->GetApplication(), 
+                                      this->GetGUI()->GetApplicationGUI()->GetMainSlicerWindow(),
+                                      "Change Tracker", "\"Volumes\" module is required, but not found. Please read module documentation.", 
+                                      vtkKWMessageDialog::ErrorIcon);
+     return;
+   }
+
    if (this->VolumeMenuButton->GetSelected() && this->SecondVolumeMenuButton->GetSelected() ) { 
      // Check if image data is associated with them 
      vtkMRMLChangeTrackerNode* node = this->GetGUI()->GetNode();
