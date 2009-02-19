@@ -503,9 +503,38 @@ itcl::body LoadVolume::saveGeometry {} {
 itcl::body LoadVolume::loadGeometry {} {
   $::slicer3::Application RequestRegistry "LoadVolumeGeometry"
   array set geo [$::slicer3::Application GetRegistryHolder]
+
+  # restore dialog size and position, but keep it on the screen and make 
+  # sure the borders are reachable to move and resize (use 50 pixels as a guess)
   if { ![info exists geo(toplevel)] } {
     set geo(toplevel) 900x800+200+200
   }
+  set geoPad 50
+  scan $geo(toplevel) "%dx%d+%d+%d" w h x y
+  set screenwidth [winfo screenwidth [$o(toplevel) GetWidgetName]]
+  set screenheight [winfo screenheight [$o(toplevel) GetWidgetName]]
+  if { [expr $x + $geoPad] > $screenwidth } {
+    set x 0
+  }
+  if { [expr $y + $geoPad] > $screenheight } {
+    set y 0
+  }
+  if { [expr $x + $w] > $screenwidth } {
+    set x 0
+    set w [expr $screenwidth - $geoPad]
+    if { $w > 900 } {
+      set w 900
+    }
+  }
+  if { [expr $y + $h] > $screenheight } {
+    set y 0
+    set h [expr $screenheight - $geoPad]
+    if { $h > 800 } {
+      set h 800
+    }
+  }
+  set geo(toplevel) ${w}x${h}+${x}+${y}
+
   if { ![info exists geo(tableFramePosition)] } {
     set geo(tableFramePosition) 0.7
   }
