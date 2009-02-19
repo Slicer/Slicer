@@ -477,8 +477,12 @@ class PipelineHandler(asyncore.dispatcher):
                         #MP#     jobs[i].join()
 
                         #MP#else:
-                        # if uncomment #MP# shift right by 3 space the line below 
-                        paths = track.TrackFiber40(data, vects.vectors.T, b.T, G.T, IJKstartpoints[0].T, r2i, i2r,\
+                        # if uncomment #MP# shift right by 3 space the line below
+                        if isInWM or wmEnabled:
+                           paths = track.TrackFiberY40(data, wm, shpD, b.T, G.T, IJKstartpoints[0].T, r2i, i2r,\
+                                  lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
+                        else:
+                           paths = track.TrackFiberU40(data, shpD, b.T, G.T, IJKstartpoints[0].T, r2i, i2r,\
                                   lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
 
 
@@ -558,7 +562,11 @@ class PipelineHandler(asyncore.dispatcher):
                         #MP#     jobs[i].join()
 
                         #MP#else:
-                        paths2 = track.TrackFiber40(data, vects.vectors.T, b.T, G.T, IJKstartpoints2[0].T, r2i, i2r,\
+                        if isInWM or wmEnabled:
+                           paths2 = track.TrackFiberY40(data, wm, shpD, b.T, G.T, IJKstartpoints2[0].T, r2i, i2r,\
+                                  lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
+                        else:
+                           paths2 = track.TrackFiberU40(data, shpD, b.T, G.T, IJKstartpoints2[0].T, r2i, i2r,\
                                   lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
 
 
