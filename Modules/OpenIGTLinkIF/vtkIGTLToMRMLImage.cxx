@@ -368,8 +368,6 @@ int vtkIGTLToMRMLImage::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNod
   // in VolumeRenderingCuda (Suggested by Nicholas Herlambang)
   volumeNode->GetImageData()->Modified();
 
-  volumeNode->InvokeEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent);
-
 //  if (lps) { // LPS coordinate
 //    vtkMatrix4x4* lpsToRas = vtkMatrix4x4::New();
 //    lpsToRas->Identity();
