@@ -1,7 +1,7 @@
 import logging
 import time
 import cmpV
-from processing import Array, Queue
+#from processing import Array, Queue
 from numpy import finfo, sqrt, exp, dot, log, cos, arccos, pi
 from numpy import reshape, vstack, hstack, ones, zeros, squeeze, transpose, newaxis, max, min, empty, array, diag
 from numpy import linalg
@@ -298,34 +298,6 @@ def EvaluateTensorX0(data, G, b):
    return  ET, lT, xT
 
 
-
-
-def EvaluateTensorZ0(data, q, G, b):
-
-   eps = finfo(float).eps
-  
-   A = zeros( (data.shape[3], 7), 'float' )
-   
-   time0=time.time() 
-   [ComputeAFunctional(A, b, G, k) for k in range(data.shape[3])]
-
-   logger.info("Time for A : %s sec" % str(time.time()-time0))
-
-   lT  = zeros((data.shape[0], data.shape[1], data.shape[2], 3) , 'float')
-   ET  = zeros((data.shape[0], data.shape[1], data.shape[2], 3, 3), 'float' )
-   xT = zeros((data.shape[0], data.shape[1], data.shape[2], 7), 'float')
-
-   indx = ones((data.shape[0], data.shape[1], data.shape[2]), 'uint16' )
-
-   time2 = time.time()
-
-   [ComputeTensorFunctional(data, xT, lT, ET,  A, b, G, k) for k in indx]
-
-   logger.info("Total time for tensor : %s sec" % str(time.time()-time2))
-
-   q.put([ET, lT, xT])
-
-
 def EvaluateTensorX1(data, G, b, wmI=empty(0)):
 
    eps = finfo(float).eps
@@ -351,33 +323,6 @@ def EvaluateTensorX1(data, G, b, wmI=empty(0)):
 
    logger.info("Total time for tensor : %s sec" % str(time.time()-time2))
    return  ET, lT, xT
-
-
-def EvaluateTensorZ1(data, q, G, b, wmI=empty(0)):
-
-   eps = finfo(float).eps
-  
-   A = zeros( (data.shape[3], 7), 'float' )
-   
-   time0=time.time() 
-   [ComputeAFunctional(A, b, G, k) for k in range(data.shape[3])]
-
-   logger.info("Time for A : %s sec" % str(time.time()-time0))
-
-   lT  = zeros((data.shape[0], data.shape[1], data.shape[2], 3) , 'float')
-   ET  = zeros((data.shape[0], data.shape[1], data.shape[2], 3, 3), 'float' )
-   xT = zeros((data.shape[0], data.shape[1], data.shape[2], 7), 'float')
-
-   indx = transpose(wmI.nonzero())
-
-   logger.info("Filtering tensor with brain mask ")
-
-   time2 = time.time()
-               
-   [ComputeTensorFunctional(data, xT, lT, ET,  A, b, G, k) for k in indx]
-
-   logger.info("Total time for tensor : %s sec" % str(time.time()-time2))
-   q.put( [ET, lT, xT])
 
 
 def EvaluateTensorU0(data, G, b, wFilter=False, baseline=0, wmMin=0, wmMax=1000, wmI=empty(0)):
