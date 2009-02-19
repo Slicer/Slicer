@@ -13,6 +13,8 @@ $::slicer3::MRMLScene SetURL $sceneFileName
 $::slicer3::MRMLScene Connect
 update
 
+exit 0
+
 set volumesGUI [$::slicer3::Application GetModuleGUIByName Volumes] 
 $volumesGUI Enter
 

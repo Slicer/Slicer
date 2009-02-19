@@ -111,7 +111,7 @@ vtkKWWindowLevelThresholdEditor::~vtkKWWindowLevelThresholdEditor()
     this->ThresholdRange->Delete();
     this->ThresholdRange = NULL;
     }
-  if ( this->ThresholdRange ) 
+  if ( this->UpdateTransferFunctionButton ) 
     {
     this->UpdateTransferFunctionButton->SetParent(NULL);
     this->UpdateTransferFunctionButton->Delete();
