@@ -162,7 +162,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::PrintSelf(ostream& os, vtkInd
 //  os << indent << "ColorMode:             " << this->ColorMode << "\n";
 }
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSliceTensorRotationMatrix(vtkMatrix4x4 *matrix)
+void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSliceGlyphRotationMatrix(vtkMatrix4x4 *matrix)
 {
   if (this->DiffusionTensorGlyphFilter)
     {

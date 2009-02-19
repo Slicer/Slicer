@@ -110,7 +110,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
 
   // Description:
   // Set slice to IJK transformation
-  virtual void SetSliceTensorRotationMatrix(vtkMatrix4x4 *matrix);
+  virtual void SetSliceGlyphRotationMatrix(vtkMatrix4x4 *matrix);
 
   //--------------------------------------------------------------------------
   // Display Information: Geometry to display (not mutually exclusive)
