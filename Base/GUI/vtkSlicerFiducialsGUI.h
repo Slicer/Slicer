@@ -35,6 +35,7 @@ class vtkKWMessage;
 class vtkSlicerVisibilityIcons;
 class vtkKWChangeColorButton;
 class vtkKWScaleWithEntry;
+class vtkKWMenuButton;
 class vtkKWMenuButtonWithLabel;
 class vtkKWLabel;
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleGUI
@@ -69,10 +70,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkGetObjectMacro ( ListTextScale, vtkKWScaleWithEntry);
     vtkGetObjectMacro ( ListOpacity, vtkKWScaleWithEntry);
     vtkGetObjectMacro ( Logic, vtkSlicerFiducialsLogic);
-    vtkGetObjectMacro ( LockToggle, vtkKWPushButtonWithLabel );
     vtkGetObjectMacro ( MoveSelectedFiducialUpButton, vtkKWPushButton );
     vtkGetObjectMacro ( MoveSelectedFiducialDownButton, vtkKWPushButton );
-    
+    vtkGetObjectMacro ( AllLockMenuButton, vtkKWMenuButton );
+    vtkGetObjectMacro ( AllVisibilityMenuButton, vtkKWMenuButton );
+    vtkGetObjectMacro ( ListLockMenuButton, vtkKWMenuButton );
+    vtkGetObjectMacro ( ListVisibilityMenuButton, vtkKWMenuButton );
+        
     // Description:
     // API for setting FiducialListNode, Logic and
     // for both setting and observing them.
@@ -174,10 +178,28 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // when right click on a row in the fid list, call this to jump the slices
     // to that point in RAS.
     void JumpSlicesCallback(int row, int col, int x, int y);
+
+    
+    // Description:
+    // Modifies the lock state on all fiducials in all lists.
+    void ModifyAllLock(int lockState);
+
+    // Description:
+    // Modifies the lock state on all fiducials in the selected list.
+    void ModifyListLock( int lockState);
+
+    // Description:
+    // Modifies the visibility state on all fiducials in all lists.
+    void ModifyAllVisibility(int visibilityState);
+
+    // Description:
+    // Modifies the visibility  state on all fiducials in the selected list.
+    void ModifyListVisibility(int visibilityState);
+
  protected:
     vtkSlicerFiducialsGUI ( );
     virtual ~vtkSlicerFiducialsGUI ( );
-
+    
     // Module logic and mrml pointers
     vtkSlicerFiducialsLogic *Logic;
 
@@ -261,12 +283,28 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkKWScaleWithEntry *ListOpacity;
 
     // Description:
-    // list is locked or not (won't move when mouse over it)
-    vtkKWPushButtonWithLabel *LockToggle;
-    
-    // Description:
     // display the points on the list
     vtkKWMultiColumnListWithScrollbars *MultiColumnList;
+
+    // Description:
+    // menu button whose menu exposes options for
+    // locking or unlocking all fiducials in all fiducial lists.
+    vtkKWMenuButton *AllLockMenuButton;
+
+    // Description:
+    // menu button whose menu exposes options for
+    // setting visibility of  all fiducials in all fiducial lists.
+    vtkKWMenuButton *AllVisibilityMenuButton;
+
+    // Description:
+    // menu button whose menu exposes options for
+    // locking or unlocking all fiducials in a fiducial list.
+    vtkKWMenuButton *ListLockMenuButton;
+
+    // Description:
+    // menu button whose menu exposes options for
+    // setting visibility of all fiducials in a fiducial list.
+    vtkKWMenuButton *ListVisibilityMenuButton;
 
     // Description:
     // contributing logo widgets
@@ -283,14 +321,15 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
         NameColumn = 0,
         SelectedColumn = 1,
         VisibilityColumn = 2,
-        XColumn = 3,
-        YColumn = 4,
-        ZColumn = 5,
-        OrWColumn = 6,
-        OrXColumn = 7,
-        OrYColumn = 8,
-        OrZColumn = 9,
-        NumberOfColumns = 10,
+        LockColumn = 3,
+        XColumn = 4,
+        YColumn = 5,
+        ZColumn = 6,
+        OrWColumn = 7,
+        OrXColumn = 8,
+        OrYColumn = 9,
+        OrZColumn = 10,
+        NumberOfColumns = 11,
     };
     //ETX
 
