@@ -2186,8 +2186,11 @@ void vtkSlicerFiducialListWidget::RemoveExtraPointWidgets(vtkMRMLFiducialListNod
   // for now, we can't reliably tell which fid list each display point widget
   // is associated with, so check all of them
   std::map< std::string, vtkPointWidget *>::iterator pointIter;
+  std::vector<std::string> IDsToRemove;
   int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLFiducialListNode");
-  for(pointIter=this->DisplayedPointWidgets.begin(); pointIter != this->DisplayedPointWidgets.end(); pointIter++) 
+  for (pointIter = this->DisplayedPointWidgets.begin();
+       pointIter != this->DisplayedPointWidgets.end();
+       pointIter++) 
     {
     bool inAList = false;
     // for each list
@@ -2202,12 +2205,18 @@ void vtkSlicerFiducialListWidget::RemoveExtraPointWidgets(vtkMRMLFiducialListNod
       }
     if (!inAList)
       {
-      vtkDebugMacro("RemoveExtraPointWidgets: displayed point widget with id " << pointIter->first << " is not in any list, removing it");
-      RemovePointWidget(pointIter->first.c_str());
+      vtkDebugMacro("RemoveExtraPointWidgets: displayed point widget with id " << pointIter->first << " is not in any list, flagging it for removal");
+      IDsToRemove.push_back(pointIter->first);
       }
     else
       {
       vtkDebugMacro("RemovePointWidget: found displayed point widget with id " << pointIter->first);
       }
     } // end loop over all the displayed point widgets
+  // now remove any that were flagged
+  for (unsigned int i = 0; i < IDsToRemove.size(); i++)
+    {
+    vtkDebugMacro("RemoveExtraPointWidgets: removing " << IDsToRemove[i]);
+    RemovePointWidget(IDsToRemove[i].c_str());
+    }
 }
