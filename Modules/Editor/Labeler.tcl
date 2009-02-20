@@ -156,7 +156,7 @@ itcl::body Labeler::makeMaskImage {polyData} {
   # bounding box is at 1, 1 (to avoid clipping)
   #
   set translate [vtkTransform New]
-  $translate Translate [expr 2 + -1. * $xlo] [expr 1 + -1. * $ylo] 0
+  $translate Translate [expr -1. * $xlo] [expr -1. * $ylo] 0
   set drawPoints [vtkPoints New]
   $drawPoints Reset
   $translate TransformPoints [$polyData GetPoints] $drawPoints
