@@ -175,7 +175,7 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
           this->ContextMenu->AddCommand("Cut Node", this, command);
     
           sprintf(command, "SelectNodeCallback {%s}", (const char *)callData);
-          this->ContextMenu->AddCommand("Go To Editor...", this, command);
+          this->ContextMenu->AddCommand("Edit Properties...", this, command);
           }
 
         if (node != NULL && (node->IsA("vtkMRMLTransformableNode")))
