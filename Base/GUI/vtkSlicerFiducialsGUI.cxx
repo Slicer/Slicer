@@ -1750,9 +1750,9 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->RemoveFiducialButton->SetImageToIcon ( this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerFiducialsDeleteLastClickedIcon() );
     this->RemoveFiducialButton->SetReliefToFlat();
     this->RemoveFiducialButton->SetBorderWidth ( 0 );
-    this->RemoveFiducialButton->SetBalloonHelpString("Remove the last fiducial that was clicked on in the table from this fiducial list.");
+    this->RemoveFiducialButton->SetBalloonHelpString("Remove the last fiducial that was \"clicked on\" in the table from this fiducial list.");
 
-    // add a remove all fiducials from this list button
+    // add a remove all fiducials from this list button"
     this->RemoveFiducialsInListButton = vtkKWPushButton::New ( );
     this->RemoveFiducialsInListButton->SetParent ( f3 );
     this->RemoveFiducialsInListButton->Create ( );
@@ -1768,7 +1768,8 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->MoveSelectedFiducialUpButton->SetImageToIcon ( this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerFiducialsUpIcon() );
     this->MoveSelectedFiducialUpButton->SetReliefToFlat();
     this->MoveSelectedFiducialUpButton->SetBorderWidth ( 0 );
-    this->MoveSelectedFiducialUpButton->SetBalloonHelpString("Move the position of selected fiducial point up one row in the list.");
+    this->MoveSelectedFiducialUpButton->SetBalloonHelpString("Move the last fiducial \"clicked on\" in the table one row up in the table");
+
 
     this->MoveSelectedFiducialDownButton = vtkKWPushButton::New();
     this->MoveSelectedFiducialDownButton->SetParent ( f4 );
@@ -1776,7 +1777,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->MoveSelectedFiducialDownButton->SetImageToIcon ( this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerFiducialsDownIcon() );
     this->MoveSelectedFiducialDownButton->SetReliefToFlat();
     this->MoveSelectedFiducialDownButton->SetBorderWidth ( 0 );
-    this->MoveSelectedFiducialDownButton->SetBalloonHelpString("Move the position of selected fiducial point down one row in the list.");
+    this->MoveSelectedFiducialDownButton->SetBalloonHelpString("Move the last fiducial \"clicked on\" in the table one row down in the table");
 
     //---
     //--- create all lock menu button and set up menu
