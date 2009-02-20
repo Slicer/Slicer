@@ -1789,7 +1789,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->ListLockMenuButton->SetReliefToFlat();
     this->ListLockMenuButton->IndicatorVisibilityOff();    
     this->ListLockMenuButton->SetImageToIcon ( this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerLockOrUnlockIcon() );
-    this->ListLockMenuButton->SetBalloonHelpString ( "Lock or unlock all fiducials in selected list. (Note: locking/unlocking individual fiducials is not yet implemented.)" );
+    this->ListLockMenuButton->SetBalloonHelpString ( "Lock or unlock all fiducials in this fiducial list. (Note: locking/unlocking individual fiducials is not yet implemented.)" );
     this->ListLockMenuButton->GetMenu()->AddRadioButton ( "Lock");
     index = this->ListLockMenuButton->GetMenu()->GetIndexOfItem ("Lock");
     this->ListLockMenuButton->GetMenu()->SetItemImageToIcon (index, this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerLockIcon()  );
@@ -1815,7 +1815,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->ListVisibilityMenuButton->SetReliefToFlat();
     this->ListVisibilityMenuButton->IndicatorVisibilityOff();    
     this->ListVisibilityMenuButton->SetImageToIcon ( this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerVisibleOrInvisibleIcon() );
-    this->ListVisibilityMenuButton->SetBalloonHelpString ( "Set visibility on all fiducials in selected list." );
+    this->ListVisibilityMenuButton->SetBalloonHelpString ( "Set visibility on all fiducials in this fiducial list." );
     this->ListVisibilityMenuButton->GetMenu()->AddRadioButton ( "Visible");
     index = this->ListVisibilityMenuButton->GetMenu()->GetIndexOfItem ("Visible");
     this->ListVisibilityMenuButton->GetMenu()->SetItemImageToIcon (index, this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerVisibleIcon()  );
