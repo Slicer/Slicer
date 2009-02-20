@@ -12,6 +12,13 @@ Backend to the console plugin.
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the BSD which accompanies this distribution, and 
 is available at U{http://www.opensource.org/licenses/bsd-license.php}
+
+cd Slicer3-build
+wget http://ipython.scipy.org/dist/ipython-0.9.1.tar.gz
+tar xvfz ipython-0.9.1.tar.gz
+cd ipython-0.9.1
+../Slicer3 --launch ../../Slicer3-lib/python-build/bin/python setup.py install
+
 """
 
 #__all__ = [ 'TkConsoleView', 'IPythonView', 'ansi_colors' ]
