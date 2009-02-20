@@ -476,10 +476,12 @@ if { $isWindows } {
     # We can't put this in the system path, since developer studio ignores
     # the environment variables (or if you pass it the /UseEnv flag it
     # can't find it's own executables).
-    if { ![file exists bin] } { file mkdir bin }
-    if { ![file exists bin/$::VTK_BUILD_TYPE] } { file mkdir bin/$::VTK_BUILD_TYPE }
-    if { ![file exists bin/$::VTK_BUILD_TYPE/python25.dll] } { 
-      file copy $::Slicer3_LIB/python-build/PCbuild/python25.dll bin/$::VTK_BUILD_TYPE 
+    if { $::USE_PYTHON == "ON" } {
+      if { ![file exists bin] } { file mkdir bin }
+      if { ![file exists bin/$::VTK_BUILD_TYPE] } { file mkdir bin/$::VTK_BUILD_TYPE }
+      if { ![file exists bin/$::VTK_BUILD_TYPE/python25.dll] } { 
+        file copy $::Slicer3_LIB/python-build/PCbuild/python25.dll bin/$::VTK_BUILD_TYPE 
+      }
     }
 
     if { $MSVC6 } {
