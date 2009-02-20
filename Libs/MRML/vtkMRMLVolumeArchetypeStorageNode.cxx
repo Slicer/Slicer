@@ -280,7 +280,24 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   reader->ResetFileNames();
   for (int n = 0; n < this->GetNumberOfFileNames(); n++)
     {
-    reader->AddFileName(this->GetNthFileName(n));
+    const char *nthFileName = this->GetNthFileName(n);
+    if (this->GetScene() != NULL &&
+        this->GetScene()->IsFilePathRelative(nthFileName))
+      {
+      // get the path to the full file name, take off the file and append this
+      // one
+      vtksys_stl::vector<vtksys_stl::string> components;
+      vtksys::SystemTools::SplitPath(fullName.c_str(), components);
+      components.pop_back();
+      components.push_back(nthFileName);
+      vtksys_stl::string fullNthFileNameStr = vtksys::SystemTools::JoinPath(components);
+      vtkDebugMacro("ReadData: Converted relative path at index " << n << " from " << nthFileName << " to " << fullNthFileNameStr);
+      reader->AddFileName(fullNthFileNameStr.c_str());
+      }
+    else
+      {
+      reader->AddFileName(nthFileName);
+      }
     }
   reader->SetOutputScalarTypeToNative();
   reader->SetDesiredCoordinateOrientationToNative();
@@ -300,7 +317,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     }
     catch (...)
     {
-    vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file: " << fullName.c_str() );
+    vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file, fullName = " << fullName.c_str() << ", reader file name = " << reader->GetFileName(0) << ", num files = " << reader->GetNumberOfFileNames() );
     reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
     reader->Delete();
     return 0;
@@ -309,10 +326,11 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   if (reader->GetOutput() == NULL 
       || reader->GetOutput()->GetPointData()->GetScalars()->GetNumberOfTuples() == 0) 
     {
-    vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file: " << fullName.c_str() );
+    vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Unable to read data from file: " << fullName.c_str() );
     reader->Delete();
     return 0;
     }
+  
   // set volume attributes
   volNode->SetAndObserveStorageNodeID(this->GetID());
   volNode->SetMetaDataDictionary( reader->GetMetaDataDictionary() );
