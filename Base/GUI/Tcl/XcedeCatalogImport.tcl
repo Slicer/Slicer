@@ -738,6 +738,8 @@ proc XcedeCatalogImportEntryOverlay {node} {
 proc XcedeCatalogImportGetNodeType { format } {
     if {$format == "FreeSurfer:mgz-1" } {
         return "Volume"
+    } elseif {$format == "nrrd:nrrd-1" } {
+        return "Volume"
     } elseif {$format == "nifti:nii-1" } {
         return "Volume"
     } elseif { $format == "FreeSurfer:w-1" } {
@@ -786,6 +788,8 @@ proc XcedeCatalogImportFormatCheck { format } {
     if {$format == "FreeSurfer:mgz-1" } {
         return 1
     } elseif {$format == "nifti:nii-1" } {
+        return 1
+    } elseif {$format == "nrrd:nrrd-1" } {
         return 1
     } elseif { $format == "FreeSurfer:w-1" } {
         return 1
