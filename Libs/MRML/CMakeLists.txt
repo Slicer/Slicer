@@ -189,6 +189,7 @@ set_source_files_properties(
   vtkMRMLDisplayNode.cxx
   vtkMRMLDisplayableNode.cxx
   vtkMRMLVolumeDisplayNode.cxx
+  vtkMRMLFiberBundleDisplayNode.cxx
   ABSTRACT
   )
 
