@@ -505,11 +505,11 @@ itcl::body LoadVolume::loadGeometry {} {
   array set geo [$::slicer3::Application GetRegistryHolder]
 
   # restore dialog size and position, but keep it on the screen and make 
-  # sure the borders are reachable to move and resize (use 50 pixels as a guess)
+  # sure the borders are reachable to move and resize (use 150 pixels as a guess)
   if { ![info exists geo(toplevel)] } {
     set geo(toplevel) 900x800+200+200
   }
-  set geoPad 50
+  set geoPad 150
   scan $geo(toplevel) "%dx%d+%d+%d" w h x y
   set screenwidth [winfo screenwidth [$o(toplevel) GetWidgetName]]
   set screenheight [winfo screenheight [$o(toplevel) GetWidgetName]]
@@ -1144,7 +1144,7 @@ itcl::body LoadVolume::parseDICOMDirectory {directoryName arrayName} {
     set ff [file tail $f]
     incr fileCount
     set progress [expr pow((1. * $fileCount) / $totalFiles,2)]
-    $progressDialog SetMessageText "Exaining $ff..."
+    $progressDialog SetMessageText "Examining $ff..."
     $progressDialog UpdateProgress $progress
     update
 
