@@ -379,6 +379,8 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
     "The range and histogram of the currently selected volume.");
   this->ColorTransferFunctionEditor->SetWholeParameterRangeToFunctionRange();
   this->ColorTransferFunctionEditor->SetVisibleParameterRangeToWholeParameterRange();
+  this->ColorTransferFunctionEditor->SetPointVisibility(0);
+  this->ColorTransferFunctionEditor->SetMidPointVisibility(0);
   
   this->ColorTransferFunctionEditor->SetPointPositionInValueRangeToTop();
   this->ColorTransferFunctionEditor->SetPointStyleToCursorDown();
