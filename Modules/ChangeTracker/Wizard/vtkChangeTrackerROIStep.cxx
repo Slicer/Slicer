@@ -454,7 +454,6 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
     }
 
   InitROIRender();
-  ResetROIRender();
   this->MRMLUpdateROINodeFromROI();
  
   if (!this->roiWidget)
@@ -622,7 +621,8 @@ void vtkChangeTrackerROIStep::ROIReset() {
     vtkMRMLChangeTrackerNode* Node = this->GetGUI()->GetNode();
     //vtkSlicerSliceLogic *sliceLogic = this->GetGUI()->GetSliceLogic();
     vtkMRMLVolumeNode* volumeNode =  vtkMRMLVolumeNode::SafeDownCast(Node->GetScene()->GetNodeByID(Node->GetScan1_Ref()));
-    
+    if(!volumeNode)
+      return;
     vtkMatrix4x4 *ijkToras = vtkMatrix4x4::New();
     volumeNode->GetIJKToRASMatrix(ijkToras);
     double pointRAS[4], pointIJK[4];
@@ -834,12 +834,13 @@ void vtkChangeTrackerROIStep::RetrieveInteractorIJKCoordinates(vtkSlicerSliceGUI
 
   // --------------------------------------------------------------
   // Compute RAS coordinates
-   int point[2];
-   rwi->GetLastEventPosition(point);
-   double inPt[4] = {point[0], point[1], 0, 1};
-   double rasPt[4];
-   vtkMatrix4x4 *matrix = sliceGUI->GetLogic()->GetSliceNode()->GetXYToRAS();
-   matrix->MultiplyPoint(inPt, rasPt); 
+  int point[2];
+  rwi->GetLastEventPosition(point);
+  double inPt[4] = {point[0], point[1], 0, 1};
+  double rasPt[4];
+  vtkMatrix4x4 *matrix = sliceGUI->GetLogic()->GetSliceNode()->GetXYToRAS();
+  matrix->MultiplyPoint(inPt, rasPt); 
+  matrix->Delete();
 
   // --------------------------------------------------------------
   // Compute IJK coordinates
@@ -1021,11 +1022,11 @@ void vtkChangeTrackerROIStep::MRMLUpdateROINodeFromROI()
   
   double pointRAS[4], pointIJK[4];
   double radius[3];
-  vtkMatrix4x4 *ijkToras = vtkMatrix4x4::New();
   vtkMRMLVolumeNode *volumeNode = 
     vtkMRMLVolumeNode::SafeDownCast(Node->GetScene()->GetNodeByID(Node->GetScan1_Ref()));
   if(!volumeNode)
     return;
+  vtkMatrix4x4 *ijkToras = vtkMatrix4x4::New();
   volumeNode->GetIJKToRASMatrix(ijkToras);
   pointIJK[0] = (double)center[0];
   pointIJK[1] = (double)center[1];
@@ -1076,6 +1077,7 @@ void vtkChangeTrackerROIStep::TransitionCallback()
        if (roiNode)
          roiNode->SetVisibility(0);
        ResetROIRender();
+       this->RenderRemove();
 
        this->GUI->GetWizardWidget()->GetWizardWorkflow()->AttemptToGoToNextStep();
      } else {
@@ -1266,9 +1268,11 @@ void vtkChangeTrackerROIStep::ResetROICenter(int *center)
 {
   vtkMRMLChangeTrackerNode* Node      =  this->GetGUI()->GetNode();
   double pointRAS[4], pointIJK[4];
-  vtkMatrix4x4 *ijkToras = vtkMatrix4x4::New();
   vtkMRMLVolumeNode *volumeNode = 
     vtkMRMLVolumeNode::SafeDownCast(Node->GetScene()->GetNodeByID(Node->GetScan1_Ref()));
+  if(!volumeNode)
+    return;
+  vtkMatrix4x4 *ijkToras = vtkMatrix4x4::New();
   volumeNode->GetIJKToRASMatrix(ijkToras);
   pointIJK[0] = (double)center[0];
   pointIJK[1] = (double)center[1];

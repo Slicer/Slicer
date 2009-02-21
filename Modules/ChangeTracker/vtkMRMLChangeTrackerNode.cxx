@@ -101,6 +101,9 @@ vtkMRMLChangeTrackerNode::vtkMRMLChangeTrackerNode()
    // more reliable
    this->UseITK = true;
    this->Scan2_RegisteredReady = false;
+
+   this->Global_TransformRef = NULL;
+   this->Local_TransformRef = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -120,6 +123,8 @@ vtkMRMLChangeTrackerNode::~vtkMRMLChangeTrackerNode()
    this->SetAnalysis_Intensity_Ref(NULL);
    this->SetAnalysis_Deformable_Ref(NULL);
    this->SetGrid_Ref(NULL);
+   this->SetLocal_TransformRef(NULL);
+   this->SetGlobal_TransformRef(NULL);
 }
 
 //----------------------------------------------------------------------------
@@ -144,6 +149,22 @@ void vtkMRMLChangeTrackerNode::WriteXML(ostream& of, int nIndent)
       {
       ss << this->Scan2_Ref;
       of << indent << " Scan2_Ref=\"" << ss.str() << "\"";
+      }
+  }
+  {
+    std::stringstream ss;
+    if (this->Global_TransformRef)
+      {
+      ss << this->Global_TransformRef;
+      of << indent << " Global_TransformRef=\"" << ss.str() << "\"";
+      }
+  }
+  {
+    std::stringstream ss;
+    if (this->Local_TransformRef)
+      {
+      ss << this->Local_TransformRef;
+      of << indent << " Local_TransformRef=\"" << ss.str() << "\"";
       }
   }
 
@@ -188,6 +209,16 @@ void vtkMRMLChangeTrackerNode::ReadXMLAttributes(const char** atts)
       {
       this->SetScan2_Ref(attValue);
       this->Scene->AddReferencedNodeID(this->Scan2_Ref, this);
+      }
+    else if (!strcmp(attName, "Global_TransformRef"))
+      {
+      this->SetGlobal_TransformRef(attValue);
+      this->Scene->AddReferencedNodeID(this->Global_TransformRef, this);
+      }
+    else if (!strcmp(attName, "Local_TransformRef"))
+      {
+      this->SetLocal_TransformRef(attValue);
+      this->Scene->AddReferencedNodeID(this->Local_TransformRef, this);
       }
     else if (!strcmp(attName, "ROIMin"))
       {

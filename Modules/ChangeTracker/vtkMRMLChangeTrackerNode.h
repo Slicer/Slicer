@@ -116,6 +116,12 @@ class VTK_CHANGETRACKER_EXPORT vtkMRMLChangeTrackerNode : public vtkMRMLNode
   vtkGetStringMacro(Scan2_LocalRef);
   vtkSetStringMacro(Scan2_LocalRef);
 
+  vtkGetStringMacro(Global_TransformRef);
+  vtkSetStringMacro(Global_TransformRef);
+
+  vtkGetStringMacro(Local_TransformRef);
+  vtkSetStringMacro(Local_TransformRef);
+
   vtkSetStringMacro(Scan2_SuperSampleRef);
   vtkGetStringMacro(Scan2_SuperSampleRef);
 
@@ -180,6 +186,8 @@ protected:
   char* Scan2_SuperSampleRef;
   char* Scan2_NormedRef;
   char* Scan2_ThreshRef;
+  char* Global_TransformRef;
+  char* Local_TransformRef;
 
   char* Analysis_Intensity_Ref;
   char* Analysis_Deformable_Ref;

@@ -1072,33 +1072,35 @@ int vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
 
   vtkMRMLScene *scene = this->ChangeTrackerNode->GetScene();
   vtkMRMLChangeTrackerNode *ctNode = this->ChangeTrackerNode;
-
-  moduleLogic = vtkCommandLineModuleLogic::New();
+  vtkMRMLScalarVolumeNode *outputNode;
+  vtkMRMLLinearTransformNode *transformNode;
   
   moduleNode = 
     static_cast<vtkMRMLCommandLineModuleNode*>(scene->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
   if(!moduleNode){
     return -2;
   }
-
-  moduleNode->SetModuleDescription("Rigid registration");
-
-  vtkMRMLScalarVolumeNode *outputNode;
   outputNode = static_cast<vtkMRMLScalarVolumeNode*>(scene->GetNodeByID(ctNode->GetScan2_GlobalRef()));
   if(outputNode){
     scene->RemoveNode(outputNode);
     ctNode->SetScan2_GlobalRef("");
   }
+  transformNode = static_cast<vtkMRMLLinearTransformNode*>(scene->GetNodeByID(ctNode->GetGlobal_TransformRef()));
+  if(!transformNode)
+    {
+    // Create output transform node
+    transformNode =
+      vtkMRMLLinearTransformNode::New();
+    transformNode->SetName("Global_LRTransform");
+    scene->AddNode(transformNode);
+    transformNode->Delete();
+    }
+
+  moduleLogic = vtkCommandLineModuleLogic::New();
+  moduleNode->SetModuleDescription("Rigid registration");
 
   outputNode = CreateVolumeNode(static_cast<vtkMRMLVolumeNode*>(scene->GetNodeByID(ctNode->GetScan1_Ref())), 
     "TG_scan2_Global");
-
-  // Create output transform node
-  vtkMRMLLinearTransformNode *transformNode =
-    vtkMRMLLinearTransformNode::New();
-  transformNode->SetName("Global_LRTransform");
-  scene->AddNode(transformNode);
-  transformNode->Delete();
 
   // Linear registration parameter setup
   moduleNode->SetParameterAsString("FixedImageFileName", ctNode->GetScan1_Ref());
@@ -1120,6 +1122,7 @@ int vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
     return -5;
 
   ctNode->SetScan2_GlobalRef(outputNode->GetID());
+  ctNode->SetGlobal_TransformRef(transformNode->GetID());
   moduleLogic->SetAndObserveMRMLScene(NULL);
   moduleLogic->Delete();
   moduleNode->Delete();
@@ -1135,22 +1138,19 @@ int vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
 
   vtkMRMLScene *scene = this->ChangeTrackerNode->GetScene();
   vtkMRMLChangeTrackerNode *ctNode = this->ChangeTrackerNode;
+  vtkMRMLScalarVolumeNode *outputNode;
+  vtkMRMLLinearTransformNode *transformNode;
 
   assert(ctNode->GetScan1_SuperSampleRef());
   assert(ctNode->GetScan2_SuperSampleRef());
 
 
-  moduleLogic = vtkCommandLineModuleLogic::New(); 
   moduleNode = 
     static_cast<vtkMRMLCommandLineModuleNode*>(scene->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
   if(!moduleNode){
     //std::cerr << "Cannot create Rigid registration node. Aborting." << std::endl;
     return -2;
   }
-
-  moduleNode->SetModuleDescription("Rigid registration");
-
-  vtkMRMLScalarVolumeNode *outputNode;
   outputNode = 
     static_cast<vtkMRMLScalarVolumeNode*>(scene->GetNodeByID(ctNode->GetScan2_LocalRef()));
   if(outputNode){
@@ -1158,19 +1158,27 @@ int vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
     ctNode->SetScan2_LocalRef("");
   }
 
+  moduleLogic = vtkCommandLineModuleLogic::New(); 
+  moduleNode->SetModuleDescription("Rigid registration");
   outputNode = CreateVolumeNode(static_cast<vtkMRMLVolumeNode*>(scene->GetNodeByID(ctNode->GetScan1_Ref())), 
     "TG_scan2_Local");
 
   // Create output transform node
   // TODO: check whether the transform has been created, delete/reuse if yes
-  vtkMRMLLinearTransformNode *transformNode =
-    vtkMRMLLinearTransformNode::New();
-  transformNode->SetName("ROI_LRTransform");
-  scene->AddNode(transformNode);
+  transformNode = 
+    static_cast<vtkMRMLLinearTransformNode*>(scene->GetNodeByID(ctNode->GetLocal_TransformRef()));
+  if(!transformNode)
+    {
+    transformNode = vtkMRMLLinearTransformNode::New();
+    transformNode->SetName("ROI_LRTransform");
+    scene->AddNode(transformNode);
+    transformNode->Delete();
+    }
 
   // Linear registration parameter setup
   moduleNode->SetParameterAsString("FixedImageFileName", ctNode->GetScan1_SuperSampleRef());
   moduleNode->SetParameterAsString("MovingImageFileName", ctNode->GetScan2_SuperSampleRef());
+
   moduleNode->SetParameterAsString("TranslationScale", "10");
   moduleNode->SetParameterAsString("Iterations", "100,100,50,20");
   moduleNode->SetParameterAsString("ResampledImageFileName", outputNode->GetID());
@@ -1191,6 +1199,7 @@ int vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
     return -5;
 
   ctNode->SetScan2_LocalRef(outputNode->GetID());
+  ctNode->SetLocal_TransformRef(transformNode->GetID());
   moduleLogic->SetAndObserveMRMLScene(NULL);
   moduleLogic->Delete();
   moduleNode->Delete();
