@@ -751,51 +751,38 @@ void vtkNeuroNavGUI::Exit ( )
 //---------------------------------------------------------------------------
 void vtkNeuroNavGUI::BuildGUI ( )
 {
-
-  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-  // Define your help text here.
-  const char *help = "The **NeuroNav Module** connects Slicer to a IGSTK-supported device that feeds a real-time stream of coordinates from a tracking device. This is useful in the operating room to allow the surgeons to navigate the preloaded volume(s) by pointing to a location with a probe that is tracked."; 
-
   // ---
   // MODULE GUI FRAME 
   // create a page
   this->UIPanel->AddPage ( "NeuroNav", "NeuroNav", NULL );
 
-  vtkKWWidget *page = this->UIPanel->GetPageWidget ( "NeuroNav" );
-
-
-  // ----------------------------------------------------------------
-  // HELP FRAME            
-  // ----------------------------------------------------------------
-  vtkSlicerModuleCollapsibleFrame *NeuroNavHelpFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-  NeuroNavHelpFrame->SetParent ( page );
-  NeuroNavHelpFrame->Create ( );
-  NeuroNavHelpFrame->CollapseFrame ( );
-  NeuroNavHelpFrame->SetLabelText ("Help");
-  app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                NeuroNavHelpFrame->GetWidgetName(), page->GetWidgetName());
-
-  // configure the parent classes help text widget
-  this->HelpText->SetParent ( NeuroNavHelpFrame->GetFrame() );
-  this->HelpText->Create ( );
-  this->HelpText->SetHorizontalScrollbarVisibility ( 0 );
-  this->HelpText->SetVerticalScrollbarVisibility ( 1 );
-  this->HelpText->GetWidget()->SetText ( help );
-  this->HelpText->GetWidget()->SetReliefToFlat ( );
-  this->HelpText->GetWidget()->SetWrapToWord ( );
-  this->HelpText->GetWidget()->ReadOnlyOn ( );
-  this->HelpText->GetWidget()->QuickFormattingOn ( );
-  this->HelpText->GetWidget()->SetBalloonHelpString ( "" );
-  app->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
-                this->HelpText->GetWidgetName ( ) );
-
-  NeuroNavHelpFrame->Delete();
-
+  BuildGUIForHelpFrame();
+ 
   // BuildGUIForDeviceFrame ();
-  BuildGUIForRegistrationFrame ();
-  BuildGUIForTrackingFrame ();
+  BuildGUIForRegistrationFrame();
+  BuildGUIForTrackingFrame();
   // BuildGUIForHandPieceFrame ();
 }
+
+
+
+void vtkNeuroNavGUI::BuildGUIForHelpFrame()
+{
+
+  // ----------------------------------------------------------------
+  // HELP FRAME         
+  // ----------------------------------------------------------------
+
+  // Define your help text here.
+
+  const char *help = "NeuroNav is a navigation system for neurosurgery. \n<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:NeuroNav-Documentation-3.4</a>";
+  const char *about = "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. The Volumes module was contributed by Haiying Liu and Noby Hata at SPL, BWH (Ron Kikinis).";
+
+  vtkKWWidget *page = this->UIPanel->GetPageWidget ( "NeuroNav" );
+  this->BuildHelpAndAboutFrame (page, help, about);
+
+}
+
 
 
 void vtkNeuroNavGUI::BuildGUIForRegistrationFrame ()

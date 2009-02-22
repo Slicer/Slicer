@@ -145,6 +145,7 @@ private:
 
   void BuildGUIForTrackingFrame ();
   void BuildGUIForRegistrationFrame ();
+  void BuildGUIForHelpFrame ();
 
   void TrackerLoop();
 
