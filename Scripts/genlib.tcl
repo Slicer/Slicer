@@ -502,7 +502,7 @@ if { [BuildThis $::BLT_TEST_FILE "blt"] == 1 } {
 # Get and build python
 #
 
-if {  [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [string tolower $::USE_PYTHON] == "on" } {
+if {  1 || [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [string tolower $::USE_PYTHON] == "on" } {
     if { $isWindows } {
 
       file mkdir $::Slicer3_LIB/python
@@ -511,6 +511,8 @@ if {  [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [stri
       runcmd $::SVN co $::PYTHON_TAG python-build
       cd $Slicer3_LIB/python-build
 
+      # patch the socket module to accomodate newer visual studios
+      file copy -force $::Slicer3_HOME/Base/GUI/Python/patched-socketmodule.c Modules/socketmodule.c
       # point the tkinter build file to the slicer tcl-build 
       replaceStringInFile "PCbuild/_tkinter.vcproj" "tcltk" "tcl-build"
 
@@ -521,9 +523,11 @@ if {  [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [stri
       replaceStringInFile Lib/distutils/msvccompiler.py "raise DistutilsPlatformError," "print"
 
       
-      # TODO: copy the lib so that numpy and slicer can find it easily
-      # - perhaps we need an installer step here
+      # copy the lib so that numpy and slicer can find it easily
+      # copy the socket shared library so python can find it
+      # TODO: perhaps we need an installer step here
       file copy -force $::Slicer3_LIB/python-build/PCbuild/python25.lib $::Slicer3_LIB/python-build/Lib/python25.lib 
+      file copy -force $::Slicer3_LIB/python-build/PCbuild/_socket.pyd $::Slicer3_LIB/python-build/Lib/_socket.pyd
 
     } else {
 
