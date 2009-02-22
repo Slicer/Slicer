@@ -502,7 +502,7 @@ if { [BuildThis $::BLT_TEST_FILE "blt"] == 1 } {
 # Get and build python
 #
 
-if {  1 || [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [string tolower $::USE_PYTHON] == "on" } {
+if { [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [string tolower $::USE_PYTHON] == "on" } {
     if { $isWindows } {
 
       file mkdir $::Slicer3_LIB/python

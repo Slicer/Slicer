@@ -151,7 +151,7 @@ set ::USE_SYSTEM_PYTHON "false"
 set ::USE_PYTHON "ON"
 
 # CMake option for numerical Python, only matters if Python is on
-set ::USE_NUMPY "OFF"
+set ::USE_NUMPY "ON"
 # getbuildtest option for SCIPY - also build support libraries (blas and lapack) needed for scipy
 # - should be off except for experimentation (does not work on all plaftorms - requires fortran)
 # - should be "true" or "false"
