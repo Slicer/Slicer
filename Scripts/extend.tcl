@@ -267,6 +267,124 @@ proc loadArray {fileName arrayName} {
   close $fp
 }
 
+
+################################################################################
+# helper
+# - uploads the named file to the extension server
+
+proc upload {fileName} {
+
+  set size [file size $fileName]
+  set name [file tail $fileName]
+
+  set fp [open $fileName "r"]
+  fconfigure $fp -translation binary -encoding binary
+  set data [read $fp]
+  close $fp
+
+  set sock [socket ext.slicer.org 8845]
+  puts $sock "put $::ext(date) $::env(BUILD) $name $size"
+  fconfigure $sock -translation binary -encoding binary
+  puts -nonewline $sock $data
+  flush $sock
+  close $sock
+  
+  puts "uploaded $fileName ($size bytes)"
+}
+
+################################################################################
+#
+# before building, sort the ext files based on the dependencies they need
+# - load the s3ext file parameters into array "ext"
+# - build a dependency tree
+# - re-export the list in the right order
+#
+
+# return 1 if ext1 depends on ext2
+# return 0 if not
+# return -1 if there is a dependency loop
+proc checkDepends {ext1 ext2 dependArray} {
+  upvar $dependArray depends
+  set dependList $depends($ext1)
+  set newDepends $depends($ext1)
+  while { $newDepends != "" } {
+    set dlist $newDepends
+    set newDepends ""
+    foreach d $dlist {
+      if { $d == $ext1 } {
+        return -1
+      }
+      set newDepends [concat $newDepends $depends($d)]
+    }
+    set dependList [concat $dependList $newDepends]
+  }
+  if { [lsearch $dependList $ext2] != -1 } {
+    return 1
+  } else {
+    return 0
+  }
+}
+
+set ::newExtFiles $::EXTEND(s3extFiles)
+foreach s3ext $::EXTEND(s3extFiles) {
+  array unset ext
+  set ::ext(name) [file root [file tail $s3ext]]
+  loadArray $s3ext ext
+  if { ![info exists ::ext(depends)] } {
+    set ::ext(depends) ""
+  }
+  set ::depends($s3ext) ""
+  foreach dependency $::ext(depends) {
+    set dependFile $::Slicer3_HOME/Extensions/$dependency.s3ext
+    if { ![file exists $dependFile] } {
+      puts stderr "$s3ext depends on non-existent extension $dependency - it will not be built"
+      set index [lsearch $::newExtFiles $s3ext]
+      set ::newExtFiles [lreplace $::newExtFiles $index $index]
+    } else {
+      lappend ::depends($s3ext) $dependFile
+    }
+  }
+}
+set ::EXTEND(s3extFiles) $::newExtFiles
+set ::newExtFiles ""
+foreach s3ext $::EXTEND(s3extFiles) {
+  if { [checkDepends $s3ext $s3ext ::depends] == -1 } {
+    puts stderr "$s3ext depends on itself! it will not be built"
+  } else {
+    lappend ::newExtFiles $s3ext
+  }
+}
+set ::EXTEND(s3extFiles) $::newExtFiles
+set rearranged 1
+while { $rearranged } {
+  set ::newExtFiles $::EXTEND(s3extFiles)
+  foreach s3ext1 $::EXTEND(s3extFiles) {
+    foreach s3ext2 $::EXTEND(s3extFiles) {
+      if { [checkDepends $s3ext1 $s3ext2 ::depends] == 1 } {
+        set ext1index [lsearch $newExtFiles $s3ext1] 
+        set ext2index [lsearch $newExtFiles $s3ext2]
+        if { $ext1index < $ext2index } {
+          # here ext1 depends on ext2, but it is earlier in the list
+          # - so move ext2 to the front of the list and start over
+          set ::newExtFiles [lreplace $newExtFiles $ext2index $ext2index]
+          set ::newExtFiles [concat $s3ext2 $::newExtFiles]
+          puts "moved [file tail $s3ext2] to front because it is needed by [file tail $s3ext1]"
+        }
+      } else {
+      }
+    }
+  }
+  if { $::newExtFiles == $::EXTEND(s3extFiles) } {
+    set rearranged 0
+  } else {
+    set ::EXTEND(s3extFiles) $::newExtFiles
+  }
+}
+
+
+
+
+
 ################################################################################
 #
 # the actual build and test commands for each module
@@ -284,14 +402,16 @@ foreach s3ext $::EXTEND(s3extFiles) {
 
   # collect params
   array unset ext
-  set ext(name) [file root [file tail $s3ext]]
-  set ext(scm) ""
+  set ::ext(name) [file root [file tail $s3ext]]
+  set ::ext(scm) ""
   loadArray $s3ext ext
-  set ext(date) [clock format [clock seconds] -format %Y-%m-%d]
+
+  set ::ext(date) [clock format [clock seconds] -format %Y-%m-%d]
+
 
   # make dirs
   foreach suffix {"" -build -install} {
-    set dir $::Slicer3_EXT/$ext(name)$suffix
+    set dir $::Slicer3_EXT/$::ext(name)$suffix
     if { ![file exists $dir] } {
       file mkdir $dir
     }
@@ -299,56 +419,56 @@ foreach s3ext $::EXTEND(s3extFiles) {
 
   # check out code
   # - set array variable srcDir
-  cd $::Slicer3_EXT/$ext(name)
-  switch $ext(scm) {
+  cd $::Slicer3_EXT/$::ext(name)
+  switch $::ext(scm) {
     "cvs" {
-      runcmd $::CVS -d $ext(cvsroot) co $ext(cvsmodule)
-      set ext(srcDir) $::Slicer3_EXT/$ext(name)/$ext(cvsmodule)
+      runcmd $::CVS -d $::ext(cvsroot) co $::ext(cvsmodule)
+      set ::ext(srcDir) $::Slicer3_EXT/$::ext(name)/$::ext(cvsmodule)
     }
     "svn" {
-      runcmd $::SVN co $ext(svnpath) $ext(name)
-      set ext(srcDir) $::Slicer3_EXT/$ext(name)/$ext(name)
+      runcmd $::SVN co $::ext(svnpath) $::ext(name)
+      set ::ext(srcDir) $::Slicer3_EXT/$::ext(name)/$::ext(name)
     }
     default {
       puts stderr "No source code control tool specified in $s3ext"
-      set ext(srcDir) ""
+      set ::ext(srcDir) ""
     }
   }
 
-  if { $ext(srcDir) == "" } {
+  if { $::ext(srcDir) == "" } {
     continue
   }
 
   if { $isWindows } {
     set make [file attributes $::MAKE -shortname]
-    set makeCmd "$make $ext(name).sln /build $::VTK_BUILD_TYPE /project ALL_BUILD"
+    set makeCmd "$make $::ext(name).sln /build $::VTK_BUILD_TYPE /project ALL_BUILD"
   } else {
     set makeCmd $::MAKE
   }
 
   # configure project and make
-  cd $::Slicer3_EXT/$ext(name)-build
+  cd $::Slicer3_EXT/$::ext(name)-build
   runcmd $::CMAKE \
     -DSlicer3_DIR:PATH=$::Slicer3_BUILD \
     -DBUILD_AGAINST_SLICER3:BOOL=ON \
     -DMAKECOMMAND:STRING=$makeCmd \
-    -DCMAKE_INSTALL_PREFIX:PATH=$::Slicer3_EXT/$ext(name)-install \
-    $ext(srcDir)
+    -DCMAKE_INSTALL_PREFIX:PATH=$::Slicer3_EXT/$::ext(name)-install \
+    $::ext(srcDir)
 
   # build the project
-  cd $::Slicer3_EXT/$ext(name)-build
+  cd $::Slicer3_EXT/$::ext(name)-build
   if { $isWindows } {
-    runcmd "$::MAKE" $ext(name).sln /build $::VTK_BUILD_TYPE /project ALL_BUILD
+    runcmd "$::MAKE" $::ext(name).sln /build $::VTK_BUILD_TYPE /project ALL_BUILD
   } else {
     eval runcmd $::MAKE
   }
 
   # run the tests
   # - not all modules have tests, so allow make to fail gracefully with catch
-  cd $::Slicer3_EXT/$ext(name)-build
+  cd $::Slicer3_EXT/$::ext(name)-build
   if { $::EXTEND(test-type) != "" } {
     if { $isWindows } {
-      set ret [catch "runcmd $::MAKE $ext(name).sln /build $::VTK_BUILD_TYPE /project $::EXTEND(test-type)" res]
+      set ret [catch "runcmd $::MAKE $::ext(name).sln /build $::VTK_BUILD_TYPE /project $::EXTEND(test-type)" res]
     } else {
       set ret [catch "eval runcmd $::MAKE $::EXTEND(test-type)" res]
     }
@@ -360,16 +480,16 @@ foreach s3ext $::EXTEND(s3extFiles) {
   }
 
   # run the install target
-  cd $::Slicer3_EXT/$ext(name)-build
+  cd $::Slicer3_EXT/$::ext(name)-build
   if { $isWindows } {
-    runcmd $::MAKE $ext(name).sln /build $::VTK_BUILD_TYPE /project INSTALL
+    runcmd $::MAKE $::ext(name).sln /build $::VTK_BUILD_TYPE /project INSTALL
   } else {
     eval runcmd $::MAKE install
   }
 
   # make the zip file
   # - TODO: first, write a config file that describes the build machine
-  set dir $::Slicer3_EXT/$ext(name)-install/lib/Slicer3
+  set dir $::Slicer3_EXT/$::ext(name)-install/lib/Slicer3
   foreach dirType {Modules Plugins} {
     if { [file exists $dir/$dirType] } {
       set dir $dir/$dirType
@@ -377,29 +497,15 @@ foreach s3ext $::EXTEND(s3extFiles) {
     }
   }
   cd $dir
-  set ext(zipFileName) $dir/$ext(name)-$ext(date)-$::env(BUILD).zip 
-  runcmd zip -r9 $ext(zipFileName) .
+  set ::ext(zipFileName) $dir/$::ext(name)-$::ext(date)-$::env(BUILD).zip 
+  runcmd zip -r9 $::ext(zipFileName) .
 
   # upload it
   # - read zip file into 'data' variable
   # - write it to a socket on the ext.slicer.org server
   #
-  #runcmd curl --data-binary @$ext(zipFileName) http://ext.slicer.org/getfile.html?name=$ext(name)&build=$::env(BUILD)&date=$ext(date)
-  set size [file size $ext(zipFileName)]
-  set name [file tail $ext(zipFileName)]
 
-  set fp [open $ext(zipFileName) "r"]
-  fconfigure $fp -translation binary -encoding binary
-  set data [read $fp]
-  close $fp
-
-  set sock [socket ext.slicer.org 8845]
-  puts $sock "put $ext(date) $::env(BUILD) $name $size"
-  fconfigure $sock -translation binary -encoding binary
-  puts -nonewline $sock $data
-  flush $sock
-  close $sock
-  
-  puts "uploaded $ext(zipFileName) ($size bytes)"
+  upload $::ext(zipFileName)  
+  upload $s3ext
 }
 
