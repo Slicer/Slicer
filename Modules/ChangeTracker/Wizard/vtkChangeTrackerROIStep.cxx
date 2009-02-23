@@ -840,7 +840,7 @@ void vtkChangeTrackerROIStep::RetrieveInteractorIJKCoordinates(vtkSlicerSliceGUI
    double rasPt[4];
    vtkMatrix4x4 *matrix = sliceGUI->GetLogic()->GetSliceNode()->GetXYToRAS();
    matrix->MultiplyPoint(inPt, rasPt); 
-   matrix->Delete();
+
   // --------------------------------------------------------------
   // Compute IJK coordinates
   double ijkPt[4];
