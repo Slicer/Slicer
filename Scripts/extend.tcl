@@ -12,7 +12,7 @@
 # Usage:
 #   extend [options] [target]
 #
-# Initiated - sp - 2006-05-11
+# Initiated - sp - 2008-12-30
 #
 
 ################################################################################
@@ -229,9 +229,15 @@ foreach c $candidates {
   if { $::EXTEND(buildList) == "" } {
     lappend ::EXTEND(s3extFiles) $c
   } else {
-    set name [file tail [file root $c]]
+    set fileName [file tail $c]
+    set name [file root $fileName]
     if { [lsearch $::EXTEND(buildList) $name] != -1 } {
       lappend ::EXTEND(s3extFiles) $c
+    }
+    foreach buildFile $::EXTEND(buildList) {
+      if { [file normalize $buildFile] == [file normalize $c] } {
+        lappend ::EXTEND(s3extFiles) $c
+      }
     }
   }
 }
