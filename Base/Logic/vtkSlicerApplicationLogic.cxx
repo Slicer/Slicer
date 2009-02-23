@@ -1454,7 +1454,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       disp = vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
       }
     }
-  else if (fbnd)
+  else if (fbnd && !fbnd->GetDisplayNode())
     {
     // Fiber bundle node
     disp = NULL;
