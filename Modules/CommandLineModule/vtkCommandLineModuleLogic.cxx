@@ -489,7 +489,11 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
   MRMLIDMap sceneToMiniSceneMap;
 
   // Mini-scene used to communicate a subset of the main scene to the module
-  vtkSmartPointer<vtkMRMLScene> miniscene = vtkMRMLScene::New();
+  // Additional handling is necessary because we use SmartPointers
+  // (see http://slicer.spl.harvard.edu/slicerWiki/index.php/Slicer3:Memory_Management#SmartPointers)
+  vtkMRMLScene *tmpScene = vtkMRMLScene::New();
+  vtkSmartPointer<vtkMRMLScene> miniscene = tmpScene;
+  tmpScene->Delete();
   std::string minisceneFilename
     = this->ConstructTemporarySceneFileName(miniscene);
  
