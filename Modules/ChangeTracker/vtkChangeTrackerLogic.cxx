@@ -1167,6 +1167,7 @@ int vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
     vtkMRMLLinearTransformNode::New();
   transformNode->SetName("ROI_LRTransform");
   scene->AddNode(transformNode);
+  transformNode->Delete();
 
   // Linear registration parameter setup
   moduleNode->SetParameterAsString("FixedImageFileName", ctNode->GetScan1_SuperSampleRef());
