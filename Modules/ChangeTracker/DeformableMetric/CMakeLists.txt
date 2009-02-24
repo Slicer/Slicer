@@ -14,14 +14,25 @@ endif(NOT Slicer3_SOURCE_DIR)
 add_executable(DetectGrowth DetectGrowth.cxx)
 #slicer3_set_plugins_output_path(DetectGrowth)
 target_link_libraries(DetectGrowth ITKCommon ITKIO)
-#slicer3_install_plugins(DetectGrowth)
+#slicer3_install_plugins(DetectGrowth) 
+install(TARGETS DetectGrowth RUNTIME 
+        DESTINATION bin COMPONENT Development
+)
 
 add_executable(applyDeformationITK applyDeformationITK.cxx)
 #slicer3_set_plugins_output_path(applyDeformationITK)
 target_link_libraries(applyDeformationITK ITKNumerics ITKIO)
 #slicer3_install_plugins(applyDeformationITK)
+install(TARGETS applyDeformationITK RUNTIME 
+        DESTINATION bin COMPONENT Development
+)
+
 
 add_executable(DetectGrowthSegmentation DetectGrowthSegmentation.cxx)
 #slicer3_set_plugins_output_path(DetectGrowthSegmentation)
 target_link_libraries(DetectGrowthSegmentation ITKCommon ITKIO)
+install(TARGETS DetectGrowthSegmentation RUNTIME 
+        DESTINATION bin COMPONENT Development
+)
+
 #slicer3_install_plugins(DetectGrowthSegmentation)
