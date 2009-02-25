@@ -470,11 +470,13 @@ class Plugin(object):
         # Now set the keyword args
         for key in keywords.keys():
             parameterTag = None
+            parameterLabel = None
             tagFound = False
             for group in range(self.module.GetNumberOfParameterGroups()):
                 for arg in range(self.module.GetNumberOfParametersInGroup(group)):
                     if key == self.module.GetParameterLongFlag(group,arg):
                         parameterTag = self.module.GetParameterTag(group,arg)
+                        parameterLabel = self.module.GetParameterLabel(group,arg)
                         tagFound = True
                         break
                 if tagFound:
@@ -499,7 +501,7 @@ class Plugin(object):
                     fid = fiducialList.AddFiducial()
                     fiducialList.SetNthFiducialXYZ(fid,*point)
                 fiducialList.SetAllFiducialsSelected(1)
-                self.module.SetParameterAsString(key,fiducialList.GetID())
+                self.module.SetParameterAsString(parameterLabel,fiducialList.GetID())
             else:
                 parameterValue = keywords[key]
                 if parameterValue.__class__ in [list,tuple]:
@@ -507,14 +509,14 @@ class Plugin(object):
                         for parameterValueElem in parameterValue:
                             parameterValueString = ','.join([str(el) for el in parameterValueElem])
                             print 'Setting: ' + str(key) + ' = ' + parameterValueString
-                            self.module.SetParameterAsString(key,parameterValueString)
+                            self.module.SetParameterAsString(parameterLabel,parameterValueString)
                     else:
                         parameterValueString = ','.join([str(el) for el in parameterValue])
                         print 'Setting: ' + str(key) + ' = ' + parameterValueString
-                        self.module.SetParameterAsString(key,parameterValueString)
+                        self.module.SetParameterAsString(parameterLabel,parameterValueString)
                 else:
                     print 'Setting: ' + str(key) + ' = ' + str(parameterValue)
-                    self.module.SetParameterAsString(key,str(parameterValue))
+                    self.module.SetParameterAsString(parameterLabel,str(parameterValue))
 
         # And finally, execute the plugin
         logic = slicer.vtkCommandLineModuleLogic()
