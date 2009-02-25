@@ -132,6 +132,11 @@ public:
   // interactor style
   virtual void Init ( );
 
+  // Description:
+  // Get the categorization of the module.  The category is used for
+  // grouping modules together into menus.
+  const char *GetCategory() const {return "Informatics";}
+
 protected:
   vtkQdecModuleGUI();
   ~vtkQdecModuleGUI();

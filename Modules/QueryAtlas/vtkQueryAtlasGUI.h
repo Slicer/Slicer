@@ -321,8 +321,13 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // appears to be a statistics volume (has 'stat' in
     // its name) upon load.
     virtual void AutoWinLevThreshStatisticsVolume ( vtkMRMLScalarVolumeNode *vnode );
-    
- protected:
+
+    // Description:
+    // Get the categorization of the module.  The category is used for
+    // grouping modules together into menus.
+    const char *GetCategory() const {return "Informatics";}
+
+protected:
     vtkQueryAtlasGUI ( );
     virtual ~vtkQueryAtlasGUI ( );
     vtkQueryAtlasGUI ( const vtkQueryAtlasGUI& ); // Not implemented.

@@ -117,6 +117,10 @@ class VTK_FETCHMI_EXPORT vtkFetchMIGUI : public vtkSlicerModuleGUI
   virtual void Exit ( ){};
   virtual void Init ( );
 
+  // Description:
+  // Get the categorization of the module.  The category is used for
+  // grouping modules together into menus.
+  const char *GetCategory() const {return "Informatics";}
 
 protected:
   vtkFetchMIGUI();

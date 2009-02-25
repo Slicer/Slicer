@@ -81,6 +81,11 @@ class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkGradientAnisotropicDiffus
   virtual void Enter ( ){};
   virtual void Exit ( ){};
 
+  // Description:
+  // Get the categorization of the module.  The category is used for
+  // grouping modules together into menus.
+  const char *GetCategory() const {return "Filtering";}
+
 protected:
   vtkGradientAnisotropicDiffusionFilterGUI();
   virtual ~vtkGradientAnisotropicDiffusionFilterGUI();
