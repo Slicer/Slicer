@@ -771,29 +771,29 @@ namespace itk
 
         itk::MetaDataDictionary &thisDic=this->GetMetaDataDictionary();
     
-    float fScanBuffer;
+    float fScanBuffer = 0.0;
     
     if ( ExposeMetaData<float>(thisDic, "TR", fScanBuffer) )
       {
-  TWriteZ( fp, fScanBuffer );
-  
-  if ( ExposeMetaData<float>(thisDic, "FlipAngle", fScanBuffer) )
-    {
-      TWriteZ( fp, fScanBuffer);
+      TWriteZ( fp, fScanBuffer );
       
-      if ( ExposeMetaData<float>(thisDic, "TE", fScanBuffer) )
+      if ( ExposeMetaData<float>(thisDic, "FlipAngle", fScanBuffer) )
         {
-    TWriteZ( fp, fScanBuffer);
-    
-    if ( ExposeMetaData<float>(thisDic, "TI", fScanBuffer) )
-      {
         TWriteZ( fp, fScanBuffer);
-
-        if ( ExposeMetaData<float>(thisDic, "FoV", fScanBuffer) )
+        
+        if ( ExposeMetaData<float>(thisDic, "TE", fScanBuffer) )
+          {
           TWriteZ( fp, fScanBuffer);
-      } // end TI
-        } // end TE
-    } // end FlipAngle
+          
+          if ( ExposeMetaData<float>(thisDic, "TI", fScanBuffer) )
+            {
+            TWriteZ( fp, fScanBuffer);
+            
+            if ( ExposeMetaData<float>(thisDic, "FoV", fScanBuffer) )
+              TWriteZ( fp, fScanBuffer);
+            } // end TI
+          } // end TE
+        } // end FlipAngle
       } // end TR
 
   }
