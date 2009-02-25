@@ -129,9 +129,9 @@ int ExtractSiemensDiffusionInformation( std::string tagString, std::string nameS
 
     int vm = *(infoAsCharPtr+64);
     std::string vr = infoAsString.substr( 68, 4 );
-    int syngodt = *(infoAsCharPtr+72);
-    int nItems = *(infoAsCharPtr+76);
-    int localDummy = *(infoAsCharPtr+80);
+//    int syngodt = *(infoAsCharPtr+72);
+//    int nItems = *(infoAsCharPtr+76);
+//    int localDummy = *(infoAsCharPtr+80);
 
     int offset = 84;
     for (int k = 0; k < vm; k++)
@@ -388,7 +388,7 @@ int main(int argc, char* argv[])
 
   tag.clear();
   itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0018|0050", tag );
-  float sliceThickness = atof( tag.c_str() );
+//  float sliceThickness = atof( tag.c_str() );
 
   tag.clear();
   itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0018|0088", tag );
@@ -890,8 +890,8 @@ int main(int argc, char* argv[])
     region.SetSize(1, dmSize[1]);
     region.SetSize(2, 1);
 
-    int rawMosaic = 0;
-    int colMosaic = 0;
+//    int rawMosaic = 0;
+//    int colMosaic = 0;
     int slcMosaic = 0;
 
     for (unsigned int k = 0; k < dmSize[2]; k++)
@@ -902,7 +902,7 @@ int main(int argc, char* argv[])
       // figure out the mosaic region for this slice
       int sliceIndex = k;
 
-      int nBlockPerSlice = mMosaic*nMosaic;
+//      int nBlockPerSlice = mMosaic*nMosaic;
       slcMosaic = sliceIndex/(nSliceInVolume);
       sliceIndex -= slcMosaic*nSliceInVolume;
       int colMosaic = sliceIndex/mMosaic;
@@ -1042,7 +1042,7 @@ int main(int argc, char* argv[])
   header << "measurement frame: (1,0,0) (0,1,0) (0,0,1)" << std::endl;
 
   header << "modality:=DWMRI" << std::endl;
-  float bValue = 0;
+//  float bValue = 0;
   for (int k = 0; k < nVolume; k++)
   {
     if (bValues[k] > maxBvalue)
