@@ -46,7 +46,6 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
 
   this->VolumeSelectorWidget = NULL;
   this->LoadVolumeButton = NULL;
-  this->SaveVolumeButton = NULL;
   this->VolumeHeaderWidget = NULL;
   this->VolumeDisplayWidget = NULL;
   this->scalarVDW = NULL;
@@ -60,7 +59,6 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
   this->DisplayFrame = NULL;
   this->InfoFrame = NULL;
   this->OptionFrame = NULL;
-  this->SaveFrame = NULL;
   this->GradientFrame = NULL;
 
   this->ScalarDisplayFrame = NULL;
@@ -75,7 +73,6 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
   this->OrientImageMenu = NULL;
   this->LabelMapCheckButton = NULL;
   this->SingleFileCheckButton = NULL;
-  this->UseCompressionCheckButton = NULL;
   this->ApplyButton=NULL;
 
   this->VolumeFileHeaderWidget = NULL;
@@ -101,11 +98,6 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     {
     this->LoadVolumeButton->SetParent(NULL );
     this->LoadVolumeButton->Delete ( );
-    }
-  if (this->SaveVolumeButton )
-    {
-    this->SaveVolumeButton->SetParent(NULL );
-    this->SaveVolumeButton->Delete ( );
     }
   if (this->VolumeFileHeaderWidget)
     {
@@ -141,11 +133,6 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     {
     this->SingleFileCheckButton->SetParent(NULL );
     this->SingleFileCheckButton->Delete ( );
-    }
-  if (this->UseCompressionCheckButton)
-    {
-    this->UseCompressionCheckButton->SetParent(NULL );
-    this->UseCompressionCheckButton->Delete ( );
     }
   if (this->ApplyButton)
     {
@@ -224,12 +211,6 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     this->LoadFrame->Delete ( );
     this->LoadFrame = NULL;
     }
-  if ( this->SaveFrame )
-    {
-    this->SaveFrame->SetParent ( NULL );
-    this->SaveFrame->Delete ( );
-    this->SaveFrame = NULL;
-    }
   if ( this->DisplayFrame )
     {
     this->DisplayFrame->SetParent ( NULL );
@@ -303,7 +284,6 @@ void vtkSlicerVolumesGUI::PrintSelf ( ostream& os, vtkIndent indent )
   os << indent << "LoadFrame: " << this->GetLoadFrame ( ) << "\n";
   os << indent << "DisplayFrame: " << this->GetDisplayFrame ( ) << "\n";    
   os << indent << "OptionFrame: " << this->GetOptionFrame ( ) << "\n";
-  os << indent << "SaveFrame: " << this->GetSaveFrame ( ) << "\n";
 
   if ( this->GetNumberOfItemsInDictionary() > 0 )
     {
@@ -329,18 +309,10 @@ void vtkSlicerVolumesGUI::RemoveGUIObservers ( )
     {
     this->LoadVolumeButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
     }
-  if (this->SaveVolumeButton)
-    {
-    this->SaveVolumeButton->GetLoadSaveDialog()->RemoveObservers (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
-    }
   if (this->ApplyButton)
     {
     this->ApplyButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    }
-  if (this->UseCompressionCheckButton)
-    {
-    this->UseCompressionCheckButton->RemoveObservers ( vtkKWCheckButton::SelectedStateChangedEvent,  (vtkCommand *)this->GUICallbackCommand );
-    }
+    }  
 }
 
 
@@ -351,54 +323,13 @@ void vtkSlicerVolumesGUI::AddGUIObservers ( )
   // observer load volume button    
   this->VolumeSelectorWidget->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->LoadVolumeButton->GetWidget()->GetLoadSaveDialog()->AddObserver (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->SaveVolumeButton->GetLoadSaveDialog()->AddObserver (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->UseCompressionCheckButton->AddObserver ( vtkKWCheckButton::SelectedStateChangedEvent,  (vtkCommand *)this->GUICallbackCommand );
 }
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData )
 {
-  if (event == vtkKWCheckButton::SelectedStateChangedEvent && 
-      this->UseCompressionCheckButton == vtkKWCheckButton::SafeDownCast(caller))
-    {
-    vtkMRMLVolumeNode *refNode = 
-      vtkMRMLVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
-    if (refNode != NULL)
-      {
-      if ( !strcmp(refNode->GetClassName(), "vtkMRMLScalarVolumeNode") || !strcmp(refNode->GetClassName(), "vtkMRMLVectorVolumeNode")) 
-        {
-        // set UI widgets for Archetype storage node
-        vtkMRMLVolumeArchetypeStorageNode *snode = vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(
-          refNode->GetStorageNode());
-        if (snode == NULL) 
-          {
-          snode = vtkMRMLVolumeArchetypeStorageNode::New();
-          snode->SetScene(this->GetMRMLScene());
-          this->GetMRMLScene()->AddNode(snode);
-          refNode->SetAndObserveStorageNodeID(snode->GetID());
-          snode->Delete();
-          }
-        snode->SetUseCompression(this->UseCompressionCheckButton->GetSelectedState());
-        }
-      else 
-        {
-        // set UI widgets for NRRD storage node
-        vtkMRMLNRRDStorageNode *snode = vtkMRMLNRRDStorageNode::SafeDownCast(
-          refNode->GetStorageNode());
-        if (snode == NULL) 
-          {
-          snode = vtkMRMLNRRDStorageNode::New();
-          snode->SetScene(this->GetMRMLScene());
-          this->GetMRMLScene()->AddNode(snode);
-          refNode->SetAndObserveStorageNodeID(snode->GetID());
-          snode->Delete();
-          }
-        snode->SetUseCompression(this->UseCompressionCheckButton->GetSelectedState());
-        }
-      }
-    }
   if (this->VolumeFileHeaderWidget == vtkSlicerVolumeFileHeaderWidget::SafeDownCast(caller) && 
       event == vtkSlicerVolumeFileHeaderWidget::FileHeaderOKEvent )
     {
@@ -569,24 +500,6 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
       }
     return;
     }
-  else if (this->SaveVolumeButton->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) && event == vtkKWTopLevel::WithdrawEvent )
-    {
-    const char * fileName = this->SaveVolumeButton->GetFileName();
-    if ( fileName ) 
-      {
-      vtkSlicerVolumesLogic* volumeLogic = this->Logic;
-      vtkMRMLVolumeNode *volNode = vtkMRMLVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
-      if ( !volumeLogic->SaveArchetypeVolume( fileName, volNode ))
-        {
-        // TODO: generate an error...
-        }
-      else
-        {
-        this->SaveVolumeButton->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
-        }
-      }
-    return;
-    }
 } 
 
 
@@ -667,7 +580,6 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
         refNode->SetAndObserveStorageNodeID(snode->GetID());
         snode->Delete();
         }
-      this->UseCompressionCheckButton->SetSelectedState(snode->GetUseCompression());
 
       // update the load frame
       if (snode->GetCenterImage())
@@ -698,7 +610,6 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
         refNode->SetAndObserveStorageNodeID(snode->GetID());
         snode->Delete();
         }
-      this->UseCompressionCheckButton->SetSelectedState(snode->GetUseCompression());
       // update the load frame
       if (snode->GetCenterImage())
         {
@@ -889,7 +800,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->UIPanel->AddPage ( "Volumes", "Volumes", NULL );
 
   // Define your help text and build the help frame here.
-  const char *help = "The Volumes Module loads, saves and adjusts display parameters of volume data. \n<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:Volumes-Documentation-3.4</a>\n\nThe Diffusion Editor allows modifying parameters (gradients, bValues, measurement frame) of DWI data and provides a quick way to interpret them. For that it estimates a tensor and shows glyphs and tracts for visual exploration. Help for Diffusion Editor: <a>http://www.slicer.org/slicerWiki/index.php/Modules:Volumes:Diffusion_Editor-Documentation</a>";
+  const char *help = "The Volumes Module loads and adjusts display parameters of volume data. \n<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:Volumes-Documentation-3.4</a>\n\nThe Diffusion Editor allows modifying parameters (gradients, bValues, measurement frame) of DWI data and provides a quick way to interpret them. For that it estimates a tensor and shows glyphs and tracts for visual exploration. Help for Diffusion Editor: <a>http://www.slicer.org/slicerWiki/index.php/Modules:Volumes:Diffusion_Editor-Documentation</a>";
   const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.\nThe Volumes module was contributed by Alex Yarmarkovich, Isomics Inc. (Steve Pieper) with help from others at SPL, BWH (Ron Kikinis). \n\nThe Diffusion Editor was developed by Kerstin Kessel.";
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Volumes" );
   this->BuildHelpAndAboutFrame ( page, help, about );
@@ -1109,34 +1020,6 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->OptionFrame->Create ( );
   this->OptionFrame->SetLabelText ("Option");
   this->OptionFrame->CollapseFrame ( );
-
-  // ---
-  // Save FRAME            
-  SaveFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-  this->SaveFrame->SetParent ( page );
-  this->SaveFrame->Create ( );
-  this->SaveFrame->SetLabelText ("Save");
-  this->SaveFrame->CollapseFrame ( );
-  app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-              this->SaveFrame->GetWidgetName(), page->GetWidgetName());
-
-  this->UseCompressionCheckButton = vtkKWCheckButton::New();
-  this->UseCompressionCheckButton->SetParent(this->SaveFrame->GetFrame());
-  this->UseCompressionCheckButton->Create();
-  this->UseCompressionCheckButton->SelectedStateOn();
-  this->UseCompressionCheckButton->SetText("Use Compression");
-  this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
-               this->UseCompressionCheckButton->GetWidgetName());
-
-  this->SaveVolumeButton = vtkKWLoadSaveButton::New ( );
-  this->SaveVolumeButton->SetParent ( this->SaveFrame->GetFrame() );
-  this->SaveVolumeButton->Create();
-  this->SaveVolumeButton->SetText("Save Volume");
-  this->SaveVolumeButton->GetLoadSaveDialog()->SaveDialogOn();
-  this->SaveVolumeButton->GetLoadSaveDialog()->SetFileTypes("{ {volume} {*.*} }");
-  this->SaveVolumeButton->GetLoadSaveDialog()->RetrieveLastPathFromRegistry("OpenPath");
-  app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
-              this->SaveVolumeButton->GetWidgetName());
 
   this->VolumeFileHeaderWidget = vtkSlicerVolumeFileHeaderWidget::New();
   this->VolumeFileHeaderWidget->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow());

@@ -58,7 +58,6 @@ class VTK_VOLUMES_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     vtkGetObjectMacro (LoadFrame, vtkSlicerModuleCollapsibleFrame );
     vtkGetObjectMacro (DisplayFrame, vtkSlicerModuleCollapsibleFrame );
     vtkGetObjectMacro (OptionFrame, vtkSlicerModuleCollapsibleFrame );
-    vtkGetObjectMacro (SaveFrame, vtkSlicerModuleCollapsibleFrame );
 
     vtkGetObjectMacro ( VolumeDisplayWidget, vtkSlicerVolumeDisplayWidget );
     vtkGetObjectMacro ( VolumeSelectorWidget, vtkSlicerNodeSelectorWidget );
@@ -152,7 +151,6 @@ protected:
     vtkKWMenuButtonWithLabel *OrientImageMenu;
     vtkKWCheckButton *LabelMapCheckButton;
     vtkKWCheckButton *SingleFileCheckButton;
-    vtkKWCheckButton *UseCompressionCheckButton;
     vtkKWPushButton *ApplyButton;
 
     vtkSlicerModuleCollapsibleFrame *HelpFrame;
@@ -160,7 +158,6 @@ protected:
     vtkSlicerModuleCollapsibleFrame *DisplayFrame;
     vtkSlicerModuleCollapsibleFrame *InfoFrame;
     vtkSlicerModuleCollapsibleFrame *OptionFrame;
-    vtkSlicerModuleCollapsibleFrame *SaveFrame;    
     vtkSlicerModuleCollapsibleFrame *GradientFrame;
 
     vtkKWFrame *LabelMapDisplayFrame;
@@ -171,7 +168,6 @@ protected:
     vtkKWFrame *VolumeDisplayFrame;
 
     vtkSlicerNodeSelectorWidget* VolumeSelectorWidget;
-    vtkKWLoadSaveButton *SaveVolumeButton;
     vtkSlicerVolumeDisplayWidget *VolumeDisplayWidget;
     vtkSlicerLabelMapVolumeDisplayWidget *labelVDW;
     vtkSlicerScalarVolumeDisplayWidget *scalarVDW;
