@@ -31,7 +31,7 @@ if { [itcl::find class PaintEffect] == "" } {
     constructor {sliceGUI} {Labeler::constructor $sliceGUI} {}
     destructor {}
 
-    public variable radius 10
+    public variable radius 5
     public variable smudge 0
     public variable delayedPaint 1
 
@@ -369,7 +369,7 @@ itcl::body PaintEffect::setMRMLDefaults { } {
   chain
   set node [EditorGetParameterNode]
   foreach {param default} {
-    radius 10
+    radius 5
     smudge 0
   } {
     set pvalue [$node GetParameter Paint,$param] 
