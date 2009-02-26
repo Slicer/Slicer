@@ -524,6 +524,7 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
       //assert(this->ChangeTrackerNode->GetScan2_RegisteredRef());
       if(DoITKRegistration(vtkSlicerApplication::GetInstance()))
         return ERR_GLOBAL_REG;
+      app->Script("update");
     } else {
       // AF: keep initial registration approach for validation
       app->Script("::ChangeTrackerTcl::Scan2ToScan1Registration_GUI Global");
@@ -554,6 +555,7 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
       // goal.
       if(DoITKROIRegistration(vtkSlicerApplication::GetInstance()))
         return ERR_LOCAL_REG;
+      app->Script("update");
     } else {
       app->Script("::ChangeTrackerTcl::Scan2ToScan1Registration_GUI Local"); 
       progressBar->SetValue(50.0/TimeLength);
