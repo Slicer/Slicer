@@ -582,10 +582,10 @@ subdirs ( SparseFieldLevelSetContour )
 subdirs ( Realign )
 subdirs( DiffusionApplications )
 subdirs( ExtractSkeleton )
-#if( ${ITK_VERSION_MAJOR} GREATER 3 OR ${ITK_VERSION_MINOR} GREATER 6 )
-#  subdirs( RegisterImagesModule )
-#endif( ${ITK_VERSION_MAJOR} GREATER 3 OR ${ITK_VERSION_MINOR} GREATER 6 )
-subdirs( UtahBSpline )
+if( ${ITK_VERSION_MAJOR} GREATER 3 OR ${ITK_VERSION_MINOR} GREATER 6 )
+  subdirs( RegisterImagesModule )
+endif( ${ITK_VERSION_MAJOR} GREATER 3 OR ${ITK_VERSION_MINOR} GREATER 6 )
+#subdirs( UtahBSpline )
 subdirs( DiffeomorphicDemonsRegistration )
 
 if(Slicer3_USE_MIDAS)
@@ -645,7 +645,7 @@ if (Slicer3_SOURCE_DIR)
     AffineRegistrationLib
     BSplineDeformableRegistration
     BSplineDeformableRegistrationLib
-    TestGridTransformRegistration
+    #TestGridTransformRegistration
     LabelMapSmoothing
     LabelMapSmoothingLib
     ImageLabelCombine
