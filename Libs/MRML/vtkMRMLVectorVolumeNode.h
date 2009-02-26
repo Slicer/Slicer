@@ -21,6 +21,7 @@
 
 #include "vtkMRMLTensorVolumeNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
+#include "vtkMRMLVectorVolumeDisplayNode.h"
 
 class vtkImageData;
 
@@ -48,6 +49,17 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeNode : public vtkMRMLTensorVolumeNode
   // Description:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "VectorVolume";};
+
+  // Description:
+  // Extract a vector component and pass it on to CalculateScalarAutoLevels.
+  virtual void CalculateAutoLevels(vtkMRMLScalarVolumeDisplayNode *refNode = NULL, vtkImageData *refData = NULL);
+
+  // Description:
+  // Associated display MRML node
+  virtual vtkMRMLVectorVolumeDisplayNode* GetVectorVolumeDisplayNode()
+  {
+    return vtkMRMLVectorVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
+  }
 
   // Description:
   // Create default storage node or NULL if does not have one

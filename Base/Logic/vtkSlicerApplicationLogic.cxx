@@ -40,6 +40,7 @@
 #include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
+#include "vtkMRMLVectorVolumeDisplayNode.h"
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
@@ -1431,13 +1432,20 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       || (vvnd && !vvnd->GetDisplayNode()))
     {
     // Scalar or vector volume node
-    if (svnd->GetLabelMap()) 
+    if (svnd)
       {
-      disp = vtkMRMLLabelMapVolumeDisplayNode::New();
+      if (svnd->GetLabelMap()) 
+        {
+        disp = vtkMRMLLabelMapVolumeDisplayNode::New();
+        }
+      else
+        {
+        disp = vtkMRMLScalarVolumeDisplayNode::New();
+        }
       }
     else
       {
-      disp = vtkMRMLScalarVolumeDisplayNode::New();
+      disp = vtkMRMLVectorVolumeDisplayNode::New();
       }
     }
   else if ((dtvnd && !dtvnd->GetDisplayNode())
