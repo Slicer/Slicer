@@ -380,6 +380,7 @@ int vtkPolyDataTensorToColor::RequestData(
   //verts->Delete();
   
   output->Squeeze();
+  delete [] pts;
 
   return 1;
 }
