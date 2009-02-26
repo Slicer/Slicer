@@ -102,15 +102,15 @@ int main( int argc, char * argv[] )
     trans->Update();
 
     estim->SetTransform(trans);
-    if (estimationMethod == std::string("Least Squares"))
+    if (estimationMethod == std::string("LS"))
       {
       estim->SetEstimationMethodToLLS();
       }
-    else if(estimationMethod == std::string("Weighted Least Squares"))
+    else if(estimationMethod == std::string("WLS"))
       {
       estim->SetEstimationMethodToWLS();
       }
-    else if (estimationMethod == std::string("Non Linear"))
+    else if (estimationMethod == std::string("NL"))
       {
       estim->SetEstimationMethodToNLS();
       }

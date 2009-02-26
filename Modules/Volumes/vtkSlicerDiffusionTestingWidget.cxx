@@ -433,7 +433,7 @@ void vtkSlicerDiffusionTestingWidget::RunDWI()
   tensorCLM->SetName("GradientEditor: Tensor Estimation");
 
   // set the parameters
-  tensorCLM->SetParameterAsString("estimationMethod", "Least Squares");
+  tensorCLM->SetParameterAsString("estimationMethod", "LS");
   tensorCLM->SetParameterAsDouble("otsuOmegaThreshold",0.5);
   tensorCLM->SetParameterAsBool("removeIslands", 0);
   tensorCLM->SetParameterAsBool("applyMask", 0);
