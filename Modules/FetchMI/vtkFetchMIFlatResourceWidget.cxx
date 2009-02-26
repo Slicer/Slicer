@@ -226,8 +226,8 @@ void vtkFetchMIFlatResourceWidget::ProcessWidgetEvents ( vtkObject *caller,
         }
       std::string dtype;
       std::string uri;
-      int dlFlag = 0;
-      int dtFlag = 0;
+//      int dlFlag = 0;
+//      int dtFlag = 0;
 
       for ( int n=0; n <num; n++)
         {

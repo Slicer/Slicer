@@ -583,8 +583,8 @@ int vtkFetchMILogic::RequestStorableNodesUpload ( )
     return 0;
     }
 
-  const char *svrName = this->GetCurrentWebService()->GetName();
-  const char *svctype = this->GetCurrentWebService()->GetServiceType();
+//  const char *svrName = this->GetCurrentWebService()->GetName();
+//  const char *svctype = this->GetCurrentWebService()->GetServiceType();
 
   //---
   //--- For each selected storable node:
@@ -969,7 +969,7 @@ void vtkFetchMILogic::SaveResourceSelectionState ( )
     }
   //---Models
   nnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLModelNode");
-  for (n=0; n<nnodes; n++ )
+  for (int n=0; n<nnodes; n++ )
     {
     node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLModelNode");
     if ( node->GetHideFromEditors() )
@@ -988,7 +988,7 @@ void vtkFetchMILogic::SaveResourceSelectionState ( )
     }
   //--- UnstructuredGrids
   nnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLUnstructuredGridNode");
-  for (n=0; n<nnodes; n++ )
+  for (int n=0; n<nnodes; n++ )
     {
     node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLUnstructuredGridNode");
     if ( node->GetHideFromEditors() )
@@ -1739,7 +1739,7 @@ int vtkFetchMILogic::DeleteSceneFromServer ( const char *uri )
       //---
       //--- parse out all uris (scene's first) and uriListMembers into a vector of strings.
       //---
-      int found = 0;
+//      int found = 0;
       size_t pos;
       size_t pos2;
       size_t pos3;
