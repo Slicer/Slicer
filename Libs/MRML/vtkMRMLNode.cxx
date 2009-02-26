@@ -220,8 +220,8 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
     }
   of << indent << " hideFromEditors=\"" << (this->HideFromEditors ? "true" : "false") << "\"";
 
-  of << indent << " selectable=\"" << (this->Selectable ? "true" : "false") << "\" ";
-  of << indent << " selected=\"" << (this->Selected ? "true" : "false") << "\" ";
+  of << indent << " selectable=\"" << (this->Selectable ? "true" : "false") << "\"";
+  of << indent << " selected=\"" << (this->Selected ? "true" : "false") << "\"";
 
 }
 
