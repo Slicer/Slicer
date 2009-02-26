@@ -395,9 +395,9 @@ void vtkProstateNavTargetingStep::UpdateMRMLObserver(vtkMRMLSelectionNode* selno
 
   std::cerr << "vtkProstateNavTargetingStep::UpdateMRMLObserver()" << std::endl;
 
-  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-  vtkSlicerFiducialsGUI *fidGUI
-    = (vtkSlicerFiducialsGUI*) app->GetModuleGUIByName("Fiducials");
+  //vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+  //vtkSlicerFiducialsGUI *fidGUI
+  //  = (vtkSlicerFiducialsGUI*) app->GetModuleGUIByName("Fiducials");
 
   vtkMRMLFiducialListNode* fidlist = 
     vtkMRMLFiducialListNode::SafeDownCast(this->MRMLScene
@@ -412,7 +412,7 @@ void vtkProstateNavTargetingStep::UpdateMRMLObserver(vtkMRMLSelectionNode* selno
     events->InsertNextValue(vtkMRMLFiducialListNode::FiducialModifiedEvent);
 
     vtkObject *oldNode = (fidlist);
-    vtkObject *pNode   = this->GetGUI()->GetFiducialListNode();
+    //vtkObject *pNode   = this->GetGUI()->GetFiducialListNode();
     this->MRMLObserverManager
       ->SetAndObserveObjectEvents(vtkObjectPointer(&(fidlist)),(fidlist),(events));
     if ( oldNode != (fidlist) )
