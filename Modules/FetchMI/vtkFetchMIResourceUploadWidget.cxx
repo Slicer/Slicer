@@ -1000,13 +1000,13 @@ void vtkFetchMIResourceUploadWidget::PopulateTagMenuButtonCallback ()
     vtkErrorMacro ("vtkFetchMIResourceUploadWidget: PopulateTagMenuButtonCallback got NULL FetchMINode.");
     return;
     }
-  if ( this->Logic->GetCurrentServer() == NULL )
+  if ( this->Logic->GetCurrentWebService() == NULL )
     {
     vtkErrorMacro ("vtkFetchMIResourceUploadWidget: PopulateTagMenuButtonCallback got NULL server.");
     return;
     }
   
-  const char *svr = this->Logic->GetCurrentServer()->GetName();
+  const char *svr = this->Logic->GetCurrentWebService()->GetName();
   int attIndex;
   int valIndex;
 
@@ -1039,7 +1039,7 @@ void vtkFetchMIResourceUploadWidget::PopulateTagMenuButtonCallback ()
       // (unlikely i think...) but whatever.
       // For now, try populating from the node's tagtable rather than
       // the logic's table. 
-      if ( this->Logic->CurrentServerMetadata.size() <= 0 )
+      if ( this->Logic->CurrentWebServiceMetadata.size() <= 0 )
         {
         // check to see if there's a server selected.
         if ( svr == NULL || !(strcmp(svr, "" )) )
@@ -1058,8 +1058,8 @@ void vtkFetchMIResourceUploadWidget::PopulateTagMenuButtonCallback ()
       // populate with tags, and options to add new ones.
       std::map<std::string, std::vector<std::string> >::iterator iter;
       int cascadeCount = 0;
-      for (  iter = this->Logic->CurrentServerMetadata.begin();
-            iter != this->Logic->CurrentServerMetadata.end();
+      for (  iter = this->Logic->CurrentWebServiceMetadata.begin();
+            iter != this->Logic->CurrentWebServiceMetadata.end();
             iter++ )
         {
         if ( iter->first.c_str() == NULL )
@@ -1201,6 +1201,8 @@ void vtkFetchMIResourceUploadWidget::AddNewItem ( const char *dataset, const cha
     this->GetMultiColumnList()->GetWidget()->AddRow();
     this->GetMultiColumnList()->GetWidget()->RowSelectableOff(i);
     this->GetMultiColumnList()->GetWidget()->SetCellWindowCommandToCheckButton(i, 0);
+    //--- select each new addition.
+    this->GetMultiColumnList()->GetWidget()->SelectCell ( i, 0 );
     this->GetMultiColumnList()->GetWidget()->SetCellImageToIcon(i, 1, this->FetchMIIcons->GetShowDataTagsIcon() );
 //    vtkKWFrame *f = this->GetMultiColumnList()->GetWidget()->GetCellWindowAsFrame(i, 1);
 //    f->SetBinding ( "<Button-1>", this, "ShowTagViewCallback");

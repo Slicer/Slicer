@@ -565,7 +565,7 @@ void vtkFetchMIParserXND::GetXMLEntry ( vtkXMLDataElement *element )
          (!(strcmp(name, "label" ))) )
       {
       // parse the xml file and put result into node's XND tag table.
-      // and into logic's CurrentServerMetadata map.
+      // and into logic's CurrentWebServiceMetadata map.
       value = element->GetCharacterData();
       vtkXNDTagTable* t = vtkXNDTagTable::SafeDownCast (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XND" ));
       //--- we are choosing to set SlicerDataType a default

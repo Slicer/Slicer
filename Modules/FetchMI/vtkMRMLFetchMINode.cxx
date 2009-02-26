@@ -94,6 +94,10 @@ vtkMRMLFetchMINode::vtkMRMLFetchMINode()
 void vtkMRMLFetchMINode::AddTagTablesForWebServices ( )
 {
 
+  //---
+  //--- DEVELOPERS NOTE: extend here as new web services are added.
+  //---
+  
    //--- fBIRN HID web services
    vtkHIDTagTable *hid_tt = vtkHIDTagTable::New();
    hid_tt->Initialize();
@@ -318,7 +322,12 @@ void vtkMRMLFetchMINode::SetServer ( const char *s)
     return;
     }
 
+  //---
+  //--- DEVELOPERS NOTE: extend here as new web services are added.
+  //---
+
   this->SetSelectedServer (s);
+
   if ( !(strcmp(s, "https://loci.ucsd.edu/hid" ) ))
     {
     //--- should we set a handler here too?

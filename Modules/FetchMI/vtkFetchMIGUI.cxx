@@ -355,7 +355,7 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
       vtkKWMessageDialog *message = vtkKWMessageDialog::New();
       message->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow() );
       message->SetStyleToOkCancel();
-      std::string msg = "This action will delete the selected resources from the selected server and is NOT undoable. \n Delete the selected resources?";
+      std::string msg = "This action will delete the selected resources from the selected server and is NOT undoable. \n Do you want to continue?";
       message->SetText(msg.c_str());
       message->Create();
       int ok = message->Invoke();
@@ -417,6 +417,7 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
           //--- TODO: when more service types are availabe, build out way to get them
           this->Logic->AddNewServer(e->GetValue(), "XND", "XND", "XND");
           this->FetchMINode->SetServer ( this->ServerMenuButton->GetValue() );
+          this->ResourceList->DeleteAllItems();
           }
         }
       }
@@ -456,6 +457,7 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
               }
             else
               {
+              this->ResourceList->DeleteAllItems();
               this->TaggedDataList->ResetCurrentTagLabel();
               }
             }
@@ -466,7 +468,6 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
             }
 
           this->FetchMINode->SetServer ( this->ServerMenuButton->GetValue() );
-
           //--- this queries server for tags
           vtkDebugMacro ("--------------------GUI event calling Query.");
           this->SetStatusText ( "Querying selected server for metadata (may take a little while)..." );
@@ -576,7 +577,7 @@ void vtkFetchMIGUI::AddVolumeNodes()
   int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLVolumeNode");
   int n;
   int row = this->TaggedDataList->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
-  const char *dtype;
+  const char *dtype = NULL;
   for (n=0; n<nnodes; n++)
     {
     node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLVolumeNode");
@@ -921,12 +922,12 @@ void vtkFetchMIGUI::UpdateTagTableFromGUI ( )
     return;
     }
   
-  if ( this->Logic->GetCurrentServer() == NULL )
+  if ( this->Logic->GetCurrentWebService() == NULL )
     {
     vtkErrorMacro ("FetchMIGUI: UpdateTagTableFromGUI got a NULL server.\n");
     return;
     }
-  const char *svctype = this->Logic->GetCurrentServer()->GetServiceType();
+  const char *svctype = this->Logic->GetCurrentWebService()->GetServiceType();
   if (! this->Logic->GetServerCollection()->IsKnownServiceType(svctype) )
     {
     vtkErrorMacro ( "UpdateTagTableFromGUI:Got unknown web service type");
@@ -938,54 +939,22 @@ void vtkFetchMIGUI::UpdateTagTableFromGUI ( )
   std::string val;
   int sel;
   //--- update the FetchMINode, depending on what service is selected.
-  if ( !(strcmp(svctype, "XND")))
+  
+  vtkTagTable *t = this->Logic->GetCurrentWebService()->GetTagTable();
+  if ( t == NULL )
     {
-    vtkXNDTagTable *t;
-    if (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XND" ) != NULL)
-      {
-      t = vtkXNDTagTable::SafeDownCast ( this->FetchMINode->GetSelectedTagTable() );
-      if ( t == NULL )
-        {
-        // TODO: vtkErrorMacro
-        return;
-        }
-      for ( int i=0; i < num; i++ )
-        {
-        att = this->QueryList->GetAttributeOfItem ( i );
-        val = this->QueryList->GetValueOfItem ( i );
-        sel = this->QueryList->IsItemSelected ( i );
-        t->AddOrUpdateTag ( att.c_str(), val.c_str(), sel );
-        }
-      }
+    // TODO: vtkErrorMacro
+    vtkErrorMacro ( "UpdateTagTableFromGUI:Got NULL tag table for current web service client." );
+    return;
     }
-  else if ( !(strcmp(svctype, "HID")))
+  for ( int i=0; i < num; i++ )
     {
-    vtkHIDTagTable *t;
-    if (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "HID" ) != NULL)
-      {
-      t = vtkHIDTagTable::SafeDownCast ( this->FetchMINode->GetSelectedTagTable() );
-      if ( t == NULL )
-        {
-        // TODO: vtkErrorMacro
-        return;
-        }
-      for ( int i=0; i < num; i++ )
-        {
-        att = this->QueryList->GetAttributeOfItem ( i );
-        val = this->QueryList->GetValueOfItem ( i );
-        if ( this->QueryList->IsItemSelected ( i ) )
-          {
-          t->AddOrUpdateTag ( att.c_str(), val.c_str(), 1 );
-          }
-        else
-          {
-          t->AddOrUpdateTag ( att.c_str(), val.c_str(), 0 );
-          }
-        }
-      }
+    att = this->QueryList->GetAttributeOfItem ( i );
+    val = this->QueryList->GetValueOfItem ( i );
+    sel = this->QueryList->IsItemSelected ( i );
+    t->AddOrUpdateTag ( att.c_str(), val.c_str(), sel );
     }
 }
-
 
 
 
@@ -1005,11 +974,11 @@ void vtkFetchMIGUI::UpdateTagTableFromMRML ( )
     return;
     }
   
-  if ( this->Logic->GetCurrentServer() == NULL )
+  if ( this->Logic->GetCurrentWebService() == NULL )
     {
     return;
     }
-  const char *svctype = this->Logic->GetCurrentServer()->GetServiceType();
+  const char *svctype = this->Logic->GetCurrentWebService()->GetServiceType();
   if (! this->Logic->GetServerCollection()->IsKnownServiceType(svctype) )
     {
     vtkErrorMacro ( "UpdateTagTableFromMRML:Got unknown web service type");
@@ -1017,45 +986,18 @@ void vtkFetchMIGUI::UpdateTagTableFromMRML ( )
     }
 
   //--- now restore user's selection state for all tags.
-  if ( !(strcmp(svctype, "XND")))
+  vtkTagTable *t = this->Logic->GetCurrentWebService()->GetTagTable();
+  if ( t != NULL )
     {
-    if (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XND" ) != NULL)
+    const char *att;
+    int i, row;
+    for (i=0; i < t->GetNumberOfTags(); i++ )
       {
-      vtkXNDTagTable *t = vtkXNDTagTable::SafeDownCast ( this->FetchMINode->GetSelectedTagTable() );      
-      if ( t != NULL )
+      att = t->GetTagAttribute(i);
+      row = this->QueryList->GetRowForAttribute ( att );
+      if ( row >= 0 && (t->IsTagSelected(att)) )
         {
-        const char *att;
-        int i, row;
-        for (i=0; i < t->GetNumberOfTags(); i++ )
-          {
-          att = t->GetTagAttribute(i);
-          row = this->QueryList->GetRowForAttribute ( att );
-          if ( row >= 0 && (t->IsTagSelected(att)) )
-            {
-            this->QueryList->SelectRow(row);              
-            }
-          }
-        }
-      }
-    }
-  else if ( !(strcmp(svctype, "HID")))
-    {
-    if (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "HID" ) != NULL)
-      {
-      vtkHIDTagTable *t = vtkHIDTagTable::SafeDownCast ( this->FetchMINode->GetSelectedTagTable() );
-      if ( t != NULL )
-        {
-        const char *att;
-        int i, row;
-        for (i=0; i < t->GetNumberOfTags(); i++ )
-          {
-          att = t->GetTagAttribute(i);
-          row = this->QueryList->GetRowForAttribute ( att );
-          if ( row >= 0 && (t->IsTagSelected(att)) )
-            {
-            this->QueryList->SelectRow(row);              
-            }
-          }
+        this->QueryList->SelectRow(row);              
         }
       }
     }
@@ -1071,7 +1013,7 @@ void vtkFetchMIGUI::PopulateQueryListFromServer()
   this->QueryList->SetInPopulateWidget(1);
   this->QueryList->PopulateFromServer();
 
-  const char *ttname = this->Logic->GetCurrentServer()->GetTagTableName();
+  const char *ttname = this->Logic->GetCurrentWebService()->GetTagTableName();
   vtkTagTable *t = this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( ttname );
   if ( t != NULL )
     {
@@ -1086,7 +1028,7 @@ void vtkFetchMIGUI::PopulateQueryListFromServer()
       //--- NOTE: this is not essential, but seems friendly... so try it out.
       //--- Check to see if previously selected value for each tag
       //--- (stored in node's tagtable) is in the new list of known
-      //--- values for tag, just populated in Logic's CurrentServerMetadata.
+      //--- values for tag, just populated in Logic's CurrentWebServiceMetadata.
       //--- If so, select it. If this behavior is annoying, then just comment
       //--- out this block.
       //---
@@ -1104,58 +1046,68 @@ void vtkFetchMIGUI::RestoreSelectedValuesForTagsFromMRML()
 {
   if ( this->FetchMINode == NULL )
     {
-    vtkErrorMacro ( "RestoreSelectedValuesForTags: got NULL FetchMINode");
+    vtkErrorMacro ( "RestoreSelectedValuesForTagsFromMRML: got NULL FetchMINode");
     return;
     }
   if ( this->FetchMINode->GetTagTableCollection() == NULL )
     {
-    vtkErrorMacro ( "RestoreSelectedValuesForTags: got NULL TagTableCollection in FetchMINode");
+    vtkErrorMacro ( "RestoreSelectedValuesForTagsFromMRML: got NULL TagTableCollection in FetchMINode");
     return;
     }
-
+  if ( this->Logic == NULL )
+    {
+    vtkErrorMacro ( "RestoreSelectedValuesForTagsFromMRML: got NULL Logic");
+    return;
+    }
+  if ( this->Logic->GetCurrentWebService() == NULL )
+    {
+    vtkErrorMacro ( "RestoreSelectedValuesForTagsFromMRML: got NULL current web service");
+    return;
+    }
+  if ( this->Logic->GetCurrentWebService()->GetTagTable() == NULL )
+    {
+    vtkErrorMacro ( "RestoreSelectedValuesForTagsFromMRML: got NULL tagTable");
+    return;
+    }  
 
   //--- check node's tag table and see what values were stored for each attribute.
-  //--- Then, go thru CurrentServerMetadata and select the value if it's present.
+  //--- Then, go thru CurrentWebServiceMetadata and select the value if it's present.
   std::map<std::string, std::vector<std::string> >::iterator iter;
-  if (this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XND" ) != NULL)
+  vtkTagTable *t = this->Logic->GetCurrentWebService()->GetTagTable ( );
+  if ( t != NULL )
     {
-//    vtkXNDTagTable *t = vtkXNDTagTable::SafeDownCast ( this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XND" ));
-      vtkXNDTagTable *t = vtkXNDTagTable::SafeDownCast ( this->FetchMINode->GetSelectedTagTable() );    
-    if ( t != NULL )
+    const char *att;
+    const char *val;
+    int i, j;
+    int numTags = t->GetNumberOfTags();
+    int widgetRow = 0;
+    // For each tag in mrml, get the attribute, and value.
+    for (i=0; i < numTags; i++ )
       {
-      const char *att;
-      const char *val;
-      int i, j;
-      int numTags = t->GetNumberOfTags();
-      int widgetRow = 0;
-      // For each tag in mrml, get the attribute, and value.
-      for (i=0; i < numTags; i++ )
+      att = t->GetTagAttribute(i);
+      val = t->GetTagValue(i);
+      //--- Search CurrentWebServiceMetadata for the attribute.
+      if ( att != NULL && val != NULL )
         {
-        att = t->GetTagAttribute(i);
-        val = t->GetTagValue(i);
-        //--- Search CurrentServerMetadata for the attribute.
-        if ( att != NULL && val != NULL )
+        for ( iter = this->Logic->CurrentWebServiceMetadata.begin();
+              iter != this->Logic->CurrentWebServiceMetadata.end();
+              iter++ )
           {
-          for ( iter = this->Logic->CurrentServerMetadata.begin();
-                iter != this->Logic->CurrentServerMetadata.end();
-                iter++ )
+          if ( ! (strcmp (iter->first.c_str(), att ) ) )
             {
-            if ( ! (strcmp (iter->first.c_str(), att ) ) )
+            //--- Search thru attributes values to see if the value is present.
+            int numValues = iter->second.size();
+            for (j=0; j< numValues; j++ )
               {
-              //--- Search thru attributes values to see if the value is present.
-              int numValues = iter->second.size();
-              for (j=0; j< numValues; j++ )
+              if ( !(strcmp(val, iter->second[j].c_str()) ) )
                 {
-                if ( !(strcmp(val, iter->second[j].c_str()) ) )
+                //--- Value is present for tag. Find the corresponding
+                //--- row in the GUI, and select the value.
+                widgetRow = this->QueryList->GetRowForAttribute ( att );
+                this->QueryList->SelectValueOfItem(widgetRow, val);
+                if (t->IsTagSelected(att) )
                   {
-                  //--- Value is present for tag. Find the corresponding
-                  //--- row in the GUI, and select the value.
-                  widgetRow = this->QueryList->GetRowForAttribute ( att );
-                  this->QueryList->SelectValueOfItem(widgetRow, val);
-                  if (t->IsTagSelected(att) )
-                    {
-                    this->QueryList->SelectRow(widgetRow);
-                    }
+                  this->QueryList->SelectRow(widgetRow);
                   }
                 }
               }
@@ -1193,6 +1145,7 @@ void vtkFetchMIGUI::ProcessMRMLEvents ( vtkObject *caller,
     if ( (strcmp (this->FetchMINode->GetSelectedServer(), this->ServerMenuButton->GetValue() ) ) )
       {
       this->ServerMenuButton->SetValue ( this->FetchMINode->GetSelectedServer() );
+      this->ResourceList->DeleteAllItems();
       }
     }
 
@@ -1759,7 +1712,26 @@ void vtkFetchMIGUI::DeleteSelectedResourcesFromServer()
       {
       deleteURI.clear();
       deleteURI =  this->ResourceList->GetNthSelectedURI(i);
-      retval = this->Logic->DeleteResourceFromServer ( deleteURI.c_str() );
+      
+      vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+      dialog->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow() );
+      dialog->SetStyleToOkOtherCancel();
+      dialog->SetOKButtonText ( "Scene & its Data" );
+      dialog->SetOtherButtonText ( "Scene File Only" );
+      dialog->SetText ("What would you like to delete?");
+      dialog->Create();
+      dialog->Invoke();
+      int rval = dialog->GetStatus();
+      dialog->Delete();
+
+      if ( rval == vtkKWMessageDialog::StatusOK )
+        {
+        retval = this->Logic->DeleteSceneFromServer ( deleteURI.c_str() );
+        }
+      if ( rval == vtkKWMessageDialog::StatusOther )
+        {
+        retval = this->Logic->DeleteResourceFromServer ( deleteURI.c_str() );
+        }
       if ( retval != 1 )
         {
         deleteError = 1;
@@ -1767,10 +1739,16 @@ void vtkFetchMIGUI::DeleteSelectedResourcesFromServer()
       else
         {
         // update the ResourceList: find the row for this uri and delete the row.
-        r = this->ResourceList->GetRowForURI( deleteURI.c_str() );
-        if ( r >= 0 )
+        std::string uriTarget;
+        for ( unsigned int j=0; j < this->Logic->GetNumberOfURIsDeletedOnServer(); j++ )
           {
-          this->ResourceList->GetMultiColumnList()->GetWidget()->DeleteRow ( r );
+          uriTarget.clear();
+          uriTarget = this->Logic->URIsDeletedOnServer[j];
+          r = this->ResourceList->GetRowForURI( uriTarget.c_str() );
+          if ( r >= 0 )
+            {
+            this->ResourceList->GetMultiColumnList()->GetWidget()->DeleteRow ( r );
+            }
           }
         }
       }
@@ -1782,7 +1760,7 @@ void vtkFetchMIGUI::DeleteSelectedResourcesFromServer()
     vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
     dialog->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow() );
     dialog->SetStyleToMessage();
-    dialog->SetText ("Warning: there was a problem deleting some of the selected resources; please refresh your query to determine the resources' status.");
+    dialog->SetText ("Warning: there was a problem deleting some of the selected resources; please refresh your resource query to determine the resources' status.");
     dialog->Create();
     dialog->Invoke();
     dialog->Delete();

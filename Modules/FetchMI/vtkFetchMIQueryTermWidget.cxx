@@ -189,10 +189,10 @@ void vtkFetchMIQueryTermWidget::ProcessWidgetEvents ( vtkObject *caller,
       }
     else if ( b == this->RefreshButton )
       {
-      if ( this->Logic->GetCurrentServer() != NULL )
+      if ( this->Logic->GetCurrentWebService() != NULL )
         {
         //--- check the node's selected server for tags.
-        const char *ttname = this->Logic->GetCurrentServer()->GetTagTableName();
+        const char *ttname = this->Logic->GetCurrentWebService()->GetTagTableName();
           {
           if ( this->Logic->GetFetchMINode()->GetTagTableCollection() )
             {
@@ -499,8 +499,8 @@ void vtkFetchMIQueryTermWidget::PopulateFromServer ( )
   //--- block any update events until done.
   this->DeleteAllItems( );
   std::map<std::string, std::vector<std::string> >::iterator iter;
-  for ( iter = this->Logic->CurrentServerMetadata.begin();
-        iter != this->Logic->CurrentServerMetadata.end();
+  for ( iter = this->Logic->CurrentWebServiceMetadata.begin();
+        iter != this->Logic->CurrentWebServiceMetadata.end();
         iter++ )
     {
     this->AddNewTagForQuery ( iter->first.c_str(), iter->second );

@@ -9,11 +9,6 @@
 #include "vtkXMLDataElement.h"
 #include "vtkXMLDataParser.h"
 
-
-#include "vtkFetchMIWriterCollection.h"
-#include "vtkFetchMIParserCollection.h"
-#include "vtkFetchMIClientCallerCollection.h"
-
 #include "vtkFetchMIServer.h"
 #include "vtkFetchMIServerCollection.h"
 
@@ -47,8 +42,8 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
 
   // Description:
   // Get/Set on the currently selected web service
-  vtkGetObjectMacro ( CurrentServer, vtkFetchMIServer );
-  vtkSetObjectMacro ( CurrentServer, vtkFetchMIServer );
+  vtkGetObjectMacro ( CurrentWebService, vtkFetchMIServer );
+  vtkSetObjectMacro ( CurrentWebService, vtkFetchMIServer );
 
   // Description:
   // Flag allowing user to select whether or not to save scene description. Not currrently used.
@@ -59,6 +54,11 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   // Flag detecting whether scene is selected for saving (otherwise just selected data is saved.)
   vtkGetMacro (SceneSelected, int );
   vtkSetMacro (SceneSelected, int );
+
+  // Description:
+  // Get/Set on a flag used internally to store the user's save setting on the scene.
+  vtkGetMacro (TemporarySceneSelected, int );
+  vtkSetMacro (TemporarySceneSelected, int );
 
   // Description:
   // Flag we use to indicate that we're searching specifically for resources on the host.
@@ -114,7 +114,7 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   // ParseTagQueryResponse() method to parse the resulting XML
   // into the FetchMINode's tagtable with default values (used for resource query and markup),
   // and into the class's container for all the selected webservice's existing metadata,
-  // called  CurrentServerMetadata
+  // called  CurrentWebServiceMetadata
   void QueryServerForTags ( );
 
   // Description:
@@ -122,17 +122,17 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   // each tag the server knows about. It initiates parsing of the
   // XML response by the ParseTagValuesQueryResponse() method
   // into the class's container for all the selected webservice's existing 
-  // metadata, called CurrentServerMetadata (used for Query).
+  // metadata, called CurrentWebServiceMetadata (used for Query).
   void QueryServerForTagValues ( );
 
   // Description:
-  // Method cleans out CurrentServerMetadata each time a
+  // Method cleans out CurrentWebServiceMetadata each time a
   // host is queried for the tags it supports.
   void ClearExistingTagsForQuery ( );
 
   // Description:
   // Method clears out vector of strings corresponding to a specific
-  // tag name in the CurrentServerMetadata when a host is
+  // tag name in the CurrentWebServiceMetadata when a host is
   // queried for the known values for that tag.
   void ClearExistingValuesForTag ( const char *tagname );
 
@@ -153,6 +153,7 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   // This method deletes a resource specified by uri from
   // the selected server.
   virtual int DeleteResourceFromServer ( const char *uri );
+  virtual int DeleteSceneFromServer ( const char *uri );
 
   virtual const char *GetServiceTypeForServer ( const char *svc );
   
@@ -161,7 +162,7 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   // this method fills up the FetchMINode's XNDTagTable (for resource query and markup)
   // which is used to populate the list of available tags in the GUI,
   // and into the class's container for the selected webservices's known
-  // metadata, called CurrentServerMetadata.
+  // metadata, called CurrentWebServiceMetadata.
   // if the query returns with an error, the node's error message
   // is filled.
   //(Parser->ParseMetadataQueryResponse() )
@@ -170,7 +171,7 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   // Description:
   // In XND, we can query to see what attributes are listed
   // currently for a given tag.
-  // this method fills up the class's CurrentServerMetadata vector
+  // this method fills up the class's CurrentWebServiceMetadata vector
   // of strings, which is used to populate the menu of possible
   // values for each tag in the GUI. If the query returns with an error,
   // the node's error message is filled.
@@ -195,19 +196,16 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   virtual void RequestResourceUpload ();
 
   // Description:
-  // This method requests upload to XNAT desktop
-  // webservices in particular. The method adds any
-  // newly defined user tags to the database, 
-  // posts metadata for each reasource by calling
-  // the PostMetadataToXND() method, parses out the
-  // response to find the uri for the resource, sets the
-  // node's URI, and finally uploads each resource
-  // using the PostStorableNodes() method.
-  virtual void RequestResourceUploadToXND ( );
+  // Workhorse method fo ruploading datafiles.
+  virtual int RequestStorableNodesUpload ( );
 
   // Description:
-  // not fully implemented
-  virtual void RequestResourceUploadToHID ( );
+  // Workhorse method fo ruploading scene file.
+  virtual int RequestSceneUpload ( );
+
+  // Description:
+  // Adds new tags to the server.
+  virtual int AddNewTagsToServer ( );
 
   // Description:
   // Workhorse method assembles the appropriate uri,
@@ -215,30 +213,19 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   // known type, and sets up its download.
   // This is the method developers should extend
   // as new webservice types are supported.
-  int RequestResourceDownload ( const char *uri, const char *slicerDataType );
+  void RequestResourceDownload ( const char *uri, const char *slicerDataType );
 
   // Description:
-  // This method requests download of the scene
-  // from a supported XNAT Desktop webservice.
-  // This method provides a pattern for other methods
-  // that support download from new web services.
-  void RequestSceneDownloadFromXND ( const char *uri);
-
-  // Description:
-  // not fully implemented
-  void RequestSceneDownloadFromHID ( const char *uri);
+  // Workhorse method that downloads a MRML scene
+  // from remote repository.
+  void RequestSceneDownload ( const char *uri );
 
   // Description:
   // This method requests download of a slicerDataType
-  // from a supported XNAT Desktop webservice.
-  // This method provides a pattern for other methods
-  // that support download from new web services.
-  void RequestResourceDownloadFromXND ( const char *uri, const char *slicerDataType);
-
-  // Description:
-  // not fully implemented
-  void RequestResourceDownloadFromHID ( const char *uri, const char *slicerDataType );
-
+  // from a supported webservice. (not yet fully implemented
+  // since we currently only download MRML scenes, and remote
+  // resources referenced by them.) Do not use until completed.
+  void RequestStorableNodeDownload ( const char *uri, const char *slicerDataType);
   
   //---------------------------------------------------------------------
   // Tag Data Methods
@@ -287,32 +274,9 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   // Upload Tagged Data Methods
   //---------------------------------------------------------------------
   // Description:
-  // This method takes each dataset selected for upload
-  // and writes the metadata for it.
-  // Method returns 1 if write is successful, and 0 if not.
-  int WriteMetadataForUpload ( const char *filename, const char *ID, vtkXNDHandler *handler);
-
-  // Description:
-  // Posts metadata to XND and  returns 1 if OK, 0 if not.
-  int PostMetadataToXND( vtkXNDHandler *handler, const char *dataFilename );
-
-  // Description:
   // This method takes care of posting a storable node that has multiple
   // storage nodes.
   int PostStorableNodes();
-
-  // Description:
-  // Method checks to see if the data to be uploaded has the
-  // required tags. Current list of required tags:
-  // Experiment
-  // Project
-  // Scan
-  // Subject
-  // Modality
-  // SlicerDataType
-  // TODO: Check to see if this is still valid: used to be important for XNE...
-  // Method return 1 if all tags are present, 0 if not.
-  int TestForRequiredTags ( );
 
   // Description:
   // Before an upload, this method checks to make sure all storable
@@ -326,6 +290,18 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   void SetIdleWriteStateOnSelectedResources ( );
 
   // Description:
+  // This method is called internally when a remote upload or download
+  // fails. It resets the transfer status on a node to make it usable
+  // in future transfers. 
+  void SetTransferDoneWriteStateOnSelectedResources ( );
+
+  // Description:
+  // This method is called internally when a remote upload or download
+  // fails. It resets the transfer status on a node to make it usable
+  // in future transfers. 
+  void SetCancelledWriteStateOnSelectedResources ( );
+
+  // Description:
   // This method is called when user requests data upload to XND.
   // It changes sets a storable node's URIhandler.
   void SetURIHandlerOnSelectedResources (vtkURIHandler *handler);
@@ -335,6 +311,7 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   // It changes a storable node's filename to include the cache path.
   void SetCacheFileNamesOnSelectedResources ( );
 
+  
   // Description:
   // This method checks to see if the file for xml query responses
   // exists in the cache. If yes, returns the filename, and if not,
@@ -381,16 +358,38 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   void AddSelectedStorableNode ( const char *nodeID);
   void RemoveSelectedStorableNode ( const char *nodeID);
 
+  // Description:
+  // Method that saves a user's list of selected resources to
+  // upload and sets the current list of resources to include ALL.
+  // This method is required until we can load/save any dataset,
+  // and not just the scene file. NOTE TO DEVELOPERS: extend
+  // this method as new storable node types are added to Slicer.
+  void SaveResourceSelectionState ( );
+
+  // Description:
+  // Method restores the list of selected resources to a user's
+  // selection specification.
+  // This method is required until we can load/save any dataset,
+  // and not just the scene file.
+  void RestoreResourceSelectionState();
 
   // Description:
   // Flag that's set if scene description is marked for save.
   int SaveSceneDescription;
+
   // Description:
   // Flag that's set if a scene is selected for upload.
   int SceneSelected;
+
+  // Description:
+  // Flag that's set when internally adjusting selection state; this
+  // flag records user's setting.
+  int TemporarySceneSelected;
+
   // Description:
   // Tag Table that contains tags that apply to the scene.
   vtkTagTable *SceneTags;
+
 
   //BTX
   //---
@@ -414,8 +413,24 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   // Vector of strings populated by the GUI when
   // the upload button is selected. 
   std::vector<std::string> SelectedStorableNodeIDs;
+  std::vector<std::string> TemporarySelectedStorableNodeIDs;
+
+  // The vector of uris that a delete action has removed on server.
+  std::vector<std::string> URIsDeletedOnServer;
+
   std::vector<std::string> ModifiedNodes;
 
+  // Map of strings populated by original filenames and new
+  // file names changed for RemoteIO. Used in the event
+  // that upload fails before all files are copied
+  // to cache, and we need to revert back to original filenames. 
+  std::map<std::string, std::string> OldAndNewFileNames;
+  // Map of strings populated by original uris and new
+  // uris changed for RemoteIO. Used in the event
+  // that upload fails before all files are copied
+  // to cache, and we need to revert back to original uris
+  std::map<std::string, std::string> OldAndNewURIs;
+  
   // Temporary map of tagnames to all values for that tag on a server.
   // Looks like:
   // Attribute1 --> {Value1, Value2, Value3...ValueI}
@@ -429,11 +444,16 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   // assigned values and selected, those populate the vtkTagTable for
   // the selected webservice, and are used to form query or to tag
   // individual storable nodes or the scene itself.
-  std::map<std::string, std::vector< std::string> > CurrentServerMetadata;
+  std::map<std::string, std::vector< std::string> > CurrentWebServiceMetadata;
   //ETX
+
+  virtual unsigned int GetNumberOfURIsDeletedOnServer ( );
+  virtual void ResetURIsDeletedOnServer ( );
 
   // Description:
   // Method adds a new server to the collection.
+  // Note to developers: Currently this method needs to provide a case
+  // for each web service type available. TODO: generalize.
   virtual void AddNewServer ( const char *name,
                               const char *type,
                               const char *uriHandlerName,
@@ -483,13 +503,52 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   void operator=(const vtkFetchMILogic&);
 
   vtkFetchMIServerCollection *ServerCollection;
-  vtkFetchMIServer *CurrentServer;
+  vtkFetchMIServer *CurrentWebService;
   vtkMRMLFetchMINode* FetchMINode;
 
   // Description:
   // Number of Metadata attributes a database currently supports.
   int NumberOfTagsOnServer;
 
+  //BTX
+  // Description:
+  // For internal use only; requires that this->OldAndNewFileNames
+  // is populated properly, and if not, this could corrupt node filenames.
+  // This method is called when an upload fails before all files
+  // are successfully written to cache. In this event, all files marked
+  // for upload will have filenames pointing to cache, but not all
+  // files will be there. So we restore the original filenames, saved
+  // in string map this->OldAndNewFileNames, to all resources marked for 
+  // upload. Returns 1 for success, 0 for failure.
+  int RestoreFileNamesOnSelectedResources ( );
+
+  // Description:
+  // For internal use only; requires that this->OldAndNewURIs
+  // is populated properly, and if not, this could corrupt node filenames.
+  // This method is called when an upload fails before all files
+  // are successfully written to cache. In this event, all files marked
+  // for upload will have filenames pointing to cache, but not all
+  // files will be there. So we restore the original filenames, saved
+  // in string map this->OldAndNewURIs, to all resources marked for 
+  // upload. Returns 1 for success, 0 for failure.
+  int RestoreURIsOnSelectedResources ( );
+
+  // Description:
+  // For internal use only; requires that this->OldAndNewURIs
+  // is populated properly. It's called before an upload to save the
+  // uri names on all resources in case the upload fails and we need
+  // to restore uris.
+  void SaveOldURIsOnSelectedResources( );
+
+  // Description:
+  // For internal use only; requires that this->OldAndNewURIs
+  // is populated properly. It's called during the upload of each
+  // resource just before the new uri is set on a storage node or
+  // on the storagenode's urilist. If upload fails for some reason,
+  // then the uri can be restored to the old value.
+  void SaveNewURIOnSelectedResource ( const char *olduri, const char *newuri );
+  //ETX
+  
   // Description:
   // Flag that turns off when we're just querying host for metadata
   int ResourceQuery;

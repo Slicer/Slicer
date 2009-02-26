@@ -54,13 +54,10 @@ set(FetchMI_SRCS
   vtkFetchMIParser.cxx
   vtkFetchMIParserHID.cxx
   vtkFetchMIParserXND.cxx
-  vtkFetchMIParserCollection.cxx
   vtkFetchMIWriter.cxx
   vtkFetchMIWriterXND.cxx
-  vtkFetchMIWriterCollection.cxx
-  vtkFetchMIClientCaller.cxx
-  vtkFetchMIClientCallerXND.cxx
-  vtkFetchMIClientCallerCollection.cxx
+  vtkFetchMIWebServicesClient.cxx
+  vtkFetchMIWebServicesClientXND.cxx
   vtkFetchMIServer.cxx
   vtkFetchMIServerCollection.cxx
   )

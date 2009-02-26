@@ -168,6 +168,7 @@ void vtkFetchMIFlatResourceWidget::ProcessWidgetEvents ( vtkObject *caller,
           {
           if ( app->GetApplicationGUI()->GetMainSlicerWindow() )
             {
+            /*
             vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
             dialog->SetParent ( app->GetApplicationGUI()->GetMainSlicerWindow() );
             dialog->SetStyleToOkCancel();
@@ -182,14 +183,17 @@ void vtkFetchMIFlatResourceWidget::ProcessWidgetEvents ( vtkObject *caller,
                 }
               }
             dialog->Delete();
+            */
             }
           }
         }
       if ( !doit )
         {
         // user chose not to close scene, so don't download.
+        /*
         vtkWarningMacro ( "FetchMI: can only download a new scene if current scene is closed." );
         return;
+        */
         }
 
       //--- raise the DataIOManager Window.
@@ -222,7 +226,6 @@ void vtkFetchMIFlatResourceWidget::ProcessWidgetEvents ( vtkObject *caller,
         }
       std::string dtype;
       std::string uri;
-      int retval;
       int dlFlag = 0;
       int dtFlag = 0;
 
@@ -230,42 +233,7 @@ void vtkFetchMIFlatResourceWidget::ProcessWidgetEvents ( vtkObject *caller,
         {
         dtype = this->GetNthSelectedSlicerDataType (n);
         uri = this->GetNthSelectedURI (n);
-        retval = this->Logic->RequestResourceDownload (uri.c_str(), dtype.c_str());
-        if ( retval == 0 )
-          {
-          // unknown data type
-          dtFlag = 2;
-          }
-        if ( retval < 0 )
-          {
-          // null pointer problem with download request
-          dlFlag = 1;
-          }
-        }
-      //--- report to user if any downloads failed.
-      if ( dtFlag == 2 )
-        {
-          //--- pop up error message: unknown dtype.
-          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-          dialog->SetParent ( this->GetParent() );
-          dialog->SetStyleToMessage();
-          msg = "Currently, only resources with the tag SlicerDataType=MRML can be downloaded through this module.";
-          dialog->SetText ( msg.c_str() );
-          dialog->Create();
-          dialog->Invoke();
-          dialog->Delete();
-        }
-      if ( dlFlag == 1 )
-        {
-        //--- popup error message.
-          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-          dialog->SetParent ( this->GetParent() );
-          dialog->SetStyleToMessage();
-          msg = "Download of one or more requested resources failed.";
-          dialog->SetText ( msg.c_str() );
-          dialog->Create();
-          dialog->Invoke();
-          dialog->Delete();
+        this->Logic->RequestResourceDownload (uri.c_str(), dtype.c_str());
         }
       }
     else if ( (b == this->GetClearSelectedButton()) && (event == vtkKWPushButton::InvokedEvent ) )

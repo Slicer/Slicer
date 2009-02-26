@@ -6,7 +6,8 @@
 #include "vtkURIHandler.h"
 #include "vtkFetchMIParser.h"
 #include "vtkFetchMIWriter.h"
-#include "vtkFetchMIClientCaller.h"
+#include "vtkFetchMIWebServicesClient.h"
+#include "vtkTagTable.h"
 
 class VTK_FETCHMI_EXPORT vtkFetchMIServer : public vtkObject
 {
@@ -32,8 +33,8 @@ public:
 
   // Description:
   // Get/Set on the Server's clientcaller
-  vtkSetObjectMacro ( ClientCaller, vtkFetchMIClientCaller );
-  vtkGetObjectMacro ( ClientCaller, vtkFetchMIClientCaller );
+  vtkSetObjectMacro ( WebServicesClient, vtkFetchMIWebServicesClient );
+  vtkGetObjectMacro ( WebServicesClient, vtkFetchMIWebServicesClient );
 
   // Description:
   // Get/Set on the Server's clientcaller
@@ -53,6 +54,7 @@ public:
   vtkGetStringMacro ( URIHandlerName );
   vtkSetStringMacro ( URIHandlerName );
 
+  
   // Description:
   // Get/Set on the name of a TagTable that goes with this server.
   // Certain web services may have their own required tags, which
@@ -60,6 +62,8 @@ public:
   // logic's collection of tag tables by name.
   vtkGetStringMacro ( TagTableName );
   vtkSetStringMacro ( TagTableName );
+  vtkGetObjectMacro ( TagTable, vtkTagTable );
+  vtkSetObjectMacro ( TagTable, vtkTagTable );
 
  protected:
   vtkFetchMIServer();
@@ -71,8 +75,9 @@ public:
 
   vtkFetchMIParser *Parser;
   vtkFetchMIWriter *Writer;
-  vtkFetchMIClientCaller *ClientCaller;
+  vtkFetchMIWebServicesClient *WebServicesClient;
   vtkURIHandler *URIHandler;
+  vtkTagTable *TagTable;
   
   vtkFetchMIServer(const vtkFetchMIServer&); // Not implemented
   void operator=(const vtkFetchMIServer&); // Not Implemented

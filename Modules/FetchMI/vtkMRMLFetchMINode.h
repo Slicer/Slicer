@@ -95,10 +95,6 @@ class VTK_FETCHMI_EXPORT vtkMRMLFetchMINode : public vtkMRMLNode
   vtkStringArray *SlicerDataTypes;
   
   //BTX
-  std::vector<std::string> RequiredXNDTags;
-  //ETX
-
-  //BTX
   enum
     {
       KnownServersModifiedEvent = 11000,

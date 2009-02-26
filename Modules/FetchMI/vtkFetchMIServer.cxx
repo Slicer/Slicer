@@ -18,8 +18,9 @@ vtkFetchMIServer::vtkFetchMIServer ( )
   this->Parser = NULL;
   this->Writer = NULL;
   this->URIHandler = NULL;
-  this->ClientCaller = NULL;
+  this->WebServicesClient = NULL;
   this->ServiceType = NULL;
+  this->TagTable = NULL;
 }
 
 
@@ -44,8 +45,9 @@ vtkFetchMIServer::~vtkFetchMIServer ( )
   this->Parser = NULL;
   this->Writer = NULL;
   this->URIHandler = NULL;
-  this->ClientCaller = NULL;
+  this->WebServicesClient = NULL;
   this->ServiceType = NULL;
+  this->TagTable = NULL;
 }
 
 //---------------------------------------------------------------------------
