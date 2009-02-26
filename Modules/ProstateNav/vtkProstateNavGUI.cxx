@@ -117,7 +117,7 @@ const double vtkProstateNavGUI::WorkPhaseColorDisabled[vtkProstateNavLogic::NumP
   /* Cl */ { 1.0, 1.0, 0.95 },
   /* Tg */ { 0.95, 0.95, 1.0 },
   /* Mn */ { 0.95, 1.0, 1.0 },
-  /* Em */ { 1.0, 0.0, 0.0 },
+  /* Em */ { 1.0, 0.95, 0.95 },
   };
 
 const char *vtkProstateNavGUI::WorkPhaseStr[vtkProstateNavLogic::NumPhases] =
