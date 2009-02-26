@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Filtering</category>
-  <title>Resample Volume 2</title>
+  <title>Resample Scalar/Vector/DWI Volume</title>
   <description>
    This module implements image and vector-image resampling through
    the use of itk Transforms.It can also handle diffusion weighted

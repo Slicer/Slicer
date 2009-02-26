@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Filtering</category>
-  <title>Resample Volume</title>
+  <title>Resample Scalar Volume</title>
   <description>
 Resampling an image is an important task in image analysis.It is
 especially important in the frame of image registration. This module
