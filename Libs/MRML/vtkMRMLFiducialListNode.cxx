@@ -57,7 +57,6 @@ vtkMRMLFiducialListNode::vtkMRMLFiducialListNode()
 {
 
   this->FiducialList = vtkCollection::New();
-  this->Indent = 1;
   this->SymbolScale = 5.0;
   this->TextScale = 4.5;
   this->Visibility = 1;
@@ -102,49 +101,8 @@ void vtkMRMLFiducialListNode::WriteXML(ostream& of, int nIndent)
   // Write all attributes not equal to their defaults
   
   Superclass::WriteXML(of, nIndent);
-  
-  vtkIndent indent(nIndent);
 
-  /* it's saved in the storage node output file
-  of << " symbolScale=\"" << this->SymbolScale << "\"";
-  of << " symbolType=\"" << this->GlyphType << "\"";
-  of << " textScale=\"" << this->TextScale << "\"";
-  of << " visibility=\"" << this->Visibility << "\"";
-  
-  of << " color=\"" << this->Color[0] << " " << 
-                    this->Color[1] << " " <<
-                    this->Color[2] << "\"";
-
-  of << " selectedcolor=\"" << this->SelectedColor[0] << " " << 
-                    this->SelectedColor[1] << " " <<
-                    this->SelectedColor[2] << "\"";
-  
-  of << " ambient=\"" << this->Ambient << "\"";
-
-  of << " diffuse=\"" << this->Diffuse << "\"";
-
-  of << " specular=\"" << this->Specular << "\"";
-
-  of << " power=\"" << this->Power << "\"";
-
-  of << " locked=\"" << this->Locked << "\"";
-
-  of << " opacity=\"" << this->Opacity << "\"";
-  
-  if (this->GetNumberOfFiducials() > 0)
-  {
-      of << " fiducials=\"";
-      for (int idx = 0; idx < this->GetNumberOfFiducials(); idx++)
-      {
-          if (this->GetNthFiducial(idx) != NULL)
-          {
-              of << "\n";
-              this->GetNthFiducial(idx)->WriteXML(of, nIndent);
-          }
-      }
-      of << "\"";
-  }
-  */
+  // rest is saved in the storage node file
 }
 
 //----------------------------------------------------------------------------
@@ -308,6 +266,7 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
 {
+  int oldMode = this->GetDisableModifiedEvent();
   this->DisableModifiedEventOn();
   
   Superclass::Copy(anode);
@@ -370,13 +329,14 @@ void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
       fidThis = NULL;
       }
     // turn on modified events
-    this->DisableModifiedEventOff();
+    this->SetDisableModifiedEvent(oldMode);
     this->Modified();
+    vtkDebugMacro("Copy: throwing a fid modified event w/NULL id");
     this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, NULL);
     }
   else
     {
-    this->DisableModifiedEventOff();
+    this->SetDisableModifiedEvent(oldMode);
     //this->InvokePendingModifiedEvent();
     }
 
@@ -819,6 +779,7 @@ int vtkMRMLFiducialListNode::SetAllFiducialsSelected(int flag)
    if (!this->GetDisableModifiedEvent())
      {
      // now call modified
+     vtkDebugMacro("SetAllFidsSelected: throwing a fid modified event w/null");
      this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, NULL);
      }
    this->ModifiedSinceReadOn();
@@ -889,6 +850,7 @@ int vtkMRMLFiducialListNode::SetAllFiducialsVisibility(int flag)
   if (!this->GetDisableModifiedEvent())
     {
     // now call modified
+    vtkDebugMacro("SetAllFidsVisib: throwing fid mod event with null");
     this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, NULL);
     }
   this->ModifiedSinceReadOn();

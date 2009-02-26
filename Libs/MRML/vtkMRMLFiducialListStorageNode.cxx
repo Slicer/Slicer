@@ -61,12 +61,10 @@ vtkMRMLFiducialListStorageNode::~vtkMRMLFiducialListStorageNode()
 {
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLFiducialListStorageNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-  vtkIndent indent(nIndent);
-
-  std::stringstream ss;
 }
 
 //----------------------------------------------------------------------------
