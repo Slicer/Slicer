@@ -186,11 +186,13 @@ int vtkFetchMIParserXND::ParseMetadataPostResponse( const char *filename )
     //--- XND webservices returns this uri on its own line...
     //--- get lines and search each one.
     //--- when found, set found to 1.    
-    pos = line.find ( "http://" );
-    if ( pos == 0 && pos != std::string::npos )
+    if ( ( pos = line.find ( "http://", 0) ) != std::string::npos )
       {
-      found = 1;
-      break;
+      if ( pos == 0 )
+        {
+        found = 1;
+        break;
+        }
       }
     }
 
