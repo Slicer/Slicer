@@ -381,9 +381,6 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
 
   this->SetReadStateIdle();
   
-  // update the file list
-  this->UpdateFileList(refNode);
-
   return result;
 }
 
