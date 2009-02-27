@@ -235,7 +235,7 @@ void vtkChangeTrackerLogic::PrintSelf(ostream& os, vtkIndent indent)
 // }
 
 int vtkChangeTrackerLogic::CheckROI(vtkMRMLVolumeNode* volumeNode) {
-  if (!volumeNode || !this->ChangeTrackerNode) {
+  if (!volumeNode || !this->ChangeTrackerNode || !volumeNode->GetImageData()) {
     cout << "vtkChangeTrackerLogic::CheckROI: No Volume Defined" << endl;
     return 0;
   }
@@ -274,6 +274,7 @@ vtkMRMLScalarVolumeNode* vtkChangeTrackerLogic::CreateVolumeNode(vtkMRMLVolumeNo
   clonedVolumeNode->SetAndObserveStorageNodeID(NULL);
   clonedVolumeNode->SetName(name);
   clonedVolumeNode->SetAndObserveDisplayNodeID(clonedDisplayNode->GetID());
+  clonedVolumeNode->SetAndObserveImageData(NULL);
 
   if (0) {
     // copy over the volume's data
