@@ -47,7 +47,12 @@ class VTK_MRML_EXPORT vtkMRMLVolumeArchetypeStorageNode : public vtkMRMLStorageN
   // Description:
   // Do a temp write to update the file list in this storage node with all
   // file names that are written when write out the ref node
-  int UpdateFileList(vtkMRMLNode *refNode);
+  // If move is 1, return the directory that contains the written files and
+  // only the written files, for use in a move instead of a double
+  // write. Otherwise return an empty string.
+//BTX
+  std::string UpdateFileList(vtkMRMLNode *refNode, int move = 0);
+//ETX
   
   // Description:
   // Write data from a  referenced node

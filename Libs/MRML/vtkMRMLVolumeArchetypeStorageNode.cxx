@@ -280,24 +280,8 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   reader->ResetFileNames();
   for (int n = 0; n < this->GetNumberOfFileNames(); n++)
     {
-    const char *nthFileName = this->GetNthFileName(n);
-    if (this->GetScene() != NULL &&
-        this->GetScene()->IsFilePathRelative(nthFileName))
-      {
-      // get the path to the full file name, take off the file and append this
-      // one
-      vtksys_stl::vector<vtksys_stl::string> components;
-      vtksys::SystemTools::SplitPath(fullName.c_str(), components);
-      components.pop_back();
-      components.push_back(nthFileName);
-      vtksys_stl::string fullNthFileNameStr = vtksys::SystemTools::JoinPath(components);
-      vtkDebugMacro("ReadData: Converted relative path at index " << n << " from " << nthFileName << " to " << fullNthFileNameStr);
-      reader->AddFileName(fullNthFileNameStr.c_str());
-      }
-    else
-      {
-      reader->AddFileName(nthFileName);
-      }
+    std::string nthFileName = this->GetFullNameFromNthFileName(n);
+    reader->AddFileName(nthFileName.c_str());
     }
   reader->SetOutputScalarTypeToNative();
   reader->SetDesiredCoordinateOrientationToNative();
@@ -387,6 +371,8 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
 {
+  int result = 1;
+
   // test whether refNode is a valid node to hold a volume
   if (!refNode->IsA("vtkMRMLScalarVolumeNode") ) 
     {
@@ -408,43 +394,100 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
     }
 
   // update the file list
-  this->UpdateFileList(refNode);
-  
+  std::string moveFromDir = this->UpdateFileList(refNode, 1);
+
+ 
   std::string fullName = this->GetFullNameFromFileName();  
   if (fullName == std::string("")) 
     {
     vtkErrorMacro("WriteData: File name not specified");
     return 0;
     }
-  vtkITKImageWriter *writer = vtkITKImageWriter::New();
-  writer->SetFileName(fullName.c_str());
+
+  bool moveSucceeded = true;
+  if (moveFromDir != std::string(""))
+    {
+    // the temp writing went okay, just move the files from there to where
+    // they're supposed to go. It will fail if the temp dir is on a different
+    // device, so fall back to a second write in that case.
+    std::string targetDir = vtksys::SystemTools::GetParentDirectory(fullName.c_str());
+    vtkDebugMacro("WriteData: moving files from temp dir " << moveFromDir << " to target dir " << targetDir);
+
+    vtksys::Directory dir;
+    dir.Load(moveFromDir.c_str());
+    vtkDebugMacro("WriteData: tempdir " << moveFromDir.c_str() << " has " << dir.GetNumberOfFiles() << " in it");
+    size_t fileNum;
+    vtksys_stl::vector<vtksys_stl::string> targetPathComponents;
+    vtksys::SystemTools::SplitPath(targetDir.c_str(), targetPathComponents);
+    vtksys_stl::vector<vtksys_stl::string> sourcePathComponents;
+    vtksys::SystemTools::SplitPath(moveFromDir.c_str(), sourcePathComponents);
+    for (fileNum = 0; fileNum <  dir.GetNumberOfFiles(); ++fileNum)
+      {
+      const char *thisFile = dir.GetFile(static_cast<unsigned long>(fileNum));
+      // skip the dirs
+      if (strcmp(thisFile,".") &&
+          strcmp(thisFile,".."))
+        {
+        targetPathComponents.push_back(thisFile);
+        sourcePathComponents.push_back(thisFile);
+        std::string targetFile = vtksys::SystemTools::JoinPath(targetPathComponents);
+        std::string sourceFile = vtksys::SystemTools::JoinPath(sourcePathComponents);
+        vtkDebugMacro("WriteData: moving file number " << fileNum << ", " << sourceFile << " to " << targetFile);
+        // thisFile needs a full path it's bare
+        int renameReturn = std::rename(sourceFile.c_str(), targetFile.c_str());
+        if (renameReturn != 0 )
+          {
+          perror( "Error renaming file" );
+          vtkErrorMacro( "WriteData: Error renaming file to " << targetFile << ", renameReturn = " << renameReturn );
+          // fall back to doing a second write
+          moveSucceeded = false;
+          break;
+          }
+        targetPathComponents.pop_back();
+        sourcePathComponents.pop_back();
+        }
+      }
+    
+    }
+  else
+    {
+    // didn't move it
+    moveSucceeded = false;
+    }
+
+  if (!moveSucceeded)
+    {
+    vtkDebugMacro("WriteData: writing out file with archetype " << fullName);
+    
+    vtkITKImageWriter *writer = vtkITKImageWriter::New();
+    writer->SetFileName(fullName.c_str());
   
-  writer->SetInput( volNode->GetImageData() );
-  writer->SetUseCompression(this->GetUseCompression());
-  if(this->WriteFileFormat)
-    {
-    writer->SetImageIOClassName(
-      this->GetScene()->GetDataIOManager()->GetFileFormatHelper()->
-      GetClassNameFromFormatString(this->WriteFileFormat));
-    }
-
-  // set volume attributes
-  vtkMatrix4x4* mat = vtkMatrix4x4::New();
-  volNode->GetRASToIJKMatrix(mat);
-  writer->SetRasToIJKMatrix(mat);
-
-  int result = 1;
-  try
-    {
-    writer->Write();
-    }
+    writer->SetInput( volNode->GetImageData() );
+    writer->SetUseCompression(this->GetUseCompression());
+    if(this->WriteFileFormat)
+      {
+      writer->SetImageIOClassName(
+                                  this->GetScene()->GetDataIOManager()->GetFileFormatHelper()->
+                                  GetClassNameFromFormatString(this->WriteFileFormat));
+      }
+    
+    // set volume attributes
+    vtkMatrix4x4* mat = vtkMatrix4x4::New();
+    volNode->GetRASToIJKMatrix(mat);
+    writer->SetRasToIJKMatrix(mat);
+    
+    try
+      {
+      writer->Write();
+      }
     catch (...)
-    {
-    result = 0;
+      {
+      result = 0;
+      }
+    mat->Delete();
+    writer->Delete();    
     }
-  mat->Delete();
-  writer->Delete();    
-
+  
   Superclass::StageWriteData(refNode);
   
   return result;
@@ -492,33 +535,30 @@ void vtkMRMLVolumeArchetypeStorageNode::InitializeSupportedWriteFileTypes()
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNode)
+std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNode, int move)
 {
+  std::string returnString = "";
   // test whether refNode is a valid node to hold a volume
   if (!refNode->IsA("vtkMRMLScalarVolumeNode") ) 
     {
     vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
-    return 0;
+    return returnString;
     }
   
   vtkMRMLVolumeNode *volNode = NULL;
+  volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
   
-  if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
-    {
-    volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
-    }
-  
-  if (volNode->GetImageData() == NULL) 
+  if (volNode == NULL || volNode->GetImageData() == NULL) 
     {
     vtkErrorMacro("UpdateFileList: cannot write ImageData, it's NULL");
-    return 0;
+    return returnString;
     }
 
   std::string oldName = this->GetFileName();  
   if (oldName == std::string("")) 
     {
     vtkErrorMacro("UpdateFileList: File name not specified");
-    return 0;
+    return returnString;
     }
 
   // clear out the old file list
@@ -601,7 +641,14 @@ int vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNode)
   vtkDebugMacro("UpdateFileList: resetting file name to " << oldName.c_str());
   this->SetFileName(oldName.c_str());
 
-  // clean up directory??
-  
-  return result;
+  if (move != 1)
+    {
+    // clean up directory??
+    return std::string("");
+    }
+  else
+    {
+    vtkDebugMacro("UpdateFileList: returning temp dir " << tempDir);
+    return tempDir;
+    }
 }
