@@ -1193,7 +1193,6 @@ endElement(void *userData, const char *element)
 
   if (name == "parameters" && ps->Depth == 1)
     {
-
     ps->CurrentDescription.AddParameterGroup(*ps->CurrentGroup);
     ps->CurrentGroup = 0;
     ps->CurrentParameter = 0;
@@ -1206,106 +1205,190 @@ endElement(void *userData, const char *element)
   else if (group && parameter && (name == "integer"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
+    if (ps->CurrentParameter)
+      {
+      delete ps->CurrentParameter;
+      }
     ps->CurrentParameter = 0;
     }
   else if (group && parameter && (name == "float"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
+    if (ps->CurrentParameter)
+      {
+      delete ps->CurrentParameter;
+      }
     ps->CurrentParameter = 0;
     }
   else if (group && parameter && (name == "double"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
+    if (ps->CurrentParameter)
+      {
+      delete ps->CurrentParameter;
+      }
     ps->CurrentParameter = 0;
     }
   else if (group && parameter && (name == "string"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
+    if (ps->CurrentParameter)
+      {
+      delete ps->CurrentParameter;
+      }
     ps->CurrentParameter = 0;
     }
   else if (group && parameter && (name =="boolean"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
+    if (ps->CurrentParameter)
+      {
+      delete ps->CurrentParameter;
+      }
     ps->CurrentParameter = 0;
     }
   else if (group && parameter && (name == "file"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
+    if (ps->CurrentParameter)
+      {
+      delete ps->CurrentParameter;
+      }
     ps->CurrentParameter = 0;
     }
   else if (group && parameter && (name == "directory"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
+    if (ps->CurrentParameter)
+      {
+      delete ps->CurrentParameter;
+      }
     ps->CurrentParameter = 0;
     }
   else if (group && parameter && (name == "transform"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
+    if (ps->CurrentParameter)
+      {
+      delete ps->CurrentParameter;
+      }
     ps->CurrentParameter = 0;
     }
   else if (group && parameter && (name == "image"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
+    if (ps->CurrentParameter)
+      {
+      delete ps->CurrentParameter;
+      }
     ps->CurrentParameter = 0;
     }
   else if (group && parameter && (name == "geometry"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
+    if (ps->CurrentParameter)
+      {
+      delete ps->CurrentParameter;
+      }
     ps->CurrentParameter = 0;
     }
   else if (group && parameter && (name == "table"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
+    if (ps->CurrentParameter)
+      {
+      delete ps->CurrentParameter;
+      }
     ps->CurrentParameter = 0;
     }
   else if (group && parameter && (name == "integer-vector"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
+    if (ps->CurrentParameter)
+      {
+      delete ps->CurrentParameter;
+      }
     ps->CurrentParameter = 0;
     }
   else if (group && parameter && (name == "float-vector"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
+    if (ps->CurrentParameter)
+      {
+      delete ps->CurrentParameter;
+      }
     ps->CurrentParameter = 0;
     }
   else if (group && parameter && (name == "string-vector"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
+    if (ps->CurrentParameter)
+      {
+      delete ps->CurrentParameter;
+      }
     ps->CurrentParameter = 0;
     }
   else if (group && parameter && (name == "double-vector"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
+    if (ps->CurrentParameter)
+      {
+      delete ps->CurrentParameter;
+      }
     ps->CurrentParameter = 0;
     }
   else if (group && parameter && (name == "point"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
+    if (ps->CurrentParameter)
+      {
+      delete ps->CurrentParameter;
+      }
     ps->CurrentParameter = 0;
     }
   else if (group && parameter && (name == "region"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
+    if (ps->CurrentParameter)
+      {
+      delete ps->CurrentParameter;
+      }
     ps->CurrentParameter = 0;
     }
   else if (group && parameter && (name == "string-enumeration"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
+    if (ps->CurrentParameter)
+      {
+      delete ps->CurrentParameter;
+      }
     ps->CurrentParameter = 0;
     }
   else if (group && parameter && (name == "integer-enumeration"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
+    if (ps->CurrentParameter)
+      {
+      delete ps->CurrentParameter;
+      }
     ps->CurrentParameter = 0;
     }
   else if (group && parameter && (name == "float-enumeration"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
+    if (ps->CurrentParameter)
+      {
+      delete ps->CurrentParameter;
+      }
     ps->CurrentParameter = 0;
     }
   else if (group && parameter && (name == "double-enumeration"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
+    if (ps->CurrentParameter)
+      {
+      delete ps->CurrentParameter;
+      }
     ps->CurrentParameter = 0;
     }
   else if (parameter && (name == "flag"))
