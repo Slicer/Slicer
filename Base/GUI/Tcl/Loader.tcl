@@ -327,7 +327,7 @@ itcl::body Loader::destructor {} {
 # set enable/disable state of dialog
 itcl::body Loader::setState { state } {
   foreach object $_vtkObjects {
-    if { [$object IsA vtkKWCoreWidget] } {
+    if { [$object IsA vtkKWPushButton] } {
       $object SetStateTo$state
     }
   }
