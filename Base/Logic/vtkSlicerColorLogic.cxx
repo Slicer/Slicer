@@ -162,6 +162,8 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
       }
     func->Build();
     }
+
+  delete procNodeID;
   procNode->Delete();
   
   // add freesurfer nodes
@@ -358,8 +360,9 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
     node->SetName(vtksys::SystemTools::GetFilenameName(node->GetStorageNode()->GetFileName()).c_str());
     if (node->GetStorageNode()->ReadData(node))
       {
-      id =  std::string(this->GetDefaultFileColorNodeID(this->ColorFiles[i].c_str()));
-      
+      const char* colorNodeID = this->GetDefaultFileColorNodeID(this->ColorFiles[i].c_str());
+      id =  std::string(colorNodeID);
+
       node->SetSingletonTag(id.c_str());
       if (this->GetMRMLScene()->GetNodeByID(id) == NULL)
         {
@@ -367,6 +370,8 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
         this->GetMRMLScene()->AddNode(node);
         vtkDebugMacro("Read and added file node: " <<  this->ColorFiles[i].c_str());
         }
+
+      delete colorNodeID;
       }
     else
       {
