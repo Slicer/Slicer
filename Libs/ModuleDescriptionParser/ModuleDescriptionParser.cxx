@@ -1194,6 +1194,10 @@ endElement(void *userData, const char *element)
   if (name == "parameters" && ps->Depth == 1)
     {
     ps->CurrentDescription.AddParameterGroup(*ps->CurrentGroup);
+    if (ps->CurrentGroup)
+      {
+      delete ps->CurrentGroup;
+      }
     ps->CurrentGroup = 0;
     ps->CurrentParameter = 0;
     }
