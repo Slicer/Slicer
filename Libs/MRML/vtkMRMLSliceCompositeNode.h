@@ -140,18 +140,6 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   vtkSetMacro ( AnnotationMode, int );
   
   // Description:
-  // configures the crosshair appearance and behavior
-  vtkGetMacro (CrosshairMode, int );
-  vtkSetMacro (CrosshairMode, int );  
-  vtkGetMacro (CrosshairBehavior, int );
-  vtkSetMacro (CrosshairBehavior, int );  
-  vtkSetClampMacro (CrosshairThickness, int, 1, 3);
-  vtkGetMacro (CrosshairThickness, int);
-  void SetCrosshairToFine() { this->SetCrosshairThickness(1); }
-  void SetCrosshairToMedium() { this->SetCrosshairThickness(2); }
-  void SetCrosshairToThick() { this->SetCrosshairThickness(3); }
-  
-  // Description:
   // configures the behavior of PropagateVolumeSelection(): 
   // if set to false, the background/label for slice views
   // will not be reset. Default value is true
@@ -182,28 +170,6 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
       All,
       LabelValuesOnly,
       LabelAndVoxelValuesOnly
-    };
-  // Modes for crosshair display and behavior
-  enum
-    {
-      NoCrosshair = 0,
-      ShowBasic,
-      ShowIntersection,
-      ShowHashmarks,
-      ShowAll,
-      ShowSmallBasic,
-      ShowSmallIntersection
-    };
-  enum
-    {
-      Fine = 1,
-      Medium,
-      Thick,
-    };
-  enum
-    {
-      Normal = 0,
-      JumpSlice
     };
   // Modes for compositing
   enum
@@ -242,10 +208,6 @@ protected:
   int AnnotationSpace;
   int AnnotationMode;
   
-  int CrosshairMode;
-  int CrosshairThickness;
-  int CrosshairBehavior;
-
   bool DoPropagateVolumeSelection;
 };
 

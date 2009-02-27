@@ -19,6 +19,7 @@
 #include "vtkImageBlend.h"
 #include "vtkImageMathematics.h"
 
+#include "vtkMRMLCrosshairNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
@@ -294,6 +295,16 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents(vtkObject * caller,
   if (event != vtkMRMLScene::NewSceneEvent) 
     {
     this->UpdatePipeline();
+    }
+
+  // On a new scene, create the singleton for the default crosshair
+  if ( vtkMRMLScene::SafeDownCast(caller) && event == vtkMRMLScene::NewSceneEvent)
+    {
+    vtkMRMLScene *scene =  vtkMRMLScene::SafeDownCast(caller);
+    vtkMRMLCrosshairNode *crosshair = vtkMRMLCrosshairNode::New();
+    crosshair->SetCrosshairName("default");
+    scene->AddNode( crosshair );
+    crosshair->Delete();
     }
 }
 

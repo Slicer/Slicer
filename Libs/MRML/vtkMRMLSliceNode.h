@@ -164,9 +164,12 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
                            int Orientation);
 
   // Description:
-  // Set the RAS offset of the Slice to the passed values
+  // Set the RAS offset of the Slice to the passed values. JumpSlice
+  // and JumpAllSlices use the JumpMode to determine how to jump.
   void JumpSlice(double r, double a, double s);
   void JumpAllSlices(double r, double a, double s);
+  void JumpSliceByOffsetting(double r, double a, double s);
+  void JumpSliceByCentering(double r, double a, double s);
 
   // Description:
   // Enum to specify the method of jumping slices

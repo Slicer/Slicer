@@ -30,6 +30,7 @@
 #include "vtkSlicerFiducialsLogic.h"
 #include "vtkSlicerColorLogic.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLCrosshairNode.h"
 #include "vtkCacheManager.h"
 #include "vtkDataIOManager.h"
 #include "vtkDataIOManagerLogic.h"
@@ -51,7 +52,6 @@
 #include "vtkSlicerTheme.h"
 #include "vtkSlicerWindow.h"
 #include "vtkSlicerApplicationSettingsInterface.h"
-
 
 #include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
@@ -908,7 +908,6 @@ int Slicer3_main(int argc, char *argv[])
   
 #endif
 
-
   vtkSlicerSlicesGUI *slicesGUI = vtkSlicerSlicesGUI::New ();
     
   // build the application GUI
@@ -1360,6 +1359,11 @@ int Slicer3_main(int argc, char *argv[])
   appGUI->InitializeViewControlGUI();
   //    appGUI->InitializeNavigationWidget();
 
+ // --- First scene needs a crosshair to be added manually
+  vtkMRMLCrosshairNode *crosshair = vtkMRMLCrosshairNode::New();
+  crosshair->SetCrosshairName("default");
+  scene->AddNode( crosshair );
+  crosshair->Delete();
 
   //
   //--- Cache and RemoteIO ManagerGUI

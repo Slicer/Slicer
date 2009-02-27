@@ -8,6 +8,7 @@
 #include "vtkSlicerSlicesGUI.h"
 #include "vtkSlicerSliceGUI.h"
 #include "vtkMRMLFiducialListNode.h"
+#include "vtkMRMLCrosshairNode.h"
 #include "vtkSlicerTheme.h"
 #include "vtkSlicerVisibilityIcons.h"
 #include "vtkSlicerSlicesControlIcons.h"
@@ -1065,6 +1066,7 @@ void vtkSlicerSlicesControlGUI::ModifyVisibility ( )
 void vtkSlicerSlicesControlGUI::ModifyCrossHairMode ( )
 {
   vtkSlicerApplicationGUI *appGUI;
+  vtkMRMLCrosshairNode *xnode;
   vtkMRMLSliceCompositeNode *cnode;
   vtkMRMLSliceNode *snode;
   
@@ -1072,16 +1074,16 @@ void vtkSlicerSlicesControlGUI::ModifyCrossHairMode ( )
     {
     appGUI = vtkSlicerApplicationGUI::SafeDownCast (this->GetApplicationGUI());
     
-    // first save the state of all slice composite nodes for undo
-    int nnodes = appGUI->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+    // first save the state of all crosshair nodes for undo
+    int nnodes = appGUI->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLCrosshairNode");
     vtkCollection *nodes = vtkCollection::New();
     for (int i = 0; i < nnodes; i++)
       {
-      cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
-        appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
-      if ( cnode )
+      xnode = vtkMRMLCrosshairNode::SafeDownCast (
+        appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLCrosshairNode" ) );
+      if ( xnode )
         {
-        nodes->AddItem (cnode );
+        nodes->AddItem (xnode );
         }
       }
     this->MRMLScene->SaveStateForUndo ( nodes );
@@ -1090,105 +1092,127 @@ void vtkSlicerSlicesControlGUI::ModifyCrossHairMode ( )
     // then change the annotation mode for all slice composite nodes
     for (int i = 0; i < nnodes; i++)
       {
-      cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
-        appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+      xnode = vtkMRMLCrosshairNode::SafeDownCast (
+        appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLCrosshairNode" ) );
 
       // Crosshair mode
       if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("No crosshair") == 1 )
         {
-        if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::NoCrosshair )
+        if ( xnode->GetCrosshairMode() != vtkMRMLCrosshairNode::NoCrosshair )
           {
-          cnode->SetCrosshairMode ( vtkMRMLSliceCompositeNode::NoCrosshair );
+          xnode->SetCrosshairMode ( vtkMRMLCrosshairNode::NoCrosshair );
           }
         }
       else if (this->GetCrossHairButton()->GetMenu()->GetItemSelectedState ("Basic crosshair") == 1)
         {
-        if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::ShowBasic )
+        if ( xnode->GetCrosshairMode() != vtkMRMLCrosshairNode::ShowBasic )
           {
-          cnode->SetCrosshairMode ( vtkMRMLSliceCompositeNode::ShowBasic );
+          xnode->SetCrosshairMode ( vtkMRMLCrosshairNode::ShowBasic );
           }
         }
       else if (this->GetCrossHairButton()->GetMenu()->GetItemSelectedState ("Basic + intersection") == 1)
         {
-        if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::ShowIntersection )
+        if ( xnode->GetCrosshairMode() != vtkMRMLCrosshairNode::ShowIntersection )
           {
-          cnode->SetCrosshairMode ( vtkMRMLSliceCompositeNode::ShowIntersection );
+          xnode->SetCrosshairMode ( vtkMRMLCrosshairNode::ShowIntersection );
           }
         }
       else if (this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Basic + hashmarks") ==1 )
         {
-        if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::ShowHashmarks )
+        if ( xnode->GetCrosshairMode() != vtkMRMLCrosshairNode::ShowHashmarks )
           {
-          cnode->SetCrosshairMode ( vtkMRMLSliceCompositeNode::ShowHashmarks );
+          xnode->SetCrosshairMode ( vtkMRMLCrosshairNode::ShowHashmarks );
           }
         }
       else if (this->GetCrossHairButton()->GetMenu()->GetItemSelectedState( "Basic + hashmarks + intersection") ==1 )
         {
-        if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::ShowAll )
+        if ( xnode->GetCrosshairMode() != vtkMRMLCrosshairNode::ShowAll )
           {
-          cnode->SetCrosshairMode ( vtkMRMLSliceCompositeNode::ShowAll );
+          xnode->SetCrosshairMode ( vtkMRMLCrosshairNode::ShowAll );
           }
         }      
       else if (this->GetCrossHairButton()->GetMenu()->GetItemSelectedState( "Small basic") ==1 )
         {
-        if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::ShowSmallBasic )
+        if ( xnode->GetCrosshairMode() != vtkMRMLCrosshairNode::ShowSmallBasic )
           {
-          cnode->SetCrosshairMode ( vtkMRMLSliceCompositeNode::ShowSmallBasic );
+          xnode->SetCrosshairMode ( vtkMRMLCrosshairNode::ShowSmallBasic );
           }
         }      
       else if (this->GetCrossHairButton()->GetMenu()->GetItemSelectedState( "Small basic + intersection") ==1 )
         {
-        if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::ShowSmallIntersection )
+        if ( xnode->GetCrosshairMode() != vtkMRMLCrosshairNode::ShowSmallIntersection )
           {
-          cnode->SetCrosshairMode ( vtkMRMLSliceCompositeNode::ShowSmallIntersection );
+          xnode->SetCrosshairMode ( vtkMRMLCrosshairNode::ShowSmallIntersection );
           }
         }      
 
-      // Crosshair Actions
-      if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Jump slice") == 1)
-        {
-        if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::JumpSlice )
-          {
-          cnode->SetCrosshairBehavior ( vtkMRMLSliceCompositeNode::JumpSlice );
-          }
-        }      
-      else if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Jump slice") == 0)
-        {
-        if ( cnode->GetCrosshairMode() != vtkMRMLSliceCompositeNode::Normal )
-          {
-          cnode->SetCrosshairBehavior ( vtkMRMLSliceCompositeNode::Normal );
-          }
-        }      
-
-      cnode->SetSliceIntersectionVisibility( 
-        this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Slice Intersections") );
+//       // Crosshair Actions
+//       if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Jump slice") == 1)
+//         {
+//         if ( xnode->GetCrosshairMode() != vtkMRMLCrosshairNode::JumpSlice )
+//           {
+//           xnode->SetCrosshairBehavior ( vtkMRMLCrosshairNode::JumpSlice );
+//           }
+//         }      
+//       else if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Jump slice") == 0)
+//         {
+//         if ( xnode->GetCrosshairMode() != vtkMRMLCrosshairNode::Normal )
+//           {
+//           xnode->SetCrosshairBehavior ( vtkMRMLCrosshairNode::Normal );
+//           }
+//         }      
 
       // Crosshair thickness
       if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Fine") == 1)
         {
-        if ( cnode->GetCrosshairThickness() != vtkMRMLSliceCompositeNode::Fine )
+        if ( xnode->GetCrosshairThickness() != vtkMRMLCrosshairNode::Fine )
           {
-          cnode->SetCrosshairToFine();
+          xnode->SetCrosshairToFine();
           }
         }      
       else if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Medium") == 1)
         {
-        if ( cnode->GetCrosshairThickness() != vtkMRMLSliceCompositeNode::Medium )
+        if ( xnode->GetCrosshairThickness() != vtkMRMLCrosshairNode::Medium )
           {
-          cnode->SetCrosshairToMedium();
+          xnode->SetCrosshairToMedium();
           }
         }      
       else if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Thick") == 1)
         {
-        if ( cnode->GetCrosshairThickness() != vtkMRMLSliceCompositeNode::Thick )
+        if ( xnode->GetCrosshairThickness() != vtkMRMLCrosshairNode::Thick )
           {
-          cnode->SetCrosshairToThick();
+          xnode->SetCrosshairToThick();
           }
         }      
       }
 
-    // do the same thing for the slice nodes
+    // do the same thing for the slice composite nodes
     // first save the state of all slice composite nodes for undo
+    int cnnodes = appGUI->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+    vtkCollection *cnodes = vtkCollection::New();
+    for (int i = 0; i < cnnodes; i++)
+      {
+      cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
+        appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+      if ( cnode )
+        {
+        cnodes->AddItem (cnode );
+        }
+      }
+    this->MRMLScene->SaveStateForUndo ( cnodes );
+    cnodes->Delete ( );
+
+    // then change the annotation mode for all slice composite nodes
+    for (int i = 0; i < cnnodes; i++)
+      {
+      cnode = vtkMRMLSliceCompositeNode::SafeDownCast ( appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+
+      cnode->SetSliceIntersectionVisibility( 
+        this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Slice Intersections") );
+      }
+
+    // do the same thing for the slice nodes
+    // first save the state of all slice nodes for undo
     int snnodes = appGUI->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceNode");
     vtkCollection *snodes = vtkCollection::New();
     for (int i = 0; i < snnodes; i++)
@@ -1208,21 +1232,21 @@ void vtkSlicerSlicesControlGUI::ModifyCrossHairMode ( )
       {
       snode = vtkMRMLSliceNode::SafeDownCast ( appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceNode" ) );
 
-      // Crosshair Actions
-      if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Centered jumping") == 1)
-        {
-        if ( snode->GetJumpMode() != vtkMRMLSliceNode::CenteredJumpSlice )
-          {
-          snode->SetJumpMode ( vtkMRMLSliceNode::CenteredJumpSlice );
-          }
-        }      
-      else if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Offset jumping") == 1)
-        {
-        if ( snode->GetJumpMode() != vtkMRMLSliceNode::OffsetJumpSlice )
-          {
-          snode->SetJumpMode ( vtkMRMLSliceNode::OffsetJumpSlice );
-          }
-        }
+//       // Crosshair Actions
+//       if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Centered jumping") == 1)
+//         {
+//         if ( snode->GetJumpMode() != vtkMRMLSliceNode::CenteredJumpSlice )
+//           {
+//           snode->SetJumpMode ( vtkMRMLSliceNode::CenteredJumpSlice );
+//           }
+//         }      
+//       else if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Offset jumping") == 1)
+//         {
+//         if ( snode->GetJumpMode() != vtkMRMLSliceNode::OffsetJumpSlice )
+//           {
+//           snode->SetJumpMode ( vtkMRMLSliceNode::OffsetJumpSlice );
+//           }
+//         }
       }
     }
 }
@@ -1663,7 +1687,7 @@ void vtkSlicerSlicesControlGUI::BuildCrossHairMenu ( )
   item = this->CrossHairButton->GetMenu()->AddRadioButton ("Small basic + intersection" );
   this->CrossHairButton->GetMenu()->SetItemGroupName(item, "CrosshairMode" );
 
-  this->CrossHairButton->GetMenu()->SelectItem ("Basic + intersection");
+  this->CrossHairButton->GetMenu()->SelectItem ("No crosshair");
 
   
   this->CrossHairButton->GetMenu()->AddSeparator();
@@ -1679,16 +1703,16 @@ void vtkSlicerSlicesControlGUI::BuildCrossHairMenu ( )
   this->CrossHairButton->GetMenu()->SelectItem ("Fine");
 
   
-  this->CrossHairButton->GetMenu()->AddSeparator();
-  this->CrossHairButton->GetMenu()->AddCheckButton ("Jump slice" );
-  this->CrossHairButton->GetMenu()->DeselectItem ( "Jump slice" );
-  this->CrossHairButton->GetMenu()->AddSeparator();
-  item = this->CrossHairButton->GetMenu()->AddRadioButton ("Centered jumping" );
-  this->CrossHairButton->GetMenu()->SetItemGroupName(item, "JumpMode" );
-  item = this->CrossHairButton->GetMenu()->AddRadioButton ("Offset jumping" );
-  this->CrossHairButton->GetMenu()->SetItemGroupName(item, "JumpMode" );
+//   this->CrossHairButton->GetMenu()->AddSeparator();
+//   this->CrossHairButton->GetMenu()->AddCheckButton ("Jump slice" );
+//   this->CrossHairButton->GetMenu()->DeselectItem ( "Jump slice" );
+//   this->CrossHairButton->GetMenu()->AddSeparator();
+//   item = this->CrossHairButton->GetMenu()->AddRadioButton ("Centered jumping" );
+//   this->CrossHairButton->GetMenu()->SetItemGroupName(item, "JumpMode" );
+//   item = this->CrossHairButton->GetMenu()->AddRadioButton ("Offset jumping" );
+//   this->CrossHairButton->GetMenu()->SetItemGroupName(item, "JumpMode" );
   
-  this->CrossHairButton->GetMenu()->SelectItem ( "Centered jumping" );
+//   this->CrossHairButton->GetMenu()->SelectItem ( "Centered jumping" );
 
   this->CrossHairButton->GetMenu()->AddSeparator();
   this->CrossHairButton->GetMenu()->AddCheckButton ("Slice Intersections" );

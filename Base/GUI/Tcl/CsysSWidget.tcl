@@ -346,7 +346,7 @@ itcl::body CsysSWidget::processEvent { {caller ""} {event ""} } {
       set _description ""
     }
     "LeftButtonPressEvent" {
-      $sliceGUI SetGrabID $this
+#      $sliceGUI SetGrabID $this
       set transformNode [$this getTransform]
       if { $transformNode != "" } {
         $::slicer3::MRMLScene SaveStateForUndo $transformNode

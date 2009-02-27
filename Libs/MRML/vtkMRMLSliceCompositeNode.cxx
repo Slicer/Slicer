@@ -66,9 +66,6 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
   this->FiducialLabelVisibility = 1;
   this->AnnotationSpace = vtkMRMLSliceCompositeNode::IJKAndRAS;
   this->AnnotationMode = vtkMRMLSliceCompositeNode::All;
-  this->CrosshairMode = vtkMRMLSliceCompositeNode::ShowIntersection;
-  this->CrosshairBehavior = vtkMRMLSliceCompositeNode::Normal;
-  this->CrosshairThickness = vtkMRMLSliceCompositeNode::Fine;
   this->SliceIntersectionVisibility = 0;
   this->DoPropagateVolumeSelection = true;
 }
@@ -144,58 +141,6 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " annotationMode=\"" << "LabelAndVoxelValuesOnly" << "\"";
     }
-
-  if ( this->CrosshairMode == vtkMRMLSliceCompositeNode::NoCrosshair )
-    {
-    of << indent << " crosshairMode=\"" << "NoCrosshair" << "\"";
-    }
-  else if ( this->CrosshairMode == vtkMRMLSliceCompositeNode::ShowBasic )
-    {
-    of << indent << " crosshairMode=\"" << "ShowBasic" << "\"";
-    }
-  else if ( this->CrosshairMode == vtkMRMLSliceCompositeNode::ShowIntersection )
-    {
-    of << indent << " crosshairMode=\"" << "ShowIntersection" << "\"";
-    }
-  else if ( this->CrosshairMode == vtkMRMLSliceCompositeNode::ShowHashmarks )
-    {
-    of << indent << " crosshairMode=\"" << "ShowHashmarks" << "\"";
-    }
-  else if ( this->CrosshairMode == vtkMRMLSliceCompositeNode::ShowAll )
-    {
-    of << indent << " crosshairMode=\"" << "ShowAll" << "\"";
-    }
-  else if ( this->CrosshairMode == vtkMRMLSliceCompositeNode::ShowSmallBasic )
-    {
-    of << indent << " crosshairMode=\"" << "ShowSmallBasic" << "\"";
-    }
-  else if ( this->CrosshairMode == vtkMRMLSliceCompositeNode::ShowSmallIntersection )
-    {
-    of << indent << " crosshairMode=\"" << "ShowSmallIntersection" << "\"";
-    }
-  
-  if ( this->CrosshairBehavior == vtkMRMLSliceCompositeNode::JumpSlice )
-    {
-    of << indent << " crosshairBehavior=\"" << "JumpSlice" << "\"";
-    }
-  else if ( this->CrosshairBehavior == vtkMRMLSliceCompositeNode::Normal )
-    {
-    of << indent << " crosshairBehavior=\"" << "Normal" << "\"";
-    }
-
-  if ( this->CrosshairThickness == vtkMRMLSliceCompositeNode::Fine )
-    {
-    of << indent << " crosshairThickness=\"" << "Fine" << "\"";
-    }
-  else if ( this->CrosshairThickness == vtkMRMLSliceCompositeNode::Medium )
-    {
-    of << indent << " crosshairThickness=\"" << "Medium" << "\"";
-    }
-  else if ( this->CrosshairThickness == vtkMRMLSliceCompositeNode::Thick )
-    {
-    of << indent << " crosshairThickness=\"" << "Thick" << "\"";
-    }
-
   of << indent << " doPropagateVolumeSelection=\"" << (int)this->DoPropagateVolumeSelection << "\"";
 }
 
@@ -364,63 +309,6 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
         this->SetAnnotationMode (vtkMRMLSliceCompositeNode::LabelAndVoxelValuesOnly);
         }
       }
-    else if(!strcmp (attName, "crosshairMode" ))
-      {
-      if (!strcmp (attValue, "NoCrosshair"))
-        {
-        this->SetCrosshairMode (vtkMRMLSliceCompositeNode::NoCrosshair);
-        }
-      else if (!strcmp (attValue, "ShowBasic"))
-        {
-        this->SetCrosshairMode (vtkMRMLSliceCompositeNode::ShowBasic);
-        }
-      else if (!strcmp (attValue, "ShowIntersection"))
-        {
-        this->SetCrosshairMode (vtkMRMLSliceCompositeNode::ShowIntersection);
-        }      
-      else if (!strcmp (attValue, "ShowHashmarks"))
-        {
-        this->SetCrosshairMode ( vtkMRMLSliceCompositeNode::ShowHashmarks);
-        }
-      else if (!strcmp (attValue, "ShowAll"))
-        {
-        this->SetCrosshairMode (vtkMRMLSliceCompositeNode::ShowAll);
-        }
-      else if (!strcmp (attValue, "ShowSmallBasic"))
-        {
-        this->SetCrosshairMode (vtkMRMLSliceCompositeNode::ShowSmallBasic);
-        }
-      else if (!strcmp (attValue, "ShowSmallIntersection"))
-        {
-        this->SetCrosshairMode (vtkMRMLSliceCompositeNode::ShowSmallIntersection);
-        }
-      }
-    else if (!strcmp (attName, "crosshairBehavior" ))
-      {
-      if ( !strcmp (attValue, "JumpSlice"))
-        {
-        this->SetCrosshairBehavior ( vtkMRMLSliceCompositeNode::JumpSlice);
-        }
-      if ( !strcmp (attValue, "Normal"))
-        {
-        this->SetCrosshairBehavior ( vtkMRMLSliceCompositeNode::Normal);
-        }
-      }
-    else if(!strcmp (attName, "crosshairThickness" ))
-      {
-      if (!strcmp (attValue, "Fine"))
-        {
-        this->SetCrosshairThickness (vtkMRMLSliceCompositeNode::Fine);
-        }
-      else if (!strcmp (attValue, "Medium"))
-        {
-        this->SetCrosshairThickness (vtkMRMLSliceCompositeNode::Medium);
-        }
-      else if (!strcmp (attValue, "Thick"))
-        {
-        this->SetCrosshairThickness (vtkMRMLSliceCompositeNode::Thick);
-        }
-      }
     else if(!strcmp (attName, "doPropagateVolumeSelection" ))
       {
       this->SetDoPropagateVolumeSelection(atoi(attValue)?true:false);
@@ -452,9 +340,6 @@ void vtkMRMLSliceCompositeNode::Copy(vtkMRMLNode *anode)
   this->SetFiducialLabelVisibility ( node->GetFiducialLabelVisibility ( ) );
   this->SetAnnotationSpace ( node->GetAnnotationSpace() );
   this->SetAnnotationMode ( node->GetAnnotationMode() );
-  this->SetCrosshairMode ( node->GetCrosshairMode() );
-  this->SetCrosshairBehavior (node->GetCrosshairBehavior());
-  this->SetCrosshairThickness (node->GetCrosshairThickness());
   this->SetDoPropagateVolumeSelection (node->GetDoPropagateVolumeSelection());
   //this->DisableModifiedEventOff();
   //this->InvokePendingModifiedEvent();
@@ -483,9 +368,6 @@ void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "SliceIntersectionVisibility: " << this->SliceIntersectionVisibility << "\n";
   os << indent << "AnnotationSpace: " << this->AnnotationSpace << "\n";
   os << indent << "AnnotationMode: " << this->AnnotationMode << "\n";
-  os << indent << "CrosshairMode: " << this->CrosshairMode << "\n";
-  os << indent << "CrosshairBehavior: " << this->CrosshairBehavior << "\n";
-  os << indent << "CrosshairThickness: " << this->CrosshairThickness << "\n";
   os << indent << "DoPropagateVolumeSelection: " << this->DoPropagateVolumeSelection << "\n";
 }
 
