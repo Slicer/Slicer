@@ -132,6 +132,7 @@ if { [itcl::find class Loader] == "" } {
     method status {message} {}
     method chooseDirectory {} {}
     method getOpenFile {} {}
+    method setState { state } {}
 
     method objects {} {return [array get o]}
 
@@ -322,6 +323,16 @@ itcl::body Loader::destructor {} {
 
 }
 
+
+# set enable/disable state of dialog
+itcl::body Loader::setState { state } {
+  foreach object $_vtkObjects {
+    if { [$object IsA vtkKWCoreWidget] } {
+      $object SetStateTo$state
+    }
+  }
+  [$o(list) GetWidget] SetStateTo$state
+}
 
 # remove entries from the list box
 itcl::body Loader::clear { } {
@@ -563,6 +574,7 @@ itcl::body Loader::processEvent { {caller ""} {event ""} } {
   }
 
   if { $caller == $o(apply) } {
+    $this setState Disabled
     $this apply
     after idle "itcl::delete object $this"
     return
