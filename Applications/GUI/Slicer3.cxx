@@ -1166,35 +1166,43 @@ int Slicer3_main(int argc, char *argv[])
 
       vtkSlicerModuleGUI* gui = desc.GetGUIPtr();
       vtkSlicerModuleLogic* logic = desc.GetLogicPtr();
-      logic->SetAndObserveMRMLScene( scene );
-      logic->SetModuleName(desc.GetShortName().c_str());
 
-      vtkIntArray* events = logic->NewObservableEvents();
-      logic->SetAndObserveMRMLSceneEvents(scene, events);
-      events->Delete();
-          
-      events = gui->NewObservableEvents();
-      if (events != NULL)
+      if ( logic )
         {
-        gui->SetAndObserveMRMLSceneEvents(scene, events);
-        events->Delete();
-        }
-      logic->SetApplicationLogic(appLogic);
-      logic->SetModuleLocation(desc.GetLocation().c_str());
+        logic->SetAndObserveMRMLScene( scene );
+        logic->SetModuleName(desc.GetShortName().c_str());
 
-      gui->SetApplication( slicerApp );
-      gui->SetApplicationGUI( appGUI );
-      gui->SetAndObserveApplicationLogic( appLogic );
-      gui->SetAndObserveMRMLScene( scene );
-      gui->SetModuleLogic(logic);
-      gui->SetGUIName( desc.GetGUIName().c_str() );
-      gui->GetUIPanel()->SetName( gui->GetGUIName ( ) );
-      gui->GetUIPanel()->SetUserInterfaceManager( appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
-      gui->GetUIPanel()->Create( );
-      slicerApp->AddModuleGUI( gui );
-      gui->BuildGUI ( );
-      gui->AddGUIObservers ( );
-      gui->Init();
+        vtkIntArray* events = logic->NewObservableEvents();
+        logic->SetAndObserveMRMLSceneEvents(scene, events);
+        events->Delete();
+
+        logic->SetApplicationLogic(appLogic);
+        logic->SetModuleLocation(desc.GetLocation().c_str());
+            
+        if ( gui )
+          {
+          events = gui->NewObservableEvents();
+          if (events != NULL)
+            {
+            gui->SetAndObserveMRMLSceneEvents(scene, events);
+            events->Delete();
+            }
+
+          gui->SetApplication( slicerApp );
+          gui->SetApplicationGUI( appGUI );
+          gui->SetAndObserveApplicationLogic( appLogic );
+          gui->SetAndObserveMRMLScene( scene );
+          gui->SetModuleLogic(logic);
+          gui->SetGUIName( desc.GetGUIName().c_str() );
+          gui->GetUIPanel()->SetName( gui->GetGUIName ( ) );
+          gui->GetUIPanel()->SetUserInterfaceManager( appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
+          gui->GetUIPanel()->Create( );
+          slicerApp->AddModuleGUI( gui );
+          gui->BuildGUI ( );
+          gui->AddGUIObservers ( );
+          gui->Init();
+          }
+        }
       }
     lmit++;
     }
@@ -1490,12 +1498,15 @@ int Slicer3_main(int argc, char *argv[])
 
       vtkSlicerModuleGUI* gui = desc.GetGUIPtr();
 
-      name = gui->GetTclName();
-      std::string format("namespace eval slicer3 set ");
-      format += desc.GetShortName();
-      format += "GUI %s";
+      if ( gui )
+        {
+        name = gui->GetTclName();
+        std::string format("namespace eval slicer3 set ");
+        format += desc.GetShortName();
+        format += "GUI %s";
 
-      slicerApp->Script (format.c_str(), name);        
+        slicerApp->Script (format.c_str(), name);        
+        }
 
       }
     lmit++;
@@ -1555,12 +1566,12 @@ int Slicer3_main(int argc, char *argv[])
     if (module) 
       {
       name = module->GetTclName();
-      }
-    std::string title = *mit;
-    std::transform(
-      title.begin(), title.end(), title.begin(), SpacesToUnderscores());
+      std::string title = *mit;
+      std::transform(
+        title.begin(), title.end(), title.begin(), SpacesToUnderscores());
 
-    slicerApp->Script ("namespace eval slicer3 set CommandLineModuleGUI_%s %s", title.c_str(), name);
+      slicerApp->Script ("namespace eval slicer3 set CommandLineModuleGUI_%s %s", title.c_str(), name);
+      }
       
     ++mit;
     }
@@ -1906,10 +1917,14 @@ int Slicer3_main(int argc, char *argv[])
     vtkSlicerModuleGUI *module;
     module = slicerApp->GetModuleGUIByName( (*mit).c_str() );
 
-    /*      module->RemoveGUIObservers();*/
-    module->TearDownGUI ( );
+    if ( module )
+      {
 
-    moduleGUIs.push_back(module);
+      /*      module->RemoveGUIObservers();*/
+      module->TearDownGUI ( );
+
+      moduleGUIs.push_back(module);
+      }
       
     ++mit;
     }

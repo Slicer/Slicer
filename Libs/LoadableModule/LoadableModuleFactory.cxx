@@ -425,9 +425,9 @@ LoadableModuleFactory
                 }
               }
 
-            // if the symbols are found, then get the XML descriptions
+            // if correct symbols are found, then get the XML descriptions
             // and cache the gui function to run the module
-            if ( (xmlSymbol || descFunction) && guiFunction )
+            if ( (xmlSymbol || descFunction) )
               {
               std::string xml;
               if (xmlSymbol)
@@ -448,20 +448,27 @@ LoadableModuleFactory
                 LoadableModuleDescription module;
                 module.SetType("SharedObjectModule");
 
-                module.SetLogicPtr( reinterpret_cast<vtkSlicerModuleLogic*> ((*logicFunction)()) );
-                module.SetGUIPtr( reinterpret_cast<vtkSlicerModuleGUI*> ((*guiFunction)()) );
+                if ( logicFunction )
+                  {
+                  module.SetLogicPtr( reinterpret_cast<vtkSlicerModuleLogic*> ((*logicFunction)()) );
+                  if ( guiFunction )
+                    {
+                    module.SetGUIPtr( reinterpret_cast<vtkSlicerModuleGUI*> ((*guiFunction)()) );
 
-                // Set the target as the entry point to call
-                char entryPointAsText[256];
-                std::string entryPointAsString;
-                std::string lowerName = this->Name;
-                std::transform(lowerName.begin(), lowerName.end(),
-                               lowerName.begin(),
-                               (int (*)(int))std::tolower);
-                
-                sprintf(entryPointAsText, "%p", guiFunction);
-                entryPointAsString = lowerName + ":" + entryPointAsText;
-                module.SetTarget( entryPointAsString );
+                    // Set the target as the entry point to call
+                    char entryPointAsText[256];
+                    std::string entryPointAsString;
+                    std::string lowerName = this->Name;
+                    std::transform(lowerName.begin(), lowerName.end(),
+                                   lowerName.begin(),
+                                   (int (*)(int))std::tolower);
+                    
+                    sprintf(entryPointAsText, "%p", guiFunction);
+                    entryPointAsString = lowerName + ":" + entryPointAsText;
+                    module.SetTarget( entryPointAsString );
+                    }
+                  }
+
                 module.SetLocation( fullLibraryPath );
 
                 // Parse the xml to build the description of the module
