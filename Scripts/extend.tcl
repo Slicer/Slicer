@@ -202,20 +202,6 @@ if { $::EXTEND(verbose) } {
 }
 
 
-#
-# Deletes Slicer3_EXT if clean option given
-#
-if { $::EXTEND(clean) } {
-  if { $::EXTEND(verbose) } {
-    puts "Deleting $::Slicer3_EXT..."
-  }
-  if { $isDarwin } {
-    # tcl file delete is broken on Darwin, so use rm -rf instead
-    runcmd rm -rf $::Slicer3_EXT
-  } else {
-    file delete -force $::Slicer3_EXT
-  }
-}
 if { ![file exists $::Slicer3_EXT] } {
     file mkdir $::Slicer3_EXT
 }
@@ -314,7 +300,9 @@ proc checkDepends {ext1 ext2 dependArray} {
       if { $d == $ext1 } {
         return -1
       }
-      set newDepends [concat $newDepends $depends($d)]
+      if { [info exists depends($d)] } {
+        set newDepends [concat $newDepends $depends($d)]
+      }
     }
     set dependList [concat $dependList $newDepends]
   }
@@ -325,6 +313,7 @@ proc checkDepends {ext1 ext2 dependArray} {
   }
 }
 
+# first remove any extensions that depend on something we don't know about
 set ::newExtFiles $::EXTEND(s3extFiles)
 foreach s3ext $::EXTEND(s3extFiles) {
   array unset ext
@@ -336,7 +325,7 @@ foreach s3ext $::EXTEND(s3extFiles) {
   set ::depends($s3ext) ""
   foreach dependency $::ext(depends) {
     set dependFile $::Slicer3_HOME/Extensions/$dependency.s3ext
-    if { ![file exists $dependFile] } {
+    if { ![file exists $dependFile] && ![file exists $::Slicer3_BUILD/Modules/$dependency] } {
       puts stderr "$s3ext depends on non-existent extension $dependency - it will not be built"
       set index [lsearch $::newExtFiles $s3ext]
       set ::newExtFiles [lreplace $::newExtFiles $index $index]
@@ -345,6 +334,8 @@ foreach s3ext $::EXTEND(s3extFiles) {
     }
   }
 }
+
+# now remove any circular dependencies
 set ::EXTEND(s3extFiles) $::newExtFiles
 set ::newExtFiles ""
 foreach s3ext $::EXTEND(s3extFiles) {
@@ -354,6 +345,8 @@ foreach s3ext $::EXTEND(s3extFiles) {
     lappend ::newExtFiles $s3ext
   }
 }
+
+# now sort the extensions so that dependencies are built first
 set ::EXTEND(s3extFiles) $::newExtFiles
 set rearranged 1
 while { $rearranged } {
@@ -409,9 +402,13 @@ foreach s3ext $::EXTEND(s3extFiles) {
   set ::ext(date) [clock format [clock seconds] -format %Y-%m-%d]
 
 
-  # make dirs
+  # make dirs, delete if asked for clean build
   foreach suffix {"" -build -install} {
     set dir $::Slicer3_EXT/$::ext(name)$suffix
+    if { $::EXTEND(clean) && $suffix != "" } {
+      puts "Deleting $dir..."
+      file delete -force $dir
+    }
     if { ![file exists $dir] } {
       file mkdir $dir
     }
@@ -446,13 +443,27 @@ foreach s3ext $::EXTEND(s3extFiles) {
     set makeCmd $::MAKE
   }
 
+  set dependPaths ""
+  foreach dep $ext(depends) {
+    if { [file exists $Slicer3_HOME/Modules/$dep] } {
+      # this is a module that comes with slicer
+      set dependPaths "$dependPaths -D${dep}_SOURCE_DIR=$Slicer3_HOME/Modules/$dep"
+      set dependPaths "$dependPaths -D${dep}_BINARY_DIR=$Slicer3_BUILD/Modules/$dep"
+    } else {
+      set dependPaths "$dependPaths -D${dep}_SOURCE_DIR=$Slicer3_EXT/$dep/$dep"
+      set dependPaths "$dependPaths -D${dep}_BINARY_DIR=$Slicer3_EXT/$dep-build"
+    }
+  }
+
   # configure project and make
   cd $::Slicer3_EXT/$::ext(name)-build
-  runcmd $::CMAKE \
+  eval runcmd $::CMAKE \
+    -DCMAKE_VERBOSE_MAKEFILE:BOOL=TRUE \
     -DSlicer3_DIR:PATH=$::Slicer3_BUILD \
     -DBUILD_AGAINST_SLICER3:BOOL=ON \
     -DMAKECOMMAND:STRING=$makeCmd \
     -DCMAKE_INSTALL_PREFIX:PATH=$::Slicer3_EXT/$::ext(name)-install \
+    $dependPaths \
     $::ext(srcDir)
 
   # build the project
