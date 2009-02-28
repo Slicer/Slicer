@@ -353,10 +353,6 @@ LoadableModuleDescriptionParser::ParseXmlDescription( const std::string& xml, Lo
     count++;
   }
 
-  if (description.GetGUIName().empty()) {
-    description.SetGUIName(description.GetName());
-  }
-
   return status;
 }
 
