@@ -1880,9 +1880,12 @@ int Slicer3_main(int argc, char *argv[])
     LoadableModuleDescription desc = loadableModuleFactory.GetModuleDescription(*lmit);
     if (ignoreModules->LookupValue(desc.GetName().c_str()) < 0)
       {
-      desc.GetGUIPtr()->TearDownGUI();
-      desc.GetGUIPtr()->RemoveGUIObservers();
-
+      vtkSlicerModuleGUI* gui = desc.GetGUIPtr();
+      if (gui)
+        {
+        gui->TearDownGUI();
+        gui->RemoveGUIObservers();
+        }
       }
     lmit++;
     }
@@ -2017,7 +2020,11 @@ int Slicer3_main(int argc, char *argv[])
   while (lmit != loadableModuleNames.end()) 
     {
     LoadableModuleDescription desc = loadableModuleFactory.GetModuleDescription(*lmit);
-    desc.GetGUIPtr()->Delete();
+    vtkSlicerModuleGUI* gui = desc.GetGUIPtr();
+    if (gui)
+      {
+      gui->Delete();
+      }
     lmit++;
     }
 
