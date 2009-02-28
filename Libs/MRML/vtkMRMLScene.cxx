@@ -722,6 +722,10 @@ int vtkMRMLScene::LoadIntoScene(vtkCollection* nodeCollection)
     {
     this->RootDirectory = this->RootDirectory + vtksys_stl::string("/");
     }
+  else
+    {
+    this->RootDirectory = vtksys_stl::string("./");
+    }
   vtkMRMLParser* parser = vtkMRMLParser::New();
   parser->SetMRMLScene(this);
   if (nodeCollection != this->CurrentScene)
