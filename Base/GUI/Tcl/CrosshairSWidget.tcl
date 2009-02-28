@@ -102,10 +102,19 @@ itcl::body CrosshairSWidget::constructor {sliceGUI} {
   $o(crosshairHighlightActor) SetPosition $w2 $h2
 
   # 
-  # add observers to the crosshair
+  # set the crosshair node and add observers to the crosshair
+  # (for now, always talk to the singleton "default")
   #
-  set _crosshairNode [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLCrosshairNode]
-  $::slicer3::Broker AddObservation $_crosshairNode ModifiedEvent "::SWidget::ProtectedCallback $this processEvent $_crosshairNode ModifiedEvent"
+  set numberOfCrosshairs [$::slicer3::MRMLScene GetNumberOfNodesByClass vtkMRMLCrosshairNode]
+  for {set xi 0} { $xi < $numberOfCrosshairs} { [incr xi] } {
+      set xnode [$::slicer3::MRMLScene GetNthNodeByClass $xi vtkMRMLCrosshairNode]
+      if { [$xnode GetCrosshairName] == "default" } {
+          set _crosshairNode $xnode
+          $::slicer3::Broker AddObservation $_crosshairNode ModifiedEvent "::SWidget::ProtectedCallback $this processEvent $_crosshairNode ModifiedEvent"          
+          break
+      }
+  }
+
 
   #
   # set up observers on sliceGUI and on sliceNode
