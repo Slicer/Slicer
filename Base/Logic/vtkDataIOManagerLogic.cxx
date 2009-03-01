@@ -69,11 +69,13 @@ void vtkDataIOManagerLogic::ProcessMRMLEvents(vtkObject *caller, unsigned long e
       {
       vtkDebugMacro("ProcessMRMLEvents: calling queue read on the node " << node->GetID());
       this->QueueRead ( node );
+//      node->InvokeEvent ( vtkDataIOManager::RefreshDisplayEvent );
       }  
     else if ( (node != NULL) && (event == vtkDataIOManager::RemoteWriteEvent ) )
       {
       vtkDebugMacro("ProcessMRMLEvents: calling queue write on teh node " << node->GetID());
       this->QueueWrite ( node );
+//      node->InvokeEvent ( vtkDataIOManager::RefreshDisplayEvent );
       }
     }
 }
@@ -363,6 +365,7 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
   //--- the resulting mrml call will trigger an event
   //--- that causes GUI to refresh.
   this->AddNewDataTransfer ( transfer0, node );
+  this->GetDataIOManager()->InvokeEvent ( vtkDataIOManager::RefreshDisplayEvent );
   
   vtkDebugMacro("QueueRead: asynchronous enabled = " << this->GetDataIOManager()->GetEnableAsynchronousIO());
   
@@ -437,6 +440,7 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
     transfer1->SetTransferStatus ( vtkDataTransfer::Idle );
     transfer1->SetCancelRequested ( 0 );
     this->AddNewDataTransfer ( transfer1, node );
+    this->GetDataIOManager()->InvokeEvent ( vtkDataIOManager::RefreshDisplayEvent );
     
     if ( this->GetDataIOManager()->GetEnableAsynchronousIO() )
       {
@@ -558,11 +562,7 @@ int vtkDataIOManagerLogic::QueueWrite ( vtkMRMLNode *node )
   //--- as URIListMember0. Would be nice if these things were the same.
   //--- but for now, respect the implementation: the URIList will be one
   //--- entity shorter than the FileNameList.
-  if ( numFiles != (numURIs+1) )
-    {
-    vtkErrorMacro("QueueWrite: Storage node has different number of FileNames and URIs.");
-    return 0;    
-    }
+
   std::string src;
   std::string dst;
   if ( numFiles == 0 )
@@ -575,8 +575,13 @@ int vtkDataIOManagerLogic::QueueWrite ( vtkMRMLNode *node )
     numFiles =1;
     }
 
+  if ( numFiles != (numURIs+1) )
+    {
+    vtkErrorMacro("QueueWrite: Storage node has different number of FileNames and URIs.");
+    return 0;    
+    }
+  
   std::vector<std::string> pathComponents;
-
 
   // schedule the write of each
   for ( int n=0; n < numFiles; n++ )
@@ -615,6 +620,7 @@ int vtkDataIOManagerLogic::QueueWrite ( vtkMRMLNode *node )
     transfer->SetTransferStatus ( vtkDataTransfer::Idle );
     transfer->SetCancelRequested ( 0 );
     this->AddNewDataTransfer ( transfer, node );
+    this->GetDataIOManager()->InvokeEvent ( vtkDataIOManager::RefreshDisplayEvent );
   
     vtkDebugMacro("QueueWrite: asynchronous enabled = " << this->GetDataIOManager()->GetEnableAsynchronousIO());
   
