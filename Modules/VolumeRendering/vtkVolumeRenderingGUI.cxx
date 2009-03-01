@@ -240,8 +240,8 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
   this->NS_VolumeRenderingDataSlicer=vtkSlicerNodeSelectorVolumeRenderingWidget::New();
   this->NS_VolumeRenderingDataSlicer->SetParent(loadSaveDataFrame->GetFrame());
   this->NS_VolumeRenderingDataSlicer->Create();
-  this->NS_VolumeRenderingDataSlicer->SetLabelText("Existing Parametersets: ");
-  this->NS_VolumeRenderingDataSlicer->SetBalloonHelpString("Select one of the existing parametersets or presets.");
+  this->NS_VolumeRenderingDataSlicer->SetLabelText("Existing Parameter Sets: ");
+  this->NS_VolumeRenderingDataSlicer->SetBalloonHelpString("Select one of the existing parameter sets or presets.");
   this->NS_VolumeRenderingDataSlicer->SetLabelWidth(labelWidth);
   this->NS_VolumeRenderingDataSlicer->EnabledOff();//By default off
   this->NS_VolumeRenderingDataSlicer->NoneEnabledOn();
@@ -254,7 +254,7 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
   this->NS_VolumeRenderingDataScene->SetParent(loadSaveDataFrame->GetFrame());
   this->NS_VolumeRenderingDataScene->Create();
   this->NS_VolumeRenderingDataScene->NoneEnabledOn();
-  this->NS_VolumeRenderingDataScene->SetLabelText("Current Parametersets: ");
+  this->NS_VolumeRenderingDataScene->SetLabelText("Current Parameter Sets: ");
   this->NS_VolumeRenderingDataScene->SetBalloonHelpString("Select how the volume should be displayed. Several parameter sets per volume are possible");
   this->NS_VolumeRenderingDataScene->SetLabelWidth(labelWidth);
   this->NS_VolumeRenderingDataScene->EnabledOff();//By default off
@@ -269,7 +269,7 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
   this->EWL_CreateNewVolumeRenderingNode->SetParent(loadSaveDataFrame->GetFrame());
   this->EWL_CreateNewVolumeRenderingNode->Create();
   this->EWL_CreateNewVolumeRenderingNode->SetBalloonHelpString("Specify a name for a new parameter set.");
-  this->EWL_CreateNewVolumeRenderingNode->SetLabelText("Name New Parameterset: ");
+  this->EWL_CreateNewVolumeRenderingNode->SetLabelText("Name New Parameter Set: ");
   this->EWL_CreateNewVolumeRenderingNode->SetLabelWidth(labelWidth);
   this->EWL_CreateNewVolumeRenderingNode->EnabledOff();
   app->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2", this->EWL_CreateNewVolumeRenderingNode->GetWidgetName());
@@ -279,7 +279,7 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
   this->PB_CreateNewVolumeRenderingNode->SetParent(loadSaveDataFrame->GetFrame());
   this->PB_CreateNewVolumeRenderingNode->Create();
   this->PB_CreateNewVolumeRenderingNode->SetBalloonHelpString("Create a new parameter set for the current volume. This way you can switch between different visualization settings for the same volume.");
-  this->PB_CreateNewVolumeRenderingNode->SetText("Create Visualization Parameterset");
+  this->PB_CreateNewVolumeRenderingNode->SetText("Create Visualization Parameter Set");
   app->Script("pack %s -side top -anchor ne -padx 2 -pady 2",this->PB_CreateNewVolumeRenderingNode->GetWidgetName());
 
   //Details frame
@@ -497,7 +497,7 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
       if(this->Presets->GetNodeByID(this->NS_VolumeRenderingDataSlicer->GetSelected()->GetID())!=NULL)
         {
         //Copy Preset Information in current Node
-        this->CurrentNode->CopyParameterset(this->NS_VolumeRenderingDataSlicer->GetSelected());
+        this->CurrentNode->CopyParameterSet(this->NS_VolumeRenderingDataSlicer->GetSelected());
         this->Helper->UpdateGUIElements();
         }
       //It's not a preset so just update references, and select the new Added Node
