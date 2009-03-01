@@ -254,10 +254,10 @@ void vtkLabelStatisticsGUI::UpdateGUI ()
            
            this->ResultList->InsertCellTextAsInt(i, 0, label.Label);
            this->ResultList->InsertCellTextAsInt(i, 1, label.Count);
-           this->ResultList->InsertCellTextAsInt(i, 2, label.Volume);
+           this->ResultList->InsertCellTextAsDouble(i, 2, label.Volume);
            
-           this->ResultList->InsertCellTextAsInt(i, 3, label.Min);
-           this->ResultList->InsertCellTextAsInt(i, 4, label.Max);
+           this->ResultList->InsertCellTextAsDouble(i, 3, label.Min);
+           this->ResultList->InsertCellTextAsDouble(i, 4, label.Max);
            this->ResultList->InsertCellTextAsDouble(i, 5, label.Mean);
            this->ResultList->InsertCellTextAsDouble(i, 6, label.StdDev);
            i++;

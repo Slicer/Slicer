@@ -99,8 +99,8 @@ void vtkLabelStatisticsLogic::Apply()
   vtkImageAccumulate *stataccum = vtkImageAccumulate::New();
   stataccum->SetInput(inLabelmapVolume->GetImageData());
   stataccum->Update();
-  lo = (int)(stataccum->GetMin())[0];
-  hi = (int)(stataccum->GetMax())[0];
+  lo = static_cast<int>(stataccum->GetMin()[0]);
+  hi = static_cast<int>(stataccum->GetMax()[0]);
   stataccum->Delete();
 
   std::string tmpString("Label\tCount\tVolume\tMin\tMax\tMean\tStdDev\n");
@@ -150,9 +150,9 @@ void vtkLabelStatisticsLogic::Apply()
       vtkMRMLLabelStatisticsNode::LabelStatsEntry entry;
       entry.Label = i;
       entry.Count = stat1->GetVoxelCount();
-      entry.Volume = entry.Count * cubicMMPerVoxel;
-      entry.Min = static_cast<int>((stat1->GetMin())[0]);
-      entry.Max = static_cast<int>((stat1->GetMax())[0]);
+      entry.Volume = static_cast<double>(entry.Count) * cubicMMPerVoxel;
+      entry.Min = stat1->GetMin()[0];
+      entry.Max = stat1->GetMax()[0];
       entry.Mean = (stat1->GetMean())[0];
       entry.StdDev = (stat1->GetStandardDeviation())[0];
       
