@@ -529,6 +529,7 @@ void vtkProstateNavGUI::AddLogicObservers ( )
 void vtkProstateNavGUI::HandleMouseEvent(vtkSlicerInteractorStyle *style)
 {
 
+  /*
   vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
   vtkSlicerInteractorStyle *istyle0 
     = vtkSlicerInteractorStyle::SafeDownCast(appGUI->GetMainSliceGUI("Red")->GetSliceViewer()
@@ -540,7 +541,6 @@ void vtkProstateNavGUI::HandleMouseEvent(vtkSlicerInteractorStyle *style)
     = vtkSlicerInteractorStyle::SafeDownCast(appGUI->GetMainSliceGUI("Green")->GetSliceViewer()
                                              ->GetRenderWidget()->GetRenderWindowInteractor()->GetInteractorStyle());
 
-  /*
   vtkCornerAnnotation *anno = NULL;
   if (style == istyle0)
     {

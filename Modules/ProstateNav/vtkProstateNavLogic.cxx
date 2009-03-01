@@ -383,6 +383,7 @@ int  vtkProstateNavLogic::RobotMoveTo()
   cnode->PushOutgoingCommand("MOVE_TO");
   cnode->InvokeEvent(vtkCommand::ModifiedEvent);
   
+  return 1;
 }
 
 //---------------------------------------------------------------------------
@@ -401,6 +402,8 @@ int vtkProstateNavLogic::SendZFrame()
   cnode->SetZFrameTransformNodeID(this->ZFrameTransformNodeID.c_str());
   cnode->PushOutgoingCommand("SET_Z_FRAME");
   cnode->InvokeEvent(vtkCommand::ModifiedEvent);
+
+  return 1;
   
 }
 

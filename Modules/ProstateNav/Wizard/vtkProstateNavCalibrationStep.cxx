@@ -639,7 +639,6 @@ int vtkProstateNavCalibrationStep::ZFrameRegistration(vtkMRMLScalarVolumeNode* v
   Quaternion    Zorientation;
 
 //simond debug frame delay
-  static int flip_counter=0;
   static Column3Vector Iposition;
   static Quaternion Iorientation;
   
@@ -1154,7 +1153,7 @@ bool vtkProstateNavCalibrationStep::CheckFiducialGeometry(int Zcoordinates[7][2]
  */
 void vtkProstateNavCalibrationStep::FindFidCentre(float points[7][2], float &rmid, float &cmid)
 {
-  int    i, j;
+  int    i;
   float  minrow=0.0, maxrow=0.0, mincol=0.0, maxcol=0.0;
 
   // Find the bounding rectangle.
@@ -1649,7 +1648,7 @@ Real vtkProstateNavCalibrationStep::ComplexMax(Matrix &realmat, Matrix &imagmat)
  */
 Real vtkProstateNavCalibrationStep::RealMax(Matrix &realmat)
 {
-  Real maxabs=0, valabs;
+  Real maxabs=0;
   
   
   for(int i=0; i<realmat.nrows(); i++)
