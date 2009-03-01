@@ -160,7 +160,6 @@ void vtkMRMLVolumePropertyNode::Copy(vtkMRMLNode *anode)
 
     this->DisableModifiedEventOn();
 
-    vtkMRMLVolumePropertyNode *node = (vtkMRMLVolumePropertyNode *) anode;
     this->CopyParameterset(anode);
     
     this->DisableModifiedEventOff();
