@@ -761,6 +761,7 @@ void vtkSlicerDataTransferWidget::UpdateWidget()
       {
       app->ProcessIdleTasks();
       }
+    this->Script ("update idletasks");
     }
 }
 

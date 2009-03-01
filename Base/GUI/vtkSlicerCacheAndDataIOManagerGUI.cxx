@@ -448,17 +448,12 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessMRMLEvents ( vtkObject *caller,
     else if ( event == vtkDataIOManager::DisplayManagerWindowEvent )
       {
       this->DisplayManagerWindow();
-      this->Script ("update idletasks");
       }
     else if ( event == vtkDataIOManager::TransferUpdateEvent )
       {
       this->UpdateEntireGUI();
       }
-    else if ( event == vtkDataIOManager::RemoteReadEvent )
-      {
-      this->DisplayManagerWindow();
-      }
-    else if ( event == vtkDataIOManager::RemoteWriteEvent )
+    else if ( event == vtkDataIOManager::RefreshDisplayEvent )
       {
       this->DisplayManagerWindow();
       }
@@ -559,8 +554,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::SetDataIOManager( vtkDataIOManager *ioma
 void vtkSlicerCacheAndDataIOManagerGUI::SetAndObserveDataIOManager( vtkDataIOManager *iomanager )
 {
   vtkIntArray  *events = vtkIntArray::New();
-  events->InsertNextValue( vtkDataIOManager::RemoteReadEvent);
-  events->InsertNextValue( vtkDataIOManager::RemoteWriteEvent);
+  events->InsertNextValue ( vtkDataIOManager::RefreshDisplayEvent);
   events->InsertNextValue( vtkDataIOManager::LocalReadEvent);
   events->InsertNextValue( vtkDataIOManager::LocalWriteEvent);
   events->InsertNextValue ( vtkDataIOManager::NewTransferEvent );
@@ -724,6 +718,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateOverviewPanel()
     app->ProcessIdleTasks();
     }
 
+  this->Script ("update idletasks");
   vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: DONE Updating Overview Panel");  
 }
 
@@ -753,7 +748,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateTransfersPanel()
     {
     app->ProcessIdleTasks();
     }
-
+  this->Script ("update idletasks");
 }
 
 
@@ -986,6 +981,10 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
     this->AsynchronousCheckButton->SetParent ( this->ControlFrame );
     this->AsynchronousCheckButton->Create();
     this->AsynchronousCheckButton->SetText ("Use asynchronous I/O");
+    this->AsynchronousCheckButton->SetStateToDisabled();
+    this->AsynchronousCheckButton->SetSelectedState(0);
+    // DISABLE FOR NOW.
+    /*
     if ( this->DataIOManager != NULL )
       {
       this->AsynchronousCheckButton->SetSelectedState(this->DataIOManager->GetEnableAsynchronousIO() );
@@ -994,7 +993,8 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
       {
       this->AsynchronousCheckButton->SetSelectedState(0);
       }
-
+    */
+    
     // not packed for now.
     this->TimeOutCheckButton = vtkKWCheckButton::New();
     this->TimeOutCheckButton->SetParent ( this->ControlFrame );
@@ -1196,7 +1196,8 @@ void vtkSlicerCacheAndDataIOManagerGUI::DisplayManagerWindow ( )
   vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: Displaying Manager Window");
   this->ManagerTopLevel->DeIconify();
   this->ManagerTopLevel->Raise();
-  //--- wjp test.
+  this->Script ("update idletasks");
+  
   this->UpdateEntireGUI();
   
   //--- refresh the GUI
@@ -1206,6 +1207,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::DisplayManagerWindow ( )
     app->ProcessIdleTasks();
     }
 
+  this->Script ("update idletasks");
   vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: DONE displaying Manager Window");
 }
 
