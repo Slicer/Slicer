@@ -216,7 +216,6 @@ void vtkNeuroNavLogic::UpdateTransformNodeByName(const char *name)
     {
     this->SetTransformNodeName(name);
 
-    vtkMRMLLinearTransformNode* transformNode;
     vtkMRMLScene* scene = this->GetApplicationLogic()->GetMRMLScene();
     vtkCollection* collection = scene->GetNodesByName(this->TransformNodeName);
 
@@ -280,9 +279,6 @@ void vtkNeuroNavLogic::UpdateDisplay(int sliceNo1, int sliceNo2, int sliceNo3)
     float tx = transform->GetElement(0, 0);
     float ty = transform->GetElement(1, 0);
     float tz = transform->GetElement(2, 0);
-    float sx = transform->GetElement(0, 1);
-    float sy = transform->GetElement(1, 1);
-    float sz = transform->GetElement(2, 1);
     float nx = transform->GetElement(0, 2);
     float ny = transform->GetElement(1, 2);
     float nz = transform->GetElement(2, 2);

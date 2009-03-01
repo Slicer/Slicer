@@ -429,7 +429,7 @@ void vtkNeuroNavGUI::HandleMouseEvent(vtkSlicerInteractorStyle *style)
       std::string ras = std::string(rasText);
 
       // remove "R:," "A:," and "S:" from the string
-      int loc = ras.find("R:", 0);
+      size_t loc = ras.find("R:", 0);
       if ( loc != std::string::npos ) 
         {
         ras = ras.replace(loc, 2, "");
@@ -446,7 +446,7 @@ void vtkNeuroNavGUI::HandleMouseEvent(vtkSlicerInteractorStyle *style)
         }
 
       // remove "\n" from the string
-      int found = ras.find("\n", 0);
+      size_t found = ras.find("\n", 0);
       while ( found != std::string::npos )
         {
         ras = ras.replace(found, 1, " ");
@@ -676,8 +676,6 @@ void vtkNeuroNavGUI::ProcessMRMLEvents ( vtkObject *caller,
 void vtkNeuroNavGUI::Enter ( )
 {
   // Fill in
-  vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
-
 
   if (this->TimerFlag == 0)
     {
