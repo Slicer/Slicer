@@ -280,13 +280,14 @@ void vtkMRMLVolumeRenderingNode::Copy(vtkMRMLNode *anode)
     this->SetCroppingEnabled (node->CroppingEnabled);
     this->SetCroppingRegionPlanes(node->CroppingRegionPlanes);
     this->References = node->References;
-    this->CopyParameterset(anode);
+    this->CopyParameterSet(anode);
     
     this->DisableModifiedEventOff();
     this->InvokePendingModifiedEvent();
 
 }
-void vtkMRMLVolumeRenderingNode::CopyParameterset(vtkMRMLNode *anode)
+
+void vtkMRMLVolumeRenderingNode::CopyParameterSet(vtkMRMLNode *anode)
 {
     //cast
     vtkMRMLVolumeRenderingNode *node = (vtkMRMLVolumeRenderingNode *) anode;

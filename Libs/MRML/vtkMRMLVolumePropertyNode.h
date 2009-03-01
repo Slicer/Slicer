@@ -81,7 +81,7 @@ public:
 
     //Description;
     //Copy only the paramterset (like Volume Propertys, Piecewiesefunctions etc. as deep copy,but no references etc.)
-    void CopyParameterset(vtkMRMLNode *node);
+    void CopyParameterSet(vtkMRMLNode *node);
 
     // Description:
     // Get node XML tag name (like Volume, Model)
