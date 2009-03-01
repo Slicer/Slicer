@@ -474,6 +474,7 @@ void vtkFetchMILogic::RequestResourceUpload ( )
   retval = this->AddNewTagsToServer();
   if ( retval == 0 )
     {
+    //--- CATCH ERROR AND RESTORE!
     //--- post error message
     std::string msg = "Error checking tags against those on the selected server. Upload cancelled.";
     this->FetchMINode->SetErrorMessage (msg.c_str() );
@@ -496,6 +497,7 @@ void vtkFetchMILogic::RequestResourceUpload ( )
   retval = this->RequestStorableNodesUpload();
   if ( retval == 0 )
     {
+    //--- CATCH ERROR AND RESTORE!
     //--- post error message
     std::string msg = "Error uploading datasets to the selected server. Upload cancelled.";
     this->FetchMINode->SetErrorMessage (msg.c_str() );
@@ -526,6 +528,7 @@ void vtkFetchMILogic::RequestResourceUpload ( )
   retval = this->RequestSceneUpload();
   if ( retval == 0 )
     {
+    //--- CATCH ERROR AND RESTORE!
     //--- post error message
     std::string msg = "Error uploading scene description to the selected server. Upload cancelled.";
     this->FetchMINode->SetErrorMessage (msg.c_str() );
@@ -583,11 +586,9 @@ int vtkFetchMILogic::RequestStorableNodesUpload ( )
     return 0;
     }
 
-//  const char *svrName = this->GetCurrentWebService()->GetName();
-//  const char *svctype = this->GetCurrentWebService()->GetServiceType();
-
   //---
   //--- For each selected storable node:
+  //---     * Generate FileNameList any multi-file volumes.
   //---     * generate metadata using the writer
   //---     * post metadata thru the client caller
   //---     * parse post response and set URIs using the parser
@@ -614,6 +615,22 @@ int vtkFetchMILogic::RequestStorableNodesUpload ( )
         continue;
         }
 
+      //---
+      //--- Populate the multi-file list for any storage node that may have them.
+      //---
+
+      if ( storageNode->IsA("vtkMRMLVolumeArchetypeStorageNode") )
+        {
+        std::string moveFromDir = "";
+        vtkMRMLVolumeArchetypeStorageNode *s =vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(storageNode);
+        moveFromDir = s->UpdateFileList(storableNode, 1);
+        if (moveFromDir == std::string(""))
+          {
+          vtkErrorMacro ( "RequestStorableNodesUpload: unable to create file list for storageNode." );
+          return 0;
+          }
+        }
+      
       //---
       //--- empty out the URIList from past uploads/downloads in the storage node.
       //---
@@ -1739,7 +1756,6 @@ int vtkFetchMILogic::DeleteSceneFromServer ( const char *uri )
       //---
       //--- parse out all uris (scene's first) and uriListMembers into a vector of strings.
       //---
-//      int found = 0;
       size_t pos;
       size_t pos2;
       size_t pos3;
@@ -1748,16 +1764,17 @@ int vtkFetchMILogic::DeleteSceneFromServer ( const char *uri )
       {
       line.clear();
       pfile >> line;
+
       //--- look for uri: should only be one on a line.
-      pos = line.find ( "uri=" );
-      if ( pos == 0 && pos != std::string::npos )
+      pos = line.find ( "uri=", 0 );
+      if ( pos != std::string::npos )
         {
         //--- get everything between non-escaped quotes.
         // start at pos, look for openquote.
         pos2 = line.find ( "\"", pos );
         if ( (pos2 != std::string::npos) && ((pos2+1) != std::string::npos))
           {
-        // start at pos, look for closequote.
+          // start at pos, look for closequote.
           pos3 = line.find ( "\"", pos2+1);
           if ( pos3 != std::string::npos )
             {
@@ -1769,27 +1786,24 @@ int vtkFetchMILogic::DeleteSceneFromServer ( const char *uri )
         }
 
       //--- look for uriListMembers -- could be more than one on a line.
-      pos = line.find ( "uriListMember" );
-      while ( pos != std::string::npos)
+      pos = 0;
+      while ( (pos=line.find ("uriListMember", pos) != std::string::npos ) )
         {
-        pos = line.find ( "uriListMember");
-        if ( pos == 0 && pos != std::string::npos )
+        //--- get everything between non-escaped quotes.
+        // start at pos, look for openquote.
+        pos2 = line.find ( "\"", pos );
+        if ( (pos2+1) < std::string::npos )
           {
-          //--- get everything between non-escaped quotes.
-          // start at pos, look for openquote.
-          pos2 = line.find ( "\"", pos );
-          if ( (pos2 != std::string::npos) && ((pos2+1) != std::string::npos))
-            {
           // start at pos, look for closequote.
-            pos3 = line.find ( "\"", pos2+1 );
-            if ( pos3 != std::string::npos )
-              {
-              // grab what's between quotes
-              target = line.substr ((pos2+1), (pos3-pos2-1));
-              deleteTargets.push_back( target );
-              }
+          pos3 = line.find ( "\"", pos2+1 );
+          if ( pos3 != std::string::npos )
+            {
+            // grab what's between quotes
+            target = line.substr ((pos2+1), (pos3-pos2-1));
+            deleteTargets.push_back( target );
             }
           }
+        pos ++;
         }
       }
       pfile.close();
@@ -2952,19 +2966,27 @@ int vtkFetchMILogic::CheckStorageNodeFileNames()
 void vtkFetchMILogic::SaveNewURIOnSelectedResource ( const char *olduri, const char *newuri )
 {
   //--- find old uri in the list and map it to the  new uri name.
-  if ( olduri == NULL || newuri == NULL)
+  if ( newuri == NULL )
     {
     return;
     }
 
-  std::string oldstr = olduri;
   std::string newstr = newuri;
+  std::string oldstr;
+  if (  olduri == NULL )
+    {
+    oldstr = "NULL";
+    }
+  else
+    {
+    oldstr = olduri;
+    }
   const char *otst;
   const char *ntst;
 
   std::map<std::string, std::string>::iterator iter;
   for ( iter = this->OldAndNewURIs.begin();
-        iter != this->OldAndNewURIs.end(); )
+        iter != this->OldAndNewURIs.end(); iter++)
     {
     if ( iter->first == oldstr )
       {
@@ -3147,7 +3169,14 @@ int vtkFetchMILogic::RestoreURIsOnSelectedResources ( )
             if  (iter->second == tstURI )  
               {
               //--- restore the filename, count it and mark found
-              storageNode->SetURI ( iter->first.c_str() );              
+              if ( iter->first == "NULL" )
+                {
+                storageNode->SetURI ( NULL );
+                }
+              else
+                {
+                storageNode->SetURI ( iter->first.c_str() );
+                }
               restoreCount++;
               foundURIOnNode = 1;
               //--- get rid of the name just restored in the map.
@@ -3183,7 +3212,10 @@ int vtkFetchMILogic::RestoreURIsOnSelectedResources ( )
                   {
                   if  (iter2->second == URIList[filenum] )
                     {
-                    storageNode->AddURI ( iter2->first.c_str() );
+                    if ( iter2->first != "NULL")
+                      {
+                      storageNode->AddURI ( iter2->first.c_str() );
+                      }
                     restoreCount ++;
                     foundURIListMemberOnNode = 1;
                     this->OldAndNewURIs.erase( iter2++);
