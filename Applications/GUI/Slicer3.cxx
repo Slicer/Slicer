@@ -61,14 +61,7 @@
 #include "vtkSlicerROIGUI.h"
 
 #ifdef Slicer3_USE_PYTHON
-// If debug, Python wants pythonxx_d.lib, so fake it out
-#ifdef _DEBUG
-#undef _DEBUG
-#include <Python.h>
-#define _DEBUG
-#else
-#include <Python.h>
-#endif
+#include "slicerPython.h"
 
 extern "C" {
   void init_mytkinter( Tcl_Interp* );

@@ -74,13 +74,7 @@ a
 #include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
 #ifdef Slicer3_USE_PYTHON
-#ifdef _DEBUG
-#undef _DEBUG
-#include <Python.h>
-#define _DEBUG
-#else
-#include <Python.h>
-#endif
+#include "slicerPython.h"
 #endif
 
 //---------------------------------------------------------------------------

@@ -11,6 +11,11 @@
 #include "vtkMatrix4x4.h"
 
 #ifdef Slicer3_USE_PYTHON
+// Python will define _LARGEFILE_SOURCE to 1, while kwsys simply defines it - undef it here
+// to avoid getting a warning during the build
+#ifdef _LARGEFILE_SOURCE
+#undef _LARGEFILE_SOURCE
+#endif 
 #ifdef _DEBUG
 #undef _DEBUG
 #include <Python.h>
