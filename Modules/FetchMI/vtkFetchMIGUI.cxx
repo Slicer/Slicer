@@ -14,6 +14,8 @@
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkSlicerPopUpHelpWidget.h"
+#include "vtkSlicerGUILayout.h"
+#include "vtkSlicerWaitMessageWidget.h"
 
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLVolumeNode.h"
@@ -30,8 +32,10 @@
 #include "vtkHIDTagTable.h"
 #include "vtkTagTable.h"
 
+
 #include "vtkKWApplication.h"
 #include "vtkKWWidget.h"
+#include "vtkKWEvent.h"
 #include "vtkKWEntry.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWLabel.h"
@@ -39,6 +43,7 @@
 #include "vtkKWMenuButton.h"
 #include "vtkKWMenuButtonWithLabel.h"
 #include "vtkKWFrame.h"
+#include "vtkKWSplitFrame.h"
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWMessageDialog.h"
@@ -51,12 +56,21 @@
 #include "vtkFetchMIFlatResourceWidget.h"
 #include "vtkFetchMIResourceUploadWidget.h"
 #include "vtkFetchMITagViewWidget.h"
+#include "vtkKWNotebook.h"
 
 #include <map>
 #include <string>
 #include <vector>
 #include <iterator>
 #include <sstream>
+
+#define _br 0.945
+#define _bg 0.945
+#define _bb 0.975
+
+#define _fr 0.75
+#define _fg 0.75
+#define _fb 0.75
 
 //----------------------------------------------------------------------------
 //--- a word about language:
@@ -101,7 +115,8 @@ vtkFetchMIGUI::vtkFetchMIGUI()
   this->UpdatingMRML = 0;
   this->DataDirectoryName = NULL;
   this->TagViewer = NULL;
-
+  this->Notebook = NULL;
+  this->SetGUIWidth(-1);
   
 //  this->DebugOn();
 }
@@ -111,6 +126,7 @@ vtkFetchMIGUI::~vtkFetchMIGUI()
 {
     this->RemoveMRMLNodeObservers ( );
     this->RemoveLogicObservers ( );
+    this->SetGUIWidth(-1);
     
     if ( this->QueryList )
       {
@@ -183,6 +199,12 @@ vtkFetchMIGUI::~vtkFetchMIGUI()
       this->TagViewer->Delete();
       this->TagViewer = NULL;
       }
+    if ( this->Notebook )
+      {
+      this->Notebook->SetParent ( NULL );
+      this->Notebook->Delete();
+      this->Notebook = NULL;
+      }
 
     this->UpdatingMRML = 0;
     this->UpdatingGUI = 0;
@@ -191,6 +213,59 @@ vtkFetchMIGUI::~vtkFetchMIGUI()
     this->Logic = NULL;
     vtkSetAndObserveMRMLNodeMacro( this->FetchMINode, NULL );
 }
+
+//----------------------------------------------------------------------------
+void vtkFetchMIGUI::Enter()
+{
+  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+  if ( app )
+    {
+    vtkSlicerGUILayout *geom = app->GetDefaultGeometry ( );
+    if ( geom )
+      {
+      vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
+      if ( appGUI )
+        {
+        if ( appGUI->GetMainSlicerWindow() )
+          {
+          this->SetGUIWidth (appGUI->GetMainSlicerWindow()->GetMainSplitFrame()->GetFrame1Size ());
+          appGUI->GetMainSlicerWindow()->GetMainSplitFrame()->SetFrame1Size (geom->GetDefaultGUIPanelWidth() * 1.75 );
+          }
+        }
+      }
+    }
+}
+
+
+//----------------------------------------------------------------------------
+void vtkFetchMIGUI::Exit ( )
+{
+  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+  if ( app )
+    {
+    vtkSlicerGUILayout *geom = app->GetDefaultGeometry ( );
+    if ( geom )
+      {
+      vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
+      if ( appGUI )
+        {
+        if ( appGUI->GetMainSlicerWindow() )
+          {
+          if ( this->GUIWidth < 0 )
+            {
+            appGUI->GetMainSlicerWindow()->GetMainSplitFrame()->SetFrame1Size (geom->GetDefaultGUIPanelWidth() );
+            }
+          else
+            {
+            // restore.
+            appGUI->GetMainSlicerWindow()->GetMainSplitFrame()->SetFrame1Size (this->GUIWidth );
+            }
+          }
+        }
+      }
+    }
+}
+
 
 //----------------------------------------------------------------------------
 void vtkFetchMIGUI::TearDownGUI ( )
@@ -269,6 +344,8 @@ void vtkFetchMIGUI::AddGUIObservers ( )
   this->TaggedDataList->AddObserver(vtkFetchMIResourceUploadWidget::UploadRequestedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->TaggedDataList->AddWidgetObservers();
   this->ServerMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->Notebook->AddObserver ( vtkKWEvent::NotebookRaisePageEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->Notebook->AddObserver ( vtkKWEvent::NotebookShowPageEvent, (vtkCommand *)this->GUICallbackCommand );
 //  this->AddServerEntry->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
 //  this->CloseNewServerButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 //  this->AddServerButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -291,6 +368,8 @@ void vtkFetchMIGUI::RemoveGUIObservers ( )
   this->TaggedDataList->RemoveObservers(vtkFetchMIResourceUploadWidget::UploadRequestedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->TaggedDataList->RemoveWidgetObservers();
   this->ServerMenuButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->Notebook->RemoveObservers ( vtkKWEvent::NotebookRaisePageEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->Notebook->RemoveObservers ( vtkKWEvent::NotebookShowPageEvent, (vtkCommand *)this->GUICallbackCommand );
 //  this->AddServerEntry->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
 //  this->CloseNewServerButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 //  this->AddServerButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -344,6 +423,7 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
   vtkKWEntry *e = vtkKWEntry::SafeDownCast ( caller );
   vtkKWMenu *m = vtkKWMenu::SafeDownCast ( caller );
+  vtkKWNotebook *n = vtkKWNotebook::SafeDownCast ( caller );
   vtkFetchMIResourceUploadWidget *w = vtkFetchMIResourceUploadWidget::SafeDownCast ( caller );
   vtkFetchMIFlatResourceWidget *f = vtkFetchMIFlatResourceWidget::SafeDownCast ( caller );
   vtkFetchMIQueryTermWidget *q= vtkFetchMIQueryTermWidget::SafeDownCast ( caller );
@@ -387,9 +467,57 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
       }
     else if ( (w== this->TaggedDataList) && (event == vtkFetchMIResourceUploadWidget::UploadRequestedEvent) )
       {
-      this->Logic->RequestResourceUpload();
+      //--- try to post a message....
+      if ( this->GetApplication() )
+        {
+        vtkSlicerApplication* app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
+        if ( app )
+          {
+          vtkSlicerApplicationGUI *appGUI = app->GetApplicationGUI();
+          if ( appGUI )
+            {
+            if (appGUI->GetMainSlicerWindow() )
+              {
+              vtkSlicerWaitMessageWidget *wm = vtkSlicerWaitMessageWidget::New();
+              wm->SetParent ( appGUI->GetMainSlicerWindow() );
+              wm->Create();
+              wm->SetText ("Uploading scene and its resources (may take a little while)...");
+              wm->DisplayWindow();
+              this->SetStatusText ("Uploading scene and its resources ( may take a little while).");
+              this->Logic->RequestResourceUpload();
+              wm->SetText ("Uploading scene and its resources (may take a little while)... done.");
+              wm->WithdrawWindow();
+              wm->Delete();
+              this->SetStatusText ("");
+              }
+            }
+          }
+        }
+      else
+        {
+        this->Logic->RequestResourceUpload();
+        }
       }
     }
+/*
+  if ( n != NULL )
+    {
+    if ( (n == this->Notebook) && ((event == vtkKWEvent::NotebookRaisePageEvent) ||
+                                   (event == vtkKWEvent::NotebookShowPageEvent)) )
+      {
+      int id = this->Notebook->GetRaisedPageId();
+      //--- grey all pages fg color down
+      this->Notebook->SetForegroundColor ( _fr, _fg, _fb);
+      //--- then highlight the raised page.
+      vtkKWFrame *nf = this->Notebook->GetFrame (id );
+      if ( nf )
+        {
+        nf->SetForegroundColor ( 0.0, 0.0, 0.0);
+        }
+      }
+    }
+*/
+
   if ( q != NULL )
     {
     if ( (q== this->QueryList) && (event == vtkFetchMIQueryTermWidget::TagChangedEvent) )
@@ -417,6 +545,7 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
           //--- TODO: when more service types are availabe, build out way to get them
           this->Logic->AddNewServer(e->GetValue(), "XND", "XND", "XND");
           this->FetchMINode->SetServer ( this->ServerMenuButton->GetValue() );
+          e->SetValue ( "" );
           this->ResourceList->DeleteAllItems();
           }
         }
@@ -433,6 +562,7 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
           //--- TODO: when more service types are availabe, build out way to get them
           this->Logic->AddNewServer (this->GetAddServerEntry()->GetValue(), "XND", "XND", "XND");
           this->FetchMINode->SetServer ( this->ServerMenuButton->GetValue() );        
+          this->ResourceList->DeleteAllItems();
           }
         }
       }
@@ -461,9 +591,10 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
               this->TaggedDataList->ResetCurrentTagLabel();
               }
             }
-          if ( !(strcmp (this->ServerMenuButton->GetValue(), "Add new server (XNAT Desktop only)" )))
+          if ( !(strcmp (this->ServerMenuButton->GetValue(), "Add new server (XNAT Desktop servers only)" )))
             {
-            this->RaiseNewServerWindow ();
+            vtkErrorMacro ( "This is commented out for now." );
+            //this->RaiseNewServerWindow ();
             return;
             }
 
@@ -471,14 +602,44 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
           //--- this queries server for tags
           vtkDebugMacro ("--------------------GUI event calling Query.");
           this->SetStatusText ( "Querying selected server for metadata (may take a little while)..." );
-          this->Logic->QueryServerForTags();
-          this->SetStatusText ( "Querying selected server for metadata (may take a little while)......." );
-          this->Logic->QueryServerForTagValues( );
-          this->SetStatusText ( "Querying selected server for metadata (may take a little while)....... done." );
-          // TODO: temporary fix for HID which we are
-          // not yet querying for available tags. Just
-          // repopulate from default tags in FetchMINode
-          this->SetStatusText ( "" );
+
+          if ( this->GetApplication() )
+            {
+            vtkSlicerApplication* app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
+            if ( app )
+              {
+              vtkSlicerApplicationGUI *appGUI = app->GetApplicationGUI();
+              if ( appGUI )
+                {
+                if (appGUI->GetMainSlicerWindow() )
+                  {
+
+                  vtkSlicerWaitMessageWidget *wm = vtkSlicerWaitMessageWidget::New();
+                  wm->SetParent ( appGUI->GetMainSlicerWindow() );
+                  wm->Create();
+                  wm->SetText ("Querying selected server for metadata (may take a little while)...");
+                  wm->DisplayWindow();
+                  this->Logic->QueryServerForTags();
+                  this->SetStatusText ( "Querying selected server for metadata (may take a little while)......." );
+                  this->Logic->QueryServerForTagValues( );
+                  wm->SetText ("Querying selected server for metadata (may take a little while)... done.");
+                  wm->WithdrawWindow();
+                  wm->Delete();
+                  // TODO: temporary fix for HID which we are
+                  // not yet querying for available tags. Just
+                  // repopulate from default tags in FetchMINode
+                  this->SetStatusText ( "" );
+                  }
+                }
+              }
+            }
+          else
+            {
+            this->Logic->QueryServerForTags();
+            this->SetStatusText ( "Querying selected server for metadata (may take a little while)......." );
+            this->Logic->QueryServerForTagValues( );
+            this->SetStatusText ( "" );
+            }
           }
         }
       }
@@ -1305,7 +1466,7 @@ void vtkFetchMIGUI::UpdateGUI ()
         }
       //TODO: hook up these commands!
       this->ServerMenuButton->GetMenu()->AddSeparator();
-      this->ServerMenuButton->GetMenu()->AddRadioButton("Add new server");
+      this->ServerMenuButton->GetMenu()->AddRadioButton("Add new server (XNAT Desktop servers only)");
       
       //--- select active server in the ServerMenuButton
       if ( this->FetchMINode->GetSelectedServer() != NULL )
@@ -1431,7 +1592,7 @@ void vtkFetchMIGUI::RaiseNewServerWindow()
   this->NewServerWindow->SetPosition ( px + 10, py + 10) ;
   this->NewServerWindow->SetBorderWidth ( 1 );
   this->NewServerWindow->SetReliefToFlat();
-  this->NewServerWindow->SetTitle ("Add a new (XNAT Desktop only) server");
+  this->NewServerWindow->SetTitle ("Add a new server (only XNAT Desktop supported at this time.)");
   this->NewServerWindow->SetSize (450, 75);
   this->NewServerWindow->Withdraw();
   this->NewServerWindow->SetDeleteWindowProtocolCommand ( this, "DestroyNewServerWindow");
@@ -1526,7 +1687,7 @@ void vtkFetchMIGUI::ShowSelectionTagView()
 
   std::stringstream ss;
   vtkMRMLStorableNode *node;
-  vtkTagTable *t;
+  vtkTagTable *t = NULL;
 
   //--- figure out the text
 //  int dnum = this->TaggedDataList->GetNumberOfSelectedItems();
@@ -1701,6 +1862,9 @@ void vtkFetchMIGUI::DeleteSelectedResourcesFromServer()
   //--- For each resource successfully deleted, the ResourceList is updated; and if any
   //--- resource deletion causes an error, a message dialog is posted warning the user
   //--- that not all resources may have been deleted.
+
+  //--- try to post a message....
+
   int num = this->ResourceList->GetNumberOfSelectedItems();
   // loop over all selected data; 
   int retval = 1;
@@ -1726,11 +1890,65 @@ void vtkFetchMIGUI::DeleteSelectedResourcesFromServer()
 
       if ( rval == vtkKWMessageDialog::StatusOK )
         {
-        retval = this->Logic->DeleteSceneFromServer ( deleteURI.c_str() );
+        if ( this->GetApplication() )
+          {
+          vtkSlicerApplication* app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
+          if ( app )
+            {
+            vtkSlicerApplicationGUI *appGUI = app->GetApplicationGUI();
+            if ( appGUI )
+              {
+              if (appGUI->GetMainSlicerWindow() )
+                {
+                vtkSlicerWaitMessageWidget *wm = vtkSlicerWaitMessageWidget::New();
+                wm->SetParent ( appGUI->GetMainSlicerWindow() );
+                wm->Create();
+                wm->SetText ("Deleting scene and it's referenced datasets from the server (may take a little while)...");
+                wm->DisplayWindow();
+                retval = this->Logic->DeleteSceneFromServer ( deleteURI.c_str() );
+                wm->SetText ("Deleting scene and it's referenced datasets from the server (may take a little while)... done.");
+                wm->WithdrawWindow();
+                wm->Delete();
+                this->SetStatusText ("");
+                }
+              }
+            }
+          }
+        else
+          {
+          retval = this->Logic->DeleteSceneFromServer ( deleteURI.c_str() );
+          }
         }
       if ( rval == vtkKWMessageDialog::StatusOther )
         {
-        retval = this->Logic->DeleteResourceFromServer ( deleteURI.c_str() );
+        if ( this->GetApplication() )
+          {
+          vtkSlicerApplication* app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
+          if ( app )
+            {
+            vtkSlicerApplicationGUI *appGUI = app->GetApplicationGUI();
+            if ( appGUI )
+              {
+              if (appGUI->GetMainSlicerWindow() )
+                {
+                vtkSlicerWaitMessageWidget *wm = vtkSlicerWaitMessageWidget::New();
+                wm->SetParent ( appGUI->GetMainSlicerWindow() );
+                wm->Create();
+                wm->SetText ("Deleting scene file from the server (may take a little while)...");
+                wm->DisplayWindow();
+                retval = this->Logic->DeleteResourceFromServer ( deleteURI.c_str() );
+                wm->SetText ("Deleting scene file from the server (may take a little while)... done.");
+                wm->WithdrawWindow();
+                wm->Delete();
+                this->SetStatusText ("");
+                }
+              }
+            }
+          }
+        else
+          {
+          retval = this->Logic->DeleteResourceFromServer ( deleteURI.c_str() );
+          }
         }
       if ( retval != 1 )
         {
@@ -1961,48 +2179,33 @@ void vtkFetchMIGUI::BuildGUI ( )
   this->ServerMenuButton->Create();
   this->ServerMenuButton->SetValue ( "none" );
 
+  this->Notebook = vtkKWNotebook::New();
+  this->Notebook->SetParent ( serverFrame );
+  this->Notebook->Create();
+  this->Notebook->UseFrameWithScrollbarsOn();
+  this->Notebook->SetPageTabColor ( _br, _bg, _bb);
+  this->Notebook->SetSelectedPageTabColor (1.0, 1.0, 1.0 );
+
+  this->Notebook->AddPage ( "Query for Scenes", "Query the server for resources that match selected metadata." );
+  this->Notebook->AddPage ( "Browse Query Results & Download", "Browse resources and select a scene for download." );
+  this->Notebook->AddPage ( "Tag Scene & Upload", "Apply metadata to datasets and the scene and upload to selected server." );
+  this->Notebook->RaisePage ("Query for Scenes");
   
   this->Script ( "grid %s -row 0 -column 0 -sticky e -padx 2 -pady 2", l1->GetWidgetName() );
   this->Script ( "grid %s -row 0 -column 1 -sticky ew -padx 2 -pady 2", this->ServerMenuButton->GetWidgetName() );
+  this->Script ( "grid %s -row 1 -column 0 -columnspan 2 -sticky ew -padx 2 -pady 2", this->Notebook->GetWidgetName() );
   this->Script ( "grid columnconfigure %s 0 -weight 0", serverFrame->GetWidgetName() );
   this->Script ( "grid columnconfigure %s 1 -weight 1", serverFrame->GetWidgetName() );
-  
-  // Query Frame
-  vtkSlicerModuleCollapsibleFrame *queryFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-  queryFrame->SetParent(page);
-  queryFrame->Create();
-  queryFrame->SetLabelText("Query Web Services for Data");
-  queryFrame->ExpandFrame();
-  app->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2 -in %s",
-    queryFrame->GetWidgetName(), page->GetWidgetName());
-
-  // Download Frame
-  vtkSlicerModuleCollapsibleFrame *resourceFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-  resourceFrame->SetParent(page);
-  resourceFrame->Create();
-  resourceFrame->SetLabelText("Browse Query Results & Download (Scenes only)");
-  resourceFrame->ExpandFrame();
-  app->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2 -in %s",
-    resourceFrame->GetWidgetName(), page->GetWidgetName());
-
-  // Tag & Upload Frame
-  vtkSlicerModuleCollapsibleFrame *descriptionFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-  descriptionFrame->SetParent(page);
-  descriptionFrame->Create();
-  descriptionFrame->SetLabelText("Describe Data & Upload (Scenes+data only)");
-  descriptionFrame->ExpandFrame();
-  app->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2 -in %s",
-    descriptionFrame->GetWidgetName(), page->GetWidgetName());
 
   this->QueryList = vtkFetchMIQueryTermWidget::New();
-  this->QueryList->SetParent ( queryFrame->GetFrame() );
+  this->QueryList->SetParent ( this->Notebook->GetFrame ( "Query for Scenes") );
   this->QueryList->Create();
   this->QueryList->SetApplication ( app );
   this->QueryList->SetLogic ( this->Logic );
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->QueryList->GetWidgetName() );
 
   this->ResourceList = vtkFetchMIFlatResourceWidget::New();
-  this->ResourceList->SetParent ( resourceFrame->GetFrame() );
+  this->ResourceList->SetParent ( this->Notebook->GetFrame ("Browse Query Results & Download") );
   this->ResourceList->Create();
   this->ResourceList->SetApplication ( app );
   this->ResourceList->SetLogic ( this->Logic );
@@ -2010,20 +2213,15 @@ void vtkFetchMIGUI::BuildGUI ( )
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->ResourceList->GetWidgetName() );
 
   this->TaggedDataList = vtkFetchMIResourceUploadWidget::New();
-  this->TaggedDataList->SetParent ( descriptionFrame->GetFrame() );
+  this->TaggedDataList->SetParent ( this->Notebook->GetFrame ( "Tag Scene & Upload" ) );
   this->TaggedDataList->Create();
   this->TaggedDataList->SetApplication ( app );
   this->TaggedDataList->SetLogic ( this->Logic );
   this->TaggedDataList->SetMRMLScene ( this->MRMLScene );
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->TaggedDataList->GetWidgetName() );
 
-
   l1->Delete();
-  
   serverFrame->Delete();
-  queryFrame->Delete();
-  resourceFrame->Delete();
-  descriptionFrame->Delete();  
 
   this->UpdateGUI();
 //  this->Logic->CreateTemporaryFiles();

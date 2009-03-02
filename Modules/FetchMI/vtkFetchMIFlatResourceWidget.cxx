@@ -4,6 +4,10 @@
 
 #include "vtkFetchMIFlatResourceWidget.h"
 #include "vtkSlicerApplication.h"
+#include "vtkSlicerApplicationGUI.h"
+#include "vtkSlicerWindow.h"
+#include "vtkSlicerWaitMessageWidget.h"
+
 #include "vtkKWFrame.h"
 #include "vtkKWMultiColumnList.h"
 #include "vtkKWMultiColumnListWithScrollbars.h"
@@ -229,11 +233,45 @@ void vtkFetchMIFlatResourceWidget::ProcessWidgetEvents ( vtkObject *caller,
 //      int dlFlag = 0;
 //      int dtFlag = 0;
 
-      for ( int n=0; n <num; n++)
+      //--- try to post a wait message
+      if ( this->GetApplication() )
         {
-        dtype = this->GetNthSelectedSlicerDataType (n);
-        uri = this->GetNthSelectedURI (n);
-        this->Logic->RequestResourceDownload (uri.c_str(), dtype.c_str());
+        vtkSlicerApplication* app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
+        if ( app )
+          {
+          vtkSlicerApplicationGUI *appGUI = app->GetApplicationGUI();
+          if ( appGUI )
+            {
+            if (appGUI->GetMainSlicerWindow() )
+              {
+              vtkSlicerWaitMessageWidget *wm = vtkSlicerWaitMessageWidget::New();
+              wm->SetParent ( appGUI->GetMainSlicerWindow() );
+              wm->Create();
+              wm->SetText ("Downloading requested resources (may take a little while)...");
+              this->SetStatusText ( "Downloading requested resources (may take a little while)...");
+              wm->DisplayWindow();
+              for ( int n=0; n <num; n++)
+                {
+                dtype = this->GetNthSelectedSlicerDataType (n);
+                uri = this->GetNthSelectedURI (n);
+                this->Logic->RequestResourceDownload (uri.c_str(), dtype.c_str());
+                }
+              wm->SetText ("Downloading requested resources (may take a little while)... done.");
+              wm->WithdrawWindow();
+              wm->Delete();
+              this->SetStatusText ("");
+              }
+            }
+          }
+        }
+      else
+        {
+        for ( int n=0; n <num; n++)
+          {
+          dtype = this->GetNthSelectedSlicerDataType (n);
+          uri = this->GetNthSelectedURI (n);
+          this->Logic->RequestResourceDownload (uri.c_str(), dtype.c_str());
+          }
         }
       }
     else if ( (b == this->GetClearSelectedButton()) && (event == vtkKWPushButton::InvokedEvent ) )
@@ -473,45 +511,13 @@ void vtkFetchMIFlatResourceWidget::CreateWidget ( )
   // create the icons
   this->FetchMIIcons = vtkFetchMIIcons::New();
 
-  this->GetMultiColumnList()->GetWidget()->AddColumn ( "Select" );
-  this->GetMultiColumnList()->GetWidget()->ColumnEditableOn ( 0 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnAlignmentToLeft (0 );
-  this->GetMultiColumnList()->GetWidget()->ColumnResizableOff ( 0 );
-  this->GetMultiColumnList()->GetWidget()->ColumnStretchableOff ( 0 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnFormatCommandToEmptyOutput(0);
-  this->GetMultiColumnList()->GetWidget()->SetColumnEditWindowToCheckButton(0);
-
-  this->GetMultiColumnList()->GetWidget()->AddColumn ( "Filename      " );
-  this->GetMultiColumnList()->GetWidget()->ColumnEditableOff ( 1 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnWidth ( 1, 0 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnSortModeToAscii ( 1 );
-
-  this->GetMultiColumnList()->GetWidget()->AddColumn ( "Slicer Data Type" );
-  this->GetMultiColumnList()->GetWidget()->ColumnEditableOff ( 2 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnWidth ( 2, 0 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnSortModeToAscii ( 2 );
-
-  this->GetMultiColumnList()->GetWidget()->AddColumn ( "Query Result" );
-  this->GetMultiColumnList()->GetWidget()->ColumnEditableOff ( 3 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnWidth ( 3, 0 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnSortModeToAscii ( 3 );
-
-  // some problems with editing, so add a call back
-  this->GetMultiColumnList()->GetWidget()->SetRightClickCommand(this, "RightClickListCallback");
-  
-  this->Script ( "pack %s -side top -fill x -expand n", this->GetMultiColumnList()->GetWidgetName() );
 
   // frame for the buttons
   vtkKWFrame *bFrame = vtkKWFrame::New();
   bFrame->SetParent ( this->ContainerFrame );
   bFrame->Create();
-  this->Script ("pack %s -side top -fill x -anchor c -expand n -padx 2 -pady 2", bFrame->GetWidgetName() );
+  this->Script ("pack %s -side top -fill x -anchor c -expand n -padx 2 -pady 6", bFrame->GetWidgetName() );
 
-  vtkKWLabel *spacer = vtkKWLabel::New();
-  spacer->SetParent ( bFrame );
-  spacer->Create();
-  spacer->SetText ("             " );
-  
   this->DownloadSelectedButton = vtkKWPushButton::New();
   this->DownloadSelectedButton->SetParent (bFrame);
   this->DownloadSelectedButton->Create();
@@ -576,6 +582,11 @@ void vtkFetchMIFlatResourceWidget::CreateWidget ( )
       }
     }
 
+  vtkKWLabel *spacer = vtkKWLabel::New();
+  spacer->SetParent ( bFrame );
+  spacer->Create();
+  spacer->SetText ("             " );
+
   this->Script ("pack %s -side left -anchor w -expand n -padx 2 -pady 2",
                 this->SelectAllButton->GetWidgetName() );
   this->Script ("pack %s -side left -anchor w -expand n -padx 2 -pady 2",
@@ -583,13 +594,42 @@ void vtkFetchMIFlatResourceWidget::CreateWidget ( )
   this->Script ("pack %s -side left -anchor w -expand n -padx 2 -pady 2",
                 this->HelpButton->GetWidgetName() );
 
-
   this->Script ("pack %s %s %s %s %s -side left -anchor w -expand n -padx 2 -pady 2",
                 spacer->GetWidgetName(),
                 this->ClearSelectedButton->GetWidgetName(),
                 this->ClearAllButton->GetWidgetName(),
                 this->DeleteButton->GetWidgetName(),
                 this->DownloadSelectedButton->GetWidgetName());
+
+  this->GetMultiColumnList()->GetWidget()->AddColumn ( "Select" );
+  this->GetMultiColumnList()->GetWidget()->ColumnEditableOn ( 0 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnAlignmentToLeft (0 );
+  this->GetMultiColumnList()->GetWidget()->ColumnResizableOff ( 0 );
+  this->GetMultiColumnList()->GetWidget()->ColumnStretchableOff ( 0 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnFormatCommandToEmptyOutput(0);
+  this->GetMultiColumnList()->GetWidget()->SetColumnEditWindowToCheckButton(0);
+
+  this->GetMultiColumnList()->GetWidget()->AddColumn ( "Filename      " );
+  this->GetMultiColumnList()->GetWidget()->ColumnEditableOff ( 1 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnWidth ( 1, 0 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnSortModeToAscii ( 1 );
+
+  this->GetMultiColumnList()->GetWidget()->AddColumn ( "Slicer Data Type" );
+  this->GetMultiColumnList()->GetWidget()->ColumnEditableOff ( 2 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnWidth ( 2, 0 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnSortModeToAscii ( 2 );
+
+  this->GetMultiColumnList()->GetWidget()->AddColumn ( "Query Result" );
+  this->GetMultiColumnList()->GetWidget()->ColumnEditableOff ( 3 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnWidth ( 3, 0 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnSortModeToAscii ( 3 );
+
+  this->GetMultiColumnList()->GetWidget()->SetHeight ( 22 );
+  
+  // some problems with editing, so add a call back
+  this->GetMultiColumnList()->GetWidget()->SetRightClickCommand(this, "RightClickListCallback");
+  
+  this->Script ( "pack %s -side top -fill x -pady 0 -expand n", this->GetMultiColumnList()->GetWidgetName() );
 
   spacer->Delete();
   bFrame->Delete();

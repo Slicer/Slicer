@@ -333,23 +333,26 @@ void vtkFetchMILogic::AddNewServer (const char *name,
   // Developers note: extend this check as new service types are added.
   if ( !(strcmp(type, "XND")))
     {
-    vtkFetchMIServer *s1 = vtkFetchMIServer::New();
-    vtkFetchMIWriterXND *xndw = vtkFetchMIWriterXND::New();
-    vtkFetchMIParserXND *xndp = vtkFetchMIParserXND::New();
-    vtkFetchMIWebServicesClientXND *xndc = vtkFetchMIWebServicesClientXND::New();
-    s1->SetName ( name );
-    s1->SetServiceType ( type );
-    s1->SetParser ( xndp);
-    s1->SetWriter (xndw);
-    s1->SetWebServicesClient ( xndc);
-    s1->SetURIHandlerName ( URIHandlerName );
-    s1->SetTagTableName ( TagTableName );
-    s1->SetTagTable ( this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XND" ) );
-    this->ServerCollection->AddItem ( s1 );
-    s1->Delete();
-    xndw->Delete();
-    xndp->Delete();
-    xndc->Delete();
+    vtkFetchMIServer *localhost = this->GetServerCollection()->FindServerByName ( "http://localhost:8081");
+    if ( localhost != NULL )
+      {
+      vtkFetchMIServer *s1 = vtkFetchMIServer::New();
+      s1->SetName ( name );
+      s1->SetServiceType ( type );
+      s1->SetParser ( localhost->GetParser() );
+      s1->SetWriter (localhost->GetWriter() );
+      s1->SetWebServicesClient ( localhost->GetWebServicesClient() );
+      s1->SetURIHandlerName ( URIHandlerName );
+      s1->SetTagTableName ( TagTableName );
+      s1->SetTagTable ( this->FetchMINode->GetTagTableCollection()->FindTagTableByName ( "XND" ) );
+      this->ServerCollection->AddItem ( s1 );
+      s1->Delete();
+      }
+    else
+      {
+    vtkErrorMacro ( "Server is of unknown or unsupported type." );
+    return;
+      }
     if ( this->FetchMINode != NULL )
       {
       this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::KnownServersModifiedEvent );

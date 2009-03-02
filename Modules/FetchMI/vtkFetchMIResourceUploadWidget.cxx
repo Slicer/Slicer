@@ -6,6 +6,7 @@
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerWindow.h"
+
 #include "vtkKWFrame.h"
 #include "vtkKWMultiColumnList.h"
 #include "vtkKWMultiColumnListWithScrollbars.h"
@@ -412,11 +413,10 @@ void vtkFetchMIResourceUploadWidget::UpdateNewUserTag( const char *att, const ch
   std::stringstream ss;
   if ( this->CurrentTagLabel )
     {
-    ss << "Tag: ";
     ss << this->CurrentTagAttribute;
     ss << " = ";
     ss << this->CurrentTagValue;
-    this->CurrentTagLabel->SetForegroundColor ( 0.05, 0.1, .46 );
+    this->CurrentTagLabel->SetForegroundColor ( 0.0, 0.0, 0.0);
     this->CurrentTagLabel->SetText ( ss.str().c_str() );
     }
 
@@ -531,15 +531,23 @@ void vtkFetchMIResourceUploadWidget::ProcessWidgetEvents ( vtkObject *caller, un
       {
       if ( this->AddNewValueEntry != NULL && this->AddNewTagEntry != NULL )
         {
-        this->UpdateNewUserTag ( this->AddNewTagEntry->GetValue(), this->AddNewValueEntry->GetValue());
-        }
+        if ( this->AddNewTagEntry->GetValue() != NULL && this->AddNewValueEntry->GetValue() != NULL )
+          {
+          this->UpdateNewUserTag ( this->AddNewTagEntry->GetValue(), this->AddNewValueEntry->GetValue());
+          }
+        this->AddNewValueEntry->SetValue ("");
+       }
       }
     if ( e == this->AddNewValueEntry && event == vtkKWEntry::EntryValueChangedEvent )
       {
       //--- make sure they're up.
       if ( this->AddNewValueEntry && this->AddNewTagEntry )
         {
-        this->UpdateNewUserTag ( this->AddNewTagEntry->GetValue(), this->AddNewValueEntry->GetValue());
+        if ( this->AddNewTagEntry->GetValue() != NULL && this->AddNewValueEntry->GetValue() != NULL )
+          {
+          this->UpdateNewUserTag ( this->AddNewTagEntry->GetValue(), this->AddNewValueEntry->GetValue());
+          }
+        this->AddNewTagEntry->SetValue ("");
         }
       }
     }
@@ -847,60 +855,39 @@ void vtkFetchMIResourceUploadWidget::CreateWidget ( )
   // create the icons
   this->FetchMIIcons = vtkFetchMIIcons::New();
 
-  this->GetMultiColumnList()->GetWidget()->AddColumn ( "Tag" );
-  this->GetMultiColumnList()->GetWidget()->ColumnEditableOn ( 0 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnAlignmentToLeft (0 );
-  this->GetMultiColumnList()->GetWidget()->ColumnResizableOff ( 0 );
-  this->GetMultiColumnList()->GetWidget()->ColumnStretchableOff ( 0 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnFormatCommandToEmptyOutput(0);
-  this->GetMultiColumnList()->GetWidget()->SetColumnEditWindowToCheckButton ( 0);
-
-  this->GetMultiColumnList()->GetWidget()->AddColumn ( "Show" );
-  this->GetMultiColumnList()->GetWidget()->ColumnEditableOff ( 1 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnAlignmentToLeft (1 );
-  this->GetMultiColumnList()->GetWidget()->ColumnResizableOff ( 1 );
-  this->GetMultiColumnList()->GetWidget()->ColumnStretchableOff ( 1 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnFormatCommandToEmptyOutput(1);
-
-  this->GetMultiColumnList()->GetWidget()->AddColumn ( "Filename      " );
-  this->GetMultiColumnList()->GetWidget()->ColumnEditableOff ( 2 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnWidth ( 2, 0 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnSortModeToAscii ( 2 );
-
-  this->GetMultiColumnList()->GetWidget()->AddColumn ( "Slicer Data Type" );
-  this->GetMultiColumnList()->GetWidget()->ColumnEditableOff ( 3 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnWidth ( 3, 0 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnSortModeToAscii ( 3 );
-//  this->GetMultiColumnList()->GetWidget()->ColumnVisibilityOff ( 3 );
-  
-  this->GetMultiColumnList()->GetWidget()->AddColumn ( "Scene/Data" );
-  this->GetMultiColumnList()->GetWidget()->ColumnEditableOff ( 4 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnWidth ( 4, 0 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnSortModeToAscii ( 4 );
-  this->Script ( "pack %s -side top -fill x -expand n", this->GetMultiColumnList()->GetWidgetName() );
-
   // frame for the buttons
-  vtkKWFrame *botFrame = vtkKWFrame::New();
-  botFrame->SetParent ( this->ContainerFrame );
-  botFrame->Create();
-  this->Script ("pack %s -side top -fill x -anchor nw -expand y -padx 2 -pady 2", botFrame->GetWidgetName() );
+  vtkKWFrame *topFrame = vtkKWFrame::New();
+  topFrame->SetParent ( this->ContainerFrame );
+  topFrame->Create();
+  this->Script ("pack %s -side top -fill x -anchor nw -expand y -padx 2 -pady 6", topFrame->GetWidgetName() );
   
   // frame for the buttons
   vtkKWFrame *buttonFrame = vtkKWFrame::New();
   buttonFrame->SetParent ( this->ContainerFrame );
   buttonFrame->Create();
-  this->Script ("pack %s -side top -anchor c -expand n -padx 2 -pady 2", buttonFrame->GetWidgetName() );
+  this->Script ("pack %s -side top -anchor c -expand y -fill x -padx 2 -pady 2", buttonFrame->GetWidgetName() );
 
   this->SelectTagMenuButton = vtkKWMenuButton::New();
-  this->SelectTagMenuButton->SetParent (botFrame);
+  this->SelectTagMenuButton->SetParent (topFrame);
   this->SelectTagMenuButton->Create();
   this->SelectTagMenuButton->IndicatorVisibilityOn();
   this->SelectTagMenuButton->SetBalloonHelpString (  "Select or create new tag." );  
   this->SelectTagMenuButton->SetValue ("Select a tag or create a new one");
   this->SelectTagMenuButton->SetBinding ("<Button-1>", this, "PopulateTagMenuButtonCallback" );
 
+  this->CurrentTagLabel = vtkKWLabel::New();
+  this->CurrentTagLabel->SetParent ( topFrame);
+  this->CurrentTagLabel->Create();
+  this->CurrentTagLabel->SetAnchorToCenter();
+  this->CurrentTagLabel->SetBackgroundColor ( 0.881378431373, 0.88137254902, 0.98294117647);
+  this->ResetCurrentTagLabel();
+
+  this->Script ( "grid %s -row 0 -column 0  -sticky ew -padx 2 -pady 2", this->SelectTagMenuButton->GetWidgetName() );
+  this->Script ( "grid %s -row 1 -column 0 -sticky ew -padx 2 -pady 2", this->CurrentTagLabel->GetWidgetName() );
+  this->Script ( "grid columnconfigure %s 0 -weight 1", topFrame->GetWidgetName() );
+  
   this->TaggingHelpButton = vtkKWPushButton::New();
-  this->TaggingHelpButton->SetParent (botFrame);
+  this->TaggingHelpButton->SetParent (buttonFrame);
   this->TaggingHelpButton->Create();
   this->TaggingHelpButton->SetBorderWidth ( 0 );
   this->TaggingHelpButton->SetReliefToFlat();  
@@ -908,7 +895,7 @@ void vtkFetchMIResourceUploadWidget::CreateWidget ( )
   this->TaggingHelpButton->SetBalloonHelpString ( "See more information about describing datasets with tags." );
 
   this->SelectAllButton = vtkKWPushButton::New();
-  this->SelectAllButton->SetParent (botFrame);
+  this->SelectAllButton->SetParent (buttonFrame);
   this->SelectAllButton->Create();
   this->SelectAllButton->SetBorderWidth ( 0 );
   this->SelectAllButton->SetReliefToFlat();  
@@ -916,7 +903,7 @@ void vtkFetchMIResourceUploadWidget::CreateWidget ( )
   this->SelectAllButton->SetBalloonHelpString ( "Select all datasets in list" );
 
   this->DeselectAllButton = vtkKWPushButton::New();
-  this->DeselectAllButton->SetParent (botFrame);
+  this->DeselectAllButton->SetParent (buttonFrame);
   this->DeselectAllButton->Create();
   this->DeselectAllButton->SetBorderWidth ( 0 );
   this->DeselectAllButton->SetReliefToFlat();  
@@ -957,29 +944,64 @@ void vtkFetchMIResourceUploadWidget::CreateWidget ( )
   this->UploadButton->SetReliefToFlat();
   this->UploadButton->SetImageToIcon ( this->FetchMIIcons->GetUploadIcon() );
 
-  this->CurrentTagLabel = vtkKWLabel::New();
-  this->CurrentTagLabel->SetParent ( botFrame);
-  this->CurrentTagLabel->Create();
-  this->CurrentTagLabel->SetAnchorToWest();
-  this->ResetCurrentTagLabel();
+  vtkKWLabel *spacer = vtkKWLabel::New();
+  spacer->SetParent ( buttonFrame );
+  spacer->Create();
+  spacer->SetText ("             " );
 
-  this->Script ( "grid %s -row 0 -column 0 -sticky w -padx 2 -pady 2", this->SelectAllButton->GetWidgetName() );
-  this->Script ( "grid %s -row 0 -column 1 -sticky w -padx 2 -pady 2", this->DeselectAllButton->GetWidgetName() );
-  this->Script ( "grid %s -row 0 -column 2 -sticky w -padx 2 -pady 2", this->TaggingHelpButton->GetWidgetName() );
-  this->Script ( "grid %s -row 0 -column 3  -sticky ew -padx 2 -pady 2", this->SelectTagMenuButton->GetWidgetName() );
-  this->Script ( "grid %s -row 1 -column 3  -sticky ew -padx 2 -pady 0", this->CurrentTagLabel->GetWidgetName() );
-  this->Script ( "grid columnconfigure %s 0 -weight 0", botFrame->GetWidgetName() );
-  this->Script ( "grid columnconfigure %s 1 -weight 0", botFrame->GetWidgetName() );
-  this->Script ( "grid columnconfigure %s 2 -weight 0", botFrame->GetWidgetName() );
-  this->Script ( "grid columnconfigure %s 3 -weight 1", botFrame->GetWidgetName() );
-
-  this->Script ("pack %s %s %s %s -side left -anchor c -expand n -padx 2 -pady 2",
-                this->ShowTagsForAllButton->GetWidgetName(),
+  this->Script ("pack %s -side left -anchor sw -expand n -padx 2 -pady 2",
+                this->SelectAllButton->GetWidgetName() );
+  this->Script ("pack %s -side left -anchor sw -expand n -padx 2 -pady 2",
+                this->DeselectAllButton->GetWidgetName() );
+  this->Script ("pack %s -side left -anchor sw -expand n -padx 2 -pady 2",
+                this->TaggingHelpButton->GetWidgetName() );
+  this->Script ("pack %s %s %s %s %s -side left -anchor sw -expand n -padx 2 -pady 2",
+                spacer->GetWidgetName(),
                 this->ApplyTagsButton->GetWidgetName(),
                 this->RemoveTagsButton->GetWidgetName(),
+                this->ShowTagsForAllButton->GetWidgetName(),
                 this->UploadButton->GetWidgetName() );
+
+  spacer->Delete();
+
+  this->GetMultiColumnList()->GetWidget()->AddColumn ( "Tag" );
+  this->GetMultiColumnList()->GetWidget()->ColumnEditableOn ( 0 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnAlignmentToLeft (0 );
+  this->GetMultiColumnList()->GetWidget()->ColumnResizableOff ( 0 );
+  this->GetMultiColumnList()->GetWidget()->ColumnStretchableOff ( 0 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnFormatCommandToEmptyOutput(0);
+  this->GetMultiColumnList()->GetWidget()->SetColumnEditWindowToCheckButton ( 0);
+
+  this->GetMultiColumnList()->GetWidget()->AddColumn ( "Show" );
+  this->GetMultiColumnList()->GetWidget()->ColumnEditableOff ( 1 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnAlignmentToLeft (1 );
+  this->GetMultiColumnList()->GetWidget()->ColumnResizableOff ( 1 );
+  this->GetMultiColumnList()->GetWidget()->ColumnStretchableOff ( 1 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnFormatCommandToEmptyOutput(1);
+  //--- turn off for now until we implement it.
+  this->GetMultiColumnList()->GetWidget()->ColumnVisibilityOff ( 1 );
+
+  this->GetMultiColumnList()->GetWidget()->AddColumn ( "Filename      " );
+  this->GetMultiColumnList()->GetWidget()->ColumnEditableOff ( 2 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnWidth ( 2, 0 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnSortModeToAscii ( 2 );
+
+  this->GetMultiColumnList()->GetWidget()->AddColumn ( "Slicer Data Type" );
+  this->GetMultiColumnList()->GetWidget()->ColumnEditableOff ( 3 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnWidth ( 3, 0 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnSortModeToAscii ( 3 );
+//  this->GetMultiColumnList()->GetWidget()->ColumnVisibilityOff ( 3 );
   
-  botFrame->Delete();
+  this->GetMultiColumnList()->GetWidget()->AddColumn ( "Scene/Data" );
+  this->GetMultiColumnList()->GetWidget()->ColumnEditableOff ( 4 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnWidth ( 4, 0 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnSortModeToAscii ( 4 );
+
+  this->GetMultiColumnList()->GetWidget()->SetHeight ( 22);
+  
+  this->Script ( "pack %s -side top -fill x -pady 0 -expand n", this->GetMultiColumnList()->GetWidgetName() );
+
+  topFrame->Delete();
   buttonFrame->Delete();
 
 }
@@ -1002,7 +1024,14 @@ void vtkFetchMIResourceUploadWidget::PopulateTagMenuButtonCallback ()
     }
   if ( this->Logic->GetCurrentWebService() == NULL )
     {
-    vtkErrorMacro ("vtkFetchMIResourceUploadWidget: PopulateTagMenuButtonCallback got NULL server.");
+    vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+    dialog->SetParent (this->GetParent() );
+    dialog->SetStyleToMessage();
+    std::string msg = "A server must be selected before tags can be assigned to the scene and data.";
+    dialog->SetText ( msg.c_str() );
+    dialog->Create();
+    dialog->Invoke();
+    dialog->Delete();
     return;
     }
   
@@ -1250,7 +1279,7 @@ void vtkFetchMIResourceUploadWidget::ShowTagViewCallback( )
 //---------------------------------------------------------------------------
 void vtkFetchMIResourceUploadWidget::ResetCurrentTagLabel ( )
 {
-  this->CurrentTagLabel->SetForegroundColor ( 0.7, 0.7, 0.7 );
+  this->CurrentTagLabel->SetForegroundColor ( 0.5, 0.5, 0.5 );
   this->CurrentTagLabel->SetText ( "Selected Tag: (none)" );
 }
 

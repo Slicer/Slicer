@@ -18,6 +18,7 @@ class vtkFetchMITagViewWidget;
 class vtkXNDHandler;
 
 class vtkKWFrame;
+class vtkKWNotebook;
 class vtkKWLabel;
 class vtkKWFrameWithLabel;
 class vtkKWPushButton;
@@ -67,6 +68,10 @@ class VTK_FETCHMI_EXPORT vtkFetchMIGUI : public vtkSlicerModuleGUI
   vtkGetObjectMacro ( TagViewer, vtkFetchMITagViewWidget);
   vtkGetObjectMacro ( CloseNewServerButton, vtkKWPushButton );
   vtkGetObjectMacro ( NewServerWindow, vtkKWTopLevel );
+  vtkGetObjectMacro ( Notebook, vtkKWNotebook );
+
+  vtkGetMacro (GUIWidth, int );
+  vtkSetMacro (GUIWidth, int );
 
   // Description:
   // Create widgets
@@ -113,8 +118,8 @@ class VTK_FETCHMI_EXPORT vtkFetchMIGUI : public vtkSlicerModuleGUI
 
   // Description:
   // Describe behavior at module startup and exit.
-  virtual void Enter ( ){};
-  virtual void Exit ( ){};
+  virtual void Enter ( );
+  virtual void Exit ( );
   virtual void Init ( );
 
   // Description:
@@ -192,10 +197,12 @@ protected:
   vtkKWPushButton *QueryTagsButton;
   vtkFetchMITagViewWidget *TagViewer;
   vtkFetchMIIcons *FetchMIIcons;
+  vtkKWNotebook *Notebook;
 
   char *DataDirectoryName;
   int UpdatingGUI;
   int UpdatingMRML;
+  int GUIWidth;
 
 };
 

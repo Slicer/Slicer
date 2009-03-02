@@ -14,7 +14,7 @@ vtkCxxRevisionMacro ( vtkFetchMIWriterXND, "$Revision: 1.0 $");
 //---------------------------------------------------------------------------
 vtkFetchMIWriterXND::vtkFetchMIWriterXND ( )
 {
-  this->Name = "XNDWriter";
+  this->SetName ("XNDWriter");
 }
 
 

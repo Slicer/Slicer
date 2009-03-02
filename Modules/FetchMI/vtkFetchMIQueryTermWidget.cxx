@@ -7,6 +7,7 @@
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerWindow.h"
+#include "vtkSlicerWaitMessageWidget.h"
 
 #include "vtkKWFrame.h"
 #include "vtkKWLabel.h"
@@ -219,11 +220,40 @@ void vtkFetchMIQueryTermWidget::ProcessWidgetEvents ( vtkObject *caller,
       {
       this->InvokeEvent ( vtkFetchMIQueryTermWidget::QuerySubmittedEvent );
       this->SetStatusText ("Querying selected server for resources...");
-      this->Logic->QueryServerForResources();
-      this->SetStatusText ("Querying selected server for resources...done.");
-      this->SetStatusText ("");
-      }
 
+      //--- try to post a message....
+      if ( this->GetApplication() )
+        {
+        vtkSlicerApplication* app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
+        if ( app )
+          {
+          vtkSlicerApplicationGUI *appGUI = app->GetApplicationGUI();
+          if ( appGUI )
+            {
+            if (appGUI->GetMainSlicerWindow() )
+              {
+              vtkSlicerWaitMessageWidget *wm = vtkSlicerWaitMessageWidget::New();
+              wm->SetParent ( appGUI->GetMainSlicerWindow() );
+              wm->Create();
+              wm->SetText ("Querying selected server for matching resources (may take a little while)...");
+              wm->DisplayWindow();
+              this->SetStatusText ("Querying selected server for resources...done.");
+              this->Logic->QueryServerForResources();
+              wm->SetText ("Querying selected server for matching resources (may take a little while)... done.");
+              wm->WithdrawWindow();
+              wm->Delete();
+              this->SetStatusText ("");
+              }
+            }
+          }
+        }
+      else
+        {
+        this->SetStatusText ("Querying selected server for resources...done.");
+        this->Logic->QueryServerForResources();
+        this->SetStatusText ("");
+        }
+      }
     }
   this->UpdateMRML();
 } 
@@ -364,41 +394,12 @@ void vtkFetchMIQueryTermWidget::CreateWidget ( )
   // create the icons
   this->FetchMIIcons = vtkFetchMIIcons::New();
 
-  // configure the multicolumn list
-  this->GetMultiColumnList()->GetWidget()->AddColumn ( "Use" );
-  this->GetMultiColumnList()->GetWidget()->ColumnEditableOn ( 0 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnAlignmentToLeft (0 );
-  this->GetMultiColumnList()->GetWidget()->ColumnResizableOn ( 0 );
-  this->GetMultiColumnList()->GetWidget()->ColumnStretchableOn ( 0 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnFormatCommandToEmptyOutput(0);
-  this->GetMultiColumnList()->GetWidget()->SetColumnEditWindowToCheckButton ( 0);
-
-  this->GetMultiColumnList()->GetWidget()->AddColumn ( "Attribute              " );
-  this->GetMultiColumnList()->GetWidget()->ColumnEditableOff ( 1 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnWidth ( 1, 0 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnSortModeToAscii ( 1 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnEditWindowToEntry ( 1 );
-
-  this->GetMultiColumnList()->GetWidget()->AddColumn ( "Value                   " );
-  
-  this->GetMultiColumnList()->GetWidget()->SetColumnWidth ( 2, 0 );
-  this->GetMultiColumnList()->GetWidget()->SetColumnSortModeToAscii ( 2 );
-  this->GetMultiColumnList()->GetWidget()->ColumnEditableOff ( 2 ); 
-  this->GetMultiColumnList()->GetWidget()->SetColumnFormatCommandToEmptyOutput(2);  
-
-  this->Script ( "pack %s -side top -fill x -expand n", this->GetMultiColumnList()->GetWidgetName() );
 
   // frame for the buttons
   vtkKWFrame *bFrame = vtkKWFrame::New();
   bFrame->SetParent ( this->ContainerFrame );
   bFrame->Create();
-  this->Script ("pack %s -side top -anchor c -expand y -fill x -padx 2 -pady 2", bFrame->GetWidgetName() );
-
-
-  vtkKWLabel *spacer = vtkKWLabel::New();
-  spacer->SetParent ( bFrame );
-  spacer->Create();
-  spacer->SetText ("             " );
+  this->Script ("pack %s -side top -anchor c -expand y -fill x -padx 2 -pady 6", bFrame->GetWidgetName() );
 
   this->RefreshButton = vtkKWPushButton::New();
   this->RefreshButton->SetParent (bFrame);
@@ -423,7 +424,6 @@ void vtkFetchMIQueryTermWidget::CreateWidget ( )
   this->ClearAllButton->SetReliefToFlat();  
   this->ClearAllButton->SetImageToIcon ( this->FetchMIIcons->GetDeleteAllIcon() );
   this->ClearAllButton->SetBalloonHelpString ( "Clear all (non-essential) terms from list" );
-
 
   this->SelectAllButton = vtkKWPushButton::New();
   this->SelectAllButton->SetParent (bFrame);
@@ -457,20 +457,49 @@ void vtkFetchMIQueryTermWidget::CreateWidget ( )
   this->SearchButton->SetImageToIcon ( this->FetchMIIcons->GetSearchIcon() );
   this->SearchButton->SetBalloonHelpString ( "Query server for resources matching selected tags." );
 
-  this->Script ("pack %s -side left -anchor w -expand n -padx 2 -pady 2",
-                this->SelectAllButton->GetWidgetName() );
-  this->Script ("pack %s -side left -anchor w -expand n -padx 2 -pady 2",
-                this->DeselectAllButton->GetWidgetName() );
-  this->Script ("pack %s -side left -anchor w -expand n -padx 2 -pady 2",
-                this->HelpButton->GetWidgetName() );
-  
+  vtkKWLabel *spacer = vtkKWLabel::New();
+  spacer->SetParent ( bFrame );
+  spacer->Create();
+  spacer->SetText ("             " );
 
-  this->Script ("pack %s %s %s %s %s -side left -anchor w -expand n -padx 2 -pady 2",
+  this->Script ("pack %s -side left -anchor sw -expand n -padx 2 -pady 2",
+                this->SelectAllButton->GetWidgetName() );
+  this->Script ("pack %s -side left -anchor sw -expand n -padx 2 -pady 2",
+                this->DeselectAllButton->GetWidgetName() );
+  this->Script ("pack %s -side left -anchor sw -expand n -padx 2 -pady 2",
+                this->HelpButton->GetWidgetName() );
+  this->Script ("pack %s %s %s %s %s -side left -anchor sw -expand n -padx 2 -pady 2",
                 spacer->GetWidgetName(),
                 this->ClearSelectedButton->GetWidgetName(),
                 this->ClearAllButton->GetWidgetName(),
                 this->SearchButton->GetWidgetName(),
                 this->RefreshButton->GetWidgetName() );
+
+  // configure the multicolumn list
+  this->GetMultiColumnList()->GetWidget()->AddColumn ( "Use" );
+  this->GetMultiColumnList()->GetWidget()->ColumnEditableOn ( 0 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnAlignmentToLeft (0 );
+  this->GetMultiColumnList()->GetWidget()->ColumnResizableOn ( 0 );
+  this->GetMultiColumnList()->GetWidget()->ColumnStretchableOn ( 0 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnFormatCommandToEmptyOutput(0);
+  this->GetMultiColumnList()->GetWidget()->SetColumnEditWindowToCheckButton ( 0);
+
+  this->GetMultiColumnList()->GetWidget()->AddColumn ( "Attribute              " );
+  this->GetMultiColumnList()->GetWidget()->ColumnEditableOff ( 1 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnWidth ( 1, 0 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnSortModeToAscii ( 1 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnEditWindowToEntry ( 1 );
+
+  this->GetMultiColumnList()->GetWidget()->AddColumn ( "Value                   " );
+  
+  this->GetMultiColumnList()->GetWidget()->SetColumnWidth ( 2, 0 );
+  this->GetMultiColumnList()->GetWidget()->SetColumnSortModeToAscii ( 2 );
+  this->GetMultiColumnList()->GetWidget()->ColumnEditableOff ( 2 ); 
+  this->GetMultiColumnList()->GetWidget()->SetColumnFormatCommandToEmptyOutput(2);  
+
+  this->GetMultiColumnList()->GetWidget()->SetHeight ( 22 );
+  this->Script ( "pack %s -side top -fill x -pady 0 -expand n", this->GetMultiColumnList()->GetWidgetName() );
+
   spacer->Delete();
 
   bFrame->Delete();
