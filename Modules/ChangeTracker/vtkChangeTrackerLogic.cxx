@@ -379,6 +379,10 @@ vtkMRMLScalarVolumeNode* vtkChangeTrackerLogic::CreateSuperSample(int ScanNum) {
       this->ChangeTrackerNode->GetScene()->GetNodeByID(this->ChangeTrackerNode->GetScan1_Ref()));
   }
 
+  // make sure the input image is valid!
+  if(!volumeNode->GetImageData())
+    return NULL;
+
   if (!this->CheckROI(volumeNode)) {
     vtkErrorMacro(<<"Warning: vtkChangeTrackerLogic::CreateSuperSample: Scan " << ScanNum << " failed CheckROI");
     return NULL;
