@@ -140,6 +140,7 @@ set(SlicerBaseGUI_SRCS
   vtkSlicerRenderWidget.cxx
   vtkSlicerBoxRepresentation.cxx
   vtkSlicerBoxWidget2.cxx
+  vtkSlicerWaitMessageWidget.cxx
   )
 
 # Helper classes

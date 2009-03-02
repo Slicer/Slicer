@@ -1,3 +1,4 @@
+edb5217aaa0014516a82a5f8373a919c32c3e53202ca6056bcb732c20eff0ff6  Base/GUI/vtkSlicerWaitMessageWidget.cxx.~2~
 a018191d406f3bac0dfe183bf0a8e12951a70960083d70d0865a7b77fe3574dc  Base/Logic/Wrapping/Tcl/hints
 d65d37e47b66b6eedbd6285dad6f5d52eff9e7fa4f4af36973a73ec727b44289  Doxyfile
 4d05d6a8c05a1302ef25a5ef559932b131b95122396d5b32a67794315a5821ac  Libs/CudaSupport/Makefile
