@@ -455,6 +455,12 @@ foreach s3ext $::EXTEND(s3extFiles) {
     }
   }
 
+  set extraLink ""
+  if { $isDarwin } {
+    set extraLink "$extraLink -DCMAKE_SHARED_LINKER_FLAGS:STRING=-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
+    set extraLink "$extraLink -DCMAKE_EXE_LINKER_FLAGS=-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
+  }
+
   # configure project and make
   cd $::Slicer3_EXT/$::ext(name)-build
   eval runcmd $::CMAKE \
@@ -464,6 +470,7 @@ foreach s3ext $::EXTEND(s3extFiles) {
     -DMAKECOMMAND:STRING=$makeCmd \
     -DCMAKE_INSTALL_PREFIX:PATH=$::Slicer3_EXT/$::ext(name)-install \
     $dependPaths \
+    $extraLink \
     $::ext(srcDir)
 
   # build the project
