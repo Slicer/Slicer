@@ -522,20 +522,6 @@ include_directories(
   ${vtkTeem_SOURCE_DIR}  ${vtkTeem_BINARY_DIR})
 
 #####################
-set (CLP ProbeVolumeWithModel)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
-add_executable(${CLP} ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP})
-link_directories(${MRML_LIB_DIR} ${vtkTeem_LIB_DIR})
-target_link_libraries (${CLP} ITKBasicFilters MRML vtkTeem)
-include_directories(
-  ${vtkITK_SOURCE_DIR} 
-  ${vtkITK_BINARY_DIR} 
-  ${MRML_SOURCE_DIR} ${MRML_BINARY_DIR} 
-  ${vtkTeem_SOURCE_DIR}  ${vtkTeem_BINARY_DIR})
-#####################
 set (CLP ResampleVolume2)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
@@ -662,7 +648,6 @@ if (Slicer3_SOURCE_DIR)
     FreesurferSurfaceSectionExtraction
     ZeroCrossingBasedEdgeDetectionImageFilter
     ZeroCrossingBasedEdgeDetectionImageFilterLib
-    ProbeVolumeWithModel
     DiffusionTensorMathematics
     DiffusionTensorEstimation
     )
