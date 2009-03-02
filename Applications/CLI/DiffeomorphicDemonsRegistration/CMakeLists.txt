@@ -27,6 +27,11 @@ target_link_libraries (${CLP}
   ITKStatistics
   )
 
+add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
+set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
+slicer3_set_plugins_output_path(${CLP}Lib)
+target_link_libraries (${CLP}Lib ITKIO ITKCommon ITKStatistics)
+
 
 if (Slicer3_SOURCE_DIR)
   # install each target in the production area (where it would appear in an 

@@ -13,7 +13,7 @@
     <description>Input/output parameters</description>
     <image> 
       <name>demonsTargetVolume</name>
-      <label>Target Volume</label>
+      <label>Fixed Image</label>
       <channel>input</channel>
       <flag>f</flag>
       <longflag>fixed_image</longflag>
@@ -23,12 +23,12 @@
     <image>
       <name>demonsMovingVolume</name>
       <flag>m</flag>
-      <label>Moving Volume</label>
+      <label>Moving Image</label>
       <longflag>moving_image</longflag>
       <channel>input</channel>
       <description>Target volume</description>
     </image>
-    <image type="vector">
+    <image type="vector" hidden="true">
       <name>demonsDeformationVolume</name>
       <flag>O</flag>
       <longflag>output_field</longflag>
@@ -38,7 +38,7 @@
     </image>
     <image>
       <name>demonsResampledVolume</name>
-      <label>Resample Volume</label>
+      <label>Output Volume</label>
       <flag>o</flag>
       <longflag>output_image</longflag>
       <channel>output</channel>
@@ -61,14 +61,14 @@
      <flag>i</flag>
      <longflag>num_iterations</longflag>
      <description>Number of Iterations per Level</description> 
-     <label>Iteration</label>
+     <label>Iterations</label>
      <default>20,20,20</default>
    </integer-vector>  
    <double>
      <name>smoothing</name>
      <flag>s</flag>
      <longflag>def_field_sigma</longflag>
-     <description>Variance of the smoothing (Sigma)</description> 
+     <description>Standard deviation of the smoothing (Sigma)</description> 
      <label>Smoothing</label>
      <default>3.0</default>
    </double>  
