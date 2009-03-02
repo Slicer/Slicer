@@ -909,9 +909,29 @@ startElement(void *userData, const char *element, const char **attrs)
         {
         parameter->SetFileExtensionsAsString(attrs[2*attr+1]);
         }
+      else if ((strcmp(attrs[2*attr], "hidden") == 0))
+        {
+        if ((strcmp(attrs[2*attr+1], "true") == 0) ||
+            (strcmp(attrs[2*attr+1], "false") == 0))
+          {
+          parameter->SetHidden(attrs[2*attr+1]);
+          }
+        else
+          {
+          std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr+1]) + "\" is not a valid argument for the attribute \"hidden\". Only \"true\" and \"false\" are accepted.");
+          if (ps->ErrorDescription.size() == 0)
+            {
+            ps->ErrorDescription = error;
+            ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+            ps->Error = true;
+            }
+          ps->OpenTags.push(name);
+          return;
+          }
+        }
       else
         {
-        std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr]) + "\" is not a valid attribute for \"" + name + "\". Only \"multiple\", \"fileExtensions\" and \"type\" are accepted.");
+        std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr]) + "\" is not a valid attribute for \"" + name + "\". Only \"multiple\", \"fileExtensions\", \"type\" and \"hidden\" are accepted.");
         if (ps->ErrorDescription.size() == 0)
           {
           ps->ErrorDescription = error;

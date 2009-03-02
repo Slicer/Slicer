@@ -1880,6 +1880,13 @@ vtkCommandLineModuleLogic::FindHiddenNodeID(const ModuleDescription& d,
             vtkErrorMacro(<< "Hidden \"table\" parameters must be of type \"color\"");
             }
           }
+        else if (p.GetTag() == "image")
+          {
+          // hidden parameters allowed for images to hide from GUI but
+          // we don't currently do anything with them. This implies
+          // that hidden parameters that are images must have flags
+          // and not be index parameters.
+          }
         else
           {
           vtkErrorMacro(<< "Hidden parameters not supported on \""
@@ -1895,8 +1902,11 @@ vtkCommandLineModuleLogic::FindHiddenNodeID(const ModuleDescription& d,
     else
       {
       // no reference node
-      vtkErrorMacro(<< "Hidden parameter \"" << p.GetName().c_str()
-                    << "\" but no reference parameter.");
+      if (this->GetDebug())
+        {
+        vtkErrorMacro(<< "Hidden parameter \"" << p.GetName().c_str()
+                      << "\" but no reference parameter.");
+        }
       }
     }
   else

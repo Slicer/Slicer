@@ -1076,7 +1076,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
     for (pcount = 0, pit = pbeginit; pit != pendit; ++pit, ++pcount)
       {
       // switch on the type of the parameter...
-      vtkKWCoreWidget *parameter;
+      vtkKWCoreWidget *parameter=0;
 
       // parameters with flags can support the None node because they
       // are optional
@@ -1322,112 +1322,118 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         }
       else if ((*pit).GetTag() == "image" && (*pit).GetChannel() == "input")
         {
-        vtkSlicerNodeSelectorWidget *tparameter
-          = vtkSlicerNodeSelectorWidget::New();
-        std::string labelAttrName("LabelMap");
-        std::string labelAttrValue("1");
-        std::string nodeClass;
-        const char *attrName = 0;
-        const char *attrValue = 0;
-        if ((*pit).GetType() == "any")
+        if ((*pit).GetHidden() != "true")
           {
-          nodeClass = "vtkMRMLVolumeNode";
-          }
-        else if ((*pit).GetType() == "label")
-          {
-          nodeClass = "vtkMRMLScalarVolumeNode";
-          attrName = labelAttrName.c_str();
-          attrValue = labelAttrValue.c_str();
-          }
-        else if ((*pit).GetType() == "vector")
-          {
-          nodeClass = "vtkMRMLVectorVolumeNode";
-          }
-        else if ((*pit).GetType() == "tensor")
-          {
-          nodeClass = "vtkMRMLDiffusionTensorVolumeNode";
-          }
-        else if ((*pit).GetType() == "diffusion-weighted")
-          {
-          nodeClass = "vtkMRMLDiffusionWeightedVolumeNode";
-          }
-        else
-          {
-          nodeClass = "vtkMRMLScalarVolumeNode";
-          }
+          vtkSlicerNodeSelectorWidget *tparameter
+            = vtkSlicerNodeSelectorWidget::New();
+          std::string labelAttrName("LabelMap");
+          std::string labelAttrValue("1");
+          std::string nodeClass;
+          const char *attrName = 0;
+          const char *attrValue = 0;
+          if ((*pit).GetType() == "any")
+            {
+            nodeClass = "vtkMRMLVolumeNode";
+            }
+          else if ((*pit).GetType() == "label")
+            {
+            nodeClass = "vtkMRMLScalarVolumeNode";
+            attrName = labelAttrName.c_str();
+            attrValue = labelAttrValue.c_str();
+            }
+          else if ((*pit).GetType() == "vector")
+            {
+            nodeClass = "vtkMRMLVectorVolumeNode";
+            }
+          else if ((*pit).GetType() == "tensor")
+            {
+            nodeClass = "vtkMRMLDiffusionTensorVolumeNode";
+            }
+          else if ((*pit).GetType() == "diffusion-weighted")
+            {
+            nodeClass = "vtkMRMLDiffusionWeightedVolumeNode";
+            }
+          else
+            {
+            nodeClass = "vtkMRMLScalarVolumeNode";
+            }
 
-        tparameter->SetNodeClass(nodeClass.c_str(), attrName, attrValue, 
-                                 (title + " Volume").c_str());
-        tparameter->SetNoneEnabled(noneEnabled);
-        tparameter->SetParent( parameterGroupFrame->GetFrame() );
-        tparameter->Create();
-        tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
-        tparameter->UpdateMenu();
+          tparameter->SetNodeClass(nodeClass.c_str(), attrName, attrValue, 
+                                   (title + " Volume").c_str());
+          tparameter->SetNoneEnabled(noneEnabled);
+          tparameter->SetParent( parameterGroupFrame->GetFrame() );
+          tparameter->Create();
+          tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
+          tparameter->UpdateMenu();
         
-        tparameter->SetBorderWidth(2);
-        tparameter->SetReliefToFlat();
-        tparameter->SetLabelText( (*pit).GetLabel().c_str());
-        parameter = tparameter;
+          tparameter->SetBorderWidth(2);
+          tparameter->SetReliefToFlat();
+          tparameter->SetLabelText( (*pit).GetLabel().c_str());
+          parameter = tparameter;
+          }
         }
       else if ((*pit).GetTag() == "image" && (*pit).GetChannel() == "output")
         {
-        vtkSlicerNodeSelectorWidget *tparameter
-          = vtkSlicerNodeSelectorWidget::New();
-        std::string labelAttrName("LabelMap");
-        std::string labelAttrValue("1");
-        std::string nodeClass;
-        const char *attrName = 0;
-        const char *attrValue = 0;
-        if ((*pit).GetType() == "label")
+        if ((*pit).GetHidden() != "true")
           {
-          nodeClass = "vtkMRMLScalarVolumeNode";
-          attrName = labelAttrName.c_str();
-          attrValue = labelAttrValue.c_str();
-          }
-        else if ((*pit).GetType() == "vector")
-          {
-          nodeClass = "vtkMRMLVectorVolumeNode";
-          }
-        else if ((*pit).GetType() == "tensor")
-          {
-          nodeClass = "vtkMRMLDiffusionTensorVolumeNode";
-          }
-        else if ((*pit).GetType() == "diffusion-weighted")
-          {
-          nodeClass = "vtkMRMLDiffusionWeightedVolumeNode";
-          }
-        else
-          {
-          nodeClass = "vtkMRMLScalarVolumeNode";
-          }
+          vtkSlicerNodeSelectorWidget *tparameter
+            = vtkSlicerNodeSelectorWidget::New();
+          std::string labelAttrName("LabelMap");
+          std::string labelAttrValue("1");
+          std::string nodeClass;
+          const char *attrName = 0;
+          const char *attrValue = 0;
+          if ((*pit).GetType() == "label")
+            {
+            nodeClass = "vtkMRMLScalarVolumeNode";
+            attrName = labelAttrName.c_str();
+            attrValue = labelAttrValue.c_str();
+            }
+          else if ((*pit).GetType() == "vector")
+            {
+            nodeClass = "vtkMRMLVectorVolumeNode";
+            }
+          else if ((*pit).GetType() == "tensor")
+            {
+            nodeClass = "vtkMRMLDiffusionTensorVolumeNode";
+            }
+          else if ((*pit).GetType() == "diffusion-weighted")
+            {
+            nodeClass = "vtkMRMLDiffusionWeightedVolumeNode";
+            }
+          else
+            {
+            nodeClass = "vtkMRMLScalarVolumeNode";
+            }
 
-        tparameter->SetNodeClass(nodeClass.c_str(), attrName, attrValue, 
-                                 (title + " Volume").c_str());
-        if ((*pit).GetType() == "any")
-          {
-          // Add all of the other concrete volume node types
-          tparameter->AddNodeClass("vtkMRMLVectorVolumeNode",
-                                   attrName, attrValue, 
-                                   (title + " VectorVolume").c_str());
-          tparameter->AddNodeClass("vtkMRMLDiffusionTensorVolumeNode",
-                                   attrName, attrValue, 
-                                   (title + " DiffusionTensorVolume").c_str());
-          tparameter->AddNodeClass("vtkMRMLDiffusionWeightedVolumeNode",
-                                   attrName, attrValue, 
-                                   (title + " DiffusionWeightedVolume").c_str());
-          }
-        tparameter->SetNewNodeEnabled(1);
-        tparameter->SetNoneEnabled(noneEnabled);
-        // tparameter->SetNewNodeName((title+" output").c_str());
-        tparameter->SetParent( parameterGroupFrame->GetFrame() );
-        tparameter->Create();
-        tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
-        tparameter->UpdateMenu();
+          tparameter->SetNodeClass(nodeClass.c_str(), attrName, attrValue, 
+                                   (title + " Volume").c_str());
+          if ((*pit).GetType() == "any")
+            {
+            // Add all of the other concrete volume node types
+            tparameter->AddNodeClass("vtkMRMLVectorVolumeNode",
+                                     attrName, attrValue, 
+                                     (title + " VectorVolume").c_str());
+            tparameter->AddNodeClass("vtkMRMLDiffusionTensorVolumeNode",
+                                     attrName, attrValue, 
+                                     (title + " DiffusionTensorVolume").c_str());
+            tparameter->AddNodeClass("vtkMRMLDiffusionWeightedVolumeNode",
+                                     attrName, attrValue, 
+                                     (title + " DiffusionWeightedVolume").c_str());
+            }
+          tparameter->SetNewNodeEnabled(1);
+          tparameter->SetNoneEnabled(noneEnabled);
+          // tparameter->SetNewNodeName((title+" output").c_str());
+          tparameter->SetParent( parameterGroupFrame->GetFrame() );
+          tparameter->Create();
+          tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
+          tparameter->UpdateMenu();
         
-        tparameter->SetBorderWidth(2);
-        tparameter->SetReliefToFlat();
-        tparameter->SetLabelText( (*pit).GetLabel().c_str());
-        parameter = tparameter;
+          tparameter->SetBorderWidth(2);
+          tparameter->SetReliefToFlat();
+          tparameter->SetLabelText( (*pit).GetLabel().c_str());
+          parameter = tparameter;
+          }
         }
       else if ((*pit).GetTag() == "geometry" && (*pit).GetChannel() == "input")
         {
