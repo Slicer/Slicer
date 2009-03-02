@@ -191,6 +191,8 @@ vtkCommandLineModuleGUI::SetModuleDescription(const ModuleDescription& descripti
     this->Logo = 0;
     }
 
+  this->SetCategory(this->ModuleDescriptionObject.GetCategory().c_str());
+
   this->Modified();
 }
 

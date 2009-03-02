@@ -50,8 +50,6 @@ vtkScriptedModuleGUI::vtkScriptedModuleGUI()
   this->Logic = NULL;
   this->ScriptedModuleNode = NULL;
   this->Language = vtkScriptedModuleGUI::Tcl;
-  this->Category = NULL;
-  this->SetCategory("None");
 }
 
 //----------------------------------------------------------------------------

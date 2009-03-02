@@ -106,10 +106,6 @@ public:
   };
 //ETX
 
-  // Description:
-  // Set the category for menu grouping
-  vtkSetStringMacro(Category);
-  virtual const char *GetCategory() const {return this->Category;};
 
 protected:
   
@@ -131,7 +127,6 @@ private:
   vtkMRMLScriptedModuleNode* ScriptedModuleNode;
 
   int Language;
-  char *Category;
 };
 
 #endif

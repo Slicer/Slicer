@@ -43,10 +43,6 @@ public:
   vtkGetObjectMacro (CommandLineModuleNode, vtkMRMLCommandLineModuleNode);
   virtual void SetCommandLineModuleNode(vtkMRMLCommandLineModuleNode*);
   
-  // Description: Get the categorization of the module.
-  const char *GetCategory() const
-    { return this->ModuleDescriptionObject.GetCategory().c_str(); }
-
   // Description:
   // Get the index of the module.  The index is used for sorting the 
   // modules within a menu. Modules are sorted first by index, then alphabetical
@@ -110,8 +106,6 @@ public:
   const ModuleDescription& GetModuleDescription() const
     { return ModuleDescriptionObject; }
   void SetModuleDescription(const ModuleDescription& description);
-//   vtkGetMacro(ModuleDescription, ModuleDescription);
-//   vtkSetMacro(ModuleDescription, ModuleDescription);
   
 
 protected:
