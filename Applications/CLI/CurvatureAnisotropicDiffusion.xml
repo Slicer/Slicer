@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Filtering.Denoising</category>
+  <index>2</index>
   <title>Curvature Anisotropic Diffusion</title>
   <description>
 Performs anisotropic diffusion on an image using a modified curvature

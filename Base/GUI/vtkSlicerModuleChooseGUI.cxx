@@ -31,6 +31,29 @@
 vtkStandardNewMacro (vtkSlicerModuleChooseGUI );
 vtkCxxRevisionMacro ( vtkSlicerModuleChooseGUI, "$Revision: 1.0 $");
 
+namespace {
+typedef std::pair<unsigned short, std::string> ModuleItem;
+
+struct ModuleCompare
+{
+  bool operator()(const ModuleItem& a, const ModuleItem& b) const
+  {
+    if (a.first < b.first)
+      {
+      return true;
+      }
+    if (a.first == b.first && a.second < b.second)
+      {
+      return true;
+      }
+    return false;
+  }
+};
+  
+typedef std::set<ModuleItem, ModuleCompare> ModuleSet;
+typedef std::map<std::string, ModuleSet> CategoryToModuleVector;
+typedef CategoryToModuleVector::iterator CategoryIterator;
+};
 
 void
 splitString (const std::string &text,
@@ -725,10 +748,6 @@ void vtkSlicerModuleChooseGUI::Populate( )
   //const char* mName;
   vtkSlicerModuleGUI *m;
 
-  typedef std::set<std::string> ModuleSet;
-  typedef std::map<std::string, ModuleSet > CategoryToModuleVector;
-  typedef CategoryToModuleVector::iterator CategoryIterator;
-
   CategoryToModuleVector categoryToModuleName;
 
   if ( (this->GetApplication( )  != NULL ) ) 
@@ -753,12 +772,12 @@ void vtkSlicerModuleChooseGUI::Populate( )
         if (!m->GetCategory() || strcmp(m->GetCategory(), "") == 0)
           {
           categoryToModuleName["None"]
-            .insert(m->GetUIPanel()->GetName());
+            .insert(ModuleItem(m->GetIndex(), m->GetUIPanel()->GetName()));
           }
         else
           {
           categoryToModuleName[m->GetCategory()]
-            .insert(m->GetUIPanel()->GetName());
+            .insert(ModuleItem(m->GetIndex(), m->GetUIPanel()->GetName()));
           }
 
         m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ));
@@ -788,11 +807,11 @@ void vtkSlicerModuleChooseGUI::Populate( )
       while (mit0 != categoryToModuleName["None"].end())
         {
         std::stringstream methodString;
-        methodString << "SelectModule \"" << (*mit0).c_str() << "\"";
+        methodString << "SelectModule \"" << (*mit0).second.c_str() << "\"";
         this->GetModulesMenuButton()->GetMenu( )
-          ->AddRadioButton( (*mit0).c_str(), this,
+          ->AddRadioButton( (*mit0).second.c_str(), this,
                         methodString.str().c_str() );
-        allMap[(*mit0).c_str()] = methodString.str();
+        allMap[(*mit0).second.c_str()] = methodString.str();
         ++mit0;
         }
       this->GetModulesMenuButton()->GetMenu()->AddSeparator();
@@ -836,11 +855,11 @@ void vtkSlicerModuleChooseGUI::Populate( )
           while (mit != (*cit).second.end())
             {
             std::stringstream methodString;
-            methodString << "SelectModule \"" << (*mit).c_str() << "\"";
-            index = menu->AddRadioButton( (*mit).c_str(), this,
+            methodString << "SelectModule \"" << (*mit).second.c_str() << "\"";
+            index = menu->AddRadioButton( (*mit).second.c_str(), this,
                                       methodString.str().c_str());
 
-            allMap[(*mit).c_str()] = methodString.str();
+            allMap[(*mit).second.c_str()] = methodString.str();
             ++mit;
             }
           }

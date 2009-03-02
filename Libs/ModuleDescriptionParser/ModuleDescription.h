@@ -42,6 +42,16 @@ public:
   {
     return this->Category;
   }
+
+  void SetIndex(const std::string &ind)
+  {
+    this->Index = ind;
+  }
+
+  const std::string& GetIndex() const
+  {
+    return this->Index;
+  }
   
   void SetTitle(const std::string &title)
   {
@@ -264,7 +274,8 @@ public:
   
 private:
   std::string Title;
-  std::string Category;
+  std::string Category; 
+  std::string Index;
   std::string Description;
   std::string Version;
   std::string DocumentationURL;

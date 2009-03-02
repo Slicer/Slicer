@@ -64,9 +64,14 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
   vtkSetObjectMacro ( ApplicationGUI, vtkSlicerApplicationGUI );
 
   // Description:
-  // Get the categorization of the module.  THe category is used for
+  // Get the categorization of the module.  The category is used for
   // grouping modules together into menus.
   virtual const char *GetCategory() const {return "None";}
+
+  // Description:
+  // Get the index of the module.  The index is used for sorting the 
+  // modules within a menu. Modules are sorted first by index, then alphabetical
+  virtual unsigned short GetIndex() const {return VTK_SHORT_MAX;}
   
   // Description:
   // Get a logo for the module

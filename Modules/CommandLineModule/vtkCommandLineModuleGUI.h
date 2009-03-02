@@ -48,6 +48,12 @@ public:
     { return this->ModuleDescriptionObject.GetCategory().c_str(); }
 
   // Description:
+  // Get the index of the module.  The index is used for sorting the 
+  // modules within a menu. Modules are sorted first by index, then alphabetical
+  virtual unsigned short GetIndex() const 
+  { return (unsigned short)atol(this->ModuleDescriptionObject.GetIndex().c_str()); }
+
+  // Description:
   // Create widgets
   virtual void BuildGUI ( );
 

@@ -1539,6 +1539,12 @@ endElement(void *userData, const char *element)
     trimLeadingAndTrailing(temp);
     ps->CurrentDescription.SetCategory(temp);
     }
+  else if (!parameter && (name == "index"))
+    {
+    std::string temp = ps->LastData[ps->Depth];
+    trimLeadingAndTrailing(temp);
+    ps->CurrentDescription.SetIndex(temp);
+    }
   else if (name == "title")
     {
     std::string temp = ps->LastData[ps->Depth];

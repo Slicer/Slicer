@@ -14,11 +14,16 @@
 
 #include "ModuleDescription.h"
 
+#include <sstream>
 
 ModuleDescription::ModuleDescription()
 {
   this->Type = "Unknown";
   this->Description = "No description provided";
+
+  std::stringstream ss;
+  ss << (unsigned short) -1;
+  ss >> this->Index;
 }
 
 
@@ -26,6 +31,7 @@ ModuleDescription::ModuleDescription(const ModuleDescription &md)
 {
   this->Title = md.Title;
   this->Category = md.Category;
+  this->Index = md.Index;
   this->Description = md.Description;
   this->Version = md.Version;
   this->DocumentationURL = md.DocumentationURL;
@@ -49,6 +55,7 @@ ModuleDescription::operator=(const ModuleDescription &md)
 {
   this->Title = md.Title;
   this->Category = md.Category;
+  this->Index = md.Index;
   this->Description = md.Description;
   this->Version = md.Version;
   this->DocumentationURL = md.DocumentationURL;
@@ -70,6 +77,7 @@ std::ostream & operator<<(std::ostream &os, const ModuleDescription &module)
 {
   os << "Title: " << module.GetTitle() << std::endl;
   os << "Category: " << module.GetCategory() << std::endl;
+  os << "Index: " << module.GetIndex() << std::endl;
   os << "Description: " << module.GetDescription() << std::endl;
   os << "Version: " << module.GetVersion() << std::endl;
   os << "DocumentationURL: " << module.GetDocumentationURL() << std::endl;

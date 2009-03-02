@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Filtering.Denoising</category>
+  <index>3</index>
   <title>Gaussian Blur</title>
   <description>
 	  Apply a gaussian blurr to an image
