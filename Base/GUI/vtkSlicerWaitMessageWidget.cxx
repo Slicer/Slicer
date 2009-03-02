@@ -8,6 +8,7 @@
 
 #include "vtkKWLabel.h"
 #include "vtkKWTopLevel.h"
+#include "vtkKWTkUtilities.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerWaitMessageWidget );
@@ -69,7 +70,13 @@ void vtkSlicerWaitMessageWidget::WithdrawWindow ( )
     {
     return;
     }
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  if ( app )
+    {
+    app->Script ( "grab release %s", this->MessageWindow->GetWidgetName() );
+    }
   this->MessageWindow->Withdraw();
+
 }
 
 //---------------------------------------------------------------------------
@@ -82,6 +89,13 @@ void vtkSlicerWaitMessageWidget::DisplayWindow ( )
     }
   this->MessageWindow->DeIconify();
   this->MessageWindow->Raise();
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  if ( app )
+    {
+    app->Script ( "grab %s", this->MessageWindow->GetWidgetName() );
+    app->ProcessIdleTasks();
+    }
+  this->Script ("update idletasks");  
 }
 
 
@@ -124,12 +138,14 @@ void vtkSlicerWaitMessageWidget::CreateWidget ( )
       this->MessageWindow->SetMasterWindow ( this->GetParent ( ) );
       this->MessageWindow->SetApplication ( app );
       this->MessageWindow->Create();
-      this->MessageWindow->SetBorderWidth ( 2 );
+      int px, py, sx, sy;
+      vtkKWTkUtilities::GetWidgetCoordinates(this->GetParent(), &px, &py);
+      vtkKWTkUtilities::GetWidgetSize(this->GetParent(), &sx, &sy);
+      this->MessageWindow->SetPosition ( px + sx/2.0 - 230, py + sy/2.0 - 60) ;
+      this->MessageWindow->SetBorderWidth ( 1 );
       this->MessageWindow->SetReliefToFlat ( );
-      this->MessageWindow->SetDisplayPositionToPointer();
       this->MessageWindow->SetTitle("Slicer operation in progress");
-      this->MessageWindow->SetSize ( 350, 300 );
-      this->MessageWindow->HideDecorationOn();
+      this->MessageWindow->SetSize ( 460, 120 );
       this->MessageWindow->Withdraw();
       this->MessageWindow->SetDeleteWindowProtocolCommand ( this, "WithdrawWindow" );
 
