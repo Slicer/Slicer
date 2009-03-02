@@ -774,17 +774,6 @@ add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test ITKIO ITKBasicFilters)
 
 ##################################
-# ProbeVolumeWithModel tests
-add_test(ProbeVolumeWithModelTest ${Slicer3_EXE} --launch ProbeVolumeWithModelTest
-  ProbeVolumeWithModelTest --help
-  )
-
-set (CLP ProbeVolumeWithModel)
-add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test  ITKBasicFilters MRML vtkTeem)
-
-##################################
 # ResampleVolume2 tests
 add_test(ResampleVolume2Test ${Slicer3_EXE} --launch ResampleVolume2Test
   --compare 
