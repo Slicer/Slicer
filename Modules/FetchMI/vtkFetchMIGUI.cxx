@@ -286,6 +286,7 @@ void vtkFetchMIGUI::TearDownGUI ( )
   this->SetLogic ( NULL );
   this->ResourceList->SetMRMLScene( NULL );
   this->TaggedDataList->SetMRMLScene ( NULL );
+  this->DestroyNewServerWindow();
   this->SetAndObserveMRMLScene ( NULL );
 
 }
@@ -346,9 +347,6 @@ void vtkFetchMIGUI::AddGUIObservers ( )
   this->ServerMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->Notebook->AddObserver ( vtkKWEvent::NotebookRaisePageEvent, (vtkCommand *)this->GUICallbackCommand );
   this->Notebook->AddObserver ( vtkKWEvent::NotebookShowPageEvent, (vtkCommand *)this->GUICallbackCommand );
-//  this->AddServerEntry->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
-//  this->CloseNewServerButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-//  this->AddServerButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
 }
 
@@ -370,9 +368,6 @@ void vtkFetchMIGUI::RemoveGUIObservers ( )
   this->ServerMenuButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->Notebook->RemoveObservers ( vtkKWEvent::NotebookRaisePageEvent, (vtkCommand *)this->GUICallbackCommand );
   this->Notebook->RemoveObservers ( vtkKWEvent::NotebookShowPageEvent, (vtkCommand *)this->GUICallbackCommand );
-//  this->AddServerEntry->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
-//  this->CloseNewServerButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-//  this->AddServerButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
 }
 
@@ -544,7 +539,7 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
           {
           //--- TODO: when more service types are availabe, build out way to get them
           this->Logic->AddNewServer(e->GetValue(), "XND", "XND", "XND");
-          this->FetchMINode->SetServer ( this->ServerMenuButton->GetValue() );
+          this->FetchMINode->SetServer (e->GetValue() );
           e->SetValue ( "" );
           this->ResourceList->DeleteAllItems();
           }
@@ -561,7 +556,8 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
           {
           //--- TODO: when more service types are availabe, build out way to get them
           this->Logic->AddNewServer (this->GetAddServerEntry()->GetValue(), "XND", "XND", "XND");
-          this->FetchMINode->SetServer ( this->ServerMenuButton->GetValue() );        
+          this->FetchMINode->SetServer ( this->GetAddServerEntry()->GetValue() );        
+          e->SetValue ( "" );
           this->ResourceList->DeleteAllItems();
           }
         }
@@ -1546,10 +1542,18 @@ void vtkFetchMIGUI::BindNewServerWindow ( )
     }
   if ( this->CloseNewServerButton->IsCreated() )
     {
-    this->CloseNewServerButton->SetBinding ( "<ButtonPress>", this, "DestroyNewServerWindow" );
+    this->CloseNewServerButton->SetBinding ( "<ButtonPress>", this, "WithdrawNewServerWindow" );
+//    this->CloseNewServerButton->SetBinding ( "<ButtonPress>", this, "DestroyNewServerWindow" );
     }
 
 }
+
+//---------------------------------------------------------------------------
+void vtkFetchMIGUI::WithdrawNewServerWindow()
+{
+  this->NewServerWindow->Withdraw();
+}
+
 
 //---------------------------------------------------------------------------
 void vtkFetchMIGUI::UnBindNewServerWindow ( )
@@ -1580,74 +1584,80 @@ void vtkFetchMIGUI::RaiseNewServerWindow()
     return;
     }
 
-  this->DestroyNewServerWindow();
+  if ( !this->NewServerWindow->IsCreated() )
+    {
+    int px, py;
+    //--- top level container.
+    this->NewServerWindow = vtkKWTopLevel::New();
+    this->NewServerWindow->SetMasterWindow (this->GetServerMenuButton() );
+    this->NewServerWindow->SetApplication ( this->GetApplication() );
+    this->NewServerWindow->Create();
+    vtkKWTkUtilities::GetWidgetCoordinates(this->GetServerMenuButton(), &px, &py);
+    this->NewServerWindow->SetPosition ( px + 10, py + 10) ;
+    this->NewServerWindow->SetBorderWidth ( 1 );
+    this->NewServerWindow->SetReliefToFlat();
+    this->NewServerWindow->SetTitle ("Add a new server (only XNAT Desktop supported at this time.)");
+    this->NewServerWindow->SetSize (450, 75);
+    this->NewServerWindow->Withdraw();
+    this->NewServerWindow->SetDeleteWindowProtocolCommand ( this, "DestroyNewServerWindow");
 
-  int px, py;
-  //--- top level container.
-  this->NewServerWindow = vtkKWTopLevel::New();
-  this->NewServerWindow->SetMasterWindow (this->GetServerMenuButton() );
-  this->NewServerWindow->SetApplication ( this->GetApplication() );
-  this->NewServerWindow->Create();
-  vtkKWTkUtilities::GetWidgetCoordinates(this->GetServerMenuButton(), &px, &py);
-  this->NewServerWindow->SetPosition ( px + 10, py + 10) ;
-  this->NewServerWindow->SetBorderWidth ( 1 );
-  this->NewServerWindow->SetReliefToFlat();
-  this->NewServerWindow->SetTitle ("Add a new server (only XNAT Desktop supported at this time.)");
-  this->NewServerWindow->SetSize (450, 75);
-  this->NewServerWindow->Withdraw();
-  this->NewServerWindow->SetDeleteWindowProtocolCommand ( this, "DestroyNewServerWindow");
+    vtkKWFrame *f1 = vtkKWFrame::New();
+    f1->SetParent ( this->NewServerWindow );
+    f1->Create();
+    f1->SetBorderWidth ( 1 );
+    this->Script ( "pack %s -side top -anchor nw -fill x -expand n -padx 0 -pady 1", f1->GetWidgetName() );
 
-  vtkKWFrame *f1 = vtkKWFrame::New();
-  f1->SetParent ( this->NewServerWindow );
-  f1->Create();
-  f1->SetBorderWidth ( 1 );
-  this->Script ( "pack %s -side top -anchor nw -fill x -expand n -padx 0 -pady 1", f1->GetWidgetName() );
+    //--- new tag entry
+    vtkKWLabel *l1 = vtkKWLabel::New();
+    l1->SetParent (f1);
+    l1->Create();
+    l1->SetText ( "Server:" );
+    l1->SetWidth ( 12 );
+    this->AddServerEntry = vtkKWEntry::New();
+    this->AddServerEntry->SetParent ( f1 );
+    this->AddServerEntry->Create();
+    this->AddServerEntry->SetWidth(20);
+    this->AddServerEntry->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    this->AddServerButton = vtkKWPushButton::New();
+    this->AddServerButton->SetParent ( f1);
+    this->AddServerButton->Create();
+    this->AddServerButton->SetReliefToFlat();
+    this->AddServerButton->SetBorderWidth ( 0 );
+    this->AddServerButton->SetImageToIcon ( this->FetchMIIcons->GetAddNewIcon() );
+    this->AddServerButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand);
 
-  //--- new tag entry
-  vtkKWLabel *l1 = vtkKWLabel::New();
-  l1->SetParent (f1);
-  l1->Create();
-  l1->SetText ( "Server:" );
-  l1->SetWidth ( 12 );
-  this->AddServerEntry = vtkKWEntry::New();
-  this->AddServerEntry->SetParent ( f1 );
-  this->AddServerEntry->Create();
-  this->AddServerEntry->SetWidth(20);
-  this->AddServerEntry->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->AddServerButton = vtkKWPushButton::New();
-  this->AddServerButton->SetParent ( f1);
-  this->AddServerButton->Create();
-  this->AddServerButton->SetReliefToFlat();
-  this->AddServerButton->SetBorderWidth ( 0 );
-  this->AddServerButton->SetImageToIcon ( this->FetchMIIcons->GetAddNewIcon() );
-  this->AddServerButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand);
+    this->Script ( "grid %s -row 0 -column 0 -sticky e -padx 2 -pady 2", l1->GetWidgetName() );
+    this->Script ( "grid %s -row 0 -column 1 -sticky ew -padx 2 -pady 2", this->AddServerEntry->GetWidgetName() );
+    this->Script ( "grid %s -row 0 -column 2 -sticky ew -padx 2 -pady 2", this->AddServerButton->GetWidgetName() );
+    this->Script ( "grid columnconfigure %s 0 -weight 0", f1->GetWidgetName() );
+    this->Script ( "grid columnconfigure %s 1 -weight 1", f1->GetWidgetName() );
+    this->Script ( "grid columnconfigure %s 2 -weight 0", f1->GetWidgetName() );
 
-  this->Script ( "grid %s -row 0 -column 0 -sticky e -padx 2 -pady 2", l1->GetWidgetName() );
-  this->Script ( "grid %s -row 0 -column 1 -sticky ew -padx 2 -pady 2", this->AddServerEntry->GetWidgetName() );
-  this->Script ( "grid %s -row 0 -column 2 -sticky ew -padx 2 -pady 2", this->AddServerButton->GetWidgetName() );
-  this->Script ( "grid columnconfigure %s 0 -weight 0", f1->GetWidgetName() );
-  this->Script ( "grid columnconfigure %s 1 -weight 1", f1->GetWidgetName() );
-  this->Script ( "grid columnconfigure %s 2 -weight 0", f1->GetWidgetName() );
+    //--- close button (destroys win and widgets when closed.
+    //--- TODO: this is causing an error when window is destroyed.
+    //--- I think because the button is destroyed while the binding
+    //--- to it is still active. Not sure how to fix, so leaving out the
+    //--- close button for now; window can be closed using the 'x'
+    //--- in the title bar.
 
-  //--- close button (destroys win and widgets when closed.
-  //--- TODO: this is causing an error when window is destroyed.
-  //--- I think because the button is destroyed while the binding
-  //--- to it is still active. Not sure how to fix, so leaving out the
-  //--- close button for now; window can be closed using the 'x'
-  //--- in the title bar.
-/*
-  this->CloseNewServerButton = vtkKWPushButton::New();
-  this->CloseNewServerButton->SetParent ( f3 );
-  this->CloseNewServerButton->Create();
-  this->CloseNewServerButton->SetText ( "close" );
-  this->Script ( "pack %s -side top -anchor c  -expand n -padx 2 -pady 6",
-                 this->CloseNewServerButton->GetWidgetName() );
-  this->CloseNewServerButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand);
-*/
+    vtkKWFrame *f2 = vtkKWFrame::New();
+    f2->SetParent ( this->NewServerWindow );
+    f2->Create();
+    f2->SetBorderWidth ( 1 );
+    this->Script ( "pack %s -side top -anchor nw -fill x -expand n -padx 0 -pady 1", f2->GetWidgetName() );
 
-  this->BindNewServerWindow();
-  f1->Delete();
-  l1->Delete();
+    this->CloseNewServerButton = vtkKWPushButton::New();
+    this->CloseNewServerButton->SetParent ( f2 );
+    this->CloseNewServerButton->Create();
+    this->CloseNewServerButton->SetText ( "close" );
+    this->Script ( "pack %s -side top -anchor c  -expand n -padx 2 -pady 6",
+                   this->CloseNewServerButton->GetWidgetName() );
+
+    this->BindNewServerWindow();
+    f1->Delete();
+    f2->Delete();
+    l1->Delete();
+    }
 
   //-- display
   this->NewServerWindow->DeIconify();
@@ -2154,12 +2164,42 @@ void vtkFetchMIGUI::BuildGUI ( )
     
   // HELP FRAME
   // Define your help text and build the help frame here.
-  const char *help = "FetchMI (Medical Informatics) help.\n\n *** Select a server\n\n  *** Query the server for tags. If server has any defined,  it'll fill up the top listbox\n\n *** You can add attributes for tags in the top listbox\n\n *** Select the tags you want to use in your query\n\n *** Click the spyglass to search the server for matching resources.\n\n *** Get a list of resources back and they're parsed and listed in the second listbox.\n\n *** Select a MRML scene file from that list\n\n *** And click download.\n\n \n\n ***The bottom listbox initializes with all data in scene (and scene file) just like the savedatawidget.\n\n ***Each time a node added or deleted event occurs, it updates\n\n ***user selects tags in top box, and applies them to selected datasets in bottom box using the Apply tags button. Tags are preserved in node and MRML scene.\n\n ***user can click tag-view icon to show all tags on any individual dataset or scene in a popup widget.\n\n *** user can upload selected data or scene to selected server. (in our first pass, the scene and all nodes).";
+  const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, CTSC and the Slicer Community. See <a>http://www.slicer.org</a> for details. \n\n";
+  
+  const char *help = "**FetchMI** (Fetch Medical Informatics) is a 'sandbox' module for functionality to remotely upload, download and tag data. Its functionality will eventually be moved into Slicer's load and save panels and into a separate module for data markup.\n\n *** Select a server.** All subsequent operations will transact with the selected server.\n\n * The selected server will automatically be queried for the metadata it currently supports. The panel in the **Query for Scenes** tab will be populated with this metadata (attributes and available values). Update this panel time by clicking the **Refresh** button.\n\n * Select any tags you want to use to query for resources \n\n * Click the **Search** button (binoculars) to query the server for matching resources.\n\n * The **Browse Query Results & Download** tab will be populated by a list of resources matching the query.\n\n * Select a resource (MRML Scenes only) from that list. \n\n * Click the **Download** button and the scene will be downloaded to your current cache directory and loaded.\n\n * The **Tag Scene & Upload** tab shows all data in scene (and scene file).\n\n * Select or create new tags using the menubutton at the top of this panel, and click the **Apply Tags** button to associate to selected datasets. Click the **Remove Tags** button to dissociate selected tag from selected datasets. \n\n ***NOTE: tags should be brief. They can include spaces, but CANNOT include any special characters at this time.**\n\n * Click the **Show All Tags** button to see all tags on all loaded datasets and scene.\n\n * Upload the current scene to the server by clicking the **Upload** button, after data is tagged. In this version, the entire scene and all datasets are uploaded.\n\n ***NOTE: remote uploads and downloads can be slow. Initiating these without access to the network or without access to the selected server may lead to unexpected application behavior.**\n\n";
 
-  const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. \n\n";
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "FetchMI" );
   this->BuildHelpAndAboutFrame ( page, help, about );
+  vtkKWLabel *NACLabel = vtkKWLabel::New();
+  NACLabel->SetParent ( this->GetLogoFrame() );
+  NACLabel->Create();
+  NACLabel->SetImageToIcon ( this->GetAcknowledgementIcons()->GetNACLogo() );
 
+  vtkKWLabel *NAMICLabel = vtkKWLabel::New();
+  NAMICLabel->SetParent ( this->GetLogoFrame() );
+  NAMICLabel->Create();
+  NAMICLabel->SetImageToIcon ( this->GetAcknowledgementIcons()->GetNAMICLogo() );    
+
+  vtkKWLabel *NCIGTLabel = vtkKWLabel::New();
+  NCIGTLabel->SetParent ( this->GetLogoFrame() );
+  NCIGTLabel->Create();
+  NCIGTLabel->SetImageToIcon ( this->GetAcknowledgementIcons()->GetNCIGTLogo() );
+    
+  vtkKWLabel *BIRNLabel = vtkKWLabel::New();
+  BIRNLabel->SetParent ( this->GetLogoFrame() );
+  BIRNLabel->Create();
+  BIRNLabel->SetImageToIcon ( this->GetAcknowledgementIcons()->GetBIRNLogo() );
+
+  app->Script ( "grid %s -row 0 -column 0 -padx 2 -pady 2 -sticky w", NAMICLabel->GetWidgetName());
+  app->Script ("grid %s -row 0 -column 1 -padx 2 -pady 2 -sticky w", NACLabel->GetWidgetName());
+  app->Script ( "grid %s -row 1 -column 0 -padx 2 -pady 2 -sticky w",  BIRNLabel->GetWidgetName());
+  app->Script ( "grid %s -row 1 -column 1 -padx 2 -pady 2 -sticky w",  NCIGTLabel->GetWidgetName());                  
+
+  NACLabel->Delete();
+  NAMICLabel->Delete();
+  NCIGTLabel->Delete();
+  BIRNLabel->Delete();
+  
   // create icons
   this->FetchMIIcons = vtkFetchMIIcons::New();
 

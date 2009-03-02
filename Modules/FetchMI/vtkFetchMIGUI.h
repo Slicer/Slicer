@@ -112,6 +112,7 @@ class VTK_FETCHMI_EXPORT vtkFetchMIGUI : public vtkSlicerModuleGUI
   // can be added. There is currently no check for whether
   // the server is valid. 
   void RaiseNewServerWindow();
+  void WithdrawNewServerWindow();
   void DestroyNewServerWindow();
   void BindNewServerWindow();
   void UnBindNewServerWindow();
