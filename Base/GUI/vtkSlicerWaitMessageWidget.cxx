@@ -141,11 +141,11 @@ void vtkSlicerWaitMessageWidget::CreateWidget ( )
       int px, py, sx, sy;
       vtkKWTkUtilities::GetWidgetCoordinates(this->GetParent(), &px, &py);
       vtkKWTkUtilities::GetWidgetSize(this->GetParent(), &sx, &sy);
-      this->MessageWindow->SetPosition ( px + sx/2.0 - 230, py + sy/2.0 - 60) ;
+      this->MessageWindow->SetPosition ( px + sx/2.0 - 300, py + sy/2.0 - 60) ;
       this->MessageWindow->SetBorderWidth ( 1 );
       this->MessageWindow->SetReliefToFlat ( );
       this->MessageWindow->SetTitle("Slicer operation in progress");
-      this->MessageWindow->SetSize ( 460, 120 );
+      this->MessageWindow->SetSize ( 600, 120 );
       this->MessageWindow->Withdraw();
       this->MessageWindow->SetDeleteWindowProtocolCommand ( this, "WithdrawWindow" );
 
