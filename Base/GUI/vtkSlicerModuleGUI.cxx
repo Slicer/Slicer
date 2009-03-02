@@ -25,6 +25,7 @@ vtkSlicerModuleGUI::vtkSlicerModuleGUI ( ) {
     this->Logo = 0;
     this->Built = false;
     this->ModuleName = NULL;
+    this->Index = VTK_SHORT_MAX;
 }
 
 //---------------------------------------------------------------------------

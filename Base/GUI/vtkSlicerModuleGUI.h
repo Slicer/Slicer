@@ -69,9 +69,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
   virtual const char *GetCategory() const {return "None";}
 
   // Description:
-  // Get the index of the module.  The index is used for sorting the 
+  // Get/Set the index of the module.  The index is used for sorting the 
   // modules within a menu. Modules are sorted first by index, then alphabetical
-  virtual unsigned short GetIndex() const {return VTK_SHORT_MAX;}
+  virtual unsigned short GetIndex() const {return this->Index;}
+  vtkSetMacro(Index, unsigned short);
   
   // Description:
   // Get a logo for the module
@@ -157,6 +158,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
     // Description:
     // Describes whether the GUI has been built or not.
     bool Built;
+
+    // Description:
+    // Priority order for menus 
+    unsigned short Index;
     
     // constructor, destructor.
     vtkSlicerModuleGUI ( );
