@@ -619,6 +619,32 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
     this->MultiColumnList->GetWidget()->AddRow();
     this->MultiColumnList->GetWidget()->SetCellText(
       row,NodeName_Column,node->GetName());
+
+    // As a safety measure:
+    // If the data is sitting in cache, it's vulnerable to overwriting or deleting.
+    // Mark the node as modified since read so that a user will be more likely
+    // to save it to a reliable location on local (or remote) disk.
+    if ( this->MRMLScene->GetCacheManager() )
+      {
+      if ( this->MRMLScene->GetCacheManager()->GetRemoteCacheDirectory() )
+        {
+        std::string cacheDir = this->MRMLScene->GetCacheManager()->GetRemoteCacheDirectory();
+        size_t pos = name.find ( cacheDir.c_str() );
+        if ( pos != std::string::npos)
+          {
+          node->ModifiedSinceReadOn();
+          }
+        }
+      else
+        {
+        vtkWarningMacro ( "Warning saving data: cannot get a default cache directory, so not able to check whether any datafiles are residing in cache and should be marked for save by default. Please take care when saving data." );
+        }
+      }
+    else
+      {
+      vtkWarningMacro ( "Warning saving data: cannot get a default cache directory, so not able to check whether any datafiles are residing in cache and should be marked for save by default. Please take care when saving data." );
+      }
+
     if (node->GetModifiedSinceRead()) 
       {
       this->SetRowModified(row, 1);
