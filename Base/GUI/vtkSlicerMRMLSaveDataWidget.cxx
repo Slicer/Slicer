@@ -263,6 +263,14 @@ void vtkSlicerMRMLSaveDataWidget::SaveSceneWithData(int sceneRow)
     }          
   fin.close();
 
+  // set the scene's root directory so that storage nodes can use it
+  if (this->GetMRMLScene())
+    {
+    vtksys_stl::string directory = 
+      vtksys::SystemTools::GetParentDirectory(sceneFileName.c_str());
+    this->MRMLScene->SetRootDirectory(directory.c_str());
+    }
+
   if(writeScene && this->SaveModifiedData())
     {
     if(this->SaveScene(sceneRow))
