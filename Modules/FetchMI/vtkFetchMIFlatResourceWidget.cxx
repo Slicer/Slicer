@@ -163,8 +163,6 @@ void vtkFetchMIFlatResourceWidget::ProcessWidgetEvents ( vtkObject *caller,
       }
     else if ( (b == this->GetDownloadSelectedButton()) && (event == vtkKWPushButton::InvokedEvent ) )
       {
-      
-      int doit = 0;
       vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication());
       if ( app )
         {
@@ -172,34 +170,9 @@ void vtkFetchMIFlatResourceWidget::ProcessWidgetEvents ( vtkObject *caller,
           {
           if ( app->GetApplicationGUI()->GetMainSlicerWindow() )
             {
-            /*
-            vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-            dialog->SetParent ( app->GetApplicationGUI()->GetMainSlicerWindow() );
-            dialog->SetStyleToOkCancel();
-            dialog->SetText ( "Downloading a new scene will automatically close the current scene. Continue?" );
-            dialog->Create();
-            if ( dialog->Invoke() )
-              {
-              if ( this->GetMRMLScene() )
-                {
-                doit = 1;
-                this->MRMLScene->Clear(false);
-                }
-              }
-            dialog->Delete();
-            */
             }
           }
         }
-      if ( !doit )
-        {
-        // user chose not to close scene, so don't download.
-        /*
-        vtkWarningMacro ( "FetchMI: can only download a new scene if current scene is closed." );
-        return;
-        */
-        }
-
       //--- raise the DataIOManager Window.
       if ( this->GetMRMLScene() != NULL )
         {
@@ -221,7 +194,7 @@ void vtkFetchMIFlatResourceWidget::ProcessWidgetEvents ( vtkObject *caller,
           vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
           dialog->SetParent ( this->GetParent() );
           dialog->SetStyleToMessage();
-          msg = "Currently, only one MRML scene at a time can be downloaded, and there appear to be multiple selections. Please select only one for download.";
+          msg = "Currently, only one MRML scene at a time can be downloaded, and there appear to be multiple selections. Please select only scene at a time for download.";
           dialog->SetText ( msg.c_str() );
           dialog->Create();
           dialog->Invoke();
@@ -230,8 +203,6 @@ void vtkFetchMIFlatResourceWidget::ProcessWidgetEvents ( vtkObject *caller,
         }
       std::string dtype;
       std::string uri;
-//      int dlFlag = 0;
-//      int dtFlag = 0;
 
       //--- try to post a wait message
       if ( this->GetApplication() )

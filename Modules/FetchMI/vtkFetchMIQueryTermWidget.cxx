@@ -202,15 +202,37 @@ void vtkFetchMIQueryTermWidget::ProcessWidgetEvents ( vtkObject *caller,
               {
               t->SetRestoreSelectionState(1);
               //--- this queries server for tags
-              this->SetStatusText ("Querying selected server for metadata..." );
-              this->Logic->QueryServerForTags();
-              this->SetStatusText ( "Querying selected server for metadata......." );
-              this->Logic->QueryServerForTagValues( );
-              this->SetStatusText ( "Querying selected server for metadata.......done." );
-              // TODO: temporary fix for HID which we are
-              // not yet querying for available tags. Just
-              // repopulate from default tags in FetchMINode
-              this->SetStatusText ( "");
+
+              //--- try to post a message....
+              if ( this->GetApplication() )
+                {
+                vtkSlicerApplication* app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
+                if ( app )
+                  {
+                  vtkSlicerApplicationGUI *appGUI = app->GetApplicationGUI();
+                  if ( appGUI )
+                    {
+                    if (appGUI->GetMainSlicerWindow() )
+                      {
+                      vtkSlicerWaitMessageWidget *wm = vtkSlicerWaitMessageWidget::New();
+                      wm->SetParent ( appGUI->GetMainSlicerWindow() );
+                      wm->Create();
+                      wm->SetText ("Querying selected server for metadata (may take a little while)...");
+                      wm->DisplayWindow();
+                      this->SetStatusText ("Querying selected server for metadata..." );
+                      this->Logic->QueryServerForTags();
+                      this->Logic->QueryServerForTagValues( );
+                      wm->SetText ("Querying selected server for metadata (may take a little while)... done.");
+                      wm->WithdrawWindow();
+                      wm->Delete();
+                      // TODO: temporary fix for HID which we are
+                      // not yet querying for available tags. Just
+                      // repopulate from default tags in FetchMINode
+                      this->SetStatusText ( "" );
+                      }
+                    }
+                  }
+                }
               }
             }
           }

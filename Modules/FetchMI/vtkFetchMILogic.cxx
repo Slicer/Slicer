@@ -2834,7 +2834,17 @@ void vtkFetchMILogic::RequestSceneDownload ( const char *uri )
   // now override the mrml scene's url to point to file on disk
   this->GetMRMLScene()->SetURL(localURL.c_str());
   //--- load the remote scene
-  this->MRMLScene->Connect();
+//  this->MRMLScene->Connect();
+  this->MRMLScene->Import();
+
+  if (  this->MRMLScene->GetErrorCode() != 0 ) 
+    {
+    vtkErrorMacro ("RequestSceneDownload: Null or empty server name." );
+    std::string msg = this->GetMRMLScene()->GetErrorMessage();
+    this->FetchMINode->SetErrorMessage (msg.c_str() );
+    this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
+    return;
+    }
 
 }
 
