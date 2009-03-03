@@ -69,13 +69,13 @@ void vtkDataIOManagerLogic::ProcessMRMLEvents(vtkObject *caller, unsigned long e
       {
       vtkDebugMacro("ProcessMRMLEvents: calling queue read on the node " << node->GetID());
       this->QueueRead ( node );
-//      node->InvokeEvent ( vtkDataIOManager::RefreshDisplayEvent );
+      node->InvokeEvent ( vtkDataIOManager::RefreshDisplayEvent );
       }  
     else if ( (node != NULL) && (event == vtkDataIOManager::RemoteWriteEvent ) )
       {
       vtkDebugMacro("ProcessMRMLEvents: calling queue write on teh node " << node->GetID());
       this->QueueWrite ( node );
-//      node->InvokeEvent ( vtkDataIOManager::RefreshDisplayEvent );
+      node->InvokeEvent ( vtkDataIOManager::RefreshDisplayEvent );
       }
     }
 }
@@ -661,6 +661,7 @@ int vtkDataIOManagerLogic::QueueWrite ( vtkMRMLNode *node )
       //---
       transfer->SetTransferStatus( vtkDataTransfer::Running);
       this->ApplyTransfer ( transfer );
+      this->GetDataIOManager()->InvokeEvent ( vtkDataIOManager::RefreshDisplayEvent );
       transfer->SetTransferStatus( vtkDataTransfer::Completed);
       // now set the node's storage node state to ready
       dnode->GetNthStorageNode(storageNodeIndex)->SetWriteStateTransferDone();

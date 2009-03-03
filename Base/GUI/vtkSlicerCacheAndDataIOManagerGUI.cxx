@@ -455,7 +455,8 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessMRMLEvents ( vtkObject *caller,
       }
     else if ( event == vtkDataIOManager::RefreshDisplayEvent )
       {
-      this->DisplayManagerWindow();
+//      this->DisplayManagerWindow();
+      this->UpdateEntireGUI();
       }
     else if ( event == vtkDataIOManager::SettingsUpdateEvent )
       {
@@ -728,7 +729,8 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateOverviewPanel()
 void vtkSlicerCacheAndDataIOManagerGUI::UpdateTransfersPanel()
 {
   //--- update widgets
-
+//  this->Script ( "%s yview moveto 1.0", this->TransfersFrame->GetFrame()->GetWidgetName() );
+  
   vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: Updating Transfers Panel");
   if ( this->TransferWidgetCollection != NULL )
     {
