@@ -465,9 +465,39 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
                                      "%25", "%");
 
   //--- Now strip off all the uri prefix (does this work?)
-  vtksys_stl::string filename = vtksys::SystemTools::GetFilenameName ( kwInString );
 
-  vtkDebugMacro("GetFilenameFromURI: got filename name " << filename.c_str());
+  vtksys_stl::string newFileName;
+  vtksys_stl::string fileName;
+  vtksys_stl::string baseName;
+  vtksys_stl::string extensionName;
+  vtksys_stl::string tmpName = vtksys::SystemTools::GetFilenameName ( kwInString );
+  vtksys_stl::string versionExtension;
+
+  vtkDebugMacro("GetFilenameFromURI: got fileName name " << tmpName.c_str());
+
+  //--- Now check for trailing version numbers.
+  vtksys_stl::string::size_type found = tmpName.find_first_of ( ".");
+  if ( found != tmpName.npos )
+    {
+    //--- save the extension_version and baseName.
+    versionExtension = tmpName.substr ( found );
+    baseName = tmpName.substr ( 0, found );
+
+    found = versionExtension.find_first_of ( "_");
+    if ( found != versionExtension.npos )
+      {
+      //--- found a version number modifying the extension.
+      extensionName = versionExtension.substr(0, found);
+      }
+    }
+  if ( baseName.c_str() != NULL )
+    {
+    newFileName = baseName.c_str();
+    }
+  if ( extensionName.c_str() != NULL )
+    {
+    newFileName += extensionName.c_str();
+    }
 
   //--- Create absolute path
   if (this->GetRemoteCacheDirectory() == NULL ||
@@ -475,12 +505,12 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
     {
     vtkErrorMacro("GetFilenameFromURI: remote cache dir is not set! The file will appear in the current working dir.");
     }
-  vtksys_stl::string absolute = this->GetRemoteCacheDirectory();
-  absolute += "/";
-  absolute += filename;
-  filename = absolute;
+  vtksys_stl::vector<vtksys_stl::string> pathComponents;
+  vtksys::SystemTools::SplitPath( this->GetRemoteCacheDirectory(), pathComponents);
+  pathComponents.push_back ( newFileName );
+  fileName = vtksys::SystemTools::JoinPath ( pathComponents );
   
-  const char *inStr = filename.c_str();
+  const char *inStr = fileName.c_str();
   char *returnString = NULL;
   size_t n = strlen(inStr) + 1;
   char *cp1 = new char[n];

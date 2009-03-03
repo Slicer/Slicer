@@ -98,6 +98,11 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   // Description:
   // Extracts the filename from the URI and prepends the
   // Remote Cache Directory path to it. Returns the full path.
+  // NOTE: this method looks at a filename's extension and
+  // if appended version numbers have been added, it attempts
+  // to strip them out of the extension and add them to the
+  // filenamebase. So filename.nrrd_010 would become filename.nrrd.
+  // This will cause problems for any file type with an '_' in its extension.
   const char* GetFilenameFromURI ( const char *uri );
   const char* AddCachePathToFilename ( const char *filename );
   const char* EncodeURI ( const char *uri );
