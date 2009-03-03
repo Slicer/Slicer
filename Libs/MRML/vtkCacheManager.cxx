@@ -489,6 +489,10 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
       //--- found a version number modifying the extension.
       extensionName = versionExtension.substr(0, found);
       }
+    else
+      {
+      extensionName = versionExtension;
+      }
     }
   if ( baseName.c_str() != NULL )
     {
