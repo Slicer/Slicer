@@ -57,6 +57,7 @@
 #include "vtkFetchMIResourceUploadWidget.h"
 #include "vtkFetchMITagViewWidget.h"
 #include "vtkKWNotebook.h"
+#include "vtkKWLabel.h"
 
 #include <map>
 #include <string>
@@ -106,6 +107,8 @@ vtkFetchMIGUI::vtkFetchMIGUI()
   this->TaggedDataList = NULL;
   this->AddServerButton = NULL;
   this->CloseNewServerButton = NULL;
+  this->NewServerLabel = NULL;
+  this->ServerTypeMenuButton = NULL;
   this->NewServerWindow = NULL;
   this->ServerMenuButton = NULL;
   this->AddServerEntry = NULL;
@@ -171,7 +174,6 @@ vtkFetchMIGUI::~vtkFetchMIGUI()
       }
     if ( this->NewServerWindow)
       {
-      this->UnBindNewServerWindow();
       this->NewServerWindow->SetParent ( NULL );
       this->NewServerWindow->Delete();
       this->NewServerWindow = NULL;
@@ -536,16 +538,20 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
     {
     if (e == this->AddServerEntry )
       {
-      if ( e->GetValue() != NULL )
+      if ( (e->GetValue() != NULL) && (strcmp ( "", e->GetValue() )) )
         {
-        if ( strcmp ( e->GetValue(), "" ) )
+        //--- TODO: when more service types are availabe, build out way to get them
+        this->Logic->AddNewServer(e->GetValue(), "XND", "XND", "XND");
+        this->FetchMINode->SetServer (e->GetValue() );
+        if ( this->NewServerLabel )
           {
-          //--- TODO: when more service types are availabe, build out way to get them
-          this->Logic->AddNewServer(e->GetValue(), "XND", "XND", "XND");
-          this->FetchMINode->SetServer (e->GetValue() );
-          e->SetValue ( "" );
-          this->ResourceList->DeleteAllItems();
+          std::stringstream ss;
+          ss << "Added server: ";
+          ss <<  this->FetchMINode->GetSelectedServer();
+          std::string s = ss.str();
+          this->NewServerLabel->SetText ( s.c_str() );
           }
+        this->AddServerEntry->SetValue ( "" );
         }
       }
     }
@@ -553,17 +559,31 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
     {
     if ( b == this->AddServerButton )
       {
-      if ( this->GetAddServerEntry()->GetValue() != NULL )
+      if ( this->AddServerEntry!= NULL )
         {
-        if ( strcmp ( this->GetAddServerEntry()->GetValue(), "" ) )
+        if ( this->GetAddServerEntry()->GetValue() != NULL)
           {
-          //--- TODO: when more service types are availabe, build out way to get them
-          this->Logic->AddNewServer (this->GetAddServerEntry()->GetValue(), "XND", "XND", "XND");
-          this->FetchMINode->SetServer ( this->GetAddServerEntry()->GetValue() );        
-          e->SetValue ( "" );
-          this->ResourceList->DeleteAllItems();
+          if ( strcmp ( this->GetAddServerEntry()->GetValue(), "" ) )
+            {
+            //--- TODO: when more service types are availabe, build out way to get them
+            this->Logic->AddNewServer (this->GetAddServerEntry()->GetValue(), "XND", "XND", "XND");
+            this->FetchMINode->SetServer ( this->GetAddServerEntry()->GetValue() );        
+            if ( this->NewServerLabel )
+              {
+              std::stringstream ss;
+              ss << "Added server: ";
+              ss <<  this->FetchMINode->GetSelectedServer();
+              std::string s = ss.str();
+              this->NewServerLabel->SetText ( s.c_str() );
+              }
+            this->AddServerEntry->SetValue ( "" );
+            }
           }
         }
+      }
+    else if ( b == this->CloseNewServerButton )
+      {
+      this->WithdrawNewServerWindow();
       }
     }
   
@@ -592,16 +612,21 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
             }
           if ( !(strcmp (this->ServerMenuButton->GetValue(), "Add new server (XNAT Desktop servers only)" )))
             {
-            vtkErrorMacro ( "This is commented out for now." );
-            //this->RaiseNewServerWindow ();
+            this->RaiseNewServerWindow ();
             return;
             }
 
-          this->FetchMINode->SetServer ( this->ServerMenuButton->GetValue() );
+          //--- set server only if it changed.
+          if ( strcmp (this->FetchMINode->GetSelectedServer(), this->ServerMenuButton->GetValue() ) )
+            {
+            this->FetchMINode->SetServer ( this->ServerMenuButton->GetValue() );
+            }
+
           //--- this queries server for tags
           vtkDebugMacro ("--------------------GUI event calling Query.");
           this->SetStatusText ( "Querying selected server for metadata (may take a little while)..." );
 
+          //--- try to put up a 'remoteio in process' window
           if ( this->GetApplication() )
             {
             vtkSlicerApplication* app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
@@ -639,6 +664,10 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
             this->SetStatusText ( "" );
             }
           }
+        }
+      else if ( m== this->ServerTypeMenuButton->GetMenu() )
+        {
+        //--- nothing for now; only server type is XND.
         }
       }
     }
@@ -1506,8 +1535,14 @@ void vtkFetchMIGUI::DestroyNewServerWindow( )
     return;
     }
   this->NewServerWindow->Withdraw();
-  this->UnBindNewServerWindow();
 
+  if ( this->ServerTypeMenuButton )
+    {
+    this->ServerTypeMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+    this->ServerTypeMenuButton->SetParent ( NULL );
+    this->ServerTypeMenuButton->Delete();
+    this->ServerTypeMenuButton = NULL;
+    }
   if ( this->AddServerEntry )
     {
     this->AddServerEntry->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -1522,7 +1557,12 @@ void vtkFetchMIGUI::DestroyNewServerWindow( )
     this->AddServerButton->Delete();
     this->AddServerButton = NULL;
     }
-
+  if ( this->NewServerLabel )
+    {
+    this->NewServerLabel->SetParent ( NULL );
+    this->NewServerLabel->Delete();
+    this->NewServerLabel = NULL;
+    }
   if ( this->CloseNewServerButton )
     {
     this->CloseNewServerButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -1536,40 +1576,11 @@ void vtkFetchMIGUI::DestroyNewServerWindow( )
 
 
 
-//---------------------------------------------------------------------------
-void vtkFetchMIGUI::BindNewServerWindow ( )
-{
-  if (!this->CloseNewServerButton )
-    {
-    return;
-    }
-  if ( this->CloseNewServerButton->IsCreated() )
-    {
-    this->CloseNewServerButton->SetBinding ( "<ButtonPress>", this, "WithdrawNewServerWindow" );
-//    this->CloseNewServerButton->SetBinding ( "<ButtonPress>", this, "DestroyNewServerWindow" );
-    }
-
-}
 
 //---------------------------------------------------------------------------
 void vtkFetchMIGUI::WithdrawNewServerWindow()
 {
   this->NewServerWindow->Withdraw();
-}
-
-
-//---------------------------------------------------------------------------
-void vtkFetchMIGUI::UnBindNewServerWindow ( )
-{
-
-  if ( !this->CloseNewServerButton )
-    {
-    return;
-    }
-  if (this->CloseNewServerButton->IsCreated() )
-    {
-    this->CloseNewServerButton->RemoveBinding ( "<ButtonPress>" );
-    }
 }
 
 
@@ -1587,7 +1598,8 @@ void vtkFetchMIGUI::RaiseNewServerWindow()
     return;
     }
 
-  if ( !this->NewServerWindow->IsCreated() )
+  //--- create if not already here.
+  if ( this->NewServerWindow == NULL )
     {
     int px, py;
     //--- top level container.
@@ -1599,8 +1611,8 @@ void vtkFetchMIGUI::RaiseNewServerWindow()
     this->NewServerWindow->SetPosition ( px + 10, py + 10) ;
     this->NewServerWindow->SetBorderWidth ( 1 );
     this->NewServerWindow->SetReliefToFlat();
-    this->NewServerWindow->SetTitle ("Add a new server (only XNAT Desktop supported at this time.)");
-    this->NewServerWindow->SetSize (450, 75);
+    this->NewServerWindow->SetTitle ("Add a new server (only XND supported at this time.)");
+    this->NewServerWindow->SetSize (450, 125);
     this->NewServerWindow->Withdraw();
     this->NewServerWindow->SetDeleteWindowProtocolCommand ( this, "DestroyNewServerWindow");
 
@@ -1610,17 +1622,36 @@ void vtkFetchMIGUI::RaiseNewServerWindow()
     f1->SetBorderWidth ( 1 );
     this->Script ( "pack %s -side top -anchor nw -fill x -expand n -padx 0 -pady 1", f1->GetWidgetName() );
 
-    //--- new tag entry
+
     vtkKWLabel *l1 = vtkKWLabel::New();
     l1->SetParent (f1);
     l1->Create();
-    l1->SetText ( "Server:" );
+    l1->SetText ( "Server Type:" );
     l1->SetWidth ( 12 );
+
+    vtkKWLabel *l2 = vtkKWLabel::New();
+    l2->SetParent (f1);
+    l2->Create();
+    l2->SetText ( "Server Name:" );
+    l2->SetWidth ( 12 );
+
+    //--- this is here but not hooked into logic at this time
+    //--- since XND is the only option.
+    this->ServerTypeMenuButton = vtkKWMenuButton::New();
+    this->ServerTypeMenuButton->SetParent (f1 );
+    this->ServerTypeMenuButton->Create();
+    this->ServerTypeMenuButton->SetValue ( "XND" );
+    this->ServerTypeMenuButton->GetMenu()->AddRadioButton ( "XND" );
+    this->ServerTypeMenuButton->GetMenu()->AddSeparator ( );
+    this->ServerTypeMenuButton->GetMenu()->AddCommand ( "close" );
+    this->ServerTypeMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+    
     this->AddServerEntry = vtkKWEntry::New();
     this->AddServerEntry->SetParent ( f1 );
     this->AddServerEntry->Create();
     this->AddServerEntry->SetWidth(20);
     this->AddServerEntry->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+
     this->AddServerButton = vtkKWPushButton::New();
     this->AddServerButton->SetParent ( f1);
     this->AddServerButton->Create();
@@ -1629,40 +1660,29 @@ void vtkFetchMIGUI::RaiseNewServerWindow()
     this->AddServerButton->SetImageToIcon ( this->FetchMIIcons->GetAddNewIcon() );
     this->AddServerButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand);
 
+    this->NewServerLabel = vtkKWLabel::New();
+    this->NewServerLabel->SetParent (f1);
+    this->NewServerLabel->Create();
+    this->NewServerLabel->SetBackgroundColor ( 0.881378431373, 0.88137254902, 0.98294117647);
+    this->NewServerLabel->SetText ( "" );
+    
     this->Script ( "grid %s -row 0 -column 0 -sticky e -padx 2 -pady 2", l1->GetWidgetName() );
-    this->Script ( "grid %s -row 0 -column 1 -sticky ew -padx 2 -pady 2", this->AddServerEntry->GetWidgetName() );
-    this->Script ( "grid %s -row 0 -column 2 -sticky ew -padx 2 -pady 2", this->AddServerButton->GetWidgetName() );
+    this->Script ( "grid %s -row 0 -column 1 -columnspan 2 -sticky ew -padx 2 -pady 2", this->ServerTypeMenuButton->GetWidgetName() );
+    this->Script ( "grid %s -row 1 -column 0 -sticky e -padx 2 -pady 2", l2->GetWidgetName() );
+    this->Script ( "grid %s -row 1 -column 1 -sticky ew -padx 2 -pady 2", this->AddServerEntry->GetWidgetName() );
+    this->Script ( "grid %s -row 1 -column 2 -sticky w -padx 2 -pady 2", this->AddServerButton->GetWidgetName() );
+    this->Script ( "grid %s -row 2 -column 1 -columnspan 2 -sticky ew -padx 2 -pady 2", this->NewServerLabel->GetWidgetName() );
     this->Script ( "grid columnconfigure %s 0 -weight 0", f1->GetWidgetName() );
     this->Script ( "grid columnconfigure %s 1 -weight 1", f1->GetWidgetName() );
     this->Script ( "grid columnconfigure %s 2 -weight 0", f1->GetWidgetName() );
 
-    //--- close button (destroys win and widgets when closed.
-    //--- TODO: this is causing an error when window is destroyed.
-    //--- I think because the button is destroyed while the binding
-    //--- to it is still active. Not sure how to fix, so leaving out the
-    //--- close button for now; window can be closed using the 'x'
-    //--- in the title bar.
-
-    vtkKWFrame *f2 = vtkKWFrame::New();
-    f2->SetParent ( this->NewServerWindow );
-    f2->Create();
-    f2->SetBorderWidth ( 1 );
-    this->Script ( "pack %s -side top -anchor nw -fill x -expand n -padx 0 -pady 1", f2->GetWidgetName() );
-
-    this->CloseNewServerButton = vtkKWPushButton::New();
-    this->CloseNewServerButton->SetParent ( f2 );
-    this->CloseNewServerButton->Create();
-    this->CloseNewServerButton->SetText ( "close" );
-    this->Script ( "pack %s -side top -anchor c  -expand n -padx 2 -pady 6",
-                   this->CloseNewServerButton->GetWidgetName() );
-
-    this->BindNewServerWindow();
-    f1->Delete();
-    f2->Delete();
     l1->Delete();
+    l2->Delete();
+    f1->Delete();
     }
 
   //-- display
+  this->NewServerLabel->SetText ( "" );
   this->NewServerWindow->DeIconify();
   this->NewServerWindow->Raise();
 }

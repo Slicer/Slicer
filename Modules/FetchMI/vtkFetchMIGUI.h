@@ -61,11 +61,13 @@ class VTK_FETCHMI_EXPORT vtkFetchMIGUI : public vtkSlicerModuleGUI
   vtkGetObjectMacro ( TaggedDataList, vtkFetchMIResourceUploadWidget );
   vtkGetObjectMacro ( AddServerButton, vtkKWPushButton );
   vtkGetObjectMacro ( ServerMenuButton, vtkKWMenuButton );
+  vtkGetObjectMacro ( NewServerLabel, vtkKWLabel );
   vtkGetObjectMacro ( RefreshButton, vtkKWPushButton );
   vtkGetObjectMacro ( AddServerEntry, vtkKWEntry );
   vtkGetObjectMacro ( FetchMIIcons, vtkFetchMIIcons );
   vtkGetObjectMacro ( QueryTagsButton, vtkKWPushButton );
   vtkGetObjectMacro ( TagViewer, vtkFetchMITagViewWidget);
+  vtkGetObjectMacro ( ServerTypeMenuButton, vtkKWMenuButton );
   vtkGetObjectMacro ( CloseNewServerButton, vtkKWPushButton );
   vtkGetObjectMacro ( NewServerWindow, vtkKWTopLevel );
   vtkGetObjectMacro ( Notebook, vtkKWNotebook );
@@ -114,8 +116,6 @@ class VTK_FETCHMI_EXPORT vtkFetchMIGUI : public vtkSlicerModuleGUI
   void RaiseNewServerWindow();
   void WithdrawNewServerWindow();
   void DestroyNewServerWindow();
-  void BindNewServerWindow();
-  void UnBindNewServerWindow();
 
   // Description:
   // Describe behavior at module startup and exit.
@@ -190,8 +190,10 @@ protected:
   vtkFetchMIFlatResourceWidget *ResourceList;
   vtkFetchMIResourceUploadWidget *TaggedDataList;
   vtkKWPushButton *AddServerButton;
+  vtkKWMenuButton *ServerTypeMenuButton;
   vtkKWPushButton *CloseNewServerButton;
   vtkKWTopLevel *NewServerWindow;
+  vtkKWLabel *NewServerLabel;
   vtkKWMenuButton *ServerMenuButton;
   vtkKWPushButton *RefreshButton;
   vtkKWEntry *AddServerEntry;
