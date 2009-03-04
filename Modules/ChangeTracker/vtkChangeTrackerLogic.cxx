@@ -16,7 +16,6 @@
 #include "vtkImageIslandFilter.h"
 #include "vtkSlicerVolumesLogic.h"
 #include "vtkSlicerVolumesGUI.h"
-#include "vtkRigidRegistrator.h"
 #include "vtkKWProgressGauge.h"
 #include "vtkImageMedian3D.h"
 //#include "vtkSlicerApplication.h"
@@ -957,59 +956,6 @@ void vtkChangeTrackerLogic::DefineSegment(vtkImageData *INPUT, vtkImageIslandFil
   OUTPUT->Update(); 
 }
 
-// Stole it from vtkEMSegmentLogic
-void vtkChangeTrackerLogic::RigidRegistration(vtkMRMLVolumeNode* fixedVolumeNode, vtkMRMLVolumeNode* movingVolumeNode, 
-                        vtkMRMLVolumeNode* outputVolumeNode, vtkTransform* fixedRASToMovingRASTransform, 
-                        double backgroundLevel)
-{
-  vtkRigidRegistrator* registrator = vtkRigidRegistrator::New();
-
-  // set fixed image ------
-  registrator->SetFixedImage(fixedVolumeNode->GetImageData());
-  vtkMatrix4x4* IJKToRASMatrixFixed = vtkMatrix4x4::New();
-  fixedVolumeNode->GetIJKToRASMatrix(IJKToRASMatrixFixed);
-  registrator->SetFixedIJKToXYZ(IJKToRASMatrixFixed);
-  IJKToRASMatrixFixed->Delete();
-    
-  // set moving image ------
-  registrator->SetMovingImage(movingVolumeNode->GetImageData());
-  vtkMatrix4x4* IJKToRASMatrixMoving = vtkMatrix4x4::New();
-  movingVolumeNode->GetIJKToRASMatrix(IJKToRASMatrixMoving);
-  registrator->SetMovingIJKToXYZ(IJKToRASMatrixMoving);
-  IJKToRASMatrixMoving->Delete();
-
-  registrator->SetImageToImageMetricToMutualInformation();
-  registrator->SetMetricComputationSamplingRatio(0.3333);
-  registrator->SetNumberOfIterations(5);
-  // registrator->SetNumberOfLevels(2); 
-
-  registrator->SetTransformInitializationTypeToImageCenters();
-  registrator->SetIntensityInterpolationTypeToLinear();
-
-  try
-    {
-    //
-    // run registration
-    registrator->RegisterImages();
-    fixedRASToMovingRASTransform->DeepCopy(registrator->GetTransform());
-
-    if (outputVolumeNode != NULL)
-      {
-      //
-      // resample moving image
-      vtkChangeTrackerLogic::LinearResample(movingVolumeNode, outputVolumeNode, fixedVolumeNode, fixedRASToMovingRASTransform, backgroundLevel);
-      }
-    }
-  catch (...)
-    {
-    std::cerr << "Failed to register images!!!" << std::endl;
-    }
-    
-  //
-  // clean up
-  registrator->Delete();
-}
-
 void vtkChangeTrackerLogic::LinearResample (vtkMRMLVolumeNode* inputVolumeNode, vtkMRMLVolumeNode* outputVolumeNode, vtkMRMLVolumeNode* outputVolumeGeometryNode,
                     vtkTransform* outputRASToInputRASTransform, double backgroundLevel)
 {
@@ -1110,7 +1056,7 @@ int vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
   // Linear registration parameter setup
   moduleNode->SetParameterAsString("FixedImageFileName", ctNode->GetScan1_Ref());
   moduleNode->SetParameterAsString("MovingImageFileName", ctNode->GetScan2_Ref());
-  moduleNode->SetParameterAsString("Iterations", "100,100,50,20");
+  moduleNode->SetParameterAsString("Iterations", "jjsdkjfflkj100,100,50,20");
   moduleNode->SetParameterAsString("ResampledImageFileName", outputNode->GetID());
   moduleNode->SetParameterAsString("OutputTransform", transformNode->GetID());
 
