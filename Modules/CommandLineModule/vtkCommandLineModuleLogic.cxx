@@ -1726,7 +1726,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
                 {
                 if ( (*pit).GetDefault() != "" )
                   {
-                  vtkSmartPointer<vtkStringArray> reqSTNID = vtkStringArray::New();
+                  vtkSmartPointer<vtkStringArray> reqSTNID = vtkSmartPointer<vtkStringArray>::New();
                   vtkStdString areq;
                   areq = "[$::slicer3::MRMLScene GetNodeByID " + reference + "] "
                     + "SetAndObserveTransformNodeID "
