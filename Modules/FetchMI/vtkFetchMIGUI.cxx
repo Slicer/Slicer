@@ -418,7 +418,6 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
   vtkKWEntry *e = vtkKWEntry::SafeDownCast ( caller );
   vtkKWMenu *m = vtkKWMenu::SafeDownCast ( caller );
-  vtkKWNotebook *n = vtkKWNotebook::SafeDownCast ( caller );
   vtkFetchMIResourceUploadWidget *w = vtkFetchMIResourceUploadWidget::SafeDownCast ( caller );
   vtkFetchMIFlatResourceWidget *f = vtkFetchMIFlatResourceWidget::SafeDownCast ( caller );
   vtkFetchMIQueryTermWidget *q= vtkFetchMIQueryTermWidget::SafeDownCast ( caller );
