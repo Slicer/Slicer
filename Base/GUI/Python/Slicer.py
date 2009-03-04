@@ -16,7 +16,7 @@ def StartConsole():
     import ipTk
     reload(ipTk)
     top = Tkinter.Toplevel ( tk )
-    os.environ['HOME']=os.getcwd()
+    os.environ = dict([ ( s[:s.find('=')],s[s.find('=')+1:]) for s in tk.call('env').splitlines()])
     s=ipTk.IPythonView(top, banner="3D Slicer IPython console\n")
     s.master.title("3D Slicer 3.3 alpha IPython console")
     s.config(background="black")
