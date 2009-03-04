@@ -855,17 +855,11 @@ void vtkFetchMIResourceUploadWidget::CreateWidget ( )
   // create the icons
   this->FetchMIIcons = vtkFetchMIIcons::New();
 
-  // frame for the buttons
+  // frame for tag selection
   vtkKWFrame *topFrame = vtkKWFrame::New();
   topFrame->SetParent ( this->ContainerFrame );
   topFrame->Create();
   this->Script ("pack %s -side top -fill x -anchor nw -expand y -padx 2 -pady 6", topFrame->GetWidgetName() );
-  
-  // frame for the buttons
-  vtkKWFrame *buttonFrame = vtkKWFrame::New();
-  buttonFrame->SetParent ( this->ContainerFrame );
-  buttonFrame->Create();
-  this->Script ("pack %s -side top -anchor c -expand y -fill x -padx 2 -pady 2", buttonFrame->GetWidgetName() );
 
   this->SelectTagMenuButton = vtkKWMenuButton::New();
   this->SelectTagMenuButton->SetParent (topFrame);
@@ -885,17 +879,36 @@ void vtkFetchMIResourceUploadWidget::CreateWidget ( )
   this->Script ( "grid %s -row 0 -column 0  -sticky ew -padx 2 -pady 2", this->SelectTagMenuButton->GetWidgetName() );
   this->Script ( "grid %s -row 1 -column 0 -sticky ew -padx 2 -pady 2", this->CurrentTagLabel->GetWidgetName() );
   this->Script ( "grid columnconfigure %s 0 -weight 1", topFrame->GetWidgetName() );
-  
-  this->TaggingHelpButton = vtkKWPushButton::New();
-  this->TaggingHelpButton->SetParent (buttonFrame);
-  this->TaggingHelpButton->Create();
-  this->TaggingHelpButton->SetBorderWidth ( 0 );
-  this->TaggingHelpButton->SetReliefToFlat();  
-  this->TaggingHelpButton->SetImageToIcon ( this->FetchMIIcons->GetHelpIcon() );
-  this->TaggingHelpButton->SetBalloonHelpString ( "See more information about describing datasets with tags." );
 
+  // frames for the buttons
+  vtkKWFrame *f = vtkKWFrame::New();
+  f->SetParent ( this->ContainerFrame );
+  f->Create();
+  vtkKWFrame *f1 = vtkKWFrame::New();
+  f1->SetParent ( f );
+  f1->Create();
+  vtkKWFrame *f2 = vtkKWFrame::New();
+  f2->SetParent ( f );
+  f2->Create();
+  vtkKWFrame *f3 = vtkKWFrame::New();
+  f3->SetParent ( f );
+  f3->Create();
+  vtkKWFrame *f4 = vtkKWFrame::New();
+  f4->SetParent ( f );
+  f4->Create();
+  
+  this->Script ("pack %s -side top -anchor w -expand y -fill x -padx 2 -pady 6", f->GetWidgetName() );
+  this->Script ("grid %s -row 0 -column 0 -sticky w -padx 2 -pady 0", f1->GetWidgetName() );
+  this->Script ("grid %s -row 0 -column 1 -sticky w -padx 20 -pady 0", f2->GetWidgetName() );
+  this->Script ("grid %s -row 0 -column 2 -sticky ew -padx 2 -pady 0", f3->GetWidgetName() );
+  this->Script ("grid %s -row 0 -column 3 -sticky e -padx 2 -pady 0", f4->GetWidgetName() );
+  this->Script ("grid columnconfigure %s 0 -weight 0", f->GetWidgetName() );
+  this->Script ("grid columnconfigure %s 1 -weight 0", f->GetWidgetName() );
+  this->Script ("grid columnconfigure %s 2 -weight 1", f->GetWidgetName() );
+  this->Script ("grid columnconfigure %s 3 -weight 0", f->GetWidgetName() );
+  
   this->SelectAllButton = vtkKWPushButton::New();
-  this->SelectAllButton->SetParent (buttonFrame);
+  this->SelectAllButton->SetParent ( f1 );
   this->SelectAllButton->Create();
   this->SelectAllButton->SetBorderWidth ( 0 );
   this->SelectAllButton->SetReliefToFlat();  
@@ -903,7 +916,7 @@ void vtkFetchMIResourceUploadWidget::CreateWidget ( )
   this->SelectAllButton->SetBalloonHelpString ( "Select all datasets in list" );
 
   this->DeselectAllButton = vtkKWPushButton::New();
-  this->DeselectAllButton->SetParent (buttonFrame);
+  this->DeselectAllButton->SetParent ( f1 );
   this->DeselectAllButton->Create();
   this->DeselectAllButton->SetBorderWidth ( 0 );
   this->DeselectAllButton->SetReliefToFlat();  
@@ -911,7 +924,7 @@ void vtkFetchMIResourceUploadWidget::CreateWidget ( )
   this->DeselectAllButton->SetBalloonHelpString ( "Deselect all datasets in list" );
 
   this->ShowTagsForAllButton = vtkKWPushButton::New();
-  this->ShowTagsForAllButton->SetParent (buttonFrame);
+  this->ShowTagsForAllButton->SetParent ( f2 );
   this->ShowTagsForAllButton->Create();
   this->ShowTagsForAllButton->SetBorderWidth ( 0 );
   this->ShowTagsForAllButton->SetReliefToFlat();  
@@ -919,7 +932,7 @@ void vtkFetchMIResourceUploadWidget::CreateWidget ( )
   this->ShowTagsForAllButton->SetBalloonHelpString ( "Show all tags describing scene and data" );
 
   this->ApplyTagsButton = vtkKWPushButton::New();
-  this->ApplyTagsButton->SetParent (buttonFrame);
+  this->ApplyTagsButton->SetParent ( f2 );
   this->ApplyTagsButton->Create();
   this->ApplyTagsButton->SetBorderWidth ( 0 );
   this->ApplyTagsButton->SetReliefToFlat();  
@@ -927,7 +940,7 @@ void vtkFetchMIResourceUploadWidget::CreateWidget ( )
   this->ApplyTagsButton->SetBalloonHelpString ( "Apply this tag to selected datasets" );
 
   this->RemoveTagsButton = vtkKWPushButton::New();
-  this->RemoveTagsButton->SetParent (buttonFrame);
+  this->RemoveTagsButton->SetParent ( f2 );
   this->RemoveTagsButton->Create();
   this->RemoveTagsButton->SetBorderWidth ( 0 );
   this->RemoveTagsButton->SetReliefToFlat();  
@@ -935,7 +948,7 @@ void vtkFetchMIResourceUploadWidget::CreateWidget ( )
   this->RemoveTagsButton->SetBalloonHelpString ( "Remove this tag from selected datasets" );
 
   this->UploadButton = vtkKWPushButton::New();
-  this->UploadButton->SetParent (buttonFrame);
+  this->UploadButton->SetParent ( f3 );
   this->UploadButton->Create();
   this->UploadButton->SetBorderWidth ( 0 );
   this->UploadButton->SetReliefToFlat();
@@ -944,25 +957,25 @@ void vtkFetchMIResourceUploadWidget::CreateWidget ( )
   this->UploadButton->SetReliefToFlat();
   this->UploadButton->SetImageToIcon ( this->FetchMIIcons->GetUploadIcon() );
 
-  vtkKWLabel *spacer = vtkKWLabel::New();
-  spacer->SetParent ( buttonFrame );
-  spacer->Create();
-  spacer->SetText ("             " );
+  this->TaggingHelpButton = vtkKWPushButton::New();
+  this->TaggingHelpButton->SetParent ( f4 );
+  this->TaggingHelpButton->Create();
+  this->TaggingHelpButton->SetBorderWidth ( 0 );
+  this->TaggingHelpButton->SetReliefToFlat();  
+  this->TaggingHelpButton->SetImageToIcon ( this->FetchMIIcons->GetHelpIcon() );
+  this->TaggingHelpButton->SetBalloonHelpString ( "See more information about describing datasets with tags." );
 
-  this->Script ("pack %s -side left -anchor sw -expand n -padx 2 -pady 2",
-                this->SelectAllButton->GetWidgetName() );
-  this->Script ("pack %s -side left -anchor sw -expand n -padx 2 -pady 2",
+  this->Script ("pack %s %s -side left -anchor w -expand n -padx 2 -pady 2",
+                this->SelectAllButton->GetWidgetName(),
                 this->DeselectAllButton->GetWidgetName() );
-  this->Script ("pack %s -side left -anchor sw -expand n -padx 2 -pady 2",
-                this->TaggingHelpButton->GetWidgetName() );
-  this->Script ("pack %s %s %s %s %s -side left -anchor sw -expand n -padx 2 -pady 2",
-                spacer->GetWidgetName(),
+  this->Script ("pack %s %s %s -side left -anchor w -expand n -padx 2 -pady 2",
                 this->ApplyTagsButton->GetWidgetName(),
                 this->RemoveTagsButton->GetWidgetName(),
-                this->ShowTagsForAllButton->GetWidgetName(),
+                this->ShowTagsForAllButton->GetWidgetName() );
+  this->Script ("pack %s -side left -anchor w -expand n -padx 2 -pady 2",
                 this->UploadButton->GetWidgetName() );
-
-  spacer->Delete();
+  this->Script ("pack %s -side right -anchor w -expand n -padx 2 -pady 2",
+                this->TaggingHelpButton->GetWidgetName() );
 
   this->GetMultiColumnList()->GetWidget()->AddColumn ( "Tag" );
   this->GetMultiColumnList()->GetWidget()->ColumnEditableOn ( 0 );
@@ -1002,8 +1015,11 @@ void vtkFetchMIResourceUploadWidget::CreateWidget ( )
   this->Script ( "pack %s -side top -fill x -pady 0 -expand n", this->GetMultiColumnList()->GetWidgetName() );
 
   topFrame->Delete();
-  buttonFrame->Delete();
-
+  f1->Delete();
+  f2->Delete();
+  f3->Delete();
+  f4->Delete();
+  f->Delete();
 }
 
 

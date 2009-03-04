@@ -482,31 +482,47 @@ void vtkFetchMIFlatResourceWidget::CreateWidget ( )
   // create the icons
   this->FetchMIIcons = vtkFetchMIIcons::New();
 
+  // frames for the buttons
+  vtkKWFrame *f = vtkKWFrame::New();
+  f->SetParent ( this->ContainerFrame );
+  f->Create();
+  vtkKWFrame *f1 = vtkKWFrame::New();
+  f1->SetParent ( f );
+  f1->Create();
+  vtkKWFrame *f2 = vtkKWFrame::New();
+  f2->SetParent ( f );
+  f2->Create();
+  vtkKWFrame *f3 = vtkKWFrame::New();
+  f3->SetParent ( f );
+  f3->Create();
+  
+  this->Script ("pack %s -side top -anchor w -expand y -fill x -padx 2 -pady 6", f->GetWidgetName() );
+  this->Script ("grid %s -row 0 -column 0 -sticky w -padx 2 -pady 0", f1->GetWidgetName() );
+  this->Script ("grid %s -row 0 -column 1 -sticky ew -padx 30 -pady 0", f2->GetWidgetName() );
+  this->Script ("grid %s -row 0 -column 2 -sticky e -padx 2 -pady 0", f3->GetWidgetName() );
+  this->Script ("grid columnconfigure %s 0 -weight 0", f->GetWidgetName() );
+  this->Script ("grid columnconfigure %s 1 -weight 1", f->GetWidgetName() );
+  this->Script ("grid columnconfigure %s 2 -weight 0", f->GetWidgetName() );
 
-  // frame for the buttons
-  vtkKWFrame *bFrame = vtkKWFrame::New();
-  bFrame->SetParent ( this->ContainerFrame );
-  bFrame->Create();
-  this->Script ("pack %s -side top -fill x -anchor c -expand n -padx 2 -pady 6", bFrame->GetWidgetName() );
-
-  this->DownloadSelectedButton = vtkKWPushButton::New();
-  this->DownloadSelectedButton->SetParent (bFrame);
-  this->DownloadSelectedButton->Create();
-  this->DownloadSelectedButton->SetBorderWidth ( 0 );
-  this->DownloadSelectedButton->SetReliefToFlat();  
-  this->DownloadSelectedButton->SetImageToIcon ( this->FetchMIIcons->GetDownloadIcon() );
-  this->DownloadSelectedButton->SetBalloonHelpString ( "Download selected resources" );
 
   this->SelectAllButton = vtkKWPushButton::New();
-  this->SelectAllButton->SetParent (bFrame);
+  this->SelectAllButton->SetParent ( f1 );
   this->SelectAllButton->Create();
   this->SelectAllButton->SetBorderWidth ( 0 );
   this->SelectAllButton->SetReliefToFlat();  
   this->SelectAllButton->SetImageToIcon ( this->FetchMIIcons->GetSelectAllIcon() );
   this->SelectAllButton->SetBalloonHelpString ( "Select all resources for downloading" );
 
+  this->DeselectAllButton = vtkKWPushButton::New();
+  this->DeselectAllButton->SetParent ( f1 );
+  this->DeselectAllButton->Create();
+  this->DeselectAllButton->SetBorderWidth ( 0 );
+  this->DeselectAllButton->SetReliefToFlat();  
+  this->DeselectAllButton->SetImageToIcon ( this->FetchMIIcons->GetDeselectAllIcon() );
+  this->DeselectAllButton->SetBalloonHelpString ( "Deselect all resources in list" );
+
   this->ClearSelectedButton = vtkKWPushButton::New();
-  this->ClearSelectedButton->SetParent (bFrame);
+  this->ClearSelectedButton->SetParent ( f1 );
   this->ClearSelectedButton->Create();
   this->ClearSelectedButton->SetBorderWidth ( 0 );
   this->ClearSelectedButton->SetReliefToFlat ( );  
@@ -514,35 +530,35 @@ void vtkFetchMIFlatResourceWidget::CreateWidget ( )
   this->ClearSelectedButton->SetBalloonHelpString ( "Clear selected resources from list" );
 
   this->ClearAllButton = vtkKWPushButton::New();
-  this->ClearAllButton->SetParent (bFrame);
+  this->ClearAllButton->SetParent ( f1 );
   this->ClearAllButton->Create();
   this->ClearAllButton->SetBorderWidth ( 0 );
   this->ClearAllButton->SetReliefToFlat();  
   this->ClearAllButton->SetImageToIcon ( this->FetchMIIcons->GetDeleteAllIcon() );
   this->ClearAllButton->SetBalloonHelpString ( "Clear all resources from list" );
 
-  this->DeselectAllButton = vtkKWPushButton::New();
-  this->DeselectAllButton->SetParent (bFrame);
-  this->DeselectAllButton->Create();
-  this->DeselectAllButton->SetBorderWidth ( 0 );
-  this->DeselectAllButton->SetReliefToFlat();  
-  this->DeselectAllButton->SetImageToIcon ( this->FetchMIIcons->GetDeselectAllIcon() );
-  this->DeselectAllButton->SetBalloonHelpString ( "Deselect all resources in list" );
+  this->DownloadSelectedButton = vtkKWPushButton::New();
+  this->DownloadSelectedButton->SetParent ( f2 );
+  this->DownloadSelectedButton->Create();
+  this->DownloadSelectedButton->SetBorderWidth ( 0 );
+  this->DownloadSelectedButton->SetReliefToFlat();  
+  this->DownloadSelectedButton->SetImageToIcon ( this->FetchMIIcons->GetDownloadIcon() );
+  this->DownloadSelectedButton->SetBalloonHelpString ( "Download selected resources" );
+
+  this->DeleteButton = vtkKWPushButton::New();
+  this->DeleteButton->SetParent ( f2 );
+  this->DeleteButton->Create();
+  this->DeleteButton->SetBorderWidth ( 0 );
+  this->DeleteButton->SetReliefToFlat();
+  this->DeleteButton->SetBalloonHelpString ( "Delete selected resources from remote server." );
 
   this->HelpButton = vtkKWPushButton::New();
-  this->HelpButton->SetParent (bFrame);
+  this->HelpButton->SetParent ( f3 );
   this->HelpButton->Create();
   this->HelpButton->SetBorderWidth ( 0 );
   this->HelpButton->SetReliefToFlat();  
   this->HelpButton->SetImageToIcon ( this->FetchMIIcons->GetHelpIcon() );
   this->HelpButton->SetBalloonHelpString ( "Tips on using this panel's interface." );
-
-  this->DeleteButton = vtkKWPushButton::New();
-  this->DeleteButton->SetParent (bFrame);
-  this->DeleteButton->Create();
-  this->DeleteButton->SetBorderWidth ( 0 );
-  this->DeleteButton->SetReliefToFlat();
-  this->DeleteButton->SetBalloonHelpString ( "Delete selected resources from remote server." );
 
   if ( this->GetApplication() != NULL )
     {
@@ -553,24 +569,16 @@ void vtkFetchMIFlatResourceWidget::CreateWidget ( )
       }
     }
 
-  vtkKWLabel *spacer = vtkKWLabel::New();
-  spacer->SetParent ( bFrame );
-  spacer->Create();
-  spacer->SetText ("             " );
-
-  this->Script ("pack %s -side left -anchor w -expand n -padx 2 -pady 2",
-                this->SelectAllButton->GetWidgetName() );
-  this->Script ("pack %s -side left -anchor w -expand n -padx 2 -pady 2",
-                this->DeselectAllButton->GetWidgetName() );
-  this->Script ("pack %s -side left -anchor w -expand n -padx 2 -pady 2",
-                this->HelpButton->GetWidgetName() );
-
-  this->Script ("pack %s %s %s %s %s -side left -anchor w -expand n -padx 2 -pady 2",
-                spacer->GetWidgetName(),
+  this->Script ("pack %s %s %s %s -side left -anchor w -expand n -padx 2 -pady 2",
+                this->SelectAllButton->GetWidgetName(),
+                this->DeselectAllButton->GetWidgetName(),
                 this->ClearSelectedButton->GetWidgetName(),
-                this->ClearAllButton->GetWidgetName(),
-                this->DeleteButton->GetWidgetName(),
-                this->DownloadSelectedButton->GetWidgetName());
+                this->ClearAllButton->GetWidgetName() );
+  this->Script ("pack %s %s -side left -anchor w  -expand n -padx 2 -pady 2",
+                this->DownloadSelectedButton->GetWidgetName(),
+                this->DeleteButton->GetWidgetName() );
+  this->Script ("pack %s -side right -anchor w -expand n -padx 2 -pady 2",
+                this->HelpButton->GetWidgetName() );
 
   this->GetMultiColumnList()->GetWidget()->AddColumn ( "Select" );
   this->GetMultiColumnList()->GetWidget()->ColumnEditableOn ( 0 );
@@ -602,9 +610,10 @@ void vtkFetchMIFlatResourceWidget::CreateWidget ( )
   
   this->Script ( "pack %s -side top -fill x -pady 0 -expand n", this->GetMultiColumnList()->GetWidgetName() );
 
-  spacer->Delete();
-  bFrame->Delete();
-
+  f1->Delete();
+  f2->Delete();
+  f3->Delete();
+  f->Delete();
 }
 
 

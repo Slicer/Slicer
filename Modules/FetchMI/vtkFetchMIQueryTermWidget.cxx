@@ -417,38 +417,30 @@ void vtkFetchMIQueryTermWidget::CreateWidget ( )
   this->FetchMIIcons = vtkFetchMIIcons::New();
 
 
-  // frame for the buttons
-  vtkKWFrame *bFrame = vtkKWFrame::New();
-  bFrame->SetParent ( this->ContainerFrame );
-  bFrame->Create();
-  this->Script ("pack %s -side top -anchor c -expand y -fill x -padx 2 -pady 6", bFrame->GetWidgetName() );
-
-  this->RefreshButton = vtkKWPushButton::New();
-  this->RefreshButton->SetParent (bFrame);
-  this->RefreshButton->Create();
-  this->RefreshButton->SetBorderWidth ( 0 );
-  this->RefreshButton->SetReliefToFlat();  
-  this->RefreshButton->SetImageToIcon ( this->FetchMIIcons->GetRefreshServerIcon() );
-  this->RefreshButton->SetBalloonHelpString ( "Re-query current server for new tags" );
-
-  this->ClearSelectedButton = vtkKWPushButton::New();
-  this->ClearSelectedButton->SetParent (bFrame);
-  this->ClearSelectedButton->Create();
-  this->ClearSelectedButton->SetBorderWidth ( 0 );
-  this->ClearSelectedButton->SetReliefToFlat ( );  
-  this->ClearSelectedButton->SetImageToIcon ( this->FetchMIIcons->GetDeleteSelectedIcon() );
-  this->ClearSelectedButton->SetBalloonHelpString ( "Clear selected (non-essential) terms from list" );
-
-  this->ClearAllButton = vtkKWPushButton::New();
-  this->ClearAllButton->SetParent (bFrame);
-  this->ClearAllButton->Create();
-  this->ClearAllButton->SetBorderWidth ( 0 );
-  this->ClearAllButton->SetReliefToFlat();  
-  this->ClearAllButton->SetImageToIcon ( this->FetchMIIcons->GetDeleteAllIcon() );
-  this->ClearAllButton->SetBalloonHelpString ( "Clear all (non-essential) terms from list" );
+  // frames for the buttons
+  vtkKWFrame *f = vtkKWFrame::New();
+  f->SetParent ( this->ContainerFrame );
+  f->Create();
+  vtkKWFrame *f1 = vtkKWFrame::New();
+  f1->SetParent ( f );
+  f1->Create();
+  vtkKWFrame *f2 = vtkKWFrame::New();
+  f2->SetParent ( f );
+  f2->Create();
+  vtkKWFrame *f3 = vtkKWFrame::New();
+  f3->SetParent ( f );
+  f3->Create();
+  
+  this->Script ("pack %s -side top -anchor w -expand y -fill x -padx 2 -pady 6", f->GetWidgetName() );
+  this->Script ("grid %s -row 0 -column 0 -sticky w -padx 2 -pady 0", f1->GetWidgetName() );
+  this->Script ("grid %s -row 0 -column 1 -sticky ew -padx 30 -pady 0", f2->GetWidgetName() );
+  this->Script ("grid %s -row 0 -column 2 -sticky e -padx 2 -pady 0", f3->GetWidgetName() );
+  this->Script ("grid columnconfigure %s 0 -weight 0", f->GetWidgetName() );
+  this->Script ("grid columnconfigure %s 1 -weight 1", f->GetWidgetName() );
+  this->Script ("grid columnconfigure %s 2 -weight 0", f->GetWidgetName() );
 
   this->SelectAllButton = vtkKWPushButton::New();
-  this->SelectAllButton->SetParent (bFrame);
+  this->SelectAllButton->SetParent (f1);
   this->SelectAllButton->Create();
   this->SelectAllButton->SetBorderWidth ( 0 );
   this->SelectAllButton->SetReliefToFlat();  
@@ -456,46 +448,63 @@ void vtkFetchMIQueryTermWidget::CreateWidget ( )
   this->SelectAllButton->SetBalloonHelpString ( "Select all terms in list to use in query" );
   
   this->DeselectAllButton = vtkKWPushButton::New();
-  this->DeselectAllButton->SetParent (bFrame);
+  this->DeselectAllButton->SetParent (f1);
   this->DeselectAllButton->Create();
   this->DeselectAllButton->SetBorderWidth ( 0 );
   this->DeselectAllButton->SetReliefToFlat();  
   this->DeselectAllButton->SetImageToIcon ( this->FetchMIIcons->GetDeselectAllIcon() );
   this->DeselectAllButton->SetBalloonHelpString ( "Deselect all terms in list" );
 
-  this->HelpButton = vtkKWPushButton::New();
-  this->HelpButton->SetParent (bFrame);
-  this->HelpButton->Create();
-  this->HelpButton->SetBorderWidth ( 0 );
-  this->HelpButton->SetReliefToFlat();  
-  this->HelpButton->SetImageToIcon ( this->FetchMIIcons->GetHelpIcon() );
-  this->HelpButton->SetBalloonHelpString ( "Tips on using this panel's interface." );
+  this->ClearAllButton = vtkKWPushButton::New();
+  this->ClearAllButton->SetParent (f1);
+  this->ClearAllButton->Create();
+  this->ClearAllButton->SetBorderWidth ( 0 );
+  this->ClearAllButton->SetReliefToFlat();  
+  this->ClearAllButton->SetImageToIcon ( this->FetchMIIcons->GetDeleteAllIcon() );
+  this->ClearAllButton->SetBalloonHelpString ( "Clear all (non-essential) terms from list" );
+
+  this->ClearSelectedButton = vtkKWPushButton::New();
+  this->ClearSelectedButton->SetParent (f1 );
+  this->ClearSelectedButton->Create();
+  this->ClearSelectedButton->SetBorderWidth ( 0 );
+  this->ClearSelectedButton->SetReliefToFlat ( );  
+  this->ClearSelectedButton->SetImageToIcon ( this->FetchMIIcons->GetDeleteSelectedIcon() );
+  this->ClearSelectedButton->SetBalloonHelpString ( "Clear selected (non-essential) terms from list" );
+
+  this->RefreshButton = vtkKWPushButton::New();
+  this->RefreshButton->SetParent (f2);
+  this->RefreshButton->Create();
+  this->RefreshButton->SetBorderWidth ( 0 );
+  this->RefreshButton->SetReliefToFlat();  
+  this->RefreshButton->SetImageToIcon ( this->FetchMIIcons->GetRefreshServerIcon() );
+  this->RefreshButton->SetBalloonHelpString ( "Re-query current server for new tags" );
 
   this->SearchButton = vtkKWPushButton::New();
-  this->SearchButton->SetParent (bFrame);
+  this->SearchButton->SetParent (f2);
   this->SearchButton->Create();
   this->SearchButton->SetBorderWidth ( 0 );
   this->SearchButton->SetReliefToFlat();  
   this->SearchButton->SetImageToIcon ( this->FetchMIIcons->GetSearchIcon() );
   this->SearchButton->SetBalloonHelpString ( "Query server for resources matching selected tags." );
 
-  vtkKWLabel *spacer = vtkKWLabel::New();
-  spacer->SetParent ( bFrame );
-  spacer->Create();
-  spacer->SetText ("             " );
+  this->HelpButton = vtkKWPushButton::New();
+  this->HelpButton->SetParent (f3);
+  this->HelpButton->Create();
+  this->HelpButton->SetBorderWidth ( 0 );
+  this->HelpButton->SetReliefToFlat();  
+  this->HelpButton->SetImageToIcon ( this->FetchMIIcons->GetHelpIcon() );
+  this->HelpButton->SetBalloonHelpString ( "Tips on using this panel's interface." );
 
-  this->Script ("pack %s -side left -anchor sw -expand n -padx 2 -pady 2",
-                this->SelectAllButton->GetWidgetName() );
-  this->Script ("pack %s -side left -anchor sw -expand n -padx 2 -pady 2",
-                this->DeselectAllButton->GetWidgetName() );
-  this->Script ("pack %s -side left -anchor sw -expand n -padx 2 -pady 2",
-                this->HelpButton->GetWidgetName() );
-  this->Script ("pack %s %s %s %s %s -side left -anchor sw -expand n -padx 2 -pady 2",
-                spacer->GetWidgetName(),
+  this->Script ("pack %s %s %s %s -side left -anchor w -expand n -padx 2 -pady 2",
+                this->SelectAllButton->GetWidgetName(),
+                this->DeselectAllButton->GetWidgetName(),
                 this->ClearSelectedButton->GetWidgetName(),
-                this->ClearAllButton->GetWidgetName(),
+                this->ClearAllButton->GetWidgetName() );
+  this->Script ("pack %s %s -side left -anchor w  -expand n -padx 2 -pady 2",
                 this->SearchButton->GetWidgetName(),
                 this->RefreshButton->GetWidgetName() );
+  this->Script ("pack %s -side right -anchor w -expand n -padx 2 -pady 2",
+                this->HelpButton->GetWidgetName() );
 
   // configure the multicolumn list
   this->GetMultiColumnList()->GetWidget()->AddColumn ( "Use" );
@@ -522,9 +531,11 @@ void vtkFetchMIQueryTermWidget::CreateWidget ( )
   this->GetMultiColumnList()->GetWidget()->SetHeight ( 22 );
   this->Script ( "pack %s -side top -fill x -pady 0 -expand n", this->GetMultiColumnList()->GetWidgetName() );
 
-  spacer->Delete();
-
-  bFrame->Delete();
+  f1->Delete();
+  f2->Delete();
+  f3->Delete();
+  f->Delete();
+  
 }
 
 
