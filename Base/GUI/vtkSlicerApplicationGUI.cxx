@@ -1263,9 +1263,6 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
   this->MainSlicerWindow->GetFileMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
 
   i = this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
-                                                                 "Publish to XNAT Host...", this, "ProcessPublishToXnatCommand");
-
-  i = this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
                                                                  "Close Scene", this, "ProcessCloseSceneCommand");
   this->MainSlicerWindow->GetFileMenu()->SetItemAccelerator ( i, "Ctrl-W");
   this->MainSlicerWindow->GetFileMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
@@ -1283,13 +1280,17 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
   i = this->MainSlicerWindow->GetEditMenu()->AddCommand ("Set Home", NULL, "$::slicer3::ApplicationGUI SetCurrentModuleToHome");
   this->MainSlicerWindow->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+H");
   this->MainSlicerWindow->GetEditMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
+
+/*
+  // commenting out Undo and Redo options for now: 03/03/2009
   i = this->MainSlicerWindow->GetEditMenu()->AddCommand ( "Undo", NULL, "$::slicer3::MRMLScene Undo" );
   this->MainSlicerWindow->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+Z");
   this->MainSlicerWindow->GetEditMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
   i = this->MainSlicerWindow->GetEditMenu()->AddCommand ( "Redo", NULL, "$::slicer3::MRMLScene Redo" );
   this->MainSlicerWindow->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+Y");
   this->MainSlicerWindow->GetEditMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
-            
+*/            
+
   this->GetMainSlicerWindow()->GetEditMenu()->InsertSeparator (this->GetMainSlicerWindow()->GetEditMenu()->GetNumberOfItems());
   i = this->MainSlicerWindow->GetEditMenu()->AddCommand ( "Edit Box", NULL, "::EditBox::ShowDialog" );
   this->MainSlicerWindow->GetEditMenu()->SetItemAccelerator ( i, "space");
@@ -3058,15 +3059,20 @@ void vtkSlicerApplicationGUI::ConfigureRemoteIOSettings()
           }
         }
       //---- update DataIOManager
+      //--- for now, just turn this guy off. Expose again when curl doesn't step on itself and crash.
       vtkDataIOManager *dm = scene->GetDataIOManager();
       if ( dm != NULL )
         {
+        dm->SetEnableAsynchronousIO ( 0 );
+        /*
         if ( dm->GetEnableAsynchronousIO() != app->GetEnableAsynchronousIO() )
           {
           dm->SetEnableAsynchronousIO (app->GetEnableAsynchronousIO() );
           }
+        */
         }
 
+      
       //---- update application settings interface if required...
       if ( this->GetMainSlicerWindow() != NULL )
         {

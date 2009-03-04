@@ -1043,7 +1043,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   //--- and add toolbars to the window's main toolbar set.        
   tbs->AddToolbar ( this->GetLoadSaveToolbar() );
   tbs->AddToolbar ( this->GetModulesToolbar() );
-  tbs->AddToolbar ( this->GetUndoRedoToolbar () );
+//  tbs->AddToolbar ( this->GetUndoRedoToolbar () );
   tbs->AddToolbar ( this->GetViewToolbar() );
   tbs->AddToolbar ( this->GetInteractionModeToolbar() );
         
@@ -1486,6 +1486,17 @@ void vtkSlicerToolbarGUI::PopUpCompareViewCustomLayoutFrame()
     {
     return;
     }
+  /*
+  if ( !this->UndoIconButton || !this->UndoIconButton->IsCreated())
+    {
+    return;
+    }
+  */
+  if ( !this->ColorIconButton || !this->ColorIconButton->IsCreated())
+    {
+    return;
+    }
+
   // Get the position of the mouse, the position and size of the push button,
   // the size of the scale.
 
@@ -1493,7 +1504,8 @@ void vtkSlicerToolbarGUI::PopUpCompareViewCustomLayoutFrame()
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication());
   
   vtkKWTkUtilities::GetMousePointerCoordinates(this->ChooseLayoutIconMenuButton, &x, &y);
-  vtkKWTkUtilities::GetWidgetCoordinates(this->UndoIconButton, &px, &py);
+  vtkKWTkUtilities::GetWidgetCoordinates(this->ColorIconButton, &px, &py);
+//  vtkKWTkUtilities::GetWidgetCoordinates(this->UndoIconButton, &px, &py);
   vtkKWTkUtilities::GetWidgetSize(this->ChooseLayoutIconMenuButton, NULL, &ph);
  
   this->CompareViewBoxTopLevel->SetPosition(px-ph, py+ph);
