@@ -138,6 +138,7 @@ void vtkSlicerWaitMessageWidget::CreateWidget ( )
       this->MessageWindow->SetMasterWindow ( this->GetParent ( ) );
       this->MessageWindow->SetApplication ( app );
       this->MessageWindow->Create();
+//      this->MessageWindow->ModalOn();
       int px, py, sx, sy;
       vtkKWTkUtilities::GetWidgetCoordinates(this->GetParent(), &px, &py);
       vtkKWTkUtilities::GetWidgetSize(this->GetParent(), &sx, &sy);
