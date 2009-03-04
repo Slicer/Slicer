@@ -219,6 +219,7 @@ void vtkFetchMIQueryTermWidget::ProcessWidgetEvents ( vtkObject *caller,
                       wm->Create();
                       wm->SetText ("Querying selected server for metadata (may take a little while)...");
                       wm->DisplayWindow();
+                      this->Script ("update idletasks");  
                       this->SetStatusText ("Querying selected server for metadata..." );
                       this->Logic->QueryServerForTags();
                       this->Logic->QueryServerForTagValues( );
@@ -259,6 +260,7 @@ void vtkFetchMIQueryTermWidget::ProcessWidgetEvents ( vtkObject *caller,
               wm->Create();
               wm->SetText ("Querying selected server for matching resources (may take a little while)...");
               wm->DisplayWindow();
+              this->Script ("update idletasks");  
               this->SetStatusText ("Querying selected server for resources...done.");
               this->Logic->QueryServerForResources();
               wm->SetText ("Querying selected server for matching resources (may take a little while)... done.");

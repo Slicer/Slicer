@@ -43,6 +43,7 @@ public:
   vtkGetObjectMacro (AddNewTagButton, vtkKWPushButton);
   vtkGetObjectMacro (AddNewValueEntry, vtkKWEntry);
   vtkGetObjectMacro (AddNewValueButton, vtkKWPushButton);
+  vtkGetObjectMacro (AddNewTagLabel, vtkKWLabel );
   vtkGetObjectMacro (CloseNewTagWindowButton, vtkKWPushButton);
 
   // Description:
@@ -126,9 +127,8 @@ public:
   
   void PopulateTagMenuButtonCallback ();
 
-  void BindNewTagWindow();
-  void UnBindNewTagWindow();
   void DestroyNewTagWindow();
+  void WithdrawNewTagWindow();
   void RaiseNewTagWindow( const char *att );
 
 
@@ -182,6 +182,7 @@ public:
   //--- Add new Tag pop-up window
   vtkKWTopLevel *NewTagWindow;
   vtkKWEntry *AddNewTagEntry;
+  vtkKWLabel *AddNewTagLabel;
   vtkKWPushButton *AddNewTagButton;
   vtkKWEntry *AddNewValueEntry;
   vtkKWPushButton *AddNewValueButton;

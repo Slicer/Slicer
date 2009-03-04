@@ -483,6 +483,7 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
               wm->Create();
               wm->SetText ("Uploading scene and its resources (may take a little while)...");
               wm->DisplayWindow();
+              this->Script ("update idletasks");  
               this->SetStatusText ("Uploading scene and its resources ( may take a little while).");
               this->Logic->RequestResourceUpload();
               wm->SetText ("Uploading scene and its resources (may take a little while)... done.");
@@ -646,6 +647,7 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
                   wm->Create();
                   wm->SetText ("Querying selected server for metadata (may take a little while)...");
                   wm->DisplayWindow();
+                  this->Script ("update idletasks");  
                   this->Logic->QueryServerForTags();
                   this->SetStatusText ( "Querying selected server for metadata (may take a little while)......." );
                   this->Logic->QueryServerForTagValues( );
@@ -1584,6 +1586,11 @@ void vtkFetchMIGUI::DestroyNewServerWindow( )
 //---------------------------------------------------------------------------
 void vtkFetchMIGUI::WithdrawNewServerWindow()
 {
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  if ( app )
+    {
+    app->Script ( "grab release %s", this->NewServerWindow->GetWidgetName() );
+    }
   this->NewServerWindow->Withdraw();
 }
 
@@ -1616,7 +1623,7 @@ void vtkFetchMIGUI::RaiseNewServerWindow()
     this->NewServerWindow->SetBorderWidth ( 1 );
     this->NewServerWindow->SetReliefToFlat();
     this->NewServerWindow->SetTitle ("Add a new server (only XND supported at this time.)");
-    this->NewServerWindow->SetSize (450, 125);
+    this->NewServerWindow->SetSize (450, 100);
     this->NewServerWindow->Withdraw();
     this->NewServerWindow->SetDeleteWindowProtocolCommand ( this, "DestroyNewServerWindow");
 
@@ -1689,6 +1696,14 @@ void vtkFetchMIGUI::RaiseNewServerWindow()
   this->NewServerLabel->SetText ( "" );
   this->NewServerWindow->DeIconify();
   this->NewServerWindow->Raise();
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  if ( app )
+    {
+    app->Script ( "grab %s", this->NewServerWindow->GetWidgetName() );
+    app->ProcessIdleTasks();
+    }
+  this->Script ("update idletasks");  
+
 }
 
 
@@ -1942,6 +1957,7 @@ void vtkFetchMIGUI::DeleteSelectedResourcesFromServer()
                 wm->Create();
                 wm->SetText ("Deleting scene and it's referenced datasets from the server (may take a little while)...");
                 wm->DisplayWindow();
+                this->Script ("update idletasks");  
                 retval = this->Logic->DeleteSceneFromServer ( deleteURI.c_str() );
                 wm->SetText ("Deleting scene and it's referenced datasets from the server (may take a little while)... done.");
                 wm->WithdrawWindow();
@@ -1973,6 +1989,7 @@ void vtkFetchMIGUI::DeleteSelectedResourcesFromServer()
                 wm->Create();
                 wm->SetText ("Deleting scene file from the server (may take a little while)...");
                 wm->DisplayWindow();
+                this->Script ("update idletasks");  
                 retval = this->Logic->DeleteResourceFromServer ( deleteURI.c_str() );
                 wm->SetText ("Deleting scene file from the server (may take a little while)... done.");
                 wm->WithdrawWindow();
@@ -2053,6 +2070,24 @@ void vtkFetchMIGUI::RemoveTagFromSelectedData()
   if ( (att.c_str() != NULL) && (val.c_str() != NULL) &&
        (strcmp(att.c_str(), "")) && (strcmp(val.c_str(), "")) )
     {
+    //--- do an error checking for users: if the tag attribute = SlicerDataType
+    //--- we need to caution people that applying this tag to data incorrectly
+    //--- can cause slicer trouble with upload/download. Ask them to confirm.
+    if ( !(strcmp(att.c_str(), "SlicerDataType")) )
+      {
+      vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+      dialog->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow() );
+      dialog->SetStyleToOkCancel();
+      dialog->SetText ("Slicer has already applied this tag to all datasets. Changing its value can lead to problems during data upload and download. Are you sure you want to apply this tag to the selected resources?");
+      dialog->Create();
+      int ok = dialog->Invoke();
+      dialog->Delete(); 
+      if (!ok)
+        {
+        return;
+        }
+      }
+
     //--- apply to all selected data in TaggedDataList
     dnum = this->TaggedDataList->GetNumberOfSelectedItems();
     const char *nodeID;
@@ -2125,6 +2160,25 @@ void vtkFetchMIGUI::TagSelectedData()
   if ( (att.c_str() != NULL) && (val.c_str() != NULL) &&
        (strcmp(att.c_str(), "")) && (strcmp(val.c_str(), "")) )
     {
+
+    //--- do an error checking for users: if the tag attribute = SlicerDataType
+    //--- we need to caution people that applying this tag to data incorrectly
+    //--- can cause slicer trouble with upload/download. Ask them to confirm.
+    if ( !(strcmp(att.c_str(), "SlicerDataType")) )
+      {
+      vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+      dialog->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow() );
+      dialog->SetStyleToOkCancel();
+      dialog->SetText ("Slicer has already applied this tag to all datasets. Changing its value can lead to problems during data upload and download. Are you sure you want to apply this tag to the selected resources?");
+      dialog->Create();
+      int ok = dialog->Invoke();
+      dialog->Delete(); 
+      if (!ok)
+        {
+        return;
+        }
+      }
+
     //--- apply to all selected data in TaggedDataList
     dnum = this->TaggedDataList->GetNumberOfSelectedItems();
     const char *nodeID;

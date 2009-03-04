@@ -221,6 +221,7 @@ void vtkFetchMIFlatResourceWidget::ProcessWidgetEvents ( vtkObject *caller,
               wm->SetText ("Downloading requested resources (may take a little while)...");
               this->SetStatusText ( "Downloading requested resources (may take a little while)...");
               wm->DisplayWindow();
+              this->Script ("update idletasks");  
               for ( int n=0; n <num; n++)
                 {
                 dtype = this->GetNthSelectedSlicerDataType (n);

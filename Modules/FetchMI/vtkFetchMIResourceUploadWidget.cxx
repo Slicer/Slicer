@@ -62,6 +62,7 @@ vtkFetchMIResourceUploadWidget::vtkFetchMIResourceUploadWidget ( )
   this->NewUserValue = NULL;
   this->NewTagWindow = NULL;
   this->AddNewTagEntry = NULL;
+  this->AddNewTagLabel = NULL;
   this->AddNewTagButton = NULL;
   this->AddNewValueEntry = NULL;
   this->AddNewValueButton = NULL;
@@ -82,6 +83,8 @@ vtkFetchMIResourceUploadWidget::~vtkFetchMIResourceUploadWidget ( )
 {
   this->RemoveMRMLObservers();
   this->SetLogic ( NULL );
+
+  this->DestroyNewTagWindow();
 
   if ( this->UploadButton )
     {
@@ -178,33 +181,6 @@ void vtkFetchMIResourceUploadWidget::SetStatusText (const char *txt)
     }
 }
 
-//---------------------------------------------------------------------------
-void vtkFetchMIResourceUploadWidget::BindNewTagWindow ( )
-{
-  if (!this->CloseNewTagWindowButton )
-    {
-    return;
-    }
-  if ( this->CloseNewTagWindowButton->IsCreated() )
-    {
-    this->CloseNewTagWindowButton->SetBinding ( "<ButtonPress>", this, "DestroyNewTagWindow" );
-    }
-
-}
-
-//---------------------------------------------------------------------------
-void vtkFetchMIResourceUploadWidget::UnBindNewTagWindow ( )
-{
-
-  if ( !this->CloseNewTagWindowButton )
-    {
-    return;
-    }
-  if (this->CloseNewTagWindowButton->IsCreated() )
-    {
-    this->CloseNewTagWindowButton->RemoveBinding ( "<ButtonPress>" );
-    }
-}
 
 //---------------------------------------------------------------------------
 void vtkFetchMIResourceUploadWidget::DestroyNewTagWindow( )
@@ -218,8 +194,8 @@ void vtkFetchMIResourceUploadWidget::DestroyNewTagWindow( )
     vtkErrorMacro ("DestroyNewTagWindow: NewTagWindow is not created.");
     return;
     }
-  this->NewTagWindow->Withdraw();
-  this->UnBindNewTagWindow();
+
+  this->WithdrawNewTagWindow ( );
 
   if ( this->AddNewTagEntry )
     {
@@ -241,6 +217,12 @@ void vtkFetchMIResourceUploadWidget::DestroyNewTagWindow( )
     this->AddNewValueButton->Delete();    
     this->AddNewValueButton = NULL;
     }
+  if ( this->AddNewTagLabel )
+    {
+    this->AddNewTagLabel->SetParent ( NULL );
+    this->AddNewTagLabel->Delete();
+    this->AddNewTagLabel = NULL;
+    }
   if ( this->CloseNewTagWindowButton )
     {
     this->CloseNewTagWindowButton->SetParent ( NULL );
@@ -251,6 +233,22 @@ void vtkFetchMIResourceUploadWidget::DestroyNewTagWindow( )
   this->NewTagWindow->Delete();
   this->NewTagWindow = NULL;
 }
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkFetchMIResourceUploadWidget::WithdrawNewTagWindow ( )
+{
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  if ( app )
+    {
+    app->Script ( "grab release %s", this->NewTagWindow->GetWidgetName() );
+    }
+  this->NewTagWindow->Withdraw();
+}
+
+
 
 
 //---------------------------------------------------------------------------
@@ -268,96 +266,94 @@ void vtkFetchMIResourceUploadWidget::RaiseNewTagWindow(const char *att)
     return;
     }
 
-  this->DestroyNewTagWindow();
-
-  int px, py;
-  //--- top level container.
-  this->NewTagWindow = vtkKWTopLevel::New();
-  this->NewTagWindow->SetMasterWindow (this->GetSelectTagMenuButton() );
-  this->NewTagWindow->SetApplication ( this->GetParent()->GetApplication() );
-  this->NewTagWindow->Create();
-  vtkKWTkUtilities::GetWidgetCoordinates(this->GetSelectTagMenuButton(), &px, &py);
-  this->NewTagWindow->SetPosition ( px + 10, py + 10) ;
-  this->NewTagWindow->SetBorderWidth ( 1 );
-  this->NewTagWindow->SetReliefToFlat();
-  this->NewTagWindow->SetTitle ("Add a new tag");
-  this->NewTagWindow->SetSize (450, 75);
-  this->NewTagWindow->Withdraw();
-  this->NewTagWindow->SetDeleteWindowProtocolCommand ( this, "DestroyNewTagWindow");
-
-  vtkKWFrame *f1 = vtkKWFrame::New();
-  f1->SetParent ( this->NewTagWindow );
-  f1->Create();
-  f1->SetBorderWidth ( 1 );
-  this->Script ( "pack %s -side top -anchor nw -fill x -expand n -padx 0 -pady 1", f1->GetWidgetName() );
-
-  //--- new tag entry
-  vtkKWLabel *l1 = vtkKWLabel::New();
-  l1->SetParent (f1);
-  l1->Create();
-  l1->SetText ( "Tag:" );
-  l1->SetWidth ( 12 );
-  this->AddNewTagEntry = vtkKWEntry::New();
-  this->AddNewTagEntry->SetParent ( f1 );
-  this->AddNewTagEntry->Create();
-  this->AddNewTagEntry->SetWidth(20);
-  //--- new value entry
-  vtkKWLabel *l3 = vtkKWLabel::New();
-  l3->SetParent (f1);
-  l3->Create();
-  l3->SetText ( "Value:" );
-  l3->SetWidth ( 12 );
-  this->AddNewValueEntry = vtkKWEntry::New();
-  this->AddNewValueEntry->SetParent ( f1 );
-  this->AddNewValueEntry->Create();
-  this->AddNewValueEntry->AddObserver ( vtkKWEntry::EntryValueChangedEvent,  (vtkCommand *)this->GUICallbackCommand);
-  //--- add new value button
-  this->AddNewValueButton = vtkKWPushButton::New();
-  this->AddNewValueButton->SetParent ( f1 );
-  this->AddNewValueButton->Create();
-  this->AddNewValueButton->SetBorderWidth ( 0 );
-  this->AddNewValueButton->SetReliefToFlat();
-  this->AddNewValueButton->SetImageToIcon ( this->FetchMIIcons->GetAddNewIcon() );
-  this->AddNewValueButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand);
-  this->Script ( "grid %s -row 0 -column 0 -sticky e -padx 2 -pady 2", l1->GetWidgetName() );
-  this->Script ( "grid %s -row 0 -column 1 -sticky ew -padx 2 -pady 2", this->AddNewTagEntry->GetWidgetName() );
-  this->Script ( "grid %s -row 1 -column 0 -sticky e -padx 2 -pady 2", l3->GetWidgetName() );
-  this->Script ( "grid %s -row 1 -column 1 -sticky ew -padx 2 -pady 2", this->AddNewValueEntry->GetWidgetName() );
-  this->Script ( "grid %s -row 1 -column 2 -sticky ew -padx 2 -pady 2", this->AddNewValueButton->GetWidgetName() );
-  this->Script ( "grid columnconfigure %s 0 -weight 0", f1->GetWidgetName() );
-  this->Script ( "grid columnconfigure %s 1 -weight 1", f1->GetWidgetName() );
-  this->Script ( "grid columnconfigure %s 2 -weight 0", f1->GetWidgetName() );
-
-  //--- close button (destroys win and widgets when closed.
-  //--- TODO: this is causing an error when window is destroyed.
-  //--- I think because the button is destroyed while the binding
-  //--- to it is still active. Not sure how to fix, so leaving out the
-  //--- close button for now; window can be closed using the 'x'
-  //--- in the title bar.
-/*
-  this->CloseNewTagWindowButton = vtkKWPushButton::New();
-  this->CloseNewTagWindowButton->SetParent ( f3 );
-  this->CloseNewTagWindowButton->Create();
-  this->CloseNewTagWindowButton->SetText ( "close" );
-  this->Script ( "pack %s -side top -anchor c  -expand n -padx 2 -pady 6",
-                 this->CloseNewTagWindowButton->GetWidgetName() );
-*/
-
-  this->BindNewTagWindow();
-  f1->Delete();
-  l1->Delete();
-  l3->Delete();
-
-  //--- initialize entry
-  if ( att != NULL && (strcmp(att, "" )) )
+  if ( this->NewTagWindow == NULL )
     {
-    this->AddNewTagEntry->SetValue ( att );
+    int px, py;
+    //--- top level container.
+    this->NewTagWindow = vtkKWTopLevel::New();
+    this->NewTagWindow->SetMasterWindow (this->GetSelectTagMenuButton() );
+    this->NewTagWindow->SetApplication ( this->GetParent()->GetApplication() );
+    this->NewTagWindow->Create();
+    vtkKWTkUtilities::GetWidgetCoordinates(this->GetApplyTagsButton(), &px, &py);
+    this->NewTagWindow->SetPosition ( px + 10, py + 10) ;
+    this->NewTagWindow->SetBorderWidth ( 1 );
+    this->NewTagWindow->SetReliefToFlat();
+    this->NewTagWindow->SetTitle ("Add a new tag");
+    this->NewTagWindow->SetSize (450, 100);
+    this->NewTagWindow->Withdraw();
+    this->NewTagWindow->SetDeleteWindowProtocolCommand ( this, "DestroyNewTagWindow");
+
+    vtkKWFrame *f1 = vtkKWFrame::New();
+    f1->SetParent ( this->NewTagWindow );
+    f1->Create();
+    f1->SetBorderWidth ( 1 );
+    this->Script ( "pack %s -side top -anchor nw -fill x -expand n -padx 0 -pady 1", f1->GetWidgetName() );
+
+    //--- new tag entry
+    vtkKWLabel *l1 = vtkKWLabel::New();
+    l1->SetParent (f1);
+    l1->Create();
+    l1->SetText ( "Tag:" );
+    l1->SetWidth ( 12 );
+    this->AddNewTagEntry = vtkKWEntry::New();
+    this->AddNewTagEntry->SetParent ( f1 );
+    this->AddNewTagEntry->Create();
+    this->AddNewTagEntry->SetWidth(20);
+    //--- new value entry
+    vtkKWLabel *l3 = vtkKWLabel::New();
+    l3->SetParent (f1);
+    l3->Create();
+    l3->SetText ( "Value:" );
+    l3->SetWidth ( 12 );
+    this->AddNewValueEntry = vtkKWEntry::New();
+    this->AddNewValueEntry->SetParent ( f1 );
+    this->AddNewValueEntry->Create();
+    this->AddNewValueEntry->AddObserver ( vtkKWEntry::EntryValueChangedEvent,  (vtkCommand *)this->GUICallbackCommand);
+    //--- add new value button
+    this->AddNewValueButton = vtkKWPushButton::New();
+    this->AddNewValueButton->SetParent ( f1 );
+    this->AddNewValueButton->Create();
+    this->AddNewValueButton->SetBorderWidth ( 0 );
+    this->AddNewValueButton->SetReliefToFlat();
+    this->AddNewValueButton->SetImageToIcon ( this->FetchMIIcons->GetAddNewIcon() );
+    this->AddNewValueButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand);
+
+    this->AddNewTagLabel  = vtkKWLabel::New();
+    this->AddNewTagLabel->SetParent ( f1 );
+    this->AddNewTagLabel->Create();
+    this->AddNewTagLabel->SetText ( "" );    
+    this->AddNewTagLabel->SetBackgroundColor ( 0.881378431373, 0.88137254902, 0.98294117647);
+
+    this->Script ( "grid %s -row 0 -column 0 -sticky e -padx 2 -pady 2", l1->GetWidgetName() );
+    this->Script ( "grid %s -row 0 -column 1 -sticky ew -padx 2 -pady 2", this->AddNewTagEntry->GetWidgetName() );
+    this->Script ( "grid %s -row 1 -column 0 -sticky e -padx 2 -pady 2", l3->GetWidgetName() );
+    this->Script ( "grid %s -row 1 -column 1 -sticky ew -padx 2 -pady 2", this->AddNewValueEntry->GetWidgetName() );
+    this->Script ( "grid %s -row 1 -column 2 -sticky ew -padx 2 -pady 2", this->AddNewValueButton->GetWidgetName() );
+    this->Script ( "grid %s -row 2 -column 1 -columnspan 2 -sticky ew -padx 2 -pady 2", this->AddNewTagLabel->GetWidgetName() );
+    this->Script ( "grid columnconfigure %s 0 -weight 0", f1->GetWidgetName() );
+    this->Script ( "grid columnconfigure %s 1 -weight 1", f1->GetWidgetName() );
+    this->Script ( "grid columnconfigure %s 2 -weight 0", f1->GetWidgetName() );
+
+    f1->Delete();
+    l1->Delete();
+    l3->Delete();
+
+    //--- initialize entry
+    if ( att != NULL && (strcmp(att, "" )) )
+      {
+      this->AddNewTagEntry->SetValue ( att );
+      }
     }
   
   //-- display
   this->NewTagWindow->DeIconify();
   this->NewTagWindow->Raise();
-
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  if ( app )
+    {
+    app->Script ( "grab %s", this->NewTagWindow->GetWidgetName() );
+    app->ProcessIdleTasks();
+    }
 }
 
 
@@ -531,23 +527,47 @@ void vtkFetchMIResourceUploadWidget::ProcessWidgetEvents ( vtkObject *caller, un
       {
       if ( this->AddNewValueEntry != NULL && this->AddNewTagEntry != NULL )
         {
-        if ( this->AddNewTagEntry->GetValue() != NULL && this->AddNewValueEntry->GetValue() != NULL )
+        //--- make sure they're up and contain info
+        if ( ( this->AddNewTagEntry->GetValue() != NULL) && (this->AddNewValueEntry->GetValue() != NULL ) &&
+             ( strcmp ("", this->AddNewTagEntry->GetValue() )) && ( strcmp ( "", this->AddNewValueEntry->GetValue() ) ) )
           {
           this->UpdateNewUserTag ( this->AddNewTagEntry->GetValue(), this->AddNewValueEntry->GetValue());
+          if ( this->AddNewTagLabel )
+            {
+            std::stringstream ss;
+            ss << "Added: ";
+            ss << this->AddNewTagEntry->GetValue();
+            ss << " = ";
+            ss << this->AddNewValueEntry->GetValue();
+            std::string s = ss.str();
+            this->AddNewTagLabel->SetText ( s.c_str() );
+            }
           }
         this->AddNewValueEntry->SetValue ("");
+        this->AddNewTagEntry->SetValue ("");
        }
       }
     if ( e == this->AddNewValueEntry && event == vtkKWEntry::EntryValueChangedEvent )
       {
-      //--- make sure they're up.
+      //--- make sure they're up and contain info
       if ( this->AddNewValueEntry && this->AddNewTagEntry )
         {
-        if ( this->AddNewTagEntry->GetValue() != NULL && this->AddNewValueEntry->GetValue() != NULL )
+        if ( ( this->AddNewTagEntry->GetValue() != NULL) && (this->AddNewValueEntry->GetValue() != NULL ) &&
+             ( strcmp ("", this->AddNewTagEntry->GetValue() )) && ( strcmp ( "", this->AddNewValueEntry->GetValue() ) ) )
           {
           this->UpdateNewUserTag ( this->AddNewTagEntry->GetValue(), this->AddNewValueEntry->GetValue());
+          if ( this->AddNewTagLabel )
+            {
+            std::stringstream ss;
+            ss << "Added: ";
+            ss << this->AddNewTagEntry->GetValue();
+            ss << " = ";
+            ss << this->AddNewValueEntry->GetValue();
+            std::string s = ss.str();
+            this->AddNewTagLabel->SetText ( s.c_str() );
+            }
           }
-        this->AddNewTagEntry->SetValue ("");
+        this->AddNewValueEntry->SetValue ( "" );
         }
       }
     }
