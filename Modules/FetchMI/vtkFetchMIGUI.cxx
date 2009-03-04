@@ -616,7 +616,11 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
             return;
             }
 
-          //--- set server only if it changed.
+          //--- set server only if it changed or if it's not yet set.
+          if ( this->FetchMINode->GetSelectedServer() == NULL )
+            {
+            this->FetchMINode->SetServer ( this->ServerMenuButton->GetValue() );
+            }
           if ( strcmp (this->FetchMINode->GetSelectedServer(), this->ServerMenuButton->GetValue() ) )
             {
             this->FetchMINode->SetServer ( this->ServerMenuButton->GetValue() );
