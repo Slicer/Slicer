@@ -255,6 +255,9 @@ void vtkMRMLSelectionNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLSelectionNode *node = vtkMRMLSelectionNode::SafeDownCast(anode);
 
+  int oldMode = this->GetDisableModifiedEvent();
+  this->DisableModifiedEventOn();
+  
   this->SetActiveVolumeID(node->GetActiveVolumeID());
   this->SetSecondaryVolumeID(node->GetActiveVolumeID());
   this->SetActiveLabelVolumeID(node->GetActiveLabelVolumeID());
@@ -262,6 +265,9 @@ void vtkMRMLSelectionNode::Copy(vtkMRMLNode *anode)
   this->SetActiveCameraID (node->GetActiveCameraID());
   this->SetActiveViewID (node->GetActiveViewID() );
   this->SetActiveLayoutID (node->GetActiveLayoutID() );
+
+  this->SetDisableModifiedEvent(oldMode);
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
