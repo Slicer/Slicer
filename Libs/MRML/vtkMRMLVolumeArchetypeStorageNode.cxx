@@ -198,6 +198,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     }
   
   std::string fullName = this->GetFullNameFromFileName();
+  vtkDebugMacro("ReadData: got full archetype name " << fullName);
 
   if (fullName == std::string("")) 
     {
@@ -274,13 +275,13 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     volNode->SetAndObserveImageData (NULL);
     }
 
-
-  reader->SetArchetype(fullName.c_str());
   // set the list of file names on the reader
   reader->ResetFileNames();
+  reader->SetArchetype(fullName.c_str());
   for (int n = 0; n < this->GetNumberOfFileNames(); n++)
     {
     std::string nthFileName = this->GetFullNameFromNthFileName(n);
+    vtkDebugMacro("ReadData: got full name for " << n << "th file: " << nthFileName << ", adding it to reader, current num files on it = " << reader->GetNumberOfFileNames());
     reader->AddFileName(nthFileName.c_str());
     }
   reader->SetOutputScalarTypeToNative();
@@ -297,11 +298,12 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   int result = 1;
   try
     {
+    vtkDebugMacro("ReadData: right before reader update, reader num files = " << reader->GetNumberOfFileNames());
     reader->Update();
     }
     catch (...)
     {
-    vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file, fullName = " << fullName.c_str() << ", reader file name = " << reader->GetFileName(0) << ", num files = " << reader->GetNumberOfFileNames() );
+    vtkErrorMacro("ReadData: Cannot read file, fullName = " << fullName.c_str() << ", node num file names = " << this->GetNumberOfFileNames() << ", reader num files = " << reader->GetNumberOfFileNames() << ", reader archetype = " << reader->GetArchetype() << ", reader 0th file name = " << reader->GetFileName(0) );
     reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
     reader->Delete();
     return 0;
@@ -310,7 +312,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   if (reader->GetOutput() == NULL 
       || reader->GetOutput()->GetPointData()->GetScalars()->GetNumberOfTuples() == 0) 
     {
-    vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Unable to read data from file: " << fullName.c_str() );
+    vtkErrorMacro("ReadData: Unable to read data from file: " << fullName.c_str() );
     reader->Delete();
     return 0;
     }
@@ -392,7 +394,7 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
     vtkErrorMacro("cannot write ImageData, it's NULL");
     return 0;
     }
-
+  
   // update the file list
   std::string moveFromDir = this->UpdateFileList(refNode, 1);
 
@@ -431,6 +433,16 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
         targetPathComponents.push_back(thisFile);
         sourcePathComponents.push_back(thisFile);
         std::string targetFile = vtksys::SystemTools::JoinPath(targetPathComponents);
+        // does the target file already exist?
+        if (vtksys::SystemTools::FileExists(targetFile.c_str(), true))
+          {
+          // remove it
+          vtkWarningMacro("WriteData: removing old version of file " << targetFile);
+          if (!vtksys::SystemTools::RemoveFile(targetFile.c_str()))
+            {
+            vtkErrorMacro("WriteData: unable to remove old version of file " << targetFile);
+            }
+          }
         std::string sourceFile = vtksys::SystemTools::JoinPath(sourcePathComponents);
         vtkDebugMacro("WriteData: moving file number " << fileNum << ", " << sourceFile << " to " << targetFile);
         // thisFile needs a full path it's bare
@@ -565,8 +577,10 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   this->ResetFileNameList();
   
   // make a new dir to write temporary stuff out to
+//  vtksys_stl::vector<vtksys_stl::string> pathComponents;
+  // get the base dir of the destination
+  /*
   // get the cache dir and make a subdir in it.
-  vtksys_stl::vector<vtksys_stl::string> pathComponents;
   if (this->GetScene() &&
       this->GetScene()->GetCacheManager() &&
       this->GetScene()->GetCacheManager()->GetRemoteCacheDirectory())
@@ -577,6 +591,12 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
     {
     vtkWarningMacro("UpdateFileList: Unable to get remote cache dir, using current dir for temp dir.");
     }
+  */
+  // get the original directory
+  vtksys_stl::string originalDir = vtksys::SystemTools::GetParentDirectory(oldName.c_str());
+  vtksys_stl::vector<vtksys_stl::string> pathComponents;
+  vtksys::SystemTools::SplitPath(originalDir.c_str(), pathComponents);
+  // add a temp dir to it
   pathComponents.push_back(std::string("TempWrite"));
   std::string tempDir = vtksys::SystemTools::JoinPath(pathComponents);
   vtkDebugMacro("UpdateFileList: deleting and then re-creating temp dir "<< tempDir.c_str());
@@ -622,19 +642,51 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   mat->Delete();
   writer->Delete();
 
-  // look through the new dir and populate the file list, minus the new dir
+  // look through the new dir and populate the file list
   vtksys::Directory dir;
   dir.Load(tempDir.c_str());
   vtkDebugMacro("UpdateFileList: tempdir " << tempDir.c_str() << " has " << dir.GetNumberOfFiles() << " in it");
   size_t fileNum;
-  for (fileNum = 0; fileNum <  dir.GetNumberOfFiles(); ++fileNum)
+
+  // take the archetype and temp dir off of the path
+  pathComponents.pop_back();
+  pathComponents.pop_back();
+  vtksys_stl::string localDirectory = vtksys::SystemTools::JoinPath(pathComponents);
+  vtksys_stl::string relativePath;
+  if (volNode->GetScene() != NULL &&
+      strcmp(volNode->GetScene()->GetRootDirectory(), "") != 0)
+    {
+    // use the scene's root dir, all the files in the list will be
+    // relative to it (the relative path is how you go from the root dir to
+    // the dir in which the volume is saved)
+    relativePath = vtksys::SystemTools::RelativePath(volNode->GetScene()->GetRootDirectory(), localDirectory.c_str());
+    vtkDebugMacro("UpdateFileList: got the scene root dir " << volNode->GetScene()->GetRootDirectory());
+    }
+  else
+    {
+    // use the archetype's directory, so that all the files in the list will
+    // be relative to it
+    relativePath = vtksys::SystemTools::RelativePath(originalDir.c_str(), localDirectory.c_str());
+    }
+  vtkDebugMacro("UpdateFileList: using prefix of relative path " << relativePath.c_str());
+  // now get ready to join the relative path to thisFile
+  vtksys_stl::vector<vtksys_stl::string> relativePathComponents;
+  vtksys::SystemTools::SplitPath(relativePath.c_str(), relativePathComponents);
+  for (fileNum = 0; fileNum < dir.GetNumberOfFiles(); ++fileNum)
     {
     // skip the dirs
-    if (strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)),".") &&
-        strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)),".."))
+    const char *thisFile = dir.GetFile(static_cast<unsigned long>(fileNum));
+    if (strcmp(thisFile,".") &&
+        strcmp(thisFile,".."))
       {
-      vtkDebugMacro("UpdateFileList: adding file number " << fileNum << ", " << dir.GetFile(static_cast<unsigned long>(fileNum)));
-      this->AddFileName(dir.GetFile(static_cast<unsigned long>(fileNum)));
+      vtkDebugMacro("UpdateFileList: adding file number " << fileNum << ", " << thisFile);
+      // at this point, the file name is bare of a directory, turn it into a
+      // relative path from the original archetype
+      relativePathComponents.push_back(thisFile);
+      vtksys_stl::string relativeFile =  vtksys::SystemTools::JoinPath(relativePathComponents);
+      relativePathComponents.pop_back();
+      vtkDebugMacro("UpdateFileList: " << fileNum << ", using relative file name " << relativeFile.c_str());
+      this->AddFileName(relativeFile.c_str());
       }
     }
   // restore the old file name
@@ -643,7 +695,9 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
 
   if (move != 1)
     {
-    // clean up directory??
+    // clean up temp directory
+    vtkDebugMacro("UpdateFileList: removing temp dir " << tempDir);
+    vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
     return std::string("");
     }
   else
