@@ -143,7 +143,7 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
 
   // Description:
   // Get the file's absolute path from the file name and the mrml scene root
-  // dir
+  // dir. GetFullnameFromFileName calls GetFullNameFromNthFileName with -1.
   //BTX
   std::string GetFullNameFromFileName();
   std::string GetFullNameFromNthFileName(int n);
@@ -218,18 +218,18 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
     return NULL;
     };
 
-protected:
-  vtkMRMLStorageNode();
-  ~vtkMRMLStorageNode();
-  vtkMRMLStorageNode(const vtkMRMLStorageNode&);
-  void operator=(const vtkMRMLStorageNode&);
-
   // Description:
   // Set the nth file in FileNameList, checks that it is already defined
   void ResetNthFileName(int n, const char *fileName);
   // Description:
   // Set the nth uri in URIList, checks that it is already defined
   void ResetNthURI(int n, const char *uri);
+  
+protected:
+  vtkMRMLStorageNode();
+  ~vtkMRMLStorageNode();
+  vtkMRMLStorageNode(const vtkMRMLStorageNode&);
+  void operator=(const vtkMRMLStorageNode&);
   
   char *FileName;
   char *URI;

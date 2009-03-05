@@ -421,52 +421,69 @@ const char * vtkMRMLStorageNode::GetStateAsString(int state)
 //----------------------------------------------------------------------------
 std::string vtkMRMLStorageNode::GetFullNameFromFileName()
 {
-  std::string fullName = std::string("");
-  if (this->GetFileName() == NULL)
-    {
-    vtkDebugMacro("GetFullNameFromFileName: filename is null, returning empty string");
-    return fullName;
-    }
-  
-  if (this->SceneRootDir != NULL && this->Scene->IsFilePathRelative(this->GetFileName())) 
-    {
-    // use the system tools to join the two paths and then collapse them
-    vtksys_stl::vector<vtksys_stl::string> rootComponents;
-    vtksys::SystemTools::SplitPath(this->SceneRootDir, rootComponents);
-    vtksys_stl::vector<vtksys_stl::string> fileComponents;
-    vtksys::SystemTools::SplitPath(this->GetFileName(), fileComponents);
-    for (unsigned int p = 0; p < fileComponents.size(); p++)
-      {
-      rootComponents.push_back(fileComponents[p]);
-      }
-    vtksys_stl::string expandedName = vtksys::SystemTools::JoinPath(rootComponents);
-    fullName = vtksys::SystemTools::CollapseFullPath(expandedName.c_str());
-    }
-  else 
-    {
-    fullName = std::string(this->GetFileName());
-    }
-  return fullName;
+  return this->GetFullNameFromNthFileName(-1);  
 }
 
 //----------------------------------------------------------------------------
 std::string vtkMRMLStorageNode::GetFullNameFromNthFileName(int n)
 {
   std::string fullName = std::string("");
-  if (this->GetNumberOfFileNames() < n)
+  const char *fileName;
+  if (n == -1)
     {
-    vtkDebugMacro("GetFullNameFromNthFileName: file name " << n << " not in list (size = " << this->GetNumberOfFileNames() << "), returning empty string");
-    return fullName;
+    // special case, use the archetype
+    if (this->GetFileName() == NULL)
+      {
+      vtkDebugMacro("GetFullNameFromFileName: filename is null, returning empty string");
+      return fullName;
+      }
+    fileName = this->GetFileName();
     }
-  const char *fileName = this->GetNthFileName(n); //FileNameList[n].c_str();
-  if (this->SceneRootDir != NULL && this->Scene->IsFilePathRelative(fileName)) 
+  else
     {
-    fullName = std::string(this->SceneRootDir) + std::string(fileName);
+    if (n < 0 || this->GetNumberOfFileNames() < n)
+      {
+      vtkDebugMacro("GetFullNameFromNthFileName: file name " << n << " not in list (size = " << this->GetNumberOfFileNames() << "), returning empty string");
+      return fullName;
+      }
+    fileName = this->GetNthFileName(n);
     }
-  else 
+
+  vtkDebugMacro("GetFullNameFromNthFileName: n = " << n << ", using file name '" << fileName << "'");
+  
+  if (this->Scene != NULL &&
+      this->Scene->GetRootDirectory() != NULL &&
+      this->Scene->IsFilePathRelative(fileName)) 
     {
+    vtkDebugMacro("GetFullNameFromNthFileName: n = " << n << ", scene root dir = '" << this->Scene->GetRootDirectory() << "'");
+    // use the system tools to join the two paths and then collapse them   
+    if (strcmp(this->Scene->GetRootDirectory(), "") == 0)
+      {
+      vtkDebugMacro("GetFullNameFromNthFileName: scene root dir is empty, just collapsing the fileName " << fileName);
+      fullName = vtksys::SystemTools::CollapseFullPath(fileName);
+      }
+    else
+      {
+      // if the root directory is ./, using it as a base dir for
+      // CollapseFullPath doesn't work well, so collapse it into a full path
+      std::string rootDirCollapsed = vtksys::SystemTools::CollapseFullPath(this->Scene->GetRootDirectory());
+      vtkDebugMacro("GetFullNameFromNthFileName: using scene root dir to collapse file name: " << rootDirCollapsed);
+      fullName = vtksys::SystemTools::CollapseFullPath(fileName, rootDirCollapsed.c_str());
+      }
+    }
+  else
+    {
+    if (this->Scene == NULL)
+      {
+      vtkDebugMacro("GetFullNameFromNthFileName: scene is null, returning " << fileName);
+      }
+    else
+      {
+      vtkDebugMacro("GetFullNameFromNthFileName: scene root dir = " << (this->Scene->GetRootDirectory() != NULL ? this->Scene->GetRootDirectory() : "null") << ", relative = " << (this->Scene->IsFilePathRelative(fileName) ? "yes" : "no"));
+      }
     fullName = std::string(fileName);
     }
+  vtkDebugMacro("GetFullNameFromNthFileName: " << n << ", returning full name " << fullName);
   return fullName;
 }
 
@@ -498,6 +515,7 @@ unsigned int vtkMRMLStorageNode::AddFileName( const char* filename )
   std::string filenamestr (filename);
   if (!this->FileNameIsInList(filename))
     {
+    vtkDebugMacro("AddFileName: adding " << filename);
     this->FileNameList.push_back( filenamestr );
     }
   return (unsigned int)this->FileNameList.size();
@@ -530,7 +548,7 @@ void vtkMRMLStorageNode::ResetNthFileName(int n, const char* fileName)
     vtkErrorMacro("ResetNthFileName: given file name is null (n = " << n << ")");
     return;
     }
-  if (this->GetNumberOfFileNames() >= n)
+  if (n >= 0 && this->GetNumberOfFileNames() >= n)
     {
     this->FileNameList[n] = std::string(fileName);
     }
@@ -576,7 +594,7 @@ void vtkMRMLStorageNode::ResetNthURI(int n, const char* fileName)
     vtkErrorMacro("ResetNthURI: given URI is null (n = " << n << ")");
     return;
     }
-  if (this->GetNumberOfURIs() >= n)
+  if (n >= 0 && this->GetNumberOfURIs() >= n)
     {
     this->URIList[n] = std::string(fileName);
     }
