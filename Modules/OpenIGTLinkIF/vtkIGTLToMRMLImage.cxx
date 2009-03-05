@@ -107,7 +107,7 @@ vtkMRMLNode* vtkIGTLToMRMLImage::CreateNewNode(vtkMRMLScene* scene, const char* 
     displayNode->SetLowerThreshold(range[0]);
     displayNode->SetUpperThreshold(range[1]);
     displayNode->SetWindow(range[1] - range[0]);
-    displayNode->SetLevel(0.5 * (range[1] - range[0]) );
+    displayNode->SetLevel(0.5 * (range[1] + range[0]) );
     
     vtkDebugMacro("Adding node..");
     scene->AddNode(displayNode);
