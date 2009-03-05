@@ -726,6 +726,8 @@ void vtkSlicerApplicationGUI::ShowModulesWizard()
     }
   if (!this->ModulesWizardDialog->IsCreated())
     {
+    this->ModulesWizardDialog->SetParent( this->MainSlicerWindow );
+    this->ModulesWizardDialog->SetMasterWindow( this->MainSlicerWindow );
     this->ModulesWizardDialog->SetApplication( this->GetApplication() );
     this->ModulesWizardDialog->Create();
     }

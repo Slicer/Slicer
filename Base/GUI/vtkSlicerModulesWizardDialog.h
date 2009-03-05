@@ -18,6 +18,10 @@ public:
   std::string Name;
   std::string Version;
   std::string URL;
+  std::string Homepage;
+  std::string Category;
+  std::string ExtensionStatus;
+  std::string Description;
 };
 //ETX
 

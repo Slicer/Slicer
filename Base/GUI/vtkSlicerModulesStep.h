@@ -9,6 +9,7 @@
 #include <vector>
 #include <map>
 
+class vtkSlicerApplication;
 class vtkSlicerModulesWizardDialog;
 class vtkKWMultiColumnList;
 class vtkKWPushButton;
@@ -31,6 +32,18 @@ public:
   virtual void HideUserInterface();
   virtual void Validate();
   virtual void Update();
+
+  // Description:
+  // Check if a download/install or uninstall has been selected
+  //BTX
+  enum
+  {
+    ActionIsDownloadInstall = 0,
+    ActionIsUninstall,
+    ActionIsEmpty
+  };
+  //ETX
+  virtual int IsActionValid();
 
   // Description:
   // Set/Get the wizard widget this step should install its UI in.
@@ -107,6 +120,12 @@ private:
   vtkSlicerModulesWizardDialog *WizardDialog;
 
   // Description:
+  // Helper method to download .s3ext file and parse
+  //BTX
+  void DownloadParseS3ext(const std::string& s3ext, ManifestEntry* entry);
+  //ETX
+      
+  // Description:
   // Helper method for dowlonad and install
   //BTX
   bool DownloadInstallExtension(const std::string& ExtensionName,
@@ -123,9 +142,18 @@ private:
   // Helper method for adding extensions to the column list
   //BTX
   void InsertExtension(int Index,
-                       const std::string& ExtensionName,
-                       const std::string& URL,
+                       ManifestEntry* Entry,
                        const std::string& CacheDir);
+  //ETX
+
+  // Description:
+  // Helper method to read from repository and parse for modules
+  //BTX
+  void UpdateModulesFromRepository(vtkSlicerApplication *app);
+  //ETX
+
+  //BTX
+  int ActionTaken;
   //ETX
 };
 

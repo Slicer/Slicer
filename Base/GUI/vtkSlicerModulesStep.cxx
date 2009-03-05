@@ -10,6 +10,7 @@
 #include "vtkKWLabel.h"
 #include "vtkKWMultiColumnList.h"
 #include "vtkKWFrame.h"
+#include "vtkKWMessageDialog.h"
 
 #include "vtkSlicerModulesConfigurationStep.h"
 
@@ -17,6 +18,7 @@
 
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerConfigure.h"
+#include "vtkSlicerModulesConfigurationStep.h"
 #include "vtkSlicerModulesWizardDialog.h"
 
 #include <itksys/SystemTools.hxx>
@@ -120,7 +122,7 @@ void vtkSlicerModulesStep::ShowUserInterface()
 
   vtkKWWizardWidget *wizard_widget = 
     this->GetWizardDialog()->GetWizardWidget();
-
+  
   vtkSlicerApplication *app =
     dynamic_cast<vtkSlicerApplication*> (this->GetApplication());
 
@@ -280,6 +282,43 @@ void vtkSlicerModulesStep::ShowUserInterface()
 }
 
 //----------------------------------------------------------------------------
+void vtkSlicerModulesStep::UpdateModulesFromRepository(vtkSlicerApplication *app)
+{
+  const char* tmp = app->GetTemporaryDirectory();
+  std::string tmpfile(tmp);
+  tmpfile += "/manifest.html";
+
+  std::ifstream ifs(tmpfile.c_str());
+
+  char *HTML = 0;
+
+  if (!ifs.fail())
+    {
+    ifs.seekg(0, std::ios::end);
+    size_t len = ifs.tellg();
+    ifs.seekg(0, std::ios::beg);
+    HTML = new char[len+1];
+    ifs.read(HTML, len);
+    HTML[len] = '\n';
+    }
+  
+  ifs.close();
+
+  std::vector<ManifestEntry*>::iterator iter = this->Modules.begin();
+  while (iter != this->Modules.end())
+    {
+    delete (*iter);
+    iter++;
+    }
+    
+  this->Modules.clear();
+
+  this->Modules = this->ParseManifest(HTML);
+
+  delete[] HTML;
+}
+
+//----------------------------------------------------------------------------
 void vtkSlicerModulesStep::Update()
 {
   vtkSlicerApplication *app =
@@ -287,40 +326,45 @@ void vtkSlicerModulesStep::Update()
 
   if (app)
     {
-    const char* tmp = app->GetTemporaryDirectory();
-    std::string tmpfile(tmp);
-    tmpfile += "/manifest.html";
+      vtkSlicerModulesWizardDialog *wizard_dlg = this->GetWizardDialog();
+      
+      vtkSlicerModulesConfigurationStep *conf_step = wizard_dlg->GetModulesConfigurationStep();
 
-    std::ifstream ifs(tmpfile.c_str());
-
-    char *HTML = 0;
-
-    if (!ifs.fail())
-      {
-      ifs.seekg(0, std::ios::end);
-      size_t len = ifs.tellg();
-      ifs.seekg(0, std::ios::beg);
-      HTML = new char[len+1];
-      ifs.read(HTML, len);
-      HTML[len] = '\n';
-      }
-  
-    ifs.close();
-
-    std::vector<ManifestEntry*>::iterator iter = this->Modules.begin();
-    while (iter != this->Modules.end())
-      {
-      delete (*iter);
-      iter++;
-      }
-    
-    this->Modules.clear();
-
-    this->Modules = this->ParseManifest(HTML);
-
-    delete[] HTML;
-
-    //------------
+      if (vtkSlicerModulesConfigurationStep::ActionInstall == conf_step->GetSelectedAction())
+        {
+        this->UpdateModulesFromRepository(app);
+        if (this->DownloadButton)
+          {
+          this->DownloadButton->EnabledOn();
+          }
+        if (this->UninstallButton)
+          {
+          this->UninstallButton->EnabledOff();
+          }
+        }
+      else if (vtkSlicerModulesConfigurationStep::ActionUninstall == conf_step->GetSelectedAction())
+        {
+        if (this->DownloadButton)
+          {
+          this->DownloadButton->EnabledOff();
+          }
+        if (this->UninstallButton)
+          {
+          this->UninstallButton->EnabledOn();
+          }
+        }
+      else if (vtkSlicerModulesConfigurationStep::ActionEither == conf_step->GetSelectedAction())
+        {
+        this->UpdateModulesFromRepository(app);
+        if (this->DownloadButton)
+          {
+          this->DownloadButton->EnabledOn();
+          }
+        if (this->UninstallButton)
+          {
+          this->UninstallButton->EnabledOn();
+          }
+        }
 
     const char* cachedir = app->GetModuleCachePath();
 
@@ -328,14 +372,11 @@ void vtkSlicerModulesStep::Update()
       {
       this->ModulesMultiColumnList->DeleteAllRows();
 
-      if (vtkSlicerModulesConfigurationStep::ActionUninstall != this->GetWizardDialog()->GetModulesConfigurationStep()->GetSelectedAction())
+      // Insert each extension entry discovered on the repository
+      for (unsigned int i = 0; i < this->Modules.size(); i++)
         {
-        // Insert each extension entry discovered on the repository
-        for (unsigned int i = 0; i < this->Modules.size(); i++)
-          {
-          ManifestEntry *extension = this->Modules[i];            
-          this->InsertExtension(i, extension->Name, extension->URL, cachedir);
-          }
+        ManifestEntry *extension = this->Modules[i];            
+        this->InsertExtension(i, extension, cachedir);
         }
       }
     }
@@ -343,16 +384,18 @@ void vtkSlicerModulesStep::Update()
 
 //----------------------------------------------------------------------------
 void vtkSlicerModulesStep::InsertExtension(int Index,
-                                           const std::string& ExtensionName,
-                                           const std::string& URL,
+                                           ManifestEntry* Entry,
                                            const std::string& CacheDir)
 {
-  this->ModulesMultiColumnList->InsertCellText(Index, 2, ExtensionName.c_str());
-  this->ModulesMultiColumnList->InsertCellText(Index, 6, URL.c_str());
+  this->ModulesMultiColumnList->InsertCellText(Index, 2, Entry->Name.c_str());
+  this->ModulesMultiColumnList->InsertCellText(Index, 3, Entry->Category.c_str());
+  this->ModulesMultiColumnList->InsertCellText(Index, 4, Entry->Description.c_str());
+  this->ModulesMultiColumnList->InsertCellText(Index, 5, Entry->Homepage.c_str());
+  this->ModulesMultiColumnList->InsertCellText(Index, 6, Entry->URL.c_str());
             
   this->ModulesMultiColumnList->SetCellWindowCommandToCheckButton(Index, 0);
       
-  std::string extdir(CacheDir + std::string("/") + ExtensionName);
+  std::string extdir(CacheDir + std::string("/") + Entry->Name);
 
   if (itksys::SystemTools::FileExists(extdir.c_str()))
     {
@@ -362,6 +405,12 @@ void vtkSlicerModulesStep::InsertExtension(int Index,
     {
     this->SetStatus(Index, vtkSlicerModulesStep::StatusNotFoundOnDisk);
     }
+}
+
+//----------------------------------------------------------------------------
+int vtkSlicerModulesStep::IsActionValid()
+{
+  return this->ActionTaken != vtkSlicerModulesStep::ActionIsEmpty ? 1 : 0;
 }
 
 //----------------------------------------------------------------------------
@@ -418,12 +467,23 @@ void vtkSlicerModulesStep::DownloadInstall()
 
   this->HeaderText->SetText(this->Messages["FINISHED"].c_str());
 
+  this->ActionTaken = vtkSlicerModulesStep::ActionIsDownloadInstall;
+  
   this->GetWizardDialog()->GetWizardWidget()->CancelButtonVisibilityOn();
 }
 
 //----------------------------------------------------------------------------
 void vtkSlicerModulesStep::Uninstall()
 {
+  vtkKWMessageDialog *dlg = vtkKWMessageDialog::New();
+
+  dlg->SetApplication( this->GetApplication() );
+  dlg->SetMasterWindow( this->GetWizardDialog() );
+  dlg->SetText("You are about to uninstall the selected modules, OK?");
+  dlg->SetStyleToOkCancel();
+
+  dlg->Delete();
+
   int nrows = this->ModulesMultiColumnList->GetNumberOfRows();
   for (int row=0; row<nrows; row++)
     {
@@ -441,6 +501,8 @@ void vtkSlicerModulesStep::Uninstall()
       }
     }
 
+
+  this->GetWizardDialog()->GetWizardWidget()->CancelButtonVisibilityOff();
 }
 
 //----------------------------------------------------------------------------
@@ -535,32 +597,44 @@ std::vector<ManifestEntry*> vtkSlicerModulesStep::ParseManifest(const std::strin
 
   std::string baseURL = wizard_dlg->GetSelectedRepositoryURL();
 
-  std::string key(".zip\">");
+  std::string first_key(".zip\">");
+  std::string second_key(".s3ext\">");
 
-  std::string::size_type zip = txt.find(key, 0);
+  std::string::size_type zip = txt.find(first_key, 0);
   std::string::size_type atag = txt.find("</a>", zip);
   std::string::size_type dash = txt.find("-", zip);
- 
+  std::string::size_type ext = txt.find(second_key, dash);
+  std::string::size_type atag2 = txt.find("</a>", ext);
+
   ManifestEntry* entry;
 
   // :NOTE: 20081003 tgl: Put in a sanity check of 10,000 to
   // prevent an infinite loop.  Get Out The Vote 2008!
 
+  std::string s3ext;
   int count = 0;
   while (zip != std::string::npos && count < 10000)
     {
     entry = new ManifestEntry;
 
-    if (std::string::npos != dash)
+    if (std::string::npos != atag2)
       {
       entry->URL = baseURL;
       entry->URL += "/";
-      entry->URL += txt.substr(zip + key.size(), atag - (zip + key.size()));
-      entry->Name = txt.substr(zip + key.size(), dash - (zip + key.size()));
+      entry->URL += txt.substr(zip + first_key.size(), atag - (zip + first_key.size()));
+      entry->Name = txt.substr(zip + first_key.size(), dash - (zip + first_key.size()));
       
-      zip = txt.find(key, zip + 1);
+      s3ext = baseURL;
+      s3ext += "/";
+      s3ext += txt.substr(ext + second_key.size(), atag2 - (ext + second_key.size()));
+
+      this->DownloadParseS3ext(s3ext, entry);
+
+      zip = txt.find(first_key, zip + 1);
       dash = txt.find("-", zip);
       atag = txt.find("</a>", zip);
+      ext = txt.find(second_key, dash);
+      atag2 = txt.find("</a>", dash);
 
       result.push_back(entry);
       }
@@ -571,10 +645,57 @@ std::vector<ManifestEntry*> vtkSlicerModulesStep::ParseManifest(const std::strin
   return result;
 }
 
-static bool
-UnzipPackage(const std::string& zipfile, 
-             const std::string& target,
-             const std::string& tmpdir)
+//----------------------------------------------------------------------------
+void vtkSlicerModulesStep::DownloadParseS3ext(const std::string& s3ext,
+                                              ManifestEntry* entry)
+{
+  vtkHTTPHandler *handler = vtkHTTPHandler::New();
+
+  if (0 != handler->CanHandleURI(s3ext.c_str()))
+    {
+    std::string::size_type pos = s3ext.rfind("/");
+    std::string s3extname = s3ext.substr(pos + 1);
+      
+    vtkSlicerApplication *app = dynamic_cast<vtkSlicerApplication*> (this->GetApplication());
+      
+    std::string tmpfile(std::string(app->GetTemporaryDirectory()) + std::string("/") + s3extname);
+      
+    handler->StageFileRead(s3ext.c_str(), tmpfile.c_str());
+
+    std::ifstream ifs(tmpfile.c_str());
+    std::string line;
+    
+    while (std::getline(ifs, line))
+      {
+        if (line.find("homepage") == 0)
+          {
+          entry->Homepage = line.substr(8);
+          }
+        else if (line.find("category") == 0)
+          {
+          entry->Category = line.substr(8);
+          }
+        else if (line.find("status") == 0)
+          {
+          entry->ExtensionStatus = line.substr(8);
+          }
+        else if (line.find("description") == 0)
+          {
+          entry->Description = line.substr(8);
+          }
+      }
+
+    ifs.close();
+    }
+  
+  handler->Delete();
+  
+}
+
+//----------------------------------------------------------------------------
+static bool UnzipPackage(const std::string& zipfile, 
+                         const std::string& target,
+                         const std::string& tmpdir)
 {
   std::string unzip;
 
