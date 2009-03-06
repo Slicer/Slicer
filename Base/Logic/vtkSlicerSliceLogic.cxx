@@ -1102,101 +1102,15 @@ void vtkSlicerSliceLogic::GetVolumeSliceDimensions(vtkMRMLVolumeNode *volumeNode
   sliceCenter[1] = sliceDimensions[1] = 0.0;
   sliceCenter[2] = sliceDimensions[2] = 0.0;
 
-  vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
+  double sliceBounds[6];
 
-  if ( !sliceNode )
+  this->GetVolumeSliceBounds(volumeNode, sliceBounds);
+
+  for (int i=0; i<3; i++) 
     {
-    return;
+    sliceDimensions[i] = sliceBounds[2*i+1] - sliceBounds[2*i];
+    sliceCenter[i] = 0.5*(sliceBounds[2*i+1] + sliceBounds[2*i]);
     }
-  
-  // create homogeneous versions of vectors (names with H in them)
-  // for doing matrix transforms
-  double rasDimensions[3], rasHDimensions[4], sliceHDimensions[4];
-  double rasCenter[3], rasHCenter[4], sliceHCenter[4];
-  this->GetVolumeRASBox(volumeNode, rasDimensions, rasCenter);
-  rasHDimensions[0] = rasDimensions[0];
-  rasHDimensions[1] = rasDimensions[1];
-  rasHDimensions[2] = rasDimensions[2];
-  rasHDimensions[3] = 0.0;
-  rasHCenter[0] = rasCenter[0];
-  rasHCenter[1] = rasCenter[1];
-  rasHCenter[2] = rasCenter[2];
-  rasHCenter[3] = 1.0;
-
-  //
-  // figure out how big that volume is on this particular slice plane
-  //
-  vtkMatrix4x4 *rasToSlice = vtkMatrix4x4::New();
-  rasToSlice->DeepCopy(sliceNode->GetSliceToRAS());
-  rasToSlice->MultiplyPoint( rasHCenter, sliceHCenter );
-  rasToSlice->SetElement(0, 3, 0.0);
-  rasToSlice->SetElement(1, 3, 0.0);
-  rasToSlice->SetElement(2, 3, 0.0);
-  rasToSlice->Invert();
-  rasToSlice->MultiplyPoint( rasHDimensions, sliceHDimensions );
-  rasToSlice->Delete();
-
-  // ignore homogeneous coordinate
-  sliceDimensions[0] = sliceHDimensions[0];
-  sliceDimensions[1] = sliceHDimensions[1];
-  sliceDimensions[2] = sliceHDimensions[2];
-  sliceCenter[0] = sliceHCenter[0];
-  sliceCenter[1] = sliceHCenter[1];
-  sliceCenter[2] = sliceHCenter[2];
-}
-
-// Get the spacing of the volume, transformed to slice space
-double *vtkSlicerSliceLogic::GetVolumeSliceSpacing(vtkMRMLVolumeNode *volumeNode)
-{
-  if ( !volumeNode )
-    {
-    return (this->SliceSpacing);
-    }
-
-  vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
-
-  if ( !sliceNode )
-    {
-    return (this->SliceSpacing);
-    }
-
-  if (sliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::PrescribedSliceSpacingMode)
-    {
-    // jvm - should we cache the PrescribedSliceSpacing in SliceSpacing?
-    double *pspacing = sliceNode->GetPrescribedSliceSpacing();
-    this->SliceSpacing[0] = pspacing[0];
-    this->SliceSpacing[1] = pspacing[1];
-    this->SliceSpacing[2] = pspacing[2];
-    return (pspacing);
-    }
-  
-  
-  vtkMatrix4x4 *ijkToRAS = vtkMatrix4x4::New();
-  vtkMatrix4x4 *rasToSlice = vtkMatrix4x4::New();
-  vtkMatrix4x4 *ijkToSlice = vtkMatrix4x4::New();
-
-  volumeNode->GetIJKToRASMatrix(ijkToRAS);
-  rasToSlice->DeepCopy(sliceNode->GetSliceToRAS());
-  rasToSlice->Invert();
-
-  ijkToSlice->Multiply4x4(rasToSlice, ijkToRAS, ijkToSlice);
-
-  double invector[4];
-  invector[0] = invector[1] = invector[2] = 1.0;
-  invector[3] = 0.0;
-  double spacing[4];
-  ijkToSlice->MultiplyPoint(invector, spacing);
-  int i;
-  for (i = 0; i < 3; i++)
-    {
-    this->SliceSpacing[i] = fabs(spacing[i]);
-    }
-
-  ijkToRAS->Delete();
-  rasToSlice->Delete();
-  ijkToSlice->Delete();
-
-  return (this->SliceSpacing);
 }
 
 void vtkSlicerSliceLogic::GetVolumeSliceBounds(vtkMRMLVolumeNode *volumeNode, double sliceBounds[6])
@@ -1271,6 +1185,60 @@ void vtkSlicerSliceLogic::GetVolumeSliceBounds(vtkMRMLVolumeNode *volumeNode, do
   sliceBounds[3] = maxBounds[1];
   sliceBounds[4] = minBounds[2];
   sliceBounds[5] = maxBounds[2];
+}
+
+// Get the spacing of the volume, transformed to slice space
+double *vtkSlicerSliceLogic::GetVolumeSliceSpacing(vtkMRMLVolumeNode *volumeNode)
+{
+  if ( !volumeNode )
+    {
+    return (this->SliceSpacing);
+    }
+
+  vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
+
+  if ( !sliceNode )
+    {
+    return (this->SliceSpacing);
+    }
+
+  if (sliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::PrescribedSliceSpacingMode)
+    {
+    // jvm - should we cache the PrescribedSliceSpacing in SliceSpacing?
+    double *pspacing = sliceNode->GetPrescribedSliceSpacing();
+    this->SliceSpacing[0] = pspacing[0];
+    this->SliceSpacing[1] = pspacing[1];
+    this->SliceSpacing[2] = pspacing[2];
+    return (pspacing);
+    }
+  
+  
+  vtkMatrix4x4 *ijkToRAS = vtkMatrix4x4::New();
+  vtkMatrix4x4 *rasToSlice = vtkMatrix4x4::New();
+  vtkMatrix4x4 *ijkToSlice = vtkMatrix4x4::New();
+
+  volumeNode->GetIJKToRASMatrix(ijkToRAS);
+  rasToSlice->DeepCopy(sliceNode->GetSliceToRAS());
+  rasToSlice->Invert();
+
+  ijkToSlice->Multiply4x4(rasToSlice, ijkToRAS, ijkToSlice);
+
+  double invector[4];
+  invector[0] = invector[1] = invector[2] = 1.0;
+  invector[3] = 0.0;
+  double spacing[4];
+  ijkToSlice->MultiplyPoint(invector, spacing);
+  int i;
+  for (i = 0; i < 3; i++)
+    {
+    this->SliceSpacing[i] = fabs(spacing[i]);
+    }
+
+  ijkToRAS->Delete();
+  rasToSlice->Delete();
+  ijkToSlice->Delete();
+
+  return (this->SliceSpacing);
 }
 
 // adjust the node's field of view to match the extent of current volume
