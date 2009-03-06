@@ -157,6 +157,7 @@ void vtkMRMLGlyphableVolumeSliceDisplayNode::SetSlicePositionMatrix(vtkMatrix4x4
     {
     this->SliceToXYTransform->SetMatrix(this->SliceToXYMatrix);
     }
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
