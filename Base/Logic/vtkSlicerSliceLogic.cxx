@@ -1213,17 +1213,8 @@ void vtkSlicerSliceLogic::GetVolumeSliceBounds(vtkMRMLVolumeNode *volumeNode, do
     }
   
   double rasDimensions[3], rasCenter[3];
-  double rasHMin[4], rasHMax[4]; 
-  double sliceHMin[4], sliceHMax[4]; 
+
   this->GetVolumeRASBox(volumeNode, rasDimensions, rasCenter);
-  rasHMin[0] = rasCenter[0] - rasDimensions[0] / 2.;
-  rasHMin[1] = rasCenter[1] - rasDimensions[1] / 2.;
-  rasHMin[2] = rasCenter[2] - rasDimensions[2] / 2.;
-  rasHMin[3] = 1.;
-  rasHMax[0] = rasCenter[0] + rasDimensions[0] / 2.;
-  rasHMax[1] = rasCenter[1] + rasDimensions[1] / 2.;
-  rasHMax[2] = rasCenter[2] + rasDimensions[2] / 2.;
-  rasHMax[3] = 1.;
 
   //
   // figure out how big that volume is on this particular slice plane
@@ -1234,17 +1225,52 @@ void vtkSlicerSliceLogic::GetVolumeSliceBounds(vtkMRMLVolumeNode *volumeNode, do
   rasToSlice->SetElement(1, 3, 0.0);
   rasToSlice->SetElement(2, 3, 0.0);
   rasToSlice->Invert();
-  rasToSlice->MultiplyPoint( rasHMin, sliceHMin );
-  rasToSlice->MultiplyPoint( rasHMax, sliceHMax );
+
+  double minBounds[3], maxBounds[3];
+  double rasCorner[4], sliceCorner[4];
+  int i,j,k;
+
+  for ( i=0; i<3; i++) 
+    {
+    minBounds[i] = 1.0e10;
+    maxBounds[i] = -1.0e10;
+    }
+  for ( i=-1; i<=1; i=i+2) 
+    {
+    for ( j=-1; j<=1; j=j+2) 
+      {
+      for ( k=-1; k<=1; k=k+2) 
+        {
+        rasCorner[0] = rasCenter[0] + i * rasDimensions[0] / 2.;
+        rasCorner[1] = rasCenter[1] + j * rasDimensions[1] / 2.;
+        rasCorner[2] = rasCenter[2] + k * rasDimensions[2] / 2.;
+        rasCorner[3] = 1.;
+
+        rasToSlice->MultiplyPoint( rasCorner, sliceCorner );
+
+        for (int n=0; n<3; n++) {
+          if (sliceCorner[n] < minBounds[n])
+            {
+            minBounds[n] = sliceCorner[n];
+            }
+          if (sliceCorner[n] > maxBounds[n])
+            {
+            maxBounds[n] = sliceCorner[n];
+            }
+          }
+        }
+      }
+    }
+  
   rasToSlice->Delete();
 
   // ignore homogeneous coordinate
-  sliceBounds[0] = min(sliceHMin[0],sliceHMax[0]);
-  sliceBounds[1] = max(sliceHMin[0],sliceHMax[0]);
-  sliceBounds[2] = min(sliceHMin[1],sliceHMax[1]);
-  sliceBounds[3] = max(sliceHMin[1],sliceHMax[1]);
-  sliceBounds[4] = min(sliceHMin[2],sliceHMax[2]);
-  sliceBounds[5] = max(sliceHMin[2],sliceHMax[2]);
+  sliceBounds[0] = minBounds[0];
+  sliceBounds[1] = maxBounds[0];
+  sliceBounds[2] = minBounds[1];
+  sliceBounds[3] = maxBounds[1];
+  sliceBounds[4] = minBounds[2];
+  sliceBounds[5] = maxBounds[2];
 }
 
 // adjust the node's field of view to match the extent of current volume
