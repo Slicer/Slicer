@@ -1064,7 +1064,6 @@ int vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
   moduleLogic->SetApplicationLogic(app->GetApplicationGUI()->GetApplicationLogic());
   moduleLogic->SetTemporaryDirectory(app->GetTemporaryDirectory());
   moduleLogic->LazyEvaluateModuleTarget(moduleNode);
-  moduleLogic->SetRedirectModuleStreams(0);
   ModuleDescription moduleDesc = moduleNode->GetModuleDescription();
   if(moduleDesc.GetTarget() == "Unknown")
     return -4;  // failed to find registration module
@@ -1135,7 +1134,6 @@ int vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
   moduleLogic->SetApplicationLogic(app->GetApplicationGUI()->GetApplicationLogic());
   moduleLogic->SetTemporaryDirectory(app->GetTemporaryDirectory());
   moduleLogic->LazyEvaluateModuleTarget(moduleNode);
-  moduleLogic->SetRedirectModuleStreams(0);
 
   ModuleDescription moduleDesc = moduleNode->GetModuleDescription();
   if(moduleDesc.GetTarget() == "Unknown")
