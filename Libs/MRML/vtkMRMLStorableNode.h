@@ -99,6 +99,17 @@ public:
   void AddAndObserveStorageNodeID(const char *StorageNodeID);
   void SetAndObserveNthStorageNodeID(int n, const char *StorageNodeID);
 
+  // Description:
+  // This is describes the type of data stored in the nodes storage node(s).
+  // It's an informatics metadata mechanism so that Slicer knows what kinds
+  // of nodes to create to receive downloaded datasets, and works around
+  // potential ambiguity of file extensions, etc. Method is called when storage
+  // nodes are created. The method gets applied to any storable data that
+  // should be saved with, and loaded with the scene, including nodes that
+  // are hidden from editors like scalar overlays.
+  void SetSlicerDataType ( const char *type );
+  const char *GetSlicerDataType ();
+  
   int GetNumberOfStorageNodes()
     {
       return (int)this->StorageNodeIDs.size();
@@ -147,7 +158,10 @@ public:
 
 //BTX
   std::vector<std::string> StorageNodeIDs;
- 
+  // Description:
+  // SlicerDataType records the kind of storage node that
+  // holds the data. Set in each subclass.
+  std::string SlicerDataType;
   std::vector<vtkMRMLStorageNode *> StorageNodes;
 //ETX
 

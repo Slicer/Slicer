@@ -26,7 +26,9 @@ Version:   $Revision: 1.3 $
 vtkMRMLStorableNode::vtkMRMLStorableNode()
 {
   this->UserTagTable = vtkTagTable::New();
+  this->SlicerDataType = "";
 }
+
 
 //----------------------------------------------------------------------------
 vtkMRMLStorableNode::~vtkMRMLStorableNode()
@@ -36,8 +38,25 @@ vtkMRMLStorableNode::~vtkMRMLStorableNode()
     this->UserTagTable->Delete();
     this->UserTagTable = NULL;
     }
+  this->SlicerDataType.clear();
   this->SetAndObserveStorageNodeID( NULL);
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLStorableNode::SetSlicerDataType ( const char *type )
+{
+  this->SlicerDataType.clear();
+  this->SlicerDataType = type;
+  this->Scene->InvokeEvent ( vtkMRMLScene::MetadataAddedEvent );
+}
+
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLStorableNode::GetSlicerDataType ()
+{
+  return ( this->SlicerDataType.c_str() );
+}
+
 
 //----------------------------------------------------------------------------
 void vtkMRMLStorableNode::WriteXML(ostream& of, int nIndent)
