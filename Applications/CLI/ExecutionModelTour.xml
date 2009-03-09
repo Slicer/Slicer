@@ -133,6 +133,13 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Output transform</label>
       <channel>output</channel>
     </transform>
+    <point coordinateSystem="ras" multiple="true">
+      <name>seed</name>
+      <label>Seeds</label>
+      <longflag>--seed</longflag>
+      <description>Lists of points in the CLI correspond to slicer fiducial lists</description>
+      <default>0,0,0</default>
+    </point>
   </parameters>
 
   <parameters>
