@@ -452,7 +452,11 @@ void vtkSeedTracts::SeedStreamlineFromPoint(double x,
     {
     this->Streamlines->AddItem((vtkObject *)newStreamline);  
     }
-  
+  else
+    {
+    // Free allocated memory 
+    newStreamline->Delete();
+    }
   //newStreamline->Delete();
 }
 
