@@ -21,6 +21,11 @@
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLFreeSurferModelStorageNode.h"
+#include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
+#include "vtkMRMLFiducialListNode.h"
+#include "vtkMRMLFiducialListStorageNode.h"
+#include "vtkMRMLColorTableNode.h"
+#include "vtkMRMLColorTableStorageNode.h"
 #include "vtkMRMLNRRDStorageNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
@@ -116,7 +121,6 @@ vtkFetchMIGUI::vtkFetchMIGUI()
   this->FetchMINode = NULL;
   this->UpdatingGUI = 0;
   this->UpdatingMRML = 0;
-  this->DataDirectoryName = NULL;
   this->TagViewer = NULL;
   this->Notebook = NULL;
   this->SetGUIWidth(-1);
@@ -210,7 +214,6 @@ vtkFetchMIGUI::~vtkFetchMIGUI()
 
     this->UpdatingMRML = 0;
     this->UpdatingGUI = 0;
-    this->SetDataDirectoryName ( NULL );
 
     this->Logic = NULL;
     vtkSetAndObserveMRMLNodeMacro( this->FetchMINode, NULL );
@@ -266,6 +269,18 @@ void vtkFetchMIGUI::Exit ( )
         }
       }
     }
+}
+
+
+//----------------------------------------------------------------------------
+vtkIntArray *vtkFetchMIGUI::NewObservableEvents()
+{
+ vtkIntArray *events = vtkIntArray::New();
+  events->InsertNextValue(vtkMRMLScene::MetadataAddedEvent);
+  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+  // Slicer3.cxx calls delete on events
+  return events;
 }
 
 
@@ -374,16 +389,6 @@ void vtkFetchMIGUI::RemoveGUIObservers ( )
 }
 
 
-//---------------------------------------------------------------------------
-vtkIntArray* vtkFetchMIGUI::NewObservableEvents()
-{
-  vtkIntArray* events = vtkIntArray::New();
-  events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
-  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
-  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-  return events;
-}
 
 
 //---------------------------------------------------------------------------
@@ -737,6 +742,26 @@ void vtkFetchMIGUI::UpdateResourceTableFromMRML ( )
 
 
 //---------------------------------------------------------------------------
+void vtkFetchMIGUI::InitializeSceneTable()
+{
+  if ( this->GetFetchMINode() == NULL )
+    {
+    vtkErrorMacro ("InitializeSceneTable got a NULL FetchMINode." );
+    return;
+    }
+  if ( this->TaggedDataList == NULL )
+    {
+    vtkErrorMacro ("InitializeSceneTable got a NULL TaggedDataList widget." );
+    return;
+    }
+
+  this->TaggedDataList->DeleteAllItems();
+  this->Logic->ClearModifiedNodes();
+  this->AddMRMLSceneRow();
+}
+
+
+//---------------------------------------------------------------------------
 void vtkFetchMIGUI::UpdateSceneTableFromMRML()
 {
 
@@ -754,24 +779,28 @@ void vtkFetchMIGUI::UpdateSceneTableFromMRML()
   this->TaggedDataList->DeleteAllItems();
   this->Logic->ClearModifiedNodes();
   this->AddMRMLSceneRow();
-  this->AddVolumeNodes();
-  this->AddModelNodes();
-  this->AddUnstructuredGridNodes();
+
+  this->UpdateVolumeNodes();
+  this->UpdateModelNodes();
+  this->UpdateUnstructuredGridNodes();
+  this->UpdateFiducialListNodes();
+  this->UpdateColorTableNodes();
+
 }
 
 
 //---------------------------------------------------------------------------
-void vtkFetchMIGUI::AddVolumeNodes()
+void vtkFetchMIGUI::UpdateVolumeNodes()
 {
 
   vtkMRMLNode *node=NULL;
   vtkMRMLStorableNode *stnode=NULL;
-  vtkTagTable *t=NULL;
   
-  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLVolumeNode");
   int n;
+  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLVolumeNode");
   int row = this->TaggedDataList->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
   const char *dtype = NULL;
+
   for (n=0; n<nnodes; n++)
     {
     node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLVolumeNode");
@@ -781,94 +810,26 @@ void vtkFetchMIGUI::AddVolumeNodes()
       }
     vtkMRMLVolumeNode *vnode = vtkMRMLVolumeNode::SafeDownCast(node);
     vtkMRMLStorageNode* snode = vnode->GetStorageNode();
-    //--- if a storage node doesn't yet exist for the node, add it.
-    if (snode == NULL) 
+    if (snode == NULL && !node->GetModifiedSinceRead())
       {
-      vtkMRMLStorageNode *storageNode;
-      if ( vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node) || 
-            vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node) )
-        {
-        storageNode = vtkMRMLNRRDStorageNode::New();
-        }
-      else
-        {
-        storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
-        }
-      storageNode->SetScene(this->GetMRMLScene());
-      this->SetMRMLScene(this->GetMRMLScene());
-      this->GetMRMLScene()->AddNode(storageNode);  
-      this->SetAndObserveMRMLScene(this->GetMRMLScene());
-      vnode->SetAndObserveStorageNodeID(storageNode->GetID());
-      storageNode->Delete();
-      snode = storageNode;
-      }
-
-    if (snode->GetFileName() == NULL && this->DataDirectoryName != NULL) 
-      {
-      std::string name (this->DataDirectoryName);
-      name += std::string(node->GetName());
-      name += std::string(".nrrd");
-      snode->SetFileName(name.c_str());
-      }
-
-    // get absolute filename
-    std::string name;
-    if (this->MRMLScene->IsFilePathRelative(snode->GetFileName()))
-      {
-      name = this->MRMLScene->GetRootDirectory();
-      if (name[name.size()-1] != '/')
-        {
-        name = name + std::string("/");
-        }
-      }
-    name += snode->GetFileName();
-
-    // Set the SlicerDataType
-    dtype = "Volume";
-    vtkMRMLScalarVolumeNode *vsnode = vtkMRMLScalarVolumeNode::SafeDownCast (vnode );
-    stnode = vtkMRMLStorableNode::SafeDownCast ( vsnode );
-    vtkMRMLDiffusionTensorVolumeNode *dtinode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast (vnode );
-    vtkMRMLDiffusionWeightedVolumeNode *dwinode = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast (vnode);
-    if ( vsnode != NULL )
-      {
-      if ( vsnode->GetLabelMap() )
-        {
-        dtype = "LabelMap";
-        }
-      else
-        {
-        dtype = "ScalarVolume";
-        }
-      }
-    if ( dtinode != NULL )
-      {
-      dtype = "DTIVolume";
-      }
-    if ( dwinode != NULL )
-      {
-      dtype = "DWIVolume";
+      continue;
       }
     
-    this->TaggedDataList->AddNewItem ( node->GetID(), dtype );
-
-    //--- store node's slicerdatatype in its UserTagTable
-    if ( stnode != NULL && (strcmp(dtype, "")) )
+    //--- get node's slicerdatatype
+    stnode = vtkMRMLStorableNode::SafeDownCast ( node );
+    if ( stnode != NULL  )
       {
-      t = stnode->GetUserTagTable();
-      if ( t != NULL )
+      dtype =  vnode->GetSlicerDataType();
+      if ( dtype == NULL )
         {
-        t->AddOrUpdateTag ( "SlicerDataType", dtype, 1 );
+        dtype = "unknown";
         }
+      this->TaggedDataList->AddNewItem ( node->GetID(), dtype);
       }
     
     if (node->GetModifiedSinceRead()) 
       {
       this->TaggedDataList->SelectRow ( row );
-      this->Logic->AddModifiedNode(node->GetID());
-      //--- TODO: can we get rid of this?
-      //--- this should be getting called by the TaggedDataList when SelectRow
-      //--- triggers a widget event...
-      this->Logic->AddSelectedStorableNode(node->GetID() );
       }
     row++;
     }
@@ -876,16 +837,15 @@ void vtkFetchMIGUI::AddVolumeNodes()
 
 
 //---------------------------------------------------------------------------
-void vtkFetchMIGUI::AddModelNodes()
+void vtkFetchMIGUI::UpdateModelNodes()
 {
-  vtkMRMLNode *node;
-  vtkMRMLStorableNode *stnode;
-  vtkTagTable *t;
+  vtkMRMLNode *node = NULL;
+  vtkMRMLStorableNode *stnode = NULL;
   
   int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLModelNode");
   int n;
   int row = this->TaggedDataList->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
-  const char *dtype = "VTKModel";
+  const char *dtype = NULL;
   
   for (n=0; n<nnodes; n++)
     {
@@ -894,81 +854,132 @@ void vtkFetchMIGUI::AddModelNodes()
       {
       continue;
       }
-    stnode = vtkMRMLStorableNode::SafeDownCast ( node );
+
     vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast(node);
     vtkMRMLStorageNode* snode = mnode->GetStorageNode();
     if (snode == NULL && !node->GetModifiedSinceRead())
       {
       continue;
       }
-    if (snode == NULL && node->GetModifiedSinceRead()) 
-      {
-      vtkMRMLModelStorageNode *storageNode = vtkMRMLModelStorageNode::New();
-      storageNode->SetScene(this->GetMRMLScene());
-      this->SetMRMLScene(this->GetMRMLScene());
-      this->GetMRMLScene()->AddNode(storageNode);  
-      this->SetAndObserveMRMLScene(this->GetMRMLScene());
-      mnode->SetAndObserveStorageNodeID(storageNode->GetID());
-      storageNode->Delete();
-      snode = storageNode;
-      }
 
-    if (snode->GetFileName() == NULL && this->DataDirectoryName != NULL) {
-      std::string name (this->DataDirectoryName);
-      name += std::string(node->GetName());
-      name += std::string(".vtk");
-      snode->SetFileName(name.c_str());
-    }
-
-    // get absolute filename
-    std::string name;
-    if (this->MRMLScene->IsFilePathRelative(snode->GetFileName()))
+    //--- get node's slicerdatatype
+    stnode = vtkMRMLStorableNode::SafeDownCast ( node );
+    if ( stnode != NULL  )
       {
-      name = this->MRMLScene->GetRootDirectory();
-      if (name[name.size()-1] != '/')
+      dtype =  mnode->GetSlicerDataType();
+      if ( dtype == NULL )
         {
-        name = name + std::string("/");
+        dtype = "unknown";
         }
-      }
-    name += snode->GetFileName();
-    
-    // Set the SlicerDataType
-    vtkMRMLFreeSurferModelStorageNode *fsnode = vtkMRMLFreeSurferModelStorageNode::SafeDownCast (snode);
-    if ( fsnode != NULL )
-      {
-      if ( snode->IsA("vtkMRMLFreeSurferModelStorageNode") )
-        {
-        dtype = "FreeSurferModel";
-        }
-      }
-
-    this->TaggedDataList->AddNewItem ( node->GetID(), dtype );
-
-    //--- store node's slicerdatatype in its UserTagTable.
-    if ( stnode != NULL && (strcmp(dtype, "")) )
-      {
-      t = stnode->GetUserTagTable();
-      if ( t != NULL )
-        {
-        t->AddOrUpdateTag ( "SlicerDataType", dtype, 1 );
-        }
+      this->TaggedDataList->AddNewItem ( node->GetID(), dtype);
       }
 
     if (node->GetModifiedSinceRead()) 
       {
       this->TaggedDataList->SelectRow ( row );
-      this->Logic->AddModifiedNode(node->GetID());
-      //--- TODO: can we get rid of this?
-      //--- this should be getting called by the TaggedDataList when SelectRow
-      //--- triggers a widget event...
-      this->Logic->AddSelectedStorableNode(node->GetID() );      
       }
     row++;
     }
 }
 
+
+
 //---------------------------------------------------------------------------
-void vtkFetchMIGUI::AddUnstructuredGridNodes()
+void vtkFetchMIGUI::UpdateFiducialListNodes()
+{
+  vtkMRMLNode *node = NULL;
+  vtkMRMLStorableNode *stnode = NULL;
+  
+  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLFiducialListNode");
+  int n;
+  int row = this->TaggedDataList->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
+  const char *dtype = NULL;
+  
+  //--- sniff thru the scene; get each vtkMRMLFiducialListNode and tag it.
+  for (n=0; n<nnodes; n++)
+    {
+    node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLFiducialListNode");
+    if (node->GetHideFromEditors()) 
+      {
+      continue;
+      }
+    vtkMRMLFiducialListNode *flnode = vtkMRMLFiducialListNode::SafeDownCast(node);
+    vtkMRMLStorageNode* snode = flnode->GetStorageNode();
+    if (snode == NULL && !node->GetModifiedSinceRead())
+      {
+      continue;
+      }
+
+    //--- get node's slicerdatatype
+    stnode = vtkMRMLStorableNode::SafeDownCast ( node );
+    if ( stnode != NULL  )
+      {
+      dtype =  flnode->GetSlicerDataType();
+      if ( dtype == NULL || !(strcmp(dtype, "") ) )
+        {
+        dtype = "unknown";
+        }
+      this->TaggedDataList->AddNewItem ( node->GetID(), dtype);
+      }
+
+    if (node->GetModifiedSinceRead()) 
+      {
+      this->TaggedDataList->SelectRow ( row );
+      }
+    row++;
+    }
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkFetchMIGUI::UpdateColorTableNodes()
+{
+  vtkMRMLNode *node = NULL;
+  vtkMRMLStorableNode *stnode = NULL;
+  
+  int n;
+  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLColorTableNode");
+  int row = this->TaggedDataList->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
+  const char *dtype = NULL;
+  
+  //--- sniff thru the scene; get each vtkMRMLFiducialListNode and tag it.
+  for (n=0; n<nnodes; n++)
+    {
+    node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLColorTableNode");
+    if (node->GetHideFromEditors()) 
+      {
+      continue;
+      }
+    vtkMRMLColorTableNode *cnode = vtkMRMLColorTableNode::SafeDownCast(node);
+    vtkMRMLStorageNode* snode = cnode->GetStorageNode();
+    if (snode == NULL && !node->GetModifiedSinceRead())
+      {
+      continue;
+      }
+
+    //--- get node's slicerdatatype
+    stnode = vtkMRMLStorableNode::SafeDownCast ( node );
+    if ( stnode != NULL  )
+      {
+      dtype =  cnode->GetSlicerDataType();
+      if ( dtype == NULL )
+        {
+        dtype = "unknown";
+        }
+      this->TaggedDataList->AddNewItem ( node->GetID(), dtype);
+      }
+    if (node->GetModifiedSinceRead()) 
+      {
+      this->TaggedDataList->SelectRow ( row );
+      }
+    row++;
+    }
+}
+
+
+//---------------------------------------------------------------------------
+void vtkFetchMIGUI::UpdateUnstructuredGridNodes()
 {
   //--- UNSTRUCTURED GRID NODES
 #if !defined(MESHING_DEBUG) && defined(Slicer3_BUILD_MODULES)  
@@ -978,12 +989,12 @@ void vtkFetchMIGUI::AddUnstructuredGridNodes()
   // meshes and other vtkUnstructuredGrid datatypes can be stored persistently.
   // this code is gated by MESHING_DEBUG since the MEshing MRML modules 
   
+  int n;
   vtkMRMLNode *node;
   vtkMRMLStorableNode *stnode;
   int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLUnstructuredGridNode");
-  int n;
   int row = this->TaggedDataList->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
-  const char *dtype;
+  const char *dtype = NULL;
   
   for (n=0; n<nnodes; n++)
     {
@@ -999,57 +1010,20 @@ void vtkFetchMIGUI::AddUnstructuredGridNodes()
       {
       continue;
       }
-    if (snode == NULL && node->GetModifiedSinceRead()) 
-      {
-        vtkMRMLUnstructuredGridStorageNode *storageNode = vtkMRMLUnstructuredGridStorageNode::New();
-      storageNode->SetScene(this->GetMRMLScene());
-      this->SetMRMLScene(this->GetMRMLScene());
-      this->GetMRMLScene()->AddNode(storageNode);  
-      this->SetAndObserveMRMLScene(this->GetMRMLScene());
-      gnode->SetAndObserveStorageNodeID(storageNode->GetID());
-      storageNode->Delete();
-      snode = storageNode;
-      }
-    if (snode->GetFileName() == NULL && this->DataDirectoryName != NULL) {
-      std::string name (this->DataDirectoryName);
-      name += std::string(node->GetName());
-      name += std::string(".vtk");
-      snode->SetFileName(name.c_str());
-    }
 
-    // get absolute filename
-    std::string name;
-    if (this->MRMLScene->IsFilePathRelative(snode->GetFileName()))
+    //--- get node's slicerdatatype
+    if ( stnode != NULL  )
       {
-      name = this->MRMLScene->GetRootDirectory();
-      if (name[name.size()-1] != '/')
+      dtype =  gode->GetSlicerDataType();
+      if ( dtype == NULL )
         {
-        name = name + std::string("/");
+        dtype = "unknown";
         }
+      this->TaggedDataList->AddNewItem ( node->GetID(), dtype);
       }
-    name += snode->GetFileName();
-
-
-    dtype = "UnstructuredGrid";
-    this->TaggedDataList->AddNewItem ( node->GetID(), dtype );
-    //--- store node's slicerdatatype in its UserTagTable.
-    if ( stnode != NULL && (strcmp(dtype, "")) )
-      {
-      t = stnode->GetUserTagTable();
-      if ( t != NULL )
-        {
-        t->AddOrUpdateTag ( "SlicerDataType", dtype, 1 );
-        }
-      }
-
     if (node->GetModifiedSinceRead()) 
       {
       this->TaggedDataList->SelectRow(row);
-      this->Logic->AddModifiedNode(node->GetID());
-      //--- TODO: can we get rid of this?
-      //--- this should be getting called by the TaggedDataList when SelectRow
-      //--- triggers a widget event...
-      this->Logic->AddSelectedStorableNode(node->GetID() );      
       }
     row++;
     }
@@ -1068,23 +1042,21 @@ void vtkFetchMIGUI::AddMRMLSceneRow()
     vtkErrorMacro ("FetchMIGUI: AddMRMLSceneRow got a NULL MRMLScene.");
     return;
     }
-
+  
+  //--- make sure the scene has a selected SlicerDataType tag.
+  this->MRMLScene->GetUserTagTable()->AddOrUpdateTag ( "SlicerDataType", "MRML", 0);
 
   std::string dir = this->MRMLScene->GetRootDirectory();
   if (dir[dir.size()-1] != '/')
     {
     dir += std::string("/");
     }
-  this->SetDataDirectoryName ( dir.c_str());
-  
-  //--- make sure the scene has a selected SlicerDataType tag.
-  this->MRMLScene->GetUserTagTable()->AddOrUpdateTag ( "SlicerDataType", "MRML", 0);
-
   std::string uriName;
   const char *url = this->MRMLScene->GetURL();
   if (!url || !(*url))
     {
-    uriName = dir.append("SlicerScene1");
+    uriName = dir.append("SlicerScene1.mrml");
+    this->MRMLScene->SetURL ( uriName.c_str() );
     }
   else
     {
@@ -1096,6 +1068,7 @@ void vtkFetchMIGUI::AddMRMLSceneRow()
     //--- put a row in the TaggedDataList with selected, datatype, and url.
     this->TaggedDataList->AddNewItem ( "Scene description", "MRML");
     this->TaggedDataList->SelectRow ( 0 );
+
     }
 }
 
@@ -1321,132 +1294,100 @@ void vtkFetchMIGUI::ProcessMRMLEvents ( vtkObject *caller,
 {
   if ( this->FetchMINode == NULL )
     {
-    vtkErrorMacro ("FetchMIGUI: ProcessMRMLEvents has a NULL FetchMINode");
+    vtkErrorMacro ("ProcessMRMLEvents has a NULL FetchMINode");
     return;
+    }
+
+  if ( this->ApplicationGUI == NULL )
+    {
+    vtkErrorMacro ("ProcessMRMLEvents: ApplicationGUI is null");
+    return;    
     }
 
   // if parameter node has been changed externally, update GUI widgets with new values
   vtkMRMLFetchMINode* node = vtkMRMLFetchMINode::SafeDownCast(caller);
-
-  if ( this->ApplicationGUI == NULL )
-    {
-    //TODO vtkErrorMacro();
-    return;    
-    }
+  vtkMRMLScene *scene = vtkMRMLScene::SafeDownCast ( caller );
   
-  if (event == vtkMRMLFetchMINode::SelectedServerModifiedEvent )
+  if ( node != NULL )
     {
-    if ( (strcmp (this->FetchMINode->GetSelectedServer(), this->ServerMenuButton->GetValue() ) ) )
+    if ( node == this->GetFetchMINode() )
       {
-      this->ServerMenuButton->SetValue ( this->FetchMINode->GetSelectedServer() );
-      this->ResourceList->DeleteAllItems();
+      if (event == vtkMRMLFetchMINode::SelectedServerModifiedEvent )
+        {
+        if ( (strcmp (this->FetchMINode->GetSelectedServer(), this->ServerMenuButton->GetValue() ) ) )
+          {
+          this->ServerMenuButton->SetValue ( this->FetchMINode->GetSelectedServer() );
+          this->ResourceList->DeleteAllItems();
+          }
+        }
+      else if ( event == vtkMRMLFetchMINode::RemoteIOErrorEvent )
+        {
+        vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+        dialog->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow() );
+        dialog->SetStyleToMessage();
+        dialog->SetText ( this->FetchMINode->GetErrorMessage() );
+        dialog->Create();
+        dialog->Invoke();
+        dialog->Delete();
+        }
+      else if (event == vtkMRMLFetchMINode::TagResponseReadyEvent )
+        {
+        //--- check for error
+        if ( this->FetchMINode->GetErrorMessage() != NULL )
+          {
+          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+          dialog->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow() );
+          dialog->SetStyleToMessage();
+          dialog->SetText ( this->FetchMINode->GetErrorMessage() );
+          dialog->Create();
+          dialog->Invoke();
+          dialog->Delete();
+          }
+        vtkDebugMacro ("--------------------Populating the Query Widget");
+        this->PopulateQueryListFromServer();
+        }
+      else if (event == vtkMRMLFetchMINode::ResourceResponseReadyEvent )
+        {
+        //--- check for error
+        if ( this->FetchMINode->GetErrorMessage() != NULL )
+          {
+          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+          dialog->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow() );
+          dialog->SetStyleToMessage();
+          dialog->SetText ( this->FetchMINode->GetErrorMessage() );
+          dialog->Create();
+          dialog->Invoke();
+          dialog->Delete();
+          }
+        this->UpdateResourceTableFromMRML();
+        this->Notebook->RaisePage ("Browse Query Results & Download");
+        }
+      else
+        {
+        this->UpdateGUI();
+        }
       }
     }
 
-  if ( event == vtkMRMLScene::SceneCloseEvent )
+  if ( scene != NULL && scene == this->GetMRMLScene() )
     {
-    this->Logic->ClearModifiedNodes();
-    this->Logic->ClearSelectedStorableNodes();
-    this->UpdateSceneTableFromMRML();
-    }
-
-  if (( event == vtkMRMLScene::NodeAddedEvent) ||
-      ( event == vtkMRMLScene::NodeRemovedEvent) ||
-      ( event == vtkMRMLScene::NewSceneEvent ))
-    {
-    this->UpdateSceneTableFromMRML();
-    }
-  
-  else if (node != NULL && this->GetFetchMINode() == node) 
-    {
-    if ( event == vtkMRMLFetchMINode::RemoteIOErrorEvent )
+    if ( event == vtkMRMLScene::MetadataAddedEvent )
       {
-          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-          dialog->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow() );
-          dialog->SetStyleToMessage();
-          dialog->SetText ( this->FetchMINode->GetErrorMessage() );
-          dialog->Create();
-          dialog->Invoke();
-          dialog->Delete();
+      this->UpdateSceneTableFromMRML();
+      }    
+    if ( event == vtkMRMLScene::SceneCloseEvent )
+      {
+      this->Logic->ClearModifiedNodes();
+      this->Logic->ClearSelectedStorableNodes();
+      this->InitializeSceneTable();
       }
-    if (event == vtkMRMLFetchMINode::TagResponseReadyEvent )
+    if ( event == vtkMRMLScene::NodeRemovedEvent)
       {
-      //--- check for error
-      if ( this->FetchMINode->GetErrorMessage() != NULL )
-        {
-          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-          dialog->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow() );
-          dialog->SetStyleToMessage();
-          dialog->SetText ( this->FetchMINode->GetErrorMessage() );
-          dialog->Create();
-          dialog->Invoke();
-          dialog->Delete();
-        }
-      vtkDebugMacro ("--------------------Populating the Query Widget");
-      this->PopulateQueryListFromServer();
-      }
-    if (event == vtkMRMLFetchMINode::ResourceResponseReadyEvent )
-      {
-      //--- check for error
-      if ( this->FetchMINode->GetErrorMessage() != NULL )
-        {
-          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-          dialog->SetParent ( this->GetApplicationGUI()->GetMainSlicerWindow() );
-          dialog->SetStyleToMessage();
-          dialog->SetText ( this->FetchMINode->GetErrorMessage() );
-          dialog->Create();
-          dialog->Invoke();
-          dialog->Delete();
-        }
-      this->UpdateResourceTableFromMRML();
-      this->Notebook->RaisePage ("Browse Query Results & Download");
-      }
-    else
-      {
-      this->UpdateGUI();
+      this->UpdateSceneTableFromMRML();
       }
     }
 }
 
-
-
-//---------------------------------------------------------------------------
-void vtkFetchMIGUI::UpdateMRML ()
-{
-  // update from GUI
-  if ( this->UpdatingGUI )
-    {
-    return;
-    }
-  this->UpdatingMRML = 1;
-  
-  vtkMRMLFetchMINode* n = this->GetFetchMINode();
-  if (n == NULL)
-    {
-    n = vtkMRMLFetchMINode::New();
-    vtkIntArray *events = vtkIntArray::New();
-    events->InsertNextValue ( vtkMRMLFetchMINode::KnownServersModifiedEvent );
-    events->InsertNextValue ( vtkMRMLFetchMINode::SelectedServerModifiedEvent );
-    events->InsertNextValue ( vtkMRMLFetchMINode::TagsModifiedEvent );
-    events->InsertNextValue ( vtkMRMLFetchMINode::SaveSelectionEvent );
-    events->InsertNextValue ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
-    events->InsertNextValue ( vtkMRMLFetchMINode::RemoteIOErrorChoiceEvent );
-    events->InsertNextValue ( vtkMRMLFetchMINode::ResourceResponseReadyEvent );
-    events->InsertNextValue ( vtkMRMLFetchMINode::TagResponseReadyEvent );    
-    vtkSetAndObserveMRMLNodeEventsMacro ( this->FetchMINode, n, events );
-    if ( this->Logic->GetFetchMINode() != NULL )
-      {
-      this->Logic->SetFetchMINode ( NULL );
-      this->Logic->SetFetchMINode( n );
-      }
-    events->Delete();
-  }
-
-  // save node parameters for Undo
-  //this->GetLogic()->GetMRMLScene()->SaveStateForUndo(n);
-//  n->Delete();
-  this->UpdatingMRML = 0;
-}
 
 
 
@@ -1520,7 +1461,7 @@ void vtkFetchMIGUI::UpdateGUI ()
     }
   // n->Delete();
   this->UpdateTagTableFromMRML();
-  this->UpdateSceneTableFromMRML();
+//  this->UpdateSceneTableFromMRML();
   this->UpdatingGUI = 0;
 }
 
@@ -2348,6 +2289,7 @@ void vtkFetchMIGUI::BuildGUI ( )
   this->UpdateGUI();
 //  this->Logic->CreateTemporaryFiles();
   this->Logic->InitializeInformatics();
+  this->InitializeSceneTable();
   this->LoadTclPackage();
 }
 

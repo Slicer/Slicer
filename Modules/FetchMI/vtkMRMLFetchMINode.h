@@ -21,8 +21,6 @@ class VTK_FETCHMI_EXPORT vtkMRMLFetchMINode : public vtkMRMLNode
   vtkTypeRevisionMacro(vtkMRMLFetchMINode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  vtkGetObjectMacro ( SlicerDataTypes, vtkStringArray );
-  vtkSetObjectMacro ( SlicerDataTypes, vtkStringArray );
   vtkGetObjectMacro ( ResourceDescription, vtkTagTable );
 
   vtkGetObjectMacro ( TagTableCollection, vtkTagTableCollection );
@@ -92,8 +90,6 @@ class VTK_FETCHMI_EXPORT vtkMRMLFetchMINode : public vtkMRMLNode
   char *SelectedServiceType;
   char *ErrorMessage;
 
-  vtkStringArray *SlicerDataTypes;
-  
   //BTX
   enum
     {
@@ -103,6 +99,7 @@ class VTK_FETCHMI_EXPORT vtkMRMLFetchMINode : public vtkMRMLNode
       ResourceResponseReadyEvent,
       TagResponseReadyEvent,
       TagValueResponseReadyEvent,
+      NewNodeTaggedEvent,
       SaveSelectionEvent,
       RemoteIOErrorEvent,
       RemoteIODirectoryErrorEvent,

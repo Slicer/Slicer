@@ -21,6 +21,7 @@
 #include <iterator>
 
 class vtkXNDHandler;
+class vtkIntArray;
 class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
 {
   public:
@@ -89,10 +90,12 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
     vtkSetAndObserveMRMLNodeMacro( this->FetchMINode, n);
     }
 
+  virtual vtkIntArray* NewObservableEvents();
+
   // Description:
   // Creates temporary files in cache for up and download, and
   // sets all URI handlers on servers in ServerCollection
-  // If using module logic without gui, then make this call.
+  // NOTE: If using module logic without gui, then make this call.
   void InitializeInformatics();
 
   // Description:
@@ -244,11 +247,6 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   void TagStorableNodes ( );
 
   // Description:
-  // Method takes a data type as a string and
-  // returns the index of the known data type,
-  // or a -1 if the type is unknown.
-  int CheckValidSlicerDataType ( const char *dtype);
-  // Description:
   // Makes sure all data is appropriately tagged
   // before upload happens.
   int CheckStorableNodesForTags ( );
@@ -269,6 +267,18 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   // Deselects the scene for tagging or uploading.
   void DeselectScene();
   
+  // Description:
+  // Invoked when Logic sees a NodeAddedEvent on the Scene,
+  // this method applies the "SlicerDataType" tag to any new node.
+  // This tag helps Slicer figure out what kind of node to create to
+  // store the data when it's downloaded from a remote host.
+  void ApplySlicerDataTypeTag();
+  void SetSlicerDataTypeOnVolumeNodes();
+  void SetSlicerDataTypeOnModelNodes();
+  void SetSlicerDataTypeOnUnstructuredGridNodes();
+  void SetSlicerDataTypeOnFiducialListNodes();
+  void SetSlicerDataTypeOnColorTableNodes();
+
 
   //---------------------------------------------------------------------
   // Upload Tagged Data Methods
@@ -282,6 +292,11 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   // Before an upload, this method checks to make sure all storable
   // nodes have set storage nodes with valid filenames.
   int CheckStorageNodeFileNames();
+
+  // Description:
+  // Before an upload, this method checks to make sure all nodes
+  // have been saved to local disk (as safety catch.)
+  int CheckModifiedSinceRead ( );
 
   // Description:
   // This method is called when user requests data upload to XND.

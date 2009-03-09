@@ -45,9 +45,6 @@ class VTK_FETCHMI_EXPORT vtkFetchMIGUI : public vtkSlicerModuleGUI
   this->SetLogic(reinterpret_cast<vtkFetchMILogic*> (logic)); 
   }
 
-  vtkGetStringMacro (DataDirectoryName);
-  vtkSetStringMacro (DataDirectoryName);
-
    // Description: Get/Set MRML node
   vtkGetObjectMacro (Logic, vtkFetchMILogic);
   vtkSetObjectMacro (Logic, vtkFetchMILogic);
@@ -82,13 +79,12 @@ class VTK_FETCHMI_EXPORT vtkFetchMIGUI : public vtkSlicerModuleGUI
   virtual void TearDownGUI ( );
   void LoadTclPackage ( );
 
+  vtkIntArray *NewObservableEvents();
 
   // Description:
   // Add obsereves to GUI widgets
   virtual void AddGUIObservers ( );
 
-  vtkIntArray* NewObservableEvents();
-  
   // Description:
   // Remove obsereves to GUI widgets
   virtual void RemoveGUIObservers ( );
@@ -153,12 +149,14 @@ protected:
   //--- Method restores user's selection state for all tags.
   void UpdateTagTableFromMRML();
   void UpdateResourceTableFromMRML();
+  void InitializeSceneTable();
   void UpdateSceneTableFromMRML();
   void AddMRMLSceneRow();
-  void AddVolumeNodes();
-  void AddModelNodes();
-  void AddUnstructuredGridNodes();
-
+  void UpdateVolumeNodes();
+  void UpdateModelNodes();
+  void UpdateFiducialListNodes();
+  void UpdateUnstructuredGridNodes();
+  void UpdateColorTableNodes();
 
   // Description:
   // Apply/remove current  tag to selected data.
@@ -179,8 +177,7 @@ protected:
   void ShowSelectionTagView();
 
   // Description:
-  // Updates parameters values in MRML node based on GUI widgets 
-  void UpdateMRML();
+  // updates status text in the slicer window.
   void SetStatusText( const char *txt);
 
 
@@ -202,7 +199,6 @@ protected:
   vtkFetchMIIcons *FetchMIIcons;
   vtkKWNotebook *Notebook;
 
-  char *DataDirectoryName;
   int UpdatingGUI;
   int UpdatingMRML;
   int GUIWidth;

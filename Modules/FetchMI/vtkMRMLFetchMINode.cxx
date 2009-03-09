@@ -70,15 +70,7 @@ vtkMRMLFetchMINode::vtkMRMLFetchMINode()
    //--- as appropriate.
    this->ResourceDescription = vtkTagTable::New();
    this->ResourceDescription->SetName ( "ResourceDescription");
-   this->SlicerDataTypes = vtkStringArray::New();
-   this->SlicerDataTypes->InsertValue ( 0, "MRML");
-   this->SlicerDataTypes->InsertValue ( 1, "ScalarVolume");
-   this->SlicerDataTypes->InsertValue ( 2, "LabelMap");
-   this->SlicerDataTypes->InsertValue ( 3, "VTKModel");
-   this->SlicerDataTypes->InsertValue ( 4, "FreeSurferModel");
-   this->SlicerDataTypes->InsertValue ( 5, "DTIVolume");
-   this->SlicerDataTypes->InsertValue ( 6, "DWIVolume");
-   this->SlicerDataTypes->InsertValue ( 7, "UnstructuredGrid");
+
 
    //--- Initialize tag table with default tags for
    //--- Slicer-friendly services
@@ -120,11 +112,6 @@ void vtkMRMLFetchMINode::AddTagTablesForWebServices ( )
 vtkMRMLFetchMINode::~vtkMRMLFetchMINode()
 {
   
-  if ( this->SlicerDataTypes)
-    {
-    this->SlicerDataTypes->Delete();
-    this->SlicerDataTypes = NULL;
-    }
   if ( this->SelectedTagTable )
     {
     this->SetSelectedTagTable ( NULL );
