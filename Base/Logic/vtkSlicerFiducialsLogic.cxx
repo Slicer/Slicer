@@ -90,7 +90,8 @@ vtkMRMLFiducialListNode *vtkSlicerFiducialsLogic::AddFiducialList()
   vtkMRMLStorableNode *storableNode = vtkMRMLStorableNode::SafeDownCast(node);
   if (storableNode)
     {
-    vtkMRMLStorageNode *snode = storableNode->CreateDefaultStorageNode();
+    vtkMRMLStorageNode *snode = vtkMRMLFiducialListNode::SafeDownCast(node)->CreateDefaultStorageNode();
+    //    vtkMRMLStorageNode *snode = storableNode->CreateDefaultStorageNode(); 
     if (snode)
       {
       snode->SetScene(this->GetMRMLScene());
