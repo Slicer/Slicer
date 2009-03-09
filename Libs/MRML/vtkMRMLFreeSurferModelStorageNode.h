@@ -55,6 +55,12 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelStorageNode : public vtkMRMLModelSto
   virtual int WriteData(vtkMRMLNode *refNode);
 
   // Description:
+  // Copy data from a  referenced node's filename to new location.
+  // NOTE: use this instead of Write Data in the Remote IO Pipeline
+  // until FreeSurferModel Writers are available.
+  virtual int CopyData(vtkMRMLNode *refNode, const char *newFileName);
+
+  // Description:
   // Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 

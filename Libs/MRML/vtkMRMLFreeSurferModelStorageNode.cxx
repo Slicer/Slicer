@@ -293,7 +293,7 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLFreeSurferModelStorageNode::WriteData(vtkMRMLNode *refNode)
 {
-  vtkErrorMacro("Model Writing not supported for FreeSurfer models");
+  vtkErrorMacro("Model Writing not supported for FreeSurfer models. For RemoteIO, please see the CopyData method as a possible workaround.");
   return 0;
   
   // test whether refNode is a valid node to hold a model
@@ -326,6 +326,59 @@ int vtkMRMLFreeSurferModelStorageNode::WriteData(vtkMRMLNode *refNode)
   
   return result;
 }
+
+
+//----------------------------------------------------------------------------
+int vtkMRMLFreeSurferModelStorageNode::CopyData(vtkMRMLNode *refNode,
+                                                const char *newFileName)
+{
+  
+  bool copyOK;
+  
+  // test whether refNode is a valid node to hold a model
+  if (!refNode->IsA("vtkMRMLModelNode") ) 
+    {
+    vtkErrorMacro("Reference node is not a vtkMRMLModelNode");
+    return 0;
+    }
+  
+  vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(refNode);
+  std::string newName = newFileName;
+  std::string fullName = this->GetFullNameFromFileName();
+  if (fullName == std::string("")) 
+    {
+    vtkErrorMacro("vtkMRMLFreeSurferModelNode: File name not specified");
+    return 0;
+    }
+  if ( newName == std::string(""))
+    {
+    vtkErrorMacro("vtkMRMLFreeSurferModelNode: Copy-to file name not specified");
+    return 0;
+    }
+  if (fullName == newName )
+    {
+    vtkWarningMacro("vtkMRMLFreeSurferModelNode: Copy-to file name and Copy-from file names are identical");
+//    return 1;
+    }
+
+  //--- try copying to destination always
+  copyOK = itksys::SystemTools::CopyAFile ( fullName.c_str(), newName.c_str(), 1 );
+  //--- try copying to destination if different
+  //tst = itksys::SystemTools::CopyAFile ( fullName.c_str(), newName.c_str(), 0 );
+  
+  if ( !copyOK )
+    {
+    return ( 0 );
+    }
+  
+  //--- if copy worked, change filename, then upload.
+  this->SetFileName ( newName.c_str() );
+  this->StageWriteData(refNode);
+  return 1;
+
+}
+
+
 
 
 //----------------------------------------------------------------------------
