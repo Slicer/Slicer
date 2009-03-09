@@ -19,6 +19,7 @@
 
 #include "vtkSlicerModelsLogic.h"
 
+#include "vtkTagTable.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLModelDisplayNode.h"
@@ -311,11 +312,32 @@ int vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRMLModelNode *mode
     this->GetMRMLScene()->AddNodeNoNotify(storageNode);
     // now add this as another storage node on the model
     modelNode->AddAndObserveStorageNodeID(storageNode->GetID());
-
+    
     // now read, since all the id's are set up
     vtkDebugMacro("AddScalar: calling read data now.");
     if (this->GetDebug()) { storageNode->DebugOn(); }
     storageNode->ReadData(modelNode);
+
+    //--- informatics
+    //--- tag for informatics and invoke event for anyone who cares.
+    vtkTagTable *tt = modelNode->GetUserTagTable();
+    if ( tt != NULL )
+      {
+      if ( storageNode->IsA("vtkMRMLFreeSurferModelOverlayStorageNode"))
+        {
+        modelNode->SetSlicerDataType ( "FreeSurferModelWithOverlay" );
+        tt = modelNode->GetUserTagTable();
+        tt->AddOrUpdateTag ( "SlicerDataType", modelNode->GetSlicerDataType() );
+        }
+      else if ( storageNode-IsA("vtkMRMLFreeSurferModelStorageNode"))
+        {
+        modelNode->SetSlicerDataType ( "FreeSurferModel" );
+        tt = modelNode->GetUserTagTable();
+        tt->AddOrUpdateTag ( "SlicerDataType", modelNode->GetSlicerDataType() );
+        }
+      }
+    //--- end informatics
+
     }
   fsmoStorageNode->Delete();
   
