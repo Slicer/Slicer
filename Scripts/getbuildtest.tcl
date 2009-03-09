@@ -183,7 +183,7 @@ if {$argc > 1 } {
 #    Usage
 #    exit 1
 }
-puts "getbuildtest: setting build list to $strippedargs"
+# puts "getbuildtest: setting build list to $strippedargs"
 set ::GETBUILDTEST(buildList) $strippedargs
 
 

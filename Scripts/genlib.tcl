@@ -136,7 +136,7 @@ for {set i 0} {$i < $argc} {incr i} {
 }
 set argv $strippedargs
 set argc [llength $argv]
-puts "Stripped args = $argv"
+# puts "Stripped args = $argv"
 
 set ::Slicer3_LIB ""
 if {$argc > 1 } {
