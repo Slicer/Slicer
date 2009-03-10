@@ -255,9 +255,13 @@ void vtkChangeTrackerSegmentationStep::PreSegmentScan1Define() {
   this->PreSegmentNode = volumesLogic->CreateLabelVolume(Node->GetScene(),volumeNode, "TG_Scan1_PreSegment");
   this->PreSegmentNode->SetAndObserveImageData(this->PreSegment->GetOutput());
   
-  applicationGUI->GetMainSliceGUI("Red")->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID(this->PreSegmentNode->GetID());
-  applicationGUI->GetMainSliceGUI("Yellow")->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID(this->PreSegmentNode->GetID());
-  applicationGUI->GetMainSliceGUI("Green")->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID(this->PreSegmentNode->GetID());
+  applicationGUI->GetMainSliceGUI("Red")->GetLogic()->GetSliceCompositeNode()->SetLabelVolumeID(this->PreSegmentNode->GetID());
+  applicationGUI->GetMainSliceGUI("Yellow")->GetLogic()->GetSliceCompositeNode()->SetLabelVolumeID(this->PreSegmentNode->GetID());
+  applicationGUI->GetMainSliceGUI("Green")->GetLogic()->GetSliceCompositeNode()->SetLabelVolumeID(this->PreSegmentNode->GetID());
+  
+  applicationGUI->GetMainSliceGUI("Red")->GetLogic()->GetSliceCompositeNode()->SetLabelOpacity(0.6);
+  applicationGUI->GetMainSliceGUI("Yellow")->GetLogic()->GetSliceCompositeNode()->SetLabelOpacity(0.6);
+  applicationGUI->GetMainSliceGUI("Green")->GetLogic()->GetSliceCompositeNode()->SetLabelOpacity(0.6);
 
   applicationGUI->GetSlicesControlGUI()->GetSliceFadeScale()->SetValue(0.6);
   // ------------------------------------

@@ -506,10 +506,13 @@ void vtkChangeTrackerAnalysisStep::ShowUserInterface()
         cv0SliceCompositeNode->SetLabelVolumeID( "" );
         cv1SliceCompositeNode->SetLabelVolumeID( "" );
 
-        cv0SliceCompositeNode->SetForegroundVolumeID( volumeAnalysisNode->GetID() );
+        cv0SliceCompositeNode->SetForegroundVolumeID( "" );
         cv1SliceCompositeNode->SetForegroundVolumeID( "" );
 
-        cv0SliceCompositeNode->SetForegroundOpacity(0.6);
+        cv0SliceCompositeNode->SetLabelVolumeID( volumeAnalysisNode->GetID() );
+        cv1SliceCompositeNode->SetLabelVolumeID( "" );
+
+        cv0SliceCompositeNode->SetLabelOpacity(0.6);
 
         // this is the right way to fit slice to background in this scenario,
         // according to Steve
