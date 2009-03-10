@@ -23,7 +23,7 @@ vtkSlicerDiffusionTensorGlyphDisplayWidget::vtkSlicerDiffusionTensorGlyphDisplay
 
   this->DiffusionTensorDisplayPropertiesNodeID = NULL;
 
-
+  this->Frame = NULL;
   //this->VisibilityButton = NULL;
   this->GlyphGeometryMenu = NULL;
   this->LineGlyphEigenvectorMenu = NULL;
@@ -95,6 +95,12 @@ vtkSlicerDiffusionTensorGlyphDisplayWidget::~vtkSlicerDiffusionTensorGlyphDispla
     this->TubeRadiusScale = NULL;
     }
 
+  if (this->Frame)
+    {
+    this->Frame->SetParent(NULL);
+    this->Frame->Delete();
+    this->Frame = NULL;
+    }
 
 
   this->SetMRMLScene ( NULL );
@@ -446,14 +452,14 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::CreateWidget ( )
 
   // ---
   // DISPLAY FRAME            
-  vtkKWFrameWithLabel *frame = vtkKWFrameWithLabel::New ( );
-  frame->SetParent ( this->GetParent() );
-  frame->Create ( );
-  frame->SetLabelText ( "Glyph Display Properties" );
-  //frame->CollapseFrame ( );
+  this->Frame = vtkKWFrameWithLabel::New ( );
+  this->Frame->SetParent ( this->GetParent() );
+  this->Frame->Create ( );
+  this->Frame->SetLabelText ( "Glyph Display Properties" );
+  //this->Frame->CollapseFrame ( );
 
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-    frame->GetWidgetName() );
+    this->Frame->GetWidgetName() );
 
   // glyph visibility
   //   this->VisibilityButton = vtkKWCheckButtonWithLabel::New();
@@ -469,7 +475,7 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::CreateWidget ( )
     vtkKWMenuButtonWithLabel::New();
 
   this->GlyphGeometryMenu = glyphMenuButton;
-  glyphMenuButton->SetParent( frame->GetFrame() );
+  glyphMenuButton->SetParent( this->Frame->GetFrame() );
   glyphMenuButton->Create();
 
   // initialize glyph geometry menu
@@ -495,7 +501,7 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::CreateWidget ( )
     glyphMenuButton->GetWidgetName());
 
   this->GlyphScale = vtkKWScaleWithLabel::New();
-  this->GlyphScale->SetParent ( frame->GetFrame() );
+  this->GlyphScale->SetParent ( this->Frame->GetFrame() );
   this->GlyphScale->Create ( );
   this->GlyphScale->SetLabelText("Scale Factor");
   this->GlyphScale->GetWidget()->SetRange(0,200);
@@ -505,7 +511,7 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::CreateWidget ( )
     this->GlyphScale->GetWidgetName() );
 
   this->GlyphResolutionScale = vtkKWScaleWithLabel::New();
-  this->GlyphResolutionScale->SetParent ( frame->GetFrame() );
+  this->GlyphResolutionScale->SetParent ( this->Frame->GetFrame() );
   this->GlyphResolutionScale->Create ( );
   this->GlyphResolutionScale->SetLabelText("Spacing");
   this->GlyphResolutionScale->GetWidget()->SetRange(1,50);
@@ -517,7 +523,7 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::CreateWidget ( )
   // ---
   // ADVANCED FRAME            
   vtkKWFrameWithLabel *advFrame = vtkKWFrameWithLabel::New ( );
-  advFrame->SetParent ( frame->GetFrame() );
+  advFrame->SetParent ( this->Frame->GetFrame() );
   advFrame->Create ( );
   advFrame->SetLabelText ( "Advanced" );
   advFrame->CollapseFrame ( );
@@ -649,7 +655,6 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::CreateWidget ( )
   tubeFrame->Delete();
   lineFrame->Delete();
   advFrame->Delete();
-  frame->Delete();
   propNode->Delete();
   }
 

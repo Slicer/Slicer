@@ -26,6 +26,7 @@
 #include "vtkKWCheckButtonWithLabel.h"
 #include "vtkKWScaleWithLabel.h"
 #include "vtkKWMenuButtonWithLabel.h"
+#include "vtkKWFrameWithLabel.h"
 
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 
@@ -57,6 +58,18 @@ public:
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
   
   void SetGlyphResolution(int value);
+
+  vtkGetObjectMacro(Frame, vtkKWFrameWithLabel);
+
+  void Collapse() 
+  {
+    this->Frame->CollapseFrame();
+  };
+ void Expend() 
+  {
+    this->Frame->ExpandFrame ();
+  };
+
 
  protected:
   vtkSlicerDiffusionTensorGlyphDisplayWidget();
@@ -101,6 +114,8 @@ public:
   // Description:
   // All of the widgets used in this widget
   vtkKWMenuButtonWithLabel  *GlyphGeometryMenu;
+
+  vtkKWFrameWithLabel *Frame;
 
   //vtkKWCheckButtonWithLabel *VisibilityButton;
   //vtkKWCheckButtonWithLabel *ScalarVisibilityButton;

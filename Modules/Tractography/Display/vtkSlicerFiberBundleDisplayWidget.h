@@ -28,6 +28,7 @@
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkSlicerDiffusionTensorGlyphDisplayWidget.h"
 
+#include "vtkKWNotebook.h"
 #include "vtkKWCheckButtonWithLabel.h"
 #include "vtkKWScaleWithLabel.h"
 #include "vtkKWChangeColorButton.h"
@@ -84,13 +85,13 @@ public:
 
   // Description:
   // Update the widget's values to correspond to the MRML display node.
-  void UpdateWidget();
+  virtual void UpdateWidget();
 
   // Description:
   // Update the display node's values to correspond to the widget
-  void UpdateMRML();
+  virtual void UpdateMRML();
   
-  bool SyncSceneNodes();
+  virtual bool SyncSceneNodes();
     
   // Description:
   // All of the widgets used in this widget
@@ -101,6 +102,7 @@ public:
   vtkKWChangeColorButton *ChangeColorButton;
 
   vtkKWCheckButtonWithLabel *VisibilityButton;
+  vtkKWCheckButtonWithLabel *ScalarVisibilityButton;
 
   vtkSlicerDiffusionTensorGlyphDisplayWidget *GlyphDisplayWidget;
 
@@ -116,12 +118,13 @@ public:
   vtkMRMLFiberBundleDisplayNode* GetCurrentDisplayNode();
   vtkMRMLDiffusionTensorDisplayPropertiesNode* GetCurrentDiffusionTensorDisplayPropertyNode();
 
-  vtkKWMenuButtonWithLabel *GeometryMenu;
+  vtkKWNotebook *GeometryMenu;
   vtkKWFrameWithLabel *DisplayFrame;
   vtkKWMenuButtonWithLabel  *GeometryColorMenu;
-
   
 //BTX
+  std::vector<int> GeometryMenuID;
+  int CurrentGeometryID;
   std::string CurrentGeometry;
   std::map <std::string, int> GeometryColorMap;
 //ETX

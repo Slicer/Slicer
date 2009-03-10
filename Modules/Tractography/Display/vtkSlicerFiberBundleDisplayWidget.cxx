@@ -10,6 +10,7 @@
 #include "vtkKWScale.h"
 #include "vtkKWMenuButton.h"
 #include "vtkKWCheckButton.h"
+#include "vtkKWEvent.h"
 
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
@@ -34,6 +35,7 @@ vtkSlicerFiberBundleDisplayWidget::vtkSlicerFiberBundleDisplayWidget ( )
     this->OpacityScale = NULL;
 
     this->VisibilityButton = NULL;
+    this->ScalarVisibilityButton = NULL;
 
     this->GlyphDisplayWidget = NULL;
     this->GeometryMenu = NULL;
@@ -82,7 +84,12 @@ vtkSlicerFiberBundleDisplayWidget::~vtkSlicerFiberBundleDisplayWidget ( )
     this->ChangeColorButton= NULL;
     }
   
-
+  if (this->ScalarVisibilityButton)
+    {
+    this->ScalarVisibilityButton->SetParent(NULL);
+    this->ScalarVisibilityButton->Delete();
+    this->ScalarVisibilityButton = NULL;
+    }
 
   if (this->VisibilityButton)
     {
@@ -159,10 +166,10 @@ void vtkSlicerFiberBundleDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
 {
   vtkDebugWithObjectMacro(this,"Process Widget Events");
   
-  if (vtkKWMenu::SafeDownCast(caller) == this->GeometryMenu->GetWidget()->GetMenu() && 
-        event == vtkKWMenu::MenuItemInvokedEvent)
+  if (event == vtkKWEvent::NotebookRaisePageEvent)
     {
-    this->CurrentGeometry = this->GeometryMenu->GetWidget()->GetValue();
+    char *title = ((char **)callData)[0];
+    this->CurrentGeometry = title;
     std::string label = this->CurrentGeometry + std::string(" Display");
     this->DisplayFrame->SetLabelText (label.c_str());
     this->UpdateWidget();
@@ -327,7 +334,8 @@ void vtkSlicerFiberBundleDisplayWidget::UpdateWidget()
     return;
     }
   this->UpdatingWidget = 1;
-  
+
+ 
   // Select this fiberBundle node
   this->FiberBundleSelectorWidget->SetSelected(this->FiberBundleNode); 
 
@@ -341,6 +349,19 @@ void vtkSlicerFiberBundleDisplayWidget::UpdateWidget()
     this->GeometryColorMenu->GetWidget()->SetValue(propNode->GetColorGlyphByAsString());
     }
 
+  if (this->CurrentGeometry == "Glyph") 
+    {
+    this->GlyphDisplayWidget->SetEnabled(1);
+    this->GlyphDisplayWidget->Expend();
+    this->GlyphDisplayWidget->GetFrame()->SetEnabled(1);
+    }
+  else
+     {
+    this->GlyphDisplayWidget->SetEnabled(0);
+    this->GlyphDisplayWidget->Collapse();
+    this->GlyphDisplayWidget->GetFrame()->SetEnabled(0);
+    }
+
   // common props
   if ( dnode )
     {
@@ -348,6 +369,15 @@ void vtkSlicerFiberBundleDisplayWidget::UpdateWidget()
     this->ClippingButton->GetWidget()->SetSelectedState(dnode->GetClipping());
     this->OpacityScale->GetWidget()->SetValue(dnode->GetOpacity());
     this->ChangeColorButton->SetColor(dnode->GetColor());
+    if (dnode->GetColorMode() == 1)
+      {
+      this->ScalarVisibilityButton->GetWidget()->SetSelectedState(1);
+      }
+    else
+      {
+      this->ScalarVisibilityButton->GetWidget()->SetSelectedState(0);
+      }
+
     if (dnode->GetColorNode() != NULL)
       {
       vtkMRMLColorNode *color =
@@ -417,6 +447,15 @@ void vtkSlicerFiberBundleDisplayWidget::UpdateMRML()
     dnode->SetOpacity(this->OpacityScale->GetWidget()->GetValue());
     dnode->SetColor(this->ChangeColorButton->GetColor());
     dnode->SetVisibility(this->VisibilityButton->GetWidget()->GetSelectedState());
+    dnode->SetScalarVisibility(this->ScalarVisibilityButton->GetWidget()->GetSelectedState());
+    if (this->ScalarVisibilityButton->GetWidget()->GetSelectedState())
+      {
+      dnode->SetColorModeToScalar();
+      }
+    else
+      {
+       dnode->SetColorModeToSolid();
+      }
     }
       
   this->UpdatingMRML = 0;
@@ -437,9 +476,9 @@ void vtkSlicerFiberBundleDisplayWidget::RemoveWidgetObservers ( ) {
   this->ChangeColorButton->RemoveObservers(vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->ColorSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
-
+  this->ScalarVisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->VisibilityButton->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GeometryMenu->GetWidget()->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GeometryMenu->RemoveObservers (vtkKWEvent::NotebookRaisePageEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GeometryColorMenu->GetWidget()->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   // TO DO glyph widget
@@ -486,17 +525,20 @@ void vtkSlicerFiberBundleDisplayWidget::CreateWidget ( )
 
   // geometry menu
 
-  this->GeometryMenu = vtkKWMenuButtonWithLabel::New();
+  this->GeometryMenu = vtkKWNotebook::New();
   this->GeometryMenu->SetParent( fiberBundleDisplayFrame );
   this->GeometryMenu->Create();
-  this->GeometryMenu->GetWidget()->GetMenu()->AddRadioButton("Tube");
-  this->GeometryMenu->GetWidget()->GetMenu()->AddRadioButton("Line");
-  this->GeometryMenu->GetWidget()->GetMenu()->AddRadioButton("Glyph");
-  this->GeometryMenu->GetWidget()->SetValue("Tube");
+
+  this->GeometryMenuID.clear();
+  this->GeometryMenuID.push_back(this->GeometryMenu->AddPage("Line"));
+  this->GeometryMenuID.push_back(this->GeometryMenu->AddPage("Tube"));
+  this->GeometryMenuID.push_back(this->GeometryMenu->AddPage("Glyph"));
+
+  this->GeometryMenu->RaisePage("Tube");
+  this->CurrentGeometryID = this->GeometryMenuID[1];
   this->CurrentGeometry = "Tube";
   
   // pack geom menu
-  this->GeometryMenu->SetLabelText("Display For:");
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                this->GeometryMenu->GetWidgetName());
 
@@ -565,6 +607,15 @@ void vtkSlicerFiberBundleDisplayWidget::CreateWidget ( )
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  this->ColorSelectorWidget->GetWidgetName());
   
+  // scalar visibility
+  this->ScalarVisibilityButton = vtkKWCheckButtonWithLabel::New();
+  this->ScalarVisibilityButton->SetParent ( this->DisplayFrame->GetFrame()  );
+  this->ScalarVisibilityButton->Create ( );
+  this->ScalarVisibilityButton->SetLabelText("Scalar Color Visibility");
+  this->ScalarVisibilityButton->SetBalloonHelpString("set model scalar color visibility.");
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 this->ScalarVisibilityButton->GetWidgetName());
+
   this->ClippingButton = vtkKWCheckButtonWithLabel::New();
   this->ClippingButton->SetParent ( this->DisplayFrame->GetFrame() );
   this->ClippingButton->Create ( );
@@ -614,9 +665,9 @@ void vtkSlicerFiberBundleDisplayWidget::CreateWidget ( )
 
   this->ColorSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
    
-
+  this->ScalarVisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->VisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GeometryMenu->GetWidget()->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GeometryMenu->AddObserver (vtkKWEvent::NotebookRaisePageEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GeometryColorMenu->GetWidget()->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
 

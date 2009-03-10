@@ -266,7 +266,7 @@ void vtkSlicerTractographyDisplayGUI::BuildGUI ( )
     modLoadFrame->SetParent ( this->UIPanel->GetPageWidget ( "Tractography" ) );
     modLoadFrame->Create ( );
     modLoadFrame->SetLabelText ("Load");
-    modLoadFrame->ExpandFrame ( );
+    modLoadFrame->CollapseFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   modLoadFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Tractography")->GetWidgetName());
 
@@ -296,7 +296,7 @@ void vtkSlicerTractographyDisplayGUI::BuildGUI ( )
     modDisplayFrame->SetParent ( this->UIPanel->GetPageWidget ( "Tractography" ) );
     modDisplayFrame->Create ( );
     modDisplayFrame->SetLabelText ("Display");
-    modDisplayFrame->CollapseFrame ( );
+    modDisplayFrame->ExpandFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   modDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Tractography")->GetWidgetName());
     
