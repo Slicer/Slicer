@@ -348,11 +348,11 @@ int main(int argc, char* argv[])
       return EXIT_FAILURE; 
     }
 
-    /*
+    
     std::string Scan1SuperSampleFileName = tg.WorkingDir + "/TG_scan1_SuperSampled.nhdr";
     std::string Scan2LocalNormalizedFileName = tg.WorkingDir + "/TG_scan2_norm.nhdr";
     std::string Scan1SegmentFileName = tg.WorkingDir + "/TG_scan1_Segment.nhdr";
-    */
+    
   
 
     // Necessary for creating matrix with correct origin
@@ -488,6 +488,15 @@ int main(int argc, char* argv[])
              cerr << "ERROR: tgRegisterAG failed" << endl;
              return EXIT_FAILURE;
              }
+
+           std::string CMD = "catch { exec mv " + tg.WorkingDir + "/LinearRegistration.txt " + tg.WorkingDir + "/GlobalLinearRegistration.txt }";
+           app->Script(CMD.c_str());
+
+           CMD = "catch { ::ChangeTrackerReg::DeleteTransformAG }";
+           app->Script(CMD.c_str());
+
+           CMD = tg.WorkingDir + "/TG_scan2_Global.nhdr";
+           tgWriteVolume(CMD.c_str(),tg.Scan1Matrix,Scan2Global);    
            }
 
          if(TerminationStep == 1)
@@ -625,8 +634,8 @@ int main(int argc, char* argv[])
            app->Script(CMD.c_str());
 
            std::string Scan2LocalFileName = tg.WorkingDir + "/TG_scan2_Local.nhdr"; 
-           tgWriteVolume(tgOutput.c_str(),supersampleMatrix,Scan2Local);
-           //tgWriteVolume(Scan2LocalFileName.c_str(),supersampleMatrix,Scan2Local);
+           //tgWriteVolume(tgOutput.c_str(),supersampleMatrix,Scan2Local);
+           tgWriteVolume(Scan2LocalFileName.c_str(),supersampleMatrix,Scan2Local);
            }
    
        } else {
@@ -646,9 +655,10 @@ int main(int argc, char* argv[])
           cout << "=== Normalize Scan2 ===" << endl;
           std::string CMD = "::ChangeTrackerTcl::HistogramNormalization_FCT " + Scan1SuperSampleTcl + " " + Scan1SegmentOutputTcl + " " 
                                                                             + Scan2LocalTcl + " " + Scan2LocalNormalizedTcl;
+          cout << "Scan 2 normalized" << endl;
           app->Script(CMD.c_str()); 
-          tgWriteVolume(tgOutput.c_str(),supersampleMatrix, Scan2LocalNormalized);
-          //tgWriteVolume(Scan2LocalNormalizedFileName.c_str(),supersampleMatrix, Scan2LocalNormalized);
+          //tgWriteVolume(tgOutput.c_str(),supersampleMatrix, Scan2LocalNormalized);
+          tgWriteVolume(Scan2LocalNormalizedFileName.c_str(),supersampleMatrix, Scan2LocalNormalized);
     }
    
     //
