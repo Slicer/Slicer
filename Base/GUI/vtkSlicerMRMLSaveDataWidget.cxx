@@ -571,6 +571,7 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
   int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLStorableNode");
   int n;
   int row = dataTable->GetNumberOfRows();
+  int directoryColumnWidth = 0;
   vtkMRMLStorableNode *node = NULL;
 
   for (n=0; n<nnodes; n++)
@@ -624,6 +625,18 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
       }
     name += snode->GetFileName();
 
+    // Need to set the width of the directory column so entire path is visible.
+    // So keep a running measure of max filename lengths, and set
+    // column width once all storables have been added.
+    std::string tmpstr = name;
+    std::string tmpstr2 = vtksys::SystemTools::CollapseFullPath ( tmpstr.c_str());
+    std::string tmpstr3 = vtksys::SystemTools::GetFilenamePath ( tmpstr2.c_str());
+    int tmpmax = tmpstr3.length();
+    if ( tmpmax > directoryColumnWidth )
+      {
+      directoryColumnWidth = tmpmax;
+      }
+
     this->MultiColumnList->GetWidget()->AddRow();
     this->MultiColumnList->GetWidget()->SetCellText(
       row,NodeName_Column,node->GetName());
@@ -670,6 +683,11 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
     this->AddStorageNodeId(snode->GetID(), row);
     row++;
     }
+
+  //--- adjust width of directory column to fit the longest directory name plus a little buffer
+  //--- to accommodate a larger font size, which the kww doesn't seem to account for... (?).
+  directoryColumnWidth += 10;
+  this->MultiColumnList->GetWidget()->SetColumnWidth (FileDirectory_Column, directoryColumnWidth);
 
   this->IsProcessing = false;
 
