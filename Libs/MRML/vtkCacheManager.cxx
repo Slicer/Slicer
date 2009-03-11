@@ -476,7 +476,8 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
   vtkDebugMacro("GetFilenameFromURI: got fileName name " << tmpName.c_str());
 
   //--- Now check for trailing version numbers.
-  vtksys_stl::string::size_type found = tmpName.find_first_of ( ".");
+//  vtksys_stl::string::size_type found = tmpName.find_first_of ( ".");
+  vtksys_stl::string::size_type found = tmpName.find_last_of ( ".");
   if ( found != tmpName.npos )
     {
     //--- save the extension_version and baseName.
