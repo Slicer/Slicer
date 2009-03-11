@@ -2155,13 +2155,16 @@ void vtkMRMLScene::UpdateNodeChangedIDs()
 {
   std::map< std::string, std::string>::const_iterator iterChanged;
   vtkMRMLNode *node;
-
+  
   for (iterChanged = this->ReferencedIDChanges.begin(); iterChanged != this->ReferencedIDChanges.end(); iterChanged++) 
     {
-    node = this->GetNodeByID(iterChanged->first.c_str());
-    if (node)
+    if (iterChanged->first.c_str() && iterChanged->first != "")
       {
-      node->UpdateID(iterChanged->second.c_str());
+      node = this->GetNodeByID(iterChanged->first.c_str());
+      if (node)
+        {
+        node->UpdateID(iterChanged->second.c_str());
+        }
       }
     }
   this->NodeIDsMTime = 0;
@@ -2183,7 +2186,10 @@ void vtkMRMLScene::UpdateNodeIDs()
     for (unsigned int n=0; n<nnodes; n++)
       {
       node = this->GetNthNode(n);
-      this->NodeIDs[std::string(node->GetID())] = node;
+      if (node->GetID())
+        {
+        this->NodeIDs[std::string(node->GetID())] = node;
+        }
       }
     }
   this->NodeIDsMTime = this->CurrentScene->GetMTime();
