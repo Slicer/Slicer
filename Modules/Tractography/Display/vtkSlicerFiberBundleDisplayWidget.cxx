@@ -676,6 +676,7 @@ void vtkSlicerFiberBundleDisplayWidget::CreateWidget ( )
 
   fiberBundleDisplayFrame->Delete();
     
+  this->UpdateWidget();
 }
 
 //---------------------------------------------------------------------------
