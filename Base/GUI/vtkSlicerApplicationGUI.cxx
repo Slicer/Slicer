@@ -2531,6 +2531,14 @@ void vtkSlicerApplicationGUI::UnpackConventionalView()
           g->UngridGUI();
         }
     }
+    // Hide the secondary panel
+  if ( this->MainSlicerWindow )
+    {
+    if ( this->MainSlicerWindow->GetSecondarySplitFrame() )
+      {
+      this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(0);
+      }
+    }
 }
 
 void vtkSlicerApplicationGUI::UnpackOneUp3DView()
@@ -2559,6 +2567,15 @@ void vtkSlicerApplicationGUI::UnpackOneUp3DView()
           g->UnpackGUI();
         }
     }
+    // Hide the secondary panel
+  if ( this->MainSlicerWindow )
+    {
+    if ( this->MainSlicerWindow->GetSecondarySplitFrame() )
+      {
+      this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(0);
+      }
+    }
+  
 }
 
 void vtkSlicerApplicationGUI::UnpackOneUpSliceView()
@@ -2585,6 +2602,15 @@ void vtkSlicerApplicationGUI::UnpackOneUpSliceView()
           g->UnpackGUI();
         }
     }
+      // Hide the secondary panel
+  if ( this->MainSlicerWindow )
+    {
+    if ( this->MainSlicerWindow->GetSecondarySplitFrame() )
+      {
+      this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(0);
+      }
+    }
+
 }
 
 void vtkSlicerApplicationGUI::UnpackFourUpView()
@@ -2613,6 +2639,15 @@ void vtkSlicerApplicationGUI::UnpackFourUpView()
           g->UngridGUI();
         }
     }
+      // Hide the secondary panel
+  if ( this->MainSlicerWindow )
+    {
+    if ( this->MainSlicerWindow->GetSecondarySplitFrame() )
+      {
+      this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(0);
+      }
+    }
+
 }
 
 void vtkSlicerApplicationGUI::UnpackTabbed3DView()
@@ -2644,6 +2679,15 @@ void vtkSlicerApplicationGUI::UnpackTabbed3DView()
           g->UnpackGUI();
         }
     }
+      // Hide the secondary panel
+  if ( this->MainSlicerWindow )
+    {
+    if ( this->MainSlicerWindow->GetSecondarySplitFrame() )
+      {
+      this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(0);
+      }
+    }
+
 }
 
 void vtkSlicerApplicationGUI::UnpackTabbedSliceView()
@@ -2671,6 +2715,15 @@ void vtkSlicerApplicationGUI::UnpackTabbedSliceView()
           g->UnpackGUI();
         }
     }
+      // Hide the secondary panel
+  if ( this->MainSlicerWindow )
+    {
+    if ( this->MainSlicerWindow->GetSecondarySplitFrame() )
+      {
+      this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(0);
+      }
+    }
+
 }
 
 void vtkSlicerApplicationGUI::UnpackCompareView()
@@ -2710,6 +2763,15 @@ void vtkSlicerApplicationGUI::UnpackCompareView()
         }
       }
     }
+      // Hide the secondary panel
+  if ( this->MainSlicerWindow )
+    {
+    if ( this->MainSlicerWindow->GetSecondarySplitFrame() )
+      {
+      this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Visibility(0);
+      }
+    }
+
 }
 
 void vtkSlicerApplicationGUI::UnpackLightboxView()
