@@ -222,6 +222,9 @@ public:
     {
     this->SetID(newID);
     };
+  // Description:
+  // Copy node's ID
+  void CopyID(vtkMRMLNode *node);
 
   // Description:
   // Tag that make this node a singleton in the scene

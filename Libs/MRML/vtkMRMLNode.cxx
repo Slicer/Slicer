@@ -138,6 +138,16 @@ void vtkMRMLNode::CopyWithScene(vtkMRMLNode *node)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLNode::CopyID(vtkMRMLNode *node)
+{
+
+  if (node->GetID()) 
+    {
+    this->SetID( node->GetID() );
+    } 
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLNode::Copy(vtkMRMLNode *node)
 {
   if (node->GetName() && strcmp(node->GetName(),""))
