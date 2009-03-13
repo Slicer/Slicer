@@ -1000,7 +1000,7 @@ ImageToImageRegistrationHelper< TImage >
 
   typedef DifferenceImageFilter< TImage, TImage >        DifferenceFilterType;
 
-  typename ImageType::ConstPointer imTemp = this->GetFixedImage();
+  typename TImage::ConstPointer imTemp = this->GetFixedImage();
   this->SetFixedImage( this->m_BaselineImage );
   this->m_BaselineResampledMovingImage = this->ResampleImage();
   this->SetFixedImage( imTemp );

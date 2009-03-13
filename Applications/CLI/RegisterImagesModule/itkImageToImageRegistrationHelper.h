@@ -195,19 +195,15 @@ class ImageToImageRegistrationHelper : public Object
     //  Resample
     //**************
     //**************
-    typename ImageType::ConstPointer  ResampleImage( 
-                                    InterpolationMethodEnumType interp 
-                                      = OptimizedRegistrationMethodType
-                                        ::LINEAR_INTERPOLATION,
-                                    const ImageType * movingImage=NULL,
-                                    const MatrixTransformType * matrixTransform=NULL,
-                                    const BSplineTransformType * bsplineTransform=NULL );
+    typename TImage::ConstPointer  ResampleImage( 
+      InterpolationMethodEnumType interp = OptimizedRegistrationMethodType::LINEAR_INTERPOLATION,
+      const ImageType * movingImage=NULL,
+      const MatrixTransformType * matrixTransform=NULL,
+      const BSplineTransformType * bsplineTransform=NULL );
 
     // Returns the moving image resampled into the space of the fixed image
-    typename ImageType::ConstPointer  GetFinalMovingImage( 
-                                    InterpolationMethodEnumType interp
-                                     = OptimizedRegistrationMethodType
-                                       ::LINEAR_INTERPOLATION );
+    typename TImage::ConstPointer  GetFinalMovingImage( 
+      InterpolationMethodEnumType interp = OptimizedRegistrationMethodType::LINEAR_INTERPOLATION );
 
     //**************
     //**************
@@ -428,8 +424,8 @@ class ImageToImageRegistrationHelper : public Object
     void operator = ( const Self & );               // Purposely not implemented
 
     //  Data
-    typename ImageType::ConstPointer      m_FixedImage;
-    typename ImageType::ConstPointer      m_MovingImage;
+    typename TImage::ConstPointer         m_FixedImage;
+    typename TImage::ConstPointer         m_MovingImage;
 
     bool                                  m_SampleFromOverlap;
     double                                m_SampleIntensityPortion;
