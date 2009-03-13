@@ -321,6 +321,8 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessGUIEvents ( vtkObject *call
     int createFiber = 1;
     vtkMRMLDiffusionTensorVolumeNode *volumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->VolumeSelector->GetSelected());
     vtkMRMLTransformableNode *fiducialListNode = vtkMRMLTransformableNode::SafeDownCast(this->FiducialSelector->GetSelected());  
+
+    int existingFiber = 0;
     if (this->OverwritePolyDataWarning && volumeNode && fiducialListNode  && fiberNode && fiberNode->GetPolyData() != NULL)
       {
       vtkKWMessageDialog *message = vtkKWMessageDialog::New();
@@ -330,11 +332,16 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessGUIEvents ( vtkObject *call
       message->SetText(msg.c_str());
       message->Create();
       createFiber = message->Invoke();
+      if (!createFiber) 
+        {
+        this->OutFiberSelector->SetSelected(NULL);
+        }
+      existingFiber = 1;
       message->Delete();
       }
 
     vtkMRMLTransformableNode *node = vtkMRMLTransformableNode::SafeDownCast(this->FiducialSelector->GetSelected());
-    if (node) 
+    if (!existingFiber && node) 
       {
       std::string name = std::string(node->GetName())+ std::string("_FiberTracts");
       fiberNode->SetName(name.c_str());
