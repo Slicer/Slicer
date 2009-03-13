@@ -260,21 +260,33 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   if (dnode == NULL || oldPoly == NULL)
     {
     dnode = fiberNode->AddLineDisplayNode();
+
+    dnode->DisableModifiedEventOn();
     dnode->SetVisibility(0);
+    dnode->SetScalarVisibility(0);
+    dnode->DisableModifiedEventOff();
     }
     
   dnode = fiberNode->GetTubeDisplayNode();
   if (dnode == NULL || oldPoly == NULL)
     {
     dnode = fiberNode->AddTubeDisplayNode();
+
+    dnode->DisableModifiedEventOn();
     dnode->SetVisibility(1);
+    dnode->SetScalarVisibility(1);
+    dnode->DisableModifiedEventOff();
     }
   
   dnode = fiberNode->GetGlyphDisplayNode();
   if (dnode == NULL || oldPoly == NULL)
     {
     dnode = fiberNode->AddGlyphDisplayNode();
+
+    dnode->DisableModifiedEventOn();
     dnode->SetVisibility(0);
+    dnode->SetScalarVisibility(0);
+    dnode->DisableModifiedEventOff();
     }
 
   if (fiberNode->GetStorageNode() == NULL) 

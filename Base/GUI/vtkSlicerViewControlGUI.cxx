@@ -1645,17 +1645,19 @@ void vtkSlicerViewControlGUI::UpdateNavigationWidgetViewActors ( )
       while (mainActor != NULL )
         {
         // get the bbox of this actor
-        mainActor->GetBounds ( bounds );
-        // check to see if it's big enough to include in the scene...
-        x = bounds[1] - bounds[0];
-        y = bounds[3] - bounds[2];
-        z = bounds[5] - bounds[4];
-        dimension = x*x + y*y + z*z;
-
+        int vis = mainActor->GetVisibility();
+        //if (vis)
+        //  {
+          mainActor->GetBounds ( bounds );
+          // check to see if it's big enough to include in the scene...
+          x = bounds[1] - bounds[0];
+          y = bounds[3] - bounds[2];
+          z = bounds[5] - bounds[4];
+          dimension = x*x + y*y + z*z;
+         // }
         // add a copy of the actor to NavigationWidgets's renderer
         // only if it's big enough to count (don't bother with tiny
         // and don't bother with invisible stuff)
-        int vis = mainActor->GetVisibility();
         if ( dimension > cutoffDimension && vis )
           {
           // ---new: create new actor, mapper, deep copy, add it.
