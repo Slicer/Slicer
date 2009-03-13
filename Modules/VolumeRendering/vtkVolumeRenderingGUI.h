@@ -121,7 +121,7 @@ public:
 
     // Description:
     // Get methods on class members ( no Set methods required. )
-    vtkGetObjectMacro (PB_Testing,vtkKWPushButton);
+    vtkGetObjectMacro (PB_HideSurfaceModels,vtkKWPushButton);
     vtkGetObjectMacro (PB_CreateNewVolumeRenderingNode,vtkKWPushButton);
     vtkGetObjectMacro (NS_ImageData,vtkSlicerNodeSelectorWidget);
     vtkGetObjectMacro (NS_VolumeRenderingDataSlicer,vtkSlicerNodeSelectorVolumeRenderingWidget);
@@ -176,7 +176,7 @@ protected:
     //OWN GUI Elements
 
     //Frame Save/Load
-    vtkKWPushButton *PB_Testing;
+    vtkKWPushButton *PB_HideSurfaceModels;
     vtkKWPushButton *PB_CreateNewVolumeRenderingNode;
     vtkSlicerNodeSelectorWidget *NS_ImageData;
     //BTX

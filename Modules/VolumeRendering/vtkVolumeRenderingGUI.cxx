@@ -57,7 +57,7 @@ vtkVolumeRenderingGUI::vtkVolumeRenderingGUI(void)
   this->PreviousNS_ImageData="";
   this->PreviousNS_VolumeRenderingDataScene="";
   this->PreviousNS_VolumeRenderingSlicer="";
-  this->PB_Testing=NULL;
+  this->PB_HideSurfaceModels=NULL;
   this->PB_CreateNewVolumeRenderingNode=NULL;
   this->NS_ImageData=NULL;
   this->NS_VolumeRenderingDataSlicer=NULL;
@@ -96,11 +96,11 @@ vtkVolumeRenderingGUI::~vtkVolumeRenderingGUI(void)
   //vtkSlicerViewerInteractorStyle *InteractorStyle;
   //vtkMRMLVolumeRenderingNode  *CurrentNode;//really delete this
 
-  if(this->PB_Testing)
+  if(this->PB_HideSurfaceModels)
     {
-    this->PB_Testing->SetParent(NULL);
-    this->PB_Testing->Delete();
-    this->PB_Testing=NULL;
+    this->PB_HideSurfaceModels->SetParent(NULL);
+    this->PB_HideSurfaceModels->Delete();
+    this->PB_HideSurfaceModels=NULL;
     }
 
   if (this->PB_CreateNewVolumeRenderingNode)
@@ -216,16 +216,16 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                 loadSaveDataFrame->GetWidgetName(), this->UIPanel->GetPageWidget("VolumeRendering")->GetWidgetName());
 
-  //Testing Pushbutton
-  this->PB_Testing= vtkKWPushButton::New();
-  this->PB_Testing->SetParent(loadSaveDataFrame->GetFrame());
-  this->PB_Testing->Create();
-  this->PB_Testing->SetText("Make All Models Invisible");
-  this->PB_Testing->SetBalloonHelpString("Make all surface models invisible. Go to models module to enable, disable only some of them.");
-  this->PB_Testing->SetWidth(labelWidth);
-  app->Script("pack %s -side top -anchor ne -padx 2 -pady 2",this->PB_Testing->GetWidgetName());
+  //Hide surface models pushbutton
+  this->PB_HideSurfaceModels= vtkKWPushButton::New();
+  this->PB_HideSurfaceModels->SetParent(loadSaveDataFrame->GetFrame());
+  this->PB_HideSurfaceModels->Create();
+  this->PB_HideSurfaceModels->SetText("Hide Surface Models");
+  this->PB_HideSurfaceModels->SetBalloonHelpString("Make all surface models invisible. Go to models module to enable, disable only some of them.");
+  this->PB_HideSurfaceModels->SetWidth(labelWidth);
+  app->Script("pack %s -side top -anchor ne -padx 2 -pady 2",this->PB_HideSurfaceModels->GetWidgetName());
 
-  //NodeSelector  for Node from MRML Scene
+  //NodeSelector for Node from MRML Scene
   this->NS_ImageData=vtkSlicerNodeSelectorWidget::New();
   this->NS_ImageData->SetParent(loadSaveDataFrame->GetFrame());
   this->NS_ImageData->Create();
@@ -269,7 +269,7 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
   this->EWL_CreateNewVolumeRenderingNode->SetParent(loadSaveDataFrame->GetFrame());
   this->EWL_CreateNewVolumeRenderingNode->Create();
   this->EWL_CreateNewVolumeRenderingNode->SetBalloonHelpString("Specify a name for a new parameter set.");
-  this->EWL_CreateNewVolumeRenderingNode->SetLabelText("Name New Parameter Set: ");
+  this->EWL_CreateNewVolumeRenderingNode->SetLabelText("New Parameter Set: ");
   this->EWL_CreateNewVolumeRenderingNode->SetLabelWidth(labelWidth);
   this->EWL_CreateNewVolumeRenderingNode->EnabledOff();
   app->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2", this->EWL_CreateNewVolumeRenderingNode->GetWidgetName());
@@ -279,7 +279,7 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
   this->PB_CreateNewVolumeRenderingNode->SetParent(loadSaveDataFrame->GetFrame());
   this->PB_CreateNewVolumeRenderingNode->Create();
   this->PB_CreateNewVolumeRenderingNode->SetBalloonHelpString("Create a new parameter set for the current volume. This way you can switch between different visualization settings for the same volume.");
-  this->PB_CreateNewVolumeRenderingNode->SetText("Create Visualization Parameter Set");
+  this->PB_CreateNewVolumeRenderingNode->SetText("Create New Visualization Parameter Set");
   app->Script("pack %s -side top -anchor ne -padx 2 -pady 2",this->PB_CreateNewVolumeRenderingNode->GetWidgetName());
 
   //Details frame
@@ -334,7 +334,7 @@ void vtkVolumeRenderingGUI::AddGUIObservers(void)
   this->NS_ImageData->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->NS_VolumeRenderingDataScene->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->NS_VolumeRenderingDataSlicer->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->PB_Testing->AddObserver(vtkKWPushButton::InvokedEvent,(vtkCommand *)this->GUICallbackCommand );
+  this->PB_HideSurfaceModels->AddObserver(vtkKWPushButton::InvokedEvent,(vtkCommand *)this->GUICallbackCommand );
   this->PB_CreateNewVolumeRenderingNode->AddObserver(vtkKWPushButton::InvokedEvent,(vtkCommand*)this->GUICallbackCommand);
 
 
@@ -344,7 +344,7 @@ void vtkVolumeRenderingGUI::RemoveGUIObservers(void)
   this->NS_ImageData->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->NS_VolumeRenderingDataScene->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->NS_VolumeRenderingDataSlicer->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->PB_Testing->RemoveObservers (vtkKWPushButton::InvokedEvent,(vtkCommand *)this->GUICallbackCommand);
+  this->PB_HideSurfaceModels->RemoveObservers (vtkKWPushButton::InvokedEvent,(vtkCommand *)this->GUICallbackCommand);
   this->PB_CreateNewVolumeRenderingNode->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
 }
 void vtkVolumeRenderingGUI::RemoveMRMLNodeObservers(void)
@@ -370,8 +370,8 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
   //Check PushButtons
   //
   vtkKWPushButton *callerObject=vtkKWPushButton::SafeDownCast(caller);
-  // TODO Testing Button  Remove later
-  if(callerObject==this->PB_Testing&&event==vtkKWPushButton::InvokedEvent)
+  // hide surface models to reveal volume rendering
+  if(callerObject==this->PB_HideSurfaceModels&&event==vtkKWPushButton::InvokedEvent)
     {
     int count=this->GetLogic()->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLModelNode");
     for(int i=0;i<count;i++)
@@ -696,7 +696,7 @@ void vtkVolumeRenderingGUI::UpdateGUI(void)
   if(this->NS_ImageData->GetSelected()!=NULL)
     {
     this->PB_CreateNewVolumeRenderingNode->EnabledOn();
-    this->PB_Testing->EnabledOn();
+    this->PB_HideSurfaceModels->EnabledOn();
     this->NS_VolumeRenderingDataScene->EnabledOn();
     this->NS_VolumeRenderingDataScene->NoneEnabledOff();
     this->EWL_CreateNewVolumeRenderingNode->EnabledOn();
@@ -706,7 +706,7 @@ void vtkVolumeRenderingGUI::UpdateGUI(void)
     {
     this->EWL_CreateNewVolumeRenderingNode->EnabledOff();
     this->PB_CreateNewVolumeRenderingNode->EnabledOff();
-    this->PB_Testing->EnabledOff();
+    this->PB_HideSurfaceModels->EnabledOff();
     this->NS_VolumeRenderingDataScene->NoneEnabledOn();
     this->NS_VolumeRenderingDataScene->SetSelected(NULL);
     this->NS_VolumeRenderingDataScene->EnabledOff();
