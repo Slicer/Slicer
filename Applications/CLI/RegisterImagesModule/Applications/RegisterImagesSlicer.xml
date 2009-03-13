@@ -4,7 +4,7 @@
   <title>Register Images</title>
   <description>Provides rigid, affine, and BSpline registration methods via a simple GUI</description>
   <version>0.1.0.$Revision: 2104 $(alpha)</version>
-  <documentation-url></documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:RegisterImages-Documentation-3.4</documentation-url>
   <license></license>
   <contributor>Stephen R Aylward</contributor>
   <acknowledgements></acknowledgements>
