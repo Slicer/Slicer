@@ -592,11 +592,13 @@ int main( int argc, char * argv[] )
       case itk::ImageIOBase::UCHAR:
       case itk::ImageIOBase::CHAR:
       case itk::ImageIOBase::SHORT:
+#ifdef SUPPORT_2D_IMAGES
         if(dimensions == 2)
           {
           return DoIt<2, short>( argc, argv );
           }
         else
+#endif
           {
           return DoIt<3, short>( argc, argv );
           }
@@ -607,21 +609,25 @@ int main( int argc, char * argv[] )
       case itk::ImageIOBase::ULONG:
       case itk::ImageIOBase::LONG:
       case itk::ImageIOBase::FLOAT:
+#ifdef SUPPORT_2D_IMAGES
         if(dimensions == 2)
           {
           return DoIt<2, float>( argc, argv );
           }
         else
+#endif
           {
           return DoIt<3, float>( argc, argv );
           }
         break;
       case itk::ImageIOBase::DOUBLE:
+#ifdef SUPPORT_2D_IMAGES
         if(dimensions == 2)
           {
           return DoIt<2, double>( argc, argv );
           }
         else
+#endif
           {
           return DoIt<3, double>( argc, argv );
           }
