@@ -194,23 +194,58 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
   if (node) {
     vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast(node->GetScene()->GetNodeByID(node->GetScan1_Ref()));
     if (volumeNode) {
+
+      /*
       vtkSlicerApplicationLogic *applicationLogic = this->GetGUI()->GetLogic()->GetApplicationLogic();
       applicationLogic->GetSelectionNode()->SetActiveVolumeID(volumeNode->GetID());
       applicationLogic->PropagateVolumeSelection(); 
+      */
       if (!volumeNode->GetImageData()) {
-     vtkKWMessageDialog::PopupMessage(this->GetGUI()->GetApplication(), 
-                                      this->GetGUI()->GetApplicationGUI()->GetMainSlicerWindow(),
-                                      "Change Tracker", 
-                                      "No image data associated with Scan 1", 
-                                      vtkKWMessageDialog::ErrorIcon);
-     return;
+        vtkKWMessageDialog::PopupMessage(this->GetGUI()->GetApplication(), 
+                                         this->GetGUI()->GetApplicationGUI()->GetMainSlicerWindow(),
+                                         "Change Tracker", 
+                                         "No image data associated with Scan 1", 
+                                         vtkKWMessageDialog::ErrorIcon);
+        return;
       }
-      memcpy(dimensions,volumeNode->GetImageData()->GetDimensions(),sizeof(int)*3);
-      // Load File 
 
-      char fileName[1024];
-      sprintf(fileName,"%s/TG_Analysis_Intensity.nhdr",node->GetWorkingDir());
-       // vtkMRMLVolumeNode* tmp =  this->GetGUI()->GetLogic()->LoadVolume(vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication()),fileName,1,"TG_analysis");
+      memcpy(dimensions,volumeNode->GetImageData()->GetDimensions(),sizeof(int)*3);
+
+      // set the scan1 volume as the background node, while keeping the slice
+      // selector position
+      double oldSliceSetting[3];
+      vtkSlicerSliceGUI *redGUI, *greenGUI, *yellowGUI;
+      vtkSlicerApplicationGUI *applicationGUI = this->GetGUI()->GetApplicationGUI();
+      vtkSlicerApplicationLogic *applicationLogic = this->GetGUI()->GetLogic()->GetApplicationLogic();
+      
+      redGUI = applicationGUI->GetMainSliceGUI("Red");
+      greenGUI = applicationGUI->GetMainSliceGUI("Green");
+      yellowGUI = applicationGUI->GetMainSliceGUI("Yellow");
+
+      oldSliceSetting[0] = double(redGUI->GetSliceController()->GetOffsetScale()->GetValue());
+      oldSliceSetting[1] = double(greenGUI->GetSliceController()->GetOffsetScale()->GetValue());
+      oldSliceSetting[2] = double(yellowGUI->GetSliceController()->GetOffsetScale()->GetValue());
+
+      applicationLogic->GetSelectionNode()->SetActiveVolumeID(volumeNode->GetID());
+      applicationLogic->PropagateVolumeSelection();
+
+      applicationGUI->GetGUILayoutNode()->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutFourUpView);
+      
+      redGUI->GetLogic()->GetSliceCompositeNode()->SetBackgroundVolumeID(volumeNode->GetID());
+      redGUI->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID("");
+      yellowGUI->GetLogic()->GetSliceCompositeNode()->SetBackgroundVolumeID(volumeNode->GetID());
+      yellowGUI->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID("");
+      greenGUI->GetLogic()->GetSliceCompositeNode()->SetBackgroundVolumeID(volumeNode->GetID());
+      greenGUI->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID("");
+
+      redGUI->GetSliceController()->GetOffsetScale()->SetValue(oldSliceSetting[0]);
+      greenGUI->GetSliceController()->GetOffsetScale()->SetValue(oldSliceSetting[1]);
+      yellowGUI->GetSliceController()->GetOffsetScale()->SetValue(oldSliceSetting[2]);
+
+      // Load File 
+      //char fileName[1024];
+      //sprintf(fileName,"%s/TG_Analysis_Intensity.nhdr",node->GetWorkingDir());
+      // vtkMRMLVolumeNode* tmp =  this->GetGUI()->GetLogic()->LoadVolume(vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication()),fileName,1,"TG_analysis");
     } 
   } else {
     cout << "no node "  << endl;
