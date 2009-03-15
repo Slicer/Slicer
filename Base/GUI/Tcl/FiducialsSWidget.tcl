@@ -159,9 +159,10 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
               #
               # first check for key repeats (don't allow more than
               # one fiducial per second)
+              # also ignore control-p (brings up python interactor)
               #
               set now [clock seconds]
-              if { [expr $now - $_timeOfLastKeyEvent] >= 1 } {
+              if { [expr $now - $_timeOfLastKeyEvent] >= 1 && ![$_interactor GetControlKey] } {
                 set _timeOfLastKeyEvent $now
                 #
                 # get the event position and make it relative to a renderer/viewport
