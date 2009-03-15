@@ -144,6 +144,8 @@ public:
   int DoITKRegistration(vtkSlicerApplication *app);
   int DoITKROIRegistration(vtkSlicerApplication *app);
 
+  char* GetInputScanName(int);
+
 private:
   vtkChangeTrackerLogic();
   ~vtkChangeTrackerLogic();

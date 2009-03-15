@@ -439,12 +439,11 @@ vtkMRMLScalarVolumeNode* vtkChangeTrackerLogic::CreateSuperSample(int ScanNum) {
 
   // ---------------------------------
   // Now return results and clean up 
-  char VolumeOutputName[1024];
-
+  char VolumeOutputName[255];
   if (ScanNum > 1) 
-    sprintf(VolumeOutputName, "TG_scan2_Global_SuperSampled");
+    sprintf(VolumeOutputName, "%s_VOI_GlobalReg_SuperSampled", this->GetInputScanName(1));
   else 
-    sprintf(VolumeOutputName, "TG_scan1_SuperSampled");
+    sprintf(VolumeOutputName, "%s_VOI_SuperSampled", this->GetInputScanName(0));
 
   vtkMRMLScalarVolumeNode *VolumeOutputNode = this->CreateVolumeNode(volumeNode,VolumeOutputName);
   VolumeOutputNode->SetAndObserveImageData(ROISuperSampleFinal);
@@ -572,28 +571,28 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
   } else {
     cout << "DEBUGGING " << endl;
     if (1) {
-    if (!this->ChangeTrackerNode->GetScan2_NormedRef() || !strcmp(this->ChangeTrackerNode->GetScan2_NormedRef(),"")) { 
-      char fileName[1024];
-      sprintf(fileName,"%s/TG_scan2_norm.nhdr",this->ChangeTrackerNode->GetWorkingDir());
-      vtkMRMLVolumeNode* tmp = this->LoadVolume(app,fileName,0,"TG_scan2_norm");
-      if (tmp) {
-        this->ChangeTrackerNode->SetScan2_NormedRef(tmp->GetID());
-      } else {
-         cout << "Error: Could not load " << fileName << endl;
-         return ERR_OTHER;
+      if (!this->ChangeTrackerNode->GetScan2_NormedRef() || !strcmp(this->ChangeTrackerNode->GetScan2_NormedRef(),"")) { 
+        char fileName[1024];
+        sprintf(fileName,"%s/TG_scan2_norm.nhdr",this->ChangeTrackerNode->GetWorkingDir());
+        vtkMRMLVolumeNode* tmp = this->LoadVolume(app,fileName,0,"TG_scan2_norm");
+        if (tmp) {
+          this->ChangeTrackerNode->SetScan2_NormedRef(tmp->GetID());
+        } else {
+          cout << "Error: Could not load " << fileName << endl;
+          return ERR_OTHER;
+        }
       }
-    }
     } else {
       if (!this->ChangeTrackerNode->GetScan2_LocalRef() || !strcmp(this->ChangeTrackerNode->GetScan2_LocalRef(),"")) { 
-      char fileName[1024];
-      sprintf(fileName,"%s/TG_scan2_Local.nrrd",this->ChangeTrackerNode->GetWorkingDir());
-      vtkMRMLVolumeNode* tmp = this->LoadVolume(app,fileName,0,"TG_scan2_Local");
-      if (tmp) {
-        this->ChangeTrackerNode->SetScan2_LocalRef(tmp->GetID());
-      } else {
-         cout << "Error: Could not load " << fileName << endl;
-         return ERR_OTHER;
-      }
+        char fileName[1024];
+        sprintf(fileName,"%s/TG_scan2_Local.nrrd",this->ChangeTrackerNode->GetWorkingDir());
+        vtkMRMLVolumeNode* tmp = this->LoadVolume(app,fileName,0,"TG_scan2_Local");
+        if (tmp) {
+          this->ChangeTrackerNode->SetScan2_LocalRef(tmp->GetID());
+        } else {
+          cout << "Error: Could not load " << fileName << endl;
+          return ERR_OTHER;
+        }
       }
     }
   }
@@ -1043,8 +1042,11 @@ int vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
     ctNode->SetScan2_GlobalRef("");
   }
 
-  outputNode = CreateVolumeNode(static_cast<vtkMRMLVolumeNode*>(scene->GetNodeByID(ctNode->GetScan1_Ref())), 
-    "TG_scan2_Global");
+  char RegVolumeName[255];
+  sprintf(RegVolumeName, "%s_GlobalReg", this->GetInputScanName(1));
+  outputNode = 
+    CreateVolumeNode(static_cast<vtkMRMLVolumeNode*>(scene->GetNodeByID(ctNode->GetScan1_Ref())), 
+                     RegVolumeName);
 
   // Create output transform node
   vtkMRMLLinearTransformNode *transformNode =
@@ -1111,8 +1113,10 @@ int vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
     ctNode->SetScan2_LocalRef("");
   }
 
+  char RegVolumeName[255];
+  sprintf(RegVolumeName, "%s_VOI_LocalReg", this->GetInputScanName(1));
   outputNode = CreateVolumeNode(static_cast<vtkMRMLVolumeNode*>(scene->GetNodeByID(ctNode->GetScan1_Ref())), 
-    "TG_scan2_Local");
+                                RegVolumeName);
 
   // Create output transform node
   // TODO: check whether the transform has been created, delete/reuse if yes
@@ -1160,5 +1164,14 @@ void vtkChangeTrackerLogic::ProcessMRMLEvents(vtkObject* caller,
 //    this->ChangeTrackerNode->SetScan2LinearRegRef(callerNode->GetID());
     this->ChangeTrackerNode->SetScan2_RegisteredReady(true);
   }
+}
+
+char* vtkChangeTrackerLogic::GetInputScanName(int scan){
+   vtkMRMLVolumeNode *volumeNode;
+   if(scan == 0)
+     volumeNode = vtkMRMLVolumeNode::SafeDownCast(this->ChangeTrackerNode->GetScene()->GetNodeByID(this->ChangeTrackerNode->GetScan1_Ref()));
+   else
+     volumeNode = vtkMRMLVolumeNode::SafeDownCast(this->ChangeTrackerNode->GetScene()->GetNodeByID(this->ChangeTrackerNode->GetScan2_Ref()));
+   return volumeNode->GetName();
 }
 // AF <<<

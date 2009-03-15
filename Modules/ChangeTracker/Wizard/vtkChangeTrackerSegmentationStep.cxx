@@ -252,7 +252,9 @@ void vtkChangeTrackerSegmentationStep::PreSegmentScan1Define() {
   // ---------------------------------
   // show segmentation in Slice view 
   // ------------------------------
-  this->PreSegmentNode = volumesLogic->CreateLabelVolume(Node->GetScene(),volumeNode, "TG_Scan1_PreSegment");
+  char segmNodeName[255];
+  sprintf(segmNodeName, "%s_VOI_PreSegmented", this->GetGUI()->GetLogic()->GetInputScanName(0));
+  this->PreSegmentNode = volumesLogic->CreateLabelVolume(Node->GetScene(),volumeNode, segmNodeName);
   this->PreSegmentNode->SetAndObserveImageData(this->PreSegment->GetOutput());
   
   applicationGUI->GetMainSliceGUI("Red")->GetLogic()->GetSliceCompositeNode()->SetLabelVolumeID(this->PreSegmentNode->GetID());
@@ -302,9 +304,12 @@ int vtkChangeTrackerSegmentationStep::SegmentScan1Define() {
   vtkChangeTrackerLogic::DefineSegment(this->PreSegment->GetOutput(),RemoveIslands);
 
   // Set It up 
-  vtkSlicerVolumesLogic *volumesLogic         = (vtkSlicerVolumesGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Volumes")))->GetLogic();
+  vtkSlicerVolumesLogic *volumesLogic = 
+    (vtkSlicerVolumesGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Volumes")))->GetLogic();
+  char segmNodeName[255];
+  sprintf(segmNodeName, "%s_VOI_Segmented", this->GetGUI()->GetLogic()->GetInputScanName(0));
 
-  this->SegmentNode = volumesLogic->CreateLabelVolume(Node->GetScene(),this->PreSegmentNode, "TG_scan1_Segment");
+  this->SegmentNode = volumesLogic->CreateLabelVolume(Node->GetScene(), this->PreSegmentNode, segmNodeName);
 
   //return 1;
 

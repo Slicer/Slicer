@@ -62,7 +62,9 @@ namespace eval ChangeTrackerTcl {
       # -------------------------------------
       HistogramNormalization_DeleteOutput
 
-      set OUTPUT_NODE [$LOGIC CreateVolumeNode  $SCAN1_NODE "TG_scan2_norm" ]
+      set SCAN2_NAME [$LOGIC GetInputScanName 1]
+      set OUTPUT_NODE_NAME "${SCAN2_NAME}_VOI_Reg_norm"
+      set OUTPUT_NODE [$LOGIC CreateVolumeNode  $SCAN1_NODE $OUTPUT_NODE_NAME ]
       $OUTPUT_NODE SetAndObserveImageData $OUTPUT
       $NODE SetScan2_NormedRef [$OUTPUT_NODE GetID]
    
@@ -400,7 +402,8 @@ namespace eval ChangeTrackerTcl {
         # puts "Threshold: [$NODE GetSegmentThresholdMin] [$NODE GetSegmentThresholdMax]" 
         IntensityThresholding_Fct $INPUT_VOL $SCAN1_VOL [$NODE GetSegmentThresholdMin] [$NODE GetSegmentThresholdMax] $OUTPUT_VOL 
 
-        set OUTPUT_NODE [$LOGIC CreateVolumeNode  $SCAN_NODE "TG_scan${SCAN_ID}_Thr" ]
+        set SCAN_NAME [$LOGIC GetInputScanName "[expr ($SCAN_ID-1)]" ]
+        set OUTPUT_NODE [$LOGIC CreateVolumeNode  $SCAN_NODE "${SCAN_NAME}_VOI_Thr" ]
         $OUTPUT_NODE SetAndObserveImageData $OUTPUT_VOL
         $NODE SetScan${SCAN_ID}_ThreshRef [$OUTPUT_NODE GetID]
         $LOGIC SaveVolume $::slicer3::Application $OUTPUT_NODE
@@ -527,11 +530,11 @@ namespace eval ChangeTrackerTcl {
         set VOLUMES_GUI  [$::slicer3::Application GetModuleGUIByName "Volumes"]
         set VOLUMES_LOGIC [$VOLUMES_GUI GetLogic]
 
-        set OUTPUT_NODE [$VOLUMES_LOGIC CreateLabelVolume $SCENE $SEGM_NODE "TG_Analysis_IntensityReal"]
+        set OUTPUT_NODE [$VOLUMES_LOGIC CreateLabelVolume $SCENE $SEGM_NODE "ChTracker_Analysis_IntensityInternal"]
         $OUTPUT_NODE SetAndObserveImageData [$LOGIC GetAnalysis_Intensity_ROIBinCombine]
         # $LOGIC SaveVolume $::slicer3::Application $OUTPUT_NODE
 
-        set OUTPUT_NODE [$VOLUMES_LOGIC CreateLabelVolume $SCENE $SEGM_NODE "TG_Analysis_IntensityDisplay"]
+        set OUTPUT_NODE [$VOLUMES_LOGIC CreateLabelVolume $SCENE $SEGM_NODE "ChTracker_Analysis_IntensityDisplay"]
         $OUTPUT_NODE SetAndObserveImageData [$LOGIC GetAnalysis_Intensity_ROIBinDisplay]
         # $LOGIC SaveVolume $::slicer3::Application $OUTPUT_NODE
 
@@ -1292,7 +1295,8 @@ namespace eval ChangeTrackerTcl {
       # ======================================
       # Load in Segmentation for Scan2
       # Ignore error messages 
-      set SCAN2_SEGM_NODE [$LOGIC LoadVolume $::slicer3::Application $SCAN1_TO_SCAN2_SEGM_NAME 1 TG_scan2_segm]
+      set SCAN2_NAME [$LOGIC GetInputScanName 1]
+      set SCAN2_SEGM_NODE [$LOGIC LoadVolume $::slicer3::Application $SCAN1_TO_SCAN2_SEGM_NAME 1 "${SCAN2_NAME}_VOI_Segmented"]
 
       # could not load in result 
       if { $SCAN2_SEGM_NODE == "" } { 
@@ -1335,7 +1339,7 @@ namespace eval ChangeTrackerTcl {
       $THR Update
 
       set VOLUMES_LOGIC [[$::slicer3::Application GetModuleGUIByName "Volumes"] GetLogic]
-      set OUTPUT_NODE [$VOLUMES_LOGIC CreateLabelVolume $SCENE $SCAN1_SEGM_NODE "TG_Analysis_Deformable"]
+      set OUTPUT_NODE [$VOLUMES_LOGIC CreateLabelVolume $SCENE $SCAN1_SEGM_NODE "ChTracker_Analysis_DeformableMap"]
       $OUTPUT_NODE SetAndObserveImageData [$THR GetOutput]
       $NODE SetAnalysis_Deformable_Ref [$OUTPUT_NODE GetID]
       $LOGIC SaveVolume $::slicer3::Application $OUTPUT_NODE
