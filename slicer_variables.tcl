@@ -82,9 +82,9 @@ set ::PYTHON_TAG "http://svn.python.org/projects/python/branches/release25-maint
 set ::BLAS_TAG http://svn.slicer.org/Slicer3-lib-mirrors/trunk/netlib/BLAS
 set ::LAPACK_TAG http://svn.slicer.org/Slicer3-lib-mirrors/trunk/netlib/lapack-3.1.1
 #set ::NUMPY_TAG "http://svn.scipy.org/svn/numpy/trunk"
-set ::NUMPY_TAG "http://svn.scipy.org/svn/numpy/branches/1.1.x"
+set ::NUMPY_TAG "http://svn.scipy.org/svn/numpy/branches/1.2.x"
 #set ::SCIPY_TAG "http://svn.scipy.org/svn/scipy/trunk"
-set ::SCIPY_TAG "http://svn.scipy.org/svn/scipy/branches/0.6.x"
+set ::SCIPY_TAG "http://svn.scipy.org/svn/scipy/branches/0.7.x"
 set ::BatchMake_TAG "BatchMake-1-0-8"
 set ::SLICERLIBCURL_TAG "HEAD"
 set ::OpenIGTLink_TAG "http://svn.na-mic.org/NAMICSandBox/branches/OpenIGTLink-1-0"
