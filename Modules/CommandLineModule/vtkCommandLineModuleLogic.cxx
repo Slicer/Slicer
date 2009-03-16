@@ -348,7 +348,7 @@ void vtkCommandLineModuleLogic::Apply ( vtkMRMLCommandLineModuleNode* node )
     }
   else
     {
-      node->SetStatus(vtkMRMLCommandLineModuleNode::Scheduled);
+    node->SetStatus(vtkMRMLCommandLineModuleNode::Scheduled);
     }
   
   task->Delete();
