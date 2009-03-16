@@ -3,6 +3,8 @@
 
 #include "vtkSlicerMRMLTreeWidget.h"
 
+#include "vtkMatrix4x4.h"
+
 #include "vtkKWEntry.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWFrameWithLabel.h"
@@ -24,7 +26,6 @@
 #include "vtkMRMLTransformableNode.h"
 #include "vtkMRMLVolumeNode.h"
 
-#include "vtkMatrix4x4.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerMRMLTreeWidget );
@@ -117,7 +118,6 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
 
     else if (event == vtkKWTree::RightClickOnNodeEvent)
       {
-      // This code above should be in something like TriggerContextMenu
 
       if (!this->ContextMenu)
         {
@@ -254,6 +254,7 @@ void vtkSlicerMRMLTreeWidget::DeleteNodeCallback(const char *id)
       this->GetMRMLScene()->RemoveNode(node);
       }
     }
+  this->TreeWidget->GetWidget()->ClearSelection();
   this->UpdateTreeFromMRML();
 }
 
@@ -307,6 +308,7 @@ void vtkSlicerMRMLTreeWidget::CutNodeCallback(const char *id)
     this->GetMRMLScene()->RemoveNode(node);
     tnode->SetAndObserveTransformNodeID(NULL);
     }
+  this->TreeWidget->GetWidget()->ClearSelection();
   this->UpdateTreeFromMRML();
 }
 
