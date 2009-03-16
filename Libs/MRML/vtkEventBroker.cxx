@@ -672,43 +672,37 @@ vtkObservation *vtkEventBroker::DequeueObservation ()
 //----------------------------------------------------------------------------
 void vtkEventBroker::InvokeObservation ( vtkObservation *observation, void *callData )
 {
-  // TODO record the timing before and after invocation
- 
   this->EventNestingLevel++;
 
   double startTime = this->TimerLog->GetUniversalTime();
   bool observationDeleted = false;
 
+  // Register so observation won't be deleted while callback is running
+  observation->Register(this);
+
+  // Invoke the observation
+  // - run script is available, otherwise run callback command
   if ( observation->GetScript() != NULL )
     {
     (*(this->ScriptHandler)) ( observation->GetScript() );
     }
   else
     {
-    // Invoke the observation
-    observation->Register(this);
     observation->GetCallbackCommand()->Execute(
                                       observation->GetSubject(),
                                       observation->GetEvent(),
                                       callData );
-    if (observation->GetReferenceCount() == 1)
-      {
-      observationDeleted = true;
-      }
-    observation->Delete();
     }
 
-  if (!observationDeleted)
-    {
-    double elapsedTime = this->TimerLog->GetUniversalTime() - startTime;
-    observation->SetTotalElapsedTime (observation->GetTotalElapsedTime() + elapsedTime);
-    observation->SetLastElapsedTime (elapsedTime);
+  // Record timing and write the to the log file if enabled
+  double elapsedTime = this->TimerLog->GetUniversalTime() - startTime;
+  observation->SetTotalElapsedTime (observation->GetTotalElapsedTime() + elapsedTime);
+  observation->SetLastElapsedTime (elapsedTime);
+  this->LogEvent (observation);
 
-    // Write the to the log file if enabled
-    this->LogEvent (observation);
-    }
+  // clear reference to observation (may cause delete)
+  observation->Delete();
   this->EventNestingLevel--;
-
 }
 
 //----------------------------------------------------------------------------
