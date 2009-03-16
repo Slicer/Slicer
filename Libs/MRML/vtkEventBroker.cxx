@@ -675,7 +675,6 @@ void vtkEventBroker::InvokeObservation ( vtkObservation *observation, void *call
   this->EventNestingLevel++;
 
   double startTime = this->TimerLog->GetUniversalTime();
-  bool observationDeleted = false;
 
   // Register so observation won't be deleted while callback is running
   observation->Register(this);
