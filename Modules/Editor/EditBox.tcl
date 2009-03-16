@@ -227,7 +227,11 @@ itcl::body EditBox::create { } {
   $this createButtonRow $parent {ErodeLabel DilateLabel Threshold ChangeLabel}
   $this createButtonRow $parent {InterpolateLabels MakeModel Watershed LevelTracing}
   $this createButtonRow $parent {PreviousFiducial NextFiducial FiducialVisibilityOn DeleteFiducials}
-  $this createButtonRow $parent {GoToEditorModule PinOpen Undo }
+  if { $frame == "" } {
+    $this createButtonRow $parent {GoToEditorModule PinOpen Undo }
+  } else {
+    $this createButtonRow $parent {Undo }
+  }
  
   $this setMode $mode 
 
