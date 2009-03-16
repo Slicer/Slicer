@@ -499,6 +499,8 @@ itcl::body LoadVolume::saveGeometry {} {
   set geo(dicomSplitPosition) [$o(dicomSplit) GetSeparatorPosition]
   set geo(dicomDescriptionWidth) [[$o(dicomList) GetWidget] GetColumnWidth 0]
   set geo(dicomValueWidth) [[$o(dicomList) GetWidget] GetColumnWidth 1]
+  set geo(browserFavoriteWidth) [[$o(browser) GetMainFrame] GetFrame1Size]
+  set geo(browserDirWidth) [[$o(browser) GetDirFileFrame] GetFrame1Size]
   $::slicer3::Application SetRegistry "LoadVolumeGeometry" [array get geo]
 }
 
@@ -551,6 +553,12 @@ itcl::body LoadVolume::loadGeometry {} {
   }
   if { [info exists geo(dicomValueWidth)] } {
     [$o(dicomList) GetWidget] SetColumnWidth 1 $geo(dicomValueWidth) 
+  }
+  if { [info exists geo(browserFavoriteWidth)] } {
+    [$o(browser) GetMainFrame] SetFrame1Size $geo(browserFavoriteWidth) 
+  }
+  if { [info exists geo(browserDirWidth)] } {
+    [$o(browser) GetDirFileFrame] SetFrame1Size $geo(browserDirWidth) 
   }
 }
 
