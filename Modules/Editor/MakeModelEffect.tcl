@@ -246,14 +246,12 @@ itcl::body MakeModelEffect::buildOptions {} {
     -side right -anchor sw -padx 2 -pady 2 
 
   #
-  # event observers - TODO: if there were a way to make these more specific, I would...
+  # event observers
   #
-  set tag [$o(goToModelMaker) AddObserver AnyEvent "$this goToModelMaker"]
-  lappend _observerRecords "$o(goToModelMaker) $tag"
-  set tag [$o(apply) AddObserver AnyEvent "$this apply"]
-  lappend _observerRecords "$o(apply) $tag"
-  set tag [$o(cancel) AddObserver AnyEvent "after idle ::EffectSWidget::RemoveAll"]
-  lappend _observerRecords "$o(cancel) $tag"
+  set InvokedEvent 10000
+  $::slicer3::Broker AddObservation $o(goToModelMaker) $InvokedEvent "$this goToModelMaker"
+  $::slicer3::Broker AddObservation $o(apply) $InvokedEvent "$this apply"
+  $::slicer3::Broker AddObservation $o(cancel) $InvokedEvent "after idle ::EffectSWidget::RemoveAll"
 
   if { [$this getOutputLabel] == "" } {
     $this errorDialog "Label map needed for MakeModeling"
@@ -278,8 +276,7 @@ itcl::body MakeModelEffect::tearDownOptions { } {
 
 itcl::body MakeModelEffect::goToModelMaker { } {
   set toolbar [$::slicer3::ApplicationGUI GetApplicationToolbar]
-  [$toolbar GetModuleChooseGUI] SelectModule "Model Maker"
-  update
+  after idle [list [$toolbar GetModuleChooseGUI] SelectModule "Model Maker"]
   after idle ::EffectSWidget::RemoveAll
 }
 
