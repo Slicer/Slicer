@@ -103,6 +103,7 @@ set(SlicerBaseGUI_SRCS
   vtkKWTextWithHyperlinksWithScrollbars.cxx
   vtkSlicerModuleCollapsibleFrame.cxx
   vtkSlicerNodeSelectorWidget.cxx
+  vtkSlicerContextMenuHelper.cxx
   vtkSlicerWidget.cxx
   vtkKWMatrix4x4.cxx
   vtkKWScriptedWidget.cxx

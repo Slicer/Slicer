@@ -34,6 +34,7 @@
 #include "vtkMRMLNode.h"
 
 #include "vtkSlicerBaseGUI.h"
+#include "vtkSlicerContextMenuHelper.h"
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerNodeSelectorWidget : public vtkKWMenuButtonWithSpinButtonsWithLabel
 {
@@ -145,11 +146,16 @@ public:
   void UnconditionalUpdateMenu();
 
   // Description:
+  // A helper class to manage context menus
+  vtkSetObjectMacro(ContextMenuHelper, vtkSlicerContextMenuHelper);
+  vtkGetObjectMacro(ContextMenuHelper, vtkSlicerContextMenuHelper);
+
+  // Description:
   // Remove all menu entries
   void ClearMenu();
 
   void ProcessNewNodeCommand(const char *className, const char *nodeName);
-  void ProcessCommand(char *slectedId);
+  void ProcessCommand(char *selectedID);
 
   bool CheckNodeClass(vtkMRMLNode *node);
 
@@ -187,6 +193,7 @@ protected:
   int ChildClassesEnabled;
 
   vtkMRMLScene       *MRMLScene;
+  vtkSlicerContextMenuHelper      *ContextMenuHelper;
 
 private:
 

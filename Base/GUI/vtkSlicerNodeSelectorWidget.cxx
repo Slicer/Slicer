@@ -35,14 +35,6 @@ static void MRMLCallback(vtkObject *caller, unsigned long eid, void *__clientDat
 {
   vtkSlicerNodeSelectorWidget *self = reinterpret_cast<vtkSlicerNodeSelectorWidget *>(__clientData);
 
-  /* don't clear menu on scene close since the singleton nodes are not recreated anymore
-  if (vtkMRMLScene::SceneCloseEvent == eid)
-    {
-    self->ClearMenu();
-    self->SetSelected(NULL);
-    return;
-    }
-  */
   if (self->GetInMRMLCallbackFlag())
     {
 #ifdef _DEBUG
@@ -75,6 +67,7 @@ vtkSlicerNodeSelectorWidget::vtkSlicerNodeSelectorWidget()
   this->ShowHidden = 0;
   this->ChildClassesEnabled = 1;
   this->MRMLScene      = NULL;
+  this->ContextMenuHelper      = NULL;
   this->MRMLCallbackCommand = vtkCallbackCommand::New();
   this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
   this->MRMLCallbackCommand->SetCallback(MRMLCallback);
@@ -90,6 +83,10 @@ vtkSlicerNodeSelectorWidget::~vtkSlicerNodeSelectorWidget()
     {
     this->MRMLCallbackCommand->Delete();
     this->MRMLCallbackCommand = NULL;
+    }
+  if (this->ContextMenuHelper)
+    {
+    this->ContextMenuHelper->Delete();
     }
 }
 
@@ -384,6 +381,7 @@ void vtkSlicerNodeSelectorWidget::UnconditionalUpdateMenu()
         }
      }
   }
+
   //Node already selected in additonal Nodes
   if(resultAddAdditionalNodes!=0&&selectedNode==NULL)
     {
@@ -406,6 +404,24 @@ void vtkSlicerNodeSelectorWidget::UnconditionalUpdateMenu()
     this->SelectedID = std::string(name);
     }
 
+  // Add Context menu for operations on selected node
+  // - first create it if needed
+  // - then populate it based on the currently selected node
+  if ( !this->ContextMenuHelper )
+    {
+    this->ContextMenuHelper = vtkSlicerContextMenuHelper::New();
+    this->ContextMenuHelper->SetMRMLScene( this->GetMRMLScene() );
+    }
+  if ( selectedNode )
+    {
+    vtkKWMenu *menu = this->GetWidget()->GetWidget()->GetMenu();
+    menu->AddSeparator();
+    this->ContextMenuHelper->SetMRMLNode(selectedNode);
+    this->ContextMenuHelper->SetContextMenu(menu);
+    this->ContextMenuHelper->PopulateMenu();
+    }
+
+
   if (oldSelectedNode != selectedNode)
     {
     this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
@@ -417,9 +433,9 @@ vtkMRMLNode *vtkSlicerNodeSelectorWidget::GetSelected()
 {
   vtkMRMLNode *node = this->MRMLScene->GetNodeByID (this->SelectedID.c_str());
   if(node==NULL)
-  {
-     node=this->GetSelectedInAdditional();
-  }
+    {
+    node=this->GetSelectedInAdditional();
+    }
   return node;
 }
 
@@ -433,9 +449,10 @@ void vtkSlicerNodeSelectorWidget::ProcessNewNodeCommand(const char *className, c
     {
     node = this->MRMLScene->CreateNodeByClass( className );
     if (node == NULL)
-    {
+      {
       return;
-    }
+      }
+
     // Invoke a new node event giving an observer an opportunity to
     // configure the node
     this->InvokeEvent(vtkSlicerNodeSelectorWidget::NewNodeEvent, node);
@@ -453,7 +470,6 @@ void vtkSlicerNodeSelectorWidget::ProcessNewNodeCommand(const char *className, c
       name = nodeName;
       }
     NewNodeCount++;
-//    ss << name << NewNodeCount;
     vtkDebugMacro("Node selector process new node, new node count is " << NewNodeCount);
     ss << this->MRMLScene->GetUniqueNameByString(name);
     node->SetName(ss.str().c_str());
@@ -485,9 +501,9 @@ void vtkSlicerNodeSelectorWidget::ProcessNewNodeCommand(const char *className, c
 
 
 //----------------------------------------------------------------------------
-void vtkSlicerNodeSelectorWidget::ProcessCommand(char *slectedId)
+void vtkSlicerNodeSelectorWidget::ProcessCommand(char *selectedID)
 {
-  this->SelectedID = std::string(slectedId);
+  this->SelectedID = std::string(selectedID);
 
   this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
 }
