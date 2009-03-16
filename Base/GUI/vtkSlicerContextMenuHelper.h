@@ -31,10 +31,10 @@ a
 #include "vtkMRMLScene.h" 
 #include "vtkMRMLNode.h" 
 
-#include "vtkKWTopLevel.h";
-#include "vtkKWMenu.h";
+#include "vtkKWTopLevel.h"
+#include "vtkKWMenu.h"
 
-#include "vtkKWEntryWithLabel.h";
+#include "vtkKWEntryWithLabel.h"
 class vtkKWPushButton;
 
 
