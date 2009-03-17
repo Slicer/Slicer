@@ -50,6 +50,7 @@ target_link_libraries(
   vtkCommon
   vtkTeem
   )
+install(TARGETS ${CLP_MODULE} RUNTIME DESTINATION bin COMPONENT Development)
 #slicer3_install_plugins(${CLP_MODULE})
 
 # this is needed to set up testing
