@@ -14,6 +14,7 @@ if(NOT Slicer3_SOURCE_DIR)
   slicer3_set_default_install_prefix_for_external_projects()
 endif(NOT Slicer3_SOURCE_DIR)
 
+
 # --------------------------------------------------------------------------
 # Copy over the Python files
 
@@ -32,5 +33,33 @@ if(Slicer3_USE_PYTHON)
     FILES ${PYTHONFILES}
     DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR}
     )
+
+  file(GLOB PYTHONFILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "StochasticTractographyServer/*.py")
+  foreach(pythonfile ${PYTHONFILES})
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/${pythonfile}
+      ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${pythonfile}
+      COPYONLY)
+  endforeach(pythonfile)
+
+  install(
+    FILES ${PYTHONFILES}
+    DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR}/StochasticTractographyServer
+    )
+
+
+  file(GLOB PYTHONFILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "StochasticTractographyServerMP/*.py")
+  foreach(pythonfile ${PYTHONFILES})
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/${pythonfile}
+      ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${pythonfile}
+      COPYONLY)
+  endforeach(pythonfile)
+
+  install(
+    FILES ${PYTHONFILES}
+    DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR}/StochasticTractographyServerMP
+    )
+
 
 endif(Slicer3_USE_PYTHON)
