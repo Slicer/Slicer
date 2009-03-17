@@ -1164,8 +1164,6 @@ void vtkChangeTrackerROIStep::ROIIntensityMinMaxUpdate(vtkImageData* image, doub
     return;
     }
 
-  // take a sparse sample of the ROI intensity, with 10 samples in each
-  // dimension
   int ijk[3];
   int iInc, jInc, kInc;
   intensityMin = 1e10;
@@ -1187,54 +1185,8 @@ void vtkChangeTrackerROIStep::ROIIntensityMinMaxUpdate(vtkImageData* image, doub
       {
       for(;ijk[2]<ctNode->GetROIMax(2);ijk[2]++)
         {
-        double intensity = 0;
-
-        switch (image->GetScalarType())
-             {
-              case VTK_CHAR:{
-                char *intensityPtr = (char*)image->GetScalarPointer(ijk[0], ijk[1], ijk[2]);
-                intensity = (double)(*intensityPtr);
-                break;}
-              case VTK_UNSIGNED_CHAR:{
-                unsigned char *intensityPtr = (unsigned char*)image->GetScalarPointer(ijk[0], ijk[1], ijk[2]);
-                intensity = (double)(*intensityPtr);
-                break;}
-              case VTK_SHORT:{
-                short *intensityPtr = (short*)image->GetScalarPointer(ijk[0], ijk[1], ijk[2]);
-                intensity = (double)(*intensityPtr);
-                break;}
-              case VTK_UNSIGNED_SHORT:{
-                unsigned short *intensityPtr = (unsigned short*)image->GetScalarPointer(ijk[0], ijk[1], ijk[2]);
-                intensity = (double)(*intensityPtr);
-                break;}
-              case VTK_INT:{
-                int *intensityPtr = (int*)image->GetScalarPointer(ijk[0], ijk[1], ijk[2]);
-                intensity = (double)(*intensityPtr);
-                break;}
-              case VTK_UNSIGNED_INT:{
-                unsigned int *intensityPtr = (unsigned int*)image->GetScalarPointer(ijk[0], ijk[1], ijk[2]);
-                intensity = (double)(*intensityPtr);
-                break;}
-              case VTK_LONG:{
-                long *intensityPtr = (long*)image->GetScalarPointer(ijk[0], ijk[1], ijk[2]);
-                intensity = (double)(*intensityPtr);
-                break;}
-              case VTK_UNSIGNED_LONG:{
-                unsigned long *intensityPtr = (unsigned long*)image->GetScalarPointer(ijk[0], ijk[1], ijk[2]);
-                intensity = (double)(*intensityPtr);
-                break;}
-              case VTK_FLOAT:{
-                float *intensityPtr = (float*)image->GetScalarPointer(ijk[0], ijk[1], ijk[2]);
-                intensity = (double)(*intensityPtr);
-                break;}
-              case VTK_DOUBLE:{
-                double *intensityPtr = (double*)image->GetScalarPointer(ijk[0], ijk[1], ijk[2]);
-                intensity = (double)(*intensityPtr);
-                break;}
-              default:{
-                cerr << "Unknown scalar type" << endl;
-              }
-             }
+        double intensity =
+          image->GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],0);
         if(intensityMin>intensity)
           intensityMin = intensity;
         if(intensityMax<intensity)
