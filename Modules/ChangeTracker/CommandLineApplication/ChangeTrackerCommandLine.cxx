@@ -309,6 +309,7 @@ int main(int argc, char* argv[])
     tgCMDLineStructure tg(interp);   
     // Create Working Directory 
     tg.SetWorkingDir(app,tgOutput.c_str()); 
+    std:: cout << "Working dir: " << tg.GetWorkingDir() << std::endl;
 
     tgVtkDefineMacro(Scan2LocalNormalized,vtkImageData);
     tgVtkDefineMacro(Scan2Local,vtkImageData); 
@@ -525,13 +526,12 @@ int main(int argc, char* argv[])
        }
     
        // 
-       // --------------- ROI --------------------
-       // 
+       // --------------- ROI ------NAME 
 
        if (1) {
          // -------------------------------------
          // Resample Scan 1
-   
+         std::string NAME;
          cout << "=== Define ROI for each scan ===" << endl;
     
          if (logic->CreateSuperSampleFct(tg.Scan1Data,ROIMin, ROIMax, SuperSampleSpacing,Scan1SuperSample)) {
@@ -543,7 +543,9 @@ int main(int argc, char* argv[])
          // Finally save results 
          // 
          //tgWriteVolume(tgOutput.c_str(),supersampleMatrix,Scan1SuperSample);
-         //tgWriteVolume(Scan1SuperSampleFileName.c_str(),supersampleMatrix,Scan1SuperSample);
+         NAME = tg.WorkingDir + "/TG_scan1_SuperSampled.nhdr";
+         std::cout << "scan1_supersmapled saved to " << NAME << std::endl;
+         tgWriteVolume(NAME.c_str(),supersampleMatrix,Scan1SuperSample);
    
          // -------------------------------------
          // Resample Scan2 
@@ -552,8 +554,8 @@ int main(int argc, char* argv[])
           cerr << "ERROR: Could not super sample scan1 " << endl;
           return EXIT_FAILURE; 
          }
-          std::string NAME = tg.WorkingDir + "/TG_scan2_Global_SuperSampled.nhdr";
-          //tgWriteVolume(NAME.c_str(),supersampleMatrix, Scan2SuperSample);    
+          NAME = tg.WorkingDir + "/TG_scan2_SuperSampled.nhdr";
+          tgWriteVolume(NAME.c_str(),supersampleMatrix, Scan2SuperSample);    
        } else {
           cout << "Debugging - jump over super sampling" << endl;      
        }
@@ -571,7 +573,7 @@ int main(int argc, char* argv[])
          vtkChangeTrackerLogic::DefineSegment(Scan1PreSegment->GetOutput(),Scan1Segment);
    
          //tgWriteVolume(tgOutput.c_str(),supersampleMatrix,Scan1Segment->GetOutput());
-         //tgWriteVolume(Scan1SegmentFileName.c_str(),supersampleMatrix,Scan1Segment->GetOutput());
+         tgWriteVolume(Scan1SegmentFileName.c_str(),supersampleMatrix,Scan1Segment->GetOutput());
          Scan1SegmentOutput->DeepCopy(Scan1Segment->GetOutput());
        }
 
@@ -746,7 +748,6 @@ int main(int argc, char* argv[])
 
     if (tgDeformableAnalysisFlag ) { 
 
-      /* FIXME
       std::string SCAN1_TO_SCAN2_SEGM_NAME           = tg.WorkingDir + "/TG_Deformable_Scan1SegmentationAlignedToScan2.nhdr";
       std::string SCAN1_TO_SCAN2_DEFORM_NAME         = tg.WorkingDir + "/TG_Deformable_Deformation.mha";
       std::string SCAN1_TO_SCAN2_DEFORM_INVERSE_NAME = tg.WorkingDir + "/TG_Deformable_Deformation_Inverse.mha";
@@ -758,7 +759,7 @@ int main(int argc, char* argv[])
                                                                   + SCAN1_TO_SCAN2_SEGM_NAME + " " + SCAN1_TO_SCAN2_DEFORM_NAME + " " 
                                                                       + SCAN1_TO_SCAN2_DEFORM_INVERSE_NAME + " " + SCAN1_TO_SCAN2_RESAMPLED_NAME + " "  
                                                                   + ANALYSIS_SEGM_FILE + " " + ANALYSIS_JACOBIAN_FILE;
-      cout << CMD.c_str() << endl;
+      //cout << CMD.c_str() << endl;
       cout << "=======" << endl;
    
       app->Script(CMD.c_str());
@@ -770,7 +771,7 @@ int main(int argc, char* argv[])
       CMD =  "lindex [::ChangeTrackerTcl::ReadASCIIFile " + ANALYSIS_JACOBIAN_FILE +"] 0";
       Analysis_JACO_Growth = atof(app->Script(CMD.c_str()));
       cout << "Jacobian Result: " << Analysis_JACO_Growth << endl;
-      */
+      
     } 
 
     // 
