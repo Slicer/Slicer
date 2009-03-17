@@ -412,15 +412,13 @@ void vtkSlicerNodeSelectorWidget::UnconditionalUpdateMenu()
     this->ContextMenuHelper = vtkSlicerContextMenuHelper::New();
     this->ContextMenuHelper->SetMRMLScene( this->GetMRMLScene() );
     }
-  if ( selectedNode )
-    {
-    vtkKWMenu *menu = this->GetWidget()->GetWidget()->GetMenu();
-    menu->AddSeparator();
-    this->ContextMenuHelper->SetMRMLNode(selectedNode);
-    this->ContextMenuHelper->SetContextMenu(menu);
-    this->ContextMenuHelper->PopulateMenu();
-    }
 
+  vtkKWMenu *menu = this->GetWidget()->GetWidget()->GetMenu();
+  menu->AddSeparator();
+  this->ContextMenuHelper->SetMRMLNode(selectedNode);
+  this->ContextMenuHelper->SetContextMenu(menu);
+  this->ContextMenuHelper->PopulateMenu();
+  this->ContextMenuHelper->UpdateMenuState();
 
   if (oldSelectedNode != selectedNode)
     {
@@ -532,6 +530,12 @@ void vtkSlicerNodeSelectorWidget::SetSelected(vtkMRMLNode *node)
     {
     this->SelectedID = std::string("");
     m->SetValue("");
+    }
+
+  if (this->ContextMenuHelper)
+    {
+    this->ContextMenuHelper->SetMRMLNode(node);
+    this->ContextMenuHelper->UpdateMenuState();
     }
 }
 

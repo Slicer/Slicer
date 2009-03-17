@@ -20,6 +20,9 @@ vtkSlicerContextMenuHelper::vtkSlicerContextMenuHelper ( ) {
   this->MRMLNode = NULL;
   this->ContextMenu = NULL;
   this->RenameTopLevel = NULL;
+  this->DeleteItem = -1;
+  this->RenameItem = -1;
+  this->EditItem = -1;
 }
 
 //---------------------------------------------------------------------------
@@ -43,15 +46,15 @@ vtkSlicerContextMenuHelper::~vtkSlicerContextMenuHelper ( ) {
 //---------------------------------------------------------------------------
 void vtkSlicerContextMenuHelper::PopulateMenu()
 {
-  if (!this->ContextMenu || !this->MRMLNode || !this->MRMLScene)
+  if (!this->ContextMenu || !this->MRMLScene)
     {
     vtkWarningMacro("Trying to populate a menu with null pointers!");
     return;
     }
 
-  this->ContextMenu->AddCommand("Delete", this, "DeleteNodeCallback");
-  this->ContextMenu->AddCommand("Rename...", this, "RenameNodeCallback");
-  this->ContextMenu->AddCommand("Edit Properties...", this, "EditCallback");
+  this->DeleteItem = this->ContextMenu->AddCommand("Delete", this, "DeleteNodeCallback");
+  this->RenameItem = this->ContextMenu->AddCommand("Rename...", this, "RenameNodeCallback");
+  this->EditItem = this->ContextMenu->AddCommand("Edit Properties...", this, "EditCallback");
 }
 
 //---------------------------------------------------------------------------
@@ -82,7 +85,7 @@ void vtkSlicerContextMenuHelper::ToggleVisibilityCallback()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerContextMenuHelper::RenameCallback()
+void vtkSlicerContextMenuHelper::RenameNodeCallback()
 {
   if (this->MRMLNode && this->MRMLScene)
     {
@@ -126,6 +129,8 @@ void vtkSlicerContextMenuHelper::PopUpRenameEntry()
     this->RenameEntry->SetParent( popUpFrameP );
     this->RenameEntry->Create();
     this->RenameEntry->SetLabelText( "New name: " );
+    this->RenameEntry->GetWidget()->SetCommandTrigger(vtkKWEntry::TriggerOnReturnKey); 
+    this->RenameEntry->GetWidget()->SetCommand (this, "RenameApplyCallback");
     popUpFrameP->Delete();
 
     vtkKWFrame *fP = vtkKWFrame::New();
@@ -159,7 +164,8 @@ void vtkSlicerContextMenuHelper::PopUpRenameEntry()
   app->ProcessPendingEvents();
   this->RenameTopLevel->DeIconify();
   this->RenameTopLevel->Raise();
-  
+
+  this->RenameEntry->GetWidget()->SelectAll();
 }
 
 //---------------------------------------------------------------------------
@@ -179,6 +185,24 @@ void vtkSlicerContextMenuHelper::RenameApplyCallback()
   if (node != NULL)
     {
     node->SetName( this->RenameEntry->GetWidget()->GetValue() );
+    this->MRMLScene->InvokeEvent(vtkMRMLScene::NodeAddedEvent, node);
     }
+  this->HideRenameEntry();
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerContextMenuHelper::UpdateMenuState()
+{
+  if ( this->GetMRMLNode() )
+    {
+    this->ContextMenu->SetItemState(this->DeleteItem, 1);
+    this->ContextMenu->SetItemState(this->RenameItem, 1);
+    this->ContextMenu->SetItemState(this->EditItem, 1);
+    }
+  else
+    {
+    this->ContextMenu->SetItemState(this->DeleteItem, 0);
+    this->ContextMenu->SetItemState(this->RenameItem, 0);
+    this->ContextMenu->SetItemState(this->EditItem, 0);
+    }
+}

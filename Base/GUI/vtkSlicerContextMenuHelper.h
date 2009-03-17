@@ -53,9 +53,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerContextMenuHelper : public vtkObject
   // to operate on.
   //
   virtual void DeleteNodeCallback();
+  virtual void RenameNodeCallback();
   virtual void ToggleVisibilityCallback();
-  virtual void RenameCallback();
   virtual void RenameApplyCallback();
+  virtual void RenameApplyCallback(char *name) {this->RenameApplyCallback();};
   virtual void EditCallback();
 
   // Description:
@@ -79,6 +80,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerContextMenuHelper : public vtkObject
   vtkSetObjectMacro(ContextMenu, vtkKWMenu);
   vtkGetObjectMacro(ContextMenu, vtkKWMenu);
 
+  // Description:
+  // Update menu item state based on MRMLNode state (null or not null)
+  void UpdateMenuState();
+
   protected:
     
   vtkSlicerContextMenuHelper();
@@ -95,6 +100,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerContextMenuHelper : public vtkObject
   vtkKWEntryWithLabel *RenameEntry;
   vtkKWPushButton *RenameApply;
   vtkKWPushButton *RenameCancel;
+  // Description:
+  // holders for menu item indices
+  int DeleteItem;
+  int RenameItem;
+  int EditItem;
 };
 
 #endif
