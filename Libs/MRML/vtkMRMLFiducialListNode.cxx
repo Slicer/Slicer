@@ -102,7 +102,48 @@ void vtkMRMLFiducialListNode::WriteXML(ostream& of, int nIndent)
   
   Superclass::WriteXML(of, nIndent);
 
-  // rest is saved in the storage node file
+  // rest is saved in the storage node file, but it needs to be here as well
+  // due to the way the scene snapshots are handled (storage nodes are not re-read)
+  vtkIndent indent(nIndent);
+  
+  of << " symbolScale=\"" << this->SymbolScale << "\"";
+  of << " symbolType=\"" << this->GlyphType << "\"";
+  of << " textScale=\"" << this->TextScale << "\"";
+  of << " visibility=\"" << this->Visibility << "\"";
+  
+  of << " color=\"" << this->Color[0] << " " <<
+                       this->Color[1] << " " <<
+                       this->Color[2] << "\"";
+
+  of << " selectedcolor=\"" << this->SelectedColor[0] << " " <<
+                               this->SelectedColor[1] << " " <<
+                               this->SelectedColor[2] << "\"";
+
+  of << " ambient=\"" << this->Ambient << "\"";
+ 
+  of << " diffuse=\"" << this->Diffuse << "\"";
+ 
+  of << " specular=\"" << this->Specular << "\"";
+ 
+  of << " power=\"" << this->Power << "\""; 
+ 
+  of << " locked=\"" << this->Locked << "\"";
+ 
+  of << " opacity=\"" << this->Opacity << "\"";
+ 
+  if (this->GetNumberOfFiducials() > 0)
+    {
+    of << " fiducials=\"";
+    for (int idx = 0; idx < this->GetNumberOfFiducials(); idx++)
+      {
+      if (this->GetNthFiducial(idx) != NULL)
+        {
+        of << "\n";
+        this->GetNthFiducial(idx)->WriteXML(of, nIndent);
+        }
+      }
+    of << "\"";
+    }
 }
 
 //----------------------------------------------------------------------------

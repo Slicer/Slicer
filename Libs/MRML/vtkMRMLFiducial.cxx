@@ -70,23 +70,25 @@ vtkMRMLFiducial::~vtkMRMLFiducial()
 //----------------------------------------------------------------------------
 void vtkMRMLFiducial::WriteXML(ostream& of, int nIndent)
 {
-  // this is encapsulated in the fiducial list storage node
-  /*
+  // this is encapsulated in the fiducial list storage node, but needs to be
+  // here as well because when scene snapshots are restored, storage nodes are
+  // not re-read
+
   // Write all attributes, since the parsing of the string is dependent on the
   // order here
   
   //Superclass::WriteXML(of, nIndent);
 
   
-    // now that it's not a first class node, write it out simply
-    if (this->ID != NULL)
+  // now that it's not a first class node, write it out simply
+  if (this->ID != NULL)
     {
-        of << "id " << this->ID;
+    of << "id " << this->ID;
     }
   if (this->LabelText != NULL)
-  {
-      of << " labeltext " << this->LabelText;
-  }
+    {
+    of << " labeltext " << this->LabelText;
+    }
   
   of << " xyz " << this->XYZ[0] << " " << 
                     this->XYZ[1] << " " <<
@@ -99,7 +101,6 @@ void vtkMRMLFiducial::WriteXML(ostream& of, int nIndent)
   
   of << " selected " << this->Selected;
   of << " visibility " << this->Visibility;
-  */  
 }
 
 //----------------------------------------------------------------------------
