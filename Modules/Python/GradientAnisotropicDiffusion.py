@@ -111,6 +111,7 @@ def Execute ( inputVolume, outputVolume, conductance=1.0, timeStep=0.0625, itera
     filter.SetInput(inputVolume.GetImageData())
     filter.Update()
     outputVolume.SetAndObserveImageData(filter.GetOutput())
+    filter.SetOutput('')
     matrix = slicer.vtkMatrix4x4()
     inputVolume.GetIJKToRASMatrix(matrix)
     outputVolume.SetIJKToRASMatrix(matrix)
