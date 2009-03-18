@@ -157,7 +157,9 @@ protected:
   vtkKWScaleWithLabel *RegionSizeScale;
   vtkKWScaleWithLabel *RegionSampleSizeScale;
   vtkKWEntryWithLabel *MaxNumberOfSeedsEntry;
-  
+
+  vtkKWMenuButtonWithLabel *DisplayMenu;
+
   vtkKWCheckButton *SeedSelectedFiducialsButton;
   vtkKWCheckButton *SeedButton;
 

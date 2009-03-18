@@ -89,6 +89,7 @@ vtkSlicerTractographyFiducialSeedingGUI::vtkSlicerTractographyFiducialSeedingGUI
   this->RegionSizeScale = vtkKWScaleWithLabel::New();
   this->RegionSampleSizeScale = vtkKWScaleWithLabel::New();
   this->MaxNumberOfSeedsEntry = vtkKWEntryWithLabel::New();
+  this->DisplayMenu = vtkKWMenuButtonWithLabel::New();
 
   this->TractographyFiducialSeedingNodeSelector = vtkSlicerNodeSelectorWidget::New();
 
@@ -142,6 +143,13 @@ vtkSlicerTractographyFiducialSeedingGUI::~vtkSlicerTractographyFiducialSeedingGU
     this->StoppingModeMenu->SetParent(NULL);
     this->StoppingModeMenu->Delete();
     this->StoppingModeMenu = NULL;
+  }
+
+  if ( this->DisplayMenu ) 
+  {
+    this->DisplayMenu->SetParent(NULL);
+    this->DisplayMenu->Delete();
+    this->DisplayMenu = NULL;
   }
   
   if ( this->StoppingValueScale ) 
@@ -264,6 +272,8 @@ void vtkSlicerTractographyFiducialSeedingGUI::AddGUIObservers ( )
 
   this->TractographyFiducialSeedingNodeSelector->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
 
+  this->DisplayMenu->GetWidget()->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
 }
 
 
@@ -296,6 +306,8 @@ void vtkSlicerTractographyFiducialSeedingGUI::RemoveGUIObservers ( )
   this->MaxNumberOfSeedsEntry->GetWidget()->RemoveObservers(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->TractographyFiducialSeedingNodeSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+
+  this->DisplayMenu->GetWidget()->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
 }
 
@@ -416,6 +428,11 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessGUIEvents ( vtkObject *call
       this->CreateTracts();
       }
     }
+  else if (vtkKWMenu::SafeDownCast(caller) == this->DisplayMenu->GetWidget()->GetMenu() && 
+        event == vtkKWMenu::MenuItemInvokedEvent)
+    {
+    this->CreateTracts();
+    }
 
 }
 
@@ -475,6 +492,15 @@ void vtkSlicerTractographyFiducialSeedingGUI::UpdateGUI ()
     this->RegionSampleSizeScale->GetWidget()->SetValue(n->GetSeedingRegionStep());
     this->MaxNumberOfSeedsEntry->GetWidget()->SetValueAsInt(n->GetMaxNumberOfSeeds());
     this->SeedSelectedFiducialsButton->SetSelectedState(n->GetSeedSelectedFiducials());
+    if(n->GetDisplayMode() == 0)
+      {
+      this->DisplayMenu->GetWidget()->SetValue("Lines");
+      }
+    else
+      {
+      this->DisplayMenu->GetWidget()->SetValue ( "Tubes");
+      }
+
     }
 
   this->UpdatingGUI = 0;
@@ -532,7 +558,14 @@ void vtkSlicerTractographyFiducialSeedingGUI::UpdateMRML ()
   n->SetSeedingRegionStep( this->RegionSampleSizeScale->GetWidget()->GetValue() );
   n->SetMaxNumberOfSeeds( this->MaxNumberOfSeedsEntry->GetWidget()->GetValueAsInt() );
   n->SetSeedSelectedFiducials( this->SeedSelectedFiducialsButton->GetSelectedState() );
-
+  if(!strcmp(this->DisplayMenu->GetWidget()->GetValue(), "Lines"))
+    {
+    n->SetDisplayMode(0);
+    }
+  else if(!strcmp(this->DisplayMenu->GetWidget()->GetValue(), "Tubes"))
+    {
+    n->SetDisplayMode(1);
+    }
   this->UpdatingMRML = 0;
 
  }
@@ -638,6 +671,12 @@ void vtkSlicerTractographyFiducialSeedingGUI::CreateTracts()
 
   if(volumeNode == NULL || fiducialListNode == NULL || fiberNode == NULL) return;
 
+  int displayMode = 0;
+  if (std::string("Tubes") == this->DisplayMenu->GetWidget()->GetValue ())
+    {
+    displayMode = 1;
+    }
+
   this->ModuleLogic->CreateTracts(volumeNode, fiducialListNode, fiberNode,
                                                           stopingMode.c_str(),
                                                           this->StoppingValueScale->GetWidget()->GetValue(),
@@ -647,7 +686,8 @@ void vtkSlicerTractographyFiducialSeedingGUI::CreateTracts()
                                                           this->RegionSizeScale->GetWidget()->GetValue(),
                                                           this->RegionSampleSizeScale->GetWidget()->GetValue(),
                                                           this->MaxNumberOfSeedsEntry->GetWidget()->GetValueAsInt(),
-                                                          this->SeedSelectedFiducialsButton->GetSelectedState());  
+                                                          this->SeedSelectedFiducialsButton->GetSelectedState(),
+                                                          displayMode);  
 }
 
 //---------------------------------------------------------------------------
@@ -837,10 +877,24 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->MaxNumberOfSeedsEntry->GetWidgetName() );
 
+  // trackts display button
+  this->DisplayMenu->SetParent(moduleFrame->GetFrame());
+  this->DisplayMenu->Create();
+  this->DisplayMenu->SetWidth(20);
+  this->DisplayMenu->SetLabelWidth(20);
+  this->DisplayMenu->SetLabelText("Display Tracks As:");
+  this->DisplayMenu->GetWidget()->GetMenu()->AddRadioButton ( "Lines");
+  this->DisplayMenu->GetWidget()->GetMenu()->AddRadioButton ( "Tubes");
+  this->DisplayMenu->GetWidget()->SetValue ( "Lines" );
+  this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+               this->DisplayMenu->GetWidgetName());
+
   this->SeedButton->SetParent(moduleFrame->GetFrame());
   this->SeedButton->Create();
   this->SeedButton->SelectedStateOn();
-  this->SeedButton->SetText("Seed Tracts");
+  this->SeedButton->SetText("Enable Seeding Tracts");
+  //this->SeedButton->SetActiveBackgroundColor(0.9, 0.5, 0.5);
+  this->SeedButton->SetBackgroundColor(0.9, 0.6, 0.6);
   this->Script(
     "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
     this->SeedButton->GetWidgetName());

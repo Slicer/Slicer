@@ -68,7 +68,8 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
                                                             double mnimumPathLength,
                                                             double regionSize, double sampleStep,
                                                             int maxNumberOfSeeds,
-                                                            int seedSelectedFiducials)
+                                                            int seedSelectedFiducials,
+                                                            int displayMode)
 {
   // 0. check inputs
   if (volumeNode == NULL || transformableNode == NULL || fiberNode == NULL ||
@@ -260,34 +261,51 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   if (dnode == NULL || oldPoly == NULL)
     {
     dnode = fiberNode->AddLineDisplayNode();
+    }
 
-    dnode->DisableModifiedEventOn();
+  dnode->DisableModifiedEventOn();
+  if (displayMode == 0)
+    {
+    dnode->SetScalarVisibility(1);
+    dnode->SetVisibility(1);
+    }
+  else
+    {
     dnode->SetVisibility(0);
     dnode->SetScalarVisibility(0);
-    dnode->DisableModifiedEventOff();
     }
-    
+
+  dnode->DisableModifiedEventOff();
+
   dnode = fiberNode->GetTubeDisplayNode();
   if (dnode == NULL || oldPoly == NULL)
     {
     dnode = fiberNode->AddTubeDisplayNode();
-
-    dnode->DisableModifiedEventOn();
-    dnode->SetVisibility(1);
-    dnode->SetScalarVisibility(1);
-    dnode->DisableModifiedEventOff();
     }
-  
+
+  dnode->DisableModifiedEventOn();
+  if (displayMode == 1)
+    {
+    dnode->SetScalarVisibility(1);
+    dnode->SetVisibility(1);
+    }
+  else
+    {
+    dnode->SetVisibility(0);
+    dnode->SetScalarVisibility(0);
+    }
+  dnode->DisableModifiedEventOff();
+
   dnode = fiberNode->GetGlyphDisplayNode();
   if (dnode == NULL || oldPoly == NULL)
     {
     dnode = fiberNode->AddGlyphDisplayNode();
-
-    dnode->DisableModifiedEventOn();
-    dnode->SetVisibility(0);
-    dnode->SetScalarVisibility(0);
-    dnode->DisableModifiedEventOff();
     }
+
+  dnode->DisableModifiedEventOn();
+  dnode->SetVisibility(0);
+  dnode->SetScalarVisibility(0);
+  dnode->DisableModifiedEventOff();
 
   if (fiberNode->GetStorageNode() == NULL) 
     {

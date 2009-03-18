@@ -51,7 +51,8 @@ class VTK_FIDUCIALSEEDING_EXPORT vtkSlicerTractographyFiducialSeedingLogic : pub
                           double integrationStepLength, double mnimumPathLength,
                           double resgionSize, double samplingStep,
                           int maxNumberOfSeeds,
-                          int seedSelectedFiducials);
+                          int seedSelectedFiducials,
+                          int displayMode);
 protected:
   vtkSlicerTractographyFiducialSeedingLogic();
   ~vtkSlicerTractographyFiducialSeedingLogic();

@@ -102,6 +102,13 @@ class VTK_FIDUCIALSEEDING_EXPORT vtkMRMLTractographyFiducialSeedingNode : public
   vtkGetMacro(SeedSelectedFiducials, int);
   vtkSetMacro(SeedSelectedFiducials, int);
 
+  // Description:
+  // Get/Set Display Mode (module parameter)
+  // 0 - Lines
+  // 1 - Tubes
+  vtkGetMacro(DisplayMode, int);
+  vtkSetMacro(DisplayMode, int);
+
   
   // Description:
   // Get/Set input volume MRML Id
@@ -130,7 +137,8 @@ protected:
   void operator=(const vtkMRMLTractographyFiducialSeedingNode&);
 
   int StoppingMode;
-  
+  int DisplayMode;
+
   double StoppingValue;
   double StoppingCurvature;
   double IntegrationStep;

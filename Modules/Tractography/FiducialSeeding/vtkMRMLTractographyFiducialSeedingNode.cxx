@@ -62,6 +62,8 @@ vtkMRMLTractographyFiducialSeedingNode::vtkMRMLTractographyFiducialSeedingNode()
    this->MinimumPathLength = 20.0;
    this->MaxNumberOfSeeds = 100;
    this->SeedSelectedFiducials = 0;
+   this->DisplayMode = 1;
+
    this->InputVolumeRef = NULL;
    this->InputFiducialRef = NULL;
    this->OutputFiberRef = NULL;
@@ -127,6 +129,12 @@ void vtkMRMLTractographyFiducialSeedingNode::WriteXML(ostream& of, int nIndent)
   }
     
   of << indent << " seedSelectedFiducials=\"" << (this->SeedSelectedFiducials ? "true" : "false") << "\"";
+  
+  {
+    std::stringstream ss;
+    ss << this->DisplayMode;
+    of << indent << " displayMode=\"" << ss.str() << "\"";
+  }
 
   {
     std::stringstream ss;
@@ -225,6 +233,13 @@ void vtkMRMLTractographyFiducialSeedingNode::ReadXMLAttributes(const char** atts
         this->SeedSelectedFiducials = 0;
         }
       }
+    else if (!strcmp(attName, "DisplayMode")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->DisplayMode;
+      }
+
     else if (!strcmp(attName, "InputVolumeRef"))
       {
       this->SetInputVolumeRef(attValue);
@@ -262,6 +277,7 @@ void vtkMRMLTractographyFiducialSeedingNode::Copy(vtkMRMLNode *anode)
   this->SetSeedingRegionStep(node->SeedingRegionStep);
   this->SetMaxNumberOfSeeds(node->MaxNumberOfSeeds);
   this->SetSeedSelectedFiducials(node->SeedSelectedFiducials);
+  this->SetDisplayMode(node->DisplayMode);
   this->SetInputVolumeRef(node->InputVolumeRef);
   this->SetInputFiducialRef(node->InputFiducialRef);
   this->SetOutputFiberRef(node->OutputFiberRef);
@@ -286,6 +302,7 @@ void vtkMRMLTractographyFiducialSeedingNode::PrintSelf(ostream& os, vtkIndent in
   os << indent << "SeedingRegionStep:   " << this->SeedingRegionStep << "\n";
   os << indent << "MaxNumberOfSeeds:   " << this->MaxNumberOfSeeds << "\n";
   os << indent << "SeedSelectedFiducials:   " << this->SeedSelectedFiducials << "\n";
+  os << indent << "DisplayMode:   " << this->DisplayMode << "\n";
   os << indent << "InputVolumeRef:   " << 
    (this->InputVolumeRef ? this->InputVolumeRef : "(none)") << "\n";
   os << indent << "InputFiducialRef:   " << 
