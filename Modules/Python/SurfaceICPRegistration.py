@@ -2,7 +2,7 @@
 XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
 
-  <category>Python Modules</category>
+  <category>Surface Models</category>
   <title>Python Surface ICP Registration</title>
   <description>
 Performes registration of the input surface onto a target surface using on the Iterative Closest Point algorithm.

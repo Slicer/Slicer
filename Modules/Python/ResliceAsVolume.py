@@ -2,7 +2,7 @@
 XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
 
-  <category>Python Modules</category>
+  <category>Converters</category>
   <title>Python Reslice As Volume</title>
   <description>
 Reslice a volume based on the geometry of another volume.

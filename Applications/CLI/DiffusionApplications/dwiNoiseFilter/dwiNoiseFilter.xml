@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Filtering.DWI</category>
+  <category>Diffusion.Filtering</category>
   <title>Rician LMMSE Image Filter</title>
   <description>
     Filters a set of diffusion weighted images in the mean squared error sense using a Rician noise model. The noise parameter is automatically estimated. New version using ITK pipelines and multi-threading.

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Demonstration</category>
+  <category>Developer Tools</category>
   <title>Execution Model Tour</title>
   <description>Shows one of each type of parameter.</description>
   <version>0.1.0.$Revision$(alpha)</version>

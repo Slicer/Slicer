@@ -2,7 +2,7 @@
 XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
 
-  <category>Python Modules</category>
+  <category>Developer Tools</category>
   <title>Python Script</title>
   <description>
 Run external Python code on a surface or image.

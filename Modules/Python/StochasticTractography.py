@@ -1,6 +1,6 @@
 XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Python Modules</category>
+  <category>Diffusion</category>
   <title>Python Stochastic Tractography</title>
   <description> This module implements stochastic tractography. For more information please refer to the following link 
 

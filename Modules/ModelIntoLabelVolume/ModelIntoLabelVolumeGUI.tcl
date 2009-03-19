@@ -54,7 +54,7 @@ proc ModelIntoLabelVolumeBuildGUI {this} {
   }
 
 
-  $this SetCategory "Model Generation"
+  $this SetCategory "Surface Models"
   [$this GetUIPanel] AddPage "ModelIntoLabelVolume" "ModelIntoLabelVolume" ""
   set pageWidget [[$this GetUIPanel] GetPageWidget "ModelIntoLabelVolume"]
 

@@ -2,7 +2,7 @@
 XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
 
-  <category>Python Modules</category>
+  <category>Converters</category>
   <title>Python Explode Volume Transform</title>
   <description>
 Explode the ijkToRASTransform from volume, generating a parent transform and a pure vtkImageData volume.

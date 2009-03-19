@@ -2,7 +2,7 @@
 
 XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Python Modules</category>
+  <category>Filtering</category>
   <title>Python Gradient Anisotropic Diffusion</title>
   <description>
 Runs gradient anisotropic diffusion on a volume.

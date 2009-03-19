@@ -2,7 +2,7 @@
 XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
 
-  <category>Python Modules</category>
+  <category>Developer Tools</category>
   <title>Python Numpy Script</title>
   <description>
 Run a Python Numpy script on an image.

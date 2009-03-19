@@ -816,6 +816,41 @@ void vtkSlicerModuleChooseGUI::Populate( )
         }
       this->GetModulesMenuButton()->GetMenu()->AddSeparator();
 
+      // Add the pre-defined menus in the order defined on:
+      // http://www.slicer.org/slicerWiki/index.php/Documentation-3.4
+      std::vector<std::string> predefinedCategories;
+      predefinedCategories.push_back("Wizards");
+      predefinedCategories.push_back("Informatics");
+      predefinedCategories.push_back("Registration");
+      predefinedCategories.push_back("Segmentation");
+      predefinedCategories.push_back("Statistics");
+      predefinedCategories.push_back("Diffusion");
+      predefinedCategories.push_back("Tractography");
+      predefinedCategories.push_back("IGT");
+      predefinedCategories.push_back("Filtering");
+      predefinedCategories.push_back("Surface Models");
+      predefinedCategories.push_back("Batch Processing");
+      predefinedCategories.push_back("Converters");
+      predefinedCategories.push_back("Work in Progress");
+      predefinedCategories.push_back("Developer Tools");
+      unsigned int i;
+      for (i = 0; i < predefinedCategories.size(); i++)
+        {
+        CategoryToModuleVector::iterator modNameIt;
+        if ( categoryToModuleName.find(predefinedCategories[i]) != categoryToModuleName.end() )
+          {
+          // Need to make the itermediate menu
+          vtkKWMenu *pos = this->GetModulesMenuButton()->GetMenu();
+          vtkKWMenu* menu = vtkKWMenu::New();
+          menu->SetParent( pos );
+          menu->Create();
+          pos->AddCascade( predefinedCategories[i].c_str(), menu );
+          menu->Delete();
+          }
+        }
+
+      this->GetModulesMenuButton()->GetMenu()->AddSeparator();
+
       // add the rest of the menus
       CategoryIterator cit;
       cit = categoryToModuleName.begin();

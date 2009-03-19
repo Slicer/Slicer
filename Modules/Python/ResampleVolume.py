@@ -2,7 +2,7 @@
 XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
 
-  <category>Python Modules</category>
+  <category>Converters</category>
   <title>Python Resample Volume</title>
   <description>
 Resample a volume based on user-specified parameters.

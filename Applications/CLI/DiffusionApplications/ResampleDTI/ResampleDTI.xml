@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Diffusion Tensor</category>
+  <category>Diffusion</category>
   <title>Resample DTI Volume</title>
   <description>
 Resampling an image is a very important task in image analysis.It is

@@ -1,2 +1,2 @@
 Name: Slicer Tractography Display
-GUIName: DisplayLoadSave
+GUIName: FiberBundles

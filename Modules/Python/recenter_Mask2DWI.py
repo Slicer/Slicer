@@ -1,6 +1,6 @@
 XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Python Modules</category>
+  <category>Diffusion</category>
   <title>Python Recenter Scalar to DWI Volume</title>
   <description>Python module</description>
   <version>0.1.0.$Revision: 1892 $(alpha)</version>

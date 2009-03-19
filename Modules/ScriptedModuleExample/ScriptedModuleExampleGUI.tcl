@@ -54,7 +54,7 @@ proc ScriptedModuleExampleBuildGUI {this} {
   }
 
 
-  $this SetCategory "Demonstration"
+  $this SetCategory "Developer Tools"
   [$this GetUIPanel] AddPage "ScriptedModuleExample" "ScriptedModuleExample" ""
   set pageWidget [[$this GetUIPanel] GetPageWidget "ScriptedModuleExample"]
 

@@ -55,7 +55,7 @@ class VTK_IA_FEMesh_EXPORT vtkIA_FEMeshGUI : public vtkSlicerModuleGUI
   void PrintSelf(ostream& os, vtkIndent indent);
   
   // set a specific category for this module.  All Meshing modules will be together in their own category.
-  const char *GetCategory() const {return "Meshing";}
+  const char *GetCategory() const {return "Wizards";}
 
   virtual void Register(vtkObject *o) { Superclass::Register(o); };
   virtual void UnRegister(vtkObject *o) { Superclass::UnRegister(o); };

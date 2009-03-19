@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Model Generation</category>
+  <category>Developer Tools</category>
   <title>Multiple models example</title>
   <description>
 Create 3D surface models from segmented data.

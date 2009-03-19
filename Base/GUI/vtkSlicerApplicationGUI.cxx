@@ -1068,7 +1068,7 @@ void vtkSlicerApplicationGUI::SelectModuleForNode ( vtkMRMLNode *node )
     }
   else if (node->IsA("vtkMRMLFiberBundleNode"))
     {
-    moduleName = "DisplayLoadSave";
+    moduleName = "FiberBundles";
     }
   else if (node->IsA("vtkMRMLModelNode"))
     {

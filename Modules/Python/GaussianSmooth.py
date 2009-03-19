@@ -2,7 +2,7 @@
 XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
 
-  <category>Python Modules</category>
+  <category>Filtering</category>
   <title>Python Gaussian Smoothing</title>
   <description>
 Apply Gaussian smoothing on a volume.

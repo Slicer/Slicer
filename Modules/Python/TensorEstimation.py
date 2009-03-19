@@ -1,6 +1,6 @@
 XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Python Modules</category>
+  <category>Diffusion</category>
   <title>Python Diffusion Tensor Estimation</title>
   <description>Performs a tensor model estimation from diffusion weighted images.</description> 
   <version>0.1.0.$Revision: 1892 $(alpha)</version>

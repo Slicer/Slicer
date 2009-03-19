@@ -63,7 +63,7 @@ proc ClipModelBuildGUI {this} {
     }
     
     
-    $this SetCategory "Model Generation"
+    $this SetCategory "Surface Models"
     [$this GetUIPanel] AddPage "ClipModel" "ClipModel" ""
     set pageWidget [[$this GetUIPanel] GetPageWidget "ClipModel"]
     

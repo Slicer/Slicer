@@ -32,7 +32,7 @@ proc SetupGlyphs {} {
 
   $::slicer3::MRMLScene Clear 0
 
-  set ::gui [$::slicer3::Application GetModuleGUIByName DisplayLoadSave] 
+  set ::gui [$::slicer3::Application GetModuleGUIByName FiberBundles] 
 
   set ::seed [$::slicer3::Application GetModuleGUIByName FiducialSeeding]
   $::seed OverwritePolyDataWarningOff
