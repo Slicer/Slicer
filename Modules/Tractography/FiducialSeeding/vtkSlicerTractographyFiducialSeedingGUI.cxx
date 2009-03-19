@@ -806,7 +806,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
   this->StoppingValueScale->SetLabelText("Stopping Value");
   this->StoppingValueScale->GetWidget()->SetRange(0.01,1);
   this->StoppingValueScale->GetWidget()->SetResolution(0.01);
-  this->StoppingValueScale->GetWidget()->SetValue(0.1);
+  this->StoppingValueScale->GetWidget()->SetValue(0.25);
   this->StoppingValueScale->SetBalloonHelpString("Tractography will stop when the stopping measurement drops below this value.");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->StoppingValueScale->GetWidgetName() );
@@ -816,7 +816,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
   this->StoppingCurvatureScale->SetLabelText("Stopping Track Curvature");
   this->StoppingCurvatureScale->GetWidget()->SetRange(0.01,10);
   this->StoppingCurvatureScale->GetWidget()->SetResolution(0.1);
-  this->StoppingCurvatureScale->GetWidget()->SetValue(0.8);
+  this->StoppingCurvatureScale->GetWidget()->SetValue(0.7);
   this->StoppingCurvatureScale->SetBalloonHelpString("Tractography will stop if radius of curvature becomes smaller than this number units are degrees per mm.");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->StoppingCurvatureScale->GetWidgetName() );
@@ -846,7 +846,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
   this->RegionSizeScale->SetLabelText("Fiducail Seeding Region Size (mm)");
   this->RegionSizeScale->GetWidget()->SetRange(0,10);
   this->RegionSizeScale->GetWidget()->SetResolution(0.5);
-  this->RegionSizeScale->GetWidget()->SetValue(1.0);
+  this->RegionSizeScale->GetWidget()->SetValue(2.5);
   this->RegionSizeScale->SetBalloonHelpString("The size of the seeding region for each fiducial.");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->RegionSizeScale->GetWidgetName() );
@@ -856,7 +856,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
   this->RegionSampleSizeScale->SetLabelText("Fiducail Seeding Step Size (mm)");
   this->RegionSampleSizeScale->GetWidget()->SetRange(1,10);
   this->RegionSampleSizeScale->GetWidget()->SetResolution(0.5);
-  this->RegionSampleSizeScale->GetWidget()->SetValue(0.5);
+  this->RegionSampleSizeScale->GetWidget()->SetValue(1.0);
   this->RegionSampleSizeScale->SetBalloonHelpString("Step between seedin samples in the fiducial region");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->RegionSampleSizeScale->GetWidgetName() );

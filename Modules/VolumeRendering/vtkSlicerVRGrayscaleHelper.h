@@ -309,6 +309,10 @@ protected:
     vtkKWScaleWithLabel *SC_Framerate;
     
     // Description:
+    // Update the quality from stage mask
+    void UpdateQuality(void);
+
+    // Description:
     // Update the quality check boxes ( e.g. ensure that one cb is always enabled etc.)
     void UpdateQualityCheckBoxes(void);
 

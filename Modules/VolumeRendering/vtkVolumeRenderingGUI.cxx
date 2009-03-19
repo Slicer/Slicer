@@ -234,6 +234,7 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
   this->NS_ImageData->SetBalloonHelpString("Select volume to render. Only one volume at the some time is possible.");
   this->NS_ImageData->SetLabelWidth(labelWidth);
   this->NS_ImageData->SetNodeClass("vtkMRMLScalarVolumeNode","","","");
+  this->NS_ImageData->SetChildClassesEnabled(0);
   app->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->NS_ImageData->GetWidgetName());
 
   //NodeSelector for VolumeRenderingNode Preset

@@ -62,8 +62,8 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->SetTCLDebug(0);
     this->Histograms=NULL;
 
-    this->ScheduleMask[0]=1;
-    this->ScheduleMask[1]=1;
+    this->ScheduleMask[0]=0;
+    this->ScheduleMask[1]=0;
     this->ScheduleMask[2]=1;
     //this->MB_Quality=NULL;
     this->RenViewport=NULL;
@@ -80,7 +80,7 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->FactorLastLowRes=0;
     this->SampleDistanceFactor=2.0;
     this->LastTimeLowRes=0;
-    this->GoalLowResTime=0.05;
+    this->GoalLowResTime=0.25;
     //.6 seems to be best
     this->PercentageNoChange=0.6;
     this->TimeToWaitForHigherStage=0.1;
@@ -745,7 +745,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     
     // added for GPGPU raycast
     // if using gpu ray cast, by pass/ignore all other volume rendering pathes
-    if(callerObjectCheckButton==this->CB_GPURayCast->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
+    if(this->CB_GPURayCast && callerObjectCheckButton==this->CB_GPURayCast->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
     {
         if (this->CB_GPURayCast->GetWidget()->GetSelectedState())
         {
@@ -764,7 +764,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         this->UpdateQualityCheckBoxes();
         return;
     }
-    if(callerObjectCheckButton==this->CB_GPURayCastMIP->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
+    if(this->CB_GPURayCastMIP && callerObjectCheckButton==this->CB_GPURayCastMIP->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
     {
         if (this->CB_GPURayCastMIP->GetWidget()->GetSelectedState())
             this->MapperGPURaycast->MIPRenderingOn();
@@ -774,7 +774,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         this->UpdateQualityCheckBoxes();
         return;
     }
-    if(callerObjectCheckButton==this->CB_GPURayCastShading->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
+    if(this->CB_GPURayCastShading && callerObjectCheckButton==this->CB_GPURayCastShading->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
     {
         if (this->CB_GPURayCastShading->GetWidget()->GetSelectedState())
             this->MapperGPURaycast->ShadingOn();
@@ -784,7 +784,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         this->UpdateQualityCheckBoxes();
         return;
     }
-    if(callerObjectCheckButton==this->CB_GPURayCastAdaptiveFPS->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
+    if(this->CB_GPURayCastAdaptiveFPS && callerObjectCheckButton==this->CB_GPURayCastAdaptiveFPS->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
     {
         if (this->CB_GPURayCastAdaptiveFPS->GetWidget()->GetSelectedState())
             this->MapperGPURaycast->AdaptiveFPSOn();
@@ -794,7 +794,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         this->UpdateQualityCheckBoxes();
         return;
     }
-    if(callerObjectCheckButton==this->CB_GPURayCastMIP->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
+    if(this->CB_GPURayCastMIP && callerObjectCheckButton==this->CB_GPURayCastMIP->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
     {
         if (this->CB_GPURayCastMIP->GetWidget()->GetSelectedState())
             this->MapperGPURaycast->MIPRenderingOn();
@@ -804,7 +804,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         this->UpdateQualityCheckBoxes();
         return;
     }
-    if(callerObjectCheckButton==this->CB_GPURayCastLargeVolume->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
+    if(this->CB_GPURayCastLargeVolume && callerObjectCheckButton==this->CB_GPURayCastLargeVolume->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
     {
         if (this->CB_GPURayCastLargeVolume->GetWidget()->GetSelectedState())
             this->MapperGPURaycast->LargeVolumeSizeOn();
@@ -816,25 +816,25 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     }
     
     
-    if(callerObjectCheckButton==this->CB_TextureLow->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
+    if(this->CB_TextureLow && callerObjectCheckButton==this->CB_TextureLow->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
     {
         this->ScheduleMask[0]=callerObjectCheckButton->GetSelectedState();
         this->UpdateQualityCheckBoxes();
         return;
     }
-    if(callerObjectCheckButton==this->CB_TextureHigh->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
+    if(this->CB_TextureHigh && callerObjectCheckButton==this->CB_TextureHigh->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
     {
         this->ScheduleMask[1]=callerObjectCheckButton->GetSelectedState();
         this->UpdateQualityCheckBoxes();
         return;
     }   
-    if(callerObjectCheckButton==this->CB_RayCast->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
+    if(this->CB_RayCast && callerObjectCheckButton==this->CB_RayCast->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
     {
         this->ScheduleMask[2]=callerObjectCheckButton->GetSelectedState();
         this->UpdateQualityCheckBoxes();
         return;
     }
-    if(callerObjectCheckButton==this->CB_InteractiveFrameRate->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
+    if(this->CB_InteractiveFrameRate && callerObjectCheckButton==this->CB_InteractiveFrameRate->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
     {
 
         this->MapperRaycast->SetAutoAdjustSampleDistances(callerObjectCheckButton->GetSelectedState());
@@ -871,6 +871,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     }
     else if(caller==this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::StartEvent)
     {
+         this->UpdateQuality();
 
         //First check if we have to abort the ZeroStageRender
         if(strcmp(this->StageZeroEventHandlerID.c_str(),"")!=0)
@@ -910,6 +911,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         vtkSlicerVRHelperDebug("startevent Scheduled %d",this->Scheduled);
         vtkSlicerVRHelperDebug("startevent currentstage %d",this->CurrentStage);
         vtkSlicerVRHelperDebug("startevent id %s",this->EventHandlerID.c_str());
+
 
         //it is not a Scheduled event so we use stage the quality stage and abort every existings scheduling
         if(this->Scheduled==0||this->ButtonDown==1)
@@ -1035,6 +1037,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     }
     else if(caller==this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::EndEvent)
     {
+        this->UpdateQuality();
+
         // added for GPGPU raycast
         // skip scheduling when using gpu ray mapper
                 if (this->CB_GPURayCast->GetWidget()->GetSelectedState())
@@ -1469,7 +1473,7 @@ void vtkSlicerVRGrayscaleHelper::ScheduleStageZero()
 
 }
 
-void vtkSlicerVRGrayscaleHelper::UpdateQualityCheckBoxes(void)
+void vtkSlicerVRGrayscaleHelper::UpdateQuality(void)
 {
 
     //Update the quality
@@ -1480,7 +1484,12 @@ void vtkSlicerVRGrayscaleHelper::UpdateQualityCheckBoxes(void)
         i++;
         this->Quality=i;
     }
+}
+void vtkSlicerVRGrayscaleHelper::UpdateQualityCheckBoxes(void)
+{
 
+    //Update the quality
+    this->UpdateQuality();
     //Check if we have to enable or  disable FPS
     //this->SC_Framerate->SetEnabled(this->ScheduleMask[0]);
 
@@ -2152,7 +2161,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->CB_TextureLow->SetBalloonHelpString("Enable very fast, lower quality GPU based rendering.");
     this->CB_TextureLow->SetLabelText("Use Texture Low");
     this->CB_TextureLow->SetLabelWidth(labelWidth);
-    this->CB_TextureLow->GetWidget()->SetSelectedState(1);
+    this->CB_TextureLow->GetWidget()->SetSelectedState(0);
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
         this->CB_TextureLow->GetWidgetName() );
     this->CB_TextureLow->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
@@ -2164,7 +2173,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->CB_TextureHigh->SetBalloonHelpString("Enable slow, high quality GPU based rendering.");
     this->CB_TextureHigh->SetLabelText("Use Texture High");
     this->CB_TextureHigh->SetLabelWidth(labelWidth);
-    this->CB_TextureHigh->GetWidget()->SetSelectedState(1);
+    this->CB_TextureHigh->GetWidget()->SetSelectedState(0);
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
         this->CB_TextureHigh->GetWidgetName() );
     this->CB_TextureHigh->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
@@ -2186,7 +2195,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->CB_InteractiveFrameRate->SetBalloonHelpString("Enable low quality software rendering. Use together with check box above");
     this->CB_InteractiveFrameRate->SetLabelText("Raycast interactive");
     this->CB_InteractiveFrameRate->SetLabelWidth(labelWidth);
-    this->CB_InteractiveFrameRate->EnabledOff();
+    this->CB_InteractiveFrameRate->GetWidget()->SetSelectedState(1);
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->CB_InteractiveFrameRate->GetWidgetName() );
     this->CB_InteractiveFrameRate->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
 

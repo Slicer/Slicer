@@ -52,12 +52,11 @@ vtkMRMLNode* vtkMRMLTractographyFiducialSeedingNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLTractographyFiducialSeedingNode::vtkMRMLTractographyFiducialSeedingNode()
 {
-   this->StoppingValue = 1.0;
-   this->StoppingMode = 1;
-   this->StoppingValue = 0.1;
-   this->StoppingCurvature = 0.8;
+   this->StoppingMode = 0;
+   this->StoppingValue = 0.25;
+   this->StoppingCurvature = 0.7;
    this->IntegrationStep = 0.5;
-   this->SeedingRegionSize = 1.0;
+   this->SeedingRegionSize = 2.5;
    this->SeedingRegionStep = 1.0;
    this->MinimumPathLength = 20.0;
    this->MaxNumberOfSeeds = 100;
