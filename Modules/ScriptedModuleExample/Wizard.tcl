@@ -17,19 +17,10 @@ proc ShowStep1 {step} {
   set wiz_widget [$w(wiz) GetWizardWidget]
   set parent [$wiz_widget GetClientArea]
 
-  if { ![info exists w(buttons)] } {
+  if { ![info exists w(addVol)] } {
     set w(buttons) [vtkKWRadioButtonSet New]
     $w(buttons) SetParent $parent
     $w(buttons) Create
-
-    set id 0
-    set options { "Addition" "Division" "Square Root" }
-    foreach opt $options {
-      set radiob [$w(buttons) AddWidget $id]
-      incr id
-      $radiob SetText $opt
-      $radiob SetCommand $wiz_widget Update
-    }
 
     set w(addVol) [vtkKWPushButton New]
     $w(addVol) SetParent $parent
@@ -49,18 +40,12 @@ proc ShowStep1 {step} {
     }
     $w(selFixed) SetBalloonHelpString "Pick the volume node to use as the reference for registration.  Transform will map moving image to this space.  This volume will become background in slice views"
     $w(selMoving) SetBalloonHelpString "Pick the volume node to use as the variable eference for registration.  Transform will map this volume into Fixed space.  This volume will become foreground in slice views"
-
-
-    [$w(buttons) GetWidget 0] Select
-
-
   }
 
   pack [$w(addVol) GetWidgetName] -side top -expand y -fill none -anchor center
   foreach vol {Fixed Moving} {
     pack [$w(sel$vol) GetWidgetName] -side top -expand y -fill none -anchor center
   }
-  #pack [$w(buttons) GetWidgetName] -side top -expand y -fill none -anchor center
 }
 
 proc ValidateStep1 {step} {
@@ -98,7 +83,7 @@ proc ValidateStep1 {step} {
 
     set nnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLSliceCompositeNode"]
     for {set n 0} {$n < $nnodes} {incr n} {
-      set cnode [$::slicer3::MRMLScene GetNthNodeByClass n "vtkMRMLSliceCompositeNode"]
+      set cnode [$::slicer3::MRMLScene GetNthNodeByClass $n "vtkMRMLSliceCompositeNode"]
       $cnode SetForegroundOpacity 0.5
     }
 
@@ -109,7 +94,7 @@ proc ValidateStep1 {step} {
 
 
 #
-# step 2: pick first operand
+# step 2: TODO: fill this with registration-related code
 #
 proc ShowStep2 {step} { 
   upvar 0 ::WIZARD w
@@ -123,29 +108,107 @@ proc ShowStep2 {step} {
     $w(entry1) Create
     $w(entry1) SetRestrictValueToDouble
     $w(entry1) SetCommandTriggerToAnyChange
-    $w(entry1) SetCommand $wiz_widget Update
+    $w(entry1) SetCommand ""
   }
 
   pack [$w(entry1) GetWidgetName] -side top -expand y -fill none -anchor center
 }
+
+proc RunRegistration {} {
+
+  # TODO: convert this to something that calls registration
+
+  #
+  # find the Register
+  # - call Enter to be sure GUI has been built
+  #
+  set modelMaker ""
+  foreach gui [vtkCommandLineModuleGUI ListInstances] {
+    if { [$gui GetGUIName] == "Model Maker" } {
+      set modelMaker $gui
+    }
+  }
+
+  if { $modelMaker == "" } {
+    errorDialog "Cannot make model: no Model Maker Module found."
+  }
+
+  $modelMaker Enter
+
+  #
+  # set up the model maker node
+  #
+  set moduleNode [vtkMRMLCommandLineModuleNode New]
+  $::slicer3::MRMLScene AddNode $moduleNode
+  $moduleNode SetName "Editor Make Model"
+  $moduleNode SetModuleDescription "Model Maker"
+
+  set name [[$o(name) GetWidget] GetValue]
+  if { $name == "" } {
+    $moduleNode SetParameterAsString "Name" "Quick Model"
+  } else {
+    $moduleNode SetParameterAsString "Name" $name
+  }
+  $moduleNode SetParameterAsString "FilterType" "Sinc"
+  $moduleNode SetParameterAsBool "GenerateAll" "0"
+  $moduleNode SetParameterAsString "Labels" [EditorGetPaintLabel]
+  $moduleNode SetParameterAsBool "JointSmooth" 1
+  $moduleNode SetParameterAsBool "SplitNormals" 1
+  $moduleNode SetParameterAsBool "PointNormals" 1
+  $moduleNode SetParameterAsBool "SkipUnNamed" 1
+  $moduleNode SetParameterAsInt "Start" -1
+  $moduleNode SetParameterAsInt "End" -1
+  if { [[$o(smooth) GetWidget] GetSelectedState] } {
+    $moduleNode SetParameterAsDouble "Decimate" 0.25
+    $moduleNode SetParameterAsDouble "Smooth" 10
+  } else {
+    $moduleNode SetParameterAsDouble "Decimate" 0
+    $moduleNode SetParameterAsDouble "Smooth" 0
+  }
+
+  $moduleNode SetParameterAsString "InputVolume" [$volumeNode GetID]
+
+  #
+  # output 
+  # - make a new hierarchy node if needed
+  #
+  set outHierarchy [[$::slicer3::MRMLScene GetNodesByClassByName "vtkMRMLModelHierarchyNode" "Editor Models"] GetItemAsObject 0]
+  if { $outHierarchy == "" } {
+    set outHierarchy [vtkMRMLModelHierarchyNode New]
+    $outHierarchy SetScene $::slicer3::MRMLScene
+    $outHierarchy SetName "Editor Models"
+    $::slicer3::MRMLScene AddNode $outHierarchy
+  }
+
+  $moduleNode SetParameterAsString "ModelSceneFile" [$outHierarchy GetID]
+
+
+
+  # 
+  # run the task (in the background)
+  # - use the GUI to provide progress feedback
+  # - use the GUI's Logic to invoke the task
+  # - model will show up when the processing is finished
+  #
+  $modelMaker SetCommandLineModuleNode $moduleNode
+  [$modelMaker GetLogic] SetCommandLineModuleNode $moduleNode
+  $modelMaker SetCommandLineModuleNode $moduleNode
+  [$modelMaker GetLogic] Apply $moduleNode
+
+  $this statusText "Model Making Started..."
+
+  #
+  # clean up our references
+  #
+  $moduleNode Delete
+  $outHierarchy Delete
+  $modelMaker Enter
 
 proc ValidateStep2 {step} {
   upvar 0 ::WIZARD w
 
   set wiz_widget [$w(wiz) GetWizardWidget]
   set workflow [$wiz_widget GetWizardWorkflow]
-
-  if { [$w(entry1) GetValue] == "" } {
-    $wiz_widget SetErrorText "Empty Operand!" 
-    $workflow PushInput [$w(step2) GetValidationFailedInput]
-  }
-
-  if { [$w(entry1) GetValue] < 0.0  && [[$w(buttons) GetWidget 2] GetSelectedState] } {
-    $wiz_widget SetErrorText "Negative Operand!" 
-    $workflow PushInput [$w(step2) GetValidationFailedInput]
-  }
-
-
 }
 
 #
