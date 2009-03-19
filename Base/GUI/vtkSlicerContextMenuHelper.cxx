@@ -4,6 +4,7 @@
 
 #include "vtkKWTkUtilities.h"
 #include "vtkKWEntry.h"
+#include "vtkKWMessageDialog.h"
 
 #include "vtkMRMLDisplayableNode.h"
 
@@ -52,18 +53,27 @@ void vtkSlicerContextMenuHelper::PopulateMenu()
     return;
     }
 
-  this->DeleteItem = this->ContextMenu->AddCommand("Delete", this, "DeleteNodeCallback");
   this->RenameItem = this->ContextMenu->AddCommand("Rename...", this, "RenameNodeCallback");
   this->EditItem = this->ContextMenu->AddCommand("Edit Properties...", this, "EditCallback");
+  this->DeleteItem = this->ContextMenu->AddCommand("Delete...", this, "DeleteNodeCallback");
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerContextMenuHelper::DeleteNodeCallback()
 {
   vtkMRMLNode *node = this->GetMRMLNode();
+  vtkSlicerApplication *app = vtkSlicerApplication::GetInstance();
   if (node != NULL)
     {
-    this->GetMRMLScene()->RemoveNode(node);
+    std::string message = std::string("Delete ") + std::string(node->GetName()) + std::string("?"); 
+    if ( vtkKWMessageDialog::PopupYesNo( 
+          app, this->ContextMenu->GetParentTopLevel(), 
+          "Delete Node", message.c_str(),
+          vtkKWMessageDialog::WarningIcon | 
+          vtkKWMessageDialog::InvokeAtPointer) )
+      {
+      this->GetMRMLScene()->RemoveNode(node);
+      }
     }
 }
 
@@ -153,7 +163,7 @@ void vtkSlicerContextMenuHelper::PopUpRenameEntry()
     app->Script ( "pack %s %s -side left -padx 4 -anchor c", 
       RenameCancel->GetWidgetName(), this->RenameApply->GetWidgetName() );
     fP->Delete();
-    }
+    }    
 
   this->RenameEntry->GetWidget()->SetValue( this->MRMLNode->GetName() );
 

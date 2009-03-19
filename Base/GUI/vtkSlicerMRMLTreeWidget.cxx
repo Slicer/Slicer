@@ -18,6 +18,7 @@
 #include "vtkKWTreeWithScrollbars.h"
 #include "vtkKWCheckButton.h"
 #include "vtkKWCheckButtonWithLabel.h"
+#include "vtkKWMessageDialog.h"
 
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLLinearTransformNode.h"
@@ -25,6 +26,8 @@
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLTransformableNode.h"
 #include "vtkMRMLVolumeNode.h"
+
+#include "vtkSlicerApplication.h"
 
 
 //---------------------------------------------------------------------------
@@ -244,14 +247,22 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerMRMLTreeWidget::DeleteNodeCallback(const char *id)
 {
-  // cout << "I want to delete MRML node " << id << endl;
   // delete node, then repopulate tree
   for (unsigned int i=0; i<this->SelectedLeaves.size(); i++)
     {
     vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID(this->SelectedLeaves[i].c_str());
     if (node != NULL)
       {
-      this->GetMRMLScene()->RemoveNode(node);
+      vtkSlicerApplication *app = vtkSlicerApplication::GetInstance();
+      std::string message = std::string("Delete ") + std::string(node->GetName()) + std::string("?"); 
+      if ( vtkKWMessageDialog::PopupYesNo( 
+            app, this->ContextMenu->GetParentTopLevel(), 
+            "Delete Node", message.c_str(),
+            vtkKWMessageDialog::WarningIcon | 
+            vtkKWMessageDialog::InvokeAtPointer) )
+        {
+        this->GetMRMLScene()->RemoveNode(node);
+        }
       }
     }
   this->TreeWidget->GetWidget()->ClearSelection();
