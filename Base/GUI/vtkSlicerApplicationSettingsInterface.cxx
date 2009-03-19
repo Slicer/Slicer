@@ -1129,7 +1129,6 @@ void vtkSlicerApplicationSettingsInterface::ModulePathsRemovedCallback()
     str = NULL;
     this->ModulePathsPresetSelector->GetPresetDirectoriesToDelimitedString(
       &str, '|');
-    vtkWarningMacro("ModulePathsRemovedCallback: setting potential module paths to '" << (str == NULL ? "null" : str) << "'");
     app->SetPotentialModulePaths(str);
     delete [] str;
     }
