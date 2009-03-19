@@ -503,6 +503,13 @@ void vtkSlicerNodeSelectorWidget::ProcessCommand(char *selectedID)
 {
   this->SelectedID = std::string(selectedID);
 
+  if (this->ContextMenuHelper && selectedID)
+    {
+    vtkMRMLNode *node = this->MRMLScene->GetNodeByID(this->SelectedID);
+    this->ContextMenuHelper->SetMRMLNode(node);
+    this->ContextMenuHelper->UpdateMenuState();
+    }
+
   this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
 }
 

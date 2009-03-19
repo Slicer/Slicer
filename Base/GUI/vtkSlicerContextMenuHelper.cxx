@@ -166,6 +166,7 @@ void vtkSlicerContextMenuHelper::PopUpRenameEntry()
   this->RenameTopLevel->Raise();
 
   this->RenameEntry->GetWidget()->SelectAll();
+  this->RenameEntry->GetWidget()->Focus();
 }
 
 //---------------------------------------------------------------------------
