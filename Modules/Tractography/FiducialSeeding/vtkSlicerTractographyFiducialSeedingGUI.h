@@ -39,10 +39,10 @@ class VTK_FIDUCIALSEEDING_EXPORT vtkSlicerTractographyFiducialSeedingGUI : publi
   vtkTypeMacro(vtkSlicerTractographyFiducialSeedingGUI, vtkSlicerModuleGUI);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-    // Description: 
-    // Get the categorization of the module.
-    const char *GetCategory() const
-        { return "Diffusion"; }
+  // Description: 
+  // Get the categorization of the module.
+  const char *GetCategory() const
+      { return "Diffusion"; }
 
   // Description:
   // Events that this module GUI will observe. CLIENT MUST DELETE!
