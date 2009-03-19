@@ -396,3 +396,33 @@ itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
   $o(cutter) Modified
   [$sliceGUI GetSliceViewer] RequestRender
 }
+
+#
+# The Rasterize proc is an experiment for creating label maps
+# from models.  This works well for simple shapes, but unfortunately 
+# does not work for more complex shapes (i.e. with multple contours
+# intersecting the slice plane)
+#
+namespace eval ModelSWidget {
+  proc Rasterize { modelSW } {
+
+    set sliceGUI [$modelSW cget -sliceGUI]
+    set labeler [Labeler #auto $sliceGUI]
+    array set o [$modelSW getObjects]
+
+    set stripper [vtkStripper New]
+    set cleaner [vtkCleanPolyData New]
+    $stripper SetInput [$o(cutTransformFilter) GetOutput]
+    $cleaner SetInput [$stripper GetOutput]
+    set polyData [$cleaner GetOutput]
+    $polyData Update
+
+    set maskResult [$labeler makeMaskImage $polyData]
+    foreach {maskIJKToRAS mask} $maskResult {}
+    [$polyData GetPoints] Modified
+    set bounds [$polyData GetBounds]
+    $labeler applyImageMask $maskIJKToRAS $mask $bounds
+
+    itcl::delete object $labeler
+  }
+}
