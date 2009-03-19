@@ -273,8 +273,9 @@ proc DistanceMapFiducialsApply {this} {
   $::DistanceMapFiducials($this,resample) Update
   
   $::DistanceMapFiducials($this,euclideanDistance) SetInput [$::DistanceMapFiducials($this,resample) GetOutput]
+  $::DistanceMapFiducials($this,euclideanDistance) SetInitialize 1
+  $::DistanceMapFiducials($this,euclideanDistance) SetAlgorithmToSaitoCached
   $::DistanceMapFiducials($this,euclideanDistance) Update
-
   $::DistanceMapFiducials($this,marchingCubes) SetInput [$::DistanceMapFiducials($this,euclideanDistance) GetOutput]
   $::DistanceMapFiducials($this,marchingCubes) SetValue 0 $dist
   $::DistanceMapFiducials($this,marchingCubes) Update
@@ -282,8 +283,8 @@ proc DistanceMapFiducialsApply {this} {
   $::DistanceMapFiducials($this,transform) SetInput [$::DistanceMapFiducials($this,marchingCubes) GetOutput]
   $::DistanceMapFiducials($this,transform) Update
 
-  $fid RemoveAllFiducials
   $fid SetDisableModifiedEvent 1
+  $fid RemoveAllFiducials
 
   set poly [$::DistanceMapFiducials($this,transform) GetOutput]
   set nvert [$poly GetNumberOfPoints]
