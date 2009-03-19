@@ -301,15 +301,24 @@ proc DistanceTransformModelProgressEventCallback {filter} {
 
   set mainWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
   set progressGauge [$mainWindow GetProgressGauge]
+  set renderWidget [[$::slicer3::ApplicationGUI GetViewControlGUI] GetNavigationWidget]
 
   if { $filter == "" } {
     $mainWindow SetStatusText ""
     $progressGauge SetValue 0
+    $renderWidget SetRendererGradientBackground 0
   } else {
     # TODO: this causes a tcl 'update' which re-triggers the module (possibly changing
     # values while it is executing!  Talk about evil...
     #$mainWindow SetStatusText [$filter GetClassName]
     #$progressGauge SetValue [expr 100 * [$filter GetProgress]]
+
+    set progress [$filter GetProgress]
+    set remaining [expr 1.0 - $progress]
+
+    #$renderWidget SetRendererGradientBackground 1
+    #$renderWidget SetRendererBackgroundColor $progress $progress $progress
+    #$renderWidget SetRendererBackgroundColor2 $remaining $remaining $remaining
   }
 }
 
