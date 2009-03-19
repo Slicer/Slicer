@@ -229,6 +229,13 @@ void vtkSlicerVolumeHeaderWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                          unsigned long event, void *callData )
 {
 
+  vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
+  unsigned long int oldMTime = 0;
+  if ( volumeNode )
+    {
+    oldMTime = volumeNode->GetMTime();
+    }
+
   //
   // process volume selector events
   //
@@ -264,7 +271,6 @@ void vtkSlicerVolumeHeaderWidget::ProcessWidgetEvents ( vtkObject *caller,
     spacing[1] = this->SpacingEntry1->GetValueAsDouble();
     spacing[2] = this->SpacingEntry2->GetValueAsDouble();
 
-    vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
     if ( volumeNode && !this->UpdatingFromMRML )
       {
       volumeNode->SetDisableModifiedEvent(1);
@@ -278,7 +284,6 @@ void vtkSlicerVolumeHeaderWidget::ProcessWidgetEvents ( vtkObject *caller,
   vtkKWPushButton *button = vtkKWPushButton::SafeDownCast(caller);
   if ( button == this->CenterButton->GetWidget() )
     {
-    vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
     if ( volumeNode )
       {
       vtkImageData *image = volumeNode->GetImageData();
@@ -315,7 +320,6 @@ void vtkSlicerVolumeHeaderWidget::ProcessWidgetEvents ( vtkObject *caller,
   vtkKWCheckButton *cbutton = vtkKWCheckButton::SafeDownCast(caller);
   if ( cbutton == this->LabelMapCheckButton->GetWidget() )
     {
-    vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
     if ( volumeNode )
       {
       vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::SafeDownCast( volumeNode );
@@ -344,6 +348,11 @@ void vtkSlicerVolumeHeaderWidget::ProcessWidgetEvents ( vtkObject *caller,
         }
       }
     }
+
+    if ( volumeNode && oldMTime != volumeNode->GetMTime() )
+      {
+      volumeNode->SetModifiedSinceRead(1);
+      }
 }
 
 
