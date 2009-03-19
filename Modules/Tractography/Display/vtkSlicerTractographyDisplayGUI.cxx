@@ -226,6 +226,17 @@ void vtkSlicerTractographyDisplayGUI::Enter ( )
 }
 
 //---------------------------------------------------------------------------
+void vtkSlicerTractographyDisplayGUI::Enter ( vtkMRMLNode *node )
+{
+  vtkMRMLFiberBundleNode *fbNode = vtkMRMLFiberBundleNode::SafeDownCast(node);
+  if ( fbNode )
+    {
+    this->FiberBundleSelectorWidget->UpdateMenu();
+    this->FiberBundleSelectorWidget->SetSelected( fbNode );
+    }
+}
+
+//---------------------------------------------------------------------------
 void vtkSlicerTractographyDisplayGUI::Exit ( )
 {
     // Fill in

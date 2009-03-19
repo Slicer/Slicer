@@ -164,7 +164,10 @@ void vtkSlicerTransformsGUI::Enter ( vtkMRMLNode *node )
   vtkMRMLTransformNode *transformNode = vtkMRMLTransformNode::SafeDownCast(node);
   if ( transformNode )
     {
+    this->GetApplication()->ProcessPendingEvents();
+    this->TransformEditorWidget->GetTransformEditSelectorWidget()->UpdateMenu();
     this->TransformEditorWidget->GetTransformEditSelectorWidget()->SetSelected( transformNode );
+    this->TransformEditorWidget->UpdateMatrix();
     }
 }
 

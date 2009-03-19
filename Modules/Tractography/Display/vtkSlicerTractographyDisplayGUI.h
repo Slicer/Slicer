@@ -75,6 +75,7 @@ class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerTractographyDisplayGUI : pub
     // Description:
     // Methods describe behavior at module enter and exit.
     virtual void Enter ( );
+    virtual void Enter ( vtkMRMLNode *node );
     virtual void Exit ( );
 
     vtkGetObjectMacro (FiberBundleDisplayWidget, vtkSlicerFiberBundleDisplayWidget);

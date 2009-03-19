@@ -89,7 +89,9 @@ public:
   // Description:
   // get at the node selector so can use it to assign scalars
   vtkGetObjectMacro( ModelDisplaySelectorWidget, vtkSlicerNodeSelectorWidget);
-  
+    
+  void UpdateTreeFromMRML();
+
 //BTX
   enum
     {
@@ -103,8 +105,7 @@ protected:
   // Description:
   // Create the widget.
   virtual void CreateWidget();
-  
-  void UpdateTreeFromMRML();
+
   void AddNodeToTree(vtkMRMLNode *node);
   vtkMRMLNode* GetSelectedNodeInTree();
 

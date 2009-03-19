@@ -537,14 +537,16 @@ void vtkSlicerVolumesGUI::Enter ( vtkMRMLNode *node )
     this->Built = true;
     this->AddGUIObservers();
     }
-  this->CreateModuleEventBindings();
-  this->UpdateFramesFromMRML();
 
   vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);
   if ( volumeNode )
     {
+    this->VolumeSelectorWidget->UpdateMenu();
     this->VolumeSelectorWidget->SetSelected( volumeNode );
     }
+
+  this->CreateModuleEventBindings();
+  this->UpdateFramesFromMRML();
 }
 
 //---------------------------------------------------------------------------

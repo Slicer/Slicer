@@ -485,6 +485,12 @@ void vtkSlicerModelsGUI::Enter ( vtkMRMLNode *node )
     this->AddGUIObservers();
     }
   this->CreateModuleEventBindings();
+  if (node)
+    {
+    this->ModelHierarchyWidget->UpdateTreeFromMRML();
+    this->ModelHierarchyWidget->GetModelDisplaySelectorWidget()->UpdateMenu();
+    this->ModelHierarchyWidget->GetModelDisplaySelectorWidget()->SetSelected(node);
+    }
 }
 
 

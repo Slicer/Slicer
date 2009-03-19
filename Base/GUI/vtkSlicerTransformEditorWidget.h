@@ -73,6 +73,8 @@ public:
   vtkSetObjectMacro (TransformEditSelectorWidget, vtkSlicerNodeSelectorWidget);
 
 
+  void UpdateMatrix();
+
  protected:
   vtkSlicerTransformEditorWidget();
   virtual ~vtkSlicerTransformEditorWidget();
@@ -84,7 +86,6 @@ public:
   void UpdateTranslationSliders();
   void ResetRotationSliders(int axis);
 
-  void UpdateMatrix();
 
   vtkTransform* GetCurrentTransformInCoordinateSystem();
 
