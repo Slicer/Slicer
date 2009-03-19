@@ -99,7 +99,7 @@ void vtkSlicerContextMenuHelper::EditCallback()
   vtkSlicerApplication *app = vtkSlicerApplication::GetInstance();
   vtkSlicerApplicationGUI *appGUI = app->GetApplicationGUI();
 
-  if (appGUI && this->MRMLNode && this->MRMLScene)
+  if (appGUI && this->MRMLNode)
     {
     appGUI->SelectModuleForNode(this->MRMLNode);
     }
