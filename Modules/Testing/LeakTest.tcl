@@ -15,6 +15,9 @@
 #
 # two global lists of slicer modules and scripted modules 
 #
+
+# TODO: add slicer command line option to list discovered modules so this list can
+# be created automatically
 set ::modules { 
  "CLI" "Change Tracker" "EMSegment"  "Gradient Anisotropic Diffusion Filter"  "Label Statistics"  "Neuro Nav"  
  "OpenIGTLinkIF"  "QdecModule"  "QueryAtlas"  "Slicer Tractography Display"  
