@@ -1,6 +1,11 @@
 
-# Comment line test
+#
+# Configuration for plastimatch-slicer - project by Greg Sharp
+# of MGH Medical Physics
+#
 scm       svn
 svnpath   http://forge.abcd.harvard.edu/svn/plastimatch/plastimatch/trunk
 svnusername anonymous
 svnpassword ""
+
+cmakeproject plastimatch
