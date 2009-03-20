@@ -199,7 +199,9 @@ if { [file exists $localvarsfile] } {
   exit 1
 }
 
-set ::MAKE [file attributes $::MAKE -shortname]
+if { $::isWindows } {
+  set ::MAKE [file attributes $::MAKE -shortname]
+}
 vputs "making with $::MAKE"
 
 
