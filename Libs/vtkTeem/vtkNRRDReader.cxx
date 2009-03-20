@@ -791,10 +791,9 @@ void vtkNRRDReader::AllocatePointData(vtkImageData *out) {
 }
 
 int
-tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, double SD[9]) {
+vtkNRRDReader::tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, double SD[9]) {
   char me[]="tenSpaceDirectionReduce", err[BIFF_STRLEN];
   double SDT[9], tenMeasr[9], tenSlice[9];
-  float *tdata;
   size_t ii, nn;
   //unsigned int si, sj;
   //double det;
@@ -803,7 +802,7 @@ tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, double SD[9]) {
     sprintf(err, "%s: got NULL pointer", me);
     biffAdd(TEN, err); return 1;
   }
-  if (tenTensorCheck(nin, nrrdTypeFloat, AIR_TRUE, AIR_TRUE)) {
+  if (tenTensorCheck(nin, nin->type, AIR_TRUE, AIR_TRUE)) {
     sprintf(err, "%s: ", me);
     biffAdd(TEN, err); return 1;
   }
@@ -827,14 +826,38 @@ tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, double SD[9]) {
     }
   }
   nn = nrrdElementNumber(nout)/nout->axis[0].size;
-  tdata = (float*)(nout->data);
-  for (ii=0; ii<nn; ii++) {
-    TEN_T2M(tenMeasr, tdata);
-    ell_3m_mul_d(tenSlice, SD, tenMeasr);
-    ell_3m_mul_d(tenSlice, tenSlice, SDT);
-    TEN_M2T_TT(tdata, float, tenSlice);
-    tdata += 7;
-  }
+
+  switch (this->DataType)
+    {
+    case VTK_FLOAT:
+      {
+      float *tdata = (float*)(nout->data);
+      for (ii=0; ii<nn; ii++) 
+        {
+        TEN_T2M(tenMeasr, tdata);
+        ell_3m_mul_d(tenSlice, SD, tenMeasr);
+        ell_3m_mul_d(tenSlice, tenSlice, SDT);
+        TEN_M2T_TT(tdata, float, tenSlice);
+        tdata += 7;
+        }   
+      }
+      break;
+    case VTK_DOUBLE:
+      {
+      double *tdata = (double*)(nout->data);
+      for (ii=0; ii<nn; ii++) 
+        {
+        TEN_T2M(tenMeasr, tdata);
+        ell_3m_mul_d(tenSlice, SD, tenMeasr);
+        ell_3m_mul_d(tenSlice, tenSlice, SDT);
+        TEN_M2T_TT(tdata, double, tenSlice);
+        tdata += 7;
+        }
+      }      
+      break;
+    default:
+      return 1;
+    }
   return 0;
 }
 
@@ -1010,7 +1033,7 @@ void vtkNRRDReader::ExecuteData(vtkDataObject *output)
          }
 
          E |= tenMeasurementFrameReduce(ntmp, ntmp);
-         E |= tenSpaceDirectionReduce(ntmp, ntmp, NRRDWorldToIjk);
+         E |= this->tenSpaceDirectionReduce(ntmp, ntmp, NRRDWorldToIjk);
     // Tensor has been reduced-> Tensor components are described in VTK Space. The measurement frame has to
         // be updated to reflect this change: 
         RasToIjkRotationMatrix->Invert();

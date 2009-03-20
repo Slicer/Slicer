@@ -251,6 +251,8 @@ protected:
   virtual void ExecuteInformation();
   virtual void ExecuteData(vtkDataObject *out);
 
+  int tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, double SD[9]);
+
 private:
   vtkNRRDReader(const vtkNRRDReader&);  // Not implemented.
   void operator=(const vtkNRRDReader&);  // Not implemented.
