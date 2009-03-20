@@ -114,9 +114,14 @@ if {$argc > 1 } {
 set ::EXTEND(buildList) $strippedargs
 
 
-if { $::EXTEND(verbose) } {
-  puts [parray ::EXTEND]
+# only print if verbose flag is set
+proc vputs {s} {
+  if { $::EXTEND(verbose) } {
+    puts $s
+  }
 }
+
+vputs [parray ::EXTEND]
 
 
 ################################################################################
@@ -124,12 +129,11 @@ if { $::EXTEND(verbose) } {
 # Utilities:
 
 proc runcmd {args} {
-    global isWindows
     puts "running: $args"
 
     # print the results line by line to provide feedback during long builds
     # interleaves the results of stdout and stderr, except on Windows
-    if { $isWindows } {
+    if { $::isWindows } {
         # Windows does not provide native support for cat
         set fp [open "| $args" "r"]
     } else {
@@ -142,7 +146,7 @@ proc runcmd {args} {
     set ret [catch "close $fp" res] 
     if { $ret } {
         puts stderr $res
-        if { $isWindows } {
+        if { $::isWindows } {
             # Does not work on Windows
         } else {
             error $ret
@@ -152,12 +156,12 @@ proc runcmd {args} {
 
 
 #initialize platform variables
-foreach v { isSolaris isWindows isDarwin isLinux } { set $v 0 }
+foreach v { ::isSolaris ::isWindows ::isDarwin ::isLinux } { set $v 0 }
 switch $tcl_platform(os) {
-    "SunOS" { set isSolaris 1 }
-    "Linux" { set isLinux 1 }
-    "Darwin" { set isDarwin 1 }
-    default { set isWindows 1 }
+    "SunOS" { set ::isSolaris 1 }
+    "Linux" { set ::isLinux 1 }
+    "Darwin" { set ::isDarwin 1 }
+    default { set ::isWindows 1 }
 }
 
 ################################################################################
@@ -171,7 +175,7 @@ cd [file dirname [info script]]
 cd ..
 set ::Slicer3_HOME [pwd]
 cd $cwd
-if { $isWindows } {
+if { $::isWindows } {
   set ::Slicer3_HOME [file attributes $::Slicer3_HOME -shortname]
 }
 
@@ -188,18 +192,14 @@ set ::Slicer3_EXT $::Slicer3_HOME/../Slicer3-ext
 set localvarsfile $Slicer3_HOME/slicer_variables.tcl
 catch {set localvarsfile [file normalize $localvarsfile]}
 if { [file exists $localvarsfile] } {
-  if { $::EXTEND(verbose) } {
-    puts "Sourcing $localvarsfile"
-  }
+  vputs "Sourcing $localvarsfile"
   source $localvarsfile
 } else {
   puts "stderr: $localvarsfile not found - use this file to set up your build"
   exit 1
 }
 
-if { $::EXTEND(verbose) } {
-  puts "making with $::MAKE"
-}
+vputs "making with $::MAKE"
 
 
 if { ![file exists $::Slicer3_EXT] } {
@@ -228,9 +228,7 @@ foreach c $candidates {
   }
 }
 
-if { $::EXTEND(verbose) } {
-  puts "Will build: $::EXTEND(s3extFiles)"
-}
+vputs "Will build: $::EXTEND(s3extFiles)"
 
 
 ################################################################################
@@ -391,13 +389,14 @@ while { $rearranged } {
 # - upload it 
 #
 
-foreach s3ext $::EXTEND(s3extFiles) {
+proc buildExtension {s3ext} {
 
   # collect params
   array unset ext
   set ::ext(name) [file root [file tail $s3ext]]
   set ::ext(scm) ""
-  loadArray $s3ext ext
+  set ::ext(depends) ""
+  loadArray $s3ext ::ext
 
   set ::ext(date) [clock format [clock seconds] -format %Y-%m-%d]
 
@@ -433,10 +432,10 @@ foreach s3ext $::EXTEND(s3extFiles) {
   }
 
   if { $::ext(srcDir) == "" } {
-    continue
+    return
   }
 
-  if { $isWindows } {
+  if { $::isWindows } {
     set make [file attributes $::MAKE -shortname]
     set makeCmd "$make $::ext(name).sln /build $::VTK_BUILD_TYPE /project ALL_BUILD"
   } else {
@@ -444,7 +443,7 @@ foreach s3ext $::EXTEND(s3extFiles) {
   }
 
   set dependPaths ""
-  foreach dep $ext(depends) {
+  foreach dep $::ext(depends) {
     if { [file exists $Slicer3_HOME/Modules/$dep] } {
       # this is a module that comes with slicer
       set dependPaths "$dependPaths -D${dep}_SOURCE_DIR=$Slicer3_HOME/Modules/$dep"
@@ -456,7 +455,7 @@ foreach s3ext $::EXTEND(s3extFiles) {
   }
 
   set extraLink ""
-  if { $isDarwin } {
+  if { $::isDarwin } {
     set extraLink "$extraLink -DCMAKE_SHARED_LINKER_FLAGS:STRING=-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
     set extraLink "$extraLink -DCMAKE_EXE_LINKER_FLAGS=-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
   }
@@ -475,7 +474,7 @@ foreach s3ext $::EXTEND(s3extFiles) {
 
   # build the project
   cd $::Slicer3_EXT/$::ext(name)-build
-  if { $isWindows } {
+  if { $::isWindows } {
     runcmd "$::MAKE" $::ext(name).sln /build $::VTK_BUILD_TYPE /project ALL_BUILD
   } else {
     eval runcmd $::MAKE
@@ -485,7 +484,7 @@ foreach s3ext $::EXTEND(s3extFiles) {
   # - not all modules have tests, so allow make to fail gracefully with catch
   cd $::Slicer3_EXT/$::ext(name)-build
   if { $::EXTEND(test-type) != "" } {
-    if { $isWindows } {
+    if { $::isWindows } {
       set ret [catch "runcmd $::MAKE $::ext(name).sln /build $::VTK_BUILD_TYPE /project $::EXTEND(test-type)" res]
     } else {
       set ret [catch "eval runcmd $::MAKE $::EXTEND(test-type)" res]
@@ -499,7 +498,7 @@ foreach s3ext $::EXTEND(s3extFiles) {
 
   # run the install target
   cd $::Slicer3_EXT/$::ext(name)-build
-  if { $isWindows } {
+  if { $::isWindows } {
     runcmd $::MAKE $::ext(name).sln /build $::VTK_BUILD_TYPE /project INSTALL
   } else {
     eval runcmd $::MAKE install
@@ -526,4 +525,37 @@ foreach s3ext $::EXTEND(s3extFiles) {
   upload $::ext(zipFileName)  
   upload $s3ext
 }
+
+
+set ::EXTEND(BUILT) ""
+set ::EXTEND(FAILED) ""
+
+foreach s3ext $::EXTEND(s3extFiles) {
+  puts "----------------------------------------"
+  puts "----------------------------------------"
+  puts "building $s3ext"
+  set ret [catch "buildExtension $s3ext" res]
+  if { $ret } {
+    puts "********************"
+    puts "Failed to build $s3ext"
+    puts "error code is: $ret"
+    puts "error result is:\n$res"
+    lappend ::EXTEND(BUILT) $s3ext
+  } else {
+    lappend ::EXTEND(FAILED) $s3ext
+  }
+}
+
+puts "********************\n"
+puts "BUILT:"
+foreach built $::EXTEND(BUILT) {
+  puts "  $built"
+}
+
+puts "FAILED:"
+foreach failed $::EXTEND(FAILED) {
+  puts "  $failed"
+}
+
+puts "[expr 100 * (1.*[llength $::EXTEND(BUILT)] / [llength $::EXTEND(s3extFiles)])]% succeeded" 
 
