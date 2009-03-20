@@ -488,8 +488,8 @@ void vtkSlicerModelsGUI::Enter ( vtkMRMLNode *node )
   if (node)
     {
     this->ModelHierarchyWidget->UpdateTreeFromMRML();
-    this->ModelHierarchyWidget->GetModelDisplaySelectorWidget()->UpdateMenu();
-    this->ModelHierarchyWidget->GetModelDisplaySelectorWidget()->SetSelected(node);
+    this->ModelHierarchyWidget->GetModelDisplaySelectorWidget()->UnconditionalUpdateMenu();
+    this->ModelHierarchyWidget->SelectNode(node);
     }
 }
 
@@ -609,7 +609,7 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     this->ModelDisplayFrame->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
     this->ModelDisplayFrame->Create ( );
     this->ModelDisplayFrame->SetLabelText ("Hierarchy & Display");
-    this->ModelDisplayFrame->CollapseFrame ( );
+    this->ModelDisplayFrame->ExpandFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->ModelDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());
 

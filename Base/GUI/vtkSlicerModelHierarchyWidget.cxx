@@ -617,6 +617,19 @@ void vtkSlicerModelHierarchyWidget::SelectNodeCallback(const char *id)
       }
     }
 }
+
+//---------------------------------------------------------------------------
+void vtkSlicerModelHierarchyWidget::SelectNode(vtkMRMLNode *node)
+{
+  if (node != NULL)
+    {
+    if (node->GetID())
+      {
+      this->TreeWidget->GetWidget()->SelectNode(node->GetID());
+      }
+    this->ModelDisplaySelectorWidget->SetSelected(node);
+    }
+}
 //---------------------------------------------------------------------------
 void vtkSlicerModelHierarchyWidget::InsertHierarchyNodeCallback(const char *id)
 {

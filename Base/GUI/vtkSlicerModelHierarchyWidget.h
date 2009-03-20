@@ -63,6 +63,10 @@ public:
   // removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
   
+  // Description:
+  // select node in the tree and selector
+  virtual void SelectNode(vtkMRMLNode *node);
+
   // Description::
   // Callbacks
   virtual void ModelVisibilityCallback(const char *id);
