@@ -199,6 +199,7 @@ if { [file exists $localvarsfile] } {
   exit 1
 }
 
+set ::MAKE [file attributes $::MAKE -shortname]
 vputs "making with $::MAKE"
 
 
@@ -444,8 +445,7 @@ proc buildExtension {s3ext} {
   }
 
   if { $::isWindows } {
-    set make [file attributes $::MAKE -shortname]
-    set makeCmd "$make $::ext(name).sln /build $::VTK_BUILD_TYPE /project ALL_BUILD"
+    set makeCmd "$::MAKE $::ext(name).sln /out buildlog.txt /build $::VTK_BUILD_TYPE /project ALL_BUILD"
   } else {
     set makeCmd $::MAKE
   }
@@ -470,20 +470,22 @@ proc buildExtension {s3ext} {
 
   # configure project and make
   cd $::Slicer3_EXT/$::ext(name)-build
-  eval runcmd $::CMAKE \
+  runcmd $::CMAKE \
+    -G$::GENERATOR \
     -DCMAKE_VERBOSE_MAKEFILE:BOOL=TRUE \
     -DSlicer3_DIR:PATH=$::Slicer3_BUILD \
     -DBUILD_AGAINST_SLICER3:BOOL=ON \
     -DMAKECOMMAND:STRING=$makeCmd \
     -DCMAKE_INSTALL_PREFIX:PATH=$::Slicer3_EXT/$::ext(name)-install \
-    $dependPaths \
-    $extraLink \
     $::ext(srcDir)
+
+  # add additional arguments (use eval to expand lists)
+  runcmd $::CMAKE $dependPaths $extraLink $::ext(srcDir)
 
   # build the project
   cd $::Slicer3_EXT/$::ext(name)-build
   if { $::isWindows } {
-    runcmd "$::MAKE" $::ext(name).sln /build $::VTK_BUILD_TYPE /project ALL_BUILD
+    runcmd "$::MAKE" $::ext(cmakeproject).sln /out buildlog.txt /build $::VTK_BUILD_TYPE /project ALL_BUILD
   } else {
     eval runcmd $::MAKE
   }
@@ -493,7 +495,7 @@ proc buildExtension {s3ext} {
   cd $::Slicer3_EXT/$::ext(name)-build
   if { $::EXTEND(test-type) != "" } {
     if { $::isWindows } {
-      set ret [catch "runcmd $::MAKE $::ext(name).sln /build $::VTK_BUILD_TYPE /project $::EXTEND(test-type)" res]
+      set ret [catch "runcmd $::MAKE $::ext(cmakeproject).sln /out buildlog.txt /build $::VTK_BUILD_TYPE /project $::EXTEND(test-type)" res]
     } else {
       set ret [catch "eval runcmd $::MAKE $::EXTEND(test-type)" res]
     }
@@ -507,7 +509,7 @@ proc buildExtension {s3ext} {
   # run the install target
   cd $::Slicer3_EXT/$::ext(name)-build
   if { $::isWindows } {
-    runcmd $::MAKE $::ext(name).sln /build $::VTK_BUILD_TYPE /project INSTALL
+    runcmd $::MAKE $::ext(cmakeproject).sln /out buildlog.txt /build $::VTK_BUILD_TYPE /project INSTALL
   } else {
     eval runcmd $::MAKE install
   }
