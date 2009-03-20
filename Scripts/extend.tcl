@@ -422,7 +422,15 @@ proc buildExtension {s3ext} {
       set ::ext(srcDir) $::Slicer3_EXT/$::ext(name)/$::ext(cvsmodule)
     }
     "svn" {
-      runcmd $::SVN co $::ext(svnpath) $::ext(name)
+      set svncmd "$::SVN co"
+      if { [info exists ::ext(svnusername)] } {
+        set svncmd "$svncmd --username $::ext(svnusername)"
+      }
+      if { [info exists ::ext(svnpassword)] } {
+        set svncmd "$svncmd --password $::ext(svnpassword)"
+      }
+      set svncmd "$svncmd $::ext(svnpath) $::ext(name)"
+      eval runcmd $svncmd
       set ::ext(srcDir) $::Slicer3_EXT/$::ext(name)/$::ext(name)
     }
     default {
@@ -538,11 +546,11 @@ foreach s3ext $::EXTEND(s3extFiles) {
   if { $ret } {
     puts "********************"
     puts "Failed to build $s3ext"
-    puts "error code is: $ret"
+    puts "error code is: $res"
     puts "error result is:\n$res"
-    lappend ::EXTEND(BUILT) $s3ext
-  } else {
     lappend ::EXTEND(FAILED) $s3ext
+  } else {
+    lappend ::EXTEND(BUILT) $s3ext
   }
 }
 
