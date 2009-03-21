@@ -1723,6 +1723,32 @@ ModuleFactory
   PyObject* PythonDictionary = PyModule_GetDict(PythonModule);
   
   std::vector<std::string> modulePaths;
+
+  // Setting the environment variables from Tk
+
+  std::string SetEnvString =    "from __main__ import tk\n"
+                                "import os;\n"
+                                "os.environ = dict([ ( s[:s.find('=')],s[s.find('=')+1:]) for s in tk.call('env').splitlines()]);\n";
+  PyObject* v;
+      
+  v = PyRun_String( SetEnvString.c_str(),
+                            Py_file_input,
+                            PythonDictionary,
+                            PythonDictionary );
+  if (v == NULL)
+    {
+    this->WarningMessage ( "Failed to load the environment to Python" );
+    PyErr_Print();
+    }
+  else
+    {
+    if (Py_FlushLine())
+      {
+      PyErr_Clear();
+      }
+    }
+
+
 #ifdef _WIN32
   std::string delim(";");
 #else
