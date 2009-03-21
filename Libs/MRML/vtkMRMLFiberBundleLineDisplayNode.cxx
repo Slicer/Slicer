@@ -114,7 +114,7 @@ void vtkMRMLFiberBundleLineDisplayNode::SetPolyData(vtkPolyData *glyphPolyData)
 //----------------------------------------------------------------------------
 vtkPolyData* vtkMRMLFiberBundleLineDisplayNode::GetPolyData()
 {
-  if (this->TensorToColor)
+  if (this->Visibility && this->TensorToColor)
     {
     this->UpdatePolyDataPipeline();
     this->TensorToColor->Update();
