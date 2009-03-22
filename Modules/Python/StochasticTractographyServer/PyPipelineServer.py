@@ -33,11 +33,6 @@ numpy_sizes = { numpy.int8:1, numpy.uint8:1, numpy.int16:2,  numpy.uint16:2,  nu
 numpy_nrrd_names = { 'int8':'char', 'uint8':'unsigned char', 'int16':'short',  'uint16':'ushort',  'int32':'int',  'uint32':'uint',  'float32':'float',  'float64':'double' }
 numpy_vtk_types = { 'int8':'2', 'uint8':'3', 'int16':'4',  'uint16':'5',  'int32':'6',  'uint32':'7',  'float32':'10',  'float64':'11' }
 
-#vtk_types = { 2:numpy.int8, 3:numpy.uint8, 4:numpy.int16,  5:numpy.uint16,  6:numpy.int32,  7:numpy.uint32,  10:numpy.float32 }
-#numpy_sizes = { numpy.int8:1, numpy.uint8:1, numpy.int16:2,  numpy.uint16:2,  numpy.int32:4,  numpy.uint32:4,  numpy.float32:4 }
-#numpy_nrrd_names = { 'int8':'char', 'uint8':'unsigned char', 'int16':'short',  'uint16':'ushort',  'int32':'int',  'uint32':'uint',  'float32':'float' }
-#numpy_vtk_types = { 'int8':'2', 'uint8':'3', 'int16':'4',  'uint16':'5',  'int32':'6',  'uint32':'7',  'float32':'10' }
-
 
 
 logging.basicConfig(level=logging.INFO, format="%(created)-15s %(msecs)d %(levelname)8s %(thread)d %(name)s %(message)s")
@@ -479,10 +474,10 @@ class PipelineHandler(asyncore.dispatcher):
                         #MP#else:
                         # if uncomment #MP# shift right by 3 space the line below
                         if isInWM or wmEnabled:
-                           paths = track.TrackFiberY40(data, wm, shpD, b.T, G.T, IJKstartpoints[0].T, r2i, i2r,\
+                           paths0, paths1, paths2, paths3, paths4 = track.TrackFiberY40(data.flatten(), wm, shpD, b.T, G.T, IJKstartpoints[0].T, r2i, i2r,\
                                   lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
                         else:
-                           paths = track.TrackFiberU40(data, shpD, b.T, G.T, IJKstartpoints[0].T, r2i, i2r,\
+                           paths0, paths1, paths2, paths3, paths4 = track.TrackFiberU40(data.flatten(), shpD, b.T, G.T, IJKstartpoints[0].T, r2i, i2r,\
                                   lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
 
 
@@ -491,11 +486,11 @@ class PipelineHandler(asyncore.dispatcher):
                         logger.info("Connect tract")
 
                         if probMode=='binary':
-                            cm = track.ConnectFibers0(paths, maxLength, shpD, lengthEnabled,  lengthClass)
+                            cm = track.ConnectFibersX0(paths1, paths4, shpD, lengthEnabled,  lengthClass)
                         elif probMode=='cumulative':
-                            cm = track.ConnectFibers1(paths, maxLength, shpD, lengthEnabled,  lengthClass)
+                            cm = track.ConnectFibersX1(paths1, paths4, shpD, lengthEnabled,  lengthClass)
                         else:
-                            cm = track.ConnectFibers2(paths, maxLength, shpD, lengthEnabled,  lengthClass)
+                            cm = track.ConnectFibersX2(paths1, paths4, shpD, lengthEnabled,  lengthClass)
 
                     if isInRoiB:
                         # ROI B
@@ -563,10 +558,10 @@ class PipelineHandler(asyncore.dispatcher):
 
                         #MP#else:
                         if isInWM or wmEnabled:
-                           paths2 = track.TrackFiberY40(data, wm, shpD, b.T, G.T, IJKstartpoints2[0].T, r2i, i2r,\
+                           paths0, paths1, paths2, paths3, paths4  = track.TrackFiberY40(data.flatten(), wm, shpD, b.T, G.T, IJKstartpoints2[0].T, r2i, i2r,\
                                   lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
                         else:
-                           paths2 = track.TrackFiberU40(data, shpD, b.T, G.T, IJKstartpoints2[0].T, r2i, i2r,\
+                           paths0, paths1, paths2, paths3, paths4  = track.TrackFiberU40(data.flatten(), shpD, b.T, G.T, IJKstartpoints2[0].T, r2i, i2r,\
                                   lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
 
 
@@ -575,11 +570,11 @@ class PipelineHandler(asyncore.dispatcher):
                         logger.info("Connect tract")
 
                         if probMode=='binary':
-                            cm2 = track.ConnectFibers0(paths2, maxLength, shpD, lengthEnabled,  lengthClass)
+                            cm2 = track.ConnectFibersX0(paths1, paths4, maxLength, shpD, lengthEnabled,  lengthClass)
                         elif probMode=='cumulative':
-                            cm2 = track.ConnectFibers1(paths2, maxLength, shpD, lengthEnabled,  lengthClass)
+                            cm2 = track.ConnectFibersX1(paths1, paths4, maxLength, shpD, lengthEnabled,  lengthClass)
                         else:
-                            cm2 = track.ConnectFibers2(paths2, maxLength, shpD, lengthEnabled,  lengthClass)
+                            cm2 = track.ConnectFibersX2(paths1, paths4, maxLength, shpD, lengthEnabled,  lengthClass)
 
 
           else:
