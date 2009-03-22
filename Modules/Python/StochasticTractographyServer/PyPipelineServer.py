@@ -444,7 +444,7 @@ class PipelineHandler(asyncore.dispatcher):
                         # try multiprocessing
                         logger.info("Data type : %s" % data.dtype)
                         #cData = Array(ctypes.c_uint, ctypeslib.as_ctypes(data.flatten()))
-                        cData = data.flatten() 
+                        #cData = data.flatten() 
                        
                         #MP#if not monoP:
                         #MP#   jobs = []
@@ -529,7 +529,7 @@ class PipelineHandler(asyncore.dispatcher):
                         # try multiprocessing
                         logger.info("Data type : %s" % data.dtype)
                         #cData = Array(ctypes.c_uint, ctypeslib.as_ctypes(data.flatten()))
-                        cData = data.flatten() 
+                        #cData = data.flatten() 
                        
                         #MP#if not monoP:
                         #MP#   jobs = []
