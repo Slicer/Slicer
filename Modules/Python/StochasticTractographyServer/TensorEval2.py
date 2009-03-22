@@ -1,7 +1,6 @@
 import logging
 import time
 import cmpV
-#from processing import Array, Queue
 from numpy import finfo, sqrt, exp, dot, log, cos, arccos, pi
 from numpy import reshape, vstack, hstack, ones, zeros, squeeze, transpose, newaxis, max, min, empty, array, diag
 from numpy import linalg
@@ -374,46 +373,4 @@ def EvaluateWM0(data, baseline=0, wmMin=0, wmMax=1000):
    wm = cmpV.test2InVolume(base, wmMin, wmMax)
 
    return  wm
-
-
-
-#def EvaluateTensorS1(dataD, G, b, coord):
-
-#   A = ones( (dataD.shape[3], 7), 'float' )
-
-#   for k in range(dataD.shape[3]):
-#     A[k, :] = [1, -b[0,k]*G[0,k]**2, -2*b[0,k]*G[0,k]*G[1,k], -2*b[0,k]*G[0,k]*G[2,k], -b[0, k]*G[1,k]**2, -2*b[0,k]*G[1,k]*G[2,k], -b[0,k]*G[2,k]**2]
- 
-
-   # Get measurements
-#   y = squeeze(dataD[coord[0], coord[1], coord[2], :])
-#   logy = log(y)
-#   logy = logy[:, newaxis]
-      
-   # Estimate tensor for this point by means of weighted least squares
-#   W = diag(y)
-#   W2 = W**2
-#   xTensor = dot(dot(dot(inv(dot(dot(A.T,W2),A)),A.T),W2),logy)               # xTensor = [ln(mu0) d11 d12 d13 d22 d23 d33]
-#   l,E = eig(vstack([hstack([xTensor[1], xTensor[2], xTensor[3]]),            
-#                 hstack([xTensor[2], xTensor[4], xTensor[5]]), 
-#                 hstack([xTensor[3], xTensor[5], xTensor[6]]) ]))         # E = eigenvectors  
-#   return  E, l
-
-#def EvaluateTensorS2(dataD, A, G, b, coord):
-#
-   # Get measurements
-#   y = squeeze(dataD[coord[0], coord[1], coord[2], :])
-#   logy = log(y)
-#   logy = logy[:, newaxis]
-      
-   # Estimate tensor for this point by means of weighted least squares
-#   W = diag(y)
-#   W2 = W**2
-#   xTensor = dot(dot(dot(inv(dot(dot(A.T,W2),A)),A.T),W2),logy)               # xTensor = [ln(mu0) d11 d12 d13 d22 d23 d33]
-#   l,E = eig(vstack([hstack([xTensor[1], xTensor[2], xTensor[3]]),            
-#           hstack([xTensor[2], xTensor[4], xTensor[5]]), 
-#           hstack([xTensor[3], xTensor[5], xTensor[6]]) ]))         # E = eigenvectors  
-  
-
-#   return  E, l
 

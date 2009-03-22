@@ -2,8 +2,6 @@ import time
 import logging
 import vectors as vects
 reload(vects) # test to load the data as a class
-#import ctypes
-#from processing import Array, Queue
 import numpy
 from numpy import ctypeslib
 from numpy import log, exp, sqrt, random, abs, finfo, linalg, pi
@@ -14,7 +12,6 @@ from numpy.random import rand
 from numpy.linalg import norm
 
 
-#logging.basicConfig(level=logging.INFO, format="%(created)-15s %(msecs)d %(levelname)8s %(thread)d %(name)s %(message)s")
 logger                  = logging.getLogger(__name__)
 
 
@@ -30,10 +27,7 @@ def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor,
 # data - structure with diffusion tensor data, gradients and b-values
 # IJKstartpoints - starting points for the tracking in IJK coordinates (i.e. Matlab coordinates)
 # seed - a seed point for the random number generator (needed mainly for parallel processing)
-  #logger                  = logging.getLogger(__name__)
-
   
-  #dataT = ctypeslib.as_array(data.getobj()) # data.flatten()
   dataT = data
 
 
@@ -41,9 +35,6 @@ def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor,
   seps = sqrt(eps)
 
 # Set random generator, this is important for the parallell execution
-#if nargin > 2: 
-    #rand('state',seed)
-
   seed()
 
   vts =  vects.vectors.T
@@ -73,8 +64,6 @@ def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor,
   # define RAS point form IJK index (I2R matrix)
   RASstartpoints = dot(I2R[:3, :3], IJKstartpoints) + I2R[:3,3][newaxis].T
 
-  #path = {'RASpoints': empty((3,Nsteps)), 'IJKpoints': empty((3,Nsteps), 'uint32'), 'logp': empty((1,Nsteps)), 'AnIso': empty((1,Nsteps)), 'length': 0}
-  #paths = []
   paths0 = numpy.zeros((0, 3, Nsteps), 'float32')
   paths1 = numpy.zeros((0, 3, Nsteps), 'float32')
   paths2 = numpy.zeros((0, 1, Nsteps), 'float32')
@@ -87,7 +76,6 @@ def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor,
 
   for k in range(Npaths):
    
-    #timeP = time.time()
 
     #if k > 0:
     #   if  IJKstartpoints[0,k]!= IJKstartpoints[0,k-1] or  IJKstartpoints[1,k]!= IJKstartpoints[1,k-1]  or IJKstartpoints[2,k]!= IJKstartpoints[2,k-1]: 
@@ -98,7 +86,6 @@ def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor,
     IJKpoint = IJKstartpoints[:,k]
     Prior = StartPrior
     
-    #paths.append([zeros((3,Nsteps)), zeros((3,Nsteps)), zeros((1,Nsteps)), zeros((1,Nsteps)) , zeros((1,1), 'uint16')  ] )
     paths0 = numpy.resize(paths0, (counter, 3, Nsteps))
     paths1 = numpy.resize(paths1, (counter, 3, Nsteps))
     paths2 = numpy.resize(paths2, (counter, 1, Nsteps))
@@ -216,18 +203,13 @@ def  TrackFiberY40(data, mask, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVT
 # data - structure with diffusion tensor data, gradients and b-values
 # IJKstartpoints - starting points for the tracking in IJK coordinates (i.e. Matlab coordinates)
 # seed - a seed point for the random number generator (needed mainly for parallel processing)
-  #logger                  = logging.getLogger(__name__)
-
   
-  #dataT = ctypeslib.as_array(data.getobj()) # data.flatten()
   dataT = data
 
   eps = finfo(float).eps 
   seps = sqrt(eps)
 
 # Set random generator, this is important for the parallell execution
-#if nargin > 2: 
-    #rand('state',seed)
   vts =  vects.vectors.T
   ndirs = vts.shape[1]
 
@@ -256,8 +238,6 @@ def  TrackFiberY40(data, mask, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVT
   # define RAS point form IJK index (I2R matrix)
   RASstartpoints = dot(I2R[:3, :3], IJKstartpoints) + I2R[:3,3][newaxis].T
 
-  #path = {'RASpoints': empty((3,Nsteps)), 'IJKpoints': empty((3,Nsteps), 'uint32'), 'logp': empty((1,Nsteps)), 'AnIso': empty((1,Nsteps)), 'length': 0}
-  #paths = []
   paths0 = numpy.zeros((0, 3, Nsteps), 'float32')
   paths1 = numpy.zeros((0, 3, Nsteps), 'float32')
   paths2 = numpy.zeros((0, 1, Nsteps), 'float32')
@@ -271,7 +251,6 @@ def  TrackFiberY40(data, mask, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVT
 
   for k in range(Npaths):
    
-    #timeP = time.time()
     #if k > 0:
     #   if IJKstartpoints[0,k]!= IJKstartpoints[0,k-1] or  IJKstartpoints[1,k]!= IJKstartpoints[1,k-1]  or IJKstartpoints[2,k]!= IJKstartpoints[2,k-1]:
     #       cache = {}
@@ -280,7 +259,6 @@ def  TrackFiberY40(data, mask, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVT
     IJKpoint = IJKstartpoints[:,k]
     Prior = StartPrior
     
-    #paths.append([zeros((3,Nsteps)), zeros((3,Nsteps)), zeros((1,Nsteps)), zeros((1,Nsteps)) , zeros((1,1), 'uint16')  ] )
     paths0 = numpy.resize(paths0, (counter, 3, Nsteps))
     paths1 = numpy.resize(paths1, (counter, 3, Nsteps))
     paths2 = numpy.resize(paths2, (counter, 1, Nsteps))

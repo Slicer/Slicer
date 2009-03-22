@@ -1,7 +1,6 @@
 import logging
 import time
 from numpy import floor, exp, arange, reshape, convolve, sum  
-#import scipy.signal as sciS
 
 logger                   = logging.getLogger(__name__)
 
@@ -27,13 +26,10 @@ def smooth(x,FWHM,dim):
     f = exp(-arange(-l,l+1)**2/(2*sigma**2))
     f = f/sum(f)
     
-    #f = f[:, np.newaxis]
-
     s = x.shape
     x = reshape(x,(s[0], s[1]*s[2]))
 
     # Perform 1D convolution
-    #x = sciS.convolve2d(f,x,'same')
     x = convolve(f, x.flatten(), 'same')
 
     # Reshape and shift dims

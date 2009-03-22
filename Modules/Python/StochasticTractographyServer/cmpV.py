@@ -107,47 +107,6 @@ def genArray(arrayD):
   for i in range( arrayD.shape[0]):
     yield it.next()
 
-#def intersectSets0(arrayD1, arrayD2):
-#  set1 = createSet(arrayD1)
-#  set2 = createSet(arrayD2)
-#  set3 = set1.intersection(set2)
-
-#  return set3
-
-#def intersectSets(arrayD1, arrayD2):
-
-#  res = list()
-#  l1  = list()
-#  l2  = list()
-
-#  num1 = arrayD1.shape[0]
-#  num2 = arrayD2.shape[0]
-
-#  if num1>num2:
-#   lt1 = arrayD2.tolist()
-#   lt2 = arrayD1.tolist()
-#  else:
-#   lt1 = arrayD1.tolist()
-#   lt2 = arrayD2.tolist()
-  
-  #print 'Test : ', lt2[120]
-#  i1 = i2 = 0
-#  while i1 < len(lt1):
-#    if i2 < len(lt2):
-#      if lt1[i1][0] == lt2[i2][0]:
-#        res.append(lt2[i2])
-#        lt2.pop(i2)
-      
-#    if len(lt2) == (i2-1):
-#      i2 = 0
-#      i1 += 1
-#    else:
-#      i2 += 1
-
-#  return res
-
-#def setOne(ard, item):
-#  ard[item[0]][item[1]][item[2]]=1 
 
 def setOne(ard, item):
   if ard.ndim == 3:
@@ -194,9 +153,6 @@ def findIndX(arrayD, minVal, maxVal, flag = False):
 
 def intersectIndX(ar1, ar2):
   return (ar1.flatten()*ar2.flatten()).reshape(ar1.shape)
- 
-#def testZeroes(ar):
-#  return transpose(ar.nonzero())
 
 #  (lambda  x: basD[x[0]]  [x[1]] [x[2]] ) ([0,0,0])
 
@@ -259,27 +215,3 @@ def getIndex(arrayD):
   for i in range(arrayD.shape[0]):
     yield arrayD[i]
 
-# transform an array into a set
-#def createSet(arrayD):
-#  sT = set()
-#  it = getIndex(arrayD)
-#  for i in range(arrayD.shape[0]):
-#    tp =  tuple(it.next())
-#    sT.add(tp)
-
-#  return sT
-
-#def binVolume(arrayD, minD, maxD):
-#  sh = arrayD.shape
-#  nD = arrayD.ndim
-#  
-#  #if nD!=3:
-#  #  return
-#
-#  if sh[1]!=3:
-#    return
-#
-#  tmp1 = arrayD[minD<arrayD[:,2]]
-#  tmp2 = tmp1[tmp1[:,2]<max]
-#
-#  return tmp2
