@@ -71,7 +71,7 @@ vtkSlicerGPURayCastVolumeTextureMapper3D::vtkSlicerGPURayCastVolumeTextureMapper
   this->RayCastSupported         =  0;
   this->RenderWindow         = NULL;
   this->RaySteps             = 100.0f;
-  this->Framerate            = 1.0f;
+  this->Framerate            = 5.0f;
   this->GlobalAlpha          = 1.0f;
 }
 
@@ -118,8 +118,14 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::ReleaseGraphicsResources(vtkWindo
 
 void vtkSlicerGPURayCastVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolume *vol)
 {  
+  if ( this->RenderMethod == vtkSlicerVolumeTextureMapper3D::NO_METHOD )
+    {
+    vtkErrorMacro( "required extensions not supported" );
+    return;
+    }
+    
   ren->GetRenderWindow()->MakeCurrent();
-  
+    
   if ( !this->Initialized )
     {
     this->Initialize();
@@ -130,11 +136,8 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolum
     this->InitializeRayCast();
     }
     
-  if ( this->RenderMethod == vtkSlicerVolumeTextureMapper3D::NO_METHOD )
-    {
-    vtkErrorMacro( "required extensions not supported" );
-    return;
-    }
+  // Start the timer now
+  this->Timer->StartTimer();
 
   glPushAttrib(GL_ENABLE_BIT | GL_POLYGON_BIT | GL_TEXTURE_BIT);
   
@@ -147,9 +150,6 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolum
 
   glFlush();
   glFinish();
-  
-  double progress=1.0;
-  this->InvokeEvent(vtkCommand::VolumeMapperRenderProgressEvent ,&progress);
       
   this->Timer->StopTimer();      
 
@@ -199,9 +199,9 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::AdaptivePerformanceControl()
   }
   else if (this->TimeToDraw <= 0.5/this->Framerate)
   {
-    this->RaySteps *= 1.25f;
+    this->RaySteps *= 1.45f;
   }
-  else if (this->TimeToDraw <= 0.75/this->Framerate)
+  else if (this->TimeToDraw <= 0.85/this->Framerate)
   {
     this->RaySteps += 25.0f;
   }
@@ -218,11 +218,11 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::AdaptivePerformanceControl()
   maxRaysteps = maxRaysteps > dim[2] ? maxRaysteps : dim[2];  
   maxRaysteps *= 2.5f; //make sure we have enough sampling rate to recover details
   
-  maxRaysteps = maxRaysteps < 1050.0f ? 1050.0f : maxRaysteps;//ensure high sampling rate on low resolution volumes
+  maxRaysteps = maxRaysteps < 512.0f ? 512.0f : maxRaysteps;//ensure high sampling rate on low resolution volumes
   
   // add clamp
   if (this->RaySteps > maxRaysteps) this->RaySteps = maxRaysteps;
-  if (this->RaySteps < 50.0f)       this->RaySteps = 50.0f;
+  if (this->RaySteps < 150.0f)       this->RaySteps = 150.0f;
 }
 
 //needs to be cleaned, 2008/10/20, Yanling Liu
@@ -493,9 +493,6 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::RenderOneIndependentGLSL( vtkRend
   
   this->SetupOneIndependentTextures( ren, vol );
   this->SetupRayCastParameters(ren, vol);
-
-  // Start the timer now
-  this->Timer->StartTimer();
   
 //  glFrontFace(GL_CW);
   glEnable(GL_CULL_FACE);
@@ -512,9 +509,6 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::RenderTwoDependentGLSL( vtkRender
   
   this->SetupTwoDependentTextures( ren, vol );
   this->SetupRayCastParameters(ren, vol);
-    
-  // Start the timer now
-  this->Timer->StartTimer();
   
 //  glFrontFace(GL_CW);
   glEnable(GL_CULL_FACE);
@@ -531,9 +525,6 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::RenderFourDependentGLSL( vtkRende
   
   this->SetupFourDependentTextures( ren, vol );
   this->SetupRayCastParameters(ren, vol);
-  
-  // Start the timer now
-  this->Timer->StartTimer();
   
 //  glFrontFace(GL_CW);
   glEnable(GL_CULL_FACE);
@@ -1196,9 +1187,9 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::InitializeRayCast()
     vtkgl::DeleteShader(this->RayCastFragmentShader);
     vtkgl::DeleteProgram(this->RayCastProgram);
     
-    RayCastVertexShader = vtkgl::CreateShader(vtkgl::VERTEX_SHADER);
-    RayCastFragmentShader = vtkgl::CreateShader(vtkgl::FRAGMENT_SHADER);
-    RayCastProgram = vtkgl::CreateProgram();
+    this->RayCastVertexShader = vtkgl::CreateShader(vtkgl::VERTEX_SHADER);
+    this->RayCastFragmentShader = vtkgl::CreateShader(vtkgl::FRAGMENT_SHADER);
+    this->RayCastProgram = vtkgl::CreateProgram();
     
     LoadVertexShader();
 
@@ -1206,6 +1197,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::InitializeRayCast()
         LoadFragmentShader();
     else
         LoadNoShadingFragmentShader();
+        
     LoadRayCastProgram();
     
     RayCastInitialized = 1;
@@ -1398,7 +1390,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShader()
         "    float alpha = 0.0;                                                                      \n"
         "    float t = 0.0;                                                                      \n"
         "                                                                                        \n"
-        "    if ( (ParaMatrix[3][0] > 0.0) && (ParaMatrix[2][2] < 0.5) )//MIP                    \n"
+        "    if ( ParaMatrix[3][0] > 0.0 )//MIP                                                 \n"
         "    {                                                                                       \n"
         "        float maxScalar = 0.0;                                                          \n"
         "        vec3 maxScalarCoord = nextRayOrigin;                                            \n"
@@ -1638,7 +1630,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShader()
         "    float alpha = 0.0;                                                                      \n"
         "    float t = 0.0;                                                                      \n"
         "                                                                                        \n"
-        "    if ( (ParaMatrix[3][0] > 0.0) && (ParaMatrix[2][2] < 0.5) )//MIP                    \n"
+        "    if ( ParaMatrix[3][0] > 0.0 )//MIP                                                    \n"
         "    {                                                                                       \n"
         "        float maxScalar = 0.0;                                                          \n"
         "        vec3 maxScalarCoord = nextRayOrigin;                                            \n"
@@ -1753,5 +1745,17 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::ShadingOn()
 {
     this->Shading = 1;
     this->ReloadShaderFlag = 1;
+}
+
+void vtkSlicerGPURayCastVolumeTextureMapper3D::LargeVolumeSizeOff()
+{
+    this->LargeVolumeSize = 0;
+    this->SavedTextureInput = NULL;
+}
+
+void vtkSlicerGPURayCastVolumeTextureMapper3D::LargeVolumeSizeOn()
+{
+    this->LargeVolumeSize = 1;
+    this->SavedTextureInput = NULL;
 }
 

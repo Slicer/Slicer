@@ -65,12 +65,11 @@ public:
   
   // Description:
   // Enable/Disable large volume size usage
-  vtkSetMacro(LargeVolumeSize, int);  
-  vtkGetMacro(LargeVolumeSize,int);
-  vtkBooleanMacro(LargeVolumeSize,int);
+  void LargeVolumeSizeOn();
+  void LargeVolumeSizeOff();
   
   // Description:
-  // Enable/Disable large volume size usage
+  // Enable/Disable automatic quality adjustment for expected FPS
   vtkSetMacro(AdaptiveFPS, int);  
   vtkGetMacro(AdaptiveFPS,int);
   vtkBooleanMacro(AdaptiveFPS,int);

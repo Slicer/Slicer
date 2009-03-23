@@ -107,19 +107,21 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::ReleaseGraphicsResources(vtkWindow
 
 void vtkSlicerOpenGLVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolume *vol)
 {  
+  if ( this->RenderMethod == vtkSlicerVolumeTextureMapper3D::NO_METHOD )
+    {
+    vtkErrorMacro( "required extensions not supported" );
+    return;
+    }
+    
   ren->GetRenderWindow()->MakeCurrent();
   
   if ( !this->Initialized )
     {
     this->Initialize();
     }
-  
-  if ( this->RenderMethod == vtkSlicerVolumeTextureMapper3D::NO_METHOD )
-    {
-    vtkErrorMacro( "required extensions not supported" );
-    return;
-    }
-
+    
+  // Start the timer now for more accurate overall rendering time (needed for performance control)
+  this->Timer->StartTimer();
     
   vtkMatrix4x4       *matrix = vtkMatrix4x4::New();
   vtkPlaneCollection *clipPlanes;
@@ -196,10 +198,8 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolume *v
   matrix->Delete();
   glPopAttrib();
 
-
-  //glFlush();
-  //glFinish();
-  
+  glFlush();
+  glFinish();
   
   this->Timer->StopTimer();      
 
@@ -211,6 +211,67 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolume *v
     {
     this->TimeToDraw = 0.0001;
     }   
+
+  if (this->AdaptiveFPS)//adjust ray steps based on requrestd frame rate
+    this->AdaptivePerformanceControl();
+  else//use fixed ray steps
+    this->PerformanceControl();
+}
+
+void vtkSlicerOpenGLVolumeTextureMapper3D::PerformanceControl()
+{
+  float spacing[3];
+  this->GetVolumeSpacing(spacing);
+
+  float minSampleDistance = spacing[0];
+  minSampleDistance = minSampleDistance < spacing[1] ? minSampleDistance : spacing[1];  
+  minSampleDistance = minSampleDistance < spacing[2] ? minSampleDistance : spacing[2];  
+  minSampleDistance /= 32; //each slice blending maximumlly 32 polygons
+  
+  this->SampleDistance = minSampleDistance;
+}
+
+void vtkSlicerOpenGLVolumeTextureMapper3D::AdaptivePerformanceControl()
+{
+  //do automatic performance control
+  if(this->Framerate <= 0.0f)
+    this->Framerate = 1.0f;
+
+  if (this->TimeToDraw <= 0.25/this->Framerate)//descrease sample distance for better quality when possible
+  {
+    this->SampleDistance *= 0.1f;
+  }
+  else if (this->TimeToDraw <= 0.5/this->Framerate)
+  {
+    this->SampleDistance *= 0.5f;
+  }
+  else if (this->TimeToDraw <= 0.75/this->Framerate)
+  {
+    this->SampleDistance *= 0.95f;
+  }
+  else if (this->TimeToDraw > 1.25/this->Framerate)//reduce ray steps to ensure performance
+  {
+    this->SampleDistance *= 2.0f;
+  }
+  
+  float spacing[3];
+  this->GetVolumeSpacing(spacing);
+
+  float minSampleDistance = spacing[0];
+  minSampleDistance = minSampleDistance < spacing[1] ? minSampleDistance : spacing[1];  
+  minSampleDistance = minSampleDistance < spacing[2] ? minSampleDistance : spacing[2];  
+  minSampleDistance /= 32; //each slice blending maximumlly 32 polygons
+  
+  float maxSampleDistance = spacing[0];
+  maxSampleDistance = maxSampleDistance > spacing[1] ? maxSampleDistance : spacing[1];  
+  maxSampleDistance = maxSampleDistance > spacing[2] ? maxSampleDistance : spacing[2];  
+  maxSampleDistance *= 2;                          
+
+//  printf("%f %f %f\n", this->Framerate, this->TimeToDraw, 1.0/this->TimeToDraw);
+  // add clamp
+  if (this->SampleDistance < minSampleDistance) this->SampleDistance = minSampleDistance;
+  if (this->SampleDistance > maxSampleDistance) this->SampleDistance = maxSampleDistance;
+ 
 }
 
 void vtkSlicerOpenGLVolumeTextureMapper3D::RenderFP( vtkRenderer *ren, vtkVolume *vol )
@@ -499,7 +560,7 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::RenderPolygons( vtkRenderer *ren,
     // Compute the set of polygons for this region 
     // according to the bounds
     this->ComputePolygons( ren, vol, bounds[loop] );
-
+//    printf("polygon %d, fps %f, dist %f\n", this->NumberOfPolygons, this->Framerate, this->SampleDistance);
     // Loop over the polygons
     for ( i = 0; i < this->NumberOfPolygons; i++ )
       {
@@ -537,8 +598,7 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::RenderPolygons( vtkRenderer *ren,
         ptr += 6;
         }
       glEnd();
-      double progress=i/(double)this->NumberOfPolygons;
-      this->InvokeEvent(vtkCommand::VolumeMapperRenderProgressEvent ,&progress);
+     
       }
     }
 }
@@ -946,9 +1006,6 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::RenderOneIndependentNoShadeNV(
   vtkVolume *vol )
 {
   this->SetupOneIndependentTextures( ren, vol );
-
-  // Start the timer now
-  this->Timer->StartTimer();
   
   this->SetupRegisterCombinersNoShadeNV( ren, vol, 1 );
   
@@ -962,9 +1019,6 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::RenderOneIndependentShadeNV(
   vtkVolume *vol )
 {
   this->SetupOneIndependentTextures( ren, vol );
-  
-  // Start the timer now
-  this->Timer->StartTimer();
   
   this->SetupRegisterCombinersShadeNV( ren, vol, 1 );
   
@@ -1094,9 +1148,6 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::RenderTwoDependentNoShadeNV(
 {
   this->SetupTwoDependentTextures(ren, vol);
   
-  // Start the timer now
-  this->Timer->StartTimer();
-  
   this->SetupRegisterCombinersNoShadeNV( ren, vol, 2 );
   
   int stages[4] = {1,0,0,0};
@@ -1108,9 +1159,6 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::RenderTwoDependentShadeNV(
   vtkVolume *vol )
 {
   this->SetupTwoDependentTextures( ren, vol );
-  
-  // Start the timer now
-  this->Timer->StartTimer();
   
   this->SetupRegisterCombinersShadeNV( ren, vol, 2 );
   
@@ -1236,9 +1284,6 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::RenderFourDependentNoShadeNV(
 {
   this->SetupFourDependentTextures(ren, vol);
   
-  // Start the timer now
-  this->Timer->StartTimer();
-  
   this->SetupRegisterCombinersNoShadeNV( ren, vol, 4 );
   
   int stages[4] = {1,1,0,0};
@@ -1250,9 +1295,6 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::RenderFourDependentShadeNV(
   vtkVolume *vol )
 {
   this->SetupFourDependentTextures( ren, vol );
-  
-  // Start the timer now
-  this->Timer->StartTimer();
   
   this->SetupRegisterCombinersShadeNV( ren, vol, 4 );
   
@@ -1278,9 +1320,6 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::RenderOneIndependentNoShadeFP(
           vtkVolumeTextureMapper3D_OneComponentNoShadeFP );
 
   this->SetupOneIndependentTextures( ren, vol );
-
-  // Start the timer now
-  this->Timer->StartTimer();
   
   int stages[4] = {1,0,0,0};
   this->RenderPolygons( ren, vol, stages );  
@@ -1309,9 +1348,6 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::RenderOneIndependentShadeFP(
            
   this->SetupOneIndependentTextures( ren, vol );
   this->SetupProgramLocalsForShadingFP( ren, vol );
-
-  // Start the timer now
-  this->Timer->StartTimer();
   
   int stages[4] = {1,1,1,0};
   this->RenderPolygons( ren, vol, stages );  
@@ -1338,9 +1374,6 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::RenderTwoDependentNoShadeFP(
           vtkVolumeTextureMapper3D_TwoDependentNoShadeFP );
 
   this->SetupTwoDependentTextures(ren, vol);
-
-  // Start the timer now
-  this->Timer->StartTimer();
   
   int stages[4] = {1,0,0,0};
   this->RenderPolygons( ren, vol, stages );  
@@ -1369,9 +1402,6 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::RenderTwoDependentShadeFP(
 
   this->SetupTwoDependentTextures(ren, vol);
   this->SetupProgramLocalsForShadingFP( ren, vol );
-
-  // Start the timer now
-  this->Timer->StartTimer();
   
   int stages[4] = {1,0,1,0};
   this->RenderPolygons( ren, vol, stages );  
@@ -1398,9 +1428,6 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::RenderFourDependentNoShadeFP(
           vtkVolumeTextureMapper3D_FourDependentNoShadeFP );
 
   this->SetupFourDependentTextures(ren, vol);
-
-  // Start the timer now
-  this->Timer->StartTimer();
   
   int stages[4] = {1,1,0,0};
   this->RenderPolygons( ren, vol, stages );  
@@ -1428,9 +1455,6 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::RenderFourDependentShadeFP(
 
   this->SetupFourDependentTextures(ren, vol);
   this->SetupProgramLocalsForShadingFP( ren, vol );
-
-  // Start the timer now
-  this->Timer->StartTimer();
   
   int stages[4] = {1,1,1,0};
   this->RenderPolygons( ren, vol, stages );  

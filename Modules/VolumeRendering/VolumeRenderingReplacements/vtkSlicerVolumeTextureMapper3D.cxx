@@ -670,6 +670,9 @@ vtkSlicerVolumeTextureMapper3D::vtkSlicerVolumeTextureMapper3D()
   
   this->RenderMethod                  = vtkSlicerVolumeTextureMapper3D::NO_METHOD;
   this->PreferredRenderMethod         = vtkSlicerVolumeTextureMapper3D::FRAGMENT_PROGRAM_METHOD;
+  
+  this->Framerate                    = 5.0f;
+  this->AdaptiveFPS                  = 1;
 }
 
 vtkSlicerVolumeTextureMapper3D::~vtkSlicerVolumeTextureMapper3D()
@@ -1198,12 +1201,16 @@ int vtkSlicerVolumeTextureMapper3D::UpdateColorLookup( vtkVolume *vol )
     {
     needToUpdate = 1;
     }
- 
+  
   // What sample distance are we going to use for rendering? If we
   // have to render quickly according to our allocated render time,
   // don't necessary obey the sample distance requested by the user.
   // Instead set the sample distance to the average spacing.
   this->ActualSampleDistance = this->SampleDistance;
+  
+  //2009 03 20 Yanling
+  // framerate control moved to sub-class to match user expected rendering speed
+  /*
   if ( vol->GetAllocatedRenderTime() < 1.0 )
     {
     float spacing[3];
@@ -1211,7 +1218,8 @@ int vtkSlicerVolumeTextureMapper3D::UpdateColorLookup( vtkVolume *vol )
     this->ActualSampleDistance = 
       0.333 * ((double)spacing[0] + (double)spacing[1] + (double)spacing[2]);
     }
-
+  */
+  
   // How many components?
   int components = input->GetNumberOfScalarComponents();
 

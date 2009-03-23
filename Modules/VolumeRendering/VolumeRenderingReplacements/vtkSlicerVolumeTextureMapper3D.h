@@ -92,6 +92,17 @@ public:
   vtkGetMacro( SampleDistance, float );
 
   // Description:
+  // Desired frame rate
+  vtkSetMacro(Framerate, float);
+  vtkGetMacro(Framerate, float);
+  
+  // Description:
+  // Enable/Disable automatic quality adjustment for expected FPS
+  vtkSetMacro(AdaptiveFPS, int);  
+  vtkGetMacro(AdaptiveFPS,int);
+  vtkBooleanMacro(AdaptiveFPS,int);
+  
+  // Description:
   // These are the dimensions of the 3D texture
   vtkGetVectorMacro( VolumeDimensions, int,   3 );
   
@@ -153,6 +164,8 @@ protected:
   vtkSlicerVolumeTextureMapper3D();
   ~vtkSlicerVolumeTextureMapper3D();
 
+    float            Framerate;
+    int              AdaptiveFPS;
   float                    *PolygonBuffer;
   float                    *IntersectionBuffer;
   int                       NumberOfPolygons;

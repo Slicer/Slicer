@@ -58,7 +58,7 @@ public:
   virtual void Render(vtkRenderer *ren, vtkVolume *vol);
 
 //ETX
-
+  
   // Desciption:
   // Initialize when we go to render, or go to answer the
   // IsRenderSupported question. Don't call unless we have
@@ -85,7 +85,7 @@ protected:
                            GLfloat halfwayVector[2][4],
                            GLfloat *ambient );  
 //ETX
-    
+   
   int              Initialized;
   GLuint           Volume1Index;
   GLuint           Volume2Index;
@@ -142,6 +142,9 @@ protected:
   // Description:
   // Common code for setting up interpolation / clamping on 3D textures
   void Setup3DTextureParameters( vtkVolumeProperty *property );
+  
+  void AdaptivePerformanceControl();
+  void PerformanceControl();
 
 private:
   vtkSlicerOpenGLVolumeTextureMapper3D(const vtkSlicerOpenGLVolumeTextureMapper3D&);  // Not implemented.
