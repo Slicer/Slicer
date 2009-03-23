@@ -570,10 +570,12 @@ foreach built $::EXTEND(BUILT) {
   puts "  $built"
 }
 
-puts "FAILED:"
-foreach failed $::EXTEND(FAILED) {
-  puts "  $failed"
+if { [llength $::EXTEND(FAILED)] != 0 } {
+  puts "FAILED:"
+  foreach failed $::EXTEND(FAILED) {
+    puts "  $failed"
+  }
 }
 
-puts "[expr 100 * (1.*[llength $::EXTEND(BUILT)] / [llength $::EXTEND(s3extFiles)])]% succeeded" 
+puts "\n[format %3.1f [expr 100 * (1.*[llength $::EXTEND(BUILT)] / [llength $::EXTEND(s3extFiles)])]]% succeeded" 
 
