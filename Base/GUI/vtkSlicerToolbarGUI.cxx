@@ -26,6 +26,7 @@
 #include "vtkKWMenu.h"
 #include "vtkKWEntry.h"
 #include "vtkKWLabel.h"
+#include "vtkKWMessageDialog.h"
 
 //#define LIGHTBOXGUI_DEBUG
 
@@ -505,7 +506,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             }
           else
             {
-            vtkDebugMacro ("ERROR:  no slicer module gui found for Volumes\n"); 
+            vtkErrorMacro ("ERROR:  no slicer module gui found for Home module '" << (homename ? homename : "null") << "'"); 
             }
           }
         else if (pushb == this->DataIconButton && event == vtkKWPushButton::InvokedEvent )
@@ -530,6 +531,14 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           else
             {
             vtkDebugMacro ("ERROR:  no slicer module gui found for Volumes\n");
+            vtkKWMessageDialog *message = vtkKWMessageDialog::New();
+            message->SetParent ( this->VolumeIconButton->GetParent() );
+            message->SetStyleToMessage();
+            std::string msg = "The Volumes module is not loaded, please check View, Application Settings, Module Settings";
+            message->SetText(msg.c_str());
+            message->Create();
+            message->Invoke();
+            message->Delete();
             }
           }
         else if (pushb == this->ModelIconButton && event == vtkKWPushButton::InvokedEvent )
