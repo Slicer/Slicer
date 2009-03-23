@@ -52,12 +52,9 @@ void vtkSlicerVRHelper::UpdateRendering()
 {
 }
 
-
-
 void vtkSlicerVRHelper::VolumeRenderingCallback( vtkObject *caller, unsigned long eid, void *clientData, void *callData )
 {
     vtkSlicerVRHelper *self = reinterpret_cast<vtkSlicerVRHelper *>(clientData);
-
 
     if (self->GetInVolumeRenderingCallbackFlag()==1)
     {
@@ -73,15 +70,16 @@ void vtkSlicerVRHelper::VolumeRenderingCallback( vtkObject *caller, unsigned lon
     self->SetInVolumeRenderingCallbackFlag(1);
     self->ProcessVolumeRenderingEvents(caller, eid, callData);
     self->SetInVolumeRenderingCallbackFlag(0);
-
 }
 
 void vtkSlicerVRHelper::UpdateGUIElements(void)
 {
 }
+
 void vtkSlicerVRHelper::ProcessVolumeRenderingEvents(vtkObject *caller, unsigned long eid, void *callData)
 {
 }
+
 void vtkSlicerVRHelper::Init(vtkVolumeRenderingGUI *gui)
 {
     this->Gui=gui;
@@ -91,7 +89,7 @@ void vtkSlicerVRHelper::Init(vtkVolumeRenderingGUI *gui)
 
 void vtkSlicerVRHelper::CalculateMatrix(vtkMatrix4x4 *output)
 {
-        //Update matrix
+    //Update matrix
     //Check for NUll Pointer
     if(this->Gui!=NULL&&this->Gui->GetNS_ImageData()!=NULL&&this->Gui->GetNS_ImageData()->GetSelected()!=NULL)
     {
@@ -104,21 +102,18 @@ void vtkSlicerVRHelper::CalculateMatrix(vtkMatrix4x4 *output)
         }
 
         //IJK to ras
-         vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
-         vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetIJKToRASMatrix(matrix);
+        vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
+        vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetIJKToRASMatrix(matrix);
          
-         // Parent transforms
-         vtkMatrix4x4   *transform=vtkMatrix4x4::New();        
-         tmp->GetMatrixTransformToWorld(transform);
+        // Parent transforms
+        vtkMatrix4x4   *transform=vtkMatrix4x4::New();        
+        tmp->GetMatrixTransformToWorld(transform);
 
- 
-         //Transform world to ras
-         vtkMatrix4x4::Multiply4x4(transform,matrix,output);
+        //Transform world to ras
+        vtkMatrix4x4::Multiply4x4(transform,matrix,output);
 
-
-         matrix->Delete();
-         transform->Delete();
-
+        matrix->Delete();
+        transform->Delete();
     }
     else
     {
@@ -130,15 +125,17 @@ void vtkSlicerVRHelper::DisplayProgressDialog(const char* message)
 {
     if(this->GradientDialog!=NULL)
     {
-                    //this->GradientDialog->SetMessageText(message);
+        //this->GradientDialog->SetMessageText(message);
         return;
     }
-                this->GradientDialog = vtkKWProgressDialog::New();
-            this->GradientDialog->SetParent (  this->Gui->GetApplicationGUI()->GetMainSlicerWindow());
-            this->GradientDialog->SetDisplayPositionToMasterWindowCenter();
-            this->GradientDialog->Create ( );
-            this->GradientDialog->SetMessageText(message);
-            this->GradientDialog->Display();
+    
+    this->GradientDialog = vtkKWProgressDialog::New();
+    this->GradientDialog->SetParent (  this->Gui->GetApplicationGUI()->GetMainSlicerWindow());
+    this->GradientDialog->SetDisplayPositionToMasterWindowCenter();
+    this->GradientDialog->Create ( );
+    this->GradientDialog->SetMessageText(message);
+    this->GradientDialog->SetMinimumSize(200, 50);
+    this->GradientDialog->Display();
 }
 
 void vtkSlicerVRHelper::WithdrawProgressDialog()
@@ -147,8 +144,10 @@ void vtkSlicerVRHelper::WithdrawProgressDialog()
     {
         return;
     }
-        this->GradientDialog->Withdraw();
-        this->GradientDialog->SetParent(NULL);
-        this->GradientDialog->Delete();
-        this->GradientDialog=NULL;
+    
+    this->GradientDialog->Withdraw();
+    this->GradientDialog->SetParent(NULL);
+    this->GradientDialog->Delete();
+    this->GradientDialog=NULL;
 }
+
