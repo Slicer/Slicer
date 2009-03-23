@@ -153,7 +153,7 @@ void vtkMRMLFiberBundleTubeDisplayNode::SetPolyData(vtkPolyData *glyphPolyData)
 //----------------------------------------------------------------------------
 vtkPolyData* vtkMRMLFiberBundleTubeDisplayNode::GetPolyData()
 {
-  if ( this->Visibility && this->TubeFilter && this->TubeFilter->GetInput() && this->TensorToColor)
+  if ( this->TubeFilter && this->TubeFilter->GetInput() && this->TensorToColor)
     {
     this->UpdatePolyDataPipeline();
     this->TubeFilter->Update();

@@ -443,6 +443,8 @@ void vtkSlicerFiberBundleDisplayWidget::UpdateMRML()
 
   if (dnode )
     {
+    dnode->DisableModifiedEventOn();
+    
     dnode->SetClipping(this->ClippingButton->GetWidget()->GetSelectedState());
     dnode->SetOpacity(this->OpacityScale->GetWidget()->GetValue());
     dnode->SetColor(this->ChangeColorButton->GetColor());
@@ -456,6 +458,8 @@ void vtkSlicerFiberBundleDisplayWidget::UpdateMRML()
       {
        dnode->SetColorModeToSolid();
       }
+    dnode->DisableModifiedEventOff();
+    dnode->InvokePendingModifiedEvent();
     }
       
   this->UpdatingMRML = 0;

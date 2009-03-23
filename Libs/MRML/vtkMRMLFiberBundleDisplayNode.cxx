@@ -77,6 +77,7 @@ void vtkMRMLFiberBundleDisplayNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleDisplayNode::ReadXMLAttributes(const char** atts)
 {
+  this->DisableModifiedEventOn();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -91,7 +92,9 @@ void vtkMRMLFiberBundleDisplayNode::ReadXMLAttributes(const char** atts)
       {
       std::stringstream ss;
       ss << attValue;
-      ss >> ColorMode;
+      int colorMode;
+      ss >> colorMode;
+      this->SetColorMode(colorMode);
       }
 
     else if (!strcmp(attName, "DiffusionTensorDisplayPropertiesNodeRef")) 
@@ -100,6 +103,10 @@ void vtkMRMLFiberBundleDisplayNode::ReadXMLAttributes(const char** atts)
       //this->Scene->AddReferencedNodeID(this->FiberLineDiffusionTensorDisplayPropertiesNodeID, this);
       }
     }  
+
+  this->DisableModifiedEventOff();
+  this->InvokePendingModifiedEvent();
+
 }
 
 
@@ -108,10 +115,11 @@ void vtkMRMLFiberBundleDisplayNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLFiberBundleDisplayNode::Copy(vtkMRMLNode *anode)
 {
-  Superclass::Copy(anode);
-  vtkMRMLFiberBundleDisplayNode *node = (vtkMRMLFiberBundleDisplayNode *) anode;
+ vtkMRMLFiberBundleDisplayNode *node = (vtkMRMLFiberBundleDisplayNode *) anode;
+ this->SetColorMode(node->ColorMode); // do this first, since it affects how events are processed in glyphs
 
-  this->SetColorMode(node->ColorMode);
+  Superclass::Copy(anode);
+
   this->SetDiffusionTensorDisplayPropertiesNodeID(node->DiffusionTensorDisplayPropertiesNodeID);
 }
 

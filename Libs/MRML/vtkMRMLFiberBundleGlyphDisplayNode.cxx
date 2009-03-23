@@ -141,7 +141,7 @@ void vtkMRMLFiberBundleGlyphDisplayNode::SetPolyData(vtkPolyData *glyphPolyData)
 //----------------------------------------------------------------------------
 vtkPolyData* vtkMRMLFiberBundleGlyphDisplayNode::GetPolyData()
 {
-  if (this->Visibility && this->DiffusionTensorGlyphFilter)
+  if (this->DiffusionTensorGlyphFilter)
     {
     this->UpdatePolyDataPipeline();
     //this->DiffusionTensorGlyphFilter->Update();
@@ -263,7 +263,7 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
     }
   else
     {
-    this->ScalarVisibilityOff( );
+    //this->ScalarVisibilityOff( );
     }
    
  if ( this->GetScalarVisibility() && this->DiffusionTensorGlyphFilter->GetInput() != NULL )
