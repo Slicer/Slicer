@@ -21,6 +21,7 @@ class vtkSlicerFixedPointVolumeRayCastMapper;
 class vtkSlicerGPURayCastVolumeTextureMapper3D;
 class vtkKWMenuButtonWithSpinButtonsWithLabel;
 class vtkKWScaleWithLabel;
+class vtkKWScale;
 class vtkKWCheckButtonWithLabel;
 class vtkKWFrameWithLabel;
 class vtkKWNotebook;
@@ -35,6 +36,9 @@ class vtkTransform;
 class vtkSlicerVisibilityIcons;
 class vtkKWPushButtonWithLabel;
 class vtkSlicerVRMenuButtonColorMode;
+class vtkKWComboBoxWithLabel;
+class vtkKWComboBox;
+class vtkKWEntry;
 
 
 class VTK_SLICERVOLUMERENDERING_EXPORT vtkSlicerVRGrayscaleHelper :public vtkSlicerVRHelper
@@ -87,11 +91,17 @@ public:
     void ProcessThresholdReset(void);
 
     //--------------------------------------------------------------------------
-    // Mapper
+    // Performance/Quality
     //--------------------------------------------------------------------------
+    
+    // Description:
+    // Callback, that is processed when the rendering method (mapper) is changed
+    void ProcessRenderingMethodEvents(int id);
 
-
-
+    // Description:
+    // process when user change the expected FPS
+    void ProcessExpectedFPS(void);
+    
     //--------------------------------------------------------------------------
     // Cropping
     //--------------------------------------------------------------------------
@@ -116,8 +126,6 @@ public:
     // Workaround to get knowledge about resize of the renderwidget. TODO: Should get into KWWidgets.
     void ProcessConfigureCallback(void);
 
-
-
     //--------------------------------------------------------------------------
     // Advanced
     //--------------------------------------------------------------------------
@@ -126,6 +134,7 @@ public:
     //--------------------------------------------------------------------------
     // Rendering Logic
     //--------------------------------------------------------------------------
+
     // Description:
     // Create a new volume rendering node using default values
     virtual void InitializePipelineNewCurrentNode(void);
@@ -139,46 +148,9 @@ public:
     virtual void UpdateRendering(void);
 
     // Description:
-    // Schedule a rendering (called from "after ms")
-    void ScheduleRender(void);
-
-    // Description:
-    // Schedule a rendering of the lowest stage
-    void ScheduleStageZero(void);
-
-    // Description:
-    // Set/Get the quality of the rendering to the specific stage
-    void SetQuality(int qual)
-    {
-        this->Quality=qual;
-    }
-    vtkGetMacro(Quality,int);
-
-    // Description:
-    // Called everytime a mouse button is pressed
-    void SetButtonDown(int _arg)
-    {
-        vtkSlicerVRHelperDebug("setbutton %d",_arg);
-        this->ButtonDown=(_arg);
-    }
-    // Description:
-    // Set /Get methods for sample distance. Meant to influence the sample distance during runtime, in case artefacts occur.
-    vtkSetMacro(SampleDistanceHighRes, double);
-    vtkGetMacro(SampleDistanceHighRes, double);
-
-    vtkSetMacro(SampleDistanceHighResImage, double);
-    vtkGetMacro(SampleDistanceHighResImage, double);
-
-    vtkSetMacro(SampleDistanceLowRes, double);
-    vtkGetMacro(SampleDistanceLowRes, double);
-
-    vtkSetMacro(SampleDistanceFactor, double);
-    vtkGetMacro(SampleDistanceFactor, double);
-
-    // Description:
-    // Calculate and set sample distances (SampleDistanceHighRes,SampleDistanceHighResImage,SampleDistanceLowRes).
+    // Estimate sample distances for polygon blending and cpu ray casting
     // The current image spacing is the basis for the calculation
-    void CalculateAndSetSampleDistances();
+    void EstimateSampleDistances();
 
 
     // Description:
@@ -254,67 +226,59 @@ protected:
     void DestroyTreshold(void);
 
     //--------------------------------------------------------------------------
-    // Mapper
+    // Performance/Quality
     //--------------------------------------------------------------------------
 
     // Description:
-    // Frame to configure the mapping options
-    vtkKWFrameWithLabel *MappersFrame;
-
-    // Description:
-    // Enable/Disable low quality texture rendering
-    vtkKWCheckButtonWithLabel *CB_TextureLow;
-
-    // Description:
-    // Enable/Disable high quality texture rendering
-    vtkKWCheckButtonWithLabel *CB_TextureHigh;
-
-    // Description:
-    // Enable/Disable Ray Cast Mapping
-    vtkKWCheckButtonWithLabel *CB_RayCast;
+    // internal saving of the rendering method (mapper)
+    int RenderingMethod;
     
-    // added for GPGPU raycast
     // Description:
-    // Enable/Disable GPU Ray Cast Mapping
-    vtkKWCheckButtonWithLabel *CB_GPURayCast;
-
-    // added for GPGPU raycast
+    // Frame to configure the mapping options
+    // we save pointers here for dynamically collapse/expend these frames
+    vtkKWFrameWithLabel *FramePerformance;
+    vtkKWFrameWithLabel *FrameGPURayCasting;
+    vtkKWFrameWithLabel *FramePolygonBlending;
+    vtkKWFrameWithLabel *FrameCPURayCasting;
+    vtkKWFrameWithLabel *FrameFPS;
+    
+    // Description:
+    // Menu button to select which mapper to use
+    vtkKWMenuButtonWithLabel *MB_Mapper;
+    
     // Description:
     // Enable/Disable MIP GPU Ray Cast Mapping
     vtkKWCheckButtonWithLabel *CB_GPURayCastMIP;
 
-    // added for GPGPU raycast
     // Description:
     // Enable/Disable shading in GPU Ray Cast Mapping
     // some graphics card may have problem to access more than one 3D texture 
     // in shader program so it would be safe to turn off shading by default
     vtkKWCheckButtonWithLabel *CB_GPURayCastShading;
     
-    // added for GPGPU raycast
     // Description:
     // Enable/Disable large volume size usage
     vtkKWCheckButtonWithLabel *CB_GPURayCastLargeVolume;
     
-    // added for GPGPU raycast
     // Description:
     // Enable/Disable adaptive framerate control
-    vtkKWCheckButtonWithLabel *CB_GPURayCastAdaptiveFPS;
+    vtkKWCheckButtonWithLabel *CB_GPURayCastForceHighQuality;
     
     // Description:
-    // Add interactive frame rates to ray cast mapping
-    vtkKWCheckButtonWithLabel *CB_InteractiveFrameRate;
+    // Enable/Disable adaptive framerate control
+    vtkKWCheckButtonWithLabel *CB_TextureMapperForceHighQuality;
+    
+    // Description:
+    // Enable/Disable adaptive framerate control
+    vtkKWCheckButtonWithLabel *CB_CPURayCastForceHighQuality;
 
+    // Description:
+    // Enable/Disable CPU ray cast MIP rendering
+    vtkKWCheckButtonWithLabel *CB_CPURayCastMIP;
+    
     // Description:
     // Adjust the frame for interactive rendering methods
-    vtkKWScaleWithLabel *SC_Framerate;
-    
-    // Description:
-    // Update the quality from stage mask
-    void UpdateQuality(void);
-
-    // Description:
-    // Update the quality check boxes ( e.g. ensure that one cb is always enabled etc.)
-    void UpdateQualityCheckBoxes(void);
+    vtkKWScale *SC_ExpectedFPS;
 
     // Description:
     // Create the performance page
@@ -343,6 +307,7 @@ protected:
     // Description:
     // The interactive clipping box widget
     vtkSlicerBoxWidget2 *BW_Clipping_Widget;
+    
     // Description:
     // The geometrical representation of the interactive clipping box widget
     vtkSlicerBoxRepresentation *BW_Clipping_Representation;
@@ -395,10 +360,6 @@ protected:
     // Calculate and set the boundaries of the volume in box coordinates
     void CalculateBoxCoordinatesBoundaries(void);
 
-
-
-
-
     //--------------------------------------------------------------------------
     // Advanced
     //--------------------------------------------------------------------------
@@ -424,27 +385,10 @@ protected:
     //--------------------------------------------------------------------------
 
     // Description:
-    // Mask which rendering algorithms to use
-    int ScheduleMask[3];
-
-    // Description:
-    // Main renderer of the renderwidget. Used to reduce the viewport size
-    vtkRenderer *RenViewport;
-
-    // Description:
-    // Renderer used to render the plane
-    vtkRenderer *RenPlane;
-
-    // Description:
-    // Flag to signalize if the next rendering is to render the plane
-    int RenderPlane;
-
-    // Description:
     // The hardware accelerated texture mapper.
     vtkSlicerVolumeTextureMapper3D *MapperTexture;    
     
-    // added for GPGPU raycast
-        // Description:
+    // Description:
     // The hardware accelerated gpu ray cast mapper.
     vtkSlicerGPURayCastVolumeTextureMapper3D *MapperGPURaycast;
 
@@ -453,96 +397,30 @@ protected:
     vtkSlicerFixedPointVolumeRayCastMapper *MapperRaycast;
 
     // Description:
-    //Initial Factor for Interactive Rendering
-    double InitialDropLowRes;
-
-    // Description:
-    //Factor during last low Resolution Rendering
-    double FactorLastLowRes;
-
-    // Description:
-    //Time for the last Low Resolution Rendering
-    double LastTimeLowRes;
-
-    // Description:
-    // Timer to measure the duration of the low resolution rendering
-    vtkTimerLog *Timer;
-
-    // Description:
-    // Which time would we like to achieve
-    double GoalLowResTime;
-
-    // Description:
-    // Area in which no change in Factor will be made.
-    double PercentageNoChange;
-
-    // Description:
-    //H ow long to wait, before Rendering in High Resolution
-    double TimeToWaitForHigherStage;
-
-    // Description:
-    // 0 interactive, 1 High Resolution Texture VR, 2 SW Ray Cast
-    int CurrentStage;
-
-    // Description:
-    // Similiar to current stage, but describing the lowest stage
-    int Quality;
-
-    // Description:
-    // 1 mouse button is down at the moment
-    int ButtonDown;
-
-    // Description:
-    // Indicates if the next rendering comes from a scheduled rendering
-    int Scheduled;
-
-    //BTX
-
-    // Description:
-    // Event id of the next scheduled rendering (not necessary lowest quality)
-    std::string EventHandlerID;
-
-    // Description:
-    // Event id of the lowest quality scheduled rendering
-    std::string StageZeroEventHandlerID;
-    //ETX
-
-    //Description:
-    //Indicates if the VolumeRendering is Paused or not
+    // Indicates if the VolumeRendering is Paused or not
     int RenderingPaused;
+    
     // Description:
-    // Sample distance for high resolution rendering
-    double SampleDistanceHighRes;
+    // estimated sample distance for polygon blending and cpu ray casting
+    double EstimatedSampleDistance;
+    double EstimatedInteractiveSampleDistance;
 
+    
     // Description:
-    // Image sample distance for high resolution rendering
-    double SampleDistanceHighResImage;
-
+    // if updating GUI
+    int UpdateingGUI;
+    
     // Description:
-    // Sample distance for low resolution rendering
-    double SampleDistanceLowRes;
-
+    // if texture mapper supported
+    int IsTextureMappingSupported;
+    
     // Description:
-    // Sample distance factor to determine the step size based on the 
-    // spacing of the input volume.  The minimum size of the volume is divided by this
-    // factor to calculate the sample distance.  See:
-    // void vtkSlicerVRGrayscaleHelper::CalculateAndSetSampleDistances
-    double SampleDistanceFactor;
-
+    // if GPU ray casting supported
+    int IsGPURayCastingSupported;
+    
     // Description:
-    // Reset the rendering algorithm back to normal
-    void ResetRenderingAlgorithm(void);
-
-
-    // Description:
-    // Check if we have to abort the rendering because of interaction
+    // check abort event
     void CheckAbort(void);
-
-
-
-   int UpdateingGUI;
-
-
 
 private:
     // Description:
@@ -552,3 +430,4 @@ private:
 
 };
 #endif
+
