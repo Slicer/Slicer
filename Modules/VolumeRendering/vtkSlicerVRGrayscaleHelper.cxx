@@ -82,6 +82,7 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->MB_Mapper= NULL;
     this->SVP_VolumeProperty=NULL;
     
+    this->FrameFPS = NULL;
     this->FrameGPURayCasting = NULL;
     this->FramePolygonBlending = NULL;
     this->FrameCPURayCasting = NULL;
@@ -97,8 +98,8 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     //ThresholdGUI
     this->MB_ThresholdMode=NULL;
     this->VRMB_ColorMode=NULL;
-    this->RA_RampRectangleHorizontal=NULL;
-    this->RA_RampRectangleVertical=NULL;
+    this->RA_RampRectangleScalar=NULL;
+    this->RA_RampRectangleOpacity=NULL;
     this->ThresholdMode=0;
     this->PB_Reset=NULL;
     this->PB_ThresholdZoomIn=NULL;
@@ -1126,17 +1127,31 @@ void vtkSlicerVRGrayscaleHelper::CreateThreshold()
     this->VRMB_ColorMode->AddObserver(vtkSlicerVRMenuButtonColorMode::ColorModeChangedEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
     this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->VRMB_ColorMode->GetWidgetName());
 
+    this->RA_RampRectangleOpacity=vtkKWRange::New();
+    this->RA_RampRectangleOpacity->SetParent(thresholdFrame->GetFrame());
+    this->RA_RampRectangleOpacity->Create();
+    ss.str("");
+    ss<<"Set the lower and upper opacity levels for the ramp and the rectangle. ";
+    ss<<"Lower values make the volume more translucent.";
+    this->RA_RampRectangleOpacity->SetBalloonHelpString(ss.str().c_str());
+    this->RA_RampRectangleOpacity->SetLabelText("Opacity");
+    this->RA_RampRectangleOpacity->SetWholeRange(0,1);
+    this->RA_RampRectangleOpacity->SetRange(0,1);
+    this->RA_RampRectangleOpacity->EnabledOff();
+    this->RA_RampRectangleOpacity->SetCommand(this, "ProcessThresholdRange");
+    this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->RA_RampRectangleOpacity->GetWidgetName());
+    
     vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
-    this->RA_RampRectangleHorizontal=vtkKWRange::New();
-    this->RA_RampRectangleHorizontal->SetParent(thresholdFrame->GetFrame());
-    this->RA_RampRectangleHorizontal->Create();
-    this->RA_RampRectangleHorizontal->SetBalloonHelpString("Apply thresholds to the gray values of volume.");
-    this->RA_RampRectangleHorizontal->SetLabelText("Threshold");
-    this->RA_RampRectangleHorizontal->SetWholeRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
-    this->RA_RampRectangleHorizontal->SetRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
-    this->RA_RampRectangleHorizontal->SetCommand(this, "ProcessThresholdRange");
-    this->RA_RampRectangleHorizontal->EnabledOff();
-    this->Script("pack %s -side left -anchor nw -expand no -fill x -padx 2 -pady 2", this->RA_RampRectangleHorizontal->GetWidgetName());
+    this->RA_RampRectangleScalar=vtkKWRange::New();
+    this->RA_RampRectangleScalar->SetParent(thresholdFrame->GetFrame());
+    this->RA_RampRectangleScalar->Create();
+    this->RA_RampRectangleScalar->SetBalloonHelpString("Apply thresholds to the gray values of volume.");
+    this->RA_RampRectangleScalar->SetLabelText("Threshold");
+    this->RA_RampRectangleScalar->SetWholeRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
+    this->RA_RampRectangleScalar->SetRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
+    this->RA_RampRectangleScalar->SetCommand(this, "ProcessThresholdRange");
+    this->RA_RampRectangleScalar->EnabledOff();
+    this->Script("pack %s -side left -anchor nw -expand n -fill x -padx 2 -pady 2", this->RA_RampRectangleScalar->GetWidgetName());
 
     this->PB_ThresholdZoomIn=vtkKWPushButton::New();
     this->PB_ThresholdZoomIn->SetParent(thresholdFrame->GetFrame());
@@ -1158,22 +1173,7 @@ void vtkSlicerVRGrayscaleHelper::CreateThreshold()
     this->PB_Reset->SetText("Reset");
     this->PB_Reset->EnabledOff();
     this->PB_Reset->SetCommand(this,"ProcessThresholdReset");
-    this->Script("pack %s -side top -anchor nw -fill x -expand n -padx 2 -pady 2", this->PB_Reset->GetWidgetName());
-
-    this->RA_RampRectangleVertical=vtkKWRange::New();
-    this->RA_RampRectangleVertical->SetParent(thresholdFrame->GetFrame());
-    this->RA_RampRectangleVertical->Create();
-    ss.str("");
-    ss<<"Set the lower and upper opacity levels for the ramp and the rectangle. ";
-    ss<<"Lower values make the volume more translucent.";
-    this->RA_RampRectangleVertical->SetBalloonHelpString(ss.str().c_str());
-    this->RA_RampRectangleVertical->SetLabelText("Opacity");
-    this->RA_RampRectangleVertical->SetOrientationToVertical();
-    this->RA_RampRectangleVertical->SetWholeRange(1,0);
-    this->RA_RampRectangleVertical->SetRange(1,0);
-    this->RA_RampRectangleVertical->EnabledOff();
-    this->RA_RampRectangleVertical->SetCommand(this, "ProcessThresholdRange");
-    this->Script("pack %s -side left -anchor w -expand n -padx 2 -pady 2", this->RA_RampRectangleVertical->GetWidgetName());
+    this->Script("pack %s -side top -anchor nw -expand n -fill x -padx 2 -pady 2", this->PB_Reset->GetWidgetName());
 
     thresholdFrame->Delete();
 }
@@ -1223,10 +1223,10 @@ void vtkSlicerVRGrayscaleHelper::ProcessThresholdModeEvents(int id)
     {
         this->VRMB_ColorMode->EnabledOff();
 
-        this->RA_RampRectangleHorizontal->SetRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
-        this->RA_RampRectangleHorizontal->EnabledOff();
-        this->RA_RampRectangleVertical->SetRange(1,0);
-        this->RA_RampRectangleVertical->EnabledOff();
+        this->RA_RampRectangleScalar->SetRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
+        this->RA_RampRectangleScalar->EnabledOff();
+        this->RA_RampRectangleOpacity->SetRange(0,1);
+        this->RA_RampRectangleOpacity->EnabledOff();
         this->PB_Reset->EnabledOff();
         this->PB_ThresholdZoomIn->EnabledOff();
         return;
@@ -1234,8 +1234,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessThresholdModeEvents(int id)
     
     //Before we continue enabled everything
     this->VRMB_ColorMode->EnabledOn();
-    this->RA_RampRectangleHorizontal->EnabledOn();
-    this->RA_RampRectangleVertical->EnabledOn();
+    this->RA_RampRectangleScalar->EnabledOn();
+    this->RA_RampRectangleOpacity->EnabledOn();
     this->PB_Reset->EnabledOn();
     this->PB_ThresholdZoomIn->EnabledOn();
     this->ProcessThresholdRange(.0,.0);
@@ -1253,26 +1253,26 @@ void vtkSlicerVRGrayscaleHelper::ProcessThresholdRange(double notUsed,double not
     opacity->RemoveAllPoints();
     //opacity->AdjustRange(iData->GetScalarRange());
 
-    opacity->AddPoint(iData->GetScalarRange()[0],this->RA_RampRectangleVertical->GetRange()[1]);
-    opacity->AddPoint(iData->GetScalarRange()[1],this->RA_RampRectangleVertical->GetRange()[1]);
+    opacity->AddPoint(iData->GetScalarRange()[0],this->RA_RampRectangleOpacity->GetRange()[0]);
+    opacity->AddPoint(iData->GetScalarRange()[1],this->RA_RampRectangleOpacity->GetRange()[0]);
     if(this->ThresholdMode==1)
     {
-        opacity->AddPoint(iData->GetScalarRange()[0],this->RA_RampRectangleVertical->GetRange()[1]);
-        opacity->AddPoint(iData->GetScalarRange()[1],this->RA_RampRectangleVertical->GetRange()[0]);
-        opacity->AddPoint(this->RA_RampRectangleHorizontal->GetRange()[0],this->RA_RampRectangleVertical->GetRange()[1]);
-        opacity->AddPoint(this->RA_RampRectangleHorizontal->GetRange()[1],this->RA_RampRectangleVertical->GetRange()[0]);
+        opacity->AddPoint(iData->GetScalarRange()[0],this->RA_RampRectangleOpacity->GetRange()[0]);
+        opacity->AddPoint(iData->GetScalarRange()[1],this->RA_RampRectangleOpacity->GetRange()[1]);
+        opacity->AddPoint(this->RA_RampRectangleScalar->GetRange()[0],this->RA_RampRectangleOpacity->GetRange()[0]);
+        opacity->AddPoint(this->RA_RampRectangleScalar->GetRange()[1],this->RA_RampRectangleOpacity->GetRange()[1]);
 
     }
     else if(this->ThresholdMode==2)
     {
 
-        opacity->AddPoint(iData->GetScalarRange()[0],this->RA_RampRectangleVertical->GetRange()[1]);
-        opacity->AddPoint(iData->GetScalarRange()[1],this->RA_RampRectangleVertical->GetRange()[1]);
+        opacity->AddPoint(iData->GetScalarRange()[0],this->RA_RampRectangleOpacity->GetRange()[0]);
+        opacity->AddPoint(iData->GetScalarRange()[1],this->RA_RampRectangleOpacity->GetRange()[0]);
 
-        opacity->AddPoint(this->RA_RampRectangleHorizontal->GetRange()[0],this->RA_RampRectangleVertical->GetRange()[1]);
-        opacity->AddPoint(this->RA_RampRectangleHorizontal->GetRange()[0]+0.1,this->RA_RampRectangleVertical->GetRange()[0]);
-        opacity->AddPoint(this->RA_RampRectangleHorizontal->GetRange()[1]-0.1,this->RA_RampRectangleVertical->GetRange()[0]);
-        opacity->AddPoint(this->RA_RampRectangleHorizontal->GetRange()[1],this->RA_RampRectangleVertical->GetRange()[1]);
+        opacity->AddPoint(this->RA_RampRectangleScalar->GetRange()[0],this->RA_RampRectangleOpacity->GetRange()[0]);
+        opacity->AddPoint(this->RA_RampRectangleScalar->GetRange()[0]+0.1,this->RA_RampRectangleOpacity->GetRange()[1]);
+        opacity->AddPoint(this->RA_RampRectangleScalar->GetRange()[1]-0.1,this->RA_RampRectangleOpacity->GetRange()[1]);
+        opacity->AddPoint(this->RA_RampRectangleScalar->GetRange()[1],this->RA_RampRectangleOpacity->GetRange()[0]);
 
     }
     this->SVP_VolumeProperty->Update();
@@ -1281,8 +1281,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessThresholdRange(double notUsed,double not
 void vtkSlicerVRGrayscaleHelper::ProcessThresholdZoomIn(void)
 {
     vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
-    double leftBorder=this->RA_RampRectangleHorizontal->GetRange()[0];
-    double rightBorder=this->RA_RampRectangleHorizontal->GetRange()[1];
+    double leftBorder=this->RA_RampRectangleScalar->GetRange()[0];
+    double rightBorder=this->RA_RampRectangleScalar->GetRange()[1];
     double expansion=.1*(rightBorder-leftBorder);
     double leftBorderWholeRange=leftBorder-expansion;
     double rightBorderWholeRange=rightBorder+expansion;
@@ -1295,7 +1295,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessThresholdZoomIn(void)
     {
         rightBorderWholeRange=iData->GetScalarRange()[1];
     }
-    this->RA_RampRectangleHorizontal->SetWholeRange(leftBorderWholeRange,rightBorderWholeRange);
+    this->RA_RampRectangleScalar->SetWholeRange(leftBorderWholeRange,rightBorderWholeRange);
     this->SVP_VolumeProperty->GetScalarColorFunctionEditor()->SetVisibleParameterRange(leftBorderWholeRange,rightBorderWholeRange);
     this->SVP_VolumeProperty->GetScalarOpacityFunctionEditor()->SetVisibleParameterRange(leftBorderWholeRange,rightBorderWholeRange);
 }
@@ -1304,7 +1304,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessThresholdReset(void)
 {
     vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
 
-    this->RA_RampRectangleHorizontal->SetWholeRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
+    this->RA_RampRectangleScalar->SetWholeRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
     this->SVP_VolumeProperty->GetScalarColorFunctionEditor()->SetVisibleParameterRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
     this->SVP_VolumeProperty->GetScalarOpacityFunctionEditor()->SetVisibleParameterRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
 }
@@ -1519,17 +1519,17 @@ void vtkSlicerVRGrayscaleHelper::DestroyTreshold(void)
         this->VRMB_ColorMode->Delete();
         this->VRMB_ColorMode=NULL;
     }
-    if(this->RA_RampRectangleHorizontal)
+    if(this->RA_RampRectangleScalar)
     {
-        this->RA_RampRectangleHorizontal->SetParent(NULL);
-        this->RA_RampRectangleHorizontal->Delete();
-        this->RA_RampRectangleHorizontal=NULL;
+        this->RA_RampRectangleScalar->SetParent(NULL);
+        this->RA_RampRectangleScalar->Delete();
+        this->RA_RampRectangleScalar=NULL;
     }
-    if(this->RA_RampRectangleVertical)
+    if(this->RA_RampRectangleOpacity)
     {
-        this->RA_RampRectangleVertical->SetParent(NULL);
-        this->RA_RampRectangleVertical->Delete();
-        this->RA_RampRectangleVertical=NULL;
+        this->RA_RampRectangleOpacity->SetParent(NULL);
+        this->RA_RampRectangleOpacity->Delete();
+        this->RA_RampRectangleOpacity=NULL;
     }
     if(this->PB_Reset)
     {
@@ -1576,6 +1576,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("Software Ray Casting");
         this->MB_Mapper->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessRenderingMethodEvents 2");
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 8 -pady 8", this->MB_Mapper->GetWidgetName() );
+
     }
     
     //Framerate
@@ -1653,6 +1654,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->CB_GPURayCastLargeVolume->GetWidget()->SetSelectedState(0);
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_GPURayCastLargeVolume->GetWidgetName() );
         this->CB_GPURayCastLargeVolume->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->VolumeRenderingCallbackCommand);
+
     }
     
     //opengl 2D polygon blending
@@ -1674,6 +1676,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->CB_TextureMapperForceHighQuality->GetWidget()->SetSelectedState(0);
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_TextureMapperForceHighQuality->GetWidgetName() );
         this->CB_TextureMapperForceHighQuality->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->VolumeRenderingCallbackCommand);
+        
     }
     
     //software ray casting
@@ -1704,6 +1707,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->CB_CPURayCastForceHighQuality->SetLabelWidth(labelWidth);
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_CPURayCastForceHighQuality->GetWidgetName() );
         this->CB_CPURayCastForceHighQuality->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->VolumeRenderingCallbackCommand);
+
     }
    
 }
@@ -1741,13 +1745,37 @@ void vtkSlicerVRGrayscaleHelper::DestroyPerformance(void)
         this->CB_GPURayCastMIP->Delete();
         this->CB_GPURayCastMIP=NULL;
     }
-   
+    
+    if(this->CB_GPURayCastForceHighQuality!=NULL)
+    {
+        this->CB_GPURayCastForceHighQuality->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
+        this->CB_GPURayCastForceHighQuality->SetParent(NULL);
+        this->CB_GPURayCastForceHighQuality->Delete();
+        this->CB_GPURayCastForceHighQuality=NULL;
+    }
+    
+    if(this->CB_TextureMapperForceHighQuality!=NULL)
+    {
+        this->CB_TextureMapperForceHighQuality->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
+        this->CB_TextureMapperForceHighQuality->SetParent(NULL);
+        this->CB_TextureMapperForceHighQuality->Delete();
+        this->CB_TextureMapperForceHighQuality=NULL;
+    }
+    
     if(this->SC_ExpectedFPS!=NULL)
     {
         this->SC_ExpectedFPS->RemoveObservers(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
         this->SC_ExpectedFPS->SetParent(NULL);
         this->SC_ExpectedFPS->Delete();
         this->SC_ExpectedFPS=NULL;
+    }
+    
+    if(this->CB_CPURayCastMIP!=NULL)
+    {
+        this->CB_CPURayCastMIP->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
+        this->CB_CPURayCastMIP->SetParent(NULL);
+        this->CB_CPURayCastMIP->Delete();
+        this->CB_CPURayCastMIP=NULL;
     }
     
     if(this->CB_CPURayCastForceHighQuality!=NULL)
@@ -1763,6 +1791,41 @@ void vtkSlicerVRGrayscaleHelper::DestroyPerformance(void)
         this->MB_Mapper->SetParent(NULL);
         this->MB_Mapper->Delete();
         this->MB_Mapper=NULL;
+    }
+    
+    if (this->FramePerformance != NULL)
+    {
+        this->FramePerformance->SetParent(NULL);
+        this->FramePerformance->Delete();
+        this->FramePerformance = NULL;
+    }
+    
+    if (this->FrameGPURayCasting != NULL)
+    {
+        this->FrameGPURayCasting->SetParent(NULL);
+        this->FrameGPURayCasting->Delete();
+        this->FrameGPURayCasting = NULL;
+    }
+    
+    if (this->FramePolygonBlending != NULL)
+    {
+        this->FramePolygonBlending->SetParent(NULL);
+        this->FramePolygonBlending->Delete();
+        this->FramePolygonBlending = NULL;
+    }
+    
+    if (this->FrameCPURayCasting != NULL)
+    {
+        this->FrameCPURayCasting->SetParent(NULL);
+        this->FrameCPURayCasting->Delete();
+        this->FrameCPURayCasting = NULL;
+    }
+    
+    if (this->FrameFPS != NULL)
+    {
+        this->FrameFPS->SetParent(NULL);
+        this->FrameFPS->Delete();
+        this->FrameFPS = NULL;
     }
 }
 

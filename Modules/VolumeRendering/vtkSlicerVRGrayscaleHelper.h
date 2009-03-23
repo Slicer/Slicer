@@ -199,11 +199,11 @@ protected:
 
     // Description:
     // Threshold for gray value
-    vtkKWRange *RA_RampRectangleHorizontal;
+    vtkKWRange *RA_RampRectangleScalar;
 
     // Description:
     // Threshold settings for opacity
-    vtkKWRange *RA_RampRectangleVertical;
+    vtkKWRange *RA_RampRectangleOpacity;
 
     // Description:
     // Zoom into the threshold sliders
