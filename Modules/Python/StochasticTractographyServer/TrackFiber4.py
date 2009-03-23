@@ -46,12 +46,15 @@ def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor,
 
 # Distance between sample points in mm
   spa = array([ I2R[0, 0], I2R[1, 1], I2R[2, 2] ], 'float')
-
+  logger.info("spacing : %s:%s:%s" % (spa[0], spa[1], spa[2]))
 
 #TODO! compute one norm 
-  dr = abs(spa[0]/norm(spa))  
-  da = abs(spa[1]/norm(spa)) 
-  ds = abs(spa[2]/norm(spa)) 
+  #dr = abs(spa[0])  
+  #da = abs(spa[1]) 
+  #ds = abs(spa[2]) 
+  dr = spa[0]  
+  da = spa[1] 
+  ds = spa[2]
 
 # Uniform prior distribution of the direction of the first step
   StartPrior = ones((1, ndirs), 'float')
@@ -158,10 +161,15 @@ def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor,
       if not useSpacing:
         dr = da = ds = 1
 
+      #useStochastic = False
+      #if useStochastic:
       RASpoint[0] =  RASpoint[0] + dr*dl*v[0] 
       RASpoint[1] =  RASpoint[1] + da*dl*v[1]    
       RASpoint[2] =  RASpoint[2] + ds*dl*v[2]     
-
+      #else:
+      #  RASpoint[0] =  RASpoint[0] + dr*dl*e[0] 
+      #  RASpoint[1] =  RASpoint[1] + da*dl*e[1]    
+      #  RASpoint[2] =  RASpoint[2] + ds*dl*e[2]        
    
       # find IJK index from RAS point
       IJKpoint = (dot(R2I[:3, :3], RASpoint[newaxis].T) + R2I[:3,3][newaxis].T).T
@@ -219,12 +227,15 @@ def  TrackFiberY40(data, mask, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVT
 
 # Distance between sample points in mm
   spa = array([ I2R[0, 0], I2R[1, 1], I2R[2, 2] ], 'float')
-
+  logger.info("spacing : %s:%s:%s" % (spa[0], spa[1], spa[2]))
 
 #TODO! compute one norm 
-  dr = abs(spa[0]/norm(spa))  
-  da = abs(spa[1]/norm(spa)) 
-  ds = abs(spa[2]/norm(spa)) 
+  #dr = abs(spa[0])  
+  #da = abs(spa[1]) 
+  #ds = abs(spa[2]) 
+  dr = spa[0]  
+  da = spa[1] 
+  ds = spa[2]
 
 # Uniform prior distribution of the direction of the first step
   StartPrior = ones((1, ndirs), 'float')
@@ -335,9 +346,15 @@ def  TrackFiberY40(data, mask, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVT
       if not useSpacing:
         dr = da = ds = 1
 
+      #useStochastic = False
+      #if useStochastic:
       RASpoint[0] =  RASpoint[0] + dr*dl*v[0] 
       RASpoint[1] =  RASpoint[1] + da*dl*v[1]    
       RASpoint[2] =  RASpoint[2] + ds*dl*v[2]     
+      #else:
+      #  RASpoint[0] =  RASpoint[0] + dr*dl*e[0] 
+      #  RASpoint[1] =  RASpoint[1] + da*dl*e[1]    
+      #  RASpoint[2] =  RASpoint[2] + ds*dl*e[2]     
 
    
       # find IJK index from RAS point

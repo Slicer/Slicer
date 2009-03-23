@@ -4,10 +4,6 @@ import logging
 import asyncore
 import string
 import socket
-#import ctypes
-#MP#import processing
-#MP#from processing import Process, Queue
-#MP#from processing.sharedctypes import Array, synchronized
 import numpy
 from numpy import ctypeslib
 from numpy import rec
@@ -40,6 +36,46 @@ logging.basicConfig(level=logging.INFO, format="%(created)-15s %(msecs)d %(level
 logger                  = logging.getLogger(__name__)
 BACKLOG                 = 5
 SIZE                    = 4096
+
+
+def createParams(data, path, isTensor = False):
+
+  shapeD = data.shape
+  typeD = data.dtype
+
+  if data.ndim == 4 and not isTensor:
+            tmpI = 'DWI'
+            params = numpy.zeros((5), 'uint16')
+            params[0] = shapeD[0]
+            params[1] = shapeD[1]
+            params[2] = shapeD[2]
+            params[3] = shapeD[3]
+            params[4] = numpy_vtk_types[ str(typeD) ] 
+  elif data.ndim == 4 and isTensor:
+            tmpI = 'DTI'
+            params = numpy.zeros((6), 'uint16')
+            params[0] = shapeD[0]
+            params[1] = shapeD[1]
+            params[2] = shapeD[2]
+            params[3] = shapeD[3]
+            params[4] = shapeD[0]*shapeD[1]*shapeD[2]
+            params[5] = numpy_vtk_types[ str(typeD) ] 
+  elif data.ndim == 3:
+            tmpI = 'SCAL'
+            params = numpy.zeros((4), 'uint16')
+            params[0] = shapeD[0]
+            params[1] = shapeD[1]
+            params[2] = shapeD[2]
+            params[3] = numpy_vtk_types[ str(typeD) ] 
+  else:
+            tmpI = 'NODEF'
+            params = numpy.zeros((data.ndim+1), 'uint16')
+            for i in range(data.ndim+1):
+              params[i] = shapeD[i]
+            params[data.ndim] = numpy_vtk_types[ str(typeD) ] 
+
+  params.tofile(path + '.in')
+
 
 
 class PipelineHandler(asyncore.dispatcher):
@@ -96,6 +132,11 @@ class PipelineHandler(asyncore.dispatcher):
 
           orgS = self.nimage.get('origin')
           org = [float(orgS[0]), float(orgS[1]), float(orgS[2])]
+          logger.info("origin : %s:%s:%s" % (org[0], org[1], org[2]))
+
+          spaS = self.nimage.get('spacing')
+          spa = [float(spaS[0]), float(spaS[1]), float(spaS[2])]
+          logger.info("spacing : %s:%s:%s" % (spa[0], spa[1], spa[2]))
 
           G = self.nimage.get('grads')
           b = self.nimage.get('bval')
@@ -150,38 +191,6 @@ class PipelineHandler(asyncore.dispatcher):
                          logger.info("WM : %s:%s:%s" % (wmR.shape[0], wmR.shape[1], wmR.shape[2]))
 
           isInTensor = False
-          if self.params.hasKey('tensor'):
-                  if dscene.has_key(self.params.get('tensor')[0]):
-                        if not dscene.has_key(self.params.get('roiB')[0]) and not dscene.has_key(self.params.get('wm')[0]):
-                              if self.params.get('tensor')[0] != self.params.get('roiA')[0]:
-                                 self.ten = s.get(int(dscene[self.params.get('tensor')[0]]))
-                                 tenR = numpy.fromstring(self.ten.getImage(), 'float32')
-                                 tenR = tenR.reshape(shpD[2], shpD[1], shpD[0], 7) # is a tensor
-                                 tenR = tenR.swapaxes(2,0)
-                                 self.ten.setImage(tenR)
-                                 isInTensor= True
-                                 logger.info("TEN : %s:%s:%s:%s" % (tenR.shape[0], tenR.shape[1], tenR.shape[2], 7))
-                        elif dscene.has_key(self.params.get('roiB')[0]) and not dscene.has_key(self.params.get('wm')[0]):
-                              if self.params.get('tensor')[0] != self.params.get('roiB')[0] and \
-                                             self.params.get('tensor')[0] != self.params.get('roiA')[0]:
-                                 self.ten = s.get(int(dscene[self.params.get('tensor')[0]]))
-                                 tenR = numpy.fromstring(self.ten.getImage(), 'float32')
-                                 tenR = tenR.reshape(shpD[2], shpD[1], shpD[0], 7) # is a tensor
-                                 tenR = tenR.swapaxes(2,0)
-                                 self.ten.setImage(tenR)
-                                 isInTensor= True
-                                 logger.info("TEN : %s:%s:%s:%s" % (tenR.shape[0], tenR.shape[1], tenR.shape[2], 7))
-                        else:
-                              if self.params.get('tensor')[0] != self.params.get('roiB')[0] and \
-                                             self.params.get('tensor')[0] != self.params.get('roiA')[0] and \
-                                             self.params.get('tensor')[0] != self.params.get('wm')[0]:
-                                 self.ten = s.get(int(dscene[self.params.get('tensor')[0]]))
-                                 tenR = numpy.fromstring(self.ten.getImage(), 'float32')
-                                 tenR = tenR.reshape(shpD[2], shpD[1], shpD[0], 7) # is a tensor
-                                 tenR = tenR.swapaxes(2,0)
-                                 self.ten.setImage(tenR)
-                                 isInTensor= True
-                                 logger.info("TEN : %s:%s:%s:%s" % (tenR.shape[0], tenR.shape[1], tenR.shape[2], 7))
 
 
           logger.info("Input volumes loaded!")
@@ -326,69 +335,10 @@ class PipelineHandler(asyncore.dispatcher):
                     timeS1 = time.time()
 
                     if isInWM or wmEnabled:
-                             #MP#monoP = False  
+                         EV, lV, xVTensor, xYTensor = tens.EvaluateTensorX1(data, G.T, b.T, wm)
 
-                             #MP#nCpu = processing.cpuCount()
-                             #MP#logger.info("Number of CPUs on that machine : %s" % str(nCpu))
-
-                             # multiprocessing support
-                             #MP#dataBlocks = []
-                             #MP#wmBlocks = []
-
-                             #MP#nParts = 1
-                             #MP#if shpD[2]>1:
-                             #MP#  if shpD[2] >= nCpu:
-                             #MP#     nParts = nCpu
-                             #MP#  else:
-                             #MP#     nParts = shpD[2]
-
-                             #MP#  for i in range(nParts): 
-                             #MP#     datax = data[:, :, i*shpD[2]/nParts:(i+1)*shpD[2]/nParts, :]
-                             #MP#     wmx = wm[:, :, i*shpD[2]/nParts:(i+1)*shpD[2]/nParts]
-                             #MP#     logger.info("data block %i dimension : %s:%s:%s:%s" % (i, str(datax.shape[0]), str(datax.shape[1]), str(datax.shape[2]), str(datax.shape[3])))
-                             #MP#     dataBlocks.append(datax)
-                             #MP#     wmBlocks.append(wmx)
-                             #MP#else:
-                             #MP#   monoP = True
-
-                            
-                             #MP#if not monoP:
-                             #MP#   jobs = []
-                             #MP#   queues = []
-
-                             #MP#   for i in range(nParts):
-                             #MP#      queues.append(Queue())
-                             #MP#      jobs.append(Process(target = tens.EvaluateTensorZ1,\
-                             #MP#           args=(dataBlocks[i], queues[i], G.T, b.T, wmBlocks[i])))
-
-
-                             #MP#   for i  in range(nParts):
-                             #MP#      jobs[i].start()
-
-                             #MP#   tBlocks = []
-                             #MP#   for i in range(nParts):
-                             #MP#      tBlocks.append(queues[i].get())
-
-                             #MP#   for i in range(nParts):
-                             #MP#      jobs[i].join()
-
-                             #MP#   lV  = numpy.zeros((shpD[0], shpD[1], shpD[2], 3) , 'float')
-                             #MP#   EV  = numpy.zeros((shpD[0], shpD[1], shpD[2], 3, 3), 'float' )
-                             #MP#   xVTensor = numpy.zeros((shpD[0], shpD[1], shpD[2], 7), 'float')
-
-                             #MP#   for i in range(nParts):
-                             #MP#      EV[:, :, i*shpD[2]/nParts:(i+1)*shpD[2]/nParts, ...]= tBlocks[i][0]
-                             #MP#      lV[:, :, i*shpD[2]/nParts:(i+1)*shpD[2]/nParts, :]= tBlocks[i][1]
-                             #MP#      xVTensor[:, :, i*shpD[2]/nParts:(i+1)*shpD[2]/nParts, ...]= tBlocks[i][2]
- 
-
-                             #MP#else:
-                             # if uncomment #MP# shift right by 3 space the line below 
-                             EV, lV, xVTensor = tens.EvaluateTensorX1(data, G.T, b.T, wm)
-
-                             ###
                     else: # no mask applied
-                         EV, lV, xVTensor = tens.EvaluateTensorX0(data, G.T, b.T)
+                         EV, lV, xVTensor, xYTensor = tens.EvaluateTensorX0(data, G.T, b.T)
 
 
                       
@@ -418,61 +368,11 @@ class PipelineHandler(asyncore.dispatcher):
                         blocksize = totalTracts
                         IJKstartpoints = []
 
-                        #MP#monoP = False  
-
-                        #MP#nCpu = processing.cpuCount()
-                        #MP#logger.info("Number of CPUs on that machine : %s" % str(nCpu))
-
-                        #MP#nParts = 1
-                        #MP#if shpR[0]>1:
-                        #MP#   if shpR[0] >= nCpu:
-                        #MP#       nParts = nCpu
-                        #MP#   else:
-                        #MP#       nParts = shpR[0]
-
-                        #MP#   for i in range(nParts): 
-                        #MP#      roiPx = roiP[i*shpR[0]/nParts:(i+1)*shpR[0]/nParts, :] 
-                        #MP#      logger.info("ROI A %i dimension : %s:%s" % (i, str(roiPx.shape[0]), str(roiPx.shape[1])))    
-                        #MP#      IJKstartpoints.append(numpy.tile(roiPx,( blocksize, 1)))
-                        #MP#else:
-                        # if uncomment #MP# shift right by 3 space the line below 
                         IJKstartpoints.append(numpy.tile(roiP,( blocksize, 1)))
-                        #MP#   monoP = True
 
                         timeS2 = time.time()
 
-                        # try multiprocessing
                         logger.info("Data type : %s" % data.dtype)
-                        #cData = Array(ctypes.c_uint, ctypeslib.as_ctypes(data.flatten()))
-                        #cData = data.flatten() 
-                       
-                        #MP#if not monoP:
-                        #MP#   jobs = []
-                        #MP#   queues = []
-                        #MP#   for i in range(nParts):
-                        #MP#      queues.append(Queue())
-                        #MP#      if isInWM or wmEnabled:
-                        #MP#         jobs.append(Process(target = track.TrackFiberX40,\
-                        #MP#            args=(cData, wm, queues[i], shpD, b.T, G.T, IJKstartpoints[i].T, r2i, i2r,\
-                        #MP#            lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)))
-                        #MP#      else:
-                        #MP#         jobs.append(Process(target = track.TrackFiberT40,\
-                        #MP#            args=(cData, queues[i], shpD, b.T, G.T, IJKstartpoints[i].T, r2i, i2r,\
-                        #MP#            lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)))
-
-
-                        #MP#   for i  in range(nParts):
-                        #MP#     jobs[i].start()
-
-                        #MP#   paths = queues[0].get()  
-                        #MP#   for i in range(nParts-1):
-                        #MP#     paths += queues[i+1].get()
-
-                        #MP#   for i in range(nParts):
-                        #MP#     jobs[i].join()
-
-                        #MP#else:
-                        # if uncomment #MP# shift right by 3 space the line below
                         if isInWM or wmEnabled:
                            paths0, paths1, paths2, paths3, paths4 = track.TrackFiberY40(data.flatten(), wm, shpD, b.T, G.T, IJKstartpoints[0].T, r2i, i2r,\
                                   lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
@@ -504,59 +404,11 @@ class PipelineHandler(asyncore.dispatcher):
                         blocksize = totalTracts
                         IJKstartpoints2 = []
 
-                        #MP#monoP = False  
-
-                        #MP#nCpu = processing.cpuCount()
-                        #MP#logger.info("Number of CPUs on that machine : %s" % str(nCpu))
-
-                        #MP#nParts = 1
-                        #MP#if shpR2[0]>1:
-                        #MP#   if shpR2[0] >= nCpu:
-                        #MP#       nParts = nCpu
-                        #MP#   else:
-                        #MP#       nParts = shpR2[0]
-
-                        #MP#   for i in range(nParts): 
-                        #MP#      roiPx = roiP2[i*shpR2[0]/nParts:(i+1)*shpR2[0]/nParts, :] 
-                        #MP#      logger.info("ROI B %i dimension : %s:%s" % (i, str(roiPx.shape[0]), str(roiPx.shape[1])))    
-                        #MP#      IJKstartpoints2.append(numpy.tile(roiPx,( blocksize, 1)))
-                        #MP#else:
                         IJKstartpoints2.append(numpy.tile(roiP2,( blocksize, 1)))
-                        #MP#   monoP = True
 
                         timeS3 = time.time()
 
-                        # try multiprocessing
                         logger.info("Data type : %s" % data.dtype)
-                        #cData = Array(ctypes.c_uint, ctypeslib.as_ctypes(data.flatten()))
-                        #cData = data.flatten() 
-                       
-                        #MP#if not monoP:
-                        #MP#   jobs = []
-                        #MP#   queues = []
-                        #MP#   for i in range(nParts):
-                        #MP#      queues.append(Queue())
-                        #MP#      if isInWM or wmEnabled:
-                        #MP#         jobs.append(Process(target = track.TrackFiberX40,\
-                        #MP#            args=(cData, wm, queues[i], shpD, b.T, G.T, IJKstartpoints2[i].T, r2i, i2r,\
-                        #MP#            lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)))
-                        #MP#      else:
-                        #MP#         jobs.append(Process(target = track.TrackFiberT40,\
-                        #MP#            args=(cData, queues[i], shpD, b.T, G.T, IJKstartpoints2[i].T, r2i, i2r,\
-                        #MP#            lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)))
-
-
-                        #MP#   for i  in range(nParts):
-                        #MP#     jobs[i].start()
-
-                        #MP#   paths2 = queues[0].get()  
-                        #MP#   for i in range(nParts-1):
-                        #MP#     paths2 += queues[i+1].get()
-
-                        #MP#   for i in range(nParts):
-                        #MP#     jobs[i].join()
-
-                        #MP#else:
                         if isInWM or wmEnabled:
                            paths0, paths1, paths2, paths3, paths4  = track.TrackFiberY40(data.flatten(), wm, shpD, b.T, G.T, IJKstartpoints2[0].T, r2i, i2r,\
                                   lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
@@ -584,72 +436,98 @@ class PipelineHandler(asyncore.dispatcher):
           
           dateT = str(int(round(time.time())))
     
-          isDir = os.access('data', os.F_OK)
+          isDir = os.access('outputs', os.F_OK)
           if not isDir:
-            os.mkdir('data')
+            os.mkdir('outputs')
 
-          tmpF = './data/'
+          tmpF = './outputs/'
+
+
+          i2r.tofile(tmpF + 'trafo_' + dateT + '.ijk')
+
           if smoothEnabled:
                      ga = data[..., bLine]
                      ga = ga.swapaxes(2,0)
                      tmp= 'smooth_' + dateT
-                     ga.tofile(tmpF + tmp)
+                     ga.tofile(tmpF + tmp + '.data')
+                     createParams(ga, tmpF + tmp)
                      s.putS(ga, dims, org, i2r, tmp)
+
 
           if wmEnabled:
                      wm = wm.swapaxes(2,0)
                      tmp= 'brain_' + dateT
-                     wm.tofile(tmpF + tmp)
+                     wm.tofile(tmpF + tmp + '.data')
+                     createParams(wm, tmpF + tmp)
                      s.putS(wm, dims, org, i2r, tmp)
+
 
           if cmEnabled:
                      xVTensor = xVTensor.swapaxes(2,0)
                      xVTensor = xVTensor.astype('float32') # slicerd do not support double type yet
+                     xYTensor = xYTensor.swapaxes(2,0)
+                     xYTensor = xYTensor.astype('float32') # slicerd do not support double type yet
                      tmp= 'tensor_' + dateT
-                     xVTensor.tofile(tmpF + tmp)
+                     xYTensor.tofile(tmpF + tmp + '.data')
+                     createParams(xYTensor, tmpF + tmp, True)
                      s.putD(xVTensor, dims, org, i2r, mu, tmp)
+
 
                      if faEnabled:
                           faMap = faMap.swapaxes(2,0)
                           tmp= 'fa_' + dateT
-                          faMap.tofile(tmpF + tmp)
+                          faMap.tofile(tmpF + tmp + '.data')
+                          createParams(faMap, tmpF + tmp)
                           s.putS(faMap, dims, org, i2r, tmp)
+
 
                      if traceEnabled:
                           trMap = trMap.swapaxes(2,0)
                           tmp= 'trace_' + dateT
-                          trMap.tofile(tmpF + tmp)
+                          trMap.tofile(tmpF + tmp + '.data')
+                          createParams(trMap, tmpF + tmp)
                           s.putS(trMap, dims, org, i2r, tmp)
+
 
                      if modeEnabled:
                           moMap = moMap.swapaxes(2,0)
                           tmp= 'mode_' + dateT
-                          moMap.tofile(tmpF + tmp)
+                          moMap.tofile(tmpF + tmp + '.data')
+                          createParams(moMap, tmpF + tmp)
                           s.putS(moMap, dims, org, i2r, tmp)
+
 
                      if isInRoiA:
                           cm = cm.swapaxes(2,0)
                           tmp= 'cmA_' + dateT
-                          cm.tofile(tmpF + tmp)
+                          cm.tofile(tmpF + tmp + '.data')
+                          createParams(cm,  tmpF + tmp)
                           s.putS(cm, dims, org, i2r, tmp)
+
 
                      if isInRoiB:
                           cm2 = cm2.swapaxes(2,0)
                           tmp= 'cmB_' + dateT
-                          cm2.tofile(tmpF + tmp)
+                          cm2.tofile(tmpF + tmp + '.data')
+                          createParams(cm2,  tmpF + tmp)
                           s.putS(cm2, dims, org, i2r, tmp)
+
 
                      if isInRoiA and isInRoiB:
                           cm1a2 = cm[...]*cm2[...]/2.0
+                          cm1a2 = cm1a2.astype('uint32')
                           tmp= 'cmAandB_' + dateT
-                          cm1a2.tofile(tmpF + tmp)
+                          cm1a2.tofile(tmpF + tmp + '.data')
+                          createParams(cm1a2,  tmpF + tmp)
                           s.putS(cm1a2, dims, org, i2r, tmp)
 
-                          cm1o2 = cm[...]+cm2[...]
-                          tmp= 'cmAorB_' + dateT
-                          cm1o2.tofile(tmpF + tmp)
-                          s.putS(cm1o2, dims, org, i2r, tmp)
 
+                          cm1o2 = (cm[...]+cm2[...])/2.0
+                          cm1o2 = cm1o2.astype('uint32')
+                          tmp= 'cmAorB_' + dateT
+                          cm1o2.tofile(tmpF + tmp + '.data')
+                          createParams(cm1o2,  tmpF + tmp)
+                          s.putS(cm1o2, dims, org, i2r, tmp)
 
 
           logger.debug("pipeline data shape end : %s:%s:%s:%s" %  (shpD[0], shpD[1], shpD[2], shpD[3]))
