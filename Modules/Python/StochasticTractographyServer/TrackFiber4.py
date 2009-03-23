@@ -49,12 +49,12 @@ def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor,
   logger.info("spacing : %s:%s:%s" % (spa[0], spa[1], spa[2]))
 
 #TODO! compute one norm 
-  #dr = abs(spa[0])  
-  #da = abs(spa[1]) 
-  #ds = abs(spa[2]) 
-  dr = spa[0]  
-  da = spa[1] 
-  ds = spa[2]
+  dr = abs(spa[0])  
+  da = abs(spa[1]) 
+  ds = abs(spa[2]) 
+  #dr = spa[0]  
+  #da = spa[1] 
+  #ds = spa[2]
 
 # Uniform prior distribution of the direction of the first step
   StartPrior = ones((1, ndirs), 'float')
@@ -230,12 +230,12 @@ def  TrackFiberY40(data, mask, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVT
   logger.info("spacing : %s:%s:%s" % (spa[0], spa[1], spa[2]))
 
 #TODO! compute one norm 
-  #dr = abs(spa[0])  
-  #da = abs(spa[1]) 
-  #ds = abs(spa[2]) 
-  dr = spa[0]  
-  da = spa[1] 
-  ds = spa[2]
+  dr = abs(spa[0])  
+  da = abs(spa[1]) 
+  ds = abs(spa[2]) 
+  #dr = spa[0]  
+  #da = spa[1] 
+  #ds = spa[2]
 
 # Uniform prior distribution of the direction of the first step
   StartPrior = ones((1, ndirs), 'float')
