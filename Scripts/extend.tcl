@@ -507,6 +507,7 @@ proc buildExtension {s3ext} {
     if { $::isWindows } {
       # don't run testing on windows - if target doesn't exist, a dialog will come up and operation will hang
       #set ret [catch "runcmd $::MAKE $::ext(cmakeproject).sln /out buildlog.txt /build $::VTK_BUILD_TYPE /project $::EXTEND(test-type)" res]
+      set ret 0
     } else {
       set ret [catch "eval runcmd $::MAKE $::EXTEND(test-type)" res]
     }
