@@ -189,7 +189,7 @@ set ::Slicer3_EXT $::Slicer3_HOME/../Slicer3-ext
 # - use it to set your local environment and then your change won't 
 #   be overwritten when this file is updated
 #
-set localvarsfile $Slicer3_HOME/slicer_variables.tcl
+set localvarsfile $::Slicer3_HOME/slicer_variables.tcl
 catch {set localvarsfile [file normalize $localvarsfile]}
 if { [file exists $localvarsfile] } {
   vputs "Sourcing $localvarsfile"
@@ -384,7 +384,7 @@ while { $rearranged } {
 # the actual build and test commands for each module
 # - load the s3ext file parameters into array "ext"
 # - checkout the source code
-# - configure the project to point to Slicer3_BUILD
+# - configure the project to point to ::Slicer3_BUILD
 # - build the project
 # - run the tests
 # - run the install target
@@ -395,7 +395,8 @@ while { $rearranged } {
 proc buildExtension {s3ext} {
 
   # collect params
-  array unset ext
+  array unset ::ext
+  array set ::ext ""
   set ::ext(name) [file root [file tail $s3ext]]
   set ::ext(scm) ""
   set ::ext(depends) ""
@@ -454,13 +455,13 @@ proc buildExtension {s3ext} {
 
   set dependPaths ""
   foreach dep $::ext(depends) {
-    if { [file exists $Slicer3_HOME/Modules/$dep] } {
+    if { [file exists $::Slicer3_HOME/Modules/$dep] } {
       # this is a module that comes with slicer
-      set dependPaths "$dependPaths -D${dep}_SOURCE_DIR=$Slicer3_HOME/Modules/$dep"
-      set dependPaths "$dependPaths -D${dep}_BINARY_DIR=$Slicer3_BUILD/Modules/$dep"
+      set dependPaths "$dependPaths -D${dep}_SOURCE_DIR=$::Slicer3_HOME/Modules/$dep"
+      set dependPaths "$dependPaths -D${dep}_BINARY_DIR=$::Slicer3_BUILD/Modules/$dep"
     } else {
-      set dependPaths "$dependPaths -D${dep}_SOURCE_DIR=$Slicer3_EXT/$dep/$dep"
-      set dependPaths "$dependPaths -D${dep}_BINARY_DIR=$Slicer3_EXT/$dep-build"
+      set dependPaths "$dependPaths -D${dep}_SOURCE_DIR=$::Slicer3_EXT/$dep/$dep"
+      set dependPaths "$dependPaths -D${dep}_BINARY_DIR=$::Slicer3_EXT/$dep-build"
     }
   }
 
@@ -472,17 +473,21 @@ proc buildExtension {s3ext} {
 
   # configure project and make
   cd $::Slicer3_EXT/$::ext(name)-build
-  runcmd $::CMAKE \
+  set cmakeCmd [list $::CMAKE \
     -G$::GENERATOR \
     -DCMAKE_VERBOSE_MAKEFILE:BOOL=TRUE \
     -DSlicer3_DIR:PATH=$::Slicer3_BUILD \
     -DBUILD_AGAINST_SLICER3:BOOL=ON \
     -DMAKECOMMAND:STRING=$makeCmd \
-    -DCMAKE_INSTALL_PREFIX:PATH=$::Slicer3_EXT/$::ext(name)-install \
-    $::ext(srcDir)
-
-  # add additional arguments (use eval to expand lists)
-  runcmd $::CMAKE $dependPaths $extraLink $::ext(srcDir)
+    -DCMAKE_INSTALL_PREFIX:PATH=$::Slicer3_EXT/$::ext(name)-install]
+  foreach dep $dependPaths {
+    lappend cmakeCmd $dep
+  }
+  foreach link $extraLink {
+    lappend cmakeCmd $link
+  }
+  lappend cmakeCmd $::ext(srcDir)
+  eval runcmd $cmakeCmd
 
   # build the project
   cd $::Slicer3_EXT/$::ext(name)-build
@@ -550,8 +555,9 @@ foreach s3ext $::EXTEND(s3extFiles) {
   if { $ret } {
     puts "********************"
     puts "Failed to build $s3ext"
-    puts "error code is: $res"
+    puts "error code is: $ret"
     puts "error result is:\n$res"
+    puts "errorInfo is:\n$::errorInfo"
     lappend ::EXTEND(FAILED) $s3ext
   } else {
     lappend ::EXTEND(BUILT) $s3ext
