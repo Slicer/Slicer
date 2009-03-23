@@ -401,6 +401,9 @@ proc buildExtension {s3ext} {
   set ::ext(scm) ""
   set ::ext(depends) ""
   loadArray $s3ext ::ext
+  if { ![info exists ::ext(cmakeproject)] } {
+    set ::ext(cmakeproject) $::ext(name)
+  }
 
   set ::ext(date) [clock format [clock seconds] -format %Y-%m-%d]
 
@@ -426,7 +429,7 @@ proc buildExtension {s3ext} {
       set ::ext(srcDir) $::Slicer3_EXT/$::ext(name)/$::ext(cvsmodule)
     }
     "svn" {
-      set svncmd "$::SVN co"
+      set svncmd "echo t | $::SVN co"
       if { [info exists ::ext(svnusername)] } {
         set svncmd "$svncmd --username $::ext(svnusername)"
       }
@@ -502,7 +505,8 @@ proc buildExtension {s3ext} {
   cd $::Slicer3_EXT/$::ext(name)-build
   if { $::EXTEND(test-type) != "" } {
     if { $::isWindows } {
-      set ret [catch "runcmd $::MAKE $::ext(cmakeproject).sln /out buildlog.txt /build $::VTK_BUILD_TYPE /project $::EXTEND(test-type)" res]
+      # don't run testing on windows - if target doesn't exist, a dialog will come up and operation will hang
+      #set ret [catch "runcmd $::MAKE $::ext(cmakeproject).sln /out buildlog.txt /build $::VTK_BUILD_TYPE /project $::EXTEND(test-type)" res]
     } else {
       set ret [catch "eval runcmd $::MAKE $::EXTEND(test-type)" res]
     }
