@@ -450,9 +450,9 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
         this->MapperRaycast->SetSampleDistance(this->EstimatedSampleDistance*4.0);
         this->MapperRaycast->SetInteractiveSampleDistance(this->EstimatedInteractiveSampleDistance);
         this->MapperRaycast->SetAutoAdjustSampleDistances(1);
-        this->MapperRaycast->SetImageSampleDistance(4.0f);
-        this->MapperRaycast->SetMinimumImageSampleDistance(1.0f);
-        this->MapperRaycast->SetMaximumImageSampleDistance(20.0f);
+        this->MapperRaycast->SetImageSampleDistance(2.0f);
+        this->MapperRaycast->SetMinimumImageSampleDistance(2.0f);
+        this->MapperRaycast->SetMaximumImageSampleDistance(16.0f);
         
     }
     
@@ -746,11 +746,15 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             {
                 this->MapperRaycast->SetSampleDistance(this->EstimatedSampleDistance);
                 this->MapperRaycast->SetImageSampleDistance(1.0f);
+                this->MapperRaycast->SetMinimumImageSampleDistance(1.0f);
+                this->MapperRaycast->SetMaximumImageSampleDistance(4.0f);
             }
             else
             {
                 this->MapperRaycast->SetSampleDistance(this->EstimatedSampleDistance*4.0);
-                this->MapperRaycast->SetImageSampleDistance(4.0f);
+                this->MapperRaycast->SetImageSampleDistance(2.0f);
+                this->MapperRaycast->SetMinimumImageSampleDistance(2.0f);
+                this->MapperRaycast->SetMaximumImageSampleDistance(16.0f);
             }
             
             this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
@@ -1279,6 +1283,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessThresholdRange(double notUsed,double not
     this->SVP_VolumeProperty->Update();
     this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
 }
+
 void vtkSlicerVRGrayscaleHelper::ProcessThresholdZoomIn(void)
 {
     vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
@@ -1601,7 +1606,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
 
     }
     
-    int labelWidth = 30;
+    int labelWidth = 40;
     
     //GPU ray casting
     {
@@ -1616,8 +1621,8 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->CB_GPURayCastShading=vtkKWCheckButtonWithLabel::New();
         this->CB_GPURayCastShading->SetParent(this->FrameGPURayCasting->GetFrame());
         this->CB_GPURayCastShading->Create();
-        this->CB_GPURayCastShading->SetBalloonHelpString("Enable shading in GPU ray cast. May not supported by some video cards.");
-        this->CB_GPURayCastShading->SetLabelText("Enable Shading");
+        this->CB_GPURayCastShading->SetBalloonHelpString("Enable lighting/shading in GPU ray cast. May not supported by some video cards.");
+        this->CB_GPURayCastShading->SetLabelText("Enable Lighting");
         this->CB_GPURayCastShading->SetLabelWidth(labelWidth);
         this->CB_GPURayCastShading->GetWidget()->SetSelectedState(0);
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_GPURayCastShading->GetWidgetName() );
@@ -1638,7 +1643,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->CB_GPURayCastForceHighQuality=vtkKWCheckButtonWithLabel::New();
         this->CB_GPURayCastForceHighQuality->SetParent(this->FrameGPURayCasting->GetFrame());
         this->CB_GPURayCastForceHighQuality->Create();
-        this->CB_GPURayCastForceHighQuality->SetBalloonHelpString("Force GPU mapper to use high quality (high sampling rate) and ignore expected FPS. May overwhelm GPU when used with Use Large Volume option!");
+        this->CB_GPURayCastForceHighQuality->SetBalloonHelpString("Force GPU mapper to use high quality (high sampling rate) and ignore expected FPS. May overwhelm GPU when used with Use Large Volume option.");
         this->CB_GPURayCastForceHighQuality->SetLabelText("Force High Quality");
         this->CB_GPURayCastForceHighQuality->SetLabelWidth(labelWidth);
         this->CB_GPURayCastForceHighQuality->GetWidget()->SetSelectedState(0);
@@ -1649,7 +1654,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->CB_GPURayCastLargeVolume=vtkKWCheckButtonWithLabel::New();
         this->CB_GPURayCastLargeVolume->SetParent(this->FrameGPURayCasting->GetFrame());
         this->CB_GPURayCastLargeVolume->Create();
-        this->CB_GPURayCastLargeVolume->SetBalloonHelpString("Enable this only if you are really confident about your graphics card. To use large volume, enable this before selecting GPU ray cast.");
+        this->CB_GPURayCastLargeVolume->SetBalloonHelpString("Increase size for internal volume for better rendering quality.");
         this->CB_GPURayCastLargeVolume->SetLabelText("Use Large Volume");
         this->CB_GPURayCastLargeVolume->SetLabelWidth(labelWidth);
         this->CB_GPURayCastLargeVolume->GetWidget()->SetSelectedState(0);
@@ -1703,7 +1708,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->CB_CPURayCastForceHighQuality=vtkKWCheckButtonWithLabel::New();
         this->CB_CPURayCastForceHighQuality->SetParent(this->FrameCPURayCasting->GetFrame());
         this->CB_CPURayCastForceHighQuality->Create();
-        this->CB_CPURayCastForceHighQuality->SetBalloonHelpString("Force CPU ray cast mapper to use high quality (high sampling rate) and ignore expected FPS.");
+        this->CB_CPURayCastForceHighQuality->SetBalloonHelpString("Force CPU ray cast mapper to use high quality (high sampling rate). Could be show.");
         this->CB_CPURayCastForceHighQuality->SetLabelText("Force High Quality");
         this->CB_CPURayCastForceHighQuality->SetLabelWidth(labelWidth);
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_CPURayCastForceHighQuality->GetWidgetName() );
