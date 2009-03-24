@@ -478,7 +478,7 @@ proc buildExtension {s3ext} {
   cd $::Slicer3_EXT/$::ext(name)-build
   set cmakeCmd [list $::CMAKE \
     -G$::GENERATOR \
-    -DCMAKE_VERBOSE_MAKEFILE:BOOL=TRUE \
+    -DCMAKE_VERBOSE_MAKEFILE:BOOL=$::EXTEND(verbose) \
     -DSlicer3_DIR:PATH=$::Slicer3_BUILD \
     -DBUILD_AGAINST_SLICER3:BOOL=ON \
     -DMAKECOMMAND:STRING=$makeCmd \
