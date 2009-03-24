@@ -323,6 +323,8 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingGUI *gui)
     this->CreateThreshold();
     this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->SVP_VolumeProperty->GetWidgetName());
     
+    this->WithdrawProgressDialog();
+    
     this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
 }
 
@@ -434,7 +436,7 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
     {
         //Init the texture mapper
         this->MapperTexture = vtkSlicerVolumeTextureMapper3D::New();
-        this->MapperTexture->SetSampleDistance(this->EstimatedSampleDistance);
+        this->MapperTexture->SetSampleDistance(this->EstimatedSampleDistance*2.0);
         this->MapperTexture->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
  
         //create the raycast mapper
@@ -732,8 +734,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             else
                 this->MapperGPURaycast->LargeVolumeSizeOff();
                 
-            //REQUIRED REQUIRED REQUIRED
-            this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->ResetCamera();
+ //           this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->ResetCamera();
             
             this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
             return;

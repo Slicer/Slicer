@@ -70,7 +70,7 @@ vtkSlicerGPURayCastVolumeTextureMapper3D::vtkSlicerGPURayCastVolumeTextureMapper
   this->RayCastProgram           =  0;
   this->RayCastSupported         =  0;
   this->RenderWindow         = NULL;
-  this->RaySteps             = 100.0f;
+  this->RaySteps             = 250.0f;
   this->Framerate            = 5.0f;
   this->GlobalAlpha          = 1.0f;
 }
@@ -1183,6 +1183,8 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::DrawVolumeBBox()
 
 void vtkSlicerGPURayCastVolumeTextureMapper3D::InitializeRayCast()
 {
+    RayCastInitialized = 1;
+    
     vtkgl::DeleteShader(this->RayCastVertexShader);
     vtkgl::DeleteShader(this->RayCastFragmentShader);
     vtkgl::DeleteProgram(this->RayCastProgram);
@@ -1199,8 +1201,6 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::InitializeRayCast()
         LoadNoShadingFragmentShader();
         
     LoadRayCastProgram();
-    
-    RayCastInitialized = 1;
 }
 
 void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadRayCastProgram()
@@ -1392,7 +1392,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShader()
         "                                                                                        \n"
         "    if ( ParaMatrix[3][0] > 0.0 )//MIP                                                 \n"
         "    {                                                                                       \n"
-        "        float maxScalar = 0.0;                                                          \n"
+        "        float maxScalar = -999999.0;                                                         \n"
         "        vec3 maxScalarCoord = nextRayOrigin;                                            \n"
         "        while( t < rayLen )                                                                 \n"
         "        {                                                                                   \n"
@@ -1407,11 +1407,11 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShader()
         "            nextRayOrigin += rayStep;                                                       \n"
         "        }                                                                                   \n"
         "                                                                                        \n"
-        "        if (maxScalar > 0.0)//need to check this?                                           \n"
-        "        {                                                                                   \n"
+        " //       if (maxScalar > 0.0)//need to check this?                                           \n"
+        " //       {                                                                                   \n"
         "            pixelColor = voxelColor(maxScalarCoord);                                    \n"
         "            alpha = pixelColor.w;                                                       \n"
-        "        }                                                                                   \n"
+        " //       }                                                                                   \n"
         "    }                                                                                       \n"
         "    else//normal ray casting                                                            \n"
         "    {                                                                                       \n"
@@ -1632,7 +1632,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShader()
         "                                                                                        \n"
         "    if ( ParaMatrix[3][0] > 0.0 )//MIP                                                    \n"
         "    {                                                                                       \n"
-        "        float maxScalar = 0.0;                                                          \n"
+        "        float maxScalar = -999999.0;                                                          \n"
         "        vec3 maxScalarCoord = nextRayOrigin;                                            \n"
         "        while( t < rayLen )                                                                 \n"
         "        {                                                                                   \n"
@@ -1647,14 +1647,14 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShader()
         "            nextRayOrigin += rayStep;                                                       \n"
         "        }                                                                                   \n"
         "                                                                                        \n"
-        "        if (maxScalar > 0.0)//need to check this?                                           \n"
-        "        {                                                                                   \n"
+        " //       if (maxScalar > 0.0)//need to check this?                                           \n"
+        " //       {                                                                                   \n"
         "            pixelColor = voxelColor(maxScalarCoord);                                    \n"
         "            alpha = pixelColor.w;                                                       \n"
-        "        }                                                                                   \n"
+        " //       }                                                                                   \n"
         "                                                                                            \n"
         "                                                                    \n"
-        "        // uncomment two lines below to re-enable lighting                                                           \n"
+        "        // uncomment two lines below to re-enable lighting                                   \n"
         "        if (ParaMatrix[2][3] > 0.0)//need shading?                                          \n"
         "            pixelColor *= directionalLight(maxScalarCoord);                             \n"
         "    }                                                                                       \n"
@@ -1750,12 +1750,16 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::ShadingOn()
 void vtkSlicerGPURayCastVolumeTextureMapper3D::LargeVolumeSizeOff()
 {
     this->LargeVolumeSize = 0;
-    this->SavedTextureInput = NULL;
+    this->SavedTextureInput = NULL;//dirty input, force reprocess input
+    
+    this->RayCastInitialized = 0;
 }
 
 void vtkSlicerGPURayCastVolumeTextureMapper3D::LargeVolumeSizeOn()
 {
     this->LargeVolumeSize = 1;
-    this->SavedTextureInput = NULL;
+    this->SavedTextureInput = NULL;//dirty input, force reprocess input
+    
+    this->RayCastInitialized = 0;
 }
 
