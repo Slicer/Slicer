@@ -2,3 +2,5 @@
 scm       svn
 svnpath   https://www.nitrc.org/svn/slicer3examples/trunk/Slicer3ExampleModules/CommandLine
 name      ExampleCommandLine
+svnusername anonymous
+svnpassword ""
