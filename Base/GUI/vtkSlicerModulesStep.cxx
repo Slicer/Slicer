@@ -26,6 +26,50 @@
 #include <vtksys/ios/sstream>
 
 //----------------------------------------------------------------------------
+static std::string ltrim(const std::string& str)
+{
+  std::string s(str);
+  if (s.size())
+    {
+    std::string::size_type pos = s.find_first_not_of(" \n\t");
+    if (pos != std::string::npos)
+      {
+      s = s.substr(pos);
+      }
+    else
+      {
+      s = "";
+      }
+    }
+  return s;
+}
+
+//----------------------------------------------------------------------------
+static std::string rtrim(const std::string& str)
+{
+  std::string s(str);
+  if (s.size())
+    {
+    std::string::size_type pos = s.find_last_not_of(" \n\t");
+    if (pos != std::string::npos)
+      {
+      s = s.substr(0, pos + 1);
+      }
+    else
+      {
+      s = "";
+      }
+    }
+  return s;
+}
+
+//----------------------------------------------------------------------------
+static std::string trim(const std::string& str)
+{
+  return rtrim(ltrim(str));
+}
+
+//----------------------------------------------------------------------------
 vtkStandardNewMacro( vtkSlicerModulesStep );
 vtkCxxRevisionMacro(vtkSlicerModulesStep, "$Revision: 1.2 $");
 
@@ -389,7 +433,12 @@ void vtkSlicerModulesStep::InsertExtension(int Index,
 {
   this->ModulesMultiColumnList->InsertCellText(Index, 2, Entry->Name.c_str());
   this->ModulesMultiColumnList->InsertCellText(Index, 3, Entry->Category.c_str());
-  this->ModulesMultiColumnList->InsertCellText(Index, 4, Entry->Description.c_str());
+
+  std::string summary = Entry->Description.substr(0, 5);
+  summary += "...";
+
+  this->ModulesMultiColumnList->InsertCellText(Index, 4, summary.c_str());
+
   this->ModulesMultiColumnList->InsertCellText(Index, 5, Entry->Homepage.c_str());
   this->ModulesMultiColumnList->InsertCellText(Index, 6, Entry->URL.c_str());
             
@@ -669,19 +718,19 @@ void vtkSlicerModulesStep::DownloadParseS3ext(const std::string& s3ext,
       {
         if (line.find("homepage") == 0)
           {
-          entry->Homepage = line.substr(8);
+          entry->Homepage = trim(line.substr(9));
           }
         else if (line.find("category") == 0)
           {
-          entry->Category = line.substr(8);
+          entry->Category = trim(line.substr(9));
           }
         else if (line.find("status") == 0)
           {
-          entry->ExtensionStatus = line.substr(8);
+          entry->ExtensionStatus = trim(line.substr(7));
           }
         else if (line.find("description") == 0)
           {
-          entry->Description = line.substr(8);
+          entry->Description = trim(line.substr(12));
           }
       }
 
