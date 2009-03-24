@@ -149,11 +149,9 @@ void vtkMRMLFiducialListNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
-
-  // turn off modified events until done reading
-  this->DisableModifiedEventOn();
   
   const char* attName;
   const char* attValue;
@@ -295,11 +293,8 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
       vtkDebugMacro("ReadXMLAttributes: Unknown attribute name " << attName);
       }
   }
-  // turn on modified events
-  this->DisableModifiedEventOff();
-  this->Modified();
-  vtkDebugMacro("Finished reading in xml attributes, list id = " << this->GetID() << " and name = " << this->GetName() << endl);
-}
+
+  this->EndModify(disabledModify);}
 
 
 //----------------------------------------------------------------------------
@@ -307,9 +302,8 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
 {
-  int oldMode = this->GetDisableModifiedEvent();
-  this->DisableModifiedEventOn();
-  
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLFiducialListNode *node = (vtkMRMLFiducialListNode *) anode;
 
@@ -370,17 +364,11 @@ void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
       fidThis = NULL;
       }
     // turn on modified events
-    this->SetDisableModifiedEvent(oldMode);
     this->Modified();
     vtkDebugMacro("Copy: throwing a fid modified event w/NULL id");
     this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, NULL);
     }
-  else
-    {
-    this->SetDisableModifiedEvent(oldMode);
-    //this->InvokePendingModifiedEvent();
-    }
-
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------

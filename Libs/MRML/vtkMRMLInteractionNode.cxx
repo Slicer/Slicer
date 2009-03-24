@@ -176,6 +176,7 @@ void vtkMRMLInteractionNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLInteractionNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -259,6 +260,9 @@ void vtkMRMLInteractionNode::ReadXMLAttributes(const char** atts)
       }
     
     }
+    
+  this->EndModify(disabledModify);
+
 }
 
 
@@ -269,11 +273,15 @@ void vtkMRMLInteractionNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLInteractionNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLInteractionNode *node = (vtkMRMLInteractionNode *) anode;
 
   this->SetCurrentInteractionMode (node->GetCurrentInteractionMode());
   this->SetLastInteractionMode ( node->GetLastInteractionMode());
+
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------

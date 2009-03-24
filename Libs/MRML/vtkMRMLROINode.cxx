@@ -135,6 +135,8 @@ void vtkMRMLROINode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
 {
+ int disabledModify = this->StartModify();
+
   const char* attName;
   const char* attValue;
 
@@ -213,6 +215,8 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
  
     }
 
+  this->EndModify(disabledModify);
+
   return;
 }
 
@@ -275,8 +279,9 @@ void vtkMRMLROINode::ReadXMLString(const char *keyValuePairs)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLROINode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
-  this->DisableModifiedEventOn();
 
   //  vtkObject::Copy(anode);
   vtkMRMLROINode *node = (vtkMRMLROINode *) anode;
@@ -288,8 +293,7 @@ void vtkMRMLROINode::Copy(vtkMRMLNode *anode)
   this->SetVisibility(node->Visibility);
   this->SetInteractiveMode(node->InteractiveMode);
 
-  this->DisableModifiedEventOff();
-  this->InvokePendingModifiedEvent();
+  this->EndModify(disabledModify);
 
   return;
 }

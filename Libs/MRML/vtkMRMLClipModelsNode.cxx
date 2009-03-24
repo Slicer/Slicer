@@ -85,6 +85,7 @@ void vtkMRMLClipModelsNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLClipModelsNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -119,6 +120,8 @@ void vtkMRMLClipModelsNode::ReadXMLAttributes(const char** atts)
       ss >> ClipType;
       }
     } 
+    this->EndModify(disabledModify);
+
 }
 
 
@@ -127,6 +130,8 @@ void vtkMRMLClipModelsNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLClipModelsNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLClipModelsNode *node = (vtkMRMLClipModelsNode *) anode;
 
@@ -134,6 +139,9 @@ void vtkMRMLClipModelsNode::Copy(vtkMRMLNode *anode)
   this->SetYellowSliceClipState(node->YellowSliceClipState);
   this->SetGreenSliceClipState(node->GreenSliceClipState);
   this->SetRedSliceClipState(node->RedSliceClipState);
+
+  this->EndModify(disabledModify);
+
 }
 
 //----------------------------------------------------------------------------

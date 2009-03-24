@@ -77,7 +77,7 @@ void vtkMRMLFiberBundleDisplayNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleDisplayNode::ReadXMLAttributes(const char** atts)
 {
-  this->DisableModifiedEventOn();
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -104,9 +104,7 @@ void vtkMRMLFiberBundleDisplayNode::ReadXMLAttributes(const char** atts)
       }
     }  
 
-  this->DisableModifiedEventOff();
-  this->InvokePendingModifiedEvent();
-
+  this->EndModify(disabledModify);
 }
 
 
@@ -115,13 +113,17 @@ void vtkMRMLFiberBundleDisplayNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLFiberBundleDisplayNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
  vtkMRMLFiberBundleDisplayNode *node = (vtkMRMLFiberBundleDisplayNode *) anode;
  this->SetColorMode(node->ColorMode); // do this first, since it affects how events are processed in glyphs
 
   Superclass::Copy(anode);
 
   this->SetDiffusionTensorDisplayPropertiesNodeID(node->DiffusionTensorDisplayPropertiesNodeID);
-}
+ 
+  this->EndModify(disabledModify);
+  }
 
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleDisplayNode::PrintSelf(ostream& os, vtkIndent indent)

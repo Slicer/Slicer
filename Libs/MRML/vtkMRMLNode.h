@@ -152,6 +152,29 @@ public:
   // NOTE: other attributes that needs to be preserved should be handled in the subclass
   virtual void Reset();
 
+  // Description:
+  // Start modifying the node. Disable Modify events. 
+  // Returns the previous state of DisableModifiedEvent flag
+  // that should be passed to EndModify() method
+  virtual int StartModify() 
+    {
+    int disabledModify = this->GetDisableModifiedEvent();
+    this->DisableModifiedEventOn();
+    return disabledModify;
+    };
+
+  // Description:
+  // End modifying the node. Enable Modify events if the 
+  // previous state of DisableModifiedEvent flag is 0.
+  virtual void EndModify(int previousDisableModifiedEventState) 
+    {
+    this->SetDisableModifiedEvent(previousDisableModifiedEventState);
+    if (!previousDisableModifiedEventState)
+      {
+      this->InvokePendingModifiedEvent();
+      }
+    };
+
 
   // Description:
   // Get node XML tag name (like Volume, Model)

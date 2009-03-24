@@ -70,6 +70,8 @@ void vtkMRMLVolumePropertyNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumePropertyNode::ReadXMLAttributes(const char** atts)
 {
+    int disabledModify = this->StartModify();
+
     Superclass::ReadXMLAttributes(atts);
 
     const char* attName;
@@ -147,8 +149,8 @@ void vtkMRMLVolumePropertyNode::ReadXMLAttributes(const char** atts)
             this->VolumeProperty->SetSpecularPower(specularPower);
         }//else if
     }//while
-    vtkDebugMacro("Finished reading in xml attributes, list id = " << this->GetID() << " and name = " << this->GetName() << endl);
-}
+
+  this->EndModify(disabledModify);}
 
 
 //----------------------------------------------------------------------------
@@ -156,16 +158,15 @@ void vtkMRMLVolumePropertyNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLVolumePropertyNode::Copy(vtkMRMLNode *anode)
 {
-    Superclass::Copy(anode);
+  int disabledModify = this->StartModify();
 
-    this->DisableModifiedEventOn();
+  Superclass::Copy(anode);
 
-    this->CopyParameterSet(anode);
-    
-    this->DisableModifiedEventOff();
-    this->InvokePendingModifiedEvent();
-
+  this->CopyParameterSet(anode);
+  
+  this->EndModify(disabledModify);
 }
+
 void vtkMRMLVolumePropertyNode::CopyParameterSet(vtkMRMLNode *anode)
 {
     //cast

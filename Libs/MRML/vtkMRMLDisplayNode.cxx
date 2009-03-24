@@ -161,6 +161,7 @@ void vtkMRMLDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -334,6 +335,7 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
       }
 
     }  
+    this->EndModify(disabledModify);
 }
 
 
@@ -342,11 +344,10 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLDisplayNode *node = (vtkMRMLDisplayNode *) anode;
-
-  int disableModify = this->GetDisableModifiedEvent();
-  this->DisableModifiedEventOn();
 
   // Strings
 
@@ -376,12 +377,7 @@ void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetColorNodeID(node->ColorNodeID);
   this->SetActiveScalarName(node->ActiveScalarName);
 
-  this->SetDisableModifiedEvent(disableModify);
-  if (!disableModify)
-    {
-    this->InvokePendingModifiedEvent();
-    }
-
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------

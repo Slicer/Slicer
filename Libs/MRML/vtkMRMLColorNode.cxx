@@ -99,6 +99,7 @@ void vtkMRMLColorNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLColorNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -128,7 +129,7 @@ void vtkMRMLColorNode::ReadXMLAttributes(const char** atts)
       this->ReadFile();
       }
     }
-  vtkDebugMacro("Finished reading in xml attributes, list id = " << this->GetID() << " and name = " << this->GetName() << endl);
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
@@ -150,6 +151,8 @@ int vtkMRMLColorNode::ReadFile ()
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLColorNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLColorNode *node = (vtkMRMLColorNode *) anode;
 
@@ -166,6 +169,9 @@ void vtkMRMLColorNode::Copy(vtkMRMLNode *anode)
   this->Names = node->Names;
   
   this->NamesInitialised = node->NamesInitialised;
+
+  this->EndModify(disabledModify);
+
 }
 
 //----------------------------------------------------------------------------

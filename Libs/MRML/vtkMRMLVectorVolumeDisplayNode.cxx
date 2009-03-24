@@ -121,6 +121,7 @@ void vtkMRMLVectorVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLVectorVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -142,7 +143,10 @@ void vtkMRMLVectorVolumeDisplayNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> this->GlyphMode;
       }
-    }        
+    }     
+
+  this->EndModify(disabledModify);
+
 }
 
 //----------------------------------------------------------------------------
@@ -150,20 +154,15 @@ void vtkMRMLVectorVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLVectorVolumeDisplayNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLVectorVolumeDisplayNode *node = (vtkMRMLVectorVolumeDisplayNode *) anode;
   
-  int disableModify = this->GetDisableModifiedEvent();
-  this->DisableModifiedEventOn();
-
   this->SetScalarMode(node->ScalarMode);
   this->SetGlyphMode(node->GlyphMode);
 
-  this->SetDisableModifiedEvent(disableModify);
-  if (!disableModify)
-    {
-    this->InvokePendingModifiedEvent();
-    }
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------

@@ -109,6 +109,7 @@ void vtkMRMLCameraNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLCameraNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -180,6 +181,8 @@ void vtkMRMLCameraNode::ReadXMLAttributes(const char** atts)
         }
       }
     }  
+    this->EndModify(disabledModify);
+
 }
 
 
@@ -188,6 +191,8 @@ void vtkMRMLCameraNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLCameraNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLCameraNode *node = (vtkMRMLCameraNode *) anode;
 
@@ -198,6 +203,9 @@ void vtkMRMLCameraNode::Copy(vtkMRMLNode *anode)
   this->SetParallelProjection(node->GetParallelProjection());
   this->SetParallelScale(node->GetParallelScale());
   this->SetActive(node->GetActive());
+
+  this->EndModify(disabledModify);
+
 }
 
 //----------------------------------------------------------------------------

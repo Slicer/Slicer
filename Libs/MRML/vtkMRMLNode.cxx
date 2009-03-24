@@ -150,6 +150,8 @@ void vtkMRMLNode::CopyID(vtkMRMLNode *node)
 //----------------------------------------------------------------------------
 void vtkMRMLNode::Copy(vtkMRMLNode *node)
 {
+  int disabledModify = this->StartModify();
+
   if (node->GetName() && strcmp(node->GetName(),""))
     {
     this->SetName(node->GetName());
@@ -165,6 +167,8 @@ void vtkMRMLNode::Copy(vtkMRMLNode *node)
     this->SetSingletonTag( node->GetSingletonTag() );
     }
   this->SetDescription(node->GetDescription());
+
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
@@ -238,6 +242,8 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
+
   const char* attName;
   const char* attValue;
   while (*atts != NULL) 
@@ -290,6 +296,7 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
         }
       }
     } 
+  this->EndModify(disabledModify);
 
   return;
 }

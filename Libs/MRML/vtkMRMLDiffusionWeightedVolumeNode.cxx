@@ -130,6 +130,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionWeightedVolumeNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -183,6 +184,9 @@ void vtkMRMLDiffusionWeightedVolumeNode::ReadXMLAttributes(const char** atts)
         }
       }
    }    
+
+  this->EndModify(disabledModify);
+
 }  
 
 //----------------------------------------------------------------------------
@@ -364,6 +368,8 @@ double vtkMRMLDiffusionWeightedVolumeNode::GetBValue(int num)
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLDiffusionWeightedVolumeNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLDiffusionWeightedVolumeNode *node = (vtkMRMLDiffusionWeightedVolumeNode *) anode;
 
@@ -385,6 +391,9 @@ void vtkMRMLDiffusionWeightedVolumeNode::Copy(vtkMRMLNode *anode)
     this->BValues->DeepCopy(node->BValues);
     }
   this->NumberOfGradients= node->NumberOfGradients;
+
+  this->EndModify(disabledModify);
+
 }
 
 //----------------------------------------------------------------------------

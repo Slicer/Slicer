@@ -96,6 +96,7 @@ void vtkMRMLScalarVolumeNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -114,6 +115,8 @@ void vtkMRMLScalarVolumeNode::ReadXMLAttributes(const char** atts)
       this->SetLabelMap(val);
       }
     }  
+
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
@@ -121,10 +124,14 @@ void vtkMRMLScalarVolumeNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLScalarVolumeNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLScalarVolumeNode *node = (vtkMRMLScalarVolumeNode *) anode;
 
   this->SetLabelMap(node->GetLabelMap());
+
+  this->EndModify(disabledModify);
 }
 
 //-----------------------------------------------------------
@@ -339,7 +346,7 @@ void vtkMRMLScalarVolumeNode::CalculateScalarAutoLevels(vtkMRMLScalarVolumeDispl
     this->CalculatingAutoLevels = 1;
     }
 
-  displayNode->DisableModifiedEventOn();
+  int disabledModify = displayNode->StartModify();
 
   if (imageDataScalar && imageDataScalar->GetNumberOfScalarComponents() == 1) 
     {
@@ -398,8 +405,9 @@ void vtkMRMLScalarVolumeNode::CalculateScalarAutoLevels(vtkMRMLScalarVolumeDispl
       vtkDebugMacro("CalculateScalarAutoLevels: set display node window to " << this->Bimodal->GetWindow() << ", level to " << this->Bimodal->GetLevel() << ", lower threshold to " << displayNode->GetLowerThreshold() << ", upper threshold to " << displayNode->GetUpperThreshold() << ", displayNode id = " << displayNode->GetID());
       }
     }
-    displayNode->DisableModifiedEventOff();
-    displayNode->InvokePendingModifiedEvent();
+
+    displayNode->EndModify(disabledModify);
+
     this->CalculatingAutoLevels = 0;
 }
 
@@ -452,7 +460,7 @@ void vtkMRMLScalarVolumeNode::CalculateStatisticsAutoLevels(vtkMRMLScalarVolumeD
 
   if ( displayNode != NULL ) 
     {
-    displayNode->DisableModifiedEventOn();
+    int disabledModify = displayNode->StartModify();
 
     double win, level, upT, lowT;
     displayNode->SetAutoThreshold (0);
@@ -499,10 +507,7 @@ void vtkMRMLScalarVolumeNode::CalculateStatisticsAutoLevels(vtkMRMLScalarVolumeD
     displayNode->SetAutoThreshold( 0 );
     displayNode->SetAutoWindowLevel(0);
     
-    vtkDebugMacro("CalculateStatisticsAutoLevels: reset display node win/level/thresh! window = " << displayNode->GetWindow() << ", level = " << displayNode->GetLevel() << ", upper thresh = " << displayNode->GetUpperThreshold() << ", lower thresh = " << displayNode->GetLowerThreshold());
-    
-    displayNode->DisableModifiedEventOff();
-    displayNode->InvokePendingModifiedEvent();
+    displayNode->EndModify(disabledModify);
     }
 
 }

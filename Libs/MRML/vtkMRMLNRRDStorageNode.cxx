@@ -84,6 +84,7 @@ void vtkMRMLNRRDStorageNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLNRRDStorageNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -100,6 +101,9 @@ void vtkMRMLNRRDStorageNode::ReadXMLAttributes(const char** atts)
       ss >> this->CenterImage;
       }
     }
+
+  this->EndModify(disabledModify);
+
 }
 
 //----------------------------------------------------------------------------
@@ -107,10 +111,15 @@ void vtkMRMLNRRDStorageNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, StorageID
 void vtkMRMLNRRDStorageNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLNRRDStorageNode *node = (vtkMRMLNRRDStorageNode *) anode;
 
   this->SetCenterImage(node->CenterImage);
+
+  this->EndModify(disabledModify);
+
 }
 
 //----------------------------------------------------------------------------

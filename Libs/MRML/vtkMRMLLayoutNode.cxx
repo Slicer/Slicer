@@ -86,6 +86,7 @@ void vtkMRMLLayoutNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLLayoutNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
   
@@ -158,6 +159,8 @@ void vtkMRMLLayoutNode::ReadXMLAttributes(const char** atts)
       }
     }
 
+  this->EndModify(disabledModify);
+
 }
     
 
@@ -175,6 +178,8 @@ void vtkMRMLLayoutNode::SetViewArrangement ( int arrNew )
 // Does NOT copy: ID, FilePrefix, LabelText, ID
 void vtkMRMLLayoutNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
 //  vtkObject::Copy(anode);
   vtkMRMLLayoutNode *node = (vtkMRMLLayoutNode *) anode;
   this->SetViewArrangement (node->GetViewArrangement() );
@@ -189,6 +194,8 @@ void vtkMRMLLayoutNode::Copy(vtkMRMLNode *anode)
   this->SetMainPanelSize( node->GetMainPanelSize() );
   this->SetSecondaryPanelSize( node->GetSecondaryPanelSize() );
   
+  this->EndModify(disabledModify);
+
 }
 
 //----------------------------------------------------------------------------

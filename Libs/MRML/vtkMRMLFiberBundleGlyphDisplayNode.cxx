@@ -84,6 +84,7 @@ void vtkMRMLFiberBundleGlyphDisplayNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleGlyphDisplayNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -105,6 +106,8 @@ void vtkMRMLFiberBundleGlyphDisplayNode::ReadXMLAttributes(const char** atts)
         }
       }
     }  
+
+  this->EndModify(disabledModify);
 }
 
 
@@ -113,10 +116,14 @@ void vtkMRMLFiberBundleGlyphDisplayNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLFiberBundleGlyphDisplayNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLFiberBundleGlyphDisplayNode *node = (vtkMRMLFiberBundleGlyphDisplayNode *) anode;
 
   this->SetTwoDimensionalVisibility(node->TwoDimensionalVisibility);
+
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------

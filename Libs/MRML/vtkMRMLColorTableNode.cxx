@@ -98,6 +98,7 @@ void vtkMRMLColorTableNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -162,7 +163,7 @@ void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
           vtkDebugMacro ("Unknown attribute name " << attName << endl);
       }
   }
-  vtkDebugMacro("Finished reading in xml attributes, list id = " << this->GetID() << " and name = " << this->GetName() << endl);
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
@@ -170,12 +171,16 @@ void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLColorTableNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLColorTableNode *node = (vtkMRMLColorTableNode *) anode;
   if (node->LookupTable)
     {
     this->SetLookupTable(node->LookupTable);
     }
+  this->EndModify(disabledModify);
+
 }
 
 //----------------------------------------------------------------------------
@@ -1805,15 +1810,17 @@ void vtkMRMLColorTableNode::ClearNames()
 //---------------------------------------------------------------------------
 void vtkMRMLColorTableNode::Reset()
 {
+  int disabledModify = this->StartModify();
+
   // only call reset if this is a user node
   if (this->GetType() == vtkMRMLColorTableNode::User)
     {
     int type = this->GetType();
     Superclass::Reset();
-    this->DisableModifiedEventOn();
     this->SetType(type);
-    this->DisableModifiedEventOff();
     }
+
+  this->EndModify(disabledModify);
 }
 
 //---------------------------------------------------------------------------

@@ -108,6 +108,7 @@ void vtkMRMLDiffusionImageVolumeNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionImageVolumeNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -132,7 +133,9 @@ void vtkMRMLDiffusionImageVolumeNode::ReadXMLAttributes(const char** atts)
       {
       this->SetMaskNodeID(attValue);
       }
-  }      
+  }   
+
+  this->EndModify(disabledModify);
 
 } 
 

@@ -194,7 +194,6 @@ void vtkMRMLFiducial::ReadXMLString(const char *keyValuePairs)
 //----------------------------------------------------------------------------
 void vtkMRMLFiducial::ReadXMLAttributes(const char** atts)
 {
-
     //vtkMRMLNode::ReadXMLAttributes(atts);
 
   const char* attName;
@@ -264,6 +263,7 @@ void vtkMRMLFiducial::ReadXMLAttributes(const char** atts)
           }
     }
   }
+
 }
 
 
@@ -282,6 +282,8 @@ void vtkMRMLFiducial::Copy(vtkObject *anode)
   this->SetLabelText(node->GetLabelText());
   this->SetSelected(node->GetSelected());
   this->SetVisibility(node->GetVisibility());
+
+
 
 }
 

@@ -101,10 +101,14 @@ void vtkMRMLNonlinearTransformNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLNonlinearTransformNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLNonlinearTransformNode *node = (vtkMRMLNonlinearTransformNode *) anode;
 
   this->WarpTransformToParent->DeepCopy( node->GetWarpTransformToParent() );
+
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------

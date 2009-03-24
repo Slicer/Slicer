@@ -115,6 +115,7 @@ void vtkMRMLStorableNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLStorableNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -166,6 +167,9 @@ void vtkMRMLStorableNode::ReadXMLAttributes(const char** atts)
         }
       }  
     }
+
+  this->EndModify(disabledModify);
+
 }
 
 //----------------------------------------------------------------------------
@@ -185,6 +189,8 @@ void vtkMRMLStorableNode::UpdateReferenceID(const char *oldID, const char *newID
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLStorableNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLStorableNode *node = (vtkMRMLStorableNode *) anode;
   if (!node)
@@ -226,6 +232,9 @@ void vtkMRMLStorableNode::Copy(vtkMRMLNode *anode)
     {
     this->SetAndObserveNthStorageNodeID(i, node->StorageNodeIDs[i].c_str());
     }
+
+  this->EndModify(disabledModify);
+
 }
 
 //----------------------------------------------------------------------------

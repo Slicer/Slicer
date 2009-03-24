@@ -105,6 +105,7 @@ void vtkMRMLVolumeArchetypeStorageNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeArchetypeStorageNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -133,6 +134,8 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadXMLAttributes(const char** atts)
       ss >> this->UseOrientationFromFile;
       }
     }
+
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
@@ -140,12 +143,16 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, StorageID
 void vtkMRMLVolumeArchetypeStorageNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLVolumeArchetypeStorageNode *node = (vtkMRMLVolumeArchetypeStorageNode *) anode;
 
   this->SetCenterImage(node->CenterImage);
   this->SetSingleFile(node->SingleFile);
   this->SetUseOrientationFromFile(node->UseOrientationFromFile);
+
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------

@@ -211,6 +211,7 @@ void vtkMRMLScalarVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -269,6 +270,8 @@ void vtkMRMLScalarVolumeDisplayNode::ReadXMLAttributes(const char** atts)
       ss >> this->AutoThreshold;
       }
     }  
+    
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
@@ -276,13 +279,11 @@ void vtkMRMLScalarVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLScalarVolumeDisplayNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLScalarVolumeDisplayNode *node = (vtkMRMLScalarVolumeDisplayNode *) anode;
   
-  int disableModify = this->GetDisableModifiedEvent();
-
-  this->DisableModifiedEventOn();
-
   this->SetAutoWindowLevel(node->AutoWindowLevel);
   this->SetWindow(node->Window);
   this->SetLevel(node->Level);
@@ -292,11 +293,8 @@ void vtkMRMLScalarVolumeDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetLowerThreshold(node->LowerThreshold);
   this->SetInterpolate(node->Interpolate);
   
-  this->SetDisableModifiedEvent(disableModify);
-  if (!disableModify)
-    {
-    this->InvokePendingModifiedEvent();
-    }
+  this->EndModify(disabledModify);
+  
 }
 
 //----------------------------------------------------------------------------

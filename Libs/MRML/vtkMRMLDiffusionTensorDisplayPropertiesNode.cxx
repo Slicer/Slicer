@@ -128,6 +128,7 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::WriteXML(ostream& of, int nInd
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorDisplayPropertiesNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -218,7 +219,7 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::ReadXMLAttributes(const char**
       ss >> SuperquadricGlyphPhiResolution;
       }
   }
-
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
@@ -226,6 +227,8 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::ReadXMLAttributes(const char**
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLDiffusionTensorDisplayPropertiesNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLDiffusionTensorDisplayPropertiesNode *node = (vtkMRMLDiffusionTensorDisplayPropertiesNode *) anode;
 
@@ -243,7 +246,9 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::Copy(vtkMRMLNode *anode)
   this->SetSuperquadricGlyphGamma(node->SuperquadricGlyphGamma);
   this->SetSuperquadricGlyphThetaResolution(node->SuperquadricGlyphThetaResolution);
   this->SetSuperquadricGlyphPhiResolution(node->SuperquadricGlyphPhiResolution);
-}
+  
+  this->EndModify(disabledModify);
+  }
 
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorDisplayPropertiesNode::PrintSelf(ostream& os, vtkIndent indent)

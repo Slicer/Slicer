@@ -91,11 +91,17 @@ void vtkMRMLViewNode::SetRenderMode ( int m )
     {
     case vtkMRMLViewNode::Perspective:
       this->RenderMode = m;
-      this->InvokeEvent ( vtkMRMLViewNode::RenderModeEvent );
+      if (!this->GetDisableModifiedEvent()) 
+        {
+        this->InvokeEvent ( vtkMRMLViewNode::RenderModeEvent );
+        }
       break;
     case vtkMRMLViewNode::Orthographic:
       this->RenderMode = m;
-      this->InvokeEvent ( vtkMRMLViewNode::RenderModeEvent );
+      if (!this->GetDisableModifiedEvent()) 
+        {
+        this->InvokeEvent ( vtkMRMLViewNode::RenderModeEvent );
+        }
       break;
     default:
       break;
@@ -110,27 +116,28 @@ void vtkMRMLViewNode::SetStereoType ( int m )
     {
     case vtkMRMLViewNode::NoStereo:
       this->StereoType = m;
-      this->InvokeEvent ( vtkMRMLViewNode::StereoModeEvent );
       break;
     case vtkMRMLViewNode::RedBlue:
       this->StereoType = m;
-      this->InvokeEvent ( vtkMRMLViewNode::StereoModeEvent );
       break;
     case vtkMRMLViewNode::Anaglyph:
       this->StereoType = m;
-      this->InvokeEvent ( vtkMRMLViewNode::StereoModeEvent );
       break;
     case vtkMRMLViewNode::CrystalEyes:
       this->StereoType = m;
-      this->InvokeEvent ( vtkMRMLViewNode::StereoModeEvent );
       break;
     case vtkMRMLViewNode::Interlaced:
       this->StereoType = m;
-      this->InvokeEvent ( vtkMRMLViewNode::StereoModeEvent );
       break;
     default:
+      return;
       break;
     }
+  if (!this->GetDisableModifiedEvent()) 
+    {
+    this->InvokeEvent ( vtkMRMLViewNode::StereoModeEvent );
+    }
+
 }
 
 
@@ -142,19 +149,22 @@ void vtkMRMLViewNode::SetAnimationMode ( int m )
     {
     case vtkMRMLViewNode::Off:
       this->AnimationMode = m;
-      this->InvokeEvent ( vtkMRMLViewNode::AnimationModeEvent );
       break;
     case vtkMRMLViewNode::Spin:
       this->AnimationMode = m;
-      this->InvokeEvent ( vtkMRMLViewNode::AnimationModeEvent );
       break;
     case vtkMRMLViewNode::Rock:
       this->AnimationMode = m;
-      this->InvokeEvent ( vtkMRMLViewNode::AnimationModeEvent );
       break;
     default:
+      return;
       break;
     }
+  if (!this->GetDisableModifiedEvent()) 
+    {
+    this->InvokeEvent ( vtkMRMLViewNode::AnimationModeEvent );
+    }
+
 }
 
 
@@ -165,11 +175,17 @@ void vtkMRMLViewNode::SetBoxVisible ( int m )
     {
     case 0:
       this->BoxVisible = 0;
-      this->InvokeEvent ( vtkMRMLViewNode::VisibilityEvent );
+      if (!this->GetDisableModifiedEvent()) 
+        {
+        this->InvokeEvent ( vtkMRMLViewNode::VisibilityEvent );
+        }
       break;
     case 1:
       this->BoxVisible = 1;
-      this->InvokeEvent ( vtkMRMLViewNode::VisibilityEvent );
+      if (!this->GetDisableModifiedEvent()) 
+        {
+        this->InvokeEvent ( vtkMRMLViewNode::VisibilityEvent );
+        }
       break;
     default:
       break;
@@ -184,15 +200,19 @@ void vtkMRMLViewNode::SetFiducialsVisible ( int m )
     {
     case 0:
       this->FiducialsVisible = 0;
-      this->InvokeEvent ( vtkMRMLViewNode::VisibilityEvent );
       break;
     case 1:
       this->FiducialsVisible = 1;
-      this->InvokeEvent ( vtkMRMLViewNode::VisibilityEvent );
       break;
     default:
+      return;
       break;
     }
+  if (!this->GetDisableModifiedEvent()) 
+    {
+    this->InvokeEvent ( vtkMRMLViewNode::VisibilityEvent );
+    }
+
 }
 
 
@@ -204,15 +224,19 @@ void vtkMRMLViewNode::SetFiducialLabelsVisible ( int m )
     {
     case 0:
       this->FiducialLabelsVisible = 0;
-      this->InvokeEvent ( vtkMRMLViewNode::VisibilityEvent );
       break;
     case 1:
       this->FiducialLabelsVisible = 1;
-      this->InvokeEvent ( vtkMRMLViewNode::VisibilityEvent );
       break;
     default:
+      return;
       break;
     }
+  if (!this->GetDisableModifiedEvent()) 
+    {
+    this->InvokeEvent ( vtkMRMLViewNode::VisibilityEvent );
+    }
+
 }
 
 
@@ -223,14 +247,17 @@ void vtkMRMLViewNode::SetAxisLabelsVisible ( int m )
     {
     case 0:
       this->AxisLabelsVisible = 0;
-      this->InvokeEvent ( vtkMRMLViewNode::VisibilityEvent );
       break;
     case 1:
       this->AxisLabelsVisible = 1;
-      this->InvokeEvent ( vtkMRMLViewNode::VisibilityEvent );
       break;
     default:
+      return;
       break;
+    }
+  if (!this->GetDisableModifiedEvent()) 
+    {
+    this->InvokeEvent ( vtkMRMLViewNode::VisibilityEvent );
     }
 }
 
@@ -362,6 +389,7 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -600,6 +628,9 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
       }
 
     }
+    
+    
+  this->EndModify(disabledModify);
 }
 
 
@@ -610,6 +641,8 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLViewNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLViewNode *node = (vtkMRMLViewNode *) anode;
 
@@ -632,6 +665,8 @@ void vtkMRMLViewNode::Copy(vtkMRMLNode *anode)
   this->SetRenderMode ( node->GetRenderMode() );
   this->SetBackgroundColor ( node->GetBackgroundColor ( ) );
   this->SetActive(node->GetActive());
+
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------

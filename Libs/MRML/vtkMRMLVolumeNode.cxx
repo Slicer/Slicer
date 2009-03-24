@@ -92,6 +92,7 @@ void vtkMRMLVolumeNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -139,6 +140,8 @@ void vtkMRMLVolumeNode::ReadXMLAttributes(const char** atts)
         }
       }
    }  
+
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
@@ -146,6 +149,8 @@ void vtkMRMLVolumeNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   // don't modify the input node
   int amode = anode->GetDisableModifiedEvent();
   anode->DisableModifiedEventOn();
@@ -180,13 +185,12 @@ void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
 
   // this is to work around the SetAndObserveImageData causing 
   // ModifiedSinceRead become 1 on both nodes
-  int mode = this->GetDisableModifiedEvent();
-  this->DisableModifiedEventOn();
   this->SetModifiedSinceRead (modified);
-  this->SetDisableModifiedEvent(mode);
 
   anode->SetModifiedSinceRead (modified);
   anode->SetDisableModifiedEvent(amode);
+
+  this->EndModify(disabledModify);
 
 }
 

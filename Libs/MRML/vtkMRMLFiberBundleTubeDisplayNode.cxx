@@ -91,6 +91,7 @@ void vtkMRMLFiberBundleTubeDisplayNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleTubeDisplayNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -115,6 +116,9 @@ void vtkMRMLFiberBundleTubeDisplayNode::ReadXMLAttributes(const char** atts)
       ss >> TubeNumberOfSides;
       }
     }  
+
+  this->EndModify(disabledModify);
+
 }
 
 
@@ -123,11 +127,16 @@ void vtkMRMLFiberBundleTubeDisplayNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLFiberBundleTubeDisplayNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLFiberBundleTubeDisplayNode *node = (vtkMRMLFiberBundleTubeDisplayNode *) anode;
 
   this->SetTubeNumberOfSides(node->TubeNumberOfSides);
   this->SetTubeRadius(node->TubeRadius);
+
+  this->EndModify(disabledModify);
+
 }
 
 //----------------------------------------------------------------------------

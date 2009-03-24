@@ -185,6 +185,7 @@ void vtkMRMLSliceCompositeNode::UpdateReferenceID(const char *oldID, const char 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -314,6 +315,8 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
       this->SetDoPropagateVolumeSelection(atoi(attValue)?true:false);
       }
     }
+
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
@@ -321,10 +324,10 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, SliceID
 void vtkMRMLSliceCompositeNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLSliceCompositeNode *node = vtkMRMLSliceCompositeNode::SafeDownCast(anode);
-
-  //this->DisableModifiedEventOn();
 
   this->SetBackgroundVolumeID(node->GetBackgroundVolumeID());
   this->SetForegroundVolumeID(node->GetForegroundVolumeID());
@@ -341,8 +344,8 @@ void vtkMRMLSliceCompositeNode::Copy(vtkMRMLNode *anode)
   this->SetAnnotationSpace ( node->GetAnnotationSpace() );
   this->SetAnnotationMode ( node->GetAnnotationMode() );
   this->SetDoPropagateVolumeSelection (node->GetDoPropagateVolumeSelection());
-  //this->DisableModifiedEventOff();
-  //this->InvokePendingModifiedEvent();
+   
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------

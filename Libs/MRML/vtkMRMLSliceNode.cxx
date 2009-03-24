@@ -464,6 +464,7 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -621,6 +622,8 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
       }
     }
   this->UpdateMatrices();
+
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
@@ -628,10 +631,10 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, SliceID
 void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLSliceNode *node = vtkMRMLSliceNode::SafeDownCast(anode);
-
-  //this->DisableModifiedEventOn();
 
   this->SetSliceVisible(node->GetSliceVisible());
   this->SliceToRAS->DeepCopy(node->GetSliceToRAS());
@@ -654,8 +657,8 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
     }
   this->UpdateMatrices();
 
-  //this->DisableModifiedEventOff();
-  //this->InvokePendingModifiedEvent();
+  this->EndModify(disabledModify);
+  
 }
 
 //----------------------------------------------------------------------------

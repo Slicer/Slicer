@@ -199,6 +199,7 @@ void vtkMRMLSelectionNode::UpdateReferences()
 //----------------------------------------------------------------------------
 void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -245,6 +246,8 @@ void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
       }
 
     }
+
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
@@ -252,12 +255,11 @@ void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, SliceID
 void vtkMRMLSelectionNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLSelectionNode *node = vtkMRMLSelectionNode::SafeDownCast(anode);
 
-  int oldMode = this->GetDisableModifiedEvent();
-  this->DisableModifiedEventOn();
-  
   this->SetActiveVolumeID(node->GetActiveVolumeID());
   this->SetSecondaryVolumeID(node->GetActiveVolumeID());
   this->SetActiveLabelVolumeID(node->GetActiveLabelVolumeID());
@@ -266,9 +268,9 @@ void vtkMRMLSelectionNode::Copy(vtkMRMLNode *anode)
   this->SetActiveViewID (node->GetActiveViewID() );
   this->SetActiveLayoutID (node->GetActiveLayoutID() );
 
-  this->SetDisableModifiedEvent(oldMode);
-  this->Modified();
-}
+  this->EndModify(disabledModify);
+  
+  }
 
 //----------------------------------------------------------------------------
 void vtkMRMLSelectionNode::PrintSelf(ostream& os, vtkIndent indent)

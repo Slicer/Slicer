@@ -68,6 +68,7 @@ void vtkMRMLDisplayableNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -90,6 +91,9 @@ void vtkMRMLDisplayableNode::ReadXMLAttributes(const char** atts)
       //this->Scene->AddReferencedNodeID(this->DisplayNodeID, this);
       }    
     }  
+
+  this->EndModify(disabledModify);
+
 }
 
 //----------------------------------------------------------------------------
@@ -115,6 +119,8 @@ void vtkMRMLDisplayableNode::UpdateReferenceID(const char *oldID, const char *ne
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLDisplayableNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLDisplayableNode *node = (vtkMRMLDisplayableNode *) anode;
   this->SetAndObserveDisplayNodeID(NULL);
@@ -128,6 +134,8 @@ void vtkMRMLDisplayableNode::Copy(vtkMRMLNode *anode)
     {
     this->SetPolyData(node->PolyData);
     }
+
+  this->EndModify(disabledModify);
 
 }
 

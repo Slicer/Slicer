@@ -108,8 +108,13 @@ void vtkMRMLSceneSnapshotNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLSceneSnapshotNode::ProcessChildNode(vtkMRMLNode *node)
 {
+  int disabledModify = node->StartModify();
+
   Superclass::ProcessChildNode(node);
-  node->SetAddToScene(0);
+  node->SetAddToSceneNoModify(0);
+
+  node->EndModify(disabledModify);
+
   if (this->Nodes == NULL)
     {
     this->Nodes = vtkMRMLScene::New();

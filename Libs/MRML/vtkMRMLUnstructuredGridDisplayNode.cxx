@@ -85,6 +85,7 @@ void vtkMRMLUnstructuredGridDisplayNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLUnstructuredGridDisplayNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -102,6 +103,9 @@ void vtkMRMLUnstructuredGridDisplayNode::ReadXMLAttributes(const char** atts)
       ss >> ShrinkFactor;
       }
     }  
+
+  this->EndModify(disabledModify);
+
 }
 
 
@@ -110,9 +114,13 @@ void vtkMRMLUnstructuredGridDisplayNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLUnstructuredGridDisplayNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLUnstructuredGridDisplayNode *node = (vtkMRMLUnstructuredGridDisplayNode *) anode;
   this->SetShrinkFactor(node->ShrinkFactor);
+  
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------

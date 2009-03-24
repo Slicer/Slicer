@@ -118,6 +118,8 @@ void vtkMRMLStorageNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::ReadXMLAttributes(atts);
 
   this->ResetFileNameList();
@@ -167,6 +169,9 @@ void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
       ss >> this->WriteState;
       }
     }
+
+  this->EndModify(disabledModify);
+
 }
 
 //----------------------------------------------------------------------------
@@ -174,6 +179,8 @@ void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, StorageID
 void vtkMRMLStorageNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLStorageNode *node = (vtkMRMLStorageNode *) anode;
   this->SetFileName(node->FileName);
@@ -191,6 +198,9 @@ void vtkMRMLStorageNode::Copy(vtkMRMLNode *anode)
   this->SetUseCompression(node->UseCompression);
   this->SetReadState(node->ReadState);
   this->SetWriteState(node->WriteState);
+
+  this->EndModify(disabledModify);
+
 }
 
 //----------------------------------------------------------------------------

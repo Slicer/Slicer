@@ -114,6 +114,7 @@ void vtkMRMLTensorVolumeNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLTensorVolumeNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -147,6 +148,7 @@ void vtkMRMLTensorVolumeNode::ReadXMLAttributes(const char** atts)
       }
   }
 
+  this->EndModify(disabledModify);
 } 
 
 //----------------------------------------------------------------------------
@@ -218,6 +220,8 @@ void vtkMRMLTensorVolumeNode::SetMeasurementFrameMatrix(const double xr, const d
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLTensorVolumeNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLTensorVolumeNode *node = (vtkMRMLTensorVolumeNode *) anode;
 
@@ -230,6 +234,9 @@ void vtkMRMLTensorVolumeNode::Copy(vtkMRMLNode *anode)
       }
     }
   this->Order = node->Order;
+
+  this->EndModify(disabledModify);
+
 }
 
 //----------------------------------------------------------------------------

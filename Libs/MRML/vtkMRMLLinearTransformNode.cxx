@@ -103,6 +103,7 @@ void vtkMRMLLinearTransformNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -135,6 +136,7 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
       matrix->Delete();
       }
     }  
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
@@ -142,6 +144,8 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLLinearTransformNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLLinearTransformNode *node = (vtkMRMLLinearTransformNode *) anode;
   for (int i=0; i<4; i++) 
@@ -151,6 +155,7 @@ void vtkMRMLLinearTransformNode::Copy(vtkMRMLNode *anode)
       this->GetMatrixTransformToParent()->SetElement(i,j,(node->MatrixTransformToParent->GetElement(i,j)));
       }
     }
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------

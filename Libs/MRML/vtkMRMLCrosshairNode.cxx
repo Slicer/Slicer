@@ -126,6 +126,7 @@ void vtkMRMLCrosshairNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLCrosshairNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -209,6 +210,9 @@ void vtkMRMLCrosshairNode::ReadXMLAttributes(const char** atts)
         }
       }
     }
+  
+  this->EndModify(disabledModify);
+
 }
 
 //----------------------------------------------------------------------------
@@ -216,18 +220,18 @@ void vtkMRMLCrosshairNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, SliceID
 void vtkMRMLCrosshairNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLCrosshairNode *node = vtkMRMLCrosshairNode::SafeDownCast(anode);
-
-  //this->DisableModifiedEventOn();
 
   this->SetCrosshairMode ( node->GetCrosshairMode() );
   this->SetCrosshairBehavior (node->GetCrosshairBehavior());
   this->SetCrosshairThickness (node->GetCrosshairThickness());
   this->SetCrosshairRAS(node->GetCrosshairRAS());
 
-  //this->DisableModifiedEventOff();
-  //this->InvokePendingModifiedEvent();
+  this->EndModify(disabledModify);
+
 }
 
 //----------------------------------------------------------------------------

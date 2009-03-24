@@ -70,6 +70,7 @@ void vtkMRMLHierarchyNode::UpdateReferenceID(const char *oldID, const char *newI
 //----------------------------------------------------------------------------
 void vtkMRMLHierarchyNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -85,6 +86,9 @@ void vtkMRMLHierarchyNode::ReadXMLAttributes(const char** atts)
       //this->Scene->AddReferencedNodeID(this->ParentNodeID, this);
       }
     }
+
+  this->EndModify(disabledModify);
+
 }
 
 //----------------------------------------------------------------------------
@@ -92,9 +96,13 @@ void vtkMRMLHierarchyNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLHierarchyNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLHierarchyNode *node = (vtkMRMLHierarchyNode *) anode;
   this->SetParentNodeID(node->ParentNodeID);
+
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------

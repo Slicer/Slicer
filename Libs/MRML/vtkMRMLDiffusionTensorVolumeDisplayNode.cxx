@@ -99,6 +99,7 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -118,6 +119,7 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::ReadXMLAttributes(const char** att
       }
 
     }
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
@@ -125,9 +127,13 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::ReadXMLAttributes(const char** att
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLDiffusionTensorVolumeDisplayNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLDiffusionTensorVolumeDisplayNode *node = (vtkMRMLDiffusionTensorVolumeDisplayNode *) anode;
   this->SetScalarInvariant(node->ScalarInvariant);
+
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------

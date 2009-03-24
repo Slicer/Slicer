@@ -126,6 +126,7 @@ void vtkMRMLGlyphableVolumeDisplayNode::UpdateReferenceID(const char *oldID, con
 //----------------------------------------------------------------------------
 void vtkMRMLGlyphableVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -148,6 +149,8 @@ void vtkMRMLGlyphableVolumeDisplayNode::ReadXMLAttributes(const char** atts)
       }
 
     }  
+
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
@@ -155,20 +158,14 @@ void vtkMRMLGlyphableVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLGlyphableVolumeDisplayNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLGlyphableVolumeDisplayNode *node = (vtkMRMLGlyphableVolumeDisplayNode *) anode;
   
-  int disableModify = this->GetDisableModifiedEvent();
-  this->DisableModifiedEventOn();
-
   this->SetGlyphColorNodeID(node->GlyphColorNodeID);
 
-  this->SetDisableModifiedEvent(disableModify);
-  if (!disableModify)
-    {
-    this->InvokePendingModifiedEvent();
-    }
-
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------

@@ -217,6 +217,7 @@ void vtkMRMLVolumeHeaderlessStorageNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeHeaderlessStorageNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   vtkMRMLStorageNode::ReadXMLAttributes(atts);
 
@@ -271,8 +272,10 @@ void vtkMRMLVolumeHeaderlessStorageNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> CenterImage;
       }
-
     }
+
+  this->EndModify(disabledModify);
+
 }
 
 //----------------------------------------------------------------------------
@@ -280,6 +283,8 @@ void vtkMRMLVolumeHeaderlessStorageNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, StorageID
 void vtkMRMLVolumeHeaderlessStorageNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLVolumeHeaderlessStorageNode *node = (vtkMRMLVolumeHeaderlessStorageNode *) anode;
 
@@ -290,6 +295,8 @@ void vtkMRMLVolumeHeaderlessStorageNode::Copy(vtkMRMLNode *anode)
   this->SetFileScalarType(node->FileScalarType);
   this->SetFileNumberOfScalarComponents(node->FileNumberOfScalarComponents);
   this->SetCenterImage(node->CenterImage);
+
+  this->EndModify(disabledModify);
 
 }
 

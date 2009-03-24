@@ -71,6 +71,7 @@ void vtkMRMLTransformableNode::UpdateReferenceID(const char *oldID, const char *
 //----------------------------------------------------------------------------
 void vtkMRMLTransformableNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -86,6 +87,8 @@ void vtkMRMLTransformableNode::ReadXMLAttributes(const char** atts)
       //this->Scene->AddReferencedNodeID(this->TransformNodeID, this);
       }
     }
+
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
@@ -93,9 +96,13 @@ void vtkMRMLTransformableNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLTransformableNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
   vtkMRMLTransformableNode *node = (vtkMRMLTransformableNode *) anode;
   this->SetTransformNodeID(node->TransformNodeID);
+
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
