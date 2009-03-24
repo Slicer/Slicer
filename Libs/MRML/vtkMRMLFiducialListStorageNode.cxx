@@ -173,6 +173,9 @@ int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     // clear out the list
     fiducialListNode->RemoveAllFiducials();
+    // turn off modified events
+    int modFlag = fiducialListNode->GetDisableModifiedEvent();
+    fiducialListNode->DisableModifiedEventOn();
     char line[1024];
     // default column ordering for fiducial info
     // first pass: line will have label,x,y,z,selected,visible
@@ -428,6 +431,8 @@ int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
           } // point line
         }
       }
+    fiducialListNode->SetDisableModifiedEvent(modFlag);
+    fiducialListNode->InvokeEvent(vtkMRMLScene::NodeAddedEvent, fiducialListNode);//vtkMRMLFiducialListNode::DisplayModifiedEvent);
     fstr.close();
     }
   else
