@@ -109,15 +109,17 @@ proc slicerextd_sock_fileevent {sock} {
             # read a file from the socket and store it based on the parameters
             # date, build, name
             # - use file tail to avoid getting ../../trash
+            # - the protocol is a convention that matches the 
+            #   upload proc in Scripts/extend.tcl
             #
 
             if { [llength $line] < 5 } {
-                puts $sock "put error: need date, build, name, and size"
+                puts $sock "put error: need svnsubpath, rev-build, name, and size"
                 flush $sock
                 return
             }
-            set date [file tail [lindex $line 1]]
-            set build [file tail [lindex $line 2]]
+            set subpath [file tail [lindex $line 1]]
+            set revbuild [file tail [lindex $line 2]]
             set name [file tail [lindex $line 3]]
             set size [file tail [lindex $line 4]]
             
@@ -126,11 +128,16 @@ proc slicerextd_sock_fileevent {sock} {
             set data [read $sock $size]
             fconfigure $sock -translation auto
 
-            set dir $::SLICEREXTD(dir)/$date
-            if { ![file exists $dir] } {
-              file mkdir $dir
+            set pathSoFar ""
+            foreach subdir [file split $subpath] {
+              set pathSoFar $pathSoFar/$subdir
+              set dir $::SLICEREXTD(dir)/$pathSoFar
+              if { ![file exists $dir] } {
+                file mkdir $dir
+              }
             }
-            set dir $dir/$build
+
+            set dir $dir/$revbuild
             if { ![file exists $dir] } {
               file mkdir $dir
             }
