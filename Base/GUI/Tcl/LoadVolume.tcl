@@ -736,6 +736,7 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
 
   #
   # select archetype based on clicks in the dicom tree
+  # - ignore the serial number at the start of each node id
   # - always select a series 
   # -- click patient or study selects first series
   # -- click file selects containing series
@@ -745,23 +746,26 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
     set selection [$t GetSelection]
     set name [$t GetNodeText $selection]
     switch -glob $selection {
-      patient* {
+      {[0-9]*-patient*} {
         set patient $name
         set study [lindex $_dicomTree($patient,studies) 0]
         set series [lindex $_dicomTree($patient,$study,series) 0]
-        set seriesNode series-[$this safeNodeName $series]
+        set studyNode [lindex [$t GetNodeChildren $selection] 0]
+        set seriesNode [lindex [$t GetNodeChildren $studyNode] 0]
+        #set seriesNode series-[$this safeNodeName $series]
       }
-      study* {
+      {[0-9]*-study*} {
         set patientNode [$t GetNodeParent $selection]
         set patient [$t GetNodeText $patientNode]
         set study $name
         set series [lindex $_dicomTree($patient,$study,series) 0]
-        set seriesNode series-[$this safeNodeName $series]
+        set seriesNode [lindex [$t GetNodeChildren $selection] 0]
+        ##set seriesNode series-[$this safeNodeName $series]
       }
-      series-*-file* {
+      {[0-9]*-series-*-file*} {
         set seriesNode [$t GetNodeParent $selection]
       }
-      series* {
+      {[0-9]*-series*} {
         set seriesNode $selection
       }
       default {
@@ -773,6 +777,7 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
 
     # extract the file list corresponding to the selection (it is all the files in the selected series)
     # - the archetype file is the first one in the list
+    # - strip leading node serial number and (optional) trailing parenthetical description
     set fileList ""
     foreach fileNode [$t GetNodeChildren $seriesNode] {
       # - extract file name from node name
@@ -781,6 +786,8 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
       set closeParen [string last ) $nodeText]
       if { $openParen != -1 && $closeParen != -1 } {
         set fileName [string range $nodeText [expr $openParen + 1] [expr $closeParen - 1]]
+      } else {
+        set fileName $nodeText
       }
       lappend fileList $fileName
     }
@@ -858,7 +865,6 @@ itcl::body LoadVolume::selectArchetype { path name {optionsName ""} } {
     set dicomCache [DICOMCache #auto]
     $dicomCache getTreeForDirectory $directoryName _dicomTree
     itcl::delete object $dicomCache
-
     $this populateDICOMTree $directoryName _dicomTree
 
     # look for the rest of the series and set the file names list 
@@ -1090,21 +1096,26 @@ itcl::body LoadVolume::populateDICOMTree {directoryName arrayName} {
     return
   }
 
+  set n 0 ;# serial number of node
   foreach patient $tree(patients) {
-    set patientNode patient-[$this safeNodeName $patient]
+    set patientNode $n-patient-[$this safeNodeName $patient]
+    incr n
     $t AddNode "" $patientNode $patient
     $t OpenNode $patientNode
     foreach study $tree($patient,studies) {
-      set studyNode study-[$this safeNodeName $study]
+      set studyNode $n-study-[$this safeNodeName $study]
+      incr n
       $t AddNode $patientNode $studyNode $study
       $t OpenNode $studyNode
       foreach series $tree($patient,$study,series) {
-        set seriesNode series-[$this safeNodeName $series]
+        set seriesNode $n-series-[$this safeNodeName $series]
+        incr n
         set fileCount [llength $tree($patient,$study,$series,files)]
         if { $fileCount == 1 } {set countString "file" } else { set countString "files" }
         $t AddNode $studyNode $seriesNode "$series ($fileCount $countString)"
         foreach file $tree($patient,$study,$series,files) {
-          set fileNode $seriesNode-file-[$this safeNodeName $file]
+          set fileNode $n-$seriesNode-file-[$this safeNodeName $file]
+          incr n
           $t AddNode $seriesNode $fileNode "[file tail $file] ($file)"
         }
       }
@@ -1166,6 +1177,9 @@ itcl::body LoadVolume::parseDICOMDirectory {directoryName arrayName} {
 
 
     $this parseDICOMHeader $f header
+    if { !$header(isDICOM) } {
+      continue
+    }
 
     foreach key "patient study series" {
       set tag [set [string toupper $key]]
