@@ -62,7 +62,7 @@ switch $::tcl_platform(os) {
     }
 }
 
-puts stderr "Slicer3_HOME is $::Slicer3_HOME"
+puts "Slicer3_HOME is $::Slicer3_HOME"
 
 # Choose which library versions you want to compile against.  These
 # shouldn't be changed between releases except for testing purposes.
