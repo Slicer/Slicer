@@ -27,7 +27,6 @@ proc Usage { {msg ""} } {
     set msg "$msg\n  \[target\] is determined automatically if not specified"
     set msg "$msg\n  \[options\] is one of the following:"
     set msg "$msg\n   h --help : prints this message and exits"
-    set msg "$msg\n   -f --clean : delete lib and build directories first"
     set msg "$msg\n   --release : compile with optimization flags"
     set msg "$msg\n   --relwithdebinfo : compile with optimization flags and debugging symbols"
     set msg "$msg\n   -u --update : does a cvs/svn update on each lib"
@@ -35,7 +34,6 @@ proc Usage { {msg ""} } {
     puts stderr $msg
 }
 
-set ::EXTEND(clean) "false"
 set ::EXTEND(update) ""
 set ::EXTEND(release) ""
 set ::EXTEND(verbose) "false"
@@ -61,10 +59,6 @@ set argc [llength $argv]
 for {set i 0} {$i < $argc} {incr i} {
     set a [lindex $argv $i]
     switch -glob -- $a {
-        "--clean" -
-        "-f" {
-            set ::EXTEND(clean) "true"
-        }
         "--update" -
         "-u" {
             set ::EXTEND(update) "--update"
@@ -270,7 +264,7 @@ proc upload {fileName} {
   close $fp
 
   set sock [socket ext.slicer.org 8845]
-  puts $sock "put $::ext(date) $::env(BUILD) $name $size"
+  puts $sock "put $::ext(slicerSVNSubpath) $::ext(slicerSVNRevision)-$::env(BUILD) $name $size"
   fconfigure $sock -translation binary -encoding binary
   puts -nonewline $sock $data
   flush $sock
@@ -411,7 +405,7 @@ proc buildExtension {s3ext} {
   # make dirs, delete if asked for clean build
   foreach suffix {"" -build -install} {
     set dir $::Slicer3_EXT/$::ext(name)$suffix
-    if { $::EXTEND(clean) && $suffix != "" } {
+    if { $suffix != "" } {
       puts "Deleting $dir..."
       file delete -force $dir
     }
@@ -526,6 +520,26 @@ proc buildExtension {s3ext} {
     eval runcmd $::MAKE install
   }
 
+  # extract the svn revision number
+  set cwd [pwd]
+  cd $::ext(srcDir)
+  set svninfo [split [exec svn info] "\n"]
+  array set svn ""
+  foreach line $svninfo {
+    foreach {tag value} $line {
+      if { $tag == "Revision:" } {
+        set ::ext(svnrevision) $value
+      }
+    }
+  }
+  cd $cwd
+
+  # get the slicer version information
+  loadArray $::Slicer3_BUILD/lib/Slicer3/Slicer3Version.txt slicerVersion
+  set len [string length "http://svn.slicer.org/Slicer3/"]
+  set ::ext(slicerSVNSubpath) [string range $slicerVersion(svnurl) $len end]
+  set ::ext(slicerSVNRevision) $slicerVersion(svnrevision)
+
   # make the zip file
   # - TODO: first, write a config file that describes the build machine
   set dir $::Slicer3_EXT/$::ext(name)-install/lib/Slicer3
@@ -536,16 +550,16 @@ proc buildExtension {s3ext} {
     }
   }
   cd $dir
-  set ::ext(zipFileName) $dir/$::ext(name)-$::ext(date)-$::env(BUILD).zip 
+  set ::ext(zipFileName) $dir/$::ext(name)-$::ext(svnrevision)-$::ext(date)-$::env(BUILD).zip 
   runcmd zip -r9 $::ext(zipFileName) .
 
   # upload it
   # - read zip file into 'data' variable
   # - write it to a socket on the ext.slicer.org server
   #
-
   upload $::ext(zipFileName)  
   upload $s3ext
+
 }
 
 
