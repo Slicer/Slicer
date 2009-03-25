@@ -524,19 +524,27 @@ proc buildExtension {s3ext} {
     eval runcmd $::MAKE install
   }
 
-  # extract the svn revision number
-  set cwd [pwd]
-  cd $::ext(srcDir)
-  set svninfo [split [exec svn info] "\n"]
-  array set svn ""
-  foreach line $svninfo {
-    foreach {tag value} $line {
-      if { $tag == "Revision:" } {
-        set ::ext(svnrevision) $value
+  # extract the extension revision number
+  switch $::ext(scm) {
+    "cvs" {
+      # TODO: look at file modification dates
+      set ::ext(revision) $::ext(date)
+    }
+    "svn" {
+      set cwd [pwd]
+      cd $::ext(srcDir)
+      set svninfo [split [exec svn info] "\n"]
+      array set svn ""
+      foreach line $svninfo {
+        foreach {tag value} $line {
+          if { $tag == "Revision:" } {
+            set ::ext(revision) $value
+          }
+        }
       }
+      cd $cwd
     }
   }
-  cd $cwd
 
   # get the slicer version information
   loadArray $::Slicer3_BUILD/lib/Slicer3/Slicer3Version.txt slicerVersion
@@ -554,7 +562,7 @@ proc buildExtension {s3ext} {
     }
   }
   cd $dir
-  set ::ext(zipFileName) $dir/$::ext(name)-$::ext(svnrevision)-$::ext(date)-$::env(BUILD).zip 
+  set ::ext(zipFileName) $dir/$::ext(name)-$::ext(revision)-$::ext(date)-$::env(BUILD).zip 
   runcmd zip -r9 $::ext(zipFileName) .
 
   # upload it
