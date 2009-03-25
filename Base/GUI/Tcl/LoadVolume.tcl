@@ -107,6 +107,8 @@ if { [itcl::find class LoadVolume] == "" } {
 
     # visibility of extra column of hex in the dicom table
     public variable showGroupElement 0
+    # tolerance in mm for deciding if slice spacing is irregular
+    public variable epsilon 0.01
 
     variable _vtkObjects "" ;# internal list of object to delete
 
@@ -806,8 +808,11 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
     # set the file list corresponding to the selection (it is all the files in the selected series)
     set _dicomSeriesFileList $fileList
 
-    $t OpenNode $seriesNode
-    $t SeeNode $selection
+    # try to open the series and see the contents
+    # - this is in a catch, since selectArchetype may have changed the layout
+    #   of the tree
+    catch "$t OpenNode $seriesNode"
+    catch "$t SeeNode $selection"
 
     return
   }
@@ -1292,7 +1297,7 @@ itcl::body LoadVolume::organizeDICOMSeries {arrayName} {
 
 
   #
-  # sort each series by Instance Number
+  # sort each series geometrically
   #
   set POSITION "0020|0032"
   set ORIENTATION "0020|0037"
@@ -1330,7 +1335,34 @@ itcl::body LoadVolume::organizeDICOMSeries {arrayName} {
         set sortedFiles [lsort -real -index 1 $sortList]
         set tree($patient,$study,$series,files) ""
         foreach element $sortedFiles {
-          lappend tree($patient,$study,$series,files) [lindex $element 0]
+          foreach {file dist} $element {}
+          lappend tree($patient,$study,$series,files) $file
+          set tree($patient,$study,$series,$file,dist) $dist
+        }
+
+        #
+        # confirm equal spacing between slices
+        # - use public variable 'epsilon' to determine the tolerance
+        #
+        set fileCount [llength $tree($patient,$study,$series,files)]
+        if { $fileCount > 1 } {
+          set file0 [lindex $tree($patient,$study,$series,files) 0]
+          set file1 [lindex $tree($patient,$study,$series,files) 1]
+          set dist0 $tree($patient,$study,$series,$file0,dist)
+          set dist1 $tree($patient,$study,$series,$file1,dist)
+          set spacing0 [expr $dist1 - $dist0]
+          for {set n 2} {$n < $fileCount} {incr n} {
+            set fileN [lindex $tree($patient,$study,$series,files) $n]
+            set fileNminus1 [lindex $tree($patient,$study,$series,files) [expr $n - 1]]
+            set distN $tree($patient,$study,$series,$fileN,dist)
+            set distNminus1 $tree($patient,$study,$series,$fileNminus1,dist)
+            set spacingN [expr $distN - $distNminus1]
+            set spaceError [expr $spacingN - $spacing0]
+            if { $spaceError > $epsilon } {
+              $this errorDialog "Warning!  The images in series \"$series\" are not equally spaced (a difference of $spaceError in spacings was detected).  Slicer will load this series as if it had a spacing of $spacing0.  Please use caution."
+              break
+            }
+          }
         }
       }
     }
