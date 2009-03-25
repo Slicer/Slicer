@@ -66,6 +66,7 @@ set(vtkITK_SRCS
   vtkITKNewOtsuThresholdImageFilter.cxx
   vtkITKBSplineTransform.cxx
   vtkITKTimeSeriesDatabase.cxx
+  vtkITKIslandMath.cxx
   )
 
 # Abstract/pure virtual classes
