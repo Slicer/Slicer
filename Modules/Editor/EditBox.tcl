@@ -95,7 +95,6 @@ itcl::body EditBox::findEffects { {path ""} } {
     DeleteFiducials LabelOpacity
     FiducialVisibilityOff
     FiducialVisibilityOn 
-    IdentifyIslands
     LabelVisibilityOff LabelVisibilityOn 
     SnapToGridOff SnapToGridOn
     InterpolateLabels LabelOpacity

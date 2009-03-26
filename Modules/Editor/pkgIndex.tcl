@@ -23,4 +23,5 @@ package ifneeded Editor 3.0 [list
   source [file join $dir MakeModelEffect.tcl]
   source [file join $dir ErodeLabelEffect.tcl]
   source [file join $dir DilateLabelEffect.tcl]
+  source [file join $dir IdentifyIslandsEffect.tcl]
 ]
