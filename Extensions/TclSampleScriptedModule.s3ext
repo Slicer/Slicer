@@ -1,0 +1,29 @@
+#
+# first token of each non-comment line is the keyword and the rest of the line 
+# (including spaces) is the value.
+# - the value can be blank
+#
+
+# scm is source code manager (i.e. svn)
+scm       svn
+svnpath   https://www.nitrc.org/svn/slicer3examples/trunk/Slicer3ExampleModules/Scripted/TclSampleScriptedModule
+svnusername slicerbot
+svnpassword slicer
+
+# list dependencies 
+# - these should be names of other modules that have .s3ext files 
+# - the dependencies will be built first
+depends ScriptedModule
+
+# homepage
+homepage  http://www.slicer.org
+
+# match category in the xml description of the module (where it shows up in Modules menu)
+category  Developer Tools
+
+# give people an idea what to expect from this code 
+# - is it just a test or something you stand beind?
+status    Beta
+
+# One line description of what the module does
+description This is an example of an extension module written in tcl
