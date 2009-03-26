@@ -179,7 +179,7 @@ set ::Slicer3_EXT $::Slicer3_HOME/../Slicer3-ext
 # that tells what slicer3 build these newly built extensions 
 # are compatibile with
 
-exec tclsh $::Slicer3_HOME/Scripts/versioner.tcl
+exec $::Slicer3_HOME/Scripts/versioner.tcl
 
 #######
 #
