@@ -1,8 +1,8 @@
 
 scm       svn
 svnpath   https://www.nitrc.org/svn/slicer3examples/trunk/Slicer3ExampleModules/LoadableGuiLess
-svnusername anonymous
-svnpassword ""
+svnusername slicerbot
+svnpassword slicer
 
 depends
 
