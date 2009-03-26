@@ -478,7 +478,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::UpdateGUI ()
     
     if(n->GetStoppingMode() == 0)
       {
-      this->StoppingModeMenu->GetWidget()->SetValue("Linear Measurement");
+      this->StoppingModeMenu->GetWidget()->SetValue("Linear Measure");
       }
     else
       {
@@ -541,7 +541,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::UpdateMRML ()
     n->SetOutputFiberRef(this->OutFiberSelector->GetSelected()->GetID());
     }
     
-  if(!strcmp(this->StoppingModeMenu->GetWidget()->GetValue(), "Linear Measurement"))
+  if(!strcmp(this->StoppingModeMenu->GetWidget()->GetValue(), "Linear Measure"))
     {
     n->SetStoppingMode(0);
     }
@@ -794,9 +794,9 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
   this->StoppingModeMenu->SetWidth(20);
   this->StoppingModeMenu->SetLabelWidth(12);
   this->StoppingModeMenu->SetLabelText("Stopping Mode:");
-  this->StoppingModeMenu->GetWidget()->GetMenu()->AddRadioButton ( "Linear Measurement");
+  this->StoppingModeMenu->GetWidget()->GetMenu()->AddRadioButton ( "Linear Measure");
   this->StoppingModeMenu->GetWidget()->GetMenu()->AddRadioButton ( "Fractional Anisotropy");
-  this->StoppingModeMenu->GetWidget()->SetValue ( "Linear Measurement" );
+  this->StoppingModeMenu->GetWidget()->SetValue ( "Linear Measure" );
   this->Script(
     "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
     this->StoppingModeMenu->GetWidgetName());

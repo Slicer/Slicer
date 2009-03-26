@@ -97,10 +97,10 @@
       
     <double>
       <name>ClTh</name>
-      <label>Linear Measurement Start Threshold</label>
+      <label>Linear Measure Start Threshold</label>
       <flag>-c</flag>
       <longflag>--clthreshold</longflag>
-      <description>Minimum Linear Measurement for the seeding to start.</description>
+      <description>Minimum Linear Measure for the seeding to start.</description>
       <default>0.3</default>
       <constraints>
         <minimum>0</minimum>
@@ -148,8 +148,8 @@
       <description>Tensor measurement used to stop the tractography</description>
       <flag>-f</flag>
       <longflag>--stoppingmode</longflag>      	
-      <default>LinearMeasurement</default>
-      <element>LinearMeasurement</element>
+      <default>LinearMeasure</default>
+      <element>LinearMeasure</element>
       <element>FractionalAnisotropy</element>
     </string-enumeration>
     

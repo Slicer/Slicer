@@ -172,12 +172,11 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   seed->SetVtkHyperStreamlinePointsSettings(streamer);
   seed->SetMinimumPathLength(mnimumPathLength);
 
-  //if (this->StoppingMode && std::string(this->StoppingMode) == std::string("LinearMeasurement"))
-  if (stoppingMode && strcmp("Linear Measurement", stoppingMode) != 0)
+  if ( stoppingMode && 
+        ( (strcmp("Linear Measurement", stoppingMode) != 0) || (strcmp("Linear Measure", stoppingMode) != 0) ) )
     {
      streamer->SetStoppingModeToLinearMeasure();
     }
-  //else if (this->StoppingMode && std::string(this->StoppingMode) == std::string("FractionalAnisotropy"))
   else if (stoppingMode && strcmp("Fractional Anisotropy", stoppingMode) != 0)
     {  
     streamer->SetStoppingModeToFractionalAnisotropy();

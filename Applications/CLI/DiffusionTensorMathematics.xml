@@ -49,9 +49,9 @@
       <element>RelativeAnisotropy</element>
       <element>FractionalAnisotropy</element>
       <element>Mode</element>
-      <element>LinearMeasurement</element>
-      <element>PlanarMeasurement</element>
-      <element>SphericalMeasurement</element>
+      <element>LinearMeasure</element>
+      <element>PlanarMeasure</element>
+      <element>SphericalMeasure</element>
     </string-enumeration>
   </parameters>
 </executable>

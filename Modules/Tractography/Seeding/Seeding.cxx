@@ -189,11 +189,11 @@ int main( int argc, const char * argv[] )
   vtkHyperStreamlineDTMRI *streamer=vtkHyperStreamlineDTMRI::New();
   seed->SetVtkHyperStreamlinePointsSettings(streamer);
   
-  if (StoppingMode == std::string("LinearMeasurement"))
+  if (StoppingMode == std::string("LinearMeasurement") || StoppingMode == std::string("LinearMeasure"))
     {
      streamer->SetStoppingModeToLinearMeasure();
     }
-  else if (StoppingMode == std::string("PlanarMeasurement"))
+  else if (StoppingMode == std::string("PlanarMeasurement") || StoppingMode == std::string("PlanarMeasure"))
     {  
     streamer->SetStoppingModeToPlanarMeasure();
     }

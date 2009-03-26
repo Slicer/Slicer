@@ -61,15 +61,15 @@ int main( int argc, char * argv[] )
     {
     math->SetOperationToMode();
     }
-  else if (operation == std::string("LinearMeasurement"))
+  else if (operation == std::string("LinearMeasurement") || operation == std::string("LinearMeasure"))
     {
     math->SetOperationToLinearMeasure();
     }
-  else if (operation == std::string("PlanarMeasurement"))
+  else if (operation == std::string("PlanarMeasurement") || operation == std::string("PlanarMeasure"))
     {
     math->SetOperationToPlanarMeasure();
     }
-  else if (operation == std::string("SphericalMeasurement"))
+  else if (operation == std::string("SphericalMeasurement") || operation == std::string("SphericalMeasure"))
     {
     math->SetOperationToSphericalMeasure();
     }
