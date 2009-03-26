@@ -130,6 +130,8 @@ vtkMRMLNode* vtkIGTLToMRMLImage::CreateNewNode(vtkMRMLScene* scene, const char* 
   displayNode->Delete();
   image->Delete();
 
+  this->CenterImage(volumeNode);
+
   return volumeNode;
 }
 
@@ -149,7 +151,6 @@ vtkIntArray* vtkIGTLToMRMLImage::GetNodeEvents()
 //---------------------------------------------------------------------------
 int vtkIGTLToMRMLImage::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNode* node)
 {
-
   if (strcmp(node->GetNodeTagName(), "Volume") != 0)
     {
     //std::cerr << "Invalid node!!!!" << std::endl;
@@ -367,6 +368,8 @@ int vtkIGTLToMRMLImage::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNod
   // The following line is Necessary to update volume rendering
   // in VolumeRenderingCuda (Suggested by Nicholas Herlambang)
   volumeNode->GetImageData()->Modified();
+   
+  this->CenterImage(volumeNode);
 
 //  if (lps) { // LPS coordinate
 //    vtkMatrix4x4* lpsToRas = vtkMatrix4x4::New();
@@ -398,3 +401,38 @@ int vtkIGTLToMRMLImage::MRMLToIGTL(unsigned long event, vtkMRMLNode* mrmlNode, i
 
 }
 
+
+void vtkIGTLToMRMLImage::CenterImage(vtkMRMLVolumeNode *volumeNode)
+{
+    if ( volumeNode )
+      {
+      vtkImageData *image = volumeNode->GetImageData();
+      if (image) 
+        {
+        vtkMatrix4x4 *ijkToRAS = vtkMatrix4x4::New();
+        volumeNode->GetIJKToRASMatrix(ijkToRAS);
+
+        double dimsH[4];
+        double rasCorner[4];
+        int *dims = image->GetDimensions();
+        dimsH[0] = dims[0] - 1;
+        dimsH[1] = dims[1] - 1;
+        dimsH[2] = dims[2] - 1;
+        dimsH[3] = 0.;
+        ijkToRAS->MultiplyPoint(dimsH, rasCorner);
+
+        double origin[3];
+        int i;
+        for (i = 0; i < 3; i++)
+          {
+          origin[i] = -0.5 * rasCorner[i];
+          }
+        volumeNode->SetDisableModifiedEvent(1);
+        volumeNode->SetOrigin(origin);
+        volumeNode->SetDisableModifiedEvent(0);
+        volumeNode->InvokePendingModifiedEvent();
+
+        ijkToRAS->Delete();
+        }
+      }
+}

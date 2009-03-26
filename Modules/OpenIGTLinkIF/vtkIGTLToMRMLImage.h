@@ -22,6 +22,8 @@
 
 #include "igtlTransformMessage.h"
 
+class vtkMRMLVolumeNode;
+
 class VTK_OPENIGTLINKIF_EXPORT vtkIGTLToMRMLImage : public vtkIGTLToMRMLBase
 {
  public:
@@ -45,6 +47,8 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLToMRMLImage : public vtkIGTLToMRMLBase
  protected:
   vtkIGTLToMRMLImage();
   ~vtkIGTLToMRMLImage();
+
+  void CenterImage(vtkMRMLVolumeNode *volumeNode);
 
  protected:
   //BTX
