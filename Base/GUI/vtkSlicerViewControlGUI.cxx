@@ -3430,7 +3430,7 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->ScreenGrabButton->Create ( );
       this->ScreenGrabButton->SetReliefToFlat ( );
       this->ScreenGrabButton->SetBorderWidth ( 0 );
-      this->ScreenGrabButton->SetImageToIcon ( this->SlicerViewControlIcons->GetScreenGrabButtonIcon() );
+      this->ScreenGrabButton->SetImageToIcon ( this->SlicerViewControlIcons->GetSceneSnapshotButtonIcon() );
       this->ScreenGrabButton->IndicatorVisibilityOff ( );
       this->ScreenGrabButton->SetBalloonHelpString ( "Capture a screenshot of the 3D view or 3D and Slice views.");
       //--- MenuButton to select among saved scene snapshots
