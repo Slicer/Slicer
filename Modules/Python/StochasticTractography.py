@@ -1,6 +1,6 @@
 XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Diffusion</category>
+  <category>Python Modules</category>
   <title>Python Stochastic Tractography</title>
   <description> This module implements stochastic tractography. For more information please refer to the following link 
 
@@ -9,7 +9,7 @@ www.na-mic.org/Wiki/index.php/Python_Stochastic_Tractography_Tutorial
   <version>0.1.0.$Revision: 1892 $(alpha)</version>
   <documentation-url></documentation-url>
   <contributor> Developer: Julien de Siebenthal (PNL) (jvs@bwh.harvard.edu)
-Supervisors: Marek Kubicki (PNL), Carl-Fredrik Westin (LMI), Steve Pieper (Isomics) and Sylvain Bouix (PNL)
+Supervisors: Marek Kubicki (PNL), Carl-Fredrik Westin (LMI) and Sylvain Bouix (PNL)
  </contributor>
  <acknowledgements>
 Grants: National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149 (Ron Kikinis, Marek Kubicki)
