@@ -47,7 +47,7 @@ vtkSlicerToolbarIcons::vtkSlicerToolbarIcons ( )
     this->MouseManipulateOnIcon = vtkKWIcon::New ( );
     this->MouseManipulateOffIcon = vtkKWIcon::New ( );
     this->MouseManipulateDisabledIcon = vtkKWIcon::New ( );
-
+    this->ScreenShotIcon = vtkKWIcon::New();
     this->UndoIcon = vtkKWIcon::New ( );
     this->RedoIcon = vtkKWIcon::New ( );
     this->AssignImageDataToIcons ( );
@@ -252,6 +252,11 @@ vtkSlicerToolbarIcons::~vtkSlicerToolbarIcons ( )
     {
     this->RedoIcon->Delete ( );
     this->RedoIcon = NULL;
+    }
+  if ( this->ScreenShotIcon )
+    {
+    this->ScreenShotIcon->Delete();
+    this->ScreenShotIcon = NULL;
     }
 }
 
@@ -480,7 +485,11 @@ void vtkSlicerToolbarIcons::AssignImageDataToIcons ( )
                                image_ToolbarRedo_height,
                                image_ToolbarRedo_pixel_size,
                                image_ToolbarUndo_length, 0);
-
+    this->ScreenShotIcon->SetImage (image_SlicerScreenCapture,
+                                    image_SlicerScreenCapture_width,
+                                    image_SlicerScreenCapture_height,
+                                    image_SlicerScreenCapture_pixel_size,
+                                    image_SlicerScreenCapture_length, 0);
 }
 
 
@@ -534,5 +543,7 @@ void vtkSlicerToolbarIcons::PrintSelf ( ostream& os, vtkIndent indent )
 
     os << indent << "UndoIcon" << this->GetUndoIcon ( ) << "\n";
     os << indent << "RedoIcon" << this->GetRedoIcon ( ) << "\n";
+    os << indent << "ScreenShotIcon " << this->GetScreenShotIcon() << "\n";
+
 }
 

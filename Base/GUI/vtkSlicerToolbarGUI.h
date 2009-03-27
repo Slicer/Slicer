@@ -11,14 +11,20 @@
 #include "vtkSlicerComponentGUI.h"
 #include "vtkSlicerToolbarIcons.h"
 #include "vtkSlicerModuleChooseGUI.h"
+#include "vtkSlicerPopUpHelpWidget.h"
+#include "vtkKWLoadSaveDialog.h"
 
 #include "vtkKWFrame.h"
 #include "vtkKWToolbar.h"
 #include "vtkKWPushButton.h"
-
 #include "vtkKWMenuButton.h"
 #include "vtkKWRadioButtonSet.h"
-
+#include "vtkKWCheckButton.h"
+#include "vtkKWTopLevel.h"
+#include "vtkKWEntry.h"
+#include "vtkKWDialog.h"
+#include "vtkKWLoadSaveDialog.h"
+#include "vtkKWLoadSaveButton.h"
 
 class vtkSlicerApplicationGUI;
 
@@ -45,6 +51,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     
     vtkGetObjectMacro (ModulesToolbar, vtkKWToolbar);
     vtkGetObjectMacro (LoadSaveToolbar, vtkKWToolbar );
+    vtkGetObjectMacro ( UtilitiesToolbar, vtkKWToolbar );
     vtkGetObjectMacro (ViewToolbar, vtkKWToolbar);
     vtkGetObjectMacro (InteractionModeToolbar, vtkKWToolbar);
     vtkGetObjectMacro (UndoRedoToolbar, vtkKWToolbar);
@@ -67,18 +74,47 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkGetObjectMacro (ChooseLayoutIconMenuButton, vtkKWMenuButton );
     vtkGetObjectMacro (UndoIconButton, vtkKWPushButton );
     vtkGetObjectMacro (RedoIconButton, vtkKWPushButton );
+    vtkGetObjectMacro (ScreenShotIconButton, vtkKWPushButton );
     
+    vtkGetObjectMacro ( ScreenShotOptionsWindow, vtkKWTopLevel );
+    vtkGetObjectMacro ( ScreenShotNameEntry, vtkKWEntry );
+    vtkGetObjectMacro ( ScreenShotNumberEntry, vtkKWEntry );
+    vtkGetObjectMacro ( ScreenShotOverwriteButton, vtkKWCheckButton );
+    vtkGetObjectMacro ( ScreenShotCaptureButton, vtkKWPushButton );
+    vtkGetObjectMacro ( ScreenShotCloseButton, vtkKWPushButton );
+    vtkGetObjectMacro ( ScreenShotDialogButton, vtkKWLoadSaveButton );
+    vtkGetObjectMacro ( ScreenShotMagnificationEntry, vtkKWEntry );
+    vtkGetObjectMacro ( ScreenShotFormatMenuButton, vtkKWMenuButton );
+
     vtkGetObjectMacro (MousePickButton, vtkKWRadioButton);
     vtkGetObjectMacro (MousePlaceButton, vtkKWRadioButton);
     vtkGetObjectMacro (MouseTransformViewButton, vtkKWRadioButton);    
 
     vtkGetObjectMacro (CompareViewLightboxRowEntry, vtkKWEntry );
     vtkGetObjectMacro (CompareViewLightboxColumnEntry, vtkKWEntry );
+
+    // Description:
+    // These are the base filename and snapshot numbers
+    // used to name screenshots.
+    vtkGetStringMacro ( ScreenShotName );
+    vtkSetStringMacro ( ScreenShotName );
+    vtkGetStringMacro ( ScreenShotDirectory );
+    vtkSetStringMacro ( ScreenShotDirectory );
+    vtkGetMacro ( ScreenShotNumber, int );
+    vtkSetMacro ( ScreenShotNumber, int );
+    vtkGetMacro ( ScreenShotMagnification, int );
+    vtkSetMacro ( ScreenShotMagnification, int );
+    virtual const char *GetScreenShotFormat ( );
+    virtual void SetScreenShotFormat ( const char *format );
     
     // Description:
     // This method builds the Data module's GUI
     virtual void BuildGUI ( ) ;
 
+    virtual void WithdrawScreenShotOptionsWindow ( );
+    virtual void RaiseScreenShotOptionsWindow ( );
+    virtual void DestroyScreenShotOptionsWindow ( );
+    
     // Description:
     // Add/Remove observers on widgets in the GUI
     virtual void AddGUIObservers ( );
@@ -140,7 +176,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkKWToolbar *ViewToolbar;
     vtkKWToolbar *InteractionModeToolbar;
     vtkKWToolbar *UndoRedoToolbar;
-
+    vtkKWToolbar *UtilitiesToolbar;
     vtkKWTopLevel *CompareViewBoxTopLevel;
 
     // Description:
@@ -164,7 +200,18 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkKWPushButton *SaveSceneIconButton;
     vtkKWMenuButton *LoadSceneIconButton;
     vtkKWMenuButton *ChooseLayoutIconMenuButton;
+    vtkKWPushButton *ScreenShotIconButton;
 
+    //--- Screen snapshot configure window
+    vtkKWTopLevel *ScreenShotOptionsWindow;
+    vtkKWEntry *ScreenShotNameEntry;
+    vtkKWEntry *ScreenShotNumberEntry;
+    vtkKWEntry *ScreenShotMagnificationEntry;
+    vtkKWMenuButton *ScreenShotFormatMenuButton;
+    vtkKWCheckButton *ScreenShotOverwriteButton;
+    vtkKWPushButton *ScreenShotCaptureButton;
+    vtkKWPushButton *ScreenShotCloseButton;
+    vtkKWLoadSaveButton *ScreenShotDialogButton;
 
     vtkKWEntry *CompareViewBoxRowEntry;
 //    vtkKWEntry *CompareViewBoxColumnEntry;
@@ -186,6 +233,15 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     char *InteractionNodeID;
     vtkMRMLInteractionNode *InteractionNode;
     int ProcessingMRMLEvent;
+    char *ScreenShotName;
+    char *ScreenShotDirectory;
+    int ScreenShotNumber;
+    int ScreenShotMagnification;
+    int ScreenShotOverwrite;
+
+    //BTX
+    std::string ScreenShotFormat;
+    //ETX
     
  private:
     vtkSlicerToolbarGUI ( const vtkSlicerToolbarGUI& ); // Not implemented.

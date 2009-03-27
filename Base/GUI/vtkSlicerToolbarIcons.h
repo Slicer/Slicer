@@ -11,6 +11,7 @@
 #include "./Resources/vtkSlicerViewToolbar_ImageData.h"
 #include "./Resources/vtkSlicerModuleToolbar_ImageData.h"
 #include "./Resources/vtkSlicerUndoRedoToolbar_ImageData.h"
+#include "./Resources/vtkSlicerUtilitiesToolbar_ImageData.h"
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarIcons : public vtkSlicerIcons
 {
@@ -59,6 +60,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkGetObjectMacro (MouseManipulateDisabledIcon, vtkKWIcon );
     vtkGetObjectMacro (UndoIcon, vtkKWIcon );
     vtkGetObjectMacro (RedoIcon, vtkKWIcon );
+    vtkGetObjectMacro (ScreenShotIcon, vtkKWIcon );
 
     virtual void AssignImageDataToIcons ( );
     
@@ -104,6 +106,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkKWIcon *MousePlaceDisabledIcon;
     vtkKWIcon *UndoIcon;
     vtkKWIcon *RedoIcon;    
+    vtkKWIcon *ScreenShotIcon;
 
 
  private:
