@@ -65,8 +65,8 @@ vtkOpenIGTLinkIFLogic::vtkOpenIGTLinkIFLogic()
   this->SliceNode[2] = NULL;
 
   this->SliceOrientation[0] = SLICE_RTIMAGE_PERP;
-  this->SliceOrientation[1] = SLICE_RTIMAGE_INPLANE90;
-  this->SliceOrientation[2] = SLICE_RTIMAGE_INPLANE;
+  this->SliceOrientation[1] = SLICE_RTIMAGE_INPLANE;
+  this->SliceOrientation[2] = SLICE_RTIMAGE_INPLANE90;
 
   this->NeedRealtimeImageUpdate0 = 0;
   this->NeedRealtimeImageUpdate1 = 0;
@@ -964,8 +964,8 @@ void vtkOpenIGTLinkIFLogic::UpdateSliceNode(int sliceNodeNumber, vtkMatrix4x4* t
     {
     if (this->EnableOblique) // perpendicular
       {
-      this->SliceOrientation[sliceNodeNumber] = SLICE_RTIMAGE_PERP;
-      this->SliceNode[sliceNodeNumber]->SetSliceToRASByNTP(nx, ny, nz, tx, ty, tz, px, py, pz, 0);
+      //this->SliceOrientation[sliceNodeNumber] = SLICE_RTIMAGE_PERP;
+      this->SliceNode[sliceNodeNumber]->SetSliceToRASByNTP(nx, ny, nz, tx, ty, tz, px, py, pz, sliceNodeNumber);
       }
     else
       {
@@ -977,8 +977,8 @@ void vtkOpenIGTLinkIFLogic::UpdateSliceNode(int sliceNodeNumber, vtkMatrix4x4* t
     {
     if (this->EnableOblique) // In-Plane
       {
-      this->SliceOrientation[sliceNodeNumber] = SLICE_RTIMAGE_INPLANE;
-      this->SliceNode[sliceNodeNumber]->SetSliceToRASByNTP(nx, ny, nz, tx, ty, tz, px, py, pz, 1);
+      //this->SliceOrientation[sliceNodeNumber] = SLICE_RTIMAGE_INPLANE;
+      this->SliceNode[sliceNodeNumber]->SetSliceToRASByNTP(nx, ny, nz, tx, ty, tz, px, py, pz, sliceNodeNumber);
       }
     else
       {
@@ -990,8 +990,8 @@ void vtkOpenIGTLinkIFLogic::UpdateSliceNode(int sliceNodeNumber, vtkMatrix4x4* t
     {
     if (this->EnableOblique)  // In-Plane 90
       {
-      this->SliceOrientation[sliceNodeNumber] = SLICE_RTIMAGE_INPLANE90;
-      this->SliceNode[sliceNodeNumber]->SetSliceToRASByNTP(nx, ny, nz, tx, ty, tz, px, py, pz, 2);
+       //this->SliceOrientation[sliceNodeNumber] = SLICE_RTIMAGE_INPLANE90;
+      this->SliceNode[sliceNodeNumber]->SetSliceToRASByNTP(nx, ny, nz, tx, ty, tz, px, py, pz, sliceNodeNumber);
       }
     else
       {
