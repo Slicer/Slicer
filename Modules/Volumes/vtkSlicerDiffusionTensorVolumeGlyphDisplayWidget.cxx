@@ -572,6 +572,7 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::CreateWidget ( )
   this->GlyphDisplayWidget->SetParent ( this->DisplayFrame );
   this->GlyphDisplayWidget->SetMRMLScene(this->GetMRMLScene());
   this->GlyphDisplayWidget->Create ( );
+  this->GlyphDisplayWidget->SetGlyphResolution(5);
   this->GlyphDisplayWidget->SetBalloonHelpString("set glyph display parameters.");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
     this->GlyphDisplayWidget->GetWidgetName() );

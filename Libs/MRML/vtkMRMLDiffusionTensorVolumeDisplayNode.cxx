@@ -243,14 +243,16 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::AddSliceGlyphDisplayNodes( vtkMRML
     {
     vtkMRMLDiffusionTensorDisplayPropertiesNode *glyphDTDPN = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
     this->GetScene()->AddNode(glyphDTDPN);
+    int modifyState = glyphDTDPN->StartModify();
+    glyphDTDPN->SetLineGlyphResolution(5);
+    glyphDTDPN->EndModify(modifyState);
     glyphDTDPN->Delete();
     
     for (int i=0; i<3; i++)
       {
-      vtkMRMLDiffusionTensorVolumeSliceDisplayNode *node = vtkMRMLDiffusionTensorVolumeSliceDisplayNode::New();
-      node->SetVisibility(0);
       if (this->GetScene())
         {
+        vtkMRMLDiffusionTensorVolumeSliceDisplayNode *node = vtkMRMLDiffusionTensorVolumeSliceDisplayNode::New();
         if (i == 0) 
           {
           node->SetName("Red");
@@ -267,9 +269,14 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::AddSliceGlyphDisplayNodes( vtkMRML
         this->GetScene()->AddNode(node);
         node->Delete();
 
+        int modifyState = node->StartModify();     
+        node->SetVisibility(0);
+
         node->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(glyphDTDPN->GetID());
 
         node->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
+        
+        node->EndModify(modifyState);
 
         volumeNode->AddAndObserveDisplayNodeID(node->GetID());
         
