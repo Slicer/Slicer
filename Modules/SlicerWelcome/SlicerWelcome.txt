@@ -1,0 +1,4 @@
+Name: SlicerWelcome
+GUIName: SlicerWelcome
+
+

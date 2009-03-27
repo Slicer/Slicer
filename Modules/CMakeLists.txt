@@ -50,6 +50,7 @@ subdirs(
    QdecModule
    QueryAtlas
    FetchMI
+   SlicerWelcome
    ScriptedModule
    ScriptedModuleExample
    SlicerDaemon
@@ -84,6 +85,7 @@ endif(Slicer3_USE_OPENIGTLINK)
 ## VOLUMES_DEBUG
 ## QUERYATLAS_DEBUG
 ## FETCHMI_DEBUG
+## WELCOME_DEBUG
 ## COLORS_DEBUG
 ## FIDUCIALS_DEBUG
 ## CAMERA_DEBUG
