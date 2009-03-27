@@ -449,7 +449,7 @@ proc buildExtension {s3ext} {
   }
 
   if { $::isWindows } {
-    set makeCmd "$::MAKE $::ext(name).sln /out buildlog.txt /build $::VTK_BUILD_TYPE /project ALL_BUILD"
+    set makeCmd "$::MAKE $::ext(cmakeproject).sln /out buildlog-ctest.txt /build $::VTK_BUILD_TYPE /project ALL_BUILD"
   } else {
     set makeCmd $::MAKE
   }
@@ -493,7 +493,7 @@ proc buildExtension {s3ext} {
   # build the project
   cd $::Slicer3_EXT/$::ext(name)-build
   if { $::isWindows } {
-    runcmd "$::MAKE" $::ext(cmakeproject).sln /out buildlog.txt /build $::VTK_BUILD_TYPE /project ALL_BUILD
+    runcmd "$::MAKE" $::ext(cmakeproject).sln /out buildlog-allbuild.txt /build $::VTK_BUILD_TYPE /project ALL_BUILD
   } else {
     eval runcmd $::MAKE
   }
@@ -504,7 +504,7 @@ proc buildExtension {s3ext} {
   if { $::EXTEND(test-type) != "" } {
     if { $::isWindows } {
       # don't run testing on windows - if target doesn't exist, a dialog will come up and operation will hang
-      #set ret [catch "runcmd $::MAKE $::ext(cmakeproject).sln /out buildlog.txt /build $::VTK_BUILD_TYPE /project $::EXTEND(test-type)" res]
+      #set ret [catch "runcmd $::MAKE $::ext(cmakeproject).sln /out buildlog-test.txt /build $::VTK_BUILD_TYPE /project $::EXTEND(test-type)" res]
       set ret 0
     } else {
       set ret [catch "eval runcmd $::MAKE $::EXTEND(test-type)" res]
@@ -519,7 +519,7 @@ proc buildExtension {s3ext} {
   # run the install target
   cd $::Slicer3_EXT/$::ext(name)-build
   if { $::isWindows } {
-    runcmd $::MAKE $::ext(cmakeproject).sln /out buildlog.txt /build $::VTK_BUILD_TYPE /project INSTALL
+    runcmd $::MAKE $::ext(cmakeproject).sln /out buildlog-install.txt /build $::VTK_BUILD_TYPE /project INSTALL
   } else {
     eval runcmd $::MAKE install
   }
