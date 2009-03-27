@@ -38,7 +38,7 @@ vtkSlicerViewControlIcons::vtkSlicerViewControlIcons ( )
     this->OrthoButtonIcon = vtkKWIcon::New ( );
     this->PerspectiveButtonIcon = vtkKWIcon::New ( );
     this->CenterButtonIcon = vtkKWIcon::New ( );
-    this->ScreenGrabButtonIcon = vtkKWIcon::New ( );
+    this->SceneSnapshotButtonIcon = vtkKWIcon::New ( );
     this->StereoButtonIcon = vtkKWIcon::New ( );
     this->LookFromOffButtonIcon = vtkKWIcon::New ( );
     this->LookFromOnButtonIcon = vtkKWIcon::New ( );
@@ -167,10 +167,10 @@ vtkSlicerViewControlIcons::~vtkSlicerViewControlIcons ( )
       this->CenterButtonIcon->Delete ( );
       this->CenterButtonIcon = NULL;
       }
-    if ( this->ScreenGrabButtonIcon )
+    if ( this->SceneSnapshotButtonIcon )
       {
-      this->ScreenGrabButtonIcon->Delete ( );
-      this->ScreenGrabButtonIcon = NULL;
+      this->SceneSnapshotButtonIcon->Delete ( );
+      this->SceneSnapshotButtonIcon = NULL;
       }
     if ( this->StereoButtonIcon )
       {
@@ -461,7 +461,7 @@ void vtkSlicerViewControlIcons::AssignImageDataToIcons ( ) {
                                    image_ViewCenter_height,
                                    image_ViewCenter_pixel_size,
                                    image_ViewCenter_length, 0 );                                   
-  this->ScreenGrabButtonIcon->SetImage ( image_ViewSelect,
+  this->SceneSnapshotButtonIcon->SetImage ( image_ViewSelect,
                                    image_ViewSelect_width,
                                    image_ViewSelect_height,
                                    image_ViewSelect_pixel_size,
@@ -584,7 +584,7 @@ void vtkSlicerViewControlIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "OrthoButtonIcon: " << this->GetOrthoButtonIcon () << "\n";
     os << indent << "PerspectiveButtonIcon: " << this->GetPerspectiveButtonIcon () << "\n";
     os << indent << "CenterButtonIcon: " << this->GetCenterButtonIcon () << "\n";
-    os << indent << "ScreenGrabButtonIcon: " << this->GetScreenGrabButtonIcon () << "\n";
+    os << indent << "SceneSnapshotButtonIcon: " << this->GetSceneSnapshotButtonIcon () << "\n";
     os << indent << "StereoButtonIcon: " << this->GetStereoButtonIcon () << "\n";
     os << indent << "LookFromOffButtonIcon: " << this->GetLookFromOffButtonIcon () << "\n";
     os << indent << "RotateAroundOffButtonIcon: " << this->GetRotateAroundOffButtonIcon () << "\n";
