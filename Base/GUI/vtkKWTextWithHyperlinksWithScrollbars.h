@@ -1,5 +1,8 @@
-#include "vtkKWTextWithScrollbars.h"
+#ifndef __vtkKWTextWithHyperlinksWithScrollbars_h
+#define __vtkKWTextWithHyperlinksWithScrollbars_h
 
+
+#include "vtkKWTextWithScrollbars.h"
 #include "vtkSlicerBaseGUI.h"
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkKWTextWithHyperlinksWithScrollbars : public vtkKWTextWithScrollbars
@@ -25,3 +28,5 @@ private:
     vtkKWTextWithHyperlinksWithScrollbars(const vtkKWTextWithHyperlinksWithScrollbars&); // Not implemented
     void operator=(const vtkKWTextWithHyperlinksWithScrollbars&); // Not implemented
 };
+
+#endif

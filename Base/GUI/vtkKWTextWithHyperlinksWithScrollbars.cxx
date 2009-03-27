@@ -2,6 +2,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkKWText.h"
 #include <sstream>
+#include <string>
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro( vtkKWTextWithHyperlinksWithScrollbars);
@@ -16,6 +17,7 @@ vtkKWTextWithHyperlinksWithScrollbars::~vtkKWTextWithHyperlinksWithScrollbars(vo
 void vtkKWTextWithHyperlinksWithScrollbars::SetText(const char *s)
 {
     std::string text;
+
     text=s;
     this->GetWidget()->SetText("");
     while(text.size()!=0)
@@ -26,9 +28,12 @@ void vtkKWTextWithHyperlinksWithScrollbars::SetText(const char *s)
         {
             std::string hyperlink;
             std::string append;
+            std::string tail;
             append=text.substr(0,begin);
             hyperlink=text.substr(begin+3,end-(begin+3));
-            text=text.substr(end+4,text.length());
+            tail=text.substr(end+4,text.length());
+            text.clear();
+            text = tail;
             this->GetWidget()->AppendText(append.c_str());
             if(hyperlink.size()!=0)
             {
