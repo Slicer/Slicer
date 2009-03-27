@@ -21,5 +21,6 @@ package ifneeded SlicerBaseGUITcl 3.0 [list
   source [file join $dir XcatalogImport.tcl]
   source [file join $dir XnatXcatImport.tcl]
   source [file join $dir XnatPublishScene.tcl]         
+  source [file join $dir ScreenShot.tcl]
   source [file join $dir MRMLWatcher.tcl]
 ]
