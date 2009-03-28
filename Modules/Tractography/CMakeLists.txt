@@ -15,7 +15,6 @@ endif(NOT Slicer3_SOURCE_DIR)
 
 # --------------------------------------------------------------------------
 subdirs(
-  Editor
   Seeding
   Settings
   Display
