@@ -98,13 +98,19 @@ public:
                                   void *callData);
   // Description:
   // Describe behavior at module startup and exit.
-  virtual void Enter(){};
-  virtual void Exit(){};
+  virtual void Enter(){
+    this->ModuleEntered = true;
+  };
+  virtual void Exit(){
+    this->ModuleEntered = false;
+  };
 
   // Description: The name of the Module - this is used to 
   // construct the proc invocations
   vtkGetStringMacro(ModuleName);
   vtkSetStringMacro(ModuleName);
+
+  bool GetModuleEntered() { return ModuleEntered;};
 
   // Description: set an observer by number (work around
   // limitation in kwwidgets tcl wrapping)
@@ -171,6 +177,8 @@ private:
 
   // Wizard step cannot observe MRML events
   vtkMRMLROINode *roiNode;
+
+  bool ModuleEntered;
 };
 
 #endif

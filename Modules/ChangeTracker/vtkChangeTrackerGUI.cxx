@@ -77,6 +77,8 @@ vtkChangeTrackerGUI::vtkChangeTrackerGUI()
                  0);
   this->Logo = logo;
   logo->Delete();
+
+  this->ModuleEntered = false;
 }
 
 //----------------------------------------------------------------------------

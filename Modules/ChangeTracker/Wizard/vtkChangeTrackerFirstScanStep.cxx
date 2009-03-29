@@ -148,7 +148,11 @@ void vtkChangeTrackerFirstScanStep::ShowUserInterface()
   this->UpdateGUI();
 
   vtkSlicerApplicationGUI *applicationGUI     = this->GetGUI()->GetApplicationGUI();
-  applicationGUI->GetGUILayoutNode()->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutFourUpView);
+  // ShowUserInterface() is called on Slicer startup during workflow
+  // initialization in GUI construction. Do not reset the layout if called
+  // before Enter()
+  if(this->GUI->GetModuleEntered())
+    applicationGUI->GetGUILayoutNode()->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutFourUpView);
 
   {
     vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();  
