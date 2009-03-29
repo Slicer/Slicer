@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Python Modules</category>
