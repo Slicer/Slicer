@@ -72,7 +72,7 @@ void vtkMRMLLayoutNode::WriteXML(ostream& of, int nIndent)
 
   of << indent << " currentViewArrangement=\"" << this->ViewArrangement << "\"";
   of << indent << " guiPanelVisibility=\"" << this->GUIPanelVisibility << "\"";
-  of << indent << " bottomPanelVisiblity =\"" << this->BottomPanelVisibility << "\"";
+  of << indent << " bottomPanelVisibility =\"" << this->BottomPanelVisibility << "\"";
   of << indent << " guiPanelLR=\"" << this->GUIPanelLR << "\"";
   of << indent << " numberOfCompareViewRows=\"" << this->NumberOfCompareViewRows << "\"";
   of << indent << " numberOfCompareViewColumns=\"" << this->NumberOfCompareViewColumns << "\"";
