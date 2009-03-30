@@ -73,7 +73,14 @@ itcl::body IdentifyIslandsEffect::apply {} {
   set islands [vtkITKIslandMath New]
   $islands SetInput [$this getInputLabel]
   $islands SetOutput [$this getOutputLabel]
+  $islands SetMinimumSize [[$o(minSize) GetWidget] GetValueAsInt]
+  $islands SetFullyConnected [$o(fullyConnected) GetSelectedState]
+  $this setProgressFilter $islands "Calculating Islands..."
   $islands Update
+  set islandCount [$islands GetNumberOfIslands]
+  set islandOrigCount [$islands GetOriginalNumberOfIslands]
+  set ignoredIslands [expr $islandOrigCount - $islandCount]
+  $this statusText "[$islands GetNumberOfIslands] islands created ($ignoredIslands ignored)"
   $islands Delete
   $this postApply
 
@@ -88,75 +95,27 @@ itcl::body IdentifyIslandsEffect::buildOptions {} {
   # iterations and label value
   #
 
-  set o(fill) [vtkKWEntryWithLabel New]
-  $o(fill) SetParent [$this getOptionsFrame]
-  $o(fill) Create
-  [$o(fill) GetWidget] SetRestrictValueToInteger
-  [$o(fill) GetWidget] SetValueAsInt 0
-  $o(fill) SetLabelText "Background Label: "
-  $o(fill) SetBalloonHelpString "Dilated pixels will replace this value."
-  pack [$o(fill) GetWidgetName] -side top -anchor e -fill x -padx 2 -pady 2 -expand true
-
-  set o(iterations) [vtkKWEntryWithLabel New]
-  $o(iterations) SetParent [$this getOptionsFrame]
-  $o(iterations) Create
-  [$o(iterations) GetWidget] SetRestrictValueToInteger
-  [$o(iterations) GetWidget] SetValueAsInt 1
-  $o(iterations) SetLabelText "Iterations: "
-  $o(iterations) SetBalloonHelpString "Number of times to apply selected operation."
-  # TODO: support iterations
-  #pack [$o(iterations) GetWidgetName] -side top -anchor e -fill x -padx 2 -pady 2 
-
+  set o(minSize) [vtkKWEntryWithLabel New]
+  $o(minSize) SetParent [$this getOptionsFrame]
+  $o(minSize) Create
+  [$o(minSize) GetWidget] SetRestrictValueToInteger
+  [$o(minSize) GetWidget] SetValueAsInt 0
+  $o(minSize) SetLabelText "Minimum Size: "
+  $o(minSize) SetBalloonHelpString "Any islands smaller than this number of voxels will be ignored (label value will be 0)."
+  pack [$o(minSize) GetWidgetName] -side top -anchor e -fill x -padx 2 -pady 2 -expand true
 
   #
   # 4 or 8 neighbors
   #
 
-  set o(eightNeighbors) [vtkKWRadioButton New]
-  $o(eightNeighbors) SetParent [$this getOptionsFrame]
-  $o(eightNeighbors) Create
-  $o(eightNeighbors) SetValueAsInt 8
-  $o(eightNeighbors) SetText "Eight Neighbors"
-  $o(eightNeighbors) SetBalloonHelpString "Treat diagonally adjacent voxels as neighbors."
-  pack [$o(eightNeighbors) GetWidgetName] \
+  set o(fullyConnected) [vtkKWCheckButton New]
+  $o(fullyConnected) SetParent [$this getOptionsFrame]
+  $o(fullyConnected) Create
+  $o(fullyConnected) SetText "Fully Connected"
+  $o(fullyConnected) SetBalloonHelpString "When on, do not treat diagonally adjacent voxels as neighbors."
+  $o(fullyConnected) SetSelectedState 0
+  pack [$o(fullyConnected) GetWidgetName] \
     -side top -anchor e -fill x -padx 2 -pady 2 -expand true
-
-  set o(fourNeighbors) [vtkKWRadioButton New]
-  $o(fourNeighbors) SetParent [$this getOptionsFrame]
-  $o(fourNeighbors) Create
-  $o(fourNeighbors) SetValueAsInt 4
-  $o(fourNeighbors) SetText "Four Neighbors"
-  $o(fourNeighbors) SetBalloonHelpString "Do not treat diagonally adjacent voxels as neighbors."
-  pack [$o(fourNeighbors) GetWidgetName] \
-    -side top -anchor e -fill x -padx 2 -pady 2 -expand true
-
-  $o(fourNeighbors) SetSelectedState 1
-  $o(eightNeighbors) SetVariableName [$o(fourNeighbors) GetVariableName] 
-
-  #
-  # erode or erode then dilate
-  #
-
-  set o(erode) [vtkKWRadioButton New]
-  $o(erode) SetParent [$this getOptionsFrame]
-  $o(erode) Create
-  $o(erode) SetValue "Dilate"
-  $o(erode) SetText "Dilate"
-  $o(erode) SetBalloonHelpString "Treat diagonally adjacent voxels as neighbors."
-  # TODO: support erode and dilate
-  #pack [$o(erode) GetWidgetName] -side top -anchor e -fill x -padx 2 -pady 2 -expand true
-
-  set o(erodeDilate) [vtkKWRadioButton New]
-  $o(erodeDilate) SetParent [$this getOptionsFrame]
-  $o(erodeDilate) Create
-  $o(erodeDilate) SetValue "Dilate&Erode"
-  $o(erodeDilate) SetText "Dilate&Erode"
-  $o(erodeDilate) SetBalloonHelpString "Do not treat diagonally adjacent voxels as neighbors."
-  # TODO: support erode and dilate
-  #pack [$o(erodeDilate) GetWidgetName] -side top -anchor e -fill x -padx 2 -pady 2 -expand true
-
-  $o(erode) SetSelectedState 1
-  $o(erodeDilate) SetVariableName [$o(erode) GetVariableName] 
 
   #
   # an apply button
@@ -188,7 +147,7 @@ itcl::body IdentifyIslandsEffect::buildOptions {} {
   $o(help) SetParent [$this getOptionsFrame]
   $o(help) Create
   $o(help) SetHelpTitle "IdentifyIslands"
-  $o(help) SetHelpText "Use this tool to remove pixels from the boundary of the current label."
+  $o(help) SetHelpText "Use this tool to create a unique label value for each connected region in the current label map.  Connected regions are defined as groups of pixels which touch each other but are surrounded by zero valued voxels.  If FullyConnected is selected, then only voxels that share a face are counted as connected; if unselected, then voxels that touch at an edge or a corner are considered connected.\n\n Note: be aware that all non-zero label values labels values are considered equal by this filter and that the result will renumber the resulting islands in order of size."
   $o(help) SetBalloonHelpString "Bring up help window."
   pack [$o(help) GetWidgetName] \
     -side right -anchor sw -padx 2 -pady 2 
@@ -214,7 +173,7 @@ itcl::body IdentifyIslandsEffect::tearDownOptions { } {
   # call superclass version of tearDownOptions
   chain
 
-  foreach w "fill iterations fourNeighbors eightNeighbors erode erodeDilate help cancel apply" {
+  foreach w "minSize fullyConnected help cancel apply" {
     if { [info exists o($w)] } {
       $o($w) SetParent ""
       pack forget [$o($w) GetWidgetName] 
