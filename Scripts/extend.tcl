@@ -528,7 +528,7 @@ proc buildExtension {s3ext} {
   switch $::ext(scm) {
     "cvs" {
       # TODO: look at file modification dates
-      set ::ext(revision) $::ext(date)
+      set ::ext(revision) cvs$::ext(date)
     }
     "svn" {
       set cwd [pwd]
@@ -538,7 +538,7 @@ proc buildExtension {s3ext} {
       foreach line $svninfo {
         foreach {tag value} $line {
           if { $tag == "Revision:" } {
-            set ::ext(revision) $value
+            set ::ext(revision) svn$value
           }
         }
       }
