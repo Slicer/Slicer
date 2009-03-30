@@ -53,6 +53,12 @@ class VTK_ITK_EXPORT vtkITKIslandMath : public vtkSimpleImageToImageFilter
   void SetSliceBySliceToIK() {this->SetSliceBySlice(2);}
   void SetSliceBySliceToJK() {this->SetSliceBySlice(1);}
 
+  // Description:
+  // Accessors to describe result of calculations
+  vtkGetMacro(NumberOfIslands, unsigned long);
+  vtkSetMacro(NumberOfIslands, unsigned long);
+  vtkGetMacro(OriginalNumberOfIslands, unsigned long);
+  vtkSetMacro(OriginalNumberOfIslands, unsigned long);
 
 
 protected:
@@ -65,6 +71,9 @@ protected:
   int SliceBySlice;
   vtkIdType MinimumSize;
   vtkIdType MaximumSize;
+
+  unsigned long NumberOfIslands;
+  unsigned long OriginalNumberOfIslands;
   
 private:
   vtkITKIslandMath(const vtkITKIslandMath&);  // Not implemented.

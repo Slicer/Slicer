@@ -18,10 +18,13 @@
 #include "vtkPointData.h"
 #include "vtkDataArray.h"
 #include "vtkImageData.h"
+#include "vtkProcessObject.h"
 
 #include "itkImage.h"
 #include "itkConnectedComponentImageFilter.h"
 #include "itkRelabelComponentImageFilter.h"
+#include "itkEventObject.h"
+#include "itkCommand.h"
 
 vtkCxxRevisionMacro(vtkITKIslandMath, "$Revision: 1900 $");
 vtkStandardNewMacro(vtkITKIslandMath);
@@ -32,6 +35,9 @@ vtkITKIslandMath::vtkITKIslandMath()
   this->SliceBySlice = 0;
   this->MinimumSize = 0;
   this->MaximumSize = VTK_LARGE_ID;
+  this->NumberOfIslands = 0;
+  this->OriginalNumberOfIslands = 0;
+
 }
 
 vtkITKIslandMath::~vtkITKIslandMath()
@@ -46,7 +52,20 @@ void vtkITKIslandMath::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "SliceBySlice: " << SliceBySlice << std::endl;
   os << indent << "MinimumSize: " << MinimumSize << std::endl;
   os << indent << "MaximumSize: " << MaximumSize << std::endl;
+  os << indent << "NumberOfIslands: " << NumberOfIslands << std::endl;
+  os << indent << "OriginalNumberOfIslands: " << OriginalNumberOfIslands << std::endl;
 }
+
+// Note: local function not method - conforms to signature in itkCommand.h
+void vtkITKIslandMathHandleProgressEvent (itk::Object *caller, const itk::EventObject& eventObject, void *clientdata)
+{
+  itk::ProcessObject *itkFilter = static_cast<itk::ProcessObject*>(caller);
+  vtkProcessObject *vtkFilter = static_cast<vtkProcessObject*>(clientdata);
+  if ( itkFilter && vtkFilter )
+    {
+    vtkFilter->UpdateProgress ( itkFilter->GetProgress() );
+    }
+};
 
 template <class T>
 void vtkITKIslandMathExecute(vtkITKIslandMath *self, vtkImageData* input,
@@ -76,6 +95,11 @@ void vtkITKIslandMathExecute(vtkITKIslandMath *self, vtkImageData* input,
   inImage->SetBufferedRegion(region);
   inImage->SetSpacing(spacing);
 
+  // set up the progress callback
+  itk::CStyleCommand::Pointer progressCommand = itk::CStyleCommand::New();
+  progressCommand->SetClientData( static_cast<void *>(self) );
+  progressCommand->SetCallback( vtkITKIslandMathHandleProgressEvent );
+
 
   // Calculate the island operation
   // ccfilter - identifies the islands
@@ -85,12 +109,16 @@ void vtkITKIslandMathExecute(vtkITKIslandMath *self, vtkImageData* input,
   typedef itk::RelabelComponentImageFilter<ImageType, ImageType> RelabelComponentType;
   typename RelabelComponentType::Pointer relabel = RelabelComponentType::New();
 
-  ccfilter->SetFullyConnected(self->GetFullyConnected());
+  ccfilter->AddObserver(itk::ProgressEvent(), progressCommand);
+  relabel->AddObserver(itk::ProgressEvent(), progressCommand);
 
+  ccfilter->SetFullyConnected(self->GetFullyConnected());
   ccfilter->SetInput( inImage );
   relabel->SetInput( ccfilter->GetOutput() );
   relabel->SetMinimumObjectSize( self->GetMinimumSize() );
   relabel->Update();
+  self->SetNumberOfIslands(relabel->GetNumberOfObjects());
+  self->SetOriginalNumberOfIslands(relabel->GetOriginalNumberOfObjects());
 
   // Copy to the output
   memcpy(outPtr, relabel->GetOutput()->GetBufferPointer(),
