@@ -85,6 +85,7 @@ vtkSlicerToolbarGUI::vtkSlicerToolbarGUI ( )
   this->CompareViewLightboxColumnEntry = NULL;
 
   //--- Screen snapshot configure window
+  this->ScreenShotFormatMenuButton = NULL;
   this->ScreenShotOptionsWindow = NULL;
   this->ScreenShotNameEntry = NULL;
   this->ScreenShotNumberEntry = NULL;
@@ -955,7 +956,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           }
         if ( m != NULL && event == vtkKWMenu::MenuItemInvokedEvent )
           {
-          if ( m == this->ScreenShotFormatMenuButton->GetMenu() )
+          if ( this->ScreenShotFormatMenuButton && m == this->ScreenShotFormatMenuButton->GetMenu() )
             {
             this->SetScreenShotFormat ( this->ScreenShotFormatMenuButton->GetValue() );
             }
@@ -970,7 +971,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
 
         if ( d != NULL && event == vtkKWTopLevel::WithdrawEvent )
           {
-          if ( d == this->ScreenShotDialogButton->GetLoadSaveDialog() )
+          if ( this->ScreenShotDialogButton && d == this->ScreenShotDialogButton->GetLoadSaveDialog() )
             {
             std::string dirname;
             if ( this->ScreenShotDialogButton->GetLoadSaveDialog()->GetFileName() != NULL )
