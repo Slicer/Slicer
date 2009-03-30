@@ -31,6 +31,7 @@ class vtkKWScaleWithEntry;
 class vtkKWPushButton;
 class vtkSlicerNodeSelectorWidget;
 class vtkKWMultiColumnList;
+class vtkKWMultiColumnListWithScrollbars;
 class vtkKWLoadSaveButton;
 
 class VTK_LABELSTATISTICS_EXPORT vtkLabelStatisticsGUI : public vtkSlicerModuleGUI
@@ -117,6 +118,7 @@ protected:
   vtkLabelStatisticsLogic *Logic;
   vtkMRMLLabelStatisticsNode* LabelStatisticsNode;
   vtkKWMultiColumnList* ResultList;
+  vtkKWMultiColumnListWithScrollbars* ResultListWithScrollbars;
   vtkKWLoadSaveButton* SaveToFile;
 };
 

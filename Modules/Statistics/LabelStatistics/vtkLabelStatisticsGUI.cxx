@@ -32,6 +32,7 @@ Version:   $Revision: 1.2 $
 #include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWMultiColumnList.h"
+#include "vtkKWMultiColumnListWithScrollbars.h"
 #include "vtkMRMLLabelStatisticsNode.h"
 #include "vtkKWLoadSaveButton.h"
 #include "vtkKWProgressGauge.h"
@@ -61,7 +62,8 @@ vtkLabelStatisticsGUI::vtkLabelStatisticsGUI()
   this->ApplyButton = vtkKWPushButton::New();
   this->SaveToFile = vtkKWLoadSaveButton::New();
   //this->VolStatsResult = vtkKWText::New();
-  this->ResultList = vtkKWMultiColumnList::New();
+  this->ResultListWithScrollbars = vtkKWMultiColumnListWithScrollbars::New();
+  this->ResultList = this->ResultListWithScrollbars->GetWidget();
   // this->SaveToClipboardButton = vtkKWPushButton::New();
   this->Logic = NULL;
   this->LabelStatisticsNode = NULL;
@@ -107,10 +109,11 @@ vtkLabelStatisticsGUI::~vtkLabelStatisticsGUI()
 //     this->VolStatsResult->Delete();
 //     this->VolStatsResult = NULL;
 //     }
-  if ( this->ResultList ) 
+  if ( this->ResultListWithScrollbars ) 
     {
-    this->ResultList->SetParent(NULL);
-    this->ResultList->Delete();
+    this->ResultListWithScrollbars->SetParent(NULL);
+    this->ResultListWithScrollbars->Delete();
+    this->ResultListWithScrollbars = NULL;
     this->ResultList = NULL;
     }
   
@@ -338,8 +341,8 @@ void vtkLabelStatisticsGUI::BuildGUI ( )
   app->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
                 this->ApplyButton->GetWidgetName());
 
-  this->ResultList->SetParent( moduleFrame->GetFrame());
-  this->ResultList->Create();
+  this->ResultListWithScrollbars->SetParent( moduleFrame->GetFrame());
+  this->ResultListWithScrollbars->Create();
   
   // this->ResultList->MovableColumnsOn();
   this->ResultList->SetWidth(0);
@@ -372,7 +375,7 @@ void vtkLabelStatisticsGUI::BuildGUI ( )
 
   app->Script(
     "pack %s -side top -anchor e  -padx 20 -pady 10", 
-    this->ResultList->GetWidgetName());
+    this->ResultListWithScrollbars->GetWidgetName());
  
   this->SaveToFile->SetParent( moduleFrame->GetFrame() );
   this->SaveToFile->Create();
