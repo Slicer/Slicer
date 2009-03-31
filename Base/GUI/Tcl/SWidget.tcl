@@ -90,6 +90,9 @@ if { [itcl::find class SWidget] == "" } {
     variable _sliceCompositeNode ""
     variable _layers
 
+    # flag to indicate that there is an update pending (in after idle)
+    variable _updatePending 0
+
     # methods
     method rasToXY {rasPoint} {}
     method rasToXYZ {rasPoint} {}
@@ -106,6 +109,8 @@ if { [itcl::find class SWidget] == "" } {
     method getPixel {image i j k} {}
     method setPixel {image i j k value} {}
     method setPixelBlock {image i j k size value} {}
+    method requestUpdate {} {}
+    method processUpdate {} {}
 
     # make a new instance of a class and add it to the list for cleanup
     method vtkNew {class} {
@@ -297,6 +302,18 @@ itcl::body SWidget::setPixel { image i j k value } {
     }
   }
   return 0
+}
+
+itcl::body SWidget::requestUpdate {} {
+  if { $_updatePending } {
+    return
+  }
+  set _updatePending 1
+  after idle $this processUpdate
+}
+
+itcl::body SWidget::processUpdate {} {
+  set _updatePending 0
 }
 
 #

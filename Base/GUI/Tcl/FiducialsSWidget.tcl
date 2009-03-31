@@ -39,6 +39,7 @@ if { [itcl::find class FiducialsSWidget] == "" } {
     method seedMovedCallback {seed fidListNode fidIndex} {}
     method seedMovingCallback {seed fidListNode fidIndex} {}
     method addFiducialListObserver {fidListNode} {}
+    method processUpdate {} {} ;# override superclass 
 
   }
 }
@@ -123,7 +124,7 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
           switch [$_interactor GetKeySym] {
             "grave" -
             "quoteleft" {
-              # this is the 'backtick' key in the upper left of the 
+              # this is the 'backtick' ` key in the upper left of the 
               # keyboard - it seems to have different names on windows vs X
               #
               # - if the slice is linked, then jump all slices to it
@@ -189,18 +190,6 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
     }
   }
 
-  #
-  # first, remove the old seeds
-  # - for reasons unknown as yet, deleting the object from within the 
-  #   event handler causes a hang -- so set it up to be deleted later
-  #
-  foreach seed $_seedSWidgets {
-    $seed place -10000 -10000 -10000
-    after idle "::SWidget::ProtectedDelete ::FiducialsSWidget::$seed;"
-    [$sliceGUI GetSliceViewer] RequestRender
-  }
-  set _seedSWidgets ""
-
 
   #
   # scene changed, so remove all the observers from the fiducial lists
@@ -214,6 +203,25 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
       } 
     }
   }
+
+  $this requestUpdate
+}
+
+itcl::body FiducialsSWidget::processUpdate {} {
+
+  chain
+
+  #
+  # first, remove the old seeds
+  # - for reasons unknown as yet, deleting the object from within the 
+  #   event handler causes a hang -- so set it up to be deleted later
+  #
+  foreach seed $_seedSWidgets {
+    $seed place -10000 -10000 -10000
+    after idle "::SWidget::ProtectedDelete ::FiducialsSWidget::$seed;"
+    [$sliceGUI GetSliceViewer] RequestRender
+  }
+  set _seedSWidgets ""
 
 
   #
@@ -240,10 +248,8 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
     for {set i 0} {$i < $nLists} {incr i} {
       set fidListNode [$scene GetNthNodeByClass $i "vtkMRMLFiducialListNode"]
 
-      # add an observer on this fiducial list
-      if { [$caller IsA "vtkMRMLScene"] } {
-        $this addFiducialListObserver $fidListNode
-      }
+      # add an observer on this fiducial list (won't re-add existing observers)
+      $this addFiducialListObserver $fidListNode
 
       if { ![$fidListNode GetVisibility] } {
         continue
@@ -300,7 +306,14 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
 
 itcl::body FiducialsSWidget::addFiducialListObserver {fidListNode} {
   if { [info command $fidListNode] != "" } {
-    set tag [$fidListNode AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $fidListNode"]
+    foreach {fnode tag} $_fiducialListObserverTagPairs {
+      if { $fnode == $fidListNode } {
+        return ;# the observer already exists
+      }
+    }
+    # no observer, so add one
+    set tag [$fidListNode AddObserver AnyEvent \
+        "::SWidget::ProtectedCallback $this processEvent $fidListNode"]
     lappend _fiducialListObserverTagPairs "$fidListNode $tag"
   }
 }
