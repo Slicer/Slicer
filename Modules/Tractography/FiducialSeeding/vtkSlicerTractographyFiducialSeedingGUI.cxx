@@ -843,7 +843,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
 
   this->RegionSizeScale->SetParent ( moduleFrame->GetFrame() );
   this->RegionSizeScale->Create ( );
-  this->RegionSizeScale->SetLabelText("Fiducail Seeding Region Size (mm)");
+  this->RegionSizeScale->SetLabelText("Fiducial Seeding Region Size (mm)");
   this->RegionSizeScale->GetWidget()->SetRange(0,10);
   this->RegionSizeScale->GetWidget()->SetResolution(0.5);
   this->RegionSizeScale->GetWidget()->SetValue(2.5);
@@ -853,7 +853,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
 
   this->RegionSampleSizeScale->SetParent ( moduleFrame->GetFrame() );
   this->RegionSampleSizeScale->Create ( );
-  this->RegionSampleSizeScale->SetLabelText("Fiducail Seeding Step Size (mm)");
+  this->RegionSampleSizeScale->SetLabelText("Fiducial Seeding Step Size (mm)");
   this->RegionSampleSizeScale->GetWidget()->SetRange(1,10);
   this->RegionSampleSizeScale->GetWidget()->SetResolution(0.5);
   this->RegionSampleSizeScale->GetWidget()->SetValue(1.0);
