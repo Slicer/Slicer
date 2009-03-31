@@ -1049,35 +1049,40 @@ void vtkChangeTrackerROIStep::MRMLUpdateROIFromROINode()
 // Propagate changes in ROINode MRML to ChangeTracker ROI MRML
 void vtkChangeTrackerROIStep::MRMLUpdateROINodeFromROI()
 {
-  vtkMRMLChangeTrackerNode* Node      =  this->GetGUI()->GetNode();
-  int size[3]   = {Node->GetROIMax(0) - Node->GetROIMin(0) + 1, 
-                   Node->GetROIMax(1) - Node->GetROIMin(1) + 1, 
-                   Node->GetROIMax(2) - Node->GetROIMin(2) + 1};
+  double ROIMinIJK[4], ROIMaxIJK[4], ROIMinRAS[4], ROIMaxRAS[4];
+  double radius[3], center[3];
 
-  int center[3] = {(Node->GetROIMax(0) + Node->GetROIMin(0))/2,
-                   (Node->GetROIMax(1) + Node->GetROIMin(1))/2, 
-                   (Node->GetROIMax(2) + Node->GetROIMin(2))/2};
-  
-  double pointRAS[4], pointIJK[4];
-  double radius[3];
+  vtkMRMLChangeTrackerNode* Node = this->GetGUI()->GetNode();
   vtkMRMLVolumeNode *volumeNode = 
     vtkMRMLVolumeNode::SafeDownCast(Node->GetScene()->GetNodeByID(Node->GetScan1_Ref()));
-  if(!volumeNode)
+
+  if(!volumeNode || !Node)
     return;
+
+  ROIMinIJK[0] = Node->GetROIMin(0);
+  ROIMinIJK[1] = Node->GetROIMin(1);
+  ROIMinIJK[2] = Node->GetROIMin(2);
+  ROIMinIJK[3] = 1.;
+  ROIMaxIJK[0] = Node->GetROIMax(0);
+  ROIMaxIJK[1] = Node->GetROIMax(1);
+  ROIMaxIJK[2] = Node->GetROIMax(2);
+  ROIMaxIJK[3] = 1.;
+
   vtkMatrix4x4 *ijkToras = vtkMatrix4x4::New();
   volumeNode->GetIJKToRASMatrix(ijkToras);
-  pointIJK[0] = (double)center[0];
-  pointIJK[1] = (double)center[1];
-  pointIJK[2] = (double)center[2];
-  pointIJK[3] = 1.;
-  ijkToras->MultiplyPoint(pointIJK,pointRAS);
+  ijkToras->MultiplyPoint(ROIMinIJK,ROIMinRAS);
+  ijkToras->MultiplyPoint(ROIMaxIJK,ROIMaxRAS);
   ijkToras->Delete();
 
-  radius[0] = volumeNode->GetSpacing()[0]*(double)size[0]/2.;
-  radius[1] = volumeNode->GetSpacing()[1]*(double)size[1]/2.;
-  radius[2] = volumeNode->GetSpacing()[2]*(double)size[2]/2.;
+  center[0] = (ROIMaxRAS[0]+ROIMinRAS[0])/2.;
+  center[1] = (ROIMaxRAS[1]+ROIMinRAS[1])/2.;
+  center[2] = (ROIMaxRAS[2]+ROIMinRAS[2])/2.;
 
-  roiNode->SetXYZ(pointRAS[0], pointRAS[1], pointRAS[2]);
+  radius[0] = fabs(ROIMaxRAS[0]-ROIMinRAS[0])/2.;
+  radius[1] = fabs(ROIMaxRAS[1]-ROIMinRAS[1])/2.;
+  radius[2] = fabs(ROIMaxRAS[2]-ROIMinRAS[2])/2.;
+
+  roiNode->SetXYZ(center[0], center[1], center[2]);
   roiNode->SetRadiusXYZ(radius[0], radius[1], radius[2]);
   roiNode->Modified();
 }
