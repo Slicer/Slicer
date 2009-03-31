@@ -1214,7 +1214,7 @@ void vtkFetchMIResourceUploadWidget::AddNewItem ( const char *dataset, const cha
     if ( node != NULL )
       {
       snode = node->GetStorageNode();
-      if ( snode != NULL )
+      if ( snode != NULL && snode->GetFileName())
         {
         filePath = snode->GetFileName();
         }

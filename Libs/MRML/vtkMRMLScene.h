@@ -320,6 +320,8 @@ public:
 
   void UpdateNodeChangedIDs();
 
+  void RemoveUnusedNodeReferences();
+
   // Description: 
   // get the new id of the node that is different from one in the mrml file
   // or NULL if id has not changed
