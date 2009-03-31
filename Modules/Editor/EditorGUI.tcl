@@ -40,10 +40,7 @@ proc EditorTearDownGUI {this} {
 
   unset ::Editor(singleton)
 
-  if { [info exists ::Editor(undoImageData)] } {
-    $::Editor(undoImageData) Delete
-    unset ::Editor(undoImageData)
-  }
+  EditorFreeUndoRedoVolumes
 
 }
 
@@ -500,29 +497,119 @@ proc EditorCreateLabelVolume {this} {
 }
 
 #
-# store/restore a single volume 
+# store/restore a fixed number of volumes
+# - for now, limit to 10 undo volumes total
+# - keep two lists - undo and redo
+# -- adding to undo invalidates redo list
+# - each list entry is a pair of vtkImageData and mrml Node ID
 #
-proc EditorStoreUndoVolume {node} {
-  if { ![info exists ::Editor(undoImageData)] } {
-    set ::Editor(undoImageData) [vtkImageData New]
+proc EditorFreeVolumes {volumeList} {
+  foreach volume $volumeList {
+    foreach {imageData nodeID} $volume {}
+    $imageData Delete
   }
-  set ::Editor(undoNodeID) [$node GetID]
-  $::Editor(undoImageData) DeepCopy [$node GetImageData]
 }
 
-proc EditorRestoreUndoVolume {} {
-  if { ![info exists ::Editor(undoImageData)] } {
-    return
+# called at tear down time to free local instances
+proc EditorFreeUndoRedoVolumes {} {
+  foreach list {undoImages redoImages} {
+    EditorFreeVolumes $::Editor($list)
+    set ::Editor($list) ""
   }
-  set node [$::slicer3::MRMLScene GetNodeByID $::Editor(undoNodeID)]
+}
+
+# called by editor effects
+proc EditorStoreUndoVolume {node} {
+
+  EditorStoreUndoRedoVolume [$node GetID] undoImages
+
+  # invalidate Redo list
+  EditorFreeVolumes $::Editor(redoImages)
+}
+
+
+# unsed internally to manage nodes
+proc EditorStoreUndoRedoVolume {nodeID listID} {
+  
+  # create lists if needed
+  if { ![info exists ::Editor(undoImages)] } {
+    set ::Editor(undoImages) ""
+    set ::Editor(redoImages) ""
+  }
+
+  # trim oldest undo image if needed
+  if { [llength ::Editor($listID)] > 9 } {
+    set disposeImage [lindex $::Editor($listID) 0]
+    foreach {imageData nodeID} $disposeImage {}
+    $imageData Delete
+    set ::Editor($listID) [lrange $::Editor($listID) 1 end]
+  }
+
+  # add new 
+  set node [$::slicer3::MRMLScene GetNodeByID $nodeID]
+  set imageData [vtkImageData New]
   if { $node != "" } {
-    [$node GetImageData] DeepCopy $::Editor(undoImageData)
+    $imageData DeepCopy [$node GetImageData]
+  } else {
+    error "no node for $nodeID"
+  }
+  set nodeID [$node GetID]
+  lappend ::Editor($listID) "$imageData $nodeID"
+}
+
+proc EditorRestoreData {imageData nodeID} {
+  # restore the volume data
+  set node [$::slicer3::MRMLScene GetNodeByID $nodeID]
+  if { $node != "" } {
+    [$node GetImageData] DeepCopy $imageData
+  } else {
+    error "no node for $nodeID"
   }
   $node SetModifiedSinceRead 1
   $node Modified
 }
 
+# called by button presses or keystrokes
+proc EditorPerformUndoVolume {} {
+  if { ![info exists ::Editor(undoImages)] || [llength $::Editor(undoImages)] == 0 } {
+    return
+  }
 
+  # get the volume to restore
+  set restore [lindex $::Editor(undoImages) end]
+  foreach {imageData nodeID} $restore {}
+
+  # save the current state as a redo point
+  EditorStoreUndoRedoVolume $nodeID redoImages
+
+  # now pop the next item on the undo stack
+  set ::Editor(undoImages) [lrange $::Editor(undoImages) 0 end-1]
+
+  EditorRestoreData $imageData $nodeID
+
+}
+
+# called by button presses or keystrokes
+proc EditorPerformRedoVolume {} {
+  if { ![info exists ::Editor(redoImages)] || [llength $::Editor(redoImages)] == 0 } {
+    return
+  }
+
+  # get the volume to restore
+  set restore [lindex $::Editor(redoImages) end]
+  foreach {imageData nodeID} $restore {}
+
+  # save the current state as an undo point
+  EditorStoreUndoRedoVolume $nodeID undoImages
+
+  # now pop the next item on the redo stack
+  set ::Editor(redoImages) [lrange $::Editor(redoImages) 0 end-1]
+  EditorRestoreData $imageData $nodeID
+}
+
+#
+# helper to display error
+#
 proc EditorErrorDialog {errorText} {
   set dialog [vtkKWMessageDialog New]
   $dialog SetParent [$::slicer3::ApplicationGUI GetMainSlicerWindow]

@@ -98,7 +98,7 @@ itcl::body EditBox::findEffects { {path ""} } {
     LabelVisibilityOff LabelVisibilityOn 
     SnapToGridOff SnapToGridOn
     InterpolateLabels LabelOpacity
-    ToggleLabelOutline Watershed Wand Redo
+    ToggleLabelOutline Watershed Wand
   }
 
 
@@ -227,9 +227,9 @@ itcl::body EditBox::create { } {
   $this createButtonRow $parent {InterpolateLabels MakeModel Watershed LevelTracing}
   $this createButtonRow $parent {PreviousFiducial NextFiducial FiducialVisibilityOn DeleteFiducials}
   if { $frame == "" } {
-    $this createButtonRow $parent {GoToEditorModule PinOpen Undo }
+    $this createButtonRow $parent {GoToEditorModule PinOpen Undo Redo}
   } else {
-    $this createButtonRow $parent {Undo }
+    $this createButtonRow $parent {Undo Redo}
   }
  
   $this setMode $mode 
@@ -285,7 +285,10 @@ itcl::body EditBox::selectEffect { effect } {
       EditorToggleErasePaintLabel
     }
     "Undo" {
-      EditorRestoreUndoVolume
+      EditorPerformUndoVolume
+    }
+    "Redo" {
+      EditorPerformRedoVolume
     }
     default {
 
