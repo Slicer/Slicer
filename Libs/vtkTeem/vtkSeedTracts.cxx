@@ -330,6 +330,8 @@ void vtkSeedTracts::UpdateHyperStreamlinePointsSettings( vtkHyperStreamlineDTMRI
   // IntegrationDirection (set in this class, default both ways)
   currHSP->SetIntegrationDirection(this->IntegrationDirection);
 
+  currHSP->SetIntegrationStepLength(this->VtkHyperStreamlinePointsSettings->GetIntegrationStepLength());
+
 }
 
 // Update settings of one hyper streamline:
@@ -365,6 +367,8 @@ void vtkSeedTracts::UpdateHyperStreamlineTeemSettings( vtkHyperStreamlineTeem *c
   
   // IntegrationDirection (set in this class, default both ways)
   currHST->SetIntegrationDirection(this->IntegrationDirection);
+
+  currHST->SetIntegrationStepLength(this->VtkHyperStreamlineTeemSettings->GetIntegrationStepLength());
 
   std::cout << "DONE in settings  function HST" << endl;
 }

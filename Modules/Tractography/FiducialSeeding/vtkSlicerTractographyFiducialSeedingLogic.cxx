@@ -188,7 +188,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   //streamer->SetMaximumPropagationDistance(this->MaximumPropagationDistance);
   streamer->SetStoppingThreshold(stoppingValue);
   streamer->SetRadiusOfCurvature(stoppingCurvature);
-  streamer->SetStepLength(integrationStepLength);
+  streamer->SetIntegrationStepLength(integrationStepLength);
 
   // Temp fix to provide a scalar
   seed->GetInputTensorField()->GetPointData()->SetScalars(volumeNode->GetImageData()->GetPointData()->GetScalars());
