@@ -55,6 +55,8 @@ namespace eval ChangeTrackerTcl {
       }
     
       set OUTPUT [ vtkImageData New]
+      $OUTPUT SetScalarType [[$SCAN1_NODE GetImageData] GetScalarType]
+      puts "Setting scalar type to $OUTPUT GetScalarType"
       HistogramNormalization_FCT [$SCAN1_NODE GetImageData] [$SCAN1_SEGMENT_NODE GetImageData] [$SCAN2_NODE GetImageData] $OUTPUT
           
       # -------------------------------------
@@ -151,9 +153,15 @@ namespace eval ChangeTrackerTcl {
      }
 
     proc HistogramNormalization_HistFct {SCAN SEGMENT} {
+        # Input image may not be VTK_SHORT, so we cast it first
+        set CastImage [vtkImageCast New]
+        $CastImage SetInput $SCAN
+        $CastImage SetOutputScalarType [$SEGMENT GetScalarType]
+        $CastImage Update
+
         set HighIntensityRegion [vtkImageMathematics New]
         $HighIntensityRegion SetInput1 $SEGMENT
-        $HighIntensityRegion SetInput2 $SCAN 
+        $HighIntensityRegion SetInput2 [$CastImage GetOutput]
         $HighIntensityRegion SetOperationToMultiply
         $HighIntensityRegion Update 
          
@@ -161,9 +169,11 @@ namespace eval ChangeTrackerTcl {
         $SUM SetInput [$HighIntensityRegion GetOutput] 
         $SUM Update
         set result [$SUM GetVoxelSum ]
-         $SUM Delete
+
+        $SUM Delete
         $HighIntensityRegion Delete
-    return $result
+        $CastImage Delete
+        return $result
     } 
 
 
