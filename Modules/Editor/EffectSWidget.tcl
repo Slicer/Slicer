@@ -462,7 +462,7 @@ itcl::body EffectSWidget::getOutputLabel {} {
 itcl::body EffectSWidget::postApply {} {
   set logic [[$sliceGUI GetLogic]  GetLabelLayer]
   set node [$logic GetVolumeNode]
-  EditorStoreUndoVolume $node
+  EditorStoreCheckpoint $node
   set targetImage [$node GetImageData]
   switch $scope {
     "all" {

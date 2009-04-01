@@ -40,7 +40,7 @@ proc EditorTearDownGUI {this} {
 
   unset ::Editor(singleton)
 
-  EditorFreeUndoRedoVolumes
+  EditorFreeCheckpointVolumes
 
 }
 
@@ -498,9 +498,9 @@ proc EditorCreateLabelVolume {this} {
 
 #
 # store/restore a fixed number of volumes
-# - for now, limit to 10 undo volumes total
-# - keep two lists - undo and redo
-# -- adding to undo invalidates redo list
+# - for now, limit to 10 checkpoint volumes total
+# - keep two lists - checkpoint and redo
+# -- adding to nextCheckpoint invalidates redo list
 # - each list entry is a pair of vtkImageData and mrml Node ID
 #
 proc EditorFreeVolumes {volumeList} {
@@ -511,33 +511,50 @@ proc EditorFreeVolumes {volumeList} {
 }
 
 # called at tear down time to free local instances
-proc EditorFreeUndoRedoVolumes {} {
-  foreach list {undoImages redoImages} {
-    EditorFreeVolumes $::Editor($list)
-    set ::Editor($list) ""
+proc EditorFreeCheckpointVolumes {} {
+  foreach list {previousCheckpointImages nextCheckpointImages} {
+    if { [info exists ::Editor($list)] } {
+      EditorFreeVolumes $::Editor($list)
+      set ::Editor($list) ""
+    }
+  }
+}
+
+proc EditorUpdateCheckpointButtons {} {
+  if { $::Editor(previousCheckpointImages) != "" } {
+    EditBox::SetButtonState PreviousCheckpoint ""
+  } else {
+    EditBox::SetButtonState PreviousCheckpoint Disabled
+  }
+  if { $::Editor(nextCheckpointImages) != "" } {
+    EditBox::SetButtonState NextCheckpoint ""
+  } else {
+    EditBox::SetButtonState NextCheckpoint Disabled
   }
 }
 
 # called by editor effects
-proc EditorStoreUndoVolume {node} {
+proc EditorStoreCheckpoint {node} {
 
-  EditorStoreUndoRedoVolume [$node GetID] undoImages
+  EditorStoreCheckpointVolume [$node GetID] previousCheckpointImages
 
-  # invalidate Redo list
-  EditorFreeVolumes $::Editor(redoImages)
+  # invalidate NextCheckpoint list
+  EditorFreeVolumes $::Editor(nextCheckpointImages)
+
+  EditorUpdateCheckpointButtons 
 }
 
 
 # unsed internally to manage nodes
-proc EditorStoreUndoRedoVolume {nodeID listID} {
+proc EditorStoreCheckpointVolume {nodeID listID} {
   
   # create lists if needed
-  if { ![info exists ::Editor(undoImages)] } {
-    set ::Editor(undoImages) ""
-    set ::Editor(redoImages) ""
+  if { ![info exists ::Editor(previousCheckpointImages)] } {
+    set ::Editor(previousCheckpointImages) ""
+    set ::Editor(nextCheckpointImages) ""
   }
 
-  # trim oldest undo image if needed
+  # trim oldest previousCheckpoint image if needed
   if { [llength ::Editor($listID)] > 9 } {
     set disposeImage [lindex $::Editor($listID) 0]
     foreach {imageData nodeID} $disposeImage {}
@@ -570,41 +587,42 @@ proc EditorRestoreData {imageData nodeID} {
 }
 
 # called by button presses or keystrokes
-proc EditorPerformUndoVolume {} {
-  if { ![info exists ::Editor(undoImages)] || [llength $::Editor(undoImages)] == 0 } {
+proc EditorPerformPreviousCheckpoint {} {
+  if { ![info exists ::Editor(previousCheckpointImages)] || [llength $::Editor(previousCheckpointImages)] == 0 } {
     return
   }
 
   # get the volume to restore
-  set restore [lindex $::Editor(undoImages) end]
+  set restore [lindex $::Editor(previousCheckpointImages) end]
   foreach {imageData nodeID} $restore {}
 
   # save the current state as a redo point
-  EditorStoreUndoRedoVolume $nodeID redoImages
+  EditorStoreCheckpointVolume $nodeID nextCheckpointImages
 
-  # now pop the next item on the undo stack
-  set ::Editor(undoImages) [lrange $::Editor(undoImages) 0 end-1]
+  # now pop the next item on the previousCheckpoint stack
+  set ::Editor(previousCheckpointImages) [lrange $::Editor(previousCheckpointImages) 0 end-1]
 
   EditorRestoreData $imageData $nodeID
-
+  EditorUpdateCheckpointButtons 
 }
 
 # called by button presses or keystrokes
-proc EditorPerformRedoVolume {} {
-  if { ![info exists ::Editor(redoImages)] || [llength $::Editor(redoImages)] == 0 } {
+proc EditorPerformNextCheckpoint {} {
+  if { ![info exists ::Editor(nextCheckpointImages)] || [llength $::Editor(nextCheckpointImages)] == 0 } {
     return
   }
 
   # get the volume to restore
-  set restore [lindex $::Editor(redoImages) end]
+  set restore [lindex $::Editor(nextCheckpointImages) end]
   foreach {imageData nodeID} $restore {}
 
-  # save the current state as an undo point
-  EditorStoreUndoRedoVolume $nodeID undoImages
+  # save the current state as an previousCheckpoint point
+  EditorStoreCheckpointVolume $nodeID previousCheckpointImages
 
   # now pop the next item on the redo stack
-  set ::Editor(redoImages) [lrange $::Editor(redoImages) 0 end-1]
+  set ::Editor(nextCheckpointImages) [lrange $::Editor(nextCheckpointImages) 0 end-1]
   EditorRestoreData $imageData $nodeID
+  EditorUpdateCheckpointButtons 
 }
 
 #

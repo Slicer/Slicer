@@ -26,6 +26,13 @@ namespace eval EditBox {
   proc ShowDialog {} {
     ::Box::ShowDialog EditBox
   }
+
+  # set the state of an icon in all edit boxes (e.g. undo/redo)
+  proc SetButtonState {effect state} {
+    foreach editBox [itcl::find objects -class EditBox] {
+      $editBox setButtonState $effect $state
+    }
+  }
 }
 
 
@@ -43,6 +50,7 @@ if { [itcl::find class EditBox] == "" } {
     # methods
     method create { } {}
     method createButtonRow {parent effects} {}
+    method setButtonState {effect state} {}
     method findEffects { {path ""} } {}
     method selectEffect {effect} {}
     method processEvent {{caller ""} {event ""}} {}
@@ -83,7 +91,7 @@ itcl::body EditBox::findEffects { {path ""} } {
     LabelVisibilityOff LabelVisibilityOn NextFiducial 
     SnapToGridOff SnapToGridOn
     EraseLabel Threshold PinOpen PreviousFiducial  InterpolateLabels LabelOpacity
-    ToggleLabelOutline Watershed Undo Redo
+    ToggleLabelOutline Watershed PreviousCheckpoint NextCheckpoint
   }
 
   set _effects(list,disabled) {
@@ -133,6 +141,17 @@ itcl::body EditBox::findEffects { {path ""} } {
         $_effects($effect,icon) $_effects($effect,imageData$iconMode)
   }
   $reader Delete
+
+  # undo/redo start disabled but can be enabled externally
+  $this setButtonState PreviousCheckpoint Disabled
+  $this setButtonState NextCheckpoint Disabled
+}
+
+# needs to be a valid effect name and state of "", Disabled, or Selected
+itcl::body EditBox::setButtonState {effect state} {
+  $::slicer3::ApplicationGUI SetIconImage \
+      $_effects($effect,icon) $_effects($effect,imageData$state)
+  $o($effect,button) SetImageToIcon $_effects($effect,icon)
 }
 
 #
@@ -227,9 +246,9 @@ itcl::body EditBox::create { } {
   $this createButtonRow $parent {InterpolateLabels MakeModel Watershed LevelTracing}
   $this createButtonRow $parent {PreviousFiducial NextFiducial FiducialVisibilityOn DeleteFiducials}
   if { $frame == "" } {
-    $this createButtonRow $parent {GoToEditorModule PinOpen Undo Redo}
+    $this createButtonRow $parent {PreviousCheckpoint NextCheckpoint GoToEditorModule PinOpen}
   } else {
-    $this createButtonRow $parent {Undo Redo}
+    $this createButtonRow $parent {PreviousCheckpoint NextCheckpoint}
   }
  
   $this setMode $mode 
@@ -284,11 +303,11 @@ itcl::body EditBox::selectEffect { effect } {
     "EraseLabel" {
       EditorToggleErasePaintLabel
     }
-    "Undo" {
-      EditorPerformUndoVolume
+    "PreviousCheckpoint" {
+      EditorPerformPreviousCheckpoint
     }
-    "Redo" {
-      EditorPerformRedoVolume
+    "NextCheckpoint" {
+      EditorPerformNextCheckpoint
     }
     default {
 

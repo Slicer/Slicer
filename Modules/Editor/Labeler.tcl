@@ -52,8 +52,8 @@ if { [itcl::find class Labeler] == "" } {
 
     # keep track of first application of the label since the 
     # class was instantiated - this is used to decide when to 
-    # make a copy of the label map for the Editor's Undo function
-    variable appliedSinceConstructed 0
+    # make a copy of the label map for the Editor's Checkpoint function
+    variable _appliedSinceConstructed 0
 
     # methods
     method processEvent {{caller ""} {event ""}} {}
@@ -239,10 +239,12 @@ itcl::body Labeler::applyImageMask { maskIJKToRAS mask bounds } {
   # image
   #
   
-  if { $appliedSinceConstructed == 0 } {
+  if { $_appliedSinceConstructed == 0 } {
     # first application, so save the old label volume
-    EditorStoreUndoVolume $_layers(label,node)
-    set appliedSinceConstructed 1
+    # - this means there will only be one checkpoint for each 'instance'
+    #   of the effect (i.e. multiple brush strokes all undone by one click)
+    EditorStoreCheckpoint $_layers(label,node)
+    set _appliedSinceConstructed 1
   }
 
   #
@@ -314,11 +316,6 @@ itcl::body Labeler::applyImageMask { maskIJKToRAS mask bounds } {
   if { ![info exists o(extractImage)] } {
     set o(extractImage) [vtkNew vtkImageData]
   }
-
-  #
-  # save the full volume as undo layer
-  #
-  EditorStoreUndoVolume $_layers(label,node)
 
   #
   # set up the painter class and let 'r rip!
