@@ -1169,26 +1169,29 @@ void vtkChangeTrackerROIStep::ROIIntensityMinMaxUpdate(vtkImageData* image, doub
     return;
     }
 
-  int ijk[3];
-  int iInc, jInc, kInc;
-  intensityMin = 1e10;
-  intensityMax = -1.;
+  int ijk[3], ijkMin[3], ijkMax[3], ijkInc[3];
+  
+  ijkMax[0] = ctNode->GetROIMax(0);
+  ijkMax[1] = ctNode->GetROIMax(1);
+  ijkMax[2] = ctNode->GetROIMax(2);
 
-//  iInc = (ctNode->GetROIMax(0)-ctNode->GetROIMin(0))/3;
-//  jInc = (ctNode->GetROIMax(1)-ctNode->GetROIMin(1))/3;
-//  kInc = (ctNode->GetROIMax(2)-ctNode->GetROIMin(2))/3;
-  iInc = 1;
-  jInc = 1;
-  kInc = 1;
-  ijk[0] = ctNode->GetROIMin(0);
-  ijk[1] = ctNode->GetROIMin(1);
-  ijk[2] = ctNode->GetROIMin(2);
+  ijkMin[0] = ctNode->GetROIMin(0);
+  ijkMin[1] = ctNode->GetROIMin(1);
+  ijkMin[2] = ctNode->GetROIMin(2);
 
-  for(;ijk[0]<ctNode->GetROIMax(0);ijk[0]++)
+  // sparse sample for performance
+  ijkInc[0] = (ijkMax[0]-ijkMin[0])/10;
+  ijkInc[1] = (ijkMax[1]-ijkMin[1])/10;
+  ijkInc[2] = (ijkMax[2]-ijkMin[2])/10;
+
+  intensityMin = image->GetScalarComponentAsDouble(ijkMin[0],ijkMin[1],ijkMin[2],0);
+  intensityMax = image->GetScalarComponentAsDouble(ijkMin[0],ijkMin[1],ijkMin[2],0);
+
+  for(ijk[0]=ijkMin[0];ijk[0]<ijkMax[0];ijk[0]+=ijkInc[0])
     {
-    for(;ijk[1]<ctNode->GetROIMax(1);ijk[1]++)
+    for(ijk[1]=ijkMin[1];ijk[1]<ijkMax[1];ijk[1]+=ijkInc[1])
       {
-      for(;ijk[2]<ctNode->GetROIMax(2);ijk[2]++)
+      for(ijk[2]=ijkMin[2];ijk[2]<ijkMax[2];ijk[2]+=ijkInc[2])
         {
         double intensity =
           image->GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],0);
@@ -1229,7 +1232,7 @@ void vtkChangeTrackerROIStep::UpdateROIRender()
     intensityMin = imgRange[0];
     intensityMax = imgRange[1];
     this->ROIIntensityMinMaxUpdate(volumeNode->GetImageData(), intensityMin, intensityMax);
-    this->SetRender_BandPassFilter((intensityMax+intensityMin)*.5, intensityMax-1, color0, color1);
+    this->SetRender_BandPassFilter((intensityMax+intensityMin)*.4, intensityMax-1, color0, color1);
 
     if(this->Render_RayCast_Mapper)
       {
