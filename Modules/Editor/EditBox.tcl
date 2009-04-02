@@ -107,6 +107,7 @@ itcl::body EditBox::findEffects { {path ""} } {
     SnapToGridOff SnapToGridOn
     InterpolateLabels LabelOpacity
     ToggleLabelOutline Watershed Wand
+    PreviousCheckpoint NextCheckpoint
   }
 
 
@@ -142,9 +143,6 @@ itcl::body EditBox::findEffects { {path ""} } {
   }
   $reader Delete
 
-  # undo/redo start disabled but can be enabled externally
-  $this setButtonState PreviousCheckpoint Disabled
-  $this setButtonState NextCheckpoint Disabled
 }
 
 # needs to be a valid effect name and state of "", Disabled, or Selected
