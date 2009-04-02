@@ -1606,7 +1606,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
 
     }
     
-    int labelWidth = 40;
+    int labelWidth = 30;
     
     //GPU ray casting
     {
