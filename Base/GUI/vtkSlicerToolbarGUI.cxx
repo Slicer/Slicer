@@ -517,7 +517,17 @@ void vtkSlicerToolbarGUI::WithdrawScreenShotOptionsWindow ( )
     {
     app->Script ( "grab release %s", this->ScreenShotOptionsWindow->GetWidgetName() );
     }
+
+  this->ScreenShotDialogButton->GetLoadSaveDialog()->RemoveObservers ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ScreenShotNameEntry->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ScreenShotNumberEntry->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ScreenShotMagnificationEntry->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ScreenShotFormatMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->ScreenShotOverwriteButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ScreenShotCaptureButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ScreenShotCloseButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ScreenShotOptionsWindow->Withdraw();
+
 }
 
 
@@ -588,7 +598,6 @@ void vtkSlicerToolbarGUI::RaiseScreenShotOptionsWindow ( )
     this->ScreenShotDialogButton->SetMaximumFileNameLength (128 );
     this->ScreenShotDialogButton->GetLoadSaveDialog()->ChooseDirectoryOn();
 
-    this->ScreenShotDialogButton->GetLoadSaveDialog()->AddObserver ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ScreenShotDialogButton->SetBalloonHelpString ( "Select a directory in which screen captures will be saved." );
 
     vtkKWLabel *l1 = vtkKWLabel::New();
@@ -600,7 +609,6 @@ void vtkSlicerToolbarGUI::RaiseScreenShotOptionsWindow ( )
     this->ScreenShotNameEntry->SetParent ( f1 );
     this->ScreenShotNameEntry->Create();
     this->ScreenShotNameEntry->SetValue ( this->ScreenShotName );    
-    this->ScreenShotNameEntry->AddObserver (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ScreenShotNameEntry->SetBalloonHelpString ( "Select a base-name for the image file, or use the default provided." );
 
     vtkKWLabel *l2 = vtkKWLabel::New();
@@ -611,7 +619,6 @@ void vtkSlicerToolbarGUI::RaiseScreenShotOptionsWindow ( )
     this->ScreenShotNumberEntry->SetParent ( f1 );
     this->ScreenShotNumberEntry->Create();
     this->ScreenShotNumberEntry->SetValueAsInt ( this->ScreenShotNumber );
-    this->ScreenShotNumberEntry->AddObserver (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ScreenShotNumberEntry->SetBalloonHelpString ( "Select a number to append to the image file base-name to create a unique filename." );
 
     vtkKWLabel *l3 = vtkKWLabel::New();
@@ -622,7 +629,6 @@ void vtkSlicerToolbarGUI::RaiseScreenShotOptionsWindow ( )
     this->ScreenShotMagnificationEntry->SetParent ( f1 );
     this->ScreenShotMagnificationEntry->Create();
     this->ScreenShotMagnificationEntry->SetValueAsInt ( this->ScreenShotMagnification );
-    this->ScreenShotMagnificationEntry->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ScreenShotMagnificationEntry->SetBalloonHelpString ( "Select a scale factor for the image file, e.g. a value of \"2\" will save an image twice the size of the current 3D Viewer." );
 
     vtkKWLabel *l4 = vtkKWLabel::New();
@@ -646,7 +652,6 @@ void vtkSlicerToolbarGUI::RaiseScreenShotOptionsWindow ( )
     this->ScreenShotFormat = ".png";
     this->ScreenShotFormatMenuButton->SetWidth ( 15 );
     this->ScreenShotFormatMenuButton->SetValue ( this->ScreenShotFormat.c_str() );
-    this->ScreenShotFormatMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand);
     this->ScreenShotFormatMenuButton->SetBalloonHelpString ( "Specify an image file format." );
     
     vtkKWLabel *l5 = vtkKWLabel::New();
@@ -657,7 +662,6 @@ void vtkSlicerToolbarGUI::RaiseScreenShotOptionsWindow ( )
     this->ScreenShotOverwriteButton->SetParent ( f1 );
     this->ScreenShotOverwriteButton->Create();
     this->ScreenShotOverwriteButton->SetSelectedState ( this->ScreenShotOverwrite );
-    this->ScreenShotOverwriteButton->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ScreenShotOverwriteButton->SetBalloonHelpString ( "Select this option if you wish to overwrite any existing image files with new screen captures." );
 
     this->Script ( "grid %s -row 0 -column 0 -padx 2 -pady 2 -sticky e", l0->GetWidgetName() );
@@ -688,7 +692,6 @@ void vtkSlicerToolbarGUI::RaiseScreenShotOptionsWindow ( )
     this->ScreenShotCaptureButton->Create();
     this->ScreenShotCaptureButton->SetText ( "Capture" );
     this->ScreenShotCaptureButton->SetWidth ( 9 );
-    this->ScreenShotCaptureButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     
     this->ScreenShotCloseButton = vtkKWPushButton::New();
     this->ScreenShotCloseButton->SetParent ( f2 );
@@ -696,7 +699,6 @@ void vtkSlicerToolbarGUI::RaiseScreenShotOptionsWindow ( )
     this->ScreenShotCloseButton->SetText ( "Close" );
     this->ScreenShotCloseButton->SetCommand ( this, "WithdrawScreenShotOptionsWindow" );
     this->ScreenShotCloseButton->SetWidth ( 9 );
-    this->ScreenShotCloseButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
     this->Script ( "pack %s %s -side left -anchor c -fill x -expand n -padx 0 -pady 1",
                    this->ScreenShotCloseButton->GetWidgetName(),
@@ -713,6 +715,16 @@ void vtkSlicerToolbarGUI::RaiseScreenShotOptionsWindow ( )
     f2->Delete();
 
     }
+
+
+  this->ScreenShotDialogButton->GetLoadSaveDialog()->AddObserver ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ScreenShotNameEntry->AddObserver (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ScreenShotNumberEntry->AddObserver (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ScreenShotMagnificationEntry->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ScreenShotFormatMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->ScreenShotOverwriteButton->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ScreenShotCaptureButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ScreenShotCloseButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   // display
   this->ScreenShotOptionsWindow->DeIconify();
@@ -834,9 +846,12 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
     vtkMRMLInteractionNode *interactionNode = NULL;
 
     vtkKWEntry *e = vtkKWEntry::SafeDownCast ( caller );
-    vtkKWMenu *m = vtkKWMenu::SafeDownCast ( caller );
     vtkKWCheckButton *cb = vtkKWCheckButton::SafeDownCast ( caller );
     vtkKWLoadSaveDialog *d = vtkKWLoadSaveDialog::SafeDownCast ( caller );
+    vtkKWRadioButton *radiob = vtkKWRadioButton::SafeDownCast ( caller );
+    vtkKWPushButton *pushb = vtkKWPushButton::SafeDownCast ( caller );
+    vtkKWMenu *menu = vtkKWMenu::SafeDownCast ( caller );
+
     vtkMRMLLayoutNode *layout;    
 
     if (p != NULL)
@@ -853,9 +868,6 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
     // Process events from top row of buttons
     if ( app != NULL )
       {
-      vtkKWRadioButton *radiob = vtkKWRadioButton::SafeDownCast ( caller );
-      vtkKWPushButton *pushb = vtkKWPushButton::SafeDownCast ( caller );
-      vtkKWMenu *menu = vtkKWMenu::SafeDownCast ( caller );
   
       // Mouse mode buttons:
       if ( radiob != NULL )
@@ -1002,10 +1014,10 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           }
         }
 
-      if ( pushb != NULL )
+      if ( pushb != NULL && event == vtkKWPushButton::InvokedEvent )
         {
         layout = p->GetGUILayoutNode();
-        if ( pushb == this->HomeIconButton && event == vtkKWPushButton::InvokedEvent )
+        if ( pushb == this->HomeIconButton )
           {
           const char *homename = app->GetHomeModule();
           vtkSlicerModuleGUI *m = app->GetModuleGUIByName(homename);
@@ -1018,7 +1030,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             vtkErrorMacro ("ERROR:  no slicer module gui found for Home module '" << (homename ? homename : "null") << "'"); 
             }
           }
-        else if ( pushb == this->ScreenShotCaptureButton && event == vtkKWPushButton::InvokedEvent )
+        else if ( pushb == this->ScreenShotCaptureButton )
           {
           //--- check for bugs
           //--- try first setting user's selection. if nothing there, choose the last path. if nothing there, mark for error.
@@ -1105,11 +1117,11 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
               }
             }
           }
-        else if (pushb == this->ScreenShotIconButton && event == vtkKWPushButton::InvokedEvent )
+        else if (pushb == this->ScreenShotIconButton )
           {
           this->RaiseScreenShotOptionsWindow();
           }
-        else if (pushb == this->DataIconButton && event == vtkKWPushButton::InvokedEvent )
+        else if (pushb == this->DataIconButton )
           {
           vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Data");
           if ( m != NULL && this->GetModuleChooseGUI() != NULL )
@@ -1121,7 +1133,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             vtkDebugMacro ("ERROR:  no slicer module gui found for Data\n");
             }
           }
-        else if (pushb == this->VolumeIconButton && event == vtkKWPushButton::InvokedEvent )
+        else if (pushb == this->VolumeIconButton )
           {
           vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Volumes");
           if ( m != NULL && this->GetModuleChooseGUI() != NULL)
@@ -1141,7 +1153,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             message->Delete();
             }
           }
-        else if (pushb == this->ModelIconButton && event == vtkKWPushButton::InvokedEvent )
+        else if (pushb == this->ModelIconButton )
           {
           vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Models");
           if ( m != NULL  && this->GetModuleChooseGUI() != NULL)
@@ -1153,7 +1165,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             vtkDebugMacro ("ERROR:  no slicer module gui found for Models\n");
             }
           }
-        else if (pushb == this->FiducialsIconButton && event == vtkKWPushButton::InvokedEvent )
+        else if (pushb == this->FiducialsIconButton )
           {
           vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Fiducials");
           if ( m != NULL  && this->GetModuleChooseGUI() != NULL)
@@ -1165,7 +1177,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             vtkDebugMacro ("ERROR:  no slicer module gui found for Fiducials\n");
             }
           }
-        else if (pushb == this->ColorIconButton && event == vtkKWPushButton::InvokedEvent )
+        else if (pushb == this->ColorIconButton )
           {
           vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Color");
           if ( m != NULL  && this->GetModuleChooseGUI() != NULL)
@@ -1177,7 +1189,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             vtkDebugMacro ("ERROR:  no slicer module gui found for Color\n");
             }
           }
-        else if (pushb == this->TransformIconButton && event == vtkKWPushButton::InvokedEvent )
+        else if (pushb == this->TransformIconButton )
           {
           vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Transforms");
           if ( m != NULL  && this->GetModuleChooseGUI() != NULL)
@@ -1189,7 +1201,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             vtkDebugMacro ("ERROR:  no slicer module gui found for Transforms\n");
             }
           }
-        else if (pushb == this->EditorIconButton && event == vtkKWPushButton::InvokedEvent )
+        else if (pushb == this->EditorIconButton )
           {
           vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Editor");
           if ( m != NULL  && this->GetModuleChooseGUI() != NULL)
@@ -1201,7 +1213,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             vtkDebugMacro ("ERROR:  no slicer module gui found for Editor\n");
             }
           }
-        else if (pushb == this->EditorToolboxIconButton && event == vtkKWPushButton::InvokedEvent )
+        else if (pushb == this->EditorToolboxIconButton )
           {
           //---
           //--- Add code to pop up Editor toolbox here
@@ -1209,7 +1221,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           app->Script ("::EditBox::ShowDialog");
           }
 
-        else if ((pushb == this->CompareViewBoxApplyButton) && (event == vtkKWPushButton::InvokedEvent))
+        else if (pushb == this->CompareViewBoxApplyButton) 
           {
           this->HideCompareViewCustomLayoutFrame();
           layout->SetNumberOfCompareViewRows ( this->CompareViewBoxRowEntry->GetValueAsInt() );
@@ -1217,15 +1229,15 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           layout->SetNumberOfCompareViewLightboxColumns ( this->CompareViewLightboxColumnEntry->GetValueAsInt() );
           layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutCompareView );
           }
-        else if ( pushb == this->UndoIconButton && event == vtkKWPushButton::InvokedEvent )
+        else if ( pushb == this->UndoIconButton )
           {
           p->GetMRMLScene()->Undo();
           }
-        else if ( pushb == this->RedoIconButton && event == vtkKWPushButton::InvokedEvent )
+        else if ( pushb == this->RedoIconButton )
           {
           p->GetMRMLScene()->Redo();
           }
-        else if ( pushb == this->SaveSceneIconButton && event == vtkKWPushButton::InvokedEvent)
+        else if ( pushb == this->SaveSceneIconButton )
           {
           p->ProcessSaveSceneAsCommand();
           }
@@ -1233,16 +1245,13 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
 
 
       // TODO: figure out why we can't resume view rock or spin.
-      if ( menu != NULL )
+      if ( menu != NULL && event == vtkKWMenu::MenuItemInvokedEvent )
         {
-        if ( m != NULL && event == vtkKWMenu::MenuItemInvokedEvent )
+        if ( this->ScreenShotFormatMenuButton != NULL && menu == this->ScreenShotFormatMenuButton->GetMenu() )
           {
-          if ( this->ScreenShotFormatMenuButton && m == this->ScreenShotFormatMenuButton->GetMenu() )
-            {
-            this->SetScreenShotFormat ( this->ScreenShotFormatMenuButton->GetValue() );
-            }
+          this->SetScreenShotFormat ( this->ScreenShotFormatMenuButton->GetValue() );
           }
-        else if ( menu == this->ChooseLayoutIconMenuButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+        else if ( this->ChooseLayoutIconMenuButton != NULL && menu == this->ChooseLayoutIconMenuButton->GetMenu() )
           {
           if ( p->GetGUILayoutNode() == NULL )
             {
@@ -1353,7 +1362,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             this->SetLayoutMenubuttonValueToCurrentLayout();
             }
           }
-        else if ( menu == this->LoadSceneIconButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+        else if (this->LoadSceneIconButton!= NULL &&  menu == this->LoadSceneIconButton->GetMenu() )
           {
           const char *thingToDo = this->LoadSceneIconButton->GetValue();
           if ( !strcmp ( thingToDo, "Load scene"))
