@@ -81,6 +81,7 @@
 #include "itkVTKImageIO.h"
 #include "itkTIFFImageIO.h"
 #include "itkAnalyzeImageIO.h"
+#include "itkDicomImageIO2Factory.h"
 #include <itksys/SystemTools.hxx>
 
 vtkCxxRevisionMacro(vtkITKArchetypeImageSeriesReader, "$Revision$");
@@ -127,7 +128,12 @@ vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
   this->SelectedSlice = -1;
   this->SelectedOrientation = -1;
 
+  // make sure ITK built-in factories are registered,
+  // then register the extra ones and unregister the 
+  // ones we don't want
+  itk::ImageIOFactory::RegisterBuiltInFactories();
   this->RegisterExtraBuiltInFactories();
+  this->UnRegisterDeprecatedBuiltInFactories();
 }
 
 // 
@@ -155,7 +161,41 @@ vtkITKArchetypeImageSeriesReader::RegisterExtraBuiltInFactories()
     }
   }
 #endif
+}
 
+//
+// ITK includes some old/unwanted IO Factories that cause 
+// incorrect parsing of dicom files in some circumstances
+//
+void
+vtkITKArchetypeImageSeriesReader::UnRegisterDeprecatedBuiltInFactories()
+{
+  static bool firstTime = true;
+  if (!firstTime)
+    {
+    return;
+    }
+  firstTime = false;
+  
+  std::list<itk::ObjectFactoryBase*> registeredFactories = itk::ObjectFactoryBase::GetRegisteredFactories();
+  itk::DICOMImageIO2Factory *dicomIO = NULL;
+  for ( std::list<itk::ObjectFactoryBase*>::iterator i = registeredFactories.begin();
+        i != registeredFactories.end(); ++i )
+    {
+    dicomIO = dynamic_cast<itk::DICOMImageIO2Factory*>(*i);
+    if ( dicomIO )
+      {
+      break;
+      }
+    }
+  if ( dicomIO )
+    {
+    itk::ObjectFactoryBase::UnRegisterFactory( dicomIO );
+    }
+  else
+    {
+    vtkErrorMacro("Could not find dicomIO factory to unregister");
+    }
 }
 
 //----------------------------------------------------------------------------

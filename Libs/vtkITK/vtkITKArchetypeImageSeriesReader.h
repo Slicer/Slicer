@@ -243,7 +243,12 @@ public:
   // GE5 (Signa - magic number: IMGF) files that they need to work
   // with so we register the factory explictly here
   //
+  // In addition, ITK does register an older dicom parser that incorrectly
+  // report success when reading ill-formed dicom files so we turn that old
+  // parser off.
+  //
   void RegisterExtraBuiltInFactories();
+  void UnRegisterDeprecatedBuiltInFactories();
 
   //BTX
   // Description:

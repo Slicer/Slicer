@@ -310,7 +310,11 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     }
     catch (...)
     {
-    vtkErrorMacro("ReadData: Cannot read file, fullName = " << fullName.c_str() << ", node num file names = " << this->GetNumberOfFileNames() << ", reader num files = " << reader->GetNumberOfFileNames() << ", reader archetype = " << reader->GetArchetype() << ", reader 0th file name = " << reader->GetFileName(0) );
+    vtkErrorMacro("ReadData: Cannot read file, fullName = " << fullName.c_str() << ", node num file names = " << this->GetNumberOfFileNames() << ", reader num files = " << reader->GetNumberOfFileNames() << ", reader archetype = " << reader->GetArchetype());
+    if (reader->GetFileName(0) != NULL)
+      {
+      vtkErrorMacro("reader 0th file name = " << reader->GetFileName(0) );
+      }
     reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
     reader->Delete();
     return 0;
