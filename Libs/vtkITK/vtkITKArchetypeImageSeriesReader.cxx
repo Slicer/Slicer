@@ -81,7 +81,7 @@
 #include "itkVTKImageIO.h"
 #include "itkTIFFImageIO.h"
 #include "itkAnalyzeImageIO.h"
-#include "itkDicomImageIO2Factory.h"
+#include "itkDICOMImageIO2Factory.h"
 #include <itksys/SystemTools.hxx>
 
 vtkCxxRevisionMacro(vtkITKArchetypeImageSeriesReader, "$Revision$");
