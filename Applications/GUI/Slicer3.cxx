@@ -1676,6 +1676,7 @@ int Slicer3_main(int argc, char *argv[])
     pythonCommand += "import SlicerScriptedModule\n";
     pythonCommand += "SlicerScriptedModuleInfo = SlicerScriptedModule.SlicerScriptedModuleImporter(packageNames)\n";
     pythonCommand += "SlicerScriptedModuleInfo.ScanAndInitModules()\n";
+    pythonCommand += "Slicer.ScriptedModuleInfo = SlicerScriptedModuleInfo\n";
 
     v = PyRun_String( pythonCommand.c_str(),
                       Py_file_input,
