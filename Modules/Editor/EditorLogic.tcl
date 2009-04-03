@@ -62,7 +62,7 @@ proc EditorAddQuickModel { sliceLogic } {
 # - copy works, but image data is not correct somehow.
 # - also need a GUI to access this function
 #
-proc EditorLabelCheckpoint {} {
+proc EditorLabelCheckPoint {} {
 
   #
   # get the image data for the label layer

@@ -52,7 +52,7 @@ if { [itcl::find class Labeler] == "" } {
 
     # keep track of first application of the label since the 
     # class was instantiated - this is used to decide when to 
-    # make a copy of the label map for the Editor's Checkpoint function
+    # make a copy of the label map for the Editor's CheckPoint function
     variable _appliedSinceConstructed 0
 
     # methods
@@ -243,7 +243,7 @@ itcl::body Labeler::applyImageMask { maskIJKToRAS mask bounds } {
     # first application, so save the old label volume
     # - this means there will only be one checkpoint for each 'instance'
     #   of the effect (i.e. multiple brush strokes all undone by one click)
-    EditorStoreCheckpoint $_layers(label,node)
+    EditorStoreCheckPoint $_layers(label,node)
     set _appliedSinceConstructed 1
   }
 

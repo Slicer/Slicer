@@ -150,6 +150,15 @@ itcl::body EditBox::setButtonState {effect state} {
   $::slicer3::ApplicationGUI SetIconImage \
       $_effects($effect,icon) $_effects($effect,imageData$state)
   $o($effect,button) SetImageToIcon $_effects($effect,icon)
+  switch $state {
+    Selected -
+    "" {
+      $o($effect,button) SetState 1
+    }
+    "Disabled" {
+      $o($effect,button) SetState 0
+    }
+  }
 }
 
 #

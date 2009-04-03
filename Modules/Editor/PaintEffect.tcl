@@ -454,7 +454,7 @@ itcl::body PaintEffect::paintAddPoint {x y} {
 itcl::body PaintEffect::paintApply {} {
   if { $_paintCoordinates != "" } {
     $this queryLayers 0 0 
-    EditorStoreCheckpoint $_layers(label,node)
+    EditorStoreCheckPoint $_layers(label,node)
   }
   foreach xy $_paintCoordinates {
     eval $this paintBrush $xy
