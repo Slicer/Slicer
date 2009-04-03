@@ -115,8 +115,15 @@ def CalculateFA0(lda):
   eps = finfo(float).eps 
   
   # Calulate FA - correct in FA0
-  FA = 1./sqrt(2)*sqrt(((lda[..., 0]-lda[..., 1])**2 + (lda[..., 1]-lda[..., 2])**2 + (lda[..., 0]-lda[..., 2])**2) / (lda[..., 0]**2 + lda[..., 1]**2 + lda[..., 2]**2 + eps))
- 
+  d1 = lda[...,0]-(1.0/3.0)*(lda[..., 0] + lda[..., 1] + lda[..., 2])
+  d2 = lda[...,1]-(1.0/3.0)*(lda[..., 0] + lda[..., 1] + lda[..., 2])
+  d3 = lda[...,2]-(1.0/3.0)*(lda[..., 0] + lda[..., 1] + lda[..., 2])
+
+  n = d1**2 + d2**2 + d3**2
+
+  FA = sqrt( (2.0/3.0) * n / (lda[..., 0]**2 + lda[..., 1]**2 + lda[..., 2]**2 + eps))
+   
+
   return FA
 
 
@@ -138,8 +145,16 @@ def CalculateMode0(lda):
   eps = finfo(float).eps 
   
   # Calulate MODE
-  MODEx = (lda[..., 0] + lda[..., 1] + lda[..., 2]) / sqrt((lda[..., 0]-lda[..., 1])**2 + (lda[..., 1]-lda[..., 2])**2 + (lda[..., 0]-lda[..., 2])**2 + eps)
-  MODE = sqrt(2) * MODEx*MODEx*MODEx
+  d1 = lda[...,0]-(1.0/3.0)*(lda[..., 0] + lda[..., 1] + lda[..., 2])
+  d2 = lda[...,1]-(1.0/3.0)*(lda[..., 0] + lda[..., 1] + lda[..., 2])
+  d3 = lda[...,2]-(1.0/3.0)*(lda[..., 0] + lda[..., 1] + lda[..., 2])
+
+  n = sqrt(d1**2 + d2**2 + d3**2 + eps)
+  MODE1x = d1 / n
+  MODE2x = d2 / n  
+  MODE3x = d3 / n
+
+  MODE = 3.0 * sqrt(6.0) * MODE1x*MODE2x*MODE3x
   
   logger.info("Mode shape : %s:%s:%s" % (MODE.shape[0], MODE.shape[1], MODE.shape[2]))
 
