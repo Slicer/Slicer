@@ -91,7 +91,7 @@ itcl::body EditBox::findEffects { {path ""} } {
     LabelVisibilityOff LabelVisibilityOn NextFiducial 
     SnapToGridOff SnapToGridOn
     EraseLabel Threshold PinOpen PreviousFiducial  InterpolateLabels LabelOpacity
-    ToggleLabelOutline Watershed PreviousCheckpoint NextCheckpoint
+    ToggleLabelOutline Watershed PreviousCheckPoint NextCheckPoint
   }
 
   set _effects(list,disabled) {
@@ -107,7 +107,7 @@ itcl::body EditBox::findEffects { {path ""} } {
     SnapToGridOff SnapToGridOn
     InterpolateLabels LabelOpacity
     ToggleLabelOutline Watershed Wand
-    PreviousCheckpoint NextCheckpoint
+    PreviousCheckPoint NextCheckPoint
   }
 
 
@@ -244,9 +244,9 @@ itcl::body EditBox::create { } {
   $this createButtonRow $parent {InterpolateLabels MakeModel Watershed LevelTracing}
   $this createButtonRow $parent {PreviousFiducial NextFiducial FiducialVisibilityOn DeleteFiducials}
   if { $frame == "" } {
-    $this createButtonRow $parent {PreviousCheckpoint NextCheckpoint GoToEditorModule PinOpen}
+    $this createButtonRow $parent {PreviousCheckPoint NextCheckPoint GoToEditorModule PinOpen}
   } else {
-    $this createButtonRow $parent {PreviousCheckpoint NextCheckpoint}
+    $this createButtonRow $parent {PreviousCheckPoint NextCheckPoint}
   }
  
   $this setMode $mode 
@@ -285,9 +285,9 @@ itcl::body EditBox::selectEffect { effect } {
       EditorSelectModule
       EditorSetActiveToolLabel DefaultTool
     }
-    "LabelCheckpoint" {
+    "LabelCheckPoint" {
       # save a copy of the current label layer into the scene
-      EditorLabelCheckpoint
+      EditorLabelCheckPoint
       EditorSetActiveToolLabel DefaultTool
     }
     "PreviousFiducial" {
@@ -301,11 +301,11 @@ itcl::body EditBox::selectEffect { effect } {
     "EraseLabel" {
       EditorToggleErasePaintLabel
     }
-    "PreviousCheckpoint" {
-      EditorPerformPreviousCheckpoint
+    "PreviousCheckPoint" {
+      EditorPerformPreviousCheckPoint
     }
-    "NextCheckpoint" {
-      EditorPerformNextCheckpoint
+    "NextCheckPoint" {
+      EditorPerformNextCheckPoint
     }
     default {
 
