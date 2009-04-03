@@ -23,8 +23,8 @@ class SlicerScriptedModuleImporter(object):
         for moduleName in self.ModuleNames:
             try:
                 importedModule = __import__(moduleName)
-            except ImportError:
-                print>>sys.stderr, ImportError
+            except ImportError, e:
+                print>>sys.stderr, e
                 continue
             if importedModule == None:
                 continue
