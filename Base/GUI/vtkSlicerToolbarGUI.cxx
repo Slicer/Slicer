@@ -841,8 +841,9 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
     {
     // Toolbar's parent is the main vtkSlicerApplicationGUI;
     // Toolbar events will trigger vtkSlicerAppliationGUI methods
-    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
-    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( p->GetApplication() );
+
+    vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( appGUI->GetApplication() );
     vtkMRMLInteractionNode *interactionNode = NULL;
 
     vtkKWEntry *e = vtkKWEntry::SafeDownCast ( caller );
@@ -854,11 +855,10 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
 
     vtkMRMLLayoutNode *layout;    
 
-    if (p != NULL)
+    if ( this->ApplicationLogic != NULL )
       {
-      //interactionNode = vtkMRMLInteractionNode::SafeDownCast (p->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
+      interactionNode = this->GetApplicationLogic()->GetInteractionNode();
       }
-    interactionNode = this->GetApplicationLogic()->GetInteractionNode();
 
     if (interactionNode == NULL)
       {
@@ -866,131 +866,154 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
       }
                                    
     // Process events from top row of buttons
-    if ( app != NULL )
+    if ( app == NULL )
       {
-  
-      // Mouse mode buttons:
-      if ( radiob != NULL )
+      vtkErrorMacro ( "ProcessGUIEvents: Got NULL Application" );
+      return;
+      }
+    if ( appGUI == NULL )
+      {
+      vtkErrorMacro ( "ProcessGUIEvents: Got NULL ApplicationGUI" );
+      return;
+      }
+
+    
+    // Mouse mode buttons:
+    if ( radiob != NULL && event == vtkKWRadioButton::SelectedStateChangedEvent )
+      {
+      if ( radiob == this->MousePickButton)
         {
-        if ( radiob == this->MousePickButton
-             && event == vtkKWRadioButton::SelectedStateChangedEvent )
+        val = radiob->GetSelectedState();
+        if ( val && interactionNode )
           {
-          val = radiob->GetSelectedState();
-          if ( val && interactionNode )
-            {
-            interactionNode->SetLastInteractionMode ( interactionNode->GetCurrentInteractionMode() );
-            interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::PickManipulate );
-            }
+          interactionNode->SetLastInteractionMode ( interactionNode->GetCurrentInteractionMode() );
+          interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::PickManipulate );
           }
-        else if ( radiob == this->MouseTransformViewButton
-                  && event == vtkKWRadioButton::SelectedStateChangedEvent)
+        }
+      else if ( radiob == this->MouseTransformViewButton )
+        {
+        val = radiob->GetSelectedState();
+        if ( val && interactionNode )
           {
-          val = radiob->GetSelectedState();
-          if ( val && interactionNode )
-            {
-            interactionNode->SetLastInteractionMode ( interactionNode->GetCurrentInteractionMode() );
-            interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::ViewTransform );
-            }
+          interactionNode->SetLastInteractionMode ( interactionNode->GetCurrentInteractionMode() );
+          interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::ViewTransform );
           }
-        else if ( radiob == this->MousePlaceButton
-                  && event == vtkKWRadioButton::SelectedStateChangedEvent)
+        }
+      else if ( radiob == this->MousePlaceButton )
+        {
+        val = radiob->GetSelectedState();
+        if ( val && interactionNode )
           {
-          val = radiob->GetSelectedState();
-          if ( val && interactionNode )
+          interactionNode->SetLastInteractionMode ( interactionNode->GetCurrentInteractionMode() );
+          interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::Place );
+          }
+        }
+      }
+
+    if ( e != NULL && event == vtkKWEntry::EntryValueChangedEvent )
+      {
+      if ( e == this->ScreenShotNameEntry )
+        {
+        // check
+        if ( (this->ScreenShotNameEntry->GetValue() != NULL)  &&
+             (strcmp(this->ScreenShotNameEntry->GetValue(), this->ScreenShotName)) )
+          {
+          this->SetScreenShotName ( this->ScreenShotNameEntry->GetValue() );
+          }
+        else
+          {
+          // dialog
+          if ( this->GetApplicationGUI() && this->GetApplicationGUI()->GetMainSlicerWindow() )
             {
-            interactionNode->SetLastInteractionMode ( interactionNode->GetCurrentInteractionMode() );
-            interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::Place );
+            vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+            dialog->SetParent (  this->GetApplicationGUI()->GetMainSlicerWindow() );
+            dialog->SetStyleToMessage();
+            std::string msg = "Please enter a valid name for the screen capture.";
+            dialog->SetText(msg.c_str());
+            dialog->Create ( );
+            dialog->Invoke();
+            dialog->Delete();
             }
           }
         }
-
-      if ( e != NULL )
+      else if ( e == this->ScreenShotNumberEntry )
         {
-        if ( e == this->ScreenShotNameEntry && event == vtkKWEntry::EntryValueChangedEvent )
+        if ( (this->ScreenShotNumberEntry->GetValueAsInt() >= 0 ) )
           {
-          // check
-          if ( (this->ScreenShotNameEntry->GetValue() != NULL) && ((strcmp (this->ScreenShotNameEntry->GetValue(), "" ))) )
-            {
-            this->SetScreenShotName ( this->ScreenShotNameEntry->GetValue() );
-            }
-          else
-            {
-            // dialog
-            if ( this->GetApplicationGUI() && this->GetApplicationGUI()->GetMainSlicerWindow() )
-              {
-              vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-              dialog->SetParent (  this->GetApplicationGUI()->GetMainSlicerWindow() );
-              dialog->SetStyleToMessage();
-              std::string msg = "Please enter a valid name for the screen capture.";
-              dialog->SetText(msg.c_str());
-              dialog->Create ( );
-              dialog->Invoke();
-              dialog->Delete();
-              }
-            }
-          }
-        else if ( e == this->ScreenShotNumberEntry && event == vtkKWEntry::EntryValueChangedEvent )
-          {
-          if ( (this->ScreenShotNumberEntry->GetValueAsInt() >= 0 ) )
+          if ( this->ScreenShotNumberEntry->GetValueAsInt() != this->ScreenShotNumber )
             {
             this->ScreenShotNumber = this->ScreenShotNumberEntry->GetValueAsInt ( );
             }
-          else
+          }
+        else
+          {
+          // dialog
+          if ( this->GetApplicationGUI() && this->GetApplicationGUI()->GetMainSlicerWindow() )
             {
-            // dialog
-            if ( this->GetApplicationGUI() && this->GetApplicationGUI()->GetMainSlicerWindow() )
-              {
-              vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-              dialog->SetParent (  this->GetApplicationGUI()->GetMainSlicerWindow() );
-              dialog->SetStyleToMessage();
-              std::string msg = "Please enter a non-negative integer value.";
-              dialog->SetText(msg.c_str());
-              dialog->Create ( );
-              dialog->Invoke();
-              dialog->Delete();
-              }
+            vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+            dialog->SetParent (  this->GetApplicationGUI()->GetMainSlicerWindow() );
+            dialog->SetStyleToMessage();
+            std::string msg = "Please enter a non-negative integer value.";
+            dialog->SetText(msg.c_str());
+            dialog->Create ( );
+            dialog->Invoke();
+            dialog->Delete();
             }
           }
-        else if ( e == this->ScreenShotMagnificationEntry  && event == vtkKWEntry::EntryValueChangedEvent )
+        }
+      else if ( e == this->ScreenShotMagnificationEntry  )
+        {
+        if (this->ScreenShotMagnificationEntry->GetValueAsInt() > 0 )
           {
-          if (this->ScreenShotMagnificationEntry->GetValueAsInt() > 0 )
+          if ( this->ScreenShotMagnificationEntry->GetValueAsInt() != this->ScreenShotMagnification )
             {
             this->ScreenShotMagnification = this->ScreenShotMagnificationEntry->GetValueAsInt ( );
             }
-          else
+          }
+        else
+          {
+          // dialog
+          if ( this->GetApplicationGUI() && this->GetApplicationGUI()->GetMainSlicerWindow() )
             {
-            // dialog
-            if ( this->GetApplicationGUI() && this->GetApplicationGUI()->GetMainSlicerWindow() )
-              {
-              vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-              dialog->SetParent (  this->GetApplicationGUI()->GetMainSlicerWindow() );
-              dialog->SetStyleToMessage();
-              std::string msg = "Please enter a non-zero integer value.";
-              dialog->SetText(msg.c_str());
-              dialog->Create ( );
-              dialog->Invoke();
-              dialog->Delete();
-              }
+            vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+            dialog->SetParent (  this->GetApplicationGUI()->GetMainSlicerWindow() );
+            dialog->SetStyleToMessage();
+            std::string msg = "Please enter a non-zero integer value.";
+            dialog->SetText(msg.c_str());
+            dialog->Create ( );
+            dialog->Invoke();
+            dialog->Delete();
             }
           }
         }
+      }
         
-      if ( cb != NULL )
+    if ( cb != NULL )
+      {
+      if ( cb == this->ScreenShotOverwriteButton && event == vtkKWCheckButton::SelectedStateChangedEvent )
         {
-        if ( cb == this->ScreenShotOverwriteButton && event == vtkKWCheckButton::SelectedStateChangedEvent )
-          {
-          this->ScreenShotOverwrite = this->ScreenShotOverwriteButton->GetSelectedState();
-          }
+        this->ScreenShotOverwrite = this->ScreenShotOverwriteButton->GetSelectedState();
         }
+      }
 
-      if ( d != NULL && event == vtkKWTopLevel::WithdrawEvent )
+    if ( d != NULL && event == vtkKWTopLevel::WithdrawEvent )
+      {
+      if ( this->ScreenShotDialogButton && d == this->ScreenShotDialogButton->GetLoadSaveDialog() )
         {
-        if ( this->ScreenShotDialogButton && d == this->ScreenShotDialogButton->GetLoadSaveDialog() )
+        std::string dirname;
+        if ( this->ScreenShotDialogButton->GetLoadSaveDialog()->GetFileName() != NULL )
           {
-          std::string dirname;
-          if ( this->ScreenShotDialogButton->GetLoadSaveDialog()->GetFileName() != NULL )
+          dirname = this->ScreenShotDialogButton->GetLoadSaveDialog()->GetFileName();
+          if ( vtksys::SystemTools::FileIsDirectory ( dirname.c_str() ) )
             {
-            dirname = this->ScreenShotDialogButton->GetLoadSaveDialog()->GetFileName();
+            this->SetScreenShotDirectory ( dirname.c_str() );
+            }
+          }
+        else
+          {
+          if ( this->ScreenShotDialogButton->GetLoadSaveDialog()->GetLastPath() != NULL )
+            {
+            dirname = this->ScreenShotDialogButton->GetLoadSaveDialog()->GetLastPath();
             if ( vtksys::SystemTools::FileIsDirectory ( dirname.c_str() ) )
               {
               this->SetScreenShotDirectory ( dirname.c_str() );
@@ -998,388 +1021,377 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             }
           else
             {
-            if ( this->ScreenShotDialogButton->GetLoadSaveDialog()->GetLastPath() != NULL )
+            this->SetScreenShotDirectory ( NULL );
+            }
+          }
+        }
+      }
+
+    if ( pushb != NULL && event == vtkKWPushButton::InvokedEvent )
+      {
+      layout = appGUI->GetGUILayoutNode();
+      if ( pushb == this->HomeIconButton )
+        {
+        const char *homename = app->GetHomeModule();
+        vtkSlicerModuleGUI *m = app->GetModuleGUIByName(homename);
+        if ( m != NULL && this->GetModuleChooseGUI() != NULL )
+          {
+          this->GetModuleChooseGUI()->SelectModule ( homename );
+          }
+        else
+          {
+          vtkErrorMacro ("ERROR:  no slicer module gui found for Home module '" << (homename ? homename : "null") << "'"); 
+          }
+        }
+      else if ( pushb == this->ScreenShotCaptureButton )
+        {
+        //--- check for bugs
+        //--- try first setting user's selection. if nothing there, choose the last path. if nothing there, mark for error.
+        std::string dirname;
+        if ( this->GetScreenShotDirectory() != NULL )
+          {
+          dirname = this->GetScreenShotDirectory();
+          }
+        else
+          {
+          if ( this->ScreenShotDialogButton->GetLoadSaveDialog()->GetLastPath() != NULL )
+            {
+            dirname = this->ScreenShotDialogButton->GetLoadSaveDialog()->GetLastPath();
+            }
+          else
+            {
+            dirname = "none";
+            }
+          }
+        if ( (!(strcmp(dirname.c_str(), "none")) ) ||
+             (this->ScreenShotName == NULL ) ||
+             (this->ScreenShotMagnification < 1 ) ||
+             (this->ScreenShotNumber < 0 ) ||
+             (this->ScreenShotFormat.c_str() == NULL ) )
+          {
+          // provide a warning that no directory exists.
+          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+          dialog->SetParent (  this->GetApplicationGUI()->GetMainSlicerWindow() );
+          dialog->SetStyleToMessage();
+          std::string msg = "Please specify a valid directory,  filename, version number, scale and format. ";
+          dialog->SetText(msg.c_str());
+          dialog->Create ( );
+          dialog->Invoke();
+          dialog->Delete();
+          }
+        else
+          {
+          //--- assemble filename with path.
+          std::vector<std::string> pathComponents;
+          vtksys::SystemTools::SplitPath ( dirname.c_str(), pathComponents );
+          std::stringstream ss;
+          ss << this->ScreenShotName << "_" << this->ScreenShotNumber << this->ScreenShotFormat;
+          std::string s = ss.str();
+          pathComponents.push_back ( s );
+          std::string filename = vtksys::SystemTools::JoinPath ( pathComponents );
+          //--- make sure it's a unix-style path.
+          std::string upath = vtksys::SystemTools::ConvertToUnixOutputPath ( filename.c_str() );
+          int capture = 1;
+
+          //--- see if file already exists
+          if ( vtksys::SystemTools::FileExists ( upath.c_str()) ||
+               vtksys::SystemTools::FileExists ( filename.c_str()) )
+            {
+            //--- if overwrite not selected and file exists, give a warning & option to overwrite.
+            if (!(this->ScreenShotOverwrite) )
               {
-              dirname = this->ScreenShotDialogButton->GetLoadSaveDialog()->GetLastPath();
-              if ( vtksys::SystemTools::FileIsDirectory ( dirname.c_str() ) )
+              if ( this->GetApplicationGUI() && this->GetApplicationGUI()->GetMainSlicerWindow() )
                 {
-                this->SetScreenShotDirectory ( dirname.c_str() );
+                vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+                dialog->SetParent (  this->GetApplicationGUI()->GetMainSlicerWindow() );
+                dialog->SetStyleToYesNo();
+                std::string msg = "File already exists. Overwrite?";
+                dialog->SetText(msg.c_str());
+                dialog->Create ( );
+                capture = dialog->Invoke();
+                dialog->Delete();
                 }
               }
-            else
+            }
+          //--- if good for capture, set status text and grab the screenshot.
+          if ( capture )
+            {
+            if ( this->GetApplicationGUI() && this->GetApplicationGUI()->GetMainSlicerWindow() )
               {
-              this->SetScreenShotDirectory ( NULL );
+              this->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText ( "Capturing Screenshot...." );
+              }
+            this->Script ( "SlicerSaveLargeImage %s %d", upath.c_str(), this->GetScreenShotMagnification() );
+            this->ScreenShotNumber += 1;
+            this->ScreenShotNumberEntry->SetValueAsInt ( this->ScreenShotNumber );
+            if ( this->GetApplicationGUI() && this->GetApplicationGUI()->GetMainSlicerWindow() )
+              {
+              this->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText ( "" );
               }
             }
           }
         }
-
-      if ( pushb != NULL && event == vtkKWPushButton::InvokedEvent )
+      else if (pushb == this->ScreenShotIconButton )
         {
-        layout = p->GetGUILayoutNode();
-        if ( pushb == this->HomeIconButton )
+        this->RaiseScreenShotOptionsWindow();
+        }
+      else if (pushb == this->DataIconButton )
+        {
+        vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Data");
+        if ( m != NULL && this->GetModuleChooseGUI() != NULL )
           {
-          const char *homename = app->GetHomeModule();
-          vtkSlicerModuleGUI *m = app->GetModuleGUIByName(homename);
-          if ( m != NULL && this->GetModuleChooseGUI() != NULL )
-            {
-            this->GetModuleChooseGUI()->SelectModule ( homename );
-            }
-          else
-            {
-            vtkErrorMacro ("ERROR:  no slicer module gui found for Home module '" << (homename ? homename : "null") << "'"); 
-            }
+          this->GetModuleChooseGUI()->SelectModule ( "Data" );
           }
-        else if ( pushb == this->ScreenShotCaptureButton )
+        else
           {
-          //--- check for bugs
-          //--- try first setting user's selection. if nothing there, choose the last path. if nothing there, mark for error.
-          std::string dirname;
-          if ( this->GetScreenShotDirectory() != NULL )
-            {
-            dirname = this->GetScreenShotDirectory();
-            }
-          else
-            {
-            if ( this->ScreenShotDialogButton->GetLoadSaveDialog()->GetLastPath() != NULL )
-              {
-              dirname = this->ScreenShotDialogButton->GetLoadSaveDialog()->GetLastPath();
-              }
-            else
-              {
-              dirname = "none";
-              }
-            }
-          if ( (!(strcmp(dirname.c_str(), "none")) ) ||
-               (this->ScreenShotName == NULL ) ||
-               (this->ScreenShotMagnification < 1 ) ||
-               (this->ScreenShotNumber < 0 ) ||
-               (this->ScreenShotFormat.c_str() == NULL ) )
-            {
-            // provide a warning that no directory exists.
-            vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-            dialog->SetParent (  this->GetApplicationGUI()->GetMainSlicerWindow() );
-            dialog->SetStyleToMessage();
-            std::string msg = "Please specify a valid directory,  filename, version number, scale and format. ";
-            dialog->SetText(msg.c_str());
-            dialog->Create ( );
-            dialog->Invoke();
-            dialog->Delete();
-            }
-          else
-            {
-            //--- assemble filename with path.
-            std::vector<std::string> pathComponents;
-            vtksys::SystemTools::SplitPath ( dirname.c_str(), pathComponents );
-            std::stringstream ss;
-            ss << this->ScreenShotName << "_" << this->ScreenShotNumber << this->ScreenShotFormat;
-            std::string s = ss.str();
-            pathComponents.push_back ( s );
-            std::string filename = vtksys::SystemTools::JoinPath ( pathComponents );
-            //--- make sure it's a unix-style path.
-            std::string upath = vtksys::SystemTools::ConvertToUnixOutputPath ( filename.c_str() );
-            int capture = 1;
-
-            //--- see if file already exists
-            if ( vtksys::SystemTools::FileExists ( upath.c_str()) ||
-                 vtksys::SystemTools::FileExists ( filename.c_str()) )
-              {
-              //--- if overwrite not selected and file exists, give a warning & option to overwrite.
-              if (!(this->ScreenShotOverwrite) )
-                {
-                if ( this->GetApplicationGUI() && this->GetApplicationGUI()->GetMainSlicerWindow() )
-                  {
-                  vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-                  dialog->SetParent (  this->GetApplicationGUI()->GetMainSlicerWindow() );
-                  dialog->SetStyleToYesNo();
-                  std::string msg = "File already exists. Overwrite?";
-                  dialog->SetText(msg.c_str());
-                  dialog->Create ( );
-                  capture = dialog->Invoke();
-                  dialog->Delete();
-                  }
-                }
-              }
-            //--- if good for capture, set status text and grab the screenshot.
-            if ( capture )
-              {
-              if ( this->GetApplicationGUI() && this->GetApplicationGUI()->GetMainSlicerWindow() )
-                {
-                this->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText ( "Capturing Screenshot...." );
-                }
-              this->Script ( "SlicerSaveLargeImage %s %d", upath.c_str(), this->GetScreenShotMagnification() );
-              this->ScreenShotNumber += 1;
-              this->ScreenShotNumberEntry->SetValueAsInt ( this->ScreenShotNumber );
-              if ( this->GetApplicationGUI() && this->GetApplicationGUI()->GetMainSlicerWindow() )
-                {
-                this->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText ( "" );
-                }
-              }
-            }
-          }
-        else if (pushb == this->ScreenShotIconButton )
-          {
-          this->RaiseScreenShotOptionsWindow();
-          }
-        else if (pushb == this->DataIconButton )
-          {
-          vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Data");
-          if ( m != NULL && this->GetModuleChooseGUI() != NULL )
-            {
-            this->GetModuleChooseGUI()->SelectModule ( "Data" );
-            }
-          else
-            {
-            vtkDebugMacro ("ERROR:  no slicer module gui found for Data\n");
-            }
-          }
-        else if (pushb == this->VolumeIconButton )
-          {
-          vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Volumes");
-          if ( m != NULL && this->GetModuleChooseGUI() != NULL)
-            {
-            this->GetModuleChooseGUI()->SelectModule ( "Volumes" );
-            }
-          else
-            {
-            vtkDebugMacro ("ERROR:  no slicer module gui found for Volumes\n");
-            vtkKWMessageDialog *message = vtkKWMessageDialog::New();
-            message->SetParent ( this->VolumeIconButton->GetParent() );
-            message->SetStyleToMessage();
-            std::string msg = "The Volumes module is not loaded, please check View, Application Settings, Module Settings";
-            message->SetText(msg.c_str());
-            message->Create();
-            message->Invoke();
-            message->Delete();
-            }
-          }
-        else if (pushb == this->ModelIconButton )
-          {
-          vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Models");
-          if ( m != NULL  && this->GetModuleChooseGUI() != NULL)
-            {
-            this->GetModuleChooseGUI()->SelectModule ( "Models" );
-            }
-          else
-            {
-            vtkDebugMacro ("ERROR:  no slicer module gui found for Models\n");
-            }
-          }
-        else if (pushb == this->FiducialsIconButton )
-          {
-          vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Fiducials");
-          if ( m != NULL  && this->GetModuleChooseGUI() != NULL)
-            {
-            this->GetModuleChooseGUI()->SelectModule ( "Fiducials" );
-            }
-          else
-            {
-            vtkDebugMacro ("ERROR:  no slicer module gui found for Fiducials\n");
-            }
-          }
-        else if (pushb == this->ColorIconButton )
-          {
-          vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Color");
-          if ( m != NULL  && this->GetModuleChooseGUI() != NULL)
-            {
-            this->GetModuleChooseGUI()->SelectModule ( "Color" );
-            }
-          else
-            {
-            vtkDebugMacro ("ERROR:  no slicer module gui found for Color\n");
-            }
-          }
-        else if (pushb == this->TransformIconButton )
-          {
-          vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Transforms");
-          if ( m != NULL  && this->GetModuleChooseGUI() != NULL)
-            {
-            this->GetModuleChooseGUI()->SelectModule ( "Transforms" );
-            }
-          else
-            {
-            vtkDebugMacro ("ERROR:  no slicer module gui found for Transforms\n");
-            }
-          }
-        else if (pushb == this->EditorIconButton )
-          {
-          vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Editor");
-          if ( m != NULL  && this->GetModuleChooseGUI() != NULL)
-            {
-            this->GetModuleChooseGUI()->SelectModule ( "Editor" );
-            }
-          else
-            {
-            vtkDebugMacro ("ERROR:  no slicer module gui found for Editor\n");
-            }
-          }
-        else if (pushb == this->EditorToolboxIconButton )
-          {
-          //---
-          //--- Add code to pop up Editor toolbox here
-          //---
-          app->Script ("::EditBox::ShowDialog");
-          }
-
-        else if (pushb == this->CompareViewBoxApplyButton) 
-          {
-          this->HideCompareViewCustomLayoutFrame();
-          layout->SetNumberOfCompareViewRows ( this->CompareViewBoxRowEntry->GetValueAsInt() );
-          layout->SetNumberOfCompareViewLightboxRows ( this->CompareViewLightboxRowEntry->GetValueAsInt () );
-          layout->SetNumberOfCompareViewLightboxColumns ( this->CompareViewLightboxColumnEntry->GetValueAsInt() );
-          layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutCompareView );
-          }
-        else if ( pushb == this->UndoIconButton )
-          {
-          p->GetMRMLScene()->Undo();
-          }
-        else if ( pushb == this->RedoIconButton )
-          {
-          p->GetMRMLScene()->Redo();
-          }
-        else if ( pushb == this->SaveSceneIconButton )
-          {
-          p->ProcessSaveSceneAsCommand();
+          vtkDebugMacro ("ERROR:  no slicer module gui found for Data\n");
           }
         }
-
-
-      // TODO: figure out why we can't resume view rock or spin.
-      if ( menu != NULL && event == vtkKWMenu::MenuItemInvokedEvent )
+      else if (pushb == this->VolumeIconButton )
         {
-        if ( this->ScreenShotFormatMenuButton != NULL && menu == this->ScreenShotFormatMenuButton->GetMenu() )
+        vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Volumes");
+        if ( m != NULL && this->GetModuleChooseGUI() != NULL)
           {
-          this->SetScreenShotFormat ( this->ScreenShotFormatMenuButton->GetValue() );
+          this->GetModuleChooseGUI()->SelectModule ( "Volumes" );
           }
-        else if ( this->ChooseLayoutIconMenuButton != NULL && menu == this->ChooseLayoutIconMenuButton->GetMenu() )
+        else
           {
-          if ( p->GetGUILayoutNode() == NULL )
-            {
-            //--- if there's no layout node yet, create it,
-            //--- add it to the scene, and make the
-            //--- applicationGUI observe it.
-            layout = vtkMRMLLayoutNode::New();
-            if (layout == NULL)
-              {
-              vtkErrorMacro ( "ERROR: No layout node exists and cannot create a new one." );
-              return;
-              }
-            this->MRMLScene->AddNode(layout);
-            p->SetAndObserveGUILayoutNode ( layout );
-            //--- update MRML selection node.
-            if ( this->ApplicationLogic != NULL )
-              {
-              if ( this->ApplicationLogic->GetSelectionNode() != NULL )
-                {
-                this->ApplicationLogic->GetSelectionNode()->SetActiveLayoutID( layout->GetID() );
-                }
-              }
-            layout->Delete();
-            }
-          layout = p->GetGUILayoutNode();
+          vtkDebugMacro ("ERROR:  no slicer module gui found for Volumes\n");
+          vtkKWMessageDialog *message = vtkKWMessageDialog::New();
+          message->SetParent ( this->VolumeIconButton->GetParent() );
+          message->SetStyleToMessage();
+          std::string msg = "The Volumes module is not loaded, please check View, Application Settings, Module Settings";
+          message->SetText(msg.c_str());
+          message->Create();
+          message->Invoke();
+          message->Delete();
+          }
+        }
+      else if (pushb == this->ModelIconButton )
+        {
+        vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Models");
+        if ( m != NULL  && this->GetModuleChooseGUI() != NULL)
+          {
+          this->GetModuleChooseGUI()->SelectModule ( "Models" );
+          }
+        else
+          {
+          vtkDebugMacro ("ERROR:  no slicer module gui found for Models\n");
+          }
+        }
+      else if (pushb == this->FiducialsIconButton )
+        {
+        vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Fiducials");
+        if ( m != NULL  && this->GetModuleChooseGUI() != NULL)
+          {
+          this->GetModuleChooseGUI()->SelectModule ( "Fiducials" );
+          }
+        else
+          {
+          vtkDebugMacro ("ERROR:  no slicer module gui found for Fiducials\n");
+          }
+        }
+      else if (pushb == this->ColorIconButton )
+        {
+        vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Color");
+        if ( m != NULL  && this->GetModuleChooseGUI() != NULL)
+          {
+          this->GetModuleChooseGUI()->SelectModule ( "Color" );
+          }
+        else
+          {
+          vtkDebugMacro ("ERROR:  no slicer module gui found for Color\n");
+          }
+        }
+      else if (pushb == this->TransformIconButton )
+        {
+        vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Transforms");
+        if ( m != NULL  && this->GetModuleChooseGUI() != NULL)
+          {
+          this->GetModuleChooseGUI()->SelectModule ( "Transforms" );
+          }
+        else
+          {
+          vtkDebugMacro ("ERROR:  no slicer module gui found for Transforms\n");
+          }
+        }
+      else if (pushb == this->EditorIconButton )
+        {
+        vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Editor");
+        if ( m != NULL  && this->GetModuleChooseGUI() != NULL)
+          {
+          this->GetModuleChooseGUI()->SelectModule ( "Editor" );
+          }
+        else
+          {
+          vtkDebugMacro ("ERROR:  no slicer module gui found for Editor\n");
+          }
+        }
+      else if (pushb == this->EditorToolboxIconButton )
+        {
+        //---
+        //--- Add code to pop up Editor toolbox here
+        //---
+        app->Script ("::EditBox::ShowDialog");
+        }
 
-          const char *whichLayout = this->ChooseLayoutIconMenuButton->GetValue();
-          if ( !strcmp ( whichLayout, "Conventional layout"))
+      else if (pushb == this->CompareViewBoxApplyButton) 
+        {
+        this->HideCompareViewCustomLayoutFrame();
+        layout->SetNumberOfCompareViewRows ( this->CompareViewBoxRowEntry->GetValueAsInt() );
+        layout->SetNumberOfCompareViewLightboxRows ( this->CompareViewLightboxRowEntry->GetValueAsInt () );
+        layout->SetNumberOfCompareViewLightboxColumns ( this->CompareViewLightboxColumnEntry->GetValueAsInt() );
+        layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutCompareView );
+        }
+      else if ( pushb == this->UndoIconButton )
+        {
+        appGUI->GetMRMLScene()->Undo();
+        }
+      else if ( pushb == this->RedoIconButton )
+        {
+        appGUI->GetMRMLScene()->Redo();
+        }
+      else if ( pushb == this->SaveSceneIconButton )
+        {
+        appGUI->ProcessSaveSceneAsCommand();
+        }
+      }
+
+
+    // TODO: figure out why we can't resume view rock or spin.
+    if ( menu != NULL && event == vtkKWMenu::MenuItemInvokedEvent )
+      {
+      if ( this->ScreenShotFormatMenuButton != NULL && menu == this->ScreenShotFormatMenuButton->GetMenu() )
+        {
+        this->SetScreenShotFormat ( this->ScreenShotFormatMenuButton->GetValue() );
+        }
+      else if ( this->ChooseLayoutIconMenuButton != NULL && menu == this->ChooseLayoutIconMenuButton->GetMenu() )
+        {
+        if ( appGUI->GetGUILayoutNode() == NULL )
+          {
+          //--- if there's no layout node yet, create it,
+          //--- add it to the scene, and make the
+          //--- applicationGUI observe it.
+          layout = vtkMRMLLayoutNode::New();
+          if (layout == NULL)
             {
-            if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutConventionalView )
+            vtkErrorMacro ( "ERROR: No layout node exists and cannot create a new one." );
+            return;
+            }
+          this->MRMLScene->AddNode(layout);
+          appGUI->SetAndObserveGUILayoutNode ( layout );
+          //--- update MRML selection node.
+          if ( this->ApplicationLogic != NULL )
+            {
+            if ( this->ApplicationLogic->GetSelectionNode() != NULL )
               {
-              p->GetMRMLScene()->SaveStateForUndo ( layout );
-              layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutConventionalView);
+              this->ApplicationLogic->GetSelectionNode()->SetActiveLayoutID( layout->GetID() );
               }
             }
-          else if (!strcmp( whichLayout, "3D only layout" ))
+          layout->Delete();
+          }
+        layout = appGUI->GetGUILayoutNode();
+
+        const char *whichLayout = this->ChooseLayoutIconMenuButton->GetValue();
+        if ( !strcmp ( whichLayout, "Conventional layout"))
+          {
+          if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutConventionalView )
             {
-            if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutOneUp3DView )
-              {
-              p->GetMRMLScene()->SaveStateForUndo ( layout );
-              layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutOneUp3DView);
-              }
-            }
-          else if ( !strcmp ( whichLayout, "Four-up layout"))
-            {
-            if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutFourUpView )
-              {
-              p->GetMRMLScene()->SaveStateForUndo ( layout );
-              layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutFourUpView);
-              }
-            }
-          else if ( !strcmp (whichLayout, "Tabbed 3D layout") )
-            {
-            if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutTabbed3DView )
-              {
-              p->GetMRMLScene()->SaveStateForUndo ( layout );
-              layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutTabbed3DView);
-              }
-            }
-          else if (!strcmp ( whichLayout, "Tabbed slice layout"))
-            {
-            if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView )
-              {
-              p->GetMRMLScene()->SaveStateForUndo ( layout );
-              layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView );
-              }
-            }
-          else if (!strcmp ( whichLayout, "Compare layout"))
-            {
-            PopUpCompareViewCustomLayoutFrame();
-            }
-          else if ( !strcmp (whichLayout, "Red slice only layout") )
-            {
-            if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView )
-              {
-              p->GetMRMLScene()->SaveStateForUndo ( layout );
-              layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
-              }
-            }
-          else if ( !strcmp (whichLayout, "Yellow slice only layout") )
-            {
-            if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView )
-              {
-              p->GetMRMLScene()->SaveStateForUndo ( layout );
-              layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView);
-              }
-            } 
-          else if ( !strcmp (whichLayout, "Green slice only layout") )
-            {
-            if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView )
-              {
-              p->GetMRMLScene()->SaveStateForUndo ( layout );
-              layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView);
-              }
-            }
-          else if ( !strcmp ( whichLayout, "Toggle GUI panel visibility"))
-            {
-            int v = p->GetMainSlicerWindow()->GetMainPanelVisibility();
-            p->GetMainSlicerWindow()->SetMainPanelVisibility (!v );
-            layout->SetGUIPanelVisibility ( p->GetMainSlicerWindow()->GetMainPanelVisibility() );
-            this->SetLayoutMenubuttonValueToCurrentLayout ();
-            }
-          else if ( !strcmp ( whichLayout, "Toggle GUI panel L/R"))
-            {
-            int v = p->GetMainSlicerWindow()->GetViewPanelPosition();
-            p->GetMainSlicerWindow()->SetViewPanelPosition ( !v );
-            layout->SetGUIPanelLR ( p->GetMainSlicerWindow()->GetViewPanelPosition() );
-            this->SetLayoutMenubuttonValueToCurrentLayout();
+            appGUI->GetMRMLScene()->SaveStateForUndo ( layout );
+            layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutConventionalView);
             }
           }
-        else if (this->LoadSceneIconButton!= NULL &&  menu == this->LoadSceneIconButton->GetMenu() )
+        else if (!strcmp( whichLayout, "3D only layout" ))
           {
-          const char *thingToDo = this->LoadSceneIconButton->GetValue();
-          if ( !strcmp ( thingToDo, "Load scene"))
+          if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutOneUp3DView )
             {
-            p->ProcessLoadSceneCommand();
-            this->LoadSceneIconButton->SetValue ( "");
+            appGUI->GetMRMLScene()->SaveStateForUndo ( layout );
+            layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutOneUp3DView);
             }
-          else if (!strcmp (thingToDo, "Import scene"))
+          }
+        else if ( !strcmp ( whichLayout, "Four-up layout"))
+          {
+          if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutFourUpView )
             {
-            p->ProcessImportSceneCommand();
-            this->LoadSceneIconButton->SetValue ("");
+            appGUI->GetMRMLScene()->SaveStateForUndo ( layout );
+            layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutFourUpView);
             }
-          else if ( !strcmp ( thingToDo, "Add data" ))
+          }
+        else if ( !strcmp (whichLayout, "Tabbed 3D layout") )
+          {
+          if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutTabbed3DView )
             {
-            p->ProcessAddDataCommand();
-            this->LoadSceneIconButton->SetValue ("");
+            appGUI->GetMRMLScene()->SaveStateForUndo ( layout );
+            layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutTabbed3DView);
             }
+          }
+        else if (!strcmp ( whichLayout, "Tabbed slice layout"))
+          {
+          if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView )
+            {
+            appGUI->GetMRMLScene()->SaveStateForUndo ( layout );
+            layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView );
+            }
+          }
+        else if (!strcmp ( whichLayout, "Compare layout"))
+          {
+          PopUpCompareViewCustomLayoutFrame();
+          }
+        else if ( !strcmp (whichLayout, "Red slice only layout") )
+          {
+          if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView )
+            {
+            appGUI->GetMRMLScene()->SaveStateForUndo ( layout );
+            layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
+            }
+          }
+        else if ( !strcmp (whichLayout, "Yellow slice only layout") )
+          {
+          if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView )
+            {
+            appGUI->GetMRMLScene()->SaveStateForUndo ( layout );
+            layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView);
+            }
+          } 
+        else if ( !strcmp (whichLayout, "Green slice only layout") )
+          {
+          if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView )
+            {
+            appGUI->GetMRMLScene()->SaveStateForUndo ( layout );
+            layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView);
+            }
+          }
+        else if ( !strcmp ( whichLayout, "Toggle GUI panel visibility"))
+          {
+          int v = appGUI->GetMainSlicerWindow()->GetMainPanelVisibility();
+          appGUI->GetMainSlicerWindow()->SetMainPanelVisibility (!v );
+          layout->SetGUIPanelVisibility ( appGUI->GetMainSlicerWindow()->GetMainPanelVisibility() );
+          this->SetLayoutMenubuttonValueToCurrentLayout ();
+          }
+        else if ( !strcmp ( whichLayout, "Toggle GUI panel L/R"))
+          {
+          int v = appGUI->GetMainSlicerWindow()->GetViewPanelPosition();
+          appGUI->GetMainSlicerWindow()->SetViewPanelPosition ( !v );
+          layout->SetGUIPanelLR ( appGUI->GetMainSlicerWindow()->GetViewPanelPosition() );
+          this->SetLayoutMenubuttonValueToCurrentLayout();
+          }
+        }
+      else if (this->LoadSceneIconButton!= NULL &&  menu == this->LoadSceneIconButton->GetMenu() )
+        {
+        const char *thingToDo = this->LoadSceneIconButton->GetValue();
+        if ( !strcmp ( thingToDo, "Load scene"))
+          {
+          appGUI->ProcessLoadSceneCommand();
+          this->LoadSceneIconButton->SetValue ( "");
+          }
+        else if (!strcmp (thingToDo, "Import scene"))
+          {
+          appGUI->ProcessImportSceneCommand();
+          this->LoadSceneIconButton->SetValue ("");
+          }
+        else if ( !strcmp ( thingToDo, "Add data" ))
+          {
+          appGUI->ProcessAddDataCommand();
+          this->LoadSceneIconButton->SetValue ("");
           }
         }
       }
@@ -1392,48 +1404,48 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerToolbarGUI::SetLayoutMenubuttonValueToLayout (int layout)
 {
-  //--- sets the layout dropdown menu selection to match layout value
-  if ( this->ChooseLayoutIconMenuButton->GetMenu() != NULL )
-    {
-    switch ( layout )
-      {
-      case vtkMRMLLayoutNode::SlicerLayoutConventionalView:
-        this->ChooseLayoutIconMenuButton->SetValue ( "Conventional layout" );
-        break;
-      case vtkMRMLLayoutNode::SlicerLayoutFourUpView:
-        this->ChooseLayoutIconMenuButton->SetValue ( "Four-up layout" );
-        break;
-      case vtkMRMLLayoutNode::SlicerLayoutOneUp3DView:
-        this->ChooseLayoutIconMenuButton->SetValue ( "3D only layout" );
-        break;
-      case vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView:
-        this->ChooseLayoutIconMenuButton->SetValue ( "Red slice only layout" );
-        break;
-      case vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView:
-        this->ChooseLayoutIconMenuButton->SetValue ( "Yellow slice only layout" );
-        break;
-      case vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView:
-        this->ChooseLayoutIconMenuButton->SetValue ( "Green slice only layout" );
-        break;
-      case vtkMRMLLayoutNode::SlicerLayoutOneUpSliceView:
-        this->ChooseLayoutIconMenuButton->SetValue ( "Red slice only layout" );
-        break;
-      case vtkMRMLLayoutNode::SlicerLayoutTabbed3DView:
-        this->ChooseLayoutIconMenuButton->SetValue ( "Tabbed 3D layout" );
-        break;
-      case vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView:
-        this->ChooseLayoutIconMenuButton->SetValue ( "Tabbed slice layout" );
-        break;
-      case vtkMRMLLayoutNode::SlicerLayoutCompareView:
-        this->ChooseLayoutIconMenuButton->SetValue ( "Compare layout" );
-        break;
-      case vtkMRMLLayoutNode::SlicerLayoutLightboxView:              
-        this->ChooseLayoutIconMenuButton->SetValue ( "Lightbox layout" );
-        break;
-      default:
-        break;
-      }
-    }
+//--- sets the layout dropdown menu selection to match layout value
+if ( this->ChooseLayoutIconMenuButton->GetMenu() != NULL )
+{
+ switch ( layout )
+   {
+   case vtkMRMLLayoutNode::SlicerLayoutConventionalView:
+     this->ChooseLayoutIconMenuButton->SetValue ( "Conventional layout" );
+     break;
+   case vtkMRMLLayoutNode::SlicerLayoutFourUpView:
+     this->ChooseLayoutIconMenuButton->SetValue ( "Four-up layout" );
+     break;
+   case vtkMRMLLayoutNode::SlicerLayoutOneUp3DView:
+     this->ChooseLayoutIconMenuButton->SetValue ( "3D only layout" );
+     break;
+   case vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView:
+     this->ChooseLayoutIconMenuButton->SetValue ( "Red slice only layout" );
+     break;
+   case vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView:
+     this->ChooseLayoutIconMenuButton->SetValue ( "Yellow slice only layout" );
+     break;
+   case vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView:
+     this->ChooseLayoutIconMenuButton->SetValue ( "Green slice only layout" );
+     break;
+   case vtkMRMLLayoutNode::SlicerLayoutOneUpSliceView:
+     this->ChooseLayoutIconMenuButton->SetValue ( "Red slice only layout" );
+     break;
+   case vtkMRMLLayoutNode::SlicerLayoutTabbed3DView:
+     this->ChooseLayoutIconMenuButton->SetValue ( "Tabbed 3D layout" );
+     break;
+   case vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView:
+     this->ChooseLayoutIconMenuButton->SetValue ( "Tabbed slice layout" );
+     break;
+   case vtkMRMLLayoutNode::SlicerLayoutCompareView:
+     this->ChooseLayoutIconMenuButton->SetValue ( "Compare layout" );
+     break;
+   case vtkMRMLLayoutNode::SlicerLayoutLightboxView:              
+     this->ChooseLayoutIconMenuButton->SetValue ( "Lightbox layout" );
+     break;
+   default:
+     break;
+   }
+}
 }
 
 
@@ -1495,9 +1507,9 @@ int vtkSlicerToolbarGUI::StopViewRockOrSpin ( )
 
 //---------------------------------------------------------------------------
 void vtkSlicerToolbarGUI::ProcessLogicEvents ( vtkObject *caller,
-                                            unsigned long event, void *callData )
+                                               unsigned long event, void *callData )
 {
-    // Fill in}
+  // Fill in}
 }
 
 
