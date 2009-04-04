@@ -8,7 +8,7 @@
 
 #include "SlicerBatchMakeConfig.h"
 #include "GaussianBlurBatchMakeModuleCLP.h"
-
+#include <fstream>
 namespace bm
 {
 
@@ -113,6 +113,7 @@ int main(int argc, char* argv[])
 
   script += "setapp(gbapp @GaussianBlurImageFilter)\n";
 
+#ifdef SENDTODASHBOARD
   // Create the dashboard
   script += "DashboardHost(http://www.insight-journal.org/batchmake)\n";
   script += "DashboardUser('Anonymous')\n";
@@ -123,7 +124,14 @@ int main(int argc, char* argv[])
   //script += "AddMethodInput(cadTimeStep meth 'Time Step' 'float')\n";
   script += "AddMethodInput(inputSlice meth 'Input Slice' 'png')\n";
   script += "AddMethodOutput(outputSlice meth 'Output Slice' 'png')\n";
-
+#endif
+  // julien's add
+  script += "InputDirectory('" + dataDir + "')\n";
+  script += "OutputDirectory( '" + outputDir + "')\n";
+  script += "WorkingDirectory( '" + outputDir + "')\n";
+  script += "ExecutableDirectory('/home/condor/applications/')\n";
+  script += "GridTransferFile( NONE )\n";
+  // end julien's add
   script += "foreach(file ${inputFiles})\n";
   script += "  foreach(sigma ${params1})\n";
   //script += "    foreach(timeStep ${params2})\n";
@@ -147,8 +155,9 @@ int main(int argc, char* argv[])
   
   script += "    Set(outputSlice "+outputDir+"/${outputName}-${sigma}.png)\n";
   script += "    ExtractSlice(${outputFilename} ${outputSlice})\n";
-
+#ifdef SENDTODASHBOARD
   script += "    DashboardSend(meth)\n";
+#endif
 
   //script += "    endforeach(timeStep params2)\n";
   script += "  endforeach(sigma params1)\n";
@@ -156,9 +165,14 @@ int main(int argc, char* argv[])
 
   std::string scriptFile = outputDir
                            + "/SlicerGaussianBlurBatchMakeModule.bms";
-  FILE* fic = fopen(scriptFile.c_str(), "wb");
-  fprintf(fic, script.c_str());
-  fclose(fic);
+  /*
+    FILE* fic = fopen(scriptFile.c_str(), "wb");
+    fprintf(fic, script.c_str());
+    fclose(fic);
+  */
+  std::ofstream file( scriptFile.c_str() );
+  file << script; 
+  file.close();
 
   // Create a progress manager gui
   bm::ScriptParser batchMakeParser;
@@ -191,7 +205,7 @@ int main(int argc, char* argv[])
 
   progressManager.SetNumberOfActions((actions*2)+10);
   batchMakeParser.SetProgressManager(&progressManager);
-  
+
   batchMakeParser.LoadWrappedApplication(BatchMake_WRAPPED_APPLICATION_DIR);
   batchMakeParser.SetBatchMakeBinaryPath(BatchMake_WRAPPED_APPLICATION_DIR);
   
@@ -230,7 +244,8 @@ int main(int argc, char* argv[])
     //itksysProcess_Execute(gp);
 
     // Generate the script
-    batchMakeParser.RunCondor(script, outputDir.c_str());
+    batchMakeParser.RunCondor( script );
+    //                         , outputDir.c_str());
     
     std::cout << "<filter-end>" << std::endl;
     std::cout << " <filter-name>CondorSubmit</filter-name>" << std::endl;

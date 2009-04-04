@@ -42,7 +42,7 @@
 				<Name>targetVolumeFileName1</Name>
 				<Value>--targetVolumeFileName1</Value>
 				<Parent>0</Parent>
-				<External>1</External>
+				<External>0</External>
 				<Optional>0</Optional>
 			</Param>
 			<Param>

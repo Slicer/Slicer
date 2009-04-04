@@ -94,6 +94,7 @@ int main(int argc, char* argv[])
   // Write the script
   std::string script = "echo('Starting BatchMake Script')\n";
   script += "setapp(emsegment @EMSegmentCommandLine_GUIVersion)\n";
+  //script += "setapp(emsegment @EMSegmentCommandLine)\n";
 
   char* buffer = new char[512];
   sprintf(buffer,"set(patientdir '%s')\n",dataDir.c_str());
@@ -124,6 +125,13 @@ int main(int argc, char* argv[])
   sprintf(buffer,"listdirindir(patients ${patientdir} '%s')\n",DataMask.c_str());
   script += buffer;
 
+  // mrmlSceneFile shall be in the patientdir directory.
+  script += "InputDirectory('" + dataDir + "')\n";
+  script += "OutputDirectory( '" + outputDir + "')\n";
+  script += "WorkingDirectory( '" + outputDir + "')\n";
+  script += "ExecutableDirectory('/home/condor/applications/')\n";
+  script += "GridTransferFile( NONE )\n";
+
   script += "foreach(patient ${patients})\n";
   
   script += "  set(currentdir ${patientdir}/${patient})\n";
@@ -132,10 +140,10 @@ int main(int argc, char* argv[])
   
   script += "  set(outputfile ${outputdir}/${patient}_labelmap.mha)\n";
   
-  script += "  setappoption(emsegment.mrmlSceneFileName ${mrmlfile})\n";
-  script += "  setappoption(emsegment.resultVolumeFileName ${outputfile})\n";
-  script += "  setappoption(emsegment.targetVolumeFileName1 ${t1image})\n";
-  script += "  setappoption(emsegment.targetVolumeFileName2 ${t2image})\n";
+  script += "  setappoption(emsegment.mrmlSceneFileName.mrmlSceneFileName ${mrmlfile})\n";
+  script += "  setappoption(emsegment.resultVolumeFileName.resultVolumeFileName ${outputfile})\n";
+  script += "  setappoption(emsegment.targetVolumeFileName1.targetVolumeFileName1 ${t1image})\n";
+  script += "  setappoption(emsegment.targetVolumeFileName2.targetVolumeFileName2 ${t2image})\n";
   script += "  Run(output ${emsegment})\n";
 
   script += "endforeach(patient ${patients})\n";
@@ -189,7 +197,8 @@ int main(int argc, char* argv[])
     // itksysProcess_Execute(gp);
 
     // Generate the script
-    batchMakeParser.RunCondor(script, outputDir.c_str());
+    batchMakeParser.RunCondor( script );
+    //                        , outputDir.c_str());
 
     std::cout << "<filter-end>" << std::endl;
     std::cout << " <filter-name>CondorSubmit</filter-name>" << std::endl;

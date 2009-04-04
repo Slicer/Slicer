@@ -26,29 +26,29 @@ find_package(BatchMake REQUIRED)
 include(${BatchMake_USE_FILE})
 
 if(BatchMake_DIR)
-  find_program(bmGridSend
-    NAMES bmGridSend.exe bmGridSend
-    PATHS ${BatchMake_DIR}/bin/relwithdebinfo
-    ${BatchMake_DIR}/bin/release
-    ${BatchMake_DIR}/bin/debug
-    ${BatchMake_DIR}/bin/${CMAKE_BUILD_TYPE}
-    ${BatchMake_DIR}/bin)
+#  find_program(bmGridSend
+#    NAMES bmGridSend.exe bmGridSend
+#    PATHS ${BatchMake_DIR}/bin/relwithdebinfo
+#    ${BatchMake_DIR}/bin/release
+#    ${BatchMake_DIR}/bin/debug
+#    ${BatchMake_DIR}/bin/${CMAKE_BUILD_TYPE}
+#    ${BatchMake_DIR}/bin)
   
-  find_program(bmGridStore
-    NAMES bmGridStore.exe bmGridStore
-    PATHS ${BatchMake_DIR}/bin/relwithdebinfo
-    ${BatchMake_DIR}/bin/release
-    ${BatchMake_DIR}/bin/debug
-    ${BatchMake_DIR}/bin/${CMAKE_BUILD_TYPE}
-    ${BatchMake_DIR}/bin)
+#  find_program(bmGridStore
+#    NAMES bmGridStore.exe bmGridStore
+#    PATHS ${BatchMake_DIR}/bin/relwithdebinfo
+#    ${BatchMake_DIR}/bin/release
+#    ${BatchMake_DIR}/bin/debug
+#    ${BatchMake_DIR}/bin/${CMAKE_BUILD_TYPE}
+#    ${BatchMake_DIR}/bin)
   
-  find_program(bmSliceExtractor
-    NAMES bmSliceExtractor.exe bmSliceExtractor
-    PATHS ${BatchMake_DIR}/bin/relwithdebinfo
-    ${BatchMake_DIR}/bin/release
-    ${BatchMake_DIR}/bin/debug
-    ${BatchMake_DIR}/bin/${CMAKE_BUILD_TYPE}
-    ${BatchMake_DIR}/bin)
+#  find_program(bmSliceExtractor
+#    NAMES bmSliceExtractor.exe bmSliceExtractor
+#    PATHS ${BatchMake_DIR}/bin/relwithdebinfo
+#    ${BatchMake_DIR}/bin/release
+#    ${BatchMake_DIR}/bin/debug
+#    ${BatchMake_DIR}/bin/${CMAKE_BUILD_TYPE}
+#    ${BatchMake_DIR}/bin)
 
   find_path(Slicer3_BINARY_DIR NAMES Base/Logic/SlicerBaseLogicInit.cxx)
   if(Slicer3_BINARY_DIR)
@@ -81,12 +81,12 @@ if(BatchMake_DIR)
     configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/${Slicer3ExeModule}.bmm.in"
       "${BatchMake_WRAPPED_APPLICATION_DIR}/${Slicer3ExeModule}.bmm")
 
-    configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/bmSliceExtractor.bmm.in"
-      "${BatchMake_WRAPPED_APPLICATION_DIR}/bmSliceExtractor.bmm")
-    configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/bmGridSend.bmm.in"
-      "${BatchMake_WRAPPED_APPLICATION_DIR}/bmGridSend.bmm")
-    configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/bmGridStore.bmm.in"
-      "${BatchMake_WRAPPED_APPLICATION_DIR}/bmGridStore.bmm")
+#    configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/bmSliceExtractor.bmm.in"
+#      "${BatchMake_WRAPPED_APPLICATION_DIR}/bmSliceExtractor.bmm")
+#    configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/bmGridSend.bmm.in"
+#      "${BatchMake_WRAPPED_APPLICATION_DIR}/bmGridSend.bmm")
+#    configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/bmGridStore.bmm.in"
+#      "${BatchMake_WRAPPED_APPLICATION_DIR}/bmGridStore.bmm")
 
     # Configure a header
     configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/SlicerBatchMakeConfig.h.in"
@@ -124,9 +124,9 @@ if(BatchMake_DIR)
 
     set(RUNTIME_SUPPORT_FILES 
       "${CMAKE_CURRENT_SOURCE_DIR}/${Slicer3BatchModule}.xml"
-      "${BatchMake_WRAPPED_APPLICATION_DIR}/bmSliceExtractor.bmm"
-      "${BatchMake_WRAPPED_APPLICATION_DIR}/bmGridSend.bmm"
-      "${BatchMake_WRAPPED_APPLICATION_DIR}/bmGridStore.bmm"
+#      "${BatchMake_WRAPPED_APPLICATION_DIR}/bmSliceExtractor.bmm"
+#      "${BatchMake_WRAPPED_APPLICATION_DIR}/bmGridSend.bmm"
+#      "${BatchMake_WRAPPED_APPLICATION_DIR}/bmGridStore.bmm"
       "${BatchMake_WRAPPED_APPLICATION_DIR}/${Slicer3ExeModule}.bmm")
     install(FILES ${RUNTIME_SUPPORT_FILES} 
       DESTINATION ${Slicer3_INSTALL_PLUGINS_SHARE_DIR}/${PROJECT_NAME})
