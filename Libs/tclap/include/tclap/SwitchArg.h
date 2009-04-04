@@ -107,6 +107,11 @@ public:
    * Returns bool, whether or not the switch has been set.
    */
   bool getValue();
+  
+  /**
+   * Returns string, 0 if false, 1 if true.
+   */
+  virtual std::string getValueAsString()const;
 
 };
 
@@ -135,6 +140,20 @@ inline SwitchArg::SwitchArg(const std::string& flag,
 }
 
 inline bool SwitchArg::getValue() { return _value; }
+
+inline std::string SwitchArg::getValueAsString()const
+{
+  std::string res;
+  if( _value )
+    {
+    res = "1";
+    }
+  else
+    {
+    res = "0";
+    }
+  return res;
+}
 
 inline bool SwitchArg::combinedSwitchesMatch(std::string& combinedSwitches )
 {

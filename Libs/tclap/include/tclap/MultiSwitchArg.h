@@ -30,6 +30,20 @@
 
 #include <tclap/SwitchArg.h>
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#else
+#define HAVE_SSTREAM
+#endif
+
+#if defined(HAVE_SSTREAM)
+#include <sstream>
+#elif defined(HAVE_STRSTREAM)
+#include <strstream>
+#else
+#error "Need a stringstream (sstream or strstream) to compile!"
+#endif
+
 namespace TCLAP {
 
 /**
@@ -104,6 +118,11 @@ public:
    * Returns int, the number of times the switch has been set.
    */
   int getValue();
+  
+  /**
+   * Returns the number of times the switch has been set.
+   */
+  virtual std::string getValueAsString()const;
 
   /**
    * Returns the shortID for this Arg.
@@ -141,6 +160,19 @@ inline MultiSwitchArg::MultiSwitchArg(const std::string& flag,
 }
 
 inline int MultiSwitchArg::getValue() { return _value; }
+
+inline std::string MultiSwitchArg::getValueAsString()const 
+{
+#if defined(HAVE_SSTREAM)
+  std::ostringstream os;
+#elif defined(HAVE_STRSTREAM)
+  std::ostrstream os;
+#else
+#error "Need a stringstream (sstream or strstream) to compile!"
+#endif
+  os << _value;
+  return os.str(); 
+}
 
 inline bool MultiSwitchArg::processArg(int *i, std::vector<std::string>& args)
 {

@@ -333,7 +333,8 @@ public:
 
   virtual bool allowMore();
   virtual bool acceptsMultipleValues();
-
+  
+  virtual std::string getValueAsString()const = 0; 
 };
 
 /**

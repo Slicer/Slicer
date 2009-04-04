@@ -307,6 +307,8 @@ public:
    */
   const std::vector<T>& getValue();
 
+  virtual std::string getValueAsString()const;
+
   /**
    * Returns the a short id string.  Used in the usage. 
    * \param val - value to be used.
@@ -398,6 +400,30 @@ MultiArg<T>::MultiArg(const std::string& flag,
 
 template<class T>
 const std::vector<T>& MultiArg<T>::getValue() { return _values; }
+
+template<class T>
+std::string MultiArg<T>::getValueAsString()const
+{
+#if defined(HAVE_SSTREAM)
+  std::ostringstream os;
+#elif defined(HAVE_STRSTREAM)
+  std::ostrstream os;
+#else
+#error "Need a stringstream (sstream or strstream) to compile!"
+#endif
+  typename std::vector<T>::const_iterator it = _values.begin();
+  typename std::vector<T>::const_iterator end = _values.end(); 
+  if( it != end )
+    {
+    os << *it;
+    ++it;
+    }
+  for( ; it != end; ++it )
+    {
+    os << " " << *it;
+    }
+  return os.str();
+}
 
 template<class T>
 bool MultiArg<T>::processArg(int *i, std::vector<std::string>& args) 

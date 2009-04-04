@@ -342,6 +342,11 @@ public:
    * Returns the value of the argument.
    */
   T& getValue() ;
+  
+  /** 
+   * Returns the value of the argument as a string
+   */
+  virtual std::string getValueAsString()const;
 
   /**
    * Specialization of shortID.
@@ -429,6 +434,20 @@ ValueArg<T>::ValueArg(const std::string& flag,
  */
 template<class T>
 T& ValueArg<T>::getValue() { return _value; }
+
+template<class T>
+std::string ValueArg<T>::getValueAsString()const
+{
+#if defined(HAVE_SSTREAM)
+  std::ostringstream os;
+#elif defined(HAVE_STRSTREAM)
+  std::ostrstream os;
+#else
+#error "Need a stringstream (sstream or strstream) to compile!"
+#endif
+  os << _value;
+  return os.str();
+}
 
 /**
  * Implementation of processArg().
