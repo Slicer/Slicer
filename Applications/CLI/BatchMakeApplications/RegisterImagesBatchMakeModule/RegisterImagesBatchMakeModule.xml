@@ -1,81 +1,379 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>
-  Batch Processing
-  </category>
-  <title>
-  Registration BatchMake
-  </title>
-  <description>
-  Run Registration Module as a batch process.
-  </description>
-  <version>0.1.0.$Revision: 1.1 $(alpha)</version>
-  <documentation-url></documentation-url>
+  <category>Batch Processing</category>
+  <title>Register Images BatchMake 2</title>
+  <description>Provides rigid, affine, and BSpline registration methods via a simple GUI</description>
+  <version>0.1.0.$Revision: 2104 $(alpha)</version>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:RegisterImages-Documentation-3.4</documentation-url>
   <license></license>
-  <contributor>Stephen Aylward at Kitware Inc.</contributor>
-  <acknowledgements>http://www.batchmake.org
-  </acknowledgements>
-
+  <contributor>Stephen R Aylward</contributor>
+  <acknowledgements></acknowledgements>
+ <parameters advanced="true">
+    <label>BatchMake</label>
+    <description>BatchMake specific parameters</description>
+    <string-enumeration>
+      <name>RunningMode_Grid</name>
+      <longflag>runningMode_Grid</longflag>
+      <description>Running Mode: Where the module shall be executed? On your local machine or on a grid?</description>
+      <label>Running Mode</label>
+      <default>local</default>
+      <element>local</element>
+      <element>condor</element>
+    </string-enumeration>
+    <directory>
+      <name>InputDirectory_Grid</name>
+      <label>Grid input directory</label>
+      <longflag>inputDirectory_Grid</longflag>
+      <default></default>
+      <description>Directory where the input data are. Necessary if dealing with relative input paths.</description>
+    </directory>
+    <directory>
+      <name>OutputDirectory_Grid</name>
+      <label>Grid output directory</label>
+      <longflag>outputDirectory_Grid</longflag>
+      <default></default>
+      <description>Directory where the output data are. Necessary if dealing with relative output paths.</description>
+    </directory>
+    <directory>
+      <name>ExecutableDirectory_Grid</name>
+      <label>Grid executable directory</label>
+      <longflag>executableDirectory_Grid</longflag>
+      <default></default>
+      <description>Directory where the executables are.</description>
+    </directory>
+    <directory>
+      <name>WorkingDirectory_Grid</name>
+      <label>Grid working directory</label>
+      <longflag>workingDirectory_Grid</longflag>
+      <default></default>
+      <description>Directory where the condor scripts are written.</description>
+    </directory>
+    <string-enumeration>
+      <name>TransferFile_Grid</name>
+      <longflag>transferFile_Grid</longflag>
+      <description>Type of files that shall be transfered by the grid</description>
+      <label>Transfer File</label>
+      <default>NONE</default>
+      <element>NONE</element>
+      <element>EXECUTABLE</element>
+      <element>INPUT_FILES</element>
+      <element>OUTPUT_FILES</element>
+      <element>ALL</element>
+    </string-enumeration>
+  </parameters>
   <parameters>
-    <label>Input Datasets</label>
-    <description>Input Datasets</description>
-
-    <image>
+    <label>IO</label>
+    <description>Input and output parameters</description>
+    <file>
       <name>fixedImage</name>
       <label>Fixed Image</label>
       <channel>input</channel>
       <index>0</index>
-    </image>
-
-    <file fileExtensions=".prm">
-      <name>parametersFileName</name>
-      <longflag>parametersFileName</longflag>
-      <description>File that contrains the registration module parameters.</description>
-      <label>Registration parameters file</label>
-    </file>    
-     
+      <description>Image which defines the space into which the moving image is registered</description>
+    </file>
     <directory>
-      <name>movingImageDir</name>
-      <label>Moving image directory</label>
+      <name>movingImage_Directory</name>
+      <label>Moving Image Directory</label>
       <channel>input</channel>
-      <index>0</index>
-      <description>Directory where to find input images</description>
+      <index>1</index>
+      <description>The transform goes from the fixed image's space into the moving image's space</description>
     </directory>
-
     <string>
-      <name>movingImageMask</name>
-      <label>Directory Mask</label>
-      <default>Patient*</default>
-      <longflag>movingImageMask</longflag>
+      <name>MovingImage_Mask</name>
+      <label>Moving Image Mask</label>
+      <longflag>movingImage_Mask</longflag>
+      <description>The transform goes from the fixed image's space into the moving image's space</description>
     </string>
-
-  </parameters>
-
-  <parameters>
-    <label>Output Directory</label>
-    <description>Output Directory</description>
     <directory>
-       <name>outputDir</name>
-       <label>Output directory</label>
-       <channel>output</channel>
-       <index>1</index>
-       <description>Directory where to put the processed images</description>
+      <name>ResampledImage_Directory</name>
+      <label>Resample image</label>
+      <channel>output</channel>
+      <longflag>resampledImage_Directory</longflag>
+      <description>Registration results</description>
+      <default></default>
     </directory>
+    <string>
+      <name>ResampledImage_Mask</name>
+      <label>Resample image mask</label>
+      <channel>output</channel>
+      <longflag>resampledImage_Mask</longflag>
+      <description>Registration results</description>
+      <default></default>
+    </string>
   </parameters>
-
- <parameters>
-    <label>BatchMake</label>
-    <description>BatchMake specific parameters</description>
-
+  <parameters>
+    <label>Registration Parameters</label>
+    <description>Common parameters</description>
+    <file>
+      <name>loadTransform</name>
+      <label>Load transform</label>
+      <description>Load a transform that is immediately applied to the moving image</description>
+      <longflag>loadTransform</longflag>
+      <channel>input</channel>
+      <default></default>
+    </file>
+    <file>
+      <name>saveTransform</name>
+      <label>Save transform</label>
+      <description>Save the transform that results from registration</description>
+      <longflag>saveTransform</longflag>
+      <channel>output</channel>
+      <default></default>
+    </file>
+    <!--
+    <file>
+      <name>loadParameters</name>
+      <label>Load parameters</label>
+      <description>File containing detailed parameters for registration</description>
+      <longflag>loadParameters</longflag>
+      <default></default>
+    </file>
+    <file>
+      <name>saveParameters</name>
+      <label>Save parameters</label>
+      <description>Writed the parameters used for registration</description>
+      <longflag>saveParameters</longflag>
+      <default></default>
+    </file>
+    -->
     <string-enumeration>
-      <name>runLocally</name>
-      <longflag>local</longflag>
-      <description>Running Mode</description>
-      <label>Running Mode</label>
-      <default>locally</default>
-      <element>locally</element>
-      <element>grid via condor</element>
+      <name>initialization</name>
+      <description>Method to prime the registration process</description>
+      <label>Initialization</label>
+      <longflag>initialization</longflag>
+      <element>None</element>
+      <element>Landmarks</element>
+      <element>ImageCenters</element>
+      <element>CentersOfMass</element>
+      <element>SecondMoments</element>
+      <default>CentersOfMass</default>
     </string-enumeration>
-  
+    <string-enumeration>
+      <name>registration</name>
+      <description>Method for the registration process</description>
+      <label>Registration</label>
+      <longflag>registration</longflag>
+      <element>None</element>
+      <element>Initial</element>
+      <element>Rigid</element>
+      <element>Affine</element>
+      <element>BSpline</element>
+      <element>PipelineRigid</element>
+      <element>PipelineAffine</element>
+      <element>PipelineBSpline</element>
+      <default>Affine</default>
+    </string-enumeration>
+    <float>
+      <name>expectedOffset</name>
+      <description>Expected misalignment after initialization</description>
+      <label>Expected offset magnitude</label>
+      <longflag>expectedOffset</longflag>
+      <default>10</default>
+    </float>
+    <float>
+      <name>expectedRotation</name>
+      <description>Expected misalignment after initialization</description>
+      <label>Expected rotation magnitude</label>
+      <longflag>expectedRotation</longflag>
+      <default>0.1</default>
+    </float>
+    <float>
+      <name>expectedScale</name>
+      <description>Expected misalignment after initialization</description>
+      <label>Expected scale magnitude</label>
+      <longflag>expectedScale</longflag>
+      <default>0.05</default>
+    </float>
+    <float>
+      <name>expectedSkew</name>
+      <description>Expected misalignment after initialization</description>
+      <label>Expected skew magnitude</label>
+      <longflag>expectedSkew</longflag>
+      <default>0.01</default>
+    </float>
+  </parameters>
+  <parameters advanced="true">
+    <label>Advanced Registration Parameters</label>
+    <description>Parameters that determine how registration is performed</description>
+    <string-enumeration>
+      <name>verbosityLevel</name>
+      <description>Level of detail of reporting progress</description>
+      <label>Verbosity level</label>
+      <longflag>verbosityLevel</longflag>
+      <element>Silent</element>
+      <element>Standard</element>
+      <element>Verbose</element>
+      <default>Standard</default>
+    </string-enumeration>
+    <boolean>
+      <name>sampleFromOverlap</name>
+      <description>Limit metric evaluation to the fixed image region overlapped by the moving image</description>
+      <label>Sample from fixed/moving overlap</label>
+      <longflag>sampleFromOverlap</longflag>
+      <default>false</default>
+    </boolean>
+    <float>
+      <name>sampleIntensityPortion</name>
+      <description>Limit metric evaluation to the fixed image points at or above the threshold (as a percent of intensity range of the image)</description>
+      <label>Fixed image intensity percentage threshold</label>
+      <longflag>sampleIntensityPortion</longflag>
+      <default>0.0</default>
+    </float>
+    <integer>
+      <name>randomNumberSeed</name>
+      <description>Seed to generate a consistent random number sequence</description>
+      <label>Random number seed (0=none)</label>
+      <longflag>randomNumberSeed</longflag>
+      <default>0</default>
+    </integer>
+    <integer>
+      <name>numberOfThreads</name>
+      <description>Number of CPU threads to use</description>
+      <label>Number of threads (0=max)</label>
+      <longflag>numberOfThreads</longflag>
+      <default>0</default>
+    </integer>
+    <boolean>
+      <name>minimizeMemory</name>
+      <description>Reduce the amount of memory required at the cost of increased computation time</description>
+      <label>Minimize memory</label>
+      <longflag>minimizeMemory</longflag>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <name>useWindowedSinc</name>
+      <description>Use Windowed Sinc interpolation when generating the final resampled moving image</description>
+      <label>Use windowed sinc for final interpolation</label>
+      <longflag>useWindowedSinc</longflag>
+      <default>false</default>
+    </boolean>
+  </parameters>
+  <parameters advanced="true">
+    <label>Registration Testing Parameters</label>
+    <description>Functions for comparing registration results with a baseline image</description>
+    <file>
+      <name>baselineImage</name>
+      <label>Baseline Image</label>
+      <longflag>baselineImage</longflag>
+      <channel>input</channel>
+      <description>Image against which the resampled moving image will be compared</description>
+      <default></default>
+    </file>
+    <integer>
+      <name>baselineNumberOfFailedPixelsTolerance</name>
+      <label>Number of Failed Pixels Tolerance</label>
+      <longflag>baselineNumberOfFailedPixelsTolerance</longflag>
+      <description>Maximum number of pixels that can differ and the test pass</description>
+      <default>1000</default>
+    </integer>
+    <double>
+      <name>baselineIntensityTolerance</name>
+      <label>Intensity Tolerance</label>
+      <longflag>baselineIntensityTolerance</longflag>
+      <description>Maximum intensity difference for pixels to be considered matching</description>
+      <default>10</default>
+    </double>
+    <integer>
+      <name>baselineRadiusTolerance</name>
+      <label>Radius Tolerance</label>
+      <longflag>baselineRadiusTolerance</longflag>
+      <description>Maximum neighborhood that will be searched to find a matching pixel</description>
+      <default>0</default>
+    </integer>
+    <file>
+      <name>baselineDifferenceImage</name>
+      <label>Baseline Difference Image</label>
+      <longflag>baselineDifferenceImage</longflag>
+      <channel>output</channel>
+      <description>Result from subtracting the registered moving image from the baseline image</description>
+      <default></default>
+    </file>
+    <file>
+      <name>baselineResampledMovingImage</name>
+      <label>Baseline Resampled Moving Image</label>
+      <longflag>baselineResampledMovingImage</longflag>
+      <channel>output</channel>
+      <description>Result resampling the moving image to the space of the baseline image</description>
+      <default></default>
+    </file>
+  </parameters>
+  <parameters advanced="true">
+    <label>Advanced Initial Registration Parameters</label>
+    <description>Parameters that determine how initial registration is performed</description>
+    <float-vector>
+      <name>fixedLandmarks</name>
+      <description>Ordered list of landmarks in the fixed image</description>
+      <label>Fixed landmarks</label>
+      <longflag>fixedLandmarks</longflag>
+      <default></default>
+    </float-vector>
+    <float-vector>
+      <name>movingLandmarks</name>
+      <description>Ordered list of landmarks in the moving image</description>
+      <label>Moving landmarks</label>
+      <longflag>movingLandmarks</longflag>
+      <default></default>
+    </float-vector>
+  </parameters>
+  <parameters advanced="true">
+    <label>Advanced Rigid Registration Parameters</label>
+    <description>Parameters that determine how registration is performed</description>
+    <integer>
+      <name>rigidMaxIterations</name>
+      <description>Maximum number of rigid optimization iterations</description>
+      <label>Rigid Max Iterations</label>
+      <longflag>rigidMaxIterations</longflag>
+      <default>100</default>
+    </integer>
+    <float>
+      <name>rigidSamplingRatio</name>
+      <description>Portion of the image to use in computing the metric during rigid registration</description>
+      <label>Rigid sampling ratio</label>
+      <longflag>rigidSamplingRatio</longflag>
+      <default>0.01</default>
+    </float>
+  </parameters>
+  <parameters advanced="true">
+    <label>Advanced Affine Registration Parameters</label>
+    <description>Parameters that determine how registration is performed</description>
+    <integer>
+      <name>affineMaxIterations</name>
+      <description>Maximum number of affine optimization iterations</description>
+      <label>Affine Max Iterations</label>
+      <longflag>affineMaxIterations</longflag>
+      <default>50</default>
+    </integer>
+    <float>
+      <name>affineSamplingRatio</name>
+      <description>Portion of the image to use in computing the metric during affine registration</description>
+      <label>Affine sampling ratio</label>
+      <longflag>affineSamplingRatio</longflag>
+      <default>0.02</default>
+    </float>
+  </parameters>
+  <parameters advanced="true">
+    <label>Advanced BSpline Registration Parameters</label>
+    <description>Parameters that determine how registration is performed</description>
+    <integer>
+      <name>bsplineMaxIterations</name>
+      <description>Maximum number of bspline optimization iterations</description>
+      <label>BSpline Max Iterations</label>
+      <longflag>bsplineMaxIterations</longflag>
+      <default>20</default>
+    </integer>
+    <float>
+      <name>bsplineSamplingRatio</name>
+      <description>Portion of the image to use in computing the metric during BSpline registration</description>
+      <label>BSpline sampling ratio</label>
+      <longflag>bsplineSamplingRatio</longflag>
+      <default>0.10</default>
+    </float>
+    <integer>
+      <name>controlPointSpacing</name>
+      <description>Number of pixels between control points</description>
+      <label>Control point spacing (pixels)</label>
+      <longflag>controlPointSpacing</longflag>
+      <default>40</default>
+    </integer>
   </parameters>
 </executable>
