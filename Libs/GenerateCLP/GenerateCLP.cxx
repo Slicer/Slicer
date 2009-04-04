@@ -768,8 +768,6 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
         }
       }
     }
-  sout << "try" << EOL << std::endl;
-  sout << "  {" << EOL << std::endl;
   sout << "    std::string fullDescription(\"Description: \");" << EOL << std::endl;
   sout << "    fullDescription += \"" << module.GetDescription() << "\";" << EOL << std::endl;
   sout << "    if (!std::string(\"" << module.GetContributor() << "\").empty())" << EOL << std::endl;
@@ -951,6 +949,9 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
         }
       }
     }
+  sout << "try" << EOL << std::endl;
+  sout << "  {" << EOL << std::endl;
+
   // Remap any aliases in the flags or long flags
   sout << "    /* Build a map of flag aliases to the true flag */" << EOL << std::endl;
   sout << "    std::map<std::string,std::string> flagAliasMap;" << EOL << std::endl;
