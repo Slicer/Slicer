@@ -513,20 +513,47 @@ void vtkSlicerToolbarGUI::DestroyScreenShotOptionsWindow ( )
 void vtkSlicerToolbarGUI::WithdrawScreenShotOptionsWindow ( )
 {
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
-  if ( app )
+  if ( app && this->ScreenShotOptionsWindow )
     {
     app->Script ( "grab release %s", this->ScreenShotOptionsWindow->GetWidgetName() );
     }
 
-  this->ScreenShotDialogButton->GetLoadSaveDialog()->RemoveObservers ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ScreenShotNameEntry->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ScreenShotNumberEntry->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ScreenShotMagnificationEntry->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ScreenShotFormatMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->ScreenShotOverwriteButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ScreenShotCaptureButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ScreenShotCloseButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ScreenShotOptionsWindow->Withdraw();
+  if ( this->ScreenShotDialogButton )
+    {
+    this->ScreenShotDialogButton->GetLoadSaveDialog()->RemoveObservers ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+  if ( this->ScreenShotNameEntry )
+    {
+    this->ScreenShotNameEntry->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+  if ( this->ScreenShotNumberEntry )
+    {
+    this->ScreenShotNumberEntry->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+  if ( this->ScreenShotMagnificationEntry )
+    {
+    this->ScreenShotMagnificationEntry->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+  if ( this->ScreenShotFormatMenuButton )
+    {
+    this->ScreenShotFormatMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+    }
+  if ( this->ScreenShotOverwriteButton )
+    {
+    this->ScreenShotOverwriteButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+  if ( this->ScreenShotCaptureButton )
+    {
+    this->ScreenShotCaptureButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+  if ( this->ScreenShotCloseButton )
+    {
+    this->ScreenShotCloseButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+  if ( this->ScreenShotOptionsWindow )
+    {
+    this->ScreenShotOptionsWindow->Withdraw();
+    }
 
 }
 
