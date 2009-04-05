@@ -316,6 +316,24 @@ void vtkSlicerApplicationGUI::PrintSelf ( ostream& os, vtkIndent indent )
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
 {
+  //-- do some null pointer checking.
+  if ( this->MRMLScene == NULL )
+    {
+    vtkErrorMacro ( "ProcessLoadSceneCommand: Got NULL MRMLScene." );
+    return;
+    }
+  if ( this->LoadSceneDialog == NULL )
+    {
+    vtkErrorMacro ( "ProcessLoadSceneCommand: Got NULL LoadSceneDialog." );
+    return;
+    }
+  if ( this->MainSlicerWindow == NULL )
+    {
+    vtkErrorMacro ( "ProcessLoadSceneCommand: Got NULL SlicerWindow." );
+    return;
+    }
+  
+    
   this->LoadSceneDialog->RetrieveLastPathFromRegistry("OpenPath");
 
   this->LoadSceneDialog->Invoke();
@@ -398,6 +416,23 @@ void vtkSlicerApplicationGUI::ProcessPublishToXnatCommand()
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessImportSceneCommand()
 {
+  //-- do some null pointer checking.
+  if ( this->MRMLScene == NULL )
+    {
+    vtkErrorMacro ( "ProcessImportSceneCommand: Got NULL MRMLScene." );
+    return;
+    }
+  if ( this->LoadSceneDialog == NULL )
+    {
+    vtkErrorMacro ( "ProcessImportSceneCommand: Got NULL LoadSceneDialog." );
+    return;
+    }
+  if ( this->MainSlicerWindow == NULL )
+    {
+    vtkErrorMacro ( "ProcessImportSceneCommand: Got NULL SlicerWindow." );
+    return;
+    }
+
   this->LoadSceneDialog->RetrieveLastPathFromRegistry(
                                                       "OpenPath");
 
