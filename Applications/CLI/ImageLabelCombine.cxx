@@ -49,8 +49,11 @@ int main( int argc, char * argv[] ){
   writer->SetFileName(OutputLabelMap.c_str());
   writer->SetInput( labelCombine->GetOutput() );
   
-  readerA->GetRasToIjkMatrix()->Invert();
-  writer->SetIJKToRASMatrix( readerA->GetRasToIjkMatrix() );
+  if (readerA->GetRasToIjkMatrix())
+    {
+    readerA->GetRasToIjkMatrix()->Invert();
+    writer->SetIJKToRASMatrix( readerA->GetRasToIjkMatrix() );
+    }
   writer->Write();
   writer->Write();
 
