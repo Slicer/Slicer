@@ -134,6 +134,7 @@ void vtkSlicerModuleGUI::BuildHelpAndAboutFrame ( vtkKWWidget *parent,
   this->HelpText->GetWidget()->SetReliefToFlat ( );
   this->HelpText->GetWidget()->SetWrapToWord ( );
   this->HelpText->GetWidget()->QuickFormattingOn ( );
+  this->HelpText->GetWidget()->SetHeight ( 20 );
   this->HelpText->SetText ( helptext );
   //Important that Read only after SetText otherwise it doesn't work
   this->HelpText->GetWidget()->ReadOnlyOn ( );
