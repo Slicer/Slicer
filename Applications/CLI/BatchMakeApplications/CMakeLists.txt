@@ -65,5 +65,4 @@ SUBDIRS(
   EMSegmentBatchMakeModule
   GaussianBlurBatchMakeModule
   RegisterImagesBatchMakeModule
-  ResampleVolumeBatchMakeModule
 )
