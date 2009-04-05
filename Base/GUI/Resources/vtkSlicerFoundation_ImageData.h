@@ -1417,9 +1417,221 @@ static const unsigned char image_SlicerNotFoundOnDisk[] =
   "uDNR5Oa2SoMfF2+9vo9YTgjUZDrVZjKbCbdrvd5XJhQz0eDzpmKNDhIoPk0J2lKAobYTab"
   "tVrtj32HAh0uMhPzfxp8APVy9uE=";
 
+/* 
+ * Resource generated for file:
+ *    ImportScene.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerImportScene_width          = 21;
+static const unsigned int  image_SlicerImportScene_height         = 21;
+static const unsigned int  image_SlicerImportScene_pixel_size     = 3;
+static const unsigned long image_SlicerImportScene_length         = 236;
+static const unsigned long image_SlicerImportScene_decoded_length = 1323;
 
+static const unsigned char image_SlicerImportScene[] = 
+  "eNqllDEOwyAMRTlY6cDcuVMuiuQrIDH0EC0LrAy0tWqBUEgMhacIwSc/X1gOQqzymeXM7p"
+  "y7Zi6ZonjvR+yHiUopY8yg/b49rLVlJDsArKSP2KWUdfqcfTp9d/ayhXrXHkJYOXuMkam8"
+  "1pq3I9gn/6bX87rNdozYsTMhgzpUtF3H/ES4xE/h+KroprfK4S7zAi1TSu8fpNCkW/nnTd"
+  "DDKIy9rcOZsnjbrPAFqG519w==";
 
+/* 
+ * Resource generated for file:
+ *    LoadDICOMVolume.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerLoadDICOMVolume_width          = 21;
+static const unsigned int  image_SlicerLoadDICOMVolume_height         = 21;
+static const unsigned int  image_SlicerLoadDICOMVolume_pixel_size     = 3;
+static const unsigned long image_SlicerLoadDICOMVolume_length         = 360;
+static const unsigned long image_SlicerLoadDICOMVolume_decoded_length = 1323;
 
+static const unsigned char image_SlicerLoadDICOMVolume[] = 
+  "eNqlkzsKg0AQhnOwmMJDpMolFHIRDyB4DMHSVrCIoIVoJ1iojW8l+cmiLOtklfgXyzA7H/"
+  "PY2cvlrN7/ahe/LbouWj1lWR7BSb+qqp7nHcTvj5fv++vJcMdxzmQX8CclRVH47CQ+z/M4"
+  "jrquR1EUhqGmaeFXMBguzz5N0683FXrnm1rxYRhwWpbluq5gHOm96zqcQOI4FgzJ5G3bZn"
+  "jbtr+Kx57sZmc4WTy/ZoIEnCyeGYZhZFmGMHLnm6aR/yke59dst3hmmKYpwauqkhePgQPf"
+  "fnNm1HUtLz4IgjzP8b5k9r7vi6JIkgRh/kZwpmmK343tInEsLfpCAFJkG8GJKwQgjJz8GX"
+  "0AQFjMhg==";
+
+/* 
+ * Resource generated for file:
+ *    LoadDirectory.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerLoadDirectory_width          = 21;
+static const unsigned int  image_SlicerLoadDirectory_height         = 21;
+static const unsigned int  image_SlicerLoadDirectory_pixel_size     = 3;
+static const unsigned long image_SlicerLoadDirectory_length         = 352;
+static const unsigned long image_SlicerLoadDirectory_decoded_length = 1323;
+
+static const unsigned char image_SlicerLoadDirectory[] = 
+  "eNpjYmJgogx9/fr1z58///79+08KAKqHaP9PLqCDdrgf8WjHEzLvrzZAEJD99+9fXNrhyn"
+  "AhoJrPnz8jm4Cm/ey2XBdbFVwIqMbDwx3IACrDqr043XbjvDj8boCo+fHjB9AZyNrvHCkL"
+  "8dZ5fakOj16ImsePH7969QpoAkT7r1+/gOSkJj8gwm81RM3t27efP3+Opj3QQxtoOB69z8"
+  "5WA9XcvHnzwYMHHz9+RHN8ZY4DfquXTo4AqoFbTWS8w9GM9kBkq5G1f/v2DRggNwkBoNUM"
+  "DAwQq5G1A0WAgfmYEACqBGrHTDZAxwBN+IYXMKAC8nIcVtvpox3oR0ih9A8MmCgu6ADCTj"
+  "3i";
+
+/* 
+ * Resource generated for file:
+ *    LoadFiducials.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerLoadFiducials_width          = 21;
+static const unsigned int  image_SlicerLoadFiducials_height         = 21;
+static const unsigned int  image_SlicerLoadFiducials_pixel_size     = 3;
+static const unsigned long image_SlicerLoadFiducials_length         = 96;
+static const unsigned long image_SlicerLoadFiducials_decoded_length = 1323;
+
+static const unsigned char image_SlicerLoadFiducials[] = 
+  "eNpjYKAU/CcXEKn9sS4DGdrhujAZRNqOrB7TDTR1PIW2k+F3rKYR73iSkgGydjLSEk0dP5"
+  "psKPE7hY6nSnGBXzslAAC+H+n8";
+
+/* 
+ * Resource generated for file:
+ *    LoadModel.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerLoadModel_width          = 21;
+static const unsigned int  image_SlicerLoadModel_height         = 21;
+static const unsigned int  image_SlicerLoadModel_pixel_size     = 3;
+static const unsigned long image_SlicerLoadModel_length         = 236;
+static const unsigned long image_SlicerLoadModel_decoded_length = 1323;
+
+static const unsigned char image_SlicerLoadModel[] = 
+  "eNq1k8EJwzAMRbORa4wW6KWbtNfM0VuGyAgZIpP02BFcBbfiV5YVQ8hHBPuj9w2yMwxHlX"
+  "96t5UtKbyIiBJRCIG/rNxWjTP1nEcuXHTigiDuJCCO/QpvJQge+uTgl5TW1yK1OTEqx8G5"
+  "ARO+DiTs4pgATuzHJeHfif146TedkyZfEh7T7T5dS/FW1uz79y4JJo4s9ptvXuHqXB+v56"
+  "Ca8Tc3cV+7p5+K15M/og/p/gpE";
+
+/* 
+ * Resource generated for file:
+ *    LoadScene.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerLoadScene_width          = 21;
+static const unsigned int  image_SlicerLoadScene_height         = 21;
+static const unsigned int  image_SlicerLoadScene_pixel_size     = 3;
+static const unsigned long image_SlicerLoadScene_length         = 244;
+static const unsigned long image_SlicerLoadScene_decoded_length = 1323;
+
+static const unsigned char image_SlicerLoadScene[] = 
+  "eNqtlE0KwyAQRj1YzcJ11131ooJXEFz0ENWNbhVsO3SImJ86ov0IwbzwZjBMZGw279Ecde"
+  "fcsuayphDvfUqJ1E97CSG01lChR7/dH8aYckddKWWtHe7eo3PO6+5j+nD33d7LK+CkHkKY"
+  "2XuMsfHlpZRtHQJzMtwd9eVHenSYK4BqGyTk1CHECnYb5O2Zrx9PKzf+OFznnF/fIMEFwp"
+  "rs9OeV4VWqkaTWj6cHSf5y2szkAwLDdBE=";
+
+/* 
+ * Resource generated for file:
+ *    LoadTransform.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerLoadTransform_width          = 21;
+static const unsigned int  image_SlicerLoadTransform_height         = 21;
+static const unsigned int  image_SlicerLoadTransform_pixel_size     = 3;
+static const unsigned long image_SlicerLoadTransform_length         = 96;
+static const unsigned long image_SlicerLoadTransform_decoded_length = 1323;
+
+static const unsigned char image_SlicerLoadTransform[] = 
+  "eNpjYKAU/CcXUFE7ExMDBOFRj6YGTTuRlhLUbmCgh5UkUvuo7UPLdkpSHa5UTUmWIVs7MZ"
+  "l6MDj+379/lBQXlAAA/bab7Q==";
+
+/* 
+ * Resource generated for file:
+ *    LoadVolume.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerLoadVolume_width          = 21;
+static const unsigned int  image_SlicerLoadVolume_height         = 21;
+static const unsigned int  image_SlicerLoadVolume_pixel_size     = 3;
+static const unsigned long image_SlicerLoadVolume_length         = 328;
+static const unsigned long image_SlicerLoadVolume_decoded_length = 1323;
+
+static const unsigned char image_SlicerLoadVolume[] = 
+  "eNq9kzsOgzAQRLkyn0i09FQcAIm7cAA3SKZA0FmiABr+n2QUNyi2NxJEmWq1zJPHy9qy7u"
+  "p5VT/HH6QIfN/3dV0dx8nznHNu2zZ/SxZouq67bdtxHCqOJj7RIwI+jiNsKo7msiyokyRJ"
+  "01RbeJ7Xti1sKo7Y0zShhrMoCm3h+35d17BpcQSjwwdBIISATcURSeJE+DAMtbicm8SJ8F"
+  "EUmXDcaBgGOjyBz/P8NXwcx6a7Y3Rd19HhGWMmHAH6vqfDZ1mGH3de8vPSIn/TNGVZwsYU"
+  "oVlVFdbGhMvhw4AjhCJ57sczv/BgTaf/B1ff+x29ABZCEDY=";
+
+/* 
+ * Resource generated for file:
+ *    SlicerClose.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerClose_width          = 21;
+static const unsigned int  image_SlicerClose_height         = 21;
+static const unsigned int  image_SlicerClose_pixel_size     = 3;
+static const unsigned long image_SlicerClose_length         = 604;
+static const unsigned long image_SlicerClose_decoded_length = 1323;
+
+static const unsigned char image_SlicerClose[] = 
+  "eNrVk01LAlEUhsN9EGEUltHGyt9QEbUcKxQrCkYoG7BoJxSE63bR/4gW/oLCXNiikRpt0Z"
+  "CO86HOSOJnM+ZX9dKAm+oualOXy+FyznnnnvOcuRZLn+V3++2n6x/JXz8WWY6El5eGpmVb"
+  "rVan0zHzYRUlUyjkm81mz/mlHNrT09DW1jLP39frdTNfktI07QoEvKKYNgwDnu/khqGHQn"
+  "tOp93tXuA4tlQqpVIPHs/i1NRYMLgtiplKpYLCvpO32+1i8Wl/n56cHKWo2XD4bGlpDufd"
+  "3c1EghNFkSzvdru6rmezCsOs22yDVms/rN+/yrI3PM+rqooooXhgQQHVajUWuxoZGUAUNh"
+  "w+5zhOkiT4ESWgMwsQBJ6iZux268TE8Pj4kMs1G41e5HI5XI0oeXDgjH4dDhvDrEUil36/"
+  "F72vrMyz7HW5XMYsCLerqkLT1PT0GFjF42wCvLi7QGADs/D5qGTyFtMk9K7rzycnR4eHTD"
+  "KZACtFUTRNy2SEg4Od4+NgKvWIAgjkEcLgZFmSZRnCWq3WaDRgMQtBSOfzedAjyFGYmY80"
+  "gAJnsILFGR7zaz16X6Iz801h75//7Pwj7/03+x1jN7yj";
+
+/* 
+ * Resource generated for file:
+ *    SlicerLoadColorLUT.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerLoadColorLUT_width          = 21;
+static const unsigned int  image_SlicerLoadColorLUT_height         = 21;
+static const unsigned int  image_SlicerLoadColorLUT_pixel_size     = 4;
+static const unsigned long image_SlicerLoadColorLUT_length         = 232;
+static const unsigned long image_SlicerLoadColorLUT_decoded_length = 1764;
+
+static const unsigned char image_SlicerLoadColorLUT[] = 
+  "eNpjYmL4z0QDTEVwhQ5m/iGg/i0BjGHmnz9/wBgXkJOTw4nxmfn371+8Zs64chWMQexPnz"
+  "aC8UCYSQu/wwADAwNWMzOAbsyAuvPRrSQwxmYmIyP1zUR2J8gsdEyC36eR4/fY/fPAGMR+"
+  "1pICxgNhJoXxjteduMxkqOcEYxD7gW0sGA+EmRT6/QqVy7q3NCw/L0DNxFZwfAXiX0j4Dx"
+  "H4H9TMf1Suh8DmAQCxzgt1";
+
+/* 
+ * Resource generated for file:
+ *    SlicerLoadFiberBundle.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerLoadFiberBundle_width          = 21;
+static const unsigned int  image_SlicerLoadFiberBundle_height         = 21;
+static const unsigned int  image_SlicerLoadFiberBundle_pixel_size     = 3;
+static const unsigned long image_SlicerLoadFiberBundle_length         = 1028;
+static const unsigned long image_SlicerLoadFiberBundle_decoded_length = 1323;
+
+static const unsigned char image_SlicerLoadFiberBundle[] = 
+  "eNqllFtIU3Ecx6eG9BjUY2SliQxLVMwghiltXrAyTEwz0YcupIkIGfUimbcIwqSXvGtkbj"
+  "NN87K55jabtou7z3M2t+OmbtN2dTqdcz30g8UoN32wH+fhwzn/7+/3+/8uJzQUF/p/z6/D"
+  "2h65C/WamS7Hgmt3d3dV65ROWXXoJvCixMYYWpUrNoAPkiNe5fVNfjGGffu5gtoaSsRPsl"
+  "XMsTW1YK0Az7iYKh8cN7ndbq/XG1QO700d2+KbZlapxmaz0fuxslxZ8Q0UuO+1jETgpJRK"
+  "7Ha7x+MJKgfbxNzyJBcrU6WVrugWzHlZs4QE5ZxoWa0wkRI/R92ZFSr1W1tb+8nhdkjsDo"
+  "+IyscXHQ5Hevr3uFj50FcMOCOtN7KCMziDOp1OX/5B5HbPPN6ovIIgU5jJYE1OnY6Ok01O"
+  "awwG89W7PWdrGXQxCq58NQyUW/swNJmOELl6vX6Sgp2/zI/PFwFT6RJCHeVCGw14fX09ML"
+  "pbb7GSuSpCLUp8itZT1V3SapIgsVBaMyDqYgkz2qkJ1IkGLt9gMLhcLp8kJOSP3K1bQ+If"
+  "oqlEdcEDdeNLPilGFovPRoQvpHNZ5O4Y2kgObbRJwFteXrZarTs7O3tKt1LTqcq7ra6+Bw"
+  "cUHWXiuiQpI39paameWZEyVp3L7AA2mUzQQRwOF9h3VV4VUk7SDLcajUYBJV44kihVvgMu"
+  "6o+IH8tsEZCBoeAQF+SBUye7lq94FqflDUFubM5x7nSUBB0EvtWKOz14bkA2Coz71/6Wyx"
+  "8VK1oSFvg9MFQsxZlxNn5G3g18v+0YnhLdJez1D1vQ6Jr2emkvSc6phNv90BRR2ZfI3MfA"
+  "zcM56Z8SymjlwAfIzQhv5m3K9GikXsfRmsaap048p0aINGzB/Je0N0dPtZ5kqdjb29v7LS"
+  "x41kkmBMwqseQV5MnHPrznlHycbQKmCTorqYUNrEYo3X4LC72ATYRptFgscAyWIpA3Njb8"
+  "u+aXh4WF+LcVvoIT6A5ECcr+jvssPPyIz8Ohf3S/AZDNVuM=";
+
+/* 
+ * Resource generated for file:
+ *    SlicerLoadScalarOverlay.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerLoadScalarOverlay_width          = 21;
+static const unsigned int  image_SlicerLoadScalarOverlay_height         = 21;
+static const unsigned int  image_SlicerLoadScalarOverlay_pixel_size     = 3;
+static const unsigned long image_SlicerLoadScalarOverlay_length         = 756;
+static const unsigned long image_SlicerLoadScalarOverlay_decoded_length = 1323;
+
+static const unsigned char image_SlicerLoadScalarOverlay[] = 
+  "eNqllM+L4WEcx79z2MPu7MTkxyq1uZs/QFJTlMkcpFBKSS40RXJwcNiDPaq5qFEmIjnIQY"
+  "oDZSnk14zmrtloYzYnMRh2ZN+oJ/tlpmnn3adv7+f7fV7P5/N8n08PRb1Xy//VLm63261W"
+  "q9lsNhqNOp1OqVTKZDKRSHRyciIQCFgs1tPLuM1mu7u7azabNzc39Xq9UqmUSqVCoZDL5T"
+  "KZTDqdTiaTmL9YLGj44/KPxWIBeHt722g0vvIPdgNsPB4Ph8NAfi9GtOwGgwFgrVZDUkxe"
+  "fqMQMFRhiYCJxWKhUMjn8wEZj8eogeBarbZarQIsl8vFYnEvHggEvF6vx+Nxu92gZrMZwR"
+  "UKBba5t+bdcDqdoEajEcHFYnE+n18lxZBaJf3+9AEBk1f8QKw+dT8iYC4uLkD1+32CC4XC"
+  "bDb7Rhx/CVSv1yM4n89PpVJvLF6tVtPww8PDRCKBc4lEItfX1+QXuVwuh8OBak0mk16v12"
+  "g0aKTz83Majmc0Gg0Gg1dXV5eXl184B1wul81mo82Oj4+ZTCbjiFKpVADlcrlUKqXhDAbD"
+  "7/eTpBzWwc9/dfSZOjs7QwOfnp5KJBIaPp1OYXg8HpJyOJxWq0XacmM6nQ42+GktvMSC2z"
+  "h6AAfRbrc3uWBo+GAw6Ha79/f3rbVgtg8OHYg+xJveWuQT0Xw+Hw6HDw8Pv9aCwfztnscK"
+  "qGG6Fgwt+/PzM1aYTCaPa8Fs9/wrFwLBadp7XRBtJmwPX8Lfo79c2ovV";
 
 
 
