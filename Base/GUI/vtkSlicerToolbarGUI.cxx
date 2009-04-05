@@ -1023,36 +1023,6 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
         }
       }
 
-    if ( d != NULL && event == vtkKWTopLevel::WithdrawEvent )
-      {
-      if ( this->ScreenShotDialogButton && d == this->ScreenShotDialogButton->GetLoadSaveDialog() )
-        {
-        std::string dirname;
-        if ( this->ScreenShotDialogButton->GetLoadSaveDialog()->GetFileName() != NULL )
-          {
-          dirname = this->ScreenShotDialogButton->GetLoadSaveDialog()->GetFileName();
-          if ( vtksys::SystemTools::FileIsDirectory ( dirname.c_str() ) )
-            {
-            this->SetScreenShotDirectory ( dirname.c_str() );
-            }
-          }
-        else
-          {
-          if ( this->ScreenShotDialogButton->GetLoadSaveDialog()->GetLastPath() != NULL )
-            {
-            dirname = this->ScreenShotDialogButton->GetLoadSaveDialog()->GetLastPath();
-            if ( vtksys::SystemTools::FileIsDirectory ( dirname.c_str() ) )
-              {
-              this->SetScreenShotDirectory ( dirname.c_str() );
-              }
-            }
-          else
-            {
-            this->SetScreenShotDirectory ( NULL );
-            }
-          }
-        }
-      }
 
     if ( pushb != NULL && event == vtkKWPushButton::InvokedEvent )
       {
@@ -1283,6 +1253,37 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
         }
       }
 
+
+    if ( d != NULL && event == vtkKWTopLevel::WithdrawEvent )
+      {
+      if ( this->ScreenShotDialogButton && d == this->ScreenShotDialogButton->GetLoadSaveDialog() )
+        {
+        std::string dirname;
+        if ( this->ScreenShotDialogButton->GetLoadSaveDialog()->GetFileName() != NULL )
+          {
+          dirname = this->ScreenShotDialogButton->GetLoadSaveDialog()->GetFileName();
+          if ( vtksys::SystemTools::FileIsDirectory ( dirname.c_str() ) )
+            {
+            this->SetScreenShotDirectory ( dirname.c_str() );
+            }
+          }
+        else
+          {
+          if ( this->ScreenShotDialogButton->GetLoadSaveDialog()->GetLastPath() != NULL )
+            {
+            dirname = this->ScreenShotDialogButton->GetLoadSaveDialog()->GetLastPath();
+            if ( vtksys::SystemTools::FileIsDirectory ( dirname.c_str() ) )
+              {
+              this->SetScreenShotDirectory ( dirname.c_str() );
+              }
+            }
+          else
+            {
+            this->SetScreenShotDirectory ( NULL );
+            }
+          }
+        }
+      }
 
     // TODO: figure out why we can't resume view rock or spin.
     if ( menu != NULL && event == vtkKWMenu::MenuItemInvokedEvent )
