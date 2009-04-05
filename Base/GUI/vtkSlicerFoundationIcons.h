@@ -91,6 +91,19 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFoundationIcons : public vtkSlicerIcon
     vtkGetObjectMacro (SlicerCompositeIcon, vtkKWIcon );
     vtkGetObjectMacro (SlicerLockOrUnlockIcon, vtkKWIcon );
     vtkGetObjectMacro (SlicerVisibleOrInvisibleIcon, vtkKWIcon );
+    vtkGetObjectMacro (SlicerImportSceneIcon, vtkKWIcon);
+    vtkGetObjectMacro (SlicerLoadSceneIcon, vtkKWIcon);
+    vtkGetObjectMacro (SlicerLoadDicomVolumeIcon, vtkKWIcon);
+    vtkGetObjectMacro (SlicerLoadVolumeIcon, vtkKWIcon);
+    vtkGetObjectMacro (SlicerLoadDirectoryIcon, vtkKWIcon);
+    vtkGetObjectMacro (SlicerLoadFiducialsIcon, vtkKWIcon);
+    vtkGetObjectMacro (SlicerLoadModelIcon, vtkKWIcon);
+    vtkGetObjectMacro (SlicerLoadTransformIcon, vtkKWIcon);
+    vtkGetObjectMacro ( SlicerLoadColorLUTIcon, vtkKWIcon );
+    vtkGetObjectMacro ( SlicerLoadFiberBundleIcon, vtkKWIcon );
+    vtkGetObjectMacro ( SlicerLoadScalarOverlayIcon, vtkKWIcon );
+    vtkGetObjectMacro ( SlicerCloseIcon, vtkKWIcon );
+
 
     void AssignImageDataToIcons ( );
     
@@ -174,6 +187,18 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFoundationIcons : public vtkSlicerIcon
     vtkKWIcon *SlicerCompositeIcon;
     vtkKWIcon *SlicerLockIcon;
     vtkKWIcon *SlicerUnlockIcon;
+    vtkKWIcon *SlicerImportSceneIcon;
+    vtkKWIcon *SlicerLoadSceneIcon;
+    vtkKWIcon *SlicerLoadDicomVolumeIcon;
+    vtkKWIcon *SlicerLoadVolumeIcon;
+    vtkKWIcon *SlicerLoadDirectoryIcon;
+    vtkKWIcon *SlicerLoadFiducialsIcon;
+    vtkKWIcon *SlicerLoadModelIcon;
+    vtkKWIcon *SlicerLoadTransformIcon;
+    vtkKWIcon *SlicerLoadColorLUTIcon;
+    vtkKWIcon *SlicerLoadFiberBundleIcon;
+    vtkKWIcon *SlicerLoadScalarOverlayIcon;
+    vtkKWIcon *SlicerCloseIcon;
     
  private:
     vtkSlicerFoundationIcons ( const vtkSlicerFoundationIcons&); // Not implemented

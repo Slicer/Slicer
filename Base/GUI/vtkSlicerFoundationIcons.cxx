@@ -86,6 +86,18 @@ vtkSlicerFoundationIcons::vtkSlicerFoundationIcons ( )
   this->SlicerUnlockIcon = vtkKWIcon::New();
   this->SlicerFoundOnDiskIcon = vtkKWIcon::New();
   this->SlicerNotFoundOnDiskIcon = vtkKWIcon::New();
+  this->SlicerImportSceneIcon = vtkKWIcon::New();
+  this->SlicerLoadSceneIcon = vtkKWIcon::New();
+  this->SlicerLoadDicomVolumeIcon = vtkKWIcon::New();
+  this->SlicerLoadVolumeIcon = vtkKWIcon::New();
+  this->SlicerLoadDirectoryIcon = vtkKWIcon::New();
+  this->SlicerLoadFiducialsIcon = vtkKWIcon::New();
+  this->SlicerLoadModelIcon = vtkKWIcon::New();
+  this->SlicerLoadTransformIcon = vtkKWIcon::New();
+  this->SlicerLoadColorLUTIcon = vtkKWIcon::New();
+  this->SlicerLoadFiberBundleIcon = vtkKWIcon::New();
+  this->SlicerLoadScalarOverlayIcon = vtkKWIcon::New();
+  this->SlicerCloseIcon = vtkKWIcon::New();
 
   this->AssignImageDataToIcons ( );
 }
@@ -480,6 +492,66 @@ vtkSlicerFoundationIcons::~vtkSlicerFoundationIcons ( )
     this->SlicerNotFoundOnDiskIcon->Delete();
     this->SlicerNotFoundOnDiskIcon = NULL;    
     }
+  if (SlicerImportSceneIcon)
+    {
+    this->SlicerImportSceneIcon->Delete();
+    this->SlicerImportSceneIcon = NULL;
+    }
+  if (SlicerLoadSceneIcon)
+    {
+    this->SlicerLoadSceneIcon->Delete();
+    this->SlicerLoadSceneIcon = NULL;
+    }
+  if (SlicerLoadDicomVolumeIcon)
+    {
+    this->SlicerLoadDicomVolumeIcon->Delete();
+    this->SlicerLoadDicomVolumeIcon = NULL;
+    }
+  if (SlicerLoadVolumeIcon)
+    {
+    this->SlicerLoadVolumeIcon->Delete();
+    this->SlicerLoadVolumeIcon = NULL;
+    }
+  if (SlicerLoadDirectoryIcon)
+    {
+    this->SlicerLoadDirectoryIcon->Delete();
+    this->SlicerLoadDirectoryIcon = NULL;
+    }
+  if (SlicerLoadFiducialsIcon)
+    {
+    this->SlicerLoadFiducialsIcon->Delete();
+    this->SlicerLoadFiducialsIcon = NULL;
+    }
+  if (SlicerLoadModelIcon)
+    {
+    this->SlicerLoadModelIcon->Delete();
+    this->SlicerLoadModelIcon = NULL;
+    }
+  if (SlicerLoadTransformIcon)
+    {
+    this->SlicerLoadTransformIcon->Delete();
+    this->SlicerLoadTransformIcon = NULL;
+    }
+  if ( SlicerCloseIcon )
+    {
+    this->SlicerCloseIcon->Delete();
+    this->SlicerCloseIcon = NULL;
+    }
+  if ( SlicerLoadColorLUTIcon )
+    {
+    this->SlicerLoadColorLUTIcon->Delete();
+    this->SlicerLoadColorLUTIcon = NULL;
+    }
+  if ( SlicerLoadFiberBundleIcon )
+    {
+    this->SlicerLoadFiberBundleIcon->Delete();
+    this->SlicerLoadFiberBundleIcon = NULL;    
+    }
+  if ( SlicerLoadScalarOverlayIcon )
+    {
+    this->SlicerLoadScalarOverlayIcon->Delete();
+    this->SlicerLoadScalarOverlayIcon = NULL;    
+    }
 }
 
 
@@ -873,7 +945,66 @@ void vtkSlicerFoundationIcons::AssignImageDataToIcons ( )
                                          image_SlicerNotFoundOnDisk_height,
                                          image_SlicerNotFoundOnDisk_pixel_size,
                                          image_SlicerNotFoundOnDisk_length, 0);
-
+  this->SlicerImportSceneIcon->SetImage (image_SlicerImportScene,
+                                         image_SlicerImportScene_width,
+                                         image_SlicerImportScene_height,
+                                         image_SlicerImportScene_pixel_size,
+                                         image_SlicerImportScene_length, 0);
+  this->SlicerLoadSceneIcon->SetImage (image_SlicerLoadScene,
+                                       image_SlicerLoadScene_width,
+                                       image_SlicerLoadScene_height,
+                                       image_SlicerLoadScene_pixel_size,
+                                       image_SlicerLoadScene_length, 0);
+  this->SlicerLoadDicomVolumeIcon->SetImage (image_SlicerLoadDICOMVolume,
+                                             image_SlicerLoadDICOMVolume_width,
+                                             image_SlicerLoadDICOMVolume_height,
+                                             image_SlicerLoadDICOMVolume_pixel_size,
+                                             image_SlicerLoadDICOMVolume_length, 0);
+  this->SlicerLoadVolumeIcon->SetImage (image_SlicerLoadVolume,
+                                        image_SlicerLoadVolume_width,
+                                        image_SlicerLoadVolume_height,
+                                        image_SlicerLoadVolume_pixel_size,
+                                        image_SlicerLoadVolume_length, 0);
+  this->SlicerLoadDirectoryIcon->SetImage (image_SlicerLoadDirectory,
+                                           image_SlicerLoadDirectory_width,
+                                           image_SlicerLoadDirectory_height,
+                                           image_SlicerLoadDirectory_pixel_size,
+                                           image_SlicerLoadDirectory_length, 0);
+  this->SlicerLoadFiducialsIcon->SetImage (image_SlicerLoadFiducials,
+                                           image_SlicerLoadFiducials_width,
+                                           image_SlicerLoadFiducials_height,
+                                           image_SlicerLoadFiducials_pixel_size,
+                                           image_SlicerLoadFiducials_length, 0);
+  this->SlicerLoadModelIcon->SetImage (image_SlicerLoadModel,
+                                       image_SlicerLoadModel_width,
+                                       image_SlicerLoadModel_height,
+                                       image_SlicerLoadModel_pixel_size,
+                                       image_SlicerLoadModel_length, 0);
+  this->SlicerLoadTransformIcon->SetImage (image_SlicerLoadTransform,
+                                       image_SlicerLoadTransform_width,
+                                       image_SlicerLoadTransform_height,
+                                       image_SlicerLoadTransform_pixel_size,
+                                       image_SlicerLoadTransform_length, 0);
+  this->SlicerLoadColorLUTIcon->SetImage ( image_SlicerLoadColorLUT,
+                                           image_SlicerLoadColorLUT_width,
+                                           image_SlicerLoadColorLUT_height,
+                                           image_SlicerLoadColorLUT_pixel_size,
+                                           image_SlicerLoadColorLUT_length, 0);
+  this->SlicerLoadFiberBundleIcon->SetImage ( image_SlicerLoadFiberBundle,
+                                              image_SlicerLoadFiberBundle_width,
+                                              image_SlicerLoadFiberBundle_height,
+                                              image_SlicerLoadFiberBundle_pixel_size,
+                                              image_SlicerLoadFiberBundle_length, 0);
+  this->SlicerLoadScalarOverlayIcon->SetImage ( image_SlicerLoadScalarOverlay,
+                                                image_SlicerLoadScalarOverlay_width,
+                                                image_SlicerLoadScalarOverlay_height,
+                                                image_SlicerLoadScalarOverlay_pixel_size,
+                                                image_SlicerLoadScalarOverlay_length, 0);
+  this->SlicerCloseIcon->SetImage (image_SlicerClose,
+                                   image_SlicerClose_width,
+                                   image_SlicerClose_height,
+                                   image_SlicerClose_pixel_size,
+                                   image_SlicerClose_length, 0);
 }
 
 
@@ -961,4 +1092,16 @@ void vtkSlicerFoundationIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "SlicerLockOrUnlockIcon: " << this->GetSlicerLockOrUnlockIcon() << "\n";
     os << indent << "SlicerVisibleOrInvisibleIcon: " << this->GetSlicerVisibleOrInvisibleIcon() << "\n";
     os << indent << "SlicerFiducialsDeleteAllInListIcon: " << this->GetSlicerFiducialsDeleteAllInListIcon() << "\n";
+    os << indent << "SlicerImportSceneIcon: " << this->GetSlicerImportSceneIcon() << "\n";
+    os << indent << "SlicerLoadSceneIcon: " << this->GetSlicerLoadSceneIcon() << "\n";
+    os << indent << "SlicerLoadDicomVolumeIcon: " << this->GetSlicerLoadDicomVolumeIcon() << "\n";
+    os << indent << "SlicerLoadVolumeIcon: " << this->GetSlicerLoadVolumeIcon() << "\n";
+    os << indent << "SlicerLoadDirectoryIcon: " << this->GetSlicerLoadDirectoryIcon() << "\n";
+    os << indent << "SlicerLoadFiducialsIcon: " << this->GetSlicerLoadFiducialsIcon() << "\n";
+    os << indent << "SlicerLoadModelIcon: " << this->GetSlicerLoadModelIcon() << "\n";
+    os << indent << "SlicerLoadTransformIcon: " << this->GetSlicerLoadTransformIcon() << "\n";
+    os << indent << "SlicerLoadColorLUTIcon: " << this->GetSlicerLoadColorLUTIcon() << "\n";
+    os << indent << "SlicerLoadFiberBundleIcon: " << this->GetSlicerLoadFiberBundleIcon() << "\n";
+    os << indent << "SlicerLoadScalarOverlayIcon: " << this->GetSlicerLoadScalarOverlayIcon() << "\n";
+    os << indent << "SlicerCloseIcon: " << this->GetSlicerCloseIcon() << "\n";
 }
