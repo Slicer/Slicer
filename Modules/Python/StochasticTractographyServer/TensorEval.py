@@ -1,7 +1,7 @@
 import logging
 import time
 from numpy import finfo, sqrt, exp, dot, log, cos, arccos, pi
-from numpy import reshape, vstack, hstack, eye
+from numpy import reshape, vstack, hstack, eye, empty, ones
 from numpy import linalg
 
 logger                   = logging.getLogger(__name__)
@@ -15,39 +15,36 @@ def EvaluateTensorC(dataD, G, b):
 
   eps = finfo(float).eps 
 
-  print 'Original data shape : ', dataD.shape 
-
-  dataD = dataD.swapaxes(3, 0)
-  dataD = dataD.swapaxes(2, 1)
-
   shp  = dataD.shape
-  
-  print 'Modified data shape : ', shp
-
-  dataD = dataD.reshape(shp[0], shp[1]*shp[2]*shp[3])
-
-  #G.swapaxes(1,0)
+  print 'Data shape : ', shp
 
   # --- Estimate tensor components ---
   # Construct A-matrix
-  A = ones((dataD.shape[0], 7), 'float')
+  A = ones((shp[3], 7), 'float')
 
-  for k in range(dataD.shape[0]):
+  for k in range(shp[3]):
     A[k, :] = [1, -b[0,k]*G[0,k]**2, -2*b[0,k]*G[0,k]*G[1,k], -2*b[0,k]*G[0,k]*G[2,k], -b[0,k]*G[1,k]**2, -2*b[0,k]*G[1,k]*G[2,k], -b[0,k]*G[2,k]**2]
 
   # Least squares estimation. Add eps to avoid taking log of zero
   # x = [ln(mu0) d11 d12 d13 d22 d23 d33]
- 
-  xTensor = dot(dot(linalg.inv(dot(A.T,A)), A.T), log(dataD+eps))
+  
+  # 0 1 2 3 -> 0 1 3 2 -> 0 3 1 2 - > 3 0 1 2
+  dataD = dataD.swapaxes(3, 2).swapaxes(2, 1).swapaxes(1, 0)
+  dataD = dataD.reshape(shp[3], shp[0]*shp[1]*shp[2])
+  print 'Modified shape : ', dataD.shape
+  res1 = dot(linalg.inv(dot(A.T,A)), A.T)
+  print 'Shape 1 : ', res1.shape
+
+  xTensor = dot(res1, log(dataD+eps))
   print 'Tensor shape : ', xTensor.shape
 
   # prod(dwiD2.shape)/dwiD2.shape[0]
-  d11 = reshape(xTensor[1,:], shp[1]*shp[2]*shp[3])
-  d12 = reshape(xTensor[2,:], shp[1]*shp[2]*shp[3])
-  d13 = reshape(xTensor[3,:], shp[1]*shp[2]*shp[3])
-  d22 = reshape(xTensor[4,:], shp[1]*shp[2]*shp[3])
-  d23 = reshape(xTensor[5,:], shp[1]*shp[2]*shp[3])
-  d33 = reshape(xTensor[6,:], shp[1]*shp[2]*shp[3])
+  d11 = reshape(xTensor[1,:], shp[0]*shp[1]*shp[2])
+  d12 = reshape(xTensor[2,:], shp[0]*shp[1]*shp[2])
+  d13 = reshape(xTensor[3,:], shp[0]*shp[1]*shp[2])
+  d22 = reshape(xTensor[4,:], shp[0]*shp[1]*shp[2])
+  d23 = reshape(xTensor[5,:], shp[0]*shp[1]*shp[2])
+  d33 = reshape(xTensor[6,:], shp[0]*shp[1]*shp[2])
 
 
   # --- Get main eigenvector and eigenvalues ---
@@ -93,10 +90,23 @@ def EvaluateTensorC(dataD, G, b):
   l = vstack([l1 ,
               l2 ,
               l3])/Scalefactor
-  mu0 = exp(xTensor[0,:])
+  logmu0 = xTensor[0,:] #exp(xTensor[0,:])
+
+
+  l = l.reshape(l.shape[0], shp[0], shp[1], shp[2])
+  e = e.reshape(e.shape[0], shp[0], shp[1], shp[2])
+  
+  l = l.swapaxes(1, 0).swapaxes(2, 1).swapaxes(3, 2)
+  e = e.swapaxes(1, 0).swapaxes(2, 1).swapaxes(3, 2)
+
+  logmu0 = logmu0.reshape(shp[0], shp[1], shp[2])
+
+  print 'Shape l : ', l.shape
+  print 'Shape e : ', e.shape
+  print 'Shape logmu0 : ', logmu0.shape
 
   #return mu0, e, l, T
-  return mu0, e, l
+  return logmu0, e, l
 
 
 #

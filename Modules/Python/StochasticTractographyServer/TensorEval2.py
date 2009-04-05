@@ -4,7 +4,7 @@ import cmpV
 from numpy import finfo, sqrt, exp, dot, log, cos, arccos, pi
 from numpy import reshape, vstack, hstack, ones, zeros, squeeze, transpose, newaxis, max, min, empty, array, diag
 from numpy import linalg
-from numpy.linalg import inv, eig
+from numpy.linalg import inv, eig, norm
 
 
 
@@ -39,11 +39,15 @@ def ComputeTensorFunctional(data, xT, yT, lT, ET,  A, b, G, k):
                                     xTensor[2], xTensor[4], xTensor[5], 
                                     xTensor[3], xTensor[5], xTensor[6]], 'float'))
 
+   xTensor = 10000.0*xTensor
    l,E = linalg.eig(vstack([hstack([xTensor[1], xTensor[2], xTensor[3]]),
                              hstack([xTensor[2], xTensor[4], xTensor[5]]), 
                              hstack([xTensor[3], xTensor[5], xTensor[6]]) ]))         # E = eigenvectors
    
-   lT[k[0], k[1], k[2], :] = l[:]
+   lT[k[0], k[1], k[2], :] = l[:]/10000.0
+   E[:, 0]/linalg.norm(E[:, 0])
+   E[:, 1]/linalg.norm(E[:, 1])
+   E[:, 2]/linalg.norm(E[:, 2])
    ET[k[0], k[1], k[2], ...] = E[...]  
 
 
@@ -86,8 +90,8 @@ def EvaluateTensorX1(data, G, b, wmI=empty(0)):
 
    #logger.info("Time for A : %s sec" % str(time.time()-time0))
 
-   lT  = zeros((data.shape[0], data.shape[1], data.shape[2], 3) , 'float')
-   ET  = zeros((data.shape[0], data.shape[1], data.shape[2], 3, 3), 'float' )
+   lT = zeros((data.shape[0], data.shape[1], data.shape[2], 3) , 'float')
+   ET = zeros((data.shape[0], data.shape[1], data.shape[2], 3, 3), 'float' )
    xT = zeros((data.shape[0], data.shape[1], data.shape[2], 7), 'float')
    yT = zeros((data.shape[0], data.shape[1], data.shape[2], 9), 'float')
 

@@ -67,19 +67,18 @@ def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor,
   # define RAS point form IJK index (I2R matrix)
   RASstartpoints = dot(I2R[:3, :3], IJKstartpoints) + I2R[:3,3][newaxis].T
 
-  paths0 = numpy.zeros((0, 3, Nsteps), 'float32')
-  paths1 = numpy.zeros((0, 3, Nsteps), 'float32')
-  paths2 = numpy.zeros((0, 1, Nsteps), 'float32')
-  paths3 = numpy.zeros((0, 1, Nsteps), 'float32')
-  paths4 = numpy.zeros( (0, 1) , 'uint16')
-  counter = 1
+  paths0 = numpy.zeros((Npaths, 3, Nsteps), 'float32')
+  paths1 = numpy.zeros((Npaths, 3, Nsteps), 'uint16')
+  paths2 = numpy.zeros((Npaths, 1, Nsteps), 'float32')
+  paths3 = numpy.zeros((Npaths, 1, Nsteps), 'float32')
+  paths4 = numpy.zeros((Npaths, 1) , 'uint16')
+  #counter = 1
 
   y = zeros((shpT[3]), 'float')
   cache = {}
 
   for k in range(Npaths):
    
-
     #if k > 0:
     #   if  IJKstartpoints[0,k]!= IJKstartpoints[0,k-1] or  IJKstartpoints[1,k]!= IJKstartpoints[1,k-1]  or IJKstartpoints[2,k]!= IJKstartpoints[2,k-1]: 
     #       cache = {}
@@ -89,11 +88,11 @@ def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor,
     IJKpoint = IJKstartpoints[:,k]
     Prior = StartPrior
     
-    paths0 = numpy.resize(paths0, (counter, 3, Nsteps))
-    paths1 = numpy.resize(paths1, (counter, 3, Nsteps))
-    paths2 = numpy.resize(paths2, (counter, 1, Nsteps))
-    paths3 = numpy.resize(paths3, (counter, 1, Nsteps))
-    paths4 = numpy.resize(paths4, (counter, 1))
+    #paths0 = numpy.resize(paths0, (k+1, 3, Nsteps))
+    #paths1 = numpy.resize(paths1, (k+1, 3, Nsteps))
+    #paths2 = numpy.resize(paths2, (k+1, 1, Nsteps))
+    #paths3 = numpy.resize(paths3, (k+1, 1, Nsteps))
+    #paths4 = numpy.resize(paths4, (k+1, 1))
 
     for step in range(Nsteps):
        
@@ -176,11 +175,11 @@ def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor,
        
 
       # Record data
-      paths0[counter-1, :, step] = RASpoint
-      paths1[counter-1, :, step] = IJKpoint
-      paths2[counter-1, 0, step] = numpy.log(Posterior[0][vindex[0][0]]) # previously vindex[0][0] 
-      paths3[counter-1, 0, step] = numpy.abs(beta/(alpha+beta))
-      paths4[counter-1, 0] = paths4[counter-1, 0] + 1
+      paths0[k, :, step] = RASpoint
+      paths1[k, :, step] = IJKpoint
+      paths2[k, 0, step] = numpy.log(Posterior[0][vindex[0][0]]) # previously vindex[0][0] 
+      paths3[k, 0, step] = numpy.abs(beta/(alpha+beta))
+      paths4[k, 0] += 1
 
       # Break if anisotropy is too low
       if abs(beta/(alpha+beta)) < anisoT:
@@ -191,7 +190,7 @@ def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor,
       Prior = dot(v.T, vts)[newaxis]
       Prior[Prior<0] = 0
 
-    counter +=1
+    #counter +=1
   
     # computed path  
   logger.info("Job completed")
@@ -249,12 +248,12 @@ def  TrackFiberY40(data, mask, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVT
   # define RAS point form IJK index (I2R matrix)
   RASstartpoints = dot(I2R[:3, :3], IJKstartpoints) + I2R[:3,3][newaxis].T
 
-  paths0 = numpy.zeros((0, 3, Nsteps), 'float32')
-  paths1 = numpy.zeros((0, 3, Nsteps), 'float32')
-  paths2 = numpy.zeros((0, 1, Nsteps), 'float32')
-  paths3 = numpy.zeros((0, 1, Nsteps), 'float32')
-  paths4 = numpy.zeros( (0, 1) , 'uint16')
-  counter = 1
+  paths0 = numpy.zeros((Npaths, 3, Nsteps), 'float32')
+  paths1 = numpy.zeros((Npaths, 3, Nsteps), 'uint16')
+  paths2 = numpy.zeros((Npaths, 1, Nsteps), 'float32')
+  paths3 = numpy.zeros((Npaths, 1, Nsteps), 'float32')
+  paths4 = numpy.zeros( (Npaths, 1) , 'uint16')
+  #counter = 0
 
   y = zeros((shpT[3]), 'float')
  
@@ -270,11 +269,13 @@ def  TrackFiberY40(data, mask, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVT
     IJKpoint = IJKstartpoints[:,k]
     Prior = StartPrior
     
-    paths0 = numpy.resize(paths0, (counter, 3, Nsteps))
-    paths1 = numpy.resize(paths1, (counter, 3, Nsteps))
-    paths2 = numpy.resize(paths2, (counter, 1, Nsteps))
-    paths3 = numpy.resize(paths3, (counter, 1, Nsteps))
-    paths4 = numpy.resize(paths4, (counter, 1))
+    #counter += 1
+
+    #paths0 = numpy.resize(paths0, (k+1, 3, Nsteps))
+    #paths1 = numpy.resize(paths1, (k+1, 3, Nsteps))
+    #paths2 = numpy.resize(paths2, (k+1, 1, Nsteps))
+    #paths3 = numpy.resize(paths3, (k+1, 1, Nsteps))
+    #paths4 = numpy.resize(paths4, (k+1, 1))
 
     for step in range(Nsteps):
     
@@ -362,11 +363,11 @@ def  TrackFiberY40(data, mask, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVT
        
 
       # Record data
-      paths0[counter-1, :, step] = RASpoint
-      paths1[counter-1, :, step] = IJKpoint
-      paths2[counter-1, 0, step] = numpy.log(Posterior[0][vindex[0][0]]) # previously vindex[0][0] 
-      paths3[counter-1, 0, step] = numpy.abs(beta/(alpha+beta))
-      paths4[counter-1, 0] = paths4[counter-1, 0] + 1
+      paths0[k, :, step] = RASpoint
+      paths1[k, :, step] = IJKpoint
+      paths2[k, 0, step] = numpy.log(Posterior[0][vindex[0][0]]) # previously vindex[0][0] 
+      paths3[k, 0, step] = numpy.abs(beta/(alpha+beta))
+      paths4[k, 0] += 1
       
       # Break if anisotropy is too low
       if abs(beta/(alpha+beta)) < anisoT:
@@ -377,7 +378,7 @@ def  TrackFiberY40(data, mask, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVT
       Prior = dot(v.T, vts)[newaxis]
       Prior[Prior<0] = 0
 
-    counter += 1
+    #counter += 1
   
    # computed path  
   logger.info("Job completed")
@@ -385,101 +386,62 @@ def  TrackFiberY40(data, mask, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVT
   return paths0, paths1, paths2, paths3, paths4
 
 
-
 # compute connectivity maps - binary
-def ComputeConnectFibersFunctional0( k, cm, paths1, paths4, shp, lTh, isLength=False, lengthMode='uThird'):
+def ComputeConnectFibersFunctionalP0( k, cm, paths1, paths4, shp, lTh, isLength=False, lMin=1, lMax=2000):
 
+  if paths4[k, 0] > paths1.shape[2]:
+     #paths4[k[0], 0] = paths1.shape[2]
+     return
 
-  if ( not (all(paths1[k[0], :, k[1]])==0)) and ((round(paths1[k[0], 0, k[1]])<shp[0]) and (round(paths1[k[0], 1, k[1]])<shp[1]) and (round(paths1[k[0], 2, k[1]])<shp[2])):
-        if not isLength:
-              cm[round(paths1[k[0], 0, k[1]])][round(paths1[k[0], 1, k[1]])][round(paths1[k[0], 2, k[1]])]=1
-        else:
-              if lengthMode == 'dThird':
-                  if paths4[k[0], 0] < round(float(lTh.max())/3):
-                      cm[round(paths1[k[0], 0, k[1]])][round(paths1[k[0], 1, k[1]])][round(paths1[k[0], 2, k[1]])]=1
-              elif lengthMode == 'mThird':
-                  if round(float(lTh.max())/3) < paths4[k[0], 0] < round(2.0*float(lTh.max())/3):
-                      cm[round(paths1[k[0], 0, k[1]])][round(paths1[k[0], 1, k[1]])][round(paths1[k[0], 2, k[1]])]=1
-              else:
-                  if round(2.0*float(lTh.max())/3) < paths4[k[0], 0]:
-                      cm[round(paths1[k[0], 0, k[1]])][round(paths1[k[0], 1, k[1]])][round(paths1[k[0], 2, k[1]])]=1  
+  for i in range(paths4[k, 0]):
+
+     if ((paths1[k, 0, i]<shp[0]) and (paths1[k, 1, i]<shp[1]) and (paths1[k, 2, i]<shp[2])):
+
+       if not isLength:
+           cm[paths1[k, 0, i], paths1[k, 1, i], paths1[k, 2, i]]= 1
+       else:
+           if lMin <= paths4[k, 0] <= lMax:
+              cm[paths1[k, 0, i], paths1[k, 1, i], paths1[k, 2, i]]= 1
 
 # summative
-def ComputeConnectFibersFunctional1( k, cm, paths1, paths4, shp, lTh, isLength=False, lengthMode='uThird'):
-  
+def ComputeConnectFibersFunctionalP1( k, cm, paths1, paths4, shp, lTh, isLength=False, lMin=1, lMax=2000):
+ 
+  if paths4[k, 0] > paths1.shape[2]:
+     #paths4[k[0], 0] = paths1.shape[2]
+     return
 
-  if ( not (all(paths1[k[0], :, k[1]])==0)) and ((round(paths1[k[0], 0, k[1]])<shp[0]) and (round(paths1[k[0], 1, k[1]])<shp[1]) and (round(paths1[k[0], 2, k[1]])<shp[2])):
-        if not isLength:
-              cm[round(paths1[k[0], 0, k[1]])][round(paths1[k[0], 1, k[1]])][round(paths1[k[0], 2, k[1]])]+=1
-        else:
-              if lengthMode == 'dThird':
-                  if paths4[k[0], 0] < round(float(lTh.max())/3):
-                      cm[round(paths1[k[0], 0, k[1]])][round(paths1[k[0], 1, k[1]])][round(paths1[k[0], 2, k[1]])]+=1
-              elif lengthMode == 'mThird':
-                  if round(float(lTh.max())/3) < paths4[k[0], 0] < round(2.0*float(lTh.max())/3):
-                      cm[round(paths1[k[0], 0, k[1]])][round(paths1[k[0], 1, k[1]])][round(paths1[k[0], 2, k[1]])]+=1
-              else:
-                  if round(2.0*float(lTh.max())/3) < paths4[k[0], 0]:
-                      cm[round(paths1[k[0], 0, k[1]])][round(paths1[k[0], 1, k[1]])][round(paths1[k[0], 2, k[1]])]+=1  
+  for i in range(paths4[k, 0]):
+
+     if ((paths1[k, 0, i]<shp[0]) and (paths1[k, 1, i]<shp[1]) and (paths1[k, 2, i]<shp[2])):
+
+       if not isLength:
+           cm[paths1[k, 0, i], paths1[k, 1, i], paths1[k, 2, i]]+= 1
+       else:
+           if lMin <= paths4[k, 0] <= lMax:
+                cm[paths1[k, 0, i], paths1[k, 1, i], paths1[k, 2, i]]+= 1
 
 
 # weighted
-def ComputeConnectFibersFunctional2( k, cm, paths1, paths4, shp, lTh, isLength=False, lengthMode='uThird'):
+def ComputeConnectFibersFunctionalP2( k, cm, paths1, paths4, shp, lTh, isLength=False,  lMin=1, lMax=2000):
 
+  if paths4[k, 0] > paths1.shape[2]:
+     #paths4[k[0], 0] = paths1.shape[2]
+     return
 
-  if ( not (all(paths1[k[0], :, k[1]])==0)) and ((round(paths1[k[0], 0, k[1]])<shp[0]) and (round(paths1[k[0], 1, k[1]])<shp[1]) and (round(paths1[k[0], 2, k[1]])<shp[2])):
-        if not isLength:
-              cm[round(paths1[k[0], 0, k[1]])][round(paths1[k[0], 1, k[1]])][round(paths1[k[0], 2, k[1]])]+=paths4[k[0], 0]
-        else:
-              if lengthMode == 'dThird':
-                  if paths4[k[0], 0] < round(float(lTh.max())/3):
-                      cm[round(paths1[k[0], 0, k[1]])][round(paths1[k[0], 1, k[1]])][round(paths1[k[0], 2, k[1]])]+=paths4[k[0], 0]
-              elif lengthMode == 'mThird':
-                  if round(float(lTh.max())/3) < paths4[k[0], 0] < round(2.0*float(lTh.max())/3):
-                      cm[round(paths1[k[0], 0, k[1]])][round(paths1[k[0], 1, k[1]])][round(paths1[k[0], 2, k[1]])]+=paths4[k[0], 0]
-              else:
-                  if round(2.0*float(lTh.max())/3) < paths4[k[0], 0]:
-                      cm[round(paths1[k[0], 0, k[1]])][round(paths1[k[0], 1, k[1]])][round(paths1[k[0], 2, k[1]])]+=paths4[k[0], 0]  
+  for i in range(paths4[k, 0]):
 
+     if ((paths1[k, 0, i]<shp[0]) and (paths1[k, 1, i]<shp[1]) and (paths1[k, 2, i]<shp[2])):
 
-# compute connectivity maps - binary
-def ComputeConnectFibersFunctionalA0( k, cm, paths1, paths4, shp, lTh, isLength=False, lMin=1, lMax=2000):
+       if not isLength:
+           cm[paths1[k, 0, i], paths1[k, 1, i], paths1[k, 2, i]]+= paths4[k, 0]
+       else:
+           if lMin <= paths4[k, 0] <= lMax:
+              cm[paths1[k, 0, i], paths1[k, 1, i], paths1[k, 2, i]]+= paths4[k, 0]
 
-
-  if ( not (all(paths1[k[0], :, k[1]])==0)) and ((round(paths1[k[0], 0, k[1]])<shp[0]) and (round(paths1[k[0], 1, k[1]])<shp[1]) and (round(paths1[k[0], 2, k[1]])<shp[2])):
-        if not isLength:
-              cm[round(paths1[k[0], 0, k[1]])][round(paths1[k[0], 1, k[1]])][round(paths1[k[0], 2, k[1]])]=1
-        else:
-             if round(lMin <= paths4[k[0], 0] <= lMax):
-                  cm[round(paths1[k[0], 0, k[1]])][round(paths1[k[0], 1, k[1]])][round(paths1[k[0], 2, k[1]])]=1
-
-# summative
-def ComputeConnectFibersFunctionalA1( k, cm, paths1, paths4, shp, lTh, isLength=False, lMin=1, lMax=2000):
-  
-
-  if ( not (all(paths1[k[0], :, k[1]])==0)) and ((round(paths1[k[0], 0, k[1]])<shp[0]) and (round(paths1[k[0], 1, k[1]])<shp[1]) and (round(paths1[k[0], 2, k[1]])<shp[2])):
-        if not isLength:
-              cm[round(paths1[k[0], 0, k[1]])][round(paths1[k[0], 1, k[1]])][round(paths1[k[0], 2, k[1]])]+=1
-        else:
-             if round(lMin <= paths4[k[0], 0] <= lMax):
-                  cm[round(paths1[k[0], 0, k[1]])][round(paths1[k[0], 1, k[1]])][round(paths1[k[0], 2, k[1]])]+=1
-
-
-# weighted
-def ComputeConnectFibersFunctionalA2( k, cm, paths1, paths4, shp, lTh, isLength=False,  lMin=1, lMax=2000):
-
-
-  if ( not (all(paths1[k[0], :, k[1]])==0)) and ((round(paths1[k[0], 0, k[1]])<shp[0]) and (round(paths1[k[0], 1, k[1]])<shp[1]) and (round(paths1[k[0], 2, k[1]])<shp[2])):
-        if not isLength:
-              cm[round(paths1[k[0], 0, k[1]])][round(paths1[k[0], 1, k[1]])][round(paths1[k[0], 2, k[1]])]+=paths4[k[0], 0]
-        else:
-             if round(lMin <= paths4[k[0], 0] <= lMax):
-                  cm[round(paths1[k[0], 0, k[1]])][round(paths1[k[0], 1, k[1]])][round(paths1[k[0], 2, k[1]])]+=paths4[k[0], 0]
 
 # compute connectivity maps - binary
 def ConnectFibersX0( paths1, paths4, shp, isLength=False, lengthMode='uThird'):
 
-  
   nPaths = paths1.shape[0]
   nSteps = paths1.shape[2]
   print "Number of paths  = %s" % str(nPaths)
@@ -493,17 +455,29 @@ def ConnectFibersX0( paths1, paths4, shp, isLength=False, lengthMode='uThird'):
 
   print "Length tracks average : %s" % str(avg/nPaths)
   print "Max length : %s" % str(lTh.max())
+  
+  print "Discriminate along length : %s" % str(isLength)
+
+  if lengthMode == 'dThird':
+    lMin = 1.0
+    lMax = lTh.max()/3.0
+  elif lengthMode == 'mThird':
+    lMin = lTh.max()/3.0
+    lMax = 2*lTh.max()/3.0
+  else:
+    lMin = 2*lTh.max()/3.0
+    lMax = lTh.max()
+
 
   cm = zeros((shp[0], shp[1], shp[2]), 'uint32')
-  indx = transpose(ones((nPaths, nSteps), 'uint16' ).nonzero())
-  [ComputeConnectFibersFunctional0( k, cm, paths1, paths4, shp, lTh, isLength, lengthMode) for k in indx]
+  indx = transpose(ones((nPaths), 'uint16' ).nonzero())
+  [ComputeConnectFibersFunctionalP0( k, cm, paths1, paths4, shp, lTh, isLength, lMin, lMax) for k in indx]
 
   return cm
 
 # summative
 def ConnectFibersX1( paths1, paths4, shp, isLength=False, lengthMode='uThird'):
   
-
   nPaths = paths1.shape[0]
   nSteps = paths1.shape[2]
   print "Number of paths  = %s" % str(nPaths)
@@ -518,10 +492,21 @@ def ConnectFibersX1( paths1, paths4, shp, isLength=False, lengthMode='uThird'):
   print "Length tracks average : %s" % str(avg/nPaths)
   print "Max length : %s" % str(lTh.max())
 
-  cm = zeros((shp[0], shp[1], shp[2]), 'uint32')
-  indx = transpose(ones((nPaths, nSteps), 'uint16' ).nonzero())
-  [ComputeConnectFibersFunctional1( k, cm, paths1, paths4, shp, lTh, isLength, lengthMode)  for k in indx]
+  print "Discriminate along length : %s" % str(isLength)
 
+  if lengthMode == 'dThird':
+    lMin = 1.0
+    lMax = lTh.max()/3.0
+  elif lengthMode == 'mThird':
+    lMin = lTh.max()/3.0
+    lMax = 2*lTh.max()/3.0
+  else:
+    lMin = 2*lTh.max()/3.0
+    lMax = lTh.max()
+
+  cm = zeros((shp[0], shp[1], shp[2]), 'uint32')
+  indx = transpose(ones((nPaths), 'uint16' ).nonzero())
+  [ComputeConnectFibersFunctionalP1( k, cm, paths1, paths4, shp, lTh, isLength, lMin, lMax)  for k in indx]
 
   return cm
 
@@ -542,43 +527,291 @@ def ConnectFibersX2( paths1, paths4, shp, isLength=False, lengthMode='uThird'):
   print "Length tracks average : %s" % str(avg/nPaths)
   print "Max length : %s" % str(lTh.max())
 
-  cm = zeros((shp[0], shp[1], shp[2]), 'uint32')
-  indx = transpose(ones((nPaths, nSteps), 'uint16' ).nonzero())
-  [ComputeConnectFibersFunctional2( k, cm, paths1, paths4, shp, lTh, isLength, lengthMode)  for k in indx]
+  print "Discriminate along length : %s" % str(isLength)
 
+  if lengthMode == 'dThird':
+    lMin = 1.0
+    lMax = lTh.max()/3.0
+  elif lengthMode == 'mThird':
+    lMin = lTh.max()/3.0
+    lMax = 2*lTh.max()/3.0
+  else:
+    lMin = 2*lTh.max()/3.0
+    lMax = lTh.max()
+
+  cm = zeros((shp[0], shp[1], shp[2]), 'uint32')
+  indx = transpose(ones((nPaths), 'uint16' ).nonzero())
+  [ComputeConnectFibersFunctionalP2( k, cm, paths1, paths4, shp, lTh, isLength, lMin, lMax)  for k in indx]
 
   return cm
 
-
 # compute connectivity maps - binary
-def ConnectFibersAZ0( cm, paths1, paths4, shp, isLength=False, lMin=1 , lMax=2000):
+#def ConnectFibersAZ0( cm, paths1, paths4, shp, isLength=False, lMin=1 , lMax=2000):
 
-  nPaths = paths1.shape[0]
-  nSteps = paths1.shape[2]
+#  nPaths = paths1.shape[0]
+#  nSteps = paths1.shape[2]
 
-  indx = transpose(ones((nPaths, nSteps), 'uint16' ).nonzero())
-  [ComputeConnectFibersFunctionalA0( k, cm, paths1, paths4, shp, isLength, lMin, lMax) for k in indx]
+#  indx = transpose(ones((nPaths), 'uint16' ).nonzero())
+#  [ComputeConnectFibersFunctionalP0( k, cm, paths1, paths4, shp, isLength, lMin, lMax) for k in indx]
 
 
 # summative
-def ConnectFibersAZ1( cm, paths1, paths4, shp, isLength=False, lMin=1 , lMax=2000):
+#def ConnectFibersAZ1( cm, paths1, paths4, shp, isLength=False, lMin=1 , lMax=2000):
   
-  nPaths = paths1.shape[0]
-  nSteps = paths1.shape[2]
+#  nPaths = paths1.shape[0]
+#  nSteps = paths1.shape[2]
 
-  indx = transpose(ones((nPaths, nSteps), 'uint16' ).nonzero())
-  [ComputeConnectFibersFunctionalA1( k, cm, paths1, paths4, shp, isLength, lMin, lMax)  for k in indx]
-
+#  indx = transpose(ones((nPaths), 'uint16' ).nonzero())
+#  [ComputeConnectFibersFunctionalP1( k, cm, paths1, paths4, shp, isLength, lMin, lMax)  for k in indx]
 
 
 # weighted
-def ConnectFibersAZ2( cm, paths1, paths4, shp, isLength=False, lMin=1 , lMax=2000):
+#def ConnectFibersAZ2( cm, paths1, paths4, shp, isLength=False, lMin=1 , lMax=2000):
+  
+#  nPaths = paths1.shape[0]
+#  nSteps = paths1.shape[2]
+
+#  indx = transpose(ones((nPaths), 'uint16' ).nonzero())
+#  [ComputeConnectFibersFunctionalP2( k, cm, paths1, paths4, shp, isLength, lMin, lMax)  for k in indx]
+
+
+# compute connectivity maps - binary
+def ConnectFibersPZ0( cm, paths1, paths4, shp, isLength=False, lMin=1 , lMax=2000):
+
+  nPaths = paths1.shape[0]
+  nSteps = paths1.shape[2]
+
+  indx = transpose(ones((nPaths), 'uint16' ).nonzero())
+  [ComputeConnectFibersFunctionalP0( k, cm, paths1, paths4, shp, isLength, lMin, lMax) for k in indx]
+
+
+# summative
+def ConnectFibersPZ1( cm, paths1, paths4, shp, isLength=False, lMin=1 , lMax=2000):
   
   nPaths = paths1.shape[0]
   nSteps = paths1.shape[2]
 
-  indx = transpose(ones((nPaths, nSteps), 'uint16' ).nonzero())
-  [ComputeConnectFibersFunctionalA2( k, cm, paths1, paths4, shp, isLength, lMin, lMax)  for k in indx]
+  indx = transpose(ones((nPaths), 'uint16' ).nonzero())
+  [ComputeConnectFibersFunctionalP1( k, cm, paths1, paths4, shp, isLength, lMin, lMax)  for k in indx]
+
+
+# weighted
+def ConnectFibersPZ2( cm, paths1, paths4, shp, isLength=False, lMin=1 , lMax=2000):
+  
+  nPaths = paths1.shape[0]
+  nSteps = paths1.shape[2]
+
+  indx = transpose(ones((nPaths), 'uint16' ).nonzero())
+  [ComputeConnectFibersFunctionalP2( k, cm, paths1, paths4, shp, isLength, lMin, lMax)  for k in indx]
+
+
+def FindConnectionFibers( roiA, roiB, pathsRAS, pathsIJK, pathsLOGP, pathsANIS, pathsLEN, counter1, counter2, Pr, Fa, Wa):
+
+  indAx = transpose(roiA.nonzero())
+  #print 'Shape of indx A : ', indAx.shape
+  indBx = transpose(roiB.nonzero())
+  #print 'Shape of indx B : ', indBx.shape
+
+  Ga = indAx.sum(0)/len(indAx)
+  #print 'Ga : ', Ga
+  Gb = indBx.sum(0)/len(indBx)
+  #print 'Gb : ', Gb
+
+  dAB = norm(Ga-Gb)
+  maxDA = sqrt(((Ga*ones(indAx.shape) - indAx)**2).sum(1))
+  maxDB = sqrt(((Gb*ones(indBx.shape) - indBx)**2).sum(1))
+  #print 'distance between roi a and B : ', dAB
+  #print 'distance max in A : ', maxDA.max()
+  #print 'distance max in B : ', maxDB.max()
+
+
+  counterA1 = 0
+  counterB1 = 0
+  counterA2 = 0
+  counterB2 = 0
+
+  for k in range(pathsIJK.shape[0]): # looped on the number of paths
+    if pathsLEN[k,0] == 0:
+      break
+
+    pathsLEN[k,0]= transpose(pathsIJK[k].nonzero()).max()+1
+
+    ext1 = pathsIJK[k, :, 0]
+    ext2 = pathsIJK[k, :, pathsLEN[k,0]-1]
+
+    if ext1[0] >= roiA.shape[0] or ext1[1] >= roiA.shape[1] or ext1[2] >= roiA.shape[2]:
+      break
+
+    if ext2[0] >= roiA.shape[0] or ext2[1] >= roiA.shape[1] or ext2[2] >= roiA.shape[2]:
+      break
+
+
+    isIn1A = False
+    isIn1B = False
+    if roiA[ext1[0], ext1[1], ext1[2]]>0:
+      counterA1 +=1
+      isIn1A = True
+
+    if roiB[ext1[0], ext1[1], ext1[2]]>0:
+      counterB1 +=1
+      isIn1B = True
+
+    if isIn1B and isIn1A:
+      print 'Warning: fiber 1 extremity is in both rois'
+
+    if not isIn1A and not isIn1B:
+      if norm(ext1-Ga) < norm(ext1-Gb):
+         counterA1 +=1
+         isIn1A = True
+      else:
+         counterB1 +=1
+         isIn1B = True
+
+  fromA = True
+  if counterA1 < counterB1:
+     fromA = False
+     print 'Start from B'
+  else:
+     print 'Start from A'
+
+
+
+  for k in range(pathsIJK.shape[0]): # looped on the number of paths
+    if pathsLEN[k,0] == 0:
+      break
+
+    
+    pr = 0.0
+    fa = 0.0
+    wa = 0.0
+    nFactor = 0
+
+    ext1 = pathsIJK[k, :, 0]
+    ext2 = pathsIJK[k, :, pathsLEN[k,0]-1]
+
+    if ext1[0] >= roiA.shape[0] or ext1[1] >= roiA.shape[1] or ext1[2] >= roiA.shape[2]:
+      break
+
+    if ext2[0] >= roiA.shape[0] or ext2[1] >= roiA.shape[1] or ext2[2] >= roiA.shape[2]:
+      break
+
+    
+    isIn2A = False
+    isIn2B = False
+    if roiA[ext2[0], ext2[1], ext2[2]]>0:
+      counterA2 +=1
+      isIn2A = True
+
+    if roiB[ext2[0], ext2[1], ext2[2]]>0:
+      counterB2 +=1
+      isIn2B = True
+      
+
+    if isIn2B and isIn2A:
+      print 'Warning: fiber 2 extremity is in both rois'
+
+    dl = 1.0
+    if fromA and isIn2B:
+      #print 'POINT : ', ext2
+      test = exp(pathsLOGP[k, 0, :pathsLEN[k,0]])
+      pr = test[pathsLEN[k,0]-1]
+      
+      if pr > 0.1:
+        counter1 +=1
+
+        print 'Max prob : ', test.max()
+        print 'END POINT prob : ', pr
+
+        for l in range(pathsLEN[k,0]):
+          fa = fa + pathsANIS[k, 0, l]
+
+
+        nFactor = pathsLEN[k,0]
+        Pr += pr 
+        Fa += fa/nFactor
+        Wa += pr*fa/nFactor 
+        print 'normed fa : ', pr*fa/nFactor  
+
+
+
+    if not fromA and isIn2A:
+      #print 'POINT : ', ext2
+      test = exp(pathsLOGP[k, 0, :pathsLEN[k,0]])
+      pr = test[pathsLEN[k,0]-1]
+
+      if pr > 0.1:
+
+        counter1 +=1
+
+        print 'Max prob : ', test.max()
+        print 'END POINT prob : ', pr
+
+        for l in range(pathsLEN[k,0]):
+          fa = fa + pathsANIS[k, 0, l]
+        
+        nFactor = pathsLEN[k,0]
+        Pr += pr 
+        Fa += fa/nFactor
+        Wa += pr*fa/nFactor 
+        print 'normed fa : ', pr*fa/nFactor
+
+
+    eps = 10.0 #0.0 # under test
+    if fromA and not isIn2B:
+      if norm(ext2-Gb)<= maxDB.max()+eps: #dAB -maxDA.max():
+         #counter2+=1
+         #print 'POINT : ', ext2
+         test = exp(pathsLOGP[k, 0, :pathsLEN[k,0]])
+         pr = test[pathsLEN[k,0]-1]
+      
+         if pr > 0.1:
+           counter2+=1
+           counter1+=1
+
+           print 'Max prob (vicinity) : ', test.max()
+           print 'END POINT prob (vicinity) : ', pr
+
+           for l in range(pathsLEN[k,0]):
+             fa = fa + pathsANIS[k, 0, l]
+
+
+           nFactor = pathsLEN[k,0]
+           Pr += pr 
+           Fa += fa/nFactor
+           Wa += pr*fa/nFactor 
+           print 'normed fa (vicinity) : ', pr*fa/nFactor  
+
+         #print 'curve terminates in neighborhood of B with length of ', pathsLEN[k,0]
+       
+
+    if not fromA and not isIn2A:
+      if norm(ext2-Ga)<= maxDA.max()+eps: #dAB -maxDB.max():
+         #counter2+=1
+         #print 'POINT : ', ext2
+         test = exp(pathsLOGP[k, 0, :pathsLEN[k,0]])
+         pr = test[pathsLEN[k,0]-1]
+      
+         if pr > 0.1:
+           counter2+=1
+           counter1+=1
+
+           print 'Max prob (vicinity) : ', test.max()
+           print 'END POINT prob (vicinity) : ', pr
+
+           for l in range(pathsLEN[k,0]):
+             fa = fa + pathsANIS[k, 0, l]
+
+
+           nFactor = pathsLEN[k,0]
+           Pr += pr 
+           Fa += fa/nFactor
+           Wa += pr*fa/nFactor 
+           print 'normed fa (vicinity) : ', pr*fa/nFactor  
+   
+        #print 'curve terminates in neighborhood of A with length of ', pathsLEN[k,0]
+
+  return counter1, counter2, Pr, Fa, Wa
+
 
 
 

@@ -339,8 +339,6 @@ class PipelineHandler(asyncore.dispatcher):
 
                     else: # no mask applied
                          EV, lV, xVTensor, xYTensor = tens.EvaluateTensorX0(data, G.T, b.T)
-
-
                       
                     logger.info("Compute tensor in %s sec" % str(time.time()-timeS1))
 
@@ -379,7 +377,6 @@ class PipelineHandler(asyncore.dispatcher):
                         else:
                            paths0, paths1, paths2, paths3, paths4 = track.TrackFiberU40(data.flatten(), shpD, b.T, G.T, IJKstartpoints[0].T, r2i, i2r,\
                                   lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
-
 
                         logger.info("Track fibers in %s sec" % str(time.time()-timeS2))
 
