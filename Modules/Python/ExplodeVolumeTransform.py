@@ -13,8 +13,8 @@ Explode the ijkToRASTransform from volume, generating a parent transform and a c
   <contributor>Luca Antiga and Daniel Blezek</contributor>
 
   <parameters>
-    <label>IO</label>
-    <description>Input/output parameters</description>
+    <label>Explode Volume Transform Parameters</label>
+    <description>Parameters for exploding volume transform</description>
 
     <boolean>
       <name>keepOriginInVolume</name>
@@ -23,6 +23,12 @@ Explode the ijkToRASTransform from volume, generating a parent transform and a c
       <label>Keep origin in volume</label>
       <default>false</default>
     </boolean>
+
+  </parameters>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
 
     <image>
       <name>inputVolume</name>
@@ -101,7 +107,8 @@ def Execute (inputVolume, outputVolume, keepOriginInVolume=False):
 
     outputVolume.SetAndObserveTransformNodeID(outputTransformNode.GetID())
 
-    scene.Modified()
+    sceneEditedEvent = 66006
+    scene.InvokeEvent(sceneEditedEvent)
 
     return
 
