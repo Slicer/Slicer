@@ -79,13 +79,13 @@
       <description>The transform goes from the fixed image's space into the moving image's space</description>
     </directory>
     <string>
-      <name>MovingImage_Mask</name>
+      <name>movingImage_Mask</name>
       <label>Moving Image Mask</label>
       <longflag>movingImage_Mask</longflag>
       <description>The transform goes from the fixed image's space into the moving image's space</description>
     </string>
     <directory>
-      <name>ResampledImage_Directory</name>
+      <name>resampledImage_Directory</name>
       <label>Resample image</label>
       <channel>output</channel>
       <longflag>resampledImage_Directory</longflag>
@@ -93,12 +93,12 @@
       <default></default>
     </directory>
     <string>
-      <name>ResampledImage_Mask</name>
+      <name>resampledImage_Mask</name>
       <label>Resample image mask</label>
       <channel>output</channel>
       <longflag>resampledImage_Mask</longflag>
       <description>Registration results</description>
-      <default></default>
+      <default>Registered-${movingImage}</default>
     </string>
   </parameters>
   <parameters>
