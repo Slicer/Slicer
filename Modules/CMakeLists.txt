@@ -67,6 +67,7 @@ subdirs(
    ClipModel
    #VolumeRenderingCuda
    ModelIntoLabelVolume
+   ExtractSubvolume
   )
 
 if(Slicer3_USE_OPENIGTLINK)
