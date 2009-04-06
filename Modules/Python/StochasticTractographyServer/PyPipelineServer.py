@@ -146,9 +146,38 @@ class PipelineHandler(asyncore.dispatcher):
 
           s = slicerd.slicerd()
           scene = s.ls()
+          
           dscene = {}
-          for i in range(len(scene)/3):
-               dscene[scene[(i+1)*3-1]]= scene[i*3]
+  
+          indS = []
+          for i in range(len(scene)):
+             if scene[i].isdigit():
+                indS.append(i)
+
+          print 'Index : ', indS
+          for j in range(len(indS)):
+             
+             if j<len(indS)-1:
+               
+               tmpD2 = ''
+               tmpD = scene[indS[j]+2:indS[j+1]]
+               for k in range(len(tmpD)):
+                 if k <len(tmpD)-1:     
+                   tmpD2 += tmpD[k] + ' '
+                 else:
+                   tmpD2 += tmpD[k]
+
+               dscene[tmpD2]= j 
+             else:
+               tmpD2 = ''
+               tmpD = scene[indS[j]+2:]
+               for k in range(len(tmpD)):
+                 if k <len(tmpD)-1:     
+                   tmpD2 += tmpD[k] + ' '
+                 else:
+                   tmpD2 += tmpD[k]
+
+               dscene[tmpD2]= j
 
           logger.info("scene : %s" % dscene)
 
@@ -191,8 +220,14 @@ class PipelineHandler(asyncore.dispatcher):
                          logger.info("WM : %s:%s:%s" % (wmR.shape[0], wmR.shape[1], wmR.shape[2]))
 
           isInTensor = False
-
-
+          if self.params.hasKey('tensor'):
+                  if dscene.has_key(self.params.get('tensor')[0]):
+                         self.ten = s.get(int(dscene[self.params.get('tensor')[0]]))
+                         tenR = numpy.fromstring(self.ten.getImage(), 'float32')
+                         tenR = tenR.reshape(7, shpD[2]*shpD[1]*shpD[0])
+                         self.ten.setImage(tenR)
+                         isInTensor = True                                 
+                         logger.info("Tensor : %s:%s" % (tenR.shape[0], tenR.shape[1]))
           logger.info("Input volumes loaded!")
 
           # values per default
@@ -336,9 +371,12 @@ class PipelineHandler(asyncore.dispatcher):
 
                     if isInWM or wmEnabled:
                          EV, lV, xVTensor, xYTensor = tens.EvaluateTensorX1(data, G.T, b.T, wm)
+                         #logmu0, EV, lV = tensC.EvaluateTensorC(data, G.T, b.T)
 
                     else: # no mask applied
                          EV, lV, xVTensor, xYTensor = tens.EvaluateTensorX0(data, G.T, b.T)
+                         #logmu0, EV, lV = tensC.EvaluateTensorC(data, G.T, b.T)
+
                       
                     logger.info("Compute tensor in %s sec" % str(time.time()-timeS1))
 
@@ -544,6 +582,16 @@ class PipelineHandler(asyncore.dispatcher):
                     return data[0] # init
 
         tmp = data[1:]
+        if (data[0]=='dwi' or data[0]=='roiA' or data[0]=='roiB' or data[0]=='wm' or data[0]=='tensor') and len(tmp)>1:
+          tmp2 = ''
+          for i in range(len(tmp)):
+             if i <len(tmp)-1:     
+               tmp2 += tmp[i] + ' '
+             else:
+               tmp2 += tmp[i]
+          tmp = []
+          tmp.append( tmp2)
+
         self.params.set(data[0], tmp)
         logger.info("param id: %s" % data[0])
         if (len(self.params.get(data[0]))==3):

@@ -6,8 +6,6 @@ from numpy import reshape, vstack, hstack, ones, zeros, squeeze, transpose, newa
 from numpy import linalg
 from numpy.linalg import inv, eig, norm
 
-
-
 logger                   = logging.getLogger(__name__)
 
 ## idea
@@ -63,8 +61,8 @@ def EvaluateTensorX0(data, G, b):
 
    #logger.info("Time for A : %s sec" % str(time.time()-time0))
 
-   lT  = zeros((data.shape[0], data.shape[1], data.shape[2], 3) , 'float')
-   ET  = zeros((data.shape[0], data.shape[1], data.shape[2], 3, 3), 'float' )
+   lT = zeros((data.shape[0], data.shape[1], data.shape[2], 3) , 'float')
+   ET = zeros((data.shape[0], data.shape[1], data.shape[2], 3, 3), 'float' )
    xT = zeros((data.shape[0], data.shape[1], data.shape[2], 7), 'float')
    yT = zeros((data.shape[0], data.shape[1], data.shape[2], 9), 'float')
 
@@ -94,7 +92,6 @@ def EvaluateTensorX1(data, G, b, wmI=empty(0)):
    ET = zeros((data.shape[0], data.shape[1], data.shape[2], 3, 3), 'float' )
    xT = zeros((data.shape[0], data.shape[1], data.shape[2], 7), 'float')
    yT = zeros((data.shape[0], data.shape[1], data.shape[2], 9), 'float')
-
 
    indx = transpose(wmI.nonzero())
 

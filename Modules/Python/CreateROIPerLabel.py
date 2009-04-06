@@ -2,7 +2,7 @@
 
 XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Python Modules</category>
+  <category>Converters</category>
   <title>Python Create Single ROI file</title>
   <description>Python module</description>
   <version>0.1.0.$Revision: 1892 $(alpha)</version>

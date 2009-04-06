@@ -2,7 +2,7 @@
 
 XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Python Modules</category>
+  <category>Diffusion</category>
   <title>Python Stochastic Tractography</title>
   <description> This module implements stochastic tractography. For more information please refer to the following link 
 
@@ -52,6 +52,14 @@ Grants: National Alliance for Medical Image Computing (NAMIC), funded by the Nat
       <label>Input WM Volume</label>
       <channel>input</channel>
       <description>Input WM volume</description>
+    </image>
+
+    <image type = "tensor" >
+      <name>inputVol4</name>
+      <longflag>inputVol4</longflag>
+      <label>Input DTI Volume</label>
+      <channel>input</channel>
+      <description>Input DTI volume</description>
     </image>
 
   </parameters>
@@ -286,8 +294,6 @@ numpy_sizes = { numpy.int8:1, numpy.uint8:1, numpy.int16:2,  numpy.uint16:2,  nu
 numpy_nrrd_names = { 'int8':'char', 'uint8':'unsigned char', 'int16':'short',  'uint16':'ushort',  'int32':'int',  'uint32':'uint',  'float32':'float',  'float64':'double' }
 numpy_vtk_types = { 'int8':'2', 'uint8':'3', 'int16':'4',  'uint16':'5',  'int32':'6',  'uint32':'7',  'float32':'10',  'float64':'11' }
 
-
-
 SIZE = 4096 
 
 ##
@@ -491,7 +497,8 @@ def Execute (\
              inputVol0 = "",\
              inputVol1 = "",\
              inputVol2 = "",\
-             inputVol3 = ""
+             inputVol3 = "",\
+             inputVol4 = ""
              ):
 
   Slicer = __import__ ( "Slicer" )
@@ -521,9 +528,9 @@ def Execute (\
       wm = scene.GetNodeByID(inputVol3)
       wmName = wm.GetName()
 
-  #if inputVol4:
-  #    ten = scene.GetNodeByID(inputVol4)
-  #    tenName = ten.GetName()
+  if inputVol4:
+      ten = scene.GetNodeByID(inputVol4)
+      tenName = ten.GetName()
 
 
   s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -552,9 +559,9 @@ def Execute (\
      s.send('wm ' + str(wmName) + '\n')
      ack = s.recv(SIZE)
 
-  #if tenName:
-  #   s.send('tensor ' + str(tenName) + '\n')
-  #   ack = s.recv(SIZE)
+  if tenName:
+     s.send('tensor ' + str(tenName) + '\n')
+     ack = s.recv(SIZE)
 
   # smoothing
   s.send('smoothEnabled ' + str(int(smoothEnabled)) + '\n')
@@ -636,7 +643,7 @@ def Execute (\
   inputVol1 = ""
   inputVol2 = ""
   inputVol3 = ""
-
+  inputVol4 = ""
 
   return
 

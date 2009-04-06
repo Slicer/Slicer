@@ -28,7 +28,6 @@ def EvaluateTensorC(dataD, G, b):
   # Least squares estimation. Add eps to avoid taking log of zero
   # x = [ln(mu0) d11 d12 d13 d22 d23 d33]
   
-  # 0 1 2 3 -> 0 1 3 2 -> 0 3 1 2 - > 3 0 1 2
   dataD = dataD.swapaxes(3, 2).swapaxes(2, 1).swapaxes(1, 0)
   dataD = dataD.reshape(shp[3], shp[0]*shp[1]*shp[2])
   print 'Modified shape : ', dataD.shape
@@ -38,7 +37,6 @@ def EvaluateTensorC(dataD, G, b):
   xTensor = dot(res1, log(dataD+eps))
   print 'Tensor shape : ', xTensor.shape
 
-  # prod(dwiD2.shape)/dwiD2.shape[0]
   d11 = reshape(xTensor[1,:], shp[0]*shp[1]*shp[2])
   d12 = reshape(xTensor[2,:], shp[0]*shp[1]*shp[2])
   d13 = reshape(xTensor[3,:], shp[0]*shp[1]*shp[2])

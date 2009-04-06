@@ -52,9 +52,6 @@ def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor,
   dr = abs(spa[0])  
   da = abs(spa[1]) 
   ds = abs(spa[2]) 
-  #dr = spa[0]  
-  #da = spa[1] 
-  #ds = spa[2]
 
 # Uniform prior distribution of the direction of the first step
   StartPrior = ones((1, ndirs), 'float')
@@ -72,7 +69,6 @@ def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor,
   paths2 = numpy.zeros((Npaths, 1, Nsteps), 'float32')
   paths3 = numpy.zeros((Npaths, 1, Nsteps), 'float32')
   paths4 = numpy.zeros((Npaths, 1) , 'uint16')
-  #counter = 1
 
   y = zeros((shpT[3]), 'float')
   cache = {}
@@ -88,12 +84,6 @@ def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor,
     IJKpoint = IJKstartpoints[:,k]
     Prior = StartPrior
     
-    #paths0 = numpy.resize(paths0, (k+1, 3, Nsteps))
-    #paths1 = numpy.resize(paths1, (k+1, 3, Nsteps))
-    #paths2 = numpy.resize(paths2, (k+1, 1, Nsteps))
-    #paths3 = numpy.resize(paths3, (k+1, 1, Nsteps))
-    #paths4 = numpy.resize(paths4, (k+1, 1))
-
     for step in range(Nsteps):
        
       # Determine from which voxel to draw new direction  
@@ -160,15 +150,9 @@ def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor,
       if not useSpacing:
         dr = da = ds = 1
 
-      #useStochastic = False
-      #if useStochastic:
       RASpoint[0] =  RASpoint[0] + dr*dl*v[0] 
       RASpoint[1] =  RASpoint[1] + da*dl*v[1]    
       RASpoint[2] =  RASpoint[2] + ds*dl*v[2]     
-      #else:
-      #  RASpoint[0] =  RASpoint[0] + dr*dl*e[0] 
-      #  RASpoint[1] =  RASpoint[1] + da*dl*e[1]    
-      #  RASpoint[2] =  RASpoint[2] + ds*dl*e[2]        
    
       # find IJK index from RAS point
       IJKpoint = (dot(R2I[:3, :3], RASpoint[newaxis].T) + R2I[:3,3][newaxis].T).T
@@ -190,7 +174,6 @@ def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor,
       Prior = dot(v.T, vts)[newaxis]
       Prior[Prior<0] = 0
 
-    #counter +=1
   
     # computed path  
   logger.info("Job completed")
@@ -232,9 +215,6 @@ def  TrackFiberY40(data, mask, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVT
   dr = abs(spa[0])  
   da = abs(spa[1]) 
   ds = abs(spa[2]) 
-  #dr = spa[0]  
-  #da = spa[1] 
-  #ds = spa[2]
 
 # Uniform prior distribution of the direction of the first step
   StartPrior = ones((1, ndirs), 'float')
@@ -253,7 +233,6 @@ def  TrackFiberY40(data, mask, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVT
   paths2 = numpy.zeros((Npaths, 1, Nsteps), 'float32')
   paths3 = numpy.zeros((Npaths, 1, Nsteps), 'float32')
   paths4 = numpy.zeros( (Npaths, 1) , 'uint16')
-  #counter = 0
 
   y = zeros((shpT[3]), 'float')
  
@@ -269,14 +248,6 @@ def  TrackFiberY40(data, mask, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVT
     IJKpoint = IJKstartpoints[:,k]
     Prior = StartPrior
     
-    #counter += 1
-
-    #paths0 = numpy.resize(paths0, (k+1, 3, Nsteps))
-    #paths1 = numpy.resize(paths1, (k+1, 3, Nsteps))
-    #paths2 = numpy.resize(paths2, (k+1, 1, Nsteps))
-    #paths3 = numpy.resize(paths3, (k+1, 1, Nsteps))
-    #paths4 = numpy.resize(paths4, (k+1, 1))
-
     for step in range(Nsteps):
     
       # Determine from which voxel to draw new direction  
@@ -347,16 +318,9 @@ def  TrackFiberY40(data, mask, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVT
       if not useSpacing:
         dr = da = ds = 1
 
-      #useStochastic = False
-      #if useStochastic:
       RASpoint[0] =  RASpoint[0] + dr*dl*v[0] 
       RASpoint[1] =  RASpoint[1] + da*dl*v[1]    
       RASpoint[2] =  RASpoint[2] + ds*dl*v[2]     
-      #else:
-      #  RASpoint[0] =  RASpoint[0] + dr*dl*e[0] 
-      #  RASpoint[1] =  RASpoint[1] + da*dl*e[1]    
-      #  RASpoint[2] =  RASpoint[2] + ds*dl*e[2]     
-
    
       # find IJK index from RAS point
       IJKpoint = (dot(R2I[:3, :3], RASpoint[newaxis].T) + R2I[:3,3][newaxis].T).T
@@ -378,7 +342,6 @@ def  TrackFiberY40(data, mask, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVT
       Prior = dot(v.T, vts)[newaxis]
       Prior[Prior<0] = 0
 
-    #counter += 1
   
    # computed path  
   logger.info("Job completed")
@@ -390,7 +353,6 @@ def  TrackFiberY40(data, mask, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVT
 def ComputeConnectFibersFunctionalP0( k, cm, paths1, paths4, shp, lTh, isLength=False, lMin=1, lMax=2000):
 
   if paths4[k, 0] > paths1.shape[2]:
-     #paths4[k[0], 0] = paths1.shape[2]
      return
 
   for i in range(paths4[k, 0]):
@@ -407,7 +369,6 @@ def ComputeConnectFibersFunctionalP0( k, cm, paths1, paths4, shp, lTh, isLength=
 def ComputeConnectFibersFunctionalP1( k, cm, paths1, paths4, shp, lTh, isLength=False, lMin=1, lMax=2000):
  
   if paths4[k, 0] > paths1.shape[2]:
-     #paths4[k[0], 0] = paths1.shape[2]
      return
 
   for i in range(paths4[k, 0]):
@@ -425,7 +386,6 @@ def ComputeConnectFibersFunctionalP1( k, cm, paths1, paths4, shp, lTh, isLength=
 def ComputeConnectFibersFunctionalP2( k, cm, paths1, paths4, shp, lTh, isLength=False,  lMin=1, lMax=2000):
 
   if paths4[k, 0] > paths1.shape[2]:
-     #paths4[k[0], 0] = paths1.shape[2]
      return
 
   for i in range(paths4[k, 0]):
@@ -544,35 +504,6 @@ def ConnectFibersX2( paths1, paths4, shp, isLength=False, lengthMode='uThird'):
   [ComputeConnectFibersFunctionalP2( k, cm, paths1, paths4, shp, lTh, isLength, lMin, lMax)  for k in indx]
 
   return cm
-
-# compute connectivity maps - binary
-#def ConnectFibersAZ0( cm, paths1, paths4, shp, isLength=False, lMin=1 , lMax=2000):
-
-#  nPaths = paths1.shape[0]
-#  nSteps = paths1.shape[2]
-
-#  indx = transpose(ones((nPaths), 'uint16' ).nonzero())
-#  [ComputeConnectFibersFunctionalP0( k, cm, paths1, paths4, shp, isLength, lMin, lMax) for k in indx]
-
-
-# summative
-#def ConnectFibersAZ1( cm, paths1, paths4, shp, isLength=False, lMin=1 , lMax=2000):
-  
-#  nPaths = paths1.shape[0]
-#  nSteps = paths1.shape[2]
-
-#  indx = transpose(ones((nPaths), 'uint16' ).nonzero())
-#  [ComputeConnectFibersFunctionalP1( k, cm, paths1, paths4, shp, isLength, lMin, lMax)  for k in indx]
-
-
-# weighted
-#def ConnectFibersAZ2( cm, paths1, paths4, shp, isLength=False, lMin=1 , lMax=2000):
-  
-#  nPaths = paths1.shape[0]
-#  nSteps = paths1.shape[2]
-
-#  indx = transpose(ones((nPaths), 'uint16' ).nonzero())
-#  [ComputeConnectFibersFunctionalP2( k, cm, paths1, paths4, shp, isLength, lMin, lMax)  for k in indx]
 
 
 # compute connectivity maps - binary
