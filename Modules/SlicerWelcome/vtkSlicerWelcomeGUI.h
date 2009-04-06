@@ -10,6 +10,7 @@
 #include "vtkSlicerModuleGUI.h"
 #include "vtkSlicerWelcomeLogic.h"
 #include "vtkSlicerWelcomeIcons.h"
+#include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkIntArray.h"
 
 #include <string>
@@ -77,9 +78,11 @@ class VTK_SLICERWELCOME_EXPORT vtkSlicerWelcomeGUI : public vtkSlicerModuleGUI
   virtual void BuildLoadDataPanel( vtkKWFrame *parent );  
   virtual void BuildSaveDataPanel( vtkKWFrame *parent );
   virtual void BuildDataDisplayPanel( vtkKWFrame *parent );
+  virtual void BuildModulesPanel ( vtkKWFrame *parent );
   virtual void BuildOtherHelpPanel( vtkKWFrame *parent );
   virtual void BuildConfigureModulesPanel( vtkKWFrame *parent );
   virtual void BuildCommunityPanel( vtkKWFrame *parent );
+  virtual void BuildMouseModePanel( vtkKWFrame *parent );
 
 protected:
   vtkSlicerWelcomeGUI();
@@ -94,6 +97,17 @@ protected:
   vtkSlicerWelcomeLogic *Logic;
   int GUIWidth;
 
+  vtkSlicerModuleCollapsibleFrame *WelcomeFrame;
+  vtkSlicerModuleCollapsibleFrame *OverviewFrame;
+  vtkSlicerModuleCollapsibleFrame *LoadFrame;
+  vtkSlicerModuleCollapsibleFrame *SaveFrame;
+  vtkSlicerModuleCollapsibleFrame *DisplayFrame;  
+  vtkSlicerModuleCollapsibleFrame *ModulesFrame;
+  vtkSlicerModuleCollapsibleFrame *ConfigureFrame;
+  vtkSlicerModuleCollapsibleFrame *HintsFrame;
+  vtkSlicerModuleCollapsibleFrame *CommunityFrame;
+  vtkSlicerModuleCollapsibleFrame *CreditFrame;  
+  vtkSlicerModuleCollapsibleFrame *MouseModeFrame;
 };
 
 #endif
