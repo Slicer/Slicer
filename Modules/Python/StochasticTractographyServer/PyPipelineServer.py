@@ -457,11 +457,11 @@ class PipelineHandler(asyncore.dispatcher):
                         logger.info("Connect tract")
 
                         if probMode=='binary':
-                            cm2 = track.ConnectFibersX0(paths1, paths4, maxLength, shpD, lengthEnabled,  lengthClass)
+                            cm2 = track.ConnectFibersX0(paths1, paths4, shpD, lengthEnabled,  lengthClass)
                         elif probMode=='cumulative':
-                            cm2 = track.ConnectFibersX1(paths1, paths4, maxLength, shpD, lengthEnabled,  lengthClass)
+                            cm2 = track.ConnectFibersX1(paths1, paths4, shpD, lengthEnabled,  lengthClass)
                         else:
-                            cm2 = track.ConnectFibersX2(paths1, paths4, maxLength, shpD, lengthEnabled,  lengthClass)
+                            cm2 = track.ConnectFibersX2(paths1, paths4, shpD, lengthEnabled,  lengthClass)
 
 
           else:
