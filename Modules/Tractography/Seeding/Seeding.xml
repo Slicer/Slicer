@@ -185,11 +185,11 @@
   
   <parameters>
     <label>Label definition</label>
-    <description>Selection of label/s for ROI definition</description>
+    <description>Selection of label(labels) for ROI definition</description>
     
     <integer>
       <name>ROIlabel</name>
-      <label>\Seeding label</label>
+      <label>Seeding label</label>
       <flag>-o</flag>
       <longflag>--label</longflag>
       <description>Label value that defines seeding region.</description>
