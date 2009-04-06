@@ -5,7 +5,7 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
   <category>Converters</category>
   <title>Python Explode Volume Transform</title>
   <description>
-Explode the ijkToRASTransform from volume, generating a parent transform and a pure vtkImageData volume.
+Explode the ijkToRASTransform from volume, generating a parent transform and a child volume node with IJK orientation.
 </description>
   <version>1.0</version>
   <documentation-url></documentation-url>
@@ -15,6 +15,14 @@ Explode the ijkToRASTransform from volume, generating a parent transform and a p
   <parameters>
     <label>IO</label>
     <description>Input/output parameters</description>
+
+    <boolean>
+      <name>keepOriginInVolume</name>
+      <longflag>keepOriginInVolume</longflag>
+      <description>Toggle the inclusion of the origin in the extracted transform rather than in the output volume. The default is to include the origin in the transform, which produces an output volume node with the origin in 0,0,0 (same as if the node was saved and then loaded with the orientation set to IJK).</description>
+      <label>Keep origin in volume</label>
+      <default>false</default>
+    </boolean>
 
     <image>
       <name>inputVolume</name>
@@ -38,7 +46,7 @@ Explode the ijkToRASTransform from volume, generating a parent transform and a p
 """
 
 
-def Execute (inputVolume, outputVolume):
+def Execute (inputVolume, outputVolume, keepOriginInVolume=False):
 
     Slicer = __import__("Slicer")
     slicer = Slicer.slicer
@@ -47,20 +55,41 @@ def Execute (inputVolume, outputVolume):
     inputVolume = scene.GetNodeByID(inputVolume)
     outputVolume = scene.GetNodeByID(outputVolume)
 
-    ijkToRASDirections = slicer.vtkMatrix4x4()
-    inputVolume.GetIJKToRASDirectionMatrix(ijkToRASDirections)
-
-    ijkToRASMatrix = slicer.vtkMatrix4x4()
-    inputVolume.GetIJKToRASMatrix(ijkToRASMatrix)
-
     ijkToLocalMatrix = slicer.vtkMatrix4x4()
-    ijkToRASDirections.Invert()
-    ijkToLocalMatrix.Multiply4x4(ijkToRASDirections,ijkToRASMatrix,ijkToLocalMatrix)
-
     localToRASMatrix = slicer.vtkMatrix4x4()
-    ijkToRASMatrix.Invert()
-    ijkToRASMatrix.Multiply4x4(ijkToLocalMatrix,ijkToRASMatrix,localToRASMatrix)
-    localToRASMatrix.Invert()
+
+    if not keepOriginInVolume:
+
+        inputVolume.GetIJKToRASDirectionMatrix(localToRASMatrix)
+   
+        ijkToRASMatrix = slicer.vtkMatrix4x4()
+        inputVolume.GetIJKToRASMatrix(ijkToRASMatrix)
+
+        spacing = inputVolume.GetSpacing()
+        origin = inputVolume.GetOrigin()
+
+        ijkToLocalMatrix.SetElement(0,0,spacing[0])
+        ijkToLocalMatrix.SetElement(1,1,spacing[1])
+        ijkToLocalMatrix.SetElement(2,2,spacing[2])
+
+        localToRASMatrix.SetElement(0,3,origin[0])
+        localToRASMatrix.SetElement(1,3,origin[1])
+        localToRASMatrix.SetElement(2,3,origin[2])
+
+    else:
+
+        ijkToRASDirections = slicer.vtkMatrix4x4()
+        inputVolume.GetIJKToRASDirectionMatrix(ijkToRASDirections)
+    
+        ijkToRASMatrix = slicer.vtkMatrix4x4()
+        inputVolume.GetIJKToRASMatrix(ijkToRASMatrix)
+    
+        ijkToRASDirections.Invert()
+        ijkToLocalMatrix.Multiply4x4(ijkToRASDirections,ijkToRASMatrix,ijkToLocalMatrix)
+    
+        ijkToRASMatrix.Invert()
+        ijkToRASMatrix.Multiply4x4(ijkToLocalMatrix,ijkToRASMatrix,localToRASMatrix)
+        localToRASMatrix.Invert()
 
     outputVolume.SetAndObserveImageData(inputVolume.GetImageData())
     outputVolume.SetIJKToRASMatrix(ijkToLocalMatrix)
@@ -72,5 +101,8 @@ def Execute (inputVolume, outputVolume):
 
     outputVolume.SetAndObserveTransformNodeID(outputTransformNode.GetID())
 
+    scene.Modified()
+
     return
+
 
