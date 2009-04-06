@@ -40,6 +40,7 @@ vtkSlicerSliceControllerWidget::vtkSlicerSliceControllerWidget ( ) {
   // widgets comprising the SliceControllerWidget for now.
   this->MoreMenuButton = NULL;
   this->OffsetScale = NULL;
+  this->OffsetEntry = NULL;
   this->OrientationSelector = NULL;
   this->ForegroundSelector = NULL;
   this->BackgroundSelector = NULL;
@@ -104,6 +105,12 @@ vtkSlicerSliceControllerWidget::~vtkSlicerSliceControllerWidget ( ){
     this->OffsetScale->SetParent(NULL);
     this->OffsetScale->Delete ( );
     this->OffsetScale = NULL;
+    }
+  if ( this->OffsetEntry )
+    {
+    this->OffsetEntry->SetParent(NULL);
+    this->OffsetEntry->Delete ( );
+    this->OffsetEntry = NULL;
     }
   if ( this->OrientationSelector )
     {
@@ -335,9 +342,10 @@ void vtkSlicerSliceControllerWidget::AddWidgetObservers ( )
   this->ForegroundSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->GUICallbackCommand);
   this->BackgroundSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->GUICallbackCommand);
   this->LabelSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->GUICallbackCommand);
-  this->OffsetScale->GetWidget()->AddObserver( vtkKWScale::ScaleValueChangingEvent, this->GUICallbackCommand );
-  this->OffsetScale->GetWidget()->AddObserver( vtkKWScale::ScaleValueChangedEvent, this->GUICallbackCommand );
-  this->OffsetScale->GetWidget()->AddObserver( vtkKWScale::ScaleValueStartChangingEvent, this->GUICallbackCommand );
+  this->OffsetScale->AddObserver( vtkKWScale::ScaleValueChangingEvent, this->GUICallbackCommand );
+  this->OffsetScale->AddObserver( vtkKWScale::ScaleValueChangedEvent, this->GUICallbackCommand );
+  this->OffsetScale->AddObserver( vtkKWScale::ScaleValueStartChangingEvent, this->GUICallbackCommand );
+  this->OffsetEntry->AddObserver( vtkKWEntry::EntryValueChangedEvent, this->GUICallbackCommand );
   this->VisibilityToggle->AddObserver (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
   this->LoadDataButton->AddObserver (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
   this->LabelOpacityButton->AddObserver (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
@@ -380,9 +388,10 @@ void vtkSlicerSliceControllerWidget::RemoveWidgetObservers ( ) {
   this->LabelOpacityScale->GetScale ( )->RemoveObservers( vtkKWScale::ScaleValueChangedEvent, this->GUICallbackCommand );
   this->LabelOpacityToggleButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
   this->LabelOutlineToggleButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
-  this->OffsetScale->GetWidget()->RemoveObservers ( vtkKWScale::ScaleValueChangingEvent, this->GUICallbackCommand );
-  this->OffsetScale->GetWidget()->RemoveObservers ( vtkKWScale::ScaleValueChangedEvent, this->GUICallbackCommand );
-  this->OffsetScale->GetWidget()->RemoveObservers ( vtkKWScale::ScaleValueStartChangingEvent, this->GUICallbackCommand );
+  this->OffsetScale->RemoveObservers ( vtkKWScale::ScaleValueChangingEvent, this->GUICallbackCommand );
+  this->OffsetScale->RemoveObservers ( vtkKWScale::ScaleValueChangedEvent, this->GUICallbackCommand );
+  this->OffsetScale->RemoveObservers ( vtkKWScale::ScaleValueStartChangingEvent, this->GUICallbackCommand );
+  this->OffsetEntry->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, this->GUICallbackCommand );
   this->VisibilityToggle->RemoveObservers ( vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
   this->LoadDataButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
   this->LabelOpacityButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
@@ -1019,12 +1028,16 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
   //
   // Create a scale to control the slice number displayed
   //
-  this->OffsetScale = vtkKWScaleWithEntry::New();
+  this->OffsetScale = vtkKWScale::New();
   this->OffsetScale->SetParent ( this->ScaleFrame );
   this->OffsetScale->Create();
-  this->OffsetScale->RangeVisibilityOff ( );
-  this->OffsetScale->SetEntryWidth(8);
-  this->OffsetScale->SetLabelPositionToLeft();
+  this->OffsetScale->SetValueVisibility(0);
+
+  this->OffsetEntry = vtkKWEntry::New();
+  this->OffsetEntry->SetParent ( this->ScaleFrame );
+  this->OffsetEntry->Create();
+  this->OffsetEntry->SetRestrictValueToDouble();
+  this->OffsetEntry->SetWidth(8);
             
   //
   // Pack everyone up
@@ -1074,8 +1087,9 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
       this->Script ( "pack %s -side left -expand n -padx 1 -in %s",
                      this->MoreMenuButton->GetWidgetName(),
                      this->IconFrame->GetWidgetName() );
-      this->Script("pack %s -side left -fill x -expand y -in %s", 
+      this->Script("pack %s %s -side left -fill x -expand y -in %s", 
                    this->OffsetScale->GetWidgetName(),
+                   this->OffsetEntry->GetWidgetName(),
                    this->ScaleFrame->GetWidgetName());
       }
     else
@@ -1090,8 +1104,9 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
       this->Script ( "pack %s -side left -expand n -padx 1 -in %s",
                      this->MoreMenuButton->GetWidgetName(),
                      this->ScaleFrame->GetWidgetName() );
-      this->Script("pack %s -side left -fill x -expand y -in %s", 
+      this->Script("pack %s %s -side left -fill x -expand y -in %s", 
                    this->OffsetScale->GetWidgetName(),
+                   this->OffsetEntry->GetWidgetName(),
                    this->ScaleFrame->GetWidgetName());
       }
 
@@ -2640,7 +2655,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
   //
   // Scales starting to move? save state for undo.
   //
-  if ( this->OffsetScale->GetWidget() == vtkKWScale::SafeDownCast( caller ) &&
+  if ( this->OffsetScale == vtkKWScale::SafeDownCast( caller ) &&
        event == vtkKWScale::ScaleValueStartChangingEvent )
     {
     // set an undo state when the scale starts being dragged
@@ -2697,7 +2712,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
   // and here:
   // http://sourceforge.net/tracker/index.php?func=detail&aid=1899040&group_id=12997&atid=112997
   //
-  if ( this->OffsetScale->GetWidget() == vtkKWScale::SafeDownCast( caller ) &&
+  if ( this->OffsetScale == vtkKWScale::SafeDownCast( caller ) &&
        (event == vtkKWScale::ScaleValueChangedEvent ||
         event == vtkKWScale::ScaleValueChangingEvent) )
     {
@@ -2713,48 +2728,44 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
 
     if ( value != newValue || event == vtkKWScale::ScaleValueChangingEvent)
       {
+
+      this->OffsetEntry->SetValueAsDouble(newValue);
+
       // if slice viewers are linked in CompareView layout mode,
       // modify all slice logic to synch all Compare Slice viewers
       if ( link && sgui0 && (layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutCompareView))
         {
-        vtkSlicerSlicesGUI *ssgui = vtkSlicerSlicesGUI::SafeDownCast ( app->GetModuleGUIByName ("Slices") );
-        vtkSlicerSliceGUI *sgui;
-        if (ssgui)
-          {
-          const char *layoutname = NULL;
-          int nSliceGUI = ssgui->GetNumberOfSliceGUI();
-          for (i = 0; i < nSliceGUI; i++)
-            {
-            if (i == 0)
-              {
-              sgui = ssgui->GetFirstSliceGUI();
-              layoutname = ssgui->GetFirstSliceGUILayoutName();
-              }
-            else
-              {
-              sgui = ssgui->GetNextSliceGUI(layoutname);
-              layoutname = ssgui->GetNextSliceGUILayoutName(layoutname);
-              }
-            
-            if ( strcmp(layoutname, "Red") == 0 ||
-                 strcmp(layoutname, "Yellow") == 0 ||
-                 strcmp(layoutname, "Green") == 0)
-              continue;
-            
-            if ( sgui->GetLogic() &&
-                 !strcmp(this->SliceNode->GetOrientationString(), sgui->GetSliceNode()->GetOrientationString()))
-              {
-              sgui->GetLogic()->SetSliceOffset( newValue );
-              modified = 1;
-              }
-            }
-          }
+        modified = this->UpdateCompareView( newValue );
         }
       else
         {
         this->SliceLogic->SetSliceOffset( newValue );
         modified = 1;
         }
+      }
+    }
+
+  if ( this->OffsetEntry == vtkKWEntry::SafeDownCast( caller ) )
+    {
+    vtkKWEntry *entry = vtkKWEntry::SafeDownCast( caller );
+    double newValue = entry->GetValueAsDouble();
+    double value = this->SliceLogic->GetSliceOffset();
+
+    if ( value != newValue )
+      {
+      // if slice viewers are linked in CompareView layout mode,
+      // modify all slice logic to synch all Compare Slice viewers
+      if ( link && sgui0 && (layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutCompareView))
+        {
+        modified = this->UpdateCompareView( newValue );
+        }
+      else
+        {
+        this->SliceLogic->SetSliceOffset( newValue );
+        modified = 1;
+        }
+
+      this->OffsetScale->SetValue(newValue);
       }
     }
   
@@ -2764,6 +2775,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     }
 }
 
+//---------------------------------------------------------------------------
 void vtkSlicerSliceControllerWidget::SliceViewerLayoutConfig(int nRows, int nColumns)
 {
   char *pTag = NULL;
@@ -2785,6 +2797,47 @@ void vtkSlicerSliceControllerWidget::SliceViewerLayoutConfig(int nRows, int nCol
     }
 }
 
+//---------------------------------------------------------------------------
+int vtkSlicerSliceControllerWidget::UpdateCompareView ( double newValue )
+{
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication());
+  vtkSlicerSlicesGUI *ssgui = vtkSlicerSlicesGUI::SafeDownCast ( app->GetModuleGUIByName ("Slices") );
+  vtkSlicerSliceGUI *sgui;
+  int modified = 0;
+
+  if (ssgui)
+    {
+    const char *layoutname = NULL;
+    int nSliceGUI = ssgui->GetNumberOfSliceGUI();
+    int i;
+    for (i = 0; i < nSliceGUI; i++)
+      {
+      if (i == 0)
+        {
+        sgui = ssgui->GetFirstSliceGUI();
+        layoutname = ssgui->GetFirstSliceGUILayoutName();
+        }
+      else
+        {
+        sgui = ssgui->GetNextSliceGUI(layoutname);
+        layoutname = ssgui->GetNextSliceGUILayoutName(layoutname);
+        }
+      
+      if ( strcmp(layoutname, "Red") == 0 ||
+           strcmp(layoutname, "Yellow") == 0 ||
+           strcmp(layoutname, "Green") == 0)
+        continue;
+      
+      if ( sgui->GetLogic() &&
+           !strcmp(this->SliceNode->GetOrientationString(), sgui->GetSliceNode()->GetOrientationString()))
+        {
+        sgui->GetLogic()->SetSliceOffset( newValue );
+        modified = 1;
+        }
+      }
+    }
+  return (modified);
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceControllerWidget::HideLightboxCustomLayoutFrame ( )
@@ -3155,22 +3208,22 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
   if ( !(strcmp(this->SliceNode->GetOrientationString(), "Axial")))
     {
     // Orientation is Axial: I <----> S
-    this->OffsetScale->GetScale()->SetBalloonHelpString ( "I <-----> S" );
+    this->OffsetScale->SetBalloonHelpString ( "I <-----> S" );
     }
   else if ( !(strcmp(this->SliceNode->GetOrientationString(), "Sagittal")))
     {
     // Orientation is Sagittal: L <----> R
-    this->OffsetScale->GetScale()->SetBalloonHelpString ( "L <-----> R" );
+    this->OffsetScale->SetBalloonHelpString ( "L <-----> R" );
     }
   else if ( !(strcmp(this->SliceNode->GetOrientationString(), "Coronal")))
     {
     // Orientation is Coronal: P <----> A
-    this->OffsetScale->GetScale()->SetBalloonHelpString ( "P <-----> A" );
+    this->OffsetScale->SetBalloonHelpString ( "P <-----> A" );
     }
   else
     {
     // Orientation is Oblique: make tooltip null
-    this->OffsetScale->GetScale()->SetBalloonHelpString ( "Oblique" ) ;
+    this->OffsetScale->SetBalloonHelpString ( "Oblique" ) ;
     }
 
   //
@@ -3182,7 +3235,7 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
 
   this->OffsetScale->SetResolution(sliceSpacing[2]);
   this->Script ("%s configure -digits 20", 
-                this->OffsetScale->GetScale()->GetWidgetName());
+                this->OffsetScale->GetWidgetName());
 
   //
   // Set the scale range to match the field of view

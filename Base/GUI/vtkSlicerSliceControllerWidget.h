@@ -36,7 +36,8 @@ public:
     
   // Description:
   // Get/Set the Widgets in this composite widget.
-  vtkGetObjectMacro ( OffsetScale, vtkKWScaleWithEntry );
+  vtkGetObjectMacro ( OffsetScale, vtkKWScale );
+  vtkGetObjectMacro ( OffsetEntry, vtkKWEntry );
   vtkGetObjectMacro ( OrientationSelector, vtkKWMenuButtonWithSpinButtonsWithLabel );
   vtkGetObjectMacro ( ForegroundSelector, vtkSlicerNodeSelectorWidget );
   vtkGetObjectMacro ( BackgroundSelector, vtkSlicerNodeSelectorWidget );
@@ -157,6 +158,11 @@ public:
   // This only works in CompareView layout mode
   virtual void SliceViewerLayoutConfig(int nRows, int nColumns);
 
+  // Description:
+  // if slice viewers are linked in CompareView layout mode,
+  // modify all slice logic to synch all Compare Slice viewers
+  virtual int UpdateCompareView(double value);
+
   //BTX
   enum 
   {
@@ -181,7 +187,8 @@ protected:
   //
   // Slice controller subwidgets
   //
-  vtkKWScaleWithEntry *OffsetScale;
+  vtkKWScale *OffsetScale;
+  vtkKWEntry *OffsetEntry;
   vtkKWMenuButtonWithSpinButtonsWithLabel *OrientationSelector;
   vtkSlicerNodeSelectorWidget *ForegroundSelector;
   vtkSlicerNodeSelectorWidget *BackgroundSelector;
