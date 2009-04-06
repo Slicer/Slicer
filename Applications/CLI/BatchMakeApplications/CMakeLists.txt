@@ -45,9 +45,6 @@ if(BatchMake_DIR)
     configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/bmGridStore.bmm.in"
       "${BatchMake_WRAPPED_APPLICATION_DIR}/bmGridStore.bmm")
 
-    # Configure a header
-    #configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/SlicerBatchMakeConfig.h.in"
-    #  "${CMAKE_CURRENT_BINARY_DIR}/SlicerBatchMakeConfig.h")
   endif(Slicer3_BINARY_DIR)
 
   if (Slicer3_SOURCE_DIR)
@@ -65,4 +62,5 @@ SUBDIRS(
   EMSegmentBatchMakeModule
   GaussianBlurBatchMakeModule
   RegisterImagesBatchMakeModule
+  ResampleVolumeBatchMakeModule
 )
