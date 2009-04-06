@@ -647,7 +647,10 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
   this->LayoutGridRows = node->LayoutGridRows;
   
   this->SliceSpacingMode = node->SliceSpacingMode;
-  
+
+  this->WidgetVisible = node->WidgetVisible;
+  this->UseLabelOutline = node->UseLabelOutline;
+
   int i;
   for(i=0; i<3; i++) 
     {
