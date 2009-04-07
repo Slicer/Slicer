@@ -83,6 +83,7 @@ class VTK_SLICERWELCOME_EXPORT vtkSlicerWelcomeGUI : public vtkSlicerModuleGUI
   virtual void BuildConfigureModulesPanel( vtkKWFrame *parent );
   virtual void BuildCommunityPanel( vtkKWFrame *parent );
   virtual void BuildMouseModePanel( vtkKWFrame *parent );
+  virtual void BuildViewAndLayoutPanel (vtkKWFrame *parent );
 
 protected:
   vtkSlicerWelcomeGUI();
@@ -108,6 +109,7 @@ protected:
   vtkSlicerModuleCollapsibleFrame *CommunityFrame;
   vtkSlicerModuleCollapsibleFrame *CreditFrame;  
   vtkSlicerModuleCollapsibleFrame *MouseModeFrame;
+  vtkSlicerModuleCollapsibleFrame *ViewAndLayoutFrame;
 };
 
 #endif

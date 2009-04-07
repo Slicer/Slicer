@@ -30,6 +30,9 @@ class vtkSlicerWelcomeIcons : public vtkSlicerIcons
     vtkGetObjectMacro (MouseModeIcon, vtkKWIcon );
     vtkGetObjectMacro (ModuleNavIcon, vtkKWIcon );
     vtkGetObjectMacro (ModuleIcon, vtkKWIcon );    
+    vtkGetObjectMacro (SlicesControlIcon, vtkKWIcon );
+    vtkGetObjectMacro (ViewControlIcon, vtkKWIcon );
+    vtkGetObjectMacro ( LayoutIcon, vtkKWIcon );
 
     void AssignImageDataToIcons ( );
     
@@ -52,6 +55,9 @@ class vtkSlicerWelcomeIcons : public vtkSlicerIcons
     vtkKWIcon *MouseModeIcon;
     vtkKWIcon *ModuleNavIcon;
     vtkKWIcon *ModuleIcon;
+    vtkKWIcon *SlicesControlIcon;
+    vtkKWIcon *ViewControlIcon;
+    vtkKWIcon *LayoutIcon;
     
  private:
     vtkSlicerWelcomeIcons (const vtkSlicerWelcomeIcons&); // Not implemented

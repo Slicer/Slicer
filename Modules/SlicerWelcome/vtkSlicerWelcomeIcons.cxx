@@ -26,6 +26,9 @@ vtkSlicerWelcomeIcons::vtkSlicerWelcomeIcons ( )
     this->MouseModeIcon = vtkKWIcon::New();
     this->ModuleNavIcon = vtkKWIcon::New();
     this->ModuleIcon = vtkKWIcon::New();
+    this->SlicesControlIcon = vtkKWIcon::New();
+    this->ViewControlIcon = vtkKWIcon::New();
+    this->LayoutIcon = vtkKWIcon::New();
     
     this->AssignImageDataToIcons ( );
 }
@@ -114,6 +117,21 @@ vtkSlicerWelcomeIcons::~vtkSlicerWelcomeIcons ( )
       this->ModuleIcon->Delete();
       this->ModuleIcon = NULL;
       }
+    if ( this->SlicesControlIcon )
+      {
+      this->SlicesControlIcon->Delete();
+      this->SlicesControlIcon = NULL;
+      }
+    if ( this->ViewControlIcon )
+      {
+      this->ViewControlIcon->Delete();
+      this->ViewControlIcon = NULL;
+      }
+    if ( this->LayoutIcon )
+      {
+      this->LayoutIcon->Delete();
+      this->LayoutIcon = NULL;
+      }
 }
 
 //---------------------------------------------------------------------------
@@ -200,6 +218,21 @@ void vtkSlicerWelcomeIcons::AssignImageDataToIcons ( )
                               image_WelcomeModules_height,
                               image_WelcomeModules_pixel_size,
                               image_WelcomeModules_length, 0);
+  this->SlicesControlIcon->SetImage ( image_WelcomeSlicesControl,
+                                      image_WelcomeSlicesControl_width,
+                                      image_WelcomeSlicesControl_height,
+                                      image_WelcomeSlicesControl_pixel_size,
+                                      image_WelcomeSlicesControl_length, 0);
+  this->ViewControlIcon->SetImage (image_Welcome3DControl,
+                                   image_Welcome3DControl_width,
+                                   image_Welcome3DControl_height,
+                                   image_Welcome3DControl_pixel_size,
+                                   image_Welcome3DControl_length, 0);
+  this->LayoutIcon->SetImage ( image_WelcomeLayout,
+                               image_WelcomeLayout_width,
+                               image_WelcomeLayout_height,
+                               image_WelcomeLayout_pixel_size,
+                               image_WelcomeLayout_length, 0);
 }
 
 
@@ -226,5 +259,8 @@ void vtkSlicerWelcomeIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "MouseModeIcon: " << this->GetMouseModeIcon() << "\n";
     os << indent << "ModuleNavIcon: " << this->GetModuleNavIcon() << "\n";
     os << indent << "ModuleIcon: " << this->GetModuleIcon() << "\n";
+    os << indent << "SlicesControlIcon: " << this->GetSlicesControlIcon() << "\n";
+    os << indent << "ViewControlIcon: " << this->GetViewControlIcon() << "\n";
+    os << indent << "LayoutIcon: " << this->GetLayoutIcon() << "\n";
 }
 

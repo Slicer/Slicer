@@ -72,7 +72,7 @@ vtkSlicerWelcomeGUI::vtkSlicerWelcomeGUI()
   this->CommunityFrame = NULL;
   this->CreditFrame = NULL;
   this->MouseModeFrame = NULL;
-
+  this->ViewAndLayoutFrame = NULL;
   this->SetGUIWidth(-1);
 }
 
@@ -148,6 +148,12 @@ vtkSlicerWelcomeGUI::~vtkSlicerWelcomeGUI()
     this->MouseModeFrame->SetParent ( NULL );
     this->MouseModeFrame->Delete();
     this->MouseModeFrame = NULL;
+    }
+  if ( this->ViewAndLayoutFrame )
+    {
+    this->ViewAndLayoutFrame->SetParent (NULL);
+    this->ViewAndLayoutFrame->Delete();
+    this->ViewAndLayoutFrame = NULL;    
     }
   if ( this->SlicerWelcomeIcons )
     {
@@ -288,6 +294,10 @@ void vtkSlicerWelcomeGUI::AddGUIObservers ( )
     {
     this->MouseModeFrame->AddObserver (vtkSlicerModuleCollapsibleFrame::FrameExpandEvent, (vtkCommand *)this->GUICallbackCommand );
     }
+  if ( this->ViewAndLayoutFrame )
+    {
+    this->ViewAndLayoutFrame->AddObserver (vtkSlicerModuleCollapsibleFrame::FrameExpandEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
 }
 
 
@@ -339,6 +349,10 @@ void vtkSlicerWelcomeGUI::RemoveGUIObservers ( )
     {
     this->MouseModeFrame->RemoveObservers (vtkSlicerModuleCollapsibleFrame::FrameExpandEvent, (vtkCommand *)this->GUICallbackCommand );
     }
+  if ( this->ViewAndLayoutFrame )
+    {
+    this->ViewAndLayoutFrame->RemoveObservers (vtkSlicerModuleCollapsibleFrame::FrameExpandEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
 }
 
 
@@ -379,6 +393,7 @@ void vtkSlicerWelcomeGUI::ProcessGUIEvents ( vtkObject *caller,
       this->CommunityFrame->CollapseFrame();
       this->CreditFrame->CollapseFrame();
       this->MouseModeFrame->CollapseFrame();
+      this->ViewAndLayoutFrame->CollapseFrame();
       }
     else if ( f == this->OverviewFrame )
       {
@@ -392,6 +407,7 @@ void vtkSlicerWelcomeGUI::ProcessGUIEvents ( vtkObject *caller,
       this->CommunityFrame->CollapseFrame();
       this->CreditFrame->CollapseFrame();
       this->MouseModeFrame->CollapseFrame();
+      this->ViewAndLayoutFrame->CollapseFrame();
       }
     else if ( f == this->ModulesFrame )
       {
@@ -405,6 +421,7 @@ void vtkSlicerWelcomeGUI::ProcessGUIEvents ( vtkObject *caller,
       this->CommunityFrame->CollapseFrame();
       this->CreditFrame->CollapseFrame();
       this->MouseModeFrame->CollapseFrame();
+      this->ViewAndLayoutFrame->CollapseFrame();
       }
     else if ( f == this->LoadFrame )
       {
@@ -418,6 +435,7 @@ void vtkSlicerWelcomeGUI::ProcessGUIEvents ( vtkObject *caller,
       this->CommunityFrame->CollapseFrame();
       this->CreditFrame->CollapseFrame();
       this->MouseModeFrame->CollapseFrame();
+      this->ViewAndLayoutFrame->CollapseFrame();
       }
     else if ( f == this->SaveFrame )
       {
@@ -431,6 +449,7 @@ void vtkSlicerWelcomeGUI::ProcessGUIEvents ( vtkObject *caller,
       this->CommunityFrame->CollapseFrame();
       this->CreditFrame->CollapseFrame();
       this->MouseModeFrame->CollapseFrame();
+      this->ViewAndLayoutFrame->CollapseFrame();
       }
     else if ( f == this->DisplayFrame )
       {
@@ -444,6 +463,7 @@ void vtkSlicerWelcomeGUI::ProcessGUIEvents ( vtkObject *caller,
       this->CommunityFrame->CollapseFrame();
       this->CreditFrame->CollapseFrame();
       this->MouseModeFrame->CollapseFrame();
+      this->ViewAndLayoutFrame->CollapseFrame();
       }
     else if ( f == this->ConfigureFrame )
       {
@@ -457,6 +477,7 @@ void vtkSlicerWelcomeGUI::ProcessGUIEvents ( vtkObject *caller,
       this->CommunityFrame->CollapseFrame();
       this->CreditFrame->CollapseFrame();
       this->MouseModeFrame->CollapseFrame();
+      this->ViewAndLayoutFrame->CollapseFrame();
       }
     else if ( f == this->HintsFrame )
       {
@@ -470,6 +491,7 @@ void vtkSlicerWelcomeGUI::ProcessGUIEvents ( vtkObject *caller,
       this->CommunityFrame->CollapseFrame();
       this->CreditFrame->CollapseFrame();
       this->MouseModeFrame->CollapseFrame();
+      this->ViewAndLayoutFrame->CollapseFrame();
       }
     else if ( f == this->CommunityFrame )
       {
@@ -483,6 +505,7 @@ void vtkSlicerWelcomeGUI::ProcessGUIEvents ( vtkObject *caller,
       this->HintsFrame->CollapseFrame();
       this->CreditFrame->CollapseFrame();
       this->MouseModeFrame->CollapseFrame();
+      this->ViewAndLayoutFrame->CollapseFrame();
       }
     else if ( f == this->CreditFrame )
       {
@@ -496,6 +519,7 @@ void vtkSlicerWelcomeGUI::ProcessGUIEvents ( vtkObject *caller,
       this->HintsFrame->CollapseFrame();
       this->CommunityFrame->CollapseFrame();
       this->MouseModeFrame->CollapseFrame();
+      this->ViewAndLayoutFrame->CollapseFrame();
       }
     else if ( f == this->MouseModeFrame )
       {
@@ -509,6 +533,21 @@ void vtkSlicerWelcomeGUI::ProcessGUIEvents ( vtkObject *caller,
       this->HintsFrame->CollapseFrame();
       this->CommunityFrame->CollapseFrame();
       this->CreditFrame->CollapseFrame();
+      this->ViewAndLayoutFrame->CollapseFrame();
+      }
+    else if ( f == this->ViewAndLayoutFrame )
+      {
+      this->WelcomeFrame->CollapseFrame();
+      this->ModulesFrame->CollapseFrame();
+      this->OverviewFrame->CollapseFrame();
+      this->LoadFrame->CollapseFrame();
+      this->SaveFrame->CollapseFrame();
+      this->DisplayFrame->CollapseFrame();
+      this->ConfigureFrame->CollapseFrame();
+      this->HintsFrame->CollapseFrame();
+      this->CommunityFrame->CollapseFrame();
+      this->CreditFrame->CollapseFrame();
+      this->MouseModeFrame->CollapseFrame();
       }
     }
 }
@@ -619,6 +658,19 @@ void vtkSlicerWelcomeGUI::BuildGUI ( )
                   this->DisplayFrame->GetWidgetName(),
                   this->UIPanel->GetPageWidget("SlicerWelcome")->GetWidgetName());
     this->BuildDataDisplayPanel (this->DisplayFrame->GetFrame() );
+    
+    //---
+    // VIEW AND LAYOUT
+    //---
+    this->ViewAndLayoutFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+    this->ViewAndLayoutFrame->SetParent ( page );
+    this->ViewAndLayoutFrame->Create ( );
+    this->ViewAndLayoutFrame->SetLabelText ("Configuring Viewers & Layout");
+    this->ViewAndLayoutFrame->CollapseFrame ( );
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 4 -in %s",
+                  this->ViewAndLayoutFrame->GetWidgetName(),
+                  this->UIPanel->GetPageWidget("SlicerWelcome")->GetWidgetName());
+    this->BuildViewAndLayoutPanel( this->ViewAndLayoutFrame->GetFrame() );
     
     //---
     // MOUSE MODES FRAME
@@ -1201,16 +1253,110 @@ void vtkSlicerWelcomeGUI::BuildDataDisplayPanel( vtkKWFrame *parent )
   l2->Delete();
   l3->Delete();
   l4->Delete();
+
   voltxt->Delete();
   modtxt->Delete();
   fidtxt->Delete();
   sstxt->Delete();
+
   f->Delete();
 }
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerWelcomeGUI::BuildMouseModePanel( vtkKWFrame *parent )
+void vtkSlicerWelcomeGUI::BuildViewAndLayoutPanel ( vtkKWFrame *parent )
+{
+
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication());
+  if ( !app )
+    {
+    vtkErrorMacro ( "BuildDataDisplayPanel: got NULL application." );
+    return;
+    }
+
+  vtkKWFrame *f = vtkKWFrame::New();
+  f->SetParent (parent);
+  f->Create();
+
+  vtkKWLabel *l0 = vtkKWLabel::New();
+  l0->SetParent ( f );
+  l0->Create();
+  l0->SetImageToIcon ( this->SlicerWelcomeIcons->GetLayoutIcon () );
+
+  vtkKWTextWithHyperlinksWithScrollbars *ltxt = vtkKWTextWithHyperlinksWithScrollbars::New ( );
+  ltxt->SetParent ( f );
+  ltxt->Create();
+  ltxt->SetHorizontalScrollbarVisibility ( 0 );
+  ltxt->SetVerticalScrollbarVisibility ( 1);
+  ltxt->GetWidget()->SetReliefToGroove();
+  ltxt->GetWidget()->SetWrapToWord();
+  ltxt->GetWidget()->QuickFormattingOn();
+  ltxt->GetWidget()->SetHeight(5);
+  const char *t4 = "**Application Layout:** The Toolbar's **Layout** icon, shown above at the left-most, exposes a menu of application layout options. Selecting any of the options (also shown above) will adjust the arrangement and visibility of the 3D Viewer, Slice Viewers, and the GUI Panel.";
+  ltxt->SetText ( t4 );
+  //Important that Read only after SetText otherwise it doesn't work
+  ltxt->GetWidget()->ReadOnlyOn();
+
+  vtkKWLabel *l1 = vtkKWLabel::New();
+  l1->SetParent ( f );
+  l1->Create();
+  l1->SetImageToIcon ( this->SlicerWelcomeIcons->GetSlicesControlIcon () );
+
+  vtkKWTextWithHyperlinksWithScrollbars *sctxt = vtkKWTextWithHyperlinksWithScrollbars::New ( );
+  sctxt->SetParent ( f );
+  sctxt->Create();
+  sctxt->SetHorizontalScrollbarVisibility ( 0 );
+  sctxt->SetVerticalScrollbarVisibility ( 1);
+  sctxt->GetWidget()->SetReliefToGroove();
+  sctxt->GetWidget()->SetWrapToWord();
+  sctxt->GetWidget()->QuickFormattingOn();
+  sctxt->GetWidget()->SetHeight(10);
+  const char *t5 = "**Slices Controls:** Each Slice Viewer has 3 layers: Foreground, Background, and a Label Layer.  The interface shown above, found in the \"Manipulate Slice Views\" panel, can be used to adjust the view of one or more of these layers in all Slice Viewers simultaneously. From left to right, the icons expose options for: **Visibility**, **Data Centering**, **Label Map Opacity**, **Annotations**, **Layer Compositing**, **Crosshairs**, **Axis Labels**, and **Field of view**.Most of these -- and additional -- features can be found in each individual Slice Viewer's user interface (where they can be applied to that viewer exclusively). The **Fade Slider** and its surrounding icons shown above right, provide the ability to view only the Foreground or Background layer, or to fade between them; this feature is especially useful for comparing two datasets.";
+  sctxt->SetText ( t5 );
+  //Important that Read only after SetText otherwise it doesn't work
+  sctxt->GetWidget()->ReadOnlyOn();
+
+  vtkKWLabel *l2 = vtkKWLabel::New();
+  l2->SetParent ( f );
+  l2->Create();
+  l2->SetImageToIcon ( this->SlicerWelcomeIcons->GetViewControlIcon () );
+  
+  vtkKWTextWithHyperlinksWithScrollbars *vctxt = vtkKWTextWithHyperlinksWithScrollbars::New ( );
+  vctxt->SetParent ( f );
+  vctxt->Create();
+  vctxt->SetHorizontalScrollbarVisibility ( 0 );
+  vctxt->SetVerticalScrollbarVisibility ( 1);
+  vctxt->GetWidget()->SetReliefToGroove();
+  vctxt->GetWidget()->SetWrapToWord();
+  vctxt->GetWidget()->QuickFormattingOn();
+  vctxt->GetWidget()->SetHeight(8);
+  const char *t6 = "**3D View Controls:** The interface shown above, found in the \"Manipulate 3D View\" panel, can be used to modify the 3D view. Clicking on any axis labels in the left-most panel changes the viewer's **Point of View**. The collection of icons in the center controls options such as **Pitch**, **Roll**, and **Yaw**; **View Centering**, orthographic or perspective **Projection**, **Visibility & Display** parameters, **Zoom** and **Stereo Viewing** options. The right-most checkboxes toggle view **Spin** and **Rock** animations for added enhancement of depth and layout. ";
+  vctxt->SetText ( t6 );
+  //Important that Read only after SetText otherwise it doesn't work
+  vctxt->GetWidget()->ReadOnlyOn();
+
+  app->Script ( "pack %s -side top -anchor nw -fill x -expand y -padx 2 -pady 4", f->GetWidgetName() );
+  app->Script ( "pack %s %s %s %s %s %s -side top -anchor c  -fill x -expand y -padx 6 -pady 4",
+                l0->GetWidgetName(),
+                ltxt->GetWidgetName(),
+                l1->GetWidgetName(),
+                sctxt->GetWidgetName(),
+                l2->GetWidgetName(),
+                vctxt->GetWidgetName() );
+
+
+  l0->Delete();
+  l1->Delete();
+  l2->Delete();
+  ltxt->Delete();
+  sctxt->Delete();
+  vctxt->Delete();
+  f->Delete();
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerWelcomeGUI::BuildMouseModePanel ( vtkKWFrame *parent )
 {
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication());
   if ( !app )
@@ -1272,8 +1418,8 @@ void vtkSlicerWelcomeGUI::BuildOtherHelpPanel( vtkKWFrame *parent )
   basictxt->GetWidget()->SetReliefToGroove();
   basictxt->GetWidget()->SetWrapToWord();
   basictxt->GetWidget()->QuickFormattingOn();
-  basictxt->GetWidget()->SetHeight(12);
-  const char *t1 = " **Help For Performing Common Tasks:**\n\n* For general application and specific module documentation, see: <a>http://www.slicer.org/slicerWiki/index.php/Documentation-3.4</a>.\n* For information on manipulating Slice Viewers and the 3D Viewer, see: <a>http://www.slicer.org/slicerWiki/index.php/Modules:MainApplicationGUI-Documentation-3.4#Slicer_Viewers</a>.\n* For information on how basic visualization operations are performed, see: <a>http://www.na-mic.org/Wiki/index.php/Slicer3.2:Training#1.1</a>.\n* For information on merging multiple datasets (and multiple modalities) for a single subject, see: <a>http://www.na-mic.org/Wiki/index.php/Slicer3.2:Training#1.4</a>. \n* For information about manual segmentation of image data, see: <a>http://www.na-mic.org/Wiki/index.php/Slicer3.2:Training#1.2</a>. \n\n";
+  basictxt->GetWidget()->SetHeight(10);
+  const char *t1 = " **Help For Performing Common Tasks:**\n\n* For general application and specific module documentation, see: <a>http://www.slicer.org/slicerWiki/index.php/Documentation-3.4</a>.\n* For information on how basic visualization operations are performed, see: <a>http://www.na-mic.org/Wiki/index.php/Slicer3.2:Training#1.1</a>.\n* For information on merging multiple datasets (and multiple modalities) for a single subject, see: <a>http://www.slicer.org/slicerWiki/index.php/Documentation-3.4#Registration</a>. \n* For information about manual segmentation of image data, see: <a>http://www.na-mic.org/Wiki/index.php/Slicer3.2:Training#1.2</a>. \n\n";
   basictxt->SetText ( t1 );
   //Important that Read only after SetText otherwise it doesn't work
   basictxt->GetWidget()->ReadOnlyOn();
