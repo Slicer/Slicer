@@ -645,8 +645,8 @@ void vtkKWWindowLevelThresholdEditor::ProcessThresholdCommand(double min, double
     }
 
   double *range = this->ThresholdRange->GetRange();
-  if (range[0] != min || range[1] != max)
-    {
+  //if (range[0] != min || range[1] != max)
+  //  {
     range[0] = min;
     range[1] = max;
 
@@ -661,7 +661,7 @@ void vtkKWWindowLevelThresholdEditor::ProcessThresholdCommand(double min, double
       }
 
     this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, range);
-    }
+    //}
 }
 
 //----------------------------------------------------------------------------
