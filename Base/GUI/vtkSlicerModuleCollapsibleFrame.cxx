@@ -413,6 +413,8 @@ void vtkSlicerModuleCollapsibleFrame::AdjustMarginCallback()
 //----------------------------------------------------------------------------
 void vtkSlicerModuleCollapsibleFrame::ExpandFrame()
 {
+
+  this->InvokeEvent ( vtkSlicerModuleCollapsibleFrame::FrameExpandEvent );
   if (this->Frame && this->Frame->IsCreated())
     {
     this->Script("pack %s -fill both -expand yes -padx 2 -pady 2",
@@ -424,11 +426,13 @@ void vtkSlicerModuleCollapsibleFrame::ExpandFrame()
 //    this->IconData->SetImage(vtkKWIcon::IconShrink);
     this->Icon->SetImageToIcon(this->IconData);
     }
+
 }
 
 //----------------------------------------------------------------------------
 void vtkSlicerModuleCollapsibleFrame::CollapseFrame()
 {
+//  this->InvokeEvent ( vtkSlicerModuleCollapsibleFrame::FrameCollapseEvent );
   if (this->Frame && this->Frame->IsCreated())
     {
     this->Script("pack forget %s", this->Frame->GetWidgetName());

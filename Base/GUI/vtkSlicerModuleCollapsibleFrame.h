@@ -160,7 +160,14 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleCollapsibleFrame : public vtkKWC
   virtual void AdjustMarginCallback();
   virtual void CollapseButtonCallback();
   virtual void LabelSingleClickCallback();
-  
+
+  //BTX
+  enum
+    {
+      FrameCollapseEvent = 11000,
+      FrameExpandEvent,
+    };
+  //ETX
 
  protected:
   vtkSlicerModuleCollapsibleFrame();
@@ -188,6 +195,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleCollapsibleFrame : public vtkKWC
 
   virtual vtkKWLabel *GetLabelIcon();
 
+  
  private:
   vtkSlicerModuleCollapsibleFrame(const vtkSlicerModuleCollapsibleFrame&); // Not implemented
   void operator=(const vtkSlicerModuleCollapsibleFrame&); // Not implemented
