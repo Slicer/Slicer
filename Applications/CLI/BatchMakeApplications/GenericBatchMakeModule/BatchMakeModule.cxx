@@ -57,7 +57,7 @@ std::list< TCLAP::Arg* > GetDirectoryMaskParameters(
     // TCLAP::Arg::getName returns the flag of the argument and
     // and not the name, usually the difference is in the case of 
     // the first char.
-    mask[0] = std::tolower( mask[0] );
+    mask[0] = tolower( mask[0] );
 
     std::list<TCLAP::Arg*>::const_iterator it2;
     for( it2 = begin; it2 != end; ++it2 )
