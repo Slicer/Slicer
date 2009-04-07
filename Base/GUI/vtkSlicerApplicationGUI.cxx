@@ -625,76 +625,98 @@ void vtkSlicerApplicationGUI::UpdateLayout ( )
   if ( target == vtkMRMLLayoutNode::SlicerLayoutConventionalView &&
       this->GetCurrentLayout()!= vtkMRMLLayoutNode::SlicerLayoutConventionalView )
     {
+#ifndef TOOLBAR_DEBUG
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
+#endif
     this->RepackMainViewer (vtkMRMLLayoutNode::SlicerLayoutConventionalView, NULL );
     this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutConventionalView );
     }
   else if ( target == vtkMRMLLayoutNode::SlicerLayoutOneUp3DView &&
             this->GetCurrentLayout()!= vtkMRMLLayoutNode::SlicerLayoutOneUp3DView )
     {
+#ifndef TOOLBAR_DEBUG
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
+#endif
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutOneUp3DView, NULL);
     this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutOneUp3DView );
     }
   else if ( target == vtkMRMLLayoutNode::SlicerLayoutFourUpView &&
             this->GetCurrentLayout()!= vtkMRMLLayoutNode::SlicerLayoutFourUpView)
     {
+#ifndef TOOLBAR_DEBUG
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
+#endif
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutFourUpView, NULL );
     this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutFourUpView );    
     }
   else if ( target == vtkMRMLLayoutNode::SlicerLayoutTabbed3DView &&
             this->GetCurrentLayout()!= vtkMRMLLayoutNode::SlicerLayoutTabbed3DView )
     {
+#ifndef TOOLBAR_DEBUG
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
+#endif
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutTabbed3DView, NULL );
     this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutTabbed3DView );    
     }
   else if ( target == vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView &&
             this->GetCurrentLayout()!= vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView )
     {
+#ifndef TOOLBAR_DEBUG
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
+#endif
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView, NULL );
     this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView );    
     }
   else if ( target == vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView &&
             this->GetCurrentLayout()!= vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView)
     {
+#ifndef TOOLBAR_DEBUG
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
+#endif
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView, "Red");
     this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView );    
     }
   else if ( target == vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView &&
             this->GetCurrentLayout()!= vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView)
     {
+#ifndef TOOLBAR_DEBUG
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
+#endif
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView, "Yellow");
     this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView );    
     }
   else if ( target == vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView &&
             this->GetCurrentLayout()!= vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView)
     {
+#ifndef TOOLBAR_DEBUG
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
+#endif
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView, "Green");
     this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView );    
     }
   else if ( target == vtkMRMLLayoutNode::SlicerLayoutOneUpSliceView &&
              this->GetCurrentLayout()!= vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView)
     {
+#ifndef TOOLBAR_DEBUG
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
+#endif
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView, "Red");
     this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView );    
     }
   else if ( target == vtkMRMLLayoutNode::SlicerLayoutOneUpSliceView &&
              this->GetCurrentLayout()!= vtkMRMLLayoutNode::SlicerLayoutOneUpSliceView)
     {
+#ifndef TOOLBAR_DEBUG
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
+#endif
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView, "Red");
     this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView );    
     }
   else if ( (target == vtkMRMLLayoutNode::SlicerLayoutCompareView) )
     {
+#ifndef TOOLBAR_DEBUG
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
+#endif
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutCompareView, NULL);
     this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutCompareView );    
     }
@@ -1018,7 +1040,9 @@ void vtkSlicerApplicationGUI::ProcessMRMLEvents ( vtkObject *caller,
        event == vtkCommand::ModifiedEvent )
     {
     //std::cout << "Layout node modified: " << *this->GUILayoutNode << std::endl;
+#ifndef TOOLBAR_DEBUG
     this->ApplicationToolbar->UpdateLayoutMenu();
+#endif
     this->UpdateLayout();
     }
 
@@ -1027,10 +1051,12 @@ void vtkSlicerApplicationGUI::ProcessMRMLEvents ( vtkObject *caller,
       event == vtkCommand::ModifiedEvent )
     {
     // std::cout << "Scene modified" << std::endl;
+#ifndef TOOLBAR_DEBUG
     if(this->ApplicationToolbar)
       {
       this->ApplicationToolbar->UpdateLayoutMenu();
       }
+#endif
     // do not update the layout on every scene modified. only update
     // the layout when the layout node is modified (first case) or
     // when switching to a new layout node (third case)
@@ -1065,7 +1091,9 @@ void vtkSlicerApplicationGUI::ProcessMRMLEvents ( vtkObject *caller,
 */
       // std::cout << "Switching layout nodes" << std::endl;
       this->UpdateLayout();
+#ifndef TOOLBAR_DEBUG
       this->ApplicationToolbar->UpdateLayoutMenu();
+#endif
       if ( this->ApplicationLogic != NULL )
         {
         if ( this->ApplicationLogic->GetSelectionNode() != NULL )
@@ -1259,7 +1287,9 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
 #ifndef SLICEVIEWER_DEBUG
   // restore view layout from application registry...
   this->BuildMainViewer ( app->GetApplicationLayoutType());
+#ifndef TOOLBAR_DEBUG
   this->ApplicationToolbar->SetLayoutMenubuttonValueToLayout ( app->GetApplicationLayoutType() );
+#endif
 #endif
 
   // after SliceGUIs are created, the ViewControlGUI
@@ -1392,7 +1422,9 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
   }
   this->Built = true;
 //  this->UpdateLayout();
+#ifndef TOOLBAR_DEBUG
 //  this->ApplicationToolbar->UpdateLayoutMenu();
+#endif
 
   }
 }
