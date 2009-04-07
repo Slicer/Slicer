@@ -74,6 +74,7 @@ vtkSlicerWelcomeGUI::vtkSlicerWelcomeGUI()
   this->MouseModeFrame = NULL;
   this->ViewAndLayoutFrame = NULL;
   this->SetGUIWidth(-1);
+  this->Observed = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -161,6 +162,7 @@ vtkSlicerWelcomeGUI::~vtkSlicerWelcomeGUI()
     this->SlicerWelcomeIcons = NULL;
     }
   
+  this->Observed = 0;
   this->Logic = NULL;
 //    vtkSetAndObserveMRMLNodeMacro( this->SlicerWelcomeNode, NULL );
 }
@@ -174,7 +176,6 @@ void vtkSlicerWelcomeGUI::Enter()
     vtkSlicerGUILayout *geom = app->GetDefaultGeometry ( );
     if ( geom )
       {
-      this->AddGUIObservers();
       vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
       if ( appGUI )
         {
@@ -183,6 +184,21 @@ void vtkSlicerWelcomeGUI::Enter()
           this->SetGUIWidth (appGUI->GetMainSlicerWindow()->GetMainSplitFrame()->GetFrame1Size ());
           appGUI->GetMainSlicerWindow()->GetMainSplitFrame()->SetFrame1Size (geom->GetDefaultGUIPanelWidth() * 1.75 );
           }
+        }
+      }
+
+    if (this->Built == false )
+      {
+      this->BuildGUI();
+      this->Built = true;
+      this->AddGUIObservers();
+      this->AddObserver ( vtkSlicerModuleGUI::ModuleSelectedEvent, (vtkCommand *)this->ApplicationGUI->GetGUICallbackCommand() );
+      }
+    else
+      {
+      if ( !this->Observed )
+        {
+        this->AddGUIObservers();
         }
       }
     }
@@ -195,13 +211,18 @@ void vtkSlicerWelcomeGUI::Exit ( )
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   if ( app )
     {
+
+    if ( this->Built )
+      {
+      this->RemoveGUIObservers();
+      }
+
     vtkSlicerGUILayout *geom = app->GetDefaultGeometry ( );
     if ( geom )
       {
       vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
       if ( appGUI )
         {
-        this->RemoveGUIObservers();
         if ( appGUI->GetMainSlicerWindow() )
           {
           if ( this->GUIWidth < 0 )
@@ -298,6 +319,7 @@ void vtkSlicerWelcomeGUI::AddGUIObservers ( )
     {
     this->ViewAndLayoutFrame->AddObserver (vtkSlicerModuleCollapsibleFrame::FrameExpandEvent, (vtkCommand *)this->GUICallbackCommand );
     }
+  this->Observed = 1;
 }
 
 
@@ -353,6 +375,7 @@ void vtkSlicerWelcomeGUI::RemoveGUIObservers ( )
     {
     this->ViewAndLayoutFrame->RemoveObservers (vtkSlicerModuleCollapsibleFrame::FrameExpandEvent, (vtkCommand *)this->GUICallbackCommand );
     }
+  this->Observed = 0;
 }
 
 
@@ -811,6 +834,7 @@ void vtkSlicerWelcomeGUI::BuildGUI ( )
     NCIGTLabel->Delete();
     BIRNLabel->Delete();
     f->Delete();
+    this->Built = true;
 }
 
 

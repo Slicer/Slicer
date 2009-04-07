@@ -110,6 +110,8 @@ protected:
   vtkSlicerModuleCollapsibleFrame *CreditFrame;  
   vtkSlicerModuleCollapsibleFrame *MouseModeFrame;
   vtkSlicerModuleCollapsibleFrame *ViewAndLayoutFrame;
+
+  bool Observed;
 };
 
 #endif
