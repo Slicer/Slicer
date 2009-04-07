@@ -91,7 +91,7 @@ vtkCxxSetObjectMacro(vtkSlicerApplicationGUI, SlicesGUI, vtkSlicerSlicesGUI);
 //#define SLICEVIEWER_DEBUG
 
 //#define MENU_DEBUG
-#define SLICESCONTROL_DEBUG
+//#define SLICESCONTROL_DEBUG
 //#define MODULECHOOSE_DEBUG
 
 //---------------------------------------------------------------------------
