@@ -519,7 +519,9 @@ if { [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [strin
       # point the tkinter build file to the slicer tcl-build 
       replaceStringInFile "PCbuild/_tkinter.vcproj" "tcltk" "tcl-build"
 
-      runcmd $::MAKE PCbuild/pcbuild.sln /Upgrade
+      if { $::GENERATOR != "Visual Studio 7 .NET 2003" } {
+        runcmd $::MAKE PCbuild/pcbuild.sln /Upgrade
+      }
       runcmd $::MAKE PCbuild/pcbuild.sln /out buildlog.txt /build Release
 
       # fix distutils to ignore it's hardcoded python version info
