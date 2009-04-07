@@ -404,7 +404,7 @@ switch $::tcl_platform(os) {
         if {[info exists ::env(MAKE)]} {
             set ::MAKE $::env(MAKE)
         } else {
-            set ::MAKE "c:/Program\ Files/Microsoft\ Visual\ Studio\ .NET/Common7/IDE/devenv"
+            set ::MAKE "c:/Program\ Files/Microsoft\ Visual\ Studio\ .NET/Common7/IDE/devenv.exe"
         }
 
         if {[info exists ::env(COMPILER_PATH)]} {
@@ -419,7 +419,7 @@ switch $::tcl_platform(os) {
         #
         if { [file exists "c:/Program Files/Microsoft Visual Studio .NET 2003/Common7/IDE/devenv.exe"] } {
             set ::GENERATOR "Visual Studio 7 .NET 2003" 
-            set ::MAKE "c:/Program\ Files/Microsoft\ Visual\ Studio\ .NET 2003/Common7/IDE/devenv"
+            set ::MAKE "c:/Program\ Files/Microsoft\ Visual\ Studio\ .NET 2003/Common7/IDE/devenv.exe"
             set ::COMPILER_PATH "c:/Program\ Files/Microsoft\ Visual\ Studio\ .NET 2003/Vc7/bin"
             set ::MSSDK_PATH "C:\Program Files\Microsoft Visual Studio .NET 2003\Vc7\PlatformSDK"
         }
