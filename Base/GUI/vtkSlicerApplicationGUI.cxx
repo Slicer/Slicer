@@ -91,7 +91,7 @@ vtkCxxSetObjectMacro(vtkSlicerApplicationGUI, SlicesGUI, vtkSlicerSlicesGUI);
 //#define SLICEVIEWER_DEBUG
 
 //#define MENU_DEBUG
-//#define SLICESCONTROL_DEBUG
+#define SLICESCONTROL_DEBUG
 //#define MODULECHOOSE_DEBUG
 
 //---------------------------------------------------------------------------
@@ -2128,7 +2128,9 @@ void vtkSlicerApplicationGUI::PackConventionalView ( )
     g->GridGUI( this->GridFrame2, 0, 2 );
 
     
+#ifndef SLICESCONTROL_DEBUG
     this->GetSlicesControlGUI()->RequestFOVEntriesUpdate();
+#endif
 
     // finally, modify the layout node
     layout->DisableModifiedEventOn();
@@ -2230,7 +2232,9 @@ void vtkSlicerApplicationGUI::PackOneUpSliceView ( const char * whichSlice )
       newlayout = vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView ;
       }
     
+#ifndef SLICESCONTROL_DEBUG
     this->GetSlicesControlGUI()->RequestFOVEntriesUpdate();
+#endif
    
     // finally modify the layout node
     layout->DisableModifiedEventOn();
@@ -2279,7 +2283,9 @@ void vtkSlicerApplicationGUI::PackFourUpView ( )
     g = this->SlicesGUI->GetSliceGUI("Green");
     g->GridGUI( this->GetGridFrame1(), 1, 1 );
 
+#ifndef SLICESCONTROL_DEBUG
     this->GetSlicesControlGUI()->RequestFOVEntriesUpdate();
+#endif
    
     // finally modify the layout node
     layout->DisableModifiedEventOn();
@@ -2387,7 +2393,9 @@ void vtkSlicerApplicationGUI::PackTabbedSliceView ( )
     // it again when the view configuration changes.
     this->MainSlicerWindow->GetViewNotebook()->HidePage ( "View");
      
+#ifndef SLICESCONTROL_DEBUG
     this->GetSlicesControlGUI()->RequestFOVEntriesUpdate();
+#endif
  
     // finally modify the layout node
     layout->DisableModifiedEventOn();
@@ -2526,7 +2534,9 @@ void vtkSlicerApplicationGUI::PackCompareView()
         }
       }
 
+#ifndef SLICESCONTROL_DEBUG
     this->GetSlicesControlGUI()->RequestFOVEntriesUpdate();
+#endif
 
     // finally modify the layout node
     layout->DisableModifiedEventOn();
