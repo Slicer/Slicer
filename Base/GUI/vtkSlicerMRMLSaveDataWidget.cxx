@@ -30,6 +30,7 @@
 #include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLUnstructuredGridNode.h"
 #include "vtkMRMLUnstructuredGridStorageNode.h"
+#include "vtkMRMLSceneSnapshotNode.h"
 
 #include <vtksys/stl/string>
 #include <vtksys/SystemTools.hxx>
@@ -484,7 +485,8 @@ int vtkSlicerMRMLSaveDataWidget::SaveScene(int sceneRow)
     vtkMRMLScene *scene = this->GetMRMLScene();
     vtkMRMLNode *node;
     int nnodes = scene->GetNumberOfNodesByClass("vtkMRMLStorageNode");
-    for (int n=0; n<nnodes; n++)
+    int n;
+    for (n=0; n<nnodes; n++)
       {
       node = scene->GetNthNodeByClass(n, "vtkMRMLStorageNode");
       vtkMRMLStorageNode *snode = vtkMRMLStorageNode::SafeDownCast(node);
@@ -496,6 +498,15 @@ int vtkSlicerMRMLSaveDataWidget::SaveScene(int sceneRow)
         snode->SetFileName(relPath.c_str());
         snode->SetSceneRootDir(directory.c_str());
         }
+      }
+    
+    nnodes = scene->GetNumberOfNodesByClass("vtkMRMLSceneSnapshotNode");
+    for ( n=0; n<nnodes; n++)
+      {
+      node = scene->GetNthNodeByClass(n, "vtkMRMLSceneSnapshotNode");
+      vtkMRMLSceneSnapshotNode *snode = vtkMRMLSceneSnapshotNode::SafeDownCast(node);
+      snode->SetSceneRootDir(directory.c_str());
+      snode->SetRelativePaths();
       }
 
     this->GetMRMLScene()->SetURL(fileName.c_str());

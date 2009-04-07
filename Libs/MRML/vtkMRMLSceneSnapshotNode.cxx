@@ -16,6 +16,9 @@ Version:   $Revision: 1.14 $
 #include <iostream>
 #include <sstream>
 
+#include <vtksys/stl/string>
+#include <vtksys/SystemTools.hxx>
+
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
 #include "vtkCollection.h"
@@ -23,6 +26,7 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLSceneSnapshotNode.h"
 
 #include "vtkMRMLScene.h"
+#include "vtkMRMLStorageNode.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLSceneSnapshotNode* vtkMRMLSceneSnapshotNode::New()
@@ -245,6 +249,7 @@ void vtkMRMLSceneSnapshotNode::StoreScene()
       newNode->SetScene(this->Nodes);
       newNode->SetAddToSceneNoModify(0);
       newNode->CopyID(node);
+
       this->Nodes->GetCurrentScene()->vtkCollection::AddItem((vtkObject *)newNode);
       //--- Try deleting copy after collection has a reference to it,
       //--- in order to eliminate debug leaks..
@@ -340,9 +345,11 @@ void vtkMRMLSceneSnapshotNode::RestoreScene()
         }
       else 
         {
-        this->Scene->AddNodeNoNotify(node);
         addedNodes.push_back(node);
+        node->SetAddToSceneNoModify(1);
+        this->Scene->AddNodeNoNotify(node);
         // to prevent reading data on UpdateScene()
+        // but new nodes should read their data
         //node->SetAddToSceneNoModify(0);
         }
       }
@@ -379,4 +386,42 @@ void vtkMRMLSceneSnapshotNode::RestoreScene()
     }
 
 }
+//----------------------------------------------------------------------------
+void vtkMRMLSceneSnapshotNode::SetRelativePaths()
+{
+  if (this->Scene == NULL)
+    {
+    return;
+    }
+
+  if (this->Nodes == NULL)
+    {
+    return;
+    }
+
+  unsigned int nnodesSanpshot = this->Nodes->GetCurrentScene()->GetNumberOfItems();
+  unsigned int n;
+  vtkMRMLNode *node = NULL;
+
+  std::string directory = this->GetSceneRootDir();
+
+  for (n=0; n<nnodesSanpshot; n++) 
+    {
+    node  = dynamic_cast < vtkMRMLNode *>(this->Nodes->GetCurrentScene()->GetItemAsObject(n));
+    if (node) 
+      {
+      // for storage nodes replace full path with relative
+      vtkMRMLStorageNode *snode = vtkMRMLStorageNode::SafeDownCast(node);
+      if (snode && snode->GetFileName() )
+        {
+        std::string absPath = snode->GetFullNameFromFileName();
+        std::string relPath = vtksys::SystemTools::RelativePath(
+            directory.c_str(), absPath.c_str());
+        snode->SetFileName(relPath.c_str());
+        snode->SetSceneRootDir(directory.c_str());
+        }
+      }
+    }
+  }
+
 // End
