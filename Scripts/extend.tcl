@@ -259,6 +259,9 @@ proc loadArray {fileName arrayName} {
 
 proc upload {fileName} {
 
+  puts "Uploading $fileName to ext.slicer.org port 8845..."
+  flush stdout
+
   set size [file size $fileName]
   set name [file tail $fileName]
 
@@ -275,6 +278,7 @@ proc upload {fileName} {
   close $sock
   
   puts "uploaded $fileName ($size bytes)"
+  flush stdout
 }
 
 ################################################################################
