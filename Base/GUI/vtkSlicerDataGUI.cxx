@@ -4,6 +4,7 @@
 
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerModuleLogic.h"
+#include "vtkSlicerWindow.h"
 #include "vtkSlicerDataGUI.h"
 #include "vtkSlicerModuleCollapsibleFrame.h"
 
@@ -615,6 +616,13 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
     vtkErrorMacro ( "ProcessGUIEvents: got Null SlicerApplicationGUI" );
     return;    
     }
+  vtkSlicerWindow *win = appGUI->GetMainSlicerWindow();
+  if ( !win )
+    {
+    vtkErrorMacro ( "ProcessGUIEvents: got NULL Slicer Window" );
+    return;
+    }
+
 
   //--- node?
   vtkMRMLNode *node = (vtkMRMLNode *)callData;
@@ -671,11 +679,19 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
 
     else if ( b == this->LoadSceneButton )
       {
+      win->SetStatusText ( "Closing existing scene and opening selected scene file..." );
+      app->Script ( "update idletasks" );
       appGUI->ProcessLoadSceneCommand();
+      win->SetStatusText ( "" );
+      app->Script ( "update idletasks" );
       }
     else if ( b == this->ImportSceneButton )
       {
+      win->SetStatusText ( "Opening and adding data from selected scene file..." );
+      app->Script ( "update idletasks" );
       appGUI->ProcessImportSceneCommand();
+      win->SetStatusText ( "");
+      app->Script ( "update idletasks" );
       }
 
     else if ( b == this->VolumeInformationButton )
@@ -707,11 +723,19 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
 
     else if ( b == this->LoadDicomVolumeButton )
       {
+      win->SetStatusText ( "Opening and adding volume file..." );
+      app->Script ( "update idletasks" );
       appGUI->ProcessAddVolumeCommand();
+      win->SetStatusText ( "");
+      app->Script ( "update idletasks" );
       }
     else if ( b == this->LoadVolumeButton )
       {
+      win->SetStatusText ( "Opening and adding volume file..." );
+      app->Script ( "update idletasks" );
       appGUI->ProcessAddVolumeCommand();
+      win->SetStatusText ( "");
+      app->Script ( "update idletasks" );
       }
 
     else if ( b == this->ModelInformationButton )
@@ -862,12 +886,14 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
     {
     if ( this->AddModelDialogButton != NULL && d == this->AddModelDialogButton->GetLoadSaveDialog() )
       {
-      //--- Withdraw and destroy the AddModelWindow
-      this->WithdrawAddModelWindow();
+
       // If a file has been selected for loading...
       const char *fileName = this->AddModelDialogButton->GetFileName();
       if ( fileName ) 
         {
+        win->SetStatusText ( "Reading and loading model file..." );
+        app->Script ( "update idletasks" );
+
         //--- Get Models Logic
         vtkSlicerModelsGUI* modelsGUI = vtkSlicerModelsGUI::SafeDownCast ( app->GetModuleGUIByName ("Models"));
         if (modelsGUI != NULL )
@@ -890,24 +916,33 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
               }
             else
               {
+              win->SetStatusText ( "" );
+              app->Script ( "update idletasks" );
               this->AddModelDialogButton->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
               const vtksys_stl::string fname(fileName);
               vtksys_stl::string name = vtksys::SystemTools::GetFilenameName(fname);
               // set it to be the active model
               // set the display model
               this->SelectedModelNode = modelNode;
-              this->ModelSelector->SetSelected(this->SelectedModelNode);
+              if ( this->ModelSelector )
+                {
+                this->ModelSelector->SetSelected(this->SelectedModelNode);
+                }
               }
             }
           }
-        return;
+        if ( this->AddModelDialogButton->GetText() )
+          {
+          this->AddModelDialogButton->SetText("");
+          }
+        //--- Withdraw and destroy the AddModelWindow
+        this->WithdrawAddModelWindow();
         }
+      return;
       }
 
     else if ( this->AddModelDirectoryDialogButton != NULL && d == this->AddModelDirectoryDialogButton->GetLoadSaveDialog() )
       {
-      //--- Withdraw and destroy the AddModelWindow
-      this->WithdrawAddModelWindow();
       // If a file has been selected for loading...
       const char *fileName = this->AddModelDirectoryDialogButton->GetFileName();
       if ( fileName ) 
@@ -927,6 +962,9 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
             dialog0->Create ( );
             dialog0->Invoke();
             dialog0->Delete();
+
+            win->SetStatusText ( "Reading and loading files..." );
+            app->Script ( "update idletasks" );
       
             if (modelLogic->AddModels( fileName, ".vtk") == 0)
               {
@@ -953,14 +991,20 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
               }
             }
           }
-        return;      
+        //--- Withdraw and destroy the AddModelWindow
+        if ( this->AddModelDirectoryDialogButton->GetText() )
+          {
+          this->AddModelDirectoryDialogButton->SetText("");
+          }
+        this->WithdrawAddModelWindow();
         }
+
+      win->SetStatusText ( "" );
+      app->Script ( "update idletasks" );
+      return;      
       }    
     else if ( this->AddOverlayDialogButton != NULL && d == this->AddOverlayDialogButton->GetLoadSaveDialog() )
       {
-      //--- Withdraw and destroy the AddOverlayWindow
-      this->WithdrawAddScalarOverlayWindow();
-
       // If a scalar file has been selected for loading...
       const char *fileName = this->AddOverlayDialogButton->GetFileName();
       if ( fileName ) 
@@ -988,6 +1032,10 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
               {
               vtkDebugMacro("vtkSlicerDataGUI: loading scalar for model " << modelNode->GetName());
               // load the scalars
+
+              win->SetStatusText ( "Reading and loading scalar overlay..." );
+              app->Script ( "update idletasks" );
+      
               if (!modelLogic->AddScalar(fileName, modelNode))
                 {
                 vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
@@ -1007,8 +1055,16 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
               }
             }
           }
+        //--- Withdraw and destroy the AddOverlayWindow
+        if ( this->AddOverlayDialogButton->GetText())
+          {
+          this->AddOverlayDialogButton->SetText ("");
+          }
+        this->WithdrawAddScalarOverlayWindow();
         }
-      return;      
+      win->SetStatusText ( "" );
+      app->Script ( "update idletasks" );
+        return;      
       }
     else if ( this->AddFiducialDialog != NULL && d == this->AddFiducialDialog )
       {
@@ -1022,6 +1078,8 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
           vtkSlicerFiducialsLogic* fidLogic = fidGUI->GetLogic();
           if ( fidLogic != NULL )
             {
+            win->SetStatusText ( "Reading and loading fiducial list file..." );
+            app->Script ( "update idletasks" );
             vtkMRMLFiducialListNode *fnode = fidLogic->LoadFiducialList ( fileName );
             if ( fnode == NULL )
               {
@@ -1039,6 +1097,8 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
           }
         this->AddFiducialDialog->SaveLastPathToRegistry("OpenPath");
         }
+      win->SetStatusText ( "");
+      app->Script ( "update idletasks" );
       return;
       }
     else if ( this->AddColorLUTDialog != NULL && d == this->AddColorLUTDialog )
@@ -1053,6 +1113,8 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
           vtkSlicerColorLogic* colorLogic = colorGUI->GetLogic();
           if ( colorLogic != NULL )
             {
+            win->SetStatusText ( "Reading and loading color LUT file..." );
+            app->Script ( "update idletasks" );
             vtkMRMLColorNode *node = colorLogic->LoadColorFile(fileName);
             if (!node)
               {
@@ -1068,21 +1130,14 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
               }
             else
               {
-              //--- Hmmm, GetColorDisplayWidget is not public. Can't reproduce this code.
-              /*
-              if ( colorGUI->GetColorDisplayWidget() != NULL )
-                {
-                colorGUI->GetColorDisplayWidget()->SetColorNode(node);
-                }
-              */
-              //--- Hmmm, this delete is called in the vtkSlicerColorGUI, but not sure why.
-              //--- i will reproduce it here, but
               node->Delete();
               }
             }
           }
         this->AddColorLUTDialog->SaveLastPathToRegistry("OpenPath");
         }
+      win->SetStatusText ( "" );
+      app->Script ( "update idletasks" );
       return;
       }
     else if ( this->AddFiberBundleDialog != NULL && d == this->AddFiberBundleDialog )
@@ -1090,39 +1145,16 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
       const char *fileName = this->AddFiberBundleDialog->GetFileName();
       if ( fileName )
         {
+        win->SetStatusText ( "Reading and loading DTI fiber bundle file..." );
+        app->Script ( "update idletasks" );
         this->Script ( "LoadFiberBundle %s", fileName );
         this->AddFiberBundleDialog->SaveLastPathToRegistry("OpenPath");
         }
-
-      /*
       //---- THIS CHUNK COMES FROM vtkSlicerTractographyDisplayGUI
-      const char *fileName = this->AddFiberBundleDialog->GetFileName();
-      if ( fileName )
-        {
-        vtkSlicerTractographyDisplayGUI* bundlesGUI = vtkSlicerTractographyDisplayGUI::SafeDownCast ( app->GetModuleGUIByName ("FiberBundles"));
-        if (bundlesGUI != NULL )
-          {
-          vtkSlicerTractographyDisplayLogic* bundlesLogic = bundlesGUI->GetLogic();
-          if ( bundlesLogic != NULL )
-            vtkMRMLFiberBundleNode *fiberBundleNode = bundlesLogic->AddFiberBundle( fileName );
-          if ( fiberBundleNode == NULL ) 
-            {
-            vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-            dialog->SetParent ( this->UIPanel->GetPageWidget ( "Data" ) );
-            dialog->SetStyleToMessage();
-            std::string msg = std::string("Unable to read DTI fiber bundle model file ") + std::string(fileName);
-            dialog->SetText(msg.c_str());
-            dialog->Create ( );
-            dialog->Invoke();
-            dialog->Delete();
-            vtkErrorMacro("ProcessGUIEvents: unable to read DTI fiber bundle model file " << fileName);
-            }
-          }
-        }
-      */
-      return;
+      //--- implemented in tcl.
+      win->SetStatusText ( "" );
+      app->Script ( "update idletasks" );
       }
-    
     }
 }
 
@@ -1232,7 +1264,8 @@ void vtkSlicerDataGUI::BuildGUI ( )
     vtkErrorMacro ( "BuildGUI: got NULL MainSlicerWindow");
     return;
     }
-  win->SetStatusText ( "Building GUI for Data Module...." );
+  win->SetStatusText ( "Building Interface for Data Module...." );
+  app->Script ( "update idletasks" );
 
     // ---
     // MODULE GUI FRAME 
