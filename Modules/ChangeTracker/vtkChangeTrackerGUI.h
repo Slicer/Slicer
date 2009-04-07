@@ -4,7 +4,7 @@
 #include "vtkSlicerModuleGUI.h"
 #include "vtkChangeTracker.h"
 #include "vtkSlicerSliceLogic.h"
-#include "vtkKWScaleWithEntry.h"
+#include "vtkKWScale.h"
 
 class vtkChangeTrackerLogic;
 class vtkMRMLChangeTrackerNode;
@@ -131,7 +131,7 @@ public:
   // Description:
   // accessor
   vtkGetObjectMacro(SliceLogic, vtkSlicerSliceLogic);
-  vtkGetObjectMacro(SliceController_OffsetScale, vtkKWScaleWithEntry); 
+  vtkGetObjectMacro(SliceController_OffsetScale, vtkKWScale); 
 
   void PropagateVolumeSelection();
 
@@ -172,7 +172,7 @@ private:
   vtkChangeTrackerAnalysisStep         *AnalysisStep;
 
   vtkSlicerSliceLogic *SliceLogic;
-  vtkKWScaleWithEntry *SliceController_OffsetScale;
+  vtkKWScale *SliceController_OffsetScale;
   vtkCallbackCommand *SliceLogicCallbackCommand;
 
   // Wizard step cannot observe MRML events

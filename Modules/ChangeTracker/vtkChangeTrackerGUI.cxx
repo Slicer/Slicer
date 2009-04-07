@@ -540,9 +540,9 @@ void vtkChangeTrackerGUI::SliceLogicRemoveGUIObserver() {
   if (!this->GetApplicationGUI()) return;
 
   if (this->SliceController_OffsetScale) {
-    this->SliceController_OffsetScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, this->SliceLogicCallbackCommand);
-    this->SliceController_OffsetScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangingEvent, this->SliceLogicCallbackCommand);
-    this->SliceController_OffsetScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueStartChangingEvent, this->SliceLogicCallbackCommand);
+    this->SliceController_OffsetScale->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, this->SliceLogicCallbackCommand);
+    this->SliceController_OffsetScale->RemoveObservers(vtkKWScale::ScaleValueChangingEvent, this->SliceLogicCallbackCommand);
+    this->SliceController_OffsetScale->RemoveObservers(vtkKWScale::ScaleValueStartChangingEvent, this->SliceLogicCallbackCommand);
     this->SliceController_OffsetScale = NULL;
   }
 }
@@ -602,9 +602,9 @@ void vtkChangeTrackerGUI::SliceLogicDefine() {
     // Link to slicer control pannel 
     if (!this->SliceController_OffsetScale) {
       this->SliceController_OffsetScale =  this->GetApplicationGUI()->GetMainSliceGUI("Red")->GetSliceController()->GetOffsetScale();
-      this->SliceController_OffsetScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, this->SliceLogicCallbackCommand);
-      this->SliceController_OffsetScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangingEvent, this->SliceLogicCallbackCommand);
-      this->SliceController_OffsetScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueStartChangingEvent, this->SliceLogicCallbackCommand);
+      this->SliceController_OffsetScale->AddObserver(vtkKWScale::ScaleValueChangedEvent, this->SliceLogicCallbackCommand);
+      this->SliceController_OffsetScale->AddObserver(vtkKWScale::ScaleValueChangingEvent, this->SliceLogicCallbackCommand);
+      this->SliceController_OffsetScale->AddObserver(vtkKWScale::ScaleValueStartChangingEvent, this->SliceLogicCallbackCommand);
     }
 
     this->SliceLogic->GetSliceNode()->SetSliceVisible(1);
@@ -629,7 +629,7 @@ void  vtkChangeTrackerGUI::SliceLogicCallback(vtkObject *caller, unsigned long e
     if (self && self->GetSliceController_OffsetScale()) {
       if (event == vtkKWScale::ScaleValueChangedEvent || event == vtkKWScale::ScaleValueStartChangingEvent || event == vtkKWScale::ScaleValueChangingEvent) {
     vtkKWScale *scale = vtkKWScale::SafeDownCast(caller);
-    if (scale && (scale == self->GetSliceController_OffsetScale()->GetWidget())) 
+    if (scale && (scale == self->GetSliceController_OffsetScale())) 
       { 
         self->GetSliceLogic()->SetSliceOffset(self->GetSliceController_OffsetScale()->GetValue());
       }
