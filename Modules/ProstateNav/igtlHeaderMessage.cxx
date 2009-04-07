@@ -16,8 +16,8 @@
 
 #include "igtlHeaderMessage.h"
 
-#include "igtl_header.h"
-#include "igtl_position.h"
+#include "igtlutil/igtl_header.h"
+#include "igtlutil/igtl_position.h"
 
 #include <string.h>
 
