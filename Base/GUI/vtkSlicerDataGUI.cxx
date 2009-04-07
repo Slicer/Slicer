@@ -523,6 +523,11 @@ void vtkSlicerDataGUI::UnpackInformationFrame ( vtkKWFrame *f, vtkKWPushButton *
 //---------------------------------------------------------------------------
 void vtkSlicerDataGUI::RemoveGUIObservers ( )
 {
+  if (! this->Built )
+    {
+    return;
+    }
+
   this->MRMLTreeWidget->RemoveObservers (vtkSlicerMRMLTreeWidget::SelectedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->SceneInformationButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
@@ -562,6 +567,10 @@ void vtkSlicerDataGUI::RemoveGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkSlicerDataGUI::AddGUIObservers ( )
 {
+  if (! this->Built )
+    {
+    return;
+    }
   this->MRMLTreeWidget->AddObserver (vtkSlicerMRMLTreeWidget::SelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->MRMLTreeWidget->AddMRMLObservers();
 
@@ -1206,7 +1215,12 @@ void vtkSlicerDataGUI::Enter ( )
       }
     // end temporary.
     }
-    this->CreateModuleEventBindings();
+  else
+    {
+    this->AddGUIObservers();
+    }
+  this->CreateModuleEventBindings();
+
 }
 
 
@@ -1214,7 +1228,11 @@ void vtkSlicerDataGUI::Enter ( )
 //---------------------------------------------------------------------------
 void vtkSlicerDataGUI::Exit ( )
 {
-  this->ReleaseModuleEventBindings();
+  if ( this->Built )
+    {
+    this->RemoveGUIObservers();
+    this->ReleaseModuleEventBindings();
+    }
 
   this->WithdrawAddModelWindow();
   this->WithdrawAddScalarOverlayWindow();
