@@ -571,7 +571,27 @@ void vtkSlicerWelcomeGUI::SetStatusText(const char *txt)
 //---------------------------------------------------------------------------
 void vtkSlicerWelcomeGUI::BuildGUI ( ) 
 {
-  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication() );
+  if ( !app )
+    {
+    vtkErrorMacro ( "BuildGUI: got Null SlicerApplication" );
+    return;
+    }
+  vtkSlicerApplicationGUI *appGUI = app->GetApplicationGUI();
+  if ( !appGUI )
+    {
+    vtkErrorMacro ( "BuildGUI: got Null SlicerApplicationGUI" );
+    return;
+    }
+  vtkSlicerWindow *win = appGUI->GetMainSlicerWindow ();
+  if ( win == NULL )
+    {
+    vtkErrorMacro ( "BuildGUI: got NULL MainSlicerWindow");
+    return;
+    }
+  win->SetStatusText ( "Building Interface for Slicer Welcome Module...." );
+  app->Script ( "update idletasks" );
+
   this->SlicerWelcomeIcons = vtkSlicerWelcomeIcons::New();
   
   this->UIPanel->AddPage ( "SlicerWelcome", "SlicerWelcome", NULL );
