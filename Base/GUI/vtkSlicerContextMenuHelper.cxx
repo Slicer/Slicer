@@ -32,6 +32,10 @@ vtkSlicerContextMenuHelper::~vtkSlicerContextMenuHelper ( ) {
     {
     this->SetMRMLScene(NULL);
     }
+  if (this->MRMLNode)
+    {
+    this->SetMRMLNode(NULL);
+    }
   if (this->ContextMenu)
     {
     this->SetContextMenu(NULL);
