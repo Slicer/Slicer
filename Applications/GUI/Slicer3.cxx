@@ -1848,14 +1848,12 @@ int Slicer3_main(int argc, char *argv[])
 
   //--- set home module based on registry settings
   const char *homeModule = slicerApp->GetHomeModule();
-  if ( homeModule && *homeModule )
+  if ( !homeModule || !*homeModule )
     {
-    appGUI->SelectModule ( homeModule );
+    homeModule = "Data";
     }
-  else
-    {
-    appGUI->SelectModule("Data");
-    }
+  std::string tclCmd = "after idle { update; $::slicer3::ApplicatonGUI SelectModule " + std::string(homeModule) + " }";
+  Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
 
   //
   // Run!  - this will return when the user exits
