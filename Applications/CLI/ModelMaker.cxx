@@ -101,7 +101,8 @@ int main(int argc, char * argv[])
       {
       // make one up from the input volume's name
       sceneFilename = vtksys::SystemTools::GetFilenameWithoutExtension(InputVolume) + std::string(".mrml");
-      std::cerr << "ERROR: no model scene defined! Using " << sceneFilename << endl;
+      std::cerr << "********\nERROR: no model scene defined! Using " << sceneFilename << endl;
+      std::cerr << "WARNING: If you started Model Maker from the Slicer3 GUI, the models will NOT be loaded automatically.\nYou must use File->Import Scene " << sceneFilename << " to see your models (don't use Load or it will close your current scene).\n*****" << std::endl;
       }
     else
       {
@@ -142,11 +143,19 @@ int main(int argc, char * argv[])
     modelScene = vtkMRMLScene::New();
 
     modelScene->SetURL(sceneFilename.c_str());
-    modelScene->Import();
-    
-    if (debug)
+    // only try importing if the scene file exists
+    if (vtksys::SystemTools::FileExists(sceneFilename.c_str()))
       {
-      std::cout << "Imported model scene file " << sceneFilename.c_str() << std::endl;
+      modelScene->Import();
+    
+      if (debug)
+        {
+        std::cout << "Imported model scene file " << sceneFilename.c_str() << std::endl;
+        }
+      }
+    else
+      {
+      std::cerr << "Model scene file doesn't exist yet: " <<  sceneFilename.c_str() << std::endl;
       }
  
     // make sure we have a model hierarchy node
@@ -1460,9 +1469,13 @@ int main(int argc, char * argv[])
         modelScene->RemoveNode(colorNode);
         }
       modelScene->Commit();
-      std::cout << "Load the scene file " << sceneFilename.c_str() << " to see your models\n";
+      std::cout << "Models saved to scene file " << sceneFilename.c_str() << "\n";
+      if (ModelSceneFile.size() == 0)
+        {
+        std::cout << "\nIf you ran this from Slicer3's GUI, use File->Import Scene... " << sceneFilename.c_str() << " to load your models.\n";
+        }
       }
-    
+
     // Clean up
     if (debug)
       {
