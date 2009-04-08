@@ -2896,7 +2896,6 @@ void vtkSlicerApplicationGUI::AddMainSliceGUI(const char *layoutName)
     if (g == NULL)
       {
       g = vtkSlicerSliceGUI::New( );
-      this->SlicesGUI->AddSliceGUI(layoutName, g);
       g->SetApplication(app);
       g->SetApplicationLogic(this->ApplicationLogic);
       g->BuildGUI ( this->MainSlicerWindow->GetMainSplitFrame(), color->SliceGUIOrange );
@@ -2910,6 +2909,8 @@ void vtkSlicerApplicationGUI::AddMainSliceGUI(const char *layoutName)
                                            (vtkCommand *)this->GUICallbackCommand);
       g->GetSliceController()->AddObserver(vtkSlicerSliceControllerWidget::ShrinkEvent, 
                                            (vtkCommand *)this->GUICallbackCommand);
+      // add the SliceGUI to the Slices module
+      this->SlicesGUI->AddSliceGUI(layoutName, g);
       }
     }
 }

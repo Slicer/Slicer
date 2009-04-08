@@ -9,6 +9,8 @@
 #include "vtkMRMLSliceNode.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
+#include "vtkSlicerSliceControllerWidget.h"
+#include "vtkSlicerModuleNavigator.h"
 
 #include "vtkKWApplication.h"
 #include "vtkKWFrame.h"
@@ -33,11 +35,12 @@
 #include "vtkSlicerVisibilityIcons.h"
 
 #include <map>
+#include <set>
+
 
 // Private implementaton of an std::map
 class SliceGUIMap : public std::map<std::string, vtkSmartPointer<vtkSlicerSliceGUI> > {};
 class ParameterWidgetMap : public std::map<std::string, vtkSmartPointer<vtkKWCoreWidget> > {};
-
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerSlicesGUI);
@@ -75,8 +78,52 @@ vtkSlicerSlicesGUI::~vtkSlicerSlicesGUI ( )
 
 void vtkSlicerSlicesGUI::AddSliceGUI(const char *layoutName, vtkSlicerSliceGUI *pSliceGUI)
 {
+  bool showingModule = false;
+
+  if (this->GetApplicationGUI() 
+      && this->GetApplicationGUI()->GetApplicationToolbar()
+      && this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()
+      && this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator())
+    {
+    if (strcmp(this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator()->GetCurrentModuleName(), this->GetModuleName()) == 0)
+      {
+      //std::cerr << "ModuleName: " << this->GetModuleName() << ", CurrentModuleName: " << this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator()->GetCurrentModuleName() << std::endl;
+      showingModule = true;
+      }
+    }
+
+  if (showingModule)
+    {
+    // Need to force the GUI to update the SliceControllers
+    // available.  The SliceControllers are created and destroyed in
+    // Enter()/Exit() methods.  So try to reuse that code by forcing a
+    // call to Exit() either directly or indirectly (by showing
+    // another module).
+    //
+    // NEITHER APPROACH WORKS. DISABLE FOR NOW.
+    //
+    //this->Exit();
+    // or
+    //this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->RaiseModule("Volumes");
+    }
+
   std::string sMRMLNodeLayoutName = layoutName;
   (*this->InternalSliceGUIMap)[sMRMLNodeLayoutName] = pSliceGUI;
+
+  if (showingModule)
+    {
+    // Need to force the GUI to update the SliceControllers
+    // available.  The SliceControllers are created and destroyed in
+    // Enter()/Exit() methods.  So try to reuse that code by forcing a
+    // call to Enter() either directly or indirectly (by showing
+    // this module).
+    //
+    // NEITHER APPROACH WORKS. DISABLE FOR NOW.
+    //
+    //this->Enter();
+    // or
+    //this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->RaiseModule("Slices");
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -618,13 +665,169 @@ void vtkSlicerSlicesGUI::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesGUI::Enter ( )
 {
-  // Fill in
+  // Need to pack a set of controllers for the SliceGUIs
+  //
+
+  // 
+  // Add a SliceControllerWidget for each SliceGUI.  Order the widgets
+  // as Red, Yellow, Green, Compare Views, others
+  std::set<vtkSlicerSliceGUI *> guiSet;
+  vtkSlicerSliceGUI *g;
+  int nSliceGUI = this->GetNumberOfSliceGUI();
+
+  // Red, Yellow, Green
+  g = this->GetSliceGUI("Red");
+  if (g)
+    {
+    vtkSlicerSliceControllerWidget *sliceController 
+      = this->BuildSliceController(g);
+
+    if (sliceController)
+      {
+      (*this->InternalParameterWidgetMap)["Red"] = sliceController;
+      sliceController->Delete();
+      
+      guiSet.insert(g);
+      }
+    }
+  g = this->GetSliceGUI("Yellow");
+  if (g)
+    {
+    vtkSlicerSliceControllerWidget *sliceController 
+      = this->BuildSliceController(g);
+    
+    if (sliceController)
+      {
+      (*this->InternalParameterWidgetMap)["Yellow"] = sliceController;
+      sliceController->Delete();
+      
+      guiSet.insert(g);
+      }
+    }
+  g = this->GetSliceGUI("Green");
+  if (g)
+    {
+    vtkSlicerSliceControllerWidget *sliceController 
+      = this->BuildSliceController(g);
+    
+    if (sliceController)
+      {
+      (*this->InternalParameterWidgetMap)["Green"] = sliceController;
+      sliceController->Delete();
+      
+      guiSet.insert(g);
+      }
+    }
+
+  // Compare views
+  const char *nthname;
+  for (int i = 0; i < nSliceGUI; i++)
+    {
+    nthname = this->GetNthSliceGUILayoutName(i);
+
+    if (strncmp(nthname, "Compare", 7) == 0)
+      {
+      g = this->GetNthSliceGUI(i);
+
+      if (g)
+        {
+        vtkSlicerSliceControllerWidget *sliceController 
+          = this->BuildSliceController(g);
+        
+        if (sliceController)
+          {
+          (*this->InternalParameterWidgetMap)[this->GetNthSliceGUILayoutName(i)]
+            = sliceController;
+          sliceController->Delete();
+        
+          guiSet.insert(g);
+          }
+        }
+      }    
+    }  
+  
+  // Now the rest
+  std::set<vtkSlicerSliceGUI*>::iterator sit;
+  for (int i = 0; i < nSliceGUI; i++)
+    {
+    g = this->GetNthSliceGUI(i);
+    
+    sit = guiSet.find(g);
+    if (sit == guiSet.end())
+      {
+      // have not built and packed a SliceController for this SliceGUI
+      vtkSlicerSliceControllerWidget *sliceController 
+        = this->BuildSliceController(g);
+      
+      if (sliceController)
+        {
+        (*this->InternalParameterWidgetMap)[this->GetNthSliceGUILayoutName(i)] 
+          = sliceController;
+        sliceController->Delete();
+        
+        guiSet.insert(g);
+        }
+      }
+    }
+}
+
+vtkSlicerSliceControllerWidget* 
+vtkSlicerSlicesGUI::BuildSliceController(vtkSlicerSliceGUI *g)
+{
+  vtkSlicerModuleCollapsibleFrame *controllerFrame = NULL;
+
+  ParameterWidgetMap::iterator wit 
+    = (*this->InternalParameterWidgetMap).find("ControllerFrame");
+
+  if ( wit != (*this->InternalParameterWidgetMap).end() )
+    {
+    controllerFrame = vtkSlicerModuleCollapsibleFrame::SafeDownCast((*wit).second);
+    }
+  
+  if (!controllerFrame)
+    {
+    return NULL;
+    }
+
+  vtkSlicerSliceControllerWidget *sliceController 
+    = vtkSlicerSliceControllerWidget::New();
+  sliceController->SetApplication( this->GetApplication() );
+  sliceController->SetAndObserveMRMLScene( this->GetMRMLScene());
+  sliceController->SetParent( controllerFrame->GetFrame() );
+  sliceController->Create();
+  sliceController->ApplyColorCode( g->GetSliceController()->GetColorCodeButton()->GetBackgroundColor() );
+  sliceController->SetSliceNode( g->GetSliceNode() );
+  sliceController->SetSliceCompositeNode( g->GetLogic()->GetSliceCompositeNode());
+  sliceController->SetAndObserveSliceLogic( g->GetLogic() );
+  this->Script("pack %s -side top -anchor e -fill x -padx 2 -pady 2", 
+               sliceController->GetWidgetName());
+  // force the widgets to get values from MRML
+  sliceController->ProcessMRMLEvents(this, vtkCommand::ModifiedEvent, NULL);
+
+  return sliceController;
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesGUI::Exit ( )
 {
-  // Fill in
+  // Destroy all SliceControllers
+  ParameterWidgetMap::iterator wit;
+
+  for (wit = (*this->InternalParameterWidgetMap).begin(); 
+       wit != (*this->InternalParameterWidgetMap).end(); ++wit)
+    {
+    if (vtkSlicerSliceControllerWidget::SafeDownCast((*wit).second))
+      {
+      // need to un-observe?
+
+      // unpack
+      this->Script("pack forget %s", (*wit).second->GetWidgetName());
+
+      // remove item from map
+      (*this->InternalParameterWidgetMap).erase(wit);
+      }
+    }
+
 }
 
 
@@ -648,16 +851,31 @@ void vtkSlicerSlicesGUI::BuildGUI (  )
   this->BuildHelpAndAboutFrame ( page, help, about );
 
   // ---
+  // Controller Frame
+  vtkSlicerModuleCollapsibleFrame *controllerFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+  controllerFrame->SetParent ( this->UIPanel->GetPageWidget ( "Slices" ) );
+  controllerFrame->Create ( );
+  controllerFrame->SetLabelText ("Slice controllers");
+  //controllerFrame->CollapseFrame ( );
+  app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                controllerFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Slices")->GetWidgetName());
+  (*this->InternalParameterWidgetMap)["ControllerFrame"]
+    = controllerFrame;
+  controllerFrame->Delete();
+
+  // ---
   // DISPLAY FRAME            
   vtkSlicerModuleCollapsibleFrame *sliceDisplayFrame = vtkSlicerModuleCollapsibleFrame::New ( );
   sliceDisplayFrame->SetParent ( this->UIPanel->GetPageWidget ( "Slices" ) );
   sliceDisplayFrame->Create ( );
   sliceDisplayFrame->SetLabelText ("Slice information");
-  //sliceDisplayFrame->CollapseFrame ( );
+  sliceDisplayFrame->CollapseFrame ( );
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                 sliceDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Slices")->GetWidgetName());
-
+  (*this->InternalParameterWidgetMap)["SliceDisplayFrame"]
+    = sliceDisplayFrame;
   sliceDisplayFrame->Delete();
+
 
   // Active slice selector
   vtkSlicerNodeSelectorWidget *sliceNodeSelector =

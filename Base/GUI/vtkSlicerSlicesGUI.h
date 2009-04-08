@@ -22,6 +22,7 @@ class ParameterWidgetMap;
 class vtkObject;
 class vtkKWFrame;
 class vtkSlicerVisibilityIcons;
+class vtkSlicerSliceControllerWidget;
 
 // Description:
 // This class implements Slicer's Slice GUI.
@@ -93,6 +94,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesGUI : public vtkSlicerModuleGUI
   virtual ~vtkSlicerSlicesGUI ( );
 
   void UpdateGUI();
+
+  // Set up a slice controller and pack it in the panel
+  vtkSlicerSliceControllerWidget* BuildSliceController(vtkSlicerSliceGUI *);
   
  private:
   // Description:

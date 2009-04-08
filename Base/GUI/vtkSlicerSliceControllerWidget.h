@@ -68,6 +68,7 @@ public:
   vtkGetObjectMacro ( BackgroundMenuButton, vtkKWMenuButton );
   vtkGetObjectMacro ( LabelMenuButton, vtkKWMenuButton );
   vtkGetObjectMacro ( MoreMenuButton, vtkKWMenuButton );
+  vtkGetObjectMacro ( ColorCodeButton, vtkKWPushButton );
   vtkGetMacro ( LightboxRows, int );
   vtkSetMacro ( LightboxRows, int );
   vtkGetMacro ( LightboxColumns, int );  
