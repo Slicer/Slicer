@@ -64,8 +64,12 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
      <label>Generate All Models</label>
      <longflag>--generateAll</longflag>
      <description>Generate models for all labels in the input volume. Ignores Labels, Start Label, End Label settings. Skips label 0.</description>
-     <default>false</default>
+     <default>true</default>
    </boolean>
+</parameters>
+  <parameters advanced="true">
+  <label>Model Maker Parameters</label>
+  <description>Parameters used for making models.</description> 
  <integer-vector>
     <name>Labels</name>
     <flag>-l</flag>
@@ -97,10 +101,6 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
     <longflag>--jointsmooth</longflag>
     <default>false</default>
   </boolean>
-</parameters>
-  <parameters advanced="true">
-  <label>Model Maker Parameters</label>
-  <description>Parameters used for making models.</description> 
    <integer>
      <name>Smooth</name>
      <label>Smooth</label>
