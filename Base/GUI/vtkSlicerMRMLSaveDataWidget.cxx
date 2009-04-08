@@ -1051,7 +1051,7 @@ void vtkSlicerMRMLSaveDataWidget::InitRowForNonSupportedFormat(
   dataTable->SetCellTextAsInt(row,Save_Column,0);
   dataTable->SetCellWindowCommandToCheckButton(row, Save_Column);
 
-  supportedFileFormats->InsertValue(0, PICK_FORMAT_MESSAGE);
+  supportedFileFormats->InsertNextValue(PICK_FORMAT_MESSAGE);
   dataTable->SetCellText(row,Format_Column, PICK_FORMAT_MESSAGE);
   dataTable->SetCellWindowCommandToComboBoxWithValuesAsArray(
     row, Format_Column, supportedFileFormats);

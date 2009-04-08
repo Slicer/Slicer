@@ -7,6 +7,14 @@
 
 class vtkStringArray;
 
+typedef struct
+{
+  const char *ClassName;
+  const char *Description;
+  const char *GenericName;
+  const char *Extension;
+} ITKImageFileFormat;
+
 class VTK_MRML_EXPORT vtkDataFileFormatHelper : public vtkObject 
 {
   public:
@@ -33,6 +41,7 @@ class VTK_MRML_EXPORT vtkDataFileFormatHelper : public vtkObject
   virtual const char* GetITKSupportedExtensionGenericNameByIndex(int idx);
   virtual const char* GetITKSupportedExtensionClassNameByIndex(int idx);
 
+//BTX
  protected:
   vtkDataFileFormatHelper();
   virtual ~vtkDataFileFormatHelper();
@@ -45,10 +54,13 @@ class VTK_MRML_EXPORT vtkDataFileFormatHelper : public vtkObject
   // This will initialize the supported file formats
   virtual void InitializeITKSupportedFileFormats();
   virtual void PopulateITKSupportedWriteFileTypes();
-
+  virtual void AddSupportedWriterFileFormat(
+     ITKImageFileFormat& structFileFormat);
+     
 private:
   vtkDataFileFormatHelper(const vtkDataFileFormatHelper&);
   void operator=(const vtkDataFileFormatHelper&);
+//ETX
 };
 
 #endif

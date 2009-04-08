@@ -3,24 +3,25 @@
 #include "itkImageIOBase.h"
 
 #include <vector>
+#include <set>
 #include <string>
 
 #define USE_TEMP_ITK_FILEFORMAT_TABLE
-
-typedef struct
-{
-  const char *ClassName;
-  const char *Description;
-  const char *GenericName;
-  const char *Extension;
-} ITKImageFileFormat;
-
 
 #ifdef USE_TEMP_ITK_FILEFORMAT_TABLE
 #include "itkImageIOBase.h"
 
 ITKImageFileFormat FileFormatTable[] =
 {
+  // --- Preferred extensions ---
+  {"NrrdImageIO", "pixel data ?", "NRRD", ".nrrd"},
+  {"NrrdImageIO", "header ?", "NRRD", ".nhdr"},
+  {"MetaImageIO", "ASCII Text Header", "MetaImage", ".mhd"},
+  {"MetaImageIO", "Text header followed by binary pixel data", "MetaImage", ".mha"},
+  {"RawImageIO", "Uncompressed pixel data in binary", "RAW", ".raw"},
+  {"VTKImageIO", "Text header followed by uncompressed pixel data in binary", "VTK", ".vtk"},
+  // -----------------------------
+
   {"AnalyzeImageIO", "Uncompressed header in binary", "Analyze", ".hdr"},
   {"AnalyzeImageIO", "Uncompressed pixel data in binary", "Analyze", ".img"},
   {"AnalyzeImageIO", "Compressed pixel data in binary", "Analyze", ".img.gz"},
@@ -51,26 +52,20 @@ ITKImageFileFormat FileFormatTable[] =
   {"JPEGImageIO", "Compressed pixel data in binary", "JPEG", ".JPEG"},
   {"LSMImageIO", "Optional Compression. Binary pixel data", "LSM", ".lsm"},
   {"LSMImageIO", "Optional Compression. Binary pixel data", "LSM", ".LSM"},
-  {"MetaImageIO", "ASCII Text Header", "MetaImage", ".mhd"},
-  {"MetaImageIO", "Text header followed by binary pixel data", "MetaImage", ".mha"},
   {"NiftiImageIO", "Header information in binary", "NifTI", ".nia"},
   {"NiftiImageIO", "Uncompressed pixel data in binary", "NifTI", ".nii"},
   {"NiftiImageIO", "Compressed pixel data in binary", "NifTI", ".nii.gz"},
   {"NiftiImageIO", "Header information in binary", "Analyze", ".hdr"},
   {"NiftiImageIO", "Uncompressed pixel data in binary", "Analyze", ".img"},
   {"NiftiImageIO", "Compressed pixel data in binary", "Analyze", ".img.gz"},
-  {"NrrdImageIO", "pixel data ?", "NRRD", ".nrrd"},
-  {"NrrdImageIO", "header ?", "NRRD", ".nhdr"},
   {"PNGImageIO", "RLE compressed pixel data in binary", "PNG", ".png"},
   {"PNGImageIO", "RLE compressed pixel data in binary", "PNG", ".PNG"},
-  {"RawImageIO", "Uncompressed pixel data in binary", "RAW", ".raw"},
 //  {"SiemensVisionImageIO", "Not available for writing", "Siemens", "---"},
   {"StimulateImageIO", "Uncompressed pixel data in binary", "Stimulate", ".spr"},
   {"TIFFImageIO", "Compressed pixel data in binary", "TIFF", ".tiff"},
   {"TIFFImageIO", "Compressed pixel data in binary", "TIFF", ".tif"},
   {"TIFFImageIO", "Compressed pixel data in binary", "TIFF", ".TIFF"},
-  {"TIFFImageIO", "Compressed pixel data in binary", "TIFF", ".TIF"},
-  {"VTKImageIO", "Text header followed by uncompressed pixel data in binary", "VTK", ".vtk"}
+  {"TIFFImageIO", "Compressed pixel data in binary", "TIFF", ".TIF"}
 };
 
 #endif
@@ -124,11 +119,13 @@ void vtkDataFileFormatHelper::PopulateITKSupportedWriteFileTypes()
 
 #ifdef USE_TEMP_ITK_FILEFORMAT_TABLE
   int numFiles = sizeof(FileFormatTable)/sizeof(FileFormatTable[0]) ;
+  typedef std::set<std::string>              ArrayOfITKIOClassName;
+  ArrayOfITKIOClassName ITKIOClassNames;
 #else
   typedef std::vector< std::string >              ArrayOfITKExtensionsType;
 #endif
 
-  std::map< std::string, ITKImageFileFormat >    itkWriteFormatsMap;
+//  std::map< std::string, ITKImageFileFormat >    itkWriteFormatsMap;
   typedef itk::ImageIOBase                        IOBaseType;
   typedef std::list<itk::LightObject::Pointer>    ArrayOfImageIOType;
   ArrayOfImageIOType allobjects = itk::ObjectFactoryBase::CreateAllInstance("itkImageIOBase");
@@ -144,19 +141,8 @@ void vtkDataFileFormatHelper::PopulateITKSupportedWriteFileTypes()
   else
     {
 #ifdef USE_TEMP_ITK_FILEFORMAT_TABLE
-
-    const char* ioClassName = io->GetNameOfClass();
-    for(int idx=0; idx<numFiles; idx++)
-      {
-      ITKImageFileFormat structFileFormat = FileFormatTable[idx];
-      if(strcmp(structFileFormat.ClassName, ioClassName)==0)
-        {
-        std::string mapKey(structFileFormat.GenericName);
-        mapKey += structFileFormat.ClassName;
-        mapKey += structFileFormat.Extension;
-        itkWriteFormatsMap[mapKey] = structFileFormat;
-        }
-      }
+    std::string ioClassName = io->GetNameOfClass();
+    ITKIOClassNames.insert(ioClassName);
 #else
     const ArrayOfITKExtensionsType & writeExtensions = io->GetSupportedWriteExtensions();
     ArrayOfITKExtensionsType::const_iterator writeItr = writeExtensions.begin();
@@ -167,10 +153,7 @@ void vtkDataFileFormatHelper::PopulateITKSupportedWriteFileTypes()
       // For now, just use the class name.
       ITKImageFileFormat structFileFormat = 
         {io->GetNameOfClass(), io->GetNameOfClass(), io->GetNameOfClass(),(*writeItr).c_str()};
-      std::string mapKey(structFileFormat.GenericName);
-      mapKey += structFileFormat.ClassName;
-      mapKey += structFileFormat.Extension;
-      itkWriteFormatsMap[mapKey] = structFileFormat;
+      this->AddSupportedWriterFileFormat(structFileFormat);      
       ++writeItr;
       }
 #endif
@@ -178,21 +161,17 @@ void vtkDataFileFormatHelper::PopulateITKSupportedWriteFileTypes()
   itr++;
   }
 
-  // Sort the formats first, already sorted by default
-  // itkWriteFormatsMap.sort();
-  std::map< std::string, ITKImageFileFormat >::const_iterator mapItr = 
-    itkWriteFormatsMap.begin();
-  while( mapItr != itkWriteFormatsMap.end() )
+#ifdef USE_TEMP_ITK_FILEFORMAT_TABLE
+  for(int idx=0; idx<numFiles; idx++)
     {
-    ITKImageFileFormat structFileFormat = mapItr->second;
-    this->SupportedWriteFileExtensions->InsertNextValue(structFileFormat.Extension);
-    this->SupportedWriteFileClassNames->InsertNextValue(structFileFormat.ClassName);
-    this->SupportedWriteFileGenericNames->InsertNextValue(structFileFormat.GenericName);
-    std::string strFormat(structFileFormat.GenericName);
-    strFormat.append(" (").append(structFileFormat.Extension).append(")");
-    this->ITKSupportedWriteFileFormats->InsertNextValue(strFormat);
-    mapItr++;
+    ITKImageFileFormat structFileFormat = FileFormatTable[idx];
+    std::string ioClassName(structFileFormat.ClassName);
+    if(ITKIOClassNames.find(ioClassName) != ITKIOClassNames.end())
+      {
+      this->AddSupportedWriterFileFormat(structFileFormat);      
+      }
     }
+#endif
 }
 
 //----------------------------------------------------------------------------
@@ -355,6 +334,18 @@ void vtkDataFileFormatHelper::InitializeITKSupportedFileFormats()
   this->SupportedWriteFileClassNames->SetNumberOfTuples(0);
 
   this->PopulateITKSupportedWriteFileTypes();
+}
+
+//----------------------------------------------------------------------------
+void vtkDataFileFormatHelper::AddSupportedWriterFileFormat(
+ ITKImageFileFormat& structFileFormat)
+{
+  this->SupportedWriteFileExtensions->InsertNextValue(structFileFormat.Extension);
+  this->SupportedWriteFileClassNames->InsertNextValue(structFileFormat.ClassName);
+  this->SupportedWriteFileGenericNames->InsertNextValue(structFileFormat.GenericName);
+  std::string strFormat(structFileFormat.GenericName);
+  strFormat.append(" (").append(structFileFormat.Extension).append(")");
+  this->ITKSupportedWriteFileFormats->InsertNextValue(strFormat);
 }
 
 //----------------------------------------------------------------------------
