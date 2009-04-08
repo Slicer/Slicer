@@ -38,7 +38,7 @@ vtkSlicerViewControlIcons::vtkSlicerViewControlIcons ( )
     this->OrthoButtonIcon = vtkKWIcon::New ( );
     this->PerspectiveButtonIcon = vtkKWIcon::New ( );
     this->CenterButtonIcon = vtkKWIcon::New ( );
-    this->SceneSnapshotButtonIcon = vtkKWIcon::New ( );
+    this->ScreenCaptureButtonIcon = vtkKWIcon::New ( );
     this->StereoButtonIcon = vtkKWIcon::New ( );
     this->LookFromOffButtonIcon = vtkKWIcon::New ( );
     this->LookFromOnButtonIcon = vtkKWIcon::New ( );
@@ -167,10 +167,10 @@ vtkSlicerViewControlIcons::~vtkSlicerViewControlIcons ( )
       this->CenterButtonIcon->Delete ( );
       this->CenterButtonIcon = NULL;
       }
-    if ( this->SceneSnapshotButtonIcon )
+    if ( this->ScreenCaptureButtonIcon )
       {
-      this->SceneSnapshotButtonIcon->Delete ( );
-      this->SceneSnapshotButtonIcon = NULL;
+      this->ScreenCaptureButtonIcon->Delete ( );
+      this->ScreenCaptureButtonIcon = NULL;
       }
     if ( this->StereoButtonIcon )
       {
@@ -461,11 +461,11 @@ void vtkSlicerViewControlIcons::AssignImageDataToIcons ( ) {
                                    image_ViewCenter_height,
                                    image_ViewCenter_pixel_size,
                                    image_ViewCenter_length, 0 );                                   
-  this->SceneSnapshotButtonIcon->SetImage ( image_ViewSelect,
-                                   image_ViewSelect_width,
-                                   image_ViewSelect_height,
-                                   image_ViewSelect_pixel_size,
-                                   image_ViewSelect_length, 0 );                                   
+  this->ScreenCaptureButtonIcon->SetImage ( image_ScreenCapture,
+                                   image_ScreenCapture_width,
+                                   image_ScreenCapture_height,
+                                   image_ScreenCapture_pixel_size,
+                                   image_ScreenCapture_length, 0 );                                   
   this->StereoButtonIcon->SetImage ( image_ViewStereo,
                                    image_ViewStereo_width,
                                    image_ViewStereo_height,
@@ -584,7 +584,7 @@ void vtkSlicerViewControlIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "OrthoButtonIcon: " << this->GetOrthoButtonIcon () << "\n";
     os << indent << "PerspectiveButtonIcon: " << this->GetPerspectiveButtonIcon () << "\n";
     os << indent << "CenterButtonIcon: " << this->GetCenterButtonIcon () << "\n";
-    os << indent << "SceneSnapshotButtonIcon: " << this->GetSceneSnapshotButtonIcon () << "\n";
+    os << indent << "ScreenCaptureButtonIcon: " << this->GetScreenCaptureButtonIcon () << "\n";
     os << indent << "StereoButtonIcon: " << this->GetStereoButtonIcon () << "\n";
     os << indent << "LookFromOffButtonIcon: " << this->GetLookFromOffButtonIcon () << "\n";
     os << indent << "RotateAroundOffButtonIcon: " << this->GetRotateAroundOffButtonIcon () << "\n";

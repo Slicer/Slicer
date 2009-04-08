@@ -35,6 +35,7 @@
 #include "vtkSlicerViewControlIcons.h"
 #include "vtkSlicerFoundationIcons.h"
 #include "vtkMRMLSceneSnapshotNode.h"
+#include "vtkKWLoadSaveButton.h"
 
 #include "vtkMRMLSceneSnapshotNode.h"
 
@@ -127,6 +128,25 @@ vtkSlicerViewControlGUI::vtkSlicerViewControlGUI ( )
   this->YawButton = NULL;
   this->ZoomInButton = NULL;
   this->ZoomOutButton = NULL;
+  
+//--- Screen snapshot configure window
+  this->ScreenGrabFormatMenuButton = NULL;
+  this->ScreenGrabOptionsWindow = NULL;
+  this->ScreenGrabNameEntry = NULL;
+  this->ScreenGrabNumberEntry = NULL;
+  this->ScreenGrabOverwriteButton = NULL;
+  this->ScreenGrabCaptureButton = NULL;
+  this->ScreenGrabCloseButton = NULL;
+  this->ScreenGrabDialogButton = NULL;
+  this->ScreenGrabMagnificationEntry  = NULL;
+  this->ScreenGrabOverwrite = 0;
+  
+  this->ScreenGrabDirectory = NULL;
+  this->ScreenGrabName = NULL;
+  this->ScreenGrabNumber = 0;
+  this->ScreenGrabMagnification = 1;
+  this->ScreenGrabFormat = ".png";
+
 
   this->SetAndObserveMRMLScene ( NULL );
   this->SetApplicationGUI ( NULL);
@@ -139,6 +159,7 @@ void vtkSlicerViewControlGUI::TearDownGUI ( )
   this->SelectSceneSnapshotMenuButton->GetMenu()->DeleteAllItems();
   this->RemoveSliceEventObservers();
   this->RemoveMainViewerEventObservers();
+
   this->SetAndObserveMRMLScene ( NULL );
   this->SetApplicationGUI ( NULL);
   this->SetApplication ( NULL );
@@ -368,6 +389,10 @@ vtkSlicerViewControlGUI::~vtkSlicerViewControlGUI ( )
     this->ZoomOutButton = NULL;    
     }
 
+  //--- Screen snapshot configure window
+  this->DestroyScreenGrabOptionsWindow();
+  this->SetScreenGrabDirectory ( NULL );
+  this->SetScreenGrabName ( NULL );
 
   vtkSetAndObserveMRMLNodeMacro ( this->ViewNode, NULL );
   vtkSetAndObserveMRMLNodeMacro ( this->RedSliceNode, NULL );
@@ -515,7 +540,7 @@ void vtkSlicerViewControlGUI::RemoveGUIObservers ( )
     this->OrthoButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->StereoButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->CenterButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->ScreenGrabButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ScreenGrabButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->VisibilityButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SelectSceneSnapshotMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SelectSceneSnapshotMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -540,7 +565,7 @@ void vtkSlicerViewControlGUI::AddGUIObservers ( )
     this->OrthoButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->StereoButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->CenterButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->ScreenGrabButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ScreenGrabButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->VisibilityButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SelectSceneSnapshotMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SceneSnapshotButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -1090,250 +1115,489 @@ int vtkSlicerViewControlGUI::InvokeNameDialog( const char *msg, const char *name
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
-                                          unsigned long event, void *callData )
+                                                 unsigned long event, void *callData )
 {
 
   // Right now this class contains state variables that will be moved
   // to a vtkMRMLViewNode in the next iteration.
 
-
-  if ( this->GetApplicationGUI() != NULL )
+  
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
+  if ( !app )
     {
-    //Check for abort during rendering of navigation widget
-    if(caller==this->NavigationWidget->GetRenderWindow()&&event==vtkCommand::AbortCheckEvent)
+    vtkErrorMacro ("ProcessGUIEvents: Got NULL Application" );
+    return;
+    }
+  vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
+  if (!appGUI )
+    {
+    vtkErrorMacro ("ProcessGUIEvents: Got NULL Application GUI" );
+    return;
+    }
+  vtkSlicerWindow *win = appGUI->GetMainSlicerWindow();
+  if ( !win )
+    {
+    vtkErrorMacro ("ProcessGUIEvents: Got NULL Slicer Window" );
+    return;
+    }
+
+  //Check for abort during rendering of navigation widget
+  if(caller==this->NavigationWidget->GetRenderWindow()&&event==vtkCommand::AbortCheckEvent)
+    {
+    this->CheckAbort();
+    return;
+    }
+
+  //--- SafeDownCast all possibilities.
+  vtkKWCheckButton *b = vtkKWCheckButton::SafeDownCast ( caller );
+  vtkKWPushButton *p = vtkKWPushButton::SafeDownCast ( caller );
+  vtkKWMenu *m = vtkKWMenu::SafeDownCast ( caller );
+  vtkKWLoadSaveDialog *d = vtkKWLoadSaveDialog::SafeDownCast ( caller );
+  vtkSlicerInteractorStyle *istyle = vtkSlicerInteractorStyle::SafeDownCast ( caller );
+  vtkSlicerViewerInteractorStyle *vstyle = vtkSlicerViewerInteractorStyle::SafeDownCast ( caller );
+
+  // if user has requested a larger or smaller font,
+  // execute this.
+  if (0)
+    {
+    this->ReconfigureGUIFonts();
+    }
+
+  // has interaction occured in the slice viewers?
+  if ( istyle == this->RedSliceEvents || istyle == this->YellowSliceEvents || istyle == this->GreenSliceEvents)
+    {
+#ifndef NAVZOOMWIDGET_DEBUG
+    this->SliceViewMagnify( event, istyle );
+#endif
+    }
+#ifndef NAVZOOMWIDGET_DEBUG
+  // has interaction occured in the main viewer?
+  if (vstyle == this->MainViewerEvents )
+    {
+    this->RequestNavigationRender();
+    }
+#endif
+  
+  //--- check buttons w/o view node
+  if ( b != NULL )
+    {
+    if ( b == this->ScreenGrabOverwriteButton && event == vtkKWCheckButton::SelectedStateChangedEvent )
       {
-      this->CheckAbort();
+      this->ScreenGrabOverwrite = this->ScreenGrabOverwriteButton->GetSelectedState();
       return;
       }
-    vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
-    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( appGUI->GetApplication() );
-    if ( app != NULL )
+    }
+  
+  //--- screen grabs w/o view node
+  if ( p != NULL )
+    {
+    if ( p == this->ScreenGrabButton && event == vtkKWPushButton::InvokedEvent )  
       {
-      vtkKWCheckButton *b = vtkKWCheckButton::SafeDownCast ( caller );
-      vtkKWPushButton *p = vtkKWPushButton::SafeDownCast ( caller );
-      vtkKWMenu *m = vtkKWMenu::SafeDownCast ( caller );
-      vtkSlicerInteractorStyle *istyle = vtkSlicerInteractorStyle::SafeDownCast ( caller );
-      vtkSlicerViewerInteractorStyle *vstyle = vtkSlicerViewerInteractorStyle::SafeDownCast ( caller );
+      this->RaiseScreenGrabOptionsWindow();
+      }
+    else if (p == this->ScreenGrabCaptureButton && event == vtkKWPushButton::InvokedEvent)
+      {
+      //--- check for bugs
+      //--- if bad values for scale or version number were entered, just return.
+      //--- callbacks for each entry will take care of the error message.
 
-      // if user has requested a larger or smaller font,
-      // execute this.
-      if (0)
+      if ( this->ScreenGrabNameEntry )
         {
-        this->ReconfigureGUIFonts();
+        // check
+        if ( (this->ScreenGrabNameEntry->GetValue() != NULL)  &&
+             (strcmp(this->ScreenGrabNameEntry->GetValue(), this->ScreenGrabName)) )
+          {
+          this->SetScreenGrabName ( this->ScreenGrabNameEntry->GetValue() );
+          }
+        else if ( this->ScreenGrabNameEntry->GetValue() == NULL )
+          {
+          // dialog
+          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+          dialog->SetParent ( win );
+          dialog->SetStyleToMessage();
+          std::string msg = "Please enter a valid name for the screen capture.";
+          dialog->SetText(msg.c_str());
+          dialog->Create ( );
+          dialog->Invoke();
+          dialog->Delete();
+          return;
+          }
+        }
+      if ( this->ScreenGrabNumberEntry )
+        {
+        int version = this->ScreenGrabNumberEntry->GetValueAsInt();
+        if ( version >= 0  )
+          {
+          this->ScreenGrabNumber = version;
+          //--- if a user entered B, the  version will be '0'. so fix the entry.
+          this->ScreenGrabNumberEntry->SetValueAsInt ( this->ScreenGrabNumber );
+          }
+        else 
+          {
+          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+          dialog->SetParent (  win );
+          dialog->SetStyleToMessage();
+          std::string msg = "Please enter a non-negative (integer) image version number.";
+          dialog->SetText(msg.c_str());
+          dialog->Create ( );
+          dialog->Invoke();
+          dialog->Delete();
+          return;
+          }
         }
 
-      // has interaction occured in the slice viewers?
-      if ( istyle == this->RedSliceEvents || istyle == this->YellowSliceEvents || istyle == this->GreenSliceEvents)
+      if ( this->ScreenGrabMagnificationEntry  )
         {
-#ifndef NAVZOOMWIDGET_DEBUG
-        this->SliceViewMagnify( event, istyle );
-#endif
+        int mag  = this->ScreenGrabMagnificationEntry->GetValueAsInt();
+
+        if ( ( mag <= 5 ) && ( mag > 0 ))
+          {
+          this->ScreenGrabMagnification = this->ScreenGrabMagnificationEntry->GetValueAsInt ( );
+          //--- make sure user sees what we see after converting to int.
+          this->ScreenGrabMagnificationEntry->SetValueAsInt ( this->ScreenGrabMagnification );
+          }
+        else 
+          {
+          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+          dialog->SetParent (  win );
+          dialog->SetStyleToMessage();
+          std::string msg = "Please enter an integer image scale value between 1 and 5.";
+          dialog->SetText(msg.c_str());
+          dialog->Create ( );
+          dialog->Invoke();
+          dialog->Delete();
+          return;
+          }
         }
-#ifndef NAVZOOMWIDGET_DEBUG
-      // has interaction occured in the main viewer?
-      if (vstyle == this->MainViewerEvents )
+      //--- try first setting user's selection. if nothing there, choose the last path. if nothing there, mark for error.
+      std::string dirname;
+      if ( this->GetScreenGrabDirectory() != NULL )
         {
+        dirname = this->GetScreenGrabDirectory();
+        }
+      else
+        {
+        if ( this->ScreenGrabDialogButton->GetLoadSaveDialog()->GetLastPath() != NULL )
+          {
+          dirname = this->ScreenGrabDialogButton->GetLoadSaveDialog()->GetLastPath();
+          }
+        else
+          {
+          dirname = "none";
+          }
+        }
+      if ( !(strcmp(dirname.c_str(), "none") ))
+        {
+        // provide a warning 
+        vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+        dialog->SetParent (  win );
+        dialog->SetStyleToMessage();
+        std::string msg = "Please specify a valid directory.";
+        dialog->SetText(msg.c_str());
+        dialog->Create ( );
+        dialog->Invoke();
+        dialog->Delete();
+        return;
+        }
+      else if (this->ScreenGrabName == NULL )
+        {
+        // provide a warning 
+        vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+        dialog->SetParent (  win );
+        dialog->SetStyleToMessage();
+        std::string msg = "Please specify a valid image name.";
+        dialog->SetText(msg.c_str());
+        dialog->Create ( );
+        dialog->Invoke();
+        dialog->Delete();
+        return;
+        }
+      else if  (this->ScreenGrabFormat.c_str() == NULL )
+        {
+        // provide a warning 
+        vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+        dialog->SetParent (  win );
+        dialog->SetStyleToMessage();
+        std::string msg = "Please specify a valid format.";
+        dialog->SetText(msg.c_str());
+        dialog->Create ( );
+        dialog->Invoke();
+        dialog->Delete();
+        return;
+        }
+      else
+        {
+        //--- assemble filename with path.
+        int capture = 1;
+        std::vector<std::string> pathComponents;
+        vtksys::SystemTools::SplitPath ( dirname.c_str(), pathComponents );
+        std::stringstream ss;
+        ss << this->ScreenGrabName << "_" << this->ScreenGrabNumber << this->ScreenGrabFormat;
+        std::string s = ss.str();
+        pathComponents.push_back ( s );
+        std::string filename = vtksys::SystemTools::JoinPath ( pathComponents );
+        //--- make sure it's a unix-style path.
+        std::string upath = vtksys::SystemTools::ConvertToUnixOutputPath ( filename.c_str() );
+
+
+        //--- see if file already exists
+        if ( vtksys::SystemTools::FileExists ( upath.c_str()) ||
+             vtksys::SystemTools::FileExists ( filename.c_str()) )
+          {
+          //--- if overwrite not selected and file exists, give a warning & option to overwrite.
+          if (!(this->ScreenGrabOverwrite) )
+            {
+            vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+            dialog->SetParent (  win );
+            dialog->SetStyleToYesNo();
+            std::string msg = "File already exists. Overwrite?";
+            dialog->SetText(msg.c_str());
+            dialog->Create ( );
+            capture = dialog->Invoke();
+            dialog->Delete();
+            }
+          }
+        //--- if good for capture, set status text and grab the screenshot.
+        if ( capture )
+          {
+          win->SetStatusText ( "Capturing Screenshot...." );
+          app->Script ( "update idletasks" );
+          this->Script ( "SlicerSaveLargeImage %s %d", upath.c_str(), this->GetScreenGrabMagnification() );
+          this->ScreenGrabNumberEntry->SetValueAsInt ( this->ScreenGrabNumber+1 );
+          win->SetStatusText ( "" );
+          app->Script ( "update idletasks" );
+          }
+        }
+      return;
+      }
+    }
+  
+
+  if ( m != NULL && event == vtkKWMenu::MenuItemInvokedEvent )
+    {
+    if ( this->ScreenGrabFormatMenuButton != NULL && m == this->ScreenGrabFormatMenuButton->GetMenu() )
+      {
+      this->SetScreenGrabFormat ( this->ScreenGrabFormatMenuButton->GetValue() );
+      return;
+      }
+    }
+
+  
+  if ( d != NULL && event == vtkKWTopLevel::WithdrawEvent )
+    {
+    if ( this->ScreenGrabDialogButton && d == this->ScreenGrabDialogButton->GetLoadSaveDialog() )
+      {
+      std::string dirname;
+      if ( this->ScreenGrabDialogButton->GetLoadSaveDialog()->GetFileName() != NULL )
+        {
+        dirname = this->ScreenGrabDialogButton->GetLoadSaveDialog()->GetFileName();
+        if ( vtksys::SystemTools::FileIsDirectory ( dirname.c_str() ) )
+          {
+          this->SetScreenGrabDirectory ( dirname.c_str() );
+          }
+        }
+      else
+        {
+        if ( this->ScreenGrabDialogButton->GetLoadSaveDialog()->GetLastPath() != NULL )
+          {
+          dirname = this->ScreenGrabDialogButton->GetLoadSaveDialog()->GetLastPath();
+          if ( vtksys::SystemTools::FileIsDirectory ( dirname.c_str() ) )
+            {
+            this->SetScreenGrabDirectory ( dirname.c_str() );
+            }
+          }
+        else
+          {
+          this->SetScreenGrabDirectory ( NULL );
+          }
+        }
+      return;
+      }
+    }
+  
+  // Make requested changes to the ViewNode      
+  // save state for undo
+  if ( (m == this->StereoButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent) ||
+       (m == this->VisibilityButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent) ||
+       (m == this->StereoButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent) ||
+       (m == this->SelectSceneSnapshotMenuButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent) ||
+       (m == this->SelectSceneSnapshotMenuButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent) ||
+       (p == this->CenterButton && event == vtkKWPushButton::InvokedEvent) ||                      
+       (p == this->OrthoButton && event == vtkKWPushButton::InvokedEvent) ||                      
+       (p == this->PitchButton && event == vtkKWPushButton::InvokedEvent) ||
+       (p == this->RollButton && event == vtkKWPushButton::InvokedEvent) ||
+       (p == this->YawButton && event == vtkKWPushButton::InvokedEvent) ||
+       (p == this->SceneSnapshotButton && event == vtkKWPushButton::InvokedEvent) ||
+       (p == this->ZoomInButton && event == vtkKWPushButton::InvokedEvent) ||
+       (p == this->ZoomOutButton && event == vtkKWPushButton::InvokedEvent) ||
+       (b == this->SpinButton && event == vtkKWCheckButton::SelectedStateChangedEvent) ||                      
+       (b == this->RockButton && event == vtkKWCheckButton::SelectedStateChangedEvent ) )
+    {
+    if ( m == this->SelectSceneSnapshotMenuButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+      {
+      }
+    vtkMRMLViewNode *vn = this->GetActiveView();
+    if ( vn != NULL )
+      {
+      appGUI->GetMRMLScene()->SaveStateForUndo( vn );
+      if ( m == this->StereoButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+        {
+        if ( !strcmp (this->StereoButton->GetValue(), "No stereo"))
+          {
+          vn->SetStereoType( vtkMRMLViewNode::NoStereo );
+          }
+        else if (!strcmp (this->StereoButton->GetValue(), "Red/Blue"))
+          {
+          vn->SetStereoType( vtkMRMLViewNode::RedBlue );
+          }
+        else if (!strcmp (this->StereoButton->GetValue(), "Anaglyph"))
+          {
+          vn->SetStereoType( vtkMRMLViewNode::Anaglyph );
+          }
+        else if (!strcmp (this->StereoButton->GetValue(), "CrystalEyes"))
+          {
+          vn->SetStereoType( vtkMRMLViewNode::CrystalEyes );
+          }
+        else if (!strcmp (this->StereoButton->GetValue(), "Interlaced"))
+          {
+          vn->SetStereoType( vtkMRMLViewNode::Interlaced );            
+          }
+        }
+      else if ( m == this->VisibilityButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+        {
+        // Get all menu items
+        if ( vn->GetFiducialsVisible() != m->GetItemSelectedState("Fiducial points"))
+          {
+//                this->SetMRMLFiducialPointVisibility (m->GetItemSelectedState("Fiducial points"));
+          }
+        if ( vn->GetFiducialLabelsVisible() !=m->GetItemSelectedState("Fiducial labels"))
+          {
+//                this->SetMRMLFiducialLabelVisibility (m->GetItemSelectedState("Fiducial labels"));
+          }
+        if ( vn->GetBoxVisible() !=m->GetItemSelectedState ("3D cube"))
+          {
+          vn->SetBoxVisible ( m->GetItemSelectedState ("3D cube"));
+          this->RequestNavigationRender();
+          }
+        if ( vn->GetAxisLabelsVisible() != m->GetItemSelectedState ("3D axis labels"))
+          {
+          vn->SetAxisLabelsVisible (m->GetItemSelectedState ("3D axis labels"));
+          this->RequestNavigationRender();
+          }
+        if ( m->GetItemSelectedState ("Light blue background" ) == 1 )
+          {
+          vn->SetBackgroundColor ( app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
+          this->RequestNavigationRender();
+          }
+        else if ( m->GetItemSelectedState ("Black background" ) == 1 )
+          {
+          vn->SetBackgroundColor ( app->GetSlicerTheme()->GetSlicerColors()->Black );
+          this->RequestNavigationRender();
+          }
+        else if ( m->GetItemSelectedState ("White background" ) == 1 )
+          {
+          vn->SetBackgroundColor (app->GetSlicerTheme()->GetSlicerColors()->White );
+          this->RequestNavigationRender();
+          }            
+        }
+    
+      if ( (p == this->CenterButton) && (event == vtkKWPushButton::InvokedEvent ) )
+        {
+        this->MainViewResetFocalPoint ( );
         this->RequestNavigationRender();
         }
-#endif
-      
-
-      // Make requested changes to the ViewNode      
-      // save state for undo
-      if ( (m == this->StereoButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent) ||
-           (m == this->VisibilityButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent) ||
-           (m == this->StereoButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent) ||
-           (m == this->ScreenGrabButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent) ||           
-           (m == this->SelectSceneSnapshotMenuButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent) ||
-           (m == this->SelectSceneSnapshotMenuButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent) ||
-           (p == this->CenterButton && event == vtkKWPushButton::InvokedEvent) ||                      
-           (p == this->OrthoButton && event == vtkKWPushButton::InvokedEvent) ||                      
-           (p == this->PitchButton && event == vtkKWPushButton::InvokedEvent) ||
-           (p == this->RollButton && event == vtkKWPushButton::InvokedEvent) ||
-           (p == this->YawButton && event == vtkKWPushButton::InvokedEvent) ||
-           (p == this->SceneSnapshotButton && event == vtkKWPushButton::InvokedEvent) ||
-           (p == this->ZoomInButton && event == vtkKWPushButton::InvokedEvent) ||
-           (p == this->ZoomOutButton && event == vtkKWPushButton::InvokedEvent) ||
-           (b == this->SpinButton && event == vtkKWCheckButton::SelectedStateChangedEvent) ||                      
-           (b == this->RockButton && event == vtkKWCheckButton::SelectedStateChangedEvent ) )
+      else if ( (p == this->OrthoButton) && (event == vtkKWPushButton::InvokedEvent ) && vn )
         {
-        if ( m == this->ScreenGrabButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+        if ( vn->GetRenderMode() == vtkMRMLViewNode::Orthographic )
           {
-          //--- to do
+          vn->SetRenderMode (vtkMRMLViewNode::Perspective);
           }
-        else if ( m == this->SelectSceneSnapshotMenuButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+        else if ( vn->GetRenderMode() == vtkMRMLViewNode::Perspective )
           {
+          vn->SetRenderMode(vtkMRMLViewNode::Orthographic );
           }
+        }
+      else if ( p == this->PitchButton && event == vtkKWPushButton::InvokedEvent )
+        {
+        this->MainViewPitch();
+        }
+      else if ( p == this->RollButton && event == vtkKWPushButton::InvokedEvent )
+        {
+        this->MainViewRoll();
+        }
+      else if ( p == this->YawButton && event == vtkKWPushButton::InvokedEvent )
+        {
+        this->MainViewYaw();
+        }
+      else if ( p == this->ZoomInButton && event == vtkKWPushButton::InvokedEvent )
+        {
+        this->MainViewZoomIn();
+        }
+      else if ( p == this->ZoomOutButton && event == vtkKWPushButton::InvokedEvent )
+        {
+        this->MainViewZoomOut();
+        }
+      else if ( p == this->SceneSnapshotButton  && event == vtkKWPushButton::InvokedEvent )
+        {
+        //--- create a new node...
+        const char *id =  this->CreateSceneSnapshotNode ( this->MySnapshotName );
+        vtkMRMLSceneSnapshotNode *snapshotNode = vtkMRMLSceneSnapshotNode::SafeDownCast (this->MRMLScene->GetNodeByID( id ));
 
-
-        vtkMRMLViewNode *vn = this->GetActiveView();
-        if ( vn != NULL )
+        if ( snapshotNode == NULL )
           {
-          appGUI->GetMRMLScene()->SaveStateForUndo( vn );
-          if ( m == this->StereoButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
-            {
-            if ( !strcmp (this->StereoButton->GetValue(), "No stereo"))
-              {
-              vn->SetStereoType( vtkMRMLViewNode::NoStereo );
-              }
-            else if (!strcmp (this->StereoButton->GetValue(), "Red/Blue"))
-              {
-              vn->SetStereoType( vtkMRMLViewNode::RedBlue );
-              }
-            else if (!strcmp (this->StereoButton->GetValue(), "Anaglyph"))
-              {
-              vn->SetStereoType( vtkMRMLViewNode::Anaglyph );
-              }
-            else if (!strcmp (this->StereoButton->GetValue(), "CrystalEyes"))
-              {
-              vn->SetStereoType( vtkMRMLViewNode::CrystalEyes );
-              }
-            else if (!strcmp (this->StereoButton->GetValue(), "Interlaced"))
-              {
-              vn->SetStereoType( vtkMRMLViewNode::Interlaced );            
-              }
-            }
-          else if ( m == this->VisibilityButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
-            {
-            // Get all menu items
-            if ( vn->GetFiducialsVisible() != m->GetItemSelectedState("Fiducial points"))
-              {
-//                this->SetMRMLFiducialPointVisibility (m->GetItemSelectedState("Fiducial points"));
-              }
-            if ( vn->GetFiducialLabelsVisible() !=m->GetItemSelectedState("Fiducial labels"))
-              {
-//                this->SetMRMLFiducialLabelVisibility (m->GetItemSelectedState("Fiducial labels"));
-              }
-            if ( vn->GetBoxVisible() !=m->GetItemSelectedState ("3D cube"))
-              {
-              vn->SetBoxVisible ( m->GetItemSelectedState ("3D cube"));
-              this->RequestNavigationRender();
-              }
-            if ( vn->GetAxisLabelsVisible() != m->GetItemSelectedState ("3D axis labels"))
-              {
-              vn->SetAxisLabelsVisible (m->GetItemSelectedState ("3D axis labels"));
-              this->RequestNavigationRender();
-              }
-            if ( m->GetItemSelectedState ("Light blue background" ) == 1 )
-              {
-              vn->SetBackgroundColor ( app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
-              this->RequestNavigationRender();
-              }
-            else if ( m->GetItemSelectedState ("Black background" ) == 1 )
-              {
-              vn->SetBackgroundColor ( app->GetSlicerTheme()->GetSlicerColors()->Black );
-              this->RequestNavigationRender();
-              }
-            else if ( m->GetItemSelectedState ("White background" ) == 1 )
-              {
-              vn->SetBackgroundColor (app->GetSlicerTheme()->GetSlicerColors()->White );
-              this->RequestNavigationRender();
-              }            
-            }
-      
-          if ( (p == this->CenterButton) && (event == vtkKWPushButton::InvokedEvent ) )
-            {
-            this->MainViewResetFocalPoint ( );
-            this->RequestNavigationRender();
-            }
-          else if ( (p == this->OrthoButton) && (event == vtkKWPushButton::InvokedEvent ) && vn )
-            {
-            if ( vn->GetRenderMode() == vtkMRMLViewNode::Orthographic )
-              {
-              vn->SetRenderMode (vtkMRMLViewNode::Perspective);
-              }
-            else if ( vn->GetRenderMode() == vtkMRMLViewNode::Perspective )
-              {
-              vn->SetRenderMode(vtkMRMLViewNode::Orthographic );
-              }
-            }
-          else if ( p == this->PitchButton && event == vtkKWPushButton::InvokedEvent )
-            {
-            this->MainViewPitch();
-            }
-          else if ( p == this->RollButton && event == vtkKWPushButton::InvokedEvent )
-            {
-            this->MainViewRoll();
-            }
-          else if ( p == this->YawButton && event == vtkKWPushButton::InvokedEvent )
-            {
-            this->MainViewYaw();
-            }
-          else if ( p == this->ZoomInButton && event == vtkKWPushButton::InvokedEvent )
-            {
-            this->MainViewZoomIn();
-            }
-          else if ( p == this->ZoomOutButton && event == vtkKWPushButton::InvokedEvent )
-            {
-            this->MainViewZoomOut();
-            }
-          else if ( p == this->SceneSnapshotButton  && event == vtkKWPushButton::InvokedEvent )
-            {
-            //--- create a new node...
-            const char *id =  this->CreateSceneSnapshotNode ( this->MySnapshotName );
-            vtkMRMLSceneSnapshotNode *snapshotNode = vtkMRMLSceneSnapshotNode::SafeDownCast (this->MRMLScene->GetNodeByID( id ));
-
-            if ( snapshotNode == NULL )
-              {
-              return;
-              }
+          return;
+          }
           
-            std::stringstream ss;
-            int result =this->InvokeNameDialog ("Type a name your snapshot.", snapshotNode->GetName() );
-            if (!result) 
-              {
-              this->MRMLScene->RemoveNode(snapshotNode);
-              snapshotNode = NULL;
-              }
-            else 
-              {
-              vtkKWEntryWithLabel *entry = this->NameDialog->GetEntry();
-              if ( strcmp (entry->GetWidget()->GetValue(), this->MySnapshotName ))
-                {
+        std::stringstream ss;
+        int result =this->InvokeNameDialog ("Type a name your snapshot.", snapshotNode->GetName() );
+        if (!result) 
+          {
+          this->MRMLScene->RemoveNode(snapshotNode);
+          snapshotNode = NULL;
+          }
+        else 
+          {
+          vtkKWEntryWithLabel *entry = this->NameDialog->GetEntry();
+          if ( strcmp (entry->GetWidget()->GetValue(), this->MySnapshotName ))
+            {
 //                this->MySnapshotName = entry->GetWidget()->GetValue();
-                }
-              ss <<  this->MRMLScene->GetUniqueNameByString(entry->GetWidget()->GetValue());
-              snapshotNode->SetName(ss.str().c_str());
-              snapshotNode->StoreScene();
-              }
             }
+          ss <<  this->MRMLScene->GetUniqueNameByString(entry->GetWidget()->GetValue());
+          snapshotNode->SetName(ss.str().c_str());
+          snapshotNode->StoreScene();
+          }
+        }
 
       
-          //--- turn View Spin and Rocking on and off
-          if ( (b == this->SpinButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent) && vn )
-            {
-            // toggle the Spin 
-            if ( vn->GetAnimationMode() != vtkMRMLViewNode::Spin  && this->SpinButton->GetSelectedState() == 1 )
-              {
-              vn->SetAnimationMode ( vtkMRMLViewNode::Spin );
-              }
-            else if ( vn->GetAnimationMode() == vtkMRMLViewNode::Spin && this->SpinButton->GetSelectedState() == 0 )
-              {
-              vn->SetAnimationMode( vtkMRMLViewNode::Off );
-              }
-            }
-
-          if ( (b == this->RockButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent) && vn )
-            {
-            // toggle the Rock 
-            if ( vn->GetAnimationMode() != vtkMRMLViewNode::Rock && this->RockButton->GetSelectedState() == 1 )
-              {
-              vn->SetAnimationMode( vtkMRMLViewNode::Rock );
-              }
-            else if (vn->GetAnimationMode() == vtkMRMLViewNode::Rock && this->RockButton->GetSelectedState() == 0 )
-              {
-              vn->SetAnimationMode ( vtkMRMLViewNode::Off );
-              }
-            }
-
+      //--- turn View Spin and Rocking on and off
+      if ( (b == this->SpinButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent) && vn )
+        {
+        // toggle the Spin 
+        if ( vn->GetAnimationMode() != vtkMRMLViewNode::Spin  && this->SpinButton->GetSelectedState() == 1 )
+          {
+          vn->SetAnimationMode ( vtkMRMLViewNode::Spin );
+          }
+        else if ( vn->GetAnimationMode() == vtkMRMLViewNode::Spin && this->SpinButton->GetSelectedState() == 0 )
+          {
+          vn->SetAnimationMode( vtkMRMLViewNode::Off );
+          }
+        }
+    
+      if ( (b == this->RockButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent) && vn )
+        {
+        // toggle the Rock 
+        if ( vn->GetAnimationMode() != vtkMRMLViewNode::Rock && this->RockButton->GetSelectedState() == 1 )
+          {
+          vn->SetAnimationMode( vtkMRMLViewNode::Rock );
+          }
+        else if (vn->GetAnimationMode() == vtkMRMLViewNode::Rock && this->RockButton->GetSelectedState() == 0 )
+          {
+          vn->SetAnimationMode ( vtkMRMLViewNode::Off );
           }
         }
       }
     }
 }
-
-
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::MainViewZoom(double factor )
@@ -2702,23 +2966,6 @@ void vtkSlicerViewControlGUI::BuildStereoSelectMenu ( )
 
 
 
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::BuildScreenGrabMenu ( )
-{
-  this->ScreenGrabButton->GetMenu( )->DeleteAllItems();
-  this->ScreenGrabButton->GetMenu()->AddCommand ("Capture a screenshot of the 3D viewer." );
-  this->ScreenGrabButton->GetMenu()->AddCommand ("Capture a screenshot of the 3D viewer and Slice viewers." );
-  this->ScreenGrabButton->GetMenu()->AddCommand ("Capture a screenshot of the GUI panel and all viewers." );
-  this->ScreenGrabButton->GetMenu()->SetItemStateToDisabled ( "Capture a screenshot of the 3D viewer." );
-  this->ScreenGrabButton->GetMenu()->SetItemStateToDisabled ("Capture a screenshot of the 3D viewer and Slice viewers." );
-  this->ScreenGrabButton->GetMenu()->SetItemStateToDisabled ("Capture a screenshot of the GUI panel and all viewers." );
-  this->ScreenGrabButton->GetMenu()->AddSeparator();
-  this->ScreenGrabButton->GetMenu()->AddCommand ( "close" );
-}
-
-
-
-
 
 
 //---------------------------------------------------------------------------
@@ -3226,7 +3473,6 @@ void vtkSlicerViewControlGUI::ReconfigureGUIFonts ( )
 void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
 {
 
-
   vtkSlicerApplicationGUI *p = this->GetApplicationGUI ( );  
   // populate the application's 3DView control GUI panel
   if ( p != NULL )
@@ -3253,7 +3499,7 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
 
       this->CenterButton = vtkKWPushButton::New ( );
       this->StereoButton = vtkKWMenuButton::New ( );
-      this->ScreenGrabButton = vtkKWMenuButton::New ( );
+      this->ScreenGrabButton = vtkKWPushButton::New ( );
       this->VisibilityButton = vtkKWMenuButton::New ( );
       this->SceneSnapshotButton = vtkKWPushButton::New();
       this->SelectSceneSnapshotMenuButton = vtkKWMenuButton::New();
@@ -3430,9 +3676,9 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->ScreenGrabButton->Create ( );
       this->ScreenGrabButton->SetReliefToFlat ( );
       this->ScreenGrabButton->SetBorderWidth ( 0 );
-      this->ScreenGrabButton->SetImageToIcon ( this->SlicerViewControlIcons->GetSceneSnapshotButtonIcon() );
-      this->ScreenGrabButton->IndicatorVisibilityOff ( );
-      this->ScreenGrabButton->SetBalloonHelpString ( "Capture a screenshot of the 3D view or 3D and Slice views.");
+      this->ScreenGrabButton->SetOverReliefToNone();
+      this->ScreenGrabButton->SetImageToIcon ( this->SlicerViewControlIcons->GetScreenCaptureButtonIcon() );
+      this->ScreenGrabButton->SetBalloonHelpString ( "Capture a screenshot of the 3D view.");
       //--- MenuButton to select among saved scene snapshots
       this->SelectSceneSnapshotMenuButton->SetParent ( frameM);
       this->SelectSceneSnapshotMenuButton->Create ( );
@@ -3551,7 +3797,6 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->PackNavigationWidget ( );
       
       // populate menus
-      this->BuildScreenGrabMenu();
       this->BuildStereoSelectMenu ( );
       this->BuildVisibilityMenu ( );
 
@@ -3568,7 +3813,6 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       }
     }
 }
-
 
 
 
@@ -3742,3 +3986,350 @@ void vtkSlicerViewControlGUI::CheckAbort(void)
 }
 
 
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::DestroyScreenGrabOptionsWindow ( )
+{
+  if ( !this->GetScreenGrabOptionsWindow() )
+    {
+    return;
+    }
+  if ( ! (this->GetScreenGrabOptionsWindow()->IsCreated()) )
+    {
+    vtkErrorMacro ( "DestroyScreenGrabOptionsWindow: ScreenGrabOptionsWindow is not created." );
+    return;
+    }
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
+  if ( app )
+    {
+    app->Script ( "grab release %s", this->ScreenGrabOptionsWindow->GetWidgetName() );
+    }
+  this->ScreenGrabOptionsWindow->Withdraw();
+  
+  if ( this->ScreenGrabDialogButton )
+    {
+    this->ScreenGrabDialogButton->GetLoadSaveDialog()->RemoveObservers ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ScreenGrabDialogButton->SetParent ( NULL );
+    this->ScreenGrabDialogButton->Delete();
+    this->ScreenGrabDialogButton = NULL;
+    }
+  if ( this->ScreenGrabNameEntry )
+    {
+    this->ScreenGrabNameEntry->SetParent ( NULL );
+    this->ScreenGrabNameEntry->Delete();
+    this->ScreenGrabNameEntry = NULL;
+    }
+  if ( this->ScreenGrabNumberEntry )
+    {
+    this->ScreenGrabNumberEntry->SetParent ( NULL );
+    this->ScreenGrabNumberEntry->Delete();
+    this->ScreenGrabNumberEntry = NULL;    
+    }
+  if ( this->ScreenGrabMagnificationEntry )
+    {
+    this->ScreenGrabMagnificationEntry->SetParent (NULL );
+    this->ScreenGrabMagnificationEntry->Delete();
+    this->ScreenGrabMagnificationEntry = NULL;    
+    }
+  if ( this->ScreenGrabFormatMenuButton )
+    {
+    this->ScreenGrabFormatMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *) this->GUICallbackCommand );
+    this->ScreenGrabFormatMenuButton->GetMenu()->DeleteAllItems();
+    this->ScreenGrabFormatMenuButton->SetParent ( NULL );
+    this->ScreenGrabFormatMenuButton->Delete();
+    this->ScreenGrabFormatMenuButton = NULL;
+    }
+  if ( this->ScreenGrabOverwriteButton)
+    {
+    this->ScreenGrabOverwriteButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ScreenGrabOverwriteButton->SetParent ( NULL );
+    this->ScreenGrabOverwriteButton->Delete();
+    this->ScreenGrabOverwriteButton = NULL;    
+    }
+  if ( this->ScreenGrabCaptureButton )
+    {
+    this->ScreenGrabCaptureButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ScreenGrabCaptureButton->SetParent ( NULL);
+    this->ScreenGrabCaptureButton->Delete();
+    this->ScreenGrabCaptureButton = NULL;    
+    }
+  if ( this->ScreenGrabCloseButton )
+    {
+    this->ScreenGrabCloseButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ScreenGrabCloseButton->SetParent ( NULL );
+    this->ScreenGrabCloseButton->Delete();
+    this->ScreenGrabCloseButton = NULL;    
+    }
+  this->ScreenGrabOptionsWindow->Delete();
+  this->ScreenGrabOptionsWindow = NULL;
+}
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::WithdrawScreenGrabOptionsWindow ( )
+{
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
+  if ( app && this->ScreenGrabOptionsWindow )
+    {
+    app->Script ( "grab release %s", this->ScreenGrabOptionsWindow->GetWidgetName() );
+    }
+
+  if ( this->ScreenGrabDialogButton )
+    {
+    this->ScreenGrabDialogButton->GetLoadSaveDialog()->RemoveObservers ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+  if ( this->ScreenGrabFormatMenuButton )
+    {
+    this->ScreenGrabFormatMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+    }
+  if ( this->ScreenGrabOverwriteButton )
+    {
+    this->ScreenGrabOverwriteButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+  if ( this->ScreenGrabCaptureButton )
+    {
+    this->ScreenGrabCaptureButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+  if ( this->ScreenGrabCloseButton )
+    {
+    this->ScreenGrabCloseButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+  if ( this->ScreenGrabOptionsWindow )
+    {
+    this->ScreenGrabOptionsWindow->Withdraw();
+    }
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::RaiseScreenGrabOptionsWindow ( )
+{
+  //--- create window if not already created.
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
+
+  if ( this->ScreenGrabDirectory == NULL )
+    {
+    if ( app )
+      {
+      if ( app->GetTemporaryDirectory() )
+        {
+        this->SetScreenGrabDirectory(app->GetTemporaryDirectory() );
+        }
+      }
+    }
+
+  if ( this->ScreenGrabOptionsWindow == NULL )
+    {
+    int px, py;
+    //-- top level container.
+    this->ScreenGrabOptionsWindow = vtkKWTopLevel::New();
+    this->ScreenGrabOptionsWindow->SetMasterWindow ( this->GetScreenGrabButton() );
+    this->ScreenGrabOptionsWindow->SetApplication ( this->GetApplication() );
+    this->ScreenGrabOptionsWindow->Create();
+    vtkKWTkUtilities::GetWidgetCoordinates( this->GetScreenGrabButton(), &px, &py );
+    this->ScreenGrabOptionsWindow->SetPosition ( px + 10, py - 250 );
+    this->ScreenGrabOptionsWindow->SetBorderWidth ( 1 );
+    this->ScreenGrabOptionsWindow->SetReliefToFlat();
+    this->ScreenGrabOptionsWindow->SetTitle ( "Screen Capture Options");
+    this->ScreenGrabOptionsWindow->SetSize ( 550, 250 );
+    this->ScreenGrabOptionsWindow->Withdraw();
+    this->ScreenGrabOptionsWindow->SetDeleteWindowProtocolCommand ( this, "DestroyScreenGrabOptionsWindow");
+
+    vtkKWFrame *f1 = vtkKWFrame::New();
+    f1->SetParent ( this->ScreenGrabOptionsWindow );
+    f1->Create();
+    f1->SetBorderWidth ( 1 );
+    this->Script ( "pack %s -side top -anchor nw -fill x -expand y -padx 0 -pady 1", f1->GetWidgetName() );
+
+
+    vtkKWLabel *l0 = vtkKWLabel::New();
+    l0->SetParent ( f1 );
+    l0->Create();
+    l0->SetText ( "Directory / folder:" );
+    this->ScreenGrabDialogButton = vtkKWLoadSaveButton::New();
+    this->ScreenGrabDialogButton->SetParent ( f1 );
+    this->ScreenGrabDialogButton->Create();
+    if ( this->GetScreenGrabDirectory() == NULL )
+      {
+      this->ScreenGrabDialogButton->GetLoadSaveDialog()->RetrieveLastPathFromRegistry ("OpenPath");
+      const char *lastpath = this->ScreenGrabDialogButton->GetLoadSaveDialog()->GetLastPath();
+      if ( lastpath != NULL && !(strcmp(lastpath, "" )) )
+        {
+        this->ScreenGrabDialogButton->SetInitialFileName (lastpath);
+        }
+      }
+    else
+      {
+      this->ScreenGrabDialogButton->GetLoadSaveDialog()->SetLastPath ( this->GetScreenGrabDirectory() );
+      this->ScreenGrabDialogButton->SetInitialFileName ( this->GetScreenGrabDirectory() );
+      }
+    this->ScreenGrabDialogButton->TrimPathFromFileNameOff();
+    this->ScreenGrabDialogButton->SetMaximumFileNameLength (128 );
+    this->ScreenGrabDialogButton->GetLoadSaveDialog()->ChooseDirectoryOn();
+    
+    this->ScreenGrabDialogButton->SetBalloonHelpString ( "Select a directory in which screen captures will be saved." );
+
+    vtkKWLabel *l1 = vtkKWLabel::New();
+    l1->SetParent ( f1 );
+    l1->Create();
+    l1->SetText ( "Image name:" );
+    this->SetScreenGrabName  ("SlicerImage");
+    this->ScreenGrabNameEntry = vtkKWEntry::New();
+    this->ScreenGrabNameEntry->SetParent ( f1 );
+    this->ScreenGrabNameEntry->Create();
+    this->ScreenGrabNameEntry->SetCommandTriggerToReturnKeyAndFocusOut ();
+    this->ScreenGrabNameEntry->SetValue ( this->ScreenGrabName );    
+    this->ScreenGrabNameEntry->SetBalloonHelpString ( "Select a base-name for the image file, or use the default provided." );
+
+    vtkKWLabel *l2 = vtkKWLabel::New();
+    l2->SetParent ( f1 );
+    l2->Create();
+    l2->SetText ( "Image version number:" );
+    this->ScreenGrabNumberEntry = vtkKWEntry::New();
+    this->ScreenGrabNumberEntry->SetParent ( f1 );
+    this->ScreenGrabNumberEntry->Create();
+    this->ScreenGrabNumberEntry->SetCommandTriggerToReturnKeyAndFocusOut();
+    this->ScreenGrabNumberEntry->SetValueAsInt ( this->ScreenGrabNumber );
+    this->ScreenGrabNumberEntry->SetBalloonHelpString ( "Select a number to append to the image file base-name to create a unique filename." );
+
+    vtkKWLabel *l3 = vtkKWLabel::New();
+    l3->SetParent ( f1 );
+    l3->Create();
+    l3->SetText ( "Image scale:" );
+    this->ScreenGrabMagnificationEntry = vtkKWEntry::New();
+    this->ScreenGrabMagnificationEntry->SetParent ( f1 );
+    this->ScreenGrabMagnificationEntry->Create();
+this->ScreenGrabMagnificationEntry->SetCommandTriggerToReturnKeyAndFocusOut();
+    this->ScreenGrabMagnificationEntry->SetValueAsInt ( this->ScreenGrabMagnification );
+    this->ScreenGrabMagnificationEntry->SetBalloonHelpString ( "Select an integer scale factor (between 1 and 5) for the image file, e.g. a value of \"2\" will save an image twice the size of the current 3D Viewer." );
+
+    vtkKWLabel *l4 = vtkKWLabel::New();
+    l4->SetParent (f1);
+    l4->Create();
+    l4->SetText ( "Choose Format:" );
+    this->ScreenGrabFormatMenuButton = vtkKWMenuButton::New();
+    this->ScreenGrabFormatMenuButton->SetParent ( f1 );
+    this->ScreenGrabFormatMenuButton->Create();
+    this->ScreenGrabFormatMenuButton->GetMenu()->AddRadioButton ( ".png" );
+    this->ScreenGrabFormatMenuButton->GetMenu()->AddRadioButton ( ".jpg" );
+    this->ScreenGrabFormatMenuButton->GetMenu()->AddRadioButton ( ".tiff" );
+    this->ScreenGrabFormatMenuButton->GetMenu()->AddRadioButton ( ".eps" );
+    this->ScreenGrabFormatMenuButton->GetMenu()->AddRadioButton ( ".ps" );
+    this->ScreenGrabFormatMenuButton->GetMenu()->AddRadioButton ( ".prn" );
+    this->ScreenGrabFormatMenuButton->GetMenu()->AddRadioButton ( ".pnm" );
+    this->ScreenGrabFormatMenuButton->GetMenu()->AddRadioButton ( ".ppm" );
+    this->ScreenGrabFormatMenuButton->GetMenu()->AddSeparator();
+    this->ScreenGrabFormatMenuButton->GetMenu()->AddCommand ( "close" );
+    this->ScreenGrabFormat.clear();
+    this->ScreenGrabFormat = ".png";
+    this->ScreenGrabFormatMenuButton->SetWidth ( 15 );
+    this->ScreenGrabFormatMenuButton->SetValue ( this->ScreenGrabFormat.c_str() );
+    this->ScreenGrabFormatMenuButton->SetBalloonHelpString ( "Specify an image file format." );
+    
+    vtkKWLabel *l5 = vtkKWLabel::New();
+    l5->SetParent (f1);
+    l5->Create();
+    l5->SetText  ( "Overwrite existing any files" );
+    this->ScreenGrabOverwriteButton = vtkKWCheckButton::New();
+    this->ScreenGrabOverwriteButton->SetParent ( f1 );
+    this->ScreenGrabOverwriteButton->Create();
+    this->ScreenGrabOverwriteButton->SetSelectedState ( this->ScreenGrabOverwrite );
+    this->ScreenGrabOverwriteButton->SetBalloonHelpString ( "Select this option if you wish to overwrite any existing image files with new screen captures." );
+
+    this->Script ( "grid %s -row 0 -column 0 -padx 2 -pady 2 -sticky e", l0->GetWidgetName() );
+    this->Script ( "grid %s -row 0 -column 1  -columnspan 2 -padx 2 -pady 2 -sticky ew", this->ScreenGrabDialogButton->GetWidgetName() );
+    this->Script ( "grid %s -row 1 -column 0 -padx 2 -pady 2 -sticky e", l1->GetWidgetName() );
+    this->Script ( "grid %s -row 1 -column 1  -columnspan 2 -padx 2 -pady 2 -sticky ew", this->ScreenGrabNameEntry->GetWidgetName() );
+    this->Script ( "grid %s -row 2 -column 0 -padx 2 -pady 2 -sticky e", l2->GetWidgetName() );
+    this->Script ( "grid %s -row 2 -column 1  -padx 2 -pady 2 -sticky ew", this->ScreenGrabNumberEntry->GetWidgetName() );
+    this->Script ( "grid %s -row 3 -column 0 -padx 2 -pady 2 -sticky e", l3->GetWidgetName() );
+    this->Script ( "grid %s -row 3 -column 1  -padx 2 -pady 2 -sticky ew", this->ScreenGrabMagnificationEntry->GetWidgetName() );
+    this->Script ( "grid %s -row 4 -column 0 -padx 2 -pady 2 -sticky e", l4->GetWidgetName() );
+    this->Script ( "grid %s -row 4 -column 1  -padx 2 -pady 2 -sticky w", this->ScreenGrabFormatMenuButton->GetWidgetName() );
+    this->Script ( "grid %s -row 5 -column 0 -padx 2 -pady 2 -sticky e", this->ScreenGrabOverwriteButton->GetWidgetName() );
+    this->Script ( "grid %s -row 5 -column 1  -columnspan 2 -padx 2 -pady 2 -sticky w", l5->GetWidgetName() );
+    this->Script ( "grid columnconfigure %s 0 -weight 0", f1->GetWidgetName() );
+    this->Script ( "grid columnconfigure %s 1 -weight 0", f1->GetWidgetName() );
+    this->Script ( "grid columnconfigure %s 2 -weight 1", f1->GetWidgetName() );
+
+    
+    vtkKWFrame *f2 = vtkKWFrame::New();
+    f2->SetParent ( this->ScreenGrabOptionsWindow );
+    f2->Create();
+    f2->SetBorderWidth ( 1 );
+    this->Script ( "pack %s -side top -anchor nw -fill x -expand y -padx 0 -pady 3", f2->GetWidgetName() );
+
+    this->ScreenGrabCaptureButton = vtkKWPushButton::New();
+    this->ScreenGrabCaptureButton->SetParent ( f2 );
+    this->ScreenGrabCaptureButton->Create();
+    this->ScreenGrabCaptureButton->SetText ( "Capture" );
+    this->ScreenGrabCaptureButton->SetWidth ( 9 );
+    
+    this->ScreenGrabCloseButton = vtkKWPushButton::New();
+    this->ScreenGrabCloseButton->SetParent ( f2 );
+    this->ScreenGrabCloseButton->Create();
+    this->ScreenGrabCloseButton->SetText ( "Close" );
+    this->ScreenGrabCloseButton->SetCommand ( this, "WithdrawScreenGrabOptionsWindow" );
+    this->ScreenGrabCloseButton->SetWidth ( 9 );
+
+    this->Script ( "pack %s %s -side left -anchor c -fill x -expand n -padx 0 -pady 1",
+                   this->ScreenGrabCloseButton->GetWidgetName(),
+                   this->ScreenGrabCaptureButton->GetWidgetName() );
+    
+
+    l0->Delete();
+    l1->Delete();
+    l2->Delete();
+    l3->Delete();
+    l4->Delete();
+    l5->Delete();
+    f1->Delete();
+    f2->Delete();
+
+    }
+
+
+  this->ScreenGrabDialogButton->GetLoadSaveDialog()->AddObserver ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ScreenGrabFormatMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->ScreenGrabOverwriteButton->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ScreenGrabCaptureButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->ScreenGrabCloseButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+  // display
+  this->ScreenGrabOptionsWindow->DeIconify();
+  this->ScreenGrabOptionsWindow->Raise();
+  if ( app )
+    {
+    app->Script ( "grab %s", this->ScreenGrabOptionsWindow->GetWidgetName() );
+    app->ProcessIdleTasks();
+    }
+  this->Script ( "update idletasks");
+
+}
+
+
+
+//---------------------------------------------------------------------------
+const char *vtkSlicerViewControlGUI::GetScreenGrabFormat ( )
+{
+  if ( ScreenGrabFormat.c_str() != NULL && (strcmp(ScreenGrabFormat.c_str(), "" ) ) )
+    {
+    return ( ScreenGrabFormat.c_str() );
+    }
+  else
+    {
+    return NULL;
+    }
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::SetScreenGrabFormat ( const char *format )
+{
+  this->ScreenGrabFormat.clear();
+  this->ScreenGrabFormat = format;
+}

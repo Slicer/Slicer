@@ -48,7 +48,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlIcons : public vtkSlicerIco
     vtkGetObjectMacro (OrthoButtonIcon, vtkKWIcon );    
     vtkGetObjectMacro (PerspectiveButtonIcon, vtkKWIcon );
     vtkGetObjectMacro (CenterButtonIcon, vtkKWIcon );
-    vtkGetObjectMacro (SceneSnapshotButtonIcon, vtkKWIcon );
+    vtkGetObjectMacro (ScreenCaptureButtonIcon, vtkKWIcon );
     vtkGetObjectMacro (StereoButtonIcon, vtkKWIcon );
     vtkGetObjectMacro (LookFromOffButtonIcon, vtkKWIcon );
     vtkGetObjectMacro (LookFromOnButtonIcon, vtkKWIcon );
@@ -101,7 +101,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlIcons : public vtkSlicerIco
     vtkKWIcon *OrthoButtonIcon;
     vtkKWIcon *PerspectiveButtonIcon;
     vtkKWIcon *CenterButtonIcon;
-    vtkKWIcon *SceneSnapshotButtonIcon;
+    vtkKWIcon *ScreenCaptureButtonIcon;
     vtkKWIcon *StereoButtonIcon;
     vtkKWIcon *LookFromOffButtonIcon;
     vtkKWIcon *LookFromOnButtonIcon;

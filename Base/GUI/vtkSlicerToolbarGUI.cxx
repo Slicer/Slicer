@@ -51,7 +51,6 @@ vtkSlicerToolbarGUI::vtkSlicerToolbarGUI ( )
   this->UndoRedoToolbar = vtkKWToolbar::New ( );
   this->UtilitiesToolbar = vtkKWToolbar::New();
 
-  this->ScreenShotIconButton = vtkKWPushButton::New();
   this->HomeIconButton = vtkKWPushButton::New ( );
   this->DataIconButton = vtkKWPushButton::New ( );
   this->VolumeIconButton = vtkKWPushButton::New ( );
@@ -83,25 +82,6 @@ vtkSlicerToolbarGUI::vtkSlicerToolbarGUI ( )
   this->CompareViewBoxApplyButton = NULL; //vtkKWPushButton::New( );
   this->CompareViewLightboxRowEntry = NULL;
   this->CompareViewLightboxColumnEntry = NULL;
-
-  //--- Screen snapshot configure window
-  this->ScreenShotFormatMenuButton = NULL;
-  this->ScreenShotOptionsWindow = NULL;
-  this->ScreenShotNameEntry = NULL;
-  this->ScreenShotNumberEntry = NULL;
-  this->ScreenShotOverwriteButton = NULL;
-  this->ScreenShotCaptureButton = NULL;
-  this->ScreenShotCloseButton = NULL;
-  this->ScreenShotDialogButton = NULL;
-  this->ScreenShotMagnificationEntry  = NULL;
-  this->ScreenShotOverwrite = 0;
-  
-  this->ScreenShotDirectory = NULL;
-  this->ScreenShotName = NULL;
-  this->ScreenShotNumber = 0;
-  this->ScreenShotMagnification = 1;
-  this->ScreenShotFormat = ".png";
-
 }
 
 
@@ -169,25 +149,7 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
     this->ModuleChooseGUI = NULL;
     }
     
-  // Delete the widgets
-  if ( this->ScreenShotMagnificationEntry )
-    {
-    this->ScreenShotMagnificationEntry->SetParent ( NULL );
-    this->ScreenShotMagnificationEntry->Delete();
-    this->ScreenShotMagnificationEntry = NULL;    
-    }
-  if ( this->ScreenShotDialogButton )
-    {
-    this->ScreenShotDialogButton->SetParent ( NULL );
-    this->ScreenShotDialogButton->Delete();
-    this->ScreenShotDialogButton = NULL;
-    }
-  if ( this->ScreenShotIconButton )
-    {
-    this->ScreenShotIconButton->SetParent ( NULL );
-    this->ScreenShotIconButton->Delete();
-    this->ScreenShotIconButton = NULL;    
-    }
+
   if ( this->HomeIconButton )
     {
     this->HomeIconButton->SetParent ( NULL );
@@ -372,11 +334,6 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
     this->CompareViewBoxTopLevel = NULL;
     }
 
-  //--- Screen snapshot configure window
-  this->DestroyScreenShotOptionsWindow();
-  
-  this->SetScreenShotDirectory ( NULL );
-  this->SetScreenShotName ( NULL );
   this->SetApplicationGUI ( NULL );
   this->SetInteractionNodeID ( NULL );
   vtkSetMRMLNodeMacro( this->InteractionNode, NULL);
@@ -427,369 +384,6 @@ void vtkSlicerToolbarGUI::AddMRMLObservers()
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerToolbarGUI::DestroyScreenShotOptionsWindow ( )
-{
-  if ( !this->GetScreenShotOptionsWindow() )
-    {
-    return;
-    }
-  if ( ! (this->GetScreenShotOptionsWindow()->IsCreated()) )
-    {
-    vtkErrorMacro ( "DestroyScreenShotOptionsWindow: ScreenShotOptionsWindow is not created." );
-    return;
-    }
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
-  if ( app )
-    {
-    app->Script ( "grab release %s", this->ScreenShotOptionsWindow->GetWidgetName() );
-    }
-  this->ScreenShotOptionsWindow->Withdraw();
-  
-  if ( this->ScreenShotDialogButton )
-    {
-    this->ScreenShotDialogButton->GetLoadSaveDialog()->RemoveObservers ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->ScreenShotDialogButton->SetParent ( NULL );
-    this->ScreenShotDialogButton->Delete();
-    this->ScreenShotDialogButton = NULL;
-    }
-  if ( this->ScreenShotNameEntry )
-    {
-    this->ScreenShotNameEntry->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->ScreenShotNameEntry->SetParent ( NULL );
-    this->ScreenShotNameEntry->Delete();
-    this->ScreenShotNameEntry = NULL;
-    }
-  if ( this->ScreenShotNumberEntry )
-    {
-    this->ScreenShotNumberEntry->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->ScreenShotNumberEntry->SetParent ( NULL );
-    this->ScreenShotNumberEntry->Delete();
-    this->ScreenShotNumberEntry = NULL;    
-    }
-  if ( this->ScreenShotMagnificationEntry )
-    {
-    this->ScreenShotMagnificationEntry->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand * )this->GUICallbackCommand );
-    this->ScreenShotMagnificationEntry->SetParent (NULL );
-    this->ScreenShotMagnificationEntry->Delete();
-    this->ScreenShotMagnificationEntry = NULL;    
-    }
-  if ( this->ScreenShotFormatMenuButton )
-    {
-    this->ScreenShotFormatMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *) this->GUICallbackCommand );
-    this->ScreenShotFormatMenuButton->GetMenu()->DeleteAllItems();
-    this->ScreenShotFormatMenuButton->SetParent ( NULL );
-    this->ScreenShotFormatMenuButton->Delete();
-    this->ScreenShotFormatMenuButton = NULL;
-    }
-  if ( this->ScreenShotOverwriteButton)
-    {
-    this->ScreenShotOverwriteButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->ScreenShotOverwriteButton->SetParent ( NULL );
-    this->ScreenShotOverwriteButton->Delete();
-    this->ScreenShotOverwriteButton = NULL;    
-    }
-  if ( this->ScreenShotCaptureButton )
-    {
-    this->ScreenShotCaptureButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->ScreenShotCaptureButton->SetParent ( NULL);
-    this->ScreenShotCaptureButton->Delete();
-    this->ScreenShotCaptureButton = NULL;    
-    }
-  if ( this->ScreenShotCloseButton )
-    {
-    this->ScreenShotCloseButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->ScreenShotCloseButton->SetParent ( NULL );
-    this->ScreenShotCloseButton->Delete();
-    this->ScreenShotCloseButton = NULL;    
-    }
-  this->ScreenShotOptionsWindow->Delete();
-  this->ScreenShotOptionsWindow = NULL;
-}
-
-
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerToolbarGUI::WithdrawScreenShotOptionsWindow ( )
-{
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
-  if ( app && this->ScreenShotOptionsWindow )
-    {
-    app->Script ( "grab release %s", this->ScreenShotOptionsWindow->GetWidgetName() );
-    }
-
-  if ( this->ScreenShotDialogButton )
-    {
-    this->ScreenShotDialogButton->GetLoadSaveDialog()->RemoveObservers ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
-    }
-  if ( this->ScreenShotNameEntry )
-    {
-    this->ScreenShotNameEntry->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    }
-  if ( this->ScreenShotNumberEntry )
-    {
-    this->ScreenShotNumberEntry->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    }
-  if ( this->ScreenShotMagnificationEntry )
-    {
-    this->ScreenShotMagnificationEntry->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    }
-  if ( this->ScreenShotFormatMenuButton )
-    {
-    this->ScreenShotFormatMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand);
-    }
-  if ( this->ScreenShotOverwriteButton )
-    {
-    this->ScreenShotOverwriteButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    }
-  if ( this->ScreenShotCaptureButton )
-    {
-    this->ScreenShotCaptureButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    }
-  if ( this->ScreenShotCloseButton )
-    {
-    this->ScreenShotCloseButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    }
-  if ( this->ScreenShotOptionsWindow )
-    {
-    this->ScreenShotOptionsWindow->Withdraw();
-    }
-
-}
-
-
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerToolbarGUI::RaiseScreenShotOptionsWindow ( )
-{
-  //--- create window if not already created.
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
-
-  if ( this->ScreenShotDirectory == NULL )
-    {
-    if ( app )
-      {
-      if ( app->GetTemporaryDirectory() )
-        {
-        this->SetScreenShotDirectory(app->GetTemporaryDirectory() );
-        }
-      }
-    }
-  if ( this->ScreenShotOptionsWindow == NULL )
-    {
-    int px, py;
-    //-- top level container.
-    this->ScreenShotOptionsWindow = vtkKWTopLevel::New();
-    this->ScreenShotOptionsWindow->SetMasterWindow ( this->GetScreenShotIconButton() );
-    this->ScreenShotOptionsWindow->SetApplication ( this->GetApplication() );
-    this->ScreenShotOptionsWindow->Create();
-    vtkKWTkUtilities::GetWidgetCoordinates( this->GetScreenShotIconButton(), &px, &py );
-    this->ScreenShotOptionsWindow->SetPosition ( px + 10, py + 10 );
-    this->ScreenShotOptionsWindow->SetBorderWidth ( 1 );
-    this->ScreenShotOptionsWindow->SetReliefToFlat();
-    this->ScreenShotOptionsWindow->SetTitle ( "Screen Capture Options");
-    this->ScreenShotOptionsWindow->SetSize ( 550, 250 );
-    this->ScreenShotOptionsWindow->Withdraw();
-    this->ScreenShotOptionsWindow->SetDeleteWindowProtocolCommand ( this, "DestroyScreenShotOptionsWindow");
-
-    vtkKWFrame *f1 = vtkKWFrame::New();
-    f1->SetParent ( this->ScreenShotOptionsWindow );
-    f1->Create();
-    f1->SetBorderWidth ( 1 );
-    this->Script ( "pack %s -side top -anchor nw -fill x -expand y -padx 0 -pady 1", f1->GetWidgetName() );
-
-
-    vtkKWLabel *l0 = vtkKWLabel::New();
-    l0->SetParent ( f1 );
-    l0->Create();
-    l0->SetText ( "Directory / folder:" );
-    this->ScreenShotDialogButton = vtkKWLoadSaveButton::New();
-    this->ScreenShotDialogButton->SetParent ( f1 );
-    this->ScreenShotDialogButton->Create();
-    if ( this->GetScreenShotDirectory() == NULL )
-      {
-      this->ScreenShotDialogButton->GetLoadSaveDialog()->RetrieveLastPathFromRegistry ("OpenPath");
-      const char *lastpath = this->ScreenShotDialogButton->GetLoadSaveDialog()->GetLastPath();
-      if ( lastpath != NULL && !(strcmp(lastpath, "" )) )
-        {
-        this->ScreenShotDialogButton->SetInitialFileName (lastpath);
-        }
-      }
-    else
-      {
-      this->ScreenShotDialogButton->GetLoadSaveDialog()->SetLastPath ( this->GetScreenShotDirectory() );
-      this->ScreenShotDialogButton->SetInitialFileName ( this->GetScreenShotDirectory() );
-      }
-    this->ScreenShotDialogButton->TrimPathFromFileNameOff();
-    this->ScreenShotDialogButton->SetMaximumFileNameLength (128 );
-    this->ScreenShotDialogButton->GetLoadSaveDialog()->ChooseDirectoryOn();
-
-    this->ScreenShotDialogButton->SetBalloonHelpString ( "Select a directory in which screen captures will be saved." );
-
-    vtkKWLabel *l1 = vtkKWLabel::New();
-    l1->SetParent ( f1 );
-    l1->Create();
-    l1->SetText ( "Image name:" );
-    this->SetScreenShotName  ("SlicerImage");
-    this->ScreenShotNameEntry = vtkKWEntry::New();
-    this->ScreenShotNameEntry->SetParent ( f1 );
-    this->ScreenShotNameEntry->Create();
-    this->ScreenShotNameEntry->SetValue ( this->ScreenShotName );    
-    this->ScreenShotNameEntry->SetBalloonHelpString ( "Select a base-name for the image file, or use the default provided." );
-
-    vtkKWLabel *l2 = vtkKWLabel::New();
-    l2->SetParent ( f1 );
-    l2->Create();
-    l2->SetText ( "Image version number:" );
-    this->ScreenShotNumberEntry = vtkKWEntry::New();
-    this->ScreenShotNumberEntry->SetParent ( f1 );
-    this->ScreenShotNumberEntry->Create();
-    this->ScreenShotNumberEntry->SetValueAsInt ( this->ScreenShotNumber );
-    this->ScreenShotNumberEntry->SetBalloonHelpString ( "Select a number to append to the image file base-name to create a unique filename." );
-
-    vtkKWLabel *l3 = vtkKWLabel::New();
-    l3->SetParent ( f1 );
-    l3->Create();
-    l3->SetText ( "Image scale:" );
-    this->ScreenShotMagnificationEntry = vtkKWEntry::New();
-    this->ScreenShotMagnificationEntry->SetParent ( f1 );
-    this->ScreenShotMagnificationEntry->Create();
-    this->ScreenShotMagnificationEntry->SetValueAsInt ( this->ScreenShotMagnification );
-    this->ScreenShotMagnificationEntry->SetBalloonHelpString ( "Select a scale factor for the image file, e.g. a value of \"2\" will save an image twice the size of the current 3D Viewer." );
-
-    vtkKWLabel *l4 = vtkKWLabel::New();
-    l4->SetParent (f1);
-    l4->Create();
-    l4->SetText ( "Choose Format:" );
-    this->ScreenShotFormatMenuButton = vtkKWMenuButton::New();
-    this->ScreenShotFormatMenuButton->SetParent ( f1 );
-    this->ScreenShotFormatMenuButton->Create();
-    this->ScreenShotFormatMenuButton->GetMenu()->AddRadioButton ( ".png" );
-    this->ScreenShotFormatMenuButton->GetMenu()->AddRadioButton ( ".jpg" );
-    this->ScreenShotFormatMenuButton->GetMenu()->AddRadioButton ( ".tiff" );
-    this->ScreenShotFormatMenuButton->GetMenu()->AddRadioButton ( ".eps" );
-    this->ScreenShotFormatMenuButton->GetMenu()->AddRadioButton ( ".ps" );
-    this->ScreenShotFormatMenuButton->GetMenu()->AddRadioButton ( ".prn" );
-    this->ScreenShotFormatMenuButton->GetMenu()->AddRadioButton ( ".pnm" );
-    this->ScreenShotFormatMenuButton->GetMenu()->AddRadioButton ( ".ppm" );
-    this->ScreenShotFormatMenuButton->GetMenu()->AddSeparator();
-    this->ScreenShotFormatMenuButton->GetMenu()->AddCommand ( "close" );
-    this->ScreenShotFormat.clear();
-    this->ScreenShotFormat = ".png";
-    this->ScreenShotFormatMenuButton->SetWidth ( 15 );
-    this->ScreenShotFormatMenuButton->SetValue ( this->ScreenShotFormat.c_str() );
-    this->ScreenShotFormatMenuButton->SetBalloonHelpString ( "Specify an image file format." );
-    
-    vtkKWLabel *l5 = vtkKWLabel::New();
-    l5->SetParent (f1);
-    l5->Create();
-    l5->SetText  ( "Overwrite existing any files" );
-    this->ScreenShotOverwriteButton = vtkKWCheckButton::New();
-    this->ScreenShotOverwriteButton->SetParent ( f1 );
-    this->ScreenShotOverwriteButton->Create();
-    this->ScreenShotOverwriteButton->SetSelectedState ( this->ScreenShotOverwrite );
-    this->ScreenShotOverwriteButton->SetBalloonHelpString ( "Select this option if you wish to overwrite any existing image files with new screen captures." );
-
-    this->Script ( "grid %s -row 0 -column 0 -padx 2 -pady 2 -sticky e", l0->GetWidgetName() );
-    this->Script ( "grid %s -row 0 -column 1  -columnspan 2 -padx 2 -pady 2 -sticky ew", this->ScreenShotDialogButton->GetWidgetName() );
-    this->Script ( "grid %s -row 1 -column 0 -padx 2 -pady 2 -sticky e", l1->GetWidgetName() );
-    this->Script ( "grid %s -row 1 -column 1  -columnspan 2 -padx 2 -pady 2 -sticky ew", this->ScreenShotNameEntry->GetWidgetName() );
-    this->Script ( "grid %s -row 2 -column 0 -padx 2 -pady 2 -sticky e", l2->GetWidgetName() );
-    this->Script ( "grid %s -row 2 -column 1  -padx 2 -pady 2 -sticky ew", this->ScreenShotNumberEntry->GetWidgetName() );
-    this->Script ( "grid %s -row 3 -column 0 -padx 2 -pady 2 -sticky e", l3->GetWidgetName() );
-    this->Script ( "grid %s -row 3 -column 1  -padx 2 -pady 2 -sticky ew", this->ScreenShotMagnificationEntry->GetWidgetName() );
-    this->Script ( "grid %s -row 4 -column 0 -padx 2 -pady 2 -sticky e", l4->GetWidgetName() );
-    this->Script ( "grid %s -row 4 -column 1  -padx 2 -pady 2 -sticky w", this->ScreenShotFormatMenuButton->GetWidgetName() );
-    this->Script ( "grid %s -row 5 -column 0 -padx 2 -pady 2 -sticky e", this->ScreenShotOverwriteButton->GetWidgetName() );
-    this->Script ( "grid %s -row 5 -column 1  -columnspan 2 -padx 2 -pady 2 -sticky w", l5->GetWidgetName() );
-    this->Script ( "grid columnconfigure %s 0 -weight 0", f1->GetWidgetName() );
-    this->Script ( "grid columnconfigure %s 1 -weight 0", f1->GetWidgetName() );
-    this->Script ( "grid columnconfigure %s 2 -weight 1", f1->GetWidgetName() );
-
-    
-    vtkKWFrame *f2 = vtkKWFrame::New();
-    f2->SetParent ( this->ScreenShotOptionsWindow );
-    f2->Create();
-    f2->SetBorderWidth ( 1 );
-    this->Script ( "pack %s -side top -anchor nw -fill x -expand y -padx 0 -pady 3", f2->GetWidgetName() );
-
-    this->ScreenShotCaptureButton = vtkKWPushButton::New();
-    this->ScreenShotCaptureButton->SetParent ( f2 );
-    this->ScreenShotCaptureButton->Create();
-    this->ScreenShotCaptureButton->SetText ( "Capture" );
-    this->ScreenShotCaptureButton->SetWidth ( 9 );
-    
-    this->ScreenShotCloseButton = vtkKWPushButton::New();
-    this->ScreenShotCloseButton->SetParent ( f2 );
-    this->ScreenShotCloseButton->Create();
-    this->ScreenShotCloseButton->SetText ( "Close" );
-    this->ScreenShotCloseButton->SetCommand ( this, "WithdrawScreenShotOptionsWindow" );
-    this->ScreenShotCloseButton->SetWidth ( 9 );
-
-    this->Script ( "pack %s %s -side left -anchor c -fill x -expand n -padx 0 -pady 1",
-                   this->ScreenShotCloseButton->GetWidgetName(),
-                   this->ScreenShotCaptureButton->GetWidgetName() );
-    
-
-    l0->Delete();
-    l1->Delete();
-    l2->Delete();
-    l3->Delete();
-    l4->Delete();
-    l5->Delete();
-    f1->Delete();
-    f2->Delete();
-
-    }
-
-
-  this->ScreenShotDialogButton->GetLoadSaveDialog()->AddObserver ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ScreenShotNameEntry->AddObserver (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ScreenShotNumberEntry->AddObserver (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ScreenShotMagnificationEntry->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ScreenShotFormatMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->ScreenShotOverwriteButton->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ScreenShotCaptureButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ScreenShotCloseButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-
-  // display
-  this->ScreenShotOptionsWindow->DeIconify();
-  this->ScreenShotOptionsWindow->Raise();
-  if ( app )
-    {
-    app->Script ( "grab %s", this->ScreenShotOptionsWindow->GetWidgetName() );
-    app->ProcessIdleTasks();
-    }
-  this->Script ( "update idletasks");
-
-}
-
-
-
-//---------------------------------------------------------------------------
-const char *vtkSlicerToolbarGUI::GetScreenShotFormat ( )
-{
-  if ( ScreenShotFormat.c_str() != NULL && (strcmp(ScreenShotFormat.c_str(), "" ) ) )
-    {
-    return ( ScreenShotFormat.c_str() );
-    }
-  else
-    {
-    return NULL;
-    }
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerToolbarGUI::SetScreenShotFormat ( const char *format )
-{
-  this->ScreenShotFormat.clear();
-  this->ScreenShotFormat = format;
-}
-
-
-//---------------------------------------------------------------------------
 void vtkSlicerToolbarGUI::RemoveGUIObservers ( )
 {
     // Fill in
@@ -810,7 +404,6 @@ void vtkSlicerToolbarGUI::RemoveGUIObservers ( )
   this->MousePlaceButton->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->MouseTransformViewButton->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->CompareViewBoxApplyButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ScreenShotIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->CompareViewBoxRowEntry->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->CompareViewLightboxRowEntry->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -838,7 +431,6 @@ void vtkSlicerToolbarGUI::AddGUIObservers ( )
   this->FiducialsIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->TransformIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ColorIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ScreenShotIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     
   // view configuration icon button observers...
   this->ChooseLayoutIconMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -869,13 +461,29 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
     // Toolbar's parent is the main vtkSlicerApplicationGUI;
     // Toolbar events will trigger vtkSlicerAppliationGUI methods
 
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
+    if ( !app )
+      {
+      vtkErrorMacro ("ProcessGUIEvents: Got NULL Application" );
+      return;
+      }
     vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
-    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( appGUI->GetApplication() );
+    if (!appGUI )
+      {
+      vtkErrorMacro ("ProcessGUIEvents: Got NULL Application GUI" );
+      return;
+      }
+    vtkSlicerWindow *win = appGUI->GetMainSlicerWindow();
+    if ( !win )
+      {
+      vtkErrorMacro ("ProcessGUIEvents: Got NULL Slicer Window" );
+      return;
+      }
+    
     vtkMRMLInteractionNode *interactionNode = NULL;
-
     vtkKWEntry *e = vtkKWEntry::SafeDownCast ( caller );
     vtkKWCheckButton *cb = vtkKWCheckButton::SafeDownCast ( caller );
-    vtkKWLoadSaveDialog *d = vtkKWLoadSaveDialog::SafeDownCast ( caller );
+
     vtkKWRadioButton *radiob = vtkKWRadioButton::SafeDownCast ( caller );
     vtkKWPushButton *pushb = vtkKWPushButton::SafeDownCast ( caller );
     vtkKWMenu *menu = vtkKWMenu::SafeDownCast ( caller );
@@ -937,93 +545,6 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
         }
       }
 
-    if ( e != NULL && event == vtkKWEntry::EntryValueChangedEvent )
-      {
-      if ( e == this->ScreenShotNameEntry )
-        {
-        // check
-        if ( (this->ScreenShotNameEntry->GetValue() != NULL)  &&
-             (strcmp(this->ScreenShotNameEntry->GetValue(), this->ScreenShotName)) )
-          {
-          this->SetScreenShotName ( this->ScreenShotNameEntry->GetValue() );
-          }
-        else
-          {
-          // dialog
-          if ( this->GetApplicationGUI() && this->GetApplicationGUI()->GetMainSlicerWindow() )
-            {
-            vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-            dialog->SetParent (  this->GetApplicationGUI()->GetMainSlicerWindow() );
-            dialog->SetStyleToMessage();
-            std::string msg = "Please enter a valid name for the screen capture.";
-            dialog->SetText(msg.c_str());
-            dialog->Create ( );
-            dialog->Invoke();
-            dialog->Delete();
-            }
-          }
-        }
-      else if ( e == this->ScreenShotNumberEntry )
-        {
-        if ( (this->ScreenShotNumberEntry->GetValueAsInt() >= 0 ) )
-          {
-          if ( this->ScreenShotNumberEntry->GetValueAsInt() != this->ScreenShotNumber )
-            {
-            this->ScreenShotNumber = this->ScreenShotNumberEntry->GetValueAsInt ( );
-            }
-          }
-        else
-          {
-          // dialog
-          if ( this->GetApplicationGUI() && this->GetApplicationGUI()->GetMainSlicerWindow() )
-            {
-            vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-            dialog->SetParent (  this->GetApplicationGUI()->GetMainSlicerWindow() );
-            dialog->SetStyleToMessage();
-            std::string msg = "Please enter a non-negative integer value.";
-            dialog->SetText(msg.c_str());
-            dialog->Create ( );
-            dialog->Invoke();
-            dialog->Delete();
-            }
-          }
-        }
-      else if ( e == this->ScreenShotMagnificationEntry  )
-        {
-        if (this->ScreenShotMagnificationEntry->GetValueAsInt() > 0 )
-          {
-          if ( this->ScreenShotMagnificationEntry->GetValueAsInt() != this->ScreenShotMagnification )
-            {
-            this->ScreenShotMagnification = this->ScreenShotMagnificationEntry->GetValueAsInt ( );
-            }
-          }
-        else
-          {
-          // dialog
-          if ( this->GetApplicationGUI() && this->GetApplicationGUI()->GetMainSlicerWindow() )
-            {
-            vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-            dialog->SetParent (  this->GetApplicationGUI()->GetMainSlicerWindow() );
-            dialog->SetStyleToMessage();
-            std::string msg = "Please enter a non-zero integer value.";
-            dialog->SetText(msg.c_str());
-            dialog->Create ( );
-            dialog->Invoke();
-            dialog->Delete();
-            }
-          }
-        }
-      }
-        
-    if ( cb != NULL )
-      {
-      if ( cb == this->ScreenShotOverwriteButton && event == vtkKWCheckButton::SelectedStateChangedEvent )
-        {
-        this->ScreenShotOverwrite = this->ScreenShotOverwriteButton->GetSelectedState();
-        }
-      }
-
-
     if ( pushb != NULL && event == vtkKWPushButton::InvokedEvent )
       {
       layout = appGUI->GetGUILayoutNode();
@@ -1039,97 +560,6 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           {
           vtkErrorMacro ("ERROR:  no slicer module gui found for Home module '" << (homename ? homename : "null") << "'"); 
           }
-        }
-      else if ( pushb == this->ScreenShotCaptureButton )
-        {
-        //--- check for bugs
-        //--- try first setting user's selection. if nothing there, choose the last path. if nothing there, mark for error.
-        std::string dirname;
-        if ( this->GetScreenShotDirectory() != NULL )
-          {
-          dirname = this->GetScreenShotDirectory();
-          }
-        else
-          {
-          if ( this->ScreenShotDialogButton->GetLoadSaveDialog()->GetLastPath() != NULL )
-            {
-            dirname = this->ScreenShotDialogButton->GetLoadSaveDialog()->GetLastPath();
-            }
-          else
-            {
-            dirname = "none";
-            }
-          }
-        if ( (!(strcmp(dirname.c_str(), "none")) ) ||
-             (this->ScreenShotName == NULL ) ||
-             (this->ScreenShotMagnification < 1 ) ||
-             (this->ScreenShotNumber < 0 ) ||
-             (this->ScreenShotFormat.c_str() == NULL ) )
-          {
-          // provide a warning that no directory exists.
-          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-          dialog->SetParent (  this->GetApplicationGUI()->GetMainSlicerWindow() );
-          dialog->SetStyleToMessage();
-          std::string msg = "Please specify a valid directory,  filename, version number, scale and format. ";
-          dialog->SetText(msg.c_str());
-          dialog->Create ( );
-          dialog->Invoke();
-          dialog->Delete();
-          }
-        else
-          {
-          //--- assemble filename with path.
-          std::vector<std::string> pathComponents;
-          vtksys::SystemTools::SplitPath ( dirname.c_str(), pathComponents );
-          std::stringstream ss;
-          ss << this->ScreenShotName << "_" << this->ScreenShotNumber << this->ScreenShotFormat;
-          std::string s = ss.str();
-          pathComponents.push_back ( s );
-          std::string filename = vtksys::SystemTools::JoinPath ( pathComponents );
-          //--- make sure it's a unix-style path.
-          std::string upath = vtksys::SystemTools::ConvertToUnixOutputPath ( filename.c_str() );
-          int capture = 1;
-
-          //--- see if file already exists
-          if ( vtksys::SystemTools::FileExists ( upath.c_str()) ||
-               vtksys::SystemTools::FileExists ( filename.c_str()) )
-            {
-            //--- if overwrite not selected and file exists, give a warning & option to overwrite.
-            if (!(this->ScreenShotOverwrite) )
-              {
-              if ( this->GetApplicationGUI() && this->GetApplicationGUI()->GetMainSlicerWindow() )
-                {
-                vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-                dialog->SetParent (  this->GetApplicationGUI()->GetMainSlicerWindow() );
-                dialog->SetStyleToYesNo();
-                std::string msg = "File already exists. Overwrite?";
-                dialog->SetText(msg.c_str());
-                dialog->Create ( );
-                capture = dialog->Invoke();
-                dialog->Delete();
-                }
-              }
-            }
-          //--- if good for capture, set status text and grab the screenshot.
-          if ( capture )
-            {
-            if ( this->GetApplicationGUI() && this->GetApplicationGUI()->GetMainSlicerWindow() )
-              {
-              this->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText ( "Capturing Screenshot...." );
-              }
-            this->Script ( "SlicerSaveLargeImage %s %d", upath.c_str(), this->GetScreenShotMagnification() );
-            this->ScreenShotNumber += 1;
-            this->ScreenShotNumberEntry->SetValueAsInt ( this->ScreenShotNumber );
-            if ( this->GetApplicationGUI() && this->GetApplicationGUI()->GetMainSlicerWindow() )
-              {
-              this->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText ( "" );
-              }
-            }
-          }
-        }
-      else if (pushb == this->ScreenShotIconButton )
-        {
-        this->RaiseScreenShotOptionsWindow();
         }
       else if (pushb == this->DataIconButton )
         {
@@ -1254,45 +684,10 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
       }
 
 
-    if ( d != NULL && event == vtkKWTopLevel::WithdrawEvent )
-      {
-      if ( this->ScreenShotDialogButton && d == this->ScreenShotDialogButton->GetLoadSaveDialog() )
-        {
-        std::string dirname;
-        if ( this->ScreenShotDialogButton->GetLoadSaveDialog()->GetFileName() != NULL )
-          {
-          dirname = this->ScreenShotDialogButton->GetLoadSaveDialog()->GetFileName();
-          if ( vtksys::SystemTools::FileIsDirectory ( dirname.c_str() ) )
-            {
-            this->SetScreenShotDirectory ( dirname.c_str() );
-            }
-          }
-        else
-          {
-          if ( this->ScreenShotDialogButton->GetLoadSaveDialog()->GetLastPath() != NULL )
-            {
-            dirname = this->ScreenShotDialogButton->GetLoadSaveDialog()->GetLastPath();
-            if ( vtksys::SystemTools::FileIsDirectory ( dirname.c_str() ) )
-              {
-              this->SetScreenShotDirectory ( dirname.c_str() );
-              }
-            }
-          else
-            {
-            this->SetScreenShotDirectory ( NULL );
-            }
-          }
-        }
-      }
-
     // TODO: figure out why we can't resume view rock or spin.
     if ( menu != NULL && event == vtkKWMenu::MenuItemInvokedEvent )
       {
-      if ( this->ScreenShotFormatMenuButton != NULL && menu == this->ScreenShotFormatMenuButton->GetMenu() )
-        {
-        this->SetScreenShotFormat ( this->ScreenShotFormatMenuButton->GetValue() );
-        }
-      else if ( this->ChooseLayoutIconMenuButton != NULL && menu == this->ChooseLayoutIconMenuButton->GetMenu() )
+      if ( this->ChooseLayoutIconMenuButton != NULL && menu == this->ChooseLayoutIconMenuButton->GetMenu() )
         {
         if ( appGUI->GetGUILayoutNode() == NULL )
           {
@@ -1480,7 +875,7 @@ if ( this->ChooseLayoutIconMenuButton->GetMenu() != NULL )
 //---------------------------------------------------------------------------
 void vtkSlicerToolbarGUI::SetLayoutMenubuttonValueToCurrentLayout ()
 {
-  if ( this->GetApplication() != NULL )
+  if ( this->GetApplication() != NULL && this->GetApplicationGUI() != NULL )
     {
     if ( this->GetApplicationGUI()->GetGUILayoutNode() != NULL )
       {
@@ -1494,7 +889,7 @@ void vtkSlicerToolbarGUI::SetLayoutMenubuttonValueToCurrentLayout ()
 //---------------------------------------------------------------------------
 void vtkSlicerToolbarGUI::ResumeViewRockOrSpin ( int mode )
 {
-  if ( this->ApplicationGUI != NULL )
+  if ( this->ApplicationGUI != NULL && this->GetApplicationGUI() != NULL )
     {
     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
     if ( p->GetViewControlGUI() != NULL )
@@ -1714,8 +1109,10 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   //--- and add toolbars to the window's main toolbar set.        
   tbs->AddToolbar ( this->GetLoadSaveToolbar() );
   tbs->AddToolbar ( this->GetModulesToolbar() );
-//  tbs->AddToolbar ( this->GetUndoRedoToolbar () );
-  tbs->AddToolbar ( this->GetUtilitiesToolbar() );
+  tbs->AddToolbar ( this->GetUndoRedoToolbar () );
+
+  //---re-locating screen capture in view control GUI.
+  //  tbs->AddToolbar ( this->GetUtilitiesToolbar() );
   tbs->AddToolbar ( this->GetViewToolbar() );
   tbs->AddToolbar ( this->GetInteractionModeToolbar() );
         
@@ -1886,16 +1283,6 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->RedoIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetRedoIcon ( ) );
   this->RedoIconButton->SetBalloonHelpString ( "Redo (or use keyboard Ctrl+Y)");
   urtb->AddWidget ( this->RedoIconButton );
-
-  // Utilities toolbar.
-  this->ScreenShotIconButton->SetParent ( utb->GetFrame() );
-  this->ScreenShotIconButton->Create();
-  this->ScreenShotIconButton->SetReliefToFlat();
-  this->ScreenShotIconButton->SetBorderWidth (0);
-  this->ScreenShotIconButton->SetOverReliefToNone ( );
-  this->ScreenShotIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetScreenShotIcon() );
-  this->ScreenShotIconButton->SetBalloonHelpString ( "Raise options for capturing one or more screen shots." );  
-  utb->AddWidget ( this->ScreenShotIconButton );
 
   // Layout choose menu
   const char *imageName;

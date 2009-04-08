@@ -47,6 +47,8 @@ class vtkKWEntryWithLabel;
 class vtkSlicerViewControlIcons;
 class vtkCallbackCommand;
 class vtkKWSimpleEntryDialog;
+class vtkKWTopLevel;
+class vtkKWLoadSaveButton;
 
 //BTX
 #ifndef vtkSetAndObserveMRMLNodeMacro
@@ -117,7 +119,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkGetObjectMacro (RockButton, vtkKWCheckButton);
   vtkGetObjectMacro (OrthoButton, vtkKWPushButton);
   vtkGetObjectMacro (CenterButton, vtkKWPushButton);
-  vtkGetObjectMacro (ScreenGrabButton, vtkKWMenuButton);
+  vtkGetObjectMacro (ScreenGrabButton, vtkKWPushButton);
   vtkGetObjectMacro (StereoButton, vtkKWMenuButton);
   vtkGetObjectMacro (VisibilityButton, vtkKWMenuButton );
   vtkGetObjectMacro (PitchButton, vtkKWPushButton);
@@ -196,6 +198,39 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   // Get the button which enables/disables the navigation widget
   // Caution: This Button is not packed at the moment
   vtkGetObjectMacro (EnableDisableNavButton, vtkKWCheckButton);
+
+  // Description:
+  // These are the base filename and snapshot numbers
+  // used to name screenshots.
+  vtkGetStringMacro ( ScreenGrabName );
+  vtkSetStringMacro ( ScreenGrabName );
+  vtkGetStringMacro ( ScreenGrabDirectory );
+  vtkSetStringMacro ( ScreenGrabDirectory );
+  vtkGetMacro ( ScreenGrabNumber, int );
+  vtkSetMacro ( ScreenGrabNumber, int );
+  vtkGetMacro ( ScreenGrabMagnification, int );
+  vtkSetMacro ( ScreenGrabMagnification, int );
+
+  // Description:
+  // Widgets that  populate the ScreenGrab Window.
+  vtkGetObjectMacro ( ScreenGrabOptionsWindow, vtkKWTopLevel );
+  vtkGetObjectMacro ( ScreenGrabNameEntry, vtkKWEntry );
+  vtkGetObjectMacro ( ScreenGrabNumberEntry, vtkKWEntry );
+  vtkGetObjectMacro ( ScreenGrabOverwriteButton, vtkKWCheckButton );
+  vtkGetObjectMacro ( ScreenGrabCaptureButton, vtkKWPushButton );
+  vtkGetObjectMacro ( ScreenGrabCloseButton, vtkKWPushButton );
+  vtkGetObjectMacro ( ScreenGrabDialogButton, vtkKWLoadSaveButton );
+  vtkGetObjectMacro ( ScreenGrabMagnificationEntry, vtkKWEntry );
+  vtkGetObjectMacro ( ScreenGrabFormatMenuButton, vtkKWMenuButton );
+
+  virtual const char *GetScreenGrabFormat ( );
+  virtual void SetScreenGrabFormat ( const char *format );
+
+  // Description:
+  // Methods to raise, populate and dismantle the ScreenGrab options window.
+  virtual void WithdrawScreenGrabOptionsWindow ( );
+  virtual void RaiseScreenGrabOptionsWindow ( );
+  virtual void DestroyScreenGrabOptionsWindow ( );
     
   // Description:
   // This method builds the Data module's GUI
@@ -385,7 +420,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
 
   // Description:
   // Builds pulldown menus for GUI menubuttons
-  void BuildScreenGrabMenu ( );
   void BuildStereoSelectMenu ( );
   void BuildVisibilityMenu ( );
 
@@ -425,7 +459,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkKWPushButton *OrthoButton;
   vtkKWPushButton *CenterButton;
   vtkKWMenuButton *StereoButton;
-  vtkKWMenuButton *ScreenGrabButton;
+  vtkKWPushButton *ScreenGrabButton;
   vtkKWMenuButton *VisibilityButton;
   vtkKWPushButton *PitchButton;
   vtkKWPushButton *YawButton;
@@ -433,6 +467,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkKWPushButton *ZoomInButton;
   vtkKWPushButton *ZoomOutButton;
 
+  //--- Screen snapshot configure window
+  vtkKWTopLevel *ScreenGrabOptionsWindow;
+  vtkKWEntry *ScreenGrabNameEntry;
+  vtkKWEntry *ScreenGrabNumberEntry;
+  vtkKWEntry *ScreenGrabMagnificationEntry;
+  vtkKWMenuButton *ScreenGrabFormatMenuButton;
+  vtkKWCheckButton *ScreenGrabOverwriteButton;
+  vtkKWPushButton *ScreenGrabCaptureButton;
+  vtkKWPushButton *ScreenGrabCloseButton;
+  vtkKWLoadSaveButton *ScreenGrabDialogButton;
 
   vtkKWMenuButton *SelectSceneSnapshotMenuButton;
   vtkKWPushButton *SceneSnapshotButton;
@@ -497,6 +541,17 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   double SliceMagnification;
   int SliceInteracting;
   const char *MySnapshotName;
+
+  char *ScreenGrabName;
+  char *ScreenGrabDirectory;
+  int ScreenGrabNumber;
+  int ScreenGrabMagnification;
+  int ScreenGrabOverwrite;
+
+  //BTX
+  std::string ScreenGrabFormat;
+  //ETX
+
 
  private:
   vtkSlicerViewControlGUI ( const vtkSlicerViewControlGUI& ); // Not implemented.
