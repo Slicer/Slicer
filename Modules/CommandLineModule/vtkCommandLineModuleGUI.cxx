@@ -720,11 +720,15 @@ void vtkCommandLineModuleGUI::UpdateGUI ()
     this->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetValue(n->GetModuleDescription().GetProcessInformation()->Progress * 100);
     this->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1, n->GetModuleDescription().GetProcessInformation()->StageProgress * 100);
 
-    std::string message = statusString + ": " +
-      n->GetModuleDescription().GetProcessInformation()->ProgressMessage;
-
-    message = message + "(" + n->GetName() +")";
-
+    std::string message = statusString + ": ";
+    if (statusString != std::string("Completed"))
+      {
+      // only show the progress message if it's not complete
+      message = message + 
+        n->GetModuleDescription().GetProcessInformation()->ProgressMessage;
+      }
+    message = message + "(" + n->GetName() + ")";
+    
     std::ostrstream strvalue;
     strvalue << std::setiosflags(ios::fixed) << std::setprecision(2)
              << n->GetModuleDescription().GetProcessInformation()->ElapsedTime;
