@@ -709,6 +709,7 @@ int Slicer3_main(int argc, char *argv[])
     tclCmd = "source " + File;
     int returnCode = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
     Slicer3_Tcl_Eval( interp, "update" );
+    vtkEventBroker::GetInstance()->Delete(); 
     slicerApp->Delete();
     return ( returnCode );
     }
@@ -774,7 +775,10 @@ int Slicer3_main(int argc, char *argv[])
   slicerApp->GetSplashScreen()->SetProgressMessageVerticalOffset(-25);
   slicerApp->SplashMessage("Initializing Window...");
 
-  cout << "Starting Slicer: " << slicerHome.c_str() << endl;
+  if (!TestMode)
+    {
+    cout << "Starting Slicer: " << slicerHome.c_str() << endl;
+    }
 
   if ( Stereo )
     {
@@ -1734,7 +1738,16 @@ int Slicer3_main(int argc, char *argv[])
   // use the startup script passed on command line if it exists
   if ( Script != "" )
     {    
-    std::string tclCmd = "after idle source " + Script;
+    std::string tclCmd = "";
+    // Pass arguments to the Tcl script
+    tclCmd = "set args \"\"; ";
+    std::vector<std::string>::const_iterator argit = Args.begin();
+    while (argit != Args.end())
+      {
+      tclCmd += " lappend args \"" + *argit + "\"; ";
+      ++argit;
+      }
+    tclCmd += " after idle source " + Script;
     Slicer3_Tcl_Eval( interp, tclCmd.c_str() ) ;
     }
 
@@ -1775,7 +1788,7 @@ int Slicer3_main(int argc, char *argv[])
   // if there was no script file, the Args should hold a mrml file
   // 
   //
-  if ( File == ""  && Args.size() != 0)
+  if ( File == ""  && Script == "" && Args.size() != 0)
     {
     std::vector<std::string>::const_iterator argit = Args.begin();
     while (argit != Args.end())
