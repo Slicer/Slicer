@@ -31,7 +31,7 @@ if { [itcl::find class DrawEffect] == "" } {
     constructor {sliceGUI} {Labeler::constructor $sliceGUI} {}
     destructor {}
 
-    variable _lastInsertSlice ""
+    variable _activeSlice ""
     variable _lastInsertSliceNodeMTime ""
     variable _actionState ""
 
@@ -46,6 +46,7 @@ if { [itcl::find class DrawEffect] == "" } {
     method resetPolyData {} {}
     method addPoint {r a s} {}
     method deleteLastPoint {} {}
+    method setLineMode {{mode "solid"}} {}
   }
 }
 
@@ -87,6 +88,18 @@ itcl::body DrawEffect::positionActors { } {
   $rasToXY TransformPoints $o(rasPoints) $o(xyPoints)
   $rasToXY Delete
   $o(polyData) Modified
+}
+
+itcl::body DrawEffect::setLineMode {{mode "solid"}} {
+  set property [$o(actor) GetProperty]
+  switch $mode {
+    "solid" {
+      $property SetLineStipplePattern 65535
+    }
+    "dashed" {
+      $property SetLineStipplePattern 0xff00
+    }
+  } 
 }
 
 itcl::body DrawEffect::processEvent { {caller ""} {event ""} } {
@@ -185,8 +198,10 @@ itcl::body DrawEffect::processEvent { {caller ""} {event ""} } {
     #
     set logic [$sliceGUI GetLogic]
     set currentSlice [$logic GetSliceOffset]
-    if { $_lastInsertSlice != $currentSlice } {
-      $this resetPolyData
+    if { $_activeSlice != $currentSlice } {
+      $this setLineMode "dashed"
+    } else {
+      $this setLineMode "solid"
     }
   }
 
@@ -252,15 +267,26 @@ itcl::body DrawEffect::resetPolyData {} {
   $o(rasPoints) Reset
   $lines SetNumberOfCells 0
 
-  set _lastInsertSlice ""
+  set _activeSlice ""
 }
 
 itcl::body DrawEffect::addPoint {r a s} {
 
-  # store modify time so these points can be cleared if 
-  # slice plane is moved
+  # store active slice when first point is added
   set logic [$sliceGUI GetLogic]
-  set _lastInsertSlice [$logic GetSliceOffset]
+  set currentSlice [$logic GetSliceOffset]
+  if { $_activeSlice == "" } {
+    $this setLineMode "solid"
+    set _activeSlice $currentSlice
+  }
+  # don't allow adding points on except on the active slice (where
+  # first point was laid down)
+  if { $_activeSlice != $currentSlice } {
+  puts skipping
+  puts "$_activeSlice != $currentSlice"
+    return
+  }
+
   set _lastInsertSliceNodeMTime [$_sliceNode GetMTime]
 
   set p [$o(rasPoints) InsertNextPoint $r $a $s]
