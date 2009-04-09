@@ -55,6 +55,7 @@ public:
   void UpdateVTK();
 
   void UpdateElement (int row, int col, double val);
+  void UpdateElement (int row, int col, char *val);
   
   // Description:
   // Command to call when the User manipulates the widget

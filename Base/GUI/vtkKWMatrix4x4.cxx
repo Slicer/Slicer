@@ -163,6 +163,14 @@ void vtkKWMatrix4x4::UpdateWidget()
 
   this->Modified();
 }
+
+//----------------------------------------------------------------------------
+void vtkKWMatrix4x4::UpdateElement (int row, int col, char *val)
+{
+  UpdateVTK();
+  UpdateWidget();
+}
+
 //----------------------------------------------------------------------------
 void vtkKWMatrix4x4::UpdateElement (int row, int col, double val)
 {
