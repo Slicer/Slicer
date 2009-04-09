@@ -560,17 +560,17 @@ void vtkSlicerApplicationLogic::CreateSliceLogics()
     this->AddSliceLogic("Green", sliceLogic);
     
 
-        SliceLogicMap::iterator lit;
-        for (lit = this->InternalSliceLogicMap->begin(); lit != this->InternalSliceLogicMap->end(); ++lit)
-        {
-                sliceLogic = vtkSlicerSliceLogic::SafeDownCast((*lit).second);
-                sliceLogic->SetMRMLScene ( this->GetMRMLScene() );
-                sliceLogic->ProcessLogicEvents ();
-                sliceLogic->ProcessMRMLEvents (this->GetMRMLScene(), vtkCommand::ModifiedEvent, NULL);
-                sliceLogic->SetAndObserveMRMLSceneEvents ( this->GetMRMLScene(), events );
-                //if (this->Slices)
-                //      this->Slices->AddItem(sliceLogic);
-        }
+    SliceLogicMap::iterator lit;
+    for (lit = this->InternalSliceLogicMap->begin(); lit != this->InternalSliceLogicMap->end(); ++lit)
+      {
+      sliceLogic = vtkSlicerSliceLogic::SafeDownCast((*lit).second);
+      sliceLogic->SetMRMLScene ( this->GetMRMLScene() );
+      sliceLogic->ProcessLogicEvents ();
+      sliceLogic->ProcessMRMLEvents (this->GetMRMLScene(), vtkCommand::ModifiedEvent, NULL);
+      sliceLogic->SetAndObserveMRMLSceneEvents ( this->GetMRMLScene(), events );
+      //if (this->Slices)
+      //      this->Slices->AddItem(sliceLogic);
+      }
     
     events->Delete();
 }
