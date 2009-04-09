@@ -636,6 +636,7 @@ int vtkMRMLScene::Import()
 
       node = (vtkMRMLNode *)scene->GetItemAsObject(n);
       nodesAddedByClass[std::string(node->GetClassName())] = node;
+      vtkDebugMacro("Adding Node: " << node->GetName());
       if (node->GetAddToScene())
         {
         node->UpdateScene(this);
@@ -656,6 +657,7 @@ int vtkMRMLScene::Import()
     std::map<std::string, vtkMRMLNode *>::iterator iter; 
     for(iter = nodesAddedByClass.begin(); iter != nodesAddedByClass.end(); iter++)
       {
+      vtkDebugMacro("Invoking NodeAddedEvent for: " << (iter->second)->GetName());
       this->InvokeEvent(this->NodeAddedEvent, iter->second);        
       }
       
@@ -732,10 +734,12 @@ int vtkMRMLScene::LoadIntoScene(vtkCollection* nodeCollection)
     {
     parser->SetNodeCollection(nodeCollection);
     }
+  vtkDebugMacro("Parsing: " << this->URL.c_str());
   parser->SetFileName(URL.c_str());
   int result = parser->Parse();
   parser->Delete();
 
+  vtkDebugMacro("Done Parsing: " << this->URL.c_str());
   return result;
 }
 
