@@ -52,8 +52,6 @@ vtkMRMLNode* vtkMRMLFiducialListStorageNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLFiducialListStorageNode::vtkMRMLFiducialListStorageNode()
 {
-  // mark it modified since read so that it will trigger a save 
-  this->ModifiedSinceReadOn();
 }
 
 //----------------------------------------------------------------------------
@@ -446,8 +444,8 @@ int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
   // make sure that the list node points to this storage node
   fiducialListNode->SetAndObserveStorageNodeID(this->GetID());
 
-  // mark it modified since read
-  fiducialListNode->ModifiedSinceReadOn();
+  // mark it unmodified since read
+  fiducialListNode->ModifiedSinceReadOff();
   
   return 1;
 }
