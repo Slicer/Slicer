@@ -144,22 +144,28 @@ itcl::body SliceSWidget::updateModelSWidgets {} {
   }
 
   # loop through models and create any needed new widgets
+  # - skip the slice model that corresponds to our slice GUI
   # - also keep track of used ones so we know which ones to delete later
   set usedModelSWidgets ""
   set nModels [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLModelNode"]
   for {set n 0} {$n < $nModels} {incr n} {
-    set mNode [$::slicer3::MRMLScene GetNthNodeByClass $n "vtkMRMLModelNode"]
-    set id [$mNode GetID]
-    if { ![info exists msws($sliceGUI,$id)] } {
-      set mWidget [ModelSWidget #auto $sliceGUI]
-      $mWidget configure -modelID $id
-      lappend _swidgets $mWidget
-    } else {
-      lappend usedModelSWidgets $msws($sliceGUI,$id)
+    set modelNode [$::slicer3::MRMLScene GetNthNodeByClass $n "vtkMRMLModelNode"]
+    set id [$modelNode GetID]
+    set layoutName [$_sliceNode GetName]
+    set modelName [$modelNode GetName]
+    if { ![string match ${layoutName}* $modelName] } {
+      if { ![info exists msws($sliceGUI,$id)] } {
+        set mWidget [ModelSWidget #auto $sliceGUI]
+        $mWidget configure -modelID $id
+        lappend _swidgets $mWidget
+      } else {
+        lappend usedModelSWidgets $msws($sliceGUI,$id)
+      }
     }
   }
 
   # delete any of the widgets that no longer correspond to a model that is in the scene
+  # - only the ones which correspond to 'our' sliceGUI instance
   foreach msw $modelSWidgets {
     if { [lsearch $usedModelSWidgets $msw] == -1 } {
       if { [$msw cget -sliceGUI] == $sliceGUI } {
