@@ -54,14 +54,6 @@ Grants: National Alliance for Medical Image Computing (NAMIC), funded by the Nat
       <description>Input WM volume</description>
     </image>
 
-    <image type = "tensor" >
-      <name>inputVol4</name>
-      <longflag>inputVol4</longflag>
-      <label>Input DTI Volume</label>
-      <channel>input</channel>
-      <description>Input DTI volume</description>
-    </image>
-
   </parameters>
 
   <parameters>
