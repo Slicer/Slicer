@@ -32,6 +32,7 @@ if { [itcl::find class DrawEffect] == "" } {
     destructor {}
 
     variable _lastInsertSlice ""
+    variable _lastInsertSliceNodeMTime ""
     variable _actionState ""
 
     # methods
@@ -121,8 +122,14 @@ itcl::body DrawEffect::processEvent { {caller ""} {event ""} } {
         $sliceGUI SetGUICommandAbortFlag 1
       }
       "RightButtonReleaseEvent" {
-        $this apply
-        set _actionState ""
+        # if the slice node hasn't changed since the last point was added,
+        # then we apply.  Otherwise it was a slice zoom action with the right mouse.
+        # - update the record so the next right click will work
+        if { $_lastInsertSliceNodeMTime == [$_sliceNode GetMTime] } {
+          $this apply
+          set _actionState ""
+        }
+        set _lastInsertSliceNodeMTime [$_sliceNode GetMTime]
       }
       "MouseMoveEvent" {
         switch $_actionState {
@@ -138,7 +145,6 @@ itcl::body DrawEffect::processEvent { {caller ""} {event ""} } {
       "LeftButtonReleaseEvent" {
         set _actionState ""
         $sliceGUI SetGrabID ""
-        #eval $this addPoint $_currentPosition
         $sliceGUI SetGUICommandAbortFlag 1
       }
       "KeyPressEvent" { 
@@ -255,6 +261,7 @@ itcl::body DrawEffect::addPoint {r a s} {
   # slice plane is moved
   set logic [$sliceGUI GetLogic]
   set _lastInsertSlice [$logic GetSliceOffset]
+  set _lastInsertSliceNodeMTime [$_sliceNode GetMTime]
 
   set p [$o(rasPoints) InsertNextPoint $r $a $s]
   set lines [$o(polyData) GetLines]
