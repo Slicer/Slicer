@@ -1732,8 +1732,19 @@ int Slicer3_main(int argc, char *argv[])
   slicerApp->SplashMessage("Finalizing Startup...");
   appGUI->DisplayMainSlicerWindow ( );
 
-  Slicer3_Tcl_Eval( interp, "update" ) ;
+
+  //--- set home module based on registry settings
+  const char *homeModule = slicerApp->GetHomeModule();
+  if ( !homeModule || !*homeModule )
+    {
+    homeModule = "Data";
+    }
+  std::string tclCmd = "after idle { update; $::slicer3::ApplicationGUI SelectModule " + std::string(homeModule) + " }";
+  Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
     
+  Slicer3_Tcl_Eval( interp, "update" ) ;
+
+
   // More command line arguments:
   // use the startup script passed on command line if it exists
   if ( Script != "" )
@@ -1858,15 +1869,6 @@ int Slicer3_main(int argc, char *argv[])
     res = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
     }
 
-
-  //--- set home module based on registry settings
-  const char *homeModule = slicerApp->GetHomeModule();
-  if ( !homeModule || !*homeModule )
-    {
-    homeModule = "Data";
-    }
-  std::string tclCmd = "after idle { update; $::slicer3::ApplicationGUI SelectModule " + std::string(homeModule) + " }";
-  Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
 
   //
   // Run!  - this will return when the user exits
