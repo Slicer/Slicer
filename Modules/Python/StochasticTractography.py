@@ -512,6 +512,7 @@ def Execute (\
   dwiName = dwi.GetName()
 
 
+  tenName = ""
   roiAName = ""
   roiBName = ""
   wmName = ""
