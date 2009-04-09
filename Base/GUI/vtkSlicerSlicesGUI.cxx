@@ -388,8 +388,8 @@ void vtkSlicerSlicesGUI::UpdateGUI()
 
   
   // Need to know the slice node
-  vtkMRMLSliceNode* n = vtkMRMLSliceNode::SafeDownCast(sliceNodeSelector->GetSelected());
-  if (n == NULL) 
+  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(sliceNodeSelector->GetSelected());
+  if (sliceNode == NULL) 
     {
     return;
     }
@@ -397,19 +397,19 @@ void vtkSlicerSlicesGUI::UpdateGUI()
   vtkKWLabelWithLabel *layoutName = vtkKWLabelWithLabel::SafeDownCast((*this->InternalParameterWidgetMap)["LayoutName"]);
   if (layoutName)
     {
-    layoutName->GetWidget()->SetText(n->GetLayoutName());
+    layoutName->GetWidget()->SetText(sliceNode->GetLayoutName());
     }
 
   vtkKWMenuButtonWithLabel *orientation = vtkKWMenuButtonWithLabel::SafeDownCast((*this->InternalParameterWidgetMap)["Orientation"]);
   if (orientation)
     {
-    orientation->GetWidget()->SetValue(n->GetOrientationString());
+    orientation->GetWidget()->SetValue(sliceNode->GetOrientationString());
     }
 
   vtkKWPushButtonWithLabel *sliceVisible = vtkKWPushButtonWithLabel::SafeDownCast((*this->InternalParameterWidgetMap)["SliceVisible"]);
   if (sliceVisible)
     {
-    if (n->GetSliceVisible())
+    if (sliceNode->GetSliceVisible())
       {
       sliceVisible->GetWidget()->SetImageToIcon(this->VisibilityIcons->GetVisibleIcon());
       }
@@ -422,14 +422,14 @@ void vtkSlicerSlicesGUI::UpdateGUI()
   vtkKWCheckButtonWithLabel *widgetVisible = vtkKWCheckButtonWithLabel::SafeDownCast((*this->InternalParameterWidgetMap)["WidgetVisible"]);
   if (widgetVisible)
     {
-    widgetVisible->GetWidget()->SetSelectedState(n->GetWidgetVisible());
+    widgetVisible->GetWidget()->SetSelectedState(sliceNode->GetWidgetVisible());
     }
 
   vtkKWLabel *dimensionX = vtkKWLabel::SafeDownCast((*this->InternalParameterWidgetMap)["DimensionX"]);
   if (dimensionX)
     {
     std::stringstream ss;
-    ss << n->GetDimensions()[0];
+    ss << sliceNode->GetDimensions()[0];
     dimensionX->SetText( ss.str().c_str() );
     }
 
@@ -437,7 +437,7 @@ void vtkSlicerSlicesGUI::UpdateGUI()
   if (dimensionY)
     {
     std::stringstream ss;
-    ss << n->GetDimensions()[1];
+    ss << sliceNode->GetDimensions()[1];
     dimensionY->SetText( ss.str().c_str() );
     }
 
@@ -445,7 +445,7 @@ void vtkSlicerSlicesGUI::UpdateGUI()
   if (dimensionZ)
     {
     std::stringstream ss;
-    ss << n->GetDimensions()[2];
+    ss << sliceNode->GetDimensions()[2];
     dimensionZ->SetText( ss.str().c_str() );
     }
     
@@ -453,7 +453,7 @@ void vtkSlicerSlicesGUI::UpdateGUI()
   if (fieldOfViewX)
     {
     std::stringstream ss;
-    ss << n->GetFieldOfView()[0];
+    ss << sliceNode->GetFieldOfView()[0];
     fieldOfViewX->SetText( ss.str().c_str() );
     }
 
@@ -461,7 +461,7 @@ void vtkSlicerSlicesGUI::UpdateGUI()
   if (fieldOfViewY)
     {
     std::stringstream ss;
-    ss << n->GetFieldOfView()[1];
+    ss << sliceNode->GetFieldOfView()[1];
     fieldOfViewY->SetText( ss.str().c_str() );
     }
 
@@ -469,7 +469,7 @@ void vtkSlicerSlicesGUI::UpdateGUI()
   if (fieldOfViewZ)
     {
     std::stringstream ss;
-    ss << n->GetFieldOfView()[2];
+    ss << sliceNode->GetFieldOfView()[2];
     fieldOfViewZ->SetText( ss.str().c_str() );
     }
 
@@ -478,7 +478,7 @@ void vtkSlicerSlicesGUI::UpdateGUI()
   if (layoutRows)
     {
     std::stringstream ss;
-    ss << n->GetLayoutGridRows();
+    ss << sliceNode->GetLayoutGridRows();
     layoutRows->SetValue( ss.str().c_str() );
     }
 
@@ -486,19 +486,19 @@ void vtkSlicerSlicesGUI::UpdateGUI()
   if (layoutColumns)
     {
     std::stringstream ss;
-    ss << n->GetLayoutGridColumns();
+    ss << sliceNode->GetLayoutGridColumns();
     layoutColumns->SetValue( ss.str().c_str() );
     }
 
   vtkKWRadioButtonSetWithLabel *sliceSpacingMode = vtkKWRadioButtonSetWithLabel::SafeDownCast((*this->InternalParameterWidgetMap)["SliceSpacingMode"]);
   if (sliceSpacingMode)
     {
-    if (n->GetSliceSpacingMode() == vtkMRMLSliceNode::AutomaticSliceSpacingMode)
+    if (sliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::AutomaticSliceSpacingMode)
       {
       vtkKWRadioButton* rb = sliceSpacingMode->GetWidget()->GetWidget(0);
       rb->SetSelectedState(1);
       }
-    else if (n->GetSliceSpacingMode() == vtkMRMLSliceNode::PrescribedSliceSpacingMode)
+    else if (sliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::PrescribedSliceSpacingMode)
       {
       vtkKWRadioButton* rb = sliceSpacingMode->GetWidget()->GetWidget(1);
       rb->SetSelectedState(1);
@@ -509,7 +509,7 @@ void vtkSlicerSlicesGUI::UpdateGUI()
   if (prescribedSpacing)
     {
     std::stringstream ss;
-    ss << n->GetPrescribedSliceSpacing()[2];
+    ss << sliceNode->GetPrescribedSliceSpacing()[2];
     prescribedSpacing->GetWidget()->SetValue( ss.str().c_str() );
     }
   
