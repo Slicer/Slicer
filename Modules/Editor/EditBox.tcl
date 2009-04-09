@@ -94,6 +94,15 @@ itcl::body EditBox::findEffects { {path ""} } {
     ToggleLabelOutline Watershed PreviousCheckPoint NextCheckPoint
   }
 
+  # these buttons do not switch you out of the current tool
+  set _effects(list,nonmodal) {
+    FiducialVisibilityOn LabelVisibilityOff LabelVisibilityOn
+    NextFiducial PreviousFiducial DeleteFiducials SnapToGridOn SnapToGridOff
+    EraseLabel PreviousCheckPoint NextCheckPoint ToggleLabelOutline
+    SnapToGridOff SnapToGridOn LabelOpacity
+  }
+
+  # these buttons start disabled (check points will re-enable when circumstances are right)
   set _effects(list,disabled) {
     ChooseColor 
     ImplicitCube ImplicitEllipse 
@@ -272,8 +281,10 @@ itcl::body EditBox::create { } {
 #
 itcl::body EditBox::selectEffect { effect } {
 
-  EffectSWidget::RemoveAll
-  EditorSetActiveToolLabel $effect
+  if { [lsearch $_effects(list,nonmodal) $effect] == -1 } {
+    EffectSWidget::RemoveAll
+    EditorSetActiveToolLabel $effect
+  }
 
   # mouse tool changes cursor, and dismisses popup/menu
   set mouseTool 0
