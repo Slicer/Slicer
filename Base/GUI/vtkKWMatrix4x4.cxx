@@ -156,7 +156,7 @@ void vtkKWMatrix4x4::UpdateWidget()
     for (col=0; col<4; col++)
       {
       this->MultiColumnList->InsertCellTextAsDouble(row, col, this->Matrix4x4->GetElement(row, col));
-      this->MultiColumnList->SetCellEditWindowToSpinBox(row, col);
+      this->MultiColumnList->SetCellEditWindowToEntry(row, col);
       }
     }
   this->Updating = 0;
