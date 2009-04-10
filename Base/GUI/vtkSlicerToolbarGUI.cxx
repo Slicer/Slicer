@@ -481,8 +481,8 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
       }
     
     vtkMRMLInteractionNode *interactionNode = NULL;
-    vtkKWEntry *e = vtkKWEntry::SafeDownCast ( caller );
-    vtkKWCheckButton *cb = vtkKWCheckButton::SafeDownCast ( caller );
+//    vtkKWEntry *e = vtkKWEntry::SafeDownCast ( caller );
+//    vtkKWCheckButton *cb = vtkKWCheckButton::SafeDownCast ( caller );
 
     vtkKWRadioButton *radiob = vtkKWRadioButton::SafeDownCast ( caller );
     vtkKWPushButton *pushb = vtkKWPushButton::SafeDownCast ( caller );
