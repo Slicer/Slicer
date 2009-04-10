@@ -210,6 +210,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   const char* GetRemoteCacheDirectory() const;
   
   // Description:
+  // Set/Get the binary location
+  void SetBinDir(const char* path);
+  const char* GetBinDir() const;
+
+  // Description:
   // Set/Get the application window size
   // for saving in the registry.
   void SetApplicationWindowSize (int width, int height );
@@ -395,7 +400,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   char ApplicationFontSize [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char ApplicationFontFamily [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char IgnoreModuleNames [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
-  
+  char BinDir [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+
   int ApplicationWindowWidth;
   int ApplicationWindowHeight;
   int ApplicationSlicesFrameHeight;

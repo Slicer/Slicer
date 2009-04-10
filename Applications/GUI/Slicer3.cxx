@@ -642,6 +642,8 @@ int Slicer3_main(int argc, char *argv[])
   //
   vtkSlicerApplication *slicerApp = vtkSlicerApplication::GetInstance ( );
 
+  slicerApp->SetBinDir(slicerBinDir.c_str());
+
   if (TestMode)
     {
     slicerApp->SetRegistryLevel(0);

@@ -1370,6 +1370,26 @@ const char* vtkSlicerApplication::GetTemporaryDirectory() const
 }
 
 //----------------------------------------------------------------------------
+void vtkSlicerApplication::SetBinDir(const char* path)
+{
+  if (path)
+    {
+    if (strcmp(this->BinDir, path) != 0
+        && strlen(path) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
+      {
+      strcpy(this->BinDir, path);
+      this->Modified();
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+const char* vtkSlicerApplication::GetBinDir() const
+{
+  return this->BinDir;
+}
+
+//----------------------------------------------------------------------------
 bool vtkSlicerApplication::RequestDisplayMessage( const char *type, const char *message )
 {
   bool active;
