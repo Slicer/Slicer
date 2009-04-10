@@ -274,18 +274,45 @@ void vtkSlicerModulesConfigurationStep::Update()
 
   if (this->SearchLocationBox)
     {
-    vtksys_stl::string platform;
-    vtksys::SystemTools::GetEnv("BUILD", platform);
+    std::string txtfile(app->GetBinDir());
+    txtfile += "/../";
+    txtfile += Slicer3_INSTALL_LIB_DIR;
+    txtfile += "/";
+    txtfile += "Slicer3Version.txt";
 
-    // :TODO: 20090108 tgl: Uncomment and use macro for "real" use.
+    std::string platform;
+    std::string build_date;
+    std::string svnurl;
+    std::string svnrevision;
 
-    std::string build_date("2009-03-02"); // Slicer3_VERSION_PATCH);
+    std::ifstream ifs(txtfile.c_str());
+
+    std::string line;
+    while (std::getline(ifs, line, '\n')) {
+      if (line.find("build ") == 0) {
+        platform = line.substr(6);
+      } else if (line.find("buildDate ") == 0) {
+        build_date = line.substr(10);
+      } else if (line.find("svnurl ") == 0) {
+        svnurl = line.substr(7);
+      } else if (line.find("svnrevision ") == 0) {
+        svnrevision = line.substr(12);
+      }
+    }
+
+    ifs.close();
+
+    // :TODO: 20090405 tgl: URL below should be configurable.
 
     std::string ext_slicer_org("http://ext.slicer.org/ext/");
-    ext_slicer_org += build_date;
+
+    int pos = svnurl.find_last_of("/");
+    ext_slicer_org += svnurl.substr(pos);
     ext_slicer_org += "/";
+    ext_slicer_org += svnrevision;
+    ext_slicer_org += "-";
     ext_slicer_org += platform;
-        
+    
     this->GetWizardDialog()->SetSelectedRepositoryURL( ext_slicer_org );
         
     this->SearchLocationBox->GetWidget()->SetValue(this->GetWizardDialog()->GetSelectedRepositoryURL().c_str());
