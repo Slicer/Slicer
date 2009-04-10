@@ -563,7 +563,7 @@ def FindConnectionFibers( roiA, roiB, pathsRAS, pathsIJK, pathsLOGP, pathsANIS, 
 
   for k in range(pathsIJK.shape[0]): # looped on the number of paths
     if pathsLEN[k,0] == 0:
-      break
+      continue 
 
     pathsLEN[k,0]= transpose(pathsIJK[k].nonzero()).max()+1
 
@@ -571,10 +571,10 @@ def FindConnectionFibers( roiA, roiB, pathsRAS, pathsIJK, pathsLOGP, pathsANIS, 
     ext2 = pathsIJK[k, :, pathsLEN[k,0]-1]
 
     if ext1[0] >= roiA.shape[0] or ext1[1] >= roiA.shape[1] or ext1[2] >= roiA.shape[2]:
-      break
+      continue
 
     if ext2[0] >= roiA.shape[0] or ext2[1] >= roiA.shape[1] or ext2[2] >= roiA.shape[2]:
-      break
+      continue
 
 
     isIn1A = False
@@ -744,5 +744,131 @@ def FindConnectionFibers( roiA, roiB, pathsRAS, pathsIJK, pathsLOGP, pathsANIS, 
   return counter1, counter2, Pr, Fa, Wa
 
 
+def FilterFibers0( pathsRAS, pathsIJK, pathsLOGP, pathsANIS, pathsLEN, roiA, roiB, shape, vicinity, threshold):
+
+  print 'Shape roi A : ', roiA.shape
+  print 'Shape roi B : ', roiB.shape
+
+  indAx = transpose(roiA.nonzero())
+  #print 'Shape of indx A : ', indAx.shape
+  indBx = transpose(roiB.nonzero())
+  #print 'Shape of indx B : ', indBx.shape
+
+  Ga = indAx.sum(0)/len(indAx)
+  print 'Ga : ', Ga
+  Gb = indBx.sum(0)/len(indBx)
+  print 'Gb : ', Gb
+
+  dAB = norm(Ga-Gb)
+  maxDA = sqrt(((Ga*ones(indAx.shape) - indAx)**2).sum(1))
+  maxDB = sqrt(((Gb*ones(indBx.shape) - indBx)**2).sum(1))
+  print 'distance between roi a and B : ', dAB
+  print 'distance max in A : ', maxDA.max()
+  print 'distance max in B : ', maxDB.max()
+
+  counter1 = 0
+  counter2 = 0
+  counterA1 = 0
+  counterB1 = 0
+  counterA2 = 0
+  counterB2 = 0
+
+  cm = numpy.zeros((shape[0], shape[1], shape[2]), 'uint32')
+  cmf = numpy.zeros((shape[0], shape[1], shape[2]), 'float32')
+
+  print 'Shape connectivity map : ', cm.shape
+
+  Pr = 0.0
+  Fa = 0.0
+  Wa = 0.0
+  
+
+  for k in range(pathsIJK.shape[0]): # looped on the number of paths
+    if pathsLEN[k,0] == 0:
+      print 'Warning: length 0'
+      continue
+
+    ext1 = pathsIJK[k, :, 0]
+    ext2 = pathsIJK[k, :, pathsLEN[k,0]-1]
+
+    isIn2A = True
+    isIn2B = False
+
+    for l in range(pathsLEN[k,0]):
+      if not (pathsIJK[k, 0, l] >= roiA.shape[0] or  pathsIJK[k, 1, l]  >= roiA.shape[1] or  pathsIJK[k, 2, l]  >= roiA.shape[2]):
+        if roiB[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]]>0:
+          counterB2 +=1
+          isIn2B = True
+          print 'Fiber matched!'
+          break
+
+
+    if isIn2B:
+      pr = 0.0
+      fa = 0.0
+      wa = 0.0
+      nFactor = 0
+
+      nFactor = pathsLEN[k,0]
+
+      test = exp(pathsLOGP[k, 0, :nFactor])
+      pr = test[pathsLEN[k,0]-1]
+      
+      if pr > threshold:
+        counter1 +=1
+
+        for l in range(nFactor): 
+          fa = fa + pathsANIS[k, 0, l]
+          wa = wa + test[l]*pathsANIS[k, 0, l]
+          if not (pathsIJK[k, 0, l] >= roiA.shape[0] or  pathsIJK[k, 1, l]  >= roiA.shape[1] or  pathsIJK[k, 2, l]  >= roiA.shape[2]):
+            cm[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]]+=1
+            cmf[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]] = (cmf[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]] + 1)/2.0
+
+        Pr += pr #test.sum()/float(nFactor)
+        Fa += fa/float(nFactor)
+        Wa += pr*fa/float(nFactor) #wa/floa(nFactor)
+
+
+
+    if not isIn2B:
+      pr = 0.0
+      fa = 0.0
+      wa = 0.0
+      nFactor = 0
+      
+
+      if norm(ext2-Gb)<= maxDB.max()+vicinity: 
+         nFactor = pathsLEN[k,0]
+
+         test = exp(pathsLOGP[k, 0, :nFactor])
+         pr = test[pathsLEN[k,0]-1]
+      
+         if pr > threshold:
+           counter2+=1
+           counter1+=1
+
+           for l in range(nFactor):
+             fa = fa + pathsANIS[k, 0, l]
+             wa = wa + test[l]*pathsANIS[k, 0, l]
+             if not (pathsIJK[k, 0, l] >= roiA.shape[0] or  pathsIJK[k, 1, l]  >= roiA.shape[1] or  pathsIJK[k, 2, l]  >= roiA.shape[2]):
+               cm[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]]+=1
+               cmf[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]] = (cmf[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]] + 1)/2.0
+
+           Pr += pr #test.sum()/float(nFactor)
+           Fa += fa/float(nFactor)
+           Wa += pr*fa/float(nFactor) #wa/float(nFactor) 
+
+         #print 'curve terminates in neighborhood of B with length of ', pathsLEN[k,0]
+       
+
+  print 'Filtering of fibers done'
+  if counter1>0:
+    print 'Number of curves connecting : ', counter1
+    print 'Mean probability : ', Pr/float(counter1)
+    print 'Mean FA : ', Fa/float(counter1)
+    print 'Mean WA : ', Wa/float(counter1)
+
+
+  return cm, cmf
 
 

@@ -224,7 +224,8 @@ class PipelineHandler(asyncore.dispatcher):
                   if dscene.has_key(self.params.get('tensor')[0]):
                          self.ten = s.get(int(dscene[self.params.get('tensor')[0]]))
                          tenR = numpy.fromstring(self.ten.getImage(), 'float32')
-                         tenR = tenR.reshape(7, shpD[2]*shpD[1]*shpD[0])
+                         tenR = tenR.reshape(shpD[2], shpD[1], shpD[0], 7)
+                         tenR = tenR.swapaxes(2,0)
                          self.ten.setImage(tenR)
                          isInTensor = True                                 
                          logger.info("Tensor : %s:%s" % (tenR.shape[0], tenR.shape[1]))
@@ -357,7 +358,11 @@ class PipelineHandler(asyncore.dispatcher):
                     if isInRoiB: # correcting brain mask with roi A & B
                        logger.info("Correcting mask based on roiB")
                        tmpB = self.roiB.getImage()
-                       wm[tmpB>0]=1 
+                       wm[tmpB>0]=1
+          else: # avoid singularities in data
+                    minVData = 10
+                    wm = tens.EvaluateWM0(data, bLine, minVData, data[..., bLine].max())
+       
 
           if isInWM:
                     logger.info("Using external mask")
@@ -369,12 +374,18 @@ class PipelineHandler(asyncore.dispatcher):
                     logger.info("Compute tensor")
                     timeS1 = time.time()
 
-                    if isInWM or wmEnabled:
-                         EV, lV, xVTensor, xYTensor = tens.EvaluateTensorX1(data, G.T, b.T, wm)
-                         #logmu0, EV, lV = tensC.EvaluateTensorC(data, G.T, b.T)
+                    #if isInWM or wmEnabled:
+                    if not isInTensor:
+                       EV, lV, xVTensor, xYTensor = tens.EvaluateTensorX1(data, G.T, b.T, wm)
+                    else:
+                       EV, lV, xVTensor, xYTensor = tens.EvaluateTensorK1(self.ten.getImage(), shpD, wm)
+                       #logmu0, EV, lV = tensC.EvaluateTensorC(data, G.T, b.T)
 
-                    else: # no mask applied
-                         EV, lV, xVTensor, xYTensor = tens.EvaluateTensorX0(data, G.T, b.T)
+                    #else: # no mask applied
+                    #  if not isInTensor:
+                    #     EV, lV, xVTensor, xYTensor = tens.EvaluateTensorX0(data, G.T, b.T)
+                    #  else:
+                    #     EV, lV, xVTensor, xYTensor = tens.EvaluateTensorK0(self.ten.getImage(), shpD)
                          #logmu0, EV, lV = tensC.EvaluateTensorC(data, G.T, b.T)
 
                       
@@ -409,23 +420,24 @@ class PipelineHandler(asyncore.dispatcher):
                         timeS2 = time.time()
 
                         logger.info("Data type : %s" % data.dtype)
-                        if isInWM or wmEnabled:
-                           paths0, paths1, paths2, paths3, paths4 = track.TrackFiberY40(data.flatten(), wm, shpD, b.T, G.T, IJKstartpoints[0].T, r2i, i2r,\
+                        # paths: paths0=RAS, paths1=IJK, paths2=logP, paths3=ANISO, paths4=Length
+                        #if isInWM or wmEnabled:
+                        paths00, paths01, paths02, paths03, paths04 = track.TrackFiberY40(data.flatten(), wm, shpD, b.T, G.T, IJKstartpoints[0].T, r2i, i2r,\
                                   lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
-                        else:
-                           paths0, paths1, paths2, paths3, paths4 = track.TrackFiberU40(data.flatten(), shpD, b.T, G.T, IJKstartpoints[0].T, r2i, i2r,\
-                                  lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
+                        #else:
+                        #   paths00, paths01, paths02, paths03, paths04 = track.TrackFiberU40(data.flatten(), shpD, b.T, G.T, IJKstartpoints[0].T, r2i, i2r,\
+                        #          lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
 
                         logger.info("Track fibers in %s sec" % str(time.time()-timeS2))
 
                         logger.info("Connect tract")
 
                         if probMode=='binary':
-                            cm = track.ConnectFibersX0(paths1, paths4, shpD, lengthEnabled,  lengthClass)
+                            cm = track.ConnectFibersX0(paths01, paths04, shpD, lengthEnabled,  lengthClass)
                         elif probMode=='cumulative':
-                            cm = track.ConnectFibersX1(paths1, paths4, shpD, lengthEnabled,  lengthClass)
+                            cm = track.ConnectFibersX1(paths01, paths04, shpD, lengthEnabled,  lengthClass)
                         else:
-                            cm = track.ConnectFibersX2(paths1, paths4, shpD, lengthEnabled,  lengthClass)
+                            cm = track.ConnectFibersX2(paths01, paths04, shpD, lengthEnabled,  lengthClass)
 
                     if isInRoiB:
                         # ROI B
@@ -444,12 +456,12 @@ class PipelineHandler(asyncore.dispatcher):
                         timeS3 = time.time()
 
                         logger.info("Data type : %s" % data.dtype)
-                        if isInWM or wmEnabled:
-                           paths0, paths1, paths2, paths3, paths4  = track.TrackFiberY40(data.flatten(), wm, shpD, b.T, G.T, IJKstartpoints2[0].T, r2i, i2r,\
+                        #if isInWM or wmEnabled:
+                        paths10, paths11, paths12, paths13, paths14  = track.TrackFiberY40(data.flatten(), wm, shpD, b.T, G.T, IJKstartpoints2[0].T, r2i, i2r,\
                                   lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
-                        else:
-                           paths0, paths1, paths2, paths3, paths4  = track.TrackFiberU40(data.flatten(), shpD, b.T, G.T, IJKstartpoints2[0].T, r2i, i2r,\
-                                  lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
+                        #else:
+                        #   paths10, paths11, paths12, paths13, paths14  = track.TrackFiberU40(data.flatten(), shpD, b.T, G.T, IJKstartpoints2[0].T, r2i, i2r,\
+                        #          lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
 
 
                         logger.info("Track fibers in %s sec" % str(time.time()-timeS3))
@@ -457,11 +469,18 @@ class PipelineHandler(asyncore.dispatcher):
                         logger.info("Connect tract")
 
                         if probMode=='binary':
-                            cm2 = track.ConnectFibersX0(paths1, paths4, shpD, lengthEnabled,  lengthClass)
+                            cm2 = track.ConnectFibersX0(paths11, paths14, shpD, lengthEnabled,  lengthClass)
                         elif probMode=='cumulative':
-                            cm2 = track.ConnectFibersX1(paths1, paths4, shpD, lengthEnabled,  lengthClass)
+                            cm2 = track.ConnectFibersX1(paths11, paths14, shpD, lengthEnabled,  lengthClass)
                         else:
-                            cm2 = track.ConnectFibersX2(paths1, paths4, shpD, lengthEnabled,  lengthClass)
+                            cm2 = track.ConnectFibersX2(paths11, paths14, shpD, lengthEnabled,  lengthClass)
+
+                    if isInRoiA and isInRoiB:
+                        vicinity = 10
+                        threshold = 0.1
+                        cm3, cm3f = track.FilterFibers0(paths00, paths01, paths02, paths03, paths04, self.roiA.getImage(), self.roiB.getImage(), shpD, vicinity, threshold)
+                        cm4, cm4f = track.FilterFibers0(paths10, paths11, paths12, paths13, paths14, self.roiB.getImage(), self.roiA.getImage(), shpD, vicinity, threshold)
+
 
 
           else:
@@ -489,12 +508,12 @@ class PipelineHandler(asyncore.dispatcher):
                      s.putS(ga, dims, org, i2r, tmp)
 
 
-          if wmEnabled:
-                     wm = wm.swapaxes(2,0)
-                     tmp= 'brain_' + dateT
-                     wm.tofile(tmpF + tmp + '.data')
-                     createParams(wm, tmpF + tmp)
-                     s.putS(wm, dims, org, i2r, tmp)
+          #if wmEnabled:
+          wm = wm.swapaxes(2,0)
+          tmp= 'brain_' + dateT
+          wm.tofile(tmpF + tmp + '.data')
+          createParams(wm, tmpF + tmp)
+          s.putS(wm, dims, org, i2r, tmp)
 
 
           if cmEnabled:
@@ -563,6 +582,33 @@ class PipelineHandler(asyncore.dispatcher):
                           cm1o2.tofile(tmpF + tmp + '.data')
                           createParams(cm1o2,  tmpF + tmp)
                           s.putS(cm1o2, dims, org, i2r, tmp)
+
+                          tmp= 'cmA2B_' + dateT
+                          cm3 = cm3.swapaxes(2,0)
+                          cm3.tofile(tmpF + tmp + '.data')
+                          createParams(cm3,  tmpF + tmp)
+                          s.putS(cm3, dims, org, i2r, tmp)
+
+                          tmp= 'cmFA2B_' + dateT
+                          cm3f = cm3f.swapaxes(2,0)
+                          cm3f.tofile(tmpF + tmp + '.data')
+                          createParams(cm3f,  tmpF + tmp)
+                          s.putS(cm3f, dims, org, i2r, tmp)
+
+
+                          tmp= 'cmB2A_' + dateT
+                          cm4 = cm4.swapaxes(2,0)
+                          cm4.tofile(tmpF + tmp + '.data')
+                          createParams(cm4,  tmpF + tmp)
+                          s.putS(cm4, dims, org, i2r, tmp)
+
+                          tmp= 'cmFB2A_' + dateT
+                          cm4f = cm4f.swapaxes(2,0)
+                          cm4f.tofile(tmpF + tmp + '.data')
+                          createParams(cm4f,  tmpF + tmp)
+                          s.putS(cm4f, dims, org, i2r, tmp)
+
+
 
 
           logger.debug("pipeline data shape end : %s:%s:%s:%s" %  (shpD[0], shpD[1], shpD[2], shpD[3]))
