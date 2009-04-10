@@ -662,13 +662,17 @@ int vtkMRMLScene::Import()
       }
       
     this->Modified();
+    this->RemoveUnusedNodeReferences();
+    } //if (res)
+  else
+    {
+    this->ClearReferencedNodeID();
     }
 
   scene->RemoveAllItems();
   scene->Delete();
 
   this->SetUndoFlag(undoFlag);
-  this->RemoveUnusedNodeReferences();
 
   int returnCode = 1;
   if (this->GetErrorCode() == 0) 
