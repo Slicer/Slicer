@@ -128,6 +128,7 @@ itcl::body RemoveIslandsEffect::apply {} {
   set islands [vtkITKIslandMath New]
   $islands SetInput [$preThresh GetOutput]
   $islands SetFullyConnected [$o(fullyConnected) GetSelectedState]
+  $this setProgressFilter $islands "Calculating Islands..."
   $islands Update
   set bgLabel [$this findNonZeroBorderPixel [$islands GetOutput]]
 
@@ -139,48 +140,14 @@ itcl::body RemoveIslandsEffect::apply {} {
   $postThresh ThresholdBetween $bgLabel $bgLabel
   $postThresh SetInput [$islands GetOutput]
   $postThresh SetOutput [$this getOutputLabel]
+  $this setProgressFilter $postThresh "Applying to Label Map..."
   $postThresh Update
   $this postApply
 
+  $preThresh Delete
+  $islands Delete
   $postThresh Delete
 
-
-
-  if { 0 } {
-
-    # Experiment
-
-    # create two pipelines 
-    # - one binary of only foreground
-    # - one binary of only non-foreground
-    # - remove islands from both
-    foreach branch {fore back} in {1 0} out {0 1} {
-      set ${branch}thresh [vtkImageThreshold New]
-      ${branch}thresh SetInValue $in
-      ${branch}thresh SetOutValue $out
-      ${branch}thresh SetReplaceOutOn
-      ${branch}thresh ThresholdBetween $label $label
-      ${branch}thresh SetOutputScalarType [[$this getOutputLabel] GetScalarType]
-
-      set ${branch}islands [vtkITKIslandMath New]
-      ${branch}islands SetInput [${branch}thresh GetOutput]
-      ${branch}islands SetFullyConnected [$o(fullyConnected) GetSelectedState]
-    }
-
-    $backthresh SetInput [$this getInputLabel]
-    $forethresh SetInput [$backislands GetOutput]
-
-    $this setProgressFilter $foreislands "Calculating Islands..."
-    $foreislands Update
-
-    set islandCount [$islands GetNumberOfIslands]
-    set islandOrigCount [$islands GetOriginalNumberOfIslands]
-    set ignoredIslands [expr $islandOrigCount - $islandCount]
-    $this statusText "[$islands GetNumberOfIslands] islands created ($ignoredIslands ignored)"
-    $islands Delete
-    $this postApply
-
-  }
 }
 
 itcl::body RemoveIslandsEffect::buildOptions {} {
