@@ -257,11 +257,14 @@ void vtkSlicerTheme::Install ( )
   odb->AddEntry ( "vtkKWRadioButton", "SetCompoundModeToLeft", NULL );
 
   // Slicer WidgetWithLabel (scrap the groove around all)
-  odb->AddEntry ( "vtkKWWidgetWithLabel", "SetRelief", "flat" );    
+  odb->AddEntry ( "vtkKWWidgetWithLabel", "SetRelief", "flat" );
 
-
-    
-
+  // Slicer KW Dialogs This should configure all derived classes:
+  // vtkKWColorPickerDialogs
+  // vtkKWFileBrowserDialogs
+  // vtkKWMessageDialogs and 
+  // vtkKWWizardDialogs.
+  odb->AddEntryAsInt ( "vtkKWDialog", "SetModal", 1 );
 
   // Slicer MultiColumnLists
   // font
@@ -284,8 +287,6 @@ void vtkSlicerTheme::Install ( )
   odb->AddEntryAsDouble3 ( "vtkKWWindow:TrayFrame", "SetBackgroundColor",
                            this->SlicerColors->MediumCoolStone );    
 
-
-    
   // Slicer MultiColumnListsWithScrollbars
   // scroll bars
   // Win32 does not support resizing a scrollbar properly, it merely crops
@@ -296,8 +297,6 @@ void vtkSlicerTheme::Install ( )
   // Win32.
   odb->AddEntryAsInt("vtkKWScrollbar", "SetWidth", 15);
   odb->AddEntryAsDouble3("vtkKWScrollbar", "SetTroughColor", this->SlicerColors->RecessedColor);
-    
-
     
   // Slicer Menu and MenuButtons
   odb->AddEntryAsDouble3 ("vtkKWMenu", "SetActiveBackgroundColor",
@@ -314,7 +313,6 @@ void vtkSlicerTheme::Install ( )
   // Slicer Menubar
   // Slicer Entry
   // Slicer Listbox
-  // Slicer Messages
   // ....?
 
 }
