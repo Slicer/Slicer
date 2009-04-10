@@ -73,6 +73,7 @@ vtkSlicerWelcomeGUI::vtkSlicerWelcomeGUI()
   this->CreditFrame = NULL;
   this->MouseModeFrame = NULL;
   this->ViewAndLayoutFrame = NULL;
+  this->StartWithWelcome = NULL;
   this->SetGUIWidth(-1);
   this->Observed = 0;
 }
@@ -84,6 +85,12 @@ vtkSlicerWelcomeGUI::~vtkSlicerWelcomeGUI()
 //    this->RemoveLogicObservers ( );
   this->SetGUIWidth(-1);
     
+  if ( this->StartWithWelcome )
+    {
+    this->StartWithWelcome->SetParent ( NULL );
+    this->StartWithWelcome->Delete();    
+    this->StartWithWelcome = NULL;
+    }
   if ( this->WelcomeFrame )
     {
     this->WelcomeFrame->SetParent ( NULL );
@@ -271,6 +278,10 @@ void vtkSlicerWelcomeGUI::PrintSelf(ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 void vtkSlicerWelcomeGUI::AddGUIObservers ( ) 
 {
+  if ( this->StartWithWelcome )
+    {
+    this->StartWithWelcome->GetWidget()->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
   if ( this->WelcomeFrame )
     {
     this->WelcomeFrame->AddObserver (vtkSlicerModuleCollapsibleFrame::FrameExpandEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -327,6 +338,10 @@ void vtkSlicerWelcomeGUI::AddGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkSlicerWelcomeGUI::RemoveGUIObservers ( )
 {
+  if ( this->StartWithWelcome )
+    {
+    this->StartWithWelcome->GetWidget()->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
   if ( this->WelcomeFrame )
     {
     this->WelcomeFrame->RemoveObservers (vtkSlicerModuleCollapsibleFrame::FrameExpandEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -389,18 +404,24 @@ void vtkSlicerWelcomeGUI::ProcessGUIEvents ( vtkObject *caller,
                                            void *callData ) 
 {
 
-  if ( this->Logic == NULL )
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication() );
+  if ( !app )
     {
-    //TODO: error macro
+    vtkErrorMacro ( "ProcessGUIEvents: got Null SlicerApplication" );
     return;
     }
 
-
-//  vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
-
-
   vtkSlicerModuleCollapsibleFrame *f = vtkSlicerModuleCollapsibleFrame::SafeDownCast ( caller );
+  vtkKWCheckButton *cb = vtkKWCheckButton::SafeDownCast ( caller );
 
+  if ( cb != NULL && event == vtkKWCheckButton::SelectedStateChangedEvent )
+    {
+    if ( cb == this->StartWithWelcome->GetWidget() )
+      {
+      app->SetUseWelcomeModuleAtStartup ( this->StartWithWelcome->GetWidget()->GetSelectedState() );
+      }
+    }
+  
   //--- Brute force: if one frame is expanded, close the others.
   if ( f != NULL && event == vtkSlicerModuleCollapsibleFrame::FrameExpandEvent )
     {
@@ -729,6 +750,19 @@ void vtkSlicerWelcomeGUI::BuildGUI ( )
     this->BuildMouseModePanel( this->MouseModeFrame->GetFrame() );
 
     //---
+    // ADD & REMOVE MODULES FRAME
+    //---
+    this->ConfigureFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+    this->ConfigureFrame->SetParent ( page );
+    this->ConfigureFrame->Create ( );
+    this->ConfigureFrame->SetLabelText ("Adding & Removing Modules");
+    this->ConfigureFrame->CollapseFrame ( );
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 4 -in %s",
+                  this->ConfigureFrame->GetWidgetName(),
+                  this->UIPanel->GetPageWidget("SlicerWelcome")->GetWidgetName());
+     this->BuildConfigureModulesPanel( this->ConfigureFrame->GetFrame() );
+
+    //---
     // COMMON ACTIVITIES FRAME
     //---
     this->HintsFrame = vtkSlicerModuleCollapsibleFrame::New ( );
@@ -740,21 +774,6 @@ void vtkSlicerWelcomeGUI::BuildGUI ( )
                   this->HintsFrame->GetWidgetName(),
                   this->UIPanel->GetPageWidget("SlicerWelcome")->GetWidgetName());
     this->BuildOtherHelpPanel( this->HintsFrame->GetFrame() );
-
-    //---
-    // ADD & REMOVE MODULES FRAME
-    //---
-    this->ConfigureFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-    this->ConfigureFrame->SetParent ( page );
-    this->ConfigureFrame->Create ( );
-    this->ConfigureFrame->SetLabelText ("Adding & Removing Modules");
-    this->ConfigureFrame->CollapseFrame ( );
-/*
-    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 4 -in %s",
-                  this->ConfigureFrame->GetWidgetName(),
-                  this->UIPanel->GetPageWidget("SlicerWelcome")->GetWidgetName());
-*/
-     this->BuildConfigureModulesPanel( this->ConfigureFrame->GetFrame() );
 
     //---
     // COMMUNITY FRAME
@@ -869,7 +888,7 @@ void vtkSlicerWelcomeGUI::BuildWelcomeAndAboutPanel( vtkKWFrame *parent )
   welcome->GetWidget()->SetWrapToWord();
   welcome->GetWidget()->QuickFormattingOn();
   welcome->GetWidget()->SetHeight ( 5 );
-  const char *about = "**3D Slicer** is a free open source software platform for medical image processing and 3D visualization of image data. This module contains some basic information and useful links to get you started using Slicer. Please see our website <a>http://www.slicer.org</a> for additional information.";
+  const char *about = "**3D Slicer** is a free open source software platform for medical image processing and 3D visualization of image data. This module contains some basic information and useful links to get you started using Slicer. Please see our website <a>http://www.slicer.org</a> and the documentation on our wiki for more information: <a>http://www.slicer.org/slicerWiki/index.php/Documentation-3.4</a>.";
   welcome->SetText ( about );
   //Important that Read only after SetText otherwise it doesn't work
   welcome->GetWidget()->ReadOnlyOn();
@@ -897,12 +916,26 @@ void vtkSlicerWelcomeGUI::BuildWelcomeAndAboutPanel( vtkKWFrame *parent )
   hint->GetWidget()->SetReliefToFlat();
   hint->GetWidget()->SetWrapToWord();
   hint->GetWidget()->QuickFormattingOn();
-  hint->GetWidget()->SetForegroundColor ( 0.4, 0.4, 0.4 );
   hint->GetWidget()->SetHeight ( 3 );
   const char *hinttxt = "**Hint**: to open any information panel below, click on its grey title bar.";
   hint->SetText ( hinttxt );
   //Important that Read only after SetText otherwise it doesn't work
   hint->GetWidget()->ReadOnlyOn();
+
+  this->StartWithWelcome = vtkKWCheckButtonWithLabel::New();
+  this->StartWithWelcome->SetParent ( parent );
+  this->StartWithWelcome->Create();
+  this->StartWithWelcome->SetLabelPositionToRight ( );
+  this->StartWithWelcome->GetLabel()->SetAnchorToCenter();
+  this->StartWithWelcome->GetLabel()->SetText ( " Don't show this module on startup." );
+  if ( app->GetUseWelcomeModuleAtStartup() )
+    {
+    this->StartWithWelcome->GetWidget()->SetSelectedState (app->GetUseWelcomeModuleAtStartup() );
+    }
+  else
+    {
+    this->StartWithWelcome->GetWidget()->SetSelectedState (app->GetUseWelcomeModuleAtStartup() );
+    }
 
   app->Script ( "pack %s -side top -anchor nw -fill x -expand y -padx 6 -pady 2",
                 welcome->GetWidgetName() );
@@ -910,6 +943,8 @@ void vtkSlicerWelcomeGUI::BuildWelcomeAndAboutPanel( vtkKWFrame *parent )
                 disclaimer->GetWidgetName() );
   app->Script ( "pack %s -side top -anchor nw -fill x -expand y -padx 6 -pady 2",
                 hint->GetWidgetName() );
+  app->Script ( "pack %s -side top -anchor nw  -padx 6 -pady 2",
+                this->StartWithWelcome->GetWidgetName() );
   welcome->Delete();
   disclaimer->Delete();
   hint->Delete();
@@ -1374,7 +1409,7 @@ void vtkSlicerWelcomeGUI::BuildViewAndLayoutPanel ( vtkKWFrame *parent )
   vctxt->GetWidget()->SetWrapToWord();
   vctxt->GetWidget()->QuickFormattingOn();
   vctxt->GetWidget()->SetHeight(8);
-  const char *t6 = "**3D View Controls:** The interface shown above, found in the \"Manipulate 3D View\" panel, can be used to modify the 3D view. Clicking on any axis labels in the left-most panel changes the viewer's **Point of View**. The collection of icons in the center controls options such as **Pitch**, **Roll**, and **Yaw**; **View Centering**, orthographic or perspective **Projection**, **Visibility & Display** parameters, **Zoom** and **Stereo Viewing** options. The right-most checkboxes toggle view **Spin** and **Rock** animations for added enhancement of depth and layout. ";
+  const char *t6 = "**3D View Controls:** The interface shown above, found in the \"Manipulate 3D View\" panel, can be used to modify the 3D view. Clicking on any axis labels in the left-most panel changes the viewer's **Point of View**. The collection of icons in the center controls options such as **Pitch**, **Roll**, and **Yaw**; **View Centering**, orthographic or perspective **Projection**, **Visibility & Display** parameters, **Screen Snapshot** and **Scene Snapshot** capabilities, **Zoom** and **Stereo Viewing** options. The right-most checkboxes toggle view **Spin** and **Rock** animations for added enhancement of depth and layout. \n\nFinally, the small window on the right displays different information depending on the location of your mouse: when the mouse is over a Slice Viewer, the window provides a **magnified view** of the area surrounding the mouse pointer; otherwise, the window displays a **bird's-eye view** of the entire scene.";
   vctxt->SetText ( t6 );
   //Important that Read only after SetText otherwise it doesn't work
   vctxt->GetWidget()->ReadOnlyOn();
@@ -1499,20 +1534,52 @@ void vtkSlicerWelcomeGUI::BuildConfigureModulesPanel( vtkKWFrame *parent )
     return;
     }
 
+  vtkKWFrame *f = vtkKWFrame::New();
+  f->SetParent ( parent );
+  f->Create();
+  
+  vtkKWLabel *l = vtkKWLabel::New();
+  l->SetParent ( f );
+  l->Create();
+  l->SetImageToIcon ( this->SlicerWelcomeIcons->GetModuleConfigureIcon() );
+
   vtkKWTextWithHyperlinksWithScrollbars *txt = vtkKWTextWithHyperlinksWithScrollbars::New ( );
-  txt->SetParent ( parent );
+  txt->SetParent ( f );
   txt->Create();
   txt->SetHorizontalScrollbarVisibility ( 0 );
-  txt->SetVerticalScrollbarVisibility ( 0);
+  txt->SetVerticalScrollbarVisibility ( 1 );
   txt->GetWidget()->SetReliefToGroove();
   txt->GetWidget()->SetWrapToWord();
+  txt->GetWidget()->SetHeight ( 10 );
   txt->GetWidget()->QuickFormattingOn();
-  const char *t = "";
+  const char *t = "**Configuring your Slicer build:** Slicer has two basic types of modules, **Loadable Modules** and **Command Line Plugins**. By default, Slicer starts up with all modules included. You can customize Slicer to include only the Loadable and Command Line modules you need; which keeps Slicer as compact as possible and accelerates application startup time. To customize Slicer this way, open the **Application Settings Interface** by selecting **View->Application Settings** from the File Menu, (or by using the **F2** hotkey), then choosing the Module Settings panel. In this panel:\n\n* Deselecting the **Load Modules** checkbutton allows you to supress all Loadable Modules.\n\n* Selecting the **Load Modules** checkbutton will cause all modules selected in the **Select Modules** panel (shown below) to be loaded next time you start up Slicer.\n\n* Deselecting the **Load Command-Line Plugins** checkbox will surpress all Command-Line modules, and\n\n* Selecting that checkbutton will include all Command-Line modules next time you start up.\n";
   txt->SetText ( t );
   //Important that Read only after SetText otherwise it doesn't work
   txt->GetWidget()->ReadOnlyOn();
-  app->Script ( "pack %s -side top -anchor nw -fill x -expand y -padx 2 -pady 4", txt->GetWidgetName() );
+  
+  vtkKWTextWithHyperlinksWithScrollbars *txt2 = vtkKWTextWithHyperlinksWithScrollbars::New ( );
+  txt2->SetParent ( f );
+  txt2->Create();
+  txt2->SetHorizontalScrollbarVisibility ( 0 );
+  txt2->SetVerticalScrollbarVisibility ( 1 );
+  txt2->GetWidget()->SetReliefToGroove();
+  txt2->GetWidget()->SetWrapToWord();
+  txt2->GetWidget()->SetHeight ( 6 );
+  txt2->GetWidget()->QuickFormattingOn();
+  const char *t1 = "**Other useful hints:** The **Application Settings Interface** has other useful settings which are saved in the Application Registry and restored each time you start Slicer. Note that in this panel, you can also specify your **Home** module, **Temporary** directory and other useful settings. From here, you can explore other Application Interface Settings panels, such as **Slicer Settings**, **Remote Data Handling Settings**, and **Font Settings**.\n";
+  txt2->SetText ( t1 );
+  //Important that Read only after SetText otherwise it doesn't work
+  txt2->GetWidget()->ReadOnlyOn();
+
+  app->Script ( "pack %s -side top -anchor nw -fill x -expand y -padx 2 -pady 4", f->GetWidgetName() );
+  app->Script ( "pack %s %s %s -side top -anchor nw -fill x -expand y -padx 2 -pady 4",
+                txt->GetWidgetName(),
+                l->GetWidgetName(),
+                txt2->GetWidgetName() );
   txt->Delete();
+  l->Delete();
+  txt2->Delete();
+  f->Delete();
 }
 
 //---------------------------------------------------------------------------

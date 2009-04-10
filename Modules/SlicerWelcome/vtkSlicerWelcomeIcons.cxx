@@ -26,6 +26,7 @@ vtkSlicerWelcomeIcons::vtkSlicerWelcomeIcons ( )
     this->MouseModeIcon = vtkKWIcon::New();
     this->ModuleNavIcon = vtkKWIcon::New();
     this->ModuleIcon = vtkKWIcon::New();
+    this->ModuleConfigureIcon = vtkKWIcon::New();
     this->SlicesControlIcon = vtkKWIcon::New();
     this->ViewControlIcon = vtkKWIcon::New();
     this->LayoutIcon = vtkKWIcon::New();
@@ -116,6 +117,11 @@ vtkSlicerWelcomeIcons::~vtkSlicerWelcomeIcons ( )
       {
       this->ModuleIcon->Delete();
       this->ModuleIcon = NULL;
+      }
+    if ( this->ModuleConfigureIcon )
+      {
+      this->ModuleConfigureIcon->Delete();
+      this->ModuleConfigureIcon = NULL;
       }
     if ( this->SlicesControlIcon )
       {
@@ -218,6 +224,11 @@ void vtkSlicerWelcomeIcons::AssignImageDataToIcons ( )
                               image_WelcomeModules_height,
                               image_WelcomeModules_pixel_size,
                               image_WelcomeModules_length, 0);
+  this->ModuleConfigureIcon->SetImage (image_WelcomeConfigure,
+                              image_WelcomeConfigure_width,
+                              image_WelcomeConfigure_height,
+                              image_WelcomeConfigure_pixel_size,
+                              image_WelcomeConfigure_length, 0);
   this->SlicesControlIcon->SetImage ( image_WelcomeSlicesControl,
                                       image_WelcomeSlicesControl_width,
                                       image_WelcomeSlicesControl_height,
@@ -259,6 +270,7 @@ void vtkSlicerWelcomeIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "MouseModeIcon: " << this->GetMouseModeIcon() << "\n";
     os << indent << "ModuleNavIcon: " << this->GetModuleNavIcon() << "\n";
     os << indent << "ModuleIcon: " << this->GetModuleIcon() << "\n";
+    os << indent << "ModuleConfigureIcon: " << this->GetModuleConfigureIcon() << "\n";
     os << indent << "SlicesControlIcon: " << this->GetSlicesControlIcon() << "\n";
     os << indent << "ViewControlIcon: " << this->GetViewControlIcon() << "\n";
     os << indent << "LayoutIcon: " << this->GetLayoutIcon() << "\n";

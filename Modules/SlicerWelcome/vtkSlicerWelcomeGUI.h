@@ -12,6 +12,9 @@
 #include "vtkSlicerWelcomeIcons.h"
 #include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkIntArray.h"
+#include "vtkKWCheckButton.h"
+#include "vtkKWLabel.h"
+#include "vtkKWCheckButtonWithLabel.h"
 
 #include <string>
 
@@ -44,6 +47,9 @@ class VTK_SLICERWELCOME_EXPORT vtkSlicerWelcomeGUI : public vtkSlicerModuleGUI
   
   vtkGetMacro (GUIWidth, int );
   vtkSetMacro (GUIWidth, int );
+  
+  vtkGetObjectMacro (StartWithWelcome, vtkKWCheckButtonWithLabel);
+  vtkSetObjectMacro (StartWithWelcome, vtkKWCheckButtonWithLabel);
 
   // Description:
   // Create widgets
@@ -111,6 +117,7 @@ protected:
   vtkSlicerModuleCollapsibleFrame *MouseModeFrame;
   vtkSlicerModuleCollapsibleFrame *ViewAndLayoutFrame;
 
+  vtkKWCheckButtonWithLabel *StartWithWelcome;
   bool Observed;
 };
 
