@@ -285,12 +285,33 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   // set the list of file names on the reader
   reader->ResetFileNames();
   reader->SetArchetype(fullName.c_str());
-  for (int n = 0; n < this->GetNumberOfFileNames(); n++)
+
+  // TODO: this is a workaround for an issue in itk::ImageSeriesReader
+  // where is assumes that all the filenames that have been passed
+  // to it are a dimension smaller than the image it is asked to create
+  // (i.e. a list of .jpg files that form a volume).
+  // In our case though, we can have file lists that include both the
+  // header and bulk data, like .hdr/.img pairs.  So we need to 
+  // be careful not to send extra filenames to the reader if the 
+  // format is multi-file for the same volume
+  //
+  // check for Analyze and similar format- if the archetype is 
+  // one of those, then don't send the rest of the list
+  //
+  std::string fileExt(itksys::SystemTools::GetFilenameLastExtension(fullName));
+  if ( fileExt != std::string(".hdr") 
+      && fileExt != std::string(".img") 
+      && fileExt != std::string(".mhd") 
+      && fileExt != std::string(".nhdr") )
     {
-    std::string nthFileName = this->GetFullNameFromNthFileName(n);
-    vtkDebugMacro("ReadData: got full name for " << n << "th file: " << nthFileName << ", adding it to reader, current num files on it = " << reader->GetNumberOfFileNames());
-    reader->AddFileName(nthFileName.c_str());
+    for (int n = 0; n < this->GetNumberOfFileNames(); n++)
+      {
+      std::string nthFileName = this->GetFullNameFromNthFileName(n);
+      vtkDebugMacro("ReadData: got full name for " << n << "th file: " << nthFileName << ", adding it to reader, current num files on it = " << reader->GetNumberOfFileNames());
+      reader->AddFileName(nthFileName.c_str());
+      }
     }
+
   reader->SetOutputScalarTypeToNative();
   reader->SetDesiredCoordinateOrientationToNative();
   if (this->CenterImage) 
