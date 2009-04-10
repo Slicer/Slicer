@@ -527,7 +527,6 @@ int main(int argc, char* argv[])
 
   std::cout << script.str(); 
 
-  int result = EXIT_SUCCESS;
   if( !gridRunningMode || gridRunningMode->getValueAsString() != "condor" )
     {
     batchMakeParser.ParseBuffer(script.str());
