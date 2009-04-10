@@ -506,7 +506,9 @@ proc EditorCreateLabelVolume {this} {
 proc EditorFreeVolumes {volumeList} {
   foreach volume $volumeList {
     foreach {imageData nodeID} $volume {}
-    $imageData Delete
+    if { [info command $imageData] != "" } {
+      $imageData Delete
+    }
   }
 }
 
