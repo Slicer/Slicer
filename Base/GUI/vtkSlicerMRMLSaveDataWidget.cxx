@@ -481,6 +481,8 @@ int vtkSlicerMRMLSaveDataWidget::SaveScene(int sceneRow)
     this->MRMLScene->SetRootDirectory(directory.c_str());
     directory = directory + vtksys_stl::string("/");
 
+    vtkDebugMacro("SaveScene: updated root diretory to " << directory.c_str());
+    
     // convert absolute paths to relative
     vtkMRMLScene *scene = this->GetMRMLScene();
     vtkMRMLNode *node;
@@ -492,11 +494,22 @@ int vtkSlicerMRMLSaveDataWidget::SaveScene(int sceneRow)
       vtkMRMLStorageNode *snode = vtkMRMLStorageNode::SafeDownCast(node);
       if (snode->GetFileName())
         {
+        
         itksys_stl::string absPath = snode->GetFullNameFromFileName();
         itksys_stl::string relPath = itksys::SystemTools::RelativePath(
           directory.c_str(), absPath.c_str());
+        vtkDebugMacro("SaveScene: changing storage node file name from absPath " << absPath << " to relPath " << relPath << ", now working on " << snode->GetNumberOfFileNames() << " other files in the node");
         snode->SetFileName(relPath.c_str());
         snode->SetSceneRootDir(directory.c_str());
+        // do it for all files in the node
+        int numFiles = snode->GetNumberOfFileNames();
+        for (int i = 0; i < numFiles; i++)
+          {
+          absPath = snode->GetFullNameFromNthFileName(i);
+          relPath = itksys::SystemTools::RelativePath(directory.c_str(), absPath.c_str());
+          vtkDebugMacro("Updating " << i << "th path from " << absPath << " to " << relPath);
+          snode->ResetNthFileName(i, relPath.c_str());
+          }
         }
       }
     
