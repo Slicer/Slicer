@@ -1741,7 +1741,7 @@ int Slicer3_main(int argc, char *argv[])
     {
     homeModule = "Data";
     }
-  std::string tclCmd = "after idle { update; $::slicer3::ApplicationGUI SelectModule " + std::string(homeModule) + " }";
+  std::string tclCmd = "after idle { update; $::slicer3::ApplicationGUI SelectModule \"" + std::string(homeModule) + "\" }";
   Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
     
   Slicer3_Tcl_Eval( interp, "update" ) ;
