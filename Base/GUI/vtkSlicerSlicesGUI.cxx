@@ -80,17 +80,17 @@ void vtkSlicerSlicesGUI::AddSliceGUI(const char *layoutName, vtkSlicerSliceGUI *
 {
   bool showingModule = false;
 
-  if (this->GetApplicationGUI() 
-      && this->GetApplicationGUI()->GetApplicationToolbar()
-      && this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()
-      && this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator())
-    {
-    if (strcmp(this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator()->GetCurrentModuleName(), this->GetModuleName()) == 0)
-      {
-      //std::cerr << "ModuleName: " << this->GetModuleName() << ", CurrentModuleName: " << this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator()->GetCurrentModuleName() << std::endl;
-      showingModule = true;
-      }
-    }
+//   if (this->GetApplicationGUI() 
+//       && this->GetApplicationGUI()->GetApplicationToolbar()
+//       && this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()
+//       && this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator())
+//     {
+//     if (strcmp(this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator()->GetCurrentModuleName(), this->GetModuleName()) == 0)
+//       {
+//       //std::cerr << "ModuleName: " << this->GetModuleName() << ", CurrentModuleName: " << this->GetApplicationGUI()->GetApplicationToolbar()->GetModuleChooseGUI()->GetModuleNavigator()->GetCurrentModuleName() << std::endl;
+//       showingModule = true;
+//       }
+//     }
 
   if (showingModule)
     {
