@@ -588,14 +588,26 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
     }
 
   this->AddMRMLSceneRow();
-    
+  // get length of MRMLScene Directory...
+  int directoryColumnWidth;
+  std::string dirtxt = this->MultiColumnList->GetWidget()->GetCellText(0, FileDirectory_Column );
+  if ( dirtxt.length () < 0 )
+    {
+    directoryColumnWidth = 0;
+    }
+  else
+    {
+    directoryColumnWidth = dirtxt.length();
+    }
+
+
   vtkKWMultiColumnList* dataTable = this->MultiColumnList->GetWidget();
   
   // Process all Storable nodes
   int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLStorableNode");
   int n;
   int row = dataTable->GetNumberOfRows();
-  int directoryColumnWidth = 0;
+
   vtkMRMLStorableNode *node = NULL;
 
   for (n=0; n<nnodes; n++)
@@ -652,6 +664,7 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
     // Need to set the width of the directory column so entire path is visible.
     // So keep a running measure of max filename lengths, and set
     // column width once all storables have been added.
+
     std::string tmpstr = name;
     std::string tmpstr2 = vtksys::SystemTools::CollapseFullPath ( tmpstr.c_str());
     std::string tmpstr3 = vtksys::SystemTools::GetFilenamePath ( tmpstr2.c_str());
