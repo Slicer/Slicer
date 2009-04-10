@@ -167,7 +167,7 @@ int main(int argc, char* argv[])
     BatchMake_APPLICATION_PATH );
   applicationWrapper.Save( 
     std::string( BatchMake_WRAPPED_APPLICATION_DIR ) 
-    + std::string("/") + applicationWrapper.GetName().GetValue()  + std::string(".bmm") );
+    + std::string("/") + applicationWrapper.GetName()  + std::string(".bmm") );
   bm::ScriptParser batchMakeParser;
   batchMakeParser.LoadWrappedApplication( BatchMake_WRAPPED_APPLICATION_DIR );
   batchMakeParser.SetBatchMakeBinaryPath( BatchMake_WRAPPED_APPLICATION_DIR );
@@ -176,7 +176,7 @@ int main(int argc, char* argv[])
   std::stringstream script;
   script << "echo('Starting BatchMake Script')" << std::endl;
   // Use the module title to extract the application .BMM name.
-  script << "setapp( app @'" << applicationWrapper.GetName().GetValue() 
+  script << "setapp( app @'" << applicationWrapper.GetName()
          << "' )" << std::endl;
   
   
