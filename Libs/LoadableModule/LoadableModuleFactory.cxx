@@ -17,6 +17,11 @@
 #include "itksys/Process.h"
 #include "itksys/Base64.h"
 
+#if defined(__APPLE__) && (MAC_OS_X_VERSION_MAX_ALLOWED >= 1030)
+// needed to hack around itksys to override defaults used by Mac OS X
+#include <dlfcn.h>
+#endif
+
 #include "LoadableModuleFactory.h"
 #include "LoadableModuleDescriptionParser.h"
 #include "LoadableModuleDescription.h"
@@ -401,8 +406,15 @@ LoadableModuleFactory
           long int libraryModifiedTime
             = itksys::SystemTools::ModifiedTime(fullLibraryPath.c_str());
 
+#if defined(__APPLE__) && (MAC_OS_X_VERSION_MAX_ALLOWED >= 1030)
+          // Mac OS X defaults to RTLD_GLOBAL and there is no way to
+          // override in itksys. So make the direct call to dlopen().
+          itksys::DynamicLoader::LibraryHandle lib
+            = dlopen(fullLibraryPath.c_str(), RTLD_LAZY | RTLD_LOCAL);
+#else
           itksys::DynamicLoader::LibraryHandle lib
             = itksys::DynamicLoader::OpenLibrary(fullLibraryPath.c_str());
+#endif
           if ( lib )
             {
             // Look for the entry points and symbols to get an XML

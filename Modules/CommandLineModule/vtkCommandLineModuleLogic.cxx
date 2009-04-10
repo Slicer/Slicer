@@ -48,6 +48,12 @@ Version:   $Revision: 1.2 $
 #include "itksys/RegularExpression.hxx"
 #include "itksys/DynamicLoader.hxx" 
 
+#if defined(__APPLE__) && (MAC_OS_X_VERSION_MAX_ALLOWED >= 1030)
+// needed to hack around itksys to override defaults used by Mac OS X
+#include <dlfcn.h>
+#endif
+
+
 #include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
 #ifdef Slicer3_USE_PYTHON
@@ -364,8 +370,15 @@ void vtkCommandLineModuleLogic::LazyEvaluateModuleTarget(ModuleDescription& modu
       {
       typedef int (*ModuleEntryPoint)(int argc, char* argv[]);
       
+#if defined(__APPLE__) && (MAC_OS_X_VERSION_MAX_ALLOWED >= 1030)
+      // Mac OS X defaults to RTLD_GLOBAL and there is no way to
+      // override in itksys. So make the direct call to dlopen().
+      itksys::DynamicLoader::LibraryHandle lib
+        = dlopen(moduleDescriptionObject.GetLocation().c_str(), RTLD_LAZY | RTLD_LOCAL);
+#else
       itksys::DynamicLoader::LibraryHandle lib
         = itksys::DynamicLoader::OpenLibrary(moduleDescriptionObject.GetLocation().c_str());
+#endif
       if ( lib )
         {
         ModuleEntryPoint entryPoint

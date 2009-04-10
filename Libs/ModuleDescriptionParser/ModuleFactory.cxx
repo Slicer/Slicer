@@ -33,6 +33,11 @@
 #include "BinaryFileDescriptor.h"
 #endif
 
+#if defined(__APPLE__) && (MAC_OS_X_VERSION_MAX_ALLOWED >= 1030)
+// needed to hack around itksys to override defaults used by Mac OS X
+#include <dlfcn.h>
+#endif
+
 #include "ModuleDescriptionParserConfigure.h" /* ModuleDescriptionParser_USE_PYTHON */
 
 #ifdef ModuleDescriptionParser_USE_PYTHON
@@ -556,9 +561,16 @@ ModuleFactory
             // whatever, it was in the cache, so we can safely skip it.
             continue;
             }
-          
+
+#if defined(__APPLE__) && (MAC_OS_X_VERSION_MAX_ALLOWED >= 1030)
+          // Mac OS X defaults to RTLD_GLOBAL and there is no way to
+          // override in itksys. So make the direct call to dlopen().
+          itksys::DynamicLoader::LibraryHandle lib
+            = dlopen(fullLibraryPath.c_str(), RTLD_LAZY | RTLD_LOCAL);
+#else
           itksys::DynamicLoader::LibraryHandle lib
             = itksys::DynamicLoader::OpenLibrary(fullLibraryPath.c_str());
+#endif
           if ( lib )
             {
             // Look for the entry points and symbols to get an XML
@@ -639,7 +651,11 @@ ModuleFactory
                 
                 sprintf(entryPointAsText, "%p", entryPoint);
                 entryPointAsString = lowerName + ":" + entryPointAsText;
-                module.SetTarget( entryPointAsString );
+                // Set the target as "Unknown" and close the
+                // library forcing a lazy evaluation later should this
+                // module be used.
+                // module.SetTarget( entryPointAsString );
+                module.SetTarget( "Unknown" );
                 module.SetLocation( fullLibraryPath );
 
                 // Parse the xml to build the description of the module
@@ -746,6 +762,10 @@ ModuleFactory
                 
                 (*this->InternalCache)[entry.Location] = entry;
                 this->CacheModified = true;
+
+                // Close the library to release resources and force a
+                // lazy load when the module is used
+                itksys::DynamicLoader::CloseLibrary(lib);
                 }
               else
                 {
