@@ -746,6 +746,11 @@ void vtkChangeTrackerROIStep::ROIMapUpdate() {
     roiNode->Modified();
     roiUpdateGuard = false;
     }
+  
+  double *roiXYZ = roiNode->GetXYZ();      
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication());
+  app->GetApplicationGUI()->GetViewControlGUI()->MainViewSetFocalPoint(roiXYZ[0], roiXYZ[1], roiXYZ[2]);
+
 }
 
 
