@@ -71,6 +71,7 @@ const char *vtkSlicerApplication::ApplicationWindowHeightRegKey = "ApplicationWi
 const char *vtkSlicerApplication::ApplicationSlicesFrameHeightRegKey = "ApplicationSlicesFrameHeight";
 const char *vtkSlicerApplication::ApplicationLayoutTypeRegKey = "ApplicationLayoutType";
 const char *vtkSlicerApplication::EnableAsynchronousIORegKey = "EnableAsynchronousIO";
+const char *vtkSlicerApplication::UseWelcomeModuleAtStartupRegKey = "UseWelcomeModuleAtStartup";
 const char *vtkSlicerApplication::EnableForceRedownloadRegKey = "EnableForceRedownload";
 //const char *vtkSlicerApplication::EnableRemoteCacheOverwritingRegKey = "EnableRemoteCacheOverwriting";
 const char *vtkSlicerApplication::RemoteCacheDirectoryRegKey = "RemoteCacheDirectory";
@@ -237,6 +238,8 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->RemoteCacheLimit = 200;
     this->RemoteCacheFreeBufferSize = 10;
     
+    this->UseWelcomeModuleAtStartup = 1;
+
     // configure the application before creating
     this->SetName ( "3D Slicer Version 3.3 Alpha" );
 
@@ -757,6 +760,12 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
         2, "RunTime", vtkSlicerApplication::ApplicationLayoutTypeRegKey);
     }
 
+  if ( this->HasRegistryValue(
+        2, "RunTime", vtkSlicerApplication::UseWelcomeModuleAtStartupRegKey))
+    {
+    this->UseWelcomeModuleAtStartup = this->GetIntRegistryValue (
+        2, "RunTime", vtkSlicerApplication::UseWelcomeModuleAtStartupRegKey);
+    }
    if (this->HasRegistryValue(
          2, "RunTime", vtkSlicerApplication::EnableAsynchronousIORegKey))
     {
@@ -958,6 +967,10 @@ void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
   this->SetRegistryValue(
                          2, "RunTime", vtkSlicerApplication::RemoteCacheFreeBufferSizeRegKey, "%d", 
                          this->RemoteCacheFreeBufferSize);
+  this->SetRegistryValue (
+                          2, "RunTime", vtkSlicerApplication::UseWelcomeModuleAtStartupRegKey, "%d",
+                          this->UseWelcomeModuleAtStartup);
+
 }
 
 
@@ -1615,6 +1628,20 @@ void vtkSlicerApplication::SplashMessage (const char *message)
 }
 
 //----------------------------------------------------------------------------
+void vtkSlicerApplication::SetUseWelcomeModuleAtStartup ( int val )
+{
+  if ( val != this->UseWelcomeModuleAtStartup )
+    {
+    if ( val == 0 || val ==1 )
+      {
+      this->UseWelcomeModuleAtStartup = val;
+      }
+    }
+  return;
+}
+
+
+//----------------------------------------------------------------------------
 void vtkSlicerApplication::SetEnableAsynchronousIO ( int val )
 {
   if ( val != this->EnableAsynchronousIO )
@@ -1886,6 +1913,7 @@ void vtkSlicerApplication::PrintSelf ( ostream& os, vtkIndent indent )
   os << nextIndent << "RemoteCacheLimit: " << RemoteCacheLimit <<  "\n";
   os << nextIndent << "RemoteCacheFreeBufferSize: " << RemoteCacheFreeBufferSize <<  "\n";
 
+  os << nextIndent << "UseWelcomeModuleAtStartup: " << UseWelcomeModuleAtStartup << "\n";
   os << indent << "UseSplashScreen: " << UseSplashScreen <<  "\n";
   os << indent << "StereoEnabled: " << StereoEnabled <<  "\n";
 }

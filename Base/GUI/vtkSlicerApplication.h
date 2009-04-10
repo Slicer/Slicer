@@ -116,6 +116,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   static const char *ApplicationSlicesFrameHeightRegKey;
   static const char *ApplicationLayoutTypeRegKey;
   static const char *EnableAsynchronousIORegKey;
+  static const char *UseWelcomeModuleAtStartupRegKey;
   static const char *EnableForceRedownloadRegKey;
   static const char *EnableRemoteCacheOverwritingRegKey;
   static const char *RemoteCacheDirectoryRegKey;
@@ -145,6 +146,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // Windows, ':' on Unix/MacOSX platforms.
   void SetModulePaths(const char *paths);
   const char* GetModulePaths() const;
+
 
   // Description:
   // Set/Get the potential search paths for modules.
@@ -271,6 +273,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   vtkBooleanMacro(EnableAsynchronousIO, int);
 
   // Description:
+  // Control whether the welcome module is shown at startup.
+  void SetUseWelcomeModuleAtStartup (int );
+  vtkGetMacro (UseWelcomeModuleAtStartup, int );
+  vtkBooleanMacro (UseWelcomeModuleAtStartup, int );
+
+  // Description:
   // Set/Get if re-downloads to the cache should be forced
   void SetEnableForceRedownload (int);
   vtkGetMacro(EnableForceRedownload, int);
@@ -344,6 +352,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   vtkSetMacro (UseSplashScreen, int);
   vtkGetMacro (UseSplashScreen, int);
 
+  
   // Description:
   // Control stereo render capability
   vtkSetMacro (StereoEnabled, int);
@@ -425,7 +434,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   int RemoteCacheLimit;
   int RemoteCacheFreeBufferSize;
 
-
+  int UseWelcomeModuleAtStartup;
+  
   // Description:
   // print out local vars
   void PrintSelf ( ostream& os, vtkIndent indent );
@@ -444,6 +454,7 @@ private:
   DisplayMessageQueue* InternalDisplayMessageQueue;
   
   static vtkSlicerApplication* Instance;
+
 
   int UseSplashScreen;
   int StereoEnabled;
