@@ -79,6 +79,14 @@ This is also the space for NRRD header.
 
 #include "DWIDicomLoadCLP.h"
 
+// Use an anonymous namespace to keep class types and function names
+// from colliding when module is used as shared object module.  Every
+// thing should be in an anonymous namespace except for the module
+// entry point, e.g. main()
+//
+namespace {
+
+
 // relevant GE private tags
 const gdcm::DictEntry GEDictBValue( 0x0043, 0x1039, "IS", "1", "B Value of diffusion weighting" );
 const gdcm::DictEntry GEDictXGradient( 0x0019, 0x10bb, "DS", "1", "X component of gradient direction" );
@@ -102,6 +110,9 @@ typedef itk::GDCMImageIO ImageIOType;
 typedef itk::GDCMSeriesFileNames InputNamesGeneratorType;
 
 typedef itk::VectorImage< PixelValueType, SpaceDim > NRRDImageType;
+
+} // end of anonymous namespace
+
 
 int main(int argc, char* argv[])
 {

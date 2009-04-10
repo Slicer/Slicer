@@ -25,10 +25,19 @@
 #include "vtkPoints.h"
 #include "vtkPolyData.h"
 
+
 #include "Utils.h"
 #include "MeshOps.h"
 #include "LSops.h"
 #include "MeanCurvatureEnergy.h"
+
+
+// Use an anonymous namespace to keep class types and function names
+// from colliding when module is used as shared object module.  Every
+// thing should be in an anonymous namespace except for the module
+// entry point, e.g. main()
+//
+namespace {
 
 MeshData* meshdata;
 SparseFieldLS* sfls;
@@ -49,6 +58,9 @@ This gives it an initial geometry in the vtk file, four seed points in (x,y,z) c
 The resulting output contains a colormap that defines interior/exterior of the surface
 as determined by evolving the curve into high mean curvature areas.
 */
+
+} // end of anonymous namespace
+
 
 int main(int argc, char* argv[] )
 {

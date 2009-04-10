@@ -1,3 +1,16 @@
+/*=========================================================================
+
+  Program:   Slicer3
+  Language:  C++
+  Module:    $HeadURL: http://svn.slicer.org/Slicer3/trunk/Applications/CLI/ConfidenceConnected.cxx $
+  Date:      $Date: 2008-11-24 14:36:19 -0500 (Mon, 24 Nov 2008) $
+  Version:   $Revision: 7965 $
+
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
+
+==========================================================================*/
 #if defined(_MSC_VER)
 #pragma warning ( disable : 4786 )
 #endif
@@ -22,6 +35,15 @@
 #include "ImageLabelCombineCLP.h"
 
 #include "vtkImageLabelCombine.h"
+
+// Use an anonymous namespace to keep class types and function names
+// from colliding when module is used as shared object module.  Every
+// thing should be in an anonymous namespace except for the module
+// entry point, e.g. main()
+//
+namespace {
+
+} // end of anonymous namespace
 
 
 int main( int argc, char * argv[] ){

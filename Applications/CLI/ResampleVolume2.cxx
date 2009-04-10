@@ -39,6 +39,13 @@
 #include <itkNrrdImageIO.h>
 #include <itkMetaDataObject.h>
 
+// Use an anonymous namespace to keep class types and function names
+// from colliding when module is used as shared object module.  Every
+// thing should be in an anonymous namespace except for the module
+// entry point, e.g. main()
+//
+namespace {
+
 #define RADIUS 3
 
 struct parameters
@@ -728,6 +735,8 @@ template< class PixelType > int Rotate( parameters list )
     writer->Update() ;
     return EXIT_SUCCESS;
 }
+
+} // end of anonymous namespace
 
 
 int main( int argc , char * argv[] )

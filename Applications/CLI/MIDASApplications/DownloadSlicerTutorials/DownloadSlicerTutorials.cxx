@@ -12,6 +12,14 @@
 #include <vector>
 #include "DownloadSlicerTutorialsCLP.h"
 
+// Use an anonymous namespace to keep class types and function names
+// from colliding when module is used as shared object module.  Every
+// thing should be in an anonymous namespace except for the module
+// entry point, e.g. main()
+//
+namespace {
+
+
 // our file stream
 std::ofstream* outputFile = NULL;
 CURL* curl = NULL;
@@ -110,6 +118,9 @@ bool openInBrowser(char * url)
 
   return true;
   }
+
+} // end of anonymous namespace
+
 
 // Desciption:
 // This is executed at runtime. The PARSE_ARGS statement references the

@@ -29,15 +29,23 @@
 #include "itkAffineTransform.h"
 #include "itkResampleImageFilter.h"
 #include "itkBinomialBlurImageFilter.h"
+#include "itkCommand.h"
 
 #include "itkPluginUtilities.h"
 
 #include "itkTimeProbesCollectorBase.h"
 
+// Use an anonymous namespace to keep class types and function names
+// from colliding when module is used as shared object module.  Every
+// thing should be in an anonymous namespace except for the module
+// entry point, e.g. main()
+//
+namespace {
+
+
 //  The following section of code implements a Command observer
 //  used to monitor the evolution of the registration process.
 //
-#include "itkCommand.h"
 class CommandIterationUpdate : public itk::Command 
 {
 public:
@@ -506,6 +514,9 @@ template<class T> int DoIt( int argc, char * argv[], const T& targ)
     }
   return EXIT_FAILURE;
 }
+
+} // end of anonymous namespace
+
 
 int main( int argc, char * argv[] )
 {

@@ -29,6 +29,14 @@
 
 #include "HistogramMatchingCLP.h"
 
+// Use an anonymous namespace to keep class types and function names
+// from colliding when module is used as shared object module.  Every
+// thing should be in an anonymous namespace except for the module
+// entry point, e.g. main()
+//
+namespace {
+
+
 template<class T> int DoIt( int argc, char * argv[], T )
 {
   PARSE_ARGS;
@@ -82,6 +90,9 @@ template<class T> int DoIt( int argc, char * argv[], T )
   return EXIT_SUCCESS;
 
 }
+
+} // end of anonymous namespace
+
 
 int main( int argc, char * argv[] )
 {

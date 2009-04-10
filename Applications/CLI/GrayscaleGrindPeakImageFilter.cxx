@@ -1,24 +1,20 @@
 /*=========================================================================
 
-  Program:   Insight Segmentation & Registration Toolkit
-  Module:    $HeadURL$
+  Program:   Slicer3
   Language:  C++
+  Module:    $HeadURL$
   Date:      $Date$
   Version:   $Revision$
 
-  Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
+  See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
-=========================================================================*/
+==========================================================================*/
 #if defined(_MSC_VER)
 #pragma warning ( disable : 4786 )
 #endif
 
-//  
 
 #include "itkImage.h"
 #include "itkImageFileReader.h"
@@ -28,6 +24,14 @@
 #include "itkGrayscaleGrindPeakImageFilter.h"
 
 #include "GrayscaleGrindPeakImageFilterCLP.h"
+
+// Use an anonymous namespace to keep class types and function names
+// from colliding when module is used as shared object module.  Every
+// thing should be in an anonymous namespace except for the module
+// entry point, e.g. main()
+//
+namespace {
+
 
 template<class T> int DoIt( int argc, char * argv[], T )
 {
@@ -80,6 +84,9 @@ template<class T> int DoIt( int argc, char * argv[], T )
   return EXIT_SUCCESS;
 
 }
+
+} // end of anonymous namespace
+
 
 int main( int argc, char * argv[] )
 {

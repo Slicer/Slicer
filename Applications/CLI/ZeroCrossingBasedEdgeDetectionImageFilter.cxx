@@ -18,6 +18,14 @@
 
 #include "ZeroCrossingBasedEdgeDetectionImageFilterCLP.h"
 
+// Use an anonymous namespace to keep class types and function names
+// from colliding when module is used as shared object module.  Every
+// thing should be in an anonymous namespace except for the module
+// entry point, e.g. main()
+//
+namespace {
+
+
 template<class T> int DoIt( int argc, char * argv[], T )
 {
  
@@ -66,6 +74,8 @@ template<class T> int DoIt( int argc, char * argv[], T )
   writer->Update();
   return EXIT_SUCCESS;    
 }
+
+} // end of anonymous namespace
 
 
 int main( int argc, char * argv[] )
