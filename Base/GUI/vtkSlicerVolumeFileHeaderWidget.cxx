@@ -56,7 +56,8 @@ vtkSlicerVolumeFileHeaderWidget::~vtkSlicerVolumeFileHeaderWidget ( )
   this->RemoveWidgetObservers();
 
   this->VolumeHeaderlessStorageNode->Delete();
-  
+  this->VolumeHeaderlessStorageNode = NULL;
+
   if (this->HeaderDialog)
     {
     this->HeaderDialog->SetParent(NULL);
