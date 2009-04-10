@@ -564,19 +564,26 @@ void vtkSlicerMRMLTreeWidget::CreateWidget ( )
     (vtkCommand *)this->GUICallbackCommand);
 
 
+  vtkKWFrame *f = vtkKWFrame::New();
+  f->SetParent ( frame->GetFrame() );
+  f->Create();
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 f->GetWidgetName() );
+                 
   this->ShowIDButton = vtkKWCheckButtonWithLabel::New();
-  this->ShowIDButton->SetParent ( frame->GetFrame() );
+  this->ShowIDButton->SetParent ( f );
   this->ShowIDButton->Create ( );
   this->ShowIDButton->SetLabelPositionToRight();
-  this->ShowIDButton->GetLabel()->SetAnchorToEast();
+  this->ShowIDButton->ExpandWidgetOff();
+  this->ShowIDButton->GetLabel()->SetAnchorToCenter();
   this->ShowIDButton->SetLabelText(" Display MRML ID's");
   this->ShowIDButton->SetBalloonHelpString("Display MRML ID's.");
-  this->Script ( "pack %s -side top -anchor w -expand y -fill x -padx 2 -pady 2",
+  this->Script ( "pack %s -side top -anchor w -expand n -padx 0 -pady 0",
                  this->ShowIDButton->GetWidgetName());
   this->ShowIDButton->GetWidget()->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->UpdateTreeFromMRML();
-
+  f->Delete();
   frame->Delete();
 
   // MRML Node Inspector
