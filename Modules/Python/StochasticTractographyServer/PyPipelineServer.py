@@ -478,8 +478,8 @@ class PipelineHandler(asyncore.dispatcher):
                     if isInRoiA and isInRoiB:
                         vicinity = 10
                         threshold = 0.1
-                        cm3, cm3f = track.FilterFibers0(paths00, paths01, paths02, paths03, paths04, self.roiA.getImage(), self.roiB.getImage(), shpD, vicinity, threshold)
-                        cm4, cm4f = track.FilterFibers0(paths10, paths11, paths12, paths13, paths14, self.roiB.getImage(), self.roiA.getImage(), shpD, vicinity, threshold)
+                        cm3 = track.FilterFibers0(paths00, paths01, paths02, paths03, paths04, self.roiA.getImage(), self.roiB.getImage(), shpD, vicinity, threshold)
+                        cm4 = track.FilterFibers0(paths10, paths11, paths12, paths13, paths14, self.roiB.getImage(), self.roiA.getImage(), shpD, vicinity, threshold)
 
 
 
@@ -556,15 +556,28 @@ class PipelineHandler(asyncore.dispatcher):
                           tmp= 'cmA_' + dateT
                           cm.tofile(tmpF + tmp + '.data')
                           createParams(cm,  tmpF + tmp)
-                          s.putS(cm, dims, org, i2r, tmp)
+                          #s.putS(cm, dims, org, i2r, tmp)
 
+                          tmp= 'cmFA_' + dateT
+                          cmf = cm/float(cm.max())
+                          cmf.astype('float32')
+                          cmf.tofile(tmpF + tmp + '.data')
+                          createParams(cmf,  tmpF + tmp)
+                          s.putS(cmf, dims, org, i2r, tmp)
 
                      if isInRoiB:
                           cm2 = cm2.swapaxes(2,0)
                           tmp= 'cmB_' + dateT
                           cm2.tofile(tmpF + tmp + '.data')
                           createParams(cm2,  tmpF + tmp)
-                          s.putS(cm2, dims, org, i2r, tmp)
+                          #s.putS(cm2, dims, org, i2r, tmp)
+
+                          tmp= 'cmFB_' + dateT
+                          cm2f = cm2/float(cm2.max())
+                          cm2f.astype('float32')
+                          cm2f.tofile(tmpF + tmp + '.data')
+                          createParams(cm2f,  tmpF + tmp)
+                          s.putS(cm2f, dims, org, i2r, tmp)
 
 
                      if isInRoiA and isInRoiB:
@@ -573,7 +586,15 @@ class PipelineHandler(asyncore.dispatcher):
                           tmp= 'cmAandB_' + dateT
                           cm1a2.tofile(tmpF + tmp + '.data')
                           createParams(cm1a2,  tmpF + tmp)
-                          s.putS(cm1a2, dims, org, i2r, tmp)
+                          #s.putS(cm1a2, dims, org, i2r, tmp)
+
+
+                          tmp= 'cmFAandB_' + dateT
+                          cm1a2f = cm1a2/float(cm1a2.max())
+                          cm1a2f.astype('float32')
+                          cm1a2f.tofile(tmpF + tmp + '.data')
+                          createParams(cm1a2f,  tmpF + tmp)
+                          s.putS(cm1a2f, dims, org, i2r, tmp)
 
 
                           cm1o2 = (cm[...]+cm2[...])/2.0
@@ -581,16 +602,24 @@ class PipelineHandler(asyncore.dispatcher):
                           tmp= 'cmAorB_' + dateT
                           cm1o2.tofile(tmpF + tmp + '.data')
                           createParams(cm1o2,  tmpF + tmp)
-                          s.putS(cm1o2, dims, org, i2r, tmp)
+                          #s.putS(cm1o2, dims, org, i2r, tmp)
+
+                          tmp= 'cmFAorB_' + dateT
+                          cm1o2f = cm1o2/float(cm1o2.max())
+                          cm1o2f.astype('float32')
+                          cm1o2f.tofile(tmpF + tmp + '.data')
+                          createParams(cm1o2f,  tmpF + tmp)
+                          s.putS(cm1o2f, dims, org, i2r, tmp)
 
                           tmp= 'cmA2B_' + dateT
                           cm3 = cm3.swapaxes(2,0)
                           cm3.tofile(tmpF + tmp + '.data')
                           createParams(cm3,  tmpF + tmp)
-                          s.putS(cm3, dims, org, i2r, tmp)
+                          #s.putS(cm3, dims, org, i2r, tmp)
 
                           tmp= 'cmFA2B_' + dateT
-                          cm3f = cm3f.swapaxes(2,0)
+                          cm3f = cm3/float(cm3.max())
+                          cm3f.astype('float32')
                           cm3f.tofile(tmpF + tmp + '.data')
                           createParams(cm3f,  tmpF + tmp)
                           s.putS(cm3f, dims, org, i2r, tmp)
@@ -600,10 +629,11 @@ class PipelineHandler(asyncore.dispatcher):
                           cm4 = cm4.swapaxes(2,0)
                           cm4.tofile(tmpF + tmp + '.data')
                           createParams(cm4,  tmpF + tmp)
-                          s.putS(cm4, dims, org, i2r, tmp)
+                          #s.putS(cm4, dims, org, i2r, tmp)
 
                           tmp= 'cmFB2A_' + dateT
-                          cm4f = cm4f.swapaxes(2,0)
+                          cm4f = cm4/float(cm4.max()) 
+                          cm4f.astype('float32')
                           cm4f.tofile(tmpF + tmp + '.data')
                           createParams(cm4f,  tmpF + tmp)
                           s.putS(cm4f, dims, org, i2r, tmp)

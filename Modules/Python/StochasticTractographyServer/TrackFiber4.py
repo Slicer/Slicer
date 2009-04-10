@@ -774,7 +774,6 @@ def FilterFibers0( pathsRAS, pathsIJK, pathsLOGP, pathsANIS, pathsLEN, roiA, roi
   counterB2 = 0
 
   cm = numpy.zeros((shape[0], shape[1], shape[2]), 'uint32')
-  cmf = numpy.zeros((shape[0], shape[1], shape[2]), 'float32')
 
   print 'Shape connectivity map : ', cm.shape
 
@@ -799,7 +798,7 @@ def FilterFibers0( pathsRAS, pathsIJK, pathsLOGP, pathsANIS, pathsLEN, roiA, roi
         if roiB[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]]>0:
           counterB2 +=1
           isIn2B = True
-          print 'Fiber matched!'
+          #print 'Fiber matched!'
           break
 
 
@@ -822,11 +821,10 @@ def FilterFibers0( pathsRAS, pathsIJK, pathsLOGP, pathsANIS, pathsLEN, roiA, roi
           wa = wa + test[l]*pathsANIS[k, 0, l]
           if not (pathsIJK[k, 0, l] >= roiA.shape[0] or  pathsIJK[k, 1, l]  >= roiA.shape[1] or  pathsIJK[k, 2, l]  >= roiA.shape[2]):
             cm[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]]+=1
-            cmf[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]] = (cmf[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]] + 1)/2.0
 
-        Pr += pr #test.sum()/float(nFactor)
+        Pr += pr 
         Fa += fa/float(nFactor)
-        Wa += pr*fa/float(nFactor) #wa/floa(nFactor)
+        Wa += pr*fa/float(nFactor) 
 
 
 
@@ -852,11 +850,10 @@ def FilterFibers0( pathsRAS, pathsIJK, pathsLOGP, pathsANIS, pathsLEN, roiA, roi
              wa = wa + test[l]*pathsANIS[k, 0, l]
              if not (pathsIJK[k, 0, l] >= roiA.shape[0] or  pathsIJK[k, 1, l]  >= roiA.shape[1] or  pathsIJK[k, 2, l]  >= roiA.shape[2]):
                cm[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]]+=1
-               cmf[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]] = (cmf[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]] + 1)/2.0
 
-           Pr += pr #test.sum()/float(nFactor)
+           Pr += pr
            Fa += fa/float(nFactor)
-           Wa += pr*fa/float(nFactor) #wa/float(nFactor) 
+           Wa += pr*fa/float(nFactor) 
 
          #print 'curve terminates in neighborhood of B with length of ', pathsLEN[k,0]
        
@@ -869,6 +866,6 @@ def FilterFibers0( pathsRAS, pathsIJK, pathsLOGP, pathsANIS, pathsLEN, roiA, roi
     print 'Mean WA : ', Wa/float(counter1)
 
 
-  return cm, cmf
+  return cm
 
 
