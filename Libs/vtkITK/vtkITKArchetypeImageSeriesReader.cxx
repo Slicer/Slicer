@@ -91,6 +91,7 @@ vtkStandardNewMacro(vtkITKArchetypeImageSeriesReader);
 vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
 {
   this->Archetype  = NULL;
+  this->IndexArchetype = 0;
   this->SingleFile = 1;
   this->UseOrientationFromFile = 1;
   this->RasToIjkMatrix = NULL;
