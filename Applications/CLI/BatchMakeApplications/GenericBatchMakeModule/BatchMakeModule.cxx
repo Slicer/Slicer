@@ -167,7 +167,7 @@ int main(int argc, char* argv[])
     BatchMake_APPLICATION_PATH );
   applicationWrapper.Save( 
     std::string( BatchMake_WRAPPED_APPLICATION_DIR ) 
-    + "/" + applicationWrapper.GetName()  + ".bmm" );
+    + std::string("/") + applicationWrapper.GetName().GetValue()  + std::string(".bmm") );
   bm::ScriptParser batchMakeParser;
   batchMakeParser.LoadWrappedApplication( BatchMake_WRAPPED_APPLICATION_DIR );
   batchMakeParser.SetBatchMakeBinaryPath( BatchMake_WRAPPED_APPLICATION_DIR );
@@ -176,7 +176,7 @@ int main(int argc, char* argv[])
   std::stringstream script;
   script << "echo('Starting BatchMake Script')" << std::endl;
   // Use the module title to extract the application .BMM name.
-  script << "setapp( app @'" << applicationWrapper.GetName() 
+  script << "setapp( app @'" << applicationWrapper.GetName().GetValue() 
          << "' )" << std::endl;
   
   
@@ -530,7 +530,7 @@ int main(int argc, char* argv[])
   int result = EXIT_SUCCESS;
   if( !gridRunningMode || gridRunningMode->getValueAsString() != "condor" )
     {
-    result = batchMakeParser.ParseBuffer(script.str());
+    batchMakeParser.ParseBuffer(script.str());
     }
   else
     {
@@ -562,7 +562,7 @@ int main(int argc, char* argv[])
     script << "GridOwner( condor )" << std::endl;
     
     //generate the condor script and condor_submit them
-    result = batchMakeParser.RunCondor( script.str() );
+    batchMakeParser.RunCondor( script.str() );
     }
   
   return EXIT_SUCCESS;
