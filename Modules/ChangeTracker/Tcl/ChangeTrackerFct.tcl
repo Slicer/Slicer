@@ -606,9 +606,18 @@ namespace eval ChangeTrackerTcl {
   
 
     proc Analysis_Intensity_SubtractVolume {ImageMath Scan1Data Scan2Data   ImageSmooth } {
+        set CastImage1 [vtkImageCast New]
+        set CastImage2 [vtkImageCast New]
+        $CastImage1 SetInput $Scan1Data
+        $CastImage2 SetInput $Scan2Data
+        $CastImage1 SetOutputScalarTypeToShort
+        $CastImage2 SetOutputScalarTypeToShort
+        $CastImage1 Update
+        $CastImage2 Update
+
         # Subtract consecutive scans from each other
-        $ImageMath SetInput1 $Scan2Data 
-        $ImageMath SetInput2 $Scan1Data 
+        $ImageMath SetInput1 [$CastImage2 GetOutput] 
+        $ImageMath SetInput2 [$CastImage1 GetOutput]
         $ImageMath SetOperationToSubtract  
         $ImageMath Update
 
@@ -617,6 +626,9 @@ namespace eval ChangeTrackerTcl {
         $ImageSmooth SetKernelSize 3 3 3
         $ImageSmooth ReleaseDataFlagOff
         $ImageSmooth Update
+
+        $CastImage1 Delete
+        $CastImage2 Delete
     }
  
     proc Analysis_Intensity_Fct { Scan1Data Scan1Segment Scan2Data AnalysisSensitivity ThresholdMin ThresholdMax AnalysisScan1ByLower AnalysisScan1Range 
