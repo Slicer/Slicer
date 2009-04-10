@@ -384,7 +384,18 @@ int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
           {
           vtkDebugMacro("got a line: \n\"" << line << "\"");
           char *ptr;
-          ptr = strtok(line, ",");
+          // if the label text is missing, strtok will return a pointer to the
+          // x value, will need to call strtok with the line on the next try
+          bool reTokenise = false;
+          if (strncmp(line, ",", 1) == 0)
+            {
+            ptr = NULL;
+            reTokenise = true;
+            }
+          else
+            {
+            ptr = strtok(line, ",");
+            }
           std::string label = std::string("");
           double x = 0.0, y = 0.0, z = 0.0;
           int sel = 1, vis = 1;
@@ -418,7 +429,16 @@ int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
                 vis = atoi(ptr);
                 }
               }
+            if (reTokenise == false)
+              {
               ptr = strtok(NULL, ",");
+              }
+            else
+              {
+              ptr = strtok(line, ",");
+              // turn it off
+              reTokenise = false;
+              }
               columnNumber++;
             } // end while over columns          
           int fidIndex = fiducialListNode->AddFiducialWithLabelXYZSelectedVisibility(label.c_str(), x, y, z, sel, vis);

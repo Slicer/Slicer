@@ -109,7 +109,7 @@ void vtkMRMLFiducial::ReadXMLString(const char *keyValuePairs)
     // used because the fiducial list gloms together the point's key and
     // values into one long string, VERY dependent on the order it's written
     // out in when WriteXML is used
-
+    
     // insert the string into a stream
     std::stringstream ss;
     ss << keyValuePairs;
@@ -129,29 +129,48 @@ void vtkMRMLFiducial::ReadXMLString(const char *keyValuePairs)
     
     // now get out the labeltext key
     ss >> keyName;
+    bool emptyLabel = false;
     if (keyName == std::string("labeltext"))
       {
       // now get the label text value
       ss >> keyName;
-      this->SetLabelText(keyName.c_str());
+      // check for an empty string
+      if (keyName.compare("xyz") == 0)
+        {
+        // we have an empty label
+        this->SetLabelText("");
+        // set a flag
+        emptyLabel = true;
+        }
+      else
+        {
+        this->SetLabelText(keyName.c_str());
+        }
 
 
-      vtkDebugMacro("ReadXMLString: got label text " << this->LabelText);
+      vtkDebugMacro("ReadXMLString: got label text '" << this->LabelText << "'");
       }
     
-    // get the xyz key
-    ss >> keyName;
-    while (keyName != std::string("xyz") &&
-           keyName != std::string(""))
-      {
-      // we're still getting parts of the labeltext
-      std::string newLabel = std::string(this->GetLabelText()) + std::string(" ") + keyName;
-      vtkDebugMacro("ReadXMLString: adding to label text: '" << newLabel.c_str() << "'");
-      this->SetLabelText(newLabel.c_str());
-      ss >> keyName;
-      }
+   
 
-    if (keyName == std::string("xyz"))
+    if (!emptyLabel)
+      {
+      // get the xyz key
+      ss >> keyName;
+      vtkDebugMacro("ReadXMLString: after checking labeltext, keyname = " << keyName.c_str());
+
+      while (keyName != std::string("xyz") &&
+             keyName != std::string(""))
+        {
+        // we're still getting parts of the labeltext
+        std::string newLabel = std::string(this->GetLabelText()) + std::string(" ") + keyName;
+        vtkDebugMacro("ReadXMLString: adding to label text: '" << newLabel.c_str() << "'");
+        this->SetLabelText(newLabel.c_str());
+        ss >> keyName;
+        }
+      }
+    if (emptyLabel ||
+        keyName == std::string("xyz"))
       {
       // now get the x, y, z values
       ss >> this->XYZ[0];
