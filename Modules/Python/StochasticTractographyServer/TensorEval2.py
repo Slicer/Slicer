@@ -19,7 +19,7 @@ def ComputeAFunctional(A, b, G, k):
    A[k, :] = [1, -b[0,k]*G[0,k]**2, -2*b[0,k]*G[0,k]*G[1,k], -2*b[0,k]*G[0,k]*G[2,k], -b[0, k]*G[1,k]**2, -2*b[0,k]*G[1,k]*G[2,k], -b[0,k]*G[2,k]**2]
 
 
-def ComputeTensorFunctional(data, xT, yT, lT, ET, A, b, G, k):
+def ComputeTensorFunctional(data, xT, yT, lT, ET, A, k):
    eps = finfo(float).eps
 
    y = data[k[0], k[1], k[2], :] + eps
@@ -91,7 +91,7 @@ def EvaluateTensorX0(data, G, b):
 
    time2 = time.time()
 
-   [ComputeTensorFunctional(data, xT, yT, lT, ET,  A, b, G, k) for k in indx]
+   [ComputeTensorFunctional(data, xT, yT, lT, ET, A, k) for k in indx]
 
    print "Total time for tensor : %s sec" % str(time.time()-time2)
 
@@ -116,7 +116,7 @@ def EvaluateTensorX1(data, G, b, wmI=empty(0)):
 
    time2 = time.time()
                
-   [ComputeTensorFunctional(data, xT, yT, lT, ET,  A, b, G, k) for k in indx]
+   [ComputeTensorFunctional(data, xT, yT, lT, ET, A, k) for k in indx]
 
    print "Total time for tensor : %s sec" % str(time.time()-time2)
 

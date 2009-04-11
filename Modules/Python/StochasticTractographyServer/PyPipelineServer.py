@@ -335,9 +335,18 @@ class PipelineHandler(asyncore.dispatcher):
 
           r2i = numpy.linalg.inv(i2r)
 
+          print 'IJK2RAS : '
+          print i2r
+          print 'RAS2IJK : '
+          print r2i
+          print 'MU : '
+          print mu
 
           # correctly express gradients into RAS space
-          G = numpy.dot(G, mu[:3,:3].T)
+          # 04/10 - trafo not needed - bugfix in Slicer
+          m2i = numpy.dot(mu[:3, :3], numpy.sign(r2i)[:3, :3])
+          G = numpy.dot(G, m2i.T)
+
 
           logger.info("Tensor flag : %s" % str(tensEnabled))
 
@@ -403,6 +412,7 @@ class PipelineHandler(asyncore.dispatcher):
                     if not stopEnabled:
                         fa = 0.0
 
+
                     if isInRoiA:
                         # ROI A
                         logger.info("Search ROI A")
@@ -422,10 +432,10 @@ class PipelineHandler(asyncore.dispatcher):
                         logger.info("Data type : %s" % data.dtype)
                         # paths: paths0=RAS, paths1=IJK, paths2=logP, paths3=ANISO, paths4=Length
                         #if isInWM or wmEnabled:
-                        paths00, paths01, paths02, paths03, paths04 = track.TrackFiberY40(data.flatten(), wm, shpD, b.T, G.T, IJKstartpoints[0].T, r2i, i2r,\
+                        paths00, paths01, paths02, paths03, paths04 = track.TrackFiberY40(data.flatten(), wm, shpD, mu, b.T, G.T, IJKstartpoints[0].T, r2i, i2r,\
                                   lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
                         #else:
-                        #   paths00, paths01, paths02, paths03, paths04 = track.TrackFiberU40(data.flatten(), shpD, b.T, G.T, IJKstartpoints[0].T, r2i, i2r,\
+                        #   paths00, paths01, paths02, paths03, paths04 = track.TrackFiberU40(data.flatten(), shpD, mu, b.T, G.T, IJKstartpoints[0].T, r2i, i2r,\
                         #          lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
 
                         logger.info("Track fibers in %s sec" % str(time.time()-timeS2))
@@ -457,10 +467,10 @@ class PipelineHandler(asyncore.dispatcher):
 
                         logger.info("Data type : %s" % data.dtype)
                         #if isInWM or wmEnabled:
-                        paths10, paths11, paths12, paths13, paths14  = track.TrackFiberY40(data.flatten(), wm, shpD, b.T, G.T, IJKstartpoints2[0].T, r2i, i2r,\
+                        paths10, paths11, paths12, paths13, paths14  = track.TrackFiberY40(data.flatten(), wm, shpD, mu, b.T, G.T, IJKstartpoints2[0].T, r2i, i2r,\
                                   lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
                         #else:
-                        #   paths10, paths11, paths12, paths13, paths14  = track.TrackFiberU40(data.flatten(), shpD, b.T, G.T, IJKstartpoints2[0].T, r2i, i2r,\
+                        #   paths10, paths11, paths12, paths13, paths14  = track.TrackFiberU40(data.flatten(), shpD, mu, b.T, G.T, IJKstartpoints2[0].T, r2i, i2r,\
                         #          lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
 
 

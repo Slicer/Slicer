@@ -16,7 +16,7 @@ logger                  = logging.getLogger(__name__)
 
 
 # Gradients must be transformed in RAS!
-def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor, dl=1, Nsteps=300, anisoT=0.2, useSpacing = False, seed=None):
+def  TrackFiberU40(data, shpT, mu, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor, dl=1, Nsteps=300, anisoT=0.2, useSpacing = False, seed=None):
 # This function performs stochastic tracking of one fiber.
 # The algorithm is described in the paper 
 # O. Friman et al. 
@@ -150,9 +150,9 @@ def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor,
       if not useSpacing:
         dr = da = ds = 1
 
-      RASpoint[0] =  RASpoint[0] + dr*dl*v[0] 
-      RASpoint[1] =  RASpoint[1] + da*dl*v[1]    
-      RASpoint[2] =  RASpoint[2] + ds*dl*v[2]     
+      RASpoint[0] =  RASpoint[0]  + dr*dl*v[0] 
+      RASpoint[1] =  RASpoint[1]  + da*dl*v[1]    
+      RASpoint[2] =  RASpoint[2]  + ds*dl*v[2]     
    
       # find IJK index from RAS point
       IJKpoint = (dot(R2I[:3, :3], RASpoint[newaxis].T) + R2I[:3,3][newaxis].T).T
@@ -182,7 +182,7 @@ def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor,
 
 
 # Gradients must be transformed in RAS!
-def  TrackFiberY40(data, mask, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor, dl=1, Nsteps=300, anisoT=0.2, useSpacing = False, seed=None):
+def  TrackFiberY40(data, mask, shpT, mu, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor, dl=1, Nsteps=300, anisoT=0.2, useSpacing = False, seed=None):
 # This function performs stochastic tracking of one fiber.
 # The algorithm is described in the paper 
 # O. Friman et al. 
@@ -202,6 +202,7 @@ def  TrackFiberY40(data, mask, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVT
 # Set random generator, this is important for the parallell execution
   vts =  vects.vectors.T
   ndirs = vts.shape[1]
+
 
 # Pre-calculate the scalar products with the gradient directions
   AnIsoExponent = tile(b.T, (1, ndirs) )*dot(G.T, vts)**2
@@ -318,9 +319,11 @@ def  TrackFiberY40(data, mask, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVT
       if not useSpacing:
         dr = da = ds = 1
 
-      RASpoint[0] =  RASpoint[0] + dr*dl*v[0] 
-      RASpoint[1] =  RASpoint[1] + da*dl*v[1]    
-      RASpoint[2] =  RASpoint[2] + ds*dl*v[2]     
+      v0 = numpy.dot(v, numpy.sign(I2R)[:3, :3].T) 
+
+      RASpoint[0] =  RASpoint[0] + dr*dl*v0[0] 
+      RASpoint[1] =  RASpoint[1] + da*dl*v0[1]    
+      RASpoint[2] =  RASpoint[2] + ds*dl*v0[2]     
    
       # find IJK index from RAS point
       IJKpoint = (dot(R2I[:3, :3], RASpoint[newaxis].T) + R2I[:3,3][newaxis].T).T
