@@ -345,10 +345,20 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
       || reader->GetOutput()->GetPointData()->GetScalars()->GetNumberOfTuples() == 0) 
     {
     vtkErrorMacro("ReadData: Unable to read data from file: " << fullName.c_str() );
+    reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
     reader->Delete();
     return 0;
     }
   
+  if ( volNode->IsA("vtkMRMLScalarVolumeNode") && reader->GetNumberOfComponents() != 1 ) 
+    {
+    volNode->SetAndObserveImageData(NULL);
+    vtkErrorMacro("ReadData: Not a scalar volume file: " << fullName.c_str() );
+    reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
+    reader->Delete();
+    return 0;
+    }
+
   // set volume attributes
   volNode->SetAndObserveStorageNodeID(this->GetID());
   volNode->SetMetaDataDictionary( reader->GetMetaDataDictionary() );
