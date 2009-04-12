@@ -388,7 +388,6 @@ class PipelineHandler(asyncore.dispatcher):
                        EV, lV, xVTensor, xYTensor = tens.EvaluateTensorX1(data, G.T, b.T, wm)
                     else:
                        EV, lV, xVTensor, xYTensor = tens.EvaluateTensorK1(self.ten.getImage(), shpD, wm)
-                       #logmu0, EV, lV = tensC.EvaluateTensorC(data, G.T, b.T)
 
                     #else: # no mask applied
                     #  if not isInTensor:

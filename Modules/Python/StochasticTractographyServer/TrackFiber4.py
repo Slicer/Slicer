@@ -150,9 +150,11 @@ def  TrackFiberU40(data, shpT, mu, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTen
       if not useSpacing:
         dr = da = ds = 1
 
-      RASpoint[0] =  RASpoint[0]  + dr*dl*v[0] 
-      RASpoint[1] =  RASpoint[1]  + da*dl*v[1]    
-      RASpoint[2] =  RASpoint[2]  + ds*dl*v[2]     
+      v0 = numpy.dot(v, numpy.sign(I2R)[:3, :3].T)
+
+      RASpoint[0] =  RASpoint[0]  + dr*dl*v0[0] 
+      RASpoint[1] =  RASpoint[1]  + da*dl*v0[1]    
+      RASpoint[2] =  RASpoint[2]  + ds*dl*v0[2]     
    
       # find IJK index from RAS point
       IJKpoint = (dot(R2I[:3, :3], RASpoint[newaxis].T) + R2I[:3,3][newaxis].T).T
@@ -612,7 +614,7 @@ def FindConnectionFibers( roiA, roiB, pathsRAS, pathsIJK, pathsLOGP, pathsANIS, 
 
   for k in range(pathsIJK.shape[0]): # looped on the number of paths
     if pathsLEN[k,0] == 0:
-      break
+      continue 
 
     
     pr = 0.0
@@ -624,10 +626,10 @@ def FindConnectionFibers( roiA, roiB, pathsRAS, pathsIJK, pathsLOGP, pathsANIS, 
     ext2 = pathsIJK[k, :, pathsLEN[k,0]-1]
 
     if ext1[0] >= roiA.shape[0] or ext1[1] >= roiA.shape[1] or ext1[2] >= roiA.shape[2]:
-      break
+      continue
 
     if ext2[0] >= roiA.shape[0] or ext2[1] >= roiA.shape[1] or ext2[2] >= roiA.shape[2]:
-      break
+      continue
 
     
     isIn2A = False
@@ -690,9 +692,9 @@ def FindConnectionFibers( roiA, roiB, pathsRAS, pathsIJK, pathsLOGP, pathsANIS, 
         print 'normed fa : ', pr*fa/nFactor
 
 
-    eps = 10.0 #0.0 # under test
+    vicinity = 10.0 #0.0 # under test
     if fromA and not isIn2B:
-      if norm(ext2-Gb)<= maxDB.max()+eps: #dAB -maxDA.max():
+      if norm(ext2-Gb)<= maxDB.max()+vicinity: #dAB -maxDA.max():
          #counter2+=1
          #print 'POINT : ', ext2
          test = exp(pathsLOGP[k, 0, :pathsLEN[k,0]])
@@ -719,7 +721,7 @@ def FindConnectionFibers( roiA, roiB, pathsRAS, pathsIJK, pathsLOGP, pathsANIS, 
        
 
     if not fromA and not isIn2A:
-      if norm(ext2-Ga)<= maxDA.max()+eps: #dAB -maxDB.max():
+      if norm(ext2-Ga)<= maxDA.max()+vicinity: #dAB -maxDB.max():
          #counter2+=1
          #print 'POINT : ', ext2
          test = exp(pathsLOGP[k, 0, :pathsLEN[k,0]])
