@@ -384,26 +384,20 @@ class PipelineHandler(asyncore.dispatcher):
                     timeS1 = time.time()
 
                     #if isInWM or wmEnabled:
-                    if not isInTensor:
-                       EV, lV, xVTensor, xYTensor = tens.EvaluateTensorX1(data, G.T, b.T, wm)
-                    else:
-                       EV, lV, xVTensor, xYTensor = tens.EvaluateTensorK1(self.ten.getImage(), shpD, wm)
-
-                    #else: # no mask applied
-                    #  if not isInTensor:
-                    #     EV, lV, xVTensor, xYTensor = tens.EvaluateTensorX0(data, G.T, b.T)
-                    #  else:
-                    #     EV, lV, xVTensor, xYTensor = tens.EvaluateTensorK0(self.ten.getImage(), shpD)
-                         #logmu0, EV, lV = tensC.EvaluateTensorC(data, G.T, b.T)
+                    if tensEnabled:
+                      if not isInTensor:
+                        EV, lV, xVTensor, xYTensor = tens.EvaluateTensorX1(data, G.T, b.T, wm)
+                      else:
+                        EV, lV, xVTensor, xYTensor = tens.EvaluateTensorK1(self.ten.getImage(), shpD, wm)
 
                       
-                    logger.info("Compute tensor in %s sec" % str(time.time()-timeS1))
+                      logger.info("Compute tensor in %s sec" % str(time.time()-timeS1))
 
-                    if faEnabled:
+                      if faEnabled:
                          faMap = tensC.CalculateFA0(lV)
-                    if traceEnabled:
+                      if traceEnabled:
                          trMap = tensC.CalculateTrace0(lV)
-                    if modeEnabled:
+                      if modeEnabled:
                          moMap = tensC.CalculateMode0(lV)
 
                     
@@ -429,13 +423,12 @@ class PipelineHandler(asyncore.dispatcher):
                         timeS2 = time.time()
 
                         logger.info("Data type : %s" % data.dtype)
-                        # paths: paths0=RAS, paths1=IJK, paths2=logP, paths3=ANISO, paths4=Length
-                        #if isInWM or wmEnabled:
-                        paths00, paths01, paths02, paths03, paths04 = track.TrackFiberY40(data.flatten(), wm, shpD, mu, b.T, G.T, IJKstartpoints[0].T, r2i, i2r,\
+                        if tensEnabled:
+                          paths00, paths01, paths02, paths03, paths04 = track.TrackFiberY40(data.flatten(), wm, shpD, mu, b.T, G.T, IJKstartpoints[0].T, r2i, i2r,\
                                   lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
-                        #else:
-                        #   paths00, paths01, paths02, paths03, paths04 = track.TrackFiberU40(data.flatten(), shpD, mu, b.T, G.T, IJKstartpoints[0].T, r2i, i2r,\
-                        #          lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
+                        else:
+                          paths00, paths01, paths02, paths03, paths04 = track.TrackFiberW40(data.flatten(), wm, shpD, mu, b.T, G.T, IJKstartpoints[0].T, r2i, i2r,\
+                                  stepSize, maxLength, fa, spaceEnabled)
 
                         logger.info("Track fibers in %s sec" % str(time.time()-timeS2))
 
@@ -465,13 +458,8 @@ class PipelineHandler(asyncore.dispatcher):
                         timeS3 = time.time()
 
                         logger.info("Data type : %s" % data.dtype)
-                        #if isInWM or wmEnabled:
                         paths10, paths11, paths12, paths13, paths14  = track.TrackFiberY40(data.flatten(), wm, shpD, mu, b.T, G.T, IJKstartpoints2[0].T, r2i, i2r,\
                                   lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
-                        #else:
-                        #   paths10, paths11, paths12, paths13, paths14  = track.TrackFiberU40(data.flatten(), shpD, mu, b.T, G.T, IJKstartpoints2[0].T, r2i, i2r,\
-                        #          lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
-
 
                         logger.info("Track fibers in %s sec" % str(time.time()-timeS3))
 
@@ -525,7 +513,7 @@ class PipelineHandler(asyncore.dispatcher):
           s.putS(wm, dims, org, i2r, tmp)
 
 
-          if cmEnabled:
+          if tensEnabled:
                      xVTensor = xVTensor.swapaxes(2,0)
                      xVTensor = xVTensor.astype('float32') # slicerd do not support double type yet
                      xYTensor = xYTensor.swapaxes(2,0)
@@ -559,7 +547,7 @@ class PipelineHandler(asyncore.dispatcher):
                           createParams(moMap, tmpF + tmp)
                           s.putS(moMap, dims, org, i2r, tmp)
 
-
+          if cmEnabled:
                      if isInRoiA:
                           cm = cm.swapaxes(2,0)
                           tmp= 'cmA_' + dateT

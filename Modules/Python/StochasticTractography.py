@@ -54,6 +54,14 @@ Grants: National Alliance for Medical Image Computing (NAMIC), funded by the Nat
       <description>Input WM volume</description>
     </image>
 
+    <image type = "tensor" >
+      <name>inputVol4</name>
+      <longflag>inputVol4</longflag>
+      <label>Input DTI Volume</label>
+      <channel>input</channel>
+      <description>Input DTI volume</description>
+    </image>
+
   </parameters>
 
   <parameters>
@@ -111,11 +119,11 @@ Grants: National Alliance for Medical Image Computing (NAMIC), funded by the Nat
     <description>Parameters for diffusion tensor</description>
     
     <boolean>
-      <name>cmEnabled</name>
-      <longflag>cmEnabled</longflag>
-      <description>Toggle DTI based tractography (tensor and connectivity)</description>
+      <name>tensEnabled</name>
+      <longflag>tensEnabled</longflag>
+      <description>Toggle DTI based tractography (tensor)</description>
       <label>Enabled</label>
-      <default>true</default>
+      <default>false</default>
     </boolean>
 
 
@@ -152,7 +160,15 @@ Grants: National Alliance for Medical Image Computing (NAMIC), funded by the Nat
     <description>
     Parameters tractography algorithm
     </description>
-       
+    
+    <boolean>
+      <name>cmEnabled</name>
+      <longflag>cmEnabled</longflag>
+      <description>Toggle DTI based tractography (connectivity)</description>
+      <label>Enabled</label>
+      <default>true</default>
+    </boolean>
+
     <integer>
       <name>totalTracts</name>
       <longflag>totalTracts</longflag>
@@ -482,6 +498,7 @@ def Execute (\
              spaceEnabled,\
              stopEnabled,\
              fa,\
+             tensEnabled,\
              cmEnabled,\
              probMode,\
              lengthEnabled,\
@@ -574,7 +591,7 @@ def Execute (\
   ack = s.recv(SIZE)
 
   # tensor
-  s.send('tensEnabled ' + str(int(True)) + '\n')
+  s.send('tensEnabled ' + str(int(tensEnabled)) + '\n')
   ack = s.recv(SIZE)
 
   bLine = 0

@@ -72,6 +72,55 @@ def ComputeTensorKFunctional(tens, shp, xT, yT, lT, ET, k):
    E[:, 2]/linalg.norm(E[:, 2])
    ET[k[0], k[1], k[2], ...] = E[...]  
 
+def ComputeTensorPFunctional(y, xT, yT, lT, ET, A):
+   eps = finfo(float).eps
+
+   logy = log(y)
+   logy = logy[:, newaxis]
+
+   # Estimate tensor for this point by means of weighted least squares
+   W = diag(y)
+   W2 = W**2
+
+   xTensor = dot(dot(dot(linalg.inv(dot(dot(A.T,W2),A)),A.T),W2),logy)           # xTensor = [ln(mu0) d11 d12 d13 d22 d23 d33]
+
+   xT[:] = squeeze(xTensor[:])
+   yT[:] = squeeze(array([xTensor[1], xTensor[2], xTensor[3], 
+                                    xTensor[2], xTensor[4], xTensor[5], 
+                                    xTensor[3], xTensor[5], xTensor[6]], 'float'))
+
+   xTensor = 10000.0*xTensor
+   l,E = linalg.eig(vstack([hstack([xTensor[1], xTensor[2], xTensor[3]]),
+                             hstack([xTensor[2], xTensor[4], xTensor[5]]), 
+                             hstack([xTensor[3], xTensor[5], xTensor[6]]) ]))         # E = eigenvectors
+   
+   lT[:] = l[:]/10000.0
+   E[:, 0]/linalg.norm(E[:, 0])
+   E[:, 1]/linalg.norm(E[:, 1])
+   E[:, 2]/linalg.norm(E[:, 2])
+   ET[...] = E[...]  
+
+def EvaluateTensorP0(data, G, b):
+
+   eps = finfo(float).eps
+  
+   A = zeros( (data.shape[0], 7), 'float' )
+   
+   [ComputeAFunctional(A, b, G, k) for k in range(data.shape[0])]
+
+
+   lT = zeros((3) , 'float')
+   ET = zeros((3, 3), 'float' )
+   xT = zeros((7), 'float')
+   yT = zeros((9), 'float')
+
+   #time2 = time.time()
+
+   ComputeTensorPFunctional(data, xT, yT, lT, ET, A) 
+
+   #print "Total time for tensor : %s sec" % str(time.time()-time2)
+
+   return  ET, lT, xT, yT
 
 def EvaluateTensorX0(data, G, b):
 

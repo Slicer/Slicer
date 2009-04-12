@@ -2,6 +2,8 @@ import time
 import logging
 import vectors as vects
 reload(vects) # test to load the data as a class
+import TensorEval2 as tens
+reload(tens)
 import numpy
 from numpy import ctypeslib
 from numpy import log, exp, sqrt, random, abs, finfo, linalg, pi
@@ -276,7 +278,6 @@ def  TrackFiberY40(data, mask, shpT, mu, b, G, IJKstartpoints, R2I, I2R, lV, EV,
         # Estimate tensor for this point by means of weighted least squares
         W2 = diag(y)**2
 
-
         l = lV[coord[0], coord[1], coord[2], :]
         index = argsort(abs(l))[::-1] 
         l =l[index,:]
@@ -353,6 +354,174 @@ def  TrackFiberY40(data, mask, shpT, mu, b, G, IJKstartpoints, R2I, I2R, lV, EV,
 
   return paths0, paths1, paths2, paths3, paths4
 
+# Gradients must be transformed in RAS!
+def  TrackFiberW40(data, mask, shpT, mu, b, G, IJKstartpoints, R2I, I2R, dl=1, Nsteps=300, anisoT=0.2, useSpacing = False, seed=None):
+# This function performs stochastic tracking of one fiber.
+# The algorithm is described in the paper 
+# O. Friman et al. 
+# A Bayesian Approach for Stochastic White Matter Tractography
+# IEEE Transactions on Medical Imaging, 2006; 25(8):965-978
+#
+# Input variables:
+# data - structure with diffusion tensor data, gradients and b-values
+# IJKstartpoints - starting points for the tracking in IJK coordinates (i.e. Matlab coordinates)
+# seed - a seed point for the random number generator (needed mainly for parallel processing)
+  
+  dataT = data
+
+  eps = finfo(float).eps 
+  seps = sqrt(eps)
+
+# Set random generator, this is important for the parallell execution
+  vts =  vects.vectors.T
+  ndirs = vts.shape[1]
+
+
+# Pre-calculate the scalar products with the gradient directions
+  AnIsoExponent = tile(b.T, (1, ndirs) )*dot(G.T, vts)**2
+
+
+# Distance between sample points in mm
+  spa = array([ I2R[0, 0], I2R[1, 1], I2R[2, 2] ], 'float')
+  logger.info("spacing : %s:%s:%s" % (spa[0], spa[1], spa[2]))
+
+#TODO! compute one norm 
+  dr = abs(spa[0])  
+  da = abs(spa[1]) 
+  ds = abs(spa[2]) 
+
+# Uniform prior distribution of the direction of the first step
+  StartPrior = ones((1, ndirs), 'float')
+  
+
+# Initialize
+  Npaths =  IJKstartpoints.shape[1]
+
+  logger.info("Number of paths : %s" % str(Npaths))
+  
+  # define RAS point form IJK index (I2R matrix)
+  RASstartpoints = dot(I2R[:3, :3], IJKstartpoints) + I2R[:3,3][newaxis].T
+
+  paths0 = numpy.zeros((Npaths, 3, Nsteps), 'float32')
+  paths1 = numpy.zeros((Npaths, 3, Nsteps), 'uint16')
+  paths2 = numpy.zeros((Npaths, 1, Nsteps), 'float32')
+  paths3 = numpy.zeros((Npaths, 1, Nsteps), 'float32')
+  paths4 = numpy.zeros( (Npaths, 1) , 'uint16')
+
+  y = zeros((shpT[3]), 'float')
+ 
+  cache = {}
+
+  for k in range(Npaths):
+   
+    #if k > 0:
+    #   if IJKstartpoints[0,k]!= IJKstartpoints[0,k-1] or  IJKstartpoints[1,k]!= IJKstartpoints[1,k-1]  or IJKstartpoints[2,k]!= IJKstartpoints[2,k-1]:
+    #       cache = {}
+
+    RASpoint = RASstartpoints[:,k]
+    IJKpoint = IJKstartpoints[:,k]
+    Prior = StartPrior
+    
+    for step in range(Nsteps):
+    
+      # Determine from which voxel to draw new direction  
+      coord = floor(IJKpoint) + (ceil(IJKpoint+seps)-IJKpoint < random.rand(3,1).T)
+      coord = coord-1 # Matlab
+      coord = coord.squeeze()
+     
+ 
+      # Get measurements
+      if 0<=coord[0]<shpT[0] and 0<=coord[1]<shpT[1] and 0<=coord[2]<shpT[2]:
+        if mask[coord[0], coord[1], coord[2]]==0:
+          break 
+        cId = coord[0]*shpT[1]*shpT[2]*shpT[3] +  coord[1]*shpT[2]*shpT[3]  + coord[2]*shpT[3]
+
+        y[:] = squeeze(dataT[cId:cId+shpT[3]]+eps)
+      else:
+        break
+
+      if not cache.has_key(cId):
+        logy = log(y)
+        logy = logy[:, newaxis]
+
+        # Estimate tensor for this point by means of weighted least squares
+        W2 = diag(y)**2
+
+        
+        E, l, xTensor, yTensor = tens.EvaluateTensorP0(y, G, b)
+
+        index = argsort(abs(l))[::-1] 
+        l =l[index,:]
+      
+      
+        # Set point estimates in the Constrained model
+        alpha = (l[1]+l[2])/2
+        beta = l[0] - alpha
+
+        logmu0 = xTensor[0]
+        e = E[:, index[0]][newaxis].T
+      
+        r = logy - (logmu0 -(b.T*alpha + b.T*beta*dot(G.T, e)**2) )
+
+        sigma2 = sum(dot(W2,r**2))/(len(y)-6)  
+        # Calculate measurements predicted by model for all directions in the variable vectors
+        logmus = logmu0 - tile(b.T*alpha, (1, ndirs))  - beta*AnIsoExponent
+        mus2 = exp(2*logmus)          # Only need squared mus below, this row takes half of the computational effort
+
+        # Calculate the likelihood function
+        logY = tile(logy, (1, ndirs))
+        Likelihood = exp((logmus - 0.5*log(2*pi*sigma2) - mus2/(2*sigma2)*((logY-logmus)**2)).sum(0)[newaxis])
+
+        cache[cId]= Likelihood
+      else:
+        Likelihood = cache[cId]
+
+      # Calculate the posterior distribution for the fiber direction
+      Posterior = Likelihood*Prior
+      Posterior = Posterior/Posterior[:].sum(1)
+    
+      # Draw a random direction from the posterior
+      vindex = where(cumsum(Posterior) > rand())
+      if len(vindex[0])==0:
+        break
+      v = vts[:, vindex[0][0]]
+    
+      # Update current point
+ 
+      if not useSpacing:
+        dr = da = ds = 1
+
+      v0 = numpy.dot(v, numpy.sign(I2R)[:3, :3].T) 
+
+      RASpoint[0] =  RASpoint[0] + dr*dl*v0[0] 
+      RASpoint[1] =  RASpoint[1] + da*dl*v0[1]    
+      RASpoint[2] =  RASpoint[2] + ds*dl*v0[2]     
+   
+      # find IJK index from RAS point
+      IJKpoint = (dot(R2I[:3, :3], RASpoint[newaxis].T) + R2I[:3,3][newaxis].T).T
+       
+
+      # Record data
+      paths0[k, :, step] = RASpoint
+      paths1[k, :, step] = IJKpoint
+      paths2[k, 0, step] = numpy.log(Posterior[0][vindex[0][0]]) # previously vindex[0][0] 
+      paths3[k, 0, step] = numpy.abs(beta/(alpha+beta))
+      paths4[k, 0] += 1
+      
+      # Break if anisotropy is too low
+      if abs(beta/(alpha+beta)) < anisoT:
+        break
+    
+    
+      # Generate the prior for next step
+      Prior = dot(v.T, vts)[newaxis]
+      Prior[Prior<0] = 0
+
+  
+   # computed path  
+  logger.info("Job completed")
+
+  return paths0, paths1, paths2, paths3, paths4
 
 # compute connectivity maps - binary
 def ComputeConnectFibersFunctionalP0( k, cm, paths1, paths4, shp, lTh, isLength=False, lMin=1, lMax=2000):
