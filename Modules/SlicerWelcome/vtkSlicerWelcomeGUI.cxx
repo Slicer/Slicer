@@ -753,7 +753,7 @@ void vtkSlicerWelcomeGUI::BuildGUI ( )
     this->ConfigureFrame = vtkSlicerModuleCollapsibleFrame::New ( );
     this->ConfigureFrame->SetParent ( page );
     this->ConfigureFrame->Create ( );
-    this->ConfigureFrame->SetLabelText ("Adding & Removing Modules");
+    this->ConfigureFrame->SetLabelText ("Customizing Slicer");
     this->ConfigureFrame->CollapseFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 4 -in %s",
                   this->ConfigureFrame->GetWidgetName(),
@@ -1548,9 +1548,9 @@ void vtkSlicerWelcomeGUI::BuildConfigureModulesPanel( vtkKWFrame *parent )
   txt->SetVerticalScrollbarVisibility ( 1 );
   txt->GetWidget()->SetReliefToGroove();
   txt->GetWidget()->SetWrapToWord();
-  txt->GetWidget()->SetHeight ( 10 );
+  txt->GetWidget()->SetHeight ( 8 );
   txt->GetWidget()->QuickFormattingOn();
-  const char *t = "**Configuring your Slicer build:** Slicer has two basic types of modules, **Loadable Modules** and **Command Line Plugins**. By default, Slicer starts up with all modules included. You can customize Slicer to include only the Loadable and Command Line modules you need; which keeps Slicer as compact as possible and accelerates application startup time. To customize Slicer this way, open the **Application Settings Interface** by selecting **View->Application Settings** from the File Menu, (or by using the **F2** hotkey), then choosing the Module Settings panel. In this panel:\n\n* Deselecting the **Load Modules** checkbutton allows you to supress all Loadable Modules.\n\n* Selecting the **Load Modules** checkbutton will cause all modules selected in the **Select Modules** panel (shown below) to be loaded next time you start up Slicer.\n\n* Deselecting the **Load Command-Line Plugins** checkbox will surpress all Command-Line modules, and\n\n* Selecting that checkbutton will include all Command-Line modules next time you start up.\n";
+  const char *t = "**Configuring your Slicer build:** Slicer can be customized using the **Application Settings Interface**. Open this utility by selecting **View->Application Settings** from the File Menu, or by using the **F2** hot-key. Any options selected in this panel will be saved in the Application Registry and restored each time you start Slicer. Many useful options are provided within the interface's sub-panels: font family and size can be adjusted using the **Font Settings** panel, the **Slicer Settings** panel allows you to specify paths to web browsers and other useful applications, and the **Remote Data Handling Settings** panel allows you to select data caching options. \n"; 
   txt->SetText ( t );
   //Important that Read only after SetText otherwise it doesn't work
   txt->GetWidget()->ReadOnlyOn();
@@ -1562,9 +1562,10 @@ void vtkSlicerWelcomeGUI::BuildConfigureModulesPanel( vtkKWFrame *parent )
   txt2->SetVerticalScrollbarVisibility ( 1 );
   txt2->GetWidget()->SetReliefToGroove();
   txt2->GetWidget()->SetWrapToWord();
-  txt2->GetWidget()->SetHeight ( 6 );
+  txt2->GetWidget()->SetHeight ( 10 );
   txt2->GetWidget()->QuickFormattingOn();
-  const char *t1 = "**Other useful hints:** The **Application Settings Interface** has other useful settings which are saved in the Application Registry and restored each time you start Slicer. Note that in this panel, you can also specify your **Home** module, **Temporary** directory and other useful settings. From here, you can explore other Application Interface Settings panels, such as **Slicer Settings**, **Remote Data Handling Settings**, and **Font Settings**.\n";
+  const char *t1 = "**Adding and Removing Modules:** Slicer has two basic types of modules, **Loadable Modules** and **Command Line Plugins**. By default, Slicer starts up with all modules included. You can customize Slicer to include only the Loadable and Command Line modules you need; which keeps Slicer as compact as possible and accelerates application startup time. To customize Slicer this way, select the Application Settings Interface's **Module Settings** panel. In this panel:\n\n* Deselecting the **Load Modules** checkbutton allows you to supress all Loadable Modules.\n\n* Selecting the **Load Modules** checkbutton will cause all modules selected in the **Select Modules** panel (shown above) to be loaded next time you start up Slicer.\n\n* Deselecting the **Load Command-Line Plugins** checkbox will surpress all Command-Line modules, and\n\n* Selecting that checkbutton will include all Command-Line modules next time you start up.\n";
+
   txt2->SetText ( t1 );
   //Important that Read only after SetText otherwise it doesn't work
   txt2->GetWidget()->ReadOnlyOn();
