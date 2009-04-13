@@ -107,6 +107,7 @@ if { [itcl::find class SWidget] == "" } {
     method highlight {} {}
     method place {x y z} {}
     method getPixel {image i j k} {}
+    method getTensorPixel {node i j k} {}
     method setPixel {image i j k value} {}
     method setPixelBlock {image i j k size value} {}
     method requestUpdate {} {}
@@ -237,10 +238,44 @@ itcl::body SWidget::queryLayers { x y {z 0} } {
           set _layers($layer,$v) [expr int(round([set $v]))]
         }
       }
-      set _layers($layer,pixel) [$this getPixel $_layers($layer,image) \
-                      $_layers($layer,i) $_layers($layer,j) $_layers($layer,k)]
+      if { [$_layers($layer,node) GetClassName] == "vtkMRMLDiffusionTensorVolumeNode" } {
+        set _layers($layer,pixel) [$this getTensorPixel $_layers($layer,node) \
+                        $_layers($layer,i) $_layers($layer,j) $_layers($layer,k)]
+      } else {
+        set _layers($layer,pixel) [$this getPixel $_layers($layer,image) \
+                        $_layers($layer,i) $_layers($layer,j) $_layers($layer,k)]
+      }
     }
   }
+}
+
+itcl::body SWidget::getTensorPixel { node i j k } {
+
+  if { ![info exists o(dtiMath)] } {
+    set o(dtiMath) [vtkDiffusionTensorMathematicsSimple New]
+    set o(dtiPixelImage) [vtkImageData New]
+    set o(dtiPixelTensors) [vtkDoubleArray New]
+    $o(dtiPixelImage) SetDimensions 1 1 1
+    $o(dtiPixelImage) AllocateScalars
+    $o(dtiPixelTensors) SetNumberOfComponents 9
+    $o(dtiPixelTensors) Allocate 1 0
+    [$o(dtiPixelImage) GetPointData] SetTensors $o(dtiPixelTensors)
+    $o(dtiMath) SetInput $o(dtiPixelImage)
+  }
+
+  set tensorImage [$node GetImageData]
+  set tensors [[$tensorImage GetPointData] GetTensors]
+  set displayNode [$node GetDisplayNode]
+
+  foreach "w h d" [$tensorImage GetDimensions] {}
+  set sliceSize [expr $w * $h]
+  set idx [expr $i + $j*$w + $k*$sliceSize]
+  set tensor [$tensors GetTuple9 $idx]
+  eval $o(dtiPixelTensors) SetTuple9  0 $tensor
+  $o(dtiMath) SetOperation [$displayNode GetScalarInvariant]
+  $o(dtiMath) Update
+  set pixel [[[[$o(dtiMath) GetOutput] GetPointData] GetScalars] GetTuple1 0]
+  return $pixel
 }
 
 itcl::body SWidget::getPixel { image i j k } {
