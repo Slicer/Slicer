@@ -92,6 +92,7 @@ extern "C" {
 //#define MODELS_DEBUG
 //#define REMOTEIO_DEBUG
 //#define SCRIPTEDMODULE_DEBUG
+//#define SLICESMODULE_DEBUG
 
 #define CAMERA_DEBUG
 
@@ -907,6 +908,7 @@ int Slicer3_main(int argc, char *argv[])
   
 #endif
 
+#if !defined(SLICESMODULE_DEBUG)
   vtkSlicerSlicesGUI *slicesGUI = vtkSlicerSlicesGUI::New ();
     
   // build the application GUI
@@ -929,6 +931,7 @@ int Slicer3_main(int argc, char *argv[])
   slicerApp->AddModuleGUI ( slicesGUI );
   slicesGUI->BuildGUI ();
   slicesGUI->AddGUIObservers ( );
+#endif
 
   // get the module paths that the user has configured
   std::string userModulePaths;
@@ -1225,7 +1228,10 @@ int Slicer3_main(int argc, char *argv[])
   modelsGUI->SetAndObserveMRMLScene ( scene );
   modelsGUI->SetModuleLogic ( modelsLogic );
   modelsGUI->SetModelHierarchyLogic( modelHierarchyLogic );
-  appGUI->GetViewerWidget()->SetModelHierarchyLogic(modelHierarchyLogic);
+  if (  appGUI->GetViewerWidget() )
+    {
+    appGUI->GetViewerWidget()->SetModelHierarchyLogic(modelHierarchyLogic);
+    }
   modelsGUI->SetGUIName( "Models" );
   modelsGUI->GetUIPanel()->SetName ( modelsGUI->GetGUIName ( ) );
   modelsGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
@@ -1521,8 +1527,10 @@ int Slicer3_main(int argc, char *argv[])
   slicerApp->Script ("namespace eval slicer3 set RemoteIOGUI %s", name);
 #endif
     
+#if !defined(SLICESMODULE_DEBUG)
   name = slicesGUI->GetTclName();
   slicerApp->Script ("namespace eval slicer3 set SlicesGUI %s", name);
+#endif
 
 
 #ifndef MODELS_DEBUG
@@ -1862,22 +1870,25 @@ int Slicer3_main(int argc, char *argv[])
     res = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
     }
 
-  //--- set home module based on registry settings
-  const char *homeModule = slicerApp->GetHomeModule();
-  if ( (slicerApp->GetUseWelcomeModuleAtStartup() ) &&
-       (slicerApp->GetModuleGUIByName ( "SlicerWelcome" )!= NULL) )
+  if ( !NoModules )
     {
-    appGUI->SelectModule ( "SlicerWelcome" );
-    }
-  else if ( (homeModule ) &&
-            (*homeModule ) &&
-            (slicerApp->GetModuleGUIByName ( "homeModule" ) ) )
-    {
-    appGUI->SelectModule ( homeModule );
-    }
-  else
-    {
-    appGUI->SelectModule("Data");
+    //--- set home module based on registry settings
+    const char *homeModule = slicerApp->GetHomeModule();
+    if ( (slicerApp->GetUseWelcomeModuleAtStartup() ) &&
+         (slicerApp->GetModuleGUIByName ( "SlicerWelcome" )!= NULL) )
+      {
+      appGUI->SelectModule ( "SlicerWelcome" );
+      }
+    else if ( (homeModule ) &&
+              (*homeModule ) &&
+              (slicerApp->GetModuleGUIByName ( "homeModule" ) ) )
+      {
+      appGUI->SelectModule ( homeModule );
+      }
+    else
+      {
+      appGUI->SelectModule("Data");
+      }
     }
 
 //  std::string tclCmd = "after idle { update; $::slicer3::ApplicationGUI SelectModule \"" + std::string(homeModule) + "\" }";
@@ -2071,7 +2082,6 @@ int Slicer3_main(int argc, char *argv[])
   cameraGUI->Delete ();
 #endif
   dataGUI->Delete ();
-//  slicesGUI->Delete ();
 
 #if !defined(SCRIPTEDMODULE_DEBUG) && defined(Slicer3_BUILD_MODULES)
   if ( !NoModules )
@@ -2125,7 +2135,9 @@ int Slicer3_main(int argc, char *argv[])
   appGUI->DeleteComponentGUIs();
   appGUI->TearDownViewers();
   appGUI->SetSlicesGUI ( NULL );
+#if !defined(SLICESMODULE_DEBUG)
   slicesGUI->Delete();
+#endif
   appGUI->Delete ();
     
   //--- delete logic next, removing Refs to MRML
