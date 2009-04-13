@@ -118,7 +118,6 @@ vtkFetchMIGUI::vtkFetchMIGUI()
   this->ServerMenuButton = NULL;
   this->AddServerEntry = NULL;
   this->FetchMIIcons = NULL;
-  this->FetchMINode = NULL;
   this->UpdatingGUI = 0;
   this->UpdatingMRML = 0;
   this->TagViewer = NULL;
@@ -303,6 +302,11 @@ vtkIntArray *vtkFetchMIGUI::NewObservableEvents()
 //----------------------------------------------------------------------------
 void vtkFetchMIGUI::TearDownGUI ( )
 {
+  if ( !this->Built )
+    {
+    return;
+    }
+
   if ( this->FetchMINode )
     {
     vtkSetAndObserveMRMLNodeMacro( this->FetchMINode, NULL );
@@ -1429,10 +1433,10 @@ void vtkFetchMIGUI::UpdateGUI ()
     }
   this->UpdatingGUI = 1;
   
-  vtkMRMLFetchMINode* n = this->GetFetchMINode();
-  if (n == NULL )
+  vtkMRMLFetchMINode* fetchMINode = this->GetFetchMINode();
+  if (fetchMINode == NULL )
     {
-    n = vtkMRMLFetchMINode::New();
+    fetchMINode = vtkMRMLFetchMINode::New();
     vtkIntArray *events = vtkIntArray::New();
     events->InsertNextValue ( vtkMRMLFetchMINode::KnownServersModifiedEvent );
     events->InsertNextValue ( vtkMRMLFetchMINode::SelectedServerModifiedEvent );
@@ -1442,16 +1446,18 @@ void vtkFetchMIGUI::UpdateGUI ()
     events->InsertNextValue ( vtkMRMLFetchMINode::RemoteIOErrorChoiceEvent );
     events->InsertNextValue ( vtkMRMLFetchMINode::ResourceResponseReadyEvent );
     events->InsertNextValue ( vtkMRMLFetchMINode::TagResponseReadyEvent );    
-    vtkSetAndObserveMRMLNodeEventsMacro ( this->FetchMINode, n, events );
+    vtkSetAndObserveMRMLNodeEventsMacro ( this->FetchMINode, fetchMINode, events );
+    fetchMINode->Delete(); 
     if ( this->Logic->GetFetchMINode() != NULL )
       {
       this->Logic->SetFetchMINode ( NULL );
-      this->Logic->SetFetchMINode( n );
       }
+    this->Logic->SetFetchMINode( this->GetFetchMINode() );
     events->Delete();
     }
+  fetchMINode = this->GetFetchMINode();
   
-  if (n != NULL)
+  if (fetchMINode != NULL)
     {
     //---  update the list of known servers in the
     if ( this->ServerMenuButton != NULL )
@@ -1487,7 +1493,7 @@ void vtkFetchMIGUI::UpdateGUI ()
     {
     vtkErrorMacro ("FetchMIGUI: UpdateGUI has a NULL FetchMINode." );
     }
-  // n->Delete();
+  // fetchMINode->Delete();
   this->UpdateTagTableFromMRML();
 //  this->UpdateSceneTableFromMRML();
   this->UpdatingGUI = 0;
@@ -2193,17 +2199,16 @@ void vtkFetchMIGUI::TagSelectedData()
 void vtkFetchMIGUI::BuildGUI ( ) 
 {
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-  vtkMRMLFetchMINode* n = vtkMRMLFetchMINode::New();
-  if ( this->Logic != NULL )
+  if ( this->MRMLScene != NULL )
     {
-    this->Logic->GetMRMLScene()->RegisterNodeClass(n);
-    if ( this->Logic->GetFetchMINode() == NULL )
-      {
-      this->Logic->SetFetchMINode ( NULL );
-      this->Logic->SetFetchMINode( n );
-      }
+    vtkMRMLFetchMINode* fetchMINode = vtkMRMLFetchMINode::New();
+    this->MRMLScene->RegisterNodeClass(fetchMINode);
+    fetchMINode->Delete();
     }
-  n->Delete();
+  else
+    {
+    vtkErrorMacro("GUI is being built before MRML Scene is set");
+    }
 
   this->UIPanel->AddPage ( "FetchMI", "FetchMI", NULL );
   // ---
