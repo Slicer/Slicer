@@ -22,7 +22,7 @@ set ::modules {
  "CLI" "Change Tracker" "EMSegment"  "Gradient Anisotropic Diffusion Filter"  "Label Statistics"  "Neuro Nav"  
  "OpenIGTLinkIF"  "QdecModule"  "QueryAtlas"  "Slicer Tractography Display"  
  "Slicer Tractography Fiducial Seeding"  "Volume Rendering"  "VolumeRenderingCuda" "Volumes"
- "OpenIGTLink IF" "Skeleton" "IA_FEMesh"
+ "OpenIGTLink IF" "Skeleton" "IA_FEMesh" "ClipModel" "FetchMI" "ProstateNav" "SlicerWelcome"
  }
 
 set ::scriptedModules ""
@@ -108,6 +108,8 @@ puts "--------------------------------------------------------------------------
 puts "ignoring all"
 puts "--------------------------------------------------------------------------------"
 runSlicer $::modules
+
+exit
 
 puts "--------------------------------------------------------------------------------"
 puts "ignoring none"
