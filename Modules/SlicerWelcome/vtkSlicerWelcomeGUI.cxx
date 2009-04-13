@@ -636,8 +636,6 @@ void vtkSlicerWelcomeGUI::BuildGUI ( )
   win->SetStatusText ( "Building Interface for Slicer Welcome Module...." );
   app->Script ( "update idletasks" );
 
-  this->SlicerWelcomeIcons = vtkSlicerWelcomeIcons::New();
-  
   this->UIPanel->AddPage ( "SlicerWelcome", "SlicerWelcome", NULL );
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "SlicerWelcome" );    
 
