@@ -27,6 +27,7 @@ vtkSlicerModuleGUI::vtkSlicerModuleGUI ( ) {
     this->ModuleName = NULL;
     this->Index = VTK_SHORT_MAX;
     this->Category = NULL;
+    this->LazyBuild = 0;
     this->SetCategory("None");
 }
 

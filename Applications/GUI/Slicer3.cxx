@@ -1199,9 +1199,12 @@ int Slicer3_main(int argc, char *argv[])
           gui->GetUIPanel()->SetUserInterfaceManager( appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
           gui->GetUIPanel()->Create( );
           slicerApp->AddModuleGUI( gui );
-          gui->BuildGUI ( );
-          gui->AddGUIObservers ( );
-          gui->Init();
+          if ( !gui->GetLazyBuild() )
+            {
+            gui->BuildGUI ( );
+            gui->AddGUIObservers ( );
+            gui->Init();
+            }
           }
         }
       }

@@ -74,6 +74,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
   virtual unsigned short GetIndex() const {return this->Index;}
   vtkSetMacro(Index, unsigned short);
   
+  vtkGetMacro (LazyBuild, int );
+  vtkSetMacro (LazyBuild, int );
+  
   // Description:
   // Get a logo for the module
   virtual vtkKWIcon* GetLogo() const;
@@ -167,6 +170,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
     // the category for menu grouping
     char *Category;
     
+    // Description:
+    // If true, Slicer builds the GUI during startup,
+    // otherwise, wait until the module is selected.
+    int LazyBuild;
+
     // constructor, destructor.
     vtkSlicerModuleGUI ( );
     virtual ~vtkSlicerModuleGUI ( );
