@@ -115,6 +115,7 @@ IF (NOT CUDA_INSTALL_PREFIX)
   IF (cuda_path)
     MARK_AS_ADVANCED(CUDA_NVCC)
     STRING(REGEX REPLACE "[/\\\\]?bin[/\\\\]?nvcc[/\\\\]?$" "" cuda_path ${cuda_path})
+    STRING(REGEX REPLACE "[/\\\\]?bin[/\\\\]?nvcc.exe[/\\\\]?$" "" cuda_path ${cuda_path})
   ELSE(cuda_path)
     SET(cuda_path "$ENV{CUDA_BIN_PATH}")
     STRING(REGEX REPLACE "[/\\\\]?bin[/\\\\]?$" "" cuda_path ${cuda_path})
@@ -222,8 +223,10 @@ IF(NOT CUDA_CUT_INCLUDE)
     SET(SEARCH_PATHS /Developer/CUDA/common/inc
                      $ENV{HOME}/NVIDIA_CUDA_SDK_MACOSX/common/inc)
   ELSEIF(WIN32)
-    SET(SEARCH_PATHS "C:/Program Files/NVIDIA Corporation/NVIDIA SDK 10/NVIDIA CUDA SDK/common/inc"
+    SET(SEARCH_PATHS $ENV{NVSDKCUDA_ROOT}/common/inc
+                     "C:/Program Files/NVIDIA Corporation/NVIDIA SDK 10/NVIDIA CUDA SDK/common/inc"
                      "C:/Program Files/NVIDIA Corporation/NVIDIA CUDA SDK/common/inc")
+#                     "C:/Documents and Settings/All Users/Application Data/NVIDIA Corporation/NVIDIA CUDA SDK/common/inc")
   ELSE(APPLE)
      SET(SEARCH_PATHS $ENV{HOME}/NVIDIA_CUDA_SDK/common/inc
                       ${CUDA_INSTALL_PREFIX}/local/NVSDK0.2/common/inc
@@ -250,7 +253,8 @@ IF(NOT CUDA_CUT_TARGET_LINK)
     SET(SEARCH_PATHS /Developer/CUDA/lib
                      $ENV{HOME}/NVIDIA_CUDA_SDK_MACOSX/lib)
   ELSEIF(WIN32)
-    SET(SEARCH_PATHS "C:/Program Files/NVIDIA Corporation/NVIDIA SDK 10/NVIDIA CUDA SDK/lib"
+    SET(SEARCH_PATHS $ENV{NVSDKCUDA_ROOT}/common/lib
+                     "C:/Program Files/NVIDIA Corporation/NVIDIA SDK 10/NVIDIA CUDA SDK/lib"
                      "C:/Program Files/NVIDIA Corporation/NVIDIA CUDA SDK/lib")
   ELSE(APPLE)
      SET(SEARCH_PATHS $ENV{HOME}/NVIDIA_CUDA_SDK/lib
@@ -308,7 +312,7 @@ MACRO(CUDA_add_custom_commands)
     IF(${file} MATCHES ".*\\.cu$")
     
     # Add a custom target to generate a cpp file.
-    SET(generated_file  "${CMAKE_BINARY_DIR}/src/cuda/${file}_generated.c")
+    SET(generated_file  "${CMAKE_BINARY_DIR}/src/cuda/${file}_generated.cxx")
     SET(generated_target "${file}_target")
     GET_FILENAME_COMPONENT(file_we ${file} NAME_WE)
     SET(generated_object "${file_we}.o")        
@@ -340,8 +344,9 @@ MACRO(CUDA_add_custom_commands)
            ${CUDA_NVCC_FLAGS}
            -DNVCC
            -c 
-           -use_fast_math -O3
-           -o ${generated_object} 
+           -use_fast_math
+           -Xcompiler -fPIC
+           -o ${generated_object}
            ${CUDA_NVCC_INCLUDE_ARGS}
        COMMENT "Building NVCC ${file}: ${generated_object}\n"
       )
