@@ -124,6 +124,7 @@ vtkFetchMIGUI::vtkFetchMIGUI()
   this->Notebook = NULL;
   this->SetGUIWidth(-1);
   this->LazyBuild = 1;
+  this->Observed = 0;
 //  this->DebugOn();
 
 }
@@ -212,11 +213,13 @@ vtkFetchMIGUI::~vtkFetchMIGUI()
       this->Notebook = NULL;
       }
 
+    this->Observed = 0;
     this->UpdatingMRML = 0;
     this->UpdatingGUI = 0;
     
     this->Logic = NULL;
     vtkSetAndObserveMRMLNodeMacro( this->FetchMINode, NULL );
+
 }
 
 
@@ -230,7 +233,12 @@ void vtkFetchMIGUI::Enter()
     this->Built = true;
     this->AddObserver ( vtkSlicerModuleGUI::ModuleSelectedEvent, (vtkCommand *)this->ApplicationGUI->GetGUICallbackCommand() );
     }
-  this->AddGUIObservers();
+
+  if ( !this->Observed )
+    {
+    this->AddGUIObservers();
+    }
+
   this->CreateModuleEventBindings();
 
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
@@ -391,7 +399,7 @@ void vtkFetchMIGUI::AddGUIObservers ( )
   this->ServerMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->Notebook->AddObserver ( vtkKWEvent::NotebookRaisePageEvent, (vtkCommand *)this->GUICallbackCommand );
   this->Notebook->AddObserver ( vtkKWEvent::NotebookShowPageEvent, (vtkCommand *)this->GUICallbackCommand );
-
+  this->Observed = 1;
 }
 
 
@@ -417,7 +425,7 @@ void vtkFetchMIGUI::RemoveGUIObservers ( )
   this->ServerMenuButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->Notebook->RemoveObservers ( vtkKWEvent::NotebookRaisePageEvent, (vtkCommand *)this->GUICallbackCommand );
   this->Notebook->RemoveObservers ( vtkKWEvent::NotebookShowPageEvent, (vtkCommand *)this->GUICallbackCommand );
-
+  this->Observed = 0;
 }
 
 

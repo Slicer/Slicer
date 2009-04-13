@@ -202,6 +202,7 @@ protected:
   int UpdatingGUI;
   int UpdatingMRML;
   int GUIWidth;
+  int Observed;
 
 };
 
