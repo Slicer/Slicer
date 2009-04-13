@@ -336,6 +336,8 @@ void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
       vtkMRMLFiducial *fidThis = vtkMRMLFiducial::SafeDownCast(this->FiducialList->vtkCollection::GetItemAsObject(f));
       unsigned long mtime = fidThis->GetMTime();
       fidThis->Copy(fid);
+      // Copy doesn't copy the ID, so check to see if the fiducial node in the
+      // list to copy has a different id
       if (fidThis->GetMTime() > mtime || 
           (fid->GetID() && fidThis->GetID() && strcmp(fid->GetID(), fidThis->GetID())) )
         {
@@ -1524,6 +1526,8 @@ int vtkMRMLFiducialListNode::MoveFiducialUp(int fidIndex)
   // make a copy to avoid memory corruption
   vtkMRMLFiducial *copyFidAbove = vtkMRMLFiducial::New();
   copyFidAbove->Copy(fidAbove);
+  // id isn't copied
+  copyFidAbove->SetID(fidAbove->GetID());
   // now replace the one above with this one
   this->FiducialList->ReplaceItem(newIndex, thisFid);
   // and replace this one withthe one that was above
@@ -1568,6 +1572,8 @@ int vtkMRMLFiducialListNode::MoveFiducialDown(int fidIndex)
   // make copy to avoid memory corruption
   vtkMRMLFiducial *copyFidBelow = vtkMRMLFiducial::New();
   copyFidBelow->Copy(fidBelow);
+  // the id isn't copied
+  copyFidBelow->SetID(fidBelow->GetID());
   
   newIndex = fidIndex + 1;
   // now replace the one below with this one
