@@ -154,7 +154,6 @@ class PipelineHandler(asyncore.dispatcher):
              if scene[i].isdigit():
                 indS.append(i)
 
-          print 'Index : ', indS
           for j in range(len(indS)):
              
              if j<len(indS)-1:
@@ -312,6 +311,7 @@ class PipelineHandler(asyncore.dispatcher):
                     fa = float(self.params.get('fa')[0])
                     logger.debug("fa: %s" % fa)
 
+
           if self.params.hasKey('probMode'):
                     probMode = self.params.get('probMode')[0]
                     logger.debug("probMode: %s" % probMode)
@@ -323,7 +323,15 @@ class PipelineHandler(asyncore.dispatcher):
           if self.params.hasKey('lengthClass'):
                     lengthClass = self.params.get('lengthClass')[0]
                     logger.debug("lengthClass: %s" % lengthClass)
-          
+         
+          if self.params.hasKey('vicinity'):
+                    vicinity = int(self.params.get('vicinity')[0])
+                    logger.debug("vicinity: %s" % vicinity)
+          if self.params.hasKey('threshold'):
+                    threshold = float(self.params.get('threshold')[0])
+                    logger.debug("threshold: %s" % threshold)
+
+ 
 
 
           ngrads = shpD[3] #b.shape[0]
@@ -378,29 +386,31 @@ class PipelineHandler(asyncore.dispatcher):
                     wm = self.wm.getImage()
                                             
 
-          if cmEnabled:
-                    #if not isInTensor:
+          if tensEnabled:
+
                     logger.info("Compute tensor")
                     timeS1 = time.time()
 
-                    #if isInWM or wmEnabled:
-                    if tensEnabled:
-                      if not isInTensor:
+
+                    if not isInTensor:
                         EV, lV, xVTensor, xYTensor = tens.EvaluateTensorX1(data, G.T, b.T, wm)
-                      else:
+                    else:
                         EV, lV, xVTensor, xYTensor = tens.EvaluateTensorK1(self.ten.getImage(), shpD, wm)
 
                       
-                      logger.info("Compute tensor in %s sec" % str(time.time()-timeS1))
+                    logger.info("Compute tensor in %s sec" % str(time.time()-timeS1))
 
-                      if faEnabled:
+                    if faEnabled:
                          faMap = tensC.CalculateFA0(lV)
-                      if traceEnabled:
+                    if traceEnabled:
                          trMap = tensC.CalculateTrace0(lV)
-                      if modeEnabled:
+                    if modeEnabled:
                          moMap = tensC.CalculateMode0(lV)
 
-                    
+
+
+          if cmEnabled:
+                                       
                     logger.info("Track fibers")
                     if not stopEnabled:
                         fa = 0.0
@@ -458,8 +468,12 @@ class PipelineHandler(asyncore.dispatcher):
                         timeS3 = time.time()
 
                         logger.info("Data type : %s" % data.dtype)
-                        paths10, paths11, paths12, paths13, paths14  = track.TrackFiberY40(data.flatten(), wm, shpD, mu, b.T, G.T, IJKstartpoints2[0].T, r2i, i2r,\
+                        if tensEnabled:
+                          paths10, paths11, paths12, paths13, paths14 = track.TrackFiberY40(data.flatten(), wm, shpD, mu, b.T, G.T, IJKstartpoints2[0].T, r2i, i2r,\
                                   lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
+                        else:
+                          paths10, paths11, paths12, paths13, paths14 = track.TrackFiberW40(data.flatten(), wm, shpD, mu, b.T, G.T, IJKstartpoints2[0].T, r2i, i2r,\
+                                  stepSize, maxLength, fa, spaceEnabled)
 
                         logger.info("Track fibers in %s sec" % str(time.time()-timeS3))
 
@@ -473,15 +487,13 @@ class PipelineHandler(asyncore.dispatcher):
                             cm2 = track.ConnectFibersX2(paths11, paths14, shpD, lengthEnabled,  lengthClass)
 
                     if isInRoiA and isInRoiB:
-                        vicinity = 10
-                        threshold = 0.1
                         cm3 = track.FilterFibers0(paths00, paths01, paths02, paths03, paths04, self.roiA.getImage(), self.roiB.getImage(), shpD, vicinity, threshold)
                         cm4 = track.FilterFibers0(paths10, paths11, paths12, paths13, paths14, self.roiB.getImage(), self.roiA.getImage(), shpD, vicinity, threshold)
 
 
 
           else:
-                     logger.info("No tractography to execute!")
+                    logger.info("No tractography to execute!")
 
 
           
@@ -580,60 +592,63 @@ class PipelineHandler(asyncore.dispatcher):
                      if isInRoiA and isInRoiB:
                           cm1a2 = cm[...]*cm2[...]/2.0
                           cm1a2 = cm1a2.astype('uint32')
-                          tmp= 'cmAandB_' + dateT
-                          cm1a2.tofile(tmpF + tmp + '.data')
-                          createParams(cm1a2,  tmpF + tmp)
-                          #s.putS(cm1a2, dims, org, i2r, tmp)
+                          if not (cm1a2 == 0).all():
+                            tmp= 'cmAandB_' + dateT
+                            cm1a2.tofile(tmpF + tmp + '.data')
+                            createParams(cm1a2,  tmpF + tmp)
+                            #s.putS(cm1a2, dims, org, i2r, tmp)
 
 
-                          tmp= 'cmFAandB_' + dateT
-                          cm1a2f = cm1a2/float(cm1a2.max())
-                          cm1a2f.astype('float32')
-                          cm1a2f.tofile(tmpF + tmp + '.data')
-                          createParams(cm1a2f,  tmpF + tmp)
-                          s.putS(cm1a2f, dims, org, i2r, tmp)
+                            tmp= 'cmFAandB_' + dateT
+                            cm1a2f = cm1a2/float(cm1a2.max())
+                            cm1a2f.astype('float32')
+                            cm1a2f.tofile(tmpF + tmp + '.data')
+                            createParams(cm1a2f,  tmpF + tmp)
+                            s.putS(cm1a2f, dims, org, i2r, tmp)
 
-
+                                       
                           cm1o2 = (cm[...]+cm2[...])/2.0
                           cm1o2 = cm1o2.astype('uint32')
-                          tmp= 'cmAorB_' + dateT
-                          cm1o2.tofile(tmpF + tmp + '.data')
-                          createParams(cm1o2,  tmpF + tmp)
-                          #s.putS(cm1o2, dims, org, i2r, tmp)
+                          if not (cm1o2 == 0).all():
+                            tmp= 'cmAorB_' + dateT
+                            cm1o2.tofile(tmpF + tmp + '.data')
+                            createParams(cm1o2,  tmpF + tmp)
+                            #s.putS(cm1o2, dims, org, i2r, tmp)
 
-                          tmp= 'cmFAorB_' + dateT
-                          cm1o2f = cm1o2/float(cm1o2.max())
-                          cm1o2f.astype('float32')
-                          cm1o2f.tofile(tmpF + tmp + '.data')
-                          createParams(cm1o2f,  tmpF + tmp)
-                          s.putS(cm1o2f, dims, org, i2r, tmp)
+                            tmp= 'cmFAorB_' + dateT
+                            cm1o2f = cm1o2/float(cm1o2.max())
+                            cm1o2f.astype('float32')
+                            cm1o2f.tofile(tmpF + tmp + '.data')
+                            createParams(cm1o2f,  tmpF + tmp)
+                            s.putS(cm1o2f, dims, org, i2r, tmp)
 
-                          tmp= 'cmA2B_' + dateT
-                          cm3 = cm3.swapaxes(2,0)
-                          cm3.tofile(tmpF + tmp + '.data')
-                          createParams(cm3,  tmpF + tmp)
-                          #s.putS(cm3, dims, org, i2r, tmp)
+                          if not (cm3 == 0).all():
+                            tmp= 'cmA2B_' + dateT
+                            cm3 = cm3.swapaxes(2,0)
+                            cm3.tofile(tmpF + tmp + '.data')
+                            createParams(cm3,  tmpF + tmp)
+                            #s.putS(cm3, dims, org, i2r, tmp)
 
-                          tmp= 'cmFA2B_' + dateT
-                          cm3f = cm3/float(cm3.max())
-                          cm3f.astype('float32')
-                          cm3f.tofile(tmpF + tmp + '.data')
-                          createParams(cm3f,  tmpF + tmp)
-                          s.putS(cm3f, dims, org, i2r, tmp)
+                            tmp= 'cmFA2B_' + dateT
+                            cm3f = cm3/float(cm3.max())
+                            cm3f.astype('float32')
+                            cm3f.tofile(tmpF + tmp + '.data')
+                            createParams(cm3f,  tmpF + tmp)
+                            s.putS(cm3f, dims, org, i2r, tmp)
 
+                          if not (cm4 == 0).all():
+                            tmp= 'cmB2A_' + dateT
+                            cm4 = cm4.swapaxes(2,0)
+                            cm4.tofile(tmpF + tmp + '.data')
+                            createParams(cm4,  tmpF + tmp)
+                            #s.putS(cm4, dims, org, i2r, tmp)
 
-                          tmp= 'cmB2A_' + dateT
-                          cm4 = cm4.swapaxes(2,0)
-                          cm4.tofile(tmpF + tmp + '.data')
-                          createParams(cm4,  tmpF + tmp)
-                          #s.putS(cm4, dims, org, i2r, tmp)
-
-                          tmp= 'cmFB2A_' + dateT
-                          cm4f = cm4/float(cm4.max()) 
-                          cm4f.astype('float32')
-                          cm4f.tofile(tmpF + tmp + '.data')
-                          createParams(cm4f,  tmpF + tmp)
-                          s.putS(cm4f, dims, org, i2r, tmp)
+                            tmp= 'cmFB2A_' + dateT
+                            cm4f = cm4/float(cm4.max()) 
+                            cm4f.astype('float32')
+                            cm4f.tofile(tmpF + tmp + '.data')
+                            createParams(cm4f,  tmpF + tmp)
+                            s.putS(cm4f, dims, org, i2r, tmp)
 
 
 

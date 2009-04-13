@@ -54,14 +54,6 @@ Grants: National Alliance for Medical Image Computing (NAMIC), funded by the Nat
       <description>Input WM volume</description>
     </image>
 
-    <image type = "tensor" >
-      <name>inputVol4</name>
-      <longflag>inputVol4</longflag>
-      <label>Input DTI Volume</label>
-      <channel>input</channel>
-      <description>Input DTI volume</description>
-    </image>
-
   </parameters>
 
   <parameters>
@@ -285,6 +277,32 @@ Grants: National Alliance for Medical Image Computing (NAMIC), funded by the Nat
       <element>uThird</element>
     </string-enumeration>
 
+    <integer>
+      <name>vicinity</name>
+      <longflag>vicinity</longflag>
+      <description>2 ROIs connection: defines a neigborhood centered on each ROI allowing to count tracts terminating near the ROI but not exactly in</description>
+      <label>Vicinity</label>
+      <default>0</default>
+      <constraints>
+        <minimum>0</minimum>
+        <maximum>20</maximum>
+        <step>1</step>
+      </constraints>
+    </integer>
+    
+    <double>
+      <name>thresHold</name>
+      <longflag>thresHold</longflag>
+      <description>2 ROIs connection: defines the threshold of probability below which the tracts are rejected</description>
+      <label>Threshold</label>
+      <default>0.1</default>
+      <constraints>
+        <minimum>0.0</minimum>
+        <maximum>1.0</maximum>
+        <step>0.05</step>
+      </constraints>
+    </double>
+
     
   </parameters>
 
@@ -503,6 +521,8 @@ def Execute (\
              probMode,\
              lengthEnabled,\
              lengthClass,\
+             vicinity,\
+             thresHold,\
              inputVol0 = "",\
              inputVol1 = "",\
              inputVol2 = "",\
@@ -641,6 +661,13 @@ def Execute (\
 
   s.send('lengthClass ' + str(lengthClass) + '\n')
   ack = s.recv(SIZE)
+
+  s.send('vicinity ' + str(vicinity) + '\n')
+  ack = s.recv(SIZE)
+
+  s.send('threshold ' + str(thresHold) + '\n')
+  ack = s.recv(SIZE)
+
 
   s.send('data\n')
   ack = s.recv(SIZE)
