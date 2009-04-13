@@ -538,6 +538,10 @@ void vtkFetchMIFlatResourceWidget::CreateWidget ( )
   this->ClearAllButton->SetImageToIcon ( this->FetchMIIcons->GetDeleteAllIcon() );
   this->ClearAllButton->SetBalloonHelpString ( "Clear all resources from list" );
 
+  vtkKWLabel *l1 = vtkKWLabel::New();
+  l1->SetParent ( f2 );
+  l1->Create();
+  l1->SetText ( "  Download:" );
   this->DownloadSelectedButton = vtkKWPushButton::New();
   this->DownloadSelectedButton->SetParent ( f2 );
   this->DownloadSelectedButton->Create();
@@ -546,6 +550,10 @@ void vtkFetchMIFlatResourceWidget::CreateWidget ( )
   this->DownloadSelectedButton->SetImageToIcon ( this->FetchMIIcons->GetDownloadIcon() );
   this->DownloadSelectedButton->SetBalloonHelpString ( "Download selected resources" );
 
+  vtkKWLabel *l2 = vtkKWLabel::New();
+  l2->SetParent ( f2 );
+  l2->Create();
+  l2->SetText ( "Delete:" );
   this->DeleteButton = vtkKWPushButton::New();
   this->DeleteButton->SetParent ( f2 );
   this->DeleteButton->Create();
@@ -575,8 +583,10 @@ void vtkFetchMIFlatResourceWidget::CreateWidget ( )
                 this->DeselectAllButton->GetWidgetName(),
                 this->ClearSelectedButton->GetWidgetName(),
                 this->ClearAllButton->GetWidgetName() );
-  this->Script ("pack %s %s -side left -anchor w  -expand n -padx 2 -pady 2",
+  this->Script ("pack %s %s %s %s -side left -anchor w  -expand n -padx 2 -pady 2",
+                l1->GetWidgetName(),
                 this->DownloadSelectedButton->GetWidgetName(),
+                l2->GetWidgetName(),
                 this->DeleteButton->GetWidgetName() );
   this->Script ("pack %s -side right -anchor w -expand n -padx 2 -pady 2",
                 this->HelpButton->GetWidgetName() );
@@ -611,6 +621,8 @@ void vtkFetchMIFlatResourceWidget::CreateWidget ( )
   
   this->Script ( "pack %s -side top -fill x -pady 0 -expand n", this->GetMultiColumnList()->GetWidgetName() );
 
+  l1->Delete();
+  l2->Delete();
   f1->Delete();
   f2->Delete();
   f3->Delete();

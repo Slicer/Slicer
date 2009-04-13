@@ -473,6 +473,10 @@ void vtkFetchMIQueryTermWidget::CreateWidget ( )
   this->ClearSelectedButton->SetImageToIcon ( this->FetchMIIcons->GetDeleteSelectedIcon() );
   this->ClearSelectedButton->SetBalloonHelpString ( "Clear selected (non-essential) terms from list" );
 
+  vtkKWLabel *l1 = vtkKWLabel::New();
+  l1->SetParent ( f2 );
+  l1->Create();
+  l1->SetText ( "  Refresh Query:" );
   this->RefreshButton = vtkKWPushButton::New();
   this->RefreshButton->SetParent (f2);
   this->RefreshButton->Create();
@@ -481,6 +485,10 @@ void vtkFetchMIQueryTermWidget::CreateWidget ( )
   this->RefreshButton->SetImageToIcon ( this->FetchMIIcons->GetRefreshServerIcon() );
   this->RefreshButton->SetBalloonHelpString ( "Re-query current server for new tags" );
 
+  vtkKWLabel *l2 = vtkKWLabel::New();
+  l2->SetParent ( f2 );
+  l2->Create();
+  l2->SetText ( "Query Server:" );
   this->SearchButton = vtkKWPushButton::New();
   this->SearchButton->SetParent (f2);
   this->SearchButton->Create();
@@ -502,8 +510,10 @@ void vtkFetchMIQueryTermWidget::CreateWidget ( )
                 this->DeselectAllButton->GetWidgetName(),
                 this->ClearSelectedButton->GetWidgetName(),
                 this->ClearAllButton->GetWidgetName() );
-  this->Script ("pack %s %s -side left -anchor w  -expand n -padx 2 -pady 2",
+  this->Script ("pack %s %s %s %s -side left -anchor w  -expand n -padx 2 -pady 2",
+                l2->GetWidgetName(),
                 this->SearchButton->GetWidgetName(),
+                l1->GetWidgetName(),
                 this->RefreshButton->GetWidgetName() );
   this->Script ("pack %s -side right -anchor w -expand n -padx 2 -pady 2",
                 this->HelpButton->GetWidgetName() );
@@ -533,6 +543,8 @@ void vtkFetchMIQueryTermWidget::CreateWidget ( )
   this->GetMultiColumnList()->GetWidget()->SetHeight ( 22 );
   this->Script ( "pack %s -side top -fill x -pady 0 -expand n", this->GetMultiColumnList()->GetWidgetName() );
 
+  l1->Delete();
+  l2->Delete();
   f1->Delete();
   f2->Delete();
   f3->Delete();
@@ -680,6 +692,10 @@ void vtkFetchMIQueryTermWidget::AddNewTagForQuery ( const char *keyword, std::ve
         }
       }
     }
+
+  //--- if there is a SlicerDataType attribute, make sure that "MRML" is
+  //--- one of its attributes -- and select it.
+  
   tagValues->Delete();
 
 }

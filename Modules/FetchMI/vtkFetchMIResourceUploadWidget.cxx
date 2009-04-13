@@ -951,6 +951,10 @@ void vtkFetchMIResourceUploadWidget::CreateWidget ( )
   this->ShowTagsForAllButton->SetImageToIcon ( this->FetchMIIcons->GetShowDataTagsIcon() );
   this->ShowTagsForAllButton->SetBalloonHelpString ( "Show all tags describing scene and data" );
 
+  vtkKWLabel *l1 = vtkKWLabel::New();
+  l1->SetParent ( f2 );
+  l1->Create();
+  l1->SetText ( "  Apply, Remove & View Tags:" );
   this->ApplyTagsButton = vtkKWPushButton::New();
   this->ApplyTagsButton->SetParent ( f2 );
   this->ApplyTagsButton->Create();
@@ -967,6 +971,10 @@ void vtkFetchMIResourceUploadWidget::CreateWidget ( )
   this->RemoveTagsButton->SetImageToIcon ( this->FetchMIIcons->GetRemoveTagsIcon() );
   this->RemoveTagsButton->SetBalloonHelpString ( "Remove this tag from selected datasets" );
 
+  vtkKWLabel *l2 = vtkKWLabel::New();
+  l2->SetParent ( f2 );
+  l2->Create();
+  l2->SetText ( "  Upload:" );
   this->UploadButton = vtkKWPushButton::New();
   this->UploadButton->SetParent ( f3 );
   this->UploadButton->Create();
@@ -988,11 +996,13 @@ void vtkFetchMIResourceUploadWidget::CreateWidget ( )
   this->Script ("pack %s %s -side left -anchor w -expand n -padx 2 -pady 2",
                 this->SelectAllButton->GetWidgetName(),
                 this->DeselectAllButton->GetWidgetName() );
-  this->Script ("pack %s %s %s -side left -anchor w -expand n -padx 2 -pady 2",
+  this->Script ("pack %s %s %s %s -side left -anchor w -expand n -padx 2 -pady 2",
+                l1->GetWidgetName(),
                 this->ApplyTagsButton->GetWidgetName(),
                 this->RemoveTagsButton->GetWidgetName(),
                 this->ShowTagsForAllButton->GetWidgetName() );
-  this->Script ("pack %s -side left -anchor w -expand n -padx 2 -pady 2",
+  this->Script ("pack %s %s -side left -anchor w -expand n -padx 2 -pady 2",
+                l2->GetWidgetName(),
                 this->UploadButton->GetWidgetName() );
   this->Script ("pack %s -side right -anchor w -expand n -padx 2 -pady 2",
                 this->TaggingHelpButton->GetWidgetName() );
@@ -1035,6 +1045,8 @@ void vtkFetchMIResourceUploadWidget::CreateWidget ( )
   this->Script ( "pack %s -side top -fill x -pady 0 -expand n", this->GetMultiColumnList()->GetWidgetName() );
 
   topFrame->Delete();
+  l1->Delete();
+  l2->Delete();
   f1->Delete();
   f2->Delete();
   f3->Delete();

@@ -124,8 +124,9 @@ vtkFetchMIGUI::vtkFetchMIGUI()
   this->TagViewer = NULL;
   this->Notebook = NULL;
   this->SetGUIWidth(-1);
-  
+  this->LazyBuild = 1;
 //  this->DebugOn();
+
 }
 
 //----------------------------------------------------------------------------
@@ -214,14 +215,25 @@ vtkFetchMIGUI::~vtkFetchMIGUI()
 
     this->UpdatingMRML = 0;
     this->UpdatingGUI = 0;
-
+    
     this->Logic = NULL;
     vtkSetAndObserveMRMLNodeMacro( this->FetchMINode, NULL );
 }
 
+
+
 //----------------------------------------------------------------------------
 void vtkFetchMIGUI::Enter()
 {
+  if ( this->Built == false )
+    {
+    this->BuildGUI();
+    this->Built = true;
+    this->AddObserver ( vtkSlicerModuleGUI::ModuleSelectedEvent, (vtkCommand *)this->ApplicationGUI->GetGUICallbackCommand() );
+    }
+  this->AddGUIObservers();
+  this->CreateModuleEventBindings();
+
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   if ( app )
     {
@@ -245,6 +257,10 @@ void vtkFetchMIGUI::Enter()
 //----------------------------------------------------------------------------
 void vtkFetchMIGUI::Exit ( )
 {
+
+  this->RemoveGUIObservers();
+  this->ReleaseModuleEventBindings();
+
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   if ( app )
     {
@@ -295,10 +311,12 @@ void vtkFetchMIGUI::TearDownGUI ( )
     {
     this->TagViewer->UnBind();
     }
+  this->RemoveObservers ( vtkSlicerModuleGUI::ModuleSelectedEvent, (vtkCommand *)this->ApplicationGUI->GetGUICallbackCommand() );
   this->QueryList->RemoveWidgetObservers();
   this->ResourceList->RemoveWidgetObservers();
   this->TaggedDataList->RemoveWidgetObservers();
   this->RemoveGUIObservers ( );
+  this->ReleaseModuleEventBindings();
   this->Logic->SetFetchMINode ( NULL );
   this->SetLogic ( NULL );
   this->ResourceList->SetMRMLScene( NULL );
@@ -350,6 +368,11 @@ void vtkFetchMIGUI::LoadTclPackage ( )
 //---------------------------------------------------------------------------
 void vtkFetchMIGUI::AddGUIObservers ( ) 
 {
+  if ( !this->Built )
+    {
+    return;
+    }
+  
   this->QueryList->AddWidgetObservers();
   this->QueryList->AddObserver(vtkFetchMIQueryTermWidget::TagChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->QueryList->AddObserver(vtkFetchMIQueryTermWidget::QuerySubmittedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -372,6 +395,11 @@ void vtkFetchMIGUI::AddGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkFetchMIGUI::RemoveGUIObservers ( )
 {
+  if ( !this->Built )
+    {
+    return;
+    }
+
   this->QueryList->RemoveWidgetObservers();
   this->QueryList->RemoveObservers(vtkFetchMIQueryTermWidget::TagChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->QueryList->RemoveObservers(vtkFetchMIQueryTermWidget::QuerySubmittedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -2291,6 +2319,8 @@ void vtkFetchMIGUI::BuildGUI ( )
   this->Logic->InitializeInformatics();
   this->InitializeSceneTable();
   this->LoadTclPackage();
+  this->Init();
+  this->Built = true;
 }
 
 
