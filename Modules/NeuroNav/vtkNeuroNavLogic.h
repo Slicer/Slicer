@@ -121,11 +121,11 @@ public:
   vtkMRMLModelNode* AddLocatorModel(const char* nodeName, double r, double g, double b);
 
   void UpdateDisplay(int sliceNo1, int sliceNo2, int sliceNo3);
-  void GetCurrentPosition( float *px, float *py, float *pz);
+  void GetCurrentPosition(double *px, double *py, double *pz);
   void UpdateTransformNodeByName(const char *name);
   int PerformPatientToImageRegistration();
 
-  void UpdateFiducialSeeding(const char *name);
+  void UpdateFiducialSeeding(const char *name, double offset);
 
 protected:
 

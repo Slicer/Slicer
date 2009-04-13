@@ -95,6 +95,8 @@ public:
                            unsigned long eid, void *clientData, void *callData);
 
   //ETX
+  void TransformChangedCallback(double);
+  void TransformChangingCallback(double);
 
 protected:
   vtkNeuroNavGUI ( );
@@ -137,7 +139,7 @@ protected:
   // Module logic and mrml pointers
   vtkNeuroNavLogic *Logic;
 
-  // Access the slice windows
+  vtkKWScaleWithEntry *TranslationScale;
 
 private:
   vtkNeuroNavGUI ( const vtkNeuroNavGUI& ); // Not implemented.

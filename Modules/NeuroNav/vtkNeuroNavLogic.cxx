@@ -184,7 +184,7 @@ vtkMRMLModelNode* vtkNeuroNavLogic::AddLocatorModel(const char* nodeName, double
 
 
 
-void vtkNeuroNavLogic::GetCurrentPosition(float *px, float *py, float *pz)
+void vtkNeuroNavLogic::GetCurrentPosition(double *px, double *py, double *pz)
 {
   *px = 0.0;
   *py = 0.0;
@@ -234,11 +234,12 @@ void vtkNeuroNavLogic::UpdateTransformNodeByName(const char *name)
 }
 
 
-void vtkNeuroNavLogic::UpdateFiducialSeeding(const char *name)
+void vtkNeuroNavLogic::UpdateFiducialSeeding(const char *name, double offset)
 {
   if (name)
     {
-    this->GetApplicationLogic()->GetMRMLScene()->SaveStateForUndo();
+    // The following line causes memory leaking.
+    // this->GetApplicationLogic()->GetMRMLScene()->SaveStateForUndo();
 
     vtkMRMLScene* scene = this->GetApplicationLogic()->GetMRMLScene();
     vtkCollection* collection = scene->GetNodesByName(name);
@@ -255,8 +256,18 @@ void vtkNeuroNavLogic::UpdateFiducialSeeding(const char *name)
       vtkErrorMacro("NeuroNavLogic: The fiducial list node doesn't exist.");
       return;
       }
-    float x, y, z;
+
+    double x, y, z;
     this->GetCurrentPosition(&x, &y, &z);
+    if (offset != 0.0)
+      {
+      double len = sqrt(x*x + y*y + z*z);
+      double r = (len + offset) / len;
+      x = r*x;
+      y = r*y;
+      z = r*z;
+      }
+
     flist->SetNthFiducialXYZ(0, x, y, z); 
     }
 }

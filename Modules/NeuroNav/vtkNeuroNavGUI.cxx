@@ -101,6 +101,8 @@ vtkNeuroNavGUI::vtkNeuroNavGUI ( )
 
   this->CloseScene = false;
   this->TimerFlag = 0;
+
+  this->TranslationScale = NULL;
 }
 
 
@@ -235,6 +237,13 @@ vtkNeuroNavGUI::~vtkNeuroNavGUI ( )
     {
     this->ResetPushButton->SetParent(NULL );
     this->ResetPushButton->Delete ( );
+    }
+
+  if (this->TranslationScale)
+    {
+    this->TranslationScale->SetParent(NULL);
+    this->TranslationScale->Delete();
+    this->TranslationScale = NULL;
     }
 
   this->SetModuleLogic ( NULL );
@@ -475,7 +484,7 @@ void vtkNeuroNavGUI::ProcessGUIEvents ( vtkObject *caller,
     if (this->GetPatCoordinatesPushButton == vtkKWPushButton::SafeDownCast(caller) 
         && event == vtkKWPushButton::InvokedEvent)
       {
-      float px, py, pz;
+      double px, py, pz;
       char value[50];
       this->GetLogic()->GetCurrentPosition(&px, &py, &pz);
       sprintf(value, "%6.2f  %6.2f  %6.2f", px, py, pz);
@@ -728,7 +737,8 @@ void vtkNeuroNavGUI::ProcessTimerEvents()
     if (checked)
     {
     const char *nodeName2 = this->FiducialListNodeNameEntry->GetWidget()->GetValue();
-    this->GetLogic()->UpdateFiducialSeeding(nodeName2);
+    double offset = this->TranslationScale->GetValue();
+    this->GetLogic()->UpdateFiducialSeeding(nodeName2, offset);
     }
  
     vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(), 
@@ -1087,6 +1097,20 @@ void vtkNeuroNavGUI::BuildGUIForTrackingFrame ()
                "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
                this->FiducialListNodeNameEntry->GetWidgetName());
 
+  this->TranslationScale =  vtkKWScaleWithEntry::New() ;
+  this->TranslationScale->SetParent( tractographyFrame->GetFrame() );
+  this->TranslationScale->Create();
+  this->TranslationScale->SetLabelText("Fiducial Translation: ");
+  this->TranslationScale->SetWidth ( 40 );
+  this->TranslationScale->SetLabelWidth(30);
+  this->TranslationScale->SetRange(-20, 20);
+  this->TranslationScale->SetStartCommand(this, "TransformChangingCallback");
+  this->TranslationScale->SetCommand(this, "TransformChangingCallback");
+  this->TranslationScale->SetEndCommand(this, "TransformChangedCallback");
+  this->TranslationScale->SetEntryCommand(this, "TransformChangedCallback");
+  this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 3", 
+          this->TranslationScale->GetWidgetName());
+
   this->TractographyCheckButton = vtkKWCheckButton::New();
   this->TractographyCheckButton->SetParent(tractographyFrame->GetFrame());
   this->TractographyCheckButton->Create();
@@ -1199,5 +1223,17 @@ void vtkNeuroNavGUI::BuildGUIForTrackingFrame ()
   driverFrame->Delete();
   modeFrame->Delete();
   sliceFrame->Delete();
+}
+
+
+void vtkNeuroNavGUI::TransformChangedCallback(double)
+{
+//    cout << "Transform changed.\n";
+}
+
+
+void vtkNeuroNavGUI::TransformChangingCallback(double)
+{
+//    cout << "Transform changing.\n";
 }
 
