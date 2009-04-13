@@ -84,6 +84,7 @@ if(Slicer3_USE_PYTHON)
     install(DIRECTORY
       "${PYTHON_DIR}/"
       DESTINATION lib/Python
+      USE_SOURCE_PERMISSIONS
       )
   endif(EXISTS "${PYTHON_DIR}")
 endif(Slicer3_USE_PYTHON)
