@@ -93,6 +93,74 @@ vtkDiffusionTensorMathematicsSimple::vtkDiffusionTensorMathematicsSimple()
      }     
  }
 
+//----------------------------------------------------------------------------     
+const char *vtkDiffusionTensorMathematicsSimple::GetOperationAsString()
+{
+
+  switch (this->Operation)
+    {
+    case VTK_TENS_TRACE: return ("Trace");
+    case VTK_TENS_DETERMINANT: return ("Determinant");
+    case VTK_TENS_RELATIVE_ANISOTROPY: return ("Relative Anisotropy");
+    case VTK_TENS_FRACTIONAL_ANISOTROPY: return ("Fractional Anisotropy");
+    case VTK_TENS_MAX_EIGENVALUE: return ("Maximum Eigenvalue");
+    case VTK_TENS_MID_EIGENVALUE: return ("Middle Eigenvalue");
+    case VTK_TENS_MIN_EIGENVALUE: return ("Minimum Eigenvalue");
+    case VTK_TENS_LINEAR_MEASURE: return ("Linear Measure");
+    case VTK_TENS_PLANAR_MEASURE: return ("Planar Measure");
+    case VTK_TENS_SPHERICAL_MEASURE: return ("Spherical Measure");
+    case VTK_TENS_COLOR_ORIENTATION: return ("Color by Orientation");
+    case VTK_TENS_D11: return ("D11");
+    case VTK_TENS_D22: return ("D22");
+    case VTK_TENS_D33: return ("D33");
+    case VTK_TENS_MODE: return ("Mode");
+    case VTK_TENS_COLOR_MODE: return ("Color by Mode");
+    case VTK_TENS_MAX_EIGENVALUE_PROJX: return ("Maximum Eigenvalue Projection X");
+    case VTK_TENS_MAX_EIGENVALUE_PROJY: return ("Maximum Eigenvalue Projection Y");
+    case VTK_TENS_MAX_EIGENVALUE_PROJZ: return ("Maximum Eigenvalue Projection Z");
+    case VTK_TENS_RAI_MAX_EIGENVEC_PROJX: return ("Relative Anisotropy Maximum Eigenvalue Projection X");
+    case VTK_TENS_RAI_MAX_EIGENVEC_PROJY: return ("Relative Anisotropy Maximum Eigenvalue Projection Y");
+    case VTK_TENS_RAI_MAX_EIGENVEC_PROJZ: return ("Relative Anisotropy Maximum Eigenvalue Projection Z");
+    case VTK_TENS_PARALLEL_DIFFUSIVITY: return ("Parallel Diffusivity");
+    case VTK_TENS_PERPENDICULAR_DIFFUSIVITY: return ("Perpendicular Diffusivity");
+    }
+  return "Unknown";
+}
+
+//----------------------------------------------------------------------------     
+const char *vtkDiffusionTensorMathematicsSimple::GetOperationAsAbbreviatedString()
+{
+
+  switch (this->Operation)
+    {
+    case VTK_TENS_TRACE: return ("Tr");
+    case VTK_TENS_DETERMINANT: return ("Det");
+    case VTK_TENS_RELATIVE_ANISOTROPY: return ("RA");
+    case VTK_TENS_FRACTIONAL_ANISOTROPY: return ("FA");
+    case VTK_TENS_MAX_EIGENVALUE: return ("MaxE");
+    case VTK_TENS_MID_EIGENVALUE: return ("MidE");
+    case VTK_TENS_MIN_EIGENVALUE: return ("MinE");
+    case VTK_TENS_LINEAR_MEASURE: return ("Lin");
+    case VTK_TENS_PLANAR_MEASURE: return ("Pla");
+    case VTK_TENS_SPHERICAL_MEASURE: return ("Sph");
+    case VTK_TENS_COLOR_ORIENTATION: return ("CBO");
+    case VTK_TENS_D11: return ("D11");
+    case VTK_TENS_D22: return ("D22");
+    case VTK_TENS_D33: return ("D33");
+    case VTK_TENS_MODE: return ("Mode");
+    case VTK_TENS_COLOR_MODE: return ("CBM");
+    case VTK_TENS_MAX_EIGENVALUE_PROJX: return ("MxEX");
+    case VTK_TENS_MAX_EIGENVALUE_PROJY: return ("MxEY");
+    case VTK_TENS_MAX_EIGENVALUE_PROJZ: return ("MxEZ");
+    case VTK_TENS_RAI_MAX_EIGENVEC_PROJX: return ("RMxEX");
+    case VTK_TENS_RAI_MAX_EIGENVEC_PROJY: return ("RMxEY");
+    case VTK_TENS_RAI_MAX_EIGENVEC_PROJZ: return ("RMxEZ");
+    case VTK_TENS_PARALLEL_DIFFUSIVITY: return ("ParD");
+    case VTK_TENS_PERPENDICULAR_DIFFUSIVITY: return ("PerpD");
+    }
+  return "Unknown";
+}
+
 //----------------------------------------------------------------------------
 int vtkDiffusionTensorMathematicsSimple::RequestInformation (
   vtkInformation * vtkNotUsed(request),

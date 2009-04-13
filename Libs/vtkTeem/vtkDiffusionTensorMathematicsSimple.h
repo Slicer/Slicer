@@ -43,6 +43,8 @@ public:
   vtkGetMacro(Operation,int);
   vtkSetClampMacro(Operation,int, VTK_TENS_TRACE, VTK_TENS_PERPENDICULAR_DIFFUSIVITY);
 
+  const char *GetOperationAsString();
+  const char *GetOperationAsAbbreviatedString();
 
   // Operation options.
   //BTX

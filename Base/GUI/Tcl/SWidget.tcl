@@ -258,7 +258,8 @@ itcl::body SWidget::getTensorPixel { node i j k } {
     $o(dtiPixelImage) SetDimensions 1 1 1
     $o(dtiPixelImage) AllocateScalars
     $o(dtiPixelTensors) SetNumberOfComponents 9
-    $o(dtiPixelTensors) Allocate 1 0
+    $o(dtiPixelTensors) SetNumberOfTuples 1 
+    $o(dtiPixelTensors) Allocate 9 0
     [$o(dtiPixelImage) GetPointData] SetTensors $o(dtiPixelTensors)
     $o(dtiMath) SetInput $o(dtiPixelImage)
   }
@@ -269,12 +270,26 @@ itcl::body SWidget::getTensorPixel { node i j k } {
 
   foreach "w h d" [$tensorImage GetDimensions] {}
   set sliceSize [expr $w * $h]
+  set volSize [expr $d * $sliceSize]
   set idx [expr $i + $j*$w + $k*$sliceSize]
+
+  if { $idx < 0 || $idx >= $volSize } {
+    return "Out of Frame"
+  }
+
   set tensor [$tensors GetTuple9 $idx]
   eval $o(dtiPixelTensors) SetTuple9  0 $tensor
+
+  $o(dtiPixelImage) Modified
   $o(dtiMath) SetOperation [$displayNode GetScalarInvariant]
   $o(dtiMath) Update
-  set pixel [[[[$o(dtiMath) GetOutput] GetPointData] GetScalars] GetTuple1 0]
+  set outImage [$o(dtiMath) GetOutput]
+  set numComps [$outImage GetNumberOfScalarComponents]
+  set pixel ""
+  if { $numComps == 1 } {
+    lappend pixel [$outImage GetScalarComponentAsDouble 0 0 0 0]
+  }
+  lappend pixel [$o(dtiMath) GetOperationAsAbbreviatedString]
   return $pixel
 }
 
