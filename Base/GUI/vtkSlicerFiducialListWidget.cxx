@@ -63,7 +63,7 @@ public:
         {
         this->FiducialList->GetScene()->SaveStateForUndo(this->FiducialList);
         }
-      }
+      }    
     // only update the position if it's an interaction event
     else if (event == vtkCommand::InteractionEvent)
       {
@@ -104,6 +104,14 @@ public:
           transformToWorld->Delete();
           transformToWorld = NULL;
           }
+        else
+          {
+          std::cerr << "No fiducial list defined for this point widget! id = '" << FiducialID << "', event = " << event << "\n";
+          }
+        }
+      else
+        {
+        std::cerr << "No point widget defined for this point widget callback! id = '" << FiducialID << "', event = " << event << "\n";
         }
       }
   }
@@ -633,7 +641,6 @@ void vtkSlicerFiducialListWidget::ProcessWidgetEvents ( vtkObject *caller,
         vtkSlicerFiducialsLogic *fidLogic  = vtkSlicerFiducialsGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Fiducials"))->GetLogic();
         int modelIndex = fidLogic->AddFiducialSelected(rasPoint[0], rasPoint[1], rasPoint[2], 1);
         // swallow the event
-        vtkDebugMacro("Fiducial List Widget dealt with the Pick, added fiducial at index " << modelIndex << ", setting my gui call back command abort flag so that the interactor style will stop passing the event along, event = " << event);
         if (this->GUICallbackCommand != NULL)
           {
             
@@ -1126,7 +1133,7 @@ void vtkSlicerFiducialListWidget::UpdateFiducialsFromMRML()
   // Render
   if (this->ViewerWidget != NULL)
     {
-    this->ViewerWidget->RequestRender();
+    this->RequestRender();
     }
 }
 
@@ -1181,7 +1188,6 @@ void vtkSlicerFiducialListWidget::UpdateFiducialListFromMRML(vtkMRMLFiducialList
     int actorExists = 0;
     // a flag set when a point widget is found in the DisplayedPointWidgets map
     int pointWidgetExists = 0;
-
    
     // first get the list's transform node
     vtkMRMLTransformNode* tnode = flist->GetParentTransformNode();
@@ -1208,7 +1214,10 @@ void vtkSlicerFiducialListWidget::UpdateFiducialListFromMRML(vtkMRMLFiducialList
         {
         // clear out the points list
         this->GlyphPointsMap[id]->SetNumberOfPoints(0);
-        this->GlyphScalarsMap[id]->SetNumberOfTuples(0);
+        if (this->GlyphScalarsMap[id]->GetNumberOfTuples() != flist->GetNumberOfFiducials())
+          {
+          this->GlyphScalarsMap[id]->SetNumberOfTuples(0);
+          }
         }    
       
       // make sure that we've got the right glyph for the 3d case
@@ -1277,11 +1286,13 @@ void vtkSlicerFiducialListWidget::UpdateFiducialListFromMRML(vtkMRMLFiducialList
           // no actor, allocate vars and set up the pipeline
           actor = vtkFollower::New();              
           actor->SetMapper ( this->GlyphMapperMap[id] );
+          
           if (mainViewer)
             {
             mainViewer->AddViewProp ( actor );
             }
-          }                        
+          }
+        /*
         // reset the fid list glyph actor's colours
         vtkLookupTable::SafeDownCast(actor->GetMapper()->GetLookupTable())->SetTableValue(0, unselectedColor[0],
                                                                                           unselectedColor[1],
@@ -1294,7 +1305,7 @@ void vtkSlicerFiducialListWidget::UpdateFiducialListFromMRML(vtkMRMLFiducialList
                                                                                           1.0);
         // the last entry has an opacity of 0 for turning the glyph invisible
         vtkLookupTable::SafeDownCast(actor->GetMapper()->GetLookupTable())->SetTableValue(2, 0.0, 0.0, 0.0, 0.0);
-       
+        */        
         } // end of glyph3d != NULL
 
       // do the updates for each point, point position, scalar map, text actor
@@ -1483,7 +1494,7 @@ void vtkSlicerFiducialListWidget::UpdateFiducialListFromMRML(vtkMRMLFiducialList
         }
       else
         {
-        vtkWarningMacro("UpdateFiducialsFromMRML: New fid widget: Not updating interactor size, main viewer is null");
+        vtkDebugMacro("UpdateFiducialsFromMRML: New fid widget: Not updating interactor size, main viewer is null");
         }
 
          
@@ -1505,7 +1516,8 @@ void vtkSlicerFiducialListWidget::UpdateFiducialListFromMRML(vtkMRMLFiducialList
       this->DisplayedPointWidgets[fid] = pointWidget;
       }
     this->UpdatePointWidget(flist, fid.c_str());
-      }
+      }   
+    
     transformToWorld->Delete();
     transformToWorld = NULL;
 }
@@ -1908,7 +1920,6 @@ void vtkSlicerFiducialListWidget::SetFiducialDisplayProperty(vtkMRMLFiducialList
       textActor->SetVisibility(flist->GetNthFiducialVisibility(n));
       }
     }
-
   transformToWorld->Delete();
   transformToWorld = NULL;
   
