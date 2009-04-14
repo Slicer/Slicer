@@ -163,7 +163,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
     func->Build();
     }
 
-  delete procNodeID;
+  delete [] procNodeID;
   procNode->Delete();
   
   // add freesurfer nodes
