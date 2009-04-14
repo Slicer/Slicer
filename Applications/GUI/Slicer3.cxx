@@ -1873,7 +1873,7 @@ int Slicer3_main(int argc, char *argv[])
     res = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
     }
 
-  if ( !NoModules )
+  if ( !NoModules && !TestMode )
     {
     //--- set home module based on registry settings
     const char *homeModule = slicerApp->GetHomeModule();
