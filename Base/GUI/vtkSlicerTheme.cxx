@@ -265,6 +265,10 @@ void vtkSlicerTheme::Install ( )
   // vtkKWMessageDialogs and 
   // vtkKWWizardDialogs.
   odb->AddEntryAsInt ( "vtkKWDialog", "SetModal", 1 );
+  odb->AddEntryAsInt ( "vtkKWLoadSaveDialog", "SetModal", 1 );
+  odb->AddEntryAsInt ( "vtkKWMessageDialog", "SetModal", 1 );
+  odb->AddEntryAsInt ( "vtkKWSaveImageDialog", "SetModal", 1 );
+  odb->AddEntryAsInt ( "vtkKWSimpleEntryDialog", "SetModal", 1 );
 
   // Slicer MultiColumnLists
   // font

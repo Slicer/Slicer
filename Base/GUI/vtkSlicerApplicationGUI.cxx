@@ -151,7 +151,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
 
   //--- Save and load scene dialogs, widgets
   this->LoadSceneDialog = vtkKWLoadSaveDialog::New();
-
+  
   this->SaveDataWidget = vtkSlicerMRMLSaveDataWidget::New();
 
   this->ModulesWizardDialog = NULL;
@@ -344,6 +344,7 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
   progressDialog->SetMasterWindow( this->MainSlicerWindow );
   progressDialog->SetDisplayPositionToMasterWindowCenter();
   progressDialog->Create();
+  progressDialog->ModalOn();
 
   if ( fileName ) 
     {
@@ -396,6 +397,8 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
       std::string msg = this->GetMRMLScene()->GetErrorMessage();
       dialog->SetText(msg.c_str());
       dialog->Create ( );
+      dialog->SetMasterWindow( this->MainSlicerWindow );
+      dialog->ModalOn();
       dialog->Invoke();
       dialog->Delete();
       }
@@ -440,6 +443,7 @@ void vtkSlicerApplicationGUI::ProcessImportSceneCommand()
   progressDialog->SetParent( this->MainSlicerWindow );
   progressDialog->SetMasterWindow( this->MainSlicerWindow );
   progressDialog->Create();
+  progressDialog->ModalOn();
 
   this->LoadSceneDialog->Invoke();
   // If a file has been selected for loading...
@@ -472,6 +476,8 @@ void vtkSlicerApplicationGUI::ProcessImportSceneCommand()
       std::string msg = this->GetMRMLScene()->GetErrorMessage();
       dialog->SetText(msg.c_str());
       dialog->Create ( );
+      dialog->SetMasterWindow( this->MainSlicerWindow );
+      dialog->ModalOn();
       dialog->Invoke();
       dialog->Delete();
       }
@@ -510,6 +516,8 @@ void vtkSlicerApplicationGUI::ProcessCloseSceneCommand()
   dialog->SetStyleToOkCancel();
   dialog->SetText("Are you sure you want to close the scene?");
   dialog->Create ( );
+  dialog->SetMasterWindow( this->MainSlicerWindow );
+  dialog->ModalOn();
   if (dialog->Invoke())
     {
     if (this->GetMRMLScene()) 
@@ -787,6 +795,7 @@ void vtkSlicerApplicationGUI::ShowModulesWizard()
     this->ModulesWizardDialog->SetMasterWindow( this->MainSlicerWindow );
     this->ModulesWizardDialog->SetApplication( this->GetApplication() );
     this->ModulesWizardDialog->Create();
+    this->ModulesWizardDialog->ModalOn();
     }
 
   this->ModulesWizardDialog->Invoke();  
@@ -1415,6 +1424,8 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             
   this->LoadSceneDialog->SetParent ( this->MainSlicerWindow );
   this->LoadSceneDialog->Create ( );
+  this->LoadSceneDialog->SetMasterWindow( this->MainSlicerWindow );
+  this->LoadSceneDialog->ModalOn();
   this->LoadSceneDialog->SetFileTypes("{ {Scenes} {.mrml .xml .xcat} } { {MRML Scene} {.mrml} } { {Slicer2 Scene} {.xml} } { {Xcede Catalog} {.xcat} } { {All} {.*} }");
   this->LoadSceneDialog->RetrieveLastPathFromRegistry("OpenPath");
 

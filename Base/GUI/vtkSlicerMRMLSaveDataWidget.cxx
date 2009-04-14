@@ -1243,6 +1243,7 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
   this->SaveDialog->SetTitle("Save Scene and Unsaved Data");
   this->SaveDialog->SetSize(400, 200);
   this->SaveDialog->Create ( );
+  this->SaveDialog->ModalOn();
 
   // Data Frame
   vtkKWFrameWithLabel *dataFrame = vtkKWFrameWithLabel::New ( );
