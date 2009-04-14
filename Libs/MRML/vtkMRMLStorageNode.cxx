@@ -509,11 +509,46 @@ int vtkMRMLStorageNode::FileNameIsInList(const char *fileName)
 {
   
   std::string fname = std::string(fileName);
+  bool fileNameIsRelative =  this->Scene->IsFilePathRelative(fileName);
   for (unsigned int i = 0; i < this->FileNameList.size(); i++)
     {
-    if (fname.compare(this->FileNameList[i]) == 0)
+    std::string thisFile = this->FileNameList[i];
+    bool thisFileIsRelative = this->Scene->IsFilePathRelative(thisFile.c_str());
+    // make sure we're comparing apples to apples
+    if (fileNameIsRelative != thisFileIsRelative)
       {
-      return 1;
+      std::string rel1, rel2;
+      const char *rootDir = this->Scene->GetRootDirectory();
+      vtkDebugMacro("WARNING: trying to determine if file " << fileName << " is already in the list and comparing against " << thisFile.c_str() << ", they have mismatched absolute/relative paths. Using scene root dir to disambiguate: " << rootDir);
+      if (fileNameIsRelative)
+        {
+        rel1 = std::string(fileName);
+        }
+      else
+        {
+        rel1 = vtksys::SystemTools::RelativePath(rootDir, fileName);
+        }
+      if (thisFileIsRelative)
+        {
+        rel2 = thisFile;
+        }
+      else
+        {
+        rel2 = vtksys::SystemTools::RelativePath(rootDir, thisFile.c_str());
+        }
+        
+      vtkDebugMacro("\tComparing " << rel1 << " and " << rel2);
+      if (rel1.compare(rel2) == 0)
+        {
+        return 1;
+        }
+      }
+    else
+      {
+      if (fname.compare(this->FileNameList[i]) == 0)
+        {
+        return 1;
+        }
       }
     }
   return 0;
