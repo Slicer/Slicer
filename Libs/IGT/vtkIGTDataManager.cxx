@@ -24,7 +24,11 @@ vtkIGTDataManager::vtkIGTDataManager()
 
 vtkIGTDataManager::~vtkIGTDataManager()
 {
-
+  if (this->MRMLScene)
+    {
+    this->MRMLScene->Delete();
+    this->MRMLScene = NULL;
+    }
 }
 
 
