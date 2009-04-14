@@ -244,8 +244,22 @@ vtkProstateNavGUI::~vtkProstateNavGUI ( )
 
   if (this->WizardWidget)
     {
+    this->WizardWidget->SetParent(NULL);
     this->WizardWidget->Delete();
     this->WizardWidget = NULL;
+    }
+
+  if ( this->WizardSteps )
+    {
+    for (int i = 0; i < vtkProstateNavLogic::NumPhases; i ++)
+      {
+      if ( this->WizardSteps[i] != NULL )
+        {
+        this->WizardSteps[i]->Delete();
+        this->WizardSteps[i] = NULL;
+        }
+      }
+    delete [] this->WizardSteps;
     }
 
   this->SetModuleLogic ( NULL );
