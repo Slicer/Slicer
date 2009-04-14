@@ -53,6 +53,10 @@ class vtkTransform;
 class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
 {
  public:
+  
+  virtual void Register(vtkObject *o) { Superclass::Register(o); };
+  virtual void UnRegister(vtkObject *o) { Superclass::UnRegister(o); };
+
   //BTX
   enum {
     SLICE_PLANE_RED    = 0,
@@ -104,6 +108,10 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
   // Description:    
   // This method builds the IGTDemo module GUI
   virtual void BuildGUI ( );
+
+  // Description:    
+  // This method builds the IGTDemo module GUI
+  virtual void TearDownGUI ( );
   
   // Description:
   // Add/Remove observers on widgets in the GUI

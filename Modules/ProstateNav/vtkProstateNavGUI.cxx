@@ -299,7 +299,7 @@ vtkProstateNavGUI::~vtkProstateNavGUI ( )
   if (this->StopScanButton)
     {
     this->StopScanButton->SetParent(NULL);
-    this->StartScanButton->Delete();
+    this->StopScanButton->Delete();
     }
 
   if ( this->ImagingMenu )
@@ -934,6 +934,18 @@ void vtkProstateNavGUI::BuildGUI ( )
 
 }
 
+//---------------------------------------------------------------------------
+void vtkProstateNavGUI::TearDownGUI ( )
+{
+  // disconnect circular references so destructor can be called
+  
+  this->GetLogic()->SetGUI(NULL);
+  for (int i = 0; i < vtkProstateNavLogic::NumPhases-1; i ++)
+    {
+    this->WizardSteps[i]->SetGUI(NULL);
+    this->WizardSteps[i]->SetLogic(NULL);
+    }
+}
 
 //---------------------------------------------------------------------------
 void vtkProstateNavGUI::BuildGUIForWizardFrame()
