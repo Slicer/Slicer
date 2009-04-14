@@ -29,8 +29,9 @@
 #include "vtkSmartPointer.h"
 #include "vtkTimerLog.h"
 
-#include "vtkNRRDReader.h"
-#include "vtkNRRDWriter.h"
+#include "vtkITKArchetypeImageSeriesReader.h"
+#include "vtkITKArchetypeImageSeriesScalarReader.h"
+#include "vtkITKImageWriter.h"
 #include "vtkImageData.h"
 #include "ImageLabelCombineCLP.h"
 
@@ -51,13 +52,20 @@ int main( int argc, char * argv[] ){
   PARSE_ARGS;
 
   // Read in label volume inputs
-  vtkNRRDReader *readerA = vtkNRRDReader::New();
-  readerA->SetFileName(InputLabelMap_A.c_str());
+  vtkITKArchetypeImageSeriesReader* readerA = vtkITKArchetypeImageSeriesScalarReader::New();
+  readerA->SetArchetype(InputLabelMap_A.c_str());
+  readerA->SetOutputScalarTypeToNative();
+  readerA->SetDesiredCoordinateOrientationToNative();
+  readerA->SetUseNativeOriginOn();
   readerA->Update();
- 
-  vtkNRRDReader *readerB = vtkNRRDReader::New();
-  readerB->SetFileName(InputLabelMap_B.c_str());
+   
+  vtkITKArchetypeImageSeriesReader* readerB = vtkITKArchetypeImageSeriesScalarReader::New();
+  readerB->SetArchetype(InputLabelMap_B.c_str());
+  readerB->SetOutputScalarTypeToNative();
+  readerB->SetDesiredCoordinateOrientationToNative();
+  readerB->SetUseNativeOriginOn();
   readerB->Update();
+
   
   // combine labels
   vtkImageLabelCombine *labelCombine = vtkImageLabelCombine::New();
@@ -67,16 +75,14 @@ int main( int argc, char * argv[] ){
   labelCombine->Update();
 
   // Output
-  vtkNRRDWriter *writer = vtkNRRDWriter::New();
+  vtkITKImageWriter *writer = vtkITKImageWriter::New();
   writer->SetFileName(OutputLabelMap.c_str());
   writer->SetInput( labelCombine->GetOutput() );
   
   if (readerA->GetRasToIjkMatrix())
     {
-    readerA->GetRasToIjkMatrix()->Invert();
-    writer->SetIJKToRASMatrix( readerA->GetRasToIjkMatrix() );
+    writer->SetRasToIJKMatrix( readerA->GetRasToIjkMatrix() );
     }
-  writer->Write();
   writer->Write();
 
   //Delete everything

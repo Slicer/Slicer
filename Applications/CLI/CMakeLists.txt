@@ -514,13 +514,6 @@ target_link_libraries (${CLP} vtkITK vtkImaging vtkGraphics vtkIO vtkTeem)
 include_directories(
   ${vtkTeem_SOURCE_DIR}  ${vtkTeem_BINARY_DIR})
 
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib vtkITK vtkImaging vtkGraphics vtkIO vtkTeem)
-include_directories(
-  ${vtkTeem_SOURCE_DIR}  ${vtkTeem_BINARY_DIR})
-
 #####################
 set (CLP ResampleVolume2)
 
@@ -636,7 +629,6 @@ if (Slicer3_SOURCE_DIR)
     LabelMapSmoothing
     LabelMapSmoothingLib
     ImageLabelCombine
-    ImageLabelCombineLib
     OrientImage
     OrientImageLib
     CheckerBoardLib

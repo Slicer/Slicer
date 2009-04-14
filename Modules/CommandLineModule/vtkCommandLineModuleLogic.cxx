@@ -708,6 +708,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     // if the file is to be written, then write it
     if (out)
       {
+      out->SetScene(this->MRMLScene);
       out->SetFileName( (*id2fn0).second.c_str() );
       if (!out->WriteData( nd ))
         {
