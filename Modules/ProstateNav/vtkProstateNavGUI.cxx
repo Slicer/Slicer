@@ -209,6 +209,7 @@ vtkProstateNavGUI::vtkProstateNavGUI ( )
 //---------------------------------------------------------------------------
 vtkProstateNavGUI::~vtkProstateNavGUI ( )
 {
+  this->RemoveGUIObservers();
 
   if (this->DataManager)
     {
@@ -226,8 +227,6 @@ vtkProstateNavGUI::~vtkProstateNavGUI ( )
     this->DataCallbackCommand->Delete();
     }
 
-  this->RemoveGUIObservers();
-
 
   //----------------------------------------------------------------
   // Workphase Frame
@@ -242,25 +241,27 @@ vtkProstateNavGUI::~vtkProstateNavGUI ( )
   //----------------------------------------------------------------
   // Wizard Frame
 
-  if (this->WizardWidget)
-    {
-    this->WizardWidget->SetParent(NULL);
-    this->WizardWidget->Delete();
-    this->WizardWidget = NULL;
-    }
 
-  if ( this->WizardSteps )
+  if ( 0 && this->WizardSteps )
     {
     for (int i = 0; i < vtkProstateNavLogic::NumPhases; i ++)
       {
       if ( this->WizardSteps[i] != NULL )
         {
-        this->WizardSteps[i]->Delete();
         this->WizardSteps[i] = NULL;
         }
       }
     delete [] this->WizardSteps;
+    this->WizardSteps = NULL;
     }
+
+  if (this->WizardWidget)
+    {
+    this->WizardWidget->SetParent(NULL);
+    //this->WizardWidget->Delete(); calling this delete causes crash - without it, just leaks
+    this->WizardWidget = NULL;
+    }
+  return;
 
   this->SetModuleLogic ( NULL );
 
@@ -328,10 +329,10 @@ vtkProstateNavGUI::~vtkProstateNavGUI ( )
 
 
   if (this->LocatorCheckButton)
-  {
-  this->LocatorCheckButton->SetParent(NULL );
-  this->LocatorCheckButton->Delete ( );
-  }
+    {
+    this->LocatorCheckButton->SetParent(NULL );
+    this->LocatorCheckButton->Delete ( );
+    }
 
 }
 
@@ -954,10 +955,13 @@ void vtkProstateNavGUI::TearDownGUI ( )
   // disconnect circular references so destructor can be called
   
   this->GetLogic()->SetGUI(NULL);
-  for (int i = 0; i < vtkProstateNavLogic::NumPhases-1; i ++)
+  for (int i = 0; i < vtkProstateNavLogic::NumPhases; i ++)
     {
-    this->WizardSteps[i]->SetGUI(NULL);
-    this->WizardSteps[i]->SetLogic(NULL);
+    if (this->WizardSteps[i])
+      {
+      this->WizardSteps[i]->SetGUI(NULL);
+      this->WizardSteps[i]->SetLogic(NULL);
+      }
     }
 }
 
@@ -1062,6 +1066,7 @@ void vtkProstateNavGUI::BuildGUIForWizardFrame()
       //                                              WorkPhaseColor[i][1],
       //                                              WorkPhaseColor[i][2]);
       wizard_workflow->AddNextStep(this->WizardSteps[i]);
+      this->WizardSteps[i]->Delete();
       }
 
 
