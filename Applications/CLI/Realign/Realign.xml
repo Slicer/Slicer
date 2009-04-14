@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Registration</category>
-  <title>RealignVolume</title>
-  <description>Realigns a volume based on a transformation matrix (if output volume is specified). It can make a transform using a list of fiducials. If pass in a transform matrix and an output volume, but no fiducials, applies the transform to the input volume.</description>
+  <title>ACPC Transform</title>
+  <description>Calculate a transformation from two lists of fiducial points. Use the Filtering module **Resample Scalar/Vector/DWI Volume** to apply the transformation to a volume.</description>
 <version>1.0</version>
-<documentation-url>http://www.slicer.org</documentation-url>
+<documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:RealignVolume-Documentation-3.4</documentation-url>
   <license>slicer3</license>
   <contributor>Nicole Aucoin</contributor>
 <acknowledgements>
@@ -12,7 +12,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
 </acknowledgements>
 <parameters>
    <label>Transform</label>
-   <description>Calculate a transform from midline and ACPC fiducial lists, or specify a transform.</description>
+   <description>Calculate a transform from midline and ACPC fiducial lists.</description>
    <point coordinateSystem="ras" multiple="true">
       <name>ACPC</name>
       <label>ACPC Line</label>
@@ -28,53 +28,14 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <default>0,0,0</default>
    </point>
    <transform type="linear">
-      <longflag>transform2</longflag>
-      <description>An output transform - load a calculated transform in this node.</description>
+      <name>OutputTransform</name>
+      <longflag>--outputTransform</longflag>
+      <description>A transform filled in from the ACPC and Midline registration calculation</description>
       <label>Output transform</label>
       <channel>output</channel>
    </transform>
 </parameters>
-<parameters advanced="true">
-  <label>Reslice</label>
-  <description>Apply transform to volume, still under development</description>
-  <transform type="linear">
-      <longflag>transform1</longflag>
-      <description>An input transform, apply this to the input volume and get the output volume</description>
-      <label>Input transform</label>
-      <channel>input</channel>
-   </transform>
-   <image type="scalar">
-      <name>InputVolume</name>
-      <label>Input Volume</label>
-      <channel>input</channel>
-      <longflag>--inputvolume</longflag>
-      <description>Input volume.</description>
-   </image>
-   <image type="scalar">
-      <name>OutputVolume</name>
-      <label>Output Volume</label>
-      <channel>output</channel>
-      <longflag>--outputvolume</longflag>
-      <description>Output realigned volume, optional (if not set, just returns the output transform)</description>
-   </image>
-   <image type="scalar">
-      <name>ReferenceVolume</name>
-      <label>Reference Volume</label>
-      <channel>input</channel>
-      <longflag>--referencevolume</longflag>
-      <description>Reference volume, optional. If set, use the RAS/IJK transform from this volume instead of the input volume.</description>
-   </image>
-   <string-enumeration>
-      <name>InterpolationType</name>
-      <label>Interpolation Type</label>
-      <description>Controls the type of interpolation done when reslicing</description>
-      <longflag>--interpolationtype</longflag>
-      <element>NearestNeighbor</element>
-      <element>Linear</element>
-      <element>Cubic</element>
-      <default>NearestNeighbor</default> 
-   </string-enumeration>
-</parameters>
+
 <parameters advanced="true">
   <label>Debug</label>
     <boolean>
@@ -82,7 +43,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Debug</label>
       <description>Click if wish to see debugging output</description>
       <flag>d</flag> 
-      <default>true</default>
+      <default>false</default>
     </boolean>
 </parameters>
 </executable>
