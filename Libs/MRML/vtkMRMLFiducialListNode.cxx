@@ -1385,8 +1385,106 @@ void vtkMRMLFiducialListNode::SetOpacity(double opacity)
     {
         return;
     }
+    if (opacity < 0.0 || opacity > 1.0)
+      {
+      return;
+      }
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Opacity to " << opacity);
     this->Opacity = opacity;
+   
+    if (!this->GetDisableModifiedEvent())
+      {
+      // invoke a display modified event
+      this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+      }
+    this->ModifiedSinceReadOn();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLFiducialListNode::SetAmbient(double val)
+{
+    if (this->Ambient == val)
+      {
+      return;
+      }
+    if (val < 0.0 || val > 1.0)
+      {
+      return;
+      }
+    vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Ambient to " << val);
+    this->Ambient = val;
+   
+    if (!this->GetDisableModifiedEvent())
+      {
+      // invoke a display modified event
+      this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+      }
+    this->ModifiedSinceReadOn();
+}
+
+
+//---------------------------------------------------------------------------
+void vtkMRMLFiducialListNode::SetDiffuse(double val)
+{
+    if (this->Diffuse == val)
+      {
+      return;
+      }
+    if (val < 0.0 || val > 1.0)
+      {
+      return;
+      }
+
+    vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Diffuse to " << val);
+    this->Diffuse = val;
+   
+    if (!this->GetDisableModifiedEvent())
+      {
+      // invoke a display modified event
+      this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+      }
+    this->ModifiedSinceReadOn();
+}
+
+
+//---------------------------------------------------------------------------
+void vtkMRMLFiducialListNode::SetSpecular(double val)
+{
+    if (this->Specular == val)
+      {
+      return;
+      }
+    if (val < 0.0 || val > 1.0)
+      {
+      return;
+      }
+
+    vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Specular to " << val);
+    this->Specular = val;
+   
+    if (!this->GetDisableModifiedEvent())
+      {
+      // invoke a display modified event
+      this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+      }
+    this->ModifiedSinceReadOn();
+}
+
+
+//---------------------------------------------------------------------------
+void vtkMRMLFiducialListNode::SetPower(double val)
+{
+    if (this->Power == val)
+      {
+      return;
+      }
+    if (val < 0.0 || val > 1.0)
+      {
+      return;
+      }
+
+    vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Power to " << val);
+    this->Power = val;
    
     if (!this->GetDisableModifiedEvent())
       {

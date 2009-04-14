@@ -205,23 +205,23 @@ public:
   vtkGetMacro(Opacity, double);
 
   // Description:
-  // Ambient of the fiducial surface expressed as a number from 0 to 100
-  vtkSetMacro(Ambient, double);
+  // Ambient of the fiducial surface expressed as a number from 0 to 1
+  void SetAmbient(double val);
   vtkGetMacro(Ambient, double);
   
   // Description:
-  // Diffuse of the fiducial surface expressed as a number from 0 to 100
-  vtkSetMacro(Diffuse, double);
+  // Diffuse of the fiducial surface expressed as a number from 0 to 1
+  void SetDiffuse(double val);
   vtkGetMacro(Diffuse, double);
   
   // Description:
-  // Specular of the fiducial surface expressed as a number from 0 to 100
-  vtkSetMacro(Specular, double);
+  // Specular of the fiducial surface expressed as a number from 0 to 1
+  void SetSpecular(double val);
   vtkGetMacro(Specular, double);
 
   // Description:
-  // Power of the fiducial surface expressed as a number from 0 to 100
-  vtkSetMacro(Power, double);
+  // Power of the fiducial surface expressed as a number from 0 to 1
+  void SetPower(double val);
   vtkGetMacro(Power, double);
 
   // Description:
