@@ -868,6 +868,8 @@ int vtkMRMLFiducialListNode::GetNthFiducialVisibility(int n)
       }
 }
 
+
+
 //----------------------------------------------------------------------------
 int vtkMRMLFiducialListNode::SetAllFiducialsVisibility(int flag)
 {

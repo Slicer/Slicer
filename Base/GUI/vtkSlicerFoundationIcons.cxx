@@ -68,6 +68,7 @@ vtkSlicerFoundationIcons::vtkSlicerFoundationIcons ( )
   this->SlicerRedoIcon = vtkKWIcon::New();
   this->SlicerUnlinkIcon = vtkKWIcon::New();
   this->SlicerLinkIcon = vtkKWIcon::New();    
+  this->SlicerCheckedVisibleIcon = vtkKWIcon::New();
   this->SlicerVisibleIcon = vtkKWIcon::New();
   this->SlicerInvisibleIcon = vtkKWIcon::New();
   this->SlicerRefreshIcon = vtkKWIcon::New();
@@ -401,6 +402,12 @@ vtkSlicerFoundationIcons::~vtkSlicerFoundationIcons ( )
     {
     this->SlicerLinkIcon->Delete();
     this->SlicerLinkIcon = NULL;    
+    }
+
+  if ( this->SlicerCheckedVisibleIcon)
+    {
+    this->SlicerCheckedVisibleIcon->Delete();
+    this->SlicerCheckedVisibleIcon = NULL;    
     }
   if ( this->SlicerVisibleIcon)
     {
@@ -855,6 +862,11 @@ void vtkSlicerFoundationIcons::AssignImageDataToIcons ( )
                                       image_SlicerVisible_height,
                                       image_SlicerVisible_pixel_size,
                                       image_SlicerVisible_length, 0);
+  this->SlicerCheckedVisibleIcon->SetImage ( image_SlicerCheckedVisible,
+                                      image_SlicerCheckedVisible_width,
+                                      image_SlicerCheckedVisible_height,
+                                      image_SlicerCheckedVisible_pixel_size,
+                                      image_SlicerCheckedVisible_length, 0);
   this->SlicerInvisibleIcon->SetImage ( image_SlicerInvisible,
                                         image_SlicerInvisible_width,
                                         image_SlicerInvisible_height,
@@ -1071,6 +1083,7 @@ void vtkSlicerFoundationIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "SlicerRedoIcon: " << this->GetSlicerRedoIcon() << "\n";
     os << indent << "SlicerUnlinkIcon: " << this->GetSlicerUnlinkIcon() << "\n";
     os << indent << "SlicerLinkIcon: " << this->GetSlicerLinkIcon() << "\n";
+    os << indent << "SlicerCheckedVisibleIcon: " << this->GetSlicerCheckedVisibleIcon() << "\n";
     os << indent << "SlicerVisibleIcon: " << this->GetSlicerVisibleIcon() << "\n";
     os << indent << "SlicerInvisibleIcon: " << this->GetSlicerInvisibleIcon() << "\n";
     os << indent << "SlicerRefreshIcon: " << this->GetSlicerRefreshIcon() << "\n";

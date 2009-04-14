@@ -7,7 +7,6 @@
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerFoundationIcons.h"
 #include "vtkSlicerModuleLogic.h"
-#include "vtkSlicerVisibilityIcons.h"
 #include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkMRMLViewNode.h"
 
@@ -51,7 +50,6 @@ vtkSlicerFiducialsGUI::vtkSlicerFiducialsGUI ( )
     this->DeselectAllFiducialsInListButton = NULL;
     
     this->VisibilityToggle = NULL;
-    this->VisibilityIcons = NULL;
 
     this->MoveSelectedFiducialUpButton = NULL;
     this->MoveSelectedFiducialDownButton = NULL;
@@ -186,11 +184,6 @@ vtkSlicerFiducialsGUI::~vtkSlicerFiducialsGUI ( )
     this->VisibilityToggle->SetParent(NULL);
     this->VisibilityToggle->Delete();
     this->VisibilityToggle = NULL;
-    }
-  if ( this->VisibilityIcons )
-    {
-    this->VisibilityIcons->Delete  ( );
-    this->VisibilityIcons = NULL;
     }
   if (this->ListColorButton)
     {
@@ -525,6 +518,17 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
           }
         }
       //--- TODO: now delete the node...
+      }
+    else if ( button == this->VisibilityToggle->GetWidget() )
+      {
+      if ( activeFiducialListNode->GetVisibility() > 0 )
+        {
+        activeFiducialListNode->SetVisibility ( 0 );
+        }
+      else
+        {
+        activeFiducialListNode->SetVisibility ( 1 );
+        }
       }
     else if (button == this->SelectAllFiducialsButton)
       {
@@ -875,14 +879,11 @@ void vtkSlicerFiducialsGUI::ModifyAllVisibility( int visibilityState)
     flNode = vtkMRMLFiducialListNode::SafeDownCast (this->MRMLScene->GetNthNodeByClass ( nn, "vtkMRMLFiducialListNode" ));
     if ( flNode != NULL )
       {
+      flNode->SetAllFiducialsVisibility ( visibilityState );
       flNode->SetVisibility ( visibilityState );
-      for ( int n = 0; n < flNode->GetNumberOfFiducials(); n++ )
-        {
-        flNode->SetNthFiducialVisibility ( n, visibilityState );
-        }
       }
     }
-
+  
   // update the fiducial visibility parameter in the view node too.
   // TODO: when there are multiple views, use active view instead of 0th.
   // vtkMRMLViewNode *vn = vtkMRMLViewNode::SafeDownCast(
@@ -899,17 +900,26 @@ void vtkSlicerFiducialsGUI::ModifyAllVisibility( int visibilityState)
     vtkErrorMacro ( "ModifyAllVisibility: got NULL activeFiducialListNode." );
     return;
     }
-  if (this->GetVisibilityIcons() != NULL)
+
+  if ( this->GetApplicationGUI() == NULL )
     {
-    if (activeFiducialListNode->GetVisibility() > 0)
-      {
-      this->GetVisibilityToggle()->GetWidget()->SetImageToIcon(this->GetVisibilityIcons()->GetVisibleIcon());
-      }
-    else
-      {
-      this->GetVisibilityToggle()->GetWidget()->SetImageToIcon(this->GetVisibilityIcons()->GetInvisibleIcon());
-      }
+    vtkErrorMacro ( "ModifyAllVisibility: Got NULL ApplicationGUI" );
+    return;
     }
+  if ( this->GetApplicationGUI()->GetSlicerFoundationIcons() == NULL )
+    {
+    vtkErrorMacro ( "ModifyAllVisibility: Got NULL SlicerFoundationIcons." );
+    return;
+    }
+  if (activeFiducialListNode->GetVisibility() > 0)
+    {
+    this->GetVisibilityToggle()->GetWidget()->SetImageToIcon(this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerCheckedVisibleIcon() );
+    }
+  else
+    {
+    this->GetVisibilityToggle()->GetWidget()->SetImageToIcon(this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerInvisibleIcon() );
+    }
+
 }
 
 
@@ -938,12 +948,8 @@ void vtkSlicerFiducialsGUI::ModifyListVisibility( int visibilityState)
   this->MRMLScene->SaveStateForUndo(activeFiducialListNode);
 
   // change the visibility on the list
+  activeFiducialListNode->SetAllFiducialsVisibility ( visibilityState );
   activeFiducialListNode->SetVisibility( visibilityState );
-  for ( int n = 0; n < activeFiducialListNode->GetNumberOfFiducials(); n++ )
-    {
-    activeFiducialListNode->SetNthFiducialVisibility ( n, visibilityState );
-    }
-
 
   // update the fiducial visibility parameter in the view node too.
   // TODO: when there are multiple views, use active view instead of 0th.
@@ -955,16 +961,23 @@ void vtkSlicerFiducialsGUI::ModifyListVisibility( int visibilityState)
   // }
 
   // update the icon in the DISPLAY panel
-  if (this->GetVisibilityIcons() != NULL)
+  if ( this->GetApplicationGUI() == NULL )
     {
-    if (activeFiducialListNode->GetVisibility() > 0)
-      {
-      this->GetVisibilityToggle()->GetWidget()->SetImageToIcon(this->GetVisibilityIcons()->GetVisibleIcon());
-      }
-    else
-      {
-      this->GetVisibilityToggle()->GetWidget()->SetImageToIcon(this->GetVisibilityIcons()->GetInvisibleIcon());
-      }
+    vtkErrorMacro ( "ModifyListVisibility: Got NULL ApplicationGUI" );
+    return;
+    }
+  if ( this->GetApplicationGUI()->GetSlicerFoundationIcons() == NULL )
+    {
+    vtkErrorMacro ( "ModifyListVisibility: Got NULL SlicerFoundationIcons." );
+    return;
+    }
+  if (activeFiducialListNode->GetVisibility() > 0)
+    {
+    this->GetVisibilityToggle()->GetWidget()->SetImageToIcon(this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerCheckedVisibleIcon() );
+    }
+  else
+    {
+    this->GetVisibilityToggle()->GetWidget()->SetImageToIcon(this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerInvisibleIcon() );
     }
 }
 
@@ -1329,25 +1342,7 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
 void vtkSlicerFiducialsGUI::SetGUIDisplayFrameFromList(vtkMRMLFiducialListNode * activeFiducialListNode)
 {
     vtkDebugMacro(<< "\tupdating the visibility button\n");
-    if (this->GetVisibilityToggle() != NULL &&
-        this->GetVisibilityIcons() != NULL)
-      {
-      if (activeFiducialListNode->GetVisibility() > 0)
-        {
-        this->GetVisibilityToggle()->GetWidget()->SetImageToIcon(
-                                                    this->GetVisibilityIcons()->GetVisibleIcon());
-        }
-      else
-        {
-        this->GetVisibilityToggle()->GetWidget()->SetImageToIcon(
-                                                    this->GetVisibilityIcons()->GetInvisibleIcon());
-        }
-      }
-    else
-      {
-      vtkErrorMacro ("ERROR; trying up update null visibility toggle!\n");
-      }
-     
+
     // color
     vtkDebugMacro(<< "\tupdating the colour\n");
     double *nodeColor = activeFiducialListNode->GetColor();
@@ -1424,6 +1419,31 @@ void vtkSlicerFiducialsGUI::SetGUIDisplayFrameFromList(vtkMRMLFiducialListNode *
         scale != this->ListOpacity->GetValue())
       {
       this->ListOpacity->SetValue(scale);
+      }
+
+    // visibility
+    if ( this->GetVisibilityToggle() == NULL )
+      {
+      vtkErrorMacro ( "SetGUIDisplayFrameFromList: Got NULL ApplicationGUI" );
+      return;
+      }
+    if ( this->GetApplicationGUI() == NULL )
+      {
+      vtkErrorMacro ( "SetGUIDisplayFrameFromList: Got NULL ApplicationGUI" );
+      return;
+      }
+    if ( this->GetApplicationGUI()->GetSlicerFoundationIcons() == NULL )
+      {
+      vtkErrorMacro ( "SetGUIDisplayFrameFromList: Got NULL SlicerFoundationIcons." );
+      return;
+      }
+    if (activeFiducialListNode->GetVisibility() > 0)
+      {
+      this->GetVisibilityToggle()->GetWidget()->SetImageToIcon(this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerCheckedVisibleIcon() );
+      }
+    else
+      {
+      this->GetVisibilityToggle()->GetWidget()->SetImageToIcon(this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerInvisibleIcon() );
       }
 }
 
@@ -1586,7 +1606,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->RemoveAllFiducialsButton->SetImageToIcon ( this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerFiducialsDeleteAllIcon() );
     this->RemoveAllFiducialsButton->SetReliefToFlat();
     this->RemoveAllFiducialsButton->SetBorderWidth ( 0 );
-    this->RemoveAllFiducialsButton->SetBalloonHelpString("Remove all fiducial lists and the fiducials they contain.");
+    this->RemoveAllFiducialsButton->SetBalloonHelpString("Remove all fiducial points from all fiducial lists.");
 
     //---
     //--- create all lock menu button and set up menu
@@ -1624,7 +1644,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->AllVisibilityMenuButton->SetReliefToFlat();
     this->AllVisibilityMenuButton->IndicatorVisibilityOff();
     this->AllVisibilityMenuButton->SetImageToIcon ( this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerVisibleOrInvisibleIcon() );
-    this->AllVisibilityMenuButton->SetBalloonHelpString ( "Set visibility on all fiducials in all fiducial lists." );
+    this->AllVisibilityMenuButton->SetBalloonHelpString ( "Set hide or expose all fiducial lists, and set visibility on all fiducials in them." );
     this->AllVisibilityMenuButton->GetMenu()->AddRadioButton ( "Visible");
     index = this->AllVisibilityMenuButton->GetMenu()->GetIndexOfItem ("Visible");
     this->AllVisibilityMenuButton->GetMenu()->SetItemImageToIcon (index, this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerVisibleIcon()  );
@@ -1816,7 +1836,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->ListVisibilityMenuButton->SetReliefToFlat();
     this->ListVisibilityMenuButton->IndicatorVisibilityOff();    
     this->ListVisibilityMenuButton->SetImageToIcon ( this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerVisibleOrInvisibleIcon() );
-    this->ListVisibilityMenuButton->SetBalloonHelpString ( "Set visibility on all fiducials in this fiducial list." );
+    this->ListVisibilityMenuButton->SetBalloonHelpString ( "Hide or expose the fiducial list and set visibility on all of its fiducials." );
     this->ListVisibilityMenuButton->GetMenu()->AddRadioButton ( "Visible");
     index = this->ListVisibilityMenuButton->GetMenu()->GetIndexOfItem ("Visible");
     this->ListVisibilityMenuButton->GetMenu()->SetItemImageToIcon (index, this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerVisibleIcon()  );
@@ -1868,7 +1888,6 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
                  listFrame->GetWidgetName());
 
     // add the multicolumn list to show the points
-    this->VisibilityIcons = vtkSlicerVisibilityIcons::New ( );
     this->MultiColumnList = vtkKWMultiColumnListWithScrollbars::New ( );
     this->MultiColumnList->SetParent ( listFrame );
     this->MultiColumnList->Create ( );
@@ -1883,7 +1902,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     // add the visibility column with no text, use an icon
     this->MultiColumnList->GetWidget()->AddColumn("Visible");
     this->MultiColumnList->GetWidget()->AddColumn("Locked");
-//    this->MultiColumnList->GetWidget()->SetColumnLabelImageToIcon(this->VisibilityColumn, this->VisibilityIcons->GetVisibleIcon());
+//    this->MultiColumnList->GetWidget()->SetColumnLabelImageToIcon(this->VisibilityColumn, this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerVisibleIcon() );
     this->MultiColumnList->GetWidget()->AddColumn("X");
     this->MultiColumnList->GetWidget()->AddColumn("Y");
     this->MultiColumnList->GetWidget()->AddColumn("Z");
@@ -2011,13 +2030,13 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->VisibilityToggle->SetParent ( fiducialDisplayFrame->GetFrame() );
     this->VisibilityToggle->Create ( );
     this->VisibilityToggle->SetLabelWidth ( 14 );
-    this->VisibilityToggle->SetLabelText ( "Visibility:");
+    this->VisibilityToggle->SetLabelText ( "Hide or Expose:");
     this->VisibilityToggle->GetLabel()->SetAnchorToEast();
     this->VisibilityToggle->GetWidget()->SetReliefToFlat ( );
     this->VisibilityToggle->GetWidget()->SetOverReliefToNone ( );
     this->VisibilityToggle->GetWidget()->SetBorderWidth ( 0 );
-    this->VisibilityToggle->GetWidget()->SetImageToIcon ( this->VisibilityIcons->GetInvisibleIcon ( ) );        
-    this->VisibilityToggle->SetBalloonHelpString ( "Toggles fiducial list visibility in the MainViewer." );
+    this->VisibilityToggle->GetWidget()->SetImageToIcon ( this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerInvisibleIcon() );
+    this->VisibilityToggle->SetBalloonHelpString ( "Toggles visibility of all fiducial points in the selected list that have their visibility checked." );
 
     // opacity
     this->ListOpacity = vtkKWScaleWithEntry::New();
@@ -2042,7 +2061,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->ListColorButton->SetLabelWidth ( 14 );
     this->ListColorButton->SetBalloonHelpString("Change the colour of the fiducial list symbols and text in the MainViewer");
     this->ListColorButton->SetDialogTitle("List symbol and text color");
-    this->ListColorButton->SetLabelText("Color:");
+    this->ListColorButton->SetLabelText("Unselected Color:");
 
     // selected colour
     this->ListSelectedColorButton = vtkKWChangeColorButton::New();
@@ -2062,8 +2081,8 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
                   this->ListTextScale->GetWidgetName(),
                   this->ListOpacity->GetWidgetName(),
                   this->VisibilityToggle->GetWidgetName(),
-                  this->ListColorButton->GetWidgetName(),
-                  this->ListSelectedColorButton->GetWidgetName() );
+                  this->ListSelectedColorButton->GetWidgetName(),
+                  this->ListColorButton->GetWidgetName() );
     
     //---
     //--- and clean up temporary stuff

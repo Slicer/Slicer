@@ -138,7 +138,7 @@ public:
   // Description:
   // Set all fiducials visible state to flag
   int SetAllFiducialsVisibility(int flag);
-
+  
   // Description:
   // Get the elements of the fiducial points
   // Return a three element float holding the position

@@ -17,7 +17,6 @@
 #include "vtkKWFrame.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWPushButtonWithLabel.h"
-#include "vtkSlicerVisibilityIcons.h"
 #include "vtkKWChangeColorButton.h"
 
 #include "vtkKWScaleWithEntry.h"
@@ -32,7 +31,6 @@ class vtkKWMultiColumnListWithScrollbars;
 class vtkKWPushButton;
 class vtkKWPushButtonWithLabel;
 class vtkKWMessage;
-class vtkSlicerVisibilityIcons;
 class vtkKWChangeColorButton;
 class vtkKWScaleWithEntry;
 class vtkKWMenuButton;
@@ -62,7 +60,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkGetObjectMacro ( DeselectAllFiducialsButton, vtkKWPushButton);
     vtkGetObjectMacro ( DeselectAllFiducialsInListButton, vtkKWPushButton);
     vtkGetObjectMacro ( VisibilityToggle, vtkKWPushButtonWithLabel);
-    vtkGetObjectMacro ( VisibilityIcons, vtkSlicerVisibilityIcons);
     vtkGetObjectMacro ( ListColorButton, vtkKWChangeColorButton);
     vtkGetObjectMacro ( ListSelectedColorButton, vtkKWChangeColorButton);
     vtkGetObjectMacro ( ListSymbolScale, vtkKWScaleWithEntry);
@@ -258,7 +255,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // Description:
     // list visibility, overrides individual point visibility
     vtkKWPushButtonWithLabel *VisibilityToggle;
-    vtkSlicerVisibilityIcons *VisibilityIcons;
 
     // Description:
     // list colour
