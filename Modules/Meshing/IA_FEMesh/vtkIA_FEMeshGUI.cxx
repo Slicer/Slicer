@@ -82,7 +82,6 @@ vtkIA_FEMeshGUI::vtkIA_FEMeshGUI()
 
   this->Logic = NULL;
   this->MeshingUI = NULL;
-    this->MeshingUI = NULL;
 //    this->MimxMainNotebook = NULL;
 //    this->ViewProperties = NULL;
 //    this->DoUndoTree = NULL;
@@ -107,10 +106,6 @@ vtkIA_FEMeshGUI::vtkIA_FEMeshGUI()
 vtkIA_FEMeshGUI::~vtkIA_FEMeshGUI()
 {
 
-  if (this->MeshingUI != NULL)
-    {
-    this->MeshingUI->Delete();
-    }
 
   if (this->Logic != NULL)
     {
@@ -120,10 +115,16 @@ vtkIA_FEMeshGUI::~vtkIA_FEMeshGUI()
   // tear down the KWMimxWindow instance used to hold the GUI for the meshing
   // module.  The renderWidget has to be released so that Slicer can close down cleanly 
   if (this->MeshingUI != NULL)
-  {
-      if (this->MeshingUI->GetRenderWidget() != NULL) this->MeshingUI->GetRenderWidget()->Delete();
-      this->MeshingUI->Delete();
-  }
+    {
+    if (this->MeshingUI->GetRenderWidget() != NULL) this->MeshingUI->GetRenderWidget()->Delete();
+    }
+
+  if (this->MeshingUI != NULL)
+    {
+    this->MeshingUI->SetParent(NULL);
+    this->MeshingUI->Delete();
+    }
+
 }
 
 
