@@ -66,7 +66,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkGetObjectMacro ( ListSymbolTypeMenu, vtkKWMenuButtonWithLabel);
     vtkGetObjectMacro ( ListTextScale, vtkKWScaleWithEntry);
     vtkGetObjectMacro ( ListOpacity, vtkKWScaleWithEntry);
+    vtkGetObjectMacro ( ListAmbient, vtkKWScaleWithEntry);
+    vtkGetObjectMacro ( ListDiffuse, vtkKWScaleWithEntry);
+    vtkGetObjectMacro ( ListSpecular, vtkKWScaleWithEntry);
+    vtkGetObjectMacro ( ListPower, vtkKWScaleWithEntry);
+
     vtkGetObjectMacro ( Logic, vtkSlicerFiducialsLogic);
+    
     vtkGetObjectMacro ( MoveSelectedFiducialUpButton, vtkKWPushButton );
     vtkGetObjectMacro ( MoveSelectedFiducialDownButton, vtkKWPushButton );
     vtkGetObjectMacro ( AllLockMenuButton, vtkKWMenuButton );
@@ -279,6 +285,22 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkKWScaleWithEntry *ListOpacity;
 
     // Description:
+    // list actor ambient
+    vtkKWScaleWithEntry *ListAmbient;
+
+    // Description:
+    // list actor diffuse
+    vtkKWScaleWithEntry *ListDiffuse;
+    
+    // Description:
+    // list actor specular
+    vtkKWScaleWithEntry *ListSpecular;
+
+    // Description:
+    // list actor power
+    vtkKWScaleWithEntry *ListPower;
+    
+    // Description:
     // display the points on the list
     vtkKWMultiColumnListWithScrollbars *MultiColumnList;
 
@@ -317,14 +339,14 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
         NameColumn = 0,
         SelectedColumn = 1,
         VisibilityColumn = 2,
-        LockColumn = 3,
-        XColumn = 4,
-        YColumn = 5,
-        ZColumn = 6,
-        OrWColumn = 7,
-        OrXColumn = 8,
-        OrYColumn = 9,
-        OrZColumn = 10,
+        XColumn = 3,
+        YColumn = 4,
+        ZColumn = 5,
+        OrWColumn = 6,
+        OrXColumn = 7,
+        OrYColumn = 8,
+        OrZColumn = 9,
+        LockColumn = 10,
         NumberOfColumns = 11,
     };
     //ETX
