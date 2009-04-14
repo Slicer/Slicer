@@ -312,8 +312,8 @@ Grants: National Alliance for Medical Image Computing (NAMIC), funded by the Nat
 import numpy
 import socket
 import time
-import os
-
+import os, sys
+import subprocess as sp
 
 vtk_types = { 2:numpy.int8, 3:numpy.uint8, 4:numpy.int16,  5:numpy.uint16,  6:numpy.int32,  7:numpy.uint32,  10:numpy.float32,  11:numpy.float64 }
 numpy_sizes = { numpy.int8:1, numpy.uint8:1, numpy.int16:2,  numpy.uint16:2,  numpy.int32:4,  numpy.uint32:4,  numpy.float32:4,  numpy.float64:8 }
@@ -340,10 +340,6 @@ def sendVolume(vol, c, isDti=False):
 
   shape = data.shape
   dtype = data.dtype
-
-  #print 'Data shape : ', shape
-  #print 'Data type : ', dtype
-
 
   org = vol.GetOrigin()
 
@@ -530,6 +526,33 @@ def Execute (\
              inputVol4 = ""
              ):
 
+  if os.name=='posix':
+    p1 = sp.Popen(["ps", "-edlf"], stdout=sp.PIPE)
+    output = p1.communicate()[0]
+
+    tag = 'PyPipelineServer'
+
+    if output.find(tag)>0:
+      lines = output.split('\n')
+      for i in range(len(lines)):
+        if lines[i].find(tag)>0:
+          pid = lines[i].split()[3]
+          #print 'Python server active PID : ', pid
+          p2 = sp.Popen(["kill", "-9", str(pid)])
+
+    nmodule = 'StochasticTractographyServer'
+
+    dir0 = os.environ['Slicer3_PLUGINS_DIR']
+    #print 'based module : ', dir0
+    fdir0 = dir0 + '/' + nmodule + '/'
+    #print 'full path : ', fdir0
+    curdir = os.getcwd()
+    os.chdir(fdir0)
+    p = sp.Popen("python PyPipelineServer.py", shell=True )
+    os.chdir(curdir)
+
+    time.sleep(2)
+
   Slicer = __import__ ( "Slicer" )
   slicer = Slicer.slicer
   scene = slicer.MRMLScene
@@ -681,6 +704,7 @@ def Execute (\
   inputVol2 = ""
   inputVol3 = ""
   inputVol4 = ""
+
 
   return
 
