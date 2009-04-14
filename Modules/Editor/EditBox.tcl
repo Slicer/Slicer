@@ -253,14 +253,12 @@ itcl::body EditBox::create { } {
   # the buttons
   #
 
-  $this createButtonRow $parent {DefaultTool SnapToGridOn ChooseColor SlurpColor}
-  $this createButtonRow $parent {LabelOpacity ToggleLabelOutline LabelVisibilityOn Wand}
-  $this createButtonRow $parent {Paint ThresholdPaintLabel Draw ThresholdBucket}
-  $this createButtonRow $parent {EraseLabel ImplicitEllipse ImplicitRectangle ImplicitCube}
+  $this createButtonRow $parent {DefaultTool EraseLabel}
+  $this createButtonRow $parent {Paint Draw LevelTracing ImplicitRectangle}
   $this createButtonRow $parent {IdentifyIslands ChangeIsland RemoveIslands SaveIsland}
   $this createButtonRow $parent {ErodeLabel DilateLabel Threshold ChangeLabel}
-  $this createButtonRow $parent {InterpolateLabels MakeModel Watershed LevelTracing}
-  $this createButtonRow $parent {PreviousFiducial NextFiducial FiducialVisibilityOn DeleteFiducials}
+  $this createButtonRow $parent {MakeModel}
+  $this createButtonRow $parent {PreviousFiducial NextFiducial}
   if { $frame == "" } {
     $this createButtonRow $parent {PreviousCheckPoint NextCheckPoint GoToEditorModule PinOpen}
   } else {
