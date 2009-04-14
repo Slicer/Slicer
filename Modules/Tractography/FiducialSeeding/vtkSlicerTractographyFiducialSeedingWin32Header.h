@@ -6,14 +6,14 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkFiducailSeedingWin32Header.h,v $
+  Module:    $RCSfile: vtkFiducilaSeedingWin32Header.h,v $
   Date:      $Date: 2006/01/06 17:56:51 $
   Version:   $Revision: 1.4 $
 
 =========================================================================auto=*/
-// .NAME vtkFiducailSeedingWin32Header - manage Windows system differences
+// .NAME vtkFiducilaSeedingWin32Header - manage Windows system differences
 // .SECTION Description
-// The vtkFiducailSeedingWin32Header captures some system differences between Unix
+// The vtkFiducilaSeedingWin32Header captures some system differences between Unix
 // and Windows operating systems. 
 
 #ifndef __vtkSlicerTractographyFiducialSeedingWin32Header_h
