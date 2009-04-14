@@ -241,8 +241,7 @@ vtkProstateNavGUI::~vtkProstateNavGUI ( )
   //----------------------------------------------------------------
   // Wizard Frame
 
-
-  if ( 0 && this->WizardSteps )
+  if ( this->WizardSteps )
     {
     for (int i = 0; i < vtkProstateNavLogic::NumPhases; i ++)
       {
