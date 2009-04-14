@@ -59,6 +59,11 @@ public:
   void RemoveAllEntries();
 
   // Description:
+  // Sets all rows in the list box to be selected or unselected depending on
+  // the flag
+  void SetAllEntriesSelected(int sel);
+
+  // Description:
   // Returns selected entries
   vtkStringArray* GetSelectedEntries();
  
@@ -123,6 +128,11 @@ private:
   vtkKWPushButton *OkButton;
 
   vtkKWPushButton *CancelButton;
+
+  // Description:
+  // set all list box entries to selected/unselected in Box column 
+  vtkKWPushButton *SelectAllButton;
+  vtkKWPushButton *SelectNoneButton;
   
   vtkKWMultiColumnListWithScrollbars *MultiColumnList;
 

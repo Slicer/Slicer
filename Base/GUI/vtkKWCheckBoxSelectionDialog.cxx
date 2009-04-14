@@ -27,6 +27,8 @@ vtkCxxRevisionMacro ( vtkKWCheckBoxSelectionDialog, "$Revision: 1.0 $");
 vtkKWCheckBoxSelectionDialog::vtkKWCheckBoxSelectionDialog ( )
 {
   this->Dialog = NULL;
+  this->SelectAllButton = NULL;
+  this->SelectNoneButton = NULL;
   this->OkButton = NULL;
   this->CancelButton = NULL;
   this->MultiColumnList = NULL;
@@ -54,11 +56,21 @@ vtkKWCheckBoxSelectionDialog::~vtkKWCheckBoxSelectionDialog ( )
     this->MultiColumnList->SetParent(NULL);
     this->MultiColumnList->Delete();
     }
+  if (this->SelectAllButton)
+    {
+    this->SelectAllButton->SetParent(NULL);
+    this->SelectAllButton->Delete();
+    }
+  if (this->SelectNoneButton)
+    {
+    this->SelectNoneButton->SetParent(NULL);
+    this->SelectNoneButton->Delete();
+    }
   if (this->OkButton)
     {
     this->OkButton->SetParent(NULL);
     this->OkButton->Delete();
-    }
+    }  
   if (this->CancelButton)
     {
     this->CancelButton->SetParent(NULL);
@@ -142,21 +154,45 @@ vtkStringArray* vtkKWCheckBoxSelectionDialog::GetUnselectedEntries()
 }
 
 //---------------------------------------------------------------------------
+void vtkKWCheckBoxSelectionDialog::SetAllEntriesSelected(int sel)
+{
+  int nrows = this->MultiColumnList->GetWidget()->GetNumberOfRows();
+  for (int row=0; row<nrows; row++)
+    {
+    this->MultiColumnList->GetWidget()->SetCellTextAsInt(row, 1, sel);
+    this->MultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton(row, 1);
+    }
+}
+
+//---------------------------------------------------------------------------
 void vtkKWCheckBoxSelectionDialog::ProcessWidgetEvents ( vtkObject *caller,
                                                     unsigned long event, 
                                                     void *callData )
 {
-  if (this->OkButton ==  vtkKWPushButton::SafeDownCast(caller) && event ==  vtkKWPushButton::InvokedEvent)
+  vtkKWPushButton *button = vtkKWPushButton::SafeDownCast(caller);
+  if (button != NULL && event == vtkKWPushButton::InvokedEvent)
     {
-    this->MultiColumnList->GetWidget()->FinishEditing();
-    this->Cancel = 0;
-    this->Dialog->OK();
-//  this->InvokeEvent(vtkKWCheckBoxSelectionDialog::DataSavedEvent);
-    }
-  else if (this->CancelButton ==  vtkKWPushButton::SafeDownCast(caller) && event ==  vtkKWPushButton::InvokedEvent)
-    { 
-    this->Cancel = 1;
-    this->Dialog->Cancel();
+    // check which one it was
+    if (this->SelectAllButton == button)
+      {
+      this->SetAllEntriesSelected(1);
+      }
+    else if (this->SelectNoneButton == button)
+      {
+      this->SetAllEntriesSelected(0);
+      }
+    else if (this->OkButton ==  button)
+      {
+      this->MultiColumnList->GetWidget()->FinishEditing();
+      this->Cancel = 0;
+      this->Dialog->OK();
+//    this->InvokeEvent(vtkKWCheckBoxSelectionDialog::DataSavedEvent);
+      }
+    else if (this->CancelButton ==  button)
+      { 
+      this->Cancel = 1;
+      this->Dialog->Cancel();
+      }
     }
 } 
 
@@ -175,6 +211,16 @@ void vtkKWCheckBoxSelectionDialog::RemoveWidgetObservers ( )
   if (this->CancelButton)
     {
     this->CancelButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  
+        (vtkCommand *)this->GUICallbackCommand );
+    }
+  if (this->SelectAllButton)
+    {
+    this->SelectAllButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  
+        (vtkCommand *)this->GUICallbackCommand );
+    }
+  if (this->SelectNoneButton)
+    {
+    this->SelectNoneButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  
         (vtkCommand *)this->GUICallbackCommand );
     }
 }
@@ -205,7 +251,7 @@ void vtkKWCheckBoxSelectionDialog::CreateWidget ( )
   dataFrame->SetParent ( this->Dialog );
   dataFrame->Create ( );
   dataFrame->SetLabelText (this->Title);
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+  this->Script ( "pack %s -side top -anchor nw -fill both -expand true -padx 2 -pady 2",
                  dataFrame->GetWidgetName() );
   
   // add the multicolumn list to show the points
@@ -236,10 +282,30 @@ void vtkKWCheckBoxSelectionDialog::CreateWidget ( )
     }
   this->Script ( "pack %s -fill both -expand true",
                      this->MultiColumnList->GetWidgetName());
- 
 
-  // this->MultiColumnList->GetWidget()->SetCellUpdatedCommand(this, "UpdateElement");
-    
+  // select Frame
+  vtkKWFrame *selectFrame =  vtkKWFrame::New ( );
+  selectFrame->SetParent ( this->Dialog );
+  selectFrame->Create ( );
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 selectFrame->GetWidgetName() );
+
+  // add select all button
+  this->SelectAllButton = vtkKWPushButton::New ( );
+  this->SelectAllButton->SetParent ( selectFrame );
+  this->SelectAllButton->Create ( );
+  this->SelectAllButton->SetText ("Select All Modules");
+  this->Script("pack %s -side left -anchor w -padx 2 -pady 4", 
+              this->SelectAllButton->GetWidgetName());
+
+  // add select none button
+  this->SelectNoneButton = vtkKWPushButton::New ( );
+  this->SelectNoneButton->SetParent ( selectFrame );
+  this->SelectNoneButton->Create ( );
+  this->SelectNoneButton->SetText ("Select No Modules");
+  this->Script("pack %s -side left -anchor w -padx 2 -pady 4", 
+              this->SelectNoneButton->GetWidgetName());
+  
   // save Frame
   vtkKWFrame *saveFrame = vtkKWFrame::New ( );
   saveFrame->SetParent ( this->Dialog );
@@ -266,11 +332,13 @@ void vtkKWCheckBoxSelectionDialog::CreateWidget ( )
   // add observers
   this->OkButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->CancelButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-
+  this->SelectAllButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->SelectNoneButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   
   this->MultiColumnList->SetEnabled(1);
   this->OkButton->SetEnabled(1);
   dataFrame->Delete();
+  selectFrame->Delete();
   saveFrame->Delete();
   
 }
