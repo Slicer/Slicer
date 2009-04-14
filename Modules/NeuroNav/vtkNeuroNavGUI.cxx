@@ -1103,7 +1103,7 @@ void vtkNeuroNavGUI::BuildGUIForTrackingFrame ()
   this->TranslationScale->SetLabelText("Fiducial Translation: ");
   this->TranslationScale->SetWidth ( 40 );
   this->TranslationScale->SetLabelWidth(30);
-  this->TranslationScale->SetRange(-20, 20);
+  this->TranslationScale->SetRange(-80, 80);
   this->TranslationScale->SetStartCommand(this, "TransformChangingCallback");
   this->TranslationScale->SetCommand(this, "TransformChangingCallback");
   this->TranslationScale->SetEndCommand(this, "TransformChangedCallback");
