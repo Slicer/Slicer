@@ -980,12 +980,12 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
               vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
               dialog->SetParent ( this->UIPanel->GetPageWidget ( "Data" ) );
               dialog->SetStyleToMessage();
-              std::string msg = std::string("Unable to read models directory ") + std::string(fileName);
+              std::string msg = std::string("Unable to read all models from directory ") + std::string(fileName);
               dialog->SetText(msg.c_str());
               dialog->Create ( );
               dialog->Invoke();
               dialog->Delete();
-              vtkErrorMacro("ProcessGUIEvents: unable to read file " << fileName);
+              vtkErrorMacro("ProcessGUIEvents: unable to read all models from directory " << fileName);
               }
             else
               {
@@ -1714,7 +1714,7 @@ void vtkSlicerDataGUI:: BuildModelPanel (vtkKWFrame *parent )
   modeltxt->GetWidget()->SetWrapToWord();
   modeltxt->GetWidget()->QuickFormattingOn();
 //  modeltxt->GetWidget()->SetHeight( 12 );
-  const char *t1 = "Use this model loading option to raise a dialog with options to add models to the current scene, and to add (FreeSurfer) scalar overlays to models in the scene. (Click the **Close** (x) icon to hide this message.)\n";  
+  const char *t1 = "Use this model loading option to raise a dialog with options to add models to the current scene. (Click the **Close** (x) icon to hide this message.)\n";  
   modeltxt->SetText ( t1 );
   //Important that Read only after SetText otherwise it doesn't work
   modeltxt->GetWidget()->ReadOnlyOn();
