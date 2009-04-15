@@ -18,7 +18,7 @@ logger                  = logging.getLogger(__name__)
 
 
 # Gradients must be transformed in RAS!
-def  TrackFiberU40(data, shpT, mu, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor, dl=1, Nsteps=300, anisoT=0.2, useSpacing = False, seed=None):
+def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor, dl=1, Nsteps=300, anisoT=0.2, useSpacing = False, seed=None):
 # This function performs stochastic tracking of one fiber.
 # The algorithm is described in the paper 
 # O. Friman et al. 
@@ -146,13 +146,21 @@ def  TrackFiberU40(data, shpT, mu, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTen
       if len(vindex[0])==0:
         break
       v = vts[:, vindex[0][0]]
-    
+   
+      # Record data
+      paths0[k, :, step] = RASpoint
+      paths1[k, :, step] = IJKpoint
+      paths2[k, 0, step] = numpy.log(Posterior[0][vindex[0][0]]) # previously vindex[0][0] 
+      paths3[k, 0, step] = numpy.abs(beta/(alpha+beta))
+      paths4[k, 0] += 1
+
+ 
       # Update current point
  
       if not useSpacing:
         dr = da = ds = 1
 
-      v0 = numpy.dot(v, numpy.sign(I2R)[:3, :3].T)
+      v0 = numpy.dot(v, numpy.sign(I2R)[:3, :3].T)  
 
       RASpoint[0] =  RASpoint[0]  + dr*dl*v0[0] 
       RASpoint[1] =  RASpoint[1]  + da*dl*v0[1]    
@@ -161,14 +169,6 @@ def  TrackFiberU40(data, shpT, mu, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTen
       # find IJK index from RAS point
       IJKpoint = (dot(R2I[:3, :3], RASpoint[newaxis].T) + R2I[:3,3][newaxis].T).T
        
-
-      # Record data
-      paths0[k, :, step] = RASpoint
-      paths1[k, :, step] = IJKpoint
-      paths2[k, 0, step] = numpy.log(Posterior[0][vindex[0][0]]) # previously vindex[0][0] 
-      paths3[k, 0, step] = numpy.abs(beta/(alpha+beta))
-      paths4[k, 0] += 1
-
       # Break if anisotropy is too low
       if abs(beta/(alpha+beta)) < anisoT:
         break
@@ -186,7 +186,7 @@ def  TrackFiberU40(data, shpT, mu, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTen
 
 
 # Gradients must be transformed in RAS!
-def  TrackFiberY40(data, mask, shpT, mu, b, G, IJKstartpoints, R2I, I2R, lV, EV, xVTensor, dl=1, Nsteps=300, anisoT=0.2, useSpacing = False, seed=None):
+def  TrackFiberY40(data, mask, shpT, b, G, vts, IJKstartpoints, R2I, I2R, lV, EV, xVTensor, dl=1, Nsteps=300, anisoT=0.2, useSpacing = False, seed=None):
 # This function performs stochastic tracking of one fiber.
 # The algorithm is described in the paper 
 # O. Friman et al. 
@@ -204,7 +204,7 @@ def  TrackFiberY40(data, mask, shpT, mu, b, G, IJKstartpoints, R2I, I2R, lV, EV,
   seps = sqrt(eps)
 
 # Set random generator, this is important for the parallell execution
-  vts =  vects.vectors.T
+  #vts =  vects.vectors.T
   ndirs = vts.shape[1]
 
 
@@ -245,10 +245,6 @@ def  TrackFiberY40(data, mask, shpT, mu, b, G, IJKstartpoints, R2I, I2R, lV, EV,
 
   for k in range(Npaths):
    
-    #if k > 0:
-    #   if IJKstartpoints[0,k]!= IJKstartpoints[0,k-1] or  IJKstartpoints[1,k]!= IJKstartpoints[1,k-1]  or IJKstartpoints[2,k]!= IJKstartpoints[2,k-1]:
-    #       cache = {}
-
     RASpoint = RASstartpoints[:,k]
     IJKpoint = IJKstartpoints[:,k]
     Prior = StartPrior
@@ -316,28 +312,27 @@ def  TrackFiberY40(data, mask, shpT, mu, b, G, IJKstartpoints, R2I, I2R, lV, EV,
       if len(vindex[0])==0:
         break
       v = vts[:, vindex[0][0]]
-    
-      # Update current point
- 
-      if not useSpacing:
-        dr = da = ds = 1
-
-      v0 = numpy.dot(v, numpy.sign(I2R)[:3, :3].T) 
-
-      RASpoint[0] =  RASpoint[0] + dr*dl*v0[0] 
-      RASpoint[1] =  RASpoint[1] + da*dl*v0[1]    
-      RASpoint[2] =  RASpoint[2] + ds*dl*v0[2]     
    
-      # find IJK index from RAS point
-      IJKpoint = (dot(R2I[:3, :3], RASpoint[newaxis].T) + R2I[:3,3][newaxis].T).T
-       
-
       # Record data
       paths0[k, :, step] = RASpoint
       paths1[k, :, step] = IJKpoint
       paths2[k, 0, step] = numpy.log(Posterior[0][vindex[0][0]]) # previously vindex[0][0] 
       paths3[k, 0, step] = numpy.abs(beta/(alpha+beta))
       paths4[k, 0] += 1
+
+ 
+      # Update current point
+ 
+      if not useSpacing:
+        dr = da = ds = 1
+
+      RASpoint[0] =  RASpoint[0] + dr*dl*v[0] 
+      RASpoint[1] =  RASpoint[1] + da*dl*v[1]    
+      RASpoint[2] =  RASpoint[2] + ds*dl*v[2]     
+   
+      # find IJK index from RAS point
+      IJKpoint = (dot(R2I[:3, :3], RASpoint[newaxis].T) + R2I[:3,3][newaxis].T).T
+
       
       # Break if anisotropy is too low
       if abs(beta/(alpha+beta)) < anisoT:
@@ -355,7 +350,7 @@ def  TrackFiberY40(data, mask, shpT, mu, b, G, IJKstartpoints, R2I, I2R, lV, EV,
   return paths0, paths1, paths2, paths3, paths4
 
 # Gradients must be transformed in RAS!
-def  TrackFiberW40(data, mask, shpT, mu, b, G, IJKstartpoints, R2I, I2R, dl=1, Nsteps=300, anisoT=0.2, useSpacing = False, seed=None):
+def  TrackFiberW40(data, mask, shpT, b, G, vts, IJKstartpoints, R2I, I2R, dl=1, Nsteps=300, anisoT=0.2, useSpacing = False, seed=None):
 # This function performs stochastic tracking of one fiber.
 # The algorithm is described in the paper 
 # O. Friman et al. 
@@ -373,7 +368,7 @@ def  TrackFiberW40(data, mask, shpT, mu, b, G, IJKstartpoints, R2I, I2R, dl=1, N
   seps = sqrt(eps)
 
 # Set random generator, this is important for the parallell execution
-  vts =  vects.vectors.T
+  #vts =  vects.vectors.T
   ndirs = vts.shape[1]
 
 
@@ -485,29 +480,28 @@ def  TrackFiberW40(data, mask, shpT, mu, b, G, IJKstartpoints, R2I, I2R, dl=1, N
       if len(vindex[0])==0:
         break
       v = vts[:, vindex[0][0]]
-    
-      # Update current point
- 
-      if not useSpacing:
-        dr = da = ds = 1
-
-      v0 = numpy.dot(v, numpy.sign(I2R)[:3, :3].T) 
-
-      RASpoint[0] =  RASpoint[0] + dr*dl*v0[0] 
-      RASpoint[1] =  RASpoint[1] + da*dl*v0[1]    
-      RASpoint[2] =  RASpoint[2] + ds*dl*v0[2]     
    
-      # find IJK index from RAS point
-      IJKpoint = (dot(R2I[:3, :3], RASpoint[newaxis].T) + R2I[:3,3][newaxis].T).T
-       
-
       # Record data
       paths0[k, :, step] = RASpoint
       paths1[k, :, step] = IJKpoint
       paths2[k, 0, step] = numpy.log(Posterior[0][vindex[0][0]]) # previously vindex[0][0] 
       paths3[k, 0, step] = numpy.abs(beta/(alpha+beta))
       paths4[k, 0] += 1
-      
+
+ 
+      # Update current point
+ 
+      if not useSpacing:
+        dr = da = ds = 1
+
+      RASpoint[0] =  RASpoint[0] + dr*dl*v[0] 
+      RASpoint[1] =  RASpoint[1] + da*dl*v[1]    
+      RASpoint[2] =  RASpoint[2] + ds*dl*v[2]     
+   
+      # find IJK index from RAS point
+      IJKpoint = (dot(R2I[:3, :3], RASpoint[newaxis].T) + R2I[:3,3][newaxis].T).T
+       
+
       # Break if anisotropy is too low
       if abs(beta/(alpha+beta)) < anisoT:
         break
@@ -710,12 +704,10 @@ def ConnectFibersPZ2( cm, paths1, paths4, shp, isLength=False, lMin=1 , lMax=200
   [ComputeConnectFibersFunctionalP2( k, cm, paths1, paths4, shp, isLength, lMin, lMax)  for k in indx]
 
 
-def FindConnectionFibers( roiA, roiB, pathsRAS, pathsIJK, pathsLOGP, pathsANIS, pathsLEN, counter1, counter2, Pr, Fa, Wa):
+def FindConnectionFibers( roiA, roiB, pathsRAS, pathsIJK, pathsLOGP, pathsANIS, pathsLEN, counter1, counter2, Pr, Fa, Wa, threshold=0.1, vicinity=5):
 
   indAx = transpose(roiA.nonzero())
-  #print 'Shape of indx A : ', indAx.shape
   indBx = transpose(roiB.nonzero())
-  #print 'Shape of indx B : ', indBx.shape
 
   Ga = indAx.sum(0)/len(indAx)
   #print 'Ga : ', Ga
@@ -734,6 +726,12 @@ def FindConnectionFibers( roiA, roiB, pathsRAS, pathsIJK, pathsLOGP, pathsANIS, 
   counterB1 = 0
   counterA2 = 0
   counterB2 = 0
+
+  cm1 = numpy.zeros((roiA.shape[0], roiA.shape[1], roiA.shape[2]), 'uint32')
+  cm2 = numpy.zeros((roiA.shape[0], roiA.shape[1], roiA.shape[2]), 'uint32')
+  cm3 = numpy.zeros((roiA.shape[0], roiA.shape[1], roiA.shape[2]), 'uint32')
+  cm4 = numpy.zeros((roiA.shape[0], roiA.shape[1], roiA.shape[2]), 'uint32')
+
 
   for k in range(pathsIJK.shape[0]): # looped on the number of paths
     if pathsLEN[k,0] == 0:
@@ -817,11 +815,10 @@ def FindConnectionFibers( roiA, roiB, pathsRAS, pathsIJK, pathsLOGP, pathsANIS, 
 
     dl = 1.0
     if fromA and isIn2B:
-      #print 'POINT : ', ext2
       test = exp(pathsLOGP[k, 0, :pathsLEN[k,0]])
       pr = test[pathsLEN[k,0]-1]
       
-      if pr > 0.1:
+      if pr > threshold:
         counter1 +=1
 
         print 'Max prob : ', test.max()
@@ -829,22 +826,23 @@ def FindConnectionFibers( roiA, roiB, pathsRAS, pathsIJK, pathsLOGP, pathsANIS, 
 
         for l in range(pathsLEN[k,0]):
           fa = fa + pathsANIS[k, 0, l]
-
+          if not (pathsIJK[k, 0, l] >= roiA.shape[0] or  pathsIJK[k, 1, l]  >= roiA.shape[1] or  pathsIJK[k, 2, l]  >= roiA.shape[2]):
+            cm1[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]]+=1
+            cm3[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]]+=1
 
         nFactor = pathsLEN[k,0]
         Pr += pr 
-        Fa += fa/nFactor
-        Wa += pr*fa/nFactor 
-        print 'normed fa : ', pr*fa/nFactor  
+        Fa += fa/float(nFactor)
+        Wa += pr*fa/float(nFactor) 
+        print 'normed fa : ', pr*fa/float(nFactor)  
 
 
 
     if not fromA and isIn2A:
-      #print 'POINT : ', ext2
       test = exp(pathsLOGP[k, 0, :pathsLEN[k,0]])
       pr = test[pathsLEN[k,0]-1]
 
-      if pr > 0.1:
+      if pr > threshold:
 
         counter1 +=1
 
@@ -853,23 +851,23 @@ def FindConnectionFibers( roiA, roiB, pathsRAS, pathsIJK, pathsLOGP, pathsANIS, 
 
         for l in range(pathsLEN[k,0]):
           fa = fa + pathsANIS[k, 0, l]
-        
+          if not (pathsIJK[k, 0, l] >= roiA.shape[0] or  pathsIJK[k, 1, l]  >= roiA.shape[1] or  pathsIJK[k, 2, l]  >= roiA.shape[2]):
+            cm2[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]]+=1
+            cm4[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]]+=1
+
         nFactor = pathsLEN[k,0]
         Pr += pr 
-        Fa += fa/nFactor
-        Wa += pr*fa/nFactor 
-        print 'normed fa : ', pr*fa/nFactor
+        Fa += fa/float(nFactor)
+        Wa += pr*fa/float(nFactor) 
+        print 'normed fa : ', pr*fa/float(nFactor)
 
 
-    vicinity = 10.0 #0.0 # under test
     if fromA and not isIn2B:
       if norm(ext2-Gb)<= maxDB.max()+vicinity: #dAB -maxDA.max():
-         #counter2+=1
-         #print 'POINT : ', ext2
          test = exp(pathsLOGP[k, 0, :pathsLEN[k,0]])
          pr = test[pathsLEN[k,0]-1]
       
-         if pr > 0.1:
+         if pr > threshold:
            counter2+=1
            counter1+=1
 
@@ -878,25 +876,26 @@ def FindConnectionFibers( roiA, roiB, pathsRAS, pathsIJK, pathsLOGP, pathsANIS, 
 
            for l in range(pathsLEN[k,0]):
              fa = fa + pathsANIS[k, 0, l]
+             if not (pathsIJK[k, 0, l] >= roiA.shape[0] or  pathsIJK[k, 1, l]  >= roiA.shape[1] or  pathsIJK[k, 2, l]  >= roiA.shape[2]):
+               cm3[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]]+=1
 
 
            nFactor = pathsLEN[k,0]
+
            Pr += pr 
-           Fa += fa/nFactor
-           Wa += pr*fa/nFactor 
-           print 'normed fa (vicinity) : ', pr*fa/nFactor  
+           Fa += fa/float(nFactor)
+           Wa += pr*fa/float(nFactor) 
+           print 'normed fa (vicinity) : ', pr*fa/float(nFactor)  
 
          #print 'curve terminates in neighborhood of B with length of ', pathsLEN[k,0]
        
 
     if not fromA and not isIn2A:
       if norm(ext2-Ga)<= maxDA.max()+vicinity: #dAB -maxDB.max():
-         #counter2+=1
-         #print 'POINT : ', ext2
          test = exp(pathsLOGP[k, 0, :pathsLEN[k,0]])
          pr = test[pathsLEN[k,0]-1]
       
-         if pr > 0.1:
+         if pr > threshold:
            counter2+=1
            counter1+=1
 
@@ -905,20 +904,22 @@ def FindConnectionFibers( roiA, roiB, pathsRAS, pathsIJK, pathsLOGP, pathsANIS, 
 
            for l in range(pathsLEN[k,0]):
              fa = fa + pathsANIS[k, 0, l]
+             if not (pathsIJK[k, 0, l] >= roiA.shape[0] or  pathsIJK[k, 1, l]  >= roiA.shape[1] or  pathsIJK[k, 2, l]  >= roiA.shape[2]):
+               cm4[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]]+=1
 
 
            nFactor = pathsLEN[k,0]
            Pr += pr 
-           Fa += fa/nFactor
-           Wa += pr*fa/nFactor 
-           print 'normed fa (vicinity) : ', pr*fa/nFactor  
+           Fa += fa/float(nFactor)
+           Wa += pr*fa/float(nFactor) 
+           print 'normed fa (vicinity) : ', pr*fa/float(nFactor)  
    
         #print 'curve terminates in neighborhood of A with length of ', pathsLEN[k,0]
 
-  return counter1, counter2, Pr, Fa, Wa
+  return counter1, counter2, Pr, Fa, Wa, cm1, cm2, cm3, cm4
 
 
-def FilterFibers0( pathsRAS, pathsIJK, pathsLOGP, pathsANIS, pathsLEN, roiA, roiB, shape, vicinity, threshold):
+def FilterFibers0( pathsRAS, pathsIJK, pathsLOGP, pathsANIS, pathsLEN, roiA, roiB, shape, threshold=0.1, vicinity=5):
 
   print 'Shape roi A : ', roiA.shape
   print 'Shape roi B : ', roiB.shape

@@ -30,75 +30,83 @@ def ComputeTensorFunctional(data, xT, yT, lT, ET, A, k):
    W = diag(y)
    W2 = W**2
 
-   xTensor = dot(dot(dot(linalg.inv(dot(dot(A.T,W2),A)),A.T),W2),logy)           # xTensor = [ln(mu0) d11 d12 d13 d22 d23 d33]
+   try:
+     xTensor = dot(dot(dot(linalg.inv(dot(dot(A.T,W2),A)),A.T),W2),logy)           # xTensor = [ln(mu0) d11 d12 d13 d22 d23 d33]
 
-   xT[k[0], k[1], k[2], :] = squeeze(xTensor[:])
-   yT[k[0], k[1], k[2], :] = squeeze(array([xTensor[1], xTensor[2], xTensor[3], 
+     xT[k[0], k[1], k[2], :] = squeeze(xTensor[:])
+     yT[k[0], k[1], k[2], :] = squeeze(array([xTensor[1], xTensor[2], xTensor[3], 
                                     xTensor[2], xTensor[4], xTensor[5], 
                                     xTensor[3], xTensor[5], xTensor[6]], 'float'))
 
-   xTensor = 10000.0*xTensor
-   l,E = linalg.eig(vstack([hstack([xTensor[1], xTensor[2], xTensor[3]]),
+     l,E = linalg.eig(vstack([hstack([xTensor[1], xTensor[2], xTensor[3]]),
                              hstack([xTensor[2], xTensor[4], xTensor[5]]), 
                              hstack([xTensor[3], xTensor[5], xTensor[6]]) ]))         # E = eigenvectors
    
-   lT[k[0], k[1], k[2], :] = l[:]/10000.0
-   E[:, 0]/linalg.norm(E[:, 0])
-   E[:, 1]/linalg.norm(E[:, 1])
-   E[:, 2]/linalg.norm(E[:, 2])
-   ET[k[0], k[1], k[2], ...] = E[...]  
+
+     lT[k[0], k[1], k[2], :] = l[:]
+     E[:, 0]/linalg.norm(E[:, 0])
+     E[:, 1]/linalg.norm(E[:, 1])
+     E[:, 2]/linalg.norm(E[:, 2])
+     ET[k[0], k[1], k[2], ...] = E[...]
+   except:
+     print 'Numerical exception - diagonalization/eigeinvalue decomposition'
 
 
 def ComputeTensorKFunctional(tens, shp, xT, yT, lT, ET, k):
    eps = finfo(float).eps
 
    # Estimate tensor for this point by means of weighted least squares
+   try:
+     xTensor = tens[k[0], k[1], k[2], :]
 
-   xTensor = tens[k[0], k[1], k[2], :]
-
-   xT[k[0], k[1], k[2], :] = squeeze(xTensor[:])
-   yT[k[0], k[1], k[2], :] = squeeze(array([xTensor[1], xTensor[2], xTensor[3], 
+     xT[k[0], k[1], k[2], :] = squeeze(xTensor[:])
+     yT[k[0], k[1], k[2], :] = squeeze(array([xTensor[1], xTensor[2], xTensor[3], 
                                     xTensor[2], xTensor[4], xTensor[5], 
                                     xTensor[3], xTensor[5], xTensor[6]], 'float'))
 
-   xTensor = 10000.0*xTensor
-   l,E = linalg.eig(vstack([hstack([xTensor[1], xTensor[2], xTensor[3]]),
+     l,E = linalg.eig(vstack([hstack([xTensor[1], xTensor[2], xTensor[3]]),
                              hstack([xTensor[2], xTensor[4], xTensor[5]]), 
                              hstack([xTensor[3], xTensor[5], xTensor[6]]) ]))         # E = eigenvectors
    
-   lT[k[0], k[1], k[2], :] = l[:]/10000.0
-   E[:, 0]/linalg.norm(E[:, 0])
-   E[:, 1]/linalg.norm(E[:, 1])
-   E[:, 2]/linalg.norm(E[:, 2])
-   ET[k[0], k[1], k[2], ...] = E[...]  
+     lT[k[0], k[1], k[2], :] = l[:]
+     E[:, 0]/linalg.norm(E[:, 0])
+     E[:, 1]/linalg.norm(E[:, 1])
+     E[:, 2]/linalg.norm(E[:, 2])
+     ET[k[0], k[1], k[2], ...] = E[...]
+   except:
+     print 'Numerical exception - diagonalization/eigeinvalue decomposition'
+
 
 def ComputeTensorPFunctional(y, xT, yT, lT, ET, A):
    eps = finfo(float).eps
 
-   logy = log(y)
+   logy = log(y+eps)
    logy = logy[:, newaxis]
 
    # Estimate tensor for this point by means of weighted least squares
    W = diag(y)
    W2 = W**2
 
-   xTensor = dot(dot(dot(linalg.inv(dot(dot(A.T,W2),A)),A.T),W2),logy)           # xTensor = [ln(mu0) d11 d12 d13 d22 d23 d33]
+   try:
+     xTensor = dot(dot(dot(linalg.inv(dot(dot(A.T,W2),A)),A.T),W2),logy)           # xTensor = [ln(mu0) d11 d12 d13 d22 d23 d33]
 
-   xT[:] = squeeze(xTensor[:])
-   yT[:] = squeeze(array([xTensor[1], xTensor[2], xTensor[3], 
+     xT[:] = squeeze(xTensor[:])
+     yT[:] = squeeze(array([xTensor[1], xTensor[2], xTensor[3], 
                                     xTensor[2], xTensor[4], xTensor[5], 
                                     xTensor[3], xTensor[5], xTensor[6]], 'float'))
 
-   xTensor = 10000.0*xTensor
-   l,E = linalg.eig(vstack([hstack([xTensor[1], xTensor[2], xTensor[3]]),
+     l,E = linalg.eig(vstack([hstack([xTensor[1], xTensor[2], xTensor[3]]),
                              hstack([xTensor[2], xTensor[4], xTensor[5]]), 
                              hstack([xTensor[3], xTensor[5], xTensor[6]]) ]))         # E = eigenvectors
    
-   lT[:] = l[:]/10000.0
-   E[:, 0]/linalg.norm(E[:, 0])
-   E[:, 1]/linalg.norm(E[:, 1])
-   E[:, 2]/linalg.norm(E[:, 2])
-   ET[...] = E[...]  
+     lT[:] = l[:]
+     E[:, 0]/linalg.norm(E[:, 0])
+     E[:, 1]/linalg.norm(E[:, 1])
+     E[:, 2]/linalg.norm(E[:, 2])
+     ET[...] = E[...]  
+   except:
+     print 'Numerical exception - diagonalization/eigeinvalue decomposition'
+
 
 def EvaluateTensorP0(data, G, b):
 
@@ -155,13 +163,17 @@ def EvaluateTensorX1(data, G, b, wmI=empty(0)):
    
    [ComputeAFunctional(A, b, G, k) for k in range(data.shape[3])]
 
-
+   print 'A computed'
+ 
    lT = zeros((data.shape[0], data.shape[1], data.shape[2], 3) , 'float')
    ET = zeros((data.shape[0], data.shape[1], data.shape[2], 3, 3), 'float' )
    xT = zeros((data.shape[0], data.shape[1], data.shape[2], 7), 'float')
    yT = zeros((data.shape[0], data.shape[1], data.shape[2], 9), 'float')
 
    indx = transpose(wmI.nonzero())
+
+   print 'Index transposed'
+
 
    time2 = time.time()
                

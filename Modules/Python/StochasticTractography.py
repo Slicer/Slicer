@@ -526,7 +526,8 @@ def Execute (\
              inputVol4 = ""
              ):
 
-  if os.name=='posix':
+  if os.name == 'posix':
+
     p1 = sp.Popen(["ps", "-edlf"], stdout=sp.PIPE)
     output = p1.communicate()[0]
 
@@ -553,6 +554,7 @@ def Execute (\
 
     time.sleep(2)
 
+  #
   Slicer = __import__ ( "Slicer" )
   slicer = Slicer.slicer
   scene = slicer.MRMLScene
