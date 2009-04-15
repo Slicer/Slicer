@@ -227,6 +227,7 @@ vtkMimxMeshActor::~vtkMimxMeshActor()
   this->TubeFilter->Delete();
   this->OutlineGeometryFilter->Delete();
   this->LegendActor->Delete();
+  this->lutFilter->Delete();
 }
 
 //----------------------------------------------------------------------------------------

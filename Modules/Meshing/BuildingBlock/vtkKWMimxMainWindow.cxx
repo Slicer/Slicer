@@ -138,10 +138,14 @@ vtkKWMimxMainWindow::vtkKWMimxMainWindow()
   this->FontFamilyButtons  = NULL; 
   
   /* Initialize the Default Application Settings */
+  /*
+   * TODO: these are disabled for use inside slicer
   vtkKWFrameWithLabel::SetDefaultLabelFontWeightToNormal( );
   this->SlicerTheme = vtkSlicerTheme::New( );
   strcpy ( this->ApplicationFontSize,   "small" );
   strcpy ( this->ApplicationFontFamily, "Arial" );
+  */
+  this->SlicerTheme = NULL;
   
   /* Default Auto Save Settings */
   this->AutoSaveFlag = true;
