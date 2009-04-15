@@ -640,6 +640,10 @@ void vtkSlicerFiducialListWidget::ProcessWidgetEvents ( vtkObject *caller,
         {
         vtkSlicerFiducialsLogic *fidLogic  = vtkSlicerFiducialsGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Fiducials"))->GetLogic();
         int modelIndex = fidLogic->AddFiducialSelected(rasPoint[0], rasPoint[1], rasPoint[2], 1);
+        if (modelIndex == -1)
+          {
+          vtkErrorMacro("Pick failed, could not add a fiducial at " << rasPoint[0] << "," << rasPoint[1] << "," << rasPoint[2]); 
+          }
         // swallow the event
         if (this->GUICallbackCommand != NULL)
           {
