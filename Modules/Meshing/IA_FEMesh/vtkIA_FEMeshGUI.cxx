@@ -56,7 +56,7 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLLayoutNode.h"
 
-//#include "vtkKWMimxMainNotebook.h"
+#include "vtkKWMimxMainNotebook.h"
 //#include "vtkIA_FEMeshMRMLNotebook.h"
 #include "vtkKWMimxViewProperties.h"
 #include "vtkKWMimxMainUserInterfacePanel.h"
@@ -244,6 +244,19 @@ void vtkIA_FEMeshGUI::BuildGUI ( )
 
 }
 
+//---------------------------------------------------------------------------
+void vtkIA_FEMeshGUI::TearDownGUI ( )
+{
+  if ( this->MeshingUI )
+    {
+    this->MeshingUI->SetRenderWidget(NULL);
+    this->MeshingUI->SetMainWindow(NULL);
+    this->MeshingUI->SetParent(NULL);
+    this->MeshingUI->GetViewProperties()->SetMimxMainWindow(NULL);
+    this->MeshingUI->GetMainUserInterfacePanel()->TearDown();
+    this->MeshingUI->GetMainUserInterfacePanel()->SetMimxMainWindow(NULL);
+    }
+}
 
 
 // Description:

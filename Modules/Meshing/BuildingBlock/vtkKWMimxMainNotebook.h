@@ -65,6 +65,10 @@ public:
   // save and restore the visibility state of all objects managed by the notebook tabs
   void SaveVisibilityStateOfObjectLists(void);
   void RestoreVisibilityStateOfObjectLists(void);
+
+  // Description:
+  // disconnect circular references that prevent clean shutdown (leaks)
+  virtual void TearDown();
   
 protected:
         vtkKWMimxMainNotebook();

@@ -206,6 +206,25 @@ void vtkKWMimxMainNotebook::CreateWidget()
 }
 
 //----------------------------------------------------------------------------
+void vtkKWMimxMainNotebook::TearDown()
+{
+  if(this->ImageMenuGroup)     
+      this->ImageMenuGroup->SetMimxMainWindow(NULL);
+  if(this->SurfaceMenuGroup)     
+      this->SurfaceMenuGroup->SetMimxMainWindow(NULL);
+  if(this->BBMenuGroup)     
+      this->BBMenuGroup->SetMimxMainWindow(NULL);
+  if(this->FEMeshMenuGroup)     
+      this->FEMeshMenuGroup->SetMimxMainWindow(NULL);
+  if(this->QualityMenuGroup)     
+      this->QualityMenuGroup->SetMimxMainWindow(NULL);
+  if(this->MaterialPropertyMenuGroup)     
+      this->MaterialPropertyMenuGroup->SetMimxMainWindow(NULL);
+  if(this->BoundaryConditionsMenuGroup)     
+      this->BoundaryConditionsMenuGroup->SetMimxMainWindow(NULL);
+}
+
+//----------------------------------------------------------------------------
 void vtkKWMimxMainNotebook::Update()
 {
         this->UpdateEnableState();

@@ -66,6 +66,7 @@ class VTK_IA_FEMesh_EXPORT vtkIA_FEMeshGUI : public vtkSlicerModuleGUI
   vtkSetObjectMacro (Logic, vtkIA_FEMeshLogic);
 
   virtual void BuildGUI ( );
+  virtual void TearDownGUI ( );
 
   virtual void AddGUIObservers ( );
 

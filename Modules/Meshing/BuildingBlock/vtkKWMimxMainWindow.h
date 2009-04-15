@@ -69,6 +69,9 @@ class VTK_BUILDINGBLOCK_EXPORT vtkKWMimxMainWindow : public vtkKWCompositeWidget
 public:
         static vtkKWMimxMainWindow* New();
         vtkTypeRevisionMacro(vtkKWMimxMainWindow,vtkKWCompositeWidget);
+
+        virtual void Register(vtkObject *o) { Superclass::Register(o); };
+        virtual void UnRegister(vtkObject *o) { Superclass::UnRegister(o); };
         
         // Description:
         // Get/Set the KWRenderWidget used to render the scene. The

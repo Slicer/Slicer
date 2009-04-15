@@ -85,8 +85,6 @@ void vtkMRMLFiniteElementBuildingBlockDisplayNode::UpdatePolyDataPipeline()
 vtkMRMLFiniteElementBuildingBlockDisplayNode::~vtkMRMLFiniteElementBuildingBlockDisplayNode()
 {
   this->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
-  this->GeometryFilter->Delete();
-  this->ShrinkPolyData->Delete();
 }
 
 //----------------------------------------------------------------------------
