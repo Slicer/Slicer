@@ -147,6 +147,7 @@ vtkFetchMILogic::vtkFetchMILogic()
      }
 
    this->Visited = false;
+   this->Raised = false;
 }
 
 
@@ -186,6 +187,7 @@ vtkFetchMILogic::~vtkFetchMILogic()
   this->ParsingError = 0;
   this->SetAndObserveMRMLScene ( NULL );
   this->Visited = false;  
+  this->Raised = false;
 }
 
 
@@ -195,7 +197,7 @@ vtkFetchMILogic::~vtkFetchMILogic()
 void vtkFetchMILogic::Enter()
 {
   this->Visited = true;
-
+  this->Raised = true;
   //---
   //--- Set up Logic observers on enter, and released on exit.
   vtkIntArray *logicEvents = this->NewObservableEvents();
@@ -204,6 +206,14 @@ void vtkFetchMILogic::Enter()
     this->SetAndObserveMRMLSceneEvents ( this->MRMLScene, logicEvents );
     logicEvents->Delete();
     }
+
+}
+
+
+//----------------------------------------------------------------------------
+void vtkFetchMILogic::Exit()
+{
+  this->Raised = false;
 }
 
 
@@ -1232,6 +1242,12 @@ void vtkFetchMILogic::ProcessMRMLEvents ( vtkObject *caller, unsigned long event
   if ( scene == this->MRMLScene && event == vtkMRMLScene::NodeAddedEvent )
     {
     this->ApplySlicerDataTypeTag();
+    }
+
+  // only do what we need it to do if module is hidden.
+  if ( !this->Raised )
+    {
+    return;
     }
 
   vtkMRMLFetchMINode* node = vtkMRMLFetchMINode::SafeDownCast ( caller );

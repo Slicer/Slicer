@@ -29,7 +29,10 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   vtkTypeMacro(vtkFetchMILogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  // Description:
+  // These methods are used to turn observers on/off when module is entered/exited.
   virtual void Enter ( );
+  virtual void Exit ( ) ;
   
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event,
                                    void *callData );
@@ -575,6 +578,7 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   int ParsingError;
   char *ReservedURI;
   bool Visited;
+  bool Raised;
 
 };
 

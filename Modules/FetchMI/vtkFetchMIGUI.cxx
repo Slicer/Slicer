@@ -292,6 +292,9 @@ void vtkFetchMIGUI::Exit ( )
   this->RemoveGUIObservers();
   this->ReleaseModuleEventBindings();
 
+  //--- Do a parallel thing in Logic
+  this->Logic->Exit();
+    
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   if ( app )
     {
@@ -1501,6 +1504,13 @@ void vtkFetchMIGUI::UpdateGUI ()
   if (fetchMINode == NULL )
     {
     fetchMINode = vtkMRMLFetchMINode::New();
+    //--- Initialize tag table with default tags for
+    //--- Slicer-friendly services
+    //--- NOTE TO DEVELOPERS: add new tag tables for new 
+    //--- webservices in the following method, and give each tag
+    //--- table a unique name.
+    fetchMINode->AddTagTablesForWebServices();
+
     vtkIntArray *events = vtkIntArray::New();
     events->InsertNextValue ( vtkMRMLFetchMINode::KnownServersModifiedEvent );
     events->InsertNextValue ( vtkMRMLFetchMINode::SelectedServerModifiedEvent );
@@ -1519,8 +1529,8 @@ void vtkFetchMIGUI::UpdateGUI ()
     this->Logic->SetFetchMINode( this->GetFetchMINode() );
     events->Delete();
     }
+
   fetchMINode = this->GetFetchMINode();
-  
   if (fetchMINode != NULL)
     {
     //---  update the list of known servers in the
@@ -2387,13 +2397,15 @@ void vtkFetchMIGUI::BuildGUI ( )
   l1->Delete();
   serverFrame->Delete();
 
-  this->UpdateGUI();
-//  this->Logic->CreateTemporaryFiles();
-  this->Logic->InitializeInformatics();
-  this->InitializeSceneTable();
   this->LoadTclPackage();
   this->Init();
   this->Built = true;
+
+  this->UpdateGUI();
+  this->InitializeSceneTable();
+
+//  this->Logic->CreateTemporaryFiles();
+  this->Logic->InitializeInformatics();
 }
 
 

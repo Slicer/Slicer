@@ -72,12 +72,6 @@ vtkMRMLFetchMINode::vtkMRMLFetchMINode()
    this->ResourceDescription->SetName ( "ResourceDescription");
 
 
-   //--- Initialize tag table with default tags for
-   //--- Slicer-friendly services
-   //--- NOTE TO DEVELOPERS: add new tag tables for new 
-   //--- webservices in the following method, and give each tag
-   //--- table a unique name.
-   this->AddTagTablesForWebServices();
    
 }
 
