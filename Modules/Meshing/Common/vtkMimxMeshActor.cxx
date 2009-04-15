@@ -219,6 +219,7 @@ vtkMimxMeshActor::~vtkMimxMeshActor()
   this->ShrinkFilter->Delete();
   if(this->PointSetOfNodeSet)
     this->PointSetOfNodeSet->Delete();
+  this->ClipPlaneGeometryFilter->Delete();
 }
 
 //----------------------------------------------------------------------------------------
