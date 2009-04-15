@@ -216,10 +216,14 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
     return;
     }
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
-  if ( b == this->LoadModelButton || b == this->LoadScalarsButton)
+  if (b == this->LoadModelButton || b == this->LoadScalarsButton)
     {
     // get the data gui
-    vtkSlicerDataGUI *dataGUI = vtkSlicerDataGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Data"));
+    vtkSlicerDataGUI *dataGUI = NULL;
+    if ( this->GetApplication() != NULL )
+      {
+      dataGUI = vtkSlicerDataGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Data"));
+      }
     if (dataGUI != NULL)
       {
       if (b == this->LoadModelButton)
@@ -377,7 +381,7 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     this->LoadModelButton->SetText (" Add 3D model or a model directory" );
     this->LoadModelButton->SetWidth ( 300 );
     this->LoadModelButton->SetAnchorToWest();
-    this->LoadModelButton->SetBalloonHelpString("Use this model loading option to raise a dialog with options to add models to the current scene, and to add (FreeSurfer) scalar overlays to models in the scene.");
+    this->LoadModelButton->SetBalloonHelpString("Use this model loading option to raise a dialog with options to add models to the current scene.");
   
     app->Script("pack %s -side top -anchor nw -padx 2 -pady 4 -ipadx 0 -ipady 0", 
                 this->LoadModelButton->GetWidgetName());
