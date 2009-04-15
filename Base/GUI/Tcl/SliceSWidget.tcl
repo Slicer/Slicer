@@ -570,7 +570,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       foreach gui $sliceGUIs {
         [[$gui GetSliceViewer] GetRenderWidget] CornerAnnotationVisibilityOff
         set snode [$gui GetSliceNode]
-        if { [$this isCompareView] } {
+        if { [$this isCompareView] == 1 } {
           $snode SetSliceSpacingModeToAutomatic
         }
           
@@ -729,6 +729,10 @@ itcl::body SliceSWidget::updateAnnotations {x y z r a s} {
     set ijkText ""
     set xyText ""
     set rasText ""
+    set foregroundname "None"
+    set backgroundname "None"
+    set labelname "None"
+    set reformation ""
 
     # find the SliceSWidget for sgui
     set sw [$this getSliceSWidgetForGUI $sgui]
@@ -760,6 +764,22 @@ itcl::body SliceSWidget::updateAnnotations {x y z r a s} {
                      $slayers(background,i) $slayers(background,j) $slayers(background,k)]
       set xyText "X: $x\nY:$y"
       set rasText [format "R: %.1f\nA: %.1f\nS: %.1f" $r $a $s]
+
+      if {[info command $slayers(label,node)] != ""
+          && $slayers(label,node) != ""} {
+          set labelname [$slayers(label,node) GetName]
+      }
+
+      if {[info command $slayers(foreground,node)] != ""
+          && $slayers(foreground,node) != ""} {
+          set foregroundname [$slayers(foreground,node) GetName]
+      }
+
+      if {[info command $slayers(background,node)] != ""
+          && $slayers(background,node) != ""} {
+          set backgroundname [$slayers(background,node) GetName]
+      } 
+
     }
 
     set formattedSpacing [format "%.3g" [lindex [$logic GetLowestVolumeSliceSpacing] 2]]
@@ -767,7 +787,8 @@ itcl::body SliceSWidget::updateAnnotations {x y z r a s} {
     if { [$sNode GetSliceSpacingMode] == 1 } {
       set spacingText "(Sp: ${formattedSpacing}mm)"
     }
-    
+
+
     set spaceText0 ""
     set spaceText1 ""
     switch [$sliceCompositeNode GetAnnotationSpace] {
@@ -777,6 +798,8 @@ itcl::body SliceSWidget::updateAnnotations {x y z r a s} {
       "3" {set spaceText0 $rasText; set spaceText1 $ijkText}
     }
     
+   set reformation [$_sliceNode GetOrientationString]
+      
 
     [[$sgui GetSliceViewer] GetRenderWidget] CornerAnnotationVisibilityOn
     set annotation [[[$sgui GetSliceViewer] GetRenderWidget] GetCornerAnnotation] 
@@ -791,19 +814,19 @@ itcl::body SliceSWidget::updateAnnotations {x y z r a s} {
         $annotation SetText 0 "${labelText}\n${voxelText}"
         $annotation SetText 1 $spaceText0
         $annotation SetText 2 $spaceText1
-        $annotation SetText 3 "\n\n${spacingText}"
+          $annotation SetText 3 "${backgroundname}\n${foregroundname}\n${labelname}\n\n${reformation}\n${spacingText}"
       }
       "2" {
         $annotation SetText 0 "${labelText}"
         $annotation SetText 1 ""
         $annotation SetText 2 ""
-        $annotation SetText 3 ""
+        $annotation SetText 3 "${backgroundname}\n${foregroundname}\n${labelname}\n\n${reformation}\n${spacingText}"
       }
       "3" {
         $annotation SetText 0 "${labelText}\n${voxelText}"
         $annotation SetText 1 ""
         $annotation SetText 2 ""
-        $annotation SetText 3 ""
+        $annotation SetText 3 "${backgroundname}\n${foregroundname}\n${labelname}\n\n${reformation}\n${spacingText}"
       }
     }
     
@@ -817,6 +840,11 @@ itcl::body SliceSWidget::updateAnnotation {x y z r a s} {
   set logic [$sliceGUI GetLogic]
   set sliceCompositeNode [$logic GetSliceCompositeNode]
 
+  set foregroundname "None"
+  set backgroundname "None"
+  set labelname "None"
+
+  set reformation [$_sliceNode GetOrientationString]
   
   # get the display node for the label volume, extract the name of the colour used to represent the label pixel
   set colorName ""
@@ -835,6 +863,22 @@ itcl::body SliceSWidget::updateAnnotation {x y z r a s} {
           }
       }
   }
+
+  if {[info command $_layers(label,node)] != ""
+      && $_layers(label,node) != ""} {
+      set labelname [$_layers(label,node) GetName]
+  }
+  
+  if {[info command $_layers(foreground,node)] != ""
+      && $_layers(foreground,node) != ""} {
+      set foregroundname [$_layers(foreground,node) GetName]
+  }
+  
+  if {[info command $_layers(background,node)] != ""
+      && $_layers(background,node) != ""} {
+      set backgroundname [$_layers(background,node) GetName]
+  }
+
   set labelText "Lb: $_layers(label,pixel) $colorName"
   set voxelText "Fg: $_layers(foreground,pixel)\nBg: $_layers(background,pixel)"
   set ijkText [format "Bg I: %d\nBg J: %d\nBg K: %d" \
@@ -868,19 +912,19 @@ itcl::body SliceSWidget::updateAnnotation {x y z r a s} {
       $_annotation SetText 0 "${labelText}\n${voxelText}"
       $_annotation SetText 1 $spaceText0
       $_annotation SetText 2 $spaceText1
-      $_annotation SetText 3 "\n\n${spacingText}"
+      $_annotation SetText 3 "${backgroundname}\n${foregroundname}\n${labelname}\n\n${reformation}\n${spacingText}"
     }
     "2" {
       $_annotation SetText 0 "${labelText}"
       $_annotation SetText 1 ""
       $_annotation SetText 2 ""
-      $_annotation SetText 3 ""
+      $_annotation SetText 3 "${backgroundname}\n${foregroundname}\n${labelname}\n\n${reformation}\n${spacingText}"
     }
     "3" {
       $_annotation SetText 0 "${labelText}\n${voxelText}"
       $_annotation SetText 1 ""
       $_annotation SetText 2 ""
-      $_annotation SetText 3 ""
+      $_annotation SetText 3 "${backgroundname}\n${foregroundname}\n${labelname}\n\n${reformation}\n${spacingText}"
     }
   }
 }
