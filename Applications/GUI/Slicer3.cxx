@@ -1174,8 +1174,11 @@ int Slicer3_main(int argc, char *argv[])
         logic->SetModuleName(desc.GetShortName().c_str());
 
         vtkIntArray* events = logic->NewObservableEvents();
-        logic->SetAndObserveMRMLSceneEvents(scene, events);
-        events->Delete();
+        if ( events != NULL )
+          {
+          logic->SetAndObserveMRMLSceneEvents(scene, events);
+          events->Delete();
+          }
 
         logic->SetApplicationLogic(appLogic);
         logic->SetModuleLocation(desc.GetLocation().c_str());
@@ -1199,12 +1202,9 @@ int Slicer3_main(int argc, char *argv[])
           gui->GetUIPanel()->SetUserInterfaceManager( appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
           gui->GetUIPanel()->Create( );
           slicerApp->AddModuleGUI( gui );
-//          if ( !gui->GetLazyBuild() )
-//            {
-            gui->BuildGUI ( );
-            gui->AddGUIObservers ( );
-            gui->Init();
-//            }
+          gui->BuildGUI ( );
+          gui->AddGUIObservers ( );
+          gui->Init();
           }
         }
       }
