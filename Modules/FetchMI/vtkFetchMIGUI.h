@@ -202,7 +202,11 @@ protected:
   int UpdatingGUI;
   int UpdatingMRML;
   int GUIWidth;
-  int Observed;
+  // Description:
+  // This flag gets set when the module is entered,
+  // and unset when the module is exited. It is used
+  // to put observers on and off the MRML Scene.
+  bool Raised;
 
 };
 

@@ -145,6 +145,8 @@ vtkFetchMILogic::vtkFetchMILogic()
      {
      this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::KnownServersModifiedEvent );
      }
+
+   this->Visited = false;
 }
 
 
@@ -183,15 +185,38 @@ vtkFetchMILogic::~vtkFetchMILogic()
   this->ErrorChecking = 0;
   this->ParsingError = 0;
   this->SetAndObserveMRMLScene ( NULL );
-  
+  this->Visited = false;  
 }
 
 
 
 
 //----------------------------------------------------------------------------
+void vtkFetchMILogic::Enter()
+{
+  this->Visited = true;
+
+  //---
+  //--- Set up Logic observers on enter, and released on exit.
+  vtkIntArray *logicEvents = this->NewObservableEvents();
+  if ( logicEvents != NULL )
+    {
+    this->SetAndObserveMRMLSceneEvents ( this->MRMLScene, logicEvents );
+    logicEvents->Delete();
+    }
+}
+
+
+
+//----------------------------------------------------------------------------
 vtkIntArray* vtkFetchMILogic::NewObservableEvents()
 {
+
+  if ( !this->Visited )
+    {
+    return (NULL);
+    }
+
  vtkIntArray *events = vtkIntArray::New();
  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   // Slicer3.cxx calls delete on events
@@ -1187,6 +1212,11 @@ void vtkFetchMILogic::SetFetchMINode( vtkMRMLFetchMINode *node )
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData )
 {
+
+  if ( !this->Visited )
+    {
+    return;
+    }
   if ( this->FetchMINode == NULL )
     {
     vtkErrorMacro ( "FetchMILogic::ProcessMRMLEvents: got null FetchMINode." );

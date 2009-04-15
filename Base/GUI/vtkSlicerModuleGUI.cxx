@@ -24,10 +24,10 @@ vtkSlicerModuleGUI::vtkSlicerModuleGUI ( ) {
     this->ApplicationGUI = NULL;
     this->Logo = 0;
     this->Built = false;
+    this->Visited = false;
     this->ModuleName = NULL;
     this->Index = VTK_SHORT_MAX;
     this->Category = NULL;
-    this->LazyBuild = 0;
     this->SetCategory("None");
 }
 
@@ -78,6 +78,7 @@ vtkSlicerModuleGUI::~vtkSlicerModuleGUI ( ) {
     this->SetApplicationGUI( NULL );
     this->Logo = 0;
     this->Built = false;
+    this->Visited = false;
     this->SetModuleName (NULL);
 }
 

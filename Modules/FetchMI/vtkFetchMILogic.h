@@ -29,6 +29,8 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   vtkTypeMacro(vtkFetchMILogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  virtual void Enter ( );
+  
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event,
                                    void *callData );
 
@@ -572,6 +574,8 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   int ErrorChecking;
   int ParsingError;
   char *ReservedURI;
+  bool Visited;
+
 };
 
 

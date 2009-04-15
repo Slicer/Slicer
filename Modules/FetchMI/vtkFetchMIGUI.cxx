@@ -123,9 +123,8 @@ vtkFetchMIGUI::vtkFetchMIGUI()
   this->TagViewer = NULL;
   this->Notebook = NULL;
   this->SetGUIWidth(-1);
-  this->LazyBuild = 1;
-  this->Observed = 0;
 //  this->DebugOn();
+  this->Raised = false;
 
 }
 
@@ -213,13 +212,13 @@ vtkFetchMIGUI::~vtkFetchMIGUI()
       this->Notebook = NULL;
       }
 
-    this->Observed = 0;
     this->UpdatingMRML = 0;
     this->UpdatingGUI = 0;
     
     this->Logic = NULL;
     vtkSetAndObserveMRMLNodeMacro( this->FetchMINode, NULL );
 
+    this->Raised = false;
 }
 
 
@@ -227,20 +226,37 @@ vtkFetchMIGUI::~vtkFetchMIGUI()
 //----------------------------------------------------------------------------
 void vtkFetchMIGUI::Enter()
 {
+  
+  
+  //--- mark as currently being visited.
+  this->Raised = true;
+
+  //--- mark as visited at least once.
+  this->Visited = true;
+
+  //--- only build when first visited.
   if ( this->Built == false )
     {
     this->BuildGUI();
     this->Built = true;
     this->AddObserver ( vtkSlicerModuleGUI::ModuleSelectedEvent, (vtkCommand *)this->ApplicationGUI->GetGUICallbackCommand() );
+
+    //--- Do a parallel thing in Logic
+    this->Logic->Enter();
+
+    //--- Set up GUI observers 
+    vtkIntArray *guiEvents = this->NewObservableEvents ( );
+    if ( guiEvents != NULL )
+      {
+      this->SetAndObserveMRMLSceneEvents ( this->MRMLScene, guiEvents );
+      guiEvents->Delete();
+      }
     }
 
-  if ( !this->Observed )
-    {
-    this->AddGUIObservers();
-    }
-
+  this->AddGUIObservers();    
   this->CreateModuleEventBindings();
 
+  //--- expand the GUI panel
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   if ( app )
     {
@@ -258,12 +274,20 @@ void vtkFetchMIGUI::Enter()
         }
       }
     }
+
+  //--- make GUI reflect current MRML state
+  this->UpdateGUI();
+  this->UpdateSceneTableFromMRML();
+
 }
 
 
 //----------------------------------------------------------------------------
 void vtkFetchMIGUI::Exit ( )
 {
+
+  //--- mark as no longer selected.
+  this->Raised = false;
 
   this->RemoveGUIObservers();
   this->ReleaseModuleEventBindings();
@@ -298,6 +322,11 @@ void vtkFetchMIGUI::Exit ( )
 //----------------------------------------------------------------------------
 vtkIntArray *vtkFetchMIGUI::NewObservableEvents()
 {
+  if ( !this->Visited )
+    {
+    return NULL;
+    }
+  
  vtkIntArray *events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::MetadataAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
@@ -384,6 +413,12 @@ void vtkFetchMIGUI::AddGUIObservers ( )
     {
     return;
     }
+
+  //--- include this to enable lazy building
+  if ( !this->Visited )
+    {
+    return;
+    }
   
   this->QueryList->AddWidgetObservers();
   this->QueryList->AddObserver(vtkFetchMIQueryTermWidget::TagChangedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -399,7 +434,6 @@ void vtkFetchMIGUI::AddGUIObservers ( )
   this->ServerMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->Notebook->AddObserver ( vtkKWEvent::NotebookRaisePageEvent, (vtkCommand *)this->GUICallbackCommand );
   this->Notebook->AddObserver ( vtkKWEvent::NotebookShowPageEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->Observed = 1;
 }
 
 
@@ -408,6 +442,12 @@ void vtkFetchMIGUI::AddGUIObservers ( )
 void vtkFetchMIGUI::RemoveGUIObservers ( )
 {
   if ( !this->Built )
+    {
+    return;
+    }
+
+  //--- include this to enable lazy building
+  if ( !this->Visited )
     {
     return;
     }
@@ -425,7 +465,6 @@ void vtkFetchMIGUI::RemoveGUIObservers ( )
   this->ServerMenuButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->Notebook->RemoveObservers ( vtkKWEvent::NotebookRaisePageEvent, (vtkCommand *)this->GUICallbackCommand );
   this->Notebook->RemoveObservers ( vtkKWEvent::NotebookShowPageEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->Observed = 0;
 }
 
 
@@ -451,14 +490,18 @@ void vtkFetchMIGUI::ProcessGUIEvents ( vtkObject *caller,
                                            void *callData ) 
 {
 
+  if ( !this->Built )
+    {
+    return;
+    }
   if ( this->FetchMINode == NULL )
     {
-    //TODO: error macro
+    vtkErrorMacro ( "ProcessGUIEvents: got NULL FetchMINode" );
     return;
     }
   if ( this->Logic == NULL )
     {
-    //TODO: error macro
+    vtkErrorMacro ( "ProcessGUIEvents: got NULL Module Logic" );
     return;
     }
 
@@ -1332,6 +1375,14 @@ void vtkFetchMIGUI::ProcessMRMLEvents ( vtkObject *caller,
                                             unsigned long event,
                                             void *callData ) 
 {
+  if ( !this->Raised )
+    {
+    return;
+    }
+  if ( !this->Visited )
+    {
+    return;
+    }
   if ( this->FetchMINode == NULL )
     {
     vtkErrorMacro ("ProcessMRMLEvents has a NULL FetchMINode");
@@ -1434,6 +1485,11 @@ void vtkFetchMIGUI::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkFetchMIGUI::UpdateGUI ()
 {
+  if ( !this->Built )
+    {
+    return;
+    }
+  
   // update from MRML
   if ( this->UpdatingMRML )
     {
@@ -1501,9 +1557,7 @@ void vtkFetchMIGUI::UpdateGUI ()
     {
     vtkErrorMacro ("FetchMIGUI: UpdateGUI has a NULL FetchMINode." );
     }
-  // fetchMINode->Delete();
   this->UpdateTagTableFromMRML();
-//  this->UpdateSceneTableFromMRML();
   this->UpdatingGUI = 0;
 }
 
@@ -2206,6 +2260,12 @@ void vtkFetchMIGUI::TagSelectedData()
 //---------------------------------------------------------------------------
 void vtkFetchMIGUI::BuildGUI ( ) 
 {
+  //--- include this to enable lazy building
+  if ( !this->Visited )
+    {
+    return;
+    }
+  
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   if ( this->MRMLScene != NULL )
     {
