@@ -100,20 +100,20 @@ vtkCxxRevisionMacro(vtkKWMimxMainWindow, "$Revision: 1.24.4.2 $");
 //----------------------------------------------------------------------------
 vtkKWMimxMainWindow::vtkKWMimxMainWindow()
 {
-        this->MainWindow = NULL;
-        this->RenderWidget = NULL;
-        this->PVAxesActor = NULL;
-        this->AxesRenderer = NULL;
-        this->CallbackCommand = NULL;
-        this->ErrorCallback = vtkMimxErrorCallback::New();
-        //this->ViewMenu = NULL;
-        this->ViewProperties = NULL;
-        this->DoUndoTree = NULL;
-        this->MainUserInterfacePanel = NULL;
-        this->DisplayPropertyDialog = NULL;
-        
-        /* Default Icons for Apply/Cancel Buttons */
-        this->applyIcon = vtkKWIcon::New();
+  this->MainWindow = NULL;
+  this->RenderWidget = NULL;
+  this->PVAxesActor = NULL;
+  this->AxesRenderer = NULL;
+  this->CallbackCommand = NULL;
+  this->ErrorCallback = vtkMimxErrorCallback::New();
+  //this->ViewMenu = NULL;
+  this->ViewProperties = NULL;
+  this->DoUndoTree = NULL;
+  this->MainUserInterfacePanel = NULL;
+  this->DisplayPropertyDialog = NULL;
+  
+  /* Default Icons for Apply/Cancel Buttons */
+  this->applyIcon = vtkKWIcon::New();
   this->applyIcon->SetImage( image_mimxApply, 
                              image_mimxApply_width, 
                              image_mimxApply_height, 
@@ -144,27 +144,27 @@ vtkKWMimxMainWindow::vtkKWMimxMainWindow()
   strcpy ( this->ApplicationFontFamily, "Arial" );
   
   /* Default Auto Save Settings */
-        this->AutoSaveFlag = true;
-        this->AutoSaveTime = 5;
-        this->AutoSaveWorkDirFlag = true;
-        this->AverageElementLength = 1.0;
-        this->ABAQUSPrecision = 2;
-        strcpy(this->WorkingDirectory,"");
-        std::string tmpDate =  "Mesh-" + vtksys::SystemTools::GetCurrentDateTime("%Y%m%d-%H%M");
-        strcpy(this->DateTimeString, tmpDate.c_str()); 
-        
+  this->AutoSaveFlag = true;
+  this->AutoSaveTime = 5;
+  this->AutoSaveWorkDirFlag = true;
+  this->AverageElementLength = 1.0;
+  this->ABAQUSPrecision = 2;
+  strcpy(this->WorkingDirectory,"");
+  std::string tmpDate =  "Mesh-" + vtksys::SystemTools::GetCurrentDateTime("%Y%m%d-%H%M");
+  strcpy(this->DateTimeString, tmpDate.c_str()); 
+  
 #if defined(WIN32)
-        strcpy(this->AutoSaveDirectory,"/tmp");
+  strcpy(this->AutoSaveDirectory,"/tmp");
 #else
-        strcpy(this->AutoSaveDirectory,"C:/Windows/Temp");
+  strcpy(this->AutoSaveDirectory,"C:/Windows/Temp");
 #endif
 
   /* Set the Default Render Window Colors */
   this->TextColor[0] = this->TextColor[1] = this->TextColor[2] = 1.0;
-        this->BackgroundColor[0] = this->BackgroundColor[1] = this->BackgroundColor[2] = 0.0;
-        
-        /* The default is a standalone application */
-        this->StandAloneApplication = false;  
+  this->BackgroundColor[0] = this->BackgroundColor[1] = this->BackgroundColor[2] = 0.0;
+  
+  /* The default is a standalone application */
+  this->StandAloneApplication = false;  
         
 
 }
@@ -172,55 +172,54 @@ vtkKWMimxMainWindow::vtkKWMimxMainWindow()
 //----------------------------------------------------------------------------
 vtkKWMimxMainWindow::~vtkKWMimxMainWindow()
 {
-        if (this->AxesRenderer)
-        { 
-
-            this->RemoveOrientationAxis();
-            this->AxesRenderer->Delete();
-        }
-        if (this->PVAxesActor)
-          this->PVAxesActor->Delete();
-        if (this->CallbackCommand)
-          this->CallbackCommand->Delete();
-        if (this->ErrorCallback)
-          this->ErrorCallback->Delete();
-        // Is this needed now???
-        if(this->MainWindow)
-              this->MainWindow->Delete();
-        if(this->RenderWidget)
-                this->RenderWidget->Delete();
-        if(this->ViewProperties)
-          this->ViewProperties->Delete();
-        if(this->DoUndoTree)
-                this->DoUndoTree->Delete();
-        if(this->MainUserInterfacePanel)
-                this->MainUserInterfacePanel->Delete();
-        if (this->DisplayPropertyDialog )
-          this->DisplayPropertyDialog->Delete();
-        if (this->applyIcon)
-          this->applyIcon->Delete();
-        if (this->cancelIcon)
-          this->cancelIcon->Delete();
-        if (this->MimxSettingsFrame)
-          this->MimxSettingsFrame->Delete();
+  if (this->AxesRenderer)
+    { 
+    this->RemoveOrientationAxis();
+    this->AxesRenderer->Delete();
+    }
+  if (this->PVAxesActor)
+    this->PVAxesActor->Delete();
+  if (this->CallbackCommand)
+    this->CallbackCommand->Delete();
+  if (this->ErrorCallback)
+    this->ErrorCallback->Delete();
+  // Is this needed now???
+  if(this->MainWindow)
+        this->MainWindow->Delete();
+  if(this->RenderWidget)
+          this->RenderWidget->Delete();
+  if(this->ViewProperties)
+    this->ViewProperties->Delete();
+  if(this->DoUndoTree)
+    this->DoUndoTree->Delete();
+  if(this->MainUserInterfacePanel)
+    this->MainUserInterfacePanel->Delete();
+  if (this->DisplayPropertyDialog )
+    this->DisplayPropertyDialog->Delete();
+  if (this->applyIcon)
+    this->applyIcon->Delete();
+  if (this->cancelIcon)
+    this->cancelIcon->Delete();
+  if (this->MimxSettingsFrame)
+    this->MimxSettingsFrame->Delete();
   if (this->AutoSaveButton)
-          this->AutoSaveButton->Delete();
+    this->AutoSaveButton->Delete();
   if (this->AutoSaveScale)
-          this->AutoSaveScale->Delete();
+    this->AutoSaveScale->Delete();
   if (this->WorkingDirButton)
-          this->WorkingDirButton->Delete();
+    this->WorkingDirButton->Delete();
   if (this->AutoSaveDir)
-          this->AutoSaveDir->Delete();
+    this->AutoSaveDir->Delete();
   if (this->AverageElementLengthEntry)
-          this->AverageElementLengthEntry->Delete();
+    this->AverageElementLengthEntry->Delete();
   if (this->PropertyPrecisionScale)
-          this->PropertyPrecisionScale->Delete();
+    this->PropertyPrecisionScale->Delete();
   if (this->FontSettingsFrame)
-          this->FontSettingsFrame->Delete();
+    this->FontSettingsFrame->Delete();
   if (this->FontSizeButtons)
-          this->FontSizeButtons->Delete();
+    this->FontSizeButtons->Delete();
   if (this->FontFamilyButtons)
-          this->FontFamilyButtons->Delete();
+    this->FontFamilyButtons->Delete();
 }
 
 
