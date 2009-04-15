@@ -76,15 +76,21 @@ vtkKWMimxViewProperties::vtkKWMimxViewProperties()
 vtkKWMimxViewProperties::~vtkKWMimxViewProperties()
 {
   if(this->MainFrame)
-          this->MainFrame->Delete();
+    this->MainFrame->Delete();
   if(this->ObjectList)
-          this->ObjectList->Delete();
-        if (this->ViewButton)
-          this->ViewButton->Delete();
-        if (this->DisplayButton)
-          this->DisplayButton->Delete();
-        if (this->ViewPropertyDialog)
-          this->ViewPropertyDialog->Delete();
+    this->ObjectList->Delete();
+  if (this->ViewButton)
+    this->ViewButton->Delete();
+  if (this->DisplayButton)
+    this->DisplayButton->Delete();
+  if (this->ViewPropertyDialog)
+    this->ViewPropertyDialog->Delete();
+  if (this->MultiColumnList)
+    this->MultiColumnList->Delete();
+  if (this->MimxMainWindow)
+    this->MimxMainWindow->Delete();
+  if (this->DoUndoTree)
+    this->DoUndoTree->Delete();
 }
 //----------------------------------------------------------------------------
 void vtkKWMimxViewProperties::CreateWidget()
