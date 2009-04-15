@@ -60,6 +60,7 @@ vtkKWMimxMainMenuGroup::~vtkKWMimxMainMenuGroup()
 {
   if(this->MainFrame)
     this->MainFrame->Delete();
+  this->SetDoUndoTree(NULL);
 }
 //----------------------------------------------------------------------------
 void vtkKWMimxMainMenuGroup::CreateWidget()

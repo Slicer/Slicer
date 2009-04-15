@@ -253,8 +253,10 @@ void vtkIA_FEMeshGUI::TearDownGUI ( )
     this->MeshingUI->SetMainWindow(NULL);
     this->MeshingUI->SetParent(NULL);
     this->MeshingUI->GetViewProperties()->SetMimxMainWindow(NULL);
+    this->MeshingUI->GetViewProperties()->SetDoUndoTree(NULL);
     this->MeshingUI->GetMainUserInterfacePanel()->TearDown();
     this->MeshingUI->GetMainUserInterfacePanel()->SetMimxMainWindow(NULL);
+    this->MeshingUI->GetMainUserInterfacePanel()->SetDoUndoTree(NULL);
     }
 }
 
