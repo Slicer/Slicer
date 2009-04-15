@@ -62,35 +62,37 @@ vtkCxxRevisionMacro(vtkKWMimxMainNotebook, "$Revision: 1.39.4.2 $");
 //----------------------------------------------------------------------------
 vtkKWMimxMainNotebook::vtkKWMimxMainNotebook()
 {
-        this->Notebook = NULL;
-        this->MimxMainWindow = NULL;
-        this->SurfaceMenuGroup = NULL;
-        this->BBMenuGroup = NULL;
-        this->FEMeshMenuGroup = NULL;
-        this->ImageMenuGroup = NULL;
+  this->Notebook = NULL;
+  this->MimxMainWindow = NULL;
+  this->SurfaceMenuGroup = NULL;
+  this->BBMenuGroup = NULL;
+  this->FEMeshMenuGroup = NULL;
+  this->ImageMenuGroup = NULL;
   this->QualityMenuGroup = NULL;
-        this->DoUndoTree = NULL;
-        this->MaterialPropertyMenuGroup = NULL;
-        this->BoundaryConditionsMenuGroup = NULL;
+  this->DoUndoTree = NULL;
+  this->MaterialPropertyMenuGroup = NULL;
+  this->BoundaryConditionsMenuGroup = NULL;
 }
 
 //----------------------------------------------------------------------------
 vtkKWMimxMainNotebook::~vtkKWMimxMainNotebook()
 {
-        if(this->Notebook)
-                this->Notebook->Delete();
-        if(this->SurfaceMenuGroup)
-                this->SurfaceMenuGroup->Delete();
-        if(this->FEMeshMenuGroup)
-                this->FEMeshMenuGroup->Delete();
-        if(this->BBMenuGroup)
-                this->BBMenuGroup->Delete();
-        if(this->ImageMenuGroup)
-                this->ImageMenuGroup->Delete();
+  if(this->Notebook)
+    this->Notebook->Delete();
+  if(this->SurfaceMenuGroup)
+    this->SurfaceMenuGroup->Delete();
+  if(this->FEMeshMenuGroup)
+    this->FEMeshMenuGroup->Delete();
+  if(this->BBMenuGroup)
+    this->BBMenuGroup->Delete();
+  if(this->ImageMenuGroup)
+    this->ImageMenuGroup->Delete();
+  if(this->QualityMenuGroup)
+    this->QualityMenuGroup->Delete();
   if(this->MaterialPropertyMenuGroup)
-          this->MaterialPropertyMenuGroup->Delete();
+    this->MaterialPropertyMenuGroup->Delete();
   if(this->BoundaryConditionsMenuGroup)
-          this->BoundaryConditionsMenuGroup->Delete();  
+    this->BoundaryConditionsMenuGroup->Delete();  
 }
 
 //----------------------------------------------------------------------------
