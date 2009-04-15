@@ -77,6 +77,32 @@ vtkKWMimxMainNotebook::vtkKWMimxMainNotebook()
 //----------------------------------------------------------------------------
 vtkKWMimxMainNotebook::~vtkKWMimxMainNotebook()
 {
+  // Clear the lists
+  
+  // Lists used for surface operations
+  this->SurfaceMenuGroup->SetFEMeshList(NULL);
+  this->SurfaceMenuGroup->SetBBoxList(NULL);
+  
+  // Lists used for Mesh operations
+  this->FEMeshMenuGroup->SetSurfaceList(NULL);
+  this->FEMeshMenuGroup->SetImageList(NULL);
+  this->FEMeshMenuGroup->SetBBoxList(NULL);
+  
+  // List used for Building Block Operations
+  this->BBMenuGroup->SetSurfaceList(NULL);
+
+  // Lists used for Quality Operations
+  this->QualityMenuGroup->SetFEMeshList(NULL);
+  this->QualityMenuGroup->SetBBoxList(NULL);
+  this->QualityMenuGroup->SetSurfaceList(NULL);
+  
+  // Lists used for Material Property Operations
+  this->MaterialPropertyMenuGroup->SetFEMeshList(NULL);
+  this->MaterialPropertyMenuGroup->SetImageList(NULL);
+  
+  // Lists used for Boundary Condition Operations
+  this->BoundaryConditionsMenuGroup->SetFEMeshList(NULL);  
+
   if(this->Notebook)
     this->Notebook->Delete();
   if(this->SurfaceMenuGroup)
