@@ -119,15 +119,15 @@ vtkMimxMeshActor::vtkMimxMeshActor()
   this->OutlineGeometryFilter = vtkGeometryFilter::New();
   this->OutlineGeometryFilter->SetInput( this->UnstructuredGrid );
 
-  vtkFeatureEdges* featureEdges = vtkFeatureEdges::New();
-  featureEdges->SetInput( this->OutlineGeometryFilter->GetOutput() );
-  featureEdges->BoundaryEdgesOn();
-  featureEdges->ManifoldEdgesOn();
-  featureEdges->FeatureEdgesOff();
-  featureEdges->ColoringOff();
+  this->FeatureEdges = vtkFeatureEdges::New();
+  this->FeatureEdges->SetInput( this->OutlineGeometryFilter->GetOutput() );
+  this->FeatureEdges->BoundaryEdgesOn();
+  this->FeatureEdges->ManifoldEdgesOn();
+  this->FeatureEdges->FeatureEdgesOff();
+  this->FeatureEdges->ColoringOff();
   
   this->TubeFilter = vtkTubeFilter::New();
-  this->TubeFilter->SetInputConnection(featureEdges->GetOutputPort());
+  this->TubeFilter->SetInputConnection(this->FeatureEdges->GetOutputPort());
   this->TubeFilter->SetRadius(0.03);
    
   this->OutlineMapper = vtkPolyDataMapper::New();
@@ -220,6 +220,7 @@ vtkMimxMeshActor::~vtkMimxMeshActor()
   if(this->PointSetOfNodeSet)
     this->PointSetOfNodeSet->Delete();
   this->ClipPlaneGeometryFilter->Delete();
+  this->FeatureEdges->Delete();
 }
 
 //----------------------------------------------------------------------------------------
@@ -1369,6 +1370,7 @@ void vtkMimxMeshActor::AddElementSetListItem( std::string setName )
   elementSetProperty->GeometryFilter = vtkGeometryFilter::New();
   elementSetProperty->GeometryFilter->SetInput( elementSetProperty->ExtractCellsFilter->GetOutput() );
 
+  // TODO: these will leak:
   vtkFeatureEdges* featureEdges = vtkFeatureEdges::New();
   featureEdges->SetInput( elementSetProperty->GeometryFilter->GetOutput() );
   featureEdges->BoundaryEdgesOn();

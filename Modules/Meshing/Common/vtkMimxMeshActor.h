@@ -43,6 +43,7 @@ class vtkActor;
 class vtkDataSetMapper;
 class vtkExtractCells;
 class vtkExtractGeometry;
+class vtkFeatureEdges;
 class vtkGeometryFilter;
 class vtkIdList;
 class vtkLookupTable;
@@ -384,6 +385,7 @@ private:
   vtkRenderWindowInteractor *Interactor;
   vtkPlaneWidget *CuttingPlaneWidget;
   vtkExtractGeometry *ClipPlaneGeometryFilter;
+  vtkFeatureEdges *FeatureEdges;
   vtkPlane *CuttingPlane;
   vtkScalarBarActor *LegendActor;
   vtkLookupTable *lutFilter;
