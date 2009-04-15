@@ -130,6 +130,12 @@ int main(int argc, char* argv[])
   const ReaderType::FileNamesContainer & filenames = 
     inputNames->GetInputFileNames();
 
+  if (filenames.size() == 0)
+    {
+    std::cerr << "Input directory is empty: " << inputDicom.c_str() << std::endl;
+    return EXIT_FAILURE;
+    }
+
   typedef itk::OrientedImage< PixelValueType, 2 > SliceType;
   typedef itk::ImageFileReader< SliceType > SliceReaderType;
 
