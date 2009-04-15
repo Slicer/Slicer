@@ -463,7 +463,7 @@ std::string vtkMRMLStorageNode::GetFullNameFromNthFileName(int n)
   
   if (this->Scene != NULL &&
       this->Scene->GetRootDirectory() != NULL &&
-      this->Scene->IsFilePathRelative(fileName)) 
+      this->IsFilePathRelative(fileName)) 
     {
     vtkDebugMacro("GetFullNameFromNthFileName: n = " << n << ", scene root dir = '" << this->Scene->GetRootDirectory() << "'");
     // use the system tools to join the two paths and then collapse them   
@@ -489,7 +489,7 @@ std::string vtkMRMLStorageNode::GetFullNameFromNthFileName(int n)
       }
     else
       {
-      vtkDebugMacro("GetFullNameFromNthFileName: scene root dir = " << (this->Scene->GetRootDirectory() != NULL ? this->Scene->GetRootDirectory() : "null") << ", relative = " << (this->Scene->IsFilePathRelative(fileName) ? "yes" : "no"));
+      vtkDebugMacro("GetFullNameFromNthFileName: scene root dir = " << (this->Scene->GetRootDirectory() != NULL ? this->Scene->GetRootDirectory() : "null") << ", relative = " << (this->IsFilePathRelative(fileName) ? "yes" : "no"));
       }
     fullName = std::string(fileName);
     }
@@ -509,16 +509,24 @@ int vtkMRMLStorageNode::FileNameIsInList(const char *fileName)
 {
   
   std::string fname = std::string(fileName);
-  bool fileNameIsRelative =  this->Scene->IsFilePathRelative(fileName);
+  bool fileNameIsRelative =  this->IsFilePathRelative(fileName);
   for (unsigned int i = 0; i < this->FileNameList.size(); i++)
     {
     std::string thisFile = this->FileNameList[i];
-    bool thisFileIsRelative = this->Scene->IsFilePathRelative(thisFile.c_str());
+    bool thisFileIsRelative = this->IsFilePathRelative(thisFile.c_str());
     // make sure we're comparing apples to apples
     if (fileNameIsRelative != thisFileIsRelative)
       {
       std::string rel1, rel2;
-      const char *rootDir = this->Scene->GetRootDirectory();
+      const char *rootDir;
+      if ( this->Scene )
+        {
+        rootDir = this->Scene->GetRootDirectory();
+        }
+      else
+        {
+        rootDir = ".";
+        }
       vtkDebugMacro("WARNING: trying to determine if file " << fileName << " is already in the list and comparing against " << thisFile.c_str() << ", they have mismatched absolute/relative paths. Using scene root dir to disambiguate: " << rootDir);
       if (fileNameIsRelative)
         {
@@ -715,4 +723,26 @@ void vtkMRMLStorageNode::InitializeSupportedWriteFileTypes()
   this->SupportedWriteFileTypes->SetNumberOfTuples(0);
 }
 
+//------------------------------------------------------------------------------
+int vtkMRMLStorageNode::IsFilePathRelative(const char * filepath)
+{
+
+  if ( this->Scene )
+    {
+    return this->Scene->IsFilePathRelative(filepath);
+    }
+  else
+    {
+    vtksys_stl::vector<vtksys_stl::string> components;
+    vtksys::SystemTools::SplitPath((const char*)filepath, components);
+    if (components[0] == "") 
+      {
+      return 1;
+      }
+    else
+      {
+      return 0;
+      }
+    }
+}
 

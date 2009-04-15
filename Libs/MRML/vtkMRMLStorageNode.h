@@ -224,6 +224,11 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   // Description:
   // Set the nth uri in URIList, checks that it is already defined
   void ResetNthURI(int n, const char *uri);
+
+  // Description:
+  // Checks is file path is a relative path by calling appropriate
+  // method on the scene depending on whether the scene pointer is valid
+  int IsFilePathRelative(const char * filepath);
   
 protected:
   vtkMRMLStorageNode();
