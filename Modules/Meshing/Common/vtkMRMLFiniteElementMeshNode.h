@@ -46,17 +46,17 @@ class VTK_MIMXCOMMON_EXPORT vtkMRMLFiniteElementMeshNode : public vtkMRMLUnstruc
   virtual const char* GetNodeTagName() {return "FiniteElementMesh";};
 
   // Description:
-   // Set pointer to the Mimx actor that contains the state variables
-   void SetMimxMeshActor(vtkMimxMeshActor* ptr) {actor = ptr;}
-   vtkMimxMeshActor* GetMimxMeshActor(void) {return actor;}
+  // Set pointer to the Mimx actor that contains the state variables
+  vtkSetObjectMacro(MimxMeshActor, vtkMimxMeshActor);
+  vtkGetObjectMacro(MimxMeshActor, vtkMimxMeshActor);
 
    // don't use VTK macros  because the values are stored in an actor instance
-   void   SetDataType(int value) {this->actor->SetDataType(value);}   
-   int    GetDataType(void)      {return this->actor->GetDataType();} 
- //***  void   SetFileName(char* value) {this->actor->SetFileName(value);}   
-   char*  GetFileName(void)      {return this->actor->GetFileName();} 
-   void   SetFilePath(char* value) {this->actor->SetFilePath(value);}   
-   char*  GetFilePath(void)      {return this->actor->GetFilePath();} 
+   void   SetDataType(int value) {this->MimxMeshActor->SetDataType(value);}   
+   int    GetDataType(void)      {return this->MimxMeshActor->GetDataType();} 
+ //***  void   SetFileName(char* value) {this->MimxMeshActor->SetFileName(value);}   
+   char*  GetFileName(void)      {return this->MimxMeshActor->GetFileName();} 
+   void   SetFilePath(char* value) {this->MimxMeshActor->SetFilePath(value);}   
+   char*  GetFilePath(void)      {return this->MimxMeshActor->GetFilePath();} 
    
    void SetSavedVisibilityState(bool state) {this->savedVisibilityState = state;}
    bool GetSavedVisibilityState(void) {return this->savedVisibilityState;}  
@@ -68,7 +68,7 @@ protected:
   void operator=(const vtkMRMLFiniteElementMeshNode&);
 
   // store the state inside an actor, so it can share with the local list
-  vtkMimxMeshActor* actor;
+  vtkMimxMeshActor* MimxMeshActor;
   
   // remember whether this node was on or off when IA_FEMesh was onscreen.  The state is stored here
   // during module exit and checked during module entry. 

@@ -32,9 +32,7 @@ vtkMRMLFiniteElementMeshNode* vtkMRMLFiniteElementMeshNode::New()
       return (vtkMRMLFiniteElementMeshNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
-  vtkMimxMeshActor* newactor =  vtkMimxMeshActor::New();
   vtkMRMLFiniteElementMeshNode* newnode = new vtkMRMLFiniteElementMeshNode;
-  newnode->SetMimxMeshActor(newactor);
   return newnode;
 }
 
@@ -49,21 +47,25 @@ vtkMRMLFiniteElementMeshNode* vtkMRMLFiniteElementMeshNode::CreateNodeInstance()
       return (vtkMRMLFiniteElementMeshNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
-  vtkMimxMeshActor* newactor =  vtkMimxMeshActor::New();
-   vtkMRMLFiniteElementMeshNode* newnode = new vtkMRMLFiniteElementMeshNode;
-   newnode->SetMimxMeshActor(newactor);
-   return newnode;
+  vtkMRMLFiniteElementMeshNode* newnode = new vtkMRMLFiniteElementMeshNode;
+  return newnode;
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLFiniteElementMeshNode::vtkMRMLFiniteElementMeshNode()
 {
-
+  this->MimxMeshActor = vtkMimxMeshActor::New();
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLFiniteElementMeshNode::~vtkMRMLFiniteElementMeshNode()
 {
+  if (this->MimxMeshActor)
+    {
+    this->MimxMeshActor->Delete();
+    this->MimxMeshActor = NULL;
+    }
+
 }
 
 //----------------------------------------------------------------------------
@@ -75,17 +77,17 @@ void vtkMRMLFiniteElementMeshNode::WriteXML(ostream& of, int nIndent)
   vtkIndent indent(nIndent);
   {
     std::stringstream ss;
-    ss << this->actor->GetDataType();
+    ss << this->MimxMeshActor->GetDataType();
     of << indent << " DataType=\"" << ss.str() << "\"";
   }
   {
     std::stringstream ss;
-    ss << this->actor->GetFileName();
+    ss << this->MimxMeshActor->GetFileName();
     of << indent << " fileName=\"" << ss.str() << "\"";
   }
   {
     std::stringstream ss;
-    ss << this->actor->GetFilePath();
+    ss << this->MimxMeshActor->GetFilePath();
     of << indent << " FilePath=\"" << ss.str() << "\"";
   }
   {
@@ -116,7 +118,7 @@ void vtkMRMLFiniteElementMeshNode::ReadXMLAttributes(const char** atts)
        std::stringstream ss;
        ss << attValue;
        ss >> intAttribute;
-       this->actor->SetDataType(intAttribute);
+       this->MimxMeshActor->SetDataType(intAttribute);
        }
      else if (!strcmp(attName, "fileName"))
        {
@@ -151,9 +153,8 @@ void vtkMRMLFiniteElementMeshNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLFiniteElementMeshNode *node = (vtkMRMLFiniteElementMeshNode *) anode;
 
-  this->actor->SetDataType(node->GetDataType());
-  //***this->actor->SetFileName(node->GetFileName());
-  this->actor->SetFilePath(node->GetFilePath());
+  this->MimxMeshActor->SetDataType(node->GetDataType());
+  this->MimxMeshActor->SetFilePath(node->GetFilePath());
 }
 
 //----------------------------------------------------------------------------
