@@ -54,6 +54,7 @@ vtkMeshQualityClass::vtkMeshQualityClass(void)
   this->InitVariables();
   this->SavedCuttingPlaneImplicitFunction = NULL;
   this->VTKQualityFilterPtr = NULL;
+  this->ExtractSelectedGeometryFilter = NULL:
 }
 
 
@@ -109,6 +110,12 @@ vtkMeshQualityClass::~vtkMeshQualityClass(void)
           this->SavedCuttingPlaneImplicitFunction->Delete();
   if(this->VTKQualityFilterPtr)
           this->VTKQualityFilterPtr->Delete();
+
+  if (this->ExtractSelectedGeometryFilter)
+    {
+    this->ExtractSelectedGeometryFilter->Delete();
+    this->ExtractSelectedGeometryFilter = NULL;
+    }
 }
 
 
