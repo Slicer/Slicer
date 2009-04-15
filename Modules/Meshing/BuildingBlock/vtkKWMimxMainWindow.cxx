@@ -236,20 +236,20 @@ void vtkKWMimxMainWindow::AddOrientationAxis()
    if ( this->RenderWidget )
    {
        if(!this->AxesRenderer)
-       {
-               this->AxesRenderer = vtkRenderer::New();
-               this->PVAxesActor = vtkPVAxesActor::New();
-               this->CallbackCommand = vtkCallbackCommand::New();
-       }
+         {
+         this->AxesRenderer = vtkRenderer::New();
+         this->PVAxesActor = vtkPVAxesActor::New();
+         this->CallbackCommand = vtkCallbackCommand::New();
+         this->CallbackCommand->SetCallback(updateAxis);
+         this->CallbackCommand->SetClientData(this);
+         this->RenderWidget->GetRenderer()->AddObserver(vtkCommand::AnyEvent,this->CallbackCommand);
+         }
        this->AxesRenderer->InteractiveOff();
        this->RenderWidget->GetRenderWindow()->SetNumberOfLayers(2);
        this->RenderWidget->GetRenderer()->SetLayer(0);
        this->AxesRenderer->SetLayer(1);
        this->AxesRenderer->SetViewport(0.0,0.0,0.25,0.25);
        this->AxesRenderer->AddActor(this->PVAxesActor);
-       this->CallbackCommand->SetCallback(updateAxis);
-       this->CallbackCommand->SetClientData(this);
-       this->RenderWidget->GetRenderer()->AddObserver(vtkCommand::AnyEvent,this->CallbackCommand);
        this->RenderWidget->GetRenderWindow()->AddRenderer(this->AxesRenderer);
        this->RenderWidget->Render();
    }
