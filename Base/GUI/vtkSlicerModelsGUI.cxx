@@ -24,6 +24,10 @@
 // for scalars
 #include "vtkPointData.h"
 
+// for new data module buttons
+#include "vtkSlicerDataGUI.h"
+#include "vtkSlicerApplicationGUI.h"
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerModelsGUI );
 vtkCxxRevisionMacro ( vtkSlicerModelsGUI, "$Revision: 1.0 $");
@@ -39,7 +43,6 @@ vtkSlicerModelsGUI::vtkSlicerModelsGUI ( )
 
   //this->ModelNode = NULL;
   this->LoadModelButton = NULL;
-  this->LoadModelDirectoryButton = NULL;
   this->ModelDisplayWidget = NULL;
   this->ClipModelsWidget = NULL;
   this->LoadScalarsButton = NULL;
@@ -92,11 +95,6 @@ vtkSlicerModelsGUI::~vtkSlicerModelsGUI ( )
     {
     this->LoadModelButton->SetParent(NULL);
     this->LoadModelButton->Delete ( );
-    }    
-  if (this->LoadModelDirectoryButton ) 
-    {
-    this->LoadModelDirectoryButton->SetParent(NULL);
-    this->LoadModelDirectoryButton->Delete ( );
     }
   if (this->ModelDisplayWidget ) 
     {
@@ -166,18 +164,11 @@ void vtkSlicerModelsGUI::RemoveGUIObservers ( )
 {
   if (this->LoadModelButton)
     {
-    this->LoadModelButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers( vtkKWTopLevel::WithdrawEvent,
-        (vtkCommand *)this->GUICallbackCommand );    
-    }
-  if (this->LoadModelDirectoryButton)
-    {
-    this->LoadModelDirectoryButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers( vtkKWTopLevel::WithdrawEvent,
-        (vtkCommand *)this->GUICallbackCommand );    
+    this->LoadModelButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     }
   if (this->LoadScalarsButton)
     {
-    this->LoadScalarsButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers( vtkKWTopLevel::WithdrawEvent,
-        (vtkCommand *)this->GUICallbackCommand );    
+    this->LoadScalarsButton->RemoveObservers( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );   
     }
   if (this->ModelDisplaySelectorWidget)
     {
@@ -194,9 +185,8 @@ void vtkSlicerModelsGUI::RemoveGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkSlicerModelsGUI::AddGUIObservers ( )
 {
-  this->LoadModelButton->GetWidget()->GetLoadSaveDialog()->AddObserver ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->LoadModelDirectoryButton->GetWidget()->GetLoadSaveDialog()->AddObserver ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->LoadScalarsButton->GetWidget()->GetLoadSaveDialog()->AddObserver ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->LoadModelButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->LoadScalarsButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   //this->ModelDisplaySelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ModelHierarchyWidget->AddObserver(vtkSlicerModelHierarchyWidget::SelectedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
@@ -225,227 +215,35 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
       }
     return;
     }
-/**
-  if (vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->ModelDisplaySelectorWidget && 
-        event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
+  vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
+  if ( b == this->LoadModelButton || b == this->LoadScalarsButton)
     {
-    vtkMRMLModelNode *model = 
-        vtkMRMLModelNode::SafeDownCast(this->ModelDisplaySelectorWidget->GetSelected());
-
-    if (model != NULL && model->GetDisplayNode() != NULL)
+    // get the data gui
+    vtkSlicerDataGUI *dataGUI = vtkSlicerDataGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Data"));
+    if (dataGUI != NULL)
       {
-      this->ModelDisplayWidget->SetModelDisplayNode(model->GetModelDisplayNode());
-      this->ModelDisplayWidget->SetModelNode(model);
-      }
-    return;
-    }
-**/
-  if (this->LoadModelButton->GetWidget()->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) && event == vtkKWTopLevel::WithdrawEvent)
-    {
-    // If a file has been selected for loading...
-    const char *fileName = this->LoadModelButton->GetWidget()->GetFileName();
-    if ( fileName ) 
-      {
-      vtkSlicerModelsLogic* modelLogic = this->Logic;
-      
-      vtkMRMLModelNode *modelNode = modelLogic->AddModel( fileName );
-      if ( modelNode == NULL ) 
+      if (b == this->LoadModelButton)
         {
-        vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-        dialog->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
-        dialog->SetStyleToMessage();
-        std::string msg = std::string("Unable to read model file ") + std::string(fileName);
-        dialog->SetText(msg.c_str());
-        dialog->Create ( );
-        dialog->Invoke();
-        dialog->Delete();
-
-        vtkErrorMacro("Unable to read model file " << fileName);
-        // reset the file browse button text
-        this->LoadModelButton->GetWidget()->SetText ("None");
+        dataGUI->RaiseAddModelWindow();
         }
-      else
+      else if ( b == this->LoadScalarsButton )
         {
-         this->LoadModelButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
-         const itksys_stl::string fname(fileName);
-         itksys_stl::string name = itksys::SystemTools::GetFilenameName(fname);
-         this->LoadModelButton->GetWidget()->SetText (name.c_str());
-
-         // set it to be the active model
-         // set the display model
-         this->ModelHierarchyWidget->GetModelDisplaySelectorWidget()->SetSelected(modelNode);
+        dataGUI->RaiseAddScalarOverlayWindow();
         }
       }
-    return;
-    }
-    else if (this->LoadModelDirectoryButton->GetWidget()->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) && event == vtkKWTopLevel::WithdrawEvent )
-    {
-    // If a file has been selected for loading...
-    const char *fileName = this->LoadModelDirectoryButton->GetWidget()->GetFileName();
-    if ( fileName ) 
+    else
       {
-      vtkSlicerModelsLogic* modelLogic = this->Logic;
-
-      vtkKWMessageDialog *dialog0 = vtkKWMessageDialog::New();
-      dialog0->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
-      dialog0->SetStyleToMessage();
-      std::string msg0 = std::string("Reading *.vtk from models directory ") + std::string(fileName);
-      dialog0->SetText(msg0.c_str());
-      dialog0->Create ( );
-      dialog0->Invoke();
-      dialog0->Delete();
-      
-      if (modelLogic->AddModels( fileName, ".vtk") == 0)
-        {
-        vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-        dialog->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
-        dialog->SetStyleToMessage();
-        std::string msg = std::string("Unable to read models directory ") + std::string(fileName);
-        dialog->SetText(msg.c_str());
-        dialog->Create ( );
-        dialog->Invoke();
-        dialog->Delete();
-        }
-      else
-        {
-        this->LoadModelDirectoryButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
-        vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-        dialog->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
-        dialog->SetStyleToMessage();
-        dialog->SetText("Done reading models...");
-        dialog->Create ( );
-        dialog->Invoke();
-        dialog->Delete();
-        }
+      vtkErrorMacro("Unable to get the Data module interface for loading! Please use File->Add Data");
+      vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+      dialog->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
+      dialog->SetStyleToMessage();
+      std::string msg = std::string("Unable to get the Data module interface for loading! Please use File->Add Data");
+      dialog->SetText(msg.c_str());
+      dialog->Create ( );
+      dialog->Invoke();
+      dialog->Delete();
       }
-    this->LoadModelDirectoryButton->GetWidget()->SetText ("None");
-    return;
     }
-  else if (this->LoadScalarsButton->GetWidget()->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) && event == vtkKWTopLevel::WithdrawEvent)
-    {
-    // If a scalar file has been selected for loading...
-    const char *fileName = this->LoadScalarsButton->GetWidget()->GetFileName();
-    if ( fileName ) 
-      {
-      // get the model from the display widget rather than this gui's save
-      // model selector
-      vtkMRMLModelNode *modelNode = NULL;
-      if (this->ModelHierarchyWidget != NULL &&
-          this->ModelHierarchyWidget->GetModelDisplaySelectorWidget() != NULL)
-        {
-        modelNode = vtkMRMLModelNode::SafeDownCast(this->ModelHierarchyWidget->GetModelDisplaySelectorWidget()->GetSelected());
-        }
-      else { vtkErrorMacro("Model hierarchy widget or it's model display selector widget is null, can't get the model node."); }
-      if (modelNode != NULL)
-        {
-        vtkDebugMacro("vtkSlicerModelsGUI: loading scalar for model " << modelNode->GetName());
-        // load the scalars
-        vtkSlicerModelsLogic* modelLogic = this->Logic;
-        if (!modelLogic->AddScalar(fileName, modelNode))
-          {
-          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-          dialog->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
-          dialog->SetStyleToMessage();
-          std::string msg = std::string("Unable to read scalars file ") + std::string(fileName);
-          dialog->SetText(msg.c_str());
-          dialog->Create ( );
-          dialog->Invoke();
-          dialog->Delete();
-          
-          vtkErrorMacro("Error loading scalar overlay file " << fileName);
-          this->LoadScalarsButton->GetWidget()->SetText ("None");
-          }
-        else
-          {
-          this->LoadScalarsButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
-          // set the active scalar in the display node to this one
-          // - is done in the model storage node         
-          }
-        }
-      else
-        {
-        vtkErrorMacro("Unable to get the model on which to load " << fileName );
-        }
-      }
-    return;
-    }
-  /*
-  else if (event == vtkSlicerViewerInteractorStyle::SelectRegionEvent &&
-           vtkSlicerViewerInteractorStyle::SafeDownCast(caller) != NULL &&
-           callData != NULL)
-    {
-    vtkDebugMacro("ProcessGUIEvents: Pick Manipulate event!\n");
-    // do the pick
-    int x = ((int *)callData)[0];
-    int y = ((int *)callData)[1];
-    if (this->GetViewerWidget() &&
-        this->GetViewerWidget()->Pick(x,y) != 0)
-      {
-      // get the node name, this returns the model display node's id
-      const char *dispNodeID = this->GetViewerWidget()->GetPickedNodeName();
-      if (strcmp(dispNodeID, "") != 0)
-        {
-        vtkDebugMacro("ProcessGUIEvents: got picked node " << dispNodeID);
-        vtkMRMLModelNode *modelNode = NULL;
-        vtkMRMLModelDisplayNode *modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(dispNodeID));
-        if (modelDisplayNode != NULL)
-          {
-          int selectedFlag = !(modelDisplayNode->GetSelected());
-          vtkDebugMacro("Got a display node with name " << modelDisplayNode->GetName() << ", toggling selected to " << selectedFlag);
-          // find the model node with this display node
-          std::vector<vtkMRMLNode *> modelNodes;
-          int numModelNodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLModelNode", modelNodes);
-          for (unsigned int n=0; n<modelNodes.size() && modelNode == NULL; n++)
-            {
-            vtkMRMLModelNode *modelNodeToTest = vtkMRMLModelNode::SafeDownCast(modelNodes[n]);
-            if (modelNodeToTest != NULL)
-              {
-              int numDispNodes = modelNodeToTest->GetNumberOfDisplayNodes();
-              for (int d = 0; d < numDispNodes && modelNode == NULL; d++)
-                {
-                vtkMRMLModelDisplayNode *mDN = vtkMRMLModelDisplayNode::SafeDownCast(modelNodeToTest->GetNthDisplayNode(d));
-                if (modelDisplayNode != NULL &&
-                    strcmp(mDN->GetID(), modelDisplayNode->GetID()) == 0)
-                  {
-                  vtkDebugMacro("Found display node on model node with id " << modelNodeToTest->GetID());
-                  modelNode = modelNodeToTest;
-                  }
-                }
-              }
-            }
-          if (modelNode != NULL)
-            {
-            vtkDebugMacro("Got the modelnode, setting it active: " << modelNode->GetID());
-            // set it to be the selected/active model
-            // set the display model
-            this->ModelHierarchyWidget->GetModelDisplaySelectorWidget()->SetSelected(modelNode);
-            vtkDebugMacro("Setting selected to " << selectedFlag << " on the model node " << modelNode->GetName());
-            
-            modelNode->SetSelected(selectedFlag);
-            if (modelDisplayNode)
-              {
-              vtkDebugMacro("Setting selected to " << selectedFlag << " on the model display node " << modelDisplayNode->GetName());
-              modelDisplayNode->SetSelected(selectedFlag);
-              } 
-            }
-          } else { vtkDebugMacro("Couldn't find a display node with id " << dispNodeID); }
-        // swallow the pick
-        if (this->GUICallbackCommand != NULL)
-          {
-          vtkDebugMacro("ProcessGUIEvents: swallowing the pick");
-          this->GUICallbackCommand->SetAbortFlag(1);
-          }
-        else
-          {
-          vtkErrorMacro("Unable to get the gui call back command that calls process widget events, event = " << event << " is not swallowed here");
-          }
-        }
-      else { vtkDebugMacro("Unable to get the name of the object that was picked."); }
-      } else { vtkDebugMacro("ProcessGUIEvents: invalid pick"); }
-    return;
-    }
-  */
-
 }    
 
 //---------------------------------------------------------------------------
@@ -518,7 +316,8 @@ void vtkSlicerModelsGUI::BuildGUI ( )
 {
 
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-  
+    vtkSlicerApplicationGUI *appGUI = app->GetApplicationGUI();
+
     // ---
     // MODULE GUI FRAME 
     // configure a page for a model loading UI for now.
@@ -528,7 +327,7 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     this->UIPanel->AddPage ( "Models", "Models", NULL );
     
     // Define your help text and build the help frame here.
-    const char *help = "The Models Module loads and adjusts display parameters of models.\n<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:Models-Documentation-3.4</a>\nSave models via the File menu, Save button.\nThe Load Model button will allow you to load any model that Slicer can read, Load Model Directory will load all the VTK models in a directory. Load FreeSurfer Overlay will load a scalar file and associate it with the currently active model.\nYou can adjust the display properties of the models in the Display pane. Select the model you wish to work on from the model selector drop down menu. Scalar overlays are loaded with a default colour look up table, but can be reassigned manually. Once a new scalar overlay is chosen, currently the old color map is still used, so that must be adjusted in conjunction with the overlay.\nClipping is turned on for a model in the Display pane, and the slice planes that will clip the model are selected in the Clipping pane.\nThe Model Hierarchy pane allows you to group models together and set the group's properties.";
+    const char *help = "The Models Module loads and adjusts display parameters of models.\n<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:Models-Documentation-3.4</a>\nSave models via the File menu, Save button.\nThe Add 3D model or a model directory button will allow you to load any model that Slicer can read, as well as all the VTK models in a directory. Add Scalar Overlay will load a scalar file and associate it with the currently active model.\nYou can adjust the display properties of the models in the Display pane. Select the model you wish to work on from the model selector drop down menu. Scalar overlays are loaded with a default colour look up table, but can be reassigned manually. Once a new scalar overlay is chosen, currently the old color map is still used, so that must be adjusted in conjunction with the overlay.\nClipping is turned on for a model in the Display pane, and the slice planes that will clip the model are selected in the Clipping pane.\nThe Model Hierarchy pane allows you to group models together and set the group's properties.";
     const char *about = "This module was contributed by Nicole Aucoin, SPL, BWH (Ron Kikinis), and Alex Yarmarkovich, Isomics Inc. (Steve Pieper).\nThis work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. ";
     vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Models" );
     this->BuildHelpAndAboutFrame ( page, help, about );
@@ -568,39 +367,35 @@ void vtkSlicerModelsGUI::BuildGUI ( )
                   modLoadFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());
 
     // add a file browser 
-    this->LoadModelButton = vtkKWLoadSaveButtonWithLabel::New ( );
+    this->LoadModelButton = vtkKWPushButton::New();
     this->LoadModelButton->SetParent ( modLoadFrame->GetFrame() );
     this->LoadModelButton->Create ( );
-    this->LoadModelButton->SetLabelText ("Load Model: ");
-    this->LoadModelButton->GetWidget()->SetText ("None");
-    this->LoadModelButton->GetWidget()->GetLoadSaveDialog()->SetTitle("Open Model");
-    this->LoadModelButton->GetWidget()->GetLoadSaveDialog()->RetrieveLastPathFromRegistry("OpenPath");
-    this->LoadModelButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes(
-                                                             "{ {model} {*.*} }");
+    this->LoadModelButton->SetBorderWidth ( 0 );
+    this->LoadModelButton->SetReliefToFlat();  
+    this->LoadModelButton->SetCompoundModeToLeft ();
+    this->LoadModelButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerLoadModelIcon() );
+    this->LoadModelButton->SetText (" Add 3D model or a model directory" );
+    this->LoadModelButton->SetWidth ( 300 );
+    this->LoadModelButton->SetAnchorToWest();
+    this->LoadModelButton->SetBalloonHelpString("Use this model loading option to raise a dialog with options to add models to the current scene, and to add (FreeSurfer) scalar overlays to models in the scene.");
+  
     app->Script("pack %s -side top -anchor nw -padx 2 -pady 4 -ipadx 0 -ipady 0", 
                 this->LoadModelButton->GetWidgetName());
 
-   // add a file browser 
-    this->LoadModelDirectoryButton = vtkKWLoadSaveButtonWithLabel::New ( );
-    this->LoadModelDirectoryButton->SetParent ( modLoadFrame->GetFrame() );
-    this->LoadModelDirectoryButton->Create ( );
-    this->LoadModelDirectoryButton->SetLabelText ("Load Model Directory: ");
-    this->LoadModelDirectoryButton->GetWidget()->SetText ("None");
-    this->LoadModelDirectoryButton->SetBalloonHelpString("Load *.vtk surface files from a directory");
-    this->LoadModelDirectoryButton->GetWidget()->GetLoadSaveDialog()->ChooseDirectoryOn();
-    app->Script("pack %s -side top -anchor nw -padx 2 -pady 4 -ipadx 0 -ipady 0", 
-                this->LoadModelDirectoryButton->GetWidgetName());
 
-
-    this->LoadScalarsButton = vtkKWLoadSaveButtonWithLabel::New();
+    this->LoadScalarsButton = vtkKWPushButton::New();
     this->LoadScalarsButton->SetParent ( modLoadFrame->GetFrame() );
     this->LoadScalarsButton->Create ( );
-    this->LoadScalarsButton->SetLabelText ("Load FreeSurfer Overlay: ");
-    this->LoadScalarsButton->SetBalloonHelpString("Load scalar values and assign them to the currently active model.");
-    this->LoadScalarsButton->GetWidget()->SetText ("None");
-    this->LoadScalarsButton->GetWidget()->GetLoadSaveDialog()->SetTitle("Open FreeSurfer Overlay");
-    this->LoadScalarsButton->GetWidget()->GetLoadSaveDialog()->RetrieveLastPathFromRegistry("OpenPath");
-    this->LoadScalarsButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes("{ {All} {.*} } { {Thickness} {.thickness} } { {Curve} {.curv} } { {Average Curve} {.avg_curv} } { {Sulc} {.sulc} } { {Area} {.area} } { {W} {.w} } { {Parcellation Annotation} {.annot} } { {Volume} {.mgz .mgh} } { {Label} {.label} }");
+    this->LoadScalarsButton->SetBorderWidth ( 0 );
+    this->LoadScalarsButton->SetReliefToFlat();  
+    this->LoadScalarsButton->SetCompoundModeToLeft ();
+    this->LoadScalarsButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerLoadScalarOverlayIcon() );
+    this->LoadScalarsButton->SetText (" Add scalar overlay" );
+    this->LoadScalarsButton->SetWidth ( 300 );
+    this->LoadScalarsButton->SetAnchorToWest();
+    this->LoadScalarsButton->SetBalloonHelpString("Use this option to add a (FreeSurfer) scalar overlay to an existing model in the scene.");
+
+    // this->LoadScalarsButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes("{ {All} {.*} } { {Thickness} {.thickness} } { {Curve} {.curv} } { {Average Curve} {.avg_curv} } { {Sulc} {.sulc} } { {Area} {.area} } { {W} {.w} } { {Parcellation Annotation} {.annot} } { {Volume} {.mgz .mgh} } { {Label} {.label} }");
     app->Script("pack %s -side top -anchor nw -padx 2 -pady 4 -ipadx 0 -ipady 0", 
                 this->LoadScalarsButton->GetWidgetName());
     

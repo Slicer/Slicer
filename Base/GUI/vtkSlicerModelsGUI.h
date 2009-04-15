@@ -41,8 +41,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
     
     // Description:
     // Get methods on class members ( no Set methods required. )
-    vtkGetObjectMacro ( LoadModelButton, vtkKWLoadSaveButtonWithLabel );
-    vtkGetObjectMacro ( LoadScalarsButton, vtkKWLoadSaveButtonWithLabel);
+    vtkGetObjectMacro ( LoadModelButton, vtkKWPushButton );
+    vtkGetObjectMacro ( LoadScalarsButton, vtkKWPushButton );
     //vtkGetObjectMacro ( Logic, vtkSlicerModelsLogic);
     //vtkGetObjectMacro ( ModelNode, vtkMRMLModelNode );
     
@@ -77,12 +77,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
     // This method builds the Models module GUI
     virtual void BuildGUI ( ) ;
 
-       // Descripgion:
+    // Descripgion:
     // This method releases references and key-bindings,
     // and optionally removes observers.
     virtual void TearDownGUI ( );
 
-        // Description:
+    // Description:
     // Methods for adding module-specific key bindings and
     // removing them.
     virtual void CreateModuleEventBindings ( );
@@ -130,9 +130,8 @@ protected:
     //vtkMRMLModelNode *ModelNode;
     
     // Widgets for the Models module
-    vtkKWLoadSaveButtonWithLabel *LoadModelButton;
-    vtkKWLoadSaveButtonWithLabel *LoadScalarsButton;
-    vtkKWLoadSaveButtonWithLabel *LoadModelDirectoryButton;
+    vtkKWPushButton *LoadModelButton;
+    vtkKWPushButton *LoadScalarsButton;
     vtkSlicerNodeSelectorWidget* ModelDisplaySelectorWidget;
     vtkKWLabel *NACLabel;
     vtkKWLabel *NAMICLabel;
@@ -165,6 +164,5 @@ private:
     vtkSlicerModelsGUI ( const vtkSlicerModelsGUI& ); // Not implemented.
     void operator = ( const vtkSlicerModelsGUI& ); //Not implemented.
 };
-
 
 #endif
