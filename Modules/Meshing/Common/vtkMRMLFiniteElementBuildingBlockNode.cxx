@@ -33,9 +33,7 @@ vtkMRMLFiniteElementBuildingBlockNode* vtkMRMLFiniteElementBuildingBlockNode::Ne
       return (vtkMRMLFiniteElementBuildingBlockNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.  
-  vtkMimxUnstructuredGridActor* newactor =  vtkMimxUnstructuredGridActor::New();
   vtkMRMLFiniteElementBuildingBlockNode* newnode = new vtkMRMLFiniteElementBuildingBlockNode;
-  newnode->SetMimxUnstructuredGridActor(newactor);
   return newnode;
 }
 
@@ -50,21 +48,24 @@ vtkMRMLFiniteElementBuildingBlockNode* vtkMRMLFiniteElementBuildingBlockNode::Cr
       return (vtkMRMLFiniteElementBuildingBlockNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
-  vtkMimxUnstructuredGridActor* newactor =  vtkMimxUnstructuredGridActor::New();
    vtkMRMLFiniteElementBuildingBlockNode* newnode = new vtkMRMLFiniteElementBuildingBlockNode;
-   newnode->SetMimxUnstructuredGridActor(newactor);
    return newnode;
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLFiniteElementBuildingBlockNode::vtkMRMLFiniteElementBuildingBlockNode()
 {
-
+  this->MimxUnstructuredGridActor = vtkMimxUnstructuredGridActor::New();
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLFiniteElementBuildingBlockNode::~vtkMRMLFiniteElementBuildingBlockNode()
 {
+  if (this->MimxUnstructuredGridActor)
+    {
+    this->MimxUnstructuredGridActor->Delete();
+    this->MimxUnstructuredGridActor = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -76,17 +77,17 @@ Superclass::WriteXML(of, nIndent);
     vtkIndent indent(nIndent);
     {
       std::stringstream ss;
-      ss << this->actor->GetDataType();
+      ss << this->MimxUnstructuredGridActor->GetDataType();
       of << indent << " DataType=\"" << ss.str() << "\"";
     }
     {
       std::stringstream ss;
-      ss << this->actor->GetFileName();
+      ss << this->MimxUnstructuredGridActor->GetFileName();
       of << indent << " fileName=\"" << ss.str() << "\"";
     }
 //    {
 //      std::stringstream ss;
-//      ss << this->actor->GetFilePath();
+//      ss << this->MimxUnstructuredGridActor->GetFilePath();
 //      of << indent << " FilePath=\"" << ss.str() << "\"";
 //    }
 }
@@ -112,7 +113,7 @@ void vtkMRMLFiniteElementBuildingBlockNode::ReadXMLAttributes(const char** atts)
       std::stringstream ss;
       ss << attValue;
       ss >> intAttribute;
-      this->actor->SetDataType(intAttribute);
+      this->MimxUnstructuredGridActor->SetDataType(intAttribute);
       }
     else if (!strcmp(attName, "fileName"))
       {
@@ -140,9 +141,9 @@ void vtkMRMLFiniteElementBuildingBlockNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLFiniteElementBuildingBlockNode *node = (vtkMRMLFiniteElementBuildingBlockNode *) anode;
 
-  this->actor->SetDataType(node->GetDataType());
-  //***this->actor->SetFileName(node->GetFileName());
-  //this->actor->SetFilePath(node->GetFilePath());
+  this->MimxUnstructuredGridActor->SetDataType(node->GetDataType());
+  //***this->MimxUnstructuredGridActor->SetFileName(node->GetFileName());
+  //this->MimxUnstructuredGridActor->SetFilePath(node->GetFilePath());
 }
 
 //----------------------------------------------------------------------------
