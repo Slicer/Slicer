@@ -215,7 +215,12 @@ vtkFetchMIGUI::~vtkFetchMIGUI()
     this->UpdatingMRML = 0;
     this->UpdatingGUI = 0;
     
-    this->Logic = NULL;
+    if ( this->Logic )
+      {
+      this->Logic->Delete();
+      this->Logic = NULL;
+      }
+
     vtkSetAndObserveMRMLNodeMacro( this->FetchMINode, NULL );
 
     this->Raised = false;
