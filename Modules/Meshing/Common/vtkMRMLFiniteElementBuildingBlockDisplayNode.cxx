@@ -55,6 +55,8 @@ vtkMRMLNode* vtkMRMLFiniteElementBuildingBlockDisplayNode::CreateNodeInstance()
 vtkMRMLFiniteElementBuildingBlockDisplayNode::vtkMRMLFiniteElementBuildingBlockDisplayNode()
 {
   this->ShrinkFactor = 1.0;  
+  this->FeatureEdges = vtkFeatureEdges::New();
+  this->OutlineTube = vtkTubeFilter::New();
 }
 
 
@@ -62,15 +64,13 @@ vtkMRMLFiniteElementBuildingBlockDisplayNode::vtkMRMLFiniteElementBuildingBlockD
 vtkPolyData* vtkMRMLFiniteElementBuildingBlockDisplayNode::GetPolyData()
 {
    // we know these building blocks will always be in wireframe mode, so force outlines
-  vtkFeatureEdges* featureEdges = (vtkFeatureEdges*) vtkFeatureEdges::New();
-      featureEdges->SetInput(this->GeometryFilter->GetOutput());
-      featureEdges->BoundaryEdgesOn();
-      featureEdges->ManifoldEdgesOn();
-      featureEdges->FeatureEdgesOff();
-   vtkTubeFilter* outlineTube = (vtkTubeFilter*) vtkTubeFilter::New();
-     outlineTube->SetInput(featureEdges->GetOutput());
-     outlineTube->SetRadius(0.15);
-   return outlineTube->GetOutput();  
+  this->FeatureEdges->SetInput(this->GeometryFilter->GetOutput());
+  this->FeatureEdges->BoundaryEdgesOn();
+  this->FeatureEdges->ManifoldEdgesOn();
+  this->FeatureEdges->FeatureEdgesOff();
+  this->OutlineTube->SetInput(this->FeatureEdges->GetOutput());
+  this->OutlineTube->SetRadius(0.15);
+  return this->OutlineTube->GetOutput();  
 }
 
 
@@ -85,6 +85,8 @@ void vtkMRMLFiniteElementBuildingBlockDisplayNode::UpdatePolyDataPipeline()
 vtkMRMLFiniteElementBuildingBlockDisplayNode::~vtkMRMLFiniteElementBuildingBlockDisplayNode()
 {
   this->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+  this->FeatureEdges->Delete();
+  this->OutlineTube->Delete();
 }
 
 //----------------------------------------------------------------------------

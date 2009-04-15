@@ -34,6 +34,8 @@
 #include "vtkMRMLUnstructuredGridNode.h"
 #include "vtkMRMLUnstructuredGridDisplayNode.h"
 
+class vtkFeatureEdges;
+class vtkTubeFilter;
 
 class VTK_MIMXCOMMON_EXPORT vtkMRMLFiniteElementBuildingBlockDisplayNode : public vtkMRMLUnstructuredGridDisplayNode
 {
@@ -93,6 +95,8 @@ class VTK_MIMXCOMMON_EXPORT vtkMRMLFiniteElementBuildingBlockDisplayNode : publi
   vtkMRMLFiniteElementBuildingBlockDisplayNode ( const vtkMRMLFiniteElementBuildingBlockDisplayNode& );
   void operator= ( const vtkMRMLFiniteElementBuildingBlockDisplayNode& );
 
+  vtkFeatureEdges* FeatureEdges;
+  vtkTubeFilter* OutlineTube;
  
 
   // dispaly pipeline components declared here
