@@ -180,12 +180,32 @@ proc ImportNodeVolume {node} {
       }
 
       set logic [$::slicer3::VolumesGUI GetLogic]
-      ##      set volumeNode [$logic AddArchetypeVolume $fileName 1 $labelMap $n(name)]
       set loadingOptions $labelMap
-      set volumeNode [$logic AddArchetypeVolume $fileName $n(name) $loadingOptions]
+      set volumeNode [$logic AddArchetypeVolume $fileName $n(name) $loadingOptions ""]
       set volumeNodeID [$volumeNode GetID]
 
     }
+
+    "dicom" {
+
+      set fileList [vtkStringArray New]
+      foreach f $n(dicomFileNameList) {
+        if { [file pathtype $f] == "relative" } {
+          set fileName $::S2(dir)/$f
+        } else {
+          set fileName $f
+        }
+        $fileList InsertNextValue $fileName
+      }
+      set fileName [$fileList GetValue 0]
+
+      set logic [$::slicer3::VolumesGUI GetLogic]
+      set loadingOptions 0
+      set volumeNode [$logic AddArchetypeVolume $fileName $n(name) $loadingOptions $fileList]
+      set volumeNodeID [$volumeNode GetID]
+      $fileList Delete
+    }
+
 
     "headerless" -
     "basic" {
