@@ -2,7 +2,6 @@
 #include "vtkObjectFactory.h"
 #include "vtkCommand.h"
 #include "vtkKWWidget.h"
-#include "vtkSlicerModelsGUI.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerModuleLogic.h"
 #include "vtkSlicerVisibilityIcons.h"
