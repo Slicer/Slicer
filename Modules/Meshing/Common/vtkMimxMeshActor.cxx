@@ -217,10 +217,16 @@ vtkMimxMeshActor::~vtkMimxMeshActor()
   this->InteriorMapper->Delete();
   this->InteriorActor->Delete();
   this->ShrinkFilter->Delete();
+  this->InteriorShrinkFilter->Delete();
   if(this->PointSetOfNodeSet)
     this->PointSetOfNodeSet->Delete();
   this->ClipPlaneGeometryFilter->Delete();
   this->FeatureEdges->Delete();
+  this->CuttingPlaneWidget->Delete();
+  this->CuttingPlane->Delete();
+  this->TubeFilter->Delete();
+  this->OutlineGeometryFilter->Delete();
+  this->LegendActor->Delete();
 }
 
 //----------------------------------------------------------------------------------------
@@ -1393,6 +1399,7 @@ void vtkMimxMeshActor::AddElementSetListItem( std::string setName )
   elementSetProperty->OutlineActor->GetProperty()->SetAmbient(0);
 
   /* Create the Interior View */
+  // TODO: this will leak
   elementSetProperty->InteriorShrinkFilter = vtkShrinkFilter::New();
   elementSetProperty->InteriorShrinkFilter->SetInput( elementSetProperty->ExtractCellsFilter->GetOutput() );
   elementSetProperty->InteriorShrinkFilter->SetShrinkFactor(0.995);
