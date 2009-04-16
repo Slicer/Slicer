@@ -40,6 +40,7 @@ proc TestWithArtificialData {} {
     }
     
     $vol SetAndObserveImageData $imData 
+    $imData Delete
 
     # now make up a model
     set mod [vtkMRMLModelNode New]
@@ -124,6 +125,9 @@ proc TestWithArtificialData {} {
     if {[$labelData GetScalarComponentAsFloat 10 10 5 0] != 2.0} {
         incr numMisplaced
     }
+
+    $vol Delete
+    $mod Delete
 
     if {$numMisplaced != 0} {
         puts "ERROR: $numMisplaced points out of 6."
