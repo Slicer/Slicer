@@ -198,7 +198,7 @@ itcl::body RemoveIslandsEffect::buildOptions {} {
   $o(help) SetParent [$this getOptionsFrame]
   $o(help) Create
   $o(help) SetHelpTitle "RemoveIslands"
-  $o(help) SetHelpText "Use this tool to create a unique label value for each connected region in the current label map.  Connected regions are defined as groups of pixels which touch each other but are surrounded by zero valued voxels.  If FullyConnected is selected, then only voxels that share a face are counted as connected; if unselected, then voxels that touch at an edge or a corner are considered connected.\n\n Note: be aware that all non-zero label values labels values are considered equal by this filter and that the result will renumber the resulting islands in order of size."
+  $o(help) SetHelpText "Use this tool to remove isolated islands of background (0) within a segmented region (current label color).  Note that only completely isolated islands of background are removed.  You may need to manually cut the connections between interior regions and the background using one of the paint or draw tools."
   $o(help) SetBalloonHelpString "Bring up help window."
   pack [$o(help) GetWidgetName] \
     -side right -anchor sw -padx 2 -pady 2 

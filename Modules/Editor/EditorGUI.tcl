@@ -468,7 +468,7 @@ proc EditorCreateLabelVolume {this} {
 
   set volumeNode [$::Editor($this,volumesSelect) GetSelected]
   if { $volumeNode == "" } {
-    EditorErrorDialog "Select Source Volume for Label Map"
+    EditorErrorDialog "Select Scalar Source Volume for Label Map"
     return;
   }
 
