@@ -252,9 +252,9 @@ itcl::body SWidget::queryLayers { x y {z 0} } {
 itcl::body SWidget::getTensorPixel { node i j k } {
 
   if { ![info exists o(dtiMath)] } {
-    set o(dtiMath) [vtkDiffusionTensorMathematicsSimple New]
-    set o(dtiPixelImage) [vtkImageData New]
-    set o(dtiPixelTensors) [vtkDoubleArray New]
+    set o(dtiMath) [vtkNew vtkDiffusionTensorMathematicsSimple]
+    set o(dtiPixelImage) [vtkNew vtkImageData]
+    set o(dtiPixelTensors) [vtkNew vtkDoubleArray]
     $o(dtiPixelImage) SetDimensions 1 1 1
     $o(dtiPixelImage) AllocateScalars
     $o(dtiPixelTensors) SetNumberOfComponents 9
