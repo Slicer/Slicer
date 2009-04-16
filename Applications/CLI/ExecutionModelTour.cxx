@@ -76,6 +76,5 @@ int main (int argc, char *argv[])
     }
   vtkEventBroker::GetInstance()->Delete();
 
-  scene->Delete();
   return EXIT_SUCCESS;
 }
