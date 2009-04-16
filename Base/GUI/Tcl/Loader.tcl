@@ -464,7 +464,7 @@ itcl::body Loader::add { paths } {
           $this addRow $path "FiducialList"
           $this status ""
         } else {
-          $this status "Cannot read file $path"
+          $this status "Cannot read file $path\nFor DICOM use File->Add Volume..."
         }
       }
     }
