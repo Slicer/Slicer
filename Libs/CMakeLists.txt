@@ -27,8 +27,13 @@ set(dirs ${dirs}
   IGT
   RemoteIO
   #SIGN
-  CudaSupport
   )
+
+OPTION(CUDA_SUPPORT_ENABLED "If Cuda Support should be integrated into Slicer. You have to configure once again to see the other availiable options" OFF)
+
+IF(CUDA_SUPPORT_ENABLED)
+  set (dirs ${dirs} CudaSupport)
+ENDIF(CUDA_SUPPORT_ENABLED)
 
 set(include_dirs)
 set(libs)

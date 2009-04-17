@@ -1,7 +1,5 @@
 PROJECT(CudaSupport)
 
-OPTION(CUDA_SUPPORT_ENABLED "If Cuda Support should be integrated into Slicer. You have to configure once again to see the other availiabel options" OFF)
-
 IF(CUDA_SUPPORT_ENABLED)
 
 INCLUDE(${CMAKE_SOURCE_DIR}/CMake/cuda/FindCuda.cmake)
