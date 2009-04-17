@@ -73,6 +73,7 @@ vtkSlicerNodeSelectorWidget::vtkSlicerNodeSelectorWidget()
   this->MRMLCallbackCommand->SetCallback(MRMLCallback);
   this->InMRMLCallbackFlag = 0;
   this->SetBalloonHelpString("Select a node");
+  this->GetWidget()->GetWidget()->SetAdjustLabelWidthToWidgetSize(1);
 }
 
 //----------------------------------------------------------------------------
