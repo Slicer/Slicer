@@ -23,8 +23,27 @@ $editor UpdateWidget [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLDiffusion
   
 set testWidget [$::editor  GetTestingWidget] 
 
-
 $testWidget RunDWI
+
+set waiting 1
+while {$waiting} {
+  puts "Waiting for task..."
+  set waiting 0
+  set nNodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLCommandLineModuleNode"]
+  puts "found $nNodes nodes"
+  for {set i 0} {$i < $nNodes} {incr i} {
+    puts "checking node $i"
+    set clmNode [$::slicer3::MRMLScene GetNthNodeByClass $i "vtkMRMLCommandLineModuleNode"]
+    set needToWait { "Idle" "Scheduled" "Running" }
+    set status [$clmNode GetStatusString]
+    puts "$status"
+    if { [lsearch $needToWait $status] != -1 } {
+      set waiting 1
+    }
+  }
+  after 250
+}
+puts "Task finished."
 
 $testWidget SetGlyphVisibility 0 1
 
