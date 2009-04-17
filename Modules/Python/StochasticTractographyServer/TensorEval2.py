@@ -163,17 +163,12 @@ def EvaluateTensorX1(data, G, b, wmI=empty(0)):
    
    [ComputeAFunctional(A, b, G, k) for k in range(data.shape[3])]
 
-   print 'A computed'
- 
    lT = zeros((data.shape[0], data.shape[1], data.shape[2], 3) , 'float')
    ET = zeros((data.shape[0], data.shape[1], data.shape[2], 3, 3), 'float' )
    xT = zeros((data.shape[0], data.shape[1], data.shape[2], 7), 'float')
    yT = zeros((data.shape[0], data.shape[1], data.shape[2], 9), 'float')
 
    indx = transpose(wmI.nonzero())
-
-   print 'Index transposed'
-
 
    time2 = time.time()
                
@@ -197,7 +192,6 @@ def EvaluateTensorK0(ten, shape):
    indx = transpose(ones((shape[0], shape[1], shape[2]), 'uint16' ).nonzero())
 
    time2 = time.time()
-   print 'Basic shape : ', shape     
 
    [ComputeTensorKFunctional(ten, shape, xT, yT, lT, ET, k) for k in indx]
 
@@ -219,7 +213,6 @@ def EvaluateTensorK1(ten, shape, wmI=empty(0)):
    indx = transpose(wmI.nonzero())
 
    time2 = time.time()
-   print 'Basic shape : ', shape               
 
    [ComputeTensorKFunctional(ten, shape, xT, yT, lT, ET, k) for k in indx]
 
