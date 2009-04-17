@@ -527,32 +527,34 @@ def Execute (\
              ):
 
   if os.name == 'posix':
+    s1 = sp.Popen("uname", stdout=sp.PIPE)
+    osVersion = s1.communicate()[0].strip()
 
-    p1 = sp.Popen(["ps", "-edlf"], stdout=sp.PIPE)
-    output = p1.communicate()[0]
+    if osVersion == 'Linux' or osVersion == 'Darwin':
+      #p1 = sp.Popen(["ps", "-elf"], stdout=sp.PIPE)
+      p1 = sp.Popen(["ps", "ax"], stdout=sp.PIPE) # BSD
+      output = p1.communicate()[0]
 
-    tag = 'PyPipelineServer'
+      tag = 'PyPipelineServer'
 
-    if output.find(tag)>0:
-      lines = output.split('\n')
-      for i in range(len(lines)):
-        if lines[i].find(tag)>0:
-          pid = lines[i].split()[3]
-          #print 'Python server active PID : ', pid
-          p2 = sp.Popen(["kill", "-9", str(pid)])
+      if output.find(tag)>0:
+        lines = output.split('\n')
+        for i in range(len(lines)):
+          if lines[i].find(tag)>0:
+            #pid = lines[i].split()[3]
+            pid = lines[i].split()[0]  # BSD
+            p2 = sp.Popen(["kill", "-9", str(pid)])
 
-    nmodule = 'StochasticTractographyServer'
+      nmodule = 'StochasticTractographyServer'
 
-    dir0 = os.environ['Slicer3_PLUGINS_DIR']
-    #print 'based module : ', dir0
-    fdir0 = dir0 + '/' + nmodule + '/'
-    #print 'full path : ', fdir0
-    curdir = os.getcwd()
-    os.chdir(fdir0)
-    p = sp.Popen("python PyPipelineServer.py", shell=True )
-    os.chdir(curdir)
+      dir0 = os.environ['Slicer3_PLUGINS_DIR']
+      fdir0 = dir0 + '/' + nmodule + '/'
+      curdir = os.getcwd()
+      os.chdir(fdir0)
+      p = sp.Popen("python PyPipelineServer.py", shell=True )
+      os.chdir(curdir)
 
-    time.sleep(2)
+      time.sleep(2)
 
   #
   Slicer = __import__ ( "Slicer" )
