@@ -27,7 +27,7 @@ set(dirs ${dirs}
   IGT
   RemoteIO
   #SIGN
-  #CudaSupport
+  CudaSupport
   )
 
 set(include_dirs)
