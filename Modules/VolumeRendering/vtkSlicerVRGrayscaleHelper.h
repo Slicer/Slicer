@@ -19,6 +19,7 @@ class vtkSlicerVolumeTextureMapper3D;
 class vtkTimerLog;
 class vtkSlicerFixedPointVolumeRayCastMapper;
 class vtkSlicerGPURayCastVolumeTextureMapper3D;
+class vtkCudaVolumeMapper;
 class vtkKWMenuButtonWithSpinButtonsWithLabel;
 class vtkKWScaleWithLabel;
 class vtkKWScale;
@@ -237,6 +238,7 @@ protected:
     // Frame to configure the mapping options
     // we save pointers here for dynamically collapse/expend these frames
     vtkKWFrameWithLabel *FramePerformance;
+    vtkKWFrameWithLabel *FrameCUDARayCasting;
     vtkKWFrameWithLabel *FrameGPURayCasting;
     vtkKWFrameWithLabel *FramePolygonBlending;
     vtkKWFrameWithLabel *FrameCPURayCasting;
@@ -246,6 +248,10 @@ protected:
     // Menu button to select which mapper to use
     vtkKWMenuButtonWithLabel *MB_Mapper;
     
+    // Description:
+    // Enable/Disable shading in CUDA Ray Cast Mapping
+    vtkKWCheckButtonWithLabel *CB_CUDARayCastShading;
+
     // Description:
     // Enable/Disable MIP GPU Ray Cast Mapping
     vtkKWCheckButtonWithLabel *CB_GPURayCastMIP;
@@ -390,6 +396,10 @@ protected:
     
     // Description:
     // The hardware accelerated gpu ray cast mapper.
+    vtkCudaVolumeMapper *MapperCUDARaycast;
+
+    // Description:
+    // The hardware accelerated gpu ray cast mapper.
     vtkSlicerGPURayCastVolumeTextureMapper3D *MapperGPURaycast;
 
     // Description:
@@ -414,6 +424,10 @@ protected:
     // if texture mapper supported
     int IsTextureMappingSupported;
     
+    // Description:
+    // if CUDA ray casting supported
+    int IsCUDARayCastingSupported;
+
     // Description:
     // if GPU ray casting supported
     int IsGPURayCastingSupported;

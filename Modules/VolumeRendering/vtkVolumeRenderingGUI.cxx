@@ -423,6 +423,8 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
         if(oldNode!=NULL)
           {
           oldNode->RemoveObservers(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallbackCommand);
+          //NH
+          oldNode->RemoveObservers(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand );
           }
             
         }
@@ -447,6 +449,8 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
       vtkMRMLScalarVolumeNode *selectedImageData=vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected());
       //Add observer to trigger update of transform
       selectedImageData->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallbackCommand);
+      //NH
+      selectedImageData->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand );
       this->UnpackSvpGUI();
       this->PackSvpGUI();
 
@@ -587,6 +591,10 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
     //TODO when can we remove the op
     }
   this->ProcessingMRMLEvents = 0;
+
+  if(event == vtkMRMLScalarVolumeNode::ImageDataModifiedEvent){
+    this->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+  }
 
 }
 
