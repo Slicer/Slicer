@@ -19,6 +19,8 @@
 #include "vtkKWMenuButton.h"
 #include "vtkKWMenuButtonWithLabel.h"
 
+#include "vtkKWSimpleEntryDialog.h"
+
 #include "vtkSlicerFiducialsGUI.h"
 
 //---------------------------------------------------------------------------
@@ -35,7 +37,10 @@ vtkSlicerFiducialsGUI::vtkSlicerFiducialsGUI ( )
     this->FiducialListNode = NULL; // "(none)";
 
     this->MeasurementLabel = NULL;
-    
+    this->RenumberButton = NULL;
+    this->RenameButton = NULL;
+    this->RenameDialogue = NULL;
+
     this->AddFiducialButton = NULL;
     this->RemoveFiducialButton = NULL;
     this->RemoveFiducialsInListButton = NULL;
@@ -121,6 +126,24 @@ vtkSlicerFiducialsGUI::~vtkSlicerFiducialsGUI ( )
     this->MeasurementLabel->SetParent(NULL);
     this->MeasurementLabel->Delete();
     this->MeasurementLabel = NULL;
+    }
+  if (this->RenumberButton)
+    {
+    this->RenumberButton->SetParent(NULL);
+    this->RenumberButton->Delete();
+    this->RenumberButton = NULL;
+    }
+  if (this->RenameButton)
+    {
+    this->RenameButton->SetParent(NULL);
+    this->RenameButton->Delete();
+    this->RenameButton = NULL;
+    }
+  if (this->RenameDialogue)
+    {
+    this->RenameDialogue->SetParent(NULL);
+    this->RenameDialogue->Delete();
+    this->RenameDialogue = NULL;
     }
   if (this->AddFiducialButton )
     {
@@ -343,6 +366,9 @@ void vtkSlicerFiducialsGUI::RemoveGUIObservers ( )
     this->AllVisibilityMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ListVisibilityMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );    
 
+    this->RenumberButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->RenameButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    
     this->RemoveObservers (vtkSlicerFiducialsGUI::FiducialListIDModifiedEvent, (vtkCommand *)this->GUICallbackCommand);    
 
     if (this->MRMLScene)
@@ -386,6 +412,9 @@ void vtkSlicerFiducialsGUI::AddGUIObservers ( )
     this->ListLockMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );    
     this->AllVisibilityMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ListVisibilityMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );    
+
+    this->RenumberButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->RenameButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
     this->AddObserver(vtkSlicerFiducialsGUI::FiducialListIDModifiedEvent, (vtkCommand *)this->GUICallbackCommand);
 
@@ -664,6 +693,32 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
           this->MultiColumnList->GetWidget()->GetSelectedCells(rows, cols);
           this->MultiColumnList->GetWidget()->DeselectRow(selectedIndex);
           this->MultiColumnList->GetWidget()->SelectCell(newIndex, cols[0]);
+          }
+        }
+      }
+    else if (button == this->RenumberButton)
+      {
+      this->RenumberFiducials(activeFiducialListNode);      
+      }
+    else if (button == this->RenameButton)
+      {
+      if (this->RenameDialogue == NULL)
+        {
+        this->RenameDialogue = vtkKWSimpleEntryDialog::New();
+        this->RenameDialogue->SetParent(this->UIPanel->GetPageWidget ( "Fiducials" ));
+        this->RenameDialogue->SetTitle("Rename Fiducials");
+        this->RenameDialogue->SetStyleToOkCancel();
+        this->RenameDialogue->GetEntry()->SetLabelText("Please enter the new name prefix for fiducials in this list:");
+        this->RenameDialogue->GetEntry()->GetWidget()->SetValue("");
+        this->RenameDialogue->Create();
+        }
+      if (this->RenameDialogue)
+        {
+        int result = this->RenameDialogue->Invoke();
+        if (result && this->RenameDialogue->GetEntry()->GetWidget()->GetValue() != NULL || !strcmp(this->RenameDialogue->GetEntry()->GetWidget()->GetValue(),""))
+          {
+          const char *newName = this->RenameDialogue->GetEntry()->GetWidget()->GetValue();
+          this->RenameFiducials(activeFiducialListNode, newName);
           }
         }
       }
@@ -2027,7 +2082,14 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->MultiColumnList->GetWidget()->SetColumnFormatCommandToEmptyOutput ( this->SelectedColumn );
     this->MultiColumnList->GetWidget()->SetColumnFormatCommandToEmptyOutput ( this->VisibilityColumn );
     this->MultiColumnList->GetWidget()->SetColumnFormatCommandToEmptyOutput ( this->LockColumn );
-    
+
+
+    // for now, hide the orientation columns
+    for (int hideCol = this->OrWColumn; hideCol <= this->OrZColumn; hideCol++)
+      {
+      this->MultiColumnList->GetWidget()->ColumnVisibilityOff(hideCol);
+      }
+
     app->Script ( "pack %s -fill both -expand true", this->MultiColumnList->GetWidgetName());
     this->MultiColumnList->GetWidget()->SetCellUpdatedCommand(this, "UpdateElement");
     // set up the right click jump slices to that fiducial point call back
@@ -2050,6 +2112,26 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     app->Script("pack %s -side top -anchor nw -fill x -pady 0",
                 this->MeasurementLabel->GetWidgetName());
 
+    // add a button to renumber fids
+    this->RenumberButton = vtkKWPushButton::New();
+    this->RenumberButton->SetParent(measurementFrame);
+    this->RenumberButton->Create();
+    this->RenumberButton->SetText("Renumber Fiducials");
+    //this->RenumberButton->SetReliefToFlat();
+    //this->RenumberButton->SetBorderWidth(0);
+    this->RenumberButton->SetBalloonHelpString("Renumber the fiducials in this list. Removes any numbers from the ends of the labels and then appends a number denoting the current place in the list, starting from 0. Note: does not affect the auto name generation for the next added fiducial.");
+
+    // add a button to rename fids
+    this->RenameButton = vtkKWPushButton::New();
+    this->RenameButton->SetParent(measurementFrame);
+    this->RenameButton->Create();
+    this->RenameButton->SetText("Rename Fiducials");
+    //this->RenameButton->SetReliefToFlat();
+    //this->RenameButton->SetBorderWidth(0);
+    this->RenameButton->SetBalloonHelpString("Rename the fiducials in this list. Preserves any numbers at the end of the labels. Note: does not affect the auto name generation for the next added fiducial - change the list name from the node selector.");
+
+    app->Script("pack %s %s -padx 2 -pady 2 -side top", this->RenumberButton->GetWidgetName(), this->RenameButton->GetWidgetName());
+    
     // ---
     // FIDUCIAL DISPLAY FRAME            
     vtkSlicerModuleCollapsibleFrame *fiducialDisplayFrame = vtkSlicerModuleCollapsibleFrame::New ( );
@@ -2493,5 +2575,67 @@ void vtkSlicerFiducialsGUI::JumpSlicesCallback(int row, int col, int x, int y)
   else
     {
     vtkWarningMacro("JumpSlicesCallback: row " << row << " out of range of 0 to " << this->MultiColumnList->GetWidget()->GetNumberOfRows() - 1);
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerFiducialsGUI::RenumberFiducials(vtkMRMLFiducialListNode *flist)
+{
+  if (flist == NULL)
+    {
+    return;
+    }
+
+  if (flist->GetNumberOfFiducials() < 1)
+    {
+    // nothing to do
+    return;
+    }
+  
+  // save state for undo
+  this->MRMLScene->SaveStateForUndo(flist);
+  for (int p = 0; p < this->MultiColumnList->GetWidget()->GetNumberOfRows(); p++)
+    {
+    std::string oldName = flist->GetNthFiducialLabelText(p);
+
+    std::string strippedName;
+    std::string numString;
+    size_t pos = oldName.find_last_not_of("0123456789");
+    strippedName = oldName.substr(0, pos+1);
+    std::stringstream ss;
+    ss << strippedName;
+    ss << p;
+    flist->SetNthFiducialLabelText(p, ss.str().c_str());
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerFiducialsGUI::RenameFiducials(vtkMRMLFiducialListNode *flist, const char *newName)
+{
+  if (flist == NULL)
+    {
+    return;
+    }
+
+  if (flist->GetNumberOfFiducials() < 1)
+    {
+    // nothing to do
+    return;
+    }
+  
+  // save state for undo
+  this->MRMLScene->SaveStateForUndo(flist);
+  for (int p = 0; p < this->MultiColumnList->GetWidget()->GetNumberOfRows(); p++)
+    {
+    std::string oldName = flist->GetNthFiducialLabelText(p);
+
+    std::string strippedName;
+    std::string numString;
+    size_t pos = oldName.find_last_not_of("0123456789");
+    strippedName = oldName.substr(pos+1, std::string::npos);
+    std::stringstream ss;
+    ss << newName;
+    ss << strippedName;
+    flist->SetNthFiducialLabelText(p, ss.str().c_str());
     }
 }

@@ -49,6 +49,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // Get methods on class members ( no Set methods required. )
     vtkGetObjectMacro ( FiducialListSelectorWidget, vtkSlicerNodeSelectorWidget);
     vtkGetObjectMacro ( MeasurementLabel, vtkKWLabel);
+    vtkGetObjectMacro ( RenumberButton, vtkKWPushButton);
+    vtkGetObjectMacro ( RenameButton, vtkKWPushButton);
+    vtkGetObjectMacro ( RenameDialogue, vtkKWSimpleEntryDialog);
     vtkGetObjectMacro ( AddFiducialButton, vtkKWPushButton);
     vtkGetObjectMacro ( RemoveFiducialButton, vtkKWPushButton);
     vtkGetObjectMacro ( RemoveAllFiducialsButton, vtkKWPushButton);
@@ -178,6 +181,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     void UpdateMeasurementLabel();
 
     // Description:
+    // Renumber all the fiducials in the active list. It first removes any numbers
+    // from the ends of the label texts and then appends numbers starting from 0
+    void RenumberFiducials(vtkMRMLFiducialListNode *flist);
+
+    // Description:
+    // Reanme all the fiducials in the active list. It preserves any numbers
+    // already on the ends of the labels.
+    void RenameFiducials(vtkMRMLFiducialListNode *flist, const char *newName);
+
+    // Description:
     // when right click on a row in the fid list, call this to jump the slices
     // to that point in RAS.
     void JumpSlicesCallback(int row, int col, int x, int y);
@@ -220,7 +233,19 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // Description:
     // Update this label with text about distance between selected fiducials
     vtkKWLabel *MeasurementLabel;
-    
+
+    // Description:
+    // Renumber the fiducials in this list, starting from 0
+    vtkKWPushButton *RenumberButton;
+
+    // Description:
+    // Rename the fiducials in this list, preserving ending numbers
+    vtkKWPushButton *RenameButton;
+
+    // Description:
+    // pop up dialogue to get the new fid name
+    vtkKWSimpleEntryDialog *RenameDialogue;
+
     // Description:
     // add a point
     vtkKWPushButton *AddFiducialButton;
