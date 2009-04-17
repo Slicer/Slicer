@@ -49,7 +49,7 @@ void vtkCudaVolumeMapper::SetImageData(vtkImageData* data){
 
 int vtkCudaVolumeMapper::GetCurrentRenderMode() const
 {
-
+  return 42; // and that really compiled without the return? really? :)
 }
 
 void vtkCudaVolumeMapper::SetThreshold(float min, float max)
