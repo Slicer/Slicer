@@ -356,7 +356,7 @@ class PipelineHandler(asyncore.dispatcher):
           G2 = numpy.dot(G, m2i[:3, :3].T)
 
           vts = vects.vectors
-          vts = numpy.dot(vts, i2r[:3,:3].T)
+          vts = numpy.dot(vts, numpy.sign(i2r)[:3,:3].T)
           [normv(vts, i) for i in range(vts.shape[0])]
 
 
@@ -493,8 +493,8 @@ class PipelineHandler(asyncore.dispatcher):
                             cm2 = track.ConnectFibersX2(paths11, paths14, shpD, lengthEnabled,  lengthClass)
 
                     if isInRoiA and isInRoiB:
-                        cm3 = track.FilterFibers0(paths00, paths01, paths02, paths03, paths04, self.roiA.getImage(), self.roiB.getImage(), shpD, vicinity, threshold)
-                        cm4 = track.FilterFibers0(paths10, paths11, paths12, paths13, paths14, self.roiB.getImage(), self.roiA.getImage(), shpD, vicinity, threshold)
+                        cm3 = track.FilterFibers0(paths00, paths01, paths02, paths03, paths04, self.roiA.getImage(), self.roiB.getImage(), shpD, threshold, vicinity)
+                        cm4 = track.FilterFibers0(paths10, paths11, paths12, paths13, paths14, self.roiB.getImage(), self.roiA.getImage(), shpD, threshold, vicinity)
 
 
 
