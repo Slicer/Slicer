@@ -327,7 +327,7 @@ void vtkNeuroNavLogic::UpdateSliceNode(int sliceNo1, int sliceNo2, int sliceNo3,
     this->SliceNo1Last = sliceNo1;
     if (this->EnableOblique) // perpendicular
       {
-      this->SliceNode[0]->SetSliceToRASByNTP(nx, ny, nz, tx, ty, tz, px, py, pz, 2);
+      this->SliceNode[0]->SetSliceToRASByNTP(nx, ny, nz, tx, ty, tz, px, py, pz, 0);
       this->SliceNode[0]->UpdateMatrices();
       }
     else
@@ -353,7 +353,7 @@ void vtkNeuroNavLogic::UpdateSliceNode(int sliceNo1, int sliceNo2, int sliceNo3,
     this->SliceNo2Last = sliceNo2;
     if (this->EnableOblique) // In-Plane
       {
-      this->SliceNode[1]->SetSliceToRASByNTP(nx, ny, nz, tx, ty, tz, px, py, pz, 0);
+      this->SliceNode[1]->SetSliceToRASByNTP(nx, ny, nz, tx, ty, tz, px, py, pz, 1);
       this->SliceNode[1]->UpdateMatrices();
       }
     else
@@ -380,7 +380,7 @@ void vtkNeuroNavLogic::UpdateSliceNode(int sliceNo1, int sliceNo2, int sliceNo3,
     this->SliceNo3Last = sliceNo3;
     if (this->EnableOblique)  // In-Plane 90
       {
-      this->SliceNode[2]->SetSliceToRASByNTP(nx, ny, nz, tx, ty, tz, px, py, pz, 1);
+      this->SliceNode[2]->SetSliceToRASByNTP(nx, ny, nz, tx, ty, tz, px, py, pz, 2);
       this->SliceNode[2]->UpdateMatrices();
       }
     else
@@ -396,14 +396,20 @@ void vtkNeuroNavLogic::UpdateSliceNode(int sliceNo1, int sliceNo2, int sliceNo3,
 
 void vtkNeuroNavLogic::CheckSliceNodes()
 {
-  for (int i = 0; i < 3; i ++)
+  if (this->SliceNode[0] == NULL)
     {
-    if (this->SliceNode[i] == NULL)
-      {
-      char nodename[36];
-      sprintf(nodename, "vtkMRMLSliceNode%d", i+1);
-      this->SliceNode[i] = vtkMRMLSliceNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(nodename));
-      }
+    this->SliceNode[0] = this->GetApplicationLogic()
+      ->GetSliceLogic("Red")->GetSliceNode();
+    }
+  if (this->SliceNode[1] == NULL)
+    {
+    this->SliceNode[1] = this->GetApplicationLogic()
+      ->GetSliceLogic("Yellow")->GetSliceNode();
+    }
+  if (this->SliceNode[2] == NULL)
+    {
+    this->SliceNode[2] = this->GetApplicationLogic()
+      ->GetSliceLogic("Green")->GetSliceNode();
     }
 }
 
