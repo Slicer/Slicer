@@ -715,7 +715,8 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
       if (this->RenameDialogue)
         {
         int result = this->RenameDialogue->Invoke();
-        if (result && this->RenameDialogue->GetEntry()->GetWidget()->GetValue() != NULL || !strcmp(this->RenameDialogue->GetEntry()->GetWidget()->GetValue(),""))
+        if (result && 
+            ((this->RenameDialogue->GetEntry()->GetWidget()->GetValue() != NULL) || (!strcmp(this->RenameDialogue->GetEntry()->GetWidget()->GetValue(),""))))
           {
           const char *newName = this->RenameDialogue->GetEntry()->GetWidget()->GetValue();
           this->RenameFiducials(activeFiducialListNode, newName);
