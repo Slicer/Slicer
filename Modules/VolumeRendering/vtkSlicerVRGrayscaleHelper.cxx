@@ -1016,7 +1016,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessCropping(int index, double min,double ma
     if (this->UpdateingGUI)
         return;
 
-    if(this->MapperTexture==NULL||this->MapperRaycast==NULL||this->MapperGPURaycast == NULL||this->MapperCUDARaycast)
+    if(this->MapperTexture==NULL||this->MapperRaycast==NULL||this->MapperGPURaycast == NULL||this->MapperCUDARaycast==NULL)
         return;
 
     double pointA[3];
