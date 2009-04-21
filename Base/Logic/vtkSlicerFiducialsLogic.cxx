@@ -69,10 +69,6 @@ void vtkSlicerFiducialsLogic::AddFiducialListSelected()
     {
     vtkErrorMacro("AddFiducialListSelected: unable to add a fiducial list and set it active");
     }
-  if (node)
-    {
-    node->Delete();
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -103,6 +99,7 @@ vtkMRMLFiducialListNode *vtkSlicerFiducialsLogic::AddFiducialList()
     }
   node->SetName(this->MRMLScene->GetUniqueNameByString("L"));
   this->GetMRMLScene()->AddNode(node); 
+  node->Delete();
   return vtkMRMLFiducialListNode::SafeDownCast(node);
 }
 
