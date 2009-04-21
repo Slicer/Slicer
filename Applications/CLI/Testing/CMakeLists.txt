@@ -896,3 +896,21 @@ set (CLP ZeroCrossingBasedEdgeDetectionImageFilter)
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test ITKIO ITKBasicFilters)
+
+##################################
+# PolyDataToLabelmap tests
+add_test(PolyDataToLabelmapTest ${Slicer3_EXE} --launch PolyDataToLabelmapTest
+  --compare ${BASELINE}/OAS10001.mha
+            ${TEMP}/PolyDataToLabelmapTestOutput.mha
+  PolyDataToLabelmapTest        
+    ${TEST_DATA}/PolyDataToLabelmap/OAS10001.hdr 
+    ${TEST_DATA}/PolyDataToLabelmap/OAS10001.vtp 
+    ${TEMP}/PolyDataToLabelmapTestOutput.mha
+  )
+
+set (CLP PolyDataToLabelmap)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP}Lib)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO ITKCommon vtkIO vtkCommon vtkFiltering vtkGraphics ITKBasicFilters)
+
