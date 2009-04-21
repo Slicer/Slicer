@@ -174,6 +174,21 @@ set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoi
 target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
 
 #####################
+set (CLP PolyDataToLabelmap)
+
+set ( ${CLP}_SOURCE ${CLP}.cxx)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+add_executable(${CLP} ${${CLP}_SOURCE})
+slicer3_set_plugins_output_path(${CLP})
+target_link_libraries (${CLP} ITKIO ITKCommon vtkIO vtkCommon vtkFiltering vtkGraphics ITKBasicFilters)
+
+add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
+slicer3_set_plugins_output_path(${CLP}Lib)
+set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
+target_link_libraries (${CLP}Lib ITKIO ITKCommon vtkIO vtkCommon vtkFiltering vtkGraphics ITKBasicFilters)
+
+
+#####################
 set (CLP GaussianBlurImageFilter)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
