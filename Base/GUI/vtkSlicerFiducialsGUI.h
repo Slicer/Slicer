@@ -50,6 +50,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkGetObjectMacro ( FiducialListSelectorWidget, vtkSlicerNodeSelectorWidget);
     vtkGetObjectMacro ( MeasurementLabel, vtkKWLabel);
     vtkGetObjectMacro ( RenumberButton, vtkKWPushButton);
+    vtkGetObjectMacro ( RenumberDialogue, vtkKWSimpleEntryDialog);
     vtkGetObjectMacro ( RenameButton, vtkKWPushButton);
     vtkGetObjectMacro ( RenameDialogue, vtkKWSimpleEntryDialog);
     vtkGetObjectMacro ( AddFiducialButton, vtkKWPushButton);
@@ -181,16 +182,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     void UpdateMeasurementLabel();
 
     // Description:
-    // Renumber all the fiducials in the active list. It first removes any numbers
-    // from the ends of the label texts and then appends numbers starting from 0
-    void RenumberFiducials(vtkMRMLFiducialListNode *flist);
-
-    // Description:
-    // Reanme all the fiducials in the active list. It preserves any numbers
-    // already on the ends of the labels.
-    void RenameFiducials(vtkMRMLFiducialListNode *flist, const char *newName);
-
-    // Description:
     // when right click on a row in the fid list, call this to jump the slices
     // to that point in RAS.
     void JumpSlicesCallback(int row, int col, int x, int y);
@@ -237,6 +228,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // Description:
     // Renumber the fiducials in this list, starting from 0
     vtkKWPushButton *RenumberButton;
+
+    // Description:
+    // pop up dialogue to get the new fiducial starting number
+    vtkKWSimpleEntryDialog *RenumberDialogue;
 
     // Description:
     // Rename the fiducials in this list, preserving ending numbers

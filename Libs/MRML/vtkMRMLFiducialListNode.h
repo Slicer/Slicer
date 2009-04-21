@@ -286,7 +286,44 @@ public:
   // at the top or bottom of the list), the new fiducial index on success
   int MoveFiducialUp(int fidIndex);
   int MoveFiducialDown(int fidIndex);
+
+  // Description:
+  // Renumber all the fiducials in the active list. It first removes any numbers
+  // from the ends of the label texts and then appends numbers starting from 0
+  // by default.
+  void RenumberFiducials(int startFrom = 0);
+
+  // Description:
+  // Reanme all the fiducials in the active list. It preserves any numbers
+  // already on the ends of the labels.
+  void RenameFiducials(const char *newName);
+
+  //BTX
+  // Description:
+  // flags to determine how the next fiducial added to the list is labelled
+  enum NumberingSchemes
+  {
+      UseID = 0,
+      UseIndex,
+      UsePrevious,
+  };
+  //ETX
+
+  // Description:
+  // Flag determining how to number the next added fiducial
+  vtkSetMacro(NumberingScheme, int);
+  vtkGetMacro(NumberingScheme, int);
   
+  // Description:
+  // Generate the label text for a fiducial from it's id. If NumberingScheme
+  // is UseID, uses the ID (default). If NumberingScheme is UseIndex, strips the ID of any
+  // trailing numbers and appends the fiducial's index to it. If
+  // NumberingScheme is UsePrevious, checks the previous fiducial
+  // in the list for a trailing number and increments it by 1, and appends the
+  // new number. If it's the first fiducial, uses 0. If the previous fiducial
+  // has no trailing number in it's label text, will use 1.
+  void SetFiducialLabelTextFromID(vtkMRMLFiducial *fid);
+
 protected:
   vtkMRMLFiducialListNode();
   ~vtkMRMLFiducialListNode();
@@ -317,6 +354,10 @@ protected:
   double Power;
   int Locked;
   int GlyphType;
+
+  // Description:
+  // How the next added fiducial will be numbered in it's LabelText field
+  int NumberingScheme;
 };
 
 #endif

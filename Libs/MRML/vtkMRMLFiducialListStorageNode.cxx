@@ -329,6 +329,13 @@ int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
             int val = atoi(str.c_str());
             fiducialListNode->SetLocked(val);
             }
+          else if (lineString.find("# numberingScheme = ") != std::string::npos)
+            {
+            std::string str = lineString.substr(10, std::string::npos);
+            vtkDebugMacro("Getting numberingScheme, substr = " << str.c_str());
+            int val = atoi(str.c_str());
+            fiducialListNode->SetNumberingScheme(val);
+            }
           else if (lineString.find("# columns = ") != std::string::npos)
             {
             std::string str = lineString.substr(12, std::string::npos);
@@ -536,7 +543,8 @@ int vtkMRMLFiducialListStorageNode::WriteData(vtkMRMLNode *refNode)
   of << "# specular = " << fiducialListNode->GetSpecular() << endl;
   of << "# power = " << fiducialListNode->GetPower() << endl;
   of << "# locked = " << fiducialListNode->GetLocked() << endl;
-  
+  of << "# numberingScheme = " << fiducialListNode->GetNumberingScheme() << endl;
+
   // if change the ones being included, make sure to update the parsing in ReadData
   of << "# columns = label,x,y,z,sel,vis" << endl;
   for (int i = 0; i < fiducialListNode->GetNumberOfFiducials(); i++)

@@ -73,6 +73,8 @@ vtkMRMLFiducialListNode::vtkMRMLFiducialListNode()
   this->Power = 1;
   this->Locked = 0;
 
+  this->NumberingScheme = vtkMRMLFiducialListNode::UseID;
+
   //this->GlyphType = this->Diamond3D;
   this->GlyphType = this->StarBurst2D;
   
@@ -128,7 +130,9 @@ void vtkMRMLFiducialListNode::WriteXML(ostream& of, int nIndent)
   of << " power=\"" << this->Power << "\""; 
  
   of << " locked=\"" << this->Locked << "\"";
- 
+
+  of << " numberingScheme=\"" << this->NumberingScheme << "\"";
+
   of << " opacity=\"" << this->Opacity << "\"";
  
   if (this->GetNumberOfFiducials() > 0)
@@ -238,6 +242,12 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
           ss << attValue;
           ss >> this->Locked;
       }
+      else if (!strcmp(attName, "numberingScheme")) 
+        {
+        std::stringstream ss;
+        ss << attValue;
+        ss >> this->NumberingScheme;
+        }
       else if (!strcmp(attName, "opacity")) 
       {
           std::stringstream ss;
@@ -320,6 +330,7 @@ void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
   this->SetSpecular(node->Specular);
   this->SetPower(node->Power);
   this->SetLocked(node->Locked);
+  this->SetNumberingScheme(node->NumberingScheme);
 
   // Copy all fiducials
 
@@ -556,7 +567,8 @@ void vtkMRMLFiducialListNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Specular: (" << this->Specular << ")\n";
   os << indent << "Power:    (" << this->Power << ")\n";
   os << indent << "Locked:    (" << this->Locked << ")\n";
-  
+  os << indent << "NumberingScheme: (" << this->NumberingScheme << ")\n";
+ 
   if (this->GetNumberOfFiducials() > 0)
   {
       os << indent << "Fiducial points:\n";
@@ -948,11 +960,14 @@ int vtkMRMLFiducialListNode::AddFiducial()
   std::string nameString;
   ss >> nameString;
   fiducial->SetID(this->GetScene()->GetUniqueNameByString(nameString.c_str()));
-  // use the same for the label text for now
-  fiducial->SetLabelText(fiducial->GetID());
+ 
   
   // add it to the collection
   this->FiducialList->vtkCollection::AddItem(fiducial);
+  // set the label text now that the fid is in the list so it can be based on
+  // the previous fid's number
+  this->SetFiducialLabelTextFromID(fiducial);
+
   int itemIndex = this->FiducialList->vtkCollection::IsItemPresent(fiducial);
   // decrement the index, because GetNthFiducial needs a 0 based array
   // index, IsItemPresent returns a 1 based array index
@@ -999,8 +1014,7 @@ int vtkMRMLFiducialListNode::AddFiducialWithXYZ(float x, float y, float z, int s
   std::string nameString;
   ss >> nameString;
   fiducial->SetID(this->GetScene()->GetUniqueNameByString(nameString.c_str()));
-  // use the same for the label text for now
-  fiducial->SetLabelText(fiducial->GetID());
+ 
   
   fiducial->SetXYZ(x,y,z);
 
@@ -1010,9 +1024,11 @@ int vtkMRMLFiducialListNode::AddFiducialWithXYZ(float x, float y, float z, int s
   
   // add it to the collection
   this->FiducialList->vtkCollection::AddItem(fiducial);
-  int itemIndex = this->FiducialList->vtkCollection::IsItemPresent(fiducial);
+  // set the label text based on any previous item in the collection
+  this->SetFiducialLabelTextFromID(fiducial);
+  int itemIndex = this->IsFiducialPresent(fiducial);
   // decrement the index, because GetNthFiducial needs a 0 based array
-  // index, IsItemPresent returns a 1 based array index
+  // index, IsFiducialPresent returns a 1 based array index
   itemIndex--;
 
   // then delete it, the collection has registered it and will keep track of
@@ -1061,9 +1077,9 @@ int vtkMRMLFiducialListNode::AddFiducialWithLabelXYZSelectedVisibility(const cha
   
   // add it to the collection
   this->FiducialList->vtkCollection::AddItem(fiducial);
-  int itemIndex = this->FiducialList->vtkCollection::IsItemPresent(fiducial);
+  int itemIndex = this->IsFiducialPresent(fiducial);
   // decrement the index, because GetNthFiducial needs a 0 based array
-  // index, IsItemPresent returns a 1 based array index
+  // index, IsFiducialPresent returns a 1 based array index
   itemIndex--;
 
   // then delete it, the collection has registered it and will keep track of
@@ -1688,4 +1704,109 @@ int vtkMRMLFiducialListNode::MoveFiducialDown(int fidIndex)
   this->ModifiedSinceReadOn();
   
   return newIndex;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLFiducialListNode::RenumberFiducials(int startFrom)
+{
+  if (this->GetNumberOfFiducials() < 1)
+    {
+    // nothing to do
+    return;
+    }
+  
+  // save state for undo
+  if (this->GetScene())
+    {
+    this->GetScene()->SaveStateForUndo(this);
+    }
+  for (int p = 0, n = startFrom; p < this->GetNumberOfFiducials(); p++, n++)
+    {
+    std::string oldName = this->GetNthFiducialLabelText(p);
+
+    std::string strippedName;
+    std::string numString;
+    size_t pos = oldName.find_last_not_of("0123456789");
+    strippedName = oldName.substr(0, pos+1);
+    std::stringstream ss;
+    ss << strippedName;
+    ss << n;
+    this->SetNthFiducialLabelText(p, ss.str().c_str());
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLFiducialListNode::RenameFiducials(const char *newName)
+{
+
+  if (newName == NULL ||
+      this->GetNumberOfFiducials() < 1)
+    {
+    // nothing to do
+    return;
+    }
+  
+  // save state for undo
+  if (this->GetScene())
+    {
+    this->GetScene()->SaveStateForUndo(this);
+    }
+  for (int p = 0; p < this->GetNumberOfFiducials(); p++)
+    {
+    std::string oldName = this->GetNthFiducialLabelText(p);
+
+    std::string strippedName;
+    std::string numString;
+    size_t pos = oldName.find_last_not_of("0123456789");
+    strippedName = oldName.substr(pos+1, std::string::npos);
+    std::stringstream ss;
+    ss << newName;
+    ss << strippedName;
+    this->SetNthFiducialLabelText(p, ss.str().c_str());
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLFiducialListNode::SetFiducialLabelTextFromID(vtkMRMLFiducial *fid)
+{
+  if (fid == NULL || fid->GetID() == NULL)
+    {
+    return;
+    }
+  std::string id = fid->GetID();
+ 
+  if (this->NumberingScheme == vtkMRMLFiducialListNode::UseID)
+    {
+    fid->SetLabelText(fid->GetID());
+    }
+  else
+    {
+    int itemIndex = this->GetFiducialIndex(id);
+    size_t pos = id.find_last_not_of("0123456789");
+    std::string strippedID = id.substr(0, pos+1);
+    std::stringstream ss;
+    ss << strippedID;
+
+    if (this->NumberingScheme == vtkMRMLFiducialListNode::UseIndex)
+      {
+      // use the fid's index
+      ss << itemIndex;
+      }
+    else if (this->NumberingScheme == vtkMRMLFiducialListNode::UsePrevious)
+      {
+      // use the number from the previous fiducial
+      int lastNumber = 0;
+      if (itemIndex > 0)
+        {
+        std::string previousLabel = this->GetNthFiducialLabelText(itemIndex - 1);
+        size_t prevpos = previousLabel.find_last_not_of("0123456789");
+        std::string suffixPreviousLabel = previousLabel.substr(prevpos+1, std::string::npos);
+        lastNumber = atoi(suffixPreviousLabel.c_str());
+        lastNumber++;
+        }
+      ss << lastNumber;
+      }
+    std::string labelText = ss.str();
+    fid->SetLabelText(labelText.c_str());
+    }
 }
