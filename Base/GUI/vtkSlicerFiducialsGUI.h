@@ -49,6 +49,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // Get methods on class members ( no Set methods required. )
     vtkGetObjectMacro ( FiducialListSelectorWidget, vtkSlicerNodeSelectorWidget);
     vtkGetObjectMacro ( MeasurementLabel, vtkKWLabel);
+    vtkGetObjectMacro ( ListMeasurementLabel, vtkKWLabel);
     vtkGetObjectMacro ( RenumberButton, vtkKWPushButton);
     vtkGetObjectMacro ( RenumberDialogue, vtkKWSimpleEntryDialog);
     vtkGetObjectMacro ( RenameButton, vtkKWPushButton);
@@ -178,8 +179,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
 
     // Description:
     // Called when the selected state of some fids have changed, to update the
-    // measurement label
-    void UpdateMeasurementLabel();
+    // measurement labels
+    void UpdateMeasurementLabels();
 
     // Description:
     // when right click on a row in the fid list, call this to jump the slices
@@ -224,6 +225,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // Description:
     // Update this label with text about distance between selected fiducials
     vtkKWLabel *MeasurementLabel;
+
+    // Description:
+    // Update this label with text about the distance between selected
+    // fiducials for the whole list
+    vtkKWLabel *ListMeasurementLabel;
 
     // Description:
     // Renumber the fiducials in this list, starting from 0

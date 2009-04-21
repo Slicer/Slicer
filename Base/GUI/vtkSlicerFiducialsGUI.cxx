@@ -37,6 +37,7 @@ vtkSlicerFiducialsGUI::vtkSlicerFiducialsGUI ( )
     this->FiducialListNode = NULL; // "(none)";
 
     this->MeasurementLabel = NULL;
+    this->ListMeasurementLabel = NULL;
     this->RenumberButton = NULL;
     this->RenumberDialogue = NULL;
     this->RenameButton = NULL;
@@ -127,6 +128,12 @@ vtkSlicerFiducialsGUI::~vtkSlicerFiducialsGUI ( )
     this->MeasurementLabel->SetParent(NULL);
     this->MeasurementLabel->Delete();
     this->MeasurementLabel = NULL;
+    }
+  if (this->ListMeasurementLabel)
+    {
+    this->ListMeasurementLabel->SetParent(NULL);
+    this->ListMeasurementLabel->Delete();
+    this->ListMeasurementLabel = NULL;
     }
   if (this->RenumberButton)
     {
@@ -1406,7 +1413,6 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
         {
         this->MultiColumnList->GetWidget()->SetCellTextAsInt(row,this->SelectedColumn,(activeFiducialListNode->GetNthFiducialSelected(row) ? 1 : 0));
         this->MultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton(row,this->SelectedColumn);
-        this->UpdateMeasurementLabel();
         }
       // locked
       if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsInt(row,this->LockColumn) != (activeFiducialListNode->GetLocked() ? 1 : 0))
@@ -1442,7 +1448,6 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
           {
           this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->ZColumn,xyz[2]);
           }
-        this->UpdateMeasurementLabel();
         }
       if (wxyz != NULL)
         {
@@ -1464,6 +1469,7 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
           }
         }
       }
+    this->UpdateMeasurementLabels();
     
     vtkDebugMacro("Now going to update GUI from the logic's active list");
     // update the visibility, color, scale buttons to match the displayed list's
@@ -2140,6 +2146,15 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     app->Script("pack %s -side top -anchor nw -fill x -pady 0",
                 this->MeasurementLabel->GetWidgetName());
 
+    // add a label to hold Point-to-Point measurement on the whole list
+    this->ListMeasurementLabel = vtkKWLabel::New();
+    this->ListMeasurementLabel->SetParent( utilitiesFrame );
+    this->ListMeasurementLabel->Create();
+    this->ListMeasurementLabel->SetText("List Distance: ");
+    this->ListMeasurementLabel->SetBalloonHelpString("Summed linear distance between sequential selected fiducials");
+    app->Script("pack %s -side top -anchor nw -fill x -pady 0",
+                this->ListMeasurementLabel->GetWidgetName());
+
     //---
     // utility buttons frame
     //---
@@ -2156,7 +2171,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->RenumberButton->SetText("Renumber Fiducials");
     //this->RenumberButton->SetReliefToFlat();
     //this->RenumberButton->SetBorderWidth(0);
-    this->RenumberButton->SetBalloonHelpString("Renumber the fiducials in this list. Removes any numbers from the ends of the labels and then appends a number denoting the current place in the list, starting from 0. Note: does not affect the auto name generation for the next added fiducial.");
+    this->RenumberButton->SetBalloonHelpString("Renumber the fiducials in this list. Removes any numbers from the ends of the labels and then appends a number denoting the current place in the list, starting from entered value, 0 if none. Note: does not affect the auto name generation for the next added fiducial.");
 
     // add a button to rename fids
     this->RenameButton = vtkKWPushButton::New();
@@ -2167,7 +2182,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     //this->RenameButton->SetBorderWidth(0);
     this->RenameButton->SetBalloonHelpString("Rename the fiducials in this list. Preserves any numbers at the end of the labels. Note: does not affect the auto name generation for the next added fiducial - change the list name from the node selector.");
 
-    app->Script("pack %s %s -padx 2 -pady 2 -side left", this->RenumberButton->GetWidgetName(), this->RenameButton->GetWidgetName());
+    app->Script("pack %s %s -padx 4 -pady 2 -side left", this->RenumberButton->GetWidgetName(), this->RenameButton->GetWidgetName());
     
     // ---
     // FIDUCIAL DISPLAY FRAME            
@@ -2396,7 +2411,7 @@ void vtkSlicerFiducialsGUI::UpdateElement(int row, int col, char * str)
                 // selected
                 vtkDebugMacro("UpdateElement: setting node " <<  activeFiducialListNode->GetNthFiducialLabelText(row) << "'s selected flag to " << str << endl);
                 activeFiducialListNode->SetNthFiducialSelected(row, (atoi(str) == 1));
-                this->UpdateMeasurementLabel();
+                this->UpdateMeasurementLabels();
             }
             else if ( col == this->LockColumn)
               {
@@ -2430,7 +2445,7 @@ void vtkSlicerFiducialsGUI::UpdateElement(int row, int col, char * str)
                   if (col == this->XColumn) { activeFiducialListNode->SetNthFiducialXYZ(row, newCoordinate, xyz[1], xyz[2]); }
                   if (col == this->YColumn) { activeFiducialListNode->SetNthFiducialXYZ(row, xyz[0], newCoordinate, xyz[2]); }
                   if (col == this->ZColumn) { activeFiducialListNode->SetNthFiducialXYZ(row, xyz[0], xyz[1], newCoordinate); }
-                  this->UpdateMeasurementLabel();
+                  this->UpdateMeasurementLabels();
                   }            
             }
             else if (col >= this->OrWColumn  && col <= this->OrZColumn)
@@ -2527,54 +2542,78 @@ void vtkSlicerFiducialsGUI::SetFiducialListNodeID (char * id)
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerFiducialsGUI::UpdateMeasurementLabel()
+void vtkSlicerFiducialsGUI::UpdateMeasurementLabels()
 {
-  if (!this->MeasurementLabel)
+  if (!this->MeasurementLabel || !this->ListMeasurementLabel)
     {
     return;
     }
+  std::string newLabel = "Distance: ";
+  std::string newListLabel = "List Distance: ";
+
   // get the fiducial list
   vtkMRMLFiducialListNode * activeFiducialListNode = (vtkMRMLFiducialListNode *)this->MRMLScene->GetNodeByID(this->GetFiducialListNodeID());
   if (activeFiducialListNode == NULL)
     {
+    this->MeasurementLabel->SetText(newLabel.c_str());
+    this->ListMeasurementLabel->SetText(newListLabel.c_str());
     return;
     }
   
   int numPoints = activeFiducialListNode->GetNumberOfFiducials();
   int numSelected = 0;
-  int selectedIndices[2];
-  std::string newLabel = "Distance: ";
-  for (int n = 0; n < numPoints && numSelected < 2; n++)
+  int lastSelectedIndex = -1;
+  int thisSelectedIndex = -1;
+  double dist = 0.0;
+  double listDist = 0.0;
+  for (int n = 0; n < numPoints; n++)
     {
     if (activeFiducialListNode->GetNthFiducialSelected(n))
       {
-      selectedIndices[numSelected] = n;
+      lastSelectedIndex = thisSelectedIndex;
+      thisSelectedIndex = n;
       numSelected++;
       
-      if (numSelected == 2)
+      if (numSelected >= 2)
         {
-        std::stringstream ss;
-        ss << newLabel;
-        ss << activeFiducialListNode->GetNthFiducialLabelText(selectedIndices[0]);
-        ss << " to ";
-        ss << activeFiducialListNode->GetNthFiducialLabelText(selectedIndices[1]);
-        ss << " = ";
-        float *xyz1 = activeFiducialListNode->GetNthFiducialXYZ(selectedIndices[0]);
-        float *xyz2 = activeFiducialListNode->GetNthFiducialXYZ(selectedIndices[1]);
-        double dist = 0.0;
+        float *xyz1 = activeFiducialListNode->GetNthFiducialXYZ(lastSelectedIndex);
+        float *xyz2 = activeFiducialListNode->GetNthFiducialXYZ(thisSelectedIndex);
         if (xyz1 != NULL && xyz2 != NULL)
           {
           dist = sqrt(pow(double(xyz2[0] - xyz1[0]),2) +
                       pow(double(xyz2[1] - xyz1[1]),2) +
                       pow(double(xyz2[2] - xyz1[2]),2));
           }
-        ss << dist;
-        ss << " mm";
-        newLabel = ss.str();
+        if (numSelected == 2)
+          {
+          std::stringstream ss;
+          ss << newLabel;
+          ss << activeFiducialListNode->GetNthFiducialLabelText(lastSelectedIndex);
+          ss << " to ";
+          ss << activeFiducialListNode->GetNthFiducialLabelText(thisSelectedIndex);
+          ss << " = ";
+          ss << dist;
+          ss << " mm";
+          newLabel = ss.str();
+          listDist = dist;
+          }
+        else
+          {
+          listDist += dist;
+          }
         }
       }
     }
   this->MeasurementLabel->SetText(newLabel.c_str());
+  if (listDist > 0.0)
+    {
+    std::stringstream ss;
+    ss << newListLabel;
+    ss << listDist;
+    ss << " mm";
+    newListLabel = ss.str();
+    }
+  this->ListMeasurementLabel->SetText(newListLabel.c_str());
 }
 
 //---------------------------------------------------------------------------
