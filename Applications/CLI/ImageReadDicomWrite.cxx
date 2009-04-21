@@ -213,12 +213,12 @@ int main( int argc, char* argv[] )
 
     // Always set the rescale interscept and rescale slope (even if
     // they are at their defaults of 0 and 1 respectively).
-    value.str("");
-    value << rescaleInterscept;
-    itk::EncapsulateMetaData<std::string>(dictionary, "0028|1052", value.str());
-    value.str("");
-    value << rescaleSlope;
-    itk::EncapsulateMetaData<std::string>(dictionary, "0028|1053", value.str());
+    //value.str("");
+    //value << rescaleInterscept;
+    //itk::EncapsulateMetaData<std::string>(dictionary, "0028|1052", value.str());
+    //value.str("");
+    //value << rescaleSlope;
+    //itk::EncapsulateMetaData<std::string>(dictionary, "0028|1053", value.str());
     
     
     Image3DType::RegionType extractRegion;
@@ -242,7 +242,32 @@ int main( int argc, char* argv[] )
       extract->SetInput(image );
       extract->SetExtractionRegion(extractRegion);
       extract->GetOutput()->SetMetaDataDictionary(dictionary);
+      extract->Update();
 
+    itk::ImageRegionIterator<Image2DType> it( extract->GetOutput(), extract->GetOutput()->GetLargestPossibleRegion() );
+    Image2DType::PixelType minValue = itk::NumericTraits<Image2DType::PixelType>::max();
+    Image2DType::PixelType maxValue = itk::NumericTraits<Image2DType::PixelType>::min();
+    for (it.GoToBegin(); !it.IsAtEnd(); ++it)
+    {
+      Image2DType::PixelType p = it.Get();
+      if (p > maxValue)
+      {
+        maxValue = p;
+      }
+      if (p < minValue)
+      {
+        minValue = p;
+      }
+    }
+    Image2DType::PixelType windowCenter = (minValue+maxValue)/2;
+    Image2DType::PixelType windowWidth = (maxValue-minValue);
+
+    value.str("");
+    value << windowCenter;
+    itk::EncapsulateMetaData<std::string>(dictionary, "0028|1050", value.str());
+    value.str("");
+    value << windowWidth;
+    itk::EncapsulateMetaData<std::string>(dictionary, "0028|1051", value.str());
 
     WriterType::Pointer writer = WriterType::New();
       value.str("");
