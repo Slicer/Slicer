@@ -1686,7 +1686,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->UIPanel->AddPage ( "Fiducials", "Fiducials", NULL );
     
     // Define your help text and build the help frame here.
-    const char *help = "The Fiducials Module creates and manages lists of Fiducial points. <a>http://www.slicer.org/slicerWiki/index.php/Modules:Fiducials-Documentation</a>.\nClick on the tool bar icon of an arrow pointing to a starburst fiducial to enter the 'place a new object mode', then click on 3D models or on 2D slices.\nYou can also place fiducials while in 'tranform view' mode by positioning the mouse over a 2D slice plane in the Slice view windows (it must be the active window) and pressing the 'P' key. You can then click and drag the fiducial using the mouse in 'transform view' mode.\nYou can reset the positions of the fiducials in the table below, and adjust selection (fiducials must be selected if they are to be passed into a command line module).\nTo align slices with fiducials, move the fiducial while holding down the Control key.\nYou can right click in a row to align slices to that fiducial, or in the 2d slice windows you can use the '`' key to jump to the next fiducial, Shift-` to jump backwards through the list.\nUse the backspace or delete key to delete a fiducial over which you are hovering in 2D.\nThe distance between the first two selected fiducials in the list will be computed automatically and appear in a label below the list of fiducials.";
+    const char *help = "The Fiducials Module creates and manages lists of Fiducial points. <a>http://www.slicer.org/slicerWiki/index.php/Modules:Fiducials-Documentation</a>.\nClick on the tool bar icon of an arrow pointing to a starburst fiducial to enter the 'place a new object mode', then click on 3D models or on 2D slices.\nYou can also place fiducials while in 'tranform view' mode by positioning the mouse over a 2D slice plane in the Slice view windows (it must be the active window) and pressing the 'P' key. You can then click and drag the fiducial using the mouse in 'transform view' mode.\nYou can reset the positions of the fiducials in the table below, and adjust selection (fiducials must be selected if they are to be passed into a command line module).\nTo align slices with fiducials, move the fiducial while holding down the Control key.\nYou can right click in a row to align slices to that fiducial, or in the 2d slice windows you can use the '`' key to jump to the next fiducial, Shift-` to jump backwards through the list.\nUse the backspace or delete key to delete a fiducial over which you are hovering in 2D.\nThe distance between the first two selected fiducials in the list will be computed automatically and appear in a label below the list of fiducials, as well as the summed linear distance between all sequential selected fiducials.\nYou can renumber all the fiducials in the list by clicking on the Renumber Fiducials button and entering an integer from which to start incrementing by 1. You can rename all the fiducials in the list by clicking on the Rename Fiducials buttons and providing a string that will replace characters in the fiducial name up to any numbers at the end of the name.";
     const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. ";
     vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Fiducials" );
     this->BuildHelpAndAboutFrame ( page, help, about );
@@ -2132,7 +2132,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     // utilities frame
     //---
     vtkKWFrame *utilitiesFrame = vtkKWFrame::New();
-    utilitiesFrame->SetParent(fiducialFrame);
+    utilitiesFrame->SetParent(fiducialFrame->GetFrame());
     utilitiesFrame->Create();
     app->Script ("pack %s -side top -anchor nw -fill x -pady 0",
                  utilitiesFrame->GetWidgetName());
@@ -2159,7 +2159,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     // utility buttons frame
     //---
     vtkKWFrame *utilitiesButtonFrame = vtkKWFrame::New();
-    utilitiesButtonFrame->SetParent(fiducialFrame);
+    utilitiesButtonFrame->SetParent(fiducialFrame->GetFrame());
     utilitiesButtonFrame->Create();
     app->Script ("pack %s -side top -anchor nw -fill x -pady 0",
                  utilitiesButtonFrame->GetWidgetName());
