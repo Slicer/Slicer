@@ -63,7 +63,7 @@ subdirs(
 #  MRAblation <- not working either
    Volumes
    EMSegment
-   #DistanceTransformModel
+   DistanceTransformModel
    ClipModel
    #VolumeRenderingCuda
    ModelIntoLabelVolume
