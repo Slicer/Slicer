@@ -533,6 +533,7 @@ if { [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [strin
       # TODO: perhaps we need an installer step here
       file copy -force $::Slicer3_LIB/python-build/PCbuild/python25.lib $::Slicer3_LIB/python-build/Lib/python25.lib 
       file copy -force $::Slicer3_LIB/python-build/PCbuild/_socket.pyd $::Slicer3_LIB/python-build/Lib/_socket.pyd
+      file copy -force $::Slicer3_LIB/python-build/PCbuild/_ctypes.pyd $::Slicer3_LIB/python-build/Lib/_ctypes.pyd
 
     } else {
 
