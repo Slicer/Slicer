@@ -190,7 +190,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
   // set the centre of gravity
   //double *bounds = polyData->GetBounds();
   COG.Fill (0.0);
-  for (size_t k = 0; k < polyData->GetNumberOfPoints(); k++)
+  for (vtkIdType k = 0; k < polyData->GetNumberOfPoints(); k++)
     {
     double *pt = polyData->GetPoint( k );
     for ( int m = 0; m < 3; m++ )
@@ -226,6 +226,9 @@ template<class T> int DoIt( int argc, char * argv[], T )
   writer->SetFileName( OutputVolume.c_str() );
   writer->SetInput(  label );
   writer->Update();
+
+  pdReader->Delete();
+  sampler->Delete();
 
   return EXIT_SUCCESS;
 }
