@@ -174,8 +174,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
   }
 
   // do morphological closing
-  LabelImageType::Pointer closedLabel = BinaryClosingFilter3D( label, 5);
-
+  LabelImageType::Pointer closedLabel = BinaryClosingFilter3D( label, 2);
   itk::ImageRegionIteratorWithIndex<LabelImageType> itLabel (closedLabel, closedLabel->GetLargestPossibleRegion() );
 
   // do flood fill using binary threshold image function
@@ -210,9 +209,10 @@ template<class T> int DoIt( int argc, char * argv[], T )
   for (floodFill.GoToBegin(); !floodFill.IsAtEnd(); ++floodFill)
     {
     LabelImageType::IndexType i = floodFill.GetIndex();
-    label->SetPixel( i, 255 );
+    closedLabel->SetPixel( i, 255 );
     }
-  LabelImageType::Pointer finalLabel = BinaryClosingFilter3D( label, 2);
+  LabelImageType::Pointer finalLabel = BinaryClosingFilter3D( closedLabel, 2);
+
   for (itLabel.GoToBegin(); !itLabel.IsAtEnd(); ++itLabel)
     {
     LabelImageType::IndexType i = itLabel.GetIndex();
