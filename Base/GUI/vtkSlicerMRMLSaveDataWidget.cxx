@@ -267,11 +267,12 @@ void vtkSlicerMRMLSaveDataWidget::SaveSceneWithData(int sceneRow)
   // set the scene's root directory so that storage nodes can use it
   if (this->GetMRMLScene())
     {
-    vtksys_stl::string directory = 
-      vtksys::SystemTools::GetParentDirectory(sceneFileName.c_str());
-    this->MRMLScene->SetRootDirectory(directory.c_str());
+      vtksys_stl::string directory = 
+        vtksys::SystemTools::GetParentDirectory(sceneFileName.c_str());
+      this->MRMLScene->SetRootDirectory(directory.c_str());
+      this->SetSnapshotsRootDirectory();
     }
-
+  
   if(writeScene && this->SaveModifiedData())
     {
     if(this->SaveScene(sceneRow))
@@ -479,55 +480,29 @@ int vtkSlicerMRMLSaveDataWidget::SaveScene(int sceneRow)
     vtksys_stl::string directory = 
       vtksys::SystemTools::GetParentDirectory(fileName.c_str());
     this->MRMLScene->SetRootDirectory(directory.c_str());
-    directory = directory + vtksys_stl::string("/");
-
-    vtkDebugMacro("SaveScene: updated root diretory to " << directory.c_str());
+    this->SetSnapshotsRootDirectory();
     
-    // convert absolute paths to relative
-    vtkMRMLScene *scene = this->GetMRMLScene();
-    vtkMRMLNode *node;
-    int nnodes = scene->GetNumberOfNodesByClass("vtkMRMLStorageNode");
-    int n;
-    for (n=0; n<nnodes; n++)
-      {
-      node = scene->GetNthNodeByClass(n, "vtkMRMLStorageNode");
-      vtkMRMLStorageNode *snode = vtkMRMLStorageNode::SafeDownCast(node);
-      if (snode->GetFileName())
-        {
-        
-        itksys_stl::string absPath = snode->GetFullNameFromFileName();
-        itksys_stl::string relPath = itksys::SystemTools::RelativePath(
-          directory.c_str(), absPath.c_str());
-        vtkDebugMacro("SaveScene: changing storage node file name from absPath " << absPath << " to relPath " << relPath << ", now working on " << snode->GetNumberOfFileNames() << " other files in the node");
-        snode->SetFileName(relPath.c_str());
-        snode->SetSceneRootDir(directory.c_str());
-        // do it for all files in the node
-        int numFiles = snode->GetNumberOfFileNames();
-        for (int i = 0; i < numFiles; i++)
-          {
-          absPath = snode->GetFullNameFromNthFileName(i);
-          relPath = itksys::SystemTools::RelativePath(directory.c_str(), absPath.c_str());
-          vtkDebugMacro("Updating " << i << "th path from " << absPath << " to " << relPath);
-          snode->ResetNthFileName(i, relPath.c_str());
-          }
-        }
-      }
-    
-    nnodes = scene->GetNumberOfNodesByClass("vtkMRMLSceneSnapshotNode");
-    for ( n=0; n<nnodes; n++)
-      {
-      node = scene->GetNthNodeByClass(n, "vtkMRMLSceneSnapshotNode");
-      vtkMRMLSceneSnapshotNode *snode = vtkMRMLSceneSnapshotNode::SafeDownCast(node);
-      snode->SetSceneRootDir(directory.c_str());
-      snode->SetRelativePaths();
-      }
-
     this->GetMRMLScene()->SetURL(fileName.c_str());
     this->GetMRMLScene()->Commit();  
     return 1;
     }
-
+  
   return 0;
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerMRMLSaveDataWidget::SetSnapshotsRootDirectory()
+{
+  vtkMRMLScene *scene = this->GetMRMLScene();
+  vtkMRMLNode *node = NULL;
+
+  int nnodes = scene->GetNumberOfNodesByClass("vtkMRMLSceneSnapshotNode");
+  for (int n=0; n<nnodes; n++)
+    {
+    node = scene->GetNthNodeByClass(n, "vtkMRMLSceneSnapshotNode");
+    vtkMRMLSceneSnapshotNode *snode = vtkMRMLSceneSnapshotNode::SafeDownCast(node);
+    snode->GetNodes()->SetRootDirectory(scene->GetRootDirectory());
+    }
 }
 
 //---------------------------------------------------------------------------

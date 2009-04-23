@@ -232,6 +232,8 @@ protected:
   // Save the scene with modified and marked data.
   virtual void SaveSceneWithData(int sceneRow);
 
+  virtual void SetSnapshotsRootDirectory();
+
   //BTX
   // Description:
   // The column orders in the list box

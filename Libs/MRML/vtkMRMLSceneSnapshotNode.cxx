@@ -237,6 +237,11 @@ void vtkMRMLSceneSnapshotNode::StoreScene()
     this->Nodes->GetCurrentScene()->RemoveAllItems();
     }
 
+  if (this->GetScene())
+    {
+    this->Nodes->SetRootDirectory(this->GetScene()->GetRootDirectory());
+    }
+
   vtkMRMLNode *node = NULL;
   int n;
   for (n=0; n < this->Scene->GetNumberOfNodes(); n++) 
@@ -386,42 +391,3 @@ void vtkMRMLSceneSnapshotNode::RestoreScene()
     }
 
 }
-//----------------------------------------------------------------------------
-void vtkMRMLSceneSnapshotNode::SetRelativePaths()
-{
-  if (this->Scene == NULL)
-    {
-    return;
-    }
-
-  if (this->Nodes == NULL)
-    {
-    return;
-    }
-
-  unsigned int nnodesSanpshot = this->Nodes->GetCurrentScene()->GetNumberOfItems();
-  unsigned int n;
-  vtkMRMLNode *node = NULL;
-
-  std::string directory = this->GetSceneRootDir();
-
-  for (n=0; n<nnodesSanpshot; n++) 
-    {
-    node  = dynamic_cast < vtkMRMLNode *>(this->Nodes->GetCurrentScene()->GetItemAsObject(n));
-    if (node) 
-      {
-      // for storage nodes replace full path with relative
-      vtkMRMLStorageNode *snode = vtkMRMLStorageNode::SafeDownCast(node);
-      if (snode && snode->GetFileName() )
-        {
-        std::string absPath = snode->GetFullNameFromFileName();
-        std::string relPath = vtksys::SystemTools::RelativePath(
-            directory.c_str(), absPath.c_str());
-        snode->SetFileName(relPath.c_str());
-        snode->SetSceneRootDir(directory.c_str());
-        }
-      }
-    }
-  }
-
-// End

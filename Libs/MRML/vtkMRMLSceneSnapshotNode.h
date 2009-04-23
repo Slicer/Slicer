@@ -73,9 +73,6 @@ class VTK_MRML_EXPORT vtkMRMLSceneSnapshotNode : public vtkMRMLNode
 
   vtkGetObjectMacro ( Nodes, vtkMRMLScene );
 
-  // Description:
-  // change the paths of internal storage nodes to relative
-  void SetRelativePaths();
 
 protected:
   vtkMRMLSceneSnapshotNode();

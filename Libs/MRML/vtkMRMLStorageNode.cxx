@@ -26,6 +26,9 @@ Version:   $Revision: 1.1.1.1 $
 #include <vtksys/stl/string>
 #include <vtksys/SystemTools.hxx>
 
+#include <itksys/stl/string>
+#include <itksys/SystemTools.hxx>
+
 //----------------------------------------------------------------------------
 vtkMRMLStorageNode::vtkMRMLStorageNode()
 {
@@ -81,7 +84,14 @@ void vtkMRMLStorageNode::WriteXML(ostream& of, int nIndent)
 
   if (this->FileName != NULL) 
     {
-    of << indent << " fileName=\"" << vtkMRMLNode::URLEncodeString(this->FileName) << "\"";
+    // convert to relative filename
+    std::string name = this->FileName;
+    if (this->GetScene() && !this->IsFilePathRelative(this->FileName))
+      {
+      name = itksys::SystemTools::RelativePath(this->GetScene()->GetRootDirectory(), this->FileName);
+      }
+    
+    of << indent << " fileName=\"" << vtkMRMLNode::URLEncodeString(name.c_str()) << "\"";
     
     // if there is a file list, add the archetype to it. add file will check
     // that it's not already there. currently needed for reading in multi
@@ -94,7 +104,15 @@ void vtkMRMLStorageNode::WriteXML(ostream& of, int nIndent)
     }
   for (int i = 0; i < this->GetNumberOfFileNames(); i++)
     {
-    of << indent << " fileListMember" << i << "=\"" << vtkMRMLNode::URLEncodeString(this->GetNthFileName(i)) << "\"";
+    // convert to relative filename
+    std::string name = this->GetNthFileName(i);
+    if (this->GetScene() && !this->IsFilePathRelative(this->GetNthFileName(i)))
+      {
+      name = itksys::SystemTools::RelativePath(this->GetScene()->GetRootDirectory(), this->GetNthFileName(i));
+      }
+
+
+    of << indent << " fileListMember" << i << "=\"" << vtkMRMLNode::URLEncodeString(name.c_str()) << "\"";
     }
 
   if (this->URI != NULL)
@@ -133,11 +151,39 @@ void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
     if (!strcmp(attName, "fileName")) 
       {
       std::string filename = vtkMRMLNode::URLDecodeString(attValue);
-      this->SetFileName(filename.c_str());
+
+      // convert to absolute filename
+      std::string name;
+      if (this->GetScene() && this->IsFilePathRelative(filename.c_str()))
+        {
+        name = this->GetScene()->GetRootDirectory();
+        if (name[name.size()-1] != '/')
+          {
+          name = name + std::string("/");
+          }
+        }
+      
+      name += filename;
+      
+      this->SetFileName(name.c_str());
       }
     if (!strncmp(attName, "fileListMember", 14))
       {
       std::string filename = vtkMRMLNode::URLDecodeString(attValue);
+      
+      // convert to absolute filename
+      std::string name;
+      if (this->GetScene() && this->IsFilePathRelative(filename.c_str()))
+        {
+        name = this->GetScene()->GetRootDirectory();
+        if (name[name.size()-1] != '/')
+          {
+          name = name + std::string("/");
+          }
+        }
+      
+      name += filename;
+      
       this->AddFileName(filename.c_str());
       }
     else if (!strcmp(attName, "uri"))
