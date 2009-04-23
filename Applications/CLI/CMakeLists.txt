@@ -578,26 +578,31 @@ subdirs( DiffusionApplications )
 #subdirs( EndoNavTracking )
 subdirs( ExtractSkeleton )
 
-message ( "ITK_USE_OPTIMIZED_REGISTRATION_METHODS is " ${ITK_USE_OPTIMIZED_REGISTRATION_METHODS} )
-
-
-if ( ${ITK_VERSION_MAJOR} GREATER 3 OR (${ITK_VERSION_MAJOR} MATCHES 3 AND ${ITK_VERSION_MINOR} GREATER 12) )
+if ( ${ITK_VERSION_MAJOR} GREATER 3 )
 
   subdirs( RegisterImagesModule )
 
-else ( ${ITK_VERSION_MAJOR} GREATER 3 OR (${ITK_VERSION_MAJOR} MATCHES 3 AND ${ITK_VERSION_MINOR} GREATER 12) )
+else ( ${ITK_VERSION_MAJOR} GREATER 3 )
 
-  if ( ${ITK_VERSION_MAJOR} GREATER 3 OR (${ITK_VERSION_MAJOR} MATCHES 3 AND ${ITK_VERSION_MINOR} GREATER 6) )
-    if ( ITK_USE_OPTIMIZED_REGISTRATION_METHODS )
-      subdirs( RegisterImagesModule )
-    else ( ITK_USE_OPTIMIZED_REGISTRATION_METHODS )
-      message ("RegisterImagesModule requires that the ITK_USE_OPTIMIZED_REGISTRATION_METHODS option be turned on when building ITK")
-    endif ( ITK_USE_OPTIMIZED_REGISTRATION_METHODS )
-  else ( ${ITK_VERSION_MAJOR} GREATER 3 OR (${ITK_VERSION_MAJOR} MATCHES 3 AND ${ITK_VERSION_MINOR} GREATER 6) )
-    message ("RegisterImagesModule requires ITK version 3.8 or higher")
-  endif ( ${ITK_VERSION_MAJOR} GREATER 3 OR (${ITK_VERSION_MAJOR} MATCHES 3 AND ${ITK_VERSION_MINOR} GREATER 6) )
+  if ( ${ITK_VERSION_MAJOR} MATCHES 3 AND ${ITK_VERSION_MINOR} GREATER 12 )
 
-endif ( ${ITK_VERSION_MAJOR} GREATER 3 OR (${ITK_VERSION_MAJOR} MATCHES 3 AND ${ITK_VERSION_MINOR} GREATER 12) )
+    subdirs( RegisterImagesModule )
+
+  else ( ${ITK_VERSION_MAJOR} MATCHES 3 AND ${ITK_VERSION_MINOR} GREATER 12 )
+
+    if ( ${ITK_VERSION_MAJOR} MATCHES 3 AND ${ITK_VERSION_MINOR} GREATER 6 )
+      if ( ITK_USE_OPTIMIZED_REGISTRATION_METHODS )
+        subdirs( RegisterImagesModule )
+      else ( ITK_USE_OPTIMIZED_REGISTRATION_METHODS )
+        message ("RegisterImagesModule requires that the ITK_USE_OPTIMIZED_REGISTRATION_METHODS option be turned on when building ITK")
+      endif ( ITK_USE_OPTIMIZED_REGISTRATION_METHODS )
+    else ( ${ITK_VERSION_MAJOR} MATCHES 3 AND ${ITK_VERSION_MINOR} GREATER 6 )
+      message ("RegisterImagesModule requires ITK version 3.8 or higher")
+    endif ( ${ITK_VERSION_MAJOR} MATCHES 3 AND ${ITK_VERSION_MINOR} GREATER 6 )
+
+  endif ( ${ITK_VERSION_MAJOR} MATCHES 3 AND ${ITK_VERSION_MINOR} GREATER 12 )
+
+endif ( ${ITK_VERSION_MAJOR} GREATER 3 )
 
 #subdirs( UtahBSpline )
 subdirs( DiffeomorphicDemonsRegistration )
