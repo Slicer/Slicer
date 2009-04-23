@@ -74,7 +74,7 @@ if(Slicer3_USE_OPENIGTLINK)
   subdirs(
     OpenIGTLinkIF
     NeuroNav
-    #ProstateNav
+    ProstateNav
     )
 endif(Slicer3_USE_OPENIGTLINK)
 
