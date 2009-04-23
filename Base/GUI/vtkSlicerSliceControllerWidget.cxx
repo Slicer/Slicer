@@ -1437,7 +1437,7 @@ void vtkSlicerSliceControllerWidget::ToggleLabelOutline( int link)
       
       if (sgui)
         {
-        if (sgui->GetSliceController() == this )
+        if (sgui->GetSliceNode() == this->SliceNode )
           {
           found = 1;
           break;
@@ -1582,7 +1582,7 @@ void vtkSlicerSliceControllerWidget::ToggleReformatWidget( int link)
         
       if (sgui)
         {
-        if (sgui->GetSliceController() == this )
+        if (sgui->GetSliceNode() == this->SliceNode )
           {
           found = 1;
           break;
@@ -1714,7 +1714,7 @@ void vtkSlicerSliceControllerWidget::FitSliceToBackground ( int link )
         
       if (sgui)
         {
-        if (sgui->GetSliceController() == this )
+        if (sgui->GetSliceNode() == this->SliceNode )
           {
           found = 1;
           break;
@@ -3001,7 +3001,7 @@ void vtkSlicerSliceControllerWidget::PopUpLabelOpacityScaleAndEntry ( int link )
         
       if (sgui)
         {
-        if (sgui->GetSliceController() == this )
+        if (sgui->GetSliceNode() == this->SliceNode )
           {
           found = 1;
           break;
