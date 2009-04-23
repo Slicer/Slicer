@@ -65,7 +65,7 @@ proc DistanceTransformModelBuildGUI {this} {
   }
 
 
-  $this SetCategory "Model Generation"
+  $this SetCategory "Surface Models"
   [$this GetUIPanel] AddPage "DistanceTransformModel" "DistanceTransformModel" ""
   set pageWidget [[$this GetUIPanel] GetPageWidget "DistanceTransformModel"]
 
