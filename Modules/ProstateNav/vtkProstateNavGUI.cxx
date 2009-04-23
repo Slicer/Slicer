@@ -257,7 +257,7 @@ vtkProstateNavGUI::~vtkProstateNavGUI ( )
   if (this->WizardWidget)
     {
     this->WizardWidget->SetParent(NULL);
-    //this->WizardWidget->Delete(); calling this delete causes crash - without it, just leaks
+    this->WizardWidget->Delete(); 
     this->WizardWidget = NULL;
     }
   return;
@@ -1065,7 +1065,7 @@ void vtkProstateNavGUI::BuildGUIForWizardFrame()
       //                                              WorkPhaseColor[i][1],
       //                                              WorkPhaseColor[i][2]);
       wizard_workflow->AddNextStep(this->WizardSteps[i]);
-      this->WizardSteps[i]->Delete();
+//    this->WizardSteps[i]->Delete();
       }
 
 
@@ -1081,9 +1081,11 @@ void vtkProstateNavGUI::BuildGUIForWizardFrame()
     // -----------------------------------------------------------------
     // Show the user interface
 
-    this->WizardWidget->GetWizardWorkflow()->
-      GetCurrentStep()->ShowUserInterface();
-
+//    this->WizardWidget->GetWizardWorkflow()->GetCurrentStep()->ShowUserInterface();
+    if (wizard_workflow->GetCurrentStep())
+      {
+      wizard_workflow->GetCurrentStep()->ShowUserInterface();
+      }
 }
 
 
