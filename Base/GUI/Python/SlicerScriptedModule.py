@@ -63,7 +63,8 @@ class SlicerScriptedModuleImporter(object):
             logic.Initialize()
             self.Modules[moduleName] = {
                 'logic': logic,
-                'gui': gui
+                'gui': gui,
+                'module': importedModule
                 }
             gui.BuildGUI()
             gui.AddGUIObservers()
