@@ -97,7 +97,7 @@ public:
   vtkBooleanMacro(NewNodeEnabled, int);
   vtkGetMacro(NewNodeEnabled, int);
   vtkSetMacro(NewNodeEnabled, int);
-  
+
   // Description:
   // Specifies whether or not None can be selected
   vtkBooleanMacro(NoneEnabled, int);
@@ -171,6 +171,12 @@ protected:
   vtkSlicerNodeSelectorWidget();
   virtual ~vtkSlicerNodeSelectorWidget();
 
+
+
+  // Description:
+  // Create the widget
+  virtual void CreateWidget();
+
 //BTX
   std::vector<std::string> NodeClasses;
   std::vector<std::string> AttributeNames;
@@ -183,7 +189,7 @@ protected:
 
   std::string SelectedID;
 //ETX
-  
+
   int NewNodeEnabled;
 
   int NoneEnabled;
