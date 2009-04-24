@@ -20,6 +20,7 @@ vtkSlicerContextMenuHelper::vtkSlicerContextMenuHelper ( ) {
   this->MRMLScene = NULL;
   this->MRMLNode = NULL;
   this->ContextMenu = NULL;
+  this->RenameEntry = NULL;
   this->RenameTopLevel = NULL;
   this->DeleteItem = -1;
   this->RenameItem = -1;
@@ -39,6 +40,12 @@ vtkSlicerContextMenuHelper::~vtkSlicerContextMenuHelper ( ) {
   if (this->ContextMenu)
     {
     this->SetContextMenu(NULL);
+    }
+  if (this->RenameEntry)
+    {
+    this->RenameEntry->SetParent(NULL);
+    this->RenameEntry->Delete();
+    this->RenameEntry = NULL;
     }
   if (this->RenameTopLevel)
     {
@@ -128,8 +135,8 @@ void vtkSlicerContextMenuHelper::PopUpRenameEntry()
     {
     this->RenameTopLevel = vtkKWTopLevel::New ( );
     this->RenameTopLevel->SetApplication ( app );
-    this->RenameTopLevel->SetMasterWindow ( app->GetNthWindow(0) );
     this->RenameTopLevel->Create ( );
+    this->RenameTopLevel->SetMasterWindow ( app->GetApplicationGUI()->GetMainSlicerWindow() );
     this->RenameTopLevel->HideDecorationOn ( );
     this->RenameTopLevel->Withdraw ( );
     this->RenameTopLevel->SetBorderWidth ( 2 );
