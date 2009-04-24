@@ -325,10 +325,12 @@ def  TrackFiberY40(data, mask, shpT, b, G, vts, IJKstartpoints, R2I, I2R, lV, EV
  
       if not useSpacing:
         dr = da = ds = 1
+     
+      v0 = numpy.dot(v,  numpy.sign(I2R[:3, :3]).T)
 
-      RASpoint[0] =  RASpoint[0] + dr*dl*v[0] 
-      RASpoint[1] =  RASpoint[1] + da*dl*v[1]    
-      RASpoint[2] =  RASpoint[2] + ds*dl*v[2]     
+      RASpoint[0] =  RASpoint[0] + dr*dl*v0[0] 
+      RASpoint[1] =  RASpoint[1] + da*dl*v0[1]    
+      RASpoint[2] =  RASpoint[2] + ds*dl*v0[2]     
    
       # find IJK index from RAS point
       IJKpoint = (dot(R2I[:3, :3], RASpoint[newaxis].T) + R2I[:3,3][newaxis].T).T
@@ -494,9 +496,11 @@ def  TrackFiberW40(data, mask, shpT, b, G, vts, IJKstartpoints, R2I, I2R, dl=1, 
       if not useSpacing:
         dr = da = ds = 1
 
-      RASpoint[0] =  RASpoint[0] + dr*dl*v[0] 
-      RASpoint[1] =  RASpoint[1] + da*dl*v[1]    
-      RASpoint[2] =  RASpoint[2] + ds*dl*v[2]     
+      v0 = numpy.dot(v,  numpy.sign(I2R[:3, :3]).T)
+
+      RASpoint[0] =  RASpoint[0] + dr*dl*v0[0] 
+      RASpoint[1] =  RASpoint[1] + da*dl*v0[1]    
+      RASpoint[2] =  RASpoint[2] + ds*dl*v0[2]     
    
       # find IJK index from RAS point
       IJKpoint = (dot(R2I[:3, :3], RASpoint[newaxis].T) + R2I[:3,3][newaxis].T).T
@@ -968,13 +972,15 @@ def FilterFibers0( pathsRAS, pathsIJK, pathsLOGP, pathsANIS, pathsLEN, roiA, roi
     isIn2A = True
     isIn2B = False
 
-    for l in range(pathsLEN[k,0]):
-      if not (pathsIJK[k, 0, l] >= roiA.shape[0] or  pathsIJK[k, 1, l]  >= roiA.shape[1] or  pathsIJK[k, 2, l]  >= roiA.shape[2]):
-        if roiB[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]]>0:
-          counterB2 +=1
-          isIn2B = True
-          #print 'Fiber matched!'
-          break
+    for l in range(vicinity):
+      if not (pathsIJK[k, 0, pathsLEN[k,0]-l-1] >= roiB.shape[0] or  pathsIJK[k, 1, pathsLEN[k,0]-l-1]  >= roiB.shape[1] or  pathsIJK[k, 2, pathsLEN[k,0]-l-1]  >= roiB.shape[2]):
+        if l < pathsLEN[k,0]:
+          if roiB[pathsIJK[k, 0, pathsLEN[k,0]-l-1], pathsIJK[k, 1, pathsLEN[k,0]-l-1], pathsIJK[k, 2, pathsLEN[k,0]-l-1]]>0:
+            counterB2 +=1
+            isIn2B = True
+            break
+        else:
+            break
 
 
     if isIn2B:
@@ -1003,32 +1009,32 @@ def FilterFibers0( pathsRAS, pathsIJK, pathsLOGP, pathsANIS, pathsLEN, roiA, roi
 
 
 
-    if not isIn2B:
-      pr = 0.0
-      fa = 0.0
-      wa = 0.0
-      nFactor = 0
+    #if not isIn2B:
+    #  pr = 0.0
+    #  fa = 0.0
+    #  wa = 0.0
+    #  nFactor = 0
       
 
-      if norm(ext2-Gb)<= maxDB.max()+vicinity: 
-         nFactor = pathsLEN[k,0]
+    #  if norm(ext2-Gb)<= maxDB.max()+vicinity: 
+    #     nFactor = pathsLEN[k,0]
 
-         test = exp(pathsLOGP[k, 0, :nFactor])
-         pr = test[pathsLEN[k,0]-1]
+    #     test = exp(pathsLOGP[k, 0, :nFactor])
+    #     pr = test[pathsLEN[k,0]-1]
       
-         if pr > threshold:
-           counter2+=1
-           counter1+=1
+    #     if pr > threshold:
+    #       counter2+=1
+    #       counter1+=1
 
-           for l in range(nFactor):
-             fa = fa + pathsANIS[k, 0, l]
-             wa = wa + test[l]*pathsANIS[k, 0, l]
-             if not (pathsIJK[k, 0, l] >= roiA.shape[0] or  pathsIJK[k, 1, l]  >= roiA.shape[1] or  pathsIJK[k, 2, l]  >= roiA.shape[2]):
-               cm[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]]+=1
+    #       for l in range(nFactor):
+    #         fa = fa + pathsANIS[k, 0, l]
+    #         wa = wa + test[l]*pathsANIS[k, 0, l]
+    #         if not (pathsIJK[k, 0, l] >= roiA.shape[0] or  pathsIJK[k, 1, l]  >= roiA.shape[1] or  pathsIJK[k, 2, l]  >= roiA.shape[2]):
+    #           cm[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]]+=1
 
-           Pr += pr
-           Fa += fa/float(nFactor)
-           Wa += pr*fa/float(nFactor) 
+    #       Pr += pr
+    #       Fa += fa/float(nFactor)
+    #       Wa += pr*fa/float(nFactor) 
 
          #print 'curve terminates in neighborhood of B with length of ', pathsLEN[k,0]
        

@@ -350,16 +350,12 @@ class PipelineHandler(asyncore.dispatcher):
 
           # correctly express gradients into RAS space
           # 04/10 - trafo not needed - bugfix in Slicer
-          m2i = numpy.dot(mu[:3, :3], numpy.sign(r2i[:3, :3]))
-     
-          G1 = numpy.dot(G, mu[:3, :3].T)
-          G2 = numpy.dot(G, m2i[:3, :3].T)
+          mu2 = numpy.dot(numpy.sign(r2i[:3, :3]), mu[:3, :3]) 
+          
+          G1 = numpy.dot(G, mu2[:3, :3].T)
+          #G2 = numpy.dot(G, mu2[:3, :3].T)
 
           vts = vects.vectors
-          vts = numpy.dot(vts, numpy.sign(i2r)[:3,:3].T)
-          [normv(vts, i) for i in range(vts.shape[0])]
-
-
 
           logger.info("Tensor flag : %s" % str(tensEnabled))
 
@@ -399,7 +395,6 @@ class PipelineHandler(asyncore.dispatcher):
 
                     if not isInTensor:
                         EV, lV, xVTensor, xYTensor = tens.EvaluateTensorX1(data, G1.T, b.T, wm)
-                        EV2, lV2, xVTensor2, xYTensor2 = tens.EvaluateTensorX1(data, G2.T, b.T, wm) 
                     else:
                         EV, lV, xVTensor, xYTensor = tens.EvaluateTensorK1(self.ten.getImage(), shpD, wm)
 
@@ -532,14 +527,14 @@ class PipelineHandler(asyncore.dispatcher):
 
 
           if tensEnabled:
-                     xVTensor2 = xVTensor2.swapaxes(2,0)
-                     xVTensor2 = xVTensor2.astype('float32') # slicerd do not support double type yet
-                     xYTensor2 = xYTensor2.swapaxes(2,0)
-                     xYTensor2 = xYTensor2.astype('float32') # slicerd do not support double type yet
+                     xVTensor = xVTensor.swapaxes(2,0)
+                     xVTensor = xVTensor.astype('float32') # slicerd do not support double type yet
+                     xYTensor = xYTensor.swapaxes(2,0)
+                     xYTensor = xYTensor.astype('float32') # slicerd do not support double type yet
                      tmp= 'tensor_' + dateT
-                     xYTensor2.tofile(tmpF + tmp + '.data')
-                     createParams(xYTensor2, tmpF + tmp, True)
-                     s.putD(xVTensor2, dims, org, i2r, mu, tmp)
+                     xYTensor.tofile(tmpF + tmp + '.data')
+                     createParams(xYTensor, tmpF + tmp, True)
+                     s.putD(xVTensor, dims, org, i2r, mu, tmp)
 
 
                      if faEnabled:
