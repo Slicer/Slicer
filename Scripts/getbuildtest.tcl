@@ -46,6 +46,11 @@ proc Usage { {msg ""} } {
     set msg "$msg\n   --rpm : optional, specify CPack RPM generator for packaging"
     set msg "$msg\n   --deb : optional, specify CPack DEB generator for packaging"
     set msg "$msg\n   -e --extend : optional, build external modules using the extend script"
+    set msg "$msg\n   -32 -64 : Set if we want to build Slicer 32 or 64 bits" 
+    set msg "$msg\n            : The default on Solaris is the current bitness of the underlying kernel (isainfo -b)"
+    set msg "$msg\n            : 32 bits on other platforms"
+    set msg "$msg\n   --gcc --suncc : Set the desired compiler for the build process"
+    set msg "$msg\n            : The default is gcc/g++"
     puts stderr $msg
 }
 
@@ -66,7 +71,14 @@ set ::GETBUILDTEST(buildList) ""
 set ::GETBUILDTEST(cpack-generator) ""
 set ::GETBUILDTEST(rpm-spec) ""
 set ::GETBUILDTEST(extend) "false"
-
+if {$tcl_platform(os) == "SunOS"} {
+   set isainfo [exec isainfo -b]
+   set ::GETBUILDTEST(bitness) "-$isainfo"
+} else {
+  set ::GETBUILDTEST(bitness) "32"
+}
+set ::GETBUILDTEST(compiler) "gcc"
+ 
 set strippedargs ""
 set argc [llength $argv]
 for {set i 0} {$i < $argc} {incr i} {
@@ -161,6 +173,18 @@ for {set i 0} {$i < $argc} {incr i} {
         "-e" {
             set ::GETBUILDTEST(extend) "true"
         }
+        "-64" {
+            set ::GETBUILDTEST(bitness) "64"
+        }
+        "-32" {
+            set ::GETBUILDTEST(bitness) "32"
+        }
+        "--suncc" {
+          set ::GETBUILDTEST(compiler) "suncc"
+        }
+        "--gcc" {
+            set ::GETBUILDTEST(compiler) "gcc"
+        }
         "--help" -
         "-h" {
             Usage
@@ -175,6 +199,8 @@ for {set i 0} {$i < $argc} {incr i} {
         }
     }
 }
+
+puts "GETBUILDTEST(compiler): $::GETBUILDTEST(compiler) GETBUILDTEST)(bitness): $::GETBUILDTEST(bitness)"
 
 set argv $strippedargs
 set argc [llength $argv]
@@ -367,6 +393,10 @@ if { $::GETBUILDTEST(doxy) } {
 # build the lib with options
 cd $::Slicer3_HOME
 set cmd "sh ./Scripts/genlib.tcl $Slicer3_LIB"
+
+append cmd " --$::GETBUILDTEST(compiler)"
+append cmd " -$::GETBUILDTEST(bitness)"
+
 if { $::GETBUILDTEST(release) != "" } {
    append cmd " $::GETBUILDTEST(release)"
 } 

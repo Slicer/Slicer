@@ -88,9 +88,15 @@ set ::SCIPY_TAG "http://svn.scipy.org/svn/scipy/branches/0.7.x"
 set ::BatchMake_TAG "BatchMake-1-2"
 set ::SLICERLIBCURL_TAG "HEAD"
 set ::OpenIGTLink_TAG "http://svn.na-mic.org/NAMICSandBox/branches/OpenIGTLink-1-0"
+
 # set TCL_VERSION to "tcl" to get 8.4, otherwise use tcl85 get 8.5
-set ::TCL_VERSION tcl
-#set ::TCL_VERSION tcl85
+# set 8.5 for Solaris explicitly, because 8.4 complains 
+# when built 64 bit with gcc. Suncc/CC is fine, however.
+  if {$tcl_platform(os) == "SunOS"} {
+    set ::TCL_VERSION tcl85
+  } else {
+    set ::TCL_VERSION tcl
+  }
 
 # Set library, binary, etc. paths...
 
@@ -185,7 +191,7 @@ switch $::tcl_platform(os) {
         set ::INCR_TCL_LIB $::TCL_LIB_DIR/lib/libitcl3.2.so
         set ::INCR_TK_LIB $::TCL_LIB_DIR/lib/libitk3.2.so
 
-        set ::TCL_TEST_FILE $::TCL_BIN_DIR/tclsh8.4
+        set ::TCL_TEST_FILE $::TCL_BIN_DIR/tclsh8.5
         if { $::USE_SYSTEM_PYTHON } {
           error "need to define system python path for $::tcl_platform(os)"
         }
@@ -195,22 +201,22 @@ switch $::tcl_platform(os) {
         set ::NETLIB_TEST_FILE $::Slicer3_LIB/netlib-build/BLAS-build/libblas.a
         set ::NUMPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/numpy/core/numeric.pyc
         set ::SCIPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/scipy/version.pyc
-        set ::TK_TEST_FILE  $::TCL_BIN_DIR/wish8.4
-        set ::ITCL_TEST_FILE $::TCL_LIB_DIR/libitcl3.2.so
+        set ::TK_TEST_FILE  $::TCL_BIN_DIR/wish8.5
+        set ::ITCL_TEST_FILE $::TCL_LIB_DIR/itcl3.4/libitcl3.4.so
         set ::Teem_TEST_FILE $::Teem_BIN_DIR/unu
         set ::VTK_TEST_FILE $::VTK_DIR/bin/vtk
         set ::KWWidgets_TEST_FILE $::KWWidgets_BUILD_DIR/bin/libKWWidgets.so
-        set ::VTK_TCL_LIB $::TCL_LIB_DIR/libtcl8.4.$shared_lib_ext 
-        set ::VTK_TK_LIB $::TCL_LIB_DIR/libtk8.4.$shared_lib_ext
-        set ::VTK_TCLSH $::TCL_BIN_DIR/tclsh8.4
+        set ::VTK_TCL_LIB $::TCL_LIB_DIR/libtcl8.5.$shared_lib_ext 
+        set ::VTK_TK_LIB $::TCL_LIB_DIR/libtk8.5.$shared_lib_ext
+        set ::VTK_TCLSH $::TCL_BIN_DIR/tclsh8.5
         set ::ITK_TEST_FILE $::ITK_BINARY_PATH/bin/libITKCommon.$shared_lib_ext
         set ::TK_EVENT_PATCH $::Slicer3_HOME/tkEventPatch.diff
         set ::env(VTK_BUILD_SUBDIR) $::VTK_BUILD_SUBDIR
         set ::OPENIGTLINK_TEST_FILE $::OpenIGTLink_DIR/bin/libOpenIGTLink.$shared_lib_ext
         set ::BatchMake_TEST_FILE $::BatchMake_BUILD_DIR/bin/BatchMake
         set ::SLICERLIBCURL_TEST_FILE $::SLICERLIBCURL_BUILD_DIR/bin/libslicerlibcurl.$shared_lib_ext
-        set ::IWIDGETS_TEST_FILE $::TCL_LIB_DIR/iwidgets4.0.1/iwidgets.tcl
-        set ::BLT_TEST_FILE $::TCL_BIN_DIR/bltwish24
+        set ::IWIDGETS_TEST_FILE $::TCL_LIB_DIR/iwidgets4.0.2/iwidgets.tcl
+        set ::BLT_TEST_FILE $::TCL_BIN_DIR/bltwish30
 
         # We need a workaround here, because gcc does not pick up libraries in /lib
         # on Solaris. 
@@ -337,8 +343,47 @@ switch $::tcl_platform(os) {
         set ::VTKSLICERBASE_BUILD_LIB $::Slicer3_HOME/Base/builds/$::env(BUILD)/bin/vtkSlicerBase.so
         set ::VTKSLICERBASE_BUILD_TCL_LIB $::Slicer3_HOME/Base/builds/$::env(BUILD)/bin/vtkSlicerBaseTCL.so
         set ::GENERATOR "Unix Makefiles"
-        set ::COMPILER_PATH "/usr/sfw/bin"
-        set ::COMPILER "g++"
+        set have_compiler [info exists GETBUILDTEST(compiler)]
+        puts "have_compiler from GETBUILDTEST value: $have_compiler"
+        if {$have_compiler == 1} {
+          set GENLIB(compiler) $GETBUILDTEST(compiler)
+        } else { 
+          set GETBUILDTEST(compiler) $GENLIB(compiler)
+        }
+        puts "slicer_variables.tcl: GENLIB(compiler): $::GENLIB(compiler) GETBUILDTEST(compiler): $::GETBUILDTEST(compiler)"
+        if {$GETBUILDTEST(compiler) == "suncc" || $GENLIB(compiler) == "suncc"} {
+          set ::COMPILER_PATH "/opt/SUNWspro/bin"
+          set ::COMPILER "CC"
+          set ::env(CC) cc
+          set ::env(CXX) CC
+          set ::FORTRAN_COMPILER "f90"
+        } else {
+          set ::env(CC) gcc
+          set ::env(CXX) g++
+          set ::COMPILER_PATH "/usr/sfw/bin"
+          set ::COMPILER "g++"
+          set ::FORTRAN_COMPILER "g77"
+        }
+        # NOTE: the bellow flags will only work with gcc, and Studio 12 or newer.
+        # Earlier Studio versions do not accept the -m64 flag.
+        # If you're not using one of the two, you should check 
+        # your compiler's manual for the existence of a similar flag.
+        set have_bitness [info exists GETBUILDTEST(bitness)]
+        if {$have_bitness == 1} {
+          set GENLIB(bitness) $GETBUILDTEST(bitness)
+        } else {
+          set GETBUILDTEST(bitness) $GENLIB(bitness)
+        }
+        if {$GETBUILDTEST(bitness) == "64" || $GENLIB(bitness) == "64"} {
+          set ::env(CFLAGS) -m64
+          set ::env(CXXFLAGS) -m64
+          set ::env(LDFLAGS) -m64
+        } else {
+          set ::env(CFLAGS) ""
+          set ::env(CXXFLGS) ""
+          set ::env(LDFLAGS) ""
+        }
+        puts "slicer_variables.tcl: GENLIB(bitness): $::GENLIB(bitness) GETBUILDTEST(bitness): $::GETBUILDTEST(bitness)"
         set ::CMAKE $::CMAKE_PATH/bin/cmake
         set numCPUs [lindex [exec /usr/sbin/psrinfo | grep on-line | wc -l | tr -d ''] 0]
         set ::MAKE "gmake -j[expr $numCPUs]"        

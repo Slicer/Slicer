@@ -76,6 +76,10 @@ proc Usage { {msg ""} } {
     set msg "$msg\n   --nobuild : only download and/or update, but don't build"
     set msg "$msg\n   --test-type : type of ctest to run (for enabled packages)"
     set msg "$msg\n   optional space separated list of packages to build (lower case)"
+    set msg "$msg\n   -32 : does a 32 bit build of Slicer and all the libs (Default: isainfo -b on Solaris, 32 bit on other OS'es)"
+    set msg "$msg\n   -64 : does a 64 bit build of Slicer and all the libs"
+    set msg "$msg\n   --suncc : builds Slicer with Sun's compilers (The default is gcc)"
+    set msg "$msg\n   --gcc : builds Slicer with GNU compilers"
     puts stderr $msg
 }
 
@@ -84,6 +88,13 @@ set GENLIB(update) "false"
 set GENLIB(buildit) "true"
 set GENLIB(test-type) ""
 set ::GENLIB(buildList) ""
+if {$tcl_platform(os) == "SunOS"} {
+  set isainfo [exec isainfo -b]
+  set ::GENLIB(bitness) "-$isainfo"
+} else {
+  set GENLIB(bitness) "32"
+}
+set GENLIB(compiler) "gcc"
 
 set isRelease 0
 set isRelWithDebInfo 0
@@ -120,6 +131,18 @@ for {set i 0} {$i < $argc} {incr i} {
                 set ::GENLIB(test-type) [lindex $argv $i]
             }
         }
+        "-64" {
+            set ::GENLIB(bitness) "64"
+        }
+        "-32" {
+            set ::GENLIB(bitness) "32"
+        }
+        "--suncc" {
+            set ::GENLIB(compiler) "suncc"
+        }
+        "--gcc" {
+            set ::GENLIB(compiler) "gcc"
+        }
         "--help" -
         "-h" {
             Usage
@@ -134,6 +157,8 @@ for {set i 0} {$i < $argc} {incr i} {
         }
     }
 }
+
+puts "GENLIB(compiler): $::GENLIB(compiler) GENLIB(bitness): $::GENLIB(bitness)"
 set argv $strippedargs
 set argc [llength $argv]
 # puts "Stripped args = $argv"
@@ -282,7 +307,7 @@ if ($isRelWithDebInfo) {
 }
 
 # tcl file delete is broken on Darwin, so use rm -rf instead
-if { $GENLIB(clean) } {
+if { $::GENLIB(clean) } {
     puts "Deleting slicer lib files..."
     if { $isDarwin } {
         runcmd rm -rf $Slicer3_LIB
@@ -329,12 +354,7 @@ if { [BuildThis $::CMAKE "cmake"] == 1 } {
 
         if {$::GENLIB(buildit)} {
           cd $::CMAKE_PATH
-          if { $isSolaris } {
-              # make sure to pick up curses.h in /local/os/include
-              runcmd $Slicer3_LIB/CMake/bootstrap --init=$Slicer3_HOME/Scripts/spl.cmake.init
-          } else {
-              runcmd $Slicer3_LIB/CMake/bootstrap
-          } 
+          runcmd $Slicer3_LIB/CMake/bootstrap
           eval runcmd $::MAKE
        }
     }
@@ -355,17 +375,27 @@ if { [BuildThis $::TCL_TEST_FILE "tcl"] == 1 } {
 
     file mkdir $Slicer3_LIB/tcl
     cd $Slicer3_LIB/tcl
+    if { $::TCL_VERSION == "tcl85" } {
+      runcmd $::CVS -d:pserver:anonymous:@tcl.cvs.sourceforge.net:/cvsroot/tcl login 
+      runcmd $::CVS -z3 -d:pserver:anonymous@tcl.cvs.sourceforge.net:/cvsroot/tcl co -r core-8-5-6 tcl
+    } else {
+      runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/$::TCL_VERSION/tcl tcl
+    }
 
-    runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/$::TCL_VERSION/tcl tcl
     if {$::GENLIB(buildit)} {
       if {$isWindows} {
           # can't do windows
       } else {
-          cd $Slicer3_LIB/tcl/tcl/unix
+        cd $Slicer3_LIB/tcl/tcl/unix
 
+        if {$::GENLIB(bitness) == "64"} {
+          runcmd ./configure --enable-64bit --prefix=$Slicer3_LIB/tcl-build
+        } else {
           runcmd ./configure --prefix=$Slicer3_LIB/tcl-build
-          eval runcmd $::MAKE
-          eval runcmd $::MAKE install
+        }
+
+        eval runcmd $::MAKE
+        eval runcmd $::MAKE install
       }
     }
 }
@@ -373,23 +403,32 @@ if { [BuildThis $::TCL_TEST_FILE "tcl"] == 1 } {
 if { [BuildThis $::TK_TEST_FILE "tk"] == 1 } {
     cd $Slicer3_LIB/tcl
 
-    runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/$::TCL_VERSION/tk tk
+    if { $::TCL_VERSION == "tcl85" } {
+      runcmd $::CVS -d:pserver:anonymous:@tktoolkit.cvs.sourceforge.net:/cvsroot/tktoolkit login 
+      runcmd $::CVS -z3 -d:pserver:anonymous@tktoolkit.cvs.sourceforge.net:/cvsroot/tktoolkit co -r core-8-5-6 tk
+    } else {
+      runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/$::TCL_VERSION/tk tk
+    }
 
     if {$::GENLIB(buildit)} {
       if {$isWindows} {
          # ignore, already downloaded with tcl
       } else {
-         cd $Slicer3_LIB/tcl/tk/unix
-         if { $isDarwin } {
-                  runcmd ./configure --with-tcl=$Slicer3_LIB/tcl-build/lib --prefix=$Slicer3_LIB/tcl-build --disable-corefoundation --x-libraries=/usr/X11R6/lib --x-includes=/usr/X11R6/include --with-x
-               } else {
-                  runcmd ./configure --with-tcl=$Slicer3_LIB/tcl-build/lib --prefix=$Slicer3_LIB/tcl-build
-               }
-         eval runcmd $::MAKE
-         eval runcmd $::MAKE install
+        cd $Slicer3_LIB/tcl/tk/unix
+        if { $isDarwin } {
+          runcmd ./configure --with-tcl=$Slicer3_LIB/tcl-build/lib --prefix=$Slicer3_LIB/tcl-build --disable-corefoundation --x-libraries=/usr/X11R6/lib --x-includes=/usr/X11R6/include --with-x
+        } else {
+          if {$::GENLIB(bitness) =="64"} {
+            runcmd ./configure --with-tcl=$Slicer3_LIB/tcl-build/lib --enable-64bit --prefix=$Slicer3_LIB/tcl-build
+          } else {
+            runcmd ./configure --with-tcl=$Slicer3_LIB/tcl-build/lib --prefix=$Slicer3_LIB/tcl-build
+          }
+        } 
+        eval runcmd $::MAKE
+        eval runcmd $::MAKE install
          
-         file copy -force $Slicer3_LIB/tcl/tk/generic/default.h $Slicer3_LIB/tcl-build/include
-         file copy -force $Slicer3_LIB/tcl/tk/unix/tkUnixDefault.h $Slicer3_LIB/tcl-build/include
+        file copy -force $Slicer3_LIB/tcl/tk/generic/default.h $Slicer3_LIB/tcl-build/include
+        file copy -force $Slicer3_LIB/tcl/tk/unix/tkUnixDefault.h $Slicer3_LIB/tcl-build/include
       }
    }
 }
@@ -398,7 +437,12 @@ if { [BuildThis $::ITCL_TEST_FILE "itcl"] == 1 } {
 
     cd $Slicer3_LIB/tcl
 
-    runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/$::TCL_VERSION/incrTcl incrTcl
+    if { $::TCL_VERSION == "tcl85" } {
+      runcmd $::CVS -d:pserver:anonymous:@incrtcl.cvs.sourceforge.net:/cvsroot/incrtcl login
+      runcmd $::CVS -z3 -d:pserver:anonymous@incrtcl.cvs.sourceforge.net:/cvsroot/incrtcl co -r HEAD incrTcl
+    } else {
+      runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/$::TCL_VERSION/incrTcl incrTcl
+    }
 
     cd $Slicer3_LIB/tcl/incrTcl
 
@@ -411,7 +455,17 @@ if { [BuildThis $::ITCL_TEST_FILE "itcl"] == 1 } {
           exec cp ../incrTcl/itcl/configure ../incrTcl/itcl/configure.orig
           exec sed -e "s/\\*\\.c | \\*\\.o | \\*\\.obj) ;;/\\*\\.c | \\*\\.o | \\*\\.obj | \\*\\.dSYM | \\*\\.gnoc ) ;;/" ../incrTcl/itcl/configure.orig > ../incrTcl/itcl/configure 
       }
-      runcmd ../incrTcl/configure --with-tcl=$Slicer3_LIB/tcl-build/lib --with-tk=$Slicer3_LIB/tcl-build/lib --prefix=$Slicer3_LIB/tcl-build
+      puts "Genlib.tcl incrTcl CC $::env(CC) CFLAGS $::env(CFLAGS)"
+      if {$::GENLIB(bitness) == "64"} {
+        set ::env(CC) "$::GENLIB(compiler) -m64"
+        puts "genlib incrTcl 64 bit branch: $::env(CC)"
+        runcmd ../incrTcl/configure --with-tcl=$Slicer3_LIB/tcl-build/lib --with-tk=$Slicer3_LIB/tcl-build/lib --prefix=$Slicer3_LIB/tcl-build
+      } else {
+        set ::env(CC) "$::GENLIB(compiler)"
+        puts "genlib incrTcl 32 bit branch: $::env(CC)"
+        runcmd ../incrTcl/configure --with-tcl=$Slicer3_LIB/tcl-build/lib --with-tk=$Slicer3_LIB/tcl-build/lib --prefix=$Slicer3_LIB/tcl-build
+      }
+
       if { $isDarwin } {
         # need to run ranlib separately on lib for Darwin
         # file is created and ranlib is needed inside make all
@@ -420,6 +474,7 @@ if { [BuildThis $::ITCL_TEST_FILE "itcl"] == 1 } {
           runcmd ranlib ../incrTcl/itcl/libitclstub3.2.a
         }
       }
+
       eval runcmd $::MAKE all
       eval runcmd $::SERIAL_MAKE install
     }
@@ -433,7 +488,12 @@ if { [BuildThis $::ITCL_TEST_FILE "itcl"] == 1 } {
 if { [BuildThis $::IWIDGETS_TEST_FILE "iwidgets"] == 1 } {
     cd $Slicer3_LIB/tcl
 
-    runcmd  $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/$::TCL_VERSION/iwidgets iwidgets
+    if { $::TCL_VERSION == "tcl85" } {
+      runcmd $::CVS -d:pserver:anonymous:@incrtcl.cvs.sourceforge.net:/cvsroot/incrtcl login
+      runcmd $::CVS -z3 -d:pserver:anonymous@incrtcl.cvs.sourceforge.net:/cvsroot/incrtcl co -r HEAD iwidgets
+    } else {
+      runcmd  $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/$::TCL_VERSION/iwidgets iwidgets
+    }
 
     if {$::GENLIB(buildit)} {
         if {$isWindows} {
@@ -456,7 +516,14 @@ if { [BuildThis $::IWIDGETS_TEST_FILE "iwidgets"] == 1 } {
 if { [BuildThis $::BLT_TEST_FILE "blt"] == 1 } {
     cd $Slicer3_LIB/tcl
 
-    runcmd  $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/$::TCL_VERSION/blt blt
+
+    if { $::TCL_VERSION == "tcl85" } {
+      runcmd $::CVS -d:pserver:anonymous:@blt.cvs.sourceforge.net:/cvsroot/blt login
+      runcmd $::CVS -z3 -d:pserver:anonymous@blt.cvs.sourceforge.net:/cvsroot/blt co -r HEAD blt
+    } else {
+      runcmd  $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/$::TCL_VERSION/blt blt
+      runcmd  $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/blt blt
+    }
 
     if {$::GENLIB(buildit)} {
         if { $isWindows } { 
@@ -479,16 +546,10 @@ if { [BuildThis $::BLT_TEST_FILE "blt"] == 1 } {
             eval runcmd $::MAKE
             eval runcmd $::MAKE install
         } elseif { $isSolaris } {
-
             cd $Slicer3_LIB/tcl/blt
-#            runcmd ./configure --with-tcl=$Slicer3_LIB/tcl/tcl/unix --with-tk=$Slicer3_LIB/tcl-build --prefix=$Slicer3_LIB/tcl-build --enable-shared --x-includes=/usr/X11R6/include --x-libraries=/usr/X11R6/lib --with-cflags=-fno-common
-            runcmd ./configure --with-tcl=$Slicer3_LIB/tcl/tcl/unix --with-tk=$Slicer3_LIB/tcl-build --prefix=$Slicer3_LIB/tcl-build --disable-static --enable-shared 
+            runcmd ./configure --with-tcl=$Slicer3_LIB/tcl/tcl/unix --with-tk=$Slicer3_LIB/tcl-build --prefix=$Slicer3_LIB/tcl-build --enable-shared
             eval runcmd $::SERIAL_MAKE
             eval runcmd $::SERIAL_MAKE install
-            exec /usr/bin/ln -s $Slicer3_LIB/tcl/blt/src/shared/libBLT24.so $Slicer3_LIB/tcl/blt/src/libBLT.so
-            exec /usr/bin/ln -s $Slicer3_LIB/tcl-build/lib/libBLT24.so $Slicer3_LIB/tcl-build/lib/libBLT.so
-            # leaving here $::MAKE instead of $::SERIAL_MAKE can lead to funny things... :) 2008.06.25
-
         } else {
             cd $Slicer3_LIB/tcl/blt
             runcmd ./configure --with-tcl=$Slicer3_LIB/tcl/tcl/unix --with-tk=$Slicer3_LIB/tcl-build --prefix=$Slicer3_LIB/tcl-build
@@ -502,7 +563,7 @@ if { [BuildThis $::BLT_TEST_FILE "blt"] == 1 } {
 # Get and build python
 #
 
-if { [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [string tolower $::USE_PYTHON] == "on" } {
+if {  [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [string tolower $::USE_PYTHON] == "on" } {
     if { $isWindows } {
 
       file mkdir $::Slicer3_LIB/python
@@ -537,24 +598,24 @@ if { [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [strin
 
     } else {
 
-        file mkdir $::Slicer3_LIB/python
-        file mkdir $::Slicer3_LIB/python-build
-        cd $::Slicer3_LIB
+      file mkdir $::Slicer3_LIB/python
+      file mkdir $::Slicer3_LIB/python-build
+      cd $::Slicer3_LIB
 
-        cd $Slicer3_LIB/python
-        runcmd $::SVN co $::PYTHON_TAG
-        cd $Slicer3_LIB/python/release25-maint
+      cd $Slicer3_LIB/python
+      runcmd $::SVN co $::PYTHON_TAG
+      cd $Slicer3_LIB/python/release25-maint
 
-        set ::env(LDFLAGS) -L$Slicer3_LIB/tcl-build/lib
-        set ::env(CPPFLAGS) -I$Slicer3_LIB/tcl-build/include
-        if { ![info exists ::env(LD_LIBRARY_PATH)] } { set ::env(LD_LIBRARY_PATH) "" }
-        set ::env(LD_LIBRARY_PATH) $Slicer3_LIB/tcl-build/lib:$Slicer3_LIB/python-build/lib:$::env(LD_LIBRARY_PATH)
+      set ::env(LDFLAGS) "$::env(LDFLAGS) -L$Slicer3_LIB/tcl-build/lib"
+      set ::env(CPPFLAGS) "$::env(CPPFLAGS) -I$Slicer3_LIB/tcl-build/include"
+      if { ![info exists ::env(LD_LIBRARY_PATH)] } { set ::env(LD_LIBRARY_PATH) "" }
+      set ::env(LD_LIBRARY_PATH) $Slicer3_LIB/tcl-build/lib:$Slicer3_LIB/python-build/lib:$::env(LD_LIBRARY_PATH)
 
-        runcmd ./configure --prefix=$Slicer3_LIB/python-build --with-tcl=$Slicer3_LIB/tcl-build --enable-shared
-        eval runcmd $::MAKE
-        puts [catch "eval runcmd $::SERIAL_MAKE install" res] ;# try twice - it probably fails first time...
-
-        if { $isDarwin } {
+      runcmd ./configure --prefix=$Slicer3_LIB/python-build --with-tcl=$Slicer3_LIB/tcl-build --enable-shared
+      eval runcmd $::MAKE
+      eval runcmd $::SERIAL_MAKE install
+        
+      if { $isDarwin } {
             # Special Slicer hack to build and install the .dylib
             file mkdir $::Slicer3_LIB/python-build/lib/
             file delete -force $::Slicer3_LIB/python-build/lib/libpython2.5.dylib
@@ -700,8 +761,15 @@ if {  [BuildThis $::NUMPY_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [strin
         }
 
         cd $::Slicer3_LIB/python/numpy
-        runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install
-
+        if {$::GENLIB(bitness) == "64"} {
+          set ::env(CC) "$::GENLIB(compiler) -m64"
+          puts "Genlib.tcl NUMPY - this is the 64 bit branch: CC $::env(CC) CFLAGS $::env(CFLAGS) LDFLAGS $::env(LDFLAGS) LD_LIBRARY_PATH $::env(LD_LIBRARY_PATH)"
+          runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install
+        } else {
+          set ::env(CC) "$::GENLIB(compiler)"
+          puts "Genlib.tcl NUMPY -this is the 32 bit branch: CC $::env(CC) CFLAGS $::env(CFLAGS) LDFLAGS $::env(LDFLAGS) LD_LIBRARY_PATH $::env(LD_LIBRARY_PATH)"
+          runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install
+        }
         # do scipy
 
         if { $::USE_SCIPY } {
@@ -712,6 +780,7 @@ if {  [BuildThis $::NUMPY_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [strin
           cd $::Slicer3_LIB/python/scipy
           
           # turn off scipy - not clear how to get it to build on all platforms
+          puts "Genlib.tcl SCIPY CC $::env(CC) CFLAGS $::env(CFLAGS) LDFLAGS $::env(LDFLAGS) LD_LIBRARY_PATH $::env(LD_LIBRARY_PATH)"
           runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install
         }
     }
@@ -802,6 +871,31 @@ if { [BuildThis $::VTK_TEST_FILE "vtk"] == 1 } {
             -DTCL_TCLSH:FILEPATH=$::VTK_TCLSH \
             -DOPENGL_gl_LIBRARY:STRING=$OpenGLString \
             $USE_VTK_ANSI_STDLIB \
+            ../VTK
+      } elseif { $isSolaris && $::GENLIB(bitness) == "64" } {
+        runcmd $::CMAKE \
+            -G$GENERATOR \
+            -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+            -DBUILD_SHARED_LIBS:BOOL=ON \
+            -DCMAKE_SKIP_RPATH:BOOL=ON \
+            -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
+            -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
+            -DBUILD_TESTING:BOOL=OFF \
+            -DVTK_USE_CARBON:BOOL=OFF \
+            -DVTK_USE_X:BOOL=ON \
+            -DVTK_WRAP_TCL:BOOL=ON \
+            -DVTK_USE_HYBRID:BOOL=ON \
+            -DVTK_USE_PATENTED:BOOL=ON \
+            -DVTK_USE_PARALLEL:BOOL=ON \
+            -DVTK_DEBUG_LEAKS:BOOL=$::VTK_DEBUG_LEAKS \
+            -DTCL_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
+            -DTK_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
+            -DTCL_LIBRARY:FILEPATH=$::VTK_TCL_LIB \
+            -DTK_LIBRARY:FILEPATH=$::VTK_TK_LIB \
+            -DTCL_TCLSH:FILEPATH=$::VTK_TCLSH \
+            $USE_VTK_ANSI_STDLIB \
+            -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
+            -DVTK_USE_64BIT_IDS:BOOL=ON \
             ../VTK
       } else {
         runcmd $::CMAKE \
@@ -989,6 +1083,13 @@ if { [BuildThis $::Teem_TEST_FILE "teem"] == 1 } {
 
       if { $isDarwin } {
         set C_FLAGS -DCMAKE_C_FLAGS:STRING=-fno-common \
+      } else {
+        set C_FLAGS ""
+      }
+# !!! FIXME How to append -m64 the -fno-common if we want to build 64 bit on Mac?
+
+      if {$::GENLIB(bitness) == "64"} {
+        set C_FLAGS -DCMAKE_C_FLAGS:STRING=-m64 \
       } else {
         set C_FLAGS ""
       }
