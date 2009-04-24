@@ -18,7 +18,7 @@
 #include <assert.h>
 
 //------------------------------------------------------------------------------
-                                                                   vtkImageMeanIntensityNormalization* vtkImageMeanIntensityNormalization::New()
+vtkImageMeanIntensityNormalization* vtkImageMeanIntensityNormalization::New()
 {
   // First try to create the object from the vtkObjectFactory
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkImageMeanIntensityNormalization");
@@ -27,8 +27,8 @@
   return new vtkImageMeanIntensityNormalization;
 }
 
-                                                                 //----------------------------------------------------------------------------
-                                                                   vtkImageMeanIntensityNormalization::vtkImageMeanIntensityNormalization()
+//----------------------------------------------------------------------------
+vtkImageMeanIntensityNormalization::vtkImageMeanIntensityNormalization()
 {
   this->NormValue = -1; 
   this->NormType  = INTENSITY_NORM_UNDEFINED; 
