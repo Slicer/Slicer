@@ -1703,7 +1703,7 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLDisplayableNode *mode
             }
           }
          //// }
-//        actor->GetProperty()->SetBackfaceCulling(dnode->GetBackfaceCulling());
+        actor->GetProperty()->SetBackfaceCulling(dnode->GetBackfaceCulling());
 
         if (mdnode)
           {
