@@ -605,9 +605,11 @@ if {  [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [stri
       runcmd $::SVN co $::PYTHON_TAG
       cd $Slicer3_LIB/python/release25-maint
 
+      foreach flag {LD_LIBRARY_PATH LDFLAGS CPPFLAGS} {
+        if { ![info exists ::env($flag)] } { set ::env($flag) "" }
+      }
       set ::env(LDFLAGS) "$::env(LDFLAGS) -L$Slicer3_LIB/tcl-build/lib"
       set ::env(CPPFLAGS) "$::env(CPPFLAGS) -I$Slicer3_LIB/tcl-build/include"
-      if { ![info exists ::env(LD_LIBRARY_PATH)] } { set ::env(LD_LIBRARY_PATH) "" }
       set ::env(LD_LIBRARY_PATH) $Slicer3_LIB/tcl-build/lib:$Slicer3_LIB/python-build/lib:$::env(LD_LIBRARY_PATH)
 
       runcmd ./configure --prefix=$Slicer3_LIB/python-build --with-tcl=$Slicer3_LIB/tcl-build --enable-shared
@@ -762,11 +764,9 @@ if {  [BuildThis $::NUMPY_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [strin
         cd $::Slicer3_LIB/python/numpy
         if {$::GENLIB(bitness) == "64"} {
           set ::env(CC) "$::GENLIB(compiler) -m64"
-          puts "Genlib.tcl NUMPY - this is the 64 bit branch: CC $::env(CC) CFLAGS $::env(CFLAGS) LDFLAGS $::env(LDFLAGS) LD_LIBRARY_PATH $::env(LD_LIBRARY_PATH)"
           runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install
         } else {
           set ::env(CC) "$::GENLIB(compiler)"
-          puts "Genlib.tcl NUMPY -this is the 32 bit branch: CC $::env(CC) CFLAGS $::env(CFLAGS) LDFLAGS $::env(LDFLAGS) LD_LIBRARY_PATH $::env(LD_LIBRARY_PATH)"
           runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install
         }
         # do scipy
@@ -779,7 +779,6 @@ if {  [BuildThis $::NUMPY_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [strin
           cd $::Slicer3_LIB/python/scipy
           
           # turn off scipy - not clear how to get it to build on all platforms
-          puts "Genlib.tcl SCIPY CC $::env(CC) CFLAGS $::env(CFLAGS) LDFLAGS $::env(LDFLAGS) LD_LIBRARY_PATH $::env(LD_LIBRARY_PATH)"
           runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install
         }
     }
