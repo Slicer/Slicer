@@ -439,6 +439,9 @@ if {$::GETBUILDTEST(verbose)} {
 }
 
 # build the slicer
+# - first run cmake
+# - then run plaftorm specific build command
+
 cd $::Slicer3_BUILD
 runcmd $::CMAKE \
         -G$::GENERATOR \
@@ -467,6 +470,19 @@ runcmd $::CMAKE \
         -DSLICERLIBCURL_DIR:FILEPATH=$Slicer3_LIB/cmcurl-build \
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=$::GETBUILDTEST(cmake-verbose) \
         $Slicer3_HOME
+
+
+#
+# run the versioner script to create the Slicer3Version.txt file
+# that tells what slicer3 build these newly built extensions 
+# are compatibile with
+#
+
+source $::Slicer3_HOME/Scripts/versioner.tcl
+
+#
+# now do the actual build
+#
 
 if { $isWindows } {
 
@@ -571,6 +587,11 @@ if {$::GETBUILDTEST(upload) == "true"} {
         puts "See http://www.na-mic.org/Slicer/Download, in the $::GETBUILDTEST(uploadFlag) directory, for the uploaded file."
     }
 }
+
+
+#
+# build slicer extensions if requested on the command line
+#
 
 if { $::GETBUILDTEST(extend) == "true" } {
   # build the slicer3 extensions

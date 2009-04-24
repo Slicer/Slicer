@@ -175,12 +175,6 @@ set ::Slicer3_LIB $::Slicer3_HOME/../Slicer3-lib
 set ::Slicer3_BUILD $::Slicer3_HOME/../Slicer3-build
 set ::Slicer3_EXT $::Slicer3_HOME/../Slicer3-ext
 
-# run the versioner script to create the Slicer3Version.txt file
-# that tells what slicer3 build these newly built extensions 
-# are compatibile with
-
-source $::Slicer3_HOME/Scripts/versioner.tcl
-
 #######
 #
 # Note: the local vars file, Slicer3/slicer_variables.tcl, overrides the default values in this script
