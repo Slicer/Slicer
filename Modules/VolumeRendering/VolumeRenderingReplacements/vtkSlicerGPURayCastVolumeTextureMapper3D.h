@@ -47,11 +47,6 @@ public:
   static vtkSlicerGPURayCastVolumeTextureMapper3D *New();
 
   // Description:
-  // Desired frame rate
-  vtkSetMacro(Framerate, float);
-  vtkGetMacro(Framerate, float);
-
-  // Description:
   // Overall alpha for volume rendering result
   // Used for blending volume rendering with polygons
   // Default value: 1.0
@@ -67,12 +62,6 @@ public:
   // Enable/Disable large volume size usage
   void LargeVolumeSizeOn();
   void LargeVolumeSizeOff();
-  
-  // Description:
-  // Enable/Disable automatic quality adjustment for expected FPS
-  vtkSetMacro(AdaptiveFPS, int);  
-  vtkGetMacro(AdaptiveFPS,int);
-  vtkBooleanMacro(AdaptiveFPS,int);
   
   // Description:
   // Enable/Disable clipping
@@ -137,7 +126,6 @@ protected:
   int              Clipping;
   int              Shading;
   int              LargeVolumeSize;
-  int              AdaptiveFPS;
 
   GLuint           Volume1Index;
   GLuint           Volume2Index;
@@ -155,7 +143,6 @@ protected:
   GLfloat          ParaMatrix[16];//4x4 matrix uniform for ray casting parameters
   
   float            RaySteps;
-  float            Framerate;
   float            GlobalAlpha;
   
   void Initialize();

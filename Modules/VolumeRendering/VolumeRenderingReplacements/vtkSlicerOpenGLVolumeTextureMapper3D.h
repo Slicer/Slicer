@@ -144,7 +144,6 @@ protected:
   void Setup3DTextureParameters( vtkVolumeProperty *property );
   
   void AdaptivePerformanceControl();
-  void PerformanceControl();
 
 private:
   vtkSlicerOpenGLVolumeTextureMapper3D(const vtkSlicerOpenGLVolumeTextureMapper3D&);  // Not implemented.

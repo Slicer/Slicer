@@ -267,18 +267,6 @@ protected:
     vtkKWCheckButtonWithLabel *CB_GPURayCastLargeVolume;
     
     // Description:
-    // Enable/Disable adaptive framerate control
-    vtkKWCheckButtonWithLabel *CB_GPURayCastForceHighQuality;
-    
-    // Description:
-    // Enable/Disable adaptive framerate control
-    vtkKWCheckButtonWithLabel *CB_TextureMapperForceHighQuality;
-    
-    // Description:
-    // Enable/Disable adaptive framerate control
-    vtkKWCheckButtonWithLabel *CB_CPURayCastForceHighQuality;
-
-    // Description:
     // Enable/Disable CPU ray cast MIP rendering
     vtkKWCheckButtonWithLabel *CB_CPURayCastMIP;
     

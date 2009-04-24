@@ -79,10 +79,9 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->CB_CUDARayCastShading=NULL;
     this->CB_GPURayCastMIP=NULL;
     this->CB_GPURayCastShading=NULL;
-    this->CB_GPURayCastForceHighQuality=NULL;
-    this->CB_TextureMapperForceHighQuality=NULL;
+    
     this->CB_GPURayCastLargeVolume=NULL;
-    this->CB_CPURayCastForceHighQuality=NULL;
+
     this->SC_ExpectedFPS=NULL;
     this->MB_Mapper= NULL;
     this->SVP_VolumeProperty=NULL;
@@ -510,7 +509,6 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
 
             this->CB_GPURayCastMIP->EnabledOff();
             this->CB_GPURayCastShading->EnabledOff();
-            this->CB_GPURayCastForceHighQuality->EnabledOff();
             this->CB_GPURayCastLargeVolume->EnabledOff();
     
             errorText->Delete();
@@ -524,7 +522,6 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
             errorText->SetText("OpenGL Texture Mapping is not supported");
             this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", errorText->GetWidgetName());
             
-            this->CB_TextureMapperForceHighQuality->EnabledOff();
             errorText->Delete();
         }
 
@@ -536,7 +533,8 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
         this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
         this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
         this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-
+        this->MapperTexture->AddObserver(vtkCommand::VolumeMapperRenderProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+        
         //cpu ray casting
         this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
         this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
@@ -753,28 +751,6 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
             return;
         }
-
-        if(callerObjectCheckButton == this->CB_GPURayCastForceHighQuality->GetWidget())
-        {
-            if (this->CB_GPURayCastForceHighQuality->GetWidget()->GetSelectedState())
-                this->MapperGPURaycast->AdaptiveFPSOff();
-            else
-                this->MapperGPURaycast->AdaptiveFPSOn();
-        
-            this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();                
-            return;
-        }
-    
-        if(callerObjectCheckButton == this->CB_TextureMapperForceHighQuality->GetWidget())
-        {
-            if (this->CB_TextureMapperForceHighQuality->GetWidget()->GetSelectedState())
-                this->MapperTexture->AdaptiveFPSOff();
-            else
-                this->MapperTexture->AdaptiveFPSOn();
-        
-            this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();                
-            return;
-        }
         
         if(callerObjectCheckButton == this->CB_GPURayCastLargeVolume->GetWidget())
         {
@@ -784,33 +760,6 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
                 this->MapperGPURaycast->LargeVolumeSizeOff();
                 
  //           this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->ResetCamera();
-            
-            this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
-            return;
-        }
-    
-        if(callerObjectCheckButton==this->CB_CPURayCastForceHighQuality->GetWidget())
-        {
-            if(callerObjectCheckButton->GetSelectedState())
-            {
-                this->MapperRaycast->ManualInteractiveOff();
-                this->MapperRaycast->SetInteractiveSampleDistance(this->EstimatedInteractiveSampleDistance);
-                this->MapperRaycast->SetAutoAdjustSampleDistances(1);
-                this->MapperRaycast->SetSampleDistance(this->EstimatedSampleDistance);
-                this->MapperRaycast->SetImageSampleDistance(1.0f);
-                this->MapperRaycast->SetMinimumImageSampleDistance(1.0f);
-                this->MapperRaycast->SetMaximumImageSampleDistance(2.0f);
-            }
-            else
-            {
-                this->MapperRaycast->ManualInteractiveOn();
-                float desiredTime = 1.0f/this->SC_ExpectedFPS->GetValue();//expected fps will not be 0 so safe to do division here
-        
-                this->MapperRaycast->SetManualInteractiveRate(desiredTime);
-                this->MapperRaycast->SetImageSampleDistance(2.0f);
-                this->MapperRaycast->SetMinimumImageSampleDistance(2.0f);
-                this->MapperRaycast->SetMaximumImageSampleDistance(16.0f);
-            }
             
             this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
             return;
@@ -896,6 +845,13 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             if(this->GradientDialog != NULL)
                 this->GradientDialog->UpdateProgress(*progress);
     
+            return;
+        }
+        else if (eid==vtkCommand::VolumeMapperRenderProgressEvent)
+        {
+            double *progress=(double*)callData;
+            //enable following line will have strange problems!!!
+            //this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetValue(100**progress);
             return;
         }
         
@@ -1737,15 +1693,6 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->CB_CPURayCastMIP->GetWidget()->SetSelectedState(0);
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_CPURayCastMIP->GetWidgetName() );
         this->CB_CPURayCastMIP->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->VolumeRenderingCallbackCommand);
-        
-        this->CB_CPURayCastForceHighQuality=vtkKWCheckButtonWithLabel::New();
-        this->CB_CPURayCastForceHighQuality->SetParent(this->FrameCPURayCasting->GetFrame());
-        this->CB_CPURayCastForceHighQuality->Create();
-        this->CB_CPURayCastForceHighQuality->SetBalloonHelpString("Force CPU ray cast mapper to use high quality (high sampling rate). Could be show.");
-        this->CB_CPURayCastForceHighQuality->SetLabelText("Force High Quality");
-        this->CB_CPURayCastForceHighQuality->SetLabelWidth(labelWidth);
-        this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_CPURayCastForceHighQuality->GetWidgetName() );
-        this->CB_CPURayCastForceHighQuality->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->VolumeRenderingCallbackCommand);
 
     }
     
@@ -1780,17 +1727,6 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_GPURayCastMIP->GetWidgetName() );
         this->CB_GPURayCastMIP->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->VolumeRenderingCallbackCommand);
         
-        //enable/disable adaptive frame rate control
-        this->CB_GPURayCastForceHighQuality=vtkKWCheckButtonWithLabel::New();
-        this->CB_GPURayCastForceHighQuality->SetParent(this->FrameGPURayCasting->GetFrame());
-        this->CB_GPURayCastForceHighQuality->Create();
-        this->CB_GPURayCastForceHighQuality->SetBalloonHelpString("Force GPU mapper to use high quality (high sampling rate) and ignore expected FPS. May overwhelm GPU when used with Use Large Volume option.");
-        this->CB_GPURayCastForceHighQuality->SetLabelText("Force High Quality");
-        this->CB_GPURayCastForceHighQuality->SetLabelWidth(labelWidth);
-        this->CB_GPURayCastForceHighQuality->GetWidget()->SetSelectedState(0);
-        this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_GPURayCastForceHighQuality->GetWidgetName() );
-        this->CB_GPURayCastForceHighQuality->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->VolumeRenderingCallbackCommand);
-        
         //enable/disable large volume
         this->CB_GPURayCastLargeVolume=vtkKWCheckButtonWithLabel::New();
         this->CB_GPURayCastLargeVolume->SetParent(this->FrameGPURayCasting->GetFrame());
@@ -1813,16 +1749,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->FramePolygonBlending->SetLabelText("OpenGL Polygon Blending");
         this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->FramePolygonBlending->GetWidgetName() );
         
-        //enable/disable adaptive frame rate control
-        this->CB_TextureMapperForceHighQuality=vtkKWCheckButtonWithLabel::New();
-        this->CB_TextureMapperForceHighQuality->SetParent(this->FramePolygonBlending->GetFrame());
-        this->CB_TextureMapperForceHighQuality->Create();
-        this->CB_TextureMapperForceHighQuality->SetBalloonHelpString("Force texture mapper to use high quality (high sampling rate) and ignore expected FPS.");
-        this->CB_TextureMapperForceHighQuality->SetLabelText("Force High Quality");
-        this->CB_TextureMapperForceHighQuality->SetLabelWidth(labelWidth);
-        this->CB_TextureMapperForceHighQuality->GetWidget()->SetSelectedState(0);
-        this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_TextureMapperForceHighQuality->GetWidgetName() );
-        this->CB_TextureMapperForceHighQuality->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->VolumeRenderingCallbackCommand);   
+        //currently no parameters
     }
    
 }
@@ -1867,24 +1794,7 @@ void vtkSlicerVRGrayscaleHelper::DestroyPerformance(void)
         this->CB_GPURayCastMIP->SetParent(NULL);
         this->CB_GPURayCastMIP->Delete();
         this->CB_GPURayCastMIP=NULL;
-    }
-    
-    if(this->CB_GPURayCastForceHighQuality!=NULL)
-    {
-        this->CB_GPURayCastForceHighQuality->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
-        this->CB_GPURayCastForceHighQuality->SetParent(NULL);
-        this->CB_GPURayCastForceHighQuality->Delete();
-        this->CB_GPURayCastForceHighQuality=NULL;
-    }
-    
-    if(this->CB_TextureMapperForceHighQuality!=NULL)
-    {
-        this->CB_TextureMapperForceHighQuality->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
-        this->CB_TextureMapperForceHighQuality->SetParent(NULL);
-        this->CB_TextureMapperForceHighQuality->Delete();
-        this->CB_TextureMapperForceHighQuality=NULL;
-    }
-    
+    }    
     if(this->SC_ExpectedFPS!=NULL)
     {
         this->SC_ExpectedFPS->RemoveObservers(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
@@ -1899,14 +1809,6 @@ void vtkSlicerVRGrayscaleHelper::DestroyPerformance(void)
         this->CB_CPURayCastMIP->SetParent(NULL);
         this->CB_CPURayCastMIP->Delete();
         this->CB_CPURayCastMIP=NULL;
-    }
-    
-    if(this->CB_CPURayCastForceHighQuality!=NULL)
-    {
-        this->CB_CPURayCastForceHighQuality->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-        this->CB_CPURayCastForceHighQuality->SetParent(NULL);
-        this->CB_CPURayCastForceHighQuality->Delete();
-        this->CB_CPURayCastForceHighQuality=NULL;
     }
     
     if(this->MB_Mapper != NULL)
@@ -2012,11 +1914,11 @@ void vtkSlicerVRGrayscaleHelper::EstimateSampleDistances(void)
     
     if (minDim > 128)
     {
-        this->EstimatedSampleDistance = (maxSpace + minSpace) * 0.5;
+        this->EstimatedSampleDistance = (maxSpace + minSpace) * 0.33;
     }
     else
     {
-        this->EstimatedSampleDistance = minSpace * 0.5;
+        this->EstimatedSampleDistance = minSpace * 0.25;
     }
 }
 

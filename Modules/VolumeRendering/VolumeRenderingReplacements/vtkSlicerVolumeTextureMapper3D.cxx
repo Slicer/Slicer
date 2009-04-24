@@ -672,7 +672,6 @@ vtkSlicerVolumeTextureMapper3D::vtkSlicerVolumeTextureMapper3D()
   this->PreferredRenderMethod         = vtkSlicerVolumeTextureMapper3D::FRAGMENT_PROGRAM_METHOD;
   
   this->Framerate                    = 5.0f;
-  this->AdaptiveFPS                  = 1;
 }
 
 vtkSlicerVolumeTextureMapper3D::~vtkSlicerVolumeTextureMapper3D()

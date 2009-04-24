@@ -212,23 +212,8 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolume *v
     this->TimeToDraw = 0.0001;
     }   
 
-  if (this->AdaptiveFPS)//adjust ray steps based on requrestd frame rate
-    this->AdaptivePerformanceControl();
-  else//use fixed ray steps
-    this->PerformanceControl();
-}
-
-void vtkSlicerOpenGLVolumeTextureMapper3D::PerformanceControl()
-{
-  float spacing[3];
-  this->GetVolumeSpacing(spacing);
-
-  float minSampleDistance = spacing[0];
-  minSampleDistance = minSampleDistance < spacing[1] ? minSampleDistance : spacing[1];  
-  minSampleDistance = minSampleDistance < spacing[2] ? minSampleDistance : spacing[2];  
-  minSampleDistance /= 32; //each slice blending maximumlly 32 polygons
-  
-  this->SampleDistance = minSampleDistance;
+  //adjust ray steps based on requrestd frame rate
+  this->AdaptivePerformanceControl();
 }
 
 void vtkSlicerOpenGLVolumeTextureMapper3D::AdaptivePerformanceControl()
@@ -598,7 +583,12 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::RenderPolygons( vtkRenderer *ren,
         ptr += 6;
         }
       glEnd();
-     
+      double progress=i/(double)this->NumberOfPolygons;
+      
+      int step = this->NumberOfPolygons/10 == 0 ? 1 : this->NumberOfPolygons/10;
+      
+      if (i % step == 0)
+          this->InvokeEvent(vtkCommand::VolumeMapperRenderProgressEvent, &progress);
       }
     }
 }
