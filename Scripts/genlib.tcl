@@ -455,7 +455,6 @@ if { [BuildThis $::ITCL_TEST_FILE "itcl"] == 1 } {
           exec cp ../incrTcl/itcl/configure ../incrTcl/itcl/configure.orig
           exec sed -e "s/\\*\\.c | \\*\\.o | \\*\\.obj) ;;/\\*\\.c | \\*\\.o | \\*\\.obj | \\*\\.dSYM | \\*\\.gnoc ) ;;/" ../incrTcl/itcl/configure.orig > ../incrTcl/itcl/configure 
       }
-      puts "Genlib.tcl incrTcl CC $::env(CC) CFLAGS $::env(CFLAGS)"
       if {$::GENLIB(bitness) == "64"} {
         set ::env(CC) "$::GENLIB(compiler) -m64"
         puts "genlib incrTcl 64 bit branch: $::env(CC)"
