@@ -180,7 +180,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::PerformanceControl()
   maxRaysteps = maxRaysteps > dim[1] ? maxRaysteps : dim[1];  
   maxRaysteps = maxRaysteps > dim[2] ? maxRaysteps : dim[2];  
   
-  maxRaysteps *= 4.0f;
+  maxRaysteps *= 8.0f;
   
   maxRaysteps = maxRaysteps < 1050.0f ? 1050.0f : maxRaysteps;//ensure high sampling rate on low resolution volumes
   
@@ -216,9 +216,9 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::AdaptivePerformanceControl()
   float maxRaysteps = dim[0];
   maxRaysteps = maxRaysteps > dim[1] ? maxRaysteps : dim[1];  
   maxRaysteps = maxRaysteps > dim[2] ? maxRaysteps : dim[2];  
-  maxRaysteps *= 2.5f; //make sure we have enough sampling rate to recover details
+  maxRaysteps *= 8.0f; //make sure we have enough sampling rate to recover details
   
-  maxRaysteps = maxRaysteps < 512.0f ? 512.0f : maxRaysteps;//ensure high sampling rate on low resolution volumes
+  maxRaysteps = maxRaysteps < 1050.0f ? 1050.0f : maxRaysteps;//ensure high sampling rate on low resolution volumes
   
   // add clamp
   if (this->RaySteps > maxRaysteps) this->RaySteps = maxRaysteps;
@@ -376,8 +376,8 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupRayCastParameters(vtkRendere
   //ParaMatrix:                                                             
   //EyePos.x,      EyePos.y,      EyePos.z,     Step                        
   //VolBBoxLow.x,  VolBBoxLow.y,  VolBBoxLow.z, VolBBoxHigh.x               
-  //VolBBoxHigh.y, VolBBoxHigh.z, RenderMethod, Shading,                
-  //MIP,           GlobalAlpha,   Debug,
+  //VolBBoxHigh.y, VolBBoxHigh.z, RenderMethod, N/A,                
+  //N/A,           GlobalAlpha,   Debug,
   
   double modelViewMat[16];
   glGetDoublev(GL_MODELVIEW_MATRIX, modelViewMat);
@@ -447,9 +447,9 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupRayCastParameters(vtkRendere
       break;
     }
   
-  this->ParaMatrix[11] = pVol->GetProperty()->GetShade() ? 1.0f : 0.0f;
-
-  this->ParaMatrix[12] = (float)MIPRendering;
+  this->ParaMatrix[11] = 0.0f;
+  this->ParaMatrix[12] = 0.0f;
+  
   this->ParaMatrix[13] = GlobalAlpha;
   
   this->ParaMatrix[14] = 0.0f;//debug, 0: no debug, 1: show ray origin, 2: show ray end
@@ -1195,10 +1195,15 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::InitializeRayCast()
     
     LoadVertexShader();
 
-    if (this->Shading)
-        LoadFragmentShader();
+    if (this->MIPRendering)
+        LoadNoShadingFragmentShaderMIP();
     else
-        LoadNoShadingFragmentShader();
+    {
+        if (this->Shading)
+            LoadFragmentShader();
+        else
+            LoadNoShadingFragmentShader();
+    }
         
     LoadRayCastProgram();
 }
@@ -1254,7 +1259,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadVertexShader()
     }
 }
 
-void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShader()
+void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMIP()
 {
     std::ostringstream fp_oss;
     fp_oss <<
@@ -1270,8 +1275,8 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShader()
         "//ParaMatrix:                                                                          \n"
         "//EyePos.x,      EyePos.y,      EyePos.z,     Step                                         \n"
         "//VolBBoxLow.x,  VolBBoxLow.y,  VolBBoxLow.z, VolBBoxHigh.x                            \n"
-        "//VolBBoxHigh.y, VolBBoxHigh.z, RenderMethod, Shading,                                 \n"
-        "//MIP,           GlobalAlpha,   Debug,                                                 \n"
+        "//VolBBoxHigh.y, VolBBoxHigh.z, RenderMethod, N/A,                                 \n"
+        "//N/A,           GlobalAlpha,   Debug,                                                 \n"
         "                                                                                        \n"
         "vec4 computeRayEnd()                                                                   \n"
         "{                                                                                          \n"
@@ -1289,8 +1294,191 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShader()
         "    for (int i = 0; i < 10; i++)                                                        \n"
         "    {                                                                                       \n"
         "        a3 = (a1 + a2) * 0.5;                                                           \n"
-        "        if (length(a2 - a1) <= halfStep)                                                \n"
-        "            return vec4(clamp(a3, mmn, mmx), 1.0);                                      \n"
+        " //       if (length(a2 - a1) <= halfStep)                                                \n"
+        " //           return vec4(clamp(a3, mmn, mmx), 1.0);                                      \n"
+        "        if ( all(greaterThanEqual(a3, mmn)) && all(lessThanEqual(a3, mmx)) )            \n"
+        "            a1 = a3;                                                                    \n"
+        "        else                                                                            \n"
+        "            a2 = a3;                                                                    \n"
+        "    }                                                                                       \n"
+        "    return vec4(clamp(a3, mmn, mmx), 1.0);                                              \n"
+        "}                                                                                          \n"
+        "                                                                                        \n"
+        "vec4 computeRayOrigin()                                                                \n"
+        "{                                                                                          \n"
+        "    vec3 o = vec3(ParaMatrix[0][0], ParaMatrix[0][1], ParaMatrix[0][2]);                \n"
+        "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
+        "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
+        "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "                                                        \n"
+        "    if (all(greaterThanEqual(o, mmn)) && all(lessThanEqual(o, mmx)) )                       \n"
+        "        return vec4(o, 1.0);                                                            \n"
+        "    else                                                                                \n"
+        "        return gl_TexCoord[0];                                                          \n"
+        "}                                                                                          \n"
+        "                                                                                        \n"
+        "//perform 3D texture lookup based on RenderMethod                                          \n"
+        "vec4 voxelColor(vec3 coord)                                                            \n"
+        "{                                                                                          \n"
+        "    vec4 color = vec4(0);                                                               \n"
+        "    float renderMethod = ParaMatrix[2][2];                                              \n"
+        "    if (renderMethod < 0.5)                                                             \n"
+        "    {                                                                                       \n"
+        "        vec4 scalar = texture3D(TextureVol, coord);                                         \n"
+        "        color = texture2D(TextureColorLookup, vec2(scalar.w, scalar.x));                \n"
+        "    }                                                                                       \n"
+        "    else if (renderMethod < 1.5)                                                        \n"
+        "    {                                                                                       \n"
+        "        vec4 scalar = texture3D(TextureVol, coord);                                         \n"
+        "        color = texture2D(TextureColorLookup, vec2(scalar.w, scalar.x));                \n"
+        "        vec4 opacity = texture2D(TextureAlphaLookup, vec2(scalar.y, scalar.z));         \n"
+        "        color.w = opacity.w;                                                            \n"
+        "    }                                                                                       \n"
+        "    else if (renderMethod < 2.5)                                                        \n"
+        "    {                                                                                       \n"
+        "        color = texture3D(TextureVol, coord);                                           \n"
+        "        vec4 scalar = texture3D(TextureVol1, coord);                                    \n"
+        "        vec4 opacity = texture2D(TextureAlphaLookup, vec2(scalar.w, scalar.x));         \n"
+        "        color.w = opacity.w;                                                            \n"
+        "    }                                                                                       \n"
+        "    return color;                                                                       \n"
+        "}                                                                                          \n"
+        "                                                                                        \n"
+        "float voxelScalar(vec3 coord)                                                          \n"
+        "{                                                                                          \n"
+        "    float renderMethod = ParaMatrix[2][2];                                              \n"
+        "    if (renderMethod < 0.5)                                                             \n"
+        "    {                                                                                       \n"
+        "        vec4 scalar = texture3D(TextureVol, coord);                                         \n"
+        "        return scalar.w;                                                                \n"
+        "    }                                                                                       \n"
+        "    else if (renderMethod < 1.5)                                                        \n"
+        "    {                                                                                       \n"
+        "        vec4 scalar = texture3D(TextureVol, coord);                                         \n"
+        "        return scalar.w;                                                                \n"
+        "    }                                                                                       \n"
+        "    else if (renderMethod < 2.5)                                                        \n"
+        "    {                                                                                       \n"
+        "        vec4 color = texture3D(TextureVol, coord);                                          \n"
+        "        vec4 scalar = texture3D(TextureVol1, coord);                                    \n"
+        "        return scalar.w;                                                                \n"
+        "    }                                                                                       \n"
+        "    return 0.0;                                                                             \n"
+        "}                                                                                          \n"
+        "                                                                                        \n"
+        "void main()                                                                            \n"
+        "{                                                                      \n"
+        "    vec4 rayOrigin = computeRayOrigin();                                                \n"
+        "    vec4 rayEnd = computeRayEnd();                                                      \n"
+        "    vec3 rayDir = rayEnd.xyz - rayOrigin.xyz;                                               \n"
+        "    float rayLen = length(rayDir);                                                      \n"
+        "    rayDir = normalize(rayDir);                                                             \n"
+        "                                                                                        \n"
+        "    //debug mode                                                                        \n"
+        "    if (ParaMatrix[3][2] > 1.5)                                                             \n"                                      
+        "    {                                                                                       \n"
+        "        gl_FragColor = rayEnd;                                                          \n"
+        "        return;                                                                         \n"
+        "    }                                                                                       \n"
+        "    else if (ParaMatrix[3][2] > 0.5)                                                    \n"
+        "    {                                                                                       \n"
+        "        gl_FragColor = rayOrigin;                                                           \n"
+        "        return;                                                                         \n"
+        "    }                                                                                       \n"
+        "                                                                                        \n"
+        "    //do ray casting                                                                    \n"
+        "    vec3 rayStep = rayDir*ParaMatrix[0][3];                                             \n"
+        "    vec3 nextRayOrigin = rayOrigin.xyz;                                                     \n"
+        "                                                                                        \n"
+        "    vec4 pixelColor = vec4(0);                                                          \n"
+        "    float alpha = 0.0;                                                                      \n"
+        "    float t = 0.0;                                                                      \n"
+        "                                                                                        \n"
+        "    {                                                                                       \n"
+        "        float maxScalar = voxelScalar(nextRayOrigin);                                   \n"
+        "        vec3 maxScalarCoord = nextRayOrigin;                                            \n"
+        "        while( t < rayLen )                                                                 \n"
+        "        {                                                                                   \n"
+        "            float scalar = voxelScalar(nextRayOrigin);                                      \n"
+        "            if (maxScalar < scalar)                                                     \n"
+        "            {                                                                               \n"
+        "                maxScalar = scalar;                                                         \n"
+        "                maxScalarCoord = nextRayOrigin;                                         \n"
+        "            }                                                                               \n"
+        "                                                                                        \n"
+        "            t += ParaMatrix[0][3];                                                      \n"
+        "            nextRayOrigin += rayStep;                                                       \n"
+        "        }                                                                                   \n"
+        "                                                                                        \n"
+        "        pixelColor = voxelColor(maxScalarCoord);                                           \n"
+        "        alpha = pixelColor.w;                                                                \n"
+        "    }                                                                                       \n"
+        "    gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                        \n"
+        "                                                                                        \n"
+        "}                                                                                          \n";
+        
+    std::string source = fp_oss.str();
+    const char* pSourceText = source.c_str();
+    
+    vtkgl::ShaderSource(RayCastFragmentShader, 1, &pSourceText, NULL);
+    vtkgl::CompileShader(RayCastFragmentShader);
+    
+    GLint result;
+    vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::COMPILE_STATUS, &result);
+    
+    if (!result)
+        printf("Fragment Shader Compile Status: FALSE\n");
+        
+    GLint infoLogLen;
+    vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::INFO_LOG_LENGTH, &infoLogLen);
+    try
+    {
+        vtkgl::GLchar *pInfoLog = (vtkgl::GLchar*)malloc(sizeof(vtkgl::GLchar)*(infoLogLen+1));
+        vtkgl::GetShaderInfoLog(RayCastFragmentShader, infoLogLen, NULL, pInfoLog);
+        printf("%s", pInfoLog);
+    }catch(...)
+    {
+    }
+}
+
+void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShader()
+{
+    std::ostringstream fp_oss;
+    fp_oss <<
+        "varying vec4 Position;                                                                 \n"
+        "uniform sampler3D TextureVol;                                                          \n"
+        "uniform sampler3D TextureVol1;                                                         \n"
+        "uniform sampler3D TextureVol2;                                                         \n"
+        "uniform sampler2D TextureColorLookup;                                                  \n"
+        "uniform sampler2D TextureAlphaLookup;                                                  \n"
+        "uniform mat4 ParaMatrix;                                                                   \n"
+        "uniform mat4 VolumeMatrix;                                                                 \n"
+        "                                                                                        \n"
+        "//ParaMatrix:                                                                          \n"
+        "//EyePos.x,      EyePos.y,      EyePos.z,     Step                                         \n"
+        "//VolBBoxLow.x,  VolBBoxLow.y,  VolBBoxLow.z, VolBBoxHigh.x                            \n"
+        "//VolBBoxHigh.y, VolBBoxHigh.z, RenderMethod, N/A,                                 \n"
+        "//N/A,           GlobalAlpha,   Debug,                                                 \n"
+        "                                                                                        \n"
+        "vec4 computeRayEnd()                                                                   \n"
+        "{                                                                                          \n"
+        "   vec3 o = vec3(ParaMatrix[0][0], ParaMatrix[0][1], ParaMatrix[0][2]);                \n"
+        "    vec3 mmn = vec3(ParaMatrix[1][0], ParaMatrix[1][1], ParaMatrix[1][2]);              \n"
+        "    vec3 mmx = vec3(ParaMatrix[1][3], ParaMatrix[2][0], ParaMatrix[2][1]);              \n"
+        "    mmn = clamp(mmn, 0.0, 1.0);                                                             \n"
+        "    mmx = clamp(mmx, 0.0, 1.0);                                                             \n"     
+        "                                                        \n"
+        "    vec3 a1 = gl_TexCoord[0].xyz;                                                       \n"
+        "    vec3 a2 = a1 + normalize(a1 - o) * length(mmx - mmn);                               \n"
+        "    vec3 a3;                                                                            \n"
+        "                                                                                        \n"
+        "    float halfStep = ParaMatrix[0][3]*0.5;                                              \n"
+        "    for (int i = 0; i < 10; i++)                                                        \n"
+        "    {                                                                                       \n"
+        "        a3 = (a1 + a2) * 0.5;                                                           \n"
+        "//        if (length(a2 - a1) <= halfStep)                                                \n"
+        "//            return vec4(clamp(a3, mmn, mmx), 1.0);                                      \n"
         "        if ( all(greaterThanEqual(a3, mmn)) && all(lessThanEqual(a3, mmx)) )            \n"
         "            a1 = a3;                                                                    \n"
         "        else                                                                            \n"
@@ -1390,30 +1578,6 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShader()
         "    float alpha = 0.0;                                                                      \n"
         "    float t = 0.0;                                                                      \n"
         "                                                                                        \n"
-        "    if ( ParaMatrix[3][0] > 0.0 )//MIP                                                 \n"
-        "    {                                                                                       \n"
-        "        float maxScalar = -999999.0;                                                         \n"
-        "        vec3 maxScalarCoord = nextRayOrigin;                                            \n"
-        "        while( t < rayLen )                                                                 \n"
-        "        {                                                                                   \n"
-        "            float scalar = voxelScalar(nextRayOrigin);                                      \n"
-        "            if (maxScalar < scalar)                                                     \n"
-        "            {                                                                               \n"
-        "                maxScalar = scalar;                                                         \n"
-        "                maxScalarCoord = nextRayOrigin;                                         \n"
-        "            }                                                                               \n"
-        "                                                                                        \n"
-        "            t += ParaMatrix[0][3];                                                      \n"
-        "            nextRayOrigin += rayStep;                                                       \n"
-        "        }                                                                                   \n"
-        "                                                                                        \n"
-        " //       if (maxScalar > 0.0)//need to check this?                                           \n"
-        " //       {                                                                                   \n"
-        "            pixelColor = voxelColor(maxScalarCoord);                                    \n"
-        "            alpha = pixelColor.w;                                                       \n"
-        " //       }                                                                                   \n"
-        "    }                                                                                       \n"
-        "    else//normal ray casting                                                            \n"
         "    {                                                                                       \n"
         "        while( (t < rayLen) && (alpha < 1.0) )                                          \n"
         "        {                                                                                   \n"
@@ -1491,8 +1655,8 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShader()
         "    for (int i = 0; i < 10; i++)                                                        \n"
         "    {                                                                                       \n"
         "        a3 = (a1 + a2) * 0.5;                                                           \n"
-        "        if (length(a2 - a1) <= halfStep)                                                \n"
-        "            return vec4(clamp(a3, mmn, mmx), 1.0);                                      \n"
+        " //       if (length(a2 - a1) <= halfStep)                                                \n"
+        " //           return vec4(clamp(a3, mmn, mmx), 1.0);                                      \n"
         "        if ( all(greaterThanEqual(a3, mmn)) && all(lessThanEqual(a3, mmx)) )            \n"
         "            a1 = a3;                                                                    \n"
         "        else                                                                            \n"
@@ -1630,43 +1794,13 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShader()
         "    float alpha = 0.0;                                                                      \n"
         "    float t = 0.0;                                                                      \n"
         "                                                                                        \n"
-        "    if ( ParaMatrix[3][0] > 0.0 )//MIP                                                    \n"
-        "    {                                                                                       \n"
-        "        float maxScalar = -999999.0;                                                          \n"
-        "        vec3 maxScalarCoord = nextRayOrigin;                                            \n"
-        "        while( t < rayLen )                                                                 \n"
-        "        {                                                                                   \n"
-        "            float scalar = voxelScalar(nextRayOrigin);                                      \n"
-        "            if (maxScalar < scalar)                                                     \n"
-        "            {                                                                               \n"
-        "                maxScalar = scalar;                                                         \n"
-        "                maxScalarCoord = nextRayOrigin;                                         \n"
-        "            }                                                                               \n"
-        "                                                                                        \n"
-        "            t += ParaMatrix[0][3];                                                      \n"
-        "            nextRayOrigin += rayStep;                                                       \n"
-        "        }                                                                                   \n"
-        "                                                                                        \n"
-        " //       if (maxScalar > 0.0)//need to check this?                                           \n"
-        " //       {                                                                                   \n"
-        "            pixelColor = voxelColor(maxScalarCoord);                                    \n"
-        "            alpha = pixelColor.w;                                                       \n"
-        " //       }                                                                                   \n"
-        "                                                                                            \n"
-        "                                                                    \n"
-        "        // uncomment two lines below to re-enable lighting                                   \n"
-        "        if (ParaMatrix[2][3] > 0.0)//need shading?                                          \n"
-        "            pixelColor *= directionalLight(maxScalarCoord);                             \n"
-        "    }                                                                                       \n"
-        "    else//normal ray casting                                                            \n"
         "    {                                                                                       \n"
         "        while( (t < rayLen) && (alpha < 1.0) )                                          \n"
         "        {                                                                                   \n"
         "            vec4 nextColor = voxelColor(nextRayOrigin);                                     \n"
         "            float tempAlpha = nextColor.w;                                              \n"
         "                                                                                        \n"
-        "            if (ParaMatrix[2][3] > 0.0)                                                     \n"
-        "                nextColor *= directionalLight(nextRayOrigin);                           \n"
+        "            nextColor *= directionalLight(nextRayOrigin);                                \n"
         "                                                                                        \n"      
         "            tempAlpha = (1.0-alpha)*tempAlpha;                                              \n"
         "            pixelColor += nextColor*tempAlpha;                                              \n"
@@ -1733,6 +1867,18 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::PrintFragmentShaderInfoLog()
     }catch(...)
     {
     }
+}
+
+void vtkSlicerGPURayCastVolumeTextureMapper3D::MIPRenderingOff()
+{
+    this->MIPRendering = 0;
+    this->ReloadShaderFlag = 1;
+}
+
+void vtkSlicerGPURayCastVolumeTextureMapper3D::MIPRenderingOn()
+{
+    this->MIPRendering = 1;
+    this->ReloadShaderFlag = 1;
 }
 
 void vtkSlicerGPURayCastVolumeTextureMapper3D::ShadingOff()

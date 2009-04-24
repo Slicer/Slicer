@@ -82,9 +82,8 @@ public:
   
   // Description:
   // MIP rendering
-  vtkSetMacro(MIPRendering, int);  
-  vtkGetMacro(MIPRendering,int);
-  vtkBooleanMacro(MIPRendering,int);
+  void MIPRenderingOn();
+  void MIPRenderingOff();
   
   // Description:
   // Is hardware rendering supported? No if the input data is
@@ -180,8 +179,14 @@ protected:
   void SetupRayCastParameters( vtkRenderer *pRen, vtkVolume *pVol);
   
   void LoadVertexShader();
+  
+  // regular ray casting
   void LoadFragmentShader();
   void LoadNoShadingFragmentShader();
+  
+  // mip ray casting
+  void LoadNoShadingFragmentShaderMIP();//lighting in MIP could be bad, so no shading here
+  
   void LoadRayCastProgram();
 
   void AdaptivePerformanceControl();  
