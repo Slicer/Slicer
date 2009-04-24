@@ -13,7 +13,7 @@ proc TestFiducialAdd { {renameFlag 1} {visibilityFlag 1} {numToAdd 125} } {
         # but: this doesn't engage the fiducial list widget and is misleadingly fast
         catch "sc Delete"
         vtkMRMLScene sc
-        set fidList [vtkMRMLFiducialListNode fidNode]
+        set fidList [vtkMRMLFiducialListNode New]
         sc AddNode $fidList
     }
 
