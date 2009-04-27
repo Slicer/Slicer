@@ -1024,6 +1024,7 @@ void vtkProstateNavGUI::BuildGUIForWizardFrame()
 
     app->Script("pack %s -side top -anchor nw -fill both -expand y",
                 this->WizardWidget->GetWidgetName());
+    wizardFrame->Delete();
 
     // -----------------------------------------------------------------
     // Add the steps to the workflow
@@ -1433,11 +1434,20 @@ void vtkProstateNavGUI::BuildGUIForVisualizationControlFrame ()
                ImagingMenu->GetWidgetName());
 
 
+  displayFrame->SetParent(NULL);
   displayFrame->Delete();
+  driverFrame->SetParent(NULL);
   driverFrame->Delete();
+  modeFrame->SetParent(NULL);
   modeFrame->Delete();
+  sliceFrame->SetParent(NULL);
   sliceFrame->Delete();
+  visCtrlFrame->SetParent(NULL);
   visCtrlFrame->Delete();
+  rtImageFrame->SetParent(NULL);
+  rtImageFrame->Delete();
+  scanFrame->SetParent(NULL);
+  scanFrame->Delete();
 }
 
 
