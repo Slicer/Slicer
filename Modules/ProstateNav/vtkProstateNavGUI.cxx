@@ -335,6 +335,28 @@ vtkProstateNavGUI::~vtkProstateNavGUI ( )
     delete [] this->WizardSteps;
     this->WizardSteps = NULL;
     }
+
+  // -----------------------------------------
+  // Work Phase Display Frame
+
+  if (this->SoftwareStatusLabelDisp)
+    {
+    this->SoftwareStatusLabelDisp->SetParent(NULL);
+    this->SoftwareStatusLabelDisp->Delete(); 
+    this->SoftwareStatusLabelDisp = NULL;
+    }
+  if (this->ScannerStatusLabelDisp)
+    {
+    this->ScannerStatusLabelDisp->SetParent(NULL);
+    this->ScannerStatusLabelDisp->Delete(); 
+    this->ScannerStatusLabelDisp = NULL;
+    }
+  if (this->RobotStatusLabelDisp)
+    {
+    this->RobotStatusLabelDisp->SetParent(NULL);
+    this->RobotStatusLabelDisp->Delete(); 
+    this->RobotStatusLabelDisp = NULL;
+    }
 }
 
 
