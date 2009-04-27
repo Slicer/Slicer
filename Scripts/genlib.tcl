@@ -158,15 +158,11 @@ for {set i 0} {$i < $argc} {incr i} {
     }
 }
 
-puts "GENLIB(compiler): $::GENLIB(compiler) GENLIB(bitness): $::GENLIB(bitness)"
 set argv $strippedargs
 set argc [llength $argv]
-# puts "Stripped args = $argv"
 
 set ::Slicer3_LIB ""
 if {$argc > 1 } {
-  #Usage
-  #exit 1
     # the stripped args list now has the Slicer3_LIB first and then the list of packages to build
     set ::GENLIB(buildList) [lrange $strippedargs 1 end]
     set strippedargs [lindex $strippedargs 0]
