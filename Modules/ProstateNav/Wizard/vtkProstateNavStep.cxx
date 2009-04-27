@@ -115,7 +115,7 @@ void vtkProstateNavStep::ShowUserInterface()
   
   if (!this->MRMLScene)
     {
-    this->MRMLScene = this->GetGUI()->GetMRMLScene();
+    this->SetAndObserveMRMLScene (this->GetGUI()->GetMRMLScene());
     }
 
   vtkKWWizardWidget *wizardWidget = this->GetGUI()->GetWizardWidget();
