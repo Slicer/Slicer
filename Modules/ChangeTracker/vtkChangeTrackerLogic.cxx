@@ -1058,7 +1058,7 @@ int vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
   // Linear registration parameter setup
   moduleNode->SetParameterAsString("FixedImageFileName", ctNode->GetScan1_Ref());
   moduleNode->SetParameterAsString("MovingImageFileName", ctNode->GetScan2_Ref());
-  moduleNode->SetParameterAsString("Iterations", "jjsdkjfflkj100,100,50,20");
+  moduleNode->SetParameterAsString("Iterations", "100,100,50,20");
   moduleNode->SetParameterAsString("ResampledImageFileName", outputNode->GetID());
   moduleNode->SetParameterAsString("OutputTransform", transformNode->GetID());
 
