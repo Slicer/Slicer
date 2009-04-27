@@ -869,7 +869,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             
 //            printf("value : %f\n", *progress);
              
-            double value = 100 * (*progress);
+//            double value = 100 * (*progress);
                      
             if (progressBar != NULL)
             {
