@@ -410,10 +410,8 @@ protected:
     int RenderingPaused;
     
     // Description:
-    // estimated sample distance for polygon blending and cpu ray casting
+    // estimated sample distance for cpu ray casting
     double EstimatedSampleDistance;
-    double EstimatedInteractiveSampleDistance;
-
     
     // Description:
     // if updating GUI

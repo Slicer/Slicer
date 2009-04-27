@@ -116,12 +116,6 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::ReleaseGraphicsResources(vtkWindo
 
 void vtkSlicerGPURayCastVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolume *vol)
 {  
-  if ( this->RenderMethod == vtkSlicerVolumeTextureMapper3D::NO_METHOD )
-    {
-    vtkErrorMacro( "required extensions not supported" );
-    return;
-    }
-    
   ren->GetRenderWindow()->MakeCurrent();
     
   if ( !this->Initialized )
@@ -845,145 +839,29 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::Initialize()
   vtkOpenGLExtensionManager * extensions = vtkOpenGLExtensionManager::New();
   extensions->SetRenderWindow(NULL); // set render window to the current one.
   
-  int supports_texture3D=extensions->ExtensionSupported( "GL_VERSION_1_2" );
-  if(supports_texture3D)
-    {
-    extensions->LoadExtension("GL_VERSION_1_2");
-    }
-  else
-    {
-    supports_texture3D=extensions->ExtensionSupported( "GL_EXT_texture3D" );
-    if(supports_texture3D)
-      {
-      extensions->LoadCorePromotedExtension("GL_EXT_texture3D");
-      }
-    }
-  
-  int supports_multitexture=extensions->ExtensionSupported( "GL_VERSION_1_3" );
-  if(supports_multitexture)
-    {
-    extensions->LoadExtension("GL_VERSION_1_3");
-    }
-  else
-    {
-    supports_multitexture=
-      extensions->ExtensionSupported("GL_ARB_multitexture");
-    if(supports_multitexture)
-      {
-      extensions->LoadCorePromotedExtension("GL_ARB_multitexture");
-      }
-    }
-  
-  int supports_1_5=extensions->ExtensionSupported( "GL_VERSION_1_5" );
-  if(supports_1_5)
-    {   
-    extensions->LoadExtension("GL_VERSION_1_5");
-    }
-   
   int supports_2_0=extensions->ExtensionSupported( "GL_VERSION_2_0" );
   if(supports_2_0)
     {   
-    extensions->LoadExtension("GL_VERSION_2_0");
-    RayCastSupported = supports_2_0;
-    }
-
-  int supports_GL_NV_texture_shader2     = extensions->ExtensionSupported( "GL_NV_texture_shader2" );
-  int supports_GL_NV_register_combiners2 = extensions->ExtensionSupported( "GL_NV_register_combiners2" );
-  int supports_GL_ATI_fragment_shader    = extensions->ExtensionSupported( "GL_ATI_fragment_shader" );
-  int supports_GL_ARB_fragment_program   = extensions->ExtensionSupported( "GL_ARB_fragment_program" );
-  int supports_GL_ARB_vertex_program     = extensions->ExtensionSupported( "GL_ARB_vertex_program" );
-  int supports_GL_NV_register_combiners  = extensions->ExtensionSupported( "GL_NV_register_combiners" );
-  
-  if(supports_GL_NV_texture_shader2) 
-    {
-    extensions->LoadExtension("GL_NV_texture_shader2" );
+    extensions->LoadExtension("GL_VERSION_2_0");//printf("GL_2_0\n");
     }
   
-  if(supports_GL_NV_register_combiners2)  
-    {
-    extensions->LoadExtension( "GL_NV_register_combiners2" );
-    }
-  
-  if(supports_GL_ATI_fragment_shader)     
-    {
-    extensions->LoadExtension( "GL_ATI_fragment_shader" );
-    }
-  
-  if(supports_GL_ARB_fragment_program)    
-    {
-    extensions->LoadExtension( "GL_ARB_fragment_program" );
-    }
-  
-  if(supports_GL_ARB_vertex_program)    
-    {
-    extensions->LoadExtension( "GL_ARB_vertex_program" );
-    }
-  
-  if(supports_GL_NV_register_combiners)  
-    {
-    extensions->LoadExtension( "GL_NV_register_combiners" );
-    }
-
-  extensions->Delete();
-  
-  
-  int canDoFP = 0;
-  int canDoNV = 0;
-  
-  if ( supports_texture3D      &&
-       supports_multitexture       &&
-       supports_GL_ARB_fragment_program   &&
-       supports_GL_ARB_vertex_program     &&
-       vtkgl::TexImage3D           &&
-       vtkgl::ActiveTexture        &&
-       vtkgl::MultiTexCoord3fv     &&
-       vtkgl::GenProgramsARB          &&
-       vtkgl::DeleteProgramsARB       &&
-       vtkgl::BindProgramARB          &&
-       vtkgl::ProgramStringARB        &&
-       vtkgl::ProgramLocalParameter4fARB )
-    {    
-    canDoFP = 1;
-    }
-  
-  if ( supports_texture3D      &&
-       supports_multitexture       &&
-       supports_GL_NV_texture_shader2     &&
-       supports_GL_NV_register_combiners2 &&
-       supports_GL_NV_register_combiners  &&
-       vtkgl::TexImage3D           &&
-       vtkgl::ActiveTexture        &&
-       vtkgl::MultiTexCoord3fv     &&
-       vtkgl::CombinerParameteriNV    &&
-       vtkgl::CombinerStageParameterfvNV  &&
-       vtkgl::CombinerInputNV         &&
-       vtkgl::CombinerOutputNV        &&
-       vtkgl::FinalCombinerInputNV )
-    {
-    canDoNV = 1;
-    }
-
-  // can't do either
-  if ( !canDoFP && !canDoNV )
-    {
-    this->RenderMethod = vtkSlicerVolumeTextureMapper3D::NO_METHOD;
-    }
-  // can only do FragmentProgram
-  else if ( canDoFP && !canDoNV )
-    {
-    this->RenderMethod = vtkSlicerVolumeTextureMapper3D::FRAGMENT_PROGRAM_METHOD;  
-    }
-  // can only do NVidia method
-  else if ( !canDoFP && canDoNV )
-    {
-    this->RenderMethod = vtkSlicerVolumeTextureMapper3D::NVIDIA_METHOD;
-    }
-  // can do both - pick the preferred one
-  else
-    {
-    this->RenderMethod = this->PreferredRenderMethod;
+  int supports_2_1=extensions->ExtensionSupported( "GL_VERSION_2_1" );
+  if(supports_2_1)
+    {   
+    extensions->LoadExtension("GL_VERSION_2_1");//printf("GL_2_1\n");
     }
     
+  int supports_3_0=extensions->ExtensionSupported( "GL_VERSION_3_0" );
+  if(supports_3_0)
+    {   
+    extensions->LoadExtension("GL_VERSION_3_0");//printf("GL_3_0\n");
+    }
+    
+    if (supports_2_0 || supports_2_1 || supports_3_0)
+        RayCastSupported = 1;
+    else
+        RayCastSupported = 0;
+        
 //  GLint num;
 //  glGetIntegerv(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &num);
 //  printf("%d \n", num);
