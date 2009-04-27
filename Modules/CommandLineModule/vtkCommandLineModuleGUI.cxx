@@ -1150,12 +1150,15 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         }
       else if ((*pit).GetTag() == "boolean")
         {
-        vtkKWCheckButtonWithLabel *tparameter = vtkKWCheckButtonWithLabel::New();
-        tparameter->SetParent( parameterGroupFrame->GetFrame() );
-        tparameter->Create();
-        tparameter->SetLabelText((*pit).GetLabel().c_str());
-        tparameter->GetWidget()->SetSelectedState((*pit).GetDefault() == "true" ? 1 : 0);
-        parameter = tparameter;
+        if((*pit).GetHidden() != "true")
+          {
+          vtkKWCheckButtonWithLabel *tparameter = vtkKWCheckButtonWithLabel::New();
+          tparameter->SetParent( parameterGroupFrame->GetFrame() );
+          tparameter->Create();
+          tparameter->SetLabelText((*pit).GetLabel().c_str());
+          tparameter->GetWidget()->SetSelectedState((*pit).GetDefault() == "true" ? 1 : 0);
+          parameter = tparameter;
+          }
         }
       else if ((*pit).GetTag() == "float")
         {

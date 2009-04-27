@@ -315,7 +315,7 @@ startElement(void *userData, const char *element, const char **attrs)
     if (!group || (ps->OpenTags.top() != "parameters"))
       {
       std::string error("ModuleDescriptionParser Error: <" + name + "> can only be used inside <parameters> but was found inside <" + ps->OpenTags.top() + ">");
-    if (ps->ErrorDescription.size() == 0)
+      if (ps->ErrorDescription.size() == 0)
       {
       ps->ErrorDescription = error;
       ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
@@ -327,6 +327,32 @@ startElement(void *userData, const char *element, const char **attrs)
     parameter = new ModuleParameter;
     parameter->SetTag(name);
     parameter->SetCPPType("bool");
+    
+    // Parse attribute pairs
+    int attrCount = XML_GetSpecifiedAttributeCount(ps->Parser);
+    for (int attr=0; attr < (attrCount / 2); attr++)
+      {
+      if ((strcmp(attrs[2*attr], "hidden") == 0))
+        {
+        if ((strcmp(attrs[2*attr+1], "true") == 0) ||
+            (strcmp(attrs[2*attr+1], "false") == 0))
+          {
+          parameter->SetHidden(attrs[2*attr+1]);
+          }
+        else
+          {
+          std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr+1]) + "\" is not a valid argument for the attribute \"hidden\". Only \"true\" and \"false\" are accepted.");
+          if (ps->ErrorDescription.size() == 0)
+            {
+            ps->ErrorDescription = error;
+            ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+            ps->Error = true;
+            }
+          ps->OpenTags.push(name);
+          return;
+          }
+        }
+      }
     }
   else if (name == "integer-vector")
     {
