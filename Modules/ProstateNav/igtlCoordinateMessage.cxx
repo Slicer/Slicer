@@ -285,7 +285,7 @@ int CoordinateMessage::UnpackBody()
       memcpy((void*)this->m_Offset, (void*)tmp, sizeof(igtl_float32)*3);
       
       off += sizeof(igtl_float32)*3;
-      igtlUint32 tmp2;
+      igtlUint32 tmp2 = 0;
       memcpy((void*)tmp2, (void*)(off), sizeof(igtl_float32));
       this->m_Insertion = BYTE_SWAP_INT32(tmp2);
       }
