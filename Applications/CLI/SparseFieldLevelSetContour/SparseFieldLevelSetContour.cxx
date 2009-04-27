@@ -43,8 +43,6 @@ MeshData* meshdata;
 SparseFieldLS* sfls;
 MeanCurvatureEnergy* energy;
 vtkPolyDataWriter* writer;
-bool LSready = false;
-bool done_init = false;
 int showLS = 0;
 int evolve_its = 10; // how many evolution iterations to take
 int mesh_smooth_its = 100; // how many times to smooth the input mesh

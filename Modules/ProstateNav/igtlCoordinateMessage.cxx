@@ -269,8 +269,8 @@ int CoordinateMessage::UnpackBody()
   this->m_Quaternion[2] = p->quaternion[2];
   this->m_Quaternion[3] = p->quaternion[3];
 
-  if (this->GetPackSize() >= IGTL_HEADER_SIZE+IGTL_POSITION_MESSAGE_DEFAULT_SIZE
-      +sizeof(igtlFloat32)*4)
+  if (this->GetPackSize() >= static_cast<int>(IGTL_HEADER_SIZE+IGTL_POSITION_MESSAGE_DEFAULT_SIZE
+      +sizeof(igtlFloat32)*4))
     {
     unsigned char* off = (unsigned char*) this->m_Body;
     off += sizeof(igtl_position);
