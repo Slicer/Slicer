@@ -68,71 +68,76 @@ vtkProstateNavConfigurationStep::~vtkProstateNavConfigurationStep()
     {
     this->RobotFrame->SetParent(NULL);
     this->RobotFrame->Delete();
+    this->RobotFrame = NULL;
     }
-
   if (this->RobotLabel1)
     {
     this->RobotLabel1->SetParent(NULL);
     this->RobotLabel1->Delete();
+    this->RobotLabel1 = NULL;
     }
-
   if (this->RobotLabel2)
     {
     this->RobotLabel2->SetParent(NULL);
     this->RobotLabel2->Delete();
+    this->RobotLabel2 = NULL;
     }
-
   if (this->RobotAddressEntry)
     {
     this->RobotAddressEntry->SetParent(NULL);
     this->RobotAddressEntry->Delete();
+    this->RobotAddressEntry = NULL;
     }
-
   if (this->RobotPortEntry)
     {
     this->RobotPortEntry->SetParent(NULL);
     this->RobotPortEntry->Delete();
+    this->RobotPortEntry = NULL;
     }
-
   if (this->RobotConnectButton)
     {
     this->RobotConnectButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     this->RobotConnectButton->SetParent(NULL);
     this->RobotConnectButton->Delete();
+    this->RobotConnectButton = NULL;
     }
-
   if (this->ScannerFrame)
     {
     this->ScannerFrame->SetParent(NULL);
     this->ScannerFrame->Delete();
+    this->ScannerFrame = NULL;
     }
   if (this->ScannerLabel1)
     {
     this->ScannerLabel1->SetParent(NULL);
     this->ScannerLabel1->Delete();
+    this->ScannerLabel1 = NULL;
     }
   if (this->ScannerLabel2)
     {
     this->ScannerLabel2->SetParent(NULL);
     this->ScannerLabel2->Delete();
+    this->ScannerLabel2 = NULL;
     }
   if (this->ScannerAddressEntry)
     {
     this->ScannerAddressEntry->SetParent(NULL);
     this->ScannerAddressEntry->Delete();
+    this->ScannerAddressEntry = NULL;
     }
   if (this->ScannerPortEntry)
     {
     this->ScannerPortEntry->SetParent(NULL);
     this->ScannerPortEntry->Delete();
+    this->ScannerPortEntry = NULL;
     }
   if (this->ScannerConnectButton)
     {
     this->ScannerConnectButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     this->ScannerConnectButton->SetParent(NULL);
     this->ScannerConnectButton->Delete();
+    this->ScannerConnectButton = NULL;
     }
-
 }
 
 

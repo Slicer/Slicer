@@ -77,9 +77,31 @@ vtkProstateNavCalibrationStep::vtkProstateNavCalibrationStep()
 //----------------------------------------------------------------------------
 vtkProstateNavCalibrationStep::~vtkProstateNavCalibrationStep()
 {
+  if (this->SelectImageFrame)
+    {
+    this->SelectImageFrame->SetParent(NULL);
+    this->SelectImageFrame->Delete();
+    }
+  if (this->SelectImageButton)
+    {
+    this->SelectImageButton->SetParent(NULL);
+    this->SelectImageButton->Delete();
+    }
+  if (this->CalibrateButton)
+    {
+    this->CalibrateButton->SetParent(NULL);
+    this->CalibrateButton->Delete();
+    }
+  if (this->ZFrameSettingFrame)
+    {
+    this->ZFrameSettingFrame->SetParent(NULL);
+    this->ZFrameSettingFrame->Delete();
+    }
   if (this->ShowZFrameCheckButton)
     {
     this->ShowZFrameCheckButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand );
+    this->ShowZFrameCheckButton->SetParent(NULL);
+    this->ShowZFrameCheckButton->Delete();
     }
 }
 

@@ -238,29 +238,8 @@ vtkProstateNavGUI::~vtkProstateNavGUI ( )
     }
 
 
-  //----------------------------------------------------------------
-  // Wizard Frame
 
-  if ( this->WizardSteps )
-    {
-    for (int i = 0; i < vtkProstateNavLogic::NumPhases; i ++)
-      {
-      if ( this->WizardSteps[i] != NULL )
-        {
-        this->WizardSteps[i] = NULL;
-        }
-      }
-    delete [] this->WizardSteps;
-    this->WizardSteps = NULL;
-    }
 
-  if (this->WizardWidget)
-    {
-    this->WizardWidget->SetParent(NULL);
-    this->WizardWidget->Delete(); 
-    this->WizardWidget = NULL;
-    }
-  return;
 
   this->SetModuleLogic ( NULL );
 
@@ -333,6 +312,29 @@ vtkProstateNavGUI::~vtkProstateNavGUI ( )
     this->LocatorCheckButton->Delete ( );
     }
 
+  //----------------------------------------------------------------
+  // Wizard Frame
+
+  if (this->WizardWidget)
+    {
+    this->WizardWidget->SetParent(NULL);
+    this->WizardWidget->Delete(); 
+    this->WizardWidget = NULL;
+    }
+
+  if ( this->WizardSteps )
+    {
+    for (int i = 0; i < vtkProstateNavLogic::NumPhases; i ++)
+      {
+      if ( this->WizardSteps[i] != NULL )
+        {
+        this->WizardSteps[i]->Delete();
+        this->WizardSteps[i] = NULL;
+        }
+      }
+    delete [] this->WizardSteps;
+    this->WizardSteps = NULL;
+    }
 }
 
 
@@ -1001,8 +1003,6 @@ void vtkProstateNavGUI::BuildGUIForWizardFrame()
     app->Script("pack %s -side top -anchor nw -fill both -expand y",
                 this->WizardWidget->GetWidgetName());
 
-    wizardFrame->Delete();
-
     // -----------------------------------------------------------------
     // Add the steps to the workflow
 
@@ -1065,7 +1065,6 @@ void vtkProstateNavGUI::BuildGUIForWizardFrame()
       //                                              WorkPhaseColor[i][1],
       //                                              WorkPhaseColor[i][2]);
       wizard_workflow->AddNextStep(this->WizardSteps[i]);
-//    this->WizardSteps[i]->Delete();
       }
 
 

@@ -66,6 +66,54 @@ vtkProstateNavTargetingStep::vtkProstateNavTargetingStep()
 //----------------------------------------------------------------------------
 vtkProstateNavTargetingStep::~vtkProstateNavTargetingStep()
 {
+  if (this->MainFrame)
+    {
+    this->MainFrame->SetParent(NULL);
+    this->MainFrame->Delete();
+    this->MainFrame = NULL;
+    }
+  if (this->TargetListFrame)
+    {
+    this->TargetListFrame->SetParent(NULL);
+    this->TargetListFrame->Delete();
+    this->TargetListFrame = NULL;
+    }
+  if (this->TargetControlFrame)
+    {
+    this->TargetControlFrame->SetParent(NULL);
+    this->TargetControlFrame->Delete();
+    this->TargetControlFrame = NULL;
+    }
+  if (this->MultiColumnList)
+    {
+    this->MultiColumnList->SetParent(NULL);
+    this->MultiColumnList->Delete();
+    this->MultiColumnList = NULL;
+    }
+  if (this->NeedlePositionMatrix)
+    {
+    this->NeedlePositionMatrix->SetParent(NULL);
+    this->NeedlePositionMatrix->Delete();
+    this->NeedlePositionMatrix = NULL;
+    }
+  if (this->NeedleOrientationMatrix)
+    {
+    this->NeedleOrientationMatrix->SetParent(NULL);
+    this->NeedleOrientationMatrix->Delete();
+    this->NeedleOrientationMatrix = NULL;
+    }
+  if (this->MoveButton)
+    {
+    this->MoveButton->SetParent(NULL);
+    this->MoveButton->Delete();
+    this->MoveButton = NULL;
+    }
+  if (this->StopButton)
+    {
+    this->StopButton->SetParent(NULL);
+    this->StopButton->Delete();
+    this->StopButton = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------

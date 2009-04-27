@@ -33,6 +33,9 @@ public:
   vtkTypeRevisionMacro(vtkProstateNavStep,vtkKWWizardStep);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  virtual void Register(vtkObject *o) { Superclass::Register(o); };
+  virtual void UnRegister(vtkObjectBase *o) { Superclass::UnRegister(o); };
+
   // Description: 
   // Get/Set GUI
   vtkGetObjectMacro(GUI, vtkProstateNavGUI);

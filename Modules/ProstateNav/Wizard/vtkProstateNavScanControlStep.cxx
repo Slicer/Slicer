@@ -57,7 +57,42 @@ vtkProstateNavScanControlStep::vtkProstateNavScanControlStep()
 //----------------------------------------------------------------------------
 vtkProstateNavScanControlStep::~vtkProstateNavScanControlStep()
 {
-  
+  if (this->TargetListFrame)
+    {
+    this->TargetListFrame->SetParent(NULL);
+    this->TargetListFrame->Delete();
+    this->TargetListFrame = NULL;
+    }
+  if (this->MultiColumnList)
+    {
+    this->MultiColumnList->SetParent(NULL);
+    this->MultiColumnList->Delete();
+    this->MultiColumnList = NULL;
+    }
+  if (this->TargetControlFrame)
+    {
+    this->TargetControlFrame->SetParent(NULL);
+    this->TargetControlFrame->Delete();
+    this->TargetControlFrame = NULL;
+    }
+  if (this->AddButton)
+    {
+    this->AddButton->SetParent(NULL);
+    this->AddButton->Delete();
+    this->AddButton = NULL;
+    }
+  if (this->RemoveButton)
+    {
+    this->RemoveButton->SetParent(NULL);
+    this->RemoveButton->Delete();
+    this->RemoveButton = NULL;
+    }
+  if (this->RemoveAllButton)
+    {
+    this->RemoveAllButton->SetParent(NULL);
+    this->RemoveAllButton->Delete();
+    this->RemoveAllButton = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
