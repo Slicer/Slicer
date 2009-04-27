@@ -162,6 +162,15 @@ public:
     // The software accelerated software mapper
     vtkGetObjectMacro ( MapperRaycast, vtkSlicerFixedPointVolumeRayCastMapper);
 
+    // Description:
+    // Called everytime a mouse button is pressed
+    void SetButtonDown(int _arg)
+    {
+        vtkSlicerVRHelperDebug("setbutton %d",_arg);
+        this->ButtonDown=(_arg);
+        SetupCPURayCastInteractive();
+    }
+    
 protected:
     //--------------------------------------------------------------------------
     // General
@@ -373,6 +382,8 @@ protected:
     // Description:
     // Adjust the transfer functions to the current setting of vtkVolumeProperty
     void AdjustMapping(void);
+    
+    void SetupCPURayCastInteractive();
 
     //--------------------------------------------------------------------------
     // Rendering Logic
@@ -423,6 +434,12 @@ protected:
     // Description:
     // check abort event
     void CheckAbort(void);
+    
+    // Description:
+    // 1 mouse button is down at the moment
+    int ButtonDown;
+    
+    int CPURayCastingInteractionFlag;
 
 private:
     // Description:

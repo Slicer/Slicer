@@ -583,12 +583,10 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::RenderPolygons( vtkRenderer *ren,
         ptr += 6;
         }
       glEnd();
-      double progress=i/(double)this->NumberOfPolygons;
-      
-      int step = this->NumberOfPolygons/10 == 0 ? 1 : this->NumberOfPolygons/10;
-      
-      if (i % step == 0)
-          this->InvokeEvent(vtkCommand::VolumeMapperRenderProgressEvent, &progress);
+//      double progress=i/(double)this->NumberOfPolygons;
+//      int step = this->NumberOfPolygons/10 == 0 ? 1 : this->NumberOfPolygons/10;
+ //     if (i % step == 0)
+ //         this->InvokeEvent(vtkCommand::VolumeMapperRenderProgressEvent, &progress);
       }
     }
 }
