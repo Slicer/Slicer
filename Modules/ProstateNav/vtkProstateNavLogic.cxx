@@ -134,7 +134,7 @@ int vtkProstateNavLogic::Enter()
   this->GetMRMLScene()->RegisterNodeClass( linxnode );
   linxnode->Delete();
   
-  std::cerr << "checking IsA() .." << std::endl;
+//  std::cerr << "checking IsA() .." << std::endl;
   if (linxnode->IsA("vtkMRMLBrpRobotCommandNode"))
     {
     std::cerr << "OK" << std::endl;
@@ -207,9 +207,9 @@ int vtkProstateNavLogic::Enter()
     modelNode->SetAndObserveTransformNodeID(this->ZFrameTransformNodeID.c_str());
     }
 
-  std::cerr << "Robot = " <<  this->RobotCommandNodeID << std::endl;
-  std::cerr << "Target = " <<  this->RobotTargetNodeID  << std::endl;
-  std::cerr << "ZFrame = " <<  this->ZFrameModelNodeID  << std::endl;
+//  std::cerr << "Robot = " <<  this->RobotCommandNodeID << std::endl;
+//  std::cerr << "Target = " <<  this->RobotTargetNodeID  << std::endl;
+//  std::cerr << "ZFrame = " <<  this->ZFrameModelNodeID  << std::endl;
 
 
   return 1;
@@ -294,7 +294,7 @@ void vtkProstateNavLogic::TimerHandler()
       cnode->PushOutgoingCommand("GET_COORDINA");
       cnode->InvokeEvent(vtkCommand::ModifiedEvent);
       }
-    std::cerr << "void vtkProstateNavLogic::TimerHandler() is called" << std::endl;
+//    std::cerr << "void vtkProstateNavLogic::TimerHandler() is called" << std::endl;
     vtkKWTkUtilities::CreateTimerHandler(this->GetGUI()->GetApplication(), 200, this, "TimerHandler");
     }
 }

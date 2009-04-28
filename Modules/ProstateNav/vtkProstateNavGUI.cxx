@@ -203,7 +203,9 @@ vtkProstateNavGUI::vtkProstateNavGUI ( )
   this->FiducialListNode   = NULL;
 
   this->Entered = 0;
-
+  this->CoordinateConverter = NULL;
+  this->CommandConverter = NULL;
+ 
 }
 
 //---------------------------------------------------------------------------
@@ -356,6 +358,16 @@ vtkProstateNavGUI::~vtkProstateNavGUI ( )
     this->RobotStatusLabelDisp->SetParent(NULL);
     this->RobotStatusLabelDisp->Delete(); 
     this->RobotStatusLabelDisp = NULL;
+    }
+  if (this->CoordinateConverter)
+    { 
+    this->CoordinateConverter->Delete();
+    this->CoordinateConverter = NULL;
+    }
+  if (this->CommandConverter)
+    {
+    this->CommandConverter->Delete();
+    this->CommandConverter = NULL;
     }
 }
 
@@ -894,10 +906,16 @@ void vtkProstateNavGUI::Enter()
                                         ->GetModuleGUIByName("OpenIGTLink IF"));
     if (igtlGUI)
       {
-      vtkIGTLToMRMLCoordinate* coordinateConverter = vtkIGTLToMRMLCoordinate::New();
-      vtkIGTLToMRMLBrpRobotCommand* commandConverter = vtkIGTLToMRMLBrpRobotCommand::New();
-      igtlGUI->GetLogic()->RegisterMessageConverter(coordinateConverter);
-      igtlGUI->GetLogic()->RegisterMessageConverter(commandConverter);
+      if (!this->CoordinateConverter)
+        {
+        this->CoordinateConverter = vtkIGTLToMRMLCoordinate::New();
+        }
+      if (!this->CommandConverter)
+        {
+        this->CommandConverter = vtkIGTLToMRMLBrpRobotCommand::New();
+        }
+      igtlGUI->GetLogic()->RegisterMessageConverter(this->CoordinateConverter);
+      igtlGUI->GetLogic()->RegisterMessageConverter(this->CommandConverter);
       }
 
     this->GetLogic()->Enter();
@@ -1455,7 +1473,7 @@ void vtkProstateNavGUI::BuildGUIForVisualizationControlFrame ()
 int vtkProstateNavGUI::ChangeWorkPhase(int phase, int fChangeWizard)
 {
 
-  cerr << "ChangeWorkPhase: started" << endl;
+//  cerr << "ChangeWorkPhase: started" << endl;
     if (!this->Logic->SwitchWorkPhase(phase)) // Set next phase
     {
       cerr << "ChangeWorkPhase: Cannot make transition!" << endl;

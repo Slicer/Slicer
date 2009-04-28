@@ -46,7 +46,9 @@ class vtkKWWizardWidget;
 class vtkProstateNavStep;
 
 class vtkTransform;
-
+class vtkIGTLToMRMLCoordinate;
+class vtkIGTLToMRMLBrpRobotCommand;
+ 
 // Description:    
 // This class implements Slicer's Volumes GUI
 //
@@ -224,6 +226,10 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
   int FreezeOrientationUpdate;
 
   int RealtimeImageOrient;
+
+  vtkIGTLToMRMLCoordinate* CoordinateConverter;
+  vtkIGTLToMRMLBrpRobotCommand* CommandConverter;
+ 
 
   //----------------------------------------------------------------
   // Target Fiducials
