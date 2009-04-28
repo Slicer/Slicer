@@ -163,12 +163,15 @@ def EvaluateTensorX1(data, G, b, wmI=empty(0)):
    
    [ComputeAFunctional(A, b, G, k) for k in range(data.shape[3])]
 
+ 
    lT = zeros((data.shape[0], data.shape[1], data.shape[2], 3) , 'float')
    ET = zeros((data.shape[0], data.shape[1], data.shape[2], 3, 3), 'float' )
    xT = zeros((data.shape[0], data.shape[1], data.shape[2], 7), 'float')
    yT = zeros((data.shape[0], data.shape[1], data.shape[2], 9), 'float')
 
    indx = transpose(wmI.nonzero())
+
+
 
    time2 = time.time()
                

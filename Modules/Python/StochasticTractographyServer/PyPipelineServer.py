@@ -350,19 +350,20 @@ class PipelineHandler(asyncore.dispatcher):
 
           # correctly express gradients into RAS space
           # 04/10 - trafo not needed - bugfix in Slicer
-          mu2 = numpy.dot(numpy.sign(r2i[:3, :3]), mu[:3, :3]) 
-          
+          mu2 = numpy.dot(numpy.sign(r2i)[:3, :3], mu[:3, :3])
+
           G1 = numpy.dot(G, mu2[:3, :3].T)
           #G2 = numpy.dot(G, mu2[:3, :3].T)
 
           vts = vects.vectors
+
 
           logger.info("Tensor flag : %s" % str(tensEnabled))
 
           if smoothEnabled:
                     for k in range(shpD[3]):
                         timeSM0 = time.time()
-                        data[...,k] = sm.smooth(data[...,k], FWHM, numpy.array([ numpy.abs(i2r[0,0]), numpy.abs(i2r[1,1]), numpy.abs(i2r[2,2]) ],'float'))
+                        data[...,k] = sm.smooth(data[...,k], FWHM, numpy.array([ spa[0], spa[1], spa[2] ],'float'))
                         logger.info("Smoothing DWI volume %i in %s sec" % (k, str(time.time()-timeSM0)))
 
           if wmEnabled:
@@ -435,10 +436,10 @@ class PipelineHandler(asyncore.dispatcher):
 
                         logger.info("Data type : %s" % data.dtype)
                         if tensEnabled:
-                          paths00, paths01, paths02, paths03, paths04 = track.TrackFiberY40(data.flatten(), wm, shpD, b.T, G1.T, vts.T, IJKstartpoints[0].T, r2i, i2r,\
+                          paths00, paths01, paths02, paths03, paths04 = track.TrackFiberY40(data.flatten(), wm, shpD, b.T, G1.T, vts.T, IJKstartpoints[0].T, r2i, i2r, spa,\
                                   lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
                         else:
-                          paths00, paths01, paths02, paths03, paths04 = track.TrackFiberW40(data.flatten(), wm, shpD, b.T, G1.T, vts.T, IJKstartpoints[0].T, r2i, i2r,\
+                          paths00, paths01, paths02, paths03, paths04 = track.TrackFiberW40(data.flatten(), wm, shpD, b.T, G1.T, vts.T, IJKstartpoints[0].T, r2i, i2r, spa,\
                                   stepSize, maxLength, fa, spaceEnabled)
 
                         logger.info("Track fibers in %s sec" % str(time.time()-timeS2))
@@ -470,10 +471,10 @@ class PipelineHandler(asyncore.dispatcher):
 
                         logger.info("Data type : %s" % data.dtype)
                         if tensEnabled:
-                          paths10, paths11, paths12, paths13, paths14 = track.TrackFiberY40(data.flatten(), wm, shpD, b.T, G1.T, vts.T, IJKstartpoints2[0].T, r2i, i2r,\
+                          paths10, paths11, paths12, paths13, paths14 = track.TrackFiberY40(data.flatten(), wm, shpD, b.T, G1.T, vts.T, IJKstartpoints2[0].T, r2i, i2r, spa,\
                                   lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
                         else:
-                          paths10, paths11, paths12, paths13, paths14 = track.TrackFiberW40(data.flatten(), wm, shpD, b.T, G1.T, vts.T, IJKstartpoints2[0].T, r2i, i2r,\
+                          paths10, paths11, paths12, paths13, paths14 = track.TrackFiberW40(data.flatten(), wm, shpD, b.T, G1.T, vts.T, IJKstartpoints2[0].T, r2i, i2r, spa,\
                                   stepSize, maxLength, fa, spaceEnabled)
 
                         logger.info("Track fibers in %s sec" % str(time.time()-timeS3))
