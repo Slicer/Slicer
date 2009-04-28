@@ -42,7 +42,8 @@ vtkSlicerFiducialsGUI::vtkSlicerFiducialsGUI ( )
     this->RenumberDialogue = NULL;
     this->RenameButton = NULL;
     this->RenameDialogue = NULL;
-
+    this->ListNumberingSchemeMenu = NULL;
+    
     this->AddFiducialButton = NULL;
     this->RemoveFiducialButton = NULL;
     this->RemoveFiducialsInListButton = NULL;
@@ -158,6 +159,12 @@ vtkSlicerFiducialsGUI::~vtkSlicerFiducialsGUI ( )
     this->RenameDialogue->SetParent(NULL);
     this->RenameDialogue->Delete();
     this->RenameDialogue = NULL;
+    }
+  if (this->ListNumberingSchemeMenu)
+    {
+    this->ListNumberingSchemeMenu->SetParent(NULL);
+    this->ListNumberingSchemeMenu->Delete();
+    this->ListNumberingSchemeMenu = NULL;
     }
   if (this->AddFiducialButton )
     {
@@ -382,7 +389,8 @@ void vtkSlicerFiducialsGUI::RemoveGUIObservers ( )
 
     this->RenumberButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->RenameButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    
+    this->ListNumberingSchemeMenu->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+
     this->RemoveObservers (vtkSlicerFiducialsGUI::FiducialListIDModifiedEvent, (vtkCommand *)this->GUICallbackCommand);    
 
     if (this->MRMLScene)
@@ -429,6 +437,7 @@ void vtkSlicerFiducialsGUI::AddGUIObservers ( )
 
     this->RenumberButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->RenameButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ListNumberingSchemeMenu->GetWidget()->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand);
 
     this->AddObserver(vtkSlicerFiducialsGUI::FiducialListIDModifiedEvent, (vtkCommand *)this->GUICallbackCommand);
 
@@ -866,7 +875,14 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
         {
         this->ModifyListVisibility( 0 );
         }
-      }    
+      }
+    // list numberering scheme type
+    else if (menu == this->ListNumberingSchemeMenu->GetWidget()->GetMenu())
+      {
+      // save state for undo
+      this->MRMLScene->SaveStateForUndo(activeFiducialListNode);
+      activeFiducialListNode->SetNumberingSchemeFromString(this->ListNumberingSchemeMenu->GetWidget()->GetValue());
+      }
     }
 
   // list symbol type
@@ -1470,7 +1486,13 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
         }
       }
     this->UpdateMeasurementLabels();
-    
+
+    // update the numbering scheme
+    if (this->ListNumberingSchemeMenu->GetWidget()->GetValue() != activeFiducialListNode->GetNumberingSchemeAsString())
+      {
+      this->ListNumberingSchemeMenu->GetWidget()->SetValue(activeFiducialListNode->GetNumberingSchemeAsString());
+      }
+
     vtkDebugMacro("Now going to update GUI from the logic's active list");
     // update the visibility, color, scale buttons to match the displayed list's
     if (activeFiducialListNode == NULL)
@@ -2182,7 +2204,38 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     //this->RenameButton->SetBorderWidth(0);
     this->RenameButton->SetBalloonHelpString("Rename the fiducials in this list. Preserves any numbers at the end of the labels. Note: does not affect the auto name generation for the next added fiducial - change the list name from the node selector.");
 
-    app->Script("pack %s %s -padx 4 -pady 2 -side left", this->RenumberButton->GetWidgetName(), this->RenameButton->GetWidgetName());
+    app->Script("pack %s %s -padx 4 -pady 2 -side left",
+                 this->RenumberButton->GetWidgetName(), this->RenameButton->GetWidgetName());
+
+    //---
+    // numbering scheme menu frame
+    //---
+    vtkKWFrame *numberingSchemeFrame = vtkKWFrame::New();
+    numberingSchemeFrame->SetParent(fiducialFrame->GetFrame());
+    numberingSchemeFrame->Create();
+    app->Script ("pack %s -side top -anchor nw -fill x -pady 0",
+                 numberingSchemeFrame->GetWidgetName());
+    // a menu for the list numbering schemes
+    this->ListNumberingSchemeMenu = vtkKWMenuButtonWithLabel::New();
+    this->ListNumberingSchemeMenu->SetParent( numberingSchemeFrame );
+    this->ListNumberingSchemeMenu->Create();
+    this->ListNumberingSchemeMenu->SetBorderWidth(0);
+    this->ListNumberingSchemeMenu->SetLabelWidth ( 18 );
+    this->ListNumberingSchemeMenu->GetLabel()->SetAnchorToEast();    
+    this->ListNumberingSchemeMenu->GetWidget()->SetWidth ( 13 );
+    this->ListNumberingSchemeMenu->SetBalloonHelpString("Set the numbering scheme used to assign integers to the next added fiducial in the list.. UseID uses the point ID, UseIndex uses the list index of the point, UsePrevious increments the number at the end of the previous point. ");
+    this->ListNumberingSchemeMenu->SetLabelText("Numbering Scheme: ");
+    // add the valid schemes
+    vtkMRMLFiducialListNode * fidlist = vtkMRMLFiducialListNode::New();
+    for (int s = vtkMRMLFiducialListNode::SchemeMin;
+         s <= vtkMRMLFiducialListNode::SchemeMax;
+         s++)
+      {
+      this->ListNumberingSchemeMenu->GetWidget()->GetMenu()->AddRadioButton(fidlist->GetNumberingSchemeAsString(s));
+      }
+    this->ListNumberingSchemeMenu->GetWidget()->SetValue(fidlist->GetNumberingSchemeAsString(vtkMRMLFiducialListNode::UseID));
+    app->Script("pack %s -padx 2 -pady 2 -side left",
+                this->ListNumberingSchemeMenu->GetWidgetName());
     
     // ---
     // FIDUCIAL DISPLAY FRAME            
@@ -2231,7 +2284,6 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->ListSymbolTypeMenu->SetBalloonHelpString("UNDER CONSTRUCTION: Change the type of glyph used to mark the fiducial list points");
     this->ListSymbolTypeMenu->SetLabelText("Glyph Type:");
     // add the valid glyph types
-    vtkMRMLFiducialListNode * fidlist = vtkMRMLFiducialListNode::New();
     int glyphIndex = 0;
     for (int g = vtkMRMLFiducialListNode::GlyphMin;
          g <= vtkMRMLFiducialListNode::GlyphMax;
@@ -2242,7 +2294,6 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
       glyphIndex++;
       }
     this->ListSymbolTypeMenu->GetWidget()->SetValue(fidlist->GetGlyphTypeAsString(vtkMRMLFiducialListNode::Diamond3D));
-    fidlist->Delete();
     
     // visibility
     this->VisibilityToggle = vtkKWPushButtonWithLabel::New();
@@ -2363,6 +2414,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     //---
     //--- and clean up temporary stuff
     //---
+    fidlist->Delete();
     lA->Delete();
     fA->Delete();
     fB->Delete();
@@ -2375,6 +2427,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     f0->Delete();
     utilitiesFrame->Delete();
     utilitiesButtonFrame->Delete();
+    numberingSchemeFrame->Delete();
     listFrame->Delete();
     fiducialDisplayFrame->Delete();
     fiducialFrame->Delete();

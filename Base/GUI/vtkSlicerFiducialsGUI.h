@@ -69,6 +69,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkGetObjectMacro ( ListSelectedColorButton, vtkKWChangeColorButton);
     vtkGetObjectMacro ( ListSymbolScale, vtkKWScaleWithEntry);
     vtkGetObjectMacro ( ListSymbolTypeMenu, vtkKWMenuButtonWithLabel);
+    vtkGetObjectMacro ( ListNumberingSchemeMenu, vtkKWMenuButtonWithLabel);
     vtkGetObjectMacro ( ListTextScale, vtkKWScaleWithEntry);
     vtkGetObjectMacro ( ListOpacity, vtkKWScaleWithEntry);
     vtkGetObjectMacro ( ListAmbient, vtkKWScaleWithEntry);
@@ -299,6 +300,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // Description:
     // symbol scale
     vtkKWScaleWithEntry *ListSymbolScale;
+
     // Description:
     // symbol type
     vtkKWMenuButtonWithLabel *ListSymbolTypeMenu;
@@ -349,6 +351,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // menu button whose menu exposes options for
     // setting visibility of all fiducials in a fiducial list.
     vtkKWMenuButton *ListVisibilityMenuButton;
+
+    // Description:
+    // choose the numbering scheme for the next fiducial added in the list
+    vtkKWMenuButtonWithLabel *ListNumberingSchemeMenu;
 
     // Description:
     // contributing logo widgets
