@@ -241,7 +241,8 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->UseWelcomeModuleAtStartup = 1;
 
     // configure the application before creating
-    this->SetName ( "3D Slicer Version 3.3 Alpha" );
+    // TODO: set name automatically from VERSION_PATCH or info in Version.txt
+    this->SetName ( "3D Slicer Version 3.5 Alpha" );
 
 #ifdef _WIN32
     vtkKWWin32RegistryHelper *regHelper = 
