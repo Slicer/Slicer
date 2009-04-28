@@ -301,12 +301,16 @@ void vtkProstateNavScanControlStep::ProcessGUIEvents(vtkObject *caller,
 void vtkProstateNavScanControlStep::ProcessMRMLEvents(vtkObject *caller,
                                          unsigned long event, void *callData)
 {
+  if (!this->GetGUI())
+    {
+    return;
+    }
+
   vtkMRMLSelectionNode *selnode;
   if (this->GetGUI()->GetApplicationLogic())
     {
     selnode = this->GetGUI()->GetApplicationLogic()->GetSelectionNode();
     }
-
 
   // -----------------------------------------------------------------
   // Update MRML Observer
@@ -367,7 +371,7 @@ void vtkProstateNavScanControlStep::ProcessMRMLEvents(vtkObject *caller,
     {
     SetGUIFromList(this->GetGUI()->GetFiducialListNode());
     }
-  
+ 
   // -----------------------------------------------------------------
   // Display Modified Event
 
@@ -383,7 +387,7 @@ void vtkProstateNavScanControlStep::ProcessMRMLEvents(vtkObject *caller,
 void vtkProstateNavScanControlStep::UpdateMRMLObserver(vtkMRMLSelectionNode* selnode)
 {
 
-  std::cerr << "vtkProstateNavScanControlStep::UpdateMRMLObserver()" << std::endl;
+//  std::cerr << "vtkProstateNavScanControlStep::UpdateMRMLObserver()" << std::endl;
 
 //  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
 //  vtkSlicerFiducialsGUI *fidGUI
@@ -394,7 +398,7 @@ void vtkProstateNavScanControlStep::UpdateMRMLObserver(vtkMRMLSelectionNode* sel
                                           ->GetNodeByID(this->GetGUI()->GetFiducialListNodeID()));
   if (selnode != NULL)
     {
-    std::cerr << "selnode != 0;" << std::endl;
+//    std::cerr << "selnode != 0;" << std::endl;
     // is the active fid list id out of synch with our selection?
     vtkIntArray *events = vtkIntArray::New();
     events->InsertNextValue(vtkCommand::ModifiedEvent);
@@ -410,7 +414,9 @@ void vtkProstateNavScanControlStep::UpdateMRMLObserver(vtkMRMLSelectionNode* sel
       this->GetGUI()->SetFiducialListNode(fidlist);
       this->InvokeEvent (vtkCommand::ModifiedEvent);
       } 
+    events->Delete();
     }
+
 }
 
 

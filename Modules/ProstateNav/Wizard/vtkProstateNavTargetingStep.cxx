@@ -372,7 +372,12 @@ void vtkProstateNavTargetingStep::ProcessGUIEvents(vtkObject *caller,
 void vtkProstateNavTargetingStep::ProcessMRMLEvents(vtkObject *caller,
                                          unsigned long event, void *callData)
 {
-  std::cerr << "vtkProstateNavTargetingStep::ProcessMRMLEvents() is called. " << std::cerr;
+  //std::cerr << "vtkProstateNavTargetingStep::ProcessMRMLEvents() is called. " << std::cerr;
+
+  if (!this->GetGUI())
+    {
+    return;
+    }
 
   vtkMRMLSelectionNode *selnode;
   if (this->GetGUI()->GetApplicationLogic())
@@ -441,7 +446,7 @@ void vtkProstateNavTargetingStep::ProcessMRMLEvents(vtkObject *caller,
 void vtkProstateNavTargetingStep::UpdateMRMLObserver(vtkMRMLSelectionNode* selnode)
 {
 
-  std::cerr << "vtkProstateNavTargetingStep::UpdateMRMLObserver()" << std::endl;
+//  std::cerr << "vtkProstateNavTargetingStep::UpdateMRMLObserver()" << std::endl;
 
   //vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   //vtkSlicerFiducialsGUI *fidGUI
@@ -452,7 +457,7 @@ void vtkProstateNavTargetingStep::UpdateMRMLObserver(vtkMRMLSelectionNode* selno
                                           ->GetNodeByID(this->GetGUI()->GetFiducialListNodeID()));
   if (selnode != NULL)
     {
-    std::cerr << "selnode != 0;" << std::endl;
+    //std::cerr << "selnode != 0;" << std::endl;
     // is the active fid list id out of synch with our selection?
     vtkIntArray *events = vtkIntArray::New();
     events->InsertNextValue(vtkCommand::ModifiedEvent);
@@ -468,6 +473,7 @@ void vtkProstateNavTargetingStep::UpdateMRMLObserver(vtkMRMLSelectionNode* selno
       this->GetGUI()->SetFiducialListNode(fidlist);
       this->InvokeEvent (vtkCommand::ModifiedEvent);
       } 
+    events->Delete();
     }
 }
 
