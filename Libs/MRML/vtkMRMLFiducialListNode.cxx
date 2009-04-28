@@ -470,7 +470,7 @@ void vtkMRMLFiducialListNode::SetGlyphTypeFromString(const char *glyphString)
     {
     this->SetGlyphType(this->Cross2D);
     }
-else if (!strcmp(glyphString, "ThickCross2D"))
+  else if (!strcmp(glyphString, "ThickCross2D"))
     {
     this->SetGlyphType(this->ThickCross2D);
     }
@@ -527,37 +527,85 @@ else if (!strcmp(glyphString, "ThickCross2D"))
 }
 
 //----------------------------------------------------------------------------
+const char* vtkMRMLFiducialListNode::GetNumberingSchemeAsString()
+{
+  return this->GetNumberingSchemeAsString(this->NumberingScheme);
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLFiducialListNode::GetNumberingSchemeAsString(int scheme)
+{
+  if (scheme == this->UseID)
+    {
+    return "UseID";
+    }
+  if (scheme == this->UseIndex)
+    {
+    return "UseIndex";
+    }
+  if (scheme == this->UsePrevious)
+    {
+    return "UsePrevious";
+    }
+  return "UNKNOWN";
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLFiducialListNode::SetNumberingSchemeFromString(const char *schemeString)
+{
+  int changed = 1;
+  if (!strcmp(schemeString, "UseID"))
+    {
+    this->SetNumberingScheme(this->UseID);
+    }
+  else if (!strcmp(schemeString, "UseIndex"))
+    {
+    this->SetNumberingScheme(this->UseIndex);
+    }
+  else if (!strcmp(schemeString, "UsePrevious"))
+    {
+    this->SetNumberingScheme(this->UsePrevious);
+    }
+  else
+    {
+    vtkErrorMacro("Invalid numbering scheme string: " << schemeString);
+    changed = 0;
+    }
+  if (changed)
+    {
+    this->ModifiedSinceReadOn();
+    }  
+}
+  
+//----------------------------------------------------------------------------
 void vtkMRMLFiducialListNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   int idx;
   
   Superclass::PrintSelf(os,indent);
 
-  os << indent << "Name: " <<
-      (this->Name ? this->Name : "(none)") << "\n";
-  
   os << indent << "Symbol scale: (";
-  os << indent << this->SymbolScale << ")\n";
+  os << this->SymbolScale << ")\n";
 
   os << indent << "Symbol type: ";
-  os << indent << this->GetGlyphTypeAsString() << "\n";
+  os << this->GetGlyphTypeAsString() << " (" << this->GlyphType << ")\n";
     
   os << indent << "Text scale: (";
-  os << indent << this->TextScale << ")\n";
+  os << this->TextScale << ")\n";
 
   os << indent << "Visibility: (";
-  os << indent << this->Visibility << ")\n";
+  os << this->Visibility << ")\n";
 
   os << indent << "Color: (";
   for (idx = 0; idx < 3; ++idx)
     {
-        os << indent << this->Color[idx];
+        os << this->Color[idx];
         if (idx < 2) { os << ", "; } else { os << ")\n"; }
     }
   os << indent << "Selected color: (";
   for (idx = 0; idx < 3; ++idx)
     {
-        os << indent << this->SelectedColor[idx];
+        os << this->SelectedColor[idx];
         if (idx < 2) { os << ", "; } else { os << ")\n"; }
     }
   
@@ -567,7 +615,7 @@ void vtkMRMLFiducialListNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Specular: (" << this->Specular << ")\n";
   os << indent << "Power:    (" << this->Power << ")\n";
   os << indent << "Locked:    (" << this->Locked << ")\n";
-  os << indent << "NumberingScheme: (" << this->NumberingScheme << ")\n";
+  os << indent << "Numbering scheme: " << this->GetNumberingSchemeAsString() << " (" << this->NumberingScheme << ")\n";
  
   if (this->GetNumberOfFiducials() > 0)
   {

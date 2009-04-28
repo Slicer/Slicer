@@ -262,7 +262,7 @@ public:
   int GlyphTypeIs3D() { return this->GlyphTypeIs3D(this->GlyphType); };
 
   // Description:
-  // Return a string representing the glyph type
+  // Return a string representing the glyph type, set it from a string
   const char* GetGlyphTypeAsString();
   const char* GetGlyphTypeAsString(int g);
   void SetGlyphTypeFromString(const char *glyphString);
@@ -303,9 +303,11 @@ public:
   // flags to determine how the next fiducial added to the list is labelled
   enum NumberingSchemes
   {
-      UseID = 0,
+      SchemeMin = 0,
+      UseID = SchemeMin,
       UseIndex,
       UsePrevious,
+      SchemeMax = UsePrevious,
   };
   //ETX
 
@@ -313,7 +315,13 @@ public:
   // Flag determining how to number the next added fiducial
   vtkSetMacro(NumberingScheme, int);
   vtkGetMacro(NumberingScheme, int);
-  
+
+  // Description:
+  // Return a string representing the numbering scheme, set it from a string
+  const char* GetNumberingSchemeAsString();
+  const char* GetNumberingSchemeAsString(int g);
+  void SetNumberingSchemeFromString(const char *schemeString);
+
   // Description:
   // Generate the label text for a fiducial from it's id. If NumberingScheme
   // is UseID, uses the ID (default). If NumberingScheme is UseIndex, strips the ID of any
