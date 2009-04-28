@@ -19,15 +19,6 @@ if(WIN32)
   include_directories(${PYTHON_INCLUDE_PATH}/../PC)
 endif(WIN32)
 
-if(Slicer3_USE_NUMPY)
-  include_directories(
-    ${PYTHON_NUMPY}
-    ${PYTHON_NUMPY}/../
-    ${PYTHON_NUMPY}/../../../numarray/numpy
-    ${PYTHON_NUMPY}/include/numpy
-    )
-endif(Slicer3_USE_NUMPY)
-
 # --------------------------------------------------------------------------
 # Numpy?
 
@@ -54,6 +45,16 @@ if(Slicer3_USE_NUMPY)
     NO_SYSTEM_ENVIRONMENT_PATH
     )
 endif(Slicer3_USE_NUMPY)
+
+if(Slicer3_USE_NUMPY)
+  include_directories(
+    ${PYTHON_NUMPY}
+    ${PYTHON_NUMPY}/../
+    ${PYTHON_NUMPY}/../../../numarray/numpy
+    ${PYTHON_NUMPY}/include/numpy
+    )
+endif(Slicer3_USE_NUMPY)
+
 
 # --------------------------------------------------------------------------
 # Sources
