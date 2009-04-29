@@ -122,6 +122,7 @@ itcl::body RemoveIslandsEffect::apply {} {
   $preThresh ReplaceOutOn
   $preThresh ThresholdBetween $label $label
   $preThresh SetInput [$this getInputLabel]
+  $preThresh SetOutputScalarTypeToUnsignedLong
 
   # now identify the islands in the inverted volume
   # and find the pixel that corresponds to the background
@@ -138,6 +139,7 @@ itcl::body RemoveIslandsEffect::apply {} {
   $postThresh SetOutValue $label
   $postThresh ReplaceOutOn
   $postThresh ThresholdBetween $bgLabel $bgLabel
+  $postThresh SetOutputScalarTypeToShort
   $postThresh SetInput [$islands GetOutput]
   $postThresh SetOutput [$this getOutputLabel]
   $this setProgressFilter $postThresh "Applying to Label Map..."

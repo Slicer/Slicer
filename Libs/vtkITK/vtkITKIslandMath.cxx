@@ -128,7 +128,6 @@ void vtkITKIslandMathExecute(vtkITKIslandMath *self, vtkImageData* input,
 
 
 
-
 //
 // 
 //
@@ -165,6 +164,8 @@ void vtkITKIslandMath::SimpleExecute(vtkImageData *input, vtkImageData *output)
     void* inPtr = input->GetScalarPointer();
     void* outPtr = output->GetScalarPointer();
 
+#if (ITK_VERSION_MAJOR > 3) || \
+      ((ITK_VERSION_MAJOR == 3 && ITK_VERSION_MINOR >= 14))
     switch (inScalars->GetDataType())
       {
       vtkTemplateMacroCase(VTK_DOUBLE, double, CALL);                           \
@@ -177,11 +178,25 @@ void vtkITKIslandMath::SimpleExecute(vtkImageData *input, vtkImageData *output)
       vtkTemplateMacroCase(VTK_UNSIGNED_SHORT, unsigned short, CALL);           \
       vtkTemplateMacroCase(VTK_CHAR, char, CALL);                               \
       vtkTemplateMacroCase(VTK_SIGNED_CHAR, signed char, CALL);                 \
-      vtkTemplateMacroCase(VTK_UNSIGNED_CHAR, unsigned char, CALL);
+      vtkTemplateMacroCase(VTK_UNSIGNED_CHAR, unsigned char, CALL);             \
+      default:
+        {
+        vtkErrorMacro(<< "Incompatible data type for this version of ITK.");
+        }
       } //switch
+#else
+    switch (inScalars->GetDataType())
+      {
+      vtkTemplateMacroCase(VTK_UNSIGNED_LONG, unsigned long, CALL);             \
+      default:
+        {
+        vtkErrorMacro(<< "Incompatible data type for this version of ITK.");
+        }
+      } //switch
+#endif
     }
   else 
     {
-    vtkErrorMacro(<< "Can only calculate on single component scalar.");
+    vtkErrorMacro(<< "Only single component images supported.");
     }
 }

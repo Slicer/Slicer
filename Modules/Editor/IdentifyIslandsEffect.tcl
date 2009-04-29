@@ -70,18 +70,30 @@ itcl::body IdentifyIslandsEffect::apply {} {
     return
   }
 
+  set castIn [vtkImageCast New]
+  $castIn SetOutputScalarTypeToUnsignedLong
+  $castIn SetInput [$this getInputLabel]
+
   set islands [vtkITKIslandMath New]
-  $islands SetInput [$this getInputLabel]
-  $islands SetOutput [$this getOutputLabel]
+  $islands SetInput [$castIn GetOutput]
+
+  set castOut [vtkImageCast New]
+  $castOut SetOutputScalarTypeToShort
+  $castOut SetInput [$islands GetOutput]
+  $castOut SetOutput [$this getOutputLabel]
+
   $islands SetMinimumSize [[$o(minSize) GetWidget] GetValueAsInt]
   $islands SetFullyConnected [$o(fullyConnected) GetSelectedState]
   $this setProgressFilter $islands "Calculating Islands..."
-  $islands Update
+  [$this getOutputLabel] Update
   set islandCount [$islands GetNumberOfIslands]
   set islandOrigCount [$islands GetOriginalNumberOfIslands]
   set ignoredIslands [expr $islandOrigCount - $islandCount]
   $this statusText "[$islands GetNumberOfIslands] islands created ($ignoredIslands ignored)"
+
+  $castIn Delete
   $islands Delete
+  $castOut Delete
   $this postApply
 
 }

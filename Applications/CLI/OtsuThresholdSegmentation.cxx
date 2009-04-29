@@ -49,7 +49,7 @@ int main( int argc, char * argv[] )
   PARSE_ARGS;
 
 // Image Types
-  typedef  short  InputPixelType;
+  typedef  unsigned long  InputPixelType;
   typedef  unsigned long  InternalPixelType;
   typedef  short  OutputPixelType;
 
