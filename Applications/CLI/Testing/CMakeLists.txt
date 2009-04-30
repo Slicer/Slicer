@@ -826,10 +826,15 @@ add_test(RigidRegistrationTest01 ${Slicer3_EXE} --launch RigidRegistrationTest
 # This test reproduces exactly the registration step on
 # the meningioma growth detection (tutorial) data for ChangeTracker
 # Setting parameters explicitly, because default values are not passed to CLI
+# In testing mode, this test is supposed to fail if the error at the image
+# corner (as compared to the transform passed with --initialtransform) exceeds
+# 0.1
 add_test(RigidRegistrationTest02 ${Slicer3_EXE} --launch RigidRegistrationTest
 #  --compare ${BASELINE}/RigidRegistrationTest02.nrrd
 #   ${TEMP}/RigidRegistrationTest02.nrrd
   RigidRegistrationTest
+  --testingmode
+  --initialtransform ${TEST_DATA}/MRMeningioma01.tfm
   --resampledmovingfilename  ${TEMP}/RigidRegistrationTest02.nrrd
   --outputtransform ${TEMP}/RigidRegistrationTest02Transform.txt
   --iterations 100,100,50,20
