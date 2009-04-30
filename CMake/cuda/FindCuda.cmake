@@ -119,7 +119,7 @@ IF (NOT CUDA_INSTALL_PREFIX)
     STRING(REGEX REPLACE "[/\\\\]?bin[/\\\\]?nvcc.exe[/\\\\]?$" "" cuda_path ${cuda_path})
   ELSE(cuda_path)
     SET(cuda_path "$ENV{CUDA_BIN_PATH}")
-    STRING(REGEX REPLACE "[/\\\\]?bin[/\\\\]?$" "" cuda_path ${cuda_path})
+    #STRING(REGEX REPLACE "[/\\\\]?bin[/\\\\]?$" "" cuda_path ${cuda_path})
   ENDIF(cuda_path)
 
   SET(CUDA_INSTALL_PREFIX ${cuda_path} CACHE PATH "Prefix used during install")
