@@ -109,6 +109,7 @@ IF (NOT CUDA_INSTALL_PREFIX)
     nvcc
     PATHS $ENV{CUDA_BIN_PATH}
           /usr/local/bin
+          /usr/local/cuda/bin
     )
 
   SET(cuda_path "${CUDA_NVCC}")
@@ -135,6 +136,7 @@ IF (NOT CUDA_NVCC)
     nvcc
     PATHS ${CUDA_INSTALL_PREFIX}/bin $ENV{CUDA_BIN_PATH}
           /usr/local/bin
+          /usr/local/cuda/bin
     )
 
   IF(NOT CUDA_NVCC)

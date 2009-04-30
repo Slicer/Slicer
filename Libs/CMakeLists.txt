@@ -29,7 +29,13 @@ set(dirs ${dirs}
   #SIGN
   )
 
-OPTION(CUDA_SUPPORT_ENABLED "If Cuda Support should be integrated into Slicer. You have to configure once again to see the other availiable options" OFF)
+INCLUDE(${CMAKE_SOURCE_DIR}/CMake/cuda/FindCuda.cmake)
+
+IF(FOUND_CUDA AND FOUND_CUDART AND FOUND_CUT)
+   OPTION(CUDA_SUPPORT_ENABLED "If Cuda Support should be integrated into Slicer. You have to configure once again to see the other availiable options" ON)
+ELSE(FOUND_CUDA AND FOUND_CUDART AND FOUND_CUT)
+   OPTION(CUDA_SUPPORT_ENABLED "If Cuda Support should be integrated into Slicer. You have to configure once again to see the other availiable options" OFF)
+ENDIF(FOUND_CUDA AND FOUND_CUDART AND FOUND_CUT)
 
 IF(CUDA_SUPPORT_ENABLED)
   set (dirs ${dirs} CudaSupport)
