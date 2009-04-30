@@ -39,6 +39,8 @@
 
 #include "itkTimeProbesCollectorBase.h"
 
+#define TESTMODE_ERROR_TOLERANCE 0.1
+
 // Use an anonymous namespace to keep class types and function names
 // from colliding when module is used as shared object module.  Every
 // thing should be in an anonymous namespace except for the module
@@ -213,6 +215,92 @@ template<class T1, class T2> int DoIt2( int argc, char * argv[], const T1&, cons
     return EXIT_FAILURE;
     }
 
+  // This was added by Fedorov:
+  // In testing mode, the initial transform is treated as "ground truth"
+  // transform. The fixed image is resampled and saved into moving image (to
+  // minimize the changes to the code). The resulting transform is compared to
+  // the "ground truth" transform after registration.
+  // NOTE: Testing mode can only be invoked from Command line interface: the
+  // "TestingMode" parameter is "hidden" in GUI.
+  typename TransformType::Pointer groundTruthTransform = NULL;
+  typename MovingImageType::Pointer movingImageTestingMode = NULL;
+  if(TestingMode)
+    {
+    typedef itk::TransformFileReader TransformReaderType;
+    TransformReaderType::Pointer groundTruthTransformReader;
+    groundTruthTransform = TransformType::New();
+
+    if (InitialTransform != "")
+      {
+      groundTruthTransformReader = TransformReaderType::New();
+      groundTruthTransformReader->SetFileName( InitialTransform );
+      try
+        {
+        groundTruthTransformReader->Update();
+        }
+      catch (itk::ExceptionObject &err)
+        {
+        std::cerr << err << std::endl;
+        return EXIT_FAILURE ;
+        }
+      if(groundTruthTransformReader->GetTransformList()->size() == 0)
+        {
+        std::cerr << "Non-empty transform should be specified in Testing Mode" << std::endl;
+        return EXIT_FAILURE;
+        }
+      }
+    else
+      {
+      std::cerr << "Transform must be specified in TestingMode!" << std::endl;
+      return EXIT_FAILURE;
+      }
+    
+    TransformReaderType::TransformType::Pointer initial
+      = *(groundTruthTransformReader->GetTransformList()->begin());
+
+    // most likely, the transform coming in is a subclass of
+    // MatrixOffsetTransformBase 
+    typedef itk::MatrixOffsetTransformBase<double,3,3> DoubleMatrixOffsetType;
+    typedef itk::MatrixOffsetTransformBase<float,3,3> FloatMatrixOffsetType;
+
+    DoubleMatrixOffsetType::Pointer da
+      = dynamic_cast<DoubleMatrixOffsetType*>(initial.GetPointer());
+    FloatMatrixOffsetType::Pointer fa
+      = dynamic_cast<FloatMatrixOffsetType*>(initial.GetPointer());
+
+    if (da)
+      {
+      vnl_svd<double> svd(da->GetMatrix().GetVnlMatrix());
+
+      groundTruthTransform->SetMatrix( svd.U() * vnl_transpose(svd.V()) );
+      groundTruthTransform->SetOffset( da->GetOffset() );
+      }
+    else if (fa)
+      {
+      vnl_matrix<double> t(3,3);
+      for (int i=0; i < 3; ++i)
+        {
+        for (int j=0; j <3; ++j)
+          {
+          t.put(i, j, fa->GetMatrix().GetVnlMatrix().get(i, j));
+          }
+        }
+
+      vnl_svd<double> svd( t );
+
+      groundTruthTransform->SetMatrix( svd.U() * vnl_transpose(svd.V()) );
+      groundTruthTransform->SetOffset( fa->GetOffset() );
+      }
+    else
+      {
+      std::cout << "Initial transform is an unsupported type.\n";
+      return EXIT_FAILURE;
+      }
+
+    std::cout << "Testing mode ground truth transform: "; 
+    groundTruthTransform->Print ( std::cout );
+    }
+
   //user decide if the input images need to be smoothed
 
   // Reorient to axials to avoid issues with registration metrics not
@@ -278,7 +366,7 @@ template<class T1, class T2> int DoIt2( int argc, char * argv[], const T1&, cons
   typedef itk::TransformFileReader TransformReaderType;
   TransformReaderType::Pointer initialTransform;
 
-  if (InitialTransform != "")
+  if (InitialTransform != "" && !TestingMode)
     {
     initialTransform= TransformReaderType::New();
     initialTransform->SetFileName( InitialTransform );
@@ -355,51 +443,54 @@ template<class T1, class T2> int DoIt2( int argc, char * argv[], const T1&, cons
   // (Should this be instead of the centering transform or composed
   // with the centering transform?
   //
-  if (InitialTransform != ""
-      && initialTransform->GetTransformList()->size() != 0)
+  if(!TestingMode)
     {
-    TransformReaderType::TransformType::Pointer initial
-      = *(initialTransform->GetTransformList()->begin());
-    
-    // most likely, the transform coming in is a subclass of
-    // MatrixOffsetTransformBase 
-    typedef itk::MatrixOffsetTransformBase<double,3,3> DoubleMatrixOffsetType;
-    typedef itk::MatrixOffsetTransformBase<float,3,3> FloatMatrixOffsetType;
-    
-    DoubleMatrixOffsetType::Pointer da
-      = dynamic_cast<DoubleMatrixOffsetType*>(initial.GetPointer());
-    FloatMatrixOffsetType::Pointer fa
-      = dynamic_cast<FloatMatrixOffsetType*>(initial.GetPointer());
-
-    if (da)
+    if (InitialTransform != ""
+      && initialTransform->GetTransformList()->size() != 0)
       {
-      vnl_svd<double> svd(da->GetMatrix().GetVnlMatrix());
+      TransformReaderType::TransformType::Pointer initial
+        = *(initialTransform->GetTransformList()->begin());
 
-      transform->SetMatrix( svd.U() * vnl_transpose(svd.V()) );
-      transform->SetOffset( da->GetOffset() );
-      }
-    else if (fa)
-      {
-      vnl_matrix<double> t(3,3);
-      for (int i=0; i < 3; ++i)
+      // most likely, the transform coming in is a subclass of
+      // MatrixOffsetTransformBase 
+      typedef itk::MatrixOffsetTransformBase<double,3,3> DoubleMatrixOffsetType;
+      typedef itk::MatrixOffsetTransformBase<float,3,3> FloatMatrixOffsetType;
+
+      DoubleMatrixOffsetType::Pointer da
+        = dynamic_cast<DoubleMatrixOffsetType*>(initial.GetPointer());
+      FloatMatrixOffsetType::Pointer fa
+        = dynamic_cast<FloatMatrixOffsetType*>(initial.GetPointer());
+
+      if (da)
         {
-        for (int j=0; j <3; ++j)
+        vnl_svd<double> svd(da->GetMatrix().GetVnlMatrix());
+
+        transform->SetMatrix( svd.U() * vnl_transpose(svd.V()) );
+        transform->SetOffset( da->GetOffset() );
+        }
+      else if (fa)
+        {
+        vnl_matrix<double> t(3,3);
+        for (int i=0; i < 3; ++i)
           {
-          t.put(i, j, fa->GetMatrix().GetVnlMatrix().get(i, j));
+          for (int j=0; j <3; ++j)
+            {
+            t.put(i, j, fa->GetMatrix().GetVnlMatrix().get(i, j));
+            }
           }
+
+        vnl_svd<double> svd( t );
+
+        transform->SetMatrix( svd.U() * vnl_transpose(svd.V()) );
+        transform->SetOffset( fa->GetOffset() );
+        }
+      else
+        {
+        std::cout << "Initial transform is an unsupported type.\n";
         }
 
-      vnl_svd<double> svd( t );
-      
-      transform->SetMatrix( svd.U() * vnl_transpose(svd.V()) );
-      transform->SetOffset( fa->GetOffset() );
+      std::cout << "Initial transform: "; transform->Print ( std::cout );
       }
-    else
-      {
-      std::cout << "Initial transform is an unsupported type.\n";
-      }
-
-    std::cout << "Initial transform: "; transform->Print ( std::cout );
     }
 
 
@@ -468,6 +559,41 @@ template<class T1, class T2> int DoIt2( int argc, char * argv[], const T1&, cons
       {
       std::cerr << err << std::endl;
       return EXIT_FAILURE ;
+      }
+    }
+
+  // In testing mode, take the image corner, and compute the error as the
+  // difference between the locations of points after transforming with the
+  // recovered transform and the ground truth transform.
+  if(TestingMode)
+    {
+    // estimate the error of registration at index (0,0,0)
+    ContinuousIndexType testIndex;
+    typename TransformType::InputPointType testPoint;
+    typename TransformType::OutputVectorType errorVector;
+
+    testIndex[0] = 0.;
+    testIndex[1] = 0.;
+    testIndex[2] = 0.;
+    
+    orientFixed->GetOutput()->TransformContinuousIndexToPhysicalPoint(testIndex, testPoint);
+    typename TransformType::OutputPointType groundTruthPoint, recoveredPoint;
+    groundTruthPoint = groundTruthTransform->TransformPoint(testPoint);
+    recoveredPoint = transform->TransformPoint(testPoint);
+    errorVector[0] = groundTruthPoint[0]-recoveredPoint[0];
+    errorVector[1] = groundTruthPoint[1]-recoveredPoint[1];
+    errorVector[2] = groundTruthPoint[2]-recoveredPoint[2];
+    std::cout << "Magnitude of error vector: " << errorVector.GetNorm() << std::endl;
+
+    if(errorVector.GetNorm() > TESTMODE_ERROR_TOLERANCE)
+      {
+      std::cerr << "Registration error in testing mode exceeds threshold " << 
+        TESTMODE_ERROR_TOLERANCE << std::endl;
+
+      std::cerr << "Recovered transform: " << std::endl;
+      transform->Print(std::cerr);
+
+      return EXIT_FAILURE;
       }
     }
 

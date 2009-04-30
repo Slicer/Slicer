@@ -45,6 +45,15 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
   <parameters>
     <label>Registration Parameters</label>
     <description>Parameters used for registration</description>
+
+    <boolean hidden="true">
+      <name>TestingMode</name>
+      <longflag>testingmode</longflag>
+      <description>Enable testing mode. Input transform will be used to construct floating image. The floating image will be ignored if passed.</description>
+      <label>Testing mode</label>
+      <default>false</default>
+    </boolean>
+
     <integer>
       <name>HistogramBins</name>
       <flag>b</flag>
@@ -144,6 +153,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <channel>output</channel>
       <description>Resampled moving image to the fixed image coordinate frame. Optional (specify an output transform or an output volume or both).</description>
     </image>
+    
   </parameters>
 
 </executable>
