@@ -2,7 +2,7 @@ PROJECT(CudaSupport)
 
 IF(CUDA_SUPPORT_ENABLED)
 
-INCLUDE(${CMAKE_SOURCE_DIR}/CMake/cuda/FindCuda.cmake)
+#INCLUDE(${CMAKE_SOURCE_DIR}/CMake/cuda/FindCuda.cmake)
 
 # --------#
 # Sources #
