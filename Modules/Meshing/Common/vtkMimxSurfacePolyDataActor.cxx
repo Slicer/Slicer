@@ -166,7 +166,7 @@ void vtkMimxSurfacePolyDataActor::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------------
 
 // added to support slicer integration
-void vtkMimxSurfacePolyDataActor::SaveVisibility(void) {this->SavedVisibility = this->Actor->GetVisibility();}
+void vtkMimxSurfacePolyDataActor::SaveVisibility(void) {this->SavedVisibility = (this->Actor->GetVisibility())?true:false;}
 void vtkMimxSurfacePolyDataActor::RestoreVisibility(void) {this->Actor->SetVisibility(this->SavedVisibility);}
 void vtkMimxSurfacePolyDataActor::Hide() {this->Actor->SetVisibility(0);}
 void vtkMimxSurfacePolyDataActor::Show() {this->Actor->SetVisibility(1);}

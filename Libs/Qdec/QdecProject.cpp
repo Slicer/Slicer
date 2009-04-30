@@ -901,7 +901,7 @@ int QdecProject::GenerateMappedLabelForAllSubjects
 {
   vector< string > subjects = this->GetSubjectIDs();
   int numSubjects = this->GetSubjectIDs().size();
-  double stepIncrement = 100.0 / numSubjects-1.;
+  float stepIncrement = 100.0f / numSubjects-1.f;
   int nStep = 1;
 
   if ( 0 == numSubjects )
@@ -933,7 +933,7 @@ int QdecProject::GenerateMappedLabelForAllSubjects
       status += "'...";
       iProgressUpdateGUI->UpdateProgressMessage( status.c_str() );
       iProgressUpdateGUI->UpdateProgressPercent
-        ( (double)nStep++ * stepIncrement );
+        ( (float)nStep++ * stepIncrement );
     }
     char* sCommand = strdup( ssCommand.str().c_str() );
     printf( "\n----------------------------------------------------------\n" );

@@ -555,11 +555,11 @@ int vtkMRMLStorageNode::FileNameIsInList(const char *fileName)
 {
   
   std::string fname = std::string(fileName);
-  bool fileNameIsRelative =  this->IsFilePathRelative(fileName);
+  int fileNameIsRelative =  this->IsFilePathRelative(fileName);
   for (unsigned int i = 0; i < this->FileNameList.size(); i++)
     {
     std::string thisFile = this->FileNameList[i];
-    bool thisFileIsRelative = this->IsFilePathRelative(thisFile.c_str());
+    int thisFileIsRelative = this->IsFilePathRelative(thisFile.c_str());
     // make sure we're comparing apples to apples
     if (fileNameIsRelative != thisFileIsRelative)
       {

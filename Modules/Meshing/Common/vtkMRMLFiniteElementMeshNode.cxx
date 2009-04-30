@@ -140,7 +140,7 @@ void vtkMRMLFiniteElementMeshNode::ReadXMLAttributes(const char** atts)
        std::stringstream ss;
        ss << attValue;
        ss >> intAttribute;
-       this->SetSavedVisibilityState(intAttribute);
+       this->SetSavedVisibilityState((intAttribute)?true:false);
        }
      }
 }

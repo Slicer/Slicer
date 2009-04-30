@@ -339,8 +339,7 @@ void vtkKWMimxApplication::LoadRegistryApplicationSettings()
   registryFlag = this->HasRegistryValue (1, "AutoSave", "SaveFlag");
   if ( registryFlag )
   {
-    this->AutoSaveFlag = static_cast<bool> ( 
-          this->GetIntRegistryValue(1, "AutoSave", "SaveFlag") );
+  this->AutoSaveFlag = (this->GetIntRegistryValue(1, "AutoSave", "SaveFlag"))?true:false;
   }
   
   registryFlag = this->HasRegistryValue (1, "AutoSave", "SaveFrequency");
@@ -352,8 +351,7 @@ void vtkKWMimxApplication::LoadRegistryApplicationSettings()
   registryFlag = this->HasRegistryValue (1, "AutoSave", "UseWorkingDirectory");
   if ( registryFlag )
   {
-    this->AutoSaveWorkDirFlag = static_cast<bool> ( 
-          this->GetIntRegistryValue(1, "AutoSave", "UseWorkingDirectory") );
+  this->AutoSaveWorkDirFlag = (this->GetIntRegistryValue(1, "AutoSave", "UseWorkingDirectory"))?true:false;
   }
   
   registryFlag = this->HasRegistryValue (1, "AutoSave", "SaveDirectory");
