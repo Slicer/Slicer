@@ -933,35 +933,38 @@ void vtkProstateNavGUI::Enter()
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
 
     // Get a pointer to the Fiducials module
-    vtkSlicerFiducialsGUI *fidGUI
-      = (vtkSlicerFiducialsGUI*)app->GetModuleGUIByName("Fiducials");
-    fidGUI->Enter();
-
-    // Create New Fiducial list for Prostate Module
-    vtkSlicerFiducialsLogic *fidLogic = (vtkSlicerFiducialsLogic*)(fidGUI->GetLogic());
-    vtkMRMLFiducialListNode *newList = fidLogic->AddFiducialList();
-
-    if (newList != NULL)
+    vtkSlicerFiducialsGUI* fidGUI = vtkSlicerFiducialsGUI::SafeDownCast ( app->GetModuleGUIByName ("Fiducials"));
+    if (fidGUI)
       {
-      // Change the name of the list
-      newList->SetName(this->GetMRMLScene()->GetUniqueNameByString("PM"));
-
-      fidGUI->SetFiducialListNodeID(newList->GetID());
-      newList->Delete();
-      }
-    else
-      {
-        vtkErrorMacro("Unable to add a new fid list via the logic\n");
-      }
-    // now get the newly active node 
-    this->FiducialListNodeID = fidGUI->GetFiducialListNodeID();
-    this->FiducialListNode 
-      = (vtkMRMLFiducialListNode *)this->GetMRMLScene()->GetNodeByID(this->FiducialListNodeID);
-    if (this->FiducialListNode == NULL)
-      {
-      vtkErrorMacro ("ERROR adding a new fiducial list for the point...\n");
-      return;
-      }
+      // Create New Fiducial list for Prostate Module
+      vtkSlicerFiducialsLogic *fidLogic = fidGUI->GetLogic();
+      if (fidLogic)
+        {
+        vtkMRMLFiducialListNode *newList = fidLogic->AddFiducialList();
+        if (newList)
+          {
+          // Change the name of the list
+          newList->SetName(this->GetMRMLScene()->GetUniqueNameByString("PM"));
+          //fidGUI->SetFiducialListNodeID(id);
+          }
+        else
+          {
+          vtkErrorMacro("Unable to add a new fid list via the logic\n");
+          }
+          // now get the newly active node 
+//        this->FiducialListNodeID = fidGUI->GetFiducialListNodeID();
+          this->FiducialListNodeID = newList->GetID(); 
+//        this->FiducialListNode = (vtkMRMLFiducialListNode *)this->GetMRMLScene()->GetNodeByID(this->FiducialListNodeID);
+          this->FiducialListNode = (vtkMRMLFiducialListNode *)this->GetMRMLScene()->GetNodeByID(newList->GetID());
+//        newList->Delete();
+ 
+          if (this->FiducialListNode == NULL)
+            {
+            vtkErrorMacro ("ERROR adding a new fiducial list for the point...\n");
+            return;
+            }
+          }
+       }
     }
 }
 
