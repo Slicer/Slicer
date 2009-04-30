@@ -151,18 +151,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     virtual void UpdateElement(int row, int col, char * str);
 
     // Description:
-    // Getting and setting the mrml fiducail list node id
+    // Getting the mrml fiducial list node id
     vtkGetStringMacro(FiducialListNodeID);
-    //vtkSetStringMacro(FiducialListNodeID);
+
+    // Description:
+    // Set the fid list id, and update the widgets
     void SetFiducialListNodeID(char *id);
     
     // Description:
     // Which fiducial list node are we displaying in this gui?
     vtkSlicerNodeSelectorWidget* FiducialListSelectorWidget;
-    
-    // Description:
-    // Set the selected node, the fid list id, and update the widgets
-    void SetFiducialListNode(vtkMRMLFiducialListNode *fiducialListNode);
 
     //BTX
     // Description:
@@ -214,13 +212,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
 
     // Description:
     // The ID of the fiducial list node that is currently displayed in the GUI
-    // TODO: probably redundant
     char *FiducialListNodeID;
 
-    // Description:
-    // The the fiducial list node that is currently displayed in the GUI
-    vtkMRMLFiducialListNode *FiducialListNode;
-    
     // Widgets for the Fiducials module
 
     // Description:

@@ -33,8 +33,7 @@ vtkSlicerFiducialsGUI::vtkSlicerFiducialsGUI ( )
 {
     this->Logic = NULL;
     this->FiducialListSelectorWidget = NULL;
-    this->FiducialListNodeID = NULL; // "(none)";
-    this->FiducialListNode = NULL; // "(none)";
+    this->FiducialListNodeID = NULL;
 
     this->MeasurementLabel = NULL;
     this->ListMeasurementLabel = NULL;
@@ -335,10 +334,7 @@ vtkSlicerFiducialsGUI::~vtkSlicerFiducialsGUI ( )
     this->BIRNLabel = NULL;
     }
 
-  //this->SetFiducialListNodeID("(none)");
   this->SetFiducialListNodeID(NULL);
-  vtkSetMRMLNodeMacro(this->FiducialListNode, NULL);
-
 }
 
 
@@ -483,7 +479,7 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
         vtkMRMLFiducialListNode::SafeDownCast(this->FiducialListSelectorWidget->GetSelected());
       if (fidList != NULL)
         {
-        this->SetFiducialListNode(fidList);
+        this->SetFiducialListNodeID(fidList->GetID());
         }
       else
         {
@@ -1177,7 +1173,6 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
           delNode->GetID() == this->GetFiducialListNodeID())
         {
         vtkDebugMacro("My node got deleted " << this->GetFiducialListNodeID());
-//        this->SetFiducialListNodeID(NULL);
         }
       }
     }
@@ -1242,6 +1237,12 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
         if (node == NULL)
           {
           vtkDebugMacro("\tBUT: the node is null\n");
+          // check to see if the id used to get the node is not null, if it's
+          // a valid string, means that the node was deleted
+          if (this->GetFiducialListNodeID() != NULL)
+            {
+            this->SetFiducialListNodeID(NULL);
+            }
           return;
           }
         vtkDebugMacro("ProcessMRMLEvents: \t\tUpdating the GUI\n");
@@ -1273,7 +1274,7 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
       if (activeFiducialListNode !=  vtkMRMLFiducialListNode::SafeDownCast(this->FiducialListSelectorWidget->GetSelected()))
         {
         // select it first off
-        this->SetFiducialListNode(vtkMRMLFiducialListNode::SafeDownCast(this->FiducialListSelectorWidget->GetSelected()));
+        this->SetFiducialListNodeID(vtkMRMLFiducialListNode::SafeDownCast(this->FiducialListSelectorWidget->GetSelected())->GetID());
         }
       vtkDebugMacro("Setting gui from list after display modified event");
       SetGUIFromList(activeFiducialListNode);
@@ -1506,7 +1507,10 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
 //---------------------------------------------------------------------------
 void vtkSlicerFiducialsGUI::SetGUIDisplayFrameFromList(vtkMRMLFiducialListNode * activeFiducialListNode)
 {
-    vtkDebugMacro(<< "\tupdating the visibility button\n");
+  if (activeFiducialListNode == NULL)
+    {
+    return;
+    }
 
     // color
     vtkDebugMacro(<< "\tupdating the colour\n");
@@ -2511,28 +2515,15 @@ void vtkSlicerFiducialsGUI::UpdateElement(int row, int col, char * str)
                 if (col == this->OrZColumn) { activeFiducialListNode->SetNthFiducialOrientation(row, wxyz[0], wxyz[1], wxyz[2], newCoordinate); }
             }
             else
-            {
-                vtkErrorMacro ("UpdateElement: ERROR: invalid column number " << col << ", valid values are 0-" << this->NumberOfColumns << endl);
-                return;
-            }
+              {
+              vtkErrorMacro ("UpdateElement: ERROR: invalid column number " << col << ", valid values are 0-" << this->NumberOfColumns << endl);
+              return;
+              }
         }
     else
-    {
-        vtkErrorMacro ("Invalid row " << row << " or column " << col <<  ", valid columns are 0-" << this->NumberOfColumns-1 << "\n");
-    }
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerFiducialsGUI::SetFiducialListNode (vtkMRMLFiducialListNode *fiducialListNode)
-{
-    if (fiducialListNode == NULL)
-    {
-        vtkErrorMacro ("ERROR: SetFiducialListNode - list node is null.\n");
-        return;
-    }
-    // save the ID
-    vtkDebugMacro("setting the fid list node id to " << fiducialListNode->GetID());
-    this->SetFiducialListNodeID(fiducialListNode->GetID());
+      {
+      vtkErrorMacro ("Invalid row " << row << " or column " << col <<  ", valid columns are 0-" << this->NumberOfColumns-1 << "\n");
+      }
 }
 
 //---------------------------------------------------------------------------
@@ -2547,51 +2538,52 @@ void vtkSlicerFiducialsGUI::SetFiducialListNodeID (char * id)
     }
 
   // get the old node
-  vtkMRMLFiducialListNode *fidlist = vtkMRMLFiducialListNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->GetFiducialListNodeID()));
-       
-    // set the id properly - see the vtkSetStringMacro
-    this->FiducialListNodeID = id;
+  vtkMRMLFiducialListNode *oldFidList = vtkMRMLFiducialListNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->GetFiducialListNodeID()));
 
-    if (id == NULL)
-      {
-      vtkDebugMacro("SetFiducialListNodeID: NULL input id, removed observers and returning.\n");
-      return;
-      }
-    
-    // get the new node
-    fidlist = vtkMRMLFiducialListNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->GetFiducialListNodeID()));
-    // set up observers on the new node
-    if (fidlist != NULL)
-      {
-      if (this->GetDebug())
-        {
-        fidlist->DebugOn();
-        }
-      vtkIntArray *events = vtkIntArray::New();
-      events->InsertNextValue(vtkCommand::ModifiedEvent);
-      events->InsertNextValue(vtkMRMLFiducialListNode::DisplayModifiedEvent);
-      events->InsertNextValue(vtkMRMLFiducialListNode::FiducialModifiedEvent);
-      events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
-      events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-      vtkSetAndObserveMRMLNodeEventsMacro(this->FiducialListNode, fidlist, events);
-      events->Delete();
+  // set the id properly - see the vtkSetStringMacro
+  this->FiducialListNodeID = id;
 
-      // set up the GUI
-      this->SetGUIFromList(this->FiducialListNode);
-      }
-    else
+  if (id == NULL)
+    {
+    vtkDebugMacro("SetFiducialListNodeID: NULL input id, clearing GUI and returning.\n");
+    this->SetGUIFromList(NULL);
+    return;
+    }
+  
+  // get the new node
+  vtkMRMLFiducialListNode *newFidList = vtkMRMLFiducialListNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->GetFiducialListNodeID()));
+  // set up observers on the new node
+  if (newFidList != NULL)
+    {
+    if (this->GetDebug())
       {
-      vtkDebugMacro ("ERROR: unable to get the mrml fiducial node to observe!\n");
+      newFidList->DebugOn();
       }
+    vtkIntArray *events = vtkIntArray::New();
+    events->InsertNextValue(vtkCommand::ModifiedEvent);
+    events->InsertNextValue(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+    events->InsertNextValue(vtkMRMLFiducialListNode::FiducialModifiedEvent);
+    events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+    events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+    vtkSetAndObserveMRMLNodeEventsMacro(oldFidList, newFidList, events);
+    events->Delete();
 
-    // update the selected fid list id
-    if (this->ApplicationLogic != NULL &&
-        this->ApplicationLogic->GetSelectionNode() != NULL &&
-        this->FiducialListNodeID != NULL)
-      {
-      vtkDebugMacro("Fid GUI: setting the active fid list id to " << this->FiducialListNodeID);
-      this->ApplicationLogic->GetSelectionNode()->SetActiveFiducialListID( this->FiducialListNodeID );
-      }
+    // set up the GUI
+    this->SetGUIFromList(newFidList);
+    }
+  else
+    {
+    vtkDebugMacro ("ERROR: unable to get the mrml fiducial node to observe!\n");
+    }
+
+  // update the selected fid list id
+  if (this->ApplicationLogic != NULL &&
+      this->ApplicationLogic->GetSelectionNode() != NULL &&
+      this->FiducialListNodeID != NULL)
+    {
+    vtkDebugMacro("Fid GUI: setting the active fid list id to " << this->FiducialListNodeID);
+    this->ApplicationLogic->GetSelectionNode()->SetActiveFiducialListID( this->FiducialListNodeID );
+    }
 }
 
 //---------------------------------------------------------------------------
