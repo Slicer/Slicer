@@ -166,7 +166,7 @@ int vtkIGTLToMRMLImage::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNod
   // If you want to skip CRC check, call Unpack() without argument.
   int c = imgMsg->Unpack(1);
 
-  if (c & igtl::MessageHeader::UNPACK_BODY == 0) // if CRC check fails
+  if ((c & igtl::MessageHeader::UNPACK_BODY) == 0) // if CRC check fails
     {
     // TODO: error handling
     return 0;
