@@ -51,6 +51,13 @@
      <description>Growth Metric is based on deformation map between scan1 and scan2</description> 
      <default>true</default>
     </boolean>  
+    <boolean>
+      <name>saveResultsLog</name>
+      <longflag>save_results_log</longflag>
+      <label>Save results log</label>
+      <description>If set, the results of the analysis will be saved in the working directory in the file AnalysisOutcome.log</description>
+      <default>false</default>
+    </boolean>
     <integer-vector>
      <name>tgROIMin</name>
      <longflag>roi_min</longflag>
