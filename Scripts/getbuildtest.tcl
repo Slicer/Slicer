@@ -200,8 +200,6 @@ for {set i 0} {$i < $argc} {incr i} {
     }
 }
 
-puts "GETBUILDTEST(compiler): $::GETBUILDTEST(compiler) GETBUILDTEST)(bitness): $::GETBUILDTEST(bitness)"
-
 set argv $strippedargs
 set argc [llength $argv]
 
@@ -419,7 +417,7 @@ if { $::GETBUILDTEST(version-patch) == "" } {
 }
 
 # set the binary filename root
-set ::GETBUILDTEST(binary-filename) "Slicer3-3.3-alpha-$::GETBUILDTEST(version-patch)-$::env(BUILD)"
+set ::GETBUILDTEST(binary-filename) "Slicer3-3.5-alpha-$::GETBUILDTEST(version-patch)-$::env(BUILD)"
 if {$::GETBUILDTEST(verbose)} {
     puts "CPack will use $::::GETBUILDTEST(binary-filename)"
 }
