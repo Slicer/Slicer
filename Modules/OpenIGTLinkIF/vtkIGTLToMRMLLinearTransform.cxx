@@ -116,7 +116,7 @@ int vtkIGTLToMRMLLinearTransform::IGTLToMRML(igtl::MessageBase::Pointer buffer, 
   float py = matrix[1][3];
   float pz = matrix[2][3];
 
-  //std::cerr << "matrix = " << std::endl;
+  //std::cerr << "\n\nmatrix = " << std::endl;
   //std::cerr << tx << ", " << ty << ", " << tz << std::endl;
   //std::cerr << sx << ", " << sy << ", " << sz << std::endl;
   //std::cerr << nx << ", " << ny << ", " << nz << std::endl;
@@ -144,6 +144,12 @@ int vtkIGTLToMRMLLinearTransform::IGTLToMRML(igtl::MessageBase::Pointer buffer, 
   transform->SetElement(2, 3, pz);
 
   transformToParent->DeepCopy(transform);
+
+
+  //std::cerr << "IGTL matrix = " << std::endl;
+  //transform->Print(cerr);
+  //std::cerr << "MRML matrix = " << std::endl;
+  //transformToParent->Print(cerr);
 
   transform->Delete();
 

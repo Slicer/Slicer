@@ -75,6 +75,7 @@ if(Slicer3_USE_OPENIGTLINK)
     OpenIGTLinkIF
     NeuroNav
     ProstateNav
+    IGTNavigation
     )
 endif(Slicer3_USE_OPENIGTLINK)
 

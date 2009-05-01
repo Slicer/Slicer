@@ -540,6 +540,7 @@ void vtkOpenIGTLinkIFLogic::ImportFromCircularBuffers()
               }
             }
           (*iter)->IGTLToMRML(buffer, node);
+          node->Modified();
           //int devID = cmiter->second->GetDeviceID(buffer->GetDeviceName(), (*iter)->GetIGTLName());
           //if (devID >= 0)
           //  {
@@ -1328,5 +1329,8 @@ void vtkOpenIGTLinkIFLogic::GetDeviceNamesFromMrml(IGTLMrmlNodeListType &list, c
     }
 
 }
+
+
+
 
 
