@@ -162,8 +162,10 @@ void vtkSlicerLabelMapVolumeDisplayWidget::AddWidgetObservers ( )
 {
   this->Superclass::AddWidgetObservers();
   
-   this->ColorSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
-
+  if (!this->ColorSelectorWidget->HasObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand ))
+    {
+    this->ColorSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
 }
 
 //---------------------------------------------------------------------------

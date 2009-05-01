@@ -428,6 +428,16 @@ if (this->UpdatingMRML || this->UpdatingWidget)
     {
     this->UpdateWidgetFromMRML();
     }
+
+  if (event == vtkMRMLScene::SceneCloseEvent ||
+       (event == vtkMRMLScene::NodeRemovedEvent && 
+       (reinterpret_cast<vtkMRMLVolumeNode *>(callData) != NULL ) &&
+       (reinterpret_cast<vtkMRMLVolumeNode *>(callData) == this->VolumeNode ) )  )
+    {
+    this->SetVolumeNode(NULL);
+    this->WindowLevelThresholdEditor->SetImageData(NULL);
+    }
+
   this->UpdatingMRML = 0;
   
   }
@@ -509,11 +519,30 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::AddWidgetObservers ( )
 {  
   this->Superclass::AddWidgetObservers();
 
-  this->ScalarModeMenu->GetWidget()->GetWidget()->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ColorSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->WindowLevelThresholdEditor->AddObserver(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->WindowLevelThresholdEditor->AddObserver(vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->InterpolateButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  if (!this->ScalarModeMenu->GetWidget()->GetWidget()->GetMenu()->HasObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand ) )
+    {
+    this->ScalarModeMenu->GetWidget()->GetWidget()->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+
+  if (!this->ColorSelectorWidget->HasObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand ) )
+    {
+    this->ColorSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+
+  if (!this->WindowLevelThresholdEditor->HasObserver(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, (vtkCommand *)this->GUICallbackCommand ) )
+    {
+    this->WindowLevelThresholdEditor->AddObserver(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+
+  if (!this->WindowLevelThresholdEditor->HasObserver(vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand ) )
+    {
+    this->WindowLevelThresholdEditor->AddObserver(vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+  
+  if (!this->InterpolateButton->HasObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand ) )
+    {
+    this->InterpolateButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
 }
 
 //---------------------------------------------------------------------------

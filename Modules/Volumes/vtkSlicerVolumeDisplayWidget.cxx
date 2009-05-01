@@ -35,9 +35,10 @@ vtkSlicerVolumeDisplayWidget::vtkSlicerVolumeDisplayWidget ( )
 vtkSlicerVolumeDisplayWidget::~vtkSlicerVolumeDisplayWidget ( )
 {
 
-  this->SetMRMLScene ( NULL );
+  this->SetAndObserveMRMLScene ( NULL );
   vtkSetMRMLNodeMacro(this->VolumeNode, NULL);
-
+  this->RemoveMRMLObservers();
+  this->RemoveWidgetObservers();
 }
 
 
@@ -100,9 +101,10 @@ void vtkSlicerVolumeDisplayWidget::UpdateWidgetFromMRML ()
 //---------------------------------------------------------------------------
 void vtkSlicerVolumeDisplayWidget::TearDownWidget ()
 {
-  this->RemoveWidgetObservers();
-  this->SetMRMLScene(NULL);
-  this->SetAndObserveMRMLScene(NULL);
+  //this->RemoveMRMLObservers();
+  //this->RemoveWidgetObservers();
+  //this->SetAndObserveMRMLScene(NULL);
+  //this->SetMRMLScene(this->MRMLScene);
   this->SetVolumeNode(NULL);
 }
 
@@ -111,7 +113,16 @@ void vtkSlicerVolumeDisplayWidget::AddMRMLObservers ( )
 {
   if (this->MRMLScene)
     {
-    this->MRMLScene->AddObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    //this->MRMLScene->AddObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    if (!this->MRMLScene->HasObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand))
+      {
+      this->MRMLScene->AddObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+      }
+
+    if (!this->MRMLScene->HasObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand) )
+      {
+      this->MRMLScene->AddObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
+      }   
     }
 }
 
@@ -121,6 +132,8 @@ void vtkSlicerVolumeDisplayWidget::RemoveMRMLObservers ( )
   if (this->MRMLScene)
     {
     this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    this->MRMLScene->RemoveObservers(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
     }
 }
 
@@ -128,7 +141,10 @@ void vtkSlicerVolumeDisplayWidget::RemoveMRMLObservers ( )
 void vtkSlicerVolumeDisplayWidget::AddWidgetObservers ( ) 
 {
   vtkDebugMacro("vtkSlicerVolumeDisplayWidget: adding observer");
-  this->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand );
+  if (!this->HasObserver(vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand ) )
+    {
+    this->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand );
+    }
 }
 
 //---------------------------------------------------------------------------

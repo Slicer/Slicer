@@ -170,6 +170,11 @@ void vtkKWWindowLevelThresholdEditor::SetImageData(vtkImageData* imageData)
 
       this->Modified();
       }
+    else 
+      {
+      this->ColorTransferFunctionEditor->SetHistogram(NULL); 
+      this->TransferFunction->RemoveAllPoints();
+      }
     }
 }
 
