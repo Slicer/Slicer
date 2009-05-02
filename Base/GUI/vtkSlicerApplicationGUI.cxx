@@ -1423,8 +1423,8 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
 
             
   this->LoadSceneDialog->SetParent ( this->MainSlicerWindow );
+  this->LoadSceneDialog->SetMasterWindow( app->GetNthWindow(0) );
   this->LoadSceneDialog->Create ( );
-  this->LoadSceneDialog->SetMasterWindow( this->MainSlicerWindow );
   this->LoadSceneDialog->ModalOn();
   this->LoadSceneDialog->SetFileTypes("{ {Scenes} {.mrml .xml .xcat} } { {MRML Scene} {.mrml} } { {Slicer2 Scene} {.xml} } { {Xcede Catalog} {.xcat} } { {All} {.*} }");
   this->LoadSceneDialog->RetrieveLastPathFromRegistry("OpenPath");
