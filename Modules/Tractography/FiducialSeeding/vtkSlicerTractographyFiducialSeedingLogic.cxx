@@ -274,6 +274,8 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   //6. Extra5ct PolyData in RAS
   vtkPolyData *outFibers = vtkPolyData::New();
   
+  seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers);
+
   fiberNode->SetAndObservePolyData(outFibers);
   
   vtkMRMLFiberBundleDisplayNode *dnode = fiberNode->GetLineDisplayNode();
