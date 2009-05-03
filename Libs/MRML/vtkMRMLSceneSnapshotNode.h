@@ -73,6 +73,7 @@ class VTK_MRML_EXPORT vtkMRMLSceneSnapshotNode : public vtkMRMLNode
 
   vtkGetObjectMacro ( Nodes, vtkMRMLScene );
 
+  void SetAbsentStorageFileNames();
 
 protected:
   vtkMRMLSceneSnapshotNode();

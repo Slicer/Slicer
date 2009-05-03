@@ -83,6 +83,8 @@ void vtkMRMLSceneSnapshotNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLSceneSnapshotNode::WriteNodeBodyXML(ostream& of, int nIndent)
 {
+  this->SetAbsentStorageFileNames();
+
   vtkMRMLNode * node = NULL;
   int n;
   for (n=0; n < this->Nodes->GetCurrentScene()->GetNumberOfItems(); n++) 
@@ -390,4 +392,44 @@ void vtkMRMLSceneSnapshotNode::RestoreScene()
     this->Scene->InvokeEvent(vtkMRMLScene::NodeAddedEvent, addedNodes[n] );
     }
 
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSceneSnapshotNode::SetAbsentStorageFileNames()
+{
+  if (this->Scene == NULL)
+    {
+    return;
+    }
+
+  if (this->Nodes == NULL)
+    {
+    return;
+    }
+
+  unsigned int nnodesSanpshot = this->Nodes->GetCurrentScene()->GetNumberOfItems();
+  unsigned int n;
+  vtkMRMLNode *node = NULL;
+
+  for (n=0; n<nnodesSanpshot; n++) 
+    {
+    node  = dynamic_cast < vtkMRMLNode *>(this->Nodes->GetCurrentScene()->GetItemAsObject(n));
+    if (node) 
+      {
+      // for storage nodes replace full path with relative
+      vtkMRMLStorageNode *snode = vtkMRMLStorageNode::SafeDownCast(node);
+      if (snode && (snode->GetFileName() == NULL || std::string(snode->GetFileName()) == "") )
+        {
+        vtkMRMLNode *node1 = this->Scene->GetNodeByID(snode->GetID());
+        if (node1)
+          {
+          vtkMRMLStorageNode *snode1 = vtkMRMLStorageNode::SafeDownCast(node1);
+          if (snode1)
+            {
+            snode->SetFileName(snode1->GetFileName());
+            }
+          }
+        }
+      } //if (node) 
+    } //for (n=0; n<nnodesSanpshot; n++) 
 }
