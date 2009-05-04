@@ -319,11 +319,25 @@
     <label>Advanced Rigid Registration Parameters</label>
     <description>Parameters that determine how registration is performed</description>
     <integer>
-      <name>rigidMaxIterations</name>
+      <name>rigidMaxIterations_Min</name>
       <description>Maximum number of rigid optimization iterations</description>
-      <label>Rigid Max Iterations</label>
-      <longflag>rigidMaxIterations</longflag>
+      <label>Rigid Max Iterations (min)</label>
+      <longflag>rigidMaxIterations_Min</longflag>
       <default>100</default>
+    </integer>
+    <integer>
+      <name>rigidMaxIterations_Max</name>
+      <description>Maximum number of rigid optimization iterations</description>
+      <label>Rigid Max Iterations (max)</label>
+      <longflag>rigidMaxIterations_Max</longflag>
+      <default>100</default>
+    </integer>
+    <integer>
+      <name>rigidMaxIterations_Step</name>
+      <description>Maximum number of rigid optimization iterations</description>
+      <label>Rigid Max Iterations (step)</label>
+      <longflag>rigidMaxIterations_Step</longflag>
+      <default>50</default>
     </integer>
     <float>
       <name>rigidSamplingRatio</name>
@@ -337,10 +351,24 @@
     <label>Advanced Affine Registration Parameters</label>
     <description>Parameters that determine how registration is performed</description>
     <integer>
-      <name>affineMaxIterations</name>
+      <name>affineMaxIterations_Min</name>
       <description>Maximum number of affine optimization iterations</description>
-      <label>Affine Max Iterations</label>
-      <longflag>affineMaxIterations</longflag>
+      <label>Affine Max Iterations(min)</label>
+      <longflag>affineMaxIterations_Min</longflag>
+      <default>50</default>
+    </integer>
+    <integer>
+      <name>affineMaxIterations_Max</name>
+      <description>Maximum number of affine optimization iterations</description>
+      <label>Affine Max Iterations(max)</label>
+      <longflag>affineMaxIterations_Max</longflag>
+      <default>50</default>
+    </integer>
+    <integer>
+      <name>affineMaxIterations_Step</name>
+      <description>Maximum number of affine optimization iterations</description>
+      <label>Affine Max Iterations(step)</label>
+      <longflag>affineMaxIterations_Step</longflag>
       <default>50</default>
     </integer>
     <float>
@@ -355,10 +383,24 @@
     <label>Advanced BSpline Registration Parameters</label>
     <description>Parameters that determine how registration is performed</description>
     <integer>
-      <name>bsplineMaxIterations</name>
+      <name>bsplineMaxIterations_Min</name>
       <description>Maximum number of bspline optimization iterations</description>
-      <label>BSpline Max Iterations</label>
-      <longflag>bsplineMaxIterations</longflag>
+      <label>BSpline Max Iterations(min)</label>
+      <longflag>bsplineMaxIterations_Min</longflag>
+      <default>20</default>
+    </integer>
+    <integer>
+      <name>bsplineMaxIterations_Max</name>
+      <description>Maximum number of bspline optimization iterations</description>
+      <label>BSpline Max Iterations(max)</label>
+      <longflag>bsplineMaxIterations_Max</longflag>
+      <default>20</default>
+    </integer>    
+    <integer>
+      <name>bsplineMaxIterations_Step</name>
+      <description>Maximum number of bspline optimization iterations</description>
+      <label>BSpline Max Iterations(step)</label>
+      <longflag>bsplineMaxIterations_Step</longflag>
       <default>20</default>
     </integer>
     <float>
