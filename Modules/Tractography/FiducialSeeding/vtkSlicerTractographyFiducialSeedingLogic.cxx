@@ -158,12 +158,6 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   TensorRASToIJKRotation->Invert();
   seed->SetTensorRotationMatrix(TensorRASToIJKRotation);  
 
-
-  // 1 min 0.1 % memory growth
-
-
- 
-
   //ROI comes from tensor, IJKToRAS is the same
   // as the tensor
   vtkTransform *trans2 = vtkTransform::New();
@@ -233,8 +227,6 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
       }
     }
 
-  // 0.1% memory growth every second
- 
   // loop over points in the models
   if (modelNode) 
     {
@@ -256,20 +248,6 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
       }
     }
 
-  /*
-  ici->Delete();
-  seed->Delete();
-  transformVolumeToFifucial->Delete();
-  transFiducial->Delete();
-  TensorRASToIJK->Delete();
-  TensorRASToIJKRotation->Delete();
-  trans->Delete();
-  trans2->Delete();
-  streamer->Delete();
-
-  return 1;
-  */
-    
     
   //6. Extra5ct PolyData in RAS
   vtkPolyData *outFibers = vtkPolyData::New();
