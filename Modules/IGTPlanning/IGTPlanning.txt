@@ -1,0 +1,2 @@
+Name: IGTPlanning
+GUIName: IGT Planning 
