@@ -27,13 +27,13 @@
   <parameters>
 	<label>Output Parameters</label>
 	<description>Output params.</description>
-	<file>
-		<name>OutputFilename</name>
-		<description>Name of the output data file.</description>
-		<label>Output Filename</label>
-		<longflag>outputFilename</longflag>
-		<default>lsvtkout.vtk</default>
-	</file>
+	<geometry>
+		<name>OutputModel</name>
+		<description>Output model.</description>
+		<label>Output Model</label>
+                <channel>output</channel>
+		<longflag>outputModel</longflag>
+	</geometry>
    </parameters>
   
   <contributor>

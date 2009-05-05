@@ -14,8 +14,8 @@
 #include "SparseFieldLevelSetContourCLP.h"
 #include <iostream>
 #include <vector>
-#include "vtkPolyDataReader.h"
-#include "vtkPolyDataWriter.h"
+#include "vtkXMLPolyDataReader.h"
+#include "vtkXMLPolyDataWriter.h"
 #include "vtkCellData.h"
 #include "vtkSmoothPolyDataFilter.h"
 #include "vtkPolyDataMapper.h"
@@ -42,7 +42,7 @@ namespace {
 MeshData* meshdata;
 SparseFieldLS* sfls;
 MeanCurvatureEnergy* energy;
-vtkPolyDataWriter* writer;
+vtkXMLPolyDataWriter* writer;
 int showLS = 0;
 int evolve_its = 10; // how many evolution iterations to take
 int mesh_smooth_its = 100; // how many times to smooth the input mesh
@@ -62,25 +62,25 @@ as determined by evolving the curve into high mean curvature areas.
 
 int main(int argc, char* argv[] )
 {
-  std::cout<<"starting...\n";
+  std::cerr<<"starting...\n";
   PARSE_ARGS;
 
-  std::cout<<OutputFilename.c_str()<<"\n";
-  std::cout<<"Length of contour seeds: "<<ContourSeedPts.size()<<"\n";
+  std::cerr<<OutputModel.c_str()<<"\n";
+  std::cerr<<"Length of contour seeds: "<<ContourSeedPts.size()<<"\n";
 
-  vtkPolyDataReader* reader = vtkPolyDataReader::New();
+  vtkXMLPolyDataReader* reader = vtkXMLPolyDataReader::New();
   reader->SetFileName(InputSurface.c_str());
   reader->Update();
 
   vtkPolyData* polyDataInput = reader->GetOutput();
 
   vtkSmoothPolyDataFilter* smoother = vtkSmoothPolyDataFilter::New();
-  std::cout<<"Smoothing the surface...";
+  std::cerr<<"Smoothing the surface...";
   smoother->SetNumberOfIterations( mesh_smooth_its );
 
   smoother->SetInput( polyDataInput );
   smoother->Update();
-  std::cout<<" done! \n ";
+  std::cerr<<" done! \n ";
 
 // Now we'll look at it.
   vtkPolyData* smooth_brain = smoother->GetOutput();
@@ -156,9 +156,9 @@ int main(int argc, char* argv[] )
   sfls = new SparseFieldLS( meshdata, C, energy );
   C = sfls->Evolve(evolve_its);
 
-  writer = vtkPolyDataWriter::New();
+  writer = vtkXMLPolyDataWriter::New();
   writer->SetInput( meshdata->polydata );
-  writer->SetFileName( OutputFilename.c_str() );
+  writer->SetFileName( OutputModel.c_str() );
   writer->Write();
   // The result is contained in the scalar colormap of the output.
 
