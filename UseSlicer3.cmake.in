@@ -33,6 +33,11 @@ if(Teem_FOUND)
   include(${Teem_USE_FILE})
 endif(Teem_FOUND)
 
+find_package(BatchMake)
+if(BatchMake_FOUND)
+  include(${BatchMake_USE_FILE})
+endif(BatchMake_FOUND)
+
 # Add compiler flags needed to use Slicer3.
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${Slicer3_REQUIRED_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Slicer3_REQUIRED_CXX_FLAGS}")
