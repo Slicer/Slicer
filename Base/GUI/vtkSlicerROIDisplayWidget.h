@@ -91,6 +91,12 @@ public:
   void SetXRangeExtent(double r0, double r1);
   void SetYRangeExtent(double r0, double r1);
   void SetZRangeExtent(double r0, double r1);
+
+  // Description:
+  // Set slider resolution for each extent
+  void SetXResolution(double r);
+  void SetYResolution(double r);
+  void SetZResolution(double r);
   
 protected:
   vtkSlicerROIDisplayWidget ( );
@@ -133,6 +139,12 @@ protected:
    double XRangeExtent[2];
    double YRangeExtent[2];
    double ZRangeExtent[2];
+
+   // Description:
+   // Values for resolution in each extent
+   double XResolution;
+   double YResolution;
+   double ZResolution;
 
 private:
   vtkSlicerROIDisplayWidget ( const vtkSlicerROIDisplayWidget& ); // Not implemented.

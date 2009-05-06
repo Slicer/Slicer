@@ -75,6 +75,11 @@ vtkSlicerROIDisplayWidget::vtkSlicerROIDisplayWidget ( )
     this->YRangeExtent[1] = 100;
     this->ZRangeExtent[0] = -100;
     this->ZRangeExtent[1] = 100;
+
+    this->XResolution = 1;
+    this->YResolution = 1;
+    this->ZResolution = 1;
+
 }
 
 
@@ -353,6 +358,24 @@ void vtkSlicerROIDisplayWidget::SetZRangeExtent(double r0, double r1)
 }
 
 //---------------------------------------------------------------------------
+void vtkSlicerROIDisplayWidget::SetXResolution(double r)
+{
+  this->XResolution = r;
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerROIDisplayWidget::SetYResolution(double r)
+{
+  this->YResolution = r;
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerROIDisplayWidget::SetZResolution(double r)
+{
+  this->ZResolution = r;
+}
+
+//---------------------------------------------------------------------------
 void vtkSlicerROIDisplayWidget::CreateWidget ( )
 {
   // Check if already created
@@ -402,7 +425,7 @@ void vtkSlicerROIDisplayWidget::CreateWidget ( )
   this->XRange->SetRange(XRangeExtent[0]+(XRangeExtent[1]-XRangeExtent[0])*.4,
                          XRangeExtent[0]+(XRangeExtent[1]-XRangeExtent[0])*.6);
   this->XRange->SetOrientationToHorizontal ();
-  this->XRange->SetResolution(1);
+  this->XRange->SetResolution(this->XResolution);
   this->XRange->SetEntriesWidth(4);
   this->XRange->SetWidth(120);
   this->XRange->SetSlider1Color(this->ColorsClippingHandles[0]);
@@ -437,7 +460,7 @@ void vtkSlicerROIDisplayWidget::CreateWidget ( )
   this->YRange->SetRange(YRangeExtent[0]+(YRangeExtent[1]-YRangeExtent[0])*.4,
                          YRangeExtent[0]+(YRangeExtent[1]-YRangeExtent[0])*.6);
   this->YRange->SetOrientationToHorizontal ();
-  this->YRange->SetResolution(1);
+  this->YRange->SetResolution(this->YResolution);
   this->YRange->SetEntriesWidth(4);
   this->YRange->SetWidth(120);
   this->YRange->SetSlider1Color(this->ColorsClippingHandles[2]);
@@ -472,7 +495,7 @@ void vtkSlicerROIDisplayWidget::CreateWidget ( )
   this->ZRange->SetRange(ZRangeExtent[0]+(ZRangeExtent[1]-ZRangeExtent[0])*.4,
                          ZRangeExtent[0]+(ZRangeExtent[1]-ZRangeExtent[0])*.6);
   this->ZRange->SetOrientationToHorizontal ();
-  this->ZRange->SetResolution(1);
+  this->ZRange->SetResolution(this->ZResolution);
   this->ZRange->SetEntriesWidth(4);
   this->ZRange->SetWidth(120);
   this->ZRange->SetSlider1Color(this->ColorsClippingHandles[4]);
