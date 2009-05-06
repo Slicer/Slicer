@@ -1178,20 +1178,17 @@ void vtkChangeTrackerROIStep::ROIIntensityMinMaxUpdate(vtkImageData* image, doub
     return;
     }
 
-  int ijk[3], ijkMin[3], ijkMax[3], ijkInc[3];
+  int ijk[3], ijkMin[3], ijkMax[3], ijkInc[3], i;
   
-  ijkMax[0] = ctNode->GetROIMax(0);
-  ijkMax[1] = ctNode->GetROIMax(1);
-  ijkMax[2] = ctNode->GetROIMax(2);
-
-  ijkMin[0] = ctNode->GetROIMin(0);
-  ijkMin[1] = ctNode->GetROIMin(1);
-  ijkMin[2] = ctNode->GetROIMin(2);
-
-  // sparse sample for performance
-  ijkInc[0] = (ijkMax[0]-ijkMin[0])/10;
-  ijkInc[1] = (ijkMax[1]-ijkMin[1])/10;
-  ijkInc[2] = (ijkMax[2]-ijkMin[2])/10;
+  for(i=0;i<3;i++)
+    {
+    ijkMax[i] = ctNode->GetROIMax(i);
+    ijkMin[i] = ctNode->GetROIMin(i);
+    
+    ijkInc[i] = (ijkMax[i]-ijkMin[i])/10;
+    if(ijkInc[i]<=0)
+      ijkInc[i] = 1;
+    }
 
   intensityMin = image->GetScalarComponentAsDouble(ijkMin[0],ijkMin[1],ijkMin[2],0);
   intensityMax = image->GetScalarComponentAsDouble(ijkMin[0],ijkMin[1],ijkMin[2],0);
