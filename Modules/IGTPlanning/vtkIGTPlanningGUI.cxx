@@ -218,17 +218,6 @@ void vtkIGTPlanningGUI::BuildGUI()
   vtkNotUsed(vtkKWWizardWidget *wizard_widget = this->WizardWidget;);
 
   // -----------------------------------------------------------------
-  // Parameter Set step
-
-  if (!this->InitializationStep)
-    {
-    this->InitializationStep = vtkIGTPlanningInitializationStep::New();
-    this->InitializationStep->SetGUI(this);
-    }
-
-  wizard_workflow->AddStep(this->InitializationStep);
-
-  // -----------------------------------------------------------------
   // Load preoperative data step
 
   if (!this->LoadingPreoperativeDataStep)
@@ -237,7 +226,19 @@ void vtkIGTPlanningGUI::BuildGUI()
     this->LoadingPreoperativeDataStep->SetGUI(this);
     }
  
-  wizard_workflow->AddNextStep(this->LoadingPreoperativeDataStep);
+  wizard_workflow->AddStep(this->LoadingPreoperativeDataStep);
+
+
+  // -----------------------------------------------------------------
+  // Parameter Set step
+
+  if (!this->InitializationStep)
+    {
+    this->InitializationStep = vtkIGTPlanningInitializationStep::New();
+    this->InitializationStep->SetGUI(this);
+    }
+
+  wizard_workflow->AddNextStep(this->InitializationStep);
 
   // -----------------------------------------------------------------
   // Calibration step 
@@ -256,7 +257,7 @@ void vtkIGTPlanningGUI::BuildGUI()
 
   wizard_workflow->SetFinishStep(this->CalibrationStep);
   wizard_workflow->CreateGoToTransitionsToFinishStep();
-  wizard_workflow->SetInitialStep(this->InitializationStep);
+  wizard_workflow->SetInitialStep(this->LoadingPreoperativeDataStep);
 }
 
 //---------------------------------------------------------------------------
