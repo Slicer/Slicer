@@ -520,6 +520,10 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
     this->roiWidget->SetYRangeExtent(rasBounds[1],rasBounds[4]);
     this->roiWidget->SetZRangeExtent(rasBounds[2],rasBounds[5]);
 
+    this->roiWidget->SetXResolution(fabs(rasBounds[3]-rasBounds[0])/100.);
+    this->roiWidget->SetYResolution(fabs(rasBounds[4]-rasBounds[1])/100.);
+    this->roiWidget->SetZResolution(fabs(rasBounds[5]-rasBounds[2])/100.);
+
     this->roiWidget->Create();
     this->roiWidget->SetROINode(roiNode);
     }
