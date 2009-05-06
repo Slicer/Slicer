@@ -861,7 +861,9 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::Initialize()
         RayCastSupported = 1;
     else
         RayCastSupported = 0;
-        
+    
+    extensions->Delete();
+    
 //  GLint num;
 //  glGetIntegerv(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &num);
 //  printf("%d \n", num);
