@@ -6,6 +6,7 @@
 class vtkKWFrameWithLabel;
 class vtkKWMenuButtonWithLabel;
 class vtkKWMenuButtonWithLabel;
+class vtkKWPushButton;
 
 class VTK_IGT_EXPORT vtkIGTPlanningLoadingPreoperativeDataStep : public vtkIGTPlanningStep
 {
@@ -24,9 +25,12 @@ protected:
 
   virtual void PopulatePreoperativeImageDataSelector();
   virtual void PopulateToolModelSelector();
- 
+  void ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData);
+
   vtkKWMenuButtonWithLabel   *PreoperativeImageDataMenuButton; 
   vtkKWMenuButtonWithLabel   *ToolModelMenuButton; 
+
+  vtkKWPushButton            *AddVolumeButton; 
 
 private:
   vtkIGTPlanningLoadingPreoperativeDataStep(const vtkIGTPlanningLoadingPreoperativeDataStep&);

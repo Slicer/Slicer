@@ -25,7 +25,7 @@ vtkCxxRevisionMacro(vtkIGTPlanningCalibrationStep, "$Revision: 1.6 $");
 //----------------------------------------------------------------------------
 vtkIGTPlanningCalibrationStep::vtkIGTPlanningCalibrationStep()
 {
-  this->SetName("3/5. Calibration");
+  this->SetName("3/3. Calibration");
   this->SetDescription("Calibrate required tools such as tracker tool.");
 
   this->LoadPrecomputedCalibrationDataFrame = NULL;

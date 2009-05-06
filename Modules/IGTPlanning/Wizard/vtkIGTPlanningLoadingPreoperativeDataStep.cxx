@@ -11,6 +11,8 @@
 #include "vtkKWPushButton.h"
 #include "vtkKWMessageDialog.h"
 
+#include "vtkSlicerApplication.h"
+
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkIGTPlanningLoadingPreoperativeDataStep);
 vtkCxxRevisionMacro(vtkIGTPlanningLoadingPreoperativeDataStep, "$Revision: 1.8 $");
@@ -18,7 +20,7 @@ vtkCxxRevisionMacro(vtkIGTPlanningLoadingPreoperativeDataStep, "$Revision: 1.8 $
 //----------------------------------------------------------------------------
 vtkIGTPlanningLoadingPreoperativeDataStep::vtkIGTPlanningLoadingPreoperativeDataStep()
 {
-  this->SetName("2/5. LoadingPreoperativeData");
+  this->SetName("1/3. Loading Preoperative Data");
   this->SetDescription("Load required preoperative data.");
 
   this->PreoperativeImageDataMenuButton = NULL;
@@ -182,4 +184,18 @@ void vtkIGTPlanningLoadingPreoperativeDataStep::PopulatePreoperativeImageDataSel
 void vtkIGTPlanningLoadingPreoperativeDataStep::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
+}
+
+//----------------------------------------------------------------------------
+void vtkIGTPlanningLoadingPreoperativeDataStep::ProcessGUIEvents(vtkObject *caller,
+                                          unsigned long event, void *callData)
+{
+  // AddVolumeButton Pressed
+
+  if (this->AddVolumeButton == vtkKWPushButton::SafeDownCast(caller)
+      && event == vtkKWPushButton::InvokedEvent)
+    {
+    this->GetGUI()->GetApplication()->Script("::LoadVolume::ShowDialog");
+//    this->GetGUI()->GetApplication();
+    }
 }

@@ -21,7 +21,7 @@ vtkCxxRevisionMacro(vtkIGTPlanningInitializationStep, "$Revision: 1.4 $");
 //----------------------------------------------------------------------------
 vtkIGTPlanningInitializationStep::vtkIGTPlanningInitializationStep()
 {
-  this->SetName("1/5. Initialization");
+  this->SetName("2/3. Initialization");
   this->SetDescription("Initialize the required systems.");
 
   this->TrackingFrame = NULL;
