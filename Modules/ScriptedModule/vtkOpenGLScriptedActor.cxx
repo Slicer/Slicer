@@ -158,7 +158,6 @@ void vtkOpenGLScriptedActor::Render(vtkRenderer *ren, vtkMapper *mapper)
       // Script actor renderer mapper
       vtkSlicerApplication *slicerApp = vtkSlicerApplication::GetInstance();
       vtkSlicerApplicationGUI *slicerAppGUI = slicerApp->GetApplicationGUI();
-      vtkErrorMacro("Running Script " << this->Script );
       slicerAppGUI->PythonCommand(this->Script);
 #else
       vtkErrorMacro("Only python is currently supported but it was not compiled into this build.");

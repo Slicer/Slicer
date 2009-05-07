@@ -43,6 +43,7 @@ set(ScriptedModule_SRCS
   vtkScriptedModuleLogic.cxx
   vtkScriptedModuleGUI.cxx
   vtkMRMLScriptedModuleNode.cxx
+  vtkOpenGLScriptedActor.cxx
   )
 
 # --------------------------------------------------------------------------
