@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Filtering</category>
+  <index>1</index>
+  <title>N3 MRI Bias Field Correction</title>
+  <description>
+    Bias Field Correction of MRI images based on the Non-parametric
+    Non-uniform Intensity Normalization (N3) method described by Sled et al.
+    in IEEE TMI 1998.
+  </description>
+  <license></license>
+  <contributor>Nicolas RANNOU</contributor>
+
+  <parameters>
+    <label>N3 MRI Bias Field Correction Parameters</label>
+    <description>Parameters for the correction of the bias</description>
+
+      <string-enumeration>
+      <name>dimension</name>
+      <longflag>--dimension</longflag>
+      <description>Dimension of the image</description>
+      <label>Dimension of the image</label>
+      <default>2d</default>
+      <element>2d</element>
+      <element>3d</element>
+      </string-enumeration>
+
+      <integer>
+      <name>numberOfIterations</name>
+      <longflag>--iterations</longflag>
+      <description>Maximum Number of iterations</description>
+      <label>Iterations</label>
+      <default>1</default>
+      <constraints>
+        <minimum>1</minimum>
+        <maximum>50</maximum>
+        <step>1</step>
+      </constraints>
+      </integer>
+
+      <integer>
+      <name>numberOfFitting</name>
+      <longflag>--numberOfFitting</longflag>
+      <description>Number of fitting levels</description>
+      <label>Fitting Levels</label>
+      <default>1</default>
+      <constraints>
+        <minimum>1</minimum>
+        <maximum>50</maximum>
+        <step>1</step>
+      </constraints>
+      </integer>
+
+      <string-enumeration>
+      <name>showResult</name>
+      <longflag>--showResult</longflag>
+      <description>Use the binary mask or not</description>
+      <label>Show the result of field</label>
+      <default>result</default>
+      <element>result</element>
+      <element>field</element>
+    </string-enumeration>
+
+  </parameters>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image>
+      <name>inputVolume</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input volume to be filtered</description>
+    </image>
+
+    <image>
+      <name>outputVolume</name>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>Output filtered</description>
+    </image>
+
+  </parameters>
+
+</executable>
