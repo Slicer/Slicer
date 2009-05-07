@@ -914,7 +914,25 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
             if ( modelNode == NULL ) 
               {
               vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-              dialog->SetParent ( this->UIPanel->GetPageWidget ( "Data" ) );
+              if (this->UIPanel &&
+                  this->UIPanel->GetPageWidget ( "Data" ))
+                {
+                dialog->SetParent ( this->UIPanel->GetPageWidget ( "Data" ) );
+                }
+              else
+                {
+                if (modelsGUI->GetUIPanel() &&
+                    modelsGUI->GetUIPanel()->GetPageWidget("Models"))
+                  {
+                  dialog->SetParent(modelsGUI->GetUIPanel()->GetPageWidget("Models"));
+                  }
+                else
+                  {
+                  // nothing obvious for the parent, so just set the
+                  // application to try and avoid a kw widgets crash
+                  dialog->SetApplication(app);
+                  }
+                }
               dialog->SetStyleToMessage();
               std::string msg = std::string("Unable to read model file ") + std::string(fileName);
               dialog->SetText(msg.c_str());
@@ -2236,6 +2254,7 @@ void vtkSlicerDataGUI::RaiseAddModelWindow ( )
       {
       this->AddModelWindow->SetParent ( this->LoadModelButton);
       }
+    
     this->AddModelWindow->SetApplication ( this->GetApplication() );
     this->AddModelWindow->Create();
     if ( this->GetLoadModelButton() )
