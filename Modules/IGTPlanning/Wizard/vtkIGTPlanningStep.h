@@ -33,6 +33,7 @@ protected:
   ~vtkIGTPlanningStep();
 
   vtkIGTPlanningGUI *GUI;
+  vtkCallbackCommand *GUICallbackCommand;
 
   // Description:
   // Initialize a menu with loaded volumes
@@ -43,6 +44,9 @@ protected:
   // Set the selected volume for a menu 
   // Return, 1 on success, 0 otherwise;
   virtual int SetMenuButtonSelectedItem(vtkKWMenu* menu, vtkIdType volId);
+
+  virtual void ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData) {};
+  static void GUICallback(vtkObject *caller, unsigned long eid, void *clientData, void *callData );
 
 private:
   vtkIGTPlanningStep(const vtkIGTPlanningStep&);

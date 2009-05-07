@@ -10,6 +10,7 @@
 #include "vtkKWLabel.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWMessageDialog.h"
+#include "vtkKWMessageDialog.h"
 
 #include "vtkSlicerApplication.h"
 
@@ -25,6 +26,8 @@ vtkIGTPlanningLoadingPreoperativeDataStep::vtkIGTPlanningLoadingPreoperativeData
 
   this->PreoperativeImageDataMenuButton = NULL;
   this->ToolModelMenuButton = NULL;
+
+  this->AddVolumeButton = NULL; 
 }
 
 //----------------------------------------------------------------------------
@@ -41,6 +44,12 @@ vtkIGTPlanningLoadingPreoperativeDataStep::~vtkIGTPlanningLoadingPreoperativeDat
     this->ToolModelMenuButton->Delete();
     this->ToolModelMenuButton = NULL;
     }
+
+  if(this->AddVolumeButton)
+    {
+    this->AddVolumeButton->Delete();
+    this->AddVolumeButton = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -54,6 +63,20 @@ void vtkIGTPlanningLoadingPreoperativeDataStep::ShowUserInterface()
 
   vtkKWWidget *parent = wizard_widget->GetClientArea();
 
+  if (!this->AddVolumeButton)
+    {
+    this->AddVolumeButton = vtkKWPushButton::New();
+    this->AddVolumeButton->SetParent (parent);
+    this->AddVolumeButton->Create();
+    this->AddVolumeButton->SetText("Add a volume");
+    this->AddVolumeButton->SetWidth(25);
+//    this->AddVolumeButton->SetBalloonHelpString("Add a volume.");
+    this->AddVolumeButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+    }
+  this->Script(
+    "pack %s -side top -anchor center -padx 2 -pady 10", 
+    this->AddVolumeButton->GetWidgetName());
+/* 
   // Create the preoperative image data  menu button
 
   if (!this->PreoperativeImageDataMenuButton)
@@ -107,6 +130,7 @@ void vtkIGTPlanningLoadingPreoperativeDataStep::ShowUserInterface()
     this->ToolModelMenuButton->GetWidgetName());
   
   this->PopulateToolModelSelector();
+*/
 
    //Add a help to the step
   vtkKWPushButton * helpButton =  wizard_widget->GetHelpButton();
@@ -116,7 +140,7 @@ void vtkIGTPlanningLoadingPreoperativeDataStep::ShowUserInterface()
   msg_dlg1->SetStyleToOkCancel();
   msg_dlg1->Create();
   msg_dlg1->SetTitle("Loading Preoperative Data Step");
-  msg_dlg1->SetText( "This is the second step in IGT applications. In this step, the user loads "
+  msg_dlg1->SetText( "This is the first step in IGT applications. In this step, the user loads "
                      "preoperative data required for IGT application. This includes images "
                      "(CT, MRI data), surgical tool/endoscope probe models, and surgical planning "
                      "information");
@@ -185,6 +209,7 @@ void vtkIGTPlanningLoadingPreoperativeDataStep::PrintSelf(ostream& os, vtkIndent
 {
   this->Superclass::PrintSelf(os,indent);
 }
+
 
 //----------------------------------------------------------------------------
 void vtkIGTPlanningLoadingPreoperativeDataStep::ProcessGUIEvents(vtkObject *caller,

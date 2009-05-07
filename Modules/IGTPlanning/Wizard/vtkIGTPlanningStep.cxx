@@ -14,11 +14,19 @@ vtkCxxSetObjectMacro(vtkIGTPlanningStep,GUI,vtkIGTPlanningGUI);
 vtkIGTPlanningStep::vtkIGTPlanningStep()
 {
   this->GUI = NULL;
+  this->GUICallbackCommand = vtkCallbackCommand::New();
+  this->GUICallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
+  this->GUICallbackCommand->SetCallback(&vtkIGTPlanningStep::GUICallback);
 }
 
 //----------------------------------------------------------------------------
 vtkIGTPlanningStep::~vtkIGTPlanningStep()
 {
+  if ( this->GUICallbackCommand != NULL )
+    {
+    this->GUICallbackCommand->Delete ( );
+    this->GUICallbackCommand = NULL;
+    }
   this->SetGUI(NULL);
 }
 
@@ -115,3 +123,17 @@ void vtkIGTPlanningStep::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }
+
+
+void vtkIGTPlanningStep::GUICallback( vtkObject *caller,
+                           unsigned long eid, void *clientData, void *callData )
+{
+  //vtkDebugWithObjectMacro(self, "In vtkIGTPlanningStep GUICallback");
+  vtkIGTPlanningStep *self = reinterpret_cast<vtkIGTPlanningStep *>(clientData);
+
+  if (self)
+    {
+    self->ProcessGUIEvents(caller, eid, callData);
+    }
+}
+
