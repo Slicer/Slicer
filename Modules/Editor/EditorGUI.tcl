@@ -554,10 +554,11 @@ proc EditorStoreCheckPointVolume {nodeID listID} {
   if { ![info exists ::Editor(previousCheckPointImages)] } {
     set ::Editor(previousCheckPointImages) ""
     set ::Editor(nextCheckPointImages) ""
+    set ::Editor(numberOfCheckPoints) 10
   }
 
   # trim oldest previousCheckPoint image if needed
-  if { [llength ::Editor($listID)] > 9 } {
+  if { [llength $::Editor($listID)] >= $::Editor(numberOfCheckPoints) } {
     set disposeImage [lindex $::Editor($listID) 0]
     foreach {imageData nodeID} $disposeImage {}
     $imageData Delete
