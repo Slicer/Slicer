@@ -982,7 +982,30 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
           if ( modelLogic != NULL )
             {
             vtkKWMessageDialog *dialog0 = vtkKWMessageDialog::New();
-            dialog0->SetParent ( this->UIPanel->GetPageWidget ( "Data" ) );
+            vtkKWWidget *parentWidget = NULL;
+            if (this->UIPanel &&
+                this->UIPanel->GetPageWidget ( "Data" ))
+              {
+              parentWidget = this->UIPanel->GetPageWidget ( "Data" );
+              }
+            else
+              {
+              if (modelsGUI->GetUIPanel() &&
+                  modelsGUI->GetUIPanel()->GetPageWidget("Models"))
+                {
+                parentWidget = modelsGUI->GetUIPanel()->GetPageWidget("Models");
+                }
+              }
+            if (parentWidget != NULL)
+              {
+              dialog0->SetParent ( parentWidget );
+              }
+            else
+              {
+              // nothing obvious for the parent, so just set the
+              // application
+              dialog0->SetApplication(app);
+              }
             dialog0->SetStyleToMessage();
             std::string msg0 = std::string("Reading *.vtk from models directory ") + std::string(fileName);
             dialog0->SetText(msg0.c_str());
@@ -992,11 +1015,19 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
 
             win->SetStatusText ( "Reading and loading files..." );
             app->Script ( "update idletasks" );
-      
             if (modelLogic->AddModels( fileName, ".vtk") == 0)
               {
               vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-              dialog->SetParent ( this->UIPanel->GetPageWidget ( "Data" ) );
+              if (parentWidget != NULL)
+                {
+                dialog->SetParent ( parentWidget );
+                }
+              else
+                {
+                // nothing obvious for the parent, so just set the
+                // application
+                dialog->SetApplication(app);
+                }
               dialog->SetStyleToMessage();
               std::string msg = std::string("Unable to read all models from directory ") + std::string(fileName);
               dialog->SetText(msg.c_str());
@@ -1009,7 +1040,16 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
               {
               this->AddModelDirectoryDialogButton->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
               vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-              dialog->SetParent ( this->UIPanel->GetPageWidget ( "Data" ) );
+              if (parentWidget != NULL)
+                {
+                dialog->SetParent ( parentWidget );
+                }
+              else
+                {
+                // nothing obvious for the parent, so just set the
+                // application
+                dialog->SetApplication(app);
+                }
               dialog->SetStyleToMessage();
               dialog->SetText("Done reading models...");
               dialog->Create ( );
@@ -1036,10 +1076,30 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
       const char *fileName = this->AddOverlayDialogButton->GetFileName();
       if ( fileName ) 
         {
+        vtkSlicerModelsGUI* modelsGUI = vtkSlicerModelsGUI::SafeDownCast ( app->GetModuleGUIByName ("Models"));
         if ( this->SelectedModelNode == NULL )
           {
           vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-          dialog->SetParent ( this->UIPanel->GetPageWidget ( "Data" ) );
+          if (this->UIPanel &&
+              this->UIPanel->GetPageWidget ( "Data" ))
+            {
+            dialog->SetParent ( this->UIPanel->GetPageWidget ( "Data" ) );
+            }
+          else
+            {
+            if (modelsGUI &&
+                modelsGUI->GetUIPanel() &&
+                modelsGUI->GetUIPanel()->GetPageWidget("Models"))
+              {
+              dialog->SetParent(modelsGUI->GetUIPanel()->GetPageWidget("Models"));
+              }
+            else
+              {
+              // nothing obvious for the parent, so just set the
+              // application to try and avoid a kw widgets crash
+              dialog->SetApplication(app);
+              }
+            }
           dialog->SetStyleToMessage();
           std::string msg = std::string("Please select a model to which the scalar overlay will be applied before selecting the overlay.");
           dialog->SetText(msg.c_str());
@@ -1048,7 +1108,6 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
           dialog->Delete();
           return;
           }
-        vtkSlicerModelsGUI* modelsGUI = vtkSlicerModelsGUI::SafeDownCast ( app->GetModuleGUIByName ("Models"));
         if (modelsGUI != NULL )
           {
           vtkSlicerModelsLogic* modelLogic = modelsGUI->GetLogic();
@@ -1066,7 +1125,25 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
               if (!modelLogic->AddScalar(fileName, modelNode))
                 {
                 vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-                dialog->SetParent ( this->UIPanel->GetPageWidget ( "Data" ) );
+                if (this->UIPanel &&
+                  this->UIPanel->GetPageWidget ( "Data" ))
+                  {
+                  dialog->SetParent ( this->UIPanel->GetPageWidget ( "Data" ) );
+                  }
+                else
+                  {
+                  if (modelsGUI->GetUIPanel() &&
+                      modelsGUI->GetUIPanel()->GetPageWidget("Models"))
+                    {
+                    dialog->SetParent(modelsGUI->GetUIPanel()->GetPageWidget("Models"));
+                    }
+                  else
+                    {
+                    // nothing obvious for the parent, so just set the
+                    // application to try and avoid a kw widgets crash
+                    dialog->SetApplication(app);
+                    }
+                  }                
                 dialog->SetStyleToMessage();
                 std::string msg = std::string("Unable to read scalars file ") + std::string(fileName);
                 dialog->SetText(msg.c_str());
