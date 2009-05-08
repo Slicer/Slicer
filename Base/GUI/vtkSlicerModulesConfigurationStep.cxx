@@ -209,7 +209,17 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     this->CacheDirectoryButton->Create();
     this->CacheDirectoryButton->SetLabelText("Download (cache) directory:");
     this->CacheDirectoryButton->SetLabelWidth(label_width);
-    this->CacheDirectoryButton->GetWidget()->SetCommand(this, "CacheDirectoryCallback");
+    this->CacheDirectoryButton->GetWidget()->SetCommand(
+      this, "CacheDirectoryCallback");
+    this->CacheDirectoryButton->GetWidget()
+      ->GetLoadSaveDialog()->ChooseDirectoryOn();
+    this->CacheDirectoryButton->GetWidget()
+      ->GetLoadSaveDialog()->SaveDialogOff();
+    this->CacheDirectoryButton->GetWidget()
+      ->GetLoadSaveDialog()->SetTitle("Select a directory for the module cache");
+    this->CacheDirectoryButton->GetWidget()
+      ->GetLoadSaveDialog()->SetBalloonHelpString(
+      "Cache directory for modules.  Leave it empty for default location.");
     }
 
   if (!this->TrashButton)
