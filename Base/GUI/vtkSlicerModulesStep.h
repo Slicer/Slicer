@@ -11,7 +11,7 @@
 
 class vtkSlicerApplication;
 class vtkSlicerModulesWizardDialog;
-class vtkKWMultiColumnList;
+class vtkKWMultiColumnListWithScrollbars;
 class vtkKWPushButton;
 class vtkKWLabel;
 class vtkKWFrame;
@@ -112,7 +112,7 @@ private:
   vtkKWLabel *HeaderText;
   vtkKWPushButton *SelectAllButton;
   vtkKWPushButton *SelectNoneButton;
-  vtkKWMultiColumnList *ModulesMultiColumnList;
+  vtkKWMultiColumnListWithScrollbars *ModulesMultiColumnList;
   vtkKWPushButton *DownloadButton;
   vtkKWPushButton *UninstallButton;
   vtkKWPushButton *StopButton;
