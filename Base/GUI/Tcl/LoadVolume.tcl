@@ -618,7 +618,10 @@ itcl::body LoadVolume::apply { } {
         set dispNode [$node GetScalarVolumeDisplayNode]
         if {$dispNode != ""} {
           $dispNode AutoWindowLevelOff
-          $dispNode SetWindow $_dicomWindowLevel(window)
+          # for now, take the first if there's a list
+          set dicomwin [lindex [split $_dicomWindowLevel(window) {\\}] 0]
+          # puts "Got $dicomwin out of  $_dicomWindowLevel(window)"
+          $dispNode SetWindow $dicomwin
         }
       }
     }
@@ -627,7 +630,10 @@ itcl::body LoadVolume::apply { } {
         set dispNode [$node GetScalarVolumeDisplayNode]
         if {$dispNode != ""} {
           $dispNode AutoWindowLevelOff
-          $dispNode SetLevel $_dicomWindowLevel(level)
+          # for now, take the first if there's a list
+          set lev  [lindex [split $_dicomWindowLevel(level) {\\}] 0]
+          # puts "Got $lev out of $_dicomWindowLevel(level)"
+          $dispNode SetLevel $lev
         }
       }
     }
