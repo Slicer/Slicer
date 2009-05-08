@@ -230,7 +230,18 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     {
     this->TrashButton->SetParent( this->Frame3 );
     this->TrashButton->Create();
-    this->TrashButton->SetImageToPredefinedIcon(vtkKWIcon::IconTrashcan);
+    
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+    vtkSlicerApplicationGUI *gui = app->GetApplicationGUI();
+
+    if (gui)
+      {
+      this->TrashButton->SetImageToIcon(gui->GetSlicerFoundationIcons()->GetSlicerDeleteIcon());
+      }
+    else
+      {
+      this->TrashButton->SetImageToPredefinedIcon(vtkKWIcon::IconTrashcan);
+      }
     }
 
   if (!this->SearchLocationBox)
@@ -271,7 +282,7 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
 //----------------------------------------------------------------------------
 void vtkSlicerModulesConfigurationStep::Update()
 {
-  vtkSlicerApplication *app = dynamic_cast<vtkSlicerApplication*> (this->GetApplication());
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
 
   if (app)
     {
