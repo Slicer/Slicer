@@ -121,6 +121,7 @@ if { [itcl::find class LoadVolume] == "" } {
     variable _dicomColumn ;# keep track of columns
     variable _dicomTree ;# currently loaded dicom directory
     variable _dicomSeriesFileList "" ;# files in the current series list
+    variable _dicomWindowLevel ;# keep track of the current series window and level
 
     # methods
     method processEvent {{caller ""} {event ""}} {}
@@ -611,6 +612,25 @@ itcl::body LoadVolume::apply { } {
     } else {
       $selNode SetReferenceActiveVolumeID [$node GetID]
     }
+    # is there a win/level setting?
+    if {$_dicomWindowLevel(window) != -1} {
+      if {[$node IsA "vtkMRMLScalarVolumeNode"] == 1} {
+        set dispNode [$node GetScalarVolumeDisplayNode]
+        if {$dispNode != ""} {
+          $dispNode AutoWindowLevelOff
+          $dispNode SetWindow $_dicomWindowLevel(window)
+        }
+      }
+    }
+    if {$_dicomWindowLevel(level) != -1} {
+      if {[$node IsA "vtkMRMLScalarVolumeNode"] == 1} {
+        set dispNode [$node GetScalarVolumeDisplayNode]
+        if {$dispNode != ""} {
+          $dispNode AutoWindowLevelOff
+          $dispNode SetLevel $_dicomWindowLevel(level)
+        }
+      }
+    }
     $::slicer3::ApplicationLogic PropagateVolumeSelection
 
     $::slicer3::Application SetRegistry "OpenPath" [file dirname $fileName]
@@ -1032,6 +1052,8 @@ itcl::body LoadVolume::parseDICOMHeader {fileName arrayName} {
   upvar $arrayName header
   set header(fileName $fileName)
   set header(isDICOM) 0
+  set _dicomWindowLevel(window) -1
+  set _dicomWindowLevel(level) -1
 
   if { $fileName == "" || ![file exists $fileName] || [file isdirectory $fileName] } {
     return
@@ -1064,6 +1086,12 @@ itcl::body LoadVolume::parseDICOMHeader {fileName arrayName} {
     set header($n,key) $key
     set header($key,description) $description
     set header($key,value) $value
+    if {$description == "Window Center"} {
+      set _dicomWindowLevel(level) $value
+    }
+    if {$description == "Window Width"} {
+      set _dicomWindowLevel(window) $value
+    }
   }
   set header(isDICOM) $isDICOM
 
