@@ -1397,7 +1397,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
 
   i = this->GetMainSlicerWindow()->GetViewMenu()->InsertCommand (
                                                                  this->GetMainSlicerWindow()->GetViewMenuInsertPosition(),
-                                                                 "Module Search", this, "ShowModulesWizard");
+                                                                 "Extension Manager", this, "ShowModulesWizard");
   this->GetMainSlicerWindow()->GetViewMenu()->SetItemAccelerator ( i, "slash");
   this->GetMainSlicerWindow()->GetViewMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
 
