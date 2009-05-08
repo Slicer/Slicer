@@ -181,6 +181,7 @@ void vtkSlicerModuleChooseGUI::RemoveGUIObservers ( )
 {
     this->ModulesPrev->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModulesNext->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ModulesRefresh->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModulesHistory->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModulesSearch->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModulesSearchEntry->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -192,6 +193,7 @@ void vtkSlicerModuleChooseGUI::AddGUIObservers ( )
 {
     this->ModulesPrev->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModulesNext->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ModulesRefresh->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModulesHistory->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModulesSearch->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ModulesSearchEntry->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -276,6 +278,15 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
       }
 
 //    this->RaiseModule ( moduleName );
+    }
+  else if ( pushb == this->ModulesRefresh && event == vtkKWPushButton::InvokedEvent )
+    {
+      vtkSlicerApplicationGUI *gui = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
+
+      if (gui)
+        {
+        gui->ShowModulesWizard();
+        }
     }
   if ( menu == this->ModulesHistory->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
     {
@@ -512,20 +523,20 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
       this->ModulesHistory->SetBorderWidth ( 0 );
       this->ModulesHistory->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleHistoryIcon() );
       this->ModulesHistory->IndicatorVisibilityOff  ( );
-      this->ModulesHistory->SetBalloonHelpString ("List all visited modules.");
+      this->ModulesHistory->SetBalloonHelpString ("List all visited extensions.");
 
       this->ModulesRefresh->SetParent ( this->ModuleNavigationFrame );
       this->ModulesRefresh->Create ( );
       this->ModulesRefresh->SetBorderWidth ( 0 );
       this->ModulesRefresh->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleRefreshIcon() );
-      this->ModulesRefresh->SetBalloonHelpString ("Refresh the list of available modules.");
+      this->ModulesRefresh->SetBalloonHelpString ("Manage Slicer extensions.");
 
       this->ModulesSearch->SetParent ( this->ModuleNavigationFrame );
       this->ModulesSearch->Create ( );
       this->ModulesSearch->SetBorderWidth ( 0 );
       this->ModulesSearch->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleSearchIcon() );
       this->ModulesSearch->IndicatorVisibilityOff ( );
-      this->ModulesSearch->SetBalloonHelpString ("Displays module search results for the text entered to the left (or use keyboard Ctrl+F).");
+      this->ModulesSearch->SetBalloonHelpString ("Displays extension search results for the text entered to the left (or use keyboard Ctrl+F).");
 
       //--- create a small label to show search context
       vtkKWLabel *colonLabel = vtkKWLabel::New ( );
@@ -609,7 +620,7 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWToolbar *tb )
       this->ModulesRefresh->SetOverReliefToNone ( );
       this->ModulesRefresh->SetBorderWidth ( 0 );
       this->ModulesRefresh->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleRefreshIcon() );
-      this->ModulesRefresh->SetBalloonHelpString ("Refresh the list of available modules.");
+      this->ModulesRefresh->SetBalloonHelpString ("Manage Slicer extensions.");
       tb->AddWidget ( this->ModulesRefresh);
 
       this->ModulesSearchEntry->SetParent ( tb->GetFrame() );
