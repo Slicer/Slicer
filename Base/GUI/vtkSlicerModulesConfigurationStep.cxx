@@ -233,6 +233,7 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     this->SearchLocationBox->Create();
     this->SearchLocationBox->SetLabelText("Where to search:");
     this->SearchLocationBox->SetLabelWidth(label_width);
+    this->SearchLocationBox->ExpandWidgetOn();
     }
  
   this->Script("pack %s %s -side left", 
@@ -285,8 +286,6 @@ void vtkSlicerModulesConfigurationStep::Update()
     std::string svnurl;
     std::string svnrevision;
 
-    std::cout << "txtfile: " << txtfile << std::endl;
-
     std::ifstream ifs(txtfile.c_str());
 
     std::string line;
@@ -314,7 +313,7 @@ void vtkSlicerModulesConfigurationStep::Update()
 
     // :TODO: 20090405 tgl: URL below should be configurable.
 
-    std::string ext_slicer_org("http://ext.slicer.org/ext/");
+    std::string ext_slicer_org("http://ext.slicer.org/ext");
 
     if (!svnurl.empty())
       {
