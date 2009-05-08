@@ -417,6 +417,11 @@ int vtkSlicerModulesConfigurationStep::IsRepositoryValid()
       }
 
     }
+  else if (vtkSlicerModulesConfigurationStep::ActionUninstall == this->GetSelectedAction())
+    {
+      // :NOTE: 20090508 tgl: Nothing to check for this action.
+      result = 0;
+    }
 
   return result;
 }
