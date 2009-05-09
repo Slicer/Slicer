@@ -1899,6 +1899,8 @@ int Slicer3_main(int argc, char *argv[])
   Slicer3_Tcl_Eval( interp, "update" ) ;
 
 
+  scene->ClearUndoStack();
+  scene->ClearRedoStack();
 
   //
   // Run!  - this will return when the user exits
