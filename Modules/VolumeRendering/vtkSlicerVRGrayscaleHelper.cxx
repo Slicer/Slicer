@@ -1661,7 +1661,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->FrameFPS->SetParent(this->FramePerformance->GetFrame());
         this->FrameFPS->Create();
         this->FrameFPS->AllowFrameToCollapseOff();
-        this->FrameFPS->SetLabelText("Exptected Framerate (FPS)");
+        this->FrameFPS->SetLabelText("Expected Framerate (FPS)");
         this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->FrameFPS->GetWidgetName() );
     
         this->SC_ExpectedFPS=vtkKWScale::New();
@@ -1937,7 +1937,7 @@ void vtkSlicerVRGrayscaleHelper::EstimateSampleDistances(void)
     minDim = minDim > dims[1] ? dims[1] : minDim;
     minDim = minDim > dims[2] ? dims[2] : minDim;
 */    
-    this->EstimatedSampleDistance = minSpace * 0.125;
+    this->EstimatedSampleDistance = minSpace * 0.5f;
 }
 
 void vtkSlicerVRGrayscaleHelper::ConvertWorldToBoxCoordinates(double *inputOutput)
