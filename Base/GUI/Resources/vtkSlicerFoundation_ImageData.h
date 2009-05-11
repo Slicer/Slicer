@@ -1417,6 +1417,7 @@ static const unsigned char image_SlicerFoundOnDisk[] =
   "cJIOgbPiYMp+64aHnZOTvsWlpch8bD2d/j/RIXBWHNlvXSqVqqurbW42tbXd7erqsNme9P"
   "Y+6+t7TtIhcFYcTNnfrCAIPT1PzebrDQ2XdLojWu0BtbqMpEPgrDg75v+p8A/M9ueK";
 
+
 /* 
  * Resource generated for file:
  *    SlicerNotFoundOnDisk.png (zlib, base64) (image file)
@@ -1424,19 +1425,21 @@ static const unsigned char image_SlicerFoundOnDisk[] =
 static const unsigned int  image_SlicerNotFoundOnDisk_width          = 21;
 static const unsigned int  image_SlicerNotFoundOnDisk_height         = 21;
 static const unsigned int  image_SlicerNotFoundOnDisk_pixel_size     = 3;
-static const unsigned long image_SlicerNotFoundOnDisk_length         = 588;
+static const unsigned long image_SlicerNotFoundOnDisk_length         = 724;
 static const unsigned long image_SlicerNotFoundOnDisk_decoded_length = 1323;
 
 static const unsigned char image_SlicerNotFoundOnDisk[] = 
-  "eNrNlL9LAnEYxnVyscVwqCFKGnR0blCS4hKMApfIqUEOksIpSQhEbNAlUMK/oElXawiRoM"
-  "OISDu0S8w8NEHFn+lhomcP1VRGp5NfXl5enuf5cMeXe28wmJRD03QgEHC73RaLRaFQSKVS"
-  "sViMjhkKdLjIDGVtNpvJZPL7/ZFIJJVKlctljuP6nwdDsVhMJBKhUMjpdPp8vt+4SCRSKp"
-  "VGo9HhcASDwXg8Xq1WeZ5HxwwFOlxkkByKe71ekiQJglCpVHK5XCKR4OXRMUOBDheZv/Bw"
-  "OByNRrPZbKlUajcbXOy6dn6GjhkKdLjI/Iu/Upf50yNmbe5xWZ5aX0xbNwv3N8JxZkdDr8"
-  "yyh9uFk4Okfv5haYohVwXiLMvWdTIU/96BnrFuAEcJxHO5XOcu0o1d9fMZjo7Smmmw6WOL"
-  "8KdXKhXuhSnsEox+IbNneLZtjXR1CDczT+y+Iamb6RZYfDaj4q16rXUbblIXvfbbGDiQrx"
-  "uDNR5Oa2SoMfF2+9vo9YTgjUZDrVZjKbCbdrvd5XJhQz0eDzpmKNDhIoPk0J2lKAobYTab"
-  "tVrtj32HAh0uMhPzfxp8APVy9uE=";
+  "eNrNlLFvEmEYh2FiYeUfYIKRxUGNwQEDtYaepUjLISYags1NTiRMhJAYGJoKabA5LNoYq3"
+  "JJa+3VpICkA2GyIpImpJWropG7hAKVE8gV/EU2RXNjb3jz5nl/T/Ld5XtvODwrT6lUSqVS"
+  "4XCYoiitVqtWq5VKJSp6EHBMkRnr+nw+kiTj8Xgul6tUKoIgiKJ4+vtBU6/Xy+Uyy7LBYD"
+  "AWi/2tKxQKnU5ns9kCgQDDMMVisdFoDAYDVPQg4Jgig+RYPRqNer1es9ms1+s1Go1KpcLh"
+  "UdGDgGOKzL/0bDZbKBQ4juN5/qR5POL9zg8cHgQcU2T+r/dFsScIh/Sjt46bmxMEavXZWr"
+  "fVlCRJjg7308JijZr/4rl15J6p3aOamXQtnTnheTn6AZ3g5u8ezV3nnMTnO87j56uDfv/7"
+  "xvqHpbgcPeNwlVyze9NXi66Zr6srp/0e6t5t97bdKUd/ZSEyk6Zdh/UgScNFRZ+5ZtqwEH"
+  "L0HTuZdpPlJC31uh/ph5tTE4zp0ptpK7isd3/JHG6xUrf7LrH8dPLKivF88vKFnVnn/nJC"
+  "jt7i+f2t7eLai8dT1gcXzz2xmF/b597fj/yU9+Xb7fa3anV3YZEhbqxbCNbmLMdpXHpk5O"
+  "ijWyd2OiM+kCQ5t67VahkMBiwFdtPv94dCIWxoJBJBRQ8CjikySI7d2Xw+j43weDxGo/GP"
+  "fQcBxxSZM/N/Gv4CYT3gzQ==";
 
 /* 
  * Resource generated for file:
@@ -1786,6 +1789,7 @@ static const unsigned char image_SlicerHideExposeAllFiducialLists[] =
   "ZQAv/9lcSiIi1KEu99Q+6NWQHxqcac8uE/X38BsZnFqg==";
 
 
+
 /* 
  * Resource generated for file:
  *    SlicerHideFiducialList.png (zlib, base64) (image file)
@@ -1934,3 +1938,67 @@ static const unsigned char image_SlicerHideAllFiducialLists[] =
   "jD+b+ZdaBWAlH7hcrkwmMxgM4HcMVtDY2BjowIX/TH7/D/0OYjILNA==";
 
 
+/* 
+ * Resource generated for file:
+ *    SlicerExtensions.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerExtensions_width          = 21;
+static const unsigned int  image_SlicerExtensions_height         = 21;
+static const unsigned int  image_SlicerExtensions_pixel_size     = 3;
+static const unsigned long image_SlicerExtensions_length         = 1428;
+static const unsigned long image_SlicerExtensions_decoded_length = 1323;
+
+static const unsigned char image_SlicerExtensions[] = 
+  "eNqlVOtPmlcc/ptmK1pReYMCRZCrYvBSwLoC1Yq1CHKrIAgod1ARWrVeClNjmHip9hXrpS"
+  "oy1KqxutJuXVxTG7Ob1mpdovtlJGbph33YTs6Hk/f8nt95zvM85+Vw/u9oerDyH6a1J/4v"
+  "cIM/Gln56eLi4rfDE3PnUmPHosG//M8CW++XcHNnbGFtr290W+9b0nkXoht75+fnp5//9P"
+  "Qtql3T2ra5wMRL7+AL6AzzC7jet7z56gPUf/jlY3hm593+77A+OTlJJBKwiG++nVl+BYuD"
+  "X4/tjxahuaV75RIOxAy+5/sHR+d/j7Ozs3fvD4LDqLO9v8XVORia/HTyObnV1x/UWIeU9k"
+  "nTg4XCwsIkHNhq3JFmH3r48dPs7KzN/bBabrmvt5tbnA53h7bJpdC5Vte3otFofYP9ltx/"
+  "Vz+oa0MLCgqScFBGYXvieYRC/8BAiC+qb7E6eDerEFIRlcV72NU3HBqvVZje/PDj7Pxiid"
+  "gAHVT2MIvFSsJ7RjY7gs83X74F2kqtxWCyMDn8lAzKlcz85JxEn5ksbc7WLijoDY7pbAGZ"
+  "eYjJZAIcmP9xeHx6enp8fLz7fUJcrbTYXCkZ5NRsRiaxBEfmZV+/oWiwLkXjUoUBao6Ojt"
+  "DpSI22l06nw/UbWmf3fn6/s7MTi8VGwmPCKll3z+M0HAOXx6MU3aWX1tNKZCp9azS2VivX"
+  "7+/v+/1+vqBcKGujUChwfbUTbXL0SWRGu6s9EonUSDWj41NV9xrzudLSSkt5rYdf456Z/8"
+  "7bOaA1uoeHh3NJNITILqs0EolENptdbx0XK7tYPLVE1gQu9weHaup0yyvxZne/3Njf6Ayh"
+  "c2vrGztybWssvmaxOq5mUuFGnHI1Ho9PwkXKLiZPxeBWra9v7O7u2t1+pc45NjkXW92KrW"
+  "6Poysm98Cz+Sg0V2r0KRlUUKNQoAQ4kFc5pqq1Aa7QODKGggKhUCgcDo8/QU2ObkvboMP/"
+  "befjifjqi+3t7ampKbVaTS/g59C+LhHpCQRCUrq65pGKOq/e4lOpVAieSCQzvN4OoJFIvN"
+  "7a2vJ4PEKxhMPlg1OZWUg2kQOSVtxzkclkMA4yo3FNS3TflN2xsYor0xHWV9fImGyawWQL"
+  "BAJCoQhHKsISiq9m0jJwZEwWBZizBZo7mq78/HyAw/PRtS/IWkYhSyy+BsnjY3AsiEqZoB"
+  "J2MWnXwETIwBUsFT6m4wsJTHGx2CxtCjIYjMvMqxxPJbrgjWoHvVQOBWB6Rk4RBscECJyb"
+  "hhRgCVyEIiCybsMRFVKvwjqSDC28XGtPzOifv++cqDUERPJ2gcTKvaVjlEqvs0V4Kp9Av0"
+  "ktqmbzFZB2QY3ttsInMw2afRFw7fKXBRaAMjQaLS8vj0Qi5eTkZGVlpaenp6amYjAYLBaL"
+  "IEhubi5sQdigDI4G2f8CBUe8yw==";
+
+/* 
+ * Resource generated for file:
+ *    www.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_www_width          = 21;
+static const unsigned int  image_www_height         = 21;
+static const unsigned int  image_www_pixel_size     = 3;
+static const unsigned long image_www_length         = 1392;
+static const unsigned long image_www_decoded_length = 1323;
+
+static const unsigned char image_www[] = 
+  "eNql1GlM2ncYB/AmfbM0c3uxLi5Z92Z3UrdZXbpuGq2dsbO2sanK2sRF65xSRLR22loERD"
+  "as9cCq3bwBa/EADwREARWliopWRVDsX1TwQA7Bi1r9XyNhWzbjuz6vn8/vyO/5/o4de91C"
+  "/1/7ILS6vjGmWZSOAoJ+tWRQo9IuLVscrw6gQ52HOIwgBtMGSzCSSOFdzRn0Zxg/i5GfwT"
+  "SH3W7DFQpZXWOL63YIho/kEARP6BbxFHbgT/XeeM05utMvF/S+tvzVNcAnHfiCIA9Ob0kr"
+  "F2uNFtfxDnEEQSZ0C/EU9ueXKr8MlQVk7YUw0GAKGnQHPX8bCUhxBqbrfBMaMHEJ6hfAsF"
+  "YPw8h/+YrFnsLgecU+OZs05h+9FkZHwxloJAvFNCJRLDCiaCecrL9xK0mpaHRY1L+VVOjX"
+  "Nv7lIARxeifPp9b5YIUBuBcXE/YxJehNEYpVobhJGDfkvCVcTiTn9HZXgtv90I6ytCyvsk"
+  "XmuoKbWxzb+Oq+0z+zzxGkl4t3o+hoPBdNm0SJKwjJvE82WFNq/+TzCl5aOkAbF9nqfNZb"
+  "kUTMXrFtubl20XTlodiH2heUp4msfRXLQgldKGkepW/C+fvO+8Oy2hqqfUUE2hpAGxOyNW"
+  "4s8/Fp8ZJRjZsr1PqvyR2+tN4LD6bCKeaYx2haD0pdQPN2IZphrrA0e2lWANtbQCsbtFY7"
+  "lqpsS9yykkxaWbWb94zrPvm11Zcm9Uvq+uGXmehHSIoEJQNorhPCctjEB4SiAoy0+bpVz9"
+  "xbr9Mo86cGCxrZVOLvdDdXqWeDSRwvXM13qYIQ7NiPeXvYdiRjCqaYQcLE2PW6P66kXC0v"
+  "idNN1G2ZuiTttPzsMD6vuLGF5+Y6QM/kCrwSS765336RMhhBNd6se0lQ7N4FNknmNfKqml"
+  "5PGpBUmACOfqo8+274Rx+/Hxh3TzWpdfNVs5UvFPHF4mha1feFwohHQ7Hl0zj+dNozVdaw"
+  "8HFrQb+0yjjXZJ5ntzcQLwR+6nEmBMvgmmybbn5wcNAmU4gEXKWyly8TMjt5lYImVgezrb"
+  "tS3sccH6xfBZoN2qqeDsq91JA3T570iclqkI4e/PPurpk1We15NZyOttou0dN+GUc5wBlR"
+  "PJkaqV+abdKra1Tyh92txPyc8HffeeNtn8uppVzXlB6aeZ3BdIfBZj6tnh4XPB9iKiQMeW"
+  "euvJOmEOdI2jJTE/093jpx4kO/2EyGVm909R9KnCutc0ZzcmFDKJaEy8goLMooK8bn0mIw"
+  "UYGepzyPe3xwOuhGMrV0Zt4AQdCReXetaXHscOWTCbSabyOS3/MOPX7qrKf3Jf9IfAKR0S"
+  "TqM1k23Pseyf8OPgzbt53Asnl0ZmHguW5UA8wtrtgcWyB09G/zOvUXLMbztQ==";
