@@ -969,6 +969,11 @@ void vtkSlicerColorEditWidget::GenerateNewColorTableNode()
   // let the node know that the names are intialised
   node->NamesInitialisedOn();
 
+  // don't hide this node, so can save it in the save data widget
+  node->HideFromEditorsOff();
+  // set it as modified since read, since we need to save it still
+  node->ModifiedSinceReadOn();
+
   // set it to be active
   this->SetColorNodeID(node->GetID());
 
