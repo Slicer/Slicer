@@ -36,7 +36,9 @@ endif(TCL_DIR)
 if(CMAKE_SYSTEM MATCHES "SunOS.*")
   FIND_PATH(CURL_DIR libslicerlibcurl.so ${Slicer3_BINARY_DIR}/../Slicer3-lib/cmcurl-build/bin)
   FIND_PATH(SFW_LIB_DIR libgcc_s.so /usr/sfw/lib)
-  Find_PATH(SFW_LIB_DIR_64 libgcc_s.so /usr/sfw/lib/amd64)
+  FIND_PATH(SFW_LIB_DIR_64 libgcc_s.so /usr/sfw/lib/amd64)
+  FIND_PATH(SUN_CC_LIB_DIR libCrun.so.1 /usr/lib)
+  FIND_PATH(SUN_CC_LIB_DIR_64 libCrun.so.1 /usr/lib/amd64)
 
 # Let's check if we're okay
 
@@ -46,29 +48,41 @@ if(CMAKE_SYSTEM MATCHES "SunOS.*")
 # Bellow we'll find a few more libs, and their 64 bit versions too.
 
   FIND_FILE(CURL_LIB libslicerlibcurl.so PATHS ${CURL_DIR})
-  FIND_FILE(STDCXX1 libstdc++.so PATHS ${SFW_LIB_DIR})
-  FIND_FILE(STDCXX2 libstdc++.so.6 PATHS ${SFW_LIB_DIR})
-  FIND_FILE(STDCXX3 libstdc++.so.6.0.3 PATHS ${SFW_LIB_DIR})
+  FIND_FILE(GNUSTDCXX1 libstdc++.so PATHS ${SFW_LIB_DIR})
+  FIND_FILE(GNUSTDCXX2 libstdc++.so.6 PATHS ${SFW_LIB_DIR})
+  FIND_FILE(GNUSTDCXX3 libstdc++.so.6.0.3 PATHS ${SFW_LIB_DIR})
   FIND_FILE(LIBGCC1 libgcc_s.so libgcc_s.so.1 PATHS ${SFW_LIB_DIR})
   FIND_FILE(LIBGCC2 libgcc_s.so.1 PATHS ${SFW_LIB_DIR})
+  FIND_FILE(LIBCRUN libCrun.so.1 PATHS ${SUN_CC_LIB_DIR})
+  FIND_FILE(LIBCSTD libCstd.so.1 PATHS ${SUN_CC_LIB_DIR})
 
 # We won't use them at the moment, but 64 bit builds do need them, so they are here for later use. 
 
-  FIND_FILE(STDCXX_64_1 libstdc++.so PATHS ${SFW_LIB_DIR_64})
-  FIND_FILE(STDCXX_64_2 libstdc++.so.6 PATHS ${SFW_LIB_DIR_64})
-  FIND_FILE(STDCXX_64_3 libstdc++.so.6.0.3 PATHS ${SFW_LIB_DIR_64})
+  FIND_FILE(GNUSTDCXX_64_1 libstdc++.so PATHS ${SFW_LIB_DIR_64})
+  FIND_FILE(GNUSTDCXX_64_2 libstdc++.so.6 PATHS ${SFW_LIB_DIR_64})
+  FIND_FILE(GNUSTDCXX_64_3 libstdc++.so.6.0.3 PATHS ${SFW_LIB_DIR_64})
   FIND_FILE(LIBGCC_64_1 libgcc_s.so libgcc_s.so.1 PATHS ${SFW_LIB_DIR_64})
   FIND_FILE(LIBGCC_64_2 libgcc_s.so.1 PATHS ${SFW_LIB_DIR_64})
+  FIND_FILE(LIBCRUN_64 libCrun.so.1 PATHS ${SUN_CC_LIB_DIR_64})
+  FIND_FILE(LIBCSTD_64 libCstd.so.1 PATHS ${SUN_CC_LIB_DIR_64})
 
 # Check again :)
 
- message(STATUS "CURL_LIB is ${CURL_LIB} STDCXX1 is ${STDCXX1} STDCXX2 is ${STDCXX2} STDCXX3 is ${STDCXX3} LIBGCC1 is ${LIBGCC1}  LIBGCC2 is ${LIBGCC2}")
+ message(STATUS "CURL_LIB is ${CURL_LIB} GNUSTDCXX1 is ${GNUSTDCXX1} GNUSTDCXX2 is ${GNUSTDCXX2} GNUSTDCXX3 is ${GNUSTDCXX3} LIBGCC1 is ${LIBGCC1}  LIBGCC2 is ${LIBGCC2}")
 
 # Let's install them.
 
   INSTALL(FILES
-      ${CURL_LIB} ${STDCXX1} ${STDCXX2} ${STDCXX3} ${LIBGCC1} ${LIBGCC2}
+      ${CURL_LIB} 
       DESTINATION lib/Slicer3
+      )      
+  INSTALL(FILES
+      ${GNUSTDCXX1} ${GNUSTDCXX2} ${GNUSTDCXX3} ${LIBGCC1} ${LIBGCC2} ${LIBCRUN} ${LIBCSTD}
+      DESTINATION lib/Slicer3/CompilerLibs/32
+      ) 
+  INSTALL(FILES
+      ${GNUSTDCXX_64_1} ${GNUSTDCXX_64_2} ${GNUSTDCXX_64_3} ${LIBGCC_64_1} ${LIBGCC_64_2} ${LIBCRUN} ${LIBCSTD}
+      DESTINATION lib/Slicer3/CompilerLibs/64
       ) 
 endif(CMAKE_SYSTEM MATCHES "SunOS.*")
 
