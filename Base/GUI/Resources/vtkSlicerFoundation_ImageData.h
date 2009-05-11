@@ -1975,13 +1975,13 @@ static const unsigned char image_SlicerExtensions[] =
  * Resource generated for file:
  *    www.png (zlib, base64) (image file)
  */
-static const unsigned int  image_www_width          = 21;
-static const unsigned int  image_www_height         = 21;
-static const unsigned int  image_www_pixel_size     = 3;
-static const unsigned long image_www_length         = 1392;
-static const unsigned long image_www_decoded_length = 1323;
+static const unsigned int  image_SlicerWWW_width          = 21;
+static const unsigned int  image_SlicerWWW_height         = 21;
+static const unsigned int  image_SlicerWWW_pixel_size     = 3;
+static const unsigned long image_SlicerWWW_length         = 1392;
+static const unsigned long image_SlicerWWW_decoded_length = 1323;
 
-static const unsigned char image_www[] = 
+static const unsigned char image_SlicerWWW[] = 
   "eNql1GlM2ncYB/AmfbM0c3uxLi5Z92Z3UrdZXbpuGq2dsbO2sanK2sRF65xSRLR22loERD"
   "as9cCq3bwBa/EADwREARWliopWRVDsX1TwQA7Bi1r9XyNhWzbjuz6vn8/vyO/5/o4de91C"
   "/1/7ILS6vjGmWZSOAoJ+tWRQo9IuLVscrw6gQ52HOIwgBtMGSzCSSOFdzRn0Zxg/i5GfwT"
