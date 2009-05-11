@@ -86,7 +86,7 @@
     </string>
     <directory>
       <name>resampledImage_Directory</name>
-      <label>Resample image</label>
+      <label>Resample Images Directory</label>
       <channel>output</channel>
       <longflag>resampledImage_Directory</longflag>
       <description>Registration results</description>
@@ -94,7 +94,7 @@
     </directory>
     <string>
       <name>resampledImage_Mask</name>
-      <label>Resample image mask</label>
+      <label>Resample Images mask</label>
       <channel>output</channel>
       <longflag>resampledImage_Mask</longflag>
       <description>Registration results</description>
