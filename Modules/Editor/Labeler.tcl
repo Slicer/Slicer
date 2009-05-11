@@ -569,16 +569,17 @@ itcl::body Labeler::rotateSliceToImage { } {
   set dir(I) {  0  0 -1 }
 
   # find the closest major direction for each index vector
-  set sqrt2over2 [expr sqrt(2.) / 2.]
   foreach index {i j k} {
+    set dir($index,closestAxisDot) -1
     foreach direction $dir(directions) {
       set dot 0
       foreach comp0 [set ${index}ToRAS] comp1 $dir($direction) {
         set dot [expr $dot + $comp0 * $comp1] 
       }
       set dir(dot,$index,$direction) $dot
-      if { $dot > $sqrt2over2 } {
+      if { $dot > $dir($index,closestAxisDot) } {
         set dir($index,closestAxis) $direction
+        set dir($index,closestAxisDot) $dot
       }
     }
   }
