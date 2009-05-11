@@ -20,8 +20,27 @@
 #include "vtkKWMenu.h"
 #include "vtkKWCheckButton.h"
 #include "vtkKWEntry.h"
+#include "vtkKWPushButtonSetWithLabel.h"
+#include "vtkKWPushButtonSet.h"
+#include "vtkKWPushButton.h"
+#include <vtksys/SystemTools.hxx>
+#include <vtksys/ios/sstream>
+#include <vtksys/stl/list>
+#include "vtkSlicerVolumesIcons.h"
 
 #define MIN_RESOLUTION 0.00001
+
+//----------------------------------------------------------------------------
+class vtkKWWindowLevelThresholdEditorInternals
+{
+public:
+
+  typedef vtksys_stl::list<vtkKWWindowLevelThresholdEditor::Preset*> PresetsContainer;
+  typedef vtksys_stl::list<vtkKWWindowLevelThresholdEditor::Preset*>::iterator PresetsContainerIterator;
+
+  PresetsContainer Presets;
+};
+
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro( vtkKWWindowLevelThresholdEditor );
@@ -36,6 +55,10 @@ vtkKWWindowLevelThresholdEditor::vtkKWWindowLevelThresholdEditor()
 
   this->ImageData = NULL;
 
+  this->WindowLevelPresetIcons = vtkSlicerVolumesIcons::New();
+  this->Internals = new vtkKWWindowLevelThresholdEditorInternals;
+  this->AddDefaultPresets();
+  
   this->WindowLevelAutoManual = vtkKWMenuButtonWithLabel::New() ;
   this->ThresholdAutoManual = vtkKWMenuButtonWithLabel::New();
    
@@ -46,6 +69,7 @@ vtkKWWindowLevelThresholdEditor::vtkKWWindowLevelThresholdEditor()
   this->WindowLevelRange = vtkKWRange::New();
   this->LevelEntry = vtkKWEntry::New();
   this->WindowEntry = vtkKWEntry::New();
+  this->WindowLevelPresetsButtonSet = vtkKWPushButtonSetWithLabel::New();
  
   this->ThresholdRange = vtkKWRange::New();
   this->ColorTransferFunctionEditor = vtkKWColorTransferFunctionEditor::New();   
@@ -75,6 +99,34 @@ vtkKWWindowLevelThresholdEditor::~vtkKWWindowLevelThresholdEditor()
     this->ImageData = NULL;
     }
 
+  // Delete all presets
+
+  if ( this->WindowLevelPresetIcons )
+    {
+    this->WindowLevelPresetIcons->Delete ( );
+    this->WindowLevelPresetIcons = NULL;
+    }
+
+  if (this->Internals)
+    {
+    vtkKWWindowLevelThresholdEditorInternals::PresetsContainerIterator it = 
+      this->Internals->Presets.begin();
+    vtkKWWindowLevelThresholdEditorInternals::PresetsContainerIterator end = 
+      this->Internals->Presets.end();
+    for (; it != end; ++it)
+      {
+      if (*it)
+        {
+        if ((*it)->HelpString)
+          {
+          delete [] (*it)->HelpString;
+          }
+        delete (*it);
+        }
+      }
+    delete this->Internals;
+    }
+
   if ( this->LevelEntry ) 
     {
     this->LevelEntry->SetParent(NULL);
@@ -86,6 +138,12 @@ vtkKWWindowLevelThresholdEditor::~vtkKWWindowLevelThresholdEditor()
     this->WindowEntry->SetParent(NULL);
     this->WindowEntry->Delete();
     this->WindowEntry = NULL;
+    }
+  if ( this->WindowLevelPresetsButtonSet )
+    {
+    this->WindowLevelPresetsButtonSet->SetParent(NULL);
+    this->WindowLevelPresetsButtonSet->Delete();
+    this->WindowLevelPresetsButtonSet = NULL;
     }
   if ( this->WindowLevelAutoManual ) 
     {
@@ -277,6 +335,28 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   
   this->UpdateTransferFunction();  
 
+  // --
+  // Window/Level Presets Frame
+  // --
+  vtkKWFrame *winLevelPresetsFrame = vtkKWFrame::New();
+  winLevelPresetsFrame->SetParent(this);
+  winLevelPresetsFrame->Create();
+  this->Script(
+    "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2", 
+    winLevelPresetsFrame->GetWidgetName());
+
+  this->WindowLevelPresetsButtonSet->SetParent(winLevelPresetsFrame);
+  this->WindowLevelPresetsButtonSet->SetLabelPositionToTop();
+  this->WindowLevelPresetsButtonSet->GetLabel()->SetText("Window Level Editor Presets:");
+  this->WindowLevelPresetsButtonSet->Create();
+  this->WindowLevelPresetsButtonSet->ExpandWidgetOff();
+  this->WindowLevelPresetsButtonSet->SetBalloonHelpString("Some preset window and level values useful for viewing CT and PET volumes, since the Auto Window/Level works best for MR");
+  this->Script("pack %s -side right -anchor nw -expand n", this->WindowLevelPresetsButtonSet->GetWidgetName());
+  this->WindowLevelPresetsButtonSet->GetWidget()->PackHorizontallyOn();
+
+  this->CreatePresets();
+
+  
   vtkKWFrame *winLevelFrame = vtkKWFrame::New ( );
   winLevelFrame->SetParent (this);
   winLevelFrame->Create();
@@ -325,6 +405,9 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->Script("grid %s -row 0 -column 5 -sticky e",
                this->LevelEntry->GetWidgetName() );
 
+  // --
+  // Threhold Frame
+  // --
   vtkKWFrame *threshFrame = vtkKWFrame::New ( );
   threshFrame->SetParent (this);
   threshFrame->Create();
@@ -433,6 +516,7 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
 
    // clean up...
   winLevelFrame->Delete ( );
+  winLevelPresetsFrame->Delete ( );
   threshFrame->Delete ( );
   applyFrame->Delete();
 
@@ -845,4 +929,147 @@ void vtkKWWindowLevelThresholdEditor::ProcessCheckButtonCommand(int state)
 
   vtkDebugMacro("ProcessCheckButtonCommand: invoking value changed event");
   this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, NULL);
+}
+
+//----------------------------------------------------------------------------
+void vtkKWWindowLevelThresholdEditor::AddDefaultPresets()
+{
+  if (!this->Internals)
+    {
+    return;
+    }
+
+  vtkKWWindowLevelThresholdEditor::Preset *preset;
+
+  // Presets : CT-bone
+
+  preset = new vtkKWWindowLevelThresholdEditor::Preset;
+  preset->Window = 1000;
+  preset->Level = 400;
+  preset->HelpString = vtksys::SystemTools::DuplicateString("CT-bone: Emphasize bone in a CT volume.");
+  this->Internals->Presets.push_back(preset);
+
+  // Presets: CT-air
+  preset = new vtkKWWindowLevelThresholdEditor::Preset;
+  preset->Window = 1000;
+  preset->Level = -426;
+  preset->HelpString = vtksys::SystemTools::DuplicateString("CT-air: Emphasize air in a CT volume.");
+  this->Internals->Presets.push_back(preset);
+
+  // Presets: PET
+  preset = new vtkKWWindowLevelThresholdEditor::Preset;
+  // THIS IS A GUESS
+  preset->Window = 10000;
+  preset->Level = 6000;
+  preset->HelpString = vtksys::SystemTools::DuplicateString("PET: Preset for PET volume (use the Rainbow Color LUT).");
+  this->Internals->Presets.push_back(preset);
+}
+
+//----------------------------------------------------------------------------
+void vtkKWWindowLevelThresholdEditor::CreatePresets()
+{
+  if (!this->IsCreated())
+    {
+    return;
+    }
+
+  // Delete all presets
+
+  vtkKWPushButtonSet *pbs = this->WindowLevelPresetsButtonSet->GetWidget();
+  pbs->DeleteAllWidgets();
+
+  // Create all presets
+
+  int rank = 0;
+  vtkKWWindowLevelThresholdEditorInternals::PresetsContainerIterator it = 
+    this->Internals->Presets.begin();
+  vtkKWWindowLevelThresholdEditorInternals::PresetsContainerIterator end = 
+    this->Internals->Presets.end();
+  for (; it != end; ++it, ++rank)
+    {
+    if (*it)
+      {
+      vtkKWPushButton *pb = pbs->AddWidget(rank);
+      if ((*it)->HelpString)
+        {
+        pb->SetBalloonHelpString((*it)->HelpString);
+        }
+      // models creates an image here
+      switch (rank)
+        {
+        case 0:
+          pb->SetImageToIcon(this->WindowLevelPresetIcons->GetWindowLevelPresetCTBoneIcon());
+          break;
+        case 1:
+          pb->SetImageToIcon(this->WindowLevelPresetIcons->GetWindowLevelPresetCTAirIcon());
+          break;
+        case 2:
+          pb->SetImageToIcon(this->WindowLevelPresetIcons->GetWindowLevelPresetPETIcon());
+          break;
+        default:
+          vtkErrorMacro("Only have icons for first three presets, " << rank << " will be blank");
+        }
+      vtksys_ios::ostringstream preset_callback;
+      preset_callback << "PresetWindowLevelCallback " << rank;
+      pb->SetCommand(this, preset_callback.str().c_str());
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkKWWindowLevelThresholdEditor::PresetWindowLevelCallback(int rank)
+{
+    vtkKWWindowLevelThresholdEditorInternals::PresetsContainerIterator it = 
+    this->Internals->Presets.begin();
+  vtkKWWindowLevelThresholdEditorInternals::PresetsContainerIterator end = 
+    this->Internals->Presets.end();
+  for (; it != end && rank; ++it, --rank);
+
+  if (it != end)
+    {
+    int prop_has_changed = this->UpdateWindowLevelFromPreset(*it);
+//    this->Update();
+    if (prop_has_changed)
+      {
+//      this->InvokePropertyChangedCommand();
+//      this->SendStateEvent(this->PropertyChangedEvent);
+      }
+    }
+
+}
+
+//----------------------------------------------------------------------------
+int vtkKWWindowLevelThresholdEditor::UpdateWindowLevelFromPreset(const Preset *preset)
+{
+  if (!this->ProcessCallbacks)
+    {
+    return 0;
+    }
+  if (!preset)
+    {
+    return 0;
+    }
+  vtkDebugMacro("ProcessWindowLevelPresetCommand: setting window and level");
+  if (strcmp(this->WindowLevelAutoManual->GetWidget()->GetValue(), "Manual") != 0)
+    {
+    this->WindowLevelAutoManual->GetWidget()->SetValue("Manual");
+    }
+  this->SetWindowLevel(preset->Window, preset->Level);
+  this->UpdateAutoLevels();
+  this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, NULL);
+  return 1;
+}
+
+//----------------------------------------------------------------------------
+void vtkKWWindowLevelThresholdEditor::SetPresetSize(int v)
+{
+  if (this->PresetSize == v || v < 8)
+    {
+    return;
+    }
+
+  this->PresetSize = v;
+  this->Modified();
+
+  this->CreatePresets();
 }

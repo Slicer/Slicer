@@ -42,6 +42,12 @@ install(FILES
   DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
 
+file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.h") 
+install(FILES 
+  ${files}
+  DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
+  )
+
 # --------------------------------------------------------------------------
 # Sources
 
@@ -62,6 +68,7 @@ set(Volumes_SRCS
   vtkSlicerDiffusionWeightedVolumeDisplayWidget.cxx
   vtkSlicerDiffusionTensorVolumeDisplayWidget.cxx
   vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget.cxx
+  vtkSlicerVolumesIcons.cxx
   vtkKWWindowLevelThresholdEditor.cxx
   )
 

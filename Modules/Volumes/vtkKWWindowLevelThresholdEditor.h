@@ -44,6 +44,9 @@
 
 #include "vtkSlicerBaseGUI.h"
 
+class vtkKWWindowLevelThresholdEditorInternals;
+class vtkKWPushButtonSetWithLabel;
+class vtkSlicerVolumesIcons;
 class VTK_VOLUMES_EXPORT vtkKWWindowLevelThresholdEditor : public vtkKWCompositeWidget
 {
 public:
@@ -55,6 +58,10 @@ public:
   // Associated ImageData
   vtkGetObjectMacro(ImageData, vtkImageData);
   void SetImageData(vtkImageData* ImageData);
+
+  // Description:
+  // icons
+  vtkGetObjectMacro(WindowLevelPresetIcons, vtkSlicerVolumesIcons);
 
   // Description:
   // Get/Set Window
@@ -131,6 +138,13 @@ public:
 
 //ETX
 
+  vtkGetMacro(PresetSize, int);
+  virtual void SetPresetSize(int);
+
+  // Description:
+  // call back from the preset buttons
+  void PresetWindowLevelCallback(int rank);
+
 protected:
   vtkKWWindowLevelThresholdEditor();
   ~vtkKWWindowLevelThresholdEditor();
@@ -156,7 +170,34 @@ protected:
 
   int UpdateTransferFunctionPeriod;
   int UpdateTransferFunctionCount;
-  
+
+  // Presets for Window/Level
+  //BTX
+  class Preset
+  {
+  public:
+    double Window;
+    double Level;
+    char *HelpString;
+
+    Preset() { this->HelpString = 0; };
+  };
+  // PIMPL Encapsulation for STL containers
+
+  vtkKWWindowLevelThresholdEditorInternals *Internals;
+  friend class vtkKWWindowLevelThresholdEditorInternals;
+
+  //ETX
+
+  // Description:
+  // Add default presets
+  virtual void AddDefaultPresets();
+  // Description:
+  // Create the presets
+  virtual void CreatePresets();
+  // Description:
+  // Update widgets from the preset
+  int UpdateWindowLevelFromPreset(const Preset *preset);
 
 private:
   vtkKWWindowLevelThresholdEditor(const vtkKWWindowLevelThresholdEditor&); // Not implemented
@@ -176,8 +217,12 @@ private:
   vtkKWRange *WindowLevelRange;
   vtkKWEntry *LevelEntry;
   vtkKWEntry *WindowEntry;
+  vtkKWPushButtonSetWithLabel *WindowLevelPresetsButtonSet;
+  int PresetSize;
   vtkKWRange *ThresholdRange;
   vtkKWCheckButton *UpdateTransferFunctionButton;
+
+  vtkSlicerVolumesIcons *WindowLevelPresetIcons;
 };
 
 #endif
