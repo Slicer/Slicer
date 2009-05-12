@@ -112,7 +112,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFoundationIcons : public vtkSlicerIcon
     vtkGetObjectMacro ( SlicerLoadFiberBundleIcon, vtkKWIcon );
     vtkGetObjectMacro ( SlicerLoadScalarOverlayIcon, vtkKWIcon );
     vtkGetObjectMacro ( SlicerCloseIcon, vtkKWIcon );
-
+    vtkGetObjectMacro ( SlicerExtensionsIcon, vtkKWIcon );
+    vtkGetObjectMacro (SlicerWWWIcon, vtkKWIcon );
 
     void AssignImageDataToIcons ( );
     
@@ -217,6 +218,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFoundationIcons : public vtkSlicerIcon
     vtkKWIcon *SlicerLoadFiberBundleIcon;
     vtkKWIcon *SlicerLoadScalarOverlayIcon;
     vtkKWIcon *SlicerCloseIcon;
+    vtkKWIcon *SlicerExtensionsIcon;
+    vtkKWIcon *SlicerWWWIcon;
     
  private:
     vtkSlicerFoundationIcons ( const vtkSlicerFoundationIcons&); // Not implemented

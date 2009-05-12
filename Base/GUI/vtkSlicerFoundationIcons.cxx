@@ -108,7 +108,9 @@ vtkSlicerFoundationIcons::vtkSlicerFoundationIcons ( )
   this->SlicerLoadFiberBundleIcon = vtkKWIcon::New();
   this->SlicerLoadScalarOverlayIcon = vtkKWIcon::New();
   this->SlicerCloseIcon = vtkKWIcon::New();
-
+  this->SlicerExtensionsIcon = vtkKWIcon::New();
+  this->SlicerWWWIcon = vtkKWIcon::New();
+  
   this->AssignImageDataToIcons ( );
 }
 
@@ -608,6 +610,16 @@ vtkSlicerFoundationIcons::~vtkSlicerFoundationIcons ( )
     this->SlicerLoadScalarOverlayIcon->Delete();
     this->SlicerLoadScalarOverlayIcon = NULL;    
     }
+  if (this->SlicerExtensionsIcon )
+    {
+    this->SlicerExtensionsIcon->Delete();
+    this->SlicerExtensionsIcon = NULL;
+    }
+  if ( this->SlicerWWWIcon )
+    {
+    this->SlicerWWWIcon->Delete();
+    this->SlicerWWWIcon = NULL;
+    }
 }
 
 
@@ -1106,6 +1118,16 @@ void vtkSlicerFoundationIcons::AssignImageDataToIcons ( )
                                    image_SlicerClose_height,
                                    image_SlicerClose_pixel_size,
                                    image_SlicerClose_length, 0);
+  this->SlicerExtensionsIcon->SetImage (image_SlicerExtensions,
+                                        image_SlicerExtensions_width,
+                                        image_SlicerExtensions_height,
+                                        image_SlicerExtensions_pixel_size,
+                                        image_SlicerExtensions_length, 0);
+  this->SlicerWWWIcon->SetImage (image_SlicerWWW,
+                                 image_SlicerWWW_width,
+                                 image_SlicerWWW_height,
+                                 image_SlicerWWW_pixel_size,
+                                 image_SlicerWWW_length, 0);
 }
 
 
@@ -1214,4 +1236,6 @@ void vtkSlicerFoundationIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "SlicerLoadFiberBundleIcon: " << this->GetSlicerLoadFiberBundleIcon() << "\n";
     os << indent << "SlicerLoadScalarOverlayIcon: " << this->GetSlicerLoadScalarOverlayIcon() << "\n";
     os << indent << "SlicerCloseIcon: " << this->GetSlicerCloseIcon() << "\n";
+    os << indent << "SlicerExtensionsIcon: " << this->GetSlicerExtensionsIcon() << "\n";
+    os << indent << "SlicerWWWIcon: " << this->GetSlicerWWWIcon() << "\n";
 }

@@ -477,6 +477,11 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
     {
     if ( p->GetApplication() != NULL )
       {
+    if ( p->GetSlicerFoundationIcons() == NULL )
+      {
+      vtkErrorMacro ( "BuildGUI got NULL Foundation Icons from ApplicationGUI" );
+      return;
+      }
       vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( p->GetApplication() );
 
       //--- ALL modules menu button label
@@ -510,25 +515,25 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
       this->ModulesNext->Create ( );
       this->ModulesNext->SetBorderWidth ( 0 );
       this->ModulesNext->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleNextIcon() );
-      this->ModulesNext->SetBalloonHelpString ("Go to next module.");
+      this->ModulesNext->SetBalloonHelpString ("Go to next visited module.");
 
       this->ModulesPrev->SetParent ( this->ModuleNavigationFrame );
       this->ModulesPrev->Create ( );
       this->ModulesPrev->SetBorderWidth ( 0 );
       this->ModulesPrev->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModulePrevIcon() );
-      this->ModulesPrev->SetBalloonHelpString ("Go to previous module.");
+      this->ModulesPrev->SetBalloonHelpString ("Go to previous visited module.");
         
       this->ModulesHistory->SetParent ( this->ModuleNavigationFrame );
       this->ModulesHistory->Create ( );
       this->ModulesHistory->SetBorderWidth ( 0 );
       this->ModulesHistory->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleHistoryIcon() );
       this->ModulesHistory->IndicatorVisibilityOff  ( );
-      this->ModulesHistory->SetBalloonHelpString ("List all visited extensions.");
+      this->ModulesHistory->SetBalloonHelpString ("List all visited modules & extensions.");
 
       this->ModulesRefresh->SetParent ( this->ModuleNavigationFrame );
       this->ModulesRefresh->Create ( );
       this->ModulesRefresh->SetBorderWidth ( 0 );
-      this->ModulesRefresh->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleRefreshIcon() );
+      this->ModulesRefresh->SetImageToIcon ( p->GetSlicerFoundationIcons()->GetSlicerExtensionsIcon());
       this->ModulesRefresh->SetBalloonHelpString ("Manage Slicer extensions.");
 
       this->ModulesSearch->SetParent ( this->ModuleNavigationFrame );
@@ -536,7 +541,7 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWFrame *appF )
       this->ModulesSearch->SetBorderWidth ( 0 );
       this->ModulesSearch->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleSearchIcon() );
       this->ModulesSearch->IndicatorVisibilityOff ( );
-      this->ModulesSearch->SetBalloonHelpString ("Displays extension search results for the text entered to the left (or use keyboard Ctrl+F).");
+      this->ModulesSearch->SetBalloonHelpString ("Displays module search results for the text entered to the left (or use keyboard Ctrl+F).");
 
       //--- create a small label to show search context
       vtkKWLabel *colonLabel = vtkKWLabel::New ( );
@@ -592,7 +597,7 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWToolbar *tb )
       this->ModulesPrev->SetOverReliefToNone ( );
       this->ModulesPrev->SetBorderWidth ( 0 );
       this->ModulesPrev->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModulePrevIcon() );
-      this->ModulesPrev->SetBalloonHelpString ("Go to previous module.");
+      this->ModulesPrev->SetBalloonHelpString ("Go to previous visited module.");
       tb->AddWidget ( this->ModulesPrev );
 
       //--- Next and previous module button
@@ -602,7 +607,7 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWToolbar *tb )
       this->ModulesNext->SetOverReliefToNone ( );
       this->ModulesNext->SetBorderWidth ( 0 );
       this->ModulesNext->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleNextIcon() );
-      this->ModulesNext->SetBalloonHelpString ("Go to next module.");
+      this->ModulesNext->SetBalloonHelpString ("Go to next visited module.");
       tb->AddWidget ( this->ModulesNext );
 
       this->ModulesHistory->SetParent ( tb->GetFrame() );
@@ -611,15 +616,24 @@ void vtkSlicerModuleChooseGUI::BuildGUI ( vtkKWToolbar *tb )
       this->ModulesHistory->SetBorderWidth ( 0 );
       this->ModulesHistory->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleHistoryIcon() );
       this->ModulesHistory->IndicatorVisibilityOff  ( );
-      this->ModulesHistory->SetBalloonHelpString ("List all visited modules.");
+      this->ModulesHistory->SetBalloonHelpString ("List all visited modules & extensions.");
       tb->AddWidget ( this->ModulesHistory);
 
+      vtkSlicerApplicationGUI *p = this->GetApplicationGUI ( );
+      if ( p )
+        {
+        if ( p->GetSlicerFoundationIcons() == NULL )
+          {
+          vtkErrorMacro ( "BuildGUI got NULL Foundation Icons from ApplicationGUI" );
+          return;          
+          }
+        }
       this->ModulesRefresh->SetParent ( tb->GetFrame() );
       this->ModulesRefresh->Create ( );
       this->ModulesRefresh->SetReliefToFlat();
       this->ModulesRefresh->SetOverReliefToNone ( );
       this->ModulesRefresh->SetBorderWidth ( 0 );
-      this->ModulesRefresh->SetImageToIcon ( this->SlicerModuleNavigationIcons->GetModuleRefreshIcon() );
+      this->ModulesRefresh->SetImageToIcon ( p->GetSlicerFoundationIcons()->GetSlicerExtensionsIcon() );
       this->ModulesRefresh->SetBalloonHelpString ("Manage Slicer extensions.");
       tb->AddWidget ( this->ModulesRefresh);
 
