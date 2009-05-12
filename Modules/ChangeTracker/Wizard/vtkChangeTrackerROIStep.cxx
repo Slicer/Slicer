@@ -222,9 +222,9 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
       greenGUI = applicationGUI->GetMainSliceGUI("Green");
       yellowGUI = applicationGUI->GetMainSliceGUI("Yellow");
 
-      oldSliceSetting[0] = double(redGUI->GetSliceController()->GetOffsetScale()->GetValue());
-      oldSliceSetting[1] = double(greenGUI->GetSliceController()->GetOffsetScale()->GetValue());
-      oldSliceSetting[2] = double(yellowGUI->GetSliceController()->GetOffsetScale()->GetValue());
+      oldSliceSetting[0] = double(redGUI->GetLogic()->GetSliceOffset());
+      oldSliceSetting[1] = double(greenGUI->GetLogic()->GetSliceOffset());
+      oldSliceSetting[2] = double(yellowGUI->GetLogic()->GetSliceOffset());
 
       applicationLogic->GetSelectionNode()->SetActiveVolumeID(volumeNode->GetID());
       applicationLogic->PropagateVolumeSelection();
@@ -238,13 +238,14 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
       greenGUI->GetLogic()->GetSliceCompositeNode()->SetBackgroundVolumeID(volumeNode->GetID());
       greenGUI->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID("");
 
-      redGUI->GetSliceController()->GetOffsetScale()->SetValue(oldSliceSetting[0]);
-      greenGUI->GetSliceController()->GetOffsetScale()->SetValue(oldSliceSetting[1]);
-      yellowGUI->GetSliceController()->GetOffsetScale()->SetValue(oldSliceSetting[2]);
+      redGUI->GetLogic()->SetSliceOffset(oldSliceSetting[0]);
+      greenGUI->GetLogic()->SetSliceOffset(oldSliceSetting[1]);
+      yellowGUI->GetLogic()->SetSliceOffset(oldSliceSetting[2]);
 
       // Load File 
       //char fileName[1024];
       //sprintf(fileName,"%s/TG_Analysis_Intensity.nhdr",node->GetWorkingDir());
+
       // vtkMRMLVolumeNode* tmp =  this->GetGUI()->GetLogic()->LoadVolume(vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication()),fileName,1,"TG_analysis");
     } 
   } else {
@@ -812,9 +813,9 @@ int vtkChangeTrackerROIStep::ROIMapShow() {
  
   // Reset to original slice location 
   double oldSliceSetting[3];
-  oldSliceSetting[0] = double(applicationGUI->GetMainSliceGUI("Red")->GetSliceController()->GetOffsetScale()->GetValue());
-  oldSliceSetting[1] = double(applicationGUI->GetMainSliceGUI("Yellow")->GetSliceController()->GetOffsetScale()->GetValue());
-  oldSliceSetting[2] = double(applicationGUI->GetMainSliceGUI("Green")->GetSliceController()->GetOffsetScale()->GetValue());
+  oldSliceSetting[0] = double(applicationGUI->GetMainSliceGUI("Red")->GetLogic()->GetSliceOffset());
+  oldSliceSetting[1] = double(applicationGUI->GetMainSliceGUI("Yellow")->GetLogic()->GetSliceOffset());
+  oldSliceSetting[2] = double(applicationGUI->GetMainSliceGUI("Green")->GetLogic()->GetSliceOffset());
 
   applicationGUI->GetMainSliceGUI("Red")->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID(this->ROILabelMapNode->GetID());
   applicationGUI->GetMainSliceGUI("Yellow")->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID(this->ROILabelMapNode->GetID());
@@ -825,9 +826,9 @@ int vtkChangeTrackerROIStep::ROIMapShow() {
   applicationGUI->GetMainSliceGUI("Green")->GetLogic()->GetSliceCompositeNode()->SetForegroundOpacity(0.6);
 
   // Reset to original slice location 
-  applicationGUI->GetMainSliceGUI("Red")->GetSliceController()->GetOffsetScale()->SetValue(oldSliceSetting[0]);
-  applicationGUI->GetMainSliceGUI("Yellow")->GetSliceController()->GetOffsetScale()->SetValue(oldSliceSetting[1]);
-  applicationGUI->GetMainSliceGUI("Green")->GetSliceController()->GetOffsetScale()->SetValue(oldSliceSetting[2]);
+  applicationGUI->GetMainSliceGUI("Red")->GetLogic()->SetSliceOffset(oldSliceSetting[0]);
+  applicationGUI->GetMainSliceGUI("Yellow")->GetLogic()->SetSliceOffset(oldSliceSetting[1]);
+  applicationGUI->GetMainSliceGUI("Green")->GetLogic()->SetSliceOffset(oldSliceSetting[2]);
 
   this->ROIMapUpdate();
 

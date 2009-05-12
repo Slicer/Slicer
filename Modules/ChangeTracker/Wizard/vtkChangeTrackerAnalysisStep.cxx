@@ -455,22 +455,6 @@ void vtkChangeTrackerAnalysisStep::ShowUserInterface()
 
       vtkSlicerApplicationGUI *applicationGUI     = this->GetGUI()->GetApplicationGUI();
 
-      double oldSliceSetting[3];
-      oldSliceSetting[0] = double(applicationGUI->GetMainSliceGUI("Red")->GetSliceController()->GetOffsetScale()->GetValue());
-      oldSliceSetting[1] = double(applicationGUI->GetMainSliceGUI("Yellow")->GetSliceController()->GetOffsetScale()->GetValue());
-      oldSliceSetting[2] = double(applicationGUI->GetMainSliceGUI("Green")->GetSliceController()->GetOffsetScale()->GetValue());
-
-//      applicationGUI->GetMainSliceGUI("Red")->GetSliceController()->GetForegroundSelector()->SetSelected(volumeAnalysisNode);
-//      applicationGUI->GetMainSliceGUI("Yellow")->GetSliceController()->GetForegroundSelector()->SetSelected(volumeAnalysisNode);
-//      applicationGUI->GetMainSliceGUI("Green")->GetSliceController()->GetForegroundSelector()->SetSelected(volumeAnalysisNode);
-
-//      applicationLogic->PropagateVolumeSelection();
-
-      // Return to original slice position 
-      applicationGUI->GetMainSliceGUI("Red")->GetSliceController()->GetOffsetScale()->SetValue(oldSliceSetting[0]);
-      applicationGUI->GetMainSliceGUI("Yellow")->GetSliceController()->GetOffsetScale()->SetValue(oldSliceSetting[1]);
-      applicationGUI->GetMainSliceGUI("Green")->GetSliceController()->GetOffsetScale()->SetValue(oldSliceSetting[2]);
-
       // Initialize CompareView layout
       applicationGUI->GetGUILayoutNode()->SetNumberOfCompareViewRows(2);
       applicationGUI->GetGUILayoutNode()->SetNumberOfCompareViewColumns(1);

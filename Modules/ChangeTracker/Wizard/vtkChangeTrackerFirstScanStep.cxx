@@ -142,7 +142,7 @@ void vtkChangeTrackerFirstScanStep::ShowUserInterface()
     // If you want to attach a function once is selected 
     // look at GrayscaleSelector vtkSlicerVolumeMathGUI::AddGUIObservers
   }
-  this->Script( "pack %s %s -side top -anchor nw -padx 2 -pady 2",  this->VolumeMenuButton->GetWidgetName(), this->SecondVolumeMenuButton->GetWidgetName());
+  this->Script( "pack %s %s -side top -anchor nw -fill x -padx 0 -pady 2",  this->VolumeMenuButton->GetWidgetName(), this->SecondVolumeMenuButton->GetWidgetName());
 
   this->AddGUIObservers();
   this->UpdateGUI();
