@@ -89,6 +89,22 @@ static const unsigned char image_SlicerCancelDisabled[] =
 
 /* 
  * Resource generated for file:
+ *    SlicerCenterOnFiducial.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerCenterOnFiducial_width          = 21;
+static const unsigned int  image_SlicerCenterOnFiducial_height         = 21;
+static const unsigned int  image_SlicerCenterOnFiducial_pixel_size     = 3;
+static const unsigned long image_SlicerCenterOnFiducial_length         = 172;
+static const unsigned long image_SlicerCenterOnFiducial_decoded_length = 1323;
+
+static const unsigned char image_SlicerCenterOnFiducial[] = 
+  "eNpjYmJgwo2AgImJALpw4SMuBNSOR3aYaTcxsTUxsYEjoHYkLlDKlqB2Y2PrO3f+YyIitQ"
+  "NVYpoAESFSOxA91mX4/x9Bwh1ApHYIgGgHAjza0QDcdrjVcNsZMADltlPd73BDkGONSO2Y"
+  "ekmKd2QETnUoIsM4x5GhnZKyDgCRYRJ0";
+
+
+/* 
+ * Resource generated for file:
  *    SlicerCancelRequested.png (zlib, base64) (image file)
  */
 static const unsigned int  image_SlicerCancelRequested_width          = 21;

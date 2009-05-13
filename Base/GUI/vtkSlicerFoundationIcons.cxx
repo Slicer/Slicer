@@ -74,6 +74,7 @@ vtkSlicerFoundationIcons::vtkSlicerFoundationIcons ( )
   this->SlicerInvisibleIcon = vtkKWIcon::New();
   this->SlicerRefreshIcon = vtkKWIcon::New();
   this->SlicerVolumeIcon = vtkKWIcon::New();
+  this->SlicerCenterOnFiducialIcon = vtkKWIcon::New();
   this->SlicerFiducialsAddNewIcon = vtkKWIcon::New();
   this->SlicerFiducialsDeleteAllIcon = vtkKWIcon::New();
   this->SlicerFiducialsDeleteLastClickedIcon = vtkKWIcon::New();
@@ -439,7 +440,12 @@ vtkSlicerFoundationIcons::~vtkSlicerFoundationIcons ( )
     {
     this->SlicerVolumeIcon->Delete();
     this->SlicerVolumeIcon = NULL;    
-    }  
+    }
+  if ( this->SlicerCenterOnFiducialIcon )
+    {
+    this->SlicerCenterOnFiducialIcon->Delete();
+    this->SlicerCenterOnFiducialIcon = NULL;
+    }
   if ( this->SlicerFiducialsAddNewIcon )
     {
     this->SlicerFiducialsAddNewIcon->Delete();
@@ -943,6 +949,11 @@ void vtkSlicerFoundationIcons::AssignImageDataToIcons ( )
                                      image_SlicerVolume_height,
                                      image_SlicerVolume_pixel_size,
                                      image_SlicerVolume_length, 0);
+  this->SlicerCenterOnFiducialIcon->SetImage (image_SlicerCenterOnFiducial,
+                                              image_SlicerCenterOnFiducial_width,
+                                              image_SlicerCenterOnFiducial_height,
+                                              image_SlicerCenterOnFiducial_pixel_size,
+                                              image_SlicerCenterOnFiducial_length, 0);
   this->SlicerFiducialsAddNewIcon->SetImage (image_SlicerAddFiducial,
                                              image_SlicerAddFiducial_width,
                                              image_SlicerAddFiducial_height,
@@ -1199,6 +1210,7 @@ void vtkSlicerFoundationIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "SlicerInvisibleIcon: " << this->GetSlicerInvisibleIcon() << "\n";
     os << indent << "SlicerRefreshIcon: " << this->GetSlicerRefreshIcon() << "\n";
     os << indent << "SlicerVolumeIcon: " << this->GetSlicerVolumeIcon() << "\n";
+    os << indent << "SlicerCenterOnFiducialIcon: " << this->GetSlicerCenterOnFiducialIcon() << "\n";
     os << indent << "SlicerFiducialsAddNewIcon: " << this->GetSlicerFiducialsAddNewIcon() << "\n";
     os << indent << "SlicerFiducialsDeleteAllIcon: " << this->GetSlicerFiducialsDeleteAllIcon() << "\n";
     os << indent << "SlicerFiducialsDeleteLastClickedIcon: " << this->GetSlicerFiducialsDeleteLastClickedIcon() << "\n";

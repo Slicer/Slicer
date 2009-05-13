@@ -61,7 +61,8 @@ vtkSlicerFiducialsGUI::vtkSlicerFiducialsGUI ( )
 
     this->MoveSelectedFiducialUpButton = NULL;
     this->MoveSelectedFiducialDownButton = NULL;
-    
+    this->Center3DViewOnSelectedFiducialButton = NULL;
+
     this->ListColorButton = NULL;
     this->ListSelectedColorButton = NULL;
     this->ListSymbolScale = NULL;
@@ -318,6 +319,12 @@ vtkSlicerFiducialsGUI::~vtkSlicerFiducialsGUI ( )
     this->MoveSelectedFiducialDownButton->Delete();
     this->MoveSelectedFiducialDownButton = NULL;
     }
+  if (this->Center3DViewOnSelectedFiducialButton)
+    {
+    this->Center3DViewOnSelectedFiducialButton->SetParent(NULL);
+    this->Center3DViewOnSelectedFiducialButton->Delete();
+    this->Center3DViewOnSelectedFiducialButton = NULL;
+    }
   if (this->MultiColumnList)
     {
     this->MultiColumnList->SetParent(NULL);
@@ -383,6 +390,7 @@ void vtkSlicerFiducialsGUI::RemoveGUIObservers ( )
 
     this->MoveSelectedFiducialUpButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->MoveSelectedFiducialDownButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->Center3DViewOnSelectedFiducialButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->HideListToggle->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ListColorButton->RemoveObservers (vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     this->ListSelectedColorButton->RemoveObservers (vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -432,6 +440,7 @@ void vtkSlicerFiducialsGUI::AddGUIObservers ( )
 
     this->MoveSelectedFiducialUpButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->MoveSelectedFiducialDownButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->Center3DViewOnSelectedFiducialButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->HideListToggle->AddObserver (vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     this->ListColorButton->AddObserver (vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ListSelectedColorButton->AddObserver (vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -825,6 +834,29 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
           this->MultiColumnList->GetWidget()->GetSelectedCells(rows, cols);
           this->MultiColumnList->GetWidget()->DeselectRow(selectedIndex);
           this->MultiColumnList->GetWidget()->SelectCell(newIndex, cols[0]);
+          }
+        }
+      }
+    else if (button == this->Center3DViewOnSelectedFiducialButton)
+      {
+      vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Center 3d view on Selected Fiducial Down Button event: " << event << ".\n");
+      // get the index of the selected fiducial
+      int selectedIndex =  this->MultiColumnList->GetWidget()->GetIndexOfFirstSelectedRow();
+      if (selectedIndex == -1)
+        {
+        vtkErrorMacro("Select a fiducial first...");
+        }
+      else
+        {
+        // no undo
+        // get the r,a,s
+        float *ras = activeFiducialListNode->GetNthFiducialXYZ(selectedIndex);
+        // recenter the 3d view
+        if (ras != NULL &&
+            this->GetApplicationGUI() &&
+            this->GetApplicationGUI()->GetViewControlGUI())
+          {
+          this->GetApplicationGUI()->GetViewControlGUI()->MainViewSetFocalPoint(ras[0], ras[1], ras[2]);
           }
         }
       }
@@ -2553,6 +2585,17 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     // click on a fiducial name to move it up/down in list.
     this->MoveSelectedFiducialDownButton->SetBalloonHelpString("Move the last fiducial whose name was \"clicked on\" in the table one row down in the table");
 
+    // center view on selected fiducial button
+    this->Center3DViewOnSelectedFiducialButton = vtkKWPushButton::New();
+    this->Center3DViewOnSelectedFiducialButton->SetParent ( f3 );
+    this->Center3DViewOnSelectedFiducialButton->Create ( );
+    this->Center3DViewOnSelectedFiducialButton->SetImageToIcon ( this->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerCenterOnFiducialIcon());
+    this->Center3DViewOnSelectedFiducialButton->SetReliefToFlat();
+    this->Center3DViewOnSelectedFiducialButton->SetBorderWidth ( 0 );
+    // encourage users to
+    // click on a fiducial name to recenter.
+    this->Center3DViewOnSelectedFiducialButton->SetBalloonHelpString("Center the 3D view on the last fiducial whose name was \"clicked on\" in the table.\nRight click on a fiducial name in the table to jump the 2d slices to that fiducial location.\nWARNING: no undo is currently implemented.");
+    
     // remove fiducial button
     this->RemoveFiducialButton = vtkKWPushButton::New ( );
     this->RemoveFiducialButton->SetParent ( f4 );
@@ -2589,9 +2632,10 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
                 this->DeselectAllFiducialsInListButton->GetWidgetName() );
     app->Script( "pack %s -side left -anchor w -padx 2 -pady 2",
                  this->AddFiducialButton->GetWidgetName() );
-    app->Script( "pack %s %s -side left -anchor nw -padx 2 -pady 2", 
-                this->MoveSelectedFiducialUpButton->GetWidgetName(),
-                this->MoveSelectedFiducialDownButton->GetWidgetName() );
+    app->Script( "pack %s %s %s -side left -anchor nw -padx 2 -pady 2", 
+                 this->MoveSelectedFiducialUpButton->GetWidgetName(),
+                 this->MoveSelectedFiducialDownButton->GetWidgetName(),
+                 this->Center3DViewOnSelectedFiducialButton->GetWidgetName());
     app->Script( "pack %s %s -side left -anchor ne -padx 2 -pady 2", 
                 this->RemoveFiducialButton->GetWidgetName(),
                 this->RemoveFiducialsInListButton->GetWidgetName() );

@@ -82,6 +82,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     
     vtkGetObjectMacro ( MoveSelectedFiducialUpButton, vtkKWPushButton );
     vtkGetObjectMacro ( MoveSelectedFiducialDownButton, vtkKWPushButton );
+    vtkGetObjectMacro ( Center3DViewOnSelectedFiducialButton, vtkKWPushButton );
     vtkGetObjectMacro ( AllLockMenuButton, vtkKWMenuButton );
     vtkGetObjectMacro ( AllVisibilityMenuButton, vtkKWMenuButton );
     vtkGetObjectMacro ( FiducialsListLockToggle, vtkKWPushButton );
@@ -313,6 +314,10 @@ protected:
     // moves the selected fiducial up/down in the list.
     vtkKWPushButton *MoveSelectedFiducialUpButton;
     vtkKWPushButton *MoveSelectedFiducialDownButton;
+
+    // Description:
+    // centers the 3d view on the selected fiducial
+    vtkKWPushButton *Center3DViewOnSelectedFiducialButton;
 
     // Description:
     // list visibility, overrides individual point visibility
