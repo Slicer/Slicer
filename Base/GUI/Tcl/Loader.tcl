@@ -52,6 +52,11 @@ namespace eval Loader {
   #
   proc LoadArchetype { path {centered 0} {labelMap 0} {name ""} } {
 
+    if { [info exists ::slicer3::VolumesGUI] == 0 } {
+      $this errorDialog "Volumes module is not loaded, cannot load volumes."
+      return
+    }
+
     if { ![file exists $path] } {
       error "path does not exist: $path"
     }
@@ -500,6 +505,9 @@ itcl::body Loader::apply { } {
 
       switch [$w GetCellText $row $col(Type)] {
         "Volume" {
+          if { [info exists ::slicer3::VolumesGUI] == 0 } {
+            $this errorDialog "Volumes module is not loaded, cannot load volumes."
+          } else {
           set centered [$w GetCellTextAsInt $row $col(Centered)]
           set labelMap [$w GetCellTextAsInt $row $col(LabelMap)]
           set volumeLogic [$::slicer3::VolumesGUI GetLogic]
@@ -516,6 +524,7 @@ itcl::body Loader::apply { } {
               $selNode SetReferenceActiveVolumeID [$node GetID]
             }
             $::slicer3::ApplicationLogic PropagateVolumeSelection
+          }
           }
         }
         "Model" {
