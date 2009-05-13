@@ -64,7 +64,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkGetObjectMacro ( SelectAllFiducialsInListButton, vtkKWPushButton);
     vtkGetObjectMacro ( DeselectAllFiducialsButton, vtkKWPushButton);
     vtkGetObjectMacro ( DeselectAllFiducialsInListButton, vtkKWPushButton);
-    vtkGetObjectMacro ( VisibilityToggle, vtkKWPushButtonWithLabel);
+    vtkGetObjectMacro ( HideListToggle, vtkKWPushButton);
+    vtkGetObjectMacro ( RemoveSelectedListButton, vtkKWPushButton );
     vtkGetObjectMacro ( ListColorButton, vtkKWChangeColorButton);
     vtkGetObjectMacro ( ListSelectedColorButton, vtkKWChangeColorButton);
     vtkGetObjectMacro ( ListSymbolScale, vtkKWScaleWithEntry);
@@ -83,7 +84,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkGetObjectMacro ( MoveSelectedFiducialDownButton, vtkKWPushButton );
     vtkGetObjectMacro ( AllLockMenuButton, vtkKWMenuButton );
     vtkGetObjectMacro ( AllVisibilityMenuButton, vtkKWMenuButton );
-    vtkGetObjectMacro ( ListLockMenuButton, vtkKWMenuButton );
+    vtkGetObjectMacro ( FiducialsListLockToggle, vtkKWPushButton );
+    vtkGetObjectMacro ( HideOrExposeAllFiducialListsMenuButton, vtkKWMenuButton );
     vtkGetObjectMacro ( ListVisibilityMenuButton, vtkKWMenuButton );
         
     // Description:
@@ -188,22 +190,56 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
 
     
     // Description:
-    // Modifies the lock state on all fiducials in all lists.
+    // Modifies the lock state on all fiducial lists.
     void ModifyAllLock(int lockState);
 
     // Description:
-    // Modifies the lock state on all fiducials in the selected list.
+    // Modifies the lock state on selected fiducial list.
     void ModifyListLock( int lockState);
+    // Description:
+    // Modifies the visibility state on all fiducials in all lists
+    // but preserves list exposure setting
+    void ModifyAllFiducialVisibility(int visibilityState);
 
     // Description:
-    // Modifies the visibility state on all fiducials in all lists.
-    void ModifyAllVisibility(int visibilityState);
+     // Modifies the visibility state on all fiducials in the
+     // selected list.
+     void ModifyFiducialsInListVisibility(int visibilityState);
+ 
+     // Description:
+     // Modifies the exposure state on all fiducial  lists but
+     // preserves fiducial visibility setting.
+     void ModifyAllListExposure(int visibilityState);
 
-    // Description:
-    // Modifies the visibility  state on all fiducials in the selected list.
-    void ModifyListVisibility(int visibilityState);
+     // Modifies the exposure state on selected fiducial list
+     // but preserves fiducial visibility setting.
+     void ModifyListExposure(int visibilityState);
 
- protected:
+     // Description
+     // sets node state when visibility or lock cells
+     // in the multicolumn list for individual  fiducials
+     // are clicked on (selected)
+     // for toggling. Modifies Nth Fiducial.
+     void VisibilityOrLockToggleCallback ( );
+     
+     // Description:
+     // modifies the multicolumn list if a fiducial point's
+     // visibility changes
+     void ModifyIndividualFiducialsVisibilityGUI();
+     // Description:
+     // modifies the multicolumn list if a fiducial list's lock
+     // state changes.
+     void ModifyIndividualFiducialsLockGUI( );
+     // Description:
+     // modifies the Selected List toggle button to
+     // show the selected list's lock state.
+     void ModifySelectedListLockGUI();
+     // Description:
+     // modifies the Selected List's hide/expose button to
+     // show the selected list's exposure state.
+     void ModifySelectedListExposureGUI();
+
+protected:
     vtkSlicerFiducialsGUI ( );
     virtual ~vtkSlicerFiducialsGUI ( );
     
@@ -280,7 +316,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
 
     // Description:
     // list visibility, overrides individual point visibility
-    vtkKWPushButtonWithLabel *VisibilityToggle;
+    vtkKWPushButton *HideListToggle;
+
+    // Description:
+    // removes selected fiducial list and its fiducials.
+    vtkKWPushButton *RemoveSelectedListButton;
 
     // Description:
     // list colour
@@ -336,9 +376,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkKWMenuButton *AllVisibilityMenuButton;
 
     // Description:
-    // menu button whose menu exposes options for
+    // push button to toggle
     // locking or unlocking all fiducials in a fiducial list.
-    vtkKWMenuButton *ListLockMenuButton;
+    vtkKWPushButton *FiducialsListLockToggle;
 
     // Description:
     // menu button whose menu exposes options for
@@ -349,6 +389,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // choose the numbering scheme for the next fiducial added in the list
     vtkKWMenuButtonWithLabel *ListNumberingSchemeMenu;
 
+    // menu button whose menu exposes options
+    // for hiding or exposing all fiducial lists.
+    vtkKWMenuButton *HideOrExposeAllFiducialListsMenuButton;
+  
     // Description:
     // contributing logo widgets
     vtkKWLabel *NACLabel;
@@ -361,9 +405,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // The column orders in the list box
     enum
     {
-        NameColumn = 0,
-        SelectedColumn = 1,
-        VisibilityColumn = 2,
+        SelectedColumn = 0,
+        VisibilityColumn = 1,
+        NameColumn = 2,
         XColumn = 3,
         YColumn = 4,
         ZColumn = 5,
