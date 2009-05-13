@@ -73,6 +73,20 @@ add_dependencies(${CLP}Test ${CLP}Lib)
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test ITKIO)
 
+# Mask tests
+add_test(MaskTest ${Slicer3_EXE} --launch MaskTest
+  --compare ${BASELINE}/MaskedVolume.nrrd
+  ${TEMP}/MaskedVolume.nrrd
+  MaskTest --label 1
+  ${TEST_DATA}/CTHeadAxial.nhdr ${TEST_DATA}/CTHeadAxialMask.nrrd ${TEMP}/MaskedVolume.nrrd
+  )
+
+set (CLP Mask)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP}Lib)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO)
+
 # Threshold tests
 add_test(ThresholdTest ${Slicer3_EXE} --launch ThresholdTest
   --compare ${BASELINE}/ThresholdTest.nhdr
