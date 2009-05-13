@@ -898,6 +898,22 @@ add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test  ITKIO ITKBasicFilters)
 
 ##################################
+# Multiply tests
+add_test(MultiplyTest ${Slicer3_EXE} --launch MultiplyTest
+  --compare ${BASELINE}/MultiplyTest.nrrd
+            ${TEMP}/MultiplyTest.nrrd
+  MultiplyTest
+    ${TEST_DATA}/CTHeadAxial.nhdr
+    ${TEST_DATA}/CTHeadAxial.nhdr
+    ${TEMP}/MultiplyTest.nrrd
+  )
+
+set (CLP Multiply)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test  ITKIO ITKBasicFilters)
+
+##################################
 # VotingBinaryHoleFillingImageFilter tests
 add_test(VotingBinaryHoleFillingImageFilterTest ${Slicer3_EXE} --launch VotingBinaryHoleFillingImageFilterTest
   --compare ${BASELINE}/VotingBinaryHoleFillingImageFilterTest.nhdr
