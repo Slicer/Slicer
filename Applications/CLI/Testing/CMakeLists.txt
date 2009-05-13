@@ -87,6 +87,21 @@ add_dependencies(${CLP}Test ${CLP}Lib)
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test ITKIO)
 
+# Cast tests
+add_test(CastTest ${Slicer3_EXE} --launch CastTest
+  --compare ${BASELINE}/CastTest.nrrd
+  ${TEMP}/CastTest.nrrd
+  CastTest --type UnsignedChar
+  ${TEST_DATA}/CastTest.nrrd ${TEMP}/CastTest.nrrd
+  )
+
+set (CLP Cast)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP}Lib)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO)
+
+
 # CheckerBoard tests
 add_test(CheckerBoardTest ${Slicer3_EXE} --launch CheckerBoardTest
   --compare ${BASELINE}/CheckerBoardTest.nhdr
@@ -718,6 +733,55 @@ target_link_libraries(${CLP}Test
   SlicerBaseLogic
   SlicerBaseCLI
   )
+
+##################################
+# ACPC Test
+
+add_test(APCPTransformTest  ${Slicer3_EXE} --launch ACPCTransformTest
+   ACPCTransformTest 
+     --acpc 0.5,-21.5,-9.5 --acpc -2.5,4.5,-16.5 
+     --midline 12.5,-93.5,7.5 --midline 12.5,-93.5,-12.5 
+     --midline 5.5,-93.5,-25.5 --midline 9.5,-83.5,-22.5 
+     --midline 9.5,-83.5,-12.5 --midline 10.5,-83.5,10.5 
+     --midline 10.5,-83.5,26.5 --midline 7.5,-68.5,38.5 
+     --midline 7.5,-68.5,13.5 --midline 6.5,-68.5,-9.5 
+     --midline 5.5,-68.5,-30.5 --midline 5.5,-68.5,-48.5 
+     --midline 3.5,-49.5,50.5 --midline 4.5,-49.5,25.5 
+     --midline 3.5,-49.5,5.5 --midline 4.5,-49.5,-32.5 
+     --midline 3.5,-34.5,54.5 --midline 1.5,-34.5,30.5 
+     --midline 1.5,-34.5,17.5 --midline 3.5,-34.5,-22.5 
+     --midline 1.5,-19.5,58.5 --midline 0.5,-19.5,34.5
+     --midline 0.5,-19.5,18.5 --midline 0.5,-19.5,-13.5
+     --midline 1.5,-19.5,-25.5 --midline -1.5,-4.5,62.5 
+     --midline -2.5,-4.5,36.5 --midline -1.5,-4.5,19.5 
+     --midline -1.5,-4.5,0.5 --midline -1.5,-4.5,-12.5 
+     --midline -1.5,-4.5,-24.5 --midline -1.5,-4.5,-39.5
+     --midline -3.5,10.5,49.5 --midline -1.5,10.5,28.5
+     --midline -3.5,10.5,14.5 --midline -2.5,10.5,5.5 
+     --midline -3.5,10.5,-15.5 --midline -1.5,10.5,-33.5
+     --midline -5.5,26.5,44.5 --midline -6.5,26.5,25.5 
+     --midline -5.5,26.5,3.5 --midline -5.5,26.5,-11.5 
+     --midline -5.5,26.5,-21.5 --midline -5.5,26.5,-35.5
+     --midline -5.5,41.5,35.5 --midline -7.5,41.5,12.5 
+     --midline -6.5,41.5,-4.5 --midline -7.5,41.5,-27.5 
+     --midline -7.5,41.5,-41.5 --midline -7.5,56.5,24.5 
+     --midline -9.5,56.5,-0.5 --midline -9.5,56.5,-12.5 
+     --midline -9.5,56.5,-29.5 --midline -10.5,71.5,3.5 
+     --midline -10.5,71.5,-12.5 --midline -11.5,71.5,-26.5 
+     --outputTransform ACPCTransformTest.mrml#vtkMRMLLinearTransformNode1
+)
+
+set (CLP ACPCTransform)
+include_directories(${Slicer3_SOURCE_DIR}/Applications/CLI/Realign)
+include_directories(${Slicer3_BINARY_DIR}/Applications/CLI/Realign)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test
+  vtkImaging vtkGraphics vtkIO
+  ModuleDescriptionParser vtkTeem
+  MRML
+  SlicerBaseCLI
+)
 
 ##################################
 # MultipleModelsExample tests

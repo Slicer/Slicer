@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Filtering.Arithmetic</category>
+  <title>Cast Image</title>
+  <description>
+Cast a volume to a given data type.\n
+Use at your own risk when casting an input volume into a lower precision type!\n
+Allows casting to the same type as the input volume.
+</description>
+  <version>0.1.0.$Revision: 2104 $(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Nicole Aucoin</contributor>
+<acknowledgements>
+This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+</acknowledgements>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image>
+      <name>InputVolume</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input volume, the volume to cast.</description>
+    </image>
+    <image>
+      <name>OutputVolume</name>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>Output volume, cast to the new type.</description>
+    </image>
+  </parameters>
+  <parameters>
+    <label>Filter Settings</label>    
+    <string-enumeration>
+      <name>Type</name>
+      <label>Output Type:</label>
+      <description>Type for the new output volume.</description>
+      <longflag>--type</longflag>
+      <flag>--t</flag>
+      <default>UnsignedChar</default>
+      <element>Char</element>
+      <element>UnsignedChar</element>
+      <element>Short</element>
+      <element>UnsignedShort</element>
+      <element>Int</element>
+      <element>UnsignedInt</element>
+      <element>Long</element>
+      <element>UnsignedLong</element>
+      <element>Float</element>
+      <element>Double</element>
+    </string-enumeration>  
+  </parameters>
+</executable>
