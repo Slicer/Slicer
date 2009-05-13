@@ -56,7 +56,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
     InputImageType, InputImageType, OutputImageType >  FilterType;
 
   typename ReaderType::Pointer reader1 = ReaderType::New();
-  itk::PluginFilterWatcher watchReader1(reader1, "Read Volume 2",
+  itk::PluginFilterWatcher watchReader1(reader1, "Read Volume 1",
                                         CLPProcessInformation);
   
   typename ReaderType::Pointer reader2 = ReaderType::New();
