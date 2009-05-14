@@ -178,6 +178,8 @@ itcl::body LoadVolume::constructor {} {
   set o(toplevel) [vtkNew vtkKWTopLevel]
   $o(toplevel) SetApplication $::slicer3::Application
   $o(toplevel) SetTitle "Add Volume"
+  set parent [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+  $o(toplevel) SetMasterWindow $parent
   $o(toplevel) Create
 
   # delete this instance when the window is closed
@@ -1329,6 +1331,10 @@ itcl::body LoadVolume::organizeDICOMSeries {arrayName} {
 
   #
   # sort each series geometrically
+  #
+  # TODO: more consistency checks:
+  # - is there gantry tilt?
+  # - are the orientations the same for all slices?
   #
   set POSITION "0020|0032"
   set ORIENTATION "0020|0037"
