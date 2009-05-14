@@ -179,8 +179,11 @@ protected:
     double Window;
     double Level;
     char *HelpString;
-
-    Preset() { this->HelpString = 0; };
+    char *ColorTableNodeID;
+    vtkKWIcon *Icon;
+    // use the Icon String if no icon yet
+    char *IconString;
+    Preset() { this->HelpString = 0; this->ColorTableNodeID = 0; this->Icon = NULL; this->IconString = 0;};
   };
   // PIMPL Encapsulation for STL containers
 

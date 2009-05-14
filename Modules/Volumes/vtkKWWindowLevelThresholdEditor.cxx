@@ -28,6 +28,10 @@
 #include <vtksys/stl/list>
 #include "vtkSlicerVolumesIcons.h"
 
+#include <vtkMRMLNode.h>
+#include <vtkMRMLColorTableNode.h>
+#include <vtkSlicerNodeSelectorWidget.h>
+
 #define MIN_RESOLUTION 0.00001
 
 //----------------------------------------------------------------------------
@@ -120,6 +124,20 @@ vtkKWWindowLevelThresholdEditor::~vtkKWWindowLevelThresholdEditor()
         if ((*it)->HelpString)
           {
           delete [] (*it)->HelpString;
+          }
+        if ((*it)->ColorTableNodeID)
+          {
+          delete [] (*it)->ColorTableNodeID;
+          (*it)->ColorTableNodeID = NULL;
+          }
+        if ((*it)->IconString)
+          {
+          delete [] (*it)->IconString;
+          (*it)->IconString = NULL;
+          }
+        if ((*it)->Icon)
+          {
+          (*it)->Icon = NULL;
           }
         delete (*it);
         }
@@ -942,10 +960,11 @@ void vtkKWWindowLevelThresholdEditor::AddDefaultPresets()
   vtkKWWindowLevelThresholdEditor::Preset *preset;
 
   // Presets : CT-bone
-
   preset = new vtkKWWindowLevelThresholdEditor::Preset;
   preset->Window = 1000;
   preset->Level = 400;
+  preset->Icon = this->WindowLevelPresetIcons->GetWindowLevelPresetCTBoneIcon();
+  preset->ColorTableNodeID = vtksys::SystemTools::DuplicateString("vtkMRMLColorTableNodeGrey");
   preset->HelpString = vtksys::SystemTools::DuplicateString("CT-bone: Emphasize bone in a CT volume.");
   this->Internals->Presets.push_back(preset);
 
@@ -953,6 +972,8 @@ void vtkKWWindowLevelThresholdEditor::AddDefaultPresets()
   preset = new vtkKWWindowLevelThresholdEditor::Preset;
   preset->Window = 1000;
   preset->Level = -426;
+  preset->Icon = this->WindowLevelPresetIcons->GetWindowLevelPresetCTAirIcon();
+  preset->ColorTableNodeID = vtksys::SystemTools::DuplicateString("vtkMRMLColorTableNodeGrey");
   preset->HelpString = vtksys::SystemTools::DuplicateString("CT-air: Emphasize air in a CT volume.");
   this->Internals->Presets.push_back(preset);
 
@@ -961,7 +982,42 @@ void vtkKWWindowLevelThresholdEditor::AddDefaultPresets()
   // THIS IS A GUESS
   preset->Window = 10000;
   preset->Level = 6000;
+  preset->Icon = this->WindowLevelPresetIcons->GetWindowLevelPresetPETIcon();
+  preset->ColorTableNodeID = vtksys::SystemTools::DuplicateString("vtkMRMLColorTableNodeRainbow");
   preset->HelpString = vtksys::SystemTools::DuplicateString("PET: Preset for PET volume (use the Rainbow Color LUT).");
+  this->Internals->Presets.push_back(preset);
+
+  // Presets: CT-abdomen
+  preset = new vtkKWWindowLevelThresholdEditor::Preset;
+  preset->Window = 350;
+  preset->Level = 40;
+//  preset->Icon =
+//  this->WindowLevelPresetIcons->GetWindowLevelPresetCTAbdomenIcon();
+  preset->IconString =  vtksys::SystemTools::DuplicateString("CT-abdomen");
+  preset->ColorTableNodeID = vtksys::SystemTools::DuplicateString("vtkMRMLColorTableNodeGrey");
+  preset->HelpString = vtksys::SystemTools::DuplicateString("CT-abdomen: View abdominal CT volume.");
+  this->Internals->Presets.push_back(preset);
+
+  // Presets: CT-brain
+  preset = new vtkKWWindowLevelThresholdEditor::Preset;
+  preset->Window = 100;
+  preset->Level = 50;
+//  preset->Icon =
+//  this->WindowLevelPresetIcons->GetWindowLevelPresetCTBrainIcon();
+  preset->IconString =  vtksys::SystemTools::DuplicateString("CT-brain");
+  preset->ColorTableNodeID = vtksys::SystemTools::DuplicateString("vtkMRMLColorTableNodeGrey");
+  preset->HelpString = vtksys::SystemTools::DuplicateString("CT-brain: View brain CT volume.");
+  this->Internals->Presets.push_back(preset);
+
+  // Presets: CT-lung
+  preset = new vtkKWWindowLevelThresholdEditor::Preset;
+  preset->Window = 1400;
+  preset->Level = -500;
+//  preset->Icon =
+//  this->WindowLevelPresetIcons->GetWindowLevelPresetCTLungIcon();
+  preset->IconString =  vtksys::SystemTools::DuplicateString("CT-lung");
+  preset->ColorTableNodeID = vtksys::SystemTools::DuplicateString("vtkMRMLColorTableNodeGrey");
+  preset->HelpString = vtksys::SystemTools::DuplicateString("CT-lung: View lung CT volume.");
   this->Internals->Presets.push_back(preset);
 }
 
@@ -994,20 +1050,14 @@ void vtkKWWindowLevelThresholdEditor::CreatePresets()
         {
         pb->SetBalloonHelpString((*it)->HelpString);
         }
-      // models creates an image here
-      switch (rank)
+      // set the icon
+      if ((*it)->Icon)
         {
-        case 0:
-          pb->SetImageToIcon(this->WindowLevelPresetIcons->GetWindowLevelPresetCTBoneIcon());
-          break;
-        case 1:
-          pb->SetImageToIcon(this->WindowLevelPresetIcons->GetWindowLevelPresetCTAirIcon());
-          break;
-        case 2:
-          pb->SetImageToIcon(this->WindowLevelPresetIcons->GetWindowLevelPresetPETIcon());
-          break;
-        default:
-          vtkErrorMacro("Only have icons for first three presets, " << rank << " will be blank");
+        pb->SetImageToIcon((*it)->Icon);
+        }
+      else if ((*it)->IconString)
+        {
+        pb->SetText((*it)->IconString);
         }
       vtksys_ios::ostringstream preset_callback;
       preset_callback << "PresetWindowLevelCallback " << rank;
@@ -1019,7 +1069,7 @@ void vtkKWWindowLevelThresholdEditor::CreatePresets()
 //----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::PresetWindowLevelCallback(int rank)
 {
-    vtkKWWindowLevelThresholdEditorInternals::PresetsContainerIterator it = 
+  vtkKWWindowLevelThresholdEditorInternals::PresetsContainerIterator it = 
     this->Internals->Presets.begin();
   vtkKWWindowLevelThresholdEditorInternals::PresetsContainerIterator end = 
     this->Internals->Presets.end();
@@ -1048,6 +1098,44 @@ int vtkKWWindowLevelThresholdEditor::UpdateWindowLevelFromPreset(const Preset *p
   if (!preset)
     {
     return 0;
+    }
+  // set the colour LUT
+  if (preset->ColorTableNodeID)
+    {
+    if (this->GetParent())
+      {
+      // have to look through the parent's children for the node selector
+      int numChildren = this->GetParent()->GetNumberOfChildren();
+      for (int c = 0; c < numChildren; c++)
+        {
+        if (this->GetParent()->GetNthChild(c)->IsA("vtkSlicerNodeSelectorWidget"))
+          {
+          vtkMRMLNode *oldColorNode = vtkSlicerNodeSelectorWidget::SafeDownCast(this->GetParent()->GetNthChild(c))->GetSelected();
+          if (oldColorNode && oldColorNode->GetScene())
+            {
+            // need it to get at the scene
+            vtkMRMLNode *node = oldColorNode->GetScene()->GetNodeByID(preset->ColorTableNodeID);
+            if (node)
+              {
+              vtkMRMLColorTableNode *colorNode = vtkMRMLColorTableNode::SafeDownCast(node);
+              if (colorNode)
+                {
+                vtkSlicerNodeSelectorWidget::SafeDownCast(this->GetParent()->GetNthChild(c))->SetSelected(colorNode);
+                }
+              }
+            else
+              {
+              vtkErrorMacro("Unable to find preset colour node in scene: " << preset->ColorTableNodeID);
+              }
+            }
+          else
+            {
+            vtkErrorMacro("Unable to get at the mrml scene to set a new color node, please set a colour in the colour selector and try again");
+            }
+          break;
+          }
+        }
+      }
     }
   vtkDebugMacro("ProcessWindowLevelPresetCommand: setting window and level");
   if (strcmp(this->WindowLevelAutoManual->GetWidget()->GetValue(), "Manual") != 0)
