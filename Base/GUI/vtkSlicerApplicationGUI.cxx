@@ -47,6 +47,7 @@ a
 #include "vtkKWToolbarSet.h"
 #include "vtkKWMessageDialog.h"
 #include "vtkKWProgressDialog.h"
+#include "vtkKWProgressGauge.h"
 #include "vtkKWEntry.h"
 #include "vtkKWLabel.h"
 
@@ -162,6 +163,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
   this->ViewerPageTag = 1999;
   this->ProcessingMRMLEvent = 0;
   this->SceneClosing = false;
+
 }
 
 //---------------------------------------------------------------------------
@@ -245,6 +247,9 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
       this->SlicerFoundationIcons->Delete();
       this->SlicerFoundationIcons =  NULL;
       }
+
+    // force the external progress helper to exit if it's running
+    this->Script("if {[info exists extprog_fp]} {puts $extprog_fp exit; flush $extprog_fp}");
 
     this->SetApplication(NULL);
     this->SetApplicationLogic ( NULL );
@@ -333,7 +338,14 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
     return;
     }
   
-    
+  if ( !this->LoadSceneDialog->IsCreated() )
+    {
+    this->LoadSceneDialog->SetParent ( this->MainSlicerWindow );
+    this->LoadSceneDialog->SetMasterWindow( this->MainSlicerWindow );
+    this->LoadSceneDialog->Create ( );
+    this->LoadSceneDialog->SetFileTypes("{ {Scenes} {.mrml .xml .xcat} } { {MRML Scene} {.mrml} } { {Slicer2 Scene} {.xml} } { {Xcede Catalog} {.xcat} } { {All} {.*} }");
+    }
+
   this->LoadSceneDialog->RetrieveLastPathFromRegistry("OpenPath");
 
   this->LoadSceneDialog->Invoke();
@@ -436,8 +448,15 @@ void vtkSlicerApplicationGUI::ProcessImportSceneCommand()
     return;
     }
 
-  this->LoadSceneDialog->RetrieveLastPathFromRegistry(
-                                                      "OpenPath");
+  if ( !this->LoadSceneDialog->IsCreated() )
+    {
+    this->LoadSceneDialog->SetParent ( this->MainSlicerWindow );
+    this->LoadSceneDialog->SetMasterWindow( this->MainSlicerWindow );
+    this->LoadSceneDialog->Create ( );
+    this->LoadSceneDialog->SetFileTypes("{ {Scenes} {.mrml .xml .xcat} } { {MRML Scene} {.mrml} } { {Slicer2 Scene} {.xml} } { {Xcede Catalog} {.xcat} } { {All} {.*} }");
+    }
+
+  this->LoadSceneDialog->RetrieveLastPathFromRegistry( "OpenPath");
 
   vtkKWProgressDialog *progressDialog = vtkKWProgressDialog::New();
   progressDialog->SetParent( this->MainSlicerWindow );
@@ -1422,13 +1441,6 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
   this->GetMainSlicerWindow()->GetFeedbackMenu()->AddCommand ("Community: Slicer Visual Blog (www)", NULL, "$::slicer3::ApplicationGUI PostToVisualBlog");            
 
             
-  this->LoadSceneDialog->SetParent ( this->MainSlicerWindow );
-  this->LoadSceneDialog->SetMasterWindow( app->GetNthWindow(0) );
-  this->LoadSceneDialog->Create ( );
-  this->LoadSceneDialog->ModalOn();
-  this->LoadSceneDialog->SetFileTypes("{ {Scenes} {.mrml .xml .xcat} } { {MRML Scene} {.mrml} } { {Slicer2 Scene} {.xml} } { {Xcede Catalog} {.xcat} } { {All} {.*} }");
-  this->LoadSceneDialog->RetrieveLastPathFromRegistry("OpenPath");
-
 #endif
   }
   this->Built = true;
@@ -1484,7 +1496,6 @@ void vtkSlicerApplicationGUI::PythonConsole (  )
   PyObject* v = PyRun_StringFlags ( "import sys;\n"
                                     "try:\n"
                                     "  import Slicer;\n"
-                                    "  reload ( Slicer );\n"
                                     "  Slicer.StartConsole();\n"
                                     "except Exception, e:\n"
                                     "  print 'Failed to import Slicer', e\n"
@@ -3284,4 +3295,36 @@ void vtkSlicerApplicationGUI::SecondarySplitFrameConfigureCallback(int width, in
   this->GUILayoutNode->DisableModifiedEventOn();
   this->GUILayoutNode->SetSecondaryPanelSize( this->MainSlicerWindow->GetSecondarySplitFrame()->GetFrame1Size() );
   this->GUILayoutNode->DisableModifiedEventOff();
+}
+
+//-------------------------------------------------------------------------------------------------
+//
+void vtkSlicerApplicationGUI::SetExternalProgress(char *message, float progress)
+{
+  static int progress_initialized = 0;
+
+  if ( !progress_initialized )
+    {
+    this->Script("set extprog_wish $::env(TCL_DIR)/bin/wish8.4");
+    this->Script("set extprog_script $::env(Slicer3_HOME)/lib/Slicer3/SlicerBaseGUI/Tcl/ExternalProgress.tcl");
+    this->Script("set extprog_fp [open \"| $extprog_wish\" \"w\"]");
+    this->Script("puts $extprog_fp \"source $extprog_script\"; flush $extprog_fp");
+    progress_initialized = 1;
+    }
+
+  const char *gauge = this->GetMainSlicerWindow()->GetProgressGauge()->GetWidgetName();
+  const char *geometry = this->Script("winfo geometry %s", gauge);
+  int w, h, x, y;
+  sscanf(geometry, "%dx%d", &w, &h);
+  const char *rootx = this->Script("string trim [winfo rootx %s]", gauge);
+  sscanf(rootx, "%d", &x);
+  const char *rooty = this->Script("string trim [winfo rooty %s]", gauge);
+  sscanf(rooty, "%d", &y);
+  char newGeometry[BUFSIZ];
+  sprintf(newGeometry, "%dx%d+%d+%d", w, h, x, y);
+  char progressString[BUFSIZ];
+  sprintf(progressString, "%3.f", progress * 100);
+
+  this->Script("puts $extprog_fp \"progress_Window %s %s %s\"; flush $extprog_fp",
+                    newGeometry, message, progressString);
 }
