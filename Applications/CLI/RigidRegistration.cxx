@@ -216,10 +216,15 @@ template<class T1, class T2> int DoIt2( int argc, char * argv[], const T1&, cons
     }
 
   // This was added by Fedorov:
-  // In testing mode, the initial transform is treated as "ground truth"
-  // transform. The fixed image is resampled and saved into moving image (to
-  // minimize the changes to the code). The resulting transform is compared to
-  // the "ground truth" transform after registration.
+  // In testing mode, the initial transform is assumed to be derived by
+  // registering the provided input with the same parameters on *some*
+  // platform. The testing mode is essentially testing *reproducibility*, not
+  // correctness of the registration.
+  //
+  // The measure of reproducibility used is the error vector for a (0,0,0)
+  // image index subject to the input transform vs. the recovered transform.
+  // This measure is caclulated and reported after registration.
+  //
   // NOTE: Testing mode can only be invoked from Command line interface: the
   // "TestingMode" parameter is "hidden" in GUI.
   typename TransformType::Pointer groundTruthTransform = NULL;
@@ -708,6 +713,10 @@ int main( int argc, char * argv[] )
 {
   
   PARSE_ARGS;
+
+  // this line is here to be able to see the full output on the dashboard even
+  // when the test succeeds (to see the reproducibility error measure)
+  cout << endl << "ctest needs: CTEST_FULL_OUTPUT" << endl;
 
   itk::ImageIOBase::IOPixelType pixelType;
   itk::ImageIOBase::IOComponentType componentType;
