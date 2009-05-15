@@ -171,24 +171,21 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
     this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->MapperRaycast->RemoveObservers(vtkCommand::ProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-    this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperRenderEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
      
     this->MapperCUDARaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->MapperCUDARaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->MapperCUDARaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-    this->MapperCUDARaycast->RemoveObservers(vtkCommand::VolumeMapperRenderEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     
     this->MapperGPURaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->MapperGPURaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->MapperGPURaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-    this->MapperGPURaycast->RemoveObservers(vtkCommand::VolumeMapperRenderEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
 
     this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-    this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperRenderEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
 
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::EndEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
     
     //Remove Volume
     if(this->SVP_VolumeProperty!=NULL)
@@ -546,28 +543,26 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
         this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
         this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
         this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-        this->MapperTexture->AddObserver(vtkCommand::VolumeMapperRenderEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
         
         //cpu ray casting
         this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
         this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
         this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
         this->MapperRaycast->AddObserver(vtkCommand::ProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-        this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperRenderEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
         
         //hook up the cuda mapper
         this->MapperCUDARaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
         this->MapperCUDARaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
         this->MapperCUDARaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-        this->MapperCUDARaycast->AddObserver(vtkCommand::VolumeMapperRenderEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
 
         //hook up the gpu mapper
         this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
         this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
         this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-        this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperRenderEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
 
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
+
+        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::EndEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
     }
 
     //choose default mapper, set software ray mapper as default
@@ -838,6 +833,13 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     {
         this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
     }
+
+    vtkRenderWindow *renderWindow = vtkRenderWindow::SafeDownCast(caller);
+    if (renderWindow && eid==vtkCommand::EndEvent)
+      {
+      this->Gui->GetApplicationGUI()->SetExternalProgress("Done.", 0.);
+      return;
+      }     
     
     //Check if caller equals mapper
     //All other event catchers before
@@ -872,11 +874,6 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
       {
       float progress=*((float*)callData);
       this->Gui->GetApplicationGUI()->SetExternalProgress("Rendering...", progress);
-      return;
-      }     
-    else if (eid==vtkCommand::VolumeMapperRenderEndEvent)
-      {
-      this->Gui->GetApplicationGUI()->SetExternalProgress("", 0.);
       return;
       }     
     
