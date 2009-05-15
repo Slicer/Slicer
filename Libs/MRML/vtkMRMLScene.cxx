@@ -1460,7 +1460,10 @@ void vtkMRMLScene::PrintSelf(ostream& os, vtkIndent indent)
     std::string className = (*iter);
     os << indent << "Number Of Nodes for class " << className.c_str() << " : " << this->GetNumberOfNodesByClass(className.c_str()) << "\n";
     }
-  this->UserTagTable->PrintSelf(os, indent);
+  if ( this->GetUserTagTable() != NULL )
+    {
+    this->UserTagTable->PrintSelf(os, indent);
+    }
 
   os << indent << "Registered node classes:\n";
   for (unsigned int n = 0; n < this->RegisteredNodeClasses.size(); n++)
