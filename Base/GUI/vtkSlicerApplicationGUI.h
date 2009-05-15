@@ -300,6 +300,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Callbacks set on the configure events of the split frames
     void MainSplitFrameConfigureCallback(int width, int height);
     void SecondarySplitFrameConfigureCallback(int width, int height);
+
+    // Description:
+    // Use a helper process to display a progress message and progress bar.
+    // Need to use this for feedback when a normal KWWidgets progress bar
+    // would cause event loops (since it calls the tk 'update' command
+    // to force display)
+    void SetExternalProgress(char *message, float progress);
   
 protected:
     vtkSlicerApplicationGUI ( );
