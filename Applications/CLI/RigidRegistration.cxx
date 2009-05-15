@@ -739,7 +739,7 @@ int main( int argc, char * argv[] )
 
   // this line is here to be able to see the full output on the dashboard even
   // when the test succeeds (to see the reproducibility error measure)
-  std::cout << endl << "ctest needs: CTEST_FULL_OUTPUT" << std::endl;
+  std::cout << std::endl << "ctest needs: CTEST_FULL_OUTPUT" << std::endl;
 
   itk::ImageIOBase::IOPixelType pixelType;
   itk::ImageIOBase::IOComponentType componentType;
