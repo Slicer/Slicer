@@ -172,6 +172,7 @@ template<class T1, class T2> int DoIt2( int argc, char * argv[], const T1&, cons
   typedef itk::ResampleImageFilter<MovingImageType,MovingImageType> ResampleType;//##
   typedef itk::LinearInterpolateImageFunction<MovingImageType, double> ResampleInterpolatorType;//##
   typedef itk::ImageFileWriter<MovingImageType> WriterType;//##
+  typedef itk::ImageFileWriter<FixedImageType> FixedWriterType;//##
   typedef itk::ContinuousIndex<double, 3> ContinuousIndexType;
 
   //bool DoInitializeTransform = false;
@@ -214,6 +215,17 @@ template<class T1, class T2> int DoIt2( int argc, char * argv[], const T1&, cons
     std::cerr << err << std::endl;
     return EXIT_FAILURE;
     }
+
+    typename FixedWriterType::Pointer fixedWriter = FixedWriterType::New();
+    fixedWriter->SetFileName ( "/tmp/fixed.nrrd" );
+    fixedWriter->SetInput ( fixedReader->GetOutput() );
+    fixedWriter->Write();
+
+    typename WriterType::Pointer movingWriter = WriterType::New();
+    movingWriter->SetFileName ( "/tmp/moving.nrrd" );
+    movingWriter->SetInput ( movingReader->GetOutput() );
+    movingWriter->Write();
+
 
   // This was added by Fedorov:
   // In testing mode, the initial transform is assumed to be derived by
@@ -521,6 +533,16 @@ template<class T1, class T2> int DoIt2( int argc, char * argv[], const T1&, cons
   registration->SetFixedImage ( orientFixed->GetOutput() );
   registration->SetMovingImage ( orientMoving->GetOutput() );
 
+typename FixedWriterType::Pointer fixedWriter2 = FixedWriterType::New();
+fixedWriter2->SetFileName ( "/tmp/reginput-fixed.nrrd" );
+fixedWriter2->SetInput ( orientFixed->GetOutput() );
+fixedWriter2->Write();
+
+typename WriterType::Pointer movingWriter2 = WriterType::New();
+movingWriter2->SetFileName ( "/tmp/reginput-moving.nrrd" );
+movingWriter2->SetInput ( orientMoving->GetOutput() );
+movingWriter2->Write();
+
   // Force an iteration event to trigger a progress event
   Schedule->SetRegistration( registration );
   
@@ -564,41 +586,6 @@ template<class T1, class T2> int DoIt2( int argc, char * argv[], const T1&, cons
       {
       std::cerr << err << std::endl;
       return EXIT_FAILURE ;
-      }
-    }
-
-  // In testing mode, take the image corner, and compute the error as the
-  // difference between the locations of points after transforming with the
-  // recovered transform and the ground truth transform.
-  if(TestingMode)
-    {
-    // estimate the error of registration at index (0,0,0)
-    ContinuousIndexType testIndex;
-    typename TransformType::InputPointType testPoint;
-    typename TransformType::OutputVectorType errorVector;
-
-    testIndex[0] = 0.;
-    testIndex[1] = 0.;
-    testIndex[2] = 0.;
-    
-    orientFixed->GetOutput()->TransformContinuousIndexToPhysicalPoint(testIndex, testPoint);
-    typename TransformType::OutputPointType groundTruthPoint, recoveredPoint;
-    groundTruthPoint = groundTruthTransform->TransformPoint(testPoint);
-    recoveredPoint = transform->TransformPoint(testPoint);
-    errorVector[0] = groundTruthPoint[0]-recoveredPoint[0];
-    errorVector[1] = groundTruthPoint[1]-recoveredPoint[1];
-    errorVector[2] = groundTruthPoint[2]-recoveredPoint[2];
-    std::cout << "Magnitude of error vector: " << errorVector.GetNorm() << std::endl;
-
-    if(errorVector.GetNorm() > TESTMODE_ERROR_TOLERANCE)
-      {
-      std::cerr << "Registration error in testing mode exceeds threshold " << 
-        TESTMODE_ERROR_TOLERANCE << std::endl;
-
-      std::cerr << "Recovered transform: " << std::endl;
-      transform->Print(std::cerr);
-
-      return EXIT_FAILURE;
       }
     }
 
@@ -648,6 +635,42 @@ template<class T1, class T2> int DoIt2( int argc, char * argv[], const T1&, cons
   
   // Report the time taken by the registration
   collector.Report();
+
+  // In testing mode, take the image corner, and compute the error as the
+  // difference between the locations of points after transforming with the
+  // recovered transform and the ground truth transform.
+  if(TestingMode)
+    {
+    // estimate the error of registration at index (0,0,0)
+    ContinuousIndexType testIndex;
+    typename TransformType::InputPointType testPoint;
+    typename TransformType::OutputVectorType errorVector;
+
+    testIndex[0] = 0.;
+    testIndex[1] = 0.;
+    testIndex[2] = 0.;
+    
+    orientFixed->GetOutput()->TransformContinuousIndexToPhysicalPoint(testIndex, testPoint);
+    typename TransformType::OutputPointType groundTruthPoint, recoveredPoint;
+    groundTruthPoint = groundTruthTransform->TransformPoint(testPoint);
+    recoveredPoint = transform->TransformPoint(testPoint);
+    errorVector[0] = groundTruthPoint[0]-recoveredPoint[0];
+    errorVector[1] = groundTruthPoint[1]-recoveredPoint[1];
+    errorVector[2] = groundTruthPoint[2]-recoveredPoint[2];
+    std::cout << "Magnitude of error vector: " << errorVector.GetNorm() << std::endl;
+
+    if(errorVector.GetNorm() > TESTMODE_ERROR_TOLERANCE)
+      {
+      std::cerr << "Registration error in testing mode exceeds threshold " << 
+        TESTMODE_ERROR_TOLERANCE << std::endl;
+
+      std::cerr << "Recovered transform: " << std::endl;
+      transform->Print(std::cerr);
+
+      return EXIT_FAILURE;
+      }
+    }
+
   
   return EXIT_SUCCESS ;
 }
@@ -716,7 +739,7 @@ int main( int argc, char * argv[] )
 
   // this line is here to be able to see the full output on the dashboard even
   // when the test succeeds (to see the reproducibility error measure)
-  cout << endl << "ctest needs: CTEST_FULL_OUTPUT" << endl;
+  std::cout << endl << "ctest needs: CTEST_FULL_OUTPUT" << std::endl;
 
   itk::ImageIOBase::IOPixelType pixelType;
   itk::ImageIOBase::IOComponentType componentType;
