@@ -1555,6 +1555,8 @@ void vtkSlicerApplicationGUI::PythonCommand ( char *cmd )
     {
     PyErr_Clear();
     }
+#else
+  vtkErrorMacro("Python is not available in this build.");
 #endif
 }
 
@@ -2171,15 +2173,15 @@ void vtkSlicerApplicationGUI::PackConventionalView ( )
       
     //--- red slice viewer
     g = this->SlicesGUI->GetSliceGUI("Red");
-    g->GridGUI( this->GridFrame2, 0, 0 );
+    if (g) g->GridGUI( this->GridFrame2, 0, 0 );
 
     //--- yellow slice viewer
     g = this->SlicesGUI->GetSliceGUI("Yellow");
-    g->GridGUI( this->GridFrame2, 0, 1 );
+    if (g) g->GridGUI( this->GridFrame2, 0, 1 );
 
     //--- green slice viewer
     g = this->SlicesGUI->GetSliceGUI("Green");
-    g->GridGUI( this->GridFrame2, 0, 2 );
+    if (g) g->GridGUI( this->GridFrame2, 0, 2 );
 
     
 #ifndef SLICESCONTROL_DEBUG
@@ -3107,12 +3109,18 @@ void vtkSlicerApplicationGUI::SetAndObserveMainSliceLogic ( vtkSlicerSliceLogic 
         //      }
         //}
   
-  vtkSlicerSliceGUI *g = this->SlicesGUI->GetSliceGUI("Red");
-  g->SetAndObserveModuleLogic(l0);
-  g = this->SlicesGUI->GetSliceGUI("Yellow");
-  g->SetAndObserveModuleLogic(l1);
-  g = this->SlicesGUI->GetSliceGUI("Green");
-  g->SetAndObserveModuleLogic(l2);
+  if ( this->SlicesGUI )
+    {
+    vtkSlicerSliceGUI *g = this->SlicesGUI->GetSliceGUI("Red");
+    if ( g )
+      {
+      g->SetAndObserveModuleLogic(l0);
+      g = this->SlicesGUI->GetSliceGUI("Yellow");
+      g->SetAndObserveModuleLogic(l1);
+      g = this->SlicesGUI->GetSliceGUI("Green");
+      g->SetAndObserveModuleLogic(l2);
+      }
+    }
 }
 
 
@@ -3305,7 +3313,9 @@ void vtkSlicerApplicationGUI::SetExternalProgress(char *message, float progress)
 
   if ( !progress_initialized )
     {
-    this->Script("set extprog_wish $::env(TCL_DIR)/bin/wish8.4");
+    // look for mac/linux style or windows style name for wish
+    this->Script("set wish_candidates [list $::env(TCL_DIR)/bin/wish8.4 $::env(TCL_DIR)/bin/wish84.exe]");
+    this->Script("foreach wc $wish_candidates {if { [file exists $wc] } {set extprog_wish $wc} }");
     this->Script("set extprog_script $::env(Slicer3_HOME)/lib/Slicer3/SlicerBaseGUI/Tcl/ExternalProgress.tcl");
     this->Script("set extprog_fp [open \"| $extprog_wish\" \"w\"]");
     this->Script("puts $extprog_fp \"source $extprog_script\"; flush $extprog_fp");
