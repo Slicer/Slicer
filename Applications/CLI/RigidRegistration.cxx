@@ -216,6 +216,7 @@ template<class T1, class T2> int DoIt2( int argc, char * argv[], const T1&, cons
     return EXIT_FAILURE;
     }
 
+    /*
     typename FixedWriterType::Pointer fixedWriter = FixedWriterType::New();
     fixedWriter->SetFileName ( "/tmp/fixed.nrrd" );
     fixedWriter->SetInput ( fixedReader->GetOutput() );
@@ -225,7 +226,7 @@ template<class T1, class T2> int DoIt2( int argc, char * argv[], const T1&, cons
     movingWriter->SetFileName ( "/tmp/moving.nrrd" );
     movingWriter->SetInput ( movingReader->GetOutput() );
     movingWriter->Write();
-
+    */
 
   // This was added by Fedorov:
   // In testing mode, the initial transform is assumed to be derived by
@@ -532,7 +533,7 @@ template<class T1, class T2> int DoIt2( int argc, char * argv[], const T1&, cons
   registration->SetInterpolator ( interpolator );
   registration->SetFixedImage ( orientFixed->GetOutput() );
   registration->SetMovingImage ( orientMoving->GetOutput() );
-
+/*
 typename FixedWriterType::Pointer fixedWriter2 = FixedWriterType::New();
 fixedWriter2->SetFileName ( "/tmp/reginput-fixed.nrrd" );
 fixedWriter2->SetInput ( orientFixed->GetOutput() );
@@ -542,7 +543,7 @@ typename WriterType::Pointer movingWriter2 = WriterType::New();
 movingWriter2->SetFileName ( "/tmp/reginput-moving.nrrd" );
 movingWriter2->SetInput ( orientMoving->GetOutput() );
 movingWriter2->Write();
-
+*/
   // Force an iteration event to trigger a progress event
   Schedule->SetRegistration( registration );
   
