@@ -899,19 +899,19 @@ inline double vtkPichonFastMarching::distanceNeighbor(int n)
 int vtkPichonFastMarching::indexFather(int n )
 {
   float Tmin = (float)INF;
-  int index, indexMin;
+  int index, indexMin = 0;
 
   // note: has to be 6 or else topology not consistent and
   // we get weird path to parents using the diagonals
   for(int k=1;k<=6;k++)
-    {
-      index = n+shiftNeighbor(k);
-      if( node[index].T<Tmin )
+  {
+    index = n+shiftNeighbor(k);
+    if( node[index].T<Tmin )
     {
       Tmin = node[index].T;
       indexMin = index;
     }
-    }
+  }
 
   //assert( Tmin < INF );
   // or else there was no initialized neighbor around ?
