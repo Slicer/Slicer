@@ -39,8 +39,6 @@ proc FastMarchingSegmentationTearDownGUI {this} {
 }
 
 proc FastMarchingSegmentationBuildGUI {this} {
-  load $::Slicer3_HOME/bin/libPichonFastMarching.so
-  package require PichonFastMarching
 
   if { [info exists ::FastMarchingSegmentation(singleton)] } {
     error "FastMarchingSegmentation singleton already created"

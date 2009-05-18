@@ -67,6 +67,8 @@ set(SlicerBaseLogic_SRCS
   vtkImageNeighborhoodFilter.cxx
   vtkImageLabelOutline.cxx
   vtkSlicerTransformLogic.cxx
+  vtkPichonFastMarching.cxx
+  vtkPichonFastMarchingPDF.cxx
   )
 
 # Abstract/pure virtual classes

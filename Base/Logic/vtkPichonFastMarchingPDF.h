@@ -6,10 +6,10 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
 =========================================================================auto=*/
-#ifndef PichonFastMarchingPDF_h
-#define PichonFastMarchingPDF_h
+#ifndef __PichonFastMarchingPDF_h
+#define __PichonFastMarchingPDF_h
 
-#include "vtkPichonFastMarchingWin32Header.h"
+#include "vtkSlicerBaseLogic.h"
 
 #ifdef _WIN32 // WINDOWS
 
@@ -47,7 +47,7 @@ of Intensity and Inhomogeneity
 
 */
 
-class VTK_PICHONFASTMARCHING_EXPORT vtkPichonFastMarchingPDF : public vtkObject
+class VTK_SLICER_BASE_LOGIC_EXPORT vtkPichonFastMarchingPDF : public vtkObject
 {
 public:
 

@@ -9,26 +9,12 @@
 #ifndef __vtkPichonFastMarching_h
 #define __vtkPichonFastMarching_h
 
-#include "vtkPichonFastMarchingWin32Header.h"
-//#include "vtkPichonFastMarchingConfigure.h"
 #include "vtkImageData.h"
 #include "vtkImageToImageFilter.h"
-
-//#ifdef _WIN32 // WINDOWS
-
-//#include <assert.h> 
-//don't use asserts to avoid program crash
-
-//#include <vector>
-//#include <algorithm>
-//#include <iostream>
-
-//#else // UNIX
+#include "vtkSlicerBaseLogic.h"
 
 #include <vector>
 #include <algorithm>
-
-//#endif
 
 #include "vtkPichonFastMarchingPDF.h"
 
@@ -69,7 +55,7 @@ typedef std::vector<int> VecInt;
 
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
-class VTK_PICHONFASTMARCHING_EXPORT vtkPichonFastMarching : public vtkImageToImageFilter
+class VTK_SLICER_BASE_LOGIC_EXPORT vtkPichonFastMarching : public vtkImageToImageFilter
 {
  private:
   bool somethingReallyWrong;

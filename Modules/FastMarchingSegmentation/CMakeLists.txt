@@ -43,35 +43,3 @@ install(
   FILES ${TCLFILES}
   DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}
   )
-
-configure_file(
-  ${FastMarchingSegmentation_SOURCE_DIR}/vtkPichonFastMarchingConfigure.h.in
-  ${FastMarchingSegmentation_BINARY_DIR}/vtkPichonFastMarchingConfigure.h
-  )
-  
-file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-install(
-  FILES ${headers} 
-  "${CMAKE_CURRENT_BINARY_DIR}/vtkPichonFastMarchingConfigure.h"
-  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
-  )
-
-include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-set(LIB_NAME PichonFastMarching)
-set(LIB_SRCS vtkPichonFastMarching.cxx vtkPichonFastMarchingPDF.cxx)
-vtk_wrap_tcl3(${LIB_NAME} LIB_TCL_SRCS "${LIB_SRCS}" "")
-
-add_library(${LIB_NAME} ${LIB_SRCS} ${LIB_TCL_SRCS})
-
-target_link_libraries(${LIB_NAME}
-  ${Slicer3_Libs_LIBRARIES}
-  ${Slicer3_Base_LIBRARIES}
-  ${KWWidgets_LIBRARIES}
-  )
-
-install(TARGETS ${LIB_NAME}
-  RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-  LIBRARY DESTINATION bin COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION bin COMPONENT Development
-  )
-
