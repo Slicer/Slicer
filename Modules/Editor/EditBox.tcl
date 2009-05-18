@@ -193,7 +193,6 @@ itcl::body EditBox::createButtonRow {parent effects} {
     $pushButton SetImageToIcon $_effects($effect,icon)
     $pushButton SetBalloonHelpString $effect
     $pushButton SetBorderWidth 0
-    [$pushButton GetBalloonHelpManager] SetDelay 300
     if { [lsearch $_effects(list,disabled) $effect] != -1 } {
       $pushButton SetStateToDisabled
     }
