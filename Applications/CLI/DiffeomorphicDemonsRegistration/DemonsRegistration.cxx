@@ -6,6 +6,8 @@
  * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
  */
 
+#include "itkOrientedImage.h"
+#include "itkOrientImageFilter.h"
 #include "itkMultiResolutionPDEDeformableRegistration2.h"
 #include "itkFastSymmetricForcesDemonsRegistrationFilter.h"
 #include "itkDiffeomorphicDemonsRegistrationFilter.h"
@@ -448,10 +450,13 @@ protected:
 template <unsigned int Dimension>
 void DoDemonsRegistration( arguments args )
 {
-   // Declare the types of the images (float or double only)
+   // Declare the types of the images (other types forced to float on input)
    typedef float PixelType;
 
-   typedef itk::Image< PixelType, Dimension >  ImageType;
+   // read and transform oriented images, operate on non-oriented
+   typedef itk::OrientedImage< PixelType, Dimension >  OrientedImageType;
+   typedef itk::OrientImageFilter<OrientedImageType,OrientedImageType> OrientFilterType;//##
+   typedef itk::Image< PixelType, Dimension > ImageType;
 
    // Images we use
    typename ImageType::Pointer fixedImage = 0;
@@ -460,11 +465,10 @@ void DoDemonsRegistration( arguments args )
    {//for mem allocations
    
    // Set up the file readers
-   typedef typename itk::ImageFileReader< ImageType > FixedImageReaderType;
-   typedef typename itk::ImageFileReader< ImageType > MovingImageReaderType;
+   typedef typename itk::ImageFileReader< OrientedImageType > ImageReaderType;
 
-   typename FixedImageReaderType::Pointer fixedImageReader   = FixedImageReaderType::New();
-   typename MovingImageReaderType::Pointer movingImageReader = MovingImageReaderType::New();
+   typename ImageReaderType::Pointer fixedImageReader  = ImageReaderType::New();
+   typename ImageReaderType::Pointer movingImageReader = ImageReaderType::New();
    
    fixedImageReader->SetFileName( args.fixedImageFile.c_str() );
    movingImageReader->SetFileName( args.movingImageFile.c_str() );
@@ -483,13 +487,44 @@ void DoDemonsRegistration( arguments args )
       exit( EXIT_FAILURE );
    }
 
-   
+  // Reorient to axials to avoid issues with registration metrics not
+  // transforming image gradients with the image orientation in
+  // calculating the derivative of metric wrt transformation
+  // parameters.
+  //
+  // Forcing image to be axials avoids this problem. Note, that
+  // reorientation will mean that the displacement vectors will not
+  // be in the space of either of the input images.
+  // TODO: either fix the rest of the code to handle different orientations
+  // of the input data or post-transform the vectors back
+  // into the fixed image space (probably more efficient)
+ 
+   typename OrientFilterType::Pointer orientFixed = OrientFilterType::New();
+   orientFixed->UseImageDirectionOn();
+   orientFixed->SetDesiredCoordinateOrientationToAxial();
+   orientFixed->SetInput( fixedImageReader->GetOutput() );
+   typename OrientFilterType::Pointer orientMoving = OrientFilterType::New();
+   orientMoving->UseImageDirectionOn();
+   orientMoving->SetDesiredCoordinateOrientationToAxial();
+   orientMoving->SetInput( movingImageReader->GetOutput() );
+
+   try
+     {
+     orientFixed->Update();
+     orientMoving->Update();
+     }
+   catch ( itk::ExceptionObject& err )
+     {
+      std::cerr << "Could not read run the orient filter." << std::endl;
+      std::cerr << err << std::endl;
+      exit( EXIT_FAILURE );
+     }
 
    if (!args.useHistogramMatching)
    {
-      fixedImage = fixedImageReader->GetOutput();
+      fixedImage = orientFixed->GetOutput();
       fixedImage->DisconnectPipeline();
-      movingImage = movingImageReader->GetOutput();
+      movingImage = orientMoving->GetOutput();
       movingImage->DisconnectPipeline();
    }
    else
@@ -498,8 +533,8 @@ void DoDemonsRegistration( arguments args )
          <ImageType, ImageType> MatchingFilterType;
       typename MatchingFilterType::Pointer matcher = MatchingFilterType::New();
 
-      matcher->SetInput( movingImageReader->GetOutput() );
-      matcher->SetReferenceImage( fixedImageReader->GetOutput() );
+      matcher->SetInput( orientMoving->GetOutput() );
+      matcher->SetReferenceImage( orientFixed->GetOutput() );
 
       matcher->SetNumberOfHistogramLevels( 1024 );
       matcher->SetNumberOfMatchPoints( 7 );
@@ -520,7 +555,7 @@ void DoDemonsRegistration( arguments args )
       movingImage = matcher->GetOutput();
       movingImage->DisconnectPipeline();
       
-      fixedImage = fixedImageReader->GetOutput();
+      fixedImage = orientFixed->GetOutput();
       fixedImage->DisconnectPipeline();
    }
 
@@ -946,9 +981,10 @@ int main( int argc, char *argv[] )
    
    switch ( imageIO->GetNumberOfDimensions() )
    {
-   case 2:
-      DoDemonsRegistration<2>(args);
-      break;
+   // can't support the 2D case with OrientedImages.
+   //case 2:
+      //DoDemonsRegistration<2>(args);
+      //break;
    case 3:
       DoDemonsRegistration<3>(args);
       break;
