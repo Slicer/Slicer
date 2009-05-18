@@ -33,7 +33,7 @@
 #include <math.h>
 #include <ieeefp.h>
 #endif
-#include <deque.h>
+#include <deque>
 
 #endif
 
