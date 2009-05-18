@@ -26,6 +26,7 @@ if(TCL_DIR)
   install(DIRECTORY
     ${TCL_DIR}/
     DESTINATION lib/TclTk
+    USE_SOURCE_PERMISSIONS
     )
 endif(TCL_DIR)
 
