@@ -68,8 +68,37 @@ proc FastMarchingSegmentationBuildGUI {this} {
   # help frame
   #
   set helptext "This module performs segmentation using fast marching method with automatic estimation of region statistics. The core C++ classes were contributed by Eric Pichon in slicer2.\n\nIn order to benefit from this module, please use the following steps:\n(1) specify input scalar volume to be segmented\n(2) put fiducial seeds within the region you want to segment\n(3) specify the expected volume of the structure to be segmented. Note, overestimation of this volume is OK, because you will be able to adjust the actual volume once the segmentation is complete\n(4) specify the color for the segmentation, and create the output label volume\n(5) push \"Run\" button to segment\n(6) use volume control slider to adjust segmentation result."
-  set abouttext "This module was developed by Andriy Fedorov based on the original implementation of Eric Pichon in Slicer2.\nThis work was funded by Brain Science Foundation, and supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details."
+  set abouttext "This module was developed by Andriy Fedorov based on the original implementation of Eric Pichon in Slicer2.\nThis work was funded by Brain Science Foundation, and is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details."
   $this BuildHelpAndAboutFrame $pageWidget $helptext $abouttext
+
+  set slicerBaseIcons [vtkSlicerBaseAcknowledgementLogoIcons New]
+
+  set logo [vtkKWIcon New]
+  set logoReader [vtkPNGReader New]
+  set iconDir [file join [[$::FastMarchingSegmentation(singleton) GetLogic] GetModuleShareDirectory] "ImageData"]
+  puts "Icon is located in $iconDir/BSFlogo.png"
+  $logoReader SetFileName $iconDir/BSFLogo.png
+  $logoReader Update
+
+  $logo SetImage [$logoReader GetOutput]
+
+  set logoLabelBSF [vtkKWLabel New]
+  $logoLabelBSF SetParent [$this GetLogoFrame]
+  $logoLabelBSF Create
+  $logoLabelBSF SetImageToIcon $logo
+
+  set logoLabelNAMIC [vtkKWLabel New]
+  $logoLabelNAMIC SetParent [$this GetLogoFrame]
+  $logoLabelNAMIC Create
+  $logoLabelNAMIC SetImageToIcon [$slicerBaseIcons GetNAMICLogo]
+
+  pack [$logoLabelBSF GetWidgetName] [$logoLabelNAMIC GetWidgetName] -side left
+
+  $logoLabelBSF Delete
+  $logoLabelNAMIC Delete
+  $logoReader Delete
+  $logo Delete
+  $slicerBaseIcons Delete
 
   #
   # FastMarchingSegmentation input and initialization parameters
