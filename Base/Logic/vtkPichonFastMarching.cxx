@@ -817,7 +817,7 @@ void vtkPichonFastMarching::init(int dimX, int dimY, int dimZ, double depth, dou
   arrayShiftNeighbor[26] = -1-dimX+dimXY;
   arrayDistanceNeighbor[26] = sqrt( dx*dx + dy*dy + dz*dz );
 
-  this->depth=depth;
+  this->depth = (int) depth;
 
   node = new FMnode[ dimX*dimY*dimZ ];
   // assert( node!=NULL );
@@ -843,14 +843,14 @@ void vtkPichonFastMarching::init(int dimX, int dimY, int dimZ, double depth, dou
       return;
     }
 
-  pdfIntensityIn = new vtkPichonFastMarchingPDF( depth );
+  pdfIntensityIn = new vtkPichonFastMarchingPDF( (int) depth );
   if(!(pdfIntensityIn!=NULL))
     {
       vtkErrorMacro("Error in void vtkPichonFastMarching::init(), not enough memory for allocation of 'pdfIntensityIn'");
       return;
     }
 
-  pdfInhomoIn = new vtkPichonFastMarchingPDF( depth );
+  pdfInhomoIn = new vtkPichonFastMarchingPDF( (int) depth );
   if(!(pdfInhomoIn!=NULL))
     {
       vtkErrorMacro("Error in void vtkPichonFastMarching::init(), not enough memory for allocation of 'pdfInhomoIn'");
