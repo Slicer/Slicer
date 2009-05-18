@@ -13,7 +13,7 @@
 
 #ifdef _WIN32 // WINDOWS
 
-//#include <float.h>
+#include <float.h>
 #define isnan(x) _isnan(x)
 #define finite(x) _finite(x)
 
@@ -33,7 +33,7 @@
 #include <math.h>
 #include <ieeefp.h>
 #endif
-#include <deque>
+#include <deque.h>
 
 #endif
 
