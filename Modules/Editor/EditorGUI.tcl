@@ -76,23 +76,6 @@ proc EditorBuildGUI {this} {
   set abouttext "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details."
   $this BuildHelpAndAboutFrame $pageWidget $helptext $abouttext
 
-  if { 0 } { 
-    # leave out the node selector for now - we'll use one global node and save GUI space
-    set ::Editor($this,nodeSelector) [vtkSlicerNodeSelectorWidget New]
-    $::Editor($this,nodeSelector) SetNodeClass "vtkMRMLScriptedModuleNode" "ModuleName" "Editor" "EditorParameter"
-    $::Editor($this,nodeSelector) SetNewNodeEnabled 1
-    $::Editor($this,nodeSelector) NoneEnabledOn
-    $::Editor($this,nodeSelector) NewNodeEnabledOn
-    $::Editor($this,nodeSelector) SetParent $pageWidget
-    $::Editor($this,nodeSelector) Create
-    $::Editor($this,nodeSelector) SetMRMLScene [[$this GetLogic] GetMRMLScene]
-    $::Editor($this,nodeSelector) UpdateMenu
-    $::Editor($this,nodeSelector) SetLabelText "Editor Parameters"
-    $::Editor($this,nodeSelector) SetBalloonHelpString "Select Editor parameters from current scene or create new ones"
-    pack [$::Editor($this,nodeSelector) GetWidgetName] \
-      -side top -anchor nw -fill x -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
-  }
-
   #
   # Editor Volumes
   #
@@ -193,10 +176,21 @@ proc EditorBuildGUI {this} {
   pack [$::Editor($this,optionsSpacer) GetWidgetName] \
     -fill both -expand true 
 
+  # Enable check point check button
+  set ::Editor($this,enableCheckPoint) [vtkKWCheckButton New]
+  $::Editor($this,enableCheckPoint) SetParent $::Editor($this,toolsFrame)
+  $::Editor($this,enableCheckPoint) Create
+  $::Editor($this,enableCheckPoint) SetText "Enable Volume Check Points"
+  $::Editor($this,enableCheckPoint) SetBalloonHelpString "Volume Check Points allow you to move back and forth through recent edits.\n\nNote: for large volumes, you may run out of system memory when this is enabled."
+  $::Editor($this,enableCheckPoint) SetSelectedState 0
+  pack [$::Editor($this,enableCheckPoint) GetWidgetName] \
+    -side left
+  set ::Editor(checkPointsEnabled) 0
 }
 
 proc EditorAddGUIObservers {this} {
   $this AddObserverByNumber $::Editor($this,volumesCreate) 10000 
+  $this AddObserverByNumber $::Editor($this,enableCheckPoint) 10000 
     
 # $this DebugOn
   if {[$this GetDebug]} {
@@ -228,6 +222,15 @@ proc EditorProcessGUIEvents {this caller event} {
     switch $event {
       "10000" {
         EditorCreateLabelVolume $this
+      }
+    }
+  } 
+
+  if { $caller == $::Editor($this,enableCheckPoint) } {
+    switch $event {
+      "10000" {
+        set onoff [$::Editor($this,enableCheckPoint) GetSelectedState]
+        EditorSetCheckPointEnabled $onoff
       }
     }
   } 
@@ -512,6 +515,15 @@ proc EditorFreeVolumes {volumeList} {
   }
 }
 
+# called by checkbox in GUI
+proc EditorSetCheckPointEnabled {onoff} {
+  if { !$onoff } {
+    EditorFreeCheckPointVolumes
+    EditorUpdateCheckPointButtons
+  }
+  set ::Editor(checkPointsEnabled) $onoff
+}
+
 # called at tear down time to free local instances
 proc EditorFreeCheckPointVolumes {} {
   foreach list {previousCheckPointImages nextCheckPointImages} {
@@ -537,6 +549,10 @@ proc EditorUpdateCheckPointButtons {} {
 
 # called by editor effects
 proc EditorStoreCheckPoint {node} {
+
+  if { !$::Editor(checkPointsEnabled) } {
+    return
+  }
 
   EditorStoreCheckPointVolume [$node GetID] previousCheckPointImages
 
