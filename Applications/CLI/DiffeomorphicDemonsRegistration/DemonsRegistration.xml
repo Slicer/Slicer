@@ -42,7 +42,7 @@
       <flag>o</flag>
       <longflag>output_image</longflag>
       <channel>output</channel>
-      <description>Resampled Volume</description>
+      <description>Resampled Volume - NOTE: output volume will be oriented as axial and may not match input orientations.</description>
     </image>
 </parameters>
 <parameters>
