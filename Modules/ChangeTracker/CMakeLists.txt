@@ -221,3 +221,15 @@ install(FILES
   ${TESTFILES}
   DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Testing COMPONENT Development
   ) 
+  
+#
+# Copy over BSF logo (and any new logos that might be added in the future)
+#
+file(GLOB IMAGEFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "ImageData/*.png")
+foreach(file ${IMAGEFILES})
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/${file}
+    COPYONLY
+    )
+endforeach(file)
