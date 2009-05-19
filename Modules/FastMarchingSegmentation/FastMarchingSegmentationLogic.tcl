@@ -146,11 +146,11 @@ proc FastMarchingSegmentationInitializeFilter {this} {
 
   set ::FastMarchingSegmentation($this,fastMarchingFilter) [vtkPichonFastMarching New]
   set ::FastMarchingSegmentation($this,inputVolume) [ [[$this GetLogic] GetMRMLScene] \
-    GetNodeByID [[$::FastMarchingSegmentation($this,inputSelector) \
-    GetSelected ] GetID] ]
+    GetNodeByID [[$::FastMarchingSegmentation($this,inputSelector) GetSelected ] GetID] ]
   set inputVolume $::FastMarchingSegmentation($this,inputVolume)
 
   FastMarchingSegmentationCreateLabelVolume $this
+
   set labelVolume $::FastMarchingSegmentation($this,labelVolume)
 
   if { $inputVolume == ""} {
@@ -230,14 +230,7 @@ proc FastMarchingSegmentationSegment {this} {
   set ras2ijk [vtkMatrix4x4 New]
   $inputVolume GetRASToIJKMatrix $ras2ijk
   
-#  $fmFilter setRAStoIJKmatrix \
-#    [$ras2ijk GetElement 0 1]  [$ras2ijk GetElement 0 2]  [$ras2ijk GetElement 0 3] [$ras2ijk GetElement 0 4] \
-#    [$ras2ijk GetElement 1 1]  [$ras2ijk GetElement 1 2]  [$ras2ijk GetElement 1 3] [$ras2ijk GetElement 1 4] \
-#    [$ras2ijk GetElement 2 1]  [$ras2ijk GetElement 2 2]  [$ras2ijk GetElement 2 3] [$ras2ijk GetElement 2 4] \
-#    [$ras2ijk GetElement 3 1]  [$ras2ijk GetElement 3 2]  [$ras2ijk GetElement 3 3] [$ras2ijk GetElement 3 4];
-#  puts "Here 2"
   set numFiducials [$inputFiducials GetNumberOfFiducials]
-#  puts "Fiducial list has $numFiducials fiducials"
   
   for {set i 0} {$i<$numFiducials} {incr i} {
     scan [$inputFiducials GetNthFiducialXYZ $i] "%f %f %f" fx fy fz
@@ -275,27 +268,56 @@ proc FastMarchingSegmentationUpdateTime {this} {
 }
 
 proc FastMarchingSegmentationCreateLabelVolume {this} {
+
   set volumeNode $::FastMarchingSegmentation($this,inputVolume)
+  set outputVolumeNode [ [[$this GetLogic] GetMRMLScene] GetNodeByID \
+    [[$::FastMarchingSegmentation($this,outputSelector) GetSelected ] GetID] ]
+
+  # from vtkSlicerVolumesLogic
+  set outputDisplayNode [vtkMRMLLabelMapVolumeDisplayNode New]
   set scene [[$this GetLogic] GetMRMLScene]
+  $scene AddNode $outputDisplayNode
 
-  set volumesLogic [$::slicer3::VolumesGUI GetLogic]
-  set labelVolumeName [[$::FastMarchingSegmentation($this,outputLabelText) GetWidget] GetValue]
-  set labelNode [$volumesLogic CreateLabelVolume $scene $volumeNode $labelVolumeName]
+  $outputDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeLabels"
 
-  # make the source node the active background, and the label node the active label
+  $outputVolumeNode SetAndObserveDisplayNodeID [$outputDisplayNode GetID]
+  $outputVolumeNode SetModifiedSinceRead 1
+  $outputVolumeNode SetLabelMap 1
+  
+  set thresh [vtkImageThreshold New]
+  $thresh SetReplaceIn 1
+  $thresh SetReplaceOut 1
+  $thresh SetInValue 0
+  $thresh SetOutValue 0
+  $thresh SetOutputScalarTypeToShort
+  $thresh SetInput [$volumeNode GetImageData]
+  [$thresh GetOutput] Update
+  $outputVolumeNode SetAndObserveImageData [$thresh GetOutput]
+
+  $thresh Delete
+  $outputDisplayNode Delete
+
+  set ::FastMarchingSegmentation($this,labelVolume) $outputVolumeNode
+
+  set ras2ijk [vtkMatrix4x4 New]
+  set ijk2ras [vtkMatrix4x4 New]
+  $volumeNode GetRASToIJKMatrix $ras2ijk
+  $volumeNode GetIJKToRASMatrix $ijk2ras
+
+  $outputVolumeNode SetRASToIJKMatrix $ras2ijk
+  $outputVolumeNode SetIJKToRASMatrix $ijk2ras
+  
+  $ras2ijk Delete
+  $ijk2ras Delete
+
+  scan [$volumeNode GetOrigin] "%f%f%f" originX originY originZ
+  $outputVolumeNode SetOrigin $originX $originY $originZ
+
   set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
-  $selectionNode SetReferenceActiveVolumeID [$volumeNode GetID]
-  $selectionNode SetReferenceActiveLabelVolumeID [$labelNode GetID]
+  $selectionNode SetReferenceActiveLabelVolumeID [$outputVolumeNode GetID]
   $selectionNode Modified
   [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection
 
-  set ::FastMarchingSegmentation($this,labelVolume) $labelNode
-  
-  set labelVolumeName [$labelNode GetName]
-  $::FastMarchingSegmentation($this,currentOutputText) SetText "Current ouput volume: $labelVolumeName"
-
-  # update the editor range to be the full range of the background image
-  set range [[$volumeNode GetImageData] GetScalarRange]
-  eval ::Labler::SetPaintRange $range
+  return
 }
 

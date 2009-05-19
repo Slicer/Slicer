@@ -14,11 +14,11 @@ proc FastMarchingSegmentationTearDownGUI {this} {
 
   # nodeSelector  ;# disabled for now
   set widgets {
-    runButton inputSelector outputLabelText
-    outputCreateButton currentOutputText
+    outputSelector
+    runButton inputSelector 
     fiducialsSelector segVolumeThumbWheel
     timeScrollScale labelColorSpin
-    timeScrollText initFrame outputVolumeFrame outputParametersFrame
+    timeScrollText initFrame outputParametersFrame
   }
 
   foreach w $widgets {
@@ -76,7 +76,6 @@ proc FastMarchingSegmentationBuildGUI {this} {
   set logo [vtkKWIcon New]
   set logoReader [vtkPNGReader New]
   set iconDir [file join [[$::FastMarchingSegmentation(singleton) GetLogic] GetModuleShareDirectory] "ImageData"]
-  puts "Icon is located in $iconDir/BSFlogo.png"
   $logoReader SetFileName $iconDir/BSFLogo.png
   $logoReader Update
 
@@ -109,17 +108,6 @@ proc FastMarchingSegmentationBuildGUI {this} {
   $initFrame Create
   $initFrame SetLabelText "Input/initialization parameters"
   pack [$initFrame GetWidgetName] \
-    -side top -anchor nw -fill x -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
-
-  #
-  # FastMarchingSegmentation output
-  #
-  set ::FastMarchingSegmentation($this,outputVolumeFrame) [vtkSlicerModuleCollapsibleFrame New]
-  set outputVolumeFrame $::FastMarchingSegmentation($this,outputVolumeFrame)
-  $outputVolumeFrame SetParent $pageWidget
-  $outputVolumeFrame Create
-  $outputVolumeFrame SetLabelText "Output"
-  pack [$outputVolumeFrame GetWidgetName] \
     -side top -anchor nw -fill x -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
 
   #
@@ -157,7 +145,19 @@ proc FastMarchingSegmentationBuildGUI {this} {
   $fiducials SetLabelText "Input seeds:"
   $fiducials SetBalloonHelpString "List of fiducials to be used as seeds for segmentation"
   pack [$fiducials GetWidgetName] -side top -anchor e -padx 2 -pady 2
-  
+
+  set ::FastMarchingSegmentation($this,outputSelector) [vtkSlicerNodeSelectorWidget New]
+  set outselect $::FastMarchingSegmentation($this,outputSelector)
+  $outselect SetParent [$initFrame GetFrame]
+  $outselect Create
+  $outselect NewNodeEnabledOn
+  $outselect SetNodeClass "vtkMRMLScalarVolumeNode" "LabelMap" "1" ""
+  $outselect SetMRMLScene [[$this GetLogic] GetMRMLScene]
+  $outselect UpdateMenu
+  $outselect SetLabelText "Output volume:"
+  $outselect SetBalloonHelpString "The Output Volume to keep segmentation result"
+  pack [$outselect GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+ 
   set ::FastMarchingSegmentation($this,segVolumeThumbWheel) [vtkKWThumbWheel New]
   set segvolume $::FastMarchingSegmentation($this,segVolumeThumbWheel)
   $segvolume SetParent [$initFrame GetFrame]
@@ -174,17 +174,9 @@ proc FastMarchingSegmentationBuildGUI {this} {
   $segvolume SetBalloonHelpString "Overestimate of the segmented structure volume"
   pack [$segvolume GetWidgetName] -side top -anchor e -padx 2 -pady 2 
 
-  # Output volume definition
-  set ::FastMarchingSegmentation($this,currentOutputText) [vtkKWLabel New]
-  set outName $::FastMarchingSegmentation($this,currentOutputText)
-  $outName SetParent [$outputVolumeFrame GetFrame]
-  $outName Create
-  $outName SetText "Output label volume not defined!"
-  pack [$outName GetWidgetName] -side top -anchor e -padx 2 -pady 2 
-
   set ::FastMarchingSegmentation($this,labelColorSpin) [vtkKWSpinBoxWithLabel New]
   set outColor $::FastMarchingSegmentation($this,labelColorSpin)
-  $outColor SetParent [$outputVolumeFrame GetFrame]
+  $outColor SetParent [$initFrame GetFrame]
   $outColor SetLabelText "Output label value:"
   $outColor Create
   $outColor SetWidth 3
@@ -192,32 +184,11 @@ proc FastMarchingSegmentationBuildGUI {this} {
   $outColor SetBalloonHelpString "Specify color for the output label"
   pack [$outColor GetWidgetName] -side top -anchor e -padx 2 -pady 2 
 
-  set ::FastMarchingSegmentation($this,outputLabelText) [vtkKWEntryWithLabel New]
-  set outLabelName $::FastMarchingSegmentation($this,outputLabelText)
-  $outLabelName SetParent [$outputVolumeFrame GetFrame]
-  $outLabelName Create
-  $outLabelName SetLabelText "Output volume name:"
-  $outLabelName SetBalloonHelpString "Name of the output label volume"
-  $outLabelName SetLabelPositionToLeft
-
-
-  set ::FastMarchingSegmentation($this,outputCreateButton) [vtkKWPushButton New]
-  set outCreateButton $::FastMarchingSegmentation($this,outputCreateButton)
-  $outCreateButton SetParent [$outputVolumeFrame GetFrame]
-  $outCreateButton Create
-  $outCreateButton SetText "Create output volume"
-  $outCreateButton SetBalloonHelpString "Push to create output label volume"
-  $outCreateButton EnabledOff
-  pack [$outLabelName GetWidgetName] [$outCreateButton GetWidgetName] \
-    -side left -anchor e -padx 2 -pady 2 
-
-
   set ::FastMarchingSegmentation($this,runButton) [vtkKWPushButton New]
   set run $::FastMarchingSegmentation($this,runButton)
-  $run SetParent $outputVolumeFrame
+  $run SetParent [$initFrame GetFrame]
   $run Create
   $run SetText "Run Segmentation"
-  $run EnabledOff
   pack [$run GetWidgetName] -side top -anchor e -padx 2 -pady 2 -fill x
 
   # FastMarching output parameters
@@ -247,13 +218,6 @@ proc FastMarchingSegmentationBuildGUI {this} {
 proc FastMarchingSegmentationAddGUIObservers {this} {
   $this AddObserverByNumber $::FastMarchingSegmentation($this,runButton) 10000 
   $this AddObserverByNumber $::FastMarchingSegmentation($this,timeScrollScale) 10000
-  $this AddObserverByNumber $::FastMarchingSegmentation($this,inputSelector)  11000
-  $this AddObserverByNumber $::FastMarchingSegmentation($this,outputCreateButton)  10000
-  $this AddObserverByNumber $::FastMarchingSegmentation($this,fiducialsSelector)  11000
-  $this AddObserverByNumber $::FastMarchingSegmentation($this,segVolumeThumbWheel)  10000
-  
-#  $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
-    
 }
 
 proc FastMarchingSegmentationRemoveGUIObservers {this} {
@@ -273,6 +237,8 @@ proc FastMarchingSegmentationProcessGUIEvents {this caller event} {
   if { $caller == $::FastMarchingSegmentation($this,runButton) } {
   
     set inputFiducials [$::FastMarchingSegmentation($this,fiducialsSelector) GetSelected]
+    set outputVolume [$::FastMarchingSegmentation($this,outputSelector) GetSelected]
+    set inputVolume [$::FastMarchingSegmentation($this,inputSelector) GetSelected]
     if {$inputFiducials == ""} {
       FastMarchingSegmentationErrorDialog $this "Please specify input fiducial list!"
       return
@@ -281,13 +247,23 @@ proc FastMarchingSegmentationProcessGUIEvents {this caller event} {
       FastMarchingSegmentationErrorDialog $this "Input fiducial list must be non-empty!"
       return
     } 
+    if {$outputVolume == ""} {
+      FastMarchingSegmentationErrorDialog $this "Please specify output volume!"
+      return
+    }
+    if {$inputVolume == $outputVolume } {
+      FastMarchingSegmentationErrorDialog $this "Input and output volumes cannot be the same!"
+      return
+    } 
     if { [$::FastMarchingSegmentation($this,segVolumeThumbWheel) GetValue] == 0} {
       FastMarchingSegmentationErrorDialog $this "Target segmentation volume cannot be 0!"
       return
     }
+
+    FastMarchingSegmentationInitializeFilter $this
+
     FastMarchingSegmentationExpand $this
     $::FastMarchingSegmentation($this,timeScrollScale) EnabledOn
-    $::FastMarchingSegmentation($this,runButton) EnabledOff
     set timescroll $::FastMarchingSegmentation($this,timeScrollScale)
     set segmentedVolume [$::FastMarchingSegmentation($this,segVolumeThumbWheel) GetValue]
     set knownpoints [$::FastMarchingSegmentation($this,fastMarchingFilter) nKnownPoints]
@@ -299,26 +275,6 @@ proc FastMarchingSegmentationProcessGUIEvents {this caller event} {
   if { $caller == $::FastMarchingSegmentation($this,timeScrollScale) } {
     FastMarchingSegmentationUpdateTime $this    
   } 
-
-  if { $caller == $::FastMarchingSegmentation($this,segVolumeThumbWheel) } {
-  } 
-
-  if {$caller == $::FastMarchingSegmentation($this,inputSelector) } {
-    $::FastMarchingSegmentation($this,currentOutputText) SetText "Output label volume not defined!"
-    $::FastMarchingSegmentation($this,outputCreateButton) EnabledOn
-    $::FastMarchingSegmentation($this,timeScrollScale) EnabledOff
-    $::FastMarchingSegmentation($this,runButton) EnabledOff
-  }
-
-  if {$caller == $::FastMarchingSegmentation($this,fiducialsSelector) } {
-  }
-
-  if {$caller == $::FastMarchingSegmentation($this,outputCreateButton) } {
-    FastMarchingSegmentationInitializeFilter $this
-    $::FastMarchingSegmentation($this,runButton) EnabledOn
-  }
-
-# FastMarchingSegmentationUpdateMRML $this
 }
 
 #
