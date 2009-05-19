@@ -109,7 +109,9 @@ itcl::body ThresholdEffect::preview {} {
   #
 
   set color [::EditorGetPaintColor $::Editor(singleton)]
-  set o(lut) [vtkNew vtkLookupTable]
+  if { ![info exists o(lut)] } {
+    set o(lut) [vtkNew vtkLookupTable]
+  }
   $o(lut) SetRampToLinear
   $o(lut) SetNumberOfTableValues 2
   $o(lut) SetTableRange 0 1
