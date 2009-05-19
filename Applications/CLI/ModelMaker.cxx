@@ -60,7 +60,6 @@ int ImportAnatomyLabelFile( std::string, LabelAnatomyContainer &);
 int main(int argc, char * argv[])
 {
     PARSE_ARGS;
-    bool debug = false;
 
     if (debug) 
       {
@@ -83,6 +82,7 @@ int main(int argc, char * argv[])
       std::cout << "Output model scene file: " << (ModelSceneFile.size() > 0 ? ModelSceneFile[0].c_str() : "None") << std::endl;
       std::cout << "Color table file : " << ColorTable.c_str() << std::endl;
       std::cout << "Save intermediate models: " << SaveIntermediateModels << std::endl;
+      std::cout << "Debug: " << debug << std::endl;
       std::cout << "\nStarting..." << std::endl;
       }
 

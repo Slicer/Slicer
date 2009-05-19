@@ -173,4 +173,16 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
      <default>true</default>
    </boolean>
 </parameters>
+<parameters advanced="true">
+  <label>Debug</label>
+    <boolean>
+      <name>debug</name>
+      <label>Debug</label>
+      <description>Click if wish to see debugging output</description>
+      <flag>-d</flag> 
+      <longflag>--debug</longflag>
+      <default>false</default>
+    </boolean>
+</parameters>
+
 </executable>
