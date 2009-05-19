@@ -374,16 +374,20 @@ itcl::body Labeler::buildOptions { } {
   $o(paintOver) Create
   $o(paintOver) SetLabelText "Paint Over: "
   $o(paintOver) SetBalloonHelpString "Allow effect to overwrite non-zero labels."
+  [$o(paintOver) GetLabel] SetWidth 22
+  [$o(paintOver) GetLabel] SetAnchorToEast
   pack [$o(paintOver) GetWidgetName] \
-    -side top -anchor e -fill x -padx 2 -pady 2 
+    -side top -anchor w -padx 2 -pady 2 
 
   set o(paintThreshold) [vtkKWCheckButtonWithLabel New]
   $o(paintThreshold) SetParent [$this getOptionsFrame]
   $o(paintThreshold) Create
   $o(paintThreshold) SetLabelText "Threshold Painting: "
+  [$o(paintThreshold) GetLabel] SetWidth 22
+  [$o(paintThreshold) GetLabel] SetAnchorToEast
   $o(paintThreshold) SetBalloonHelpString "Enable/Disable threshold mode for labeling."
   pack [$o(paintThreshold) GetWidgetName] \
-    -side top -anchor e -fill x -padx 2 -pady 2 
+    -side top -anchor w -padx 2 -pady 2 
 
 
   set o(paintRange) [vtkKWRange New]

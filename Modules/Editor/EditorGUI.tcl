@@ -122,7 +122,7 @@ proc EditorBuildGUI {this} {
   $::Editor($this,toolsFrame) Create
   $::Editor($this,toolsFrame) SetLabelText "Tools"
   pack [$::Editor($this,toolsFrame) GetWidgetName] \
-    -side top -anchor nw -fill x -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
+    -side top -anchor nw -fill x -expand true -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
 
   set ::Editor($this,toolsEditFrame) [vtkKWFrame New]
   $::Editor($this,toolsEditFrame) SetParent [$::Editor($this,toolsFrame) GetFrame]
@@ -166,7 +166,7 @@ proc EditorBuildGUI {this} {
   $::Editor($this,optionsFrame) SetBorderWidth 1
   $::Editor($this,optionsFrame) SetReliefToSolid
   pack [$::Editor($this,optionsFrame) GetWidgetName] \
-    -side left -anchor nw -fill both -padx 2 -pady 2 
+    -side left -anchor nw -fill both -expand true -padx 2 -pady 2 
 
   # one pixel label to keep the option panel expanded
     # TODO: doesn't work as intended

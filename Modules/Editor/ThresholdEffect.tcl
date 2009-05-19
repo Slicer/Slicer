@@ -179,8 +179,7 @@ itcl::body ThresholdEffect::buildOptions { } {
     $o(range) SetRange $lo $hi
   }
 
-  pack [$o(range) GetWidgetName] \
-    -side top -anchor e -fill x -padx 2 -pady 2 
+  pack [$o(range) GetWidgetName] -side top -anchor e -fill x -padx 2 -pady 2 
 
 
   #
@@ -216,6 +215,18 @@ itcl::body ThresholdEffect::buildOptions { } {
   pack [$o(apply) GetWidgetName] \
     -side right -anchor e -padx 2 -pady 2 
 
+  if { [$this getInputBackground] == "" || [$this getInputLabel] == "" } {
+    $this errorDialog "Need to have background and label layers to use threshold"
+    after idle ::EffectSWidget::RemoveAll
+    return
+  }
+
+  #
+  # call update before adding observers to avoid triggering preview
+  # updates during packing and configuring
+  #
+  $::slicer3::Application ProcessPendingEvents
+
   #
   # event observers - TODO: if there were a way to make these more specific, I would...
   #
@@ -228,10 +239,6 @@ itcl::body ThresholdEffect::buildOptions { } {
   set tag [$o(cancel) AddObserver AnyEvent "after idle ::EffectSWidget::RemoveAll"]
   lappend _observerRecords "$o(cancel) $tag"
 
-  if { [$this getInputBackground] == "" || [$this getInputLabel] == "" } {
-    $this errorDialog "Need to have background and label layers to use threshold"
-    after idle ::EffectSWidget::RemoveAll
-  }
 }
 
 itcl::body ThresholdEffect::tearDownOptions { } {

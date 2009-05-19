@@ -33,8 +33,8 @@ if { [itcl::find class EffectSWidget] == "" } {
     destructor {}
 
     public variable scope "all"
-    public variable animationSteps "20"
-    public variable animationDelay "100"
+    public variable animationSteps "10"
+    public variable animationDelay "200"
     public variable exitCommand ""
 
     variable _renderer ""
@@ -259,7 +259,7 @@ itcl::body EffectSWidget::animateCursor { {onOff "on"} } {
     }
     $this setAnimationState 1
     set _cursorAnimationState 0
-    [$sliceGUI GetSliceViewer] Render
+    [$sliceGUI GetSliceViewer] RequestRender
     return
   }
 
@@ -269,7 +269,6 @@ itcl::body EffectSWidget::animateCursor { {onOff "on"} } {
 
   # force a render
   [$sliceGUI GetSliceViewer] RequestRender
-  #[$sliceGUI GetSliceViewer] Render
 
   incr _cursorAnimationState
   set _cursorAnimationTag [after $animationDelay "$this animateCursor on"]
