@@ -84,7 +84,7 @@ proc EditorBuildGUI {this} {
   $::Editor($this,volumesFrame) Create
   $::Editor($this,volumesFrame) SetLabelText "Volumes"
   pack [$::Editor($this,volumesFrame) GetWidgetName] \
-    -side top -anchor nw -fill x -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
+    -side top -anchor nw -fill x -expand true -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
 
   set ::Editor($this,volumesSelect) [vtkSlicerNodeSelectorWidget New]
   $::Editor($this,volumesSelect) SetParent [$::Editor($this,volumesFrame) GetFrame]
