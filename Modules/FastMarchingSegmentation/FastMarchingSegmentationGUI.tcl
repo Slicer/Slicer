@@ -182,7 +182,7 @@ proc FastMarchingSegmentationBuildGUI {this} {
   $segvolume SetMinimumValue 0
   $segvolume SetClampMinimumValue 0
   $segvolume SetValue 0
-  [$segvolume GetLabel] SetText "Target segmented volume (mm^3):"
+  [$segvolume GetLabel] SetText "Target segmented volume (mL):"
   $segvolume SetBalloonHelpString "Overestimate of the segmented structure volume"
   pack [$segvolume GetWidgetName] -side top -anchor e -padx 2 -pady 2 
 
