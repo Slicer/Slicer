@@ -273,6 +273,10 @@ proc FastMarchingSegmentationCreateLabelVolume {this} {
   set outputVolumeNode [ [[$this GetLogic] GetMRMLScene] GetNodeByID \
     [[$::FastMarchingSegmentation($this,outputSelector) GetSelected ] GetID] ]
 
+  set inputVolumeName [$volumeNode GetName]
+  set outputVolumeName [$outputVolumeNode GetName]
+  $outputVolumeNode SetName "${inputVolumeName}_${outputVolumeName}"
+
   # from vtkSlicerVolumesLogic
   set outputDisplayNode [vtkMRMLLabelMapVolumeDisplayNode New]
   set scene [[$this GetLogic] GetMRMLScene]
@@ -318,6 +322,8 @@ proc FastMarchingSegmentationCreateLabelVolume {this} {
   $selectionNode Modified
   [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection
 
+  # this is here to trigger updates on node selectors
+  $scene InvokeEvent 66000
   return
 }
 

@@ -18,7 +18,8 @@ proc FastMarchingSegmentationTearDownGUI {this} {
     runButton inputSelector 
     fiducialsSelector segVolumeThumbWheel
     timeScrollScale labelColorSpin
-    timeScrollText initFrame outputParametersFrame
+    initFrame outputParametersFrame
+    fmFrame
   }
 
   foreach w $widgets {
@@ -67,7 +68,7 @@ proc FastMarchingSegmentationBuildGUI {this} {
   #
   # help frame
   #
-  set helptext "This module performs segmentation using fast marching method with automatic estimation of region statistics. The core C++ classes were contributed by Eric Pichon in slicer2.\n\nIn order to benefit from this module, please use the following steps:\n(1) specify input scalar volume to be segmented\n(2) put fiducial seeds within the region you want to segment\n(3) specify the expected volume of the structure to be segmented. Note, overestimation of this volume is OK, because you will be able to adjust the actual volume once the segmentation is complete\n(4) specify the color for the segmentation, and create the output label volume\n(5) push \"Run\" button to segment\n(6) use volume control slider to adjust segmentation result."
+  set helptext "THIS MODULE IS UNDER DEVELOPMENT!\n\n\nThis module performs segmentation using fast marching method with automatic estimation of region statistics. The core C++ classes were contributed by Eric Pichon in slicer2.\n\nIn order to benefit from this module, please use the following steps:\n(1) specify input scalar volume to be segmented\n(2) define fiducial seeds within the region you want to segment\n(3) specify the expected volume of the structure to be segmented. Note, overestimation of this volume is OK, because you will be able to adjust the actual volume once the segmentation is complete\n(4) specify the label color for the segmentation\n(5) Run sementation\n(6) use volume control slider to adjust segmentation result.\nDocumentation (in progress): <a>http://wiki.na-mic.org/Wiki/index.php/Slicer3:FastMarchingSegmentation</a>"
   set abouttext "This module was developed by Andriy Fedorov based on the original implementation of Eric Pichon in Slicer2.\nThis work was funded by Brain Science Foundation, and is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details."
   $this BuildHelpAndAboutFrame $pageWidget $helptext $abouttext
 
@@ -100,26 +101,37 @@ proc FastMarchingSegmentationBuildGUI {this} {
   $slicerBaseIcons Delete
 
   #
+  # FastMarchingSegmentation main frame
+  #
+  set ::FastMarchingSegmentation($this,fmFrame) [vtkSlicerModuleCollapsibleFrame New]
+  set fmFrame $::FastMarchingSegmentation($this,fmFrame)
+  $fmFrame SetParent $pageWidget
+  $fmFrame Create
+  $fmFrame SetLabelText "Fast Marching Segmentation"
+  pack [$fmFrame GetWidgetName] \
+    -side top -anchor nw -fill x -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
+
+  #
   # FastMarchingSegmentation input and initialization parameters
   #
   set ::FastMarchingSegmentation($this,initFrame) [vtkSlicerModuleCollapsibleFrame New]
   set initFrame $::FastMarchingSegmentation($this,initFrame)
-  $initFrame SetParent $pageWidget
+  $initFrame SetParent [$fmFrame GetFrame]
   $initFrame Create
-  $initFrame SetLabelText "Input/initialization parameters"
+  $initFrame SetLabelText "IO and initialization parameters"
   pack [$initFrame GetWidgetName] \
-    -side top -anchor nw -fill x -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
+    -side top -anchor nw -fill x -padx 2 -pady 2
 
   #
   # FastMarchingSegmentation output parameters
   #
   set ::FastMarchingSegmentation($this,outputParametersFrame) [vtkSlicerModuleCollapsibleFrame New]
   set outputParametersFrame $::FastMarchingSegmentation($this,outputParametersFrame)
-  $outputParametersFrame SetParent $pageWidget
+  $outputParametersFrame SetParent [$fmFrame GetFrame]
   $outputParametersFrame Create
   $outputParametersFrame SetLabelText "Segmentation result adjustment"
   pack [$outputParametersFrame GetWidgetName] \
-    -side top -anchor nw -fill x -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
+    -side top -anchor nw -fill x -padx 2 -pady 2
 
   # Input frame widgets
 
@@ -139,7 +151,7 @@ proc FastMarchingSegmentationBuildGUI {this} {
   $fiducials SetParent [$initFrame GetFrame]
   $fiducials Create
   $fiducials NewNodeEnabledOn
-  $fiducials SetNodeClass "vtkMRMLFiducialListNode" "" "" ""
+  $fiducials SetNodeClass "vtkMRMLFiducialListNode" "" "" "FastMarchingSeeds"
   $fiducials SetMRMLScene [[$this GetLogic] GetMRMLScene]
   $fiducials UpdateMenu
   $fiducials SetLabelText "Input seeds:"
@@ -151,7 +163,7 @@ proc FastMarchingSegmentationBuildGUI {this} {
   $outselect SetParent [$initFrame GetFrame]
   $outselect Create
   $outselect NewNodeEnabledOn
-  $outselect SetNodeClass "vtkMRMLScalarVolumeNode" "LabelMap" "1" ""
+  $outselect SetNodeClass "vtkMRMLScalarVolumeNode" "LabelMap" "1" "FastMarchingLabel"
   $outselect SetMRMLScene [[$this GetLogic] GetMRMLScene]
   $outselect UpdateMenu
   $outselect SetLabelText "Output volume:"
@@ -174,13 +186,16 @@ proc FastMarchingSegmentationBuildGUI {this} {
   $segvolume SetBalloonHelpString "Overestimate of the segmented structure volume"
   pack [$segvolume GetWidgetName] -side top -anchor e -padx 2 -pady 2 
 
-  set ::FastMarchingSegmentation($this,labelColorSpin) [vtkKWSpinBoxWithLabel New]
+  set ::FastMarchingSegmentation($this,labelColorSpin) [vtkKWScaleWithEntry New]
   set outColor $::FastMarchingSegmentation($this,labelColorSpin)
   $outColor SetParent [$initFrame GetFrame]
-  $outColor SetLabelText "Output label value:"
+  $outColor PopupModeOn
   $outColor Create
-  $outColor SetWidth 3
-  [$outColor GetWidget] SetValue 1.0
+  $outColor SetLabelText "Output label value:"
+  $outColor RangeVisibilityOn
+  $outColor SetResolution 1
+  $outColor SetRange 1 255
+  $outColor SetValue 1.0
   $outColor SetBalloonHelpString "Specify color for the output label"
   pack [$outColor GetWidgetName] -side top -anchor e -padx 2 -pady 2 
 
@@ -192,13 +207,7 @@ proc FastMarchingSegmentationBuildGUI {this} {
   pack [$run GetWidgetName] -side top -anchor e -padx 2 -pady 2 -fill x
 
   # FastMarching output parameters
-  set ::FastMarchingSegmentation($this,timeScrollText) [vtkKWLabel New]
-  set timeScrollText $::FastMarchingSegmentation($this,timeScrollText)
-  $timeScrollText SetParent [$outputParametersFrame GetFrame]
-  $timeScrollText Create
-  $timeScrollText SetText "Output segmentation volume:"
-
-  set ::FastMarchingSegmentation($this,timeScrollScale) [vtkKWScale New]
+  set ::FastMarchingSegmentation($this,timeScrollScale) [vtkKWScaleWithEntry New]
   set timescroll $::FastMarchingSegmentation($this,timeScrollScale)
   $timescroll SetParent [$outputParametersFrame GetFrame]
   $timescroll Create
@@ -207,8 +216,9 @@ proc FastMarchingSegmentationBuildGUI {this} {
   $timescroll SetResolution 0.001
   $timescroll SetLength 150
   $timescroll SetBalloonHelpString "Scroll back in segmentation process"
+  $timescroll SetLabelText "Output segmentation volume:"
   $timescroll EnabledOff
-  pack [$timeScrollText GetWidgetName] [$timescroll GetWidgetName] -side left -anchor e -padx 2 -pady 2
+  pack [$timescroll GetWidgetName] -side top -anchor e -padx 2 -pady 2 -fill x
 
 
   set ::FastMarchingSegmentation($this,cast) [vtkImageCast New]
@@ -218,6 +228,7 @@ proc FastMarchingSegmentationBuildGUI {this} {
 proc FastMarchingSegmentationAddGUIObservers {this} {
   $this AddObserverByNumber $::FastMarchingSegmentation($this,runButton) 10000 
   $this AddObserverByNumber $::FastMarchingSegmentation($this,timeScrollScale) 10000
+  $this AddObserverByNumber $::FastMarchingSegmentation($this,fiducialsSelector) 11000
 }
 
 proc FastMarchingSegmentationRemoveGUIObservers {this} {
@@ -275,6 +286,13 @@ proc FastMarchingSegmentationProcessGUIEvents {this caller event} {
   if { $caller == $::FastMarchingSegmentation($this,timeScrollScale) } {
     FastMarchingSegmentationUpdateTime $this    
   } 
+
+  if {$caller == $::FastMarchingSegmentation($this,fiducialsSelector) } {
+    # make sure that the newly created fiducials list is selected in the MRMLSelectionNode
+    set selectionNode [[[$this GetLogic] GetApplicationLogic] GetSelectionNode]
+    $selectionNode SetReferenceActiveFiducialListID \
+      [ [$::FastMarchingSegmentation($this,fiducialsSelector) GetSelected] GetID ]
+  }
 }
 
 #
