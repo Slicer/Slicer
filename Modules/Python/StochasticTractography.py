@@ -70,9 +70,9 @@ Grants: National Alliance for Medical Image Computing (NAMIC), funded by the Nat
     <double-vector>
       <name>FWHM</name>
       <longflag>FWHM</longflag>
-      <description>Full width half maximum</description>
+      <description>Full width half maximum in millimeters</description>
       <label>Gaussian FWHM</label>
-      <default>1,1,1</default>
+      <default>1.0,1.0,1.0</default>
     </double-vector>
 
   </parameters>
@@ -177,8 +177,8 @@ Grants: National Alliance for Medical Image Computing (NAMIC), funded by the Nat
     <integer>
       <name>maxLength</name>
       <longflag>maxLength</longflag>
-      <description>Maximum Length of Sample Tract in real dimensions (usually millimeters)</description>
-      <label>Maximum tract length (mm)</label>
+      <description>Maximal number of iterations per tract, maximum tract length = maxLength*stepSize </description>
+      <label>Maximum tract length</label>
       <default>200</default>
       <constraints>
         <minimum>10</minimum>
@@ -190,7 +190,7 @@ Grants: National Alliance for Medical Image Computing (NAMIC), funded by the Nat
     <double>
       <name>stepSize</name>
       <longflag>stepSize</longflag>
-      <description>The length of each segment of the tract in real dimensions (usually millimeters)</description>
+      <description>The segment length of the tract in millimeters</description>
       <label>Step size(mm)</label>
       <default>0.5</default>
       <constraints>
@@ -266,15 +266,15 @@ Grants: National Alliance for Medical Image Computing (NAMIC), funded by the Nat
       <name>lengthClass</name>
       <longflag>lengthClass</longflag>
       <description>Length ownership mode from tracts: 
-              dThird: first interval of length (1 to Totlength/3)
-              mThird: second interval of length (Totlength/3 to 2*Totlength/3)
-              uThird: third interval of length (2*Totlength/3 to Totlength)
+              small: interval of small length tracts (1 to Totlength/3)
+              medium: interval of medium length tracts (Totlength/3 to 2*Totlength/3)
+              large: interval of large length tracts (2*Totlength/3 to Totlength)
       </description>
       <label>Length Class</label>
-      <default>uThird</default>
-      <element>dThird</element>
-      <element>mThird</element>
-      <element>uThird</element>
+      <default>large</default>
+      <element>small</element>
+      <element>medium</element>
+      <element>large</element>
     </string-enumeration>
 
     <integer>
@@ -302,6 +302,15 @@ Grants: National Alliance for Medical Image Computing (NAMIC), funded by the Nat
         <step>0.05</step>
       </constraints>
     </double>
+
+    <boolean>
+      <name>sphericalEnabled</name>
+      <longflag>sphericalEnabled</longflag>
+      <description>Use spherical ROI vicinity to expand region of interest</description>
+      <label>Use spherical ROI vicinity</label>
+      <default>false</default>
+    </boolean>
+
 
     
   </parameters>
@@ -348,8 +357,17 @@ def sendVolume(vol, c, isDti=False):
   I2R = numpy.zeros((4,4), 'float')
   R2I = numpy.zeros((4,4), 'float')
 
+  I2RD = numpy.zeros((4,4), 'float')
+  R2ID = numpy.zeros((4,4), 'float')
+
   i2r = slicer.vtkMatrix4x4()
   r2i = slicer.vtkMatrix4x4()
+
+  i2rd = slicer.vtkMatrix4x4()
+  r2id = slicer.vtkMatrix4x4()
+
+
+  vol.GetIJKToRASDirectionMatrix(i2rd)
 
   vol.GetRASToIJKMatrix(r2i)
   vol.GetIJKToRASMatrix(i2r)
@@ -358,6 +376,7 @@ def sendVolume(vol, c, isDti=False):
      for j in range(4):
         I2R[i,j] = i2r.GetElement(i,j)
         R2I[i,j] = r2i.GetElement(i,j)
+        I2RD[i,j] = i2rd.GetElement(i,j)
 
   c.send('put\n')
   ack = c.recv(SIZE)
@@ -378,6 +397,12 @@ def sendVolume(vol, c, isDti=False):
   ack = c.recv(SIZE)
 
   c.send(I2R.tostring())
+  ack = c.recv(SIZE)
+
+  c.send('ijk2rasd\n')
+  ack = c.recv(SIZE)
+
+  c.send(I2RD.tostring())
   ack = c.recv(SIZE)
 
   c.send('components 1\n')
@@ -519,6 +544,7 @@ def Execute (\
              lengthClass,\
              vicinity,\
              thresHold,\
+             sphericalEnabled,\
              inputVol0 = "",\
              inputVol1 = "",\
              inputVol2 = "",\
@@ -531,7 +557,6 @@ def Execute (\
     osVersion = s1.communicate()[0].strip()
 
     if osVersion == 'Linux' or osVersion == 'Darwin':
-      #p1 = sp.Popen(["ps", "-elf"], stdout=sp.PIPE)
       p1 = sp.Popen(["ps", "ax"], stdout=sp.PIPE) # BSD
       output = p1.communicate()[0]
 
@@ -541,7 +566,6 @@ def Execute (\
         lines = output.split('\n')
         for i in range(len(lines)):
           if lines[i].find(tag)>0:
-            #pid = lines[i].split()[3]
             pid = lines[i].split()[0]  # BSD
             p2 = sp.Popen(["kill", "-9", str(pid)])
 
@@ -693,6 +717,9 @@ def Execute (\
   ack = s.recv(SIZE)
 
   s.send('threshold ' + str(thresHold) + '\n')
+  ack = s.recv(SIZE)
+
+  s.send('sphericalEnabled ' + str(int(sphericalEnabled)) + '\n')
   ack = s.recv(SIZE)
 
 

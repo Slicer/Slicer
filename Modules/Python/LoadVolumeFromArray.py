@@ -33,6 +33,14 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
       <label>Numpy Trafo file</label>
     </file>
 
+    <file>
+      <name>muFilename</name>
+      <longflag>muFilename</longflag>
+      <description>File containing numpy measurement frame</description>
+      <label>Numpy MU file</label>
+    </file>
+
+
 
   </parameters>
 
@@ -46,19 +54,21 @@ numpy_sizes = { numpy.int8:1, numpy.uint8:1, numpy.int16:2,  numpy.uint16:2,  nu
 numpy_nrrd_names = { 'int8':'char', 'uint8':'unsigned char', 'int16':'short',  'uint16':'ushort',  'int32':'int',  'uint32':'uint',  'float32':'float',  'float64':'double' }
 numpy_vtk_types = { 'int8':'2', 'uint8':'3', 'int16':'4',  'uint16':'5',  'int32':'6',  'uint32':'7',  'float32':'10',  'float64':'11' }
 
-def Execute (inFilename="", dataFilename="", ijkFilename=""):
+def Execute (inFilename="", dataFilename="", ijkFilename="", muFilename="" ):
   Slicer = __import__ ( "Slicer" )
   slicer = Slicer.slicer
   scene = slicer.MRMLScene
 
-  if inFilename == "" or inFilename.split('.')[1]!='in':
+  if inFilename == "" or (inFilename.split('.')[1]!='in' and inFilename.split('.')[1]!='dims') :
      return
 
-  if dataFilename == "" or dataFilename.split('.')[1]!='data':
+  if dataFilename == "" or (dataFilename.split('.')[1]!='data' and dataFilename.split('.')[1]!='dwi' and dataFilename.split('.')[1]!='dti' and dataFilename.split('.')[1]!='roi' and dataFilename.split('.')[1]!='scal'):
      return
 
   if ijkFilename == "" or ijkFilename.split('.')[1]!='ijk':
      return
+
+
 
 
   # take dimensions of the image
@@ -70,10 +80,98 @@ def Execute (inFilename="", dataFilename="", ijkFilename=""):
   ijk = numpy.fromfile(ijkFilename, 'float')
   ijk = ijk.reshape(4, 4)
 
-  #if len(dims) == 5:
-  #  dtype = vtk_types [ int(dims[4]) ]
-  #  data = numpy.fromfile(dataFilename, dtype) 
-  #  data = data.reshape(dims[0], dims[1], dims[2], dims[3])
+
+  if len(dims) == 5:
+    dtype = vtk_types [ int(dims[4]) ]
+    data = numpy.fromfile(dataFilename, dtype) 
+    data = data.reshape(dims[2], dims[1], dims[0], dims[3])
+    
+    
+    shape = data.shape
+    dtype = data.dtype
+
+    print 'Data shape : ', shape
+    print 'Data type : ', dtype
+
+ 
+    r1 = slicer.vtkMRMLDiffusionWeightedVolumeNode()
+    r11 = slicer.vtkMRMLDiffusionWeightedVolumeDisplayNode()
+    scene.AddNode(r11)
+
+    r1.AddAndObserveDisplayNodeID(r11.GetName())
+
+
+    imgD = slicer.vtkImageData()
+    imgD.SetDimensions(shape[0], shape[1], shape[2])
+    imgD.SetNumberOfScalarComponents(1)
+    if dtype == 'int8' or dtype == 'uint8' or dtype == 'int16' or dtype == 'uint16' or dtype == 'int32' or dtype == 'uint32':  # 'float32'  'float64':
+      imgD.SetScalarTypeToShort()
+    else:
+      imgD.SetScalarTypeToFloat()
+
+    imgD.AllocateScalars()
+
+
+    r1.SetAndObserveImageData(imgD)
+
+    r1.SetNumberOfGradients(shape[3])
+
+    mN = numpy.fromfile(dataFilename.split('.')[0] + '.mu', float)
+    mN = mN.reshape(4, 4)
+    gN = numpy.fromfile(dataFilename.split('.')[0] + '.grad', float) 
+    gN = gN.reshape(3, shape[3])
+    bN = numpy.fromfile(dataFilename.split('.')[0] + '.bval', float)  
+
+
+    mS = slicer.vtkMatrix4x4()
+    for i in range(4):
+      for j in range(4):
+        mS.SetElement(i,j, mN[i,j])
+
+    bS = slicer.vtkDoubleArray()
+    for i in range(shape[3]):
+      bS.InsertNextValue(bN[i])
+
+    gS = slicer.vtkDoubleArray()
+    gS.SetNumberOfComponents(3)
+    gS.SetNumberOfTuples(shape[3])
+    for i in range(shape[3]):
+       gS.InsertNextTuple3(gN[0, i], gN[1, i], gN[2, i])
+
+
+    r1.SetMeasurementFrameMatrix(mS)
+    r1.SetDiffusionGradients(gS)
+    r1.SetBValues(bS)
+
+
+    trafo = numpy.array([[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]])
+
+    ijk = numpy.dot(trafo, ijk)
+    
+    mat = slicer.vtkMatrix4x4()
+    for i in range(4):
+     for j in range(4):
+        mat.SetElement(i,j, ijk[i,j])
+
+
+    r1.SetAndObserveImageData(imgD)
+    r1.SetOrigin(ijk[0][3], ijk[1][3], ijk[2][3])
+    r1.SetSpacing(ijk[0][0], ijk[1][1], ijk[2][2])
+    r1.SetIJKToRASMatrix(mat)
+
+
+    scene.AddNode(r1)
+
+    #tmp = r1.GetImageData().ToArray()
+    tmp = r1.GetImageData().GetPointData().GetScalars().ToArray()
+    dataL = numpy.reshape(data[...,0], (shape[0]*shape[1]*shape[2], 1))
+    print 'TMP shape : ', tmp.shape 
+    tmp[:] = dataL[:]
+    #tmp[...] = data[..., nvol] 
+
+    r1.GetDisplayNode().SetDefaultColorMap()
+    r1.Modified()
+
 
   if len(dims) == 6:
     dtype = vtk_types [ int(dims[5]) ]
@@ -100,6 +198,7 @@ def Execute (inFilename="", dataFilename="", ijkFilename=""):
 
     tensorImage = slicer.vtkImageData()
     tensorImage.SetDimensions(shape[0], shape[1], shape[2])
+
     #tensorImage.SetNumberOfScalarComponents(1)
     #tensorImage.SetScalarTypeToFloat()
     #tensorImage.AllocateScalars()
@@ -115,12 +214,24 @@ def Execute (inFilename="", dataFilename="", ijkFilename=""):
      for j in range(4):
         mat.SetElement(i,j, ijk[i,j])
 
+   
+    if muFilename.split('.')[1]=='mu':
+      mu = numpy.fromfile(muFilename, 'float')
+      mu = mu.reshape(4, 4)
+    else:
+      return 
+
+    mmat = slicer.vtkMatrix4x4()
+    for i in range(4):
+     for j in range(4):
+        mmat.SetElement(i,j, mu[i,j])
+
 
     r1.SetAndObserveImageData(tensorImage)
     r1.SetOrigin(ijk[0][3], ijk[1][3], ijk[2][3])
     r1.SetSpacing(ijk[0][0], ijk[1][1], ijk[2][2])
     r1.SetIJKToRASMatrix(mat)
-    r1.SetMeasurementFrameMatrix( mat )
+    r1.SetMeasurementFrameMatrix(mmat)
     r1.GetImageData().SetScalarTypeToFloat()
 
     scene.AddNode(r1)
@@ -174,7 +285,10 @@ def Execute (inFilename="", dataFilename="", ijkFilename=""):
     imgD = slicer.vtkImageData()
     imgD.SetDimensions(shape[0], shape[1], shape[2])
     imgD.SetNumberOfScalarComponents(1)
-    imgD.SetScalarTypeToFloat()
+    if dtype == 'int8' or dtype == 'uint8' or dtype == 'int16' or dtype == 'uint16' or dtype == 'int32' or dtype == 'uint32':  # 'float32'  'float64':
+      imgD.SetScalarTypeToShort()
+    else:
+      imgD.SetScalarTypeToFloat()
     imgD.AllocateScalars()
 
     trafo = numpy.array([[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]])

@@ -72,6 +72,8 @@ def Execute (inputVolume):
   tmp[:] = dvol1[:]
 
   r1.GetDisplayNode().SetDefaultColorMap()
+  r1.GetDisplayNode().SetLevel(tmp.min())
+  r1.GetDisplayNode().SetWindow(tmp.max())
   r1.Modified()
 
   return
