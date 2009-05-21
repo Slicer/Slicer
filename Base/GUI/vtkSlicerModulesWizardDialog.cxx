@@ -58,29 +58,23 @@ void vtkSlicerModulesWizardDialog::CreateWidget()
   vtkKWWizardWorkflow *wizard_workflow = this->GetWizardWorkflow();
   vtkKWWizardWidget *wizard_widget = this->GetWizardWidget();
 
-  wizard_widget->GetTitleIconLabel()->SetImageToPredefinedIcon(
-    vtkKWIcon::IconNetDrive);
-
   // Add Configuration step
 
   this->ModulesConfigurationStep = vtkSlicerModulesConfigurationStep::New();
   this->ModulesConfigurationStep->SetWizardDialog(this);
   wizard_workflow->AddStep(this->ModulesConfigurationStep);
-  this->ModulesConfigurationStep->Delete();
 
   // Add Modules step
 
   this->ModulesStep = vtkSlicerModulesStep::New();
   this->ModulesStep->SetWizardDialog(this);
   wizard_workflow->AddNextStep(this->ModulesStep);
-  this->ModulesStep->Delete();
 
   // Add Result step
 
   this->ModulesResultStep = vtkSlicerModulesResultStep::New();
   this->ModulesResultStep->SetWizardDialog(this);
   wizard_workflow->AddNextStep(this->ModulesResultStep);
-  this->ModulesResultStep->Delete();
 
   // -----------------------------------------------------------------
   // Initial and finish step
@@ -88,4 +82,9 @@ void vtkSlicerModulesWizardDialog::CreateWidget()
   wizard_workflow->SetFinishStep(this->ModulesResultStep);
   wizard_workflow->CreateGoToTransitionsToFinishStep();
   wizard_workflow->SetInitialStep(this->ModulesConfigurationStep);
+
+  // Clean up
+  this->ModulesConfigurationStep->Delete();
+  this->ModulesStep->Delete();
+  this->ModulesResultStep->Delete();
 }

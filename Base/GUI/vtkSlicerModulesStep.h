@@ -64,18 +64,11 @@ public:
   // Description:
   // Uninstall selected extensions.
   void Uninstall();
-  // Description:
-  // Command for the HTTP hyperlink cell
-  void HomepageCommand(const char *notused,
-                       int row_index,
-                       int col_index,
-                       const char *widget_name);
   
   // Description:
   // Callback for when the homepage is clicked
-  void HomepageCallback(const char *widget_name,
-                        int row_index,
-                        int col_index);
+  void OpenHomePageInBrowserCallback();
+
   // Description:
   // Command for the description cell
   void DescriptionCommand(const char *notused,
@@ -130,7 +123,10 @@ private:
   vtkKWLabel *HeaderText;
   vtkKWPushButton *SelectAllButton;
   vtkKWPushButton *SelectNoneButton;
+
   vtkKWMultiColumnListWithScrollbars *ModulesMultiColumnList;
+  int HomePageColIndex;
+
   vtkKWPushButton *DownloadButton;
   vtkKWPushButton *UninstallButton;
   vtkKWPushButton *StopButton;
@@ -140,28 +136,28 @@ private:
   // Description:
   // Helper method to download .s3ext file and parse
   //BTX
-  void DownloadParseS3ext(const std::string& s3ext, ManifestEntry* entry);
+  void DownloadParseS3ext(const std::string &s3ext, ManifestEntry *entry);
   //ETX
       
   // Description:
   // Helper method for dowlonad and install
   //BTX
-  bool DownloadInstallExtension(const std::string& ExtensionName,
-                                const std::string& ExtensionBinaryURL);
+  bool DownloadInstallExtension(const std::string &ExtensionName,
+                                const std::string &ExtensionBinaryURL);
   //ETX
 
   // Description:
   // Helper method for dowlonad and install
   //BTX
-  bool UninstallExtension(const std::string& ExtensionName);
+  bool UninstallExtension(const std::string &ExtensionName);
   //ETX
 
   // Description:
   // Helper method for adding extensions to the column list
   //BTX
   void InsertExtension(int Index,
-                       ManifestEntry* Entry,
-                       const std::string& CacheDir);
+                       ManifestEntry *Entry,
+                       const std::string &CacheDir);
   //ETX
 
   // Description:
@@ -170,6 +166,15 @@ private:
   void UpdateModulesFromRepository(vtkSlicerApplication *app);
   //ETX
 
+  // Description:
+  // Helper method that asks the conf. step what action should be taken.
+  //BTX
+  int ActionToBeTaken();
+  // ETX
+
+  // Description:
+  // Keep track if anything was done or not.  Validation succeeds if
+  // at least one action was taken.
   //BTX
   int ActionTaken;
   //ETX

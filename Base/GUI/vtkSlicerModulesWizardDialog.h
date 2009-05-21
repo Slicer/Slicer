@@ -22,6 +22,7 @@ public:
   std::string Category;
   std::string ExtensionStatus;
   std::string Description;
+  std::string Revision;
 };
 //ETX
 

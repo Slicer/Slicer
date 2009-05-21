@@ -88,6 +88,7 @@ vtkSlicerModulesStep::vtkSlicerModulesStep()
   this->SelectAllButton = NULL;
   this->SelectNoneButton = NULL;
   this->ModulesMultiColumnList = NULL;
+  this->HomePageColIndex = NULL;
   this->DownloadButton = NULL;
   this->UninstallButton = NULL;
   this->StopButton = NULL;
@@ -96,6 +97,8 @@ vtkSlicerModulesStep::vtkSlicerModulesStep()
   this->Messages["READY"] = "Select extensions, then click uninstall to remove them from\nyour version of 3D Slicer, or click download to retrieve them.";
   this->Messages["DOWNLOAD"] = "Download in progress... Clicking the cancel button will stop\nthe process after the current extension operation is finished.";
   this->Messages["FINISHED"] = "Continue selecting extensions for download or removal,\nor click finish to complete the operation.";
+
+  this->ActionTaken = vtkSlicerModulesStep::ActionIsEmpty;
 }
 
 //----------------------------------------------------------------------------
@@ -151,8 +154,8 @@ vtkSlicerModulesStep::~vtkSlicerModulesStep()
   std::vector<ManifestEntry*>::iterator iter = this->Modules.begin();
   while (iter != this->Modules.end())
     {
-      delete (*iter);
-      iter++;
+    delete (*iter);
+    iter++;
     }
 }
 
@@ -167,11 +170,9 @@ void vtkSlicerModulesStep::ShowUserInterface()
 {
   this->Superclass::ShowUserInterface();
 
-  vtkKWWizardWidget *wizard_widget = 
-    this->GetWizardDialog()->GetWizardWidget();
+  vtkKWWizardWidget *wizard_widget = this->GetWizardDialog()->GetWizardWidget();
   
-  vtkSlicerApplication *app =
-    dynamic_cast<vtkSlicerApplication*> (this->GetApplication());
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
 
   if (!this->Frame1)
     {
@@ -237,6 +238,8 @@ void vtkSlicerModulesStep::ShowUserInterface()
     this->SelectAllButton->Create();
 
     this->SelectAllButton->SetText("Select All");
+    this->SelectAllButton->SetBorderWidth( 0 );
+    this->SelectAllButton->SetReliefToFlat();
     this->SelectAllButton->SetImageToIcon(app->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerSelectAllIcon());
     this->SelectAllButton->SetCommand(this, "SelectAll");
     }
@@ -251,6 +254,8 @@ void vtkSlicerModulesStep::ShowUserInterface()
     this->SelectNoneButton->Create();
     
     this->SelectNoneButton->SetText("Select None");
+    this->SelectNoneButton->SetBorderWidth( 0 );
+    this->SelectNoneButton->SetReliefToFlat();
     this->SelectNoneButton->SetImageToIcon(app->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerDeselectAllIcon());
     this->SelectNoneButton->SetCommand(this, "SelectNone");
     }
@@ -276,16 +281,24 @@ void vtkSlicerModulesStep::ShowUserInterface()
     col_index = the_list->AddColumn("Select");
     the_list->SetColumnEditWindowToCheckButton(col_index);
     the_list->SetColumnFormatCommandToEmptyOutput(col_index);
-    
+    the_list->SetColumnAlignmentToCenter(col_index);
+
     col_index = the_list->AddColumn("Status");
     the_list->SetColumnFormatCommandToEmptyOutput(col_index);
+    the_list->SetColumnAlignmentToCenter(col_index);
 
     col_index = the_list->AddColumn("Name");
     col_index = the_list->AddColumn("Category");
+
     col_index = the_list->AddColumn("Description");
     the_list->SetColumnFormatCommandToEmptyOutput(col_index);
-    col_index = the_list->AddColumn("HomePage");
+
+    this->HomePageColIndex = col_index = the_list->AddColumn("HomePage");
+    the_list->SetColumnWidth(col_index, 0);
     the_list->SetColumnFormatCommandToEmptyOutput(col_index);
+    the_list->SetSelectionCommand( this, "OpenHomePageInBrowserCallback" );
+    the_list->SetColumnAlignmentToCenter(col_index);
+
     col_index = the_list->AddColumn("Binary URL");
 
     }
@@ -317,14 +330,14 @@ void vtkSlicerModulesStep::ShowUserInterface()
   this->Script("pack %s -side top -pady 2 -anchor center", 
                this->HeaderText->GetWidgetName());
 
-  this->Script("pack %s %s -side left -anchor w -pady 2", 
+  this->Script("pack %s %s -side left -anchor w -pady 2 -padx 2", 
                this->SelectAllButton->GetWidgetName(),
                this->SelectNoneButton->GetWidgetName());
 
-  this->Script("pack %s -side left", 
+  this->Script("pack %s -side left -anchor sw", 
                this->ModulesMultiColumnList->GetWidgetName());
 
-  this->Script("pack %s %s -side left -anchor w -pady 2", 
+  this->Script("pack %s %s -side left -anchor sw -pady 2", 
                this->DownloadButton->GetWidgetName(),
                this->UninstallButton->GetWidgetName());
 
@@ -334,7 +347,7 @@ void vtkSlicerModulesStep::ShowUserInterface()
 //----------------------------------------------------------------------------
 void vtkSlicerModulesStep::UpdateModulesFromRepository(vtkSlicerApplication *app)
 {
-  const char* tmp = app->GetTemporaryDirectory();
+  const char* tmp = app->GetExtensionsDownloadDirectory();
   std::string tmpfile(tmp);
   tmpfile += "/manifest.html";
 
@@ -372,56 +385,54 @@ void vtkSlicerModulesStep::UpdateModulesFromRepository(vtkSlicerApplication *app
 void vtkSlicerModulesStep::Update()
 {
   vtkSlicerApplication *app =
-    dynamic_cast<vtkSlicerApplication*> (this->GetApplication());
+    vtkSlicerApplication::SafeDownCast(this->GetApplication());
 
   if (app)
     {
-      vtkSlicerModulesWizardDialog *wizard_dlg = this->GetWizardDialog();
-      
-      vtkSlicerModulesConfigurationStep *conf_step = wizard_dlg->GetModulesConfigurationStep();
+    int action = this->ActionToBeTaken();
 
-      if (vtkSlicerModulesConfigurationStep::ActionInstall == conf_step->GetSelectedAction())
+    if (vtkSlicerModulesConfigurationStep::ActionInstall == action)
+      {
+      this->UpdateModulesFromRepository(app);
+      if (this->DownloadButton)
         {
-        this->UpdateModulesFromRepository(app);
-        if (this->DownloadButton)
-          {
-          this->DownloadButton->EnabledOn();
-          }
-        if (this->UninstallButton)
-          {
-          this->UninstallButton->EnabledOff();
-          }
+        this->DownloadButton->EnabledOn();
         }
-      else if (vtkSlicerModulesConfigurationStep::ActionUninstall == conf_step->GetSelectedAction())
+      if (this->UninstallButton)
         {
-        if (this->DownloadButton)
-          {
-          this->DownloadButton->EnabledOff();
-          }
-        if (this->UninstallButton)
-          {
-          this->UninstallButton->EnabledOn();
-          }
+        this->UninstallButton->EnabledOff();
         }
-      else if (vtkSlicerModulesConfigurationStep::ActionEither == conf_step->GetSelectedAction())
+      }
+    else if (vtkSlicerModulesConfigurationStep::ActionUninstall == action)
+      {
+      if (this->DownloadButton)
         {
-        this->UpdateModulesFromRepository(app);
-        if (this->DownloadButton)
-          {
-          this->DownloadButton->EnabledOn();
-          }
-        if (this->UninstallButton)
-          {
-          this->UninstallButton->EnabledOn();
-          }
+        this->DownloadButton->EnabledOff();
         }
+      if (this->UninstallButton)
+        {
+        this->UninstallButton->EnabledOn();
+        }
+      }
+    else if (vtkSlicerModulesConfigurationStep::ActionEither == action)
+      {
+      this->UpdateModulesFromRepository(app);
+      if (this->DownloadButton)
+        {
+        this->DownloadButton->EnabledOn();
+        }
+      if (this->UninstallButton)
+        {
+        this->UninstallButton->EnabledOn();
+        }
+      }
 
     std::string cachedir = app->GetModuleCachePath();
     if (cachedir.empty())
       {
-        cachedir = app->GetBinDir();
-        cachedir += "/../";
-        cachedir += Slicer3_INSTALL_MODULES_LIB_DIR;
+      cachedir = app->GetBinDir();
+      cachedir += "/../";
+      cachedir += Slicer3_INSTALL_MODULES_LIB_DIR;
       }
 
     if (this->ModulesMultiColumnList)
@@ -451,8 +462,21 @@ void vtkSlicerModulesStep::InsertExtension(int Index,
   the_list->SetCellText(Index, 4, Entry->Description.c_str());
   the_list->SetCellWindowCommand(Index, 4, this, "DescriptionCommand");
 
-  the_list->SetCellText(Index, 4, Entry->Homepage.c_str());
-  the_list->SetCellWindowCommand(Index, 5, this, "HomepageCommand");
+
+
+  the_list->SetCellText(Index, this->HomePageColIndex, Entry->Homepage.c_str());
+
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication()); 
+  
+  if (app)
+    {
+    vtkKWIcon *www = app->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerWWWIcon();
+    the_list->SetCellImageToIcon(Index, this->HomePageColIndex, www);
+    }
+
+  the_list->SetCellEditable(Index, this->HomePageColIndex, 0);
+
+
 
   the_list->InsertCellText(Index, 6, Entry->URL.c_str());
             
@@ -479,13 +503,30 @@ int vtkSlicerModulesStep::IsActionValid()
 //----------------------------------------------------------------------------
 void vtkSlicerModulesStep::SelectAll()
 {
+  int action = this->ActionToBeTaken();
   int nrows = this->ModulesMultiColumnList->GetWidget()->GetNumberOfRows();
   for (int row=0; row<nrows; row++)
     {
-    if (StatusFoundOnDisk != this->GetStatus(row))
-      {
-      this->ModulesMultiColumnList->GetWidget()->SetCellText(row, 0, "1");
-      }
+      if (vtkSlicerModulesConfigurationStep::ActionInstall == action)
+        {
+        if (StatusFoundOnDisk != this->GetStatus(row) &&
+            StatusSuccess != this->GetStatus(row))
+          {
+          this->ModulesMultiColumnList->GetWidget()->SetCellText(row, 0, "1");
+          }
+        }
+      else if (vtkSlicerModulesConfigurationStep::ActionUninstall == action)
+        {
+        if (StatusFoundOnDisk == this->GetStatus(row) ||
+            StatusSuccess == this->GetStatus(row))
+          {
+          this->ModulesMultiColumnList->GetWidget()->SetCellText(row, 0, "1");
+          }
+        }
+      else
+        {
+        this->ModulesMultiColumnList->GetWidget()->SetCellText(row, 0, "1");
+        }
     }
 
   this->ModulesMultiColumnList->GetWidget()->RefreshAllRowsWithWindowCommand(0);
@@ -564,59 +605,36 @@ void vtkSlicerModulesStep::Uninstall()
       }
     }
 
+  this->ActionTaken = vtkSlicerModulesStep::ActionIsUninstall;
 
   this->GetWizardDialog()->GetWizardWidget()->CancelButtonVisibilityOff();
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerModulesStep::HomepageCommand(const char *notused,
-                                           int row_index,
-                                           int col_index,
-                                           const char *widget_name)
+void vtkSlicerModulesStep::OpenHomePageInBrowserCallback()
 {
-  vtkKWMultiColumnList *list = this->ModulesMultiColumnList->GetWidget();
+  vtkKWMultiColumnList *the_list = this->ModulesMultiColumnList->GetWidget();
 
-  vtkKWLabel *child = 
-    vtkKWLabel::SafeDownCast(list->GetCellWindowAsFrame(row_index, col_index));
-
- 
-  if (!child)
-    {
-    child = vtkKWLabel::New();
-    child->SetWidgetName(widget_name);
-    child->SetParent(list);
-    child->Create();
-    child->Delete();
-    }
-
-  child->SetBackgroundColor(list->GetCellCurrentBackgroundColor(row_index, col_index));
-
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication()); 
+  int num_rows = the_list->GetNumberOfRows();
+  int col;
   
-  if (app)
+  for (int loop = 0; loop < num_rows; loop++)
     {
-    vtkKWIcon *www = app->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerWWWIcon();
-    child->SetImageToIcon(www);
-    }
-  /*
-  char command[1024];
-  sprintf(command,
-          "HomepageCallback %s %d %d ",
-          child->GetTclName(), row_index, col_index );
-
-  child->SetCommand(this, command);
-  */
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerModulesStep::HomepageCallback(const char *widget_name,
-                                            int row_index,
-                                            int col_index)
-{
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
-  if (app)
-    {
-    app->OpenLink("http://wire");
+      col = the_list->IsCellSelected( loop, this->HomePageColIndex );
+    if (col)
+      {
+      const char *uri = the_list->GetCellText( loop, this->HomePageColIndex );
+      if (0 != uri)
+        {
+        vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
+        if (app)
+          {
+          app->OpenLink(uri);
+          } 
+        }
+      the_list->DeselectCell( loop, this->HomePageColIndex );
+      break;
+      }
     }
 }
 
@@ -647,7 +665,7 @@ void vtkSlicerModulesStep::DescriptionCommand(const char *notused,
 
   if (!description.empty())
     {
-    std::string summary = description.substr(0, 5);
+    std::string summary = description.substr(0, 12);
     summary += "...";
 
     child->SetText(summary.c_str());
@@ -724,12 +742,34 @@ void vtkSlicerModulesStep::HideUserInterface()
 //----------------------------------------------------------------------------
 void vtkSlicerModulesStep::Validate()
 {
+  vtkKWWizardWidget *wizard_widget = this->GetWizardDialog()->GetWizardWidget();
+
   vtkKWWizardWorkflow *wizard_workflow = 
     this->GetWizardDialog()->GetWizardWidget()->GetWizardWorkflow();
 
-  // This step always validates
+  int valid = this->IsActionValid();
+  if (valid != 0)
+    {
+    wizard_workflow->PushInput(vtkKWWizardStep::GetValidationSucceededInput());
+    }
+  else
+    {
+    int action = this->ActionToBeTaken();
+    if (vtkSlicerModulesConfigurationStep::ActionInstall == action)
+      {
+      wizard_widget->SetErrorText("No action taken, choose \"Download & Install\".");
+      }
+    else if (vtkSlicerModulesConfigurationStep::ActionUninstall == action)
+      {
+      wizard_widget->SetErrorText("No action taken, choose \"Uninstall\".");
+      }
+    else
+      {
+      wizard_widget->SetErrorText("No action taken, choose \"Download & Install\" or \"Uninstall\".");
+      }
 
-  wizard_workflow->PushInput(vtkKWWizardStep::GetValidationSucceededInput());
+    wizard_workflow->PushInput(vtkKWWizardStep::GetValidationFailedInput());
+    }
 
   wizard_workflow->ProcessInputs();
 }
@@ -747,14 +787,35 @@ std::vector<ManifestEntry*> vtkSlicerModulesStep::ParseManifest(const std::strin
 
   std::string baseURL = wizard_dlg->GetSelectedRepositoryURL();
 
-  std::string first_key(".zip\">");
-  std::string second_key(".s3ext\">");
+  std::string zip_key(".zip\">");
+  std::string ext_key(".s3ext\">");
+  std::string atag_key("</a>");
+  std::string svn_key("-svn");
+  std::string cvs_key("-cvs");
 
-  std::string::size_type zip = txt.find(first_key, 0);
-  std::string::size_type atag = txt.find("</a>", zip);
-  std::string::size_type dash = txt.find("-", zip);
-  std::string::size_type ext = txt.find(second_key, dash);
-  std::string::size_type atag2 = txt.find("</a>", ext);
+  std::string::size_type zip = txt.find(zip_key, 0);
+  std::string::size_type atag = txt.find(atag_key, zip);
+  std::string::size_type dash = txt.find(svn_key, zip);
+
+  bool cvs = false;
+  if (dash > atag)
+    {
+    cvs = true;
+    dash = txt.find(cvs_key, zip);
+    }
+
+  std::string::size_type dash2;
+  if (cvs)
+    {
+    dash2 = (dash + 3 + 10);
+    }
+  else
+    {
+    dash2 = txt.find("-", dash + 1);
+    }
+
+  std::string::size_type ext = txt.find(ext_key, dash2);
+  std::string::size_type atag2 = txt.find(atag_key, ext);
 
   ManifestEntry* entry;
 
@@ -771,20 +832,48 @@ std::vector<ManifestEntry*> vtkSlicerModulesStep::ParseManifest(const std::strin
       {
       entry->URL = baseURL;
       entry->URL += "/";
-      entry->URL += txt.substr(zip + first_key.size(), atag - (zip + first_key.size()));
-      entry->Name = txt.substr(zip + first_key.size(), dash - (zip + first_key.size()));
+      entry->URL += txt.substr(zip + zip_key.size(), atag - (zip + zip_key.size()));
       
+      if (cvs)
+        {
+        entry->Name = txt.substr(zip + zip_key.size(), dash - (zip + zip_key.size()));
+        }
+      else
+        {
+        entry->Name = txt.substr(zip + zip_key.size(), dash - (zip + zip_key.size()));
+        }
+
+      if (cvs)
+        {
+        // :NOTE: 20090519 tgl: CVS controlled extensions use an ISO date.
+        entry->Revision = txt.substr(dash + cvs_key.size(), 10);
+        }
+      else
+        {
+        entry->Revision = txt.substr(dash + svn_key.size(), dash2 - (dash + svn_key.size()));
+        }
+
       s3ext = baseURL;
       s3ext += "/";
-      s3ext += txt.substr(ext + second_key.size(), atag2 - (ext + second_key.size()));
+      s3ext += txt.substr(ext + ext_key.size(), atag2 - (ext + ext_key.size()));
 
       this->DownloadParseS3ext(s3ext, entry);
 
-      zip = txt.find(first_key, zip + 1);
-      dash = txt.find("-", zip);
-      atag = txt.find("</a>", zip);
-      ext = txt.find(second_key, dash);
-      atag2 = txt.find("</a>", dash);
+      zip = txt.find(zip_key, zip + 1);
+
+      dash = txt.find(svn_key, zip);
+      atag = txt.find(atag_key, zip);
+
+      cvs = false;
+      if (dash > atag)
+        {
+        cvs = true;
+        dash = txt.find(cvs_key, dash);
+        }
+
+      dash2 = txt.find("-", dash + 1);
+      ext = txt.find(ext_key, dash );
+      atag2 = txt.find(atag_key, ext);
 
       result.push_back(entry);
       }
@@ -806,9 +895,10 @@ void vtkSlicerModulesStep::DownloadParseS3ext(const std::string& s3ext,
     std::string::size_type pos = s3ext.rfind("/");
     std::string s3extname = s3ext.substr(pos + 1);
       
-    vtkSlicerApplication *app = dynamic_cast<vtkSlicerApplication*> (this->GetApplication());
+    vtkSlicerApplication *app =
+      vtkSlicerApplication::SafeDownCast(this->GetApplication());
       
-    std::string tmpfile(std::string(app->GetTemporaryDirectory()) + std::string("/") + s3extname);
+    std::string tmpfile(std::string(app->GetExtensionsDownloadDirectory()) + std::string("/") + s3extname);
       
     handler->StageFileRead(s3ext.c_str(), tmpfile.c_str());
 
@@ -895,35 +985,25 @@ bool vtkSlicerModulesStep::DownloadInstallExtension(const std::string& Extension
     std::string::size_type pos = ExtensionBinaryURL.rfind("/");
     std::string zipname = ExtensionBinaryURL.substr(pos + 1);
       
-    vtkSlicerApplication *app = dynamic_cast<vtkSlicerApplication*> (this->GetApplication());
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
       
-    std::string tmpfile(std::string(app->GetTemporaryDirectory()) + std::string("/") + zipname);
+    std::string tmpfile(std::string(app->GetExtensionsDownloadDirectory()) + std::string("/") + zipname);
       
-    std::cout << "tmpfile: " << tmpfile << std::endl;
-
     handler->StageFileRead(ExtensionBinaryURL.c_str(), tmpfile.c_str());
 
     std::string cachedir = app->GetModuleCachePath();
-
-    std::cout << "cachedir: " << cachedir << std::endl;
 
     if (cachedir.empty())
       {
         cachedir = app->GetBinDir();
 
-        std::cout << "bindir: " << app->GetBinDir() << std::endl;
-
         cachedir += "/../";
         cachedir += Slicer3_INSTALL_MODULES_LIB_DIR;
-
-        std::cout << "install: " << Slicer3_INSTALL_MODULES_LIB_DIR << std::endl;
       }
-
-    std::cout << "cachedir: " << cachedir << std::endl;
 
     std::string libdir(cachedir + std::string("/") + ExtensionName);
 
-    std::string tmpdir(std::string(app->GetTemporaryDirectory()) + std::string("/extension"));
+    std::string tmpdir(std::string(app->GetExtensionsDownloadDirectory()) + std::string("/extension"));
 
     if (UnzipPackage(tmpfile, libdir, tmpdir))
       {
@@ -959,11 +1039,11 @@ bool vtkSlicerModulesStep::UninstallExtension(const std::string& ExtensionName)
 {
   bool result = false;
 
-  vtkSlicerApplication *app = dynamic_cast<vtkSlicerApplication*> (this->GetApplication());
+  vtkSlicerApplication *app =
+    vtkSlicerApplication::SafeDownCast(this->GetApplication());
 
   if (app)
     {
-
     // :BUG: 20090108 tgl: Not guaranteed that the install of the
     // module will be under Slicer3_INSTALL_MODULES_LIB_DIR if
     // ModuelCachePath is empty.
@@ -1009,10 +1089,19 @@ bool vtkSlicerModulesStep::UninstallExtension(const std::string& ExtensionName)
         }    
 
       app->SetModulePaths(paths.c_str());
-
       }
-
     }
 
   return result;
+}
+
+
+//----------------------------------------------------------------------------
+int vtkSlicerModulesStep::ActionToBeTaken()
+{
+  vtkSlicerModulesWizardDialog *wizard_dlg = this->GetWizardDialog();
+      
+  vtkSlicerModulesConfigurationStep *conf_step = wizard_dlg->GetModulesConfigurationStep();
+
+  return conf_step->GetSelectedAction();
 }

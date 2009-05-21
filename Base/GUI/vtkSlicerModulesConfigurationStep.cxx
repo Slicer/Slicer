@@ -11,7 +11,6 @@
 #include "vtkKWRadioButton.h"
 #include "vtkKWRadioButtonSet.h"
 #include "vtkKWComboBox.h"
-#include "vtkKWComboBoxWithLabel.h"
 #include "vtkKWWizardStep.h"
 #include "vtkKWWizardWidget.h"
 #include "vtkKWWizardWorkflow.h"
@@ -41,12 +40,14 @@ vtkSlicerModulesConfigurationStep::vtkSlicerModulesConfigurationStep()
   this->Frame1 = NULL;
   this->Frame2 = NULL;
   this->Frame3 = NULL;
+  this->Frame4 = NULL;
 
   this->HeaderIcon = NULL;
   this->HeaderText = NULL;
   this->ActionRadioButtonSet = NULL;
   this->CacheDirectoryButton = NULL;
   this->TrashButton = NULL;
+  this->SearchLocationLabel = NULL;
   this->SearchLocationBox = NULL;
 
   this->RepositoryValidationFailed = vtkKWStateMachineInput::New();
@@ -68,6 +69,10 @@ vtkSlicerModulesConfigurationStep::~vtkSlicerModulesConfigurationStep()
     {
     this->Frame3->Delete();
     }
+  if (this->Frame4)
+    {
+    this->Frame4->Delete();
+    }
   if (this->HeaderIcon)
     {
     this->HeaderIcon->Delete();
@@ -87,6 +92,10 @@ vtkSlicerModulesConfigurationStep::~vtkSlicerModulesConfigurationStep()
   if (this->TrashButton)
     {
     this->TrashButton->Delete();
+    }
+  if (this->SearchLocationLabel)
+    {
+    this->SearchLocationLabel->Delete();
     }
   if (this->SearchLocationBox)
     {
@@ -110,6 +119,8 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
 
   vtkKWWizardWidget *wizard_widget = 
     this->GetWizardDialog()->GetWizardWidget();
+
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
 
   if (!this->Frame1)
     {
@@ -139,10 +150,24 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     this->Frame3->Create();
     }
 
-  this->Script("pack %s %s %s -side top -pady 5",
-               this->Frame1->GetWidgetName(),
-               this->Frame2->GetWidgetName(),
-               this->Frame3->GetWidgetName());
+  if (!this->Frame4)
+    {
+    this->Frame4 = vtkKWFrame::New();
+    }
+  if (!this->Frame4->IsCreated())
+    {
+    this->Frame4->SetParent( wizard_widget->GetClientArea() );
+    this->Frame4->Create();
+    }
+
+  this->Script("pack %s -side top -fill x -anchor w -padx 5 -pady 5",
+               this->Frame1->GetWidgetName() );
+  this->Script("pack %s -side top -anchor w -padx 30 -pady 5",
+               this->Frame2->GetWidgetName() );
+  this->Script("pack %s -side top -anchor w -padx 30 -pady 5",
+               this->Frame3->GetWidgetName() );
+  this->Script("pack %s -side top -fill x -anchor w -expand y -padx 5 -pady 5",
+               this->Frame4->GetWidgetName());
 
   if (!this->HeaderIcon)
     {
@@ -165,7 +190,7 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     {
     this->HeaderText->SetParent( this->Frame1 );
     this->HeaderText->Create();
-    this->HeaderText->SetText("This wizard lets you search for extensions to add to 3D Slicer,\ndownload and install them, and uninstall existing extensions.");
+    this->HeaderText->SetText("This wizard lets you search for extensions to add to 3D Slicer,\ndownload and install them, and uninstall existing extensions.\nYou will need a network connection to access remote extension\nrepositories.");
     }
 
   if (!this->ActionRadioButtonSet)
@@ -197,8 +222,6 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     this->ActionRadioButtonSet->PackHorizontallyOn();
   }
 
-  int label_width = 25;
-
   if (!this->CacheDirectoryButton)
     {
     this->CacheDirectoryButton = vtkKWLoadSaveButtonWithLabel::New();
@@ -207,8 +230,20 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     {
     this->CacheDirectoryButton->SetParent( this->Frame3 );
     this->CacheDirectoryButton->Create();
-    this->CacheDirectoryButton->SetLabelText("Download (cache) directory:");
-    this->CacheDirectoryButton->SetLabelWidth(label_width);
+    this->CacheDirectoryButton->SetLabelText("Change download (cache) directory:");
+    this->CacheDirectoryButton->SetLabelWidth(34);
+    this->CacheDirectoryButton->GetLabel()->SetAnchorToEast();
+    this->CacheDirectoryButton->GetWidget()->TrimPathFromFileNameOff();
+    this->CacheDirectoryButton->GetWidget()
+      ->GetLoadSaveDialog()->ChooseDirectoryOn();
+    this->CacheDirectoryButton->GetWidget()
+      ->GetLoadSaveDialog()->SaveDialogOff();
+    this->CacheDirectoryButton->GetWidget()
+      ->GetLoadSaveDialog()->SetTitle("Select a directory");
+    this->CacheDirectoryButton->GetWidget()
+      ->GetLoadSaveDialog()->SetBalloonHelpString(
+      "Select a directory to be used as a download directory (cache) for Extensions.");
+
     this->CacheDirectoryButton->GetWidget()->SetCommand(
       this, "CacheDirectoryCallback");
     this->CacheDirectoryButton->GetWidget()
@@ -222,6 +257,13 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
       "Cache directory for modules.  Leave it empty for default location.");
     }
 
+  vtkKWLabel *l = vtkKWLabel::New();
+  l->SetParent ( this->Frame3 );
+  l->Create();
+  l->SetText ( "Delete files from cache (optional):" );
+  l->SetWidth ( 34 );
+  l->SetAnchorToEast();
+
   if (!this->TrashButton)
     {
     this->TrashButton = vtkKWPushButton::New();
@@ -230,52 +272,65 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     {
     this->TrashButton->SetParent( this->Frame3 );
     this->TrashButton->Create();
-    
-    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
-    vtkSlicerApplicationGUI *gui = app->GetApplicationGUI();
 
-    if (gui)
+    this->TrashButton->SetCommand(this, "EmptyCacheDirectoryCommand");
+
+    if (app)
       {
-      this->TrashButton->SetImageToIcon(gui->GetSlicerFoundationIcons()->GetSlicerDeleteIcon());
+      this->TrashButton->SetImageToIcon(app->GetApplicationGUI()->GetSlicerFoundationIcons()->GetSlicerDeleteIcon());        
       }
     else
       {
       this->TrashButton->SetImageToPredefinedIcon(vtkKWIcon::IconTrashcan);
       }
+
+    this->TrashButton->SetBorderWidth(0);
+    this->TrashButton->SetReliefToFlat();
+    }
+
+  if (!this->SearchLocationLabel)
+    {
+      this->SearchLocationLabel = vtkKWLabel::New();
+    }
+  if (!this->SearchLocationLabel->IsCreated())
+    {
+    this->SearchLocationLabel->SetParent( this->Frame4 );
+    this->SearchLocationLabel->Create();
+    this->SearchLocationLabel->SetText("Where to search:");
+    this->SearchLocationLabel->SetWidth(17);
+    this->SearchLocationLabel->SetAnchorToEast();
     }
 
   if (!this->SearchLocationBox)
     {
-    this->SearchLocationBox = vtkKWComboBoxWithLabel::New();
+    this->SearchLocationBox = vtkKWComboBox::New();
     }
   if (!this->SearchLocationBox->IsCreated())
     {
-    this->SearchLocationBox->SetParent( this->Frame3 );
+    this->SearchLocationBox->SetParent( this->Frame4 );
     this->SearchLocationBox->Create();
-    this->SearchLocationBox->SetLabelText("Where to search:");
-    this->SearchLocationBox->SetLabelWidth(label_width);
     this->SearchLocationBox->ExpandWidgetOn();
     }
  
-  this->Script("pack %s %s -side left", 
+  this->Script("pack %s %s -side left -anchor w -padx 5", 
                this->HeaderIcon->GetWidgetName(),
                this->HeaderText->GetWidgetName());
-  
-  this->Script("pack %s -side left -pady 20", 
+
+  this->Script("pack %s -side top -padx 2 -anchor w", 
                this->ActionRadioButtonSet->GetWidgetName());
 
-  this->Script("grid %s -row 0 -column 0 -sticky e -padx 5 -pady 5",
+  this->Script("pack %s -side top -padx 2 -pady 25 -anchor w",
                this->CacheDirectoryButton->GetWidgetName());
 
-  this->Script("grid %s -row 0 -column 1 -sticky e -padx 5 -pady 5",
+  this->Script("pack %s %s -side left -padx 2 -pady 2 -anchor w",
+               l->GetWidgetName(),
                this->TrashButton->GetWidgetName());
- 
-  this->Script("grid %s -row 1 -column 0 -columnspan 2 -sticky e -padx 5 -pady 5",
+
+  this->Script("pack %s %s -side left -anchor w -padx 5 -pady 25 -fill x -expand y",
+               this->SearchLocationLabel->GetWidgetName(),
                this->SearchLocationBox->GetWidgetName());
 
-  this->Script("grid columnconfigure %s 0 -weight 1",
-               this->Frame3->GetWidgetName());
-
+  l->Delete();
   this->Update();
 }
 
@@ -348,7 +403,7 @@ void vtkSlicerModulesConfigurationStep::Update()
 
     this->GetWizardDialog()->SetSelectedRepositoryURL( ext_slicer_org );
         
-    this->SearchLocationBox->GetWidget()->SetValue(this->GetWizardDialog()->GetSelectedRepositoryURL().c_str());
+    this->SearchLocationBox->SetValue(this->GetWizardDialog()->GetSelectedRepositoryURL().c_str());
     }
 
   if (this->ActionRadioButtonSet)
@@ -399,9 +454,10 @@ int vtkSlicerModulesConfigurationStep::IsRepositoryValid()
   if (vtkSlicerModulesConfigurationStep::ActionInstall == this->GetSelectedAction() ||
       vtkSlicerModulesConfigurationStep::ActionEither == this->GetSelectedAction())
     {      
-    std::string url = this->SearchLocationBox->GetWidget()->GetValue();
+    std::string url = this->SearchLocationBox->GetValue();
       
-    vtkSlicerApplication *app = dynamic_cast<vtkSlicerApplication*> (this->GetApplication());
+    vtkSlicerApplication *app = 
+      vtkSlicerApplication::SafeDownCast(this->GetApplication());
 
     const char* tmp = app->GetTemporaryDirectory();
     std::string tmpfile(tmp);
@@ -490,6 +546,18 @@ void vtkSlicerModulesConfigurationStep::CacheDirectoryCallback()
     {
     // Store the setting in the application object
     app->SetModuleCachePath(this->CacheDirectoryButton->GetWidget()->GetLoadSaveDialog()->GetFileName());
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerModulesConfigurationStep::EmptyCacheDirectoryCommand()
+{
+  vtkSlicerApplication *app
+    = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+
+  if (app)
+    {
+
     }
 }
 

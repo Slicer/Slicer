@@ -5,7 +5,7 @@
 
 #include <string>
 
-class vtkKWComboBoxWithLabel;
+class vtkKWComboBox;
 class vtkKWLabel;
 class vtkKWLoadSaveButtonWithLabel;
 class vtkKWPushButton;
@@ -13,6 +13,7 @@ class vtkKWRadioButtonSet;
 class vtkKWStateMachineInput;
 class vtkSlicerModulesWizardDialog;
 class vtkKWFrame;
+class vtkKWLabel;
 
 class vtkSlicerModulesConfigurationStep : public vtkKWWizardStep
 {
@@ -57,6 +58,7 @@ public:
   // Callbacks
   virtual int ActionRadioButtonSetChangedCallback();
   virtual void CacheDirectoryCallback();
+  virtual void EmptyCacheDirectoryCommand();
 
 protected:
   vtkSlicerModulesConfigurationStep();
@@ -66,12 +68,14 @@ protected:
   vtkKWFrame *Frame1;
   vtkKWFrame *Frame2;
   vtkKWFrame *Frame3;
+  vtkKWFrame *Frame4;
   vtkKWLabel *HeaderIcon;
   vtkKWLabel *HeaderText;
   vtkKWRadioButtonSet *ActionRadioButtonSet;
   vtkKWLoadSaveButtonWithLabel *CacheDirectoryButton;
   vtkKWPushButton *TrashButton;
-  vtkKWComboBoxWithLabel *SearchLocationBox;
+  vtkKWLabel *SearchLocationLabel;
+  vtkKWComboBox *SearchLocationBox;
   vtkKWStateMachineInput *RepositoryValidationFailed;
 
 private:

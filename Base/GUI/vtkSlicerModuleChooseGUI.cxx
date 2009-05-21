@@ -281,13 +281,13 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
     }
   else if ( pushb == this->ModulesRefresh && event == vtkKWPushButton::InvokedEvent )
     {
-      vtkSlicerApplicationGUI *gui = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
-
+      vtkSlicerApplicationGUI *gui = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI() );
       if (gui)
         {
         gui->ShowModulesWizard();
         }
     }
+
   if ( menu == this->ModulesHistory->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
     {
     // First, get the text (modulename) of the selected module.

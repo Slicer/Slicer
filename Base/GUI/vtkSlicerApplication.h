@@ -210,6 +210,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // Set/Get a directory for the remote file cache
   void SetRemoteCacheDirectory(const char *path);
   const char* GetRemoteCacheDirectory() const;
+
+  // Description:
+  // Set/Get a directory for extensions download cache
+  void SetExtensionsDownloadDirectory(const char *path);
+  const char* GetExtensionsDownloadDirectory() const;
   
   // Description:
   // Set/Get the binary location
@@ -410,6 +415,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   char ApplicationFontFamily [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char IgnoreModuleNames [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char BinDir [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  char ExtensionsDownloadDir [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
 
   int ApplicationWindowWidth;
   int ApplicationWindowHeight;
