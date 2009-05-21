@@ -130,6 +130,7 @@ class PipelineHandler(asyncore.dispatcher):
 
           ####! swap x and z for volume coming from Slicer - do not forget to apply the inverse before to send them back
           data = data.swapaxes(2,0)
+          data = data.astype('float')
 
           ####
           shpD = data.shape
@@ -147,6 +148,11 @@ class PipelineHandler(asyncore.dispatcher):
           G = self.nimage.get('grads')
           b = self.nimage.get('bval')
           i2r = self.nimage.get('ijk2ras')
+          i2rd = self.nimage.get('ijk2rasd')
+
+          print 'I2R : ', i2r
+          print 'I2RD : ', i2rd
+
           mu = self.nimage.get('mu')
           dims = self.nimage.get('dimensions')
 
@@ -187,18 +193,21 @@ class PipelineHandler(asyncore.dispatcher):
           logger.info("scene : %s" % dscene)
 
           # currently there is a bug in the GUI of slicer python - do not load if three times the same volume 
-          
+         
           isInRoiA = False
           if self.params.hasKey('roiA'):
                   if dscene.has_key(self.params.get('roiA')[0]):
                          self.roiA = s.get(int(dscene[self.params.get('roiA')[0]]))
                          roiAR = numpy.fromstring(self.roiA.getImage(), 'uint16')
-                         roiAR = roiAR.reshape(shpD[2], shpD[1], shpD[0]) # because come from Slicer - will not send them back so swap them one for all
-                         roiAR = roiAR.swapaxes(2,0)
-                         roiAR[roiAR>0]=1
-                         self.roiA.setImage(roiAR)
-                         isInRoiA = True
-                         logger.info("RoiA : %s:%s:%s" % (roiAR.shape[0], roiAR.shape[1], roiAR.shape[2]))
+                         if roiAR.shape[0] ==  shpD[2]*shpD[1]*shpD[0]:
+                           roiAR = roiAR.reshape(shpD[2], shpD[1], shpD[0]) # because come from Slicer - will not send them back so swap them one for all
+                           roiAR = roiAR.swapaxes(2,0)
+                           roiAR[roiAR>0]=1
+                           self.roiA.setImage(roiAR)
+                           isInRoiA = True
+                           logger.info("RoiA : %s:%s:%s" % (roiAR.shape[0], roiAR.shape[1], roiAR.shape[2]))
+                         else:
+                           logger.info("RoiA has not the same dimension as the DWI : %s" % roiAR.shape[0])
 
           isInRoiB = False
           if self.params.hasKey('roiB'):
@@ -206,34 +215,44 @@ class PipelineHandler(asyncore.dispatcher):
                         if self.params.get('roiB')[0] != self.params.get('roiA')[0]:
                               self.roiB = s.get(int(dscene[self.params.get('roiB')[0]]))
                               roiBR = numpy.fromstring(self.roiB.getImage(), 'uint16')
-                              roiBR = roiBR.reshape(shpD[2], shpD[1], shpD[0])
-                              roiBR = roiBR.swapaxes(2,0)
-                              roiBR[roiBR>0]=1
-                              self.roiB.setImage(roiBR)
-                              isInRoiB = True      
-                              logger.info("RoiB : %s:%s:%s" % (roiBR.shape[0], roiBR.shape[1], roiBR.shape[2]))
+                              if roiBR.shape[0] ==  shpD[2]*shpD[1]*shpD[0]:
+                                roiBR = roiBR.reshape(shpD[2], shpD[1], shpD[0])
+                                roiBR = roiBR.swapaxes(2,0)
+                                roiBR[roiBR>0]=1
+                                self.roiB.setImage(roiBR)
+                                isInRoiB = True      
+                                logger.info("RoiB : %s:%s:%s" % (roiBR.shape[0], roiBR.shape[1], roiBR.shape[2]))
+                              else:
+                                logger.info("RoiB has not the same dimension as the DWI : %s" % roiBR.shape[0])
          
           isInWM = False
           if self.params.hasKey('wm'):
                   if dscene.has_key(self.params.get('wm')[0]):
                          self.wm = s.get(int(dscene[self.params.get('wm')[0]]))
                          wmR = numpy.fromstring(self.wm.getImage(), 'uint16')
-                         wmR = wmR.reshape(shpD[2], shpD[1], shpD[0])
-                         wmR = wmR.swapaxes(2,0)
-                         self.wm.setImage(wmR)
-                         isInWM = True                                 
-                         logger.info("WM : %s:%s:%s" % (wmR.shape[0], wmR.shape[1], wmR.shape[2]))
+                         if wmR.shape[0] ==  shpD[2]*shpD[1]*shpD[0]:
+                           wmR = wmR.reshape(shpD[2], shpD[1], shpD[0])
+                           wmR = wmR.swapaxes(2,0)
+                           self.wm.setImage(wmR)
+                           isInWM = True                                 
+                           logger.info("WM : %s:%s:%s" % (wmR.shape[0], wmR.shape[1], wmR.shape[2]))
+                         else:
+                           logger.info("WM has not the same dimension as the DWI : %s" % wmR.shape[0])
 
           isInTensor = False
           if self.params.hasKey('tensor'):
                   if dscene.has_key(self.params.get('tensor')[0]):
                          self.ten = s.get(int(dscene[self.params.get('tensor')[0]]))
                          tenR = numpy.fromstring(self.ten.getImage(), 'float32')
-                         tenR = tenR.reshape(shpD[2], shpD[1], shpD[0], 7)
-                         tenR = tenR.swapaxes(2,0)
-                         self.ten.setImage(tenR)
-                         isInTensor = True                                 
-                         logger.info("Tensor : %s:%s" % (tenR.shape[0], tenR.shape[1]))
+                         if tenR.shape[0] ==  shpD[2]*shpD[1]*shpD[0]*7:
+                           tenR = tenR.reshape(shpD[2], shpD[1], shpD[0], 7)
+                           tenR = tenR.swapaxes(2,0)
+                           self.ten.setImage(tenR)
+                           isInTensor = True                                 
+                           logger.info("Tensor : %s:%s" % (tenR.shape[0], tenR.shape[1]))
+                         else:
+                           logger.info("Tensor has not the same dimension as the DWI : %s" % tenR.shape[0])
+
           logger.info("Input volumes loaded!")
 
           # values per default
@@ -278,6 +297,9 @@ class PipelineHandler(asyncore.dispatcher):
                     traceEnabled = bool(int(self.params.get('traceEnabled')[0]))
           if self.params.hasKey('modeEnabled'):
                     modeEnabled = bool(int(self.params.get('modeEnabled')[0]))
+          if self.params.hasKey('sphericalEnabled'):
+                    sphericalEnabled = bool(int(self.params.get('sphericalEnabled')[0]))
+
 
           # can handle normally
           FWHM = numpy.ones((3), 'float')
@@ -345,15 +367,23 @@ class PipelineHandler(asyncore.dispatcher):
           G = G.reshape((ngrads,3))
           b = b.reshape((ngrads,1))
           i2r = i2r.reshape((4,4))
+          i2rd = i2rd.reshape((4,4))
           mu = mu.reshape((4,4))
           r2i = numpy.linalg.inv(i2r)
+          r2id = numpy.linalg.inv(i2rd)
 
           # correctly express gradients into RAS space
           # 04/10 - trafo not needed - bugfix in Slicer
-          mu2 = numpy.dot(numpy.sign(r2i)[:3, :3], mu[:3, :3])
 
-          G1 = numpy.dot(G, mu2[:3, :3].T)
-          #G2 = numpy.dot(G, mu2[:3, :3].T)
+          
+          G1 = numpy.dot(G, mu[:3, :3].T)
+
+          mu2 = numpy.dot(r2id[:3, :3], mu[:3, :3])
+          G2 = numpy.dot(G, mu2[:3, :3].T)
+
+          
+          #logger.info("G0: %s:%s:%s" % (str(G0[0]), str(G0[1]), str(G0[2])) )
+          #logger.info("G1: %s:%s:%s" % (str(G1[0]), str(G1[1]), str(G1[2])) )
 
           vts = vects.vectors
 
@@ -395,7 +425,7 @@ class PipelineHandler(asyncore.dispatcher):
 
 
                     if not isInTensor:
-                        EV, lV, xVTensor, xYTensor = tens.EvaluateTensorX1(data, G1.T, b.T, wm)
+                        EV, lV, xVTensor, xYTensor = tens.EvaluateTensorX1(data, G2.T, b.T, wm)
                     else:
                         EV, lV, xVTensor, xYTensor = tens.EvaluateTensorK1(self.ten.getImage(), shpD, wm)
 
@@ -435,11 +465,11 @@ class PipelineHandler(asyncore.dispatcher):
                         timeS2 = time.time()
 
                         logger.info("Data type : %s" % data.dtype)
-                        if tensEnabled:
-                          paths00, paths01, paths02, paths03, paths04 = track.TrackFiberY40(data.flatten(), wm, shpD, b.T, G1.T, vts.T, IJKstartpoints[0].T, r2i, i2r, spa,\
-                                  lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
-                        else:
-                          paths00, paths01, paths02, paths03, paths04 = track.TrackFiberW40(data.flatten(), wm, shpD, b.T, G1.T, vts.T, IJKstartpoints[0].T, r2i, i2r, spa,\
+                        #if tensEnabled:
+                        #  paths00, paths01, paths02, paths03, paths04 = track.TrackFiberY40(data.flatten(), wm, shpD, b.T, G1.T, vts.T, IJKstartpoints[0].T, r2i, i2r, spa,\
+                        #          lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
+                        #else:
+                        paths00, paths01, paths02, paths03, paths04 = track.TrackFiberW40(data.flatten(), wm, shpD, b.T, G1.T, vts.T, IJKstartpoints[0].T, r2i, i2r, spa,\
                                   stepSize, maxLength, fa, spaceEnabled)
 
                         logger.info("Track fibers in %s sec" % str(time.time()-timeS2))
@@ -470,11 +500,11 @@ class PipelineHandler(asyncore.dispatcher):
                         timeS3 = time.time()
 
                         logger.info("Data type : %s" % data.dtype)
-                        if tensEnabled:
-                          paths10, paths11, paths12, paths13, paths14 = track.TrackFiberY40(data.flatten(), wm, shpD, b.T, G1.T, vts.T, IJKstartpoints2[0].T, r2i, i2r, spa,\
-                                  lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
-                        else:
-                          paths10, paths11, paths12, paths13, paths14 = track.TrackFiberW40(data.flatten(), wm, shpD, b.T, G1.T, vts.T, IJKstartpoints2[0].T, r2i, i2r, spa,\
+                        #if tensEnabled:
+                        #  paths10, paths11, paths12, paths13, paths14 = track.TrackFiberY40(data.flatten(), wm, shpD, b.T, G1.T, vts.T, IJKstartpoints2[0].T, r2i, i2r, spa,\
+                        #          lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
+                        #else:
+                        paths10, paths11, paths12, paths13, paths14 = track.TrackFiberW40(data.flatten(), wm, shpD, b.T, G1.T, vts.T, IJKstartpoints2[0].T, r2i, i2r, spa,\
                                   stepSize, maxLength, fa, spaceEnabled)
 
                         logger.info("Track fibers in %s sec" % str(time.time()-timeS3))
@@ -489,8 +519,8 @@ class PipelineHandler(asyncore.dispatcher):
                             cm2 = track.ConnectFibersX2(paths11, paths14, shpD, lengthEnabled,  lengthClass)
 
                     if isInRoiA and isInRoiB:
-                        cm3 = track.FilterFibers0(paths00, paths01, paths02, paths03, paths04, self.roiA.getImage(), self.roiB.getImage(), shpD, threshold, vicinity)
-                        cm4 = track.FilterFibers0(paths10, paths11, paths12, paths13, paths14, self.roiB.getImage(), self.roiA.getImage(), shpD, threshold, vicinity)
+                        cm3 = track.FilterFibers0(paths00, paths01, paths02, paths03, paths04, self.roiA.getImage(), self.roiB.getImage(), shpD, threshold, vicinity, sphericalEnabled)
+                        cm4 = track.FilterFibers0(paths10, paths11, paths12, paths13, paths14, self.roiB.getImage(), self.roiA.getImage(), shpD, threshold, vicinity, sphericalEnabled)
 
 
 
@@ -514,17 +544,19 @@ class PipelineHandler(asyncore.dispatcher):
                      ga = data[..., bLine]
                      ga = ga.swapaxes(2,0)
                      tmp= 'smooth_' + dateT
-                     ga.tofile(tmpF + tmp + '.data')
-                     createParams(ga, tmpF + tmp)
-                     s.putS(ga, dims, org, i2r, tmp)
+                     if not (ga == 0).all():
+                       ga.tofile(tmpF + tmp + '.data')
+                       createParams(ga, tmpF + tmp)
+                       s.putS(ga, dims, org, i2r, tmp)
 
 
           #if wmEnabled:
           wm = wm.swapaxes(2,0)
           tmp= 'brain_' + dateT
-          wm.tofile(tmpF + tmp + '.data')
-          createParams(wm, tmpF + tmp)
-          s.putS(wm, dims, org, i2r, tmp)
+          if not (wm == 0).all():
+            wm.tofile(tmpF + tmp + '.data')
+            createParams(wm, tmpF + tmp)
+            s.putS(wm, dims, org, i2r, tmp)
 
 
           if tensEnabled:
@@ -533,62 +565,70 @@ class PipelineHandler(asyncore.dispatcher):
                      xYTensor = xYTensor.swapaxes(2,0)
                      xYTensor = xYTensor.astype('float32') # slicerd do not support double type yet
                      tmp= 'tensor_' + dateT
-                     xYTensor.tofile(tmpF + tmp + '.data')
-                     createParams(xYTensor, tmpF + tmp, True)
-                     s.putD(xVTensor, dims, org, i2r, mu, tmp)
+                     if (not (xYTensor == 0).all()) and (not (xVTensor == 0).all()):
+                       xYTensor.tofile(tmpF + tmp + '.data')
+                       createParams(xYTensor, tmpF + tmp, True)
+                       s.putD(xVTensor, dims, org, i2r, mu, tmp)
 
 
                      if faEnabled:
                           faMap = faMap.swapaxes(2,0)
                           tmp= 'fa_' + dateT
-                          faMap.tofile(tmpF + tmp + '.data')
-                          createParams(faMap, tmpF + tmp)
-                          s.putS(faMap, dims, org, i2r, tmp)
+                          if not (faMap == 0).all():
+                            faMap.tofile(tmpF + tmp + '.data')
+                            createParams(faMap, tmpF + tmp)
+                            s.putS(faMap, dims, org, i2r, tmp)
 
 
                      if traceEnabled:
                           trMap = trMap.swapaxes(2,0)
                           tmp= 'trace_' + dateT
-                          trMap.tofile(tmpF + tmp + '.data')
-                          createParams(trMap, tmpF + tmp)
-                          s.putS(trMap, dims, org, i2r, tmp)
+                          if not (trMap == 0).all():
+                            trMap.tofile(tmpF + tmp + '.data')
+                            createParams(trMap, tmpF + tmp)
+                            s.putS(trMap, dims, org, i2r, tmp)
 
 
                      if modeEnabled:
                           moMap = moMap.swapaxes(2,0)
                           tmp= 'mode_' + dateT
-                          moMap.tofile(tmpF + tmp + '.data')
-                          createParams(moMap, tmpF + tmp)
-                          s.putS(moMap, dims, org, i2r, tmp)
+                          if not (moMap == 0).all():
+                            moMap.tofile(tmpF + tmp + '.data')
+                            createParams(moMap, tmpF + tmp)
+                            s.putS(moMap, dims, org, i2r, tmp)
 
           if cmEnabled:
                      if isInRoiA:
                           cm = cm.swapaxes(2,0)
                           tmp= 'cmA_' + dateT
-                          cm.tofile(tmpF + tmp + '.data')
-                          createParams(cm,  tmpF + tmp)
-                          #s.putS(cm, dims, org, i2r, tmp)
+                          if not (cm == 0).all():
+                            cm.tofile(tmpF + tmp + '.data')
+                            createParams(cm,  tmpF + tmp)
+                            #s.putS(cm, dims, org, i2r, tmp)
 
                           tmp= 'cmFA_' + dateT
                           cmf = cm/float(cm.max())
                           cmf.astype('float32')
-                          cmf.tofile(tmpF + tmp + '.data')
-                          createParams(cmf,  tmpF + tmp)
-                          s.putS(cmf, dims, org, i2r, tmp)
+                          if not (cmf == 0).all():
+                            cmf.tofile(tmpF + tmp + '.data')
+                            createParams(cmf,  tmpF + tmp)
+                            s.putS(cmf, dims, org, i2r, tmp)
 
                      if isInRoiB:
                           cm2 = cm2.swapaxes(2,0)
                           tmp= 'cmB_' + dateT
-                          cm2.tofile(tmpF + tmp + '.data')
-                          createParams(cm2,  tmpF + tmp)
-                          #s.putS(cm2, dims, org, i2r, tmp)
+                          if not (cm2 == 0).all():
+                            cm2.tofile(tmpF + tmp + '.data')
+                            createParams(cm2,  tmpF + tmp)
+                            #s.putS(cm2, dims, org, i2r, tmp)
 
                           tmp= 'cmFB_' + dateT
                           cm2f = cm2/float(cm2.max())
                           cm2f.astype('float32')
-                          cm2f.tofile(tmpF + tmp + '.data')
-                          createParams(cm2f,  tmpF + tmp)
-                          s.putS(cm2f, dims, org, i2r, tmp)
+                          if not (cm2f == 0).all():
+                            cm2f.tofile(tmpF + tmp + '.data')
+                            createParams(cm2f,  tmpF + tmp)
+                            s.putS(cm2f, dims, org, i2r, tmp)
 
 
                      if isInRoiA and isInRoiB:
@@ -694,7 +734,7 @@ class PipelineHandler(asyncore.dispatcher):
 
         if not self.nimage.hasKey('dimensions'):
 
-            if self.ntype == 'ijk2ras' or self.ntype == 'mu' or self.ntype == 'grads' or self.ntype == 'bval':
+            if self.ntype == 'ijk2ras' or self.ntype=='ijk2rasd' or self.ntype == 'mu' or self.ntype == 'grads' or self.ntype == 'bval':
                 self.nimage.set(self.ntype, numpy.fromstring(data, 'float'))
                 logger.debug("data id: %s" % self.ntype)
                 logger.debug("data value: %s" % self.nimage.get(self.ntype))
@@ -704,7 +744,7 @@ class PipelineHandler(asyncore.dispatcher):
                 data = string.split(data)
 
                 if len(data)==1:
-                     if data[0]=='ijk2ras' or data[0]=='mu' or data[0]=='grads' or data[0]=='bval':
+                     if data[0]=='ijk2ras' or data[0]=='ijk2rasd' or data[0]=='mu' or data[0]=='grads' or data[0]=='bval':
                            self.ntype=data[0]
                            return
                      else:

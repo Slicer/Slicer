@@ -36,6 +36,8 @@ def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, SPA, lV, EV, xVTe
   eps = finfo(float).eps 
   seps = sqrt(eps)
 
+  IJKstartpoints = IJKstartpoints.astype('float')
+
   vts =  vects.vectors.T
   ndirs = vts.shape[1]
 
@@ -154,14 +156,15 @@ def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, SPA, lV, EV, xVTe
  
       # Update current point
  
+      v0 = v
+
+      RASpoint[0] =  RASpoint[0]  + dl*v0[0] 
+      RASpoint[1] =  RASpoint[1]  + dl*v0[1]    
       if not useSpacing:
-        dr = da = ds = 1
-
-      v0 = numpy.dot(v, numpy.sign(I2R)[:3, :3].T)  
-
-      RASpoint[0] =  RASpoint[0]  + dr*dl*v0[0] 
-      RASpoint[1] =  RASpoint[1]  + da*dl*v0[1]    
-      RASpoint[2] =  RASpoint[2]  + ds*dl*v0[2]     
+        RASpoint[2] =  RASpoint[2]  + dl*v0[2]   
+      else:   
+        RASpoint[2] =  RASpoint[2]  + (dl+(1.0-dr/ds))*v0[2]     
+  
    
       # find IJK index from RAS point
       IJKpoint = (dot(R2I[:3, :3], RASpoint[newaxis].T) + R2I[:3,3][newaxis].T).T
@@ -200,6 +203,8 @@ def  TrackFiberY40(data, mask, shpT, b, G, vts, IJKstartpoints, R2I, I2R, SPA, l
 
   eps = finfo(float).eps 
   seps = sqrt(eps)
+
+  IJKstartpoints = IJKstartpoints.astype('float')
 
 
 # Set random generator, this is important for the parallell execution
@@ -322,14 +327,15 @@ def  TrackFiberY40(data, mask, shpT, b, G, vts, IJKstartpoints, R2I, I2R, SPA, l
  
       # Update current point
  
+      v0 = v 
+
+      RASpoint[0] =  RASpoint[0] + dl*v0[0] 
+      RASpoint[1] =  RASpoint[1] + dl*v0[1]    
       if not useSpacing:
-        dr = da = ds = 1
-
-      v0 = numpy.dot(v, numpy.sign(I2R)[:3, :3].T)  
-
-      RASpoint[0] =  RASpoint[0]  + dr*dl*v0[0] 
-      RASpoint[1] =  RASpoint[1]  + da*dl*v0[1]    
-      RASpoint[2] =  RASpoint[2]  + ds*dl*v0[2]     
+        RASpoint[2] =  RASpoint[2]  + dl*v0[2]   
+      else:   
+        RASpoint[2] =  RASpoint[2]  + (dl+(1.0-dr/ds))*v0[2]     
+ 
    
       # find IJK index from RAS point
       IJKpoint = (dot(R2I[:3, :3], RASpoint[newaxis].T) + R2I[:3,3][newaxis].T).T
@@ -369,6 +375,8 @@ def  TrackFiberW40(data, mask, shpT, b, G, vts, IJKstartpoints, R2I, I2R, SPA, d
   eps = finfo(float).eps 
   seps = sqrt(eps)
 
+  IJKstartpoints = IJKstartpoints.astype('float')
+  
 
 # Set random generator, this is important for the parallell execution
   #vts =  vects.vectors.T
@@ -418,6 +426,7 @@ def  TrackFiberW40(data, mask, shpT, b, G, vts, IJKstartpoints, R2I, I2R, SPA, d
 
     RASpoint = RASstartpoints[:,k]
     IJKpoint = IJKstartpoints[:,k]
+
     Prior = StartPrior
     
     for step in range(Nsteps):
@@ -490,23 +499,22 @@ def  TrackFiberW40(data, mask, shpT, b, G, vts, IJKstartpoints, R2I, I2R, SPA, d
       paths2[k, 0, step] = numpy.log(Posterior[0][vindex[0][0]]) # previously vindex[0][0] 
       paths3[k, 0, step] = numpy.abs(beta/(alpha+beta))
       paths4[k, 0] += 1
-
  
       # Update current point
- 
+      v0 = v
+      #v0 = dot(v, I2RD[:3, :3].T)
+
+      RASpoint[0] =  RASpoint[0] + dl*v0[0] 
+      RASpoint[1] =  RASpoint[1] + dl*v0[1]
       if not useSpacing:
-        dr = da = ds = 1
-
-      v0 = numpy.dot(v, numpy.sign(I2R)[:3, :3].T)  
-
-      RASpoint[0] =  RASpoint[0] + dr*dl*v0[0] 
-      RASpoint[1] =  RASpoint[1] + da*dl*v0[1]    
-      RASpoint[2] =  RASpoint[2] + ds*dl*v0[2]     
+        RASpoint[2] =  RASpoint[2]  + dl*v0[2]   
+      else:   
+        RASpoint[2] =  RASpoint[2]  + (dl+(1.0-dr/ds))*v0[2]     
    
       # find IJK index from RAS point
       IJKpoint = (dot(R2I[:3, :3], RASpoint[newaxis].T) + R2I[:3,3][newaxis].T).T
        
-
+   
       # Break if anisotropy is too low
       if abs(beta/(alpha+beta)) < anisoT:
         break
@@ -591,10 +599,10 @@ def ConnectFibersX0( paths1, paths4, shp, isLength=False, lengthMode='uThird'):
   
   print "Discriminate along length : %s" % str(isLength)
 
-  if lengthMode == 'dThird':
+  if lengthMode == 'small':
     lMin = 1.0
     lMax = lTh.max()/3.0
-  elif lengthMode == 'mThird':
+  elif lengthMode == 'medium':
     lMin = lTh.max()/3.0
     lMax = 2*lTh.max()/3.0
   else:
@@ -627,10 +635,10 @@ def ConnectFibersX1( paths1, paths4, shp, isLength=False, lengthMode='uThird'):
 
   print "Discriminate along length : %s" % str(isLength)
 
-  if lengthMode == 'dThird':
+  if lengthMode == 'small':
     lMin = 1.0
     lMax = lTh.max()/3.0
-  elif lengthMode == 'mThird':
+  elif lengthMode == 'medium':
     lMin = lTh.max()/3.0
     lMax = 2*lTh.max()/3.0
   else:
@@ -662,10 +670,10 @@ def ConnectFibersX2( paths1, paths4, shp, isLength=False, lengthMode='uThird'):
 
   print "Discriminate along length : %s" % str(isLength)
 
-  if lengthMode == 'dThird':
+  if lengthMode == 'small':
     lMin = 1.0
     lMax = lTh.max()/3.0
-  elif lengthMode == 'mThird':
+  elif lengthMode == 'medium':
     lMin = lTh.max()/3.0
     lMax = 2*lTh.max()/3.0
   else:
@@ -973,40 +981,38 @@ def FilterFibers0( pathsRAS, pathsIJK, pathsLOGP, pathsANIS, pathsLEN, roiA, roi
     isIn2A = True
     isIn2B = False
 
-    for l in range(vicinity):
-      if not (pathsIJK[k, 0, pathsLEN[k,0]-l-1] >= roiB.shape[0] or  pathsIJK[k, 1, pathsLEN[k,0]-l-1]  >= roiB.shape[1] or  pathsIJK[k, 2, pathsLEN[k,0]-l-1]  >= roiB.shape[2]):
-        if l < pathsLEN[k,0]:
-          if roiB[pathsIJK[k, 0, pathsLEN[k,0]-l-1], pathsIJK[k, 1, pathsLEN[k,0]-l-1], pathsIJK[k, 2, pathsLEN[k,0]-l-1]]>0:
-            counterB2 +=1
-            isIn2B = True
-            break
-        else:
-            break
+    #for l in range(pathsLEN[k,0]):
+    #  if not (pathsIJK[k, 0, l] >= roiA.shape[0] or  pathsIJK[k, 1, l]  >= roiA.shape[1] or  pathsIJK[k, 2, l]  >= roiA.shape[2]):
+    #    if roiB[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]]>0:
+    #      counterB2 +=1
+    #      isIn2B = True
+          #print 'Fiber matched!'
+    #      break
 
 
-    if isIn2B:
-      pr = 0.0
-      fa = 0.0
-      wa = 0.0
-      nFactor = 0
+    #if isIn2B:
+    #  pr = 0.0
+    #  fa = 0.0
+    #  wa = 0.0
+    #  nFactor = 0
 
-      nFactor = pathsLEN[k,0]
+    #  nFactor = pathsLEN[k,0]
 
-      test = exp(pathsLOGP[k, 0, :nFactor])
-      pr = test[pathsLEN[k,0]-1]
+    #  test = exp(pathsLOGP[k, 0, :nFactor])
+    #  pr = test[pathsLEN[k,0]-1]
       
-      if pr > threshold:
-        counter1 +=1
+    #  if pr > threshold:
+    #    counter1 +=1
 
-        for l in range(nFactor): 
-          fa = fa + pathsANIS[k, 0, l]
-          wa = wa + test[l]*pathsANIS[k, 0, l]
-          if not (pathsIJK[k, 0, l] >= roiA.shape[0] or  pathsIJK[k, 1, l]  >= roiA.shape[1] or  pathsIJK[k, 2, l]  >= roiA.shape[2]):
-            cm[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]]+=1
+    #    for l in range(nFactor): 
+    #      fa = fa + pathsANIS[k, 0, l]
+    #      wa = wa + test[l]*pathsANIS[k, 0, l]
+    #      if not (pathsIJK[k, 0, l] >= roiA.shape[0] or  pathsIJK[k, 1, l]  >= roiA.shape[1] or  pathsIJK[k, 2, l]  >= roiA.shape[2]):
+    #        cm[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]]+=1
 
-        Pr += pr 
-        Fa += fa/float(nFactor)
-        Wa += pr*fa/float(nFactor) 
+    #    Pr += pr 
+    #    Fa += fa/float(nFactor)
+    #    Wa += pr*fa/float(nFactor) 
 
 
 
@@ -1050,4 +1056,111 @@ def FilterFibers0( pathsRAS, pathsIJK, pathsLOGP, pathsANIS, pathsLEN, roiA, roi
 
   return cm
 
+def FilterFibersZ0(cm, pathsRAS, pathsIJK, pathsLOGP, pathsANIS, pathsLEN, roiA, roiB, shape, counter1, counter2, counterA1, counterB1, counterA2, counterB2, Pr, Fa, Wa, threshold=0.1, vicinity=5):
+
+  print 'Shape roi A : ', roiA.shape
+  print 'Shape roi B : ', roiB.shape
+
+  indAx = transpose(roiA.nonzero())
+  #print 'Shape of indx A : ', indAx.shape
+  indBx = transpose(roiB.nonzero())
+  #print 'Shape of indx B : ', indBx.shape
+
+  Ga = indAx.sum(0)/len(indAx)
+  print 'Ga : ', Ga
+  Gb = indBx.sum(0)/len(indBx)
+  print 'Gb : ', Gb
+
+  dAB = norm(Ga-Gb)
+  maxDA = sqrt(((Ga*ones(indAx.shape) - indAx)**2).sum(1))
+  maxDB = sqrt(((Gb*ones(indBx.shape) - indBx)**2).sum(1))
+  print 'distance between roi a and B : ', dAB
+  print 'distance max in A : ', maxDA.max()
+  print 'distance max in B : ', maxDB.max()
+
+  print 'Shape connectivity map : ', cm.shape
+
+  for k in range(pathsIJK.shape[0]): # looped on the number of paths
+    if pathsLEN[k,0] == 0:
+      print 'Warning: length 0'
+      continue
+
+    ext1 = pathsIJK[k, :, 0]
+    ext2 = pathsIJK[k, :, pathsLEN[k,0]-1]
+
+    isIn2A = True
+    isIn2B = False
+
+    for l in range(vicinity):
+      if not (pathsIJK[k, 0, pathsLEN[k,0]-l-1] >= roiB.shape[0] or  pathsIJK[k, 1, pathsLEN[k,0]-l-1]  >= roiB.shape[1] or  pathsIJK[k, 2, pathsLEN[k,0]-l-1]  >= roiB.shape[2]):
+        if l < pathsLEN[k,0]:
+          if roiB[pathsIJK[k, 0, pathsLEN[k,0]-l-1], pathsIJK[k, 1, pathsLEN[k,0]-l-1], pathsIJK[k, 2, pathsLEN[k,0]-l-1]]>0:
+            counterB2 +=1
+            isIn2B = True
+            break
+        else:
+            break
+
+
+    if isIn2B:
+      pr = 0.0
+      fa = 0.0
+      wa = 0.0
+      nFactor = 0
+
+      nFactor = pathsLEN[k,0]
+
+      test = exp(pathsLOGP[k, 0, :nFactor])
+      pr = test[pathsLEN[k,0]-1]
+      
+      if pr > threshold:
+        counter1 +=1
+
+        for l in range(nFactor): 
+          fa = fa + pathsANIS[k, 0, l]
+          wa = wa + test[l]*pathsANIS[k, 0, l]
+          if not (pathsIJK[k, 0, l] >= roiA.shape[0] or  pathsIJK[k, 1, l]  >= roiA.shape[1] or  pathsIJK[k, 2, l]  >= roiA.shape[2]):
+            cm[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]]+=1
+
+        Pr += pr 
+        Fa += fa/float(nFactor)
+        Wa += pr*fa/float(nFactor) 
+
+
+    if sphericalEnabled:
+      if not isIn2B:
+        pr = 0.0
+        fa = 0.0
+        wa = 0.0
+        nFactor = 0
+      
+
+        if norm(ext2-Gb)<= maxDB.max()+vicinity: 
+          nFactor = pathsLEN[k,0]
+
+          test = exp(pathsLOGP[k, 0, :nFactor])
+          pr = test[pathsLEN[k,0]-1]
+      
+          if pr > threshold:
+            counter2+=1
+            counter1+=1
+
+            for l in range(nFactor):
+              fa = fa + pathsANIS[k, 0, l]
+              wa = wa + test[l]*pathsANIS[k, 0, l]
+              if not (pathsIJK[k, 0, l] >= roiA.shape[0] or  pathsIJK[k, 1, l]  >= roiA.shape[1] or  pathsIJK[k, 2, l]  >= roiA.shape[2]):
+                cm[pathsIJK[k, 0, l], pathsIJK[k, 1, l], pathsIJK[k, 2, l]]+=1
+
+            Pr += pr
+            Fa += fa/float(nFactor)
+            Wa += pr*fa/float(nFactor) 
+
+       
+
+  print 'Filtering of fibers done'
+  if counter1>0:
+    print 'Number of curves connecting : ', counter1
+    print 'Mean probability : ', Pr/float(counter1)
+    print 'Mean FA : ', Fa/float(counter1)
+    print 'Mean WA : ', Wa/float(counter1)
 
