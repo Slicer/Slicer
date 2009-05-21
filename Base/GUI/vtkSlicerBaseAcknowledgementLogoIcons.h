@@ -18,6 +18,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerBaseAcknowledgementLogoIcons : public 
     vtkGetObjectMacro ( NCIGTLogo, vtkKWIcon);
     vtkGetObjectMacro ( NACLogo, vtkKWIcon);
     vtkGetObjectMacro ( BIRNLogo, vtkKWIcon);
+    vtkGetObjectMacro ( CTSCLogo, vtkKWIcon );
 
     void AssignImageDataToIcons ( );
     
@@ -28,6 +29,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerBaseAcknowledgementLogoIcons : public 
     vtkKWIcon *NCIGTLogo;
     vtkKWIcon *NACLogo;
     vtkKWIcon *BIRNLogo;    
+    vtkKWIcon *CTSCLogo;
     
  private:
     vtkSlicerBaseAcknowledgementLogoIcons (const vtkSlicerBaseAcknowledgementLogoIcons&); // Not implemented

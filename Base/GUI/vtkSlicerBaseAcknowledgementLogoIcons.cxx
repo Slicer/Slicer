@@ -14,6 +14,7 @@ vtkSlicerBaseAcknowledgementLogoIcons::vtkSlicerBaseAcknowledgementLogoIcons ( )
     this->BIRNLogo = vtkKWIcon::New ( );
     this->NAMICLogo = vtkKWIcon::New ( );
     this->NCIGTLogo = vtkKWIcon::New ( );    
+    this->CTSCLogo = vtkKWIcon::New();
     this->AssignImageDataToIcons ( );
 }
 
@@ -38,6 +39,10 @@ vtkSlicerBaseAcknowledgementLogoIcons::~vtkSlicerBaseAcknowledgementLogoIcons ( 
             this->BIRNLogo->Delete ( );
             this->BIRNLogo = NULL;
         }
+    if ( this->CTSCLogo ) {
+    this->CTSCLogo->Delete();
+    this->CTSCLogo = NULL;
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -63,6 +68,11 @@ void vtkSlicerBaseAcknowledgementLogoIcons::AssignImageDataToIcons ( )
                                 image_BIRN_height,
                                 image_BIRN_pixel_size,
                                 image_BIRN_length, 0);
+ this->CTSCLogo->SetImage ( image_CTSC,
+                            image_CTSC_width,
+                            image_CTSC_height,
+                            image_CTSC_pixel_size,
+                            image_CTSC_length, 0);
 
 }
 
@@ -78,5 +88,6 @@ void vtkSlicerBaseAcknowledgementLogoIcons::PrintSelf ( ostream& os, vtkIndent i
     os << indent << "NACLogo: " << this->GetNACLogo ( ) << "\n";
     os << indent << "NCIGTLogo: " << this->GetNCIGTLogo ( ) << "\n";
     os << indent << "BIRNLogo: " << this->GetBIRNLogo ( ) << "\n";
+    os << indent << "CTSCLogo: " << this->CTSCLogo << "\n";
 
 }
