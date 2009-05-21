@@ -1847,7 +1847,7 @@ ModuleFactory
             "if 'XML' in dir ( Module ):\n"
             "    XML = Module.XML\n"
             "if 'toXML' in dir ( Module ):\n"
-            "    XML = Module.ToXML()\n"
+            "    XML = Module.toXML()\n"
             "if not 'Execute' in dir ( Module ):\n"
             "    XML = ''\n";
 
