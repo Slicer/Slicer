@@ -1,4 +1,3 @@
-
 /* 
  * Resource generated for file:
  *    www.png (zlib, base64) (image file)
@@ -30,7 +29,6 @@ static const unsigned char image_www[] =
   "euvJOmEOdI2jJTE/093jpx4kO/2EyGVm909R9KnCutc0ZzcmFDKJaEy8goLMooK8bn0mIw"
   "UYGepzyPe3xwOuhGMrV0Zt4AQdCReXetaXHscOWTCbSabyOS3/MOPX7qrKf3Jf9IfAKR0S"
   "TqM1k23Pseyf8OPgzbt53Asnl0ZmHguW5UA8wtrtgcWyB09G/zOvUXLMbztQ==";
-
 
 
 /* 
