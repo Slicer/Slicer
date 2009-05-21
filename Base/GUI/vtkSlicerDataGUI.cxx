@@ -1390,7 +1390,7 @@ void vtkSlicerDataGUI::BuildGUI ( )
     
     // Define your help text and build the help frame here.
     const char *help = "The Data Module displays and permits operations on the MRML tree, and creates and edits transformation hierarchies.\n The Load panels exposes options for loading data. Helpful comments can be opened by clicking on the \"information\" icons in each load panel. \n<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:Data-Documentation-3.4</a>\n";
-    const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.\nThe Data module was contributed by Alex Yarmarkovich, Isomics Inc. with help from others at SPL, BWH (Ron Kikinis)";
+    const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, CTSC, and the Slicer Community. See <a>http://www.slicer.org</a> for details.\nThe Data module was contributed by Alex Yarmarkovich, Isomics Inc. with help from others at SPL, BWH (Ron Kikinis, Wendy Plesniak)";
     vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Data" );
     this->BuildHelpAndAboutFrame ( page, help, about );
 
@@ -1413,11 +1413,23 @@ void vtkSlicerDataGUI::BuildGUI ( )
     this->BIRNLabel->SetParent ( this->GetLogoFrame() );
     this->BIRNLabel->Create();
     this->BIRNLabel->SetImageToIcon ( this->GetAcknowledgementIcons()->GetBIRNLogo() );
-    app->Script ( "grid %s -row 0 -column 0 -padx 2 -pady 2 -sticky w", this->NAMICLabel->GetWidgetName());
-    app->Script ("grid %s -row 0 -column 1 -padx 2 -pady 2 -sticky w",  this->NACLabel->GetWidgetName());
-    app->Script ( "grid %s -row 1 -column 0 -padx 2 -pady 2 -sticky w",  this->BIRNLabel->GetWidgetName());
-    app->Script ( "grid %s -row 1 -column 1 -padx 2 -pady 2 -sticky w",  this->NCIGTLabel->GetWidgetName());                  
 
+    vtkKWLabel *CTSCLabel = vtkKWLabel::New();
+    CTSCLabel->SetParent ( this->GetLogoFrame() );
+    CTSCLabel->Create();
+    CTSCLabel->SetImageToIcon (this->GetAcknowledgementIcons()->GetCTSCLogo() );
+
+    app->Script ( "grid %s -row 0 -column 0 -padx 2 -pady 2 -sticky e", this->NAMICLabel->GetWidgetName());
+    app->Script ("grid %s -row 0 -column 1 -padx 2 -pady 2 -sticky e", this->NACLabel->GetWidgetName());
+    app->Script ( "grid %s -row 1 -column 0 -padx 2 -pady 2 -sticky e",  this->BIRNLabel->GetWidgetName());
+    app->Script ( "grid %s -row 1 -column 1 -padx 2 -pady 2 -sticky e",  this->NCIGTLabel->GetWidgetName());                  
+    app->Script ( "grid %s -row 1 -column 2 -padx 2 -pady 2 -sticky w",  CTSCLabel->GetWidgetName());                  
+    app->Script ( "grid columnconfigure %s 0 -weight 0", this->GetLogoFrame()->GetWidgetName() );
+    app->Script ( "grid columnconfigure %s 1 -weight 0", this->GetLogoFrame()->GetWidgetName() );
+    app->Script ( "grid columnconfigure %s 2 -weight 1", this->GetLogoFrame()->GetWidgetName() );
+
+    CTSCLabel->Delete();
+    
     // INSPECT FRAME
     vtkSlicerModuleCollapsibleFrame *displayModifyFrame = vtkSlicerModuleCollapsibleFrame::New ( );
     displayModifyFrame->SetParent ( this->UIPanel->GetPageWidget ( "Data" ) );
