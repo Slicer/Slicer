@@ -2039,17 +2039,21 @@ int Slicer3_main(int argc, char *argv[])
     }
   if ( dataIOManager != NULL )
     {
+    scene->SetDataIOManager(NULL);
+    dataIOManager->SetCacheManager(NULL);
     dataIOManager->Delete();
     dataIOManager = NULL;
     }
   if ( cacheManager != NULL )
     {
+    scene->SetCacheManager(NULL);
     cacheManager->SetMRMLScene ( NULL );
     cacheManager->Delete();
     cacheManager = NULL;
     }
   if (URIHandlerCollection != NULL )
     {
+    scene->SetURIHandlerCollection(NULL);
     URIHandlerCollection->Delete();
     URIHandlerCollection = NULL;
     }
