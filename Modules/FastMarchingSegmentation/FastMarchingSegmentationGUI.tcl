@@ -30,6 +30,12 @@ proc FastMarchingSegmentationTearDownGUI {this} {
   $::FastMarchingSegmentation($this,cast) Delete
   $::FastMarchingSegmentation($this,fastMarchingFilter) Delete
 
+  catch {$::FastMarchingSegmentation($this,renderMapper) Delete}
+  catch {$::FastMarchingSegmentation($this,renderVolumeProperty) Delete}
+  catch {$::FastMarchingSegmentation($this,renderVolume) Delete}
+  catch {$::FastMarchingSegmentation($this,renderFilter) Delete}
+  catch {$::FastMarchingSegmentation($this,renderColorMapping) Delete}
+
   if { [[$this GetUIPanel] GetUserInterfaceManager] != "" } {
     set pageWidget [[$this GetUIPanel] GetPageWidget "FastMarchingSegmentation"]
     [$this GetUIPanel] RemovePage "FastMarchingSegmentation"
@@ -69,7 +75,7 @@ proc FastMarchingSegmentationBuildGUI {this} {
   # help frame
   #
   set helptext "THIS MODULE IS UNDER DEVELOPMENT!\n\n\nThis module performs segmentation using fast marching method with automatic estimation of region statistics. The core C++ classes were contributed by Eric Pichon in slicer2.\n\nIn order to benefit from this module, please use the following steps:\n(1) specify input scalar volume to be segmented\n(2) define fiducial seeds within the region you want to segment\n(3) specify the expected volume of the structure to be segmented. Note, overestimation of this volume is OK, because you will be able to adjust the actual volume once the segmentation is complete\n(4) specify the label color for the segmentation\n(5) Run sementation\n(6) use volume control slider to adjust segmentation result.\nDocumentation (in progress): <a>http://wiki.na-mic.org/Wiki/index.php/Slicer3:FastMarchingSegmentation</a>"
-  set abouttext "This module was developed by Andriy Fedorov based on the original implementation of Eric Pichon in Slicer2.\nThis work was funded by Brain Science Foundation, and is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details."
+  set abouttext "This module was designed and implemented by Andriy Fedorov and Ron Kikinis based on the original implementation of Eric Pichon in Slicer2.\nThis work was funded by Brain Science Foundation, and is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details."
   $this BuildHelpAndAboutFrame $pageWidget $helptext $abouttext
 
   set slicerBaseIcons [vtkSlicerBaseAcknowledgementLogoIcons New]
@@ -216,11 +222,24 @@ proc FastMarchingSegmentationBuildGUI {this} {
   $timescroll SetResolution 0.001
   $timescroll SetLength 150
   $timescroll SetBalloonHelpString "Scroll back in segmentation process"
-  $timescroll SetLabelText "Output segmentation volume:"
+  $timescroll SetLabelText "Output segmentation volume (mL): "
   $timescroll EnabledOff
   pack [$timescroll GetWidgetName] -side top -anchor e -padx 2 -pady 2 -fill x
 
+  # initialize volume rendering
+  set ::FastMarchingSegmentation($this,renderMapper) [vtkFixedPointVolumeRayCastMapper New]
+  set ::FastMarchingSegmentation($this,renderFilter) [vtkPiecewiseFunction New]
+  set ::FastMarchingSegmentation($this,renderColorMapping) [vtkColorTransferFunction New]
+  set ::FastMarchingSegmentation($this,renderVolumeProperty) [vtkVolumeProperty New]
+  set ::FastMarchingSegmentation($this,renderVolume) [vtkVolume New]
 
+  set renderFilter $::FastMarchingSegmentation($this,renderFilter)
+  set renderMapper $::FastMarchingSegmentation($this,renderMapper)
+  set renderColorMapping $::FastMarchingSegmentation($this,renderColorMapping)
+  set renderVolumeProperty $::FastMarchingSegmentation($this,renderVolumeProperty)
+  set renderVolume $::FastMarchingSegmentation($this,renderVolume)
+ 
+  # Fast marching filters
   set ::FastMarchingSegmentation($this,cast) [vtkImageCast New]
   set ::FastMarchingSegmentation($this,fastMarchingFilter) [vtkPichonFastMarching New]
 }
@@ -228,6 +247,7 @@ proc FastMarchingSegmentationBuildGUI {this} {
 proc FastMarchingSegmentationAddGUIObservers {this} {
   $this AddObserverByNumber $::FastMarchingSegmentation($this,runButton) 10000 
   $this AddObserverByNumber $::FastMarchingSegmentation($this,timeScrollScale) 10000
+  $this AddObserverByNumber $::FastMarchingSegmentation($this,timeScrollScale) 10001
   $this AddObserverByNumber $::FastMarchingSegmentation($this,fiducialsSelector) 11000
 }
 
@@ -281,10 +301,89 @@ proc FastMarchingSegmentationProcessGUIEvents {this caller event} {
     $timescroll SetRange 0.0 $segmentedVolume
     $timescroll SetValue $segmentedVolume
     $timescroll SetResolution [ expr [expr double($segmentedVolume)] / [expr double($knownpoints)] ]
+
+    # undisplay old volume, if one exists
+    if { [info exists ::FastMarchingSegmentation($this,renderVolume)] } {
+      set viewerWidget [ [$this GetApplicationGUI] GetViewerWidget ]
+      [$viewerWidget GetMainViewer ] RemoveViewProp $::FastMarchingSegmentation($this,renderVolume)
+      puts "Render volume removed"
+    }
+
+    # delete old instances
+    catch {$::FastMarchingSegmentation($this,renderMapper) Delete}
+    catch {$::FastMarchingSegmentation($this,renderVolumeProperty) Delete}
+    catch {$::FastMarchingSegmentation($this,renderVolume) Delete}
+    catch {$::FastMarchingSegmentation($this,renderFilter) Delete}
+    catch {$::FastMarchingSegmentation($this,renderColorMapping) Delete}
+   
+    # initialize volume rendering
+    set ::FastMarchingSegmentation($this,renderMapper) [vtkFixedPointVolumeRayCastMapper New]
+    set ::FastMarchingSegmentation($this,renderFilter) [vtkPiecewiseFunction New]
+    set ::FastMarchingSegmentation($this,renderColorMapping) [vtkColorTransferFunction New]
+    set ::FastMarchingSegmentation($this,renderVolumeProperty) [vtkVolumeProperty New]
+    set ::FastMarchingSegmentation($this,renderVolume) [vtkVolume New]
+
+    set renderFilter $::FastMarchingSegmentation($this,renderFilter)
+    set renderMapper $::FastMarchingSegmentation($this,renderMapper)
+    set renderColorMapper $::FastMarchingSegmentation($this,renderColorMapping)
+    set renderVolumeProperty $::FastMarchingSegmentation($this,renderVolumeProperty)
+    set renderVolume $::FastMarchingSegmentation($this,renderVolume)
+ 
+    $renderVolumeProperty SetShade 1
+    $renderVolumeProperty SetAmbient 0.3
+    $renderVolumeProperty SetDiffuse 0.6
+    $renderVolumeProperty SetSpecular 0.5
+    $renderVolumeProperty SetSpecularPower 40.
+    $renderVolumeProperty SetScalarOpacity $renderFilter
+    $renderVolumeProperty SetColor $renderColorMapper
+    $renderVolumeProperty SetInterpolationTypeToNearest
+    $renderVolumeProperty ShadeOn
+
+    $renderVolume SetProperty $renderVolumeProperty
+    $renderVolume SetMapper $renderMapper
+
+    # set up volume rendering
+    $renderMapper SetInput [$::FastMarchingSegmentation($this,labelVolume) GetImageData]
+    set ijk2ras [vtkMatrix4x4 New]
+    $inputVolume GetIJKToRASMatrix $ijk2ras
+    $renderVolume PokeMatrix $ijk2ras
+    $ijk2ras Delete
+
+    # set up opacity filter
+    set labelValue [expr double([[$::FastMarchingSegmentation($this,labelColorSpin) \
+      GetWidget] GetValue])]
+    $renderFilter RemoveAllPoints
+    $renderFilter AddPoint 0. 0.
+    $renderFilter AddPoint 256. 0.
+    $renderFilter AddPoint $labelValue 1.
+    $renderFilter AddPoint [expr $labelValue-.1] 0.
+    $renderFilter AddPoint [expr $labelValue+.1] 0.
+    $renderFilter ClampingOff
+
+    # get the color that corresponds to the label from the lookup table
+    set displayNode [$::FastMarchingSegmentation($this,labelVolume) GetDisplayNode]
+    set colorNode [$displayNode GetColorNode]
+    set colorLUT [$colorNode GetLookupTable]
+      
+    set color [$colorLUT GetColor $labelValue]
+
+    $renderColorMapper RemoveAllPoints
+    $renderColorMapper AddRGBPoint $labelValue [lindex $color 0] [lindex $color 1] [lindex $color 2]
+
+    set viewerWidget [ [$this GetApplicationGUI] GetViewerWidget ]
+
+
+
+    [$viewerWidget GetMainViewer ] AddViewProp $renderVolume
+    $viewerWidget RequestRender
   } 
 
   if { $caller == $::FastMarchingSegmentation($this,timeScrollScale) } {
     FastMarchingSegmentationUpdateTime $this    
+    if {$event == 10001} {
+      set viewerWidget [ [$this GetApplicationGUI] GetViewerWidget ]
+      $viewerWidget RequestRender
+    }
   } 
 
   if {$caller == $::FastMarchingSegmentation($this,fiducialsSelector) } {
@@ -363,9 +462,19 @@ proc FastMarchingSegmentationProcessMRMLEvents {this callerID event} {
 }
 
 proc FastMarchingSegmentationEnter {this} {
+  if { [info exists ::FastMarchingSegmentation($this,renderVolume)] } {
+    set viewerWidget [ [$this GetApplicationGUI] GetViewerWidget ]
+    [$viewerWidget GetMainViewer ] AddViewProp $::FastMarchingSegmentation($this,renderVolume)
+    $viewerWidget RequestRender
+  }
 }
 
 proc FastMarchingSegmentationExit {this} {
+  if { [info exists ::FastMarchingSegmentation($this,renderVolume)] } {
+    set viewerWidget [ [$this GetApplicationGUI] GetViewerWidget ]
+    [$viewerWidget GetMainViewer ] RemoveViewProp $::FastMarchingSegmentation($this,renderVolume)
+    $viewerWidget RequestRender
+  }
 }
 
 proc FastMarchingSegmentationProgressEventCallback {filter} {
