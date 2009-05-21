@@ -20,6 +20,7 @@
 #include "vtkHTTPHandler.h"
 
 #include "vtkSlicerApplication.h"
+#include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerConfigure.h"
 #include "vtkSlicerModulesConfigurationStep.h"
 #include "vtkSlicerModulesWizardDialog.h"
@@ -236,7 +237,6 @@ void vtkSlicerModulesStep::ShowUserInterface()
     {
     this->SelectAllButton->SetParent( this->Frame2 );
     this->SelectAllButton->Create();
-
     this->SelectAllButton->SetText("Select All");
     this->SelectAllButton->SetBorderWidth( 0 );
     this->SelectAllButton->SetReliefToFlat();
@@ -252,7 +252,6 @@ void vtkSlicerModulesStep::ShowUserInterface()
     {
     this->SelectNoneButton->SetParent( this->Frame2 );
     this->SelectNoneButton->Create();
-    
     this->SelectNoneButton->SetText("Select None");
     this->SelectNoneButton->SetBorderWidth( 0 );
     this->SelectNoneButton->SetReliefToFlat();

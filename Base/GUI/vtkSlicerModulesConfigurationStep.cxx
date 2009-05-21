@@ -19,7 +19,9 @@
 #include "vtkKWFrame.h"
 
 #include "vtkSlicerApplication.h"
+#include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerModulesWizardDialog.h"
+#include "vtkSlicerFoundationIcons.h"
 
 #include "vtkHTTPHandler.h"
 
@@ -116,7 +118,7 @@ void vtkSlicerModulesConfigurationStep::SetWizardDialog(vtkSlicerModulesWizardDi
 void vtkSlicerModulesConfigurationStep::ShowUserInterface()
 {
   this->Superclass::ShowUserInterface();
-
+  
   vtkKWWizardWidget *wizard_widget = 
     this->GetWizardDialog()->GetWizardWidget();
 
@@ -244,17 +246,7 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
       ->GetLoadSaveDialog()->SetBalloonHelpString(
       "Select a directory to be used as a download directory (cache) for Extensions.");
 
-    this->CacheDirectoryButton->GetWidget()->SetCommand(
-      this, "CacheDirectoryCallback");
-    this->CacheDirectoryButton->GetWidget()
-      ->GetLoadSaveDialog()->ChooseDirectoryOn();
-    this->CacheDirectoryButton->GetWidget()
-      ->GetLoadSaveDialog()->SaveDialogOff();
-    this->CacheDirectoryButton->GetWidget()
-      ->GetLoadSaveDialog()->SetTitle("Select a directory for the module cache");
-    this->CacheDirectoryButton->GetWidget()
-      ->GetLoadSaveDialog()->SetBalloonHelpString(
-      "Cache directory for modules.  Leave it empty for default location.");
+    this->CacheDirectoryButton->GetWidget()->SetCommand(this, "CacheDirectoryCallback");
     }
 
   vtkKWLabel *l = vtkKWLabel::New();
@@ -272,7 +264,6 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     {
     this->TrashButton->SetParent( this->Frame3 );
     this->TrashButton->Create();
-
     this->TrashButton->SetCommand(this, "EmptyCacheDirectoryCommand");
 
     if (app)
@@ -309,7 +300,6 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     {
     this->SearchLocationBox->SetParent( this->Frame4 );
     this->SearchLocationBox->Create();
-    this->SearchLocationBox->ExpandWidgetOn();
     }
  
   this->Script("pack %s %s -side left -anchor w -padx 5", 
@@ -337,7 +327,7 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
 //----------------------------------------------------------------------------
 void vtkSlicerModulesConfigurationStep::Update()
 {
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  vtkSlicerApplication *app = dynamic_cast<vtkSlicerApplication*> (this->GetApplication());
 
   if (app)
     {
@@ -365,22 +355,14 @@ void vtkSlicerModulesConfigurationStep::Update()
     std::ifstream ifs(txtfile.c_str());
 
     std::string line;
-    while (std::getline(ifs, line, '\n'))
-      {
-      if (line.find("build ") == 0)
-      {
-      platform = line.substr(6);
-      }
-      else if (line.find("buildDate ") == 0)
-      {
-      build_date = line.substr(10);
-      }
-      else if (line.find("svnurl ") == 0)
-      {
+    while (std::getline(ifs, line, '\n')) {
+      if (line.find("build ") == 0) {
+        platform = line.substr(6);
+      } else if (line.find("buildDate ") == 0) {
+        build_date = line.substr(10);
+      } else if (line.find("svnurl ") == 0) {
         svnurl = line.substr(7);
-      }
-      else if (line.find("svnrevision ") == 0)
-      {
+      } else if (line.find("svnrevision ") == 0) {
         svnrevision = line.substr(12);
       }
     }
@@ -389,18 +371,15 @@ void vtkSlicerModulesConfigurationStep::Update()
 
     // :TODO: 20090405 tgl: URL below should be configurable.
 
-    std::string ext_slicer_org("http://ext.slicer.org/ext");
+    std::string ext_slicer_org("http://ext.slicer.org/ext/");
 
-    if (!svnurl.empty())
-      {
-      int pos = svnurl.find_last_of("/");
-      ext_slicer_org += svnurl.substr(pos);
-      ext_slicer_org += "/";
-      ext_slicer_org += svnrevision;
-      ext_slicer_org += "-";
-      ext_slicer_org += platform;
-      }
-
+    int pos = svnurl.find_last_of("/");
+    ext_slicer_org += svnurl.substr(pos + 1);
+    ext_slicer_org += "/";
+    ext_slicer_org += svnrevision;
+    ext_slicer_org += "-";
+    ext_slicer_org += platform;
+    
     this->GetWizardDialog()->SetSelectedRepositoryURL( ext_slicer_org );
         
     this->SearchLocationBox->SetValue(this->GetWizardDialog()->GetSelectedRepositoryURL().c_str());
@@ -484,13 +463,8 @@ int vtkSlicerModulesConfigurationStep::IsRepositoryValid()
       }
 
     }
-  else if (vtkSlicerModulesConfigurationStep::ActionUninstall == this->GetSelectedAction())
-    {
-      // :NOTE: 20090508 tgl: Nothing to check for this action.
-      result = 0;
-    }
 
-  return result;
+  return 0;//result;
 }
 
 //----------------------------------------------------------------------------
