@@ -16,7 +16,7 @@ proc EditorTearDownGUI {this} {
     volumesFrame 
     optionsSpacer optionsFrame
     toolsActiveTool toolsEditFrame toolsColorFrame
-    toolsFrame 
+    toolsFrame enableCheckPoint
   }
 
   itcl::delete object $::Editor($this,editColor)
