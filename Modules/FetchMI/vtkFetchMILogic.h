@@ -279,6 +279,7 @@ class VTK_FETCHMI_EXPORT vtkFetchMILogic : public vtkSlicerModuleLogic
   // store the data when it's downloaded from a remote host.
   void ApplySlicerDataTypeTag();
   void SetSlicerDataTypeOnVolumeNodes();
+  void SetSlicerDataTypeOnFiberBundleNodes();
   void SetSlicerDataTypeOnModelNodes();
   void SetSlicerDataTypeOnUnstructuredGridNodes();
   void SetSlicerDataTypeOnFiducialListNodes();

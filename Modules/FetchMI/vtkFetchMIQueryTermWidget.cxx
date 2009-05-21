@@ -695,6 +695,16 @@ void vtkFetchMIQueryTermWidget::AddNewTagForQuery ( const char *keyword, std::ve
 
   //--- if there is a SlicerDataType attribute, make sure that "MRML" is
   //--- one of its attributes -- and select it.
+  this->GetMultiColumnList()->GetWidget()->SetCellText (n, 1, keyword );
+  if ( !(strcmp(keyword, "SlicerDataType") ) )
+    {
+    cb = this->GetMultiColumnList()->GetWidget()->GetCellWindowAsComboBox(n, 2);
+    if ( !cb->HasValue ( "MRML" ) )
+      {
+      cb->AddValue ( "MRML" );
+      }
+    cb->SetValue ( "MRML" );
+    }
   
   tagValues->Delete();
 
