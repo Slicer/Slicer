@@ -823,6 +823,11 @@ void vtkSlicerWelcomeGUI::BuildGUI ( )
     BIRNLabel->Create();
     BIRNLabel->SetImageToIcon ( this->GetAcknowledgementIcons()->GetBIRNLogo() );
 
+    vtkKWLabel *CTSCLabel = vtkKWLabel::New();
+    CTSCLabel->SetParent ( f );
+    CTSCLabel->Create();
+    CTSCLabel->SetImageToIcon (this->GetAcknowledgementIcons()->GetCTSCLogo() );
+
     vtkKWTextWithHyperlinksWithScrollbars *txt = vtkKWTextWithHyperlinksWithScrollbars::New ( );
     txt->SetParent ( f ) ;
     txt->Create();
@@ -836,13 +841,15 @@ void vtkSlicerWelcomeGUI::BuildGUI ( )
     txt->SetText ( ack );
     txt->GetWidget()->ReadOnlyOn();
 
-    app->Script ( "grid %s -row 0 -column 0 -padx 2 -pady 2 -sticky e", NAMICLabel->GetWidgetName());
-    app->Script ("grid %s -row 0 -column 1 -padx 2 -pady 2 -sticky w", NACLabel->GetWidgetName());
+   app->Script ( "grid %s -row 0 -column 0 -padx 2 -pady 2 -sticky e", NAMICLabel->GetWidgetName());
+    app->Script ("grid %s -row 0 -column 1 -padx 2 -pady 2 -sticky e", NACLabel->GetWidgetName());
     app->Script ( "grid %s -row 1 -column 0 -padx 2 -pady 2 -sticky e",  BIRNLabel->GetWidgetName());
-    app->Script ( "grid %s -row 1 -column 1 -padx 2 -pady 2 -sticky w",  NCIGTLabel->GetWidgetName());                  
-    app->Script ( "grid %s -row 2 -column 0 -columnspan 2 -padx 2 -pady 2 -sticky ew",  txt->GetWidgetName());                  
-    app->Script ( "grid columnconfigure %s 0 -weight 1", f->GetWidgetName() );
-    app->Script ( "grid columnconfigure %s 1 -weight 1", f->GetWidgetName() );
+    app->Script ( "grid %s -row 1 -column 1 -padx 2 -pady 2 -sticky e",  NCIGTLabel->GetWidgetName());                  
+    app->Script ( "grid %s -row 1 -column 2 -padx 2 -pady 2 -sticky w",  CTSCLabel->GetWidgetName());                  
+    app->Script ( "grid %s -row 2 -column 0 -columnspan 3 -padx 2 -pady 2 -sticky ew",  txt->GetWidgetName());                  
+    app->Script ( "grid columnconfigure %s 0 -weight 0", f->GetWidgetName() );
+    app->Script ( "grid columnconfigure %s 1 -weight 0", f->GetWidgetName() );
+    app->Script ( "grid columnconfigure %s 2 -weight 1", f->GetWidgetName() );
 
 
     txt->Delete();
@@ -850,6 +857,7 @@ void vtkSlicerWelcomeGUI::BuildGUI ( )
     NAMICLabel->Delete();
     NCIGTLabel->Delete();
     BIRNLabel->Delete();
+    CTSCLabel->Delete();
     f->Delete();
     this->Built = true;
 }
@@ -928,11 +936,11 @@ void vtkSlicerWelcomeGUI::BuildWelcomeAndAboutPanel( vtkKWFrame *parent )
   this->StartWithWelcome->GetLabel()->SetText ( " Don't show this module on startup." );
   if ( app->GetUseWelcomeModuleAtStartup() )
     {
-    this->StartWithWelcome->GetWidget()->SetSelectedState (app->GetUseWelcomeModuleAtStartup() );
+    this->StartWithWelcome->GetWidget()->SetSelectedState (0);
     }
   else
     {
-    this->StartWithWelcome->GetWidget()->SetSelectedState (app->GetUseWelcomeModuleAtStartup() );
+    this->StartWithWelcome->GetWidget()->SetSelectedState (1);
     }
 
   app->Script ( "pack %s -side top -anchor nw -fill x -expand y -padx 6 -pady 2",
@@ -1043,8 +1051,8 @@ void vtkSlicerWelcomeGUI::BuildModulesPanel( vtkKWFrame *parent )
   extendedtxt->GetWidget()->SetReliefToGroove();
   extendedtxt->GetWidget()->SetWrapToWord();
   extendedtxt->GetWidget()->QuickFormattingOn();
-  extendedtxt->GetWidget()->SetHeight (10);
-const char *t2 = "**Extended Modules:** The Toolbar's Module menu (shown above) also provides access to additional software modules, organized by categories. \n\nThe **Previous**, **Next**, and **History** icons, and the **Search** icon and text-box are convenient ways to move quickly among modules. To customize the modules you'd like Slicer to include, select **View->ApplicationSettings->Module Settings** from Slicer's File Menu, select the **Load Modules** checkbox, and the **Select Modules** button.\n\n";
+  extendedtxt->GetWidget()->SetHeight (11);
+const char *t2 = "The Module Navigation and Search toolbar (shown above) contains a **Modules Menu**, **Previous**, **Next**, and **History** icons, and the **Search** icon with text-box as convenient ways to move quickly among loaded modules. To customize the modules you'd like Slicer to include, select **View->ApplicationSettings->Module Settings** from Slicer's File Menu, select the **Load Modules** checkbox, and the **Select Modules** button.\n\n**Extended Modules:**  this toolbar also provides access, via the **Extensions** (gear) icon, to the Module Extensions Wizard.  This Wizard can be used to locate, and add/remove additional extension modules to/from Slicer. This Wizard requires a network connection. \n\n";
   extendedtxt->SetText ( t2 );
   //Important that Read only after SetText otherwise it doesn't work  
   extendedtxt->GetWidget()->ReadOnlyOn();
