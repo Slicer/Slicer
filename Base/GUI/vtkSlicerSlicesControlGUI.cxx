@@ -1962,6 +1962,13 @@ void vtkSlicerSlicesControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->FeaturesVisibleButton->IndicatorVisibilityOff ( );
       this->FeaturesVisibleButton->SetBalloonHelpString ( "Toggle visibility of various Slice Viewer features." );
 
+      this->LabelOpacityButton->SetParent (appF);
+      this->LabelOpacityButton->Create ( );
+      this->LabelOpacityButton->SetBorderWidth ( 0 );
+      this->LabelOpacityButton->SetImageToIcon ( this->SlicesControlIcons->GetAllLabelOpacityIcon() );
+      this->LabelOpacityButton->SetBalloonHelpString ( "Popup scale to adjust opacity of Label Layer in all Slice Viewers." );
+
+
       //--- Popup Scale with Entry (displayed when user clicks LabelOpacityButton
       //--- LabelOpacityButton, LabelOpacityScale and its entry will be observed
       //--- and their events handled in ProcessGUIEvents;
@@ -1999,11 +2006,14 @@ void vtkSlicerSlicesControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->Script ( "pack %s -side left -anchor w -padx 1 -pady 3 -expand n", this->LabelOpacityScale->GetWidgetName ( ) );
       this->Script ( "pack %s -side left -anchor e -padx 2 -pady 3 -expand n", this->LabelOpacityToggleButton->GetWidgetName());
       
-      this->LabelOpacityButton->SetParent (appF);
-      this->LabelOpacityButton->Create ( );
-      this->LabelOpacityButton->SetBorderWidth ( 0 );
-      this->LabelOpacityButton->SetImageToIcon ( this->SlicesControlIcons->GetAllLabelOpacityIcon() );
-      this->LabelOpacityButton->SetBalloonHelpString ( "Popup scale to adjust opacity of Label Layer in all Slice Viewers." );
+      this->FieldOfViewButton->SetParent (appF);
+      this->FieldOfViewButton->Create ( );
+      this->FieldOfViewButton->SetBorderWidth ( 0 );
+      this->FieldOfViewButton->SetImageToIcon ( this->SlicesControlIcons->GetFieldOfViewIcon() );
+      this->FieldOfViewButton->SetBalloonHelpString ( "Set the field of view (in mm) in a Slice Window." );
+#ifdef FOV_ENTRIES_DEBUG
+      this->FieldOfViewButton->SetStateToDisabled ( );
+#endif
 
 #ifndef FOV_ENTRIES_DEBUG
       this->FieldOfViewTopLevel->SetApplication ( this->GetApplication ( ) );
@@ -2061,14 +2071,6 @@ void vtkSlicerSlicesControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->Script ( "pack %s -side top -anchor c -padx 4 -pady 3 -expand n", closer->GetWidgetName());
       closer->SetBinding ( "<Button-1>", this, "HideFieldOfViewEntries" );
       closer->Delete();
-#endif
-      this->FieldOfViewButton->SetParent (appF);
-      this->FieldOfViewButton->Create ( );
-      this->FieldOfViewButton->SetBorderWidth ( 0 );
-      this->FieldOfViewButton->SetImageToIcon ( this->SlicesControlIcons->GetFieldOfViewIcon() );
-      this->FieldOfViewButton->SetBalloonHelpString ( "Set the field of view (in mm) in a Slice Window." );
-#ifdef FOV_ENTRIES_DEBUG
-      this->FieldOfViewButton->SetStateToDisabled ( );
 #endif
 
       //--- pack everything up from left to right.
