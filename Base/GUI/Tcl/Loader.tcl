@@ -190,6 +190,7 @@ itcl::body Loader::constructor { } {
     "Select All" "Select None"
     "Label All" "Label None"
     "Centered All" "Centered None"
+      "FiberBundle All" "FiberBundleNone"
   }
   set widgets ""
   foreach a $actions {
@@ -222,16 +223,19 @@ itcl::body Loader::constructor { } {
   $w SetPotentialCellColorsChangedCommand $w "ScheduleRefreshColorsOfAllCellsWithWindowCommand"
   $w SetColumnSortedCommand $w "ScheduleRefreshColorsOfAllCellsWithWindowCommand"
 
-  foreach column {Select File Type Name LabelMap Centered} {
+  foreach column {Select File Type Name LabelMap Centered FiberBundle} {
     set col($column) [$w AddColumn $column]
   }
   $w SetColumnFormatCommandToEmptyOutput $col(Select)
+  $w SetColumnFormatCommandToEmptyOutput $col(LabelMap)
+  $w SetColumnFormatCommandToEmptyOutput $col(Centered)
+  $w SetColumnFormatCommandToEmptyOutput $col(FiberBundle)  
 
   # configure the entries
-  foreach column {Select LabelMap Centered} {
+  foreach column {Select LabelMap Centered FiberBundle} {
     $w SetColumnEditWindowToCheckButton $col($column)
   }
-  foreach column {Select File Name LabelMap Centered} {
+  foreach column {Select File Name LabelMap Centered FiberBundle} {
     $w ColumnEditableOn $col($column)
   }
   $w SetColumnWidth $col(Select) 6
@@ -364,6 +368,12 @@ itcl::body Loader::addRow { path type } {
     $w InsertCellTextAsInt $i $col(LabelMap) $seg
     $w SetCellWindowCommandToCheckButton $i $col(LabelMap)
   } 
+
+  if { $type == "Model" } {
+   #--- by default, not a fiber bundle
+    $w InsertCellTextAsInt $i $col(FiberBundle) 0
+    $w SetCellWindowCommandToCheckButton $i $col(FiberBundle)
+  }
 
 }
 
@@ -528,12 +538,27 @@ itcl::body Loader::apply { } {
           }
         }
         "Model" {
-          set node [[$::slicer3::ModelsGUI GetLogic] AddModel $path]
-          if { $node == "" } {
-            $this errorDialog "Could not open $path"
-          } else {
-            $node SetName $name
-          }
+            set fiberBundle [ $w GetCellTextAsInt $row $col(FiberBundle)]
+            if { $fiberBundle == 1 } {
+                set app $::slicer3::Application
+                set fiberBundleGUI [$app GetModuleGUIByName "FiberBundles" ]
+                if { $fiberBundleGUI != "" } {
+                    set fiberBundleLogic [ $fiberBundleGUI GetLogic ]
+                    if { $fiberBundleLogic != "" } {
+                        set fiberBundleNode [ $fiberBundleLogic AddFiberBundle $path ]
+                        if {$fiberBundleNode == "" } {
+                            $this errorDialog "Unable to read DTI fiber bundle model file $path"
+                        }
+                    }
+                }
+            } else {
+                set node [[$::slicer3::ModelsGUI GetLogic] AddModel $path]
+                if { $node == "" } {
+                    $this errorDialog "Could not open $path"
+                } else {
+                    $node SetName $name
+                }
+            }
         }
         "XCEDE" {
           set pass [ XcatalogImport $path ]
@@ -639,6 +664,16 @@ itcl::body Loader::processEvent { {caller ""} {event ""} } {
   if { $caller == $o(labelNone) } {
     $this setAll LabelMap 0
     return
+  }
+
+  if { $caller == $o(fiberBundleAll) } {
+      $this setAll FiberBundle 1
+      return
+  }
+
+  if { $caller == $o(fiberBundleNone) } {
+      $this setAll FiberBundle 0
+      return
   }
 
   puts "$this: unknown event from $caller"
