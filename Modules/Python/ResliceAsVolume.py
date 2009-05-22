@@ -12,6 +12,9 @@ Reslice a volume based on the geometry of another volume.
   <documentation-url></documentation-url>
   <license></license>
   <contributor>Luca Antiga and Daniel Blezek</contributor>
+<acknowledgements>
+This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+</acknowledgements>
 
   <parameters>
     <label>Reslice Parameters</label>
