@@ -372,10 +372,16 @@ proc FastMarchingSegmentationProcessGUIEvents {this caller event} {
 
     set viewerWidget [ [$this GetApplicationGUI] GetViewerWidget ]
 
-
-
     [$viewerWidget GetMainViewer ] AddViewProp $renderVolume
     $viewerWidget RequestRender
+
+    # set mouse mode to ViewTransform
+    set interactionNode [ [ [$this GetLogic] GetApplicationLogic ] \
+      GetInteractionNode]
+    $interactionNode SetLastInteractionMode [$interactionNode \
+      GetCurrentInteractionMode]
+    $interactionNode SetCurrentInteractionMode 7
+    $interactionNode Modified
   } 
 
   if { $caller == $::FastMarchingSegmentation($this,timeScrollScale) } {
