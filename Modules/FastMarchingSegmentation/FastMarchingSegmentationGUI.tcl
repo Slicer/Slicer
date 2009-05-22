@@ -20,6 +20,7 @@ proc FastMarchingSegmentationTearDownGUI {this} {
     timeScrollScale labelColorSpin
     initFrame outputParametersFrame
     fmFrame
+    timescrollRange
   }
 
   foreach w $widgets {
@@ -213,6 +214,19 @@ proc FastMarchingSegmentationBuildGUI {this} {
   pack [$run GetWidgetName] -side top -anchor e -padx 2 -pady 2 -fill x
 
   # FastMarching output parameters
+  set ::FastMarchingSegmentation($this,timescrollRange) [vtkKWRange New]
+  set tsRange $::FastMarchingSegmentation($this,timescrollRange)
+  $tsRange SetParent [$outputParametersFrame GetFrame]
+  $tsRange Create
+  $tsRange SetLabelText "Segmented volume selection range:"
+  $tsRange SymmetricalInteractionOff
+  $tsRange SetLabelPositionToTop
+  $tsRange SetEntry1PositionToTop
+  $tsRange SetEntry2PositionToTop
+  $tsRange SetSliderSize 4
+  $tsRange SetBalloonHelpString "Define the sub-range of segmented volume (mL)"
+  pack [$tsRange GetWidgetName] -side top -anchor e -padx 2 -pady 2 -fill x
+
   set ::FastMarchingSegmentation($this,timeScrollScale) [vtkKWScaleWithEntry New]
   set timescroll $::FastMarchingSegmentation($this,timeScrollScale)
   $timescroll SetParent [$outputParametersFrame GetFrame]
@@ -223,8 +237,11 @@ proc FastMarchingSegmentationBuildGUI {this} {
   $timescroll SetLength 150
   $timescroll SetBalloonHelpString "Scroll back in segmentation process"
   $timescroll SetLabelText "Output segmentation volume (mL): "
-  $timescroll EnabledOff
+  $timescroll SetLabelPositionToTop
+  $timescroll SetEntryPositionToTop
+  $timescroll RangeVisibilityOn
   pack [$timescroll GetWidgetName] -side top -anchor e -padx 2 -pady 2 -fill x
+
 
   # initialize volume rendering
   set ::FastMarchingSegmentation($this,renderMapper) [vtkFixedPointVolumeRayCastMapper New]
@@ -249,6 +266,7 @@ proc FastMarchingSegmentationAddGUIObservers {this} {
   $this AddObserverByNumber $::FastMarchingSegmentation($this,timeScrollScale) 10000
   $this AddObserverByNumber $::FastMarchingSegmentation($this,timeScrollScale) 10001
   $this AddObserverByNumber $::FastMarchingSegmentation($this,fiducialsSelector) 11000
+  $this AddObserverByNumber $::FastMarchingSegmentation($this,timescrollRange) 10001
 }
 
 proc FastMarchingSegmentationRemoveGUIObservers {this} {
@@ -296,10 +314,15 @@ proc FastMarchingSegmentationProcessGUIEvents {this caller event} {
     FastMarchingSegmentationExpand $this
     $::FastMarchingSegmentation($this,timeScrollScale) EnabledOn
     set timescroll $::FastMarchingSegmentation($this,timeScrollScale)
+    set tsRange $::FastMarchingSegmentation($this,timescrollRange)
     set segmentedVolume [$::FastMarchingSegmentation($this,segVolumeThumbWheel) GetValue]
     set knownpoints [$::FastMarchingSegmentation($this,fastMarchingFilter) nKnownPoints]
-    $timescroll SetRange 0.0 $segmentedVolume
-    $timescroll SetValue $segmentedVolume
+    $tsRange SetWholeRange 0.0 $segmentedVolume
+    $tsRange SetRange [expr 0.05*$segmentedVolume] [expr 0.95*$segmentedVolume]
+    set range [$tsRange GetRange]
+    $timescroll SetRange [lindex $range 0] [lindex $range 1]
+    $timescroll SetValue [expr  [expr [lindex $range 0]+[lindex $range 1]]/2.]
+    $tsRange SetResolution [ expr [expr double($segmentedVolume)] / [expr double($knownpoints)] ]
     $timescroll SetResolution [ expr [expr double($segmentedVolume)] / [expr double($knownpoints)] ]
 
     # undisplay old volume, if one exists
@@ -397,6 +420,13 @@ proc FastMarchingSegmentationProcessGUIEvents {this caller event} {
     set selectionNode [[[$this GetLogic] GetApplicationLogic] GetSelectionNode]
     $selectionNode SetReferenceActiveFiducialListID \
       [ [$::FastMarchingSegmentation($this,fiducialsSelector) GetSelected] GetID ]
+  }
+
+  if {$caller == $::FastMarchingSegmentation($this,timescrollRange) } {
+    set tsRange $::FastMarchingSegmentation($this,timescrollRange)
+    set timescroll $::FastMarchingSegmentation($this,timeScrollScale)
+    set range [$tsRange GetRange]
+    $timescroll SetRange [lindex $range 0] [lindex $range 1]
   }
 }
 

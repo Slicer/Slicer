@@ -258,13 +258,12 @@ proc FastMarchingSegmentationSegment {this} {
 proc FastMarchingSegmentationUpdateTime {this} {
   set requestedTime [$::FastMarchingSegmentation($this,timeScrollScale) GetValue]
   set fmFilter $::FastMarchingSegmentation($this,fastMarchingFilter)
-  set labelVolume $::FastMarchingSegmentation($this,labelVolume)
   set scaleRange [$::FastMarchingSegmentation($this,timeScrollScale) GetRange]
   set requestedTime [expr $requestedTime / [lindex $scaleRange 1] ]
   $fmFilter show $requestedTime
   $fmFilter Modified
   $fmFilter Update
-  $labelVolume Modified
+  $::FastMarchingSegmentation($this,labelVolume) Modified
 }
 
 proc FastMarchingSegmentationCreateLabelVolume {this} {
