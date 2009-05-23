@@ -42,8 +42,6 @@ def dispW0(dataD, inputVolume, shpV, nvol):
     scene.AddNode(r1)
 
     tmp = r1.GetImageData().ToArray()
-    print 'tmp   : ', tmp.shape
-    print 'dataD : ', dataD.shape
     tmp[...] = dataD[..., nvol] 
 
     r1.GetDisplayNode().SetDefaultColorMap()
@@ -80,8 +78,6 @@ def dispW1(dataD, G, b, org, spa, mat, mu, shpV, nvol):
     scene.AddNode(r1)
 
     tmp = r1.GetImageData().ToArray()
-    print 'tmp   : ', tmp.shape
-    print 'dataD : ', dataD.shape
     tmp[...] = dataD[..., nvol] 
 
     r1.GetDisplayNode().SetDefaultColorMap()
@@ -118,8 +114,6 @@ def dispV0(dataD, inputVolume, shpV):
     scene.AddNode(r1)
 
     tmp = r1.GetImageData().ToArray()
-    print 'tmp   : ', tmp.shape
-    print 'dataD : ', dataD.shape
     tmp[:] = dataD[:] 
 
     r1.GetDisplayNode().SetDefaultColorMap()
@@ -149,8 +143,6 @@ def dispV1(dataD, org, spa, mat, shpV):
     scene.AddNode(r1)
 
     tmp = r1.GetImageData().ToArray()
-    print 'tmp   : ', tmp.shape
-    print 'dataD : ', dataD.shape
     tmp[:] = dataD[:] 
 
     r1.GetDisplayNode().SetDefaultColorMap()
@@ -181,8 +173,6 @@ def dispUV(dataD, org, spa, mat, shpV):
     scene.AddNode(r1)
 
     tmp = r1.GetImageData().ToArray()
-    print 'tmp   : ', tmp.shape
-    print 'dataD : ', dataD.shape
     tmp[:] = dataD[:] 
 
     r1.GetDisplayNode().SetDefaultColorMap()
@@ -222,8 +212,6 @@ def dispS(dataD, inputVolume, shpV):
     scene.AddNode(r1)
 
     tmp = r1.GetImageData().GetPointData().GetScalars().ToArray()
-    print 'tmp   : ', tmp.shape
-    print 'dataD : ', dataD.shape
     dataD = reshape(dataD, (shpV[0]*shpV[1]*shpV[2], 1))
     tmp[:] = dataD[:]
 

@@ -16,7 +16,6 @@ def EvaluateTensorC(dataD, G, b):
   eps = finfo(float).eps 
 
   shp  = dataD.shape
-  print 'Data shape : ', shp
 
   # --- Estimate tensor components ---
   # Construct A-matrix
@@ -30,12 +29,9 @@ def EvaluateTensorC(dataD, G, b):
   
   dataD = dataD.swapaxes(3, 2).swapaxes(2, 1).swapaxes(1, 0)
   dataD = dataD.reshape(shp[3], shp[0]*shp[1]*shp[2])
-  print 'Modified shape : ', dataD.shape
   res1 = dot(linalg.inv(dot(A.T,A)), A.T)
-  print 'Shape 1 : ', res1.shape
 
   xTensor = dot(res1, log(dataD+eps))
-  print 'Tensor shape : ', xTensor.shape
 
   d11 = reshape(xTensor[1,:], shp[0]*shp[1]*shp[2])
   d12 = reshape(xTensor[2,:], shp[0]*shp[1]*shp[2])
@@ -99,9 +95,6 @@ def EvaluateTensorC(dataD, G, b):
 
   logmu0 = logmu0.reshape(shp[0], shp[1], shp[2])
 
-  print 'Shape l : ', l.shape
-  print 'Shape e : ', e.shape
-  print 'Shape logmu0 : ', logmu0.shape
 
   #return mu0, e, l, T
   return logmu0, e, l

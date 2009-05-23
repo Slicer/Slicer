@@ -35,13 +35,13 @@ def cmpV(a, b, fa, flag=True):
 def cmpV3(a, b, fa, flag=True):
   d = zeros((a.shape[0], a.shape[1], a.shape[2]), dtype = uint16)
 
-  print 'd shape : ', d.shape
+  #print 'd shape : ', d.shape
 
   c1 = zeros((a.shape[1], a.shape[2]), 'float32')
   c2 = zeros((a.shape[1], a.shape[2]), 'uint16')
   
-  print 'c1 shape : ', c1.shape
-  print 'c2 shape : ', c2.shape
+  #print 'c1 shape : ', c1.shape
+  #print 'c2 shape : ', c2.shape
   for kkk in range(a.shape[0]):
     c1[:] = a[kkk, :, :]
     c2[:] = b[kkk, :, :]
@@ -189,7 +189,7 @@ def histo0InVolume(arrayD,binVal):
   numB = int(round(intV/binVal))
   Ntot = shp[0]*shp[1]*shp[2]
 
-  print Ntot
+  #print Ntot
 
   hist = []
   test = int(0)
@@ -206,8 +206,8 @@ def histo0InVolume(arrayD,binVal):
     hist.append(float(len(scalDd))/Ntot)
 
   rs = Ntot-test
-  print test
-  print rs
+  #print test
+  #print rs
   return hist
 
 # get index using generator

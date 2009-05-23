@@ -150,8 +150,6 @@ class PipelineHandler(asyncore.dispatcher):
           i2r = self.nimage.get('ijk2ras')
           i2rd = self.nimage.get('ijk2rasd')
 
-          print 'I2R : ', i2r
-          print 'I2RD : ', i2rd
 
           mu = self.nimage.get('mu')
           dims = self.nimage.get('dimensions')
@@ -868,7 +866,7 @@ class PipelineHandler(asyncore.dispatcher):
                       cmd = string.strip(self.data)
                       cmd = string.split(cmd)
                       if len(cmd)!=1:
-                         logger.error("command awaited!")
+                         logger.info("command awaited!")
                       else:
                          logger.info("command : %s" % cmd[0])
                          if cmd[0]=='get':
