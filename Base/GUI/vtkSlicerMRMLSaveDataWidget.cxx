@@ -1360,7 +1360,7 @@ void vtkSlicerMRMLSaveDataWidget::SetupSaveDataListWidget()
   saveDataMCList->ColumnEditableOn(col_index);
 
   col_index = saveDataMCList->AddColumn("Node Name");
-  saveDataMCList->ColumnEditableOff(col_index);
+  saveDataMCList->ColumnEditableOn(col_index);
   saveDataMCList->SetColumnWidth(col_index, 12);
 
   col_index = saveDataMCList->AddColumn("Node Type");
@@ -1412,6 +1412,10 @@ void vtkSlicerMRMLSaveDataWidget::Invoke ( )
 
   this->UpdateFromMRML();
 
+  // don't allow node name edits to scene description
+  int sceneRow = this->GetSceneRowIndex();
+  this->MultiColumnList->GetWidget()->CellEditableOff ( sceneRow, NodeName_Column);
+
   if (this->SaveDialog)
     {
     this->SaveDialog->Invoke ( );
@@ -1428,12 +1432,55 @@ void vtkSlicerMRMLSaveDataWidget::UpdateDataTableCell(
     row, Hidden_FileName_Column));
   std::string currText = this->MultiColumnList->GetWidget()->GetCellText(row, col);
   const char* pText = currText.c_str();
+  int sceneRow = this->GetSceneRowIndex();
+  vtkMRMLNode *node = this->MRMLScene->GetNodeByID(
+     this->MultiColumnList->GetWidget()->GetCellText(row, Hidden_NodeID_Column));
 
   switch(col)
     {
     case Save_Column:
       this->IsRowFileFormatSet(row);
       this->UpdateEnableState();
+      break;
+    case NodeName_Column:
+      // dump out with error if the node is invalid.
+      if ( node )
+        {
+        // reset GUI to old node name if input text is empty
+        const char *oldNodeName = node->GetName ();
+        if(!pText || !(*pText) ||!strlen(pText))
+          {      
+          if ( !oldNodeName || !(*oldNodeName) || !strlen (oldNodeName))
+            {
+            vtkErrorMacro(<< this->GetClassName() << ": Both new and old node names invalid. Using ID as name.");
+            node->SetName(node->GetID());
+            this->SetRowMarkedForSave(sceneRow, 1);
+            if ( strcmp (pText, node->GetID() ) )
+              {
+              this->MultiColumnList->GetWidget()->SetCellText( row, col, node->GetID() );
+              }
+            }
+          else
+            {
+            vtkErrorMacro(<< this->GetClassName() << ": New node name invalid. Using old node name.");
+            this->MultiColumnList->GetWidget()->SetCellText( row, col, oldNodeName);
+            }
+          }
+        else
+          {
+          // update the node name if it differs from previous and mark scene for saving.
+          if ( strcmp (pText, oldNodeName ))
+            {
+            node->SetName(pText);
+            this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::SceneEditedEvent, node);
+            this->SetRowMarkedForSave(sceneRow, 1);
+            }
+          }
+        }
+      else
+        {
+        vtkErrorMacro(<< this->GetClassName() << ": Invalid node. Cannot set new name.");
+        }
       break;
     case FileName_Column:
       if(!pText || !(*pText) ||!strlen(pText))
