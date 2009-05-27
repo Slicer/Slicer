@@ -616,8 +616,8 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::CreateWidget ( )
   this->ColorSelectorWidget->SetPadY(2);
   this->ColorSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
   this->ColorSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
-  this->ColorSelectorWidget->SetLabelText( "Color Select: ");
-  this->ColorSelectorWidget->SetBalloonHelpString("select a volume from the current mrml scene.");
+  this->ColorSelectorWidget->SetLabelText( "Lookup Table: ");
+  this->ColorSelectorWidget->SetBalloonHelpString("select a LUT from the current mrml scene.");
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
     this->ColorSelectorWidget->GetWidgetName());
 
