@@ -73,7 +73,7 @@ proc DistanceTransformModelBuildGUI {this} {
   # help frame
   #
   set helptext "The DistanceTransformModel updates a model node based on the distance the boundary of a label map."
-  set abouttext "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details."
+  set abouttext "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. The Distance Transform module was contributed by Steve Pieper, Isomics, Inc., and uses the NumpyScript module created by Luca Antiga."
   $this BuildHelpAndAboutFrame $pageWidget $helptext $abouttext
 
 
