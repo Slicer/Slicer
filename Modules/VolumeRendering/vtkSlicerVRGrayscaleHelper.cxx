@@ -1251,6 +1251,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessRenderingMethodEvents(int id)
     
     this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
     this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();//double rendering request to force mapper to adjust rendering quality for expected fps
+    
+    this->NB_Details->Resize();
 }
 
 void vtkSlicerVRGrayscaleHelper::ProcessThresholdModeEvents(int id)
@@ -1654,29 +1656,6 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     }
     
     int labelWidth = 26;
-
-    //CUDA ray casting
-
-    {
-      this->FrameCUDARayCasting = vtkKWFrameWithLabel::New();
-      this->FrameCUDARayCasting->SetParent(this->FramePerformance->GetFrame());
-      this->FrameCUDARayCasting->Create();
-      this->FrameCUDARayCasting->AllowFrameToCollapseOff();
-      this->FrameCUDARayCasting->SetLabelText("CUDA Ray Casting");
-      this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->FrameCUDARayCasting->GetWidgetName() );
-
-      //enable/disable CUDA ray casting shading
-      this->CB_CUDARayCastShading=vtkKWCheckButtonWithLabel::New();
-      this->CB_CUDARayCastShading->SetParent(this->FrameCUDARayCasting->GetFrame());
-      this->CB_CUDARayCastShading->Create();
-      this->CB_CUDARayCastShading->SetBalloonHelpString("Enable lighting/shading in CUDA ray cast.");
-      this->CB_CUDARayCastShading->SetLabelText("Enable Lighting");
-      this->CB_CUDARayCastShading->SetLabelWidth(labelWidth);
-      this->CB_CUDARayCastShading->GetWidget()->SetSelectedState(0);
-      this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_CUDARayCastShading->GetWidgetName() );
-      this->CB_CUDARayCastShading->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->VolumeRenderingCallbackCommand);
-        
-    }
     
     //software ray casting
     {
@@ -1754,6 +1733,28 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->FramePolygonBlending->GetWidgetName() );
         
         //currently no parameters
+    }
+    
+    //CUDA ray casting
+    {
+      this->FrameCUDARayCasting = vtkKWFrameWithLabel::New();
+      this->FrameCUDARayCasting->SetParent(this->FramePerformance->GetFrame());
+      this->FrameCUDARayCasting->Create();
+      this->FrameCUDARayCasting->AllowFrameToCollapseOff();
+      this->FrameCUDARayCasting->SetLabelText("CUDA Ray Casting");
+      this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->FrameCUDARayCasting->GetWidgetName() );
+
+      //enable/disable CUDA ray casting shading
+      this->CB_CUDARayCastShading=vtkKWCheckButtonWithLabel::New();
+      this->CB_CUDARayCastShading->SetParent(this->FrameCUDARayCasting->GetFrame());
+      this->CB_CUDARayCastShading->Create();
+      this->CB_CUDARayCastShading->SetBalloonHelpString("Enable lighting/shading in CUDA ray cast.");
+      this->CB_CUDARayCastShading->SetLabelText("Enable Lighting");
+      this->CB_CUDARayCastShading->SetLabelWidth(labelWidth);
+      this->CB_CUDARayCastShading->GetWidget()->SetSelectedState(0);
+      this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_CUDARayCastShading->GetWidgetName() );
+      this->CB_CUDARayCastShading->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->VolumeRenderingCallbackCommand);
+        
     }
    
 }
