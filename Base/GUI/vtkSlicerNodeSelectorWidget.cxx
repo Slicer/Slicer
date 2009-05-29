@@ -433,6 +433,11 @@ void vtkSlicerNodeSelectorWidget::UnconditionalUpdateMenu()
     {
     this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
     }
+  if ( oldSelectedName != selectedName )
+    {
+    this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeRenameEvent, NULL);
+    }
+
 }
 
 //----------------------------------------------------------------------------

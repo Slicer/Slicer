@@ -135,6 +135,7 @@ public:
     {
       NodeSelectedEvent = 11000,
       NewNodeEvent = 11001,
+      NodeRenameEvent = 11002,
     };
 //ETX
 
