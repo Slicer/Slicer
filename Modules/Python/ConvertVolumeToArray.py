@@ -37,7 +37,8 @@ def Execute (inputVolume):
   inputVolume = scene.GetNodeByID(inputVolume)
   isTensor = False
 
-  if inputVolume.GetImageData().GetPointData().GetTensors().GetNumberOfComponents() == 9:
+  if inputVolume.GetImageData().GetPointData().GetTensors():
+    #print 'Tensor True'
     isTensor = True
   
   if  not isTensor:
@@ -49,7 +50,6 @@ def Execute (inputVolume):
   
 
   I2R = numpy.zeros((4,4), 'float')
-
   i2r = slicer.vtkMatrix4x4()
 
   inputVolume.GetIJKToRASMatrix(i2r)
@@ -58,6 +58,17 @@ def Execute (inputVolume):
      for j in range(4):
         I2R[i,j] = i2r.GetElement(i,j)
 
+  if isTensor:
+    MU = numpy.zeros((4,4), 'float')
+    mu = slicer.vtkMatrix4x4()
+    
+    inputVolume.GetMeasurementFrameMatrix(mu)
+
+    for i in range(4):
+     for j in range(4):
+        MU[i,j] = mu.GetElement(i,j)
+
+    
 
   shapeD = data.shape
   typeD = data.dtype
@@ -110,10 +121,12 @@ def Execute (inputVolume):
   # to translate back from file
   #dtype = vtk_types [ int(scalar_type[0]) ]
   
-  tmpN = inputVolume.GetName().split('.')[0]
+  tmpN = inputVolume.GetName().split('.')[0].replace(' ', '_')
   
-  params.tofile(tmpF + 'IN_' + tmpN + '.in')
-  I2R.tofile(tmpF + 'IJK_' + tmpN + '.ijk')
+  params.tofile(tmpF + tmpI + '_' + tmpN + '.in')
+  I2R.tofile(tmpF + tmpI + '_' + tmpN + '.ijk')
+  if isTensor:
+    MU.tofile(tmpF + tmpI + '_' + tmpN + '.mu')
   data.tofile(tmpF + tmpI + '_' + tmpN + '.data')
 
   return
