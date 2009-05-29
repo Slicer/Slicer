@@ -12,11 +12,12 @@ proc EditorTearDownGUI {this} {
 
   # nodeSelector  ;# disabled for now
   set widgets {
-    volumesCreate volumeName volumesSelect
-    volumesFrame 
-    optionsSpacer optionsFrame
-    toolsActiveTool toolsEditFrame toolsColorFrame
-    toolsFrame enableCheckPoint
+      labelMapDerive labelMapSelect activeLabelMap
+      volumesCreate volumeName volumesSelect
+      volumesFrame 
+      optionsSpacer optionsFrame
+      toolsActiveTool toolsEditFrame toolsColorFrame
+      toolsFrame enableCheckPoint
   }
 
   itcl::delete object $::Editor($this,editColor)
@@ -43,6 +44,33 @@ proc EditorTearDownGUI {this} {
   EditorFreeCheckPointVolumes
 
 }
+
+
+
+proc UpdateCurrentLabelMapLabel {this} {
+
+    #--- check to see if there is an active label map. if so,
+    #--- select that in the labelMapSelect selector.
+    
+    set labelmap [ $::Editor($this,labelMapSelect) GetSelected ]
+    if { $labelmap != "" } {
+        set mapname  [  $labelmap GetName ]
+        if { $mapname != "" } {
+            $::Editor($this,activeLabelMap) SetText "Editing $mapname..."
+        } else {
+            set id [ $labelmap GetID ]
+            $::Editor($this,activeLabelMap) SetText "Editing $id..."
+        }
+    } else {
+        $::Editor($this,activeLabelMap) SetText "No label map selected for editing..."
+    }
+
+    #--- clean out status text.
+    [$::slicer3::ApplicationGUI GetMainSlicerWindow] SetStatusText ""
+}
+
+
+
 
 proc EditorBuildGUI {this} {
 
@@ -82,7 +110,7 @@ proc EditorBuildGUI {this} {
   set ::Editor($this,volumesFrame) [vtkSlicerModuleCollapsibleFrame New]
   $::Editor($this,volumesFrame) SetParent $pageWidget
   $::Editor($this,volumesFrame) Create
-  $::Editor($this,volumesFrame) SetLabelText "Volumes"
+  $::Editor($this,volumesFrame) SetLabelText "Create & Select Label Maps"
   pack [$::Editor($this,volumesFrame) GetWidgetName] \
     -side top -anchor nw -fill x -expand true -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
 
@@ -95,7 +123,11 @@ proc EditorBuildGUI {this} {
   $::Editor($this,volumesSelect) UpdateMenu
   $::Editor($this,volumesSelect) SetLabelText "Source Volume:"
   $::Editor($this,volumesSelect) SetBalloonHelpString "The Source Volume will define the dimensions and directions for the new label map"
-  pack [$::Editor($this,volumesSelect) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+  #--- new test
+  if { 0 } {
+      pack [$::Editor($this,volumesSelect) GetWidgetName] -side top -anchor e -padx 2 -pady 2
+  }
+  #--- end new test
 
   set ::Editor($this,volumeName) [vtkKWEntryWithLabel New]
   $::Editor($this,volumeName) SetParent [$::Editor($this,volumesFrame) GetFrame]
@@ -104,15 +136,50 @@ proc EditorBuildGUI {this} {
   [$::Editor($this,volumeName) GetWidget] SetValue "Working"
   $::Editor($this,volumeName) SetBalloonHelpString \
     "Leave blank for automatic label name based on input name."
-  pack [$::Editor($this,volumeName) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+  #--- new test
+  if { 0 } {
+      pack [$::Editor($this,volumeName) GetWidgetName] -side top -anchor e -padx 2 -pady 2
+  }
+  #--- end new test
 
   set ::Editor($this,volumesCreate) [vtkKWPushButton New]
   $::Editor($this,volumesCreate) SetParent [$::Editor($this,volumesFrame) GetFrame]
   $::Editor($this,volumesCreate) Create
   $::Editor($this,volumesCreate) SetText "Create Label Map"
   $::Editor($this,volumesCreate) SetBalloonHelpString "Create a new label map based on the source."
-  pack [$::Editor($this,volumesCreate) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+  #--- new test
+  if { 0 } {
+      pack [$::Editor($this,volumesCreate) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+  }
+  #--- end new test
 
+  #--- when user selects a source volume,
+  #--- new label map is created, named and selected
+  #--- in the labelMap Selector.
+  set ::Editor($this,labelMapDerive) [vtkSlicerNodeSelectorWidget New]
+  $::Editor($this,labelMapDerive) SetParent [$::Editor($this,volumesFrame) GetFrame]
+  $::Editor($this,labelMapDerive) Create
+  $::Editor($this,labelMapDerive) SetNodeClass "vtkMRMLScalarVolumeNode" "" "" ""
+  $::Editor($this,labelMapDerive) NewNodeEnabledOff
+  $::Editor($this,labelMapDerive) ChildClassesEnabledOff
+  $::Editor($this,labelMapDerive) NoneEnabledOn
+  $::Editor($this,labelMapDerive) SetMRMLScene [[$this GetLogic] GetMRMLScene]
+  $::Editor($this,labelMapDerive) UpdateMenu
+  $::Editor($this,labelMapDerive) SetLabelText "Create Label Map From:"
+  $::Editor($this,labelMapDerive) SetBalloonHelpString "Create a new label map wth dimensions and directions from an existing volume."
+  pack [$::Editor($this,labelMapDerive) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+
+  set ::Editor($this,labelMapSelect) [vtkSlicerNodeSelectorWidget New]
+  $::Editor($this,labelMapSelect) SetParent [$::Editor($this,volumesFrame) GetFrame]
+  $::Editor($this,labelMapSelect) Create
+  $::Editor($this,labelMapSelect) SetNodeClass "vtkMRMLScalarVolumeNode" "LabelMap" "1" ""
+  $::Editor($this,labelMapSelect) ChildClassesEnabledOff
+  $::Editor($this,labelMapSelect) NoneEnabledOn
+  $::Editor($this,labelMapSelect) SetMRMLScene [[$this GetLogic] GetMRMLScene]
+  $::Editor($this,labelMapSelect) UpdateMenu
+  $::Editor($this,labelMapSelect) SetLabelText "Select Label Map to Edit:"
+  $::Editor($this,labelMapSelect) SetBalloonHelpString "Choose from existing label maps in the scene."
+  pack [$::Editor($this,labelMapSelect) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
 
   #
   # Tool Frame
@@ -120,9 +187,17 @@ proc EditorBuildGUI {this} {
   set ::Editor($this,toolsFrame) [vtkSlicerModuleCollapsibleFrame New]
   $::Editor($this,toolsFrame) SetParent $pageWidget
   $::Editor($this,toolsFrame) Create
-  $::Editor($this,toolsFrame) SetLabelText "Tools"
+  $::Editor($this,toolsFrame) SetLabelText "Edit Selected Label Map"
   pack [$::Editor($this,toolsFrame) GetWidgetName] \
     -side top -anchor nw -fill x -expand true -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
+
+  set ::Editor($this,activeLabelMap) [ vtkKWLabel New ]
+  $::Editor($this,activeLabelMap) SetParent [$::Editor($this,toolsFrame) GetFrame]
+  $::Editor($this,activeLabelMap) Create
+  $::Editor($this,activeLabelMap) SetForegroundColor 0.2 0.7 0.1
+  UpdateCurrentLabelMapLabel $this
+  pack [ $::Editor($this,activeLabelMap) GetWidgetName ] -side top -fill x -expand y -anchor w -padx 2 -pady 2
+
 
   set ::Editor($this,toolsEditFrame) [vtkKWFrame New]
   $::Editor($this,toolsEditFrame) SetParent [$::Editor($this,toolsFrame) GetFrame]
@@ -189,18 +264,30 @@ proc EditorBuildGUI {this} {
 }
 
 proc EditorAddGUIObservers {this} {
-  $this AddObserverByNumber $::Editor($this,volumesCreate) 10000 
-  $this AddObserverByNumber $::Editor($this,enableCheckPoint) 10000 
-    
+    $this AddObserverByNumber $::Editor($this,volumesCreate) 10000 
+    $this AddObserverByNumber $::Editor($this,enableCheckPoint) 10000 
+    #--- new test
+    $this AddObserverByNumber $::Editor($this,labelMapSelect) 11000 
+    $this AddObserverByNumber $::Editor($this,labelMapSelect) 11002
+    $this AddObserverByNumber $::Editor($this,labelMapDerive) 11000 
+    #--- end new test    
+
 # $this DebugOn
-  if {[$this GetDebug]} {
-    puts "Adding mrml observer to selection node, modified event"
-  }
-  $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
-    
+    if {[$this GetDebug]} {
+        puts "Adding mrml observer to selection node, modified event"
+    }
+    $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
 }
 
 proc EditorRemoveGUIObservers {this} {
+    #--- new test
+  $this RemoveObserverByNumber $::Editor($this,volumesCreate) 10000 
+  $this RemoveObserverByNumber $::Editor($this,enableCheckPoint) 10000 
+  $this RemoveObserverByNumber $::Editor($this,labelMapSelect) 11000 
+  $this RemoveObserverByNumber $::Editor($this,labelMapSelect) 11002
+  $this RemoveObserverByNumber $::Editor($this,labelMapDerive) 11000 
+    #--- end new test
+  
   if {[$this GetDebug]} {
     puts "Removing mrml observer on selection node, modified event"
   }
@@ -221,10 +308,71 @@ proc EditorProcessGUIEvents {this caller event} {
   if { $caller == $::Editor($this,volumesCreate) } {
     switch $event {
       "10000" {
-        EditorCreateLabelVolume $this
+          EditorCreateLabelVolume $this
       }
     }
   } 
+  if { $caller == $::Editor($this,labelMapSelect) } {
+    switch $event {
+      "11000" {
+          #--- give users some feedback
+          [$::slicer3::ApplicationGUI GetMainSlicerWindow] SetStatusText "Selecting label map..."
+          update idletasks
+          #--- put this selected label map into the label layer (make it active).
+          set labelNode [$::Editor($this,labelMapSelect) GetSelected ]
+          if {  $labelNode != ""  &&  [$this GetLogic] != ""  &&  [[$this GetLogic] GetApplicationLogic] != "" } {
+              set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
+          } else {
+              EditorErrorDialog "The selected label map cannot be used for editing. Please derive a new, or select a different one."
+          }
+          if { $selectionNode != "" } {
+              $selectionNode SetReferenceActiveLabelVolumeID [$labelNode GetID]
+              [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection
+          } else {
+              EditorErrorDialog "Error trying to display label map in the lable layer. Please try to do this manually."
+          }
+          #--- then update the label to communicate 
+          #--- which label map user is currently editing
+          UpdateCurrentLabelMapLabel $this
+          [$::slicer3::ApplicationGUI GetMainSlicerWindow] SetStatusText ""
+          update idletasks
+          return
+      } "11002" {
+          #--- new test
+          UpdateCurrentLabelMapLabel $this
+          return
+          #--- end new test
+      }
+    }
+  }
+
+  if { $caller == $::Editor($this,labelMapDerive) } {
+    switch $event {
+      "11000" {
+          #--- add some text feedback to user
+          set vName [[[$::Editor($this,labelMapDerive) GetWidget] GetWidget] GetValue ]
+          if { $vName != "" } {
+              [$::slicer3::ApplicationGUI GetMainSlicerWindow] SetStatusText "Creating new label map based on $vName..."
+          } else {
+              [$::slicer3::ApplicationGUI GetMainSlicerWindow] SetStatusText "Creating new label map..."
+          }
+          update idletasks
+          #--- derive new label map
+          set mapID [ EditorCreateLabelVolume $this ]
+          set mapNode [ $::slicer3::MRMLScene GetNodeByID $mapID ]
+          if { $mapNode != "" } {
+              $::Editor($this,labelMapSelect) SetSelected $mapNode
+              #--- then update the label to communicate 
+              #--- which label map user is currently editing
+              UpdateCurrentLabelMapLabel $this
+          } else {
+              EditorErrorDialog "Error trying to either derive label map, or in trying to select it for display and editing."
+          }
+          #--- clear out status text.
+          [$::slicer3::ApplicationGUI GetMainSlicerWindow] SetStatusText ""
+      }
+    }
+  }
 
   if { $caller == $::Editor($this,enableCheckPoint) } {
     switch $event {
@@ -447,11 +595,16 @@ proc EditorProcessMRMLEvents {this callerID event} {
 }
 
 proc EditorEnter {this} {
-  if {[$this GetDebug]} {
-    puts "EditorEnter: Adding mrml observer on selection node, modified event"
-  }
+    if {[$this GetDebug]} {
+        puts "EditorEnter: Adding mrml observer on selection node, modified event"
+    }
+
   $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode] 31
+
   $::Editor($this,volumesSelect) UpdateMenu
+    #--- new test
+  UpdateCurrentLabelMapLabel $this
+    #--- end new test
 }
 
 proc EditorExit {this} {
@@ -461,6 +614,7 @@ proc EditorExit {this} {
     puts "EditorExit: Removing mrml observer on selection node modified event"
   }
   $this RemoveMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode] 31
+  
   # delete the current effect - users were getting confused that the editor was still
   # active when the module wasn't visible
   after idle ::EffectSWidget::RemoveAll
@@ -468,18 +622,24 @@ proc EditorExit {this} {
 
 # TODO: there might be a better place to put this for general use...  
 proc EditorCreateLabelVolume {this} {
-
   set volumeNode [$::Editor($this,volumesSelect) GetSelected]
+
+  #--- new test
+  set volumeNode [ $::Editor($this,labelMapDerive) GetSelected]
+  #--- end new test
+
   if { $volumeNode == "" } {
     EditorErrorDialog "Select Scalar Source Volume for Label Map"
     return;
   }
 
-  set name [[$::Editor($this,volumeName) GetWidget] GetValue]
-  if { $name == "" } {
-    set name "[$volumeNode GetName]-label"
-  }
-
+  #--- new test
+  #  set name [[$::Editor($this,volumeName) GetWidget] GetValue]
+  #  if { $name == "" } {
+  #   set name "[$volumeNode GetName]-label"
+  #  }
+   set name "[$volumeNode GetName]-label"
+  #--- end new test  
 
   set scene [[$this GetLogic] GetMRMLScene]
 
@@ -491,12 +651,19 @@ proc EditorCreateLabelVolume {this} {
   $selectionNode SetReferenceActiveVolumeID [$volumeNode GetID]
   $selectionNode SetReferenceActiveLabelVolumeID [$labelNode GetID]
   [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection
-
+  
+  #--- new test
+  set id [ $labelNode GetID ]
+  #--- end new test
   $labelNode Delete
 
   # update the editor range to be the full range of the background image
   set range [[$volumeNode GetImageData] GetScalarRange]
   eval ::Labler::SetPaintRange $range
+
+  #--- new test
+  return $id
+  #--- end new test
 }
 
 #
