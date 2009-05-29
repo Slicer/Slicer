@@ -292,7 +292,7 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingGUI *gui)
     //Create a notebook
     this->NB_Details=vtkKWNotebook::New();
     this->NB_Details->SetParent(this->Gui->GetDetailsFrame()->GetFrame());
-    this->NB_Details->SetMinimumHeight(400);
+//    this->NB_Details->SetMinimumHeight(400);
     this->NB_Details->Create();
     this->NB_Details->AddPage("Performance","Influence the performance and quality of the rendering. Settings will still be available after starting Slicer3 again.");
     this->NB_Details->AddPage("Threshold","Edit volume rendering mapping options by using a threshold mechanism.");
@@ -498,41 +498,21 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
         
         if (!IsCUDARayCastingSupported)
         {
-            vtkKWLabel *errorText=vtkKWLabel::New();
-            errorText->SetParent(this->Gui->GetDetailsFrame()->GetFrame());
-            errorText->Create();
-            errorText->SetText("CUDA ray casting is not supported");
-            this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", errorText->GetWidgetName());
-
+            vtkErrorMacro("CUDA is not supported by your computer.");
             this->CB_CUDARayCastShading->EnabledOff();
-     
-            errorText->Delete();
         }
 
         if (!IsGPURayCastingSupported)
         {
-            vtkKWLabel *errorText=vtkKWLabel::New();
-            errorText->SetParent(this->Gui->GetDetailsFrame()->GetFrame());
-            errorText->Create();
-            errorText->SetText("GPU RayCasting (GLSL) is not supported");
-            this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", errorText->GetWidgetName());
-
+            vtkErrorMacro("GPU ray casting (GLSL) is not supported by your computer.");
             this->CB_GPURayCastMIP->EnabledOff();
             this->CB_GPURayCastShading->EnabledOff();
             this->CB_GPURayCastLargeVolume->EnabledOff();
-    
-            errorText->Delete();
         }
     
         if(!IsTextureMappingSupported)
         {
-            vtkKWLabel *errorText=vtkKWLabel::New();
-            errorText->SetParent(this->Gui->GetDetailsFrame()->GetFrame());
-            errorText->Create();
-            errorText->SetText("OpenGL Texture Mapping is not supported");
-            this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", errorText->GetWidgetName());
-            
-            errorText->Delete();
+            vtkErrorMacro("OpenGL Texture Mapping is not supported by your computer.");
         }
 
     }
