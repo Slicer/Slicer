@@ -1727,8 +1727,6 @@ void vtkFetchMILogic::SetSlicerDataTypeOnFiberBundleNodes()
     }
 
   vtkMRMLNode *node = NULL;
-  vtkMRMLStorableNode *stnode = NULL;
-  vtkTagTable *t = NULL;
   
   int n;
   int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLFiberBundleNode");
