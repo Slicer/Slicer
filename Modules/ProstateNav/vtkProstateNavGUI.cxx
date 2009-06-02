@@ -162,10 +162,10 @@ vtkProstateNavGUI::vtkProstateNavGUI ( )
   
   this->WorkPhaseButtonSet = NULL;
 
-#ifdef USE_NAVITRACK
+  // these need to be set to null no matter what
   this->ScannerStatusLabelDisp  = NULL;
   this->SoftwareStatusLabelDisp = NULL;
-#endif
+  this->RobotStatusLabelDisp = NULL;
 
   //----------------------------------------------------------------  
   // Wizard Frame
@@ -191,11 +191,11 @@ vtkProstateNavGUI::vtkProstateNavGUI ( )
   this->StartScanButton        = NULL;
   this->StopScanButton         = NULL;
 
-  this->FreezeImageCheckButton = NULL;
   this->LocatorCheckButton     = NULL;
 
+  this->ImagingControlCheckButton = NULL;
   this->ImagingMenu            = NULL;
-
+  
   //----------------------------------------------------------------
   // Target Fiducials List (MRML)
 
@@ -297,6 +297,11 @@ vtkProstateNavGUI::~vtkProstateNavGUI ( )
     this->StopScanButton->Delete();
     }
 
+  if ( this->ImagingControlCheckButton )
+    {
+    this->ImagingControlCheckButton->SetParent(NULL);
+    this->ImagingControlCheckButton->Delete();
+    }
   if ( this->ImagingMenu )
     {
     this->ImagingMenu->SetParent(NULL);
@@ -369,6 +374,8 @@ vtkProstateNavGUI::~vtkProstateNavGUI ( )
     this->CommandConverter->Delete();
     this->CommandConverter = NULL;
     }
+
+  
 }
 
 

@@ -203,15 +203,15 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
   vtkCallbackCommand *DataCallbackCommand;
 
   // Access the slice windows
-  vtkSlicerSliceLogic *Logic0;
-  vtkSlicerSliceLogic *Logic1;
-  vtkSlicerSliceLogic *Logic2;
+  //vtkSlicerSliceLogic *Logic0;
+  //vtkSlicerSliceLogic *Logic1;
+  //vtkSlicerSliceLogic *Logic2;
   vtkMRMLSliceNode *SliceNode0;
   vtkMRMLSliceNode *SliceNode1;
   vtkMRMLSliceNode *SliceNode2;
-  vtkSlicerSliceControllerWidget *Control0;
-  vtkSlicerSliceControllerWidget *Control1;
-  vtkSlicerSliceControllerWidget *Control2;
+  //vtkSlicerSliceControllerWidget *Control0;
+  //vtkSlicerSliceControllerWidget *Control1;
+  //vtkSlicerSliceControllerWidget *Control2;
 
   //BTX
   std::string LocatorModelID;
@@ -225,7 +225,7 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
   //int NeedRealtimeImageUpdate;
   int FreezeOrientationUpdate;
 
-  int RealtimeImageOrient;
+  //int RealtimeImageOrient;
 
   vtkIGTLToMRMLCoordinate* CoordinateConverter;
   vtkIGTLToMRMLBrpRobotCommand* CommandConverter;
