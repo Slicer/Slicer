@@ -275,6 +275,23 @@ void vtkFetchMIGUI::Enter()
           {
           this->SetGUIWidth (appGUI->GetMainSlicerWindow()->GetMainSplitFrame()->GetFrame1Size ());
           appGUI->GetMainSlicerWindow()->GetMainSplitFrame()->SetFrame1Size ( (int)(floor(geom->GetDefaultGUIPanelWidth() * 1.75)) );
+          const char *txt = appGUI->GetMainSlicerWindow()->GetStatusText();
+
+          vtkSlicerWaitMessageWidget *wm = vtkSlicerWaitMessageWidget::New();
+          if ( wm )
+            {
+            wm->SetParent ( appGUI->GetMainSlicerWindow() );
+            wm->Create();
+            wm->SetText ("Checking and updating all metadata (may take a little while)...");
+            wm->DisplayWindow();
+            this->SetStatusText ("Checking and updating all metadata ( may take a little while).");
+            this->Script ("update idletasks");  
+            this->Logic->ApplySlicerDataTypeTag();
+            wm->WithdrawWindow();
+            wm->Delete();
+            }
+          this->SetStatusText ("");
+          this->Script ("update idletasks");
           }
         }
       }
@@ -2281,7 +2298,27 @@ void vtkFetchMIGUI::BuildGUI ( )
     return;
     }
   
-  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication() );
+  if ( !app )
+    {
+    vtkErrorMacro ( "BuildGUI: got Null SlicerApplication" );
+    return;
+    }
+  vtkSlicerApplicationGUI *appGUI = app->GetApplicationGUI();
+  if ( !appGUI )
+    {
+    vtkErrorMacro ( "BuildGUI: got Null SlicerApplicationGUI" );
+    return;
+    }
+  vtkSlicerWindow *win = appGUI->GetMainSlicerWindow ();
+  if ( win == NULL )
+    {
+    vtkErrorMacro ( "BuildGUI: got NULL MainSlicerWindow");
+    return;
+    }
+  win->SetStatusText ( "Building Interface for FetchMI Module...." );
+  app->Script ( "update idletasks" );
+
   if ( this->MRMLScene != NULL )
     {
     vtkMRMLFetchMINode* fetchMINode = vtkMRMLFetchMINode::New();

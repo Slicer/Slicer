@@ -216,8 +216,10 @@ vtkFetchMILogic::~vtkFetchMILogic()
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::Enter()
 {
+
   this->Visited = true;
   this->Raised = true;
+
   //---
   //--- Set up Logic observers on enter, and released on exit.
   vtkIntArray *logicEvents = this->NewObservableEvents();
@@ -528,6 +530,11 @@ void vtkFetchMILogic::RequestResourceUpload ( )
   //--- for the remoteIO pipeline.
   this->SetIdleWriteStateOnSelectedResources ();
   this->SetCacheFileNamesOnSelectedResources();
+
+  //---
+  //--- make sure that the Slicer data type is set on all storables.
+  this->ApplySlicerDataTypeTag();
+  //---
 
   //---
   //--- update the handler to match Currently selected server.
@@ -1247,6 +1254,7 @@ void vtkFetchMILogic::ProcessMRMLEvents ( vtkObject *caller, unsigned long event
     {
     return;
     }
+
   if ( this->FetchMINode == NULL )
     {
     vtkErrorMacro ( "FetchMILogic::ProcessMRMLEvents: got null FetchMINode." );
