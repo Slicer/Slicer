@@ -89,7 +89,7 @@ vtkSlicerModulesStep::vtkSlicerModulesStep()
   this->SelectAllButton = NULL;
   this->SelectNoneButton = NULL;
   this->ModulesMultiColumnList = NULL;
-  this->HomePageColIndex = NULL;
+  this->HomePageColIndex = 0;
   this->DownloadButton = NULL;
   this->UninstallButton = NULL;
   this->StopButton = NULL;

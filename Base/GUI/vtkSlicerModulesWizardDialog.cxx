@@ -56,7 +56,6 @@ void vtkSlicerModulesWizardDialog::CreateWidget()
   this->SetSize(600, 500);
 
   vtkKWWizardWorkflow *wizard_workflow = this->GetWizardWorkflow();
-  vtkKWWizardWidget *wizard_widget = this->GetWizardWidget();
 
   // Add Configuration step
 
