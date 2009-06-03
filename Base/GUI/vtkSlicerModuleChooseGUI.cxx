@@ -298,7 +298,6 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
     // but don't want to trigger extra events by setting it. ignore for now.
     this->SelectModule ( c );
     this->GetModuleNavigator()->AddModuleNameToNavigationList ( c );
-//    this->RaiseModule ( c );
     }
   if ( entry == this->ModulesSearchEntry && event == vtkKWEntry::EntryValueChangedEvent )
     {
@@ -340,14 +339,26 @@ void vtkSlicerModuleChooseGUI::RaiseModule ( const char *moduleName )
           mName = m->GetUIPanel()->GetName();
           if ( !strcmp (moduleName, mName) ) 
            {
-            m->GetUIPanel()->Raise();
-            p->GetMainSlicerWindow()->SetStatusText ( mName );
-            this->GetModulesMenuButton()->SetValue( mName );
-            break;
+           //--- feedback to user
+           std::string statusText = "...raising module ";
+           statusText += mName;
+           statusText += "...";
+           p->GetMainSlicerWindow()->SetStatusText ( statusText.c_str() );
+           this->Script ( "update idletasks");
+
+           //--- raise the panel
+           m->GetUIPanel()->Raise();
+           p->GetMainSlicerWindow()->SetStatusText ( mName );
+           this->GetModulesMenuButton()->SetValue( mName );
+
+           //--- feedback to user
+           p->GetMainSlicerWindow()->SetStatusText ( mName );
+           this->Script ( "update idletasks");
+           break;
            }
           m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ) );
-        } // end while      
-      } // end if ( app != NULL
+        } 
+      } 
     }
 }
 
@@ -398,6 +409,15 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName, vtkMRMLNod
           vtkSlicerModuleGUI *currentModule = app->GetModuleGUIByName( currentModuleName );
           if (currentModule != NULL )
             {
+            //--- user feedback
+            if ( this->GetApplicationGUI()->GetMainSlicerWindow() )
+              {
+              std::string statusText = "leaving ";
+              statusText += currentModuleName;
+              statusText += " ...";
+              this->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText ( statusText.c_str() );
+              this->Script ( "update idletasks");
+              }
             currentModule->Exit ( );
             }
           }
