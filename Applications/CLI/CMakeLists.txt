@@ -1,6 +1,6 @@
 project( CLI )
 
-# 
+#
 
 find_package(GenerateCLP REQUIRED)
 if(GenerateCLP_FOUND)
@@ -620,6 +620,7 @@ subdirs ( Realign )
 subdirs( DiffusionApplications )
 #subdirs( EndoNavTracking )
 subdirs( ExtractSkeleton )
+subdirs( N3MRIBiasFieldCorrection )
 
 if ( ${ITK_VERSION_MAJOR} GREATER 3 )
 
@@ -686,7 +687,7 @@ if (Slicer3_SOURCE_DIR)
     CurvatureAnisotropicDiffusionLib
     GradientAnisotropicDiffusion
     GradientAnisotropicDiffusionLib
-    MedianImageFilter 
+    MedianImageFilter
     MedianImageFilterLib
     Multiply
     MultiplyLib
