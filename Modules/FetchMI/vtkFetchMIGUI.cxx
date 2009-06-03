@@ -275,7 +275,6 @@ void vtkFetchMIGUI::Enter()
           {
           this->SetGUIWidth (appGUI->GetMainSlicerWindow()->GetMainSplitFrame()->GetFrame1Size ());
           appGUI->GetMainSlicerWindow()->GetMainSplitFrame()->SetFrame1Size ( (int)(floor(geom->GetDefaultGUIPanelWidth() * 1.75)) );
-          const char *txt = appGUI->GetMainSlicerWindow()->GetStatusText();
 
           vtkSlicerWaitMessageWidget *wm = vtkSlicerWaitMessageWidget::New();
           if ( wm )
