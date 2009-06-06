@@ -8,9 +8,11 @@
     Non-uniform Intensity Normalization (N3) method described by Sled et al.
     in IEEE TMI 1998.
   </description>
+  <version>0.1.0</version>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:N3MRIBiasFieldCorrection</documentation-url>
   <license></license>
-  <contributor>Nicolas RANNOU nrannou@bwh.harvard.edu</contributor>
-
+  <contributor>Nicolas Rannou, Sylvain Jaume</contributor>
+  <acknowledgements>This work has been supported by NA-MIC</acknowledgements>
   <parameters>
     <label>N3 MRI Bias Field Correction Parameters</label>
     <description>Parameters for the correction of the bias</description>
