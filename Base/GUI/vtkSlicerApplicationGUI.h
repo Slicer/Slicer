@@ -307,7 +307,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // would cause event loops (since it calls the tk 'update' command
     // to force display)
     void SetExternalProgress(char *message, float progress);
-  
+
 protected:
     vtkSlicerApplicationGUI ( );
     virtual ~vtkSlicerApplicationGUI ( );
