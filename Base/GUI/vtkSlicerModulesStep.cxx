@@ -441,8 +441,7 @@ void vtkSlicerModulesStep::Update()
       // Insert each extension entry discovered on the repository
       for (unsigned int i = 0; i < this->Modules.size(); i++)
         {
-        ManifestEntry *extension = this->Modules[i];            
-        this->InsertExtension(i, extension, cachedir);
+        this->InsertExtension(i, this->Modules[i], cachedir);
         }
       }
     }
@@ -797,7 +796,7 @@ std::vector<ManifestEntry*> vtkSlicerModulesStep::ParseManifest(const std::strin
   std::string::size_type dash = txt.find(svn_key, zip);
 
   bool cvs = false;
-  if (dash > atag)
+  if (std::string::npos == dash || dash > atag)
     {
     cvs = true;
     dash = txt.find(cvs_key, zip);
@@ -864,7 +863,7 @@ std::vector<ManifestEntry*> vtkSlicerModulesStep::ParseManifest(const std::strin
       atag = txt.find(atag_key, zip);
 
       cvs = false;
-      if (dash > atag)
+      if (std::string::npos == dash || dash > atag)
         {
         cvs = true;
         dash = txt.find(cvs_key, zip);
@@ -874,7 +873,7 @@ std::vector<ManifestEntry*> vtkSlicerModulesStep::ParseManifest(const std::strin
       ext = txt.find(ext_key, dash );
       atag2 = txt.find(atag_key, ext);
 
-      result.push_back(entry);
+      this->AddEntry(result, entry);
       }
       
     count++;
@@ -882,6 +881,39 @@ std::vector<ManifestEntry*> vtkSlicerModulesStep::ParseManifest(const std::strin
 
   return result;
 }
+
+//----------------------------------------------------------------------------
+void vtkSlicerModulesStep::AddEntry(std::vector<ManifestEntry*> &entries,
+                                    ManifestEntry *entry)
+{
+  std::vector<ManifestEntry*>::iterator iter;
+  for (iter = entries.begin(); iter != entries.end(); iter++)
+    {
+    if ((*iter)->Name == entry->Name)
+      {
+      break;
+      }
+    }
+
+  if (iter == entries.end())
+    {
+    entries.push_back(entry);
+    }
+  else
+    {
+    if (entry->Revision > (*iter)->Revision)
+      {
+      delete (*iter);
+      (*iter) = entry;
+      }
+    else
+      {
+      delete entry;
+      entry = 0;
+      }
+    }
+  
+}// AddEntry
 
 //----------------------------------------------------------------------------
 void vtkSlicerModulesStep::DownloadParseS3ext(const std::string& s3ext,

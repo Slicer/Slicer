@@ -109,12 +109,6 @@ private:
   vtkSlicerModulesStep(const vtkSlicerModulesStep&); // Not implemented.
   void operator=(const vtkSlicerModulesStep&); // Not implemented.
 
-  // Description:
-  // Helper method to turn a module manifest into a selectable list.
-  //BTX
-  std::vector<ManifestEntry*> ParseManifest(const std::string&);
-  //ETX
-
   vtkKWFrame *Frame1;
   vtkKWFrame *Frame2;
   vtkKWFrame *Frame3;
@@ -132,6 +126,18 @@ private:
   vtkKWPushButton *StopButton;
 
   vtkSlicerModulesWizardDialog *WizardDialog;
+
+  // Description:
+  // Helper method to turn a module manifest into a selectable list.
+  //BTX
+  std::vector<ManifestEntry*> ParseManifest(const std::string&);
+  //ETX
+
+  // Description:
+  // Helper method to add greatest revision of named extensions to the vector.
+  //BTX
+  void AddEntry(std::vector<ManifestEntry*> &entries, ManifestEntry *entry);
+  //ETX
 
   // Description:
   // Helper method to download .s3ext file and parse
