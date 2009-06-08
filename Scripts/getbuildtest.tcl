@@ -409,7 +409,11 @@ if { $::GETBUILDTEST(buildList) != "" } {
     append cmd " $::GETBUILDTEST(buildList)"
 }
 
-eval runcmd $cmd
+set retval [catch "eval runcmd $cmd"]
+if {$retval == 1} {
+  puts "ERROR: failed to run getbuildtest: $cmd"
+  return
+}
 
 if { $::GETBUILDTEST(version-patch) == "" } {
   # TODO: add build type (win32, etc) here...
