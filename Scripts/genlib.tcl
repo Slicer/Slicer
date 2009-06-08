@@ -575,7 +575,8 @@ if {  [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [stri
       # point the tkinter build file to the slicer tcl-build 
       replaceStringInFile "PCbuild/_tkinter.vcproj" "tcltk" "tcl-build"
 
-      if { $::GENERATOR != "Visual Studio 7 .NET 2003" } {
+      if { $::GENERATOR != "Visual Studio 7 .NET 2003" &&
+           $::MAKE != "c:/Program Files/Microsoft Visual Studio 9.0/Common7/IDE/VCExpress.exe"} {
         runcmd $::MAKE PCbuild/pcbuild.sln /Upgrade
       }
       runcmd $::MAKE PCbuild/pcbuild.sln /out buildlog.txt /build Release
