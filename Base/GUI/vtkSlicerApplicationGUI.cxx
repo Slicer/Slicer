@@ -101,6 +101,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
 
   this->MRMLScene = NULL;
   this->Built = false;
+  this->DataCount = 0;
   
   //---  
   // widgets used in the Slice module
@@ -253,6 +254,9 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 
     this->SetApplication(NULL);
     this->SetApplicationLogic ( NULL );
+    this->SetAndObserveMRMLScene (NULL);
+    this->DataCount = 0;
+
 }
 
 //---------------------------------------------------------------------------
@@ -1098,6 +1102,19 @@ void vtkSlicerApplicationGUI::ProcessMRMLEvents ( vtkObject *caller,
     //-- todo: is this right?
     //    this->SetAndObserveGUILayoutNode ( NULL );
     }
+  else if ( scene != NULL &&
+            scene == this->MRMLScene &&
+            event == vtkMRMLScene::LoadProgressFeedbackEvent )
+    {
+    this->UpdateLoadStatusText();
+    }
+  else if ( scene != NULL &&
+            scene == this->MRMLScene &&
+            event == vtkMRMLScene::SaveProgressFeedbackEvent )
+    {
+    this->UpdateSaveStatusText();
+    }
+  
   else if (scene != NULL &&
            scene == this->MRMLScene
            && event == vtkMRMLScene::NodeAddedEvent )
@@ -1148,6 +1165,54 @@ void vtkSlicerApplicationGUI::Enter ( )
 void vtkSlicerApplicationGUI::Exit ( )
 {
 }
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::UpdateLoadStatusText()
+{
+  vtkSlicerWindow *win = this->GetMainSlicerWindow();
+  const char *upText = "Adding data";
+
+  if ( win != NULL )
+    {
+    std::string txt = win->GetStatusText ();
+    if ( txt.find(upText) != std::string::npos )
+      {
+      txt.append ( "..." );
+      win->SetStatusText ( txt.c_str() );
+      this->Script ( "update idletasks" );
+      }
+    else
+      {
+      win->SetStatusText ( upText );
+      this->Script ( "update idletasks" );
+      }
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::UpdateSaveStatusText()
+{
+  vtkSlicerWindow *win = this->GetMainSlicerWindow();
+  const char *upText = "Saving data";
+
+  if ( win != NULL )
+    {
+    std::string txt = win->GetStatusText ();
+    if ( txt.find(upText) != std::string::npos )
+      {
+      txt.append ( "..." );
+      win->SetStatusText ( txt.c_str() );
+      this->Script ( "update idletasks" );
+      }
+    else
+      {
+      win->SetStatusText ( upText );
+      this->Script ( "update idletasks" );
+      }
+    }
+}
+
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::SelectModuleForNode ( vtkMRMLNode *node )
@@ -1264,8 +1329,14 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
   
   this->MainSlicerWindow->Create ( );
 
-//            app->GetTclInteractor()->SetFont("Courier 12");
-            
+  // Observe an event that updates the status text during loading of data.
+
+  vtkIntArray *events = vtkIntArray::New();
+  events->InsertNextValue(vtkMRMLScene::LoadProgressFeedbackEvent);
+  events->InsertNextValue(vtkMRMLScene::SaveProgressFeedbackEvent);
+  this->SetAndObserveMRMLSceneEvents (this->MRMLScene, events );
+  events->Delete();
+
   // configure initial GUI layout
   geom->InitializeMainSlicerWindowSize ( );
   geom->ConfigureMainSlicerWindowPanels ( );
@@ -1898,13 +1969,11 @@ void vtkSlicerApplicationGUI::CreateMain3DViewer ( )
     events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
     events->InsertNextValue(vtkCommand::ModifiedEvent);
     this->ViewerWidget->SetAndObserveMRMLSceneEvents (this->MRMLScene, events );
-      
-    // use the events for the fiducial list widget as well
-    //events->Delete();
     this->ViewerWidget->Create();
     this->ViewerWidget->GetMainViewer()->SetRendererBackgroundColor (app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
     this->ViewerWidget->UpdateFromMRML();
     this->ViewerWidget->SetApplicationLogic ( this->GetApplicationLogic () );
+
     // add the fiducial list widget
     this->FiducialListWidget = vtkSlicerFiducialListWidget::New();
     this->FiducialListWidget->SetApplication( app );
@@ -1912,8 +1981,8 @@ void vtkSlicerApplicationGUI::CreateMain3DViewer ( )
     this->FiducialListWidget->SetInteractorStyle(vtkSlicerViewerInteractorStyle::SafeDownCast(this->ViewerWidget->GetMainViewer()->GetRenderWindowInteractor()->GetInteractorStyle()));
     this->FiducialListWidget->Create();
     this->FiducialListWidget->SetAndObserveMRMLSceneEvents (this->MRMLScene, events );
-    events->Delete();
     this->FiducialListWidget->UpdateFromMRML();
+    events->Delete();
 
     // add the roi widget
     this->ROIViewerWidget = vtkSlicerROIViewerWidget::New();

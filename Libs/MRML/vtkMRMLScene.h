@@ -349,6 +349,8 @@ public:
       SceneLoadingErrorEvent = 66005,
       SceneEditedEvent = 66006,
       MetadataAddedEvent = 66007,
+      LoadProgressFeedbackEvent = 66008,
+      SaveProgressFeedbackEvent = 66009,
     };
 //ETX
 

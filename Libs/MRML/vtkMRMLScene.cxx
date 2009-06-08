@@ -785,6 +785,8 @@ int vtkMRMLScene::Commit(const char* url)
     return 1;
     }
   
+  this->InvokeEvent (vtkMRMLScene::SaveProgressFeedbackEvent );
+
   //file << "<?xml version=\"1.0\" standalone='no'?>\n";
   //file << "<!DOCTYPE MRML SYSTEM \"mrml20.dtd\">\n";
 

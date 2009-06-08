@@ -187,6 +187,18 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void DeleteComponentGUIs();
     
     // Description:
+    // Gives progress feedback in the main slicer window
+    // and is called when a storage node's StageReadData is called.
+    // Provides "signs of life" when large datasets are being loaded.
+    virtual void UpdateLoadStatusText();
+
+    // Description:
+    // Gives progress feedback in the main slicer window
+    // and is called when a storage node's StageWriteData is called.
+    // Provides "signs of life" when large datasets are being saved.
+    virtual void UpdateSaveStatusText();
+    
+    // Description:
     // These methods configure and pack the Slicer Window
     virtual void PackFirstSliceViewerFrame ( );
 
@@ -382,6 +394,9 @@ protected:
     bool SceneClosing;
     bool Built;
     int CurrentLayout;
+    // Description:
+    // Used for user feedback during loading of datasets
+    int DataCount;
       
  private:
     vtkSlicerApplicationGUI ( const vtkSlicerApplicationGUI& ); // Not implemented.

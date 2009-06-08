@@ -294,6 +294,11 @@ void vtkMRMLStorageNode::ProcessMRMLEvents ( vtkObject *caller, unsigned long ev
 void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
 {
   // if the URI is null, or emtpy assume the file name is set and return
+  if ( this->Scene )
+    {
+    this->Scene->InvokeEvent (vtkMRMLScene::LoadProgressFeedbackEvent );
+    }
+
   if ( this->GetURI() == NULL )
     {
     vtkDebugMacro("StageReadData: uri is null, setting state to transfer done");
@@ -383,6 +388,11 @@ void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
 //----------------------------------------------------------------------------
 void vtkMRMLStorageNode::StageWriteData ( vtkMRMLNode *refNode )
 {
+  if ( this->Scene )
+    {
+    this->Scene->InvokeEvent (vtkMRMLScene::SaveProgressFeedbackEvent );
+    }
+
   if (this->URI == NULL)
     {
     this->SetWriteStateTransferDone();
