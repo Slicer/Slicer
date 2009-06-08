@@ -305,7 +305,7 @@ proc ModelIntoLabelVolumeApply {this} {
       set labelmapVolumeNode [ModelIntoLabelVolumeIntersect $modelNode $volumeNode $labelValue $labelVolumeName $intensityFlag $matrixNode]
   }
   if {$labelmapVolumeNode == ""} {
-      puts "ERROR: can't find a new label map volume."
+      puts "ERROR: can't find a new label map volume with name '$labelVolumeName'"
       return
   }
   # set the new label map to be active
