@@ -575,9 +575,12 @@ if {  [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [stri
       # point the tkinter build file to the slicer tcl-build 
       replaceStringInFile "PCbuild/_tkinter.vcproj" "tcltk" "tcl-build"
 
-      if { $::GENERATOR != "Visual Studio 7 .NET 2003" &&
-           $::MAKE != "c:/Program Files/Microsoft Visual Studio 9.0/Common7/IDE/VCExpress.exe"} {
-        runcmd $::MAKE PCbuild/pcbuild.sln /Upgrade
+      if { $::GENERATOR != "Visual Studio 7 .NET 2003" } {
+         if {$::MAKE != "c:/Program Files/Microsoft Visual Studio 9.0/Common7/IDE/VCExpress.exe"} {
+           runcmd $::MAKE PCbuild/pcbuild.sln /Upgrade
+         } else {
+           runcmd $::MAKE PCbuild/pcbuild.sln
+         }
       }
       runcmd $::MAKE PCbuild/pcbuild.sln /out buildlog.txt /build Release
 
@@ -588,9 +591,21 @@ if {  [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [stri
       # copy the lib so that numpy and slicer can find it easily
       # copy the socket shared library so python can find it
       # TODO: perhaps we need an installer step here
-      file copy -force $::Slicer3_LIB/python-build/PCbuild/python25.lib $::Slicer3_LIB/python-build/Lib/python25.lib 
-      file copy -force $::Slicer3_LIB/python-build/PCbuild/_socket.pyd $::Slicer3_LIB/python-build/Lib/_socket.pyd
-      file copy -force $::Slicer3_LIB/python-build/PCbuild/_ctypes.pyd $::Slicer3_LIB/python-build/Lib/_ctypes.pyd
+      set ret [catch "file copy -force $::Slicer3_LIB/python-build/PCbuild/python25.lib $::Slicer3_LIB/python-build/Lib/python25.lib "]
+      if {$ret == 1} {
+          puts "ERROR: couldn't copy $::Slicer3_LIB/python-build/PCbuild/python25.lib to $::Slicer3_LIB/python-build/Lib/"
+          exit 1
+      }
+      set ret [catch "file copy -force $::Slicer3_LIB/python-build/PCbuild/_socket.pyd $::Slicer3_LIB/python-build/Lib/_socket.pyd"]
+      if {$ret == 1} {
+         puts "ERROR: failed to copy $::Slicer3_LIB/python-build/PCbuild/_socket.pyd $::Slicer3_LIB/python-build/Lib/_socket.pyd"
+         exit 1
+       }
+      set ret [catch "file copy -force $::Slicer3_LIB/python-build/PCbuild/_ctypes.pyd to $::Slicer3_LIB/python-build/Lib/_ctypes.pyd"]
+      if {$ret == 1} {
+        puts "ERORR: failed to copy $::Slicer3_LIB/python-build/PCbuild/_ctypes.pyd to $::Slicer3_LIB/python-build/Lib/_ctypes.pyd"
+        exit 1
+      }
 
     } else {
 
