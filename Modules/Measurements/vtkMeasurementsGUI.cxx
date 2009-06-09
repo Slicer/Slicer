@@ -84,7 +84,7 @@ vtkMeasurementsGUI::vtkMeasurementsGUI()
 
   this->AngleRepresentation = vtkAngleRepresentation3D::New();
   this->AngleRepresentation->SetHandleRepresentation(this->AngleHandleRepresentation);
-  double textscale[3] = {1.0, 1.0, 1.0};
+  double textscale[3] = {10.0, 10.0, 10.0};
   this->AngleRepresentation->SetTextActorScale(textscale);
 
   this->AngleWidget = vtkAngleWidget::New();
