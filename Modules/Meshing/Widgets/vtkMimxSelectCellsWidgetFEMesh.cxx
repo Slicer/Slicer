@@ -64,6 +64,9 @@ PURPOSE.  See the above copyright notices for more information.
 #include "vtkPolyDataMapper.h"
 #include "vtkPolyDataSource.h"
 #include "vtkSelection.h"
+#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
+#include "vtkSelectionNode.h"
+#endif
 #include "vtkSphereSource.h"
 #include "vtkVisibleCellSelector.h"
 #include "vtkWidgetCallbackMapper.h" 
@@ -475,12 +478,20 @@ void vtkMimxSelectCellsWidgetFEMesh::SelectVisibleCellsOnSurfaceFunction(
   vtkSelection *res = vtkSelection::New();
   select->GetSelectedIds(res);
 
+#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
+  vtkSelectionNode *cellidssel = res->GetNode(0);
+#else
   vtkSelection *cellidssel = res->GetChild(0);
+#endif
   vtkExtractSelectedPolyDataIds *extr = vtkExtractSelectedPolyDataIds::New();
   if (cellidssel)
     {
     extr->SetInput(0, fil->GetOutput());
+#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
+    extr->SetInput(1, res);
+#else
     extr->SetInput(1, cellidssel);
+#endif
     extr->Update();
     }
   if(extr->GetOutput()->GetNumberOfCells() < 1)
@@ -521,9 +532,18 @@ void vtkMimxSelectCellsWidgetFEMesh::SelectVisibleCellsOnSurfaceFunction(
   self->Input->GetCellData()->AddArray(globalids);
   self->Input->GetCellData()->SetGlobalIds(globalids);
 
+#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
+  selection->RemoveAllNodes();
+  vtkSelectionNode *node = vtkSelectionNode::New();
+  selection->AddNode(node);
+  node->Delete();
+  node->GetProperties()->Set(
+    vtkSelectionNode::CONTENT_TYPE(), vtkSelectionNode::GLOBALIDS);
+#else
   selection->Clear();
   selection->GetProperties()->Set(
     vtkSelection::CONTENT_TYPE(), vtkSelection::GLOBALIDS);
+#endif
   vtkIdTypeArray *cellIds = vtkIdTypeArray::New();
   cellIds->SetNumberOfComponents(1);
   cellIds->SetNumberOfTuples(self->SelectedCellIds->GetNumberOfIds());
@@ -531,7 +551,11 @@ void vtkMimxSelectCellsWidgetFEMesh::SelectVisibleCellsOnSurfaceFunction(
     {
     cellIds->SetTuple1(i, self->SelectedCellIds->GetId(i));
     }
+#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
+  selection->GetNode(0)->SetSelectionList(cellIds);
+#else
   selection->SetSelectionList(cellIds);
+#endif
   cellIds->Delete();
         
   ext->Update();
@@ -625,10 +649,18 @@ void vtkMimxSelectCellsWidgetFEMesh::SelectCellsOnSurfaceFunction(
     }
   self->Input->GetCellData()->AddArray(globalids);
   self->Input->GetCellData()->SetGlobalIds(globalids);
-
+#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
+  selection->RemoveAllNodes();
+  vtkSelectionNode *node = vtkSelectionNode::New();
+  selection->AddNode(node);
+  node->Delete();
+  node->GetProperties()->Set(
+    vtkSelectionNode::CONTENT_TYPE(), vtkSelectionNode::GLOBALIDS);
+#else
   selection->Clear();
   selection->GetProperties()->Set(
     vtkSelection::CONTENT_TYPE(), vtkSelection::GLOBALIDS);
+#endif
   vtkIdTypeArray *cellIds = vtkIdTypeArray::New();
   cellIds->SetNumberOfComponents(1);
   cellIds->SetNumberOfTuples(self->SelectedCellIds->GetNumberOfIds());
@@ -636,7 +668,11 @@ void vtkMimxSelectCellsWidgetFEMesh::SelectCellsOnSurfaceFunction(
     {
     cellIds->SetTuple1(i, self->SelectedCellIds->GetId(i));
     }
+#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
+  selection->GetNode(0)->SetSelectionList(cellIds);
+#else
   selection->SetSelectionList(cellIds);
+#endif
   cellIds->Delete();
 
   ext->Update();
@@ -911,13 +947,20 @@ void vtkMimxSelectCellsWidgetFEMesh::ExtractVisibleSurfaceFunction(vtkMimxSelect
     self->CurrentRenderer->RemoveActor(self->ExtractedSurfaceActor);
     self->ExtractedSurfaceActor->Delete();
     }
-
+#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
+  vtkSelectionNode *cellids = res->GetNode(0);
+#else
   vtkSelection *cellids = res->GetChild(0);
+#endif
   vtkExtractSelectedPolyDataIds *extr = vtkExtractSelectedPolyDataIds::New();
   if (cellids)
     {
     extr->SetInput(0, clean->GetOutput());
+#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
+    extr->SetInput(1, res);
+#else
     extr->SetInput(1, cellids);
+#endif
     extr->Update();
     self->ExtractedSurfaceActor = vtkActor::New();
     vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();

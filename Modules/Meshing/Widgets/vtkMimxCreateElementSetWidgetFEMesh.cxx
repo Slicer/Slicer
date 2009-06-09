@@ -62,6 +62,9 @@ PURPOSE.  See the above copyright notices for more information.
 #include "vtkPolyDataMapper.h"
 #include "vtkPolyDataSource.h"
 #include "vtkSelection.h"
+#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
+#include "vtkSelectionNode.h"
+#endif
 #include "vtkVisibleCellSelector.h"
 #include "vtkWidgetCallbackMapper.h" 
 #include "vtkWidgetEvent.h"
@@ -601,13 +604,20 @@ void vtkMimxCreateElementSetWidgetFEMesh::SelectVisibleCellsOnSurfaceFunction(
 
   vtkSelection *res = vtkSelection::New();
   select->GetSelectedIds(res);
-
+#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
+  vtkSelectionNode *cellidssel = res->GetNode(0);
+#else
   vtkSelection *cellidssel = res->GetChild(0);
+#endif
   vtkExtractSelectedPolyDataIds *extr = vtkExtractSelectedPolyDataIds::New();
   if (cellidssel)
     {
     extr->SetInput(0, fil->GetOutput());
+#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
+    extr->SetInput(1, res);
+#else
     extr->SetInput(1, cellidssel);
+#endif
     extr->Update();
     }
 
