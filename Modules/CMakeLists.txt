@@ -66,6 +66,7 @@ subdirs(
    DistanceTransformModel
    ClipModel
    #VolumeRenderingCuda
+   Measurements
    ModelIntoLabelVolume
    ExtractSubvolume
    FastMarchingSegmentation
