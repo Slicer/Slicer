@@ -103,6 +103,8 @@ vtkQdecModuleGUI::vtkQdecModuleGUI()
   this->QuestionMenu = NULL;
   this->Logic = NULL;
 
+  this->Index = 2;
+
   // for picking
   this->ViewerWidget = NULL;
   this->InteractorStyle = NULL;
