@@ -19,7 +19,7 @@ vtkSlicerToolbarIcons::vtkSlicerToolbarIcons ( )
     this->TransformIcon = vtkKWIcon::New();
     this->ColorIcon = vtkKWIcon::New();
     this->FiducialsIcon = vtkKWIcon::New();
-    //   this->MeasurementsIcon = vtkKWIcon::New();
+    this->MeasurementsIcon = vtkKWIcon::New();
     this->SaveSceneIcon = vtkKWIcon::New();
     this->LoadSceneIcon = vtkKWIcon::New();
     this->ChooseLayoutIcon = vtkKWIcon::New ( );
@@ -106,13 +106,11 @@ vtkSlicerToolbarIcons::~vtkSlicerToolbarIcons ( )
     this->FiducialsIcon->Delete ( );
     this->FiducialsIcon = NULL;
     }
-/*
   if ( this->MeasurementsIcon )
     {
     this->MeasurementsIcon->Delete ( );
     this->MeasurementsIcon = NULL;
     }
-*/
   if ( this->SaveSceneIcon )
     {
     this->SaveSceneIcon->Delete ( );
@@ -320,13 +318,12 @@ void vtkSlicerToolbarIcons::AssignImageDataToIcons ( )
                                    image_ToolbarFiducials_height,
                                    image_ToolbarFiducials_pixel_size,
                                    image_ToolbarFiducials_length, 0 );
-/*    
+
     this->MeasurementsIcon->SetImage( image_ToolbarMeasurements,
                                    image_ToolbarMeasurements_width,
                                    image_ToolbarMeasurements_height,
                                    image_ToolbarMeasurements_pixel_size,
                                    image_ToolbarMeasurements_length, 0 );
-*/                                     
 
     this->SaveSceneIcon->SetImage( image_ToolbarSaveScene,
                                    image_ToolbarSaveScene_width,
@@ -509,7 +506,7 @@ void vtkSlicerToolbarIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "TransformIcon" << this->GetTransformIcon ( ) << "\n";    
     os << indent << "ColorIcon" << this->GetColorIcon ( ) << "\n";
     os << indent << "FiducialsIcon" << this->GetFiducialsIcon ( ) << "\n";
-//    os << indent << "MeasurementsIcon" << this->GetMeasurementsIcon ( ) << "\n";
+    os << indent << "MeasurementsIcon" << this->GetMeasurementsIcon ( ) << "\n";
     os << indent << "SaveSceneIcon" << this->GetSaveSceneIcon ( ) << "\n";
     os << indent << "LoadSceneIcon" << this->GetLoadSceneIcon ( ) << "\n";
     os << indent << "ConventionalViewIcon" << this->GetConventionalViewIcon ( ) << "\n";

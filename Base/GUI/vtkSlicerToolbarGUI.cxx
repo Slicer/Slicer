@@ -59,7 +59,7 @@ vtkSlicerToolbarGUI::vtkSlicerToolbarGUI ( )
   this->EditorToolboxIconButton = vtkKWPushButton::New ( );
   this->ColorIconButton = vtkKWPushButton::New ( );
   this->FiducialsIconButton = vtkKWPushButton::New ( );
-//  this->MeasurementsIconButton = vtkKWPushButton::New ( );
+  this->MeasurementsIconButton = vtkKWPushButton::New ( );
   this->TransformIconButton = vtkKWPushButton::New ( );
   this->SaveSceneIconButton = vtkKWPushButton::New ( );
   this->LoadSceneIconButton = vtkKWMenuButton::New ( );
@@ -205,14 +205,12 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
     this->FiducialsIconButton->Delete ( );
     this->FiducialsIconButton = NULL;
     }
-/*
   if ( this->MeasurementsIconButton )
     {
     this->MeasurementsIconButton->SetParent ( NULL );
     this->MeasurementsIconButton->Delete ( );
     this->MeasurementsIconButton = NULL;
     }
-*/
   if ( this->SaveSceneIconButton )
     {
     this->SaveSceneIconButton->SetParent ( NULL );
@@ -396,6 +394,7 @@ void vtkSlicerToolbarGUI::RemoveGUIObservers ( )
   this->VolumeIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ModelIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->FiducialsIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->MeasurementsIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ColorIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ChooseLayoutIconMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->UndoIconButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -429,6 +428,7 @@ void vtkSlicerToolbarGUI::AddGUIObservers ( )
   this->VolumeIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ModelIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->FiducialsIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->MeasurementsIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->TransformIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ColorIconButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     
@@ -615,6 +615,18 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
         else
           {
           vtkDebugMacro ("ERROR:  no slicer module gui found for Fiducials\n");
+          }
+        }
+      else if (pushb == this->MeasurementsIconButton )
+        {
+        vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Measurements");
+        if ( m != NULL  && this->GetModuleChooseGUI() != NULL)
+          {
+          this->GetModuleChooseGUI()->SelectModule ( "Measurements" );
+          }
+        else
+          {
+          vtkDebugMacro ("ERROR:  no slicer module gui found for Measurements\n");
           }
         }
       else if (pushb == this->ColorIconButton )
@@ -1242,17 +1254,17 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->EditorIconButton->SetBalloonHelpString ( "Editor");        
   mtb->AddWidget ( this->EditorIconButton );
 
+#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
   // measurements module icon
-/*
   this->MeasurementsIconButton->SetParent ( mtb->GetFrame ( ) );
   this->MeasurementsIconButton->Create ( );
   this->MeasurementsIconButton->SetReliefToFlat ( );
   this->MeasurementsIconButton->SetBorderWidth ( 0 );
   this->MeasurementsIconButton->SetOverReliefToNone ( );
   this->MeasurementsIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetMeasurementsIcon ( ) );
-  this->MeasurementsIconButton->SetBalloonHelpString ( "Measurements (not yet available)");        
+  this->MeasurementsIconButton->SetBalloonHelpString ( "Measurements");        
   mtb->AddWidget ( this->MeasurementsIconButton );
-*/
+#endif
   
   // color utility icon
   this->ColorIconButton->SetParent ( mtb->GetFrame ( ) );

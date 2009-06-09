@@ -31,7 +31,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkGetObjectMacro (TransformIcon, vtkKWIcon);
     vtkGetObjectMacro (ColorIcon, vtkKWIcon);
     vtkGetObjectMacro (FiducialsIcon, vtkKWIcon);
-//    vtkGetObjectMacro (MeasurementsIcon, vtkKWIcon );
+    vtkGetObjectMacro (MeasurementsIcon, vtkKWIcon );
     vtkGetObjectMacro (SaveSceneIcon, vtkKWIcon);
     vtkGetObjectMacro (LoadSceneIcon, vtkKWIcon);
     vtkGetObjectMacro (ChooseLayoutIcon, vtkKWIcon );
@@ -77,7 +77,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarIcons : public vtkSlicerIcons
     vtkKWIcon *TransformIcon;
     vtkKWIcon *ColorIcon;
     vtkKWIcon *FiducialsIcon;
-//    vtkKWIcon *MeasurementsIcon;
+    vtkKWIcon *MeasurementsIcon;
     vtkKWIcon *SaveSceneIcon;
     vtkKWIcon *LoadSceneIcon;
     vtkKWIcon *ChooseLayoutIcon;
