@@ -52,6 +52,8 @@ set(IGTPlanning_SRCS
   vtkIGTPlanningGUI.cxx
   vtkIGTPlanningLogic.cxx 
   vtkIGTPlanningMRMLManager.cxx 
+  vtkKWGuideWidget.cxx
+
   # wizard : Add wizard supporting programs here
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkIGTPlanningStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkIGTPlanningInitializationStep.cxx

@@ -11,9 +11,11 @@ class vtkIGTPlanningInitializationStep;
 class vtkIGTPlanningLoadingPreoperativeDataStep;
 class vtkIGTPlanningCalibrationStep;
 class vtkMRMLNode;
+class vtkKWGuideWidget;
+class vtkKWTopLevel;
 
-class VTK_IGT_EXPORT vtkIGTPlanningGUI : 
-  public vtkSlicerModuleGUI
+ 
+class VTK_IGT_EXPORT vtkIGTPlanningGUI : public vtkSlicerModuleGUI
 {
 public:
   static vtkIGTPlanningGUI *New();
@@ -103,8 +105,6 @@ public:
   unsigned long AddObserverByNumber(vtkObject *observee, unsigned long event);
 
 protected:
-
-private:
   vtkIGTPlanningGUI();
   ~vtkIGTPlanningGUI();
   vtkIGTPlanningGUI(const vtkIGTPlanningGUI&);
@@ -130,6 +130,17 @@ private:
   vtkIGTPlanningInitializationStep               *InitializationStep;
   vtkIGTPlanningLoadingPreoperativeDataStep      *LoadingPreoperativeDataStep;
   vtkIGTPlanningCalibrationStep                  *CalibrationStep; 
+
+  // Description:
+  // Log dialog
+  vtkKWGuideWidget *GuideWidget;
+  virtual int CreateGuideWidget();
+
+  // Description:
+  // Display the warning/error/information/debug message log dialog.
+  // Optionally provide a master window this dialog should be the slave of.
+  virtual void DisplayGuideWidget(vtkKWTopLevel *master);
+  virtual vtkKWGuideWidget* GetGuideWidget();
 
 };
 
