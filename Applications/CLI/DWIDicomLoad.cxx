@@ -8,9 +8,7 @@ Version:   $Revision: 1.2 $
 
 Copyright (c) General Electric Global Research. All rights reserved.
 
-This software is distributed WITHOUT ANY WARRANTY; without even 
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-PURPOSE.  See the above copyright notices for more information.
+See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 *** 
 This program converts Diffusion weighted MR images in Dicom format into
