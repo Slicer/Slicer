@@ -1,8 +1,10 @@
 /***********************************************************
-Copyright (C) 1994 Steen Lumholt.
-
-            All Rights Reserved
-
+ * original tkinter.c code is:  "Copyright (C) 1994 Steen Lumholt.  All Rights Reserved"
+ * and is distributed with python under the python license.
+ * 
+ * This version has been modified to work with 3D Slicer by
+ * Dan Belzek.
+ *
 ******************************************************************/
 
 /* _tkinter.c -- Interface to libtk.a and libtcl.a. */
