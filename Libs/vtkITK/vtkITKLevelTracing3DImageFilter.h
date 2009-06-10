@@ -1,17 +1,3 @@
-/*=========================================================================
-
-  Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkITKLevelTracing3DImageFilter.h $
-
-  Copyright (c) ???
-  All rights reserved.
-  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
 // .NAME vtkITKLevelTracing3DImageFilter - Wrapper class around itk::LevelTracingImageFilterImageFilter
 // .SECTION Description
 // itk::LevelTracingImageFilter

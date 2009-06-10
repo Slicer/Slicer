@@ -1,17 +1,3 @@
-/*=========================================================================
-
-  Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkITKLevelTracingImageFilter.h $
-
-  Copyright (c) ???
-  All rights reserved.
-  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
 // .NAME vtkITKNumericTraits - Extra itk::NumericTraits instantiations for VTK
 // .SECTION Description
 // vtkITKNumericTraits provides extra instantiations for itk::NumericTraits for VTK scalar types.
