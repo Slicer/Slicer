@@ -22,6 +22,7 @@
 
 #include "vtkKWCheckButton.h"
 #include "vtkSlicerNodeSelectorWidget.h"
+#include "vtkSlicerModuleCollapsibleFrame.h"
 
 #if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
 #include "vtkDistanceWidget.h"
@@ -64,7 +65,7 @@ vtkMeasurementsGUI::vtkMeasurementsGUI()
   this->Logic = NULL;
 
 #if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
-  this->RulerModel1PointPlacer = vtkPolyDataPointPlacer::New();
+  this->RulerModelPointPlacer = vtkPolyDataPointPlacer::New();
 
   this->DistanceHandleRepresentation = vtkPointHandleRepresentation3D::New();
   this->DistanceHandleRepresentation->GetProperty()->SetColor(1, 0, 0);
@@ -92,7 +93,7 @@ vtkMeasurementsGUI::vtkMeasurementsGUI()
   this->AngleWidget->SetRepresentation(this->AngleRepresentation);
 #endif
   this->RulerCheckButton = NULL;
-  this->RulerModel1SelectorWidget = NULL;
+  this->RulerModelSelectorWidget = NULL;
   this->AngleCheckButton = NULL;
 }
 
@@ -102,10 +103,10 @@ vtkMeasurementsGUI::~vtkMeasurementsGUI()
 //    this->RemoveMRMLNodeObservers ( );
 //    this->RemoveLogicObservers ( );
 #if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
-  if (this->RulerModel1PointPlacer)
+  if (this->RulerModelPointPlacer)
     {
-    this->RulerModel1PointPlacer->Delete();
-    this->RulerModel1PointPlacer = NULL;
+    this->RulerModelPointPlacer->Delete();
+    this->RulerModelPointPlacer = NULL;
     }
   if (this->DistanceHandleRepresentation)
     {
@@ -149,11 +150,11 @@ vtkMeasurementsGUI::~vtkMeasurementsGUI()
     this->RulerCheckButton->Delete();
     this->RulerCheckButton = NULL;
     }
-  if (this->RulerModel1SelectorWidget)
+  if (this->RulerModelSelectorWidget)
     {
-    this->RulerModel1SelectorWidget->SetParent(NULL);
-    this->RulerModel1SelectorWidget->Delete();
-    this->RulerModel1SelectorWidget = NULL;
+    this->RulerModelSelectorWidget->SetParent(NULL);
+    this->RulerModelSelectorWidget->Delete();
+    this->RulerModelSelectorWidget = NULL;
     }
   if ( this->AngleCheckButton )
     {
@@ -224,9 +225,9 @@ void vtkMeasurementsGUI::AddGUIObservers ( )
     {
     this->RulerCheckButton->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
-  if (this->RulerModel1SelectorWidget)
+  if (this->RulerModelSelectorWidget)
     {
-    this->RulerModel1SelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->RulerModelSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
   if ( this->AngleCheckButton )
     {
@@ -244,9 +245,9 @@ void vtkMeasurementsGUI::RemoveGUIObservers ( )
     {
     this->RulerCheckButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
-  if (this->RulerModel1SelectorWidget)
+  if (this->RulerModelSelectorWidget)
     {
-    this->RulerModel1SelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->RulerModelSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
   if ( this->AngleCheckButton )
     {
@@ -322,23 +323,28 @@ void vtkMeasurementsGUI::ProcessGUIEvents ( vtkObject *caller,
 #endif
     }
   
-  if (vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->RulerModel1SelectorWidget && 
+  if (vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->RulerModelSelectorWidget && 
         event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
     {
 #if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
     vtkMRMLModelNode *model = 
-      vtkMRMLModelNode::SafeDownCast(this->RulerModel1SelectorWidget->GetSelected());
+      vtkMRMLModelNode::SafeDownCast(this->RulerModelSelectorWidget->GetSelected());
     if (model != NULL  && model->GetDisplayNode() != NULL)
       {
-      this->RulerModel1PointPlacer->AddProp(appGUI->GetViewerWidget()->GetActorByID(model->GetDisplayNode()->GetID()));
-      this->DistanceHandleRepresentation->ConstrainedOn();
-      this->DistanceHandleRepresentation->SetPointPlacer(this->RulerModel1PointPlacer);
+      this->RulerModelPointPlacer->AddProp(appGUI->GetViewerWidget()->GetActorByID(model->GetDisplayNode()->GetID()));
+      this->DistanceHandleRepresentation->ConstrainedOff();
+      this->DistanceHandleRepresentation->DebugOn();
+      // TODO: even though we're setting the point placer to be a poly data
+      // point placer, the handle representation is still using a focal plane
+      // point placer and not binding the ends of the ruler to the model chosen
+      this->DistanceHandleRepresentation->SetPointPlacer(this->RulerModelPointPlacer);
       }
     else
       {
-      this->RulerModel1PointPlacer->RemoveAllProps();
-      this->DistanceHandleRepresentation->ConstrainedOff();
+      this->RulerModelPointPlacer->RemoveAllProps();
+//      this->DistanceHandleRepresentation->ConstrainedOn();
       this->DistanceHandleRepresentation->SetPointPlacer(NULL);
+      this->DistanceHandleRepresentation->DebugOff();
       }
 #else
     vtkWarningMacro("Distance widget only available with VTK 5.4 and later");
@@ -395,9 +401,19 @@ void vtkMeasurementsGUI::BuildGUI ( )
   const char* ack_text = "Measurements was developed by Nicole Aucoin with help from Kitware, Inc.";
   this->BuildHelpAndAboutFrame(page, help_text, ack_text);
 
+  //
+  // Ruler Frame
+  //
+  vtkSlicerModuleCollapsibleFrame *rulerFrame = vtkSlicerModuleCollapsibleFrame::New();
+  rulerFrame->SetParent(page);
+  rulerFrame->Create();
+  rulerFrame->SetLabelText("Distance Measurement Widget");
+  rulerFrame->ExpandFrame();
+  app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", rulerFrame->GetWidgetName());
+  
   // Ruler
   this->RulerCheckButton = vtkKWCheckButton::New();
-  this->RulerCheckButton->SetParent( page );
+  this->RulerCheckButton->SetParent( rulerFrame->GetFrame() );
   this->RulerCheckButton->Create();
   this->RulerCheckButton->SetText("Toggle Ruler Widget");
   this->RulerCheckButton->SelectedStateOff();
@@ -405,34 +421,47 @@ void vtkMeasurementsGUI::BuildGUI ( )
   app->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
               this->RulerCheckButton->GetWidgetName());
 
-  this->RulerModel1SelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
-  this->RulerModel1SelectorWidget->SetParent ( page );
-  this->RulerModel1SelectorWidget->Create ( );
-  this->RulerModel1SelectorWidget->AddNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
-  this->RulerModel1SelectorWidget->SetChildClassesEnabled(0);
-  this->RulerModel1SelectorWidget->NoneEnabledOn();
-  this->RulerModel1SelectorWidget->SetShowHidden(1);
-  this->RulerModel1SelectorWidget->SetMRMLScene(this->GetMRMLScene());
-  this->RulerModel1SelectorWidget->SetBorderWidth(2);
-  this->RulerModel1SelectorWidget->SetPadX(2);
-  this->RulerModel1SelectorWidget->SetPadY(2);
-  this->RulerModel1SelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-  this->RulerModel1SelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
-  this->RulerModel1SelectorWidget->SetLabelText( "Select Ruler Model 1: ");
-  this->RulerModel1SelectorWidget->SetBalloonHelpString("Select a model on which to anchor the first end of the ruler.");
+  this->RulerModelSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
+  this->RulerModelSelectorWidget->SetParent ( rulerFrame->GetFrame() );
+  this->RulerModelSelectorWidget->Create ( );
+  this->RulerModelSelectorWidget->AddNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
+  this->RulerModelSelectorWidget->SetChildClassesEnabled(0);
+  this->RulerModelSelectorWidget->NoneEnabledOn();
+  this->RulerModelSelectorWidget->SetShowHidden(1);
+  this->RulerModelSelectorWidget->SetMRMLScene(this->GetMRMLScene());
+  this->RulerModelSelectorWidget->SetBorderWidth(2);
+  this->RulerModelSelectorWidget->SetPadX(2);
+  this->RulerModelSelectorWidget->SetPadY(2);
+  this->RulerModelSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+  this->RulerModelSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
+  this->RulerModelSelectorWidget->SetLabelText( "Select Ruler Model: ");
+  this->RulerModelSelectorWidget->SetBalloonHelpString("Select a model on which to anchor the ends of the ruler.");
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 this->RulerModel1SelectorWidget->GetWidgetName());
+                 this->RulerModelSelectorWidget->GetWidgetName());
 
 
+  //
+  // Angle Frame
+  //
+  vtkSlicerModuleCollapsibleFrame *angleFrame = vtkSlicerModuleCollapsibleFrame::New();
+  angleFrame->SetParent(page);
+  angleFrame->Create();
+  angleFrame->SetLabelText("Angle Widget");
+  angleFrame->ExpandFrame();
+  app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", angleFrame->GetWidgetName());
+  
   // Angle 
   this->AngleCheckButton = vtkKWCheckButton::New();
-  this->AngleCheckButton->SetParent( page );
+  this->AngleCheckButton->SetParent( angleFrame->GetFrame() );
   this->AngleCheckButton->Create();
   this->AngleCheckButton->SetText("Toggle Angle Widget");
   this->AngleCheckButton->SelectedStateOff();
   this->AngleCheckButton->IndicatorVisibilityOff();
   app->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
               this->AngleCheckButton->GetWidgetName());
+
+  rulerFrame->Delete();
+  angleFrame->Delete();
 }
 
 //---------------------------------------------------------------------------

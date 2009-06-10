@@ -89,19 +89,19 @@ protected:
   vtkPointHandleRepresentation3D *DistanceHandleRepresentation;
   vtkDistanceRepresentation2D *DistanceRepresentation;
   vtkDistanceWidget *DistanceWidget;
+  vtkPolyDataPointPlacer *RulerModelPointPlacer;
 
   // Description:
   // the angle widget
   vtkPointHandleRepresentation3D *AngleHandleRepresentation;
   vtkAngleRepresentation3D *AngleRepresentation;
   vtkAngleWidget *AngleWidget;
-  vtkPolyDataPointPlacer *RulerModel1PointPlacer;
 #endif
 
   // Description:
   // GUI elements
   vtkKWCheckButton *RulerCheckButton;
-  vtkSlicerNodeSelectorWidget* RulerModel1SelectorWidget;
+  vtkSlicerNodeSelectorWidget* RulerModelSelectorWidget;
   vtkKWCheckButton *AngleCheckButton;
 };
 
