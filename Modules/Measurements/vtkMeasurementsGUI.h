@@ -15,12 +15,12 @@
 class vtkKWFrame;
 class vtkKWCheckButton;
 #if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
-class vtkDistanceWidget;
+class vtkLineWidget2;
 class vtkAngleWidget;
 class vtkPointHandleRepresentation3D;
-class vtkDistanceRepresentation2D;
+class vtkLineRepresentation;
 class vtkAngleRepresentation3D;
-class vtkPolyDataPointPlacer;
+class vtkPolygonalSurfacePointPlacer;
 #endif
 class vtkSlicerNodeSelectorWidget;
 class VTK_MEASUREMENTS_EXPORT vtkMeasurementsGUI : public vtkSlicerModuleGUI
@@ -72,6 +72,12 @@ class VTK_MEASUREMENTS_EXPORT vtkMeasurementsGUI : public vtkSlicerModuleGUI
   vtkGetObjectMacro(RulerCheckButton, vtkKWCheckButton);
 
   vtkGetObjectMacro(AngleCheckButton, vtkKWCheckButton);
+
+#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
+  vtkGetObjectMacro(DistanceWidget, vtkLineWidget2);
+  vtkGetObjectMacro(AngleWidget, vtkAngleWidget);
+#endif
+
 protected:
   vtkMeasurementsGUI();
   ~vtkMeasurementsGUI();
@@ -87,9 +93,10 @@ protected:
   // Description:
   // the ruler widget
   vtkPointHandleRepresentation3D *DistanceHandleRepresentation;
-  vtkDistanceRepresentation2D *DistanceRepresentation;
-  vtkDistanceWidget *DistanceWidget;
-  vtkPolyDataPointPlacer *RulerModelPointPlacer;
+  vtkLineRepresentation *DistanceRepresentation;
+  vtkLineWidget2 *DistanceWidget;
+  vtkPolygonalSurfacePointPlacer *RulerModel1PointPlacer;
+  vtkPolygonalSurfacePointPlacer *RulerModel2PointPlacer;
 
   // Description:
   // the angle widget
@@ -101,7 +108,8 @@ protected:
   // Description:
   // GUI elements
   vtkKWCheckButton *RulerCheckButton;
-  vtkSlicerNodeSelectorWidget* RulerModelSelectorWidget;
+  vtkSlicerNodeSelectorWidget* RulerModel1SelectorWidget;
+  vtkSlicerNodeSelectorWidget* RulerModel2SelectorWidget;
   vtkKWCheckButton *AngleCheckButton;
 };
 
