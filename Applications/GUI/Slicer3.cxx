@@ -1873,6 +1873,29 @@ int Slicer3_main(int argc, char *argv[])
     res = Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
     }
 
+  //
+  //--- set home module based on registry settings
+  // - show welcome unless disabled or not there
+  // - show user's home if set
+  // - show Data if nothing else
+  // - don't set if in test mode or --no-modules
+  //
+  const char *homeModule = slicerApp->GetHomeModule();
+  if ( ( slicerApp->GetUseWelcomeModuleAtStartup() ) &&
+       ( slicerApp->GetModuleGUIByName ( "SlicerWelcome" ) != NULL) )
+    {
+    homeModule = "SlicerWelcome";
+    }
+  if ( homeModule == NULL || *homeModule == 0 )
+    {
+    homeModule = "Data";
+    }
+
+  if ( !NoModules && !TestMode )
+    {
+    std::string tclCmd = "after idle { update; $::slicer3::ApplicationGUI SelectModule \"" + std::string(homeModule) + "\" }";
+    Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
+    }
   if ( !NoModules && !TestMode )
     {
     //--- set home module based on registry settings
@@ -1898,8 +1921,6 @@ int Slicer3_main(int argc, char *argv[])
     appGUI->SelectModule("Data");
     }
 
-//  std::string tclCmd = "after idle { update; $::slicer3::ApplicationGUI SelectModule \"" + std::string(homeModule) + "\" }";
-//  Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
   Slicer3_Tcl_Eval( interp, "update" ) ;
 
 
@@ -2235,7 +2256,7 @@ int Slicer3_main(int argc, char *argv[])
 
 #ifdef Slicer3_USE_PYTHON
   // Shutdown python interpreter
-  v = PyRun_String( "Slicer.slicer.deleteInstances()\n",
+  v = PyRun_String( "import Slicer;\nSlicer.slicer.deleteInstances()\n",
                     Py_file_input,
                     PythonDictionary,PythonDictionary);
   if (v == NULL)
