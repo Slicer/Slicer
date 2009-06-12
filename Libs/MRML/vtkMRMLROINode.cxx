@@ -49,7 +49,11 @@ vtkMRMLNode* vtkMRMLROINode::CreateNodeInstance()
 void vtkMRMLROINode::PrintSelf(ostream& os, vtkIndent indent)
 {  
   vtkObject::PrintSelf(os,indent);
-  //Fill in ......
+
+  os << "XYZ:\n";
+  os << indent << XYZ[0] << " " << XYZ[1] << " " << XYZ[2] << "\n";
+  os << "Radius XYZ:\n";
+  os << indent << RadiusXYZ[0] << " " << RadiusXYZ[1] << " " << RadiusXYZ[2] << "\n";
   return;
 }
 
