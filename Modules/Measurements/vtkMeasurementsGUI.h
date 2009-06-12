@@ -74,8 +74,8 @@ class VTK_MEASUREMENTS_EXPORT vtkMeasurementsGUI : public vtkSlicerModuleGUI
   vtkGetObjectMacro(AngleCheckButton, vtkKWCheckButton);
 
 #if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
-  vtkGetObjectMacro(DistanceWidget, vtkLineWidget2);
-  vtkGetObjectMacro(AngleWidget, vtkAngleWidget);
+//  vtkGetObjectMacro(DistanceWidget, vtkLineWidget2);
+//  vtkGetObjectMacro(AngleWidget, vtkAngleWidget);
 #endif
 
 protected:
