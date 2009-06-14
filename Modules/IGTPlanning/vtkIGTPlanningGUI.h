@@ -11,9 +11,6 @@ class vtkIGTPlanningInitializationStep;
 class vtkIGTPlanningLoadingPreoperativeDataStep;
 class vtkIGTPlanningCalibrationStep;
 class vtkMRMLNode;
-class vtkKWGuideWidget;
-class vtkKWTopLevel;
-
  
 class VTK_IGT_EXPORT vtkIGTPlanningGUI : public vtkSlicerModuleGUI
 {
@@ -92,8 +89,8 @@ public:
 
   // Description:
   // Describe behavior at module startup and exit.
-  virtual void Enter(){};
-  virtual void Exit(){};
+  virtual void Enter() { };
+  virtual void Exit() { };
 
   // Description: The name of the Module - this is used to 
   // construct the proc invocations
@@ -131,16 +128,6 @@ protected:
   vtkIGTPlanningLoadingPreoperativeDataStep      *LoadingPreoperativeDataStep;
   vtkIGTPlanningCalibrationStep                  *CalibrationStep; 
 
-  // Description:
-  // Log dialog
-  vtkKWGuideWidget *GuideWidget;
-  virtual int CreateGuideWidget();
-
-  // Description:
-  // Display the warning/error/information/debug message log dialog.
-  // Optionally provide a master window this dialog should be the slave of.
-  virtual void DisplayGuideWidget(vtkKWTopLevel *master);
-  virtual vtkKWGuideWidget* GetGuideWidget();
 
 };
 

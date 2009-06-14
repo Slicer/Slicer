@@ -13,10 +13,8 @@
 #include "vtkIGTPlanningInitializationStep.h"
 #include "vtkIGTPlanningLoadingPreoperativeDataStep.h"
 #include "vtkIGTPlanningCalibrationStep.h"
-#include "vtkKWGuideWidget.h"
 
 #include "vtkKWIcon.h"
-#include "vtkKWInternationalization.h"
 
 #include <vtksys/stl/string>
 #include <vtksys/SystemTools.hxx>
@@ -47,7 +45,6 @@ vtkIGTPlanningGUI::vtkIGTPlanningGUI()
   this->MRMLManager  = NULL;
   this->Logic        = NULL;
   this->ModuleName   = NULL;
-  this->GuideWidget  = NULL;
 
   this->WizardWidget = vtkKWWizardWidget::New();
 
@@ -200,7 +197,7 @@ void vtkIGTPlanningGUI::BuildGUI()
     vtkSlicerModuleCollapsibleFrame::New();
   wizard_frame->SetParent(module_page);
   wizard_frame->Create();
-  wizard_frame->SetLabelText("Wizard");
+  wizard_frame->SetLabelText("Wizard (Liver Ablation)");
   wizard_frame->ExpandFrame();
 
   app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
@@ -263,7 +260,6 @@ void vtkIGTPlanningGUI::BuildGUI()
   wizard_workflow->CreateGoToTransitionsToFinishStep();
   wizard_workflow->SetInitialStep(this->LoadingPreoperativeDataStep);
 
-  this->DisplayGuideWidget(NULL);
 }
 
 //---------------------------------------------------------------------------
@@ -325,72 +321,6 @@ void vtkIGTPlanningGUI::ProcessLogicEvents (
     }
 
   // process Logic changes
-}
-
-//----------------------------------------------------------------------------
-vtkKWGuideWidget* vtkIGTPlanningGUI::GetGuideWidget()
-{
-  if (!this->GuideWidget)
-    {
-    //this->GuideWidget = vtkKWTkcon::New();
-    this->GuideWidget = vtkKWGuideWidget::New();
-    }
-
-  if (!this->GuideWidget->IsCreated())
-    {
-    this->GuideWidget->SetApplication(this->GetApplication());
-    this->GuideWidget->Create();
-    this->GuideWidget->SetSize(253, 40);
-    }
-  
-  return this->GuideWidget;
-
-  /*
-  if (!this->GuideWidget)
-    {
-    this->GuideWidget = vtkKWGuideWidget::New();
-    this->GetGuideWidget()->SetApplication(this->GetApplication());
-    }
-  return this->GuideWidget;
-  */
-}
-
-
-//----------------------------------------------------------------------------
-int vtkIGTPlanningGUI::CreateGuideWidget()
-{
-  if (this->GetGuideWidget())
-    {
-    if (!this->GetGuideWidget()->IsCreated())
-      {
-      this->GetGuideWidget()->Create();
-      }
-    return this->GetGuideWidget()->IsCreated();
-    }
-  return 0;
-}
-
-
-//----------------------------------------------------------------------------
-void vtkIGTPlanningGUI::DisplayGuideWidget(vtkKWTopLevel* master)
-{
-  vtkKWGuideWidget *widget = this->GetGuideWidget();
-  if (widget)
-    {
-    if (!master)
-      {
-      master = this->GetApplication()->GetNthWindow(0);
-      }
-
-    if (master)
-      {
-      vtksys_stl::string title;
-      title += ks_("IGT Module Guide Widget|Title|IGT Module Guilde");
-      widget->SetTitle(title.c_str());
-      widget->SetMasterWindow(master);
-      }
-    widget->Display(135, 121);
-    }
 }
 
 
