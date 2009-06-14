@@ -7,6 +7,8 @@ class vtkKWFrameWithLabel;
 class vtkKWMenuButtonWithLabel;
 class vtkKWMenuButtonWithLabel;
 class vtkKWPushButton;
+class vtkKWGuideWidget;
+class vtkKWTopLevel;
 
 class VTK_IGT_EXPORT vtkIGTPlanningLoadingPreoperativeDataStep : public vtkIGTPlanningStep
 {
@@ -18,6 +20,12 @@ public:
   // Description:
   // Reimplement the superclass's method (see vtkKWWizardStep).
   virtual void ShowUserInterface();
+
+  // Description:
+  // Callbacks. Internal, do not use.
+  virtual void AddVolumeButtonCallback();
+  virtual void GuideWidgetButtonCallback();
+
 
 protected:
   vtkIGTPlanningLoadingPreoperativeDataStep();
@@ -31,6 +39,18 @@ protected:
   vtkKWMenuButtonWithLabel   *ToolModelMenuButton; 
 
   vtkKWPushButton            *AddVolumeButton; 
+  vtkKWPushButton            *GuideWidgetButton; 
+
+  // Description:
+  // guide widget 
+  vtkKWGuideWidget *GuideWidget;
+  virtual int CreateGuideWidget();
+
+  // Description:
+  // Display the warning/error/information/debug message log dialog.
+  // Optionally provide a master window this dialog should be the slave of.
+  virtual void DisplayGuideWidget(vtkKWTopLevel *master);
+  virtual vtkKWGuideWidget* GetGuideWidget();
 
 private:
   vtkIGTPlanningLoadingPreoperativeDataStep(const vtkIGTPlanningLoadingPreoperativeDataStep&);

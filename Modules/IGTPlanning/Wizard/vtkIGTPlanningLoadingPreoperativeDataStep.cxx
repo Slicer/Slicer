@@ -12,6 +12,9 @@
 #include "vtkKWMessageDialog.h"
 #include "vtkKWMessageDialog.h"
 
+#include "vtkKWGuideWidget.h"
+#include "vtkKWInternationalization.h"
+
 #include "vtkSlicerApplication.h"
 
 //----------------------------------------------------------------------------
@@ -28,6 +31,9 @@ vtkIGTPlanningLoadingPreoperativeDataStep::vtkIGTPlanningLoadingPreoperativeData
   this->ToolModelMenuButton = NULL;
 
   this->AddVolumeButton = NULL; 
+  this->GuideWidgetButton = NULL; 
+
+  this->GuideWidget  = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -50,6 +56,12 @@ vtkIGTPlanningLoadingPreoperativeDataStep::~vtkIGTPlanningLoadingPreoperativeDat
     this->AddVolumeButton->Delete();
     this->AddVolumeButton = NULL;
     }
+
+  if(this->GuideWidgetButton)
+    {
+    this->GuideWidgetButton->Delete();
+    this->GuideWidgetButton = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -63,19 +75,31 @@ void vtkIGTPlanningLoadingPreoperativeDataStep::ShowUserInterface()
 
   vtkKWWidget *parent = wizard_widget->GetClientArea();
 
+  if (!this->GuideWidgetButton)
+    {
+    this->GuideWidgetButton = vtkKWPushButton::New();
+    this->GuideWidgetButton->SetParent (parent);
+    this->GuideWidgetButton->Create();
+    this->GuideWidgetButton->SetText("Show Guide Widget");
+    this->GuideWidgetButton->SetCommand(this, "GuideWidgetButtonCallback");
+    this->GuideWidgetButton->SetWidth(25);
+    }
+
   if (!this->AddVolumeButton)
     {
     this->AddVolumeButton = vtkKWPushButton::New();
     this->AddVolumeButton->SetParent (parent);
     this->AddVolumeButton->Create();
     this->AddVolumeButton->SetText("Add a volume");
+    this->AddVolumeButton->SetCommand(this, "AddVolumeButtonCallback");
     this->AddVolumeButton->SetWidth(25);
-//    this->AddVolumeButton->SetBalloonHelpString("Add a volume.");
-    this->AddVolumeButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
     }
+
   this->Script(
-    "pack %s -side top -anchor center -padx 2 -pady 10", 
-    this->AddVolumeButton->GetWidgetName());
+    "pack %s %s -side top -anchor center -padx 2 -pady 5", 
+    this->AddVolumeButton->GetWidgetName(),
+    this->GuideWidgetButton->GetWidgetName());
+
 /* 
   // Create the preoperative image data  menu button
 
@@ -148,6 +172,7 @@ void vtkIGTPlanningLoadingPreoperativeDataStep::ShowUserInterface()
   helpButton->SetCommand(msg_dlg1, "Invoke");
 
   msg_dlg1->Delete();
+
 }
  
 //----------------------------------------------------------------------------
@@ -224,3 +249,88 @@ void vtkIGTPlanningLoadingPreoperativeDataStep::ProcessGUIEvents(vtkObject *call
 //    this->GetGUI()->GetApplication();
     }
 }
+
+//----------------------------------------------------------------------------
+vtkKWGuideWidget* vtkIGTPlanningLoadingPreoperativeDataStep::GetGuideWidget()
+{
+  if (!this->GuideWidget)
+    {
+    //this->GuideWidget = vtkKWTkcon::New();
+    this->GuideWidget = vtkKWGuideWidget::New();
+    }
+
+  if (!this->GuideWidget->IsCreated())
+    {
+    this->GuideWidget->SetApplication(this->GetApplication());
+    this->GuideWidget->Create();
+    this->GuideWidget->SetSize(253, 40);
+    this->GuideWidget->SetSlicerAppGUI(this->GetGUI()->GetApplicationGUI());
+    }
+  
+  return this->GuideWidget;
+
+  /*
+  if (!this->GuideWidget)
+    {
+    this->GuideWidget = vtkKWGuideWidget::New();
+    this->GetGuideWidget()->SetApplication(this->GetApplication());
+    }
+  return this->GuideWidget;
+  */
+}
+
+
+//----------------------------------------------------------------------------
+int vtkIGTPlanningLoadingPreoperativeDataStep::CreateGuideWidget()
+{
+  if (this->GetGuideWidget())
+    {
+    if (!this->GetGuideWidget()->IsCreated())
+      {
+      this->GetGuideWidget()->Create();
+      }
+    return this->GetGuideWidget()->IsCreated();
+    }
+  return 0;
+}
+
+
+//----------------------------------------------------------------------------
+void vtkIGTPlanningLoadingPreoperativeDataStep::DisplayGuideWidget(vtkKWTopLevel* master)
+{
+  vtkKWGuideWidget *widget = this->GetGuideWidget();
+  if (widget)
+    {
+    if (!master)
+      {
+      master = this->GetGUI()->GetApplication()->GetNthWindow(0);
+      }
+
+    if (master)
+      {
+      vtksys_stl::string title;
+      title += ks_("IGT Module Guide Widget|Title|IGT Module Guide");
+      widget->SetTitle(title.c_str());
+      widget->SetMasterWindow(master);
+      }
+    widget->Display(135, 121);
+    }
+}
+
+
+void vtkIGTPlanningLoadingPreoperativeDataStep::AddVolumeButtonCallback()
+{
+  // AddVolumeButton Pressed
+
+  if (this->AddVolumeButton)
+    {
+    this->GetGUI()->GetApplication()->Script("::LoadVolume::ShowDialog");
+    }
+}
+
+
+void vtkIGTPlanningLoadingPreoperativeDataStep::GuideWidgetButtonCallback()
+{
+  this->DisplayGuideWidget(NULL);
+}
+
