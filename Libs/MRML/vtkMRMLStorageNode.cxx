@@ -296,7 +296,11 @@ void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
   // if the URI is null, or emtpy assume the file name is set and return
   if ( this->Scene )
     {
-    this->Scene->InvokeEvent (vtkMRMLScene::LoadProgressFeedbackEvent );
+    // this event is being detected by GUI to provide feedback during load
+    // of data. But,
+    // commented out for now because CLI modules are using MRML to write
+    // data in another thread, causing GUI to crash.
+//    this->Scene->InvokeEvent (vtkMRMLScene::LoadProgressFeedbackEvent );
     }
 
   if ( this->GetURI() == NULL )
@@ -390,7 +394,11 @@ void vtkMRMLStorageNode::StageWriteData ( vtkMRMLNode *refNode )
 {
   if ( this->Scene )
     {
-    this->Scene->InvokeEvent (vtkMRMLScene::SaveProgressFeedbackEvent );
+    // this event is being detected by GUI to provide feedback during load
+    // of data. But,
+    // commented out for now because CLI modules are using MRML to write
+    // data in another thread, causing GUI to crash.
+//    this->Scene->InvokeEvent (vtkMRMLScene::SaveProgressFeedbackEvent );
     }
 
   if (this->URI == NULL)

@@ -785,7 +785,11 @@ int vtkMRMLScene::Commit(const char* url)
     return 1;
     }
   
-  this->InvokeEvent (vtkMRMLScene::SaveProgressFeedbackEvent );
+    // this event is being detected by GUI to provide feedback during load
+    // of data. But,
+    // commented out for now because CLI modules are using MRML to write
+    // data in another thread, causing GUI to crash.
+//  this->InvokeEvent (vtkMRMLScene::SaveProgressFeedbackEvent );
 
   //file << "<?xml version=\"1.0\" standalone='no'?>\n";
   //file << "<!DOCTYPE MRML SYSTEM \"mrml20.dtd\">\n";
