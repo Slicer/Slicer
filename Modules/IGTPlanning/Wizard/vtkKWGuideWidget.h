@@ -26,9 +26,9 @@ public:
   virtual void UpdateEnableState();
 
   // Description:
-  // Callbacks. Internal, do not use.
+  virtual void FiducialButtonCallback();
   virtual void EditorButtonCallback();
-  virtual void HomeButtonCallback();
+  virtual void ExitButtonCallback();
 
   virtual void Display(int x, int y);
 
@@ -44,8 +44,9 @@ protected:
   virtual void CreateWidget();
   
   vtkKWFrame      *ButtonFrame;
+  vtkKWPushButton *FiducialButton;
   vtkKWPushButton *EditorButton;
-  vtkKWPushButton *HomeButton;
+  vtkKWPushButton *ExitButton;
   vtkSlicerApplicationGUI *SlicerAppGUI;
 
 

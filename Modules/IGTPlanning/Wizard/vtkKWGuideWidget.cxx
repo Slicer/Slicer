@@ -18,8 +18,9 @@ vtkKWGuideWidget::vtkKWGuideWidget()
 {
   this->ButtonFrame = vtkKWFrame::New();
 
+  this->FiducialButton = vtkKWPushButton::New();
   this->EditorButton = vtkKWPushButton::New();
-  this->HomeButton = vtkKWPushButton::New();
+  this->ExitButton = vtkKWPushButton::New();
 
   this->SlicerAppGUI = NULL;
 }
@@ -30,12 +31,15 @@ vtkKWGuideWidget::~vtkKWGuideWidget()
 {
   this->ButtonFrame->Delete();
   this->ButtonFrame = NULL;
- 
+
+  this->FiducialButton->Delete();
+  this->FiducialButton = NULL;
+
   this->EditorButton->Delete();
   this->EditorButton = NULL;
 
-  this->HomeButton->Delete();
-  this->HomeButton = NULL;
+  this->ExitButton->Delete();
+  this->ExitButton = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -57,23 +61,37 @@ void vtkKWGuideWidget::CreateWidget()
   this->ButtonFrame->Create();
   this->Script("pack %s -side bottom -fill both -expand 1 -pady 1",
                this->ButtonFrame->GetWidgetName());
-  
+
+  this->FiducialButton->SetParent(this->ButtonFrame);
+  this->FiducialButton->Create();
+  this->FiducialButton->SetCommand(this, "FiducialButtonCallback");
+  this->FiducialButton->SetText(ks_("IGT Module Guide|Button|Fiducial"));
+ 
   this->EditorButton->SetParent(this->ButtonFrame);
   this->EditorButton->Create();
   this->EditorButton->SetCommand(this, "EditorButtonCallback");
   this->EditorButton->SetText(ks_("IGT Module Guide|Button|Editor"));
 
-  this->HomeButton->SetParent(this->ButtonFrame);
-  this->HomeButton->Create();
-  this->HomeButton->SetCommand(this, "HomeButtonCallback");
-  this->HomeButton->SetText(ks_("IGT Module Guide|Button|Home"));
+  this->ExitButton->SetParent(this->ButtonFrame);
+  this->ExitButton->Create();
+  this->ExitButton->SetCommand(this, "ExitButtonCallback");
+  this->ExitButton->SetText(ks_("IGT Module Guide|Button|Exit"));
  
-  this->Script("pack %s %s -side left -expand 1 -fill x",
+  this->Script("pack %s %s %s -side left -expand 1 -fill x",
+               this->FiducialButton->GetWidgetName(),
                this->EditorButton->GetWidgetName(),
-               this->HomeButton->GetWidgetName()
+               this->ExitButton->GetWidgetName()
                );
   
   this->Withdraw();
+}
+
+
+
+//----------------------------------------------------------------------------
+void vtkKWGuideWidget::FiducialButtonCallback()
+{
+  this->RaiseModule(std::string("Fiducials").c_str());
 }
 
 
@@ -87,9 +105,10 @@ void vtkKWGuideWidget::EditorButtonCallback()
 
 
 //----------------------------------------------------------------------------
-void vtkKWGuideWidget::HomeButtonCallback()
+void vtkKWGuideWidget::ExitButtonCallback()
 {
   this->RaiseModule(std::string("IGT Planning").c_str());
+  this->Withdraw();
 }
 
 
@@ -114,7 +133,7 @@ void vtkKWGuideWidget::UpdateEnableState()
 
   this->PropagateEnableState(this->ButtonFrame);
   this->PropagateEnableState(this->EditorButton);
-  this->PropagateEnableState(this->HomeButton);
+  this->PropagateEnableState(this->ExitButton);
 
 }
 
@@ -122,6 +141,9 @@ void vtkKWGuideWidget::UpdateEnableState()
 //----------------------------------------------------------------------------
 void vtkKWGuideWidget::Display(int x, int y)
 {
+  this->Superclass::Display();
+
+/*
   if (!this->IsCreated())
     {
     return;
@@ -132,6 +154,7 @@ void vtkKWGuideWidget::Display(int x, int y)
   this->DeIconify();
   this->Raise();
   this->Focus();
+*/
 
   this->InvokeEvent(vtkKWTopLevel::DisplayEvent);
 }
