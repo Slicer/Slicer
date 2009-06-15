@@ -7,7 +7,7 @@
 class vtkIGTPlanningLogic;
 class vtkIGTPlanningMRMLManager;
 class vtkKWWizardWidget;
-class vtkIGTPlanningInitializationStep;
+class vtkIGTPlanningOptimizationStep;
 class vtkIGTPlanningLoadingPreoperativeDataStep;
 class vtkIGTPlanningCalibrationStep;
 class vtkMRMLNode;
@@ -124,7 +124,7 @@ protected:
   // Description:
   // The wizard widget and steps
   vtkKWWizardWidget                              *WizardWidget;
-  vtkIGTPlanningInitializationStep               *InitializationStep;
+  vtkIGTPlanningOptimizationStep                 *OptimizationStep;
   vtkIGTPlanningLoadingPreoperativeDataStep      *LoadingPreoperativeDataStep;
   vtkIGTPlanningCalibrationStep                  *CalibrationStep; 
 

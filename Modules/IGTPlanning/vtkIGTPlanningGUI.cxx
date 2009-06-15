@@ -10,7 +10,7 @@
 #include "vtkKWWizardWorkflow.h"
 #include "vtkKWLabel.h"
 
-#include "vtkIGTPlanningInitializationStep.h"
+#include "vtkIGTPlanningOptimizationStep.h"
 #include "vtkIGTPlanningLoadingPreoperativeDataStep.h"
 #include "vtkIGTPlanningCalibrationStep.h"
 
@@ -48,7 +48,7 @@ vtkIGTPlanningGUI::vtkIGTPlanningGUI()
 
   this->WizardWidget = vtkKWWizardWidget::New();
 
-  this->InitializationStep = NULL;
+  this->OptimizationStep = NULL;
   this->LoadingPreoperativeDataStep = NULL;
   this->CalibrationStep = NULL;
 }
@@ -67,10 +67,10 @@ vtkIGTPlanningGUI::~vtkIGTPlanningGUI()
     this->WizardWidget = NULL;
     }
 
-  if (this->InitializationStep)
+  if (this->OptimizationStep)
     {
-    this->InitializationStep->Delete();
-    this->InitializationStep = NULL;
+    this->OptimizationStep->Delete();
+    this->OptimizationStep = NULL;
     }
   if (this->LoadingPreoperativeDataStep)
     {
@@ -98,10 +98,10 @@ void vtkIGTPlanningGUI::SetModuleLogic(vtkSlicerLogic* logic)
 //----------------------------------------------------------------------------
 void vtkIGTPlanningGUI::RemoveLogicObservers()
 {
-  if (this->InitializationStep)
+  if (this->OptimizationStep)
     {
-    this->InitializationStep->Delete();
-    this->InitializationStep = NULL;
+    this->OptimizationStep->Delete();
+    this->OptimizationStep = NULL;
     }
 
   if (this->LoadingPreoperativeDataStep)
@@ -233,13 +233,13 @@ void vtkIGTPlanningGUI::BuildGUI()
   // -----------------------------------------------------------------
   // Parameter Set step
 
-  if (!this->InitializationStep)
+  if (!this->OptimizationStep)
     {
-    this->InitializationStep = vtkIGTPlanningInitializationStep::New();
-    this->InitializationStep->SetGUI(this);
+    this->OptimizationStep = vtkIGTPlanningOptimizationStep::New();
+    this->OptimizationStep->SetGUI(this);
     }
 
-  wizard_workflow->AddNextStep(this->InitializationStep);
+  wizard_workflow->AddNextStep(this->OptimizationStep);
 
   // -----------------------------------------------------------------
   // Calibration step 
@@ -265,9 +265,9 @@ void vtkIGTPlanningGUI::BuildGUI()
 //---------------------------------------------------------------------------
 void vtkIGTPlanningGUI::TearDownGUI() 
 {
-  if (this->InitializationStep)
+  if (this->OptimizationStep)
     {
-    this->InitializationStep->SetGUI(NULL);
+    this->OptimizationStep->SetGUI(NULL);
     }
 
   if (this->LoadingPreoperativeDataStep)

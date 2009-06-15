@@ -55,7 +55,7 @@ set(IGTPlanning_SRCS
 
   # wizard : Add wizard supporting programs here
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkIGTPlanningStep.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkIGTPlanningInitializationStep.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkIGTPlanningOptimizationStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkIGTPlanningLoadingPreoperativeDataStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkIGTPlanningCalibrationStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkKWGuideWidget.cxx
