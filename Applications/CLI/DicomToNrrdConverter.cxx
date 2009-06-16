@@ -1,12 +1,13 @@
 /*=========================================================================
 
-Program:   ReconstructTensor
 Module:    $RCSfile: DicomToNrrdConverter.cxx,v $
 Language:  C++
 Date:      $Date: 2007/01/03 02:06:07 $
 Version:   $Revision: 1.2 $
 
-Copyright (c) General Electric Global Research. All rights reserved.
+This work is part of the National Alliance for Medical Image 
+Computing (NAMIC), funded by the National Institutes of Health 
+through the NIH Roadmap for Medical Research, Grant U54 EB005149.
 
 See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
@@ -833,7 +834,7 @@ int main(int argc, char* argv[])
   // transform gradient directions into RAS frame 
   for (int k = 0; k < nVolume; k++)
   {
-    if ( !SliceOrderIS )
+    if ( !SliceOrderIS || SliceMosaic )
     {
       DiffusionVectors[k][2] = -DiffusionVectors[k][2];  // I -> S
       DiffusionVectorsOrig[k][2] = -DiffusionVectorsOrig[k][2];  // I -> S
