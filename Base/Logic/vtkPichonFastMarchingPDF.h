@@ -29,7 +29,7 @@
 
 #else // UNIX
 
-#ifdef _SOLARIS_
+#if defined(sun) || defined(__sun)
 #include <math.h>
 #include <ieeefp.h>
 #endif
