@@ -70,8 +70,6 @@ subdirs(
    ModelIntoLabelVolume
    ExtractSubvolume
    FastMarchingSegmentation
-   RealTimeNeedleDetection
-   SecondaryWindow
 #   FourDImage
   )
 
