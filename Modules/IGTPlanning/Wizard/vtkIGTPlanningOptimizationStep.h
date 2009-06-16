@@ -6,7 +6,7 @@
 class vtkKWFrameWithLabel;
 class vtkKWMenuButtonWithLabel;
 class vtkKWEntryWithLabel;
-
+class vtkKWLoadSaveButtonWithLabel;
 
 class VTK_IGT_EXPORT vtkIGTPlanningOptimizationStep : public vtkIGTPlanningStep
 {
@@ -38,6 +38,14 @@ protected:
   vtkKWEntryWithLabel    *SpacingYEntry;
   vtkKWEntryWithLabel    *SpacingZEntry;
 
+  vtkKWEntryWithLabel    *AngularResolutionEntry;
+  vtkKWEntryWithLabel    *NumberOfAblationsEntry;
+  vtkKWEntryWithLabel    *NumberOfTrajectoriesEntry;
+  vtkKWEntryWithLabel    *NumberOfPuncturesEntry;
+  vtkKWEntryWithLabel    *TumorMarginEntry;
+
+  vtkKWLoadSaveButtonWithLabel *DirectoryButton; 
+ 
 
 private:
   vtkIGTPlanningOptimizationStep(const vtkIGTPlanningOptimizationStep&);

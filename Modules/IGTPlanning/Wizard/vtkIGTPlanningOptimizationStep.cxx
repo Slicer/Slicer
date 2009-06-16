@@ -14,7 +14,8 @@
 #include "vtkKWPushButton.h"
 #include "vtkKWMessageDialog.h"
 #include "vtkKWEntryWithLabel.h"
-
+#include "vtkKWLoadSaveButtonWithLabel.h"
+ 
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkIGTPlanningOptimizationStep);
@@ -37,6 +38,12 @@ vtkIGTPlanningOptimizationStep::vtkIGTPlanningOptimizationStep()
   this->SpacingXEntry = vtkKWEntryWithLabel::New();
   this->SpacingYEntry = vtkKWEntryWithLabel::New();
   this->SpacingZEntry = vtkKWEntryWithLabel::New();
+
+  this->AngularResolutionEntry = vtkKWEntryWithLabel::New();
+  this->NumberOfAblationsEntry = vtkKWEntryWithLabel::New();
+  this->NumberOfTrajectoriesEntry = vtkKWEntryWithLabel::New();
+  this->NumberOfPuncturesEntry = vtkKWEntryWithLabel::New();
+  this->TumorMarginEntry = vtkKWEntryWithLabel::New();
 
 }
 
@@ -67,44 +74,76 @@ vtkIGTPlanningOptimizationStep::~vtkIGTPlanningOptimizationStep()
     }
 
   if (this->ProbeAEntry) 
-  {
+    {
     this->ProbeAEntry->SetParent(NULL);
     this->ProbeAEntry->Delete();
     this->ProbeAEntry = NULL;
-  }
+    }
   if (this->ProbeBEntry) 
-  {
+    {
     this->ProbeBEntry->SetParent(NULL);
     this->ProbeBEntry->Delete();
     this->ProbeBEntry = NULL;
-  }
+    }
   if (this->ProbeCEntry) 
-  {
+    {
     this->ProbeCEntry->SetParent(NULL);
     this->ProbeCEntry->Delete();
     this->ProbeCEntry = NULL;
-  }
+    }
 
   if (this->SpacingXEntry) 
-  {
+    {
     this->SpacingXEntry->SetParent(NULL);
     this->SpacingXEntry->Delete();
     this->SpacingXEntry = NULL;
-  }
+    }
   if (this->SpacingYEntry) 
-  {
+    {
     this->SpacingYEntry->SetParent(NULL);
     this->SpacingYEntry->Delete();
     this->SpacingYEntry = NULL;
-  }
+    }
   if (this->SpacingZEntry) 
-  {
+    {
     this->SpacingZEntry->SetParent(NULL);
     this->SpacingZEntry->Delete();
     this->SpacingZEntry = NULL;
-  }
+    }
 
+  if (this->AngularResolutionEntry)
+    {
+    this->AngularResolutionEntry->SetParent(NULL);
+    this->AngularResolutionEntry->Delete();
+    this->AngularResolutionEntry = NULL;
+    }
+  if (this->NumberOfAblationsEntry)
+    {
+    this->NumberOfAblationsEntry->SetParent(NULL);
+    this->NumberOfAblationsEntry->Delete();
+    this->NumberOfAblationsEntry = NULL;
+    }
+   if (this->NumberOfTrajectoriesEntry)
+    {
+    this->NumberOfTrajectoriesEntry->SetParent(NULL);
+    this->NumberOfTrajectoriesEntry->Delete();
+    this->NumberOfTrajectoriesEntry = NULL;
+    }
+    if (this->NumberOfPuncturesEntry)
+    {
+    this->NumberOfPuncturesEntry->SetParent(NULL);
+    this->NumberOfPuncturesEntry->Delete();
+    this->NumberOfPuncturesEntry = NULL;
+    }
+    if (this->TumorMarginEntry)
+    {
+    this->TumorMarginEntry->SetParent(NULL);
+    this->TumorMarginEntry->Delete();
+    this->TumorMarginEntry = NULL;
+    }
 }
+
+
 
 //----------------------------------------------------------------------------
 void vtkIGTPlanningOptimizationStep::ShowUserInterface()
@@ -200,12 +239,41 @@ void vtkIGTPlanningOptimizationStep::ShowUserInterface()
     this->MoreFrame->SetParent(
       wizard_widget->GetClientArea());
     this->MoreFrame->Create();
-    this->MoreFrame->SetLabelText("More info");
-    this->MoreFrame->SetHeight(100);
+    this->MoreFrame->SetLabelText("More information");
+//    this->MoreFrame->SetHeight(100);
     }
 
   this->Script("pack %s -side top -expand n -fill both -padx 0 -pady 2", 
                this->MoreFrame->GetWidgetName());
+
+  this->AngularResolutionEntry->SetParent (this->MoreFrame->GetFrame());
+  this->AngularResolutionEntry->Create ( );
+  this->AngularResolutionEntry->SetLabelText("Angular resolution [degrees]:");
+// this->AngularResolutionEntry->GetWidget()->SetValueAsInt(100);
+// this->AngularResolutionEntry->SetBalloonHelpString("Maximum number of seeds");
+
+  this->NumberOfAblationsEntry->SetParent (this->MoreFrame->GetFrame());
+  this->NumberOfAblationsEntry->Create ( );
+  this->NumberOfAblationsEntry->SetLabelText("Maximal # of ablations:");
+
+  this->NumberOfTrajectoriesEntry->SetParent (this->MoreFrame->GetFrame());
+  this->NumberOfTrajectoriesEntry->Create ( );
+  this->NumberOfTrajectoriesEntry->SetLabelText("Maximal # of trajectories:");
+
+  this->NumberOfPuncturesEntry->SetParent (this->MoreFrame->GetFrame());
+  this->NumberOfPuncturesEntry->Create ( );
+  this->NumberOfPuncturesEntry->SetLabelText("Maximal # of punctures:");
+
+  this->TumorMarginEntry->SetParent (this->MoreFrame->GetFrame());
+  this->TumorMarginEntry->Create ( );
+  this->TumorMarginEntry->SetLabelText("Tumor margin [mm]:");
+
+  this->Script ( "pack %s %s %s %s %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+                 this->AngularResolutionEntry->GetWidgetName(),
+                 this->NumberOfAblationsEntry->GetWidgetName(),
+                 this->NumberOfTrajectoriesEntry->GetWidgetName(),
+                 this->NumberOfPuncturesEntry->GetWidgetName(),
+                 this->TumorMarginEntry->GetWidgetName());
 
 
   // Export and run frame
@@ -219,12 +287,26 @@ void vtkIGTPlanningOptimizationStep::ShowUserInterface()
     this->RunFrame->SetParent(
       wizard_widget->GetClientArea());
     this->RunFrame->Create();
-    this->MoreFrame->SetLabelText("Export and run");
-    this->RunFrame->SetHeight(50);
+    this->RunFrame->SetLabelText("Export and run");
+//    this->RunFrame->SetHeight(50);
     }
   this->Script("pack %s -side top -expand n -fill both -padx 0 -pady 2", 
                this->RunFrame->GetWidgetName());
 
+  this->DirectoryButton = vtkKWLoadSaveButtonWithLabel::New ( );
+  this->DirectoryButton->SetParent ( this->RunFrame->GetFrame() );
+  this->DirectoryButton->Create ( );
+  this->DirectoryButton->SetLabelPositionToLeft();
+  this->DirectoryButton->SetLabelText ("Change Destination for All Selected:");
+  this->DirectoryButton->GetWidget()->TrimPathFromFileNameOff();
+  this->DirectoryButton->GetWidget()->SetMaximumFileNameLength(64);
+  this->DirectoryButton->GetWidget()->GetLoadSaveDialog()->ChooseDirectoryOn();
+  this->DirectoryButton->GetWidget()->GetLoadSaveDialog()->RetrieveLastPathFromRegistry(
+    "OpenPath");
+
+  this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+                 this->DirectoryButton->GetWidgetName());
+ 
   //Add a help to the step
   vtkKWPushButton * helpButton =  wizard_widget->GetHelpButton();
 
