@@ -72,9 +72,7 @@ subdirs(
    FastMarchingSegmentation
    RealTimeNeedleDetection
    SecondaryWindow
-   FourDImage
-   FourDAnalysis
-   IGTWizard
+#   FourDImage
   )
 
 if(Slicer3_USE_OPENIGTLINK)
