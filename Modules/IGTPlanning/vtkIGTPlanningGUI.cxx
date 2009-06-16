@@ -207,7 +207,7 @@ void vtkIGTPlanningGUI::BuildGUI()
   this->WizardWidget->SetParent(wizard_frame->GetFrame());
   this->WizardWidget->Create();
   this->WizardWidget->GetSubTitleLabel()->SetHeight(1);
-  this->WizardWidget->SetClientAreaMinimumHeight(320);
+  this->WizardWidget->SetClientAreaMinimumHeight(400);
   //this->WizardWidget->SetButtonsPositionToTop();
   this->WizardWidget->HelpButtonVisibilityOn();
   app->Script("pack %s -side top -anchor nw -fill both -expand y",
