@@ -70,6 +70,11 @@ subdirs(
    ModelIntoLabelVolume
    ExtractSubvolume
    FastMarchingSegmentation
+   RealTimeNeedleDetection
+   SecondaryWindow
+   FourDImage
+   FourDAnalysis
+   IGTWizard
   )
 
 if(Slicer3_USE_OPENIGTLINK)
