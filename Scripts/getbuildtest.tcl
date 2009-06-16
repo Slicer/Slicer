@@ -73,7 +73,7 @@ set ::GETBUILDTEST(rpm-spec) ""
 set ::GETBUILDTEST(extend) "false"
 if {$tcl_platform(os) == "SunOS"} {
    set isainfo [exec isainfo -b]
-   set ::GETBUILDTEST(bitness) "-$isainfo"
+   set ::GETBUILDTEST(bitness) "$isainfo"
 } else {
   set ::GETBUILDTEST(bitness) "32"
 }
