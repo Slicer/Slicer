@@ -16,7 +16,7 @@ def StartConsole():
     import ipTk
     reload(ipTk)
     top = Tkinter.Toplevel ( tk )
-    os.environ = dict([ ( s[:s.find('=')],s[s.find('=')+1:]) for s in tk.call('env').splitlines()])
+#    os.environ = dict([ ( s[:s.find('=')],s[s.find('=')+1:]) for s in tk.call('env').splitlines()])
     s=ipTk.IPythonView(top, banner="3D Slicer IPython console\n")
     s.master.title("3D Slicer 3.3 alpha IPython console")
     s.config(background="black")
@@ -368,6 +368,7 @@ class Plugin(object):
         arglen = len(args)
 
         if self.module.GetModuleType() == "PythonModule":
+            vtkMRMLNodeTags = [ 'image','geometry','transform' ]
             moduleName = self.module.GetModuleTarget()
             executeArgs = {}
             outputNodes = []
@@ -376,40 +377,49 @@ class Plugin(object):
                 # Make sure we can lookup a MRML Node
                 #node = slicer.MRMLScene.GetNodeByID(args[ii])
                 node = args[ii]
-                if not node.IsA('vtkMRMLNode'):
+                parameterTag = self.module.GetParameterTag(pargs[ii][0],pargs[ii][1])
+                paramName = self.module.GetParameterName(pargs[ii][0],pargs[ii][1])
+                if (parameterTag in vtkMRMLNodeTags) and ( hasattr(node, 'IsA')  ):
+                  if not node.IsA('vtkMRMLNode'):
                     self.module = None
                     raise Exception("Plugin: " + self.name + " requires a MRML Node as a positional arg: found " + str(args[ii]) + " instead")
-                paramName = self.module.GetParameterName(pargs[ii][0],pargs[ii][1])
-                executeArgs[paramName] = node.GetID()
+                  executeArgs[paramName] = node.GetID()
+                else:
+                  executeArgs[paramName] = node
+            
             for ii in range(diff):
                 idx = arglen + ii
-                parameterTag = self.module.GetParameterTag(pargs[ii][0],pargs[ii][1])
-                parameterType = self.module.GetParameterType(pargs[ii][0],pargs[ii][1])
-                if parameterTag == "image": 
-                    if parameterType == "label":
-                        className = "vtkMRMLScalarVolumeNode"
-                    elif parameterType == "vector":
-                        className = "vtkMRMLVectorVolumeNode"
-                    elif parameterType == "tensor":
-                        className = "vtkMRMLDiffusionTensorVolumeNode"
-                    elif parameterType == "diffusion-weighted":
-                        className = "vtkMRMLDiffusionWeightedVolumeNode"
-                    else:
-                        className = "vtkMRMLScalarVolumeNode"
-                elif parameterTag == "geometry":
-                    if parameterType == "fiberbundle":
-                        className = "vtkMRMLFiberBundleNode"
-                    else:
-                        className = "vtkMRMLModelNode"
-                elif parameterTag == "transform":
-                    className = "vtkMRMLTransformNode"
-                node = slicer.MRMLScene.CreateNodeByClass(className)
-                node.SetScene(slicer.MRMLScene)
-                node.SetName(slicer.MRMLScene.GetUniqueNameByString(className))
-                slicer.MRMLScene.AddNode(node)
+                parameterTag = self.module.GetParameterTag(pargs[idx][0],pargs[idx][1])
+                parameterType = self.module.GetParameterType(pargs[idx][0],pargs[idx][1])
                 paramName = self.module.GetParameterName(pargs[idx][0],pargs[idx][1])
-                executeArgs[paramName] = node.GetID()
-                outputNodes.append(node)
+                if parameterType in vtkMRMLNodeTags:
+                  if parameterTag == "image": 
+                      if parameterType == "label":
+                          className = "vtkMRMLScalarVolumeNode"
+                      elif parameterType == "vector":
+                          className = "vtkMRMLVectorVolumeNode"
+                      elif parameterType == "tensor":
+                          className = "vtkMRMLDiffusionTensorVolumeNode"
+                      elif parameterType == "diffusion-weighted":
+                          className = "vtkMRMLDiffusionWeightedVolumeNode"
+                      else:
+                          className = "vtkMRMLScalarVolumeNode"
+                  elif parameterTag == "geometry":
+                      if parameterType == "fiberbundle":
+                          className = "vtkMRMLFiberBundleNode"
+                      else:
+                          className = "vtkMRMLModelNode"
+                  elif parameterTag == "transform":
+                      className = "vtkMRMLTransformNode"
+                  node = slicer.MRMLScene.CreateNodeByClass(className)
+                  node.SetScene(slicer.MRMLScene)
+                  node.SetName(slicer.MRMLScene.GetUniqueNameByString(className))
+                  slicer.MRMLScene.AddNode(node)
+                  executeArgs[paramName] = node.GetID()
+                  outputNodes.append(node)
+                else:
+                  executeArgs[paramName] = self.module.GetParameterDefault(pargs[idx][0],pargs[idx][1])
+
             for entry in keywords:
                 executeArgs[entry] = keywords[entry]
             module = __import__(moduleName)
