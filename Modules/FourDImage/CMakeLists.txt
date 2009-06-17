@@ -45,6 +45,12 @@ install(FILES
   DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
 
+file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.h") 
+install(FILES 
+  ${files}
+  DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
+  )
+
 # --------------------------------------------------------------------------
 # Sources
 
@@ -52,6 +58,7 @@ set(FourDImage_SRCS
   vtkFourDImageLogic.cxx
   vtkFourDImageGUI.cxx
   vtkMRML4DBundleNode.cxx
+  vtkFourDImageIcons.cxx
 )
 
 

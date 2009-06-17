@@ -29,6 +29,8 @@
 
 #include "vtkKWMultiColumnListWithScrollbars.h"
 
+#include "vtkFourDImageIcons.h"
+
 #include <map>
 
 class vtkKWScaleWithEntry;
@@ -157,6 +159,10 @@ class VTK_FourDImage_EXPORT vtkFourDImageGUI : public vtkSlicerModuleGUI
   //----------------------------------------------------------------
 
   vtkKWProgressDialog *ProgressDialog;
+
+  // -----------------------------------------
+  // Icons
+  vtkFourDImageIcons* Icons;
 
   // -----------------------------------------
   // Load / Save / Active frame
