@@ -4314,7 +4314,7 @@ PackageAndWriteData(const char* packageDirectory)
   if (!outputDirectory.empty() && 
       outputDirectory[outputDirectory.size()-1] != '/')
     {
-    // make sure directory ends in seperator
+    // make sure directory ends in separator
     outputDirectory = outputDirectory + "/";
     }
 

@@ -559,7 +559,7 @@ const char *vtkXNDHandler::QueryServer( const char *uri, const char *destination
     {
     if (retval == CURLE_BAD_FUNCTION_ARGUMENT)
       {
-      returnString = "Bad function arguement to cURL.";
+      returnString = "Bad function argument to cURL.";
       vtkErrorMacro("QueryServer: bad function argument to curl, did you init CurlHandle?");
       }
     else if (retval == CURLE_OUT_OF_MEMORY)

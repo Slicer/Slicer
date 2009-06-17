@@ -80,7 +80,7 @@ public:
     };
 
     //Description;
-    //Copy only the paramterset (like Volume Propertys, Piecewiesefunctions etc. as deep copy,but no references etc.)
+    //Copy only the parameterset (like Volume Propertys, Piecewiesefunctions etc. as deep copy,but no references etc.)
     void CopyParameterSet(vtkMRMLNode *node);
 
     // Description:

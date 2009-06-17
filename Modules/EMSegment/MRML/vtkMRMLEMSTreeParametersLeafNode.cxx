@@ -148,7 +148,7 @@ void vtkMRMLEMSTreeParametersLeafNode::ReadXMLAttributes(const char** attrs)
       }
     else if (!strcmp(key, "LogCovariance"))
       {
-      // remove visual row seperators
+      // remove visual row separators
       std::string valStr(val);
       for (i = 0; i < valStr.size(); ++i)
         {

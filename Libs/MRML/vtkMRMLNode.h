@@ -136,7 +136,7 @@ public:
 
   
   // Description:
-  // Copy paramters (not including ID and Scene) from another node of the same type.
+  // Copy parameters (not including ID and Scene) from another node of the same type.
   // NOTE: Subclasses should implement this method
   // NOTE: Call this method in the subclass impementation
   virtual void Copy(vtkMRMLNode *node);

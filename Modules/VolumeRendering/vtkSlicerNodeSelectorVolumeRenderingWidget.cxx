@@ -94,7 +94,7 @@ int vtkSlicerNodeSelectorVolumeRenderingWidget::AddAditionalNodes()
             }
         }
     }
-    //after all add a seperator
+    //after all add a separator
     this->GetWidget()->GetWidget()->GetMenu()->AddSeparator();
     //count++;
     if (selectedNode != NULL)

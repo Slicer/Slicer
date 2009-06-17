@@ -307,14 +307,14 @@ void vtkKWMimxViewPropertiesGroup::CreateWidget()
           this->OpacityThumbwheel->GetWidgetName());
   this->OpacityThumbwheel->SetEnabled(0);
   
-        vtkKWSeparator *seperator = vtkKWSeparator::New();
-        seperator->SetParent(this->StyleFrame->GetFrame());
-  seperator->Create();
-  seperator->SetOrientationToHorizontal();
-  seperator->SetOrientationToHorizontal();
+        vtkKWSeparator *separator = vtkKWSeparator::New();
+        separator->SetParent(this->StyleFrame->GetFrame());
+  separator->Create();
+  separator->SetOrientationToHorizontal();
+  separator->SetOrientationToHorizontal();
   this->GetApplication()->Script( 
     "pack %s -side top -anchor nw -expand n -padx 5 -pady 2 -fill x", 
-          seperator->GetWidgetName());
+          separator->GetWidgetName());
           
         if (!this->OutlineColorButton)
     this->OutlineColorButton = vtkKWChangeColorButton::New();

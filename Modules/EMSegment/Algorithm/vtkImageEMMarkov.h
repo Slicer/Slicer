@@ -138,7 +138,7 @@ protected:
 
   int ImgTestNo;       // Segment an image test picture (-1 => No, > 0 =>certain Test pictures)
   int ImgTestDivision; // Number of divisions/colors of the picture
-  int ImgTestPixel;    // Pixel lenght on one diviosn (pixel == -1 => max pixel length for devision)
+  int ImgTestPixel;    // Pixel length on one division (pixel == -1 => max pixel length for division)
 
 
   int **Label;            // Intensity distribution of the classes

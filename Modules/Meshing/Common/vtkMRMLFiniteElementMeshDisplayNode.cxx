@@ -54,7 +54,7 @@ vtkMRMLNode* vtkMRMLFiniteElementMeshDisplayNode::CreateNodeInstance()
 
 void vtkMRMLFiniteElementMeshDisplayNode::UpdatePolyDataPipeline()
 {
-   // set the type of metric to display here and the paramters for coloring, etc. 
+   // set the type of metric to display here and the parameters for coloring, etc. 
    //this->ShrinkFactor = whatever-was-in-the-GUI
    //this->ShrinkPolyData->SetShrinkFactor(this->ShrinkFactor); 
 }

@@ -140,7 +140,7 @@ protected:
   vtkImageData *ProbImageData;   // Pointer to the vtkImageData defining ProbData 
 
 
-  // Thes are the paramters describing the transition from 
+  // Thes are the parameters describing the transition from 
   // (Very First SuperClass - Head) From Atlas to Global Coordinate system 
   // (Next class of super class)  From Global to SuperClass Coordinate System
   // (For CLASS) For Class to SuperClass Coordinate System 

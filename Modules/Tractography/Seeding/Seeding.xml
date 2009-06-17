@@ -133,7 +133,7 @@
       <label>Maximum Length</label>
       <flag>-m</flag>
       <longflag>--maximumlength</longflag>
-      <description>Maximum lenght of fibers (in mm)</description>
+      <description>Maximum length of fibers (in mm)</description>
       <default>800</default>
       <constraints>
         <minimum>0</minimum>

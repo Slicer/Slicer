@@ -36,7 +36,7 @@ vtkImageEMMarkov::vtkImageEMMarkov()
   this->Error = 1;             // Error flag -> if Error < 0 than error occured
   this->ImgTestNo = -1;       // Segment an image test picture (-1 => No, > 0 =>certain Test pictures)
   this->ImgTestDivision = -1; // Number of divisions/colors of the picture
-  this->ImgTestPixel = -1;    // Pixel lenght on one diviosn (pixel == -1 => max pixel length for devision)
+  this->ImgTestPixel = -1;    // Pixel length on one division (pixel == -1 => max pixel length for division)
   this->Label = NULL;this->LabelNumber = NULL;this->ClassProbability = NULL;
 }
 

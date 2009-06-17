@@ -827,7 +827,7 @@ void vtkDataIOManagerLogic::ApplyTransfer( void *clientdata )
     }
   else
     {
-    vtkErrorMacro("ApplyTransfer: unknonw transfer type " <<  dt->GetTransferType() );
+    vtkErrorMacro("ApplyTransfer: unknown transfer type " <<  dt->GetTransferType() );
     }
 }
 

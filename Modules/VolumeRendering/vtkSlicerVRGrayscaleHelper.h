@@ -76,19 +76,19 @@ public:
     // Treshold
     //--------------------------------------------------------------------------
     // Description:
-    //Callback, that is processed when the treshold mode is changed
+    //Callback, that is processed when the threshold mode is changed
     void ProcessThresholdModeEvents(int id);
 
     // Description:
-    // Callback, that is processed when the range of the treshold is changed
+    // Callback, that is processed when the range of the threshold is changed
     void ProcessThresholdRange(double notUsed,double notUsedA);
 
     // Description:
-    // Callback, that is processed when one zooms into the treshold range sliders
+    // Callback, that is processed when one zooms into the threshold range sliders
     void ProcessThresholdZoomIn(void);
 
     // Description:
-    // Callback, that is processed when one resets the treshold range sliders
+    // Callback, that is processed when one resets the threshold range sliders
     void ProcessThresholdReset(void);
 
     //--------------------------------------------------------------------------
@@ -228,11 +228,11 @@ protected:
     int ThresholdMode;
 
     // Description:
-    // Create the treshold page
+    // Create the threshold page
     void CreateThreshold(void);
 
     // Description:
-    // Destroy the treshold page
+    // Destroy the threshold page
     void DestroyTreshold(void);
 
     //--------------------------------------------------------------------------

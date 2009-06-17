@@ -314,7 +314,7 @@ private:
 
   // How many sets of Registration Parameters do we have to maximize
   int    NumberOfParameterSets;
-  // How many paramters  per set 
+  // How many parameters per set 
   // => Total Number of parameters to be optimized = NumberOfParameterSets * NumberOfParameterPerSet 
   int    NumberOfParameterPerSet; 
   // The value of NumberOfParameterPerSet is defined by (TwoDFlag, RigidFlag)

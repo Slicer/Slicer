@@ -142,7 +142,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   
   // Description:
   // Set/Get the search paths for modules.
-  // This is a list of paths delimited by a specific seperator: ';' on 
+  // This is a list of paths delimited by a specific separator: ';' on 
   // Windows, ':' on Unix/MacOSX platforms.
   void SetModulePaths(const char *paths);
   const char* GetModulePaths() const;

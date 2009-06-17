@@ -103,7 +103,7 @@ void vtkMRMLEMSClassInteractionMatrixNode::ReadXMLAttributes(const char** attrs)
       {
       int directionIndex = directionPosition - this->DirectionNames.begin();
 
-      // remove visual row seperators
+      // remove visual row separators
       std::string valStr(val);
       vtkstd::replace(valStr.begin(), valStr.end(), '|', ' ');
 
