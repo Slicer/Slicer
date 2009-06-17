@@ -399,6 +399,7 @@ proc launch_SetPaths {} {
             set ::env(LD_LIBRARY_PATH) $::env(Slicer3_PLUGINS_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(Slicer3_MODULES_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(X11_LIB_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(PATH) "$::env(PATH):$::env(TCL_DIR)/bin"
             set ::env(PATH) "$::env(PATH):$::env(Teem_DIR)"
             set ::env(PATH) "$::env(Slicer3_BIN_DIR):$::env(PATH)"
             set ::env(PATH) "$::env(Slicer3_PLUGINS_DIR):$::env(PATH)"
@@ -434,7 +435,8 @@ proc launch_SetPaths {} {
             set ::env(DYLD_LIBRARY_PATH) $::env(Slicer3_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(Slicer3_PLUGINS_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(Slicer3_MODULES_DIR):$::env(DYLD_LIBRARY_PATH)
-            set ::env(PATH) $::env(PATH):$::env(Teem_DIR)
+            set ::env(PATH) "$::env(PATH):$::env(TCL_DIR)/bin"
+            set ::env(PATH) "$::env(PATH):$::env(Teem_DIR)"
             set ::env(PATH) "$::env(Slicer3_BIN_DIR):$::env(PATH)"
             set ::env(PATH) "$::env(Slicer3_PLUGINS_DIR):$::env(PATH)"
             set ::env(PATH) "$::env(Slicer3_MODULES_DIR):$::env(PATH)"
