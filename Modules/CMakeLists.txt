@@ -72,6 +72,7 @@ subdirs(
    ExtractSubvolume
    FastMarchingSegmentation
 #   FourDImage
+   ExtractSubvolumeROI
   )
 
 if(Slicer3_USE_OPENIGTLINK)

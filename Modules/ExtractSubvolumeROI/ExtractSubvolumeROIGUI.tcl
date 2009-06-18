@@ -1,0 +1,957 @@
+#
+# ExtractSubvolumeROI GUI Procs
+# - the 'this' argument to all procs is a vtkScriptedModuleGUI
+#
+
+#proc func {name argl body} {proc $name $argl [list expr $body]}
+proc min {a b} {expr $a<$b? $a: $b}
+
+
+proc ExtractSubvolumeROIConstructor {this} {
+}
+
+proc ExtractSubvolumeROIDestructor {this} {
+}
+
+proc ExtractSubvolumeROITearDownGUI {this} {
+
+
+  # nodeSelector  ;# disabled for now
+  set widgets {
+    initFrame runButton inputSelector outputSelector roiSelector samplingScale
+  }
+
+  foreach w $widgets {
+    $::ExtractSubvolumeROI($this,$w) SetParent ""
+    $::ExtractSubvolumeROI($this,$w) Delete
+  }
+
+  $::ExtractSubvolumeROI($this,resliceFilter) Delete
+
+  if { [[$this GetUIPanel] GetUserInterfaceManager] != "" } {
+    set pageWidget [[$this GetUIPanel] GetPageWidget "ExtractSubvolumeROI"]
+    [$this GetUIPanel] RemovePage "ExtractSubvolumeROI"
+  }
+
+  unset ::ExtractSubvolumeROI(singleton)
+
+  catch {$::ExtractSubvolumeROI($this,labelMap) Delete}
+}
+
+proc ExtractSubvolumeROIBuildGUI {this} {
+
+  set ::ExtractSubvolumeROI($this,redGUIObserverTags) ""
+  set ::ExtractSubvolumeROI($this,greenGUIObserverTags) ""
+  set ::ExtractSubvolumeROI($this,yellowGUIObserverTags) ""
+
+  if { [info exists ::ExtractSubvolumeROI(singleton)] } {
+    error "ExtractSubvolumeROI singleton already created"
+  }
+  set ::ExtractSubvolumeROI(singleton) $this
+
+  #
+  # create and register the node class
+  # - since this is a generic type of node, only do it if 
+  #   it hasn't already been done by another module
+  #
+
+  set mrmlScene [[$this GetLogic] GetMRMLScene]
+  set tag [$mrmlScene GetTagByClassName "vtkMRMLScriptedModuleNode"]
+  if { $tag == "" } {
+    set node [vtkMRMLScriptedModuleNode New]
+    $mrmlScene RegisterNodeClass $node
+    $node Delete
+  }
+
+
+  $this SetCategory "Converters"
+  [$this GetUIPanel] AddPage "ExtractSubvolumeROI" "ExtractSubvolumeROI" ""
+  set pageWidget [[$this GetUIPanel] GetPageWidget "ExtractSubvolumeROI"]
+
+  #
+  # help frame
+  #
+  set helptext "THIS MODULE IS UNDER DEVELOPMENT!\nThis module extracts subvolume of the image described by Region of Interest widget.\n\nTo use, specify input volume, region of interest within volume, output volume, and desied sampling. The output volume will have isotropic sampling.\n\nYou can control ROI in slice viewers. Left mouse button click expands the ROI size, Right mouse button click re-centers ROI.\n\n\nWARNING: Major limitations:\n-- input volume must be axis-aligned\n-- neither ROI or input volume can be under a transform\n"
+  set abouttext "This module was designed and implemented by Andriy Fedorov and Ron Kikinis.\nThis work was funded by Brain Science Foundation, and is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details."
+  $this BuildHelpAndAboutFrame $pageWidget $helptext $abouttext
+
+  set slicerBaseIcons [vtkSlicerBaseAcknowledgementLogoIcons New]
+
+  set logo [vtkKWIcon New]
+  set logoReader [vtkPNGReader New]
+  set iconDir [file join [[$::FastMarchingSegmentation(singleton) GetLogic] GetModuleShareDirectory] "ImageData"]
+  $logoReader SetFileName $iconDir/BSFLogo.png
+  $logoReader Update
+
+  $logo SetImage [$logoReader GetOutput]
+
+  set logoLabelBSF [vtkKWLabel New]
+  $logoLabelBSF SetParent [$this GetLogoFrame]
+  $logoLabelBSF Create
+  $logoLabelBSF SetImageToIcon $logo
+
+  set logoLabelNAMIC [vtkKWLabel New]
+  $logoLabelNAMIC SetParent [$this GetLogoFrame]
+  $logoLabelNAMIC Create
+  $logoLabelNAMIC SetImageToIcon [$slicerBaseIcons GetNAMICLogo]
+
+  pack [$logoLabelBSF GetWidgetName] [$logoLabelNAMIC GetWidgetName] -side left
+
+  $logoLabelBSF Delete
+  $logoLabelNAMIC Delete
+  $logoReader Delete
+  $logo Delete
+  $slicerBaseIcons Delete
+
+
+  #
+  # ExtractSubvolumeROI input and initialization parameters
+  #
+  set ::ExtractSubvolumeROI($this,initFrame) [vtkSlicerModuleCollapsibleFrame New]
+  set initFrame $::ExtractSubvolumeROI($this,initFrame)
+  $initFrame SetParent $pageWidget
+  $initFrame Create
+  $initFrame SetLabelText "Input/initialization parameters"
+  pack [$initFrame GetWidgetName] \
+    -side top -anchor nw -fill x -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
+
+  # Input frame widgets
+
+  set ::ExtractSubvolumeROI($this,inputSelector) [vtkSlicerNodeSelectorWidget New]
+  set select $::ExtractSubvolumeROI($this,inputSelector)
+  $select SetParent [$initFrame GetFrame]
+  $select Create
+  $select SetNodeClass "vtkMRMLScalarVolumeNode" "" "" ""
+  $select SetMRMLScene [[$this GetLogic] GetMRMLScene]
+  $select UpdateMenu
+  $select SetLabelText "Input volume:"
+  $select SetBalloonHelpString "The Source Volume to operate on"
+  pack [$select GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+
+  set ::ExtractSubvolumeROI($this,roiSelector) [vtkSlicerNodeSelectorWidget New]
+  set roi $::ExtractSubvolumeROI($this,roiSelector)
+  $roi SetParent [$initFrame GetFrame]
+  $roi Create
+  $roi NewNodeEnabledOn
+  $roi SetNodeClass "vtkMRMLROINode" "" "" ""
+  $roi SetMRMLScene [[$this GetLogic] GetMRMLScene]
+  $roi UpdateMenu
+  $roi SetLabelText "Region of interest:"
+  $roi SetBalloonHelpString "Region of interest that defines the subvolume"
+  pack [$roi GetWidgetName] -side top -anchor e -padx 2 -pady 2
+  
+  # Output volume definition
+  set ::ExtractSubvolumeROI($this,outputSelector) [vtkSlicerNodeSelectorWidget New]
+  set out $::ExtractSubvolumeROI($this,outputSelector)
+  $out SetParent [$initFrame GetFrame]
+  $out Create
+  $out NewNodeEnabledOn
+  $out SetNodeClass "vtkMRMLScalarVolumeNode" "" "" ""
+  $out SetMRMLScene [[$this GetLogic] GetMRMLScene]
+  $out UpdateMenu
+  $out SetLabelText "Output volume:"
+  $out SetBalloonHelpString "The Output Volume node"
+  pack [$out GetWidgetName] -side top -anchor e -padx 2 -pady 2 
+
+  # Spacing to use for isotropic resampling
+  set ::ExtractSubvolumeROI($this,samplingScale) [vtkKWSpinBoxWithLabel New]
+  set sampling $::ExtractSubvolumeROI($this,samplingScale)
+  $sampling SetParent [$initFrame GetFrame]
+  $sampling Create
+#  $sampling GetWidget SetRestrictValueToDouble
+  $sampling SetLabelText "Spacing to use for output volume"
+  $sampling SetBalloonHelpString "Output volume sampling"
+  pack [$sampling GetWidgetName] -side top -anchor e -padx 2 -pady 2
+
+  set ::ExtractSubvolumeROI($this,runButton) [vtkKWPushButton New]
+  set run $::ExtractSubvolumeROI($this,runButton)
+  $run SetParent [$initFrame GetFrame]
+  $run Create
+  $run SetText "Do ROI resample"
+  pack [$run GetWidgetName] -side top -anchor e -padx 2 -pady 2 -fill x
+
+  set ::ExtractSubvolumeROI($this,resliceFilter) [vtkImageReslice New]
+  set ::ExtractSubvolumeROI($this,inputVolume) ""
+
+}
+
+proc ExtractSubvolumeROIAddGUIObservers {this} {
+  $this AddObserverByNumber $::ExtractSubvolumeROI($this,runButton) 10000 
+  $this AddObserverByNumber $::ExtractSubvolumeROI($this,inputSelector)  11000
+  $this AddObserverByNumber $::ExtractSubvolumeROI($this,outputSelector)  10000
+  $this AddObserverByNumber $::ExtractSubvolumeROI($this,roiSelector) 11000
+#  $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
+    
+  #  set up pointers, observers will be initialized on module enter
+  set appGUI $::slicer3::ApplicationGUI
+  set ::ExtractSubvolumeROI($this,rwiRedInteractorStyle) \
+    [[[[[$appGUI GetMainSliceGUI "Red"] GetSliceViewer] \
+    GetRenderWidget ] GetRenderWindowInteractor] GetInteractorStyle]
+  set ::ExtractSubvolumeROI($this,rwiGreenInteractorStyle) \
+    [[[[$appGUI GetMainSliceGUI "Green"] GetSliceViewer] \
+    GetRenderWidget ] GetRenderWindowInteractor]
+  set ::ExtractSubvolumeROI($this,rwiYellowInteractorStyle) \
+    [[[[$appGUI GetMainSliceGUI "Yellow"] GetSliceViewer] \
+    GetRenderWidget ] GetRenderWindowInteractor]
+
+  # From Slicer console
+  # set style [[[[[$::slicer3::ApplicationGUI GetMainSliceGUI "Red"]
+  # GetSliceViewer] GetRenderWidget] GetRenderWindowInteractor]
+  # GetInteractorStyle]
+#  [ $rwiGreen GetInteractorStyle ] AddObserver 12 
+#  [ $rwiYellow GetInteractorStyle ] AddObserver 12 
+
+}
+
+proc ExtractSubvolumeROIRemoveGUIObservers {this} {
+}
+
+proc ExtractSubvolumeROIRemoveLogicObservers {this} {
+}
+
+proc ExtractSubvolumeROIRemoveMRMLNodeObservers {this} {
+  catch {$this RemoveMRMLObserverByNumber $::ExtractSubvolumeROI($this,observedROINode) 31}
+}
+
+proc ExtractSubvolumeROIProcessLogicEvents {this caller event} {
+}
+
+proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
+  
+  # TODO: check if the volume or ROI is under a transform, and refuse to do
+  # anything if it is to avoid problems
+  if { $caller == $::ExtractSubvolumeROI($this,runButton) } {
+  
+    set inputVolume [$::ExtractSubvolumeROI($this,inputSelector) GetSelected]
+    if {$inputVolume == ""} {
+      ExtractSubvolumeROIErrorDialog $this "Please specify input volume!"
+      return
+    }
+    ExtractSubvolumeROIApply $this
+  } 
+
+  if {$caller == $::ExtractSubvolumeROI($this,outputSelector) } {
+  }
+
+  if {$caller == $::ExtractSubvolumeROI($this,roiSelector)} {
+    puts "New ROI created!"
+    catch {$this RemoveMRMLObserverByNumber $::ExtractSubvolumeROI($this,observedROINode) 31}
+    set ::ExtractSubvolumeROI($this,observedROINode) [$::ExtractSubvolumeROI($this,roiSelector) GetSelected]
+    $this AddMRMLObserverByNumber $::ExtractSubvolumeROI($this,observedROINode) 31
+  }
+
+  if {$caller == $::ExtractSubvolumeROI($this,inputSelector) || \
+      $caller == $::ExtractSubvolumeROI($this,roiSelector) } {
+    set roiNode [$::ExtractSubvolumeROI($this,roiSelector) GetSelected]
+
+    set inputVolume [$::ExtractSubvolumeROI($this,inputSelector) GetSelected]
+    if {$inputVolume == "" || $inputVolume == $::ExtractSubvolumeROI($this,inputVolume) || $roiNode == ""} {
+      return
+    }
+    puts "Input volume selection changed"
+    set ::ExtractSubvolumeROI($this,inputVolume) $inputVolume
+    set dim [[$inputVolume GetImageData] GetWholeExtent]
+    puts "Input image extent: $dim" 
+    catch {$::ExtractSubvolumeROI($this,labelMap) Delete}
+    set ::ExtractSubvolumeROI($this,labelMap) [vtkImageRectangularSource New]
+    set labelMap $::ExtractSubvolumeROI($this,labelMap)
+    $labelMap SetWholeExtent 0 [expr [lindex $dim 1]-1] 0 [expr [lindex $dim 3]-1] 0 [expr [lindex $dim 5]-1]
+    $labelMap SetOutputScalarTypeToShort
+    $labelMap SetInsideGraySlopeFlag 0
+    $labelMap SetInValue 17
+    $labelMap SetOutValue 0
+    $labelMap Update
+
+    # create label volume to keep ROI visualization
+    # TODO: delete the older label volume if it existed
+    set scene [[$this GetLogic] GetMRMLScene]
+    set volumesLogic [$::slicer3::VolumesGUI GetLogic]
+    set ::ExtractSubvolumeROI($this,labelMapNode) [$volumesLogic CreateLabelVolume $scene $inputVolume "VolumeOfInterest"]
+    $::ExtractSubvolumeROI($this,labelMapNode) SetAndObserveImageData [$labelMap GetOutput]
+
+    set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
+    $selectionNode SetReferenceActiveLabelVolumeID [$::ExtractSubvolumeROI($this,labelMapNode) GetID]
+    $selectionNode Modified
+    $selectionNode Modified
+    [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection 0
+
+    # set the label node
+    set redCompositeNode [[[$::slicer3::ApplicationGUI GetMainSliceGUI "Red"] GetLogic ] GetSliceCompositeNode]
+    set greenCompositeNode [[[$::slicer3::ApplicationGUI GetMainSliceGUI "Green"] GetLogic ] GetSliceCompositeNode]
+    set yellowCompositeNode [[[$::slicer3::ApplicationGUI GetMainSliceGUI "Yellow"] GetLogic ] GetSliceCompositeNode]
+    $redCompositeNode SetLabelOpacity .6
+    $greenCompositeNode SetLabelOpacity .6
+    $yellowCompositeNode SetLabelOpacity .6
+#    $redCompositeNode SetReferenceLabelVolumeID [$::ExtractSubvolumeROI($this,labelMapNode) GetID]
+#    $greenCompositeNode SetReferenceLabelVolumeID [$::ExtractSubvolumeROI($this,labelMapNode) GetID]
+#    $yellowCompositeNode SetReferenceLabelVolumeID [$::ExtractSubvolumeROI($this,labelMapNode) GetID]
+  }
+
+  puts "Event from $caller"
+  set redStyle $::ExtractSubvolumeROI($this,rwiRedInteractorStyle)
+  set greenStyle $::ExtractSubvolumeROI($this,rwiGreenInteractorStyle)
+  set yellowStyle $::ExtractSubvolumeROI($this,rwiYellowInteractorStyle)
+
+
+  if {$event == "LeftButtonPressEvent" || $event == "RightButtonPressEvent"} {
+    set roiNode [$::ExtractSubvolumeROI($this,roiSelector) GetSelected]
+    if {$roiNode == ""} {
+      return
+    }
+
+    if {$caller == $redStyle} {
+      set sliceGUI [$::slicer3::ApplicationGUI GetMainSliceGUI "Red"]
+      set sliceRWI [[[$sliceGUI GetSliceViewer] GetRenderWidget ] \
+        GetRenderWindowInteractor]
+    }
+    if {$caller == $yellowStyle} {
+      set sliceGUI [$::slicer3::ApplicationGUI GetMainSliceGUI "Yellow"]
+      set sliceRWI [[[$sliceGUI GetSliceViewer] GetRenderWidget ] \
+        GetRenderWindowInteractor]
+    }
+    if {$caller == $greenStyle} {
+      set sliceGUI [$::slicer3::ApplicationGUI GetMainSliceGUI "Green"]
+      set sliceRWI [[[$sliceGUI GetSliceViewer] GetRenderWidget ] \
+        GetRenderWindowInteractor]
+    }
+
+    # now retrieve RAS position for the mouse click
+    set xy2ras [[[$sliceGUI GetLogic] GetSliceNode] GetXYToRAS]
+    set clickXY [$sliceRWI GetLastEventPosition]
+    # this is a bit confusing, because the coordinates of click are actually
+    # in RAS, but ROI uses XYZ, not RAS notation, so I stick with it
+    scan [lrange [eval $xy2ras MultiplyPoint "$clickXY 0 1"] 0 2] "%f%f%f" clickX clickY clickZ
+    puts "Point in XY: $clickXY"
+    puts "Point in RAS: $clickX $clickY $clickZ"
+  
+    if {$event == "RightButtonPressEvent"} {
+      $roiNode SetXYZ $clickX $clickY $clickZ
+    }
+    if {$event == "LeftButtonPressEvent"} {
+      scan [$roiNode GetXYZ] "%f%f%f" roiX roiY roiZ
+      scan [$roiNode GetRadiusXYZ] "%f%f%f" roiRadiusX roiRadiusY roiRadiusZ
+      set dX [expr abs($roiX-$clickX)] 
+      set dY [expr abs($roiY-$clickY)] 
+      set dZ [expr abs($roiZ-$clickZ)] 
+      puts "Deltas: $dX $dY $dZ"
+      puts "Radius: $roiRadiusX $roiRadiusY $roiRadiusZ"
+      puts "Center: $roiX $roiY $roiZ"
+      if { [expr $dX>$roiRadiusX || $dY>$roiRadiusY || $dZ>$roiRadiusZ] } {
+        # click outside the box
+        puts "Points is outside the ROI box"
+        if {[expr $dX>$roiRadiusX]} {
+          set roiRadiusX $dX
+#          set roiRadiusX [expr $roiRadiusX+$dX/2]
+#          set roiX [expr $roiX+$dX/2]
+        }
+        if {[expr $dY>$roiRadiusY]} {
+          set roiRadiusY $dY
+#          set roiRadiusY [expr $roiRadiusY+$dY/2]
+#          set roiY [expr $roiY+$dY/2]
+        } 
+        if {[expr $dZ>$roiRadiusZ]} {
+          set roiRadiusZ $dZ
+#          set roiRadiusZ [expr $roiRadiusZ+$dZ/2]
+#          set roiZ [expr $roiZ+$dZ/2]
+        } 
+      } else {
+        # in-box click -- reduce roi
+        # -- disabled for now
+#        if {[expr $dX<$roiRadiusX]} {
+#          set roiRadiusX $dX
+#        }
+#        if {[expr $dY<$roiRadiusY]} {
+#          set roiRadiusY $dY
+#        }
+#        if {[expr $dZ<$roiRadiusZ]} {
+#          set roiRadiusZ $dZ
+#        }
+      }
+      puts "New radius: $roiRadiusX $roiRadiusY $roiRadiusZ"  
+      $roiNode SetXYZ $roiX $roiY $roiZ
+      $roiNode SetRadiusXYZ $roiRadiusX $roiRadiusY $roiRadiusZ
+    }
+  }
+}
+
+#
+# Accessors to ExtractSubvolumeROI state
+#
+
+
+# get the ExtractSubvolumeROI parameter node, or create one if it doesn't exist
+proc ExtractSubvolumeROICreateParameterNode {} {
+  set node [vtkMRMLScriptedModuleNode New]
+  $node SetModuleName "ExtractSubvolumeROI"
+
+  # set node defaults
+  $node SetParameter label 1
+
+  $::slicer3::MRMLScene AddNode $node
+  $node Delete
+}
+
+# get the ExtractSubvolumeROI parameter node, or create one if it doesn't exist
+proc ExtractSubvolumeROIGetParameterNode {} {
+
+  set node ""
+  set nNodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLScriptedModuleNode"]
+  for {set i 0} {$i < $nNodes} {incr i} {
+    set n [$::slicer3::MRMLScene GetNthNodeByClass $i "vtkMRMLScriptedModuleNode"]
+    if { [$n GetModuleName] == "ExtractSubvolumeROI" } {
+      set node $n
+      break;
+    }
+  }
+
+  if { $node == "" } {
+    ExtractSubvolumeROICreateParameterNode
+    set node [ExtractSubvolumeROIGetParameterNode]
+  }
+
+  return $node
+}
+
+
+proc ExtractSubvolumeROIGetLabel {} {
+  set node [ExtractSubvolumeROIGetParameterNode]
+  if { [$node GetParameter "label"] == "" } {
+    $node SetParameter "label" 1
+  }
+  return [$node GetParameter "label"]
+}
+
+proc ExtractSubvolumeROISetLabel {index} {
+  set node [ExtractSubvolumeROIGetParameterNode]
+  $node SetParameter "label" $index
+}
+
+#
+# MRML Event processing
+#
+
+proc ExtractSubvolumeROIUpdateMRML {this} {
+}
+
+proc ExtractSubvolumeROIProcessMRMLEvents {this callerID event} {
+
+  puts "Received MRML event $event from callerID $callerID"
+  set caller [[[$this GetLogic] GetMRMLScene] GetNodeByID $callerID]
+  puts "Caller is $caller"
+  if { $caller == "" } {
+    return
+  }
+  if { $caller == $::ExtractSubvolumeROI($this,observedROINode) } {
+    ExtractSubvolumeROIUpdateLabelMap $this
+  }
+}
+
+proc ExtractSubvolumeROIEnter {this} {
+}
+
+proc ExtractSubvolumeROIExit {this} {
+}
+
+proc ExtractSubvolumeROIProgressEventCallback {filter} {
+
+  set mainWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+  set progressGauge [$mainWindow GetProgressGauge]
+  set renderWidget [[$::slicer3::ApplicationGUI GetViewControlGUI] GetNavigationWidget]
+
+  if { $filter == "" } {
+    $mainWindow SetStatusText ""
+    $progressGauge SetValue 0
+    $renderWidget SetRendererGradientBackground 0
+  } else {
+    # TODO: this causes a tcl 'update' which re-triggers the module (possibly changing
+    # values while it is executing!  Talk about evil...
+    #$mainWindow SetStatusText [$filter GetClassName]
+    #$progressGauge SetValue [expr 100 * [$filter GetProgress]]
+
+    set progress [$filter GetProgress]
+    set remaining [expr 1.0 - $progress]
+
+    #$renderWidget SetRendererGradientBackground 1
+    #$renderWidget SetRendererBackgroundColor $progress $progress $progress
+    #$renderWidget SetRendererBackgroundColor2 $remaining $remaining $remaining
+  }
+}
+
+proc ExtractSubvolumeROIApply {this} {
+
+#  if { ![info exists ::ExtractSubvolumeROI($this,processing)] } { 
+#    set ::ExtractSubvolumeROI($this,processing) 0
+#  }
+
+#  if { $::ExtractSubvolumeROI($this,processing) } {
+#    return
+#  }
+
+  #
+  # check that inputs are valid
+  #
+  set errorText ""
+  
+  set outVolumeNode [$::ExtractSubvolumeROI($this,outputSelector) GetSelected]
+  set roiNode [$::ExtractSubvolumeROI($this,roiSelector) GetSelected]
+  set volumeNode [$::ExtractSubvolumeROI($this,inputSelector) GetSelected]
+  set newSpacing [[$::ExtractSubvolumeROI($this,samplingScale) GetWidget] GetValue]
+
+  if { $volumeNode == "" || [$volumeNode GetImageData] == "" } {
+    set errorText "Input volume data appears to be not initialized!"
+  }
+  if { $outVolumeNode == "" } {
+    set errorText "Please specify output volume node!"
+  }
+  if { $roiNode == "" } {
+    set errorText "Please specify ROI node!"
+  }
+  if {$volumeNode == $outVolumeNode} {
+    set errorText "Input volume and output volume cannot be the same!"
+  }
+  if {$newSpacing <= 0.} {
+    set errorText "Sampling must be greater than zero!"
+  }
+
+  if { $errorText != "" } {
+    set dialog [vtkKWMessageDialog New]
+    $dialog SetParent [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+    $dialog SetMasterWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+    $dialog SetStyleToMessage
+    $dialog SetText $errorText
+    $dialog Create
+    $dialog Invoke
+    $dialog Delete
+    return
+  }
+
+  set ijk2ras [vtkMatrix4x4 New]
+  set ras2ijk [vtkMatrix4x4 New]
+  $volumeNode GetIJKToRASMatrix $ijk2ras
+  $volumeNode GetRASToIJKMatrix $ras2ijk
+
+  set bboxIJKMinX [expr int($::ExtractSubvolumeROI($this,bboxIJKMinX))]
+  set bboxIJKMinY [expr int($::ExtractSubvolumeROI($this,bboxIJKMinY))]
+  set bboxIJKMinZ [expr int($::ExtractSubvolumeROI($this,bboxIJKMinZ))]
+  set bboxIJKMaxX [expr int($::ExtractSubvolumeROI($this,bboxIJKMaxX))]
+  set bboxIJKMaxY [expr int($::ExtractSubvolumeROI($this,bboxIJKMaxY))]
+  set bboxIJKMaxZ [expr int($::ExtractSubvolumeROI($this,bboxIJKMaxZ))]
+
+  # prepare the output volume node
+#  $outVolumeNode CopyWithScene $volumeNode
+  if { [$outVolumeNode GetDisplayNode] == ""} {
+    set outDisplayNode [vtkMRMLScalarVolumeDisplayNode New]
+    $outDisplayNode CopyWithScene [$volumeNode GetDisplayNode]
+    set scene [[$this GetLogic] GetMRMLScene]
+    $scene AddNodeNoNotify $outDisplayNode
+    $outVolumeNode SetAndObserveDisplayNodeID [$outDisplayNode GetID]
+    $outDisplayNode Delete
+  }
+
+  $outVolumeNode SetAndObserveStorageNodeID ""
+  $outVolumeNode SetAndObserveImageData ""
+  $outVolumeNode SetRASToIJKMatrix $ras2ijk
+  $outVolumeNode SetIJKToRASMatrix $ijk2ras
+  $outVolumeNode SetModifiedSinceRead 1
+  
+  set newOrigin [lrange [eval $ijk2ras MultiplyPoint $bboxIJKMinX $bboxIJKMinY $bboxIJKMinZ 1] 0 2]
+
+  set inputSpacing [$volumeNode GetSpacing]
+
+  set changeInf [vtkImageChangeInformation New]
+  $changeInf SetInput [$volumeNode GetImageData]
+  eval $changeInf SetOutputSpacing [$volumeNode GetSpacing]
+  $changeInf Update
+
+  set imageClip [vtkImageClip New]
+  $imageClip SetInput [$changeInf GetOutput]
+  $imageClip SetOutputWholeExtent $bboxIJKMinX $bboxIJKMaxX $bboxIJKMinY \
+                                  $bboxIJKMaxY $bboxIJKMinZ $bboxIJKMaxZ
+  $imageClip ClipDataOn
+  $imageClip Update
+
+  set changeInf2 [vtkImageChangeInformation New]
+  $changeInf2 SetInput [$imageClip GetOutput]
+  $changeInf2 SetOutputExtentStart 0 0 0
+  $changeInf2 Update
+  
+
+#  puts "Resampling spacing: $newSpacing"
+
+  set dimBefore [ [$changeInf2 GetOutput] GetDimensions]
+  
+  set resampler [vtkImageResample New]
+  $resampler SetDimensionality 3
+  $resampler SetInterpolationModeToLinear
+  $resampler SetInput [$changeInf2 GetOutput]
+  $resampler SetAxisOutputSpacing 0 $newSpacing
+  $resampler SetAxisOutputSpacing 1 $newSpacing
+  $resampler SetAxisOutputSpacing 2 $newSpacing
+  $resampler ReleaseDataFlagOff 
+  $resampler Update
+
+  set dimAfter [ [$resampler GetOutput] GetDimensions]
+
+#  puts "Dimensions before: $dimBefore, and after: $dimAfter"
+
+  set changeInf3 [vtkImageChangeInformation New]
+  $changeInf3 SetInput [$resampler GetOutput]
+  $changeInf3 SetOutputSpacing 1. 1. 1.
+  $changeInf3 Update
+
+  set output [vtkImageData New]
+  $output DeepCopy [$changeInf3 GetOutput]
+
+  $outVolumeNode SetAndObserveImageData $output
+  eval $outVolumeNode SetSpacing "$newSpacing $newSpacing $newSpacing"
+  $outVolumeNode SetOrigin [lindex $newOrigin 0] [lindex $newOrigin 1] [lindex $newOrigin 2]
+  $outVolumeNode Modified
+
+  $ras2ijk Delete
+  $ijk2ras Delete
+
+  $changeInf Delete
+  $changeInf2 Delete
+  $changeInf3 Delete
+  $output Delete
+  $resampler Delete
+
+  return
+
+  set reslicer $::ExtractSubvolumeROI($this,resliceFilter)
+
+
+
+  set ::ExtractSubvolumeROI($this,processing) 1
+
+  puts "Inputs are checked!"
+
+  set inputImage [$volumeNode GetImageData]
+  puts "Input origin:"
+  puts [$inputImage GetOrigin]
+  puts "Input spacing:"
+  puts [$inputImage GetSpacing]
+  puts "Input extent:"
+  puts [$inputImage GetExtent]
+
+  puts "ROI center: "
+  puts [$roiNode GetXYZ]
+  puts "ROI radius: "
+  puts [$roiNode GetRadiusXYZ]
+  
+  scan [$roiNode GetRadiusXYZ] "%f%f%f" roiRadiusX roiRadiusY roiRadiusZ
+  scan [$roiNode GetXYZ] "%f%f%f" roiCenterX roiCenterY roiCenterZ
+
+  set extentX 100
+  set extentY 100
+  set extentZ 100
+
+  set spacingX [expr [expr double($roiRadiusX)] / [expr double($extentX)] ]
+  set spacingY [expr [expr double($roiRadiusY)] / [expr double($extentY)] ]
+  set spacingZ [expr [expr double($roiRadiusZ)] / [expr double($extentZ)] ]
+
+  $reslicer SetInput $inputImage
+  $reslicer SetOutputSpacing 1. 1. 1.
+  $reslicer SetOutputExtent 0 $extentX 0 $extentY 0 $extentZ
+  $reslicer Update
+
+  set roiCornerRAS0X [min [expr $roiCenterX-$roiRadiusX] [expr $roiCenterX+$roiRadiusX]]
+  set roiCornerRAS0Y [min [expr $roiCenterY-$roiRadiusY] [expr $roiCenterY+$roiRadiusY]]
+  set roiCornerRAS0Z [min [expr $roiCenterZ-$roiRadiusZ] [expr $roiCenterZ+$roiRadiusZ]]
+
+  set ras2ijk [vtkMatrix4x4 New]
+  $volumeNode GetRASToIJKMatrix $ras2ijk
+  $outVolumeNode SetAndObserveImageData [$reslicer GetOutput]
+  $outVolumeNode SetRASToIJKMatrix $ras2ijk
+  $ras2ijk Invert
+  $outVolumeNode SetIJKToRASMatrix $ras2ijk
+  $ras2ijk Delete
+  $outVolumeNode Modified
+
+  return
+
+  # set up output node
+#  outImage = slicer.vtkImageData()
+#  outImage.SetDimensions(sub.shape[2],sub.shape[1],sub.shape[0])
+#  outImage.AllocateScalars()
+#  outImage.ToArray()[:] = sub[:]
+#  outputVolume.SetAndObserveImageData(outImage)
+#  rasToIJK.Invert()
+#  ijkToRAS = rasToIJK
+#  outputVolume.SetIJKToRASMatrix(rasToIJK)
+#  origin = ijkToRAS.MultiplyPoint(lowerIJK[0],lowerIJK[1],lowerIJK[2],1.0)
+#  outputVolume.SetOrigin(origin[0], origin[1], origin[2])
+#  outputVolume.ModifiedSinceReadOn()
+
+
+  #
+  # configure the pipeline
+  #
+  $changeIn SetInput [$volumeNode GetImageData]
+  eval $changeIn SetOutputSpacing [$volumeNode GetSpacing]
+  $cast SetInput [$changeIn GetOutput]
+  $cast SetOutputScalarTypeToFloat
+  $dt SetInput [$cast GetOutput]
+  $dt SetSquaredDistance 0
+  $dt SetUseImageSpacing 1
+  $dt SetInsideIsPositive 0
+  $changeOut SetInput [$dt GetOutput]
+  $changeOut SetOutputSpacing 1 1 1
+  $resample SetInput [$dt GetOutput]
+  $resample SetAxisMagnificationFactor 0 $minFactor
+  $resample SetAxisMagnificationFactor 1 $minFactor
+  $resample SetAxisMagnificationFactor 2 $minFactor
+  $cubes SetInput [$resample GetOutput]
+  $cubes SetValue 0 $value
+  $polyTransformFilter SetInput [$cubes GetOutput]
+  $polyTransformFilter SetTransform $polyTransform
+  set magFactor [expr 1.0 / $minFactor]
+  $polyTransform Identity
+  $polyTransform Concatenate $ijkToRAS
+  foreach sp [$volumeNode GetSpacing] {
+    lappend invSpacing [expr 1. / $sp]
+  }
+  eval $polyTransform Scale $invSpacing
+
+  #
+  # set up progress observers
+  #
+  set observerRecords ""
+  set filters "$changeIn $resample $dt $changeOut $cubes"
+  foreach filter $filters {
+    set tag [$filter AddObserver ProgressEvent "ExtractSubvolumeROIProgressEventCallback $filter"]
+    lappend observerRecords "$filter $tag"
+  }
+
+  #
+  # activate the pipeline
+  #
+  $polyTransformFilter Update
+
+  # remove progress observers
+  foreach record $observerRecords {
+    foreach {filter tag} $record {
+      $filter RemoveObserver $tag
+    }
+  }
+  ExtractSubvolumeROIProgressEventCallback ""
+
+  #
+  # create a mrml model display node if needed
+  #
+  if { [$outModelNode GetDisplayNode] == "" } {
+    set modelDisplayNode [vtkMRMLModelDisplayNode New]
+    $outModelNode SetScene $::slicer3::MRMLScene
+    eval $modelDisplayNode SetColor .5 1 1
+    $::slicer3::MRMLScene AddNode $modelDisplayNode
+    $outModelNode SetAndObserveDisplayNodeID [$modelDisplayNode GetID]
+  }
+
+  #
+  # set the output into the MRML scene
+  #
+  $outModelNode SetAndObservePolyData [$polyTransformFilter GetOutput]
+
+  $outVolumeNode SetAndObserveImageData [$changeOut GetOutput]
+  $outVolumeNode SetIJKToRASMatrix $ijkToRAS
+  $ijkToRAS Delete
+
+
+  set ::ExtractSubvolumeROI($this,processing) 0
+}
+
+proc ExtractSubvolumeROIErrorDialog {this errorText} {
+  set dialog [vtkKWMessageDialog New]
+  $dialog SetParent [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+  $dialog SetMasterWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+  $dialog SetStyleToMessage
+  $dialog SetText $errorText
+  $dialog Create
+  $dialog Invoke
+  $dialog Delete
+}
+
+proc ExtractSubvolumeROIUpdateLabelMap {this} {
+  set labelMap $::ExtractSubvolumeROI($this,labelMap)
+  set roiNode $::ExtractSubvolumeROI($this,observedROINode)
+  set volumeNode $::ExtractSubvolumeROI($this,inputVolume)
+
+  set roiXYZ [$roiNode GetXYZ]
+  set roiRadiusXYZ [$roiNode GetRadiusXYZ]
+
+  set bboxRAS0(0) {[expr [lindex $roiXYZ 0] - [lindex $roiRadiusXYZ 0]]}
+  set bboxRAS0(1) {[expr [lindex $roiXYZ 1] - [lindex $roiRadiusXYZ 1]]}
+  set bboxRAS0(2) {[expr [lindex $roiXYZ 2] - [lindex $roiRadiusXYZ 2]]}
+
+  set bboxRAS1(0) {[expr [lindex $roiXYZ 0] + [lindex $roiRadiusXYZ 0]]}
+  set bboxRAS1(1) {[expr [lindex $roiXYZ 1] + [lindex $roiRadiusXYZ 1]]}
+  set bboxRAS1(2) {[expr [lindex $roiXYZ 2] + [lindex $roiRadiusXYZ 2]]}
+
+  set ras2ijk [vtkMatrix4x4 New]
+  $volumeNode GetRASToIJKMatrix $ras2ijk
+  scan [lrange [eval $ras2ijk MultiplyPoint $bboxRAS0(0) $bboxRAS0(1) $bboxRAS0(2) 1 ] 0 2] "%f%f%f" \
+    bboxIJK0(0) bboxIJK0(1) bboxIJK0(2)
+  scan [lrange [eval $ras2ijk MultiplyPoint $bboxRAS1(0) $bboxRAS1(1) $bboxRAS1(2) 1 ] 0 2] "%f%f%f" \
+    bboxIJK1(0) bboxIJK1(1) bboxIJK1(2)
+  set roiIJK [lrange [eval $ras2ijk MultiplyPoint [lindex $roiXYZ 0] [lindex $roiXYZ 1] [lindex $roiXYZ 2] 1] 0 2]
+  $ras2ijk Delete
+
+  for {set i 0} {$i<3} {incr i} {
+    if {$bboxIJK0($i) > $bboxIJK1($i)} {
+      set tmp $bboxIJK0($i)
+      set bboxIJK0($i) $bboxIJK1($i)
+      set bboxIJK1($i) $tmp
+    }
+  }
+  puts "New label map center in RAS: $roiXYZ"
+  puts "New label map center in IJK: $roiIJK"
+  $labelMap SetCenter [expr int([lindex $roiIJK 0])] [expr int([lindex $roiIJK 1])] [expr int([lindex $roiIJK 2])]
+  set sizeX [expr int([expr $bboxIJK1(0)-$bboxIJK0(0)-1])]
+  set sizeY [expr int([expr $bboxIJK1(1)-$bboxIJK0(1)-1])]
+  set sizeZ [expr int([expr $bboxIJK1(2)-$bboxIJK0(2)-1])]
+
+  $labelMap SetSize $sizeX $sizeY $sizeZ
+  $labelMap Update
+  puts "New label map size: $sizeX $sizeY $sizeZ"
+  $::ExtractSubvolumeROI($this,labelMapNode) Modified
+
+  set ::ExtractSubvolumeROI($this,bboxIJKMinX) [expr int($bboxIJK0(0))]
+  set ::ExtractSubvolumeROI($this,bboxIJKMinY) [expr int($bboxIJK0(1))]
+  set ::ExtractSubvolumeROI($this,bboxIJKMinZ) [expr int($bboxIJK0(2))]
+
+  set ::ExtractSubvolumeROI($this,bboxIJKMaxX) [expr int($bboxIJK1(0))]
+  set ::ExtractSubvolumeROI($this,bboxIJKMaxY) [expr int($bboxIJK1(1))]
+  set ::ExtractSubvolumeROI($this,bboxIJKMaxZ) [expr int($bboxIJK1(2))]
+}
+
+proc ExtractSubvolumeROICreateOutputVolume {this} {
+
+  set volumeNode [$::ExtractSubvolumeROI($this,inputSelector) GetSelected]
+  set outputVolumeNode [$::ExtractSubvolumeROI($this,outputSelector) GetSelected]
+
+  set inputVolumeName [$volumeNode GetName]
+  set outputVolumeName [$outputVolumeNode GetName]
+  $outputVolumeNode SetName "ResampledVolume"
+
+  # from vtkSlicerVolumesLogic
+  set outputDisplayNode [vtkMRMLLabelMapVolumeDisplayNode New]
+  set scene [[$this GetLogic] GetMRMLScene]
+  $scene AddNode $outputDisplayNode
+
+#  $outputDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeLabels"
+
+  $outputVolumeNode SetAndObserveDisplayNodeID [$outputDisplayNode GetID]
+  $outputVolumeNode SetModifiedSinceRead 1
+#  $outputVolumeNode SetLabelMap 1
+  
+  set thresh [vtkImageThreshold New]
+  $thresh SetReplaceIn 1
+  $thresh SetReplaceOut 1
+  $thresh SetInValue 0
+  $thresh SetOutValue 0
+  $thresh SetOutputScalarTypeToShort
+  $thresh SetInput [$volumeNode GetImageData]
+  [$thresh GetOutput] Update
+  $outputVolumeNode SetAndObserveImageData [$thresh GetOutput]
+
+  $thresh Delete
+  $outputDisplayNode Delete
+
+  set ::FastMarchingSegmentation($this,labelVolume) $outputVolumeNode
+
+  set ras2ijk [vtkMatrix4x4 New]
+  set ijk2ras [vtkMatrix4x4 New]
+  $volumeNode GetRASToIJKMatrix $ras2ijk
+  $volumeNode GetIJKToRASMatrix $ijk2ras
+
+  $outputVolumeNode SetRASToIJKMatrix $ras2ijk
+  $outputVolumeNode SetIJKToRASMatrix $ijk2ras
+  
+  $ras2ijk Delete
+  $ijk2ras Delete
+
+  scan [$volumeNode GetOrigin] "%f%f%f" originX originY originZ
+  $outputVolumeNode SetOrigin $originX $originY $originZ
+
+  set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
+  $selectionNode SetReferenceActiveLabelVolumeID [$outputVolumeNode GetID]
+  $selectionNode Modified
+  [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection 0
+
+  # this is here to trigger updates on node selectors
+  $scene InvokeEvent 66000
+  return
+}
+
+proc ExtractSubvolumeROIEnter {this} {
+
+  set rwiRed $::ExtractSubvolumeROI($this,rwiRedInteractorStyle)
+  set rwiGreen $::ExtractSubvolumeROI($this,rwiGreenInteractorStyle)
+  set rwiYellow $::ExtractSubvolumeROI($this,rwiYellowInteractorStyle)
+
+#  set redGUIObserverTags $::ExtractSubvolumeROI($this,redGUIObserverTags)
+#  set greenGUIObserverTags $::ExtractSubvolumeROI($this,greenGUIObserverTags)
+#  set yellowGUIObserverTags $::ExtractSubvolumeROI($this,yellowGUIObserverTags)
+
+  lappend redGUIObserverTags [$::ExtractSubvolumeROI($this,rwiRedInteractorStyle) \
+    AddObserver LeftButtonPressEvent "ExtractSubvolumeROIProcessGUIEvents $this \
+    $rwiRed LeftButtonPressEvent" 1]
+  lappend redGUIObserverTags [$::ExtractSubvolumeROI($this,rwiRedInteractorStyle) \
+    AddObserver RightButtonPressEvent "ExtractSubvolumeROIProcessGUIEvents $this \
+    $rwiRed RightButtonPressEvent" 1]
+
+  lappend greenGUIObserverTags [$::ExtractSubvolumeROI($this,rwiGreenInteractorStyle) \
+    AddObserver LeftButtonPressEvent "ExtractSubvolumeROIProcessGUIEvents $this \
+    $rwiGreen LeftButtonPressEvent" 1]
+  lappend greenGUIObserverTags [$::ExtractSubvolumeROI($this,rwiGreenInteractorStyle) \
+    AddObserver RightButtonPressEvent "ExtractSubvolumeROIProcessGUIEvents $this \
+    $rwiGreen RightButtonPressEvent" 1]
+
+  lappend yellowGUIObserverTags [$::ExtractSubvolumeROI($this,rwiYellowInteractorStyle) \
+    AddObserver LeftButtonPressEvent "ExtractSubvolumeROIProcessGUIEvents $this \
+    $rwiYellow LeftButtonPressEvent" 1]
+  lappend yellowGUIObserverTags [$::ExtractSubvolumeROI($this,rwiYellowInteractorStyle) \
+    AddObserver RightButtonPressEvent "ExtractSubvolumeROIProcessGUIEvents $this \
+    $rwiYellow RightButtonPressEvent" 1]
+
+  set ::ExtractSubvolumeROI($this,redGUIObserverTags) $redGUIObserverTags
+  set ::ExtractSubvolumeROI($this,greenGUIObserverTags) $greenGUIObserverTags
+  set ::ExtractSubvolumeROI($this,yellowGUIObserverTags) $yellowGUIObserverTags
+ 
+  puts $redGUIObserverTags 
+  puts $greenGUIObserverTags 
+  puts $yellowGUIObserverTags 
+  
+  puts "Mouse event handlers added"
+
+}
+
+proc ExtractSubvolumeROIExit {this} {
+
+  set rwiRed $::ExtractSubvolumeROI($this,rwiRedInteractorStyle)
+  set rwiGreen $::ExtractSubvolumeROI($this,rwiGreenInteractorStyle)
+  set rwiYellow $::ExtractSubvolumeROI($this,rwiYellowInteractorStyle)
+
+  puts "About to remove observer tags..."
+  puts $::ExtractSubvolumeROI($this,redGUIObserverTags)
+  puts $::ExtractSubvolumeROI($this,greenGUIObserverTags)
+  puts $::ExtractSubvolumeROI($this,yellowGUIObserverTags)
+ 
+
+  # remove all slice observers
+  foreach tag $::ExtractSubvolumeROI($this,redGUIObserverTags) {
+    $rwiRed RemoveObserver $tag
+  }
+  foreach tag $::ExtractSubvolumeROI($this,greenGUIObserverTags) {
+    $rwiGreen RemoveObserver $tag
+  }
+  foreach tag $::ExtractSubvolumeROI($this,yellowGUIObserverTags) {
+    $rwiYellow RemoveObserver $tag
+  }
+
+  set ::ExtractSubvolumeROI($this,redGUIObserverTags) ""
+  set ::ExtractSubvolumeROI($this,greenGUIObserverTags) ""
+  set ::ExtractSubvolumeROI($this,yellowGUIObserverTags) ""
+
+  puts "Mouse event handlers removed"
+}
