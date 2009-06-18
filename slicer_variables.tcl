@@ -471,6 +471,16 @@ switch $::tcl_platform(os) {
             }
         }
 
+        if {[info exists ::env(MSSDK_PATH)]} {
+            set ::MSSDK_PATH $::env(MSSDK_PATH)
+        } else {
+            if {[info exists ::env(WindowsSdkDir)]} {
+                 set ::MSSDK_PATH [file normalize $::env(WindowsSdkDir)]
+            } else {  
+                 set ::MSSDK_PATH "C:/Program\ Files/Microsoft\ SDKs/Windows/v6.0A"
+            }
+        }
+
         #
         ## for Visual Studio 7.1:
         # - automatically use newer if available
