@@ -46,7 +46,7 @@ vtkModelMirrorLogic::vtkModelMirrorLogic()
    
    this->ModelMirrorNode = NULL;
    this->MirrorMatrix = NULL;
-   this->MirrorTransform = NULL;
+   this->MirrorTransformNode = NULL;
    this->Visited = false;
    this->Raised = false;
 }
@@ -63,10 +63,10 @@ vtkModelMirrorLogic::~vtkModelMirrorLogic()
     this->MirrorMatrix->Delete();
     this->MirrorMatrix = NULL;
     }
-  if ( this->MirrorTransform )
+  if ( this->MirrorTransformNode )
     {
-    this->MirrorTransform->Delete();
-    this->MirrorTransform = NULL;
+    this->MirrorTransformNode->Delete();
+    this->MirrorTransformNode = NULL;
     }
   this->Visited = false;  
   this->Raised = false;
@@ -160,8 +160,8 @@ void vtkModelMirrorLogic::CreateMirrorModel ( )
   //---
   if ( this->ModelMirrorNode->GetOutputModel() )
     {
+    this->GetMRMLScene()->RemoveNode ( this->ModelMirrorNode->GetOutputModel() );
     this->ModelMirrorNode->GetOutputModel()->Delete();
-    this->ModelMirrorNode->SetOutputModel ( NULL );
     }
 
   //---
@@ -185,19 +185,6 @@ void vtkModelMirrorLogic::CreateMirrorModel ( )
   vtkMRMLFreeSurferModelStorageNode *fsmStorageNode = vtkMRMLFreeSurferModelStorageNode::New();
   fsmStorageNode->SetUseStripper(0);  // turn off stripping by default (breaks some pickers)
   vtkMRMLStorageNode *storageNode = NULL;
-
-  //--- copy poly data from input node.
-  /*
-  vtkPolyData *p = vtkPolyData::New();
-  vtkCleanPolyData *cleaner = vtkCleanPolyData::New();
-  cleaner->SetInput (this->ModelMirrorNode->GetInputModel()->GetPolyData() );
-  cleaner->Update();
-  p = cleaner->GetOutput();
-  mirrorModelNode->SetAndObservePolyData ( p );
-  displayNode->SetPolyData ( mirrorModelNode->GetPolyData() );
-  p->Delete();
-  cleaner->Delete();
-  */  
 
   //---
   //--- Filename and model name wrangling for new model (derived from input model)
@@ -249,8 +236,6 @@ void vtkModelMirrorLogic::CreateMirrorModel ( )
       storageNode = fsmStorageNode;
       }
 
-
-
   if (storageNode != NULL)
     {
     //--- set new name: use filename if user has not specified a valid name
@@ -279,28 +264,39 @@ void vtkModelMirrorLogic::CreateMirrorModel ( )
     this->GetMRMLScene()->AddNodeNoNotify(displayNode);
     mirrorModelNode->SetAndObserveStorageNodeID(storageNode->GetID());
     mirrorModelNode->SetAndObserveDisplayNodeID(displayNode->GetID());  
-
     this->GetMRMLScene()->AddNode(mirrorModelNode);
-    mirrorModelNode->Delete();
 
-    //---
-    //--- Copy data from input model's storage node
-    //---
-    //storageNode->Copy( inputModelNode->GetStorageNode() );
+    //--- Note: model has no PolyData yet.
+    //--- grab a copy of its polydata for further processing.
+    vtkPolyData *surface =   this->ModelMirrorNode->GetInputModel()->GetPolyData();
+    vtkPolyData *mpolys = vtkPolyData::New();
+    mpolys->DeepCopy ( surface );
+    if ( mpolys )
+      {
+      this->ModelMirrorNode->GetOutputModel()->SetAndObservePolyData (mpolys );
+      }
+    mpolys->Delete();
+    mpolys = NULL;
     }
   else
     {
     vtkErrorMacro ( "CreateMirrorModel: Got NULL Storage Node." );
-    mirrorModelNode->Delete();
-    mirrorModelNode = NULL;
     }
 
+  
   //---
   //--- clean up 
   //---
+  mirrorModelNode->Delete();
   mStorageNode->Delete();
   fsmStorageNode->Delete();
   displayNode->Delete();
+  //---
+  mirrorModelNode = NULL;
+  mStorageNode = NULL;
+  fsmStorageNode = NULL;
+  displayNode = NULL;
+  
 }
 
 
@@ -330,13 +326,13 @@ void vtkModelMirrorLogic::CreateMirrorMatrix( )
   //---
   switch ( this->ModelMirrorNode->GetMirrorPlane() )
     {
-    case vtkMRMLModelMirrorNode::AxialMirror:
-      this->MirrorMatrix->SetElement ( 1, 1, -1.0 );
-      break;
     case vtkMRMLModelMirrorNode::SaggitalMirror:
       this->MirrorMatrix->SetElement (0, 0, -1.0 );
       break;
     case vtkMRMLModelMirrorNode::CoronalMirror:
+      this->MirrorMatrix->SetElement ( 1, 1, -1.0 );
+      break;
+    case vtkMRMLModelMirrorNode::AxialMirror:
       this->MirrorMatrix->SetElement ( 2, 2, -1.0 );
       break;
     default:
@@ -356,19 +352,24 @@ void vtkModelMirrorLogic::CreateMirrorTransform ( )
     vtkErrorMacro ( "CreateMirrorTransform: Got NULL ModelMirrorNode." );
     return;
     }
-  if ( this->ModelMirrorNode->GetInputModel() == NULL )
+  if ( this->ModelMirrorNode->GetOutputModel() == NULL )
     {
-    vtkErrorMacro ( "CreateMirrorTransform: Got NULL InputModel.");
+    vtkErrorMacro ( "CreateMirrorTransform: Got NULL OutputModel.");
+    return;
+    }
+  if ( this->GetMRMLScene() == NULL )
+    {
+    vtkErrorMacro ( "CreateMirrorTransform: Got NULL MRMLScene.");
     return;
     }
 
   //---
   //---   Start with a fresh transform
   //---
-  if ( this->GetMirrorTransform() )
+  if ( this->GetMirrorTransformNode() )
     {
-    this->GetMirrorTransform()->Delete();
-    this->SetMirrorTransform ( NULL );
+    this->GetMRMLScene()->RemoveNode ( this->GetMirrorTransformNode() );
+    this->GetMirrorTransformNode()->Delete();
     }
 
   //---
@@ -385,23 +386,8 @@ void vtkModelMirrorLogic::CreateMirrorTransform ( )
   mirrorTransformNode->SetName ( "mirror");
   this->MRMLScene->AddNodeNoNotify ( storageNode );
   this->MRMLScene->AddNode(mirrorTransformNode );
-  this->SetMirrorTransform ( mirrorTransformNode );
+  this->SetMirrorTransformNode ( mirrorTransformNode );
   mirrorTransformNode->SetAndObserveStorageNodeID ( storageNode->GetID() );
-
-  //---
-  //--- 1. set the parent transform of this transform node to be the same as input node
-  //--- 2. set the parent transform of the input node to be this transform node.
-  //---
-  vtkMRMLTransformNode *tnode = this->ModelMirrorNode->GetInputModel()->GetParentTransformNode();
-  if ( tnode == NULL )
-    {
-    this->ModelMirrorNode->GetOutputModel()->SetAndObserveTransformNodeID ( NULL );
-    }
-  else
-    {
-    mirrorTransformNode->SetAndObserveTransformNodeID ( tnode->GetID() );
-    this->ModelMirrorNode->GetOutputModel()->SetAndObserveTransformNodeID (mirrorTransformNode->GetID() );
-    }
 
   //---
   //--- create and install  the mirroring matrix
@@ -417,22 +403,25 @@ void vtkModelMirrorLogic::CreateMirrorTransform ( )
         m->SetElement ( row, col, this->GetMirrorMatrix()->GetElement ( row, col ));
         }
       }
-
-    // invoke event? probably don't need since this happens under the hood...
-    vtkMRMLTransformableNode *tbnode = this->ModelMirrorNode->GetOutputModel();
-    tbnode->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent);
     }
+
+  //---
+  //--- Set the parent transform of the output node to be this transform node.
+  //---
+  this->ModelMirrorNode->GetOutputModel()->SetAndObserveTransformNodeID (mirrorTransformNode->GetID() );
 
   //---
   // clean up
   //---
-  if ( mirrorTransformNode )
-    {
-    mirrorTransformNode->Delete();
-    }
   if ( storageNode )
     {
     storageNode->Delete();
+    storageNode = NULL;
+    }
+  if ( mirrorTransformNode )
+    {
+    mirrorTransformNode->Delete();
+    mirrorTransformNode = NULL;
     }
   
 }
@@ -448,7 +437,7 @@ int vtkModelMirrorLogic::HardenTransform()
   //---
   //--- NULL pointer checking
   //---
-  if ( this->GetMirrorTransform() == NULL )
+  if ( this->GetMirrorTransformNode() == NULL )
     {
     vtkErrorMacro(<<"HardenTransform: got a NULL Transform node.");
     return ( 0 );
@@ -464,21 +453,21 @@ int vtkModelMirrorLogic::HardenTransform()
     return ( 0 );
     }
 
-  const char *id = this->ModelMirrorNode->GetInputModel()->GetID();
+  const char *id = this->ModelMirrorNode->GetOutputModel()->GetID();
   vtkMRMLTransformableNode *tbnode = vtkMRMLTransformableNode::SafeDownCast ( this->MRMLScene->GetNodeByID(id));
 
-  if (this->GetMirrorTransform()->IsTransformToWorldLinear())
+  if (this->GetMirrorTransformNode()->IsTransformToWorldLinear())
     {
     vtkMatrix4x4* hardeningMatrix = vtkMatrix4x4::New();
-    this->GetMirrorTransform()->GetMatrixTransformToWorld( hardeningMatrix);
+    this->GetMirrorTransformNode()->GetMatrixTransformToWorld( hardeningMatrix);
     tbnode->ApplyTransform(hardeningMatrix);
     hardeningMatrix->Delete();
     }
   else
     {
     vtkGeneralTransform* hardeningTransform = vtkGeneralTransform::New();
-    this->GetMirrorTransform()->GetTransformToWorld(hardeningTransform);
-    this->GetMirrorTransform()->ApplyTransform(hardeningTransform);
+    this->GetMirrorTransformNode()->GetTransformToWorld(hardeningTransform);
+    this->GetMirrorTransformNode()->ApplyTransform(hardeningTransform);
     hardeningTransform->Delete();
     }
 
@@ -490,6 +479,36 @@ int vtkModelMirrorLogic::HardenTransform()
 
 
 
+//----------------------------------------------------------------------------
+int vtkModelMirrorLogic::PositionInHierarchy ()
+{
+
+  if ( this->ModelMirrorNode == NULL )
+    {
+    vtkErrorMacro ( "" );
+    return (0);
+    }
+  if ( this->ModelMirrorNode->GetInputModel() == NULL )
+    {
+    vtkErrorMacro ( "" );
+    return (0);
+    }
+  if ( this->ModelMirrorNode->GetOutputModel() == NULL )
+    {
+    vtkErrorMacro ( "" );
+    return (0);
+    }
+
+  //--- set the parent transform of this model node to be the same as input node
+/*
+  vtkMRMLTransformNode *tnode = this->ModelMirrorNode->GetInputModel()->GetParentTransformNode();
+  if ( tnode != NULL )
+    {
+    this->ModelMirrorNode->GetOutputModel()->SetAndObserveTransformNodeID ( tnode->GetID() );
+    }
+*/
+  return (1);
+}
 
 
 //----------------------------------------------------------------------------
@@ -513,47 +532,39 @@ int vtkModelMirrorLogic::FlipNormals()
     vtkErrorMacro ( "FlipNormals: got NULL DisplayNode for OutputModel." );
     return ( 0 );
     }
-  if ( this->ModelMirrorNode->GetInputModel()->GetDisplayNode()->GetPolyData() == NULL )
-    {
-    vtkErrorMacro ( "FlipNormals: got NULL PolyData." );
-    return ( 0 );
-    }
 
-  
-  vtkPolyData *surface =   this->ModelMirrorNode->GetInputModel()->GetPolyData();
+  vtkPolyData *surface =   this->ModelMirrorNode->GetOutputModel()->GetPolyData();
   vtkPolyDataNormals *normals = vtkPolyDataNormals::New();
   normals->SetInput ( surface );
   normals->AutoOrientNormalsOn();
   normals->FlipNormalsOn();
+  normals->SplittingOff();
   normals->ConsistencyOn();
   normals->Update();
   surface = normals->GetOutput();
 
+  //--- the buggy part
   //--- now get the output of the flip & cleaner and put into new model node.
   if ( surface )
     {
     vtkCleanPolyData *cleaner = vtkCleanPolyData::New();
     cleaner->SetInput ( surface );
     cleaner->Update();
-    vtkPolyData *p = vtkPolyData::New();
-    p = cleaner->GetOutput();
 
-    //--- This is causing trouble...
-    if ( p )
+    //--- refresh polydata
+    this->ModelMirrorNode->GetOutputModel()->SetAndObservePolyData ( cleaner->GetOutput() );
+    vtkMRMLModelDisplayNode *dnode = vtkMRMLModelDisplayNode::SafeDownCast (this->ModelMirrorNode->GetOutputModel()->GetDisplayNode() );
+    if ( dnode )
       {
-      this->ModelMirrorNode->GetOutputModel()->SetAndObservePolyData ( p );
-      vtkMRMLModelDisplayNode *dnode = vtkMRMLModelDisplayNode::SafeDownCast (this->ModelMirrorNode->GetOutputModel()->GetDisplayNode() );
-      if ( dnode )
-        {
-        dnode->SetPolyData ( this->ModelMirrorNode->GetOutputModel()->GetPolyData() );
-        }
+      dnode->SetPolyData( this->ModelMirrorNode->GetOutputModel()->GetPolyData() );
       }
-
-    p->Delete();
+    
     cleaner->Delete();
+    cleaner= NULL;
     }
 
   normals->Delete();
+  normals = NULL;
   if ( surface )
     {
     return ( 1 );
@@ -563,3 +574,6 @@ int vtkModelMirrorLogic::FlipNormals()
     return ( 0 );
     }
 }
+
+
+

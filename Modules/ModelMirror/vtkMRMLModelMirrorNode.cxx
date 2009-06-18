@@ -61,6 +61,7 @@ vtkMRMLModelMirrorNode::~vtkMRMLModelMirrorNode()
   this->MirrorPlane = 0;
 }
 
+
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, VolumeID

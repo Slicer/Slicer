@@ -358,13 +358,16 @@ void vtkModelMirrorGUI::ProcessGUIEvents ( vtkObject *caller,
     
     this->Logic->CreateMirrorModel();
     this->Logic->CreateMirrorTransform();
-    if ( this->Logic->GetMirrorTransform() != NULL )
+    if ( this->Logic->GetMirrorTransformNode() != NULL )
       {
       if ( this->Logic->HardenTransform() )
         {
         if ( this->Logic->FlipNormals() )
           {
-          return;
+          if ( this->Logic->PositionInHierarchy() )
+            {
+            return;
+            }
           }
         }
       }

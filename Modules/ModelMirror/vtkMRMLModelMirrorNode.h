@@ -39,12 +39,12 @@ class VTK_MODELMIRROR_EXPORT vtkMRMLModelMirrorNode : public vtkMRMLNode
   // Get unique node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "ModelMirrorNode"; };
   
-  vtkSetObjectMacro ( InputModel, vtkMRMLModelNode );
   vtkGetObjectMacro ( InputModel, vtkMRMLModelNode );
+  vtkSetObjectMacro ( InputModel, vtkMRMLModelNode );
 
-  vtkSetObjectMacro ( OutputModel, vtkMRMLModelNode );
   vtkGetObjectMacro ( OutputModel, vtkMRMLModelNode );
-  
+  vtkSetObjectMacro ( OutputModel, vtkMRMLModelNode );
+
   vtkGetMacro ( MirrorPlane, int );
   vtkSetMacro ( MirrorPlane, int );
 

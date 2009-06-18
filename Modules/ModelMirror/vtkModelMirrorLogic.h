@@ -10,6 +10,7 @@
 
 #include "vtkModelMirror.h"
 #include "vtkMatrix4x4.h"
+#include "vtkPolyData.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLModelMirrorNode.h"
@@ -57,16 +58,17 @@ class VTK_MODELMIRROR_EXPORT vtkModelMirrorLogic : public vtkSlicerModuleLogic
   virtual vtkIntArray* NewObservableEvents();
 
   vtkGetObjectMacro ( MirrorMatrix, vtkMatrix4x4);
-  vtkSetObjectMacro ( MirrorMatrix, vtkMatrix4x4);
-  
-  vtkGetObjectMacro ( MirrorTransform, vtkMRMLLinearTransformNode );
-  vtkSetObjectMacro ( MirrorTransform, vtkMRMLLinearTransformNode );
+
+  vtkGetObjectMacro ( MirrorTransformNode, vtkMRMLLinearTransformNode );
+  vtkSetObjectMacro ( MirrorTransformNode, vtkMRMLLinearTransformNode );
+
   
   virtual void CreateMirrorModel ();
   virtual void CreateMirrorTransform ( );
   virtual void CreateMirrorMatrix( );
   virtual int HardenTransform();
   virtual int  FlipNormals();
+  virtual int PositionInHierarchy();
 
  protected:
   vtkModelMirrorLogic();
@@ -77,7 +79,7 @@ class VTK_MODELMIRROR_EXPORT vtkModelMirrorLogic : public vtkSlicerModuleLogic
   bool Visited;
   bool Raised;
   vtkMRMLModelMirrorNode *ModelMirrorNode;
-  vtkMRMLLinearTransformNode *MirrorTransform;
+  vtkMRMLLinearTransformNode *MirrorTransformNode;
   vtkMatrix4x4 *MirrorMatrix;
   
 };
