@@ -15,7 +15,7 @@
 #include "vtkKWMessageDialog.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWLoadSaveButtonWithLabel.h"
- 
+#include "vtkKWMessageDialog.h" 
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkIGTPlanningOptimizationStep);
@@ -45,6 +45,7 @@ vtkIGTPlanningOptimizationStep::vtkIGTPlanningOptimizationStep()
   this->NumberOfPuncturesEntry = vtkKWEntryWithLabel::New();
   this->TumorMarginEntry = vtkKWEntryWithLabel::New();
 
+  this->FileNameEntry = vtkKWEntryWithLabel::New();
 }
 
 
@@ -129,17 +130,36 @@ vtkIGTPlanningOptimizationStep::~vtkIGTPlanningOptimizationStep()
     this->NumberOfTrajectoriesEntry->Delete();
     this->NumberOfTrajectoriesEntry = NULL;
     }
-    if (this->NumberOfPuncturesEntry)
+  if (this->NumberOfPuncturesEntry)
     {
     this->NumberOfPuncturesEntry->SetParent(NULL);
     this->NumberOfPuncturesEntry->Delete();
     this->NumberOfPuncturesEntry = NULL;
     }
-    if (this->TumorMarginEntry)
+  if (this->TumorMarginEntry)
     {
     this->TumorMarginEntry->SetParent(NULL);
     this->TumorMarginEntry->Delete();
     this->TumorMarginEntry = NULL;
+    }
+
+  if (this->DirectoryButton)
+    {
+    this->DirectoryButton->SetParent(NULL);
+    this->DirectoryButton->Delete();
+    this->DirectoryButton = NULL;
+    }
+  if (this->FileNameEntry)
+    {
+    this->FileNameEntry->SetParent(NULL);
+    this->FileNameEntry->Delete();
+    this->FileNameEntry = NULL;
+    }
+  if (this->SaveAndRunButton)
+    {
+    this->SaveAndRunButton->SetParent(NULL);
+    this->SaveAndRunButton->Delete();
+    this->SaveAndRunButton = NULL;
     }
 }
 
@@ -297,15 +317,30 @@ void vtkIGTPlanningOptimizationStep::ShowUserInterface()
   this->DirectoryButton->SetParent ( this->RunFrame->GetFrame() );
   this->DirectoryButton->Create ( );
   this->DirectoryButton->SetLabelPositionToLeft();
-  this->DirectoryButton->SetLabelText ("Change Destination for All Selected:");
+  this->DirectoryButton->SetLabelText ("Data directory:");
   this->DirectoryButton->GetWidget()->TrimPathFromFileNameOff();
   this->DirectoryButton->GetWidget()->SetMaximumFileNameLength(64);
   this->DirectoryButton->GetWidget()->GetLoadSaveDialog()->ChooseDirectoryOn();
   this->DirectoryButton->GetWidget()->GetLoadSaveDialog()->RetrieveLastPathFromRegistry(
     "OpenPath");
 
-  this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
-                 this->DirectoryButton->GetWidgetName());
+  this->FileNameEntry->SetParent (this->RunFrame->GetFrame());
+  this->FileNameEntry->Create ( );
+  this->FileNameEntry->SetLabelText("File name:");
+  this->FileNameEntry->GetWidget()->SetValue("UserInfo.txt");
+
+  this->SaveAndRunButton = vtkKWPushButton::New();
+  this->SaveAndRunButton->SetParent (this->RunFrame->GetFrame());
+  this->SaveAndRunButton->Create();
+  this->SaveAndRunButton->SetText("Save and Run");
+  this->SaveAndRunButton->SetCommand(this, "SaveAndRunButtonCallback");
+  this->SaveAndRunButton->SetWidth(20);
+
+
+  this->Script("pack %s %s %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+               this->DirectoryButton->GetWidgetName(),
+               this->FileNameEntry->GetWidgetName(),
+               this->SaveAndRunButton->GetWidgetName());
  
   //Add a help to the step
   vtkKWPushButton * helpButton =  wizard_widget->GetHelpButton();
@@ -323,6 +358,85 @@ void vtkIGTPlanningOptimizationStep::ShowUserInterface()
 
   msg_dlg1->Delete();
 }
+
+
+void vtkIGTPlanningOptimizationStep::SaveAndRunButtonCallback()
+{
+  if (CheckInputErrors())
+    {
+    vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+    dialog->SetParent (this->GetGUI()->GetApplicationGUI()->GetMainSlicerWindow());
+    dialog->SetStyleToMessage();
+    std::string msg = "Please make sure all data fields have positive values.";
+    dialog->SetText(msg.c_str());
+    dialog->Create ( );
+    dialog->Invoke();
+    dialog->Delete();
+    return;
+    }
+
+  if (this->DirectoryButton->GetWidget()->GetFileName() == NULL)
+    {
+    vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+    dialog->SetParent (this->GetGUI()->GetApplicationGUI()->GetMainSlicerWindow());
+    dialog->SetStyleToMessage();
+    std::string msg = "Please provide a data directory for information saving.";
+    dialog->SetText(msg.c_str());
+    dialog->Create ( );
+    dialog->Invoke();
+    dialog->Delete();
+    return;
+    }
+
+  std::string filename = this->FileNameEntry->GetWidget()->GetValue();
+  if (filename.empty())
+    {
+    vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+    dialog->SetParent (this->GetGUI()->GetApplicationGUI()->GetMainSlicerWindow());
+    dialog->SetStyleToMessage();
+    std::string msg = "Please provide a file name for information saving.";
+    dialog->SetText(msg.c_str());
+    dialog->Create ( );
+    dialog->Invoke();
+    dialog->Delete();
+    return;
+    }
+
+
+
+  std::cerr << "filename: " << this->DirectoryButton->GetWidget()->GetFileName() << endl;
+ 
+  std::cerr << "after" << endl;
+
+
+}
+
+
+
+bool vtkIGTPlanningOptimizationStep::CheckInputErrors()
+{
+  bool error = false;
+
+  // all data fields must be positive values.
+  if ( ! (this->ProbeAEntry->GetWidget()->GetValueAsInt()           > 0 &&
+      this->ProbeBEntry->GetWidget()->GetValueAsInt()               > 0 &&
+      this->ProbeCEntry->GetWidget()->GetValueAsInt()               > 0 &&
+      this->SpacingXEntry->GetWidget()->GetValueAsInt()             > 0 &&
+      this->SpacingYEntry->GetWidget()->GetValueAsInt()             > 0 &&
+      this->SpacingZEntry->GetWidget()->GetValueAsInt()             > 0 &&
+      this->AngularResolutionEntry->GetWidget()->GetValueAsInt()    > 0 &&
+      this->NumberOfAblationsEntry->GetWidget()->GetValueAsInt()    > 0 &&
+      this->NumberOfTrajectoriesEntry->GetWidget()->GetValueAsInt() > 0 &&
+      this->NumberOfPuncturesEntry->GetWidget()->GetValueAsInt()    > 0 &&
+      this->TumorMarginEntry->GetWidget()->GetValueAsInt()          > 0))
+    {
+    error = true;
+    }
+
+  return error;
+}
+
+ 
 
 //----------------------------------------------------------------------------
 void vtkIGTPlanningOptimizationStep::PrintSelf(ostream& os, vtkIndent indent)

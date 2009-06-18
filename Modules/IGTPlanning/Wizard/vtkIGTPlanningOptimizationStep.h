@@ -7,6 +7,7 @@ class vtkKWFrameWithLabel;
 class vtkKWMenuButtonWithLabel;
 class vtkKWEntryWithLabel;
 class vtkKWLoadSaveButtonWithLabel;
+class vtkKWPushButton;
 
 class VTK_IGT_EXPORT vtkIGTPlanningOptimizationStep : public vtkIGTPlanningStep
 {
@@ -18,6 +19,9 @@ public:
   // Description:
   // Reimplement the superclass's method (see vtkKWWizardStep).
   virtual void ShowUserInterface();
+
+  virtual void SaveAndRunButtonCallback();
+
 
 protected:
   vtkIGTPlanningOptimizationStep();
@@ -45,6 +49,10 @@ protected:
   vtkKWEntryWithLabel    *TumorMarginEntry;
 
   vtkKWLoadSaveButtonWithLabel *DirectoryButton; 
+  vtkKWEntryWithLabel          *FileNameEntry;
+  vtkKWPushButton              *SaveAndRunButton;
+
+  bool CheckInputErrors();
  
 
 private:
