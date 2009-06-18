@@ -449,7 +449,16 @@ switch $::tcl_platform(os) {
         if {[info exists ::env(MAKE)]} {
             set ::MAKE $::env(MAKE)
         } else {
-            set ::MAKE "c:/Program\ Files/Microsoft\ Visual\ Studio\ .NET/Common7/IDE/devenv.exe"
+            # The following line set a default value, hoping that it will be
+            # overriden later on as the script tries for different flavors
+            # of visual studio. Let's try a little harder by checking 
+            # some environment variable (ultimately we should try poking
+            # in the Win32 registry).
+            if {[info exists ::env(VSINSTALLDIR)]} {
+              set ::MAKE [file join $::env(VSINSTALLDIR) "Common7/IDE/devenv.exe"]
+            } else {  
+                set ::MAKE "c:/Program\ Files/Microsoft\ Visual\ Studio\ .NET/Common7/IDE/devenv.exe"
+            }
         }
 
         if {[info exists ::env(COMPILER_PATH)]} {
