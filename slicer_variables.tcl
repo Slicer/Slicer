@@ -455,7 +455,7 @@ switch $::tcl_platform(os) {
             # some environment variable (ultimately we should try poking
             # in the Win32 registry).
             if {[info exists ::env(VSINSTALLDIR)]} {
-              set ::MAKE [file join $::env(VSINSTALLDIR) "Common7/IDE/devenv.exe"]
+                set ::MAKE [file join $::env(VSINSTALLDIR) "Common7/IDE/devenv.exe"]
             } else {  
                 set ::MAKE "c:/Program\ Files/Microsoft\ Visual\ Studio\ .NET/Common7/IDE/devenv.exe"
             }
@@ -464,7 +464,11 @@ switch $::tcl_platform(os) {
         if {[info exists ::env(COMPILER_PATH)]} {
             set ::COMPILER_PATH $::env(COMPILER_PATH)
         } else {
-            set ::COMPILER_PATH "c:/Program\ Files/Microsoft\ Visual\ Studio\ .NET/Common7/Vc7/bin"
+            if {[info exists ::env(VSINSTALLDIR)]} {
+                set ::COMPILER_PATH [file join $::env(VSINSTALLDIR) "Common7/Vc7/bin"]
+            } else {  
+                set ::COMPILER_PATH "c:/Program\ Files/Microsoft\ Visual\ Studio\ .NET/Common7/Vc7/bin"
+            }
         }
 
         #
