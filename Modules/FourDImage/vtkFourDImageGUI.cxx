@@ -778,7 +778,7 @@ void vtkFourDImageGUI::BuildGUIForHelpFrame ()
   const char *help = 
     "**The 4D Analysis Module** helps you to load, view and analyze a series of 3D images (4D image),"
     "such as perfusion MRI, DCE MRI, and fMRI. "
-    "<a>http://www.slicer.org/slicerWiki/index.php/Modules:OpenIGTLinkIF</a> for details.";
+    "<a>http://www.slicer.org/slicerWiki/index.php/Modules:FourDAnalysis</a> for details.";
   const char *about =
     "This project is directed by Hiroto Hatabu, MD, PhD (BWH)."
     "The module is designed and implemented by Junichi Tokuda, PhD (BWH), under supports from"
