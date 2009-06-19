@@ -72,6 +72,7 @@ subdirs(
    ExtractSubvolume
    FastMarchingSegmentation
 #   FourDImage
+#   FourDAnalysis
    ExtractSubvolumeROI
   )
 
