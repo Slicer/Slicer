@@ -105,7 +105,21 @@ Grants: National Alliance for Medical Image Computing (NAMIC), funded by the Nat
      </integer>
 
   </parameters>
+
+  <parameters>
+    <label>IJK/RAS Switch</label>
+    <description>Parameters for diffusion space (IJK/RAS switch)</description>
+
+    <boolean>
+      <name>isIJK</name>
+      <longflag>isIJK</longflag>
+      <description>Toggle between IJK (enabled)/RAS (disabled) space to evaluate diffusion and tractography</description>
+      <label>IJK Based</label>
+      <default>true</default>
+    </boolean>
   
+  </parameters>
+
   <parameters>
     <label>Diffusion Tensor</label>
     <description>Parameters for diffusion tensor</description>
@@ -243,8 +257,8 @@ Grants: National Alliance for Medical Image Computing (NAMIC), funded by the Nat
       <name>probMode</name>
       <longflag>probMode</longflag>
       <description>Probability computation mode from tracts:
-              binary: voxel is counted only for the first fiber going through 
-              cumulative: voxel is counted for each fiber going through 
+              binary: voxel is counted only for the first fiber going through
+              cumulative: voxel is counted for each fiber going through
               weighted: voxel is counted for each fiber going through based on their length ownership
       </description>
       <label>Computation Mode</label>
@@ -277,19 +291,6 @@ Grants: National Alliance for Medical Image Computing (NAMIC), funded by the Nat
       <element>large</element>
     </string-enumeration>
 
-    <integer>
-      <name>vicinity</name>
-      <longflag>vicinity</longflag>
-      <description>2 ROIs connection: defines a neigborhood centered on each ROI allowing to count tracts terminating near the ROI but not exactly in</description>
-      <label>Vicinity</label>
-      <default>0</default>
-      <constraints>
-        <minimum>0</minimum>
-        <maximum>20</maximum>
-        <step>1</step>
-      </constraints>
-    </integer>
-    
     <double>
       <name>thresHold</name>
       <longflag>thresHold</longflag>
@@ -303,6 +304,21 @@ Grants: National Alliance for Medical Image Computing (NAMIC), funded by the Nat
       </constraints>
     </double>
 
+
+    <integer>
+      <name>tractOffset</name>
+      <longflag>tractOffset</longflag>
+      <description>2 ROIs connection: defines the offset point from the termination end point of the tract from which ownership to the target ROI starts to be assessed</description>
+      <label>Tract offset</label>
+      <default>0</default>
+      <constraints>
+        <minimum>0</minimum>
+        <maximum>20</maximum>
+        <step>1</step>
+      </constraints>
+    </integer>
+    
+
     <boolean>
       <name>sphericalEnabled</name>
       <longflag>sphericalEnabled</longflag>
@@ -311,8 +327,39 @@ Grants: National Alliance for Medical Image Computing (NAMIC), funded by the Nat
       <default>false</default>
     </boolean>
 
-
+    <integer>
+      <name>vicinity</name>
+      <longflag>vicinity</longflag>
+      <description>2 ROIs connection: defines a neigborhood centered on each ROI allowing to count tracts terminating near the ROI but not exactly in</description>
+      <label>Vicinity</label>
+      <default>0</default>
+      <constraints>
+        <minimum>0</minimum>
+        <maximum>20</maximum>
+        <step>1</step>
+      </constraints>
+    </integer>
     
+
+  </parameters>
+
+  <parameters>
+    <label>
+    Automatic Server Initialisation
+    </label>
+    <description>
+    Let script initialize the server pipeline
+    </description>
+
+    <boolean>
+      <name>isAuto</name>
+      <longflag>isAuto</longflag>
+      <description>Automatic server initialisation (active on Linux/Mac only)</description>
+      <label>Enabled</label>
+      <default>true</default>
+    </boolean>
+
+
   </parameters>
 
 </executable>
@@ -537,14 +584,17 @@ def Execute (\
              spaceEnabled,\
              stopEnabled,\
              fa,\
+             isIJK,\
              tensEnabled,\
              cmEnabled,\
              probMode,\
              lengthEnabled,\
              lengthClass,\
+             tractOffset,\
              vicinity,\
              thresHold,\
              sphericalEnabled,\
+             isAuto,\
              inputVol0 = "",\
              inputVol1 = "",\
              inputVol2 = "",\
@@ -552,7 +602,7 @@ def Execute (\
              inputVol4 = ""
              ):
 
-  if os.name == 'posix':
+  if os.name == 'posix' and isAuto:
     s1 = sp.Popen("uname", stdout=sp.PIPE)
     osVersion = s1.communicate()[0].strip()
 
@@ -572,13 +622,16 @@ def Execute (\
       nmodule = 'StochasticTractographyServer'
 
       dir0 = os.environ['Slicer3_PLUGINS_DIR']
+      pyt0 = os.environ['PYTHONHOME']
       fdir0 = dir0 + '/' + nmodule + '/'
       curdir = os.getcwd()
       os.chdir(fdir0)
-      p = sp.Popen("python PyPipelineServer.py", shell=True )
+      cmd = pyt0 + '/bin/python PyPipelineServer.py'
+      p = sp.Popen(cmd, shell=True )
       os.chdir(curdir)
 
       time.sleep(2)
+
 
   #
   Slicer = __import__ ( "Slicer" )
@@ -661,6 +714,9 @@ def Execute (\
   s.send('supWMThres ' + str(supWMThres) + '\n')
   ack = s.recv(SIZE)
 
+  s.send('isIJK ' + str(int(isIJK)) + '\n')
+  ack = s.recv(SIZE)
+
   # tensor
   s.send('tensEnabled ' + str(int(tensEnabled)) + '\n')
   ack = s.recv(SIZE)
@@ -711,6 +767,9 @@ def Execute (\
   ack = s.recv(SIZE)
 
   s.send('lengthClass ' + str(lengthClass) + '\n')
+  ack = s.recv(SIZE)
+
+  s.send('tractOffset ' + str(tractOffset) + '\n')
   ack = s.recv(SIZE)
 
   s.send('vicinity ' + str(vicinity) + '\n')

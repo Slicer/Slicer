@@ -134,15 +134,28 @@ class PipelineHandler(asyncore.dispatcher):
 
           ####
           shpD = data.shape
+          shpV0 = numpy.zeros((4), 'uint16')
+          shpV0[0]= shpD[0]
+          shpV0[1]= shpD[1]
+          shpV0[2]= shpD[2]
+          shpV0[3]= shpD[3]
           logger.info("pipeline data shape : %s:%s:%s:%s" % (shpD[0], shpD[1], shpD[2], shpD[3]))
           logger.info("pipeline data type : %s" % data.dtype)
 
           orgS = self.nimage.get('origin')
           org = [float(orgS[0]), float(orgS[1]), float(orgS[2])]
+          org0 =  numpy.zeros((3), 'float')
+          org0[0]=org[0]
+          org0[1]=org[1]
+          org0[2]=org[2]
           logger.info("origin : %s:%s:%s" % (org[0], org[1], org[2]))
 
           spaS = self.nimage.get('spacing')
           spa = [float(spaS[0]), float(spaS[1]), float(spaS[2])]
+          spa0 = numpy.zeros((3), 'float')
+          spa0[0]=spa[0]
+          spa0[1]=spa[1]
+          spa0[2]=spa[2]
           logger.info("spacing : %s:%s:%s" % (spa[0], spa[1], spa[2]))
 
           G = self.nimage.get('grads')
@@ -319,6 +332,9 @@ class PipelineHandler(asyncore.dispatcher):
                     bLine = int(self.params.get('bLine')[0])
                     logger.debug("bLine: %s" % bLine)
                
+          if self.params.hasKey('isIJK'):
+                    isIJK = bool(int(self.params.get('isIJK')[0]))
+                    logger.debug("isIJK: %s" % isIJK)     
           if self.params.hasKey('tensMode'):
                     tensMode = self.params.get('tensMode')[0]
                     logger.debug("tensMode: %s" % tensMode)
@@ -350,6 +366,9 @@ class PipelineHandler(asyncore.dispatcher):
                     lengthClass = self.params.get('lengthClass')[0]
                     logger.debug("lengthClass: %s" % lengthClass)
          
+          if self.params.hasKey('tractOffset'):
+                    tractOffset = int(self.params.get('tractOffset')[0])
+                    logger.debug("tractOffset: %s" % tractOffset)
           if self.params.hasKey('vicinity'):
                     vicinity = int(self.params.get('vicinity')[0])
                     logger.debug("vicinity: %s" % vicinity)
@@ -360,7 +379,7 @@ class PipelineHandler(asyncore.dispatcher):
  
 
 
-          ngrads = shpD[3] #b.shape[0]
+          ngrads = shpD[3]
           logger.info("Number of gradients : %s" % str(ngrads) )
           G = G.reshape((ngrads,3))
           b = b.reshape((ngrads,1))
@@ -370,21 +389,21 @@ class PipelineHandler(asyncore.dispatcher):
           r2i = numpy.linalg.inv(i2r)
           r2id = numpy.linalg.inv(i2rd)
 
-          # correctly express gradients into RAS space
-          # 04/10 - trafo not needed - bugfix in Slicer
-
-          
+          # compute trafo fir IJK & RAS
+          # gradients in RAS
           G1 = numpy.dot(G, mu[:3, :3].T)
 
+          # gradients in IJK
           mu2 = numpy.dot(r2id[:3, :3], mu[:3, :3])
           G2 = numpy.dot(G, mu2[:3, :3].T)
 
+          # switch to compute either in IJK or RAS
+          if isIJK:
+            G0 = G2
+          else:
+            G0 = G1
           
-          #logger.info("G0: %s:%s:%s" % (str(G0[0]), str(G0[1]), str(G0[2])) )
-          #logger.info("G1: %s:%s:%s" % (str(G1[0]), str(G1[1]), str(G1[2])) )
-
           vts = vects.vectors
-
 
           logger.info("Tensor flag : %s" % str(tensEnabled))
 
@@ -423,7 +442,7 @@ class PipelineHandler(asyncore.dispatcher):
 
 
                     if not isInTensor:
-                        EV, lV, xVTensor, xYTensor = tens.EvaluateTensorX1(data, G2.T, b.T, wm)
+                        EV, lV, xVTensor, xYTensor = tens.EvaluateTensorX1(data, G0.T, b.T, wm)
                     else:
                         EV, lV, xVTensor, xYTensor = tens.EvaluateTensorK1(self.ten.getImage(), shpD, wm)
 
@@ -456,19 +475,19 @@ class PipelineHandler(asyncore.dispatcher):
           
                          
                         blocksize = totalTracts
-                        IJKstartpoints = []
 
-                        IJKstartpoints.append(numpy.tile(roiP,( blocksize, 1)))
+                        IJKstartpoints= numpy.tile(roiP,( blocksize, 1))
+                        logger.info("IJK start points shape : %s" % str(IJKstartpoints.shape))
 
                         timeS2 = time.time()
 
                         logger.info("Data type : %s" % data.dtype)
-                        #if tensEnabled:
-                        #  paths00, paths01, paths02, paths03, paths04 = track.TrackFiberY40(data.flatten(), wm, shpD, b.T, G1.T, vts.T, IJKstartpoints[0].T, r2i, i2r, spa,\
-                        #          lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
-                        #else:
-                        paths00, paths01, paths02, paths03, paths04 = track.TrackFiberW40(data.flatten(), wm, shpD, b.T, G1.T, vts.T, IJKstartpoints[0].T, r2i, i2r, spa,\
-                                  stepSize, maxLength, fa, spaceEnabled)
+                        if tensEnabled:
+                          paths00, paths01, paths02, paths03, paths04 = track.TrackFiberY40(data.flatten(), wm, shpD, b.T, G0.T, vts.T, IJKstartpoints.T,\
+                                  r2i, i2r, r2id, i2rd, spa, lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled, isIJK) 
+                        else:
+                          paths00, paths01, paths02, paths03, paths04 = track.TrackFiberW40(data.flatten(), wm, shpD, b.T, G0.T, vts.T, IJKstartpoints.T,\
+                                  r2i, i2r, r2id, i2rd, spa, stepSize, maxLength, fa, spaceEnabled, isIJK)
 
                         logger.info("Track fibers in %s sec" % str(time.time()-timeS2))
 
@@ -491,19 +510,19 @@ class PipelineHandler(asyncore.dispatcher):
           
 
                         blocksize = totalTracts
-                        IJKstartpoints2 = []
 
-                        IJKstartpoints2.append(numpy.tile(roiP2,( blocksize, 1)))
+                        IJKstartpoints2 = numpy.tile(roiP2,( blocksize, 1))
+                        logger.info("IJK start points shape : %s" % str(IJKstartpoints2.shape))
 
                         timeS3 = time.time()
 
                         logger.info("Data type : %s" % data.dtype)
-                        #if tensEnabled:
-                        #  paths10, paths11, paths12, paths13, paths14 = track.TrackFiberY40(data.flatten(), wm, shpD, b.T, G1.T, vts.T, IJKstartpoints2[0].T, r2i, i2r, spa,\
-                        #          lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled)
-                        #else:
-                        paths10, paths11, paths12, paths13, paths14 = track.TrackFiberW40(data.flatten(), wm, shpD, b.T, G1.T, vts.T, IJKstartpoints2[0].T, r2i, i2r, spa,\
-                                  stepSize, maxLength, fa, spaceEnabled)
+                        if tensEnabled:
+                          paths10, paths11, paths12, paths13, paths14 = track.TrackFiberY40(data.flatten(), wm, shpD, b.T, G0.T, vts.T, IJKstartpoints2.T,\
+                                  r2i, i2r, r2id, i2rd, spa, lV, EV, xVTensor, stepSize, maxLength, fa, spaceEnabled, isIJK)
+                        else:
+                          paths10, paths11, paths12, paths13, paths14 = track.TrackFiberW40(data.flatten(), wm, shpD, b.T, G0.T, vts.T, IJKstartpoints2.T,\
+                                  r2i, i2r, r2id, i2rd, spa, stepSize, maxLength, fa, spaceEnabled, isIJK)
 
                         logger.info("Track fibers in %s sec" % str(time.time()-timeS3))
 
@@ -517,8 +536,10 @@ class PipelineHandler(asyncore.dispatcher):
                             cm2 = track.ConnectFibersX2(paths11, paths14, shpD, lengthEnabled,  lengthClass)
 
                     if isInRoiA and isInRoiB:
-                        cm3 = track.FilterFibers0(paths00, paths01, paths02, paths03, paths04, self.roiA.getImage(), self.roiB.getImage(), shpD, threshold, vicinity, sphericalEnabled)
-                        cm4 = track.FilterFibers0(paths10, paths11, paths12, paths13, paths14, self.roiB.getImage(), self.roiA.getImage(), shpD, threshold, vicinity, sphericalEnabled)
+                        cm3 = track.FilterFibers0(paths00, paths01, paths02, paths03, paths04, self.roiA.getImage(), self.roiB.getImage(),\
+                                        shpD, threshold, tractOffset, vicinity, sphericalEnabled)
+                        cm4 = track.FilterFibers0(paths10, paths11, paths12, paths13, paths14, self.roiB.getImage(), self.roiA.getImage(),\
+                                        shpD, threshold, tractOffset, vicinity, sphericalEnabled)
 
 
 
@@ -558,6 +579,7 @@ class PipelineHandler(asyncore.dispatcher):
 
 
           if tensEnabled:
+                  if isIJK:
                      xVTensor = xVTensor.swapaxes(2,0)
                      xVTensor = xVTensor.astype('float32') # slicerd do not support double type yet
                      xYTensor = xYTensor.swapaxes(2,0)
@@ -568,8 +590,7 @@ class PipelineHandler(asyncore.dispatcher):
                        createParams(xYTensor, tmpF + tmp, True)
                        s.putD(xVTensor, dims, org, i2r, mu, tmp)
 
-
-                     if faEnabled:
+                  if faEnabled:
                           faMap = faMap.swapaxes(2,0)
                           tmp= 'fa_' + dateT
                           if not (faMap == 0).all():
@@ -578,7 +599,7 @@ class PipelineHandler(asyncore.dispatcher):
                             s.putS(faMap, dims, org, i2r, tmp)
 
 
-                     if traceEnabled:
+                  if traceEnabled:
                           trMap = trMap.swapaxes(2,0)
                           tmp= 'trace_' + dateT
                           if not (trMap == 0).all():
@@ -587,7 +608,7 @@ class PipelineHandler(asyncore.dispatcher):
                             s.putS(trMap, dims, org, i2r, tmp)
 
 
-                     if modeEnabled:
+                  if modeEnabled:
                           moMap = moMap.swapaxes(2,0)
                           tmp= 'mode_' + dateT
                           if not (moMap == 0).all():

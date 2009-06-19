@@ -18,7 +18,7 @@ logger                  = logging.getLogger(__name__)
 
 
 # Gradients must be transformed in RAS!
-def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, SPA, lV, EV, xVTensor, dl=1, Nsteps=300, anisoT=0.2, useSpacing = False, seed=None):
+def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, R2ID, I2RD, SPA, lV, EV, xVTensor, dl=1, Nsteps=300, anisoT=0.2, useSpacing = False, isIJK=True):
 # This function performs stochastic tracking of one fiber.
 # The algorithm is described in the paper 
 # O. Friman et al. 
@@ -155,8 +155,10 @@ def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, SPA, lV, EV, xVTe
 
  
       # Update current point
- 
-      v0 = v
+      if not isIJK:
+        v0 = v
+      else:
+        v0 = dot(v, I2RD[:3, :3].T)
 
       RASpoint[0] =  RASpoint[0]  + dl*v0[0] 
       RASpoint[1] =  RASpoint[1]  + dl*v0[1]    
@@ -186,7 +188,7 @@ def  TrackFiberU40(data, shpT, b, G, IJKstartpoints, R2I, I2R, SPA, lV, EV, xVTe
 
 
 # Gradients must be transformed in RAS!
-def  TrackFiberY40(data, mask, shpT, b, G, vts, IJKstartpoints, R2I, I2R, SPA, lV, EV, xVTensor, dl=1, Nsteps=300, anisoT=0.2, useSpacing = False, seed=None):
+def  TrackFiberY40(data, mask, shpT, b, G, vts, IJKstartpoints, R2I, I2R, R2ID, I2RD, SPA, lV, EV, xVTensor, dl=1, Nsteps=300, anisoT=0.2, useSpacing = False, isIJK=True):
 # This function performs stochastic tracking of one fiber.
 # The algorithm is described in the paper 
 # O. Friman et al. 
@@ -326,8 +328,10 @@ def  TrackFiberY40(data, mask, shpT, b, G, vts, IJKstartpoints, R2I, I2R, SPA, l
 
  
       # Update current point
- 
-      v0 = v 
+      if not isIJK:
+        v0 = v
+      else:
+        v0 = dot(v, I2RD[:3, :3].T)
 
       RASpoint[0] =  RASpoint[0] + dl*v0[0] 
       RASpoint[1] =  RASpoint[1] + dl*v0[1]    
@@ -357,7 +361,7 @@ def  TrackFiberY40(data, mask, shpT, b, G, vts, IJKstartpoints, R2I, I2R, SPA, l
   return paths0, paths1, paths2, paths3, paths4
 
 # Gradients must be transformed in RAS!
-def  TrackFiberW40(data, mask, shpT, b, G, vts, IJKstartpoints, R2I, I2R, SPA, dl=1, Nsteps=300, anisoT=0.2, useSpacing = False, seed=None):
+def  TrackFiberW40(data, mask, shpT, b, G, vts, IJKstartpoints, R2I, I2R, R2ID, I2RD, SPA, dl=1, Nsteps=300, anisoT=0.2, useSpacing = False, isIJK=True):
 # This function performs stochastic tracking of one fiber.
 # The algorithm is described in the paper 
 # O. Friman et al. 
@@ -501,8 +505,10 @@ def  TrackFiberW40(data, mask, shpT, b, G, vts, IJKstartpoints, R2I, I2R, SPA, d
       paths4[k, 0] += 1
  
       # Update current point
-      v0 = v
-      #v0 = dot(v, I2RD[:3, :3].T)
+      if not isIJK:
+        v0 = v
+      else:
+        v0 = dot(v, I2RD[:3, :3].T)
 
       RASpoint[0] =  RASpoint[0] + dl*v0[0] 
       RASpoint[1] =  RASpoint[1] + dl*v0[1]
@@ -712,7 +718,7 @@ def ConnectFibersPZ2( cm, paths1, paths4, shp, isLength=False, lMin=1 , lMax=200
   [ComputeConnectFibersFunctionalP2( k, cm, paths1, paths4, shp, isLength, lMin, lMax)  for k in indx]
 
 
-def FilterFibers0( pathsRAS, pathsIJK, pathsLOGP, pathsANIS, pathsLEN, roiA, roiB, shape, threshold=0.1, vicinity=5, sphericalEnabled=False):
+def FilterFibers0( pathsRAS, pathsIJK, pathsLOGP, pathsANIS, pathsLEN, roiA, roiB, shape, threshold=0.1, tractOffset=0, vicinity=0, sphericalEnabled=False):
 
   logger.info( "Shape roi A : %s" % str(roiA.shape))
   logger.info( "Shape roi B : %s" % str(roiB.shape))
@@ -758,7 +764,7 @@ def FilterFibers0( pathsRAS, pathsIJK, pathsLOGP, pathsANIS, pathsLEN, roiA, roi
     isIn2A = True
     isIn2B = False
 
-    for l in range(vicinity):
+    for l in range(tractOffset):
       if not (pathsIJK[k, 0, pathsLEN[k,0]-l-1] >= roiB.shape[0] or  pathsIJK[k, 1, pathsLEN[k,0]-l-1]  >= roiB.shape[1] or  pathsIJK[k, 2, pathsLEN[k,0]-l-1]  >= roiB.shape[2]):
         if l < pathsLEN[k,0]:
           if roiB[pathsIJK[k, 0, pathsLEN[k,0]-l-1], pathsIJK[k, 1, pathsLEN[k,0]-l-1], pathsIJK[k, 2, pathsLEN[k,0]-l-1]]>0:
@@ -832,7 +838,7 @@ def FilterFibers0( pathsRAS, pathsIJK, pathsLOGP, pathsANIS, pathsLEN, roiA, roi
 
   return cm
 
-def FilterFibersZ0(cm, pathsRAS, pathsIJK, pathsLOGP, pathsANIS, pathsLEN, roiA, roiB, shape, counter1, counter2, counterA1, counterB1, counterA2, counterB2, Pr, Fa, Wa, threshold=0.1, vicinity=5, sphericalEnabled=False):
+def FilterFibersZ0(cm, pathsRAS, pathsIJK, pathsLOGP, pathsANIS, pathsLEN, roiA, roiB, shape, counter1, counter2, counterA1, counterB1, counterA2, counterB2, Pr, Fa, Wa, threshold=0.1, tractOffset=0, vicinity=0, sphericalEnabled=False):
 
   logger.info( "Shape roi A : %s" % str(roiA.shape))
   logger.info( "Shape roi B : %s" % str(roiB.shape))
@@ -864,7 +870,7 @@ def FilterFibersZ0(cm, pathsRAS, pathsIJK, pathsLOGP, pathsANIS, pathsLEN, roiA,
     isIn2A = True
     isIn2B = False
 
-    for l in range(vicinity):
+    for l in range(tractOffset):
       if not (pathsIJK[k, 0, pathsLEN[k,0]-l-1] >= roiB.shape[0] or  pathsIJK[k, 1, pathsLEN[k,0]-l-1]  >= roiB.shape[1] or  pathsIJK[k, 2, pathsLEN[k,0]-l-1]  >= roiB.shape[2]):
         if l < pathsLEN[k,0]:
           if roiB[pathsIJK[k, 0, pathsLEN[k,0]-l-1], pathsIJK[k, 1, pathsLEN[k,0]-l-1], pathsIJK[k, 2, pathsLEN[k,0]-l-1]]>0:
