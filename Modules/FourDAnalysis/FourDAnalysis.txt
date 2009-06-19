@@ -1,0 +1,3 @@
+Name: FourDAnalysis
+GUIName: 4D Analysis
+Dependency: FourDImage
