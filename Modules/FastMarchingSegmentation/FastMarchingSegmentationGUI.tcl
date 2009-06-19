@@ -21,6 +21,7 @@ proc FastMarchingSegmentationTearDownGUI {this} {
     initFrame outputParametersFrame
     fmFrame
     timescrollRange
+    volRenderCheckbox
   }
 
   foreach w $widgets {
@@ -202,7 +203,7 @@ proc FastMarchingSegmentationBuildGUI {this} {
   $outColor RangeVisibilityOn
   $outColor SetResolution 1
   $outColor SetRange 1 255
-  $outColor SetValue 1.0
+  $outColor SetValue 6.0
   $outColor SetBalloonHelpString "Specify color for the output label"
   pack [$outColor GetWidgetName] -side top -anchor e -padx 2 -pady 2 
 
@@ -214,6 +215,16 @@ proc FastMarchingSegmentationBuildGUI {this} {
   pack [$run GetWidgetName] -side top -anchor e -padx 2 -pady 2 -fill x
 
   # FastMarching output parameters
+  set ::FastMarchingSegmentation($this,volRenderCheckbox) [vtkKWCheckButton New]
+  set ckbutton $::FastMarchingSegmentation($this,volRenderCheckbox)
+  $ckbutton SetParent [$outputParametersFrame GetFrame]
+  $ckbutton Create
+  $ckbutton SetText "Use volume rendering?"
+  $ckbutton SelectedStateOn
+  $ckbutton SetBalloonHelpString "Uncheck this to disable volume rendering if\
+    you experience performance problems"
+  pack [$ckbutton GetWidgetName] -side top -anchor e -padx 2 -pady 2
+
   set ::FastMarchingSegmentation($this,timescrollRange) [vtkKWRange New]
   set tsRange $::FastMarchingSegmentation($this,timescrollRange)
   $tsRange SetParent [$outputParametersFrame GetFrame]
@@ -526,16 +537,10 @@ proc FastMarchingSegmentationProgressEventCallback {filter} {
   } else {
     # TODO: this causes a tcl 'update' which re-triggers the module (possibly changing
     # values while it is executing!  Talk about evil...
-    #$mainWindow SetStatusText [$filter GetClassName]
-    #$progressGauge SetValue [expr 100 * [$filter GetProgress]]
-
-    set progress [$filter GetProgress]
-    set remaining [expr 1.0 - $progress]
-
-    #$renderWidget SetRendererGradientBackground 1
-    #$renderWidget SetRendererBackgroundColor $progress $progress $progress
-    #$renderWidget SetRendererBackgroundColor2 $remaining $remaining $remaining
+    $mainWindow SetStatusText [$filter GetClassName]
+    $progressGauge SetValue [expr 100 * [$filter GetProgress]]
   }
+  update
 }
 
 proc FastMarchingSegmentationApply {this} {

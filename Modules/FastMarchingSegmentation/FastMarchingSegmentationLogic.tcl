@@ -145,6 +145,11 @@ proc FastMarchingSegmentationInitializeFilter {this} {
   }
 
   set ::FastMarchingSegmentation($this,fastMarchingFilter) [vtkPichonFastMarching New]
+  
+  # observe progress events
+  set fmFilter $::FastMarchingSegmentation($this,fastMarchingFilter)
+  $fmFilter AddObserver ProgressEvent "FastMarchingSegmentationProgressEventCallback $fmFilter"
+
   set ::FastMarchingSegmentation($this,inputVolume) [ [[$this GetLogic] GetMRMLScene] \
     GetNodeByID [[$::FastMarchingSegmentation($this,inputSelector) GetSelected ] GetID] ]
   set inputVolume $::FastMarchingSegmentation($this,inputVolume)
