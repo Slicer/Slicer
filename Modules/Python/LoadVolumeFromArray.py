@@ -39,10 +39,39 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
       <description>File containing numpy measurement frame</description>
       <label>Numpy MU file</label>
     </file>
+  </parameters>
 
 
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+
+    <image type = "diffusion-weighted" >
+      <name>OutputVol0</name>
+      <longflag>OutputVol0</longflag>
+      <label>Output DWI Volume</label>
+      <channel>output</channel>
+      <description>Output DWI volume</description>
+    </image>
+
+    <image type = "tensor" >
+      <name>OutputVol1</name>
+      <longflag>OutputVol1</longflag>
+      <label>Output Tensor Volume (Region A)</label>
+      <channel>output</channel>
+      <description>Output tensor volume for region A</description>
+    </image>
+    
+    <image type = "scalar" >
+      <name>OutputVol2</name>
+      <longflag>OutputVol2</longflag>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <description>Output volume</description>
+    </image>
 
   </parameters>
+
 
 </executable>
 """
@@ -54,7 +83,14 @@ numpy_sizes = { numpy.int8:1, numpy.uint8:1, numpy.int16:2,  numpy.uint16:2,  nu
 numpy_nrrd_names = { 'int8':'char', 'uint8':'unsigned char', 'int16':'short',  'uint16':'ushort',  'int32':'int',  'uint32':'uint',  'float32':'float',  'float64':'double' }
 numpy_vtk_types = { 'int8':'2', 'uint8':'3', 'int16':'4',  'uint16':'5',  'int32':'6',  'uint32':'7',  'float32':'10',  'float64':'11' }
 
-def Execute (inFilename="", dataFilename="", ijkFilename="", muFilename="" ):
+def Execute (
+             OutputVol0="",\
+             OutputVol1="",\
+             OutputVol2="",\
+             inFilename="",\
+             dataFilename="",\
+             ijkFilename="",\
+             muFilename="" ):
   Slicer = __import__ ( "Slicer" )
   slicer = Slicer.slicer
   scene = slicer.MRMLScene
@@ -67,8 +103,6 @@ def Execute (inFilename="", dataFilename="", ijkFilename="", muFilename="" ):
 
   if ijkFilename == "" or ijkFilename.split('.')[1]!='ijk':
      return
-
-
 
 
   # take dimensions of the image
@@ -90,15 +124,7 @@ def Execute (inFilename="", dataFilename="", ijkFilename="", muFilename="" ):
     shape = data.shape
     dtype = data.dtype
 
-    print 'Data shape : ', shape
-    print 'Data type : ', dtype
-
- 
-    r1 = slicer.vtkMRMLDiffusionWeightedVolumeNode()
-    r11 = slicer.vtkMRMLDiffusionWeightedVolumeDisplayNode()
-    scene.AddNode(r11)
-
-    r1.AddAndObserveDisplayNodeID(r11.GetName())
+    OutputVol = scene.GetNodeByID(OutputVol0)
 
 
     imgD = slicer.vtkImageData()
@@ -112,9 +138,8 @@ def Execute (inFilename="", dataFilename="", ijkFilename="", muFilename="" ):
     imgD.AllocateScalars()
 
 
-    r1.SetAndObserveImageData(imgD)
-
-    r1.SetNumberOfGradients(shape[3])
+    OutputVol.SetAndObserveImageData(imgD)
+    OutputVol.SetNumberOfGradients(shape[3])
 
     mN = numpy.fromfile(dataFilename.split('.')[0] + '.mu', float)
     mN = mN.reshape(4, 4)
@@ -139,9 +164,9 @@ def Execute (inFilename="", dataFilename="", ijkFilename="", muFilename="" ):
        gS.InsertNextTuple3(gN[0, i], gN[1, i], gN[2, i])
 
 
-    r1.SetMeasurementFrameMatrix(mS)
-    r1.SetDiffusionGradients(gS)
-    r1.SetBValues(bS)
+    OutputVol.SetMeasurementFrameMatrix(mS)
+    OutputVol.SetDiffusionGradients(gS)
+    OutputVol.SetBValues(bS)
 
 
     trafo = numpy.array([[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]])
@@ -154,23 +179,18 @@ def Execute (inFilename="", dataFilename="", ijkFilename="", muFilename="" ):
         mat.SetElement(i,j, ijk[i,j])
 
 
-    r1.SetAndObserveImageData(imgD)
-    r1.SetOrigin(ijk[0][3], ijk[1][3], ijk[2][3])
-    r1.SetSpacing(ijk[0][0], ijk[1][1], ijk[2][2])
-    r1.SetIJKToRASMatrix(mat)
+    OutputVol.SetAndObserveImageData(imgD)
+    OutputVol.SetOrigin(ijk[0][3], ijk[1][3], ijk[2][3])
+    OutputVol.SetSpacing(ijk[0][0], ijk[1][1], ijk[2][2])
+    OutputVol.SetIJKToRASMatrix(mat)
 
 
-    scene.AddNode(r1)
-
-    #tmp = r1.GetImageData().ToArray()
-    tmp = r1.GetImageData().GetPointData().GetScalars().ToArray()
+    tmp = OutputVol.GetImageData().GetPointData().GetScalars().ToArray()
     dataL = numpy.reshape(data[...,0], (shape[0]*shape[1]*shape[2], 1))
     print 'TMP shape : ', tmp.shape 
     tmp[:] = dataL[:]
-    #tmp[...] = data[..., nvol] 
 
-    r1.GetDisplayNode().SetDefaultColorMap()
-    r1.Modified()
+    OutputVol.Modified()
 
 
   if len(dims) == 6:
@@ -182,26 +202,11 @@ def Execute (inFilename="", dataFilename="", ijkFilename="", muFilename="" ):
     shape = data.shape
     dtype = data.dtype
 
-    print 'Data shape : ', shape
-    print 'Data type : ', dtype
-
-    r1 = slicer.vtkMRMLDiffusionTensorVolumeNode()
-    r11 = slicer.vtkMRMLDiffusionTensorVolumeDisplayNode()
-    r11.ScalarVisibilityOff()
-    #r11.SetScalarRange(data.min(), data.max())
-    scene.AddNode(r11)
-    #scene.AddNodeNoNotify(r11)
-
-    r1.AddAndObserveDisplayNodeID(r11.GetName())
-    #r1.AddAndObserveDisplayNodeID(r11.GetID())
-    r11.AddSliceGlyphDisplayNodes(r1)
+    OutputVol = scene.GetNodeByID(OutputVol1)
 
     tensorImage = slicer.vtkImageData()
     tensorImage.SetDimensions(shape[0], shape[1], shape[2])
 
-    #tensorImage.SetNumberOfScalarComponents(1)
-    #tensorImage.SetScalarTypeToFloat()
-    #tensorImage.AllocateScalars()
     tensorImage.GetPointData().SetScalars(None)
     tensorImage.Update()
     
@@ -227,14 +232,12 @@ def Execute (inFilename="", dataFilename="", ijkFilename="", muFilename="" ):
         mmat.SetElement(i,j, mu[i,j])
 
 
-    r1.SetAndObserveImageData(tensorImage)
-    r1.SetOrigin(ijk[0][3], ijk[1][3], ijk[2][3])
-    r1.SetSpacing(ijk[0][0], ijk[1][1], ijk[2][2])
-    r1.SetIJKToRASMatrix(mat)
-    r1.SetMeasurementFrameMatrix(mmat)
-    r1.GetImageData().SetScalarTypeToFloat()
-
-    scene.AddNode(r1)
+    OutputVol.SetAndObserveImageData(tensorImage)
+    OutputVol.SetOrigin(ijk[0][3], ijk[1][3], ijk[2][3])
+    OutputVol.SetSpacing(ijk[0][0], ijk[1][1], ijk[2][2])
+    OutputVol.SetIJKToRASMatrix(mat)
+    OutputVol.SetMeasurementFrameMatrix(mmat)
+    OutputVol.GetImageData().SetScalarTypeToFloat()
 
     tensorArray = slicer.vtkFloatArray()
     tensorArray.SetNumberOfComponents(9)
@@ -251,16 +254,15 @@ def Execute (inFilename="", dataFilename="", ijkFilename="", muFilename="" ):
     #   tensorArray.SetComponent(i, 7, dataL[i, 5])
     #   tensorArray.SetComponent(i, 8, dataL[i, 6])
 
-    r1.GetImageData().GetPointData().SetTensors(tensorArray)
-    r1.GetImageData().GetPointData().GetTensors().SetName('NRRDImage')
+    OutputVol.GetImageData().GetPointData().SetTensors(tensorArray)
+    OutputVol.GetImageData().GetPointData().GetTensors().SetName('NRRDImage')
 
-    tmp = r1.GetImageData().GetPointData().GetTensors().ToArray()
+    tmp = OutputVol.GetImageData().GetPointData().GetTensors().ToArray()
     dataL = numpy.reshape(data, (shape[0]*shape[1]*shape[2], 9))
     tmp[:] = dataL[:]
 
 
-    r1.GetDisplayNode().SetDefaultColorMap()
-    r1.Modified()
+    OutputVol.Modified()
 
 
   elif len(dims) == 4:
@@ -271,16 +273,7 @@ def Execute (inFilename="", dataFilename="", ijkFilename="", muFilename="" ):
     shape = data.shape
     dtype = data.dtype
 
-    print 'Data shape : ', shape
-    print 'Data type : ', dtype
-
-    r1 = slicer.vtkMRMLScalarVolumeNode()
-    r11 = slicer.vtkMRMLScalarVolumeDisplayNode()
-    r11.ScalarVisibilityOn()
-    #r11.SetScalarRange(data.min(), data.max())
-    scene.AddNode(r11)
-
-    r1.AddAndObserveDisplayNodeID(r11.GetName())
+    OutputVol = scene.GetNodeByID(OutputVol2)
 
     imgD = slicer.vtkImageData()
     imgD.SetDimensions(shape[0], shape[1], shape[2])
@@ -301,19 +294,14 @@ def Execute (inFilename="", dataFilename="", ijkFilename="", muFilename="" ):
         mat.SetElement(i,j, ijk[i,j])
 
 
-    r1.SetAndObserveImageData(imgD)
-    r1.SetOrigin(ijk[0][3], ijk[1][3], ijk[2][3])
-    r1.SetSpacing(ijk[0][0], ijk[1][1], ijk[2][2])
-    r1.SetIJKToRASMatrix(mat)
+    OutputVol.SetAndObserveImageData(imgD)
+    OutputVol.SetIJKToRASMatrix(mat)
 
-    scene.AddNode(r1)
-
-    tmp = r1.GetImageData().GetPointData().GetScalars().ToArray()
+    tmp = OutputVol.GetImageData().GetPointData().GetScalars().ToArray()
     dataL = numpy.reshape(data, (shape[0]*shape[1]*shape[2], 1))
     tmp[:] = dataL[:]
 
-    r1.GetDisplayNode().SetDefaultColorMap()
-    r1.Modified()
+    OutputVol.Modified()
 
   else:
     return  
