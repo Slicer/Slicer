@@ -37,7 +37,7 @@ proc Usage { {msg ""} } {
 set ::EXTEND(update) ""
 set ::EXTEND(release) ""
 set ::EXTEND(verbose) "false"
-set ::EXTEND(test-type) "Experimental"
+set ::EXTEND(test-type) ""
 set ::EXTEND(buildList) ""
 
 if {[info exists ::env(CVS)]} {
@@ -499,6 +499,7 @@ proc buildExtension {s3ext} {
   # run the tests
   # - not all modules have tests, so allow make to fail gracefully with catch
   cd $::Slicer3_EXT/$::ext(name)-build
+  set ret 0
   if { $::EXTEND(test-type) != "" } {
     if { $::isWindows } {
       # don't run testing on windows - if target doesn't exist, a dialog will come up and operation will hang
