@@ -341,18 +341,27 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
         puts "Points is outside the ROI box"
         if {[expr $dX>$roiRadiusX]} {
           set roiRadiusX $dX
-#          set roiRadiusX [expr $roiRadiusX+$dX/2]
-#          set roiX [expr $roiX+$dX/2]
+          if {[expr $clickX>$roiX]} {
+            set roiX [expr $roiX+($dX-$roiRadiusX)/2]
+          } else {
+            set roiX [expr $roiX-($dX-$roiRadiusX)/2]
+          }
         }
         if {[expr $dY>$roiRadiusY]} {
           set roiRadiusY $dY
-#          set roiRadiusY [expr $roiRadiusY+$dY/2]
-#          set roiY [expr $roiY+$dY/2]
+          if {[expr $clickX>$roiX]} {
+            set roiY [expr $roiY+($dY-$roiRadiusY)/2]
+          } else {
+            set roiY [expr $roiY-($dY-$roiRadiusY)/2]
+          }
         } 
         if {[expr $dZ>$roiRadiusZ]} {
           set roiRadiusZ $dZ
-#          set roiRadiusZ [expr $roiRadiusZ+$dZ/2]
-#          set roiZ [expr $roiZ+$dZ/2]
+          if {[expr $clickZ>$roiZ]} {
+            set roiY [expr $roiZ+($dZ-$roiRadiusZ)/2]
+          } else {
+            set roiY [expr $roiZ-($dZ-$roiRadiusZ)/2]
+          }
         } 
       } else {
         # in-box click -- reduce roi
