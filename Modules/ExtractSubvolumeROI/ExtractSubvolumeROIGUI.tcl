@@ -248,10 +248,8 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
     if {$inputVolume == "" || $inputVolume == $::ExtractSubvolumeROI($this,inputVolume) || $roiNode == ""} {
       return
     }
-    puts "Input volume selection changed"
     set ::ExtractSubvolumeROI($this,inputVolume) $inputVolume
     set dim [[$inputVolume GetImageData] GetWholeExtent]
-    puts "Input image extent: $dim" 
     catch {$::ExtractSubvolumeROI($this,labelMap) Delete}
     set ::ExtractSubvolumeROI($this,labelMap) [vtkImageRectangularSource New]
     set labelMap $::ExtractSubvolumeROI($this,labelMap)
@@ -267,11 +265,11 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
     set scene [[$this GetLogic] GetMRMLScene]
     set volumesLogic [$::slicer3::VolumesGUI GetLogic]
     set ::ExtractSubvolumeROI($this,labelMapNode) [$volumesLogic CreateLabelVolume $scene $inputVolume "VolumeOfInterest"]
+    $::ExtractSubvolumeROI($this,labelMapNode) SetHideFromEditors 1
     $::ExtractSubvolumeROI($this,labelMapNode) SetAndObserveImageData [$labelMap GetOutput]
 
     set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
     $selectionNode SetReferenceActiveLabelVolumeID [$::ExtractSubvolumeROI($this,labelMapNode) GetID]
-    $selectionNode Modified
     $selectionNode Modified
     [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection 0
 
@@ -282,18 +280,18 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
     $redCompositeNode SetLabelOpacity .6
     $greenCompositeNode SetLabelOpacity .6
     $yellowCompositeNode SetLabelOpacity .6
-#    $redCompositeNode SetReferenceLabelVolumeID [$::ExtractSubvolumeROI($this,labelMapNode) GetID]
-#    $greenCompositeNode SetReferenceLabelVolumeID [$::ExtractSubvolumeROI($this,labelMapNode) GetID]
-#    $yellowCompositeNode SetReferenceLabelVolumeID [$::ExtractSubvolumeROI($this,labelMapNode) GetID]
-  }
 
-  puts "Event from $caller"
-  set redStyle $::ExtractSubvolumeROI($this,rwiRedInteractorStyle)
-  set greenStyle $::ExtractSubvolumeROI($this,rwiGreenInteractorStyle)
-  set yellowStyle $::ExtractSubvolumeROI($this,rwiYellowInteractorStyle)
+    # trigger update of the label image contents
+    $roiNode Modified
+  }
 
 
   if {$event == "LeftButtonPressEvent" || $event == "RightButtonPressEvent"} {
+  
+    set redStyle $::ExtractSubvolumeROI($this,rwiRedInteractorStyle)
+    set greenStyle $::ExtractSubvolumeROI($this,rwiGreenInteractorStyle)
+    set yellowStyle $::ExtractSubvolumeROI($this,rwiYellowInteractorStyle)
+
     set roiNode [$::ExtractSubvolumeROI($this,roiSelector) GetSelected]
     if {$roiNode == ""} {
       return
@@ -321,8 +319,6 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
     # this is a bit confusing, because the coordinates of click are actually
     # in RAS, but ROI uses XYZ, not RAS notation, so I stick with it
     scan [lrange [eval $xy2ras MultiplyPoint "$clickXY 0 1"] 0 2] "%f%f%f" clickX clickY clickZ
-    puts "Point in XY: $clickXY"
-    puts "Point in RAS: $clickX $clickY $clickZ"
   
     if {$event == "RightButtonPressEvent"} {
       $roiNode SetXYZ $clickX $clickY $clickZ
@@ -333,12 +329,8 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
       set dX [expr abs($roiX-$clickX)] 
       set dY [expr abs($roiY-$clickY)] 
       set dZ [expr abs($roiZ-$clickZ)] 
-      puts "Deltas: $dX $dY $dZ"
-      puts "Radius: $roiRadiusX $roiRadiusY $roiRadiusZ"
-      puts "Center: $roiX $roiY $roiZ"
       if { [expr $dX>$roiRadiusX || $dY>$roiRadiusY || $dZ>$roiRadiusZ] } {
         # click outside the box
-        puts "Points is outside the ROI box"
         if {[expr $dX>$roiRadiusX]} {
           set roiRadiusX $dX
           if {[expr $clickX>$roiX]} {
@@ -366,6 +358,9 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
       } else {
         # in-box click -- reduce roi
         # -- disabled for now
+        # this should reduce radius in the coordinates that correspond to
+        # in-slice only, otherwise the behavior is not intuitive, in my
+        # opinion)
 #        if {[expr $dX<$roiRadiusX]} {
 #          set roiRadiusX $dX
 #        }
@@ -376,7 +371,6 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
 #          set roiRadiusZ $dZ
 #        }
       }
-      puts "New radius: $roiRadiusX $roiRadiusY $roiRadiusZ"  
       $roiNode SetXYZ $roiX $roiY $roiZ
       $roiNode SetRadiusXYZ $roiRadiusX $roiRadiusY $roiRadiusZ
     }
@@ -443,10 +437,7 @@ proc ExtractSubvolumeROIUpdateMRML {this} {
 }
 
 proc ExtractSubvolumeROIProcessMRMLEvents {this callerID event} {
-
-  puts "Received MRML event $event from callerID $callerID"
   set caller [[[$this GetLogic] GetMRMLScene] GetNodeByID $callerID]
-  puts "Caller is $caller"
   if { $caller == "" } {
     return
   }
@@ -812,8 +803,6 @@ proc ExtractSubvolumeROIUpdateLabelMap {this} {
       set bboxIJK1($i) $tmp
     }
   }
-  puts "New label map center in RAS: $roiXYZ"
-  puts "New label map center in IJK: $roiIJK"
   $labelMap SetCenter [expr int([lindex $roiIJK 0])] [expr int([lindex $roiIJK 1])] [expr int([lindex $roiIJK 2])]
   set sizeX [expr int([expr $bboxIJK1(0)-$bboxIJK0(0)-1])]
   set sizeY [expr int([expr $bboxIJK1(1)-$bboxIJK0(1)-1])]
@@ -821,7 +810,6 @@ proc ExtractSubvolumeROIUpdateLabelMap {this} {
 
   $labelMap SetSize $sizeX $sizeY $sizeZ
   $labelMap Update
-  puts "New label map size: $sizeX $sizeY $sizeZ"
   $::ExtractSubvolumeROI($this,labelMapNode) Modified
 
   set ::ExtractSubvolumeROI($this,bboxIJKMinX) [expr int($bboxIJK0(0))]
