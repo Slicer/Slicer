@@ -1191,10 +1191,12 @@ void vtkFourDImageGUI::SetWindowLevelForCurrentFrame()
       vtkMRMLScalarVolumeDisplayNode* displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(fgNode->GetDisplayNode());
       if (displayNode)
         {
-        //double r[2];
-        //fgNode->GetImageData()->GetScalarRange(r);
-        double lower = this->RangeLower;
-        double upper = this->RangeUpper;
+        double r[2];
+        fgNode->GetImageData()->GetScalarRange(r);
+        //double lower = this->RangeLower;
+        //double upper = this->RangeUpper;
+        double lower = r[0];
+        double upper = r[1];
         double range = upper - lower;
         double thLower = lower + range * this->ThresholdLower;
         double thUpper = lower + range * this->ThresholdUpper;
@@ -1222,10 +1224,12 @@ void vtkFourDImageGUI::SetWindowLevelForCurrentFrame()
       vtkMRMLScalarVolumeDisplayNode* displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(bgNode->GetDisplayNode());
       if (displayNode)
         {
-        //double r[2];
-        //bgNode->GetImageData()->GetScalarRange(r);
-        double lower = this->RangeLower;
-        double upper = this->RangeUpper;
+        double r[2];
+        bgNode->GetImageData()->GetScalarRange(r);
+        //double lower = this->RangeLower;
+        //double upper = this->RangeUpper;
+        double lower = r[0];
+        double upper = r[1];
         double range = upper - lower;
         double thLower = lower + range * this->ThresholdLower;
         double thUpper = lower + range * this->ThresholdUpper;
