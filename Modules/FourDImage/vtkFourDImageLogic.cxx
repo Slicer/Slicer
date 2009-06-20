@@ -270,11 +270,11 @@ int vtkFourDImageLogic::CreateFileListFromDir(const char* path,
 
 
 //---------------------------------------------------------------------------
-vtkMRML4DBundleNode* vtkFourDImageLogic::LoadImagesFromDir(const char* path, const char* bundleNodeName,
-                                                          double& rangeLower,
-                                                          double& rangeUpper)
+vtkMRML4DBundleNode* vtkFourDImageLogic::LoadImagesFromDir(const char* path, const char* bundleNodeName)
 {
   StatusMessageType statusMessage;
+  double rangeLower;
+  double rangeUpper;
   
   std::cerr << "loading from " << path << std::endl;
 

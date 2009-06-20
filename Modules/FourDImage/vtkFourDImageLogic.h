@@ -108,8 +108,7 @@ class VTK_FourDImage_EXPORT vtkFourDImageLogic : public vtkSlicerModuleLogic
   int CreateFileListFromDir(const char* path,
                             std::vector<ReaderType::FileNamesContainer>& fileNamesContainerList);
   //ETX
-  vtkMRML4DBundleNode* LoadImagesFromDir(const char* path, const char* bundleNodeName,
-                                         double& rangeLower, double& rangeUpper);
+  vtkMRML4DBundleNode* LoadImagesFromDir(const char* path, const char* bundleNodeName);
   int SaveImagesToDir(const char* path, const char* bundleID, const char* prefix, const char* suffix);
 
   vtkMRMLScalarVolumeNode* AddDisplayBufferNode(vtkMRML4DBundleNode* bundleNode, 

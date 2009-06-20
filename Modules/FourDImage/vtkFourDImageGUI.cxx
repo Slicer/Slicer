@@ -455,7 +455,7 @@ void vtkFourDImageGUI::ProcessGUIEvents(vtkObject *caller,
     const char* bundleName = this->SelectInputDirectoryButton->GetWidget()->GetText();
     this->GetLogic()->AddObserver(vtkFourDImageLogic::ProgressDialogEvent, 
                                   this->LogicCallbackCommand);
-    vtkMRML4DBundleNode* newNode = this->GetLogic()->LoadImagesFromDir(path, bundleName, this->RangeLower, this->RangeUpper);
+    vtkMRML4DBundleNode* newNode = this->GetLogic()->LoadImagesFromDir(path, bundleName);
 
     this->GetLogic()->RemoveObservers(vtkFourDImageLogic::ProgressDialogEvent,
                                       this->LogicCallbackCommand);
