@@ -482,8 +482,8 @@ vtkMRMLScalarVolumeNode* vtkFourDImageLogic::AddDisplayBufferNode(vtkMRML4DBundl
   sprintf(nodeName, "%s_Display%d", bundleNode->GetName(), index);
   volumeNode->SetName(nodeName);
   
-  double rangeLower;
-  double rangeUpper;
+  double rangeLower = 0.0;
+  double rangeUpper = 0.0;
 
   double range[2];
   volumeNode->GetImageData()->GetScalarRange(range);
