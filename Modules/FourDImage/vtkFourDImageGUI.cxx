@@ -530,7 +530,7 @@ void vtkFourDImageGUI::ProcessGUIEvents(vtkObject *caller,
       this->AutoPlayFG              = 1;
       this->AutoPlayInterval        = (int) (interval_s * 1000.0 / (double)this->TimerInterval);  
       this->AutoPlayIntervalCounter = 0;
-      this->AutoPlayFGButton->SetImageToIcon(this->Icons->GetStopIcon());
+      this->AutoPlayFGButton->SetImageToIcon(this->Icons->GetPauseIcon());
       this->AutoPlayFGButton->Modified();
       }
     else
@@ -550,7 +550,7 @@ void vtkFourDImageGUI::ProcessGUIEvents(vtkObject *caller,
       this->AutoPlayBG              = 1;
       this->AutoPlayInterval        = (int) (interval_s * 1000.0 / (double)this->TimerInterval);  
       this->AutoPlayIntervalCounter = 0;
-      this->AutoPlayBGButton->SetImageToIcon(this->Icons->GetStopIcon());
+      this->AutoPlayBGButton->SetImageToIcon(this->Icons->GetPauseIcon());
       this->AutoPlayBGButton->Modified();
       }
     else

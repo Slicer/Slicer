@@ -24,7 +24,7 @@ vtkFourDImageIcons::vtkFourDImageIcons ( )
 {
         //--- window level preset icons
   this->PlayIcon = vtkKWIcon::New();
-  this->StopIcon = vtkKWIcon::New();
+  this->PauseIcon = vtkKWIcon::New();
   
   // now generate the icons from images
   this->AssignImageDataToIcons ( );
@@ -39,10 +39,10 @@ vtkFourDImageIcons::~vtkFourDImageIcons ( )
     this->PlayIcon->Delete ( );
     this->PlayIcon = NULL;
     }
-  if ( this->StopIcon )
+  if ( this->PauseIcon )
     {
-    this->StopIcon->Delete ( );
-    this->StopIcon = NULL;
+    this->PauseIcon->Delete ( );
+    this->PauseIcon = NULL;
     }
 }
 
@@ -54,11 +54,11 @@ void vtkFourDImageIcons::AssignImageDataToIcons ( )
                              image_FourDImage_Play_height,
                              image_FourDImage_Play_pixel_size,
                              image_FourDImage_Play_length, 0 );
-  this->StopIcon->SetImage ( image_FourDImage_Stop,
-                             image_FourDImage_Stop_width,
-                             image_FourDImage_Stop_height,
-                             image_FourDImage_Stop_pixel_size,
-                             image_FourDImage_Stop_length, 0 );
+  this->PauseIcon->SetImage ( image_FourDImage_Pause,
+                             image_FourDImage_Pause_width,
+                             image_FourDImage_Pause_height,
+                             image_FourDImage_Pause_pixel_size,
+                             image_FourDImage_Pause_length, 0 );
 
 }
 
@@ -69,6 +69,6 @@ void vtkFourDImageIcons::PrintSelf ( ostream& os, vtkIndent indent )
 
     os << indent << "FourDImageIcons: " << this->GetClassName ( ) << "\n";
     os << indent << "PlayIcon" << this->GetPlayIcon ( ) << "\n";
-    os << indent << "StopIcon" << this->GetStopIcon ( ) << "\n";
+    os << indent << "PauseIcon" << this->GetPauseIcon ( ) << "\n";
 
 }

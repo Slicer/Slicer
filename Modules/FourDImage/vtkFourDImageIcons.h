@@ -34,7 +34,7 @@ class VTK_FourDImage_EXPORT vtkFourDImageIcons : public vtkSlicerIcons
     // Description:
     // Get toolbar vtkKWIcons
     vtkGetObjectMacro (PlayIcon, vtkKWIcon);
-    vtkGetObjectMacro (StopIcon, vtkKWIcon);
+    vtkGetObjectMacro (PauseIcon, vtkKWIcon);
     virtual void AssignImageDataToIcons ( );
     
  protected:
@@ -42,7 +42,7 @@ class VTK_FourDImage_EXPORT vtkFourDImageIcons : public vtkSlicerIcons
     virtual ~vtkFourDImageIcons ( );
     
     vtkKWIcon *PlayIcon;
-    vtkKWIcon *StopIcon;
+    vtkKWIcon *PauseIcon;
 
  private:
     vtkFourDImageIcons (const vtkFourDImageIcons&); // Not implemented

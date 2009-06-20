@@ -2,28 +2,31 @@
  * Resource generated for file:
  *    FourDImage_Play.png (zlib, base64) (image file)
  */
-static const unsigned int  image_FourDImage_Play_width          = 21;
-static const unsigned int  image_FourDImage_Play_height         = 21;
+static const unsigned int  image_FourDImage_Play_width          = 18;
+static const unsigned int  image_FourDImage_Play_height         = 18;
 static const unsigned int  image_FourDImage_Play_pixel_size     = 4;
-static const unsigned long image_FourDImage_Play_length         = 180;
-static const unsigned long image_FourDImage_Play_decoded_length = 1764;
+static const unsigned long image_FourDImage_Play_length         = 288;
+static const unsigned long image_FourDImage_Play_decoded_length = 1296;
 
 static const unsigned char image_FourDImage_Play[] = 
-  "eNrF1M0JwCAMBWBXEVzFIQXBJRxM8CQIKS0IHrTG9EkD7/od8kd0plJKVEqBmjFG0lqTcw"
-  "5m36ZS6kmza60wE2WPzN723m/bb6bU5pi9HUJY2jsm15aYLcaYof3FbLHWUs4ZYs568Hc/"
-  "kXPnWtw72rFW9y6xRuZs3yQmyur/PMo6VRdYzRDK";
+  "eNrFlL0Kg0AQhH0HQRFbFV9PC/86LcSnsxBFwVIttLM7QZ3kApsiXW4DWZju+NidvVkAOw"
+  "DB1H5d19E0Deq6BqOOJ0fEcQxd11EUBSRTocR93yLPc2ia9pLrukjTFMMwsDgkx3EQBAHm"
+  "eWZxSLZtI4oirOvK4pAMw4B8N00Ti0MyTRNVVX369zWHZFkWkiQh/5Q5si8Oh+bq+/4vPs"
+  "u9y/63bVPau+d5CMMQy7Io/UPf95FlGcZx/DoXMqdy/rIs0XWdUk7P8zzatlXN+ftu4Ed3"
+  "7AF5W7bh";
 
 
 /* 
  * Resource generated for file:
- *    FourDImage_Stop.png (zlib, base64) (image file)
+ *    FourDImage_Pause.png (zlib, base64) (image file)
  */
-static const unsigned int  image_FourDImage_Stop_width          = 21;
-static const unsigned int  image_FourDImage_Stop_height         = 21;
-static const unsigned int  image_FourDImage_Stop_pixel_size     = 3;
-static const unsigned long image_FourDImage_Stop_length         = 36;
-static const unsigned long image_FourDImage_Stop_decoded_length = 1323;
+static const unsigned int  image_FourDImage_Pause_width          = 18;
+static const unsigned int  image_FourDImage_Pause_height         = 18;
+static const unsigned int  image_FourDImage_Pause_pixel_size     = 3;
+static const unsigned long image_FourDImage_Pause_length         = 72;
+static const unsigned long image_FourDImage_Pause_decoded_length = 972;
 
-static const unsigned char image_FourDImage_Stop[] = 
-  "eNr7/3/gAQPpYFT7qPZR7SNT+0ABAN7Fxkg=";
+static const unsigned char image_FourDImage_Pause[] = 
+  "eNr7/59M8Pbt2z2oAChCUGrbtm0MqAAoQlAKaAKaFFBkVGpUis5S5KVe8nIKGQAAeBvn/A"
+  "==";
 
