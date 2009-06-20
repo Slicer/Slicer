@@ -291,89 +291,38 @@ int vtkFourDAnalysisLogic::SaveCurve(vtkDoubleArray* curve, const char* fileName
 
 
 //---------------------------------------------------------------------------
-void vtkFourDAnalysisLogic::GenerateParameterMap(const char* script,
+void vtkFourDAnalysisLogic::GenerateParameterMap(vtkCurveAnalysisPythonInterface* script,
+                                                 vtkMRMLCurveAnalysisNode* curveNode,
                                                  vtkMRML4DBundleNode* bundleNode,
                                                  const char* outputNodeNamePrefix,
                                                  int start, int end,
                                                  int imin, int imax, int jmin, int jmax, int kmin, int kmax)
 {
-  // Add a new vtkMRMLCurveAnalysisNode to the MRML scene
-  vtkMRMLCurveAnalysisNode* curveNode = vtkMRMLCurveAnalysisNode::New();
-  this->GetMRMLScene()->AddNode(curveNode);
 
-  // Prepare vtkDoubleArray to pass the source cueve data
-  vtkDoubleArray* srcCurve = vtkDoubleArray::New();
-  srcCurve->SetNumberOfComponents(2);
-
-  vtkDoubleArray* fittedCurve = vtkDoubleArray::New();
-  fittedCurve->SetNumberOfComponents(2);
-  
-  curveNode->SetSourceData(srcCurve);
-  curveNode->SetFittedData(fittedCurve);
-
-  if (!bundleNode)
+  if (!script || !bundleNode || !curveNode)
     {
     return;
     }
 
   int nFrames = bundleNode->GetNumberOfFrames();  
-  
-  // ----------------------------------------
-  // Setup the executer
-  std::cerr << "Setting up the executer" << std::endl;
-  PyObject* v;
-  std::string pythonCmd;
-  
-  // Obtain MRML CurveAnalysis Node instance
-  pythonCmd += "from Slicer import slicer\n";
-  pythonCmd += "scene = slicer.MRMLScene\n";
-  pythonCmd += "curveNode  = scene.GetNodeByID('";
-  pythonCmd += curveNode->GetID();
-  pythonCmd += "')\n";
-  
-  // Load 4D Analysis Python Module
-  pythonCmd += "import imp\n";
-  pythonCmd += "fp, pathname, description = imp.find_module('FourDAnalysis')\n";
-  pythonCmd += "try:\n";
-  pythonCmd += "    fda = imp.load_module('FourDAnalysis', fp, pathname, description)\n";
-  pythonCmd += "finally:\n";
-  pythonCmd += "    if fp:\n";
-  pythonCmd += "        fp.close()\n";
-  pythonCmd += "caexec = fda.CurveAnalysisExecuter('";
-  pythonCmd += script;
-  pythonCmd += "')\n";
-  
-  // Get output parameter list
-  std::cerr << "Get output parameter list" << std::endl;
-  pythonCmd += "parameters = caexec.GetOutputParameterNames()\n";
-  pythonCmd += "for key in parameters:\n";
-  pythonCmd += "    curveNode.SetParameter(key, 0.0)\n";
-
-  v = PyRun_String(pythonCmd.c_str(),
-                   Py_file_input,
-                   (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()),
-                   (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()));
-  if (Py_FlushLine())
-    {
-    PyErr_Clear();
-    }
-  
   vtkStringArray* nameArray = curveNode->GetParameterNameArray();
   
   // Create map volumes for each parameter
   int numKeys = nameArray->GetNumberOfTuples();
-  typedef std::map<std::string, vtkImageData*> ParameterImageMapType;
+  typedef std::map<std::string, vtkImageData*>            ParameterImageMapType;
   typedef std::map<std::string, vtkMRMLScalarVolumeNode*> ParameterVolumeNodeMapType;
-  ParameterImageMapType ParameterImages;
+
+  ParameterImageMapType      ParameterImages;
   ParameterVolumeNodeMapType ParameterImageNodes;
+
   for (int i = 0; i < numKeys; i ++)
     {
     char  nodeName[256];
     const char* paramName = nameArray->GetValue(i);
     sprintf(nodeName, "%s_%s", outputNodeNamePrefix, paramName);
     std::cerr << "Creating " << nodeName << std::endl;
-    vtkMRMLScalarVolumeNode* node = AddMapVolumeNode(bundleNode, nodeName);
-    ParameterImages[paramName] = node->GetImageData();
+    vtkMRMLScalarVolumeNode* node  = AddMapVolumeNode(bundleNode, nodeName);
+    ParameterImages[paramName]     = node->GetImageData();
     ParameterImageNodes[paramName] = node;
     }
   
@@ -396,29 +345,13 @@ void vtkFourDAnalysisLogic::GenerateParameterMap(const char* script,
   int* dim = imageArray[0]->GetDimensions();
   int x = dim[0]; int y = dim[1]; int z = dim[2];
 
+  vtkDoubleArray* srcCurve = vtkDoubleArray::New();
+  vtkDoubleArray* fittedCurve = vtkDoubleArray::New();
   srcCurve->SetNumberOfTuples(nSrcPoints);
+
   fittedCurve->SetNumberOfTuples(0);
-
-  // Run Map generation
-  //  -- prepare python commands 
-  pythonCmd  = "";
-  pythonCmd += "inputCurve  = curveNode.GetSourceData().ToArray()\n";
-  pythonCmd += "outputCurve = curveNode.GetFittedData().ToArray()\n";
-
-  v = PyRun_String(pythonCmd.c_str(),
-                   Py_file_input,
-                   (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()),
-                   (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()));
-  if (Py_FlushLine())
-    {
-    PyErr_Clear();
-    }
-  
-  pythonCmd  = "";
-  pythonCmd += "result      = caexec.Execute(inputCurve, outputCurve)\n";
-  pythonCmd += "for key, value in result.iteritems():\n";
-  pythonCmd += "    curveNode.SetParameter(key, value)\n";
-  pythonCmd += "\n";
+  fittedCurve->SetNumberOfComponents(2);
+        
 
   // Check index
   if (imin < 0 || imin >= imax || imax >= x ||
@@ -445,22 +378,18 @@ void vtkFourDAnalysisLogic::GenerateParameterMap(const char* script,
         // Copy intensity data
         for (int t = 0; t < nSrcPoints; t ++)
           {
+          std::cerr << "    Processing line t = " << t << std::endl;
           double xy[2];
           xy[0] = (double) t + start;
           xy[1] = imageArray[t]->GetScalarComponentAsDouble(i, j, k, 0);
           srcCurve->SetTuple(t, xy);
+          fittedCurve->InsertNextTuple(xy);
           }
 
-        // Run curve fitting
-        v = PyRun_String(pythonCmd.c_str(),
-                         Py_file_input,
-                         (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()),
-                         (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()));
-        if (Py_FlushLine())
-          {
-          PyErr_Clear();
-          }
-
+        curveNode->SetSourceData(srcCurve);
+        curveNode->SetFittedData(fittedCurve);
+        script->Run(curveNode);
+        
         // Put results
         ParameterImageMapType::iterator iter;
         for (iter = ParameterImages.begin(); iter != ParameterImages.end(); iter ++)

@@ -39,8 +39,8 @@
 #include "itkOrientedImage.h"
 #include "itkImageSeriesReader.h"
 
-
 #include "vtkIntensityCurves.h"
+#include "vtkCurveAnalysisPythonInterface.h"
 
 #include <string>
 #include <map>
@@ -121,7 +121,8 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisLogic : public vtkSlicerModuleLog
   void SetApplication(vtkSlicerApplication *app) { this->Application = app; };
   vtkSlicerApplication* GetApplication() { return this->Application; };
 
-  void GenerateParameterMap(const char* script,
+  void GenerateParameterMap(vtkCurveAnalysisPythonInterface* script,
+                            vtkMRMLCurveAnalysisNode* curveNode,
                             vtkMRML4DBundleNode* bundleNode, 
                             const char* outputNodeNamePrefix,
                             int start, int end,
@@ -159,9 +160,6 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisLogic : public vtkSlicerModuleLog
 
   CurveCacheType CurveCache;  // CurveCache[<4d bundle name>][<label number>].<member of CurveDataType>
   //ETX
-
-  //vtkCurveAnalysisPythonScript* Script;
-
 
 };
 

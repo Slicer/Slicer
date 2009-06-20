@@ -128,7 +128,12 @@ int vtkCurveAnalysisPythonInterface::GetInfo(vtkMRMLCurveAnalysisNode* curveNode
 int vtkCurveAnalysisPythonInterface::Run(vtkMRMLCurveAnalysisNode* curveNode)
 {
 
+  std::cerr << "    Run()  " << std::endl;
+
+
 #ifdef Slicer3_USE_PYTHON
+
+  std::cerr << "    Run()2  " << std::endl;
 
   PyObject* v;
   std::string pythonCmd;
@@ -150,7 +155,7 @@ int vtkCurveAnalysisPythonInterface::Run(vtkMRMLCurveAnalysisNode* curveNode)
   pythonCmd += "        fp.close()\n";
 
   // Get input and output curves from MRML node
-  pythonCmd += "targetCurve  = curveNode.GetSourceData().ToArray()\n";
+  pythonCmd += "targetCurve = curveNode.GetSourceData().ToArray()\n";
   pythonCmd += "outputCurve = curveNode.GetFittedData().ToArray()\n";
   pythonCmd += "caexec = fda.CurveAnalysisExecuter('";
   pythonCmd += this->ScriptName.c_str();
@@ -192,3 +197,5 @@ int vtkCurveAnalysisPythonInterface::Run(vtkMRMLCurveAnalysisNode* curveNode)
 
 #endif // Slicer3_USE_PYTHON
 }
+
+

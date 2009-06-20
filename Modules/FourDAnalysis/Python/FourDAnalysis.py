@@ -183,7 +183,6 @@ class CurveAnalysisExecuter(object):
 
         sys.stderr.write('Directory     : %s\n' % directory )
         sys.stderr.write('File name     : %s\n' % fileName )
-        sys.stderr.write('File name     : %s\n' % fileName )
 
         # ------------------------------
         # Add the search path if it hasn't been registered.

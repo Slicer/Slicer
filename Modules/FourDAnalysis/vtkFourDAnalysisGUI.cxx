@@ -949,24 +949,39 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
   else if (this->RunScriptButton == vtkKWPushButton::SafeDownCast(caller)
            && event == vtkKWPushButton::InvokedEvent)
     {
+    // Add a new vtkMRMLCurveAnalysisNode to the MRML scene
+    vtkMRMLCurveAnalysisNode* curveNode = vtkMRMLCurveAnalysisNode::New();
+    this->GetMRMLScene()->AddNode(curveNode);
+    int start = (int)this->CurveFittingStartIndexSpinBox->GetValue();
+    int end   = (int)this->CurveFittingEndIndexSpinBox->GetValue();
+    
+    GetInitialParametersAndInputCurves(curveNode, start, end);
+    
     const char* prefix   = this->MapOutputVolumePrefixEntry->GetValue();
-    const char* filename = this->ScriptSelectButton->GetWidget()->GetFileName();
-
+    
     int imin = (int)this->MapIMinSpinBox->GetValue();
     int imax = (int)this->MapIMaxSpinBox->GetValue();
     int jmin = (int)this->MapJMinSpinBox->GetValue();
     int jmax = (int)this->MapJMaxSpinBox->GetValue();
     int kmin = (int)this->MapKMinSpinBox->GetValue();
     int kmax = (int)this->MapKMaxSpinBox->GetValue();
-
+    
     vtkMRML4DBundleNode *bundleNode = 
       vtkMRML4DBundleNode::SafeDownCast(this->Active4DBundleSelectorWidget->GetSelected());
-    if (prefix && filename && bundleNode)
+    if (prefix && bundleNode && this->CurveAnalysisScript)
       {
       int start = (int)this->CurveFittingStartIndexSpinBox->GetValue();
       int end   = (int)this->CurveFittingEndIndexSpinBox->GetValue();
-      this->GetLogic()->GenerateParameterMap(filename, bundleNode, prefix, start, end,
+      this->GetLogic()->GenerateParameterMap(this->CurveAnalysisScript,
+                                             curveNode,
+                                             bundleNode,
+                                             prefix,
+                                             start, end,
                                              imin, imax, jmin, jmax, kmin, kmax);
+      }
+    else
+      {
+      
       }
     }
 } 
@@ -1489,7 +1504,7 @@ void vtkFourDAnalysisGUI::BuildGUIForScriptSetting(int show)
   this->CurveFittingEndIndexSpinBox->Create();
   this->CurveFittingEndIndexSpinBox->SetWidth(3);
 
-  this->Script("pack %s %s %s %s -side left -fill x -expand y -anchor w -padx 2 -pady 2",
+  this->Script("pack %s %s %s %s -side left -anchor w -anchor w -padx 2 -pady 2",
                startLabel->GetWidgetName(),
                this->CurveFittingStartIndexSpinBox->GetWidgetName(),
                endLabel->GetWidgetName(),
