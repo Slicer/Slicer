@@ -79,7 +79,7 @@ proc ExtractSubvolumeROIBuildGUI {this} {
 
   set logo [vtkKWIcon New]
   set logoReader [vtkPNGReader New]
-  set iconDir [file join [[$::FastMarchingSegmentation(singleton) GetLogic] GetModuleShareDirectory] "ImageData"]
+  set iconDir [file join [[$::ExtractSubvolumeROI(singleton) GetLogic] GetModuleShareDirectory] "ImageData"]
   $logoReader SetFileName $iconDir/BSFLogo.png
   $logoReader Update
 
@@ -173,15 +173,6 @@ proc ExtractSubvolumeROIBuildGUI {this} {
   set ::ExtractSubvolumeROI($this,resliceFilter) [vtkImageReslice New]
   set ::ExtractSubvolumeROI($this,inputVolume) ""
 
-}
-
-proc ExtractSubvolumeROIAddGUIObservers {this} {
-  $this AddObserverByNumber $::ExtractSubvolumeROI($this,runButton) 10000 
-  $this AddObserverByNumber $::ExtractSubvolumeROI($this,inputSelector)  11000
-  $this AddObserverByNumber $::ExtractSubvolumeROI($this,outputSelector)  10000
-  $this AddObserverByNumber $::ExtractSubvolumeROI($this,roiSelector) 11000
-#  $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
-    
   #  set up pointers, observers will be initialized on module enter
   set appGUI $::slicer3::ApplicationGUI
   set ::ExtractSubvolumeROI($this,rwiRedInteractorStyle) \
@@ -193,7 +184,15 @@ proc ExtractSubvolumeROIAddGUIObservers {this} {
   set ::ExtractSubvolumeROI($this,rwiYellowInteractorStyle) \
     [[[[$appGUI GetMainSliceGUI "Yellow"] GetSliceViewer] \
     GetRenderWidget ] GetRenderWindowInteractor]
+}
 
+proc ExtractSubvolumeROIAddGUIObservers {this} {
+  $this AddObserverByNumber $::ExtractSubvolumeROI($this,runButton) 10000 
+  $this AddObserverByNumber $::ExtractSubvolumeROI($this,inputSelector)  11000
+  $this AddObserverByNumber $::ExtractSubvolumeROI($this,outputSelector)  10000
+  $this AddObserverByNumber $::ExtractSubvolumeROI($this,roiSelector) 11000
+#  $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
+    
   # From Slicer console
   # set style [[[[[$::slicer3::ApplicationGUI GetMainSliceGUI "Red"]
   # GetSliceViewer] GetRenderWidget] GetRenderWindowInteractor]
@@ -218,6 +217,7 @@ proc ExtractSubvolumeROIProcessLogicEvents {this caller event} {
 
 proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
   
+  puts "Event from $caller"
   # TODO: check if the volume or ROI is under a transform, and refuse to do
   # anything if it is to avoid problems
   if { $caller == $::ExtractSubvolumeROI($this,runButton) } {
@@ -230,11 +230,7 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
     ExtractSubvolumeROIApply $this
   } 
 
-  if {$caller == $::ExtractSubvolumeROI($this,outputSelector) } {
-  }
-
   if {$caller == $::ExtractSubvolumeROI($this,roiSelector)} {
-    puts "New ROI created!"
     catch {$this RemoveMRMLObserverByNumber $::ExtractSubvolumeROI($this,observedROINode) 31}
     set ::ExtractSubvolumeROI($this,observedROINode) [$::ExtractSubvolumeROI($this,roiSelector) GetSelected]
     $this AddMRMLObserverByNumber $::ExtractSubvolumeROI($this,observedROINode) 31
@@ -509,8 +505,8 @@ proc ExtractSubvolumeROIApply {this} {
   if {$volumeNode == $outVolumeNode} {
     set errorText "Input volume and output volume cannot be the same!"
   }
-  if {$newSpacing <= 0.} {
-    set errorText "Sampling must be greater than zero!"
+  if {$newSpacing < 0.} {
+    set errorText "Sampling must be non-negative!"
   }
 
   if { $errorText != "" } {
@@ -560,7 +556,7 @@ proc ExtractSubvolumeROIApply {this} {
 
   set changeInf [vtkImageChangeInformation New]
   $changeInf SetInput [$volumeNode GetImageData]
-  eval $changeInf SetOutputSpacing [$volumeNode GetSpacing]
+  eval $changeInf SetOutputSpacing $inputSpacing
   $changeInf Update
 
   set imageClip [vtkImageClip New]
@@ -582,12 +578,27 @@ proc ExtractSubvolumeROIApply {this} {
   
   set resampler [vtkImageResample New]
   $resampler SetDimensionality 3
-  $resampler SetInterpolationModeToLinear
+
+  set isLabelMap [$volumeNode GetLabelMap]
+  if {$isLabelMap} {
+    $resampler SetInterpolationModeToNearestNeighbor
+    $outVolumeNode SetLabelMap 1
+  } else {
+    $resampler SetInterpolationModeToLinear
+  }
   $resampler SetInput [$changeInf2 GetOutput]
-  $resampler SetAxisOutputSpacing 0 $newSpacing
-  $resampler SetAxisOutputSpacing 1 $newSpacing
-  $resampler SetAxisOutputSpacing 2 $newSpacing
   $resampler ReleaseDataFlagOff 
+  if { [expr $newSpacing>0.] } {
+    $resampler SetAxisOutputSpacing 0 $newSpacing
+    $resampler SetAxisOutputSpacing 1 $newSpacing
+    $resampler SetAxisOutputSpacing 2 $newSpacing
+  } else {
+    puts "using spacing $inputSpacing"
+    # requested spacing is 0, keep the original spacing then
+    $resampler SetAxisOutputSpacing 0 [lindex $inputSpacing 0]
+    $resampler SetAxisOutputSpacing 1 [lindex $inputSpacing 1]
+    $resampler SetAxisOutputSpacing 2 [lindex $inputSpacing 2]
+  }
   $resampler Update
 
   set dimAfter [ [$resampler GetOutput] GetDimensions]
