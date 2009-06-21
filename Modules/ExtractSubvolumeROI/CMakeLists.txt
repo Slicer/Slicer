@@ -44,6 +44,21 @@ install(
   DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}
   )
 
+# logo
+file(GLOB IMAGEFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "ImageData/*.png")
+foreach(file ${IMAGEFILES})
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/${file}
+    COPYONLY
+    )
+endforeach(file)
+
+install(
+  FILES ${IMAGEFILES}
+  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/ImageData
+  )
+
 #configure_file(
 #  ${ExtractSubvolumeROI_SOURCE_DIR}/vtkPichonFastMarchingConfigure.h.in
 #  ${ExtractSubvolumeROI_BINARY_DIR}/vtkPichonFastMarchingConfigure.h
