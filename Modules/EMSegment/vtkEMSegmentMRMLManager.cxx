@@ -20,6 +20,7 @@
 #include "vtkMRMLEMSWorkingDataNode.h"
 #include "vtkMRMLEMSIntensityNormalizationParametersNode.h"
 #include "vtkMRMLEMSClassInteractionMatrixNode.h"
+//#include "vtkMRMLEMSClassProportionsNode.h"
 
 #include "vtkMatrix4x4.h"
 #include "vtkMath.h"
@@ -3975,7 +3976,12 @@ RegisterMRMLNodesWithScene()
     vtkMRMLEMSIntensityNormalizationParametersNode::New();
   this->GetMRMLScene()->RegisterNodeClass(emsNormalizationNode);
   emsNormalizationNode->Delete();
-
+  /*
+  vtkMRMLEMSClassProportionsNode* emsProportionsNode = 
+    vtkMRMLEMSClassProportionsNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(emsProportionsNode);
+  emsProportionsNode->Delete();
+*/
   vtkMRMLEMSGlobalParametersNode* emsGlobalParametersNode = 
     vtkMRMLEMSGlobalParametersNode::New();
   this->GetMRMLScene()->RegisterNodeClass(emsGlobalParametersNode);
@@ -4314,7 +4320,7 @@ PackageAndWriteData(const char* packageDirectory)
   if (!outputDirectory.empty() && 
       outputDirectory[outputDirectory.size()-1] != '/')
     {
-    // make sure directory ends in separator
+    // make sure directory ends in seperator
     outputDirectory = outputDirectory + "/";
     }
 

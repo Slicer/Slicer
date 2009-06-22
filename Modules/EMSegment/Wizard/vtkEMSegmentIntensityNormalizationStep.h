@@ -9,6 +9,10 @@ class vtkKWScaleWithEntry;
 class vtkKWFrameWithLabel;
 class vtkKWEntryWithLabel;
 class vtkKWCheckButtonWithLabel;
+class vtkKWHistogram;
+class vtkKWPiecewiseFunctionEditor;
+
+class vtkImageMeanIntensityPreNormalization;
 
 class VTK_EMSEGMENT_EXPORT vtkEMSegmentIntensityNormalizationStep : public vtkEMSegmentStep
 {
@@ -39,6 +43,22 @@ public:
     vtkIdType VolId, int iValue);
   virtual void NormalizationRelativeMaxVoxelNumCallback(
     vtkIdType VolId, double dValue);
+  //virtual void ParameterCursorMoveCallback(int x);
+
+  virtual void NormalizationHistogramChangedCallback(
+  vtkIdType VolId);
+  //Get histogram Value
+  virtual void GetValueeee ();
+
+  // Description:
+  // Observers
+  virtual void AddCursorMovingGUIEvents();
+  virtual void RemoveCursorMovingGUIEvents();
+  virtual void ProcessCursorMovingGUIEvents(
+    vtkObject *caller, unsigned long event, void *callData);
+
+
+
 
   //BTX
   enum
@@ -53,6 +73,8 @@ protected:
   ~vtkEMSegmentIntensityNormalizationStep();
 
   virtual void PopulateNormalizationTargetVolumeSelector();
+  virtual void PopulateNormalizationHistogramSelector();
+  
   virtual void ResetDefaultParameters(vtkIdType target_vol_id);
 
   vtkKWMenuButtonWithLabel  *NormalizationTargetVolumeMenuButton;
@@ -64,6 +86,18 @@ protected:
   vtkKWEntryWithLabel       *NormalizationSmoothingWidthEntry;
   vtkKWEntryWithLabel       *NormalizationMaxSmoothingWidthEntry;
   vtkKWScaleWithEntry       *NormalizationRelativeMaxVoxelScale;
+  
+  vtkKWMenuButtonWithLabel  *NormalizationHistogramMenuButton;
+  vtkKWHistogram            *NormalizationHistogram;
+  vtkKWFrameWithLabel       *NormalizationHistogramFrame;
+  vtkKWPiecewiseFunctionEditor *VisuHisto;
+  
+  vtkKWEntryWithLabel       *NormalizationValueRecommandedEntry;
+  vtkKWFrameWithLabel       *RecommandationFrame;
+  
+  vtkImageMeanIntensityPreNormalization* ImageMeanIntensityPreNormalization;
+  
+  vtkIdType id_event;
 
 private:
   vtkEMSegmentIntensityNormalizationStep(const vtkEMSegmentIntensityNormalizationStep&);

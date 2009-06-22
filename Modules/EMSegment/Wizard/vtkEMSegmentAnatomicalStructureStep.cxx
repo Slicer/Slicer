@@ -73,6 +73,7 @@ vtkEMSegmentAnatomicalStructureStep::vtkEMSegmentAnatomicalStructureStep()
     vtkEMSegmentAnatomicalStructureStep::SelectedColorChangedCallback );
 
   LockSelectedColorChangedMessage = false;
+  
 }
 
 //----------------------------------------------------------------------------
@@ -273,6 +274,7 @@ void vtkEMSegmentAnatomicalStructureStep::ShowAnatomicalStructureTree()
     vtkIdType root_id = mrmlManager->GetTreeRootNodeID();
     if (root_id)
       {
+      this->nbOfLeaf = 0;
       this->PopulateAnatomicalStructureTree(NULL, root_id);
       }
     }
@@ -572,6 +574,9 @@ void vtkEMSegmentAnatomicalStructureStep::SelectedAnatomicalNodeChangedCallback(
     vtkKWEntry *entry = this->AnatomicalNodeIntensityLabelEntry->GetWidget();
     if (has_valid_selection && sel_is_leaf_node)
       {
+      
+      std::cout << "Update the node intensity label leaf" << std::endl;
+      
       int intLabel = mrmlManager->GetTreeNodeIntensityLabel(sel_vol_id);
       this->AnatomicalNodeIntensityLabelEntry->SetEnabled(enabled);
       sprintf(buffer, 
@@ -584,6 +589,10 @@ void vtkEMSegmentAnatomicalStructureStep::SelectedAnatomicalNodeChangedCallback(
       }
     else
       {
+      
+      std::cout << "Update the node intensity label  NOT leaf" << std::endl;
+      
+      
       this->AnatomicalNodeIntensityLabelEntry->SetEnabled(0);
       entry->SetCommand(NULL, NULL);
       entry->SetValue(NULL);
@@ -598,12 +607,19 @@ void vtkEMSegmentAnatomicalStructureStep::SelectedAnatomicalNodeChangedCallback(
     {
     if (has_valid_selection && sel_is_leaf_node)
       {
+      
+      std::cout << "Update the node color label leaf" << std::endl;
+      
+      
       this->AnatomicalNodeAttributeColorLabel->SetEnabled(enabled);
       this->Script("grid %s -column 1 -row 1 -sticky ne -padx 2 -pady 2",  
                    this->AnatomicalNodeAttributeColorLabel->GetWidgetName());
      }
     else 
       {
+      
+      std::cout << "Update the node color label NOT leaf" << std::endl;
+      
       this->AnatomicalNodeAttributeColorLabel->SetEnabled(0);
       this->Script("grid forget %s", 
                    this->AnatomicalNodeAttributeColorLabel->GetWidgetName());
@@ -616,6 +632,9 @@ void vtkEMSegmentAnatomicalStructureStep::SelectedAnatomicalNodeChangedCallback(
     {
     if (has_valid_selection && sel_is_leaf_node)
       {
+      
+      std::cout << "Update the node color frame leaf" << std::endl;
+      
       this->AnatomicalNodeAttributeColorFrame->SetEnabled(enabled);
       this->Script("grid %s -column 2 -row 1 -sticky ne -padx 2 -pady 2",  
                    this->AnatomicalNodeAttributeColorFrame->GetWidgetName());
@@ -624,6 +643,9 @@ void vtkEMSegmentAnatomicalStructureStep::SelectedAnatomicalNodeChangedCallback(
      }
     else 
       {
+      
+      std::cout << "Update the node color frame NOT leaf" << std::endl;
+      
       this->AnatomicalNodeAttributeColorFrame->SetEnabled(0);
       this->Script("grid forget %s", 
                    this->AnatomicalNodeAttributeColorFrame->GetWidgetName());
@@ -1101,11 +1123,17 @@ void vtkEMSegmentAnatomicalStructureStep::PopulateAnatomicalStructureTree(
   // Insert its children
 
   int nb_children = mrmlManager->GetTreeNodeNumberOfChildren(vol_id);
+  
+  if(nb_children == 0){
+  this->nbOfLeaf = this->nbOfLeaf +1;
+  std::cout <<"POPULATE TREE LEAF: "<< this->nbOfLeaf << std::endl;
+  }
+  
   for (int i = 0; i < nb_children; i++)
     {
     this->PopulateAnatomicalStructureTree(
       node.str().c_str(), mrmlManager->GetTreeNodeChildNodeID(vol_id, i));
-    }
+      }
 }
    
 //----------------------------------------------------------------------------

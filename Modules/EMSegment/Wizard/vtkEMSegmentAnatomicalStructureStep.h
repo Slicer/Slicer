@@ -52,6 +52,8 @@ public:
     vtkIdType, double r, double g, double b);
   virtual void OpenTreeCallback();
   virtual void CloseTreeCallback();
+  
+  int nbOfLeaf;
 
 protected:
   vtkEMSegmentAnatomicalStructureStep();

@@ -327,8 +327,12 @@ StartPreprocessingTargetIntensityNormalization()
       vtkWarningMacro("Error executing normalization filter for target image " 
                       << i << ".  Skipping this image.");
       }
+
     outData->ShallowCopy(normFilter->GetOutput());
     normFilter->Delete();
+    
+    outData->ShallowCopy(inData);
+    
     }
     
   std::cerr << " EMSEG: Normalization complete." << std::endl;

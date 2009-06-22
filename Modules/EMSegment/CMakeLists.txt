@@ -14,6 +14,11 @@ if(NOT Slicer3_SOURCE_DIR)
   slicer3_set_default_install_prefix_for_external_projects()
 endif(NOT Slicer3_SOURCE_DIR)
 
+# Find VTK
+
+ find_package(VTK REQUIRED)
+ include(${VTK_USE_FILE})
+
 # --------------------------------------------------------------------------
 # Include dirs
 
@@ -21,6 +26,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard
+  ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/Help
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm
   ${CMAKE_CURRENT_SOURCE_DIR}/Registration
@@ -33,11 +39,14 @@ include_directories(
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/vtkEMSegmentConfigure.h.in 
   ${CMAKE_CURRENT_BINARY_DIR}/vtkEMSegmentConfigure.h
+  ${KWWidgets_TEMPLATES_DIR}/vtkKWWidgetsPaths.h.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/vtkKWWidgetsPaths.h
   )
 
 file(GLOB headers 
   "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/Wizard/*.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/Wizard/Help/*.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/MRML/*.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/*.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/*.txx"
@@ -68,6 +77,7 @@ set(EMSegment_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkEMSegmentStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkEMSegmentRegistrationParametersStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkEMSegmentRunSegmentationStep.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/Help/vtkImageMeanIntensityPreNormalization.cxx
   # MRML
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSNode.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSSegmenterNode.cxx
@@ -142,6 +152,7 @@ set_source_files_properties(
   ${CMAKE_CURRENT_SOURCE_DIR}/Registration/vtkBSplineRegistrator.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Registration/vtkRigidRegistrator.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Registration/vtkITKTransformAdapter.cxx
+# ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/Help/vtkImageMeanIntensityPreNormalization.cxx
   WRAP_EXCLUDE
   )
 
@@ -173,6 +184,7 @@ target_link_libraries(${lib_name}
   ${Slicer3_Base_LIBRARIES}
   ${KWWidgets_LIBRARIES} 
   ${ITK_LIBRARIES}
+  #${VTK_LIBRARIES}
   Volumes
   )
 

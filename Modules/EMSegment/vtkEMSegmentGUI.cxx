@@ -204,10 +204,30 @@ void vtkEMSegmentGUI::ProcessGUIEvents(vtkObject *caller,
                                                       unsigned long event,
                                                       void *callData) 
 {
+
+std::cout<<"event: "<<event<<std::endl;
+
   this->IntensityDistributionsStep->ProcessManualIntensitySamplingGUIEvents(
     caller, event, callData);
   this->RunSegmentationStep->ProcessRunRegistrationOutputGUIEvents(
     caller, event, callData);
+  this->NormalizationStep->ProcessCursorMovingGUIEvents(
+    caller, event, callData);   
+  //this->NodeParametersStep->ProcessUpdatePriorGUIEvents(
+  //  caller, event, callData);
+ // this->IntensityDistributionsStep->ProcessPointMovingGUIEvents(
+  //  caller, event, callData);  
+  //this->IntensityDistributionsStep->ProcessPointAddGUIEvents(
+  //  caller, event, callData);
+  //this->IntensityDistributionsStep->ProcessTestButtonGUIEvents(
+  //  caller, event, callData);
+  this->NodeParametersStep->ProcessPointMovingGUIEvents(
+    caller, event, callData);  
+  this->NodeParametersStep->ProcessPointAddGUIEvents(
+    caller, event, callData);
+  this->NodeParametersStep->ProcessTestButtonGUIEvents(
+    caller, event, callData);    
+    
 }
 
 //---------------------------------------------------------------------------
