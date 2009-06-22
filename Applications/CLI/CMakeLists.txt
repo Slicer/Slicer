@@ -620,7 +620,6 @@ subdirs ( Realign )
 subdirs( DiffusionApplications )
 #subdirs( EndoNavTracking )
 subdirs( ExtractSkeleton )
-subdirs( N3MRIBiasFieldCorrection )
 
 if ( ${ITK_VERSION_MAJOR} GREATER 3 )
 
