@@ -305,7 +305,7 @@ void vtkFourDAnalysisLogic::GenerateParameterMap(vtkCurveAnalysisPythonInterface
     }
 
   int nFrames = bundleNode->GetNumberOfFrames();  
-  vtkStringArray* nameArray = curveNode->GetParameterNameArray();
+  vtkStringArray* nameArray = curveNode->GetOutputValueNameArray();
   
   // Create map volumes for each parameter
   int numKeys = nameArray->GetNumberOfTuples();
@@ -386,15 +386,15 @@ void vtkFourDAnalysisLogic::GenerateParameterMap(vtkCurveAnalysisPythonInterface
           fittedCurve->InsertNextTuple(xy);
           }
 
-        curveNode->SetSourceData(srcCurve);
-        curveNode->SetFittedData(fittedCurve);
+        curveNode->SetTargetCurve(srcCurve);
+        curveNode->SetFittedCurve(fittedCurve);
         script->Run(curveNode);
         
         // Put results
         ParameterImageMapType::iterator iter;
         for (iter = ParameterImages.begin(); iter != ParameterImages.end(); iter ++)
           {
-          float param = (float)curveNode->GetParameter(iter->first.c_str());
+          float param = (float)curveNode->GetOutputValue(iter->first.c_str());
           if (!std::isnormal(param))
             {
             param = 0.0;

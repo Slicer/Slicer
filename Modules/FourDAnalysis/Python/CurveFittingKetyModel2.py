@@ -42,8 +42,8 @@ class CurveFittingKetyModel2(CurveAnalysisBase):
     # ------------------------------
     # Constructor -- Set initial parameters
     def __init__(self):
-        self.OptimParamNameList = ['Ktrans', 've']
-        self.InitialOptimParam  = [0.1, 0.1] 
+        self.ParameterNameList  = ['Ktrans', 've']
+        self.InitialParameter   = [0.1, 0.1] 
         self.InputCurveNameList = ['AIF']
 
         # dummy 

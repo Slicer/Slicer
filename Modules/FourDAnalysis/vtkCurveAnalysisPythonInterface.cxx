@@ -69,9 +69,10 @@ int vtkCurveAnalysisPythonInterface::GetInfo(vtkMRMLCurveAnalysisNode* curveNode
   std::string pythonCmd;
 
   // clear curve analysis node
-  curveNode->ClearInputData();
-  curveNode->ClearInitialOptimParameters();
-  curveNode->ClearParameters();
+  curveNode->ClearInputArrays();
+  curveNode->ClearInitialParameters();
+  curveNode->ClearConstants();
+  curveNode->ClearOutputValues();
 
   // Obtain MRML CurveAnalysis Node instance
   pythonCmd += "from Slicer import slicer\n";
@@ -95,20 +96,20 @@ int vtkCurveAnalysisPythonInterface::GetInfo(vtkMRMLCurveAnalysisNode* curveNode
   pythonCmd += "')\n";
 
   // Get lists of input curves, initial parameters etc.
-  pythonCmd += "curveNames           = caexec.GetInputCurveNames()\n";
-  pythonCmd += "initialOptimParams   = caexec.GetInitialOptimParams()\n";
-  pythonCmd += "inputParameterNames  = caexec.GetInputParameterNames()\n";
-  pythonCmd += "outputParameterNames = caexec.GetOutputParameterNames()\n";
+  pythonCmd += "curveNames          = caexec.GetInputCurveNames()\n";
+  pythonCmd += "initialOptimParams  = caexec.GetInitialParameters()\n";
+  pythonCmd += "inputParameterNames = caexec.GetConstantNames()\n";
+  pythonCmd += "outputValueNames    = caexec.GetOutputParameterNames()\n";
 
   // Set lists
   pythonCmd += "for key in curveNames:\n";
-  pythonCmd += "    curveNode.AddInputDataName(key)\n";
+  pythonCmd += "    curveNode.AddInputArrayName(key)\n";
   pythonCmd += "for key, value in initialOptimParams.iteritems():\n";
-  pythonCmd += "    curveNode.SetInitialOptimParameter(key, value)\n";
+  pythonCmd += "    curveNode.SetInitialParameter(key, value)\n";
   pythonCmd += "for key in inputParameterNames:\n";
-  pythonCmd += "    curveNode.SetInputParameter(key, 0.0)\n";
-  pythonCmd += "for key in outputParameterNames:\n";
-  pythonCmd += "    curveNode.SetParameter(key, 0.0)\n";
+  pythonCmd += "    curveNode.SetConstant(key, 0.0)\n";
+  pythonCmd += "for key in outputValueNames:\n";
+  pythonCmd += "    curveNode.SetOutputValue(key, 0.0)\n";
 
   v = PyRun_String(pythonCmd.c_str(),
                    Py_file_input,
@@ -127,13 +128,9 @@ int vtkCurveAnalysisPythonInterface::GetInfo(vtkMRMLCurveAnalysisNode* curveNode
 //---------------------------------------------------------------------------
 int vtkCurveAnalysisPythonInterface::Run(vtkMRMLCurveAnalysisNode* curveNode)
 {
-
-  std::cerr << "    Run()  " << std::endl;
-
-
 #ifdef Slicer3_USE_PYTHON
 
-  std::cerr << "    Run()2  " << std::endl;
+  std::cerr << "Calling python script: " << this->ScriptName.c_str() << std::endl;
 
   PyObject* v;
   std::string pythonCmd;
@@ -155,16 +152,16 @@ int vtkCurveAnalysisPythonInterface::Run(vtkMRMLCurveAnalysisNode* curveNode)
   pythonCmd += "        fp.close()\n";
 
   // Get input and output curves from MRML node
-  pythonCmd += "targetCurve = curveNode.GetSourceData().ToArray()\n";
-  pythonCmd += "outputCurve = curveNode.GetFittedData().ToArray()\n";
+  pythonCmd += "targetCurve = curveNode.GetTargetCurve().ToArray()\n";
+  pythonCmd += "outputCurve = curveNode.GetFittedCurve().ToArray()\n";
   pythonCmd += "caexec = fda.CurveAnalysisExecuter('";
   pythonCmd += this->ScriptName.c_str();
   pythonCmd += "')\n";
 
   // Get lists of input curves, initial parameters etc.
   pythonCmd += "curveNames           = caexec.GetInputCurveNames()\n";
-  pythonCmd += "initialOptimParams   = caexec.GetInitialOptimParams()\n";
-  pythonCmd += "inputParameterNames  = caexec.GetInputParameterNames()\n";
+  pythonCmd += "initialOptimParams   = caexec.GetInitialParameters()\n";
+  pythonCmd += "inputParameterNames  = caexec.GetConstantNames()\n";
   pythonCmd += "outputParameterNames = caexec.GetOutputParameterNames()\n";
   
   // Set lists
@@ -172,18 +169,18 @@ int vtkCurveAnalysisPythonInterface::Run(vtkMRMLCurveAnalysisNode* curveNode)
   pythonCmd += "inputParamDict = {}\n";
   pythonCmd += "inputCurveDict = {}\n";
   pythonCmd += "for key, value in initialOptimParams.iteritems():\n";
-  pythonCmd += "    initialParamDict[key] = curveNode.GetInitialOptimParameter(key)\n";
+  pythonCmd += "    initialParamDict[key] = curveNode.GetInitialParameter(key)\n";
   pythonCmd += "for key in inputParameterNames:\n";
-  pythonCmd += "    inputParamDict[key] = curveNode.GetInputParameter(key)\n";
+  pythonCmd += "    inputParamDict[key] = curveNode.GetConstant(key)\n";
   pythonCmd += "for key in curveNames:\n";
-  pythonCmd += "    inputCurveDict[key]   = curveNode.GetInputData(key).ToArray()\n";
+  pythonCmd += "    inputCurveDict[key]   = curveNode.GetInputArray(key).ToArray()\n";
 
   // Run curve fitting
   pythonCmd += "result = caexec.Execute(inputCurveDict, initialParamDict, inputParamDict, targetCurve, outputCurve)\n";
 
   // Get results
   pythonCmd += "for key, value in result.iteritems():\n";
-  pythonCmd += "    curveNode.SetParameter(key, value)\n";
+  pythonCmd += "    curveNode.SetOutputValue(key, value)\n";
 
   v = PyRun_String(pythonCmd.c_str(),
                    Py_file_input,

@@ -44,16 +44,11 @@ class CurveFittingKetyModelStepInput(CurveAnalysisBase):
     # ------------------------------
     # Constructor -- Set initial parameters
     def __init__(self):
-        self.OptimParamNameList = ['Ktrans', 've', 'Cp0', 'delay']
-        self.InitialOptimParam  = [0.1, 0.1, 1.0, 0.0] 
-        self.InputCurveNameList = ['AIF']
-        self.InputParamNameList = ['Duration']
-        self.InputParam         = [1.0]
+        self.ParameterNameList  = ['Ktrans', 've', 'Cp0', 'delay']
+        self.InitialParameter   = [0.1, 0.1, 1.0, 0.0] 
+        self.ConstantNameList = ['Duration']
+        self.Constant         = [1.0]
 
-        # dummy 
-        self.AifTime = r_[0:5]
-        self.AifData = r_[0:5]
-        self.tck = splrep(self.AifTime, self.AifData, s=0)
 
     # ------------------------------
     # Convert signal intensity curve to concentration curve
@@ -69,26 +64,11 @@ class CurveFittingKetyModelStepInput(CurveAnalysisBase):
         return signal
        
     # ------------------------------
-    # Set input parameters
-    def SetInputParam(self, name, param):
+    # Set Constants
+    def SetConstant(self, name, param):
         if name == 'Duration':
             self.duration = param;
-
-    # ------------------------------
-    # Generate arteral input function from given data
-    def SetInputCurve(self, name, curve):
-        if name == 'AIF':
-            self.AifTime = curve[:,0]
-            self.AifData = self.SignalToConcent(curve[:,1])
-            self.Tck = splrep(self.AifTime, self.AifData, s=0)
         
-    # ------------------------------
-    # Arteral input function (AIF)
-    def Aif(self, x):
-        y = splev(x, self.Tck, der=0)
-        #y = self.AifTable[int(x/self.dt)]
-        return y
-
     # ------------------------------
     # Definition of the function
     def Function(self, t, param):

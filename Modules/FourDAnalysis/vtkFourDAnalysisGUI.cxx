@@ -877,8 +877,8 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
         }
 
       // Set source and fitted curve arrays to the curve analysis node.
-      curveNode->SetSourceData(srcCurve);
-      curveNode->SetFittedData(fittedCurve);
+      curveNode->SetTargetCurve(srcCurve);
+      curveNode->SetFittedCurve(fittedCurve);
 
       // Call Logic to excecute the curve fitting script
       //this->GetLogic()->RunCurveFitting(script, curveNode);
@@ -887,7 +887,7 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
       // Display result parameters
       UpdateOutputParameterList(curveNode);
 
-      vtkDoubleArray* resultCurve = curveNode->GetFittedData();
+      vtkDoubleArray* resultCurve = curveNode->GetFittedCurve();
       if (this->FittedCurve)
         {
         this->FittedCurve->SetNumberOfComponents(2);
@@ -2134,9 +2134,9 @@ void vtkFourDAnalysisGUI::UpdateInitialParameterList(vtkMRMLCurveAnalysisNode* c
   // Adjust number of rows
   int numRows = this->InitialParameterList->GetWidget()->GetNumberOfRows();
 
-  vtkStringArray* paramNames      = curveNode->GetInitialOptimParameterNameArray();
-  vtkStringArray* inputParamNames = curveNode->GetInputParameterNameArray();
-  vtkStringArray* inputDataNames  = curveNode->GetInputDataNameArray();
+  vtkStringArray* paramNames      = curveNode->GetInitialParameterNameArray();
+  vtkStringArray* inputParamNames = curveNode->GetConstantNameArray();
+  vtkStringArray* inputDataNames  = curveNode->GetInputArrayNameArray();
   int numParameters      = paramNames->GetNumberOfTuples();
   int numInputParameters = inputParamNames->GetNumberOfTuples();
   int numInputCurves     = inputDataNames->GetNumberOfTuples();
@@ -2149,7 +2149,7 @@ void vtkFourDAnalysisGUI::UpdateInitialParameterList(vtkMRMLCurveAnalysisNode* c
   for (int i = 0; i < numParameters; i ++)
     {
     const char* name = paramNames->GetValue(i);
-    double value     = curveNode->GetInitialOptimParameter(name);
+    double value     = curveNode->GetInitialParameter(name);
     sprintf(label, "[P] %s", name);
     this->InitialParameterList->GetWidget()->SetCellText(i, 0, label);
     this->InitialParameterList->GetWidget()->SetCellEditWindowToEntry(i, 1);
@@ -2160,7 +2160,7 @@ void vtkFourDAnalysisGUI::UpdateInitialParameterList(vtkMRMLCurveAnalysisNode* c
     {
     int row = i + numParameters;
     const char* name = inputParamNames->GetValue(i);
-    double value     = curveNode->GetInputParameter(name);
+    double value     = curveNode->GetConstant(name);
     sprintf(label, "[I] %s", name);
     this->InitialParameterList->GetWidget()->SetCellText(row, 0, label);
     this->InitialParameterList->GetWidget()->SetCellEditWindowToEntry(row, 1);
@@ -2190,9 +2190,9 @@ void vtkFourDAnalysisGUI::GetInitialParametersAndInputCurves(vtkMRMLCurveAnalysi
     return;
     }
 
-  vtkStringArray* paramNames      = curveNode->GetInitialOptimParameterNameArray();
-  vtkStringArray* inputParamNames = curveNode->GetInputParameterNameArray();
-  vtkStringArray* inputDataNames  = curveNode->GetInputDataNameArray();
+  vtkStringArray* paramNames      = curveNode->GetInitialParameterNameArray();
+  vtkStringArray* inputParamNames = curveNode->GetConstantNameArray();
+  vtkStringArray* inputDataNames  = curveNode->GetInputArrayNameArray();
   int numParameters      = paramNames->GetNumberOfTuples();
   int numInputParameters = inputParamNames->GetNumberOfTuples();
   int numInputCurves     = inputDataNames->GetNumberOfTuples();
@@ -2201,7 +2201,7 @@ void vtkFourDAnalysisGUI::GetInitialParametersAndInputCurves(vtkMRMLCurveAnalysi
     {
     const char* name = paramNames->GetValue(i);
     double value = this->InitialParameterList->GetWidget()->GetCellTextAsDouble(i, 1);
-    curveNode->SetInitialOptimParameter(name, value);
+    curveNode->SetInitialParameter(name, value);
     std::cerr << name << " = " << value << std::endl;
     }
 
@@ -2210,7 +2210,7 @@ void vtkFourDAnalysisGUI::GetInitialParametersAndInputCurves(vtkMRMLCurveAnalysi
     int row = i + numParameters;
     const char* name = inputParamNames->GetValue(i);
     double value = this->InitialParameterList->GetWidget()->GetCellTextAsDouble(row, 1);
-    curveNode->SetInputParameter(name, value);
+    curveNode->SetConstant(name, value);
     std::cerr << name << " = " << value << std::endl;
     }
 
@@ -2239,7 +2239,7 @@ void vtkFourDAnalysisGUI::GetInitialParametersAndInputCurves(vtkMRMLCurveAnalysi
         inputCurve->InsertNextTuple(xy);
         std::cerr << "input xy = " << xy[0] << ", " << xy[1] << std::endl;
         }
-      curveNode->SetInputData(name, inputCurve);
+      curveNode->SetInputArray(name, inputCurve);
       }
     }
 
@@ -2256,7 +2256,7 @@ void vtkFourDAnalysisGUI::UpdateOutputParameterList(vtkMRMLCurveAnalysisNode* cu
   // Adjust number of rows
   int numRows = this->ResultParameterList->GetWidget()->GetNumberOfRows();
 
-  vtkStringArray* paramNames = curveNode->GetParameterNameArray();
+  vtkStringArray* paramNames = curveNode->GetOutputValueNameArray();
   int numParameters  = paramNames->GetNumberOfTuples();
 
   this->ResultParameterList->GetWidget()->DeleteAllRows();
@@ -2265,7 +2265,7 @@ void vtkFourDAnalysisGUI::UpdateOutputParameterList(vtkMRMLCurveAnalysisNode* cu
   for (int i = 0; i < numParameters; i ++)
     {
     const char* name = paramNames->GetValue(i);
-    double value     = curveNode->GetParameter(name);
+    double value     = curveNode->GetOutputValue(name);
     this->ResultParameterList->GetWidget()->SetCellText(i, 0, name);
     this->ResultParameterList->GetWidget()->SetCellTextAsDouble(i, 1, value);
     }

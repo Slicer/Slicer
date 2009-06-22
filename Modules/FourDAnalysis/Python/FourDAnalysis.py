@@ -35,16 +35,16 @@ import numpy
 class CurveAnalysisBase(object):
 
     # Parameters to optimze
-    OptimParamNameList    = []
-    InitialOptimParam     = []
-    OptimParam            = []
+    ParameterNameList     = []
+    InitialParameter      = []
+    Parameter             = []
 
     # Input curve
     InputCurveNameList    = []
 
-    # Input parameters
-    InputParamNameList    = []
-    InputParam            = []
+    # constants
+    ConstantNameList    = []
+    Constant            = []
 
     # Target curve
     TargetCurve           = []
@@ -52,7 +52,7 @@ class CurveAnalysisBase(object):
     CovarianceMatrix      = []
 
     #def __init__(self):
-    #    ## OptimParamNameList and Initial Param should be set here
+    #    ## ParameterNameList and Initial Param should be set here
         
     def Initialize(self):
         return 0
@@ -81,42 +81,42 @@ class CurveAnalysisBase(object):
     # ------------------------------
     # Parameters to optimze
 
-    def GetOptimParamNameList(self):
-        return self.OptimParamNameList
+    def GetParameterNameList(self):
+        return self.ParameterNameList
 
-    def SetInitialOptimParam(self, param):
-        self.InitialOptimParam = param
+    def SetInitialParameter(self, param):
+        self.InitialParameter = param
 
-    def GetInitialOptimParam(self):
-        return self.InitialOptimParam
+    def GetInitialParameters(self):
+        return self.InitialParameter
 
-    def GetOptimParam(self):
-        return self.OptimParam
+    def GetParameter(self):
+        return self.Parameter
 
     # ------------------------------
-    # Input parameters
+    # Constants
 
-    def GetInputParamNameList(self):
-        return self.InputParamNameList
+    def GetConstantNameList(self):
+        return self.ConstantNameList
 
-    def GetInputParam(slef):
-        return self.InputParam
+    def GetConstant(slef):
+        return self.Constant
 
-    def SetInputParam(self, name, param):
+    def SetConstant(self, name, param):
         return 0
 
     # ------------------------------
     # Output parameters
 
     def GetOutputParamNameList(self):
-        dict = self.CalcOutputParamDict(self.InitialOptimParam)
+        dict = self.CalcOutputParamDict(self.InitialParameter)
         list = []
         for key, value in dict.iteritems():
             list.append(key)
         return list
 
     def GetOutputParam(self):
-        return self.CalcOutputParamDict(self.OptimParam)
+        return self.CalcOutputParamDict(self.Parameter)
 
     # ------------------------------
     # Input curve
@@ -137,7 +137,7 @@ class CurveAnalysisBase(object):
     # Fit curve
 
     def GetFitCurve(self, x):
-        return self.ConcentToSignal(self.Function(x, self.OptimParam))
+        return self.ConcentToSignal(self.Function(x, self.Parameter))
 
     # ------------------------------
     # Execute optimization
@@ -147,15 +147,13 @@ class CurveAnalysisBase(object):
         x      = self.TargetCurve[:, 0]
         y_meas = self.SignalToConcent(self.TargetCurve[:, 1])
 
-        param0 = self.InitialOptimParam
+        param0 = self.InitialParameter
 
         param_output = scipy.optimize.leastsq(self.ResidualError, param0, args=(y_meas, x),full_output=False,ftol=1e-04,xtol=1.49012e-04)
-        self.OptimParam       = param_output[0] # fitted parameters
+        self.Parameter       = param_output[0] # fitted parameters
         self.CovarianceMatrix = param_output[1] # covariant matrix
         
         return 1        ## should return 0 if optimization fails
-
-
 
 
 # ----------------------------------------------------------------------
@@ -209,11 +207,11 @@ class CurveAnalysisExecuter(object):
         return list
 
     # ------------------------------
-    # Get Initial Optimization Parameter List
-    def GetInitialOptimParams(self):
+    # Get Initial Optimization Parameter Dictionary
+    def GetInitialParameters(self):
         exec('fitting = self.Module.' + self.ModuleName + '()')
-        names  = fitting.GetOptimParamNameList()
-        values = fitting.GetInitialOptimParam()
+        names  = fitting.GetParameterNameList()
+        values = fitting.GetInitialParameters()
         n = len(names)
         params = {}
         for i in range(n):
@@ -221,10 +219,10 @@ class CurveAnalysisExecuter(object):
         return params
 
     # ------------------------------
-    # Get Input Parameter Name List
-    def GetInputParameterNames(self):
+    # Get Constant Name List
+    def GetConstantNames(self):
         exec('fitting = self.Module.' + self.ModuleName + '()')
-        list =  fitting.GetInputParamNameList()
+        list =  fitting.GetConstantNameList()
         return list
 
     # ------------------------------
@@ -236,7 +234,7 @@ class CurveAnalysisExecuter(object):
 
     # ------------------------------
     # Call curve fitting class
-    def Execute(self, inputCurvesDict, initialOptimParamDict, inputParamDict, targetCurve, outputCurve):
+    def Execute(self, inputCurvesDict, initialParameterDict, inputParamDict, targetCurve, outputCurve):
 
         exec('fitting = self.Module.' + self.ModuleName + '()')
 
@@ -249,18 +247,18 @@ class CurveAnalysisExecuter(object):
 
         # ------------------------------
         # Set initial optimization parameters
-        nameList = fitting.GetOptimParamNameList()
+        nameList = fitting.GetParameterNameList()
         n = len(nameList)
         paramList = numpy.zeros(n)
         for i in range(n):
-            paramList[i] = initialOptimParamDict[nameList[i]]
+            paramList[i] = initialParameterDict[nameList[i]]
 
-        fitting.SetInitialOptimParam(paramList)
+        fitting.SetInitialParameter(paramList)
 
         # ------------------------------
-        # Set input parameters
+        # Set constants
         for name, param, in inputParamDict.iteritems():
-            fitting.SetInputParam(name, param)
+            fitting.SetConstant(name, param)
 
         # ------------------------------
         # Run optimization

@@ -57,10 +57,10 @@ class VTK_FourDAnalysis_EXPORT vtkMRMLCurveAnalysisNode : public vtkMRMLNode
   virtual const char* GetNodeTagName()
     {return "CurveAnalysis";};
 
-  vtkSetObjectMacro( SourceData, vtkDoubleArray );
-  vtkGetObjectMacro( SourceData, vtkDoubleArray );
-  vtkSetObjectMacro( FittedData, vtkDoubleArray );
-  vtkGetObjectMacro( FittedData, vtkDoubleArray );
+  vtkSetObjectMacro( TargetCurve, vtkDoubleArray );
+  vtkGetObjectMacro( TargetCurve, vtkDoubleArray );
+  vtkSetObjectMacro( FittedCurve, vtkDoubleArray );
+  vtkGetObjectMacro( FittedCurve, vtkDoubleArray );
 
   void SetFunctionName(const char* name)
   {
@@ -73,29 +73,29 @@ class VTK_FourDAnalysis_EXPORT vtkMRMLCurveAnalysisNode : public vtkMRMLNode
   }
 
   // Input curve data
-  void SetInputData(const char* name, vtkDoubleArray* data);
-  void AddInputDataName(const char* name) { SetInputData(name, NULL); };
-  vtkDoubleArray* GetInputData(const char* name);
-  vtkStringArray* GetInputDataNameArray();
-  void ClearInputData();
+  void SetInputArray(const char* name, vtkDoubleArray* data);
+  void AddInputArrayName(const char* name) { SetInputArray(name, NULL); };
+  vtkDoubleArray* GetInputArray(const char* name);
+  vtkStringArray* GetInputArrayNameArray();
+  void ClearInputArrays();
 
   // Initial optimization parameters
-  void SetInitialOptimParameter(const char* name, double value);
-  double GetInitialOptimParameter(const char* name);
-  vtkStringArray* GetInitialOptimParameterNameArray();
-  void ClearInitialOptimParameters();
+  void SetInitialParameter(const char* name, double value);
+  double GetInitialParameter(const char* name);
+  vtkStringArray* GetInitialParameterNameArray();
+  void ClearInitialParameters();
 
-  // Input parameters
-  void SetInputParameter(const char *name, const double value);
-  double GetInputParameter(const char* name);
-  vtkStringArray* GetInputParameterNameArray();
-  void ClearInputParameters();
+  // Constant
+  void SetConstant(const char *name, const double value);
+  double GetConstant(const char* name);
+  vtkStringArray* GetConstantNameArray();
+  void ClearConstants();
   
-  // Output parameters
-  void SetParameter(const char *name, const double value);
-  double GetParameter(const char* name);
-  vtkStringArray* GetParameterNameArray();
-  void ClearParameters();
+  // Output values
+  void SetOutputValue(const char *name, const double value);
+  double GetOutputValue(const char* name);
+  vtkStringArray* GetOutputValueNameArray();
+  void ClearOutputValues();
 
 
 private:
@@ -103,14 +103,14 @@ private:
   ~vtkMRMLCurveAnalysisNode();
   vtkMRMLCurveAnalysisNode(const vtkMRMLCurveAnalysisNode&);
   void operator=(const vtkMRMLCurveAnalysisNode&);
+  
+  vtkDoubleArray* TargetCurve;
+  vtkDoubleArray* FittedCurve;
 
-  vtkDoubleArray* SourceData;
-  vtkDoubleArray* FittedData;
-
-  ValueMapType    InputParameters;
-  ValueMapType    OutputParameters;
-  ArrayMapType    InputData;
-  ValueMapType    InitialOptimParameters;
+  ValueMapType    Constants;
+  ValueMapType    OutputValues;
+  ArrayMapType    InputArrays;
+  ValueMapType    InitialParameters;
 
   //BTX
   std::string FunctionName;

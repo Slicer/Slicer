@@ -26,8 +26,7 @@ Version:   $Revision: 1.2 $
 vtkMRMLCurveAnalysisNode* vtkMRMLCurveAnalysisNode::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLCurveAnalysisNode");
-  if(ret)
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLCurveAnalysisNode"); if(ret)
     {
       return (vtkMRMLCurveAnalysisNode*)ret;
     }
@@ -53,12 +52,13 @@ vtkMRMLNode* vtkMRMLCurveAnalysisNode::CreateNodeInstance()
 vtkMRMLCurveAnalysisNode::vtkMRMLCurveAnalysisNode()
 {
   this->HideFromEditors = true;
-  this->SourceData = NULL;
-  this->FittedData = NULL;
-  this->OutputParameters.clear();
-  this->InputParameters.clear();
-  this->InitialOptimParameters.clear();
-  this->InputData.clear();
+
+  this->TargetCurve = NULL;
+  this->FittedCurve = NULL;
+  this->OutputValues.clear();
+  this->Constants.clear();
+  this->InitialParameters.clear();
+  this->InputArrays.clear();
 }
 
 //----------------------------------------------------------------------------
@@ -99,20 +99,20 @@ void vtkMRMLCurveAnalysisNode::PrintSelf(ostream& os, vtkIndent indent)
 
 
 //----------------------------------------------------------------------------
-void vtkMRMLCurveAnalysisNode::SetInputData(const char* name, vtkDoubleArray* data)
+void vtkMRMLCurveAnalysisNode::SetInputArray(const char* name, vtkDoubleArray* data)
 {
-  std::cerr << "void vtkMRMLCurveAnalysisNode::SetInputData(const char* name, vtkDoubleArray* data)" << std::endl;
+  std::cerr << "void vtkMRMLCurveAnalysisNode::SetInputArray(const char* name, vtkDoubleArray* data)" << std::endl;
   std::cerr << name << std::endl;
-  this->InputData[name] = data;
+  this->InputArrays[name] = data;
 }
 
 
 //----------------------------------------------------------------------------
-vtkDoubleArray* vtkMRMLCurveAnalysisNode::GetInputData(const char* name)
+vtkDoubleArray* vtkMRMLCurveAnalysisNode::GetInputArray(const char* name)
 {
   ArrayMapType::iterator iter;
-  iter = this->InputData.find(name);
-  if (iter != this->InputData.end())
+  iter = this->InputArrays.find(name);
+  if (iter != this->InputArrays.end())
     {
     return iter->second;
     }
@@ -123,12 +123,12 @@ vtkDoubleArray* vtkMRMLCurveAnalysisNode::GetInputData(const char* name)
 }
 
 //----------------------------------------------------------------------------
-vtkStringArray* vtkMRMLCurveAnalysisNode::GetInputDataNameArray()
+vtkStringArray* vtkMRMLCurveAnalysisNode::GetInputArrayNameArray()
 {
   ArrayMapType::iterator iter;
   vtkStringArray* array = vtkStringArray::New();
 
-  for (iter = this->InputData.begin(); iter != this->InputData.end(); iter ++)
+  for (iter = this->InputArrays.begin(); iter != this->InputArrays.end(); iter ++)
     {
     array->InsertNextValue(iter->first.c_str());
     }
@@ -137,25 +137,25 @@ vtkStringArray* vtkMRMLCurveAnalysisNode::GetInputDataNameArray()
 
 
 //----------------------------------------------------------------------------
-void vtkMRMLCurveAnalysisNode::ClearInputData()
+void vtkMRMLCurveAnalysisNode::ClearInputArrays()
 {
-  this->InputData.clear();
+  this->InputArrays.clear();
 }
 
 
 //----------------------------------------------------------------------------
-void vtkMRMLCurveAnalysisNode::SetInitialOptimParameter(const char* name, double value)
+void vtkMRMLCurveAnalysisNode::SetInitialParameter(const char* name, double value)
 {
-  this->InitialOptimParameters[name] = value;
+  this->InitialParameters[name] = value;
 }
 
 
 //----------------------------------------------------------------------------
-double vtkMRMLCurveAnalysisNode::GetInitialOptimParameter(const char* name)
+double vtkMRMLCurveAnalysisNode::GetInitialParameter(const char* name)
 {
   ValueMapType::iterator iter;
-  iter = this->InitialOptimParameters.find(name);
-  if (iter != this->InitialOptimParameters.end())
+  iter = this->InitialParameters.find(name);
+  if (iter != this->InitialParameters.end())
     {
     return iter->second;
     }
@@ -167,12 +167,12 @@ double vtkMRMLCurveAnalysisNode::GetInitialOptimParameter(const char* name)
 
 
 //----------------------------------------------------------------------------
-vtkStringArray* vtkMRMLCurveAnalysisNode::GetInitialOptimParameterNameArray()
+vtkStringArray* vtkMRMLCurveAnalysisNode::GetInitialParameterNameArray()
 {
   ValueMapType::iterator iter;
   vtkStringArray* array = vtkStringArray::New();
 
-  for (iter = this->InitialOptimParameters.begin(); iter != this->InitialOptimParameters.end(); iter ++)
+  for (iter = this->InitialParameters.begin(); iter != this->InitialParameters.end(); iter ++)
     {
     array->InsertNextValue(iter->first.c_str());
     }
@@ -182,27 +182,27 @@ vtkStringArray* vtkMRMLCurveAnalysisNode::GetInitialOptimParameterNameArray()
 
 
 //----------------------------------------------------------------------------
-void vtkMRMLCurveAnalysisNode::ClearInitialOptimParameters()
+void vtkMRMLCurveAnalysisNode::ClearInitialParameters()
 {
-  this->InitialOptimParameters.clear();
+  this->InitialParameters.clear();
 }
 
 
 //----------------------------------------------------------------------------
-void vtkMRMLCurveAnalysisNode::SetInputParameter(const char *name, const double value)
+void vtkMRMLCurveAnalysisNode::SetConstant(const char *name, const double value)
 {
-  this->InputParameters[name] = value;
+  this->Constants[name] = value;
 }
 
 
 //----------------------------------------------------------------------------
-double vtkMRMLCurveAnalysisNode::GetInputParameter(const char* name)
+double vtkMRMLCurveAnalysisNode::GetConstant(const char* name)
 {
   ValueMapType::iterator iter;
-  iter = this->InputParameters.find(name);
-  if (iter != this->InputParameters.end())
+  iter = this->Constants.find(name);
+  if (iter != this->Constants.end())
     {
-    return this->InputParameters[name]; 
+    return this->Constants[name]; 
     }
   else
     {
@@ -212,12 +212,12 @@ double vtkMRMLCurveAnalysisNode::GetInputParameter(const char* name)
 
 
 //----------------------------------------------------------------------------
-vtkStringArray* vtkMRMLCurveAnalysisNode::GetInputParameterNameArray()
+vtkStringArray* vtkMRMLCurveAnalysisNode::GetConstantNameArray()
 {
   ValueMapType::iterator iter;
   vtkStringArray* array = vtkStringArray::New();
   
-  for (iter = this->InputParameters.begin(); iter != this->InputParameters.end(); iter ++)
+  for (iter = this->Constants.begin(); iter != this->Constants.end(); iter ++)
     {
     array->InsertNextValue(iter->first.c_str());
     }
@@ -227,28 +227,28 @@ vtkStringArray* vtkMRMLCurveAnalysisNode::GetInputParameterNameArray()
 
 
 //----------------------------------------------------------------------------
-void vtkMRMLCurveAnalysisNode::ClearInputParameters()
+void vtkMRMLCurveAnalysisNode::ClearConstants()
 {
-  this->InputParameters.clear();
+  this->Constants.clear();
 }
 
 
 
 //----------------------------------------------------------------------------
-void vtkMRMLCurveAnalysisNode::SetParameter(const char *name, const double value)
+void vtkMRMLCurveAnalysisNode::SetOutputValue(const char *name, const double value)
 {
-  this->OutputParameters[name] = value;
+  this->OutputValues[name] = value;
 }
 
 
 //----------------------------------------------------------------------------
-double vtkMRMLCurveAnalysisNode::GetParameter(const char* name)
+double vtkMRMLCurveAnalysisNode::GetOutputValue(const char* name)
 {
   ValueMapType::iterator iter;
-  iter = this->OutputParameters.find(name);
-  if (iter != this->OutputParameters.end())
+  iter = this->OutputValues.find(name);
+  if (iter != this->OutputValues.end())
     {
-    return this->OutputParameters[name]; 
+    return this->OutputValues[name]; 
     }
   else
     {
@@ -258,12 +258,12 @@ double vtkMRMLCurveAnalysisNode::GetParameter(const char* name)
 
 
 //----------------------------------------------------------------------------
-vtkStringArray* vtkMRMLCurveAnalysisNode::GetParameterNameArray()
+vtkStringArray* vtkMRMLCurveAnalysisNode::GetOutputValueNameArray()
 {
   ValueMapType::iterator iter;
   vtkStringArray* array = vtkStringArray::New();
 
-  for (iter = this->OutputParameters.begin(); iter != this->OutputParameters.end(); iter ++)
+  for (iter = this->OutputValues.begin(); iter != this->OutputValues.end(); iter ++)
     {
     array->InsertNextValue(iter->first.c_str());
     }
@@ -274,9 +274,9 @@ vtkStringArray* vtkMRMLCurveAnalysisNode::GetParameterNameArray()
 
 
 //----------------------------------------------------------------------------
-void vtkMRMLCurveAnalysisNode::ClearParameters()
+void vtkMRMLCurveAnalysisNode::ClearOutputValues()
 {
-  this->OutputParameters.clear();
+  this->OutputValues.clear();
 }
 
 

@@ -37,8 +37,8 @@ class CurveFittingGammaVariate(CurveAnalysisBase):
     # ------------------------------
     # Constructor -- Set initial parameters
     def __init__(self):
-        self.OptimParamNameList = ['Sp', 'alpha', 'beta', 'Ta', 'S0']
-        self.InitialOptimParam  = [200.0, 3.0,    1.0,    0.0,  20.0] 
+        self.ParameterNameList  = ['Sp', 'alpha', 'beta', 'Ta', 'S0']
+        self.InitialParameter   = [200.0, 3.0,    1.0,    0.0,  20.0] 
 
     # ------------------------------
     # Definition of the function
