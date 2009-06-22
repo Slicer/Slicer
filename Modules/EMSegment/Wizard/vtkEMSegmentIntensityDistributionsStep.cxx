@@ -1821,21 +1821,7 @@ void vtkEMSegmentIntensityDistributionsStep::GetPercent(
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
   int nb_children = mrmlManager->GetTreeNodeNumberOfChildren(vol_id);
-  double weight = 0.0:
-  double test = 0.0;
-  double test1 = 0.0;
-  double test2 = 0.0;
-  
-  /*vtkIdType parent_ID = mrmlManager->GetTreeNodeParentNodeID(vol_id);
-  
-  
-  if(parent_ID != mrmlManager->GetTreeRootNodeID()){
-  
-  this->classPercentOrder[this->depth][i] = parent_ID;
-  this->classPercentOrderCP[this->depth][i] = parent_ID;
-  this->GetPercent(i, parent_ID);
-  
-  }*/
+  double weight = 0.0;
   
   if(nb_children > 0){
 for (int i = 0; i < nb_children; i++)
