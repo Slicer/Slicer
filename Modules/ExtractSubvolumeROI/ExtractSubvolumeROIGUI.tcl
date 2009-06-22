@@ -159,8 +159,8 @@ proc ExtractSubvolumeROIBuildGUI {this} {
   $sampling SetParent [$initFrame GetFrame]
   $sampling Create
 #  $sampling GetWidget SetRestrictValueToDouble
-  $sampling SetLabelText "Spacing to use for output volume"
-  $sampling SetBalloonHelpString "Output volume sampling"
+  $sampling SetLabelText "Input spacing scaling constant"
+  $sampling SetBalloonHelpString "Spacing of the input image in each dimension will be multiplied by this number to get output spacing. Enter 1 to preserve original spacing"
   pack [$sampling GetWidgetName] -side top -anchor e -padx 2 -pady 2
 
   set ::ExtractSubvolumeROI($this,runButton) [vtkKWPushButton New]
@@ -491,7 +491,7 @@ proc ExtractSubvolumeROIApply {this} {
   set outVolumeNode [$::ExtractSubvolumeROI($this,outputSelector) GetSelected]
   set roiNode [$::ExtractSubvolumeROI($this,roiSelector) GetSelected]
   set volumeNode [$::ExtractSubvolumeROI($this,inputSelector) GetSelected]
-  set newSpacing [[$::ExtractSubvolumeROI($this,samplingScale) GetWidget] GetValue]
+  set userSpacing [[$::ExtractSubvolumeROI($this,samplingScale) GetWidget] GetValue]
 
   if { $volumeNode == "" || [$volumeNode GetImageData] == "" } {
     set errorText "Input volume data appears to be not initialized!"
@@ -505,7 +505,7 @@ proc ExtractSubvolumeROIApply {this} {
   if {$volumeNode == $outVolumeNode} {
     set errorText "Input volume and output volume cannot be the same!"
   }
-  if {$newSpacing < 0.} {
+  if {$userSpacing <= 0.} {
     set errorText "Sampling must be non-negative!"
   }
 
@@ -586,24 +586,28 @@ proc ExtractSubvolumeROIApply {this} {
   } else {
     $resampler SetInterpolationModeToLinear
   }
+
   $resampler SetInput [$changeInf2 GetOutput]
-  $resampler ReleaseDataFlagOff 
-  if { [expr $newSpacing>0.] } {
-    $resampler SetAxisOutputSpacing 0 $newSpacing
-    $resampler SetAxisOutputSpacing 1 $newSpacing
-    $resampler SetAxisOutputSpacing 2 $newSpacing
-  } else {
-    puts "using spacing $inputSpacing"
-    # requested spacing is 0, keep the original spacing then
-    $resampler SetAxisOutputSpacing 0 [lindex $inputSpacing 0]
-    $resampler SetAxisOutputSpacing 1 [lindex $inputSpacing 1]
-    $resampler SetAxisOutputSpacing 2 [lindex $inputSpacing 2]
+  
+  if { $userSpacing == 0} {
+    set newSpacingX [lindex $inputSpacing 0]
+    set newSpacingY [lindex $inputSpacing 1]
+    set newSpacingZ [lindex $inputSpacing 2]
+  } else {    
+    set newSpacingX [expr [lindex $inputSpacing 0]*$userSpacing]
+    set newSpacingY [expr [lindex $inputSpacing 1]*$userSpacing]
+    set newSpacingZ [expr [lindex $inputSpacing 2]*$userSpacing]
   }
+
+  $resampler SetAxisOutputSpacing 0 $newSpacingX
+  $resampler SetAxisOutputSpacing 1 $newSpacingY
+  $resampler SetAxisOutputSpacing 2 $newSpacingZ
+  $resampler ReleaseDataFlagOff 
   $resampler Update
 
   set dimAfter [ [$resampler GetOutput] GetDimensions]
 
-#  puts "Dimensions before: $dimBefore, and after: $dimAfter"
+  # puts "Dimensions before: $dimBefore, and after: $dimAfter"
 
   set changeInf3 [vtkImageChangeInformation New]
   $changeInf3 SetInput [$resampler GetOutput]
@@ -614,9 +618,14 @@ proc ExtractSubvolumeROIApply {this} {
   $output DeepCopy [$changeInf3 GetOutput]
 
   $outVolumeNode SetAndObserveImageData $output
-  eval $outVolumeNode SetSpacing "$newSpacing $newSpacing $newSpacing"
-  $outVolumeNode SetOrigin [lindex $newOrigin 0] [lindex $newOrigin 1] [lindex $newOrigin 2]
+  eval $outVolumeNode SetSpacing "$newSpacingX $newSpacingY $newSpacingZ"
+  eval $outVolumeNode SetOrigin $newOrigin
   $outVolumeNode Modified
+
+  set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
+  $selectionNode SetReferenceActiveLabelVolumeID [$outVolumeNode GetID]
+  $selectionNode Modified
+  [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection 0
 
   $ras2ijk Delete
   $ijk2ras Delete
