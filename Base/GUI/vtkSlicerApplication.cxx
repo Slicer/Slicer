@@ -52,7 +52,7 @@ const char *vtkSlicerApplication::ModulePathsRegKey = "ModulePaths";
 const char *vtkSlicerApplication::PotentialModulePathsRegKey = "PotentialModulePaths";
 const char *vtkSlicerApplication::ColorFilePathsRegKey = "ColorFilePaths";
 const char *vtkSlicerApplication::PotentialColorFilePathsRegKey = "PotentialColorFilePaths";
-const char *vtkSlicerApplication::ModuleCachePathRegKey = "ModuleCachePath";
+const char *vtkSlicerApplication::ExtensionsInstallPathRegKey = "ExtensionsInstallPath";
 const char *vtkSlicerApplication::TemporaryDirectoryRegKey = "TemporaryDirectory";
 const char *vtkSlicerApplication::WebBrowserRegKey = "WebBrowser";
 const char *vtkSlicerApplication::UnzipRegKey = "Unzip";
@@ -211,7 +211,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     strcpy(this->PotentialModulePaths, "");
     strcpy(this->ColorFilePaths, "");
     strcpy(this->PotentialColorFilePaths, "");
-    strcpy(this->ModuleCachePath, "");
+    strcpy(this->ExtensionsInstallPath, "");
     strcpy ( this->HomeModule, "");
     this->LoadCommandLineModules = 1;
     this->LoadModules = 1;
@@ -664,11 +664,11 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
     }
 
   if (this->HasRegistryValue(
-    2, "RunTime", vtkSlicerApplication::ModuleCachePathRegKey))
+    2, "RunTime", vtkSlicerApplication::ExtensionsInstallPathRegKey))
     {
     this->GetRegistryValue(
-      2, "RunTime", vtkSlicerApplication::ModuleCachePathRegKey,
-      this->ModuleCachePath);
+      2, "RunTime", vtkSlicerApplication::ExtensionsInstallPathRegKey,
+      this->ExtensionsInstallPath);
     }
 
   if (this->HasRegistryValue(
@@ -897,8 +897,8 @@ void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
     this->ColorFilePaths);
 
   this->SetRegistryValue(
-    2, "RunTime", vtkSlicerApplication::ModuleCachePathRegKey, "%s", 
-    this->ModuleCachePath);
+    2, "RunTime", vtkSlicerApplication::ExtensionsInstallPathRegKey, "%s", 
+    this->ExtensionsInstallPath);
   
   this->SetRegistryValue(
     2, "RunTime", vtkSlicerApplication::TemporaryDirectoryRegKey, "%s", 
@@ -1204,23 +1204,90 @@ const char* vtkSlicerApplication::GetPotentialColorFilePaths() const
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerApplication::SetModuleCachePath(const char* path)
+void vtkSlicerApplication::SetExtensionsInstallPath(const char* path)
 {
   if (path)
     {
-    if (strcmp(this->ModuleCachePath, path) != 0
+    if (strcmp(this->ExtensionsInstallPath, path) != 0
         && strlen(path) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
       {
-      strcpy(this->ModuleCachePath, path);
+      strcpy(this->ExtensionsInstallPath, path);
       this->Modified();
       }
     }
 }
 
 //----------------------------------------------------------------------------
-const char* vtkSlicerApplication::GetModuleCachePath() const
+const char* vtkSlicerApplication::GetExtensionsInstallPath() const
 {
-  return this->ModuleCachePath;
+  std::string extpath;
+  if (this->ExtensionsInstallPath)
+    {
+    extpath = this->ExtensionsInstallPath;
+    if (extpath.empty())
+      {
+      extpath = this->GetBinDir();
+      extpath += "/../";
+      extpath += Slicer3_INSTALL_MODULES_LIB_DIR;
+      }
+
+    // does the path exist?
+    if (!itksys::SystemTools::MakeDirectory(extpath.c_str()))
+      {
+      // error making sure that the dir exists
+      std::cout << "vtkSlicerApplication::GetExtensionsInstallPath: Unable to make extensions install path: '" << extpath << "'\n\tYou can change the Extensions Install Path under View->Application Settings->Module Settings." << std::endl;
+      // pop up a window if we've got something to set for the parent
+      if (this->ApplicationGUI && this->ApplicationGUI->GetViewerWidget())
+        {
+        std::string msg = std::string("ERROR\nUnable to make extensions install path: '") + std::string(extpath) + std::string("'\nYou can change the Extensions Install Path View->Application Settings->Module Settings.");
+        vtkKWMessageDialog *message = vtkKWMessageDialog::New();
+        message->SetParent(this->ApplicationGUI->GetViewerWidget());
+        message->SetOptions(vtkKWMessageDialog::ErrorIcon);
+        message->SetIcon();
+        message->SetStyleToCancel();
+        message->SetText(msg.c_str());
+        message->Create();
+        message->Invoke();
+        message->Delete();
+        }
+      }
+    else
+      {
+      // check that can write to it
+      std::vector<std::string> tempPath;
+      tempPath.push_back("");
+      // no slash between first two elements
+      tempPath.push_back(extpath);
+      tempPath.push_back("testWrite.txt");
+      std::string tempFile = itksys::SystemTools::JoinPath(tempPath);
+      FILE *fp = fopen(tempFile.c_str(), "w");
+      if (!fp)
+        {
+        std::cerr << "WARNING: Unable to write files in ExtensionsInstallPath: '" << extpath << "'" << std::endl;
+        // pop up a window if we've got something to set for the parent
+        if (this->ApplicationGUI && this->ApplicationGUI->GetViewerWidget())
+          {
+          std::string msg = std::string("WARNING\nUnable to write files in ExtensionsInstallPath:\n'") + extpath + std::string("'");
+          vtkKWMessageDialog *message = vtkKWMessageDialog::New();
+          message->SetParent(this->ApplicationGUI->GetViewerWidget());
+          message->SetOptions(vtkKWMessageDialog::ErrorIcon);
+          message->SetIcon();
+          message->SetStyleToCancel();
+          message->SetText(msg.c_str());
+          message->Create();
+          message->Invoke();
+          message->Delete();
+          }
+        }
+      else
+        {
+        fclose(fp);
+        // delete it
+        remove(tempFile.c_str());
+        }
+      }
+    }
+  return extpath.c_str();
 }
 
 //----------------------------------------------------------------------------
@@ -1961,7 +2028,7 @@ void vtkSlicerApplication::PrintSelf ( ostream& os, vtkIndent indent )
   os << nextIndent << "ColorFilePaths: " << ColorFilePaths << "\n";
   os << nextIndent << "PotentialModulePaths: " << PotentialModulePaths << "\n";
   os << nextIndent << "PotentialColorFilePaths: " << PotentialColorFilePaths << "\n";
-  os << nextIndent << "ModuleCachePath: " << ModuleCachePath << "\n";
+  os << nextIndent << "ExtensionsInstallPath: " << ExtensionsInstallPath << "\n";
   os << nextIndent << "WebBrowser: " << WebBrowser << "\n";
   os << nextIndent << "Unzip: " << Unzip << "\n";
   os << nextIndent << "Zip: " << Zip << "\n";

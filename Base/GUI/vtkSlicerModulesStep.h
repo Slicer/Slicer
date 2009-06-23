@@ -163,7 +163,7 @@ private:
   //BTX
   void InsertExtension(int Index,
                        ManifestEntry *Entry,
-                       const std::string &CacheDir);
+                       const std::string &InstallDir);
   //ETX
 
   // Description:

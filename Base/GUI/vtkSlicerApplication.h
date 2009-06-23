@@ -98,7 +98,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   static const char *ColorFilePathsRegKey;
   static const char *PotentialModulePathsRegKey;
   static const char *PotentialColorFilePathsRegKey;
-  static const char *ModuleCachePathRegKey;
+  static const char *ExtensionsInstallPathRegKey;
   static const char *TemporaryDirectoryRegKey;
   static const char *WebBrowserRegKey;
   static const char *UnzipRegKey;
@@ -176,8 +176,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
 
   // Description:
   // Set/Get the cache path for modules.
-  void SetModuleCachePath(const char *path);
-  const char* GetModuleCachePath() const;
+  void SetExtensionsInstallPath(const char *path);
+  const char* GetExtensionsInstallPath() const;
   
   // Description:
   // Set/Get a user's home module.
@@ -404,7 +404,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   char ColorFilePaths[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char PotentialModulePaths[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char PotentialColorFilePaths[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
-  char ModuleCachePath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  char ExtensionsInstallPath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char WebBrowser [vtkKWRegistryHelper::RegistryKeyValueSizeMax ];
   char Unzip [vtkKWRegistryHelper::RegistryKeyValueSizeMax ];
   char Zip [vtkKWRegistryHelper::RegistryKeyValueSizeMax ];

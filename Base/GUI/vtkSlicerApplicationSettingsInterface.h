@@ -41,7 +41,7 @@ public:
   // Description:
   // Callbacks for the Module application settings. Internal, do not use.
 
-  virtual void ModuleCachePathCallback();
+  virtual void ExtensionsInstallPathCallback();
   virtual void HomeModuleCallback(char *name);
   virtual void TemporaryDirectoryCallback();
   virtual void LoadCommandLineModulesCallback(int state);
@@ -111,7 +111,7 @@ private:
   vtkKWEntryWithLabel *HomeModuleEntry;
   vtkKWDirectoryPresetSelector *ModulePathsPresetSelector;
   vtkKWDirectoryPresetSelector *ColorFilePathsPresetSelector;
-  vtkKWLoadSaveButtonWithLabel *ModuleCachePathButton;
+  vtkKWLoadSaveButtonWithLabel *ExtensionsInstallPathButton;
   vtkKWLoadSaveButtonWithLabel *TemporaryDirectoryButton;
   vtkKWLoadSaveButtonWithLabel *BrowserSelectButton;
   vtkKWLoadSaveButtonWithLabel *ZipSelectButton;

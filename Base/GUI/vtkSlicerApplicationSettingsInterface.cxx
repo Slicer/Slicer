@@ -41,7 +41,7 @@ vtkSlicerApplicationSettingsInterface::vtkSlicerApplicationSettingsInterface()
   this->ModuleSettingsFrame = NULL;
   this->ModulePathsPresetSelector = NULL;
   this->ColorFilePathsPresetSelector = NULL;
-  this->ModuleCachePathButton = NULL;
+  this->ExtensionsInstallPathButton = NULL;
   this->HomeModuleEntry = NULL;
   this->TemporaryDirectoryButton = NULL;
   this->BrowserSelectButton = NULL;
@@ -117,10 +117,10 @@ vtkSlicerApplicationSettingsInterface::~vtkSlicerApplicationSettingsInterface()
     this->ColorFilePathsPresetSelector = 0;
     }
 
-  if (this->ModuleCachePathButton)
+  if (this->ExtensionsInstallPathButton)
     {
-    this->ModuleCachePathButton->Delete();
-    this->ModuleCachePathButton = 0;
+    this->ExtensionsInstallPathButton->Delete();
+    this->ExtensionsInstallPathButton = 0;
     }
   
   if (this->HomeModuleEntry)
@@ -648,28 +648,28 @@ void vtkSlicerApplicationSettingsInterface::Create()
   // --------------------------------------------------------------
   // Module settings : Module CachePath
 
-  if (!this->ModuleCachePathButton)
+  if (!this->ExtensionsInstallPathButton)
     {
-    this->ModuleCachePathButton = vtkKWLoadSaveButtonWithLabel::New();
+    this->ExtensionsInstallPathButton = vtkKWLoadSaveButtonWithLabel::New();
     }
 
-  this->ModuleCachePathButton->SetParent(moduleScrollFrame->GetFrame()); //frame);
-  this->ModuleCachePathButton->Create();
-  this->ModuleCachePathButton->SetLabelText("Module Cache Path:");
-  this->ModuleCachePathButton->SetLabelWidth(label_width);
-  this->ModuleCachePathButton->GetWidget()->TrimPathFromFileNameOff();
-  this->ModuleCachePathButton->GetWidget()->SetCommand(
-    this, "ModuleCachePathCallback");
-  this->ModuleCachePathButton->GetWidget()
+  this->ExtensionsInstallPathButton->SetParent(moduleScrollFrame->GetFrame()); //frame);
+  this->ExtensionsInstallPathButton->Create();
+  this->ExtensionsInstallPathButton->SetLabelText("Extensions Install Path:");
+  this->ExtensionsInstallPathButton->SetLabelWidth(label_width);
+  this->ExtensionsInstallPathButton->GetWidget()->TrimPathFromFileNameOff();
+  this->ExtensionsInstallPathButton->GetWidget()->SetCommand(
+    this, "ExtensionsInstallPathCallback");
+  this->ExtensionsInstallPathButton->GetWidget()
     ->GetLoadSaveDialog()->ChooseDirectoryOn();
-  this->ModuleCachePathButton->GetWidget()
+  this->ExtensionsInstallPathButton->GetWidget()
     ->GetLoadSaveDialog()->SaveDialogOff();
-  this->ModuleCachePathButton->GetWidget()
-    ->GetLoadSaveDialog()->SetTitle("Select a directory for the module cache");
-  this->ModuleCachePathButton->SetBalloonHelpString(
-    "Cache directory for modules. Leave it empty for default location.");
+  this->ExtensionsInstallPathButton->GetWidget()
+    ->GetLoadSaveDialog()->SetTitle("Select a directory to install extensions into.");
+  this->ExtensionsInstallPathButton->SetBalloonHelpString(
+    "Extensions install path. Leave it empty for default location.");
 
-  tk_cmd << "pack " << this->ModuleCachePathButton->GetWidgetName()
+  tk_cmd << "pack " << this->ExtensionsInstallPathButton->GetWidgetName()
          << "  -side top -anchor w -expand no -padx 2 -pady 2" << endl;
 
   // --------------------------------------------------------------
@@ -1135,7 +1135,7 @@ void vtkSlicerApplicationSettingsInterface::ModulePathsRemovedCallback()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerApplicationSettingsInterface::ModuleCachePathCallback()
+void vtkSlicerApplicationSettingsInterface::ExtensionsInstallPathCallback()
 {
   vtkSlicerApplication *app
     = vtkSlicerApplication::SafeDownCast(this->GetApplication());
@@ -1143,7 +1143,7 @@ void vtkSlicerApplicationSettingsInterface::ModuleCachePathCallback()
   if (app)
     {
     // Store the setting in the application object
-    app->SetModuleCachePath(this->ModuleCachePathButton->GetWidget()->GetLoadSaveDialog()->GetFileName());
+    app->SetExtensionsInstallPath(this->ExtensionsInstallPathButton->GetWidget()->GetLoadSaveDialog()->GetFileName());
     }
 }
 
@@ -1412,12 +1412,12 @@ void vtkSlicerApplicationSettingsInterface::Update()
       this->ModulePathsPresetSelector->AddPresetDirectoriesFromDelimitedString(
         app->GetPotentialModulePaths(), '|');
       }
-    if (this->ModuleCachePathButton)
+    if (this->ExtensionsInstallPathButton)
       {
-      this->ModuleCachePathButton->GetWidget()
-        ->SetText(app->GetModuleCachePath());
-      this->ModuleCachePathButton->GetWidget()
-        ->GetLoadSaveDialog()->SetLastPath(app->GetModuleCachePath());
+      this->ExtensionsInstallPathButton->GetWidget()
+        ->SetText(app->GetExtensionsInstallPath());
+      this->ExtensionsInstallPathButton->GetWidget()
+        ->GetLoadSaveDialog()->SetLastPath(app->GetExtensionsInstallPath());
       }
     if (this->ColorFilePathsPresetSelector)
       {

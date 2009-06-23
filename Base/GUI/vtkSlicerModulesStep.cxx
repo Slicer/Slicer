@@ -426,13 +426,7 @@ void vtkSlicerModulesStep::Update()
         }
       }
 
-    std::string cachedir = app->GetModuleCachePath();
-    if (cachedir.empty())
-      {
-      cachedir = app->GetBinDir();
-      cachedir += "/../";
-      cachedir += Slicer3_INSTALL_MODULES_LIB_DIR;
-      }
+    std::string installdir = app->GetExtensionsInstallPath();
 
     if (this->ModulesMultiColumnList)
       {
@@ -441,7 +435,7 @@ void vtkSlicerModulesStep::Update()
       // Insert each extension entry discovered on the repository
       for (unsigned int i = 0; i < this->Modules.size(); i++)
         {
-        this->InsertExtension(i, this->Modules[i], cachedir);
+        this->InsertExtension(i, this->Modules[i], installdir);
         }
       }
     }
@@ -450,7 +444,7 @@ void vtkSlicerModulesStep::Update()
 //----------------------------------------------------------------------------
 void vtkSlicerModulesStep::InsertExtension(int Index,
                                            ManifestEntry* Entry,
-                                           const std::string& CacheDir)
+                                           const std::string& InstallDir)
 {
   vtkKWMultiColumnList *the_list = this->ModulesMultiColumnList->GetWidget();
 
@@ -480,7 +474,7 @@ void vtkSlicerModulesStep::InsertExtension(int Index,
             
   the_list->SetCellWindowCommandToCheckButton(Index, 0);
       
-  std::string extdir(CacheDir + std::string("/") + Entry->Name);
+  std::string extdir(InstallDir + std::string("/") + Entry->Name);
 
   if (itksys::SystemTools::FileExists(extdir.c_str()))
     {
@@ -1022,17 +1016,9 @@ bool vtkSlicerModulesStep::DownloadInstallExtension(const std::string& Extension
       
     handler->StageFileRead(ExtensionBinaryURL.c_str(), tmpfile.c_str());
 
-    std::string cachedir = app->GetModuleCachePath();
+    std::string installdir = app->GetExtensionsInstallPath();
 
-    if (cachedir.empty())
-      {
-        cachedir = app->GetBinDir();
-
-        cachedir += "/../";
-        cachedir += Slicer3_INSTALL_MODULES_LIB_DIR;
-      }
-
-    std::string libdir(cachedir + std::string("/") + ExtensionName);
+    std::string libdir(installdir + std::string("/") + ExtensionName);
 
     std::string tmpdir(std::string(app->GetExtensionsDownloadDirectory()) + std::string("/extension"));
 
@@ -1075,19 +1061,14 @@ bool vtkSlicerModulesStep::UninstallExtension(const std::string& ExtensionName)
 
   if (app)
     {
+
     // :BUG: 20090108 tgl: Not guaranteed that the install of the
-    // module will be under Slicer3_INSTALL_MODULES_LIB_DIR if
-    // ModuelCachePath is empty.
+    // module will be under this directory if the user has made edits
+    // to the location over time.
 
-    std::string cachedir = app->GetModuleCachePath();
-    if (cachedir.empty())
-      {
-        cachedir = app->GetBinDir();
-        cachedir += "/../";
-        cachedir = Slicer3_INSTALL_MODULES_LIB_DIR;
-      }
+    std::string installdir = app->GetExtensionsInstallPath();
 
-    std::string libdir(cachedir + std::string("/") + ExtensionName);
+    std::string libdir(installdir + std::string("/") + ExtensionName);
     
     if (itksys::SystemTools::FileExists(libdir.c_str()))
       {

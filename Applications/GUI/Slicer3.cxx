@@ -1023,12 +1023,12 @@ int Slicer3_main(int argc, char *argv[])
     defaultCachePath += "/" + intDir;
     }
       
-  // get the cache path that the user has configured
-  if (slicerApp->GetModuleCachePath())
+  // get the ext. install path that the user has configured
+  if (slicerApp->GetExtensionsInstallPath())
     {
-    userCachePath = slicerApp->GetModuleCachePath();
+    userCachePath = slicerApp->GetExtensionsInstallPath();
     }
-  slicerApp->SetModuleCachePath(userCachePath.c_str());
+  slicerApp->SetExtensionsInstallPath(userCachePath.c_str());
 
   // if user cache path is set and we can write to it, use it.
   // if user cache path is not set or we cannot write to it, try

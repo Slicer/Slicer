@@ -232,7 +232,7 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     {
     this->CacheDirectoryButton->SetParent( this->Frame3 );
     this->CacheDirectoryButton->Create();
-    this->CacheDirectoryButton->SetLabelText("Change download (cache) directory:");
+    this->CacheDirectoryButton->SetLabelText("Change Extensions Install Path:");
     this->CacheDirectoryButton->SetLabelWidth(34);
     this->CacheDirectoryButton->GetLabel()->SetAnchorToEast();
     this->CacheDirectoryButton->GetWidget()->TrimPathFromFileNameOff();
@@ -244,7 +244,7 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
       ->GetLoadSaveDialog()->SetTitle("Select a directory");
     this->CacheDirectoryButton->GetWidget()
       ->GetLoadSaveDialog()->SetBalloonHelpString(
-      "Select a directory to be used as a download directory (cache) for Extensions.");
+      "Select a directory to be used as an install directory for Extensions.");
 
     this->CacheDirectoryButton->GetWidget()->SetCommand(this, "CacheDirectoryCallback");
     }
@@ -252,7 +252,7 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
   vtkKWLabel *l = vtkKWLabel::New();
   l->SetParent ( this->Frame3 );
   l->Create();
-  l->SetText ( "Delete files from cache (optional):" );
+  l->SetText ( "Delete zip files from temporary directory (optional):" );
   l->SetWidth ( 34 );
   l->SetAnchorToEast();
 
@@ -334,8 +334,8 @@ void vtkSlicerModulesConfigurationStep::Update()
     if (this->CacheDirectoryButton)
       {
       this->CacheDirectoryButton->GetWidget()->TrimPathFromFileNameOff();
-      this->CacheDirectoryButton->GetWidget()->SetText(app->GetModuleCachePath());
-      this->CacheDirectoryButton->GetWidget()->GetLoadSaveDialog()->SetLastPath(app->GetModuleCachePath());
+      this->CacheDirectoryButton->GetWidget()->SetText(app->GetExtensionsInstallPath());
+      this->CacheDirectoryButton->GetWidget()->GetLoadSaveDialog()->SetLastPath(app->GetExtensionsInstallPath());
       }
     }
 
@@ -519,7 +519,7 @@ void vtkSlicerModulesConfigurationStep::CacheDirectoryCallback()
   if (app)
     {
     // Store the setting in the application object
-    app->SetModuleCachePath(this->CacheDirectoryButton->GetWidget()->GetLoadSaveDialog()->GetFileName());
+    app->SetExtensionsInstallPath(this->CacheDirectoryButton->GetWidget()->GetLoadSaveDialog()->GetFileName());
     }
 }
 
