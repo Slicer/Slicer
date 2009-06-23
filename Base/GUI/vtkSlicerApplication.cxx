@@ -238,8 +238,6 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->RemoteCacheLimit = 200;
     this->RemoteCacheFreeBufferSize = 10;
     
-    strcpy( this->ExtensionsDownloadDir, "" );
-    
     this->UseWelcomeModuleAtStartup = 1;
 
     // configure the application before creating
@@ -579,8 +577,6 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
   
   //--- Set up the cache directory -- use the temporary directory initially.
   strcpy ( this->RemoteCacheDirectory, this->TemporaryDirectory);
-
-  strcpy( this->ExtensionsDownloadDir, this->TemporaryDirectory );
 
   //--- web browser
   // start with no browser...
@@ -1869,91 +1865,6 @@ const char* vtkSlicerApplication::GetRemoteCacheDirectory() const
       }
     }
   return this->RemoteCacheDirectory;
-}
-
-
-//----------------------------------------------------------------------------
-void vtkSlicerApplication::SetExtensionsDownloadDirectory(const char* path)
-{
-  if (path)
-    {
-    if ( strlen(path) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
-      {
-      if ( strcmp ( this->ExtensionsDownloadDir, path ) )
-        {
-        strcpy(this->ExtensionsDownloadDir, path);
-        //--- propagate this value through the GUI into MRML's CacheManager
-        this->ConfigureRemoteIOSettingsFromRegistry();
-        this->Modified();
-        }
-      }
-    }
-  return;
-}
-
-
-//----------------------------------------------------------------------------
-const char* vtkSlicerApplication::GetExtensionsDownloadDirectory() const
-{
-  if (this->ExtensionsDownloadDir != NULL )
-    {
-    // does the path exist?
-    if (!itksys::SystemTools::MakeDirectory(this->ExtensionsDownloadDir))
-      {
-      // error making sure that the dir exists
-      std::cout << "vtkSlicerApplication::GetExtensionsDownloadDirectory: Unable to make extensions download directory: '" << this->ExtensionsDownloadDir << "'\n\tYou can change the Extensions Download Directory under View->Extensions Manager." << std::endl;
-      // pop up a window if we've got something to set for the parent
-      if (this->ApplicationGUI && this->ApplicationGUI->GetViewerWidget())
-        {
-        std::string msg = std::string("ERROR\nUnable to make extensions download directory: '") + std::string(this->ExtensionsDownloadDir) + std::string("'\nYou can change the Extensions Download Directory under View->Extensions Manager.");
-        vtkKWMessageDialog *message = vtkKWMessageDialog::New();
-        message->SetParent(this->ApplicationGUI->GetViewerWidget());
-        message->SetOptions(vtkKWMessageDialog::ErrorIcon);
-        message->SetIcon();
-        message->SetStyleToCancel();
-        message->SetText(msg.c_str());
-        message->Create();
-        message->Invoke();
-        message->Delete();
-        }
-      }
-     else
-      {
-      // check that can write to it
-      std::vector<std::string> tempPath;
-      tempPath.push_back("");
-      // no slash between first two elements
-      tempPath.push_back(this->ExtensionsDownloadDir);
-      tempPath.push_back("testWrite.txt");
-      std::string tempFile = itksys::SystemTools::JoinPath(tempPath);
-      FILE *fp = fopen(tempFile.c_str(), "w");
-      if (!fp)
-        {
-        std::cerr << "WARNING: Unable to write files in ExtensionsDownloadDirectory: '" << this->ExtensionsDownloadDir << "'" << std::endl;
-        // pop up a window if we've got something to set for the parent
-        if (this->ApplicationGUI && this->ApplicationGUI->GetViewerWidget())
-          {
-          std::string msg = std::string("WARNING\nUnable to write files in ExtensionsDownloadDirectory:\n'") + std::string(this->ExtensionsDownloadDir) + std::string("'");
-          vtkKWMessageDialog *message = vtkKWMessageDialog::New();
-          message->SetParent(this->ApplicationGUI->GetViewerWidget());
-          message->SetOptions(vtkKWMessageDialog::ErrorIcon);
-          message->SetIcon();
-          message->SetStyleToCancel();
-          message->SetText(msg.c_str());
-          message->Create();
-          message->Invoke();
-          message->Delete();
-          }
-        }
-      else
-        {
-        fclose(fp);
-        // delete it
-        remove(tempFile.c_str());
-        }
-      }
-    }
-  return this->ExtensionsDownloadDir;
 }
 
 //----------------------------------------------------------------------------

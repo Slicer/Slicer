@@ -152,12 +152,7 @@ vtkSlicerModulesStep::~vtkSlicerModulesStep()
 
   this->SetWizardDialog(NULL);
 
-  std::vector<ManifestEntry*>::iterator iter = this->Modules.begin();
-  while (iter != this->Modules.end())
-    {
-    delete (*iter);
-    iter++;
-    }
+  this->ClearModules();
 }
 
 //----------------------------------------------------------------------------
@@ -346,7 +341,7 @@ void vtkSlicerModulesStep::ShowUserInterface()
 //----------------------------------------------------------------------------
 void vtkSlicerModulesStep::UpdateModulesFromRepository(vtkSlicerApplication *app)
 {
-  const char* tmp = app->GetExtensionsDownloadDirectory();
+  const char* tmp = app->GetTemporaryDirectory();
   std::string tmpfile(tmp);
   tmpfile += "/manifest.html";
 
@@ -373,9 +368,44 @@ void vtkSlicerModulesStep::UpdateModulesFromRepository(vtkSlicerApplication *app
     iter++;
     }
     
-  this->Modules.clear();
+  std::vector<ManifestEntry*> modules = this->ParseManifest(HTML);
+  this->Modules.insert(this->Modules.begin(), modules.begin(), modules.end());
 
-  this->Modules = this->ParseManifest(HTML);
+  delete[] HTML;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerModulesStep::UpdateModulesFromDisk(vtkSlicerApplication *app)
+{
+  const char* tmp = app->GetTemporaryDirectory();
+  std::string tmpfile(tmp);
+  tmpfile += "/manifest.html";
+
+  std::ifstream ifs(tmpfile.c_str());
+
+  char *HTML = 0;
+
+  if (!ifs.fail())
+    {
+    ifs.seekg(0, std::ios::end);
+    size_t len = ifs.tellg();
+    ifs.seekg(0, std::ios::beg);
+    HTML = new char[len+1];
+    ifs.read(HTML, len);
+    HTML[len] = '\n';
+    }
+  
+  ifs.close();
+
+  std::vector<ManifestEntry*>::iterator iter = this->Modules.begin();
+  while (iter != this->Modules.end())
+    {
+    delete (*iter);
+    iter++;
+    }
+    
+  std::vector<ManifestEntry*> modules = this->ParseManifest(HTML);
+  this->Modules.insert(this->Modules.begin(), modules.begin(), modules.end());
 
   delete[] HTML;
 }
@@ -392,6 +422,7 @@ void vtkSlicerModulesStep::Update()
 
     if (vtkSlicerModulesConfigurationStep::ActionInstall == action)
       {
+      this->ClearModules();
       this->UpdateModulesFromRepository(app);
       if (this->DownloadButton)
         {
@@ -404,6 +435,8 @@ void vtkSlicerModulesStep::Update()
       }
     else if (vtkSlicerModulesConfigurationStep::ActionUninstall == action)
       {
+      this->ClearModules();
+      this->UpdateModulesFromDisk(app);
       if (this->DownloadButton)
         {
         this->DownloadButton->EnabledOff();
@@ -415,7 +448,9 @@ void vtkSlicerModulesStep::Update()
       }
     else if (vtkSlicerModulesConfigurationStep::ActionEither == action)
       {
+      this->ClearModules();
       this->UpdateModulesFromRepository(app);
+      this->UpdateModulesFromDisk(app);
       if (this->DownloadButton)
         {
         this->DownloadButton->EnabledOn();
@@ -923,7 +958,7 @@ void vtkSlicerModulesStep::DownloadParseS3ext(const std::string& s3ext,
     vtkSlicerApplication *app =
       vtkSlicerApplication::SafeDownCast(this->GetApplication());
       
-    std::string tmpfile(std::string(app->GetExtensionsDownloadDirectory()) + std::string("/") + s3extname);
+    std::string tmpfile(std::string(app->GetTemporaryDirectory()) + std::string("/") + s3extname);
       
     handler->StageFileRead(s3ext.c_str(), tmpfile.c_str());
 
@@ -1012,7 +1047,7 @@ bool vtkSlicerModulesStep::DownloadInstallExtension(const std::string& Extension
       
     vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
       
-    std::string tmpfile(std::string(app->GetExtensionsDownloadDirectory()) + std::string("/") + zipname);
+    std::string tmpfile(std::string(app->GetTemporaryDirectory()) + std::string("/") + zipname);
       
     handler->StageFileRead(ExtensionBinaryURL.c_str(), tmpfile.c_str());
 
@@ -1020,7 +1055,7 @@ bool vtkSlicerModulesStep::DownloadInstallExtension(const std::string& Extension
 
     std::string libdir(installdir + std::string("/") + ExtensionName);
 
-    std::string tmpdir(std::string(app->GetExtensionsDownloadDirectory()) + std::string("/extension"));
+    std::string tmpdir(std::string(app->GetTemporaryDirectory()) + std::string("/extension"));
 
     if (UnzipPackage(tmpfile, libdir, tmpdir))
       {
@@ -1107,7 +1142,6 @@ bool vtkSlicerModulesStep::UninstallExtension(const std::string& ExtensionName)
   return result;
 }
 
-
 //----------------------------------------------------------------------------
 int vtkSlicerModulesStep::ActionToBeTaken()
 {
@@ -1116,4 +1150,16 @@ int vtkSlicerModulesStep::ActionToBeTaken()
   vtkSlicerModulesConfigurationStep *conf_step = wizard_dlg->GetModulesConfigurationStep();
 
   return conf_step->GetSelectedAction();
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerModulesStep::ClearModules()
+{
+  std::vector<ManifestEntry*>::iterator iter = this->Modules.begin();
+  while (iter != this->Modules.end())
+    {
+    delete (*iter);
+    iter++;
+    }
+  this->Modules.clear();
 }

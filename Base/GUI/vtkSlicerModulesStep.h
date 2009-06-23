@@ -173,6 +173,12 @@ private:
   //ETX
 
   // Description:
+  // Helper method to read from disk and parse for modules
+  //BTX
+  void UpdateModulesFromDisk(vtkSlicerApplication *app);
+  //ETX
+
+  // Description:
   // Helper method that asks the conf. step what action should be taken.
   //BTX
   int ActionToBeTaken();
@@ -184,6 +190,13 @@ private:
   //BTX
   int ActionTaken;
   //ETX
+
+  //Description:
+  // Helper method to clear this->Modules
+  //BTX
+  void ClearModules();
+  //ETX
+
 };
 
 #endif
