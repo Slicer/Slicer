@@ -141,7 +141,9 @@ proc runcmd {args} {
         if { $::isWindows } {
             # Does not work on Windows
         } else {
-            error $ret
+            if { $res != "child killed: write on pipe with no readers" } {
+              error $ret
+            }
         }
     } 
 }
@@ -425,7 +427,7 @@ proc buildExtension {s3ext} {
       set ::ext(srcDir) $::Slicer3_EXT/$::ext(name)/$::ext(cvsmodule)
     }
     "svn" {
-      set svncmd "echo t | $::SVN co"
+      set svncmd "yes t | $::SVN co"
       if { [info exists ::ext(svnusername)] } {
         set svncmd "$svncmd --username $::ext(svnusername)"
       }
