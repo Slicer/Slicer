@@ -1128,10 +1128,29 @@ void vtkSlicerApplication::SetPotentialModulePaths(const char* paths)
     }
 }
 
+
 //----------------------------------------------------------------------------
 const char* vtkSlicerApplication::GetPotentialModulePaths() const
 {
   return this->PotentialModulePaths;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::AppendPotentialModulePath(const char* path, bool enabled)
+{
+  std::string paths = this->PotentialModulePaths;
+  if (!paths.empty())
+    {
+    paths += "|";  
+    }
+  paths += path;
+  paths += "|";
+  (enabled) ? paths += "1" : paths += "0";
+
+  std::cout << "append path: " << path << std::endl;
+  std::cout << "paths: " << paths << std::endl;
+
+  this->SetPotentialModulePaths(paths.c_str());
 }
 
 //----------------------------------------------------------------------------
@@ -1222,9 +1241,7 @@ const char* vtkSlicerApplication::GetExtensionsInstallPath() const
     extpath = this->ExtensionsInstallPath;
     if (extpath.empty())
       {
-      extpath = this->GetBinDir();
-      extpath += "/../";
-      extpath += Slicer3_INSTALL_MODULES_LIB_DIR;
+      extpath = Slicer3_INSTALL_MODULES_LIB_DIR;
       }
 
     // does the path exist?

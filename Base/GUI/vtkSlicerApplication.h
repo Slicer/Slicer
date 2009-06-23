@@ -167,6 +167,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   const char* GetPotentialModulePaths() const;
 
   // Description:
+  // Helper method to append a single path the existing potential
+  // modules paths.
+  void AppendPotentialModulePath(const char *path, bool enabled);
+
+  // Description:
   // Set/Get the potential search paths for color files
   // based on SetPotentialModulePaths
   void SetColorFilePaths(const char *paths);
