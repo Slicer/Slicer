@@ -252,7 +252,7 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
   vtkKWLabel *l = vtkKWLabel::New();
   l->SetParent ( this->Frame3 );
   l->Create();
-  l->SetText ( "Delete zip files from temporary directory (optional):" );
+  l->SetText ( "Delete zip files from temp. dir. (optional):" );
   l->SetWidth ( 34 );
   l->SetAnchorToEast();
 
