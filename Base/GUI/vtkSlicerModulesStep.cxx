@@ -361,13 +361,6 @@ void vtkSlicerModulesStep::UpdateModulesFromRepository(vtkSlicerApplication *app
   
   ifs.close();
 
-  std::vector<ManifestEntry*>::iterator iter = this->Modules.begin();
-  while (iter != this->Modules.end())
-    {
-    delete (*iter);
-    iter++;
-    }
-    
   std::vector<ManifestEntry*> modules = this->ParseManifest(HTML);
   this->Modules.insert(this->Modules.begin(), modules.begin(), modules.end());
 
@@ -377,37 +370,9 @@ void vtkSlicerModulesStep::UpdateModulesFromRepository(vtkSlicerApplication *app
 //----------------------------------------------------------------------------
 void vtkSlicerModulesStep::UpdateModulesFromDisk(vtkSlicerApplication *app)
 {
-  const char* tmp = app->GetTemporaryDirectory();
-  std::string tmpfile(tmp);
-  tmpfile += "/manifest.html";
+  std::vector<ManifestEntry*> modules;
 
-  std::ifstream ifs(tmpfile.c_str());
-
-  char *HTML = 0;
-
-  if (!ifs.fail())
-    {
-    ifs.seekg(0, std::ios::end);
-    size_t len = ifs.tellg();
-    ifs.seekg(0, std::ios::beg);
-    HTML = new char[len+1];
-    ifs.read(HTML, len);
-    HTML[len] = '\n';
-    }
-  
-  ifs.close();
-
-  std::vector<ManifestEntry*>::iterator iter = this->Modules.begin();
-  while (iter != this->Modules.end())
-    {
-    delete (*iter);
-    iter++;
-    }
-    
-  std::vector<ManifestEntry*> modules = this->ParseManifest(HTML);
   this->Modules.insert(this->Modules.begin(), modules.begin(), modules.end());
-
-  delete[] HTML;
 }
 
 //----------------------------------------------------------------------------
@@ -1060,24 +1025,13 @@ bool vtkSlicerModulesStep::DownloadInstallExtension(const std::string& Extension
     if (UnzipPackage(tmpfile, libdir, tmpdir))
       {
       result = true;
-      std::string paths = app->GetModulePaths();
-
-#if WIN32
-      const char delim = ';';
-#else
-      const char delim = ':';
-#endif
-      if (!paths.empty())
-        {
-        paths += delim;
-        }
-
-      paths += libdir;
-      app->SetModulePaths(paths.c_str());
+      app->AppendPotentialModulePath(libdir.c_str(), true);
       }
     else
       {
       app->Script("eval $::_fixed_zip_code; vfs::zip::Mount %s /zipfile; file copy -force /zipfile/* %s; vfs::zip::Unmount %s /zipfile", tmpfile.c_str(), libdir.c_str(), tmpfile.c_str());
+      result = true;
+      app->AppendPotentialModulePath(libdir.c_str(), true);
       }
     }
 
