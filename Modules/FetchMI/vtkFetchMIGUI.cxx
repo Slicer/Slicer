@@ -273,7 +273,7 @@ void vtkFetchMIGUI::Enter()
         {
         if ( appGUI->GetMainSlicerWindow() )
           {
-          this->SetGUIWidth (appGUI->GetMainSlicerWindow()->GetMainSplitFrame()->GetFrame1Size ());
+//          this->SetGUIWidth (appGUI->GetMainSlicerWindow()->GetMainSplitFrame()->GetFrame1Size ());
           appGUI->GetMainSlicerWindow()->GetMainSplitFrame()->SetFrame1Size ( (int)(floor(geom->GetDefaultGUIPanelWidth() * 1.75)) );
 
           vtkSlicerWaitMessageWidget *wm = vtkSlicerWaitMessageWidget::New();
@@ -1475,7 +1475,7 @@ void vtkFetchMIGUI::ProcessMRMLEvents ( vtkObject *caller,
           dialog->Delete();
           }
         this->UpdateResourceTableFromMRML();
-        this->Notebook->RaisePage ("Browse Query Results & Download");
+        this->Notebook->RaisePage ("Download");
         }
       else
         {
@@ -2400,10 +2400,10 @@ void vtkFetchMIGUI::BuildGUI ( )
   this->Notebook->SetPageTabColor ( _br, _bg, _bb);
   this->Notebook->SetSelectedPageTabColor (1.0, 1.0, 1.0 );
 
-  this->Notebook->AddPage ( "Query for Scenes", "Query the server for resources that match selected metadata." );
-  this->Notebook->AddPage ( "Browse Query Results & Download", "Browse resources and select a scene for download." );
-  this->Notebook->AddPage ( "Tag Scene & Upload", "Apply metadata to datasets and the scene and upload to selected server." );
-  this->Notebook->RaisePage ("Query for Scenes");
+  this->Notebook->AddPage ( "Search", "Query the server for resources that match selected metadata." );
+  this->Notebook->AddPage ( "Download", "Browse resources and select a scene for download." );
+  this->Notebook->AddPage ( "Tag & Upload", "Apply metadata to datasets and the scene and upload to selected server." );
+  this->Notebook->RaisePage ("Search");
 
   
   this->Script ( "grid %s -row 0 -column 0 -sticky e -padx 2 -pady 2", l1->GetWidgetName() );
@@ -2413,14 +2413,14 @@ void vtkFetchMIGUI::BuildGUI ( )
   this->Script ( "grid columnconfigure %s 1 -weight 1", serverFrame->GetWidgetName() );
 
   this->QueryList = vtkFetchMIQueryTermWidget::New();
-  this->QueryList->SetParent ( this->Notebook->GetFrame ( "Query for Scenes") );
+  this->QueryList->SetParent ( this->Notebook->GetFrame ( "Search") );
   this->QueryList->Create();
   this->QueryList->SetApplication ( app );
   this->QueryList->SetLogic ( this->Logic );
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->QueryList->GetWidgetName() );
 
   this->ResourceList = vtkFetchMIFlatResourceWidget::New();
-  this->ResourceList->SetParent ( this->Notebook->GetFrame ("Browse Query Results & Download") );
+  this->ResourceList->SetParent ( this->Notebook->GetFrame ("Download") );
   this->ResourceList->Create();
   this->ResourceList->SetApplication ( app );
   this->ResourceList->SetLogic ( this->Logic );
@@ -2428,7 +2428,7 @@ void vtkFetchMIGUI::BuildGUI ( )
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->ResourceList->GetWidgetName() );
 
   this->TaggedDataList = vtkFetchMIResourceUploadWidget::New();
-  this->TaggedDataList->SetParent ( this->Notebook->GetFrame ( "Tag Scene & Upload" ) );
+  this->TaggedDataList->SetParent ( this->Notebook->GetFrame ( "Tag & Upload" ) );
   this->TaggedDataList->Create();
   this->TaggedDataList->SetApplication ( app );
   this->TaggedDataList->SetLogic ( this->Logic );
