@@ -2794,47 +2794,53 @@ void vtkEMSegmentNodeParametersStep::GetPercent(
       for(int m = 0; m < 200 ;m++)
       {
         if(this->correspondanceArray[0][m] == mrmlManager->
+            GetTreeNodeChildNodeID(vol_id, i))
+        {
+          weight = weight + this->class_weight[m];
+        }
+      }
+    }
+
+    for (int i = 0; i < nb_children; i++)
+    {
+      for(int m = 0; m < 200 ;m++)
+      {
+        if(this->correspondanceArray[0][m] == mrmlManager->
             GetTreeNodeChildNodeID(vol_id, i)){
-weight = weight + this->class_weight[m];
+
+          this->class_weight[m] = (this->class_weight[m])/weight;
+        }
+      }
+    }
+
+    for (int i = 0; i < nb_children; i++)
+    {
+      this->GetPercent(3,mrmlManager->GetTreeNodeChildNodeID(vol_id, i));
+    }
+
+    for (int i = 0; i < 200; i++)
+    {
+      if(this->correspondanceArray[0][i] != 0)
+      {
+        mrmlManager->SetTreeNodeClassProbability(
+            this->correspondanceArray[0][i], this->class_weight[i]);
+      }
+    }
+  }
 }
-}
-}
-for (int i = 0; i < nb_children; i++)
+
+//-------------------------------------------------------------------
+double vtkEMSegmentNodeParametersStep::GetWeight(int z)
 {
-for(int m = 0; m < 200 ;m++){
-if(this->correspondanceArray[0][m] == mrmlManager->GetTreeNodeChildNodeID(vol_id, i)){
+  double sum = 0.0;
 
-this->class_weight[m] = (this->class_weight[m])/weight;
-}
-}
+  for(int l = round(this->class_size[z*2]) + 1; l < round(
+        this->class_size[z*2 + 1]); l++)
+    {
+      sum = sum + this->IntensityDistributionHistogramHistogram->
+        GetOccurenceAtValue(l);
+    }
 
-}
-
-for (int i = 0; i < nb_children; i++)
-{
-this->GetPercent(3,mrmlManager->GetTreeNodeChildNodeID(vol_id, i));
+  return sum;
 }
 
-for (int i = 0; i < 200; i++)
-{
-if(this->correspondanceArray[0][i] != 0){
-mrmlManager->SetTreeNodeClassProbability(this->correspondanceArray[0][i], this->class_weight[i]);
-std::cout << "CLASS UPDATED: "<< this->correspondanceArray[0][i] << "WEIGHT: " << this->class_weight[i] << std::endl;
-}
-}
-
-}
-
-}
-
-//--------------------------------------------------------------------------
-double vtkEMSegmentNodeParametersStep::GetWeight(
-  int z)
-{
-double sum = 0.0;
-for(int l = round(this->class_size[z*2]) + 1; l < round(this->class_size[z*2 + 1]); l++){
- sum = sum + this->IntensityDistributionHistogramHistogram->GetOccurenceAtValue(l);
-}
-
-return sum;
-}
