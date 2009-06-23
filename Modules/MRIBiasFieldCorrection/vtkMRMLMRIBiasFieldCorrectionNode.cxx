@@ -1,6 +1,7 @@
-/*=auto=========================================================================
+/*=auto==============================================================
 
-Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All
+Rights Reserved.
 
 See Doc/copyright/copyright.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
@@ -9,8 +10,9 @@ Program:   3D Slicer
 Module:    $RCSfile: vtkMRMLMRIBiasFieldCorrectionNode.cxx,v $
 Date:      $Date: 2006/03/17 15:10:10 $
 Version:   $Revision: 1.2 $
+Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 
-=========================================================================auto=*/
+==============================================================auto=*/
 
 #include <string>
 #include <iostream>
@@ -21,140 +23,148 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLMRIBiasFieldCorrectionNode.h"
 #include "vtkMRMLScene.h"
 
-
-//------------------------------------------------------------------------------
-vtkMRMLMRIBiasFieldCorrectionNode* vtkMRMLMRIBiasFieldCorrectionNode::New()
+//-------------------------------------------------------------------
+vtkMRMLMRIBiasFieldCorrectionNode* vtkMRMLMRIBiasFieldCorrectionNode
+::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLMRIBiasFieldCorrectionNode");
+  vtkObject* ret = vtkObjectFactory::CreateInstance(
+      "vtkMRMLMRIBiasFieldCorrectionNode");
+
   if(ret)
     {
       return (vtkMRMLMRIBiasFieldCorrectionNode*)ret;
     }
+
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLMRIBiasFieldCorrectionNode;
 }
 
-//----------------------------------------------------------------------------
-
+//-------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLMRIBiasFieldCorrectionNode::CreateNodeInstance()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLMRIBiasFieldCorrectionNode");
+  vtkObject* ret = vtkObjectFactory::CreateInstance(
+      "vtkMRMLMRIBiasFieldCorrectionNode");
+
   if(ret)
     {
       return (vtkMRMLMRIBiasFieldCorrectionNode*)ret;
     }
+
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLMRIBiasFieldCorrectionNode;
 }
 
-//----------------------------------------------------------------------------
+//-------------------------------------------------------------------
 vtkMRMLMRIBiasFieldCorrectionNode::vtkMRMLMRIBiasFieldCorrectionNode()
 {
-   this->Shrink = 3;
-   
-   this->Max = 50;
-   
-   this->Num = 4;
-   
-   this->Wien = 0.1;
-   
-   this->Field = 0.15;
-   
-   this->Con = 0.001;
+  this->Shrink = 3;
+  this->Max    = 50;
+  this->Num    = 4;
+  this->Wien   = 0.1;
+  this->Field  = 0.15;
+  this->Con    = 0.001;
 
-   
-   this->InputVolumeRef = NULL;
-   this->OutputVolumeRef = NULL;
-   this->StorageVolumeRef = NULL;
-   this->MaskVolumeRef = NULL;
-   
-   this->HideFromEditors = true;
+  this->InputVolumeRef   = NULL;
+  this->OutputVolumeRef  = NULL;
+  this->StorageVolumeRef = NULL;
+  this->MaskVolumeRef    = NULL;
+
+  this->HideFromEditors = true;
 }
 
-//----------------------------------------------------------------------------
-vtkMRMLMRIBiasFieldCorrectionNode::~vtkMRMLMRIBiasFieldCorrectionNode()
+//-------------------------------------------------------------------
+vtkMRMLMRIBiasFieldCorrectionNode::
+~vtkMRMLMRIBiasFieldCorrectionNode()
 {
-   this->SetInputVolumeRef( NULL );
-   this->SetOutputVolumeRef( NULL );
-   this->SetStorageVolumeRef(NULL);
-   this->SetMaskVolumeRef(NULL);
+  this->SetInputVolumeRef( NULL );
+  this->SetOutputVolumeRef( NULL );
+  this->SetStorageVolumeRef(NULL);
+  this->SetMaskVolumeRef(NULL);
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLMRIBiasFieldCorrectionNode::WriteXML(ostream& of, int nIndent)
+//-------------------------------------------------------------------
+void vtkMRMLMRIBiasFieldCorrectionNode::WriteXML(ostream& of,
+  int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
   // Write all MRML node attributes into output stream
 
   vtkIndent indent(nIndent);
-  
-     {
-    std::stringstream ss;
-    ss << this->Con;
-    of << indent << " Con=\"" << ss.str() << "\"";
-  }
-  
-   {
-    std::stringstream ss;
-    ss << this->Field;
-    of << indent << " Field=\"" << ss.str() << "\"";
-  }
-   {
-    std::stringstream ss;
-    ss << this->Wien;
-    of << indent << " Wien=\"" << ss.str() << "\"";
-  }
-   {
-    std::stringstream ss;
-    ss << this->Num;
-    of << indent << " Num=\"" << ss.str() << "\"";
-  }
+
   {
-    std::stringstream ss;
-    ss << this->Max;
-    of << indent << " Max=\"" << ss.str() << "\"";
+  std::stringstream ss;
+  ss << this->Con;
+  of << indent << " Con=\"" << ss.str() << "\"";
   }
+
   {
-    std::stringstream ss;
-    ss << this->Shrink;
-    of << indent << " Shrink=\"" << ss.str() << "\"";
+  std::stringstream ss;
+  ss << this->Field;
+  of << indent << " Field=\"" << ss.str() << "\"";
   }
+
   {
-    std::stringstream ss;
-    if ( this->InputVolumeRef )
-      {
-      ss << this->InputVolumeRef;
-      of << indent << " InputVolumeRef=\"" << ss.str() << "\"";
-     }
+  std::stringstream ss;
+  ss << this->Wien;
+  of << indent << " Wien=\"" << ss.str() << "\"";
   }
+
   {
-    std::stringstream ss;
-    if ( this->OutputVolumeRef )
-      {
-      ss << this->OutputVolumeRef;
-      of << indent << " OutputVolumeRef=\"" << ss.str() << "\"";
-      }
+  std::stringstream ss;
+  ss << this->Num;
+  of << indent << " Num=\"" << ss.str() << "\"";
   }
+
+  {
+  std::stringstream ss;
+  ss << this->Max;
+  of << indent << " Max=\"" << ss.str() << "\"";
+  }
+
+  {
+  std::stringstream ss;
+  ss << this->Shrink;
+  of << indent << " Shrink=\"" << ss.str() << "\"";
+  }
+
+  {
+  std::stringstream ss;
+  if ( this->InputVolumeRef )
     {
-    std::stringstream ss;
-    if ( this->StorageVolumeRef )
-      {
-      ss << this->StorageVolumeRef;
-      of << indent << " StorageVolumeRef=\"" << ss.str() << "\"";
-      }
+    ss << this->InputVolumeRef;
+    of << indent << " InputVolumeRef=\"" << ss.str() << "\"";
+    }
   }
+
   {
-    std::stringstream ss;
-    if ( this->MaskVolumeRef )
-      {
-      ss << this->MaskVolumeRef;
-      of << indent << " MaskVolumeRef=\"" << ss.str() << "\"";
-      }
+  std::stringstream ss;
+  if ( this->OutputVolumeRef )
+    {
+    ss << this->OutputVolumeRef;
+    of << indent << " OutputVolumeRef=\"" << ss.str() << "\"";
+    }
   }
-  
+
+  {
+  std::stringstream ss;
+  if ( this->StorageVolumeRef )
+    {
+    ss << this->StorageVolumeRef;
+    of << indent << " StorageVolumeRef=\"" << ss.str() << "\"";
+    }
+  }
+
+  {
+  std::stringstream ss;
+  if ( this->MaskVolumeRef )
+    {
+    ss << this->MaskVolumeRef;
+    of << indent << " MaskVolumeRef=\"" << ss.str() << "\"";
+    }
+  }
 }
 
 //----------------------------------------------------------------------------
