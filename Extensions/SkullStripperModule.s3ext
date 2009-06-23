@@ -10,4 +10,4 @@ category  Segmentation
 
 status    Alpha
 
-description Skull sttipping for T! weighted MR images.
+description Skull sttipping for T1 weighted MR images.
