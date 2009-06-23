@@ -46,6 +46,8 @@ set(MRIBiasFieldCorrection_SRCS
   vtkMRMLMRIBiasFieldCorrectionNode.cxx
   )
 
+subdirs(CommandLineApplication)
+
 # --------------------------------------------------------------------------
 # Wrapping
 
@@ -64,6 +66,7 @@ generatelm(MRIBiasFieldCorrection_SRCS
 # Build and install the library
 
 set(lib_name MRIBiasFieldCorrection)
+#set(lib_name MRIBiasFieldCorrectionLib)
 add_library(${lib_name}
   ${MRIBiasFieldCorrection_SRCS}
   ${MRIBiasFieldCorrection_TCL_SRCS}
@@ -81,7 +84,10 @@ slicer3_install_modules(${lib_name})
 
 # --------------------------------------------------------------------------
 # Testing
-
 if(BUILD_TESTING)
-#  subdirs(Testing)
+  message("BUILD_TESTING ON")
+  subdirs(Testing)
+else(BUILD_TESTING)
+  message("BUILD_TESTING OFF")
 endif(BUILD_TESTING)
+
