@@ -80,7 +80,7 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->CB_GPURayCastMIP=NULL;
     this->CB_GPURayCastShading=NULL;
     
-    this->CB_GPURayCastLargeVolume=NULL;
+    this->MB_GPURayCastInternalVolumeSize=NULL;
 
     this->SC_ExpectedFPS=NULL;
     this->MB_Mapper= NULL;
@@ -507,7 +507,7 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
             vtkErrorMacro("GPU ray casting (GLSL) is not supported by your computer.");
             this->CB_GPURayCastMIP->EnabledOff();
             this->CB_GPURayCastShading->EnabledOff();
-            this->CB_GPURayCastLargeVolume->EnabledOff();
+            this->MB_GPURayCastInternalVolumeSize->EnabledOff();
         }
     
         if(!IsTextureMappingSupported)
@@ -743,19 +743,6 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
             return;
         }
-        
-        if(callerObjectCheckButton == this->CB_GPURayCastLargeVolume->GetWidget())
-        {
-            if (this->CB_GPURayCastLargeVolume->GetWidget()->GetSelectedState())
-                this->MapperGPURaycast->LargeVolumeSizeOn();
-            else
-                this->MapperGPURaycast->LargeVolumeSizeOff();
-                
- //           this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->ResetCamera();
-            
-            this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
-            return;
-        }
     }
     
     //framerate
@@ -817,7 +804,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     vtkRenderWindow *renderWindow = vtkRenderWindow::SafeDownCast(caller);
     if (renderWindow && eid==vtkCommand::EndEvent)
       {
-      this->Gui->GetApplicationGUI()->SetExternalProgress("Done.", 0.);
+      char buf[32] = "Done";
+      this->Gui->GetApplicationGUI()->SetExternalProgress(buf, 0.);
       return;
       }     
     
@@ -833,27 +821,31 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
 
     if(eid==vtkCommand::VolumeMapperComputeGradientsStartEvent)
       {
-      this->DisplayProgressDialog("Please standby: Gradients are being calculated");
+//      this->DisplayProgressDialog("Please standby: Gradients are being calculated");
       return;
       }
     else if(eid==vtkCommand::VolumeMapperComputeGradientsEndEvent)
       {
-      this->WithdrawProgressDialog();
+//      this->WithdrawProgressDialog();
       return;
       }
     else if(eid==vtkCommand::VolumeMapperComputeGradientsProgressEvent)
       {
       float *progress = (float*)callData;
-      if(this->GradientDialog != NULL)
-        {
-        this->GradientDialog->UpdateProgress(*progress);
-        }
+      char buf[32] = "Gradient...";
+      this->Gui->GetApplicationGUI()->SetExternalProgress(buf, *progress);
+      
+//      if(this->GradientDialog != NULL)
+//        {
+//        this->GradientDialog->UpdateProgress(*progress);
+//        }
       return;
       }
     else if (eid==vtkCommand::ProgressEvent)
       {
       float progress=*((float*)callData);
-      this->Gui->GetApplicationGUI()->SetExternalProgress("Rendering...", progress);
+      char buf[32] = "Rendering...";
+      this->Gui->GetApplicationGUI()->SetExternalProgress(buf, progress);
       return;
       }     
     
@@ -1192,6 +1184,19 @@ void vtkSlicerVRGrayscaleHelper::CreateThreshold()
     this->Script("pack %s -side top -anchor nw -expand n -fill x -padx 2 -pady 2", this->PB_Reset->GetWidgetName());
 
     thresholdFrame->Delete();
+}
+
+void vtkSlicerVRGrayscaleHelper::ProcessGPURayCastInternalVolumeSize(int id)
+{
+    switch(id)
+    {
+    case 0:
+        this->MapperGPURaycast->SetInternalVolumeSize(256);
+        break;
+    case 1:
+        this->MapperGPURaycast->SetInternalVolumeSize(512);
+        break;
+    }
 }
 
 void vtkSlicerVRGrayscaleHelper::ProcessRenderingMethodEvents(int id)
@@ -1630,7 +1635,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("CUDA Ray Casting");
         this->MB_Mapper->GetWidget()->GetMenu()->SetItemCommand(3, this,"ProcessRenderingMethodEvents 3");
         
-        this->Script ( "pack %s -side top -anchor nw -fill x -padx 8 -pady 8", this->MB_Mapper->GetWidgetName() );
+        this->Script ( "pack %s -side top -anchor nw -fill x -padx 8 -pady 2", this->MB_Mapper->GetWidgetName() );
 
     }
     
@@ -1710,17 +1715,21 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_GPURayCastMIP->GetWidgetName() );
         this->CB_GPURayCastMIP->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->VolumeRenderingCallbackCommand);
         
-        //enable/disable large volume
-        this->CB_GPURayCastLargeVolume=vtkKWCheckButtonWithLabel::New();
-        this->CB_GPURayCastLargeVolume->SetParent(this->FrameGPURayCasting->GetFrame());
-        this->CB_GPURayCastLargeVolume->Create();
-        this->CB_GPURayCastLargeVolume->SetBalloonHelpString("Increase size for internal volume for better rendering quality.");
-        this->CB_GPURayCastLargeVolume->SetLabelText("Use Large Volume");
-        this->CB_GPURayCastLargeVolume->SetLabelWidth(labelWidth);
-        this->CB_GPURayCastLargeVolume->GetWidget()->SetSelectedState(0);
-        this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_GPURayCastLargeVolume->GetWidgetName() );
-        this->CB_GPURayCastLargeVolume->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->VolumeRenderingCallbackCommand);
-
+        //set internal volume storage
+        this->MB_GPURayCastInternalVolumeSize = vtkKWMenuButtonWithLabel::New();
+        this->MB_GPURayCastInternalVolumeSize->SetParent(this->FrameGPURayCasting->GetFrame());
+        this->MB_GPURayCastInternalVolumeSize->SetLabelText("Internal Volume Size");
+        this->MB_GPURayCastInternalVolumeSize->Create();
+        this->MB_GPURayCastInternalVolumeSize->SetLabelWidth(labelWidth);
+        this->MB_GPURayCastInternalVolumeSize->SetBalloonHelpString("Select upper limit on internal volume size");
+        this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->AddRadioButton("256^3");
+        this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastInternalVolumeSize 0");
+        this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->AddRadioButton("512^3");
+        this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->SetItemCommand(1, this,"ProcessGPURayCastInternalVolumeSize 1");
+        
+        this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastInternalVolumeSize->GetWidgetName() );
+        
+        this->MB_GPURayCastInternalVolumeSize->GetWidget()->SetValue("256^3");
     }
     
     //opengl 2D Polygon Texture 3D
@@ -1764,7 +1773,6 @@ void vtkSlicerVRGrayscaleHelper::DestroyPerformance(void)
     //Save old values to registry
     // why we save these values? It is safer to use default value for volume rendering
 //    this->Gui->GetApplication()->SetRegistryValue(2,"VolumeRendering","CB_GPURayCastShading","%d",this->CB_RayCast->GetWidget()->GetSelectedState());
-//    this->Gui->GetApplication()->SetRegistryValue(2,"VolumeRendering","CB_GPURayCastLargeVolume","%d",this->CB_TextureLow->GetWidget()->GetSelectedState());
 //    this->Gui->GetApplication()->SetRegistryValue(2,"VolumeRendering","CB_GPURayCastMIP","%d",this->CB_TextureHigh->GetWidget()->GetSelectedState());
 //    this->Gui->GetApplication()->SetRegistryValue(2,"VolumeRendering","CB_CPURayCastForceHighQuality","%d",this->CB_CPURayCastForceHighQuality->GetWidget()->GetSelectedState());
 //    this->Gui->GetApplication()->SetRegistryValue(2,"VolumeRendering","SC_ExpectedFPS","%e",this->SC_ExpectedFPS->GetValue());
@@ -1785,12 +1793,11 @@ void vtkSlicerVRGrayscaleHelper::DestroyPerformance(void)
         this->CB_GPURayCastShading=NULL;
     }
     
-    if(this->CB_GPURayCastLargeVolume!=NULL)
+    if(this->MB_GPURayCastInternalVolumeSize!=NULL)
     {
-        this->CB_GPURayCastLargeVolume->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
-        this->CB_GPURayCastLargeVolume->SetParent(NULL);
-        this->CB_GPURayCastLargeVolume->Delete();
-        this->CB_GPURayCastLargeVolume=NULL;
+        this->MB_GPURayCastInternalVolumeSize->SetParent(NULL);
+        this->MB_GPURayCastInternalVolumeSize->Delete();
+        this->MB_GPURayCastInternalVolumeSize=NULL;
     }
     
     if(this->CB_GPURayCastMIP!=NULL)

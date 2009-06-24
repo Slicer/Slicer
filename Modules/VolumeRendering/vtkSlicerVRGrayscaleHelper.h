@@ -100,6 +100,10 @@ public:
     void ProcessRenderingMethodEvents(int id);
 
     // Description:
+    // Callback, that is processed when the GPU ray cast mapper internal volume size changed
+    void ProcessGPURayCastInternalVolumeSize(int id);
+    
+    // Description:
     // process when user change the expected FPS
     void ProcessExpectedFPS(void);
     
@@ -272,8 +276,8 @@ protected:
     vtkKWCheckButtonWithLabel *CB_GPURayCastShading;
     
     // Description:
-    // Enable/Disable large volume size usage
-    vtkKWCheckButtonWithLabel *CB_GPURayCastLargeVolume;
+    // Menu button to select internal volume size
+    vtkKWMenuButtonWithLabel *MB_GPURayCastInternalVolumeSize;
     
     // Description:
     // Enable/Disable CPU ray cast MIP rendering
