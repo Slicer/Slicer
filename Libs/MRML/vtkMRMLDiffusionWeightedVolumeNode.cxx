@@ -276,7 +276,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::SetNumberOfGradients(int val)
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionWeightedVolumeNode::SetDiffusionGradient(int num,const double grad[3])
 {
-  if (this->DiffusionGradients->GetNumberOfTuples()<num)
+  if (num < this->DiffusionGradients->GetNumberOfTuples())
     {
     this->DiffusionGradients->SetComponent(num,0,grad[0]);
     this->DiffusionGradients->SetComponent(num,1,grad[1]);
@@ -300,7 +300,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::SetDiffusionGradients(vtkDoubleArray *g
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionWeightedVolumeNode::GetDiffusionGradient(int num,double grad[3])
 {  
-  if(this->DiffusionGradients->GetNumberOfTuples()<num) 
+  if(num < this->DiffusionGradients->GetNumberOfTuples()) 
     {
     grad[0]=this->DiffusionGradients->GetComponent(num,0);
     grad[1]=this->DiffusionGradients->GetComponent(num,1);
@@ -315,7 +315,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::GetDiffusionGradient(int num,double gra
 //----------------------------------------------------------------------------
 double *vtkMRMLDiffusionWeightedVolumeNode::GetDiffusionGradient(int num)
 {
-  if(this->DiffusionGradients->GetNumberOfTuples()<num) 
+  if(num < this->DiffusionGradients->GetNumberOfTuples()) 
     {
     return static_cast <double *> (this->DiffusionGradients->GetVoidPointer(num*3));
     }
@@ -336,7 +336,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::SetBValues(vtkDoubleArray *bValues)
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionWeightedVolumeNode::SetBValue(int num, const double b)
 {
-  if (this->BValues->GetNumberOfTuples()<num)
+  if (num < this->BValues->GetNumberOfTuples())
     {
     this->BValues->SetValue(num,b);
     this->Modified();
@@ -348,10 +348,9 @@ void vtkMRMLDiffusionWeightedVolumeNode::SetBValue(int num, const double b)
 }
 
 //----------------------------------------------------------------------------
-/**
 double vtkMRMLDiffusionWeightedVolumeNode::GetBValue(int num)
 {
-  if (this->BValues->GetNumberOfTuples()<num)
+  if (num < this->BValues->GetNumberOfTuples())
     {
     return this->BValues->GetValue(num);
     }
@@ -361,7 +360,6 @@ double vtkMRMLDiffusionWeightedVolumeNode::GetBValue(int num)
     return 0;
     }
 }
-**/
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
