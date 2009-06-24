@@ -56,7 +56,7 @@ vtkSlicerGPURayCastVolumeTextureMapper3D::vtkSlicerGPURayCastVolumeTextureMapper
   this->Clipping             =  0;
   this->Shading              =  0;
   this->ReloadShaderFlag     =  0;
-  this->LargeVolumeSize      =  0;
+  this->InternalVolumeSize      =  256; //by default 256^3
 
   this->Volume1Index         =  0;
   this->Volume2Index         =  0;
@@ -875,7 +875,7 @@ int vtkSlicerGPURayCastVolumeTextureMapper3D::IsTextureSizeSupported( int size[3
 {
   if ( this->GetInput()->GetNumberOfScalarComponents() < 4 )
     {
-    long maxSize = this->LargeVolumeSize ? 512*512*512 : 128*256*256;
+    long maxSize = this->InternalVolumeSize * this->InternalVolumeSize * this->InternalVolumeSize;
             
     if ( size[0]*size[1]*size[2] > maxSize )//need to test graphics memory to determine volume size
       {
@@ -1755,19 +1755,14 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::ShadingOn()
     this->ReloadShaderFlag = 1;
 }
 
-void vtkSlicerGPURayCastVolumeTextureMapper3D::LargeVolumeSizeOff()
+void vtkSlicerGPURayCastVolumeTextureMapper3D::SetInternalVolumeSize(int size)
 {
-    this->LargeVolumeSize = 0;
-    this->SavedTextureInput = NULL;//dirty input, force reprocess input
-    
-    this->RayCastInitialized = 0;
+    if (this->InternalVolumeSize != size)
+    {
+        this->InternalVolumeSize = size;
+        this->SavedTextureInput = NULL;//dirty input, force reprocess input
+        this->RayCastInitialized = 0;
+    }
 }
 
-void vtkSlicerGPURayCastVolumeTextureMapper3D::LargeVolumeSizeOn()
-{
-    this->LargeVolumeSize = 1;
-    this->SavedTextureInput = NULL;//dirty input, force reprocess input
-    
-    this->RayCastInitialized = 0;
-}
 

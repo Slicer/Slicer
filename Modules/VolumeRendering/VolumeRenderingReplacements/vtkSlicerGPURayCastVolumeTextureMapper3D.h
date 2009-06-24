@@ -59,9 +59,8 @@ public:
   void ShadingOff();
   
   // Description:
-  // Enable/Disable large volume size usage
-  void LargeVolumeSizeOn();
-  void LargeVolumeSizeOff();
+  // set internal volume size
+  void SetInternalVolumeSize(int size);
   
   // Description:
   // Enable/Disable clipping
@@ -125,7 +124,7 @@ protected:
   int              MIPRendering;
   int              Clipping;
   int              Shading;
-  int              LargeVolumeSize;
+  int              InternalVolumeSize;
 
   GLuint           Volume1Index;
   GLuint           Volume2Index;
