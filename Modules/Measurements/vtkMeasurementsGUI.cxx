@@ -37,10 +37,11 @@
 #include "vtkAngleWidget.h"
 #include "vtkAngleRepresentation3D.h"
 
+#endif
+
 #include "vtkAffineWidget.h"
 #include "vtkAffineRepresentation2D.h"
 
-#endif
 
 #include "vtkProperty.h"
 #include "vtkProperty2D.h"
@@ -83,12 +84,10 @@ void vtkAffineCallback::Execute(vtkObject*, unsigned long, void*)
           this->TransformableNode->GetScene() != NULL)
         {
         vtkMRMLLinearTransformNode *t = vtkMRMLLinearTransformNode::New();
-        vtkMRMLNode *newNode = this->TransformableNode->GetScene()->AddNodeNoNotify(t);
+        vtkMRMLNode *newNode = this->TransformableNode->GetScene()->AddNode(t);
         if (newNode->GetID() != NULL)
           {
-          this->TransformableNode->DisableModifiedEventOn();
           this->TransformableNode->SetAndObserveTransformNodeID(newNode->GetID());
-          this->TransformableNode->DisableModifiedEventOff();
           }
         else
           {
@@ -185,7 +184,7 @@ vtkMeasurementsGUI::vtkMeasurementsGUI()
   this->AngleWidget = vtkAngleWidget::New();
   this->AngleWidget->CreateDefaultRepresentation();
   this->AngleWidget->SetRepresentation(this->AngleRepresentation);
-
+#endif
   // Affine Widget set up
   this->TransformRepresentation = vtkAffineRepresentation2D::New();
   this->TransformRepresentation->SetBoxWidth(100);
@@ -195,7 +194,7 @@ vtkMeasurementsGUI::vtkMeasurementsGUI()
 
   this->TransformWidget = vtkAffineWidget::New();
   this->TransformWidget->SetRepresentation(this->TransformRepresentation);
-#endif
+
   this->RulerCheckButton = NULL;
   this->RulerModel1SelectorWidget = NULL;
   this->RulerModel2SelectorWidget = NULL;
@@ -566,7 +565,6 @@ void vtkMeasurementsGUI::ProcessGUIEvents ( vtkObject *caller,
 
   if (b == this->TransformCheckButton && event == vtkKWCheckButton::SelectedStateChangedEvent ) 
     {
-#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
     if ( this->TransformCheckButton->GetSelectedState())
       {
       if (this->TransformWidget->GetInteractor() == NULL)
@@ -583,9 +581,6 @@ void vtkMeasurementsGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       this->TransformWidget->Off();
       }
-#else
-    vtkWarningMacro("Measurement widgets not available in this version of VTK, needs 5.4 or later");
-#endif
     }
   if (vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->TransformableNodeSelectorWidget && 
         event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
@@ -638,7 +633,7 @@ void vtkMeasurementsGUI::BuildGUI ( )
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Measurements" );    
 
   // HELP
-  const char* help_text = "The Measurements module allows you to add a 3d ruler and a 3d angle widget to the 3D window. The first time you toggle one of the widgets on, you have to click once to render the ruler and three times to place the angle widget end points. After that, you can move the points around by dragging the handles.\nIn order to get the end points of the ruler to move along the surface, you currently need to rotate the view so that the handle is rendered on top of the model, the next click will snap it to the model surface.\n\nOnly available when Slicer3 is compiled with VTK version 5.4 or higher.\n\n\nUNDER CONSTRUCTION";
+  const char* help_text = "The Measurements module allows you to add a 3d ruler, a 3d angle widget, or a 2d affine transform editor widget to the 3D window. The first time you toggle one of the widgets on, you have to click once to render the ruler and transform widgets, and three times to place the angle widget end points. After that, you can move the widgets around by dragging the handles.\nIn order to get the end points of the ruler to move along the surface, you currently need to rotate the view so that the handle is rendered on top of the model, the next click will snap it to the model surface.\n\nOnly available when Slicer3 is compiled with VTK version 5.4 or higher.\n\n\nUNDER CONSTRUCTION";
   const char* ack_text = "Measurements was developed by Nicole Aucoin with help from Kitware, Inc.";
   this->BuildHelpAndAboutFrame(page, help_text, ack_text);
 
@@ -772,7 +767,6 @@ void vtkMeasurementsGUI::Init ( )
 //---------------------------------------------------------------------------
 void vtkMeasurementsGUI::UpdateTransformableNode()
 {
-#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
     vtkMRMLTransformableNode *transformableNode = 
       vtkMRMLTransformableNode::SafeDownCast(this->TransformableNodeSelectorWidget->GetSelected());
     if (transformableNode != NULL)
@@ -786,7 +780,4 @@ void vtkMeasurementsGUI::UpdateTransformableNode()
       this->TransformWidget->AddObserver(vtkCommand::InteractionEvent,acbk);
       acbk->Delete();
       }
-#else
-    vtkWarningMacro("Measurement widgets not available in this version of VTK, needs 5.4 or later");
-#endif
 }

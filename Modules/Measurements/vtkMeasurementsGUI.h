@@ -21,9 +21,9 @@ class vtkPointHandleRepresentation3D;
 class vtkLineRepresentation;
 class vtkAngleRepresentation3D;
 class vtkPolygonalSurfacePointPlacer;
+#endif
 class vtkAffineWidget;
 class vtkAffineRepresentation2D;
-#endif
 class vtkSlicerNodeSelectorWidget;
 class VTK_MEASUREMENTS_EXPORT vtkMeasurementsGUI : public vtkSlicerModuleGUI
 {
@@ -108,12 +108,11 @@ protected:
   vtkPointHandleRepresentation3D *AngleHandleRepresentation;
   vtkAngleRepresentation3D *AngleRepresentation;
   vtkAngleWidget *AngleWidget;
-
+#endif
   // Description
   // transform widget
   vtkAffineRepresentation2D *TransformRepresentation;
   vtkAffineWidget *TransformWidget;
-#endif
 
   // Description:
   // Ruler GUI elements
