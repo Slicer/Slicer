@@ -4,27 +4,36 @@ if not 'tk' in locals().keys():
 import Tkinter
 import Console
 
+import sys
 import os
 import string
 import _slicer
 
 IPython=False
 
-
 def StartConsole():
   try:
-    import ipTk
-    reload(ipTk)
-    top = Tkinter.Toplevel ( tk )
-#    os.environ = dict([ ( s[:s.find('=')],s[s.find('=')+1:]) for s in tk.call('env').splitlines()])
-    s=ipTk.IPythonView(top, banner="3D Slicer IPython console\n")
-    s.master.title("3D Slicer 3.3 alpha IPython console")
-    s.config(background="black")
-    s.config(foreground="gray")
-    s.config(insertbackground="gray")
-    s.pack(fill=Tkinter.BOTH, expand=1)
+    windowRaised = False
+    if hasattr(sys,'pythonConsoleTk'):
+      try:
+        sys.pythonConsoleTk.tkraise()
+        windowRaised = True
+      except Tkinter.TclError:
+        windowRaised = False
+
+    if not windowRaised:
+      import ipTk
+      reload(ipTk)
+      sys.pythonConsoleTk = Tkinter.Toplevel ( tk )
+  #    os.environ = dict([ ( s[:s.find('=')],s[s.find('=')+1:]) for s in tk.call('env').splitlines()])
+      s=ipTk.IPythonView(sys.pythonConsoleTk, banner="3D Slicer IPython console\n")
+      s.master.title("3D Slicer 3.3 alpha IPython console")
+      s.config(background="black")
+      s.config(foreground="gray")
+      s.config(insertbackground="gray")
+      s.pack(fill=Tkinter.BOTH, expand=1)
   except ImportError:
-    top = Tkinter.Toplevel ( tk )
+    sys.pythonConsoleTk = Tkinter.Toplevel ( tk )
     c = Console.Console(parent=top,dict={})
     c.dict["console"] = c
     c.pack(fill=Tkinter.BOTH, expand=1)
