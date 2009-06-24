@@ -69,7 +69,10 @@ int main( int argc, const char * argv[] )
   vtkMatrix4x4 *TensorRASToIJK = vtkMatrix4x4::New();
   TensorRASToIJK->DeepCopy(reader->GetRasToIjkMatrix());
   
-  //Do scale IJK
+  // VTK seeding is in ijk space with voxel scale included.
+  // Calculate the matrix that goes from tensor "scaled IJK", 
+  // the array with voxels that know their size (what vtk sees for tract seeding)
+  // to our RAS.
   double sp[3];
   reader->GetOutput()->GetSpacing(sp);
   vtkTransform *trans = vtkTransform::New();
@@ -78,14 +81,20 @@ int main( int argc, const char * argv[] )
   trans->SetMatrix(TensorRASToIJK);
   // Trans from IJK to RAS
   trans->Inverse();
-  // Take into account spacing to compute Scaled IJK
+  // Take into account spacing (remove from matrix) to compute Scaled IJK to RAS matrix
   trans->Scale(1/sp[0],1/sp[1],1/sp[2]);
   trans->Inverse();
   
   //Set Transformation to seeding class
   seed->SetWorldToTensorScaledIJK(trans);
   
-  
+  // Rotation part of matrix is only thing tensor is transformed by.
+  // This is to transform output tensors into RAS space.
+  // Tensors are output along the fibers.
+  // This matrix is not used for calculating tractography.
+  // The following should be replaced with finite strain method
+  // rather than assuming rotation part of the matrix according to 
+  // slicer convention.
   vtkMatrix4x4 *TensorRASToIJKRotation = vtkMatrix4x4::New();
   TensorRASToIJKRotation->DeepCopy(TensorRASToIJK);
   
@@ -94,7 +103,7 @@ int main( int argc, const char * argv[] )
     {
     TensorRASToIJKRotation->SetElement(i,3,0);
     }
-  //Remove scaling in rasToIjk to make a real roation matrix
+  //Remove scaling in rasToIjk to make a real rotation matrix
   double col[3];
   for (int jjj = 0; jjj < 3; jjj++) 
     {
@@ -114,14 +123,15 @@ int main( int argc, const char * argv[] )
 
   //vtkNRRDWriter *iwriter = vtkNRRDWriter::New();
   
-  // 3. Set up ROI based on Cl mask
-  //Create Cl mask
+  // 3. Set up ROI (not based on Cl mask), from input now
 
+  // cast roi to short data type
   vtkImageCast *imageCast = vtkImageCast::New();
   imageCast->SetOutputScalarTypeToShort();
   imageCast->SetInput(reader2->GetOutput());
   imageCast->Update();
 
+  //Create Cl mask
   /**
   iwriter->SetInput(imageCast->GetOutput());
   iwriter->SetFileName("C:/Temp/cast.nhdr");
@@ -163,14 +173,23 @@ int main( int argc, const char * argv[] )
   seed->UseStartingThresholdOn();
   seed->SetStartingThreshold(ClTh);
 
-  //ROI comes from tensor, IJKToRAS is the same
-  // as the tensor
+  // Set up the matrix that will take points in ROI
+  // to RAS space.  Code assumes this is world space
+  // since  we have no access to external transforms.
+  // This will only work if no transform is applied to 
+  // ROI and tensor volumes.
+  vtkMatrix4x4 *ROIRASToIJK = vtkMatrix4x4::New();
+  ROIRASToIJK->DeepCopy(reader2->GetRasToIjkMatrix());
   vtkTransform *trans2 = vtkTransform::New();
   trans2->Identity();
-  trans2->SetMatrix(TensorRASToIJK);
+  trans2->PreMultiply();
+  // no longer assume this ROI is in tensor space
+  //trans2->SetMatrix(TensorRASToIJK);
+  trans2->SetMatrix(ROIRASToIJK);
   trans2->Inverse();
   seed->SetROIToWorld(trans2);
   
+ 
   //4. Set Tractography specific parameters
   
   if (WriteToFile) 
@@ -235,6 +254,7 @@ int main( int argc, const char * argv[] )
   outFibers->Delete();
   seed->Delete();
   TensorRASToIJK->Delete();
+  ROIRASToIJK->Delete();
   TensorRASToIJKRotation->Delete();
   //math->Delete();
   //th->Delete();
