@@ -44,6 +44,8 @@
 
 #include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
+#include "vtkSlicerColorGUI.h"
+
 #ifdef Slicer3_USE_PYTHON
 #include "slicerPython.h"
 #endif
@@ -309,6 +311,8 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->PythonModule = NULL; 
     this->PythonDictionary = NULL; 
 #endif
+
+    this->ColorSwatchesAdded = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -2001,4 +2005,26 @@ void vtkSlicerApplication::PrintSelf ( ostream& os, vtkIndent indent )
   os << nextIndent << "UseWelcomeModuleAtStartup: " << UseWelcomeModuleAtStartup << "\n";
   os << indent << "UseSplashScreen: " << UseSplashScreen <<  "\n";
   os << indent << "StereoEnabled: " << StereoEnabled <<  "\n";
+}
+
+//----------------------------------------------------------------------------
+vtkKWColorPickerDialog* vtkSlicerApplication::GetColorPickerDialog()
+{
+  // add the Slicer color table nodes as swatches if not done yet
+  if (!this->ColorSwatchesAdded)
+    {
+      vtkSlicerColorGUI *colorGUI = vtkSlicerColorGUI::SafeDownCast(this->GetModuleGUIByName("Color"));
+      if (colorGUI)
+      {
+      // need to set this because AddLUTsToColorDialog has to get at the color picker
+      this->ColorSwatchesAdded = 1;
+      if (1 == colorGUI->AddLUTsToColorDialog())
+        {
+        // it failed
+        this->ColorSwatchesAdded = 0;
+        }
+      }
+    }
+  
+  return Superclass::GetColorPickerDialog();
 }

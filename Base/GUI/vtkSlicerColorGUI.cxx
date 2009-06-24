@@ -29,6 +29,10 @@
 #include "vtkKWLoadSaveButtonWithLabel.h"
 #include "vtkKWLoadSaveDialog.h"
 
+#include "vtkKWColorPickerDialog.h"
+#include "vtkKWColorPickerWidget.h"
+#include "vtkKWColorSwatchesWidget.h"
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerColorGUI );
 vtkCxxRevisionMacro ( vtkSlicerColorGUI, "$Revision: 1.0 $");
@@ -350,4 +354,61 @@ void vtkSlicerColorGUI::BuildGUI ( )
   editFrame->Delete();
   displayFrame->Delete ( );
   loadFrame->Delete();
+}
+
+//---------------------------------------------------------------------------
+int vtkSlicerColorGUI::AddLUTsToColorDialog()
+{
+  if (!this->GetApplication())
+    {
+      vtkErrorMacro("Can't add LUTs to color dialog, no application");
+      return 1;
+    }
+  vtkKWColorPickerDialog *picker = this->GetApplication()->GetColorPickerDialog();
+  if (!picker) 
+    {
+      vtkErrorMacro("No color picker dialog yet");
+      return 1;
+    }
+  vtkKWColorPickerWidget *widget = picker->GetColorPickerWidget();
+  if (!widget)
+    {
+      return 1;
+    }
+  vtkKWColorSwatchesWidget *swatches = widget->GetColorSwatchesWidget();
+  if (!swatches)
+    {
+      return 1;
+    }
+  if (!this->GetMRMLScene())
+    {
+      vtkErrorMacro("AddLUTsToPicker: mrml scene not set yet");
+      return 1;
+    }
+  // loop over all the colour table nodes in the scene and add them as collections
+  int numNodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLColorTableNode");
+  for (int n = 0; n < numNodes; n++)
+    {
+      vtkMRMLColorTableNode *colorNode = vtkMRMLColorTableNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLColorTableNode"));
+      if (colorNode)
+      {
+      int collectionID = swatches->AddCollection(colorNode->GetName());
+      int numColours = colorNode->GetNumberOfColors();
+      double rgb[4];
+      for (int c = 0; c < numColours; c++)
+        {      
+          const char *colorName = colorNode->GetColorName(c);
+          if (strcmp(colorName, "(none)"))
+            {
+            colorNode->GetLookupTable()->GetColor(c, rgb);
+            swatches->AddRGBSwatch(collectionID, colorName, rgb);
+            }
+        }
+      }
+      else
+        {
+        vtkErrorMacro("Can't find " << n << "th colour node");
+        }
+    }
+  return 0;
 }

@@ -377,6 +377,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   const char *Eval (const char *script) {return (this->Script(script));};
   const char *Eval (const char *script, const char *args) {return (this->Script("%s %s", script, args));};
 
+  virtual vtkKWColorPickerDialog* GetColorPickerDialog();
+
  protected:
   vtkSlicerApplication ( );
   virtual ~vtkSlicerApplication ( );
@@ -463,6 +465,9 @@ private:
 
   int UseSplashScreen;
   int StereoEnabled;
+
+  // have we added the mrml color table nodes to the color picker dialog yet?
+  int ColorSwatchesAdded;
 }; 
 
 #endif

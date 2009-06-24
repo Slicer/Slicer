@@ -79,7 +79,11 @@ public:
     // Description:
     // Get methods on class members (no Set methods required)
     vtkGetObjectMacro ( LoadColorFileButton, vtkKWLoadSaveButtonWithLabel );
-    
+
+    // Description:
+    // Add Slicer mrml colour table nodes to the application's color picker dialog as swatches. Returns 1 on failure, 0 on success.
+    int AddLUTsToColorDialog();
+
 protected:
     vtkSlicerColorGUI ( );
     virtual ~vtkSlicerColorGUI ( );
