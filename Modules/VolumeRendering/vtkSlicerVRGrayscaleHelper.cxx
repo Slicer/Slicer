@@ -1197,6 +1197,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessGPURayCastInternalVolumeSize(int id)
         this->MapperGPURaycast->SetInternalVolumeSize(512);
         break;
     }
+    
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
 }
 
 void vtkSlicerVRGrayscaleHelper::ProcessRenderingMethodEvents(int id)
