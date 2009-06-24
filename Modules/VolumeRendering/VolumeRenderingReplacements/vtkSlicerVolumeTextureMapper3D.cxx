@@ -449,6 +449,11 @@ void vtkSlicerVolumeTextureMapper3DComputeGradients( T *dataPtr,
   aspect[1] = (double)spacing[1] * 2.0 / avgSpacing;
   aspect[2] = (double)spacing[2] * 2.0 / avgSpacing;
   
+  //avoid division inside for loop
+  aspect[0] = 1.0/aspect[0];
+  aspect[1] = 1.0/aspect[1];
+  aspect[2] = 1.0/aspect[2];
+  
   float               scale;
   scale = 255.0 / (0.25*(scalarRange[1] - scalarRange[0]));
 
@@ -576,9 +581,9 @@ void vtkSlicerVolumeTextureMapper3DComputeGradients( T *dataPtr,
         // Take care of the aspect ratio of the data
         // Scaling in the vtkVolume is isotropic, so this is the
         // only place we have to worry about non-isotropic scaling.
-        n[0] /= aspect[0];
-        n[1] /= aspect[1];
-        n[2] /= aspect[2];
+        n[0] *= aspect[0];
+        n[1] *= aspect[1];
+        n[2] *= aspect[2];
 
         // Compute the gradient magnitude
         t = sqrt( (double)( n[0]*n[0] + 
@@ -597,18 +602,19 @@ void vtkSlicerVolumeTextureMapper3DComputeGradients( T *dataPtr,
         // Normalize the gradient direction
         if ( t > zeroNormalThreshold )
           {
-          n[0] /= t;
-          n[1] /= t;
-          n[2] /= t;
+          float t_rev = 1.0/t;
+          n[0] *= t_rev;
+          n[1] *= t_rev;
+          n[2] *= t_rev;
           }
         else
           {
           n[0] = n[1] = n[2] = 0.0;
           }
 
-        int nx = static_cast<int>((n[0] / 2.0 + 0.5)*255.0 + 0.5);
-        int ny = static_cast<int>((n[1] / 2.0 + 0.5)*255.0 + 0.5);
-        int nz = static_cast<int>((n[2] / 2.0 + 0.5)*255.0 + 0.5);
+        int nx = static_cast<int>((n[0] * 0.5 + 0.5)*255.0 + 0.5);
+        int ny = static_cast<int>((n[1] * 0.5 + 0.5)*255.0 + 0.5);
+        int nz = static_cast<int>((n[2] * 0.5 + 0.5)*255.0 + 0.5);
 
         nx = (nx<0)?(0):(nx);
         ny = (ny<0)?(0):(ny);
