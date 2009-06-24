@@ -21,6 +21,8 @@ class vtkPointHandleRepresentation3D;
 class vtkLineRepresentation;
 class vtkAngleRepresentation3D;
 class vtkPolygonalSurfacePointPlacer;
+class vtkAffineWidget;
+class vtkAffineRepresentation2D;
 #endif
 class vtkSlicerNodeSelectorWidget;
 class VTK_MEASUREMENTS_EXPORT vtkMeasurementsGUI : public vtkSlicerModuleGUI
@@ -77,6 +79,9 @@ class VTK_MEASUREMENTS_EXPORT vtkMeasurementsGUI : public vtkSlicerModuleGUI
 //  vtkGetObjectMacro(DistanceWidget, vtkLineWidget2);
 //  vtkGetObjectMacro(AngleWidget, vtkAngleWidget);
 #endif
+  // Description:
+  // assign the mrml node that's selected in the TransformableNodeSelectorWidget to the TransformWidget to be manipulated via it's transform node 
+  void UpdateTransformableNode();
 
 protected:
   vtkMeasurementsGUI();
@@ -103,14 +108,27 @@ protected:
   vtkPointHandleRepresentation3D *AngleHandleRepresentation;
   vtkAngleRepresentation3D *AngleRepresentation;
   vtkAngleWidget *AngleWidget;
+
+  // Description
+  // transform widget
+  vtkAffineRepresentation2D *TransformRepresentation;
+  vtkAffineWidget *TransformWidget;
 #endif
 
   // Description:
-  // GUI elements
+  // Ruler GUI elements
   vtkKWCheckButton *RulerCheckButton;
   vtkSlicerNodeSelectorWidget* RulerModel1SelectorWidget;
   vtkSlicerNodeSelectorWidget* RulerModel2SelectorWidget;
+
+  // Description:
+  // Angle GUI elements
   vtkKWCheckButton *AngleCheckButton;
+
+  // Description:
+  // Transform GUI elements
+  vtkKWCheckButton *TransformCheckButton;
+  vtkSlicerNodeSelectorWidget* TransformableNodeSelectorWidget;
 };
 
 #endif
