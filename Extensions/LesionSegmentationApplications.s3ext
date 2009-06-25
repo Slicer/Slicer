@@ -1,0 +1,28 @@
+#
+# first token of each non-comment line is the keyword and the rest of the line 
+# (including spaces) is the value.
+# - the value can be blank
+#
+
+# scm is source code manager (i.e. svn)
+scm       cvs
+cvsroot   :pserver:anonymous:@www.nitrc.org:/cvsroot/lupuslesion
+cvsmodule lupuslesion
+
+# list dependencies 
+# - these should be names of other modules that have .s3ext files 
+# - the dependencies will be built first
+depends 
+
+# homepage
+homepage  http://www.nitrc.org/projects/lupuslesion/
+
+# match category in the xml description of the module (where it shows up in Modules menu)
+category  Segmentation
+
+# give people an idea what to expect from this code 
+# - is it just a test or something you stand beind?
+status    Beta
+
+# One line description of what the module does
+description Set of tools for segmenting lesions in the brains of lupus patients. 
