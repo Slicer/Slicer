@@ -262,7 +262,6 @@ void vtkSlicerColorGUI::BuildGUI ( )
   if (this->GetMRMLScene())
     {
       int numColorNodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLColorNode");
-      vtkWarningMacro("ColorGUI: going through " << numColorNodes << " to get descriptions");
       for (int n = 0; n < numColorNodes; n++)
         {
         vtkMRMLColorNode *cnode = vtkMRMLColorNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLColorNode"));
@@ -278,13 +277,9 @@ void vtkSlicerColorGUI::BuildGUI ( )
             {
             desc = std::string(cnode->GetDescription());
             }
-          app->Script("puts name = %s, desc = %s", name.c_str(), desc.c_str());
-          vtkWarningMacro("Color node name = " << name << ", desc = " << desc);
           nodeNamesDescriptions = nodeNamesDescriptions + name + std::string(": ") + desc + std::string("\n");
         }
       }
-      vtkWarningMacro("Got node descriptions:\n" << nodeNamesDescriptions.c_str());
-      app->Script("puts %s", nodeNamesDescriptions.c_str());
     }
   std::string helpString = std::string("The Color Module manages color look up tables.\n\nTables are used by mappers to translate between an integer and a colour value for display of models and volumes.\nSlicer supports three kinds of tables:\n1. Continuous scales, like the greyscale table.\n2. Parametric tables, defined by an equation, such as the FMRIPA table.\n3. Discrete tables, such as those read in from a file.\n\n\n**Load:**\nYou can specify a file from which to read color files using the View -> Application Settings window, Module Settings frame. The file format is a plain text file with the .txt extension. Each line in the file has:\nlabel\tname\tR\tG\tB\tA\nlabel is an integer, name a string, and RGBA are 0-255.\n\nUsers are only allowed to edit User type tables. Use the Edit frame to create a new color table, and save it to a file.\nTODO: allow copy from a standard one.\n\n") + nodeNamesDescriptions;
   const char *help = helpString.c_str();
