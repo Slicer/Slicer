@@ -27,7 +27,7 @@
 #ifndef __vtkSlicerGPURayCastVolumeTextureMapper3D_h
 #define __vtkSlicerGPURayCastVolumeTextureMapper3D_h
 
-#include "vtkSlicerVolumeTextureMapper3D.h"
+#include "vtkSlicerGPUVolumeTextureMapper3D.h"
 #include "vtkVolumeRenderingReplacements.h"
 
 #ifndef VTK_IMPLEMENT_MESA_CXX
@@ -38,10 +38,10 @@ class vtkMatrix4x4;
 class vtkRenderWindow;
 class vtkVolumeProperty;
 
-class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerGPURayCastVolumeTextureMapper3D : public vtkSlicerVolumeTextureMapper3D
+class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerGPURayCastVolumeTextureMapper3D : public vtkSlicerGPUVolumeTextureMapper3D
 {
 public:
-  vtkTypeRevisionMacro(vtkSlicerGPURayCastVolumeTextureMapper3D,vtkSlicerVolumeTextureMapper3D);
+  vtkTypeRevisionMacro(vtkSlicerGPURayCastVolumeTextureMapper3D,vtkSlicerGPUVolumeTextureMapper3D);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkSlicerGPURayCastVolumeTextureMapper3D *New();
@@ -52,6 +52,11 @@ public:
   // Default value: 1.0
   vtkSetMacro(GlobalAlpha, float);
   vtkGetMacro(GlobalAlpha, float);
+  
+  // Description:
+  // Depth peeling threshold
+  vtkSetMacro(DepthPeelingThreshold, float);
+  vtkGetMacro(DepthPeelingThreshold, float);
   
   // Description:
   // Enable/Disable Shading
@@ -143,6 +148,7 @@ protected:
   
   float            RaySteps;
   float            GlobalAlpha;
+  float            DepthPeelingThreshold;
   
   void Initialize();
   void InitializeRayCast();

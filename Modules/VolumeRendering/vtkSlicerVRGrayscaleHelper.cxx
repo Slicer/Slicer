@@ -1,5 +1,6 @@
 //Slicer
 #include "vtkSlicerVolumeTextureMapper3D.h"
+#include "vtkSlicerGPUVolumeTextureMapper3D.h"
 #include "vtkSlicerGPURayCastVolumeTextureMapper3D.h"
 #include "vtkSlicerFixedPointVolumeRayCastMapper.h"
 #include "vtkSlicerVRGrayscaleHelper.h"
@@ -319,6 +320,8 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingGUI *gui)
     this->SVP_VolumeProperty->ScalarOpacityUnitDistanceVisibilityOff ();
     this->SVP_VolumeProperty->SetDataSet(imageData);
     
+    this->SVP_VolumeProperty->InteractiveApplyModeOn ();
+    
     this->Histograms=vtkKWHistogramSet::New();
 
     //Add Histogram for image data
@@ -476,7 +479,11 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
         this->MapperGPURaycast = vtkSlicerGPURayCastVolumeTextureMapper3D::New();
         this->MapperGPURaycast->SetFramerate(this->SC_ExpectedFPS->GetValue());
         this->MapperGPURaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
-
+        
+        double scalarRange[2];
+        vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
+        this->MapperGPURaycast->SetDepthPeelingThreshold(scalarRange[0]);
+        
         //Also take care about Ray Cast
         this->MapperRaycast=vtkSlicerFixedPointVolumeRayCastMapper::New();
         this->MapperRaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
@@ -751,6 +758,13 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         if(callerObjectSC == this->SC_ExpectedFPS)
         {
             ProcessExpectedFPS();
+            return;
+        }
+        
+        if(callerObjectSC == this->SC_GPURayCastDepthPeelingThreshold)
+        {
+            this->MapperGPURaycast->SetDepthPeelingThreshold(this->SC_GPURayCastDepthPeelingThreshold->GetValue());
+            this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
             return;
         }
     }
@@ -1723,7 +1737,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->MB_GPURayCastInternalVolumeSize->SetLabelText("Internal Volume Size");
         this->MB_GPURayCastInternalVolumeSize->Create();
         this->MB_GPURayCastInternalVolumeSize->SetLabelWidth(labelWidth);
-        this->MB_GPURayCastInternalVolumeSize->SetBalloonHelpString("Select upper limit on internal volume size");
+        this->MB_GPURayCastInternalVolumeSize->SetBalloonHelpString("Set limit on internal volume size. Down sampling will be applied to volumes larger than size limit. By default the size limit is 256^3. For video cards with 1GB or more memory, it is safe to set 512^3 limit.");
         this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->AddRadioButton("256^3");
         this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastInternalVolumeSize 0");
         this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->AddRadioButton("512^3");
@@ -1732,6 +1746,20 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastInternalVolumeSize->GetWidgetName() );
         
         this->MB_GPURayCastInternalVolumeSize->GetWidget()->SetValue("256^3");
+        
+        //get scalar range 
+        double scalarRange[2];
+        vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
+        this->SC_GPURayCastDepthPeelingThreshold=vtkKWScale::New();
+        this->SC_GPURayCastDepthPeelingThreshold->SetParent(this->FrameGPURayCasting->GetFrame());
+        this->SC_GPURayCastDepthPeelingThreshold->Create();
+        this->SC_GPURayCastDepthPeelingThreshold->SetLabelText("Volumetric Depth Peeling Threshold");
+        this->SC_GPURayCastDepthPeelingThreshold->SetBalloonHelpString("Set threshold for volumetric depth peeling. Volume rendering starts after we have met scalar values higher than the threshold. Use with transfer functions together.");
+        this->SC_GPURayCastDepthPeelingThreshold->SetRange(scalarRange[0],scalarRange[1]); 
+        this->SC_GPURayCastDepthPeelingThreshold->SetResolution(1);
+        this->SC_GPURayCastDepthPeelingThreshold->SetValue(scalarRange[0]);
+        this->SC_GPURayCastDepthPeelingThreshold->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *) this->VolumeRenderingCallbackCommand);
+        this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SC_GPURayCastDepthPeelingThreshold->GetWidgetName() );
     }
     
     //opengl 2D Polygon Texture 3D

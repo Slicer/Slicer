@@ -352,7 +352,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupRayCastParameters(vtkRendere
   //ParaMatrix:                                                             
   //EyePos.x,      EyePos.y,      EyePos.z,     Step                        
   //VolBBoxLow.x,  VolBBoxLow.y,  VolBBoxLow.z, VolBBoxHigh.x               
-  //VolBBoxHigh.y, VolBBoxHigh.z, RenderMethod, N/A,                
+  //VolBBoxHigh.y, VolBBoxHigh.z, RenderMethod, DepthPeelingThreshold,                
   //N/A,           GlobalAlpha,   Debug,
   
   double modelViewMat[16];
@@ -423,7 +423,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupRayCastParameters(vtkRendere
       break;
     }
   
-  this->ParaMatrix[11] = 0.0f;
+  this->ParaMatrix[11] = ((this->DepthPeelingThreshold + this->ScalarOffset) * this->ScalarScale)/255.0f;
   this->ParaMatrix[12] = 0.0f;
   
   this->ParaMatrix[13] = GlobalAlpha;
@@ -1320,7 +1320,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShader()
         "//ParaMatrix:                                                                          \n"
         "//EyePos.x,      EyePos.y,      EyePos.z,     Step                                         \n"
         "//VolBBoxLow.x,  VolBBoxLow.y,  VolBBoxLow.z, VolBBoxHigh.x                            \n"
-        "//VolBBoxHigh.y, VolBBoxHigh.z, RenderMethod, N/A,                                 \n"
+        "//VolBBoxHigh.y, VolBBoxHigh.z, RenderMethod, DepthPeelingThreshold,                   \n"
         "//N/A,           GlobalAlpha,   Debug,                                                 \n"
         "                                                                                        \n"
         "vec4 computeRayEnd()                                                                   \n"
@@ -1439,8 +1439,16 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShader()
         "    vec4 pixelColor = vec4(0);                                                          \n"
         "    float alpha = 0.0;                                                                      \n"
         "    float t = 0.0;                                                                      \n"
-        "                                                                                        \n"
+        "    float depthPeeling = ParaMatrix[2][3];                                                  \n"
         "    {                                                                                       \n"
+        "        while( t < rayLen)                                                                \n"
+        "        {                                                                                  \n"
+        "           vec4 nextColor = voxelColor(nextRayOrigin);                                    \n"
+        "           if ( nextColor.w > depthPeeling )                                                  \n"
+        "               break;                                                                        \n"
+        "           t += ParaMatrix[0][3];                                                      \n"
+        "           nextRayOrigin += rayStep;                                                       \n"
+        "        }                                                                                 \n"
         "        while( (t < rayLen) && (alpha < 1.0) )                                          \n"
         "        {                                                                                   \n"
         "            vec4 nextColor = voxelColor(nextRayOrigin);                                     \n"
@@ -1498,7 +1506,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShader()
         "//ParaMatrix:                                                                          \n"
         "//EyePos.x,      EyePos.y,      EyePos.z,     Step                                         \n"
         "//VolBBoxLow.x,  VolBBoxLow.y,  VolBBoxLow.z, VolBBoxHigh.x                            \n"
-        "//VolBBoxHigh.y, VolBBoxHigh.z, RenderMethod, Shading,                                 \n"
+        "//VolBBoxHigh.y, VolBBoxHigh.z, RenderMethod, DepthPeelingThreshold,                     \n"
         "//MIP,           GlobalAlpha,   Debug,                                                 \n"
         "                                                                                        \n"
         "vec4 computeRayEnd()                                                                   \n"
@@ -1655,8 +1663,17 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShader()
         "    float alpha = 0.0;                                                                      \n"
         "    float t = 0.0;                                                                      \n"
         "    vec3  lightDir = normalize( gl_LightSource[0].position.xyz );                     \n"
+        "    float depthPeeling = ParaMatrix[2][3];                                                  \n"
         "                                                                                        \n"
         "    {                                                                                       \n"
+        "        while( t < rayLen)                                                                \n"
+        "        {                                                                                  \n"
+        "           vec4 nextColor = voxelColor(nextRayOrigin);                                    \n"
+        "           if ( nextColor.w > depthPeeling )                                                  \n"
+        "               break;                                                                        \n"
+        "           t += ParaMatrix[0][3];                                                      \n"
+        "           nextRayOrigin += rayStep;                                                       \n"
+        "        }                                                                                 \n"
         "        while( (t < rayLen) && (alpha < 1.0) )                                          \n"
         "        {                                                                                   \n"
         "            vec4 nextColor = voxelColor(nextRayOrigin);                                     \n"
