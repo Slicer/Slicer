@@ -82,10 +82,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerColorLogic : public vtkSlicerLogic
   const char * GetDefaultModelColorNodeID();
 
   // Description:
-  // return a default colour node id for a freesurfer surface label map
-  const char * GetDefaultFreeSurferSurfaceLabelsColorNodeID();
-
-  // Description:
   // return a default color node id for a procedural color node
   char * GetDefaultProceduralColorNodeID(const char *name);
 
