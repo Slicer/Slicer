@@ -308,7 +308,7 @@ proc QueryAtlasAddAnnotations {} {
     if {$retval == 6} {
         error "ERROR: no internal colour table, using default"
         # use the default colour node
-        [$modelNode GetDisplayNode] SetAndObserveColorNodeID [$colorLogic GetDefaultFreeSurferSurfaceLabelsColorNodeID]
+        [$modelNode GetDisplayNode] SetAndObserveColorNodeID [$colorLogic GetDefaultFreeSurferLabelMapColorNodeID]
         set lutNode [[$modelNode GetDisplayNode] GetColorNode]
         # get the names 
         for {set i 0} {$i < [$lutNode GetNumberOfColors]} {incr i} {

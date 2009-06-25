@@ -730,7 +730,7 @@ proc QueryAtlasAddAnnotations {LHAnnoFileName RHAnnoFileName } {
                     error "ERROR: no internal colour table, using default"
                     # use the default colour node
                     set colorLogic [$::slicer3::ColorGUI GetLogic]                
-                    [$modelNode GetDisplayNode] SetAndObserveColorNodeID [$colorLogic GetDefaultFreeSurferSurfaceLabelsColorNodeID]
+                    [$modelNode GetDisplayNode] SetAndObserveColorNodeID [$colorLogic GetDefaultFreeSurferLabelsMapColorNodeID]
                     set lutNode [[$modelNode GetDisplayNode] GetColorNode]
                     # get the names 
                     for {set i 0} {$i < [$lutNode GetNumberOfColors]} {incr i} {
