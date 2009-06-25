@@ -83,7 +83,6 @@ public:
   void SetTypeToRedGreen();
   void SetTypeToGreenRed();
   void SetTypeToLabels();
-  void SetTypeToSurfaceLabels();
   void SetTypeToCustom();
   
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
@@ -99,8 +98,6 @@ public:
   // GreenRed - reversed RedGreen
   // Labels - info not held in this node, used for creating ids when read
   // labels file into a vtkMRMLColorTableNode
-  // SurfaceLabels - info not held in this node, used for creating ids when
-  // read surface labesl file into a vtkMRMLColorTableNode
   enum
   {
     Heat = 1,
@@ -109,8 +106,7 @@ public:
     RedGreen = 4,
     GreenRed = 5,
     Labels = 6,
-    SurfaceLabels = 7,
-    Custom = 8,
+    Custom = 7,
   };
   //ETX
 
@@ -141,11 +137,7 @@ public:
   // default file name for freesurfer labels
   vtkGetStringMacro(LabelsFileName);
   vtkSetStringMacro(LabelsFileName);
-  // Description:
-  // default file name for freesurfer surface labels
-  vtkGetStringMacro(SurfaceLabelsFileName);
-  vtkSetStringMacro(SurfaceLabelsFileName);
-  
+
 protected:
   vtkMRMLFreeSurferProceduralColorNode();
   ~vtkMRMLFreeSurferProceduralColorNode();
@@ -162,7 +154,6 @@ protected:
   vtkFSLookupTable *LookupTable;
 
   char *LabelsFileName;
-  char *SurfaceLabelsFileName;
 };
 
 #endif

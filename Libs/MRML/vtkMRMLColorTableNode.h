@@ -82,7 +82,6 @@ public:
   void SetTypeToFMRI();
   void SetTypeToFMRIPA();
   void SetTypeToLabels();
-  void SetTypeToSPLBrainAtlas();
   void SetTypeToRandom();
   void SetTypeToUser();
   void SetTypeToFile();
@@ -128,7 +127,6 @@ public:
   // FMRI - fMRI map
   // FMRIPA - fMRI Positive Activation map
   // Labels - the Slicer2 FullRainbow editor labels
-  // SPLBrainAtlas - the SPL Brain atlas labels
   // Random - 255 random colors
   // User - user defined in the GUI
   // File - read in from file
@@ -161,7 +159,6 @@ public:
       FMRI = 8,
       FMRIPA = 9,
       Labels = 10,
-      SPLBrainAtlas = 11,
       Random = 12,
       User = 13,
       File = 14,

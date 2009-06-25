@@ -59,7 +59,6 @@ vtkMRMLFreeSurferProceduralColorNode::vtkMRMLFreeSurferProceduralColorNode()
   this->LookupTable = NULL;
   this->HideFromEditors = 1;
   this->LabelsFileName = NULL;
-  this->SurfaceLabelsFileName = NULL;
 
   // get the home directory and the colour file in the freesurfer lib dir
   vtksys_stl::string slicerHome;
@@ -86,11 +85,6 @@ vtkMRMLFreeSurferProceduralColorNode::vtkMRMLFreeSurferProceduralColorNode()
   vtksys_stl::string colorFileName = vtksys::SystemTools::JoinPath(filesVector);
   this->SetLabelsFileName(colorFileName.c_str());
 
-  filesVector.pop_back();
-  filesVector.push_back("share/FreeSurfer/Simple_surface_labels2002.txt");
-  colorFileName = vtksys::SystemTools::JoinPath(filesVector);
-  this->SetSurfaceLabelsFileName(colorFileName.c_str());
-  
   //this->DebugOn();
 }
 
@@ -105,10 +99,6 @@ vtkMRMLFreeSurferProceduralColorNode::~vtkMRMLFreeSurferProceduralColorNode()
   if (this->LabelsFileName)
     {
     delete [] this->LabelsFileName;
-    }
-  if (this->SurfaceLabelsFileName)
-    {
-    delete [] this->SurfaceLabelsFileName;
     }
 }
 
@@ -321,10 +311,6 @@ void vtkMRMLFreeSurferProceduralColorNode::PrintSelf(ostream& os, vtkIndent inde
     {
     os << indent << "Volume label map color file: " << this->GetLabelsFileName() << endl;
     }
-  if (this->SurfaceLabelsFileName)
-    {
-    os << indent << "Surface label map color file: " << this->GetSurfaceLabelsFileName() << endl;
-    }
 }
 
 //-----------------------------------------------------------
@@ -386,12 +372,6 @@ void vtkMRMLFreeSurferProceduralColorNode::SetTypeToLabels()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLFreeSurferProceduralColorNode::SetTypeToSurfaceLabels()
-{
-  this->SetType(this->SurfaceLabels);
-}
-
-//----------------------------------------------------------------------------
 void vtkMRMLFreeSurferProceduralColorNode::SetTypeToCustom()
 {
   this->SetType(this->Custom);
@@ -423,10 +403,6 @@ const char* vtkMRMLFreeSurferProceduralColorNode::GetTypeAsString()
   if (this->Type == this->Labels)
     {
     return "Labels";
-    }
-  if (this->Type == this->SurfaceLabels)
-    {
-    return "SurfaceLabels";
     }
   if (this->Type == this->Custom)
     {
@@ -462,10 +438,6 @@ const char* vtkMRMLFreeSurferProceduralColorNode::GetTypeAsIDString()
   if (this->Type == this->Labels)
     {
     return "vtkMRMLFreeSurferColorNodeLabels";
-    }
-  if (this->Type == this->SurfaceLabels)
-    {
-    return "vtkMRMLFreeSurferColorNodeSurfaceLabels";
     }
   // custom will have a unique id
   return "(unknown)";
@@ -525,31 +497,35 @@ void vtkMRMLFreeSurferProceduralColorNode::SetType(int type)
       {
       this->GetFSLookupTable()->SetLutTypeToHeat();    
       this->SetNamesFromColors();
+      this->SetDescription("The Heat FreeSurfer colour table, shows hot spots with high activation");
       }
     else if (this->Type == this->BlueRed)
       {
       this->GetFSLookupTable()->SetLutTypeToBlueRed();
       this->SetNamesFromColors();
+      this->SetDescription("A FreeSurfer color scale, 256 colours, from blue to red");
       }
 
     else if (this->Type == this->RedBlue)
       {
       this->GetFSLookupTable()->SetLutTypeToRedBlue();     
       this->SetNamesFromColors();
+      this->SetDescription("A FreeSurfer color scale, 256 colours, from red to blue");
       }
 
     else if (this->Type == this->RedGreen)
       {
       this->GetFSLookupTable()->SetLutTypeToRedGreen();
       this->SetNamesFromColors();
+      this->SetDescription("A FreeSurfer color scale, 256 colours, from red to green, used to highlight sulcal curvature");
       }
     else if (this->Type == this->GreenRed)
       {
       this->GetFSLookupTable()->SetLutTypeToGreenRed();
       this->SetNamesFromColors();
+      this->SetDescription("A FreeSurfer color scale, 256 colours, from green to red, used to highlight sulcal curvature");
       }
     else if (this->Type == this->Labels ||
-             this->Type == this->SurfaceLabels ||
              this->Type == this->Custom)
       {
       // do nothing
