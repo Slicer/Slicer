@@ -1,0 +1,13 @@
+
+scm       svn
+svnpath   http://svn.na-mic.org/NAMICSandBox/trunk/BrainTissueClassification
+
+depends
+
+homepage  http://www.slicer.org
+
+category  Segmentation
+
+status    Alpha
+
+description Skull sttipping for T1 weighted MR images.
