@@ -30,6 +30,7 @@ vtkSlicerScalarVolumeDisplayWidget::vtkSlicerScalarVolumeDisplayWidget ( )
     this->ColorSelectorWidget = NULL;
     this->WindowLevelThresholdEditor = NULL;
     this->InterpolateButton = NULL;
+    this->UpdateDsiplayOnLoadButton = NULL;
     this->UpdatingMRML = 0;
     this->UpdatingWidget = 0;
 }
@@ -60,6 +61,12 @@ vtkSlicerScalarVolumeDisplayWidget::~vtkSlicerScalarVolumeDisplayWidget ( )
     this->InterpolateButton->SetParent(NULL);
     this->InterpolateButton->Delete();
     this->InterpolateButton = NULL;
+    }
+  if (this->UpdateDsiplayOnLoadButton)
+    {
+    this->UpdateDsiplayOnLoadButton->SetParent(NULL);
+    this->UpdateDsiplayOnLoadButton->Delete();
+    this->UpdateDsiplayOnLoadButton = NULL;
     }
 
   this->SetMRMLScene ( NULL );
@@ -296,6 +303,7 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
     return;
     }
 
+
   this->UpdatingMRML = 1;
 
   vtkMRMLVolumeNode *curVolumeNode = this->GetVolumeNode();
@@ -348,7 +356,12 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
 void vtkSlicerScalarVolumeDisplayWidget::UpdateWidgetFromMRML ()
 {
   vtkDebugMacro("UpdateWidgetFromMRML");
-  
+
+  if (this->UpdateDsiplayOnLoadButton->GetSelectedState() == 0)
+    {
+    return;
+    }
+
   vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
   if (volumeNode != NULL && this->WindowLevelThresholdEditor)
     {
@@ -499,6 +512,17 @@ void vtkSlicerScalarVolumeDisplayWidget::CreateWidget ( )
       }
     this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                   this->WindowLevelThresholdEditor->GetWidgetName() );
+
+    this->UpdateDsiplayOnLoadButton = vtkKWCheckButton::New();
+    this->UpdateDsiplayOnLoadButton->SetParent(volDisplayFrame);
+    this->UpdateDsiplayOnLoadButton->Create();
+    this->UpdateDsiplayOnLoadButton->SelectedStateOn();
+    this->UpdateDsiplayOnLoadButton->SetText("Update Dsiplay On Load");
+    this->UpdateDsiplayOnLoadButton->SetSelectedState(1);
+    this->Script(
+      "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+      this->UpdateDsiplayOnLoadButton->GetWidgetName());
+
 
    this->AddWidgetObservers();
     if (this->MRMLScene != NULL)
