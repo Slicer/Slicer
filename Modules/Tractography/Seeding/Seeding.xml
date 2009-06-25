@@ -179,6 +179,20 @@
 	<maximum>10</maximum>
 	<step>0.1</step>
       </constraints>
+    </double> 
+ 	
+    <double>
+      <name>IntegrationStepLength</name>
+      <label>Integration Step Length(mm)</label>
+      <description>Distance between points on the same fiber in mm</description>
+      <flag>-i</flag>
+      <longflag>--integrationsteplength</longflag>
+      <default>0.5</default>
+      <constraints>
+        <minimum>0.0</minimum>
+	<maximum>10</maximum>
+	<step>0.1</step>
+      </constraints>
     </double>  	
       
   </parameters>

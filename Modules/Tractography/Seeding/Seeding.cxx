@@ -229,7 +229,8 @@ int main( int argc, const char * argv[] )
   streamer->SetStoppingThreshold(StoppingValue);
   streamer->SetMaximumPropagationDistance(MaximumLength);
   streamer->SetRadiusOfCurvature(StoppingCurvature);
-  
+  streamer->SetIntegrationStepLength(IntegrationStepLength);
+
   // Temp fix to provide a scalar
   //seed->GetInputTensorField()->GetPointData()->SetScalars(math->GetOutput()->GetPointData()->GetScalars());
 
