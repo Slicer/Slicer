@@ -1,0 +1,7 @@
+
+scm       svn
+svnpath   https://www.nitrc.org/svn/multimodereg
+name      BRAINSFit
+cmakeproject      BRAINSFit
+svnusername slicerbot
+svnpassword slicer
