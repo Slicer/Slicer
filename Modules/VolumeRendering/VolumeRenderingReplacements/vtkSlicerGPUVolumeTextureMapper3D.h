@@ -105,9 +105,9 @@ protected:
   
   float                     Framerate;
   
-  unsigned char            *Volume1;
-  unsigned char            *Volume2;
-  unsigned char            *Volume3;
+  unsigned short            *Volume1;
+  unsigned short            *Volume2;
+  unsigned short            *Volume3;
   int                       VolumeSize;
   int                       VolumeComponents;
   int                       VolumeDimensions[3];
@@ -123,16 +123,11 @@ protected:
   int                       SavedColorChannels;
   float                     SavedScalarOpacityDistance;
   
-  unsigned char             ColorLookup[65536*4];
-  unsigned char             AlphaLookup[65536];
+  unsigned char             ColorLookup[524228*4];//2048*256: using 2048 color lookup table
+  unsigned char             AlphaLookup[524228];
   float                     TempArray1[3*4096];
   float                     TempArray2[4096];
   int                       ColorTableSize;
-  float                     ColorTableScale;
-  float                     ColorTableOffset; 
-
-  unsigned char             DiffuseLookup[65536*4];
-  unsigned char             SpecularLookup[65536*4];
   
   vtkTimeStamp              SavedTextureMTime;
   vtkTimeStamp              SavedParametersMTime;

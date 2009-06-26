@@ -423,7 +423,8 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupRayCastParameters(vtkRendere
       break;
     }
   
-  this->ParaMatrix[11] = ((this->DepthPeelingThreshold + this->ScalarOffset) * this->ScalarScale)/255.0f;
+  //scalar range is 0 ~ 2048, mapping to 0 ~ 65535 since we are using unsigned short
+  this->ParaMatrix[11] = ((this->DepthPeelingThreshold + this->ScalarOffset) * this->ScalarScale * 32)/65535.0f;
   this->ParaMatrix[12] = 0.0f;
   
   this->ParaMatrix[13] = GlobalAlpha;
@@ -562,16 +563,16 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupOneIndependentTextures( vtkR
     this->DeleteTextureIndex(&this->Volume1Index);
     this->CreateTextureIndex(&this->Volume1Index);
     glBindTexture(vtkgl::TEXTURE_3D, this->Volume1Index);
-    vtkgl::TexImage3D( vtkgl::TEXTURE_3D, 0, GL_LUMINANCE8_ALPHA8, dim[0], dim[1], dim[2], 0,
-               GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, this->Volume1 );
+    vtkgl::TexImage3D( vtkgl::TEXTURE_3D, 0, GL_LUMINANCE16_ALPHA16, dim[0], dim[1], dim[2], 0,
+               GL_LUMINANCE_ALPHA, GL_UNSIGNED_SHORT, this->Volume1 );
     
 
     vtkgl::ActiveTexture( vtkgl::TEXTURE5 );
     this->DeleteTextureIndex(&this->Volume2Index);
     this->CreateTextureIndex(&this->Volume2Index);
     glBindTexture(vtkgl::TEXTURE_3D, this->Volume2Index);
-    vtkgl::TexImage3D( vtkgl::TEXTURE_3D, 0, GL_RGBA8, dim[0], dim[1], dim[2], 0,
-               GL_RGB, GL_UNSIGNED_BYTE, this->Volume2 );
+    vtkgl::TexImage3D( vtkgl::TEXTURE_3D, 0, GL_RGBA16, dim[0], dim[1], dim[2], 0,
+               GL_RGB, GL_UNSIGNED_SHORT, this->Volume2 );
     }
   
   vtkgl::ActiveTexture( vtkgl::TEXTURE7 );
@@ -599,7 +600,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupOneIndependentTextures( vtkR
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
 
-    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, 256, 256, 0,
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, 2048, 256, 0,
           GL_RGBA, GL_UNSIGNED_BYTE, this->ColorLookup );    
     }
   
@@ -635,16 +636,16 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupTwoDependentTextures(
     this->DeleteTextureIndex(&this->Volume1Index);
     this->CreateTextureIndex(&this->Volume1Index);
     glBindTexture(vtkgl::TEXTURE_3D, this->Volume1Index);
-    vtkgl::TexImage3D(vtkgl::TEXTURE_3D, 0, GL_RGB8, dim[0], dim[1], dim[2], 0,
-              GL_RGB, GL_UNSIGNED_BYTE, this->Volume1 );
+    vtkgl::TexImage3D(vtkgl::TEXTURE_3D, 0, GL_RGB16, dim[0], dim[1], dim[2], 0,
+              GL_RGB, GL_UNSIGNED_SHORT, this->Volume1 );
     
     vtkgl::ActiveTexture( vtkgl::TEXTURE5 );
     glBindTexture(vtkgl::TEXTURE_3D,0);
     this->DeleteTextureIndex(&this->Volume2Index);
     this->CreateTextureIndex(&this->Volume2Index);
     glBindTexture(vtkgl::TEXTURE_3D, this->Volume2Index);
-    vtkgl::TexImage3D(vtkgl::TEXTURE_3D,0, GL_RGBA8, dim[0], dim[1], dim[2], 0,
-               GL_RGB, GL_UNSIGNED_BYTE, this->Volume2 );
+    vtkgl::TexImage3D(vtkgl::TEXTURE_3D,0, GL_RGBA16, dim[0], dim[1], dim[2], 0,
+               GL_RGB, GL_UNSIGNED_SHORT, this->Volume2 );
     }
   
   vtkgl::ActiveTexture( vtkgl::TEXTURE7 );
@@ -671,7 +672,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupTwoDependentTextures(
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
 
-    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB8, 256, 256, 0,
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB8, 2048, 256, 0,
           GL_RGB, GL_UNSIGNED_BYTE, this->ColorLookup );    
       
     vtkgl::ActiveTexture( vtkgl::TEXTURE4 );
@@ -685,7 +686,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupTwoDependentTextures(
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
 
-    glTexImage2D( GL_TEXTURE_2D, 0, GL_ALPHA8, 256, 256, 0,
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_ALPHA8, 2048, 256, 0,
           GL_ALPHA, GL_UNSIGNED_BYTE, this->AlphaLookup );      
     }
   
@@ -727,16 +728,16 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupFourDependentTextures(
     this->DeleteTextureIndex(&this->Volume1Index);
     this->CreateTextureIndex(&this->Volume1Index);
     glBindTexture(vtkgl::TEXTURE_3D, this->Volume1Index);
-    vtkgl::TexImage3D(vtkgl::TEXTURE_3D, 0, GL_RGB8, dim[0], dim[1], dim[2], 0,
-              GL_RGB, GL_UNSIGNED_BYTE, this->Volume1 );
+    vtkgl::TexImage3D(vtkgl::TEXTURE_3D, 0, GL_RGB16, dim[0], dim[1], dim[2], 0,
+              GL_RGB, GL_UNSIGNED_SHORT, this->Volume1 );
 
     vtkgl::ActiveTexture( vtkgl::TEXTURE6 );
     glBindTexture(vtkgl::TEXTURE_3D,0);
     this->DeleteTextureIndex(&this->Volume2Index);
     this->CreateTextureIndex(&this->Volume2Index);
     glBindTexture(vtkgl::TEXTURE_3D, this->Volume2Index);   
-    vtkgl::TexImage3D(vtkgl::TEXTURE_3D,0,GL_LUMINANCE8_ALPHA8,dim[0],dim[1],
-              dim[2], 0,GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE,
+    vtkgl::TexImage3D(vtkgl::TEXTURE_3D,0,GL_LUMINANCE16_ALPHA16,dim[0],dim[1],
+              dim[2], 0,GL_LUMINANCE_ALPHA, GL_UNSIGNED_SHORT,
               this->Volume2 );
 
     vtkgl::ActiveTexture( vtkgl::TEXTURE5 );
@@ -744,8 +745,8 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupFourDependentTextures(
     this->DeleteTextureIndex(&this->Volume3Index);
     this->CreateTextureIndex(&this->Volume3Index);
     glBindTexture(vtkgl::TEXTURE_3D, this->Volume3Index);
-    vtkgl::TexImage3D( vtkgl::TEXTURE_3D,0, GL_RGB8, dim[0], dim[1], dim[2], 0,
-               GL_RGB, GL_UNSIGNED_BYTE, this->Volume3 );
+    vtkgl::TexImage3D( vtkgl::TEXTURE_3D,0, GL_RGB16, dim[0], dim[1], dim[2], 0,
+               GL_RGB, GL_UNSIGNED_SHORT, this->Volume3 );
     }
   
   vtkgl::ActiveTexture( vtkgl::TEXTURE7 );
@@ -777,7 +778,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupFourDependentTextures(
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
 
-    glTexImage2D( GL_TEXTURE_2D, 0, GL_ALPHA8, 256, 256, 0,
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_ALPHA8, 2048, 256, 0,
           GL_ALPHA, GL_UNSIGNED_BYTE, this->AlphaLookup );      
     }
 
@@ -1444,7 +1445,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShader()
         "        while( t < rayLen)                                                                \n"
         "        {                                                                                  \n"
         "           vec4 nextColor = voxelColor(nextRayOrigin);                                    \n"
-        "           if ( nextColor.w > depthPeeling )                                                  \n"
+        "           if ( nextColor.w >= depthPeeling )                                                  \n"
         "               break;                                                                        \n"
         "           t += ParaMatrix[0][3];                                                      \n"
         "           nextRayOrigin += rayStep;                                                       \n"
@@ -1669,7 +1670,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShader()
         "        while( t < rayLen)                                                                \n"
         "        {                                                                                  \n"
         "           vec4 nextColor = voxelColor(nextRayOrigin);                                    \n"
-        "           if ( nextColor.w > depthPeeling )                                                  \n"
+        "           if ( nextColor.w >= depthPeeling )                                                  \n"
         "               break;                                                                        \n"
         "           t += ParaMatrix[0][3];                                                      \n"
         "           nextRayOrigin += rayStep;                                                       \n"
