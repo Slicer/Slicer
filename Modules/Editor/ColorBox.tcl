@@ -78,8 +78,8 @@ itcl::body ColorBox::create { } {
 
 
   $this update
-  set node [$this getColorNode]
-  if { $node == "" } {
+  set colorNode [$this getColorNode]
+  if { $colorNode == "" } {
     set o(colors) [vtkNew vtkKWPushButton]
     $o(colors) SetParent $o(toplevel)
     $o(colors) SetText "Cannot display colors.\nNo label layer is selected."
@@ -90,15 +90,12 @@ itcl::body ColorBox::create { } {
 
   } else {
 
-    # TODO: this doesn't pay attention tot he color!
+    # pay attention to the color node
     set o(colors) [vtkNew vtkSlicerColorDisplayWidget]
     $o(colors) SetParent $o(toplevel)
     $o(colors) SetMRMLScene $::slicer3::MRMLScene
     $o(colors) Create
-    set colorNode [vtkMRMLColorTableNode New]
-    $colorNode SetTypeToLabels
-    $o(colors) SetColorNode [$::slicer3::MRMLScene GetNodeByID [$colorNode GetTypeAsIDString]]
-    $colorNode Delete
+    $o(colors) SetColorNode $colorNode 
 
     set tag [$o(colors) AddObserver AnyEvent "::Box::ProtectedCallback $this processEvent $o(colors)"]
     lappend _observerRecords [list $o(colors) $tag]
