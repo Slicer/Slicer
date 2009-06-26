@@ -410,6 +410,8 @@ int vtkSlicerColorGUI::AddLUTsToColorDialog()
       vtkErrorMacro("AddLUTsToPicker: mrml scene not set yet");
       return 1;
     }
+  // remove the collections that are there now
+  swatches->RemoveAllCollections();
   // loop over all the colour table nodes in the scene and add them as collections
   int numNodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLColorTableNode");
   for (int n = 0; n < numNodes; n++)
