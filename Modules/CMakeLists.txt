@@ -41,6 +41,7 @@ endif(GenerateLM_FOUND)
 #   - ScriptedModule (at run-time for its Tcl package)
 
 subdirs(
+  MRIBiasFieldCorrection
    CommandLineModule
    Editor
    GradientAnisotropicDiffusionFilter
@@ -106,6 +107,6 @@ endif(Slicer3_USE_OPENIGTLINK)
 ## DEAMON_DEBUG
 
 if(Slicer3_BUILD_TESTING)
-#  subdirs(Testing)
+  subdirs(Testing)
 endif(Slicer3_BUILD_TESTING)
 
