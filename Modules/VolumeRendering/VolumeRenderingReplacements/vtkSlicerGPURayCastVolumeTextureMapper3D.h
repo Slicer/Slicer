@@ -172,8 +172,24 @@ protected:
   
   // mip ray casting
   void LoadNoShadingFragmentShaderMIP();//lighting in MIP could be bad, so no shading here
-  void LoadNoShadingFragmentShaderMIMIP();//lighting in MIP could be bad, so no shading here
+  void LoadNoShadingFragmentShaderMINIP();//lighting in MIP could be bad, so no shading here
+
+  // regular ray casting
+  void LoadFragmentShaderTwo();
+  void LoadNoShadingFragmentShaderTwo();
   
+  // mip ray casting
+  void LoadNoShadingFragmentShaderMIPTwo();//lighting in MIP could be bad, so no shading here
+  void LoadNoShadingFragmentShaderMINIPTwo();//lighting in MIP could be bad, so no shading here
+  
+  // regular ray casting
+  void LoadFragmentShaderFour();
+  void LoadNoShadingFragmentShaderFour();
+  
+  // mip ray casting
+  void LoadNoShadingFragmentShaderMIPFour();//lighting in MIP could be bad, so no shading here
+  void LoadNoShadingFragmentShaderMINIPFour();//lighting in MIP could be bad, so no shading here
+    
   void LoadRayCastProgram();
 
   void AdaptivePerformanceControl();  
