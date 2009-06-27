@@ -423,7 +423,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupRayCastParameters(vtkRendere
       break;
     }
   
-  //scalar range is 0 ~ 2048, mapping to 0 ~ 65535 since we are using unsigned short
+  //scalar range is 0 ~ 255
   this->ParaMatrix[11] = ((this->DepthPeelingThreshold + this->ScalarOffset) * this->ScalarScale )/255.0f;
   this->ParaMatrix[12] = 0.0f;
   
@@ -1444,8 +1444,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShader()
         "    {                                                                                       \n"
         "        while( t < rayLen)                                                                \n"
         "        {                                                                                  \n"
-        "           vec4 nextColor = voxelColor(nextRayOrigin);                                    \n"
-        "           if ( nextColor.w >= depthPeeling )                                                  \n"
+        "           if ( voxelScalar(nextRayOrigin) >= depthPeeling )                           \n"
         "               break;                                                                        \n"
         "           t += ParaMatrix[0][3];                                                      \n"
         "           nextRayOrigin += rayStep;                                                       \n"
@@ -1455,9 +1454,12 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShader()
         "            vec4 nextColor = voxelColor(nextRayOrigin);                                     \n"
         "            float tempAlpha = nextColor.w;                                              \n"
         "                                                                                           \n"
-        "            tempAlpha = (1.0-alpha)*tempAlpha;                                              \n"
-        "            pixelColor += nextColor*tempAlpha;                                              \n"
-        "            alpha += tempAlpha;                                                             \n"
+        "            if (tempAlpha > 0.0)                                                           \n"
+        "            {                                                                              \n"
+        "               tempAlpha = (1.0-alpha)*tempAlpha;                                              \n"
+        "               pixelColor += nextColor*tempAlpha;                                              \n"
+        "               alpha += tempAlpha;                                                             \n"
+        "             }                                                                             \n"
         "                                                                                     \n"
         "            t += ParaMatrix[0][3];                                                      \n"
         "            nextRayOrigin += rayStep;                                                       \n"
@@ -1669,8 +1671,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShader()
         "    {                                                                                       \n"
         "        while( t < rayLen)                                                                \n"
         "        {                                                                                  \n"
-        "           vec4 nextColor = voxelColor(nextRayOrigin);                                    \n"
-        "           if ( nextColor.w >= depthPeeling )                                                  \n"
+        "           if ( voxelScalar(nextRayOrigin) >= depthPeeling )                                                  \n"
         "               break;                                                                        \n"
         "           t += ParaMatrix[0][3];                                                      \n"
         "           nextRayOrigin += rayStep;                                                       \n"
@@ -1680,12 +1681,15 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShader()
         "            vec4 nextColor = voxelColor(nextRayOrigin);                                     \n"
         "            float tempAlpha = nextColor.w;                                              \n"
         "                                                                                        \n"
-        "            nextColor *= directionalLight(nextRayOrigin, lightDir);                                \n"
-        "                                                                                        \n"      
-        "            tempAlpha = (1.0-alpha)*tempAlpha;                                              \n"
-        "            pixelColor += nextColor*tempAlpha;                                              \n"
-        "            alpha += tempAlpha;                                                             \n"
-        "                                                                                     \n"
+        "            if (tempAlpha > 0.0)                                                           \n"
+        "            {                                                                              \n"
+        "               nextColor *= directionalLight(nextRayOrigin, lightDir);                      \n"
+        "                                                                                              \n"      
+        "               tempAlpha = (1.0-alpha)*tempAlpha;                                              \n"
+        "               pixelColor += nextColor*tempAlpha;                                              \n"
+        "               alpha += tempAlpha;                                                             \n"
+        "            }                                                                               \n"
+        "                                                                                           \n"
         "            t += ParaMatrix[0][3];                                                      \n"
         "            nextRayOrigin += rayStep;                                                       \n"
         "        }                                                                                   \n"
