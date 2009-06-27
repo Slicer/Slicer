@@ -100,6 +100,10 @@ public:
     void ProcessRenderingMethodEvents(int id);
 
     // Description:
+    // Callback, that is processed when the GPU ray casting rendering technique is changed
+    void ProcessGPURayCastTechnique(int id);
+    
+    // Description:
     // Callback, that is processed when the GPU ray cast mapper internal volume size changed
     void ProcessGPURayCastInternalVolumeSize(int id);
     
@@ -264,21 +268,15 @@ protected:
     // Description:
     // Enable/Disable shading in CUDA Ray Cast Mapping
     vtkKWCheckButtonWithLabel *CB_CUDARayCastShading;
-
-    // Description:
-    // Enable/Disable MIP GPU Ray Cast Mapping
-    vtkKWCheckButtonWithLabel *CB_GPURayCastMIP;
-
-    // Description:
-    // Enable/Disable shading in GPU Ray Cast Mapping
-    // some graphics card may have problem to access more than one 3D texture 
-    // in shader program so it would be safe to turn off shading by default
-    vtkKWCheckButtonWithLabel *CB_GPURayCastShading;
     
     // Description:
     // Menu button to select internal volume size
     vtkKWMenuButtonWithLabel *MB_GPURayCastInternalVolumeSize;
-    
+
+    // Description:
+    // Menu button to select rendering technique
+    vtkKWMenuButtonWithLabel *MB_GPURayCastTechnique;
+        
     // Description:
     // Enable/Disable CPU ray cast MIP rendering
     vtkKWCheckButtonWithLabel *CB_CPURayCastMIP;

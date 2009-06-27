@@ -78,9 +78,9 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     
     //GUI:
     this->CB_CUDARayCastShading=NULL;
-    this->CB_GPURayCastMIP=NULL;
-    this->CB_GPURayCastShading=NULL;
     
+    this->MB_GPURayCastTechnique=NULL;
+    this->SC_GPURayCastDepthPeelingThreshold=NULL;
     this->MB_GPURayCastInternalVolumeSize=NULL;
 
     this->SC_ExpectedFPS=NULL;
@@ -512,8 +512,8 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
         if (!IsGPURayCastingSupported)
         {
             vtkErrorMacro("GPU ray casting (GLSL) is not supported by your computer.");
-            this->CB_GPURayCastMIP->EnabledOff();
-            this->CB_GPURayCastShading->EnabledOff();
+            this->MB_GPURayCastTechnique->EnabledOff();
+            this->SC_GPURayCastDepthPeelingThreshold->EnabledOff();
             this->MB_GPURayCastInternalVolumeSize->EnabledOff();
         }
     
@@ -724,28 +724,6 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
                 this->MapperCUDARaycast->ShadingOn();
             else
                 this->MapperCUDARaycast->ShadingOff();
-
-            this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
-            return;
-        }
-    
-        if(callerObjectCheckButton == this->CB_GPURayCastMIP->GetWidget())
-        {
-            if (this->CB_GPURayCastMIP->GetWidget()->GetSelectedState())
-                this->MapperGPURaycast->MIPRenderingOn();
-            else
-                this->MapperGPURaycast->MIPRenderingOff();
-
-            this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
-            return;
-        }
-
-        if(callerObjectCheckButton == this->CB_GPURayCastShading->GetWidget())
-        {
-            if (this->CB_GPURayCastShading->GetWidget()->GetSelectedState())
-                this->MapperGPURaycast->ShadingOn();
-            else
-                this->MapperGPURaycast->ShadingOff();
 
             this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
             return;
@@ -1198,6 +1176,13 @@ void vtkSlicerVRGrayscaleHelper::CreateThreshold()
     this->Script("pack %s -side top -anchor nw -expand n -fill x -padx 2 -pady 2", this->PB_Reset->GetWidgetName());
 
     thresholdFrame->Delete();
+}
+
+void vtkSlicerVRGrayscaleHelper::ProcessGPURayCastTechnique(int id)
+{
+    this->MapperGPURaycast->SetTechnique(id);
+    
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
 }
 
 void vtkSlicerVRGrayscaleHelper::ProcessGPURayCastInternalVolumeSize(int id)
@@ -1676,7 +1661,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
 
     }
     
-    int labelWidth = 26;
+    int labelWidth = 18;
     
     //software ray casting
     {
@@ -1692,7 +1677,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->CB_CPURayCastMIP->SetParent(this->FrameCPURayCasting->GetFrame());
         this->CB_CPURayCastMIP->Create();
         this->CB_CPURayCastMIP->SetBalloonHelpString("Enable MIP rendering in CPU ray cast.");
-        this->CB_CPURayCastMIP->SetLabelText("Maximum Intensity projection");
+        this->CB_CPURayCastMIP->SetLabelText("Maximum Intensity Proj.");
         this->CB_CPURayCastMIP->SetLabelWidth(labelWidth);
         this->CB_CPURayCastMIP->GetWidget()->SetSelectedState(0);
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_CPURayCastMIP->GetWidgetName() );
@@ -1709,27 +1694,25 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->FrameGPURayCasting->SetLabelText("GPU Ray Casting");
         this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->FrameGPURayCasting->GetWidgetName() );
 
-        //enable/disable gpu ray casting shading
-        this->CB_GPURayCastShading=vtkKWCheckButtonWithLabel::New();
-        this->CB_GPURayCastShading->SetParent(this->FrameGPURayCasting->GetFrame());
-        this->CB_GPURayCastShading->Create();
-        this->CB_GPURayCastShading->SetBalloonHelpString("Enable lighting/shading in GPU ray cast. May not supported by some video cards.");
-        this->CB_GPURayCastShading->SetLabelText("Enable Lighting");
-        this->CB_GPURayCastShading->SetLabelWidth(labelWidth);
-        this->CB_GPURayCastShading->GetWidget()->SetSelectedState(0);
-        this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_GPURayCastShading->GetWidgetName() );
-        this->CB_GPURayCastShading->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->VolumeRenderingCallbackCommand);
+        //set technique
+        this->MB_GPURayCastTechnique = vtkKWMenuButtonWithLabel::New();
+        this->MB_GPURayCastTechnique->SetParent(this->FrameGPURayCasting->GetFrame());
+        this->MB_GPURayCastTechnique->SetLabelText("Rendering Technique");
+        this->MB_GPURayCastTechnique->Create();
+        this->MB_GPURayCastTechnique->SetLabelWidth(labelWidth);
+        this->MB_GPURayCastTechnique->SetBalloonHelpString("Select different techniques in GPU ray casting");
+        this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->AddRadioButton("Composite No Shading");
+        this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastTechnique 0");
+        this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->AddRadioButton("Composite Shading");
+        this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->SetItemCommand(1, this,"ProcessGPURayCastTechnique 1");
+        this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->AddRadioButton("Maximum Intensity Projection");
+        this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessGPURayCastTechnique 2");
+        this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->AddRadioButton("Minimum Intensity Projection");
+        this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->SetItemCommand(3, this,"ProcessGPURayCastTechnique 3");
         
-        //enable/disable gpu ray casting MIP rendering
-        this->CB_GPURayCastMIP=vtkKWCheckButtonWithLabel::New();
-        this->CB_GPURayCastMIP->SetParent(this->FrameGPURayCasting->GetFrame());
-        this->CB_GPURayCastMIP->Create();
-        this->CB_GPURayCastMIP->SetBalloonHelpString("Enable MIP rendering in GPU ray cast.");
-        this->CB_GPURayCastMIP->SetLabelText("Maximum Intensity projection");
-        this->CB_GPURayCastMIP->SetLabelWidth(labelWidth);
-        this->CB_GPURayCastMIP->GetWidget()->SetSelectedState(0);
-        this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_GPURayCastMIP->GetWidgetName() );
-        this->CB_GPURayCastMIP->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->VolumeRenderingCallbackCommand);
+        this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastTechnique->GetWidgetName() );
+        
+        this->MB_GPURayCastTechnique->GetWidget()->SetValue("Composite No Shading");
         
         //set internal volume storage
         this->MB_GPURayCastInternalVolumeSize = vtkKWMenuButtonWithLabel::New();
@@ -1814,14 +1797,6 @@ void vtkSlicerVRGrayscaleHelper::DestroyPerformance(void)
       this->CB_CUDARayCastShading->Delete();
       this->CB_CUDARayCastShading=NULL;
     }
-  
-    if(this->CB_GPURayCastShading!=NULL)
-    {
-        this->CB_GPURayCastShading->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
-        this->CB_GPURayCastShading->SetParent(NULL);
-        this->CB_GPURayCastShading->Delete();
-        this->CB_GPURayCastShading=NULL;
-    }
     
     if(this->MB_GPURayCastInternalVolumeSize!=NULL)
     {
@@ -1830,13 +1805,6 @@ void vtkSlicerVRGrayscaleHelper::DestroyPerformance(void)
         this->MB_GPURayCastInternalVolumeSize=NULL;
     }
     
-    if(this->CB_GPURayCastMIP!=NULL)
-    {
-        this->CB_GPURayCastMIP->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
-        this->CB_GPURayCastMIP->SetParent(NULL);
-        this->CB_GPURayCastMIP->Delete();
-        this->CB_GPURayCastMIP=NULL;
-    }    
     if(this->SC_ExpectedFPS!=NULL)
     {
         this->SC_ExpectedFPS->RemoveObservers(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);

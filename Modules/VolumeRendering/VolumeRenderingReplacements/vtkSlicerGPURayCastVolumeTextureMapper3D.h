@@ -57,12 +57,7 @@ public:
   // Depth peeling threshold
   vtkSetMacro(DepthPeelingThreshold, float);
   vtkGetMacro(DepthPeelingThreshold, float);
-  
-  // Description:
-  // Enable/Disable Shading
-  void ShadingOn();
-  void ShadingOff();
-  
+    
   // Description:
   // set internal volume size
   void SetInternalVolumeSize(int size);
@@ -74,9 +69,8 @@ public:
   vtkBooleanMacro(Clipping,int);
   
   // Description:
-  // MIP rendering
-  void MIPRenderingOn();
-  void MIPRenderingOff();
+  // Set technique
+  void SetTechnique(int tech);
   
   // Description:
   // Is hardware rendering supported? No if the input data is
@@ -126,7 +120,7 @@ protected:
   
   int              RayCastSupported;
   
-  int              MIPRendering;
+  int              Technique;
   int              Clipping;
   int              Shading;
   int              InternalVolumeSize;
@@ -178,6 +172,7 @@ protected:
   
   // mip ray casting
   void LoadNoShadingFragmentShaderMIP();//lighting in MIP could be bad, so no shading here
+  void LoadNoShadingFragmentShaderMIMIP();//lighting in MIP could be bad, so no shading here
   
   void LoadRayCastProgram();
 
