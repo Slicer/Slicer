@@ -41,7 +41,7 @@
 #include "vtkMRMLBSplineTransformNode.h"
 #include "itksys/DynamicLoader.hxx"
 
-#include "vtkMRML4DBundleNode.h"
+#include "vtkMRMLTimeSeriesBundleNode.h"
 
 #include "vtkGlobFileNames.h"
 
@@ -139,7 +139,7 @@ void vtkFourDAnalysisLogic::UpdateAll()
 
 
 //---------------------------------------------------------------------------
-vtkMRMLScalarVolumeNode* vtkFourDAnalysisLogic::AddMapVolumeNode(vtkMRML4DBundleNode* bundleNode,
+vtkMRMLScalarVolumeNode* vtkFourDAnalysisLogic::AddMapVolumeNode(vtkMRMLTimeSeriesBundleNode* bundleNode,
                                                                  const char* nodeName)
 {
   vtkMRMLScene* scene = this->GetMRMLScene();
@@ -293,7 +293,7 @@ int vtkFourDAnalysisLogic::SaveCurve(vtkDoubleArray* curve, const char* fileName
 //---------------------------------------------------------------------------
 void vtkFourDAnalysisLogic::GenerateParameterMap(vtkCurveAnalysisPythonInterface* script,
                                                  vtkMRMLCurveAnalysisNode* curveNode,
-                                                 vtkMRML4DBundleNode* bundleNode,
+                                                 vtkMRMLTimeSeriesBundleNode* bundleNode,
                                                  const char* outputNodeNamePrefix,
                                                  int start, int end,
                                                  int imin, int imax, int jmin, int jmax, int kmin, int kmax)

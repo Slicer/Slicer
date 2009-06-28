@@ -32,7 +32,7 @@
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLScalarVolumeNode.h"
-#include "vtkMRML4DBundleNode.h"
+#include "vtkMRMLTimeSeriesBundleNode.h"
 #include "vtkMRMLCurveAnalysisNode.h"
 
 
@@ -110,7 +110,7 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisLogic : public vtkSlicerModuleLog
   typedef itk::ImageSeriesReader< VolumeType > ReaderType;
   //ETX
 
-  vtkMRMLScalarVolumeNode* AddMapVolumeNode(vtkMRML4DBundleNode* bundleNode,
+  vtkMRMLScalarVolumeNode* AddMapVolumeNode(vtkMRMLTimeSeriesBundleNode* bundleNode,
                                             const char* nodeName);
   int         GetNumberOfFrames();
   const char* GetFrameNodeID(int index);
@@ -123,7 +123,7 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisLogic : public vtkSlicerModuleLog
 
   void GenerateParameterMap(vtkCurveAnalysisPythonInterface* script,
                             vtkMRMLCurveAnalysisNode* curveNode,
-                            vtkMRML4DBundleNode* bundleNode, 
+                            vtkMRMLTimeSeriesBundleNode* bundleNode, 
                             const char* outputNodeNamePrefix,
                             int start, int end,
                             int imin, int imax, int jmin, int jmax, int kmin, int kmax);

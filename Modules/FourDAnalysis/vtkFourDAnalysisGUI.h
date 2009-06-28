@@ -136,7 +136,7 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   //----------------------------------------------------------------
 
   void UpdateAll();
-  void SelectActive4DBundle(vtkMRML4DBundleNode* bundleNode);
+  void SelectActive4DBundle(vtkMRMLTimeSeriesBundleNode* bundleNode);
 
 
   //----------------------------------------------------------------

@@ -16,7 +16,7 @@
 #include "vtkIntensityCurves.h"
 
 #include "vtkDoubleArray.h"
-#include "vtkMRML4DBundleNode.h"
+#include "vtkMRMLTimeSeriesBundleNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 
 vtkStandardNewMacro(vtkIntensityCurves);

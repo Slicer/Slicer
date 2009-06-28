@@ -16,7 +16,7 @@
 #include "vtkCurveAnalysisPythonInterface.h"
 
 #include "vtkDoubleArray.h"
-#include "vtkMRML4DBundleNode.h"
+#include "vtkMRMLTimeSeriesBundleNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 
 #include "vtkSlicerApplication.h"

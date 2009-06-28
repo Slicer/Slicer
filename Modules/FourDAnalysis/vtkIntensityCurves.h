@@ -6,7 +6,7 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkMRML4DBundleNode.h,v $
+  Module:    $RCSfile: vtkIntensityCurve.h,v $
   Date:      $Date: 2006/03/19 17:12:29 $
   Version:   $Revision: 1.13 $
 
@@ -19,7 +19,7 @@
 #include "vtkObject.h"
 #include "vtkFourDAnalysisWin32Header.h"
 
-#include "vtkMRML4DBundleNode.h"
+#include "vtkMRMLTimeSeriesBundleNode.h"
 
 class VTK_FourDAnalysis_EXPORT vtkIntensityCurves : public vtkObject
 {
@@ -42,8 +42,8 @@ class VTK_FourDAnalysis_EXPORT vtkIntensityCurves : public vtkObject
 
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  vtkGetObjectMacro ( BundleNode, vtkMRML4DBundleNode );
-  vtkSetObjectMacro ( BundleNode, vtkMRML4DBundleNode );
+  vtkGetObjectMacro ( BundleNode, vtkMRMLTimeSeriesBundleNode );
+  vtkSetObjectMacro ( BundleNode, vtkMRMLTimeSeriesBundleNode );
   vtkGetObjectMacro ( MaskNode,   vtkMRMLScalarVolumeNode );
   vtkSetObjectMacro ( MaskNode,   vtkMRMLScalarVolumeNode );
 
@@ -65,10 +65,10 @@ class VTK_FourDAnalysis_EXPORT vtkIntensityCurves : public vtkObject
 
  private:
 
-  vtkMRML4DBundleNode*     BundleNode;
+  vtkMRMLTimeSeriesBundleNode*     BundleNode;
   vtkMRMLScalarVolumeNode* MaskNode;
 
-  vtkMRML4DBundleNode*     PreviousBundleNode;
+  vtkMRMLTimeSeriesBundleNode*     PreviousBundleNode;
   vtkMRMLScalarVolumeNode* PreviousMaskNode;
 
   IntensityCurveMapType IntensityCurve;  // IntensityCurveMean[label]

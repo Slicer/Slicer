@@ -60,7 +60,7 @@
 #include "vtkCornerAnnotation.h"
 #include "vtkCommandLineModuleGUI.h"
 
-#include "vtkMRML4DBundleNode.h"
+#include "vtkMRMLTimeSeriesBundleNode.h"
 #include "vtkMRMLCurveAnalysisNode.h"
 
 #include "vtkCurveAnalysisPythonInterface.h"
@@ -331,8 +331,8 @@ void vtkFourDAnalysisGUI::Enter()
   // register node type to the MRML scene
   vtkMRMLScene* scene = this->GetMRMLScene();
 
-  // 4D bundle node (vtkMRML4DBundleNode)
-  vtkMRML4DBundleNode* bundleNode = vtkMRML4DBundleNode::New();
+  // 4D bundle node (vtkMRMLTimeSeriesBundleNode)
+  vtkMRMLTimeSeriesBundleNode* bundleNode = vtkMRMLTimeSeriesBundleNode::New();
   scene->RegisterNodeClass(bundleNode);
   bundleNode->Delete();
 
@@ -700,15 +700,15 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
   else if (this->Active4DBundleSelectorWidget == vtkSlicerNodeSelectorWidget::SafeDownCast(caller)
            && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
     {
-    vtkMRML4DBundleNode *bundleNode = 
-      vtkMRML4DBundleNode::SafeDownCast(this->Active4DBundleSelectorWidget->GetSelected());
+    vtkMRMLTimeSeriesBundleNode *bundleNode = 
+      vtkMRMLTimeSeriesBundleNode::SafeDownCast(this->Active4DBundleSelectorWidget->GetSelected());
     SelectActive4DBundle(bundleNode);
     }
   else if (this->ForegroundVolumeSelectorScale == vtkKWScaleWithEntry::SafeDownCast(caller)
       && event == vtkKWScale::ScaleValueChangingEvent /*vtkKWScale::ScaleValueChangedEvent*/)
     {
-    vtkMRML4DBundleNode *bundleNode = 
-      vtkMRML4DBundleNode::SafeDownCast(this->Active4DBundleSelectorWidget->GetSelected());
+    vtkMRMLTimeSeriesBundleNode *bundleNode = 
+      vtkMRMLTimeSeriesBundleNode::SafeDownCast(this->Active4DBundleSelectorWidget->GetSelected());
     int volume = (int)this->ForegroundVolumeSelectorScale->GetValue();
     if (bundleNode)
       {
@@ -719,8 +719,8 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
       && event == vtkKWScale::ScaleValueChangingEvent /*vtkKWScale::ScaleValueChangedEvent*/ )
     {
     int volume = (int)this->BackgroundVolumeSelectorScale->GetValue();
-    vtkMRML4DBundleNode *bundleNode = 
-      vtkMRML4DBundleNode::SafeDownCast(this->Active4DBundleSelectorWidget->GetSelected());
+    vtkMRMLTimeSeriesBundleNode *bundleNode = 
+      vtkMRMLTimeSeriesBundleNode::SafeDownCast(this->Active4DBundleSelectorWidget->GetSelected());
     if (bundleNode)
       {
       SetBackground(bundleNode->GetID(), volume);
@@ -759,8 +759,8 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
     double acqTime = this->AcqTimeEntry->GetValueAsDouble();
     int selected = this->MaskSelectMenu->GetMenu()->GetIndexOfSelectedItem();
     const char* maskID   = this->MaskNodeIDList[selected].c_str();
-    vtkMRML4DBundleNode *bundleNode = 
-      vtkMRML4DBundleNode::SafeDownCast(this->Active4DBundleSelectorWidget->GetSelected());
+    vtkMRMLTimeSeriesBundleNode *bundleNode = 
+      vtkMRMLTimeSeriesBundleNode::SafeDownCast(this->Active4DBundleSelectorWidget->GetSelected());
     vtkMRMLScalarVolumeNode* maskNode =
       vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(maskID));
 
@@ -966,8 +966,8 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
     int kmin = (int)this->MapKMinSpinBox->GetValue();
     int kmax = (int)this->MapKMaxSpinBox->GetValue();
     
-    vtkMRML4DBundleNode *bundleNode = 
-      vtkMRML4DBundleNode::SafeDownCast(this->Active4DBundleSelectorWidget->GetSelected());
+    vtkMRMLTimeSeriesBundleNode *bundleNode = 
+      vtkMRMLTimeSeriesBundleNode::SafeDownCast(this->Active4DBundleSelectorWidget->GetSelected());
     if (prefix && bundleNode && this->CurveAnalysisScript)
       {
       int start = (int)this->CurveFittingStartIndexSpinBox->GetValue();
@@ -1105,7 +1105,7 @@ void vtkFourDAnalysisGUI::BuildGUIForActiveBundleSelectorFrame ()
   this->Active4DBundleSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
   this->Active4DBundleSelectorWidget->SetParent(page);
   this->Active4DBundleSelectorWidget->Create();
-  this->Active4DBundleSelectorWidget->SetNodeClass("vtkMRML4DBundleNode", NULL, NULL, NULL);
+  this->Active4DBundleSelectorWidget->SetNodeClass("vtkMRMLTimeSeriesBundleNode", NULL, NULL, NULL);
   this->Active4DBundleSelectorWidget->SetMRMLScene(this->GetMRMLScene());
   this->Active4DBundleSelectorWidget->SetBorderWidth(2);
   this->Active4DBundleSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
@@ -1849,7 +1849,7 @@ void vtkFourDAnalysisGUI::UpdateAll()
 
 
 //----------------------------------------------------------------------------
-void vtkFourDAnalysisGUI::SelectActive4DBundle(vtkMRML4DBundleNode* bundleNode)
+void vtkFourDAnalysisGUI::SelectActive4DBundle(vtkMRMLTimeSeriesBundleNode* bundleNode)
 {
   if (bundleNode == NULL)
     {
@@ -1911,8 +1911,8 @@ void vtkFourDAnalysisGUI::SetForeground(const char* bundleID, int index)
   vtkMRMLSliceCompositeNode *cnode;
   //vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
   
-  vtkMRML4DBundleNode* bundleNode 
-    = vtkMRML4DBundleNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(bundleID));
+  vtkMRMLTimeSeriesBundleNode* bundleNode 
+    = vtkMRMLTimeSeriesBundleNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(bundleID));
 
   if (!bundleNode)
     {
@@ -1949,8 +1949,8 @@ void vtkFourDAnalysisGUI::SetBackground(const char* bundleID, int index)
   vtkMRMLSliceCompositeNode *cnode;
   //vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
   
-  vtkMRML4DBundleNode* bundleNode 
-    = vtkMRML4DBundleNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(bundleID));
+  vtkMRMLTimeSeriesBundleNode* bundleNode 
+    = vtkMRMLTimeSeriesBundleNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(bundleID));
 
   if (!bundleNode)
     {
@@ -2064,7 +2064,7 @@ void vtkFourDAnalysisGUI::UpdateSeriesSelectorMenus()
   std::vector<vtkMRMLNode*> nodes;
   std::vector<std::string>  names;
 
-  this->GetApplicationLogic()->GetMRMLScene()->GetNodesByClass("vtkMRML4DBundleNode", nodes);
+  this->GetApplicationLogic()->GetMRMLScene()->GetNodesByClass("vtkMRMLTimeSeriesBundleNode", nodes);
 
   this->BundleNodeIDList.clear();
   names.clear();
