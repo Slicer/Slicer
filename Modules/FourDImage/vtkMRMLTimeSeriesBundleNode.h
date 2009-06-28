@@ -6,20 +6,20 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkMRML4DBundleNode.h,v $
+  Module:    $RCSfile: vtkMRMLTimeSeriesBundleNode.h,v $
   Date:      $Date: 2006/03/19 17:12:29 $
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-// .NAME vtkMRML4DBundleNode - MRML node for representing 
+// .NAME vtkMRMLTimeSeriesBundleNode - MRML node for representing 
 // a linear transformation to the parent node
 // .SECTION Description
 // MRML node for representing 
 // a linear transformation to the parent node in the form vtkMatrix4x4
 // MatrixTransformToParent
 
-#ifndef __vtkMRML4DBundleNode_h
-#define __vtkMRML4DBundleNode_h
+#ifndef __vtkMRMLTimeSeriesBundleNode_h
+#define __vtkMRMLTimeSeriesBundleNode_h
 
 #include "vtkFourDImageWin32Header.h"
 
@@ -28,11 +28,20 @@
 
 class vtkMRMLStorageNode;
 
-class VTK_FourDImage_EXPORT vtkMRML4DBundleNode : public vtkMRMLLinearTransformNode
+class VTK_FourDImage_EXPORT vtkMRMLTimeSeriesBundleNode : public vtkMRMLLinearTransformNode
 {
   public:
-  static vtkMRML4DBundleNode *New();
-  vtkTypeMacro(vtkMRML4DBundleNode,vtkMRMLLinearTransformNode);
+
+  //BTX
+  typedef struct {
+    unsigned int second;
+    unsigned int nanosecond;
+  } TimeStamp;
+  //ETX
+
+  public:
+  static vtkMRMLTimeSeriesBundleNode *New();
+  vtkTypeMacro(vtkMRMLTimeSeriesBundleNode,vtkMRMLLinearTransformNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
@@ -69,30 +78,34 @@ class VTK_FourDImage_EXPORT vtkMRML4DBundleNode : public vtkMRMLLinearTransformN
     };
 
   int GetNumberOfFrames();
-  int InsertFrame(int i, const char* nodeID);
-  int AddFrame(const char* nodeID);
+  int InsertFrame(int i, const char* nodeID, TimeStamp* ts = NULL);
+  int AddFrame(const char* nodeID, TimeStamp* ts = NULL);
   int RemoveFrame(int i);              // Delete a frame by index number (not remove from the scene)
   int RemoveFrame(const char* nodeID); // Delete a frame by node ID (not remove from the scene)
   void RemoveAllFrames();
 
   vtkMRMLNode* GetFrameNode(int i);
 
+  int          GetTimeStamp(int i, TimeStamp* ts);
+  int          SetTimeStamp(int i, TimeStamp* ts);
   int          SetDisplayBufferNodeID(int bufferIndex, const char* nodeID);
   vtkMRMLNode* GetDisplayBufferNode(int bufferIndex);
   void         SwitchDisplayBuffer(int bufferIndex, int i);
 
 protected:
-  vtkMRML4DBundleNode();
-  ~vtkMRML4DBundleNode();
-  vtkMRML4DBundleNode(const vtkMRML4DBundleNode&);
-  void operator=(const vtkMRML4DBundleNode&);
+  vtkMRMLTimeSeriesBundleNode();
+  ~vtkMRMLTimeSeriesBundleNode();
+  vtkMRMLTimeSeriesBundleNode(const vtkMRMLTimeSeriesBundleNode&);
+  void operator=(const vtkMRMLTimeSeriesBundleNode&);
 
   //BTX
   typedef std::vector<std::string> NodeIDListType;
+  typedef std::vector<TimeStamp> TimeStampListType;
 
-  NodeIDListType   FrameNodeIDList;
-  NodeIDListType   TransformNodeIDList;
-  NodeIDListType   DisplayBufferNodeIDList;
+  NodeIDListType    FrameNodeIDList;
+  //NodeIDListType    TransformNodeIDList;
+  NodeIDListType    DisplayBufferNodeIDList;
+  TimeStampListType TimeStampList;
   //ETX
 
 };

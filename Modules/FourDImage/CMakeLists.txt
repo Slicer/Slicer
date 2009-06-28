@@ -57,7 +57,7 @@ install(FILES
 set(FourDImage_SRCS 
   vtkFourDImageLogic.cxx
   vtkFourDImageGUI.cxx
-  vtkMRML4DBundleNode.cxx
+  vtkMRMLTimeSeriesBundleNode.cxx
   vtkFourDImageIcons.cxx
 )
 

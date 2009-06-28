@@ -20,38 +20,38 @@ Version:   $Revision: $
 #include "vtkCallbackCommand.h"
 #include "vtkLinearTransform.h"
 
-#include "vtkMRML4DBundleNode.h"
+#include "vtkMRMLTimeSeriesBundleNode.h"
 #include "vtkMRMLScene.h"
 
 //------------------------------------------------------------------------------
-vtkMRML4DBundleNode* vtkMRML4DBundleNode::New()
+vtkMRMLTimeSeriesBundleNode* vtkMRMLTimeSeriesBundleNode::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRML4DBundleNode");
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLTimeSeriesBundleNode");
   if(ret)
     {
-    return (vtkMRML4DBundleNode*)ret;
+    return (vtkMRMLTimeSeriesBundleNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
-  return new vtkMRML4DBundleNode;
+  return new vtkMRMLTimeSeriesBundleNode;
 }
 
 //----------------------------------------------------------------------------
 
-vtkMRMLNode* vtkMRML4DBundleNode::CreateNodeInstance()
+vtkMRMLNode* vtkMRMLTimeSeriesBundleNode::CreateNodeInstance()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRML4DBundleNode");
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLTimeSeriesBundleNode");
   if(ret)
     {
-    return (vtkMRML4DBundleNode*)ret;
+    return (vtkMRMLTimeSeriesBundleNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
-  return new vtkMRML4DBundleNode;
+  return new vtkMRMLTimeSeriesBundleNode;
 }
 
 //----------------------------------------------------------------------------
-vtkMRML4DBundleNode::vtkMRML4DBundleNode()
+vtkMRMLTimeSeriesBundleNode::vtkMRMLTimeSeriesBundleNode()
 {
   this->MatrixTransformToParent = NULL;
 
@@ -61,7 +61,8 @@ vtkMRML4DBundleNode::vtkMRML4DBundleNode()
   matrix->Delete();
 
   this->FrameNodeIDList.clear();
-  this->TransformNodeIDList.clear();
+  this->TimeStampList.clear();
+  //this->TransformNodeIDList.clear();
 
   this->DisplayBufferNodeIDList.resize(2);
   this->DisplayBufferNodeIDList[0] = "";
@@ -71,7 +72,7 @@ vtkMRML4DBundleNode::vtkMRML4DBundleNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRML4DBundleNode::~vtkMRML4DBundleNode()
+vtkMRMLTimeSeriesBundleNode::~vtkMRMLTimeSeriesBundleNode()
 {
   if (this->MatrixTransformToParent) 
     {
@@ -79,11 +80,12 @@ vtkMRML4DBundleNode::~vtkMRML4DBundleNode()
     }
 
   this->FrameNodeIDList.clear();
-  this->TransformNodeIDList.clear();
+  this->TimeStampList.clear();
+  //this->TransformNodeIDList.clear();
 }
 
 //----------------------------------------------------------------------------
-void vtkMRML4DBundleNode::WriteXML(ostream& of, int nIndent)
+void vtkMRMLTimeSeriesBundleNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
@@ -105,8 +107,9 @@ void vtkMRML4DBundleNode::WriteXML(ostream& of, int nIndent)
 
 
 //----------------------------------------------------------------------------
-void vtkMRML4DBundleNode::ReadXMLAttributes(const char** atts)
+void vtkMRMLTimeSeriesBundleNode::ReadXMLAttributes(const char** atts)
 {
+  // NOTE: The routine doesn't load time stamps.
 
   Superclass::ReadXMLAttributes(atts);
 
@@ -152,10 +155,10 @@ void vtkMRML4DBundleNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
-void vtkMRML4DBundleNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLTimeSeriesBundleNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRML4DBundleNode *node = (vtkMRML4DBundleNode *) anode;
+  vtkMRMLTimeSeriesBundleNode *node = (vtkMRMLTimeSeriesBundleNode *) anode;
   for (int i=0; i<4; i++) 
     {
     for (int j=0; j<4; j++)
@@ -167,7 +170,7 @@ void vtkMRML4DBundleNode::Copy(vtkMRMLNode *anode)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRML4DBundleNode::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLTimeSeriesBundleNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
 
@@ -194,7 +197,7 @@ void vtkMRML4DBundleNode::PrintSelf(ostream& os, vtkIndent indent)
 
 
 //---------------------------------------------------------------------------
-void vtkMRML4DBundleNode::ProcessMRMLEvents ( vtkObject *caller,
+void vtkMRMLTimeSeriesBundleNode::ProcessMRMLEvents ( vtkObject *caller,
                                                     unsigned long event, 
                                                     void *callData )
 {
@@ -209,7 +212,7 @@ void vtkMRML4DBundleNode::ProcessMRMLEvents ( vtkObject *caller,
 
 
 //----------------------------------------------------------------------------
-int vtkMRML4DBundleNode::GetNumberOfFrames()
+int vtkMRMLTimeSeriesBundleNode::GetNumberOfFrames()
 {
 
   return this->FrameNodeIDList.size();
@@ -218,7 +221,7 @@ int vtkMRML4DBundleNode::GetNumberOfFrames()
 
 
 //----------------------------------------------------------------------------
-int vtkMRML4DBundleNode::InsertFrame(int i, const char* nodeID)
+int vtkMRMLTimeSeriesBundleNode::InsertFrame(int i, const char* nodeID, TimeStamp* ts)
 {
   int index;
 
@@ -235,12 +238,33 @@ int vtkMRML4DBundleNode::InsertFrame(int i, const char* nodeID)
     index = i;
     }
 
+
+  // Add the ID node to the frame list
   NodeIDListType::iterator iter;
   iter = this->FrameNodeIDList.begin();
   iter += index;
 
   this->FrameNodeIDList.insert(iter, std::string(nodeID));
+  
+  // Add the time stamp to the frame list
+  TimeStampListType::iterator titer;
+  titer = this->TimeStampList.begin();
+  titer += index;
 
+  TimeStamp times;
+  if (ts)
+    {
+    times.second     = ts->second;
+    times.nanosecond = ts->nanosecond;
+    }
+  else
+    {
+    times.second     = 0;
+    times.nanosecond = 0;
+    }
+  this->TimeStampList.insert(titer, times);
+
+    
   this->Modified();
 
   return index;
@@ -249,16 +273,32 @@ int vtkMRML4DBundleNode::InsertFrame(int i, const char* nodeID)
 
 
 //----------------------------------------------------------------------------
-int vtkMRML4DBundleNode::AddFrame(const char* nodeID)
+int vtkMRMLTimeSeriesBundleNode::AddFrame(const char* nodeID, TimeStamp* ts)
 {
   this->FrameNodeIDList.push_back(std::string(nodeID));
+
+  TimeStamp times;
+  if (ts)
+    {
+    times.second     = ts->second;
+    times.nanosecond = ts->nanosecond;
+    }
+  else
+    {
+    times.second     = 0;
+    times.nanosecond = 0;
+    }
+  this->TimeStampList.push_back(times);
+
   this->Modified();
+
   return 1;
+
 }
 
 
 //----------------------------------------------------------------------------
-int vtkMRML4DBundleNode::RemoveFrame(int i)
+int vtkMRMLTimeSeriesBundleNode::RemoveFrame(int i)
 {
 
   int index;
@@ -276,6 +316,7 @@ int vtkMRML4DBundleNode::RemoveFrame(int i)
     index = i;
     }
 
+  // Frame node id list.
   NodeIDListType::iterator iter;
   iter = this->FrameNodeIDList.begin();
   iter += index;
@@ -287,6 +328,12 @@ int vtkMRML4DBundleNode::RemoveFrame(int i)
   */
   this->FrameNodeIDList.erase(iter);
 
+  // Time stamp list
+  TimeStampListType::iterator titer;
+  titer = this->TimeStampList.begin();
+  titer += index;
+  this->TimeStampList.erase(titer);
+
   this->Modified();
 
   return index;
@@ -295,7 +342,7 @@ int vtkMRML4DBundleNode::RemoveFrame(int i)
 
 
 //----------------------------------------------------------------------------
-int vtkMRML4DBundleNode::RemoveFrame(const char* nodeID)
+int vtkMRMLTimeSeriesBundleNode::RemoveFrame(const char* nodeID)
 {
   
   int index;
@@ -306,6 +353,13 @@ int vtkMRML4DBundleNode::RemoveFrame(const char* nodeID)
     if (*iter == nodeID)
       {
       this->FrameNodeIDList.erase(iter);
+
+      // Time stamp list
+      TimeStampListType::iterator titer;
+      titer = this->TimeStampList.begin();
+      titer += index;
+      this->TimeStampList.erase(titer);
+
       return index;
       }
     index ++;
@@ -316,14 +370,15 @@ int vtkMRML4DBundleNode::RemoveFrame(const char* nodeID)
 
 
 //----------------------------------------------------------------------------
-void vtkMRML4DBundleNode::RemoveAllFrames()
+void vtkMRMLTimeSeriesBundleNode::RemoveAllFrames()
 {
   this->FrameNodeIDList.clear();
+  this->TimeStampList.clear();
 }
 
 
 //----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRML4DBundleNode::GetFrameNode(int i)
+vtkMRMLNode* vtkMRMLTimeSeriesBundleNode::GetFrameNode(int i)
 {
   if (i < 0 || i >= this->FrameNodeIDList.size())
     {
@@ -340,7 +395,39 @@ vtkMRMLNode* vtkMRML4DBundleNode::GetFrameNode(int i)
 
 
 //----------------------------------------------------------------------------
-int vtkMRML4DBundleNode::SetDisplayBufferNodeID(int bufferIndex, const char* nodeID)
+int vtkMRMLTimeSeriesBundleNode::GetTimeStamp(int i, TimeStamp* ts)
+{
+  if (i < 0 || i >= this->FrameNodeIDList.size())
+    {
+    return 0;
+    }
+  
+  TimeStamp& times = this->TimeStampList[i];
+  ts->second     = times.second;
+  ts->nanosecond = times.nanosecond;
+
+  return 1;
+}
+
+
+//----------------------------------------------------------------------------
+int vtkMRMLTimeSeriesBundleNode::SetTimeStamp(int i, TimeStamp* ts)
+{
+  if (i < 0 || i >= this->FrameNodeIDList.size())
+    {
+    return 0;
+    }
+  
+  TimeStamp& times = this->TimeStampList[i];
+  times.second     = ts->second;
+  times.nanosecond = ts->nanosecond;
+
+  return 1;
+}
+
+
+//----------------------------------------------------------------------------
+int vtkMRMLTimeSeriesBundleNode::SetDisplayBufferNodeID(int bufferIndex, const char* nodeID)
 {
   this->DisplayBufferNodeIDList[bufferIndex] = nodeID;
   return 1;
@@ -348,7 +435,7 @@ int vtkMRML4DBundleNode::SetDisplayBufferNodeID(int bufferIndex, const char* nod
 
 
 //----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRML4DBundleNode::GetDisplayBufferNode(int bufferIndex)
+vtkMRMLNode* vtkMRMLTimeSeriesBundleNode::GetDisplayBufferNode(int bufferIndex)
 {
   vtkMRMLNode* node =
     vtkMRMLNode::SafeDownCast(this->GetScene()
@@ -359,7 +446,7 @@ vtkMRMLNode* vtkMRML4DBundleNode::GetDisplayBufferNode(int bufferIndex)
   
 
 //----------------------------------------------------------------------------
-void vtkMRML4DBundleNode::SwitchDisplayBuffer(int bufferIndex, int i)
+void vtkMRMLTimeSeriesBundleNode::SwitchDisplayBuffer(int bufferIndex, int i)
   // this function should be implemented in the child class
 {
   vtkMRMLScalarVolumeNode* frame = 
@@ -377,6 +464,7 @@ void vtkMRML4DBundleNode::SwitchDisplayBuffer(int bufferIndex, int i)
     }
 
 }
+
 
 
 

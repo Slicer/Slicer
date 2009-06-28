@@ -39,7 +39,7 @@
 #include "vtkMRMLBSplineTransformNode.h"
 #include "itksys/DynamicLoader.hxx"
 
-#include "vtkMRML4DBundleNode.h"
+#include "vtkMRMLTimeSeriesBundleNode.h"
 
 #include "vtkGlobFileNames.h"
 
@@ -270,7 +270,7 @@ int vtkFourDImageLogic::CreateFileListFromDir(const char* path,
 
 
 //---------------------------------------------------------------------------
-vtkMRML4DBundleNode* vtkFourDImageLogic::LoadImagesFromDir(const char* path, const char* bundleNodeName)
+vtkMRMLTimeSeriesBundleNode* vtkFourDImageLogic::LoadImagesFromDir(const char* path, const char* bundleNodeName)
 {
   StatusMessageType statusMessage;
   double rangeLower;
@@ -308,9 +308,9 @@ vtkMRML4DBundleNode* vtkFourDImageLogic::LoadImagesFromDir(const char* path, con
   rangeUpper = 0.0;
 
   // prepare 4D bundle
-  vtkMRML4DBundleNode* bundleNode = vtkMRML4DBundleNode::New();
+  vtkMRMLTimeSeriesBundleNode* bundleNode = vtkMRMLTimeSeriesBundleNode::New();
   //vtkMRMLLinearTransformNode* bundleNode = vtkMRMLLinearTransformNode::New();
-  //bundleNode->SetName("4DBundle");
+  //bundleNode->SetName("TimeSeriesBundle");
   bundleNode->SetName(bundleNodeName);
   bundleNode->SetDescription("Created by FourDImage");
 
@@ -403,8 +403,8 @@ int vtkFourDImageLogic::SaveImagesToDir(const char* path,
                                        const char* prefix,
                                        const char* suffix)
 {
-  vtkMRML4DBundleNode* bundleNode 
-    = vtkMRML4DBundleNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(bundleID));
+  vtkMRMLTimeSeriesBundleNode* bundleNode 
+    = vtkMRMLTimeSeriesBundleNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(bundleID));
 
   if (!bundleNode)
     {
@@ -447,7 +447,7 @@ int vtkFourDImageLogic::SaveImagesToDir(const char* path,
 
 
 //---------------------------------------------------------------------------
-vtkMRMLScalarVolumeNode* vtkFourDImageLogic::AddDisplayBufferNode(vtkMRML4DBundleNode* bundleNode, int index)
+vtkMRMLScalarVolumeNode* vtkFourDImageLogic::AddDisplayBufferNode(vtkMRMLTimeSeriesBundleNode* bundleNode, int index)
 {
   vtkMRMLScene* scene = this->GetMRMLScene();
 
@@ -516,8 +516,8 @@ vtkMRMLScalarVolumeNode* vtkFourDImageLogic::AddDisplayBufferNode(vtkMRML4DBundl
 
 
 //---------------------------------------------------------------------------
-int vtkFourDImageLogic::GenerateBundleFrames(vtkMRML4DBundleNode* inputBundleNode,
-                                                vtkMRML4DBundleNode* outputBundleNode)
+int vtkFourDImageLogic::GenerateBundleFrames(vtkMRMLTimeSeriesBundleNode* inputBundleNode,
+                                                vtkMRMLTimeSeriesBundleNode* outputBundleNode)
 {
   int nfInput  = inputBundleNode->GetNumberOfFrames();
   int nfOutput = outputBundleNode->GetNumberOfFrames();

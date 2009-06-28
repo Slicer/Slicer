@@ -43,6 +43,8 @@ class vtkKWRadioButtonSet;
 class vtkKWRadioButton;
 class vtkKWRange;
 class vtkKWCheckButtonWithLabel;
+class vtkKWRadioButtonSetWithLabel;
+class vtkKWEntry;
 
 class VTK_FourDImage_EXPORT vtkFourDImageGUI : public vtkSlicerModuleGUI
 {
@@ -121,13 +123,14 @@ class VTK_FourDImage_EXPORT vtkFourDImageGUI : public vtkSlicerModuleGUI
   void BuildGUIForLoadFrame(int show);
   void BuildGUIForActiveBundleSelectorFrame();
   void BuildGUIForFrameControlFrame(int show);
+  void BuildGUIForFrameFrameEditor(int show);
 
   //----------------------------------------------------------------
   // Update routines
   //----------------------------------------------------------------
 
   void UpdateAll();
-  void SelectActive4DBundle(vtkMRML4DBundleNode* bundleNode);
+  void SelectActiveTimeSeriesBundle(vtkMRMLTimeSeriesBundleNode* bundleNode);
 
 
   //----------------------------------------------------------------
@@ -137,12 +140,19 @@ class VTK_FourDImage_EXPORT vtkFourDImageGUI : public vtkSlicerModuleGUI
   void SetForeground(const char* bundleID, int index);
   void SetBackground(const char* bundleID, int index);
   void SetWindowLevelForCurrentFrame();
-  void UpdateSeriesSelectorMenus();
+  //void UpdateSeriesSelectorMenus();
+
+  //----------------------------------------------------------------
+  // Editor
+  //----------------------------------------------------------------
+  
+  void UpdateFrameList(const char* bundleID, int selectColumn=-1);
+  void UpdateTimeStamp(const char* bundleID);
 
   //----------------------------------------------------------------
   // Other utility functions
   //----------------------------------------------------------------
-  const char* GetActive4DBundleNodeID();
+  const char* GetActiveTimeSeriesBundleNodeID();
 
 
  protected:
@@ -175,7 +185,7 @@ class VTK_FourDImage_EXPORT vtkFourDImageGUI : public vtkSlicerModuleGUI
 
   // -----------------------------------------
   // Active 4D Bundle selector
-  vtkSlicerNodeSelectorWidget*  Active4DBundleSelectorWidget;
+  vtkSlicerNodeSelectorWidget*  ActiveTimeSeriesBundleSelectorWidget;
 
   // -----------------------------------------
   // Frame control
@@ -188,6 +198,17 @@ class VTK_FourDImage_EXPORT vtkFourDImageGUI : public vtkSlicerModuleGUI
   vtkKWPushButton*     AutoPlayFGButton;
   vtkKWPushButton*     AutoPlayBGButton;
   vtkKWEntry*          AutoPlayIntervalEntry;
+
+  // -----------------------------------------
+  // Frame editor
+  vtkKWMultiColumnListWithScrollbars* FrameList;
+  vtkKWPushButton*                    FrameMoveUpButton;
+  vtkKWPushButton*                    FrameMoveDownButton;
+  vtkKWPushButton*                    RemoveFrameButton;
+  vtkSlicerNodeSelectorWidget*        AddFrameNodeSelector;
+  vtkKWPushButton*                    AddFrameNodeButton;
+  vtkKWRadioButtonSetWithLabel*       TimeStampMethodButtonSet;
+  vtkKWEntry*                         TimeStepEntry;
 
   //----------------------------------------------------------------
   // Logic Values

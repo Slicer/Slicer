@@ -32,7 +32,7 @@
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLScalarVolumeNode.h"
-#include "vtkMRML4DBundleNode.h"
+#include "vtkMRMLTimeSeriesBundleNode.h"
 
 #include "itkOrientedImage.h"
 #include "itkImageSeriesReader.h"
@@ -108,10 +108,10 @@ class VTK_FourDImage_EXPORT vtkFourDImageLogic : public vtkSlicerModuleLogic
   int CreateFileListFromDir(const char* path,
                             std::vector<ReaderType::FileNamesContainer>& fileNamesContainerList);
   //ETX
-  vtkMRML4DBundleNode* LoadImagesFromDir(const char* path, const char* bundleNodeName);
+  vtkMRMLTimeSeriesBundleNode* LoadImagesFromDir(const char* path, const char* bundleNodeName);
   int SaveImagesToDir(const char* path, const char* bundleID, const char* prefix, const char* suffix);
 
-  vtkMRMLScalarVolumeNode* AddDisplayBufferNode(vtkMRML4DBundleNode* bundleNode, 
+  vtkMRMLScalarVolumeNode* AddDisplayBufferNode(vtkMRMLTimeSeriesBundleNode* bundleNode, 
                                                 int index);
   int         GetNumberOfFrames();
   const char* GetFrameNodeID(int index);
@@ -121,8 +121,15 @@ class VTK_FourDImage_EXPORT vtkFourDImageLogic : public vtkSlicerModuleLogic
   vtkSlicerApplication* GetApplication() { return this->Application; };
   //int  RunSeriesRegistration(int sIndex, int eIndex, int kIndex, RegistrationParametersType& param);
 
-  int GenerateBundleFrames(vtkMRML4DBundleNode* inputBundleNode,
-                           vtkMRML4DBundleNode* outputBundleNode);
+  int GenerateBundleFrames(vtkMRMLTimeSeriesBundleNode* inputBundleNode,
+                           vtkMRMLTimeSeriesBundleNode* outputBundleNode);
+
+
+  //----------------------------------------------------------------
+  // Editor functions
+  //----------------------------------------------------------------
+  //void AddFrame(const char* bundleID, int index, const char* nodeID);
+  //void DeleteFrame();
 
  protected:
   
