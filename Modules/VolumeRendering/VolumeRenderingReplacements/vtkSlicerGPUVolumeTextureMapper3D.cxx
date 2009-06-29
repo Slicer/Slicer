@@ -146,7 +146,6 @@ void vtkSlicerGPUVolumeTextureMapper3DComputeScalars( T *dataPtr,
           {
           idx = static_cast<unsigned char>((*(inPtr++) + offset) * scale);
           *(outPtr++) = idx;
-
           idx = static_cast<unsigned char>((*(inPtr++) + offset) * scale);
           *(outPtr++) = idx;
           
@@ -396,8 +395,6 @@ void vtkSlicerGPUVolumeTextureMapper3DComputeGradients( T *dataPtr,
   double              aspect[3];
   unsigned char       *outPtr1, *outPtr2;
   unsigned char       *normals, *gradmags;
-  int                 gradmagIncrement;
-  int                 gradmagOffset;
   double              floc[3];
   int                 loc[3];
 
@@ -466,20 +463,15 @@ void vtkSlicerGPUVolumeTextureMapper3DComputeGradients( T *dataPtr,
   y_limit = (y_limit>dim[1])?(outputDim[1]):(y_limit);
   z_limit = (z_limit>dim[2])?(outputDim[2]):(z_limit);
 
+  normals = volume2;
 
   if ( components == 1 || components == 2 )
     {
-    normals = volume2;
     gradmags = volume1;
-    gradmagIncrement = 4;
-    gradmagOffset = 3;
     }
   else 
     {
-    normals = volume2;
     gradmags = volume2;
-    gradmagIncrement = 4;
-    gradmagOffset = 3;
     }
 
   double wx, wy, wz;
@@ -505,7 +497,7 @@ void vtkSlicerGPUVolumeTextureMapper3DComputeGradients( T *dataPtr,
       outputOffset = z * outputDim[0] * outputDim[1] + y * outputDim[0] + xlow;
 
       // Set some pointers
-      outPtr1 = gradmags + gradmagIncrement*outputOffset;
+      outPtr1 = gradmags + 4*outputOffset;
       outPtr2 = normals + 4*outputOffset;
 
       for ( x = xlow; x < xhigh; x++ )
@@ -578,9 +570,8 @@ void vtkSlicerGPUVolumeTextureMapper3DComputeGradients( T *dataPtr,
         gvalue = (gvalue<0.0)?(0.0):(gvalue);
         gvalue = (gvalue>255.0)?(255.0):(gvalue);
 
-
-        *(outPtr1+gradmagOffset) = static_cast<unsigned char>(gvalue + 0.5);
-        *(outPtr1+gradmagOffset) *= 256;//scale up to fit unsigned char 16bit
+        *(outPtr1+3) = static_cast<unsigned char>(gvalue + 0.5);
+//        *(outPtr1+3) *= 256;//scale up to fit unsigned char 16bit
 
         // Normalize the gradient direction
         if ( t > zeroNormalThreshold )
@@ -610,12 +601,13 @@ void vtkSlicerGPUVolumeTextureMapper3DComputeGradients( T *dataPtr,
         *(outPtr2  ) = nx;
         *(outPtr2+1) = ny;
         *(outPtr2+2) = nz;
+        *(outPtr2+3) = 0;
 
-        outPtr1 += gradmagIncrement;
+        outPtr1 += 4;
         outPtr2 += 4;
         }
       }
-    if ( z%10 == 9 )
+    if ( z%20 == 19 )
       {
       float args[1];
       args[0] = 
