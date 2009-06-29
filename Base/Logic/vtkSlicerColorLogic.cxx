@@ -109,8 +109,8 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
   vtkMRMLColorTableNode *basicNode = vtkMRMLColorTableNode::New();
   for (int i = basicNode->GetFirstType(); i <= basicNode->GetLastType(); i++)
     {
-    // don't add a File node
-    if (i != basicNode->File)
+    // don't add a File node or the old atlas node
+    if (i != basicNode->File && i != 11)
       {
       vtkMRMLColorTableNode *node = vtkMRMLColorTableNode::New();
       node->SetType(i);
