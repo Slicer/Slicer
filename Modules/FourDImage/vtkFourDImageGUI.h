@@ -148,6 +148,7 @@ class VTK_FourDImage_EXPORT vtkFourDImageGUI : public vtkSlicerModuleGUI
   
   void UpdateFrameList(const char* bundleID, int selectColumn=-1);
   void UpdateTimeStamp(const char* bundleID);
+  int  ImportFramesFromScene(const char* bundleID, const char* format, int min, int max);
 
   //----------------------------------------------------------------
   // Other utility functions
@@ -209,6 +210,11 @@ class VTK_FourDImage_EXPORT vtkFourDImageGUI : public vtkSlicerModuleGUI
   vtkKWPushButton*                    AddFrameNodeButton;
   vtkKWRadioButtonSetWithLabel*       TimeStampMethodButtonSet;
   vtkKWEntry*                         TimeStepEntry;
+  vtkKWEntry*                         ImportFrameFormatEntry;
+  vtkKWEntry*                         ImportFrameRangeMinEntry;
+  vtkKWEntry*                         ImportFrameRangeMaxEntry;
+  vtkKWPushButton*                    ImportFrameNodeButton;
+
 
   //----------------------------------------------------------------
   // Logic Values

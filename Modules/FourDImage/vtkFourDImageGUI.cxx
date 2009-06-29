@@ -114,6 +114,12 @@ vtkFourDImageGUI::vtkFourDImageGUI ( )
   this->TimeStampMethodButtonSet = NULL;
   this->TimeStepEntry            = NULL;
 
+  this->ImportFrameFormatEntry   = NULL;
+  this->ImportFrameRangeMinEntry = NULL;
+  this->ImportFrameRangeMaxEntry = NULL;
+  this->ImportFrameNodeButton    = NULL;
+
+
   //----------------------------------------------------------------
   // Time
   this->TimerFlag = 0;
@@ -252,6 +258,27 @@ vtkFourDImageGUI::~vtkFourDImageGUI ( )
     {
     this->TimeStepEntry->SetParent(NULL);
     this->TimeStepEntry->Delete();
+    }
+
+  if (this->ImportFrameFormatEntry)
+    {
+    this->ImportFrameFormatEntry->SetParent(NULL);
+    this->ImportFrameFormatEntry->Delete();
+    }
+  if (this->ImportFrameRangeMinEntry)
+    {
+    this->ImportFrameRangeMinEntry->SetParent(NULL);
+    this->ImportFrameRangeMinEntry->Delete();
+    }
+  if (this->ImportFrameRangeMaxEntry)
+    {
+    this->ImportFrameRangeMaxEntry->SetParent(NULL);
+    this->ImportFrameRangeMaxEntry->Delete();
+    }
+  if (this->ImportFrameNodeButton)
+    {
+    this->ImportFrameNodeButton->SetParent(NULL);
+    this->ImportFrameNodeButton->Delete();
     }
 
   // Icons
@@ -407,6 +434,28 @@ void vtkFourDImageGUI::RemoveGUIObservers ( )
       ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
 
+  if (this->ImportFrameFormatEntry)
+    {
+    this->ImportFrameFormatEntry
+      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->ImportFrameRangeMinEntry)
+    {
+    this->ImportFrameRangeMinEntry
+      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->ImportFrameRangeMaxEntry)
+    {
+    this->ImportFrameRangeMaxEntry
+      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->ImportFrameNodeButton)
+    {
+    this->ImportFrameNodeButton
+      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
+
+
   this->RemoveLogicObservers();
 
 }
@@ -527,6 +576,27 @@ void vtkFourDImageGUI::AddGUIObservers ( )
     {
     this->TimeStepEntry
       ->AddObserver(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    }
+
+  if (this->ImportFrameFormatEntry)
+    {
+    this->ImportFrameFormatEntry
+      ->AddObserver(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->ImportFrameRangeMinEntry)
+    {
+    this->ImportFrameRangeMinEntry
+      ->AddObserver(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->ImportFrameRangeMaxEntry)
+    {
+    this->ImportFrameRangeMaxEntry
+      ->AddObserver(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->ImportFrameNodeButton)
+    {
+    this->ImportFrameNodeButton
+      ->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
     }
 
   this->AddLogicObservers();
@@ -852,8 +922,8 @@ void vtkFourDImageGUI::ProcessGUIEvents(vtkObject *caller,
       }
     }
 
-  if (this->TimeStepEntry == vtkKWEntry::SafeDownCast(caller)
-      && event ==  vtkKWEntry::EntryValueChangedEvent)
+  else if (this->TimeStepEntry == vtkKWEntry::SafeDownCast(caller)
+           && event ==  vtkKWEntry::EntryValueChangedEvent)
     {
     if (this->TimeStampMethodButtonSet->GetWidget()->GetWidget(0)->GetSelectedState() == 1)
       {
@@ -862,6 +932,59 @@ void vtkFourDImageGUI::ProcessGUIEvents(vtkObject *caller,
       UpdateTimeStamp(bundleNode->GetID());
       UpdateFrameList(bundleNode->GetID());
       }
+    }
+
+  else if (this->ImportFrameFormatEntry == vtkKWEntry::SafeDownCast(caller)
+           && event ==  vtkKWEntry::EntryValueChangedEvent)
+    {
+    }
+  else if (this->ImportFrameRangeMinEntry == vtkKWEntry::SafeDownCast(caller)
+           && event ==  vtkKWEntry::EntryValueChangedEvent)
+    {
+    }
+  else if (this->ImportFrameRangeMaxEntry == vtkKWEntry::SafeDownCast(caller)
+           && event ==  vtkKWEntry::EntryValueChangedEvent)
+    {
+    }
+  else if (this->ImportFrameNodeButton == vtkKWPushButton::SafeDownCast(caller)
+           && event ==  vtkKWPushButton::InvokedEvent)
+    {
+    const char* format = this->ImportFrameFormatEntry->GetValue();
+    int min            = this->ImportFrameRangeMinEntry->GetValueAsInt();
+    int max            = this->ImportFrameRangeMaxEntry->GetValueAsInt();
+    
+    vtkMRMLTimeSeriesBundleNode *bundleNode = 
+      vtkMRMLTimeSeriesBundleNode::SafeDownCast(this->ActiveTimeSeriesBundleSelectorWidget->GetSelected());
+
+    int numFrames = bundleNode->GetNumberOfFrames();
+
+    // Adjust the range
+    if (min < 0)
+      {
+      min = 0;
+      this->ImportFrameRangeMinEntry->SetValueAsInt(min);
+      }
+    if (min > max)
+      {
+      max = min;
+      }
+
+    ////// TODO: we should validate 'format' here.
+
+    // imoprt the frames
+    ImportFramesFromScene(bundleNode->GetID(), format, min, max);
+
+    int nframe = bundleNode->GetNumberOfFrames();
+    if (nframe > 0)
+      {
+      // Tentatively, UpdateDisplayBufferNode() is called 
+      this->GetLogic()->UpdateDisplayBufferNode(bundleNode, 0);
+      this->GetLogic()->UpdateDisplayBufferNode(bundleNode, 1);
+      }
+
+    UpdateTimeStamp(bundleNode->GetID());
+    UpdateFrameList(bundleNode->GetID(), 0);
+
     }
 
 } 
@@ -1379,7 +1502,7 @@ void vtkFourDImageGUI::BuildGUIForFrameFrameEditor(int show)
   vtkKWFrameWithLabel *listframe = vtkKWFrameWithLabel::New();
   listframe->SetParent(conBrowsFrame->GetFrame());
   listframe->Create();
-  listframe->SetLabelText ("Frame list");
+  listframe->SetLabelText ("Frame List");
   this->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 2",
                  listframe->GetWidgetName() );
   
@@ -1516,12 +1639,91 @@ void vtkFourDImageGUI::BuildGUIForFrameFrameEditor(int show)
                this->TimeStepEntry->GetWidgetName(),
                tslabell->GetWidgetName());
 
+  vtkKWFrameWithLabel *importframe = vtkKWFrameWithLabel::New();
+  importframe->SetParent(conBrowsFrame->GetFrame());
+  importframe->Create();
+  importframe->SetLabelText ("Import frames");
+  this->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 2",
+                 importframe->GetWidgetName() );
+  
+  vtkKWFrame *formatframe = vtkKWFrame::New();
+  formatframe->SetParent(importframe->GetFrame());
+  formatframe->Create();
+  this->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 2",
+                 formatframe->GetWidgetName() );
+
+  vtkKWLabel *formatlabel = vtkKWLabel::New();
+  formatlabel->SetParent(formatframe);
+  formatlabel->Create();
+  formatlabel->SetText("Node name:");
+
+  this->ImportFrameFormatEntry = vtkKWEntry::New();
+  this->ImportFrameFormatEntry->SetParent(formatframe);
+  this->ImportFrameFormatEntry->Create();
+  this->ImportFrameFormatEntry->SetWidth(8);
+  this->ImportFrameFormatEntry->SetValue("IMAGE_%03d");
+
+  this->Script("pack %s -side left -anchor w -padx 2 -pady 2",
+               formatlabel->GetWidgetName());
+
+  this->Script("pack %s -side left -fill x -expand y -padx 2 -pady 2", 
+               this->ImportFrameFormatEntry->GetWidgetName());
+  
+
+  vtkKWFrame *rangeframe = vtkKWFrame::New();
+  rangeframe->SetParent(importframe->GetFrame());
+  rangeframe->Create();
+  this->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 2",
+                 rangeframe->GetWidgetName() );
+
+  vtkKWLabel *rangelabel1 = vtkKWLabel::New();
+  rangelabel1->SetParent(rangeframe);
+  rangelabel1->Create();
+  rangelabel1->SetText("Range:  from ");
+
+  this->ImportFrameRangeMinEntry = vtkKWEntry::New();
+  this->ImportFrameRangeMinEntry->SetParent(rangeframe);
+  this->ImportFrameRangeMinEntry->SetRestrictValueToInteger();
+  this->ImportFrameRangeMinEntry->Create();
+  this->ImportFrameRangeMinEntry->SetWidth(4);
+  this->ImportFrameRangeMinEntry->SetValueAsInt(0);
+
+  vtkKWLabel *rangelabel2 = vtkKWLabel::New();
+  rangelabel2->SetParent(rangeframe);
+  rangelabel2->Create();
+  rangelabel2->SetText(" to ");
+
+  this->ImportFrameRangeMaxEntry = vtkKWEntry::New();
+  this->ImportFrameRangeMaxEntry->SetParent(rangeframe);
+  this->ImportFrameRangeMaxEntry->SetRestrictValueToInteger();
+  this->ImportFrameRangeMaxEntry->Create();
+  this->ImportFrameRangeMaxEntry->SetWidth(4);
+  this->ImportFrameRangeMaxEntry->SetValueAsInt(0);
+
+  this->ImportFrameNodeButton = vtkKWPushButton::New ( );
+  this->ImportFrameNodeButton->SetParent ( rangeframe );
+  this->ImportFrameNodeButton->Create ( );
+  this->ImportFrameNodeButton->SetText ("Import");
+  this->ImportFrameNodeButton->SetWidth (6);
+
+  this->Script("pack %s %s %s %s %s -side left -anchor w -padx 2 -pady 2",
+               rangelabel1->GetWidgetName(),
+               this->ImportFrameRangeMinEntry->GetWidgetName(),
+               rangelabel2->GetWidgetName(),
+               this->ImportFrameRangeMaxEntry->GetWidgetName(),
+               this->ImportFrameNodeButton->GetWidgetName());
+               
   moveframe->Delete();
   addframe->Delete();
   tsframe->Delete();
   tseframe->Delete();
   tslabell->Delete();
   tslabelr->Delete();
+  formatframe->Delete();
+  formatlabel->Delete();
+  rangeframe->Delete();
+  rangelabel1->Delete();
+  rangelabel2->Delete();
 
 }
 
@@ -1859,6 +2061,48 @@ void vtkFourDImageGUI::UpdateTimeStamp(const char* bundleID)
     {
     }
 }
+
+
+//----------------------------------------------------------------------------
+int vtkFourDImageGUI::ImportFramesFromScene(const char* bundleID, const char* format, int min, int max)
+{
+
+  vtkMRMLTimeSeriesBundleNode* bundleNode 
+    = vtkMRMLTimeSeriesBundleNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(bundleID));
+
+  if (!bundleNode)
+    {
+    return 0;
+    }
+  
+  // check the ragen of the numbers
+  if (min < 0 || min > max)
+    {
+    return 0;
+    }
+
+  for (int i = min; i <= max; i ++)
+    {
+    char nodename[256];
+    sprintf(nodename, format, i);
+
+    // The module always takes the first node in the list, if there are multiple files with a same name.
+    vtkCollection* collection = this->GetMRMLScene()->GetNodesByName(nodename);
+    int nItems = collection->GetNumberOfItems();
+    if (nItems > 0)
+      {
+      vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(collection->GetItemAsObject(0));
+      if (node)
+        {
+        bundleNode->AddFrame(node->GetID());
+        }
+      }
+    }
+
+  return 1;
+
+}
+
 
 //----------------------------------------------------------------------------
 const char* vtkFourDImageGUI::GetActiveTimeSeriesBundleNodeID()

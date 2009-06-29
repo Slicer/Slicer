@@ -203,11 +203,11 @@ void vtkMRMLTimeSeriesBundleNode::ProcessMRMLEvents ( vtkObject *caller,
 {
   Superclass::ProcessMRMLEvents ( caller, event, callData );
 
-//  if (this->MatrixTransformToParent != NULL && this->MatrixTransformToParent == vtkMatrix4x4::SafeDownCast(caller) &&
-//      event ==  vtkCommand::ModifiedEvent)
-//    {
-//    this->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent, NULL);
-//    }
+  //  if (this->MatrixTransformToParent != NULL && this->MatrixTransformToParent == vtkMatrix4x4::SafeDownCast(caller) &&
+  //      event ==  vtkCommand::ModifiedEvent)
+  //    {
+  //    this->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent, NULL);
+  //    }
 }
 
 
