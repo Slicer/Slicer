@@ -127,9 +127,7 @@ protected:
 
   GLuint           Volume1Index;
   GLuint           Volume2Index;
-  GLuint           Volume3Index;
   GLuint           ColorLookupIndex;
-  GLuint           AlphaLookupIndex;
   GLuint           RayCastVertexShader;
   GLuint           RayCastFragmentShader;
   GLuint           RayCastProgram;
@@ -147,15 +145,8 @@ protected:
   void Initialize();
   void InitializeRayCast();
   
-  void RenderGLSL(vtkRenderer *pRen, vtkVolume *pVol);
-
-  void RenderOneIndependentGLSL( vtkRenderer *ren, vtkVolume *vol );
-  void RenderTwoDependentGLSL( vtkRenderer *ren, vtkVolume *vol );
-  void RenderFourDependentGLSL( vtkRenderer *ren, vtkVolume *vol );
-  
-  void SetupOneIndependentTextures( vtkRenderer *ren, vtkVolume *vol );
-  void SetupTwoDependentTextures( vtkRenderer *ren, vtkVolume *vol );
-  void SetupFourDependentTextures( vtkRenderer *ren, vtkVolume *vol );
+  void RenderGLSL(vtkRenderer *pRen, vtkVolume *pVol);  
+  void SetupTextures( vtkRenderer *ren, vtkVolume *vol );
 
   void DeleteTextureIndex( GLuint *index );
   void CreateTextureIndex( GLuint *index );

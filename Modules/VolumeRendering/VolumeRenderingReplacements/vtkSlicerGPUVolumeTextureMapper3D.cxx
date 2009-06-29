@@ -43,6 +43,31 @@ vtkInstantiatorNewMacro(vtkSlicerGPUVolumeTextureMapper3D);
 // A shift/scale is applied to the input scalar value to produce an 8 bit
 // value for the texture volume.
 //
+/*
+  1 component:
+             R            G             B             A
+  volume 1   scalar                                   normal.mag //one texture lookup for color
+  volume 2   normal.x     normal.y      normal.z      
+  
+  color = texture(scalar, normal.mag)
+  
+  2 components:
+             R            G             B             A
+  volume 1   scalar1      scalar2                     normal.mag
+  volume 2   normal.x     normal.y      normal.z
+  
+  color = texture(scalar1, normal.mag)
+  alpha = texture(scalar2, normal.mag)
+  
+  4 components:
+             R            G             B             A
+  volume 1   scalar1      scalar2       scalar3       scalar4
+  volume 2   normal.x     normal.y      normal.z      normal.mag
+  
+  color = RGB(scalar1, scalar2, scalar3)
+  alpha = texture(scalar4, normal.mag)
+  
+*/
 // When the input data is one component, the scalar value is placed in the
 // second component of the two component volume1. The first component is
 // filled in later with the gradient magnitude.
@@ -63,11 +88,10 @@ template <class T>
 void vtkSlicerGPUVolumeTextureMapper3DComputeScalars( T *dataPtr,
                                                vtkSlicerGPUVolumeTextureMapper3D *me,
                                                float offset, float scale,
-                                               unsigned char *volume1,
-                                               unsigned char *volume2)
+                                               unsigned char *volume1)
 {
   T              *inPtr;
-  unsigned char  *outPtr, *outPtr2;
+  unsigned char  *outPtr;
   int             i, j, k;
   int             idx;
 
@@ -103,76 +127,37 @@ void vtkSlicerGPUVolumeTextureMapper3DComputeScalars( T *dataPtr,
     if ( components == 1 )
       {
       outPtr = volume1;
-      if ( scale == 1.0 )
-        {
-        for ( i = 0; i < size; i++ )
-          {
-          idx = static_cast<unsigned char>(*(inPtr++) + offset);
-          *(outPtr++) = 0;
-          *(outPtr++) = idx;
-          }
-        }
-      else
         {
         for ( i = 0; i < size; i++ )
           {
           idx = static_cast<unsigned char>((*(inPtr++) + offset) * scale);
-          *(outPtr++) = 0;
           *(outPtr++) = idx;
+          *(outPtr++) = 0;
+          *(outPtr++) = 0;
+          *(outPtr++) = 0;
           }
         }
       }
     else if ( components == 2 )
       {
       outPtr = volume1;
-      if ( scale == 1.0 )
-        {
-        for ( i = 0; i < size; i++ )
-          {
-          idx = static_cast<unsigned char>(*(inPtr++) + offset);
-          *(outPtr++) = idx;
-
-          *(outPtr++) = 0;
-
-          idx = static_cast<unsigned char>(*(inPtr++) + offset);
-          *(outPtr++) = idx;
-          }
-        }
-      else
         {
         for ( i = 0; i < size; i++ )
           {
           idx = static_cast<unsigned char>((*(inPtr++) + offset) * scale);
           *(outPtr++) = idx;
 
-          *(outPtr++) = 0;
-
           idx = static_cast<unsigned char>((*(inPtr++) + offset) * scale);
           *(outPtr++) = idx;
+          
+          *(outPtr++) = 0;
+          *(outPtr++) = 0;
           }
         }
       }
     else if ( components == 4 )
       {
       outPtr = volume1;
-      outPtr2 = volume2;
-      if ( scale == 1.0 )
-        {
-        for ( i = 0; i < size; i++ )
-          {
-          idx = static_cast<unsigned char>(*(inPtr++) + offset);
-          *(outPtr++) = idx;
-          idx = static_cast<unsigned char>(*(inPtr++) + offset);
-          *(outPtr++) = idx;
-          idx = static_cast<unsigned char>(*(inPtr++) + offset);
-          *(outPtr++) = idx;
-
-          *(outPtr2++) = 0;
-          idx = static_cast<unsigned char>(*(inPtr++) + offset);
-          *(outPtr2++) = idx;
-          }
-        }
-      else
         {
         for ( i = 0; i < size; i++ )
           {
@@ -182,10 +167,8 @@ void vtkSlicerGPUVolumeTextureMapper3DComputeScalars( T *dataPtr,
           *(outPtr++) = idx;
           idx = static_cast<unsigned char>((*(inPtr++) + offset) * scale);
           *(outPtr++) = idx;
-
-          *(outPtr2++) = 0;
           idx = static_cast<unsigned char>((*(inPtr++) + offset) * scale);
-          *(outPtr2++) = idx;
+          *(outPtr++) = idx;
           }
         }
       }
@@ -194,7 +177,6 @@ void vtkSlicerGPUVolumeTextureMapper3DComputeScalars( T *dataPtr,
   else
     {
     outPtr  = volume1;
-    outPtr2 = volume2;
  
     for ( k = 0; k < outputDimensions[2]; k++ )
       {
@@ -243,8 +225,10 @@ void vtkSlicerGPUVolumeTextureMapper3DComputeScalars( T *dataPtr,
               (    wx)*(    wy)*(    wz)*H;
 
             idx = static_cast<unsigned char>((val + offset)*scale);
-            *(outPtr++) = 0;
             *(outPtr++) = idx;
+            *(outPtr++) = 0;
+            *(outPtr++) = 0;
+            *(outPtr++) = 0;
             }
           else if ( components == 2 )
             {
@@ -291,10 +275,11 @@ void vtkSlicerGPUVolumeTextureMapper3DComputeScalars( T *dataPtr,
             idx = static_cast<unsigned char>((val1 + offset) * scale);
             *(outPtr++) = idx;
 
-            *(outPtr++) = 0;
-
             idx = static_cast<unsigned char>((val2 + offset) * scale);
             *(outPtr++) = idx;
+            
+            *(outPtr++) = 0;
+            *(outPtr++) = 0;
             }
           else 
             {
@@ -381,10 +366,8 @@ void vtkSlicerGPUVolumeTextureMapper3DComputeScalars( T *dataPtr,
             *(outPtr++) = idx;
             idx = static_cast<unsigned char>((valb + offset) * scale);
             *(outPtr++) = idx;
-
-            *(outPtr2++) = 0;
             idx = static_cast<unsigned char>((vala + offset) * scale);
-            *(outPtr2++) = idx;
+            *(outPtr++) = idx;
             }
           }
         }
@@ -398,8 +381,7 @@ void vtkSlicerGPUVolumeTextureMapper3DComputeGradients( T *dataPtr,
                                                  vtkSlicerGPUVolumeTextureMapper3D *me,
                                                  double scalarRange[2],
                                                  unsigned char *volume1,
-                                                 unsigned char *volume2,
-                                                 unsigned char *volume3)
+                                                 unsigned char *volume2)
 {
   int                 x, y, z;
   int                 offset, outputOffset;
@@ -489,15 +471,15 @@ void vtkSlicerGPUVolumeTextureMapper3DComputeGradients( T *dataPtr,
     {
     normals = volume2;
     gradmags = volume1;
-    gradmagIncrement = components+1;
-    gradmagOffset = components-1;
+    gradmagIncrement = 4;
+    gradmagOffset = 3;
     }
   else 
     {
-    normals = volume3;
+    normals = volume2;
     gradmags = volume2;
-    gradmagIncrement = 2;
-    gradmagOffset = 0;
+    gradmagIncrement = 4;
+    gradmagOffset = 3;
     }
 
   double wx, wy, wz;
@@ -524,7 +506,7 @@ void vtkSlicerGPUVolumeTextureMapper3DComputeGradients( T *dataPtr,
 
       // Set some pointers
       outPtr1 = gradmags + gradmagIncrement*outputOffset;
-      outPtr2 = normals + 3*outputOffset;
+      outPtr2 = normals + 4*outputOffset;
 
       for ( x = xlow; x < xhigh; x++ )
         {
@@ -630,10 +612,10 @@ void vtkSlicerGPUVolumeTextureMapper3DComputeGradients( T *dataPtr,
         *(outPtr2+2) = nz;
 
         outPtr1 += gradmagIncrement;
-        outPtr2 += 3;
+        outPtr2 += 4;
         }
       }
-    if ( z%8 == 7 )
+    if ( z%10 == 9 )
       {
       float args[1];
       args[0] = 
@@ -662,7 +644,6 @@ vtkSlicerGPUVolumeTextureMapper3D::vtkSlicerGPUVolumeTextureMapper3D()
   
   this->Volume1                       = NULL;
   this->Volume2                       = NULL;
-  this->Volume3                       = NULL;
   this->VolumeSize                    = 0;
   this->VolumeComponents              = 0;
   
@@ -671,9 +652,10 @@ vtkSlicerGPUVolumeTextureMapper3D::vtkSlicerGPUVolumeTextureMapper3D()
 
 vtkSlicerGPUVolumeTextureMapper3D::~vtkSlicerGPUVolumeTextureMapper3D()
 {
-    delete [] this->Volume1;
-    delete [] this->Volume2;
-    delete [] this->Volume3;
+    if (this->Volume1)
+        delete [] this->Volume1;
+    if (this->Volume2)
+        delete [] this->Volume2;
 }
 
 
@@ -755,29 +737,14 @@ int vtkSlicerGPUVolumeTextureMapper3D::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
   if ( this->VolumeSize != neededSize ||
        this->VolumeComponents != components )
     {
-    delete [] this->Volume1;
-    delete [] this->Volume2;
-    delete [] this->Volume3;
-    switch (components)
-      {
-      case 1:
-        this->Volume1 = new unsigned char [2*neededSize];
-        this->Volume2 = new unsigned char [3*neededSize];
-        this->Volume3 = NULL;
-        break;
-      case 2:
-        this->Volume1 = new unsigned char [3*neededSize];
-        this->Volume2 = new unsigned char [3*neededSize];
-        this->Volume3 = NULL;
-        break;
-      case 3:
-      case 4:
-        this->Volume1 = new unsigned char [3*neededSize];
-        this->Volume2 = new unsigned char [2*neededSize];
-        this->Volume3 = new unsigned char [3*neededSize];
-        break;
-      }
-
+    if (this->Volume1)
+        delete [] this->Volume1;
+    if (this->Volume2)
+        delete [] this->Volume2;
+    
+    this->Volume1 = new unsigned char [4*neededSize];
+    this->Volume2 = new unsigned char [4*neededSize];
+    
     this->VolumeSize       = neededSize;
     this->VolumeComponents = components;
     }
@@ -843,8 +810,7 @@ int vtkSlicerGPUVolumeTextureMapper3D::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
       vtkSlicerGPUVolumeTextureMapper3DComputeScalars(
         (VTK_TT *)(dataPtr), this,
         offset, scale,
-        this->Volume1,
-        this->Volume2));
+        this->Volume1));
     }
 
   switch ( scalarType )
@@ -854,8 +820,7 @@ int vtkSlicerGPUVolumeTextureMapper3D::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
         (VTK_TT *)(dataPtr), this,
         scalarRange,
         this->Volume1,
-        this->Volume2,
-        this->Volume3));
+        this->Volume2));
     }
 
   return 1;
@@ -1048,7 +1013,6 @@ int vtkSlicerGPUVolumeTextureMapper3D::UpdateColorLookup( vtkVolume *vol )
       // Move the two temp float arrays into one RGB unsigned char array and
       // one alpha array. 
       rgbptr = this->ColorLookup;
-      aptr   = this->AlphaLookup;
       
       if ( colorChannels == 1 )
         {  
@@ -1061,7 +1025,7 @@ int vtkSlicerGPUVolumeTextureMapper3D::UpdateColorLookup( vtkVolume *vol )
             *(rgbptr++) = static_cast<unsigned char>(*(fptr1)*255.0 + 0.5);
             *(rgbptr++) = static_cast<unsigned char>(*(fptr1)*255.0 + 0.5);
             *(rgbptr++) = static_cast<unsigned char>(*(fptr1++)*255.0 + 0.5);
-            *(aptr++)   = static_cast<unsigned char>(*(fptr2++)*goArray[goLoop]*255.0 + 0.5);
+            *(rgbptr++) = static_cast<unsigned char>(*(fptr2++)*goArray[goLoop]*255.0 + 0.5);
             }
           }
         }
@@ -1076,7 +1040,7 @@ int vtkSlicerGPUVolumeTextureMapper3D::UpdateColorLookup( vtkVolume *vol )
             *(rgbptr++) = static_cast<unsigned char>(*(fptr1)*255.0 + 0.5);
             *(rgbptr++) = static_cast<unsigned char>(*(fptr1+1)*255.0 + 0.5);
             *(rgbptr++) = static_cast<unsigned char>(*(fptr1+2)*255.0 + 0.5);
-            *(aptr++)   = static_cast<unsigned char>(*(fptr2)*goArray[goLoop]*255.0 + 0.5);
+            *(rgbptr++) = static_cast<unsigned char>(*(fptr2)*goArray[goLoop]*255.0 + 0.5);
             }
           fptr1+=3;
           fptr2++;
@@ -1090,7 +1054,7 @@ int vtkSlicerGPUVolumeTextureMapper3D::UpdateColorLookup( vtkVolume *vol )
           *(rgbptr++) = 0;
           *(rgbptr++) = 0;
           *(rgbptr++) = 0;
-          *(aptr++)   = 0;
+          *(rgbptr++) = 0;
           }
         }
       break;
@@ -1098,7 +1062,7 @@ int vtkSlicerGPUVolumeTextureMapper3D::UpdateColorLookup( vtkVolume *vol )
     case 3:
     case 4:
       // Move the two temp float arrays into one alpha array
-      aptr   = this->AlphaLookup;
+      aptr = this->ColorLookup;
       
       for ( goLoop = 0; goLoop < 256; goLoop++ )
         {
@@ -1106,9 +1070,15 @@ int vtkSlicerGPUVolumeTextureMapper3D::UpdateColorLookup( vtkVolume *vol )
         for ( i = 0; i < arraySizeNeeded; i++ )
           {
           *(aptr++)   = static_cast<unsigned char>(*(fptr2++)*goArray[goLoop]*255.0 + 0.5);
+          *(aptr++)   = static_cast<unsigned char>(*(fptr2++)*goArray[goLoop]*255.0 + 0.5);
+          *(aptr++)   = static_cast<unsigned char>(*(fptr2++)*goArray[goLoop]*255.0 + 0.5);
+          *(aptr++)   = static_cast<unsigned char>(*(fptr2++)*goArray[goLoop]*255.0 + 0.5);
           }
         for ( ; i < 256; i++ )
           {
+          *(aptr++)   = 0;
+          *(aptr++)   = 0;
+          *(aptr++)   = 0;
           *(aptr++)   = 0;
           }
         }

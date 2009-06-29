@@ -107,7 +107,6 @@ protected:
   
   unsigned char            *Volume1;
   unsigned char            *Volume2;
-  unsigned char            *Volume3;
   int                       VolumeSize;
   int                       VolumeComponents;
   int                       VolumeDimensions[3];
@@ -124,7 +123,6 @@ protected:
   float                     SavedScalarOpacityDistance;
   
   unsigned char             ColorLookup[65536*4];
-  unsigned char             AlphaLookup[65536];
   float                     TempArray1[3*4096];
   float                     TempArray2[4096];
   int                       ColorTableSize;
