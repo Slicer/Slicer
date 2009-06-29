@@ -60,7 +60,7 @@ class VTK_FourDImage_EXPORT vtkMRMLTimeSeriesBundleNode : public vtkMRMLLinearTr
 
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "FourDBundle";};
+  virtual const char* GetNodeTagName() {return "TimeSeriesBundle";};
 
   // Description:
   // alternative method to propagate events generated in Transform nodes
@@ -91,7 +91,7 @@ class VTK_FourDImage_EXPORT vtkMRMLTimeSeriesBundleNode : public vtkMRMLLinearTr
   int          SetDisplayBufferNodeID(int bufferIndex, const char* nodeID);
   vtkMRMLNode* GetDisplayBufferNode(int bufferIndex);
   void         SwitchDisplayBuffer(int bufferIndex, int i);
-
+  
 protected:
   vtkMRMLTimeSeriesBundleNode();
   ~vtkMRMLTimeSeriesBundleNode();

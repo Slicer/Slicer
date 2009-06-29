@@ -387,15 +387,28 @@ vtkMRMLTimeSeriesBundleNode* vtkFourDImageLogic::LoadImagesFromDir(const char* p
     displayNode->Delete();
     }
 
-  AddDisplayBufferNode(bundleNode, 0);
-  AddDisplayBufferNode(bundleNode, 1);
+  if (bundleNode && bundleNode->GetDisplayBufferNode(0) == NULL)
+    {
+    AddDisplayBufferNode(bundleNode, 0);
+    }
+  else
+    {
+    UpdateDisplayBufferNode(bundleNode, 0);
+    }
+  if (bundleNode && bundleNode->GetDisplayBufferNode(1) == NULL)
+    {
+    AddDisplayBufferNode(bundleNode, 1);
+    }
+  else
+    {
+    UpdateDisplayBufferNode(bundleNode, 1);
+    }
 
   statusMessage.show = 0;
   this->InvokeEvent ( vtkFourDImageLogic::ProgressDialogEvent, &statusMessage);
   
   return bundleNode;
 }
-
 
 //---------------------------------------------------------------------------
 int vtkFourDImageLogic::SaveImagesToDir(const char* path,
@@ -456,7 +469,6 @@ vtkMRMLScalarVolumeNode* vtkFourDImageLogic::AddDisplayBufferNode(vtkMRMLTimeSer
   //vtkMRMLVolumeArchetypeStorageNode*storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
   vtkMRMLScalarVolumeDisplayNode* displayNode = vtkMRMLScalarVolumeDisplayNode::New();
   
-
   volumeNode->SetScene(scene);
   //storageNode->SetScene(scene);
   displayNode->SetScene(scene);
@@ -471,6 +483,21 @@ vtkMRMLScalarVolumeNode* vtkFourDImageLogic::AddDisplayBufferNode(vtkMRMLTimeSer
     volumeNode->SetAndObserveTransformNodeID(NULL);
     vtkImageData* firstImageData = firstFrameNode->GetImageData();
     imageData->ShallowCopy(firstImageData);
+    }
+  else 
+    // if there is no frame in the bundle node (this likely happens
+    // when the node has been created from the node selector.)
+    {
+    vtkImageData* image = vtkImageData::New();
+    image->SetDimensions(256, 256, 1);
+    image->SetExtent(0, 255, 0, 255, 0, 0 );
+    image->SetSpacing(1.0, 1.0, 1.0);
+    image->SetOrigin(0.0, 0.0, 0.0);
+    image->SetNumberOfScalarComponents(1);
+    image->SetScalarTypeToShort();
+    image->AllocateScalars();
+    image->Update();
+    volumeNode->SetAndObserveImageData(image);
     }
   
   // J. Tokuda -- Jan 26, 2009: The display buffer node is placed outside
@@ -511,6 +538,61 @@ vtkMRMLScalarVolumeNode* vtkFourDImageLogic::AddDisplayBufferNode(vtkMRMLTimeSer
   //storageNode->Delete();
   displayNode->Delete();
   return volumeNode;
+
+}
+
+
+//---------------------------------------------------------------------------
+void vtkFourDImageLogic::UpdateDisplayBufferNode(vtkMRMLTimeSeriesBundleNode* bundleNode, int index)
+{
+  if (!bundleNode)
+    {
+    return;
+    }
+  vtkMRMLScene* scene = this->GetMRMLScene();
+
+  // Get display and volume node
+  vtkMRMLScalarVolumeNode *volumeNode
+    = vtkMRMLScalarVolumeNode::SafeDownCast(bundleNode->GetDisplayBufferNode(index));
+  vtkMRMLScalarVolumeDisplayNode* displayNode 
+    = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(volumeNode->GetDisplayNode());
+    
+  vtkImageData* imageData = volumeNode->GetImageData();
+  vtkMRMLScalarVolumeNode *firstFrameNode 
+    = vtkMRMLScalarVolumeNode::SafeDownCast(bundleNode->GetFrameNode(0));
+
+  if (firstFrameNode && firstFrameNode->GetImageData())
+    {
+    volumeNode->Copy(firstFrameNode);
+    volumeNode->SetAndObserveTransformNodeID(NULL);
+    vtkImageData* firstImageData = firstFrameNode->GetImageData();
+    imageData->ShallowCopy(firstImageData);
+    volumeNode->SetAndObserveImageData(imageData);
+    
+    char nodeName[128];
+    sprintf(nodeName, "%s_Display%d", bundleNode->GetName(), index);
+    volumeNode->SetName(nodeName);
+
+    double rangeLower = 0.0;
+    double rangeUpper = 0.0;
+    
+    double range[2];
+    volumeNode->GetImageData()->GetScalarRange(range);
+    if (range[0] < rangeLower) rangeLower = range[0];
+    if (range[1] > rangeUpper) rangeUpper = range[1];
+    displayNode->SetAutoWindowLevel(0);
+    displayNode->SetAutoThreshold(0);
+    displayNode->SetLowerThreshold(range[0]);
+    displayNode->SetUpperThreshold(range[1]);
+    displayNode->SetWindow(range[1] - range[0]);
+    displayNode->SetLevel(0.5 * (range[1] - range[0]) );
+    vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
+    displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
+    colorLogic->Delete();
+    
+    volumeNode->Modified();
+    displayNode->Modified();
+    }
 
 }
 

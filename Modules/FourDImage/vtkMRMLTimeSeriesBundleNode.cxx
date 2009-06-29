@@ -437,11 +437,18 @@ int vtkMRMLTimeSeriesBundleNode::SetDisplayBufferNodeID(int bufferIndex, const c
 //----------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLTimeSeriesBundleNode::GetDisplayBufferNode(int bufferIndex)
 {
-  vtkMRMLNode* node =
-    vtkMRMLNode::SafeDownCast(this->GetScene()
-                              ->GetNodeByID(this->DisplayBufferNodeIDList[bufferIndex].c_str()));
-
-  return node;
+  if (this->DisplayBufferNodeIDList[bufferIndex] != "")
+    {
+    vtkMRMLNode* node =
+      vtkMRMLNode::SafeDownCast(this->GetScene()
+                                ->GetNodeByID(this->DisplayBufferNodeIDList[bufferIndex].c_str()));
+    
+    return node;
+    }
+  else
+    {
+    return NULL;
+    }
 }
   
 

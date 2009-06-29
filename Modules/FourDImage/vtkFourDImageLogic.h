@@ -113,6 +113,7 @@ class VTK_FourDImage_EXPORT vtkFourDImageLogic : public vtkSlicerModuleLogic
 
   vtkMRMLScalarVolumeNode* AddDisplayBufferNode(vtkMRMLTimeSeriesBundleNode* bundleNode, 
                                                 int index);
+  void UpdateDisplayBufferNode(vtkMRMLTimeSeriesBundleNode* bundleNode, int index);
   int         GetNumberOfFrames();
   const char* GetFrameNodeID(int index);
   const char* GetRegisteredFrameNodeID(int index);

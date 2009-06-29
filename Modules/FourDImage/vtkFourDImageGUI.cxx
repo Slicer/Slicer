@@ -451,6 +451,9 @@ void vtkFourDImageGUI::AddGUIObservers ( )
     this->ActiveTimeSeriesBundleSelectorWidget
       ->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
                     (vtkCommand *)this->GUICallbackCommand );
+    this->ActiveTimeSeriesBundleSelectorWidget
+      ->AddObserver(vtkSlicerNodeSelectorWidget::NewNodeEvent,
+                    (vtkCommand *)this->GUICallbackCommand );
     }
   if (this->ForegroundVolumeSelectorScale)
     {
@@ -588,7 +591,6 @@ void vtkFourDImageGUI::ProcessGUIEvents(vtkObject *caller,
                                       this->LogicCallbackCommand);
 
     //UpdateSeriesSelectorMenus();
-
     vtkMRMLTimeSeriesBundleNode *bundleNode = 
       vtkMRMLTimeSeriesBundleNode::SafeDownCast(this->ActiveTimeSeriesBundleSelectorWidget->GetSelected());
 
@@ -621,9 +623,30 @@ void vtkFourDImageGUI::ProcessGUIEvents(vtkObject *caller,
   else if (this->ActiveTimeSeriesBundleSelectorWidget == vtkSlicerNodeSelectorWidget::SafeDownCast(caller)
            && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
     {
+    
+    std::cerr << "vtkSlicerNodeSelectorWidget::NodeSelectedEvent" << std::endl;
+
     vtkMRMLTimeSeriesBundleNode *bundleNode = 
       vtkMRMLTimeSeriesBundleNode::SafeDownCast(this->ActiveTimeSeriesBundleSelectorWidget->GetSelected());
+
+    if (bundleNode && bundleNode->GetDisplayBufferNode(0) == NULL)
+      {
+      this->GetLogic()->AddDisplayBufferNode(bundleNode, 0);
+      }
+    if (bundleNode && bundleNode->GetDisplayBufferNode(1) == NULL)
+      {
+      this->GetLogic()->AddDisplayBufferNode(bundleNode, 1);
+      }
+
     SelectActiveTimeSeriesBundle(bundleNode);
+    }
+  else if (this->ActiveTimeSeriesBundleSelectorWidget == vtkSlicerNodeSelectorWidget::SafeDownCast(caller)
+           && event == vtkSlicerNodeSelectorWidget::NewNodeEvent) 
+    {
+
+    std::cerr << "vtkSlicerNodeSelectorWidget::NewNodeEvent" << std::endl;
+
+    // Do nothing here. Display Node will be added when NodeSelectEvent is issued.
     }
   else if (this->ForegroundVolumeSelectorScale == vtkKWScaleWithEntry::SafeDownCast(caller)
       && event == vtkKWScale::ScaleValueChangingEvent /*vtkKWScale::ScaleValueChangedEvent*/)
@@ -782,12 +805,20 @@ void vtkFourDImageGUI::ProcessGUIEvents(vtkObject *caller,
       {
       bundleNode->InsertFrame(selectedColumn, selectedVolumeNode->GetID());
       }
-    else if (selectedColumn = nframe)
+    else if (selectedColumn == nframe)
       {
       bundleNode->AddFrame(selectedVolumeNode->GetID());
       }
+
+    if (nframe == 0)
+      {
+      // Tentatively, UpdateDisplayBufferNode() is called 
+      this->GetLogic()->UpdateDisplayBufferNode(bundleNode, 0);
+      this->GetLogic()->UpdateDisplayBufferNode(bundleNode, 1);
+      }
+
     UpdateTimeStamp(bundleNode->GetID());
-    UpdateFrameList(bundleNode->GetID());
+    UpdateFrameList(bundleNode->GetID(), selectedColumn + 1);
 
     }
 
@@ -896,7 +927,13 @@ void vtkFourDImageGUI::ProcessMRMLEvents ( vtkObject *caller,
 {
   if (event == vtkMRMLScene::NodeAddedEvent)
     {
-    //UpdateSeriesSelectorMenus();
+    //vtkMRMLNode* node =  vtkMRMLNode::SafeDownCast((vtkObject*)callData);
+    //if (node && strcmp(node->GetNodeTagName(), "TimeSeriesBundle") == 0)
+    //  {
+    //  vtkMRMLTimeSeriesBundleNode *bundleNode = 
+    //    vtkMRMLTimeSeriesBundleNode::SafeDownCast(node);
+    //  SelectActiveTimeSeriesBundle(bundleNode);
+    //  }
     }
   else if (event == vtkMRMLScene::SceneCloseEvent)
     {
@@ -987,8 +1024,8 @@ void vtkFourDImageGUI::BuildGUI ( )
   this->Icons = vtkFourDImageIcons::New();
 
   BuildGUIForHelpFrame();
-  BuildGUIForLoadFrame(1);
   BuildGUIForActiveBundleSelectorFrame();
+  BuildGUIForLoadFrame(1);
   BuildGUIForFrameControlFrame(0);
   BuildGUIForFrameFrameEditor(0);
 }
@@ -1004,7 +1041,9 @@ void vtkFourDImageGUI::BuildGUIForActiveBundleSelectorFrame ()
   this->ActiveTimeSeriesBundleSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
   this->ActiveTimeSeriesBundleSelectorWidget->SetParent(page);
   this->ActiveTimeSeriesBundleSelectorWidget->Create();
-  this->ActiveTimeSeriesBundleSelectorWidget->SetNodeClass("vtkMRMLTimeSeriesBundleNode", NULL, NULL, NULL);
+  this->ActiveTimeSeriesBundleSelectorWidget->SetNodeClass("vtkMRMLTimeSeriesBundleNode", NULL,
+                                                           NULL, "TimeSeriesBundle");
+  this->ActiveTimeSeriesBundleSelectorWidget->SetNewNodeEnabled(1);
   this->ActiveTimeSeriesBundleSelectorWidget->SetMRMLScene(this->GetMRMLScene());
   this->ActiveTimeSeriesBundleSelectorWidget->SetBorderWidth(2);
   this->ActiveTimeSeriesBundleSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
@@ -1768,7 +1807,7 @@ void vtkFourDImageGUI::UpdateFrameList(const char* bundleID, int selectColumn)
     {
     selected = 0;
     }
-  else if (selected >= numFrames)
+  else if (selected > numFrames)
     {
     selected = numFrames-1;
     }
