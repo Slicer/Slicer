@@ -74,14 +74,14 @@ def pipeline(params, nimage, roiA, roiB, wm):
 
           #print "Pipeline : STOCHASTIC"
 
-          #ppserversL=("localhost",)
+          ppserversL=("localhost",)
           #ppserversL=("*",)
           # adapted to FAT nodes
-          ppserversL=(\
-           '134.174.54.175',\
-           '134.174.54.173',\
-           '134.174.54.172',\
-           '134.174.54.174',)
+          #ppserversL=(\
+          # '134.174.54.175',\
+          # '134.174.54.173',\
+          # '134.174.54.172',\
+          # '134.174.54.174',)
 
           data = nimage.getImage()
 
@@ -332,14 +332,14 @@ def pipeline(params, nimage, roiA, roiB, wm):
                     dataBlocks = []
                     wmBlocks = []
 
-                    nCpu =  24 # could be set to the number of available cores
+                    nCpu =  8 # could be set to the number of available cores
 
                     nParts = 1
                     if shpD[2]>1 and nCpu>1 :
 
                       job_server = pp.Server(ppservers=ppserversL)
                        
-                      ncpusL = 0 # job_server.get_ncpus()
+                      ncpusL = job_server.get_ncpus()
                       #if ncpusL == 0 : ncpusL = 1 
                       print "Number of cores on local machine : %s" % str(ncpusL)
                       print "Number of active computing nodes : %s" % str(nCpu)
