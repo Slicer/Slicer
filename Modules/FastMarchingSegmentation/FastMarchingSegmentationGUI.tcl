@@ -219,7 +219,7 @@ proc FastMarchingSegmentationBuildGUI {this} {
   set ckbutton $::FastMarchingSegmentation($this,volRenderCheckbox)
   $ckbutton SetParent [$outputParametersFrame GetFrame]
   $ckbutton Create
-  $ckbutton SetText "Use volume rendering?"
+  $ckbutton SetText "interactive volume rendering of segmentation results"
   $ckbutton SelectedStateOn
   $ckbutton SetBalloonHelpString "Uncheck this to disable volume rendering if\
     you experience performance problems"
@@ -278,6 +278,7 @@ proc FastMarchingSegmentationAddGUIObservers {this} {
   $this AddObserverByNumber $::FastMarchingSegmentation($this,timeScrollScale) 10001
   $this AddObserverByNumber $::FastMarchingSegmentation($this,fiducialsSelector) 11000
   $this AddObserverByNumber $::FastMarchingSegmentation($this,timescrollRange) 10001
+  $this AddObserverByNumber $::FastMarchingSegmentation($this,volRenderCheckbox) 10000
 }
 
 proc FastMarchingSegmentationRemoveGUIObservers {this} {
@@ -438,6 +439,21 @@ proc FastMarchingSegmentationProcessGUIEvents {this caller event} {
     set timescroll $::FastMarchingSegmentation($this,timeScrollScale)
     set range [$tsRange GetRange]
     $timescroll SetRange [lindex $range 0] [lindex $range 1]
+  }
+  
+  if { $caller == $::FastMarchingSegmentation($this,volRenderCheckbox) } {
+    if { [info exists ::FastMarchingSegmentation($this,renderVolume)] } {
+      if { [eval $caller GetSelectedState] } {
+        set viewerWidget [ [$this GetApplicationGUI] GetViewerWidget ]
+        [$viewerWidget GetMainViewer ] AddViewProp $::FastMarchingSegmentation($this,renderVolume)
+        $viewerWidget RequestRender
+      } else {
+        set viewerWidget [ [$this GetApplicationGUI] GetViewerWidget ]
+        [$viewerWidget GetMainViewer ] RemoveViewProp $::FastMarchingSegmentation($this,renderVolume)
+        $viewerWidget RequestRender
+      }
+    } 
+
   }
 }
 
