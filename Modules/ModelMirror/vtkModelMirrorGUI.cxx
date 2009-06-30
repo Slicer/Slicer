@@ -127,6 +127,7 @@ vtkModelMirrorGUI::~vtkModelMirrorGUI()
       }
 
     this->Raised = false;
+//    this->SetAndObserveMRMLScene ( NULL );    
 }
 
 
@@ -177,7 +178,7 @@ void vtkModelMirrorGUI::Exit ( )
 
   this->RemoveGUIObservers();
   this->ReleaseModuleEventBindings();
-  this->SetAndObserveMRMLScene ( NULL );
+//  this->SetAndObserveMRMLScene ( NULL );
   
   //--- Do a parallel thing in Logic
   this->Logic->Exit();
@@ -211,6 +212,7 @@ void vtkModelMirrorGUI::TearDownGUI ( )
 
   this->RemoveObservers ( vtkSlicerModuleGUI::ModuleSelectedEvent, (vtkCommand *)this->ApplicationGUI->GetGUICallbackCommand() );
   this->RemoveGUIObservers ( );
+  this->ModelSelector->SetMRMLScene ( NULL );
   this->ReleaseModuleEventBindings();
   this->Logic->SetModelMirrorNode ( NULL );
   this->SetLogic ( NULL );
@@ -247,7 +249,9 @@ void vtkModelMirrorGUI::AddGUIObservers ( )
       }
     this->ModelSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
                                              ( vtkCommand *) this->GUICallbackCommand );
+    this->ModelSelector->UpdateMenu();
     }
+
   if ( this->ModelNameEntry )
     {
     this->ModelNameEntry->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *) this->GUICallbackCommand );
@@ -362,6 +366,8 @@ void vtkModelMirrorGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       if ( this->Logic->HardenTransform() )
         {
+        //--- clean up 
+        this->Logic->DeleteMirrorTransform();
         if ( this->Logic->FlipNormals() )
           {
           if ( this->Logic->PositionInHierarchy() )

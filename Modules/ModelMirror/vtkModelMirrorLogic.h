@@ -65,6 +65,7 @@ class VTK_MODELMIRROR_EXPORT vtkModelMirrorLogic : public vtkSlicerModuleLogic
   
   virtual void CreateMirrorModel ();
   virtual void CreateMirrorTransform ( );
+  virtual void DeleteMirrorTransform ( );
   virtual void CreateMirrorMatrix( );
   virtual int HardenTransform();
   virtual int  FlipNormals();

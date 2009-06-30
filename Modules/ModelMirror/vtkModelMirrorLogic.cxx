@@ -158,12 +158,14 @@ void vtkModelMirrorLogic::CreateMirrorModel ( )
   //---
   //--- Start with a clean model.
   //---
+/*
   if ( this->ModelMirrorNode->GetOutputModel() )
     {
     this->GetMRMLScene()->RemoveNode ( this->ModelMirrorNode->GetOutputModel() );
     this->ModelMirrorNode->GetOutputModel()->Delete();
     }
-
+*/
+  
   //---
   //--- Get the input model stuff
   //---
@@ -283,7 +285,24 @@ void vtkModelMirrorLogic::CreateMirrorModel ( )
     vtkErrorMacro ( "CreateMirrorModel: Got NULL Storage Node." );
     }
 
+  //---
+  //--- inherit the color and other display properties from its source
+  //---
+//  mirrorModelNode->GetDisplayNode()->Copy( inputModelNode->GetDisplayNode() );
+  mirrorModelNode->GetDisplayNode()->SetColor (inputModelNode->GetDisplayNode()->GetColor() );
+//  mirrorModelNode->GetDisplayNode()->SetDiffuse (inputModelNode->GetDisplayNode()->GetDiffuse() );
+//  mirrorModelNode->GetDisplayNode()->SetAmbient (inputModelNode->GetDisplayNode()->GetAmbient() );
+//  mirrorModelNode->GetDisplayNode()->SetSpecular (inputModelNode->GetDisplayNode()->GetSpecular() );
+//  mirrorModelNode->GetDisplayNode()->SetOpacity (inputModelNode->GetDisplayNode()->GetOpacity() );
+//  mirrorModelNode->GetDisplayNode()->SetPower (inputModelNode->GetDisplayNode()->GetPower() );
+//  mirrorModelNode->GetDisplayNode()->SetClipping (inputModelNode->GetDisplayNode()->GetClipping() );
+//  mirrorModelNode->GetDisplayNode()->SetSliceIntersectionVisibility (inputModelNode->GetDisplayNode()->GetSliceIntersectionVisibility() );
   
+  //---
+  //--- disable backface culling on mirrored model
+  //---
+  mirrorModelNode->GetDisplayNode()->SetBackfaceCulling(0);
+
   //---
   //--- clean up 
   //---
@@ -342,6 +361,18 @@ void vtkModelMirrorLogic::CreateMirrorMatrix( )
 }
 
 //----------------------------------------------------------------------------
+void vtkModelMirrorLogic::DeleteMirrorTransform()
+{
+  if ( this->GetMRMLScene() == NULL )
+    {
+    vtkErrorMacro ( "DeleteMirrorTransform: Got NULL MRMLScene.");
+    return;
+    }
+  this->GetMRMLScene()->RemoveNode ( this->MirrorTransformNode );
+}
+
+
+//----------------------------------------------------------------------------
 void vtkModelMirrorLogic::CreateMirrorTransform ( )
 {
   //---
@@ -366,12 +397,14 @@ void vtkModelMirrorLogic::CreateMirrorTransform ( )
   //---
   //---   Start with a fresh transform
   //---
+/*
   if ( this->GetMirrorTransformNode() )
     {
     this->GetMRMLScene()->RemoveNode ( this->GetMirrorTransformNode() );
     this->GetMirrorTransformNode()->Delete();
     }
-
+*/
+  
   //---
   //---  Create the transform node and accompaniments
   //---
@@ -453,6 +486,9 @@ int vtkModelMirrorLogic::HardenTransform()
     return ( 0 );
     }
 
+  //---
+  //--- Harden the mirror transform
+  //---
   const char *id = this->ModelMirrorNode->GetOutputModel()->GetID();
   vtkMRMLTransformableNode *tbnode = vtkMRMLTransformableNode::SafeDownCast ( this->MRMLScene->GetNodeByID(id));
 
