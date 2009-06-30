@@ -1211,7 +1211,7 @@ void vtkFourDImageGUI::BuildGUIForLoadFrame (int show)
 
   conBrowsFrame->SetParent(page);
   conBrowsFrame->Create();
-  conBrowsFrame->SetLabelText("Load / Save / Active Series");
+  conBrowsFrame->SetLabelText("Load / Save");
   if (!show)
     {
     conBrowsFrame->CollapseFrame();
