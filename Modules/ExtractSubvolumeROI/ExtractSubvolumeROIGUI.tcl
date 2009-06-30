@@ -71,8 +71,8 @@ proc ExtractSubvolumeROIBuildGUI {this} {
   #
   # help frame
   #
-  set helptext "THIS MODULE IS UNDER DEVELOPMENT!\nThis module extracts subvolume of the image described by Region of Interest widget.\n\nTo use, specify input volume, region of interest within volume, output volume, and desied sampling. The output volume will have isotropic sampling.\n\nYou can control ROI in slice viewers. Left mouse button click expands the ROI size, Right mouse button click re-centers ROI.\n\n\nWARNING: Major limitations:\n-- input volume must be axis-aligned\n-- neither ROI or input volume can be under a transform\n"
-  set abouttext "This module was designed and implemented by Andriy Fedorov and Ron Kikinis.\nThis work was funded by Brain Science Foundation, and is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details."
+  set helptext "THIS MODULE IS UNDER DEVELOPMENT!\nThis module extracts subvolume of the image described by Region of Interest widget.\n\nTo use, specify input volume, region of interest within volume, output volume, and desired sampling scale. The meaning of the sampling scale is that the original sampling of the input volume will be multiplied by this scale in each dimension to derive sampling for the output volume. Linear interpolation will be used for scalar volumes, and neares neighbor for labels.\n\nYou can control ROI in slice viewers. Left mouse button click expands the ROI size, Right mouse button click re-centers ROI.\n\n\nWARNING: Major limitations:\n-- input volume must be axis-aligned\n-- neither ROI or input volume can be under a transform\n"
+  set abouttext "This module was developed by Andriy Fedorov and Ron Kikinis.\nThis work was funded by Brain Science Foundation, and is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details."
   $this BuildHelpAndAboutFrame $pageWidget $helptext $abouttext
 
   set slicerBaseIcons [vtkSlicerBaseAcknowledgementLogoIcons New]
@@ -158,8 +158,8 @@ proc ExtractSubvolumeROIBuildGUI {this} {
   set sampling $::ExtractSubvolumeROI($this,samplingScale)
   $sampling SetParent [$initFrame GetFrame]
   $sampling Create
-#  $sampling GetWidget SetRestrictValueToDouble
   $sampling SetLabelText "Input spacing scaling constant"
+  [$sampling GetWidget] SetValue 1.
   $sampling SetBalloonHelpString "Spacing of the input image in each dimension will be multiplied by this number to get output spacing. Enter 1 to preserve original spacing"
   pack [$sampling GetWidgetName] -side top -anchor e -padx 2 -pady 2
 
@@ -217,7 +217,6 @@ proc ExtractSubvolumeROIProcessLogicEvents {this caller event} {
 
 proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
   
-  puts "Event from $caller"
   # TODO: check if the volume or ROI is under a transform, and refuse to do
   # anything if it is to avoid problems
   if { $caller == $::ExtractSubvolumeROI($this,runButton) } {
@@ -261,7 +260,7 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
     set scene [[$this GetLogic] GetMRMLScene]
     set volumesLogic [$::slicer3::VolumesGUI GetLogic]
     set ::ExtractSubvolumeROI($this,labelMapNode) [$volumesLogic CreateLabelVolume $scene $inputVolume "VolumeOfInterest"]
-    $::ExtractSubvolumeROI($this,labelMapNode) SetHideFromEditors 1
+#    $::ExtractSubvolumeROI($this,labelMapNode) SetHideFromEditors 1
     $::ExtractSubvolumeROI($this,labelMapNode) SetAndObserveImageData [$labelMap GetOutput]
 
     set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
@@ -325,31 +324,37 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
       set dX [expr abs($roiX-$clickX)] 
       set dY [expr abs($roiY-$clickY)] 
       set dZ [expr abs($roiZ-$clickZ)] 
+      set shiftX [expr abs($dX-$roiRadiusX)/2.]
+      set shiftY [expr abs($dY-$roiRadiusY)/2.]
+      set shiftZ [expr abs($dZ-$roiRadiusZ)/2.]
+
+      # adjust the center and radius at the same time, so that only the
+      # nearest side of the bbox moves
       if { [expr $dX>$roiRadiusX || $dY>$roiRadiusY || $dZ>$roiRadiusZ] } {
         # click outside the box
         if {[expr $dX>$roiRadiusX]} {
-          set roiRadiusX $dX
           if {[expr $clickX>$roiX]} {
-            set roiX [expr $roiX+($dX-$roiRadiusX)/2]
+            set roiX [expr $roiX+$shiftX]
           } else {
-            set roiX [expr $roiX-($dX-$roiRadiusX)/2]
+            set roiX [expr $roiX-$shiftX]
           }
+          set roiRadiusX [expr $roiRadiusX+$shiftX]
         }
         if {[expr $dY>$roiRadiusY]} {
-          set roiRadiusY $dY
-          if {[expr $clickX>$roiX]} {
-            set roiY [expr $roiY+($dY-$roiRadiusY)/2]
+          if {[expr $clickY>$roiY]} {
+            set roiY [expr $roiY+$shiftY]
           } else {
-            set roiY [expr $roiY-($dY-$roiRadiusY)/2]
+            set roiY [expr $roiY-$shiftY]
           }
+          set roiRadiusY [expr $roiRadiusY+$shiftY]
         } 
         if {[expr $dZ>$roiRadiusZ]} {
-          set roiRadiusZ $dZ
           if {[expr $clickZ>$roiZ]} {
-            set roiY [expr $roiZ+($dZ-$roiRadiusZ)/2]
+            set roiZ [expr $roiZ+$shiftZ]
           } else {
-            set roiY [expr $roiZ-($dZ-$roiRadiusZ)/2]
+            set roiZ [expr $roiZ-$shiftZ]
           }
+          set roiRadiusZ [expr $roiRadiusZ+$shiftZ]
         } 
       } else {
         # in-box click -- reduce roi
@@ -357,16 +362,8 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
         # this should reduce radius in the coordinates that correspond to
         # in-slice only, otherwise the behavior is not intuitive, in my
         # opinion)
-#        if {[expr $dX<$roiRadiusX]} {
-#          set roiRadiusX $dX
-#        }
-#        if {[expr $dY<$roiRadiusY]} {
-#          set roiRadiusY $dY
-#        }
-#        if {[expr $dZ<$roiRadiusZ]} {
-#          set roiRadiusZ $dZ
-#        }
       }
+
       $roiNode SetXYZ $roiX $roiY $roiZ
       $roiNode SetRadiusXYZ $roiRadiusX $roiRadiusY $roiRadiusZ
     }
@@ -506,7 +503,7 @@ proc ExtractSubvolumeROIApply {this} {
     set errorText "Input volume and output volume cannot be the same!"
   }
   if {$userSpacing <= 0.} {
-    set errorText "Sampling must be non-negative!"
+    set errorText "Sampling must be a floating number greater than 0!"
   }
 
   if { $errorText != "" } {
@@ -589,15 +586,9 @@ proc ExtractSubvolumeROIApply {this} {
 
   $resampler SetInput [$changeInf2 GetOutput]
   
-  if { $userSpacing == 0} {
-    set newSpacingX [lindex $inputSpacing 0]
-    set newSpacingY [lindex $inputSpacing 1]
-    set newSpacingZ [lindex $inputSpacing 2]
-  } else {    
-    set newSpacingX [expr [lindex $inputSpacing 0]*$userSpacing]
-    set newSpacingY [expr [lindex $inputSpacing 1]*$userSpacing]
-    set newSpacingZ [expr [lindex $inputSpacing 2]*$userSpacing]
-  }
+  set newSpacingX [expr [lindex $inputSpacing 0]*$userSpacing]
+  set newSpacingY [expr [lindex $inputSpacing 1]*$userSpacing]
+  set newSpacingZ [expr [lindex $inputSpacing 2]*$userSpacing]
 
   $resampler SetAxisOutputSpacing 0 $newSpacingX
   $resampler SetAxisOutputSpacing 1 $newSpacingY
@@ -606,8 +597,6 @@ proc ExtractSubvolumeROIApply {this} {
   $resampler Update
 
   set dimAfter [ [$resampler GetOutput] GetDimensions]
-
-  # puts "Dimensions before: $dimBefore, and after: $dimAfter"
 
   set changeInf3 [vtkImageChangeInformation New]
   $changeInf3 SetInput [$resampler GetOutput]
@@ -622,11 +611,6 @@ proc ExtractSubvolumeROIApply {this} {
   eval $outVolumeNode SetOrigin $newOrigin
   $outVolumeNode Modified
 
-  set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
-  $selectionNode SetReferenceActiveLabelVolumeID [$outVolumeNode GetID]
-  $selectionNode Modified
-  [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection 0
-
   $ras2ijk Delete
   $ijk2ras Delete
 
@@ -636,6 +620,13 @@ proc ExtractSubvolumeROIApply {this} {
   $output Delete
   $resampler Delete
 
+  # set background volume to the resampled volume
+  set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
+  $selectionNode SetReferenceActiveVolumeID [$outVolumeNode GetID]
+  $selectionNode SetReferenceActiveLabelVolumeID ""
+  $selectionNode Modified
+  [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection 1
+
   return
 
   set reslicer $::ExtractSubvolumeROI($this,resliceFilter)
@@ -643,8 +634,6 @@ proc ExtractSubvolumeROIApply {this} {
 
 
   set ::ExtractSubvolumeROI($this,processing) 1
-
-  puts "Inputs are checked!"
 
   set inputImage [$volumeNode GetImageData]
   puts "Input origin:"
@@ -934,13 +923,6 @@ proc ExtractSubvolumeROIEnter {this} {
   set ::ExtractSubvolumeROI($this,redGUIObserverTags) $redGUIObserverTags
   set ::ExtractSubvolumeROI($this,greenGUIObserverTags) $greenGUIObserverTags
   set ::ExtractSubvolumeROI($this,yellowGUIObserverTags) $yellowGUIObserverTags
- 
-  puts $redGUIObserverTags 
-  puts $greenGUIObserverTags 
-  puts $yellowGUIObserverTags 
-  
-  puts "Mouse event handlers added"
-
 }
 
 proc ExtractSubvolumeROIExit {this} {
@@ -948,12 +930,6 @@ proc ExtractSubvolumeROIExit {this} {
   set rwiRed $::ExtractSubvolumeROI($this,rwiRedInteractorStyle)
   set rwiGreen $::ExtractSubvolumeROI($this,rwiGreenInteractorStyle)
   set rwiYellow $::ExtractSubvolumeROI($this,rwiYellowInteractorStyle)
-
-  puts "About to remove observer tags..."
-  puts $::ExtractSubvolumeROI($this,redGUIObserverTags)
-  puts $::ExtractSubvolumeROI($this,greenGUIObserverTags)
-  puts $::ExtractSubvolumeROI($this,yellowGUIObserverTags)
- 
 
   # remove all slice observers
   foreach tag $::ExtractSubvolumeROI($this,redGUIObserverTags) {
@@ -969,6 +945,4 @@ proc ExtractSubvolumeROIExit {this} {
   set ::ExtractSubvolumeROI($this,redGUIObserverTags) ""
   set ::ExtractSubvolumeROI($this,greenGUIObserverTags) ""
   set ::ExtractSubvolumeROI($this,yellowGUIObserverTags) ""
-
-  puts "Mouse event handlers removed"
 }
