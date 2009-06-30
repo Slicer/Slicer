@@ -263,7 +263,7 @@ proc FastMarchingSegmentationSegment {this} {
 proc FastMarchingSegmentationUpdateTime {this} {
   set requestedTime [$::FastMarchingSegmentation($this,timeScrollScale) GetValue]
   set fmFilter $::FastMarchingSegmentation($this,fastMarchingFilter)
-  set scaleRange [$::FastMarchingSegmentation($this,timeScrollScale) GetRange]
+  set scaleRange [$::FastMarchingSegmentation($this,timescrollRange) GetWholeRange]
   set requestedTime [expr $requestedTime / [lindex $scaleRange 1] ]
   $fmFilter show $requestedTime
   $fmFilter Modified
@@ -279,7 +279,7 @@ proc FastMarchingSegmentationCreateLabelVolume {this} {
 
   set inputVolumeName [$volumeNode GetName]
   set outputVolumeName [$outputVolumeNode GetName]
-  $outputVolumeNode SetName "${inputVolumeName}_${outputVolumeName}"
+#  $outputVolumeNode SetName "${inputVolumeName}_${outputVolumeName}"
 
   # from vtkSlicerVolumesLogic
   set outputDisplayNode [vtkMRMLLabelMapVolumeDisplayNode New]
