@@ -226,13 +226,9 @@ vtkCommandLineModuleLogic
 
   if (tag == "image")
     {
-    bool imageIsScalar = strcmp(this->MRMLScene->GetNodeByID(name.c_str())->GetClassName(),"vtkMRMLScalarVolumeNode") == 0;
-
-    if ( ( commandType == CommandLineModule )
-         || !imageIsScalar)
+    if ( commandType == CommandLineModule )
       {
-      // If running an executable or running a shared memory module
-      // but the image type is non-scalar...
+      // If running an executable 
 
       // Use default fname construction, tack on extension
       std::string ext = ".nrrd";
@@ -244,9 +240,9 @@ vtkCommandLineModuleLogic
       }
     else
       {
-      // If not a command line module and the image type is scalar,
-      // then it is a shared object module for which we can
-      // communicated directly with the MRML tree.
+      // If not a command line module then it is a shared object
+      // module for which we can communicated directly with the MRML
+      // tree.
 
       // Redefine the filename to be a reference to a slicer node.
       
@@ -629,14 +625,14 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       // No need to write anything out with Python
       continue;
       }
-    if (((commandType == CommandLineModule) && svnd) || vvnd)
+    if ((commandType == CommandLineModule) && (svnd || vvnd))
       {
-      // only write out scalar image nodes if running an executable
+      // only write out scalar & vector image nodes if running an executable
       out = vtkMRMLVolumeArchetypeStorageNode::New();
       }
-    else if (dtvnd || dwvnd)
+    else if ((commandType == CommandLineModule) && (dtvnd || dwvnd))
       {
-      // for now, always write out the diffusion tensor nodes
+      // only write out diffusion image & tensor nodes if running an executable
       out = vtkMRMLNRRDStorageNode::New();
       }
     else if (fbnd)

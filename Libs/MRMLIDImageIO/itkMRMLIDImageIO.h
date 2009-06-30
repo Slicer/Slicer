@@ -24,6 +24,8 @@
 #include "itkImageIOBase.h"
 
 class vtkMRMLVolumeNode;
+class vtkMRMLDiffusionWeightedVolumeNode;
+class vtkMRMLDiffusionImageVolumeNode;
 class vtkImageData;
 
 namespace itk
@@ -97,6 +99,26 @@ protected:
   /** Write the image information to the node and specified image */
   virtual void WriteImageInformation(vtkMRMLVolumeNode *, vtkImageData*);
   
+  /** Take information in a Slicer node and transfer it the
+   *  MetaDataDictionary in ITK */
+  void SetDWDictionaryValues(MetaDataDictionary &dict, 
+                             vtkMRMLDiffusionWeightedVolumeNode *dw);
+
+  /** Take information in a Slicer node and transfer it the
+   *  MetaDataDictionary in ITK */
+  void SetDTDictionaryValues(MetaDataDictionary &dict, 
+                             vtkMRMLDiffusionImageVolumeNode *di);
+
+  /** Take information from the MetaDataDictionary that is needed to
+   *  transfer this volume to a Slicer node */
+  void SetDWNodeValues(vtkMRMLDiffusionWeightedVolumeNode *dw, 
+                       MetaDataDictionary &dict);
+
+  /** Take information from the MetaDataDictionary that is needed to
+   *  transfer this volume to a Slicer node */
+  void SetDTNodeValues(vtkMRMLDiffusionImageVolumeNode *di, 
+                       MetaDataDictionary &dict);
+
 private:
   MRMLIDImageIO(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented

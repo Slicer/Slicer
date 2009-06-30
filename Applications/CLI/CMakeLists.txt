@@ -28,6 +28,11 @@ add_executable(${CLP} ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP})
 target_link_libraries (${CLP} ITKIO ITKBasicFilters)
 
+add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
+set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
+slicer3_set_plugins_output_path(${CLP}Lib)
+target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
+
 #####################
 set (CLP DiffusionWeightedTest)
 
@@ -36,6 +41,12 @@ generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
 add_executable(${CLP} ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP})
 target_link_libraries (${CLP} ITKIO ITKBasicFilters)
+
+add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
+set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
+slicer3_set_plugins_output_path(${CLP}Lib)
+target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
+
 
 #####################
 set (CLP DiffusionTensorEstimation)

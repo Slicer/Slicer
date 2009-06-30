@@ -45,13 +45,6 @@ template<class PixelType> int DoIt( int argc, char * argv[], PixelType )
   reader->SetFileName( inputVolume.c_str() );
   reader->Update();
 
-  itk::MetaDataDictionary imgMetaDictionary = reader->GetMetaDataDictionary();
-  std::vector<std::string> imgMetaKeys = imgMetaDictionary.GetKeys();
-  std::vector<std::string>::iterator itKey = imgMetaKeys.begin();
-  std::string metaString;
-
-  std::cout << "Number of keys = " << imgMetaKeys.size() << std::endl;
-
   typedef itk::MetaDataDictionary DictionaryType;
   const DictionaryType & dictionary = reader->GetMetaDataDictionary();
 
@@ -60,73 +53,66 @@ template<class PixelType> int DoIt( int argc, char * argv[], PixelType )
   DictionaryType::ConstIterator itr = dictionary.Begin();
   DictionaryType::ConstIterator end = dictionary.End();
 
-  double dBValue = 1000;
-  int iFoundBValue = 0;
-
   while( itr != end )
     {
-      itk::MetaDataObjectBase::Pointer entry = itr->second;
-      MetaDataStringType::Pointer entryvalue =
-        dynamic_cast<MetaDataStringType *>( entry.GetPointer() ) ;
-
-      if( entryvalue )
+      if (itr->first == "DWMRI_b-value")
         {
+        std::string bValueString;
+        itk::ExposeMetaData<std::string>(dictionary, itr->first, bValueString);
+        std::cout << "DWMRI_b-value(string): " << bValueString << std::endl;
+        }
+      else if (itr->first.find("DWMRI_gradient") != std::string::npos)
+        {
+std::string gradientValueString;
+        itk::ExposeMetaData<std::string>(dictionary, itr->first, gradientValueString);
+        std::cout << "DWMRI_gradient(string): " << gradientValueString << std::endl;
+        }
+     else if (itr->first.find("NRRD_measurement frame") != std::string::npos)
+        {
+        std::vector<std::vector<double> > measurementFrameValue(3);
 
-          int pos = itr->first.find("DWMRI_gradient");
-
-          if ( pos != -1 ) {
-
-            std::string tagkey = itr->first;
-            std::string tagvalue = entryvalue->GetMetaDataObjectValue();
-
-            double dx[DIMENSION];
-            std::sscanf(tagvalue.c_str(), "%lf %lf %lf\n", &dx[0], &dx[1], &dx[2]);
-            diffusionDirections.push_back( (CovariantVectorType)(dx) );
-          } else {
-
-            // try to find the b-value
-
-            int pos2 = itr->first.find("DWMRI_b-value");
-
-            if ( pos2 != -1 ) {
-              std::string tagvalue = entryvalue->GetMetaDataObjectValue();
-              std::sscanf(tagvalue.c_str(), "%lf\n", &dBValue );
-              iFoundBValue = 1;
-            } else {
-              //std::cout << itr->first << " " << entryvalue->GetMetaDataObjectValue() << std::endl;
-            }
-
+        for (unsigned int i=0; i < 3; i++)
+          {
+          measurementFrameValue[i].resize(3);
           }
+        
+        itk::ExposeMetaData<std::vector<std::vector<double> > >(dictionary, itr->first, measurementFrameValue);
+
+        std::cout << itr->first << ": " << std::endl;
+        for (unsigned int i=0; i < 3; i++)
+          {
+          for (unsigned int j=0; j < 3; j++)
+            {
+            std::cout << measurementFrameValue[i][j] << " ";
+            }
+          std::cout << std::endl;
+          }
+
+        std::cout << std::endl;
+        }
+      else 
+        {
+        std::cout << itr->first << std::endl;
         }
 
-      ++itr;
+++itr;
     }
 
-  typename itk::NrrdImageIO::Pointer io = itk::NrrdImageIO::New();
-
-  itk::MetaDataDictionary metaDataDictionary;
-  metaDataDictionary = reader->GetMetaDataDictionary();
-
-  io->SetFileTypeToBinary();
-  io->SetMetaDataDictionary( metaDataDictionary );
-
-  typedef itk::ImageFileWriter<DiffusionImageType> WriterType;
-  typename WriterType::Pointer nrrdWriter = WriterType::New();
-  nrrdWriter->UseInputMetaDataDictionaryOff();
-  nrrdWriter->SetInput( reader->GetOutput() );
-  nrrdWriter->SetImageIO(io);
-  nrrdWriter->SetFileName( outputVolume.c_str() );
-  nrrdWriter->UseCompressionOn();
-  try
+   typedef itk::ImageFileWriter<DiffusionImageType> WriterType;
+   typename WriterType::Pointer nrrdWriter = WriterType::New();
+   nrrdWriter->SetInput( reader->GetOutput() );
+   nrrdWriter->SetFileName( outputVolume.c_str() );
+   nrrdWriter->UseCompressionOn();
+   try
+     {
+     nrrdWriter->Update();
+     std::cout<<"Done writting the volume"<<std::endl;
+     }
+   catch (itk::ExceptionObject e)
     {
-    nrrdWriter->Update();
-    std::cout<<"Done writting the volume"<<std::endl;
+     std::cout << e << std::endl;
+     return EXIT_FAILURE;
     }
-  catch (itk::ExceptionObject e)
-   {
-    std::cout << e << std::endl;
-    return EXIT_FAILURE;
-   }
 
 return EXIT_SUCCESS;
 }

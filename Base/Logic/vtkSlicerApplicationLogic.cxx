@@ -1455,6 +1455,11 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     if (dtvnd)
       {
       vtkMRMLDiffusionTensorVolumeDisplayNode *dtvdn = vtkMRMLDiffusionTensorVolumeDisplayNode::New();
+//       dtvdn->SetWindow(0);
+//       dtvdn->SetLevel(0);
+//       dtvdn->SetUpperThreshold(0);
+//       dtvdn->SetLowerThreshold(0);
+//       dtvdn->SetAutoWindowLevel(1);
       disp = dtvdn; // assign to superclass pointer
       }
     else
@@ -1576,7 +1581,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
         // make sure win/level gets calculated
         svnd->CalculateAutoLevels(vtkMRMLScalarVolumeDisplayNode::SafeDownCast(svnd->GetDisplayNode()), svnd->GetImageData());
         }
-      if (!strcmp(svnd->GetClassName(), "vtkMRMLScalarVolumeNode"))
+//      if (!strcmp(svnd->GetClassName(), "vtkMRMLScalarVolumeNode"))
         {
         this->PropagateVolumeSelection();
         }
