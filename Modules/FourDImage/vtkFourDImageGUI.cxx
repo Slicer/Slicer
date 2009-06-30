@@ -1299,7 +1299,7 @@ void vtkFourDImageGUI::BuildGUIForFrameControlFrame(int show)
 
   conBrowsFrame->SetParent(page);
   conBrowsFrame->Create();
-  conBrowsFrame->SetLabelText("Frame Control");
+  conBrowsFrame->SetLabelText("Control");
   if (!show)
     {
     conBrowsFrame->CollapseFrame();
@@ -1488,7 +1488,7 @@ void vtkFourDImageGUI::BuildGUIForFrameFrameEditor(int show)
 
   conBrowsFrame->SetParent(page);
   conBrowsFrame->Create();
-  conBrowsFrame->SetLabelText("Frame Editor");
+  conBrowsFrame->SetLabelText("Editor");
   if (!show)
     {
     conBrowsFrame->CollapseFrame();
