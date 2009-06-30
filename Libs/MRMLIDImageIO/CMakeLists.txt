@@ -73,8 +73,8 @@ add_library(${lib_name}
 target_link_libraries(${lib_name} 
   ITKIO 
   MRML
-  vtkGraphics
-  vtkRendering
+  vtkCommon
+  vtkFiltering
   vtkImaging
 )
 
