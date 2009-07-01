@@ -69,6 +69,7 @@ set(SlicerBaseLogic_SRCS
   vtkSlicerTransformLogic.cxx
   vtkPichonFastMarching.cxx
   vtkPichonFastMarchingPDF.cxx
+  vtkImageRectangularSource.cxx
   )
 
 # Abstract/pure virtual classes
