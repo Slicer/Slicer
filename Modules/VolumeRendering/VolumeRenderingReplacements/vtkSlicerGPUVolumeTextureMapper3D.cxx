@@ -43,7 +43,7 @@ vtkInstantiatorNewMacro(vtkSlicerGPUVolumeTextureMapper3D);
 // A shift/scale is applied to the input scalar value to produce an 8 bit
 // value for the texture volume.
 //
-/*
+/*06/30/2009 new scalar/normal storage schema (Yanling)
   1 component:
              R            G             B             A
   volume 1   scalar                                   normal.mag //one texture lookup for color
@@ -67,7 +67,13 @@ vtkInstantiatorNewMacro(vtkSlicerGPUVolumeTextureMapper3D);
   color = RGB(scalar1, scalar2, scalar3)
   alpha = texture(scalar4, normal.mag)
   
+  1 component two volumes (A and B):
+             R            G             B             A
+  volume 1   scalar A     scalar B      normal.x.A    normal.y.A
+  volume 2   normal.z.A   normal.x.B    normal.y.B    normal.z.B
+  
 */
+// 06/30/2009 original scalar/normal storage schema (VTK)
 // When the input data is one component, the scalar value is placed in the
 // second component of the two component volume1. The first component is
 // filled in later with the gradient magnitude.
@@ -725,10 +731,8 @@ int vtkSlicerGPUVolumeTextureMapper3D::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
   double spacing[3];
   input->GetSpacing(spacing);
  
-  // Is it the right size? If not, allocate it.
-  if ( this->VolumeSize != neededSize ||
-       this->VolumeComponents != components )
-    {
+  // allocate memory
+  {
     if (this->Volume1)
         delete [] this->Volume1;
     if (this->Volume2)
@@ -739,7 +743,7 @@ int vtkSlicerGPUVolumeTextureMapper3D::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
     
     this->VolumeSize       = neededSize;
     this->VolumeComponents = components;
-    }
+  }
  
   // Find the scalar range
   double scalarRange[2];

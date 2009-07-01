@@ -2901,7 +2901,6 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetInternalVolumeSize(int size)
     {
         this->InternalVolumeSize = size;
         this->SavedTextureInput = NULL;//dirty input, force reprocess input
-        this->RayCastInitialized = 0;
     }
 }
 
