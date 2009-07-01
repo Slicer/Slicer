@@ -689,7 +689,7 @@ int vtkSlicerGPUVolumeTextureMapper3D::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
   int powerOfTwoDim[3];
   input->GetDimensions(powerOfTwoDim);
   
-  for ( int i = 0; i < 3; i++ )
+/*  for ( int i = 0; i < 3; i++ )
     {
     powerOfTwoDim[i] = 32;
     while ( powerOfTwoDim[i] < dim[i] )
@@ -697,23 +697,23 @@ int vtkSlicerGPUVolumeTextureMapper3D::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
       powerOfTwoDim[i] *= 2;
       }
     }
-    
+*/    
   //non-power-of-two texture offically supported since OpenGL 2.0
   while ( ! this->IsTextureSizeSupported( powerOfTwoDim ) )
   {
     if ( powerOfTwoDim[0] >= powerOfTwoDim[1] &&
           powerOfTwoDim[0] >= powerOfTwoDim[2] )
     {
-      powerOfTwoDim[0] /= 2;
+      powerOfTwoDim[0]--;
     }
     else if ( powerOfTwoDim[1] >= powerOfTwoDim[0] &&
               powerOfTwoDim[1] >= powerOfTwoDim[2] )
     {
-      powerOfTwoDim[1] /= 2;
+      powerOfTwoDim[1]--;
     }
     else
     {
-      powerOfTwoDim[2] /= 2;
+      powerOfTwoDim[2]--;
     }
   }
   
