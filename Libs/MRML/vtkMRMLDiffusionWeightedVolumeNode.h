@@ -72,6 +72,10 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLScalarV
   // Description:
   void SetBValue (int val, const double b);
   void SetBValues (vtkDoubleArray *bValue);
+// Work around issue that GetBValue is defined as a macro in windows.h
+#ifdef GetBValue
+#undef GetBValue
+#endif
   double GetBValue(int val);
   vtkGetObjectMacro(BValues,vtkDoubleArray);
 
