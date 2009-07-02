@@ -26,6 +26,7 @@
 #include "vtkVolumeProperty.h"
 #include "vtkMatrix4x4.h"
 #include "vtkCommand.h"
+#include "vtkMultiThreader.h"
 
 vtkCxxRevisionMacro(vtkSlicerGPUVolumeTextureMapper3D, "$Revision: 1.6 $");
 
@@ -381,19 +382,24 @@ void vtkSlicerGPUVolumeTextureMapper3DComputeScalars( T *dataPtr,
 }
 
 
-template <class T>
-void vtkSlicerGPUVolumeTextureMapper3DComputeGradients( T *dataPtr,
-                                                 vtkSlicerGPUVolumeTextureMapper3D *me,
-                                                 double scalarRange[2],
-                                                 unsigned char *volume1,
-                                                 unsigned char *volume2)
+VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeTextureMapper3DComputeGradients( void *arg)
 {
+  GradientsArgsType *pArgs = (GradientsArgsType *)(((vtkMultiThreader::ThreadInfo *)arg)->UserData);
+  
+  float *dataPtr = pArgs->dataPtr;
+  vtkSlicerGPUVolumeTextureMapper3D *me = pArgs->me;
+  double scalarRange[2];
+  scalarRange[0] = pArgs->scalarRange[0];
+  scalarRange[1] = pArgs->scalarRange[1];
+  unsigned char *volume1 = pArgs->volume1;
+  unsigned char *volume2 = pArgs->volume2;
+  
   int                 x, y, z;
   int                 offset, outputOffset;
   int                 x_start, x_limit;
   int                 y_start, y_limit;
   int                 z_start, z_limit;
-  T                   *dptr;
+  float               *dptr;
   float               n[3], t;
   float               gvalue;
   float               zeroNormalThreshold;
@@ -403,8 +409,6 @@ void vtkSlicerGPUVolumeTextureMapper3DComputeGradients( T *dataPtr,
   unsigned char       *normals, *gradmags;
   double              floc[3];
   int                 loc[3];
-
-  me->InvokeEvent( vtkCommand::VolumeMapperComputeGradientsStartEvent, NULL );
 
   float outputSpacing[3];
   me->GetVolumeSpacing( outputSpacing );
@@ -446,9 +450,12 @@ void vtkSlicerGPUVolumeTextureMapper3DComputeGradients( T *dataPtr,
   // be "zero"
   zeroNormalThreshold =.001 * (scalarRange[1] - scalarRange[0]);
 
-  int thread_id = 0;
-  int thread_count = 1;
+  int thread_id    = ((vtkMultiThreader::ThreadInfo *)(arg))->ThreadID;
+  int thread_count = ((vtkMultiThreader::ThreadInfo *)(arg))->NumberOfThreads;
 
+  if (thread_id == 0)
+    me->InvokeEvent( vtkCommand::VolumeMapperComputeGradientsStartEvent, NULL );
+  
   x_start = 0;
   x_limit = outputDim[0];
   y_start = 0;
@@ -532,7 +539,7 @@ void vtkSlicerGPUVolumeTextureMapper3DComputeGradients( T *dataPtr,
         for ( int i = 0; i < 6; i++ )
           {
           float A, B, C, D, E, F, G, H;
-          T *samplePtr = dptr + sampleOffset[i];
+          float *samplePtr = dptr + sampleOffset[i];
 
           A = static_cast<float>(*(samplePtr));
           B = static_cast<float>(*(samplePtr+components));
@@ -613,16 +620,19 @@ void vtkSlicerGPUVolumeTextureMapper3DComputeGradients( T *dataPtr,
         outPtr2 += 4;
         }
       }
-    if ( z%20 == 19 )
+    if ( z%8 == 7 )
       {
       float args[1];
       args[0] = 
         static_cast<float>(z - z_start) / 
         static_cast<float>(z_limit - z_start - 1);
-      me->InvokeEvent( vtkCommand::VolumeMapperComputeGradientsProgressEvent, args );
+        if (thread_id == 0)
+          me->InvokeEvent( vtkCommand::VolumeMapperComputeGradientsProgressEvent, args );
       }
     }
-  me->InvokeEvent( vtkCommand::VolumeMapperComputeGradientsEndEvent, NULL );
+    if (thread_id == 0)
+      me->InvokeEvent( vtkCommand::VolumeMapperComputeGradientsEndEvent, NULL );
+    return VTK_THREAD_RETURN_VALUE;
 }
 
 
@@ -646,6 +656,10 @@ vtkSlicerGPUVolumeTextureMapper3D::vtkSlicerGPUVolumeTextureMapper3D()
   this->VolumeComponents              = 0;
   
   this->Framerate                    = 5.0f;
+  
+  this->GradientsArgs                 = NULL;
+  
+  this->Threader               = vtkMultiThreader::New();
 }
 
 vtkSlicerGPUVolumeTextureMapper3D::~vtkSlicerGPUVolumeTextureMapper3D()
@@ -654,6 +668,9 @@ vtkSlicerGPUVolumeTextureMapper3D::~vtkSlicerGPUVolumeTextureMapper3D()
         delete [] this->Volume1;
     if (this->Volume2)
         delete [] this->Volume2;
+        
+    if (this->GradientsArgs)
+        delete this->GradientsArgs;
 }
 
 
@@ -666,13 +683,13 @@ vtkSlicerGPUVolumeTextureMapper3D *vtkSlicerGPUVolumeTextureMapper3D::New()
 }
 
 int vtkSlicerGPUVolumeTextureMapper3D::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
-{
+{  
   int needToUpdate = 0;
 
   // Get the image data
   vtkImageData *input = this->GetInput();
   input->Update();
- 
+  
   // Has the volume changed in some way?
   if ( this->SavedTextureInput != input ||
        this->SavedTextureMTime.GetMTime() < input->GetMTime() )
@@ -795,10 +812,8 @@ int vtkSlicerGPUVolumeTextureMapper3D::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
   this->VolumeSpacing[2] = 
     (static_cast<double>(dim[2])-1.01)*(double)spacing[2] / static_cast<double>(this->VolumeDimensions[2]-1);
 
-
   // Transfer the input volume to the RGBA volume
-  void *dataPtr = input->GetScalarPointer();
-
+  void*  dataPtr = input->GetScalarPointer();
 
   switch ( scalarType )
     {
@@ -808,17 +823,98 @@ int vtkSlicerGPUVolumeTextureMapper3D::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
         offset, scale,
         this->Volume1));
     }
-
-  switch ( scalarType )
+  
+  int dataPtrSize = dim[0]*dim[1]*dim[2]*components;
+  float* floatDataPtr = new float[dataPtrSize];  
+  
+  //copy out scalar as float array for multithreading
+  //or maybe later multithreading with template...
+  switch(scalarType)
+  {
+  case VTK_SIGNED_CHAR:
+  case VTK_CHAR:
     {
-    vtkTemplateMacro( 
-      vtkSlicerGPUVolumeTextureMapper3DComputeGradients(
-        (VTK_TT *)(dataPtr), this,
-        scalarRange,
-        this->Volume1,
-        this->Volume2));
+      char* tempDataPtr = (char*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
     }
+    break;
+  case VTK_UNSIGNED_CHAR:
+    {
+      unsigned char* tempDataPtr = (unsigned char*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }
+    break;
+  case VTK_SHORT:
+    {
+      short* tempDataPtr = (short*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }    
+    break;
+  case VTK_UNSIGNED_SHORT:
+    {
+      unsigned short* tempDataPtr = (unsigned short*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }    
+    break;
+  case VTK_INT:
+    {
+      int* tempDataPtr = (int*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }    
+    break;
+  case VTK_UNSIGNED_INT:
+    {
+      unsigned int* tempDataPtr = (unsigned int*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }    
+    break;
+  case VTK_DOUBLE:
+    {
+      double* tempDataPtr = (double*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }    
+    break;
+  case VTK_FLOAT:
+    {
+      float* tempDataPtr = (float*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }    
+    break;
+  case VTK_LONG:
+    {
+      long* tempDataPtr = (long*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }    
+    break;
+  }
+  
+  if (this->GradientsArgs)
+        delete this->GradientsArgs;
+  
+  this->GradientsArgs = new GradientsArgsType;
+  
+  this->GradientsArgs->dataPtr = floatDataPtr;
+  this->GradientsArgs->me = this;
+  this->GradientsArgs->scalarRange[0] = scalarRange[0];
+  this->GradientsArgs->scalarRange[1] = scalarRange[1];
+  this->GradientsArgs->volume1 = this->Volume1;
+  this->GradientsArgs->volume2 = this->Volume2;
+  
+  this->Threader->SetSingleMethod( vtkSlicerGPUVolumeTextureMapper3DComputeGradients, (void *)(this->GradientsArgs) );
 
+  this->Threader->SingleMethodExecute();
+  
+  delete [] floatDataPtr;
+  
   return 1;
 }
 

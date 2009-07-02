@@ -55,10 +55,22 @@
 #include "vtkVolumeMapper.h"
 #include "vtkVolumeRenderingReplacements.h"
 
+class vtkMultiThreader;
 class vtkImageData;
 class vtkColorTransferFunction;
 class vtkPiecewiseFunction;
 class vtkVolumeProperty;
+
+VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeTextureMapper3DComputeGradients(void *arg);
+
+class vtkSlicerGPUVolumeTextureMapper3D;
+typedef struct{
+    float *dataPtr;
+    vtkSlicerGPUVolumeTextureMapper3D *me;
+    double scalarRange[2];
+    unsigned char *volume1;
+    unsigned char *volume2;
+}GradientsArgsType;
 
 class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerGPUVolumeTextureMapper3D : public vtkVolumeMapper
 {
@@ -129,6 +141,10 @@ protected:
   
   vtkTimeStamp              SavedTextureMTime;
   vtkTimeStamp              SavedParametersMTime;
+  
+  vtkMultiThreader          *Threader;
+  
+  GradientsArgsType         *GradientsArgs;
 
   // Description:
   // Update the internal RGBA representation of the volume. Return 1 if
@@ -141,6 +157,8 @@ protected:
   //BTX
   virtual int IsTextureSizeSupported( int [3] ) {return 0;};
   //ETX
+  
+  friend VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeTextureMapper3DComputeGradients( void *arg );
   
 private:
   vtkSlicerGPUVolumeTextureMapper3D(const vtkSlicerGPUVolumeTextureMapper3D&);  // Not implemented.
