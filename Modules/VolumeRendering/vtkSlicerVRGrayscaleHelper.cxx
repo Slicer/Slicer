@@ -293,7 +293,7 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingGUI *gui)
     //Create a notebook
     this->NB_Details=vtkKWNotebook::New();
     this->NB_Details->SetParent(this->Gui->GetDetailsFrame()->GetFrame());
-//    this->NB_Details->SetMinimumHeight(400);
+    this->NB_Details->UseFrameWithScrollbarsOn();
     this->NB_Details->Create();
     this->NB_Details->AddPage("Performance","Influence the performance and quality of the rendering. Settings will still be available after starting Slicer3 again.");
     this->NB_Details->AddPage("Threshold","Edit volume rendering mapping options by using a threshold mechanism.");
@@ -557,6 +557,10 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
         this->Volume->SetMapper(this->MapperRaycast);
         this->MB_Mapper->GetWidget()->SetValue("Software Ray Casting");
         this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using CPU Raycasting: High Quality");
+        
+        this->FrameCUDARayCasting->CollapseFrame();
+        this->FrameGPURayCasting->CollapseFrame();
+        this->FramePolygonBlending->CollapseFrame();
     }
     
     //TODO This is not the right place for this
@@ -1661,7 +1665,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
 
     }
     
-    int labelWidth = 18;
+    int labelWidth = 20;
     
     //software ray casting
     {
