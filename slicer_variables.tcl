@@ -380,7 +380,7 @@ switch $::tcl_platform(os) {
           set ::env(LDFLAGS) -m64
         } else {
           set ::env(CFLAGS) ""
-          set ::env(CXXFLGS) ""
+          set ::env(CXXFLAGS) ""
           set ::env(LDFLAGS) ""
         }
         puts "slicer_variables.tcl: GENLIB(bitness): $::GENLIB(bitness) GETBUILDTEST(bitness): $::GETBUILDTEST(bitness)"
