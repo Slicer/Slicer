@@ -619,6 +619,7 @@ proc ExtractSubvolumeROIApply {this} {
   $changeInf3 Delete
   $output Delete
   $resampler Delete
+  $imageClip Delete
 
   # set background volume to the resampled volume
   set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
