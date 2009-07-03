@@ -270,136 +270,135 @@ void vtkPichonFastMarchingExecute(vtkPichonFastMarching *self,
 
   if( !self->initialized )
     {      
-      self->initialized = true;
+    self->initialized = true;
 
-      int index=0;
-      int lastPercentageProgressBarUpdated=-1;
+    int index=0;
+    int lastPercentageProgressBarUpdated=-1;
 
 
-      for(k=0;k<self->dimZ;k++)
+    for(k=0;k<self->dimZ;k++)
       for(int j=0;j<self->dimY;j++)
-      for(int i=0;i<self->dimX;i++)
-        {
+        for(int i=0;i<self->dimX;i++)
+          {
 
           self->node[index].T=(float)INF;
 
           if(self->outdata[index]==0)
-        self->node[index].status=fmsFAR;
+            self->node[index].status=fmsFAR;
           else 
-        self->node[index].status=fmsDONE;
-      
+            self->node[index].status=fmsDONE;
+
           self->inhomo[index]=-1; // meaning inhomo and median have not been computed there
 
           if( (i<BAND_OUT) || (j<BAND_OUT) ||  (k<BAND_OUT) ||
-          (i>=(self->dimX-BAND_OUT)) || (j>=(self->dimY-BAND_OUT)) || (k>=(self->dimZ-BAND_OUT)) )
-        {
-
-          // update progress bar
-          int currentPercentage = GRANULARITY_PROGRESS*index 
-            / self->dimXYZ;
-          
-          if( currentPercentage > lastPercentageProgressBarUpdated )
+            (i>=(self->dimX-BAND_OUT)) || (j>=(self->dimY-BAND_OUT)) || (k>=(self->dimZ-BAND_OUT)) )
             {
+
+            // update progress bar
+            int currentPercentage = GRANULARITY_PROGRESS*index / self->dimXYZ;
+
+            if( currentPercentage > lastPercentageProgressBarUpdated )
+              {
               lastPercentageProgressBarUpdated = currentPercentage;
               self->UpdateProgress(float(currentPercentage)/float(GRANULARITY_PROGRESS));
+              }
+
+            self->node[index].status=fmsOUT;
+
+            // we should never have to look at these values anyway !
+            self->inhomo[ index ] = self->depth;
+            self->median[ index ] = 0;
             }
 
-          self->node[index].status=fmsOUT;
-
-          // we should never have to look at these values anyway !
-          self->inhomo[ index ] = self->depth;
-          self->median[ index ] = 0;
-        }
-
           index++;
-        }
-      
-      return;
+          }
+
+    return;
     }
 
   if( self->firstCall )
     {
-      self->firstCall=false;
-      
-      
-      //assert(self->seedPoints.size()>0);
-      if(!(self->seedPoints.size()>0))
-    {
+    self->firstCall=false;
+
+
+    //assert(self->seedPoints.size()>0);
+    if(!(self->seedPoints.size()>0))
+      {
       self->vtkErrorWrapper( "Error in vtkPichonFastMarchingExecute: !(self->seedPoints.size()>0)" );
       self->firstCall=true; // we did not complete this step
       return;
-    }
-      for(int k=0;k<(int)self->seedPoints.size();k++)
-    self->collectInfoSeed( self->seedPoints[k] );
+      }
+    for(int k=0;k<(int)self->seedPoints.size();k++)
+      self->collectInfoSeed( self->seedPoints[k] );
 
-      self->pdfIntensityIn->update();
-      self->pdfInhomoIn->update();
+    self->pdfIntensityIn->update();
+    self->pdfInhomoIn->update();
     }
 
-        if(self->nPointsEvolution<=0)
-            // then we have nothing to do and we have just been called to update the pipeline
-        return;
+  if(self->nPointsEvolution<=0)
+    // then we have nothing to do and we have just been called to update the pipeline
+    return;
 
   // reinitialize the points that were removed by the user
   if( self->nEvolutions>0 )
     if( (self->knownPoints.size()>1) && 
-    ((signed)self->knownPoints.size()-1>self->nPointsBeforeLeakEvolution) )
+      ((signed)self->knownPoints.size()-1>self->nPointsBeforeLeakEvolution) )
       {
-    // reinitialize all the points
-    for(k=self->nPointsBeforeLeakEvolution;k<(int)self->knownPoints.size();k++)
-      {
+      // reinitialize all the points
+      for(k=self->nPointsBeforeLeakEvolution;k<(int)self->knownPoints.size();k++)
+        {
         int index = self->knownPoints[k];
         self->node[ index ].status = fmsFAR;
         self->node[ index ].T = (float)INF;
-       
+
         /* 
            we also want to remove the neighbors of these points that would be in TRIAL
            as it is not trivial to remove points from the minheap, we will just set their T
            to infinity to make sure they appear in the back of the heap
-        */
+         */
 
         for(int n=1;n<=self->nNeighbors;n++)
           {
-        int indexN=index+self->shiftNeighbor(n);
-        if( self->node[indexN].status==fmsTRIAL )
-          {
+          int indexN=index+self->shiftNeighbor(n);
+          if( self->node[indexN].status==fmsTRIAL )
+            {
             self->node[indexN].T=(float)INF;
             self->downTree( self->node[indexN].leafIndex );
+            }
           }
-          }
-      }
+        }
 
-    // if the points still have a KNOWN neighbor, put them back in TRIAL
-    for(k=self->nPointsBeforeLeakEvolution;k<(int)self->knownPoints.size();k++)
-      {
+      // if the points still have a KNOWN neighbor, put them back in TRIAL
+      for(k=self->nPointsBeforeLeakEvolution;k<(int)self->knownPoints.size();k++)
+        {
         int index = self->knownPoints[k];
         int indexN;
 
         bool hasKnownNeighbor =  false;
         for(int n=1;n<=self->nNeighbors;n++)
           {
-        indexN=index+self->shiftNeighbor(n);
-        if( self->node[indexN].status==fmsKNOWN )
-          hasKnownNeighbor=true;
+          indexN=index+self->shiftNeighbor(n);
+          if( self->node[indexN].status==fmsKNOWN )
+            hasKnownNeighbor=true;
           }
 
         if( (hasKnownNeighbor) && (self->node[index].status!=fmsOUT) )
           {
-        FMleaf f;
+          FMleaf f;
 
-        self->node[index].T=self->computeT(index);
-        self->node[index].status=fmsTRIAL;        
-        f.nodeIndex=index;
+          self->node[index].T=self->computeT(index);
+          self->node[index].status=fmsTRIAL;        
+          f.nodeIndex=index;
 
-        self->insert( f );
+          self->insert( f );
           }
-      }
+        }
 
-    // remove all the points from the displayed knownPoints
-    // ok since (self->knownPoints[self->nEvolutions].size()-1>self->nPointsBeforeLeakEvolution)
-    // is true
-    while((int)self->knownPoints.size()>self->nPointsBeforeLeakEvolution)
-      self->knownPoints.pop_back();
+      // remove all the points from the displayed knownPoints
+      // ok since (self->knownPoints[self->nEvolutions].size()-1>self->nPointsBeforeLeakEvolution)
+      // is true
+      while((int)self->knownPoints.size()>self->nPointsBeforeLeakEvolution)
+        self->knownPoints.pop_back();
       }
 
   // start a new evolution
@@ -410,10 +409,10 @@ void vtkPichonFastMarchingExecute(vtkPichonFastMarching *self,
   // use the seeds
   while(self->seedPoints.size()>0)
     {
-      int index=self->seedPoints[self->seedPoints.size()-1];
-      self->seedPoints.pop_back();
+    int index=self->seedPoints[self->seedPoints.size()-1];
+    self->seedPoints.pop_back();
 
-      self->setSeed( index );
+    self->setSeed( index );
     }
 
   // check minHeap OK
@@ -424,20 +423,20 @@ void vtkPichonFastMarchingExecute(vtkPichonFastMarching *self,
 
   for(n=0;n<self->nPointsEvolution;n++)
     {
-      if( (n*GRANULARITY_PROGRESS) % self->nPointsEvolution == 0 )
+    if( (n*GRANULARITY_PROGRESS) % self->nPointsEvolution == 0 )
       self->UpdateProgress(float(n)/float(self->nPointsEvolution));
 
-      float T=self->step();
+    float T=self->step();
 
-      // all the statistics should be gathered from a band 3 pixels from the interface
-      self->pdfIntensityIn->setMemory((int)(5*self->tree.size()));
-      self->pdfInhomoIn->setMemory((int)(5*self->tree.size()));
+    // all the statistics should be gathered from a band 3 pixels from the interface
+    self->pdfIntensityIn->setMemory((int)(5*self->tree.size()));
+    self->pdfInhomoIn->setMemory((int)(5*self->tree.size()));
 
-      if( T==INF )
-    {
+    if( T==INF )
+      {
       self->vtkErrorWrapper( "FastMarching: nowhere else to go. End of evolution." );
       break;
-    }
+      }
     }
 
   // check minHeap still OK
