@@ -182,7 +182,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // Description:
   // Set/Get the cache path for modules.
   void SetExtensionsInstallPath(const char *path);
-  const char* GetExtensionsInstallPath() const;
+  const char* GetExtensionsInstallPath();
   
   // Description:
   // Set/Get a user's home module.
@@ -447,6 +447,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // print out local vars
   void PrintSelf ( ostream& os, vtkIndent indent );
   
+  vtkGetStringMacro(Extpath);
+  vtkSetStringMacro(Extpath);
+
 private:
   vtkSlicerApplication ( const vtkSlicerApplication& ); // Not implemented.
   void operator = ( const vtkSlicerApplication& ); //Not implemented.
@@ -456,6 +459,9 @@ private:
   itk::MutexLock::Pointer DisplayMessageQueueLock;
   std::string NameSeparator;
   //ETX
+
+  char* Extpath;
+
   bool DisplayMessageQueueActive;
 
   DisplayMessageQueue* InternalDisplayMessageQueue;

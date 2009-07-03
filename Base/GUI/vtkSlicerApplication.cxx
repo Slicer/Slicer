@@ -313,6 +313,8 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 #endif
 
     this->ColorSwatchesAdded = 0;
+
+    this->Extpath = NULL;
 }
 
 //---------------------------------------------------------------------------
@@ -1237,7 +1239,7 @@ void vtkSlicerApplication::SetExtensionsInstallPath(const char* path)
 }
 
 //----------------------------------------------------------------------------
-const char* vtkSlicerApplication::GetExtensionsInstallPath() const
+const char* vtkSlicerApplication::GetExtensionsInstallPath()
 {
   std::string extpath;
   if (this->ExtensionsInstallPath)
@@ -1304,7 +1306,8 @@ const char* vtkSlicerApplication::GetExtensionsInstallPath() const
         }
       }
     }
-  return extpath.c_str();
+  SetExtpath ((char*)extpath.c_str());
+  return this->Extpath;
 }
 
 //----------------------------------------------------------------------------
