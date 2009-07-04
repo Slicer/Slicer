@@ -841,8 +841,6 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
       // Add a new vtkMRMLCurveAnalysisNode to the MRML scene
       vtkMRMLCurveAnalysisNode* curveNode = vtkMRMLCurveAnalysisNode::New();
       this->GetMRMLScene()->AddNode(curveNode);
-
-      //this->GetLogic()->GetCurveAnalysisInfo(script, curveNode);
       this->CurveAnalysisScript->GetInfo(curveNode);
 
       // Prepare vtkDoubleArray to pass the source cueve data
@@ -952,6 +950,9 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
     // Add a new vtkMRMLCurveAnalysisNode to the MRML scene
     vtkMRMLCurveAnalysisNode* curveNode = vtkMRMLCurveAnalysisNode::New();
     this->GetMRMLScene()->AddNode(curveNode);
+
+    this->CurveAnalysisScript->GetInfo(curveNode);
+
     int start = (int)this->CurveFittingStartIndexSpinBox->GetValue();
     int end   = (int)this->CurveFittingEndIndexSpinBox->GetValue();
     

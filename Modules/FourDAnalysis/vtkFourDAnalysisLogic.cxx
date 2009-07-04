@@ -347,11 +347,11 @@ void vtkFourDAnalysisLogic::GenerateParameterMap(vtkCurveAnalysisPythonInterface
 
   vtkDoubleArray* srcCurve = vtkDoubleArray::New();
   vtkDoubleArray* fittedCurve = vtkDoubleArray::New();
+  srcCurve->SetNumberOfComponents(2);
   srcCurve->SetNumberOfTuples(nSrcPoints);
 
-  fittedCurve->SetNumberOfTuples(0);
   fittedCurve->SetNumberOfComponents(2);
-        
+  fittedCurve->SetNumberOfTuples(0);        
 
   // Check index
   if (imin < 0 || imin >= imax || imax >= x ||
@@ -369,16 +369,13 @@ void vtkFourDAnalysisLogic::GenerateParameterMap(vtkCurveAnalysisPythonInterface
   for (int k = kmin; k < kmax; k ++)
     {
     std::cerr << std::endl;
-    std::cerr << "Processing Slice k = " << k << std::endl;
     for (int j = jmin; j < jmax; j ++)
       {
-      std::cerr << "    Processing line j = " << j << std::endl;
       for (int i = imin; i < imax; i ++)
         {
         // Copy intensity data
         for (int t = 0; t < nSrcPoints; t ++)
           {
-          std::cerr << "    Processing line t = " << t << std::endl;
           double xy[2];
           xy[0] = (double) t + start;
           xy[1] = imageArray[t]->GetScalarComponentAsDouble(i, j, k, 0);

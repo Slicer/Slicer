@@ -60,11 +60,9 @@ int vtkCurveAnalysisPythonInterface::GetInfo(vtkMRMLCurveAnalysisNode* curveNode
 {
   //NOTE: this function creates vtkMRMLCurveAnalysisNode and obtain necessary parameters
   // (e.g. list of input curves and initial parameters) for the curve fitting.
-
-  std::cerr << "int vtkCurveAnalysisPythonInterface::GetInfo(vtkMRMLCurveAnalysisNode* curveNode)" << std::endl;
+  // This fucntion should be called after the node is registered to the MRML scene.
 
 #ifdef Slicer3_USE_PYTHON
-  std::cerr << "int vtkCurveAnalysisPythonInterface::GetInfo(vtkMRMLCurveAnalysisNode* curveNode) -- 2" << std::endl;
   PyObject* v;
   std::string pythonCmd;
 
@@ -130,7 +128,7 @@ int vtkCurveAnalysisPythonInterface::Run(vtkMRMLCurveAnalysisNode* curveNode)
 {
 #ifdef Slicer3_USE_PYTHON
 
-  std::cerr << "Calling python script: " << this->ScriptName.c_str() << std::endl;
+  //std::cerr << "Calling python script: " << this->ScriptName.c_str() << std::endl;
 
   PyObject* v;
   std::string pythonCmd;
