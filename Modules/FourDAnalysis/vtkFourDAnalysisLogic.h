@@ -54,8 +54,8 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisLogic : public vtkSlicerModuleLog
   //BTX
   enum {  // Events
     //LocatorUpdateEvent    = 50000,
-    StatusUpdateEvent       = 50001,
-    ProgressDialogEvent     = 50002,
+    StatusUpdateEvent       = 50003,
+    ProgressDialogEvent     = 50004,
   };
   enum {
     TYPE_MEAN,

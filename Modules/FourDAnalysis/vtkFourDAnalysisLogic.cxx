@@ -307,6 +307,13 @@ void vtkFourDAnalysisLogic::GenerateParameterMap(vtkCurveAnalysisPythonInterface
   int nFrames = bundleNode->GetNumberOfFrames();  
   vtkStringArray* nameArray = curveNode->GetOutputValueNameArray();
   
+
+  StatusMessageType statusMessage;
+  statusMessage.show = 1;
+  statusMessage.progress = 0.0;
+  statusMessage.message = "Preparing maps....";
+  this->InvokeEvent ( vtkFourDAnalysisLogic::ProgressDialogEvent, &statusMessage);        
+
   // Create map volumes for each parameter
   int numKeys = nameArray->GetNumberOfTuples();
   typedef std::map<std::string, vtkImageData*>            ParameterImageMapType;
@@ -366,6 +373,11 @@ void vtkFourDAnalysisLogic::GenerateParameterMap(vtkCurveAnalysisPythonInterface
     kmax = z;
     }
   
+  this->InvokeEvent ( vtkFourDAnalysisLogic::ProgressDialogEvent, &statusMessage);
+  double numVoxel = (double) (kmax-kmin)*(jmax-jmin)*(imax-imin);
+  double counter  = 0;
+  char   progressMsg[128];
+  
   for (int k = kmin; k < kmax; k ++)
     {
     std::cerr << std::endl;
@@ -373,6 +385,13 @@ void vtkFourDAnalysisLogic::GenerateParameterMap(vtkCurveAnalysisPythonInterface
       {
       for (int i = imin; i < imax; i ++)
         {
+        // Update progress message.
+        counter += 1.0;
+        statusMessage.progress = counter / numVoxel;
+        sprintf(progressMsg, "Fitting curve at (i=%d, j=%d, k=%d)", i, j, k);
+        statusMessage.message = progressMsg;
+        this->InvokeEvent ( vtkFourDAnalysisLogic::ProgressDialogEvent, &statusMessage);        
+        
         // Copy intensity data
         for (int t = 0; t < nSrcPoints; t ++)
           {
@@ -403,6 +422,11 @@ void vtkFourDAnalysisLogic::GenerateParameterMap(vtkCurveAnalysisPythonInterface
     //std::cerr << std::endl;
     }
   
+  statusMessage.show = 0;
+  statusMessage.progress = 0.0;
+  statusMessage.message = "";
+  this->InvokeEvent ( vtkFourDAnalysisLogic::ProgressDialogEvent, &statusMessage);
+
   // Put results
   ParameterVolumeNodeMapType::iterator iter;
   for (iter = ParameterImageNodes.begin(); iter != ParameterImageNodes.end(); iter ++)

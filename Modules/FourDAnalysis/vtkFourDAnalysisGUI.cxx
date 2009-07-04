@@ -973,12 +973,14 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
       {
       int start = (int)this->CurveFittingStartIndexSpinBox->GetValue();
       int end   = (int)this->CurveFittingEndIndexSpinBox->GetValue();
+      this->GetLogic()->AddObserver(vtkFourDAnalysisLogic::ProgressDialogEvent,  this->LogicCallbackCommand);
       this->GetLogic()->GenerateParameterMap(this->CurveAnalysisScript,
                                              curveNode,
                                              bundleNode,
                                              prefix,
                                              start, end,
                                              imin, imax, jmin, jmax, kmin, kmax);
+      this->GetLogic()->RemoveObservers(vtkFourDAnalysisLogic::ProgressDialogEvent,  this->LogicCallbackCommand);
       }
     else
       {
