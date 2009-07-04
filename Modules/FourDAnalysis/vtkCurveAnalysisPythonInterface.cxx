@@ -53,6 +53,8 @@ void vtkCurveAnalysisPythonInterface::PrintSelf(ostream& os, vtkIndent indent)
 int vtkCurveAnalysisPythonInterface::SetScript(const char* script)
 {
   this->ScriptName = script;
+
+  return 1;
 }
 
 
@@ -202,6 +204,9 @@ int vtkCurveAnalysisPythonInterface::Run()
 //---------------------------------------------------------------------------
 int vtkCurveAnalysisPythonInterface::GenerateFittingScript()
 {
+
+#ifdef Slicer3_USE_PYTHON
+
   std::string pythonCmd;
 
   // Obtain MRML CurveAnalysis Node instance
@@ -253,6 +258,12 @@ int vtkCurveAnalysisPythonInterface::GenerateFittingScript()
 
 
   this->PythonCmd = pythonCmd;
+
+  return 1;
+
+#else
+  return 0;
+#endif // Slicer3_USE_PYTHON
 
 }
 

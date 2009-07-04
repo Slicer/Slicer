@@ -920,14 +920,14 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
            && event == vtkKWLoadSaveDialog::FileNameChangedEvent)
     {
     const char* filename = (const char*)callData;
-    int selected = this->MaskSelectMenu->GetMenu()->GetIndexOfSelectedItem();
+    //int selected = this->MaskSelectMenu->GetMenu()->GetIndexOfSelectedItem();
     this->GetLogic()->SaveCurve(this->FittedCurve, filename);
     }
   else if (this->SavePlotButton->GetWidget()->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller)
            && event == vtkKWLoadSaveDialog::FileNameChangedEvent)
     {
     const char* filename = (const char*)callData;
-    int selected = this->MaskSelectMenu->GetMenu()->GetIndexOfSelectedItem();
+    //int selected = this->MaskSelectMenu->GetMenu()->GetIndexOfSelectedItem();
     this->GetLogic()->SaveIntensityCurves(this->IntensityCurves, filename);
     }
   /*
@@ -1104,7 +1104,7 @@ void vtkFourDAnalysisGUI::BuildGUI ( )
 //---------------------------------------------------------------------------
 void vtkFourDAnalysisGUI::BuildGUIForActiveBundleSelectorFrame ()
 {
-  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+  //vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   vtkKWWidget *page = this->UIPanel->GetPageWidget ("FourDAnalysis");
 
   //  Volume to select
@@ -2138,7 +2138,7 @@ void vtkFourDAnalysisGUI::UpdateInitialParameterList(vtkMRMLCurveAnalysisNode* c
     }
 
   // Adjust number of rows
-  int numRows = this->InitialParameterList->GetWidget()->GetNumberOfRows();
+  //int numRows = this->InitialParameterList->GetWidget()->GetNumberOfRows();
 
   vtkStringArray* paramNames      = curveNode->GetInitialParameterNameArray();
   vtkStringArray* inputParamNames = curveNode->GetConstantNameArray();
@@ -2260,7 +2260,7 @@ void vtkFourDAnalysisGUI::UpdateOutputParameterList(vtkMRMLCurveAnalysisNode* cu
     }
 
   // Adjust number of rows
-  int numRows = this->ResultParameterList->GetWidget()->GetNumberOfRows();
+  //int numRows = this->ResultParameterList->GetWidget()->GetNumberOfRows();
 
   vtkStringArray* paramNames = curveNode->GetOutputValueNameArray();
   int numParameters  = paramNames->GetNumberOfTuples();
