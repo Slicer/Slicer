@@ -31,8 +31,9 @@ class VTK_FourDAnalysis_EXPORT vtkCurveAnalysisPythonInterface : public vtkObjec
   void PrintSelf(ostream& os, vtkIndent indent);
 
   int SetScript(const char* filename);
-  int GetInfo(vtkMRMLCurveAnalysisNode* curveNode);
-  int Run(vtkMRMLCurveAnalysisNode* curveNode);
+  int SetCurveAnalysisNode(vtkMRMLCurveAnalysisNode* curveNode);
+  int GetInfo();
+  int Run();
 
  protected:
   vtkCurveAnalysisPythonInterface();
@@ -40,9 +41,14 @@ class VTK_FourDAnalysis_EXPORT vtkCurveAnalysisPythonInterface : public vtkObjec
 
  private:
 
+  int GenerateFittingScript();
+
   //BTX
   std::string ScriptName;
+  std::string PythonCmd;
   //ETX
+
+  vtkMRMLCurveAnalysisNode* CurveAnalysisNode;
 
 };
 

@@ -372,6 +372,9 @@ void vtkFourDAnalysisLogic::GenerateParameterMap(vtkCurveAnalysisPythonInterface
     jmax = y;
     kmax = z;
     }
+
+  // set curve analysis node to the script interface
+  script->SetCurveAnalysisNode(curveNode);
   
   this->InvokeEvent ( vtkFourDAnalysisLogic::ProgressDialogEvent, &statusMessage);
   double numVoxel = (double) (kmax-kmin)*(jmax-jmin)*(imax-imin);
@@ -391,7 +394,7 @@ void vtkFourDAnalysisLogic::GenerateParameterMap(vtkCurveAnalysisPythonInterface
         sprintf(progressMsg, "Fitting curve at (i=%d, j=%d, k=%d)", i, j, k);
         statusMessage.message = progressMsg;
         this->InvokeEvent ( vtkFourDAnalysisLogic::ProgressDialogEvent, &statusMessage);        
-        
+
         // Copy intensity data
         for (int t = 0; t < nSrcPoints; t ++)
           {
@@ -404,7 +407,8 @@ void vtkFourDAnalysisLogic::GenerateParameterMap(vtkCurveAnalysisPythonInterface
 
         curveNode->SetTargetCurve(srcCurve);
         curveNode->SetFittedCurve(fittedCurve);
-        script->Run(curveNode);
+
+        script->Run();
         
         // Put results
         ParameterImageMapType::iterator iter;

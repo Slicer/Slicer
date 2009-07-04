@@ -803,7 +803,8 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
     this->CurveAnalysisScript = vtkCurveAnalysisPythonInterface::New();
     this->CurveAnalysisScript->SetScript(this->CurveScriptSelectButton->GetWidget()->GetFileName());
     //this->GetLogic()->GetCurveAnalysisInfo(script, curveNode);
-    this->CurveAnalysisScript->GetInfo(curveNode);
+    this->CurveAnalysisScript->SetCurveAnalysisNode(curveNode);
+    this->CurveAnalysisScript->GetInfo();
 
     UpdateInitialParameterList(curveNode);
 
@@ -841,7 +842,8 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
       // Add a new vtkMRMLCurveAnalysisNode to the MRML scene
       vtkMRMLCurveAnalysisNode* curveNode = vtkMRMLCurveAnalysisNode::New();
       this->GetMRMLScene()->AddNode(curveNode);
-      this->CurveAnalysisScript->GetInfo(curveNode);
+      this->CurveAnalysisScript->SetCurveAnalysisNode(curveNode);
+      this->CurveAnalysisScript->GetInfo();
 
       // Prepare vtkDoubleArray to pass the source cueve data
       vtkDoubleArray* srcCurve = vtkDoubleArray::New();
@@ -880,7 +882,7 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
 
       // Call Logic to excecute the curve fitting script
       //this->GetLogic()->RunCurveFitting(script, curveNode);
-      this->CurveAnalysisScript->Run(curveNode);
+      this->CurveAnalysisScript->Run();
 
       // Display result parameters
       UpdateOutputParameterList(curveNode);
@@ -951,7 +953,8 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
     vtkMRMLCurveAnalysisNode* curveNode = vtkMRMLCurveAnalysisNode::New();
     this->GetMRMLScene()->AddNode(curveNode);
 
-    this->CurveAnalysisScript->GetInfo(curveNode);
+    this->CurveAnalysisScript->SetCurveAnalysisNode(curveNode);
+    this->CurveAnalysisScript->GetInfo();
 
     int start = (int)this->CurveFittingStartIndexSpinBox->GetValue();
     int end   = (int)this->CurveFittingEndIndexSpinBox->GetValue();

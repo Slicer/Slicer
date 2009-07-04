@@ -33,6 +33,7 @@ vtkCxxRevisionMacro(vtkCurveAnalysisPythonInterface, "$Revision: $");
 vtkCurveAnalysisPythonInterface::vtkCurveAnalysisPythonInterface()
 {
   this->ScriptName = "";
+  this->CurveAnalysisNode = NULL;
 }
 
 
@@ -56,27 +57,51 @@ int vtkCurveAnalysisPythonInterface::SetScript(const char* script)
 
 
 //---------------------------------------------------------------------------
-int vtkCurveAnalysisPythonInterface::GetInfo(vtkMRMLCurveAnalysisNode* curveNode)
+int vtkCurveAnalysisPythonInterface::SetCurveAnalysisNode(vtkMRMLCurveAnalysisNode* curveNode)
+{
+  
+  if (curveNode && curveNode->GetID())
+    {
+    this->CurveAnalysisNode = curveNode;
+    GenerateFittingScript();
+    return 1;
+    }
+  else
+    {
+    this->CurveAnalysisNode = NULL;
+    return 0;
+    }
+
+}
+
+
+//---------------------------------------------------------------------------
+int vtkCurveAnalysisPythonInterface::GetInfo()
 {
   //NOTE: this function creates vtkMRMLCurveAnalysisNode and obtain necessary parameters
   // (e.g. list of input curves and initial parameters) for the curve fitting.
   // This fucntion should be called after the node is registered to the MRML scene.
+
+  if (this->CurveAnalysisNode == NULL)
+    {
+    return 0;
+    }
 
 #ifdef Slicer3_USE_PYTHON
   PyObject* v;
   std::string pythonCmd;
 
   // clear curve analysis node
-  curveNode->ClearInputArrays();
-  curveNode->ClearInitialParameters();
-  curveNode->ClearConstants();
-  curveNode->ClearOutputValues();
+  this->CurveAnalysisNode->ClearInputArrays();
+  this->CurveAnalysisNode->ClearInitialParameters();
+  this->CurveAnalysisNode->ClearConstants();
+  this->CurveAnalysisNode->ClearOutputValues();
 
   // Obtain MRML CurveAnalysis Node instance
   pythonCmd += "from Slicer import slicer\n";
   pythonCmd += "scene = slicer.MRMLScene\n";
   pythonCmd += "curveNode  = scene.GetNodeByID('";
-  pythonCmd += curveNode->GetID();
+  pythonCmd += this->CurveAnalysisNode->GetID();
   pythonCmd += "')\n";
 
   // Load 4D Analysis Python Module
@@ -119,25 +144,71 @@ int vtkCurveAnalysisPythonInterface::GetInfo(vtkMRMLCurveAnalysisNode* curveNode
       PyErr_Clear();
     }
 
+  return 1;
+
+#else // Slicer3_USE_PYTHON
+
+  // always retuns 0 if Python is not available.
+  return 0;
+
 #endif // Slicer3_USE_PYTHON
+
+
+
 }
 
 
 //---------------------------------------------------------------------------
-int vtkCurveAnalysisPythonInterface::Run(vtkMRMLCurveAnalysisNode* curveNode)
+int vtkCurveAnalysisPythonInterface::Run()
 {
+
+  if (this->CurveAnalysisNode == NULL)
+    {
+    return 0;
+    }
+
 #ifdef Slicer3_USE_PYTHON
 
-  //std::cerr << "Calling python script: " << this->ScriptName.c_str() << std::endl;
+  if (this->PythonCmd != "")
+    {
+    PyObject* v;
+    v = PyRun_String(this->PythonCmd.c_str(),
+                     Py_file_input,
+                     (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()),
+                     (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()));
+    
+    if (Py_FlushLine())
+      {
+      PyErr_Clear();
+      }
+    
+    return 1;
+    }
+  else
+    {
+    return 0;
+    }
+    
+#else // Slicer3_USE_PYTHON
 
-  PyObject* v;
+  // always retuns 0 if Python is not available.
+  return 0;
+
+#endif // Slicer3_USE_PYTHON
+
+}
+
+
+//---------------------------------------------------------------------------
+int vtkCurveAnalysisPythonInterface::GenerateFittingScript()
+{
   std::string pythonCmd;
 
   // Obtain MRML CurveAnalysis Node instance
   pythonCmd += "from Slicer import slicer\n";
   pythonCmd += "scene = slicer.MRMLScene\n";
   pythonCmd += "curveNode  = scene.GetNodeByID('";
-  pythonCmd += curveNode->GetID();
+  pythonCmd += this->CurveAnalysisNode->GetID();
   pythonCmd += "')\n";
 
   // Load 4D Analysis Python Module
@@ -180,17 +251,8 @@ int vtkCurveAnalysisPythonInterface::Run(vtkMRMLCurveAnalysisNode* curveNode)
   pythonCmd += "for key, value in result.iteritems():\n";
   pythonCmd += "    curveNode.SetOutputValue(key, value)\n";
 
-  v = PyRun_String(pythonCmd.c_str(),
-                   Py_file_input,
-                   (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()),
-                   (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()));
-  
-  if (Py_FlushLine())
-    {
-      PyErr_Clear();
-    }
 
-#endif // Slicer3_USE_PYTHON
+  this->PythonCmd = pythonCmd;
+
 }
-
 
