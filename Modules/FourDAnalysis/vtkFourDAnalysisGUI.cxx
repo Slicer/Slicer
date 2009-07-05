@@ -105,7 +105,7 @@ vtkFourDAnalysisGUI::vtkFourDAnalysisGUI ( )
   this->BackgroundVolumeSelectorScale = NULL;
 
   // Curve fitting / parameter map
-  this->AcqTimeEntry        = NULL;
+  //this->AcqTimeEntry        = NULL;
   this->MaskSelectMenu      = NULL;
   this->RunPlotButton       = NULL;
   this->ErrorBarCheckButton = NULL;
@@ -190,11 +190,11 @@ vtkFourDAnalysisGUI::~vtkFourDAnalysisGUI ( )
     this->ThresholdRange->SetParent(NULL);
     this->ThresholdRange->Delete();
     }
-  if (this->AcqTimeEntry)
-    {
-    this->AcqTimeEntry->SetParent(NULL);
-    this->AcqTimeEntry->Delete();
-    }
+  //if (this->AcqTimeEntry)
+  //  {
+  //  this->AcqTimeEntry->SetParent(NULL);
+  //  this->AcqTimeEntry->Delete();
+  //  }
   if (this->MaskSelectMenu)
     {
     this->MaskSelectMenu->SetParent(NULL);
@@ -397,11 +397,11 @@ void vtkFourDAnalysisGUI::RemoveGUIObservers ( )
     this->ThresholdRange
       ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
-  if (this->AcqTimeEntry)
-    {
-    this->AcqTimeEntry
-      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
-    }
+  //if (this->AcqTimeEntry)
+  //  {
+  //  this->AcqTimeEntry
+  //    ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+  //  }
   if (this->MaskSelectMenu)
     {
     this->MaskSelectMenu->GetMenu()
@@ -550,11 +550,11 @@ void vtkFourDAnalysisGUI::AddGUIObservers ( )
     this->ThresholdRange
       ->AddObserver(vtkKWRange::RangeValueChangingEvent, (vtkCommand *)this->GUICallbackCommand);
     }
-  if (this->AcqTimeEntry)
-    {
-    this->AcqTimeEntry
-      ->AddObserver(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
-    }
+  //if (this->AcqTimeEntry)
+  //  {
+  //  this->AcqTimeEntry
+  //    ->AddObserver(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  //  }
   if (this->MaskSelectMenu)
     {
     this->MaskSelectMenu->GetMenu()
@@ -756,7 +756,7 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
   else if (this->RunPlotButton == vtkKWPushButton::SafeDownCast(caller)
            && event == vtkKWPushButton::InvokedEvent)
     {
-    double acqTime = this->AcqTimeEntry->GetValueAsDouble();
+    //double acqTime = this->AcqTimeEntry->GetValueAsDouble();
     int selected = this->MaskSelectMenu->GetMenu()->GetIndexOfSelectedItem();
     const char* maskID   = this->MaskNodeIDList[selected].c_str();
     vtkMRMLTimeSeriesBundleNode *bundleNode = 
@@ -769,7 +769,7 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
       this->IntensityCurves->SetBundleNode(bundleNode);
       this->IntensityCurves->SetMaskNode(maskNode);
       }
-    this->IntensityCurves->SetInterval(acqTime);
+    //this->IntensityCurves->SetInterval(acqTime);
 
     UpdateIntensityPlot(this->IntensityCurves);
 
@@ -1326,33 +1326,33 @@ void vtkFourDAnalysisGUI::BuildGUIForFunctionViewer(int show)
   this->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 2",
                  msframe->GetWidgetName() );
 
-  vtkKWFrame* tframe = vtkKWFrame::New();
-  tframe->SetParent(msframe->GetFrame());
-  tframe->Create();
-  this->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 2",
-                 tframe->GetWidgetName() );
-
-  vtkKWLabel *timeLabel = vtkKWLabel::New();
-  timeLabel->SetParent(tframe);
-  timeLabel->Create();
-  timeLabel->SetText("Acquisition time: ");
-
-  this->AcqTimeEntry = vtkKWEntry::New();
-  this->AcqTimeEntry->SetParent(tframe);
-  this->AcqTimeEntry->Create();
-  //this->MapOutputVolumePrefixEntry->SetWidth(20);
-  this->AcqTimeEntry->SetRestrictValueToDouble();
-  this->AcqTimeEntry->SetValueAsDouble(1.0);
-
-  vtkKWLabel *timeUnitLabel = vtkKWLabel::New();
-  timeUnitLabel->SetParent(tframe);
-  timeUnitLabel->Create();
-  timeUnitLabel->SetText(" s / image");
-  
-  this->Script("pack %s %s %s -side left -fill x -expand y -anchor w -padx 2 -pady 2", 
-               timeLabel->GetWidgetName(),
-               this->AcqTimeEntry->GetWidgetName(),
-               timeUnitLabel->GetWidgetName());
+  //vtkKWFrame* tframe = vtkKWFrame::New();
+  //tframe->SetParent(msframe->GetFrame());
+  //tframe->Create();
+  //this->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 2",
+  //               tframe->GetWidgetName() );
+  //
+  //vtkKWLabel *timeLabel = vtkKWLabel::New();
+  //timeLabel->SetParent(tframe);
+  //timeLabel->Create();
+  //timeLabel->SetText("Acquisition time: ");
+  //
+  //this->AcqTimeEntry = vtkKWEntry::New();
+  //this->AcqTimeEntry->SetParent(tframe);
+  //this->AcqTimeEntry->Create();
+  ////this->MapOutputVolumePrefixEntry->SetWidth(20);
+  //this->AcqTimeEntry->SetRestrictValueToDouble();
+  //this->AcqTimeEntry->SetValueAsDouble(1.0);
+  //
+  //vtkKWLabel *timeUnitLabel = vtkKWLabel::New();
+  //timeUnitLabel->SetParent(tframe);
+  //timeUnitLabel->Create();
+  //timeUnitLabel->SetText(" s / image");
+  //
+  //this->Script("pack %s %s %s -side left -fill x -expand y -anchor w -padx 2 -pady 2", 
+  //             timeLabel->GetWidgetName(),
+  //             this->AcqTimeEntry->GetWidgetName(),
+  //             timeUnitLabel->GetWidgetName());
 
   vtkKWFrame* mframe = vtkKWFrame::New();
   mframe->SetParent(msframe->GetFrame());

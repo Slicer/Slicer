@@ -186,8 +186,14 @@ void vtkIntensityCurves::GenerateIntensityCurve()
           double meanvalue = GetMeanIntensity(inode->GetImageData(), indexTable);
           double sdvalue   = GetSDIntensity(inode->GetImageData(), meanvalue, indexTable);
           //std::cerr << "mean = " << meanvalue << ", sd = " << sdvalue << std::endl;
+          
+          // get time stamp
+          vtkMRMLTimeSeriesBundleNode::TimeStamp ts;
+          this->BundleNode->GetTimeStamp(i, &ts);
+
           double xy[3];
-          xy[0] = (double)i * this->Interval;
+          //xy[0] = (double)i * this->Interval;
+          xy[0] = (double)ts.second + (double)ts.nanosecond / 1000000000.0;
           xy[1] = meanvalue;
           xy[2] = sdvalue;
           this->IntensityCurve[label]->InsertNextTuple(xy);

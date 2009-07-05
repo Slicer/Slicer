@@ -47,7 +47,7 @@ class VTK_FourDAnalysis_EXPORT vtkIntensityCurves : public vtkObject
   vtkGetObjectMacro ( MaskNode,   vtkMRMLScalarVolumeNode );
   vtkSetObjectMacro ( MaskNode,   vtkMRMLScalarVolumeNode );
 
-  void            SetInterval(double interval) { this->Interval = interval; };
+  //void            SetInterval(double interval) { this->Interval = interval; };
   int             Update();
   vtkIntArray*    GetLabelList();
   vtkDoubleArray* GetCurve(int label);
