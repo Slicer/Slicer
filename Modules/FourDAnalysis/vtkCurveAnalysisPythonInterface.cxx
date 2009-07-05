@@ -32,14 +32,24 @@ vtkCxxRevisionMacro(vtkCurveAnalysisPythonInterface, "$Revision: $");
 //---------------------------------------------------------------------------
 vtkCurveAnalysisPythonInterface::vtkCurveAnalysisPythonInterface()
 {
+
   this->ScriptName = "";
   this->CurveAnalysisNode = NULL;
+
+#ifdef Slicer3_USE_PYTHON
+  this->CompiledObject = NULL;
+#endif // Slicer3_USE_PYTHON
+
 }
 
 
 //---------------------------------------------------------------------------
 vtkCurveAnalysisPythonInterface::~vtkCurveAnalysisPythonInterface()
 {
+  if (this->CompiledObject)
+    {
+    free(this->CompiledObject);
+    }
 }
 
 
@@ -171,8 +181,24 @@ int vtkCurveAnalysisPythonInterface::Run()
 
 #ifdef Slicer3_USE_PYTHON
 
-  if (this->PythonCmd != "")
+  if (this->CompiledObject) // if compiled object exists
     {
+    PyObject* dum;
+    dum = PyEval_EvalCode ((PyCodeObject *)this->CompiledObject,
+                           (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()),
+                           (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()));
+  
+    if (PyErr_Occurred ())
+      {
+      PyErr_Print ();
+      }
+  
+    return 1;
+  
+    }
+  else if (this->PythonCmd != "")
+    {
+    std::cerr << "-------- Text script is used." << std::endl;
     PyObject* v;
     v = PyRun_String(this->PythonCmd.c_str(),
                      Py_file_input,
@@ -206,6 +232,12 @@ int vtkCurveAnalysisPythonInterface::GenerateFittingScript()
 {
 
 #ifdef Slicer3_USE_PYTHON
+
+  if (this->CompiledObject)
+    {
+    free(this->CompiledObject);
+    this->CompiledObject = NULL;
+    }
 
   std::string pythonCmd;
 
@@ -256,11 +288,46 @@ int vtkCurveAnalysisPythonInterface::GenerateFittingScript()
   pythonCmd += "for key, value in result.iteritems():\n";
   pythonCmd += "    curveNode.SetOutputValue(key, value)\n";
 
-
   this->PythonCmd = pythonCmd;
 
-  return 1;
+#ifdef Slicer3_USE_PYTHON
+  this->CompiledObject = NULL;
+#endif // Slicer3_USE_PYTHON
 
+  this->CompiledObject = Py_CompileString (this->PythonCmd.c_str(), "<stdin>", Py_file_input);
+  // NOTE: Py_file_input or Py_single_input???
+
+  if (this->CompiledObject)
+    {
+    // compiled successfully
+    return 1;
+    }
+  else if (PyErr_ExceptionMatches (PyExc_SyntaxError))           
+    {
+    char *msg = NULL;
+    PyObject *exc, *val, *trb, *obj, *dum;
+ 
+    PyErr_Fetch (&exc, &val, &trb);        /* clears exception! */
+    
+    if (PyArg_ParseTuple (val, "sO", &msg, &obj) &&
+        !strcmp (msg, "unexpected EOF while parsing")) /* E_EOF */
+      {
+      Py_XDECREF (exc);
+      Py_XDECREF (val);
+      Py_XDECREF (trb);
+      }
+    else                                   /* some other syntax error */
+      {
+      PyErr_Restore (exc, val, trb);
+      PyErr_Print ();
+      }
+    return 0;
+    }
+  else
+    {
+    PyErr_Print ();
+    }
+    
 #else
   return 0;
 #endif // Slicer3_USE_PYTHON

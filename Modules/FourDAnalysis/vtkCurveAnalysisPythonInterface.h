@@ -21,6 +21,13 @@
 
 #include "vtkMRMLCurveAnalysisNode.h"
 
+#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
+
+
+#ifdef Slicer3_USE_PYTHON
+#include <Python.h>
+#endif
+
 class VTK_FourDAnalysis_EXPORT vtkCurveAnalysisPythonInterface : public vtkObject
 {
  public:
@@ -49,6 +56,10 @@ class VTK_FourDAnalysis_EXPORT vtkCurveAnalysisPythonInterface : public vtkObjec
   //ETX
 
   vtkMRMLCurveAnalysisNode* CurveAnalysisNode;
+
+#ifdef Slicer3_USE_PYTHON
+  PyObject *CompiledObject;
+#endif // Slicer3_USE_PYTHON
 
 };
 
