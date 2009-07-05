@@ -320,6 +320,15 @@ vtkMRMLTimeSeriesBundleNode* vtkFourDImageLogic::LoadImagesFromDir(const char* p
   transform->Delete();
   scene->AddNode(bundleNode);
 
+
+  // Time stamp
+  // Tentatively, we assume that the frame rate is 1 fps.
+  // (We should obtain time stamps from the files.)
+  const int fps = 1;
+  vtkMRMLTimeSeriesBundleNode::TimeStamp ts;
+  ts.second = 0;
+  ts.nanosecond = 0;
+
   for (int i = 0; i < nVolumes; i ++)
     {
     //std::cerr << "i = " << i << std::endl;
@@ -381,6 +390,8 @@ vtkMRMLTimeSeriesBundleNode* vtkFourDImageLogic::LoadImagesFromDir(const char* p
     volumeNode->SetAndObserveTransformNodeID(bundleNode->GetID());
     volumeNode->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent);
     bundleNode->AddFrame(volumeNode->GetID());
+    bundleNode->SetTimeStamp(i, &ts);
+    ts.second += fps;
 
     volumeNode->Delete();
     storageNode->Delete();

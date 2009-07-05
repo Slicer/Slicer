@@ -1604,8 +1604,8 @@ void vtkFourDImageGUI::BuildGUIForFrameFrameEditor(int show)
   vtkKWRadioButton* bt1 = this->TimeStampMethodButtonSet->GetWidget()->AddWidget(1);
 
   bt0->SetText("Uniform");
-  bt0->SelectedStateOn();
   bt1->SetText("Non-uniform");
+  bt1->SelectedStateOn();
 
   this->Script("pack %s -side left -fill x -expand y -padx 2 -pady 2", 
                this->TimeStampMethodButtonSet->GetWidgetName());

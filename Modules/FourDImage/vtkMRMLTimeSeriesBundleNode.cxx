@@ -360,7 +360,9 @@ int vtkMRMLTimeSeriesBundleNode::RemoveFrame(const char* nodeID)
       titer += index;
       this->TimeStampList.erase(titer);
 
+      this->Modified();
       return index;
+
       }
     index ++;
     }
@@ -374,6 +376,8 @@ void vtkMRMLTimeSeriesBundleNode::RemoveAllFrames()
 {
   this->FrameNodeIDList.clear();
   this->TimeStampList.clear();
+  this->Modified();
+
 }
 
 
@@ -422,6 +426,8 @@ int vtkMRMLTimeSeriesBundleNode::SetTimeStamp(int i, TimeStamp* ts)
   times.second     = ts->second;
   times.nanosecond = ts->nanosecond;
 
+  this->Modified();
+
   return 1;
 }
 
@@ -430,6 +436,9 @@ int vtkMRMLTimeSeriesBundleNode::SetTimeStamp(int i, TimeStamp* ts)
 int vtkMRMLTimeSeriesBundleNode::SetDisplayBufferNodeID(int bufferIndex, const char* nodeID)
 {
   this->DisplayBufferNodeIDList[bufferIndex] = nodeID;
+
+  this->Modified();
+
   return 1;
 }
 
