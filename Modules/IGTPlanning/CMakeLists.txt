@@ -58,6 +58,7 @@ set(IGTPlanning_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkIGTPlanningOptimizationStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkIGTPlanningLoadingPreoperativeDataStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkIGTPlanningCalibrationStep.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkIGTPlanningUserInputStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkKWGuideWidget.cxx
 
 

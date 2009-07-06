@@ -12,7 +12,7 @@
 
 #include "vtkIGTPlanningOptimizationStep.h"
 #include "vtkIGTPlanningLoadingPreoperativeDataStep.h"
-#include "vtkIGTPlanningCalibrationStep.h"
+#include "vtkIGTPlanningUserInputStep.h"
 
 #include "vtkKWIcon.h"
 
@@ -50,7 +50,7 @@ vtkIGTPlanningGUI::vtkIGTPlanningGUI()
 
   this->OptimizationStep = NULL;
   this->LoadingPreoperativeDataStep = NULL;
-  this->CalibrationStep = NULL;
+  UserInputStep = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -77,10 +77,10 @@ vtkIGTPlanningGUI::~vtkIGTPlanningGUI()
     this->LoadingPreoperativeDataStep->Delete();
     this->LoadingPreoperativeDataStep = NULL;
     }
-  if (this->CalibrationStep)
+  if (UserInputStep)
     {
-    this->CalibrationStep->Delete();
-    this->CalibrationStep = NULL;
+    UserInputStep->Delete();
+    UserInputStep = NULL;
     }
 }
 
@@ -110,10 +110,10 @@ void vtkIGTPlanningGUI::RemoveLogicObservers()
     this->LoadingPreoperativeDataStep = NULL;
     }
 
-  if (this->CalibrationStep)
+  if (UserInputStep)
     {
-    this->CalibrationStep->Delete();
-    this->CalibrationStep = NULL;
+    UserInputStep->Delete();
+    UserInputStep = NULL;
     }
 
 }
@@ -232,7 +232,19 @@ void vtkIGTPlanningGUI::BuildGUI()
 
   // -----------------------------------------------------------------
   // Parameter Set step
+  //
+  if (!this->UserInputStep)
+    {
+    this->UserInputStep = vtkIGTPlanningUserInputStep::New();
+    this->UserInputStep->SetGUI(this);
+    }
 
+  wizard_workflow->AddNextStep(this->UserInputStep);
+
+
+  // -----------------------------------------------------------------
+  // Optimization step
+  //
   if (!this->OptimizationStep)
     {
     this->OptimizationStep = vtkIGTPlanningOptimizationStep::New();
@@ -241,22 +253,11 @@ void vtkIGTPlanningGUI::BuildGUI()
 
   wizard_workflow->AddNextStep(this->OptimizationStep);
 
-  // -----------------------------------------------------------------
-  // Calibration step 
-
-  if (!this->CalibrationStep)
-    {
-    this->CalibrationStep = vtkIGTPlanningCalibrationStep::New();
-    this->CalibrationStep->SetGUI(this);
-    }
-
-  wizard_workflow->AddNextStep(this->CalibrationStep);
-
 
  // -----------------------------------------------------------------
   // Initial and finish step
 
-  wizard_workflow->SetFinishStep(this->CalibrationStep);
+  wizard_workflow->SetFinishStep(this->OptimizationStep);
   wizard_workflow->CreateGoToTransitionsToFinishStep();
   wizard_workflow->SetInitialStep(this->LoadingPreoperativeDataStep);
 
@@ -275,9 +276,9 @@ void vtkIGTPlanningGUI::TearDownGUI()
     this->LoadingPreoperativeDataStep->SetGUI(NULL);
     }
 
-  if (this->CalibrationStep)
+  if (UserInputStep)
     {
-    this->CalibrationStep->SetGUI(NULL);
+    UserInputStep->SetGUI(NULL);
     }
 }
 //---------------------------------------------------------------------------

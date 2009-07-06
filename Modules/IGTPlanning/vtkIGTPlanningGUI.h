@@ -9,7 +9,7 @@ class vtkIGTPlanningMRMLManager;
 class vtkKWWizardWidget;
 class vtkIGTPlanningOptimizationStep;
 class vtkIGTPlanningLoadingPreoperativeDataStep;
-class vtkIGTPlanningCalibrationStep;
+class vtkIGTPlanningUserInputStep;
 class vtkMRMLNode;
  
 class VTK_IGT_EXPORT vtkIGTPlanningGUI : public vtkSlicerModuleGUI
@@ -126,7 +126,7 @@ protected:
   vtkKWWizardWidget                              *WizardWidget;
   vtkIGTPlanningOptimizationStep                 *OptimizationStep;
   vtkIGTPlanningLoadingPreoperativeDataStep      *LoadingPreoperativeDataStep;
-  vtkIGTPlanningCalibrationStep                  *CalibrationStep; 
+  vtkIGTPlanningUserInputStep                    *UserInputStep; 
 
 
 };
