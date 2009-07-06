@@ -20,40 +20,18 @@ public:
   // Reimplement the superclass's method (see vtkKWWizardStep).
   virtual void ShowUserInterface();
 
-  virtual void SaveAndRunButtonCallback();
-
+  virtual void RunButtonCallback();
+  virtual void GoToNavButtonCallback();
 
 protected:
   vtkIGTPlanningOptimizationStep();
   ~vtkIGTPlanningOptimizationStep();
 
-  vtkKWFrameWithLabel *ProbeFrame;
-  vtkKWFrameWithLabel *SpacingFrame;
-  vtkKWFrameWithLabel *MoreFrame;
   vtkKWFrameWithLabel *RunFrame;
 
-  // Probe info
-  vtkKWEntryWithLabel    *ProbeAEntry;
-  vtkKWEntryWithLabel    *ProbeBEntry;
-  vtkKWEntryWithLabel    *ProbeCEntry;
+  vtkKWPushButton              *RunButton;
+  vtkKWPushButton              *GoToNavButton;
 
-  // Sample spacing 
-  vtkKWEntryWithLabel    *SpacingXEntry;
-  vtkKWEntryWithLabel    *SpacingYEntry;
-  vtkKWEntryWithLabel    *SpacingZEntry;
-
-  vtkKWEntryWithLabel    *AngularResolutionEntry;
-  vtkKWEntryWithLabel    *NumberOfAblationsEntry;
-  vtkKWEntryWithLabel    *NumberOfTrajectoriesEntry;
-  vtkKWEntryWithLabel    *NumberOfPuncturesEntry;
-  vtkKWEntryWithLabel    *TumorMarginEntry;
-
-  vtkKWLoadSaveButtonWithLabel *DirectoryButton; 
-  vtkKWEntryWithLabel          *FileNameEntry;
-  vtkKWPushButton              *SaveAndRunButton;
-
-  bool CheckInputErrors();
- 
 
 private:
   vtkIGTPlanningOptimizationStep(const vtkIGTPlanningOptimizationStep&);

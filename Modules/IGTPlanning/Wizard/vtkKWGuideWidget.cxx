@@ -126,6 +126,7 @@ void vtkKWGuideWidget::RaiseModule(const char *moduleName)
 }
 
 
+
 //----------------------------------------------------------------------------
 void vtkKWGuideWidget::UpdateEnableState()
 {
