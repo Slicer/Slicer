@@ -629,6 +629,34 @@ const char* vtkSlicerApplicationGUI::GetCurrentLayoutStringName ( )
 
 
 //---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::CustomizeStatusBarLayout()
+{
+  
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
+
+  // Move error log icon over to the left for MacOS
+  // which positions every window's resize hardware right over the
+  // default error icon position.
+    if (this->MainSlicerWindow->GetTrayFrame() &&
+        this->MainSlicerWindow->GetTrayFrame()->IsCreated() &&
+        this->MainSlicerWindow->GetTrayFramePosition() == 
+        vtkKWWindowBase::TrayFramePositionStatusFrame)
+      {
+      app->Script ( "%s configure -padx 15",
+                    this->MainSlicerWindow->GetTrayFrame()->GetWidgetName() );
+      app->Script ( "%s configure -background white",
+                    this->MainSlicerWindow->GetTrayFrame()->GetWidgetName() );
+      //--- if TrayImageError (a label) is made public and exposed thru the KWW API,
+      //--- we can use this. Until that, we will let it be centered in the Tray Frame,
+      //--- and its image/icon centered too.
+//      app->Script ( "%s configure -anchor w",
+//                    this->MainSlicerWindow->GetTrayImageError()->GetWidgetName() );
+
+      }
+}
+
+
+//---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::UpdateLayout ( )
 {
   int mode;
@@ -1515,6 +1543,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
 #endif
   }
   this->Built = true;
+  this->CustomizeStatusBarLayout();
 //  this->UpdateLayout();
 #ifndef TOOLBAR_DEBUG
 //  this->ApplicationToolbar->UpdateLayoutMenu();
