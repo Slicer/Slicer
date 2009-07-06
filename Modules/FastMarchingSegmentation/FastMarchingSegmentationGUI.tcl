@@ -426,6 +426,7 @@ proc FastMarchingSegmentationProcessGUIEvents {this caller event} {
     if {$event == 10001} {
       set viewerWidget [ [$this GetApplicationGUI] GetViewerWidget ]
       $viewerWidget RequestRender
+      FastMarchingSegmentationDeepCopyResult $this
     }
   } 
 

@@ -191,6 +191,10 @@ proc FastMarchingSegmentationInitializeFilter {this} {
 
   $::FastMarchingSegmentation($this,fastMarchingFilter) SetInput [$cast GetOutput]
   
+  set dimX [lindex $dim 1]
+  set dimY [lindex $dim 3]
+  set dimZ [lindex $dim 5]
+#  puts "Calling init with $dimX $dimY $dimZ $depth $dx $dy $dz" 
   $fmFilter init [expr [lindex $dim 1] + 1] [expr [lindex $dim 3] + 1] \
     [expr [lindex $dim 5] + 1] $depth $dx $dy $dz
 
@@ -285,6 +289,12 @@ proc FastMarchingSegmentationUpdateTime {this} {
   $fmFilter Modified
   $fmFilter Update
   $::FastMarchingSegmentation($this,labelVolume) Modified
+}
+
+proc FastMarchingSegmentationDeepCopyResult {this} {
+  # deep copy the output of fast marching to preserve between runs
+  set labelImage [$::FastMarchingSegmentation($this,labelVolume) GetImageData]
+  $labelImage DeepCopy [$::FastMarchingSegmentation($this,fastMarchingFilter) GetOutput]
 }
 
 proc FastMarchingSegmentationCreateLabelVolume {this} {
