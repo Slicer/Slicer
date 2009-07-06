@@ -97,6 +97,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
         }
     const char* GetCurrentLayoutStringName ( );
 
+    void CustomizeStatusBarLayout();
+
     vtkGetMacro (Built, bool);
     vtkSetMacro (Built, bool);
     vtkGetMacro (CurrentLayout, int);
