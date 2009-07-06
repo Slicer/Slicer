@@ -30,6 +30,7 @@ proc FastMarchingSegmentationTearDownGUI {this} {
   }
 
   $::FastMarchingSegmentation($this,cast) Delete
+  $::FastMarchingSegmentation($this,rescale) Delete
   $::FastMarchingSegmentation($this,fastMarchingFilter) Delete
 
   catch {$::FastMarchingSegmentation($this,renderMapper) Delete}
@@ -266,9 +267,10 @@ proc FastMarchingSegmentationBuildGUI {this} {
   set renderColorMapping $::FastMarchingSegmentation($this,renderColorMapping)
   set renderVolumeProperty $::FastMarchingSegmentation($this,renderVolumeProperty)
   set renderVolume $::FastMarchingSegmentation($this,renderVolume)
- 
+  puts "Before initialization"
   # Fast marching filters
   set ::FastMarchingSegmentation($this,cast) [vtkImageCast New]
+  set ::FastMarchingSegmentation($this,rescale) [vtkImageShiftScale New]
   set ::FastMarchingSegmentation($this,fastMarchingFilter) [vtkPichonFastMarching New]
 }
 

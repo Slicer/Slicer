@@ -153,6 +153,7 @@ proc FastMarchingSegmentationInitializeFilter {this} {
   set ::FastMarchingSegmentation($this,inputVolume) [ [[$this GetLogic] GetMRMLScene] \
     GetNodeByID [[$::FastMarchingSegmentation($this,inputSelector) GetSelected ] GetID] ]
   set inputVolume $::FastMarchingSegmentation($this,inputVolume)
+  set inputImage [$inputVolume GetImageData]
 
   FastMarchingSegmentationCreateLabelVolume $this
 
@@ -163,29 +164,44 @@ proc FastMarchingSegmentationInitializeFilter {this} {
     return
   }
 
-  set inputImageData [$inputVolume GetImageData]
-  scan [$inputImageData GetScalarRange] "%f%f" rangeLow rangeHigh
-  scan [$inputVolume GetSpacing] "%f%f%f" dx dy dz
-  set dim [$inputImageData GetWholeExtent]
-
   set cast $::FastMarchingSegmentation($this,cast) 
   set fmFilter $::FastMarchingSegmentation($this,fastMarchingFilter)
   $cast SetOutputScalarTypeToShort
-  $cast SetInput $inputImageData
+  $cast SetInput $inputImage
+  $cast Update
+  set inputImage [$cast GetOutput]
+
+  scan [$inputImage GetScalarRange] "%f%f" rangeLow rangeHigh
+  scan [$inputVolume GetSpacing] "%f%f%f" dx dy dz
+  set dim [$inputImage GetWholeExtent]
+  set depth [expr $rangeHigh-$rangeLow]
+
+  if { [expr $depth>500.] } {
+    set rescale $::FastMarchingSegmentation($this,rescale)
+    $rescale SetInput $inputImage
+    $rescale SetScale [expr 300./($rangeHigh-$rangeLow)]
+    $rescale Update
+    set inputImage [$rescale GetOutput]
+    puts "WARNING: Input image has been rescaled for Fast Marching segmentation"
+    scan [$inputImage GetScalarRange] "%f%f" rangeLow rangeHigh
+    set depth [expr $rangeHigh-$rangeLow]
+  }
 
   $fmFilter SetOutput [$labelVolume GetImageData]
 
   $::FastMarchingSegmentation($this,fastMarchingFilter) SetInput [$cast GetOutput]
   
   $fmFilter init [expr [lindex $dim 1] + 1] [expr [lindex $dim 3] + 1] \
-    [expr [lindex $dim 5] + 1] [ expr int($rangeHigh)] $dx $dy $dz
+    [expr [lindex $dim 5] + 1] $depth $dx $dy $dz
 
-  $fmFilter SetInput [$cast GetOutput]
+  $fmFilter SetInput $inputImage
   $fmFilter Modified
   $fmFilter Update
 
   $fmFilter setActiveLabel 1
   $fmFilter initNewExpansion
+  
+  set ::FastMarchingSegmentation($this,inputImage) $inputImage
 }
 
 proc ConversiontomL {this Voxels} {
@@ -249,7 +265,7 @@ proc FastMarchingSegmentationSegment {this} {
 
   $cast SetInput [$inputVolume GetImageData]
   $fmFilter Modified
-  $fmFilter SetInput [$cast GetOutput]
+#  $fmFilter SetInput [$cast GetOutput]
   $fmFilter SetOutput [$labelVolume GetImageData]
   $fmFilter Modified
   $fmFilter Update
