@@ -73,6 +73,7 @@ This is also the space for NRRD header.
 #include "gdcmFile.h"           // access to dictionary
 #include "gdcmDocEntry.h"       //internal of gdcm
 #include "gdcmBinEntry.h"       //internal of gdcm
+#include "gdcmValEntry.h"       //internal of gdcm
 #include "gdcmDictEntry.h"      // access to dictionary
 #include "gdcmGlobal.h"         // access to dictionary
 
@@ -292,7 +293,6 @@ int main(int argc, char* argv[])
   itk::MetaDataDictionary sliceDict = sReader->GetMetaDataDictionary();
 
   itk::ExposeMetaData<std::string> ( sliceDict, "0008|0070", vendor );
-  std::cout << vendor << std::endl;
 
   std::string ImageType;
   itk::ExposeMetaData<std::string> ( sliceDict, "0008|0008", ImageType );
@@ -307,6 +307,7 @@ int main(int argc, char* argv[])
     gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(GEDictXGradient);
     gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(GEDictYGradient);
     gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(GEDictZGradient);
+    std::cout << "Image acquired using a GE scanner\n";
   }
   else if( vendor.find("SIEMENS") != std::string::npos )
   {
@@ -317,7 +318,8 @@ int main(int argc, char* argv[])
     gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(SiemensDictDiffusionDirection);
     gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(SiemensDictDiffusionMatrix);
     gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(SiemensDictShadowInfo);
-
+    std::cout << "Image acquired using a Siemens scanner\n";
+    
     if ( ImageType.find("MOSAIC") != std::string::npos )
     {
       std::cout << "Siemens Mosaic format\n";
@@ -331,8 +333,9 @@ int main(int argc, char* argv[])
   }
   else if ( ( vendor.find("PHILIPS") != std::string::npos ) || 
     ( vendor.find("Philips") != std::string::npos ) )
-  {
+    {
     // for philips data
+    std::cout << "Image acquired using a Philips scanner\n";
     gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(PhilipsDictBValue);
     gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(PhilipsDictDiffusionDirection);
     gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(PhilipsDictDiffusionDirectionRL);
@@ -625,39 +628,106 @@ int main(int argc, char* argv[])
     std::cout << "Number of Volume: " << nVolume << std::endl;
     std::cout << "Number of Slices in each volume: " << nSliceInVolume << std::endl;
 
-    for (int k = 0; k < nSlice; k += nSliceInVolume)
-    {
-      tag.clear();
-      bool exist = itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0043|1039",  tag);
-      float b = atof( tag.c_str() );
-      bValues.push_back(b);
-
-      vnl_vector_fixed<double, 3> vect3d;
-      if (!exist || b == 0)
+    for (int k = 0; k < nSlice; k +=  nSliceInVolume)
       {
+      gdcm::File *header0 = new gdcm::File;
+      gdcm::BinEntry* binEntry;
+      
+      header0->SetMaxSizeLoadEntry(65536);
+      header0->SetFileName( filenames[k] );
+      header0->SetLoadMode( gdcm::LD_ALL );
+      header0->Load();
+
+      // parsing bvalue and gradient directions
+      int nValueParsed = 0;
+      vnl_vector_fixed<double, 3> vect3d;
+      vect3d.fill( 0 );
+      float b = 0;
+      
+      gdcm::DocEntry* docEntry = header0->GetFirstEntry();
+      
+      while(docEntry)
+        {
+        if ( docEntry->GetKey() == "0043|1039"  )
+          {
+          binEntry = dynamic_cast<gdcm::BinEntry*> ( docEntry );
+          int binLength = binEntry->GetFullLength();
+          tag.resize( binLength );
+          uint8_t * tagString = binEntry->GetBinArea();
+          
+          for (int n = 0; n < binLength; n++)
+            {
+            tag[n] = *(tagString+n);
+          }
+
+          b = atof( tag.c_str() );
+          nValueParsed ++;
+          }
+        else if ( docEntry->GetKey() == "0019|10bb"  )
+          {
+          binEntry = dynamic_cast<gdcm::BinEntry*> ( docEntry );
+          int binLength = binEntry->GetFullLength();
+          tag.resize( binLength );
+          uint8_t * tagString = binEntry->GetBinArea();
+          
+          for (int n = 0; n < binLength; n++)
+            {
+            tag[n] = *(tagString+n);
+          }
+          vect3d[0] = atof( tag.c_str() );
+          nValueParsed ++;
+          }
+        else if ( docEntry->GetKey() == "0019|10bc"  )
+          {
+          binEntry = dynamic_cast<gdcm::BinEntry*> ( docEntry );
+          int binLength = binEntry->GetFullLength();
+          tag.resize( binLength );
+          uint8_t * tagString = binEntry->GetBinArea();
+          
+          for (int n = 0; n < binLength; n++)
+            {
+            tag[n] = *(tagString+n);
+          }
+          vect3d[1] = atof( tag.c_str() );
+          nValueParsed ++;
+          }
+        else if ( docEntry->GetKey() == "0019|10bd"  )
+          {
+          binEntry = dynamic_cast<gdcm::BinEntry*> ( docEntry );
+          int binLength = binEntry->GetFullLength();
+          tag.resize( binLength );
+          uint8_t * tagString = binEntry->GetBinArea();
+          
+          for (int n = 0; n < binLength; n++)
+            {
+            tag[n] = *(tagString+n);
+          }
+          vect3d[2] = atof( tag.c_str() );
+          nValueParsed ++;
+          }
+
+        if (nValueParsed == 4)
+          {
+          break;
+          }
+        docEntry = header0->GetNextEntry();
+        }
+
+      bValues.push_back( b );
+      if (b == 0)
+        {
         vect3d.fill( 0 );
         DiffusionVectors.push_back(vect3d);      
         DiffusionVectorsOrig.push_back(vect3d);      
-        continue;
+        }
+      else
+        {
+        DiffusionVectorsOrig.push_back(vect3d);      
+        vect3d.normalize();
+        DiffusionVectors.push_back(vect3d);
+        }
+      
       }
-
-      vect3d.fill( 0 );
-      tag.clear();
-      itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|10bb",  tag);
-      vect3d[0] = atof( tag.c_str() );
-
-      tag.clear();
-      itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|10bc",  tag);
-      vect3d[1] = atof( tag.c_str() );
-
-      tag.clear();
-      itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|10bd",  tag);
-      vect3d[2] = atof( tag.c_str() );
-
-      DiffusionVectorsOrig.push_back(vect3d);      
-      vect3d.normalize();
-      DiffusionVectors.push_back(vect3d);      
-    }
   }
   else if ( vendor.find("Philips") != std::string::npos )
   {
