@@ -29,12 +29,10 @@ class vtkKWHistogram;
 class vtkKWPushButton;
 
 class vtkKWMultiColumnList;
-
 class vtkKWColorTransferFunctionEditor;
-
 class vtkKWEntryWithLabel;
-
 class vtkColorTransferFunction;
+class vtkGaussian2DWidget;
 
 class VTK_EMSEGMENT_EXPORT vtkEMSegmentIntensityDistributionsStep :
   public vtkEMSegmentStep
@@ -101,7 +99,7 @@ public:
   virtual void test();
 
   double size;
-  int nbOfLeaf;
+  int NumberOfLeaves;
   int depth;
 
   double classSize[400];
@@ -112,14 +110,12 @@ public:
   double class_weight[200];
   double class_size[400];
 
-  const char* node_name[200];
-
   vtkIdType correspondanceArray[2][200];
 
-  virtual void GetNumberOfLeaf(const char*, vtkIdType);
+  virtual void   GetNumberOfLeaf(const char*, vtkIdType);
 
-  virtual void GetParentPercent(int, vtkIdType);
-  virtual void GetPercent(int, vtkIdType);
+  virtual void   GetParentPercent(int, vtkIdType);
+  virtual void   GetPercent(int, vtkIdType);
   virtual double GetWeight(int);
 
 protected:
@@ -134,26 +130,26 @@ protected:
   vtkKWMenuButtonWithLabel   *IntensityDistributionSpecificationMenuButton;
   vtkKWMatrixWidgetWithLabel *IntensityDistributionMeanMatrix;
   vtkKWMatrixWidgetWithLabel *IntensityDistributionCovarianceMatrix;
+  vtkKWMenu                  *ContextMenu;
+
   vtkKWMultiColumnListWithScrollbarsWithLabel
     *IntensityDistributionManualSamplingList;
-  vtkKWMenu                  *ContextMenu;
 
   vtkKWMenuButtonWithLabel  *IntensityDistributionHistogramButton;
   vtkKWFrameWithLabel       *IntensityDistributionHistogramFrame;
-
   vtkKWHistogram            *IntensityDistributionHistogramHistogram;
-  vtkKWColorTransferFunctionEditor
-    *IntensityDistributionHistogramHistogramVisu;
   vtkColorTransferFunction  *IntensityDistributionHistogramHistogramFunc;
 
-  vtkKWEntryWithLabel       *NbOfClassesEntryLabel;
+  vtkKWColorTransferFunctionEditor
+    *IntensityDistributionHistogramHistogramVisualization;
 
+  vtkGaussian2DWidget       *Gaussian2DWidget;
+  vtkKWEntryWithLabel       *NumClassesEntryLabel;
   vtkKWMultiColumnList      *ClassAndNodeList;
-
   vtkKWPushButton           *Gaussian2DButton;
-
   vtkKWMenuButtonWithLabel  *Gaussian2DVolumeXMenuButton;
   vtkKWMenuButtonWithLabel  *Gaussian2DVolumeYMenuButton;
+  vtkKWMenuButtonWithLabel  *Gaussian2DRenderingMenuButton;
 
   virtual void AddIntensityDistributionSamplePoint(double ras[3]);
 

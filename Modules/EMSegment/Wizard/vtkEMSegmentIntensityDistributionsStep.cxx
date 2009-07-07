@@ -93,11 +93,6 @@ Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 #include "vtkRenderer.h"
 #include "vtkRenderWindowInteractor.h"
 
-//#include "vtkImageMapToRGBA.h"
-//#include "vtkImageActor.h"
-//#include "vtkImageMapper.h"
-//#include "vtkLookupTable.h"
-
 #include "vtkKWApplication.h"
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWRenderWidget.h"
@@ -120,21 +115,24 @@ vtkEMSegmentIntensityDistributionsStep()
   this->SetDescription(
     "Define intensity distribution for each anatomical structure.");
 
-  this->IntensityDistributionNotebook                = NULL;
-  this->IntensityDistributionSpecificationMenuButton = NULL;
-  this->IntensityDistributionMeanMatrix              = NULL;
-  this->IntensityDistributionCovarianceMatrix        = NULL;
-  this->IntensityDistributionManualSamplingList      = NULL;
-  this->ContextMenu = NULL;
+  this->IntensityDistributionNotebook                        = NULL;
+  this->IntensityDistributionSpecificationMenuButton         = NULL;
+  this->IntensityDistributionMeanMatrix                      = NULL;
+  this->IntensityDistributionCovarianceMatrix                = NULL;
+  this->IntensityDistributionManualSamplingList              = NULL;
+  this->ContextMenu                                          = NULL;
 
-  this->IntensityDistributionHistogramFrame          = NULL;
-  this->IntensityDistributionHistogramButton         = NULL;
-  this->IntensityDistributionHistogramHistogram      = NULL;
-  this->IntensityDistributionHistogramHistogramVisu  = NULL;
+  this->IntensityDistributionHistogramFrame                  = NULL;
+  this->IntensityDistributionHistogramButton                 = NULL;
+  this->IntensityDistributionHistogramHistogram              = NULL;
 
-  this->NbOfClassesEntryLabel                        = NULL;
-  this->ClassAndNodeList                             = NULL;
-  this->Gaussian2DButton                             = NULL;
+  this->Gaussian2DWidget                                     = NULL;
+  this->NumClassesEntryLabel                                 = NULL;
+  this->ClassAndNodeList                                     = NULL;
+  this->Gaussian2DButton                                     = NULL;
+  this->Gaussian2DRenderingMenuButton                        = NULL;
+
+  this->IntensityDistributionHistogramHistogramVisualization = NULL;
 }
 
 //-------------------------------------------------------------------
@@ -153,16 +151,16 @@ vtkEMSegmentIntensityDistributionsStep::
     this->ClassAndNodeList = NULL;
     }
 
-  if (this->NbOfClassesEntryLabel)
+  if (this->NumClassesEntryLabel)
     {
-    this->NbOfClassesEntryLabel->Delete();
-    this->NbOfClassesEntryLabel = NULL;
+    this->NumClassesEntryLabel->Delete();
+    this->NumClassesEntryLabel = NULL;
     }
 
-  if (this->IntensityDistributionHistogramHistogramVisu)
+  if (this->IntensityDistributionHistogramHistogramVisualization)
     {
-    this->IntensityDistributionHistogramHistogramVisu->Delete();
-    this->IntensityDistributionHistogramHistogramVisu = NULL;
+    this->IntensityDistributionHistogramHistogramVisualization->Delete();
+    this->IntensityDistributionHistogramHistogramVisualization = NULL;
     }
 
   if (this->IntensityDistributionHistogramHistogram)
@@ -218,6 +216,18 @@ vtkEMSegmentIntensityDistributionsStep::
     this->ContextMenu->Delete();
     this->ContextMenu = NULL;
     }
+
+  if (this->Gaussian2DWidget)
+    {
+    this->Gaussian2DWidget->Delete();
+    this->Gaussian2DWidget = NULL;
+    }
+
+  if (this->Gaussian2DRenderingMenuButton)
+    {
+    this->Gaussian2DRenderingMenuButton->Delete();
+    this->Gaussian2DRenderingMenuButton = NULL;
+    }
 }
 
 //-------------------------------------------------------------------
@@ -225,38 +235,37 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
 {
   this->Superclass::ShowUserInterface();
 
-  vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
-  wizard_widget->GetCancelButton()->SetEnabled(0);
+  vtkKWWizardWidget *wizardWidget = this->GetGUI()->GetWizardWidget();
+  wizardWidget->GetCancelButton()->SetEnabled(0);
 
-  vtkEMSegmentAnatomicalStructureStep *anat_step =
+  vtkEMSegmentAnatomicalStructureStep *anatomicalStep =
     this->GetGUI()->GetAnatomicalStructureStep();
-  anat_step->ShowAnatomicalStructureTree();
+  anatomicalStep->ShowAnatomicalStructureTree();
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   if (!mrmlManager)
     {
     return;
     }
-  vtkIdType vol_id = mrmlManager->GetTreeRootNodeID();
+  vtkIdType volId = mrmlManager->GetTreeRootNodeID();
 
-  const char *root_node =
-    anat_step->GetAnatomicalStructureTree()->GetWidget()->
-    FindNodeWithUserDataAsInt(NULL, vol_id);
+  const char *rootNode = anatomicalStep->GetAnatomicalStructureTree()->
+    GetWidget()->FindNodeWithUserDataAsInt(NULL,volId);
 
-  if (root_node && *root_node)
+  if (rootNode && *rootNode)
     {
-    anat_step->SetAnatomicalTreeParentNodeSelectableState(root_node, 0);
+    anatomicalStep->SetAnatomicalTreeParentNodeSelectableState(rootNode, 0);
     }
 
   this->AddManualIntensitySamplingGUIObservers();
 
   // Override the tree callbacks for that specific step
 
-  anat_step->GetAnatomicalStructureTree()->GetWidget()->
+  anatomicalStep->GetAnatomicalStructureTree()->GetWidget()->
     SetSelectionChangedCommand(this,
       "DisplaySelectedNodeIntensityDistributionsCallback");
 
-  vtkKWWidget *parent = wizard_widget->GetClientArea();
+  vtkKWWidget *parent = wizardWidget->GetClientArea();
 
   // Create the notebook
 
@@ -271,14 +280,14 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     this->IntensityDistributionNotebook->AddPage(
       "Intensity Distribution");
     this->IntensityDistributionNotebook->AddPage("Manual Sampling");
-     this->IntensityDistributionNotebook->AddPage("Gaussian 2D");
+    this->IntensityDistributionNotebook->AddPage("Gaussian 2D");
     }
 
   vtkKWFrame *intensity_page = this->IntensityDistributionNotebook->
     GetFrame("Intensity Distribution");
   vtkKWFrame *manual_sampling_page =
     this->IntensityDistributionNotebook->GetFrame("Manual Sampling");
-  vtkKWFrame *intuitive_page =
+  vtkKWFrame *gaussianPage =
     this->IntensityDistributionNotebook->GetFrame("Gaussian 2D");
 
   this->Script(
@@ -297,14 +306,13 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     this->IntensityDistributionSpecificationMenuButton->SetParent(
       intensity_page);
     this->IntensityDistributionSpecificationMenuButton->Create();
-    this->IntensityDistributionSpecificationMenuButton->
-      SetLabelText("Specification:");
-    this->IntensityDistributionSpecificationMenuButton->GetLabel()->
-      SetWidth(EMSEG_WIDGETS_LABEL_WIDTH);
-    this->IntensityDistributionSpecificationMenuButton->GetWidget()->
-      SetWidth(EMSEG_MENU_BUTTON_WIDTH);
-    this->IntensityDistributionSpecificationMenuButton->
-      SetBalloonHelpString(
+    this->IntensityDistributionSpecificationMenuButton->SetLabelText(
+        "Specification:");
+    this->IntensityDistributionSpecificationMenuButton->GetLabel()->SetWidth(
+        EMSEG_WIDGETS_LABEL_WIDTH);
+    this->IntensityDistributionSpecificationMenuButton->GetWidget()->SetWidth(
+        EMSEG_MENU_BUTTON_WIDTH);
+    this->IntensityDistributionSpecificationMenuButton->SetBalloonHelpString(
       "Select intensity distribution specification type.");
     }
 
@@ -315,8 +323,7 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
 
   if (!this->IntensityDistributionMeanMatrix)
     {
-    this->IntensityDistributionMeanMatrix =
-      vtkKWMatrixWidgetWithLabel::New();
+    this->IntensityDistributionMeanMatrix = vtkKWMatrixWidgetWithLabel::New();
     }
   if (!this->IntensityDistributionMeanMatrix->IsCreated())
     {
@@ -324,13 +331,13 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     this->IntensityDistributionMeanMatrix->Create();
     this->IntensityDistributionMeanMatrix->SetLabelText("Log Mean:");
     this->IntensityDistributionMeanMatrix->ExpandWidgetOff();
-    this->IntensityDistributionMeanMatrix->GetLabel()->
-      SetWidth(EMSEG_WIDGETS_LABEL_WIDTH);
+    this->IntensityDistributionMeanMatrix->GetLabel()->SetWidth(
+        EMSEG_WIDGETS_LABEL_WIDTH);
     this->IntensityDistributionMeanMatrix->SetBalloonHelpString(
-      "Set the intensity distribution mean.");
+        "Set the intensity distribution mean.");
 
-    vtkKWMatrixWidget *matrix =
-      this->IntensityDistributionMeanMatrix->GetWidget();
+    vtkKWMatrixWidget *matrix = this->IntensityDistributionMeanMatrix->
+      GetWidget();
     matrix->SetNumberOfColumns(0);
     matrix->SetNumberOfRows(0);
     matrix->SetElementWidth(6);
@@ -338,7 +345,7 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     }
 
   this->Script("pack %s -side top -expand n -fill x -padx 2 -pady 2",
-               this->IntensityDistributionMeanMatrix->GetWidgetName());
+      this->IntensityDistributionMeanMatrix->GetWidgetName());
 
   // Create the distribution covariance vector/matrix
 
@@ -388,11 +395,10 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     this->IntensityDistributionManualSamplingList->GetWidget()->
       HorizontalScrollbarVisibilityOff();
 
-    vtkKWMultiColumnList *list =
-      this->IntensityDistributionManualSamplingList->GetWidget()->
-      GetWidget();
-    list->SetRightClickCommand(
-      this, "PopupManualIntensitySampleContextMenuCallback");
+    vtkKWMultiColumnList *list = this->IntensityDistributionManualSamplingList
+      ->GetWidget()->GetWidget();
+    list->SetRightClickCommand(this,
+        "PopupManualIntensitySampleContextMenuCallback");
     list->SetHeight(4);
     list->MovableColumnsOff();
     list->SetSelectionModeToSingle();
@@ -406,48 +412,29 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
   // Update the UI with the proper value, if there is a selection
 
   this->DisplaySelectedNodeIntensityDistributionsCallback();
-/*
-  vtkKWMatrixWidget *matrix =
-      this->IntensityDistributionCovarianceMatrix->GetWidget();
 
-  std::cout << *matrix;
-  int numCols = matrix->GetNumberOfColumns();
-  int numRows = matrix->GetNumberOfRows();
-  std::cout << "numCols " << numCols << std::endl;
-  std::cout << "numRows " << numRows << std::endl;
+  // Create the Gaussian 2D page
 
-  for(int j=0; j<numCols; j++)
-  {
-    for(int i=0; i<numRows; i++)
-    {
-      double value = matrix->GetElementValueAsDouble(i,j);
-      std::cout << " " << value;
-    }
-    std::cout << std::endl;
-  }
-*/
-  // Create the target images volume selector
+  std::string msg = "Select an image to define the range of the X axis in ";
+  msg += "the 2D gaussian distribution.";
 
   if (!this->Gaussian2DVolumeXMenuButton)
     {
-    this->Gaussian2DVolumeXMenuButton =
-      vtkKWMenuButtonWithLabel::New();
+    this->Gaussian2DVolumeXMenuButton = vtkKWMenuButtonWithLabel::New();
     }
   if (!this->Gaussian2DVolumeXMenuButton->IsCreated())
     {
-    this->Gaussian2DVolumeXMenuButton->SetParent(intuitive_page);
+    this->Gaussian2DVolumeXMenuButton->SetParent(gaussianPage);
     this->Gaussian2DVolumeXMenuButton->Create();
-    this->Gaussian2DVolumeXMenuButton->GetWidget()->
-      SetWidth(EMSEG_MENU_BUTTON_WIDTH+10);
-    this->Gaussian2DVolumeXMenuButton->GetLabel()->
-      SetWidth(EMSEG_WIDGETS_LABEL_WIDTH-10);
+    this->Gaussian2DVolumeXMenuButton->GetWidget()->SetWidth(
+        EMSEG_MENU_BUTTON_WIDTH+10);
+    this->Gaussian2DVolumeXMenuButton->GetLabel()->SetWidth(
+        EMSEG_WIDGETS_LABEL_WIDTH-10);
     this->Gaussian2DVolumeXMenuButton->SetLabelText("Image X Axis:");
-    this->Gaussian2DVolumeXMenuButton->SetBalloonHelpString(
-      "Select an image to define the range of the X axis in the 2D gaussian distribution.");
+    this->Gaussian2DVolumeXMenuButton->SetBalloonHelpString(msg.c_str());
     }
 
-  this->Script(
-    "pack %s -side top -anchor nw -padx 2 -pady 5",
+  this->Script("pack %s -side top -anchor nw -padx 2 -pady 5",
     this->Gaussian2DVolumeXMenuButton->GetWidgetName());
 /*
   this->PopulateGaussian2DVolumeXSelector();
@@ -460,8 +447,8 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     {
     // Select the target volume, and update everything else accordingly
     vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-    int vol_id = mrmlManager->GetVolumeNthID(0);
-    this->Gaussian2DVolumeXSelectionChangedCallback(vol_id);
+    int volId = mrmlManager->GetVolumeNthID(0);
+    this->Gaussian2DVolumeXSelectionChangedCallback(volId);
     }
 */
   if (!this->Gaussian2DButton)
@@ -473,7 +460,7 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
   if (!this->Gaussian2DButton->IsCreated())
     {
     std::cout << "Gaussian2DButton->SetParent" << std::endl;
-    this->Gaussian2DButton->SetParent(intuitive_page);
+    this->Gaussian2DButton->SetParent(gaussianPage);
     this->Gaussian2DButton->Create();
     this->Gaussian2DButton->SetText("Compute Gaussians");
     }
@@ -484,7 +471,6 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
 
   //this->AddGaussian2DButtonGUIEvents();
 
-  // 3D Gaussian
   int windowWidth = 400;
   int windowHeight = 200;
 
@@ -497,48 +483,52 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
   double rgb[3];
 
   // Add a render widget, attach it to the view frame, and pack
-  vtkGaussian2DWidget *gaussian2DWidget = vtkGaussian2DWidget::New();
-  gaussian2DWidget->SetParent(intuitive_page);
-  gaussian2DWidget->Create();
-  gaussian2DWidget->SetWidth(windowWidth);
-  gaussian2DWidget->SetHeight(windowHeight);
-  gaussian2DWidget->GetRenderer()->GetRenderWindow()->GetInteractor()->
+
+  if (!this->Gaussian2DWidget)
+  {
+   this->Gaussian2DWidget = vtkGaussian2DWidget::New();
+  }
+  this->Gaussian2DWidget->SetParent(gaussianPage);
+  this->Gaussian2DWidget->Create();
+  this->Gaussian2DWidget->SetWidth(windowWidth);
+  this->Gaussian2DWidget->SetHeight(windowHeight);
+  this->Gaussian2DWidget->GetRenderer()->GetRenderWindow()->GetInteractor()->
     Disable();
-  this->Script("pack %s -expand n -fill none -anchor c",
-      gaussian2DWidget->GetWidgetName());
+  this->Script("pack %s -expand n -fill none -anchor c",this->Gaussian2DWidget
+      ->GetWidgetName());
 
   meanX = 0.25 * (x-1);
   meanY = 0.75 * (y-1);
   rgb[0] = 1.0;
   rgb[1] = 0.0;
   rgb[2] = 0.0;
-  gaussian2DWidget->AddGaussian(meanX,meanY,sigma,rgb);
+  this->Gaussian2DWidget->AddGaussian(meanX,meanY,sigma,rgb);
 
   meanX = 0.75 * (x-1);
   meanY = 0.25 * (y-1);
   rgb[0] = 0.0;
   rgb[1] = 0.0;
   rgb[2] = 1.0;
-  gaussian2DWidget->AddGaussian(meanX,meanY,sigma,rgb);
+  this->Gaussian2DWidget->AddGaussian(meanX,meanY,sigma,rgb);
 
   meanX = 0.75 * (x-1);
   meanY = 0.75 * (y-1);
   rgb[0] = 0.0;
   rgb[1] = 1.0;
   rgb[2] = 0.0;
-  gaussian2DWidget->AddGaussian(meanX,meanY,sigma,rgb);
+  this->Gaussian2DWidget->AddGaussian(meanX,meanY,sigma,rgb);
 
-  gaussian2DWidget->CreateGaussian2D();
-  gaussian2DWidget->Render();
+  this->Gaussian2DWidget->CreateGaussian2D();
+  this->Gaussian2DWidget->Render();
 
-  std::cout << "numActors " << gaussian2DWidget->GetRenderer()->
+  std::cout << "numActors " << this->Gaussian2DWidget->GetRenderer()->
     GetNumberOfPropsRendered() << std::endl;
 
   // Deallocate and exit
   ////renderWidget->Delete();
   // GET NUMBER OF LEAF
 
-  this->nbOfLeaf = 0;
+  this->NumberOfLeaves = 0;
   if (mrmlManager)
     {
     vtkIdType root_id = mrmlManager->GetTreeRootNodeID();
@@ -557,7 +547,7 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     }
   if (!this->IntensityDistributionHistogramButton->IsCreated())
     {
-    this->IntensityDistributionHistogramButton->SetParent(intuitive_page);
+    this->IntensityDistributionHistogramButton->SetParent(gaussianPage);
     this->IntensityDistributionHistogramButton->Create();
     this->IntensityDistributionHistogramButton->GetWidget()->
       SetWidth(EMSEG_MENU_BUTTON_WIDTH+10);
@@ -579,38 +569,40 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
   if (!this->IntensityDistributionHistogramHistogram)
     {
     this->IntensityDistributionHistogramHistogram = vtkKWHistogram::New();
-    this->IntensityDistributionHistogramHistogramVisu =
+    this->IntensityDistributionHistogramHistogramVisualization =
       vtkKWColorTransferFunctionEditor::New();
     this->IntensityDistributionHistogramHistogramFunc =
       vtkColorTransferFunction::New();
     }
 
-   if (!this->IntensityDistributionHistogramHistogramVisu->IsCreated())
+   if (!this->IntensityDistributionHistogramHistogramVisualization->IsCreated())
     {
-    this->IntensityDistributionHistogramHistogramVisu->SetParent(
-        intuitive_page);
-    this->IntensityDistributionHistogramHistogramVisu->Create();
+    this->IntensityDistributionHistogramHistogramVisualization->SetParent(
+        gaussianPage);
+    this->IntensityDistributionHistogramHistogramVisualization->Create();
     //this->VisuHisto->GetTclName();
-    this->IntensityDistributionHistogramHistogramVisu->SetBorderWidth(2);
-    this->IntensityDistributionHistogramHistogramVisu->SetReliefToGroove();
-    this->IntensityDistributionHistogramHistogramVisu->SetPadX(2);
-    this->IntensityDistributionHistogramHistogramVisu->SetPadY(2);
-    //this->IntensityDistributionHistogramHistogramVisu->ParameterTicksVisibilityOn();
-    //this->IntensityDistributionHistogramHistogramVisu->ValueTicksVisibilityOn();
-    //this->IntensityDistributionHistogramHistogramVisu->ComputeValueTicksFromHistogramOn();
-    //this->IntensityDistributionHistogramHistogramVisu->SetParameterTicksFormat("%-#6.0f");
-    //this->IntensityDistributionHistogramHistogramVisu->SetValueTicksFormat(
-    //this->IntensityDistributionHistogramHistogramVisu->GetParameterTicksFormat()); 
-    this->IntensityDistributionHistogramHistogramVisu->SetPointPositionInValueRangeToTop(); 
-    this->IntensityDistributionHistogramHistogramVisu->
+    this->IntensityDistributionHistogramHistogramVisualization->SetBorderWidth(2);
+    this->IntensityDistributionHistogramHistogramVisualization->SetReliefToGroove();
+    this->IntensityDistributionHistogramHistogramVisualization->SetPadX(2);
+    this->IntensityDistributionHistogramHistogramVisualization->SetPadY(2);
+    //this->->ParameterTicksVisibilityOn();
+    //this->->ValueTicksVisibilityOn();
+    //this->->ComputeValueTicksFromHistogramOn();
+    //this->->SetParameterTicksFormat("%-#6.0f");
+    //this->->SetValueTicksFormat(
+    //this->->GetParameterTicksFormat());
+    this->IntensityDistributionHistogramHistogramVisualization->
+      SetPointPositionInValueRangeToTop();
+    this->IntensityDistributionHistogramHistogramVisualization->
       PointGuidelineVisibilityOn();
-    this->IntensityDistributionHistogramHistogramVisu->
+    this->IntensityDistributionHistogramHistogramVisualization->
       SetLabelPositionToTop();
     }
 
     this->Script(
     "pack %s -side top -anchor nw -fill both -padx 2 -pady 2 -pady 2",
-    this->IntensityDistributionHistogramHistogramVisu->GetWidgetName());
+    this->IntensityDistributionHistogramHistogramVisualization->
+    GetWidgetName());
 
     vtkEMSegmentMRMLManager *mrmlManager0 = this->GetGUI()->GetMRMLManager();
     this->IntensityDistributionHistogramButton->SetEnabled(
@@ -620,8 +612,8 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     {
     // Select the target volume, and update everything else accordingly
     vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-    int vol_id = mrmlManager->GetVolumeNthID(0);
-    this->IntensityDistributionTargetSelectionChangedCallback(vol_id);
+    int volId = mrmlManager->GetVolumeNthID(0);
+    this->IntensityDistributionTargetSelectionChangedCallback(volId);
     }
 
   this->AddPointMovingGUIEvents();
@@ -630,7 +622,7 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
    // ADD VOLUME SELECTORS FOR CLASSES
   /*
     vtkKWMenuButtonWithLabel* class1 = vtkKWMenuButtonWithLabel::New();
-    class1->SetParent(intuitive_page);
+    class1->SetParent(gaussianPage);
     class1->Create();
     class1->GetWidget()->
       SetWidth(EMSEG_MENU_BUTTON_WIDTH+10);
@@ -643,16 +635,17 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
 
         this->Script(
     "pack %s -side top -anchor nw -fill both -padx 2 -pady 5",
-    class1->GetWidgetName());*/
+    class1->GetWidgetName());
+    */
 
-    if (!this->ClassAndNodeList)
+  if (!this->ClassAndNodeList)
     {
     this->ClassAndNodeList = vtkKWMultiColumnList::New();
     }
 
-   if (!this->ClassAndNodeList->IsCreated())
+  if (!this->ClassAndNodeList->IsCreated())
     {
-    this->ClassAndNodeList->SetParent(intuitive_page);
+    this->ClassAndNodeList->SetParent(gaussianPage);
     this->ClassAndNodeList->Create();
     this->ClassAndNodeList->MovableColumnsOff();
     //this->ClassAndNodeList->SetWidth(0);
@@ -674,30 +667,106 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
 
   const char* maintin[200];
 
-  for(j = 0;j < this->nbOfLeaf;j++)
+  for(j = 0;j < this->NumberOfLeaves;j++)
   {
    maintin[j] = mrmlManager->GetTreeNodeName(leafID[j]);
   }
 
-  for(i=0; i < this->nbOfLeaf; i++)
+  for(i=0; i < this->NumberOfLeaves; i++)
   {
   this->ClassAndNodeList->InsertCellText(i,0,maintin[i]);
   this->ClassAndNodeList->SetCellWindowCommandToComboBoxWithValues(i,0,
-      this->nbOfLeaf,maintin);
+      this->NumberOfLeaves,maintin);
   this->ClassAndNodeList->InsertCellTextAsInt(i,1,i+1);
   }
     this->Script(
     "pack %s -side top -anchor nw -fill both -padx 2 -pady 2 -pady 2",
     this->ClassAndNodeList->GetWidgetName());
     */
+
+  // Create the Gaussian 2D rendering menu button
+
+  if (!this->Gaussian2DRenderingMenuButton)
+    {
+    this->Gaussian2DRenderingMenuButton = vtkKWMenuButtonWithLabel::New();
+    }
+  if (!this->Gaussian2DRenderingMenuButton->IsCreated())
+    {
+    this->Gaussian2DRenderingMenuButton->SetParent(gaussianPage);
+    this->Gaussian2DRenderingMenuButton->Create();
+    this->Gaussian2DRenderingMenuButton->SetLabelText("Rendering:");
+    this->Gaussian2DRenderingMenuButton->GetLabel()->SetWidth(
+        EMSEG_WIDGETS_LABEL_WIDTH);
+    this->Gaussian2DRenderingMenuButton->GetWidget()->SetWidth(
+        EMSEG_MENU_BUTTON_WIDTH);
+    this->Gaussian2DRenderingMenuButton->SetBalloonHelpString(
+        "Select rendering type.");
+    }
+
+  this->Script("pack %s -side top -anchor nw -padx 2 -pady 2",
+    this->Gaussian2DRenderingMenuButton->GetWidgetName());
+  /*
+    {
+    vtkKWMenu *menu = this->IntensityDistributionSpecificationMenuButton->
+      GetWidget()->GetMenu();
+    menu->DeleteAllItems();
+    if (hasValidSelection)
+      {
+      vtksys_stl::string value;
+      this->IntensityDistributionSpecificationMenuButton->SetEnabled(enabled);
+      sprintf(
+        buffer, "IntensityDistributionSpecificationCallback %d %d",
+        static_cast<int>(sel_volId), vtkEMSegmentMRMLManager::
+        DistributionSpecificationManual);
+      menu->AddRadioButton("Manual", this, buffer);
+      sprintf(
+        buffer, "IntensityDistributionSpecificationCallback %d %d",
+        static_cast<int>(sel_volId),vtkEMSegmentMRMLManager::
+        DistributionSpecificationManuallySample);
+      menu->AddRadioButton("Manual Sampling", this, buffer);
+      sprintf(
+        buffer, "IntensityDistributionSpecificationCallback %d %d",
+        static_cast<int>(sel_volId), vtkEMSegmentMRMLManager::
+        DistributionSpecificationAutoSample);
+      menu->AddRadioButton("Auto Sampling", this, buffer);
+
+      // temporarily disable auto sampling because it is not currently
+      // implemented
+      menu->SetItemStateToDisabled("Auto Sampling");
+
+      switch (mrmlManager->GetTreeNodeDistributionSpecificationMethod(
+            sel_volId))
+        {
+        case vtkEMSegmentMRMLManager::DistributionSpecificationManual:
+          value = "Manual";
+          break;
+        case vtkEMSegmentMRMLManager::
+        DistributionSpecificationManuallySample:
+          value = "Manual Sampling";
+          break;
+        case vtkEMSegmentMRMLManager::
+        DistributionSpecificationAutoSample:
+          value = "Auto Sampling";
+          break;
+        }
+      this->IntensityDistributionSpecificationMenuButton->GetWidget()->
+        SetValue(value.c_str());
+      }
+    else
+      {
+      this->IntensityDistributionSpecificationMenuButton->SetEnabled(0);
+      this->IntensityDistributionSpecificationMenuButton->GetWidget()->
+        SetValue("");
+      }
+    }
+    */
 }
 
 //----------------------------------------------------------------------------
-void vtkEMSegmentIntensityDistributionsStep::
-PopulateClassAndNodeList()
+void vtkEMSegmentIntensityDistributionsStep::PopulateClassAndNodeList()
 {
   // CLASS COLUMN CREATION
-  for(int i=0; i<this->nbOfLeaf; i++)
+  for(int i=0; i<this->NumberOfLeaves; i++)
   {
     this->ClassAndNodeList->InsertCellTextAsInt(i,1,i+1);
   }
@@ -707,7 +776,7 @@ PopulateClassAndNodeList()
 void vtkEMSegmentIntensityDistributionsStep::
 PopulateIntensityDistributionTargetVolumeSelector()
 {
-  vtkIdType target_vol_id;
+  vtkIdType target_volId;
   char buffer[256];
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
@@ -724,11 +793,11 @@ PopulateIntensityDistributionTargetVolumeSelector()
 
   for(int i = 0; i < nb_of_target_volumes; i++)
     {
-    target_vol_id = mrmlManager->GetTargetSelectedVolumeNthID(i);
+    target_volId = mrmlManager->GetTargetSelectedVolumeNthID(i);
     sprintf(buffer, "%s %d",
             "IntensityDistributionTargetSelectionChangedCallback",
-            static_cast<int>(target_vol_id));
-    const char *name = mrmlManager->GetVolumeName(target_vol_id);
+            static_cast<int>(target_volId));
+    const char *name = mrmlManager->GetVolumeName(target_volId);
     if (name)
       {
       menu->AddRadioButton(name, this, buffer);
@@ -738,48 +807,48 @@ PopulateIntensityDistributionTargetVolumeSelector()
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::
-  Gaussian2DVolumeXSelectionChangedCallback(vtkIdType target_vol_id)
+  Gaussian2DVolumeXSelectionChangedCallback(vtkIdType target_volId)
 {
   std::cout << __LINE__ << " Gaussian2DVolumeXSelectionChangedCallback"
     <<std::endl;
-  std::cout << __LINE__ << " vol id: "<< target_vol_id <<std::endl;
+  std::cout << __LINE__ << " vol id: "<< target_volId <<std::endl;
 
   //vtkDataArray* array = this->GetGUI()->GetMRMLManager()->GetVolumeNode(
-  //    target_vol_id)->GetImageData()->GetPointData()->GetScalars();
+  //    target_volId)->GetImageData()->GetPointData()->GetScalars();
 
   //double* range = array->GetRange();
 
-//this->IntensityDistributionHistogramHistogramVisu->ExpandCanvasWidthOn();
-//this->IntensityDistributionHistogramHistogramVisu->SetCanvasHeight(180);
+//this->IntensityDistributionHistogramHistogramVisualization->ExpandCanvasWidthOn();
+//this->IntensityDistributionHistogramHistogramVisualization->SetCanvasHeight(180);
 }
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::
-  IntensityDistributionTargetSelectionChangedCallback(vtkIdType target_vol_id)
+  IntensityDistributionTargetSelectionChangedCallback(vtkIdType target_volId)
 {
   std::cout << __LINE__ <<
     " INTENSITY DISTRIBUTION TARGET SELECTION CHANGED CALLBACK"<<std::endl;
-  std::cout<<"vol id: "<< target_vol_id <<std::endl;
+  std::cout<<"vol id: "<< target_volId <<std::endl;
 
   vtkDataArray* array = this->GetGUI()->GetMRMLManager()->GetVolumeNode(
-      target_vol_id)->GetImageData()->GetPointData()->GetScalars();
+      target_volId)->GetImageData()->GetPointData()->GetScalars();
   this->IntensityDistributionHistogramHistogram->BuildHistogram(array,0);
 
-  this->IntensityDistributionHistogramHistogramVisu->SetHistogram(
+  this->IntensityDistributionHistogramHistogramVisualization->SetHistogram(
       this->IntensityDistributionHistogramHistogram);
 
   double* range = this->IntensityDistributionHistogramHistogram->GetRange();
 
 int size;
-size = this->IntensityDistributionHistogramHistogramVisu->GetFunctionSize();
-this->IntensityDistributionHistogramHistogramVisu->SetDisableAddAndRemove(0);
+size = this->IntensityDistributionHistogramHistogramVisualization->GetFunctionSize();
+this->IntensityDistributionHistogramHistogramVisualization->SetDisableAddAndRemove(0);
 
 //if(size == 0){
 
 /*
 vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
-this->nbOfLeaf = 0;
+this->NumberOfLeaves = 0;
 
 if (mrmlManager)
     {
@@ -802,48 +871,48 @@ this->IntensityDistributionHistogramHistogramFunc->AddHSVPoint(range[1],0.0,1.0,
 double i;
 float color;
 
-for(i = 1; i< this->nbOfLeaf - 1 ; i++){
+for(i = 1; i< this->NumberOfLeaves - 1 ; i++){
 
-color = 0.66*(1-i/(this->nbOfLeaf -1));
+color = 0.66*(1-i/(this->NumberOfLeaves -1));
 
 std::cout<<"color: "<<color << std::endl;
 
-this->IntensityDistributionHistogramHistogramFunc->AddHSVPoint((range[0]+range[1])*(i)/(this->nbOfLeaf-1),color,1.0,1.0);
+this->IntensityDistributionHistogramHistogramFunc->AddHSVPoint((range[0]+range[1])*(i)/(this->NumberOfLeaves-1),color,1.0,1.0);
 
 }
 
-this->IntensityDistributionHistogramHistogramVisu->SetDisableAddAndRemove(1);
-//this->IntensityDistributionHistogramHistogramVisu->SetReadOnly(1);
-//this->IntensityDistributionHistogramHistogramVisu->SetReadOnly(this->nbOfLeaf);
+this->IntensityDistributionHistogramHistogramVisualization->SetDisableAddAndRemove(1);
+//this->IntensityDistributionHistogramHistogramVisualization->SetReadOnly(1);
+//this->IntensityDistributionHistogramHistogramVisualization->SetReadOnly(this->NumberOfLeaves);
 
 //}
 
-this->IntensityDistributionHistogramHistogramVisu->SetColorTransferFunction(this->IntensityDistributionHistogramHistogramFunc);
-this->IntensityDistributionHistogramHistogramVisu->SetWholeParameterRangeToFunctionRange();
-this->IntensityDistributionHistogramHistogramVisu->SetVisibleParameterRangeToWholeParameterRange();
-this->IntensityDistributionHistogramHistogramVisu->ParameterRangeVisibilityOn();
+this->IntensityDistributionHistogramHistogramVisualization->SetColorTransferFunction(this->IntensityDistributionHistogramHistogramFunc);
+this->IntensityDistributionHistogramHistogramVisualization->SetWholeParameterRangeToFunctionRange();
+this->IntensityDistributionHistogramHistogramVisualization->SetVisibleParameterRangeToWholeParameterRange();
+this->IntensityDistributionHistogramHistogramVisualization->ParameterRangeVisibilityOn();
 
-this->IntensityDistributionHistogramHistogramVisu->ExpandCanvasWidthOn();
-this->IntensityDistributionHistogramHistogramVisu->SetCanvasHeight(180);
+this->IntensityDistributionHistogramHistogramVisualization->ExpandCanvasWidthOn();
+this->IntensityDistributionHistogramHistogramVisualization->SetCanvasHeight(180);
 
 
 /*
 
-  if (!this->IntensityDistributionHistogramHistogramVisu->HasFunction() || id < 0 || id >= this->IntensityDistributionHistogramHistogramVisu->GetFunctionSize() ||
+  if (!this->IntensityDistributionHistogramHistogramVisualization->HasFunction() || id < 0 || id >= this->IntensityDistributionHistogramHistogramVisualization->GetFunctionSize() ||
       !values)
     {
     return 0;
     }
   
-  int dim = this->IntensityDistributionHistogramHistogramVisu->GetFunctionPointDimensionality();
+  int dim = this->IntensityDistributionHistogramHistogramVisualization->GetFunctionPointDimensionality();
 
 #if VTK_MAJOR_VERSION > 5 || (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION > 0)
   double node_value[6];
-  this->IntensityDistributionHistogramHistogramVisu->ColorTransferFunction->GetNodeValue(id, node_value);
+  this->IntensityDistributionHistogramHistogramVisualization->ColorTransferFunction->GetNodeValue(id, node_value);
   memcpy(values, node_value + 1, dim * sizeof(double));
 #else
   memcpy(values, 
-         (this->IntensityDistributionHistogramHistogramVisu->ColorTransferFunction->GetDataPointer() + id * (1 + dim) + 1), 
+         (this->IntensityDistributionHistogramHistogramVisualization->ColorTransferFunction->GetDataPointer() + id * (1 + dim) + 1), 
          dim * sizeof(double));
 #endif
 
@@ -855,7 +924,7 @@ this->IntensityDistributionHistogramHistogramVisu->SetCanvasHeight(180);
 
 
 
-//this->IntensityDistributionHistogramHistogramVisu->GetFunctionPointParameter(2,para);
+//this->IntensityDistributionHistogramHistogramVisualization->GetFunctionPointParameter(2,para);
 //data = this->IntensityDistributionHistogramHistogramFunc->GetDataPointer();
 
 //std::cout<<"para: "<< para[0] << para[1] << std::endl;
@@ -869,7 +938,7 @@ double* table;
 this->IntensityDistributionHistogramHistogramFunc->GetTable (x1, x2, n, table);
 
 std::cout<<"test2: "<< x1 << x2 << n << table[0] << std::endl;*/
-//this->ExtractSlice(target_vol_id);
+//this->ExtractSlice(target_volId);
 
 }
 
@@ -878,7 +947,7 @@ void vtkEMSegmentIntensityDistributionsStep::
 PopulateGaussian2DVolumeXSelector()
 {
   std::cout << __LINE__ << " PopulateGaussian2DVolumeXSelector" << std::endl;
-  vtkIdType target_vol_id;
+  vtkIdType target_volId;
   char buffer[256];
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
@@ -896,12 +965,12 @@ PopulateGaussian2DVolumeXSelector()
 
   for(int i = 0; i < nb_of_target_volumes; i++)
     {
-    target_vol_id = mrmlManager->GetTargetSelectedVolumeNthID(i);
+    target_volId = mrmlManager->GetTargetSelectedVolumeNthID(i);
 
     sprintf(buffer, "%s %d", "Gaussian2DVolumeXSelectionChangedCallback",
-        static_cast<int>(target_vol_id));
+        static_cast<int>(target_volId));
 
-    const char *name = mrmlManager->GetVolumeName(target_vol_id);
+    const char *name = mrmlManager->GetVolumeName(target_volId);
 
     if (name)
       {
@@ -932,26 +1001,25 @@ DisplaySelectedNodeIntensityDistributionsCallback()
     {
     return;
     }
-  vtkEMSegmentAnatomicalStructureStep *anat_step = 
+  vtkEMSegmentAnatomicalStructureStep *anatomicalStep =
     this->GetGUI()->GetAnatomicalStructureStep();
-  if (!anat_step)
+  if (!anatomicalStep)
     {
     return;
     }
-  vtkKWTree *tree = anat_step->GetAnatomicalStructureTree()->GetWidget();
+  vtkKWTree *tree = anatomicalStep->GetAnatomicalStructureTree()->GetWidget();
   vtksys_stl::string sel_node;
-  vtkIdType sel_vol_id = 0;
+  vtkIdType sel_volId = 0;
   int manually_sample_mode = 0;
-  int has_valid_selection = tree->HasSelection();
-  if (has_valid_selection)
+  int hasValidSelection = tree->HasSelection();
+  if (hasValidSelection)
     {
     sel_node = tree->GetSelection();
-    sel_vol_id = tree->GetNodeUserDataAsInt(sel_node.c_str());
-    has_valid_selection = mrmlManager->GetTreeNodeIsLeaf(sel_vol_id);
-    manually_sample_mode = 
-      mrmlManager->GetTreeNodeDistributionSpecificationMethod(sel_vol_id) ==
-      vtkEMSegmentMRMLManager::
-      DistributionSpecificationManuallySample;
+    sel_volId = tree->GetNodeUserDataAsInt(sel_node.c_str());
+    hasValidSelection = mrmlManager->GetTreeNodeIsLeaf(sel_volId);
+    manually_sample_mode =
+      mrmlManager->GetTreeNodeDistributionSpecificationMethod(sel_volId) ==
+      vtkEMSegmentMRMLManager::DistributionSpecificationManuallySample;
     }
 
   int enabled = tree->GetEnabled();
@@ -966,23 +1034,23 @@ DisplaySelectedNodeIntensityDistributionsCallback()
     vtkKWMenu *menu = this->IntensityDistributionSpecificationMenuButton->
       GetWidget()->GetMenu();
     menu->DeleteAllItems();
-    if (has_valid_selection)
+    if (hasValidSelection)
       {
       vtksys_stl::string value;
       this->IntensityDistributionSpecificationMenuButton->SetEnabled(enabled);
       sprintf(
-        buffer, "IntensityDistributionSpecificationCallback %d %d", 
-        static_cast<int>(sel_vol_id), vtkEMSegmentMRMLManager::
+        buffer, "IntensityDistributionSpecificationCallback %d %d",
+        static_cast<int>(sel_volId), vtkEMSegmentMRMLManager::
         DistributionSpecificationManual);
       menu->AddRadioButton("Manual", this, buffer);
       sprintf(
-        buffer, "IntensityDistributionSpecificationCallback %d %d", 
-        static_cast<int>(sel_vol_id),vtkEMSegmentMRMLManager::
+        buffer, "IntensityDistributionSpecificationCallback %d %d",
+        static_cast<int>(sel_volId),vtkEMSegmentMRMLManager::
         DistributionSpecificationManuallySample);
       menu->AddRadioButton("Manual Sampling", this, buffer);
       sprintf(
-        buffer, "IntensityDistributionSpecificationCallback %d %d", 
-        static_cast<int>(sel_vol_id), vtkEMSegmentMRMLManager::
+        buffer, "IntensityDistributionSpecificationCallback %d %d",
+        static_cast<int>(sel_volId), vtkEMSegmentMRMLManager::
         DistributionSpecificationAutoSample);
       menu->AddRadioButton("Auto Sampling", this, buffer);
 
@@ -990,7 +1058,8 @@ DisplaySelectedNodeIntensityDistributionsCallback()
       // implemented
       menu->SetItemStateToDisabled("Auto Sampling");
 
-      switch (mrmlManager->GetTreeNodeDistributionSpecificationMethod(sel_vol_id))
+      switch (mrmlManager->GetTreeNodeDistributionSpecificationMethod(
+            sel_volId))
         {
         case vtkEMSegmentMRMLManager::DistributionSpecificationManual:
           value = "Manual";
@@ -1019,27 +1088,27 @@ DisplaySelectedNodeIntensityDistributionsCallback()
 
   if (this->IntensityDistributionMeanMatrix)
     {
-    vtkKWMatrixWidget *matrix = 
+    vtkKWMatrixWidget *matrix =
       this->IntensityDistributionMeanMatrix->GetWidget();
-    if (has_valid_selection)
+    if (hasValidSelection)
       {
       this->IntensityDistributionMeanMatrix->SetEnabled(
         nb_of_target_volumes ? enabled : 0);
       matrix->SetNumberOfColumns(nb_of_target_volumes);
       matrix->SetNumberOfRows(1);
       matrix->SetReadOnly(
-        mrmlManager->GetTreeNodeDistributionSpecificationMethod(sel_vol_id) !=
+        mrmlManager->GetTreeNodeDistributionSpecificationMethod(sel_volId) !=
         vtkEMSegmentMRMLManager::DistributionSpecificationManual);
       sprintf(
         buffer, "IntensityDistributionMeanChangedCallback %d", 
-        static_cast<int>(sel_vol_id));
+        static_cast<int>(sel_volId));
       matrix->SetElementChangedCommand(this, buffer);
 
       for(col = 0; col < nb_of_target_volumes; col++)
         {
         matrix->SetElementValueAsDouble(
           0, col, 
-          mrmlManager->GetTreeNodeDistributionLogMean(sel_vol_id, col));
+          mrmlManager->GetTreeNodeDistributionLogMean(sel_volId, col));
         }
       }
     else
@@ -1056,18 +1125,18 @@ DisplaySelectedNodeIntensityDistributionsCallback()
     {
     vtkKWMatrixWidget *matrix = 
       this->IntensityDistributionCovarianceMatrix->GetWidget();
-    if (has_valid_selection)
+    if (hasValidSelection)
       {
       this->IntensityDistributionCovarianceMatrix->SetEnabled(
         nb_of_target_volumes ? enabled : 0);
       matrix->SetNumberOfColumns(nb_of_target_volumes);
       matrix->SetNumberOfRows(nb_of_target_volumes);
       matrix->SetReadOnly(
-        mrmlManager->GetTreeNodeDistributionSpecificationMethod(sel_vol_id) !=
+        mrmlManager->GetTreeNodeDistributionSpecificationMethod(sel_volId) !=
         vtkEMSegmentMRMLManager::DistributionSpecificationManual);
       sprintf(
         buffer,"IntensityDistributionCovarianceChangedCallback %d",
-        static_cast<int>(sel_vol_id));
+        static_cast<int>(sel_volId));
       matrix->SetElementChangedCommand(this, buffer);
 
       for (row = 0; row < nb_of_target_volumes; row++)
@@ -1077,7 +1146,7 @@ DisplaySelectedNodeIntensityDistributionsCallback()
           matrix->SetElementValueAsDouble(
             row, col, 
             mrmlManager->GetTreeNodeDistributionLogCovariance(
-              sel_vol_id, row, col));
+              sel_volId, row, col));
           }
         }
       }
@@ -1099,10 +1168,10 @@ DisplaySelectedNodeIntensityDistributionsCallback()
 
   if (this->IntensityDistributionManualSamplingList)
     {
-    vtkKWMultiColumnList *list = 
-      this->IntensityDistributionManualSamplingList->GetWidget()->GetWidget();
+    vtkKWMultiColumnList *list = this->IntensityDistributionManualSamplingList
+      ->GetWidget()->GetWidget();
     list->DeleteAllRows();
-    if (has_valid_selection && manually_sample_mode)
+    if (hasValidSelection && manually_sample_mode)
       {
       this->IntensityDistributionManualSamplingList->SetEnabled(enabled);
       int nb_cols = list->GetNumberOfColumns();
@@ -1119,23 +1188,22 @@ DisplaySelectedNodeIntensityDistributionsCallback()
         }
       for (col = 0; col < nb_of_target_volumes; ++col)
         {
-        vtkIdType volumeID =
-          mrmlManager->GetTargetSelectedVolumeNthID(col);
+        vtkIdType volumeID = mrmlManager->GetTargetSelectedVolumeNthID(col);
         const char* title = mrmlManager->GetVolumeName(volumeID);
         list->SetColumnTitle(col, title);
         }
       double intensity;
       int nb_samples =
-        mrmlManager->GetTreeNodeDistributionNumberOfSamples(sel_vol_id);
+        mrmlManager->GetTreeNodeDistributionNumberOfSamples(sel_volId);
       for (row = 0; row < nb_samples; row++)
         {
         list->AddRow();
         for (col = 0; col < nb_of_target_volumes; col++)
           {
-          int vol_id = mrmlManager->GetTargetSelectedVolumeNthID(col);
+          int volId = mrmlManager->GetTargetSelectedVolumeNthID(col);
           intensity = mrmlManager->
             GetTreeNodeDistributionSampleIntensityValue(
-            sel_vol_id, row, vol_id);
+            sel_volId, row, volId);
           list->SetCellTextAsDouble(row, col, intensity);
           }
         }
@@ -1150,7 +1218,7 @@ DisplaySelectedNodeIntensityDistributionsCallback()
 //-------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::
 IntensityDistributionSpecificationCallback(
-  vtkIdType sel_vol_id, int type)
+  vtkIdType sel_volId, int type)
 {
   // The distribution specification has changed because of user interaction
 
@@ -1160,9 +1228,9 @@ IntensityDistributionSpecificationCallback(
     return;
     }
   if (type != mrmlManager->
-      GetTreeNodeDistributionSpecificationMethod(sel_vol_id))
+      GetTreeNodeDistributionSpecificationMethod(sel_volId))
     {
-    mrmlManager->SetTreeNodeDistributionSpecificationMethod(sel_vol_id, type);
+    mrmlManager->SetTreeNodeDistributionSpecificationMethod(sel_volId, type);
     this->DisplaySelectedNodeIntensityDistributionsCallback();
     }
 }
@@ -1170,7 +1238,7 @@ IntensityDistributionSpecificationCallback(
 //-------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::
 IntensityDistributionMeanChangedCallback(
-  vtkIdType sel_vol_id, int row, int col, const char *value)
+  vtkIdType sel_volId, int row, int col, const char *value)
 {
   // The distribution mean vector has changed because of user interaction
 
@@ -1179,14 +1247,14 @@ IntensityDistributionMeanChangedCallback(
     {
     return;
     }
-  mrmlManager->SetTreeNodeDistributionLogMean(sel_vol_id, col, atof(value));
+  mrmlManager->SetTreeNodeDistributionLogMean(sel_volId, col, atof(value));
 }
 
 //-------------------------------------------------------------------
 void
 vtkEMSegmentIntensityDistributionsStep::
 IntensityDistributionCovarianceChangedCallback(
-  vtkIdType sel_vol_id, int row, int col, const char *value)
+  vtkIdType sel_volId, int row, int col, const char *value)
 {
   // The distribution covariance matrix has changed because of user
   // interaction
@@ -1196,7 +1264,7 @@ IntensityDistributionCovarianceChangedCallback(
     {
     return;
     }
-  mrmlManager->SetTreeNodeDistributionLogCovariance(sel_vol_id, row,
+  mrmlManager->SetTreeNodeDistributionLogCovariance(sel_volId, row,
       col, atof(value));
 }
 
@@ -1207,11 +1275,14 @@ AddIntensityDistributionSamplePoint( double ras[3])
   // Since it is not a callback, make sure we are really allowed to add
   // a sample point now
 
-  vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
+  vtkKWWizardWidget *wizardWidget = this->GetGUI()->GetWizardWidget();
 
-  if (!wizard_widget ||
-      wizard_widget->GetWizardWorkflow()->GetCurrentStep() !=
-      this)
+  if (!wizardWidget)
+    {
+    return;
+    }
+
+  if(wizardWidget->GetWizardWorkflow()->GetCurrentStep() != this)
     {
     return;
     }
@@ -1221,30 +1292,30 @@ AddIntensityDistributionSamplePoint( double ras[3])
     {
     return;
     }
-  vtkEMSegmentAnatomicalStructureStep *anat_step =
+  vtkEMSegmentAnatomicalStructureStep *anatomicalStep =
     this->GetGUI()->GetAnatomicalStructureStep();
-  if (!anat_step)
+  if (!anatomicalStep)
     {
     return;
     }
-  vtkKWTree *tree = anat_step->GetAnatomicalStructureTree()->GetWidget();
+  vtkKWTree *tree = anatomicalStep->GetAnatomicalStructureTree()->GetWidget();
   vtksys_stl::string sel_node;
-  vtkIdType sel_vol_id;
+  vtkIdType sel_volId;
   if (tree->HasSelection())
     {
     sel_node = tree->GetSelection();
-    sel_vol_id = tree->GetNodeUserDataAsInt(sel_node.c_str());
+    sel_volId = tree->GetNodeUserDataAsInt(sel_node.c_str());
     if (sel_node.size() &&
-        mrmlManager->GetTreeNodeIsLeaf(sel_vol_id) &&
+        mrmlManager->GetTreeNodeIsLeaf(sel_volId) &&
         mrmlManager->GetTreeNodeDistributionSpecificationMethod(
-          sel_vol_id) ==
+          sel_volId) ==
         vtkEMSegmentMRMLManager::
         DistributionSpecificationManuallySample)
       {
-      mrmlManager->AddTreeNodeDistributionSamplePoint(sel_vol_id, ras);
+      mrmlManager->AddTreeNodeDistributionSamplePoint(sel_volId, ras);
       this->DisplaySelectedNodeIntensityDistributionsCallback();
       int nb_samples =
-        mrmlManager->GetTreeNodeDistributionNumberOfSamples(sel_vol_id);
+        mrmlManager->GetTreeNodeDistributionNumberOfSamples(sel_volId);
       vtkKWMultiColumnList *list =
        this->IntensityDistributionManualSamplingList->GetWidget()->
        GetWidget();
@@ -1257,16 +1328,16 @@ AddIntensityDistributionSamplePoint( double ras[3])
 void vtkEMSegmentIntensityDistributionsStep::
 PopupManualIntensitySampleContextMenuCallback(int row, int, int x, int y)
 {
-  vtkEMSegmentAnatomicalStructureStep *anat_step =
+  vtkEMSegmentAnatomicalStructureStep *anatomicalStep =
     this->GetGUI()->GetAnatomicalStructureStep();
-  vtkKWTree *tree = anat_step->GetAnatomicalStructureTree()->GetWidget();
+  vtkKWTree *tree = anatomicalStep->GetAnatomicalStructureTree()->GetWidget();
   if (!tree->HasSelection())
     {
     return;
     }
 
   vtksys_stl::string sel_node(tree->GetSelection());
-  vtkIdType sel_vol_id = tree->GetNodeUserDataAsInt(sel_node.c_str());
+  vtkIdType sel_volId = tree->GetNodeUserDataAsInt(sel_node.c_str());
 
   vtkKWMultiColumnList *list = this->
     IntensityDistributionManualSamplingList->GetWidget()->GetWidget();
@@ -1288,14 +1359,14 @@ PopupManualIntensitySampleContextMenuCallback(int row, int, int x, int y)
   if (row >= 0)
     {
     sprintf( buffer, "DeleteManualIntensitySampleCallback %d %d",
-      static_cast<int>(sel_vol_id), row);
+      static_cast<int>(sel_volId), row);
     this->ContextMenu->AddCommand("Delete sample", this, buffer);
     }
 
   if (list->GetNumberOfRows())
     {
     sprintf(buffer, "DeleteAllManualIntensitySampleCallback %d",
-            static_cast<int>(sel_vol_id));
+            static_cast<int>(sel_volId));
     this->ContextMenu->AddCommand("Delete all samples", this, buffer);
     }
 
@@ -1305,7 +1376,7 @@ PopupManualIntensitySampleContextMenuCallback(int row, int, int x, int y)
 //-------------------------------------------------------------------
 void
 vtkEMSegmentIntensityDistributionsStep::
-DeleteManualIntensitySampleCallback( vtkIdType sel_vol_id,
+DeleteManualIntensitySampleCallback( vtkIdType sel_volId,
     int sample_index)
 {
   // A sample has been deleted because of user interaction
@@ -1326,7 +1397,7 @@ DeleteManualIntensitySampleCallback( vtkIdType sel_vol_id,
       return;
       }
     list->DeleteRow(sample_index);
-    mrmlManager->RemoveTreeNodeDistributionSamplePoint(sel_vol_id,
+    mrmlManager->RemoveTreeNodeDistributionSamplePoint(sel_volId,
         sample_index);
     this->DisplaySelectedNodeIntensityDistributionsCallback();
     }
@@ -1335,7 +1406,7 @@ DeleteManualIntensitySampleCallback( vtkIdType sel_vol_id,
 //-------------------------------------------------------------------
 void
 vtkEMSegmentIntensityDistributionsStep::
-DeleteAllManualIntensitySampleCallback(vtkIdType sel_vol_id)
+DeleteAllManualIntensitySampleCallback(vtkIdType sel_volId)
 {
   // All samples have been deleted because of user interaction
 
@@ -1349,7 +1420,7 @@ DeleteAllManualIntensitySampleCallback(vtkIdType sel_vol_id)
     return;
     }
   list->DeleteAllRows();
-  mrmlManager->RemoveAllTreeNodeDistributionSamplePoints(sel_vol_id);
+  mrmlManager->RemoveAllTreeNodeDistributionSamplePoints(sel_volId);
   this->DisplaySelectedNodeIntensityDistributionsCallback();
 }
 
@@ -1495,7 +1566,7 @@ void vtkEMSegmentIntensityDistributionsStep::PrintSelf(ostream& os, vtkIndent in
 //---------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::AddPointMovingGUIEvents()
 {
-  this->IntensityDistributionHistogramHistogramVisu->AddObserver(
+  this->IntensityDistributionHistogramHistogramVisualization->AddObserver(
       vtkKWParameterValueFunctionEditor::PointChangingEvent, this->GetGUI()->
       GetGUICallbackCommand());
 }
@@ -1526,7 +1597,7 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessPointMovingGUIEvents(
 //---------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::AddPointAddGUIEvents()
 {
-  this->IntensityDistributionHistogramHistogramVisu->AddObserver(
+  this->IntensityDistributionHistogramHistogramVisualization->AddObserver(
       vtkKWParameterValueFunctionEditor::PointAddedEvent, this->GetGUI()->
       GetGUICallbackCommand());
 }
@@ -1542,7 +1613,7 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessPointAddGUIEvents(
 {
   if(event == vtkKWParameterValueFunctionEditor::PointAddedEvent)
   {
-    this->size = this->IntensityDistributionHistogramHistogramVisu->
+    this->size = this->IntensityDistributionHistogramHistogramVisualization->
       GetFunctionSize();
   }
 }
@@ -1554,9 +1625,9 @@ void vtkEMSegmentIntensityDistributionsStep::test()
   double midmin, midmax;
   double node_value_next[6], node_value_prev[6];
   double node_value[6];
-  double *position = new double[this->nbOfLeaf]; //6
+  double *position = new double[this->NumberOfLeaves]; //6
 
-  while(i<(this->nbOfLeaf))
+  while(i<(this->NumberOfLeaves))
   {
     this->IntensityDistributionHistogramHistogramFunc->GetNodeValue(i,
         node_value);
@@ -1565,7 +1636,7 @@ void vtkEMSegmentIntensityDistributionsStep::test()
   }
 
   // GET MID POSITIONS (NO BORDERS)
-  for(j = 1;j<(this->nbOfLeaf)-1;j++)
+  for(j = 1;j<(this->NumberOfLeaves)-1;j++)
   {
   midmin = 0;
   midmax = 0;
@@ -1588,14 +1659,14 @@ void vtkEMSegmentIntensityDistributionsStep::test()
 
   // GET BORDERS POSITIONS
 
-  if( this->nbOfLeaf > 2 )
+  if( this->NumberOfLeaves > 2 )
   {
     this->class_size[0] = position[0];
     this->class_size[1] = this->class_size[2];
 
-    this->class_size[(this->nbOfLeaf)*2 - 2] = this->class_size[
-      (this->nbOfLeaf)*2-3];
-    this->class_size[(this->nbOfLeaf)*2 - 1] = position[(this->nbOfLeaf)-1];
+    this->class_size[(this->NumberOfLeaves)*2 - 2] = this->class_size[
+      (this->NumberOfLeaves)*2-3];
+    this->class_size[(this->NumberOfLeaves)*2 - 1] = position[(this->NumberOfLeaves)-1];
   }
   else
   {
@@ -1613,7 +1684,7 @@ void vtkEMSegmentIntensityDistributionsStep::test()
     this->class_size[2] = midmin;
   }
 
-  for(k=0;k<this->nbOfLeaf;k++)
+  for(k=0;k<this->NumberOfLeaves;k++)
   {
     this->classSize[2*k] = this->class_size[2*k];
     this->classSize[2*k+1] = this->class_size[2*k+1];
@@ -1624,34 +1695,34 @@ void vtkEMSegmentIntensityDistributionsStep::test()
 
 //-------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::GetNumberOfLeaf(
-  const char *parent, vtkIdType vol_id)
+  const char *parent, vtkIdType volId)
 {
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
-  int nb_children = mrmlManager->GetTreeNodeNumberOfChildren(vol_id);
+  int nb_children = mrmlManager->GetTreeNodeNumberOfChildren(volId);
 
   if(nb_children == 0)
   {
-  this->nbOfLeaf = this->nbOfLeaf +1;
-  this->leafID[this->nbOfLeaf-1] = static_cast<int>(vol_id);
+  this->NumberOfLeaves = this->NumberOfLeaves +1;
+  this->leafID[this->NumberOfLeaves-1] = static_cast<int>(volId);
   }
 
   for (int i = 0; i < nb_children; i++)
   {
-    this->GetNumberOfLeaf( NULL, mrmlManager->GetTreeNodeChildNodeID(vol_id,
+    this->GetNumberOfLeaf( NULL, mrmlManager->GetTreeNodeChildNodeID(volId,
           i));
   }
 }
 
 //-------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::GetParentPercent(
-  int i, vtkIdType vol_id)
+  int i, vtkIdType volId)
 {
   this->depth = this->depth +1 ;
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
-  vtkIdType parent_ID = mrmlManager->GetTreeNodeParentNodeID(vol_id);
+  vtkIdType parent_ID = mrmlManager->GetTreeNodeParentNodeID(volId);
 
   if(parent_ID != mrmlManager->GetTreeRootNodeID())
   {
@@ -1662,18 +1733,15 @@ void vtkEMSegmentIntensityDistributionsStep::GetParentPercent(
 }
 
 //-------------------------------------------------------------------
-void vtkEMSegmentIntensityDistributionsStep::
-  ProcessGaussian2DButtonGUIEvents(
+void vtkEMSegmentIntensityDistributionsStep::ProcessGaussian2DButtonGUIEvents(
     vtkObject *caller, unsigned long event, void *callData)
 {
-  int i, j=0, k=0, l=0, m=0;
-
   if(event == vtkKWPushButton::InvokedEvent)
   {
     std::cout<<"TEST PERCENT"<<std::endl;
-    std::cout<<"nbOfLeaf "<<this->nbOfLeaf<<std::endl;
+    std::cout<<"NumberOfLeaves "<<this->NumberOfLeaves<<std::endl;
 
-    for(i = 0; i < this->nbOfLeaf; i++)
+    for(int i=0; i < this->NumberOfLeaves; i++)
     {
       std::cout<<"iteration "<<i<<std::endl;
       std::cout<<"leaf ID "<<this->leafID[i]<<std::endl;
@@ -1691,13 +1759,13 @@ void vtkEMSegmentIntensityDistributionsStep::
 
     vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
-    for(i = 0;i<this->nbOfLeaf;i++)
+    for(int i=0; i<this->NumberOfLeaves; i++)
     {
-      for(j = 0;j<200;j++)
+      for(int j=0; j<200; j++)
       {
-        for(k = 0;k<this->nbOfLeaf;k++)
+        for(int k=0; k<this->NumberOfLeaves; k++)
         {
-          for(l = 0;l<200;l++)
+          for(int l=0; l<200; l++)
           {
             if(this->classPercentOrder[j][i] ==
                 this->classPercentOrderCP[l][k] &&
@@ -1705,7 +1773,7 @@ void vtkEMSegmentIntensityDistributionsStep::
             {
               this->classPercentOrderCP[l][k] = 0;
               // FIND IF POINT EXISTS AND WHERE this->classPercentOrder[j][i]
-              for(m = 0; m < 200 ;m++)
+              for(int m = 0; m < 200 ;m++)
               {
                 if(this->correspondanceArray[0][m] ==
                     this->classPercentOrder[j][i])
@@ -1729,7 +1797,7 @@ void vtkEMSegmentIntensityDistributionsStep::
               std::cout<<"COMPARE WIDGET AND ARRAY TO GET POSITION "
                 << std::endl;
 
-              for(int z = 0; z< this-> nbOfLeaf;z++ )
+              for(int z=0; z< this->NumberOfLeaves; z++)
               {
                 std::cout<<"VALUE OF Z: "<< z << std::endl;
                 if(strcmp(this->ClassAndNodeList->GetCellText(z,0),
@@ -1743,22 +1811,22 @@ void vtkEMSegmentIntensityDistributionsStep::
                     <<std::endl;
                 }
               }
-std::cout<<"END LOOP: "<< std::endl;
-control = 1;
-}
-}
-}
-}
-}
+              std::cout<<"END LOOP: "<< std::endl;
+              control = 1;
+            }
+          }
+        }
+      }
+    }
 
-vtkIdType root_id = mrmlManager->GetTreeRootNodeID();
+    vtkIdType root_id = mrmlManager->GetTreeRootNodeID();
     if (root_id)
       {
       this->GetPercent(3,root_id);
       }
+  }
 }
 
-}
 //-------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::AddGaussian2DButtonGUIEvents()
 {
@@ -1776,13 +1844,13 @@ void vtkEMSegmentIntensityDistributionsStep::RemoveGaussian2DButtonGUIEvents()
 
 //-------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::GetPercent( int j,
-    vtkIdType vol_id)
+    vtkIdType volId)
 {
   this->depth = this->depth +1 ;
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
-  int nb_children = mrmlManager->GetTreeNodeNumberOfChildren(vol_id);
+  int nb_children = mrmlManager->GetTreeNodeNumberOfChildren(volId);
   double weight = 0.0;
 
   if(nb_children > 0)
@@ -1792,7 +1860,7 @@ void vtkEMSegmentIntensityDistributionsStep::GetPercent( int j,
       for(int m = 0; m < 200 ;m++)
       {
         if(this->correspondanceArray[0][m] == mrmlManager->
-            GetTreeNodeChildNodeID(vol_id, i))
+            GetTreeNodeChildNodeID(volId, i))
         {
           weight = weight + this->class_weight[m];
         }
@@ -1804,7 +1872,7 @@ void vtkEMSegmentIntensityDistributionsStep::GetPercent( int j,
       for(int m = 0; m < 200 ;m++)
       {
         if(this->correspondanceArray[0][m] == mrmlManager->
-            GetTreeNodeChildNodeID(vol_id, i))
+            GetTreeNodeChildNodeID(volId, i))
         {
           this->class_weight[m] = (this->class_weight[m])/weight;
         }
@@ -1813,7 +1881,7 @@ void vtkEMSegmentIntensityDistributionsStep::GetPercent( int j,
 
     for (int i = 0; i < nb_children; i++)
     {
-    this->GetPercent(3,mrmlManager->GetTreeNodeChildNodeID(vol_id, i));
+    this->GetPercent(3,mrmlManager->GetTreeNodeChildNodeID(volId, i));
     }
 
     for (int i = 0; i < 200; i++)
