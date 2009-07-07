@@ -20,11 +20,13 @@ class vtkKWEntryWithLabel;
 
 class vtkColorTransferFunction;
 
-class VTK_EMSEGMENT_EXPORT vtkEMSegmentIntensityDistributionsStep : public vtkEMSegmentStep
+class VTK_EMSEGMENT_EXPORT vtkEMSegmentIntensityDistributionsStep :
+  public vtkEMSegmentStep
 {
 public:
   static vtkEMSegmentIntensityDistributionsStep *New();
-  vtkTypeRevisionMacro(vtkEMSegmentIntensityDistributionsStep,vtkEMSegmentStep);
+  vtkTypeRevisionMacro(vtkEMSegmentIntensityDistributionsStep,
+      vtkEMSegmentStep);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
@@ -34,107 +36,116 @@ public:
 
   // Description:
   // Callbacks.
-  virtual void IntensityDistributionSpecificationCallback(vtkIdType, int type);
+  virtual void IntensityDistributionSpecificationCallback(vtkIdType,
+      int type);
   virtual void DisplaySelectedNodeIntensityDistributionsCallback();
   virtual void IntensityDistributionMeanChangedCallback(
-    vtkIdType, int row, int col, const char *text);
+      vtkIdType, int row, int col, const char *text);
   virtual void IntensityDistributionCovarianceChangedCallback(
-    vtkIdType, int row, int col, const char *text);
+      vtkIdType, int row, int col, const char *text);
   virtual void PopupManualIntensitySampleContextMenuCallback(
-    int row, int col, int x, int y);
-  virtual void DeleteManualIntensitySampleCallback(
-    vtkIdType, int sample_index);
+      int row, int col, int x, int y);
+  virtual void DeleteManualIntensitySampleCallback(vtkIdType,
+      int sample_index);
   virtual void DeleteAllManualIntensitySampleCallback(vtkIdType);
 
   virtual void IntensityDistributionTargetSelectionChangedCallback(
-    vtkIdType VolId);
+      vtkIdType VolId);
+  virtual void Gaussian2DVolumeXSelectionChangedCallback(vtkIdType
+      target_vol_id);
 
   // Description:
   // Observers
   virtual void AddManualIntensitySamplingGUIObservers();
   virtual void RemoveManualIntensitySamplingGUIObservers();
   virtual void ProcessManualIntensitySamplingGUIEvents(
-  vtkObject *caller, unsigned long event, void *callData); 
-  
-    // Description:
+  vtkObject *caller, unsigned long event, void *callData);
+
+  // Description:
   // Observers
   virtual void AddPointMovingGUIEvents();
   virtual void RemovePointMovingGUIEvents();
   virtual void ProcessPointMovingGUIEvents(
   vtkObject *caller, unsigned long event, void *callData);
-  
-      // Description:
+
+  // Description:
   // Observers
   virtual void AddPointAddGUIEvents();
   virtual void RemovePointAddGUIEvents();
   virtual void ProcessPointAddGUIEvents(
   vtkObject *caller, unsigned long event, void *callData);
 
-        // Description:
+  // Description:
   // Observers
-  virtual void AddTestButtonGUIEvents();
-  virtual void RemoveTestButtonGUIEvents();
-  virtual void ProcessTestButtonGUIEvents(
+  virtual void AddGaussian2DButtonGUIEvents();
+  virtual void RemoveGaussian2DButtonGUIEvents();
+  virtual void ProcessGaussian2DButtonGUIEvents(
   vtkObject *caller, unsigned long event, void *callData);
 
   virtual void test();
-    
-  //double* position;
-  double size;  
+
+  double size;
   int nbOfLeaf;
   int depth;
-  //const char* nameOfLeaf[] = {"Nicolas","je","suis"};
+
   double classSize[400];
   vtkIdType leafID[200];
-  
+
   vtkIdType classPercentOrder[200][200];
   vtkIdType classPercentOrderCP[200][200];
   double class_weight[200];
   double class_size[400];
-  
+
   const char* node_name[200];
-  
+
   vtkIdType correspondanceArray[2][200];
-  
+
   virtual void GetNumberOfLeaf(const char*, vtkIdType);
-  
+
   virtual void GetParentPercent(int, vtkIdType);
   virtual void GetPercent(int, vtkIdType);
   virtual double GetWeight(int);
-    
+
 protected:
   vtkEMSegmentIntensityDistributionsStep();
   ~vtkEMSegmentIntensityDistributionsStep();
 
   virtual void PopulateIntensityDistributionTargetVolumeSelector();
   virtual void PopulateClassAndNodeList();
+  virtual void PopulateGaussian2DVolumeXSelector();
 
   vtkKWNotebook              *IntensityDistributionNotebook;
   vtkKWMenuButtonWithLabel   *IntensityDistributionSpecificationMenuButton;
   vtkKWMatrixWidgetWithLabel *IntensityDistributionMeanMatrix;
   vtkKWMatrixWidgetWithLabel *IntensityDistributionCovarianceMatrix;
-  vtkKWMultiColumnListWithScrollbarsWithLabel 
-                             *IntensityDistributionManualSamplingList;
+  vtkKWMultiColumnListWithScrollbarsWithLabel
+    *IntensityDistributionManualSamplingList;
   vtkKWMenu                  *ContextMenu;
-  
+
   vtkKWMenuButtonWithLabel  *IntensityDistributionHistogramButton;
   vtkKWFrameWithLabel       *IntensityDistributionHistogramFrame;
-  
+
   vtkKWHistogram            *IntensityDistributionHistogramHistogram;
-  vtkKWColorTransferFunctionEditor *IntensityDistributionHistogramHistogramVisu;
+  vtkKWColorTransferFunctionEditor
+    *IntensityDistributionHistogramHistogramVisu;
   vtkColorTransferFunction  *IntensityDistributionHistogramHistogramFunc;
-  
+
   vtkKWEntryWithLabel       *NbOfClassesEntryLabel;
-  
+
   vtkKWMultiColumnList      *ClassAndNodeList;
-  
-  vtkKWPushButton           *TestButton;
-  
+
+  vtkKWPushButton           *Gaussian2DButton;
+
+  vtkKWMenuButtonWithLabel  *Gaussian2DVolumeXMenuButton;
+  vtkKWMenuButtonWithLabel  *Gaussian2DVolumeYMenuButton;
+
   virtual void AddIntensityDistributionSamplePoint(double ras[3]);
 
 private:
-  vtkEMSegmentIntensityDistributionsStep(const vtkEMSegmentIntensityDistributionsStep&);
+  vtkEMSegmentIntensityDistributionsStep(const
+      vtkEMSegmentIntensityDistributionsStep&);
   void operator=(const vtkEMSegmentIntensityDistributionsStep&);
 };
 
 #endif
+
