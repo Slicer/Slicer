@@ -214,8 +214,9 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     strcpy(this->ColorFilePaths, "");
     strcpy(this->PotentialColorFilePaths, "");
     strcpy(this->ExtensionsInstallPath, "");
-    strcpy(this->Extpath, "");
     strcpy ( this->HomeModule, "");
+    this->Extpath = NULL;
+    this->SetExtpath("");
     this->LoadCommandLineModules = 1;
     this->LoadModules = 1;
     this->IgnoreModules = vtkStringArray::New();
