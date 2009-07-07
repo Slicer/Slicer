@@ -439,37 +439,6 @@ proc ExtractSubvolumeROIProcessMRMLEvents {this callerID event} {
   }
 }
 
-proc ExtractSubvolumeROIEnter {this} {
-}
-
-proc ExtractSubvolumeROIExit {this} {
-}
-
-proc ExtractSubvolumeROIProgressEventCallback {filter} {
-
-  set mainWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
-  set progressGauge [$mainWindow GetProgressGauge]
-  set renderWidget [[$::slicer3::ApplicationGUI GetViewControlGUI] GetNavigationWidget]
-
-  if { $filter == "" } {
-    $mainWindow SetStatusText ""
-    $progressGauge SetValue 0
-    $renderWidget SetRendererGradientBackground 0
-  } else {
-    # TODO: this causes a tcl 'update' which re-triggers the module (possibly changing
-    # values while it is executing!  Talk about evil...
-    #$mainWindow SetStatusText [$filter GetClassName]
-    #$progressGauge SetValue [expr 100 * [$filter GetProgress]]
-
-    set progress [$filter GetProgress]
-    set remaining [expr 1.0 - $progress]
-
-    #$renderWidget SetRendererGradientBackground 1
-    #$renderWidget SetRendererBackgroundColor $progress $progress $progress
-    #$renderWidget SetRendererBackgroundColor2 $remaining $remaining $remaining
-  }
-}
-
 proc ExtractSubvolumeROIApply {this} {
 
 #  if { ![info exists ::ExtractSubvolumeROI($this,processing)] } { 
@@ -627,147 +596,6 @@ proc ExtractSubvolumeROIApply {this} {
   $selectionNode SetReferenceActiveLabelVolumeID ""
   $selectionNode Modified
   [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection 1
-
-  return
-
-  set reslicer $::ExtractSubvolumeROI($this,resliceFilter)
-
-
-
-  set ::ExtractSubvolumeROI($this,processing) 1
-
-  set inputImage [$volumeNode GetImageData]
-  puts "Input origin:"
-  puts [$inputImage GetOrigin]
-  puts "Input spacing:"
-  puts [$inputImage GetSpacing]
-  puts "Input extent:"
-  puts [$inputImage GetExtent]
-
-  puts "ROI center: "
-  puts [$roiNode GetXYZ]
-  puts "ROI radius: "
-  puts [$roiNode GetRadiusXYZ]
-  
-  scan [$roiNode GetRadiusXYZ] "%f%f%f" roiRadiusX roiRadiusY roiRadiusZ
-  scan [$roiNode GetXYZ] "%f%f%f" roiCenterX roiCenterY roiCenterZ
-
-  set extentX 100
-  set extentY 100
-  set extentZ 100
-
-  set spacingX [expr [expr double($roiRadiusX)] / [expr double($extentX)] ]
-  set spacingY [expr [expr double($roiRadiusY)] / [expr double($extentY)] ]
-  set spacingZ [expr [expr double($roiRadiusZ)] / [expr double($extentZ)] ]
-
-  $reslicer SetInput $inputImage
-  $reslicer SetOutputSpacing 1. 1. 1.
-  $reslicer SetOutputExtent 0 $extentX 0 $extentY 0 $extentZ
-  $reslicer Update
-
-  set roiCornerRAS0X [min [expr $roiCenterX-$roiRadiusX] [expr $roiCenterX+$roiRadiusX]]
-  set roiCornerRAS0Y [min [expr $roiCenterY-$roiRadiusY] [expr $roiCenterY+$roiRadiusY]]
-  set roiCornerRAS0Z [min [expr $roiCenterZ-$roiRadiusZ] [expr $roiCenterZ+$roiRadiusZ]]
-
-  set ras2ijk [vtkMatrix4x4 New]
-  $volumeNode GetRASToIJKMatrix $ras2ijk
-  $outVolumeNode SetAndObserveImageData [$reslicer GetOutput]
-  $outVolumeNode SetRASToIJKMatrix $ras2ijk
-  $ras2ijk Invert
-  $outVolumeNode SetIJKToRASMatrix $ras2ijk
-  $ras2ijk Delete
-  $outVolumeNode Modified
-
-  return
-
-  # set up output node
-#  outImage = slicer.vtkImageData()
-#  outImage.SetDimensions(sub.shape[2],sub.shape[1],sub.shape[0])
-#  outImage.AllocateScalars()
-#  outImage.ToArray()[:] = sub[:]
-#  outputVolume.SetAndObserveImageData(outImage)
-#  rasToIJK.Invert()
-#  ijkToRAS = rasToIJK
-#  outputVolume.SetIJKToRASMatrix(rasToIJK)
-#  origin = ijkToRAS.MultiplyPoint(lowerIJK[0],lowerIJK[1],lowerIJK[2],1.0)
-#  outputVolume.SetOrigin(origin[0], origin[1], origin[2])
-#  outputVolume.ModifiedSinceReadOn()
-
-
-  #
-  # configure the pipeline
-  #
-  $changeIn SetInput [$volumeNode GetImageData]
-  eval $changeIn SetOutputSpacing [$volumeNode GetSpacing]
-  $cast SetInput [$changeIn GetOutput]
-  $cast SetOutputScalarTypeToFloat
-  $dt SetInput [$cast GetOutput]
-  $dt SetSquaredDistance 0
-  $dt SetUseImageSpacing 1
-  $dt SetInsideIsPositive 0
-  $changeOut SetInput [$dt GetOutput]
-  $changeOut SetOutputSpacing 1 1 1
-  $resample SetInput [$dt GetOutput]
-  $resample SetAxisMagnificationFactor 0 $minFactor
-  $resample SetAxisMagnificationFactor 1 $minFactor
-  $resample SetAxisMagnificationFactor 2 $minFactor
-  $cubes SetInput [$resample GetOutput]
-  $cubes SetValue 0 $value
-  $polyTransformFilter SetInput [$cubes GetOutput]
-  $polyTransformFilter SetTransform $polyTransform
-  set magFactor [expr 1.0 / $minFactor]
-  $polyTransform Identity
-  $polyTransform Concatenate $ijkToRAS
-  foreach sp [$volumeNode GetSpacing] {
-    lappend invSpacing [expr 1. / $sp]
-  }
-  eval $polyTransform Scale $invSpacing
-
-  #
-  # set up progress observers
-  #
-  set observerRecords ""
-  set filters "$changeIn $resample $dt $changeOut $cubes"
-  foreach filter $filters {
-    set tag [$filter AddObserver ProgressEvent "ExtractSubvolumeROIProgressEventCallback $filter"]
-    lappend observerRecords "$filter $tag"
-  }
-
-  #
-  # activate the pipeline
-  #
-  $polyTransformFilter Update
-
-  # remove progress observers
-  foreach record $observerRecords {
-    foreach {filter tag} $record {
-      $filter RemoveObserver $tag
-    }
-  }
-  ExtractSubvolumeROIProgressEventCallback ""
-
-  #
-  # create a mrml model display node if needed
-  #
-  if { [$outModelNode GetDisplayNode] == "" } {
-    set modelDisplayNode [vtkMRMLModelDisplayNode New]
-    $outModelNode SetScene $::slicer3::MRMLScene
-    eval $modelDisplayNode SetColor .5 1 1
-    $::slicer3::MRMLScene AddNode $modelDisplayNode
-    $outModelNode SetAndObserveDisplayNodeID [$modelDisplayNode GetID]
-  }
-
-  #
-  # set the output into the MRML scene
-  #
-  $outModelNode SetAndObservePolyData [$polyTransformFilter GetOutput]
-
-  $outVolumeNode SetAndObserveImageData [$changeOut GetOutput]
-  $outVolumeNode SetIJKToRASMatrix $ijkToRAS
-  $ijkToRAS Delete
-
-
-  set ::ExtractSubvolumeROI($this,processing) 0
 }
 
 proc ExtractSubvolumeROIErrorDialog {this errorText} {
@@ -813,6 +641,9 @@ proc ExtractSubvolumeROIUpdateLabelMap {this} {
       set bboxIJK1($i) $tmp
     }
   }
+
+  
+
   $labelMap SetCenter [expr int([lindex $roiIJK 0])] [expr int([lindex $roiIJK 1])] [expr int([lindex $roiIJK 2])]
   set sizeX [expr int([expr $bboxIJK1(0)-$bboxIJK0(0)-1])]
   set sizeY [expr int([expr $bboxIJK1(1)-$bboxIJK0(1)-1])]
