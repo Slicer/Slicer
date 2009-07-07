@@ -214,6 +214,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     strcpy(this->ColorFilePaths, "");
     strcpy(this->PotentialColorFilePaths, "");
     strcpy(this->ExtensionsInstallPath, "");
+    strcpy(this->Extpath, "");
     strcpy ( this->HomeModule, "");
     this->LoadCommandLineModules = 1;
     this->LoadModules = 1;
@@ -1152,9 +1153,6 @@ void vtkSlicerApplication::AppendPotentialModulePath(const char* path, bool enab
   paths += path;
   paths += "|";
   (enabled) ? paths += "1" : paths += "0";
-
-  std::cout << "append path: " << path << std::endl;
-  std::cout << "paths: " << paths << std::endl;
 
   this->SetPotentialModulePaths(paths.c_str());
 }
