@@ -1,5 +1,20 @@
-#include "vtkEMSegmentIntensityNormalizationStep.h"
+/*=auto==============================================================
 
+Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All
+Rights Reserved.
+
+See Doc/copyright/copyright.txt
+or http://www.slicer.org/copyright/copyright.txt for details.
+
+Program:   3D Slicer
+Module:    $RCSfile: vtkEMSegmentIntensityDistributionsStep.h,v$
+Date:      $Date: 2006/01/06 17:56:51 $
+Version:   $Revision: 1.6 $
+Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
+
+==============================================================auto=*/
+
+#include "vtkEMSegmentIntensityNormalizationStep.h"
 #include "vtkEMSegmentGUI.h"
 #include "vtkEMSegmentLogic.h"
 #include "vtkEMSegmentMRMLManager.h"
@@ -17,7 +32,6 @@
 
 #include "vtkKWHistogram.h"
 #include "vtkKWPiecewiseFunctionEditor.h"
-//#include "vtkKWPiecewiseFunction.h"
 #include "vtkPointData.h"
 #include "vtkImageMeanIntensityPreNormalization.h"
 
@@ -27,34 +41,38 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkEMSegmentIntensityNormalizationStep);
-vtkCxxRevisionMacro(vtkEMSegmentIntensityNormalizationStep, "$Revision: 1.1 $");
+vtkCxxRevisionMacro(vtkEMSegmentIntensityNormalizationStep,
+    "$Revision: 1.1 $");
+
 //----------------------------------------------------------------------------
-vtkEMSegmentIntensityNormalizationStep::vtkEMSegmentIntensityNormalizationStep()
+vtkEMSegmentIntensityNormalizationStep::
+vtkEMSegmentIntensityNormalizationStep()
 {
   this->SetName("5/9. Intensity Normalization");
   this->SetDescription("Apply intensity normalization to target images.");
 
-  this->NormalizationTargetVolumeMenuButton  = NULL;
-  this->NormalizationParametersFrame         = NULL;
-  this->NormalizationEnableCheckButton       = NULL;
-  this->NormalizationDefaultsMenuButton      = NULL;
-  this->NormalizationPrintCheckButton        = NULL;
-  this->NormalizationNormValueEntry          = NULL;
-  this->NormalizationSmoothingWidthEntry     = NULL;
-  this->NormalizationMaxSmoothingWidthEntry  = NULL;
-  this->NormalizationRelativeMaxVoxelScale   = NULL;
-  
-  this->NormalizationHistogramFrame          = NULL;
-  this->NormalizationHistogram               = NULL;
-  this->NormalizationHistogramMenuButton     = NULL;
-  this->VisuHisto                            = NULL;
-  this->NormalizationValueRecommandedEntry   = NULL;
-  
-  this->RecommandationFrame          = NULL;
+  this->NormalizationTargetVolumeMenuButton = NULL;
+  this->NormalizationParametersFrame        = NULL;
+  this->NormalizationEnableCheckButton      = NULL;
+  this->NormalizationDefaultsMenuButton     = NULL;
+  this->NormalizationPrintCheckButton       = NULL;
+  this->NormalizationNormValueEntry         = NULL;
+  this->NormalizationSmoothingWidthEntry    = NULL;
+  this->NormalizationMaxSmoothingWidthEntry = NULL;
+  this->NormalizationRelativeMaxVoxelScale  = NULL;
+
+  this->NormalizationHistogramFrame         = NULL;
+  this->NormalizationHistogram              = NULL;
+  this->NormalizationHistogramMenuButton    = NULL;
+  this->VisualizationHistogram              = NULL;
+  this->NormalizationValueRecommendedEntry  = NULL;
+
+  this->RecommendationFrame                 = NULL;
 }
 
 //----------------------------------------------------------------------------
-vtkEMSegmentIntensityNormalizationStep::~vtkEMSegmentIntensityNormalizationStep()
+vtkEMSegmentIntensityNormalizationStep::
+~vtkEMSegmentIntensityNormalizationStep()
 {
   if(this->NormalizationTargetVolumeMenuButton)
     {
@@ -101,39 +119,35 @@ vtkEMSegmentIntensityNormalizationStep::~vtkEMSegmentIntensityNormalizationStep(
     this->NormalizationParametersFrame->Delete();
     this->NormalizationParametersFrame = NULL;
     }
-    
-    
-    
-   if(this->NormalizationHistogram)
+  if(this->NormalizationHistogram)
     {
     this->NormalizationHistogram->Delete();
     this->NormalizationHistogram = NULL;
     }
-   if(this->NormalizationHistogramFrame)
+  if(this->NormalizationHistogramFrame)
     {
     this->NormalizationHistogramFrame->Delete();
     this->NormalizationHistogramFrame = NULL;
     }
-   if(this->NormalizationHistogramMenuButton)
+  if(this->NormalizationHistogramMenuButton)
     {
     this->NormalizationHistogramMenuButton->Delete();
     this->NormalizationHistogramMenuButton = NULL;
     }
-   if(this->VisuHisto)
+  if(this->VisualizationHistogram)
     {
-    this->VisuHisto->Delete();
-    this->VisuHisto = NULL;
+    this->VisualizationHistogram->Delete();
+    this->VisualizationHistogram = NULL;
     }
-   if(this->NormalizationValueRecommandedEntry)
+  if(this->NormalizationValueRecommendedEntry)
     {
-    this->NormalizationValueRecommandedEntry->Delete();
-    this->NormalizationValueRecommandedEntry = NULL;
+    this->NormalizationValueRecommendedEntry->Delete();
+    this->NormalizationValueRecommendedEntry = NULL;
     }
-    
-   if(this->RecommandationFrame)
+  if(this->RecommendationFrame)
     {
-    this->RecommandationFrame->Delete();
-    this->RecommandationFrame = NULL;
+    this->RecommendationFrame->Delete();
+    this->RecommendationFrame = NULL;
     }
 }
 
@@ -151,7 +165,7 @@ void vtkEMSegmentIntensityNormalizationStep::ShowUserInterface()
 
   if (!this->NormalizationTargetVolumeMenuButton)
     {
-    this->NormalizationTargetVolumeMenuButton = 
+    this->NormalizationTargetVolumeMenuButton =
       vtkKWMenuButtonWithLabel::New();
     }
   if (!this->NormalizationTargetVolumeMenuButton->IsCreated())
@@ -164,16 +178,15 @@ void vtkEMSegmentIntensityNormalizationStep::ShowUserInterface()
       SetWidth(EMSEG_WIDGETS_LABEL_WIDTH-10);
     this->NormalizationTargetVolumeMenuButton->
       SetLabelText("Target Image:");
-    this->NormalizationTargetVolumeMenuButton->
-      SetBalloonHelpString("Select a target image to set intensity normalization parameters.");
+    this->NormalizationTargetVolumeMenuButton->SetBalloonHelpString(
+        "Select a target image to set intensity normalization parameters.");
     }
 
-  this->Script(
-    "pack %s -side top -anchor nw -padx 2 -pady 5", 
+  this->Script("pack %s -side top -anchor nw -padx 2 -pady 5",
     this->NormalizationTargetVolumeMenuButton->GetWidgetName());
-  
+
   this->PopulateNormalizationTargetVolumeSelector();
-  
+
   // Create the normalization parameters frame
 
   if (!this->NormalizationParametersFrame)
@@ -189,7 +202,7 @@ void vtkEMSegmentIntensityNormalizationStep::ShowUserInterface()
     }
 
   this->Script(
-    "pack %s -side top -anchor nw -fill both -padx 2 -pady 2", 
+    "pack %s -side top -anchor nw -fill both -padx 2 -pady 2",
     this->NormalizationParametersFrame->GetWidgetName());
 
   vtkKWFrame* parentFrame = this->NormalizationParametersFrame->GetFrame();
@@ -210,32 +223,31 @@ void vtkEMSegmentIntensityNormalizationStep::ShowUserInterface()
     this->NormalizationEnableCheckButton->SetLabelWidth(
       EMSEG_WIDGETS_LABEL_WIDTH - 8);
     }
-  
+
   this->NormalizationEnableCheckButton->GetWidget()->SetCommand(NULL, NULL);
-  this->Script("grid %s -column 0 -row 0 -sticky nw -padx 2 -pady 2", 
-               this->NormalizationEnableCheckButton->GetWidgetName());
-  
-  vtkKWMenu *menu = this->NormalizationTargetVolumeMenuButton->
-      GetWidget()->GetMenu();
+  this->Script("grid %s -column 0 -row 0 -sticky nw -padx 2 -pady 2",
+      this->NormalizationEnableCheckButton->GetWidgetName());
+
+  vtkKWMenu *menu = this->NormalizationTargetVolumeMenuButton->GetWidget()->
+    GetMenu();
 
   // Create the normalization actions menu button
 
   if (!this->NormalizationDefaultsMenuButton)
     {
-    this->NormalizationDefaultsMenuButton =
-      vtkKWMenuButton::New();
+    this->NormalizationDefaultsMenuButton = vtkKWMenuButton::New();
     }
   if (!this->NormalizationDefaultsMenuButton->IsCreated())
     {
     this->NormalizationDefaultsMenuButton->SetParent(parentFrame);
     this->NormalizationDefaultsMenuButton->Create();
-    this->NormalizationDefaultsMenuButton->
-      SetWidth(EMSEG_MENU_BUTTON_WIDTH-3);
+    this->NormalizationDefaultsMenuButton->SetWidth(
+        EMSEG_MENU_BUTTON_WIDTH-3);
     }
   this->NormalizationDefaultsMenuButton->SetConfigurationOption(
     "-text", "Reset Defaults");
-  this->Script("grid %s -column 1 -row 0 -sticky nw -padx 2 -pady 2", 
-    this->NormalizationDefaultsMenuButton->GetWidgetName());
+  this->Script("grid %s -column 1 -row 0 -sticky nw -padx 2 -pady 2",
+      this->NormalizationDefaultsMenuButton->GetWidgetName());
 
   // Create the print-info check button
 
@@ -248,15 +260,14 @@ void vtkEMSegmentIntensityNormalizationStep::ShowUserInterface()
     {
     this->NormalizationPrintCheckButton->SetParent(parentFrame);
     this->NormalizationPrintCheckButton->Create();
-    this->NormalizationPrintCheckButton->SetLabelText(
-      "Print Info:");
+    this->NormalizationPrintCheckButton->SetLabelText("Print Info:");
     this->NormalizationPrintCheckButton->SetLabelWidth(
       EMSEG_WIDGETS_LABEL_WIDTH - 8);
     }
-  
+
   this->NormalizationPrintCheckButton->GetWidget()->SetCommand(NULL, NULL);
-  this->Script("grid %s -column 0 -row 1 -sticky nw -padx 2 -pady 2", 
-               this->NormalizationPrintCheckButton->GetWidgetName());
+  this->Script("grid %s -column 0 -row 1 -sticky nw -padx 2 -pady 2",
+      this->NormalizationPrintCheckButton->GetWidgetName());
 
   // Create the Norm value entry
 
@@ -268,8 +279,9 @@ void vtkEMSegmentIntensityNormalizationStep::ShowUserInterface()
     {
     this->NormalizationNormValueEntry->SetParent(parentFrame);
     this->NormalizationNormValueEntry->Create();
-    this->NormalizationNormValueEntry->SetLabelText("Norm Value:");
-    this->NormalizationNormValueEntry->SetLabelWidth(EMSEG_WIDGETS_LABEL_WIDTH-4);
+    this->NormalizationNormValueEntry->SetLabelText("Normalization Value:");
+    this->NormalizationNormValueEntry->SetLabelWidth(
+        EMSEG_WIDGETS_LABEL_WIDTH-4);
     vtkKWEntry *entry = this->NormalizationNormValueEntry->GetWidget();
     entry->SetWidth(6);
     entry->SetRestrictValueToDouble();
@@ -289,8 +301,11 @@ void vtkEMSegmentIntensityNormalizationStep::ShowUserInterface()
     {
     this->NormalizationSmoothingWidthEntry->SetParent(parentFrame);
     this->NormalizationSmoothingWidthEntry->Create();
-    this->NormalizationSmoothingWidthEntry->SetLabelText("Histogram Smoothing Width:");
-    this->NormalizationSmoothingWidthEntry->SetLabelWidth(EMSEG_WIDGETS_LABEL_WIDTH -4);
+    this->NormalizationSmoothingWidthEntry->SetLabelText(
+        "Histogram Smoothing Width:");
+    this->NormalizationSmoothingWidthEntry->SetLabelWidth(
+        EMSEG_WIDGETS_LABEL_WIDTH -4);
+
     vtkKWEntry *entry = this->NormalizationSmoothingWidthEntry->GetWidget();
     entry->SetWidth(6);
     entry->SetRestrictValueToInteger();
@@ -312,14 +327,16 @@ void vtkEMSegmentIntensityNormalizationStep::ShowUserInterface()
     this->NormalizationMaxSmoothingWidthEntry->Create();
     this->NormalizationMaxSmoothingWidthEntry->SetLabelText("Max:");
     this->NormalizationMaxSmoothingWidthEntry->SetLabelWidth(5);
-    vtkKWEntry *entry = this->NormalizationMaxSmoothingWidthEntry->GetWidget();
+
+    vtkKWEntry *entry = this->NormalizationMaxSmoothingWidthEntry->
+      GetWidget();
     entry->SetWidth(6);
     entry->SetRestrictValueToInteger();
     entry->SetCommandTriggerToAnyChange();
     }
 
   this->Script("grid %s -column 1 -row 3 -sticky se -padx 5 -pady 2",
-               this->NormalizationMaxSmoothingWidthEntry->GetWidgetName());
+      this->NormalizationMaxSmoothingWidthEntry->GetWidgetName());
 
   // Create the Relative max voxel number scale
 
@@ -333,7 +350,8 @@ void vtkEMSegmentIntensityNormalizationStep::ShowUserInterface()
     this->NormalizationRelativeMaxVoxelScale->PopupModeOn();
     this->NormalizationRelativeMaxVoxelScale->Create();
     this->NormalizationRelativeMaxVoxelScale->SetEntryWidth(4);
-    this->NormalizationRelativeMaxVoxelScale->SetLabelText("Relative Max Voxel Number:");
+    this->NormalizationRelativeMaxVoxelScale->SetLabelText(
+        "Relative Max Voxel Number:");
     this->NormalizationRelativeMaxVoxelScale->GetLabel()->
       SetWidth(EMSEG_WIDGETS_LABEL_WIDTH-4);
     this->NormalizationRelativeMaxVoxelScale->SetRange(0.0, 1.0);
@@ -344,8 +362,8 @@ void vtkEMSegmentIntensityNormalizationStep::ShowUserInterface()
       SetCommandTriggerToAnyChange();
     }
 
-  this->Script("grid %s -column 0 -row 4 -sticky nw -padx 2 -pady 2", 
-               this->NormalizationRelativeMaxVoxelScale->GetWidgetName());
+  this->Script("grid %s -column 0 -row 4 -sticky nw -padx 2 -pady 2",
+      this->NormalizationRelativeMaxVoxelScale->GetWidgetName());
 
   this->NormalizationEnableCheckButton->SetEnabled(0);
   this->NormalizationDefaultsMenuButton->SetEnabled(0);
@@ -361,13 +379,14 @@ void vtkEMSegmentIntensityNormalizationStep::ShowUserInterface()
     return;
     }
   this->NormalizationTargetVolumeMenuButton->SetEnabled(
-    mrmlManager0->GetTargetNumberOfSelectedVolumes() ? parent->GetEnabled() : 0);
+    mrmlManager0->GetTargetNumberOfSelectedVolumes() ? parent->GetEnabled() :
+    0);
 
   if(this->NormalizationTargetVolumeMenuButton->GetEnabled())
     {
     // Select the target volume, and update everything else accordingly
     vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-    
+
     if(!mrmlManager->GetTargetNumberOfSelectedVolumes() ||
       menu->GetNumberOfItems()<=0)
       {
@@ -381,8 +400,8 @@ void vtkEMSegmentIntensityNormalizationStep::ShowUserInterface()
         mrmlManager->GetTargetSelectedVolumeNthID(0));
       }
     }
-        
-      // Create the histogram frame
+
+  // Create the histogram frame
 
   if (!this->NormalizationHistogramFrame)
     {
@@ -395,20 +414,17 @@ void vtkEMSegmentIntensityNormalizationStep::ShowUserInterface()
     this->NormalizationHistogramFrame->SetLabelText(
       "Histogram");
     }
-    
-    this->Script(
-    "pack %s -side top -anchor nw -fill both -padx 2 -pady 2", 
+
+  this->Script("pack %s -side top -anchor nw -fill both -padx 2 -pady 2",
     this->NormalizationHistogramFrame->GetWidgetName());
 
   vtkKWFrame* userFrame = this->NormalizationHistogramFrame->GetFrame();
-  
 
-    // Create the histogram volume selector
+  // Create the histogram volume selector
 
   if (!this->NormalizationHistogramMenuButton)
     {
-    this->NormalizationHistogramMenuButton = 
-      vtkKWMenuButtonWithLabel::New();
+    this->NormalizationHistogramMenuButton = vtkKWMenuButtonWithLabel::New();
     }
   if (!this->NormalizationHistogramMenuButton->IsCreated())
     {
@@ -420,78 +436,53 @@ void vtkEMSegmentIntensityNormalizationStep::ShowUserInterface()
       SetWidth(EMSEG_WIDGETS_LABEL_WIDTH-10);
     this->NormalizationHistogramMenuButton->
       SetLabelText("Atlas Image:");
-    this->NormalizationHistogramMenuButton->
-      SetBalloonHelpString("Select a target image find intensity normalization parameters.");
+    this->NormalizationHistogramMenuButton->SetBalloonHelpString(
+        "Select a target image find intensity normalization parameters.");
     }
 
   this->Script(
-    "pack %s -side top -anchor nw -fill both -padx 2 -pady 5", 
+    "pack %s -side top -anchor nw -fill both -padx 2 -pady 5",
     this->NormalizationHistogramMenuButton->GetWidgetName());
-  
+
   this->PopulateNormalizationHistogramSelector();
-    
-  //update everything
-    
+
+  this->NormalizationHistogramMenuButton->GetWidget()->SetValue(mrmlManager0->
+      GetVolumeName(mrmlManager0->GetVolumeNthID(0)));
+
   // Create the histogram
-     
-     
-   if (!this->NormalizationHistogram)
+
+  if (!this->NormalizationHistogram)
     {
     this->NormalizationHistogram = vtkKWHistogram::New();
-    this->VisuHisto = vtkKWPiecewiseFunctionEditor::New();
+    this->VisualizationHistogram = vtkKWPiecewiseFunctionEditor::New();
     }
-     
-   if (!this->VisuHisto->IsCreated())
+
+  if (!this->VisualizationHistogram->IsCreated())
     {
-    this->VisuHisto->SetParent(userFrame);//parent
-    this->VisuHisto->Create();
-    this->VisuHisto->GetTclName();
-    this->VisuHisto->SetBorderWidth(2);
-    //this->VisuHisto->SetReliefToGroove();
-    this->VisuHisto->SetPadX(2);
-    this->VisuHisto->SetPadY(2);
-    
-    this->VisuHisto->ParameterTicksVisibilityOn();
-    this->VisuHisto->ValueTicksVisibilityOn();
-    this->VisuHisto->ComputeValueTicksFromHistogramOn();
-    this->VisuHisto->SetParameterTicksFormat("%-#6.0f");
-    this->VisuHisto->SetValueTicksFormat(
-    this->VisuHisto->GetParameterTicksFormat());
-    /*
-    
-    this->VisuHisto->ParameterRangeVisibilityOn();
-    this->VisuHisto->ExpandCanvasWidthOn();
-    this->VisuHisto->SetCanvasWidth(300);
-    this->VisuHisto->SetCanvasHeight(150);
-    this->VisuHisto->SetLabelText("Histogram:");
-    this->VisuHisto->LabelVisibilityOn();*/
-    this->VisuHisto->SetFrameBackgroundColor(0.92, 1.0, 0.92);
-    /*
-    //this->VisuHisto->SetLabelText("Histogram");
-    //this->VisuHisto->SetBalloonHelpString("Valeur du pixel");
-    //this->VisuHisto->ValueRangeVisibilityOn();
-    //this->VisuHisto->ParameterRangeVisibilityOn();
-    this->VisuHisto->SetLabelPositionToTop();
-    //this->VisuHisto->LockEndPointsParameterOff();
-    */
-    this->VisuHisto->SetParameterCursorVisibility(50);
-    this->VisuHisto->SetParameterCursorPosition(50);
-    this->VisuHisto->SetParameterCursorInteractionStyle(7);
-    //this->VisuHisto->SetParameterCursorMovingCommand(this,"ParameterCursorMovingCommand");      
+    this->VisualizationHistogram->SetParent(userFrame);//parent
+    this->VisualizationHistogram->Create();
+    this->VisualizationHistogram->GetTclName();
+    this->VisualizationHistogram->SetBorderWidth(2);
+    this->VisualizationHistogram->SetPadX(2);
+    this->VisualizationHistogram->SetPadY(2);
+
+    this->VisualizationHistogram->ParameterTicksVisibilityOn();
+    this->VisualizationHistogram->ValueTicksVisibilityOn();
+    this->VisualizationHistogram->ComputeValueTicksFromHistogramOn();
+    this->VisualizationHistogram->SetParameterTicksFormat("%-#6.0f");
+    this->VisualizationHistogram->SetValueTicksFormat(
+    this->VisualizationHistogram->GetParameterTicksFormat());
+    this->VisualizationHistogram->SetFrameBackgroundColor(0.92, 1.0, 0.92);
+    this->VisualizationHistogram->SetParameterCursorVisibility(50);
+    this->VisualizationHistogram->SetParameterCursorPosition(50);
+    this->VisualizationHistogram->SetParameterCursorInteractionStyle(7);
     }
-     
-     
-     
-     
-    this->Script(
-    "pack %s -side top -anchor nw -fill both -padx 2 -pady 2 -pady 2", 
-    this->VisuHisto->GetWidgetName());
-    
-   
-   
- 
-     
-    this->NormalizationHistogramMenuButton->SetEnabled(
+
+  this->Script(
+    "pack %s -side top -anchor nw -fill both -padx 2 -pady 2 -pady 2",
+    this->VisualizationHistogram->GetWidgetName());
+
+  this->NormalizationHistogramMenuButton->SetEnabled(
     mrmlManager0->GetVolumeNumberOfChoices() ? parent->GetEnabled() : 0);
 
   if(this->NormalizationHistogramMenuButton->GetEnabled())
@@ -501,70 +492,57 @@ void vtkEMSegmentIntensityNormalizationStep::ShowUserInterface()
     int vol_id = mrmlManager->GetVolumeNthID(0);
     this->NormalizationHistogramChangedCallback(vol_id);
     }
-    
-    this->AddCursorMovingGUIEvents(); 
-    
-    
-    
-    
-    
-    
-          // Create the recommandation frame
 
-  if (!this->RecommandationFrame)
+  this->AddCursorMovingGUIEvents();
+
+  // Create the recommandation frame
+
+  if (!this->RecommendationFrame)
     {
-    this->RecommandationFrame = vtkKWFrameWithLabel::New();
+    this->RecommendationFrame = vtkKWFrameWithLabel::New();
     }
-  if (!this->RecommandationFrame->IsCreated())
+  if (!this->RecommendationFrame->IsCreated())
     {
-    this->RecommandationFrame->SetParent(parent);
-    this->RecommandationFrame->Create();
-    this->RecommandationFrame->SetBackgroundColor(1,0.56,0);
-    this->RecommandationFrame->SetLabelText(
-      "Recommandations");
-
-      
+    this->RecommendationFrame->SetParent(parent);
+    this->RecommendationFrame->Create();
+    this->RecommendationFrame->SetBackgroundColor(1,0.56,0);
+    this->RecommendationFrame->SetLabelText("Recommendations");
     }
-    
-    this->Script(
-    "pack %s -side top -anchor nw -fill both -padx 2 -pady 2", 
-    this->RecommandationFrame->GetWidgetName());
-    
-    
 
-  vtkKWFrame* recomFrame = this->RecommandationFrame->GetFrame();
-    
- 
-       // Create the recommanded value
+  this->Script("pack %s -side top -anchor nw -fill both -padx 2 -pady 2",
+    this->RecommendationFrame->GetWidgetName());
 
-  if (!this->NormalizationValueRecommandedEntry)
+  vtkKWFrame* recommendationFrame = this->RecommendationFrame->GetFrame();
+
+  // Create the recommanded value
+
+  if (!this->NormalizationValueRecommendedEntry)
     {
-    this->NormalizationValueRecommandedEntry = vtkKWEntryWithLabel::New();
+    this->NormalizationValueRecommendedEntry = vtkKWEntryWithLabel::New();
     }
-  if (!this->NormalizationValueRecommandedEntry->IsCreated())
+  if (!this->NormalizationValueRecommendedEntry->IsCreated())
     {
-    this->NormalizationValueRecommandedEntry->SetParent(recomFrame);
-    this->NormalizationValueRecommandedEntry->Create();
-    this->NormalizationValueRecommandedEntry->SetLabelText("Recom. Norm Value:");
-    this->NormalizationValueRecommandedEntry->SetLabelWidth(EMSEG_WIDGETS_LABEL_WIDTH -8);
-    vtkKWEntry *entry = this->NormalizationValueRecommandedEntry->GetWidget();
+    this->NormalizationValueRecommendedEntry->SetParent(recommendationFrame);
+    this->NormalizationValueRecommendedEntry->Create();
+    this->NormalizationValueRecommendedEntry->SetLabelText(
+        "Recommended Normalization Value:");
+    this->NormalizationValueRecommendedEntry->SetLabelWidth(
+        EMSEG_WIDGETS_LABEL_WIDTH -8);
+
+    vtkKWEntry *entry = this->NormalizationValueRecommendedEntry->GetWidget();
     entry->SetWidth(6);
     entry->SetRestrictValueToInteger();
     entry->SetCommandTriggerToAnyChange();
-    
     }
 
   this->Script("grid %s -column 0 -row 1 -sticky nw -padx 2 -pady 2",
-               this->NormalizationValueRecommandedEntry->GetWidgetName());
-  
-    
-     
+      this->NormalizationValueRecommendedEntry->GetWidgetName());
 }
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityNormalizationStep::
   PopulateNormalizationTargetVolumeSelector()
-{  
+{
   vtkIdType target_vol_id;
   char buffer[256];
 
@@ -574,7 +552,7 @@ void vtkEMSegmentIntensityNormalizationStep::
     return;
     }
   int nb_of_target_volumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
-  
+
   vtkKWMenu* menu = this->NormalizationTargetVolumeMenuButton->
     GetWidget()->GetMenu();
   menu->DeleteAllItems();
@@ -584,8 +562,7 @@ void vtkEMSegmentIntensityNormalizationStep::
   for(int i = 0; i < nb_of_target_volumes; i++)
     {
     target_vol_id = mrmlManager->GetTargetSelectedVolumeNthID(i);
-    sprintf(buffer, "%s %d", 
-            "NormalizationTargetSelectionChangedCallback", 
+    sprintf(buffer, "%s %d", "NormalizationTargetSelectionChangedCallback",
             static_cast<int>(target_vol_id));
     const char *name = mrmlManager->GetVolumeName(target_vol_id);
     if (name)
@@ -598,20 +575,19 @@ void vtkEMSegmentIntensityNormalizationStep::
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityNormalizationStep::
   PopulateNormalizationHistogramSelector()
-{  
-
-
+{
   vtkIdType vol_id;
   char buffer[256];
 
-  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager(); 
-   
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+
  if (!mrmlManager)
     {
     return;
     }
-  int nb_of_volumes = mrmlManager->GetVolumeNumberOfChoices();
-  
+
+ int nb_of_volumes = mrmlManager->GetVolumeNumberOfChoices();
+
   vtkKWMenu* menu = this->NormalizationHistogramMenuButton->
     GetWidget()->GetMenu();
   menu->DeleteAllItems();
@@ -621,9 +597,8 @@ void vtkEMSegmentIntensityNormalizationStep::
   for(int i = 0; i < nb_of_volumes; i++)
     {
     vol_id = mrmlManager->GetVolumeNthID(i);
-    sprintf(buffer, "%s %d", 
-            "NormalizationHistogramChangedCallback", 
-            static_cast<int>(vol_id));
+    sprintf(buffer,"%s %d","NormalizationHistogramChangedCallback",
+        static_cast<int>(vol_id));
     const char *name = mrmlManager->GetVolumeName(vol_id);
     if (name)
       {
@@ -644,24 +619,24 @@ void vtkEMSegmentIntensityNormalizationStep::
     {
     return;
     }
-  
+
   char buffer[256];
-  int parentEnabled = 
-    this->NormalizationParametersFrame->GetEnabled();
+  int parentEnabled = this->NormalizationParametersFrame->GetEnabled();
 
   // Update Normalization-Enable check button
 
-  this->NormalizationEnableCheckButton->SetEnabled(parentEnabled);  
-  vtkKWCheckButton *cbEnable = 
+  this->NormalizationEnableCheckButton->SetEnabled(parentEnabled);
+  vtkKWCheckButton *cbEnable =
     this->NormalizationEnableCheckButton->GetWidget();
-  sprintf(buffer, "NormalizationEnableCallback %d", 
-          static_cast<int>(target_vol_id));
+  sprintf(buffer, "NormalizationEnableCallback %d",
+      static_cast<int>(target_vol_id));
   cbEnable->SetCommand(this, buffer);
   cbEnable->SetSelectedState(mrmlManager->
     GetTargetVolumeIntensityNormalizationEnabled(target_vol_id));
   this->NormalizationEnableCallback(
     target_vol_id, cbEnable->GetSelectedState());
 }
+
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityNormalizationStep::
   NormalizationHistogramChangedCallback(vtkIdType target_vol_id)
@@ -671,54 +646,54 @@ void vtkEMSegmentIntensityNormalizationStep::
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
   vtkMRMLVolumeNode* volumeNode = mrmlManager->GetVolumeNode(target_vol_id);
-  
+
   vtkImageData* inputImage = volumeNode->GetImageData();
-  
+
   vtkDataArray* array = inputImage->GetPointData()->GetScalars();
-  
+
   this->NormalizationHistogram->BuildHistogram(array,0);
-  this->VisuHisto->SetHistogram(NormalizationHistogram);
-  this->VisuHisto->DisplayHistogramOnly();
-  
-  
-  this->VisuHisto->SetWholeParameterRangeToFunctionRange();
-  this->VisuHisto->SetVisibleParameterRangeToWholeParameterRange();
-  this->VisuHisto->ParameterRangeVisibilityOn();
-  this->VisuHisto->ExpandCanvasWidthOn();
-  //this->VisuHisto->SetCanvasWidth(200);
-  this->VisuHisto->SetCanvasHeight(180);
-  
+  this->VisualizationHistogram->SetHistogram(NormalizationHistogram);
+  this->VisualizationHistogram->DisplayHistogramOnly();
+
+  this->VisualizationHistogram->SetWholeParameterRangeToFunctionRange();
+  this->VisualizationHistogram->
+    SetVisibleParameterRangeToWholeParameterRange();
+  this->VisualizationHistogram->ParameterRangeVisibilityOn();
+  this->VisualizationHistogram->ExpandCanvasWidthOn();
+  this->VisualizationHistogram->SetCanvasHeight(180);
+
   id_event = target_vol_id;
 }
+
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityNormalizationStep::
   NormalizationEnableCallback(vtkIdType target_vol_id, int checked)
 {
-  // The target volume enabled checkbutton has changed 
-  // because of user interaction
+  // The target volume enabled checkbutton has changed because of user
+  // interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   if (!mrmlManager)
     {
     return;
     }
-  mrmlManager->SetTargetVolumeIntensityNormalizationEnabled(target_vol_id, 
-    checked);
 
-  int iEnabled = 
-    this->NormalizationParametersFrame->GetEnabled();
+  mrmlManager->SetTargetVolumeIntensityNormalizationEnabled(target_vol_id,
+      checked);
+
+  int isEnabled = this->NormalizationParametersFrame->GetEnabled();
   if(!checked)
     {
-    iEnabled = 0;
+    isEnabled = 0;
     }
-  this->NormalizationDefaultsMenuButton->SetEnabled(iEnabled);
-  this->NormalizationPrintCheckButton->SetEnabled(iEnabled);
-  this->NormalizationNormValueEntry->SetEnabled(iEnabled);
-  this->NormalizationSmoothingWidthEntry->SetEnabled(iEnabled);
-  this->NormalizationMaxSmoothingWidthEntry->SetEnabled(iEnabled);
-  this->NormalizationRelativeMaxVoxelScale->SetEnabled(iEnabled);
+  this->NormalizationDefaultsMenuButton->SetEnabled(isEnabled);
+  this->NormalizationPrintCheckButton->SetEnabled(isEnabled);
+  this->NormalizationNormValueEntry->SetEnabled(isEnabled);
+  this->NormalizationSmoothingWidthEntry->SetEnabled(isEnabled);
+  this->NormalizationMaxSmoothingWidthEntry->SetEnabled(isEnabled);
+  this->NormalizationRelativeMaxVoxelScale->SetEnabled(isEnabled);
 
-  if(!iEnabled)
+  if(!isEnabled)
     {
     return;
     }
@@ -727,57 +702,54 @@ void vtkEMSegmentIntensityNormalizationStep::
   char buffer[256];
 
   this->NormalizationDefaultsMenuButton->GetMenu()->DeleteAllItems();
-  sprintf(buffer, "NormalizationNormTypeCallback %d %d", 
-          static_cast<int>(target_vol_id), NormalizationDefaultT1SPGR);
+  sprintf(buffer, "NormalizationNormTypeCallback %d %d",
+      static_cast<int>(target_vol_id), NormalizationDefaultT1SPGR);
   this->NormalizationDefaultsMenuButton->
     GetMenu()->AddRadioButton("MR T1 SPGR", this, buffer);
-  sprintf(buffer, "NormalizationNormTypeCallback %d %d", 
-          static_cast<int>(target_vol_id), NormalizationDefaultT2);
-  this->NormalizationDefaultsMenuButton->
-    GetMenu()->AddRadioButton("MR T2", this, buffer);
+  sprintf(buffer, "NormalizationNormTypeCallback %d %d",
+      static_cast<int>(target_vol_id), NormalizationDefaultT2);
+  this->NormalizationDefaultsMenuButton->GetMenu()->AddRadioButton("MR T2",
+      this, buffer);
 
   // Update Print-Info check button
 
-  sprintf(buffer, "NormalizationPrintInfoCallback %d", 
-          static_cast<int>(target_vol_id));
-  this->NormalizationPrintCheckButton->GetWidget()->SetCommand(
-    this, buffer);
+  sprintf(buffer, "NormalizationPrintInfoCallback %d",
+      static_cast<int>(target_vol_id));
+  this->NormalizationPrintCheckButton->GetWidget()->SetCommand(this, buffer);
 
   // Update Norm-value entry
 
   vtkKWEntry *entry = this->NormalizationNormValueEntry->GetWidget();
-  sprintf(buffer, "NormalizationNormValueCallback %d", 
+  sprintf(buffer, "NormalizationValueCallback %d",
           static_cast<int>(target_vol_id));
   entry->SetCommand(this, buffer);
 
   // Update Histogram-smoothing-width
 
   entry = this->NormalizationSmoothingWidthEntry->GetWidget();
-  sprintf(buffer, "NormalizationSmoothingWidthCallback %d", 
-          static_cast<int>(target_vol_id));
+  sprintf(buffer, "NormalizationSmoothingWidthCallback %d",
+      static_cast<int>(target_vol_id));
   entry->SetCommand(this, buffer);
 
   // Update Max Histogram-smoothing-width
 
   entry = this->NormalizationMaxSmoothingWidthEntry->GetWidget();
-  sprintf(buffer, "NormalizationMaxSmoothingWidthCallback %d", 
-          static_cast<int>(target_vol_id));
+  sprintf(buffer, "NormalizationMaxSmoothingWidthCallback %d",
+      static_cast<int>(target_vol_id));
   entry->SetCommand(this, buffer);
 
   // Update the Relative-Max-Voxel Num scale entry.
 
-  sprintf(
-    buffer, "NormalizationRelativeMaxVoxelNumCallback %d", 
+  sprintf( buffer, "NormalizationRelativeMaxVoxelNumCallback %d",
     static_cast<int>(target_vol_id));
   this->NormalizationRelativeMaxVoxelScale->SetEndCommand(this, buffer);
   this->NormalizationRelativeMaxVoxelScale->SetEntryCommand(this, buffer);
 
   this->ResetDefaultParameters(target_vol_id);
 
-  int parentEnabled = 
-    this->NormalizationParametersFrame->GetEnabled();
-  vtkKWCheckButton *cbEnable = 
-    this->NormalizationEnableCheckButton->GetWidget();
+  int parentEnabled = this->NormalizationParametersFrame->GetEnabled();
+  vtkKWCheckButton *cbEnable = this->NormalizationEnableCheckButton->
+    GetWidget();
 
   this->NormalizationDefaultsMenuButton->SetEnabled(
     cbEnable->GetSelectedState() ? parentEnabled : 0);
@@ -788,15 +760,15 @@ void vtkEMSegmentIntensityNormalizationStep::
   NormalizationNormTypeCallback(vtkIdType target_vol_id,
   int enumDefaultsetting)
 {
-  // The target volume default settings dropdown has changed 
-  // because of user interaction
+  // The target volume default settings dropdown has changed because of user
+  // interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   if (!mrmlManager)
     {
     return;
     }
-  
+
   if (enumDefaultsetting == NormalizationDefaultT1SPGR)
     {
     mrmlManager->SetTargetVolumeIntensityNormalizationToDefaultT1SPGR(
@@ -815,56 +787,48 @@ void vtkEMSegmentIntensityNormalizationStep::
   NormalizationPrintInfoCallback(
   vtkIdType target_vol_id, int checked)
 {
-  // The print-info checkbutton has changed 
-  // because of user interaction
+  // The print-info checkbutton has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   if (!mrmlManager)
     {
     return;
     }
- 
-  mrmlManager->SetTargetVolumeIntensityNormalizationPrintInfo(
-    target_vol_id, checked);
 
+  mrmlManager->SetTargetVolumeIntensityNormalizationPrintInfo( target_vol_id,
+      checked);
 }
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityNormalizationStep::
-  NormalizationNormValueCallback(vtkIdType target_vol_id, double dValue)
+  NormalizationValueCallback(vtkIdType target_vol_id, double dValue)
 {
-  // The Norm-value entry has changed 
-  // because of user interaction
+  // The Norm-value entry has changed because of user interaction
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   if (!mrmlManager)
     {
     return;
     }
- 
-  mrmlManager->
-    SetTargetVolumeIntensityNormalizationNormValue(target_vol_id, dValue);
 
+  mrmlManager->SetTargetVolumeIntensityNormalizationNormValue(target_vol_id,
+      dValue);
 }
-
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityNormalizationStep::
-  NormalizationSmoothingWidthCallback(
-  vtkIdType target_vol_id, int iValue)
+  NormalizationSmoothingWidthCallback(vtkIdType target_vol_id, int iValue)
 {
-  // The Norm-value entry has changed 
-  // because of user interaction
+  // The Norm-value entry has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   if (!mrmlManager)
     {
     return;
     }
- 
+
   mrmlManager->
     SetTargetVolumeIntensityNormalizationInitialHistogramSmoothingWidth(
     target_vol_id, iValue);
-
 }
 
 //----------------------------------------------------------------------------
@@ -872,34 +836,32 @@ void vtkEMSegmentIntensityNormalizationStep::
   NormalizationMaxSmoothingWidthCallback(
   vtkIdType target_vol_id, int iValue)
 {
-  // The Norm-value entry has changed 
-  // because of user interaction
+  // The Norm-value entry has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   if (!mrmlManager)
     {
     return;
     }
- 
-  mrmlManager->SetTargetVolumeIntensityNormalizationMaxHistogramSmoothingWidth(
-    target_vol_id, iValue);
 
+  mrmlManager->
+    SetTargetVolumeIntensityNormalizationMaxHistogramSmoothingWidth(
+    target_vol_id, iValue);
 }
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityNormalizationStep::
-  NormalizationRelativeMaxVoxelNumCallback(
-  vtkIdType target_vol_id, double dValue)
+  NormalizationRelativeMaxVoxelNumCallback(vtkIdType target_vol_id,
+      double dValue)
 {
-  // The Norm-value entry has changed 
-  // because of user interaction
+  // The Norm-value entry has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   if (!mrmlManager)
     {
     return;
     }
- 
+
   mrmlManager->SetTargetVolumeIntensityNormalizationRelativeMaxVoxelNum(
     target_vol_id, dValue);
 }
@@ -913,8 +875,8 @@ void vtkEMSegmentIntensityNormalizationStep::ResetDefaultParameters(
     {
     return;
     }
-  this->NormalizationDefaultsMenuButton->SetConfigurationOption(
-    "-text", "Reset Defaults");
+  this->NormalizationDefaultsMenuButton->SetConfigurationOption("-text",
+      "Reset Defaults");
 
   this->NormalizationPrintCheckButton->GetWidget()->SetSelectedState(
     mrmlManager->GetTargetVolumeIntensityNormalizationPrintInfo(
@@ -930,90 +892,76 @@ void vtkEMSegmentIntensityNormalizationStep::ResetDefaultParameters(
     mrmlManager->
     GetTargetVolumeIntensityNormalizationMaxHistogramSmoothingWidth(
     target_vol_id));
-  this->NormalizationRelativeMaxVoxelScale->
-    SetValue(mrmlManager->
+  this->NormalizationRelativeMaxVoxelScale->SetValue(mrmlManager->
     GetTargetVolumeIntensityNormalizationRelativeMaxVoxelNum(
     target_vol_id));
 }
 
 //----------------------------------------------------------------------------
-void vtkEMSegmentIntensityNormalizationStep::PrintSelf(ostream& os, vtkIndent indent)
+void vtkEMSegmentIntensityNormalizationStep::PrintSelf(ostream& os,
+    vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }
-//---------------------------------------------------------------------------------
-void vtkEMSegmentIntensityNormalizationStep::GetValueeee()
+
+//----------------------------------------------------------------------------
+void vtkEMSegmentIntensityNormalizationStep::GetHistogramValue()
 {
-  std::cout<<"Position1: "<<this->VisuHisto->GetParameterCursorPosition()<<std::endl;
+  std::cout<<"Position1: "<<this->VisualizationHistogram->
+    GetParameterCursorPosition()<<std::endl;
 }
-
-//------------------------------------------------------------------------------------------
-/*
-void vtkEMSegmentIntensityNormalizationStep::InvokeParameterCursorMovingCommand(){
-
-std::cout<<"Position: "<<this->VisuHisto->GetParameterCursorPosition()<<std::endl;
-
-}*/
 
 //---------------------------------------------------------------------------
 void vtkEMSegmentIntensityNormalizationStep::ProcessCursorMovingGUIEvents(
-  vtkObject *caller,
-  unsigned long event,
-  void *callData) 
+  vtkObject *caller, unsigned long event, void *callData)
 {
-if(event == vtkKWPiecewiseFunctionEditor::ParameterCursorMovingEvent){
-  //std::cout<<"cursor's position: "<< this->VisuHisto->GetParameterCursorPosition() <<std::endl;
-  
-         // Build Filter
-    this->ImageMeanIntensityPreNormalization =
-      vtkImageMeanIntensityPreNormalization::New();
-  
-    this->ImageMeanIntensityPreNormalization->SetNormType
-      (INTENSITY_NORM_MEAN_MRI);
-    this->ImageMeanIntensityPreNormalization->SetNormValue
-      (80);   
-    this->ImageMeanIntensityPreNormalization->SetInitialHistogramSmoothingWidth
-      (this->VisuHisto->GetParameterCursorPosition());
-    this->ImageMeanIntensityPreNormalization->SetMaxHistogramSmoothingWidth
-      (10);
-    this->ImageMeanIntensityPreNormalization->SetRelativeMaxVoxelNum
-      (0.99);
-    this->ImageMeanIntensityPreNormalization->SetPrintInfo
-      (1);
-      
-  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  
-  //int vol_id = mrmlManager->GetVolumeNthID(id_event);
 
-  vtkMRMLVolumeNode* volumeNode = mrmlManager->GetVolumeNode(id_event);
-  
-  vtkImageData* inputImage = volumeNode->GetImageData();
-      
-     std::cout<<"Volume: "<< mrmlManager->GetVolumeName(id_event)<<std::endl;
-      
-    this->ImageMeanIntensityPreNormalization->SetInput(inputImage);
+  if(event == vtkKWPiecewiseFunctionEditor::ParameterCursorMovingEvent)
+  {
+    double range[2];
+    double occurence;
+    double counter = 0;
+    double mean = 0;
 
-    // execute filter
+    this->NormalizationHistogram->GetRange(range);
+    occurence = this->NormalizationHistogram->GetOccurenceAtValue(90);
 
-    this->ImageMeanIntensityPreNormalization->Update();
-    
-    //std::cout<<"test: "<<this->ImageMeanIntensityPreNormalization->GetInitialHistogramSmoothingWidth()<<std::endl;
-    
-    this->NormalizationValueRecommandedEntry->GetWidget()->SetValueAsDouble(this->ImageMeanIntensityPreNormalization->GetInitialHistogramSmoothingWidth());
-    
-    this->ImageMeanIntensityPreNormalization->Delete();
- } 
+    for(double i = this->VisualizationHistogram->GetParameterCursorPosition();
+        i < range[1] ; i++)
+    {
+      counter = counter + this->NormalizationHistogram->
+        GetOccurenceAtValue(i);
+      mean = mean + i*this->NormalizationHistogram->GetOccurenceAtValue(i);
+    }
+
+    if(counter)
+    {
+      mean = mean / counter;
+    }
+
+    this->NormalizationValueRecommendedEntry->GetWidget()->SetValueAsDouble(
+        (int)(mean+0.5));
+  }
 }
+
 //---------------------------------------------------------------------------
-void vtkEMSegmentIntensityNormalizationStep::AddCursorMovingGUIEvents() 
+void vtkEMSegmentIntensityNormalizationStep::AddCursorMovingGUIEvents()
 {
-
-    this->VisuHisto
-    ->AddObserver(vtkKWPiecewiseFunctionEditor::ParameterCursorMovingEvent, this->GetGUI()->GetGUICallbackCommand());
+  this->VisualizationHistogram->AddObserver(vtkKWPiecewiseFunctionEditor::
+      ParameterCursorMovingEvent, this->GetGUI()->GetGUICallbackCommand());
 }
+
 //---------------------------------------------------------------------------
 void vtkEMSegmentIntensityNormalizationStep::RemoveCursorMovingGUIEvents()
 {
-//this->VisuHisto->RemoveObserver(vtkKWPiecewiseFunctionEditor::ParameterCursorMovingEvent, this->GetGUI()->GetGUICallbackCommand());
+  this->VisualizationHistogram->RemoveObservers(vtkKWPiecewiseFunctionEditor::
+      ParameterCursorMovingEvent, this->GetGUI()->GetGUICallbackCommand());
+}
+
+//----------------------------------------------------------------------------
+void vtkEMSegmentIntensityNormalizationStep::HideUserInterface()
+{
+  this->Superclass::HideUserInterface();
+  this->RemoveCursorMovingGUIEvents();
 }
 

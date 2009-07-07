@@ -13,6 +13,7 @@ Version:   $Revision: 1.6 $
 Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 
 ==============================================================auto=*/
+
 #include "vtkEMSegmentIntensityDistributionsStep.h"
 
 #include "vtkEMSegmentGUI.h"
@@ -1830,9 +1831,10 @@ void vtkEMSegmentIntensityDistributionsStep::GetPercent( int j,
 double vtkEMSegmentIntensityDistributionsStep::GetWeight(int z)
 {
   double sum = 0.0;
+  int start = (int)(this->class_size[z*2  ] + 0.5) + 1;
+  int stop  = (int)(this->class_size[z*2+1] + 0.5);
 
-  for(int l = round(this->class_size[z*2]) + 1;
-      l < round(this->class_size[z*2 + 1]); l++)
+  for(int l = start; l < stop; l++)
   {
     sum = sum + this->IntensityDistributionHistogramHistogram->
       GetOccurenceAtValue(l);
