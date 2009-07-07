@@ -1,3 +1,16 @@
+#
+# Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All
+# Rights Reserved.
+#
+# See Doc/copyright/copyright.txt
+# or http://www.slicer.org/copyright/copyright.txt for details.
+#
+# Program:   3D Slicer
+# Module:    $RCSfile: CMakeLists.txt,v$
+# Date:      $Date: 2006/01/06 17:56:51 $
+# Version:   $Revision: 1.6 $
+# Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
+
 project(EMSegment)
 
 cmake_minimum_required(VERSION 2.4)
@@ -37,13 +50,13 @@ include_directories(
   )
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkEMSegmentConfigure.h.in 
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkEMSegmentConfigure.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/vtkEMSegmentConfigure.h
-  ${KWWidgets_TEMPLATES_DIR}/vtkKWWidgetsPaths.h.in 
+  ${KWWidgets_TEMPLATES_DIR}/vtkKWWidgetsPaths.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/vtkKWWidgetsPaths.h
   )
 
-file(GLOB headers 
+file(GLOB headers
   "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/Wizard/*.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/Wizard/Help/*.h"
@@ -52,20 +65,21 @@ file(GLOB headers
   "${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/*.txx"
   "${CMAKE_CURRENT_SOURCE_DIR}/Registration/*.h"
   )
-install(FILES 
-  ${headers} 
+
+install(FILES
+  ${headers}
   "${CMAKE_CURRENT_BINARY_DIR}/vtkEMSegmentConfigure.h"
-  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
-  )
+  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT
+  Development)
 
 # --------------------------------------------------------------------------
 # Sources
 
-set(EMSegment_SRCS 
+set(EMSegment_SRCS
   # module
   vtkEMSegmentGUI.cxx
-  vtkEMSegmentLogic.cxx 
-  vtkEMSegmentMRMLManager.cxx 
+  vtkEMSegmentLogic.cxx
+  vtkEMSegmentMRMLManager.cxx
   # wizard
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkEMSegmentParametersSetStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkEMSegmentIntensityImagesStep.cxx
@@ -77,6 +91,7 @@ set(EMSegment_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkEMSegmentStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkEMSegmentRegistrationParametersStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkEMSegmentRunSegmentationStep.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkGaussian2DWidget.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/Help/vtkImageMeanIntensityPreNormalization.cxx
   # MRML
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSNode.cxx
@@ -93,7 +108,7 @@ set(EMSegment_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSWorkingDataNode.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSIntensityNormalizationParametersNode.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSClassInteractionMatrixNode.cxx
-  # Algorithm 
+  # Algorithm
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/EMLocalInterface.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/EMLocalRegistrationCostFunction.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/EMLocalShapeCostFunction.cxx
@@ -160,11 +175,11 @@ set_source_files_properties(
 # Wrapping
 
 include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-vtk_wrap_tcl3(EMSegment 
-  EMSegment_TCL_SRCS 
+vtk_wrap_tcl3(EMSegment
+  EMSegment_TCL_SRCS
   "${EMSegment_SRCS}" "")
 
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Add Loadable Module support
 
 generatelm(EMSegment_SRCS EMSegment.txt)
@@ -173,8 +188,8 @@ generatelm(EMSegment_SRCS EMSegment.txt)
 # Build and install the library
 
 set(lib_name EMSegment)
-add_library(${lib_name} 
-  ${EMSegment_SRCS} 
+add_library(${lib_name}
+  ${EMSegment_SRCS}
   ${EMSegment_TCL_SRCS}
   )
 slicer3_set_modules_output_path(${lib_name})
@@ -182,7 +197,7 @@ slicer3_set_modules_output_path(${lib_name})
 target_link_libraries(${lib_name}
   ${Slicer3_Libs_LIBRARIES}
   ${Slicer3_Base_LIBRARIES}
-  ${KWWidgets_LIBRARIES} 
+  ${KWWidgets_LIBRARIES}
   ${ITK_LIBRARIES}
   #${VTK_LIBRARIES}
   Volumes
@@ -205,8 +220,9 @@ subdirs(CommandLineApplication)
 # --------------------------------------------------------------------------
 # Install the testing data
 
-install(DIRECTORY
-  Testing/TestData
-  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Testing COMPONENT Development
+install(DIRECTORY Testing/TestData
+  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Testing
+  COMPONENT Development
   PATTERN ".svn" EXCLUDE
   )
+
