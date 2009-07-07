@@ -176,10 +176,11 @@ proc FastMarchingSegmentationInitializeFilter {this} {
   set dim [$inputImage GetWholeExtent]
   set depth [expr $rangeHigh-$rangeLow]
 
-  if { [expr $depth>500.] } {
+  if { [expr $depth>300. || $rangeLow<0.] } {
     set rescale $::FastMarchingSegmentation($this,rescale)
     $rescale SetInput $inputImage
     $rescale SetScale [expr 300./($rangeHigh-$rangeLow)]
+    $rescale SetShift [expr -1.*$rangeLow]
     $rescale Update
     set inputImage [$rescale GetOutput]
     puts "WARNING: Input image has been rescaled for Fast Marching segmentation"
@@ -261,6 +262,7 @@ proc FastMarchingSegmentationSegment {this} {
     scan [$inputFiducials GetNthFiducialXYZ $i] "%f %f %f" fx fy fz
     puts "Coordinates of $i th fiducial: $fx $fy $fz"
     set fIJK [lrange [eval $ras2ijk MultiplyPoint $fx $fy $fz 1] 0 2]
+    puts "$i fiducial coordinates in IJK: $fIJK"
     $fmFilter addSeedIJK [expr int([expr [lindex $fIJK 0]])] [expr int([expr [lindex $fIJK 1]])] \
       [expr int([expr [lindex $fIJK 2]])]
   }
