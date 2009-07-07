@@ -97,8 +97,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
         }
     const char* GetCurrentLayoutStringName ( );
 
-    void CustomizeStatusBarLayout();
-
     vtkGetMacro (Built, bool);
     vtkSetMacro (Built, bool);
     vtkGetMacro (CurrentLayout, int);
@@ -181,6 +179,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     void ProcessSaveSceneAsCommand();
     void ProcessCloseSceneCommand();
     void UpdateLayout();
+    void CustomizeStatusBarLayout();
     
     // Description:
     // Methods describe behavior on startup and exit.
