@@ -105,6 +105,20 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
   vtkSetMacro(CroppingEnabled,int);
   vtkGetMacro(CroppingEnabled,int);
   vtkBooleanMacro(CroppingEnabled,int);
+
+  // Description:
+  // Estimated Sample Distance
+  vtkSetMacro(EstimatedSampleDistance,double);
+  vtkGetMacro(EstimatedSampleDistance,double);
+
+  // Description:
+  // Expected FPS
+  vtkSetMacro(ExpectedFPS,int);
+  vtkGetMacro(ExpectedFPS,int);
+
+  vtkGetStringMacro (CurrentVolumeMapper);
+  vtkSetStringMacro (CurrentVolumeMapper);
+
   
 protected:
   vtkMRMLVolumeRenderingParametersNode();
@@ -126,6 +140,10 @@ protected:
 
   int CroppingEnabled;
 
+  double  EstimatedSampleDistance;
+  int     ExpectedFPS;
+
+  char *CurrentVolumeMapper;
 };
 
 #endif

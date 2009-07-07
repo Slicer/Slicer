@@ -63,7 +63,11 @@ vtkMRMLVolumeRenderingParametersNode::vtkMRMLVolumeRenderingParametersNode()
   this->ROINode = NULL;
 
   this->CroppingEnabled = 0;
-  
+  this->ExpectedFPS = 5;
+  this->EstimatedSampleDistance = 1.0;
+
+  this->CurrentVolumeMapper = NULL;
+  this->SetCurrentVolumeMapper("MapperRaycast");
 }
 
 //----------------------------------------------------------------------------

@@ -2,8 +2,19 @@
 #define __vtkVolumeRenderingLogic_h
 #include "vtkSlicerModuleLogic.h"
 #include "vtkVolumeRendering.h"
+#include "vtkVolumeMapper.h"
+#include "vtkVolume.h"
 
+#include "vtkMRMLVolumeRenderingParametersNode.h"
 #include "vtkMRMLVolumeRenderingSelectionNode.h"
+
+class vtkSlicerVolumeTextureMapper3D;
+class vtkSlicerFixedPointVolumeRayCastMapper;
+class vtkSlicerGPURayCastVolumeTextureMapper3D;
+class vtkCudaVolumeMapper;
+
+class vtkRenderer;
+class vtkTimerLog;
 
 class VTK_SLICERVOLUMERENDERING_EXPORT vtkVolumeRenderingLogic :public vtkSlicerModuleLogic
 {
@@ -26,6 +37,16 @@ public:
   
   vtkMRMLVolumeRenderingSelectionNode* GetSelectionNode();
 
+  vtkMRMLVolumeRenderingParametersNode* GetParametersNode();
+
+  // Description:
+  // Update MRML events
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
+                                  unsigned long /*event*/, 
+                                  void * /*callData*/ ); 
+
+  double EstimateSampleDistances(void);
+
 protected:
   vtkVolumeRenderingLogic();
   ~vtkVolumeRenderingLogic();
@@ -33,6 +54,34 @@ protected:
   void operator=(const vtkVolumeRenderingLogic&);
 
   static bool First;
+
+  // Description:
+  // The hardware accelerated texture mapper.
+  vtkSlicerVolumeTextureMapper3D *MapperTexture;    
+  
+  // Description:
+  // The hardware accelerated gpu ray cast mapper.
+  vtkCudaVolumeMapper *MapperCUDARaycast;
+
+  // Description:
+  // The hardware accelerated gpu ray cast mapper.
+  vtkSlicerGPURayCastVolumeTextureMapper3D *MapperGPURaycast;
+
+  // Description:
+  // The software accelerated software mapper
+  vtkSlicerFixedPointVolumeRayCastMapper *MapperRaycast;
+
+  // Description:
+  // The current volume  mapper
+  vtkVolumeMapper *CurrentVolumeMapper;
+
+  //BTX
+  std::map<std::string, vtkVolumeMapper *> VolumeMappers;
+  //ETX
+
+  // Description:
+  // Actor used for Volume Rendering
+  vtkVolume *Volume;
 
 };
 
