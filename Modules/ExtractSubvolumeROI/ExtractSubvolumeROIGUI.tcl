@@ -474,6 +474,12 @@ proc ExtractSubvolumeROIApply {this} {
   if {$userSpacing <= 0.} {
     set errorText "Sampling must be a floating number greater than 0!"
   }
+  if { [$volumeNode GetParentTransformNode] != "" } {
+    set errorText "Input volume cannot be under transform!"
+  }
+  if { [$roiNode GetParentTransformNode] != "" } {
+    set errorText "ROI node cannot be under transform!"
+  }
 
   if { $errorText != "" } {
     set dialog [vtkKWMessageDialog New]
