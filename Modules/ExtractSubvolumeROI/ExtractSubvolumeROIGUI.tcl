@@ -248,7 +248,7 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
     catch {$::ExtractSubvolumeROI($this,labelMap) Delete}
     set ::ExtractSubvolumeROI($this,labelMap) [vtkImageRectangularSource New]
     set labelMap $::ExtractSubvolumeROI($this,labelMap)
-    $labelMap SetWholeExtent 0 [expr [lindex $dim 1]-1] 0 [expr [lindex $dim 3]-1] 0 [expr [lindex $dim 5]-1]
+    $labelMap SetWholeExtent 0 [expr [lindex $dim 1]] 0 [expr [lindex $dim 3]] 0 [expr [lindex $dim 5]]
     $labelMap SetOutputScalarTypeToShort
     $labelMap SetInsideGraySlopeFlag 0
     $labelMap SetInValue 17
