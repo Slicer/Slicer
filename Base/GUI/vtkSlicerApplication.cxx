@@ -214,9 +214,8 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     strcpy(this->ColorFilePaths, "");
     strcpy(this->PotentialColorFilePaths, "");
     strcpy(this->ExtensionsInstallPath, "");
+    strcpy(this->ExtensionsInstallPathDefault, Slicer3_INSTALL_MODULES_LIB_DIR);
     strcpy ( this->HomeModule, "");
-    this->Extpath = NULL;
-    this->SetExtpath("");
     this->LoadCommandLineModules = 1;
     this->LoadModules = 1;
     this->IgnoreModules = vtkStringArray::New();
@@ -316,7 +315,6 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 
     this->ColorSwatchesAdded = 0;
 
-    this->Extpath = NULL;
 }
 
 //---------------------------------------------------------------------------
@@ -1240,20 +1238,19 @@ void vtkSlicerApplication::SetExtensionsInstallPath(const char* path)
 //----------------------------------------------------------------------------
 const char* vtkSlicerApplication::GetExtensionsInstallPath()
 {
-  std::string extpath;
-  if (this->ExtensionsInstallPath)
+  char* extpath = this->ExtensionsInstallPath;
+  if (extpath)
     {
-    extpath = this->ExtensionsInstallPath;
-    if (extpath.empty())
+      if (0 == strlen(extpath))
       {
-      extpath = Slicer3_INSTALL_MODULES_LIB_DIR;
+      extpath = this->ExtensionsInstallPathDefault;
       }
 
     // does the path exist?
-    if (!itksys::SystemTools::MakeDirectory(extpath.c_str()))
+    if (!itksys::SystemTools::MakeDirectory(extpath))
       {
       // error making sure that the dir exists
-      std::cout << "vtkSlicerApplication::GetExtensionsInstallPath: Unable to make extensions install path: '" << extpath << "'\n\tYou can change the Extensions Install Path under View->Application Settings->Module Settings." << std::endl;
+      std::cout << "vtkSlicerApplication::GetExtensionsInstallPath: Unable to make extensions install path: '" << std::string(extpath) << "'\n\tYou can change the Extensions Install Path under View->Application Settings->Module Settings." << std::endl;
       // pop up a window if we've got something to set for the parent
       if (this->ApplicationGUI && this->ApplicationGUI->GetViewerWidget())
         {
@@ -1281,11 +1278,11 @@ const char* vtkSlicerApplication::GetExtensionsInstallPath()
       FILE *fp = fopen(tempFile.c_str(), "w");
       if (!fp)
         {
-        std::cerr << "WARNING: Unable to write files in ExtensionsInstallPath: '" << extpath << "'" << std::endl;
+        std::cerr << "WARNING: Unable to write files in ExtensionsInstallPath: '" << std::string(extpath) << "'" << std::endl;
         // pop up a window if we've got something to set for the parent
         if (this->ApplicationGUI && this->ApplicationGUI->GetViewerWidget())
           {
-          std::string msg = std::string("WARNING\nUnable to write files in ExtensionsInstallPath:\n'") + extpath + std::string("'");
+          std::string msg = std::string("WARNING\nUnable to write files in ExtensionsInstallPath:\n'") + std::string(extpath) + std::string("'");
           vtkKWMessageDialog *message = vtkKWMessageDialog::New();
           message->SetParent(this->ApplicationGUI->GetViewerWidget());
           message->SetOptions(vtkKWMessageDialog::ErrorIcon);
@@ -1305,8 +1302,7 @@ const char* vtkSlicerApplication::GetExtensionsInstallPath()
         }
       }
     }
-  SetExtpath ((char*)extpath.c_str());
-  return this->Extpath;
+  return extpath;
 }
 
 //----------------------------------------------------------------------------

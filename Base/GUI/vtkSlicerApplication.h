@@ -407,6 +407,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   char PotentialModulePaths[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char PotentialColorFilePaths[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char ExtensionsInstallPath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  char ExtensionsInstallPathDefault[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char WebBrowser [vtkKWRegistryHelper::RegistryKeyValueSizeMax ];
   char Unzip [vtkKWRegistryHelper::RegistryKeyValueSizeMax ];
   char Zip [vtkKWRegistryHelper::RegistryKeyValueSizeMax ];
@@ -447,9 +448,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // print out local vars
   void PrintSelf ( ostream& os, vtkIndent indent );
   
-  vtkGetStringMacro(Extpath);
-  vtkSetStringMacro(Extpath);
-
 private:
   vtkSlicerApplication ( const vtkSlicerApplication& ); // Not implemented.
   void operator = ( const vtkSlicerApplication& ); //Not implemented.
@@ -459,8 +457,6 @@ private:
   itk::MutexLock::Pointer DisplayMessageQueueLock;
   std::string NameSeparator;
   //ETX
-
-  char* Extpath;
 
   bool DisplayMessageQueueActive;
 
