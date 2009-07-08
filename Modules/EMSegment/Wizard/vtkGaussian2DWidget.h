@@ -1,9 +1,19 @@
-/*=========================================================================
+/*=auto==============================================================
 
-  Module:    $RCSfile: vtkGaussian2DWidget.h,v $
-  Author:    $Sylvain Jaume (MIT)$
+Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All
+Rights Reserved.
 
-=========================================================================*/
+See Doc/copyright/copyright.txt
+or http://www.slicer.org/copyright/copyright.txt for details.
+
+Program:   3D Slicer
+Module:    $RCSfile: vtkGaussian2DWidget.h,v $
+Date:      $Date: 2006/01/06 17:56:51 $
+Version:   $Revision: 1.6 $
+Author:    $Sylvain Jaume (MIT)$
+
+==============================================================auto=*/
+
 // .NAME vtkGaussian2DWidget - a render widget
 // .SECTION Description
 // This class encapsulates a render window, a renderer and several other
@@ -21,7 +31,7 @@
 
 class vtkDoubleArray;
 
-class KWWidgets_EXPORT vtkGaussian2DWidget : public vtkKWRenderWidget
+class VTK_EMSEGMENT_EXPORT vtkGaussian2DWidget : public vtkKWRenderWidget
 {
 public:
   static vtkGaussian2DWidget* New();
