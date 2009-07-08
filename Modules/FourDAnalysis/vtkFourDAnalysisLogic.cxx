@@ -381,7 +381,7 @@ void vtkFourDAnalysisLogic::GenerateParameterMapMT(const char* scriptFile,
   //vtkMPIController* controller = vtkMPIController::New();
   vtkMultiThreader* controller = vtkMultiThreader::New();
   //controller->Initialize(0, NULL);
-  int nProcs = 2;
+  int nProcs = 1;
 
   // When using MPI, the number of processes is determined
   // by the external program which launches this application.

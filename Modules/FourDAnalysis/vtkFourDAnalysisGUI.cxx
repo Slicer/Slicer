@@ -986,11 +986,11 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
       //                                       imin, imax, jmin, jmax, kmin, kmax);
       
       this->GetLogic()->GenerateParameterMap(this->CurveAnalysisScript,
-                                             curveNode,
-                                             bundleNode,
-                                             prefix,
-                                             start, end,
-                                             imin, imax, jmin, jmax, kmin, kmax);
+                                              curveNode,
+                                              bundleNode,
+                                              prefix,
+                                              start, end,
+                                              imin, imax, jmin, jmax, kmin, kmax);
       this->GetLogic()->RemoveObservers(vtkFourDAnalysisLogic::ProgressDialogEvent,  this->LogicCallbackCommand);
       }
     else

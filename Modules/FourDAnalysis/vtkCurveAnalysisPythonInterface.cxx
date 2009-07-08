@@ -48,7 +48,8 @@ vtkCurveAnalysisPythonInterface::~vtkCurveAnalysisPythonInterface()
 {
   if (this->CompiledObject)
     {
-    free(this->CompiledObject);
+    //free(this->CompiledObject);
+    Py_DECREF(this->CompiledObject);
     }
 }
 
@@ -256,8 +257,8 @@ int vtkCurveAnalysisPythonInterface::GenerateFittingScript()
 
   if (this->CompiledObject)
     {
-    free(this->CompiledObject);
-    this->CompiledObject = NULL;
+    //free(this->CompiledObject);
+    Py_DECREF(this->CompiledObject);
     }
 
   std::string pythonCmd;
