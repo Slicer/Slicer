@@ -57,16 +57,16 @@ public:
   static vtkAffineCallback *New() 
     { return new vtkAffineCallback; }
   virtual void Execute(vtkObject *caller, unsigned long, void*);
-  vtkAffineCallback():AffineRep(0),TransformableNode(0)
+  vtkAffineCallback():TransformableNode(0),AffineRep(0)
     {
-      this->Transform = vtkTransform::New();
+    this->Transform = vtkTransform::New();
     }
   ~vtkAffineCallback()
     {
-      if (this->Transform)
-    {
+    if (this->Transform)
+      {
       this->Transform->Delete();
-    }
+      }
     }
   vtkMRMLTransformableNode *TransformableNode;
   vtkAffineRepresentation2D *AffineRep;
@@ -163,6 +163,12 @@ vtkMeasurementsGUI::vtkMeasurementsGUI()
   this->DistanceRepresentation->SetHandleRepresentation(this->DistanceHandleRepresentation);
   this->DistanceRepresentation->DistanceAnnotationVisibilityOn();
   this->DistanceRepresentation->SetDistanceAnnotationFormat("%g mm");
+  // have to set a scale or else it will scale with the length of the line
+  double scale[3];
+  scale[0] = 10.0;
+  scale[1] = 10.0;
+  scale[2] = 10.0;
+  this->DistanceRepresentation->SetDistanceAnnotationScale(scale);
   // unfortunately, the handle representation is cloned, can't have them
   // different colours yet
   this->DistanceRepresentation->GetPoint1Representation()->GetProperty()->SetColor(1, 0, 0);
@@ -453,8 +459,8 @@ void vtkMeasurementsGUI::ProcessGUIEvents ( vtkObject *caller,
       if (this->DistanceWidget->GetInteractor() == NULL)
         {
         this->DistanceWidget->SetInteractor(appGUI->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor());
-        double p1[3] = {0.0, -60.0, 0.0};
-        double p2[3] = {0.0,  60.0, 0.0};
+        double p1[3] = {-50.0, 0.0, 0.0};
+        double p2[3] = {50.0,  0.0, 0.0};
         this->DistanceRepresentation->SetPoint1WorldPosition(p1);
         this->DistanceRepresentation->SetPoint2WorldPosition(p2);
         }
