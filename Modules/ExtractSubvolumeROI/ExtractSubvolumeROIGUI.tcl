@@ -141,7 +141,7 @@ proc ExtractSubvolumeROIBuildGUI {this} {
   $roi SetParent [$initFrame GetFrame]
   $roi Create
   $roi NewNodeEnabledOn
-  $roi SetNodeClass "vtkMRMLROINode" "" "" ""
+  $roi SetNodeClass "vtkMRMLROINode" "" "" "Subvolume_ROI"
   $roi SetMRMLScene [[$this GetLogic] GetMRMLScene]
   $roi UpdateMenu
   $roi SetLabelText "ROI:"
@@ -166,7 +166,7 @@ proc ExtractSubvolumeROIBuildGUI {this} {
   $out SetParent [$initFrame GetFrame]
   $out Create
   $out NewNodeEnabledOn
-  $out SetNodeClass "vtkMRMLScalarVolumeNode" "" "" ""
+  $out SetNodeClass "vtkMRMLScalarVolumeNode" "" "" "Resampled_ROI_Subvolume"
   $out SetMRMLScene [[$this GetLogic] GetMRMLScene]
   $out UpdateMenu
   $out SetLabelText "Output volume:"
@@ -271,8 +271,6 @@ proc ExtractSubvolumeROIProcessLogicEvents {this caller event} {
 
 proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
   puts "Event received from $caller"
-  # TODO: check if the volume or ROI is under a transform, and refuse to do
-  # anything if it is to avoid problems
   if { $caller == $::ExtractSubvolumeROI($this,runButton) } {
   
     set inputVolume [$::ExtractSubvolumeROI($this,inputSelector) GetSelected]
@@ -327,7 +325,7 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
     # TODO: delete the older label volume if it existed
     set scene [[$this GetLogic] GetMRMLScene]
     set volumesLogic [$::slicer3::VolumesGUI GetLogic]
-    set ::ExtractSubvolumeROI($this,labelMapNode) [$volumesLogic CreateLabelVolume $scene $inputVolume "VolumeOfInterest"]
+    set ::ExtractSubvolumeROI($this,labelMapNode) [$volumesLogic CreateLabelVolume $scene $inputVolume "Subvolume_ROI_Label"]
 #    $::ExtractSubvolumeROI($this,labelMapNode) SetHideFromEditors 1
     $::ExtractSubvolumeROI($this,labelMapNode) SetAndObserveImageData [$labelMap GetOutput]
 
@@ -686,6 +684,15 @@ proc ExtractSubvolumeROIApply {this} {
   $selectionNode SetReferenceActiveLabelVolumeID ""
   $selectionNode Modified
   [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection 1
+
+  # set a descriptive name for the output volume
+  set inputName [$volumeNode GetName]
+  set outputName "${inputName}-Subvolume-resample_scale-${userSpacing}"
+  $outVolumeNode SetName $outputName
+  $outVolumeNode Modified
+
+  set scene [[$this GetLogic] GetMRMLScene]
+  $scene InvokeEvent 66000
 }
 
 proc ExtractSubvolumeROIErrorDialog {this errorText} {
