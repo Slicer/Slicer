@@ -13,7 +13,6 @@ Version:   $Revision: 1.6 $
 Author:    $Sylvain Jaume (MIT)$
 
 ==============================================================auto=*/
-
 // .NAME vtkGaussian2DWidget - a render widget
 // .SECTION Description
 // This class encapsulates a render window, a renderer and several other
@@ -35,8 +34,7 @@ class VTK_EMSEGMENT_EXPORT vtkGaussian2DWidget : public vtkKWRenderWidget
 {
 public:
   static vtkGaussian2DWidget* New();
-  vtkTypeRevisionMacro(vtkGaussian2DWidget, vtkKWCompositeWidget);
-
+  vtkTypeRevisionMacro(vtkGaussian2DWidget, vtkKWRenderWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
