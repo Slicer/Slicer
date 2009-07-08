@@ -26,6 +26,7 @@ Author:    $Sylvain Jaume (MIT)$
 #ifndef __vtkGaussian2DWidget_h
 #define __vtkGaussian2DWidget_h
 
+#include "vtkEMSegment.h"
 #include "vtkKWRenderWidget.h"
 
 class vtkDoubleArray;
