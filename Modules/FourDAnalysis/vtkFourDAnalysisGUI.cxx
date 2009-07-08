@@ -977,6 +977,14 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
       int start = (int)this->CurveFittingStartIndexSpinBox->GetValue();
       int end   = (int)this->CurveFittingEndIndexSpinBox->GetValue();
       this->GetLogic()->AddObserver(vtkFourDAnalysisLogic::ProgressDialogEvent,  this->LogicCallbackCommand);
+
+      //this->GetLogic()->GenerateParameterMapMT(this->CurveAnalysisScript->GetScript(),
+      //                                       curveNode,
+      //                                       bundleNode,
+      //                                       prefix,
+      //                                       start, end,
+      //                                       imin, imax, jmin, jmax, kmin, kmax);
+      
       this->GetLogic()->GenerateParameterMap(this->CurveAnalysisScript,
                                              curveNode,
                                              bundleNode,
@@ -1417,7 +1425,7 @@ void vtkFourDAnalysisGUI::BuildGUIForFunctionViewer(int show)
   this->ErrorBarCheckButton = vtkKWCheckButtonWithLabel::New();
   this->ErrorBarCheckButton->SetParent(frame->GetFrame());
   this->ErrorBarCheckButton->Create();
-  this->ErrorBarCheckButton->GetWidget()->SelectedStateOff();
+  this->ErrorBarCheckButton->GetWidget()->SelectedStateOn();
   this->ErrorBarCheckButton->SetLabelText("Show SD");
   
   this->Script("pack %s %s -side top -fill x -expand y -anchor w -padx 2 -pady 2", 

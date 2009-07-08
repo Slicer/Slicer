@@ -262,6 +262,7 @@ class CurveAnalysisExecuter(object):
 
         # ------------------------------
         # Run optimization
+
         fitting.Execute()
         x = outputCurve[:, 0]
         y = fitting.GetFitCurve(x)

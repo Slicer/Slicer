@@ -47,13 +47,13 @@
 
 
 class vtkIGTLConnector;
+class vtkMutexLock;
 
 class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisLogic : public vtkSlicerModuleLogic 
 {
  public:
   //BTX
   enum {  // Events
-    //LocatorUpdateEvent    = 50000,
     StatusUpdateEvent       = 50003,
     ProgressDialogEvent     = 50004,
   };
@@ -62,8 +62,8 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisLogic : public vtkSlicerModuleLog
     TYPE_SD,
   };
   typedef struct {
-    int    show;
-    double progress;
+    int         show;
+    double      progress;
     std::string message;
   } StatusMessageType;
 
@@ -89,6 +89,23 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisLogic : public vtkSlicerModuleLog
   } CurveDataSetType;
 
   typedef std::map<std::string, CurveDataSetType> CurveCacheType;
+
+  typedef std::map<std::string, vtkImageData*>            ParameterImageMapType;
+  typedef std::map<std::string, vtkMRMLScalarVolumeNode*> ParameterVolumeNodeMapType;
+
+  typedef struct {
+    int                              id;
+    vtkFourDAnalysisLogic*           ptr;
+    vtkCurveAnalysisPythonInterface* curveAnalysisInterface;
+    std::vector<vtkImageData*>       imageVector;
+    std::vector<double>              imageTimeStampVector;
+    ParameterImageMapType            parameterImageMap;
+    vtkMutexLock*                    mutex;
+    
+    int rangei[2];
+    int rangej[2];
+    int rangek[2];
+  } ThreadInfo;
   //ETX
 
  public:
@@ -120,6 +137,17 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisLogic : public vtkSlicerModuleLog
 
   void SetApplication(vtkSlicerApplication *app) { this->Application = app; };
   vtkSlicerApplication* GetApplication() { return this->Application; };
+
+
+  void GenerateParameterMapMT(const char* scriptFile,
+                              vtkMRMLCurveAnalysisNode* curveNode,
+                              vtkMRMLTimeSeriesBundleNode* bundleNode,
+                              const char* outputNodeNamePrefix,
+                              int start, int end,
+                              int imin, int imax, int jmin, int jmax, int kmin, int kmax);
+  //BTX
+  static void* CurveAnalysisThread(void* ptr);
+  //ETX
 
   void GenerateParameterMap(vtkCurveAnalysisPythonInterface* script,
                             vtkMRMLCurveAnalysisNode* curveNode,

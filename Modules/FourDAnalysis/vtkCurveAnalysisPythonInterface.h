@@ -38,7 +38,9 @@ class VTK_FourDAnalysis_EXPORT vtkCurveAnalysisPythonInterface : public vtkObjec
   void PrintSelf(ostream& os, vtkIndent indent);
 
   int SetScript(const char* filename);
+  const char* GetScript() { return this->ScriptName.c_str(); };
   int SetCurveAnalysisNode(vtkMRMLCurveAnalysisNode* curveNode);
+  vtkMRMLCurveAnalysisNode* GetCurveAnalysisNode() { return this->CurveAnalysisNode; };
   int GetInfo();
   int Run();
 

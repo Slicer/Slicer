@@ -183,22 +183,36 @@ int vtkCurveAnalysisPythonInterface::Run()
 
   if (this->CompiledObject) // if compiled object exists
     {
+    PyGILState_STATE state;
+    state = PyGILState_Ensure();
+
     PyObject* dum;
     dum = PyEval_EvalCode ((PyCodeObject *)this->CompiledObject,
                            (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()),
                            (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()));
-  
+
     if (PyErr_Occurred ())
       {
       PyErr_Print ();
       }
-  
+
+    if (dum != NULL)
+      {
+      Py_DECREF(dum);
+      }
+
+    PyGILState_Release(state);
+
     return 1;
   
     }
   else if (this->PythonCmd != "")
     {
     std::cerr << "-------- Text script is used." << std::endl;
+
+    PyGILState_STATE state;
+    state = PyGILState_Ensure();
+
     PyObject* v;
     v = PyRun_String(this->PythonCmd.c_str(),
                      Py_file_input,
@@ -209,6 +223,13 @@ int vtkCurveAnalysisPythonInterface::Run()
       {
       PyErr_Clear();
       }
+    
+    if (v)
+      {
+      Py_DECREF(v);
+      }
+
+    PyGILState_Release(state);
     
     return 1;
     }

@@ -86,8 +86,57 @@ void vtkMRMLCurveAnalysisNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLCurveAnalysisNode::Copy(vtkMRMLNode *anode)
 {
+
   Superclass::Copy(anode);
   vtkMRMLCurveAnalysisNode *node = (vtkMRMLCurveAnalysisNode *) anode;
+  
+  vtkStringArray* paramNames      = node->GetInitialParameterNameArray();
+  vtkStringArray* inputParamNames = node->GetConstantNameArray();
+  vtkStringArray* inputDataNames  = node->GetInputArrayNameArray();
+
+  int numParameters      = paramNames->GetNumberOfTuples();
+  int numInputParameters = inputParamNames->GetNumberOfTuples();
+  int numInputCurves     = inputDataNames->GetNumberOfTuples();
+
+  for (int i = 0; i < numParameters; i ++)
+    {
+    const char* name = paramNames->GetValue(i);
+    double value = node->GetInitialParameter(name);
+    this->SetInitialParameter(name, value);
+    std::cerr << name << " = " << value << std::endl;
+    }
+
+  for (int i = 0; i < numInputParameters; i ++)
+    {
+    int row = i + numParameters;
+    const char* name = inputParamNames->GetValue(i);
+    double value = node->GetConstant(name);
+    this->SetConstant(name, value);
+    std::cerr << name << " = " << value << std::endl;
+    }
+
+  for (int i = 0; i < numInputCurves; i ++)
+    {
+    int row = i + numParameters + numInputParameters;
+    const char* name = inputDataNames->GetValue(i);
+    vtkDoubleArray* curve = node->GetInputArray(name);
+
+    if (curve)
+      {
+      vtkDoubleArray* inputCurve = vtkDoubleArray::New();
+      inputCurve->SetNumberOfComponents( curve->GetNumberOfComponents() );
+      int nPoints   = curve->GetNumberOfTuples();
+
+      for (int i = 0; i <= nPoints; i ++)
+        {
+        double* xy = curve->GetTuple(i);
+        inputCurve->InsertNextTuple(xy);
+        std::cerr << "input xy = " << xy[0] << ", " << xy[1] << std::endl;
+        }
+      this->SetInputArray(name, inputCurve);
+      }
+    }
+
 }
 
 
