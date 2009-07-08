@@ -19,13 +19,20 @@ proc ExtractSubvolumeROITearDownGUI {this} {
   # nodeSelector  ;# disabled for now
   set widgets {
     initFrame runButton inputSelector outputSelector roiSelector samplingScale
-    resamplingFrame
+    resamplingFrame roiVisibility
+  }
+  set nonwidgets {
+    visIcons
   }
 
   foreach w $widgets {
     $::ExtractSubvolumeROI($this,$w) SetParent ""
     $::ExtractSubvolumeROI($this,$w) Delete
   }
+  foreach w $nonwidgets {
+    $::ExtractSubvolumeROI($this,$w) Delete
+  }
+
 
   $::ExtractSubvolumeROI($this,resliceFilter) Delete
 
@@ -72,7 +79,7 @@ proc ExtractSubvolumeROIBuildGUI {this} {
   #
   # help frame
   #
-  set helptext "THIS MODULE IS UNDER DEVELOPMENT!\nThis module extracts subvolume of the image described by Region of Interest widget.\n\nTo use, specify input volume, region of interest within volume, output volume, and desired sampling scale. The meaning of the sampling scale is that the original sampling of the input volume will be multiplied by this scale in each dimension to derive sampling for the output volume. Linear interpolation will be used for scalar volumes, and neares neighbor for labels.\n\nYou can control ROI in slice viewers. Left mouse button click expands the ROI size, Right mouse button click re-centers ROI.\n\n\nWARNING: Major limitations:\n-- input volume must be axis-aligned\n-- neither ROI or input volume can be under a transform\n"
+  set helptext "This module extracts subvolume of the image described by Region of Interest widget.\n\nTo use:\n(1) specify input volume\n(2) specify ROI\n(3) adjust ROI\n(4) specify output volume\n(5) choose interpolation method\n(6) choose resampling scale\nNote: 0.5 as resampling scale will multiply spacing in each dimension by 0.5 to get new spacing (resampled image will have twice as many pixels in each dimension), 2 as resampling scale will result in the new image with two times *less* pixels in each dimension.\n\nUse mouse in slice views to adjust ROI: Left click -- resize, Right click -- re-center\n"
   set abouttext "This module was developed by Andriy Fedorov and Ron Kikinis.\nThis work was funded by Brain Science Foundation, and is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details."
   $this BuildHelpAndAboutFrame $pageWidget $helptext $abouttext
 
@@ -137,9 +144,21 @@ proc ExtractSubvolumeROIBuildGUI {this} {
   $roi SetNodeClass "vtkMRMLROINode" "" "" ""
   $roi SetMRMLScene [[$this GetLogic] GetMRMLScene]
   $roi UpdateMenu
-  $roi SetLabelText "Region of interest:"
+  $roi SetLabelText "ROI:"
   $roi SetBalloonHelpString "Region of interest that defines the subvolume"
-  pack [$roi GetWidgetName] -side top -anchor e -padx 2 -pady 2
+
+  set ::ExtractSubvolumeROI($this,visIcons) [vtkSlicerVisibilityIcons New]
+  set visIcons $::ExtractSubvolumeROI($this,visIcons)
+  set ::ExtractSubvolumeROI($this,roiVisibility) [vtkKWPushButtonWithLabel New]
+  set roiVisibility $::ExtractSubvolumeROI($this,roiVisibility)
+  $roiVisibility SetParent [$initFrame GetFrame]
+  $roiVisibility Create
+  $roiVisibility SetLabelText "ROI visibility"
+  $roiVisibility SetReliefToFlat
+  $roiVisibility SetBalloonHelpString "Toggle visibility of ROI widget"
+  [$roiVisibility GetWidget] SetImageToIcon [$visIcons GetVisibleIcon]
+
+  pack [$roi GetWidgetName] [$roiVisibility GetWidgetName] -side top -anchor e -padx 2 -pady 2
   
   # Output volume definition
   set ::ExtractSubvolumeROI($this,outputSelector) [vtkSlicerNodeSelectorWidget New]
@@ -161,7 +180,7 @@ proc ExtractSubvolumeROIBuildGUI {this} {
   $sampling Create
   $sampling SetLabelText "Input spacing scaling constant"
   [$sampling GetWidget] SetValue 1.
-  $sampling SetBalloonHelpString "Spacing of the input image in each dimension will be multiplied by this number to get output spacing. Enter 1 to preserve original spacing"
+  $sampling SetBalloonHelpString "Spacing of the input image in each dimension will be multiplied by this number to get output spacing. E.g., \"1\" will preserve original spacing, \"0.5\" will *increase* number of pixels in each dimension by 2, \"2\" will *reduce* number of pixels in each dimension by 2"
   pack [$sampling GetWidgetName] -side top -anchor e -padx 2 -pady 2
 
   # Resampler selection
@@ -170,6 +189,7 @@ proc ExtractSubvolumeROIBuildGUI {this} {
   $resamplingFrame SetParent [$initFrame GetFrame]
   $resamplingFrame Create
   $resamplingFrame SetLabelText "Interpolation type:"
+  $resamplingFrame SetBalloonHelpString "Select interpolation type"
   [$resamplingFrame GetWidget] PackHorizontallyOn
   [$resamplingFrame GetWidget] SetMaximumNumberOfWidgetsInPackingDirection 3
 
@@ -178,18 +198,21 @@ proc ExtractSubvolumeROIBuildGUI {this} {
   $nnButton SetText "Nearest Neighbor"
   $nnButton SetSelectedState 0
   $nnButton SetAnchorToWest
+  $nnButton SetBalloonHelpString "Use for resampling binary images"
 
   set linButton [[$resamplingFrame GetWidget] AddWidget 1]
   $linButton SetValue 1
   $linButton SetText "Linear"
   $linButton SetSelectedState 1
   $linButton SetAnchorToWest
+  $linButton SetBalloonHelpString "Use for resampling scalar images"
 
   set cubButton [[$resamplingFrame GetWidget] AddWidget 2]
   $cubButton SetValue 2
   $cubButton SetText "Cubic"
   $cubButton SetSelectedState 0
   $cubButton SetAnchorToWest
+  $cubButton SetBalloonHelpString "Use for resampling scalar images with improved accuracy"
 
   pack [$resamplingFrame GetWidgetName] -side top -anchor e -padx 2 -pady 2
 
@@ -221,6 +244,7 @@ proc ExtractSubvolumeROIAddGUIObservers {this} {
   $this AddObserverByNumber $::ExtractSubvolumeROI($this,inputSelector)  11000
   $this AddObserverByNumber $::ExtractSubvolumeROI($this,outputSelector)  10000
   $this AddObserverByNumber $::ExtractSubvolumeROI($this,roiSelector) 11000
+  $this AddObserverByNumber [$::ExtractSubvolumeROI($this,roiVisibility) GetWidget] 10000
 #  $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
     
   # From Slicer console
@@ -246,7 +270,7 @@ proc ExtractSubvolumeROIProcessLogicEvents {this caller event} {
 }
 
 proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
-  
+  puts "Event received from $caller"
   # TODO: check if the volume or ROI is under a transform, and refuse to do
   # anything if it is to avoid problems
   if { $caller == $::ExtractSubvolumeROI($this,runButton) } {
@@ -263,6 +287,20 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
     catch {$this RemoveMRMLObserverByNumber $::ExtractSubvolumeROI($this,observedROINode) 31}
     set ::ExtractSubvolumeROI($this,observedROINode) [$::ExtractSubvolumeROI($this,roiSelector) GetSelected]
     $this AddMRMLObserverByNumber $::ExtractSubvolumeROI($this,observedROINode) 31
+  }
+
+  if {$caller == [$::ExtractSubvolumeROI($this,roiVisibility) GetWidget] } {
+    puts "roi visibility clicked"
+    if {$::ExtractSubvolumeROI($this,observedROINode) == ""} {
+      puts "roi has not been defined"
+      return
+    }
+    if { [$::ExtractSubvolumeROI($this,observedROINode) GetVisibility] } {
+      $::ExtractSubvolumeROI($this,observedROINode) SetVisibility 0
+    } else {
+      $::ExtractSubvolumeROI($this,observedROINode) SetVisibility 1
+    }
+    $::ExtractSubvolumeROI($this,observedROINode) Modified
   }
 
   if {$caller == $::ExtractSubvolumeROI($this,inputSelector) || \
@@ -465,6 +503,16 @@ proc ExtractSubvolumeROIProcessMRMLEvents {this callerID event} {
     return
   }
   if { $caller == $::ExtractSubvolumeROI($this,observedROINode) } {
+    set visIcons $::ExtractSubvolumeROI($this,visIcons)
+    set roiVisibility $::ExtractSubvolumeROI($this,roiVisibility)
+    if { [$::ExtractSubvolumeROI($this,observedROINode) GetVisibility] } {
+      [$roiVisibility GetWidget] SetImageToIcon [$visIcons GetVisibleIcon]
+    } else {
+      [$roiVisibility GetWidget] SetImageToIcon [$visIcons GetInvisibleIcon]
+    }
+    if { $::ExtractSubvolumeROI($this,labelMap) == ""} {
+      return
+    }
     ExtractSubvolumeROIUpdateLabelMap $this
   }
 }
