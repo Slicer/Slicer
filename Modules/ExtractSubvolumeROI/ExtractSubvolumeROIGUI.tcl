@@ -19,6 +19,7 @@ proc ExtractSubvolumeROITearDownGUI {this} {
   # nodeSelector  ;# disabled for now
   set widgets {
     initFrame runButton inputSelector outputSelector roiSelector samplingScale
+    resamplingFrame
   }
 
   foreach w $widgets {
@@ -162,6 +163,35 @@ proc ExtractSubvolumeROIBuildGUI {this} {
   [$sampling GetWidget] SetValue 1.
   $sampling SetBalloonHelpString "Spacing of the input image in each dimension will be multiplied by this number to get output spacing. Enter 1 to preserve original spacing"
   pack [$sampling GetWidgetName] -side top -anchor e -padx 2 -pady 2
+
+  # Resampler selection
+  set ::ExtractSubvolumeROI($this,resamplingFrame) [vtkKWRadioButtonSetWithLabel New]
+  set resamplingFrame $::ExtractSubvolumeROI($this,resamplingFrame)
+  $resamplingFrame SetParent [$initFrame GetFrame]
+  $resamplingFrame Create
+  $resamplingFrame SetLabelText "Interpolation type:"
+  [$resamplingFrame GetWidget] PackHorizontallyOn
+  [$resamplingFrame GetWidget] SetMaximumNumberOfWidgetsInPackingDirection 3
+
+  set nnButton [[$resamplingFrame GetWidget] AddWidget 0]
+  $nnButton SetValue 0
+  $nnButton SetText "Nearest Neighbor"
+  $nnButton SetSelectedState 0
+  $nnButton SetAnchorToWest
+
+  set linButton [[$resamplingFrame GetWidget] AddWidget 1]
+  $linButton SetValue 1
+  $linButton SetText "Linear"
+  $linButton SetSelectedState 1
+  $linButton SetAnchorToWest
+
+  set cubButton [[$resamplingFrame GetWidget] AddWidget 2]
+  $cubButton SetValue 2
+  $cubButton SetText "Cubic"
+  $cubButton SetSelectedState 0
+  $cubButton SetAnchorToWest
+
+  pack [$resamplingFrame GetWidgetName] -side top -anchor e -padx 2 -pady 2
 
   set ::ExtractSubvolumeROI($this,runButton) [vtkKWPushButton New]
   set run $::ExtractSubvolumeROI($this,runButton)
@@ -551,14 +581,20 @@ proc ExtractSubvolumeROIApply {this} {
   set resampler [vtkImageResample New]
   $resampler SetDimensionality 3
 
-  set isLabelMap [$volumeNode GetLabelMap]
-  if {$isLabelMap} {
+  set nnButton [[$::ExtractSubvolumeROI($this,resamplingFrame) GetWidget] GetWidget 0]
+  set linButton [[$::ExtractSubvolumeROI($this,resamplingFrame) GetWidget] GetWidget 1]
+  set cubButton [[$::ExtractSubvolumeROI($this,resamplingFrame) GetWidget] GetWidget 2]
+
+  if { [$nnButton GetSelectedState] } {
     $resampler SetInterpolationModeToNearestNeighbor
-    $outVolumeNode SetLabelMap 1
-  } else {
+  }
+  if { [$linButton GetSelectedState] } {
     $resampler SetInterpolationModeToLinear
   }
-
+  if { [$cubButton GetSelectedState] } {
+    $resampler SetInterpolationModeToCubic
+  }
+ 
   $resampler SetInput [$changeInf2 GetOutput]
   
   set newSpacingX [expr [lindex $inputSpacing 0]*$userSpacing]
