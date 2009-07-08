@@ -34,7 +34,7 @@ def StartConsole():
       s.pack(fill=Tkinter.BOTH, expand=1)
   except ImportError:
     sys.pythonConsoleTk = Tkinter.Toplevel ( tk )
-    c = Console.Console(parent=top,dict={})
+    c = Console.Console(parent=sys.pythonConsoleTk,dict={})
     c.dict["console"] = c
     c.pack(fill=Tkinter.BOTH, expand=1)
     c.master.title("Python Console v%s" % Console.VERSION)
