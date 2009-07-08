@@ -40,6 +40,8 @@ vtkVolumeRenderingLogic::vtkVolumeRenderingLogic(void)
   this->MapperRaycast->SetMaximumImageSampleDistance(20.0f);
 
   this->CurrentVolumeMapper = this->MapperRaycast;
+
+  this->Volume = vtkVolume::New();
   this->Volume->SetMapper(this->CurrentVolumeMapper);
 }
 
