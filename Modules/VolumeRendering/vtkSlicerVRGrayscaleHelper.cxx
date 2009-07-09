@@ -1193,11 +1193,17 @@ void vtkSlicerVRGrayscaleHelper::ProcessGPURayCastInternalVolumeSize(int id)
 {
     switch(id)
     {
-    case 0:
-        this->MapperGPURaycast->SetInternalVolumeSize(256);
+    case 0://128M
+        this->MapperGPURaycast->SetInternalVolumeSize(256);//256^3
         break;
-    case 1:
-        this->MapperGPURaycast->SetInternalVolumeSize(512);
+    case 1://256M
+        this->MapperGPURaycast->SetInternalVolumeSize(384);//384^3
+        break;
+    case 2://512M
+        this->MapperGPURaycast->SetInternalVolumeSize(500);//500^3
+        break;
+    case 3://1024M
+        this->MapperGPURaycast->SetInternalVolumeSize(600);//600^3
         break;
     }
     
@@ -1707,7 +1713,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->MB_GPURayCastTechnique->SetBalloonHelpString("Select different techniques in GPU ray casting");
         this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->AddRadioButton("Composite No Shading");
         this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastTechnique 0");
-        this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->AddRadioButton("Composite Shading");
+        this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->AddRadioButton("Composite With Shading");
         this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->SetItemCommand(1, this,"ProcessGPURayCastTechnique 1");
         this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->AddRadioButton("Maximum Intensity Projection");
         this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessGPURayCastTechnique 2");
@@ -1716,23 +1722,26 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastTechnique->GetWidgetName() );
         
-        this->MB_GPURayCastTechnique->GetWidget()->SetValue("Composite No Shading");
+        this->MB_GPURayCastTechnique->GetWidget()->SetValue("Composite With Shading");
         
         //set internal volume storage
         this->MB_GPURayCastInternalVolumeSize = vtkKWMenuButtonWithLabel::New();
         this->MB_GPURayCastInternalVolumeSize->SetParent(this->FrameGPURayCasting->GetFrame());
-        this->MB_GPURayCastInternalVolumeSize->SetLabelText("Internal Volume Size");
+        this->MB_GPURayCastInternalVolumeSize->SetLabelText("GPU Memory Size");
         this->MB_GPURayCastInternalVolumeSize->Create();
         this->MB_GPURayCastInternalVolumeSize->SetLabelWidth(labelWidth);
-        this->MB_GPURayCastInternalVolumeSize->SetBalloonHelpString("Set limit on internal volume size. Down sampling will be applied to volumes larger than size limit. By default the size limit is 256^3. For video cards with 1GB or more memory, it is safe to set 512^3 limit.");
-        this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->AddRadioButton("256^3");
+        this->MB_GPURayCastInternalVolumeSize->SetBalloonHelpString("Specify size of your video card memory. This effects size of internal texture storage. Do not select memory size larger than physical GPU memory.");
+        this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->AddRadioButton("128M");
         this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastInternalVolumeSize 0");
-        this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->AddRadioButton("512^3");
+        this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->AddRadioButton("256M");
         this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->SetItemCommand(1, this,"ProcessGPURayCastInternalVolumeSize 1");
-        
+        this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->AddRadioButton("512M");
+        this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessGPURayCastInternalVolumeSize 2");
+        this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->AddRadioButton("1024M");
+        this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->SetItemCommand(3, this,"ProcessGPURayCastInternalVolumeSize 3");        
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastInternalVolumeSize->GetWidgetName() );
         
-        this->MB_GPURayCastInternalVolumeSize->GetWidget()->SetValue("256^3");
+        this->MB_GPURayCastInternalVolumeSize->GetWidget()->SetValue("256M");
         
         //get scalar range 
         double scalarRange[2];
