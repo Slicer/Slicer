@@ -264,8 +264,9 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
       vtkErrorMacro("Unable to read freesurfer colour file " << node->GetFileName());
       }
     }
+  // node->Delete();
 
-  colorStorageNode1->Delete();
+ 
   basicFSNode->Delete();
   node->Delete();
 
@@ -303,7 +304,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
   this->FindColorFiles();
   for (unsigned int i = 0; i < this->ColorFiles.size(); i++)
     {
-    node =  vtkMRMLColorTableNode::New();
+    vtkMRMLColorTableNode * node =  vtkMRMLColorTableNode::New();
     node->SetTypeToFile();
     node->SaveWithSceneOff();
     node->SetScene(this->GetMRMLScene());
@@ -406,7 +407,7 @@ void vtkSlicerColorLogic::RemoveDefaultColorNodes()
     {
     this->GetMRMLScene()->RemoveNode(node);
     }
-
+  
   // remove the dGEMRIC nodes
   vtkMRMLdGEMRICProceduralColorNode *basicdGEMRICNode = vtkMRMLdGEMRICProceduralColorNode::New();
   vtkMRMLdGEMRICProceduralColorNode *dGEMRICnode;
