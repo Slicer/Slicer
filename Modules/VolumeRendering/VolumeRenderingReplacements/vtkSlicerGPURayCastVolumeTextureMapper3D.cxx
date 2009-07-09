@@ -50,8 +50,8 @@ vtkStandardNewMacro(vtkSlicerGPURayCastVolumeTextureMapper3D);
 vtkSlicerGPURayCastVolumeTextureMapper3D::vtkSlicerGPURayCastVolumeTextureMapper3D()
 {
   this->Initialized          =  0;
-  this->RayCastInitialized       =  0;
-  this->Technique            =  0;//by default composit no shading
+  this->RayCastInitialized   =  0;
+  this->Technique            =  1;//by default composit with shading
   
   this->Clipping             =  0;
   this->ReloadShaderFlag     =  0;
