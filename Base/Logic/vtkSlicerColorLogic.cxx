@@ -332,7 +332,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
         vtkDebugMacro("Read and added file node: " <<  this->ColorFiles[i].c_str());
         }
 
-      delete colorNodeID;
+      delete [] colorNodeID;
       }
     else
       {
