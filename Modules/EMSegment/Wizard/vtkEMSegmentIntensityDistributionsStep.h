@@ -60,13 +60,13 @@ public:
   virtual void PopupManualIntensitySampleContextMenuCallback(
       int row, int col, int x, int y);
   virtual void DeleteManualIntensitySampleCallback(vtkIdType,
-      int sample_index);
+      int sampleIndex);
   virtual void DeleteAllManualIntensitySampleCallback(vtkIdType);
-
   virtual void IntensityDistributionTargetSelectionChangedCallback(
-      vtkIdType VolId);
+      vtkIdType volId);
   virtual void Gaussian2DVolumeXSelectionChangedCallback(vtkIdType
-      target_vol_id);
+      targetVolId);
+  virtual void Gaussian2DRenderingCallback(vtkIdType targetVolId, int type);
 
   // Description:
   // Observers
@@ -77,40 +77,21 @@ public:
 
   // Description:
   // Observers
-  virtual void AddPointMovingGUIEvents();
-  virtual void RemovePointMovingGUIEvents();
-  virtual void ProcessPointMovingGUIEvents(
-  vtkObject *caller, unsigned long event, void *callData);
-
-  // Description:
-  // Observers
-  virtual void AddPointAddGUIEvents();
-  virtual void RemovePointAddGUIEvents();
-  virtual void ProcessPointAddGUIEvents(
-  vtkObject *caller, unsigned long event, void *callData);
-
-  // Description:
-  // Observers
   virtual void AddGaussian2DButtonGUIEvents();
   virtual void RemoveGaussian2DButtonGUIEvents();
-  virtual void ProcessGaussian2DButtonGUIEvents(
-  vtkObject *caller, unsigned long event, void *callData);
+  virtual void ProcessGaussian2DButtonGUIEvents(vtkObject *caller,
+      unsigned long event, void *callData);
 
-  virtual void test();
+  int    NumberOfLeaves;
+  int    Depth;
+  double Size;
+  double ClassSize[400];
+  double ClassWeight[200];
 
-  double size;
-  int NumberOfLeaves;
-  int depth;
-
-  double classSize[400];
-  vtkIdType leafID[200];
-
-  vtkIdType classPercentOrder[200][200];
-  vtkIdType classPercentOrderCP[200][200];
-  double class_weight[200];
-  double class_size[400];
-
-  vtkIdType correspondanceArray[2][200];
+  vtkIdType LeafId[200];
+  vtkIdType ClassPercentOrder[200][200];
+  vtkIdType ClassPercentOrderCP[200][200];
+  vtkIdType CorrespondenceArray[2][200];
 
   virtual void   GetNumberOfLeaf(const char*, vtkIdType);
 

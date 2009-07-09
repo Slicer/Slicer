@@ -7,7 +7,7 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkEMSegmentNodeParametersStep.cxx,v$
+  Module:    $RCSfile: vtkEMSegmentNodeParametersStep.h,v$
   Date:      $Date: 2009/06/23 10:30:00$
   Version:   $Revision: 0.0$
   Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
