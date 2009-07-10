@@ -567,7 +567,7 @@ void vtkSlicerDataGUI::RemoveGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkSlicerDataGUI::AddGUIObservers ( )
 {
-  if (! this->Built )
+  if ( this->Built )
     {
     return;
     }
@@ -1299,8 +1299,8 @@ void vtkSlicerDataGUI::Enter ( )
   if ( this->Built == false )
     {
     this->BuildGUI();
-    this->Built = true;
     this->AddGUIObservers();
+    this->Built = true;
     this->AddObserver ( vtkSlicerModuleGUI::ModuleSelectedEvent, (vtkCommand *)this->ApplicationGUI->GetGUICallbackCommand() );
 
     // temporary for the load interface.
@@ -1378,7 +1378,7 @@ void vtkSlicerDataGUI::BuildGUI ( )
     return;
     }
   win->SetStatusText ( "Building Interface for Data Module...." );
-  app->Script ( "update idletasks" );
+  //app->Script ( "update idletasks" );
 
     // ---
     // MODULE GUI FRAME 
