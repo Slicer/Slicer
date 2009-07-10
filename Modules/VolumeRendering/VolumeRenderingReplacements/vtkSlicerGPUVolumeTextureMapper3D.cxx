@@ -671,6 +671,12 @@ vtkSlicerGPUVolumeTextureMapper3D::~vtkSlicerGPUVolumeTextureMapper3D()
         
     if (this->GradientsArgs)
         delete this->GradientsArgs;
+
+    if (this->Threader)
+      {
+      this->Threader->Delete();
+      this->Threader = NULL;
+      }
 }
 
 
