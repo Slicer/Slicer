@@ -154,14 +154,15 @@ class CurveAnalysisBase(object):
     # ------------------------------
     # Fit curve
 
-    def GetFitCurve(self, x, y):
+    def GetFitCurve(self, x):
         if self.FunctionVectorInput == 0:
             lst = range(len(x))
+            f = x.copy()
             for i in lst:
-                y[i] = self.Function(x[i], self.Parameter)
-            self.ConcentToSignal(y)
+                f[i] = self.Function(x[i], self.Parameter)
+            return self.ConcentToSignal(f)
         else:
-            self.ConcentToSignal(self.Function(x, self.Parameter), y)
+            return self.ConcentToSignal(self.Function(x, self.Parameter))
 
     # ------------------------------
     # Execute optimization
@@ -293,7 +294,7 @@ class CurveAnalysisExecuter(object):
         # Run optimization
 
         fitting.Execute()
-        fitting.GetFitCurve(outputCurve[:, 0], outputCurve[:,1])
+        outputCurve[:,1] = fitting.GetFitCurve(outputCurve[:, 0])
         
         result = fitting.GetOutputParam()
 
@@ -339,7 +340,7 @@ class CurveAnalysisExecuter(object):
         # Run optimization
 
         fitting.Execute()
-        fitting.GetFitCurve(outputCurve[:, 0], outputCurve[:,1])
+        outputCurve[:,1] = fitting.GetFitCurve(outputCurve[:, 0])
         
         rdict = {}
         rdict['result']      = fitting.GetOutputParam()
