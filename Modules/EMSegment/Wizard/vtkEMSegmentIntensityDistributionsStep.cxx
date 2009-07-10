@@ -569,42 +569,8 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     this->IntensityDistributionHistogramButton->GetWidgetName());
 
   this->PopulateIntensityDistributionTargetVolumeSelector();
-/*
-  if (!this->IntensityDistributionHistogramHistogram)
-    {
-    this->IntensityDistributionHistogramHistogram = vtkKWHistogram::New();
-    this->IntensityDistributionHistogramHistogramVisualization =
-      vtkKWColorTransferFunctionEditor::New();
-    this->IntensityDistributionHistogramHistogramFunc =
-      vtkColorTransferFunction::New();
-    }
 
-   if (!this->IntensityDistributionHistogramHistogramVisualization->
-       IsCreated())
-    {
-    this->IntensityDistributionHistogramHistogramVisualization->SetParent(
-        gaussianPage);
-    this->IntensityDistributionHistogramHistogramVisualization->Create();
-    this->IntensityDistributionHistogramHistogramVisualization->
-      SetBorderWidth(2);
-    this->IntensityDistributionHistogramHistogramVisualization->
-      SetReliefToGroove();
-    this->IntensityDistributionHistogramHistogramVisualization->SetPadX(2);
-    this->IntensityDistributionHistogramHistogramVisualization->SetPadY(2);
-    this->IntensityDistributionHistogramHistogramVisualization->
-      SetPointPositionInValueRangeToTop();
-    this->IntensityDistributionHistogramHistogramVisualization->
-      PointGuidelineVisibilityOn();
-    this->IntensityDistributionHistogramHistogramVisualization->
-      SetLabelPositionToTop();
-    }
-
-    this->Script(
-    "pack %s -side top -anchor nw -fill both -padx 2 -pady 2 -pady 2",
-    this->IntensityDistributionHistogramHistogramVisualization->
-    GetWidgetName());
-*/
-    vtkEMSegmentMRMLManager *mrmlManager0 = this->GetGUI()->GetMRMLManager();
+  vtkEMSegmentMRMLManager *mrmlManager0 = this->GetGUI()->GetMRMLManager();
     this->IntensityDistributionHistogramButton->SetEnabled(
     mrmlManager0->GetVolumeNumberOfChoices() ? parent->GetEnabled() : 0);
 
@@ -799,19 +765,19 @@ IntensityDistributionTargetSelectionChangedCallback(vtkIdType targetVolId)
     " INTENSITY DISTRIBUTION TARGET SELECTION CHANGED CALLBACK"<<std::endl;
   std::cout<<"target vol id: "<< targetVolId <<std::endl;
   EMS_DEBUG_MACRO("target vol id: ");
-
+/*
   vtkDataArray* array = this->GetGUI()->GetMRMLManager()->GetVolumeNode(
       targetVolId)->GetImageData()->GetPointData()->GetScalars();
-  this->IntensityDistributionHistogramHistogram->BuildHistogram(array,0);
+  //this->IntensityDistributionHistogramHistogram->BuildHistogram(array,0);
 
-  this->IntensityDistributionHistogramHistogramVisualization->SetHistogram(
-      this->IntensityDistributionHistogramHistogram);
+  //this->IntensityDistributionHistogramHistogramVisualization->SetHistogram(
+    //  this->IntensityDistributionHistogramHistogram);
 
   double range[2];
-  this->IntensityDistributionHistogramHistogram->GetRange(range);
+  //this->IntensityDistributionHistogramHistogram->GetRange(range);
 
-  int size = this->IntensityDistributionHistogramHistogramVisualization->
-    GetFunctionSize();
+  //int size = this->IntensityDistributionHistogramHistogramVisualization->
+    //GetFunctionSize();
 
   this->IntensityDistributionHistogramHistogramVisualization->
     SetDisableAddAndRemove(0);
@@ -846,6 +812,7 @@ this->IntensityDistributionHistogramHistogramVisualization->ParameterRangeVisibi
 
 this->IntensityDistributionHistogramHistogramVisualization->ExpandCanvasWidthOn();
 this->IntensityDistributionHistogramHistogramVisualization->SetCanvasHeight(180);
+*/
 }
 
 //----------------------------------------------------------------------------
@@ -1623,8 +1590,8 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessGaussian2DButtonGUIEvents(
                       mrmlManager->GetTreeNodeName(this->
                         ClassPercentOrder[0][k])) == 0)
                 {
-                  this->ClassWeight[positionF] =
-                    this->ClassWeight[positionF] + this->GetWeight(z);
+                  //this->ClassWeight[positionF] =
+                  //this->ClassWeight[positionF] + this->GetWeight(z);
                   //remplace 1 by NB_PIX_[Z]
                   std::cout<<"CLASS WEIGHT : "<< this->ClassWeight[positionF]
                     <<std::endl;
@@ -1726,10 +1693,10 @@ double vtkEMSegmentIntensityDistributionsStep::GetWeight(int z)
   int start = (int)(this->ClassSize[z*2  ] + 0.5) + 1;
   int stop  = (int)(this->ClassSize[z*2+1] + 0.5);
 
-  for(int l = start; l < stop; l++)
+  for(int i = start; i < stop; i++)
   {
-    sum += this->IntensityDistributionHistogramHistogram->
-      GetOccurenceAtValue(l);
+    //sum += this->IntensityDistributionHistogramHistogram->
+      //GetOccurenceAtValue(i);
   }
 
   return sum;

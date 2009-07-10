@@ -118,11 +118,10 @@ protected:
 
   vtkKWMenuButtonWithLabel  *IntensityDistributionHistogramButton;
   vtkKWFrameWithLabel       *IntensityDistributionHistogramFrame;
-  vtkKWHistogram            *IntensityDistributionHistogramHistogram;
-  vtkColorTransferFunction  *IntensityDistributionHistogramHistogramFunc;
-
-  vtkKWColorTransferFunctionEditor
-    *IntensityDistributionHistogramHistogramVisualization;
+  //vtkKWHistogram            *IntensityDistributionHistogramHistogram;
+  //vtkColorTransferFunction  *IntensityDistributionHistogramHistogramFunc;
+  //vtkKWColorTransferFunctionEditor
+    //*IntensityDistributionHistogramHistogramVisualization;
 
   vtkGaussian2DWidget       *Gaussian2DWidget;
   vtkKWEntryWithLabel       *NumClassesEntryLabel;
