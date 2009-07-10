@@ -119,6 +119,7 @@ class VTK_FourDImage_EXPORT vtkFourDImageGUI : public vtkSlicerModuleGUI
   //----------------------------------------------------------------
 
   virtual void BuildGUI ( );
+  virtual void TearDownGUI ( );
   void BuildGUIForHelpFrame();
   void BuildGUIForLoadFrame(int show);
   void BuildGUIForActiveBundleSelectorFrame();

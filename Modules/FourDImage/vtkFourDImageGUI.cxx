@@ -120,6 +120,10 @@ vtkFourDImageGUI::vtkFourDImageGUI ( )
   this->ImportFrameNodeButton    = NULL;
 
 
+  this->WindowLevelRange = NULL;
+  this->ThresholdRange = NULL;
+  this->Icons = NULL;
+
   //----------------------------------------------------------------
   // Time
   this->TimerFlag = 0;
@@ -136,11 +140,6 @@ vtkFourDImageGUI::~vtkFourDImageGUI ( )
     {
     this->DataCallbackCommand->Delete();
     }
-
-  //----------------------------------------------------------------
-  // Remove Observers
-
-  this->RemoveGUIObservers();
 
   //----------------------------------------------------------------
   // Remove GUI widgets
@@ -292,6 +291,14 @@ vtkFourDImageGUI::~vtkFourDImageGUI ( )
 
 }
 
+//---------------------------------------------------------------------------
+void vtkFourDImageGUI::TearDownGUI()
+{
+  //----------------------------------------------------------------
+  // Remove Observers
+  
+  this->RemoveGUIObservers();
+}
 
 //---------------------------------------------------------------------------
 void vtkFourDImageGUI::Init()
@@ -956,8 +963,6 @@ void vtkFourDImageGUI::ProcessGUIEvents(vtkObject *caller,
     vtkMRMLTimeSeriesBundleNode *bundleNode = 
       vtkMRMLTimeSeriesBundleNode::SafeDownCast(this->ActiveTimeSeriesBundleSelectorWidget->GetSelected());
 
-    int numFrames = bundleNode->GetNumberOfFrames();
-
     // Adjust the range
     if (min < 0)
       {
@@ -1157,7 +1162,7 @@ void vtkFourDImageGUI::BuildGUI ( )
 //---------------------------------------------------------------------------
 void vtkFourDImageGUI::BuildGUIForActiveBundleSelectorFrame ()
 {
-  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+//  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   vtkKWWidget *page = this->UIPanel->GetPageWidget ("FourDImage");
 
   //  Volume to select
