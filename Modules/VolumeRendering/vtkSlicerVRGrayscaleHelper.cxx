@@ -1730,7 +1730,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->MB_GPURayCastInternalVolumeSize->SetLabelText("GPU Memory Size");
         this->MB_GPURayCastInternalVolumeSize->Create();
         this->MB_GPURayCastInternalVolumeSize->SetLabelWidth(labelWidth);
-        this->MB_GPURayCastInternalVolumeSize->SetBalloonHelpString("Specify size of your video card memory. This effects size of internal texture storage. Do not select memory size larger than physical GPU memory.");
+        this->MB_GPURayCastInternalVolumeSize->SetBalloonHelpString("Specify size of your GPU memory. Generally the larger GPU memory the better rendering quality. Do not select memory size larger than physical GPU memory size.");
         this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->AddRadioButton("128M");
         this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastInternalVolumeSize 0");
         this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->AddRadioButton("256M");
