@@ -260,6 +260,7 @@ vtkMeasurementsGUI::~vtkMeasurementsGUI()
     this->AngleWidget->Delete();
     this->AngleWidget = NULL;
     }
+#endif
   if (this->TransformRepresentation)
     {
     this->TransformRepresentation->Delete();
@@ -271,7 +272,6 @@ vtkMeasurementsGUI::~vtkMeasurementsGUI()
     this->TransformWidget->Delete();
     this->TransformWidget = NULL;
     }
-#endif
   if (this->RulerCheckButton)
     {
     this->RulerCheckButton->SetParent(NULL);
