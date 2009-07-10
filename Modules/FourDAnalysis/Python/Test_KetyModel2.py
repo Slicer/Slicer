@@ -29,10 +29,10 @@ inputParamDict = {}
 
 caexec = fda.CurveAnalysisExecuter(Path)
 
-# for single process
+# Single process
 result = caexec.Execute(inputCurveDict, initialParamDict, inputParamDict, targetCurve, outputCurve)
 
-## for multi processing
+## multiprocess
 #q = Queue()
 #
 #dict = {}

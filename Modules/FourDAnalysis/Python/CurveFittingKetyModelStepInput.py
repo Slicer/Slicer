@@ -48,8 +48,7 @@ class CurveFittingKetyModelStepInput(CurveAnalysisBase):
         self.InitialParameter   = [0.1, 0.1, 1.0, 0.0] 
         self.ConstantNameList = ['Duration']
         self.Constant         = [1.0]
-        self.FunctionVectorInput = 0
-
+        self.FunctionVectorInput = 1
 
     # ------------------------------
     # Convert signal intensity curve to concentration curve

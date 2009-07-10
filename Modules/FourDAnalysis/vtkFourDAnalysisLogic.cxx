@@ -686,7 +686,6 @@ void vtkFourDAnalysisLogic::GenerateParameterMap(vtkCurveAnalysisPythonInterface
           double xy[2];
           xy[0] = imageTimeStampVector[t];//(double) t + start;
           xy[1] = imageVector[t]->GetScalarComponentAsDouble(i, j, k, 0);
-          std::cerr << "t = " << t << " xy[0] = " << xy[0] << ", xy[1] = " << xy[1] << std::endl;
           srcCurve->SetTuple(t, xy);
           fittedCurve->InsertNextTuple(xy);
           }

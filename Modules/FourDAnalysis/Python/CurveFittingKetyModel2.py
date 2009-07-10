@@ -45,6 +45,7 @@ class CurveFittingKetyModel2(CurveAnalysisBase):
         self.ParameterNameList  = ['Ktrans', 've']
         self.InitialParameter   = [0.1, 0.1] 
         self.InputCurveNameList = ['AIF']
+        self.FunctionVectorInput = 0
 
         # dummy 
         self.AifTime = r_[0:5]
@@ -83,14 +84,9 @@ class CurveFittingKetyModel2(CurveAnalysisBase):
     # Definition of the function
     def Function(self, x, param):
         Ktrans, ve = param
-        #lst = range(len(x))
-        #y = scipy.zeros(len(x))
-        #for i in lst:
-        #    xx = x[i]
-        #    s = quadrature(lambda t: self.Aif(t) * scipy.exp(-Ktrans*(xx-t)/ve), 0.0, xx, tol=1.0e-03, vec_func=False)
-        #    y[i] = Ktrans  * s[0]
 
-        s = quadrature(lambda t: self.Aif(t) * scipy.exp(-Ktrans*(x-t)/ve), 0.0, x, tol=1.0e-03, vec_func=False)
+        #s = quadrature(lambda t: self.Aif(t) * scipy.exp(-Ktrans*(x-t)/ve), 0.0, x, tol=1.0e-03, vec_func=False)
+        s = fixed_quad(lambda t: self.Aif(t) * scipy.exp(-Ktrans*(x-t)/ve), 0.0, x, n=5)
         y = Ktrans * s[0]
         return y
 

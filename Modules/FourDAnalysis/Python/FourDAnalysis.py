@@ -73,7 +73,7 @@ class CurveAnalysisBase(object):
 
     def ResidualError(self, param, y, x):
         lst = range(len(x))
-        f = scipy.zeros(len(x))
+        f = self.REBUF
         for i in lst:
             f[i] = self.Function(x[i], param)
         return (y - f)
@@ -154,14 +154,14 @@ class CurveAnalysisBase(object):
     # ------------------------------
     # Fit curve
 
-    def GetFitCurve(self, x):
-        #return self.ConcentToSignal(self.Function(x, self.Parameter))
-        lst = range(len(x))
-        f = scipy.zeros(len(x))
-        for i in lst:
-            f[i] = self.Function(x[i], self.Parameter)
-        return self.ConcentToSignal(f)
-
+    def GetFitCurve(self, x, y):
+        if self.FunctionVectorInput == 0:
+            lst = range(len(x))
+            for i in lst:
+                y[i] = self.Function(x[i], self.Parameter)
+            self.ConcentToSignal(y)
+        else:
+            self.ConcentToSignal(self.Function(x, self.Parameter), y)
 
     # ------------------------------
     # Execute optimization
@@ -172,12 +172,13 @@ class CurveAnalysisBase(object):
         y_meas = self.SignalToConcent(self.TargetCurve[:, 1])
 
         param0 = self.InitialParameter
-        #self.REBUF = scipy.zeros(len(x))  # to reduce number of memory allocations
 
         if self.FunctionVectorInput == 0:
+            self.REBUF  = scipy.zeros(len(x))   # to reduce number of memory allocations
             param_output = scipy.optimize.leastsq(self.ResidualError, param0, args=(y_meas, x),full_output=False,ftol=1e-04,xtol=1.49012e-04)
         else:
             param_output = scipy.optimize.leastsq(self.ResidualErrorVec, param0, args=(y_meas, x),full_output=False,ftol=1e-04,xtol=1.49012e-04)
+
         self.Parameter       = param_output[0] # fitted parameters
         self.CovarianceMatrix = param_output[1] # covariant matrix
 
@@ -292,10 +293,7 @@ class CurveAnalysisExecuter(object):
         # Run optimization
 
         fitting.Execute()
-        x = outputCurve[:, 0]
-        y = fitting.GetFitCurve(x)
-        
-        outputCurve[:, 1] = y
+        fitting.GetFitCurve(outputCurve[:, 0], outputCurve[:,1])
         
         result = fitting.GetOutputParam()
 
@@ -303,7 +301,7 @@ class CurveAnalysisExecuter(object):
 
 
     # ------------------------------
-    # Call curve fitting class
+    # Call curve fitting class / for mulitprocess
     def ExecuteWithQueue(self, q):
 
         dict = q.get()
@@ -341,10 +339,7 @@ class CurveAnalysisExecuter(object):
         # Run optimization
 
         fitting.Execute()
-        x = outputCurve[:, 0]
-        y = fitting.GetFitCurve(x)
-        
-        outputCurve[:, 1] = y
+        fitting.GetFitCurve(outputCurve[:, 0], outputCurve[:,1])
         
         rdict = {}
         rdict['result']      = fitting.GetOutputParam()
