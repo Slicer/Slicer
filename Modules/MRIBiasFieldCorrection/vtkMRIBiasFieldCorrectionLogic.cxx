@@ -225,10 +225,8 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
   maskshrinker->SetInput( maskImage );
   maskshrinker->SetShrinkFactors( 1 );
 
-  shrinker->SetShrinkFactors( this->MRIBiasFieldCorrectionNode->
-    GetShrink());
-  maskshrinker->SetShrinkFactors( this->MRIBiasFieldCorrectionNode->
-    GetShrink());
+  shrinker->SetShrinkFactors( (unsigned int)round(this->MRIBiasFieldCorrectionNode->GetShrink()));
+  maskshrinker->SetShrinkFactors( (unsigned int)round(this->MRIBiasFieldCorrectionNode->GetShrink()));
 
   shrinker->Update();
   shrinker->UpdateLargestPossibleRegion();
@@ -243,10 +241,10 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
   correcter->SetMaskImage( maskshrinker->GetOutput() );
 
   correcter->SetMaximumNumberOfIterations(
-    this->MRIBiasFieldCorrectionNode->GetMax() );
+              (unsigned int)round(this->MRIBiasFieldCorrectionNode->GetMax()));
 
   correcter->SetNumberOfFittingLevels(
-    this->MRIBiasFieldCorrectionNode->GetNum());
+              (unsigned int)round(this->MRIBiasFieldCorrectionNode->GetNum()));
 
   correcter->SetWeinerFilterNoise(this->MRIBiasFieldCorrectionNode->
     GetWien());
@@ -413,7 +411,7 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
   double size2 = 0;
   double xyPt[4];
   double ijkPt[3];
-  double begin[2];
+  int begin[2];
 
   xyPt[1] = round(dim1/2);
   xyPt[2] = 0;
@@ -491,12 +489,12 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
 
   xyToijk->MultiplyPoint(xyPt,ijkPt3);
 
-  size[0] = sqrt((ijkPt1[0]-ijkPt3[0])*(ijkPt1[0]-ijkPt3[0]));
-  size[1] = sqrt((ijkPt2[0]-ijkPt3[0])*(ijkPt2[0]-ijkPt3[0]));
-  size[2] = sqrt((ijkPt1[1]-ijkPt3[1])*(ijkPt1[1]-ijkPt3[1]));
-  size[3] = sqrt((ijkPt2[1]-ijkPt3[1])*(ijkPt2[1]-ijkPt3[1]));
-  size[4] = sqrt((ijkPt1[2]-ijkPt3[2])*(ijkPt1[2]-ijkPt3[2]));
-  size[5] = sqrt((ijkPt2[2]-ijkPt3[2])*(ijkPt2[2]-ijkPt3[2]));
+  size[0] = (int)round(sqrt((ijkPt1[0]-ijkPt3[0])*(ijkPt1[0]-ijkPt3[0])));
+  size[1] = (int)round(sqrt((ijkPt2[0]-ijkPt3[0])*(ijkPt2[0]-ijkPt3[0])));
+  size[2] = (int)round(sqrt((ijkPt1[1]-ijkPt3[1])*(ijkPt1[1]-ijkPt3[1])));
+  size[3] = (int)round(sqrt((ijkPt2[1]-ijkPt3[1])*(ijkPt2[1]-ijkPt3[1])));
+  size[4] = (int)round(sqrt((ijkPt1[2]-ijkPt3[2])*(ijkPt1[2]-ijkPt3[2])));
+  size[5] = (int)round(sqrt((ijkPt2[2]-ijkPt3[2])*(ijkPt2[2]-ijkPt3[2])));
 
   int compt = 0;
   int pos[2];
@@ -644,11 +642,11 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
         {
         outStorage->SetComponent(i*(size[0])+j,0,
             inVolume->GetImageData()->GetScalarComponentAsDouble(
-              originIJK[0]-j,originIJK[1]-i,originIJK[2],0));
+              (int)round(originIJK[0]-j),(int)round(originIJK[1]-i),(int)round(originIJK[2]),0));
 
         outMask->SetComponent(i*(size[0])+j,0,
             maskVolume->GetImageData()->GetScalarComponentAsDouble(
-              originIJK[0]-j,originIJK[1]-i,originIJK[2],0));
+              (int)round(originIJK[0]-j),(int)round(originIJK[1]-i),(int)round(originIJK[2]),0));
         }
       }
     }
@@ -661,11 +659,11 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
         {
         outStorage->SetComponent(i*(size[0])+j,0,
           inVolume->GetImageData()->GetScalarComponentAsDouble(
-            originIJK[0]-j,originIJK[1]+i,originIJK[2],0));
+            (int)round(originIJK[0]-j),(int)round(originIJK[1]+i),(int)round(originIJK[2]),0));
 
         outMask->SetComponent(i*(size[0])+j,0,
             maskVolume->GetImageData()->GetScalarComponentAsDouble(
-              originIJK[0]-j,originIJK[1]+i,originIJK[2],0));
+              (int)round(originIJK[0]-j),(int)round(originIJK[1]+i),(int)round(originIJK[2]),0));
         }
       }
     }
@@ -678,11 +676,11 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
         {
         outStorage->SetComponent(i*(size[0])+j,0,
           inVolume->GetImageData()->GetScalarComponentAsDouble(
-            originIJK[0]+j,originIJK[1]-i,originIJK[2],0));
+            (int)round(originIJK[0]+j),(int)round(originIJK[1]-i),(int)round(originIJK[2]),0));
 
         outMask->SetComponent(i*(size[0])+j,0,
           maskVolume->GetImageData()->GetScalarComponentAsDouble(
-            originIJK[0]+j,originIJK[1]-i,originIJK[2],0));
+            (int)round(originIJK[0]+j),(int)round(originIJK[1]-i),(int)round(originIJK[2]),0));
         }
       }
     }
@@ -695,11 +693,11 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
         {
         outStorage->SetComponent(i*(size[0])+j,0,
           inVolume->GetImageData()->GetScalarComponentAsDouble(
-            originIJK[0]+j,originIJK[1]+i,originIJK[2],0));
+            (int)round(originIJK[0]+j),(int)round(originIJK[1]+i),(int)round(originIJK[2]),0));
 
         outMask->SetComponent(i*(size[0])+j,0,
           maskVolume->GetImageData()->GetScalarComponentAsDouble(
-            originIJK[0]+j,originIJK[1]+i,originIJK[2],0));
+                                                                 (int)round(originIJK[0]+j),(int)round(originIJK[1]+i),(int)round(originIJK[2]),0));
         }
       }
     }
@@ -714,12 +712,12 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
         for (int i=0;i<size[1];i++)
           {
           outStorage->SetComponent(i*(size[0])+j,0,inVolume->
-            GetImageData()->GetScalarComponentAsDouble(originIJK[0],
-              originIJK[1]-j,originIJK[2]-i,0));
+              GetImageData()->GetScalarComponentAsDouble((int)round(originIJK[0]),
+              (int)round(originIJK[1]-j),(int)round(originIJK[2]-i),0));
 
           outMask->SetComponent(i*(size[0])+j,0,maskVolume->
-            GetImageData()->GetScalarComponentAsDouble(originIJK[0],
-              originIJK[1]-j,originIJK[2]-i,0));
+              GetImageData()->GetScalarComponentAsDouble((int)round(originIJK[0]),
+              (int)round(originIJK[1]-j),(int)round(originIJK[2]-i),0));
           }
         }
       }
@@ -732,11 +730,11 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
           {
           outStorage->SetComponent(i*(size[0])+j,0,
             inVolume->GetImageData()->GetScalarComponentAsDouble(
-              originIJK[0],originIJK[1]-j,originIJK[2]+i,0));
+              (int)round(originIJK[0]),(int)round(originIJK[1]-j),(int)round(originIJK[2]+i),0));
 
           outMask->SetComponent(i*(size[0])+j,0,
             maskVolume->GetImageData()->GetScalarComponentAsDouble(
-              originIJK[0],originIJK[1]-j,originIJK[2]+i,0));
+              (int)round(originIJK[0]),(int)round(originIJK[1]-j),(int)round(originIJK[2]+i),0));
           }
         }
       }
@@ -749,11 +747,11 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
           {
           outStorage->SetComponent(i*(size[0])+j,0,
             inVolume->GetImageData()->GetScalarComponentAsDouble(
-              originIJK[0],originIJK[1]+j,originIJK[2]-i,0));
+              (int)round(originIJK[0]),(int)round(originIJK[1]+j),(int)round(originIJK[2]-i),0));
 
           outMask->SetComponent(i*(size[0])+j,0,
             maskVolume->GetImageData()->GetScalarComponentAsDouble(
-              originIJK[0],originIJK[1]+j,originIJK[2]-i,0));
+              (int)round(originIJK[0]),(int)round(originIJK[1]+j),(int)round(originIJK[2]-i),0));
           }
         }
       }
@@ -766,11 +764,11 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
         {
         outStorage->SetComponent(i*(size[0])+j,0,
           inVolume->GetImageData()->GetScalarComponentAsDouble(
-            originIJK[0],originIJK[1]+j,originIJK[2]+i,0));
+            (int)round(originIJK[0]),(int)round(originIJK[1]+j),(int)round(originIJK[2]+i),0));
 
         outMask->SetComponent(i*(size[0])+j,0,
           maskVolume->GetImageData()->GetScalarComponentAsDouble(
-            originIJK[0],originIJK[1]+j,originIJK[2]+i,0));
+            (int)round(originIJK[0]),(int)round(originIJK[1]+j),(int)round(originIJK[2]+i),0));
         }
       }
     }
@@ -786,11 +784,11 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
           {
           outStorage->SetComponent(i*(size[0])+j,0,
             inVolume->GetImageData()->GetScalarComponentAsDouble(
-              originIJK[0]-j,originIJK[1],originIJK[2]-i,0));
+              (int)round(originIJK[0]-j),(int)round(originIJK[1]),(int)round(originIJK[2]-i),0));
 
           outMask->SetComponent(i*(size[0])+j,0,
             maskVolume->GetImageData()->GetScalarComponentAsDouble(
-              originIJK[0]-j,originIJK[1],originIJK[2]-i,0));
+              (int)round(originIJK[0]-j),(int)round(originIJK[1]),(int)round(originIJK[2]-i),0));
           }
         }
       }
@@ -804,11 +802,11 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
           {
           outStorage->SetComponent(i*(size[0])+j,0,
             inVolume->GetImageData()->GetScalarComponentAsDouble(
-              originIJK[0]-j,originIJK[1],originIJK[2]+i,0));
+              (int)round(originIJK[0]-j),(int)round(originIJK[1]),(int)round(originIJK[2]+i),0));
 
           outMask->SetComponent(i*(size[0])+j,0,
             maskVolume->GetImageData()->GetScalarComponentAsDouble(
-              originIJK[0]-j,originIJK[1],originIJK[2]+i,0));
+              (int)round(originIJK[0]-j),(int)round(originIJK[1]),(int)round(originIJK[2]+i),0));
           }
         }
       }
@@ -821,11 +819,11 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
           {
           outStorage->SetComponent(i*(size[0])+j,0,
             inVolume->GetImageData()->GetScalarComponentAsDouble(
-              originIJK[0]+j,originIJK[1],originIJK[2]-i,0));
+              (int)round(originIJK[0]+j),(int)round(originIJK[1]),(int)round(originIJK[2]-i),0));
 
           outMask->SetComponent(i*(size[0])+j,0,
             maskVolume->GetImageData()->GetScalarComponentAsDouble(
-              originIJK[0]+j,originIJK[1],originIJK[2]-i,0));
+              (int)round(originIJK[0]+j),(int)round(originIJK[1]),(int)round(originIJK[2]-i),0));
           }
         }
       }
@@ -836,8 +834,8 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
         {
         for (int i=0;i<size[1];i++)
           {
-            outStorage->SetComponent(i*(size[0])+j,0,inVolume->GetImageData()->GetScalarComponentAsDouble(originIJK[0]+j,originIJK[1],originIJK[2]+i,0));
-            outMask->SetComponent(i*(size[0])+j,0,maskVolume->GetImageData()->GetScalarComponentAsDouble(originIJK[0]+j,originIJK[1],originIJK[2]+i,0));
+            outStorage->SetComponent(i*(size[0])+j,0,inVolume->GetImageData()->GetScalarComponentAsDouble((int)round(originIJK[0]+j),(int)round(originIJK[1]),(int)round(originIJK[2]+i),0));
+            outMask->SetComponent(i*(size[0])+j,0,maskVolume->GetImageData()->GetScalarComponentAsDouble((int)round(originIJK[0]+j),(int)round(originIJK[1]),(int)round(originIJK[2]+i),0));
           }}}
     }
 
@@ -916,8 +914,8 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
   maskshrinker->SetInput( maskImage );
   maskshrinker->SetShrinkFactors( 1 );
 
-  shrinker->SetShrinkFactors( this->MRIBiasFieldCorrectionNode->GetShrink());
-  maskshrinker->SetShrinkFactors(this->MRIBiasFieldCorrectionNode->GetShrink());
+  shrinker->SetShrinkFactors( (unsigned int)round(this->MRIBiasFieldCorrectionNode->GetShrink()));
+  maskshrinker->SetShrinkFactors((unsigned int)round(this->MRIBiasFieldCorrectionNode->GetShrink()));
 
 
   shrinker->Update();
@@ -931,9 +929,9 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
   correcter->SetInput( shrinker->GetOutput() );
   correcter->SetMaskImage( maskshrinker->GetOutput() );
 
-  correcter->SetMaximumNumberOfIterations( this->MRIBiasFieldCorrectionNode->GetMax() );
+  correcter->SetMaximumNumberOfIterations( (unsigned int)round(this->MRIBiasFieldCorrectionNode->GetMax()) );
 
-  correcter->SetNumberOfFittingLevels(this->MRIBiasFieldCorrectionNode->GetNum());
+  correcter->SetNumberOfFittingLevels((unsigned int)round(this->MRIBiasFieldCorrectionNode->GetNum()));
 
   correcter->SetWeinerFilterNoise(this->MRIBiasFieldCorrectionNode->GetWien());
 
@@ -1017,7 +1015,7 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
         for (int i=0;i<size[1];i++)
         {
           this->PREVIEW->SetScalarComponentFromDouble(
-            originIJK[0]-j-1, originIJK[1]-i, originIJK[2], 0,
+            (int)round(originIJK[0]-j-1), (int)round(originIJK[1]-i), (int)round(originIJK[2]), 0,
             outStorage2->GetComponent( i*(size[0])+j, 1 ) );
         }
       }
@@ -1030,7 +1028,7 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
         for (int i=0;i<size[1];i++)
         {
           this->PREVIEW->SetScalarComponentFromDouble(
-            originIJK[0]-j-1, originIJK[1]+i, originIJK[2], 0,
+            (int)round(originIJK[0]-j-1), (int)round(originIJK[1]+i), (int)round(originIJK[2]), 0,
             outStorage2->GetComponent(i*(size[0])+j,1));
         }
       }
@@ -1043,7 +1041,7 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
         for (int i=0;i<size[1];i++)
         {
           this->PREVIEW->SetScalarComponentFromDouble(
-            originIJK[0]+j+1, originIJK[1]-i, originIJK[2], 0,
+            (int)round(originIJK[0]+j+1), (int)round(originIJK[1]-i), (int)round(originIJK[2]), 0,
             outStorage2->GetComponent( i*(size[0])+j, 1 ) );
         }
       }
@@ -1056,7 +1054,7 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
         for (int i=0;i<size[1];i++)
         {
           this->PREVIEW->SetScalarComponentFromDouble(
-            originIJK[0]+j+1, originIJK[1]+i, originIJK[2], 0,
+            (int)round(originIJK[0]+j+1), (int)round(originIJK[1]+i), (int)round(originIJK[2]), 0,
             outStorage2->GetComponent( i*(size[0])+j, 1 ) );
         }
       }
@@ -1072,7 +1070,7 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
         for (int i=0;i<size[1];i++)
         {
           this->PREVIEW->SetScalarComponentFromDouble(
-            originIJK[0],originIJK[1]-j-1,originIJK[2]-i,0,
+             (int)round(originIJK[0]),(int)round(originIJK[1]-j-1),(int)round(originIJK[2]-i),0,
              outStorage2->GetComponent(i*(size[0])+j,1));
         }
       }
@@ -1083,7 +1081,7 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
       for (int j=0;j<size[0];j++)
         for (int i=0;i<size[1];i++)
           this->PREVIEW->SetScalarComponentFromDouble(
-              originIJK[0], originIJK[1]-j-1, originIJK[2]+i, 0,
+              (int)round(originIJK[0]), (int)round(originIJK[1]-j-1), (int)round(originIJK[2]+i), 0,
               outStorage2->GetComponent(i*(size[0])+j,1));
     }
 
@@ -1092,7 +1090,7 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
       for (int j=0;j<size[0];j++)
         for (int i=0;i<size[1];i++)
           this->PREVIEW->SetScalarComponentFromDouble(
-              originIJK[0], originIJK[1]+j, originIJK[2]-i, 0,
+              (int)round(originIJK[0]), (int)round(originIJK[1]+j), (int)round(originIJK[2]-i), 0,
               outStorage2->GetComponent(i*(size[0])+j,1));
     }
 
@@ -1101,7 +1099,7 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
       for (int j=0;j<size[0];j++)
         for (int i=0;i<size[1];i++)
           this->PREVIEW->SetScalarComponentFromDouble(
-            originIJK[0], originIJK[1]+j+1, originIJK[2]+i, 0,
+            (int)round(originIJK[0]), (int)round(originIJK[1]+j+1), (int)round(originIJK[2]+i), 0,
             outStorage2->GetComponent(i*(size[0])+j,1));
     }
   }
@@ -1113,7 +1111,7 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
       for (int j=0;j<size[0];j++)
         for (int i=0;i<size[1];i++)
           this->PREVIEW->SetScalarComponentFromDouble(
-              originIJK[0]-j,originIJK[1],originIJK[2]-i,0,
+              (int)round(originIJK[0]-j),(int)round(originIJK[1]),(int)round(originIJK[2]-i),0,
               outStorage2->GetComponent(i*(size[0])+j,1));
     }
 
@@ -1122,7 +1120,7 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
       for (int j=0;j<size[0];j++)
         for (int i=0;i<size[1];i++)
           this->PREVIEW->SetScalarComponentFromDouble(
-              originIJK[0]-j,originIJK[1],originIJK[2]+i,0,
+              (int)round(originIJK[0]-j),(int)round(originIJK[1]),(int)round(originIJK[2]+i),0,
               outStorage2->GetComponent(i*(size[0])+j,1));
     }
 
@@ -1130,7 +1128,7 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
       for (int j=0;j<size[0];j++)
         for (int i=0;i<size[1];i++)
           this->PREVIEW->SetScalarComponentFromDouble(
-              originIJK[0]+j,originIJK[1],originIJK[2]-i,0,
+              (int)round(originIJK[0]+j),(int)round(originIJK[1]),(int)round(originIJK[2]-i),0,
               outStorage2->GetComponent(i*(size[0])+j,1));
     }
 
@@ -1139,7 +1137,7 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
       for (int j=0;j<size[0];j++)
         for (int i=0;i<size[1];i++)
           this->PREVIEW->SetScalarComponentFromDouble(
-              originIJK[0]+j+1,originIJK[1],originIJK[2]+i,0,
+             (int)round(originIJK[0]+j+1),(int)round(originIJK[1]),(int)round(originIJK[2]+i),0,
               outStorage2->GetComponent(i*(size[0])+j,1));
     }
   }
@@ -1209,7 +1207,7 @@ int vtkMRIBiasFieldCorrectionLogic::InitMaxThreshold()
   double maxmin[2];
   inVolume->GetImageData()->GetScalarRange(maxmin);
 
-  return maxmin[1];
+  return (int)round(maxmin[1]);
 }
 
 //-------------------------------------------------------------------
@@ -1223,7 +1221,7 @@ int vtkMRIBiasFieldCorrectionLogic::InitMinThreshold()
   double maxmin[2];
   inVolume->GetImageData()->GetScalarRange(maxmin);
 
-  return maxmin[0];
+  return (int)round(maxmin[0]);
 }
 
 //-------------------------------------------------------------------
@@ -1237,7 +1235,7 @@ int vtkMRIBiasFieldCorrectionLogic::AxialMin()
   double bounds[6];
   inVolume->GetImageData()->GetBounds(bounds);
 
-  return bounds[0];
+  return (int)round(bounds[0]);
 }
 
 //-------------------------------------------------------------------
@@ -1251,7 +1249,7 @@ int vtkMRIBiasFieldCorrectionLogic::AxialMax()
   double bounds[6];
   inVolume->GetImageData()->GetBounds(bounds);
 
-  return bounds[1];
+  return (int)round(bounds[1]);
 }
 
 //-------------------------------------------------------------------
@@ -1265,7 +1263,7 @@ int vtkMRIBiasFieldCorrectionLogic::SagittalMax()
   double bounds[6];
   inVolume->GetImageData()->GetBounds(bounds);
 
-  return bounds[3];
+  return (int)round(bounds[3]);
 }
 
 //-------------------------------------------------------------------
@@ -1279,6 +1277,6 @@ int vtkMRIBiasFieldCorrectionLogic::CoronalMax()
   double bounds[6];
   inVolume->GetImageData()->GetBounds(bounds);
 
-  return bounds[5];
+  return (int)round(bounds[5]);
 }
 
