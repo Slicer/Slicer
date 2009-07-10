@@ -424,11 +424,11 @@ vtkSlicerFixedPointVolumeRayCastMapper::vtkSlicerFixedPointVolumeRayCastMapper()
 
     this->RenderWindow           = NULL;
 
-    this->MIPHelper              = vtkSlicerFixedPointVolumeRayCastMIPHelper::New();
-    this->CompositeHelper        = vtkSlicerFixedPointVolumeRayCastCompositeHelper::New();
-    this->CompositeGOHelper      = vtkSlicerFixedPointVolumeRayCastCompositeGOHelper::New();
-    this->CompositeShadeHelper   = vtkSlicerFixedPointVolumeRayCastCompositeShadeHelper::New();
-    this->CompositeGOShadeHelper = vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper::New();
+    this->MIPHelper              = NULL;
+    this->CompositeHelper        = NULL;
+    this->CompositeGOHelper      = NULL;
+    this->CompositeShadeHelper   = NULL;
+    this->CompositeGOShadeHelper = NULL;
 
     this->IntermixIntersectingGeometry = 1;
 
@@ -516,11 +516,31 @@ vtkSlicerFixedPointVolumeRayCastMapper::~vtkSlicerFixedPointVolumeRayCastMapper(
 
     this->Threader->Delete();
 
-    this->MIPHelper->Delete();
-    this->CompositeHelper->Delete();
-    this->CompositeGOHelper->Delete();
-    this->CompositeShadeHelper->Delete();
-    this->CompositeGOShadeHelper->Delete();
+    if (this->MIPHelper)
+      {
+      this->MIPHelper->Delete();
+      this->MIPHelper = NULL;
+      }
+    if (this->CompositeHelper)
+      {
+      this->CompositeHelper->Delete();
+      this->CompositeHelper = NULL;
+      }
+    if ( this->CompositeGOHelper)
+      {
+      this->CompositeGOHelper->Delete();
+      this->CompositeGOHelper = NULL;
+      }
+    if (this->CompositeShadeHelper)
+      {
+      this->CompositeShadeHelper->Delete();
+      this->CompositeShadeHelper = NULL;
+      }
+    if (this->CompositeGOShadeHelper)
+      {
+      this->CompositeGOShadeHelper->Delete();
+      this->CompositeGOShadeHelper = NULL;
+      }
 
     if ( this->RayCastImage )
     {
@@ -1401,31 +1421,51 @@ VTK_THREAD_RETURN_TYPE SlicerFixedPointVolumeRayCastMapper_CastRays( void *arg )
 
     vtkVolume *vol = me->GetVolume();
     if ( me->GetBlendMode() == vtkVolumeMapper::MAXIMUM_INTENSITY_BLEND )
-    {
+      {
+      if  (me->GetMIPHelper() == NULL)
+        {
+        me->MIPHelper = vtkSlicerFixedPointVolumeRayCastMIPHelper::New();
+        }        
         me->GetMIPHelper()->GenerateImage( threadID, threadCount, vol, me );
     }
     else
     {
         if ( me->GetShadingRequired() == 0 )
-        {
-            if ( me->GetGradientOpacityRequired() == 0 )
+          {
+          if ( me->GetGradientOpacityRequired() == 0 )
             {
-                me->GetCompositeHelper()->GenerateImage( threadID, threadCount, vol, me );
+            if (me->GetCompositeHelper() == NULL)
+              {
+              me->CompositeHelper = vtkSlicerFixedPointVolumeRayCastCompositeHelper::New();
+              }
+            me->GetCompositeHelper()->GenerateImage( threadID, threadCount, vol, me );
             }
-            else
+          else
             {
-                me->GetCompositeGOHelper()->GenerateImage( threadID, threadCount, vol, me );
+            if (me->GetCompositeGOHelper() == NULL)
+              {
+              me->CompositeGOHelper = vtkSlicerFixedPointVolumeRayCastCompositeGOHelper::New();
+              }
+            me->GetCompositeGOHelper()->GenerateImage( threadID, threadCount, vol, me );
             }
         }
         else
-        {
-            if ( me->GetGradientOpacityRequired() == 0 )
+          {
+          if ( me->GetGradientOpacityRequired() == 0 )
             {
-                me->GetCompositeShadeHelper()->GenerateImage( threadID, threadCount, vol, me );
+            if (me->GetCompositeShadeHelper() == NULL)
+              {
+              me->CompositeShadeHelper = vtkSlicerFixedPointVolumeRayCastCompositeShadeHelper::New();
+              }
+            me->GetCompositeShadeHelper()->GenerateImage( threadID, threadCount, vol, me );
             }
-            else
+          else
             {
-                me->GetCompositeGOShadeHelper()->GenerateImage( threadID, threadCount, vol, me );
+            if (me->GetCompositeGOShadeHelper() == NULL)
+              {
+              me->CompositeGOShadeHelper = vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper::New();
+              }
+            me->GetCompositeGOShadeHelper()->GenerateImage( threadID, threadCount, vol, me );
             }
         }
     }
@@ -3066,13 +3106,56 @@ void vtkSlicerFixedPointVolumeRayCastMapper::PrintSelf(ostream& os, vtkIndent in
 
     os << indent << "RenderWindow: " << this->RenderWindow << endl;
 
-    os << indent << "CompositeHelper: " << this->CompositeHelper << endl;
-    os << indent << "CompositeShadeHelper: " << this->CompositeShadeHelper
-        << endl;
-    os << indent << "CompositeGOHelper: " << this->CompositeGOHelper << endl;
-    os << indent << "CompositeGOShadeHelper: " << this->CompositeGOShadeHelper
-        << endl;
-    os << indent << "MIPHelper: " << this->MIPHelper << endl;
+    os << indent << "CompositeHelper: ";
+    if (this->CompositeHelper != NULL)
+      {
+      os << endl;
+      this->CompositeHelper->PrintSelf(os, indent.GetNextIndent());
+      }
+    else
+      {
+      os << "NULL" << endl;
+      }
+    os << indent << "CompositeShadeHelper: ";
+    if (this->CompositeShadeHelper != NULL)
+      {
+      os << endl;
+      this->CompositeShadeHelper->PrintSelf(os, indent.GetNextIndent());
+      }
+    else
+      {
+      os << "NULL" << endl;
+      }
+    os << indent << "CompositeGOHelper: ";
+    if (this->CompositeGOHelper != NULL)
+      {
+      os << endl;
+      this->CompositeGOHelper->PrintSelf(os, indent.GetNextIndent());
+      }
+    else
+      {
+      os << "NULL" << endl;
+      }
+    os << indent << "CompositeGOShadeHelper: ";
+    if (this->CompositeGOShadeHelper != NULL)
+      {
+      os << endl;
+      this->CompositeGOShadeHelper->PrintSelf(os, indent.GetNextIndent());
+      }
+    else
+      {
+      os << "NULL" << endl;
+      }
+    os << indent << "MIPHelper: ";
+    if (this->MIPHelper != NULL)
+      {
+      os << endl;
+      this->MIPHelper->PrintSelf(os, indent.GetNextIndent());
+      }
+    else
+      {
+      os << "NULL" << endl;
+      }
 
     os << indent << "TableShift: " << this->TableShift[0] << " "
         << this->TableShift[1] << " " << this->TableShift[2] << " "
