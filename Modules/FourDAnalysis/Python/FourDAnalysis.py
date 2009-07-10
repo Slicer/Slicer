@@ -28,7 +28,6 @@ import imp
 import scipy.optimize 
 import numpy
 
-#import threading
 import time
 
 # ----------------------------------------------------------------------
@@ -54,33 +53,8 @@ class CurveAnalysisBase(object):
 
     CovarianceMatrix      = []
 
-    #ThreadList           = []
-    #
-    #class ResidualErrorThread( threading.Thread ):
-    #    def __init__ (self, obj):
-    #        multiprocessing.Process.__init__(self)
-    #        self.Obj       = obj
-    #
-    #    def SetRange(self, lst):
-    #        self.IndexList = lst
-    #
-    #    def SetParameters(self, param, x, y, re):
-    #        self.Param     = param
-    #        self.X         = x
-    #        self.Y         = y
-    #        self.ResBuf    = re
-    #
-    #    def run (self):
-    #        obj   = self.Obj
-    #        param = self.Param
-    #        x     = self.X
-    #        y     = self.Y
-    #        lst   = self.IndexList
-    #        f     = self.ResBuf
-    #        
-    #        for i in lst:
-    #            f[i] =  y[i] - obj.Function(x[i], param)
-                
+    FunctionVectorInput   = 0
+
     #def __init__(self):
         ## ParameterNameList and Initial Param should be set here
         
@@ -90,9 +64,12 @@ class CurveAnalysisBase(object):
     def Function(self, x, param):
         return 0
 
-    #def ResidualError(self, param, y, x):
-    #    err = y - (self.Function(x, param))
-    #    return err
+
+    def CalcOutputParamDict(self, param):
+        return {}
+
+    # ------------------------------
+    # Generic residual error fucntion
 
     def ResidualError(self, param, y, x):
         lst = range(len(x))
@@ -101,41 +78,12 @@ class CurveAnalysisBase(object):
             f[i] = self.Function(x[i], param)
         return (y - f)
 
-    #def SetupThreads(self, length):
-    #    self.ThreadList = []
-    #    self.nThreads = 1
-    #    nfrac = length / self.nThreads
-    #    if length % self.nThreads > 0:
-    #        nfrac = nfrac + 1
-    #
-    #    b = 0
-    #    for i in range(self.nThreads):
-    #        e = b+nfrac
-    #        if e >= length:
-    #            e = length
-    #        th = self.ResidualErrorThread(self)
-    #        th.SetRange(range(b, e))
-    #        self.ThreadList.append(th)
-    #        b = b+nfrac
-    #
-    #def ResidualErrorMT(self, param, y, x):
-    #
-    #    re  = numpy.zeros(len(x))
-    #    thlist = self.ThreadList
-    #    
-    #    for th in thlist:
-    #        th.__init__(self)
-    #        th.SetParameters(param, x, y, re)
-    #        th.start()
-    #
-    #    for th in thlist:
-    #        th.join()
-    #
-    #    return re
+    # ------------------------------
+    # Residual error for functions that accept vector
 
-
-    def CalcOutputParamDict(self, param):
-        return {}
+    def ResidualErrorVec(self, param, y, x):
+        err = y - (self.Function(x, param))
+        return err
 
     # ------------------------------
     # Convert signal intensity curve to concentration curve
@@ -226,9 +174,10 @@ class CurveAnalysisBase(object):
         param0 = self.InitialParameter
         #self.REBUF = scipy.zeros(len(x))  # to reduce number of memory allocations
 
-        #self.SetupThreads(len(x))
-
-        param_output = scipy.optimize.leastsq(self.ResidualError, param0, args=(y_meas, x),full_output=False,ftol=1e-04,xtol=1.49012e-04)
+        if self.FunctionVectorInput == 0:
+            param_output = scipy.optimize.leastsq(self.ResidualError, param0, args=(y_meas, x),full_output=False,ftol=1e-04,xtol=1.49012e-04)
+        else:
+            param_output = scipy.optimize.leastsq(self.ResidualErrorVec, param0, args=(y_meas, x),full_output=False,ftol=1e-04,xtol=1.49012e-04)
         self.Parameter       = param_output[0] # fitted parameters
         self.CovarianceMatrix = param_output[1] # covariant matrix
 
@@ -313,13 +262,13 @@ class CurveAnalysisExecuter(object):
 
     # ------------------------------
     # Call curve fitting class
-    def Execute(self, inputCurvesDict, initialParameterDict, inputParamDict, targetCurve, outputCurve):
+    def Execute(self, inputCurveDict, initialParameterDict, inputParameterDict, targetCurve, outputCurve):
 
         exec('fitting = self.Module.' + self.ModuleName + '()')
 
         # ------------------------------
         # Set Curves
-        for name, curve in inputCurvesDict.iteritems():
+        for name, curve in inputCurveDict.iteritems():
             fitting.SetInputCurve(name, curve)
 
         fitting.SetTargetCurve(targetCurve)
@@ -336,7 +285,7 @@ class CurveAnalysisExecuter(object):
 
         # ------------------------------
         # Set constants
-        for name, param, in inputParamDict.iteritems():
+        for name, param, in inputParameterDict.iteritems():
             fitting.SetConstant(name, param)
 
         # ------------------------------
@@ -351,3 +300,54 @@ class CurveAnalysisExecuter(object):
         result = fitting.GetOutputParam()
 
         return result
+
+
+    # ------------------------------
+    # Call curve fitting class
+    def ExecuteWithQueue(self, q):
+
+        dict = q.get()
+        inputCurveDict       = dict['inputCurveDict']
+        initialParameterDict = dict['initialParameterDict']
+        inputParameterDict   = dict['inputParameterDict']
+        targetCurve          = dict['targetCurve']
+        outputCurve          = dict['outputCurve']
+
+        exec('fitting = self.Module.' + self.ModuleName + '()')
+
+        # ------------------------------
+        # Set Curves
+        for name, curve in inputCurveDict.iteritems():
+            fitting.SetInputCurve(name, curve)
+
+        fitting.SetTargetCurve(targetCurve)
+
+        # ------------------------------
+        # Set initial optimization parameters
+        nameList = fitting.GetParameterNameList()
+        n = len(nameList)
+        paramList = numpy.zeros(n)
+        for i in range(n):
+            paramList[i] = initialParameterDict[nameList[i]]
+
+        fitting.SetInitialParameter(paramList)
+
+        # ------------------------------
+        # Set constants
+        for name, param, in inputParameterDict.iteritems():
+            fitting.SetConstant(name, param)
+
+        # ------------------------------
+        # Run optimization
+
+        fitting.Execute()
+        x = outputCurve[:, 0]
+        y = fitting.GetFitCurve(x)
+        
+        outputCurve[:, 1] = y
+        
+        rdict = {}
+        rdict['result']      = fitting.GetOutputParam()
+        rdict['outputCurve'] = outputCurve 
+
+        q.put(rdict)

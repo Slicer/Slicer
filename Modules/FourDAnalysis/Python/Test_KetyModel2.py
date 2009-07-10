@@ -1,6 +1,8 @@
-#! /opt/local/bin/python2.6
-####! /Users/junichi/igtdev/slicer/Slicer3-lib/python-build/bin/python2.5
+#! /Users/junichi/igtdev/slicer/Slicer3-lib/python-build/bin/python2.5
+###! /opt/local/bin/python2.6
 
+
+#from multiprocessing import Queue, Process, Manager
 import sys
 import scipy, scipy.optimize, scipy.io, numpy
 import re
@@ -26,12 +28,37 @@ inputCurveDict = {'AIF': aifCurve}
 inputParamDict = {}
 
 caexec = fda.CurveAnalysisExecuter(Path)
+
+# for single process
 result = caexec.Execute(inputCurveDict, initialParamDict, inputParamDict, targetCurve, outputCurve)
+
+## for multi processing
+#q = Queue()
+#
+#dict = {}
+#dict['inputCurveDict']   = inputCurveDict
+#dict['initialParameterDict'] = initialParamDict
+#dict['inputParameterDict']   = inputParamDict
+#dict['targetCurve']          = targetCurve
+#dict['outputCurve']          = outputCurve
+#
+#q.put(dict)
+#
+#p = Process(target = caexec.ExecuteWithQueue, args=(q,))
+#
+#p.start()
+#
+#p.join()
+#
+#rdict       = q.get()
+#result      = rdict['result']
+#outputCurve = rdict['outputCurve']
 
 scipy.io.write_array(OutputCsvFile, outputCurve, separator=',')
 
 for i, v, in result.iteritems():
     sys.stderr.write(' %5s     : %f\n'  % (i, v) )
+
 
 
 

@@ -54,24 +54,6 @@
 
 #include <cmath>
 
-#ifdef Slicer3_USE_PYTHON
-//// If debug, Python wants pythonxx_d.lib, so fake it out
-//#ifdef _DEBUG
-//#undef _DEBUG
-//#include <Python.h>
-//#define _DEBUG
-//#else
-#include <Python.h>
-//#endif
-
-//extern "C" {
-//  void init_mytkinter( Tcl_Interp* );
-//  void init_slicer(void );
-//}
-//#include "vtkTclUtil.h"
-//
-#endif
-
 vtkCxxRevisionMacro(vtkFourDAnalysisLogic, "$Revision: 3633 $");
 vtkStandardNewMacro(vtkFourDAnalysisLogic);
 
@@ -432,13 +414,6 @@ void vtkFourDAnalysisLogic::GenerateParameterMapMT(const char* scriptFile,
 
   int smin = range[sindex][0];
   int smax = range[sindex][1];
-
-#ifdef Slicer3_USE_PYTHON
-  if (!PyEval_ThreadsInitialized())
-    {
-    PyEval_InitThreads();
-    }
-#endif 
 
   vtkMutexLock* mutex = vtkMutexLock::New();
 
