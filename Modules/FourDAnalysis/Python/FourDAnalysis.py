@@ -28,6 +28,9 @@ import imp
 import scipy.optimize 
 import numpy
 
+#import threading
+import time
+
 # ----------------------------------------------------------------------
 # Base class for curve fitting algorithm classes
 # ----------------------------------------------------------------------
@@ -51,8 +54,35 @@ class CurveAnalysisBase(object):
 
     CovarianceMatrix      = []
 
+    #ThreadList           = []
+    #
+    #class ResidualErrorThread( threading.Thread ):
+    #    def __init__ (self, obj):
+    #        multiprocessing.Process.__init__(self)
+    #        self.Obj       = obj
+    #
+    #    def SetRange(self, lst):
+    #        self.IndexList = lst
+    #
+    #    def SetParameters(self, param, x, y, re):
+    #        self.Param     = param
+    #        self.X         = x
+    #        self.Y         = y
+    #        self.ResBuf    = re
+    #
+    #    def run (self):
+    #        obj   = self.Obj
+    #        param = self.Param
+    #        x     = self.X
+    #        y     = self.Y
+    #        lst   = self.IndexList
+    #        f     = self.ResBuf
+    #        
+    #        for i in lst:
+    #            f[i] =  y[i] - obj.Function(x[i], param)
+                
     #def __init__(self):
-    #    ## ParameterNameList and Initial Param should be set here
+        ## ParameterNameList and Initial Param should be set here
         
     def Initialize(self):
         return 0
@@ -60,9 +90,49 @@ class CurveAnalysisBase(object):
     def Function(self, x, param):
         return 0
 
+    #def ResidualError(self, param, y, x):
+    #    err = y - (self.Function(x, param))
+    #    return err
+
     def ResidualError(self, param, y, x):
-        err = y - (self.Function(x, param))
-        return err
+        lst = range(len(x))
+        f = scipy.zeros(len(x))
+        for i in lst:
+            f[i] = self.Function(x[i], param)
+        return (y - f)
+
+    #def SetupThreads(self, length):
+    #    self.ThreadList = []
+    #    self.nThreads = 1
+    #    nfrac = length / self.nThreads
+    #    if length % self.nThreads > 0:
+    #        nfrac = nfrac + 1
+    #
+    #    b = 0
+    #    for i in range(self.nThreads):
+    #        e = b+nfrac
+    #        if e >= length:
+    #            e = length
+    #        th = self.ResidualErrorThread(self)
+    #        th.SetRange(range(b, e))
+    #        self.ThreadList.append(th)
+    #        b = b+nfrac
+    #
+    #def ResidualErrorMT(self, param, y, x):
+    #
+    #    re  = numpy.zeros(len(x))
+    #    thlist = self.ThreadList
+    #    
+    #    for th in thlist:
+    #        th.__init__(self)
+    #        th.SetParameters(param, x, y, re)
+    #        th.start()
+    #
+    #    for th in thlist:
+    #        th.join()
+    #
+    #    return re
+
 
     def CalcOutputParamDict(self, param):
         return {}
@@ -137,22 +207,31 @@ class CurveAnalysisBase(object):
     # Fit curve
 
     def GetFitCurve(self, x):
-        return self.ConcentToSignal(self.Function(x, self.Parameter))
+        #return self.ConcentToSignal(self.Function(x, self.Parameter))
+        lst = range(len(x))
+        f = scipy.zeros(len(x))
+        for i in lst:
+            f[i] = self.Function(x[i], self.Parameter)
+        return self.ConcentToSignal(f)
+
 
     # ------------------------------
     # Execute optimization
 
     def Execute(self):
-
+        
         x      = self.TargetCurve[:, 0]
         y_meas = self.SignalToConcent(self.TargetCurve[:, 1])
 
         param0 = self.InitialParameter
+        #self.REBUF = scipy.zeros(len(x))  # to reduce number of memory allocations
+
+        #self.SetupThreads(len(x))
 
         param_output = scipy.optimize.leastsq(self.ResidualError, param0, args=(y_meas, x),full_output=False,ftol=1e-04,xtol=1.49012e-04)
         self.Parameter       = param_output[0] # fitted parameters
         self.CovarianceMatrix = param_output[1] # covariant matrix
-        
+
         return 1        ## should return 0 if optimization fails
 
 
