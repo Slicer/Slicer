@@ -123,7 +123,7 @@ vtkEMSegmentIntensityDistributionsStep()
 
   this->IntensityDistributionHistogramFrame                  = NULL;
   this->IntensityDistributionHistogramButton                 = NULL;
-  this->IntensityDistributionHistogramHistogram              = NULL;
+  //this->IntensityDistributionHistogramHistogram              = NULL;
 
   this->Gaussian2DWidget                                     = NULL;
   this->NumClassesEntryLabel                                 = NULL;
@@ -131,7 +131,7 @@ vtkEMSegmentIntensityDistributionsStep()
   this->Gaussian2DButton                                     = NULL;
   this->Gaussian2DRenderingMenuButton                        = NULL;
 
-  this->IntensityDistributionHistogramHistogramVisualization = NULL;
+  //this->IntensityDistributionHistogramHistogramVisualization = NULL;
   EMS_DEBUG_MACRO("constructor end");
 }
 
@@ -157,19 +157,18 @@ vtkEMSegmentIntensityDistributionsStep::
     this->NumClassesEntryLabel->Delete();
     this->NumClassesEntryLabel = NULL;
     }
-
+/*
   if (this->IntensityDistributionHistogramHistogramVisualization)
     {
     this->IntensityDistributionHistogramHistogramVisualization->Delete();
     this->IntensityDistributionHistogramHistogramVisualization = NULL;
     }
-
   if (this->IntensityDistributionHistogramHistogram)
     {
     this->IntensityDistributionHistogramHistogram->Delete();
     this->IntensityDistributionHistogramHistogram = NULL;
     }
-
+*/
   if (this->IntensityDistributionHistogramButton)
     {
     this->IntensityDistributionHistogramButton->Delete();
