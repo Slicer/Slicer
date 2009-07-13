@@ -71,7 +71,7 @@ subdirs(
    Measurements
    ModelIntoLabelVolume
    ExtractSubvolume
-#   FastMarchingSegmentation
+   FastMarchingSegmentation
    FourDImage
 #   FourDAnalysis
    ExtractSubvolumeROI
