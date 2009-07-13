@@ -186,7 +186,7 @@ vtkMimxMeshActor::vtkMimxMeshActor()
   this->PointSetOfNodeSet = NULL;
   this->InvertCuttingPlane = 0;
   this->MeshType = 0;
-  this->ColorRangeType == vtkMimxMeshActor::BlueToRed;
+  this->ColorRangeType = vtkMimxMeshActor::BlueToRed;
 }
 
 //----------------------------------------------------------------------------------------
