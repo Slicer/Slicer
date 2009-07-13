@@ -29,10 +29,15 @@ proc FastMarchingSegmentationTearDownGUI {this} {
     $::FastMarchingSegmentation($this,$w) Delete
   }
 
-  $::FastMarchingSegmentation($this,cast) Delete
-  $::FastMarchingSegmentation($this,rescale) Delete
-  $::FastMarchingSegmentation($this,fastMarchingFilter) Delete
+  set filters {
+    cast rescale fastMarchingFilter threshold
+  }
 
+  foreach f $filters {
+    $::FastMarchingSegmentation($this,$f) Delete
+  }
+
+  # volume rendering
   catch {$::FastMarchingSegmentation($this,renderMapper) Delete}
   catch {$::FastMarchingSegmentation($this,renderVolumeProperty) Delete}
   catch {$::FastMarchingSegmentation($this,renderVolume) Delete}
@@ -267,11 +272,12 @@ proc FastMarchingSegmentationBuildGUI {this} {
   set renderColorMapping $::FastMarchingSegmentation($this,renderColorMapping)
   set renderVolumeProperty $::FastMarchingSegmentation($this,renderVolumeProperty)
   set renderVolume $::FastMarchingSegmentation($this,renderVolume)
-  puts "Before initialization"
+  
   # Fast marching filters
   set ::FastMarchingSegmentation($this,cast) [vtkImageCast New]
   set ::FastMarchingSegmentation($this,rescale) [vtkImageShiftScale New]
   set ::FastMarchingSegmentation($this,fastMarchingFilter) [vtkPichonFastMarching New]
+  set ::FastMarchingSegmentation($this,threshold) [vtkImageThreshold New]
 }
 
 proc FastMarchingSegmentationAddGUIObservers {this} {
@@ -323,9 +329,20 @@ proc FastMarchingSegmentationProcessGUIEvents {this caller event} {
       return
     }
 
+    FastMarchingSegmentationPrepareInput $this
+    puts "Input prepared"
+
+    FastMarchingSegmentationCreateLabelVolume $this
+    puts "Output prepared"
+
     FastMarchingSegmentationInitializeFilter $this
+    puts "FM filter initialized"
 
     FastMarchingSegmentationExpand $this
+    puts "FM expansion completed"
+
+    
+    
     $::FastMarchingSegmentation($this,timeScrollScale) EnabledOn
     set timescroll $::FastMarchingSegmentation($this,timeScrollScale)
     set tsRange $::FastMarchingSegmentation($this,timescrollRange)
@@ -426,7 +443,6 @@ proc FastMarchingSegmentationProcessGUIEvents {this caller event} {
     if {$event == 10001} {
       set viewerWidget [ [$this GetApplicationGUI] GetViewerWidget ]
       $viewerWidget RequestRender
-      FastMarchingSegmentationDeepCopyResult $this
     }
   } 
 
@@ -560,136 +576,6 @@ proc FastMarchingSegmentationProgressEventCallback {filter} {
     $progressGauge SetValue [expr 100 * [$filter GetProgress]]
   }
   update
-}
-
-proc FastMarchingSegmentationApply {this} {
-
-  if { ![info exists ::FastMarchingSegmentation($this,processing)] } { 
-    set ::FastMarchingSegmentation($this,processing) 0
-  }
-
-  if { $::FastMarchingSegmentation($this,processing) } {
-    return
-  }
-
-  set volumeNode [$::FastMarchingSegmentation($this,volumesSelect) GetSelected]
-  set ijkToRAS [vtkMatrix4x4 New]
-  $volumeNode GetIJKToRASMatrix $ijkToRAS
-  set outVolumeNode [$::FastMarchingSegmentation($this,volumeOutputSelect) GetSelected]
-  set outModelNode [$::FastMarchingSegmentation($this,modelOutputSelect) GetSelected]
-  set value [$::FastMarchingSegmentation($this,thresholdSelect) GetValue]
-  set minFactor [$::FastMarchingSegmentation($this,minFactor) GetValue]
-  set cast $::FastMarchingSegmentation($this,cast)
-  set dt $::FastMarchingSegmentation($this,distanceTransform)
-  set resample $::FastMarchingSegmentation($this,resample)
-  set cubes $::FastMarchingSegmentation($this,marchingCubes)
-  set changeIn $::FastMarchingSegmentation($this,changeIn)
-  set changeOut $::FastMarchingSegmentation($this,changeOut)
-  set polyTransformFilter $::FastMarchingSegmentation($this,polyTransformFilter)
-  set polyTransform $::FastMarchingSegmentation($this,polyTransform)
-
-  #
-  # check that inputs are valid
-  #
-  set errorText ""
-  if { $volumeNode == "" || [$volumeNode GetImageData] == "" } {
-    set errorText "No input volume data..."
-  }
-  if { $outVolumeNode == "" } {
-    set errorText "No output volume node..."
-  }
-  if { $outModelNode == "" } {
-    set errorText "No output model node..."
-  }
-
-  if { $errorText != "" } {
-    set dialog [vtkKWMessageDialog New]
-    $dialog SetParent [$::slicer3::ApplicationGUI GetMainSlicerWindow]
-    $dialog SetMasterWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
-    $dialog SetStyleToMessage
-    $dialog SetText $errorText
-    $dialog Create
-    $dialog Invoke
-    $dialog Delete
-    return
-  }
-
-  set ::FastMarchingSegmentation($this,processing) 1
-
-  #
-  # configure the pipeline
-  #
-  $changeIn SetInput [$volumeNode GetImageData]
-  eval $changeIn SetOutputSpacing [$volumeNode GetSpacing]
-  $cast SetInput [$changeIn GetOutput]
-  $cast SetOutputScalarTypeToFloat
-  $dt SetInput [$cast GetOutput]
-  $dt SetSquaredDistance 0
-  $dt SetUseImageSpacing 1
-  $dt SetInsideIsPositive 0
-  $changeOut SetInput [$dt GetOutput]
-  $changeOut SetOutputSpacing 1 1 1
-  $resample SetInput [$dt GetOutput]
-  $resample SetAxisMagnificationFactor 0 $minFactor
-  $resample SetAxisMagnificationFactor 1 $minFactor
-  $resample SetAxisMagnificationFactor 2 $minFactor
-  $cubes SetInput [$resample GetOutput]
-  $cubes SetValue 0 $value
-  $polyTransformFilter SetInput [$cubes GetOutput]
-  $polyTransformFilter SetTransform $polyTransform
-  set magFactor [expr 1.0 / $minFactor]
-  $polyTransform Identity
-  $polyTransform Concatenate $ijkToRAS
-  foreach sp [$volumeNode GetSpacing] {
-    lappend invSpacing [expr 1. / $sp]
-  }
-  eval $polyTransform Scale $invSpacing
-
-  #
-  # set up progress observers
-  #
-  set observerRecords ""
-  set filters "$changeIn $resample $dt $changeOut $cubes"
-  foreach filter $filters {
-    set tag [$filter AddObserver ProgressEvent "FastMarchingSegmentationProgressEventCallback $filter"]
-    lappend observerRecords "$filter $tag"
-  }
-
-  #
-  # activate the pipeline
-  #
-  $polyTransformFilter Update
-
-  # remove progress observers
-  foreach record $observerRecords {
-    foreach {filter tag} $record {
-      $filter RemoveObserver $tag
-    }
-  }
-  FastMarchingSegmentationProgressEventCallback ""
-
-  #
-  # create a mrml model display node if needed
-  #
-  if { [$outModelNode GetDisplayNode] == "" } {
-    set modelDisplayNode [vtkMRMLModelDisplayNode New]
-    $outModelNode SetScene $::slicer3::MRMLScene
-    eval $modelDisplayNode SetColor .5 1 1
-    $::slicer3::MRMLScene AddNode $modelDisplayNode
-    $outModelNode SetAndObserveDisplayNodeID [$modelDisplayNode GetID]
-  }
-
-  #
-  # set the output into the MRML scene
-  #
-  $outModelNode SetAndObservePolyData [$polyTransformFilter GetOutput]
-
-  $outVolumeNode SetAndObserveImageData [$changeOut GetOutput]
-  $outVolumeNode SetIJKToRASMatrix $ijkToRAS
-  $ijkToRAS Delete
-
-
-  set ::FastMarchingSegmentation($this,processing) 0
 }
 
 proc FastMarchingSegmentationErrorDialog {this errorText} {
