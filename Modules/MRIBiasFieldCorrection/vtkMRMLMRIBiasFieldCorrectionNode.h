@@ -122,10 +122,11 @@ protected:
   char* StorageVolumeRef;
   char* MaskVolumeRef;
 
+  unsigned int NumberOfIterations;
+  unsigned int NumberOfFittingLevels;
+
   double MaskThreshold;
   double ShrinkFactor;
-  double NumberOfIterations;
-  double NumberOfFittingLevels;
   double WienerFilterNoise;
   double BiasField;
   double ConvergenceThreshold;
