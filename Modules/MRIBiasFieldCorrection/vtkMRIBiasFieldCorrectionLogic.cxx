@@ -29,34 +29,23 @@ Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 #include "vtkDataArray.h"
 #include "vtkObjectFactory.h"
 #include "vtkCellData.h"
-//#include "vtkPointData.h"
 #include "vtkGenericAttribute.h"
 
-////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------
 #include "vtkSlicerSliceControllerWidget.h"
 #include "vtkSlicerSlicesControlGUI.h"
 #include "vtkKWScale.h"
 
-////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------
 #include "itkImage.h"
-#include "itkCastImageFilter.h"
 #include "itkShrinkImageFilter.h"
-
-#include "itkN3MRIBiasFieldCorrectionImageFilter.h"
-#include "itkBSplineControlPointImageFilter.h"
-
-#include "itkBSplineControlPointImageFilter.h"
-//#include "itkExpImageFilter.h"
 #include "itkImageRegionIterator.h"
-
+#include "itkBSplineControlPointImageFilter.h"
+#include "itkN3MRIBiasFieldCorrectionImageFilter.h"
 #include "itkImageToVTKImageFilter.h"
 #include "itkVTKImageToImageFilter.h"
 
-////////////////////////////////////////////////////////
-
-#include "vtkSlicerSliceControllerWidget.h"
-#include "vtkSlicerSlicesControlGUI.h"
-#include "vtkKWScale.h"
+//----------------------------------------------------------------------------
 #include "vtkMRIBiasFieldCorrectionGUI.h"
 
 //----------------------------------------------------------------------------
@@ -70,6 +59,7 @@ vtkMRIBiasFieldCorrectionLogic* vtkMRIBiasFieldCorrectionLogic::New()
     {
     return (vtkMRIBiasFieldCorrectionLogic*)ret;
     }
+
   // If the factory was unable to create the object, then create it here.
   return new vtkMRIBiasFieldCorrectionLogic;
 }
@@ -125,12 +115,14 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
 
   if (numComponents != 1)
     {
-    vtkErrorMacro("Number of components " << numComponents <<
-        ". The Bias Field Correction only applies to 1-component images");
+    vtkErrorMacro("Input image voxels have " << numComponents << " components"
+        ". The Bias Field Correction algorithm only applies to 1-component "
+        << "images");
+    return;
     }
 
-  vtkMRMLScalarVolumeNode *outVolume = vtkMRMLScalarVolumeNode::
-    SafeDownCast( this->GetMRMLScene()->GetNodeByID( volumeId ) );
+  vtkMRMLScalarVolumeNode *outVolume = vtkMRMLScalarVolumeNode::SafeDownCast(
+      this->GetMRMLScene()->GetNodeByID( volumeId ) );
 
   if (outVolume == NULL)
     {
@@ -149,7 +141,7 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
 
   // copy RASToIJK matrix, and other attributes from input to output
   std::string name (outVolume->GetName());
-  std::string id (outVolume->GetID());
+  std::string id   (outVolume->GetID()  );
 
   outVolume->CopyOrientation(inVolume);
   outVolume->SetAndObserveTransformNodeID(inVolume->GetTransformNodeID());
@@ -222,25 +214,20 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
 
   unsigned int max = (unsigned int)this->MRIBiasFieldCorrectionNode->GetMax();
   unsigned int num = (unsigned int)this->MRIBiasFieldCorrectionNode->GetNum();
-  double wien = this->MRIBiasFieldCorrectionNode->GetWien();
-  double widthAtHalfMaximum = this->MRIBiasFieldCorrectionNode->GetField();
+
+  double wien                 = this->MRIBiasFieldCorrectionNode->GetWien();
+  double widthAtHalfMaximum   = this->MRIBiasFieldCorrectionNode->GetField();
   double convergenceThreshold = this->MRIBiasFieldCorrectionNode->GetCon();
 
   correcter->SetMaximumNumberOfIterations(max);
   correcter->SetNumberOfFittingLevels(num);
   correcter->SetWeinerFilterNoise(wien);
-
-  correcter->SetBiasFieldFullWidthAtHalfMaximum(
-      this->MRIBiasFieldCorrectionNode->GetField());
-
+  correcter->SetBiasFieldFullWidthAtHalfMaximum(widthAtHalfMaximum);
   correcter->SetConvergenceThreshold(convergenceThreshold);
   correcter->Update();
 
   typedef CorrecterType::BiasFieldControlPointLatticeType LatticeType;
   typedef CorrecterType::ScalarImageType                  ScalarType;
-
-  //std::cout << "LatticeType " << LatticeType << std::endl;
-  //std::cout << "ScalarType "  << ScalarType  << std::endl;
 
   typedef itk::BSplineControlPointImageFilter< LatticeType, ScalarType >
     BSplinerType;
