@@ -14,10 +14,6 @@ Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 
 ==============================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
-
 #include "vtkObjectFactory.h"
 
 #include "vtkMRIBiasFieldCorrectionLogic.h"
@@ -26,15 +22,14 @@ Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 #include "vtkMRMLScene.h"
 #include "vtkMRMLScalarVolumeNode.h"
 
-#include "vtkExtractVOI.h"
-#include "vtkImageThreshold.h"
 #include "vtkImageClip.h"
-#include "vtkImageReslice.h"
+#include "vtkImageCast.h"
+#include "vtkImageMathematics.h"
 
 #include "vtkDataArray.h"
 #include "vtkObjectFactory.h"
 #include "vtkCellData.h"
-#include "vtkPointData.h"
+//#include "vtkPointData.h"
 #include "vtkGenericAttribute.h"
 
 ////////////////////////////////////////////////////////
@@ -45,22 +40,18 @@ Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 ////////////////////////////////////////////////////////
 #include "itkImage.h"
 #include "itkCastImageFilter.h"
-#include "itkImageFileReader.h"
+#include "itkShrinkImageFilter.h"
 
 #include "itkN3MRIBiasFieldCorrectionImageFilter.h"
 #include "itkBSplineControlPointImageFilter.h"
 
-#include "itkBinaryThresholdImageFilter.h"
-
 #include "itkBSplineControlPointImageFilter.h"
-#include "itkExpImageFilter.h"
+//#include "itkExpImageFilter.h"
 #include "itkImageRegionIterator.h"
-#include "itkShrinkImageFilter.h"
 
 #include "itkImageToVTKImageFilter.h"
 #include "itkVTKImageToImageFilter.h"
 
-#include "vtkImageCast.h"
 ////////////////////////////////////////////////////////
 
 #include "vtkSlicerSliceControllerWidget.h"
@@ -68,9 +59,7 @@ Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 #include "vtkKWScale.h"
 #include "vtkMRIBiasFieldCorrectionGUI.h"
 
-///////////////////////////////////////////////////////
-
-
+//----------------------------------------------------------------------------
 vtkMRIBiasFieldCorrectionLogic* vtkMRIBiasFieldCorrectionLogic::New()
 {
   // First try to create the object from the vtkObjectFactory
@@ -85,67 +74,76 @@ vtkMRIBiasFieldCorrectionLogic* vtkMRIBiasFieldCorrectionLogic::New()
   return new vtkMRIBiasFieldCorrectionLogic;
 }
 
-//-------------------------------------------------------------------
+//----------------------------------------------------------------------------
 vtkMRIBiasFieldCorrectionLogic::vtkMRIBiasFieldCorrectionLogic()
 {
   this->MRIBiasFieldCorrectionNode = NULL;
 }
 
-//-------------------------------------------------------------------
+//----------------------------------------------------------------------------
 vtkMRIBiasFieldCorrectionLogic::~vtkMRIBiasFieldCorrectionLogic()
 {
   vtkSetMRMLNodeMacro(this->MRIBiasFieldCorrectionNode, NULL);
 }
 
-//-------------------------------------------------------------------
-void vtkMRIBiasFieldCorrectionLogic::PrintSelf(ostream& os, vtkIndent
-  indent)
+//----------------------------------------------------------------------------
+void vtkMRIBiasFieldCorrectionLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
 }
 
-//-------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkMRIBiasFieldCorrectionLogic::Apply()
 {
   // check if MRML node is present
   if (this->MRIBiasFieldCorrectionNode == NULL)
     {
-    vtkErrorMacro(
-      "No input GradientAnisotropicDiffusionFilterNode found");
+    vtkErrorMacro("No input");
     return;
     }
+
+  std::string volumeId = this->MRIBiasFieldCorrectionNode->
+    GetOutputVolumeRef();
+  std::string maskId   = this->MRIBiasFieldCorrectionNode->GetMaskVolumeRef();
 
   // find input volume
   vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::
-    SafeDownCast(this->GetMRMLScene()->GetNodeByID(
-    this->MRIBiasFieldCorrectionNode->GetInputVolumeRef()));
+    SafeDownCast( this->GetMRMLScene()->GetNodeByID( volumeId ) );
 
   if (inVolume == NULL)
     {
-    vtkErrorMacro("No input volume found");
+    vtkErrorMacro("No input volume");
     return;
     }
 
-  // find mask volume
-  vtkMRMLScalarVolumeNode *maskVolume = vtkMRMLScalarVolumeNode::
-    SafeDownCast(this->GetMRMLScene()->GetNodeByID(
-    this->MRIBiasFieldCorrectionNode->GetMaskVolumeRef()));
-
-  if (maskVolume == NULL)
+  if (inVolume->GetImageData() == NULL)
     {
-    vtkErrorMacro("No mask volume found with id= " <<
-      this->MRIBiasFieldCorrectionNode->GetMaskVolumeRef());
+    vtkErrorMacro("No input image data");
     return;
     }
 
-  // find output volume
+  int numComponents = inVolume->GetImageData()->GetNumberOfScalarComponents();
+
+  if (numComponents != 1)
+    {
+    vtkErrorMacro("Number of components " << numComponents <<
+        ". The Bias Field Correction only applies to 1-component images");
+    }
+
   vtkMRMLScalarVolumeNode *outVolume = vtkMRMLScalarVolumeNode::
-    SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->
-    MRIBiasFieldCorrectionNode->GetOutputVolumeRef()));
+    SafeDownCast( this->GetMRMLScene()->GetNodeByID( volumeId ) );
 
   if (outVolume == NULL)
     {
-    vtkErrorMacro("No output volume found with id= " <<
-      this->MRIBiasFieldCorrectionNode->GetOutputVolumeRef());
+    vtkErrorMacro("No output volume with id " << volumeId);
+    return;
+    }
+
+  vtkMRMLScalarVolumeNode *maskVolume = vtkMRMLScalarVolumeNode::
+    SafeDownCast( this->GetMRMLScene()->GetNodeByID( maskId ) );
+
+  if (maskVolume == NULL)
+    {
+    vtkErrorMacro("No mask volume with id " << maskId);
     return;
     }
 
@@ -154,79 +152,61 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
   std::string id (outVolume->GetID());
 
   outVolume->CopyOrientation(inVolume);
-  outVolume->SetAndObserveTransformNodeID(inVolume->
-    GetTransformNodeID());
-
+  outVolume->SetAndObserveTransformNodeID(inVolume->GetTransformNodeID());
   outVolume->SetName(name.c_str());
 
-  typedef itk::Image< float, 3 >        InputImageType;
-  typedef itk::Image< unsigned char, 3> MaskImageType;
-  typedef itk::Image< float, 3 >        OutputImageType;
-  typedef itk::Image< float, 3 >        InternalImageType;
+  vtkImageCast *imageCast = vtkImageCast::New();
+  imageCast->SetInput(inVolume->GetImageData());
+  imageCast->SetOutputScalarTypeToFloat();
+  imageCast->Update();
 
-  typedef itk::ImageFileReader< InputImageType > ReaderType;
+  vtkImageCast* maskCast = vtkImageCast::New();
+  maskCast->SetInput(maskVolume->GetImageData());
+  maskCast->SetOutputScalarTypeToFloat();
+  maskCast->Update();
 
-  ReaderType::Pointer reader = ReaderType::New();
-  // input volume conversion
-  vtkImageCast* imageCaster = vtkImageCast::New();
-  imageCaster->SetInput(inVolume->GetImageData());
-  imageCaster->SetOutputScalarTypeToFloat();
-  imageCaster->Modified();
-  imageCaster->Update();
+  typedef itk::Image< float,         3 > ImageType;
+  typedef itk::Image< unsigned char, 3 > MaskType;
 
-  typedef itk::VTKImageToImageFilter< InternalImageType >
+  typedef itk::VTKImageToImageFilter< ImageType > ITKConnectorType;
+  typedef itk::VTKImageToImageFilter< MaskType  > ITKMaskConnectorType;
 
-  VTK2ITKConnectorFilterType;
-  VTK2ITKConnectorFilterType::Pointer VTK2ITKconnector =
-    VTK2ITKConnectorFilterType::New();
-  VTK2ITKconnector->SetInput( imageCaster->GetOutput() );
-  VTK2ITKconnector->GetImporter()->Update();
-  VTK2ITKconnector->Update();
+  ITKConnectorType::Pointer itkImageConnector = ITKConnectorType::New();
+  itkImageConnector->SetInput(imageCast->GetOutput());
+  imageCast->Delete();
+  itkImageConnector->Update();
 
-  // mask volume conversion
-  vtkImageCast* imageCasterM = vtkImageCast::New();
-  imageCasterM->SetInput(maskVolume->GetImageData());
-  imageCasterM->SetOutputScalarTypeToFloat();
-  imageCasterM->Modified();
-  imageCasterM->Update();
+  ITKMaskConnectorType::Pointer itkMaskConnector = ITKMaskConnectorType::
+    New();
+  itkMaskConnector->SetInput( maskCast->GetOutput() );
+  maskCast->Delete();
+  itkMaskConnector->Update();
 
-  typedef itk::VTKImageToImageFilter< InternalImageType >
-    VTK2ITKConnectorFilterTypeM;
-  VTK2ITKConnectorFilterTypeM::Pointer VTK2ITKconnectorM =
-    VTK2ITKConnectorFilterTypeM::New();
-  VTK2ITKconnectorM->SetInput( imageCasterM->GetOutput() );
-  VTK2ITKconnectorM->GetImporter()->Update();
-  VTK2ITKconnectorM->Update();
+  typedef itk::ShrinkImageFilter< ImageType, ImageType > ShrinkerType;
+  typedef itk::ShrinkImageFilter< MaskType,  MaskType  > MaskShrinkType;
 
-  // processing
-  typedef itk::ShrinkImageFilter<InputImageType, InputImageType>
-    ShrinkerType;
   ShrinkerType::Pointer shrinker = ShrinkerType::New();
-  shrinker->SetInput( VTK2ITKconnector->GetOutput() );
-  shrinker->SetShrinkFactors( 1 );
+  shrinker->SetInput( itkImageConnector->GetOutput() );
 
-  typedef itk::BinaryThresholdImageFilter<InputImageType,
-    MaskImageType> mFilterType;
+  typedef itk::BinaryThresholdImageFilter< MaskType, MaskType >
+    binaryThresholdType;
 
-  mFilterType::Pointer mfilter = mFilterType::New();
-  mfilter->SetInput( VTK2ITKconnectorM->GetOutput() );
+  binaryThresholdType::Pointer binaryThresholdFilter =
+    binaryThresholdType::New();
+  binaryThresholdFilter->SetInput( itkMaskConnector->GetOutput() );
+  binaryThresholdFilter->SetLowerThreshold(1);
+  binaryThresholdFilter->SetOutsideValue(0);
+  binaryThresholdFilter->SetInsideValue(1);
+  binaryThresholdFilter->UpdateLargestPossibleRegion();
 
-  mfilter->SetLowerThreshold(1);
-  mfilter->SetOutsideValue(0);
-  mfilter->SetInsideValue(1);
-  mfilter->UpdateLargestPossibleRegion();
+  MaskShrinkType::Pointer maskshrinker = MaskShrinkType::New();
+  maskshrinker->SetInput(binaryThresholdFilter->GetOutput());
 
-  MaskImageType::Pointer maskImage = NULL;
+  unsigned int shrinkFactor = (unsigned int)this->MRIBiasFieldCorrectionNode->
+    GetShrink();
 
-  maskImage = mfilter->GetOutput();
-  typedef itk::ShrinkImageFilter<MaskImageType, MaskImageType>
-    MaskShrinkerType;
-  MaskShrinkerType::Pointer maskshrinker = MaskShrinkerType::New();
-  maskshrinker->SetInput( maskImage );
-  maskshrinker->SetShrinkFactors( 1 );
-
-  shrinker->SetShrinkFactors( (unsigned int)round(this->MRIBiasFieldCorrectionNode->GetShrink()));
-  maskshrinker->SetShrinkFactors( (unsigned int)round(this->MRIBiasFieldCorrectionNode->GetShrink()));
+  shrinker->SetShrinkFactors(shrinkFactor);
+  maskshrinker->SetShrinkFactors(shrinkFactor);
 
   shrinker->Update();
   shrinker->UpdateLargestPossibleRegion();
@@ -234,102 +214,91 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
   maskshrinker->Update();
   maskshrinker->UpdateLargestPossibleRegion();
 
-  typedef itk::N3MRIBiasFieldCorrectionImageFilter<InputImageType,
-    MaskImageType, InputImageType> CorrecterType;
+  typedef itk::N3MRIBiasFieldCorrectionImageFilter< ImageType, MaskType,
+          ImageType > CorrecterType;
   CorrecterType::Pointer correcter = CorrecterType::New();
   correcter->SetInput( shrinker->GetOutput() );
   correcter->SetMaskImage( maskshrinker->GetOutput() );
 
-  correcter->SetMaximumNumberOfIterations(
-              (unsigned int)round(this->MRIBiasFieldCorrectionNode->GetMax()));
+  unsigned int max = (unsigned int)this->MRIBiasFieldCorrectionNode->GetMax();
+  unsigned int num = (unsigned int)this->MRIBiasFieldCorrectionNode->GetNum();
+  double wien = this->MRIBiasFieldCorrectionNode->GetWien();
+  double widthAtHalfMaximum = this->MRIBiasFieldCorrectionNode->GetField();
+  double convergenceThreshold = this->MRIBiasFieldCorrectionNode->GetCon();
 
-  correcter->SetNumberOfFittingLevels(
-              (unsigned int)round(this->MRIBiasFieldCorrectionNode->GetNum()));
-
-  correcter->SetWeinerFilterNoise(this->MRIBiasFieldCorrectionNode->
-    GetWien());
+  correcter->SetMaximumNumberOfIterations(max);
+  correcter->SetNumberOfFittingLevels(num);
+  correcter->SetWeinerFilterNoise(wien);
 
   correcter->SetBiasFieldFullWidthAtHalfMaximum(
-    this->MRIBiasFieldCorrectionNode->GetField());
+      this->MRIBiasFieldCorrectionNode->GetField());
 
-  correcter->SetConvergenceThreshold(this->MRIBiasFieldCorrectionNode
-    ->GetCon());
-
+  correcter->SetConvergenceThreshold(convergenceThreshold);
   correcter->Update();
 
-  typedef itk::BSplineControlPointImageFilter<
-    CorrecterType::BiasFieldControlPointLatticeType,
-    CorrecterType::ScalarImageType> BSplinerType;
+  typedef CorrecterType::BiasFieldControlPointLatticeType LatticeType;
+  typedef CorrecterType::ScalarImageType                  ScalarType;
 
-  BSplinerType::Pointer bspliner = BSplinerType::New();
-  bspliner->SetInput( correcter->GetBiasFieldControlPointLattice() );
-  bspliner->SetSplineOrder( correcter->GetSplineOrder() );
-  bspliner->SetSize(
-    VTK2ITKconnector->GetOutput()->GetLargestPossibleRegion().GetSize() );
-  bspliner->SetOrigin( VTK2ITKconnector->GetOutput()->GetOrigin() );
-  bspliner->SetDirection( VTK2ITKconnector->GetOutput()->GetDirection() );
-  bspliner->SetSpacing( VTK2ITKconnector->GetOutput()->GetSpacing() );
-  bspliner->Update();
+  //std::cout << "LatticeType " << LatticeType << std::endl;
+  //std::cout << "ScalarType "  << ScalarType  << std::endl;
 
-  correcter->SetConvergenceThreshold(this->MRIBiasFieldCorrectionNode
-    ->GetCon());
+  typedef itk::BSplineControlPointImageFilter< LatticeType, ScalarType >
+    BSplinerType;
 
-  InputImageType::Pointer logField = InputImageType::New();
-  logField->SetOrigin( bspliner->GetOutput()->GetOrigin() );
-  logField->SetSpacing( bspliner->GetOutput()->GetSpacing() );
+  BSplinerType::Pointer bSpliner = BSplinerType::New();
+  bSpliner->SetInput( correcter->GetBiasFieldControlPointLattice() );
+  bSpliner->SetSplineOrder( correcter->GetSplineOrder() );
+  bSpliner->SetSize(
+    itkImageConnector->GetOutput()->GetLargestPossibleRegion().GetSize() );
+  //bspliner->SetOrigin(    itkImageConnector->GetOutput()->GetOrigin()    );
+  //bspliner->SetDirection( itkImageConnector->GetOutput()->GetDirection() );
+  //bspliner->SetSpacing(   itkImageConnector->GetOutput()->GetSpacing()   );
+  bSpliner->Update();
+
+  ImageType::Pointer logField = ImageType::New();
   logField->SetRegions(
-    bspliner->GetOutput()->GetLargestPossibleRegion().GetSize() );
-  logField->SetDirection( bspliner->GetOutput()->GetDirection() );
+    bSpliner->GetOutput()->GetLargestPossibleRegion().GetSize() );
+  //logField->SetOrigin(  bspliner->GetOutput()->GetOrigin()  );
+  //logField->SetSpacing( bspliner->GetOutput()->GetSpacing() );
+  //logField->SetDirection( bspliner->GetOutput()->GetDirection() );
   logField->Allocate();
 
-  correcter->SetConvergenceThreshold(this->MRIBiasFieldCorrectionNode->GetCon());
-
-  itk::ImageRegionIterator<CorrecterType::ScalarImageType> ItB(
-    bspliner->GetOutput(),
-    bspliner->GetOutput()->GetLargestPossibleRegion() );
-  itk::ImageRegionIterator<InputImageType> ItF( logField,
-    logField->GetLargestPossibleRegion() );
+  itk::ImageRegionIterator< ScalarType > ItB( bSpliner->GetOutput(),
+      bSpliner->GetOutput()->GetLargestPossibleRegion());
+  itk::ImageRegionIterator< ImageType > ItF( logField,
+      logField->GetLargestPossibleRegion() );
 
   for( ItB.GoToBegin(), ItF.GoToBegin(); !ItB.IsAtEnd(); ++ItB, ++ItF )
     {
     ItF.Set( ItB.Get()[0] );
     }
 
-  correcter->SetConvergenceThreshold(this->MRIBiasFieldCorrectionNode
-    ->GetCon());
+  typedef itk::ImageToVTKImageFilter< ImageType > VTKConnectorType;
+  VTKConnectorType::Pointer logFieldConnector = VTKConnectorType::New();
+  logFieldConnector->SetInput(logField);
+  logFieldConnector->Update();
 
-  typedef itk::ExpImageFilter<InputImageType, InputImageType>
-    ExpFilterType;
-  ExpFilterType::Pointer expFilter = ExpFilterType::New();
-  expFilter->SetInput( logField );
+  vtkImageMathematics *expFilter = vtkImageMathematics::New();
+  expFilter->SetInput(logFieldConnector->GetOutput());
+  logFieldConnector->Delete();
+  expFilter->SetOperationToExp();
   expFilter->Update();
 
-  correcter->SetConvergenceThreshold(this->MRIBiasFieldCorrectionNode
-    ->GetCon());
+  vtkImageMathematics *imageMathematics = vtkImageMathematics::New();
+  imageMathematics->SetInput1(inVolume->GetImageData());
+  imageMathematics->SetInput2(expFilter->GetOutput());
+  expFilter->Delete();
+  imageMathematics->SetOperationToDivide();
+  imageMathematics->Update();
 
-  typedef itk::DivideImageFilter<InputImageType, InputImageType,
-    InputImageType> DividerType;
-  DividerType::Pointer divider = DividerType::New();
-  divider->SetInput1( VTK2ITKconnector->GetOutput() );
-  divider->SetInput2( expFilter->GetOutput() );
-  divider->Update();
-
-  typedef itk::ImageToVTKImageFilter< InternalImageType >
-    ITK2VTKConnectorFilterType;
-  ITK2VTKConnectorFilterType::Pointer ITK2VTKconnector =
-  ITK2VTKConnectorFilterType::New();
-  ITK2VTKconnector->GetExporter()->SetInput(divider->GetOutput());
-  ITK2VTKconnector->GetImporter()->Update();
-
-  vtkImageData* image = vtkImageData::New();
-  image->DeepCopy( ITK2VTKconnector->GetImporter()->GetOutput());
-  outVolume->SetAndObserveImageData(image);
-  image->Delete();
+  outVolume->SetAndObserveImageData(imageMathematics->GetOutput());
+  imageMathematics->Delete();
   outVolume->SetModifiedSinceRead(1);
 }
 
-void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
-  vtkTransform* xyToijk,double dim0,double dim1)
+//----------------------------------------------------------------------------
+void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,
+  double dimX, double dimY)
 {
   // check if MRML node is present
   if (this->MRIBiasFieldCorrectionNode == NULL)
@@ -339,36 +308,48 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
     }
 
   // find input volume
-  vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::
-    SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->
-      MRIBiasFieldCorrectionNode->GetInputVolumeRef()));
+  vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::SafeDownCast(
+    this->GetMRMLScene()->GetNodeByID(this->MRIBiasFieldCorrectionNode->
+      GetInputVolumeRef()));
 
   if (inVolume == NULL)
     {
-    vtkErrorMacro("No input volume found");
+    vtkErrorMacro("No input volume");
+    return;
+    }
+
+  if (inVolume->GetImageData() == NULL)
+    {
+    vtkErrorMacro("Input volume has no image data");
+    return;
+    }
+
+  if (inVolume->GetImageData()->GetNumberOfScalarComponents() != 1)
+    {
+    vtkErrorMacro("Input image must have 1 component");
     return;
     }
 
   // create storage volume for preview
-  vtkMRMLScalarVolumeNode *stoVolume = vtkMRMLScalarVolumeNode::
+  vtkMRMLScalarVolumeNode *storageVolume = vtkMRMLScalarVolumeNode::
     SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->
       MRIBiasFieldCorrectionNode->GetStorageVolumeRef()));
 
-  if (stoVolume == NULL)
+  if (storageVolume == NULL)
     {
-    vtkErrorMacro("No storage volume found with id= " << this->
-        MRIBiasFieldCorrectionNode->GetStorageVolumeRef());
+    vtkErrorMacro("No storage volume with id= " << this->
+      MRIBiasFieldCorrectionNode->GetStorageVolumeRef());
     return;
     }
 
-  // create Mask volume for processing
+  // create mask volume for processing
   vtkMRMLScalarVolumeNode *maskVolume = vtkMRMLScalarVolumeNode::
     SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->
       MRIBiasFieldCorrectionNode->GetMaskVolumeRef()));
 
-  if( maskVolume == NULL )
+  if (maskVolume == NULL)
     {
-    vtkErrorMacro("No mask volume found with id= " <<
+    vtkErrorMacro("No mask volume with id " <<
       this->MRIBiasFieldCorrectionNode->GetMaskVolumeRef());
     return;
     }
@@ -380,770 +361,250 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(
 
   if (outVolume == NULL)
     {
-    vtkErrorMacro("No output volume found with id= " <<
+    vtkErrorMacro("No output volume with id " <<
       this->MRIBiasFieldCorrectionNode->GetOutputVolumeRef());
     return;
     }
 
   // copy RASToIJK matrix, and other attributes from input to output
-  std::string name (stoVolume->GetName());
-  std::string id (stoVolume->GetID());
 
-  stoVolume->CopyOrientation(inVolume);
-  stoVolume->SetAndObserveTransformNodeID(inVolume->GetTransformNodeID());
+  std::string name (storageVolume->GetName());
+  std::string id (storageVolume->GetID());
 
-  stoVolume->SetName(name.c_str());
+  storageVolume->CopyOrientation(inVolume);
+  storageVolume->SetAndObserveTransformNodeID(inVolume->GetTransformNodeID());
+  storageVolume->SetName(name.c_str());
 
   outVolume->CopyOrientation(inVolume);
   outVolume->SetAndObserveTransformNodeID(inVolume->GetTransformNodeID());
-
   outVolume->SetName(name.c_str());
 
-  this->STORAGE = vtkImageData::New();
-  this->PREVIEW = vtkImageData::New();
+  // get bounds of the array in ijk
 
-  this->STORAGE->DeepCopy(inVolume->GetImageData());
-  this->PREVIEW->DeepCopy(inVolume->GetImageData());
+  double xyOrigin[4];
+  double xyCornerX[4];
+  double xyCornerY[4];
 
-  //GET SIZE OF THE ARRAY TO BE PROCESSED AND THE FIRST PIXEL IN FRAME
+  double ijkOrigin[4];
+  double ijkCornerX[4];
+  double ijkCornerY[4];
 
-  double size1 = 0;
-  double size2 = 0;
-  double xyPt[4];
-  double ijkPt[3];
-  int begin[2];
+  xyOrigin[0] = 0;
+  xyOrigin[1] = 0;
+  xyOrigin[2] = 0;
+  xyOrigin[3] = 1;
 
-  xyPt[1] = round(dim1/2);
-  xyPt[2] = 0;
-  xyPt[3] = 1;
+  xyCornerX[0] = dimX;
+  xyCornerX[1] = 0;
+  xyCornerX[2] = 0;
+  xyCornerX[3] = 1;
 
-  int* extent = inVolume->GetImageData()->GetWholeExtent();
+  xyCornerY[0] = 0;
+  xyCornerY[1] = dimY;
+  xyCornerY[2] = 0;
+  xyCornerY[3] = 1;
 
-  for(int i = 0; i < dim0; i++)
-    {
-    xyPt[0] = round(i);
-    xyToijk->MultiplyPoint(xyPt,ijkPt);
+  xyToijk->MultiplyPoint( xyOrigin,  ijkOrigin  );
+  xyToijk->MultiplyPoint( xyCornerX, ijkCornerX );
+  xyToijk->MultiplyPoint( xyCornerY, ijkCornerY );
 
-    if( ijkPt[0]<0 || ijkPt[0]>=extent[1] ||ijkPt[1]<0 ||
-        ijkPt[1]>=extent[3] ||ijkPt[2]<0 || ijkPt[2]>=extent[5] )
-      {
-      // OUT OF VOI
-      }
-    else
-      {
-      if(size1 == 0)
-        {
-        begin[0] = i;
-        }
-      size1++;
-      }
-    }
-
-  xyPt[0] = round(dim0/2);
-
-  for(int i = 0; i < dim1; i++)
-    {
-    xyPt[1] = round(i);
-    xyToijk->MultiplyPoint(xyPt,ijkPt);
-
-  if(ijkPt[0]<0 || ijkPt[0]>=extent[1] ||ijkPt[1]<0 ||
-    ijkPt[1]>=extent[3] ||ijkPt[2]<0 || ijkPt[2]>=extent[5] )
-    {
-    // OUT OF VOI
-    }
-  else
-    {
-    if(size2 == 0)
-      {
-      begin[1] = i;
-      }
-  size2++;
-  }
+  if( ijkOrigin[0] > ijkCornerX[0] )
+  {
+    std::cout << __LINE__ << " " << __FILE__ << " Error" << std::endl;
   }
 
-  // GET BOUNDS OF THE ARRAY IN IJK
-  int size[6];
-
-  xyPt[0] = size1;
-  xyPt[1] = 0;
-  xyPt[2] = 0;
-  xyPt[3] = 1;
-
-  double ijkPt1[3];
-  double ijkPt2[3];
-  double ijkPt3[3];
-
-  xyToijk->MultiplyPoint(xyPt,ijkPt1);
-
-  xyPt[0] = 0;
-  xyPt[1] = size2;
-  xyPt[2] = 0;
-  xyPt[3] = 1;
-
-  xyToijk->MultiplyPoint(xyPt,ijkPt2);
-
-  xyPt[0] = 0;
-  xyPt[1] = 0;
-  xyPt[2] = 0;
-  xyPt[3] = 1;
-
-  xyToijk->MultiplyPoint(xyPt,ijkPt3);
-
-  size[0] = (int)round(sqrt((ijkPt1[0]-ijkPt3[0])*(ijkPt1[0]-ijkPt3[0])));
-  size[1] = (int)round(sqrt((ijkPt2[0]-ijkPt3[0])*(ijkPt2[0]-ijkPt3[0])));
-  size[2] = (int)round(sqrt((ijkPt1[1]-ijkPt3[1])*(ijkPt1[1]-ijkPt3[1])));
-  size[3] = (int)round(sqrt((ijkPt2[1]-ijkPt3[1])*(ijkPt2[1]-ijkPt3[1])));
-  size[4] = (int)round(sqrt((ijkPt1[2]-ijkPt3[2])*(ijkPt1[2]-ijkPt3[2])));
-  size[5] = (int)round(sqrt((ijkPt2[2]-ijkPt3[2])*(ijkPt2[2]-ijkPt3[2])));
-
-  int compt = 0;
-  int pos[2];
-
-  for(int i = 0; i < 6; i++)
-    {
-    if (size[i] > 0)
-      {
-      size[compt] = size[i];
-      if(i<2)
-      {
-        pos[compt] = 0;
-      }
-      else if(i>1 && i<4)
-      {
-        pos[compt] = 1;
-      }
-      else if(i>3)
-      {
-        pos[compt] = 2;
-        compt ++;
-      }
-   }
- }
-
-  double populateXY[4];
-  double populateIJK[4];
-
-  populateXY[2] = 0;
-  populateXY[3] = 1;
-
-  //GET EVOLUTION TO POPULATE (POSITION INCREMENT OR DECREMENT)
-  double direction[4][2];
-  int start = begin[0]+begin[1];
-
-  for(int i = begin[0]; i < begin[0]+2; i++)
-    {
-    for(int j = begin[1]; j < begin[1]+2; j++)
-      {
-      populateXY[0] = i;
-      populateXY[1] = j;
-
-      xyToijk->MultiplyPoint(populateXY,populateIJK);
-
-      direction[i+j-start][0] = populateIJK[pos[0]];
-      direction[i+j-start][1] = populateIJK[pos[1]];
-      }
-    }
-
-  double evolution[2];
-
-  if(direction[0][0] == direction [1][0])
-    {
-    if(direction[0][0]-direction[2][0] < 0)
-      {
-      evolution[0] = 1;
-      }
-    else
-      {
-      evolution[0] = 0;
-      }
-    }
-  else
-    {
-    if(direction[0][0]-direction[1][0] < 0)
-      {
-      evolution[0] = 1;
-      }
-    else
-      {
-      evolution[0] = 0;
-      }
-    }
-
-  if(direction[0][1] == direction [1][1])
-    {
-    if(direction[0][1]-direction[2][1] < 0)
-      {
-      evolution[1] = 1;
-      }
-    else
-      {
-      evolution[1] = 0;
-      }
-    }
-    else
-    {
-    if(direction[0][1] - direction[1][1] < 0)
-      {
-      evolution[1] = 1;
-      }
-    else
-      {
-      evolution[1] = 0;
-      }
-    }
-
-  xyPt[0] = begin[0];
-  xyPt[1] = begin[1];
-  xyPt[2] = 0;
-  xyPt[3] = 1;
-
-  double originIJK[3];
-
-  xyToijk->MultiplyPoint(xyPt,originIJK);
-
-  // POPULATE THE CORRESPONDING ARRAY AND MASK
-
-  int wholeExtent[6];
-
-  wholeExtent[0] = 0;
-  wholeExtent[2] = 0;
-  wholeExtent[4] = 0;
-  wholeExtent[5] = 0;
-
-  wholeExtent[1] = size[0]-1;
-  wholeExtent[3] = size[1]-1;
-
-  this->STORAGE = vtkImageData::New();
-  this->STORAGE->SetWholeExtent( wholeExtent );
-  this->STORAGE->SetNumberOfScalarComponents(1);
-  this->STORAGE->SetOrigin(0.0,0.0,0.0);
-  this->STORAGE->SetDimensions(size[0],size[1],1);
-  this->STORAGE->AllocateScalars();
-
-  vtkDataArray* outStorage=this->STORAGE->GetPointData()->GetScalars();
-
-  this->MASK = vtkImageData::New();
-  this->MASK->SetWholeExtent( wholeExtent );
-  this->MASK->SetNumberOfScalarComponents(1);
-  this->MASK->SetOrigin(0.0,0.0,0.0);
-  this->MASK->SetDimensions(size[0],size[1],1);
-  this->MASK->AllocateScalars();
-
-  vtkDataArray* outMask=this->MASK->GetPointData()->GetScalars();
-
-  // ARRAY EXTRACTION
-
-  if(pos[0]==0 && pos[1] == 1){
-  if(evolution[0] == 0 && evolution[1] == 0)
-    {
-    for (int j=0;j<size[0];j++)
-      {
-      for (int i=0;i<size[1];i++)
-        {
-        outStorage->SetComponent(i*(size[0])+j,0,
-            inVolume->GetImageData()->GetScalarComponentAsDouble(
-              (int)round(originIJK[0]-j),(int)round(originIJK[1]-i),(int)round(originIJK[2]),0));
-
-        outMask->SetComponent(i*(size[0])+j,0,
-            maskVolume->GetImageData()->GetScalarComponentAsDouble(
-              (int)round(originIJK[0]-j),(int)round(originIJK[1]-i),(int)round(originIJK[2]),0));
-        }
-      }
-    }
-
-  if(evolution[0] == 0 && evolution[1] == 1)
-    {
-    for(int j=0;j<size[0];j++)
-      {
-      for(int i=0;i<size[1];i++)
-        {
-        outStorage->SetComponent(i*(size[0])+j,0,
-          inVolume->GetImageData()->GetScalarComponentAsDouble(
-            (int)round(originIJK[0]-j),(int)round(originIJK[1]+i),(int)round(originIJK[2]),0));
-
-        outMask->SetComponent(i*(size[0])+j,0,
-            maskVolume->GetImageData()->GetScalarComponentAsDouble(
-              (int)round(originIJK[0]-j),(int)round(originIJK[1]+i),(int)round(originIJK[2]),0));
-        }
-      }
-    }
-
-  if(evolution[0] == 1 && evolution[1] == 0)
-    {
-    for (int j=0;j<size[0];j++)
-      {
-      for (int i=0;i<size[1];i++)
-        {
-        outStorage->SetComponent(i*(size[0])+j,0,
-          inVolume->GetImageData()->GetScalarComponentAsDouble(
-            (int)round(originIJK[0]+j),(int)round(originIJK[1]-i),(int)round(originIJK[2]),0));
-
-        outMask->SetComponent(i*(size[0])+j,0,
-          maskVolume->GetImageData()->GetScalarComponentAsDouble(
-            (int)round(originIJK[0]+j),(int)round(originIJK[1]-i),(int)round(originIJK[2]),0));
-        }
-      }
-    }
-
-  if(evolution[0] == 1 && evolution[1] == 1)
-    {
-    for (int j=0;j<size[0];j++)
-      {
-      for (int i=0;i<size[1];i++)
-        {
-        outStorage->SetComponent(i*(size[0])+j,0,
-          inVolume->GetImageData()->GetScalarComponentAsDouble(
-            (int)round(originIJK[0]+j),(int)round(originIJK[1]+i),(int)round(originIJK[2]),0));
-
-        outMask->SetComponent(i*(size[0])+j,0,
-          maskVolume->GetImageData()->GetScalarComponentAsDouble(
-                                                                 (int)round(originIJK[0]+j),(int)round(originIJK[1]+i),(int)round(originIJK[2]),0));
-        }
-      }
-    }
+  if( ijkOrigin[1] > ijkCornerX[1] )
+  {
+    std::cout << __LINE__ << " " << __FILE__ << " Error" << std::endl;
   }
 
-  if(pos[0]==1 && pos[1] == 2)
-    {
-    if(evolution[0] == 0 && evolution[1] == 0)
-      {
-      for (int j=0;j<size[0];j++)
-        {
-        for (int i=0;i<size[1];i++)
-          {
-          outStorage->SetComponent(i*(size[0])+j,0,inVolume->
-              GetImageData()->GetScalarComponentAsDouble((int)round(originIJK[0]),
-              (int)round(originIJK[1]-j),(int)round(originIJK[2]-i),0));
+  if( ijkOrigin[2] > ijkCornerX[2] )
+  {
+    std::cout << __LINE__ << " " << __FILE__ << " Error" << std::endl;
+  }
 
-          outMask->SetComponent(i*(size[0])+j,0,maskVolume->
-              GetImageData()->GetScalarComponentAsDouble((int)round(originIJK[0]),
-              (int)round(originIJK[1]-j),(int)round(originIJK[2]-i),0));
-          }
-        }
-      }
+  if( ijkOrigin[0] > ijkCornerY[0] )
+  {
+    std::cout << __LINE__ << " " << __FILE__ << " Error" << std::endl;
+  }
 
-    if(evolution[0] == 0 && evolution[1] == 1)
-      {
-      for(int j=0;j<size[0];j++)
-        {
-        for(int i=0;i<size[1];i++)
-          {
-          outStorage->SetComponent(i*(size[0])+j,0,
-            inVolume->GetImageData()->GetScalarComponentAsDouble(
-              (int)round(originIJK[0]),(int)round(originIJK[1]-j),(int)round(originIJK[2]+i),0));
+  if( ijkOrigin[1] > ijkCornerY[1] )
+  {
+    std::cout << __LINE__ << " " << __FILE__ << " Error" << std::endl;
+  }
 
-          outMask->SetComponent(i*(size[0])+j,0,
-            maskVolume->GetImageData()->GetScalarComponentAsDouble(
-              (int)round(originIJK[0]),(int)round(originIJK[1]-j),(int)round(originIJK[2]+i),0));
-          }
-        }
-      }
+  if( ijkOrigin[2] > ijkCornerY[2] )
+  {
+    std::cout << __LINE__ << " " << __FILE__ << " Error" << std::endl;
+  }
 
-    if(evolution[0] == 1 && evolution[1] == 0)
-      {
-      for (int j=0;j<size[0];j++)
-        {
-        for (int i=0;i<size[1];i++)
-          {
-          outStorage->SetComponent(i*(size[0])+j,0,
-            inVolume->GetImageData()->GetScalarComponentAsDouble(
-              (int)round(originIJK[0]),(int)round(originIJK[1]+j),(int)round(originIJK[2]-i),0));
+  double ijkBounds[6];
+  int clipExtent[6];
 
-          outMask->SetComponent(i*(size[0])+j,0,
-            maskVolume->GetImageData()->GetScalarComponentAsDouble(
-              (int)round(originIJK[0]),(int)round(originIJK[1]+j),(int)round(originIJK[2]-i),0));
-          }
-        }
-      }
+  ijkBounds[0] = ijkOrigin[0];
+  ijkBounds[1] = ijkOrigin[0];
 
-  if(evolution[0] == 1 && evolution[1] == 1)
-    {
-    for (int j=0;j<size[0];j++)
-      {
-      for(int i=0;i<size[1];i++)
-        {
-        outStorage->SetComponent(i*(size[0])+j,0,
-          inVolume->GetImageData()->GetScalarComponentAsDouble(
-            (int)round(originIJK[0]),(int)round(originIJK[1]+j),(int)round(originIJK[2]+i),0));
+  ijkBounds[2] = ijkOrigin[1];
+  ijkBounds[3] = ijkOrigin[1];
 
-        outMask->SetComponent(i*(size[0])+j,0,
-          maskVolume->GetImageData()->GetScalarComponentAsDouble(
-            (int)round(originIJK[0]),(int)round(originIJK[1]+j),(int)round(originIJK[2]+i),0));
-        }
-      }
-    }
-    }
+  ijkBounds[4] = ijkOrigin[2];
+  ijkBounds[5] = ijkOrigin[2];
 
-  if(pos[0]==0 && pos[1] == 2)
-    {
-    if(evolution[0] == 0 && evolution[1] == 0)
-      {
-      for (int j=0;j<size[0];j++)
-        {
-        for (int i=0;i<size[1];i++)
-          {
-          outStorage->SetComponent(i*(size[0])+j,0,
-            inVolume->GetImageData()->GetScalarComponentAsDouble(
-              (int)round(originIJK[0]-j),(int)round(originIJK[1]),(int)round(originIJK[2]-i),0));
+  if( ijkCornerX[0] < ijkBounds[0] ) { ijkBounds[0] = ijkCornerX[0]; }
+  if( ijkCornerX[0] > ijkBounds[1] ) { ijkBounds[1] = ijkCornerX[0]; }
 
-          outMask->SetComponent(i*(size[0])+j,0,
-            maskVolume->GetImageData()->GetScalarComponentAsDouble(
-              (int)round(originIJK[0]-j),(int)round(originIJK[1]),(int)round(originIJK[2]-i),0));
-          }
-        }
-      }
+  if( ijkCornerX[1] < ijkBounds[2] ) { ijkBounds[2] = ijkCornerX[1]; }
+  if( ijkCornerX[1] > ijkBounds[3] ) { ijkBounds[3] = ijkCornerX[1]; }
 
+  if( ijkCornerX[2] < ijkBounds[4] ) { ijkBounds[4] = ijkCornerX[2]; }
+  if( ijkCornerX[2] > ijkBounds[5] ) { ijkBounds[5] = ijkCornerX[2]; }
 
-    if(evolution[0] == 0 && evolution[1] == 1)
-      {
-      for(int j=0;j<size[0];j++)
-        {
-        for(int i=0;i<size[1];i++)
-          {
-          outStorage->SetComponent(i*(size[0])+j,0,
-            inVolume->GetImageData()->GetScalarComponentAsDouble(
-              (int)round(originIJK[0]-j),(int)round(originIJK[1]),(int)round(originIJK[2]+i),0));
+  if( ijkCornerY[0] < ijkBounds[0] ) { ijkBounds[0] = ijkCornerY[0]; }
+  if( ijkCornerY[0] > ijkBounds[1] ) { ijkBounds[1] = ijkCornerY[0]; }
 
-          outMask->SetComponent(i*(size[0])+j,0,
-            maskVolume->GetImageData()->GetScalarComponentAsDouble(
-              (int)round(originIJK[0]-j),(int)round(originIJK[1]),(int)round(originIJK[2]+i),0));
-          }
-        }
-      }
+  if( ijkCornerY[1] < ijkBounds[2] ) { ijkBounds[2] = ijkCornerY[1]; }
+  if( ijkCornerY[1] > ijkBounds[3] ) { ijkBounds[3] = ijkCornerY[1]; }
 
-    if(evolution[0] == 1 && evolution[1] == 0)
-      {
-      for (int j=0;j<size[0];j++)
-        {
-        for (int i=0;i<size[1];i++)
-          {
-          outStorage->SetComponent(i*(size[0])+j,0,
-            inVolume->GetImageData()->GetScalarComponentAsDouble(
-              (int)round(originIJK[0]+j),(int)round(originIJK[1]),(int)round(originIJK[2]-i),0));
+  if( ijkCornerY[2] < ijkBounds[4] ) { ijkBounds[4] = ijkCornerY[2]; }
+  if( ijkCornerY[2] > ijkBounds[5] ) { ijkBounds[5] = ijkCornerY[2]; }
 
-          outMask->SetComponent(i*(size[0])+j,0,
-            maskVolume->GetImageData()->GetScalarComponentAsDouble(
-              (int)round(originIJK[0]+j),(int)round(originIJK[1]),(int)round(originIJK[2]-i),0));
-          }
-        }
-      }
+  clipExtent[0] = (int) ijkBounds[0];
+  clipExtent[1] = (int) ijkBounds[1];
 
-    if(evolution[0] == 1 && evolution[1] == 1)
-      {
-      for (int j=0;j<size[0];j++)
-        {
-        for (int i=0;i<size[1];i++)
-          {
-            outStorage->SetComponent(i*(size[0])+j,0,inVolume->GetImageData()->GetScalarComponentAsDouble((int)round(originIJK[0]+j),(int)round(originIJK[1]),(int)round(originIJK[2]+i),0));
-            outMask->SetComponent(i*(size[0])+j,0,maskVolume->GetImageData()->GetScalarComponentAsDouble((int)round(originIJK[0]+j),(int)round(originIJK[1]),(int)round(originIJK[2]+i),0));
-          }}}
-    }
+  clipExtent[2] = (int) ijkBounds[2];
+  clipExtent[3] = (int) ijkBounds[3];
 
-  outVolume->SetAndObserveImageData(this->MASK);
+  clipExtent[4] = (int) ijkBounds[4];
+  clipExtent[5] = (int) ijkBounds[5];
+
+  if( clipExtent[0] > (int) ijkBounds[0] ) { clipExtent[0]--; }
+  if( clipExtent[1] < (int) ijkBounds[1] ) { clipExtent[1]++; }
+
+  if( clipExtent[2] > (int) ijkBounds[2] ) { clipExtent[2]--; }
+  if( clipExtent[3] < (int) ijkBounds[3] ) { clipExtent[3]++; }
+
+  if( clipExtent[4] > (int) ijkBounds[4] ) { clipExtent[4]--; }
+  if( clipExtent[5] < (int) ijkBounds[5] ) { clipExtent[5]++; }
+
+  vtkImageClip *imageClip = vtkImageClip::New();
+  imageClip->SetInput(inVolume->GetImageData());
+  imageClip->SetOutputWholeExtent(clipExtent);
+  imageClip->Update();
+
+  vtkImageCast *imageCast = vtkImageCast::New();
+  imageCast->SetInput(imageClip->GetOutput());
+  imageClip->Delete();
+  imageCast->SetOutputScalarTypeToFloat();
+  imageCast->Update();
+
+  vtkImageClip *maskClip = vtkImageClip::New();
+  maskClip->SetInput(maskVolume->GetImageData());
+  maskClip->SetOutputWholeExtent(clipExtent);
+  maskClip->Update();
+
+  outVolume->SetAndObserveImageData(maskClip->GetOutput());
   outVolume->SetModifiedSinceRead(1);
 
-  // PROCESS THE SLICE
+  typedef itk::Image< float,         2 > ImageType;
+  typedef itk::Image< unsigned char, 2 > MaskType;
 
-  typedef itk::Image< float,  2 >   InputImageType;
-  typedef itk::Image< unsigned char,   2 >   MaskImageType;
-  typedef itk::Image< float,  2 >   OutputImageType;
-  typedef itk::Image< float, 2 >  InternalImageType;
+  typedef itk::VTKImageToImageFilter< ImageType > ImageConnectorType;
+  typedef itk::VTKImageToImageFilter< MaskType  > MaskConnectorType;
 
-  typedef itk::ImageFileReader< InputImageType >  ReaderType;
+  ImageConnectorType::Pointer itkPreviewConnector = ImageConnectorType::New();
+  itkPreviewConnector->SetInput(imageCast->GetOutput());
+  itkPreviewConnector->Update();
 
-  ReaderType::Pointer  reader = ReaderType::New();
+  MaskConnectorType::Pointer itkMaskConnector = MaskConnectorType::New();
+  itkMaskConnector->SetInput(maskClip->GetOutput());
+  maskClip->Delete();
+  itkMaskConnector->Update();
 
-  // CREATION OF THE ITK IMAGES
+  typedef itk::N3MRIBiasFieldCorrectionImageFilter<ImageType, MaskType,
+          ImageType> BiasFieldType;
+  BiasFieldType::Pointer biasField = BiasFieldType::New();
+  biasField->SetInput( itkPreviewConnector->GetOutput() );
+  biasField->SetMaskImage( itkMaskConnector->GetOutput() );
 
-  // FOR THE SLICE TO BE PROCESSED
-  vtkImageCast* imageCaster = vtkImageCast::New();
-  imageCaster->SetInput(this->STORAGE);
+  double convergenceThreshold = this->MRIBiasFieldCorrectionNode->GetCon();
+  double maxNumIterations     = this->MRIBiasFieldCorrectionNode->GetMax();
+  double numFittingLevels     = this->MRIBiasFieldCorrectionNode->GetNum();
+  double WeinerFilterNoise    = this->MRIBiasFieldCorrectionNode->GetWien();
+  double widthAtHalfMaximum   = this->MRIBiasFieldCorrectionNode->GetField();
 
-  imageCaster->SetOutputScalarTypeToFloat(); 
-  imageCaster->Modified();
-  imageCaster->UpdateWholeExtent();
+  biasField->SetConvergenceThreshold(convergenceThreshold);
+  biasField->SetMaximumNumberOfIterations(maxNumIterations);
+  biasField->SetNumberOfFittingLevels(numFittingLevels);
+  biasField->SetWeinerFilterNoise(WeinerFilterNoise);
+  biasField->SetBiasFieldFullWidthAtHalfMaximum(widthAtHalfMaximum);
+  biasField->SetConvergenceThreshold(convergenceThreshold);
+  biasField->Update();
 
-  typedef itk::VTKImageToImageFilter< InternalImageType >
-    VTK2ITKConnectorFilterType;
-  VTK2ITKConnectorFilterType::Pointer VTK2ITKconnector =
-    VTK2ITKConnectorFilterType::New();
-  VTK2ITKconnector->SetInput( imageCaster->GetOutput() );
-  VTK2ITKconnector->Update();
+  typedef BiasFieldType::BiasFieldControlPointLatticeType LatticeType;
+  typedef BiasFieldType::ScalarImageType                  ScalarType;
 
-  // FOR THE MASK TO BE USED
-
-  vtkImageCast* imageCasterM = vtkImageCast::New();
-  imageCasterM->SetInput(this->MASK);
-
-  imageCasterM->SetOutputScalarTypeToFloat(); 
-  imageCasterM->Modified();
-  imageCasterM->UpdateWholeExtent();
-
-  typedef itk::VTKImageToImageFilter< InternalImageType > VTK2ITKConnectorFilterTypeM;
-  VTK2ITKConnectorFilterTypeM::Pointer VTK2ITKconnectorM = VTK2ITKConnectorFilterTypeM::New();
-  VTK2ITKconnectorM->SetInput( imageCasterM->GetOutput() );
-  VTK2ITKconnectorM->Update();
-
-
-  //PROCESSING    
-
-  typedef itk::ShrinkImageFilter<InputImageType, InputImageType> ShrinkerType;
-  ShrinkerType::Pointer shrinker = ShrinkerType::New();
-  shrinker->SetInput( VTK2ITKconnector->GetOutput() );
-  shrinker->SetShrinkFactors( 1 );                                     
-
-
-  typedef itk::BinaryThresholdImageFilter<
-    InputImageType, MaskImageType>  mFilterType;
-
-  mFilterType::Pointer mfilter = mFilterType::New();  
-
-  mfilter->SetInput( VTK2ITKconnectorM->GetOutput() );
-
-  mfilter->SetLowerThreshold(1);
-  mfilter->SetOutsideValue(0);
-  mfilter->SetInsideValue(1);  
-
-  MaskImageType::Pointer maskImage = NULL;
-
-  maskImage = mfilter->GetOutput();
-
-  typedef itk::ShrinkImageFilter<MaskImageType, MaskImageType> MaskShrinkerType;
-  MaskShrinkerType::Pointer maskshrinker = MaskShrinkerType::New();
-
-  maskshrinker->SetInput( maskImage );
-  maskshrinker->SetShrinkFactors( 1 );
-
-  shrinker->SetShrinkFactors( (unsigned int)round(this->MRIBiasFieldCorrectionNode->GetShrink()));
-  maskshrinker->SetShrinkFactors((unsigned int)round(this->MRIBiasFieldCorrectionNode->GetShrink()));
-
-
-  shrinker->Update();
-
-  maskshrinker->Update();
-
-
-  typedef itk::N3MRIBiasFieldCorrectionImageFilter<InputImageType, MaskImageType,
-          InputImageType> CorrecterType;
-  CorrecterType::Pointer correcter = CorrecterType::New();
-  correcter->SetInput( shrinker->GetOutput() );
-  correcter->SetMaskImage( maskshrinker->GetOutput() );
-
-  correcter->SetMaximumNumberOfIterations( (unsigned int)round(this->MRIBiasFieldCorrectionNode->GetMax()) );
-
-  correcter->SetNumberOfFittingLevels((unsigned int)round(this->MRIBiasFieldCorrectionNode->GetNum()));
-
-  correcter->SetWeinerFilterNoise(this->MRIBiasFieldCorrectionNode->GetWien());
-
-  correcter->SetBiasFieldFullWidthAtHalfMaximum(this->MRIBiasFieldCorrectionNode->GetField());
-
-  correcter->SetConvergenceThreshold(this->MRIBiasFieldCorrectionNode->GetCon());
-
-  correcter->Update();
-
-  correcter->SetConvergenceThreshold(this->MRIBiasFieldCorrectionNode->GetCon());
-
-  typedef itk::BSplineControlPointImageFilter<
-    CorrecterType::BiasFieldControlPointLatticeType, 
-    CorrecterType::ScalarImageType> BSplinerType;
+  typedef itk::BSplineControlPointImageFilter< LatticeType, ScalarType >
+    BSplinerType;
   BSplinerType::Pointer bspliner = BSplinerType::New();
-  bspliner->SetInput( correcter->GetBiasFieldControlPointLattice() );
-  bspliner->SetSplineOrder( correcter->GetSplineOrder() );
-  bspliner->SetSize(
-      VTK2ITKconnector->GetOutput()->GetLargestPossibleRegion().GetSize() );
-  bspliner->SetOrigin( VTK2ITKconnector->GetOutput()->GetOrigin() );
-  bspliner->SetDirection( VTK2ITKconnector->GetOutput()->GetDirection() );
-  bspliner->SetSpacing( VTK2ITKconnector->GetOutput()->GetSpacing() );
+  bspliner->SetInput( biasField->GetBiasFieldControlPointLattice() );
+  bspliner->SetSplineOrder( biasField->GetSplineOrder() );
+  bspliner->SetSize(itkPreviewConnector->GetOutput()->
+      GetLargestPossibleRegion().GetSize() );
+  //bspliner->SetOrigin( itkPreviewConnector->GetOutput()->GetOrigin() );
+  bspliner->SetDirection( itkPreviewConnector->GetOutput()->GetDirection() );
+  //bspliner->SetSpacing( itkPreviewConnector->GetOutput()->GetSpacing() );
   bspliner->Update();
 
-  InputImageType::Pointer logField = InputImageType::New();
-  logField->SetOrigin( bspliner->GetOutput()->GetOrigin() );
-  logField->SetSpacing( bspliner->GetOutput()->GetSpacing() );
-  logField->SetRegions(
-      bspliner->GetOutput()->GetLargestPossibleRegion().GetSize() );
+  ImageType::Pointer logField = ImageType::New();
+  //logField->SetOrigin( bspliner->GetOutput()->GetOrigin() );
+  //logField->SetSpacing( bspliner->GetOutput()->GetSpacing() );
+  logField->SetRegions( bspliner->GetOutput()->GetLargestPossibleRegion().
+      GetSize() );
   logField->SetDirection( bspliner->GetOutput()->GetDirection() );
   logField->Allocate();
 
-  itk::ImageRegionIterator<CorrecterType::ScalarImageType> ItB(
-      bspliner->GetOutput(),
-      bspliner->GetOutput()->GetLargestPossibleRegion() );
-  itk::ImageRegionIterator<InputImageType> ItF( logField,
+  itk::ImageRegionIterator< ScalarType > ItB( bspliner->
+      GetOutput(), bspliner->GetOutput()->GetLargestPossibleRegion() );
+
+  itk::ImageRegionIterator< ImageType > ItF( logField,
       logField->GetLargestPossibleRegion() );
+
   for( ItB.GoToBegin(), ItF.GoToBegin(); !ItB.IsAtEnd(); ++ItB, ++ItF )
   {
     ItF.Set( ItB.Get()[0] );
   }
 
-  typedef itk::ExpImageFilter<InputImageType, InputImageType> ExpFilterType;
-  ExpFilterType::Pointer expFilter = ExpFilterType::New();
-  expFilter->SetInput( logField );
+  typedef itk::ImageToVTKImageFilter< ImageType > VTKConnectorType;
+  VTKConnectorType::Pointer logFieldConnector = VTKConnectorType::New();
+  //logFieldConnector->GetExporter()->SetInput( logField );
+  logFieldConnector->SetInput( logField );
+  logFieldConnector->GetImporter()->Update();
+
+  vtkImageMathematics *expFilter = vtkImageMathematics::New();
+  expFilter->SetInput( logFieldConnector->GetOutput() );
+  logFieldConnector->Delete();
+  expFilter->SetOperationToExp();
   expFilter->Update();
 
-  typedef itk::DivideImageFilter<InputImageType, InputImageType, InputImageType> DividerType;
-  DividerType::Pointer divider = DividerType::New();
-  divider->SetInput1( VTK2ITKconnector->GetOutput() );
-  divider->SetInput2( expFilter->GetOutput() );
-  divider->Update();
-
-  typedef itk::ImageToVTKImageFilter< InternalImageType >
-    ITK2VTKConnectorFilterType;
-  ITK2VTKConnectorFilterType::Pointer ITK2VTKconnector =
-    ITK2VTKConnectorFilterType::New();
-  ITK2VTKconnector->GetExporter()->SetInput(divider->GetOutput());
-  ITK2VTKconnector->GetImporter()->Update();
+  vtkImageMathematics *imageMathematics = vtkImageMathematics::New();
+  imageMathematics->SetInput1(imageCast->GetOutput());
+  imageCast->Delete();
+  imageMathematics->SetInput2(expFilter->GetOutput());
+  expFilter->Delete();
+  imageMathematics->SetOperationToDivide();
+  imageMathematics->Update();
 
   std::cout << __FILE__ << std::endl;
   std::cout << "line " << __LINE__ << ": CORRECTION DONE" <<std::endl;
 
-  vtkImageData* image = vtkImageData::New();
-  image->SetWholeExtent(wholeExtent);
-  image->SetNumberOfScalarComponents(1);
-  image->SetOrigin(0.0,0.0,0.0);
-  image->SetDimensions(size[0],size[1],1);
-  image->AllocateScalars();
-  image->DeepCopy( ITK2VTKconnector->GetImporter()->GetOutput());
+  this->PreviewImage = imageMathematics->GetOutput();
+  this->PreviewImage->Register(NULL);
+  imageMathematics->Delete();
 
-  vtkDataArray* outStorage2=image->GetPointData()->GetScalars();
-  // PUT ARRAY BACK IN THE VOLUME
+  // copy origin and spacing
 
-  if(pos[0]==0 && pos[1] == 1)
-  {
-    if(evolution[0] == 0 && evolution[1] == 0)
-    {
-      for (int j=0;j<size[0];j++)
-      {
-        for (int i=0;i<size[1];i++)
-        {
-          this->PREVIEW->SetScalarComponentFromDouble(
-            (int)round(originIJK[0]-j-1), (int)round(originIJK[1]-i), (int)round(originIJK[2]), 0,
-            outStorage2->GetComponent( i*(size[0])+j, 1 ) );
-        }
-      }
-    }
-
-    if(evolution[0] == 0 && evolution[1] == 1)
-    {
-      for (int j=0;j<size[0];j++)
-      {
-        for (int i=0;i<size[1];i++)
-        {
-          this->PREVIEW->SetScalarComponentFromDouble(
-            (int)round(originIJK[0]-j-1), (int)round(originIJK[1]+i), (int)round(originIJK[2]), 0,
-            outStorage2->GetComponent(i*(size[0])+j,1));
-        }
-      }
-    }
-
-    if(evolution[0] == 1 && evolution[1] == 0)
-    {
-      for (int j=0;j<size[0];j++)
-      {
-        for (int i=0;i<size[1];i++)
-        {
-          this->PREVIEW->SetScalarComponentFromDouble(
-            (int)round(originIJK[0]+j+1), (int)round(originIJK[1]-i), (int)round(originIJK[2]), 0,
-            outStorage2->GetComponent( i*(size[0])+j, 1 ) );
-        }
-      }
-    }
-
-    if(evolution[0] == 1 && evolution[1] == 1)
-    {
-      for (int j=0;j<size[0];j++)
-      {
-        for (int i=0;i<size[1];i++)
-        {
-          this->PREVIEW->SetScalarComponentFromDouble(
-            (int)round(originIJK[0]+j+1), (int)round(originIJK[1]+i), (int)round(originIJK[2]), 0,
-            outStorage2->GetComponent( i*(size[0])+j, 1 ) );
-        }
-      }
-    }
-  }
-
-  if(pos[0]==1 && pos[1] == 2)
-  {
-    if(evolution[0] == 0 && evolution[1] == 0)
-    {
-      for (int j=0;j<size[0];j++)
-      {
-        for (int i=0;i<size[1];i++)
-        {
-          this->PREVIEW->SetScalarComponentFromDouble(
-             (int)round(originIJK[0]),(int)round(originIJK[1]-j-1),(int)round(originIJK[2]-i),0,
-             outStorage2->GetComponent(i*(size[0])+j,1));
-        }
-      }
-    }
-
-    if(evolution[0] == 0 && evolution[1] == 1)
-    {
-      for (int j=0;j<size[0];j++)
-        for (int i=0;i<size[1];i++)
-          this->PREVIEW->SetScalarComponentFromDouble(
-              (int)round(originIJK[0]), (int)round(originIJK[1]-j-1), (int)round(originIJK[2]+i), 0,
-              outStorage2->GetComponent(i*(size[0])+j,1));
-    }
-
-    if(evolution[0] == 1 && evolution[1] == 0)
-    {
-      for (int j=0;j<size[0];j++)
-        for (int i=0;i<size[1];i++)
-          this->PREVIEW->SetScalarComponentFromDouble(
-              (int)round(originIJK[0]), (int)round(originIJK[1]+j), (int)round(originIJK[2]-i), 0,
-              outStorage2->GetComponent(i*(size[0])+j,1));
-    }
-
-    if(evolution[0] == 1 && evolution[1] == 1)
-    {
-      for (int j=0;j<size[0];j++)
-        for (int i=0;i<size[1];i++)
-          this->PREVIEW->SetScalarComponentFromDouble(
-            (int)round(originIJK[0]), (int)round(originIJK[1]+j+1), (int)round(originIJK[2]+i), 0,
-            outStorage2->GetComponent(i*(size[0])+j,1));
-    }
-  }
-
-  if(pos[0]==0 && pos[1] == 2)
-  {
-    if(evolution[0] == 0 && evolution[1] == 0)
-    {
-      for (int j=0;j<size[0];j++)
-        for (int i=0;i<size[1];i++)
-          this->PREVIEW->SetScalarComponentFromDouble(
-              (int)round(originIJK[0]-j),(int)round(originIJK[1]),(int)round(originIJK[2]-i),0,
-              outStorage2->GetComponent(i*(size[0])+j,1));
-    }
-
-    if(evolution[0] == 0 && evolution[1] == 1)
-    {
-      for (int j=0;j<size[0];j++)
-        for (int i=0;i<size[1];i++)
-          this->PREVIEW->SetScalarComponentFromDouble(
-              (int)round(originIJK[0]-j),(int)round(originIJK[1]),(int)round(originIJK[2]+i),0,
-              outStorage2->GetComponent(i*(size[0])+j,1));
-    }
-
-    if(evolution[0] == 1 && evolution[1] == 0){
-      for (int j=0;j<size[0];j++)
-        for (int i=0;i<size[1];i++)
-          this->PREVIEW->SetScalarComponentFromDouble(
-              (int)round(originIJK[0]+j),(int)round(originIJK[1]),(int)round(originIJK[2]-i),0,
-              outStorage2->GetComponent(i*(size[0])+j,1));
-    }
-
-    if(evolution[0] == 1 && evolution[1] == 1)
-    {
-      for (int j=0;j<size[0];j++)
-        for (int i=0;i<size[1];i++)
-          this->PREVIEW->SetScalarComponentFromDouble(
-             (int)round(originIJK[0]+j+1),(int)round(originIJK[1]),(int)round(originIJK[2]+i),0,
-              outStorage2->GetComponent(i*(size[0])+j,1));
-    }
-  }
-
-  stoVolume->SetAndObserveImageData(this->PREVIEW);
-  stoVolume->SetModifiedSinceRead(1);
+  storageVolume->SetAndObserveImageData(this->PreviewImage);
+  storageVolume->SetModifiedSinceRead(1);
 }
 
 //-------------------------------------------------------------------
@@ -1163,37 +624,36 @@ void vtkMRIBiasFieldCorrectionLogic::Preview()
 
   if (inVolume == NULL)
     {
-    vtkErrorMacro("No input volume found");
+    vtkErrorMacro("No input volume");
     return;
     }
 
   // find output volume
-  vtkMRMLScalarVolumeNode *stoVolume = vtkMRMLScalarVolumeNode::
+  vtkMRMLScalarVolumeNode *storageVolume = vtkMRMLScalarVolumeNode::
     SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->
       MRIBiasFieldCorrectionNode->GetStorageVolumeRef()));
 
-  if(stoVolume == NULL)
+  if (storageVolume == NULL)
     {
-    vtkErrorMacro("No storage volume found with id= " << this->
+    vtkErrorMacro("No storage volume with id " << this->
       MRIBiasFieldCorrectionNode->GetStorageVolumeRef());
     return;
     }
 
   // copy RASToIJK matrix, and other attributes from input to output
-  std::string name (stoVolume->GetName());
-  std::string id (stoVolume->GetID());
+  std::string name (storageVolume->GetName());
+  std::string id (storageVolume->GetID());
 
-  stoVolume->CopyOrientation(inVolume);
-  stoVolume->SetAndObserveTransformNodeID(inVolume->GetTransformNodeID());
-
-  stoVolume->SetName(name.c_str());
+  storageVolume->CopyOrientation(inVolume);
+  storageVolume->SetAndObserveTransformNodeID(inVolume->GetTransformNodeID());
+  storageVolume->SetName(name.c_str());
 
   // copy RASToIJK matrix, and other attributes from input to output
-  stoVolume->SetAndObserveImageData(inVolume->GetImageData());
+  storageVolume->SetAndObserveImageData(inVolume->GetImageData());
 
   // set ouput of the filter to VolumeNode's ImageData
   // TODO FIX the bug of the image is deallocated unless we do DeepCopy
-  stoVolume->SetModifiedSinceRead(1);
+  storageVolume->SetModifiedSinceRead(1);
 }
 
 //-------------------------------------------------------------------
@@ -1207,7 +667,7 @@ int vtkMRIBiasFieldCorrectionLogic::InitMaxThreshold()
   double maxmin[2];
   inVolume->GetImageData()->GetScalarRange(maxmin);
 
-  return (int)round(maxmin[1]);
+  return maxmin[1];
 }
 
 //-------------------------------------------------------------------
@@ -1221,7 +681,7 @@ int vtkMRIBiasFieldCorrectionLogic::InitMinThreshold()
   double maxmin[2];
   inVolume->GetImageData()->GetScalarRange(maxmin);
 
-  return (int)round(maxmin[0]);
+  return maxmin[0];
 }
 
 //-------------------------------------------------------------------
@@ -1235,7 +695,7 @@ int vtkMRIBiasFieldCorrectionLogic::AxialMin()
   double bounds[6];
   inVolume->GetImageData()->GetBounds(bounds);
 
-  return (int)round(bounds[0]);
+  return bounds[0];
 }
 
 //-------------------------------------------------------------------
@@ -1249,7 +709,7 @@ int vtkMRIBiasFieldCorrectionLogic::AxialMax()
   double bounds[6];
   inVolume->GetImageData()->GetBounds(bounds);
 
-  return (int)round(bounds[1]);
+  return bounds[1];
 }
 
 //-------------------------------------------------------------------
@@ -1263,7 +723,7 @@ int vtkMRIBiasFieldCorrectionLogic::SagittalMax()
   double bounds[6];
   inVolume->GetImageData()->GetBounds(bounds);
 
-  return (int)round(bounds[3]);
+  return bounds[3];
 }
 
 //-------------------------------------------------------------------
@@ -1277,6 +737,6 @@ int vtkMRIBiasFieldCorrectionLogic::CoronalMax()
   double bounds[6];
   inVolume->GetImageData()->GetBounds(bounds);
 
-  return (int)round(bounds[5]);
+  return bounds[5];
 }
 
