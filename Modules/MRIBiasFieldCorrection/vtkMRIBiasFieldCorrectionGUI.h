@@ -47,15 +47,14 @@ class VTK_MRIBiasFieldCorrection_EXPORT vtkMRIBiasFieldCorrectionGUI :
   // Set the logic pointer from parent class pointer.
   // Overloads implementation in vtkSlicerModulesGUI
   // to allow loadable modules.
-  virtual void SetModuleLogic ( vtkSlicerLogic *logic )
+  virtual void SetModuleLogic( vtkSlicerLogic *logic )
     {
-    this->SetLogic(reinterpret_cast<vtkMRIBiasFieldCorrectionLogic*>
-        (logic));
+    this->SetLogic(reinterpret_cast<vtkMRIBiasFieldCorrectionLogic*>(logic));
     }
 
   // Description: Get/Set MRML node
   vtkGetObjectMacro(MRIBiasFieldCorrectionNode,
-    vtkMRMLMRIBiasFieldCorrectionNode);
+      vtkMRMLMRIBiasFieldCorrectionNode);
 
   // Description:
   // Create widgets
@@ -108,39 +107,36 @@ protected:
   // Updates parameters values in MRML node based on GUI widgets
   void UpdateMRML();
 
-  vtkKWScaleWithEntry* TimeStepScale;
-  vtkKWScaleWithEntry* NumberOfIterationsScale;
+  vtkKWScaleWithEntry               *TimeStepScale;
+  vtkKWScaleWithEntry               *NumberOfIterationsScale;
+  vtkKWScaleWithEntry               *Sagittal2Scale;
+  vtkKWScaleWithEntry               *CoronalScale;
+  vtkKWScaleWithEntry               *AxialScale;
+  vtkKWScaleWithEntry               *ThresholdScale;
+  vtkKWScaleWithEntry               *ShrinkFactor;
+  vtkKWScaleWithEntry               *MaxNumberOfIterations;
+  vtkKWScaleWithEntry               *NumberOfFittingLevels;
+  vtkKWScaleWithEntry               *WienFilterNoise;
+  vtkKWScaleWithEntry               *BiasField;
+  vtkKWScaleWithEntry               *Convergence;
+  vtkKWScaleWithEntry               *SlidePositionScale;
+  vtkKWScaleWithEntry               *BiasIntensityScale;
 
-  vtkKWScaleWithEntry* Sagittal2Scale;
+  vtkSlicerNodeSelectorWidget       *VolumeSelector;
+  vtkSlicerNodeSelectorWidget       *OutVolumeSelector;
+  vtkSlicerNodeSelectorWidget       *GADNodeSelector;
+  vtkSlicerNodeSelectorWidget       *StorageVolumeSelector;
+  vtkSlicerNodeSelectorWidget       *MaskVolumeSelector;
 
-  vtkKWScaleWithEntry* Coronal1Scale;
-  vtkKWScaleWithEntry* Coronal2Scale;
+  vtkKWPushButton                   *ApplyButton;
+  vtkKWPushButton                   *CatchButton;
 
-  vtkSlicerNodeSelectorWidget* VolumeSelector;
-  vtkSlicerNodeSelectorWidget* OutVolumeSelector;
-  vtkSlicerNodeSelectorWidget* GADNodeSelector;
-  vtkSlicerNodeSelectorWidget* StorageVolumeSelector;
-  vtkSlicerNodeSelectorWidget* MaskVolumeSelector;
+  vtkMRIBiasFieldCorrectionLogic    *Logic;
+  vtkMRMLMRIBiasFieldCorrectionNode *MRIBiasFieldCorrectionNode;
 
-  vtkKWPushButton* ApplyButton;
-  vtkKWPushButton* CatchButton;
-
-  vtkMRIBiasFieldCorrectionLogic*    Logic;
-  vtkMRMLMRIBiasFieldCorrectionNode* MRIBiasFieldCorrectionNode;
-  vtkKWFrameWithLabel*               VolumeSelectionFrame;
-
-  vtkKWFrameWithLabel* ParametersFrame;
-  vtkKWFrameWithLabel* AdvancedParametersFrame;
-
-  vtkKWScaleWithEntry* ShrinkFactor;
-  vtkKWScaleWithEntry* MaxNumberOfIterations;
-  vtkKWScaleWithEntry* NumOfFitLev;
-  vtkKWScaleWithEntry* WienFilterNoise;
-  vtkKWScaleWithEntry* BiasField;
-  vtkKWScaleWithEntry* Convergence;
-
-  vtkKWScaleWithEntry* SlidePositionScale;
-  vtkKWScaleWithEntry* BiasIntensityScale;
+  vtkKWFrameWithLabel               *VolumeSelectionFrame;
+  vtkKWFrameWithLabel               *ParametersFrame;
+  vtkKWFrameWithLabel               *AdvancedParametersFrame;
 };
 
 #endif

@@ -513,11 +513,12 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,
   biasField->SetInput( itkPreviewConnector->GetOutput() );
   biasField->SetMaskImage( itkMaskConnector->GetOutput() );
 
-  double convergenceThreshold = this->MRIBiasFieldCorrectionNode->GetCon();
-  double maxNumIterations     = this->MRIBiasFieldCorrectionNode->GetMax();
-  double numFittingLevels     = this->MRIBiasFieldCorrectionNode->GetNum();
-  double WeinerFilterNoise    = this->MRIBiasFieldCorrectionNode->GetWien();
-  double widthAtHalfMaximum   = this->MRIBiasFieldCorrectionNode->GetField();
+  double convergenceThreshold   = this->MRIBiasFieldCorrectionNode->GetCon();
+  double WeinerFilterNoise      = this->MRIBiasFieldCorrectionNode->GetWien();
+  double widthAtHalfMaximum    = this->MRIBiasFieldCorrectionNode->GetField();
+
+  unsigned int maxNumIterations = this->MRIBiasFieldCorrectionNode->GetMax();
+  unsigned int numFittingLevels = this->MRIBiasFieldCorrectionNode->GetNum();
 
   biasField->SetConvergenceThreshold(convergenceThreshold);
   biasField->SetMaximumNumberOfIterations(maxNumIterations);
@@ -644,7 +645,7 @@ void vtkMRIBiasFieldCorrectionLogic::Preview()
 }
 
 //-------------------------------------------------------------------
-int vtkMRIBiasFieldCorrectionLogic::InitMaxThreshold()
+double vtkMRIBiasFieldCorrectionLogic::InitMaxThreshold()
 {
   // find input volume
   vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::
@@ -658,7 +659,7 @@ int vtkMRIBiasFieldCorrectionLogic::InitMaxThreshold()
 }
 
 //-------------------------------------------------------------------
-int vtkMRIBiasFieldCorrectionLogic::InitMinThreshold()
+double vtkMRIBiasFieldCorrectionLogic::InitMinThreshold()
 {
   // find input volume
   vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::
@@ -672,7 +673,7 @@ int vtkMRIBiasFieldCorrectionLogic::InitMinThreshold()
 }
 
 //-------------------------------------------------------------------
-int vtkMRIBiasFieldCorrectionLogic::AxialMin()
+double vtkMRIBiasFieldCorrectionLogic::AxialMin()
 {
   // find input volume
   vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::
@@ -686,7 +687,7 @@ int vtkMRIBiasFieldCorrectionLogic::AxialMin()
 }
 
 //-------------------------------------------------------------------
-int vtkMRIBiasFieldCorrectionLogic::AxialMax()
+double vtkMRIBiasFieldCorrectionLogic::AxialMax()
 {
   // find input volume
   vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::
@@ -700,7 +701,7 @@ int vtkMRIBiasFieldCorrectionLogic::AxialMax()
 }
 
 //-------------------------------------------------------------------
-int vtkMRIBiasFieldCorrectionLogic::SagittalMax()
+double vtkMRIBiasFieldCorrectionLogic::SagittalMax()
 {
   // find input volume
   vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::
@@ -714,7 +715,7 @@ int vtkMRIBiasFieldCorrectionLogic::SagittalMax()
 }
 
 //-------------------------------------------------------------------
-int vtkMRIBiasFieldCorrectionLogic::CoronalMax()
+double vtkMRIBiasFieldCorrectionLogic::CoronalMax()
 {
   // find input volume
   vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::

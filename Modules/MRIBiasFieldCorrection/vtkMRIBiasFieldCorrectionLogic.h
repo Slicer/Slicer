@@ -58,12 +58,12 @@ class VTK_MRIBiasFieldCorrection_EXPORT
   void Apply();
   void Preview();
 
-  int InitMaxThreshold();
-  int InitMinThreshold();
-  int AxialMax();
-  int AxialMin();
-  int SagittalMax();
-  int CoronalMax();
+  double InitMaxThreshold();
+  double InitMinThreshold();
+  double AxialMax();
+  double AxialMin();
+  double SagittalMax();
+  double CoronalMax();
 
   double originOutvolume[3];
 
@@ -77,15 +77,13 @@ protected:
   vtkITKGradientAnisotropicDiffusionImageFilter*
     GradientAnisotropicDiffusionImageFilter;
 
-  vtkExtractVOI* ExtractVOI;
-  vtkExtractVOI* ExtractVOI2;
-  vtkImageThreshold* ImageThreshold;
-  vtkImageClip* ImageClip;
-  vtkImageData* CurrentSlide;
-
-  vtkImageData* Storage;
-  vtkImageData* PreviewImage;
-  vtkImageData* Mask;
+  vtkExtractVOI     *ExtractVOI;
+  vtkExtractVOI     *ExtractVOI2;
+  vtkImageThreshold *ImageThreshold;
+  vtkImageClip      *ImageClip;
+  vtkImageData      *Storage;
+  vtkImageData      *PreviewImage;
+  vtkImageData      *Mask;
 };
 
 #endif
