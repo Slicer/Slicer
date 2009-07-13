@@ -65,7 +65,7 @@ vtkSlicerGPURayCastVolumeTextureMapper3D::vtkSlicerGPURayCastVolumeTextureMapper
   this->RayCastProgram           =  0;
   this->RayCastSupported         =  0;
   this->RenderWindow         = NULL;
-  this->RaySteps             = 450.0f;
+  this->RaySteps             = 1050.0f;
 
   this->GlobalAlpha          = 1.0f;
 }
@@ -122,8 +122,30 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolum
   // Start the timer now
   this->Timer->StartTimer();
 
-  glPushAttrib(GL_ENABLE_BIT | GL_POLYGON_BIT | GL_TEXTURE_BIT);
+  glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT | GL_LIGHTING_BIT);
   
+  //setup material based on volume property
+  float ambient = vol->GetProperty()->GetAmbient();
+  float specular = vol->GetProperty()->GetSpecular();
+  float diffuse = vol->GetProperty()->GetDiffuse();
+  float power = 128*vol->GetProperty()->GetSpecularPower()/50;
+  
+//  cout<<ambient<<" "<<diffuse<<" "<<specular<<endl;
+//  cout.flush();
+  
+  float ambientMaterial[4];
+  float diffuseMaterial[4];
+  float specularMaterial[4];
+  
+  ambientMaterial[0] = ambient; ambientMaterial[1] = ambient; ambientMaterial[2] = ambient; ambientMaterial[3] = 1.0;
+  diffuseMaterial[0] = diffuse; diffuseMaterial[1] = diffuse; diffuseMaterial[2] = diffuse; diffuseMaterial[3] = 1.0;
+  specularMaterial[0] = specular; specularMaterial[1] = specular; specularMaterial[2] = specular; specularMaterial[3] = 1.0;
+  
+  glMaterialfv(GL_FRONT, GL_AMBIENT, ambientMaterial);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseMaterial);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, specularMaterial);
+  glMaterialf(GL_FRONT, GL_SHININESS, power); 
+ 
   glDisable(GL_LIGHTING);
   vtkGraphicErrorMacro(ren->GetRenderWindow(),"Before actual render method");
  
@@ -1474,18 +1496,18 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderFour()
         "    return gl_NormalMatrix * normal.xyz;                                                \n"
         "}                                                                                          \n"
         "                                                                                        \n"
-        "vec4 directionalLight(vec3 coord, vec3 lightDir)                                                          \n"
+        "vec4 directionalLight(vec3 coord, vec3 lightDir, vec4 color)                              \n"
         "{                                                                                          \n"
         "    vec3    normal = normalize(voxelNormal(coord));                                     \n"
         "    float   NdotL = max( dot( normal, lightDir ), 0.0 );                                \n"
-        "    if ( NdotL > 0.0 )                                                                      \n"
-        "    {                                                                                       \n"
-        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);             \n" 
-        "        vec4 specular = gl_LightSource[0].specular * pow(NdotHV, 40.0); \n"
-        "        return (specular + gl_LightSource[0].diffuse * NdotL + gl_LightSource[0].ambient);          \n"
-        "    }                                                                                       \n"
-        "    else                                                                                \n"
-        "        return vec4(1.0);                                                                   \n"
+        "    vec4    specular = vec4(0);                                                            \n"
+        "    if (NdotL > 0.0)                                                                     \n"
+        "    {                                                                                      \n"
+        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);      \n" 
+        "        specular = (gl_FrontMaterial.specular) * pow(NdotHV, gl_FrontMaterial.shininess);   \n"
+        "    }                                                                                   \n"
+        "    vec4    diffuse = (gl_FrontMaterial.ambient + gl_FrontMaterial.diffuse * NdotL) * color;   \n"
+        "    return (specular + diffuse);                                                         \n"
         "}                                                                                          \n"
         "                                                                                        \n"
         "void main()                                                                            \n"
@@ -2125,18 +2147,18 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderTwo()
         "    return gl_NormalMatrix * normal.xyz;                                                \n"
         "}                                                                                          \n"
         "                                                                                        \n"
-        "vec4 directionalLight(vec3 coord, vec3 lightDir)                                                          \n"
+        "vec4 directionalLight(vec3 coord, vec3 lightDir, vec4 color)                              \n"
         "{                                                                                          \n"
         "    vec3    normal = normalize(voxelNormal(coord));                                     \n"
         "    float   NdotL = max( dot( normal, lightDir ), 0.0 );                                \n"
-        "    if ( NdotL > 0.0 )                                                                      \n"
-        "    {                                                                                       \n"
-        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);             \n" 
-        "        vec4 specular = gl_LightSource[0].specular * pow(NdotHV, 40.0); \n"
-        "        return (specular + gl_LightSource[0].diffuse * NdotL + gl_LightSource[0].ambient);          \n"
-        "    }                                                                                       \n"
-        "    else                                                                                \n"
-        "        return vec4(1.0);                                                                   \n"
+        "    vec4    specular = vec4(0);                                                            \n"
+        "    if (NdotL > 0.0)                                                                     \n"
+        "    {                                                                                      \n"
+        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);      \n" 
+        "        specular = (gl_FrontMaterial.specular) * pow(NdotHV, gl_FrontMaterial.shininess);   \n"
+        "    }                                                                                   \n"
+        "    vec4    diffuse = (gl_FrontMaterial.ambient + gl_FrontMaterial.diffuse * NdotL) * color;   \n"
+        "    return (specular + diffuse);                                                         \n"
         "}                                                                                          \n"
         "                                                                                        \n"
         "void main()                                                                            \n"
@@ -2760,18 +2782,18 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShader()
         "    return gl_NormalMatrix * normal.xyz;                                                \n"
         "}                                                                                          \n"
         "                                                                                        \n"
-        "vec4 directionalLight(vec3 coord, vec3 lightDir)                                                          \n"
+        "vec4 directionalLight(vec3 coord, vec3 lightDir, vec4 color)                              \n"
         "{                                                                                          \n"
         "    vec3    normal = normalize(voxelNormal(coord));                                     \n"
         "    float   NdotL = max( dot( normal, lightDir ), 0.0 );                                \n"
-        "    if ( NdotL > 0.0 )                                                                      \n"
-        "    {                                                                                       \n"
-        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);             \n" 
-        "        vec4 specular = gl_LightSource[0].specular * pow(NdotHV, 40.0); \n"
-        "        return (specular + gl_LightSource[0].diffuse * NdotL + gl_LightSource[0].ambient);          \n"
-        "    }                                                                                       \n"
-        "    else                                                                                \n"
-        "        return vec4(1.0);                                                                   \n"
+        "    vec4    specular = vec4(0);                                                            \n"
+        "    if (NdotL > 0.0)                                                                     \n"
+        "    {                                                                                      \n"
+        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);      \n" 
+        "        specular = (gl_FrontMaterial.specular) * pow(NdotHV, gl_FrontMaterial.shininess);   \n"
+        "    }                                                                                   \n"
+        "    vec4    diffuse = (gl_FrontMaterial.ambient + gl_FrontMaterial.diffuse * NdotL) * color;   \n"
+        "    return (specular + diffuse);                                                         \n"
         "}                                                                                          \n"
         "                                                                                        \n"
         "void main()                                                                            \n"
@@ -2819,7 +2841,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShader()
         "                                                                                        \n"
         "            if (tempAlpha > 0.0)                                                           \n"
         "            {                                                                              \n"
-        "               nextColor *= directionalLight(nextRayOrigin, lightDir);                      \n"
+        "               nextColor = directionalLight(nextRayOrigin, lightDir, nextColor);             \n"
         "                                                                                              \n"      
         "               tempAlpha = (1.0-alpha)*tempAlpha;                                              \n"
         "               pixelColor += nextColor*tempAlpha;                                              \n"
