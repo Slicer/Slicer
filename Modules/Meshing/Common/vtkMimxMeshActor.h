@@ -79,6 +79,10 @@ public:
   vtkTubeFilter *TubeFilter;
   vtkShrinkFilter *InteriorShrinkFilter;
   std::string activeAttribute;
+  MeshDisplayProperty()
+    {
+    this->LegendActor = NULL;
+    }
 };
 
 class VTK_MIMXCOMMON_EXPORT vtkMimxMeshActor : public vtkMimxActorBase
@@ -372,6 +376,9 @@ protected:
   void UpdateElementSetDisplay();
   void MapperRedToBlueLookUpTable(vtkLookupTable *Lut, const char *ArrayName, double *range);
   void MapperBlueToRedLookUpTable(vtkLookupTable *Lut, const char *ArrayName, double *range);
+
+  void BuildScalarBar();
+
 private:
   vtkActor *OutlineActor;
   vtkActor *InteriorActor;

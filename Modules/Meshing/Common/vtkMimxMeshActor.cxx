@@ -88,6 +88,7 @@ vtkMimxMeshActor::vtkMimxMeshActor()
   this->DataType = ACTOR_FE_MESH;
   this->ElementSetName = NULL;
   this->IsVisible = true;
+  this->SavedVisibility = this->IsVisible;
   this->ElementSetDisplayList.clear();
   this->DisplayMode = vtkMimxMeshActor::DisplayMesh;
   this->DisplayType = vtkMimxMeshActor::DisplaySurfaceAndOutline;
@@ -177,38 +178,21 @@ vtkMimxMeshActor::vtkMimxMeshActor()
         
   /* This is used for Scale Display */
   //
-  this->lutFilter = vtkLookupTable::New();
-  this->BlueToRedLookUpTable();
-  this->LegendActor = vtkScalarBarActor::New();
-  vtkTextProperty *textProperty = this->LegendActor->GetTitleTextProperty();
-  textProperty->SetFontFamilyToArial();
-  textProperty->SetColor( TextColor );
-  textProperty->ShadowOff();
-  textProperty->ItalicOff();
-  textProperty->SetFontSize(40);
-  
-  this->LegendActor->SetTitleTextProperty( textProperty );
-  this->LegendActor->SetLabelTextProperty( textProperty );
-  this->LegendActor->SetLookupTable((this->lutFilter));
-  //
-  this->LegendActor->GetPositionCoordinate()->SetCoordinateSystemToNormalizedViewport();
-  this->LegendActor->GetPositionCoordinate()->SetValue(0.1,0.05);
-  this->LegendActor->SetOrientationToVertical();
-  this->LegendActor->SetWidth(0.1);
-  this->LegendActor->SetHeight(0.9);
-  this->LegendActor->SetPosition(0.01,0.1);
-  this->LegendActor->SetLabelFormat("%6.3f");
-  this->LegendActor->SetVisibility( 0 );
+  this->lutFilter = NULL;
+  this->LegendActor = NULL;
+
   this->IsAverageEdgeLengthCalculated = 0;
   this->AverageEdgeLength = 0.0;
   this->PointSetOfNodeSet = NULL;
   this->InvertCuttingPlane = 0;
   this->MeshType = 0;
+  this->ColorRangeType == vtkMimxMeshActor::BlueToRed;
 }
 
 //----------------------------------------------------------------------------------------
 vtkMimxMeshActor::~vtkMimxMeshActor()
 {
+  this->UnstructuredGrid->SetPoints(NULL);
   this->UnstructuredGrid->Delete();
   this->UnstructuredGridMapper->Delete();
   this->Actor->Delete();
@@ -226,8 +210,52 @@ vtkMimxMeshActor::~vtkMimxMeshActor()
   this->CuttingPlane->Delete();
   this->TubeFilter->Delete();
   this->OutlineGeometryFilter->Delete();
-  this->LegendActor->Delete();
-  this->lutFilter->Delete();
+  if (this->LegendActor)
+    {
+    vtkWarningMacro("Legend Actor Delete");
+    this->LegendActor->Delete();
+    this->LegendActor = NULL;
+    }
+  if (this->lutFilter)
+    {
+    this->lutFilter->Delete();
+    this->lutFilter = NULL;
+    }
+}
+
+//----------------------------------------------------------------------------------------
+void vtkMimxMeshActor::BuildScalarBar()
+{
+  if (!this->lutFilter)
+    {
+    this->lutFilter = vtkLookupTable::New();
+    }
+  this->BlueToRedLookUpTable();
+  if (!this->LegendActor)
+    {
+    vtkWarningMacro("LegendActor: vtkScalarBarActor::New");
+    this->LegendActor = vtkScalarBarActor::New();
+    }
+  vtkTextProperty *textProperty = this->LegendActor->GetTitleTextProperty();
+  textProperty->SetFontFamilyToArial();
+  textProperty->SetColor( TextColor );
+  textProperty->ShadowOff();
+  textProperty->ItalicOff();
+  textProperty->SetFontSize(40);
+  
+  this->LegendActor->SetTitleTextProperty( textProperty );
+  this->LegendActor->SetLabelTextProperty( textProperty );
+  textProperty->Delete();
+  this->LegendActor->SetLookupTable((this->lutFilter));
+  //
+  this->LegendActor->GetPositionCoordinate()->SetCoordinateSystemToNormalizedViewport();
+  this->LegendActor->GetPositionCoordinate()->SetValue(0.1,0.05);
+  this->LegendActor->SetOrientationToVertical();
+  this->LegendActor->SetWidth(0.1);
+  this->LegendActor->SetHeight(0.9);
+  this->LegendActor->SetPosition(0.01,0.1);
+  this->LegendActor->SetLabelFormat("%6.3f");
+  this->LegendActor->SetVisibility( 0 );
 }
 
 //----------------------------------------------------------------------------------------
@@ -778,6 +806,10 @@ bool vtkMimxMeshActor::GetMeshScalarVisibility( )
 //----------------------------------------------------------------------------------
 void vtkMimxMeshActor::SetMeshLegendVisibility(bool visible)
 {
+  if (!this->LegendActor)
+    {
+    this->BuildScalarBar();
+    }
   this->LegendActor->SetVisibility(static_cast<int>(visible));
   this->LegendActor->Modified();
 }
@@ -804,7 +836,14 @@ void vtkMimxMeshActor::SetElementSetLegendVisibility(std::string setName, bool v
 bool vtkMimxMeshActor::GetMeshLegendVisibility( )
 {
   bool visibility = false;
-  if(this->LegendActor->GetVisibility( ) )        visibility = true;
+    if (!this->LegendActor)
+    {
+    this->BuildScalarBar();
+    }
+  if (this->LegendActor->GetVisibility( ) )
+    {
+    visibility = true;
+    }
   return visibility;
 }
 
@@ -816,6 +855,10 @@ void vtkMimxMeshActor::SetMeshScalarName(std::string attributeName)
   
   if ( range ) this->GenerateMeshMapperLookUpTable(attributeName.c_str(), range);
   this->Actor->Modified();
+  if (!this->LegendActor)
+    {
+    this->BuildScalarBar();
+    }
   this->LegendActor->SetTitle( attributeName.c_str() );
 }
 
@@ -1288,7 +1331,11 @@ void vtkMimxMeshActor::CreateElementSetList( )
     if (currentSet->OutlineMapper) currentSet->OutlineMapper->Delete();
     if (currentSet->InteriorMapper) currentSet->InteriorMapper->Delete();
     if (currentSet->ShrinkFilter) currentSet->ShrinkFilter->Delete();
-    if (currentSet->LegendActor)  currentSet->LegendActor->Delete();
+    if (currentSet->LegendActor)
+      {
+      vtkWarningMacro("current set LegendActor Delete");
+      currentSet->LegendActor->Delete();
+      }
     if (currentSet->lutFilter) currentSet->lutFilter->Delete();
     ElementSetDisplayList.pop_front();
     }
@@ -1418,6 +1465,7 @@ void vtkMimxMeshActor::AddElementSetListItem( std::string setName )
   elementSetProperty->InteriorActor->SetVisibility(0);
   /* for display of scalar values of the element set*/
   elementSetProperty->lutFilter = NULL;
+  vtkWarningMacro("elemetn set property LegendActor  vtkScalarBarActor::New()");
   elementSetProperty->LegendActor = vtkScalarBarActor::New();
   vtkTextProperty *textProperty = elementSetProperty->LegendActor->GetTitleTextProperty();
   textProperty->SetFontFamilyToArial();
@@ -1460,6 +1508,10 @@ void vtkMimxMeshActor::SetRenderer(vtkRenderer *renderer)
   this->Renderer->AddViewProp(this->Actor);
   this->Renderer->AddViewProp(this->OutlineActor);
   this->Renderer->AddViewProp(this->InteriorActor);
+  if (!this->LegendActor)
+    {
+    this->BuildScalarBar();
+    }
   this->Renderer->AddViewProp(this->LegendActor);
     
   std::list<MeshDisplayProperty*>::iterator it;
@@ -1505,10 +1557,13 @@ vtkRenderWindowInteractor* vtkMimxMeshActor::GetInteractor( )
 //----------------------------------------------------------------------------------
 void vtkMimxMeshActor::SetLegendRange(double min, double max)
 {
+  if (!this->LegendActor)
+    {
+    this->BuildScalarBar();
+    }
   this->lutFilter->SetTableRange(min, max);
   this->lutFilter->ForceBuild();
   this->UnstructuredGridMapper->SetScalarRange(min, max);
-
   this->LegendActor->SetLookupTable(this->lutFilter);
   this->LegendActor->Modified();
 }
@@ -2100,7 +2155,10 @@ void vtkMimxMeshActor::SetLegendTextColor(double color[3])
   TextColor[0] = color[0];
   TextColor[1] = color[1];
   TextColor[2] = color[2];
-  
+  if (!this->LegendActor)
+    {
+    this->BuildScalarBar();
+    }
   vtkTextProperty *textProperty = this->LegendActor->GetTitleTextProperty();
   textProperty->SetColor( TextColor );
   
@@ -2549,6 +2607,10 @@ void vtkMimxMeshActor::GenerateMeshMapperLookUpTable(const char *ArrayName, doub
   this->UnstructuredGridMapper->SetScalarRange(0,numCells-1);
   Lut->Delete();
 
+  if (!this->LegendActor)
+    {
+    this->BuildScalarBar();
+    }
   this->lutFilter->SetTableRange(range[0], range[1]);
   this->lutFilter->Modified();
   this->LegendActor->SetLookupTable(this->lutFilter);
@@ -2605,6 +2667,10 @@ void vtkMimxMeshActor::GenerateElementSetMapperLookUpTable(
   currentSet->SurfaceMapper->Modified();
   currentSet->SurfaceMapper->Update();
   Lut->Delete();
+  if (!this->LegendActor)
+    {
+    this->BuildScalarBar();
+    }
   this->lutFilter->SetTableRange(range[0], range[1]);
   this->lutFilter->Modified();
   this->LegendActor->SetLookupTable(this->lutFilter);
@@ -2614,6 +2680,10 @@ void vtkMimxMeshActor::GenerateElementSetMapperLookUpTable(
 //----------------------------------------------------------------------------------------------------------------
 void vtkMimxMeshActor::RedToBlueLookUpTable()
 {
+  if (!this->lutFilter)
+    {
+    this->BuildScalarBar();
+    }
   this->lutFilter->SetNumberOfColors(100);
   this->lutFilter->Build();
   double red = 1.0;
@@ -2646,6 +2716,10 @@ void vtkMimxMeshActor::RedToBlueLookUpTable()
 //-----------------------------------------------------------------------------------------------------------------
 void vtkMimxMeshActor::BlueToRedLookUpTable()
 {
+  if (!this->lutFilter)
+    {
+    this->BuildScalarBar();
+    }
   this->lutFilter->SetNumberOfColors(100);
   this->lutFilter->Build();
   double red = 0.0;
@@ -2987,11 +3061,19 @@ void vtkMimxMeshActor::SetColorRangeType(int RangeType, const char *ArrayName,
 //-----------------------------------------------------------------------------------------------------------------
 void vtkMimxMeshActor::SetLegendTitle(const char *title)
 {
+  if (!this->LegendActor)
+    {
+    this->BuildScalarBar();
+    }
   this->LegendActor->SetTitle( title );
 }
 //-----------------------------------------------------------------------------------------------------------------
 const char *vtkMimxMeshActor::GetLegendTitle( )
 {
+  if (!this->LegendActor)
+    {
+    this->BuildScalarBar();
+    }
   return this->LegendActor->GetTitle( );
 }
 //-----------------------------------------------------------------------------------------------------------------
@@ -3000,6 +3082,10 @@ void vtkMimxMeshActor::SetLegendPrecision(int precision)
   this->LegendPrecision = precision;
   char labelformat[20];
   sprintf(labelformat,"%%6.%df",precision);
+  if (!this->LegendActor)
+    {
+    this->BuildScalarBar();
+    }
   this->LegendActor->SetLabelFormat( labelformat );
 }
 //-----------------------------------------------------------------------------------------------------------------
@@ -3010,6 +3096,10 @@ int vtkMimxMeshActor::GetLegendPrecision( )
 //-----------------------------------------------------------------------------------------------------------------
 void vtkMimxMeshActor::GetCurrentScalarRange( double *range )
 {
+  if (!this->lutFilter)
+    {
+    this->BuildScalarBar();
+    }
   this->lutFilter->GetTableRange( range );
 }
 //------------------------------------------------------------------------------------------------------------------
