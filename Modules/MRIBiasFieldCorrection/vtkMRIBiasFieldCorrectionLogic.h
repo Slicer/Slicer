@@ -25,15 +25,10 @@
 #include "vtkMRMLMRIBiasFieldCorrectionNode.h"
 
 class vtkITKGradientAnisotropicDiffusionImageFilter;
-
 class vtkExtractVOI;
-
 class vtkImageThreshold;
-
 class vtkImageClip;
-
 class vtkImageData;
-
 class vtkImageReslice;
 
 class VTK_MRIBiasFieldCorrection_EXPORT
@@ -61,7 +56,6 @@ class VTK_MRIBiasFieldCorrection_EXPORT
   void SliceProcess( vtkTransform* xyToijk, double dim0, double dim1 );
 
   void Apply();
-
   void Preview();
 
   int InitMaxThreshold();
@@ -89,9 +83,9 @@ protected:
   vtkImageClip* ImageClip;
   vtkImageData* CurrentSlide;
 
-  vtkImageData* STORAGE;
-  vtkImageData* PREVIEW;
-  vtkImageData* MASK;
+  vtkImageData* Storage;
+  vtkImageData* PreviewImage;
+  vtkImageData* Mask;
 };
 
 #endif
