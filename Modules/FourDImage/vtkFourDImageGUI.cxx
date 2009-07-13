@@ -616,7 +616,7 @@ void vtkFourDImageGUI::RemoveLogicObservers ( )
 {
   if (this->GetLogic())
     {
-    this->GetLogic()->RemoveObservers(vtkCommand::ModifiedEvent,
+    this->GetLogic()->RemoveObservers(vtkFourDImageLogic::StatusUpdateEvent,
                                       (vtkCommand *)this->LogicCallbackCommand);
     }
 }

@@ -560,7 +560,7 @@ void vtkFourDImageLogic::UpdateDisplayBufferNode(vtkMRMLTimeSeriesBundleNode* bu
     {
     return;
     }
-  vtkMRMLScene* scene = this->GetMRMLScene();
+//  vtkMRMLScene* scene = this->GetMRMLScene();
 
   // Get display and volume node
   vtkMRMLScalarVolumeNode *volumeNode

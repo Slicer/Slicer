@@ -180,10 +180,10 @@ class VTK_FourDImage_EXPORT vtkFourDImageGUI : public vtkSlicerModuleGUI
   // Load / Save / Active frame
   vtkKWLoadSaveButtonWithLabel* SelectInputDirectoryButton;
   vtkKWPushButton*              LoadImageButton;
-  vtkKWMenuButton*              SaveSeriesMenu;
+  //vtkKWMenuButton*              SaveSeriesMenu;
   vtkKWLoadSaveButtonWithLabel* SelectOutputDirectoryButton;
   vtkKWPushButton*              SaveImageButton;
-  vtkKWMenuButton*              ActiveSeriesMenu;
+  //vtkKWMenuButton*              ActiveSeriesMenu;
 
   // -----------------------------------------
   // Active 4D Bundle selector

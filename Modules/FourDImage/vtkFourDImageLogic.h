@@ -83,7 +83,7 @@ class VTK_FourDImage_EXPORT vtkFourDImageLogic : public vtkSlicerModuleLogic
     CurveDataListType CurveList;
   } CurveDataSetType;
 
-  typedef std::map<std::string, CurveDataSetType> CurveCacheType;
+  //typedef std::map<std::string, CurveDataSetType> CurveCacheType;
 
   typedef std::map<std::string, std::string> RegistrationParametersType;
   //ETX
@@ -152,15 +152,13 @@ class VTK_FourDImage_EXPORT vtkFourDImageLogic : public vtkSlicerModuleLogic
 
  private:
 
-  vtkMRMLScene* MRMLScene;
-
   //BTX
   FrameNodeVectorType FrameNodeVector;
   FrameNodeVectorType RegisteredFrameNodeVector;
   std::string VolumeBundleID;
   std::string RegisteredVolumeBundleID;
 
-  CurveCacheType CurveCache;  // CurveCache[<4d bundle name>][<label number>].<member of CurveDataType>
+  //CurveCacheType CurveCache;  // CurveCache[<4d bundle name>][<label number>].<member of CurveDataType>
   //ETX
 
 };
