@@ -13,6 +13,7 @@
   Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 
 ==============================================================auto=*/
+
 #ifndef __vtkMRIBiasFieldCorrectionGUI_h
 #define __vtkMRIBiasFieldCorrectionGUI_h
 
@@ -26,9 +27,9 @@ class vtkSlicerSliceWidget;
 class vtkKWFrame;
 class vtkKWScaleWithEntry;
 class vtkKWPushButton;
-class vtkSlicerNodeSelectorWidget;
 class vtkKWFrameWithLabel;
 class vtkKWSpinBoxWithLabel;
+class vtkSlicerNodeSelectorWidget;
 class vtkSlicerApplicationLogic;
 
 class VTK_MRIBiasFieldCorrection_EXPORT vtkMRIBiasFieldCorrectionGUI :
@@ -86,7 +87,7 @@ class VTK_MRIBiasFieldCorrection_EXPORT vtkMRIBiasFieldCorrectionGUI :
   // Description:
   // Describe behavior at module startup and exit.
   virtual void Enter() {};
-  virtual void Exit() {};
+  virtual void Exit()  {};
 
   // Description:
   // Get the categorization of the module.  The category is used for
@@ -107,24 +108,21 @@ protected:
   // Updates parameters values in MRML node based on GUI widgets
   void UpdateMRML();
 
-  vtkKWScaleWithEntry               *TimeStepScale;
-  vtkKWScaleWithEntry               *NumberOfIterationsScale;
-  vtkKWScaleWithEntry               *Sagittal2Scale;
+  vtkKWScaleWithEntry               *SagittalScale;
   vtkKWScaleWithEntry               *CoronalScale;
   vtkKWScaleWithEntry               *AxialScale;
-  vtkKWScaleWithEntry               *ThresholdScale;
-  vtkKWScaleWithEntry               *ShrinkFactor;
-  vtkKWScaleWithEntry               *MaxNumberOfIterations;
-  vtkKWScaleWithEntry               *NumberOfFittingLevels;
-  vtkKWScaleWithEntry               *WienFilterNoise;
-  vtkKWScaleWithEntry               *BiasField;
-  vtkKWScaleWithEntry               *Convergence;
-  vtkKWScaleWithEntry               *SlidePositionScale;
+  vtkKWScaleWithEntry               *MaskThresholdScale;
+  vtkKWScaleWithEntry               *ShrinkFactorScale;
+  vtkKWScaleWithEntry               *NumberOfIterationsScale;
+  vtkKWScaleWithEntry               *NumberOfFittingLevelsScale;
+  vtkKWScaleWithEntry               *WienerFilterNoiseScale;
+  vtkKWScaleWithEntry               *BiasFieldScale;
+  vtkKWScaleWithEntry               *ConvergenceThresholdScale;
   vtkKWScaleWithEntry               *BiasIntensityScale;
 
   vtkSlicerNodeSelectorWidget       *VolumeSelector;
   vtkSlicerNodeSelectorWidget       *OutVolumeSelector;
-  vtkSlicerNodeSelectorWidget       *GADNodeSelector;
+  vtkSlicerNodeSelectorWidget       *NodeSelector;
   vtkSlicerNodeSelectorWidget       *StorageVolumeSelector;
   vtkSlicerNodeSelectorWidget       *MaskVolumeSelector;
 

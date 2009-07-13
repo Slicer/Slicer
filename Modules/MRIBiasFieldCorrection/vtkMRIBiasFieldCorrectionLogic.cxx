@@ -1,35 +1,33 @@
 /*=auto==============================================================
 
-Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All
-Rights Reserved.
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All
+  Rights Reserved.
 
-See Doc/copyright/copyright.txt
-or http://www.slicer.org/copyright/copyright.txt for details.
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
 
-Program:   3D Slicer
-Module:    $RCSfile: vtkMRIBiasFieldCorrectionLogic.cxx,v $
-Date:      $Date: 2006/03/17 15:10:10 $
-Version:   $Revision: 1.2 $
-Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
+  Program:   3D Slicer
+  Module:    $RCSfile: vtkMRIBiasFieldCorrectionLogic.cxx,v $
+  Date:      $Date: 2006/03/17 15:10:10 $
+  Version:   $Revision: 1.2 $
+  Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 
 ==============================================================auto=*/
-
-#include "vtkObjectFactory.h"
 
 #include "vtkMRIBiasFieldCorrectionLogic.h"
 #include "vtkMRIBiasFieldCorrection.h"
 
-#include "vtkMRMLScene.h"
-#include "vtkMRMLScalarVolumeNode.h"
+#include "vtkObjectFactory.h"
+#include "vtkDataArray.h"
+#include "vtkCellData.h"
+#include "vtkGenericAttribute.h"
 
 #include "vtkImageClip.h"
 #include "vtkImageCast.h"
 #include "vtkImageMathematics.h"
 
-#include "vtkDataArray.h"
-#include "vtkObjectFactory.h"
-#include "vtkCellData.h"
-#include "vtkGenericAttribute.h"
+#include "vtkMRMLScene.h"
+#include "vtkMRMLScalarVolumeNode.h"
 
 //----------------------------------------------------------------------------
 #include "vtkSlicerSliceControllerWidget.h"
@@ -55,7 +53,7 @@ vtkMRIBiasFieldCorrectionLogic* vtkMRIBiasFieldCorrectionLogic::New()
   vtkObject* ret = vtkObjectFactory::CreateInstance(
     "vtkMRIBiasFieldCorrectionLogic");
 
-  if(ret)
+  if (ret)
     {
     return (vtkMRIBiasFieldCorrectionLogic*)ret;
     }
@@ -97,7 +95,7 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
 
   // find input volume
   vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::
-    SafeDownCast( this->GetMRMLScene()->GetNodeByID( volumeId ) );
+    SafeDownCast( this->GetMRMLScene()->GetNodeByID(volumeId) );
 
   if (inVolume == NULL)
     {
@@ -122,7 +120,7 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
     }
 
   vtkMRMLScalarVolumeNode *outVolume = vtkMRMLScalarVolumeNode::SafeDownCast(
-      this->GetMRMLScene()->GetNodeByID( volumeId ) );
+      this->GetMRMLScene()->GetNodeByID(volumeId) );
 
   if (outVolume == NULL)
     {
@@ -131,7 +129,7 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
     }
 
   vtkMRMLScalarVolumeNode *maskVolume = vtkMRMLScalarVolumeNode::
-    SafeDownCast( this->GetMRMLScene()->GetNodeByID( maskId ) );
+    SafeDownCast( this->GetMRMLScene()->GetNodeByID(maskId) );
 
   if (maskVolume == NULL)
     {
@@ -194,8 +192,8 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
   MaskShrinkType::Pointer maskshrinker = MaskShrinkType::New();
   maskshrinker->SetInput(binaryThresholdFilter->GetOutput());
 
-  unsigned int shrinkFactor = (unsigned int)this->MRIBiasFieldCorrectionNode->
-    GetShrink();
+  unsigned int shrinkFactor = this->MRIBiasFieldCorrectionNode->
+    GetShrinkFactor();
 
   shrinker->SetShrinkFactors(shrinkFactor);
   maskshrinker->SetShrinkFactors(shrinkFactor);
@@ -212,16 +210,21 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
   correcter->SetInput( shrinker->GetOutput() );
   correcter->SetMaskImage( maskshrinker->GetOutput() );
 
-  unsigned int max = (unsigned int)this->MRIBiasFieldCorrectionNode->GetMax();
-  unsigned int num = (unsigned int)this->MRIBiasFieldCorrectionNode->GetNum();
+  unsigned int numIterations = this->MRIBiasFieldCorrectionNode->
+    GetNumberOfIterations();
+  unsigned int numFittingLevels = this->MRIBiasFieldCorrectionNode->
+    GetNumberOfFittingLevels();
 
-  double wien                 = this->MRIBiasFieldCorrectionNode->GetWien();
-  double widthAtHalfMaximum   = this->MRIBiasFieldCorrectionNode->GetField();
-  double convergenceThreshold = this->MRIBiasFieldCorrectionNode->GetCon();
+  double wienerFilterNoise = this->MRIBiasFieldCorrectionNode->
+    GetWienerFilterNoise();
+  double widthAtHalfMaximum = this->MRIBiasFieldCorrectionNode->
+    GetBiasField();
+  double convergenceThreshold = this->MRIBiasFieldCorrectionNode->
+    GetConvergenceThreshold();
 
-  correcter->SetMaximumNumberOfIterations(max);
-  correcter->SetNumberOfFittingLevels(num);
-  correcter->SetWeinerFilterNoise(wien);
+  correcter->SetMaximumNumberOfIterations(numIterations);
+  correcter->SetNumberOfFittingLevels(numFittingLevels);
+  correcter->SetWeinerFilterNoise(wienerFilterNoise);
   correcter->SetBiasFieldFullWidthAtHalfMaximum(widthAtHalfMaximum);
   correcter->SetConvergenceThreshold(convergenceThreshold);
   correcter->Update();
@@ -513,15 +516,20 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,
   biasField->SetInput( itkPreviewConnector->GetOutput() );
   biasField->SetMaskImage( itkMaskConnector->GetOutput() );
 
-  double convergenceThreshold   = this->MRIBiasFieldCorrectionNode->GetCon();
-  double WeinerFilterNoise      = this->MRIBiasFieldCorrectionNode->GetWien();
-  double widthAtHalfMaximum    = this->MRIBiasFieldCorrectionNode->GetField();
+  double convergenceThreshold = this->MRIBiasFieldCorrectionNode->
+    GetConvergenceThreshold();
+  double WeinerFilterNoise = this->MRIBiasFieldCorrectionNode->
+    GetWienerFilterNoise();
+  double widthAtHalfMaximum = this->MRIBiasFieldCorrectionNode->
+    GetBiasField();
 
-  unsigned int maxNumIterations = this->MRIBiasFieldCorrectionNode->GetMax();
-  unsigned int numFittingLevels = this->MRIBiasFieldCorrectionNode->GetNum();
+  unsigned int numIterations = this->MRIBiasFieldCorrectionNode->
+    GetNumberOfIterations();
+  unsigned int numFittingLevels = this->MRIBiasFieldCorrectionNode->
+    GetNumberOfFittingLevels();
 
   biasField->SetConvergenceThreshold(convergenceThreshold);
-  biasField->SetMaximumNumberOfIterations(maxNumIterations);
+  biasField->SetMaximumNumberOfIterations(numIterations);
   biasField->SetNumberOfFittingLevels(numFittingLevels);
   biasField->SetWeinerFilterNoise(WeinerFilterNoise);
   biasField->SetBiasFieldFullWidthAtHalfMaximum(widthAtHalfMaximum);

@@ -24,15 +24,12 @@
 #include "vtkMRIBiasFieldCorrection.h"
 #include "vtkMRMLMRIBiasFieldCorrectionNode.h"
 
-class vtkITKGradientAnisotropicDiffusionImageFilter;
-class vtkExtractVOI;
 class vtkImageThreshold;
 class vtkImageClip;
 class vtkImageData;
-class vtkImageReslice;
 
-class VTK_MRIBiasFieldCorrection_EXPORT
-  vtkMRIBiasFieldCorrectionLogic : public vtkSlicerModuleLogic
+class VTK_MRIBiasFieldCorrection_EXPORT vtkMRIBiasFieldCorrectionLogic :
+  public vtkSlicerModuleLogic
 {
   public:
   static vtkMRIBiasFieldCorrectionLogic *New();
@@ -40,16 +37,16 @@ class VTK_MRIBiasFieldCorrection_EXPORT
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // TODO: do we need to observe MRML here?
-  virtual void ProcessMrmlEvents ( vtkObject *caller, unsigned long event,
+  virtual void ProcessMrmlEvents( vtkObject *caller, unsigned long event,
     void *callData ){};
 
   // Description: Get/Set MRML node storing parameter values
   vtkGetObjectMacro( MRIBiasFieldCorrectionNode,
     vtkMRMLMRIBiasFieldCorrectionNode);
   void SetAndObserveMRIBiasFieldCorrectionNode(
-    vtkMRMLMRIBiasFieldCorrectionNode *n)
+    vtkMRMLMRIBiasFieldCorrectionNode *node)
     {
-    vtkSetAndObserveMRMLNodeMacro( this->MRIBiasFieldCorrectionNode, n);
+    vtkSetAndObserveMRMLNodeMacro(this->MRIBiasFieldCorrectionNode, node);
     }
 
   // The method that creates and runs VTK or ITK pipeline
@@ -65,20 +62,15 @@ class VTK_MRIBiasFieldCorrection_EXPORT
   double SagittalMax();
   double CoronalMax();
 
-  double originOutvolume[3];
-
 protected:
   vtkMRIBiasFieldCorrectionLogic();
   virtual ~vtkMRIBiasFieldCorrectionLogic();
+
   vtkMRIBiasFieldCorrectionLogic(const vtkMRIBiasFieldCorrectionLogic&);
   void operator=(const vtkMRIBiasFieldCorrectionLogic&);
 
   vtkMRMLMRIBiasFieldCorrectionNode* MRIBiasFieldCorrectionNode;
-  vtkITKGradientAnisotropicDiffusionImageFilter*
-    GradientAnisotropicDiffusionImageFilter;
 
-  vtkExtractVOI     *ExtractVOI;
-  vtkExtractVOI     *ExtractVOI2;
   vtkImageThreshold *ImageThreshold;
   vtkImageClip      *ImageClip;
   vtkImageData      *Storage;

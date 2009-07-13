@@ -1,16 +1,16 @@
 /*=auto====================================================================
 
-Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
-Reserved.
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
+  Reserved.
 
-See Doc/copyright/copyright.txt
-or http://www.slicer.org/copyright/copyright.txt for details.
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
 
-Program:   3D Slicer
-Module:    $RCSfile: vtkMRIBiasFieldCorrectionGUI.cxx,v $
-Date:      $Date: 2006/03/17 15:10:10 $
-Version:   $Revision: 1.2 $
-Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)
+  Program:   3D Slicer
+  Module:    $RCSfile: vtkMRIBiasFieldCorrectionGUI.cxx,v $
+  Date:      $Date: 2006/03/17 15:10:10 $
+  Version:   $Revision: 1.2 $
+  Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)
 
 ====================================================================auto=*/
 
@@ -21,25 +21,25 @@ Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)
 
 #include "vtkKWApplication.h"
 #include "vtkKWWidget.h"
-#include "vtkKWScaleWithEntry.h"
-#include "vtkKWEntryWithLabel.h"
-#include "vtkKWMenuButtonWithLabel.h"
-#include "vtkKWMenuButton.h"
 #include "vtkKWScale.h"
-#include "vtkKWMenu.h"
+#include "vtkKWScaleWithEntry.h"
 #include "vtkKWEntry.h"
+#include "vtkKWEntryWithLabel.h"
+#include "vtkKWMenu.h"
+#include "vtkKWMenuButton.h"
+#include "vtkKWMenuButtonWithLabel.h"
 #include "vtkKWFrame.h"
-#include "vtkKWPushButton.h"
 #include "vtkKWFrameWithLabel.h"
+#include "vtkKWPushButton.h"
 
 #include "vtkSlicerApplication.h"
-#include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerSliceLogic.h"
-#include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkSlicerSliceControllerWidget.h"
 #include "vtkSlicerSlicesControlGUI.h"
 #include "vtkSlicerSliceGUI.h"
+#include "vtkSlicerModuleCollapsibleFrame.h"
+#include "vtkSlicerNodeSelectorWidget.h"
 
 #include "vtkMRMLSliceNode.h"
 
@@ -62,26 +62,23 @@ vtkMRIBiasFieldCorrectionGUI* vtkMRIBiasFieldCorrectionGUI::New()
 //-------------------------------------------------------------------------
 vtkMRIBiasFieldCorrectionGUI::vtkMRIBiasFieldCorrectionGUI()
 {
-  this->TimeStepScale              = vtkKWScaleWithEntry::New();
   this->NumberOfIterationsScale    = vtkKWScaleWithEntry::New();
-  this->Sagittal2Scale             = vtkKWScaleWithEntry::New();
-  this->CoronalScale              = vtkKWScaleWithEntry::New();
-  this->AxialScale              = vtkKWScaleWithEntry::New();
-  this->ThresholdScale             = vtkKWScaleWithEntry::New();
-  this->ShrinkFactor               = vtkKWScaleWithEntry::New();
-  this->MaxNumberOfIterations      = vtkKWScaleWithEntry::New();
-  this->NumberOfFittingLevels      = vtkKWScaleWithEntry::New();
-  this->WienFilterNoise            = vtkKWScaleWithEntry::New();
-  this->BiasField                  = vtkKWScaleWithEntry::New();
-  this->Convergence                = vtkKWScaleWithEntry::New();
-  this->SlidePositionScale         = vtkKWScaleWithEntry::New();
-  this->BiasIntensityScale         = vtkKWScaleWithEntry::New();
+  this->SagittalScale              = vtkKWScaleWithEntry::New();
+  this->CoronalScale               = vtkKWScaleWithEntry::New();
+  this->AxialScale                 = vtkKWScaleWithEntry::New();
+  this->MaskThresholdScale         = vtkKWScaleWithEntry::New();
+  this->ShrinkFactorScale          = vtkKWScaleWithEntry::New();
+  this->NumberOfIterationsScale    = vtkKWScaleWithEntry::New();
+  this->NumberOfFittingLevelsScale = vtkKWScaleWithEntry::New();
+  this->WienerFilterNoiseScale     = vtkKWScaleWithEntry::New();
+  this->BiasFieldScale             = vtkKWScaleWithEntry::New();
+  this->ConvergenceThresholdScale  = vtkKWScaleWithEntry::New();
 
   this->VolumeSelector             = vtkSlicerNodeSelectorWidget::New();
   this->OutVolumeSelector          = vtkSlicerNodeSelectorWidget::New();
   this->StorageVolumeSelector      = vtkSlicerNodeSelectorWidget::New();
   this->MaskVolumeSelector         = vtkSlicerNodeSelectorWidget::New();
-  this->GADNodeSelector            = vtkSlicerNodeSelectorWidget::New();
+  this->NodeSelector               = vtkSlicerNodeSelectorWidget::New();
 
   this->ApplyButton                = vtkKWPushButton::New();
   this->CatchButton                = vtkKWPushButton::New();
@@ -97,67 +94,60 @@ vtkMRIBiasFieldCorrectionGUI::vtkMRIBiasFieldCorrectionGUI()
 //-------------------------------------------------------------------------
 vtkMRIBiasFieldCorrectionGUI::~vtkMRIBiasFieldCorrectionGUI()
 {
-  if( this->BiasIntensityScale )
+  if (this->BiasIntensityScale)
     {
     this->BiasIntensityScale->SetParent(NULL);
     this->BiasIntensityScale->Delete();
     this->BiasIntensityScale = NULL;
     }
 
-  if( this->SlidePositionScale )
+  if (this->NumberOfIterationsScale)
     {
-    this->SlidePositionScale->SetParent(NULL);
-    this->SlidePositionScale->Delete();
-    this->SlidePositionScale = NULL;
+    this->NumberOfIterationsScale->SetParent(NULL);
+    this->NumberOfIterationsScale->Delete();
+    this->NumberOfIterationsScale = NULL;
     }
 
-  if( this->MaxNumberOfIterations )
+  if (this->NumberOfFittingLevelsScale)
     {
-    this->MaxNumberOfIterations->SetParent(NULL);
-    this->MaxNumberOfIterations->Delete();
-    this->MaxNumberOfIterations = NULL;
+    this->NumberOfFittingLevelsScale->SetParent(NULL);
+    this->NumberOfFittingLevelsScale->Delete();
+    this->NumberOfFittingLevelsScale = NULL;
     }
 
-  if( this->NumberOfFittingLevels )
+  if (this->WienerFilterNoiseScale)
     {
-    this->NumberOfFittingLevels->SetParent(NULL);
-    this->NumberOfFittingLevels->Delete();
-    this->NumberOfFittingLevels = NULL;
+    this->WienerFilterNoiseScale->SetParent(NULL);
+    this->WienerFilterNoiseScale->Delete();
+    this->WienerFilterNoiseScale = NULL;
     }
 
-  if( this->WienFilterNoise )
-    {
-    this->WienFilterNoise->SetParent(NULL);
-    this->WienFilterNoise->Delete();
-    this->WienFilterNoise = NULL;
+  if (this->BiasFieldScale)
+  {
+    this->BiasFieldScale->SetParent(NULL);
+    this->BiasFieldScale->Delete();
+    this->BiasFieldScale = NULL;
     }
 
-  if( this->BiasField )
+  if (this->ConvergenceThresholdScale)
     {
-    this->BiasField->SetParent(NULL);
-    this->BiasField->Delete();
-    this->BiasField = NULL;
+    this->ConvergenceThresholdScale->SetParent(NULL);
+    this->ConvergenceThresholdScale->Delete();
+    this->ConvergenceThresholdScale = NULL;
     }
 
-  if (this->Convergence)
+  if (this->MaskThresholdScale)
     {
-    this->Convergence->SetParent(NULL);
-    this->Convergence->Delete();
-    this->Convergence = NULL;
+    this->MaskThresholdScale->SetParent(NULL);
+    this->MaskThresholdScale->Delete();
+    this->MaskThresholdScale = NULL;
     }
 
-  if (this->ThresholdScale)
+  if (this->ShrinkFactorScale)
     {
-    this->ShrinkFactor->SetParent(NULL);
-    this->ShrinkFactor->Delete();
-    this->ShrinkFactor = NULL;
-    }
-
-  if (this->ShrinkFactor)
-    {
-    this->ShrinkFactor->SetParent(NULL);
-    this->ShrinkFactor->Delete();
-    this->ShrinkFactor = NULL;
+    this->ShrinkFactorScale->SetParent(NULL);
+    this->ShrinkFactorScale->Delete();
+    this->ShrinkFactorScale = NULL;
     }
 
   if (this->ParametersFrame)
@@ -167,35 +157,21 @@ vtkMRIBiasFieldCorrectionGUI::~vtkMRIBiasFieldCorrectionGUI()
     this->ParametersFrame = NULL;
     }
 
-  if( this->AdvancedParametersFrame )
+  if (this->AdvancedParametersFrame)
     {
     this->AdvancedParametersFrame->SetParent(NULL);
     this->AdvancedParametersFrame->Delete();
     this->AdvancedParametersFrame = NULL;
     }
 
-  if( this->TimeStepScale )
-    {
-    this->TimeStepScale->SetParent(NULL);
-    this->TimeStepScale->Delete();
-    this->TimeStepScale = NULL;
-    }
-
-  if( this->NumberOfIterationsScale )
-    {
-    this->NumberOfIterationsScale->SetParent(NULL);
-    this->NumberOfIterationsScale->Delete();
-    this->NumberOfIterationsScale = NULL;
-    }
-
-  if( this->VolumeSelector )
+  if (this->VolumeSelector)
     {
     this->VolumeSelector->SetParent(NULL);
     this->VolumeSelector->Delete();
     this->VolumeSelector = NULL;
     }
 
-  if( this->OutVolumeSelector )
+  if (this->OutVolumeSelector)
     {
     this->OutVolumeSelector->SetParent(NULL);
     this->OutVolumeSelector->Delete();
@@ -216,11 +192,11 @@ vtkMRIBiasFieldCorrectionGUI::~vtkMRIBiasFieldCorrectionGUI()
     this->MaskVolumeSelector = NULL;
     }
 
-  if (this->GADNodeSelector)
+  if (this->NodeSelector)
     {
-    this->GADNodeSelector->SetParent(NULL);
-    this->GADNodeSelector->Delete();
-    this->GADNodeSelector = NULL;
+    this->NodeSelector->SetParent(NULL);
+    this->NodeSelector->Delete();
+    this->NodeSelector = NULL;
     }
 
   if (this->ApplyButton)
@@ -244,11 +220,11 @@ vtkMRIBiasFieldCorrectionGUI::~vtkMRIBiasFieldCorrectionGUI()
     this->VolumeSelectionFrame = NULL;
     }
 
-  if(this->Sagittal2Scale)
+  if (this->SagittalScale)
     {
-    this->Sagittal2Scale->SetParent(NULL);
-    this->Sagittal2Scale->Delete();
-    this->Sagittal2Scale = NULL;
+    this->SagittalScale->SetParent(NULL);
+    this->SagittalScale->Delete();
+    this->SagittalScale = NULL;
     }
 
   if (this->CoronalScale)
@@ -265,12 +241,13 @@ vtkMRIBiasFieldCorrectionGUI::~vtkMRIBiasFieldCorrectionGUI()
     this->AxialScale = NULL;
     }
 
-  this->SetLogic (NULL);
-  vtkSetMRMLNodeMacro(this->MRIBiasFieldCorrectionNode, NULL);
+  this->SetLogic(NULL);
+  vtkSetMRMLNodeMacro(this->MRIBiasFieldCorrectionNode,NULL);
 }
 
 //-------------------------------------------------------------------------
-void vtkMRIBiasFieldCorrectionGUI::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRIBiasFieldCorrectionGUI::PrintSelf(ostream& os, vtkIndent
+    indent)
 {
 }
 
@@ -278,58 +255,58 @@ void vtkMRIBiasFieldCorrectionGUI::PrintSelf(ostream& os, vtkIndent indent)
 void vtkMRIBiasFieldCorrectionGUI::AddGUIObservers()
 {
   this->VolumeSelector->AddObserver( vtkSlicerNodeSelectorWidget::
-      NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+      NodeSelectedEvent, (vtkCommand*)this->GUICallbackCommand );
 
   this->OutVolumeSelector->AddObserver( vtkSlicerNodeSelectorWidget::
-      NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+      NodeSelectedEvent, (vtkCommand*)this->GUICallbackCommand );
 
   this->StorageVolumeSelector->AddObserver( vtkSlicerNodeSelectorWidget::
-      NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+      NodeSelectedEvent, (vtkCommand*)this->GUICallbackCommand );
 
   this->MaskVolumeSelector->AddObserver( vtkSlicerNodeSelectorWidget::
-      NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+      NodeSelectedEvent, (vtkCommand*)this->GUICallbackCommand );
 
-  this->GADNodeSelector->AddObserver( vtkSlicerNodeSelectorWidget::
-      NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->NodeSelector->AddObserver( vtkSlicerNodeSelectorWidget::
+      NodeSelectedEvent, (vtkCommand*)this->GUICallbackCommand );
 
   this->ApplyButton->AddObserver( vtkKWPushButton::InvokedEvent,
-      (vtkCommand *)this->GUICallbackCommand );
+      (vtkCommand*)this->GUICallbackCommand );
 
   this->CatchButton->AddObserver( vtkKWPushButton::InvokedEvent,
-      (vtkCommand *)this->GUICallbackCommand );
+      (vtkCommand*)this->GUICallbackCommand );
 }
 
 //-------------------------------------------------------------------------
 void vtkMRIBiasFieldCorrectionGUI::RemoveGUIObservers()
 {
   this->VolumeSelector->RemoveObservers( vtkSlicerNodeSelectorWidget::
-      NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+      NodeSelectedEvent, (vtkCommand*)this->GUICallbackCommand );
 
   this->MaskVolumeSelector->RemoveObservers( vtkSlicerNodeSelectorWidget::
-      NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+      NodeSelectedEvent, (vtkCommand*)this->GUICallbackCommand );
 
   this->OutVolumeSelector->RemoveObservers( vtkSlicerNodeSelectorWidget::
-      NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+      NodeSelectedEvent, (vtkCommand*)this->GUICallbackCommand );
 
   this->StorageVolumeSelector->RemoveObservers(
-      vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)
+      vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand*)
       this->GUICallbackCommand );
 
-  this->GADNodeSelector->RemoveObservers( vtkSlicerNodeSelectorWidget::
-      NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->NodeSelector->RemoveObservers( vtkSlicerNodeSelectorWidget::
+      NodeSelectedEvent, (vtkCommand*)this->GUICallbackCommand );
 
   this->ApplyButton->RemoveObservers( vtkKWPushButton::InvokedEvent,
-      (vtkCommand *)this->GUICallbackCommand );
+      (vtkCommand*)this->GUICallbackCommand );
 
   this->CatchButton->RemoveObservers( vtkKWPushButton::InvokedEvent,
-      (vtkCommand *)this->GUICallbackCommand );
+      (vtkCommand*)this->GUICallbackCommand );
 }
 
 //-------------------------------------------------------------------------
 void vtkMRIBiasFieldCorrectionGUI::ProcessGUIEvents( vtkObject *caller,
   unsigned long event, void *callData )
 {
-  vtkKWPushButton *b = vtkKWPushButton::SafeDownCast(caller);
+  vtkKWPushButton *button = vtkKWPushButton::SafeDownCast(caller);
 
   vtkSlicerNodeSelectorWidget *selector = vtkSlicerNodeSelectorWidget::
     SafeDownCast(caller);
@@ -362,25 +339,26 @@ void vtkMRIBiasFieldCorrectionGUI::ProcessGUIEvents( vtkObject *caller,
     this->UpdateMRML();
     this->UpdateGUI();
     }
-  if( selector == this->GADNodeSelector && event ==
+  if( selector == this->NodeSelector && event ==
       vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
-      this->GADNodeSelector->GetSelected() != NULL)
+      this->NodeSelector->GetSelected() != NULL)
     {
     vtkMRMLMRIBiasFieldCorrectionNode *node =
       vtkMRMLMRIBiasFieldCorrectionNode::SafeDownCast(
-          this->GADNodeSelector->GetSelected());
+          this->NodeSelector->GetSelected());
     this->Logic->SetAndObserveMRIBiasFieldCorrectionNode(node);
-    vtkSetAndObserveMRMLNodeMacro( this->MRIBiasFieldCorrectionNode, node);
+    vtkSetAndObserveMRMLNodeMacro( this->MRIBiasFieldCorrectionNode,
+        node);
     this->UpdateGUI();
     }
-  else if( b == this->ApplyButton && event == vtkKWPushButton::
+  else if( button == this->ApplyButton && event == vtkKWPushButton::
       InvokedEvent )
     {
     this->UpdateMRML();
     this->Logic->Apply();
     this->UpdateGUI();
     }
-  else if( b == this->CatchButton && event == vtkKWPushButton::
+  else if( button == this->CatchButton && event == vtkKWPushButton::
       InvokedEvent )
     {
     this->UpdateMRML();
@@ -416,28 +394,36 @@ void vtkMRIBiasFieldCorrectionGUI::UpdateMRML()
   if (node == NULL)
     {
     // no parameter node selected yet, create new
-    this->GADNodeSelector->SetSelectedNew(
+    this->NodeSelector->SetSelectedNew(
       "vtkMRMLMRIBiasFieldCorrectionNode");
-    this->GADNodeSelector->ProcessNewNodeCommand(
-      "vtkMRMLMRIBiasFieldCorrectionNode", "GADParameters");
+    this->NodeSelector->ProcessNewNodeCommand(
+      "vtkMRMLMRIBiasFieldCorrectionNode", "BiasFieldParameters");
     node = vtkMRMLMRIBiasFieldCorrectionNode::SafeDownCast(this->
-      GADNodeSelector->GetSelected());
+      NodeSelector->GetSelected());
 
     // set an observe new node in Logic
     this->Logic->SetAndObserveMRIBiasFieldCorrectionNode(node);
-    vtkSetAndObserveMRMLNodeMacro(this->MRIBiasFieldCorrectionNode, node);
+    vtkSetAndObserveMRMLNodeMacro(this->MRIBiasFieldCorrectionNode,node);
    }
 
   // save node parameters for Undo
   this->GetLogic()->GetMRMLScene()->SaveStateForUndo(node);
 
-  //node->SetThreshold(        this->ThresholdScale->GetValue() );
-  node->SetShrink((int)floor(this->ShrinkFactor->GetValue()) );
-  node->SetMax(   (int)floor(this->MaxNumberOfIterations->GetValue()));
-  node->SetNum(              this->NumberOfFittingLevels->GetValue());
-  node->SetWien(             this->WienFilterNoise->GetValue());
-  node->SetField(            this->BiasField->GetValue());
-  node->SetCon(              this->Convergence->GetValue());
+  double maskThreshold        = this->MaskThresholdScale->GetValue();
+  double shrinkFactor         = this->ShrinkFactorScale->GetValue();
+  double numIterations        = this->NumberOfIterationsScale->GetValue();
+  double numFittingLevels     = this->NumberOfFittingLevelsScale->GetValue();
+  double WienerFilterNoise    = this->WienerFilterNoiseScale->GetValue();
+  double biasField            = this->BiasFieldScale->GetValue();
+  double convergenceThreshold = this->ConvergenceThresholdScale->GetValue();
+
+  node->SetMaskThreshold(maskThreshold);
+  node->SetShrinkFactor(shrinkFactor);
+  node->SetNumberOfIterations((unsigned int)numIterations);
+  node->SetNumberOfFittingLevels((unsigned int)numFittingLevels);
+  node->SetWienerFilterNoise(WienerFilterNoise);
+  node->SetBiasField(biasField);
+  node->SetConvergenceThreshold(convergenceThreshold);
 
   if (this->VolumeSelector->GetSelected() != NULL)
     {
@@ -448,11 +434,13 @@ void vtkMRIBiasFieldCorrectionGUI::UpdateMRML()
     {
     node->SetOutputVolumeRef(this->OutVolumeSelector->GetSelected()->GetID());
     }
+
   if (this->StorageVolumeSelector->GetSelected() != NULL)
     {
     node->SetStorageVolumeRef(this->StorageVolumeSelector->GetSelected()->
       GetID());
     }
+
   if (this->MaskVolumeSelector->GetSelected() != NULL)
     {
     node->SetMaskVolumeRef(this->MaskVolumeSelector->GetSelected()->GetID());
@@ -465,26 +453,33 @@ void vtkMRIBiasFieldCorrectionGUI::UpdateGUI()
   vtkMRMLMRIBiasFieldCorrectionNode* node = this->
     GetMRIBiasFieldCorrectionNode();
 
-  if( node != NULL )
+  if (node != NULL)
     {
-    std::cout<<"Update GUI"<<std::endl;
-    // set GUI widgest from parameter node
+    // Set GUI widget from parameter node
+    vtkDebugMacro("Update GUI");
 
-    this->ShrinkFactor->SetValue(node->GetShrink());
-    this->MaxNumberOfIterations->SetValue(node->GetMax());
-    this->NumberOfFittingLevels->SetValue(node->GetNum());
-    this->WienFilterNoise->SetValue(node->GetWien());
-    this->BiasField->SetValue(node->GetField());
-    this->Convergence->SetValue(node->GetCon());
+    double shrinkFactor         = node->GetShrinkFactor();
+    double numIterations        = node->GetNumberOfIterations();
+    double numFittingLevels     = node->GetNumberOfFittingLevels();
+    double WienerFilterNoise    = node->GetWienerFilterNoise();
+    double biasField            = node->GetBiasField();
+    double convergenceThreshold = node->GetConvergenceThreshold();
+
+    this->ShrinkFactorScale->SetValue(shrinkFactor);
+    this->NumberOfIterationsScale->SetValue(numIterations);
+    this->NumberOfFittingLevelsScale->SetValue(numFittingLevels);
+    this->WienerFilterNoiseScale->SetValue(WienerFilterNoise);
+    this->BiasFieldScale->SetValue(biasField);
+    this->ConvergenceThresholdScale->SetValue(convergenceThreshold);
     }
 }
 
 //--------------------------------------------------------------------------
-void vtkMRIBiasFieldCorrectionGUI::ProcessMRMLEvents ( vtkObject *caller,
-  unsigned long event, void *callData )
+void vtkMRIBiasFieldCorrectionGUI::ProcessMRMLEvents(vtkObject *caller,
+  unsigned long event, void *callData)
 {
-  // if parameter node has been changed externally, update GUI
-  // widgets with new values
+  // if parameter node has been changed externally, update GUI widgets with
+  // new values
   vtkMRMLMRIBiasFieldCorrectionNode* node =
     vtkMRMLMRIBiasFieldCorrectionNode::SafeDownCast(caller);
 
@@ -492,39 +487,43 @@ void vtkMRIBiasFieldCorrectionGUI::ProcessMRMLEvents ( vtkObject *caller,
     {
     this->UpdateGUI();
     //this->Logic->Cut();
-    std::cout<<"MRML changed"<<std::endl;
+    vtkDebugMacro("MRML changed");
     }
 }
 
 //--------------------------------------------------------------------------
 void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
 {
-  vtkSlicerApplication *app = (vtkSlicerApplication*)this->
-    GetApplication();
+  vtkSlicerApplication *app = (vtkSlicerApplication*)this->GetApplication();
 
-  vtkMRMLMRIBiasFieldCorrectionNode* gadNode =
+  vtkMRMLMRIBiasFieldCorrectionNode* node =
     vtkMRMLMRIBiasFieldCorrectionNode::New();
 
-  this->Logic->GetMRMLScene()->RegisterNodeClass(gadNode);
-  gadNode->Delete();
+  this->Logic->GetMRMLScene()->RegisterNodeClass(node);
+  node->Delete();
 
-  this->UIPanel->AddPage ( "MRIBiasFieldCorrection",
-      "MRIBiasFieldCorrection", NULL );
+  this->UIPanel->AddPage("MRIBiasFieldCorrection","MRIBiasFieldCorrection",
+      NULL);
 
   // MODULE GUI FRAME
   // Define your help text and build the help frame here.
-  const char *help  = "The MRIBiasFieldCorrection module is built upon the non-uniform non-parametric inhomogeneity correction method of Styner et al. The implementation is inspired by the code of Nick Tustison classes.";
+  std::string help  = "The MRIBiasFieldCorrection module is built upon ";
+  help += "the non-uniform non-parametric inhomogeneity correction method of";
+  help += " Styner et al.  The implementation is inspired by the code of ";
+  help += "Nick Tustison classes.";
 
-  const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. ";
+  std::string about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, ";
+  about += "and the Slicer Community. See <a>http://www.slicer.org</a> for ";
+  about += "details. ";
 
   vtkKWWidget *page = this->UIPanel->GetPageWidget(
-    "MRIBiasFieldCorrection" );
-  this->BuildHelpAndAboutFrame( page, help, about );
+      "MRIBiasFieldCorrection");
+  this->BuildHelpAndAboutFrame( page, help.c_str(), about.c_str() );
 
   vtkSlicerModuleCollapsibleFrame *moduleFrame =
     vtkSlicerModuleCollapsibleFrame::New();
-  moduleFrame->SetParent( this->UIPanel->GetPageWidget(
-    "MRIBiasFieldCorrection" ) );
+  moduleFrame->SetParent(this->UIPanel->GetPageWidget(
+        "MRIBiasFieldCorrection") );
   moduleFrame->Create();
   moduleFrame->SetLabelText("MRI Bias Correction Module");
   moduleFrame->ExpandFrame();
@@ -532,22 +531,22 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
     moduleFrame->GetWidgetName(), this->UIPanel->GetPageWidget(
       "MRIBiasFieldCorrection")->GetWidgetName());
 
-  this->GADNodeSelector->SetNodeClass("vtkMRMLMRIBiasFieldCorrectionNode",
-    NULL, NULL, "GADParameters");
-  this->GADNodeSelector->SetNewNodeEnabled(1);
-  this->GADNodeSelector->NoneEnabledOn();
-  this->GADNodeSelector->SetShowHidden(1);
-  this->GADNodeSelector->SetParent( moduleFrame->GetFrame() );
-  this->GADNodeSelector->Create();
-  this->GADNodeSelector->SetMRMLScene(this->Logic->GetMRMLScene());
-  this->GADNodeSelector->UpdateMenu();
+  this->NodeSelector->SetNodeClass("vtkMRMLMRIBiasFieldCorrectionNode",
+    NULL, NULL, "BiasFieldParameters");
+  this->NodeSelector->SetNewNodeEnabled(1);
+  this->NodeSelector->NoneEnabledOn();
+  this->NodeSelector->SetShowHidden(1);
+  this->NodeSelector->SetParent( moduleFrame->GetFrame() );
+  this->NodeSelector->Create();
+  this->NodeSelector->SetMRMLScene(this->Logic->GetMRMLScene());
+  this->NodeSelector->UpdateMenu();
 
-  this->GADNodeSelector->SetBorderWidth(2);
-  this->GADNodeSelector->SetLabelText( "IN Parameters");
-  this->GADNodeSelector->SetBalloonHelpString(
-    "select a GAD node from the current mrml scene.");
+  this->NodeSelector->SetBorderWidth(2);
+  this->NodeSelector->SetLabelText( "IN Parameters");
+  this->NodeSelector->SetBalloonHelpString(
+    "select a bias field node from the current mrml scene.");
   app->Script("pack %s -side top -anchor e -padx 20 -pady 4",
-    this->GADNodeSelector->GetWidgetName());
+    this->NodeSelector->GetWidgetName());
 
   this->VolumeSelector->SetNodeClass("vtkMRMLScalarVolumeNode", NULL,
     NULL, NULL);
@@ -571,14 +570,14 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
   this->MaskVolumeSelector->UpdateMenu();
 
   this->MaskVolumeSelector->SetBorderWidth(2);
-  this->MaskVolumeSelector->SetLabelText( "Mask Volume: ");
+  this->MaskVolumeSelector->SetLabelText("Mask Volume: ");
   this->MaskVolumeSelector->SetBalloonHelpString(
     "select an output volume from the current mrml scene.");
   app->Script("pack %s -side top -anchor e -padx 20 -pady 4",
     this->MaskVolumeSelector->GetWidgetName());
 
   this->StorageVolumeSelector->SetNodeClass("vtkMRMLScalarVolumeNode",
-    NULL, NULL, "GADVolumeStorage");
+    NULL, NULL, "VolumeStorage");
   this->StorageVolumeSelector->SetNewNodeEnabled(1);
   this->StorageVolumeSelector->SetParent( moduleFrame->GetFrame() );
   this->StorageVolumeSelector->Create();
@@ -586,14 +585,14 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
   this->StorageVolumeSelector->UpdateMenu();
 
   this->StorageVolumeSelector->SetBorderWidth(2);
-  this->StorageVolumeSelector->SetLabelText( "Preview Volume: ");
+  this->StorageVolumeSelector->SetLabelText("Preview Volume: ");
   this->StorageVolumeSelector->SetBalloonHelpString(
     "select an output volume from the current mrml scene.");
   app->Script("pack %s -side top -anchor e -padx 20 -pady 4",
     this->StorageVolumeSelector->GetWidgetName());
 
   this->OutVolumeSelector->SetNodeClass("vtkMRMLScalarVolumeNode",
-    NULL, NULL, "GADVolumeOut");
+    NULL, NULL, "VolumeOut");
   this->OutVolumeSelector->SetNewNodeEnabled(1);
   this->OutVolumeSelector->SetParent( moduleFrame->GetFrame() );
   this->OutVolumeSelector->Create();
@@ -629,135 +628,130 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
   vtkKWFrame* aparametersFrame = this->AdvancedParametersFrame->GetFrame();
   /////////////////////////////////////////////////////////////////////
 
-  if( !this->ShrinkFactor )
+  if( !this->ShrinkFactorScale )
     {
-    this->ShrinkFactor = vtkKWScaleWithEntry::New();
+    this->ShrinkFactorScale = vtkKWScaleWithEntry::New();
     }
 
-  if( !this->ShrinkFactor->IsCreated() )
+  if( !this->ShrinkFactorScale->IsCreated() )
     {
-    this->ShrinkFactor->SetParent(aparametersFrame);
-    this->ShrinkFactor->Create();
-    this->ShrinkFactor->SetRange(0,10);
-    this->ShrinkFactor->SetResolution(1);
-    this->ShrinkFactor->SetValue(3);
-    this->ShrinkFactor->SetLabelText("Set Shrink Factor");
+    this->ShrinkFactorScale->SetParent(aparametersFrame);
+    this->ShrinkFactorScale->Create();
+    this->ShrinkFactorScale->SetRange(0,10);
+    this->ShrinkFactorScale->SetResolution(1);
+    this->ShrinkFactorScale->SetValue(3);
+    this->ShrinkFactorScale->SetLabelText("Set Shrink Factor");
     }
 
-  this->Script(
-    "pack %s -side top -anchor e -expand n -padx 2 -pady 6",
-    this->ShrinkFactor->GetWidgetName());
+  this->Script("pack %s -side top -anchor e -expand n -padx 2 -pady 6",
+    this->ShrinkFactorScale->GetWidgetName());
 
-  if (!this->MaxNumberOfIterations)
+  if (!this->NumberOfIterationsScale)
     {
-    this->MaxNumberOfIterations = vtkKWScaleWithEntry::New();
+    this->NumberOfIterationsScale = vtkKWScaleWithEntry::New();
     }
 
-  if( !this->MaxNumberOfIterations->IsCreated() )
+  if (!this->NumberOfIterationsScale->IsCreated())
     {
-    this->MaxNumberOfIterations->SetParent(aparametersFrame);
-    this->MaxNumberOfIterations->Create();
-    this->MaxNumberOfIterations->SetRange(0,100);
-    this->MaxNumberOfIterations->SetResolution(1);
-    this->MaxNumberOfIterations->SetValue(50);
-    this->MaxNumberOfIterations->SetLabelText(
-      "Set Max Number of Iterations");
+    this->NumberOfIterationsScale->SetParent(aparametersFrame);
+    this->NumberOfIterationsScale->Create();
+    this->NumberOfIterationsScale->SetRange(0,100);
+    this->NumberOfIterationsScale->SetResolution(1);
+    this->NumberOfIterationsScale->SetValue(50);
+    this->NumberOfIterationsScale->SetLabelText("Set Number of Iterations");
     }
 
-  this->Script(
-    "pack %s -side top -anchor e -expand n -padx 2 -pady 6",
-    this->MaxNumberOfIterations->GetWidgetName());
+  this->Script("pack %s -side top -anchor e -expand n -padx 2 -pady 6",
+    this->NumberOfIterationsScale->GetWidgetName());
 
-  if (!this->NumberOfFittingLevels)
+  if (!this->NumberOfFittingLevelsScale)
     {
-    this->NumberOfFittingLevels = vtkKWScaleWithEntry::New();
+    this->NumberOfFittingLevelsScale = vtkKWScaleWithEntry::New();
     }
 
-  if (!this->NumberOfFittingLevels->IsCreated())
+  if (!this->NumberOfFittingLevelsScale->IsCreated())
     {
-    this->NumberOfFittingLevels->SetParent(aparametersFrame);
-    this->NumberOfFittingLevels->Create();
-    this->NumberOfFittingLevels->SetRange(0,20);
-    this->NumberOfFittingLevels->SetResolution(1);
-    this->NumberOfFittingLevels->SetValue(4);
-    this->NumberOfFittingLevels->SetLabelText("Set Number of Fitting Level");
+    this->NumberOfFittingLevelsScale->SetParent(aparametersFrame);
+    this->NumberOfFittingLevelsScale->Create();
+    this->NumberOfFittingLevelsScale->SetRange(0,20);
+    this->NumberOfFittingLevelsScale->SetResolution(1);
+    this->NumberOfFittingLevelsScale->SetValue(4);
+    this->NumberOfFittingLevelsScale->SetLabelText(
+        "Set Number of Fitting Levels");
     }
 
-  this->Script(
-    "pack %s -side top -anchor e -expand n -padx 2 -pady 6",
-    this->NumberOfFittingLevels->GetWidgetName());
+  this->Script("pack %s -side top -anchor e -expand n -padx 2 -pady 6",
+    this->NumberOfFittingLevelsScale->GetWidgetName());
 
-  if (!this->WienFilterNoise)
+  if (!this->WienerFilterNoiseScale)
     {
-    this->WienFilterNoise = vtkKWScaleWithEntry::New();
+    this->WienerFilterNoiseScale = vtkKWScaleWithEntry::New();
     }
 
-  if (!this->WienFilterNoise->IsCreated())
+  if (!this->WienerFilterNoiseScale->IsCreated())
     {
-    this->WienFilterNoise->SetParent(aparametersFrame);
-    this->WienFilterNoise->Create();
-    this->WienFilterNoise->SetRange(0,10);
-    this->WienFilterNoise->SetResolution(0.1);
-    this->WienFilterNoise->SetValue(0.1);
-    this->WienFilterNoise->SetLabelText("Set Wien Filter Noise");
+    this->WienerFilterNoiseScale->SetParent(aparametersFrame);
+    this->WienerFilterNoiseScale->Create();
+    this->WienerFilterNoiseScale->SetRange(0,10);
+    this->WienerFilterNoiseScale->SetResolution(0.1);
+    this->WienerFilterNoiseScale->SetValue(0.1);
+    this->WienerFilterNoiseScale->SetLabelText("Set Wiener Filter Noise");
     }
 
-  this->Script(
-    "pack %s -side top -anchor e -expand n -padx 2 -pady 6",
-    this->WienFilterNoise->GetWidgetName());
+  this->Script("pack %s -side top -anchor e -expand n -padx 2 -pady 6",
+    this->WienerFilterNoiseScale->GetWidgetName());
 
-  if( !this->BiasField )
+  if (!this->BiasFieldScale)
     {
-    this->BiasField = vtkKWScaleWithEntry::New();
+    this->BiasFieldScale = vtkKWScaleWithEntry::New();
     }
 
-  if( !this->BiasField->IsCreated() )
+  if (!this->BiasFieldScale->IsCreated())
     {
-    this->BiasField->SetParent(aparametersFrame);
-    this->BiasField->Create();
-    this->BiasField->SetRange(0,10);
-    this->BiasField->SetResolution(0.05);
-    this->BiasField->SetValue(0.15);
-    this->BiasField->SetLabelText("Set Bias Field Full.");
+    this->BiasFieldScale->SetParent(aparametersFrame);
+    this->BiasFieldScale->Create();
+    this->BiasFieldScale->SetRange(0,10);
+    this->BiasFieldScale->SetResolution(0.05);
+    this->BiasFieldScale->SetValue(0.15);
+    this->BiasFieldScale->SetLabelText("Set Bias Field Full.");
     }
 
-  this->Script(
-    "pack %s -side top -anchor e -expand n -padx 2 -pady 6",
-    this->BiasField->GetWidgetName());
+  this->Script("pack %s -side top -anchor e -expand n -padx 2 -pady 6",
+    this->BiasFieldScale->GetWidgetName());
 
-  if(!this->Convergence)
+  if (!this->ConvergenceThresholdScale)
     {
-    this->Convergence = vtkKWScaleWithEntry::New();
+    this->ConvergenceThresholdScale = vtkKWScaleWithEntry::New();
     }
 
-  if(!this->Convergence->IsCreated())
+  if (!this->ConvergenceThresholdScale->IsCreated())
     {
-    this->Convergence->SetParent(aparametersFrame);
-    this->Convergence->Create();
-    this->Convergence->SetRange(0,10);
-    this->Convergence->SetResolution(0.001);
-    this->Convergence->SetValue(0.001);
-    this->Convergence->SetLabelText(
-      "Set Convergenceergence Threshold");
+    this->ConvergenceThresholdScale->SetParent(aparametersFrame);
+    this->ConvergenceThresholdScale->Create();
+    this->ConvergenceThresholdScale->SetRange(0,10);
+    this->ConvergenceThresholdScale->SetResolution(0.001);
+    this->ConvergenceThresholdScale->SetValue(0.001);
+    this->ConvergenceThresholdScale->SetLabelText(
+        "Set Convergence Threshold");
     }
 
-  this->Script(
-    "pack %s -side top -anchor e -expand n -padx 2 -pady 6",
-    this->Convergence->GetWidgetName());
+  this->Script("pack %s -side top -anchor e -expand n -padx 2 -pady 6",
+    this->ConvergenceThresholdScale->GetWidgetName());
 
-  //---------------------------------------------------------------------------
+  //--------------------------------------------------------------------------
   this->CatchButton->SetParent(moduleFrame->GetFrame());
   this->CatchButton->Create();
   this->CatchButton->SetText("Preview");
-  this->CatchButton->SetWidth( 8 );
+  this->CatchButton->SetWidth(8);
 
   app->Script("pack %s -side top -anchor e -padx 20 -pady 10",
     this->CatchButton->GetWidgetName());
 
+  //--------------------------------------------------------------------------
   this->ApplyButton->SetParent(moduleFrame->GetFrame());
   this->ApplyButton->Create();
   this->ApplyButton->SetText("Apply");
-  this->ApplyButton->SetWidth ( 8 );
+  this->ApplyButton->SetWidth(8);
 
   app->Script("pack %s -side top -anchor e -padx 20 -pady 10",
     this->ApplyButton->GetWidgetName());
