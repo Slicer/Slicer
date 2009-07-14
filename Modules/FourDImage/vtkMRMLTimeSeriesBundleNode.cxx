@@ -136,7 +136,7 @@ void vtkMRMLTimeSeriesBundleNode::ReadXMLAttributes(const char** atts)
       std::cerr << "Frames" << std::endl;
       const char* suffix = &attName[5];
       char** endptr;
-      long index = strtol(suffix, endptr, 10);
+      unsigned long index = strtol(suffix, endptr, 10);
       std::cerr << "index = " << index << std::endl;
       if (index >= this->FrameNodeIDList.size())
         {
@@ -223,13 +223,13 @@ int vtkMRMLTimeSeriesBundleNode::GetNumberOfFrames()
 //----------------------------------------------------------------------------
 int vtkMRMLTimeSeriesBundleNode::InsertFrame(int i, const char* nodeID, TimeStamp* ts)
 {
-  int index;
+  unsigned int index;
 
   if (i < 0)
     {
     index = 0;
     }
-  else if (i > this->FrameNodeIDList.size())
+  else if (i > (int)(this->FrameNodeIDList.size()))
     {
     index = this->FrameNodeIDList.size();
     }
@@ -301,13 +301,13 @@ int vtkMRMLTimeSeriesBundleNode::AddFrame(const char* nodeID, TimeStamp* ts)
 int vtkMRMLTimeSeriesBundleNode::RemoveFrame(int i)
 {
 
-  int index;
+  unsigned int index;
 
   if (i < 0)
     {
     index = 0;
     }
-  else if (i > this->FrameNodeIDList.size())
+  else if (i > (int)(this->FrameNodeIDList.size()))
     {
     index = this->FrameNodeIDList.size();
     }
@@ -384,7 +384,7 @@ void vtkMRMLTimeSeriesBundleNode::RemoveAllFrames()
 //----------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLTimeSeriesBundleNode::GetFrameNode(int i)
 {
-  if (i < 0 || i >= this->FrameNodeIDList.size())
+  if (i < 0 || i >= (int)(this->FrameNodeIDList.size()))
     {
     return NULL;
     }
@@ -401,7 +401,7 @@ vtkMRMLNode* vtkMRMLTimeSeriesBundleNode::GetFrameNode(int i)
 //----------------------------------------------------------------------------
 int vtkMRMLTimeSeriesBundleNode::GetTimeStamp(int i, TimeStamp* ts)
 {
-  if (i < 0 || i >= this->FrameNodeIDList.size())
+  if (i < 0 || i >= (int)(this->FrameNodeIDList.size()))
     {
     return 0;
     }
@@ -417,7 +417,7 @@ int vtkMRMLTimeSeriesBundleNode::GetTimeStamp(int i, TimeStamp* ts)
 //----------------------------------------------------------------------------
 int vtkMRMLTimeSeriesBundleNode::SetTimeStamp(int i, TimeStamp* ts)
 {
-  if (i < 0 || i >= this->FrameNodeIDList.size())
+  if (i < 0 || i >= (int)(this->FrameNodeIDList.size()))
     {
     return 0;
     }

@@ -238,7 +238,7 @@ void vtkImageMeanIntensityPreNormalization::MeanMRI(vtkImageData *Input, vtkImag
   int ImageIntensityMin;
   int ImageIntensityMax;
   double ImageIntensityMean;
-  double ImageIntensityCorrectionRatio;
+  // double ImageIntensityCorrectionRatio;
 
   int NumVoxels;
 
@@ -246,7 +246,7 @@ void vtkImageMeanIntensityPreNormalization::MeanMRI(vtkImageData *Input, vtkImag
   int    FilterHistogramMax;
   int    FilterHistogramMin;
   vtkImageAccumulate *HIST = NULL;
-  vtkImageMathematics *CORRECTED = NULL;
+  // vtkImageMathematics *CORRECTED = NULL;
   int* HIST_PTR;
 
   {
@@ -294,7 +294,7 @@ void vtkImageMeanIntensityPreNormalization::MeanMRI(vtkImageData *Input, vtkImag
     }
   ImageIntensityMean = ImageIntensityMean / double(NumVoxels);
   
-  this->InitialHistogramSmoothingWidth = ImageIntensityMean;
+  this->InitialHistogramSmoothingWidth = (int)round(ImageIntensityMean);
   
  //assert(ImageIntensityMean);
  //ImageIntensityCorrectionRatio = NormValue/ImageIntensityMean;

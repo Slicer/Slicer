@@ -443,7 +443,7 @@ void vtkModelMirrorGUI::ProcessMRMLEvents ( vtkObject *caller,
     return;    
     }
 
-  vtkMRMLScene *scene = vtkMRMLScene::SafeDownCast ( caller );
+  //vtkMRMLScene *scene = vtkMRMLScene::SafeDownCast ( caller );
 }
 
 

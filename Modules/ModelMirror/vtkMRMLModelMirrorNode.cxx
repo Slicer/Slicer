@@ -69,7 +69,7 @@ void vtkMRMLModelMirrorNode::Copy(vtkMRMLNode *anode)
 {
   //TODO
   Superclass::Copy(anode);
-  vtkMRMLModelMirrorNode *node = (vtkMRMLModelMirrorNode *) anode;
+  //vtkMRMLModelMirrorNode *node = (vtkMRMLModelMirrorNode *) anode;
 }
 
 
