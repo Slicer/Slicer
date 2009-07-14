@@ -133,11 +133,13 @@ vtkFourDImageGUI::vtkFourDImageGUI ( )
 vtkFourDImageGUI::~vtkFourDImageGUI ( )
 {
 
+  this->RemoveGUIObservers(); // this calls RemoveLogic Observers
   //----------------------------------------------------------------
   // Remove observers on logic
-  this->RemoveLogicObservers ( );
+//  this->RemoveLogicObservers ( );
   this->SetLogic( vtkObjectPointer(&this->Logic), NULL );
 
+  
   //----------------------------------------------------------------
   // Remove Callbacks
 
@@ -1483,6 +1485,16 @@ void vtkFourDImageGUI::BuildGUIForFrameControlFrame(int show)
 
   conBrowsFrame->Delete();
   fframe->Delete();
+  fgframe->Delete();
+  bgframe->Delete();
+  apframe->Delete();
+  frlabel1->Delete();
+  frlabel2->Delete();
+  cframe->Delete();
+  lwframe->Delete();
+  lwLabel->Delete();
+  thframe->Delete();
+  thLabel->Delete();
   //sframe->Delete();
 
 }
@@ -1722,13 +1734,16 @@ void vtkFourDImageGUI::BuildGUIForFrameFrameEditor(int show)
                rangelabel2->GetWidgetName(),
                this->ImportFrameRangeMaxEntry->GetWidgetName(),
                this->ImportFrameNodeButton->GetWidgetName());
-               
+
+  conBrowsFrame->Delete();
+  listframe->Delete();
   moveframe->Delete();
   addframe->Delete();
   tsframe->Delete();
   tseframe->Delete();
   tslabell->Delete();
   tslabelr->Delete();
+  importframe->Delete();
   formatframe->Delete();
   formatlabel->Delete();
   rangeframe->Delete();
