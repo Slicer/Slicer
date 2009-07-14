@@ -192,8 +192,7 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
   MaskShrinkType::Pointer maskshrinker = MaskShrinkType::New();
   maskshrinker->SetInput(binaryThresholdFilter->GetOutput());
 
-  unsigned int shrinkFactor = this->MRIBiasFieldCorrectionNode->
-    GetShrinkFactor();
+  unsigned int shrinkFactor = (unsigned int)round(this->MRIBiasFieldCorrectionNode->GetShrinkFactor());
 
   shrinker->SetShrinkFactors(shrinkFactor);
   maskshrinker->SetShrinkFactors(shrinkFactor);
