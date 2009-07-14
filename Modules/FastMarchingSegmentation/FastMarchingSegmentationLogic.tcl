@@ -121,6 +121,9 @@ proc FastMarchingSegmentationSegment {this} {
   $fmFilter show 1.0
   $fmFilter Modified
   $fmFilter Update
+
+  $fmFilter RemoveObservers ProgressEvent 
+  # "FastMarchingSegmentationProgressEventCallback $fmFilter"
 }
 
 proc FastMarchingSegmentationUpdateTime {this} {
@@ -261,3 +264,12 @@ proc FastMarchingSegmentationPrepareInput {this} {
 
   set ::FastMarchingSegmentation($this,inputImage) [$cast GetOutput]
 }
+
+proc FastMarchingSegmentationFinalize {this} {
+  # deallocate the filter
+  $::FastMarchingSegmentation($this,fastMarchingFilter) Delete
+  set ::FastMarchingSegmentation($this,fastMarchingFilter) [vtkPichonFastMarching New]
+  # disable the segmentation adjustment controls
+}
+
+
