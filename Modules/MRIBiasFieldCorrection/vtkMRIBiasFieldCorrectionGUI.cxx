@@ -62,6 +62,7 @@ vtkMRIBiasFieldCorrectionGUI* vtkMRIBiasFieldCorrectionGUI::New()
 //-------------------------------------------------------------------------
 vtkMRIBiasFieldCorrectionGUI::vtkMRIBiasFieldCorrectionGUI()
 {
+  this->BiasIntensityScale = NULL;
   this->NumberOfIterationsScale    = vtkKWScaleWithEntry::New();
   this->SagittalScale              = vtkKWScaleWithEntry::New();
   this->CoronalScale               = vtkKWScaleWithEntry::New();
