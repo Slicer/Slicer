@@ -134,6 +134,11 @@ vtkFourDImageGUI::~vtkFourDImageGUI ( )
 {
 
   //----------------------------------------------------------------
+  // Remove observers on logic
+  this->RemoveLogicObservers ( );
+  this->SetLogic( vtkObjectPointer(&this->Logic), NULL );
+
+  //----------------------------------------------------------------
   // Remove Callbacks
 
   if (this->DataCallbackCommand)
