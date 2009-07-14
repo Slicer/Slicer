@@ -299,7 +299,7 @@ proc FastMarchingSegmentationAddGUIObservers {this} {
   $this AddObserverByNumber $::FastMarchingSegmentation($this,timeScrollScale) 10001
   $this AddObserverByNumber $::FastMarchingSegmentation($this,fiducialsSelector) 11000
   $this AddObserverByNumber $::FastMarchingSegmentation($this,timescrollRange) 10001
-  $this AddObserverByNumber $::FastMarchingSegmentation($this,volRenderCheckbox) 10000
+#  $this AddObserverByNumber $::FastMarchingSegmentation($this,volRenderCheckbox) 10000
 }
 
 proc FastMarchingSegmentationRemoveGUIObservers {this} {
