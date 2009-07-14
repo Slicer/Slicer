@@ -315,8 +315,15 @@ def sendVolume(vol, path, ext='notdef', isDti=False):
 
   spa = vol.GetSpacing()
  
+  I2RD = numpy.zeros((4,4), 'float')
   I2R = numpy.zeros((4,4), 'float')
   R2I = numpy.zeros((4,4), 'float')
+
+  i2rd = slicer.vtkMatrix4x4()
+  #r2id = slicer.vtkMatrix4x4()
+
+  vol.GetIJKToRASDirectionMatrix(i2rd)
+
 
   i2r = slicer.vtkMatrix4x4()
   r2i = slicer.vtkMatrix4x4()
@@ -326,6 +333,7 @@ def sendVolume(vol, path, ext='notdef', isDti=False):
 
   for i in range(4):
      for j in range(4):
+        I2RD[i,j] = i2rd.GetElement(i,j)
         I2R[i,j] = i2r.GetElement(i,j)
         R2I[i,j] = r2i.GetElement(i,j)
 
@@ -345,6 +353,9 @@ def sendVolume(vol, path, ext='notdef', isDti=False):
 
   #c.send('ijk2ras\n')
   #c.send(I2R.tostring())
+  ijk2rasd = I2RD
+  ijk2rasd.tofile(nameT + '.ijkd')
+
   ijk2ras = I2R
   ijk2ras.tofile(nameT + '.ijk')
 
