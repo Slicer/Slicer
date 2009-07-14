@@ -9,7 +9,6 @@
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWFrame.h"
 #include "vtkKWMenu.h"
-#include "vtkKWScale.h"
 #include "vtkKWMenuButton.h"
 #include "vtkKWCheckButton.h"
 #include "vtkKWLabel.h"

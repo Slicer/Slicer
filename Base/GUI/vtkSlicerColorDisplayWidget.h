@@ -22,16 +22,13 @@
 #include "vtkSlicerWidget.h"
 
 #include "vtkSlicerNodeSelectorWidget.h"
-#include "vtkKWCheckButtonWithLabel.h"
-#include "vtkKWScaleWithLabel.h"
 
 #include "vtkMRMLColorNode.h"
 
 class vtkKWPushButton;
 class vtkKWChangeColorButton;
-class vtkKWScaleWithEntry;
-class vtkKWEntryWithLabel;
 class vtkKWMultiColumnListWithScrollbars;
+class vtkKWCheckButton;
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColorDisplayWidget : public vtkSlicerWidget
 {
   
