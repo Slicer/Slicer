@@ -37,7 +37,6 @@ Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 #include "vtkKWPushButtonSet.h"
 #include "vtkKWMultiColumnList.h"
 #include "vtkKWMultiColumnListWithScrollbars.h"
-#include "vtkSlicerColorDisplayWidget.h"
 
 #include "vtkSlicerWidget.h"
 #include "vtkKWApplication.h"
@@ -46,6 +45,7 @@ Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 #include "vtkCallbackCommand.h"
 #include "vtkMRMLEMSGlobalParametersNode.h"
 #include "vtkKWLabelWithLabel.h"
+#include "vtkSlicerNodeSelectorWidget.h"
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkEMSegmentAnatomicalStructureStep);
@@ -141,6 +141,7 @@ vtkEMSegmentAnatomicalStructureStep::~vtkEMSegmentAnatomicalStructureStep()
 
   if (this->AnatomicalNodeAttributeColorLabel)
     {
+    this->AnatomicalNodeAttributeColorLabel->SetParent(NULL);
     this->AnatomicalNodeAttributeColorLabel->Delete();
     this->AnatomicalNodeAttributeColorLabel = NULL;
     }
