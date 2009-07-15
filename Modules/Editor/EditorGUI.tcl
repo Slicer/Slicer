@@ -276,7 +276,8 @@ proc EditorAddGUIObservers {this} {
     if {[$this GetDebug]} {
         puts "Adding mrml observer to selection node, modified event"
     }
-    $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
+    $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] \
+      [$this GetNumberForVTKEvent ModifiedEvent]
 }
 
 proc EditorRemoveGUIObservers {this} {
@@ -291,7 +292,8 @@ proc EditorRemoveGUIObservers {this} {
   if {[$this GetDebug]} {
     puts "Removing mrml observer on selection node, modified event"
   }
-  $this RemoveMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
+  $this RemoveMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] \
+    [$this GetNumberForVTKEvent ModifiedEvent]
 }
 
 proc EditorRemoveLogicObservers {this} {
@@ -535,7 +537,7 @@ proc EditorProcessMRMLEvents {this callerID event} {
     # check it's display node colour node
     set displayNode [$labelVolume GetDisplayNode] 
 
-    if { $caller == $selectionNode && $event == 31 } {
+    if { $caller == $selectionNode && $event == [$this GetNumberForVTKEvent ModifiedEvent] } {
         if { [$this GetDebug] } {
             puts "...caller is selection node, with modified event"
         }
@@ -599,7 +601,8 @@ proc EditorEnter {this} {
         puts "EditorEnter: Adding mrml observer on selection node, modified event"
     }
 
-  $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode] 31
+  $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode] \
+    [$this GetNumberForVTKEvent ModifiedEvent]
 
   $::Editor($this,volumesSelect) UpdateMenu
     #--- new test
@@ -613,7 +616,8 @@ proc EditorExit {this} {
   if {[$this GetDebug]} {
     puts "EditorExit: Removing mrml observer on selection node modified event"
   }
-  $this RemoveMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode] 31
+  $this RemoveMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode] \
+    [$this GetNumberForVTKEvent ModifiedEvent]
   
   # delete the current effect - users were getting confused that the editor was still
   # active when the module wasn't visible
