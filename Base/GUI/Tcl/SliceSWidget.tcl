@@ -866,18 +866,18 @@ itcl::body SliceSWidget::updateAnnotation {x y z r a s} {
 
   if {[info command $_layers(label,node)] != ""
       && $_layers(label,node) != ""} {
-      set labelname [$_layers(label,node) GetName]
+      set labelname "Lb: [$_layers(label,node) GetName]"
   }
-  
+
   if {[info command $_layers(foreground,node)] != ""
       && $_layers(foreground,node) != ""} {
-      set foregroundname [$_layers(foreground,node) GetName]
+      set foregroundname "Fg: [$_layers(foreground,node) GetName]"
   }
-  
+
   if {[info command $_layers(background,node)] != ""
       && $_layers(background,node) != ""} {
-      set backgroundname [$_layers(background,node) GetName]
-  }
+      set backgroundname "Bg: [$_layers(background,node) GetName]"
+  } 
 
   set labelText "Lb: $_layers(label,pixel) $colorName"
   set voxelText "Fg: $_layers(foreground,pixel)\nBg: $_layers(background,pixel)"
