@@ -245,7 +245,7 @@ proc ExtractSubvolumeROIAddGUIObservers {this} {
   $this AddObserverByNumber $::ExtractSubvolumeROI($this,outputSelector)  10000
   $this AddObserverByNumber $::ExtractSubvolumeROI($this,roiSelector) 11000
   $this AddObserverByNumber [$::ExtractSubvolumeROI($this,roiVisibility) GetWidget] 10000
-#  $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
+#  $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 33
     
   # From Slicer console
   # set style [[[[[$::slicer3::ApplicationGUI GetMainSliceGUI "Red"]
@@ -263,7 +263,7 @@ proc ExtractSubvolumeROIRemoveLogicObservers {this} {
 }
 
 proc ExtractSubvolumeROIRemoveMRMLNodeObservers {this} {
-  catch {$this RemoveMRMLObserverByNumber $::ExtractSubvolumeROI($this,observedROINode) 31}
+  catch {$this RemoveMRMLObserverByNumber $::ExtractSubvolumeROI($this,observedROINode) 33}
 }
 
 proc ExtractSubvolumeROIProcessLogicEvents {this caller event} {
@@ -282,9 +282,9 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
   } 
 
   if {$caller == $::ExtractSubvolumeROI($this,roiSelector)} {
-    catch {$this RemoveMRMLObserverByNumber $::ExtractSubvolumeROI($this,observedROINode) 31}
+    catch {$this RemoveMRMLObserverByNumber $::ExtractSubvolumeROI($this,observedROINode) 33}
     set ::ExtractSubvolumeROI($this,observedROINode) [$::ExtractSubvolumeROI($this,roiSelector) GetSelected]
-    $this AddMRMLObserverByNumber $::ExtractSubvolumeROI($this,observedROINode) 31
+    $this AddMRMLObserverByNumber $::ExtractSubvolumeROI($this,observedROINode) 33
   }
 
   if {$caller == [$::ExtractSubvolumeROI($this,roiVisibility) GetWidget] } {
