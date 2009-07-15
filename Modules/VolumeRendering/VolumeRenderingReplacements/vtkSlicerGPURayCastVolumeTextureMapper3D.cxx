@@ -51,7 +51,7 @@ vtkSlicerGPURayCastVolumeTextureMapper3D::vtkSlicerGPURayCastVolumeTextureMapper
 {
   this->Initialized          =  0;
   this->RayCastInitialized   =  0;
-  this->Technique            =  1;//by default composit with shading
+  this->Technique            =  0;//by default composit with shading
   
   this->Clipping             =  0;
   this->ReloadShaderFlag     =  0;
