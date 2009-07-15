@@ -1265,6 +1265,11 @@ void vtkSlicerVRGrayscaleHelper::ProcessRenderingMethodEvents(int id)
       break;
     }
     
+    //update expected framerate
+    this->MapperTexture->SetFramerate(this->SC_ExpectedFPS->GetValue());
+    this->MapperCUDARaycast->SetIntendedFrameRate(this->SC_ExpectedFPS->GetValue());
+    this->MapperGPURaycast->SetFramerate(this->SC_ExpectedFPS->GetValue());
+    
     this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
     this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();//double rendering request to force mapper to adjust rendering quality for expected fps
     
@@ -1608,16 +1613,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessExpectedFPS(void)
     this->MapperCUDARaycast->SetIntendedFrameRate(this->SC_ExpectedFPS->GetValue());
     this->MapperGPURaycast->SetFramerate(this->SC_ExpectedFPS->GetValue());
     
-/*    //software raycasting
-    {
-        float desiredTime = 1.0f/this->SC_ExpectedFPS->GetValue();//expected fps will not be 0 so safe to do division here
-        
-        this->MapperRaycast->SetManualInteractiveRate(desiredTime);
-        this->MapperRaycast->SetImageSampleDistance(2.0f);
-        this->MapperRaycast->SetMinimumImageSampleDistance(2.0f);
-        this->MapperRaycast->SetMaximumImageSampleDistance(16.0f);
-    }
-*/    
+    //CPU ray casting framerate is handled in SetupCPURayCastInteractive()
+    
     this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
 }
 
