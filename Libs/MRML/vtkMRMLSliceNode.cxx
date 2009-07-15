@@ -92,6 +92,7 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->SliceSpacingMode = AutomaticSliceSpacingMode;
 
   this->ActiveSlice = 0;
+
 }
 
 //----------------------------------------------------------------------------
@@ -316,6 +317,9 @@ void vtkMRMLSliceNode::UpdateMatrices()
     vtkMatrix4x4 *xyToSlice = vtkMatrix4x4::New();
     vtkMatrix4x4 *xyToRAS = vtkMatrix4x4::New();
 
+    int modifiedWasDisabled = this->GetDisableModifiedEvent();
+    this->SetDisableModifiedEvent(1);
+
     // the mapping from XY output slice pixels to Slice Plane coordinate
     xyToSlice->Identity();
     for (i = 0; i < 3; i++)
@@ -402,6 +406,9 @@ void vtkMRMLSliceNode::UpdateMatrices()
       }
 
     this->SetOrientationString( orientationString );
+
+    this->SetDisableModifiedEvent(modifiedWasDisabled);
+    this->InvokePendingModifiedEvent ();
 }
 
 
