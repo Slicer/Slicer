@@ -507,3 +507,8 @@ void vtkScriptedModuleGUI::RemoveMRMLObserverByNumber ( vtkObject *observee, uns
     observee->RemoveObservers(event, (vtkCommand *)this->MRMLCallbackCommand);
     }
 }
+
+unsigned long vtkScriptedModuleGUI::GetNumberForVTKEvent( const char *eventName )
+{
+  return vtkCommand::GetEventIdFromString( eventName );
+}

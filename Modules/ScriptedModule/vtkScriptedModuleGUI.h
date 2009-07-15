@@ -94,6 +94,7 @@ public:
   unsigned long AddMRMLObserverByNumber (vtkObject *observee, unsigned long event);
   void RemoveObserverByNumber (vtkObject *observee, unsigned long event);
   void RemoveMRMLObserverByNumber (vtkObject *observee, unsigned long event);
+  unsigned long GetNumberForVTKEvent( const char *eventName );
 
   vtkGetMacro(Language,int);
   vtkSetMacro(Language,int);
