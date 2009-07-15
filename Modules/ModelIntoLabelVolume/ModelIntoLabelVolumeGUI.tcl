@@ -150,12 +150,14 @@ proc ModelIntoLabelVolumeAddGUIObservers {this} {
 
   $this AddObserverByNumber $::ModelIntoLabelVolume($this,modelsSelect) 11000    
 
-  $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
+  $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] \
+    [$this GetNumberForVTKEvent ModifiedEvent]
     
 }
 
 proc ModelIntoLabelVolumeRemoveGUIObservers {this} {
-  $this RemoveMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
+  $this RemoveMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] \
+    [$this GetNumberForVTKEvent ModifiedEvent]
   $this RemoveObserverByNumber $::ModelIntoLabelVolume($this,modelsSelect) 11000
   $this RemoveObserverByNumber $::ModelIntoLabelVolume($this,run) 10000 
 }

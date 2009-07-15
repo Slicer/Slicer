@@ -109,12 +109,14 @@ proc ScriptedModuleExampleBuildGUI {this} {
 proc ScriptedModuleExampleAddGUIObservers {this} {
   $this AddObserverByNumber $::ScriptedModuleExample($this,run) 10000 
     
-  $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
+  $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] \
+    [$this GetNumberForVTKEvent ModifiedEvent]
     
 }
 
 proc ScriptedModuleExampleRemoveGUIObservers {this} {
-  $this RemoveMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
+  $this RemoveMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] \
+    [$this GetNumberForVTKEvent ModifiedEvent]
 }
 
 proc ScriptedModuleExampleRemoveLogicObservers {this} {

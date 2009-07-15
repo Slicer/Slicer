@@ -145,12 +145,14 @@ proc DistanceMapFiducialsBuildGUI {this} {
 proc DistanceMapFiducialsAddGUIObservers {this} {
   $this AddObserverByNumber $::DistanceMapFiducials($this,run) 10000 
     
-  $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
+  $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] \
+    [$this GetNumberForVTKEvent ModifiedEvent]
     
 }
 
 proc DistanceMapFiducialsRemoveGUIObservers {this} {
-  $this RemoveMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
+  $this RemoveMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] \
+    [$this GetNumberForVTKEvent ModifiedEvent]
 }
 
 proc DistanceMapFiducialsRemoveLogicObservers {this} {

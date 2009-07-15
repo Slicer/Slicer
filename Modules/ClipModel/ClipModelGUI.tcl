@@ -143,12 +143,14 @@ proc ClipModelAddGUIObservers {this} {
     $this AddObserverByNumber $::ClipModel($this,modelsSelect) 11000  
     $this AddObserverByNumber $::ClipModel($this,roiSelect) 11000  
     $this AddObserverByNumber $::ClipModel($this,modelsOutputSelect) 11000  
-    #$this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
+    #$this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] \
+    #  [$this GetNumberForVTKEvent ModifiedEvent]
     
 }
 
 proc ClipModelRemoveGUIObservers {this} {
-    #$this RemoveMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] 31
+    #$this RemoveMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] \
+    #  [$this GetNumberForVTKEvent ModifiedEvent]
     $this RemoveObserverByNumber $::ClipModel($this,clip) 10000
     $this RemoveObserverByNumber $::ClipModel($this,modelsSelect) 11000
     $this RemoveObserverByNumber $::ClipModel($this,roiSelect) 11000
@@ -166,10 +168,12 @@ proc ClipModelProcessGUIEvents {this caller event} {
     if { $caller == $::ClipModel($this,roiSelect) } {
         set roi [$::ClipModel($this,roiSelect) GetSelected]
         if { $::ClipModel($this,roiNode) != "" } {
-            $this RemoveMRMLObserverByNumber $::ClipModel($this,roiNode) 31
+            $this RemoveMRMLObserverByNumber $::ClipModel($this,roiNode) \
+              [$this GetNumberForVTKEvent ModifiedEvent]
         }
         set ::ClipModel($this,roiNode) $roi
-        $this AddMRMLObserverByNumber $::ClipModel($this,roiNode) 31
+        $this AddMRMLObserverByNumber $::ClipModel($this,roiNode) \
+          [$this GetNumberForVTKEvent ModifiedEvent]
         $::ClipModel($this,displayWidget) SetROINode $roi
         #puts "ROI node"
         #puts [$::ClipModel($this,roiNode) Print]
@@ -219,7 +223,8 @@ proc ClipModelRemoveLogicObservers {this} {
 proc ClipModelRemoveMRMLNodeObservers {this} {
     if { [info exists ::ClipModel($this,roiNode)] 
             && $::ClipModel($this,roiNode) != "" } {
-      $this RemoveMRMLObserverByNumber $::ClipModel($this,roiNode) 31
+      $this RemoveMRMLObserverByNumber $::ClipModel($this,roiNode) \
+        [$this GetNumberForVTKEvent ModifiedEvent]
     }
 }
 
