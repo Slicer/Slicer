@@ -263,7 +263,8 @@ proc ExtractSubvolumeROIRemoveLogicObservers {this} {
 }
 
 proc ExtractSubvolumeROIRemoveMRMLNodeObservers {this} {
-  catch {$this RemoveMRMLObserverByNumber $::ExtractSubvolumeROI($this,observedROINode) 33}
+  catch {$this RemoveMRMLObserverByNumber $::ExtractSubvolumeROI($this,observedROINode) \
+    [$this GetNumberForVTKevent ModifiedEvent] }
 }
 
 proc ExtractSubvolumeROIProcessLogicEvents {this caller event} {
@@ -282,15 +283,15 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
   } 
 
   if {$caller == $::ExtractSubvolumeROI($this,roiSelector)} {
-    catch {$this RemoveMRMLObserverByNumber $::ExtractSubvolumeROI($this,observedROINode) 33}
+    catch {$this RemoveMRMLObserverByNumber $::ExtractSubvolumeROI($this,observedROINode) \
+      [$this GetNumberForVTKEvent ModifiedEvent] }
     set ::ExtractSubvolumeROI($this,observedROINode) [$::ExtractSubvolumeROI($this,roiSelector) GetSelected]
-    $this AddMRMLObserverByNumber $::ExtractSubvolumeROI($this,observedROINode) 33
+    $this AddMRMLObserverByNumber $::ExtractSubvolumeROI($this,observedROINode) \
+      [$this GetNumberForVTKEvent ModifiedEvent]
   }
 
   if {$caller == [$::ExtractSubvolumeROI($this,roiVisibility) GetWidget] } {
-    puts "roi visibility clicked"
     if {$::ExtractSubvolumeROI($this,observedROINode) == ""} {
-      puts "roi has not been defined"
       return
     }
     if { [$::ExtractSubvolumeROI($this,observedROINode) GetVisibility] } {
@@ -343,7 +344,7 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
     $yellowCompositeNode SetLabelOpacity .6
 
     # trigger update of the label image contents
-    $roiNode Modified
+    ExtractSubvolumeROIUpdateLabelMap $this
   }
 
 
@@ -496,6 +497,7 @@ proc ExtractSubvolumeROIUpdateMRML {this} {
 }
 
 proc ExtractSubvolumeROIProcessMRMLEvents {this callerID event} {
+  puts "MRML event received!"
   set caller [[[$this GetLogic] GetMRMLScene] GetNodeByID $callerID]
   if { $caller == "" } {
     return
