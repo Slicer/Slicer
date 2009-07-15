@@ -1711,9 +1711,9 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->MB_GPURayCastTechnique->Create();
         this->MB_GPURayCastTechnique->SetLabelWidth(labelWidth);
         this->MB_GPURayCastTechnique->SetBalloonHelpString("Select different techniques in GPU ray casting");
-        this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->AddRadioButton("Composite No Shading");
-        this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastTechnique 0");
         this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->AddRadioButton("Composite With Shading");
+        this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastTechnique 0");
+        this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->AddRadioButton("Composite Psuedo Shading");
         this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->SetItemCommand(1, this,"ProcessGPURayCastTechnique 1");
         this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->AddRadioButton("Maximum Intensity Projection");
         this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessGPURayCastTechnique 2");
