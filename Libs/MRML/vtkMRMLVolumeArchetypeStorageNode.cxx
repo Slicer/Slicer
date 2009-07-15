@@ -350,7 +350,8 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     return 0;
     }
   
-  if ( volNode->IsA("vtkMRMLScalarVolumeNode") && reader->GetNumberOfComponents() != 1 ) 
+  if ( !volNode->IsA("vtkMRMLVectorVolumeNode") &&
+        volNode->IsA("vtkMRMLScalarVolumeNode") && reader->GetNumberOfComponents() != 1 ) 
     {
     volNode->SetAndObserveImageData(NULL);
     vtkErrorMacro("ReadData: Not a scalar volume file: " << fullName.c_str() );
