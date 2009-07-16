@@ -92,7 +92,6 @@ set(EMSegment_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkEMSegmentRegistrationParametersStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkEMSegmentRunSegmentationStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkGaussian2DWidget.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/Help/vtkImageMeanIntensityPreNormalization.cxx
   # MRML
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSNode.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSSegmenterNode.cxx
@@ -167,7 +166,6 @@ set_source_files_properties(
   ${CMAKE_CURRENT_SOURCE_DIR}/Registration/vtkBSplineRegistrator.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Registration/vtkRigidRegistrator.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Registration/vtkITKTransformAdapter.cxx
-# ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/Help/vtkImageMeanIntensityPreNormalization.cxx
   WRAP_EXCLUDE
   )
 
