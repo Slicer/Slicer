@@ -51,7 +51,7 @@ vtkSlicerGPURayCastVolumeTextureMapper3D::vtkSlicerGPURayCastVolumeTextureMapper
 {
   this->Initialized          =  0;
   this->RayCastInitialized   =  0;
-  this->Technique            =  1;//by default composit with shading
+  this->Technique            =  0;//by default composit with shading
   
   this->Clipping             =  0;
   this->ReloadShaderFlag     =  0;
@@ -65,7 +65,7 @@ vtkSlicerGPURayCastVolumeTextureMapper3D::vtkSlicerGPURayCastVolumeTextureMapper
   this->RayCastProgram           =  0;
   this->RayCastSupported         =  0;
   this->RenderWindow         = NULL;
-  this->RaySteps             = 450.0f;
+  this->RaySteps             = 1050.0f;
 
   this->GlobalAlpha          = 1.0f;
 }
@@ -122,8 +122,30 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolum
   // Start the timer now
   this->Timer->StartTimer();
 
-  glPushAttrib(GL_ENABLE_BIT | GL_POLYGON_BIT | GL_TEXTURE_BIT);
+  glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT | GL_LIGHTING_BIT);
   
+  //setup material based on volume property
+  float ambient = vol->GetProperty()->GetAmbient();
+  float specular = vol->GetProperty()->GetSpecular();
+  float diffuse = vol->GetProperty()->GetDiffuse();
+  float power = 128*vol->GetProperty()->GetSpecularPower()/50;
+  
+//  cout<<ambient<<" "<<diffuse<<" "<<specular<<endl;
+//  cout.flush();
+  
+  float ambientMaterial[4];
+  float diffuseMaterial[4];
+  float specularMaterial[4];
+  
+  ambientMaterial[0] = ambient; ambientMaterial[1] = ambient; ambientMaterial[2] = ambient; ambientMaterial[3] = 1.0;
+  diffuseMaterial[0] = diffuse; diffuseMaterial[1] = diffuse; diffuseMaterial[2] = diffuse; diffuseMaterial[3] = 1.0;
+  specularMaterial[0] = specular; specularMaterial[1] = specular; specularMaterial[2] = specular; specularMaterial[3] = 1.0;
+  
+  glMaterialfv(GL_FRONT, GL_AMBIENT, ambientMaterial);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseMaterial);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, specularMaterial);
+  glMaterialf(GL_FRONT, GL_SHININESS, power); 
+ 
   glDisable(GL_LIGHTING);
   vtkGraphicErrorMacro(ren->GetRenderWindow(),"Before actual render method");
  
@@ -805,22 +827,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::InitializeRayCast()
     
     switch(this->Technique)
     {
-    case 0://composit no shading
-        switch(this->GetInput()->GetNumberOfScalarComponents())
-        {
-        case 1:
-            LoadNoShadingFragmentShader();
-            break;
-        case 2:
-            LoadNoShadingFragmentShaderTwo();
-            break;
-        case 3:
-        case 4:
-            LoadNoShadingFragmentShaderFour();
-            break;
-        }
-        break;
-    case 1://composit shading
+    case 0://composit shading
         switch(this->GetInput()->GetNumberOfScalarComponents())
         {
         case 1:
@@ -832,6 +839,21 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::InitializeRayCast()
         case 3:
         case 4:
             LoadFragmentShaderFour();
+            break;
+        }
+        break;
+    case 1://composit pseudo shading
+        switch(this->GetInput()->GetNumberOfScalarComponents())
+        {
+        case 1:
+            LoadNoShadingFragmentShader();
+            break;
+        case 2:
+            LoadNoShadingFragmentShaderTwo();
+            break;
+        case 3:
+        case 4:
+            LoadNoShadingFragmentShaderFour();
             break;
         }
         break;
@@ -888,12 +910,12 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadVertexShader()
 {
     std::ostringstream vp_oss;
     vp_oss <<
-        "varying vec4 Position;                                                                     \n"
+        "varying vec3 ViewDir;                                                                     \n"
         "void main()                                                                            \n"
         "{                                                                                          \n"
         "    gl_Position = ftransform();                                                             \n"
         "    gl_TexCoord[0] = gl_Color;                                                              \n"
-        "    Position = gl_Position;                                                             \n"
+        "    ViewDir = vec3(gl_ModelViewMatrix * gl_Vertex);                                         \n"
         "}                                                                                          \n";
 
         
@@ -925,7 +947,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMIPFou
 {
     std::ostringstream fp_oss;
     fp_oss <<
-        "varying vec4 Position;                                                                 \n"
+        "varying vec3 ViewDir;                                                                 \n"
         "uniform sampler3D TextureVol;                                                          \n"
         "uniform sampler3D TextureVol1;                                                         \n"
         "uniform sampler2D TextureColorLookup;                                                  \n"
@@ -1078,7 +1100,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMINIPF
 {
     std::ostringstream fp_oss;
     fp_oss <<
-        "varying vec4 Position;                                                                 \n"
+        "varying vec3 ViewDir;                                                                 \n"
         "uniform sampler3D TextureVol;                                                          \n"
         "uniform sampler3D TextureVol1;                                                         \n"
         "uniform sampler2D TextureColorLookup;                                                  \n"
@@ -1231,7 +1253,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderFour()
 {
     std::ostringstream fp_oss;
     fp_oss <<
-        "varying vec4 Position;                                                                 \n"
+        "varying vec3 ViewDir;                                                                 \n"
         "uniform sampler3D TextureVol;                                                          \n"
         "uniform sampler3D TextureVol1;                                                         \n"
         "uniform sampler2D TextureColorLookup;                                                  \n"
@@ -1389,7 +1411,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderFour()
 {
     std::ostringstream fp_oss;
     fp_oss <<
-        "varying vec4 Position;                                                                 \n"
+        "varying vec3 ViewDir;                                                                 \n"
         "uniform sampler3D TextureVol;                                                          \n"
         "uniform sampler3D TextureVol1;                                                         \n"
         "uniform sampler2D TextureColorLookup;                                                  \n"
@@ -1474,18 +1496,18 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderFour()
         "    return gl_NormalMatrix * normal.xyz;                                                \n"
         "}                                                                                          \n"
         "                                                                                        \n"
-        "vec4 directionalLight(vec3 coord, vec3 lightDir)                                                          \n"
+        "vec4 directionalLight(vec3 coord, vec3 lightDir, vec4 color)                              \n"
         "{                                                                                          \n"
         "    vec3    normal = normalize(voxelNormal(coord));                                     \n"
         "    float   NdotL = max( dot( normal, lightDir ), 0.0 );                                \n"
-        "    if ( NdotL > 0.0 )                                                                      \n"
-        "    {                                                                                       \n"
-        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);             \n" 
-        "        vec4 specular = gl_LightSource[0].specular * pow(NdotHV, 40.0); \n"
-        "        return (specular + gl_LightSource[0].diffuse * NdotL + gl_LightSource[0].ambient);          \n"
-        "    }                                                                                       \n"
-        "    else                                                                                \n"
-        "        return vec4(1.0);                                                                   \n"
+        "    vec4    specular = vec4(0);                                                            \n"
+        "    if (NdotL > 0.0)                                                                     \n"
+        "    {                                                                                      \n"
+        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);      \n" 
+        "        specular = (gl_FrontMaterial.specular) * pow(NdotHV, gl_FrontMaterial.shininess);   \n"
+        "    }                                                                                   \n"
+        "    vec4    diffuse = (gl_FrontMaterial.ambient + gl_FrontMaterial.diffuse * NdotL) * color;   \n"
+        "    return (specular + diffuse);                                                         \n"
         "}                                                                                          \n"
         "                                                                                        \n"
         "void main()                                                                            \n"
@@ -1576,7 +1598,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMIPTwo
 {
     std::ostringstream fp_oss;
     fp_oss <<
-        "varying vec4 Position;                                                                 \n"
+        "varying vec3 ViewDir;                                                                 \n"
         "uniform sampler3D TextureVol;                                                          \n"
         "uniform sampler3D TextureVol1;                                                         \n"
         "uniform sampler2D TextureColorLookup;                                                  \n"
@@ -1729,7 +1751,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMINIPT
 {
     std::ostringstream fp_oss;
     fp_oss <<
-        "varying vec4 Position;                                                                 \n"
+        "varying vec3 ViewDir;                                                                 \n"
         "uniform sampler3D TextureVol;                                                          \n"
         "uniform sampler3D TextureVol1;                                                         \n"
         "uniform sampler2D TextureColorLookup;                                                  \n"
@@ -1882,7 +1904,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderTwo()
 {
     std::ostringstream fp_oss;
     fp_oss <<
-        "varying vec4 Position;                                                                 \n"
+        "varying vec3 ViewDir;                                                                 \n"
         "uniform sampler3D TextureVol;                                                          \n"
         "uniform sampler3D TextureVol1;                                                         \n"
         "uniform sampler2D TextureColorLookup;                                                  \n"
@@ -2040,7 +2062,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderTwo()
 {
     std::ostringstream fp_oss;
     fp_oss <<
-        "varying vec4 Position;                                                                 \n"
+        "varying vec3 ViewDir;                                                                 \n"
         "uniform sampler3D TextureVol;                                                          \n"
         "uniform sampler3D TextureVol1;                                                         \n"
         "uniform sampler2D TextureColorLookup;                                                  \n"
@@ -2125,18 +2147,18 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaderTwo()
         "    return gl_NormalMatrix * normal.xyz;                                                \n"
         "}                                                                                          \n"
         "                                                                                        \n"
-        "vec4 directionalLight(vec3 coord, vec3 lightDir)                                                          \n"
+        "vec4 directionalLight(vec3 coord, vec3 lightDir, vec4 color)                              \n"
         "{                                                                                          \n"
         "    vec3    normal = normalize(voxelNormal(coord));                                     \n"
         "    float   NdotL = max( dot( normal, lightDir ), 0.0 );                                \n"
-        "    if ( NdotL > 0.0 )                                                                      \n"
-        "    {                                                                                       \n"
-        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);             \n" 
-        "        vec4 specular = gl_LightSource[0].specular * pow(NdotHV, 40.0); \n"
-        "        return (specular + gl_LightSource[0].diffuse * NdotL + gl_LightSource[0].ambient);          \n"
-        "    }                                                                                       \n"
-        "    else                                                                                \n"
-        "        return vec4(1.0);                                                                   \n"
+        "    vec4    specular = vec4(0);                                                            \n"
+        "    if (NdotL > 0.0)                                                                     \n"
+        "    {                                                                                      \n"
+        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);      \n" 
+        "        specular = (gl_FrontMaterial.specular) * pow(NdotHV, gl_FrontMaterial.shininess);   \n"
+        "    }                                                                                   \n"
+        "    vec4    diffuse = (gl_FrontMaterial.ambient + gl_FrontMaterial.diffuse * NdotL) * color;   \n"
+        "    return (specular + diffuse);                                                         \n"
         "}                                                                                          \n"
         "                                                                                        \n"
         "void main()                                                                            \n"
@@ -2227,7 +2249,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMIP()
 {
     std::ostringstream fp_oss;
     fp_oss <<
-        "varying vec4 Position;                                                                 \n"
+        "varying vec3 ViewDir;                                                                 \n"
         "uniform sampler3D TextureVol;                                                          \n"
         "uniform sampler3D TextureVol1;                                                         \n"
         "uniform sampler2D TextureColorLookup;                                                  \n"
@@ -2256,8 +2278,8 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMIP()
         "    for (int i = 0; i < 10; i++)                                                        \n"
         "    {                                                                                       \n"
         "        a3 = (a1 + a2) * 0.5;                                                           \n"
-        " //       if (length(a2 - a1) <= halfStep)                                                \n"
-        " //           return vec4(clamp(a3, mmn, mmx), 1.0);                                      \n"
+        "        if (length(a2 - a1) <= halfStep)                                                \n"
+        "            return vec4(clamp(a3, mmn, mmx), 1.0);                                      \n"
         "        if ( all(greaterThanEqual(a3, mmn)) && all(lessThanEqual(a3, mmx)) )            \n"
         "            a1 = a3;                                                                    \n"
         "        else                                                                            \n"
@@ -2283,12 +2305,8 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMIP()
         "//perform 3D texture lookup based on RenderMethod                                          \n"
         "vec4 voxelColor(vec3 coord)                                                            \n"
         "{                                                                                          \n"
-        "    vec4 color = vec4(0);                                                               \n"
-        "    {                                                                                       \n"
-        "        vec4 scalar = texture3D(TextureVol, coord);                                         \n"
-        "        color = texture2D(TextureColorLookup, vec2(scalar.x, scalar.w));                \n"
-        "    }                                                                                       \n"
-        "    return color;                                                                       \n"
+        "    vec4 scalar = texture3D(TextureVol, coord);                                         \n"
+        "    return texture2D(TextureColorLookup, vec2(scalar.x, scalar.w));                     \n"
         "}                                                                                          \n"
         "                                                                                        \n"
         "float voxelScalar(vec3 coord)                                                          \n"
@@ -2376,7 +2394,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMINIP(
 {
     std::ostringstream fp_oss;
     fp_oss <<
-        "varying vec4 Position;                                                                 \n"
+        "varying vec3 ViewDir;                                                                 \n"
         "uniform sampler3D TextureVol;                                                          \n"
         "uniform sampler3D TextureVol1;                                                         \n"
         "uniform sampler2D TextureColorLookup;                                                  \n"
@@ -2405,8 +2423,8 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMINIP(
         "    for (int i = 0; i < 10; i++)                                                        \n"
         "    {                                                                                       \n"
         "        a3 = (a1 + a2) * 0.5;                                                           \n"
-        " //       if (length(a2 - a1) <= halfStep)                                                \n"
-        " //           return vec4(clamp(a3, mmn, mmx), 1.0);                                      \n"
+        "        if (length(a2 - a1) <= halfStep)                                                \n"
+        "            return vec4(clamp(a3, mmn, mmx), 1.0);                                      \n"
         "        if ( all(greaterThanEqual(a3, mmn)) && all(lessThanEqual(a3, mmx)) )            \n"
         "            a1 = a3;                                                                    \n"
         "        else                                                                            \n"
@@ -2432,12 +2450,8 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShaderMINIP(
         "//perform 3D texture lookup based on RenderMethod                                          \n"
         "vec4 voxelColor(vec3 coord)                                                            \n"
         "{                                                                                          \n"
-        "    vec4 color = vec4(0);                                                               \n"
-        "    {                                                                                       \n"
-        "        vec4 scalar = texture3D(TextureVol, coord);                                         \n"
-        "        color = texture2D(TextureColorLookup, vec2(scalar.x, scalar.w));                \n"
-        "    }                                                                                       \n"
-        "    return color;                                                                       \n"
+        "    vec4 scalar = texture3D(TextureVol, coord);                                         \n"
+        "    return texture2D(TextureColorLookup, vec2(scalar.x, scalar.w));                         \n"
         "}                                                                                          \n"
         "                                                                                        \n"
         "float voxelScalar(vec3 coord)                                                          \n"
@@ -2525,7 +2539,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShader()
 {
     std::ostringstream fp_oss;
     fp_oss <<
-        "varying vec4 Position;                                                                 \n"
+        "varying vec3 ViewDir;                                                                 \n"
         "uniform sampler3D TextureVol;                                                          \n"
         "uniform sampler3D TextureVol1;                                                         \n"
         "uniform sampler2D TextureColorLookup;                                                  \n"
@@ -2535,9 +2549,10 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShader()
         "//ParaMatrix:                                                                          \n"
         "//EyePos.x,      EyePos.y,      EyePos.z,     Step                                         \n"
         "//VolBBoxLow.x,  VolBBoxLow.y,  VolBBoxLow.z, VolBBoxHigh.x                            \n"
-        "//VolBBoxHigh.y, VolBBoxHigh.z, N/A, DepthPeelingThreshold,                   \n"
+        "//VolBBoxHigh.y, VolBBoxHigh.z, N/A,          DepthPeelingThreshold,                   \n"
         "//N/A,           GlobalAlpha,   Debug,                                                 \n"
         "                                                                                        \n"
+        "                                                                                          \n"
         "vec4 computeRayEnd()                                                                   \n"
         "{                                                                                          \n"
         "   vec3 o = vec3(ParaMatrix[0][0], ParaMatrix[0][1], ParaMatrix[0][2]);                \n"
@@ -2554,8 +2569,8 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShader()
         "    for (int i = 0; i < 10; i++)                                                        \n"
         "    {                                                                                       \n"
         "        a3 = (a1 + a2) * 0.5;                                                           \n"
-        "//        if (length(a2 - a1) <= halfStep)                                                \n"
-        "//            return vec4(clamp(a3, mmn, mmx), 1.0);                                      \n"
+        "        if (length(a2 - a1) <= halfStep)                                                \n"
+        "            return vec4(clamp(a3, mmn, mmx), 1.0);                                      \n"
         "        if ( all(greaterThanEqual(a3, mmn)) && all(lessThanEqual(a3, mmx)) )            \n"
         "            a1 = a3;                                                                    \n"
         "        else                                                                            \n"
@@ -2581,12 +2596,8 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShader()
         "//perform 3D texture lookup based on RenderMethod                                          \n"
         "vec4 voxelColor(vec3 coord)                                                            \n"
         "{                                                                                          \n"
-        "    vec4 color = vec4(0);                                                               \n"
-        "    {                                                                                       \n"
-        "        vec4 scalar = texture3D(TextureVol, coord);                                         \n"
-        "        color = texture2D(TextureColorLookup, vec2(scalar.x, scalar.w));                \n"
-        "    }                                                                                       \n"
-        "    return color;                                                                       \n"
+        "    vec4 scalar = texture3D(TextureVol, coord);                                         \n"
+        "    return texture2D(TextureColorLookup, vec2(scalar.x, scalar.w));                     \n"
         "}                                                                                          \n"
         "                                                                                        \n"
         "float voxelScalar(vec3 coord)                                                          \n"
@@ -2595,8 +2606,23 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShader()
         "    return scalar.x;                                                                    \n"
         "}                                                                                          \n"
         "                                                                                        \n"
+        "vec3 voxelNormal(vec3 coord)                                                           \n"
+        "{                                                                                          \n"
+        "    vec4 normal = texture3D(TextureVol1, coord);                                             \n"
+        "    normal = normal * 2.0 - 1.0;                                                           \n"
+        "    normal = VolumeMatrix * normal;                                                      \n"
+        "    return gl_NormalMatrix * normal.xyz;                                                \n"
+        "}                                                                                          \n"
+        "                                                                                        \n"
+        "vec4 edgeColoring(vec3 coord, vec4 diffuse)                                              \n"
+        "{                                                                                      \n"
+        "    vec3    normal = normalize(voxelNormal(coord));                                     \n"
+        "    float   NdotV = max( dot( normal, normalize(-ViewDir) ), 0.0 );                      \n"
+        "    return diffuse*NdotV;                                                           \n"
+        "}                                                                                      \n"
+        "                                                                                           \n"
         "void main()                                                                            \n"
-        "{                                                                      \n"
+        "{                                                                                       \n"
         "    vec4 rayOrigin = computeRayOrigin();                                                \n"
         "    vec4 rayEnd = computeRayEnd();                                                      \n"
         "    vec3 rayDir = rayEnd.xyz - rayOrigin.xyz;                                               \n"
@@ -2638,6 +2664,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadNoShadingFragmentShader()
         "                                                                                           \n"
         "            if (tempAlpha > 0.0)                                                           \n"
         "            {                                                                              \n"
+        "               nextColor = edgeColoring(nextRayOrigin, nextColor);                          \n"
         "               tempAlpha = (1.0-alpha)*tempAlpha;                                              \n"
         "               pixelColor += nextColor*tempAlpha;                                              \n"
         "               alpha += tempAlpha;                                                             \n"
@@ -2679,7 +2706,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShader()
 {
     std::ostringstream fp_oss;
     fp_oss <<
-        "varying vec4 Position;                                                                 \n"
+        "varying vec3 ViewDir;                                                                 \n"
         "uniform sampler3D TextureVol;                                                          \n"
         "uniform sampler3D TextureVol1;                                                         \n"
         "uniform sampler2D TextureColorLookup;                                                  \n"
@@ -2708,8 +2735,8 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShader()
         "    for (int i = 0; i < 10; i++)                                                        \n"
         "    {                                                                                       \n"
         "        a3 = (a1 + a2) * 0.5;                                                           \n"
-        " //       if (length(a2 - a1) <= halfStep)                                                \n"
-        " //           return vec4(clamp(a3, mmn, mmx), 1.0);                                      \n"
+        "        if (length(a2 - a1) <= halfStep)                                                \n"
+        "            return vec4(clamp(a3, mmn, mmx), 1.0);                                      \n"
         "        if ( all(greaterThanEqual(a3, mmn)) && all(lessThanEqual(a3, mmx)) )            \n"
         "            a1 = a3;                                                                    \n"
         "        else                                                                            \n"
@@ -2735,12 +2762,8 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShader()
         "//perform 3D texture lookup based on RenderMethod                                          \n"
         "vec4 voxelColor(vec3 coord)                                                            \n"
         "{                                                                                          \n"
-        "    vec4 color = vec4(0);                                                               \n"
-        "    {                                                                                       \n"
-        "        vec4 scalar = texture3D(TextureVol, coord);                                         \n"
-        "        color = texture2D(TextureColorLookup, vec2(scalar.x, scalar.w));                \n"
-        "    }                                                                                       \n"
-        "    return color;                                                                       \n"
+        "    vec4 scalar = texture3D(TextureVol, coord);                                         \n"
+        "    return texture2D(TextureColorLookup, vec2(scalar.x, scalar.w));                      \n"
         "}                                                                                          \n"
         "                                                                                        \n"
         "float voxelScalar(vec3 coord)                                                          \n"
@@ -2751,27 +2774,24 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShader()
         "                                                                                        \n"
         "vec3 voxelNormal(vec3 coord)                                                           \n"
         "{                                                                                          \n"
-        "    vec4 normal = vec4(0);                                                              \n"
-        "    {                                                                                       \n"
-        "        normal = texture3D(TextureVol1, coord);                                         \n"
-        "        normal = normal * 2.0 - 1.0;                                                    \n"
-        "    }                                                                                       \n"
-        "    normal = normalize(VolumeMatrix * normal);                                              \n"
+        "    vec4 normal = texture3D(TextureVol1, coord);                                         \n"
+        "    normal = normal * 2.0 - 1.0;                                                         \n"
+        "    normal = VolumeMatrix * normal;                                                    \n"
         "    return gl_NormalMatrix * normal.xyz;                                                \n"
         "}                                                                                          \n"
         "                                                                                        \n"
-        "vec4 directionalLight(vec3 coord, vec3 lightDir)                                                          \n"
+        "vec4 directionalLight(vec3 coord, vec3 lightDir, vec4 color)                              \n"
         "{                                                                                          \n"
         "    vec3    normal = normalize(voxelNormal(coord));                                     \n"
         "    float   NdotL = max( dot( normal, lightDir ), 0.0 );                                \n"
-        "    if ( NdotL > 0.0 )                                                                      \n"
-        "    {                                                                                       \n"
-        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);             \n" 
-        "        vec4 specular = gl_LightSource[0].specular * pow(NdotHV, 40.0); \n"
-        "        return (specular + gl_LightSource[0].diffuse * NdotL + gl_LightSource[0].ambient);          \n"
-        "    }                                                                                       \n"
-        "    else                                                                                \n"
-        "        return vec4(1.0);                                                                   \n"
+        "    vec4    specular = vec4(0);                                                            \n"
+        "    if (NdotL > 0.0)                                                                     \n"
+        "    {                                                                                      \n"
+        "        float   NdotHV = max( dot( normal, gl_LightSource[0].halfVector.xyz), 0.0);      \n" 
+        "        specular = (gl_FrontMaterial.specular) * pow(NdotHV, gl_FrontMaterial.shininess);   \n"
+        "    }                                                                                   \n"
+        "    vec4    diffuse = (gl_FrontMaterial.ambient + gl_FrontMaterial.diffuse * NdotL) * color;   \n"
+        "    return (specular + diffuse);                                                         \n"
         "}                                                                                          \n"
         "                                                                                        \n"
         "void main()                                                                            \n"
@@ -2819,7 +2839,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShader()
         "                                                                                        \n"
         "            if (tempAlpha > 0.0)                                                           \n"
         "            {                                                                              \n"
-        "               nextColor *= directionalLight(nextRayOrigin, lightDir);                      \n"
+        "               nextColor = directionalLight(nextRayOrigin, lightDir, nextColor);             \n"
         "                                                                                              \n"      
         "               tempAlpha = (1.0-alpha)*tempAlpha;                                              \n"
         "               pixelColor += nextColor*tempAlpha;                                              \n"

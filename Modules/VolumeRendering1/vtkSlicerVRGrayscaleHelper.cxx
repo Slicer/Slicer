@@ -1265,6 +1265,11 @@ void vtkSlicerVRGrayscaleHelper::ProcessRenderingMethodEvents(int id)
       break;
     }
     
+    //update expected framerate
+    this->MapperTexture->SetFramerate(this->SC_ExpectedFPS->GetValue());
+    this->MapperCUDARaycast->SetIntendedFrameRate(this->SC_ExpectedFPS->GetValue());
+    this->MapperGPURaycast->SetFramerate(this->SC_ExpectedFPS->GetValue());
+    
     this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
     this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();//double rendering request to force mapper to adjust rendering quality for expected fps
     
@@ -1608,16 +1613,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessExpectedFPS(void)
     this->MapperCUDARaycast->SetIntendedFrameRate(this->SC_ExpectedFPS->GetValue());
     this->MapperGPURaycast->SetFramerate(this->SC_ExpectedFPS->GetValue());
     
-/*    //software raycasting
-    {
-        float desiredTime = 1.0f/this->SC_ExpectedFPS->GetValue();//expected fps will not be 0 so safe to do division here
-        
-        this->MapperRaycast->SetManualInteractiveRate(desiredTime);
-        this->MapperRaycast->SetImageSampleDistance(2.0f);
-        this->MapperRaycast->SetMinimumImageSampleDistance(2.0f);
-        this->MapperRaycast->SetMaximumImageSampleDistance(16.0f);
-    }
-*/    
+    //CPU ray casting framerate is handled in SetupCPURayCastInteractive()
+    
     this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
 }
 
@@ -1711,9 +1708,9 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->MB_GPURayCastTechnique->Create();
         this->MB_GPURayCastTechnique->SetLabelWidth(labelWidth);
         this->MB_GPURayCastTechnique->SetBalloonHelpString("Select different techniques in GPU ray casting");
-        this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->AddRadioButton("Composite No Shading");
-        this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastTechnique 0");
         this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->AddRadioButton("Composite With Shading");
+        this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastTechnique 0");
+        this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->AddRadioButton("Composite Psuedo Shading");
         this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->SetItemCommand(1, this,"ProcessGPURayCastTechnique 1");
         this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->AddRadioButton("Maximum Intensity Projection");
         this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessGPURayCastTechnique 2");
@@ -1730,7 +1727,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->MB_GPURayCastInternalVolumeSize->SetLabelText("GPU Memory Size");
         this->MB_GPURayCastInternalVolumeSize->Create();
         this->MB_GPURayCastInternalVolumeSize->SetLabelWidth(labelWidth);
-        this->MB_GPURayCastInternalVolumeSize->SetBalloonHelpString("Specify size of your video card memory. This effects size of internal texture storage. Do not select memory size larger than physical GPU memory.");
+        this->MB_GPURayCastInternalVolumeSize->SetBalloonHelpString("Specify size of your GPU memory. Generally the larger GPU memory the better rendering quality. Do not select memory size larger than physical GPU memory size.");
         this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->AddRadioButton("128M");
         this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastInternalVolumeSize 0");
         this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->AddRadioButton("256M");
