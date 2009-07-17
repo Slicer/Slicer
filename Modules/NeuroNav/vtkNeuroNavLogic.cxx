@@ -577,7 +577,7 @@ void vtkNeuroNavLogic::UpdateLocatorTransform()
 
     locator_transform->Identity();
     // C:
-    locator_transform->Translate(0, (100 / 2.0), 0);
+    locator_transform->Translate(0, 0, 0);
     // R:
     locator_transform->Concatenate(locator_matrix);
     // T:
