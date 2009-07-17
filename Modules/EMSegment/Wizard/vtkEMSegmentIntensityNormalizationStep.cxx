@@ -33,7 +33,6 @@ Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 #include "vtkKWHistogram.h"
 #include "vtkKWPiecewiseFunctionEditor.h"
 #include "vtkPointData.h"
-#include "vtkImageMeanIntensityPreNormalization.h"
 
 #include "vtkKWWizardWidget.h"
 #include "vtkKWWizardWorkflow.h"

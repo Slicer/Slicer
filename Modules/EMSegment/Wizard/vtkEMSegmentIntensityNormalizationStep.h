@@ -28,8 +28,6 @@ class vtkKWCheckButtonWithLabel;
 class vtkKWHistogram;
 class vtkKWPiecewiseFunctionEditor;
 
-class vtkImageMeanIntensityPreNormalization;
-
 class VTK_EMSEGMENT_EXPORT vtkEMSegmentIntensityNormalizationStep :
   public vtkEMSegmentStep
 {
@@ -113,8 +111,6 @@ protected:
 
   vtkKWEntryWithLabel          *NormalizationValueRecommendedEntry;
   vtkKWFrameWithLabel          *RecommendationFrame;
-
-  vtkImageMeanIntensityPreNormalization *ImageMeanIntensityPreNormalization;
 
   vtkIdType id_event;
 
