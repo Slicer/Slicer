@@ -972,15 +972,18 @@ itcl::body SliceSWidget::moveSlice { delta } {
                 lappend logics [$sgui GetLogic]
             } 
         }
-    } else {
-        lappend logics [$sliceGUI GetLogic]
+    } 
+    
+    set logic [$sliceGUI GetLogic]
+    if { [lsearch $logics $logic] == -1 } {
+        lappend logics $logic
     }
 
     # set the slice offset for all slice logics
     set numberOfLogics [llength $logics]
     foreach logic $logics {
         $logic SetSliceOffset [expr $offset + $delta]
-    }    
+    }
 }
 
 itcl::body SliceSWidget::jumpSlice { r a s } {
