@@ -45,9 +45,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesGUI : public vtkSlicerModuleGUI
 
   // Description:
   // Return a particular slice gui by name
-  //BTX
   vtkSlicerSliceGUI* GetSliceGUI(const char *layoutName);
-  //ETX
+
+  // Description:
+  // The current slice node being operated on
+  vtkGetObjectMacro(SliceNode, vtkMRMLSliceNode);
+  vtkSetObjectMacro(SliceNode, vtkMRMLSliceNode);
   
   // Description:
   // The following functions are used to provide an iterator to SliceGUIMap for looping through its items
@@ -104,8 +107,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesGUI : public vtkSlicerModuleGUI
   //BTX
   SliceGUIMap *InternalSliceGUIMap;
   ParameterWidgetMap *InternalParameterWidgetMap;
-  vtkSmartPointer<vtkMRMLSliceNode> SliceNode;
+  //vtkSmartPointer<vtkMRMLSliceNode> SliceNode;
   //ETX
+  vtkMRMLSliceNode *SliceNode;
 
   vtkSlicerVisibilityIcons *VisibilityIcons;
   
