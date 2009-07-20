@@ -77,9 +77,15 @@ float vtkPichonFastMarching::speed( int index )
 
 
   s=(float)pow(pI*pI*pH, powerSpeed);
-
   // make sure speed is not too small
   s*=1e10;
+
+  if(!finite(s))
+    {
+    s = 1.;
+    std::cerr << "WARNING: s set to 1.0, since it was not finite()" << std::endl;
+    }
+
 
   if( (s<1.0/(INF/1e6)) || finite(s)==0 )
     {
