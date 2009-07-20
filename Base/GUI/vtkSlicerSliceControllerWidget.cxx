@@ -2761,7 +2761,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
         }
 
       // convert to slice number
-      int slice = (newValue - this->OffsetScaleMin) / this->OffsetScaleResolution;
+      int slice = static_cast<int> (0.5 + (newValue - this->OffsetScaleMin) / this->OffsetScaleResolution);
       this->OffsetScale->SetValue(slice);
       }
     }
