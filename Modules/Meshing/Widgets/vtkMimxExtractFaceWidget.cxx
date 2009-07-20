@@ -516,7 +516,7 @@ int vtkMimxExtractFaceWidget::GetInputPickedCompleteFace(
     }
   vtkIdList *completecellidlist;
 
-  bool status;
+  bool status = true;
   for (i=0; i<compsurfpoly->GetNumberOfCells(); i++)
     {
     status = true;
