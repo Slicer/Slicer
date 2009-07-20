@@ -269,19 +269,62 @@ int vtkFourDImageLogic::CreateFileListFromDir(const char* path,
 }
 
 
+
 //---------------------------------------------------------------------------
-vtkMRMLTimeSeriesBundleNode* vtkFourDImageLogic::LoadImagesFromDir(const char* path, const char* bundleNodeName)
+void vtkFourDImageLogic::CreateFileListFromDir(const char* path,
+                                               std::vector<ReaderType::FileNamesContainer>& fileNamesContainerList,
+                                               const char* filter, int nFrames, int nSlices, int nChannels, int channel)
 {
+
+  // Search files with compatible types (except DICOM)
+  vtkGlobFileNames* gfn = vtkGlobFileNames::New();
+  gfn->SetDirectory(path);
+  gfn->AddFileNames(filter);
+
+  // Get and check number of files in the directory
+  int nFiles = gfn->GetNumberOfFileNames();
+
+  if (nFiles < nFrames*nSlices*nChannels)
+    {
+    std::cerr << "The number of files is not enough." << std::endl;
+    fileNamesContainerList.clear();
+    return;
+    }
+
+  fileNamesContainerList.clear();
+  for (int f = 0; f < nFrames; f ++)
+    {
+    ReaderType::FileNamesContainer container;
+    container.clear();
+    for (int s = 0; s < nSlices; s ++)
+      {
+      int index = f * (nSlices*nChannels) + channel*(nSlices) + s;
+      if (index < nFiles)
+        {
+        container.push_back(gfn->GetNthFileName(index));
+        }
+      else
+        {
+        std::cerr << "Error: creating file list." << std::endl;
+        return;
+        }
+      }
+    fileNamesContainerList.push_back(container);
+    }
+}
+
+
+//---------------------------------------------------------------------------
+vtkMRMLTimeSeriesBundleNode* vtkFourDImageLogic::LoadImagesByList(const char* bundleNodeName,
+                                                                  std::vector<ReaderType::FileNamesContainer>& fileNamesContainerList)
+{
+  
   StatusMessageType statusMessage;
   double rangeLower;
   double rangeUpper;
   
-  std::cerr << "loading from " << path << std::endl;
-
-  std::vector<ReaderType::FileNamesContainer> fileNamesContainerList;
-
   // Analyze the directory and create the file list
-  if (CreateFileListFromDir(path, fileNamesContainerList) <= 0)
+  if (fileNamesContainerList.size() <= 0)
     {
     std::cerr << "Couldn't find files" << std::endl;
     return NULL;
@@ -289,7 +332,6 @@ vtkMRMLTimeSeriesBundleNode* vtkFourDImageLogic::LoadImagesFromDir(const char* p
 
   int nVolumes = fileNamesContainerList.size();
   std::cerr << "nVolumes = " << nVolumes << std::endl;
-
 
   //std::vector<ReaderType::FileNamesContainer>::iterator fnciter;
   //for (fnciter = fileNamesContainerList.begin(); fnciter != fileNamesContainerList.end(); fnciter ++)
@@ -420,6 +462,41 @@ vtkMRMLTimeSeriesBundleNode* vtkFourDImageLogic::LoadImagesFromDir(const char* p
   
   return bundleNode;
 }
+
+
+//---------------------------------------------------------------------------
+vtkMRMLTimeSeriesBundleNode* vtkFourDImageLogic::LoadImagesFromDir(const char* path, const char* bundleNodeName)
+{
+  std::cerr << "loading from " << path << std::endl;
+
+  std::vector<ReaderType::FileNamesContainer> fileNamesContainerList;
+
+  if (CreateFileListFromDir(path, fileNamesContainerList) <= 0)
+    {
+    std::cerr << "Couldn't find files" << std::endl;
+    return NULL;
+    }
+  
+  return LoadImagesByList(bundleNodeName, fileNamesContainerList);
+
+}
+
+
+//---------------------------------------------------------------------------
+vtkMRMLTimeSeriesBundleNode* vtkFourDImageLogic::LoadImagesFromDir(const char* path, const char* bundleNodeName,
+                                                                   const char* filter, int nFrames, int nSlices, int nChannels, int channel)
+{
+  std::cerr << "loading from " << path << std::endl;
+
+  std::vector<ReaderType::FileNamesContainer> fileNamesContainerList;
+
+  CreateFileListFromDir(path, fileNamesContainerList, filter, nFrames, nSlices, nChannels, channel);
+  return LoadImagesByList(bundleNodeName, fileNamesContainerList);
+
+}
+
+
+
 
 //---------------------------------------------------------------------------
 int vtkFourDImageLogic::SaveImagesToDir(const char* path,

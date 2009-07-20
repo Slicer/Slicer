@@ -177,17 +177,20 @@ class VTK_FourDImage_EXPORT vtkFourDImageGUI : public vtkSlicerModuleGUI
   vtkFourDImageIcons* Icons;
 
   // -----------------------------------------
+  // Active 4D Bundle selector
+  vtkSlicerNodeSelectorWidget*  ActiveTimeSeriesBundleSelectorWidget;
+
+  // -----------------------------------------
   // Load / Save / Active frame
   vtkKWLoadSaveButtonWithLabel* SelectInputDirectoryButton;
   vtkKWPushButton*              LoadImageButton;
-  //vtkKWMenuButton*              SaveSeriesMenu;
   vtkKWLoadSaveButtonWithLabel* SelectOutputDirectoryButton;
   vtkKWPushButton*              SaveImageButton;
-  //vtkKWMenuButton*              ActiveSeriesMenu;
-
-  // -----------------------------------------
-  // Active 4D Bundle selector
-  vtkSlicerNodeSelectorWidget*  ActiveTimeSeriesBundleSelectorWidget;
+  vtkKWRadioButtonSetWithLabel* LoadOptionButtonSet;
+  vtkKWEntryWithLabel*          LoadTimePointsEntry;
+  vtkKWEntryWithLabel*          LoadSlicesEntry;
+  vtkKWEntryWithLabel*          LoadChannelsEntry;
+  vtkKWEntryWithLabel*          LoadFileFilterEntry;
 
   // -----------------------------------------
   // Frame control

@@ -90,13 +90,22 @@ vtkFourDImageGUI::vtkFourDImageGUI ( )
   this->ProgressDialog = NULL;
   this->SelectInputDirectoryButton    = NULL;
 
+  // -----------------------------------------
+  // Active 4D Bundle selector
+  this->ActiveTimeSeriesBundleSelectorWidget  = NULL;
+
+  // -----------------------------------------
   // Load / Save
   this->LoadImageButton               = NULL;
   this->SelectOutputDirectoryButton   = NULL;
   this->SaveImageButton               = NULL;
+  this->LoadOptionButtonSet           = NULL;
+  this->LoadTimePointsEntry           = NULL;
+  this->LoadSlicesEntry               = NULL;
+  this->LoadChannelsEntry             = NULL;
+  this->LoadFileFilterEntry           = NULL;
 
-  this->ActiveTimeSeriesBundleSelectorWidget  = NULL;
-
+  // -----------------------------------------
   // Frame control
   this->ForegroundVolumeSelectorScale = NULL;
   this->BackgroundVolumeSelectorScale = NULL;
@@ -104,6 +113,7 @@ vtkFourDImageGUI::vtkFourDImageGUI ( )
   this->AutoPlayBGButton              = NULL;
   this->AutoPlayIntervalEntry         = NULL;
 
+  // -----------------------------------------
   // Frame editor
   this->FrameList                = NULL;
   this->RemoveFrameButton        = NULL;
@@ -178,6 +188,31 @@ vtkFourDImageGUI::~vtkFourDImageGUI ( )
     {
     this->SaveImageButton->SetParent(NULL);
     this->SaveImageButton->Delete();
+    }
+  if (this->LoadOptionButtonSet)
+    {
+    this->LoadOptionButtonSet->SetParent(NULL);
+    this->LoadOptionButtonSet->Delete();
+    }
+  if (this->LoadTimePointsEntry)
+    {
+    this->LoadTimePointsEntry->SetParent(NULL);
+    this->LoadTimePointsEntry->Delete();
+    }
+  if (this->LoadSlicesEntry)
+    {
+    this->LoadSlicesEntry->SetParent(NULL);
+    this->LoadSlicesEntry->Delete();
+    }
+  if (this->LoadChannelsEntry)
+    {
+    this->LoadChannelsEntry->SetParent(NULL);
+    this->LoadChannelsEntry->Delete();
+    }
+  if (this->LoadFileFilterEntry)
+    {
+    this->LoadFileFilterEntry->SetParent(NULL);
+    this->LoadFileFilterEntry->Delete();
     }
 
   // 4D Bundle Selector
@@ -359,6 +394,12 @@ void vtkFourDImageGUI::RemoveGUIObservers ( )
 {
   //vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
 
+  if (this->ActiveTimeSeriesBundleSelectorWidget)
+    {
+    this->ActiveTimeSeriesBundleSelectorWidget
+      ->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
+                        (vtkCommand *)this->GUICallbackCommand );
+    }
   if (this->LoadImageButton)
     {
     this->LoadImageButton
@@ -369,11 +410,32 @@ void vtkFourDImageGUI::RemoveGUIObservers ( )
     this->SaveImageButton
       ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
-  if (this->ActiveTimeSeriesBundleSelectorWidget)
+  if (this->LoadOptionButtonSet)
     {
-    this->ActiveTimeSeriesBundleSelectorWidget
-      ->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
-                        (vtkCommand *)this->GUICallbackCommand );
+    this->LoadOptionButtonSet->GetWidget()->GetWidget(0)
+      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    this->LoadOptionButtonSet->GetWidget()->GetWidget(1)
+      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->LoadTimePointsEntry)
+    {
+    this->LoadTimePointsEntry->GetWidget()
+      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->LoadSlicesEntry)
+    {
+    this->LoadSlicesEntry->GetWidget()
+      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->LoadChannelsEntry)
+    {
+    this->LoadChannelsEntry->GetWidget()
+      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->LoadFileFilterEntry)
+    {
+    this->LoadFileFilterEntry->GetWidget()
+      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
   if (this->ForegroundVolumeSelectorScale)
     {
@@ -499,6 +561,15 @@ void vtkFourDImageGUI::AddGUIObservers ( )
   //----------------------------------------------------------------
   // GUI Observers
 
+  if (this->ActiveTimeSeriesBundleSelectorWidget)
+    {
+    this->ActiveTimeSeriesBundleSelectorWidget
+      ->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
+                    (vtkCommand *)this->GUICallbackCommand );
+    this->ActiveTimeSeriesBundleSelectorWidget
+      ->AddObserver(vtkSlicerNodeSelectorWidget::NewNodeEvent,
+                    (vtkCommand *)this->GUICallbackCommand );
+    }
   if (this->LoadImageButton)
     {
     this->LoadImageButton
@@ -509,15 +580,35 @@ void vtkFourDImageGUI::AddGUIObservers ( )
     this->SaveImageButton
       ->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
     }
-  if (this->ActiveTimeSeriesBundleSelectorWidget)
+
+  if (this->LoadOptionButtonSet)
     {
-    this->ActiveTimeSeriesBundleSelectorWidget
-      ->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
-                    (vtkCommand *)this->GUICallbackCommand );
-    this->ActiveTimeSeriesBundleSelectorWidget
-      ->AddObserver(vtkSlicerNodeSelectorWidget::NewNodeEvent,
-                    (vtkCommand *)this->GUICallbackCommand );
+    this->LoadOptionButtonSet->GetWidget()->GetWidget(0)
+      ->AddObserver(vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    this->LoadOptionButtonSet->GetWidget()->GetWidget(1)
+      ->AddObserver(vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     }
+  if (this->LoadTimePointsEntry)
+    {
+    this->LoadTimePointsEntry->GetWidget()
+      ->AddObserver(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->LoadSlicesEntry)
+    {
+    this->LoadSlicesEntry
+      ->AddObserver(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->LoadChannelsEntry)
+    {
+    this->LoadChannelsEntry
+      ->AddObserver(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->LoadFileFilterEntry)
+    {
+    this->LoadFileFilterEntry
+      ->AddObserver(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    }
+
   if (this->ForegroundVolumeSelectorScale)
     {
     this->ForegroundVolumeSelectorScale
@@ -662,14 +753,69 @@ void vtkFourDImageGUI::ProcessGUIEvents(vtkObject *caller,
     return;
     }
 
-  if (this->LoadImageButton == vtkKWPushButton::SafeDownCast(caller)
+
+  if (this->ActiveTimeSeriesBundleSelectorWidget == vtkSlicerNodeSelectorWidget::SafeDownCast(caller)
+           && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
+    {
+    
+    std::cerr << "vtkSlicerNodeSelectorWidget::NodeSelectedEvent" << std::endl;
+
+    vtkMRMLTimeSeriesBundleNode *bundleNode = 
+      vtkMRMLTimeSeriesBundleNode::SafeDownCast(this->ActiveTimeSeriesBundleSelectorWidget->GetSelected());
+
+    if (bundleNode && bundleNode->GetDisplayBufferNode(0) == NULL)
+      {
+      this->GetLogic()->AddDisplayBufferNode(bundleNode, 0);
+      }
+    if (bundleNode && bundleNode->GetDisplayBufferNode(1) == NULL)
+      {
+      this->GetLogic()->AddDisplayBufferNode(bundleNode, 1);
+      }
+
+    SelectActiveTimeSeriesBundle(bundleNode);
+    }
+
+  else if (this->ActiveTimeSeriesBundleSelectorWidget == vtkSlicerNodeSelectorWidget::SafeDownCast(caller)
+           && event == vtkSlicerNodeSelectorWidget::NewNodeEvent) 
+    {
+
+    std::cerr << "vtkSlicerNodeSelectorWidget::NewNodeEvent" << std::endl;
+
+    // Do nothing here. Display Node will be added when NodeSelectEvent is issued.
+    }
+
+  else if (this->LoadImageButton == vtkKWPushButton::SafeDownCast(caller)
       && event == vtkKWPushButton::InvokedEvent)
     {
     const char* path = this->SelectInputDirectoryButton->GetWidget()->GetFileName();
     const char* bundleName = this->SelectInputDirectoryButton->GetWidget()->GetText();
     this->GetLogic()->AddObserver(vtkFourDImageLogic::ProgressDialogEvent, 
                                   this->LogicCallbackCommand);
-    vtkMRMLTimeSeriesBundleNode* newNode = this->GetLogic()->LoadImagesFromDir(path, bundleName);
+
+    vtkMRMLTimeSeriesBundleNode* newNode = NULL;
+    if (this->LoadOptionButtonSet->GetWidget()->GetWidget(0)->GetSelectedState() == 1) // Automatic
+      {
+      newNode = this->GetLogic()->LoadImagesFromDir(path, bundleName);
+      }
+    else // Manual
+      {
+      int nFrames = this->LoadTimePointsEntry->GetWidget()->GetValueAsInt();
+      int nSlices = this->LoadSlicesEntry->GetWidget()->GetValueAsInt();
+      int nChannels = this->LoadChannelsEntry->GetWidget()->GetValueAsInt();
+      const char* filter = this->LoadFileFilterEntry->GetWidget()->GetValue();
+      std::vector<vtkMRMLTimeSeriesBundleNode*> newNodeList;
+      newNodeList.clear();
+      for (int c = 0; c < nChannels; c ++)
+        {
+        char cBundleName[256];
+        sprintf(cBundleName, "%s_%d", bundleName, c);
+        newNodeList.push_back(this->GetLogic()->LoadImagesFromDir(path, cBundleName, filter, nFrames, nSlices, nChannels, 0));
+        }
+      if (newNodeList.size() > 0)
+        {
+        newNode = newNodeList[0];
+        }
+      }
 
     this->GetLogic()->RemoveObservers(vtkFourDImageLogic::ProgressDialogEvent,
                                       this->LogicCallbackCommand);
@@ -690,7 +836,7 @@ void vtkFourDImageGUI::ProcessGUIEvents(vtkObject *caller,
       }
     }
 
-  if (this->SaveImageButton == vtkKWPushButton::SafeDownCast(caller)
+  else if (this->SaveImageButton == vtkKWPushButton::SafeDownCast(caller)
       && event == vtkKWPushButton::InvokedEvent)
     {
     const char* path = this->SelectOutputDirectoryButton->GetWidget()->GetFileName();
@@ -704,34 +850,49 @@ void vtkFourDImageGUI::ProcessGUIEvents(vtkObject *caller,
       this->GetLogic()->RemoveObservers(vtkFourDImageLogic::ProgressDialogEvent,  this->LogicCallbackCommand);
       }
     }
-  else if (this->ActiveTimeSeriesBundleSelectorWidget == vtkSlicerNodeSelectorWidget::SafeDownCast(caller)
-           && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
+
+  else if (this->LoadOptionButtonSet->GetWidget()->GetWidget(0)
+           == vtkKWRadioButton::SafeDownCast(caller)
+           && event == vtkKWRadioButton::SelectedStateChangedEvent
+           && this->LoadOptionButtonSet->GetWidget()->GetWidget(0)->GetSelectedState() == 1)
     {
-    
-    std::cerr << "vtkSlicerNodeSelectorWidget::NodeSelectedEvent" << std::endl;
-
-    vtkMRMLTimeSeriesBundleNode *bundleNode = 
-      vtkMRMLTimeSeriesBundleNode::SafeDownCast(this->ActiveTimeSeriesBundleSelectorWidget->GetSelected());
-
-    if (bundleNode && bundleNode->GetDisplayBufferNode(0) == NULL)
-      {
-      this->GetLogic()->AddDisplayBufferNode(bundleNode, 0);
-      }
-    if (bundleNode && bundleNode->GetDisplayBufferNode(1) == NULL)
-      {
-      this->GetLogic()->AddDisplayBufferNode(bundleNode, 1);
-      }
-
-    SelectActiveTimeSeriesBundle(bundleNode);
+    // Automatic configuration
+    this->LoadTimePointsEntry->EnabledOff();
+    this->LoadSlicesEntry->EnabledOff();
+    this->LoadChannelsEntry->EnabledOff();
+    this->LoadFileFilterEntry->EnabledOff();
     }
-  else if (this->ActiveTimeSeriesBundleSelectorWidget == vtkSlicerNodeSelectorWidget::SafeDownCast(caller)
-           && event == vtkSlicerNodeSelectorWidget::NewNodeEvent) 
+
+  else if (this->LoadOptionButtonSet->GetWidget()->GetWidget(1)
+           == vtkKWRadioButton::SafeDownCast(caller)
+           && event == vtkKWRadioButton::SelectedStateChangedEvent
+           && this->LoadOptionButtonSet->GetWidget()->GetWidget(1)->GetSelectedState() == 1)
     {
-
-    std::cerr << "vtkSlicerNodeSelectorWidget::NewNodeEvent" << std::endl;
-
-    // Do nothing here. Display Node will be added when NodeSelectEvent is issued.
+    // Manual configuration
+    this->LoadTimePointsEntry->EnabledOn();
+    this->LoadSlicesEntry->EnabledOn();
+    this->LoadChannelsEntry->EnabledOn();
+    this->LoadFileFilterEntry->EnabledOn();
     }
+
+  if (this->LoadTimePointsEntry->GetWidget() == vtkKWEntry::SafeDownCast(caller)
+      && event == vtkKWEntry::EntryValueChangedEvent)
+    {
+    //double interval_s = this->AutoPlayIntervalEntry->GetValueAsDouble();
+    }
+  
+  if (this->LoadSlicesEntry->GetWidget() == vtkKWEntry::SafeDownCast(caller)
+      && event == vtkKWEntry::EntryValueChangedEvent)
+    {
+    //double interval_s = this->AutoPlayIntervalEntry->GetValueAsDouble();
+    }
+  
+  if (this->LoadChannelsEntry->GetWidget() == vtkKWEntry::SafeDownCast(caller)
+      && event == vtkKWEntry::EntryValueChangedEvent)
+    {
+    //double interval_s = this->AutoPlayIntervalEntry->GetValueAsDouble();
+    }
+
   else if (this->ForegroundVolumeSelectorScale == vtkKWScaleWithEntry::SafeDownCast(caller)
       && event == vtkKWScale::ScaleValueChangingEvent /*vtkKWScale::ScaleValueChangedEvent*/)
     {
@@ -1240,8 +1401,14 @@ void vtkFourDImageGUI::BuildGUIForLoadFrame (int show)
   this->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 2",
                  inFrame->GetWidgetName() );
   
+  vtkKWFrame *selframe = vtkKWFrame::New();
+  selframe->SetParent(inFrame->GetFrame());
+  selframe->Create();
+  this->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 0 -pady 0",
+                 selframe->GetWidgetName() );
+
   this->SelectInputDirectoryButton = vtkKWLoadSaveButtonWithLabel::New();
-  this->SelectInputDirectoryButton->SetParent(inFrame->GetFrame());
+  this->SelectInputDirectoryButton->SetParent(selframe);
   this->SelectInputDirectoryButton->Create();
   this->SelectInputDirectoryButton->SetWidth(50);
   this->SelectInputDirectoryButton->GetWidget()->SetText ("Browse Input Directory");
@@ -1255,7 +1422,7 @@ void vtkFourDImageGUI::BuildGUIForLoadFrame (int show)
     ->RetrieveLastPathFromRegistry("OpenPath");
 
   this->LoadImageButton = vtkKWPushButton::New ( );
-  this->LoadImageButton->SetParent ( inFrame->GetFrame() );
+  this->LoadImageButton->SetParent ( selframe );
   this->LoadImageButton->Create ( );
   this->LoadImageButton->SetText ("Load Series");
   this->LoadImageButton->SetWidth (12);
@@ -1263,6 +1430,71 @@ void vtkFourDImageGUI::BuildGUIForLoadFrame (int show)
   this->Script("pack %s %s -side left -anchor w -fill x -padx 2 -pady 2", 
                this->SelectInputDirectoryButton->GetWidgetName(),
                this->LoadImageButton->GetWidgetName());
+
+  this->LoadOptionButtonSet = vtkKWRadioButtonSetWithLabel::New ( );
+  this->LoadOptionButtonSet->SetParent ( inFrame->GetFrame() );
+  this->LoadOptionButtonSet->Create ( );
+  this->LoadOptionButtonSet->SetLabelText("Load option:");
+  this->LoadOptionButtonSet->GetWidget()->PackHorizontallyOn ( );
+  
+  vtkKWRadioButton* bt0 = this->LoadOptionButtonSet->GetWidget()->AddWidget(0);
+  vtkKWRadioButton* bt1 = this->LoadOptionButtonSet->GetWidget()->AddWidget(1);
+
+  bt0->SetText("Automatic");
+  bt1->SetText("Manual");
+  bt0->SelectedStateOn();
+
+  this->Script("pack %s -side top -anchor w -fill x -padx 2 -pady 2", 
+               this->LoadOptionButtonSet->GetWidgetName());
+
+  this->LoadTimePointsEntry = vtkKWEntryWithLabel::New();
+  this->LoadTimePointsEntry->SetParent( inFrame->GetFrame() );
+  this->LoadTimePointsEntry->Create();
+  this->LoadTimePointsEntry->SetLabelText("Time points:");
+  this->LoadTimePointsEntry->GetWidget()->SetWidth(10);
+  this->LoadTimePointsEntry->GetWidget()->SetRestrictValueToInteger();
+  this->LoadTimePointsEntry->GetWidget()->SetValueAsInt(1);
+  this->LoadTimePointsEntry->EnabledOff();
+  this->LoadTimePointsEntry->ExpandWidgetOff();
+  this->LoadTimePointsEntry->SetLabelWidth(18);
+  
+  this->LoadSlicesEntry = vtkKWEntryWithLabel::New();
+  this->LoadSlicesEntry->SetParent( inFrame->GetFrame() );
+  this->LoadSlicesEntry->Create();
+  this->LoadSlicesEntry->SetLabelText("# of slices:");
+  this->LoadSlicesEntry->GetWidget()->SetWidth(10);
+  this->LoadSlicesEntry->GetWidget()->SetRestrictValueToInteger();
+  this->LoadSlicesEntry->GetWidget()->SetValueAsInt(1);
+  this->LoadSlicesEntry->EnabledOff();
+  this->LoadSlicesEntry->ExpandWidgetOff();
+  this->LoadSlicesEntry->SetLabelWidth(18);
+
+  this->LoadChannelsEntry = vtkKWEntryWithLabel::New();
+  this->LoadChannelsEntry->SetParent( inFrame->GetFrame() );
+  this->LoadChannelsEntry->Create();
+  this->LoadChannelsEntry->SetLabelText("# of channels:");
+  this->LoadChannelsEntry->GetWidget()->SetWidth(10);
+  this->LoadChannelsEntry->GetWidget()->SetRestrictValueToInteger();
+  this->LoadChannelsEntry->GetWidget()->SetValueAsInt(1);
+  this->LoadChannelsEntry->EnabledOff();
+  this->LoadChannelsEntry->ExpandWidgetOff();
+  this->LoadChannelsEntry->SetLabelWidth(18);
+
+  this->LoadFileFilterEntry = vtkKWEntryWithLabel::New();
+  this->LoadFileFilterEntry->SetParent( inFrame->GetFrame() );
+  this->LoadFileFilterEntry->Create();
+  this->LoadFileFilterEntry->SetLabelText("Filter:");
+  this->LoadFileFilterEntry->GetWidget()->SetWidth(10);
+  this->LoadFileFilterEntry->GetWidget()->SetValue("*");
+  this->LoadFileFilterEntry->EnabledOff();
+  this->LoadFileFilterEntry->ExpandWidgetOff();
+  this->LoadFileFilterEntry->SetLabelWidth(18);
+
+  this->Script("pack %s %s %s %s -side top -anchor w -fill x -padx 20 -pady 2", 
+               this->LoadTimePointsEntry->GetWidgetName(),
+               this->LoadSlicesEntry->GetWidgetName(),
+               this->LoadChannelsEntry->GetWidgetName(),
+               this->LoadFileFilterEntry->GetWidgetName());
 
   // -----------------------------------------
   // Output File Frame
