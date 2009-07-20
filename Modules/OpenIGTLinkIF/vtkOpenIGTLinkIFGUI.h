@@ -21,7 +21,7 @@
 
 #include "vtkSlicerModuleGUI.h"
 #include "vtkOpenIGTLinkIFLogic.h"
-#include "vtkIGTLConnector.h"
+#include "vtkMRMLIGTLConnectorNode.h"
 
 #include "vtkIGTDataManager.h"
 #include "vtkIGTPat2ImgRegistration.h"
@@ -46,6 +46,7 @@ class vtkKWLoadSaveButtonWithLabel;
 class vtkKWMultiColumnListWithScrollbars;
 class vtkKWWizardWidget;
 class vtkKWTreeWithScrollbars;
+class vtkSlicerNodeSelectorWidget;
 
 class vtkTransform;
 
@@ -88,14 +89,14 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
     NODE_DEVICE    = 3
   };
 
-  static const char* ConnectorTypeStr[vtkIGTLConnector::NUM_TYPE];
-  static const char* ConnectorStatusStr[vtkIGTLConnector::NUM_STATE];
+  static const char* ConnectorTypeStr[vtkMRMLIGTLConnectorNode::NUM_TYPE];
+  static const char* ConnectorStatusStr[vtkMRMLIGTLConnectorNode::NUM_STATE];
 
-  typedef std::vector<int> ConnectorIDListType;
+  //typedef std::vector<std::string> ConnectorIDListType;
   typedef struct {
     std::string nodeName;
     int         deviceID;
-    int         connectorID;
+    std::string connectorID;
     int         io;
   } IOConfigNodeInfoType;
 
@@ -164,8 +165,8 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   virtual void RemoveGUIObservers ( );
   void         AddLogicObservers ( );
   void         RemoveLogicObservers ( );
-  virtual void AddNodeCallback(int conID, int io, const char* name, const char* type);
-  virtual void DeleteNodeCallback(int conID, int io, int devID);
+  virtual void AddNodeCallback(const char* conID, int io, const char* name, const char* type);
+  virtual void DeleteNodeCallback(const char* conID, int io, int devID);
 
   // Description:
   // Class's mediator methods for processing events invoked by
@@ -210,12 +211,13 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   //----------------------------------------------------------------
  private:
   void IOConfigTreeContextMenu(const char *callData);
-  int  IsIOConfigTreeLeafSelected(const char* callData, int* conID, int* devID, int* io);
-  void AddIOConfigContextMenuItem(int type, int conID, int devID, int io);
+  //BTX
+  int  IsIOConfigTreeLeafSelected(const char* callData, std::string& conID, int* devID, int* io);
+  //ETX
+  void AddIOConfigContextMenuItem(int type, const char* conID, int devID, int io);
   void ChangeSlicePlaneDriver(int slice, const char* driver);
   void SetLocatorSource(int selected);
-  void UpdateLocatorSourceMenu();
-  void UpdateRealTimeImageSourceMenu();
+  //void UpdateRealTimeImageSourceMenu();
   void UpdateIOConfigTree();
   void UpdateConnectorList(int updateLevel);
   void UpdateConnectorPropertyFrame(int i);
@@ -266,8 +268,10 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   vtkKWCheckButton *ImagingControlCheckButton;
   vtkKWMenuButton  *ImagingMenu;
 
-  vtkKWMenuButton  *RealTimeImageSourceMenu;
-  vtkKWMenuButton  *LocatorSourceMenu;
+  //vtkKWMenuButton  *RealTimeImageSourceMenu;
+  vtkSlicerNodeSelectorWidget *ImageSourceSelectorWidget;
+  vtkSlicerNodeSelectorWidget *LocatorSourceSelectorWidget;
+
   vtkKWCheckButton *LocatorCheckButton;
   bool              IsSliceOrientationAdded;
   // Module logic and mrml pointers
@@ -287,6 +291,11 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   vtkMRMLSliceNode *SliceNode1;
   vtkMRMLSliceNode *SliceNode2;
 
+  // GUI Update flags
+  int UpdateConnectorListFlag;
+  int UpdateConnectorPropertyFrameFlag;
+  int UpdateIOConfigTreeFlag;
+
   //BTX
   std::string LocatorModelID;
   std::string LocatorModelID_new;
@@ -298,7 +307,10 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   // Connector and MRML Node list management
   //----------------------------------------------------------------
 
-  ConnectorIDListType ConnectorIDList;
+  //ConnectorIDListType ConnectorIDList;
+  //BTX
+  std::vector<vtkMRMLIGTLConnectorNode*> ConnectorNodeList;
+  //ETX
 
   //int   CurrentMrmlNodeListID;  // row number
   int   CurrentMrmlNodeListIndex; // row number

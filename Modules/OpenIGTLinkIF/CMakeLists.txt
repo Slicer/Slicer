@@ -52,12 +52,13 @@ install(FILES
 set(OpenIGTLinkIF_SRCS 
   vtkOpenIGTLinkIFLogic.cxx
   vtkOpenIGTLinkIFGUI.cxx
-  vtkIGTLConnector.cxx
+  #vtkIGTLConnector.cxx
   vtkIGTLCircularBuffer.cxx
   vtkIGTLToMRMLBase.cxx
   vtkIGTLToMRMLLinearTransform.cxx
   vtkIGTLToMRMLImage.cxx
   vtkIGTLToMRMLPosition.cxx
+  vtkMRMLIGTLConnectorNode.cxx
 )
 
 # --------------------------------------------------------------------------

@@ -42,7 +42,7 @@
 #include "vtkIGTLToMRMLImage.h"
 #include "vtkIGTLToMRMLPosition.h"
 
-class vtkIGTLConnector;
+class vtkMRMLIGTLConnectorNode;
 
 
 class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLogic 
@@ -75,17 +75,10 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
     std::string nodeID;
   } IGTLMrmlNodeInfoType;
 
-  typedef struct {
-    int connectorID;
-    int deviceID;
-  } ConnectorAndDevicePairType;
-
   typedef std::vector<IGTLMrmlNodeInfoType> IGTLMrmlNodeListType;
-  typedef std::vector<vtkIGTLConnector*>    ConnectorListType;
-  typedef std::map<int, vtkIGTLConnector*>  ConnectorMapType;
-  typedef std::map<int, int>                ConnectorStateMapType;
+  typedef std::vector<vtkMRMLIGTLConnectorNode*>    ConnectorListType;
+  typedef std::map<std::string, vtkMRMLIGTLConnectorNode*>  ConnectorMapType;
   typedef std::map<vtkMRMLNode*, ConnectorListType> MRMLNodeAndConnectorMapType;
-  typedef std::map<ConnectorAndDevicePairType, vtkMRMLNode*> IDToMRMLNodeMapType;
   typedef std::list<vtkIGTLToMRMLBase*>     MessageConverterListType;
   //ETX
   
@@ -136,22 +129,19 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   void AddClientConnector(const char* name, const char* svrHostName, int port);
 
   // Delete connector
-  void DeleteConnector(int index);
+  void DeleteConnector(const char* id);
 
   // Access connectors
   int               GetNumberOfConnectors();
-  vtkIGTLConnector* GetConnector(int index);
-  int               GetConnectorID(vtkIGTLConnector* con); // returns -1 if not exist
+  vtkMRMLIGTLConnectorNode* GetConnector(const char* conID);
   ConnectorMapType* GetConnectorMap();
-  int               CheckConnectorsStatusUpdates();
-  //int               ReadCircularBuffers();
   void              ImportFromCircularBuffers();
   
   // Device Name management
   int  SetRestrictDeviceName(int f);
-  int  AddDeviceToConnector(int conID, const char* deviceName, const char* deviceType, int io);
-  int  DeleteDeviceFromConnector(int conID, const char* deviceName, const char* deviceType, int io);
-  int  DeleteDeviceFromConnector(int conID, int devID, int io);
+  int  AddDeviceToConnector(const char* conID, const char* deviceName, const char* deviceType, int io);
+  int  DeleteDeviceFromConnector(const char* conID, const char* deviceName, const char* deviceType, int io);
+  int  DeleteDeviceFromConnector(const char* conID, int devID, int io);
 
   //----------------------------------------------------------------
   // MRML Management
@@ -199,13 +189,13 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   void UpdateSliceDisplay();
   void UpdateLocator();
 
-  int  RegisterDeviceEvent(vtkIGTLConnector* con,
+  int  RegisterDeviceEvent(vtkMRMLIGTLConnectorNode* con,
                            const char* deviceName,
                            const char* deviceType);
-  int  UnregisterDeviceEvent(vtkIGTLConnector* con,
+  int  UnregisterDeviceEvent(vtkMRMLIGTLConnectorNode* con,
                              const char* deviceName,
                              const char* deviceType);
-  void UnregisterDeviceEvent(int conID, int devID);
+  void UnregisterDeviceEvent(const char* conID, int devID);
   vtkCallbackCommand *DataCallbackCommand;
 
  private:
@@ -218,14 +208,11 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
 
   //BTX
   ConnectorMapType              ConnectorMap;
-  //std::vector<int>            ConnectorPrevStateList;
-  ConnectorStateMapType         ConnectorPrevStateList;
   MRMLNodeAndConnectorMapType   MRMLEventConnectorMap;
-  IDToMRMLNodeMapType           IDToMRMLNodeMap;
   MessageConverterListType      MessageConverterList;
   //ETX
 
-  int LastConnectorID;
+  //int LastConnectorID;
   int RestrictDeviceName;
 
   //----------------------------------------------------------------

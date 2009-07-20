@@ -1,19 +1,23 @@
-/*==========================================================================
+/*=auto=========================================================================
 
-  Portions (c) Copyright 2008 Brigham and Women's Hospital (BWH) All Rights Reserved.
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $HeadURL$
-  Date:      $Date$
-  Version:   $Revision$
+  Module:    $RCSfile: vtkMRMLCurveAnalysisNode.h,v $
+  Date:      $Date: 2006/03/19 17:12:29 $
+  Version:   $Revision: 1.3 $
 
-==========================================================================*/
+=========================================================================auto=*/
+#ifndef __vtkMRMLIGTLConnectorNode_h
+#define __vtkMRMLIGTLConnectorNode_h
 
-#ifndef __vtkIGTLConnector_h
-#define __vtkIGTLConnector_h
+#include "vtkOpenIGTLinkIFWin32Header.h"
+#include "vtkMRML.h"
+#include "vtkMRMLNode.h"
+#include "vtkMRMLStorageNode.h"
 
 #include <string>
 #include <map>
@@ -25,25 +29,30 @@
 #include "igtlServerSocket.h"
 #include "igtlClientSocket.h"
 
-
-//class vtkSocketCommunicator;
 class vtkMultiThreader;
 class vtkMutexLock;
-
-class vtkImageData;
-class vtkMatrix4x4;
-
 class vtkIGTLCircularBuffer;
-class vtkMRMLNode;
 
-class VTK_OPENIGTLINKIF_EXPORT vtkIGTLConnector : public vtkObject
+class VTK_OPENIGTLINKIF_EXPORT vtkMRMLIGTLConnectorNode : public vtkMRMLNode
 {
- public:  
+
+ public:
+
   //----------------------------------------------------------------
   // Constants Definitions
   //----------------------------------------------------------------
 
   //BTX
+  // Events
+  enum {
+    ConnectedEvent        = 118944,
+    DisconnectedEvent     = 118945,
+    ActivatedEvent        = 118946,
+    DeactivatedEvent      = 118947,
+    ReceiveEvent          = 118948,
+    NewDeviceEvent        = 118949,
+  };
+
   enum {
     TYPE_NOT_DEFINED,
     TYPE_SERVER,
@@ -63,9 +72,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLConnector : public vtkObject
     IO_INCOMING   = 0x01,
     IO_OUTGOING   = 0x02,
   };
-  //ETX
-  
-  //BTX
+
   typedef struct {
     std::string   name;
     std::string   type;
@@ -79,10 +86,51 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLConnector : public vtkObject
   //ETX
 
  public:
+
+  //----------------------------------------------------------------
+  // Standard methods for MRML nodes
+  //----------------------------------------------------------------
+
+  static vtkMRMLIGTLConnectorNode *New();
+  vtkTypeMacro(vtkMRMLIGTLConnectorNode,vtkMRMLNode);
   
-  static vtkIGTLConnector *New();
-  vtkTypeRevisionMacro(vtkIGTLConnector,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
+
+  virtual vtkMRMLNode* CreateNodeInstance();
+
+  // Description:
+  // Set node attributes
+  virtual void ReadXMLAttributes( const char** atts);
+
+  // Description:
+  // Write this node's information to a MRML file in XML format.
+  virtual void WriteXML(ostream& of, int indent);
+
+  // Description:
+  // Copy the node's attributes to this object
+  virtual void Copy(vtkMRMLNode *node);
+
+  // Description:
+  // Get node XML tag name (like Volume, Model)
+  virtual const char* GetNodeTagName()
+    {return "IGTLConnector";};
+
+
+ private:
+  //----------------------------------------------------------------
+  // Constructor and destroctor
+  //----------------------------------------------------------------
+  
+  vtkMRMLIGTLConnectorNode();
+  ~vtkMRMLIGTLConnectorNode();
+  vtkMRMLIGTLConnectorNode(const vtkMRMLIGTLConnectorNode&);
+  void operator=(const vtkMRMLIGTLConnectorNode&);
+
+
+ public:
+  //----------------------------------------------------------------
+  // Connector configuration
+  //----------------------------------------------------------------
 
   vtkGetMacro( ServerPort, int );
   vtkSetMacro( ServerPort, int );
@@ -90,30 +138,15 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLConnector : public vtkObject
   vtkSetMacro( Type, int );
   vtkGetMacro( State, int );
   //vtkSetMacro( State, int );
-
   vtkSetMacro( RestrictDeviceName, int );
   vtkGetMacro( RestrictDeviceName, int );
 
-  void SetName (const char* str) { this->Name = str; }
-  const char* GetName() { return this->Name.c_str(); }
+  // host name
   void SetServerHostname(const char* str) { this->ServerHostname = str; }
   const char* GetServerHostname() { return this->ServerHostname.c_str(); }
-
   //BTX
-  void SetName (std::string str) { this->Name = str; }
   void SetServerHostname(std::string str) { this->ServerHostname = str; }
   //ETX
-
-  //----------------------------------------------------------------
-  // Constructor and Destructor
-  //----------------------------------------------------------------
-
-  vtkIGTLConnector();
-  virtual ~vtkIGTLConnector();
-
-  //----------------------------------------------------------------
-  // Connector configuration
-  //----------------------------------------------------------------
 
   int SetTypeServer(int port);
   int SetTypeClient(char* hostname, int port);
@@ -206,19 +239,20 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLConnector : public vtkObject
   //ETX
 
   vtkMutexLock* CircularBufferMutex;
-  
   int     RestrictDeviceName;  // Flag to restrict incoming and outgoing data by device names
+
   //BTX
   // -- Device Name (same as MRML node) and data type (data type string defined in OpenIGTLink)
   int                LastID;
   DeviceInfoMapType DeviceInfoList;
-
   DeviceIDSetType   IncomingDeviceIDSet;
   DeviceIDSetType   OutgoingDeviceIDSet;
   DeviceIDSetType   UnspecifiedDeviceIDSet;
-
   //ETX
 
+
+  
 };
 
-#endif // __vtkIGTLConnector_h
+#endif
+
