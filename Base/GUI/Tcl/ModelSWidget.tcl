@@ -31,15 +31,9 @@ if { [itcl::find class ModelSWidget] == "" } {
     destructor {}
 
     public variable modelID ""
-    public variable movedCommand ""
-    public variable movingCommand ""
     public variable opacity "0.5"
     public variable visibility "1"
-    public variable text ""
-    public variable textScale "1"
 
-    variable _startOffset "0 0 0"
-    variable _currentPosition "0 0 0"
     variable _modelNode ""
     variable _modelNodeObservation ""
     variable _modelDisplayNodeObservation ""
@@ -48,11 +42,6 @@ if { [itcl::find class ModelSWidget] == "" } {
     # methods
     method processEvent {{caller ""} {event ""}} {}
     method positionActors {} {}
-    method pick {} {}
-    method place {x y z} {}
-    method setRASPosition {r a s} { $this place $x $y $z }
-    method getRASPosition {} { return $_currentPosition }
-    method getPickState {} { return $_pickState }
     method highlight {} {}
   }
 }
@@ -80,16 +69,6 @@ itcl::body ModelSWidget::constructor {sliceGUI} {
   $_renderer AddActor2D $o(actor)
   lappend _actors $o(actor)
 
-  set o(textActor) [vtkNew vtkActor2D]
-  set o(textMapper) [vtkNew vtkTextMapper]
-  $o(textActor) SetMapper $o(textMapper)
-  $_renderer AddActor2D $o(textActor)
-  set textProperty [$o(textMapper) GetTextProperty]
-  $textProperty ShadowOn
-  lappend _actors $o(textActor)
-
-  set _startPosition "0 0 0"
-  set _currentPosition "0 0 0"
   set _sliceCompositeNode [[$sliceGUI GetLogic] GetSliceCompositeNode]
   $this configure -visibility [$_sliceCompositeNode GetSliceIntersectionVisibility]
 
@@ -98,11 +77,6 @@ itcl::body ModelSWidget::constructor {sliceGUI} {
   # observe the slice GUI for user input events
   # TODO: no mouse events until we start interacting with the slice nodes
   $::slicer3::Broker AddObservation $sliceGUI DeleteEvent "::SWidget::ProtectedDelete $this"
-  #set events {LeftButtonPressEvent LeftButtonReleaseEvent MouseMoveEvent}
-  set events ""
-  foreach event $events {
-    $::slicer3::Broker AddObservation $sliceGUI $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI $event"
-  }
 
   # observe the slice node for direct manipulations of MRML
   set node [[$sliceGUI GetLogic] GetSliceNode]
@@ -177,77 +151,21 @@ itcl::configbody ModelSWidget::visibility {
   [$sliceGUI GetSliceViewer] RequestRender
 }
 
-itcl::configbody ModelSWidget::text {
-  $o(textMapper) SetInput $text
-  [$sliceGUI GetSliceViewer] RequestRender
-}
-
-itcl::configbody ModelSWidget::textScale {
-  set textProperty [$o(textMapper) GetTextProperty]
-  set fontSize [expr round(2.5 * $textScale)]
-  $textProperty SetFontSize $fontSize
-  $this positionActors
-  [$sliceGUI GetSliceViewer] RequestRender
-}
-
 # ------------------------------------------------------------------
 #                             METHODS
 # ------------------------------------------------------------------
-
-itcl::body ModelSWidget::pick {} {
-
-  foreach {x y z} [$this rasToXYZ $_currentPosition] {}
-  foreach {wx wy} [$_interactor GetEventPosition] {}
-  foreach {ex ey ez} [$this dcToXYZ $wx $wy] {}
-  if { [expr abs($ex - $x) < 15] && [expr abs($ey - $y) < 15] } {
-    set _pickState "over"
-    set _startOffset [list [expr $x - $ex] [expr $y - $ey] [expr $z - $ez]]
-  } else {
-    set _pickState "outside"
-  }
-}
-
-itcl::body ModelSWidget::place {x y z} {
-  set _currentPosition "$x $y $z"
-  $this positionActors
-}
 
 itcl::body ModelSWidget::positionActors { } {
 
   $o(actor) SetPosition 0 0
   return
-
-  # determine the xyz location of the fiducial
-  set xyzw [$this rasToXYZ $_currentPosition]
-  foreach {x y z w} $xyzw {}
-  $o(actor) SetPosition $x $y
-  $o(textActor) SetPosition $x $y
-
-  # determine which renderer based on z position
-  set k [expr int($z + 0.5)]
-
-  # remove the seed from the old renderer and add it to the new one
-  if { [info command $_renderer] != ""} {
-    $_renderer RemoveActor2D $o(actor)
-    $_renderer RemoveActor2D $o(textActor)
-  }
-
-  if { $k >= 0 && $k < [$_renderWidget GetNumberOfRenderers] } {
-    set _renderer [$_renderWidget GetNthRenderer $k]
-    if { [info command $_renderer] != ""} {
-      $_renderer AddActor2D $o(actor)
-      $_renderer AddActor2D $o(textActor)
-    }
-  }
 }
 
 itcl::body ModelSWidget::highlight { } {
 
   set property [$o(actor) GetProperty]
-  set textProperty [$o(textMapper) GetTextProperty]
 
   $o(actor) SetVisibility $visibility
-  $o(textActor) SetVisibility $visibility
 
   #
   # set color (extracted from the display node)
@@ -262,29 +180,11 @@ itcl::body ModelSWidget::highlight { } {
   }
 
   eval $property SetColor $color
-  eval $textProperty SetColor $color
   $property SetLineWidth 3
   $property SetOpacity $opacity
-  $textProperty SetOpacity $opacity
 
   return
 
-  set _description ""
-  switch $_actionState {
-    "dragging" {
-      $property SetColor 0 1 0
-      set _description "Move mouse with left button down to drag"
-    }
-    default {
-      switch $_pickState {
-        "over" {
-          $property SetColor 1 1 0
-          $property SetLineWidth 2
-          set _description "Move mouse with left button down to drag"
-        }
-      }
-    }
-  }
 }
 
 itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
@@ -347,49 +247,8 @@ itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
     return 
   }
 
-  if { $_actionState != "dragging" } {
-    # only check pick if we haven't grabbed (avoid 'dropping' the widget
-    # when the mouse moves quickly)
-    $this pick
-  }
-
-
-  switch $_pickState {
-    "outside" {
-      # when mouse isn't over us, we don't do anything
-      set _actionState ""
-      $sliceGUI SetGrabID ""
-    }
-    "over" {
-      # when mouse is over us, we pay attention to the
-      # event and tell others not to look at it
-      $sliceGUI SetGUICommandAbortFlag 1
-      switch $event {
-        "LeftButtonPressEvent" {
-          set _actionState "dragging"
-          $sliceGUI SetGrabID $this
-        }
-        "MouseMoveEvent" {
-          switch $_actionState {
-            "dragging" {
-              foreach {wx wy} [$_interactor GetEventPosition] {}
-              foreach {ex ey ez} [$this dcToXYZ $wx $wy] {}
-              foreach {dx dy dz} $_startOffset {}
-              set newxyz [list [expr $ex + $dx] [expr $ey + $dy] [expr $ez + $dz]]
-              set _currentPosition [$this xyzToRAS $newxyz]
-              eval $movingCommand
-            }
-          }
-        }
-        "LeftButtonReleaseEvent" {
-          set _actionState ""
-          $sliceGUI SetGrabID ""
-          set _description ""
-          eval $movedCommand
-        }
-      }
-    }
-  }
+  set _actionState ""
+  $sliceGUI SetGrabID ""
 
   $this highlight
   $this positionActors
