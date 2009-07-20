@@ -40,6 +40,8 @@ vtkSlicerSliceControllerWidget::vtkSlicerSliceControllerWidget ( ) {
   // widgets comprising the SliceControllerWidget for now.
   this->MoreMenuButton = NULL;
   this->OffsetScale = NULL;
+  this->OffsetScaleMin = 0.;
+  this->OffsetScaleResolution = 1.;
   this->OffsetEntry = NULL;
   this->OrientationSelector = NULL;
   this->ForegroundSelector = NULL;
@@ -2717,31 +2719,24 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
         event == vtkKWScale::ScaleValueChangingEvent) )
     {
     vtkKWScale *scale = vtkKWScale::SafeDownCast( caller );
-    double min, value, offset, resolution, steps, newValue;
+    double value, offset;
 
-    min = scale->GetRangeMin ();
+    // get integer value from scale and convert to mm offset
     value = scale->GetValue();
-    offset = value - min;
-    resolution = scale->GetResolution();
-    steps = offset / resolution;
-    newValue = min + (resolution * static_cast<int>(steps+0.5));
+    offset = this->OffsetScaleMin + (value * this->OffsetScaleResolution);
 
-    if ( value != newValue || event == vtkKWScale::ScaleValueChangingEvent)
+    this->OffsetEntry->SetValueAsDouble(offset);
+
+    // if slice viewers are linked in CompareView layout mode,
+    // modify all slice logic to synch all Compare Slice viewers
+    if ( link && sgui0 && (layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutCompareView))
       {
-
-      this->OffsetEntry->SetValueAsDouble(newValue);
-
-      // if slice viewers are linked in CompareView layout mode,
-      // modify all slice logic to synch all Compare Slice viewers
-      if ( link && sgui0 && (layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutCompareView))
-        {
-        modified = this->UpdateCompareView( newValue );
-        }
-      else
-        {
-        this->SliceLogic->SetSliceOffset( newValue );
-        modified = 1;
-        }
+      modified = this->UpdateCompareView( offset );
+      }
+    else
+      {
+      this->SliceLogic->SetSliceOffset( offset );
+      modified = 1;
       }
     }
 
@@ -2765,7 +2760,9 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
         modified = 1;
         }
 
-      this->OffsetScale->SetValue(newValue);
+      // convert to slice number
+      int slice = (newValue - this->OffsetScaleMin) / this->OffsetScaleResolution;
+      this->OffsetScale->SetValue(slice);
       }
     }
   
@@ -3233,23 +3230,23 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
   const double *sliceSpacing;
   sliceSpacing = this->SliceLogic->GetLowestVolumeSliceSpacing();
 
-  this->OffsetScale->SetResolution(sliceSpacing[2]);
-  this->Script ("%s configure -digits 20", 
-                this->OffsetScale->GetWidgetName());
+  this->OffsetScale->SetResolution(1);
+  this->OffsetScaleResolution = sliceSpacing[2];
 
   //
   // Set the scale range to match the field of view
+  // - calculate the number of slices in the current range
   //
   double sliceBounds[6];
   this->SliceLogic->GetLowestVolumeSliceBounds(sliceBounds);
+  int slices = static_cast<int> (0.5 + ((sliceBounds[5] - sliceBounds[4]) / sliceSpacing[2]));
 
-  double newMin = sliceBounds[4];
-  double newMax = sliceBounds[5];
+  this->OffsetScaleMin = sliceBounds[4];
   double min, max;
   this->OffsetScale->GetRange(min, max);
-  if ( min != newMin || max != newMax )
+  if ( min != 0 || max != slices )
     {
-    this->OffsetScale->SetRange(newMin, newMax);
+    this->OffsetScale->SetRange(0, slices);
     modified = 1;
     }
 
@@ -3305,10 +3302,17 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
   //
   // Set the scale and entry widgets' value to match the offset
   //
-  if ( (double) this->OffsetScale->GetValue() != this->SliceLogic->GetSliceOffset() )
+  // get offset value in mm and check for slice number
+  //
+  double value = this->GetOffsetScale()->GetValue();
+  double offset = this->OffsetScaleMin + (value * this->OffsetScaleResolution);
+  double newOffset = this->SliceLogic->GetSliceOffset();
+  int slice = static_cast<int> (0.5 + (newOffset / this->OffsetScaleResolution) - this->OffsetScaleMin);
+  if ( offset != newOffset )
     {
-    this->OffsetScale->SetValue( this->SliceLogic->GetSliceOffset() );
+    this->OffsetScale->SetValue( slice );
     }
+  this->OffsetEntry->SetValueAsDouble(newOffset);
 
 
   //

@@ -37,6 +37,10 @@ public:
   // Description:
   // Get/Set the Widgets in this composite widget.
   vtkGetObjectMacro ( OffsetScale, vtkKWScale );
+  vtkGetMacro (OffsetScaleMin, double);
+  vtkSetMacro (OffsetScaleMin, double);
+  vtkGetMacro (OffsetScaleResolution, double);
+  vtkSetMacro (OffsetScaleResolution, double);
   vtkGetObjectMacro ( OffsetEntry, vtkKWEntry );
   vtkGetObjectMacro ( OrientationSelector, vtkKWMenuButtonWithSpinButtonsWithLabel );
   vtkGetObjectMacro ( ForegroundSelector, vtkSlicerNodeSelectorWidget );
@@ -188,7 +192,12 @@ protected:
   //
   // Slice controller subwidgets
   //
+  // Offset scale is internally integer in terms of the number of
+  // steps (slices).  These get converted to/from mm for the OffsetEntry
+  // and the slice node
   vtkKWScale *OffsetScale;
+  double OffsetScaleMin;
+  double OffsetScaleResolution;
   vtkKWEntry *OffsetEntry;
   vtkKWMenuButtonWithSpinButtonsWithLabel *OrientationSelector;
   vtkSlicerNodeSelectorWidget *ForegroundSelector;
