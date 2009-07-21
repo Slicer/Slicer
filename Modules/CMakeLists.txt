@@ -19,62 +19,63 @@ endif(GenerateLM_FOUND)
 # Dependencies (to be untangled later, for now the whole directory has to
 # be built at the same time)
 #
-# Volumes: 
+# Volumes:
 #   - CommandLineModule
 #   - Tractography (SlicerTractographyDisplay, SlicerTractographyFiducialSeeding)
-# EMSegment: 
+# EMSegment:
 #   - Volumes
 #   - CommandLineModule (at run-time for its CLP Plugins: EMSegmentCommandLine*)
 # QueryAtlas:
 #   - QdecModule
-# MRAblation (if it wasn't broken): 
+# MRAblation (if it wasn't broken):
 #   - Volumes
-# Editor: 
+# Editor:
 #   - ScriptedModule (at run-time for its Tcl package)
-# Meshing: 
+# Meshing:
 #   - CommandLineModule (at run-time for its CLP Plugins: VoxelMeshModule)
-# Python: 
+# Python:
 #   - CommandLineModule or ScriptedModule (at run-time for its Python Plugins)
-# PythonGADScriptedModule: 
+# PythonGADScriptedModule:
 #   - ScriptedModule (at run-time for its Python scripts)
-# SlicerDaemon: 
+# SlicerDaemon:
 #   - ScriptedModule (at run-time for its Tcl package)
 
 subdirs(
+  AtlasCreator
   MRIBiasFieldCorrection
-   CommandLineModule
-   Editor
-   GradientAnisotropicDiffusionFilter
-   Meshing
-   Python
-#   PythonGADScriptedModule
-   QdecModule
-   QueryAtlas
-   FetchMI
-   SlicerWelcome
-   ScriptedModule
-   ScriptedModuleExample
-   SlicerDaemon
-   Statistics
-   Tractography
-#  TumorGrowth 
-   ChangeTracker # AF: refactoring TumorGrowth...
-   VolumeRendering
-#  WFEngineModule  <- can't work with 2.6 and Win32??
-#  MRAblation <- not working either
-   ModelMirror
-   Volumes
-   EMSegment
-   DistanceTransformModel
-   ClipModel
-   #VolumeRenderingCuda
-   Measurements
-   ModelIntoLabelVolume
-   ExtractSubvolume
-   FastMarchingSegmentation
-   FourDImage
-#   FourDAnalysis
-   ExtractSubvolumeROI
+  CommandLineModule
+  Editor
+  GradientAnisotropicDiffusionFilter
+  Meshing
+  Python
+# PythonGADScriptedModule
+  QdecModule
+  QueryAtlas
+  FetchMI
+  SlicerWelcome
+  ScriptedModule
+  ScriptedModuleExample
+  SlicerDaemon
+  Statistics
+  Tractography
+# TumorGrowth
+  ChangeTracker # AF: refactoring TumorGrowth...
+  VolumeRendering
+# WFEngineModule  <- can't work with 2.6 and Win32??
+# MRAblation <- not working either
+  ModelMirror
+  Volumes
+  EMSegment
+  DistanceTransformModel
+  ClipModel
+  #VolumeRenderingCuda
+  Measurements
+  ModelIntoLabelVolume
+  ExtractSubvolume
+  FastMarchingSegmentation
+  FourDImage
+# FourDAnalysis
+  ExtractSubvolumeROI
   )
 
 if(Slicer3_USE_OPENIGTLINK)
@@ -85,8 +86,6 @@ if(Slicer3_USE_OPENIGTLINK)
     #IGTNavigation
     )
 endif(Slicer3_USE_OPENIGTLINK)
-
-
 
 ## SLICES_DEBUG
 ## GAD_DEBUG
