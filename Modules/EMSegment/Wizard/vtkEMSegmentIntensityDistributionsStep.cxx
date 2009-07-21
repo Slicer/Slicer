@@ -109,7 +109,6 @@ vtkCxxRevisionMacro(vtkEMSegmentIntensityDistributionsStep,
 vtkEMSegmentIntensityDistributionsStep::
 vtkEMSegmentIntensityDistributionsStep()
 {
-  EMS_DEBUG_MACRO("constructor start");
   this->SetName("6/9. Specify Intensity Distributions");
   this->SetDescription(
     "Define intensity distribution for each anatomical structure.");
@@ -132,7 +131,6 @@ vtkEMSegmentIntensityDistributionsStep()
   this->Gaussian2DRenderingMenuButton                        = NULL;
 
   //this->IntensityDistributionHistogramHistogramVisualization = NULL;
-  EMS_DEBUG_MACRO("constructor end");
 }
 
 //-------------------------------------------------------------------
