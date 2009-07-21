@@ -194,11 +194,11 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::AdaptivePerformanceControl()
   {
     this->RaySteps *= 1.3f; 
   }
-  else if (this->TimeToDraw <= 0.95/this->Framerate)
+  else if (this->TimeToDraw <= 0.9/this->Framerate)
   {
     this->RaySteps += 10;
   }
-  else if (this->TimeToDraw > 1.25/this->Framerate)//reduce ray steps to ensure performance
+  else if (this->TimeToDraw > 1.125/this->Framerate)//reduce ray steps to ensure performance
   {
     this->RaySteps *= 0.65f;
   }
@@ -209,13 +209,16 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::AdaptivePerformanceControl()
   float maxRaysteps = dim[0];
   maxRaysteps = maxRaysteps > dim[1] ? maxRaysteps : dim[1];  
   maxRaysteps = maxRaysteps > dim[2] ? maxRaysteps : dim[2];  
-  maxRaysteps *= 16.0f; //make sure we have enough sampling rate to recover details
+  maxRaysteps *= 128.0f; //make sure we have enough sampling rate to recover details
   
   maxRaysteps = maxRaysteps < 1050.0f ? 1050.0f : maxRaysteps;//ensure high sampling rate on low resolution volumes
   
   // add clamp
   if (this->RaySteps > maxRaysteps) this->RaySteps = maxRaysteps;
   if (this->RaySteps < 150.0f)       this->RaySteps = 150.0f;
+  
+//  cout<<this->Framerate<<" "<<this->TimeToDraw<<" "<<this->RaySteps<<endl;
+//  cout.flush();
 }
 
 //needs to be cleaned, 2008/10/20, Yanling Liu
