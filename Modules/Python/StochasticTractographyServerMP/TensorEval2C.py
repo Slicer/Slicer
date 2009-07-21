@@ -1,6 +1,35 @@
 import time
 import numpy
-import cmpV
+
+def setOne(ard, item):
+  if ard.ndim == 3:
+    ard[item[0]] [item[1]] [item[2]]=1
+  elif ard.ndim == 2:
+    ard[item[0]] [item[1]]=1
+ 
+def createI2Vol(indX, shp):
+  arD = numpy.zeros((shp), numpy.uint16)
+  [setOne(arD, item) for item in indX]  
+
+  return arD
+
+def findIndX(arrayD, minVal, maxVal, flag = False):
+  itmp1 = numpy.transpose((minVal<=arrayD).nonzero()) 
+  if not flag:
+    itmp2 = numpy.transpose((arrayD<maxVal).nonzero()) 
+  else:
+    itmp2 = numpy.transpose((arrayD<=maxVal).nonzero())
+
+  return itmp1, itmp2
+
+def intersectIndX(ar1, ar2):
+  return (ar1.flatten()*ar2.flatten()).reshape(ar1.shape)
+ 
+
+def test2InVolume(arrayD, minVal, maxVal, flag = False):
+  itmp1, itmp2 = findIndX(arrayD, minVal, maxVal, flag)
+  res = intersectIndX(createI2Vol(itmp1, arrayD.shape), createI2Vol(itmp2, arrayD.shape))
+  return res
 
 def ComputeAFunctional(A, b, G, k):
    A[k, :] = [1, -b[0,k]*G[0,k]**2, -2*b[0,k]*G[0,k]*G[1,k], -2*b[0,k]*G[0,k]*G[2,k], -b[0, k]*G[1,k]**2, -2*b[0,k]*G[1,k]*G[2,k], -b[0,k]*G[2,k]**2]
@@ -94,10 +123,9 @@ def EvaluateTensorX1(data, G, b, wmI=numpy.empty(0)):
 def EvaluateWM0(data, baseline=0, wmMin=0, wmMax=1000):
 
    base = data[..., baseline]
-   wm = cmpV.test2InVolume(base, wmMin, wmMax)
+   wm = test2InVolume(base, wmMin, wmMax) 
 
    return  wm
-
 
 #
 def CalculateFA(lda):

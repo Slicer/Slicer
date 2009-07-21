@@ -368,7 +368,7 @@ def pipeline(params, nimage, roiA, roiB, wm):
                        job_server.set_ncpus(ncpus = ncpusL)
 
                        for i in range(nParts):
-                          jobs.append(job_server.submit(tensPP.EvaluateTensorX1, (dataBlocks[i], G2.T, b.T, wmBlocks[i],),(tensPP.ComputeAFunctional, tensPP.ComputeTensorFunctional,), ("numpy","time","cmpV",) ))
+                          jobs.append(job_server.submit(tensPP.EvaluateTensorX1, (dataBlocks[i], G2.T, b.T, wmBlocks[i],),(tensPP.ComputeAFunctional, tensPP.ComputeTensorFunctional,), ("numpy","time",) ))
 
 
                        tBlocks = []
