@@ -227,7 +227,7 @@ proc FastMarchingSegmentationBuildGUI {this} {
   $ckbutton SetParent [$outputParametersFrame GetFrame]
   $ckbutton Create
   $ckbutton SetText "interactive volume rendering of segmentation results"
-  $ckbutton SelectedStateOn
+  $ckbutton SelectedStateOff
   $ckbutton SetBalloonHelpString "Uncheck this to disable volume rendering if\
     you experience performance problems"
   pack [$ckbutton GetWidgetName] -side top -anchor e -padx 2 -pady 2
@@ -269,19 +269,6 @@ proc FastMarchingSegmentationBuildGUI {this} {
   $accept SetBalloonHelpString "Once accepted, segmentation cannot be adjusted with the slider. It is important to accept when you are happy with the result to free Slicer memory!!!"
   pack [$accept GetWidgetName] -side top -anchor e -padx 2 -pady 2 -fill x
 
-  # initialize volume rendering
-  set ::FastMarchingSegmentation($this,renderMapper) [vtkFixedPointVolumeRayCastMapper New]
-  set ::FastMarchingSegmentation($this,renderFilter) [vtkPiecewiseFunction New]
-  set ::FastMarchingSegmentation($this,renderColorMapping) [vtkColorTransferFunction New]
-  set ::FastMarchingSegmentation($this,renderVolumeProperty) [vtkVolumeProperty New]
-  set ::FastMarchingSegmentation($this,renderVolume) [vtkVolume New]
-
-  set renderFilter $::FastMarchingSegmentation($this,renderFilter)
-  set renderMapper $::FastMarchingSegmentation($this,renderMapper)
-  set renderColorMapping $::FastMarchingSegmentation($this,renderColorMapping)
-  set renderVolumeProperty $::FastMarchingSegmentation($this,renderVolumeProperty)
-  set renderVolume $::FastMarchingSegmentation($this,renderVolume)
-  
   # Fast marching filters
   set ::FastMarchingSegmentation($this,cast) [vtkImageCast New]
   set ::FastMarchingSegmentation($this,rescale) [vtkImageShiftScale New]
@@ -299,7 +286,7 @@ proc FastMarchingSegmentationAddGUIObservers {this} {
   $this AddObserverByNumber $::FastMarchingSegmentation($this,timeScrollScale) 10001
   $this AddObserverByNumber $::FastMarchingSegmentation($this,fiducialsSelector) 11000
   $this AddObserverByNumber $::FastMarchingSegmentation($this,timescrollRange) 10001
-#  $this AddObserverByNumber $::FastMarchingSegmentation($this,volRenderCheckbox) 10000
+  $this AddObserverByNumber $::FastMarchingSegmentation($this,volRenderCheckbox) 10000
 }
 
 proc FastMarchingSegmentationRemoveGUIObservers {this} {
@@ -376,7 +363,10 @@ proc FastMarchingSegmentationProcessGUIEvents {this caller event} {
     # TODO: popup information box reminding to hit Accept button when done
 
     # initialize volume rendering
-#    FastMarchingSegmentationCreateRender $this
+    FastMarchingSegmentationCreateRender $this
+    if { [eval $::FastMarchingSegmentation($this,volRenderCheckbox) GetSelectedState] } {
+      FastMarchingSegmentationShowRender $this
+    }
 
     # set mouse mode to ViewTransform
     set interactionNode [ [ [$this GetLogic] GetApplicationLogic ] \
@@ -412,18 +402,18 @@ proc FastMarchingSegmentationProcessGUIEvents {this caller event} {
   if { $caller == $::FastMarchingSegmentation($this,volRenderCheckbox) } {
     if { [info exists ::FastMarchingSegmentation($this,renderVolume)] } {
       if { [eval $caller GetSelectedState] } {
-        set viewerWidget [ [$this GetApplicationGUI] GetViewerWidget ]
-        [$viewerWidget GetMainViewer ] AddViewProp $::FastMarchingSegmentation($this,renderVolume)
-        $viewerWidget RequestRender
+        FastMarchingSegmentationShowRender $this
       } else {
-        set viewerWidget [ [$this GetApplicationGUI] GetViewerWidget ]
-        [$viewerWidget GetMainViewer ] RemoveViewProp $::FastMarchingSegmentation($this,renderVolume)
-        $viewerWidget RequestRender
+        FastMarchingSegmentationHideRender $this
       }
     } 
   }
 
   if { $caller == $::FastMarchingSegmentation($this,acceptButton) } {
+    if { [eval $::FastMarchingSegmentation($this,volRenderCheckbox) GetSelectedState] == 1 } {
+     FastMarchingSegmentationHideRender $this
+    }
+    FastMarchingSegmentationDestroyRender $this
     FastMarchingSegmentationFinalize $this
     FastMarchingSegmentationDisableAdjustFrameGUI $this
     FastMarchingSegmentationEnableIOFrameGUI $this
@@ -607,17 +597,20 @@ proc FastMarchingSegmentationEnableAdjustFrameGUI {this} {
 }
 
 proc FastMarchingSegmentationCreateRender {this} {
+
   set ::FastMarchingSegmentation($this,renderMapper) [vtkFixedPointVolumeRayCastMapper New]
   set ::FastMarchingSegmentation($this,renderFilter) [vtkPiecewiseFunction New]
   set ::FastMarchingSegmentation($this,renderColorMapping) [vtkColorTransferFunction New]
   set ::FastMarchingSegmentation($this,renderVolumeProperty) [vtkVolumeProperty New]
   set ::FastMarchingSegmentation($this,renderVolume) [vtkVolume New]
+  set ::FastMarchingSegmentation($this,renderMatrix) [vtkMatrix4x4 New]
 
   set renderFilter $::FastMarchingSegmentation($this,renderFilter)
   set renderMapper $::FastMarchingSegmentation($this,renderMapper)
   set renderColorMapper $::FastMarchingSegmentation($this,renderColorMapping)
   set renderVolumeProperty $::FastMarchingSegmentation($this,renderVolumeProperty)
   set renderVolume $::FastMarchingSegmentation($this,renderVolume)
+  set renderMatrix $::FastMarchingSegmentation($this,renderMatrix)
 
   $renderVolumeProperty SetShade 1
   $renderVolumeProperty SetAmbient 0.3
@@ -634,10 +627,8 @@ proc FastMarchingSegmentationCreateRender {this} {
 
 # set up volume rendering
   $renderMapper SetInput [$::FastMarchingSegmentation($this,labelVolume) GetImageData]
-  set ijk2ras [vtkMatrix4x4 New]
-  $inputVolume GetIJKToRASMatrix $ijk2ras
-  $renderVolume PokeMatrix $ijk2ras
-  $ijk2ras Delete
+  $::FastMarchingSegmentation($this,labelVolume) GetIJKToRASMatrix $renderMatrix
+  $renderVolume PokeMatrix $renderMatrix
 
 # set up opacity filter
   set labelValue [expr double([[$::FastMarchingSegmentation($this,labelColorSpin) \
@@ -663,63 +654,12 @@ proc FastMarchingSegmentationCreateRender {this} {
 }
 
 proc FastMarchingSegmentationDestroyRender {this} {
-  set ::FastMarchingSegmentation($this,renderMapper) [vtkFixedPointVolumeRayCastMapper New]
-  set ::FastMarchingSegmentation($this,renderFilter) [vtkPiecewiseFunction New]
-  set ::FastMarchingSegmentation($this,renderColorMapping) [vtkColorTransferFunction New]
-  set ::FastMarchingSegmentation($this,renderVolumeProperty) [vtkVolumeProperty New]
-  set ::FastMarchingSegmentation($this,renderVolume) [vtkVolume New]
-
-  set renderFilter $::FastMarchingSegmentation($this,renderFilter)
-  set renderMapper $::FastMarchingSegmentation($this,renderMapper)
-  set renderColorMapper $::FastMarchingSegmentation($this,renderColorMapping)
-  set renderVolumeProperty $::FastMarchingSegmentation($this,renderVolumeProperty)
-  set renderVolume $::FastMarchingSegmentation($this,renderVolume)
-
-  $renderVolumeProperty SetShade 1
-  $renderVolumeProperty SetAmbient 0.3
-  $renderVolumeProperty SetDiffuse 0.6
-  $renderVolumeProperty SetSpecular 0.5
-  $renderVolumeProperty SetSpecularPower 40.
-  $renderVolumeProperty SetScalarOpacity $renderFilter
-  $renderVolumeProperty SetColor $renderColorMapper
-  $renderVolumeProperty SetInterpolationTypeToNearest
-  $renderVolumeProperty ShadeOn
-
-  $renderVolume SetProperty $renderVolumeProperty
-  $renderVolume SetMapper $renderMapper
-
-# set up volume rendering
-  $renderMapper SetInput [$::FastMarchingSegmentation($this,labelVolume) GetImageData]
-  set ijk2ras [vtkMatrix4x4 New]
-  $inputVolume GetIJKToRASMatrix $ijk2ras
-  $renderVolume PokeMatrix $ijk2ras
-  $ijk2ras Delete
-
-# set up opacity filter
-  set labelValue [expr double([[$::FastMarchingSegmentation($this,labelColorSpin) \
-    GetWidget] GetValue])]
-  $renderFilter RemoveAllPoints
-  $renderFilter AddPoint 0. 0.
-  $renderFilter AddPoint 256. 0.
-  $renderFilter AddPoint $labelValue 1.
-  $renderFilter AddPoint [expr $labelValue-.1] 0.
-  $renderFilter AddPoint [expr $labelValue+.1] 0.
-  $renderFilter ClampingOff
-
-  # get the color that corresponds to the label from the lookup table
-  set displayNode [$::FastMarchingSegmentation($this,labelVolume) GetDisplayNode]
-  set colorNode [$displayNode GetColorNode]
-  set colorLUT [$colorNode GetLookupTable]
-
-  set color [$colorLUT GetColor $labelValue]
-
-  $renderColorMapper RemoveAllPoints
-  $renderColorMapper AddRGBPoint $labelValue [lindex $color 0] [lindex $color 1] [lindex $color 2]
-
-  set viewerWidget [ [$this GetApplicationGUI] GetViewerWidget ]
-
-  [$viewerWidget GetMainViewer ] AddViewProp $renderVolume
-  $viewerWidget RequestRender
+  $::FastMarchingSegmentation($this,renderVolume) Delete
+  $::FastMarchingSegmentation($this,renderMapper) Delete
+  $::FastMarchingSegmentation($this,renderFilter) Delete
+  $::FastMarchingSegmentation($this,renderColorMapping) Delete
+  $::FastMarchingSegmentation($this,renderVolumeProperty) Delete
+  $::FastMarchingSegmentation($this,renderMatrix) Delete
 }
 
 proc FastMarchingSegmentationShowRender {this} {
