@@ -598,12 +598,12 @@ if {  [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [stri
       }
       set ret [catch "file copy -force $::Slicer3_LIB/python-build/PCbuild/_socket.pyd $::Slicer3_LIB/python-build/Lib/_socket.pyd"]
       if {$ret == 1} {
-         puts "ERROR: failed to copy $::Slicer3_LIB/python-build/PCbuild/_socket.pyd $::Slicer3_LIB/python-build/Lib/_socket.pyd"
+         puts "ERROR: failed to copy $::Slicer3_LIB/python-build/PCbuild/_socket.pyd to $::Slicer3_LIB/python-build/Lib/_socket.pyd"
          exit 1
        }
-      set ret [catch "file copy -force $::Slicer3_LIB/python-build/PCbuild/_ctypes.pyd to $::Slicer3_LIB/python-build/Lib/_ctypes.pyd"]
+      set ret [catch "file copy -force $::Slicer3_LIB/python-build/PCbuild/_ctypes.pyd $::Slicer3_LIB/python-build/Lib/_ctypes.pyd"]
       if {$ret == 1} {
-        puts "ERORR: failed to copy $::Slicer3_LIB/python-build/PCbuild/_ctypes.pyd to $::Slicer3_LIB/python-build/Lib/_ctypes.pyd"
+        puts "ERROR: failed to copy $::Slicer3_LIB/python-build/PCbuild/_ctypes.pyd to $::Slicer3_LIB/python-build/Lib/_ctypes.pyd"
         exit 1
       }
 
