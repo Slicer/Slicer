@@ -295,6 +295,7 @@ def Execute (
     imgD.SetDimensions(shape[0], shape[1], shape[2])
     imgD.SetNumberOfScalarComponents(1)
     if dtype == 'int8' or dtype == 'uint8' or dtype == 'int16' or dtype == 'uint16' or dtype == 'int32' or dtype == 'uint32':  # 'float32'  'float64':
+      OutputVol.LabelMapOn()
       imgD.SetScalarTypeToShort()
     else:
       imgD.SetScalarTypeToFloat()
@@ -309,7 +310,6 @@ def Execute (
      for j in range(4):
         mat.SetElement(i,j, ijk[i,j])
 
-    OutputVol.LabelMapOn()
     OutputVol.SetAndObserveImageData(imgD)
     OutputVol.SetIJKToRASMatrix(mat)
 

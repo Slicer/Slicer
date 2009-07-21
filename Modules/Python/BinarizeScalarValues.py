@@ -83,6 +83,7 @@ def Execute (\
   org = inputVol.GetOrigin()
   spa = inputVol.GetSpacing()
 
+  outputVol.LabelMapOn()
   outputVol.SetAndObserveImageData(imgD)
   outputVol.SetIJKToRASMatrix(mat)
   outputVol.SetSpacing(spa[0], spa[1], spa[2])
