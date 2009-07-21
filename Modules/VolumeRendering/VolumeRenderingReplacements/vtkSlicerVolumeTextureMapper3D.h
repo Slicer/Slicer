@@ -97,6 +97,10 @@ public:
   vtkGetMacro(Framerate, float);
   
   // Description:
+  // set internal volume size
+  void SetInternalVolumeSize(int size);
+  
+  // Description:
   // These are the dimensions of the 3D texture
   vtkGetVectorMacro( VolumeDimensions, int,   3 );
   
@@ -163,7 +167,7 @@ protected:
   float                    *IntersectionBuffer;
   int                       NumberOfPolygons;
   int                       BufferSize;
-  
+  int              InternalVolumeSize;
   unsigned char            *Volume1;
   unsigned char            *Volume2;
   unsigned char            *Volume3;

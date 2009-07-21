@@ -105,7 +105,7 @@ public:
     
     // Description:
     // Callback, that is processed when the GPU ray cast mapper internal volume size changed
-    void ProcessGPURayCastInternalVolumeSize(int id);
+    void ProcessGPUMemorySize(int id);
     
     // Description:
     // process when user change the expected FPS
@@ -271,7 +271,7 @@ protected:
     
     // Description:
     // Menu button to select internal volume size
-    vtkKWMenuButtonWithLabel *MB_GPURayCastInternalVolumeSize;
+    vtkKWMenuButtonWithLabel *MB_GPUMemorySize;
 
     // Description:
     // Menu button to select rendering technique

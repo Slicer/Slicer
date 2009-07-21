@@ -222,23 +222,6 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::AdaptivePerformanceControl()
   if(this->Framerate <= 0.0f)
     this->Framerate = 1.0f;
 
-  if (this->TimeToDraw <= 0.25/this->Framerate)//descrease sample distance for better quality when possible
-  {
-    this->SampleDistance *= 0.1f;
-  }
-  else if (this->TimeToDraw <= 0.5/this->Framerate)
-  {
-    this->SampleDistance *= 0.5f;
-  }
-  else if (this->TimeToDraw <= 0.75/this->Framerate)
-  {
-    this->SampleDistance *= 0.95f;
-  }
-  else if (this->TimeToDraw > 1.25/this->Framerate)//reduce ray steps to ensure performance
-  {
-    this->SampleDistance *= 2.0f;
-  }
-  
   float spacing[3];
   this->GetVolumeSpacing(spacing);
 
@@ -251,7 +234,28 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::AdaptivePerformanceControl()
   maxSampleDistance = maxSampleDistance > spacing[1] ? maxSampleDistance : spacing[1];  
   maxSampleDistance = maxSampleDistance > spacing[2] ? maxSampleDistance : spacing[2];  
   maxSampleDistance *= 2;                          
-
+  
+  if (this->TimeToDraw <= 0.25/this->Framerate)//descrease sample distance for better quality when possible
+  {
+    this->SampleDistance *= 0.265f;
+  }
+  else if (this->TimeToDraw <= 0.5/this->Framerate)
+  {
+    this->SampleDistance *= 0.515f;
+  }
+  else if (this->TimeToDraw <= 0.75/this->Framerate)
+  {
+    this->SampleDistance *= 0.715f;
+  }
+  else if (this->TimeToDraw <= 0.95/this->Framerate)
+  {
+    this->SampleDistance += minSampleDistance;
+  }
+  else if (this->TimeToDraw > 1.25/this->Framerate)//reduce ray steps to ensure performance
+  {
+    this->SampleDistance *= 2.0f;
+  }
+  
 //  printf("%f %f %f\n", this->Framerate, this->TimeToDraw, 1.0/this->TimeToDraw);
   // add clamp
   if (this->SampleDistance < minSampleDistance) this->SampleDistance = minSampleDistance;
@@ -1903,7 +1907,9 @@ int vtkSlicerOpenGLVolumeTextureMapper3D::IsTextureSizeSupported( int size[3] )
 {
   if ( this->GetInput()->GetNumberOfScalarComponents() < 4 )
     {
-    if ( size[0]*size[1]*size[2] > 128*256*256 )
+    long maxSize = this->InternalVolumeSize * this->InternalVolumeSize * this->InternalVolumeSize;
+            
+    if ( size[0]*size[1]*size[2] > maxSize )//need to test graphics memory to determine volume size
       {
       return 0;
       }
@@ -1970,6 +1976,5 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::PrintSelf(ostream& os, vtkIndent inde
   
   this->Superclass::PrintSelf(os,indent);
 }
-
 
 

@@ -678,6 +678,7 @@ vtkSlicerVolumeTextureMapper3D::vtkSlicerVolumeTextureMapper3D()
   this->PreferredRenderMethod         = vtkSlicerVolumeTextureMapper3D::FRAGMENT_PROGRAM_METHOD;
   
   this->Framerate                    = 5.0f;
+  this->InternalVolumeSize      =  256; //by default 256^3
 }
 
 vtkSlicerVolumeTextureMapper3D::~vtkSlicerVolumeTextureMapper3D()
@@ -1496,5 +1497,12 @@ void vtkSlicerVolumeTextureMapper3D::PrintSelf(ostream& os, vtkIndent indent)
      << this->VolumeSpacing[1] << " " << this->VolumeSpacing[2] << endl;
 }
 
-
+void vtkSlicerVolumeTextureMapper3D::SetInternalVolumeSize(int size)
+{
+    if (this->InternalVolumeSize != size)
+    {
+        this->InternalVolumeSize = size;
+        this->SavedTextureInput = NULL;//dirty input, force reprocess input
+    }
+}
 

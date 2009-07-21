@@ -81,7 +81,7 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     
     this->MB_GPURayCastTechnique=NULL;
     this->SC_GPURayCastDepthPeelingThreshold=NULL;
-    this->MB_GPURayCastInternalVolumeSize=NULL;
+    this->MB_GPUMemorySize=NULL;
 
     this->SC_ExpectedFPS=NULL;
     this->MB_Mapper= NULL;
@@ -514,7 +514,7 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
             vtkErrorMacro("GPU ray casting (GLSL) is not supported by your computer.");
             this->MB_GPURayCastTechnique->EnabledOff();
             this->SC_GPURayCastDepthPeelingThreshold->EnabledOff();
-            this->MB_GPURayCastInternalVolumeSize->EnabledOff();
+            this->MB_GPUMemorySize->EnabledOff();
         }
     
         if(!IsTextureMappingSupported)
@@ -555,24 +555,28 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
     //choose default mapper
     {
         //Try to load from the registry
-        if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","MB_GPURayCastInternalVolumeSize"))
+        if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","MB_GPUMemorySize"))
         {
-            int id = this->Gui->GetApplication()->GetIntRegistryValue(2,"VolumeRendering","MB_GPURayCastInternalVolumeSize");
-            this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->SelectItem(id);
+            int id = this->Gui->GetApplication()->GetIntRegistryValue(2,"VolumeRendering","MB_GPUMemorySize");
+            this->MB_GPUMemorySize->GetWidget()->GetMenu()->SelectItem(id);
             
             switch(id)
             {
             case 0://128M
                 this->MapperGPURaycast->SetInternalVolumeSize(256);//256^3
+                this->MapperTexture->SetInternalVolumeSize(256);
                 break;
             case 1://256M
                 this->MapperGPURaycast->SetInternalVolumeSize(384);//384^3
+                this->MapperTexture->SetInternalVolumeSize(256);
                 break;
             case 2://512M
-                this->MapperGPURaycast->SetInternalVolumeSize(500);//500^3
+                this->MapperGPURaycast->SetInternalVolumeSize(512);//500^3
+                this->MapperTexture->SetInternalVolumeSize(512);
                 break;
             case 3://1024M
-                this->MapperGPURaycast->SetInternalVolumeSize(600);//600^3
+                this->MapperGPURaycast->SetInternalVolumeSize(640);//600^3
+                this->MapperTexture->SetInternalVolumeSize(512);
                 break;
             }
         }
@@ -1260,21 +1264,25 @@ void vtkSlicerVRGrayscaleHelper::ProcessGPURayCastTechnique(int id)
     this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
 }
 
-void vtkSlicerVRGrayscaleHelper::ProcessGPURayCastInternalVolumeSize(int id)
+void vtkSlicerVRGrayscaleHelper::ProcessGPUMemorySize(int id)
 {
     switch(id)
     {
     case 0://128M
         this->MapperGPURaycast->SetInternalVolumeSize(256);//256^3
+        this->MapperTexture->SetInternalVolumeSize(256);
         break;
     case 1://256M
         this->MapperGPURaycast->SetInternalVolumeSize(384);//384^3
+        this->MapperTexture->SetInternalVolumeSize(256);
         break;
     case 2://512M
-        this->MapperGPURaycast->SetInternalVolumeSize(500);//500^3
+        this->MapperGPURaycast->SetInternalVolumeSize(512);//500^3
+        this->MapperTexture->SetInternalVolumeSize(512);
         break;
     case 3://1024M
-        this->MapperGPURaycast->SetInternalVolumeSize(600);//600^3
+        this->MapperGPURaycast->SetInternalVolumeSize(640);//600^3
+        this->MapperTexture->SetInternalVolumeSize(512);
         break;
     }
     
@@ -1698,12 +1706,15 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->FramePerformance->SetLabelText("Performance/Quality");
     this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->FramePerformance->GetWidgetName() );
     
+    int labelWidth = 20;
+    
     //mapper selection combobox
     {
         this->MB_Mapper = vtkKWMenuButtonWithLabel::New();
         this->MB_Mapper->SetParent(this->FramePerformance->GetFrame());
         this->MB_Mapper->SetLabelText("Rendering Method");
         this->MB_Mapper->Create();
+        this->MB_Mapper->SetLabelWidth(labelWidth);
         this->MB_Mapper->SetBalloonHelpString("Please select one rendering method");
         this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("Software Ray Casting");
         this->MB_Mapper->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessRenderingMethodEvents 0");
@@ -1714,8 +1725,29 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("CUDA Ray Casting");
         this->MB_Mapper->GetWidget()->GetMenu()->SetItemCommand(3, this,"ProcessRenderingMethodEvents 3");
         
-        this->Script ( "pack %s -side top -anchor nw -fill x -padx 8 -pady 2", this->MB_Mapper->GetWidgetName() );
+        this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_Mapper->GetWidgetName() );
 
+    }
+    
+    //GPU memory size
+    {
+        this->MB_GPUMemorySize = vtkKWMenuButtonWithLabel::New();
+        this->MB_GPUMemorySize->SetParent(this->FramePerformance->GetFrame());
+        this->MB_GPUMemorySize->SetLabelText("GPU Memory Size");
+        this->MB_GPUMemorySize->Create();
+        this->MB_GPUMemorySize->SetLabelWidth(labelWidth);
+        this->MB_GPUMemorySize->SetBalloonHelpString("Specify size of your GPU memory. Generally the larger GPU memory the better rendering quality. Do not select memory size larger than physical GPU memory size.");
+        this->MB_GPUMemorySize->GetWidget()->GetMenu()->AddRadioButton("128M");
+        this->MB_GPUMemorySize->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPUMemorySize 0");
+        this->MB_GPUMemorySize->GetWidget()->GetMenu()->AddRadioButton("256M");
+        this->MB_GPUMemorySize->GetWidget()->GetMenu()->SetItemCommand(1, this,"ProcessGPUMemorySize 1");
+        this->MB_GPUMemorySize->GetWidget()->GetMenu()->AddRadioButton("512M");
+        this->MB_GPUMemorySize->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessGPUMemorySize 2");
+        this->MB_GPUMemorySize->GetWidget()->GetMenu()->AddRadioButton("1024M");
+        this->MB_GPUMemorySize->GetWidget()->GetMenu()->SetItemCommand(3, this,"ProcessGPUMemorySize 3");        
+        this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPUMemorySize->GetWidgetName() );
+        
+        this->MB_GPUMemorySize->GetWidget()->SetValue("256M");
     }
     
     //Framerate
@@ -1738,8 +1770,6 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SC_ExpectedFPS->GetWidgetName() );
 
     }
-    
-    int labelWidth = 20;
     
     //software ray casting
     {
@@ -1791,25 +1821,6 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastTechnique->GetWidgetName() );
         
         this->MB_GPURayCastTechnique->GetWidget()->SetValue("Composite With Shading");
-        
-        //set internal volume storage
-        this->MB_GPURayCastInternalVolumeSize = vtkKWMenuButtonWithLabel::New();
-        this->MB_GPURayCastInternalVolumeSize->SetParent(this->FrameGPURayCasting->GetFrame());
-        this->MB_GPURayCastInternalVolumeSize->SetLabelText("GPU Memory Size");
-        this->MB_GPURayCastInternalVolumeSize->Create();
-        this->MB_GPURayCastInternalVolumeSize->SetLabelWidth(labelWidth);
-        this->MB_GPURayCastInternalVolumeSize->SetBalloonHelpString("Specify size of your GPU memory. Generally the larger GPU memory the better rendering quality. Do not select memory size larger than physical GPU memory size.");
-        this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->AddRadioButton("128M");
-        this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastInternalVolumeSize 0");
-        this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->AddRadioButton("256M");
-        this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->SetItemCommand(1, this,"ProcessGPURayCastInternalVolumeSize 1");
-        this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->AddRadioButton("512M");
-        this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessGPURayCastInternalVolumeSize 2");
-        this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->AddRadioButton("1024M");
-        this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->SetItemCommand(3, this,"ProcessGPURayCastInternalVolumeSize 3");        
-        this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastInternalVolumeSize->GetWidgetName() );
-        
-        this->MB_GPURayCastInternalVolumeSize->GetWidget()->SetValue("256M");
         
         //get scalar range 
         double scalarRange[2];
@@ -1865,8 +1876,8 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
 void vtkSlicerVRGrayscaleHelper::DestroyPerformance(void)
 {
     //remember user choice on rendering method and GPU memory size
-    this->Gui->GetApplication()->SetRegistryValue(2,"VolumeRendering","MB_GPURayCastInternalVolumeSize","%d",
-        this->MB_GPURayCastInternalVolumeSize->GetWidget()->GetMenu()->GetIndexOfSelectedItem());
+    this->Gui->GetApplication()->SetRegistryValue(2,"VolumeRendering","MB_GPUMemorySize","%d",
+        this->MB_GPUMemorySize->GetWidget()->GetMenu()->GetIndexOfSelectedItem());
     this->Gui->GetApplication()->SetRegistryValue(2,"VolumeRendering","MB_Mapper","%d",
         this->MB_Mapper->GetWidget()->GetMenu()->GetIndexOfSelectedItem());
     
@@ -1878,11 +1889,11 @@ void vtkSlicerVRGrayscaleHelper::DestroyPerformance(void)
       this->CB_CUDARayCastShading=NULL;
     }
     
-    if(this->MB_GPURayCastInternalVolumeSize!=NULL)
+    if(this->MB_GPUMemorySize!=NULL)
     {
-        this->MB_GPURayCastInternalVolumeSize->SetParent(NULL);
-        this->MB_GPURayCastInternalVolumeSize->Delete();
-        this->MB_GPURayCastInternalVolumeSize=NULL;
+        this->MB_GPUMemorySize->SetParent(NULL);
+        this->MB_GPUMemorySize->Delete();
+        this->MB_GPUMemorySize=NULL;
     }
     
     if(this->SC_ExpectedFPS!=NULL)
