@@ -17,7 +17,7 @@ Choose an output volume
 Click on apply
   </description>
   <license></license>
-  <contributor>Nicolas RANNOU</contributor>
+  <contributor>Nicolas Rannou (BWH), Sylvain Jaume (MIT)</contributor>
 
   <parameters>
     <label>N3 MRI Bias Field Correction Parameters</label>
@@ -63,10 +63,10 @@ Click on apply
       </integer>
 
       <float>
-      <name>weinerFilterNoise</name>
-      <longflag>--weinerFilterNoise</longflag>
-      <description>weinerFilterNoise for mask creation</description>
-      <label>weinerFilterNoise for mask creation</label>
+      <name>wienerFilterNoise</name>
+      <longflag>--wienerFilterNoise</longflag>
+      <description>wienerFilterNoise for mask creation</description>
+      <label>wienerFilterNoise for mask creation</label>
       <default>0.1</default>
       <constraints>
         <minimum>0.0</minimum>

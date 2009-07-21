@@ -20,6 +20,7 @@
 #include "vtkMRMLMRIBiasFieldCorrectionNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkObjectFactory.h"
+//#include "vtkImageData.h"
 
 //----------------------------------------------------------------------------
 vtkMRMLMRIBiasFieldCorrectionNode* vtkMRMLMRIBiasFieldCorrectionNode::New()
@@ -57,7 +58,7 @@ vtkMRMLNode* vtkMRMLMRIBiasFieldCorrectionNode::CreateNodeInstance()
 vtkMRMLMRIBiasFieldCorrectionNode::vtkMRMLMRIBiasFieldCorrectionNode()
 {
   this->MaskThreshold         = 0.0;
-  this->ShrinkFactor          = 3.0;
+  this->OutputSize            = 1.0;
   this->NumberOfFittingLevels = 50;
   this->NumberOfIterations    = 4;
   this->WienerFilterNoise     = 0.1;
@@ -66,10 +67,11 @@ vtkMRMLMRIBiasFieldCorrectionNode::vtkMRMLMRIBiasFieldCorrectionNode()
 
   this->InputVolumeRef        = NULL;
   this->OutputVolumeRef       = NULL;
-  this->StorageVolumeRef      = NULL;
+  this->PreviewVolumeRef      = NULL;
   this->MaskVolumeRef         = NULL;
 
   this->HideFromEditors       = true;
+  //this->DemoImage             = NULL;
 }
 
 //---------------------------------------------------------------------------
@@ -77,7 +79,7 @@ vtkMRMLMRIBiasFieldCorrectionNode::~vtkMRMLMRIBiasFieldCorrectionNode()
 {
   this->SetInputVolumeRef(NULL);
   this->SetOutputVolumeRef(NULL);
-  this->SetStorageVolumeRef(NULL);
+  this->SetPreviewVolumeRef(NULL);
   this->SetMaskVolumeRef(NULL);
 }
 
@@ -96,8 +98,8 @@ void vtkMRMLMRIBiasFieldCorrectionNode::WriteXML(ostream& of, int nIndent)
 
   {
   std::stringstream ss;
-  ss << this->ShrinkFactor;
-  of << indent << " ShrinkFactor=\"" << ss.str() << "\"";
+  ss << this->OutputSize;
+  of << indent << " OutputSize=\"" << ss.str() << "\"";
   }
 
   {
@@ -150,10 +152,10 @@ void vtkMRMLMRIBiasFieldCorrectionNode::WriteXML(ostream& of, int nIndent)
 
   {
   std::stringstream ss;
-  if (this->StorageVolumeRef)
+  if (this->PreviewVolumeRef)
     {
-    ss << this->StorageVolumeRef;
-    of << indent << " StorageVolumeRef=\"" << ss.str() << "\"";
+    ss << this->PreviewVolumeRef;
+    of << indent << " PreviewVolumeRef=\"" << ss.str() << "\"";
     }
   }
 
@@ -165,6 +167,16 @@ void vtkMRMLMRIBiasFieldCorrectionNode::WriteXML(ostream& of, int nIndent)
     of << indent << " MaskVolumeRef=\"" << ss.str() << "\"";
     }
   }
+  /*
+  {
+  std::stringstream ss;
+  if (this->DemoImage)
+    {
+    ss << this->DemoImage;
+    of << indent << " DemoImage=\"" << ss.str() << "\"";
+    }
+  }
+  */
 }
 
 //----------------------------------------------------------------------------
@@ -209,11 +221,11 @@ void vtkMRMLMRIBiasFieldCorrectionNode::ReadXMLAttributes(const char** atts)
       ss >> this->MaskThreshold;
       }
 
-    if (!strcmp(attName,"ShrinkFactor"))
+    if (!strcmp(attName,"OutputSize"))
       {
       std::stringstream ss;
       ss << attValue;
-      ss >> this->ShrinkFactor;
+      ss >> this->OutputSize;
       }
 
     if (!strcmp(attName,"NumberOfIterations"))
@@ -242,10 +254,10 @@ void vtkMRMLMRIBiasFieldCorrectionNode::ReadXMLAttributes(const char** atts)
       this->Scene->AddReferencedNodeID(this->OutputVolumeRef,this);
       }
 
-    if (!strcmp(attName,"StorageVolumeRef"))
+    if (!strcmp(attName,"PreviewVolumeRef"))
       {
-      this->SetStorageVolumeRef(attValue);
-      this->Scene->AddReferencedNodeID(this->StorageVolumeRef,this);
+      this->SetPreviewVolumeRef(attValue);
+      this->Scene->AddReferencedNodeID(this->PreviewVolumeRef,this);
       }
 
      if (!strcmp(attName,"MaskVolumeRef"))
@@ -254,6 +266,8 @@ void vtkMRMLMRIBiasFieldCorrectionNode::ReadXMLAttributes(const char** atts)
       this->Scene->AddReferencedNodeID(this->MaskVolumeRef,this);
       }
     }
+
+  // DemoImage
 }
 
 //----------------------------------------------------------------------------
@@ -268,15 +282,17 @@ void vtkMRMLMRIBiasFieldCorrectionNode::Copy(vtkMRMLNode *anode)
   this->SetMaskThreshold(node->MaskThreshold);
   this->SetNumberOfIterations(node->NumberOfIterations);
   this->SetNumberOfFittingLevels(node->NumberOfFittingLevels);
-  this->SetShrinkFactor(node->ShrinkFactor);
+  this->SetOutputSize(node->OutputSize);
   this->SetConvergenceThreshold(node->ConvergenceThreshold);
   this->SetBiasField(node->BiasField);
   this->SetWienerFilterNoise(node->WienerFilterNoise);
 
   this->SetInputVolumeRef(node->InputVolumeRef);
   this->SetOutputVolumeRef(node->OutputVolumeRef);
-  this->SetStorageVolumeRef(node->StorageVolumeRef);
+  this->SetPreviewVolumeRef(node->PreviewVolumeRef);
   this->SetMaskVolumeRef(node->MaskVolumeRef);
+
+  //this->SetDemoImage(node->DemoImage);
 }
 
 //----------------------------------------------------------------------------
@@ -286,7 +302,7 @@ void vtkMRMLMRIBiasFieldCorrectionNode::PrintSelf(ostream& os, vtkIndent
   vtkMRMLNode::PrintSelf(os,indent);
 
   os << indent << "MaskThreshold:         " << this->MaskThreshold     <<"\n";
-  os << indent << "ShrinkFactor:          " << this->ShrinkFactor      <<"\n";
+  os << indent << "OutputSize:            " << this->OutputSize        <<"\n";
   os << indent << "BiasField:             " << this->BiasField         <<"\n";
   os << indent << "WienerFilterNoise:     " << this->WienerFilterNoise <<"\n";
 
@@ -301,10 +317,12 @@ void vtkMRMLMRIBiasFieldCorrectionNode::PrintSelf(ostream& os, vtkIndent
    (this->InputVolumeRef ? this->InputVolumeRef     : "(none)") << "\n";
   os << indent << "OutputVolumeRef:   " <<
    (this->OutputVolumeRef ? this->OutputVolumeRef   : "(none)") << "\n";
-  os << indent << "StorageVolumeRef:   " <<
-   (this->StorageVolumeRef ? this->StorageVolumeRef : "(none)") << "\n";
+  os << indent << "PreviewVolumeRef:   " <<
+   (this->PreviewVolumeRef ? this->PreviewVolumeRef : "(none)") << "\n";
    os << indent << "MaskVolumeRef:   " <<
    (this->MaskVolumeRef ? this->MaskVolumeRef       : "(none)") << "\n";
+
+   //DemoImage
 }
 
 //----------------------------------------------------------------------------
@@ -319,9 +337,9 @@ void vtkMRMLMRIBiasFieldCorrectionNode::UpdateReferenceID(const char *oldID,
     {
     this->SetOutputVolumeRef(newID);
     }
-  if (strcmp(oldID, this->StorageVolumeRef) == 0)
+  if (strcmp(oldID, this->PreviewVolumeRef) == 0)
     {
-    this->SetStorageVolumeRef(newID);
+    this->SetPreviewVolumeRef(newID);
     }
   if (strcmp(oldID, this->MaskVolumeRef) == 0)
     {

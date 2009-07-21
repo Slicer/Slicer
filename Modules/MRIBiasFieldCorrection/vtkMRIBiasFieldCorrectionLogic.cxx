@@ -24,7 +24,11 @@
 
 #include "vtkImageClip.h"
 #include "vtkImageCast.h"
+#include "vtkImageResample.h"
+#include "vtkImageThreshold.h"
 #include "vtkImageMathematics.h"
+#include "vtkImageConstantPad.h"
+#include "vtkImageEllipsoidSource.h"
 
 #include "vtkMRMLScene.h"
 #include "vtkMRMLScalarVolumeNode.h"
@@ -32,11 +36,9 @@
 //----------------------------------------------------------------------------
 #include "vtkSlicerSliceControllerWidget.h"
 #include "vtkSlicerSlicesControlGUI.h"
-#include "vtkKWScale.h"
 
 //----------------------------------------------------------------------------
 #include "itkImage.h"
-#include "itkShrinkImageFilter.h"
 #include "itkImageRegionIterator.h"
 #include "itkBSplineControlPointImageFilter.h"
 #include "itkN3MRIBiasFieldCorrectionImageFilter.h"
@@ -44,7 +46,7 @@
 #include "itkVTKImageToImageFilter.h"
 
 //----------------------------------------------------------------------------
-#include "vtkMRIBiasFieldCorrectionGUI.h"
+//#include "vtkMRIBiasFieldCorrectionGUI.h"
 
 //----------------------------------------------------------------------------
 vtkMRIBiasFieldCorrectionLogic* vtkMRIBiasFieldCorrectionLogic::New()
@@ -105,7 +107,7 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
 
   if (inVolume->GetImageData() == NULL)
     {
-    vtkErrorMacro("No input image data");
+    vtkErrorMacro("No image data for the input volume");
     return;
     }
 
@@ -137,23 +139,69 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
     return;
     }
 
-  // copy RASToIJK matrix, and other attributes from input to output
-  std::string name (outVolume->GetName());
-  std::string id   (outVolume->GetID()  );
+  if (maskVolume->GetImageData() == NULL)
+    {
+    vtkErrorMacro("No image data for the mask volume");
+    return;
+    }
 
+  vtkErrorMacro("inVolume");
+  std::cout << *inVolume;
+
+  vtkErrorMacro("maskVolume");
+  std::cout << *maskVolume;
+
+  vtkErrorMacro("outVolume");
+  std::cout << *outVolume;
+
+  return;
+
+  // copy RASToIJK matrix, and other attributes from input to output
   outVolume->CopyOrientation(inVolume);
   outVolume->SetAndObserveTransformNodeID(inVolume->GetTransformNodeID());
-  outVolume->SetName(name.c_str());
+
+  //-------------------------------------------------------------------------
+  double maskThreshold = this->MRIBiasFieldCorrectionNode->GetMaskThreshold();
+
+  double maskRange[2];
+  maskVolume->GetImageData()->GetScalarRange(maskRange);
+
+  std::cout << __LINE__ << " " << __FILE__ << std::endl;
+  std::cout << " maskThreshold " << maskThreshold << std::endl;
+  std::cout << " maskRange " << maskRange[0] << " " << maskRange[1] <<
+    std::endl;
+
+  maskThreshold = maskRange[0] + maskThreshold * (maskRange[1]-maskRange[0]);
+  std::cout << " maskThreshold " << maskThreshold << std::endl;
+
+  double outputSize = this->MRIBiasFieldCorrectionNode->GetOutputSize();
+
+  vtkImageResample *imageResample = vtkImageResample::New();
+  imageResample->SetInput(inVolume->GetImageData());
+  imageResample->SetAxisMagnificationFactor(0, outputSize);
+  imageResample->SetAxisMagnificationFactor(1, outputSize);
+  imageResample->SetAxisMagnificationFactor(2, outputSize);
+  imageResample->Update();
+
+  vtkImageResample *maskResample = vtkImageResample::New();
+  maskResample->SetInput(maskVolume->GetImageData());
+  maskResample->SetAxisMagnificationFactor(0, outputSize);
+  maskResample->SetAxisMagnificationFactor(1, outputSize);
+  maskResample->SetAxisMagnificationFactor(2, outputSize);
+  maskResample->Update();
 
   vtkImageCast *imageCast = vtkImageCast::New();
-  imageCast->SetInput(inVolume->GetImageData());
+  imageCast->SetInput(imageResample->GetOutput());
   imageCast->SetOutputScalarTypeToFloat();
   imageCast->Update();
 
-  vtkImageCast* maskCast = vtkImageCast::New();
-  maskCast->SetInput(maskVolume->GetImageData());
-  maskCast->SetOutputScalarTypeToFloat();
-  maskCast->Update();
+  vtkImageThreshold *imageThreshold = vtkImageThreshold::New();
+  imageThreshold->SetInput(maskResample->GetOutput());
+  imageThreshold->ThresholdByUpper(maskThreshold);
+  imageThreshold->SetOutputScalarTypeToUnsignedChar();
+  imageThreshold->SetInValue(255);
+  imageThreshold->SetOutValue(0);
+  imageThreshold->Update();
 
   typedef itk::Image< float,         3 > ImageType;
   typedef itk::Image< unsigned char, 3 > MaskType;
@@ -168,62 +216,31 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
 
   ITKMaskConnectorType::Pointer itkMaskConnector = ITKMaskConnectorType::
     New();
-  itkMaskConnector->SetInput( maskCast->GetOutput() );
-  maskCast->Delete();
+  itkMaskConnector->SetInput( imageThreshold->GetOutput() );
+  imageThreshold->Delete();
   itkMaskConnector->Update();
-
-  typedef itk::ShrinkImageFilter< ImageType, ImageType > ShrinkerType;
-  typedef itk::ShrinkImageFilter< MaskType,  MaskType  > MaskShrinkType;
-
-  ShrinkerType::Pointer shrinker = ShrinkerType::New();
-  shrinker->SetInput( itkImageConnector->GetOutput() );
-
-  typedef itk::BinaryThresholdImageFilter< MaskType, MaskType >
-    binaryThresholdType;
-
-  binaryThresholdType::Pointer binaryThresholdFilter =
-    binaryThresholdType::New();
-  binaryThresholdFilter->SetInput( itkMaskConnector->GetOutput() );
-  binaryThresholdFilter->SetLowerThreshold(1);
-  binaryThresholdFilter->SetOutsideValue(0);
-  binaryThresholdFilter->SetInsideValue(1);
-  binaryThresholdFilter->UpdateLargestPossibleRegion();
-
-  MaskShrinkType::Pointer maskshrinker = MaskShrinkType::New();
-  maskshrinker->SetInput(binaryThresholdFilter->GetOutput());
-
-  unsigned int shrinkFactor = (unsigned int)round(this->MRIBiasFieldCorrectionNode->GetShrinkFactor());
-
-  shrinker->SetShrinkFactors(shrinkFactor);
-  maskshrinker->SetShrinkFactors(shrinkFactor);
-
-  shrinker->Update();
-  shrinker->UpdateLargestPossibleRegion();
-
-  maskshrinker->Update();
-  maskshrinker->UpdateLargestPossibleRegion();
 
   typedef itk::N3MRIBiasFieldCorrectionImageFilter< ImageType, MaskType,
           ImageType > CorrecterType;
   CorrecterType::Pointer correcter = CorrecterType::New();
-  correcter->SetInput( shrinker->GetOutput() );
-  correcter->SetMaskImage( maskshrinker->GetOutput() );
+  correcter->SetInput( itkImageConnector->GetOutput() );
+  correcter->SetMaskImage( itkMaskConnector->GetOutput() );
 
-  unsigned int numIterations = this->MRIBiasFieldCorrectionNode->
+  unsigned int numIterations    = this->MRIBiasFieldCorrectionNode->
     GetNumberOfIterations();
   unsigned int numFittingLevels = this->MRIBiasFieldCorrectionNode->
     GetNumberOfFittingLevels();
 
-  double wienerFilterNoise = this->MRIBiasFieldCorrectionNode->
+  double wienerFilterNoise      = this->MRIBiasFieldCorrectionNode->
     GetWienerFilterNoise();
-  double widthAtHalfMaximum = this->MRIBiasFieldCorrectionNode->
+  double widthAtHalfMaximum     = this->MRIBiasFieldCorrectionNode->
     GetBiasField();
-  double convergenceThreshold = this->MRIBiasFieldCorrectionNode->
+  double convergenceThreshold   = this->MRIBiasFieldCorrectionNode->
     GetConvergenceThreshold();
 
   correcter->SetMaximumNumberOfIterations(numIterations);
   correcter->SetNumberOfFittingLevels(numFittingLevels);
-  correcter->SetWeinerFilterNoise(wienerFilterNoise);
+  correcter->SetWienerFilterNoise(wienerFilterNoise);
   correcter->SetBiasFieldFullWidthAtHalfMaximum(widthAtHalfMaximum);
   correcter->SetConvergenceThreshold(convergenceThreshold);
   correcter->Update();
@@ -237,19 +254,19 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
   BSplinerType::Pointer bSpliner = BSplinerType::New();
   bSpliner->SetInput( correcter->GetBiasFieldControlPointLattice() );
   bSpliner->SetSplineOrder( correcter->GetSplineOrder() );
-  bSpliner->SetSize(
-    itkImageConnector->GetOutput()->GetLargestPossibleRegion().GetSize() );
-  //bspliner->SetOrigin(    itkImageConnector->GetOutput()->GetOrigin()    );
-  //bspliner->SetDirection( itkImageConnector->GetOutput()->GetDirection() );
-  //bspliner->SetSpacing(   itkImageConnector->GetOutput()->GetSpacing()   );
+  bSpliner->SetSize( itkImageConnector->GetOutput()->
+      GetLargestPossibleRegion().GetSize() );
+  bSpliner->SetOrigin( itkImageConnector->GetOutput()->GetOrigin() );
+  bSpliner->SetSpacing( itkImageConnector->GetOutput()->GetSpacing() );
+  bSpliner->SetDirection( itkImageConnector->GetOutput()->GetDirection() );
   bSpliner->Update();
 
   ImageType::Pointer logField = ImageType::New();
-  logField->SetRegions(
-    bSpliner->GetOutput()->GetLargestPossibleRegion().GetSize() );
-  //logField->SetOrigin(  bspliner->GetOutput()->GetOrigin()  );
-  //logField->SetSpacing( bspliner->GetOutput()->GetSpacing() );
-  //logField->SetDirection( bspliner->GetOutput()->GetDirection() );
+  logField->SetRegions( bSpliner->GetOutput()->GetLargestPossibleRegion().
+      GetSize() );
+  logField->SetOrigin( bSpliner->GetOutput()->GetOrigin() );
+  logField->SetSpacing( bSpliner->GetOutput()->GetSpacing() );
+  logField->SetDirection( bSpliner->GetOutput()->GetDirection() );
   logField->Allocate();
 
   itk::ImageRegionIterator< ScalarType > ItB( bSpliner->GetOutput(),
@@ -273,10 +290,23 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
   expFilter->SetOperationToExp();
   expFilter->Update();
 
+  vtkImageResample *maskUpsample = vtkImageResample::New();
+  maskUpsample->SetInput(expFilter->GetOutput());
+  expFilter->Delete();
+
+  if (outputSize > 0.0)
+    {
+    maskUpsample->SetAxisMagnificationFactor(0, 1.0/outputSize);
+    maskUpsample->SetAxisMagnificationFactor(1, 1.0/outputSize);
+    maskUpsample->SetAxisMagnificationFactor(2, 1.0/outputSize);
+    }
+
+  maskUpsample->Update();
+
   vtkImageMathematics *imageMathematics = vtkImageMathematics::New();
   imageMathematics->SetInput1(inVolume->GetImageData());
-  imageMathematics->SetInput2(expFilter->GetOutput());
-  expFilter->Delete();
+  imageMathematics->SetInput2(maskUpsample->GetOutput());
+  maskUpsample->Delete();
   imageMathematics->SetOperationToDivide();
   imageMathematics->Update();
 
@@ -289,14 +319,14 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
 void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,
   double dimX, double dimY)
 {
-  // check if MRML node is present
+  // Check if MRML node is present
   if (this->MRIBiasFieldCorrectionNode == NULL)
     {
     vtkErrorMacro("No input MRIBiasFieldCorrectionNode found");
     return;
     }
 
-  // find input volume
+  // Find input volume
   vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::SafeDownCast(
     this->GetMRMLScene()->GetNodeByID(this->MRIBiasFieldCorrectionNode->
       GetInputVolumeRef()));
@@ -319,19 +349,19 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,
     return;
     }
 
-  // create storage volume for preview
-  vtkMRMLScalarVolumeNode *storageVolume = vtkMRMLScalarVolumeNode::
+  // create preview volume for preview
+  vtkMRMLScalarVolumeNode *previewVolume = vtkMRMLScalarVolumeNode::
     SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->
-      MRIBiasFieldCorrectionNode->GetStorageVolumeRef()));
+      MRIBiasFieldCorrectionNode->GetPreviewVolumeRef()));
 
-  if (storageVolume == NULL)
+  if (previewVolume == NULL)
     {
-    vtkErrorMacro("No storage volume with id= " << this->
-      MRIBiasFieldCorrectionNode->GetStorageVolumeRef());
+    vtkErrorMacro("No preview volume with id= " << this->
+      MRIBiasFieldCorrectionNode->GetPreviewVolumeRef());
     return;
     }
 
-  // create mask volume for processing
+  // Create mask volume for processing
   vtkMRMLScalarVolumeNode *maskVolume = vtkMRMLScalarVolumeNode::
     SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->
       MRIBiasFieldCorrectionNode->GetMaskVolumeRef()));
@@ -355,19 +385,50 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,
     return;
     }
 
+  vtkErrorMacro("inVolume");
+  std::cout << *inVolume;
+
+  vtkErrorMacro("maskVolume");
+  std::cout << *maskVolume;
+
+  vtkErrorMacro("previewVolume");
+  std::cout << *previewVolume;
+
+  vtkErrorMacro("outVolume");
+  std::cout << *outVolume;
+
   // copy RASToIJK matrix, and other attributes from input to output
 
-  std::string name (storageVolume->GetName());
-  std::string id (storageVolume->GetID());
+  std::string previewName(previewVolume->GetName());
+  vtkErrorMacro("previewVolume name " << previewName);
 
-  storageVolume->CopyOrientation(inVolume);
-  storageVolume->SetAndObserveTransformNodeID(inVolume->GetTransformNodeID());
-  storageVolume->SetName(name.c_str());
+  std::string outName(outVolume->GetName());
+  vtkErrorMacro("outVolume name " << outName);
+
+  previewVolume->CopyOrientation(inVolume);
+  previewVolume->SetAndObserveTransformNodeID(inVolume->GetTransformNodeID());
 
   outVolume->CopyOrientation(inVolume);
   outVolume->SetAndObserveTransformNodeID(inVolume->GetTransformNodeID());
-  outVolume->SetName(name.c_str());
+  outVolume->SetName(previewName.c_str());
+  /*
+  vtkImageEllipsoidSource *imageSphere = vtkImageEllipsoidSource::New();
+  imageSphere->SetWholeExtent(0,63,0,63,0,63);
+  imageSphere->SetCenter(32,32,32);
+  imageSphere->SetRadius(20,20,20);
+  imageSphere->SetInValue(255);
+  imageSphere->SetOutValue(0);
+  imageSphere->SetOutputScalarTypeToUnsignedChar();
+  imageSphere->Update();
 
+  previewVolume->SetAndObserveImageData(imageSphere->GetOutput());
+  previewVolume->SetModifiedSinceRead(1);
+
+  outVolume->SetAndObserveImageData(imageSphere->GetOutput());
+  outVolume->SetModifiedSinceRead(1);
+
+  return;
+  */
   // get bounds of the array in ijk
 
   double xyOrigin[4];
@@ -397,35 +458,59 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,
   xyToijk->MultiplyPoint( xyCornerX, ijkCornerX );
   xyToijk->MultiplyPoint( xyCornerY, ijkCornerY );
 
-  if( ijkOrigin[0] > ijkCornerX[0] )
-  {
-    std::cout << __LINE__ << " " << __FILE__ << " Error" << std::endl;
-  }
+  vtkErrorMacro("xyOrigin "
+      << xyOrigin[0] << " " << xyOrigin[1] << " " << xyOrigin[2]);
 
-  if( ijkOrigin[1] > ijkCornerX[1] )
-  {
-    std::cout << __LINE__ << " " << __FILE__ << " Error" << std::endl;
-  }
+  vtkErrorMacro("xyCornerX "
+      << xyCornerX[0] << " " << xyCornerX[1] << " " << xyCornerX[2]);
 
-  if( ijkOrigin[2] > ijkCornerX[2] )
-  {
-    std::cout << __LINE__ << " " << __FILE__ << " Error" << std::endl;
-  }
+  vtkErrorMacro("xyCornerY "
+      << xyCornerY[0] << " " << xyCornerY[1] << " " << xyCornerY[2]);
 
-  if( ijkOrigin[0] > ijkCornerY[0] )
-  {
-    std::cout << __LINE__ << " " << __FILE__ << " Error" << std::endl;
-  }
+  vtkErrorMacro("ijkOrigin "
+      << ijkOrigin[0] << " " << ijkOrigin[1] << " " << ijkOrigin[2]);
 
-  if( ijkOrigin[1] > ijkCornerY[1] )
-  {
-    std::cout << __LINE__ << " " << __FILE__ << " Error" << std::endl;
-  }
+  vtkErrorMacro("ijkCornerX "
+      << ijkCornerX[0] << " " << ijkCornerX[1] << " " << ijkCornerX[2]);
 
-  if( ijkOrigin[2] > ijkCornerY[2] )
-  {
-    std::cout << __LINE__ << " " << __FILE__ << " Error" << std::endl;
-  }
+  vtkErrorMacro("ijkCornerY "
+      << ijkCornerY[0] << " " << ijkCornerY[1] << " " << ijkCornerY[2]);
+
+  if (ijkOrigin[0] > ijkCornerX[0])
+    {
+    vtkErrorMacro("ijkOrigin[0] > ijkCornerX[0]");
+    //return;
+    }
+
+  if (ijkOrigin[1] > ijkCornerX[1])
+    {
+    vtkErrorMacro("ijkOrigin[1] > ijkCornerX[1]");
+    //return;
+    }
+
+  if (ijkOrigin[2] > ijkCornerX[2])
+    {
+    vtkErrorMacro("ijkOrigin[2] > ijkCornerX[2]");
+    //return;
+    }
+
+  if (ijkOrigin[0] > ijkCornerY[0])
+    {
+    vtkErrorMacro("ijkOrigin[0] > ijkCornerY[0]");
+    //return;
+    }
+
+  if (ijkOrigin[1] > ijkCornerY[1])
+    {
+    vtkErrorMacro("ijkOrigin[1] > ijkCornerY[1]");
+    //return;
+    }
+
+  if (ijkOrigin[2] > ijkCornerY[2])
+    {
+    vtkErrorMacro("ijkOrigin[2] > ijkCornerY[2]");
+    //return;
+    }
 
   double ijkBounds[6];
   int clipExtent[6];
@@ -466,19 +551,63 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,
   clipExtent[4] = (int) ijkBounds[4];
   clipExtent[5] = (int) ijkBounds[5];
 
-  if( clipExtent[0] > (int) ijkBounds[0] ) { clipExtent[0]--; }
-  if( clipExtent[1] < (int) ijkBounds[1] ) { clipExtent[1]++; }
+  if (clipExtent[0] > (int) ijkBounds[0]) { clipExtent[0]--; }
+  if (clipExtent[1] < (int) ijkBounds[1]) { clipExtent[1]++; }
 
-  if( clipExtent[2] > (int) ijkBounds[2] ) { clipExtent[2]--; }
-  if( clipExtent[3] < (int) ijkBounds[3] ) { clipExtent[3]++; }
+  if (clipExtent[2] > (int) ijkBounds[2]) { clipExtent[2]--; }
+  if (clipExtent[3] < (int) ijkBounds[3]) { clipExtent[3]++; }
 
-  if( clipExtent[4] > (int) ijkBounds[4] ) { clipExtent[4]--; }
-  if( clipExtent[5] < (int) ijkBounds[5] ) { clipExtent[5]++; }
+  if (clipExtent[4] > (int) ijkBounds[4]) { clipExtent[4]--; }
+  if (clipExtent[5] < (int) ijkBounds[5]) { clipExtent[5]++; }
+
+  double maskThreshold = this->MRIBiasFieldCorrectionNode->GetMaskThreshold();
+  int inWholeExtent[6];
+  inVolume->GetImageData()->GetWholeExtent(inWholeExtent);
+
+  int wholeExt[6], ext[6], updateExt[6];
+
+  inVolume->GetImageData()->GetWholeExtent(wholeExt);
+  inVolume->GetImageData()->GetExtent(ext);
+  inVolume->GetImageData()->GetUpdateExtent(updateExt);
+
+  std::cout << __LINE__ << " inVolume wholeExtent"
+    << " " << wholeExt[0] << " " << wholeExt[1]
+    << " " << wholeExt[2] << " " << wholeExt[3]
+    << " " << wholeExt[4] << " " << wholeExt[5] << std::endl;
+
+  std::cout << __LINE__ << " inVolume extent"
+    << " " << ext[0] << " " << ext[1]
+    << " " << ext[2] << " " << ext[3]
+    << " " << ext[4] << " " << ext[5] << std::endl;
+
+  std::cout << __LINE__ << " inVolume updateExtent"
+    << " " << updateExt[0] << " " << updateExt[1]
+    << " " << updateExt[2] << " " << updateExt[3]
+    << " " << updateExt[4] << " " << updateExt[5] << std::endl;
 
   vtkImageClip *imageClip = vtkImageClip::New();
   imageClip->SetInput(inVolume->GetImageData());
   imageClip->SetOutputWholeExtent(clipExtent);
+  imageClip->ClipDataOn();
   imageClip->Update();
+
+  double maskRange[2];
+  imageClip->GetOutput()->GetScalarRange(maskRange);
+
+  maskThreshold = maskRange[0] + maskThreshold * (maskRange[1]-maskRange[0]);
+
+  imageClip->GetOutput()->GetWholeExtent(wholeExt);
+  imageClip->GetOutput()->GetExtent(ext);
+
+  std::cout << __LINE__ << " imageClip wholeExtent"
+    << " " << wholeExt[0] << " " << wholeExt[1]
+    << " " << wholeExt[2] << " " << wholeExt[3]
+    << " " << wholeExt[4] << " " << wholeExt[5] << std::endl;
+
+  std::cout << __LINE__ << " imageClip extent"
+    << " " << ext[0] << " " << ext[1]
+    << " " << ext[2] << " " << ext[3]
+    << " " << ext[4] << " " << ext[5] << std::endl;
 
   vtkImageCast *imageCast = vtkImageCast::New();
   imageCast->SetInput(imageClip->GetOutput());
@@ -486,16 +615,89 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,
   imageCast->SetOutputScalarTypeToFloat();
   imageCast->Update();
 
+  imageCast->GetOutput()->GetWholeExtent(wholeExt);
+  imageCast->GetOutput()->GetExtent(ext);
+
+  std::cout << __LINE__ << " imageCast wholeExtent"
+    << " " << wholeExt[0] << " " << wholeExt[1]
+    << " " << wholeExt[2] << " " << wholeExt[3]
+    << " " << wholeExt[4] << " " << wholeExt[5] << std::endl;
+
+  std::cout << __LINE__ << " imageCast extent"
+    << " " << ext[0] << " " << ext[1]
+    << " " << ext[2] << " " << ext[3]
+    << " " << ext[4] << " " << ext[5] << std::endl;
+
   vtkImageClip *maskClip = vtkImageClip::New();
   maskClip->SetInput(maskVolume->GetImageData());
   maskClip->SetOutputWholeExtent(clipExtent);
+  maskClip->ClipDataOn();
   maskClip->Update();
 
-  outVolume->SetAndObserveImageData(maskClip->GetOutput());
+  maskClip->GetOutput()->GetWholeExtent(wholeExt);
+  maskClip->GetOutput()->GetExtent(ext);
+
+  std::cout << __LINE__ << " maskClip wholeExtent"
+    << " " << wholeExt[0] << " " << wholeExt[1]
+    << " " << wholeExt[2] << " " << wholeExt[3]
+    << " " << wholeExt[4] << " " << wholeExt[5] << std::endl;
+
+  std::cout << __LINE__ << " maskClip extent"
+    << " " << ext[0] << " " << ext[1]
+    << " " << ext[2] << " " << ext[3]
+    << " " << ext[4] << " " << ext[5] << std::endl;
+
+  vtkImageThreshold *imageThreshold = vtkImageThreshold::New();
+  imageThreshold->SetInput(maskClip->GetOutput());
+  maskClip->Delete();
+  imageThreshold->ThresholdByUpper(maskThreshold);
+  imageThreshold->SetInValue(255);
+  imageThreshold->SetOutValue(0);
+  imageThreshold->SetOutputScalarTypeToUnsignedChar();
+  imageThreshold->Update();
+
+  imageThreshold->GetOutput()->GetWholeExtent(wholeExt);
+  imageThreshold->GetOutput()->GetExtent(ext);
+
+  std::cout << __LINE__ << " imageThreshold wholeExtent"
+    << " " << wholeExt[0] << " " << wholeExt[1]
+    << " " << wholeExt[2] << " " << wholeExt[3]
+    << " " << wholeExt[4] << " " << wholeExt[5] << std::endl;
+
+  std::cout << __LINE__ << " imageThreshold extent"
+    << " " << ext[0] << " " << ext[1]
+    << " " << ext[2] << " " << ext[3]
+    << " " << ext[4] << " " << ext[5] << std::endl;
+
+  double thresholdRange[2];
+  imageThreshold->GetOutput()->GetScalarRange(thresholdRange);
+
+  std::cout << __LINE__ << " thresholdRange "
+    << thresholdRange[0] << " " << thresholdRange[1] << std::endl;
+/*
+  vtkImageConstantPad *imageConstantPad = vtkImageConstantPad::New();
+  imageConstantPad->SetInput(imageThreshold->GetOutput());
+  imageThreshold->Delete();
+  imageConstantPad->SetOutputWholeExtent(inWholeExtent);
+  imageConstantPad->SetConstant(0);
+  imageConstantPad->Update();
+*/
+  //this->...Node->Get
+
+  outVolume->SetAndObserveImageData(imageCast->GetOutput());
   outVolume->SetModifiedSinceRead(1);
 
-  typedef itk::Image< float,         2 > ImageType;
-  typedef itk::Image< unsigned char, 2 > MaskType;
+  vtkImageData *previewImage = imageCast->GetOutput();
+  previewImage->Register(NULL);
+  imageCast->Delete();
+
+  previewVolume->SetAndObserveImageData(previewImage);
+  previewVolume->SetModifiedSinceRead(1);
+
+  //vtkMRIBiasFieldCorrectionGUI::
+/*
+  typedef itk::Image<float,         2> ImageType;
+  typedef itk::Image<unsigned char, 2> MaskType;
 
   typedef itk::VTKImageToImageFilter< ImageType > ImageConnectorType;
   typedef itk::VTKImageToImageFilter< MaskType  > MaskConnectorType;
@@ -505,8 +707,8 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,
   itkPreviewConnector->Update();
 
   MaskConnectorType::Pointer itkMaskConnector = MaskConnectorType::New();
-  itkMaskConnector->SetInput(maskClip->GetOutput());
-  maskClip->Delete();
+  itkMaskConnector->SetInput(imageThreshold->GetOutput());
+  imageThreshold->Delete();
   itkMaskConnector->Update();
 
   typedef itk::N3MRIBiasFieldCorrectionImageFilter<ImageType, MaskType,
@@ -515,22 +717,29 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,
   biasField->SetInput( itkPreviewConnector->GetOutput() );
   biasField->SetMaskImage( itkMaskConnector->GetOutput() );
 
-  double convergenceThreshold = this->MRIBiasFieldCorrectionNode->
+  double convergenceThreshold   = this->MRIBiasFieldCorrectionNode->
     GetConvergenceThreshold();
-  double WeinerFilterNoise = this->MRIBiasFieldCorrectionNode->
+  double WienerFilterNoise      = this->MRIBiasFieldCorrectionNode->
     GetWienerFilterNoise();
-  double widthAtHalfMaximum = this->MRIBiasFieldCorrectionNode->
+  double widthAtHalfMaximum     = this->MRIBiasFieldCorrectionNode->
     GetBiasField();
 
-  unsigned int numIterations = this->MRIBiasFieldCorrectionNode->
+  unsigned int numIterations    = this->MRIBiasFieldCorrectionNode->
     GetNumberOfIterations();
   unsigned int numFittingLevels = this->MRIBiasFieldCorrectionNode->
     GetNumberOfFittingLevels();
 
+  std::cout << __LINE__ << " convergenceThreshold " << convergenceThreshold
+    << std::endl;
+  std::cout << __LINE__ << " WienerFilterNoise    " << WienerFilterNoise
+    << std::endl;
+  std::cout << __LINE__ << " widthAtHalfMaximum   " << widthAtHalfMaximum
+    << std::endl;
+
   biasField->SetConvergenceThreshold(convergenceThreshold);
   biasField->SetMaximumNumberOfIterations(numIterations);
   biasField->SetNumberOfFittingLevels(numFittingLevels);
-  biasField->SetWeinerFilterNoise(WeinerFilterNoise);
+  biasField->SetWienerFilterNoise(WienerFilterNoise);
   biasField->SetBiasFieldFullWidthAtHalfMaximum(widthAtHalfMaximum);
   biasField->SetConvergenceThreshold(convergenceThreshold);
   biasField->Update();
@@ -545,14 +754,14 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,
   bspliner->SetSplineOrder( biasField->GetSplineOrder() );
   bspliner->SetSize(itkPreviewConnector->GetOutput()->
       GetLargestPossibleRegion().GetSize() );
-  //bspliner->SetOrigin( itkPreviewConnector->GetOutput()->GetOrigin() );
+  bspliner->SetOrigin( itkPreviewConnector->GetOutput()->GetOrigin() );
+  bspliner->SetSpacing( itkPreviewConnector->GetOutput()->GetSpacing() );
   bspliner->SetDirection( itkPreviewConnector->GetOutput()->GetDirection() );
-  //bspliner->SetSpacing( itkPreviewConnector->GetOutput()->GetSpacing() );
   bspliner->Update();
 
   ImageType::Pointer logField = ImageType::New();
-  //logField->SetOrigin( bspliner->GetOutput()->GetOrigin() );
-  //logField->SetSpacing( bspliner->GetOutput()->GetSpacing() );
+  logField->SetOrigin( bspliner->GetOutput()->GetOrigin() );
+  logField->SetSpacing( bspliner->GetOutput()->GetSpacing() );
   logField->SetRegions( bspliner->GetOutput()->GetLargestPossibleRegion().
       GetSize() );
   logField->SetDirection( bspliner->GetOutput()->GetDirection() );
@@ -565,9 +774,9 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,
       logField->GetLargestPossibleRegion() );
 
   for( ItB.GoToBegin(), ItF.GoToBegin(); !ItB.IsAtEnd(); ++ItB, ++ItF )
-  {
+    {
     ItF.Set( ItB.Get()[0] );
-  }
+    }
 
   typedef itk::ImageToVTKImageFilter< ImageType > VTKConnectorType;
   VTKConnectorType::Pointer logFieldConnector = VTKConnectorType::New();
@@ -581,6 +790,25 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,
   expFilter->SetOperationToExp();
   expFilter->Update();
 
+  expFilter->GetOutput()->GetWholeExtent(wholeExt);
+  expFilter->GetOutput()->GetExtent(ext);
+  expFilter->GetOutput()->GetUpdateExtent(updateExt);
+
+  std::cout << __LINE__ << " expFilter wholeExtent"
+    << " " << wholeExt[0] << " " << wholeExt[1]
+    << " " << wholeExt[2] << " " << wholeExt[3]
+    << " " << wholeExt[4] << " " << wholeExt[5] << std::endl;
+
+  std::cout << __LINE__ << " expFilter extent"
+    << " " << ext[0] << " " << ext[1]
+    << " " << ext[2] << " " << ext[3]
+    << " " << ext[4] << " " << ext[5] << std::endl;
+
+  std::cout << __LINE__ << " expFilter updateExtent"
+    << " " << updateExt[0] << " " << updateExt[1]
+    << " " << updateExt[2] << " " << updateExt[3]
+    << " " << updateExt[4] << " " << updateExt[5] << std::endl;
+
   vtkImageMathematics *imageMathematics = vtkImageMathematics::New();
   imageMathematics->SetInput1(imageCast->GetOutput());
   imageCast->Delete();
@@ -590,29 +818,33 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,
   imageMathematics->Update();
 
   std::cout << __FILE__ << std::endl;
-  std::cout << "line " << __LINE__ << ": CORRECTION DONE" <<std::endl;
+  std::cout << __LINE__ << ": CORRECTION DONE" <<std::endl;
 
-  this->PreviewImage = imageMathematics->GetOutput();
-  this->PreviewImage->Register(NULL);
+  vtkImageData *previewImage = imageMathematics->GetOutput();
+  previewImage->Register(NULL);
   imageMathematics->Delete();
+*/
+  /*
+  vtkImageData *previewImage = imageCast->GetOutput();
+  previewImage->Register(NULL);
+  imageCast->Delete();
 
-  // copy origin and spacing
-
-  storageVolume->SetAndObserveImageData(this->PreviewImage);
-  storageVolume->SetModifiedSinceRead(1);
+  previewVolume->SetAndObserveImageData(previewImage);
+  previewVolume->SetModifiedSinceRead(1);
+  */
 }
 
 //-------------------------------------------------------------------
 void vtkMRIBiasFieldCorrectionLogic::Preview()
 {
-  // check if MRML node is present
+  // Check if MRML node is present
   if (this->MRIBiasFieldCorrectionNode == NULL)
     {
     vtkErrorMacro("No input MRIBiasFieldCorrectionNode found");
     return;
     }
 
-  // find input volume
+  // Find input volume
   vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::
     SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->
       MRIBiasFieldCorrectionNode->GetInputVolumeRef()));
@@ -623,32 +855,39 @@ void vtkMRIBiasFieldCorrectionLogic::Preview()
     return;
     }
 
-  // find output volume
-  vtkMRMLScalarVolumeNode *storageVolume = vtkMRMLScalarVolumeNode::
+  // Find output volume
+  vtkMRMLScalarVolumeNode *previewVolume = vtkMRMLScalarVolumeNode::
     SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->
-      MRIBiasFieldCorrectionNode->GetStorageVolumeRef()));
+      MRIBiasFieldCorrectionNode->GetPreviewVolumeRef()));
 
-  if (storageVolume == NULL)
+  if (previewVolume == NULL)
     {
-    vtkErrorMacro("No storage volume with id " << this->
-      MRIBiasFieldCorrectionNode->GetStorageVolumeRef());
+    vtkErrorMacro("No preview volume with id " << this->
+      MRIBiasFieldCorrectionNode->GetPreviewVolumeRef());
     return;
     }
 
-  // copy RASToIJK matrix, and other attributes from input to output
-  std::string name (storageVolume->GetName());
-  std::string id (storageVolume->GetID());
+  vtkErrorMacro("inVolume");
+  std::cout << *inVolume;
 
-  storageVolume->CopyOrientation(inVolume);
-  storageVolume->SetAndObserveTransformNodeID(inVolume->GetTransformNodeID());
-  storageVolume->SetName(name.c_str());
+  vtkErrorMacro("previewVolume");
+  std::cout << *previewVolume;
+
+  return;
 
   // copy RASToIJK matrix, and other attributes from input to output
-  storageVolume->SetAndObserveImageData(inVolume->GetImageData());
+  std::string name (previewVolume->GetName());
+
+  previewVolume->CopyOrientation(inVolume);
+  previewVolume->SetAndObserveTransformNodeID(inVolume->GetTransformNodeID());
+  previewVolume->SetName(name.c_str());
+
+  // copy RASToIJK matrix, and other attributes from input to output
+  previewVolume->SetAndObserveImageData(inVolume->GetImageData());
 
   // set ouput of the filter to VolumeNode's ImageData
   // TODO FIX the bug of the image is deallocated unless we do DeepCopy
-  storageVolume->SetModifiedSinceRead(1);
+  previewVolume->SetModifiedSinceRead(1);
 }
 
 //-------------------------------------------------------------------

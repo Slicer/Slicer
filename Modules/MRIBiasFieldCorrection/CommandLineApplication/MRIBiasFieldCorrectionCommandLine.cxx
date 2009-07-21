@@ -85,29 +85,21 @@ template<class T> int DoIt( int argc, char * argv[], T )
 
   shrinker->SetShrinkFactors(3);
   maskshrinker->SetShrinkFactors(3);
-  
-  
   shrinker->Update();
   maskshrinker->Update();
-  
-// Bias Correction Filter
+
+  // Bias Correction Filter
 
   typedef itk::N3MRIBiasFieldCorrectionImageFilter<InputImageType, MaskImageType,
     InputImageType> CorrecterType;
   typename CorrecterType::Pointer correcter = CorrecterType::New();
   correcter->SetInput( shrinker->GetOutput() );
   correcter->SetMaskImage( maskshrinker->GetOutput() );
-  
-  
-    correcter->SetMaximumNumberOfIterations( numberOfIterations );
-
-    correcter->SetNumberOfFittingLevels(numberOfFitting);
-    
-    correcter->SetWeinerFilterNoise(weinerFilterNoise);
-    
-    correcter->SetBiasFieldFullWidthAtHalfMaximum(biasFieldFullWidthAtHalfMaximum);
-    
-    correcter->SetConvergenceThreshold(convergenceThreshold);
+  correcter->SetMaximumNumberOfIterations( numberOfIterations );
+  correcter->SetNumberOfFittingLevels(numberOfFitting);
+  correcter->SetWienerFilterNoise(wienerFilterNoise);
+  correcter->SetBiasFieldFullWidthAtHalfMaximum(biasFieldFullWidthAtHalfMaximum);
+  correcter->SetConvergenceThreshold(convergenceThreshold);
 
   try
     {
@@ -118,9 +110,9 @@ template<class T> int DoIt( int argc, char * argv[], T )
     std::cerr << "Exception caught." << std::endl;
     return EXIT_FAILURE;
     }
-  
-// BSpline Control Filter
-  
+
+  // BSpline Control Filter
+
   typedef itk::BSplineControlPointImageFilter<typename
     CorrecterType::BiasFieldControlPointLatticeType, typename
     CorrecterType::ScalarImageType> BSplinerType;

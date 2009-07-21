@@ -29,6 +29,11 @@ class vtkKWScaleWithEntry;
 class vtkKWPushButton;
 class vtkKWFrameWithLabel;
 class vtkKWSpinBoxWithLabel;
+class vtkKWRenderWidget;
+class vtkImageViewer2;
+class vtkImageResample;
+class vtkImageThreshold;
+class vtkImageSeedConnectivity;
 class vtkSlicerNodeSelectorWidget;
 class vtkSlicerApplicationLogic;
 
@@ -108,11 +113,9 @@ protected:
   // Updates parameters values in MRML node based on GUI widgets
   void UpdateMRML();
 
-  vtkKWScaleWithEntry               *SagittalScale;
-  vtkKWScaleWithEntry               *CoronalScale;
-  vtkKWScaleWithEntry               *AxialScale;
+  vtkKWScaleWithEntry               *SliceScale;
   vtkKWScaleWithEntry               *MaskThresholdScale;
-  vtkKWScaleWithEntry               *ShrinkFactorScale;
+  vtkKWScaleWithEntry               *OutputSizeScale;
   vtkKWScaleWithEntry               *NumberOfIterationsScale;
   vtkKWScaleWithEntry               *NumberOfFittingLevelsScale;
   vtkKWScaleWithEntry               *WienerFilterNoiseScale;
@@ -123,11 +126,11 @@ protected:
   vtkSlicerNodeSelectorWidget       *VolumeSelector;
   vtkSlicerNodeSelectorWidget       *OutVolumeSelector;
   vtkSlicerNodeSelectorWidget       *NodeSelector;
-  vtkSlicerNodeSelectorWidget       *StorageVolumeSelector;
+  vtkSlicerNodeSelectorWidget       *PreviewVolumeSelector;
   vtkSlicerNodeSelectorWidget       *MaskVolumeSelector;
 
   vtkKWPushButton                   *ApplyButton;
-  vtkKWPushButton                   *CatchButton;
+  vtkKWPushButton                   *PreviewButton;
 
   vtkMRIBiasFieldCorrectionLogic    *Logic;
   vtkMRMLMRIBiasFieldCorrectionNode *MRIBiasFieldCorrectionNode;
@@ -135,6 +138,12 @@ protected:
   vtkKWFrameWithLabel               *VolumeSelectionFrame;
   vtkKWFrameWithLabel               *ParametersFrame;
   vtkKWFrameWithLabel               *AdvancedParametersFrame;
+
+  vtkImageResample                  *ImageResample;
+  vtkImageThreshold                 *ImageThreshold;
+  vtkImageSeedConnectivity          *ImageSeedConnectivity;
+  vtkImageViewer2                   *ImageViewer2;
+  vtkKWRenderWidget                 *RenderWidget;
 };
 
 #endif

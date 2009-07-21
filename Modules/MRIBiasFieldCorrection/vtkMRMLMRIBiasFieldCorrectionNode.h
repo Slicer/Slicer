@@ -18,11 +18,8 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
-#include "vtkMRMLStorageNode.h"
-
 #include "vtkMRIBiasFieldCorrection.h"
-
-class vtkImageData;
+#include "vtkImageData.h"
 
 class VTK_MRIBiasFieldCorrection_EXPORT vtkMRMLMRIBiasFieldCorrectionNode :
   public vtkMRMLNode
@@ -38,7 +35,7 @@ class VTK_MRIBiasFieldCorrection_EXPORT vtkMRMLMRIBiasFieldCorrectionNode :
 
   // Description:
   // Set node attributes from name/value pairs
-  virtual void ReadXMLAttributes( const char** atts);
+  virtual void ReadXMLAttributes(const char** atts);
 
   // Description:
   // Write this node's information to a MRML file in XML format.
@@ -59,8 +56,8 @@ class VTK_MRIBiasFieldCorrection_EXPORT vtkMRMLMRIBiasFieldCorrectionNode :
 
   // Description:
   // Get/Set the factor to downsample the image
-  vtkGetMacro(ShrinkFactor, double);
-  vtkSetMacro(ShrinkFactor, double);
+  vtkGetMacro(OutputSize, double);
+  vtkSetMacro(OutputSize, double);
 
   // Description:
   // Get/Set the number of fitting levels
@@ -98,9 +95,9 @@ class VTK_MRIBiasFieldCorrection_EXPORT vtkMRMLMRIBiasFieldCorrectionNode :
   vtkSetStringMacro(OutputVolumeRef);
 
   // Description:
-  // Get/Set storage volume MRML id
-  vtkGetStringMacro(StorageVolumeRef);
-  vtkSetStringMacro(StorageVolumeRef);
+  // Get/Set preview volume MRML id
+  vtkGetStringMacro(PreviewVolumeRef);
+  vtkSetStringMacro(PreviewVolumeRef);
 
   // Description:
   // Get/Set mask volume MRML id
@@ -110,23 +107,38 @@ class VTK_MRIBiasFieldCorrection_EXPORT vtkMRMLMRIBiasFieldCorrectionNode :
   // Description:
   // Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
-
+/*
+  // Description:
+  // Get/Set demo image
+  vtkImageData *GetDemoImage() { return this->DemoImage; }
+  void SetDemoImage(vtkImageData *image)
+    {
+    if (this->DemoImage)
+      {
+      this->DemoImage->Delete();
+      }
+    this->DemoImage = image;
+    this->DemoImage->Register(NULL);
+    }
+*/
 protected:
   vtkMRMLMRIBiasFieldCorrectionNode();
   ~vtkMRMLMRIBiasFieldCorrectionNode();
   vtkMRMLMRIBiasFieldCorrectionNode(const vtkMRMLMRIBiasFieldCorrectionNode&);
   void operator=(const vtkMRMLMRIBiasFieldCorrectionNode&);
 
-  char* InputVolumeRef;
-  char* OutputVolumeRef;
-  char* StorageVolumeRef;
-  char* MaskVolumeRef;
+  //vtkImageData *DemoImage;
+
+  char *InputVolumeRef;
+  char *OutputVolumeRef;
+  char *PreviewVolumeRef;
+  char *MaskVolumeRef;
 
   unsigned int NumberOfIterations;
   unsigned int NumberOfFittingLevels;
 
   double MaskThreshold;
-  double ShrinkFactor;
+  double OutputSize;
   double WienerFilterNoise;
   double BiasField;
   double ConvergenceThreshold;

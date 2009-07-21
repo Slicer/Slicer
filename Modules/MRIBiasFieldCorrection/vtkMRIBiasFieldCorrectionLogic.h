@@ -24,8 +24,6 @@
 #include "vtkMRIBiasFieldCorrection.h"
 #include "vtkMRMLMRIBiasFieldCorrectionNode.h"
 
-class vtkImageThreshold;
-class vtkImageClip;
 class vtkImageData;
 
 class VTK_MRIBiasFieldCorrection_EXPORT vtkMRIBiasFieldCorrectionLogic :
@@ -71,12 +69,8 @@ protected:
 
   vtkMRMLMRIBiasFieldCorrectionNode* MRIBiasFieldCorrectionNode;
 
-  vtkImageThreshold *ImageThreshold;
-  vtkImageClip      *ImageClip;
-  vtkImageData      *Storage;
-  vtkImageData      *PreviewImage;
-  vtkImageData      *Mask;
+  vtkImageData *PreviewImage;
+  vtkImageData *Mask;
 };
 
 #endif
-
