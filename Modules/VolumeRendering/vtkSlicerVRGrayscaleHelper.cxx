@@ -1762,7 +1762,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->SC_ExpectedFPS=vtkKWScale::New();
         this->SC_ExpectedFPS->SetParent(this->FrameFPS->GetFrame());
         this->SC_ExpectedFPS->Create();
-        this->SC_ExpectedFPS->SetBalloonHelpString("Influence performance and quality of volume rendering. 20 very fast, 1 slow but higher quality.");
+        this->SC_ExpectedFPS->SetBalloonHelpString("Adjust performance/quality. 1 fps: slow and high quality. 20 fps: fast and low quality.");
         this->SC_ExpectedFPS->SetRange(1,20); 
         this->SC_ExpectedFPS->SetResolution(1);
         this->SC_ExpectedFPS->SetValue(5.0);
