@@ -1,4 +1,4 @@
-/*=auto====================================================================
+/*=auto=======================================================================
 
   Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
   Reserved.
@@ -10,9 +10,9 @@
   Module:    $RCSfile: vtkMRIBiasFieldCorrectionGUI.cxx,v $
   Date:      $Date: 2006/03/17 15:10:10 $
   Version:   $Revision: 1.2 $
-  Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)
+  Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 
-====================================================================auto=*/
+=======================================================================auto=*/
 
 #include "vtkMRIBiasFieldCorrectionGUI.h"
 
@@ -50,7 +50,7 @@
 #include "vtkImageSeedConnectivity.h"
 #include "vtkImageViewer2.h"
 
-//-------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 vtkMRIBiasFieldCorrectionGUI* vtkMRIBiasFieldCorrectionGUI::New()
 {
   // First try to create the object from the vtkObjectFactory
@@ -66,10 +66,9 @@ vtkMRIBiasFieldCorrectionGUI* vtkMRIBiasFieldCorrectionGUI::New()
   return new vtkMRIBiasFieldCorrectionGUI;
 }
 
-//-------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 vtkMRIBiasFieldCorrectionGUI::vtkMRIBiasFieldCorrectionGUI()
 {
-  this->NumberOfIterationsScale    = vtkKWScaleWithEntry::New();
   this->MaskThresholdScale         = vtkKWScaleWithEntry::New();
   this->OutputSizeScale            = vtkKWScaleWithEntry::New();
   this->NumberOfIterationsScale    = vtkKWScaleWithEntry::New();
@@ -102,7 +101,7 @@ vtkMRIBiasFieldCorrectionGUI::vtkMRIBiasFieldCorrectionGUI()
   this->MRIBiasFieldCorrectionNode = NULL;
 }
 
-//-------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 vtkMRIBiasFieldCorrectionGUI::~vtkMRIBiasFieldCorrectionGUI()
 {
   if (this->BiasIntensityScale)
@@ -273,13 +272,13 @@ vtkMRIBiasFieldCorrectionGUI::~vtkMRIBiasFieldCorrectionGUI()
   vtkSetMRMLNodeMacro(this->MRIBiasFieldCorrectionNode,NULL);
 }
 
-//-------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkMRIBiasFieldCorrectionGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }
 
-//-------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkMRIBiasFieldCorrectionGUI::AddGUIObservers()
 {
   this->VolumeSelector->AddObserver( vtkSlicerNodeSelectorWidget::
@@ -310,7 +309,7 @@ void vtkMRIBiasFieldCorrectionGUI::AddGUIObservers()
       (vtkCommand*)this->GUICallbackCommand);
 }
 
-//-------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkMRIBiasFieldCorrectionGUI::RemoveGUIObservers()
 {
   this->VolumeSelector->RemoveObservers( vtkSlicerNodeSelectorWidget::
@@ -342,7 +341,7 @@ void vtkMRIBiasFieldCorrectionGUI::RemoveGUIObservers()
       (vtkCommand*)this->GUICallbackCommand );
 }
 
-//-------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkMRIBiasFieldCorrectionGUI::ProcessGUIEvents( vtkObject *caller,
   unsigned long event, void *callData )
 {
@@ -429,10 +428,6 @@ void vtkMRIBiasFieldCorrectionGUI::ProcessGUIEvents( vtkObject *caller,
     {
     double sliceNormalized     = this->SliceScale->GetValue();
     double thresholdNormalized = this->MaskThresholdScale->GetValue();
-
-    //vtkMRMLMRIBiasFieldCorrectionNode *node =
-    //vtkMRMLMRIBiasFieldCorrectionNode::SafeDownCast(
-    //  this->NodeSelector->GetSelected());
 
     std::string volumeId = this->MRIBiasFieldCorrectionNode->
       GetInputVolumeRef();
@@ -583,7 +578,7 @@ void vtkMRIBiasFieldCorrectionGUI::ProcessGUIEvents( vtkObject *caller,
   */
 }
 
-//-------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkMRIBiasFieldCorrectionGUI::UpdateMRML()
 {
   vtkMRMLMRIBiasFieldCorrectionNode* node = this->
@@ -645,7 +640,7 @@ void vtkMRIBiasFieldCorrectionGUI::UpdateMRML()
     }
 }
 
-//--------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkMRIBiasFieldCorrectionGUI::UpdateGUI()
 {
   vtkMRMLMRIBiasFieldCorrectionNode* node = this->
@@ -674,7 +669,7 @@ void vtkMRIBiasFieldCorrectionGUI::UpdateGUI()
     }
 }
 
-//--------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkMRIBiasFieldCorrectionGUI::ProcessMRMLEvents(vtkObject *caller,
   unsigned long event, void *callData)
 {
@@ -691,13 +686,11 @@ void vtkMRIBiasFieldCorrectionGUI::ProcessMRMLEvents(vtkObject *caller,
     }
 }
 
-//--------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
 {
-  //vtkSlicerApplication *app = (vtkSlicerApplication*)this->GetApplication();
-
-  vtkMRMLMRIBiasFieldCorrectionNode* node =
-    vtkMRMLMRIBiasFieldCorrectionNode::New();
+  vtkMRMLMRIBiasFieldCorrectionNode* node = vtkMRMLMRIBiasFieldCorrectionNode
+    ::New();
 
   this->Logic->GetMRMLScene()->RegisterNodeClass(node);
   node->Delete();
@@ -716,8 +709,7 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
   about += "and the Slicer Community. See <a>http://www.slicer.org</a> for ";
   about += "details. ";
 
-  vtkKWWidget *page = this->UIPanel->GetPageWidget(
-      "MRIBiasFieldCorrection");
+  vtkKWWidget *page = this->UIPanel->GetPageWidget("MRIBiasFieldCorrection");
   this->BuildHelpAndAboutFrame( page, help.c_str(), about.c_str() );
 
   vtkSlicerModuleCollapsibleFrame *moduleFrame =
@@ -742,7 +734,7 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
   this->NodeSelector->UpdateMenu();
 
   this->NodeSelector->SetBorderWidth(2);
-  this->NodeSelector->SetLabelText( "IN Parameters");
+  this->NodeSelector->SetLabelText( "Bias Field Parameters");
   this->NodeSelector->SetBalloonHelpString(
     "select a bias field node from the current mrml scene.");
   this->Script("pack %s -side top -anchor e -padx 20 -pady 4",
@@ -756,7 +748,7 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
   this->VolumeSelector->UpdateMenu();
 
   this->VolumeSelector->SetBorderWidth(2);
-  this->VolumeSelector->SetLabelText("Input Volume: ");
+  this->VolumeSelector->SetLabelText("Input Volume:");
   this->VolumeSelector->SetBalloonHelpString(
     "select an input volume from the current mrml scene.");
   this->Script("pack %s -side top -anchor e -padx 20 -pady 4",
@@ -770,7 +762,7 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
   this->MaskVolumeSelector->UpdateMenu();
 
   this->MaskVolumeSelector->SetBorderWidth(2);
-  this->MaskVolumeSelector->SetLabelText("Mask Volume: ");
+  this->MaskVolumeSelector->SetLabelText("Mask Volume:");
   this->MaskVolumeSelector->SetBalloonHelpString(
     "select an output volume from the current mrml scene.");
   this->Script("pack %s -side top -anchor e -padx 20 -pady 4",
@@ -785,7 +777,7 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
   this->PreviewVolumeSelector->UpdateMenu();
 
   this->PreviewVolumeSelector->SetBorderWidth(2);
-  this->PreviewVolumeSelector->SetLabelText("Preview Volume: ");
+  this->PreviewVolumeSelector->SetLabelText("Preview Volume:");
   this->PreviewVolumeSelector->SetBalloonHelpString(
     "select an output volume from the current mrml scene.");
   this->Script("pack %s -side top -anchor e -padx 20 -pady 4",
@@ -807,7 +799,7 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
   this->Script("pack %s -side top -anchor e -padx 20 -pady 4",
     this->OutVolumeSelector->GetWidgetName());
 
-  //-------------------------------------------------------------------------
+  //--------------------------------------------------------------------------
   if (this->AdvancedParametersFrame == NULL)
     {
     this->AdvancedParametersFrame = vtkKWFrameWithLabel::New();
@@ -825,7 +817,7 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
 
   vtkKWFrame* aparametersFrame = this->AdvancedParametersFrame->GetFrame();
 
-  //-------------------------------------------------------------------------
+  //--------------------------------------------------------------------------
   if (this->MaskThresholdScale == NULL)
     {
     this->MaskThresholdScale = vtkKWScaleWithEntry::New();
@@ -844,7 +836,7 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
   this->Script("pack %s -side top -anchor e -expand n -padx 2 -pady 6",
     this->MaskThresholdScale->GetWidgetName());
 
-  //-------------------------------------------------------------------------
+  //--------------------------------------------------------------------------
   if (this->OutputSizeScale == NULL)
     {
     this->OutputSizeScale = vtkKWScaleWithEntry::New();
@@ -863,7 +855,7 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
   this->Script("pack %s -side top -anchor e -expand n -padx 2 -pady 6",
     this->OutputSizeScale->GetWidgetName());
 
-  //-------------------------------------------------------------------------
+  //--------------------------------------------------------------------------
   if (this->NumberOfIterationsScale == NULL)
     {
     this->NumberOfIterationsScale = vtkKWScaleWithEntry::New();
@@ -882,7 +874,7 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
   this->Script("pack %s -side top -anchor e -expand n -padx 2 -pady 6",
     this->NumberOfIterationsScale->GetWidgetName());
 
-  //-------------------------------------------------------------------------
+  //--------------------------------------------------------------------------
   if (this->NumberOfFittingLevelsScale == NULL)
     {
     this->NumberOfFittingLevelsScale = vtkKWScaleWithEntry::New();
@@ -902,7 +894,7 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
   this->Script("pack %s -side top -anchor e -expand n -padx 2 -pady 6",
     this->NumberOfFittingLevelsScale->GetWidgetName());
 
-  //-------------------------------------------------------------------------
+  //--------------------------------------------------------------------------
   if (this->WienerFilterNoiseScale == NULL)
     {
     this->WienerFilterNoiseScale = vtkKWScaleWithEntry::New();
@@ -958,7 +950,7 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
   this->Script("pack %s -side top -anchor e -expand n -padx 2 -pady 6",
     this->ConvergenceThresholdScale->GetWidgetName());
 
-  //-------------------------------------------------------------------------
+  //--------------------------------------------------------------------------
   if (this->SliceScale == NULL)
     {
     this->SliceScale = vtkKWScaleWithEntry::New();
