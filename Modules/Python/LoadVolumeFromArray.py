@@ -84,25 +84,41 @@ numpy_nrrd_names = { 'int8':'char', 'uint8':'unsigned char', 'int16':'short',  '
 numpy_vtk_types = { 'int8':'2', 'uint8':'3', 'int16':'4',  'uint16':'5',  'int32':'6',  'uint32':'7',  'float32':'10',  'float64':'11' }
 
 def Execute (
-             OutputVol0="",\
-             OutputVol1="",\
-             OutputVol2="",\
              inFilename="",\
              dataFilename="",\
              ijkFilename="",\
-             muFilename="" ):
+             muFilename="",\
+             OutputVol0="",\
+             OutputVol1="",\
+             OutputVol2=""
+             ):
   Slicer = __import__ ( "Slicer" )
   slicer = Slicer.slicer
   scene = slicer.MRMLScene
 
-  if inFilename == "" or (inFilename.split('.')[1]!='in' and inFilename.split('.')[1]!='dims') :
+  print 'In : ', inFilename
+  print 'Data : ', dataFilename
+  print 'IJK : ', ijkFilename
+
+
+  if inFilename == "":
+     return 
+
+  if (inFilename.split('/')[-1].split('.')[1]!='in' and inFilename.split('/')[-1].split('.')[1]!='dims') :
      return
 
-  if dataFilename == "" or (dataFilename.split('.')[1]!='data' and dataFilename.split('.')[1]!='dwi' and dataFilename.split('.')[1]!='dti' and dataFilename.split('.')[1]!='roi' and dataFilename.split('.')[1]!='scal'):
+  if dataFilename == "": 
+     return 
+
+  if (dataFilename.split('/')[-1].split('.')[1]!='data' and dataFilename.split('/')[-1].split('.')[1]!='dwi' and dataFilename.split('/')[-1].split('.')[1]!='dti' and dataFilename.split('/')[-1].split('.')[1]!='roi' and dataFilename.split('/')[-1].split('.')[1]!='scal'):
      return
 
-  if ijkFilename == "" or ijkFilename.split('.')[1]!='ijk':
+  if ijkFilename == "":
      return
+ 
+  if ijkFilename.split('/')[-1].split('.')[1]!='ijk':
+     return
+
 
 
   # take dimensions of the image
@@ -293,7 +309,7 @@ def Execute (
      for j in range(4):
         mat.SetElement(i,j, ijk[i,j])
 
-
+    OutputVol.LabelMapOn()
     OutputVol.SetAndObserveImageData(imgD)
     OutputVol.SetIJKToRASMatrix(mat)
 

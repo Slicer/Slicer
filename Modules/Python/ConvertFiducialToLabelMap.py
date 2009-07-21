@@ -44,9 +44,9 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
 import os, time, numpy
 
 def Execute (\
-  inputVol0,\
-  outputVol0="",\
-  fiducials0=[]
+  fiducials0=[],\
+  inputVol0="",\
+  outputVol0=""
   ):
   Slicer = __import__ ( "Slicer" )
   slicer = Slicer.slicer
@@ -95,6 +95,7 @@ def Execute (\
 
     fVect1 = ((numpy.dot(R2I[:3, :3], fVect0.T) + R2I[:3,3][numpy.newaxis].T).T).astype('uint16')
 
+    outputVol.LabelMapOn()
     outputVol.SetAndObserveImageData(imgD)
     outputVol.SetIJKToRASMatrix(i2r)
     outputVol.SetSpacing(spa[0], spa[1], spa[2])

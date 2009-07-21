@@ -112,14 +112,6 @@ def Execute (inputVolume):
     params[5] = numpy_vtk_types[ str(typeD) ]
   else:
     return
-    #tmpI = 'NODEF'
-    #params = numpy.zeros((data.ndim+1), 'uint16')
-    #for i in range(data.ndim+1):
-    #   params[i] = shapeD[i]
-    #params[data.ndim] = numpy_vtk_types[ str(typeD) ] 
-
-  # to translate back from file
-  #dtype = vtk_types [ int(scalar_type[0]) ]
   
   tmpN = inputVolume.GetName().split('.')[0].replace(' ', '_')
   

@@ -3,7 +3,7 @@
 XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Converters</category>
-  <title>Python Stochastic Tractography Generator</title>
+  <title>Python Stochastic Tractography Generator (Labels)</title>
   <description> This module implements stochastic tractography. For more information please refer to the following link 
 
 www.na-mic.org/Wiki/index.php/Python_Stochastic_Tractography_Tutorial
@@ -53,6 +53,21 @@ Grants: National Alliance for Medical Image Computing (NAMIC), funded by the Nat
       <channel>input</channel>
       <description>Input WM volume</description>
     </image>
+
+    <point multiple="true">
+      <name>fiducials0</name>
+      <longflag>fiducials0</longflag>
+      <label>Input Fiducials (Region A)</label>
+      <description>Input Fiducials</description>
+    </point>
+
+    <point multiple="true">
+      <name>fiducials1</name>
+      <longflag>fiducials1</longflag>
+      <label>Input Fiducials (Region B)</label>
+      <description>Input Fiducials</description>
+    </point>
+
 
   </parameters>
 
@@ -237,7 +252,6 @@ Grants: National Alliance for Medical Image Computing (NAMIC), funded by the Nat
 """
 
 import numpy
-#import socket
 import time
 import os
 
@@ -292,7 +306,6 @@ def sendVolume(vol, path, ext='notdef', isDti=False):
         I2RD[i,j] = i2rd.GetElement(i,j)
         I2R[i,j] = i2r.GetElement(i,j)
         R2I[i,j] = r2i.GetElement(i,j)
-
 
   nameT = tmpF + name.split('.')[0] 
 
@@ -352,7 +365,6 @@ def sendVolume(vol, path, ext='notdef', isDti=False):
      dimensions[4] = numpy_vtk_types[ str(dtype) ] 
      dimensions.tofile(nameT + '.dims')
 
-
   elif  len(shape)==2: # dti
      dimensions = numpy.zeros((3), 'uint16')
      dimensions[0] = shape[0]
@@ -367,11 +379,88 @@ def sendVolume(vol, path, ext='notdef', isDti=False):
      dimensions[2] = shape[2]
      dimensions[3] = numpy_vtk_types[ str(dtype) ] 
      dimensions.tofile(nameT + '.dims')
-  
 
   data.tofile(nameT + '.' + ext)
 
   return shape, dtype
+
+
+##
+def sendLVolume(vol, fiducials, path, tag='', ext='notdef'):
+
+  Slicer = __import__ ( "Slicer" )
+  slicer = Slicer.slicer
+
+  tmpF = path 
+       
+  name = vol.GetName()
+
+  dims = vol.GetImageData().GetDimensions()
+
+  data = numpy.zeros((dims[2], dims[1], dims[0]), 'uint16')
+  shape = data.shape
+  dtype = data.dtype
+
+  org = vol.GetOrigin()
+  spa = vol.GetSpacing()
+ 
+  I2RD = numpy.zeros((4,4), 'float')
+  I2R = numpy.zeros((4,4), 'float')
+  R2I = numpy.zeros((4,4), 'float')
+
+  i2rd = slicer.vtkMatrix4x4()
+
+  vol.GetIJKToRASDirectionMatrix(i2rd)
+
+  i2r = slicer.vtkMatrix4x4()
+  r2i = slicer.vtkMatrix4x4()
+
+  vol.GetRASToIJKMatrix(r2i)
+  vol.GetIJKToRASMatrix(i2r)
+
+  for i in range(4):
+     for j in range(4):
+        I2RD[i,j] = i2rd.GetElement(i,j)
+        I2R[i,j] = i2r.GetElement(i,j)
+        R2I[i,j] = r2i.GetElement(i,j)
+
+  nameT = tmpF + name.split('.')[0] 
+
+  origin = numpy.array([org[0], org[1], org[2]], 'float')
+  origin.tofile(nameT + '_' + tag + '.org')
+
+  spacing = numpy.array([spa[0], spa[1], spa[2]], 'float')
+  spacing.tofile(nameT + '_' + tag + '.spa')
+
+  I2RD.tofile(nameT + '_' + tag + '.ijkd')
+
+  I2R.tofile(nameT + '_' + tag + '.ijk')
+
+  R2I.tofile(nameT + '_' + tag + '.ras')
+
+  dimensions = numpy.zeros((4), 'uint16')
+  dimensions[0] = dims[2]
+  dimensions[1] = dims[1]
+  dimensions[2] = dims[0]
+  dimensions[3] = numpy_vtk_types[ str(dtype) ] 
+  dimensions.tofile(nameT + '_' + tag + '.dims')
+
+  nf0 = len(fiducials)
+  fVect0 = numpy.zeros((nf0, 3), 'float')
+  for i in range(nf0):
+      fVect0[i, 0]= fiducials[i][0]
+      fVect0[i, 1]= fiducials[i][1]
+      fVect0[i, 2]= fiducials[i][2]
+
+  fVect1 = ((numpy.dot(R2I[:3, :3], fVect0.T) + R2I[:3,3][numpy.newaxis].T).T).astype('uint16')
+
+  for i in range(nf0):
+    data[fVect1[i][2]+1, fVect1[i][1]+1, fVect1[i][0]+1]= 1
+
+  data.tofile(nameT + '_' + tag + '.' + ext)
+
+  return shape, dtype
+
 
 ##
 #def recvVolume( shape, dtype, c, log='report.log', isDti=False):
@@ -424,6 +513,8 @@ def Execute (\
              probMode,\
              lengthEnabled,\
              lengthClass,\
+             fiducials0=[],\
+             fiducials1=[],\
              inputVol0 = "",\
              inputVol1 = "",\
              inputVol2 = "",\
@@ -457,6 +548,7 @@ def Execute (\
       wm = scene.GetNodeByID(inputVol3)
       wmName = wm.GetName()
 
+
   #if inputVol4:
   #    ten = scene.GetNodeByID(inputVol4)
   #    tenName = ten.GetName()
@@ -483,9 +575,19 @@ def Execute (\
 
   if roiAName:
      sendVolume(roiA, tmpF, 'roi')
+  else:
+     nf0 = len(fiducials0)
+     if  nf0>0:
+       sendLVolume(dwi, fiducials0, tmpF, 'roiA', 'roi')
+
 
   if roiBName:
      sendVolume(roiB, tmpF, 'roi')
+  else:
+     nf1 = len(fiducials1)
+     if  nf1>0:
+       sendLVolume(dwi, fiducials1, tmpF, 'roiB', 'roi')
+   
 
   if wmName:
      sendVolume(wm, tmpF, 'wm')
@@ -561,6 +663,7 @@ def Execute (\
   params[22] = lengthClass
 
   params.tofile(tmpF + dwiName.split('.')[0] + '.in')
+
 
   inputVol0 = ""
   inputVol1 = ""
