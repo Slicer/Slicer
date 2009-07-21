@@ -104,13 +104,6 @@ vtkMRIBiasFieldCorrectionGUI::vtkMRIBiasFieldCorrectionGUI()
 //----------------------------------------------------------------------------
 vtkMRIBiasFieldCorrectionGUI::~vtkMRIBiasFieldCorrectionGUI()
 {
-  if (this->BiasIntensityScale)
-    {
-    this->BiasIntensityScale->SetParent(NULL);
-    this->BiasIntensityScale->Delete();
-    this->BiasIntensityScale = NULL;
-    }
-
   if (this->NumberOfIterationsScale)
     {
     this->NumberOfIterationsScale->SetParent(NULL);
