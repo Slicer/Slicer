@@ -237,19 +237,19 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::AdaptivePerformanceControl()
   
   if (this->TimeToDraw <= 0.25/this->Framerate)//descrease sample distance for better quality when possible
   {
-    this->SampleDistance *= 0.265f;
+    this->SampleDistance *= 0.33f;
   }
   else if (this->TimeToDraw <= 0.5/this->Framerate)
   {
-    this->SampleDistance *= 0.515f;
+    this->SampleDistance *= 0.55f;
   }
   else if (this->TimeToDraw <= 0.75/this->Framerate)
   {
-    this->SampleDistance *= 0.715f;
+    this->SampleDistance *= 0.8f;
   }
-  else if (this->TimeToDraw <= 0.95/this->Framerate)
+  else if (this->TimeToDraw <= 0.85/this->Framerate)
   {
-    this->SampleDistance += minSampleDistance;
+    this->SampleDistance *= 0.95f;
   }
   else if (this->TimeToDraw > 1.25/this->Framerate)//reduce ray steps to ensure performance
   {
@@ -260,7 +260,6 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::AdaptivePerformanceControl()
   // add clamp
   if (this->SampleDistance < minSampleDistance) this->SampleDistance = minSampleDistance;
   if (this->SampleDistance > maxSampleDistance) this->SampleDistance = maxSampleDistance;
- 
 }
 
 void vtkSlicerOpenGLVolumeTextureMapper3D::RenderFP( vtkRenderer *ren, vtkVolume *vol )
