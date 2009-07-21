@@ -7,7 +7,8 @@ if __name__ == '__main__':
   if len(sys.argv)!=2:
     print 'Error : give the IP address where your Slicer was launched'
   else:
-    rootA = '/projects/schiz/software/tractography/'
+    rootA =  os.path.dirname(sys.argv[0])
+    print 'Input : ', rootA
 
     cont = os.walk('.')
     d = cont.next()
@@ -48,11 +49,6 @@ if __name__ == '__main__':
       #  print "Exception: continue anyway!"
 
 
-      #print 'Number of param : ', len(pars)
-      #print 'Number of dwis : ', len(dwis)
-      #print 'Number of rois : ', len(rois)
-
-
       if len(pars)==1  and len(dwis)==1 and len(wmas)==1:
  
            print 'ROIS : ', rois 
@@ -70,8 +66,8 @@ if __name__ == '__main__':
 
                     tmpF =  './' + tmpD + '/' 
                     os.chdir(tmpF)
-                    print 'python ' + rootA + '/TractoCell0/StochasticTractoGraphyClusterSlicerDaemonFiles.py ' + str(sys.argv[1]) + ' 18943 ' + fullDir + '/' + pars[0] + ' ' + fullDir + '/' + dwis[0] + ' ' + fullDir + '/'  +  rois[s] + ' ' + fullDir + '/'  +  rois[s+1] + ' ' + fullDir + '/'  +  wmas[0]
-                    ret = os.system('python ' + rootA + '/TractoCell0/StochasticTractoGraphyClusterSlicerDaemonFiles.py ' + str(sys.argv[1]) + ' 18943 ' + fullDir + '/' + pars[0] + ' ' + fullDir + '/' +  dwis[0] + ' ' + fullDir + '/' +  rois[s] + ' ' + fullDir + '/'  +  rois[s+1] + ' ' + fullDir + '/'  +  wmas[0])
+                    print sys.executable + ' ' + rootA + '/' + 'StochasticTractoGraphyClusterSlicerDaemonFiles.py ' + str(sys.argv[1]) + ' 18943 ' + fullDir + '/' + pars[0] + ' ' + fullDir + '/' + dwis[0] + ' ' + fullDir + '/'  +  rois[s] + ' ' + fullDir + '/'  +  rois[s+1] + ' ' + fullDir + '/'  +  wmas[0]
+                    ret = os.system(sys.executable + ' ' + rootA + '/' + 'StochasticTractoGraphyClusterSlicerDaemonFiles.py ' + str(sys.argv[1]) + ' 18943 ' + fullDir + '/' + pars[0] + ' ' + fullDir + '/' +  dwis[0] + ' ' + fullDir + '/' +  rois[s] + ' ' + fullDir + '/'  +  rois[s+1] + ' ' + fullDir + '/'  +  wmas[0])
                     os.chdir('..')
 
 
@@ -79,7 +75,6 @@ if __name__ == '__main__':
                   print "Exception: continue anyway!"
 
       os.chdir('..')
-      #shutil.move(dirs[i], '../computed/' + dirs[i])
       time.sleep(4) # breathe
     
     print 'Completed'

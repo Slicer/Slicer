@@ -4,7 +4,8 @@ import os, sys, glob, time, shutil
 
 if __name__ == '__main__':
   
-  rootA = '/projects/schiz/software/tractography/'
+  rootA = os.path.dirname(sys.argv[0])
+  print 'Input : ', rootA
 
   cont = os.walk('.')
   d = cont.next()
@@ -45,11 +46,6 @@ if __name__ == '__main__':
     #  print "Exception: continue anyway!"
 
 
-    #print 'Number of param : ', len(pars)
-    #print 'Number of dwis : ', len(dwis)
-    #print 'Number of rois : ', len(rois)
-
-
     if len(pars)==1  and len(dwis)==1:
  
            print 'ROIS : ', rois 
@@ -66,8 +62,8 @@ if __name__ == '__main__':
 
                     tmpF =  './' + tmpD + '/' 
                     os.chdir(tmpF)
-                    print 'python ' + rootA + '/TractoCell0/StochasticTractoGraphyClusterFilesFAT.py ' + fullDir + '/' + pars[0] + ' ' + fullDir + '/' + dwis[0] + ' ' + fullDir + '/'  +  rois[s] + ' ' + fullDir + '/'  +  rois[s+1]
-                    ret = os.system('python ' + rootA + '/TractoCell0/StochasticTractoGraphyClusterFilesFAT.py ' + fullDir + '/' + pars[0] + ' ' + fullDir + '/' +  dwis[0] + ' ' + fullDir + '/' +  rois[s] + ' ' + fullDir + '/'  +  rois[s+1])
+                    print sys.executable + ' ' + rootA + '/' + 'StochasticTractoGraphyClusterFilesFAT.py ' + fullDir + '/' + pars[0] + ' ' + fullDir + '/' + dwis[0] + ' ' + fullDir + '/'  +  rois[s] + ' ' + fullDir + '/'  +  rois[s+1]
+                    ret = os.system(sys.executable + ' ' + rootA + '/' + 'StochasticTractoGraphyClusterFilesFAT.py ' + fullDir + '/' + pars[0] + ' ' + fullDir + '/' +  dwis[0] + ' ' + fullDir + '/' +  rois[s] + ' ' + fullDir + '/'  +  rois[s+1])
                     os.chdir('..')
 
 
@@ -75,7 +71,6 @@ if __name__ == '__main__':
                   print "Exception: continue anyway!"
 
     os.chdir('..')
-    #shutil.move(dirs[i], '../computed/' + dirs[i])
     time.sleep(4) # breathe
     
   print 'Completed'
