@@ -124,6 +124,8 @@ public:
     vtkGetObjectMacro (PB_HideSurfaceModels,vtkKWPushButton);
     vtkGetObjectMacro (PB_CreateNewVolumeRenderingNode,vtkKWPushButton);
     vtkGetObjectMacro (NS_ImageData,vtkSlicerNodeSelectorWidget);
+    vtkGetObjectMacro (NS_ImageDataBg,vtkSlicerNodeSelectorWidget);
+    vtkGetObjectMacro (NS_ImageDataLabelmap,vtkSlicerNodeSelectorWidget);
     vtkGetObjectMacro (NS_VolumeRenderingDataSlicer,vtkSlicerNodeSelectorVolumeRenderingWidget);
     vtkGetObjectMacro (NS_VolumeRenderingDataScene,vtkSlicerNodeSelectorVolumeRenderingWidget);
     vtkGetObjectMacro (EWL_CreateNewVolumeRenderingNode,vtkKWEntryWithLabel);
@@ -179,8 +181,14 @@ protected:
     vtkKWPushButton *PB_HideSurfaceModels;
     vtkKWPushButton *PB_CreateNewVolumeRenderingNode;
     vtkSlicerNodeSelectorWidget *NS_ImageData;
+    vtkSlicerNodeSelectorWidget *NS_ImageDataBg;
+    vtkSlicerNodeSelectorWidget *NS_ImageDataLabelmap;
+    
     //BTX
     std::string PreviousNS_ImageData;
+    std::string PreviousNS_ImageDataBg;
+    std::string PreviousNS_ImageDataLabelmap;
+    
     std::string PreviousNS_VolumeRenderingSlicer;
     std::string PreviousNS_VolumeRenderingDataScene;
     //ETX

@@ -55,11 +55,15 @@ vtkVolumeRenderingGUI::vtkVolumeRenderingGUI(void)
   this->SelectionNode = NULL;
   this->Presets=NULL;
   this->PreviousNS_ImageData="";
+  this->PreviousNS_ImageDataBg="";
+  this->PreviousNS_ImageDataLabelmap="";
   this->PreviousNS_VolumeRenderingDataScene="";
   this->PreviousNS_VolumeRenderingSlicer="";
   this->PB_HideSurfaceModels=NULL;
   this->PB_CreateNewVolumeRenderingNode=NULL;
   this->NS_ImageData=NULL;
+  this->NS_ImageDataBg=NULL;
+  this->NS_ImageDataLabelmap=NULL;
   this->NS_VolumeRenderingDataSlicer=NULL;
   this->NS_VolumeRenderingDataScene=NULL;
   this->EWL_CreateNewVolumeRenderingNode=NULL;
@@ -116,7 +120,18 @@ vtkVolumeRenderingGUI::~vtkVolumeRenderingGUI(void)
     this->NS_ImageData->Delete();
     this->NS_ImageData=NULL;
     }
-
+  if (this->NS_ImageDataBg)
+    {
+    this->NS_ImageDataBg->SetParent(NULL);
+    this->NS_ImageDataBg->Delete();
+    this->NS_ImageDataBg=NULL;
+    }
+  if (this->NS_ImageDataLabelmap)
+    {
+    this->NS_ImageDataLabelmap->SetParent(NULL);
+    this->NS_ImageDataLabelmap->Delete();
+    this->NS_ImageDataLabelmap=NULL;
+    }
   if(this->NS_VolumeRenderingDataScene)
     {
     this->NS_VolumeRenderingDataScene->SetParent(NULL);
@@ -236,7 +251,31 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
   this->NS_ImageData->SetNodeClass("vtkMRMLScalarVolumeNode","","","");
   this->NS_ImageData->SetChildClassesEnabled(0);
   app->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->NS_ImageData->GetWidgetName());
+  
+  //NodeSelector for Node from MRML Scene
+  this->NS_ImageDataBg=vtkSlicerNodeSelectorWidget::New();
+  this->NS_ImageDataBg->SetParent(loadSaveDataFrame->GetFrame());
+  this->NS_ImageDataBg->Create();
+  this->NS_ImageDataBg->NoneEnabledOn();
+  this->NS_ImageDataBg->SetLabelText("Background Volume: ");
+  this->NS_ImageDataBg->SetBalloonHelpString("Select background volume to render");
+  this->NS_ImageDataBg->SetLabelWidth(labelWidth);
+  this->NS_ImageDataBg->SetNodeClass("vtkMRMLScalarVolumeNode","","","");
+  this->NS_ImageDataBg->SetChildClassesEnabled(0);
+  app->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->NS_ImageDataBg->GetWidgetName());
 
+  //NodeSelector for Node from MRML Scene
+  this->NS_ImageDataLabelmap=vtkSlicerNodeSelectorWidget::New();
+  this->NS_ImageDataLabelmap->SetParent(loadSaveDataFrame->GetFrame());
+  this->NS_ImageDataLabelmap->Create();
+  this->NS_ImageDataLabelmap->NoneEnabledOn();
+  this->NS_ImageDataLabelmap->SetLabelText("Labelmap Volume: ");
+  this->NS_ImageDataLabelmap->SetBalloonHelpString("Select labelmap volume to render.");
+  this->NS_ImageDataLabelmap->SetLabelWidth(labelWidth);
+  this->NS_ImageDataLabelmap->SetNodeClass("vtkMRMLScalarVolumeNode","","","");
+  this->NS_ImageDataLabelmap->SetChildClassesEnabled(0);
+  app->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->NS_ImageDataLabelmap->GetWidgetName());
+  
   //NodeSelector for VolumeRenderingNode Preset
   this->NS_VolumeRenderingDataSlicer=vtkSlicerNodeSelectorVolumeRenderingWidget::New();
   this->NS_VolumeRenderingDataSlicer->SetParent(loadSaveDataFrame->GetFrame());
@@ -333,6 +372,9 @@ void vtkVolumeRenderingGUI::AddGUIObservers(void)
 {
 
   this->NS_ImageData->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+//  this->NS_ImageDataBg->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+//  this->NS_ImageDataLabelmap->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+  
   this->NS_VolumeRenderingDataScene->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->NS_VolumeRenderingDataSlicer->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->PB_HideSurfaceModels->AddObserver(vtkKWPushButton::InvokedEvent,(vtkCommand *)this->GUICallbackCommand );
@@ -343,6 +385,9 @@ void vtkVolumeRenderingGUI::AddGUIObservers(void)
 void vtkVolumeRenderingGUI::RemoveGUIObservers(void)
 {
   this->NS_ImageData->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);
+//  this->NS_ImageDataBg->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);
+//  this->NS_ImageDataLabelmap->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);
+  
   this->NS_VolumeRenderingDataScene->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->NS_VolumeRenderingDataSlicer->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->PB_HideSurfaceModels->RemoveObservers (vtkKWPushButton::InvokedEvent,(vtkCommand *)this->GUICallbackCommand);
@@ -576,6 +621,8 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
       }
     //Reset every Node related stuff
     this->PreviousNS_ImageData="";
+    this->PreviousNS_ImageDataBg="";
+    this->PreviousNS_ImageDataLabelmap="";
     this->PreviousNS_VolumeRenderingDataScene="";
     this->PreviousNS_VolumeRenderingSlicer="";
     this->CurrentNode=NULL;
@@ -670,6 +717,19 @@ void vtkVolumeRenderingGUI::UpdateGUI(void)
     this->NS_ImageData->SetMRMLScene(this->GetLogic()->GetMRMLScene());
     this->NS_ImageData->UpdateMenu();
     }
+  if(this->NS_ImageDataBg->GetMRMLScene()!=this->GetLogic()->GetMRMLScene())
+    {
+    //Update the NodeSelector for Volumes
+    this->NS_ImageDataBg->SetMRMLScene(this->GetLogic()->GetMRMLScene());
+    this->NS_ImageDataBg->UpdateMenu();
+    }
+  if(this->NS_ImageDataLabelmap->GetMRMLScene()!=this->GetLogic()->GetMRMLScene())
+    {
+    //Update the NodeSelector for Volumes
+    this->NS_ImageDataLabelmap->SetMRMLScene(this->GetLogic()->GetMRMLScene());
+    this->NS_ImageDataLabelmap->UpdateMenu();
+    }
+    
   if(this->NS_VolumeRenderingDataScene->GetMRMLScene()!=this->GetLogic()->GetMRMLScene())
     {
     //Update NodeSelector for VolumeRendering Node
