@@ -236,11 +236,12 @@ def Execute (
         mat.SetElement(i,j, ijk[i,j])
 
    
-    if muFilename.split('.')[1]=='mu':
-      mu = numpy.fromfile(muFilename, 'float')
-      mu = mu.reshape(4, 4)
-    else:
+    if muFilename.split('/')[-1].split('.')[1]!='mu':
       return 
+    
+    print 'MU : ', muFilename
+    mu = numpy.fromfile(muFilename, 'float')
+    mu = mu.reshape(4, 4)
 
     mmat = slicer.vtkMatrix4x4()
     for i in range(4):
