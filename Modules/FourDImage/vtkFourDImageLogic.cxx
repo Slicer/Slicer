@@ -148,6 +148,7 @@ int vtkFourDImageLogic::CreateFileListFromDir(const char* path,
   gfn->AddFileNames("*.nhdr");
   gfn->AddFileNames("*.nrrd");
   gfn->AddFileNames("*.hdr");
+  gfn->AddFileNames("*.mha");
   gfn->AddFileNames("*.img");
   gfn->AddFileNames("*.nii");
   gfn->AddFileNames("*.nia");
@@ -273,7 +274,8 @@ int vtkFourDImageLogic::CreateFileListFromDir(const char* path,
 //---------------------------------------------------------------------------
 void vtkFourDImageLogic::CreateFileListFromDir(const char* path,
                                                std::vector<ReaderType::FileNamesContainer>& fileNamesContainerList,
-                                               const char* filter, int nFrames, int nSlices, int nChannels, int channel)
+                                               const char* order, const char* filter,
+                                               int nFrames, int nSlices, int nChannels, int channel)
 {
 
   // Search files with compatible types (except DICOM)
@@ -290,6 +292,47 @@ void vtkFourDImageLogic::CreateFileListFromDir(const char* path,
     fileNamesContainerList.clear();
     return;
     }
+  
+  int tOffset;  // increment for time point index
+  int cOffset;  // increment for channel index
+  int sOffset;  // increment for slicer index
+
+  if (strcmp(order, "T-S-C") == 0)
+    {
+    tOffset = nSlices*nChannels;
+    sOffset = nChannels;
+    cOffset = 1;
+    }
+  else if (strcmp(order, "T-C-S") == 0)
+    {
+    tOffset = nSlices*nChannels;
+    sOffset = 1;
+    cOffset = nSlices;
+    }
+  else if (strcmp(order, "S-T-C") == 0)
+    {
+    tOffset = nChannels;
+    sOffset = nChannels*nFrames;
+    cOffset = 1;
+    }
+  else if (strcmp(order, "S-C-T") == 0)
+    {
+    tOffset = 1;
+    sOffset = nChannels*nFrames;
+    cOffset = nFrames;
+    }
+  else if (strcmp(order, "C-T-S") == 0)
+    {
+    tOffset = nSlices;
+    sOffset = 1;
+    cOffset = nFrames*nSlices;
+    }
+  else if (strcmp(order, "C-S-T") == 0)
+    {
+    tOffset = 1;
+    sOffset = nFrames;
+    cOffset = nFrames*nSlices;
+    }
 
   fileNamesContainerList.clear();
   for (int f = 0; f < nFrames; f ++)
@@ -298,7 +341,8 @@ void vtkFourDImageLogic::CreateFileListFromDir(const char* path,
     container.clear();
     for (int s = 0; s < nSlices; s ++)
       {
-      int index = f * (nSlices*nChannels) + channel*(nSlices) + s;
+      //int index = f * (nSlices*nChannels) + channel*(nSlices) + s;
+      int index = f * tOffset + channel*cOffset + s*sOffset;
       if (index < nFiles)
         {
         container.push_back(gfn->GetNthFileName(index));
@@ -484,13 +528,14 @@ vtkMRMLTimeSeriesBundleNode* vtkFourDImageLogic::LoadImagesFromDir(const char* p
 
 //---------------------------------------------------------------------------
 vtkMRMLTimeSeriesBundleNode* vtkFourDImageLogic::LoadImagesFromDir(const char* path, const char* bundleNodeName,
-                                                                   const char* filter, int nFrames, int nSlices, int nChannels, int channel)
+                                                                   const char* order, const char* filter,
+                                                                   int nFrames, int nSlices, int nChannels, int channel)
 {
   std::cerr << "loading from " << path << std::endl;
 
   std::vector<ReaderType::FileNamesContainer> fileNamesContainerList;
 
-  CreateFileListFromDir(path, fileNamesContainerList, filter, nFrames, nSlices, nChannels, channel);
+  CreateFileListFromDir(path, fileNamesContainerList, order, filter, nFrames, nSlices, nChannels, channel);
   return LoadImagesByList(bundleNodeName, fileNamesContainerList);
 
 }

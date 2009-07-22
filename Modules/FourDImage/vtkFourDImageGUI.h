@@ -33,18 +33,19 @@
 
 #include <map>
 
-class vtkKWScaleWithEntry;
 class vtkKWPushButton;
-class vtkKWLoadSaveButtonWithLabel;
 class vtkKWMenuButton;
 class vtkKWSpinBox;
 class vtkKWProgressDialog;
 class vtkKWRadioButtonSet;
 class vtkKWRadioButton;
 class vtkKWRange;
+class vtkKWEntry;
+class vtkKWScaleWithEntry;
+class vtkKWLoadSaveButtonWithLabel;
 class vtkKWCheckButtonWithLabel;
 class vtkKWRadioButtonSetWithLabel;
-class vtkKWEntry;
+class vtkKWMenuButtonWithLabel;
 
 class VTK_FourDImage_EXPORT vtkFourDImageGUI : public vtkSlicerModuleGUI
 {
@@ -191,6 +192,7 @@ class VTK_FourDImage_EXPORT vtkFourDImageGUI : public vtkSlicerModuleGUI
   vtkKWEntryWithLabel*          LoadSlicesEntry;
   vtkKWEntryWithLabel*          LoadChannelsEntry;
   vtkKWEntryWithLabel*          LoadFileFilterEntry;
+  vtkKWMenuButtonWithLabel*     LoadFileOrderMenu;
 
   // -----------------------------------------
   // Frame control

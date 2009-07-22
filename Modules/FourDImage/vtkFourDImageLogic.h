@@ -109,15 +109,15 @@ class VTK_FourDImage_EXPORT vtkFourDImageLogic : public vtkSlicerModuleLogic
                             std::vector<ReaderType::FileNamesContainer>& fileNamesContainerList);
   void CreateFileListFromDir(const char* path,
                              std::vector<ReaderType::FileNamesContainer>& fileNamesContainerList,
-                             const char* filter, int nFrames, int nSlices, int nChannels, int channel);
+                             const char* order, const char* filter, int nFrames, int nSlices, int nChannels, int channel);
   vtkMRMLTimeSeriesBundleNode* LoadImagesByList(const char* bundleNodeName,
                                                 std::vector<ReaderType::FileNamesContainer>& fileNamesContainerList);
   //ETX
 
   vtkMRMLTimeSeriesBundleNode* LoadImagesFromDir(const char* path, const char* bundleNodeName);
   vtkMRMLTimeSeriesBundleNode* LoadImagesFromDir(const char* path, const char* bundleNodeName,
-                                                 const char* filter, int nFrames, int nSlices, int nChannels, int channel);
-  
+                                                 const char* order, const char* filter,
+                                                 int nFrames, int nSlices, int nChannels, int channel);
 
   int SaveImagesToDir(const char* path, const char* bundleID, const char* prefix, const char* suffix);
 

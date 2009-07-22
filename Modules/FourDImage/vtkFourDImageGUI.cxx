@@ -55,10 +55,9 @@
 #include "vtkDoubleArray.h"
 #include "vtkMath.h"
 
+#include "vtkKWMenuButtonWithLabel.h"
 #include "vtkKWProgressGauge.h"
-
 #include "vtkCornerAnnotation.h"
-
 #include "vtkMRMLTimeSeriesBundleNode.h"
 
 //---------------------------------------------------------------------------
@@ -104,6 +103,7 @@ vtkFourDImageGUI::vtkFourDImageGUI ( )
   this->LoadSlicesEntry               = NULL;
   this->LoadChannelsEntry             = NULL;
   this->LoadFileFilterEntry           = NULL;
+  this->LoadFileOrderMenu             = NULL;
 
   // -----------------------------------------
   // Frame control
@@ -213,6 +213,11 @@ vtkFourDImageGUI::~vtkFourDImageGUI ( )
     {
     this->LoadFileFilterEntry->SetParent(NULL);
     this->LoadFileFilterEntry->Delete();
+    }
+  if (this->LoadFileOrderMenu)
+    {
+    this->LoadFileOrderMenu->SetParent(NULL);
+    this->LoadFileOrderMenu->Delete();
     }
 
   // 4D Bundle Selector
@@ -437,6 +442,7 @@ void vtkFourDImageGUI::RemoveGUIObservers ( )
     this->LoadFileFilterEntry->GetWidget()
       ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
+
   if (this->ForegroundVolumeSelectorScale)
     {
     this->ForegroundVolumeSelectorScale
@@ -802,14 +808,18 @@ void vtkFourDImageGUI::ProcessGUIEvents(vtkObject *caller,
       int nFrames = this->LoadTimePointsEntry->GetWidget()->GetValueAsInt();
       int nSlices = this->LoadSlicesEntry->GetWidget()->GetValueAsInt();
       int nChannels = this->LoadChannelsEntry->GetWidget()->GetValueAsInt();
+
       const char* filter = this->LoadFileFilterEntry->GetWidget()->GetValue();
+      const char* order = this->LoadFileOrderMenu->GetWidget()->GetValue();
+      
       std::vector<vtkMRMLTimeSeriesBundleNode*> newNodeList;
       newNodeList.clear();
       for (int c = 0; c < nChannels; c ++)
         {
         char cBundleName[256];
         sprintf(cBundleName, "%s_%d", bundleName, c);
-        newNodeList.push_back(this->GetLogic()->LoadImagesFromDir(path, cBundleName, filter, nFrames, nSlices, nChannels, 0));
+        newNodeList.push_back(this->GetLogic()->LoadImagesFromDir(path, cBundleName, order, filter,
+                                                                  nFrames, nSlices, nChannels, 0));
         }
       if (newNodeList.size() > 0)
         {
@@ -861,6 +871,7 @@ void vtkFourDImageGUI::ProcessGUIEvents(vtkObject *caller,
     this->LoadSlicesEntry->EnabledOff();
     this->LoadChannelsEntry->EnabledOff();
     this->LoadFileFilterEntry->EnabledOff();
+    this->LoadFileOrderMenu->EnabledOff();
     }
 
   else if (this->LoadOptionButtonSet->GetWidget()->GetWidget(1)
@@ -873,6 +884,7 @@ void vtkFourDImageGUI::ProcessGUIEvents(vtkObject *caller,
     this->LoadSlicesEntry->EnabledOn();
     this->LoadChannelsEntry->EnabledOn();
     this->LoadFileFilterEntry->EnabledOn();
+    this->LoadFileOrderMenu->EnabledOn();
     }
 
   if (this->LoadTimePointsEntry->GetWidget() == vtkKWEntry::SafeDownCast(caller)
@@ -1490,11 +1502,28 @@ void vtkFourDImageGUI::BuildGUIForLoadFrame (int show)
   this->LoadFileFilterEntry->ExpandWidgetOff();
   this->LoadFileFilterEntry->SetLabelWidth(18);
 
-  this->Script("pack %s %s %s %s -side top -anchor w -fill x -padx 20 -pady 2", 
+  this->LoadFileOrderMenu = vtkKWMenuButtonWithLabel::New();
+  this->LoadFileOrderMenu->SetParent(inFrame->GetFrame());
+  this->LoadFileOrderMenu->Create();
+  this->LoadFileOrderMenu->SetLabelText("Ordering:");
+  this->LoadFileOrderMenu->GetWidget()->SetWidth(40);
+  this->LoadFileOrderMenu->EnabledOff();
+  this->LoadFileOrderMenu->ExpandWidgetOff();
+  this->LoadFileOrderMenu->SetLabelWidth(18);
+  this->LoadFileOrderMenu->GetWidget()->GetMenu()->AddRadioButton("T-S-C");
+  this->LoadFileOrderMenu->GetWidget()->GetMenu()->AddRadioButton("T-C-S");
+  this->LoadFileOrderMenu->GetWidget()->GetMenu()->AddRadioButton("S-T-C");
+  this->LoadFileOrderMenu->GetWidget()->GetMenu()->AddRadioButton("S-C-T");
+  this->LoadFileOrderMenu->GetWidget()->GetMenu()->AddRadioButton("C-T-S");
+  this->LoadFileOrderMenu->GetWidget()->GetMenu()->AddRadioButton("C-S-T");
+  this->LoadFileOrderMenu->GetWidget()->SetValue("T-S-C");
+
+  this->Script("pack %s %s %s %s %s -side top -anchor w -fill x -padx 20 -pady 2", 
                this->LoadTimePointsEntry->GetWidgetName(),
                this->LoadSlicesEntry->GetWidgetName(),
                this->LoadChannelsEntry->GetWidgetName(),
-               this->LoadFileFilterEntry->GetWidgetName());
+               this->LoadFileFilterEntry->GetWidgetName(),
+               this->LoadFileOrderMenu->GetWidgetName());
 
   // -----------------------------------------
   // Output File Frame
