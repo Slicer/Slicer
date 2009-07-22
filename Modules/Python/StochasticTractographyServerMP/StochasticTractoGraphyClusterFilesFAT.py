@@ -332,7 +332,7 @@ def pipeline(params, nimage, roiA, roiB, wm):
                     dataBlocks = []
                     wmBlocks = []
 
-                    nCpu =  8 # could be set to the number of available cores
+                    nCpu =  4 # could be set to the number of available cores
 
                     nParts = 1
                     if shpD[2]>1 and nCpu>1 :
@@ -848,7 +848,8 @@ def recvVolume(volName, type, isDti=False):
   print "Load data from : %s" % str(volName)
 
   # load auxiliary files
-  rootName = volName.split('.')[0]
+  rootName = os.path.join(os.path.dirname(volName), os.path.basename(volName).split('.' + os.path.basename(volName).split('.')[-1])[0])
+
   
   # take dimensions of the image
   print "Load dims from : %s" %  str(rootName + '.dims')

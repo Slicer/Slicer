@@ -6,7 +6,7 @@ if __name__ == '__main__':
   if len(sys.argv)!=2:
     print 'Error : give the IP address where your Slicer was launched'
   else:
-    rootA =  os.path.dirname(sys.argv[0]) 
+    rootA =  os.path.abspath(os.path.dirname(sys.argv[0]))
     print 'Input : ', rootA
 
     cont = os.walk('.')

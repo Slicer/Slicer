@@ -3,8 +3,8 @@ import os, sys, glob, time, shutil
 
 
 if __name__ == '__main__':
-  
-  rootA =  os.path.dirname(sys.argv[0])
+
+  rootA = os.path.abspath(os.path.dirname(sys.argv[0]))
   print 'Input : ', rootA
 
   cont = os.walk('.')
