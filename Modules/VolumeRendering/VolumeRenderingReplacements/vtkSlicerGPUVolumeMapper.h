@@ -1,0 +1,161 @@
+/*=========================================================================
+
+  Program:   Visualization Toolkit
+  Module:    $RCSfile: vtkSlicerGPUVolumeMapper.h,v $
+
+  Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
+  All rights reserved.
+  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notice for more information.
+
+=========================================================================*/
+// .NAME vtkSlicerGPUVolumeMapper - GPU volume render with 3D texture mapping (GLSL)
+
+// .SECTION Description
+// vtkSlicerGPUVolumeMapper renders two volume using 3D texture mapping in fragment shader. 
+// This class is actually an abstract superclass - with all the actual
+// work done by vtkSlicerGPURayCastVolumeMapper. 
+// 
+// This mappers currently supports:
+//
+// - any data type as input
+// - one component
+// - composite blending
+// - mip and minip
+// - two input volumes
+//
+// This mapper does not support:
+// - more than one component
+// 
+// Two input volumes must have same dimension, spacing and number of components
+//
+// .SECTION see also
+// vtkVolumeMapper
+
+#ifndef __vtkSlicerGPUVolumeMapper_h
+#define __vtkSlicerGPUVolumeMapper_h
+
+#include "vtkVolumeMapper.h"
+#include "vtkVolumeRenderingReplacements.h"
+
+class vtkImageData;
+class vtkColorTransferFunction;
+class vtkPiecewiseFunction;
+class vtkVolumeProperty;
+
+class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerGPUVolumeMapper : public vtkVolumeMapper
+{
+public:
+  vtkTypeRevisionMacro(vtkSlicerGPUVolumeMapper,vtkVolumeMapper);
+  void PrintSelf(ostream& os, vtkIndent indent);
+
+  static vtkSlicerGPUVolumeMapper *New();
+
+  // Description:
+  // Desired frame rate
+  vtkSetMacro(Framerate, float);
+  vtkGetMacro(Framerate, float);
+  
+  // Description:
+  // Set/Get the nth input data, could be label map or just another volume
+  virtual void SetNthInput( vtkImageData * , int index);
+  virtual void SetNthInput( vtkDataSet * , int index);
+  vtkImageData *GetNthInput(int index);
+  
+  // Description:
+  // These are the dimensions of the 3D texture
+  vtkGetVectorMacro( VolumeDimensions, int,   3 );
+  
+  // Description:
+  // This is the spacing of the 3D texture
+  vtkGetVectorMacro( VolumeSpacing,    float, 3 );
+
+  // Description:
+  // Based on hardware and properties, we may or may not be able to
+  // render using 3D texture mapping. This indicates if 3D texture
+  // mapping is supported by the hardware, and if the other extensions
+  // necessary to support the specific properties are available.
+  virtual int IsRenderSupported( vtkVolumeProperty * ) {return 0;};
+
+//BTX
+
+  // Description:
+  // WARNING: INTERNAL METHOD - NOT INTENDED FOR GENERAL USE
+  // DO NOT USE THIS METHOD OUTSIDE OF THE RENDERING PROCESS
+  // Render the volume
+  virtual void Render(vtkRenderer *, vtkVolume *) {};   
+
+protected:
+  vtkSlicerGPUVolumeMapper();
+  ~vtkSlicerGPUVolumeMapper();
+
+  float                     ScalarOffset;
+  float                     ScalarScale;
+  
+  float                     Framerate;
+  
+  unsigned char            *Volume1;
+  int                       VolumeSize;
+  int                       VolumeDimensions[3];
+  float                     VolumeSpacing[3];
+  
+  vtkImageData             *SavedTextureInput;
+  vtkImageData             *SavedTextureInput2nd;
+  
+  vtkColorTransferFunction *SavedRGBFunction;
+  vtkPiecewiseFunction     *SavedGrayFunction;
+  vtkPiecewiseFunction     *SavedScalarOpacityFunction;
+  vtkPiecewiseFunction     *SavedGradientOpacityFunction;
+  int                       SavedColorChannels;
+  float                     SavedScalarOpacityDistance;
+  
+  vtkColorTransferFunction *SavedRGBFunction2nd;
+  vtkPiecewiseFunction     *SavedGrayFunction2nd;
+  vtkPiecewiseFunction     *SavedScalarOpacityFunction2nd;
+  vtkPiecewiseFunction     *SavedGradientOpacityFunction2nd;
+  int                       SavedColorChannels2nd;
+  float                     SavedScalarOpacityDistance2nd;
+  
+  unsigned char             ColorLookup[256*256*4];
+  float                     TempArray1[3*4096];
+  float                     TempArray2[4096];
+  int                       ColorTableSize;
+  
+  unsigned char             ColorLookup2nd[256*256*4];
+  float                     TempArray11[3*4096];
+  float                     TempArray21[4096];
+  
+  vtkTimeStamp              SavedTextureMTime;
+  vtkTimeStamp              SavedTextureMTime2nd;
+  
+  vtkTimeStamp              SavedColorOpacityMTime;
+  vtkTimeStamp              SavedColorOpacityMTime2nd;
+
+  // Description:
+  // Update the internal RGBA representation of the volume. Return 1 if
+  // anything change, 0 if nothing changed.
+  int    UpdateVolumes( vtkVolume * );
+  int    UpdateColorLookup( vtkVolume * );
+
+  // Description:
+  // Impemented in subclass - check is texture size is OK.
+  //BTX
+  virtual int IsTextureSizeSupported( int [3] ) {return 0;};
+  //ETX
+  
+private:
+  vtkSlicerGPUVolumeMapper(const vtkSlicerGPUVolumeMapper&);  // Not implemented.
+  void operator=(const vtkSlicerGPUVolumeMapper&);  // Not implemented.
+};
+
+
+#endif
+
+
+
+
+
+
