@@ -88,6 +88,8 @@ set ::SCIPY_TAG "http://svn.scipy.org/svn/scipy/branches/0.7.x"
 set ::BatchMake_TAG "BatchMake-1-2"
 set ::SLICERLIBCURL_TAG "HEAD"
 set ::OpenIGTLink_TAG "http://svn.na-mic.org/NAMICSandBox/branches/OpenIGTLink-1-0"
+set ::OpenCV_TAG "https://opencvlibrary.svn.sourceforge.net/svnroot/opencvlibrary/trunk"
+
 
 # set TCL_VERSION to "tcl" to get 8.4, otherwise use tcl85 get 8.5
 # set 8.5 for Solaris explicitly, because 8.4 complains 
@@ -145,6 +147,7 @@ set ::CMAKE_PATH $::Slicer3_LIB/CMake-build
 set ::SOV_BINARY_DIR ""
 set ::XVNC_EXECUTABLE " "
 set ::OpenIGTLink_DIR $::Slicer3_LIB/OpenIGTLink-build 
+set ::OpenCV_DIR $::Slicer3_LIB/OpenCV-build 
 set ::BatchMake_SRC_DIR $::Slicer3_LIB/BatchMake
 set ::BatchMake_BUILD_DIR $::Slicer3_LIB/BatchMake-build
 set ::SLICERLIBCURL_SRC_DIR $::Slicer3_LIB/cmcurl
@@ -164,8 +167,9 @@ set ::USE_NUMPY "ON"
 set ::USE_SCIPY "false"
 # CMake Option for using OpenIGTLink library. Must be "OFF" or "ON", default is "OFF"
 set ::USE_OPENIGTLINK "ON"
+# CMake Option for using OpenCV library. Must be "OFF" or "ON", default is "OFF"
+set ::USE_OPENCV "OFF"
  
-
 switch $::tcl_platform(os) {
     "SunOS" {
         set shared_lib_ext "so"
@@ -247,6 +251,7 @@ switch $::tcl_platform(os) {
         set ::Teem_TEST_FILE $::Teem_BIN_DIR/unu
         set ::VTK_TEST_FILE $::VTK_DIR/bin/vtk
         set ::KWWidgets_TEST_FILE $::KWWidgets_BUILD_DIR/bin/libKWWidgets.$shared_lib_ext
+        set ::OpenCV_TEST_FILE $::OpenCV_DIR/lib/libcv.$shared_lib_ext
         set ::VTK_TCL_LIB $::TCL_LIB_DIR/libtcl8.4.$shared_lib_ext 
         set ::VTK_TK_LIB $::TCL_LIB_DIR/libtk8.4.$shared_lib_ext
         set ::VTK_TCLSH $::TCL_BIN_DIR/tclsh8.4
@@ -281,6 +286,7 @@ switch $::tcl_platform(os) {
         set ::Teem_TEST_FILE $::Teem_BIN_DIR/unu
         set ::VTK_TEST_FILE $::VTK_DIR/bin/vtk
         set ::KWWidgets_TEST_FILE $::KWWidgets_BUILD_DIR/bin/libKWWidgets.so
+        set ::OpenCV_TEST_FILE $::OpenCV_DIR/lib/libcv.so
         set ::VTK_TCL_LIB $::TCL_LIB_DIR/libtcl8.4.$shared_lib_ext 
         set ::VTK_TK_LIB $::TCL_LIB_DIR/libtk8.4.$shared_lib_ext
         set ::VTK_TCLSH $::TCL_BIN_DIR/tclsh8.4
@@ -322,6 +328,7 @@ switch $::tcl_platform(os) {
         set ::SCIPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/scipy/version.pyc
         set ::VTK_TEST_FILE $::VTK_DIR/bin/$::VTK_BUILD_TYPE/vtk.exe
         set ::KWWidgets_TEST_FILE $::KWWidgets_BUILD_DIR/bin/$::env(VTK_BUILD_SUBDIR)/KWWidgets.lib
+        set ::OpenCV_TEST_FILE $::OpenCV_DIR/lib/$::VTK_BUILD_TYPE/CV.lib
         set ::VTK_TCL_LIB $::TCL_LIB_DIR/tcl84.lib
         set ::VTK_TK_LIB $::TCL_LIB_DIR/tk84.lib
         set ::VTK_TCLSH $::TCL_BIN_DIR/tclsh84.exe
