@@ -2,6 +2,7 @@
 <executable>
   <category>Registration</category>
   <title>ACPC Transform</title>
+  <index>1</index>
   <description>Calculate a transformation from two lists of fiducial points. Use the Filtering module **Resample Scalar/Vector/DWI Volume** to apply the transformation to a volume.</description>
 <version>1.0</version>
 <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:RealignVolume-Documentation-3.4</documentation-url>

@@ -2,6 +2,7 @@
 <executable>
   <category>Registration</category>
   <title>Affine registration</title>
+  <index>3</index>
   <description>Registers two images together using an affine transform and mutual information.</description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url></documentation-url>

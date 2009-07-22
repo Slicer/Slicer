@@ -2,6 +2,7 @@
 <executable>
   <category>Registration</category>
   <title>Diffeomorphic Demons Algorithm</title>
+  <index>6</index>
   <description>Algorithm developed by Tom Vercauteren </description>
   <version> 1.0</version>
   <documentation-url></documentation-url>
