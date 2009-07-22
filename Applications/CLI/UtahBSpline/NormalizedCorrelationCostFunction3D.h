@@ -4,12 +4,15 @@
 #include "vnl/vnl_cost_function.h"
 #include "vnl/vnl_least_squares_function.h"
 
-#include "itkImage.h"
+
+
+#include "itkSubtractImageFilter.h"
+#include "itkGradientImageFilter.h"
 #include "itkDerivativeImageFilter.h"
 #include "itkCastImageFilter.h"
 #include "itkImageRegionIterator.h"
 #include "itkImageRegionIteratorWithIndex.h"
-#include "itkSubtractImageFilter.h"
+#include "itkLinearInterpolateImageFunction.h"
 
 #include "Point3D.h"
 #include "BSpline3D.h"
@@ -18,14 +21,14 @@
 #include "KnotVector.h"
 
 
-template <typename TPrecision>
+template <typename TPrecision, typename TImage>
 class NormalizedCorrelationCostFunction3D : public vnl_cost_function {
 
     
   public:
     typedef Point3D< TPrecision> TControlPoint;
-    typedef BSpline3D< TControlPoint > TParametric;
-    typedef ParametricImageTransformation3D<TParametric> TImageTransformation;
+    typedef BSpline3D< TControlPoint , TPrecision> TParametric;
+    typedef ParametricImageTransformation3D<TParametric, TImage> TImageTransformation;
     typedef typename TParametric::TControlMesh TControlMesh;
     typedef typename TParametric::TKnotVector TKnotVector;
 
@@ -33,44 +36,19 @@ class NormalizedCorrelationCostFunction3D : public vnl_cost_function {
     typedef typename Image::Pointer ImagePointer;
     typedef typename Image::IndexType ImageIndex;
     typedef typename Image::RegionType ImageRegion;
+    typedef typename Image::PointType ImagePoint;
     typedef typename ImageRegion::SizeType ImageSize;
     typedef typename ImageSize::SizeValueType ImageSizeValue;
 
-    typedef typename TImageTransformation::BFImage BFImage;
-    typedef typename BFImage::Pointer BFImagePointer;
-    
-    typedef typename TImageTransformation::SpanImage SpanImage;
-    typedef typename SpanImage::Pointer SpanImagePointer;
+
    
     NormalizedCorrelationCostFunction3D(int
         nUnknowns):vnl_cost_function(nUnknowns){
-     
-      castFilter = CastFilter::New();
-      dxFilter =  DerivativeFilter::New();
-      dxFilter->SetDirection(0);
-      dxFilter->SetOrder(1);
-      dyFilter = DerivativeFilter::New();
-      dyFilter->SetDirection(1);
-      dyFilter->SetOrder(1);
-      dzFilter = DerivativeFilter::New();
-      dzFilter->SetDirection(2);
-      dzFilter->SetOrder(1);
-
-      subtractFilter = SubtractFilter::New();
-      useMask =  false;
       
+      useMask =  false;
+      fixedBoundary = true;
       alpha = 0;
-
       verbose = 0;
-
-      bfuImage = BFImage::New();
-      bfvImage = BFImage::New();
-      bfwImage = BFImage::New();
-
-      uspanImage = SpanImage::New();
-      vspanImage = SpanImage::New();
-      wspanImage = SpanImage::New();
-
     };
     
     double f(vnl_vector<double> const &x);
@@ -85,55 +63,58 @@ class NormalizedCorrelationCostFunction3D : public vnl_cost_function {
     
     //Set / Get Methods
     void SetFixedImage(ImagePointer fixed){ 
-      this->fixedImage = fixed; 
+      this->fixedImage = fixed;
+
+      CastFilterPointer castFilter = CastFilter::New();
+      castFilter->SetInput( fixedImage );
+      castFilter->Update();
+      movingTransformedImage = castFilter->GetOutput();
     };
    
     void SetMaskImage(ImagePointer maskImage){
-      transform.SetMaskImage(maskImage);
+      this->maskImage = maskImage;
     };
 
     void SetMovingImage(ImagePointer moving){
-      this->movingImage = moving;
-      this->transform.SetImage(movingImage);
-      castFilter->SetInput( movingImage );
-      castFilter->Update();
-      movingTransformedImage = castFilter->GetOutput();
-      
-      bfuImage->SetRegions( movingImage->GetLargestPossibleRegion() );
-      bfuImage->Allocate();
-      bfvImage->SetRegions( movingImage->GetLargestPossibleRegion() );
-      bfvImage->Allocate(); 
-      bfwImage->SetRegions( movingImage->GetLargestPossibleRegion() );
-      bfwImage->Allocate();
-
-      uspanImage->SetRegions( movingImage->GetLargestPossibleRegion() );
-      uspanImage->Allocate();
-      vspanImage->SetRegions( movingImage->GetLargestPossibleRegion() );
-      vspanImage->Allocate();
-      wspanImage->SetRegions( movingImage->GetLargestPossibleRegion() );
-      wspanImage->Allocate();
-
+      this->movingImage = moving;  
     };
     
     void SetRange(const ImageRegion &range){ 
       this->transform.SetRange(range); 
     };
 
+
+    void ComputePhysicalRange(ImageRegion range){
+      transform.ComputePhysicalRange(fixedImage, range);
+    }
+
+    ImagePoint GetStart(){
+      return transform.GetStart();
+    };
+ 
+
+    ImagePoint GetSize(){
+       return transform.GetSize();
+    };
+    
+    ImageRegion GetRange(){
+       return transform.GetRange();
+    };
+
+
     void SetParametric(TParametric &parametric){
       this->transform.SetParametric( parametric );
     };
 
-    ImagePointer GetTransformedImage(){
-      return movingTransformedImage;
-    };
-
-    ImagePointer GetTransformedMaskImage(){
-      return transform.GetTransformedMaskImage();
-    };
     
     void SetUseMask(bool use){
       useMask = use;
     };
+    
+    void SetFixedBoundary(bool fixed){
+      fixedBoundary = fixed;
+    };
+
 
     void SetAlpha(TPrecision a){
       alpha = a;
@@ -152,8 +133,8 @@ class NormalizedCorrelationCostFunction3D : public vnl_cost_function {
     
 
     //Operators
-    NormalizedCorrelationCostFunction3D<TPrecision>& operator=(const
-        NormalizedCorrelationCostFunction3D<TPrecision>& rhs){
+    NormalizedCorrelationCostFunction3D<TPrecision, TImage>& operator=(const
+        NormalizedCorrelationCostFunction3D<TPrecision, TImage>& rhs){
     
        transform  = rhs.transfrom;
 
@@ -161,17 +142,7 @@ class NormalizedCorrelationCostFunction3D : public vnl_cost_function {
        movingImage = rhs.movingImage;
        movingTransformedImage =rhs.movingTransformedImage;
        differenceImage = rhs.differenceImage;
-       movingDxImage = rhs.movingDxImage;
-       movingDyImage = rhs.movingDyImage;
-       movingDzImage = rhs.movingDzImage;
-
-       bfuImage = rhs.bfuImage;
-       bfvImage = rhs.bfvImage;
-       bfwImage = rhs.bfwImage;
-
-       uspanImage = rhs.uspanImage;
-       vspanImage = rhs.vspanImage;
-       wspanImage = rhs.wspanImage;
+       movingGradient = rhs.movingGradient;
 
        useMask = rhs.useMask;
        xDistance = rhs.xDistance;
@@ -185,56 +156,55 @@ class NormalizedCorrelationCostFunction3D : public vnl_cost_function {
 
   private:
 
-    typedef typename itk::ImageRegionIterator<Image> ImageIterator;
-    typedef typename itk::ImageRegionIterator<BFImage> BFImageIterator;
-    typedef typename itk::ImageRegionIterator<SpanImage> SpanImageIterator;
 
+    typedef itk::LinearInterpolateImageFunction<Image, double> InterpolateFunction;
+    typedef typename InterpolateFunction::Pointer InterpolateFunctionPointer;
+    typedef typename InterpolateFunction::ContinuousIndexType ImageContinuousIndex;
+    typedef typename itk::ImageRegionIteratorWithIndex<Image> ImageIterator;
+       
     typedef itk::CastImageFilter<Image, Image> CastFilter;
     typedef typename CastFilter::Pointer CastFilterPointer;
-    CastFilterPointer castFilter;
     
-    typedef itk::DerivativeImageFilter<Image, Image> DerivativeFilter;
-    typedef typename DerivativeFilter::Pointer DerivativeFilterPointer;
-    DerivativeFilterPointer dxFilter;
-    DerivativeFilterPointer dyFilter;
-    DerivativeFilterPointer dzFilter;
+//    typedef itk::DerivativeImageFilter<Image, Image> DerivativeFilter;
+//    typedef typename DerivativeFilter::Pointer DerivativeFilterPointer;
+    typedef itk::GradientImageFilter<Image, TPrecision, TPrecision> GradientFilter;
+    typedef typename GradientFilter::Pointer GradientFilterPointer;
+    
+    typedef typename GradientFilter::OutputImageType GradientImage;
+    typedef typename GradientImage::Pointer GradientImagePointer;
+    typedef typename GradientImage::PixelType GradientVector;
+
+    typedef typename itk::ImageRegionIterator<GradientImage> GradientImageIterator;
 
     typedef itk::SubtractImageFilter<Image, Image, Image> SubtractFilter;
     typedef typename SubtractFilter::Pointer SubtractFilterPointer;
-    SubtractFilterPointer subtractFilter;
+
+
 
     ImagePointer fixedImage;
     ImagePointer movingImage;
+    ImagePointer maskImage;
     ImagePointer movingTransformedImage;
     ImagePointer differenceImage;
-    ImagePointer movingDxImage;
-    ImagePointer movingDyImage;
-    ImagePointer movingDzImage;
+    GradientImagePointer movingGradient;
 
-    BFImagePointer bfuImage;
-    BFImagePointer bfvImage;
-    BFImagePointer bfwImage;
-
-
-    SpanImagePointer uspanImage;
-    SpanImagePointer vspanImage;
-    SpanImagePointer wspanImage;
 
     
     TImageTransformation transform;
 
     bool useMask;
+    bool fixedBoundary;
     TPrecision xDistance;
     TPrecision yDistance;
     TPrecision zDistance;
 
     TPrecision alpha;
 
-    void ComputeTransformedImage(vnl_vector<double> const &x);
+    void ComputeTransformedImage();
     void ComputeDerivativeImages();
+
     double f();
     void gradf(vnl_vector<double> &g);
-   
 
     int verbose;
 
@@ -243,9 +213,9 @@ class NormalizedCorrelationCostFunction3D : public vnl_cost_function {
 
 
 //non-inline implementations
-template <typename TPrecision>
+template <typename TPrecision, typename TImage>
 void 
-NormalizedCorrelationCostFunction3D<TPrecision>::GetVNLParametersFromParametric(vnl_vector<double> &params)
+NormalizedCorrelationCostFunction3D<TPrecision, TImage>::GetVNLParametersFromParametric(vnl_vector<double> &params)
 {
   TParametric &parametric = transform.GetParametric();
   TControlMesh &net = parametric.GetControlMesh();
@@ -253,7 +223,7 @@ NormalizedCorrelationCostFunction3D<TPrecision>::GetVNLParametersFromParametric(
   for(int i = 0; i < net.LengthU(); i++){
     for(int j = 0; j < net.LengthV(); j++){
       for(int k = 0; k < net.LengthW(); k++){
-        TControlPoint tmp = net.Get(i, j, k);
+        TControlPoint &tmp = net.Get(i, j, k);
         params[index++] = tmp.x;
         params[index++] = tmp.y;
         params[index++] = tmp.z;
@@ -263,9 +233,9 @@ NormalizedCorrelationCostFunction3D<TPrecision>::GetVNLParametersFromParametric(
 }
 
 
-template <typename TPrecision>
+template <typename TPrecision, typename TImage>
 void 
-NormalizedCorrelationCostFunction3D<TPrecision>::SetParametricFromVNLParameters(vnl_vector<double> const &params)
+NormalizedCorrelationCostFunction3D<TPrecision, TImage>::SetParametricFromVNLParameters(vnl_vector<double> const &params)
 {
 
   TParametric &parametric = transform.GetParametric();
@@ -275,106 +245,78 @@ NormalizedCorrelationCostFunction3D<TPrecision>::SetParametricFromVNLParameters(
   for(int i = 0; i < net.LengthU(); i++){
     for(int j = 0; j < net.LengthV(); j++){
       for(int k = 0; k < net.LengthW(); k++){
-        TControlPoint tmp = net.Get(i, j, k);
+        TControlPoint &tmp = net.Get(i, j, k);
         tmp.x = params[index++];
         tmp.y = params[index++];
         tmp.z = params[index++];
-        net.Set(i, j, k, tmp);
+        //net.Set(i, j, k, tmp);
       }
     }
   }
-  //TODO necessary?
-  //parametric.SetControlMesh2D(net);
-  //transform.SetParametric(parametric);
 }
 
 
-template <typename TPrecision>
+template <typename TPrecision, typename TImage>
 void 
-NormalizedCorrelationCostFunction3D<TPrecision>::ComputeTransformedImage(vnl_vector<double> const &x)
+NormalizedCorrelationCostFunction3D<TPrecision, TImage>::ComputeTransformedImage()
 {
-  SetParametricFromVNLParameters(x);  
-  transform.TransformAndStoreBFs( movingTransformedImage, bfuImage, bfvImage,
-      bfwImage, uspanImage, vspanImage, wspanImage );
-
+  transform.Transform( movingTransformedImage, movingImage );
+ 
+  SubtractFilterPointer subtractFilter = SubtractFilter::New();
   subtractFilter->SetInput1( fixedImage );
   subtractFilter->SetInput2( movingTransformedImage );
   subtractFilter->Modified();
   subtractFilter->Update();
   differenceImage = subtractFilter->GetOutput();
   
+  
 }
 
 
-template <typename TPrecision>
+
+template <typename TPrecision, typename TImage>
 void 
-NormalizedCorrelationCostFunction3D<TPrecision>::ComputeDerivativeImages(){
-  
-  dxFilter->SetInput(movingTransformedImage);
-  dxFilter->Modified();
-  dxFilter->Update();
-  movingDxImage = dxFilter->GetOutput();
-  
-  dyFilter->SetInput(movingTransformedImage);
-  dyFilter->Modified();
-  dyFilter->Update();
-  movingDyImage = dyFilter->GetOutput();
-
-  dzFilter->SetInput(movingTransformedImage);
-  dzFilter->Modified();
-  dzFilter->Update();
-  movingDzImage = dzFilter->GetOutput();
-
-}
+NormalizedCorrelationCostFunction3D<TPrecision, TImage>::ComputeDerivativeImages(){
 
 
-template <typename TPrecision>
+  GradientFilterPointer gradientFilter = GradientFilter::New();
+  gradientFilter->SetInput(movingTransformedImage);
+  gradientFilter->Update();
+  movingGradient = gradientFilter->GetOutput();
+
+};
+
+template <typename TPrecision, typename TImage>
 double 
-NormalizedCorrelationCostFunction3D<TPrecision>::f(vnl_vector<double> const &x){
-  ComputeTransformedImage(x);  
-  
-  ImageRegion region = transform.GetRange();
-  ImageIterator it( differenceImage, region);
-
+NormalizedCorrelationCostFunction3D<TPrecision, TImage>::f(vnl_vector<double> const &x){
+  SetParametricFromVNLParameters(x); 
+  ComputeTransformedImage();
   return f();
-}
+};
 
-
-template <typename TPrecision>
+template <typename TPrecision, typename TImage>
 double 
-NormalizedCorrelationCostFunction3D<TPrecision>::f(){
-
- /* typedef typename itk::ImageFileWriter<Image> ImageWriter;
-  typedef typename ImageWriter::Pointer ImageWriterPointer;
-  ImageWriterPointer writer = ImageWriter::New();
-  char name[100];
-  sprintf(name, "./transformed_%d.mhd", iter++);
-  writer->SetFileName(name);
-  writer->SetInput(movingTransformedImage);
-  writer->Update();*/
-
-    
+NormalizedCorrelationCostFunction3D<TPrecision, TImage>::f(){
   double val = 0;
   double tmp = 0;
 
   ImageRegion region = transform.GetRange();
-  ImagePointer transformedMaskImage = transform.GetTransformedMaskImage();
   ImageIterator it( differenceImage, region);
-  ImageIterator maskIt(transformedMaskImage, region);
+  ImageIterator maskIt(maskImage, region);
 
-  int n = 0;
+  int nInMask = 0;
   for(it.GoToBegin(); !it.IsAtEnd(); ++it, ++maskIt ){
-      if(!useMask || maskIt.Get() !=0){
-        n++;
+      if(!useMask || maskIt.Get() != 0){
+        nInMask++;
         tmp =  it.Get();
         val += tmp * tmp;
       }
   }
   ImageSize regionSize = region.GetSize();
-  val = val / n;
+  val = val / nInMask;
 
   if(verbose > 0){
-    std::cout <<"f: " << val << std::endl;
+    std::cout <<"f: " << (1-alpha)* val << std::endl;
   }
 
   //Regularization term
@@ -382,17 +324,18 @@ NormalizedCorrelationCostFunction3D<TPrecision>::f(){
   TControlMesh &net = parametric.GetControlMesh();
   double regTmp = 0;
   double reg = 0;
+  
   if(alpha != 0){
   for(int i = 0; i < net.LengthU(); i++){
     for(int j = 0; j < net.LengthV(); j++){
       for(int k = 0; k < net.LengthW(); k++){
-
+        
         TControlPoint &current = net.Get(i, j, k);
         regTmp = 0;
         int nP = 0;
         for(int l=-1; l<2; l++){
           for(int m = -1; m<2; m++){
-            for(n = -1; n<2; n++){
+            for(int n = -1; n<2; n++){
 
               if(l == 0 && n == 0 && m == 0){
                   continue;
@@ -415,12 +358,13 @@ NormalizedCorrelationCostFunction3D<TPrecision>::f(){
     }
   }
   }
-
-  if(verbose > 1){
-    reg = reg / n;
-    std::cout <<"reg: " << reg << std::endl;
+  int nCps = net.LengthU() * net.LengthV() * net.LengthW();
   
-    val = (1-alpha) * val + alpha * reg;
+  reg = reg/nCps;
+
+  val = (1-alpha) * val + alpha * reg;
+  if(verbose > 1){
+    std::cout <<"reg: " << alpha * reg << std::endl;
     std::cout <<"freg: " << val << std::endl;
   }
 
@@ -428,162 +372,221 @@ NormalizedCorrelationCostFunction3D<TPrecision>::f(){
 }
 
 
-template <typename TPrecision>
+template <typename TPrecision, typename TImage>
 void 
-NormalizedCorrelationCostFunction3D<TPrecision>::gradf(vnl_vector<double> const
+NormalizedCorrelationCostFunction3D<TPrecision, TImage>::gradf(vnl_vector<double> const
     &x, vnl_vector<double> &g){
-  ComputeTransformedImage(x);
+  SetParametricFromVNLParameters(x);
+  ComputeTransformedImage();
   ComputeDerivativeImages();
+
   gradf(g);
-}
+};  
 
-
-template <typename TPrecision>
+template <typename TPrecision, typename TImage>
 void 
-NormalizedCorrelationCostFunction3D<TPrecision>::gradf(vnl_vector<double> &g){
-
-
-  TPrecision *bfu = NULL;
-  TPrecision *bfv = NULL;
-  TPrecision *bfw = NULL;
+NormalizedCorrelationCostFunction3D<TPrecision, TImage>::gradf(vnl_vector<double> &g){
 
   TParametric &parametric = transform.GetParametric();
   TControlMesh &net = parametric.GetControlMesh();
-  TKnotVector &uknots = parametric.GetUKnots();
-  TKnotVector &vknots = parametric.GetVKnots();
-  TKnotVector &wknots = parametric.GetWKnots();
-  int p = uknots.GetDegree();
-  int q = vknots.GetDegree();
-  int r = wknots.GetDegree();
+  TKnotVector &knotsU = parametric.GetUKnots();
+  TKnotVector &knotsV = parametric.GetVKnots();
+  TKnotVector &knotsW = parametric.GetWKnots();
+  int p = knotsU.GetDegree();
+  int q = knotsV.GetDegree();
+  int r = knotsW.GetDegree();
+  
+  ImagePoint size = transform.GetSize();
+  ImagePoint start = transform.GetStart();
+
+
+
+  
+  TPrecision uMin = knotsU.GetKnotA();
+  TPrecision uMax = knotsU.GetKnotB();
+  TPrecision uStep = ( uMax - uMin ) / size[0]; 
+
+  TPrecision vMin = knotsV.GetKnotA();
+  TPrecision vMax = knotsV.GetKnotB();
+  TPrecision vStep = ( vMax - vMin ) / size[1]; 
+
+  TPrecision wMin = knotsW.GetKnotA();
+  TPrecision wMax = knotsW.GetKnotB();
+  TPrecision wStep = ( wMax - wMin ) / size[2]; 
 
   TPrecision uS, uE, vS, vE, wS, wE;
   TPrecision bSum1;
   TPrecision bSum2;
   TPrecision bSum3;
 
-  int index = 0;
+  int vspan = 0;
+  int uspan = 0;
+  int wspan = 0;
   int uind = 0;
   int vind = 0;
   int wind = 0;
+  
+  TPrecision *bfu = new TPrecision[p+1];
+  TPrecision *bfv = new TPrecision[q+1];
+  TPrecision *bfw = new TPrecision[r+1];
 
-  ImagePointer transformedMaskImage = transform.GetTransformedMaskImage();
+  ImagePoint pnt;
+  TControlPoint pOut;
+  int index = 0;  
+  int nCps = net.LengthU() * net.LengthV() * net.LengthW();
   for(int i = 0; i < net.LengthU(); i++){
     for(int j = 0; j < net.LengthV(); j++){
       for(int k = 0; k < net.LengthW(); k++){
 
+     
+        //Fixed boundary controlpoints
+        if(fixedBoundary){ 
+        if(i == 0  || i == net.LengthU()-1 || j == 0 || j == net.LengthV()-1 || k ==0
+                   || k == net.LengthW()-1 ){ 
+          g[index++] = 0; 
+          g[index++] = 0; 
+          g[index++] = 0;
+          continue; 
+        }
+        }
+
+
+        //compute bspline parameter range for controlpoint i,j,k
         TControlPoint &current = net.Get(i, j, k);
-        uknots.findRange(i, uS, uE);
-        vknots.findRange(j, vS, vE);
-        wknots.findRange(k, wS, wE);
+        knotsU.findRange(i, uS, uE);
+        knotsV.findRange(j, vS, vE);
+        knotsW.findRange(k, wS, wE);
 
 
-        //regularization
+        //Regularization
         double regX = 0;
         double regY = 0;
         double regZ = 0;
 
         if(alpha != 0){
-        int nP = 0;
+          int nP = 0;
 
-        for(int l=-1; l<2; l++){
-          for(int m = -1; m<2; m++){
-            for(int n = -1; n<2; n++){
+          for(int l=-1; l<2; l++){
+            for(int m = -1; m<2; m++){
+              for(int n = -1; n<2; n++){
 
-              if(l == 0 && n == 0 && m == 0){
+                if(l == 0 && n == 0 && m == 0){
                   continue;
-              }
-              if(net.CheckIndex(i+l, j+m, k+n)){
-                TControlPoint &neighbor = net.Get(i+l, j+m, k+n);
-                regX += 2*(neighbor.x - current.x - l*xDistance);
-                regY += 2*(neighbor.y - current.y - m*yDistance);
-                regZ += 2*(neighbor.z - current.z - n*zDistance);
+                }
+                if(net.CheckIndex(i+l, j+m, k+n)){
+                  TControlPoint &neighbor = net.Get(i+l, j+m, k+n);
+                  regX += 2*(neighbor.x - current.x - l*xDistance);
+                  regY += 2*(neighbor.y - current.y - m*yDistance);
+                  regZ += 2*(neighbor.z - current.z - n*zDistance);
 
-                nP++;
+                  nP++;
+                }
               }
-            }
-          } 
+            } 
+          }
+          regX = regX / nP; 
+          regY = regY / nP;
+          regZ = regZ / nP;
         }
-        regX = regX / nP; 
-        regY = regY / nP;
-        regZ = regZ / nP;
-      }
+
+
+        //Gradient
+
       
-      ImageRegion region = transform.GetImageRegion(uS, uE, vS, vE, wS, wE);
+        ImageRegion region = transform.GetImageRegion(fixedImage, uS, uE, vS, vE, wS, wE);
 
-      ImageIterator diffIt(differenceImage, region);
-      ImageIterator dxIt(movingDxImage, region);
-      ImageIterator dyIt(movingDyImage, region);
-      ImageIterator dzIt(movingDzImage, region);
 
-      ImageIterator maskIt(transformedMaskImage, region);
-      
-      BFImageIterator bfuIt(bfuImage, region);
-      BFImageIterator bfvIt(bfvImage, region);
-      BFImageIterator bfwIt(bfwImage, region);
-
-      SpanImageIterator suIt(uspanImage, region);
-      SpanImageIterator svIt(vspanImage, region);
-      SpanImageIterator swIt(wspanImage, region);
-
-      bSum1 = 0;
-      bSum2 = 0; 
-      bSum3 = 0;   
-
-      int n = 1;
-      int nInMask = 0;
-
-      for(; !diffIt.IsAtEnd(); ++diffIt, ++maskIt,
-                               ++dxIt, ++dyIt, ++dzIt, 
-                               ++bfuIt, ++bfvIt, ++bfwIt,
-                               ++suIt, ++svIt, ++swIt)
-      {
+        ImageIterator maskIt(maskImage, region);
+        ImageIterator diffIt(differenceImage, region);
+        GradientImageIterator gIt(movingGradient, region);
         
-        n++;
-        if(!useMask || maskIt.Get() != 0 ){
-          nInMask++;
-          uind = p - suIt.Get() + i;
-          vind = q - svIt.Get() + j;
-          wind = r - swIt.Get() + k;
+        bSum1 = 0;
+        bSum2 = 0; 
+        bSum3 = 0;   
 
-          bfu = bfuIt.Get();
-          bfv = bfvIt.Get();
-          bfw = bfwIt.Get();
+  
+
+        int nInside = 0;
+        for(; !diffIt.IsAtEnd(); ++diffIt, ++gIt){
+          if(!useMask || maskIt.Get() != 0 ){
+            ImageIndex current = diffIt.GetIndex();
+            differenceImage->TransformIndexToPhysicalPoint(current, pnt);
+    
+            TPrecision u = uMin + ( pnt[0] - start[0] ) * uStep;
+            TPrecision v = vMin + ( pnt[1] - start[1] ) * vStep;
+            TPrecision w = wMin + ( pnt[2] - start[2] ) * wStep;
+   
+            if( TKnotVector::isInside(uS, uE, u) &&
+                TKnotVector::isInside(vS, vE, v) &&
+                TKnotVector::isInside(wS, wE, w)    ){
+
+              nInside++;
+
+              parametric.PointAt( u, v, w, pOut, uspan, vspan, wspan, bfu, bfv, bfw);
+              uind = p - uspan + i;
+              vind = q - vspan + j;
+              wind = r - wspan + k;
+
+              pnt[0] = pOut.x;
+              pnt[1] = pOut.y;
+              pnt[2] = pOut.z;
+              
 
 
-          TPrecision bf = 2 * diffIt.Get() * bfu[uind] * bfv[vind] * bfw[wind];
-          bSum1 += bf * dxIt.Get(); 
-          bSum2 += bf * dyIt.Get(); 
-          bSum3 += bf * dzIt.Get(); 
+              GradientVector gv = gIt.Get();
+
+              TPrecision bf = 2 * diffIt.Get() * bfu[uind] * bfv[vind] * bfw[wind];
+              bSum1 += bf * gv[0]; 
+              bSum2 += bf * gv[1]; 
+              bSum3 += bf * gv[2];
+            } 
+          }
+
         }
 
-      }
+        if(nInside > 0 ){
+          TPrecision beta = (1.0-alpha)/nInside;
+          TPrecision gamma = alpha/nCps;
+          g[index++] = beta*bSum1 + gamma*regX;
+          g[index++] = beta*bSum2 + gamma*regY;
+          g[index++] = beta*bSum3 + gamma*regZ;
+        }
+        else{  
+          g[index++] = 0; 
+          g[index++] = 0; 
+          g[index++] = 0;
+        }
 
-      TPrecision pInMask = (TPrecision)nInMask/n;
-      g[index++] = bSum1 + alpha * regX * pInMask;
-      g[index++] = bSum2 + alpha * regY * pInMask;
-      g[index++] = bSum3 + alpha * regZ * pInMask;
+
+
       }
     }
   }
+  delete[] bfu;
+  delete[] bfv;
+  delete[] bfw;
 }
 
 
-template <typename TPrecision>
+template <typename TPrecision, typename TImage>
 void
-NormalizedCorrelationCostFunction3D<TPrecision>::compute(vnl_vector<double> const &x, double *val, vnl_vector<double> *g){
-  ComputeTransformedImage(x); 
+NormalizedCorrelationCostFunction3D<TPrecision, TImage>::compute(vnl_vector<double> const &x, double *val, vnl_vector<double> *g){
+
+  SetParametricFromVNLParameters(x);
+  ComputeTransformedImage();
   ComputeDerivativeImages();
 
   if( val != NULL){
     *val = f(); 
-  } 
+  }
+
   gradf(*g);
 }
 
 
-template <typename TPrecision>
+template <typename TPrecision, typename TImage>
 void
-NormalizedCorrelationCostFunction3D<TPrecision>::Init(){
+NormalizedCorrelationCostFunction3D<TPrecision, TImage>::Init(){
   TParametric &parametric = transform.GetParametric();
   TControlMesh &net = parametric.GetControlMesh();
   TControlPoint p1 = net.Get(0, 0, 0);

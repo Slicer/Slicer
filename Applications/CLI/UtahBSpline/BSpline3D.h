@@ -7,13 +7,13 @@
 #include <iostream>
 
 
-template <typename TCPoint>
+template <typename TCPoint, typename TPrec>
 class BSpline3D{
 
 
   public:
     typedef TCPoint TControlPoint;
-    typedef typename TControlPoint::TPrecision TPrecision;
+    typedef TPrec TPrecision;
     typedef ControlMesh3D< TControlPoint > TControlMesh;
     typedef KnotVector<TPrecision> TKnotVector;
 
@@ -61,15 +61,45 @@ class BSpline3D{
 
     };
     
+    
     void PointAt( const TPrecision u, const TPrecision v, const TPrecision w, 
-                  TControlPoint &pOut, TPrecision *bfu = NULL, TPrecision *bfv = NULL,
-                  TPrecision *bfw = NULL)
+                  TControlPoint &pOut)
+    {
+      TPrecision *bfu = new TPrecision[uKnots.GetDegree() + 1];
+      TPrecision *bfv = new TPrecision[vKnots.GetDegree() + 1];
+      TPrecision *bfw = new TPrecision[wKnots.GetDegree() + 1];
+
+      PointAt(u, v, w, pOut, bfu, bfv, bfw);
+
+      delete[] bfu;
+      delete[] bfv;
+      delete[] bfw;
+    };    
+  
+
+    void PointAt( const TPrecision u, const TPrecision v, const TPrecision w, 
+                  TControlPoint &pOut, int &uspan, int &vspan, int &wspan)
+    {
+      TPrecision *bfu = new TPrecision[uKnots.GetDegree() + 1];
+      TPrecision *bfv = new TPrecision[vKnots.GetDegree() + 1];
+      TPrecision *bfw = new TPrecision[wKnots.GetDegree() + 1];
+
+      PointAt(u, v, w, pOut, uspan, vspan, wspan, bfu, bfv, bfw);
+
+      delete[] bfu;
+      delete[] bfv;
+      delete[] bfw;
+    };
+
+    void PointAt( const TPrecision u, const TPrecision v, const TPrecision w, 
+                  TControlPoint &pOut, TPrecision *bfu, TPrecision *bfv,
+                  TPrecision *bfw)
     {
       static int dummy1 = 0;
       static int dummy2 = 0;
       static int dummy3 = 0;
 
-      PointOnAt(u, v, w, pOut, dummy1, dummy2, dummy3, bfu, bfv, bfw);
+      PointAt(u, v, w, pOut, dummy1, dummy2, dummy3, bfu, bfv, bfw);
     };
 
     
@@ -83,30 +113,17 @@ class BSpline3D{
       int q = vKnots.GetDegree();
       int r = wKnots.GetDegree();
 
+
       uspan = uKnots.FindSpan(u);
-      if(bfu == NULL){
-        bfu = uKnots.BasisFunctions(uspan, u);
-      }
-      else{
-        uKnots.BasisFunctions(uspan, u, bfu);
-      }
+      uKnots.BasisFunctions(uspan, u, bfu);
+      
       int uind = uspan - p;
 
       vspan = vKnots.FindSpan(v);
-      if(bfv == NULL){
-        bfv = vKnots.BasisFunctions(vspan, v);
-      }
-      else{
-        vKnots.BasisFunctions(vspan, v, bfv);
-      }
+      vKnots.BasisFunctions(vspan, v, bfv);
 
       wspan = wKnots.FindSpan(w);
-      if(bfw == NULL){
-        bfw = wKnots.BasisFunctions(wspan, w);
-      }
-      else{
-        wKnots.BasisFunctions(wspan, w, bfw);
-      }
+      wKnots.BasisFunctions(wspan, w, bfw);
 
 
       pOut.Zero();
@@ -126,6 +143,7 @@ class BSpline3D{
         }
         pOut += tmp2 *bfw[t];
       }
+
     };
 
 
@@ -169,14 +187,17 @@ class BSpline3D{
       return true;
     };
   
-    static BSpline3D<TCPoint> createIdentity( TPrecision *index,
+    static BSpline3D<TCPoint, TPrec> createIdentity1D( TPrecision *index,
+                      TPrecision *size, int *nControlPoints, int *degree);
+
+    static BSpline3D<TCPoint, TPrec> createIdentity( TPrecision *index,
                       TPrecision *size, int *nControlPoints, int *degree);
  
     static void fit(TPrecision x1, TPrecision x2, TPrecision nC, 
                     TKnotVector &knots, TPrecision &h, TPrecision &start);
 
     //Operators
-    BSpline3D<TCPoint>& operator=(const BSpline3D<TCPoint>& rhs){
+    BSpline3D<TCPoint, TPrec>& operator=(const BSpline3D<TCPoint, TPrec>& rhs){
 
       uKnots = rhs.uKnots;
       vKnots = rhs.vKnots;
@@ -186,17 +207,16 @@ class BSpline3D{
     };
     
 
-    friend std::ostream& operator << (std::ostream& os, BSpline3D<TCPoint>& bspline){
+    friend std::ostream& operator << (std::ostream& os, BSpline3D<TCPoint, TPrec>& bspline){
        os << bspline.GetUKnots() << std::endl;
        os << bspline.GetVKnots() << std::endl;
        os << bspline.GetWKnots() << std::endl;
        os << bspline.GetControlMesh() << std::endl;
-       std::cout << "written bspline" << std::endl;
 
        return os;
     };
 
-    friend std::istream& operator >> (std::istream& is, BSpline3D<TCPoint>& bspline){
+    friend std::istream& operator >> (std::istream& is, BSpline3D<TCPoint, TPrec>& bspline){
         is >> bspline.GetUKnots();
         is >> bspline.GetVKnots();
         is >> bspline.GetWKnots();
@@ -217,11 +237,57 @@ class BSpline3D{
 
 
 
-
-template <typename T>
-BSpline3D<T> 
-BSpline3D<T>::createIdentity(typename BSpline3D<T>::TPrecision *index, typename BSpline3D<T>::TPrecision *size, int *nControlPoints, 
+template <typename T, typename TP>
+BSpline3D<T, TP> 
+BSpline3D<T, TP>::createIdentity1D(typename BSpline3D<T, TP>::TPrecision *index,
+    typename BSpline3D<T, TP>::TPrecision *size, int *nControlPoints, 
                              int *degree)
+
+{
+
+  int ulength = 0;
+  TKnotVector uknots =
+    TKnotVector::createUniformKnotsUnclamped(nControlPoints[0], degree[0], ulength);
+  int vlength = 0;
+  TKnotVector vknots =
+    TKnotVector::createUniformKnotsUnclamped(nControlPoints[1], degree[1], vlength);
+  int wlength = 0;
+  TKnotVector wknots =
+    TKnotVector::createUniformKnotsUnclamped(nControlPoints[2], degree[2], wlength);
+
+  
+  //Compute control grid start location
+  TPrecision hu = 0;
+  TPrecision xStart = 0;
+  fit(index[0], index[0]+size[0], nControlPoints[0], uknots, hu, xStart);
+
+  TPrecision hv = 0;
+  TPrecision yStart = 0;
+  fit(index[1], index[1]+size[1], nControlPoints[1], vknots, hv, yStart);
+  
+  TPrecision hw = 0;
+  TPrecision zStart = 0;
+  fit(index[2], index[2]+size[2], nControlPoints[2], wknots, hw, zStart);
+
+  TControlMesh net( nControlPoints[0], nControlPoints[1], nControlPoints[2]); 
+  for(int i = 0; i < nControlPoints[0]; i++){
+    for( int j = 0; j < nControlPoints[1]; j++){
+      for( int k = 0; k < nControlPoints[2]; k++){
+        net.Set(i, j, k, 0);
+      }
+    }
+  }
+
+ BSpline3D<T, TP>  result(net, uknots, vknots, wknots);
+ return result; 
+}
+
+
+
+template <typename T, typename TP>
+BSpline3D<T, TP> 
+BSpline3D<T, TP>::createIdentity(typename BSpline3D<T, TP>::TPrecision *index,
+    typename BSpline3D<T, TP>::TPrecision *size, int *nControlPoints, int *degree)
 
 {
 
@@ -259,18 +325,18 @@ BSpline3D<T>::createIdentity(typename BSpline3D<T>::TPrecision *index, typename 
     }
   }
 
- BSpline3D<T>  result(net, uknots, vknots, wknots);
+ BSpline3D<T, TP>  result(net, uknots, vknots, wknots);
  return result; 
 }
 
 
 
-template <typename T>
+template <typename T, typename TP>
 void 
-BSpline3D<T>::fit(typename BSpline3D<T>::TPrecision x1,
-    typename BSpline3D<T>::TPrecision x2, typename BSpline3D<T>::TPrecision nC,
-    typename BSpline3D<T>::TKnotVector &knots, typename BSpline3D<T>::TPrecision &h, 
-    typename BSpline3D<T>::TPrecision &start){
+BSpline3D<T, TP>::fit(typename BSpline3D<T, TP>::TPrecision x1,
+    typename BSpline3D<T, TP>::TPrecision x2, typename BSpline3D<T, TP>::TPrecision nC,
+    typename BSpline3D<T, TP>::TKnotVector &knots, typename BSpline3D<T, TP>::TPrecision &h, 
+    typename BSpline3D<T, TP>::TPrecision &start){
 
   int degree = knots.GetDegree();
 
@@ -305,9 +371,10 @@ BSpline3D<T>::fit(typename BSpline3D<T>::TPrecision x1,
     h2 += i*b1[i]*h;
   }
   start =  (x1 - h2)/s1;
+
+  delete[] b1;
+  delete[] b2;
   
-  std::cout << "h: " << h << std::endl;
-  std::cout << "start " << start << std::endl;
 }
 
 

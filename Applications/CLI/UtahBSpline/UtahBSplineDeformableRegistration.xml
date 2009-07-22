@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Registration</category>
-  <title>_(Utah) Deformable BSpline registration (Experimental)</title>
-  <description>Registers two images together using a normalized correlation metric and BSpline transform. This is an experimental module using a specialized BSpline method.</description>
-  <version>0.1.0.$Revision: 5746 $(alpha)</version>
+  <title>(Utah) Deformable BSpline registration (alpha)</title>
+  <index>5</index>
+  <description>Registers two images together using a normalized correlation
+  metric and a multiresolution BSpline transform. 
+  This is an experimental module using a specialized BSpline method.</description>
+  <version>(alpha)</version>
   <documentation-url></documentation-url>
   <license></license>
   <contributor>Sam Gerber, Jim Miller, Steve Pieper, Ross Whitaker</contributor>
@@ -16,69 +19,18 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
     <description>Parameters used for registration</description>
 
     <integer>
-      <name>gridSize</name>
-      <flag>g</flag>
-      <longflag>gridSize</longflag>
-      <description>Number of grid points on interior of image.</description>
-      <label>Grid Size</label>
+      <name>Detail</name>
+      <flag>d</flag>
+      <longflag>detail</longflag>
+      <description>Sets the detail of the warp. E.g. How much detail in the registration is matched. 0 = coarse registration, 10 = fine regystartion .</description>
+      <label>Detail</label>
       <default>5</default>
       <constraints>
-        <minimum>3</minimum>
+        <minimum>1</minimum>
+        <maximum>10</maximum>
         <step>1</step>
       </constraints>
     </integer>
-
-    <double>
-      <name>alpha</name>
-      <flag>a</flag>
-      <longflag>alpha</longflag>
-      <description>Regularization term.  0 is no regularization, 1 is maximum.</description>
-      <label>Regularization (alpha)</label>
-      <default>0</default>
-      <constraints>
-        <minimum>0</minimum>
-        <maximum>1</maximum>
-        <step>0.01</step>
-      </constraints>
-    </double>
-
-    <double>
-      <name>sigma</name>
-      <flag>s</flag>
-      <longflag>sigma</longflag>
-      <description>Standard deviation of image smoothing kernel in mm.</description>
-      <label>Std. Dev. of Smoothing (sigma)</label>
-      <default>0</default>
-      <constraints>
-        <minimum>0</minimum>
-      </constraints>
-    </double>
-
-    <double>
-      <name>step</name>
-      <flag>p</flag>
-      <longflag>stepSize</longflag>
-      <description>Initial step size of the optimizer (will be adjusted dynamically downward).</description>
-      <label>Initial Step Size</label>
-      <default>1</default>
-      <constraints>
-        <minimum>0</minimum>
-      </constraints>
-    </double>
-
-    <double>
-      <name>tolerance</name>
-      <flag>t</flag>
-      <longflag>tolerance</longflag>
-      <description>Convergence criterion.  Optimization will stop with step size reaches tolerance.</description>
-      <label>Tolerance</label>
-      <default>0.001</default>
-      <constraints>
-        <minimum>0</minimum>
-      </constraints>
-    </double>
-
-
   </parameters>
 
   <parameters>

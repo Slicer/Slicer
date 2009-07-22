@@ -72,6 +72,8 @@ class KnotVector{
     inline int GetN();
     inline T GetKnotA();
     inline T GetKnotB();
+
+ 
    
     //Static convenice functions 
     static KnotVector<T> createUniformKnotsClamped(int nControlPoints, int
@@ -79,6 +81,7 @@ class KnotVector{
     static KnotVector<T> createUniformKnotsUnclamped(int nControlPoints, int degree,
                                                      int &n);
 
+    static bool isInside(T uS, T uE, T u);
    
     //Operators
     KnotVector<T>& operator=(const KnotVector<T>& rhs){
@@ -135,24 +138,24 @@ class KnotVector{
 
 //Non-inline implementations 
 template <typename T>
-KnotVector<T>::KnotVector(T *knts, int len, int deg) {
-  this->knots = new T[len];
-  for(int i=0; i < len; i++){
-    this->knots[i] = knts[i];
+KnotVector<T>::KnotVector(T *knots, int length, int degree) {
+  this->knots = new T[length];
+  for(int i=0; i < length; i++){
+    this->knots[i] = knots[i];
   }
-  this->length = len;
-  this->degree = deg;
-  lower = (int)ceil((deg+1) / 2.0);
-  upper = (int)floor((deg+1) / 2.0);
+  this->length = length;
+  this->degree = degree;
+  lower = (int)ceil((degree+1) / 2.0);
+  upper = (int)floor((degree+1) / 2.0);
 
-  n = len - deg - 2;
-  for (int i = 1; i < len; i++) {
-    if (knots[i - 1] > knts[i]) {
+  n = length - degree - 2;
+  for (int i = 1; i < length; i++) {
+    if (knots[i - 1] > knots[i]) {
       throw "Not a valid knot vector";                
     }
   }  
-  left = new T[deg + 1];
-  right = new T[deg + 1];
+  left = new T[degree + 1];
+  right = new T[degree + 1];
 
 }
 
@@ -327,6 +330,14 @@ KnotVector<T>::createUniformKnotsUnclamped(int nControlPoints, int degree, int &
   delete[] knots;
   return result;   
 }
+
+template <typename T>
+bool 
+KnotVector<T>::isInside(T uS, T uE, T u){
+  return u > uS && u < uE;
+}
+
+
 
 
 

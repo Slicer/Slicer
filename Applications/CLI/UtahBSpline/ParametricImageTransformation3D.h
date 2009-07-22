@@ -1,14 +1,12 @@
 #ifndef PARAMETRICIMAGETRANSFORMATION3D_H
 #define PARAMETRICIMAGETRANSFORMATION3D_H
 
-#include "itkImage.h"
-#include "itkCastImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
 #include "itkLinearInterpolateImageFunction.h"
 
 
 
-template <typename TParametric>
+template <typename TParametric, typename TImage>
 class ParametricImageTransformation3D{
   public:
     typedef typename TParametric::TKnotVector TKnotVector;
@@ -16,174 +14,151 @@ class ParametricImageTransformation3D{
     typedef typename TParametric::TControlPoint TControlPoint;
     typedef typename TControlPoint::TPrecision TPrecision;  
     
-    typedef itk::Image<TPrecision, 3> Image;
+    typedef TImage Image;
     typedef typename Image::Pointer ImagePointer;
     typedef typename Image::IndexType ImageIndex;
     typedef typename Image::RegionType ImageRegion;
+    typedef typename Image::PointType ImagePoint;
     typedef typename ImageRegion::SizeType ImageSize;
     typedef typename ImageSize::SizeValueType ImageSizeValue;
 
+    /*
     typedef itk::Image<TPrecision *, 3> BFImage;
     typedef typename BFImage::Pointer BFImagePointer;
     
     typedef itk::Image<int, 3> SpanImage;
     typedef typename SpanImage::Pointer SpanImagePointer; 
+    */
 
 
     ParametricImageTransformation3D(){ 
-      useMask = false;
     };
 
-    void SetImage(ImagePointer img){  this->image = img; };
+    void SetImage(ImagePointer image){  this->image = image; };
     
-    void SetMaskImage(ImagePointer maskImg) { 
-      this->maskImage = maskImg; 
-      CastFilterPointer castFilter = CastFilter::New();
-      castFilter->SetInput(maskImg);
-      castFilter->Update();
-      transformedMaskImage = castFilter->GetOutput();
+    void SetRange(const ImageRegion &range){ 
+      this->range = range;
     };
     
-    ImagePointer GetTransformedMaskImage(){ 
-      return transformedMaskImage; 
-    };
-
-    void SetUseMask(bool use){
-      //useMask = use;
-    };
-
-    void SetRange(const ImageRegion &rng){ this->range = rng;
-      std::cout << rng << std::endl; };
-    
-    ImageRegion GetRange(){ return range; };
-    
-    void SetParametric(TParametric &surf){ 
-      this->surface = surf; 
+    ImageRegion GetRange(){ 
+      return range; 
     };
     
-    TParametric &GetParametric(){ return surface; };
+    void SetParametric(TParametric &surface){ 
+      this->surface = surface; 
+    };
    
-    ImagePointer Transform();
+    ImagePoint GetSize(){
+      return size;
+    };
+
+    ImagePoint GetStart(){
+      return start;
+    }; 
     
 
-    void Transform(ImagePointer transformed);
+    TParametric &GetParametric(){ 
+      return surface; 
+    };
+   
     
+
+    void Transform(ImagePointer transformed, ImagePointer image);
+    
+   /*
     void TransformAndStoreBFs(ImagePointer transformed, BFImagePointer uImage,
         BFImagePointer vImage, BFImagePointer wImage, SpanImagePointer uspans,
         SpanImagePointer vspans, SpanImagePointer wspans);
+   */
 
-    ImageRegion GetImageRegion(TPrecision uStart, TPrecision uEnd, TPrecision
+    ImageRegion GetImageRegion(ImagePointer image, TPrecision uStart, TPrecision uEnd, TPrecision
         vStart, TPrecision vEnd, TPrecision wStart, TPrecision wEnd);
 
 
     //Operators
-    ParametricImageTransformation3D<TParametric>& operator=(const ParametricImageTransformation3D<TParametric>& rhs){
-       this->surface = rhs.surface;
-       this->image = rhs.image;
-       this->maskImage = rhs.maskImage;
-       this->transformedMaskImage = rhs.transformedMaskImage;
-       this->range = rhs.range;
-       this->useMask = rhs.useMask;
+    ParametricImageTransformation3D<TParametric, TImage>& operator=(const
+        ParametricImageTransformation3D<TParametric, TImage>& rhs){
+       surface = rhs.surface;
+       range = rhs.range;
+       size = rhs.szie;
+       start = rhs.size;
     };
 
 
     friend std::ostream& operator << (std::ostream&
-      os, ParametricImageTransformation3D<TParametric>& transform){
+      os, ParametricImageTransformation3D<TParametric, TImage>& transform){
       ImageSize size = transform.range.GetSize();
       ImageIndex rangeIndex = transform.range.GetIndex();
 
-       os << size[0] << std::endl;
-       os << size[1] << std::endl;
-       os << size[2] << std::endl;
+       os << transform.size[0] << std::endl;
+       os << transform.size[1] << std::endl;
+       os << transform.size[2] << std::endl;
 
-       os << rangeIndex[0] << std::endl;
-       os << rangeIndex[1] << std::endl;
-       os << rangeIndex[2] << std::endl;
+       os << transform.start[0] << std::endl;
+       os << transform.start[1] << std::endl;
+       os << transform.start[2] << std::endl;
 
        os << transform.surface << std::endl;
        
-
-       std::cout << "transform written" << std::endl;
-
        return os;
     };
 
     friend std::istream& operator >> (std::istream& is, 
-        ParametricImageTransformation3D<TParametric>& transform){
+        ParametricImageTransformation3D<TParametric, TImage>& transform){
         
         ImageSize size = transform.range.GetSize();
         ImageIndex rangeIndex = transform.range.GetIndex();
 
-        is >> size[0];
-        is >> size[1];
-        is >> size[2];
-        is >> rangeIndex[0];
-        is >> rangeIndex[1];
-        is >> rangeIndex[2];
-
-        transform.range.SetSize(size);
-        transform.range.SetIndex(rangeIndex);
+        is >> transform.size[0];
+        is >> transform.size[1];
+        is >> transform.size[2];
+        is >> transform.start[0];
+        is >> transform.start[1];
+        is >> transform.start[2];
 
         is >> transform.surface;
-        transform.useMask = false;
         return is;
 
     };
 
+    void ComputePhysicalRange(ImagePointer image, ImageRegion range){
+      ImageIndex index = range.GetIndex();
+      image->TransformIndexToPhysicalPoint(index, start);
+      for(unsigned int i=0; i< Image::GetImageDimension(); i++){
+        index[i] += range.GetSize(i);
+      }
+      image->TransformIndexToPhysicalPoint(index, size);
+      size[0] -= start[0];
+      size[1] -= start[1];
+      size[2] -= start[2];
+    };
+
+
+
   private:
     TParametric surface;
-    ImagePointer image;
-    ImagePointer maskImage;
-    ImagePointer transformedMaskImage;
     ImageRegion range;
-
-    //CastFilter for copying Images
-    typedef itk::CastImageFilter<Image, Image> CastFilter;
-    typedef typename CastFilter::Pointer CastFilterPointer;
+    ImagePoint size;
+    ImagePoint start;
 
     typedef itk::ImageRegionIteratorWithIndex<Image> ImageIterator;
-    typedef itk::ImageRegionIterator<BFImage> BFImageIterator;
-    typedef itk::ImageRegionIterator<SpanImage> SpanImageIterator;
 
-
-    typedef itk::LinearInterpolateImageFunction<Image, TPrecision> InterpolateFunction;
+    typedef itk::LinearInterpolateImageFunction<Image, double> InterpolateFunction;
     typedef typename InterpolateFunction::Pointer InterpolateFunctionPointer;
     typedef typename InterpolateFunction::ContinuousIndexType ImageContinuousIndex;
-
-    bool useMask;
 
 };
 
 
 
-//Non-inline implementations
-template <typename TParametric>
-typename ParametricImageTransformation3D<TParametric>::ImagePointer
-ParametricImageTransformation3D<TParametric>::Transform(){
-  if( image.IsNull() ){
-    return NULL;
-  }
-
-  CastFilterPointer castFilter = CastFilter::New();
-  castFilter->SetInput( image );
-  castFilter->Update();
-  ImagePointer transformed = castFilter->GetOutput();
-
-  this->Transform(transformed);
-  return transformed;
-
-}
 
 
-template <typename TParametric>
-typename ParametricImageTransformation3D<TParametric>::ImageRegion
-ParametricImageTransformation3D<TParametric>::GetImageRegion(TPrecision
-    uStart, TPrecision uEnd, TPrecision vStart, TPrecision vEnd, TPrecision
-    wStart, TPrecision wEnd) 
+template <typename TParametric, typename TImage>
+typename ParametricImageTransformation3D<TParametric, TImage>::ImageRegion
+ParametricImageTransformation3D<TParametric, TImage>::GetImageRegion(
+      ImagePointer image ,TPrecision uStart, TPrecision uEnd, TPrecision vStart, 
+      TPrecision vEnd, TPrecision wStart, TPrecision wEnd) 
 {
-  ImageSize rangeSize = range.GetSize();
-
-  ImageIndex rangeIndex = range.GetIndex();
   
   TKnotVector &knotsU =  surface.GetUKnots();
   TKnotVector &knotsV =  surface.GetVKnots();
@@ -191,66 +166,69 @@ ParametricImageTransformation3D<TParametric>::GetImageRegion(TPrecision
   
   TPrecision uMin = knotsU.GetKnotA();
   TPrecision uMax = knotsU.GetKnotB();
-  TPrecision uStep = ( uMax - uMin ) / rangeSize[0]; 
+  TPrecision uStep = ( uMax - uMin ) / size[0]; 
 
   TPrecision vMin = knotsV.GetKnotA();
   TPrecision vMax = knotsV.GetKnotB();
-  TPrecision vStep = ( vMax - vMin ) / rangeSize[1]; 
+  TPrecision vStep = ( vMax - vMin ) / size[1]; 
 
   TPrecision wMin = knotsW.GetKnotA();
   TPrecision wMax = knotsW.GetKnotB();
-  TPrecision wStep = ( wMax - wMin ) / rangeSize[2]; 
+  TPrecision wStep = ( wMax - wMin ) / size[2]; 
+
+ //Compute imageregion from physical coordinates
+  ImagePoint tmp;
+  tmp[0] = (long) ceil( start[0] + (uStart - uMin) / uStep );
+  tmp[1] = (long) ceil( start[1] + (vStart - vMin) / vStep );
+  tmp[2] = (long) ceil( start[2] + (wStart - wMin) / wStep );
 
   ImageIndex regionIndex;
-  regionIndex[0] = (long) ceil( rangeIndex[0] + (uStart - uMin) / uStep );
-  regionIndex[1] = (long) ceil( rangeIndex[1] + (vStart - vMin) / vStep );
-  regionIndex[2] = (long) ceil( rangeIndex[2] + (wStart - wMin) / wStep );
+  image->TransformPhysicalPointToIndex(tmp, regionIndex);
+  
+  tmp[0] = (long) ceil( start[0] + (uEnd - uMin) / uStep );
+  tmp[1] = (long) ceil( start[1] + (vEnd - vMin) / vStep );
+  tmp[2] = (long) ceil( start[2] + (wEnd - wMin) / wStep );
+
+  ImageIndex endIndex;
+  image->TransformPhysicalPointToIndex(tmp, endIndex);
+
 
   ImageRegion region;
   region.SetIndex(regionIndex);
-  region.SetSize(0, (long) floor( (uEnd - uStart)/uStep) );
-  region.SetSize(1, (long) floor( (vEnd - vStart)/vStep) );
-  region.SetSize(2, (long) floor( (wEnd - wStart)/wStep) );
+  region.SetSize(0, endIndex[0] - regionIndex[0] );
+  region.SetSize(1, endIndex[1] - regionIndex[1] );
+  region.SetSize(2, endIndex[2] - regionIndex[2] );
 
   return region; 
+
 }
 
 
 
-template <typename TParametric>
+template <typename TParametric, typename TImage>
 void
-ParametricImageTransformation3D<TParametric>::Transform(ImagePointer
-    transformed){
- InterpolateFunctionPointer imageip = InterpolateFunction::New();  
- InterpolateFunctionPointer maskip = InterpolateFunction::New();
-  
+ParametricImageTransformation3D<TParametric, TImage>::Transform(ImagePointer
+    transformed, ImagePointer image){
  
-  std::cout<<"image region: " << image->GetLargestPossibleRegion() << std::endl; 
+  InterpolateFunctionPointer imageip = InterpolateFunction::New();  
+
   imageip->SetInputImage( image );
-  if(useMask){
-    maskip->SetInputImage( maskImage );
-  }
-  
 
-  ImageSize rangeSize = range.GetSize();
-
-  ImageIndex rangeIndex = range.GetIndex();
-  
   TKnotVector &knotsU =  surface.GetUKnots();
   TKnotVector &knotsV =  surface.GetVKnots();
   TKnotVector &knotsW =  surface.GetWKnots();
   
   TPrecision uMin = knotsU.GetKnotA();
   TPrecision uMax = knotsU.GetKnotB();
-  TPrecision uStep = ( uMax - uMin ) / rangeSize[0]; 
+  TPrecision uStep = ( uMax - uMin ) / size[0]; 
 
   TPrecision vMin = knotsV.GetKnotA();
   TPrecision vMax = knotsV.GetKnotB();
-  TPrecision vStep = ( vMax - vMin ) / rangeSize[1]; 
+  TPrecision vStep = ( vMax - vMin ) / size[1]; 
 
   TPrecision wMin = knotsW.GetKnotA();
   TPrecision wMax = knotsW.GetKnotB();
-  TPrecision wStep = ( wMax - wMin ) / rangeSize[2]; 
+  TPrecision wStep = ( wMax - wMin ) / size[2]; 
 
   
   ImageRegion region = transformed->GetLargestPossibleRegion();
@@ -260,63 +238,41 @@ ParametricImageTransformation3D<TParametric>::Transform(ImagePointer
   TControlPoint out; 
   ImageIterator it( transformed, range );
 
-  ImageIterator maskIt;
-  if(useMask){
-    maskIt = ImageIterator( transformedMaskImage, range );
-  }
   
-  int p = surface.GetDegreeU();
-  int q = surface.GetDegreeV();
-  int r = surface.GetDegreeW();
-  
-  TPrecision *bfu = new TPrecision[p+1]; 
-  TPrecision *bfv = new TPrecision[q+1];
-  TPrecision *bfw = new TPrecision[r+1];
-
-  int dummy1 = 0; 
-  int dummy2 = 0;
-  int dummy3 = 0;
+  ImageContinuousIndex cindex;
+  ImagePoint pnt;
+  pnt.Fill(0);
 
   for(it.GoToBegin(); !it.IsAtEnd(); ++it){
     ImageIndex current = it.GetIndex();
-    //std::cout << "index: " << current << std::endl;
-    //std::cout << "rangeindex: " << rangeIndex << std::endl;
-    TPrecision u = uMin + ( current[0] - rangeIndex[0] ) * uStep;
-    TPrecision v = vMin + ( current[1] - rangeIndex[1] ) * vStep;
-    TPrecision w = wMin + ( current[2] - rangeIndex[2] ) * wStep;
-    
-    surface.PointAt( u, v, w, out, dummy1, dummy2, dummy3, bfu, bfv, bfw);
-    ImageContinuousIndex cindex;
-
-    cindex[0] = out.x;
-    cindex[1] = out.y;
-    cindex[2] = out.z;
-    for(int i=0; i < 3; i++){
-      if(cindex[i] < index[i]){
-        cindex[i] = index[i];
-      }
-      else if(cindex[i] > index[i] + size[i] - 1){
-        cindex[i] = index[i] + size[i] - 1;
-      }
-    }
-
-    TPrecision pixel = (TPrecision) imageip->EvaluateAtContinuousIndex( cindex );
-    it.Set( pixel );
+    transformed->TransformIndexToPhysicalPoint(current, pnt);
+    TPrecision u = uMin + ( pnt[0] - start[0] ) * uStep;
+    TPrecision v = vMin + ( pnt[1] - start[1] ) * vStep;
+    TPrecision w = wMin + ( pnt[2] - start[2] ) * wStep;
    
-    if(useMask){ 
-      pixel = (TPrecision) maskip->EvaluateAtContinuousIndex( cindex ); 
-      maskIt.Set( pixel );
-      ++maskIt;
+    if( TKnotVector::isInside(uMin, uMax, u) &&
+        TKnotVector::isInside(vMin, vMax, v) &&
+        TKnotVector::isInside(wMin, wMax, w)    ){
+    
+      surface.PointAt( u, v, w, out);
+      pnt[0] = out.x;
+      pnt[1] = out.y;
+      pnt[2] = out.z;
     }
-
+    bool inside = image->TransformPhysicalPointToContinuousIndex(pnt, cindex);
+    if(inside){
+      TPrecision pixel = (TPrecision) imageip->EvaluateAtContinuousIndex( cindex );
+      it.Set( pixel );
+    }
   }
-
 }
 
 
-template <typename TParametric>
+
+/*
+template <typename TParametric, typename TImage>
 void 
-ParametricImageTransformation3D<TParametric>::TransformAndStoreBFs(
+ParametricImageTransformation3D<TParametric, TImage>::TransformAndStoreBFs(
     ImagePointer transformed, BFImagePointer uImage, BFImagePointer vImage,
     BFImagePointer wImage, SpanImagePointer suImage, SpanImagePointer svImage,
     SpanImagePointer swImage )
@@ -330,25 +286,22 @@ ParametricImageTransformation3D<TParametric>::TransformAndStoreBFs(
     maskip->SetInputImage (maskImage );
   }
 
-  ImageSize rangeSize = range.GetSize();
 
-  ImageIndex rangeIndex = range.GetIndex();
-  
   TKnotVector &knotsU =  surface.GetUKnots();
   TKnotVector &knotsV =  surface.GetVKnots();
   TKnotVector &knotsW =  surface.GetWKnots();
   
   TPrecision uMin = knotsU.GetKnotA();
   TPrecision uMax = knotsU.GetKnotB();
-  TPrecision uStep = ( uMax - uMin ) / rangeSize[0]; 
+  TPrecision uStep = ( uMax - uMin ) / size[0]; 
 
   TPrecision vMin = knotsV.GetKnotA();
   TPrecision vMax = knotsV.GetKnotB();
-  TPrecision vStep = ( vMax - vMin ) / rangeSize[1]; 
+  TPrecision vStep = ( vMax - vMin ) / size[1]; 
 
   TPrecision wMin = knotsW.GetKnotA();
   TPrecision wMax = knotsW.GetKnotB();
-  TPrecision wStep = ( wMax - wMin ) / rangeSize[2]; 
+  TPrecision wStep = ( wMax - wMin ) / size[2]; 
   
   BFImageIterator uit(uImage, range);
   BFImageIterator vit(vImage, range);
@@ -377,44 +330,29 @@ ParametricImageTransformation3D<TParametric>::TransformAndStoreBFs(
   int p = surface.GetDegreeU();
   int q = surface.GetDegreeV();
   int r = surface.GetDegreeW();
+  ImagePoint pnt;
   for(it.GoToBegin(); !it.IsAtEnd(); ++it, ++uit, ++vit, ++wit, ++suit, ++svit,
        ++swit ){
 
     ImageIndex current = it.GetIndex();
+    transformed->TransformIndexToPhysicalPoint(current, pnt);
     TPrecision *bfu = new TPrecision[p+1]; 
     TPrecision *bfv = new TPrecision[q+1]; 
     TPrecision *bfw = new TPrecision[r+1]; 
     
-    TPrecision u = uMin + ( current[0] - rangeIndex[0] ) * uStep;
-    TPrecision v = vMin + ( current[1] - rangeIndex[1] ) * vStep;
-    TPrecision w = wMin + ( current[2] - rangeIndex[2] ) * wStep;
+    TPrecision u = uMin + ( pnt[0] - start[0] ) * uStep;
+    TPrecision v = vMin + ( pnt[1] - start[1] ) * vStep;
+    TPrecision w = wMin + ( pnt[2] - start[2] ) * wStep;
     
     surface.PointAt( u, v, w, pOut, uspan, vspan, wspan, bfu, bfv, bfw);
-    ImageContinuousIndex cindex;
 
-    cindex[0] = pOut.x;
-    cindex[1] = pOut.y;
-    cindex[2] = pOut.z;
-    for(int i=0; i < 3; i++){
-      if(cindex[i] < index[i]){
-        cindex[i] = index[i];
-      }
-      else if(cindex[i] > index[i] + size[i] - 1){
-        cindex[i] = index[i] + size[i] - 1;
-      }
-    }
+    pnt[0] = pOut.x;
+    pnt[1] = pOut.y;
+    pnt[2] = pOut.z;
 
-
-
-    TPrecision pixel = (TPrecision) imageip->EvaluateAtContinuousIndex( cindex );
+    TPrecision pixel = (TPrecision) imageip->Evaluate( pnt );
     it.Set( pixel );
 
-
-   if(useMask){ 
-      pixel = (TPrecision) maskip->EvaluateAtContinuousIndex( cindex );
-      maskIt.Set( pixel );
-      ++maskIt;
-   }
 
 
     delete[] uit.Get();
@@ -432,7 +370,9 @@ ParametricImageTransformation3D<TParametric>::TransformAndStoreBFs(
 
   }
   
-};
+}
+*/
+
 
 #endif
 

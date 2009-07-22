@@ -4,6 +4,7 @@
 #include "vnl/vnl_cost_function.h"
 #include "vnl/vnl_vector.h"
 #include <iostream>
+#include <limits.h>
 
 //Simple gradient descent
 class GradientDescent{
@@ -15,21 +16,16 @@ public:
     step = 1;
     verbose = 0;
   };
-  virtual ~GradientDescent(){};
 
   void Minimize(vnl_cost_function &f, const vnl_vector<double> &xStart){
-    double currentf = 0;
-    double prevf = 10000;
+    double currentf = std::numeric_limits<double>::max();
+    double prevf = 0;
     
     /*
     double f1 = 0;
     double f2 = 0;
     double s1 = 0;
-    double s2 = 0;;;;;
-
-
-
-
+    double s2 = 0;
     */
 
 

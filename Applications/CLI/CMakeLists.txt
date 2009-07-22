@@ -658,7 +658,7 @@ else ( ${ITK_VERSION_MAJOR} GREATER 3 )
 
 endif ( ${ITK_VERSION_MAJOR} GREATER 3 )
 
-#subdirs( UtahBSpline )
+subdirs( UtahBSpline )
 subdirs( DiffeomorphicDemonsRegistration )
 
 if(Slicer3_USE_MIDAS)
