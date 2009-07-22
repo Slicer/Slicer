@@ -1274,6 +1274,41 @@ if { ![file exists $::BatchMake_TEST_FILE] || $::GENLIB(update) } {
 
 
 ################################################################################
+# Get and build OpenCV 
+#
+#
+if { [BuildThis $::OpenCV_TEST_FILE "cv"] == 1 && [string tolower $::USE_OPENCV] == "on" } {
+ 
+    cd $::Slicer3_LIB
+
+    runcmd $::SVN co $::OpenCV_TAG OpenCV 
+
+    file mkdir $::Slicer3_LIB/OpenCV-build
+    cd $::Slicer3_LIB/OpenCV-build
+
+    runcmd $::CMAKE \
+        -G$GENERATOR \
+        -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+        -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
+        -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
+        -DBUILD_SHARED_LIBS:BOOL=ON \
+        -DBUILD_TESTING:BOOL=OFF \
+        -DOpenCV_DIR:FILEPATH=$Slicer3_LIB/OpenCV-build \
+        ../OpenCV/opencv
+
+    if {$isWindows} {
+        if { $MSVC6 } {
+            runcmd $::MAKE BatchMake.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
+        } else {
+            runcmd $::MAKE BatchMake.SLN /out buildlog.txt /build  $::VTK_BUILD_TYPE
+        }
+    } else {
+        eval runcmd $::MAKE
+    }
+}
+
+
+################################################################################
 # Get and build SLICERLIBCURL (slicerlibcurl)
 #
 #

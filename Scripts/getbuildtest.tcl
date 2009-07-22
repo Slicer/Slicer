@@ -482,6 +482,7 @@ runcmd $::CMAKE \
         -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
         -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
         -DKWWidgets_DIR:FILEPATH=$Slicer3_LIB/KWWidgets-build \
+        -DOpenCV_DIR:FILEPATH=$Slicer3_LIB/OpenCV-build \
         -DTeem_DIR:FILEPATH=$Slicer3_LIB/teem-build \
         -DOpenIGTLink_DIR:FILEPATH=$Slicer3_LIB/OpenIGTLink-build \
         -DBatchMake_DIR:FILEPATH=$Slicer3_LIB/BatchMake-build \
