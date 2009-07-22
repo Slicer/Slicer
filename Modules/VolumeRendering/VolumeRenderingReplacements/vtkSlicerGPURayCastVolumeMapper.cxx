@@ -58,7 +58,6 @@ vtkSlicerGPURayCastVolumeMapper::vtkSlicerGPURayCastVolumeMapper()
   this->InternalVolumeSize      =  256; //by default 256^3
 
   this->Volume1Index         =  0;
-  this->Volume2Index         =  0;
   this->ColorLookupIndex         =  0;
   this->ColorLookup2Index         =  0;
   this->RayCastVertexShader      =  0;
@@ -79,13 +78,12 @@ vtkSlicerGPURayCastVolumeMapper::~vtkSlicerGPURayCastVolumeMapper()
 void vtkSlicerGPURayCastVolumeMapper::ReleaseGraphicsResources(vtkWindow 
                                 *renWin)
 {
-  if (( this->Volume1Index || this->Volume2Index || this->ColorLookupIndex || this->ColorLookup2Index) && renWin)
+  if (( this->Volume1Index || this->ColorLookupIndex || this->ColorLookup2Index) && renWin)
     {
     static_cast<vtkRenderWindow *>(renWin)->MakeCurrent();
 #ifdef GL_VERSION_1_1
     // free any textures
     this->DeleteTextureIndex( &this->Volume1Index );
-    this->DeleteTextureIndex( &this->Volume2Index );
     this->DeleteTextureIndex( &this->ColorLookupIndex );   
     this->DeleteTextureIndex( &this->ColorLookup2Index );   
 #endif
@@ -98,7 +96,6 @@ void vtkSlicerGPURayCastVolumeMapper::ReleaseGraphicsResources(vtkWindow
   }
     
   this->Volume1Index     = 0;
-  this->Volume2Index     = 0;
   this->ColorLookupIndex = 0;
   this->ColorLookup2Index = 0;
   this->RayCastVertexShader   = 0;
@@ -482,7 +479,7 @@ void vtkSlicerGPURayCastVolumeMapper::SetupTextures( vtkRenderer *vtkNotUsed(ren
   //0, 1, 2, 3
   //7, 6, 5, 4
   // Update the volume containing the 2 byte scalar / gradient magnitude
-  if ( this->UpdateVolumes( vol ) || !this->Volume1Index || !this->Volume2Index )
+  if ( this->UpdateVolumes( vol ) || !this->Volume1Index)
     {    
     int dim[3];
     this->GetVolumeDimensions(dim);
@@ -493,28 +490,14 @@ void vtkSlicerGPURayCastVolumeMapper::SetupTextures( vtkRenderer *vtkNotUsed(ren
     glBindTexture(vtkgl::TEXTURE_3D, this->Volume1Index);
     vtkgl::TexImage3D( vtkgl::TEXTURE_3D, 0, GL_RGBA8, dim[0], dim[1], dim[2], 0,
                GL_RGBA, GL_UNSIGNED_BYTE, this->Volume1 );
-    
-
-    vtkgl::ActiveTexture( vtkgl::TEXTURE5 );
-    this->DeleteTextureIndex(&this->Volume2Index);
-    this->CreateTextureIndex(&this->Volume2Index);
-    glBindTexture(vtkgl::TEXTURE_3D, this->Volume2Index);
-    vtkgl::TexImage3D( vtkgl::TEXTURE_3D, 0, GL_RGBA8, dim[0], dim[1], dim[2], 0,
-               GL_RGBA, GL_UNSIGNED_BYTE, this->Volume2 );
                
     delete [] this->Volume1;
-    delete [] this->Volume2;
-    
     this->Volume1 = NULL;
-    this->Volume2 = NULL;
+    
     }
   
   vtkgl::ActiveTexture( vtkgl::TEXTURE7 );
   glBindTexture(vtkgl::TEXTURE_3D, this->Volume1Index);   
-  this->Setup3DTextureParameters( vol->GetProperty() );
-
-  vtkgl::ActiveTexture( vtkgl::TEXTURE5 );
-  glBindTexture(vtkgl::TEXTURE_3D, this->Volume2Index);   
   this->Setup3DTextureParameters( vol->GetProperty() );
 
   // Update the dependent 2D color table mapping scalar value and
@@ -536,7 +519,7 @@ void vtkSlicerGPURayCastVolumeMapper::SetupTextures( vtkRenderer *vtkNotUsed(ren
     glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, 256, 256, 0,
           GL_RGBA, GL_UNSIGNED_BYTE, this->ColorLookup );    
           
-    vtkgl::ActiveTexture( vtkgl::TEXTURE4 );
+    vtkgl::ActiveTexture( vtkgl::TEXTURE5 );
     this->DeleteTextureIndex( &this->ColorLookup2Index );
     
     this->CreateTextureIndex( &this->ColorLookup2Index );
@@ -554,21 +537,18 @@ void vtkSlicerGPURayCastVolumeMapper::SetupTextures( vtkRenderer *vtkNotUsed(ren
   vtkgl::ActiveTexture( vtkgl::TEXTURE6 );
   glBindTexture(GL_TEXTURE_2D, this->ColorLookupIndex);
   
-  vtkgl::ActiveTexture( vtkgl::TEXTURE4 );
+  vtkgl::ActiveTexture( vtkgl::TEXTURE5 );
   glBindTexture(GL_TEXTURE_2D, this->ColorLookup2Index);
   
   GLint loc = vtkgl::GetUniformLocation(RayCastProgram, "TextureVol");
   if (loc >= 0)
     vtkgl::Uniform1i(loc, 7);
-  loc = vtkgl::GetUniformLocation(RayCastProgram, "TextureVol1");
-  if (loc >= 0)
-    vtkgl::Uniform1i(loc, 5);
   loc = vtkgl::GetUniformLocation(RayCastProgram, "TextureColorLookup");
   if (loc >= 0)
     vtkgl::Uniform1i(loc, 6);
   loc = vtkgl::GetUniformLocation(RayCastProgram, "TextureColorLookup2");
   if (loc >= 0)
-    vtkgl::Uniform1i(loc, 4);
+    vtkgl::Uniform1i(loc, 5);
 }
 
 int  vtkSlicerGPURayCastVolumeMapper::IsRenderSupported(vtkVolumeProperty *property )

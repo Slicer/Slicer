@@ -26,6 +26,7 @@
 #include "vtkVolumeProperty.h"
 #include "vtkMatrix4x4.h"
 #include "vtkCommand.h"
+#include "vtkExecutive.h"
 
 vtkCxxRevisionMacro(vtkSlicerGPUVolumeMapper, "$Revision: 1.6 $");
 
@@ -44,7 +45,7 @@ vtkInstantiatorNewMacro(vtkSlicerGPUVolumeMapper);
 template <class T>
 void vtkSlicerGPUVolumeMapperComputeScalars( T *dataPtr,
                                                 T *dataPtr1,
-                                                T *dataPtr2;
+                                                T *dataPtr2,
                                                vtkSlicerGPUVolumeMapper *me,
                                                float offset, float scale,
                                                unsigned char *volume1)
@@ -345,8 +346,8 @@ int vtkSlicerGPUVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
   double scalarRange[2];
   double scalarRange1[2], scalarRange2[2];
   
-  input->GetPointData()->GetScalars()->GetRange(scalarRange1, components-1);
-  input1->GetPointData()->GetScalars()->GetRange(scalarRange2, components-1);
+  input->GetPointData()->GetScalars()->GetRange(scalarRange1, 0);
+  input1->GetPointData()->GetScalars()->GetRange(scalarRange2, 0);
   
   //find scalar range for two inputs
   scalarRange[0] = scalarRange1[0] < scalarRange2[0] ? scalarRange1[0] : scalarRange2[0];
@@ -402,12 +403,13 @@ int vtkSlicerGPUVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
   // Transfer the input volume to the RGBA volume
   void *dataPtr = input->GetScalarPointer();
   void *dataPtr1 = input1->GetScalarPointer();
-    
+  void *dataPtr2 = NULL;
+  
   switch ( scalarType )
     {
     vtkTemplateMacro(
       vtkSlicerGPUVolumeMapperComputeScalars(
-        (VTK_TT *)(dataPtr), (VTK_TT*)(dataPtr1), 
+        (VTK_TT *)(dataPtr), (VTK_TT*)(dataPtr1), (VTK_TT*)(dataPtr2),
         this, offset, scale,
         this->Volume1));
     }
@@ -456,7 +458,7 @@ int vtkSlicerGPUVolumeMapper::UpdateColorLookup( vtkVolume *vol )
   {
     rgbFunc  = vol->GetProperty()->GetRGBTransferFunction(0);
     if ( this->SavedRGBFunction != rgbFunc ||
-         this->SavedParametersMTime.GetMTime() < rgbFunc->GetMTime() )
+         this->SavedColorOpacityMTime.GetMTime() < rgbFunc->GetMTime() )
     {
       needToUpdate = 1;
     }
@@ -468,7 +470,7 @@ int vtkSlicerGPUVolumeMapper::UpdateColorLookup( vtkVolume *vol )
   {
     grayFunc = vol->GetProperty()->GetGrayTransferFunction(0);
     if ( this->SavedGrayFunction != grayFunc ||
-         this->SavedParametersMTime.GetMTime() < grayFunc->GetMTime() )
+         this->SavedColorOpacityMTime.GetMTime() < grayFunc->GetMTime() )
     {
       needToUpdate = 1;
     }
@@ -486,7 +488,7 @@ int vtkSlicerGPUVolumeMapper::UpdateColorLookup( vtkVolume *vol )
   {
     rgbFunc1  = vol->GetProperty()->GetRGBTransferFunction(1);
     if ( this->SavedRGBFunction2nd != rgbFunc1 ||
-         this->SavedParametersMTime2nd.GetMTime() < rgbFunc1->GetMTime() )
+         this->SavedColorOpacityMTime2nd.GetMTime() < rgbFunc1->GetMTime() )
     {
       needToUpdate = 1;
     }
@@ -498,7 +500,7 @@ int vtkSlicerGPUVolumeMapper::UpdateColorLookup( vtkVolume *vol )
   {
     grayFunc1 = vol->GetProperty()->GetGrayTransferFunction(1);
     if ( this->SavedGrayFunction2nd != grayFunc1 ||
-         this->SavedParametersMTime2nd.GetMTime() < grayFunc1->GetMTime() )
+         this->SavedColorOpacityMTime2nd.GetMTime() < grayFunc1->GetMTime() )
     {
       needToUpdate = 1;
     }
@@ -507,14 +509,14 @@ int vtkSlicerGPUVolumeMapper::UpdateColorLookup( vtkVolume *vol )
   // Has the scalar opacity transfer function changed in some way?
   vtkPiecewiseFunction *scalarOpacityFunc = vol->GetProperty()->GetScalarOpacity(0);
   if ( this->SavedScalarOpacityFunction != scalarOpacityFunc ||
-       this->SavedParametersMTime.GetMTime() < scalarOpacityFunc->GetMTime() )
+       this->SavedColorOpacityMTime.GetMTime() < scalarOpacityFunc->GetMTime() )
     {
     needToUpdate = 1;
     }
 
   vtkPiecewiseFunction *scalarOpacityFunc1 = vol->GetProperty()->GetScalarOpacity(1);
   if ( this->SavedScalarOpacityFunction2nd != scalarOpacityFunc1 ||
-       this->SavedParametersMTime2nd.GetMTime() < scalarOpacityFunc1->GetMTime() )
+       this->SavedColorOpacityMTime2nd.GetMTime() < scalarOpacityFunc1->GetMTime() )
     {
     needToUpdate = 1;
     }
@@ -522,14 +524,14 @@ int vtkSlicerGPUVolumeMapper::UpdateColorLookup( vtkVolume *vol )
   // Has the gradient opacity transfer function changed in some way?
   vtkPiecewiseFunction *gradientOpacityFunc = vol->GetProperty()->GetGradientOpacity(0);
   if ( this->SavedGradientOpacityFunction != gradientOpacityFunc ||
-       this->SavedParametersMTime.GetMTime() < gradientOpacityFunc->GetMTime() )
+       this->SavedColorOpacityMTime.GetMTime() < gradientOpacityFunc->GetMTime() )
     {
     needToUpdate = 1;
     }
 
   vtkPiecewiseFunction *gradientOpacityFunc1 = vol->GetProperty()->GetGradientOpacity(1);
   if ( this->SavedGradientOpacityFunction2nd != gradientOpacityFunc1 ||
-       this->SavedParametersMTime2nd.GetMTime() < gradientOpacityFunc1->GetMTime() )
+       this->SavedColorOpacityMTime2nd.GetMTime() < gradientOpacityFunc1->GetMTime() )
     {
     needToUpdate = 1;
     }
@@ -572,24 +574,19 @@ int vtkSlicerGPUVolumeMapper::UpdateColorLookup( vtkVolume *vol )
 
   // Find the scalar range
   double scalarRange[2];
-  input->GetPointData()->GetScalars()->GetRange(scalarRange, components-1);
+  input->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
   
   int arraySizeNeeded = this->ColorTableSize;
 
-  if ( components < 3 )
-    {
-    // Sample the transfer functions between the min and max.
-    if ( colorChannels == 1 )
-      {
-      grayFunc->GetTable( scalarRange[0], scalarRange[1], 
-                          arraySizeNeeded, this->TempArray1 );
-      }
-    else
-      {
-      rgbFunc->GetTable( scalarRange[0], scalarRange[1], 
-                         arraySizeNeeded, this->TempArray1 );
-      }
-    }
+  // Sample the transfer functions between the min and max.
+  if ( colorChannels == 1 )
+  {
+    grayFunc->GetTable( scalarRange[0], scalarRange[1], arraySizeNeeded, this->TempArray1 );
+  }
+  else
+  {
+    rgbFunc->GetTable( scalarRange[0], scalarRange[1], arraySizeNeeded, this->TempArray1 );
+  }
   
   scalarOpacityFunc->GetTable( scalarRange[0], scalarRange[1], 
                                arraySizeNeeded, this->TempArray2 );
@@ -600,7 +597,7 @@ int vtkSlicerGPUVolumeMapper::UpdateColorLookup( vtkVolume *vol )
                                  
 // Find the scalar range
   double scalarRange1[2];
-  input1->GetPointData()->GetScalars()->GetRange(scalarRange1, components1-1);
+  input1->GetPointData()->GetScalars()->GetRange(scalarRange1, 0);
 
   // Sample the transfer functions between the min and max.
   if ( colorChannels1 == 1 )
