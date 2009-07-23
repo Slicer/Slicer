@@ -75,11 +75,10 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
     std::string nodeID;
   } IGTLMrmlNodeInfoType;
 
-  typedef std::vector<IGTLMrmlNodeInfoType> IGTLMrmlNodeListType;
-  typedef std::vector<vtkMRMLIGTLConnectorNode*>    ConnectorListType;
-  typedef std::map<std::string, vtkMRMLIGTLConnectorNode*>  ConnectorMapType;
+  typedef std::vector<IGTLMrmlNodeInfoType>         IGTLMrmlNodeListType;
+  typedef std::vector<std::string>                  ConnectorListType;
   typedef std::map<vtkMRMLNode*, ConnectorListType> MRMLNodeAndConnectorMapType;
-  typedef std::list<vtkIGTLToMRMLBase*>     MessageConverterListType;
+  typedef std::list<vtkIGTLToMRMLBase*>             MessageConverterListType;
   //ETX
   
   // Work phase keywords used in NaviTrack (defined in BRPTPRInterface.h)
@@ -122,20 +121,10 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   // Connector Management
   //----------------------------------------------------------------
 
-  // Add connector
-  void AddConnector();
-  void AddConnector(const char* name);
-  void AddServerConnector(const char* name, int port);
-  void AddClientConnector(const char* name, const char* svrHostName, int port);
-
-  // Delete connector
-  void DeleteConnector(const char* id);
-
   // Access connectors
-  int               GetNumberOfConnectors();
+  int                       GetNumberOfConnectors();
   vtkMRMLIGTLConnectorNode* GetConnector(const char* conID);
-  ConnectorMapType* GetConnectorMap();
-  void              ImportFromCircularBuffers();
+  void                      ImportFromCircularBuffers();
   
   // Device Name management
   int  SetRestrictDeviceName(int f);
@@ -207,7 +196,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   //----------------------------------------------------------------
 
   //BTX
-  ConnectorMapType              ConnectorMap;
+  //ConnectorMapType              ConnectorMap;
   MRMLNodeAndConnectorMapType   MRMLEventConnectorMap;
   MessageConverterListType      MessageConverterList;
   //ETX

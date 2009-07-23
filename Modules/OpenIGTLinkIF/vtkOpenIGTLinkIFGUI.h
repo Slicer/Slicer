@@ -92,7 +92,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   static const char* ConnectorTypeStr[vtkMRMLIGTLConnectorNode::NUM_TYPE];
   static const char* ConnectorStatusStr[vtkMRMLIGTLConnectorNode::NUM_STATE];
 
-  //typedef std::vector<std::string> ConnectorIDListType;
   typedef struct {
     std::string nodeName;
     int         deviceID;
@@ -221,7 +220,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   void UpdateIOConfigTree();
   void UpdateConnectorList(int updateLevel);
   void UpdateConnectorPropertyFrame(int i);
-
+  void UpdateConnectorNodeList();
 
  private:
   //----------------------------------------------------------------
@@ -309,7 +308,8 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
 
   //ConnectorIDListType ConnectorIDList;
   //BTX
-  std::vector<vtkMRMLIGTLConnectorNode*> ConnectorNodeList;
+  // List of connector node
+  std::vector<std::string> ConnectorNodeList;
   //ETX
 
   //int   CurrentMrmlNodeListID;  // row number

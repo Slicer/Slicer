@@ -89,15 +89,8 @@ vtkMRMLIGTLConnectorNode::vtkMRMLIGTLConnectorNode()
 //----------------------------------------------------------------------------
 vtkMRMLIGTLConnectorNode::~vtkMRMLIGTLConnectorNode()
 {
-  this->CircularBufferMutex->Lock();
-  CircularBufferMap::iterator iter;
-  for (iter = this->Buffer.begin(); iter != this->Buffer.end(); iter ++)
-    {
-    iter->second->Delete();
-    }
-  this->Buffer.clear();
-  this->CircularBufferMutex->Unlock();
-  
+
+  this->Stop();
   if (this->Thread)
     {
     this->Thread->Delete();
@@ -108,6 +101,15 @@ vtkMRMLIGTLConnectorNode::~vtkMRMLIGTLConnectorNode()
     this->Mutex->Delete();
     }
 
+  this->CircularBufferMutex->Lock();
+  CircularBufferMap::iterator iter;
+  for (iter = this->Buffer.begin(); iter != this->Buffer.end(); iter ++)
+    {
+    iter->second->Delete();
+    }
+  this->Buffer.clear();
+  this->CircularBufferMutex->Unlock();
+  
   if (this->CircularBufferMutex)
     {
     this->CircularBufferMutex->Delete();
@@ -118,14 +120,96 @@ vtkMRMLIGTLConnectorNode::~vtkMRMLIGTLConnectorNode()
 //----------------------------------------------------------------------------
 void vtkMRMLIGTLConnectorNode::WriteXML(ostream& of, int nIndent)
 {
+
   // Start by having the superclass write its information
   Superclass::WriteXML(of, nIndent);
+
+  switch (this->Type)
+    {
+    case TYPE_SERVER:
+      of << " connectorType=\"" << "SERVER" << "\" ";
+      break;
+    case TYPE_CLIENT:
+      of << " connectorType=\"" << "CLIENT" << "\" ";
+      of << " serverHostname=\"" << this->ServerHostname << "\" ";
+      break;
+    default:
+      of << " connectorType=\"" << "NOT_DEFINED" << "\" ";
+      break;
+    }
+
+  of << " serverPort=\"" << this->ServerPort << "\" ";
+  of << " restrictDeviceName=\"" << this->RestrictDeviceName << "\" ";
+
 }
+
 
 //----------------------------------------------------------------------------
 void vtkMRMLIGTLConnectorNode::ReadXMLAttributes(const char** atts)
 {
   vtkMRMLNode::ReadXMLAttributes(atts);
+
+  const char* attName;
+  const char* attValue;
+
+  const char* serverHostname = "";
+  int port = 0;
+  int type = -1;
+  int restrictDeviceName = 0;
+
+  while (*atts != NULL)
+    {
+    attName = *(atts++);
+    attValue = *(atts++);
+
+    if (!strcmp(attName, "connectorType"))
+      {
+      if (!strcmp(attValue, "SERVER"))
+        {
+        type = TYPE_SERVER;
+        }
+      else if (!strcmp(attValue, "CLIENT"))
+        {
+        type = TYPE_CLIENT;
+        }
+      else
+        {
+        type = TYPE_NOT_DEFINED;
+        }
+      }
+    if (!strcmp(attName, "serverHostname"))
+      {
+      serverHostname = attValue;
+      }
+    if (!strcmp(attName, "serverPort"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> port;
+      }
+    if (!strcmp(attName, "restrictDeviceName"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> restrictDeviceName;;
+      }
+    }
+
+  switch(type)
+    {
+    case TYPE_SERVER:
+      this->SetTypeServer(port);
+      this->SetRestrictDeviceName(restrictDeviceName);
+      break;
+    case TYPE_CLIENT:
+      this->SetTypeClient(serverHostname, port);
+      this->SetRestrictDeviceName(restrictDeviceName);
+      break;
+    default: // not defined
+      // do nothing
+      break;
+    }
+
 }
 
 
@@ -136,40 +220,36 @@ void vtkMRMLIGTLConnectorNode::Copy(vtkMRMLNode *anode)
 {
 
   Superclass::Copy(anode);
-  //vtkMRMLIGTLConnectorNode *node = (vtkMRMLIGTLConnectorNode *) anode;
+  vtkMRMLIGTLConnectorNode *node = (vtkMRMLIGTLConnectorNode *) anode;
 
-  /*
-  vtkStringArray* paramNames      = node->GetInitialParameterNameArray();
-  vtkStringArray* inputParamNames = node->GetConstantNameArray();
-  vtkStringArray* inputDataNames  = node->GetInputArrayNameArray();
-
-  int numParameters      = paramNames->GetNumberOfTuples();
-  int numInputParameters = inputParamNames->GetNumberOfTuples();
-  int numInputCurves     = inputDataNames->GetNumberOfTuples();
-
-  for (int i = 0; i < numInputCurves; i ++)
+  int type = node->GetType();
+  
+  switch(type)
     {
-    int row = i + numParameters + numInputParameters;
-    const char* name = inputDataNames->GetValue(i);
-    vtkDoubleArray* curve = node->GetInputArray(name);
-
-    if (curve)
-      {
-      vtkDoubleArray* inputCurve = vtkDoubleArray::New();
-      inputCurve->SetNumberOfComponents( curve->GetNumberOfComponents() );
-      int nPoints   = curve->GetNumberOfTuples();
-
-      for (int i = 0; i <= nPoints; i ++)
-        {
-        double* xy = curve->GetTuple(i);
-        inputCurve->InsertNextTuple(xy);
-        std::cerr << "input xy = " << xy[0] << ", " << xy[1] << std::endl;
-        }
-      this->SetInputArray(name, inputCurve);
-      }
+    case TYPE_SERVER:
+      this->SetType(TYPE_SERVER);
+      this->SetTypeServer(node->GetServerPort());
+      this->SetRestrictDeviceName(node->GetRestrictDeviceName());
+      break;
+    case TYPE_CLIENT:
+      this->SetType(TYPE_CLIENT);
+      this->SetTypeClient(node->GetServerHostname(), node->GetServerPort());
+      this->SetRestrictDeviceName(node->GetRestrictDeviceName());
+      break;
+    default: // not defined
+      // do nothing
+      this->SetType(TYPE_NOT_DEFINED);
+      break;
     }
-  */
 
+}
+
+
+void vtkMRMLIGTLConnectorNode::ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *callData )
+{
+  std::cerr << "vtkMRMLIGTLConnectorNode::ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *callData )" << std::endl;
+  Superclass::ProcessMRMLEvents(caller, event, callData);
+  return;
 }
 
 
@@ -257,8 +337,8 @@ int vtkMRMLIGTLConnectorNode::Stop()
       this->Socket->CloseSocket();
       }
     this->Mutex->Unlock();
-    //this->Thread->TerminateThread(this->ThreadID);
-    //this->ThreadID = -1;
+    this->Thread->TerminateThread(this->ThreadID);
+    this->ThreadID = -1;
     return 1;
     }
   else

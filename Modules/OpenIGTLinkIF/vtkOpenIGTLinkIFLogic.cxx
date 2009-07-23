@@ -36,10 +36,6 @@
 #include "vtkMRMLIGTLConnectorNode.h"
 #include "vtkIGTLCircularBuffer.h"
 
-//#include "igtl_header.h"
-//#include "igtl_image.h"
-//#include "igtl_transform.h"
-
 vtkCxxRevisionMacro(vtkOpenIGTLinkIFLogic, "$Revision$");
 vtkStandardNewMacro(vtkOpenIGTLinkIFLogic);
 
@@ -50,8 +46,6 @@ vtkOpenIGTLinkIFLogic::vtkOpenIGTLinkIFLogic()
   for (int i = 0; i < 3; i ++)
     {
     this->SliceDriver[i] = vtkOpenIGTLinkIFLogic::SLICE_DRIVER_USER;
-    //this->SliceDriverDeviceID[i] = -1;
-    //this->SliceDriverNodeID[i] = "";
     }
   this->LocatorDriverFlag = 0;
   //this->LocatorDriver = NULL;
@@ -77,8 +71,6 @@ vtkOpenIGTLinkIFLogic::vtkOpenIGTLinkIFLogic()
   this->DataCallbackCommand = vtkCallbackCommand::New();
   this->DataCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
   this->DataCallbackCommand->SetCallback(vtkOpenIGTLinkIFLogic::DataCallback);
-
-  this->ConnectorMap.clear();
 
   this->EnableOblique = false;
   this->FreezePlane   = false;
@@ -191,96 +183,6 @@ void vtkOpenIGTLinkIFLogic::UpdateAll()
 
 
 //---------------------------------------------------------------------------
-void vtkOpenIGTLinkIFLogic::AddConnector()
-{
-  //this->AddConnector("connector");
-  this->AddConnector(NULL);
-}
-
-
-//---------------------------------------------------------------------------
-void vtkOpenIGTLinkIFLogic::AddConnector(const char* name)
-{
-  vtkMRMLIGTLConnectorNode* connector = vtkMRMLIGTLConnectorNode::New();
-  this->GetMRMLScene()->AddNode(connector);
-
-  const char* newID = connector->GetID();
-
-  if (name == NULL)
-    {
-    //char newname[128];
-    //sprintf(newname, "Connector%d", (int)this->ConnectorMap.size() + 1);
-    connector->SetName(newID);
-    }
-  else
-    {
-    connector->SetName(name);
-    }
-  //this->ConnectorMap.push_back(connector);
-  this->ConnectorMap[newID] = connector;
-  connector->SetRestrictDeviceName(this->RestrictDeviceName);
-
-  connector->Modified();
-  this->GetMRMLScene()->Modified();
-  
-}
-
-
-//---------------------------------------------------------------------------
-void vtkOpenIGTLinkIFLogic::AddServerConnector(const char* name, int port)
-{
-  vtkMRMLIGTLConnectorNode* connector = vtkMRMLIGTLConnectorNode::New();
-  const char* newID = connector->GetID();
-
-  connector->SetName(name);
-  connector->SetType(vtkMRMLIGTLConnectorNode::TYPE_SERVER);
-  connector->SetServerPort(port);
-  //this->ConnectorMap.push_back(connector);
-  this->ConnectorMap[newID] = connector;
-  connector->SetRestrictDeviceName(this->RestrictDeviceName);
-
-  connector->Modified();
-}
-
-
-//---------------------------------------------------------------------------
-void vtkOpenIGTLinkIFLogic::AddClientConnector(const char* name, const char* svrHostName, int port)
-{
-  vtkMRMLIGTLConnectorNode* connector = vtkMRMLIGTLConnectorNode::New();
-  const char* newID = connector->GetID();
-
-  connector->SetName(name);
-  connector->SetType(vtkMRMLIGTLConnectorNode::TYPE_CLIENT);
-  connector->SetServerPort(port);
-  connector->SetServerHostname(svrHostName);
-  //this->ConnectorMap.push_back(connector);
-  this->ConnectorMap[newID] = connector;
-  connector->SetRestrictDeviceName(this->RestrictDeviceName);
-  connector->Modified();
-}
-
-
-//---------------------------------------------------------------------------
-void vtkOpenIGTLinkIFLogic::DeleteConnector(const char* id)
-{
-
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
-  if (node)
-    {
-    vtkMRMLIGTLConnectorNode* cnode = vtkMRMLIGTLConnectorNode::SafeDownCast(node);
-    cnode->Stop();
-    this->GetMRMLScene()->RemoveNode(node); 
-    this->GetMRMLScene()->Modified();
-    }
-
-  ConnectorMapType::iterator iter = this->ConnectorMap.find(id);
-  if (iter != this->ConnectorMap.end()) // if id is on the list
-    {
-    this->ConnectorMap.erase(iter);
-    }
-}
-
-//---------------------------------------------------------------------------
 int vtkOpenIGTLinkIFLogic::GetNumberOfConnectors()
 {
   vtkMRMLScene* scene = this->GetMRMLScene();
@@ -295,6 +197,7 @@ int vtkOpenIGTLinkIFLogic::GetNumberOfConnectors()
 
   return nodes.size();
 }
+
 
 //---------------------------------------------------------------------------
 vtkMRMLIGTLConnectorNode* vtkOpenIGTLinkIFLogic::GetConnector(const char* conID)
@@ -360,7 +263,7 @@ int vtkOpenIGTLinkIFLogic::RegisterDeviceEvent(vtkMRMLIGTLConnectorNode* con, co
   int found = 0;
   for (iter = list->begin(); iter != list->end(); iter ++)
     {
-    if (*iter == con)
+    if (*iter == con->GetID())
       {
       found = 1;
       break;
@@ -381,7 +284,7 @@ int vtkOpenIGTLinkIFLogic::RegisterDeviceEvent(vtkMRMLIGTLConnectorNode* con, co
 
   // TODO: node should be stored somewhere to stop event monitoring after deleting the MRML node.
   nodeEvents->Delete();
-  list->push_back(con);
+  list->push_back(con->GetID());
 
   return 1;
 }
@@ -427,7 +330,7 @@ int vtkOpenIGTLinkIFLogic::UnregisterDeviceEvent(vtkMRMLIGTLConnectorNode* con, 
   ConnectorListType::iterator iter;
   for (iter = list->begin(); iter != list->end(); iter ++)
     {
-    if (*iter == con)
+    if (*iter == con->GetID())
       {
       list->erase(iter);
       }
@@ -440,17 +343,31 @@ int vtkOpenIGTLinkIFLogic::UnregisterDeviceEvent(vtkMRMLIGTLConnectorNode* con, 
 //---------------------------------------------------------------------------
 void vtkOpenIGTLinkIFLogic::ImportFromCircularBuffers()
 {
-  ConnectorMapType::iterator cmiter;
+  //ConnectorMapType::iterator cmiter;
+  std::vector<vtkMRMLNode*> nodes;
+  const char* className = this->GetMRMLScene()->GetClassNameByTag("IGTLConnector");
+  this->GetMRMLScene()->GetNodesByClass(className, nodes);
 
-  for (cmiter = this->ConnectorMap.begin(); cmiter != this->ConnectorMap.end(); cmiter ++)
+  std::vector<vtkMRMLNode*>::iterator iter;
+  
+  //for (cmiter = this->ConnectorMap.begin(); cmiter != this->ConnectorMap.end(); cmiter ++)
+  for (iter = nodes.begin(); iter != nodes.end(); iter ++)
     {
+    vtkMRMLIGTLConnectorNode* connector = vtkMRMLIGTLConnectorNode::SafeDownCast(*iter);
+    if (connector == NULL)
+      {
+      continue;
+      }
+
     vtkMRMLIGTLConnectorNode::NameListType nameList;
-    //(*iter)->GetUpdatedBuffersList(nameList);
-    cmiter->second->GetUpdatedBuffersList(nameList);
+    //cmiter->second->GetUpdatedBuffersList(nameList);
+    connector->GetUpdatedBuffersList(nameList);
+
     vtkMRMLIGTLConnectorNode::NameListType::iterator nameIter;
     for (nameIter = nameList.begin(); nameIter != nameList.end(); nameIter ++)
       {
-      vtkIGTLCircularBuffer* circBuffer = cmiter->second->GetCircularBuffer(*nameIter);
+      //vtkIGTLCircularBuffer* circBuffer = cmiter->second->GetCircularBuffer(*nameIter);
+      vtkIGTLCircularBuffer* circBuffer = connector->GetCircularBuffer(*nameIter);
       circBuffer->StartPull();
 
       igtl::MessageBase::Pointer buffer = circBuffer->GetPullBuffer();
@@ -624,11 +541,19 @@ int vtkOpenIGTLinkIFLogic::SetRestrictDeviceName(int f)
   if (f != 0) f = 1; // make sure that f is either 0 or 1.
   this->RestrictDeviceName = f;
 
-  ConnectorMapType::iterator iter;
-  for (iter = this->ConnectorMap.begin(); iter != this->ConnectorMap.end(); iter ++)
+  std::vector<vtkMRMLNode*> nodes;
+  const char* className = this->GetMRMLScene()->GetClassNameByTag("IGTLConnector");
+  this->GetMRMLScene()->GetNodesByClass(className, nodes);
+
+  std::vector<vtkMRMLNode*>::iterator iter;
+  
+  for (iter = nodes.begin(); iter != nodes.end(); iter ++)
     {
-    //(*iter)->SetRestrictDeviceName(f);
-    iter->second->SetRestrictDeviceName(f);
+    vtkMRMLIGTLConnectorNode* connector = vtkMRMLIGTLConnectorNode::SafeDownCast(*iter);
+    if (connector)
+      {
+      connector->SetRestrictDeviceName(f);
+      }
     }
 
   return this->RestrictDeviceName;
@@ -773,7 +698,12 @@ void vtkOpenIGTLinkIFLogic::ProcessMRMLEvents(vtkObject * caller, unsigned long 
     ConnectorListType::iterator cliter;
     for (cliter = list->begin(); cliter != list->end(); cliter ++)
       {
-      vtkMRMLIGTLConnectorNode* connector = *cliter;
+      vtkMRMLIGTLConnectorNode* connector = 
+        vtkMRMLIGTLConnectorNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(*cliter));
+      if (connector == NULL)
+        {
+        return;
+        }
 
       MessageConverterListType::iterator iter;
       for (iter = this->MessageConverterList.begin();

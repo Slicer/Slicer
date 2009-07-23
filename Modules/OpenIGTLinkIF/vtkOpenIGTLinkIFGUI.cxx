@@ -559,6 +559,7 @@ void vtkOpenIGTLinkIFGUI::AddGUIObservers ( )
   // MRML
 
   vtkIntArray* events = vtkIntArray::New();
+  events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
   events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
@@ -753,12 +754,19 @@ void vtkOpenIGTLinkIFGUI::ProcessGUIEvents(vtkObject *caller,
   else if (this->AddConnectorButton == vtkKWPushButton::SafeDownCast(caller)
            && event == vtkKWPushButton::InvokedEvent)
     {
-    this->GetLogic()->AddConnector();
+    vtkMRMLIGTLConnectorNode* connector = vtkMRMLIGTLConnectorNode::New();
+    int restrectDeviceName = (this->EnableAdvancedSettingButton->GetSelectedState())? 1:0;
+
+    this->GetMRMLScene()->AddNode(connector);
+    connector->SetRestrictDeviceName(restrectDeviceName);
+    connector->Modified();
+
     UpdateConnectorList(UPDATE_ALL);
     int select = this->ConnectorList->GetWidget()->GetNumberOfRows() - 1;
     this->ConnectorList->GetWidget()->SelectSingleRow(select);
     UpdateConnectorPropertyFrame(select);
     UpdateIOConfigTree();
+    connector->Delete();
     }
 
   else if (this->DeleteConnectorButton == vtkKWPushButton::SafeDownCast(caller)
@@ -767,21 +775,28 @@ void vtkOpenIGTLinkIFGUI::ProcessGUIEvents(vtkObject *caller,
     int selected = this->ConnectorList->GetWidget()->GetIndexOfFirstSelectedRow();
     if (selected >= 0 && selected < (int)this->ConnectorNodeList.size())
       {
-      const char* id = this->ConnectorNodeList[selected]->GetID();
-      this->GetLogic()->DeleteConnector(id);
-      UpdateConnectorList(UPDATE_ALL);
-      int nrow = this->ConnectorList->GetWidget()->GetNumberOfRows();
-      if (selected >= nrow)
+      vtkMRMLIGTLConnectorNode* cnode 
+        = vtkMRMLIGTLConnectorNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->ConnectorNodeList[selected]));
+      if (cnode)
         {
-        selected = nrow - 1;
+        cnode->Stop();
+        this->GetMRMLScene()->RemoveNode(cnode);
+        this->GetMRMLScene()->Modified();
+        //this->GetLogic()->RemoveConnectorFromList(cnode);
+
+        UpdateConnectorList(UPDATE_ALL);
+        int nrow = this->ConnectorList->GetWidget()->GetNumberOfRows();
+        if (selected >= nrow)
+          {
+          selected = nrow - 1;
+          }
+        this->ConnectorList->GetWidget()->SelectSingleRow(selected);
+        UpdateConnectorList(UPDATE_ALL);
+        UpdateConnectorPropertyFrame(selected);
+        UpdateIOConfigTree();
         }
-      this->ConnectorList->GetWidget()->SelectSingleRow(selected);
-      UpdateConnectorList(UPDATE_ALL);
-      UpdateConnectorPropertyFrame(selected);
-      UpdateIOConfigTree();
       }
     }
-  
   else if (this->ConnectorNameEntry == vtkKWEntry::SafeDownCast(caller)
            && event == vtkKWEntry::EntryValueChangedEvent)
     {
@@ -789,7 +804,8 @@ void vtkOpenIGTLinkIFGUI::ProcessGUIEvents(vtkObject *caller,
 
     if (selected >= 0 && selected < (int)this->ConnectorNodeList.size())
       {
-      vtkMRMLIGTLConnectorNode* connector = this->ConnectorNodeList[selected];
+      vtkMRMLIGTLConnectorNode* connector
+        = vtkMRMLIGTLConnectorNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->ConnectorNodeList[selected]));
       if (connector)
         {
         connector->SetName(this->ConnectorNameEntry->GetValue());
@@ -805,7 +821,8 @@ void vtkOpenIGTLinkIFGUI::ProcessGUIEvents(vtkObject *caller,
     int selected = this->ConnectorList->GetWidget()->GetIndexOfFirstSelectedRow();
     if (selected >= 0 && selected < (int)this->ConnectorNodeList.size())
       {
-      vtkMRMLIGTLConnectorNode* connector = this->ConnectorNodeList[selected];
+      vtkMRMLIGTLConnectorNode* connector
+        = vtkMRMLIGTLConnectorNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->ConnectorNodeList[selected]));
       if (connector)
         {
         connector->SetType(vtkMRMLIGTLConnectorNode::TYPE_SERVER);
@@ -823,7 +840,8 @@ void vtkOpenIGTLinkIFGUI::ProcessGUIEvents(vtkObject *caller,
     int selected = this->ConnectorList->GetWidget()->GetIndexOfFirstSelectedRow();
     if (selected >= 0 && selected < (int)this->ConnectorNodeList.size())
       {
-      vtkMRMLIGTLConnectorNode* connector = this->ConnectorNodeList[selected];
+      vtkMRMLIGTLConnectorNode* connector
+        = vtkMRMLIGTLConnectorNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->ConnectorNodeList[selected]));
       if (connector)
         {
         connector->SetType(vtkMRMLIGTLConnectorNode::TYPE_CLIENT);
@@ -840,7 +858,8 @@ void vtkOpenIGTLinkIFGUI::ProcessGUIEvents(vtkObject *caller,
     int selected = this->ConnectorList->GetWidget()->GetIndexOfFirstSelectedRow();
     if (selected >= 0 && selected < (int)this->ConnectorNodeList.size())
       {
-      vtkMRMLIGTLConnectorNode* connector = this->ConnectorNodeList[selected];
+      vtkMRMLIGTLConnectorNode* connector
+        = vtkMRMLIGTLConnectorNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->ConnectorNodeList[selected]));
       if (connector)
         {
         if (this->ConnectorStatusCheckButton->GetSelectedState()) // Activated
@@ -867,7 +886,8 @@ void vtkOpenIGTLinkIFGUI::ProcessGUIEvents(vtkObject *caller,
     int selected = this->ConnectorList->GetWidget()->GetIndexOfFirstSelectedRow();
     if (selected >= 0 && selected < (int)this->ConnectorNodeList.size())
       {
-      vtkMRMLIGTLConnectorNode* connector = this->ConnectorNodeList[selected];
+      vtkMRMLIGTLConnectorNode* connector
+        = vtkMRMLIGTLConnectorNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->ConnectorNodeList[selected]));
       if (connector)
         {
         connector->SetServerHostname(this->ConnectorAddressEntry->GetValue());
@@ -882,7 +902,8 @@ void vtkOpenIGTLinkIFGUI::ProcessGUIEvents(vtkObject *caller,
     int selected = this->ConnectorList->GetWidget()->GetIndexOfFirstSelectedRow();
     if (selected >= 0 && selected < (int)this->ConnectorNodeList.size())
       {
-      vtkMRMLIGTLConnectorNode* connector = this->ConnectorNodeList[selected];
+      vtkMRMLIGTLConnectorNode* connector
+        = vtkMRMLIGTLConnectorNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->ConnectorNodeList[selected]));
       if (connector)
         {
         connector->SetServerPort(this->ConnectorPortEntry->GetValueAsInt());
@@ -1117,27 +1138,18 @@ void vtkOpenIGTLinkIFGUI::ProcessMRMLEvents ( vtkObject *caller,
         nodeEvents->InsertNextValue(vtkMRMLIGTLConnectorNode::ReceiveEvent);
         nodeEvents->InsertNextValue(vtkCommand::ModifiedEvent);
         vtkSetAndObserveMRMLNodeEventsMacro(nnode,cnode,nodeEvents);
+        nnode->Delete();
         nodeEvents->Delete();
         
-        std::vector<vtkMRMLNode*> nodes;
         // obtain the list of connectors in the scene
-        const char* className = this->GetMRMLScene()->GetClassNameByTag("IGTLConnector");
-        this->GetMRMLScene()->GetNodesByClass(className, nodes);
-        
-        this->ConnectorNodeList.clear();
-        std::vector<vtkMRMLNode*>::iterator iter;
-        for (iter = nodes.begin(); iter != nodes.end(); iter ++)
-          {
-          vtkMRMLIGTLConnectorNode* ptr = vtkMRMLIGTLConnectorNode::SafeDownCast(*iter);
-          if (ptr)
-            {
-            this->ConnectorNodeList.push_back(ptr);
-            }
-          }
-      
+        UpdateConnectorNodeList();
+
+        //this->GetLogic()->AddConnectorToList(cnode);
+
         this->UpdateConnectorListFlag          = 1;
         this->UpdateConnectorPropertyFrameFlag = 1;
         this->UpdateIOConfigTreeFlag           = 1;
+        
         }
       else
         {
@@ -1145,10 +1157,43 @@ void vtkOpenIGTLinkIFGUI::ProcessMRMLEvents ( vtkObject *caller,
         }
       }
     }
+  
+  // -----------------------------------------
+  // New scene
+  else if (event == vtkMRMLScene::NewSceneEvent)
+    {
+    std::vector<vtkMRMLNode*> nodes;
+    const char* className = this->GetMRMLScene()->GetClassNameByTag("IGTLConnector");
+    this->GetMRMLScene()->GetNodesByClass(className, nodes);
 
+    this->ConnectorNodeList.clear();
+    std::vector<vtkMRMLNode*>::iterator iter;
+    for (iter = nodes.begin(); iter != nodes.end(); iter ++)
+      {
+      vtkMRMLIGTLConnectorNode* cnode = vtkMRMLIGTLConnectorNode::SafeDownCast(*iter);
+      vtkMRMLNode *nnode = NULL; // TODO: is this OK?
+      vtkIntArray* nodeEvents = vtkIntArray::New();
+      nodeEvents->InsertNextValue(vtkMRMLIGTLConnectorNode::ConnectedEvent);
+      nodeEvents->InsertNextValue(vtkMRMLIGTLConnectorNode::DisconnectedEvent);
+      nodeEvents->InsertNextValue(vtkMRMLIGTLConnectorNode::ActivatedEvent);
+      nodeEvents->InsertNextValue(vtkMRMLIGTLConnectorNode::DeactivatedEvent);
+      nodeEvents->InsertNextValue(vtkMRMLIGTLConnectorNode::ReceiveEvent);
+      nodeEvents->InsertNextValue(vtkCommand::ModifiedEvent);
+      vtkSetAndObserveMRMLNodeEventsMacro(nnode,cnode,nodeEvents);
+      nnode->Delete();
+      nodeEvents->Delete();
+
+      }      
+    UpdateConnectorNodeList();
+    
+    this->UpdateConnectorListFlag          = 1;
+    this->UpdateConnectorPropertyFrameFlag = 1;
+    this->UpdateIOConfigTreeFlag           = 1;
+    }
+  
   // -----------------------------------------
   // Removing a node
- else if (event == vtkMRMLScene::NodeRemovedEvent)
+  else if (event == vtkMRMLScene::NodeRemovedEvent)
     {
     vtkObject* obj = (vtkObject*)callData;
     vtkMRMLIGTLConnectorNode* node = vtkMRMLIGTLConnectorNode::SafeDownCast(obj);
@@ -1156,34 +1201,21 @@ void vtkOpenIGTLinkIFGUI::ProcessMRMLEvents ( vtkObject *caller,
       {
       if (strcmp(node->GetNodeTagName(), "IGTLConnector") == 0)
         {
-        std::vector<vtkMRMLNode*> nodes;
         // obtain the list of connectors in the scene
-        const char* className = this->GetMRMLScene()->GetClassNameByTag("IGTLConnector");
-        this->GetMRMLScene()->GetNodesByClass(className, nodes);
-        
-        this->ConnectorNodeList.clear();
-        
-        std::vector<vtkMRMLNode*>::iterator iter;
-        for (iter = nodes.begin(); iter != nodes.end(); iter ++)
-          {
-          vtkMRMLIGTLConnectorNode* ptr = vtkMRMLIGTLConnectorNode::SafeDownCast(*iter);
-          if (ptr)
-            {
-            this->ConnectorNodeList.push_back(ptr);
-            }
-          }
+        UpdateConnectorNodeList();
         
         this->UpdateConnectorListFlag          = 1;
         this->UpdateConnectorPropertyFrameFlag = 1;
         this->UpdateIOConfigTreeFlag           = 1;
         
-        node->Delete();
+        node->Stop(); // should do this in the node class?
         }
-
+      
       //UpdateRealTimeImageSourceMenu();
       }
     }
-
+  
+  
   // -----------------------------------------
   // Connector node events
   else if (event == vtkMRMLIGTLConnectorNode::ConnectedEvent)
@@ -1271,6 +1303,11 @@ void vtkOpenIGTLinkIFGUI::ProcessMRMLEvents ( vtkObject *caller,
       this->CloseScene = true;
       this->LocatorCheckButton->SelectedStateOff();
       }
+
+    this->ConnectorNodeList.clear();
+    this->UpdateConnectorListFlag          = 1;
+    this->UpdateConnectorPropertyFrameFlag = 1;
+    this->UpdateIOConfigTreeFlag           = 1;
     }
 }
 
@@ -2367,7 +2404,8 @@ void vtkOpenIGTLinkIFGUI::UpdateConnectorList(int updateLevel)
     int i = *iter;
     if (i >= 0 && i < (int)this->ConnectorNodeList.size())
       {
-      vtkMRMLIGTLConnectorNode* connector = this->ConnectorNodeList[i];
+      vtkMRMLIGTLConnectorNode* connector
+        = vtkMRMLIGTLConnectorNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->ConnectorNodeList[i]));
       if (connector)
         {
         // Connector Name
@@ -2409,11 +2447,14 @@ void vtkOpenIGTLinkIFGUI::UpdateConnectorList(int updateLevel)
       {
       if (i >= 0 && i < (int)this->ConnectorNodeList.size())
         {
-        vtkMRMLIGTLConnectorNode* connector = this->ConnectorNodeList[i];
+        vtkMRMLIGTLConnectorNode* connector
+          = vtkMRMLIGTLConnectorNode::SafeDownCast(this->GetMRMLScene()
+                                                   ->GetNodeByID(this->ConnectorNodeList[i]));
         if (connector)
           {
           this->ConnectorList->GetWidget()
             ->SetCellText(i,2, ConnectorStatusStr[connector->GetState()]);
+          
           }
         }
       }
@@ -2473,7 +2514,15 @@ void vtkOpenIGTLinkIFGUI::UpdateConnectorPropertyFrame(int i)
     return;
     }
 
-  vtkMRMLIGTLConnectorNode* connector = this->ConnectorNodeList[i];
+  vtkMRMLIGTLConnectorNode* connector
+    = vtkMRMLIGTLConnectorNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->ConnectorNodeList[i]));
+
+  if (connector == NULL)  // if the connector has already beeen removed
+    {
+    UpdateConnectorNodeList();
+    UpdateConnectorPropertyFrame(i);
+    return;
+    }
 
   // Check if the connector is active
   bool activeFlag = (connector->GetState() != vtkMRMLIGTLConnectorNode::STATE_OFF);
@@ -2583,7 +2632,10 @@ int vtkOpenIGTLinkIFGUI::OnMrmlNodeListChanged(int row, int col, const char* ite
     return 0;
     }
     
-  vtkMRMLIGTLConnectorNode* connector = this->ConnectorNodeList[this->CurrentMrmlNodeListIndex];
+  vtkMRMLIGTLConnectorNode* connector
+    = vtkMRMLIGTLConnectorNode::SafeDownCast(this->GetMRMLScene()
+                                             ->GetNodeByID(this->ConnectorNodeList[this->CurrentMrmlNodeListIndex]));
+
   const char* conID = connector->GetID();
 
   if (connector == NULL)
@@ -2645,6 +2697,30 @@ int vtkOpenIGTLinkIFGUI::OnMrmlNodeListChanged(int row, int col, const char* ite
       this->CurrentNodeListSelected[row].io = currIo;
       }
     }
-    
+
   return 1;
+}
+
+
+//---------------------------------------------------------------------------
+void vtkOpenIGTLinkIFGUI::UpdateConnectorNodeList()
+{
+  // obtain the list of connectors in the scene
+
+  std::vector<vtkMRMLNode*> nodes;
+  const char* className = this->GetMRMLScene()->GetClassNameByTag("IGTLConnector");
+  this->GetMRMLScene()->GetNodesByClass(className, nodes);
+  
+  this->ConnectorNodeList.clear();
+  std::vector<vtkMRMLNode*>::iterator iter;
+  for (iter = nodes.begin(); iter != nodes.end(); iter ++)
+    {
+    vtkMRMLIGTLConnectorNode* ptr = vtkMRMLIGTLConnectorNode::SafeDownCast(*iter);
+    if (ptr)
+      {
+      this->ConnectorNodeList.push_back(ptr->GetID());
+      }
+    }
+
+  return;
 }

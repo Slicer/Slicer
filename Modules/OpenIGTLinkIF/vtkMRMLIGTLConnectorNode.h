@@ -115,8 +115,10 @@ class VTK_OPENIGTLINKIF_EXPORT vtkMRMLIGTLConnectorNode : public vtkMRMLNode
   virtual const char* GetNodeTagName()
     {return "IGTLConnector";};
 
+  // method to propagate events generated in mrml
+  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
- private:
+ protected:
   //----------------------------------------------------------------
   // Constructor and destroctor
   //----------------------------------------------------------------
