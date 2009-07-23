@@ -302,7 +302,7 @@ void vtkProstateNavConfigurationStep::ProcessGUIEvents( vtkObject *caller,
                                             ->GetModuleGUIByName("OpenIGTLink IF"));
         if (igtlGUI)
           {
-          igtlGUI->GetLogic()->AddClientConnector("BRPRobot", address, port);
+          //igtlGUI->GetLogic()->AddClientConnector("BRPRobot", address, port);
           this->RobotConnectButton->SetText("ON ");
           }
         }
@@ -328,7 +328,7 @@ void vtkProstateNavConfigurationStep::ProcessGUIEvents( vtkObject *caller,
                                               ->GetModuleGUIByName("OpenIGTLink IF"));
           if (igtlGUI)
             {
-            igtlGUI->GetLogic()->AddClientConnector("BRPScanner", address, port);
+            //igtlGUI->GetLogic()->AddClientConnector("BRPScanner", address, port);
             this->ScannerConnectButton->SetText("ON ");
             }
           }
