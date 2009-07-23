@@ -50,8 +50,8 @@ set(VolumeRendering1_SRCS
   vtkMRMLVolumeRenderingNode.cxx
   vtkMRMLVolumeRenderingSelectionNode.cxx
   vtkSlicerNodeSelectorVolumeRenderingWidget.cxx
-  vtkSlicerVRHelper.cxx
-  vtkSlicerVRGrayscaleHelper.cxx
+  #vtkSlicerVRHelper.cxx
+  #vtkSlicerVRGrayscaleHelper.cxx
   vtkSlicerVRMenuButtonColorMode.cxx
   #LabelmapPart
   #vtkSlicerVRLabelmapHelper.cxx

@@ -136,28 +136,35 @@ void vtkVolumeRenderingLogic::ProcessMRMLEvents(vtkObject *caller,
                                             unsigned long event, 
                                             void *callData)
 {
+}
+
+//----------------------------------------------------------------------------
+void vtkVolumeRenderingLogic::SetParametersNode(vtkMRMLVolumeRenderingParametersNode *node)
+{
+  if (node == NULL)
+    {
+    return;
+    }
+
   //set volume property (transfer function)
   vtkVolumeProperty *volumeProperty = NULL;
-  if (this->GetParametersNode() && this->GetParametersNode()->GetVolumePropertyNode())
+  if (node->GetVolumePropertyNode())
     {
-    volumeProperty = this->GetParametersNode()->GetVolumePropertyNode()->GetVolumeProperty();
+    volumeProperty = node->GetVolumePropertyNode()->GetVolumeProperty();
     }
   this->Volume->SetProperty(volumeProperty);
 
   vtkImageData *imageData = NULL;
-  if (this->GetParametersNode() && this->GetParametersNode()->GetVolumeNode())
+  if (node->GetVolumeNode())
     {
-    imageData = this->GetParametersNode()->GetVolumeNode()->GetImageData();
+    imageData = node->GetVolumeNode()->GetImageData();
     }
-
-  if (this->GetParametersNode())
+ 
+  std::map<std::string, vtkVolumeMapper *>::iterator iter;
+  iter = this->VolumeMappers.find(node->GetCurrentVolumeMapper());
+  if (iter != this->VolumeMappers.end())
     {
-    std::map<std::string, vtkVolumeMapper *>::iterator iter;
-    iter = this->VolumeMappers.find(this->GetParametersNode()->GetCurrentVolumeMapper());
-    if (iter != this->VolumeMappers.end())
-      {
-      this->CurrentVolumeMapper = iter->second;
-      }
+    this->CurrentVolumeMapper = iter->second;
     }
 
   this->CurrentVolumeMapper->SetInput(imageData);
@@ -166,29 +173,26 @@ void vtkVolumeRenderingLogic::ProcessMRMLEvents(vtkObject *caller,
 
 
   //Init the mappers
-  if (this->GetParametersNode()) 
-    {
-    this->MapperTexture->SetSampleDistance(this->GetParametersNode()->GetEstimatedSampleDistance());
-    this->MapperCUDARaycast->SetIntendedFrameRate(this->GetParametersNode()->GetExpectedFPS());
-    this->MapperGPURaycast->SetFramerate(this->GetParametersNode()->GetExpectedFPS());
-    this->MapperRaycast->SetSampleDistance(this->GetParametersNode()->GetEstimatedSampleDistance());
-    }
-    //create the CUDA raycast mapper
+
+  this->MapperCUDARaycast->SetIntendedFrameRate(node->GetExpectedFPS());
+  this->MapperGPURaycast->SetFramerate(node->GetExpectedFPS());
 
   if (imageData)
     {
     double scalarRange[2];
     imageData->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
     this->MapperGPURaycast->SetDepthPeelingThreshold(scalarRange[0]);
+    this->MapperTexture->SetSampleDistance(node->GetEstimatedSampleDistance());
+    this->MapperRaycast->SetSampleDistance(node->GetEstimatedSampleDistance());
     }
 }
 
 
-double vtkVolumeRenderingLogic::EstimateSampleDistances(void)
+double vtkVolumeRenderingLogic::EstimateSampleDistances(vtkImageData *imageData)
 {
-  if (this->GetParametersNode() && this->GetParametersNode()->GetVolumeNode())
+  if (imageData)
     {
-    double *spacing = vtkMRMLScalarVolumeNode::SafeDownCast(this->GetParametersNode()->GetVolumeNode())->GetSpacing();
+    double *spacing = imageData->GetSpacing();
 
     double minSpace = spacing[0];
     double maxSpace = spacing[0];
@@ -201,7 +205,7 @@ double vtkVolumeRenderingLogic::EstimateSampleDistances(void)
           minSpace = spacing[i];
     }
     
-/*    vtkImageData *imageData = vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
+/*    vtkImageData *imageData = vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetVolumeNodeSelector()->GetSelected())->GetImageData();
     int *dims = imageData->GetDimensions();
     int minDim = dims[0];
     minDim = minDim > dims[1] ? dims[1] : minDim;

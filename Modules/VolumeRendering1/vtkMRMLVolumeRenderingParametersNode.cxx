@@ -208,9 +208,9 @@ vtkMRMLVolumeNode* vtkMRMLVolumeRenderingParametersNode::GetVolumeNode()
     {
     vtkSetAndObserveMRMLObjectMacro(this->VolumeNode, NULL);
     }
-  else if (this->GetScene() && this->VolumeNodeID != NULL &&
-           ((this->VolumeNode != NULL && strcmp(this->VolumeNode->GetID(), this->VolumeNodeID)) ||
-            (this->VolumeNode = NULL)) )
+  else if (this->GetScene() != NULL && this->VolumeNodeID != NULL && 
+           (this->VolumeNode == NULL ||
+           std::string(this->VolumeNode->GetID()) != std::string( this->VolumeNodeID) ) )
     {
     vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->VolumeNodeID);
     vtkSetAndObserveMRMLObjectMacro(this->VolumeNode, vtkMRMLVolumeNode::SafeDownCast(snode));

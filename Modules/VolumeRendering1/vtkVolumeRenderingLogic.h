@@ -23,11 +23,6 @@ public:
   vtkTypeMacro(vtkVolumeRenderingLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // TODO: do we need to observe MRML here?
-  //virtual void ProcessMrmlEvents ( vtkObject *caller, unsigned long event,
-    //                               void *callData ){};
-
-  
   // Overload the scene setter, this is needed for module creation
   // via LoadableModuleFactory
   virtual void SetMRMLScene(vtkMRMLScene *scene);
@@ -39,13 +34,18 @@ public:
 
   vtkMRMLVolumeRenderingParametersNode* GetParametersNode();
 
+  void SetParametersNode(vtkMRMLVolumeRenderingParametersNode *node);
+
+  vtkGetObjectMacro(Volume, vtkVolume);
+
+
   // Description:
   // Update MRML events
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                   unsigned long /*event*/, 
                                   void * /*callData*/ ); 
 
-  double EstimateSampleDistances(void);
+  double EstimateSampleDistances(vtkImageData *imageData);
 
 protected:
   vtkVolumeRenderingLogic();
