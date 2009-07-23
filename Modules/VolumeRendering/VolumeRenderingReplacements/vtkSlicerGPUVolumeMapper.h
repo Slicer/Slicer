@@ -61,8 +61,8 @@ public:
   
   // Description:
   // Set/Get the nth input data, could be label map or just another volume
-  virtual void SetNthInput( vtkImageData * , int index);
-  virtual void SetNthInput( vtkDataSet * , int index);
+  virtual void SetNthInput( int index, vtkImageData *);
+  virtual void SetNthInput( int index, vtkDataSet *);
   vtkImageData *GetNthInput(int index);
   
   // Description:

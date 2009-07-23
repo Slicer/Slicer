@@ -19,6 +19,7 @@ class vtkSlicerVolumeTextureMapper3D;
 class vtkTimerLog;
 class vtkSlicerFixedPointVolumeRayCastMapper;
 class vtkSlicerGPURayCastVolumeTextureMapper3D;
+class vtkSlicerGPURayCastVolumeMapper;
 class vtkCudaVolumeMapper;
 class vtkKWMenuButtonWithSpinButtonsWithLabel;
 class vtkKWScaleWithLabel;
@@ -102,6 +103,11 @@ public:
     // Description:
     // Callback, that is processed when the GPU ray casting rendering technique is changed
     void ProcessGPURayCastTechnique(int id);
+    void ProcessGPURayCastTechniqueII(int id);
+    
+    // Description:
+    // Callback, that is processed when the multi-volume rendering fusion method is changed
+    void ProcessGPURayCastColorOpacityFusion(int id);
     
     // Description:
     // Callback, that is processed when the GPU ray cast mapper internal volume size changed
@@ -257,6 +263,7 @@ protected:
     vtkKWFrameWithLabel *FramePerformance;
     vtkKWFrameWithLabel *FrameCUDARayCasting;
     vtkKWFrameWithLabel *FrameGPURayCasting;
+    vtkKWFrameWithLabel *FrameGPURayCastingII;
     vtkKWFrameWithLabel *FramePolygonBlending;
     vtkKWFrameWithLabel *FrameCPURayCasting;
     vtkKWFrameWithLabel *FrameFPS;
@@ -276,7 +283,12 @@ protected:
     // Description:
     // Menu button to select rendering technique
     vtkKWMenuButtonWithLabel *MB_GPURayCastTechnique;
-        
+    vtkKWMenuButtonWithLabel *MB_GPURayCastTechniqueII;
+    
+    // Description:
+    // Menu button to select color/opacity fusion method in multi-volume rendering
+    vtkKWMenuButtonWithLabel *MB_GPURayCastColorOpacityFusion;        
+    
     // Description:
     // Enable/Disable CPU ray cast MIP rendering
     vtkKWCheckButtonWithLabel *CB_CPURayCastMIP;
@@ -407,6 +419,10 @@ protected:
     // The hardware accelerated gpu ray cast mapper.
     vtkSlicerGPURayCastVolumeTextureMapper3D *MapperGPURaycast;
 
+    // Description:
+    // The hardware accelerated gpu ray cast II mapper (multi-volume rendering).
+    vtkSlicerGPURayCastVolumeMapper *MapperGPURaycastII;
+    
     // Description:
     // The software accelerated software mapper
     vtkSlicerFixedPointVolumeRayCastMapper *MapperRaycast;

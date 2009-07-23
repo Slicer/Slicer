@@ -2,6 +2,7 @@
 #include "vtkSlicerVolumeTextureMapper3D.h"
 #include "vtkSlicerGPUVolumeTextureMapper3D.h"
 #include "vtkSlicerGPURayCastVolumeTextureMapper3D.h"
+#include "vtkSlicerGPURayCastVolumeMapper.h"
 #include "vtkSlicerFixedPointVolumeRayCastMapper.h"
 #include "vtkSlicerVRGrayscaleHelper.h"
 #include "vtkVolumeRenderingGUI.h"
@@ -73,6 +74,7 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->MapperTexture=NULL;
     this->MapperCUDARaycast=NULL;
     this->MapperGPURaycast=NULL;
+    this->MapperGPURaycastII=NULL;
     this->MapperRaycast=NULL;
     this->RenderingMethod = -1;//users are required to select a mapper
     
@@ -80,8 +82,10 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->CB_CUDARayCastShading=NULL;
     
     this->MB_GPURayCastTechnique=NULL;
+    this->MB_GPURayCastTechniqueII=NULL;
     this->SC_GPURayCastDepthPeelingThreshold=NULL;
     this->MB_GPUMemorySize=NULL;
+    this->MB_GPURayCastColorOpacityFusion=NULL;
 
     this->SC_ExpectedFPS=NULL;
     this->MB_Mapper= NULL;
@@ -180,7 +184,7 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
     this->MapperGPURaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->MapperGPURaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->MapperGPURaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-
+    
     this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
@@ -232,6 +236,12 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
     {
         this->MapperGPURaycast->Delete();
         this->MapperGPURaycast=NULL;
+    }
+    
+    if(this->MapperGPURaycastII!=NULL)
+    {
+        this->MapperGPURaycastII->Delete();
+        this->MapperGPURaycastII=NULL;
     }
     
     this->DestroyTreshold();
@@ -411,8 +421,8 @@ void vtkSlicerVRGrayscaleHelper::InitializePipelineNewCurrentNode()
 
     //Enable shading as default
     this->Gui->GetCurrentNode()->GetVolumeProperty()->ShadeOn();
-    this->Gui->GetCurrentNode()->GetVolumeProperty()->SetAmbient(.30);
-    this->Gui->GetCurrentNode()->GetVolumeProperty()->SetDiffuse(.60);
+    this->Gui->GetCurrentNode()->GetVolumeProperty()->SetAmbient(.20);
+    this->Gui->GetCurrentNode()->GetVolumeProperty()->SetDiffuse(.80);
     this->Gui->GetCurrentNode()->GetVolumeProperty()->SetSpecular(.50);
     this->Gui->GetCurrentNode()->GetVolumeProperty()->SetSpecularPower(40);//this is really weird
 
@@ -480,6 +490,17 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
         this->MapperGPURaycast->SetFramerate(this->SC_ExpectedFPS->GetValue());
         this->MapperGPURaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
         
+        //create the raycast mapper II
+        this->MapperGPURaycastII = vtkSlicerGPURayCastVolumeMapper::New();
+        this->MapperGPURaycastII->SetFramerate(this->SC_ExpectedFPS->GetValue());
+        this->MapperGPURaycastII->SetNthInput(0, vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
+        
+        //we must have source input, but may or maybe not have background and labelmap inputs
+        if (this->Gui->GetNS_ImageDataBg()->GetSelected())
+            this->MapperGPURaycastII->SetNthInput(1, vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageDataBg()->GetSelected())->GetImageData());
+        if (this->Gui->GetNS_ImageDataLabelmap()->GetSelected())
+            this->MapperGPURaycastII->SetNthInput(2, vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageDataLabelmap()->GetSelected())->GetImageData());
+        
         double scalarRange[2];
         vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
         this->MapperGPURaycast->SetDepthPeelingThreshold(scalarRange[0]);
@@ -514,7 +535,10 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
             vtkErrorMacro("GPU ray casting (GLSL) is not supported by your computer.");
             this->MB_GPURayCastTechnique->EnabledOff();
             this->SC_GPURayCastDepthPeelingThreshold->EnabledOff();
-            this->MB_GPUMemorySize->EnabledOff();
+            
+            //GPU ray cast II
+            this->MB_GPURayCastTechniqueII->EnabledOff();
+            this->MB_GPURayCastColorOpacityFusion->EnabledOff();
         }
     
         if(!IsTextureMappingSupported)
@@ -546,9 +570,10 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
         this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
         this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
         this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-
+        
+        // GPU ray cast II mapper calculate gradients in fragement shader
+        
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
-
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::EndEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
     }
 
@@ -564,23 +589,33 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
             {
             case 0://128M
                 this->MapperGPURaycast->SetInternalVolumeSize(256);//256^3
+                this->MapperGPURaycastII->SetInternalVolumeSize(256);//256^3
                 this->MapperTexture->SetInternalVolumeSize(256);
                 break;
             case 1://256M
                 this->MapperGPURaycast->SetInternalVolumeSize(384);//384^3
+                this->MapperGPURaycastII->SetInternalVolumeSize(384);//384^3
                 this->MapperTexture->SetInternalVolumeSize(256);
                 break;
             case 2://512M
-                this->MapperGPURaycast->SetInternalVolumeSize(512);//500^3
+                this->MapperGPURaycast->SetInternalVolumeSize(512);//512^3
+                this->MapperGPURaycastII->SetInternalVolumeSize(512);//512^3
                 this->MapperTexture->SetInternalVolumeSize(512);
                 break;
             case 3://1024M
-                this->MapperGPURaycast->SetInternalVolumeSize(640);//600^3
+                this->MapperGPURaycast->SetInternalVolumeSize(640);//640^3
+                this->MapperGPURaycast->SetInternalVolumeSize(640);//640^3
                 this->MapperTexture->SetInternalVolumeSize(512);
                 break;
             }
         }
         
+        this->FrameCPURayCasting->CollapseFrame();
+        this->FrameCUDARayCasting->CollapseFrame();
+        this->FrameGPURayCasting->CollapseFrame();
+        this->FrameGPURayCastingII->CollapseFrame();
+        this->FramePolygonBlending->CollapseFrame();
+            
         if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","MB_Mapper"))
         {
             int id = this->Gui->GetApplication()->GetIntRegistryValue(2,"VolumeRendering","MB_Mapper");
@@ -591,9 +626,7 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
             case 0:
                 this->Volume->SetMapper(this->MapperRaycast);
                 this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using CPU Raycasting: High Quality");
-                this->FrameCUDARayCasting->CollapseFrame();
-                this->FrameGPURayCasting->CollapseFrame();
-                this->FramePolygonBlending->CollapseFrame();
+                this->FrameCPURayCasting->ExpandFrame();
                 break;
             case 1:
                 this->Volume->SetMapper(this->MapperGPURaycast);
@@ -601,29 +634,31 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
                     this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using GPU Raycasting");
                 else
                     this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("GPU Raycasting not supported on your computer!");
-                this->FrameCUDARayCasting->CollapseFrame();
-                this->FrameCPURayCasting->CollapseFrame();
-                this->FramePolygonBlending->CollapseFrame();
+                this->FrameGPURayCasting->ExpandFrame();
                 break;
             case 2:
+                this->Volume->SetMapper(this->MapperGPURaycastII);
+                if (this->IsGPURayCastingSupported)
+                    this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using GPU Raycasting II");
+                else
+                    this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("GPU Raycasting not supported on your computer!");
+                this->FrameGPURayCastingII->ExpandFrame();
+                break;
+            case 3:
                 this->Volume->SetMapper(this->MapperTexture);
                 if (this->IsTextureMappingSupported)
                     this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using OpenGL Polygon Texture 3D");
                 else
                     this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("OpenGL Polygon Texture 3D not supported on your computer!");
-                this->FrameCUDARayCasting->CollapseFrame();
-                this->FrameGPURayCasting->CollapseFrame();
-                this->FrameCPURayCasting->CollapseFrame();
+                this->FramePolygonBlending->ExpandFrame();
                 break;
-            case 3:
+            case 4:
                 this->Volume->SetMapper(this->MapperCUDARaycast);
                 if (this->IsCUDARayCastingSupported)
                     this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using CUDA");
                 else
                     this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("CUDA not supported on your computer!");
-                this->FrameCPURayCasting->CollapseFrame();
-                this->FrameGPURayCasting->CollapseFrame();
-                this->FramePolygonBlending->CollapseFrame();
+                this->FrameCUDARayCasting->ExpandFrame();
                 break;
             }
         }
@@ -632,9 +667,7 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
             this->MB_Mapper->GetWidget()->GetMenu()->SelectItem(0);
             this->Volume->SetMapper(this->MapperRaycast);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using CPU Raycasting: High Quality");
-            this->FrameCUDARayCasting->CollapseFrame();
-            this->FrameGPURayCasting->CollapseFrame();
-            this->FramePolygonBlending->CollapseFrame();
+            this->FrameCPURayCasting->ExpandFrame();
         }
     }
     
@@ -675,6 +708,24 @@ void vtkSlicerVRGrayscaleHelper::UpdateRendering()
     
     if (this->MapperTexture->GetInput() != input)
       this->MapperTexture->SetInput(input);
+      
+    if (this->MapperGPURaycastII->GetNthInput(0) != input)
+        this->MapperGPURaycastII->SetNthInput(0, input);
+        
+    {
+        if (this->Gui->GetNS_ImageDataBg()->GetSelected())
+        {
+            input = vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageDataBg()->GetSelected())->GetImageData();
+            if (input != this->MapperGPURaycastII->GetNthInput(1))
+                this->MapperGPURaycastII->SetNthInput(1, input);
+        }
+        if (this->Gui->GetNS_ImageDataLabelmap()->GetSelected())
+        {
+            input = vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageDataLabelmap()->GetSelected())->GetImageData();
+            if (input != this->MapperGPURaycastII->GetNthInput(2))
+                this->MapperGPURaycastII->SetNthInput(2, input);
+        }
+    }
     
     //Update Property
     this->Volume->SetProperty(this->Gui->GetCurrentNode()->GetVolumeProperty());
@@ -1264,6 +1315,18 @@ void vtkSlicerVRGrayscaleHelper::ProcessGPURayCastTechnique(int id)
     this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
 }
 
+void vtkSlicerVRGrayscaleHelper::ProcessGPURayCastTechniqueII(int id)
+{
+    //this->MapperGPURaycast->SetTechnique(id);
+    
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+}
+
+void vtkSlicerVRGrayscaleHelper::ProcessGPURayCastColorOpacityFusion(int id)
+{
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+}
+
 void vtkSlicerVRGrayscaleHelper::ProcessGPUMemorySize(int id)
 {
     switch(id)
@@ -1295,11 +1358,20 @@ void vtkSlicerVRGrayscaleHelper::ProcessRenderingMethodEvents(int id)
   
     this->FrameCUDARayCasting->CollapseFrame();
     this->FrameGPURayCasting->CollapseFrame();
+    this->FrameGPURayCastingII->CollapseFrame();
     this->FramePolygonBlending->CollapseFrame();
     this->FrameCPURayCasting->CollapseFrame();
     
     switch(id)
     {
+    case 0://softwrae ray casting
+      this->FrameCPURayCasting->ExpandFrame();
+      if (this->Volume)
+      {
+        this->Volume->SetMapper(this->MapperRaycast);
+        this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using CPU Raycasting");
+      }
+      break;
     case 1://gpu ray casting
       this->FrameGPURayCasting->ExpandFrame();
       if (this->Volume && this->IsGPURayCastingSupported)
@@ -1310,7 +1382,18 @@ void vtkSlicerVRGrayscaleHelper::ProcessRenderingMethodEvents(int id)
       else
         vtkErrorMacro("GPU ray casting is not supported by your computer.");
       break;
-    case 2://old school opengl 2D Polygon Texture 3D
+    case 2://gpu ray casting II
+/*      this->FrameGPURayCastingII->ExpandFrame();
+      if (this->Volume && this->IsGPURayCastingSupported)
+      {
+        this->Volume->SetMapper(this->MapperGPURaycastII);
+        this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using GPU Raycasting II");
+      }
+      else
+        vtkErrorMacro("GPU ray casting is not supported by your computer.");*/
+      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Under construction");  
+      break;
+    case 3://old school opengl 2D Polygon Texture 3D
       this->FramePolygonBlending->ExpandFrame();
       if (this->Volume && this->IsTextureMappingSupported)
       {
@@ -1320,7 +1403,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessRenderingMethodEvents(int id)
       else
         vtkErrorMacro("OpenGL Polygon Texture 3D is not supported by your computer.");//seldom should we see this error message unless really low end graphics card...
       break;
-    case 3://CUDA ray casting
+    case 4://CUDA ray casting
       this->FrameCUDARayCasting->ExpandFrame();
       this->FrameFPS->ExpandFrame();
       if (this->Volume && this->IsCUDARayCastingSupported){
@@ -1332,14 +1415,6 @@ void vtkSlicerVRGrayscaleHelper::ProcessRenderingMethodEvents(int id)
         this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using CUDA");
       }else{
         vtkErrorMacro("CUDA is not supported by your computer.");
-      }
-      break;
-    case 0://softwrae ray casting
-      this->FrameCPURayCasting->ExpandFrame();
-      if (this->Volume)
-      {
-        this->Volume->SetMapper(this->MapperRaycast);
-        this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using CPU Raycasting");
       }
       break;
     }
@@ -1720,10 +1795,12 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->MB_Mapper->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessRenderingMethodEvents 0");
         this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("GPU Ray Casting (GLSL)");
         this->MB_Mapper->GetWidget()->GetMenu()->SetItemCommand(1, this,"ProcessRenderingMethodEvents 1");
-        this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("OpenGL Polygon Texture 3D");
+        this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("GPU Ray Casting II (GLSL)");
         this->MB_Mapper->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessRenderingMethodEvents 2");
-        this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("CUDA Ray Casting");
+        this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("OpenGL Polygon Texture 3D");
         this->MB_Mapper->GetWidget()->GetMenu()->SetItemCommand(3, this,"ProcessRenderingMethodEvents 3");
+        this->MB_Mapper->GetWidget()->GetMenu()->AddRadioButton("CUDA Ray Casting");
+        this->MB_Mapper->GetWidget()->GetMenu()->SetItemCommand(4, this,"ProcessRenderingMethodEvents 4");
         
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_Mapper->GetWidgetName() );
 
@@ -1835,6 +1912,49 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->SC_GPURayCastDepthPeelingThreshold->SetValue(scalarRange[0]);
         this->SC_GPURayCastDepthPeelingThreshold->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *) this->VolumeRenderingCallbackCommand);
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SC_GPURayCastDepthPeelingThreshold->GetWidgetName() );
+    }
+    
+    //GPU ray casting II
+    {
+        this->FrameGPURayCastingII = vtkKWFrameWithLabel::New();
+        this->FrameGPURayCastingII->SetParent(this->FramePerformance->GetFrame());
+        this->FrameGPURayCastingII->Create();
+        this->FrameGPURayCastingII->AllowFrameToCollapseOff();
+        this->FrameGPURayCastingII->SetLabelText("GPU Ray Casting II");
+        this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->FrameGPURayCastingII->GetWidgetName() );
+
+        //set technique
+        this->MB_GPURayCastTechniqueII = vtkKWMenuButtonWithLabel::New();
+        this->MB_GPURayCastTechniqueII->SetParent(this->FrameGPURayCastingII->GetFrame());
+        this->MB_GPURayCastTechniqueII->SetLabelText("Rendering Technique");
+        this->MB_GPURayCastTechniqueII->Create();
+        this->MB_GPURayCastTechniqueII->SetLabelWidth(labelWidth);
+        this->MB_GPURayCastTechniqueII->SetBalloonHelpString("Select different techniques in GPU ray casting");
+        this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->AddRadioButton("Composite With Shading");
+        this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastTechniqueII 0");
+//        this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->AddRadioButton("Composite Psuedo Shading");
+//        this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->SetItemCommand(1, this,"ProcessGPURayCastTechnique 1");
+//        this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->AddRadioButton("Maximum Intensity Projection");
+//        this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessGPURayCastTechnique 2");
+//        this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->AddRadioButton("Minimum Intensity Projection");
+//        this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->SetItemCommand(3, this,"ProcessGPURayCastTechnique 3");
+        
+        this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastTechniqueII->GetWidgetName() );
+        
+        this->MB_GPURayCastTechniqueII->GetWidget()->SetValue("Composite With Shading");
+        
+        this->MB_GPURayCastColorOpacityFusion = vtkKWMenuButtonWithLabel::New();
+        this->MB_GPURayCastColorOpacityFusion->SetParent(this->FrameGPURayCastingII->GetFrame());
+        this->MB_GPURayCastColorOpacityFusion->SetLabelText("Color/Opacity Fusion");
+        this->MB_GPURayCastColorOpacityFusion->Create();
+        this->MB_GPURayCastColorOpacityFusion->SetLabelWidth(labelWidth);
+        this->MB_GPURayCastColorOpacityFusion->SetBalloonHelpString("Select color fusion method in multi-volume rendering");
+        this->MB_GPURayCastColorOpacityFusion->GetWidget()->GetMenu()->AddRadioButton("Composite");
+        this->MB_GPURayCastColorOpacityFusion->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastColorOpacityFusion 0");
+        
+        this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastColorOpacityFusion->GetWidgetName() );
+        
+        this->MB_GPURayCastColorOpacityFusion->GetWidget()->SetValue("Composite");
     }
     
     //opengl 2D Polygon Texture 3D
