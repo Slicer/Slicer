@@ -732,10 +732,14 @@ if {  [BuildThis $::NUMPY_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [strin
     if { $isWindows } {
 
         # prepare the environment for numpy build script
-        regsub -all ":" [file dirname $::MAKE] "" devenvdir
-        regsub -all ":" $::COMPILER_PATH "" vcbindir
-        set ::env(PATH) /cygdrive/$devenvdir:/cygdrive/$vcbindir:$::env(PATH)
-        set ::env(PATH) $::Slicer3_LIB/python-build/PCbuild:$::env(PATH)
+#        regsub -all ":" [file dirname $::MAKE] "" devenvdir
+#        regsub -all ":" $::COMPILER_PATH "" vcbindir
+        set devenvdir [file dirname $::MAKE]
+        set vcbindir $::COMPILER_PATH
+
+        #set ::env(PATH) /cygdrive/$devenvdir:/cygdrive/$vcbindir:$::env(PATH)
+        set ::env(PATH) $devenvdir\;$vcbindir\;$::env(PATH)
+        set ::env(PATH) $::Slicer3_LIB/python-build/PCbuild\;$::env(PATH)
         set ::env(INCLUDE) [file dirname $::COMPILER_PATH]/include
         set ::env(INCLUDE) $::MSSDK_PATH/Include\;$::env(INCLUDE)
         set ::env(LIB) $::MSSDK_PATH/Lib\;[file dirname $::COMPILER_PATH]/lib
