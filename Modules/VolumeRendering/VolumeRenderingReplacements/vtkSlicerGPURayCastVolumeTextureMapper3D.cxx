@@ -147,7 +147,6 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolum
   glMaterialf(GL_FRONT, GL_SHININESS, power); 
  
   glDisable(GL_LIGHTING);
-  vtkGraphicErrorMacro(ren->GetRenderWindow(),"Before actual render method");
  
   this->RenderGLSL(ren, vol);
   

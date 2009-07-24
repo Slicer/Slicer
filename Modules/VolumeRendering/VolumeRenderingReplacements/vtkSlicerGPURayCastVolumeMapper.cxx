@@ -122,10 +122,28 @@ void vtkSlicerGPURayCastVolumeMapper::Render(vtkRenderer *ren, vtkVolume *vol)
   // Start the timer now
   this->Timer->StartTimer();
 
-  glPushAttrib(GL_ENABLE_BIT | GL_POLYGON_BIT | GL_TEXTURE_BIT);
+  glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT | GL_LIGHTING_BIT);
+  
+  //setup material based on volume property
+  float ambient = vol->GetProperty()->GetAmbient();
+  float specular = vol->GetProperty()->GetSpecular();
+  float diffuse = vol->GetProperty()->GetDiffuse();
+  float power = 128*vol->GetProperty()->GetSpecularPower()/50;
+  
+  float ambientMaterial[4];
+  float diffuseMaterial[4];
+  float specularMaterial[4];
+  
+  ambientMaterial[0] = ambient; ambientMaterial[1] = ambient; ambientMaterial[2] = ambient; ambientMaterial[3] = 1.0;
+  diffuseMaterial[0] = diffuse; diffuseMaterial[1] = diffuse; diffuseMaterial[2] = diffuse; diffuseMaterial[3] = 1.0;
+  specularMaterial[0] = specular; specularMaterial[1] = specular; specularMaterial[2] = specular; specularMaterial[3] = 1.0;
+  
+  glMaterialfv(GL_FRONT, GL_AMBIENT, ambientMaterial);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseMaterial);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, specularMaterial);
+  glMaterialf(GL_FRONT, GL_SHININESS, power); 
   
   glDisable(GL_LIGHTING);
-  vtkGraphicErrorMacro(ren->GetRenderWindow(),"Before actual render method");
  
   this->RenderGLSL(ren, vol);
   
@@ -255,66 +273,66 @@ void vtkSlicerGPURayCastVolumeMapper::SetupRayCastParameters(vtkRenderer *pRen, 
         numClipPlanes = clipPlanes->GetNumberOfItems();
         if (numClipPlanes > 6)
         {
-      vtkErrorMacro(<< "OpenGL guarantees only 6 additional clipping planes");
+            vtkErrorMacro(<< "OpenGL guarantees only 6 additional clipping planes");
         }
         
         double lowerBounds[3];
         double upperBounds[3];
     
-    double *pNormal = NULL;
-    double *pOrigin = NULL;
+        double *pNormal = NULL;
+        double *pOrigin = NULL;
     
-    //find out clip box
-    for (int i = 0; i < numClipPlanes; i++)
-    {
-        plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(i));
-        pNormal = plane->GetNormal();
-        pOrigin = plane->GetOrigin();
+        //find out clip box
+        for (int i = 0; i < numClipPlanes; i++)
+        {
+            plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(i));
+            pNormal = plane->GetNormal();
+            pOrigin = plane->GetOrigin();
                 
-        if (pNormal[0] > 0.85 || pNormal[0] < -0.85)//x
-        {
-            if (pNormal[0] > 0.0)//+x: min
-                lowerBounds[0] = pOrigin[0];
-            else
-                upperBounds[0] = pOrigin[0];
+            if (pNormal[0] > 0.85 || pNormal[0] < -0.85)//x
+            {
+                if (pNormal[0] > 0.0)//+x: min
+                    lowerBounds[0] = pOrigin[0];
+                else
+                    upperBounds[0] = pOrigin[0];
+            }
+            else if (pNormal[1] > 0.85 || pNormal[1] < -0.85)//y
+            {
+                if (pNormal[1] > 0.0)//+y: min
+                    lowerBounds[1] = pOrigin[1];
+                else
+                    upperBounds[1] = pOrigin[1];
+            }
+            else //z
+            {
+                if (pNormal[2] > 0.0)//+z: min
+                    lowerBounds[2] = pOrigin[2];
+                else
+                    upperBounds[2] = pOrigin[2];
+            }
         }
-        else if (pNormal[1] > 0.85 || pNormal[1] < -0.85)//y
-        {
-            if (pNormal[1] > 0.0)//+y: min
-                lowerBounds[1] = pOrigin[1];
-            else
-                upperBounds[1] = pOrigin[1];
-        }
-        else //z
-        {
-            if (pNormal[2] > 0.0)//+z: min
-                lowerBounds[2] = pOrigin[2];
-            else
-                upperBounds[2] = pOrigin[2];
-        }
-    }
     
-    //clip vertices
-    //correct when volume is axis-aligned
-    //not correct when volume is rotated to be non-axis-aligned
-    for (int i = 0; i < 8; i++)
-    {
-        for (int j = 0; j < 3; j++)
+        //clip vertices
+        //correct when volume is axis-aligned
+        //not correct when volume is rotated to be non-axis-aligned
+        for (int i = 0; i < 8; i++)
         {
-            vertices[i][j] = vertices[i][j] < lowerBounds[j] ? lowerBounds[j] : vertices[i][j];
-            vertices[i][j] = vertices[i][j] > upperBounds[j] ? upperBounds[j] : vertices[i][j];
+            for (int j = 0; j < 3; j++)
+            {
+                vertices[i][j] = vertices[i][j] < lowerBounds[j] ? lowerBounds[j] : vertices[i][j];
+                vertices[i][j] = vertices[i][j] > upperBounds[j] ? upperBounds[j] : vertices[i][j];
+            }
         }
-    }
     }
   }
    
   {//volume bbox vertices coords
     for (int i = 0; i < 8; i++)
     {
-    for (int j = 0; j < 3; j++)
-    {
-        VolumeBBoxVertices[i][j] = vertices[i][j];
-    }
+        for (int j = 0; j < 3; j++)
+        {
+            VolumeBBoxVertices[i][j] = vertices[i][j];
+        }
     }
   }
   
@@ -1405,7 +1423,7 @@ void vtkSlicerGPURayCastVolumeMapper::LoadFragmentShader()
         "vec4 voxelColorB(vec3 coord)                                                           \n"
         "{                                                                                      \n"
         "    vec4 scalar = texture3D(TextureVol, coord);                                        \n"
-        "    return texture2D(TextureColorLookup, vec2(scalar.y, 0.0));                         \n"
+        "    return texture2D(TextureColorLookup2, vec2(scalar.y, 0.0));                         \n"
         "}                                                                                       \n"
         "                                                                                        \n"
         "vec3 voxelNormalA(vec3 coord)                                                           \n"
@@ -1497,7 +1515,7 @@ void vtkSlicerGPURayCastVolumeMapper::LoadFragmentShader()
         "                                                                                        \n"
         "            if (tempAlpha > 0.0)                                                           \n"
         "            {                                                                              \n"
-        "               nextColor *= directionalLightA(nextRayOrigin, lightDir, nextColor);           \n"
+        "               nextColor = directionalLightA(nextRayOrigin, lightDir, nextColor);           \n"
         "                                                                                              \n"      
         "               tempAlpha = (1.0-alpha)*tempAlpha;                                              \n"
         "               pixelColor += nextColor*tempAlpha;                                              \n"

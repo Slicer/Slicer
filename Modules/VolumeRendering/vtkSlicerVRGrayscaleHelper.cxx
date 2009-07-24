@@ -523,29 +523,6 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
         this->IsTextureMappingSupported = this->MapperTexture->IsRenderSupported(this->Gui->GetCurrentNode()->GetVolumeProperty());//opengl Polygon Texture 3D
         this->IsCUDARayCastingSupported = this->MapperCUDARaycast->GetCUDAEnabled();//cuda ray cast
         this->IsGPURayCastingSupported = this->MapperGPURaycast->IsRenderSupported(this->Gui->GetCurrentNode()->GetVolumeProperty());//gpu ray cast (glsl)
-        
-        if (!IsCUDARayCastingSupported)
-        {
-            vtkErrorMacro("CUDA is not supported by your computer.");
-            this->CB_CUDARayCastShading->EnabledOff();
-        }
-
-        if (!IsGPURayCastingSupported)
-        {
-            vtkErrorMacro("GPU ray casting (GLSL) is not supported by your computer.");
-            this->MB_GPURayCastTechnique->EnabledOff();
-            this->SC_GPURayCastDepthPeelingThreshold->EnabledOff();
-            
-            //GPU ray cast II
-            this->MB_GPURayCastTechniqueII->EnabledOff();
-            this->MB_GPURayCastColorOpacityFusion->EnabledOff();
-        }
-    
-        if(!IsTextureMappingSupported)
-        {
-            vtkErrorMacro("OpenGL Texture Mapping is not supported by your computer.");
-        }
-
     }
     
     //setup observers for mappers
