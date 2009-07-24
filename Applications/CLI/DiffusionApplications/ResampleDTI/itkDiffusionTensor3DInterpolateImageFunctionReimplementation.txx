@@ -85,11 +85,17 @@ DiffusionTensor3DInterpolateImageFunctionReimplementation< TData >
       this->P->Up() ;
       }
     bool ok=1 ;
+    if( !interpol[0]->IsInsideBuffer( point) )
+      {
+      ok = false;
+      }
+    /***  Replaced by the code above to account for directional vectors 
     for( int i = 0 ; i < 3 ; i++ )
       {
       if( point[ i ] >this->m_End[ i ] || point[ i ]< this->m_Origin[ i ] )
         { ok = 0 ; }
       }
+    **/
     if( ok )
       {
       for( int i = 0 ; i < 6 ; i++ )
