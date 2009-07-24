@@ -59,15 +59,13 @@ void vtkSlicerGPUVolumeMapperComputeScalars( T *dataPtr,
 
   int   inputDimensions[3];
   double inputSpacing[3];
-  me->GetInput()->GetDimensions( inputDimensions );
-  me->GetInput()->GetSpacing( inputSpacing );
+  me->GetNthInput(0)->GetDimensions( inputDimensions );
+  me->GetNthInput(0)->GetSpacing( inputSpacing );
 
   int   outputDimensions[3];
   float outputSpacing[3];
   me->GetVolumeDimensions( outputDimensions );
   me->GetVolumeSpacing( outputSpacing );
-
-  int components = me->GetInput()->GetNumberOfScalarComponents();
 
   double wx, wy, wz;
   double fx, fy, fz;
@@ -86,8 +84,9 @@ void vtkSlicerGPUVolumeMapperComputeScalars( T *dataPtr,
     int size = outputDimensions[0] * outputDimensions[1] * outputDimensions[2];
 
     inPtr = dataPtr;
-    inPtr = dataPtr1;
-    if ( components == 1 )
+    inPtr1 = dataPtr1;
+    inPtr2 = dataPtr2;
+
     {
       outPtr = volume1;
       for ( i = 0; i < size; i++ )
@@ -143,9 +142,14 @@ void vtkSlicerGPUVolumeMapperComputeScalars( T *dataPtr,
           x  = vtkMath::Floor( fx );
           wx = fx - x;
 
-          inPtr = dataPtr + components * ( z*inputDimensions[0]*inputDimensions[1] + y*inputDimensions[0] + x );
+          inPtr = dataPtr + ( z*inputDimensions[0]*inputDimensions[1] + y*inputDimensions[0] + x );
+          inPtr1 = dataPtr1;
+          if (inPtr1)
+            inPtr1 += z*inputDimensions[0]*inputDimensions[1] + y*inputDimensions[0] + x;
+          inPtr2 = dataPtr2;
+          if (inPtr2)
+            inPtr2 += z*inputDimensions[0]*inputDimensions[1] + y*inputDimensions[0] + x;
           
-          if ( components == 1 )
           {
             float A, B, C, D, E, F, G, H;
             A = static_cast<float>(*(inPtr));
@@ -452,7 +456,7 @@ int vtkSlicerGPUVolumeMapper::UpdateColorLookup( vtkVolume *vol )
   {
     needToUpdate = 1;
   }
-
+  
   vtkColorTransferFunction *rgbFunc  = NULL;
   vtkPiecewiseFunction     *grayFunc = NULL;
   
@@ -585,7 +589,7 @@ int vtkSlicerGPUVolumeMapper::UpdateColorLookup( vtkVolume *vol )
     {
     return 0;
     }
-
+  
   this->SavedRGBFunction             = rgbFunc;
   this->SavedGrayFunction            = grayFunc;
   this->SavedScalarOpacityFunction   = scalarOpacityFunc;
@@ -627,7 +631,13 @@ int vtkSlicerGPUVolumeMapper::UpdateColorLookup( vtkVolume *vol )
                                  
 // Find the scalar range
   double scalarRange1[2];
-  input1->GetPointData()->GetScalars()->GetRange(scalarRange1, 0);
+  if (input1)
+    input1->GetPointData()->GetScalars()->GetRange(scalarRange1, 0);
+  else
+  {
+    scalarRange1[0] = 0.0;
+    scalarRange1[1] = 0.0;
+  }
 
   memset(this->TempArray11, 0, sizeof(float)*3*4096);
   memset(this->TempArray21, 0, sizeof(float)*4096);
@@ -784,10 +794,14 @@ void vtkSlicerGPUVolumeMapper::SetNthInput( int index, vtkImageData *input )
 
 vtkImageData *vtkSlicerGPUVolumeMapper::GetNthInput(int index)
 {
+  if (this->GetNumberOfInputPorts() < index + 1)
+    return 0;
+  
   if (this->GetNumberOfInputConnections(index) < 1)
     {
     return 0;
     }
+    
   return vtkImageData::SafeDownCast(this->GetExecutive()->GetInputData(index, 0));
 }
 

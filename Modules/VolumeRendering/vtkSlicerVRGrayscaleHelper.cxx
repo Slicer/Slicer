@@ -1365,57 +1365,56 @@ void vtkSlicerVRGrayscaleHelper::ProcessRenderingMethodEvents(int id)
     switch(id)
     {
     case 0://softwrae ray casting
-      this->FrameCPURayCasting->ExpandFrame();
       if (this->Volume)
       {
+        this->FrameCPURayCasting->ExpandFrame();
         this->Volume->SetMapper(this->MapperRaycast);
         this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using CPU Raycasting");
       }
       break;
     case 1://gpu ray casting
-      this->FrameGPURayCasting->ExpandFrame();
       if (this->Volume && this->IsGPURayCastingSupported)
       {
+        this->FrameGPURayCasting->ExpandFrame();
         this->Volume->SetMapper(this->MapperGPURaycast);
         this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using GPU Raycasting");
       }
       else
-        vtkErrorMacro("GPU ray casting is not supported by your computer.");
+        this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("GPU ray casting is not supported by your computer.");
       break;
-    case 2://gpu ray casting II
-/*      this->FrameGPURayCastingII->ExpandFrame();
+    case 2://gpu ray casting II      
       if (this->Volume && this->IsGPURayCastingSupported)
       {
+        this->FrameGPURayCastingII->ExpandFrame();
         this->Volume->SetMapper(this->MapperGPURaycastII);
         this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using GPU Raycasting II");
       }
       else
-        vtkErrorMacro("GPU ray casting is not supported by your computer.");*/
-      this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Under construction");  
+        this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Under construction");  
       break;
     case 3://old school opengl 2D Polygon Texture 3D
-      this->FramePolygonBlending->ExpandFrame();
       if (this->Volume && this->IsTextureMappingSupported)
       {
+        this->FramePolygonBlending->ExpandFrame();
         this->Volume->SetMapper(this->MapperTexture);
         this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using OpenGL Polygon Texture 3D");
       }
-      else
-        vtkErrorMacro("OpenGL Polygon Texture 3D is not supported by your computer.");//seldom should we see this error message unless really low end graphics card...
+      else//seldom should we see this error message unless really low end graphics card...
+        this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("OpenGL Polygon Texture 3D is not supported by your computer.");
       break;
     case 4://CUDA ray casting
-      this->FrameCUDARayCasting->ExpandFrame();
-      this->FrameFPS->ExpandFrame();
-      if (this->Volume && this->IsCUDARayCastingSupported){
+      if (this->Volume && this->IsCUDARayCastingSupported)
+      {
+        this->FrameCUDARayCasting->ExpandFrame();
         this->Volume->SetMapper(this->MapperCUDARaycast);
         vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
         vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetIJKToRASMatrix(matrix);
         this->MapperCUDARaycast->SetOrientationMatrix(matrix);
         matrix->Delete();
         this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using CUDA");
-      }else{
-        vtkErrorMacro("CUDA is not supported by your computer.");
       }
+      else
+        this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("CUDA is not supported by your computer.");
       break;
     }
     
@@ -1423,11 +1422,10 @@ void vtkSlicerVRGrayscaleHelper::ProcessRenderingMethodEvents(int id)
     this->MapperTexture->SetFramerate(this->SC_ExpectedFPS->GetValue());
     this->MapperCUDARaycast->SetIntendedFrameRate(this->SC_ExpectedFPS->GetValue());
     this->MapperGPURaycast->SetFramerate(this->SC_ExpectedFPS->GetValue());
+    this->MapperGPURaycastII->SetFramerate(this->SC_ExpectedFPS->GetValue());
     
     this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
     this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();//double rendering request to force mapper to adjust rendering quality for expected fps
-    
-    this->NB_Details->Resize();
 }
 
 void vtkSlicerVRGrayscaleHelper::ProcessThresholdModeEvents(int id)
