@@ -106,6 +106,8 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
   this->BoxWidget = vtkSlicerBoxWidget2::New();
   this->BoxWidgetRepresentation = vtkSlicerBoxRepresentation::New();
   this->BoxWidget->SetRepresentation(this->BoxWidgetRepresentation);
+  
+  this->EnableRender = 1;
 }
 
 
@@ -612,6 +614,17 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     //this->MainViewer->RemoveAllViewProps();
     this->RequestRender();
     }
+  else if (event == vtkMRMLScene::SceneLoadStartEvent)
+    {
+    this->SetEnableRender(0);
+    this->MainViewer->SetRenderModeToDisabled();
+    }
+  else if (event == vtkMRMLScene::SceneLoadEndEvent)
+    {
+    this->SetEnableRender(1);
+    this->MainViewer->SetRenderModeToInteractive();
+    this->RequestRender();
+    } 
   else 
     {
     this->SceneClosing = false;
@@ -956,7 +969,8 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   vtkIntArray *events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
   events->InsertNextValue(vtkMRMLScene::SceneClosingEvent);
-  //events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneLoadStartEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneLoadEndEvent);
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
@@ -1403,13 +1417,16 @@ void vtkSlicerViewerWidget::Render()
   // *** added code to check the RenderState and restore to whatever it
   // was before the specific request to render, instead of just setting
   // renderState to OFF.
-  int currentRenderState = this->MainViewer->GetRenderState();
-  this->MainViewer->RenderStateOn();
-  this->MainViewer->Render();
-  vtkDebugMacro("vtkSlicerViewerWidget::Render called render" << endl);
-  //this->MainViewer->RenderStateOff();
-  this->MainViewer->SetRenderState(currentRenderState);
-  this->SetRenderPending(0);
+  if (this->GetEnableRender())
+    {
+    int currentRenderState = this->MainViewer->GetRenderState();
+    this->MainViewer->RenderStateOn();
+    this->MainViewer->Render();
+    vtkDebugMacro("vtkSlicerViewerWidget::Render called render" << endl);
+    //this->MainViewer->RenderStateOff();
+    this->MainViewer->SetRenderState(currentRenderState);
+    this->SetRenderPending(0);
+    } 
 }
 
 

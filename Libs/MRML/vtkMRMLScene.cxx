@@ -607,6 +607,8 @@ int vtkMRMLScene::Import()
   this->SetUndoOff();
   this->ClearReferencedNodeID();
 
+  this->InvokeEvent(this->SceneLoadStartEvent, NULL);
+    
   // read nodes into a temp scene  
   vtkCollection* scene = vtkCollection::New();
   
@@ -673,7 +675,9 @@ int vtkMRMLScene::Import()
   scene->Delete();
 
   this->SetUndoFlag(undoFlag);
-
+  
+  this->InvokeEvent(this->SceneLoadEndEvent, NULL);
+   
   int returnCode = 1;
   if (this->GetErrorCode() == 0) 
     {

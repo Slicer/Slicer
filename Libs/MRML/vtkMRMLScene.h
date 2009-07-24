@@ -351,6 +351,8 @@ public:
       MetadataAddedEvent = 66007,
       LoadProgressFeedbackEvent = 66008,
       SaveProgressFeedbackEvent = 66009,
+      SceneLoadStartEvent = 66010,
+      SceneLoadEndEvent = 66011,
     };
 //ETX
 

@@ -200,7 +200,12 @@ public:
   vtkGetObjectMacro ( BoxWidgetRepresentation, vtkSlicerBoxRepresentation );
 
   void SetBoxWidgetInteractor();
-
+  
+  // Description:
+  // Get/Set the enable renderer
+  vtkGetMacro( EnableRender, int);
+  vtkSetMacro( EnableRender, int);
+  
 protected:
   vtkSlicerViewerWidget();
   virtual ~vtkSlicerViewerWidget();
@@ -324,6 +329,8 @@ protected:
   vtkSlicerBoxWidget2         *BoxWidget;
   vtkSlicerBoxRepresentation  *BoxWidgetRepresentation;
 
+  int EnableRender;
+  
 private:
   
   vtkSlicerViewerWidget(const vtkSlicerViewerWidget&); // Not implemented
