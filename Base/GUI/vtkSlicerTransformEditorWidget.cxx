@@ -675,10 +675,36 @@ void vtkSlicerTransformEditorWidget::UpdateTranslationSliders()
    if (this->MatrixWidget->GetMatrix4x4() != NULL)
       {
       this->ProcessingCallback = true;
+
+      vtkMatrix4x4 *mat = this->MatrixWidget->GetMatrix4x4();
+
+      double min = this->MinRangeEntry->GetWidget()->GetValueAsDouble();
+      double max = this->MaxRangeEntry->GetWidget()->GetValueAsDouble();
+
+      for (int i=0; i<3; i++)
+        {
+        if (mat->GetElement(i,3) < min)
+          {
+          min = mat->GetElement(i,3) - 0.3 * fabs(mat->GetElement(i,3));
+          }
+
+        if (mat->GetElement(i,3) > max)
+          {
+          max = mat->GetElement(i,3) + 0.3 * fabs(mat->GetElement(i,3));
+          }
+        }
+
+      this->MinRangeEntry->GetWidget()->SetValueAsDouble(min);
+      this->MaxRangeEntry->GetWidget()->SetValueAsDouble(max);
+
+      this->TranslationScaleLR->GetWidget()->SetRange(min, max);
+      this->TranslationScalePA->GetWidget()->SetRange(min, max);
+      this->TranslationScaleIS->GetWidget()->SetRange(min, max);
+
       this->TranslationScaleLR->SetValue(this->MatrixWidget->GetMatrix4x4()->GetElement(0,3));
       this->TranslationScalePA->SetValue(this->MatrixWidget->GetMatrix4x4()->GetElement(1,3));
-      this->ProcessingCallback = false;
       this->TranslationScaleIS->SetValue(this->MatrixWidget->GetMatrix4x4()->GetElement(2,3));
+      this->ProcessingCallback = false;
       }
 }
 
