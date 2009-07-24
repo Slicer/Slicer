@@ -490,6 +490,10 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
         this->MapperGPURaycast->SetFramerate(this->SC_ExpectedFPS->GetValue());
         this->MapperGPURaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
         
+        double scalarRange[2];
+        vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
+        this->MapperGPURaycast->SetDepthPeelingThreshold(scalarRange[0]);
+        
         //create the raycast mapper II
         this->MapperGPURaycastII = vtkSlicerGPURayCastVolumeMapper::New();
         this->MapperGPURaycastII->SetFramerate(this->SC_ExpectedFPS->GetValue());
@@ -500,10 +504,6 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
             this->MapperGPURaycastII->SetNthInput(1, vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageDataBg()->GetSelected())->GetImageData());
         if (this->Gui->GetNS_ImageDataLabelmap()->GetSelected())
             this->MapperGPURaycastII->SetNthInput(2, vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageDataLabelmap()->GetSelected())->GetImageData());
-        
-        double scalarRange[2];
-        vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
-        this->MapperGPURaycast->SetDepthPeelingThreshold(scalarRange[0]);
         
         //Also take care about Ray Cast
         this->MapperRaycast=vtkSlicerFixedPointVolumeRayCastMapper::New();
@@ -750,7 +750,10 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     
             this->MapperGPURaycast->SetClippingPlanes(planes);
             this->MapperGPURaycast->ClippingOn();
-            
+
+            this->MapperGPURaycastII->SetClippingPlanes(planes);
+            this->MapperGPURaycastII->ClippingOn();
+                        
             //Decide if this event is triggered by the vtkBoxWidget or by the sliders
             //if sliders don't trigger setRange->this would lead to an endless loop
             if(!this->NoSetRangeNeeded)
@@ -1063,7 +1066,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessCropping(int index, double min,double ma
     if (this->UpdateingGUI)
         return;
 
-    if(this->MapperTexture==NULL||this->MapperRaycast==NULL||this->MapperGPURaycast == NULL||this->MapperCUDARaycast==NULL)
+    if(this->MapperTexture==NULL||this->MapperRaycast==NULL||this->MapperGPURaycast == NULL||this->MapperCUDARaycast==NULL||this->MapperGPURaycastII == NULL)
         return;
 
     double pointA[3];
@@ -1294,7 +1297,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessGPURayCastTechnique(int id)
 
 void vtkSlicerVRGrayscaleHelper::ProcessGPURayCastTechniqueII(int id)
 {
-    //this->MapperGPURaycast->SetTechnique(id);
+    this->MapperGPURaycastII->SetTechnique(id);
     
     this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
 }
@@ -1310,18 +1313,22 @@ void vtkSlicerVRGrayscaleHelper::ProcessGPUMemorySize(int id)
     {
     case 0://128M
         this->MapperGPURaycast->SetInternalVolumeSize(256);//256^3
+        this->MapperGPURaycastII->SetInternalVolumeSize(256);//256^3
         this->MapperTexture->SetInternalVolumeSize(256);
         break;
     case 1://256M
         this->MapperGPURaycast->SetInternalVolumeSize(384);//384^3
+        this->MapperGPURaycastII->SetInternalVolumeSize(384);//384^3
         this->MapperTexture->SetInternalVolumeSize(256);
         break;
     case 2://512M
-        this->MapperGPURaycast->SetInternalVolumeSize(512);//500^3
+        this->MapperGPURaycast->SetInternalVolumeSize(512);//512^3
+        this->MapperGPURaycastII->SetInternalVolumeSize(512);//512^3
         this->MapperTexture->SetInternalVolumeSize(512);
         break;
     case 3://1024M
-        this->MapperGPURaycast->SetInternalVolumeSize(640);//600^3
+        this->MapperGPURaycast->SetInternalVolumeSize(640);//640^3
+        this->MapperGPURaycastII->SetInternalVolumeSize(640);//640^3
         this->MapperTexture->SetInternalVolumeSize(512);
         break;
     }
@@ -1504,7 +1511,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessThresholdReset(void)
 
 void vtkSlicerVRGrayscaleHelper::ProcessEnableDisableCropping(int cbSelectedState)
 {
-    if(this->MapperTexture==NULL||this->MapperRaycast==NULL||this->MapperGPURaycast == NULL||this->MapperCUDARaycast == NULL)
+    if(this->MapperTexture==NULL||this->MapperRaycast==NULL||this->MapperGPURaycast == NULL||this->MapperCUDARaycast == NULL||this->MapperGPURaycastII == NULL)
         return;
     
     for(int i = 0; i < 3; i++)
@@ -1530,6 +1537,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessEnableDisableCropping(int cbSelectedStat
 
         this->MapperCUDARaycast->ClippingOn();
         this->MapperGPURaycast->ClippingOn();
+        this->MapperGPURaycastII->ClippingOn();
     }
     else
     {
@@ -1538,6 +1546,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessEnableDisableCropping(int cbSelectedStat
         this->MapperRaycast->RemoveAllClippingPlanes();
         this->MapperGPURaycast->RemoveAllClippingPlanes();
         this->MapperGPURaycast->ClippingOff();
+        this->MapperGPURaycastII->RemoveAllClippingPlanes();
+        this->MapperGPURaycastII->ClippingOff();
         this->MapperCUDARaycast->ClippingOff();
     }
 
@@ -1741,6 +1751,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessExpectedFPS(void)
     this->MapperTexture->SetFramerate(this->SC_ExpectedFPS->GetValue());
     this->MapperCUDARaycast->SetIntendedFrameRate(this->SC_ExpectedFPS->GetValue());
     this->MapperGPURaycast->SetFramerate(this->SC_ExpectedFPS->GetValue());
+    this->MapperGPURaycastII->SetFramerate(this->SC_ExpectedFPS->GetValue());
     
     //CPU ray casting framerate is handled in SetupCPURayCastInteractive()
     
