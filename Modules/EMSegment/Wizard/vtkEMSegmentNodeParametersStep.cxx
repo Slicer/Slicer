@@ -2828,7 +2828,7 @@ void vtkEMSegmentNodeParametersStep::ProcessTestButtonGUIEvents(vtkObject
                 this->classPercentOrder[j][i] != 0)
             {
               this->classPercentOrderCP[l][k] = 0;
-              for(m = 0; m < 200 ;m++)
+              for(int m=0; m < 200 ;m++)
               {
                 if(this->correspondanceArray[m] ==
                     this->classPercentOrder[j][i])
