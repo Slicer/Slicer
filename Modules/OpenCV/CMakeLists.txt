@@ -122,9 +122,6 @@ add_library(${lib_name}
 
 slicer3_set_modules_output_path(${lib_name})
 
-MESSAGE(STATUS "cv = ${OpenCV_CV_LIBRARY}")
-
-
 target_link_libraries(${lib_name}
   ${Slicer3_Libs_LIBRARIES}
   ${Slicer3_Base_LIBRARIES}
@@ -138,10 +135,7 @@ target_link_libraries(${lib_name}
   ${OpenCV_HIGHGUI_LIBRARY}
   ${OpenCV_ML_LIBRARY}
 #  ${OpenCV_TRS_LIBRARY}
-
-#  ${OpenCV_LIBRARIES}
-#  ${OpenIGTLink_DIR}
-#  ${OpenIGTLinklib}
+  ${OpenIGTLinklib}
   )
 
 install(TARGETS ${lib_name}
