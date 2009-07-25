@@ -13,7 +13,7 @@
 ==========================================================================*/
 #include "ModuleParameter.h"
 
-void
+static void
 splitString (const std::string &text,
              const std::string &separators,
              std::vector<std::string> &words)
