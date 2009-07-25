@@ -1,113 +1,98 @@
-/*=auto==============================================================
+/*=auto=======================================================================
 
-Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All
-Rights Reserved.
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All
+  Rights Reserved.
 
-See Doc/copyright/copyright.txt
-or http://www.slicer.org/copyright/copyright.txt for details.
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
 
-Program:   3D Slicer
-Module:    $RCSfile: vtkEMSegmentIntensityDistributionsStep.cxx,v$
-Date:      $Date: 2006/01/06 17:56:51 $
-Version:   $Revision: 1.6 $
-Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
+  Program:   3D Slicer
+  Module:    $RCSfile: vtkEMSegmentIntensityDistributionsStep.cxx,v$
+  Date:      $Date: 2006/01/06 17:56:51 $
+  Version:   $Revision: 1.6 $
+  Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 
-==============================================================auto=*/
+=======================================================================auto=*/
+
 #include "vtkEMSegmentIntensityDistributionsStep.h"
 
 #include "vtkEMSegmentGUI.h"
 #include "vtkEMSegmentMRMLManager.h"
+#include "vtkEMSegmentAnatomicalStructureStep.h"
 
+#include "vtkKWApplication.h"
+#include "vtkKWColorTransferFunctionEditor.h"
+#include "vtkKWEntryWithLabel.h"
+#include "vtkKWFrameWithLabel.h"
+#include "vtkKWHistogram.h"
 #include "vtkKWLabel.h"
+#include "vtkKWMatrixWidget.h"
+#include "vtkKWMatrixWidgetWithLabel.h"
 #include "vtkKWMenu.h"
 #include "vtkKWMenuButton.h"
 #include "vtkKWMenuButtonWithLabel.h"
+#include "vtkKWMultiColumnList.h"
 #include "vtkKWMultiColumnListWithScrollbars.h"
 #include "vtkKWMultiColumnListWithScrollbarsWithLabel.h"
-#include "vtkKWMultiColumnList.h"
 #include "vtkKWNotebook.h"
+#include "vtkKWParameterValueFunctionInterface.h"
+#include "vtkKWParameterValueFunctionEditor.h"
+#include "vtkKWPushButton.h"
+#include "vtkKWRenderWidget.h"
+#include "vtkKWSimpleAnimationWidget.h"
+#include "vtkKWSurfaceMaterialPropertyWidget.h"
 #include "vtkKWTree.h"
 #include "vtkKWTreeWithScrollbars.h"
-#include "vtkKWMatrixWidgetWithLabel.h"
-#include "vtkKWMatrixWidget.h"
+#include "vtkKWWindow.h"
 #include "vtkKWWizardWidget.h"
 #include "vtkKWWizardWorkflow.h"
 
-#include "vtkKWFrameWithLabel.h"
-#include "vtkKWHistogram.h"
-#include "vtkKWColorTransferFunctionEditor.h"
-#include "vtkColorTransferFunction.h"
-#include "vtkKWParameterValueFunctionInterface.h"
-#include "vtkKWParameterValueFunctionEditor.h"
-
-#include "vtkKWPushButton.h"
-#include "vtkKWEntryWithLabel.h"
-#include "vtkKWMultiColumnList.h"
-
+#include "vtkActor.h"
+#include "vtkImageData.h"
+#include "vtkDataSetMapper.h"
+#include "vtkImageDataGeometryFilter.h"
+#include "vtkProperty.h"
+#include "vtkPolyDataMapper.h"
+#include "vtkFloatArray.h"
+#include "vtkMath.h"
 #include "vtkPointData.h"
-#include "vtkEMSegmentAnatomicalStructureStep.h"
-#include "vtkSlicerInteractorStyle.h"
-
+#include "vtkColorTransferFunction.h"
 #include "vtkMatrix4x4.h"
 #include "vtkImageReslice.h"
-#include "vtkActor.h"
+#include "vtkImageInteractionCallback.h"
+#include "vtkInteractorStyleImage.h"
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"
-
 #include "vtkImageMapToWindowLevelColors.h"
 #include "vtkImageMapToColors.h"
 #include "vtkLookupTable.h"
 #include "vtkVolumeRayCastMapper.h"
 #include "vtkVolume.h"
-
 #include "vtkPiecewiseFunction.h"
 #include "vtkVolumeProperty.h"
-
-#include "vtkImageInteractionCallback.h"
-
-#include "vtkInteractorStyleImage.h"
 #include "vtkRenderWindowInteractor.h"
-
-#include "vtkImageData.h"
-#include "vtkDataSetMapper.h"
 
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
 
-#include "vtkImageDataGeometryFilter.h"
-#include "vtkProperty.h"
-#include "vtkPolyDataMapper.h"
-#include "vtkActor.h"
-#include "vtkFloatArray.h"
-
 #include "vtkGaussian2DWidget.h"
-
-#include "vtkImageViewer2.h"
 #include "vtkAxisActor2D.h"
-#include "vtkRenderWindow.h"
+#include "vtkPolyDataMapper2D.h"
 #include "vtkRenderer.h"
+#include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
 
-#include "vtkKWApplication.h"
-#include "vtkKWFrameWithLabel.h"
-#include "vtkKWRenderWidget.h"
-#include "vtkKWSurfaceMaterialPropertyWidget.h"
-#include "vtkKWWindow.h"
-#include "vtkPolyDataMapper2D.h"
-#include "vtkRenderWindow.h"
-#include "vtkKWSimpleAnimationWidget.h"
-
+#include "vtkSlicerInteractorStyle.h"
 #include "vtkSlicerNodeSelectorWidget.h"
 
 #define EMS_DEBUG_MACRO(msg) std::cout << __LINE__ << " EMSegment " << msg \
   << std::endl;
 
-//-------------------------------------------------------------------
+//----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkEMSegmentIntensityDistributionsStep);
-vtkCxxRevisionMacro(vtkEMSegmentIntensityDistributionsStep,
-  "$Revision: 1.2 $");
+vtkCxxRevisionMacro(vtkEMSegmentIntensityDistributionsStep,"$Revision: 1.2$");
 
-//-------------------------------------------------------------------
+//----------------------------------------------------------------------------
 vtkEMSegmentIntensityDistributionsStep::
 vtkEMSegmentIntensityDistributionsStep()
 {
@@ -115,59 +100,58 @@ vtkEMSegmentIntensityDistributionsStep()
   this->SetDescription(
     "Define intensity distribution for each anatomical structure.");
 
-  this->IntensityDistributionNotebook                        = NULL;
-  this->IntensityDistributionSpecificationMenuButton         = NULL;
-  this->IntensityDistributionMeanMatrix                      = NULL;
-  this->IntensityDistributionCovarianceMatrix                = NULL;
-  this->IntensityDistributionManualSamplingList              = NULL;
-  this->ContextMenu                                          = NULL;
+  this->IntensityDistributionNotebook                = NULL;
+  this->IntensityDistributionSpecificationMenuButton = NULL;
+  this->IntensityDistributionMeanMatrix              = NULL;
+  this->IntensityDistributionCovarianceMatrix        = NULL;
+  this->IntensityDistributionManualSamplingList      = NULL;
+  this->ContextMenu                                  = NULL;
 
-  this->IntensityDistributionHistogramFrame                  = NULL;
-  this->IntensityDistributionHistogramButton                 = NULL;
+  this->IntensityDistributionHistogramFrame          = NULL;
+  this->IntensityDistributionHistogramButton         = NULL;
 
-  this->Gaussian2DWidget                                     = NULL;
-  this->NumClassesEntryLabel                                 = NULL;
-  this->Gaussian2DButton                                     = NULL;
-  this->Gaussian2DRenderingMenuButton                        = NULL;
-  
-  this->Gaussian2DVolumeXMenuButton                          = NULL;
-  this->Gaussian2DVolumeYMenuButton                          = NULL;
-  
-  this->LabelSelector                                        = NULL;
-  this->LabelmapButton                                       = NULL;
+  this->Gaussian2DWidget                             = NULL;
+  this->NumClassesEntryLabel                         = NULL;
+  this->Gaussian2DButton                             = NULL;
+  this->Gaussian2DRenderingMenuButton                = NULL;
 
+  this->Gaussian2DVolumeXMenuButton                  = NULL;
+  this->Gaussian2DVolumeYMenuButton                  = NULL;
+
+  this->LabelSelector                                = NULL;
+  this->LabelmapButton                               = NULL;
 }
 
-//-------------------------------------------------------------------
+//----------------------------------------------------------------------------
 vtkEMSegmentIntensityDistributionsStep::
 ~vtkEMSegmentIntensityDistributionsStep()
 {
   EMS_DEBUG_MACRO("destructor start");
-  
+
   if (this->LabelSelector)
     {
     this->LabelSelector->Delete();
     this->LabelSelector = NULL;
     }
-  
+
   if (this->Gaussian2DVolumeYMenuButton)
     {
     this->Gaussian2DVolumeYMenuButton->Delete();
     this->Gaussian2DVolumeYMenuButton = NULL;
     }
-  
+
   if (this->Gaussian2DVolumeXMenuButton)
     {
     this->Gaussian2DVolumeXMenuButton->Delete();
     this->Gaussian2DVolumeXMenuButton = NULL;
     }
-    
+
   if (this->LabelmapButton)
     {
     this->LabelmapButton->Delete();
     this->LabelmapButton = NULL;
     }
-    
+
   if (this->Gaussian2DButton)
     {
     this->Gaussian2DButton->Delete();
@@ -243,7 +227,7 @@ vtkEMSegmentIntensityDistributionsStep::
   EMS_DEBUG_MACRO("destructor end");
 }
 
-//-------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
 {
   EMS_DEBUG_MACRO("ShowUserInterface start");
@@ -318,6 +302,7 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     this->IntensityDistributionSpecificationMenuButton =
       vtkKWMenuButtonWithLabel::New();
     }
+
   if (!this->IntensityDistributionSpecificationMenuButton->IsCreated())
     {
     this->IntensityDistributionSpecificationMenuButton->SetParent(
@@ -607,17 +592,16 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
       this->GetNumberOfLeaf(NULL, root_id);
       }
     }
-    
 
   if (!this->Gaussian2DButton)
     {
-    std::cout << "Gaussian2DButton New" << std::endl;
+    vtkErrorMacro("Gaussian2DButton New");
     this->Gaussian2DButton = vtkKWPushButton::New();
     }
 
   if (!this->Gaussian2DButton->IsCreated())
     {
-    std::cout << "Gaussian2DButton->SetParent" << std::endl;
+    vtkErrorMacro("Gaussian2DButton->SetParent");
     this->Gaussian2DButton->SetParent(gaussianPage);
     this->Gaussian2DButton->Create();
     this->Gaussian2DButton->SetText("Compute Gaussians");
@@ -629,68 +613,26 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
 
   this->AddGaussian2DButtonGUIEvents();
 
-  int windowWidth = 300;
+  int windowWidth  = 300;
   int windowHeight = 300;
-
-  //double x = windowWidth;
-  //double y = windowHeight;
-
-  //double sigma = 0.5 * ( x*x + y*y );
-  double meanX, meanY, varianceX, varianceY, covariance;
-
-  double rgb[3];
 
   // Add a render widget, attach it to the view frame, and pack
 
   if (!this->Gaussian2DWidget)
     {
     this->Gaussian2DWidget = vtkGaussian2DWidget::New();
-  
-  this->Gaussian2DWidget->SetParent(gaussianPage);
-  this->Gaussian2DWidget->Create();
-  this->Gaussian2DWidget->GetRenderer()->GetRenderWindow()->GetInteractor()->
-    Disable();
-  
-  meanX = (72)*300/371;
-  meanY = (313.67)*300/956;
-  varianceX = (25)*90000/(371*371);
-  varianceY = (97.333)*90000/(956*956);
-  covariance = -(45)*90000/(371*956);
-  rgb[0] = 1.0;
-  rgb[1] = 0.0;
-  rgb[2] = 0.0;
-  //this->Gaussian2DWidget->AddGaussian(meanX,meanY,varianceX,varianceY,covariance,rgb);
+    this->Gaussian2DWidget->SetParent(gaussianPage);
+    this->Gaussian2DWidget->Create();
+    this->Gaussian2DWidget->GetRenderer()->GetRenderWindow()->GetInteractor()
+      ->Disable();
 
- /* meanX = 0.75 * (x-1);
-  meanY = 0.25 * (y-1);
-  rgb[0] = 0.0;
-  rgb[1] = 0.0;
-  rgb[2] = 1.0;
-  this->Gaussian2DWidget->AddGaussian(meanX,meanY,5,33,10.0,rgb);
+    this->Gaussian2DWidget->SetWidth(windowWidth);
+    this->Gaussian2DWidget->SetHeight(windowHeight);
+    this->Gaussian2DWidget->Render();
+    }
 
-  meanX = 0.75 * (x-1);
-  meanY = 0.75 * (y-1);
-  rgb[0] = 0.0;
-  rgb[1] = 1.0;
-  rgb[2] = 0.0;
-  this->Gaussian2DWidget->AddGaussian(meanX,meanY,10,10,1.0,rgb);
-*/
-  this->Gaussian2DWidget->SetWidth(windowWidth);
-  this->Gaussian2DWidget->SetHeight(windowHeight);
-
-  this->Gaussian2DWidget->CreateGaussian2D();
-  
-  this->Gaussian2DWidget->Render();
-  }
-  this->Script("pack %s -side top -anchor nw -padx 2 -pady 2 -pady 2",this->Gaussian2DWidget
-      ->GetWidgetName());
-
-  //std::cout << "numActors " << this->Gaussian2DWidget->GetRenderer()->
-  //  GetNumberOfPropsRendered() << std::endl;
-
-  // Deallocate and exit
-  ////renderWidget->Delete();
-  // GET NUMBER OF LEAF
+  this->Script("pack %s -side top -anchor nw -padx 2 -pady 2 -pady 2",this->
+      Gaussian2DWidget->GetWidgetName());
 
   // Create the histogram volume selector
 
@@ -993,8 +935,7 @@ void vtkEMSegmentIntensityDistributionsStep::HideUserInterface()
 }
 
 //----------------------------------------------------------------------------
-void
-vtkEMSegmentIntensityDistributionsStep::
+void vtkEMSegmentIntensityDistributionsStep::
 DisplaySelectedNodeIntensityDistributionsCallback()
 {
   EMS_DEBUG_MACRO("ShowUserInterface");
@@ -1005,18 +946,23 @@ DisplaySelectedNodeIntensityDistributionsCallback()
     {
     return;
     }
+
   vtkEMSegmentAnatomicalStructureStep *anatomicalStep =
     this->GetGUI()->GetAnatomicalStructureStep();
+
   if (!anatomicalStep)
     {
     return;
     }
+
   vtkKWTree *tree = anatomicalStep->GetAnatomicalStructureTree()->GetWidget();
   vtksys_stl::string sel_node;
   vtkIdType selVolId = 0;
+
   int manually_sample_mode = 0;
   int label_sample_mode = 0;
   int hasValidSelection = tree->HasSelection();
+
   if (hasValidSelection)
     {
     sel_node = tree->GetSelection();
@@ -1648,83 +1594,67 @@ void vtkEMSegmentIntensityDistributionsStep::GetNumberOfLeaf(
 void vtkEMSegmentIntensityDistributionsStep::
 IntensityDistributionTargetSelectionChangedCallback(vtkIdType targetVolId)
 {
-  
   EMS_DEBUG_MACRO("IN VOLUME SELECTOR CALLBACK");
-  
 
   double meanX;
   double meanY;
-  
-  double nomalizationValueX;
-  double nomalizationValueY;
-  
-  double varianceX ;
+
+  double varianceX;
   double varianceY;
   double covariance;
-  
-  double rgb[3];
-  
+
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  
+
   this->GetGaussian2DTargetVolumes();
-  
-  nomalizationValueX = /*log*/(this->TargetVolumeXRange[1]-this->TargetVolumeXRange[0]);
-  nomalizationValueY = /*log*/(this->TargetVolumeYRange[1]-this->TargetVolumeYRange[0]);
-  
-  std::cout<< "Normalization Values: " << nomalizationValueX << "  " << nomalizationValueY << std::endl;
-  vtkMRMLScene            *mrmlScene   = mrmlManager->GetMRMLScene();
-  vtkMRMLColorNode *colorNode = vtkMRMLColorNode::SafeDownCast(mrmlScene->GetNodeByID( mrmlManager->GetColormap() ));
-  double *color;
-  
+
+  vtkMRMLScene     *mrmlScene = mrmlManager->GetMRMLScene();
+  vtkMRMLColorNode *colorNode = vtkMRMLColorNode::SafeDownCast(mrmlScene->
+      GetNodeByID( mrmlManager->GetColormap() ));
+
+  double hsv[3];
+
   this->Gaussian2DWidget->RemoveAllGaussians();
-  
-  for(int i=0;i<this->NumberOfLeaves;i++)
-    {
-    
-    color = colorNode->GetLookupTable()->GetTableValue(mrmlManager->GetTreeNodeIntensityLabel(this->LeafId[i]));
-    
-    rgb[0] =  color[0];
-    rgb[1] =  color[1];
-    rgb[2] =  color[2];
-    
-    meanX = mrmlManager->GetTreeNodeDistributionMean(this->LeafId[i],this->TargetVolumeX);
-    meanY = mrmlManager->GetTreeNodeDistributionMean(this->LeafId[i],this->TargetVolumeY);
-       
-    varianceX = mrmlManager->GetTreeNodeDistributionCovariance(
-              this->LeafId[i], this->TargetVolumeX, this->TargetVolumeX);
-    varianceY = mrmlManager->GetTreeNodeDistributionCovariance(
-              this->LeafId[i], this->TargetVolumeY, this->TargetVolumeY);
-    covariance = mrmlManager->GetTreeNodeDistributionCovariance(
-              this->LeafId[i], this->TargetVolumeX, this->TargetVolumeY);
-              
-    this->Gaussian2DWidget->AddGaussian(((meanX)*300)/(nomalizationValueX),(((meanY)*300))/(nomalizationValueY),((varianceX)*90000)/(nomalizationValueX*nomalizationValueX),((varianceY)*90000)/(nomalizationValueY*nomalizationValueY),((covariance)*90000)/(nomalizationValueX*nomalizationValueY),rgb); 
-    
-    std::cout << "meanX: " << meanX << std::endl;
-    std::cout << "meanY: " << meanY << std::endl; 
-    std::cout << "varianceX: " << varianceX << std::endl; 
-    std::cout << "varianceY: " << varianceY << std::endl;   
-    std::cout << "covariance: " << covariance << std::endl; 
-    std::cout << "RGB: " << rgb[0] << " " << rgb[1] << " " << rgb[2] << std::endl;  
-              
-   }
-   
-   this->Gaussian2DWidget->CreateGaussian2D();
-   this->Gaussian2DWidget->Render();
+
+  for (int m=0; m < this->NumberOfLeaves; m++)
+  {
+    vtkIdType leaf  = this->LeafId[m];
+    vtkIdType label = mrmlManager->GetTreeNodeIntensityLabel(leaf);
+
+    double *color = colorNode->GetLookupTable()->GetTableValue(label);
+
+    vtkMath::RGBToHSV(color,hsv);
+
+    vtkIdType i = this->TargetVolumeX;
+    vtkIdType j = this->TargetVolumeY;
+
+    meanX = mrmlManager->GetTreeNodeDistributionMean(leaf,i);
+    meanY = mrmlManager->GetTreeNodeDistributionMean(leaf,j);
+
+    varianceX = mrmlManager->GetTreeNodeDistributionCovariance(leaf,i,i);
+    varianceY = mrmlManager->GetTreeNodeDistributionCovariance(leaf,j,j);
+
+    covariance = mrmlManager->GetTreeNodeDistributionCovariance(leaf,i,j);
+
+    this->Gaussian2DWidget->AddGaussian(meanX,meanY,varianceX,varianceY,
+        covariance,hsv[0]);
+  }
+
+  this->Gaussian2DWidget->Render();
 }
 
-//-------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::ProcessGaussian2DButtonGUIEvents(
     vtkObject *caller, unsigned long event, void *callData)
 {
 
-  if(event == vtkKWPushButton::InvokedEvent && caller == this->Gaussian2DButton)
+  if (event == vtkKWPushButton::InvokedEvent && caller == this->
+      Gaussian2DButton)
   {
     EMS_DEBUG_MACRO("IN PROCESS GAUSSIAN GUI EVENT");
-
   }
 }
 
-//-------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::AddGaussian2DButtonGUIEvents()
 {
   EMS_DEBUG_MACRO("");
@@ -1734,7 +1664,7 @@ void vtkEMSegmentIntensityDistributionsStep::AddGaussian2DButtonGUIEvents()
       this->GetGUI()->GetGUICallbackCommand());
 }
 
-//-------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::RemoveGaussian2DButtonGUIEvents()
 {
   EMS_DEBUG_MACRO("");
@@ -1743,7 +1673,7 @@ void vtkEMSegmentIntensityDistributionsStep::RemoveGaussian2DButtonGUIEvents()
       this->GetGUI()->GetGUICallbackCommand());
 }
 
-//-------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::GetGaussian2DTargetVolumes()
 {
   vtkIdType target_volId;
@@ -1764,13 +1694,12 @@ void vtkEMSegmentIntensityDistributionsStep::GetGaussian2DTargetVolumes()
     //std::cout<<"NAME: "<<name<<std::endl;
     //std::cout<<"X: "<<this->Gaussian2DVolumeXMenuButton->GetWidget()->GetValue()<<std::endl;
     //std::cout<<"Y: "<<this->Gaussian2DVolumeYMenuButton->GetWidget()->GetValue()<<std::endl;
-    
+
     vtkDataArray* array = this->GetGUI()->GetMRMLManager()->GetVolumeNode(
       target_volId)->GetImageData()->GetPointData()->GetScalars();
 
     double* range = array->GetRange();
-    //std::cout<<"range: "<<range<<std::endl;
-    
+
     if(strcmp(this->Gaussian2DVolumeXMenuButton->GetWidget()->GetValue(),name) == 0)
       {
       //std::cout<<"COMP SUCCEED IN X"<<std::endl;

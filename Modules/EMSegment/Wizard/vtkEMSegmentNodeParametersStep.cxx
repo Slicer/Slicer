@@ -2821,7 +2821,7 @@ void vtkEMSegmentNodeParametersStep::ProcessTestButtonGUIEvents(vtkObject
       {
         for (int k=0; k<this->nbOfLeaf; k++)
         {
-          for(int l = 0;l<200;l++)
+          for (int l=0; l<200; l++)
           {
             if (this->classPercentOrder[j][i] ==
                 this->classPercentOrderCP[l][k] &&
@@ -2838,7 +2838,7 @@ void vtkEMSegmentNodeParametersStep::ProcessTestButtonGUIEvents(vtkObject
                 }
               }
 
-              if(control != 0)
+              if (control != 0)
               {
                 positionF = position;
                 position++;

@@ -10,6 +10,7 @@
 # Date:      $Date: 2006/01/06 17:56:51 $
 # Version:   $Revision: 1.6 $
 # Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
+#
 
 project(EMSegment)
 
