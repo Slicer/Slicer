@@ -83,7 +83,8 @@ if(Slicer3_USE_OPENIGTLINK)
     OpenIGTLinkIF
     NeuroNav
     ProstateNav
-    #IGTNavigation
+    # IGTNavigation
+    # OpenCV
     )
 endif(Slicer3_USE_OPENIGTLINK)
 
