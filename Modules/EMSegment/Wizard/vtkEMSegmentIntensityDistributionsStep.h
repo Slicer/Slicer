@@ -34,6 +34,8 @@ class vtkKWEntryWithLabel;
 class vtkColorTransferFunction;
 class vtkGaussian2DWidget;
 
+class vtkSlicerNodeSelectorWidget;
+
 class VTK_EMSEGMENT_EXPORT vtkEMSegmentIntensityDistributionsStep :
   public vtkEMSegmentStep
 {
@@ -81,12 +83,36 @@ public:
   virtual void RemoveGaussian2DButtonGUIEvents();
   virtual void ProcessGaussian2DButtonGUIEvents(vtkObject *caller,
       unsigned long event, void *callData);
+      
+  // Description:
+  // Observers
+  virtual void AddLabelButtonGUIEventsObservers();
+  virtual void RemoveLabelButtonGUIEventsObservers();
+  virtual void ProcessLabelButtonGUIEvents(vtkObject *caller,
+      unsigned long event, void *callData);
+      
+  // Description:
+  // Observers
+  virtual void AddLabelSelectorGUIObservers();
+  virtual void RemoveLabelSelectorGUIObservers();
+  virtual void ProcessLabelSelectorGUIEvents(vtkObject *caller,
+      unsigned long event, void *callData);
+      
+      
+  
+  // Description:
+  // Get the number of the volumes to be displayed
+  // on X and Y axes
+  virtual void GetGaussian2DTargetVolumes();
 
   int    NumberOfLeaves;
-  int    Depth;
-  double Size;
-  double ClassSize[400];
-  double ClassWeight[200];
+  int    LeafLabel[200];
+  int    TargetVolumeX;
+  int    TargetVolumeY;
+  double *TargetVolumeXRange;
+  double *TargetVolumeYRange;
+  
+  vtkIdType LeavesID[200];
 
   vtkIdType LeafId[200];
   vtkIdType ClassPercentOrder[200][200];
@@ -95,17 +121,15 @@ public:
 
   virtual void   GetNumberOfLeaf(const char*, vtkIdType);
 
-  virtual void   GetParentPercent(int, vtkIdType);
-  virtual void   GetPercent(int, vtkIdType);
-  virtual double GetWeight(int);
-
 protected:
   vtkEMSegmentIntensityDistributionsStep();
   ~vtkEMSegmentIntensityDistributionsStep();
 
   virtual void PopulateIntensityDistributionTargetVolumeSelector();
-  virtual void PopulateClassAndNodeList();
+  //virtual void PopulateXVolumeSelector();
+  //virtual void PopulateYVolumeSelector();
   virtual void PopulateGaussian2DVolumeXSelector();
+  virtual void PopulateGaussian2DVolumeYSelector();
 
   vtkKWNotebook              *IntensityDistributionNotebook;
   vtkKWMenuButtonWithLabel   *IntensityDistributionSpecificationMenuButton;
@@ -118,18 +142,17 @@ protected:
 
   vtkKWMenuButtonWithLabel  *IntensityDistributionHistogramButton;
   vtkKWFrameWithLabel       *IntensityDistributionHistogramFrame;
-  //vtkKWHistogram            *IntensityDistributionHistogramHistogram;
-  //vtkColorTransferFunction  *IntensityDistributionHistogramHistogramFunc;
-  //vtkKWColorTransferFunctionEditor
-    //*IntensityDistributionHistogramHistogramVisualization;
+
 
   vtkGaussian2DWidget       *Gaussian2DWidget;
   vtkKWEntryWithLabel       *NumClassesEntryLabel;
-  vtkKWMultiColumnList      *ClassAndNodeList;
   vtkKWPushButton           *Gaussian2DButton;
   vtkKWMenuButtonWithLabel  *Gaussian2DVolumeXMenuButton;
   vtkKWMenuButtonWithLabel  *Gaussian2DVolumeYMenuButton;
   vtkKWMenuButtonWithLabel  *Gaussian2DRenderingMenuButton;
+  
+  vtkSlicerNodeSelectorWidget *LabelSelector;
+  vtkKWPushButton             *LabelmapButton;
 
   virtual void AddIntensityDistributionSamplePoint(double ras[3]);
 

@@ -51,12 +51,42 @@ public:
   // Description:
   // Set the mean and standard deviation to define an additional
   // gaussian distribution
-  void AddGaussian(double meanX, double meanY, double sigma2,
+  void AddGaussian(double meanX, double meanY, double varianceX, double varianceY, double covariance,
       double rgb[3]);
+  
+  // Description:
+  // Remove all the gaussians without deleting the widget  
+  void RemoveAllGaussians();
 
   // Description:
   // Create the gaussians.
   virtual void CreateGaussian2D();
+/*
+  // Description:
+  // Set/Get the upper left element of the covariance matrix.
+  vtkSetMacro(VarianceX,double);
+  vtkGetMacro(VarianceX,double);
+
+  // Description:
+  // Set/Get the upper right element of the covariance matrix.
+  // Note that the lower left element has the same value.
+  vtkSetMacro(Covariance,double);
+  vtkGetMacro(Covariance,double);
+
+  // Description:
+  // Set/Get the lower right element of the covariance matrix.
+  vtkSetMacro(VarianceY,double);
+  vtkGetMacro(VarianceY,double);
+  
+  // Description:
+  // Set/Get the lower right element of the covariance matrix.
+  vtkSetMacro(MeanX,double);
+  vtkGetMacro(MeanX,double);
+  
+  // Description:
+  // Set/Get the lower right element of the covariance matrix.
+  vtkSetMacro(MeanY,double);
+  vtkGetMacro(MeanY,double);*/
 
 protected:
   vtkGaussian2DWidget();
@@ -65,9 +95,21 @@ protected:
   double XAxisRange[2];
   double YAxisRange[2];
 
+  /*double VarianceX;
+  double VarianceY;
+  double Covariance;
+  
+  double MeanX;
+  double MeanY;*/
+  
+  int NbOfGaussians;
+
   vtkDoubleArray *MeanXArray;
   vtkDoubleArray *MeanYArray;
-  vtkDoubleArray *Sigma2Array;
+  vtkDoubleArray *VarianceXArray;
+  vtkDoubleArray *VarianceYArray;
+  //vtkDoubleArray *CovarianceArray;
+  vtkDoubleArray *RotationAngleArray;
 
   vtkDoubleArray *RGBArray;
 

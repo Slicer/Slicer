@@ -444,10 +444,12 @@ void vtkEMSegmentIntensityNormalizationStep::ShowUserInterface()
     this->NormalizationHistogramMenuButton->GetWidgetName());
 
   this->PopulateNormalizationHistogramSelector();
-
-  this->NormalizationHistogramMenuButton->GetWidget()->SetValue(mrmlManager0->
+/*
+  if (mrmlManager0->GetTargetNumberOfSelectedVolumes()>0)
+    {
+    this->NormalizationHistogramMenuButton->GetWidget()->SetValue(mrmlManager0->
       GetVolumeName(mrmlManager0->GetVolumeNthID(0)));
-
+    }*/
   // Create the histogram
 
   if (!this->NormalizationHistogram)
@@ -567,6 +569,10 @@ void vtkEMSegmentIntensityNormalizationStep::
     if (name)
       {
       menu->AddRadioButton(name, this, buffer);
+      if (i == 0)
+        {
+        this->NormalizationTargetVolumeMenuButton->GetWidget()->SetValue(name);
+        }
       }
     }
 }
@@ -602,6 +608,10 @@ void vtkEMSegmentIntensityNormalizationStep::
     if (name)
       {
       menu->AddRadioButton(name, this, buffer);
+      if (i == 0)
+        {
+        this->NormalizationHistogramMenuButton->GetWidget()->SetValue(name);
+        }
       }
     }
 

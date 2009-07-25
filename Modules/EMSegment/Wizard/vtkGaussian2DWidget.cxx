@@ -53,6 +53,8 @@ Author:    $Sylvain Jaume (MIT)$
 #include "vtkLookupTable.h"
 #include "vtkAxisActor2D.h"
 
+#include "vtkKWCanvas.h"
+
 #ifdef _WIN32
 #include "vtkWin32OpenGLRenderWindow.h"
 #endif
@@ -75,10 +77,15 @@ vtkGaussian2DWidget::vtkGaussian2DWidget()
 
   this->MeanXArray  = vtkDoubleArray::New();
   this->MeanYArray  = vtkDoubleArray::New();
-  this->Sigma2Array = vtkDoubleArray::New();
-
+  this->VarianceXArray = vtkDoubleArray::New();
+  this->VarianceYArray = vtkDoubleArray::New();
+  //this->CovarianceArray = vtkDoubleArray::New();
+  this->RotationAngleArray = vtkDoubleArray::New();
+  
   this->RGBArray = vtkDoubleArray::New();
   this->RGBArray->SetNumberOfComponents(3);
+  
+  this->NbOfGaussians = 0;
 }
 
 //-------------------------------------------------------------------
@@ -90,8 +97,17 @@ vtkGaussian2DWidget::~vtkGaussian2DWidget()
   this->MeanYArray->Delete();
   this->MeanYArray = NULL;
 
-  this->Sigma2Array->Delete();
-  this->Sigma2Array = NULL;
+  this->VarianceXArray->Delete();
+  this->VarianceXArray = NULL;
+  
+  this->VarianceYArray->Delete();
+  this->VarianceYArray = NULL;
+  
+  //this->CovarianceArray->Delete();
+  //this->CovarianceArray = NULL;
+  
+  this->RotationAngleArray->Delete();
+  this->RotationAngleArray = NULL;
 
   this->RGBArray->Delete();
   this->RGBArray = NULL;
@@ -99,16 +115,134 @@ vtkGaussian2DWidget::~vtkGaussian2DWidget()
 
 //-------------------------------------------------------------------
 void vtkGaussian2DWidget::AddGaussian(double meanX, double meanY,
-    double sigma2, double rgb[3])
+    double varianceX, double varianceY, double covariance, double rgb[3])
 {
   std::cout << "AddGaussian meanX " << meanX << " meanY " << meanY
-    << " sigma2 " << sigma2 << std::endl;
-
+    << " varianceX " << varianceX << " varianceY " << varianceY << " covariance " << covariance << std::endl;
+  
   this->MeanXArray->InsertNextValue(meanX);
   this->MeanYArray->InsertNextValue(meanY);
-  this->Sigma2Array->InsertNextValue(sigma2);
+  this->VarianceXArray->InsertNextValue(varianceX);
+  this->VarianceYArray->InsertNextValue(varianceY);
+  //this->CovarianceArray->InsertNextValue(covariance);
 
   this->RGBArray->InsertNextTuple(rgb);
+  
+  //May be usefull for deleting only one gaussian
+  //this->NbOfGaussians += this->NbOfGaussians;
+  
+  //std::cout << "Nb of gaussians: " << this->NbOfGaussians << std::endl;
+  
+  //Compute eigen vectors the rotation angle
+  
+  double rotationAngle;
+  double eigenValues[2];
+  double eigenVector[2];
+  double eigenMax;
+  
+  double determinant;
+     
+  double a;
+  double b;
+  double c;
+  
+  double tanValue;
+    
+  //double maximumVarianceAxe;
+  
+  a = 1;
+  b = -(varianceX+varianceY);
+  c = varianceX*varianceY - (covariance)*(covariance);
+
+  determinant = (b)*(b) - 4*a*c;
+
+  if(determinant>=0)
+    {
+    eigenValues[0] = (-b+sqrt(determinant))/(2*a);
+    eigenValues[1] = (-b-sqrt(determinant))/(2*a);
+    }
+  else
+    {
+    std::cout<<"Determinant NULL"<<std::endl;
+    }
+      
+  if(eigenValues[0]>eigenValues[1])
+    {
+    eigenMax=eigenValues[0];
+    //maximumVarianceAxe=1;
+    }
+  else
+    {
+    eigenMax=eigenValues[1];
+    //maximumVarianceAxe=2;
+    }
+    
+// calculating the eigenVector
+  
+  if(((varianceX-eigenMax)/(covariance)-(covariance)/(varianceY-eigenMax)) < 1e-5 && ((varianceX-eigenMax)/(covariance)-(covariance)/(varianceY-eigenMax)) > -1e-5)
+    {
+    eigenVector[0] = 1;
+    eigenVector[1] = (varianceX-eigenMax)/(covariance);
+    
+    std::cout<<"Maximum Variance Eigen Vector: "<<eigenVector[0]<<" :: "<<eigenVector[1]<<std::endl;
+    }
+  else
+    {
+    std::cout<<"ERROR"<<std::endl;
+    std::cout<<"Values: "<< (varianceX-eigenMax)/(covariance) <<" :: "<< (covariance)/(varianceY-eigenMax) <<std::endl;
+    }
+  
+  tanValue = eigenVector[0]/eigenVector[1];
+    
+  rotationAngle = atan(tanValue);
+  
+  std::cout << "tan value" << tanValue << std::endl;   
+  std::cout << "rotation angle" << rotationAngle << std::endl;  
+  
+  
+  this->RotationAngleArray->InsertNextValue(rotationAngle);
+}
+
+//-------------------------------------------------------------------
+void vtkGaussian2DWidget::RemoveAllGaussians()
+{
+
+  //Delete all the arrays
+
+  this->MeanXArray->Delete();
+  this->MeanXArray = NULL;
+
+  this->MeanYArray->Delete();
+  this->MeanYArray = NULL;
+
+  this->VarianceXArray->Delete();
+  this->VarianceXArray = NULL;
+  
+  this->VarianceYArray->Delete();
+  this->VarianceYArray = NULL;
+  
+  this->RotationAngleArray->Delete();
+  this->RotationAngleArray = NULL;
+
+  this->RGBArray->Delete();
+  this->RGBArray = NULL;
+  
+  //Remove all the actors
+  
+  this->RemoveAllViewProps();
+  
+  //Reinitialize the arrays and the number of gaussians
+  
+  this->MeanXArray  = vtkDoubleArray::New();
+  this->MeanYArray  = vtkDoubleArray::New();
+  this->VarianceXArray = vtkDoubleArray::New();
+  this->VarianceYArray = vtkDoubleArray::New();
+  this->RotationAngleArray = vtkDoubleArray::New();
+  
+  this->RGBArray = vtkDoubleArray::New();
+  this->RGBArray->SetNumberOfComponents(3);
+  
+  this->NbOfGaussians = 0;
 }
 
 //-------------------------------------------------------------------
@@ -154,24 +288,54 @@ void vtkGaussian2DWidget::CreateGaussian2D()
 
   int numMeanX = this->MeanXArray->GetNumberOfTuples();
   int numMeanY = this->MeanYArray->GetNumberOfTuples();
-  int numSigma2 = this->Sigma2Array->GetNumberOfTuples();
+  int numVarianceX = this->VarianceXArray->GetNumberOfTuples();
+  int numVarianceY = this->VarianceYArray->GetNumberOfTuples();
 
   std::cout << "numMeanX " << numMeanX << std::endl;
   std::cout << "numMeanY " << numMeanY << std::endl;
-  std::cout << "numSigma2 " << numSigma2 << std::endl;
+  std::cout << "numVarianceX " << numVarianceX << std::endl;
+  std::cout << "numVarianceY " << numVarianceY << std::endl;
 
-  if(numMeanX != numMeanY || numMeanY != numSigma2 || numSigma2 != numMeanX)
+  if(numMeanX != numMeanY || numMeanY != numVarianceX || numVarianceX != numMeanX)
   {
     exit(0);
   }
 
-  int numGaussians = numSigma2;
+  int numGaussians = numVarianceX;
 
   double x, y, dist;
-  double meanX, meanY, sigma2;
+  double meanX, meanY, varianceX, varianceY;
+  double rotationAngle;
+  double amplitudeGaussian[numGaussians];
+  double amplitudeGaussianMax;
 
   double pt[3], range[2];
   double center[3], bounds[6];
+
+  amplitudeGaussianMax = 0.0;
+
+  // Get the maximum variances product throuhgh all the gaussians
+  // to get an amplitude normalization factor
+
+  for(int m=0; m<numGaussians; m++)
+  {
+    varianceX = this->VarianceXArray->GetValue(m)+1;
+    varianceY = this->VarianceYArray->GetValue(m)+1;
+    if(varianceX*varianceY > amplitudeGaussianMax)
+    {
+    amplitudeGaussianMax = varianceX*varianceY;
+    }
+  }
+  
+  for(int m=0; m<numGaussians; m++)
+  {
+    varianceX = this->VarianceXArray->GetValue(m)+1;
+    varianceY = this->VarianceYArray->GetValue(m)+1;
+    
+    amplitudeGaussian[m] = 1;//(int)(sqrt(amplitudeGaussianMax)*10/sqrt(varianceX*varianceY) + 0.5);
+
+  }
+  
 
   for(int m=0; m<numGaussians; m++)
   {
@@ -186,7 +350,16 @@ void vtkGaussian2DWidget::CreateGaussian2D()
 
     meanX = this->MeanXArray->GetValue(m);
     meanY = this->MeanYArray->GetValue(m);
-    sigma2 = this->Sigma2Array->GetValue(m);
+    varianceX = this->VarianceXArray->GetValue(m);
+    varianceY = this->VarianceYArray->GetValue(m);
+    
+    rotationAngle = this->RotationAngleArray->GetValue(m);
+    
+    // Normalized amplitude of the gaussian
+    
+    //amplitudeGaussian = (varianceX*varianceY)/amplitudeGaussianMax;
+    
+    std::cout << "Gaussian Ampli: " << amplitudeGaussian[m] << std::endl;
 
     range[0] = VTK_DOUBLE_MAX;
     range[1] = VTK_DOUBLE_MIN;
@@ -199,19 +372,19 @@ void vtkGaussian2DWidget::CreateGaussian2D()
     {
       pt[1] = origin[1] + j * spacing[1];
 
-      y = pt[1] - meanY;
-      y *= y;
-
       for(int i=0; i<dim[0]; i++, id++)
       {
         pt[0] = origin[0] + i * spacing[0];
-        x = pt[0] - meanX;
-
-        x *= x;
-        dist = x + y;
-
-        pt[2] = exp( -dist / sigma2 );
-        if( fabs(pt[2]) < 1e-9 ) { pt[2] = 0.0; }
+        
+        // apply the rotation
+        x = ((pt[0]-meanX)*cos(rotationAngle) + (pt[1]-meanY)*sin(rotationAngle));
+        y = (-(pt[0]-meanX)*sin(rotationAngle) + (pt[1]-meanY)*cos(rotationAngle));
+               
+        dist = x*x/varianceX + y*y/varianceY;
+       
+        pt[2] = exp(-dist);
+               
+        //if( fabs(pt[2]) < 1e-10 ) { pt[2] = 0.0; }
 
         newPoints->SetPoint( id, pt );
         newScalars->SetValue( id, pt[2] );
@@ -242,34 +415,76 @@ void vtkGaussian2DWidget::CreateGaussian2D()
 
   std::cout << "center " << center[0] << " " << center[1] << " "
     << center[2] << std::endl;
-
+    
+  std::cout << "range " << range[0] << " " << range[1] << std::endl;
+  
   vtkLookupTable *LUT = vtkLookupTable::New();
+  //range[0] = range[0]-1;
   LUT->SetTableRange(range);
-  LUT->SetNumberOfTableValues(256);
+  LUT->SetNumberOfTableValues(4096);
 
   double rgb[3];
   this->RGBArray->GetTuple(m,rgb);
 
-  double hue = 0.0;
+//Convert RGB to Hue
+  double hue;
+  double rgbMax;
+  
+  if(rgb[0]>rgb[1])
+    {
+    if(rgb[0]>rgb[2])
+      {
+      rgbMax = rgb[0];
+      }
+    else
+      {
+      rgbMax = rgb[2];
+      }
+    }
+  else
+    {
+    if(rgb[1]>rgb[2])
+      {
+      rgbMax = rgb[1];
+      }
+    else
+      {
+      rgbMax = rgb[2];
+      }
+    }
 
-  if(rgb[1] == 1.0)
-  {
-    hue = 0.333;
-  }
-  else if(rgb[2] == 1.0)
-  {
-    hue = 0.667;
-  }
-
-  LUT->SetHueRange(hue,hue);
+  if (rgbMax == rgb[0])
+    {
+    hue = (0.0 + 60.0*(rgb[1] - rgb[2]))/360.0;
+    if (hue < 0.0)
+      {
+      hue += 1;
+      }
+    LUT->SetHueRange(hue,hue);
+    }
+  else if (rgbMax == rgb[1])
+    {
+    hue = (120.0 + 60.0*(rgb[2] - rgb[0]))/360.0;
+    LUT->SetHueRange(hue,hue);
+    }
+  else /* rgbMax == rgb.b */ 
+    {
+    hue = (240.0 + 60.0*(rgb[0] - rgb[1]))/360.0;
+    LUT->SetHueRange(hue,hue);
+    }
+  
+  std::cout << "hue " << hue << std::endl;
+  
   LUT->SetSaturationRange(1,0);
   LUT->SetValueRange(1,1);
   LUT->Build();
-
+/*
   for(int i=0; i<256; i+=10)
   {
     LUT->SetTableValue(i,0,0,0);
-  }
+  }*/
+  
+  LUT->SetTableValue(0,0,0,0);
 
   vtkPolyDataMapper *polyDataMapper = vtkPolyDataMapper::New();
   polyDataMapper->SetInput(polyData);
@@ -359,7 +574,7 @@ void vtkGaussian2DWidget::CreateGaussian2D()
   camera->Delete();
   this->Render();
 
-  std::cout << *this->GetRenderer()->GetActiveCamera();
+  //std::cout << *this->GetRenderer()->GetActiveCamera();
   std::cout << "Create Gaussian 2D end" << std::endl;
 }
 
