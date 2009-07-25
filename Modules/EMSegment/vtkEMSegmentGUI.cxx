@@ -219,15 +219,22 @@ std::cout<<"event: "<<event<<std::endl;
   //  caller, event, callData);  
   //this->IntensityDistributionsStep->ProcessPointAddGUIEvents(
   //  caller, event, callData);
-  //this->IntensityDistributionsStep->ProcessTestButtonGUIEvents(
-  //  caller, event, callData);
+  this->IntensityDistributionsStep->ProcessLabelSelectorGUIEvents(
+    caller, event, callData);
+  this->IntensityDistributionsStep->ProcessLabelButtonGUIEvents(
+    caller, event, callData);
+  this->IntensityDistributionsStep->ProcessGaussian2DButtonGUIEvents(
+    caller, event, callData);
   this->NodeParametersStep->ProcessPointMovingGUIEvents(
     caller, event, callData);  
   this->NodeParametersStep->ProcessPointAddGUIEvents(
     caller, event, callData);
   this->NodeParametersStep->ProcessTestButtonGUIEvents(
-    caller, event, callData);    
-    
+    caller, event, callData);      
+  this->NodeParametersStep->ProcessPreviewGUIEvents(
+    caller, event, callData);
+  this->NodeParametersStep->ProcessColumnListGUIEvents(
+    caller, event, callData);
 }
 
 //---------------------------------------------------------------------------

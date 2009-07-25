@@ -110,7 +110,9 @@ public:
     DistributionSpecificationManuallySample = 
     vtkMRMLEMSTreeParametersLeafNode::DistributionSpecificationManuallySample,
     DistributionSpecificationAutoSample =
-    vtkMRMLEMSTreeParametersLeafNode::DistributionSpecificationAutoSample
+    vtkMRMLEMSTreeParametersLeafNode::DistributionSpecificationAutoSample,
+    DistributionSpecificationLabelSample =
+    vtkMRMLEMSTreeParametersLeafNode::DistributionSpecificationLabelSample
     };
   //ETX
   virtual int   GetTreeNodeDistributionSpecificationMethod(vtkIdType nodeID);
@@ -123,11 +125,25 @@ public:
   virtual void     SetTreeNodeDistributionLogMean(vtkIdType nodeID, 
                                                   int volumeNumber, 
                                                   double value);
+                                                  
+  virtual double   GetTreeNodeDistributionMean(vtkIdType nodeID, 
+                                                  int volumeNumber);
+  virtual void     SetTreeNodeDistributionMean(vtkIdType nodeID, 
+                                                  int volumeNumber, 
+                                                  double value);
 
   virtual double   GetTreeNodeDistributionLogCovariance(vtkIdType nodeID, 
                                                         int rowIndex,
                                                         int columnIndex);
   virtual void     SetTreeNodeDistributionLogCovariance(vtkIdType nodeID, 
+                                                        int rowIndex, 
+                                                        int columnIndex,
+                                                        double value);
+                                                        
+  virtual double   GetTreeNodeDistributionCovariance(vtkIdType nodeID, 
+                                                        int rowIndex,
+                                                        int columnIndex);
+  virtual void     SetTreeNodeDistributionCovariance(vtkIdType nodeID, 
                                                         int rowIndex, 
                                                         int columnIndex,
                                                         double value);

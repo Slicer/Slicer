@@ -54,15 +54,22 @@ public:
 
   virtual double GetLogMean(int index) const;
   virtual void SetLogMean(int index, double value);
+  
+  virtual double GetMean(int index) const;
+  virtual void SetMean(int index, double value);
 
   virtual double GetLogCovariance(int row, int column) const;
   virtual void SetLogCovariance(int row, int column, double value);
+  
+  virtual double GetCovariance(int row, int column) const;
+  virtual void SetCovariance(int row, int column, double value);
 
   //BTX
   enum
     {
     DistributionSpecificationManual = 0,
     DistributionSpecificationManuallySample,
+    DistributionSpecificationLabelSample,
     DistributionSpecificationAutoSample
     };
   //ETX
@@ -93,7 +100,9 @@ protected:
 
   SamplePointListType                           DistributionSamplePointsRAS;
   vtkstd::vector<double>                        LogMean;
+  vtkstd::vector<double>                        Mean;
   vtkstd::vector<vtkstd::vector<double> >       LogCovariance;
+  vtkstd::vector<vtkstd::vector<double> >       Covariance;
   //ETX
 
   unsigned int                        NumberOfTargetInputChannels;

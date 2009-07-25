@@ -490,7 +490,6 @@ GetTreeNodeDistributionLogMean(vtkIdType nodeID,
     }
   return this->GetTreeParametersLeafNode(nodeID)->GetLogMean(volumeNumber);
 }
-
 //----------------------------------------------------------------------------
 void
 vtkEMSegmentMRMLManager::
@@ -504,6 +503,68 @@ SetTreeNodeDistributionLogMean(vtkIdType nodeID,
     return;
     }
   this->GetTreeParametersLeafNode(nodeID)->SetLogMean(volumeNumber, value);
+}
+
+//----------------------------------------------------------------------------
+double
+vtkEMSegmentMRMLManager::   
+GetTreeNodeDistributionMean(vtkIdType nodeID, 
+                               int volumeNumber)
+{
+  if (this->GetTreeParametersLeafNode(nodeID) == NULL)
+    {
+    vtkErrorMacro("Leaf parameters node is null for nodeID: " << nodeID);
+    return 0;
+    }
+  return this->GetTreeParametersLeafNode(nodeID)->GetMean(volumeNumber);
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
+SetTreeNodeDistributionMean(vtkIdType nodeID, 
+                               int volumeNumber, 
+                               double value)
+{
+  if (this->GetTreeParametersLeafNode(nodeID) == NULL)
+    {
+    vtkErrorMacro("Leaf parameters node is null for nodeID: " << nodeID);
+    return;
+    }
+  this->GetTreeParametersLeafNode(nodeID)->SetMean(volumeNumber, value);
+}
+
+//----------------------------------------------------------------------------
+double   
+vtkEMSegmentMRMLManager::
+GetTreeNodeDistributionCovariance(vtkIdType nodeID, 
+                                     int rowIndex,
+                                     int columnIndex)
+{
+  if (this->GetTreeParametersLeafNode(nodeID) == NULL)
+    {
+    vtkErrorMacro("Leaf parameters node is null for nodeID: " << nodeID);
+    return 0;
+    }
+  return this->GetTreeParametersLeafNode(nodeID)->
+    GetCovariance(rowIndex, columnIndex);
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
+SetTreeNodeDistributionCovariance(vtkIdType nodeID, 
+                                     int rowIndex, 
+                                     int columnIndex,
+                                     double value)
+{
+  if (this->GetTreeParametersLeafNode(nodeID) == NULL)
+    {
+    vtkErrorMacro("Leaf parameters node is null for nodeID: " << nodeID);
+    return;
+    }
+  this->GetTreeParametersLeafNode(nodeID)->
+    SetCovariance(rowIndex, columnIndex, value);
 }
 
 //----------------------------------------------------------------------------
@@ -745,8 +806,11 @@ UpdateIntensityDistributionFromSample(vtkIdType nodeID)
   // the default is mean 0, zero covariance
   //
   vtkstd::vector<double> logMean(numTargetImages, 0.0);
+  vtkstd::vector<double> Mean(numTargetImages, 0.0);
   vtkstd::vector<vtkstd::vector<double> > 
     logCov(numTargetImages, vtkstd::vector<double>(numTargetImages, 0.0));
+  vtkstd::vector<vtkstd::vector<double> > 
+    Cov(numTargetImages, vtkstd::vector<double>(numTargetImages, 0.0));
 
   if (numPoints > 0)
     {
@@ -755,6 +819,8 @@ UpdateIntensityDistributionFromSample(vtkIdType nodeID)
     //
     vtkstd::vector<vtkstd::vector<double> > 
       logSamples(numTargetImages, vtkstd::vector<double>(numPoints, 0));
+    vtkstd::vector<vtkstd::vector<double> > 
+      Samples(numTargetImages, vtkstd::vector<double>(numPoints, 0));
     
     for (unsigned int imageIndex = 0; imageIndex < numTargetImages; 
          ++imageIndex)
@@ -771,12 +837,20 @@ UpdateIntensityDistributionFromSample(vtkIdType nodeID)
           log(this->
               GetTreeNodeDistributionSampleIntensityValue(nodeID,
                                                           sampleIndex,
-                                                          volumeID) + 1.0);
+                                                          volumeID) + 1);
+        double Intensity = 
+          (this->
+              GetTreeNodeDistributionSampleIntensityValue(nodeID,
+                                                          sampleIndex,
+                                                          volumeID) );
 
         logSamples[imageIndex][sampleIndex] = logIntensity;
         logMean[imageIndex] += logIntensity;
+        Samples[imageIndex][sampleIndex] = Intensity;
+        Mean[imageIndex] += Intensity;
         }
       logMean[imageIndex] /= numPoints;
+      Mean[imageIndex] /= numPoints;
       }
 
     //
@@ -793,9 +867,13 @@ UpdateIntensityDistributionFromSample(vtkIdType nodeID)
           logCov[r][c] += 
             (logSamples[r][p] - logMean[r]) * 
             (logSamples[c][p] - logMean[c]);
+          Cov[r][c] += 
+            (Samples[r][p] - Mean[r]) * 
+            (Samples[c][p] - Mean[c]);
           }
         // unbiased covariance
         logCov[r][c] /= numPoints - 1;
+        Cov[r][c] /= numPoints - 1;
         }
       }
     }
@@ -810,10 +888,12 @@ UpdateIntensityDistributionFromSample(vtkIdType nodeID)
   for (r = 0; r < numTargetImages; ++r)
     {
     leafNode->SetLogMean(r, logMean[r]);
+    leafNode->SetMean(r, Mean[r]);
     
     for (c = 0; c < numTargetImages; ++c)
       {
       leafNode->SetLogCovariance(r, c, logCov[r][c]);
+      leafNode->SetCovariance(r, c, Cov[r][c]);
       }
     }
 }
