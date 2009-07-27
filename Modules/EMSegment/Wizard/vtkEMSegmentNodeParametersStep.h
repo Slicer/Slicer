@@ -1,3 +1,19 @@
+/*=auto=======================================================================
+
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
+  Reserved.
+
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Program:   3D Slicer
+  Module:    $RCSfile: vtkEMSegmentNodeParametetrsStep.h,v$
+  Date:      $Date: 2006/01/06 17:56:51 $
+  Version:   $Revision: 1.6 $
+  Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
+
+=======================================================================auto=*/
+
 #ifndef __vtkEMSegmentNodeParametersStep_h
 #define __vtkEMSegmentNodeParametersStep_h
 
@@ -83,86 +99,62 @@ public:
   virtual void NodeParametersPrintMFAWeightsCallback(vtkIdType, int value);
   virtual void ExcludeIncompleteEStepCallback(vtkIdType, int state);
   virtual void GenerateBackgroundProbabilityCallback(vtkIdType, int state);
+  virtual void IntensityDistributionTargetSelectionChangedCallback(
+    vtkIdType VolId);
 
   // Description:
   // Reimplement the superclass's method.
   virtual void Validate();
-  
-    // Description:
-  // Observers 
-  /*virtual void AddUpdatePriorGUIEvents();
-  virtual void RemoveUpdatePriorGUIEvents();
-  virtual void ProcessUpdatePriorGUIEvents(
-    vtkObject *caller, unsigned long event, void *callData);
-    */
-    
-  //NEW
-  
-  virtual void IntensityDistributionTargetSelectionChangedCallback(
-    vtkIdType VolId);
 
-    // Description:
+  // Description:
   // Observers
   virtual void AddPointMovingGUIEvents();
   virtual void RemovePointMovingGUIEvents();
   virtual void ProcessPointMovingGUIEvents(
   vtkObject *caller, unsigned long event, void *callData);
-  
-      // Description:
+
+  // Description:
   // Observers
-  virtual void AddPointAddGUIEvents();
-  virtual void RemovePointAddGUIEvents();
-  virtual void ProcessPointAddGUIEvents(
+  virtual void AddComputeWeightsButtonGUIEvents();
+  virtual void RemoveComputeWeightsButtonGUIEvents();
+  virtual void ProcessComputeWeightsButtonGUIEvents(
   vtkObject *caller, unsigned long event, void *callData);
 
-        // Description:
+  // Description:
   // Observers
-  virtual void AddTestButtonGUIEvents();
-  virtual void RemoveTestButtonGUIEvents();
-  virtual void ProcessTestButtonGUIEvents(
-  vtkObject *caller, unsigned long event, void *callData);
-  
   virtual void AddPreviewGUIObservers();
   virtual void RemovePreviewGUIObservers();
   virtual void ProcessPreviewGUIEvents(
     vtkObject *caller, unsigned long event, void *callData);
-    
+
+  // Description:
+  // Observers
   virtual void AddColumnListGUIObservers();
   virtual void RemoveColumnListGUIObservers();
   virtual void ProcessColumnListGUIEvents(
     vtkObject *caller, unsigned long event, void *callData);
 
-  virtual void test();
-  
-  virtual void histogramFeedback();
-    
-  //double* position;
-  double size;  
-  int nbOfLeaf;
-  int depth;
-  double classSize[400];
-  vtkIdType leafID[200];
-  vtkIdType leafIDNewOrder[200];
-  const char* leafName[200];
-  
-  double orderedLabel[200];
-  
-  vtkIdType classPercentOrder[200][200];
-  vtkIdType classPercentOrderCP[200][200];
-  double class_weight[200];
-  double class_size[400];
-  
-  const char* node_name[200];
-  
-  vtkIdType correspondanceArray[200];
-  
+  virtual void GetLeavesRange();
+  virtual void VisualFeedback();
   virtual void GetNumberOfLeaf(const char*, vtkIdType);
-  
-  virtual void GetParentPercent(int, vtkIdType);
-  virtual void GetPercent(int, vtkIdType);
-  virtual double GetWeight(int);
-  
-  //END NEW  
+  virtual void GetNodesWeights(int, vtkIdType);
+  virtual void FillTheTreeStructure(int, vtkIdType);
+  virtual double GetLeafWeight(int);
+
+  int NumberOfLeaves;
+  int DepthOfTheNodeInTheTreeStructure;
+
+  double TreeNodesWeights[200]; // 200 nodes
+  double LeavesRange[400]; // 2*200 leaves
+  double OrderedLabels[200];
+
+  const char* LeavesName[200];
+
+  vtkIdType LeavesID[200];
+  vtkIdType LeavesIDNewOrder[200];
+  vtkIdType TreeStructure[200][200]; // 200 leaves, 200 max depth of tree
+  vtkIdType TreeStructureTemporary[200][200];
+  vtkIdType TreeNodes[200];
 
 protected:
   vtkEMSegmentNodeParametersStep();
@@ -171,7 +163,7 @@ protected:
   vtkKWNotebook                      *NodeParametersNotebook;
   vtkKWScaleWithEntry                *NodeParametersGlobalPriorScale;
   vtkKWScaleWithEntry                *NodeParametersSpatialPriorWeightScale;
-  vtkKWMultiColumnListWithScrollbarsWithLabel 
+  vtkKWMultiColumnListWithScrollbarsWithLabel
                                      *NodeParametersInputChannelWeightsList;
   vtkKWScaleWithEntry                *NodeParametersAlphaScale;
   vtkKWMenuButtonWithLabel           *StoppingConditionsEMMenuButton;
@@ -200,36 +192,22 @@ protected:
   vtkKWCheckButtonWithLabel          *NodeParametersExcludeIncompleteEStepCheckButton;
   vtkKWCheckButtonWithLabel          *NodeParametersGenerateBackgroundProbabilityCheckButton;
   vtkKWFrameWithLabel                *NodeParametersInhomogeneityFrame;
-  
   vtkKWFrameWithLabel                *UpdateFrame;
+
   vtkKWPushButton                    *UpdatePrior;
-  
   vtkSlicerNodeSelectorWidget        *PreviewSelector;
-  
-  vtkImageData                       *PREVIEW;
-  
-  //NEW
-  
+  vtkImageData                       *ArrayToAccessSliceValues;
+  vtkKWMenuButtonWithLabel           *HistogramVolumeSelector;
+  vtkKWHistogram                     *HistogramData;
+  vtkKWColorTransferFunctionEditor   *HistogramVisualization;
+  vtkColorTransferFunction           *HistogramColorFunction;
+  vtkKWEntryWithLabel                *NbOfClassesEntryLabel;
+  vtkKWMultiColumnList               *ClassAndNodeList;
+  vtkKWPushButton                    *ComputeWeightsButton;
+  vtkExtractVOI                      *SliceExtracted;
+
   virtual void PopulateIntensityDistributionTargetVolumeSelector();
   virtual void PopulateClassAndNodeList();
-  
-  vtkKWMenuButtonWithLabel  *IntensityDistributionHistogramButton;
-  
-  vtkKWHistogram            *IntensityDistributionHistogramHistogram;
-  vtkKWColorTransferFunctionEditor *IntensityDistributionHistogramHistogramVisu;
-  vtkColorTransferFunction  *IntensityDistributionHistogramHistogramFunc;
-  
-  vtkKWEntryWithLabel       *NbOfClassesEntryLabel;
-  
-  vtkKWMultiColumnList      *ClassAndNodeList;
-  
-  vtkKWPushButton           *TestButton;
-  
-  //vtkImageReslice             *SliceExtracted;
-  
-  vtkExtractVOI              *SliceExtracted;
-  
-  //END NEW
 
 private:
   vtkEMSegmentNodeParametersStep(const vtkEMSegmentNodeParametersStep&);

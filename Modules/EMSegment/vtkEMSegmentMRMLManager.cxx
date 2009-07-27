@@ -831,8 +831,7 @@ UpdateIntensityDistributionFromSample(vtkIdType nodeID)
       for (unsigned int sampleIndex = 0; sampleIndex < numPoints; 
            ++sampleIndex)
         {
-        // we are interested in stats of log of intensities
-        // copy Kilian, use log(i + 1)
+        // we are interested in stats of log of intensities, use log(i + 1)
         double logIntensity = 
           log(this->
               GetTreeNodeDistributionSampleIntensityValue(nodeID,

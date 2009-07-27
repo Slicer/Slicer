@@ -1,3 +1,19 @@
+/*=auto=======================================================================
+
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
+  Reserved.
+
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Program:   3D Slicer
+  Module:    $RCSfile: vtkEMSegmentNodeParametersStep.cxx,v$
+  Date:      $Date: 2006/01/06 17:56:51 $
+  Version:   $Revision: 1.6 $
+  Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
+
+=======================================================================auto=*/
+
 #include "vtkEMSegmentNodeParametersStep.h"
 
 #include "vtkEMSegmentGUI.h"
@@ -43,40 +59,23 @@
 #include "vtkCommand.h"
 #include "vtkImageData.h"
 
-//NEW
-
 #include "vtkKWHistogram.h"
 #include "vtkKWColorTransferFunctionEditor.h"
-//#include "vtkKWColorTransferFunctionEditorDerived.h"
 #include "vtkColorTransferFunction.h"
 #include "vtkKWParameterValueFunctionInterface.h"
 #include "vtkKWParameterValueFunctionEditor.h"
-
 #include "vtkKWPushButton.h"
 
 #include "vtkSlicerNodeSelectorWidget.h"
-
 #include "vtkKWEntryWithLabel.h"
-
 #include "vtkKWMultiColumnList.h"
-
 #include "vtkPointData.h"
-
-#include "itkImageToVTKImageFilter.h"
-#include "itkVTKImageToImageFilter.h"
-
-#include "vtkImageCast.h"
-
-#include "itkUnaryFunctorImageFilter.h"
-#include "itkExtractImageFilter.h"
 
 #include "vtkMRMLColorNode.h"
 #include "vtkImageReslice.h"
 #include "vtkExtractVOI.h"
 #include "vtkMRMLColorTableNode.h"
 #include "vtkMatrix4x4.h"
-//#include "class vtkImageData;.h"
-//END NEW
 
 #include "vtkEMSegmentAnatomicalStructureStep.h"
 
@@ -111,37 +110,28 @@ vtkEMSegmentNodeParametersStep::vtkEMSegmentNodeParametersStep()
   this->NodeParametersPrintBiasCheckButton     = NULL;
   this->NodeParametersPrintLabelMapCheckButton = NULL;
   this->PrintConvergenceFrame                  = NULL;
-  this->NodeParametersPrintEMLabelMapConvergenceCheckButton = NULL;
-  this->NodeParametersPrintEMWeightsConvergenceCheckButton = NULL;
-  this->NodeParametersPrintMFALabelMapConvergenceCheckButton = NULL;
-  this->NodeParametersPrintMFAWeightsConvergenceCheckButton = NULL;
+  this->NodeParametersPrintEMLabelMapConvergenceCheckButton    = NULL;
+  this->NodeParametersPrintEMWeightsConvergenceCheckButton     = NULL;
+  this->NodeParametersPrintMFALabelMapConvergenceCheckButton   = NULL;
+  this->NodeParametersPrintMFAWeightsConvergenceCheckButton    = NULL;
 
   this->NodeParametersInteractionMatricesFrame = NULL;
   this->NodeParametersPCAFrame                 = NULL;
   this->NodeParametersRegistrationFrame        = NULL;
   this->NodeParametersMiscellaeneousFrame      = NULL;
-  this->NodeParametersExcludeIncompleteEStepCheckButton = NULL;
+  this->NodeParametersExcludeIncompleteEStepCheckButton        = NULL;
   this->NodeParametersGenerateBackgroundProbabilityCheckButton = NULL;
   this->NodeParametersInhomogeneityFrame       = NULL;
-  
-  //this->UpdateFrame       = NULL;
-  //this->UpdatePrior       = NULL;
-  
-  //NEW
-  
-  this->IntensityDistributionHistogramButton         = NULL;
-  this->IntensityDistributionHistogramHistogram      = NULL;
-  this->IntensityDistributionHistogramHistogramVisu  = NULL;
-  
-  this->NbOfClassesEntryLabel                        = NULL;
-  
-  this->ClassAndNodeList                             = NULL;
-  
-  this->TestButton                                   = NULL;
-  
-  this->PreviewSelector                              = NULL;
-  
-  //END NEW
+
+  this->HistogramColorFunction                 = NULL;
+  this->HistogramVolumeSelector                = NULL;
+  this->HistogramData                          = NULL;
+  this->HistogramVisualization                 = NULL;
+  this->NbOfClassesEntryLabel                  = NULL;
+  this->ClassAndNodeList                       = NULL;
+  this->ComputeWeightsButton                   = NULL;
+  this->PreviewSelector                        = NULL;
+
 }
 
 //----------------------------------------------------------------------------
@@ -155,10 +145,10 @@ if (this->PreviewSelector)
     this->PreviewSelector = NULL;
     }
 
-if (this->TestButton)
+if (this->ComputeWeightsButton)
     {
-    this->TestButton->Delete();
-    this->TestButton = NULL;
+    this->ComputeWeightsButton->Delete();
+    this->ComputeWeightsButton = NULL;
     }
 
   if (this->ClassAndNodeList)
@@ -173,25 +163,30 @@ if (this->TestButton)
     this->NbOfClassesEntryLabel = NULL;
     }
 
-  if (this->IntensityDistributionHistogramHistogramVisu)
+  if (this->HistogramVisualization)
     {
-    this->IntensityDistributionHistogramHistogramVisu->Delete();
-    this->IntensityDistributionHistogramHistogramVisu = NULL;
+    this->HistogramVisualization->Delete();
+    this->HistogramVisualization = NULL;
     }
 
-  if (this->IntensityDistributionHistogramHistogram)
+  if (this->HistogramData)
     {
-    this->IntensityDistributionHistogramHistogram->Delete();
-    this->IntensityDistributionHistogramHistogram = NULL;
+    this->HistogramData->Delete();
+    this->HistogramData = NULL;
+    }
+
+  if (this->HistogramColorFunction)
+    {
+    this->HistogramColorFunction->Delete();
+    this->HistogramColorFunction = NULL;
     }
 
 
-  if (this->IntensityDistributionHistogramButton)
+  if (this->HistogramVolumeSelector)
     {
-    this->IntensityDistributionHistogramButton->Delete();
-    this->IntensityDistributionHistogramButton = NULL;
+    this->HistogramVolumeSelector->Delete();
+    this->HistogramVolumeSelector = NULL;
     }
-//END NEW
 
   if (this->NodeParametersNotebook)
     {
@@ -294,9 +289,9 @@ if (this->TestButton)
     this->NodeParametersPrintLabelMapCheckButton->Delete();
     this->NodeParametersPrintLabelMapCheckButton = NULL;
     }
-  
+
   if (this->PrintBasicFrame)
-    { 
+    {
     this->PrintBasicFrame->Delete();
     this->PrintBasicFrame = NULL;
     }
@@ -318,17 +313,17 @@ if (this->TestButton)
     this->NodeParametersPrintMFALabelMapConvergenceCheckButton->Delete();
     this->NodeParametersPrintMFALabelMapConvergenceCheckButton = NULL;
     }
-  
+
   if(this->NodeParametersPrintMFAWeightsConvergenceCheckButton)
     {
     this->NodeParametersPrintMFAWeightsConvergenceCheckButton->Delete();
     this->NodeParametersPrintMFAWeightsConvergenceCheckButton = NULL;
     }
-  
+
   if (this->PrintConvergenceFrame)
     {
     this->PrintConvergenceFrame->Delete();
-    this->PrintConvergenceFrame = NULL; 
+    this->PrintConvergenceFrame = NULL;
     }
 
   if (this->NodeParametersInteractionMatricesFrame)
@@ -348,7 +343,7 @@ if (this->TestButton)
     this->NodeParametersRegistrationFrame->Delete();
     this->NodeParametersRegistrationFrame = NULL;
     }
-  
+
   if(this->NodeParametersExcludeIncompleteEStepCheckButton)
     {
     this->NodeParametersExcludeIncompleteEStepCheckButton->Delete();
@@ -372,18 +367,6 @@ if (this->TestButton)
     this->NodeParametersInhomogeneityFrame->Delete();
     this->NodeParametersInhomogeneityFrame = NULL;
     }
-  /*  
-  if (this->UpdateFrame)
-    {
-    this->UpdateFrame->Delete();
-    this->UpdateFrame = NULL;
-    }
-    
-  if (this->UpdatePrior)
-    {
-    this->UpdatePrior->Delete();
-    this->UpdatePrior = NULL;
-    }*/
 }
 
 //----------------------------------------------------------------------------
@@ -394,7 +377,7 @@ void vtkEMSegmentNodeParametersStep::ShowUserInterface()
   vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
   wizard_widget->GetCancelButton()->SetEnabled(0);
 
-  vtkEMSegmentAnatomicalStructureStep *anat_step = 
+  vtkEMSegmentAnatomicalStructureStep *anat_step =
     this->GetGUI()->GetAnatomicalStructureStep();
   anat_step->ShowAnatomicalStructureTree();
 
@@ -422,7 +405,7 @@ void vtkEMSegmentNodeParametersStep::ShowUserInterface()
     this->NodeParametersNotebook->AddPage("Print");
     this->NodeParametersNotebook->AddPage("Advanced");
     }
-    
+
   vtkKWFrame *prior_page = 
     this->NodeParametersNotebook->GetFrame("Priors");
   vtkKWFrame *basic_page = 
@@ -483,7 +466,7 @@ void vtkEMSegmentNodeParametersStep::ShowUserInterface()
     this->NodeParametersSpatialPriorWeightScale->SetResolution(0.01);
     this->NodeParametersSpatialPriorWeightScale->GetEntry()->
       SetCommandTriggerToAnyChange();
-    this->NodeParametersSpatialPriorWeightScale->SetBalloonHelpString("Weight of the atlas (spatial prior) in the segmentation decision.  The value must be in the range [0,1], where 0 indicates that the atlas is ignored and 1 indicates the maximum atlas weight."); 
+    this->NodeParametersSpatialPriorWeightScale->SetBalloonHelpString("Weigh  of the atlas (spatial prior) in the segmentation decision.  The value must be in the range [0,1], where 0 indicates that the atlas is ignored and 1 indicates the maximum atlas weight."); 
     }
 
   this->Script("grid %s -column 0 -row 1 -sticky nw -padx 2 -pady 2", 
@@ -503,7 +486,6 @@ void vtkEMSegmentNodeParametersStep::ShowUserInterface()
     this->NodeParametersInputChannelWeightsList->SetLabelText(
       "Input Channel Weights:");
     this->NodeParametersInputChannelWeightsList->SetLabelPositionToTop();
-  
     this->NodeParametersInputChannelWeightsList->GetWidget()->
       HorizontalScrollbarVisibilityOff();
 
@@ -522,8 +504,7 @@ void vtkEMSegmentNodeParametersStep::ShowUserInterface()
 
     list->SetRightClickCommand
       (this, "RightClickOnInputChannelWeightsListCallback");
-    list->SetBalloonHelpString
-      ("Weight of each channel in the segmentation decision.  Right-click or double-click to modify weights.  Weights should be in the range [0,1]; 0 indicates that the channel is ignored and 1 indicates the maximum channel weight.  The weights are not dependent on each other or any other weights.");
+    list->SetBalloonHelpString("Weight of each channel in the segmentation decision.  Right-click or double-click to modify weights.  Weights should be in the range [0,1]; 0 indicates that the channel is ignored and 1 indicates the maximum channel weight.  The weights are not dependent on each other or any other weights.");
     }
 
   this->Script(
@@ -552,16 +533,14 @@ void vtkEMSegmentNodeParametersStep::ShowUserInterface()
 
   this->Script("grid %s -column 0 -row 2 -sticky nw -padx 2 -pady 2", 
                this->NodeParametersAlphaScale->GetWidgetName());
-               
+
   this->Script("grid columnconfigure %s 1 -weight 1", basic_page->GetWidgetName());
-      
-    ////     NEW
-  
+
   // GET NUMBER OF LEAF
-  
-  this->nbOfLeaf = 0;
+
+  this->NumberOfLeaves = 0;
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-   
+
   if (mrmlManager)
     {
     vtkIdType root_id = mrmlManager->GetTreeRootNodeID();
@@ -570,9 +549,9 @@ void vtkEMSegmentNodeParametersStep::ShowUserInterface()
       this->GetNumberOfLeaf(NULL, root_id);
       }
     }
-    
-    // Create the preview volume selector
-             
+
+  // Create the preview volume selector
+
   if (!this->PreviewSelector)
     {
     this->PreviewSelector = vtkSlicerNodeSelectorWidget::New();
@@ -602,108 +581,96 @@ void vtkEMSegmentNodeParametersStep::ShowUserInterface()
       this->PreviewSelector->GetMRMLScene()->
       GetNodeByID(mrmlManager->GetOutputVolumeMRMLID()));
     }
-    
+
   this->Script(
     "pack %s -side top -anchor nw -padx 2 -pady 2", 
-    this->PreviewSelector->GetWidgetName()); 
-    
-    
-   this->AddPreviewGUIObservers();  
-    
+    this->PreviewSelector->GetWidgetName());
+  this->AddPreviewGUIObservers();
+
   // Create the histogram volume selector
 
-  if (!this->IntensityDistributionHistogramButton)
+  if (!this->HistogramVolumeSelector)
     {
-    this->IntensityDistributionHistogramButton = 
+    this->HistogramVolumeSelector = 
       vtkKWMenuButtonWithLabel::New();
     }
-  if (!this->IntensityDistributionHistogramButton->IsCreated())
+  if (!this->HistogramVolumeSelector->IsCreated())
     {
-    this->IntensityDistributionHistogramButton->SetParent(prior_page);
-    this->IntensityDistributionHistogramButton->Create();
-    this->IntensityDistributionHistogramButton->GetWidget()->
+    this->HistogramVolumeSelector->SetParent(prior_page);
+    this->HistogramVolumeSelector->Create();
+    this->HistogramVolumeSelector->GetWidget()->
       SetWidth(EMSEG_MENU_BUTTON_WIDTH+10);
-    this->IntensityDistributionHistogramButton->GetLabel()->
+    this->HistogramVolumeSelector->GetLabel()->
       SetWidth(EMSEG_WIDGETS_LABEL_WIDTH-10);
-    this->IntensityDistributionHistogramButton->
+    this->HistogramVolumeSelector->
       SetLabelText("Target Image:");
-    this->IntensityDistributionHistogramButton->
+    this->HistogramVolumeSelector->
       SetBalloonHelpString("Select a target image to adjust intensity distribution");
 
     }
 
   this->Script(
     "pack %s -side top -anchor nw -fill both -padx 2 -pady 5", 
-    this->IntensityDistributionHistogramButton->GetWidgetName());
-  
-  this->PopulateIntensityDistributionTargetVolumeSelector();    
-  
-  /*if (mrmlManager->GetTargetNumberOfSelectedVolumes() > 0)
-    {
-    this->IntensityDistributionHistogramButton->GetWidget()->SetValue(mrmlManager->GetVolumeName(mrmlManager->GetTargetSelectedVolumeNthID(0)));
-    }*/
-  // Create the histogram
-  
-  if (!this->IntensityDistributionHistogramHistogram)
-    {
-    this->IntensityDistributionHistogramHistogram = vtkKWHistogram::New();
-    this->IntensityDistributionHistogramHistogramVisu = vtkKWColorTransferFunctionEditor::New();
-    this->IntensityDistributionHistogramHistogramFunc = vtkColorTransferFunction::New();
-    }
-    
-   if (!this->IntensityDistributionHistogramHistogramVisu->IsCreated())
-    {
-    this->IntensityDistributionHistogramHistogramVisu->SetParent(prior_page);
-    this->IntensityDistributionHistogramHistogramVisu->Create();
-    this->IntensityDistributionHistogramHistogramVisu->SetBorderWidth(2);
-    this->IntensityDistributionHistogramHistogramVisu->SetReliefToGroove();
-    this->IntensityDistributionHistogramHistogramVisu->SetPadX(2);
-    this->IntensityDistributionHistogramHistogramVisu->SetPadY(2);
-    this->IntensityDistributionHistogramHistogramVisu->SetPointPositionInValueRangeToTop(); 
-    this->IntensityDistributionHistogramHistogramVisu->MidPointEntryVisibilityOn();
-    //this->IntensityDistributionHistogramHistogramVisu->PointGuidelineVisibilityOn();
-    this->IntensityDistributionHistogramHistogramVisu->MidPointGuidelineVisibilityOn(); 
-    this->IntensityDistributionHistogramHistogramVisu->SetLabelPositionToTop();
-    }
-     
-         
-    this->Script(
-    "pack %s -side top -anchor nw -fill both -padx 2 -pady 2 -pady 2", 
-    this->IntensityDistributionHistogramHistogramVisu->GetWidgetName());
-    
-    vtkEMSegmentMRMLManager *mrmlManager0 = this->GetGUI()->GetMRMLManager();
-    this->IntensityDistributionHistogramButton->SetEnabled(
-    mrmlManager0->GetVolumeNumberOfChoices() ? parent->GetEnabled() : 0);
+  this->HistogramVolumeSelector->GetWidgetName());
 
-  if(this->IntensityDistributionHistogramButton->GetEnabled())
+  this->PopulateIntensityDistributionTargetVolumeSelector();
+
+  // Create the histogram
+  if (!this->HistogramData)
+    {
+    this->HistogramData = vtkKWHistogram::New();
+    this->HistogramVisualization = vtkKWColorTransferFunctionEditor::New();
+    this->HistogramColorFunction = vtkColorTransferFunction::New();
+    }
+  if (!this->HistogramVisualization->IsCreated())
+    {
+    this->HistogramVisualization->SetParent(prior_page);
+    this->HistogramVisualization->Create();
+    this->HistogramVisualization->SetBorderWidth(2);
+    this->HistogramVisualization->SetReliefToGroove();
+    this->HistogramVisualization->SetPadX(2);
+    this->HistogramVisualization->SetPadY(2);
+    this->HistogramVisualization->SetPointPositionInValueRangeToTop(); 
+    this->HistogramVisualization->MidPointEntryVisibilityOn();
+    //this->HistogramVisualization->PointGuidelineVisibilityOn();
+    this->HistogramVisualization->MidPointGuidelineVisibilityOn(); 
+    this->HistogramVisualization->SetLabelPositionToTop();
+    }
+
+  this->Script(
+    "pack %s -side top -anchor nw -fill both -padx 2 -pady 2 -pady 2", 
+    this->HistogramVisualization->GetWidgetName());
+
+  vtkEMSegmentMRMLManager *mrmlManager0 = this->GetGUI()->GetMRMLManager();
+  this->HistogramVolumeSelector->SetEnabled(
+     mrmlManager0->GetVolumeNumberOfChoices() ? parent->GetEnabled() : 0);
+
+  if(this->HistogramVolumeSelector->GetEnabled())
     {
     // Select the target volume, and update everything else accordingly
     vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
     int vol_id = mrmlManager->GetTargetSelectedVolumeNthID(0);
     this->IntensityDistributionTargetSelectionChangedCallback(vol_id);
     }
-    
+
   this->AddPointMovingGUIEvents();
-  this->AddPointAddGUIEvents();
-  
-  
+
   // List Creation
-  
   if (!this->ClassAndNodeList)
     {
     this->ClassAndNodeList = vtkKWMultiColumnList::New();
     }
-    
-   if (!this->ClassAndNodeList->IsCreated())
+  if (!this->ClassAndNodeList->IsCreated())
     {
     this->ClassAndNodeList->SetParent(prior_page);
     this->ClassAndNodeList->Create();
     this->ClassAndNodeList->MovableColumnsOff();
-    this->ClassAndNodeList->SetPotentialCellColorsChangedCommand(this->ClassAndNodeList,"ScheduleRefreshColorsOfAllCellsWithWindowCommand");
-    //this->ClassAndNodeList->SetWidth(0);
-    
+    this->ClassAndNodeList->SetPotentialCellColorsChangedCommand(
+        this->ClassAndNodeList,
+        "ScheduleRefreshColorsOfAllCellsWithWindowCommand");
+
     int col_index;
-    
+
     col_index = this->ClassAndNodeList->AddColumn("Class");
     this->ClassAndNodeList->ColumnEditableOn(col_index);
     this->ClassAndNodeList->SetColumnFormatCommandToEmptyOutput(col_index);
@@ -714,101 +681,93 @@ void vtkEMSegmentNodeParametersStep::ShowUserInterface()
     this->ClassAndNodeList->ColumnEditableOff(col_index);
     this->ClassAndNodeList->SetColumnFormatCommandToEmptyOutput(col_index);
     this->ClassAndNodeList->SetColumnAlignmentToCenter(col_index);
-    
     }
-      
+
   int i = 0;
   int j = 0;
-  
-  //const char* maintin[200];
-  
   double node_value[6];
-  
-  for(j = 0;j < this->nbOfLeaf;j++){
-  this->leafName[j] = mrmlManager->GetTreeNodeName(this->leafID[j]);//sans this avant
-  this->orderedLabel[j] = mrmlManager->GetTreeNodeIntensityLabel(this->leafID[j]);
-  std::cout<<"Label: "<<this->orderedLabel[j]<<std::endl;
-  }
 
-  double* colors; 
+  for(j = 0;j < this->NumberOfLeaves;j++)
+    {
+    this->LeavesName[j] = mrmlManager->GetTreeNodeName(this->LeavesID[j]);
+    this->OrderedLabels[j] = mrmlManager->GetTreeNodeIntensityLabel(this->LeavesID[j]);
+    }
+
+  double* colors;
 
   vtkMRMLScene *mrmlScene   = mrmlManager->GetMRMLScene();
-  vtkMRMLColorNode *colorNode = vtkMRMLColorNode::SafeDownCast(mrmlScene->GetNodeByID( mrmlManager->GetColormap() ));
-  
-  for(i=0; i < this->nbOfLeaf; i++)
-  {
-  this->ClassAndNodeList->InsertCellText(i,0,this->leafName[i]);
-  this->ClassAndNodeList->SetCellWindowCommandToComboBoxWithValues(i,0,this->nbOfLeaf,leafName);
-  this->ClassAndNodeList->InsertCellTextAsInt(i,1,i+1);
-  
-  
-  this->IntensityDistributionHistogramHistogramFunc->GetNodeValue(i, node_value);
-  
-  const char *color[200];
-  color[0] = "1.0 0.0 0.0";
-  
-  colors = colorNode->GetLookupTable()->GetTableValue(mrmlManager->GetTreeNodeIntensityLabel(leafID[i]));
+  vtkMRMLColorNode *colorNode = vtkMRMLColorNode::SafeDownCast(mrmlScene->
+      GetNodeByID( mrmlManager->GetColormap() ));
 
-  char red[20];
-  double redDouble = colors[0];
-  char green[20];
-  double greenDouble = colors[1];
-  char blue[20];
-  double blueDouble = colors[2];
-  
-  sprintf(red,"%f",redDouble);
-  sprintf(green,"%f",greenDouble);
-  sprintf(blue,"%f",blueDouble);
+  for(i=0; i < this->NumberOfLeaves; i++)
+    {
+    this->ClassAndNodeList->InsertCellText(i,0,this->LeavesName[i]);
+    this->ClassAndNodeList->SetCellWindowCommandToComboBoxWithValues(i,0,
+        this->NumberOfLeaves,this->LeavesName);
+    this->ClassAndNodeList->InsertCellTextAsInt(i,1,i+1);
+    this->HistogramColorFunction->GetNodeValue(i, node_value);
 
-  char listColor[11] = {"        "};
+    const char *color[200];
+    color[0] = "1.0 0.0 0.0";
 
-  listColor[0] = red[0];
-  listColor[1] = red[1];
-  listColor[2] = red[2];
+    colors = colorNode->GetLookupTable()->GetTableValue(mrmlManager->
+        GetTreeNodeIntensityLabel(this->LeavesID[i]));
 
-  listColor[4] = green[0];
-  listColor[5] = green[1];
-  listColor[6] = green[2];
+    char red[20];
+    double redDouble = colors[0];
+    char green[20];
+    double greenDouble = colors[1];
+    char blue[20];
+    double blueDouble = colors[2];
 
-  listColor[8] = blue[0];
-  listColor[9] = blue[1];
-  listColor[10] = blue[2];
+    sprintf(red,"%f",redDouble);
+    sprintf(green,"%f",greenDouble);
+    sprintf(blue,"%f",blueDouble);
 
-  std::cout<<"new color: "<<listColor<<std::endl;
+    char listColor[11] = {"        "};
 
-  color[0] = listColor;
+    listColor[0] = red[0];
+    listColor[1] = red[1];
+    listColor[2] = red[2];
 
-  this->ClassAndNodeList->InsertCellText(i,2,color[0]);
-  this->ClassAndNodeList->SetCellWindowCommandToColorButton(i,2);
-  }
-                
-    this->Script(
+    listColor[4] = green[0];
+    listColor[5] = green[1];
+    listColor[6] = green[2];
+
+    listColor[8] = blue[0];
+    listColor[9] = blue[1];
+    listColor[10] = blue[2];
+
+    color[0] = listColor;
+
+    this->ClassAndNodeList->InsertCellText(i,2,color[0]);
+    this->ClassAndNodeList->SetCellWindowCommandToColorButton(i,2);
+    }
+
+  this->Script(
     "pack %s -side top -anchor nw -padx 2 -pady 2 -pady 2", 
     this->ClassAndNodeList->GetWidgetName());
 
   this->AddColumnListGUIObservers();
 
   // Update Button
-  
-  if (!this->TestButton)
+
+  if (!this->ComputeWeightsButton)
     {
-    this->TestButton = vtkKWPushButton::New();
+    this->ComputeWeightsButton = vtkKWPushButton::New();
     }
-  if (!this->TestButton->IsCreated())
+  if (!this->ComputeWeightsButton->IsCreated())
     {
-    this->TestButton->SetParent(prior_page);
-    this->TestButton->Create();
-    this->TestButton->SetText("Update Tree");    
+    this->ComputeWeightsButton->SetParent(prior_page);
+    this->ComputeWeightsButton->Create();
+    this->ComputeWeightsButton->SetText("Update Tree");
     }
 
   this->Script("pack %s -side top -anchor nw -fill both -padx 2 -pady 2 -pady 2",
-               this->TestButton->GetWidgetName());
-  
-  this->AddTestButtonGUIEvents();             
+               this->ComputeWeightsButton->GetWidgetName());
 
+  this->AddComputeWeightsButtonGUIEvents();
 
-   //////////  END NEW
-   
   // Create the EM menu button
 
   if (!this->StoppingConditionsEMMenuButton)
@@ -827,7 +786,7 @@ void vtkEMSegmentNodeParametersStep::ShowUserInterface()
 
   this->Script("grid %s -column 0 -row 0 -sticky nw -padx 2 -pady 2", 
                this->StoppingConditionsEMMenuButton->GetWidgetName());
-  
+
   // Create the EM iterations entry
 
   if (!this->StoppingConditionsEMIterationsEntry)
@@ -1292,16 +1251,14 @@ void vtkEMSegmentNodeParametersStep::ShowUserInterface()
     }
 
   this->DisplaySelectedNodeParametersCallback();
-  
-   
 }
 //----------------------------------------------------------------------------
 void vtkEMSegmentNodeParametersStep::
   PopulateClassAndNodeList()
-{  
+{
   int i;
-  
-  for(i=1; i<(this->nbOfLeaf+1); i++)
+
+  for(i=1; i<(this->NumberOfLeaves+1); i++)
   {
   this->ClassAndNodeList->InsertCellTextAsInt(i-1,1,i);
   }
@@ -1311,7 +1268,7 @@ void vtkEMSegmentNodeParametersStep::
 //----------------------------------------------------------------------------
 void vtkEMSegmentNodeParametersStep::
   PopulateIntensityDistributionTargetVolumeSelector()
-{  
+{
   vtkIdType target_vol_id;
   char buffer[256];
 
@@ -1320,19 +1277,19 @@ void vtkEMSegmentNodeParametersStep::
     {
     return;
     }
-  int nb_of_target_volumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
-  
-  vtkKWMenu* menu = this->IntensityDistributionHistogramButton->
+  int numberOfTargetVolumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
+
+  vtkKWMenu* menu = this->HistogramVolumeSelector->
     GetWidget()->GetMenu();
   menu->DeleteAllItems();
 
   // Update the target volume list in the menu button
 
-  for(int i = 0; i < nb_of_target_volumes; i++)
+  for(int i = 0; i < numberOfTargetVolumes; i++)
     {
     target_vol_id = mrmlManager->GetTargetSelectedVolumeNthID(i);
-    sprintf(buffer, "%s %d", 
-            "IntensityDistributionTargetSelectionChangedCallback", 
+    sprintf(buffer, "%s %d",
+            "IntensityDistributionTargetSelectionChangedCallback",
             static_cast<int>(target_vol_id));
     const char *name = mrmlManager->GetVolumeName(target_vol_id);
     if (name)
@@ -1340,7 +1297,8 @@ void vtkEMSegmentNodeParametersStep::
       menu->AddRadioButton(name, this, buffer);
       if (i == 0)
         {
-        this->IntensityDistributionHistogramButton->GetWidget()->SetValue(name);
+        this->HistogramVolumeSelector->GetWidget()->
+          SetValue(name);
         }
       }
     }
@@ -1349,76 +1307,74 @@ void vtkEMSegmentNodeParametersStep::
 void vtkEMSegmentNodeParametersStep::
   IntensityDistributionTargetSelectionChangedCallback(vtkIdType target_vol_id)
 {
-std::cout<<"INTENSITY DISTRIBUTION TARGET SELECTION CHANGED CALLBACK"<<std::endl;
-std::cout<<"vol id: "<< target_vol_id <<std::endl;
-  
-vtkDataArray* array = this->GetGUI()->GetMRMLManager()->GetVolumeNode(target_vol_id)->GetImageData()->GetPointData()->GetScalars();
-this->IntensityDistributionHistogramHistogram->BuildHistogram(array,0);
 
-this->IntensityDistributionHistogramHistogramVisu->SetHistogram(this->IntensityDistributionHistogramHistogram);
+  vtkDataArray* array = this->GetGUI()->GetMRMLManager()->
+    GetVolumeNode(target_vol_id)->GetImageData()->GetPointData()->GetScalars();
+  this->HistogramData->BuildHistogram(array,0);
 
-double* range = this->IntensityDistributionHistogramHistogram->GetRange();
+  this->HistogramVisualization->SetHistogram(this->HistogramData);
 
-int size;
-size = this->IntensityDistributionHistogramHistogramVisu->GetFunctionSize();
-this->IntensityDistributionHistogramHistogramVisu->SetDisableAddAndRemove(0);
+  double* range = this->HistogramData->GetRange();
 
-
-if(size > 0){
-this->IntensityDistributionHistogramHistogramFunc->RemoveAllPoints();
-}
-
-this->IntensityDistributionHistogramHistogramFunc->SetColorSpaceToHSV();
-this->IntensityDistributionHistogramHistogramFunc->AddHSVPoint(range[0],0.66,1.0,1.0);
-this->IntensityDistributionHistogramHistogramFunc->AddHSVPoint(range[1],0.0,1.0,1.0);
-
-double i;
-float color;
-
-for(i = 1; i< this->nbOfLeaf - 1 ; i++){
-
-color = 0.66*(1-i/(this->nbOfLeaf -1));
-
-std::cout<<"color: "<<color << std::endl;
-
-this->IntensityDistributionHistogramHistogramFunc->AddHSVPoint((range[0]+range[1])*(i)/(this->nbOfLeaf-1),color,1.0,1.0);
-}
+  int size;
+  size = this->HistogramVisualization->GetFunctionSize();
+  this->HistogramVisualization->SetDisableAddAndRemove(0);
 
 
-this->IntensityDistributionHistogramHistogramFunc->SetColorSpaceToRGB();
+  if(size > 0)
+    {
+    this->HistogramColorFunction->RemoveAllPoints();
+    }
 
-double nodeInfo[6];
+  this->HistogramColorFunction->SetColorSpaceToHSV();
+  this->HistogramColorFunction->AddHSVPoint(range[0],0.66,1.0,1.0);
+  this->HistogramColorFunction->AddHSVPoint(range[1],0.0,1.0,1.0);
 
-double *colors;
+  double i;
+  float color;
 
-vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  for(i = 1; i< this->NumberOfLeaves - 1 ; i++)
+    {
+    color = 0.66*(1-i/(this->NumberOfLeaves -1));
+    this->HistogramColorFunction->
+    AddHSVPoint((range[0]+range[1])*(i)/(this->NumberOfLeaves-1),color,1.0,1.0);
+    }
 
-vtkMRMLScene            *mrmlScene   = mrmlManager->GetMRMLScene();
-    
-vtkMRMLColorNode *colorNode = vtkMRMLColorNode::SafeDownCast(mrmlScene->GetNodeByID( mrmlManager->GetColormap() ));
 
-for(int j = 0 ; j < this->nbOfLeaf ; j++){
-this->IntensityDistributionHistogramHistogramFunc->GetNodeValue(j,nodeInfo);
+  this->HistogramColorFunction->SetColorSpaceToRGB();
 
-colors = colorNode->GetLookupTable()->GetTableValue(mrmlManager->GetTreeNodeIntensityLabel(leafID[j]));
-nodeInfo[1] = colors[0];
-nodeInfo[2] = colors[1];
-nodeInfo[3] = colors[2];
-nodeInfo[5] = 1.0;
+  double nodeInfo[6];
+  double *colors;
 
-this->IntensityDistributionHistogramHistogramFunc->SetNodeValue(j,nodeInfo);
-}
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  vtkMRMLScene *mrmlScene   = mrmlManager->GetMRMLScene();
+  vtkMRMLColorNode *colorNode = vtkMRMLColorNode::SafeDownCast(mrmlScene->
+    GetNodeByID( mrmlManager->GetColormap() ));
 
-this->IntensityDistributionHistogramHistogramVisu->SetDisableAddAndRemove(1);
+  for(int j = 0 ; j < this->NumberOfLeaves ; j++)
+    {
+    this->HistogramColorFunction->GetNodeValue(j,nodeInfo);
+    colors = colorNode->GetLookupTable()->GetTableValue(mrmlManager->
+      GetTreeNodeIntensityLabel(this->LeavesID[j]));
+    nodeInfo[1] = colors[0];
+    nodeInfo[2] = colors[1];
+    nodeInfo[3] = colors[2];
+    nodeInfo[5] = 1.0;
 
-this->IntensityDistributionHistogramHistogramVisu->SetColorTransferFunction(this->IntensityDistributionHistogramHistogramFunc);
-this->IntensityDistributionHistogramHistogramVisu->SetWholeParameterRangeToFunctionRange();
-this->IntensityDistributionHistogramHistogramVisu->SetVisibleParameterRangeToWholeParameterRange();
-this->IntensityDistributionHistogramHistogramVisu->ParameterRangeVisibilityOn();
+    this->HistogramColorFunction->SetNodeValue(j,nodeInfo);
+    }
 
-this->IntensityDistributionHistogramHistogramVisu->ExpandCanvasWidthOn();
-this->IntensityDistributionHistogramHistogramVisu->SetCanvasHeight(180);
+  this->HistogramVisualization->SetDisableAddAndRemove(1);
+  this->HistogramVisualization->SetColorTransferFunction
+    (this->HistogramColorFunction);
+  this->HistogramVisualization->SetWholeParameterRangeToFunctionRange();
+  this->HistogramVisualization->
+    SetVisibleParameterRangeToWholeParameterRange();
+  this->HistogramVisualization->
+    ParameterRangeVisibilityOn();
 
+  this->HistogramVisualization->ExpandCanvasWidthOn();
+  this->HistogramVisualization->SetCanvasHeight(180);
 }
 //----------------------------------------------------------------------------
 void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
@@ -1426,7 +1382,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
   // Update the UI with the proper value, if there is a selection
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  vtkEMSegmentAnatomicalStructureStep *anat_step = 
+  vtkEMSegmentAnatomicalStructureStep *anat_step =
     this->GetGUI()->GetAnatomicalStructureStep();
   if (!mrmlManager || !anat_step)
     {
@@ -1446,7 +1402,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
 
   int enabled = tree->GetEnabled();
   int row;
-  int nb_of_target_volumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
+  int numberOfTargetVolumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
   char buffer[256];
 
   // Update the class probability scale
@@ -1512,7 +1468,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
               "NodeParametersInputChannelWeightChangedCallback %d",
               static_cast<int>(sel_vol_id));
       list->SetCellUpdatedCommand(this, buffer);
-      for (row = 0; row < nb_of_target_volumes; row++)
+      for (row = 0; row < numberOfTargetVolumes; row++)
         {
         list->AddRow();
         int vol_id = mrmlManager->GetTargetSelectedVolumeNthID(row);
@@ -2124,7 +2080,8 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
         mrmlManager->GetTreeNodeGenerateBackgroundProbability(sel_vol_id));
       this->Script(
         "pack %s -side top -anchor nw -padx 2 -pady 2", 
-        this->NodeParametersGenerateBackgroundProbabilityCheckButton->GetWidgetName());
+        this->NodeParametersGenerateBackgroundProbabilityCheckButton->
+          GetWidgetName());
       }
     else
       {
@@ -2132,7 +2089,8 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       cb->SetSelectedState(0);
       this->Script(
         "pack forget %s", 
-        this->NodeParametersGenerateBackgroundProbabilityCheckButton->GetWidgetName());
+        this->NodeParametersGenerateBackgroundProbabilityCheckButton->
+          GetWidgetName());
       }
     }
 }
@@ -2207,7 +2165,8 @@ void vtkEMSegmentNodeParametersStep::StoppingConditionsEMCallback(
   // The EM stopping condition has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  if (mrmlManager && value != mrmlManager->GetTreeNodeStoppingConditionEMType(sel_vol_id))
+  if (mrmlManager && value != mrmlManager->
+      GetTreeNodeStoppingConditionEMType(sel_vol_id))
     {
     mrmlManager->SetTreeNodeStoppingConditionEMType(sel_vol_id, value);
     this->DisplaySelectedNodeParametersCallback();
@@ -2222,7 +2181,8 @@ void vtkEMSegmentNodeParametersStep::StoppingConditionsEMIterationsCallback(
 
   int v = (int)abs(atoi(value));
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  if (mrmlManager && v != mrmlManager->GetTreeNodeStoppingConditionEMIterations(sel_vol_id))
+  if (mrmlManager && v != mrmlManager->
+      GetTreeNodeStoppingConditionEMIterations(sel_vol_id))
     {
     mrmlManager->SetTreeNodeStoppingConditionEMIterations(sel_vol_id, v);
     this->DisplaySelectedNodeParametersCallback(); // in case the value < 0
@@ -2249,7 +2209,8 @@ void vtkEMSegmentNodeParametersStep::StoppingConditionsMFACallback(
   // The MFA stopping condition has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  if (mrmlManager && value != mrmlManager->GetTreeNodeStoppingConditionMFAType(sel_vol_id))
+  if (mrmlManager && value != mrmlManager->
+      GetTreeNodeStoppingConditionMFAType(sel_vol_id))
     {
     mrmlManager->SetTreeNodeStoppingConditionMFAType(sel_vol_id, value);
     this->DisplaySelectedNodeParametersCallback();
@@ -2475,7 +2436,7 @@ void vtkEMSegmentNodeParametersStep::Validate()
          << "you should edit the \"Global Prior\" fields for the"
          << " children nodes of "
          << mrmlManager->GetTreeNodeName(firstBadTreeID) << ".";
-      
+
       std::string parentNodeName = 
         mrmlManager->GetTreeNodeName(firstBadTreeID);
       std::string errorMessage   = parentNodeName  + 
@@ -2487,7 +2448,7 @@ void vtkEMSegmentNodeParametersStep::Validate()
                                        ss.str().c_str(),
                                        vtkKWMessageDialog::ErrorIcon | 
                                        vtkKWMessageDialog::InvokeAtPointer);
-      
+
       // there was an error; stay on this step
       wizard_workflow->
         PushInput(vtkKWWizardStep::GetValidationFailedInput());
@@ -2498,9 +2459,10 @@ void vtkEMSegmentNodeParametersStep::Validate()
 }
 
 //----------------------------------------------------------------------------
-void vtkEMSegmentNodeParametersStep::RightClickOnInputChannelWeightsListCallback(int row, int col, int x, int y)
+void vtkEMSegmentNodeParametersStep::
+RightClickOnInputChannelWeightsListCallback(int row, int col, int x, int y)
 {
-  vtkKWMultiColumnList *list = 
+  vtkKWMultiColumnList *list =
     this->NodeParametersInputChannelWeightsList->GetWidget()->GetWidget();
   list->EditCell(row, col);
 }
@@ -2512,301 +2474,173 @@ void vtkEMSegmentNodeParametersStep::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-/*
-void vtkEMSegmentNodeParametersStep::ProcessUpdatePriorGUIEvents(
-    vtkObject *caller, unsigned long event, void *callData)
-{*/
-/*
-vtkSlicerApplicationGUI *applicationGUI     = this->GetGUI()->GetApplicationGUI();
-
-      double oldSliceSetting[3];
-      oldSliceSetting[0] = double(applicationGUI->GetMainSliceGUI("Red")->GetSliceController()->GetOffsetScale()->GetValue());
-      
-      std::cout<<"old setting "<< oldSliceSetting[0] <<std::endl;
-*/
-
-
-/*
-  // Update the UI with the proper value, if there is a selection
-  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  vtkEMSegmentAnatomicalStructureStep *anat_step = 
-    this->GetGUI()->GetAnatomicalStructureStep();
-  if (!mrmlManager || !anat_step)
-    {
-    return;
-    }
-  vtkKWTree *tree = anat_step->GetAnatomicalStructureTree()->GetWidget();
-  vtksys_stl::string sel_node;
-  vtkIdType sel_vol_id = 0;
-  vtkIdType root_vol_id = 0;
-  vtkIdType root2_vol_id = 0;
-  int sel_is_leaf_node = 0;
-  int has_valid_selection = tree->HasSelection();
-  int tatata;
-  if (has_valid_selection)
-    {
-    sel_node = tree->GetSelection();
-    sel_vol_id = tree->GetNodeUserDataAsInt(sel_node.c_str());
-    sel_is_leaf_node = mrmlManager->GetTreeNodeIsLeaf(sel_vol_id);
-    root_vol_id = mrmlManager->GetTreeRootNodeID();
-    root2_vol_id = mrmlManager->GetTreeNodeParentNodeID(sel_vol_id);
-    tatata =mrmlManager->GetTreeNodeNumberOfChildren(sel_vol_id);
-    }*/
-  /*
-  std::cout<<"test1: "<<sel_node<<std::endl;
-  std::cout<<"test2: "<<sel_vol_id<<std::endl;
-  std::cout<<"test3: "<<sel_is_leaf_node<<std::endl;
-  std::cout<<"test4: "<<root_vol_id<<std::endl;
-  std::cout<<"test5: "<<root2_vol_id<<std::endl;
-  std::cout<<"test6: "<<tatata<<std::endl;*/
-  /*
-  int i;
-  int nbfils[mrmlManager->GetTreeNodeNumberOfChildren(sel_vol_id)];
-  
-    for(i = 0; i < mrmlManager->GetTreeNodeNumberOfChildren(sel_vol_id);i++)
-  {
-    std::cout<<mrmlManager->GetTreeNodeChildNodeID(sel_vol_id, i)<<std::endl;
-    nbfils[i] = mrmlManager->GetTreeNodeNumberOfChildren(mrmlManager->GetTreeNodeChildNodeID(sel_vol_id, i));
-  }
-  
-  *//*
-  int enabled = tree->GetEnabled();
-  int row;
-  int nb_of_target_volumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
-  char buffer[256];
-  */
- // int number = this->MRMLManager->GetTargetNumberOfSelectedVolumes();
- // std::cout<<"test: "<<number<<std::endl;
-/*
-  // Update the class probability scale
-  
-  if (this->NodeParametersGlobalPriorScale)
-    {
-    if (has_valid_selection)
-      {
-      this->NodeParametersGlobalPriorScale->SetEnabled(enabled);
-      sprintf(
-        buffer, "NodeParametersGlobalPriorChangedCallback %d", 
-        static_cast<int>(sel_vol_id));
-      this->NodeParametersGlobalPriorScale->SetEndCommand(this, buffer);
-      this->NodeParametersGlobalPriorScale->SetEntryCommand(this, buffer);
-      this->NodeParametersGlobalPriorScale->SetValue(0.15);
-       //rmlManager->GetTreeNodeClassProbability(sel_vol_id));
-      }
-    else
-      {
-      this->NodeParametersGlobalPriorScale->SetEnabled(0);
-      this->NodeParametersGlobalPriorScale->SetEndCommand(NULL, NULL);
-      this->NodeParametersGlobalPriorScale->SetEntryCommand(NULL, NULL);
-      this->NodeParametersGlobalPriorScale->SetValue(0.0);
-      }
-    }*/
-//}
-/*
-//---------------------------------------------------------------------------
-void vtkEMSegmentNodeParametersStep::AddUpdatePriorGUIEvents() 
+void vtkEMSegmentNodeParametersStep::AddPointMovingGUIEvents()
 {
 
-    this->UpdatePrior
-    ->AddObserver(vtkKWPushButton::InvokedEvent, this->GetGUI()->GetGUICallbackCommand());
-}
-//---------------------------------------------------------------------------
-void vtkEMSegmentNodeParametersStep::RemoveUpdatePriorGUIEvents()
-{
-//this->UpdatePrior->RemoveObserver(vtkKWPushButton::InvokedEvent, this->GetGUI()->GetGUICallbackCommand());
-}*/
-
-//---------------------------------------------------------------------------
-void vtkEMSegmentNodeParametersStep::AddPointMovingGUIEvents() 
-{
-
-    this->IntensityDistributionHistogramHistogramVisu
-    ->AddObserver(vtkKWParameterValueFunctionEditor::PointChangedEvent, this->GetGUI()->GetGUICallbackCommand());
+    this->HistogramVisualization
+    ->AddObserver(vtkKWParameterValueFunctionEditor::PointChangedEvent,
+        this->GetGUI()->GetGUICallbackCommand());
 }
 //---------------------------------------------------------------------------
 void vtkEMSegmentNodeParametersStep::RemovePointMovingGUIEvents()
 {
-    this->IntensityDistributionHistogramHistogramVisu
-    ->RemoveObservers(vtkKWParameterValueFunctionEditor::PointChangedEvent, this->GetGUI()->GetGUICallbackCommand());
+    this->HistogramVisualization
+    ->RemoveObservers(vtkKWParameterValueFunctionEditor::PointChangedEvent,
+        this->GetGUI()->GetGUICallbackCommand());
 }
 //---------------------------------------------------------------------------
 void vtkEMSegmentNodeParametersStep::ProcessPointMovingGUIEvents(
   vtkObject *caller,
   unsigned long event,
-  void *callData) 
+  void *callData)
 {
-if(event == vtkKWParameterValueFunctionEditor::PointChangedEvent){
-int id = 2;
-double node_value[6];
+  if(event == vtkKWParameterValueFunctionEditor::PointChangedEvent)
+    {
+    int id = 2;
+    double node_value[6];
 
- this->IntensityDistributionHistogramHistogramFunc->GetNodeValue(id, node_value);
- /*
- for(int i=0; i < this->nbOfLeaf; i++)
+    this->HistogramColorFunction->
+       GetNodeValue(id, node_value);
+
+    this->GetLeavesRange();
+    this->VisualFeedback();
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkEMSegmentNodeParametersStep::GetLeavesRange(){
+
+  int i = 0;
+  int j = 0;
+
+  double midmin;
+  double midmax;
+  double node_value_next[6];
+  double node_value_prev[6];
+  double node_value[6];
+  double * position = new double[this->NumberOfLeaves];
+
+
+
+  while(i<(this->NumberOfLeaves))
   {
-  this->IntensityDistributionHistogramHistogramFunc->GetNodeValue(i, node_value);
-  this->ClassAndNodeList->SetCellBackgroundColor(i,2,node_value[1],node_value[2],node_value[3]);
-  }*/
-  
- this->test();
- 
-  this->histogramFeedback();
+    this->HistogramColorFunction->GetNodeValue(i,
+        node_value);
+    position[i] = node_value[0];
+    i++;
   }
-}
 
-//---------------------------------------------------------------------------
-void vtkEMSegmentNodeParametersStep::AddPointAddGUIEvents() 
-{
+  //loop for all leaves but the first one and last one
+  for(j = 1;j<(this->NumberOfLeaves)-1;j++)
+  {
+    midmin = 0;
+    midmax = 0;
 
-    this->IntensityDistributionHistogramHistogramVisu
-    ->AddObserver(vtkKWParameterValueFunctionEditor::PointAddedEvent, this->GetGUI()->GetGUICallbackCommand());
-}
-//---------------------------------------------------------------------------
-void vtkEMSegmentNodeParametersStep::RemovePointAddGUIEvents()
-{
+    this->HistogramColorFunction->GetNodeValue(j-1,
+        node_value_prev);
+    this->HistogramColorFunction->GetNodeValue(j,
+        node_value);
+    this->HistogramColorFunction->GetNodeValue(j+1,
+        node_value_next);
 
-}
-//---------------------------------------------------------------------------
-void vtkEMSegmentNodeParametersStep::ProcessPointAddGUIEvents(
-  vtkObject *caller,
-  unsigned long event,
-  void *callData) 
-{
-if(event == vtkKWParameterValueFunctionEditor::PointAddedEvent){
+    midmin = node_value[0] - (position[j] -
+        position[j-1])*(1-node_value_prev[4]);
+    midmax = node_value_next[0] - (position[j+1] -
+        position[j])*(1-node_value[4]);
 
-this->size = this->IntensityDistributionHistogramHistogramVisu->GetFunctionSize();
+    this->LeavesRange[j*2] = midmin;
+    this->LeavesRange[j*2+1] = midmax;
+  }
+
+
+  if( this->NumberOfLeaves > 2 )
+  {
+    this->LeavesRange[0] = position[0];
+    this->LeavesRange[1] = this->LeavesRange[2];
+
+    this->LeavesRange[(this->NumberOfLeaves)*2 - 2] = this->
+      LeavesRange[(this->NumberOfLeaves)*2-3];
+    this->LeavesRange[(this->NumberOfLeaves)*2 - 1] =
+      position[(this->NumberOfLeaves)-1];
+  }
+  else
+  {
+    midmin = 0;
+
+    this->LeavesRange[0] = position[0];
+    this->LeavesRange[3] = position[1];
+
+    this->HistogramColorFunction->GetNodeValue(0,
+        node_value);
+
+    midmin = position[0] + (position[1] - position[0])*(node_value[4]);
+
+    this->LeavesRange[1] = midmin;
+    this->LeavesRange[2] = midmin;
 
   }
-}
-
-//---------------------------------------------------------------------------
-void vtkEMSegmentNodeParametersStep::test(){
-int i = 0;
-int j = 0;
-int k = 0;
-
-double midmin;
-double midmax;
-double node_value_next[6];
-double node_value_prev[6];
-double node_value[6];
-double position[this->nbOfLeaf]; //6
-
-
-
- while(i<(this->nbOfLeaf)){
- this->IntensityDistributionHistogramHistogramFunc->GetNodeValue(i, node_value);
- position[i] = node_value[0];
-
- i++;
- }
-
- 
- for(j = 1;j<(this->nbOfLeaf)-1;j++){
- midmin = 0;
- midmax = 0;
- 
- this->IntensityDistributionHistogramHistogramFunc->GetNodeValue(j-1, node_value_prev);
- this->IntensityDistributionHistogramHistogramFunc->GetNodeValue(j, node_value);
- this->IntensityDistributionHistogramHistogramFunc->GetNodeValue(j+1, node_value_next);
- 
- midmin = node_value[0] - (position[j] - position[j-1])*(1-node_value_prev[4]);
- midmax = node_value_next[0] - (position[j+1] - position[j])*(1-node_value[4]);   
- 
- this->class_size[j*2] = midmin;
- this->class_size[j*2+1] = midmax; 
-
- }
-
-
-if( this->nbOfLeaf > 2 ){
- this->class_size[0] = position[0];
- this->class_size[1] = this->class_size[2];
- 
- this->class_size[(this->nbOfLeaf)*2 - 2] = this->class_size[(this->nbOfLeaf)*2-3];
- this->class_size[(this->nbOfLeaf)*2 - 1] = position[(this->nbOfLeaf)-1];
- 
-}
-else{
-
-midmin = 0;
-
-this->class_size[0] = position[0];
-this->class_size[3] = position[1];
-
- this->IntensityDistributionHistogramHistogramFunc->GetNodeValue(0, node_value);
- 
- midmin = position[0] + (position[1] - position[0])*(node_value[4]);
- 
-this->class_size[1] = midmin;
-this->class_size[2] = midmin;
-
-std::cout<<"size: "<< this->class_size[0] <<" to: "<< this->class_size[1] << std::endl;
-std::cout<<"size: "<< this->class_size[2] <<" to: "<< this->class_size[3] << std::endl;
-
-}
- 
-for(k=0;k<this->nbOfLeaf;k++){
- 
-this->classSize[2*k] = this->class_size[2*k];
-this->classSize[2*k+1] = this->class_size[2*k+1];
-
-} 
 
 }
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentNodeParametersStep::GetNumberOfLeaf(
-  const char *parent, vtkIdType vol_id)
+  const char *parent, vtkIdType volumeID)
 {
-  
+
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  
-  int nb_children = mrmlManager->GetTreeNodeNumberOfChildren(vol_id);
-  
-  if(nb_children == 0){
-  
-  this->nbOfLeaf = this->nbOfLeaf +1;
-  this->leafID[this->nbOfLeaf-1] = static_cast<int>(vol_id);
-  std::cout <<"ROOT ID: "<< mrmlManager->GetTreeRootNodeID()<< std::endl;
+
+  int numberOfChildren = mrmlManager->GetTreeNodeNumberOfChildren(volumeID);
+
+  if(numberOfChildren == 0)
+  {
+
+    this->NumberOfLeaves = this->NumberOfLeaves +1;
+    this->LeavesID[this->NumberOfLeaves-1] = static_cast<int>(volumeID);
+  //std::cout <<"ROOT ID: "<< mrmlManager->GetTreeRootNodeID()<< std::endl;
   }
-  
-  for (int i = 0; i < nb_children; i++)
-    {
+
+  for (int i = 0; i < numberOfChildren; i++)
+  {
     this->GetNumberOfLeaf(
-      NULL, mrmlManager->GetTreeNodeChildNodeID(vol_id, i));
-      }
+      NULL, mrmlManager->GetTreeNodeChildNodeID(volumeID, i));
+  }
 }
 //----------------------------------------------------------------------------
-void vtkEMSegmentNodeParametersStep::GetParentPercent(
-  int i, vtkIdType vol_id)
+void vtkEMSegmentNodeParametersStep::FillTheTreeStructure(
+  int i, vtkIdType treeLeafID)
 {
-  this->depth = this->depth +1 ;
-  
+  this->DepthOfTheNodeInTheTreeStructure += 1 ;
+
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  
-  vtkIdType parent_ID = mrmlManager->GetTreeNodeParentNodeID(vol_id);
-  
-  
-  if(parent_ID != mrmlManager->GetTreeRootNodeID()){
-  
-  this->classPercentOrder[this->depth][i] = parent_ID;
-  this->classPercentOrderCP[this->depth][i] = parent_ID;
-  this->GetParentPercent(i, parent_ID);
+
+  vtkIdType parentID = mrmlManager->GetTreeNodeParentNodeID(treeLeafID);
+
+
+  if(parentID != mrmlManager->GetTreeRootNodeID())
+  {
+
+    this->TreeStructure[this->DepthOfTheNodeInTheTreeStructure][i] = parentID;
+    this->TreeStructureTemporary[this->DepthOfTheNodeInTheTreeStructure][i] =
+    parentID;
+    this->FillTheTreeStructure(i, parentID);
   }
+
 }
 
 //----------------------------------------------------------------------------
-void vtkEMSegmentNodeParametersStep::ProcessTestButtonGUIEvents(vtkObject
-    *caller, unsigned long event, void *callData)
+void vtkEMSegmentNodeParametersStep::ProcessComputeWeightsButtonGUIEvents(
+    vtkObject *caller, unsigned long event, void *callData)
 {
-  if (event == vtkKWPushButton::InvokedEvent && caller == this->TestButton)
+
+  if (event == vtkKWPushButton::InvokedEvent && caller ==
+      this->ComputeWeightsButton)
   {
-    for (int i=0; i < this->nbOfLeaf; i++)
+    for (int i=0; i < this->NumberOfLeaves; i++)
     {
-      this->depth = 0;
-      this->classPercentOrder[0][i]   = this->leafID[i];
-      this->classPercentOrderCP[0][i] = this->leafID[i];
-      this->GetParentPercent(i,this->leafID[i]);
+      this->DepthOfTheNodeInTheTreeStructure = 0;
+      this->TreeStructure[0][i]   = this->LeavesID[i];
+      this->TreeStructureTemporary[0][i] = this->LeavesID[i];
+      this->FillTheTreeStructure(i,this->LeavesID[i]);
     }
 
     int control = 1;
@@ -2815,23 +2649,23 @@ void vtkEMSegmentNodeParametersStep::ProcessTestButtonGUIEvents(vtkObject
 
     vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
-    for (int i=0;i<this->nbOfLeaf;i++)
+    for (int i=0;i<this->NumberOfLeaves;i++)
     {
       for (int j=0; j<200; j++)
       {
-        for (int k=0; k<this->nbOfLeaf; k++)
+        for (int k=0; k<this->NumberOfLeaves; k++)
         {
           for (int l=0; l<200; l++)
           {
-            if (this->classPercentOrder[j][i] ==
-                this->classPercentOrderCP[l][k] &&
-                this->classPercentOrder[j][i] != 0)
+            if (this->TreeStructure[j][i] ==
+                this->TreeStructureTemporary[l][k] &&
+                this->TreeStructure[j][i] != 0)
             {
-              this->classPercentOrderCP[l][k] = 0;
+              this->TreeStructureTemporary[l][k] = 0;
               for(int m=0; m < 200 ;m++)
               {
-                if(this->correspondanceArray[m] ==
-                    this->classPercentOrder[j][i])
+                if(this->TreeNodes[m] ==
+                    this->TreeStructure[j][i])
                 {
                   positionF = m;
                   control = 0;
@@ -2844,16 +2678,16 @@ void vtkEMSegmentNodeParametersStep::ProcessTestButtonGUIEvents(vtkObject
                 position++;
               }
 
-              this->correspondanceArray[positionF] =
-                this->classPercentOrder[j][i];
+              this->TreeNodes[positionF] =
+                this->TreeStructure[j][i];
 
-              for(int z=0; z < this->nbOfLeaf; z++)
+              for(int z=0; z < this->NumberOfLeaves; z++)
               {
                 if (strcmp(this->ClassAndNodeList->GetCellText(z,0),
                       mrmlManager->GetTreeNodeName(
-                        this->classPercentOrder[0][k])) == 0)
+                        this->TreeStructure[0][k])) == 0)
                 {
-                  this->class_weight[positionF] += this->GetWeight(z);
+                  this->TreeNodesWeights[positionF] += this->GetLeafWeight(z);
                 }
               }
 
@@ -2864,104 +2698,99 @@ void vtkEMSegmentNodeParametersStep::ProcessTestButtonGUIEvents(vtkObject
       }
     }
 
-    //for(int r = 0;r<200;r++)
-    //{
-      //std::cout<<this->correspondanceArray[r]<<std::endl;
-    //}
+    vtkIdType rootID = mrmlManager->GetTreeRootNodeID();
 
-    //std::cout<<"in Process GUI"<<std::endl;
-
-    vtkIdType root_id = mrmlManager->GetTreeRootNodeID();
-
-    if (root_id)
+    if (rootID)
       {
-      this->GetPercent(3,root_id);
+      this->GetNodesWeights(3,rootID);
       }
   }
+
 }
 
 //---------------------------------------------------------------------------
-void vtkEMSegmentNodeParametersStep::AddTestButtonGUIEvents()
+void vtkEMSegmentNodeParametersStep::AddComputeWeightsButtonGUIEvents()
 {
-  this->TestButton->AddObserver(vtkKWPushButton::InvokedEvent,this->GetGUI()->
-      GetGUICallbackCommand());
+  this->ComputeWeightsButton->AddObserver(vtkKWPushButton::InvokedEvent,
+      this->GetGUI()->GetGUICallbackCommand());
 }
 
 //---------------------------------------------------------------------------
-void vtkEMSegmentNodeParametersStep::RemoveTestButtonGUIEvents()
+void vtkEMSegmentNodeParametersStep::RemoveComputeWeightsButtonGUIEvents()
 {
-  this->TestButton->RemoveObservers(vtkKWPushButton::InvokedEvent,this->
-      GetGUI()->GetGUICallbackCommand());
+  this->ComputeWeightsButton->RemoveObservers(vtkKWPushButton::InvokedEvent,
+      this->GetGUI()->GetGUICallbackCommand());
 }
 
 //----------------------------------------------------------------------------
-void vtkEMSegmentNodeParametersStep::GetPercent(int j, vtkIdType vol_id)
+void vtkEMSegmentNodeParametersStep::GetNodesWeights(int j, vtkIdType volumeID)
 {
-  this->depth += 1;
+  this->DepthOfTheNodeInTheTreeStructure += 1;
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
-  int nb_children = mrmlManager->GetTreeNodeNumberOfChildren(vol_id);
+  int numberOfChildren = mrmlManager->GetTreeNodeNumberOfChildren(volumeID);
   double weight = 0.0;
 
-  if(nb_children > 0)
+  if(numberOfChildren > 0)
   {
-    for (int i=0; i < nb_children; i++)
+    for (int i=0; i < numberOfChildren; i++)
     {
       for(int m=0; m < 200 ;m++)
       {
-        if (this->correspondanceArray[m] == mrmlManager->
-            GetTreeNodeChildNodeID(vol_id, i))
+        if (this->TreeNodes[m] == mrmlManager->
+            GetTreeNodeChildNodeID(volumeID, i))
         {
-          weight += this->class_weight[m];
+          weight += this->TreeNodesWeights[m];
         }
       }
     }
 
-    for (int i=0; i < nb_children; i++)
+    for (int i=0; i < numberOfChildren; i++)
     {
       for (int m=0; m < 200; m++)
       {
-        if (this->correspondanceArray[m] == mrmlManager->
-            GetTreeNodeChildNodeID(vol_id, i))
+        if (this->TreeNodes[m] == mrmlManager->
+            GetTreeNodeChildNodeID(volumeID, i))
         {
-          this->class_weight[m] = (this->class_weight[m])/weight;
+          this->TreeNodesWeights[m] = (this->TreeNodesWeights[m])/weight;
         }
       }
     }
 
-    for (int i=0; i < nb_children; i++)
+    for (int i=0; i < numberOfChildren; i++)
     {
-      this->GetPercent(3,mrmlManager->GetTreeNodeChildNodeID(vol_id, i));
+      this->GetNodesWeights(3,mrmlManager->GetTreeNodeChildNodeID(volumeID,
+            i));
     }
 
-    //std::cout<<"in Get Percent"<<std::endl;
     for (int i=0; i < 200; i++)
     {
-      if (this->correspondanceArray[i] !=  0 && mrmlManager->GetTreeNode(
-            this->correspondanceArray[i]))
+      if (this->TreeNodes[i] !=  0 && mrmlManager->GetTreeNode(
+            this->TreeNodes[i]))
       {
-        mrmlManager->SetTreeNodeClassProbability(this->correspondanceArray[i],
-            this->class_weight[i]);
+        mrmlManager->SetTreeNodeClassProbability(this->TreeNodes[i],
+            this->TreeNodesWeights[i]);
       }
     }
   }
 }
 
 //--------------------------------------------------------------------------
-double vtkEMSegmentNodeParametersStep::GetWeight(int z)
+double vtkEMSegmentNodeParametersStep::GetLeafWeight(int z)
 {
-  double sum = 0.0;
+  double weight = 0.0;
 
-  int start = (int)(this->class_size[z*2]   + 1.5);
-  int stop  = (int)(this->class_size[z*2+1] + 0.5);
+  int start = (int)(this->LeavesRange[z*2]   + 1.5);
+  int stop  = (int)(this->LeavesRange[z*2+1] + 0.5);
 
   for (int i = start; i < stop; i++)
   {
-    sum += this->IntensityDistributionHistogramHistogram->GetOccurenceAtValue(i);
+    weight +=
+      this->HistogramData->GetOccurenceAtValue(i);
   }
 
-  return sum;
+  return weight;
 }
 
 //---------------------------------------------------------------------------
@@ -2995,54 +2824,46 @@ void vtkEMSegmentNodeParametersStep::ProcessPreviewGUIEvents(
       mrmlManager->SetOutputVolumeMRMLID(
         this->PreviewSelector->GetSelected()->GetID());
       }
-      
-      // find output volume
+
+  // find output volume
   if (!mrmlManager->GetSegmenterNode())
     {
     vtkErrorMacro("Segmenter node is null---aborting segmentation.");
     return;
     }
-  vtkMRMLScalarVolumeNode *outVolume = 
+  vtkMRMLScalarVolumeNode *outVolume =
     mrmlManager->GetOutputVolumeNode();
   if (outVolume == NULL)
     {
     vtkErrorMacro("No output volume found---aborting segmentation.");
     return;
     }
-     std::cout<<"process preview gui event"<<std::endl;
+     //std::cout<<"process preview gui event"<<std::endl;
     }
 }
 //--------------------------------------------------------------------------
-void vtkEMSegmentNodeParametersStep::histogramFeedback()
+void vtkEMSegmentNodeParametersStep::VisualFeedback()
 {
 
-std::cout<<"in histogramFeedback"<<std::endl;
+  vtkSlicerApplicationGUI *applicationGUI = this->GetGUI()->
+    GetApplicationGUI();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
-vtkSlicerApplicationGUI *applicationGUI     = this->GetGUI()->GetApplicationGUI();
-vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();  
-// find volumes
-/*
-
-      // find input volume
+  // find input volume
   if (!mrmlManager->GetSegmenterNode())
     {
     vtkErrorMacro("Segmenter node is null---aborting segmentation.");
     return;
     }
-  vtkMRMLVolumeNode *inVolume  = applicationGUI->GetApplicationLogic()->GetSliceLogic("Red")->GetLayerVolumeNode (0);
+  vtkMRMLVolumeNode *inVolume  = applicationGUI->GetApplicationLogic()->
+    GetSliceLogic("Red")->GetLayerVolumeNode (0);
   if (inVolume == NULL)
     {
     vtkErrorMacro("Can't get first target image.");
     return;
     }
-    
-      // find output volume
-  if (!mrmlManager->GetSegmenterNode())
-    {
-    vtkErrorMacro("Segmenter node is null---aborting segmentation.");
-    return;
-    }
-  vtkMRMLScalarVolumeNode *outVolume = 
+  // find output volume
+  vtkMRMLScalarVolumeNode *outVolume =
     mrmlManager->GetOutputVolumeNode();
   if (outVolume == NULL)
     {
@@ -3050,317 +2871,23 @@ vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
     return;
     }
 
-  std::string name (outVolume->GetName());
-  std::string id (outVolume->GetID());
-
-  outVolume->CopyOrientation(inVolume);
-  outVolume->SetAndObserveTransformNodeID(inVolume->GetTransformNodeID());
-
-  outVolume->SetName(name.c_str());
-  
-  
-  this->PREVIEW = vtkImageData::New(); 
-  
   vtkTransform* xyToijk = vtkTransform::New();
 
-  xyToijk  = applicationGUI->GetApplicationLogic()->GetSliceLogic("Red")->GetBackgroundLayer()->GetXYToIJKTransform();
+  xyToijk  = applicationGUI->GetApplicationLogic()->GetSliceLogic("Red")->
+    GetBackgroundLayer()->GetXYToIJKTransform();
 
-  vtkMRMLSliceNode *snode = applicationGUI->GetMainSliceGUI("Red")->GetSliceNode();
-  unsigned int dimensions[3];
-  snode->GetDimensions(dimensions);
+  vtkMRMLSliceNode *snode = applicationGUI->GetMainSliceGUI("Red")->
+    GetSliceNode();
 
-  std::cout<<"slice size: "<<dimensions[0]<<" "<<dimensions[1]<<std::endl;
+  unsigned int dimensionsOfTheRedBox[2];
+  snode->GetDimensions(dimensionsOfTheRedBox);
 
-  double dim0;
-  double dim1;
+  double xRedBoxSize = dimensionsOfTheRedBox[0];
+  double yRedBoxSize = dimensionsOfTheRedBox[1];
 
-  dim0 = dimensions[0];
-  dim1 = dimensions[1];
-  
-  //GET SIZE OF THE ARRAY TO BE PROCESSED AND THE FIRST PIXEL IN FRAME
-  
-  double size1 = 0;
-  double size2 = 0;
-  double xyPt[4];
-  double ijkPt[3];
-  double begin[2];
-  
-  xyPt[1] = round(dim1/2);
-  xyPt[2] = 0;
-  xyPt[3] = 1;
-  
-  int* extent  = inVolume->GetImageData()->GetWholeExtent();
-  
-  for(int i = 0; i < dim0; i++) {       
-  xyPt[0] = round(i);
-  xyToijk->MultiplyPoint(xyPt,ijkPt);
-  
-  if(ijkPt[0]<0 || ijkPt[0]>=extent[1] ||ijkPt[1]<0 || ijkPt[1]>=extent[3] ||ijkPt[2]<0 || ijkPt[2]>=extent[5] ){
-  //std::cout<<"OUT OF VOI"<<std::endl;
-  }
-  else{
-  if(size1 == 0){
-  begin[0] = i;
-  }
-  size1++;
-  }
-  }
-  
-  
-  
-  xyPt[0] = round(dim0/2);
-  
-  for(int i = 0; i < dim1; i++) {       
-        xyPt[1] = round(i);
-        xyToijk->MultiplyPoint(xyPt,ijkPt);
-  //STORAGE->SetScalarComponentFromDouble(ijkPt[0],ijkPt[1],ijkPt[2],0,inVolume->GetImageData()->GetScalarComponentAsDouble(ijkPt[0],ijkPt[1],ijkPt[2],0));
-  if(ijkPt[0]<0 || ijkPt[0]>=extent[1] ||ijkPt[1]<0 || ijkPt[1]>=extent[3] ||ijkPt[2]<0 || ijkPt[2]>=extent[5] ){
-  //std::cout<<"OUT OF VOI"<<std::endl;
-  }
-  else{
-  if(size2 == 0){
-  begin[1] = i;
-  }
-  size2++;
-  }
-  }
- 
- // GET BOUNDS OF THE ARRAY IN IJK
- int size[6];
- 
- xyPt[0] = size1;
- xyPt[1] = 0;
- xyPt[2] = 0;
- xyPt[3] = 1;
+ // std::cout<<"Dimensions of the red slice"<<std::endl;
+ // std::cout<<"X: "<<xRedBoxSize<<" Y: "<<yRedBoxSize<<std::endl;
 
- double ijkPt1[3];
- double ijkPt2[3];
- double ijkPt3[3];
- 
- xyToijk->MultiplyPoint(xyPt,ijkPt1);
-  
- xyPt[0] = 0;
- xyPt[1] = size2;
- xyPt[2] = 0;
- xyPt[3] = 1;
- 
- xyToijk->MultiplyPoint(xyPt,ijkPt2);
- 
- xyPt[0] = 0;
- xyPt[1] = 0;
- xyPt[2] = 0;
- xyPt[3] = 1;
- 
- xyToijk->MultiplyPoint(xyPt,ijkPt3);
- 
- 
- size[0] = sqrt((ijkPt1[0]-ijkPt3[0])*(ijkPt1[0]-ijkPt3[0]));
- size[1] = sqrt((ijkPt2[0]-ijkPt3[0])*(ijkPt2[0]-ijkPt3[0]));
- size[2] = sqrt((ijkPt1[1]-ijkPt3[1])*(ijkPt1[1]-ijkPt3[1]));
- size[3] = sqrt((ijkPt2[1]-ijkPt3[1])*(ijkPt2[1]-ijkPt3[1]));
- size[4] = sqrt((ijkPt1[2]-ijkPt3[2])*(ijkPt1[2]-ijkPt3[2]));
- size[5] = sqrt((ijkPt2[2]-ijkPt3[2])*(ijkPt2[2]-ijkPt3[2]));
- 
- std::cout<<"SIZE 1: "<< size[0] <<std::endl;
- std::cout<<"SIZE 1: "<< size[1] <<std::endl;
- std::cout<<"SIZE 2: "<< size[2] <<std::endl;
- std::cout<<"SIZE 2: "<< size[3] <<std::endl;
- std::cout<<"SIZE 3: "<< size[4] <<std::endl;
- std::cout<<"SIZE 3: "<< size[5] <<std::endl;
- 
- int compt = 0;
- int pos[2];
- for(int i = 0; i < 6; i++){
- if (size[i] > 0)
- {
- size[compt] = size[i];
- if(i<2)
- pos[compt] = 0;
- if(i>1 && i<4)
- pos[compt] = 1;
- if(i>3)
- pos[compt] = 2;
- compt ++;
- }
- }
-
-double populateXY[4];
-double populateIJK[4];
-
-populateXY[2] = 0;
-populateXY[3] = 1;
-
-//GET EVOLUTION TO POPULATE (POSITION INCREMENT OR DECREMENT)
-double direction[4][2];
-int start = begin[0]+begin[1];
-for(int i = begin[0]; i < begin[0]+2; i++) {
-for(int j = begin[1]; j < begin[1]+2; j++) {
-populateXY[0] = i;
-populateXY[1] = j;
-xyToijk->MultiplyPoint(populateXY,populateIJK);
-
-direction[i+j-start][0] = populateIJK[pos[0]];
-direction[i+j-start][1] = populateIJK[pos[1]];
-}
-}
-
-double evolution[2];
-
-if(direction[0][0] == direction [1][0]){
-if(direction[0][0]-direction[2][0] < 0){
-evolution[0] = 1;
-}
-else{
-evolution[0] = 0;
-}
-}
-else{
-if(direction[0][0]-direction[1][0] < 0){
-evolution[0] = 1;
-}
-else{
-evolution[0] = 0;
-}
-}
-
-if(direction[0][1] == direction [1][1]){
-if(direction[0][1]-direction[2][1] < 0){
-evolution[1] = 1;
-}
-else{
-evolution[1] = 0;
-}
-}
-else{
-if(direction[0][1]-direction[1][1] < 0){
-evolution[1] = 1;
-}
-else{
-evolution[1] = 0;
-}
-}
-
- xyPt[0] = begin[0];
- xyPt[1] = begin[1];
- xyPt[2] = 0;
- xyPt[3] = 1;
- 
- double originIJK[3];
- 
- xyToijk->MultiplyPoint(xyPt,originIJK);
- 
-// POPULATE THE CORRESPONDING ARRAY AND MASK
-
-    std::cout<<"origin IJK: "<< originIJK[0]<< " "<< originIJK[1] << " "<< originIJK[2] <<std::endl;
-    std::cout<<"size IJK: "<< size[0]<< " "<< size[1] <<std::endl;
-
-if(pos[0]==0 && pos[1] == 1){
-if(evolution[0] == 0 && evolution[1] == 0){
-for (int j=0;j<size[0];j++) 
-for (int i=0;i<size[1];i++)     
-this->PREVIEW->SetScalarComponentFromDouble(originIJK[0]-j-1,originIJK[1]-i,originIJK[2],0,12.0);
-}
-if(evolution[0] == 0 && evolution[1] == 1){
-for (int j=0;j<size[0];j++) 
-for (int i=0;i<size[1];i++)     
-this->PREVIEW->SetScalarComponentFromDouble(originIJK[0]-j-1,originIJK[1]+i,originIJK[2],0,12.0);
-}
-if(evolution[0] == 1 && evolution[1] == 0){
-for (int j=0;j<size[0];j++) 
-for (int i=0;i<size[1];i++)     
-this->PREVIEW->SetScalarComponentFromDouble(originIJK[0]+j+1,originIJK[1]-i,originIJK[2],0,12.0);
-}
-if(evolution[0] == 1 && evolution[1] == 1){
-for (int j=0;j<size[0];j++) 
-for (int i=0;i<size[1];i++)     
-this->PREVIEW->SetScalarComponentFromDouble(originIJK[0]+j+1,originIJK[1]+i,originIJK[2],0,12.0);
-}
-
-}
-
-if(pos[0]==1 && pos[1] == 2){
-if(evolution[0] == 0 && evolution[1] == 0){
-for (int j=0;j<size[0];j++) 
-for (int i=0;i<size[1];i++)     
-this->PREVIEW->SetScalarComponentFromDouble(originIJK[0],originIJK[1]-j-1,originIJK[2]-i,0,12.0);
-}
-if(evolution[0] == 0 && evolution[1] == 1){
-for (int j=0;j<size[0];j++) 
-for (int i=0;i<size[1];i++)     
-this->PREVIEW->SetScalarComponentFromDouble(originIJK[0],originIJK[1]-j-1,originIJK[2]+i,0,12.0);
-}
-if(evolution[0] == 1 && evolution[1] == 0){
-for (int j=0;j<size[0];j++) 
-for (int i=0;i<size[1];i++)     
-this->PREVIEW->SetScalarComponentFromDouble(originIJK[0],originIJK[1]+j,originIJK[2]-i,0,12.0);
-}
-if(evolution[0] == 1 && evolution[1] == 1){
-for (int j=0;j<size[0];j++) 
-for (int i=0;i<size[1];i++)     
-this->PREVIEW->SetScalarComponentFromDouble(originIJK[0],originIJK[1]+j+1,originIJK[2]+i,0,12.0);
-}
-
-}
-
-if(pos[0]==0 && pos[1] == 2){
-if(evolution[0] == 0 && evolution[1] == 0){
-for (int j=0;j<size[0];j++) 
-for (int i=0;i<size[1];i++)     
-this->PREVIEW->SetScalarComponentFromDouble(originIJK[0]-j,originIJK[1],originIJK[2]-i,0,12.0);
-}
-if(evolution[0] == 0 && evolution[1] == 1){
-for (int j=0;j<size[0];j++) 
-for (int i=0;i<size[1];i++)     
-this->PREVIEW->SetScalarComponentFromDouble(originIJK[0]-j,originIJK[1],originIJK[2]+i,0,12.0);
-}
-if(evolution[0] == 1 && evolution[1] == 0){
-for (int j=0;j<size[0];j++) 
-for (int i=0;i<size[1];i++)     
-this->PREVIEW->SetScalarComponentFromDouble(originIJK[0]+j,originIJK[1],originIJK[2]-i,0,12.0);
-}
-if(evolution[0] == 1 && evolution[1] == 1){
-for (int j=0;j<size[0];j++) 
-for (int i=0;i<size[1];i++)     
-this->PREVIEW->SetScalarComponentFromDouble(originIJK[0]+j+1,originIJK[1],originIJK[2]+i,0,12.0);
-}
-
-}
-
-outVolume->SetAndObserveImageData(this->PREVIEW);
-outVolume->SetModifiedSinceRead(1);*/
-  
-  // find input volume
-  //scalarvolumenode
-    vtkMRMLVolumeNode *inVolume = applicationGUI->GetApplicationLogic()->GetSliceLogic("Red")->GetLayerVolumeNode (0);
-  if (inVolume == NULL)
-    {
-    vtkErrorMacro("No input volume found");
-    return;
-    }
-
- // create output volume for preview
-  vtkMRMLScalarVolumeNode *outVolume =  mrmlManager->GetOutputVolumeNode();
-  if (outVolume == NULL)
-    {
-    vtkErrorMacro("No output volume found");
-    return;
-    }
-
-
-  vtkTransform* xyToijk = vtkTransform::New();
-
-  xyToijk  = applicationGUI->GetApplicationLogic()->GetSliceLogic("Red")->GetBackgroundLayer()->GetXYToIJKTransform();
-
-  vtkMRMLSliceNode *snode = applicationGUI->GetMainSliceGUI("Red")->GetSliceNode();
-  unsigned int dimensions[3];
-  snode->GetDimensions(dimensions);
-
-  double dim0 = dimensions[0];
-  double dim1 = dimensions[1];
-  
-  std::cout<<"Dimensions of the red slice"<<std::endl;
-  std::cout<<"X: "<<dim0<<" Y: "<<dim1<<std::endl;
-  
   // copy RASToIJK matrix, and other attributes from input to output
   std::string name (outVolume->GetName());
   std::string id (outVolume->GetID());
@@ -3368,764 +2895,505 @@ outVolume->SetModifiedSinceRead(1);*/
   outVolume->CopyOrientation(inVolume);
   outVolume->SetAndObserveTransformNodeID(inVolume->GetTransformNodeID());
   outVolume->SetName(name.c_str());
-  
-  //this->STORAGE = vtkImageData::New(); 
-   
 
-  //stoVolume->SetAndObserveImageData(this->PREVIEW);
-  
+
   //GET SIZE OF THE ARRAY TO BE PROCESSED AND THE FIRST PIXEL IN FRAME
-  
-  double size1 = 0;
-  double size2 = 0;
+
+  double xSliceSizeInTheRedBox = 0;
+  double ySliceSizeInTheRedBox = 0;
   double xyPt[4];
   double ijkPt[3];
-  int begin[2];
-  
-  xyPt[1] = round(dim1/2);
+  int beginningOfTheSliceInTheRedBox[2];
+
+  xyPt[1] = round(yRedBoxSize/2);
   xyPt[2] = 0;
   xyPt[3] = 1;
-  
+
   int* extent  = inVolume->GetImageData()->GetWholeExtent();
-  
-  for(int i = 0; i < dim0; i++) {       
-  xyPt[0] = round(i);
-  xyToijk->MultiplyPoint(xyPt,ijkPt);
-  
-  if(ijkPt[0]<0 || ijkPt[0]>=extent[1] ||ijkPt[1]<0 || ijkPt[1]>=extent[3] ||ijkPt[2]<0 || ijkPt[2]>=extent[5] ){
-  //std::cout<<"OUT OF VOI"<<std::endl;
-  }
-  else{
-  if(size1 == 0){
-  begin[0] = i;
-  }
-  size1++;
-  }
-  }
-  
-  
-  
-  xyPt[0] = round(dim0/2);
-  
-  for(int i = 0; i < dim1; i++) {       
-        xyPt[1] = round(i);
-        xyToijk->MultiplyPoint(xyPt,ijkPt);
-  //STORAGE->SetScalarComponentFromDouble(ijkPt[0],ijkPt[1],ijkPt[2],0,inVolume->GetImageData()->GetScalarComponentAsDouble(ijkPt[0],ijkPt[1],ijkPt[2],0));
-  if(ijkPt[0]<0 || ijkPt[0]>=extent[1] ||ijkPt[1]<0 || ijkPt[1]>=extent[3] ||ijkPt[2]<0 || ijkPt[2]>=extent[5] ){
-  //std::cout<<"OUT OF VOI"<<std::endl;
-  }
-  else{
-  if(size2 == 0){
-  begin[1] = i;
-  }
-  size2++;
-  }
-  }
-  //std::cout<<"DIM : "<< dim0 <<" SIZE : "<< size1 <<std::endl;
-  //std::cout<<"DIM : "<< dim1 <<" SIZE : "<< size2 <<std::endl;
-  
-  std::cout<<"Extent of the input volume: "<< extent[0]<<" " <<extent[1]<<" "<<extent[2]<<" "<<extent[3]<<" "<<extent[4]<<" "<<extent[5]<<std::endl;
-  std::cout<<"Size of the real slice XY: "<< size1<<" " <<size2<<std::endl;
-  std::cout<<"Beginning of the real slice XY: "<< begin[1]<<" " <<begin[2]<<std::endl;
-  
- //stoVolume->SetModifiedSinceRead(1);
- 
- // GET BOUNDS OF THE ARRAY IN IJK
- int size[6];
- 
- xyPt[0] = size1;
- xyPt[1] = 0;
- xyPt[2] = 0;
- xyPt[3] = 1;
 
- double ijkPt1[3];
- double ijkPt2[3];
- double ijkPt3[3];
- 
- xyToijk->MultiplyPoint(xyPt,ijkPt1);
-  
- xyPt[0] = 0;
- xyPt[1] = size2;
- xyPt[2] = 0;
- xyPt[3] = 1;
- 
- xyToijk->MultiplyPoint(xyPt,ijkPt2);
- 
- xyPt[0] = 0;
- xyPt[1] = 0;
- xyPt[2] = 0;
- xyPt[3] = 1;
- 
- xyToijk->MultiplyPoint(xyPt,ijkPt3);
- 
- 
- size[0] = (int)(sqrt((ijkPt1[0]-ijkPt3[0])*(ijkPt1[0]-ijkPt3[0]))+0.5);
- size[1] = (int)(sqrt((ijkPt2[0]-ijkPt3[0])*(ijkPt2[0]-ijkPt3[0]))+0.5);
- size[2] = (int)(sqrt((ijkPt1[1]-ijkPt3[1])*(ijkPt1[1]-ijkPt3[1]))+0.5);
- size[3] = (int)(sqrt((ijkPt2[1]-ijkPt3[1])*(ijkPt2[1]-ijkPt3[1]))+0.5);
- size[4] = (int)(sqrt((ijkPt1[2]-ijkPt3[2])*(ijkPt1[2]-ijkPt3[2]))+0.5);
- size[5] = (int)(sqrt((ijkPt2[2]-ijkPt3[2])*(ijkPt2[2]-ijkPt3[2]))+0.5);
- 
+  for(int i = 0; i < xRedBoxSize; i++)
+    {
+    xyPt[0] = round(i);
+    xyToijk->MultiplyPoint(xyPt,ijkPt);
 
- /*std::cout<<"SIZE 2: "<< size[2] <<std::endl;
- std::cout<<"SIZE 2: "<< size[3] <<std::endl;
- std::cout<<"SIZE 3: "<< size[4] <<std::endl;
- std::cout<<"SIZE 3: "<< size[5] <<std::endl;*/
- 
- int compt = 0;
- int pos[2];
- for(int i = 0; i < 6; i++){
- if (size[i] > 0)
- {
- size[compt] = size[i];
- if(i<2)
- pos[compt] = 0;
- if(i>1 && i<4)
- pos[compt] = 1;
- if(i>3)
- pos[compt] = 2;
- compt ++;
- }
- }
- 
- /*std::cout<<"SIZE OF THE ARRAY TO BE PROCESSED"<<std::endl;
- std::cout<<"SIZE : "<< size[0] <<" POSITION: "<< pos[0] <<std::endl;
- std::cout<<"SIZE : "<< size[1] <<" POSITION: "<< pos[1] <<std::endl;*/
- 
-double populateXY[4];
-double populateIJK[4];
+    if(ijkPt[0]<0 || ijkPt[0]>=extent[1] ||ijkPt[1]<0 || ijkPt[1]>=extent[3] ||
+        ijkPt[2]<0 || ijkPt[2]>=extent[5] )
+      {
+      //std::cout<<"OUT OF VOI"<<std::endl;
+      }
+    else
+      {
+      if(xSliceSizeInTheRedBox == 0)
+        {
+        beginningOfTheSliceInTheRedBox[0] = i;
+        }
+      xSliceSizeInTheRedBox++;
+      }
+    }
 
-populateXY[2] = 0;
-populateXY[3] = 1;
+  xyPt[0] = round(xRedBoxSize/2);
 
-/*
-for(int i = begin[0]; i < begin[0]+size1; i++) {
-for(int j = begin[1]; j < begin[1]+size2; i++) {
-populateXY[0] = i;
-populateXY[1] = j;
+  for(int i = 0; i < yRedBoxSize; i++)
+    {
+    xyPt[1] = round(i);
+    xyToijk->MultiplyPoint(xyPt,ijkPt);
+    if(ijkPt[0]<0 || ijkPt[0]>=extent[1] ||ijkPt[1]<0 || ijkPt[1]>=extent[3] ||
+        ijkPt[2]<0 || ijkPt[2]>=extent[5] )
+      {
+      //std::cout<<"OUT OF VOI"<<std::endl;
+      }
+    else
+      {
+      if(ySliceSizeInTheRedBox == 0)
+        {
+        beginningOfTheSliceInTheRedBox[1] = i;
+        }
+      ySliceSizeInTheRedBox++;
+      }
+    }
+  //std::cout<<"Extent of the input volume: "<< extent[0]<<" " <<extent[1]<<" "
+  //<<extent[2]<<" "<<extent[3]<<" "<<extent[4]<<" "<<extent[5]<<std::endl;
+  //std::cout<<"Size of the real slice XY: "<< xSliceSizeInTheRedBox<<" "
+  //<<ySliceSizeInTheRedBox<<std::endl;
+  //std::cout<<"Beginning of the real slice XY: "
+  //<< beginningOfTheSliceInTheRedBox[1]<<" "
+  //<<beginningOfTheSliceInTheRedBox[2]<<std::endl;
 
-xyToijk->MultiplyPoint(populateXY,populateIJK);
+  // GET BOUNDS OF THE ARRAY IN IJK
+  int ijkSliceSize[6];
 
-outStorage->SetComponent(i*(size[0])+j,0,-50);
-}
-}
-*/
+  xyPt[0] = xSliceSizeInTheRedBox;
+  xyPt[1] = 0;
+  xyPt[2] = 0;
+  xyPt[3] = 1;
 
-//GET EVOLUTION TO POPULATE (POSITION INCREMENT OR DECREMENT)
-double direction[4][2];
-int start = begin[0]+begin[1];
-for(int i = begin[0]; i < begin[0]+2; i++) {
-for(int j = begin[1]; j < begin[1]+2; j++) {
-populateXY[0] = i;
-populateXY[1] = j;
-xyToijk->MultiplyPoint(populateXY,populateIJK);
-/*std::cout<<"TEST X: "<<populateIJK[pos[0]]<<std::endl;
-std::cout<<"TEST Y: "<<populateIJK[pos[1]]<<std::endl;*/
-direction[i+j-start][0] = populateIJK[pos[0]];
-direction[i+j-start][1] = populateIJK[pos[1]];
-}
-}
+  double ijkPt1[3];
+  double ijkPt2[3];
+  double ijkPt3[3];
 
-/*
-std::cout<<"DIRECTIONS"<<std::endl;
-std::cout<< direction[0][0] << " " << direction[0][1] <<std::endl;
-std::cout<< direction[1][0] <<" " <<  direction[1][1] <<std::endl;
-std::cout<< direction[2][0] << " " << direction[2][1] <<std::endl;
-std::cout<< direction[3][0] << " " << direction[3][1] <<std::endl;*/
+  xyToijk->MultiplyPoint(xyPt,ijkPt1);
 
-double evolution[2];
+  xyPt[0] = 0;
+  xyPt[1] = ySliceSizeInTheRedBox;
+  xyPt[2] = 0;
+  xyPt[3] = 1;
 
-if(direction[0][0] == direction [1][0]){
-  if(direction[0][0]-direction[2][0] < 0){
-    evolution[0] = 1;
-  }
-  else{
-    evolution[0] = 0;
-  }
-}
-else{
-if(direction[0][0]-direction[1][0] < 0){
-evolution[0] = 1;
-}
-else{
-evolution[0] = 0;
-}
-}
+  xyToijk->MultiplyPoint(xyPt,ijkPt2);
 
-if(direction[0][1] == direction [1][1]){
-if(direction[0][1]-direction[2][1] < 0){
-evolution[1] = 1;
-}
-else{
-evolution[1] = 0;
-}
-}
-else{
-if(direction[0][1]-direction[1][1] < 0){
-evolution[1] = 1;
-}
-else{
-evolution[1] = 0;
-}
-}
+  xyPt[0] = 0;
+  xyPt[1] = 0;
+  xyPt[2] = 0;
+  xyPt[3] = 1;
 
- xyPt[0] = begin[0];
- xyPt[1] = begin[1];
- xyPt[2] = 0;
- xyPt[3] = 1;
- 
- int done = 0;
- double originIJK[3];
- 
- xyToijk->MultiplyPoint(xyPt,originIJK);
- 
- //std::cout << "infos"<<std::endl;
- std::cout<<"slice size IJK: "<<size[0]<<" "<<size[1]<<std::endl;
- std::cout << "position: "<< pos[0]<<" " << pos[1] << std::endl;
- std::cout << "evolution: "<<evolution[0]<<" " << evolution[1] << std::endl;
+  xyToijk->MultiplyPoint(xyPt,ijkPt3);
 
-//for(int k = 0; k<this->nbOfLeaf;k++){ 
- //std::cout << "leaf: "<< k << " label: " << this->orderedLabel[k] << std::endl;
- //std::cout << "class size: " << this->class_size[2*k] <<" to: "<< this->class_size[2*k+1]<<std::endl;
- //std::cout << "get occurence: "<< this->IntensityDistributionHistogramHistogram->GetOccurenceAtValue(this->class_size[2*k])<<std::endl;
+  ijkSliceSize[0] = (int)(sqrt((ijkPt1[0]-ijkPt3[0])*(ijkPt1[0]-ijkPt3[0]))
+      +0.5);
+  ijkSliceSize[1] = (int)(sqrt((ijkPt2[0]-ijkPt3[0])*(ijkPt2[0]-ijkPt3[0]))
+      +0.5);
+  ijkSliceSize[2] = (int)(sqrt((ijkPt1[1]-ijkPt3[1])*(ijkPt1[1]-ijkPt3[1]))
+      +0.5);
+  ijkSliceSize[3] = (int)(sqrt((ijkPt2[1]-ijkPt3[1])*(ijkPt2[1]-ijkPt3[1]))
+      +0.5);
+  ijkSliceSize[4] = (int)(sqrt((ijkPt1[2]-ijkPt3[2])*(ijkPt1[2]-ijkPt3[2]))
+      +0.5);
+  ijkSliceSize[5] = (int)(sqrt((ijkPt2[2]-ijkPt3[2])*(ijkPt2[2]-ijkPt3[2]))
+      +0.5);
 
-  //}
 
-std::cout<<"origin: "<< originIJK[0] <<" " << originIJK[1] <<" "  <<originIJK[2] <<std::endl;
+  int compt = 0;
+  int pos[2];
+  for(int i = 0; i < 6; i++)
+    {
+    if (ijkSliceSize[i] > 0)
+      {
+      ijkSliceSize[compt] = ijkSliceSize[i];
+      if(i<2)
+        pos[compt] = 0;
+      if(i>1 && i<4)
+        pos[compt] = 1;
+      if(i>3)
+        pos[compt] = 2;
+      compt ++;
+      }
+    }
 
-int iMin, iMax, jMin, jMax, kMin, kMax;
+  /*std::cout<<"SIZE OF THE ARRAY TO BE PROCESSED"<<std::endl;
+  std::cout<<"SIZE : "<< ijkSliceSize[0] <<" POSITION: "<< pos[0] <<std::endl;
+  std::cout<<"SIZE : "<< ijkSliceSize[1] <<" POSITION: "<< pos[1] <<std::endl;*/
 
-if(pos[0]==0 && pos[1] == 1){
-  kMin = (int)(originIJK[2]+0.5);
-  kMax = (int)(originIJK[2]+0.5);
-  if(evolution[0] == 0 && evolution[1] == 0){
-    iMin = (int)(originIJK[0]-size[0]+0.5);
-    iMax = (int)(originIJK[0]+0.5);
-    jMin = (int)(originIJK[1]-size[1]+0.5);
-    jMax = (int)(originIJK[1]+0.5);
-  }
-  if(evolution[0] == 0 && evolution[1] == 1){
-    iMin = (int)(originIJK[0]-size[0]+0.5);
-    iMax = (int)(originIJK[0]+0.5);
-    jMin = (int)(originIJK[1]+0.5);
-    jMax = (int)(originIJK[1]+size[1]+0.5);
-  }
-  if(evolution[0] == 1 && evolution[1] == 0){
-    iMin = (int)(originIJK[0]+0.5);
-    iMax = (int)(originIJK[0]+size[0]+0.5);
-    jMin = (int)(originIJK[1]-size[1]+0.5);
-    jMax = (int)(originIJK[1]+0.5);
-  }
-  if(evolution[0] == 1 && evolution[1] == 1){
-    iMin = (int)(originIJK[0]+0.5);
-    iMax = (int)(originIJK[0]+size[0]+0.5);
-    jMin = (int)(originIJK[1]+0.5);
-    jMax = (int)(originIJK[1]+size[1]+0.5);
-  }
-}
+  double populateXY[4];
+  double populateIJK[4];
 
-if(pos[0]==0 && pos[1] == 2){
-  jMin = (int)(originIJK[1]+0.5);
-  jMax = (int)(originIJK[1]+0.5);
-  if(evolution[0] == 0 && evolution[1] == 0){
-    iMin = (int)(originIJK[0]-size[0]+0.5);
-    iMax = (int)(originIJK[0]+0.5);
-    kMin = (int)(originIJK[2]-size[1]+0.5);
-    kMax = (int)(originIJK[2]+0.5);
-  }
-  if(evolution[0] == 0 && evolution[1] == 1){
-    iMin = (int)(originIJK[0]-size[0]+0.5);
-    iMax = (int)(originIJK[0]+0.5);
+  populateXY[2] = 0;
+  populateXY[3] = 1;
+
+  //GET EVOLUTION TO POPULATE (1 INCREMENT OR 0 DECREMENT)
+
+  double direction[4][2];
+  int start = beginningOfTheSliceInTheRedBox[0]+
+    beginningOfTheSliceInTheRedBox[1];
+  for(int i = beginningOfTheSliceInTheRedBox[0];
+      i < beginningOfTheSliceInTheRedBox[0]+2; i++)
+    {
+    for(int j = beginningOfTheSliceInTheRedBox[1];
+        j < beginningOfTheSliceInTheRedBox[1]+2; j++)
+      {
+      populateXY[0] = i;
+      populateXY[1] = j;
+      xyToijk->MultiplyPoint(populateXY,populateIJK);
+      direction[i+j-start][0] = populateIJK[pos[0]];
+      direction[i+j-start][1] = populateIJK[pos[1]];
+      }
+    }
+
+  double evolution[2];
+
+  if(direction[0][0] == direction [1][0])
+    {
+    if(direction[0][0]-direction[2][0] < 0)
+      {
+      evolution[0] = 1;
+      }
+    else
+      {
+      evolution[0] = 0;
+      }
+    }
+  else
+    {
+    if(direction[0][0]-direction[1][0] < 0)
+      {
+      evolution[0] = 1;
+      }
+    else
+      {
+      evolution[0] = 0;
+      }
+    }
+
+  if(direction[0][1] == direction [1][1])
+    {
+    if(direction[0][1]-direction[2][1] < 0)
+      {
+      evolution[1] = 1;
+      }
+    else
+      {
+      evolution[1] = 0;
+      }
+    }
+  else
+    {
+    if(direction[0][1]-direction[1][1] < 0)
+      {
+      evolution[1] = 1;
+      }
+    else
+      {
+      evolution[1] = 0;
+      }
+    }
+
+  xyPt[0] = beginningOfTheSliceInTheRedBox[0];
+  xyPt[1] = beginningOfTheSliceInTheRedBox[1];
+  xyPt[2] = 0;
+  xyPt[3] = 1;
+
+  int done = 0;
+  double originIJK[3];
+  xyToijk->MultiplyPoint(xyPt,originIJK);
+
+  int iMin, iMax, jMin, jMax, kMin, kMax;
+
+  if(pos[0]==0 && pos[1] == 1)
+    {
     kMin = (int)(originIJK[2]+0.5);
-    kMax = (int)(originIJK[2]+size[1]+0.5);
-  }
-  if(evolution[0] == 1 && evolution[1] == 0){
-    iMin = (int)(originIJK[0]+0.5);
-    iMax = (int)(originIJK[0]+size[0]+0.5);
-    kMin = (int)(originIJK[2]-size[1]+0.5);
     kMax = (int)(originIJK[2]+0.5);
-  }
-  if(evolution[0] == 1 && evolution[1] == 1){
-    iMin = (int)(originIJK[0]+0.5);
-    iMax = (int)(originIJK[0]+size[0]+0.5);
-    kMin = (int)(originIJK[2]+0.5);
-    kMax = (int)(originIJK[2]+size[1]+0.5);
-  }
-}
+    if(evolution[0] == 0 && evolution[1] == 0)
+      {
+      iMin = (int)(originIJK[0]-ijkSliceSize[0]+0.5);
+      iMax = (int)(originIJK[0]+0.5);
+      jMin = (int)(originIJK[1]-ijkSliceSize[1]+0.5);
+      jMax = (int)(originIJK[1]+0.5);
+      }
+    if(evolution[0] == 0 && evolution[1] == 1)
+      {
+      iMin = (int)(originIJK[0]-ijkSliceSize[0]+0.5);
+      iMax = (int)(originIJK[0]+0.5);
+      jMin = (int)(originIJK[1]+0.5);
+      jMax = (int)(originIJK[1]+ijkSliceSize[1]+0.5);
+      }
+    if(evolution[0] == 1 && evolution[1] == 0)
+      {
+      iMin = (int)(originIJK[0]+0.5);
+      iMax = (int)(originIJK[0]+ijkSliceSize[0]+0.5);
+      jMin = (int)(originIJK[1]-ijkSliceSize[1]+0.5);
+      jMax = (int)(originIJK[1]+0.5);
+      }
+    if(evolution[0] == 1 && evolution[1] == 1)
+      {
+      iMin = (int)(originIJK[0]+0.5);
+      iMax = (int)(originIJK[0]+ijkSliceSize[0]+0.5);
+      jMin = (int)(originIJK[1]+0.5);
+      jMax = (int)(originIJK[1]+ijkSliceSize[1]+0.5);
+      }
+    }
 
-if(pos[0]==1 && pos[1] == 2){
-  iMin = (int)(originIJK[0]+0.5);
-  iMax = (int)(originIJK[0]+0.5);
-  if(evolution[0] == 0 && evolution[1] == 0){
-    kMin = (int)(originIJK[2]-size[1]+0.5);
-    kMax = (int)(originIJK[2]+0.5);
-    jMin = (int)(originIJK[1]-size[0]+0.5);
-    jMax = (int)(originIJK[1]+0.5);
-  }
-  if(evolution[0] == 0 && evolution[1] == 1){
-    kMin = (int)(originIJK[2]+0.5);
-    kMax = (int)(originIJK[2]+size[1]+0.5);
-    jMin = (int)(originIJK[1]-size[0]+0.5);
-    jMax = (int)(originIJK[1]+0.5);
-  }
-  if(evolution[0] == 1 && evolution[1] == 0){
-    kMin = (int)(originIJK[2]-size[1]+0.5);
-    kMax = (int)(originIJK[2]+0.5);
+  if(pos[0]==0 && pos[1] == 2)
+    {
     jMin = (int)(originIJK[1]+0.5);
-    jMax = (int)(originIJK[1]+size[0]+0.5);
-  }
-  if(evolution[0] == 1 && evolution[1] == 1){
-    kMin = (int)(originIJK[2]+0.5);
-    kMax = (int)(originIJK[2]+size[1]+0.5);
-    jMin = (int)(originIJK[1]+0.5);
-    jMax = (int)(originIJK[1]+size[0]+0.5);
-  }
-}
+    jMax = (int)(originIJK[1]+0.5);
+    if(evolution[0] == 0 && evolution[1] == 0)
+      {
+      iMin = (int)(originIJK[0]-ijkSliceSize[0]+0.5);
+      iMax = (int)(originIJK[0]+0.5);
+      kMin = (int)(originIJK[2]-ijkSliceSize[1]+0.5);
+      kMax = (int)(originIJK[2]+0.5);
+      }
+    if(evolution[0] == 0 && evolution[1] == 1)
+      {
+      iMin = (int)(originIJK[0]-ijkSliceSize[0]+0.5);
+      iMax = (int)(originIJK[0]+0.5);
+      kMin = (int)(originIJK[2]+0.5);
+      kMax = (int)(originIJK[2]+ijkSliceSize[1]+0.5);
+      }
+    if(evolution[0] == 1 && evolution[1] == 0)
+      {
+      iMin = (int)(originIJK[0]+0.5);
+      iMax = (int)(originIJK[0]+ijkSliceSize[0]+0.5);
+      kMin = (int)(originIJK[2]-ijkSliceSize[1]+0.5);
+      kMax = (int)(originIJK[2]+0.5);
+      }
+    if(evolution[0] == 1 && evolution[1] == 1)
+      {
+      iMin = (int)(originIJK[0]+0.5);
+      iMax = (int)(originIJK[0]+ijkSliceSize[0]+0.5);
+      kMin = (int)(originIJK[2]+0.5);
+      kMax = (int)(originIJK[2]+ijkSliceSize[1]+0.5);
+      }
+    }
 
-/*
-if(pos[0]==0 && pos[1] == 1){
-  if(evolution[0] == 0 && evolution[1] == 0){
-    for (int j=0;j<size[0]+1;j++){ 
-      for (int i=0;i<size[1]+1;i++){
-        double pixelValue = this->PREVIEW->GetScalarComponentAsDouble(originIJK[0]-j+1,originIJK[1]-i+1,originIJK[2],0);// originIJK[1]-i,originIJK[2],0);      
-        for (int k=0;k<this->nbOfLeaf;k++){
-          if((this->class_size[2*k] <= pixelValue ) && (this->class_size[2*k+1] > pixelValue) && !done){
-            pixelValue = this->orderedLabel[k];
-            done = 1;
-          }
-        }
-        done = 0;
-        this->PREVIEW->SetScalarComponentFromDouble(originIJK[0]-j+1,originIJK[1]-i+1,originIJK[2],0,pixelValue);
+  if(pos[0]==1 && pos[1] == 2)
+    {
+    iMin = (int)(originIJK[0]+0.5);
+    iMax = (int)(originIJK[0]+0.5);
+    if(evolution[0] == 0 && evolution[1] == 0)
+      {
+      kMin = (int)(originIJK[2]-ijkSliceSize[1]+0.5);
+      kMax = (int)(originIJK[2]+0.5);
+      jMin = (int)(originIJK[1]-ijkSliceSize[0]+0.5);
+      jMax = (int)(originIJK[1]+0.5);
+      }
+    if(evolution[0] == 0 && evolution[1] == 1)
+      {
+      kMin = (int)(originIJK[2]+0.5);
+      kMax = (int)(originIJK[2]+ijkSliceSize[1]+0.5);
+      jMin = (int)(originIJK[1]-ijkSliceSize[0]+0.5);
+      jMax = (int)(originIJK[1]+0.5);
+      }
+    if(evolution[0] == 1 && evolution[1] == 0)
+      {
+      kMin = (int)(originIJK[2]-ijkSliceSize[1]+0.5);
+      kMax = (int)(originIJK[2]+0.5);
+      jMin = (int)(originIJK[1]+0.5);
+      jMax = (int)(originIJK[1]+ijkSliceSize[0]+0.5);
+      }
+    if(evolution[0] == 1 && evolution[1] == 1)
+      {
+      kMin = (int)(originIJK[2]+0.5);
+      kMax = (int)(originIJK[2]+ijkSliceSize[1]+0.5);
+      jMin = (int)(originIJK[1]+0.5);
+      jMax = (int)(originIJK[1]+ijkSliceSize[0]+0.5);
       }
     }
-  }
-  if(evolution[0] == 0 && evolution[1] == 1){
-    for (int j=0;j<size[0]+1;j++){ 
-      for (int i=0;i<size[1]+1;i++){
-         double pixelValue = this->PREVIEW->GetScalarComponentAsDouble(originIJK[0]-j-1,originIJK[1]+i,originIJK[2],0);      
-        for (int k=0;k<this->nbOfLeaf;k++){ 
-          if((this->class_size[2*k] <= pixelValue ) && (this->class_size[2*k+1] > pixelValue) && !done){
-            pixelValue = this->orderedLabel[k];
-            done = 1;
-          }
-        }
-        done = 0;
-        this->PREVIEW->SetScalarComponentFromDouble(originIJK[0]-j-1,originIJK[1]+i,originIJK[2],0,pixelValue);
-      }
-    }
-  }
-  if(evolution[0] == 1 && evolution[1] == 0){
-    for (int j=0;j<size[0]+1;j++){ 
-      for (int i=0;i<size[1]+1;i++){
-        double pixelValue = 0;
-        pixelValue = this->PREVIEW->GetScalarComponentAsDouble(originIJK[0]+j+1,originIJK[1]-i,originIJK[2],0);     
-          for (int k=0;k<this->nbOfLeaf;k++){
-          if((this->class_size[2*k] <= pixelValue ) && (this->class_size[2*k+1] > pixelValue) && !done){
-            pixelValue = this->orderedLabel[k];
-            done = 1;
-          }
-        }
-        done = 0;
-        this->PREVIEW->SetScalarComponentFromDouble(originIJK[0]+j+1,originIJK[1]-i,originIJK[2],0,pixelValue);
-      }
-    }
-  }
-  if(evolution[0] == 1 && evolution[1] == 1){
-    for (int j=0;j<size[0]+1;j++){ 
-      for (int i=0;i<size[1]+1;i++){
-        double pixelValue = this->PREVIEW->GetScalarComponentAsDouble(originIJK[0]+j+1,originIJK[1]+i,originIJK[2],0);      
-        for (int k=0;k<this->nbOfLeaf;k++){  
-          if((this->class_size[2*k] <= pixelValue ) && (this->class_size[2*k+1] > pixelValue) && !done){
-            pixelValue = this->orderedLabel[k];
-            done = 1;
-          }
-        }
-        done = 0;
-        this->PREVIEW->SetScalarComponentFromDouble(originIJK[0]+j+1,originIJK[1]+i,originIJK[2],0,pixelValue);
-      }
-    }
-  }
-}
 
-if(pos[0]==1 && pos[1] == 2){
-  if(evolution[0] == 0 && evolution[1] == 0){
-    for (int j=0;j<size[0]+1;j++){ 
-      for (int i=0;i<size[1]+1;i++){
-        double pixelValue = this->PREVIEW->GetScalarComponentAsDouble(originIJK[0],originIJK[1]-j+1,originIJK[2]-i+1,0);//originIJK[1]-j-1,originIJK[2]-i,0);
-        for (int k=0;k<this->nbOfLeaf;k++){ 
-          if((this->class_size[2*k] <= pixelValue ) && (this->class_size[2*k+1] > pixelValue) && !done){
-            pixelValue = this->orderedLabel[k];
-            done = 1;
-          }
-        }
-        done = 0;
-        this->PREVIEW->SetScalarComponentFromDouble(originIJK[0],originIJK[1]-j+1,originIJK[2]-i+1,0,pixelValue);
-      }
-    }
-  }
-  if(evolution[0] == 0 && evolution[1] == 1){
-    for (int j=0;j<size[0]+1;j++){ 
-      for (int i=0;i<size[1]+1;i++){
-        double pixelValue = this->PREVIEW->GetScalarComponentAsDouble(originIJK[0],originIJK[1]-j-1,originIJK[2]+i,0);      
-        for (int k=0;k<this->nbOfLeaf;k++){  
-          if((this->class_size[2*k] <= pixelValue ) && (this->class_size[2*k+1] > pixelValue) && !done){
-            pixelValue = this->orderedLabel[k];
-            done = 1;
-          }
-        }
-        done = 0;
-        this->PREVIEW->SetScalarComponentFromDouble(originIJK[0],originIJK[1]-j-1,originIJK[2]+i,0,pixelValue);
-      }
-    }
-  }
-  if(evolution[0] == 1 && evolution[1] == 0){
-    for (int j=0;j<size[0]+1;j++){ 
-      for (int i=0;i<size[1]+1;i++){
-        double pixelValue = this->PREVIEW->GetScalarComponentAsDouble(originIJK[0],originIJK[1]+j,originIJK[2]-i,0);     
-        for (int k=0;k<this->nbOfLeaf;k++){
-          if((this->class_size[2*k] <= pixelValue ) && (this->class_size[2*k+1] > pixelValue) && !done){
-            pixelValue = this->orderedLabel[k];
-            done = 1;
-          }
-        }
-        done = 0;
-        this->PREVIEW->SetScalarComponentFromDouble(originIJK[0],originIJK[1]+j,originIJK[2]-i,0,pixelValue);
-      }
-    }
-  }
-  if(evolution[0] == 1 && evolution[1] == 1){
-    for (int j=0;j<size[0]+1;j++){ 
-      for (int i=0;i<size[1]+1;i++){
-        double pixelValue = this->PREVIEW->GetScalarComponentAsDouble(originIJK[0],originIJK[1]+j+1,originIJK[2]+i,0);     
-        for (int k=0;k<this->nbOfLeaf;k++){  
-          if((this->class_size[2*k] <= pixelValue ) && (this->class_size[2*k+1] > pixelValue) && !done){
-            pixelValue = this->orderedLabel[k];
-            done = 1;
-          }
-        }
-        done = 0;
-        this->PREVIEW->SetScalarComponentFromDouble(originIJK[0],originIJK[1]+j+1,originIJK[2]+i,0,pixelValue);
-      }
-    }
-  }
-}
-
-if(pos[0]==0 && pos[1] == 2){
-  if(evolution[0] == 0 && evolution[1] == 0){
-    for (int j=0;j<size[0]+1;j++){ 
-      for (int i=0;i<size[1]+1;i++){
-        double pixelValue = this->PREVIEW->GetScalarComponentAsDouble(originIJK[0]-j,originIJK[1],originIJK[2]-i,0);     
-        //for (int k=0;k<this->nbOfLeaf;k++){
-        //  if((this->class_size[2*k] <= pixelValue ) && (this->class_size[2*k+1] > pixelValue) && !done){
-        //    pixelValue = this->orderedLabel[k];
-        //    done = 1;
-        //  }
-       // }
-       // done = 0;
-      this->PREVIEW->SetScalarComponentFromDouble(originIJK[0]-j,originIJK[1],originIJK[2]-i,0,pixelValue);
-      }
-    }
-  }
-  if(evolution[0] == 0 && evolution[1] == 1){
-    for (int j=0;j<size[0]+1;j++){ 
-      for (int i=0;i<size[1]+1;i++){
-        double pixelValue = this->PREVIEW->GetScalarComponentAsDouble(originIJK[0]-j,originIJK[1],originIJK[2]+i,0);   
-        //for (int k=0;k<this->nbOfLeaf;k++){
-        //  if((this->class_size[2*k] <= pixelValue ) && (this->class_size[2*k+1] > pixelValue) && !done){
-        //    pixelValue = this->orderedLabel[k];
-        //    done = 1;
-        // }
-        //}
-        //done = 0;
-        this->PREVIEW->SetScalarComponentFromDouble(originIJK[0]-j,originIJK[1],originIJK[2]+i,0,pixelValue);
-      }
-    }
-  }
-  if(evolution[0] == 1 && evolution[1] == 0){
-    for (int j=0;j<size[0]+1;j++){ 
-      for (int i=0;i<size[1]+1;i++){
-        double pixelValue = this->PREVIEW->GetScalarComponentAsDouble(originIJK[0]+j,originIJK[1],originIJK[2]-i,0);     
-        //for (int k=0;k<this->nbOfLeaf;k++){   
-        //  if((this->class_size[2*k] <= pixelValue ) && (this->class_size[2*k+1] > pixelValue) && !done){
-        //    pixelValue = this->orderedLabel[k];
-        //    done = 1;
-        //  }
-        //}
-        //done = 0;
-        this->PREVIEW->SetScalarComponentFromDouble(originIJK[0]+j,originIJK[1],originIJK[2]-i,0,pixelValue);
-      }
-    }
-  }
-  if(evolution[0] == 1 && evolution[1] == 1){
-    for (int j=0;j<size[0]+1;j++){ 
-      for (int i=0;i<size[1]+1;i++){
-        double pixelValue = this->PREVIEW->GetScalarComponentAsDouble(originIJK[0]+j+1,originIJK[1],originIJK[2]+i,0);     
-        for (int k=0;k<this->nbOfLeaf;k++){ 
-          if((this->class_size[2*k] <= pixelValue ) && (this->class_size[2*k+1] > pixelValue) && !done){
-            pixelValue = this->orderedLabel[k];
-            done = 1;
-          }
-        }
-        done = 0;
-        this->PREVIEW->SetScalarComponentFromDouble(originIJK[0]+j+1,originIJK[1],originIJK[2]+i,0,pixelValue);
-      }
-    }
-  }
-}*/
-
-/*
-// Matrices for axial, coronal, sagittal, oblique view orientations
-  static double axialElements[16] = {
-           1, 0, 0, 0,
-           0, 1, 0, 0,
-           0, 0, 1, 0,
-           0, 0, 0, 1 };
-
-  static double coronalElements[16] = {
-           1, 0, 0, 0,
-           0, 0, 1, 0,
-           0,-1, 0, 0,
-           0, 0, 0, 1 };
-
-  static double sagittalElements[16] = {
-           0, 0,-1, 0,
-           1, 0, 0, 0,
-           0,-1, 0, 0,
-           0, 0, 0, 1 };
-
-// Set the slice orientation
-  vtkMatrix4x4 *resliceAxes = vtkMatrix4x4::New();
-  resliceAxes->DeepCopy(axialElements); 
-// Set the point through which to slice
-  resliceAxes->SetElement(0, 3, 100);
-  resliceAxes->SetElement(1, 3, 100);
-  resliceAxes->SetElement(2, 3, 100);
-*/
   this->SliceExtracted = vtkExtractVOI::New();
   this->SliceExtracted->SetInput(inVolume->GetImageData());
-  //this->SliceExtracted->SetVOI(originIJK[0]-size[0],originIJK[0],originIJK[1]-size[1],originIJK[1],originIJK[2],originIJK[2]);
   this->SliceExtracted->SetVOI(iMin,iMax,jMin,jMax,kMin,kMax);
-  //this->SliceExtracted->ClipDataOn();
-  //this->SliceExtracted->SetInputConnection(inVolume->GetImageData());
-  //this->SliceExtracted->SetOutputExtent(0,60,0,60,0,0);
-  //this->SliceExtracted->SetOutputDimensionality(2);
-  //this->SliceExtracted->SetResliceAxes(resliceAxes); 
-  ///this->SliceExtracted->SetResliceTransform(xyToijk);
-  //this->SliceExtracted->SetOutputOrigin(100.0,100.0,100.0);
-  //this->SliceExtracted->SetOutputDimensionality(2);
-  this->SliceExtracted->Update(); 
-  
-  std::cout<<"Boundaries: \n"<<std::endl;
-  std::cout<<"iMin: "<<iMin<<"ixMax: "<<iMax<<" jMin: "<<jMin<<" jMax: "<<jMax<<" kMin: "<<kMin<<" kMax: "<<kMax<<std::endl;
-  
-  //double SliceOrigin[3];
-  //this->SliceExtracted->GetResliceAxesOrigin(SliceOrigin);
-  
+  this->SliceExtracted->Update();
+
+  //std::cout<<"Boundaries: \n"<<std::endl;
+  //std::cout<<"iMin: "<<iMin<<"ixMax: "<<iMax<<" jMin: "<<jMin<<" jMax: "
+  //<<jMax<<" kMin: "<<kMin<<" kMax: "<<kMax<<std::endl;
+
+
   vtkMatrix4x4 *rasToIJK = vtkMatrix4x4::New();
   vtkMatrix4x4 *ijkToRAS = vtkMatrix4x4::New();
   inVolume->GetRASToIJKMatrix(rasToIJK);
   inVolume->GetIJKToRASMatrix(ijkToRAS);
-  
+
   double *inRAS = new double[4];
   double *inIJK = new double[4];
+
   inIJK[0] = iMin;
   inIJK[1] = jMin;
   inIJK[2] = kMin;
   inIJK[3] = 1;
-  
 
-  //double *inIJK = new double[4];
-  
-  //rasToIJK->invert();
-  
   ijkToRAS->MultiplyPoint(inIJK,inRAS);
-  
-  std::cout<<"IJK: "<<inIJK[0]<<"::" <<inIJK[1]<<"::" <<inIJK[2]<<std::endl;
-  std::cout<<"RAS: "<<inRAS[0]<<"::" <<inRAS[1]<<"::" <<inRAS[2]<<std::endl;
-  
+
+  // std::cout<<"IJK: "<<inIJK[0]<<"::" <<inIJK[1]<<"::" <<inIJK[2]<<std::endl;
+  //std::cout<<"RAS: "<<inRAS[0]<<"::" <<inRAS[1]<<"::" <<inRAS[2]<<std::endl;
   //std::cout<<"origin0: "<<SliceOrigin[0]<<std::endl;
   //std::cout<<"origin1: "<<SliceOrigin[1]<<std::endl;
   //std::cout<<"origin2: "<<SliceOrigin[2]<<std::endl;
-  this->PREVIEW = vtkImageData::New();
-  this->PREVIEW->DeepCopy(this->SliceExtracted->GetOutput());
-  
-  // Labels creation
-  
-  
+
+  this->ArrayToAccessSliceValues = vtkImageData::New();
+  this->ArrayToAccessSliceValues->DeepCopy(this->SliceExtracted->GetOutput());
+
+  // Labels  determination
   double pixelValue = 0.0;
 
-  for(int i=iMin;i<iMax+1;i++){
-    for(int j=jMin;j<jMax+1;j++){
-      for(int k=kMin;k<kMax+1;k++){
-      //std::cout<<"in loop: "<<std::endl;
-        pixelValue = this->PREVIEW->GetScalarComponentAsDouble(i,j,k,0);
-        //std::cout<<"pixelValue: "<<pixelValue<<std::endl;     
-        for (int l=0;l<this->nbOfLeaf;l++){  
-          if((this->class_size[2*l] <= pixelValue ) && (this->class_size[2*l+1] > pixelValue) && !done){
-            pixelValue = this->orderedLabel[l];
+  for(int i=iMin;i<iMax+1;i++)
+    {
+    for(int j=jMin;j<jMax+1;j++)
+      {
+      for(int k=kMin;k<kMax+1;k++)
+        {
+        pixelValue = this->ArrayToAccessSliceValues->
+          GetScalarComponentAsDouble(i,j,k,0);
+        for (int l=0;l<this->NumberOfLeaves;l++)
+          {
+          if((this->LeavesRange[2*l] <= pixelValue ) &&
+             (this->LeavesRange[2*l+1] > pixelValue) && !done)
+            {
+            pixelValue = this->OrderedLabels[l];
             done = 1;
+            }
           }
-        }
         done = 0;
-        this->PREVIEW->SetScalarComponentFromDouble(i,j,k,0,pixelValue);   
-      }    
+        this->ArrayToAccessSliceValues->SetScalarComponentFromDouble(i,j,k,0,
+            pixelValue);
+        }
+      }
     }
-  }
-  
-  vtkImageChangeInformation *sliceInformation = vtkImageChangeInformation::New();
-  
-  sliceInformation->SetInput(this->PREVIEW);
+
+  vtkImageChangeInformation *sliceInformation =
+    vtkImageChangeInformation::New();
+
+  sliceInformation->SetInput(this->ArrayToAccessSliceValues);
   sliceInformation->SetOutputExtentStart(0,0,0);
 
-  
-  //outVolume->GetDisplayNode()->SetAndObserveColorNodeID(mrmlManager->GetColormap());
-  
   outVolume->SetAndObserveImageData(sliceInformation->GetOutput());
   outVolume->LabelMapOn();
-  if(outVolume->GetDisplayNode()){
-  outVolume->GetDisplayNode()->SetAndObserveColorNodeID(mrmlManager->GetColormap());
-  }
+
+  if(outVolume->GetDisplayNode())
+    {
+    outVolume->GetDisplayNode()->SetAndObserveColorNodeID(mrmlManager->
+        GetColormap());
+    }
   outVolume->SetOrigin(inRAS[0],inRAS[1],inRAS[2]);
   outVolume->SetModifiedSinceRead(1);
-    
-  this->PREVIEW->Delete();
-    
+  this->ArrayToAccessSliceValues->Delete();
 }
 //---------------------------------------------------------------------------
-void vtkEMSegmentNodeParametersStep::AddColumnListGUIObservers() 
+void vtkEMSegmentNodeParametersStep::AddColumnListGUIObservers()
 {
   this->ClassAndNodeList->AddObserver(
-    vtkKWMultiColumnList::CellUpdatedEvent, 
-    this->GetGUI()->GetGUICallbackCommand());  
+    vtkKWMultiColumnList::CellUpdatedEvent,
+    this->GetGUI()->GetGUICallbackCommand());
 }
 
 //---------------------------------------------------------------------------
 void vtkEMSegmentNodeParametersStep::RemoveColumnListGUIObservers()
 {
   this->ClassAndNodeList->RemoveObservers(
-    vtkKWMultiColumnList::CellUpdatedEvent, 
-    this->GetGUI()->GetGUICallbackCommand());  
+    vtkKWMultiColumnList::CellUpdatedEvent,
+    this->GetGUI()->GetGUICallbackCommand());
 }
 
 //---------------------------------------------------------------------------
 void vtkEMSegmentNodeParametersStep::ProcessColumnListGUIEvents(
   vtkObject *caller,
   unsigned long event,
-  void *callData) 
+  void *callData)
 {
-  if (caller == this->ClassAndNodeList && 
-      event == vtkKWMultiColumnList::CellUpdatedEvent) 
-    { 
+  if (caller == this->ClassAndNodeList &&
+      event == vtkKWMultiColumnList::CellUpdatedEvent)
+    {
     vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-    //int k = 0;
-    
-    for(int i = 0; i < this->nbOfLeaf ; i++){
-      for(int j = 0; j < this->nbOfLeaf ; j++){
-        if(strcmp(this->ClassAndNodeList->GetCellText(i,0),this->leafName[j]) == 0){
-        leafIDNewOrder[i] = leafID[j];
-        //k++;
+    for(int i = 0; i < this->NumberOfLeaves ; i++)
+      {
+      for(int j = 0; j < this->NumberOfLeaves ; j++)
+        {
+        if(strcmp(this->ClassAndNodeList->GetCellText(i,0),this->LeavesName[j])
+            == 0)
+          {
+          this->LeavesIDNewOrder[i] = this->LeavesID[j];
+          }
         }
       }
-    }
-    
-    std::cout<<"ORDER"<<std::endl;
-    double rgb[3];
-    double *colors;
-    vtkMRMLScene            *mrmlScene   = mrmlManager->GetMRMLScene();
-    
-    vtkMRMLColorNode *colorNode = vtkMRMLColorNode::SafeDownCast(mrmlScene->GetNodeByID( mrmlManager->GetColormap() ));
-    
-    //colorNode->GetLookupTable()->GetLookupTable->GetTableValue()
 
-double nodeInfo[6];
+  double rgb[3];
+  double *colors;
+  vtkMRMLScene     *mrmlScene = mrmlManager->GetMRMLScene();
+  vtkMRMLColorNode *colorNode = vtkMRMLColorNode::SafeDownCast(mrmlScene->
+      GetNodeByID( mrmlManager->GetColormap() ));
 
-    for(int i = 0; i < this->nbOfLeaf ; i++){
-    //double *colour = NULL;
-    //vtkMRMLColorNode *colorNode = mrmlManager->GetNodeByID(leafIDNewOrder[i]);
-    //vtkMRMLColorNode *colorNode = mrmlManager->GetColormap();
-    std::cout<<"ID: "<<leafIDNewOrder[i]<<std::endl;
-    std::cout<<"Label: "<<mrmlManager->GetTreeNodeIntensityLabel(leafIDNewOrder[i])<<std::endl;
-    this->orderedLabel[i] = mrmlManager->GetTreeNodeIntensityLabel(leafIDNewOrder[i]);
-    std::cout<<"color map: "<<mrmlManager->GetColormap()<<std::endl;
-    mrmlManager->GetTreeNodeColor(leafIDNewOrder[i], rgb);
-    colors = colorNode->GetLookupTable()->GetTableValue(mrmlManager->GetTreeNodeIntensityLabel(leafIDNewOrder[i]));
-    //vtkMRMLEMSTreeNode* n = mrmlManager->GetTreeNode(leafIDNewOrder[i]);
-   // n->GetParametersNode()->GetLeafParameterNode->GetColorRGB(rgb);
-    //mrmlManager->GetTreeNode(leafIDNewOrder[i])->GetParametersNode()->GetLeafParameterNode->GetColorRGB(rgb);
-      
-  char red[20];
-  double redDouble = colors[0];
-  char green[20];
-  double greenDouble = colors[1];
-  char blue[20];
-  double blueDouble = colors[2];
-  
-  sprintf(red,"%f",redDouble);
-  sprintf(green,"%f",greenDouble);
-  sprintf(blue,"%f",blueDouble);
+  double nodeInfo[6];
 
-  this->IntensityDistributionHistogramHistogramFunc->GetNodeValue(i,nodeInfo);
-  nodeInfo[1] = colors[0];
-  nodeInfo[2] = colors[1];
-  nodeInfo[3] = colors[2];
-  this->IntensityDistributionHistogramHistogramFunc->SetNodeValue(i,nodeInfo);
-  this->IntensityDistributionHistogramHistogramVisu->Update();
-
-  char listColor[11] = {"        "};
-
-  listColor[0] = red[0];
-  listColor[1] = red[1];
-  listColor[2] = red[2];
-
-  listColor[4] = green[0];
-  listColor[5] = green[1];
-  listColor[6] = green[2];
-
-  listColor[8] = blue[0];
-  listColor[9] = blue[1];
-  listColor[10] = blue[2];
-
-  std::cout<<"new color: "<<listColor<<std::endl;
-  const char *color[20];
-  color[0] = listColor;
-
-  this->ClassAndNodeList->InsertCellText(i,2,color[0]);
-  this->ClassAndNodeList->SetCellWindowCommandToColorButton(i,2);
-
-
-
-    }
-
-
-      if(this->PreviewSelector->GetSelected() != NULL){
-    this->histogramFeedback();
-}
-    //vtkMRMLScene            *mrmlScene   = this->ColorSelectorWidget->GetMRMLScene();
-    //mrmlScene->GetNodeByID( mrmlManager->GetColormap() );
-    
-    //colour = colorNode->GetLookupTable()->GetTableValue(row);
-    /*vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-    if (mrmlManager)
-      {
-      mrmlManager->SetOutputVolumeMRMLID(
-        this->PreviewSelector->GetSelected()->GetID());
-      }
-      
-      // find output volume
-  if (!mrmlManager->GetSegmenterNode())
+  for(int i = 0; i < this->NumberOfLeaves ; i++)
     {
-    vtkErrorMacro("Segmenter node is null---aborting segmentation.");
-    return;
+    //std::cout<<"ID: "<<this->LeavesIDNewOrder[i]<<std::endl;
+    //std::cout<<"Label: "<<mrmlManager->GetTreeNodeIntensityLabel(
+    //this->LeavesIDNewOrder[i])<<std::endl;
+    this->OrderedLabels[i] = mrmlManager->
+      GetTreeNodeIntensityLabel(this->LeavesIDNewOrder[i]);
+    //std::cout<<"color map: "<<mrmlManager->GetColormap()<<std::endl;
+    mrmlManager->GetTreeNodeColor(this->LeavesIDNewOrder[i], rgb);
+    colors = colorNode->GetLookupTable()->GetTableValue(mrmlManager->
+        GetTreeNodeIntensityLabel(this->LeavesIDNewOrder[i]));
+
+    char red[20];
+    double redDouble = colors[0];
+    char green[20];
+    double greenDouble = colors[1];
+    char blue[20];
+    double blueDouble = colors[2];
+
+    sprintf(red,"%f",redDouble);
+    sprintf(green,"%f",greenDouble);
+    sprintf(blue,"%f",blueDouble);
+
+    this->HistogramColorFunction->GetNodeValue(i,
+        nodeInfo);
+    nodeInfo[1] = colors[0];
+    nodeInfo[2] = colors[1];
+    nodeInfo[3] = colors[2];
+    this->HistogramColorFunction->SetNodeValue(i,
+        nodeInfo);
+    this->HistogramVisualization->Update();
+
+    char listColor[11] = {"        "};
+
+    listColor[0] = red[0];
+    listColor[1] = red[1];
+    listColor[2] = red[2];
+
+    listColor[4] = green[0];
+    listColor[5] = green[1];
+    listColor[6] = green[2];
+
+    listColor[8] = blue[0];
+    listColor[9] = blue[1];
+    listColor[10] = blue[2];
+
+    //std::cout<<"new color: "<<listColor<<std::endl;
+    const char *color[20];
+    color[0] = listColor;
+
+    this->ClassAndNodeList->InsertCellText(i,2,color[0]);
+    this->ClassAndNodeList->SetCellWindowCommandToColorButton(i,2);
+
     }
-  vtkMRMLScalarVolumeNode *outVolume = 
-    mrmlManager->GetOutputVolumeNode();
-  if (outVolume == NULL)
+
+
+  if(this->PreviewSelector->GetSelected() != NULL)
     {
-    vtkErrorMacro("No output volume found---aborting segmentation.");
-    return;
+    this->VisualFeedback();
     }
-     std::cout<<"process preview gui event"<<std::endl;*/
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -4133,9 +3401,9 @@ void vtkEMSegmentNodeParametersStep::HideUserInterface()
 {
   this->Superclass::HideUserInterface();
   this->RemovePointMovingGUIEvents();
-  this->RemoveTestButtonGUIEvents();
+  this->RemoveComputeWeightsButtonGUIEvents();
   this->RemovePreviewGUIObservers();
   this->RemoveColumnListGUIObservers();
 
-  this->ClassAndNodeList->DeleteAllRows();    
+  this->ClassAndNodeList->DeleteAllRows();
 }
