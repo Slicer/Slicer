@@ -68,9 +68,12 @@ set(ProstateNav_SRCS
   vtkProstateNavGUI.cxx
   vtkIGTLToMRMLCoordinate.cxx
   vtkIGTLToMRMLBrpRobotCommand.cxx
-  vtkMRMLBrpRobotCommandNode.cxx
   vtkRobotToImageRegistration.cxx
   vtkZFrameRobotToImageRegistration.cxx
+  vtkMRMLBrpRobotCommandNode.cxx
+  vtkMRMLRobotDisplayNode.cxx
+  vtkMRMLRobotNode.cxx
+  vtkMRMLProstateNavManagerNode.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavStepSetUp.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavScanControlStep.cxx

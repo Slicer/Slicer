@@ -122,7 +122,7 @@ const double vtkProstateNavGUI::WorkPhaseColorDisabled[vtkProstateNavLogic::NumP
 
 const char *vtkProstateNavGUI::WorkPhaseStr[vtkProstateNavLogic::NumPhases] =
   {
-  /* Su */ "Start Up",
+  /* Su */ "Set Up",
   /* Pl */ "Planning",
   /* Cl */ "Calibration",
   /* Tg */ "Targeting",
