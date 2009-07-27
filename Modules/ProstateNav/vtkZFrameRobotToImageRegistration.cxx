@@ -64,10 +64,10 @@ void vtkZFrameRobotToImageRegistration::PrintSelf(ostream& os, vtkIndent indent)
 int vtkZFrameRobotToImageRegistration::DoRegistration()
 {
   
-  if (this->FiducialImage && this->RobotToImageTransform)
+  if (this->FiducialVolume && this->RobotToImageTransform)
     {
     Init(256, 256);
-    ZFrameRegistration(this->FiducialImage, this->RobotToImageTransform, 0);
+    ZFrameRegistration(this->FiducialVolume, this->RobotToImageTransform, 0);
     return 1;
     }
   else

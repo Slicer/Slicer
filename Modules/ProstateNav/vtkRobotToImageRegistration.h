@@ -12,14 +12,14 @@
 
 ==========================================================================*/
 
-#ifndef __vtkIGTLToMRMLBase_h
-#define __vtkIGTLToMRMLBase_h
+#ifndef __vtkRobotToImageRegistration_h
+#define __vtkRobotToImageRegistration_h
 
 #include "vtkObject.h"
 #include "vtkProstateNavWin32Header.h" 
 
-#include "vtkImageData.h"
-#include "vtkMatrix4x4.h"
+#include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLLinearTransformNode.h"
 
 #include <vector>
 #include <string>
@@ -34,12 +34,12 @@ class VTK_PROSTATENAV_EXPORT vtkRobotToImageRegistration : public vtkObject
 
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  vtkGetObjectMacro ( FiducialImage, vtkImageData );
-  vtkSetObjectMacro ( FiducialImage, vtkImageData );
-  vtkGetObjectMacro ( RobotToImageTransformMatrix, vtkMatrix4x4 );
-  vtkSetObjectMacro ( RobotToImageTransformMatrix, vtkMatrix4x4 );
+  vtkGetObjectMacro ( FiducialVolume, vtkMRMLScalarVolumeNode );
+  vtkSetObjectMacro ( FiducialVolume, vtkMRMLScalarVolumeNode );
+  vtkGetObjectMacro ( RobotToImageTransform, vtkMRMLLinearTransformNode );
+  vtkSetObjectMacro ( RobotToImageTransform, vtkMRMLLinearTransformNode );
 
-  virtual int DoRegistration() {};
+  virtual int DoRegistration() { return 0; };
 
  protected:
   vtkRobotToImageRegistration();
@@ -47,8 +47,8 @@ class VTK_PROSTATENAV_EXPORT vtkRobotToImageRegistration : public vtkObject
 
  protected:
 
-  vtkImageData* FiducialImage;
-  vtkMatrix4x4* RobotToImageTransformMatrix;
+  vtkMRMLScalarVolumeNode*    FiducialVolume;
+  vtkMRMLLinearTransformNode* RobotToImageTransform;
 
 };
 

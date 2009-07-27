@@ -18,14 +18,13 @@
  */
 
 
-#ifndef __vtkIGTLToMRMLBase_h
-#define __vtkIGTLToMRMLBase_h
+#ifndef __vtkZFrameRobotToImageRegistration_h
+#define __vtkZFrameRobotToImageRegistration_h
 
 #include "vtkObject.h"
 #include "vtkProstateNavWin32Header.h" 
 
-#include "vtkMRMLScalarVolumeNode.h"
-#include "vtkMRMLLinearTransformNode.h"
+#include "vtkRobotToImageRegistration.h"
 
 #include <vector>
 #include <string>
@@ -34,20 +33,15 @@
 #include "newmatap.h"
 #include "newmat.h"
 
-class VTK_PROSTATENAV_EXPORT vtkZFrameRobotToImageRegistration : public vtkObject
+class VTK_PROSTATENAV_EXPORT vtkZFrameRobotToImageRegistration : public vtkRobotToImageRegistration
 {
 
  public:
 
   static vtkZFrameRobotToImageRegistration *New();
-  vtkTypeRevisionMacro(vtkZFrameRobotToImageRegistration,vtkObject);
+  vtkTypeRevisionMacro(vtkZFrameRobotToImageRegistration,vtkRobotToImageRegistration);
 
   void PrintSelf(ostream& os, vtkIndent indent);
-
-  vtkGetObjectMacro ( FiducialImage, vtkMRMLScalarVolumeNode );
-  vtkSetObjectMacro ( FiducialImage, vtkMRMLScalarVolumeNode );
-  vtkGetObjectMacro ( RobotToImageTransform, vtkMRMLLinearTransformNode );
-  vtkSetObjectMacro ( RobotToImageTransform, vtkMRMLLinearTransformNode );
 
   virtual int DoRegistration();
 
@@ -98,9 +92,6 @@ class VTK_PROSTATENAV_EXPORT vtkZFrameRobotToImageRegistration : public vtkObjec
   
  protected:
 
-  vtkMRMLScalarVolumeNode*    FiducialImage;
-  vtkMRMLLinearTransformNode* RobotToImageTransform;
-  
   short  *InputImage;
   int    imgxsize;
   int    imgysize;

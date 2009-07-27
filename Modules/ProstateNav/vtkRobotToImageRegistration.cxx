@@ -25,6 +25,8 @@ vtkCxxRevisionMacro(vtkRobotToImageRegistration, "$Revision: 8267 $");
 //---------------------------------------------------------------------------
 vtkRobotToImageRegistration::vtkRobotToImageRegistration()
 {
+  this->FiducialVolume        = NULL;
+  this->RobotToImageTransform = NULL;
 }
 
 
