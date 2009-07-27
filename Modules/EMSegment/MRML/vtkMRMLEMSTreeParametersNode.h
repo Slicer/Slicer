@@ -1,3 +1,19 @@
+/*=auto=======================================================================
+
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
+  Reserved.
+
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Program:   3D Slicer
+  Module:    $RCSfile: vtkMRMLEMSTreeParametersNode.h,v$
+  Date:      $Date: 2006/01/06 17:56:51 $
+  Version:   $Revision: 1.6 $
+  Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
+
+=======================================================================auto=*/
+
 #ifndef __vtkMRMLEMSTreeParametersNode_h
 #define __vtkMRMLEMSTreeParametersNode_h
 
@@ -8,8 +24,7 @@
 #include "vtkMRMLEMSTreeParametersParentNode.h"
 #include <vector>
 
-class VTK_EMSEGMENT_EXPORT vtkMRMLEMSTreeParametersNode : 
-  public vtkMRMLNode
+class VTK_EMSEGMENT_EXPORT vtkMRMLEMSTreeParametersNode : public vtkMRMLNode
 {
 public:
   static vtkMRMLEMSTreeParametersNode *New();
@@ -41,13 +56,15 @@ public:
 
   // Description:
   // Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID);  
+  virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
+  // Description:
   // manipulate tree structure
   virtual void AddChildNode(const char* childNodeID);
   virtual void RemoveNthChildNode(int n);
   virtual void MoveNthChildNode(int fromIndex, int toIndex);
 
+  // Description:
   // manipulate target input channels
   vtkGetMacro(NumberOfTargetInputChannels, unsigned int);
   virtual void SetNumberOfTargetInputChannels(unsigned int n);
@@ -55,48 +72,59 @@ public:
   virtual void RemoveNthTargetInputChannel(int index);
   virtual void MoveNthTargetInputChannel(int fromIndex, int toIndex);
 
+  // Description:
   // additional parameters valid for leaf nodes
   vtkSetReferenceStringMacro(LeafParametersNodeID);
   vtkGetStringMacro(LeafParametersNodeID);
   virtual vtkMRMLEMSTreeParametersLeafNode* GetLeafParametersNode();
-  
+
+  // Description:
   // additional parameters valid for parent nodes
   vtkSetReferenceStringMacro(ParentParametersNodeID);
   vtkGetStringMacro(ParentParametersNodeID);
   virtual vtkMRMLEMSTreeParametersParentNode* GetParentParametersNode();
 
+  // Description:
   // input channel weights; length=NumberOfTargetInputChannels
   virtual double GetInputChannelWeight(int index) const;
   virtual void SetInputChannelWeight(int index, double value);
-  
+
+  // Description:
   // name of the spatial prior volume in the atlas
   vtkGetStringMacro(SpatialPriorVolumeName);
   vtkSetStringMacro(SpatialPriorVolumeName);
 
+  // Description:
   // regulates the influence of the spatial prior
   // 0 => no influence, 1 => maximum influence
   vtkGetMacro(SpatialPriorWeight, double);
   vtkSetMacro(SpatialPriorWeight, double);
-  
+
+  // Description:
   // the relative probability of this class verses other classes at
   // the same level
   vtkGetMacro(ClassProbability, double);
   vtkSetMacro(ClassProbability, double);
 
-  // Kilian: fill this in
+  // Description:
+  // Set/get the value for exclude from incomplete step
   vtkGetMacro(ExcludeFromIncompleteEStep, int);
   vtkSetMacro(ExcludeFromIncompleteEStep, int);
-  
-  // Kilian: fill this in
+
+  // Description:
+  // Set/get the value for print weights
   vtkGetMacro(PrintWeights, int);
   vtkSetMacro(PrintWeights, int);
 
+  // Description:
+  // Set/get the value for color RGB
   vtkSetVectorMacro(ColorRGB, double, 3);
   vtkGetVectorMacro(ColorRGB, double, 3);
 
 protected:
   vtkMRMLEMSTreeParametersNode();
   ~vtkMRMLEMSTreeParametersNode();
+
   vtkMRMLEMSTreeParametersNode(const vtkMRMLEMSTreeParametersNode&);
   void operator=(const vtkMRMLEMSTreeParametersNode&);
 
@@ -122,3 +150,4 @@ protected:
 };
 
 #endif
+

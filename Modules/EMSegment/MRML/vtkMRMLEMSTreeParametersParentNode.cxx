@@ -1,46 +1,62 @@
+/*=auto=======================================================================
+
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
+  Reserved.
+
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Program:   3D Slicer
+  Module:    $RCSfile: vtkMRMLEMSTreeParametersParentNode.cxx,v$
+  Date:      $Date: 2006/01/06 17:56:51 $
+  Version:   $Revision: 1.6 $
+  Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
+
+=======================================================================auto=*/
+
 #include "vtkMRMLEMSTreeParametersParentNode.h"
 #include <sstream>
 #include "vtkMRMLScene.h"
 
 #include <vtksys/ios/sstream>
 
-//-----------------------------------------------------------------------------
-vtkMRMLEMSTreeParametersParentNode* 
-vtkMRMLEMSTreeParametersParentNode::
-New()
+//----------------------------------------------------------------------------
+vtkMRMLEMSTreeParametersParentNode* vtkMRMLEMSTreeParametersParentNode::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = 
-    vtkObjectFactory::CreateInstance("vtkMRMLEMSTreeParametersParentNode");
-  if(ret)
-    {
+  vtkObject* ret = vtkObjectFactory::CreateInstance(
+      "vtkMRMLEMSTreeParametersParentNode");
+
+  if (ret)
+  {
     return (vtkMRMLEMSTreeParametersParentNode*)ret;
-    }
+  }
+
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSTreeParametersParentNode;
 }
 
-//-----------------------------------------------------------------------------
-vtkMRMLNode* 
-vtkMRMLEMSTreeParametersParentNode::
-CreateNodeInstance()
+//----------------------------------------------------------------------------
+vtkMRMLNode* vtkMRMLEMSTreeParametersParentNode::CreateNodeInstance()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = 
-    vtkObjectFactory::CreateInstance("vtkMRMLEMSTreeParametersParentNode");
-  if(ret)
-    {
+  vtkObject* ret = vtkObjectFactory::CreateInstance(
+      "vtkMRMLEMSTreeParametersParentNode");
+
+  if (ret)
+  {
     return (vtkMRMLEMSTreeParametersParentNode*)ret;
-    }
+  }
+
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLEMSTreeParametersParentNode;
 }
 
-//-----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 vtkMRMLEMSTreeParametersParentNode::vtkMRMLEMSTreeParametersParentNode()
 {
   this->ClassInteractionMatrixNodeID  = NULL;
-  
+
   this->Alpha                         = 0.99;
 
   this->PrintBias                     = 0;
@@ -68,154 +84,202 @@ vtkMRMLEMSTreeParametersParentNode::vtkMRMLEMSTreeParametersParentNode()
   this->NumberOfTargetInputChannels   = 0;
 }
 
-//-----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 vtkMRMLEMSTreeParametersParentNode::~vtkMRMLEMSTreeParametersParentNode()
 {
   this->SetClassInteractionMatrixNodeID(NULL);
 }
 
-//-----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkMRMLEMSTreeParametersParentNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
+
   vtkIndent indent(nIndent);
 
-  of << indent << "ClassInteractionMatrixNodeID=\"" 
-     << (this->ClassInteractionMatrixNodeID ? 
-         this->ClassInteractionMatrixNodeID : "NULL")
-     << "\" ";
+  of << indent
+    << "ClassInteractionMatrixNodeID=\""
+    << (this->ClassInteractionMatrixNodeID ?
+        this->ClassInteractionMatrixNodeID : "NULL")
+     << "\"";
 
-  of << indent << "Alpha=\"" << this->Alpha << "\" ";
+  of << indent
+    << "Alpha=\""
+    << this->Alpha
+    << "\"";
 
-  of << indent << "PrintBias=\"" << this->PrintBias 
-     << "\" ";
-  of << indent << "BiasCalculationMaxIterations=\"" 
-     << this->BiasCalculationMaxIterations
-     << "\" ";
-  of << indent << "SmoothingKernelWidth=\"" << this->SmoothingKernelWidth 
-     << "\" ";
-  of << indent << "SmoothingKernelSigma=\"" << this->SmoothingKernelSigma
-     << "\" ";
+  of << indent
+    << "PrintBias=\""
+    << this->PrintBias
+    << "\"";
 
-  of << indent << "StopEMType=\"" << this->StopEMType << "\" ";
-  of << indent << "StopEMMaxIterations=\"" << this->StopEMMaxIterations 
-     << "\" ";
-  of << indent << "StopEMValue=\""<< this->StopEMValue << "\" ";
+  of << indent
+    << "BiasCalculationMaxIterations=\""
+    << this->BiasCalculationMaxIterations
+    << "\"";
 
-  of << indent << "StopMFAType=\"" << this->StopMFAType << "\" ";
-  of << indent << "StopMFAMaxIterations=\"" << this->StopMFAMaxIterations 
-     << "\" ";
-  of << indent << "StopMFAValue=\"" << this->StopMFAValue << "\" ";
+  of << indent
+    << "SmoothingKernelWidth=\""
+    << this->SmoothingKernelWidth
+     << "\"";
 
-  of << indent << "PrintFrequency=\"" << this->PrintFrequency << "\" ";
+  of << indent
+    << "SmoothingKernelSigma=\""
+    << this->SmoothingKernelSigma
+    << "\"";
 
-  of << indent << "PrintLabelMap=\"" << this->PrintLabelMap << "\" ";
+  of << indent
+    << "StopEMType=\""
+    << this->StopEMType
+    << "\"";
 
-  of << indent << "PrintEMLabelMapConvergence=\"" 
-     << this->PrintEMLabelMapConvergence << "\" ";
+  of << indent
+    << "StopEMMaxIterations=\""
+    << this->StopEMMaxIterations
+    << "\"";
 
-  of << indent << "PrintEMWeightsConvergence=\"" 
-     << this->PrintEMWeightsConvergence << "\" ";
+  of << indent
+    << "StopEMValue=\""
+    << this->StopEMValue
+    << "\"";
 
-  of << indent << "PrintMFALabelMapConvergence=\"" 
-     << this->PrintEMLabelMapConvergence << "\" ";
+  of << indent
+    << "StopMFAType=\""
+    << this->StopMFAType
+    << "\"";
 
-  of << indent << "PrintMFAWeightsConvergence=\"" 
-     << this->PrintEMWeightsConvergence << "\" ";
+  of << indent
+    << "StopMFAMaxIterations=\""
+    << this->StopMFAMaxIterations
+    << "\"";
 
-  of << indent << "GenerateBackgroundProbability=\"" 
-     << this->GenerateBackgroundProbability << "\" ";
+  of << indent
+    << "StopMFAValue=\""
+    << this->StopMFAValue
+    << "\"";
+
+  of << indent
+    << "PrintFrequency=\""
+    << this->PrintFrequency
+    << "\"";
+
+  of << indent
+    << "PrintLabelMap=\""
+    << this->PrintLabelMap
+    << "\"";
+
+  of << indent
+    << "PrintEMLabelMapConvergence=\""
+    << this->PrintEMLabelMapConvergence
+    << "\"";
+
+  of << indent
+    << "PrintEMWeightsConvergence=\""
+    << this->PrintEMWeightsConvergence
+    << "\"";
+
+  of << indent
+    << "PrintMFALabelMapConvergence=\""
+    << this->PrintEMLabelMapConvergence
+    << "\"";
+
+  of << indent
+    << "PrintMFAWeightsConvergence=\""
+    << this->PrintEMWeightsConvergence
+    << "\"";
+
+  of << indent
+    << "GenerateBackgroundProbability=\""
+    << this->GenerateBackgroundProbability
+    << "\"";
 }
 
-//-----------------------------------------------------------------------------
-void
-vtkMRMLEMSTreeParametersParentNode::
-UpdateReferenceID(const char* oldID, const char* newID)
+//----------------------------------------------------------------------------
+void vtkMRMLEMSTreeParametersParentNode::UpdateReferenceID(const char* oldID,
+    const char* newID)
 {
-  if (this->ClassInteractionMatrixNodeID && 
-      !strcmp(oldID, this->ClassInteractionMatrixNodeID))
-    {
+  if (this->ClassInteractionMatrixNodeID &&
+      strcmp(oldID, this->ClassInteractionMatrixNodeID) == 0)
+  {
     this->SetClassInteractionMatrixNodeID(newID);
-    }
+  }
 }
 
-//-----------------------------------------------------------------------------
-void 
-vtkMRMLEMSTreeParametersParentNode::
-UpdateReferences()
+//----------------------------------------------------------------------------
+void vtkMRMLEMSTreeParametersParentNode::UpdateReferences()
 {
   Superclass::UpdateReferences();
 
-  if (this->ClassInteractionMatrixNodeID != NULL && 
+  if (this->ClassInteractionMatrixNodeID != NULL &&
       this->Scene->GetNodeByID(this->ClassInteractionMatrixNodeID) == NULL)
-    {
+  {
     this->SetClassInteractionMatrixNodeID(NULL);
-    }
+  }
 }
 
-//-----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkMRMLEMSTreeParametersParentNode::ReadXMLAttributes(const char** attrs)
 {
   Superclass::ReadXMLAttributes(attrs);
 
-  //
   // we assume and even number of attrs
-  //
+
   const char* key;
   const char* val;
+
   while (*attrs != NULL)
-    {
+  {
     key = *attrs++;
     val = *attrs++;
 
-    if (!strcmp(key, "ClassInteractionMatrixNodeID"))
-      {
+    if (strcmp(key, "ClassInteractionMatrixNodeID") == 0)
+    {
       this->SetClassInteractionMatrixNodeID(val);
-      //this->Scene->AddReferencedNodeID(this->ClassInteractionMatrixNodeID, 
-      //                                 this);   
-      }    
-    else if (!strcmp(key, "Alpha"))
-      {
+      //this->Scene->AddReferencedNodeID(this->ClassInteractionMatrixNodeID,
+      //                                 this);
+    }
+    else if (strcmp(key,"Alpha") == 0)
+    {
       vtksys_stl::stringstream ss;
       ss << val;
       ss >> this->Alpha;
-      }
-    else if (!strcmp(key, "PrintBias"))
-      {
+    }
+    else if (strcmp(key,"PrintBias") == 0)
+    {
       vtksys_stl::stringstream ss;
       ss << val;
       ss >> this->PrintBias;
-      }
-    else if (!strcmp(key, "BiasCalculationMaxIterations"))
-      {
+    }
+    else if (strcmp(key, "BiasCalculationMaxIterations") == 0)
+    {
       vtksys_stl::stringstream ss;
       ss << val;
       ss >> this->BiasCalculationMaxIterations;
-      }
-    else if (!strcmp(key, "SmoothingKernelWidth"))
-      {
+    }
+    else if (strcmp(key, "SmoothingKernelWidth") == 0)
+    {
       vtksys_stl::stringstream ss;
       ss << val;
       ss >> this->SmoothingKernelWidth;
-      }
-    else if (!strcmp(key, "SmoothingKernelSigma"))
-      {
+    }
+    else if (strcmp(key, "SmoothingKernelSigma") == 0)
+    {
       vtksys_stl::stringstream ss;
       ss << val;
       ss >> this->SmoothingKernelSigma;
-      }
-    else if (!strcmp(key, "StopEMType"))
-      {
+    }
+    else if (strcmp(key, "StopEMType") == 0)
+    {
       vtksys_stl::stringstream ss;
       ss << val;
       ss >> this->StopEMType;
-      }
-    else if (!strcmp(key, "StopEMMaxIterations"))
-      {
+    }
+    else if (strcmp(key, "StopEMMaxIterations") == 0)
+    {
       vtksys_stl::stringstream ss;
       ss << val;
       ss >> this->StopEMMaxIterations;
-      }
+    }
     else if (!strcmp(key, "StopEMValue"))
       {
       vtksys_stl::stringstream ss;
@@ -285,11 +349,12 @@ void vtkMRMLEMSTreeParametersParentNode::ReadXMLAttributes(const char** attrs)
     }
 }
 
-//-----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkMRMLEMSTreeParametersParentNode::Copy(vtkMRMLNode *rhs)
 {
   Superclass::Copy(rhs);
-  vtkMRMLEMSTreeParametersParentNode* node = 
+
+  vtkMRMLEMSTreeParametersParentNode* node =
     (vtkMRMLEMSTreeParametersParentNode*) rhs;
 
   this->SetClassInteractionMatrixNodeID(node->ClassInteractionMatrixNodeID);
@@ -308,7 +373,7 @@ void vtkMRMLEMSTreeParametersParentNode::Copy(vtkMRMLNode *rhs)
   this->SetStopMFAType(node->StopMFAType);
   this->SetStopMFAMaxIterations(node->StopMFAMaxIterations);
   this->SetStopMFAValue(node->StopMFAValue);
-  
+
   this->SetPrintFrequency(node->PrintFrequency);
   this->SetPrintLabelMap(node->PrintLabelMap);
   this->SetPrintEMLabelMapConvergence(node->PrintEMLabelMapConvergence);
@@ -318,96 +383,151 @@ void vtkMRMLEMSTreeParametersParentNode::Copy(vtkMRMLNode *rhs)
   this->SetGenerateBackgroundProbability(node->GenerateBackgroundProbability);
 }
 
-//-----------------------------------------------------------------------------
-void vtkMRMLEMSTreeParametersParentNode::PrintSelf(ostream& os, 
-                                                   vtkIndent indent)
+//----------------------------------------------------------------------------
+void vtkMRMLEMSTreeParametersParentNode::PrintSelf(ostream& os,
+    vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "ClassInteractionMatrixNodeID: " 
-     << (this->ClassInteractionMatrixNodeID ? 
-         this->ClassInteractionMatrixNodeID : "(none)")
-     << "\n";
+  os << indent
+    << "ClassInteractionMatrixNodeID: "
+    << (this->ClassInteractionMatrixNodeID ?
+        this->ClassInteractionMatrixNodeID : "(none)")
+    << "\n";
 
-  os << indent << "Alpha: " << this->Alpha << "\n";
+  os << indent
+    << "Alpha: "
+    << this->Alpha
+    << "\n";
 
-  os << indent << "PrintBias: " << this->PrintBias 
-     << "\n";
-  os << indent << "BiasCalculationMaxIterations: " 
-     << this->BiasCalculationMaxIterations 
-     << "\n";
-  os << indent << "SmoothingKernelWidth: " << this->SmoothingKernelWidth 
-     << "\n";
-  os << indent << "SmoothingKernelSigma: " << this->SmoothingKernelSigma 
-     << "\n";
+  os << indent
+    << "PrintBias: "
+    << this->PrintBias
+    << "\n";
 
-  os << indent << "StopEMType: " << this->StopEMType << "\n";
-  os << indent << "StopEMMaxIterations: " << this->StopEMMaxIterations << "\n";
-  os << indent << "StopEMValue: " << this->StopEMValue << "\n";
+  os << indent
+    << "BiasCalculationMaxIterations: "
+    << this->BiasCalculationMaxIterations
+    << "\n";
 
-  os << indent << "StopMFAType: " << this->StopMFAType << "\n";
-  os << indent << "StopMFAMaxIterations: " << this->StopMFAMaxIterations 
-     << "\n";
-  os << indent << "StopMFAValue: " << this->StopMFAValue << "\n";
+  os << indent
+    << "SmoothingKernelWidth: "
+    << this->SmoothingKernelWidth
+    << "\n";
 
-  os << indent << "PrintFrequency: " << this->PrintFrequency << "\n";
-  os << indent << "PrintLabelMap: " << this->PrintLabelMap << "\n";
-  os << indent << "PrintEMLabelMapConvergence: " 
-     << this->PrintEMLabelMapConvergence << "\n";
-  os << indent << "PrintEMWeightsConvergence: " 
-     << this->PrintEMWeightsConvergence << "\n";
-  os << indent << "PrintMFALabelMapConvergence: " 
-     << this->PrintEMLabelMapConvergence << "\n";
-  os << indent << "PrintMFAWeightsConvergence: " 
-     << this->PrintEMWeightsConvergence << "\n";
-  os << indent << "GenerateBackgroundProbability: " 
-     << this->GenerateBackgroundProbability << "\n";
+  os << indent
+    << "SmoothingKernelSigma: "
+    << this->SmoothingKernelSigma
+    << "\n";
+
+  os << indent
+    << "StopEMType: "
+    << this->StopEMType
+    << "\n";
+
+  os << indent
+    << "StopEMMaxIterations: "
+    << this->StopEMMaxIterations
+    << "\n";
+
+  os << indent
+    << "StopEMValue: "
+    << this->StopEMValue
+    << "\n";
+
+  os << indent
+    << "StopMFAType: "
+    << this->StopMFAType
+    << "\n";
+
+  os << indent
+    << "StopMFAMaxIterations: "
+    << this->StopMFAMaxIterations
+    << "\n";
+
+  os << indent
+    << "StopMFAValue: "
+    << this->StopMFAValue
+    << "\n";
+
+  os << indent
+    << "PrintFrequency: "
+    << this->PrintFrequency
+    << "\n";
+
+  os << indent
+    << "PrintLabelMap: "
+    << this->PrintLabelMap
+    << "\n";
+
+  os << indent
+    << "PrintEMLabelMapConvergence: "
+    << this->PrintEMLabelMapConvergence
+    << "\n";
+
+  os << indent
+    << "PrintEMWeightsConvergence: "
+    << this->PrintEMWeightsConvergence
+    << "\n";
+
+  os << indent
+    << "PrintMFALabelMapConvergence: "
+    << this->PrintEMLabelMapConvergence
+    << "\n";
+
+  os << indent
+    << "PrintMFAWeightsConvergence: "
+    << this->PrintEMWeightsConvergence
+    << "\n";
+
+  os << indent
+    << "GenerateBackgroundProbability: "
+    << this->GenerateBackgroundProbability
+    << "\n";
 }
 
-//-----------------------------------------------------------------------------
-vtkMRMLEMSClassInteractionMatrixNode*
-vtkMRMLEMSTreeParametersParentNode::
+//----------------------------------------------------------------------------
+vtkMRMLEMSClassInteractionMatrixNode* vtkMRMLEMSTreeParametersParentNode::
 GetClassInteractionMatrixNode()
 {
   vtkMRMLEMSClassInteractionMatrixNode* node = NULL;
-  if (this->GetScene() && this->GetClassInteractionMatrixNodeID() )
+
+  if (this->GetScene() && this->GetClassInteractionMatrixNodeID())
     {
     vtkMRMLNode* snode = this->GetScene()->
       GetNodeByID(this->ClassInteractionMatrixNodeID);
+
     node = vtkMRMLEMSClassInteractionMatrixNode::SafeDownCast(snode);
     }
+
   return node;
 }
 
-//-----------------------------------------------------------------------------
-void 
-vtkMRMLEMSTreeParametersParentNode::
-AddChildNode(const char* childNodeID)
+//----------------------------------------------------------------------------
+void vtkMRMLEMSTreeParametersParentNode::AddChildNode(const char* childNodeID)
 {
   if (this->GetClassInteractionMatrixNode() != NULL)
-    {
+  {
     this->GetClassInteractionMatrixNode()->AddClass();
-    }
+  }
 }
 
-//-----------------------------------------------------------------------------
-void
-vtkMRMLEMSTreeParametersParentNode::
-RemoveNthChildNode(int n)
+//----------------------------------------------------------------------------
+void vtkMRMLEMSTreeParametersParentNode::RemoveNthChildNode(int n)
 {
   if (this->GetClassInteractionMatrixNode() != NULL)
-    {
+  {
     this->GetClassInteractionMatrixNode()->RemoveNthClass(n);
-    }
+  }
 }
 
-//-----------------------------------------------------------------------------
-void 
-vtkMRMLEMSTreeParametersParentNode::
-MoveNthChildNode(int fromIndex, int toIndex)
+//----------------------------------------------------------------------------
+void vtkMRMLEMSTreeParametersParentNode::MoveNthChildNode(int fromIndex, int
+    toIndex)
 {
   if (this->GetClassInteractionMatrixNode() != NULL)
-    {
+  {
     this->GetClassInteractionMatrixNode()->MoveNthClass(fromIndex, toIndex);
-    }
+  }
 }
+

@@ -1,3 +1,19 @@
+/*=auto=======================================================================
+
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
+  Reserved.
+
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Program:   3D Slicer
+  Module:    $RCSfile: vtkMRMLEMSTreeParametersLeafNode.h,v$
+  Date:      $Date: 2006/01/06 17:56:51 $
+  Version:   $Revision: 1.6 $
+  Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
+
+=======================================================================auto=*/
+
 #ifndef __vtkMRMLEMSTreeParametersLeafNode_h
 #define __vtkMRMLEMSTreeParametersLeafNode_h
 
@@ -8,7 +24,7 @@
 
 #include <vector>
 
-class VTK_EMSEGMENT_EXPORT vtkMRMLEMSTreeParametersLeafNode : 
+class VTK_EMSEGMENT_EXPORT vtkMRMLEMSTreeParametersLeafNode :
   public vtkMRMLNode
 {
 public:
@@ -54,13 +70,13 @@ public:
 
   virtual double GetLogMean(int index) const;
   virtual void SetLogMean(int index, double value);
-  
+
   virtual double GetMean(int index) const;
   virtual void SetMean(int index, double value);
 
   virtual double GetLogCovariance(int row, int column) const;
   virtual void SetLogCovariance(int row, int column, double value);
-  
+
   virtual double GetCovariance(int row, int column) const;
   virtual void SetCovariance(int row, int column, double value);
 
@@ -73,6 +89,7 @@ public:
     DistributionSpecificationAutoSample
     };
   //ETX
+
   vtkGetMacro(DistributionSpecificationMethod, int);
   vtkSetMacro(DistributionSpecificationMethod, int);
 
@@ -88,9 +105,10 @@ protected:
   vtkMRMLEMSTreeParametersLeafNode(const vtkMRMLEMSTreeParametersLeafNode&);
   void operator=(const vtkMRMLEMSTreeParametersLeafNode&);
 
-  int                                 PrintQuality;
-  int                                 IntensityLabel;
-  int                                 DistributionSpecificationMethod;
+  int           PrintQuality;
+  int           IntensityLabel;
+  int           DistributionSpecificationMethod;
+  unsigned int  NumberOfTargetInputChannels;
 
   //BTX
   typedef vtkstd::vector<double>                PointType;
@@ -104,8 +122,7 @@ protected:
   vtkstd::vector<vtkstd::vector<double> >       LogCovariance;
   vtkstd::vector<vtkstd::vector<double> >       Covariance;
   //ETX
-
-  unsigned int                        NumberOfTargetInputChannels;
 };
 
 #endif
+
