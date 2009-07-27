@@ -72,7 +72,7 @@ set(ProstateNav_SRCS
   vtkRobotToImageRegistration.cxx
   vtkZFrameRobotToImageRegistration.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavStep.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavConfigurationStep.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavStepSetUp.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavScanControlStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavCalibrationStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavTargetingStep.cxx

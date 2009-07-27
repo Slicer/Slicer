@@ -12,7 +12,7 @@
 
 ==========================================================================*/
 
-#include "vtkProstateNavConfigurationStep.h"
+#include "vtkProstateNavStepSetUp.h"
 
 #include "vtkProstateNavGUI.h"
 #include "vtkProstateNavLogic.h"
@@ -33,11 +33,11 @@
 
 
 //----------------------------------------------------------------------------
-vtkStandardNewMacro(vtkProstateNavConfigurationStep);
-vtkCxxRevisionMacro(vtkProstateNavConfigurationStep, "$Revision: 1.1 $");
+vtkStandardNewMacro(vtkProstateNavStepSetUp);
+vtkCxxRevisionMacro(vtkProstateNavStepSetUp, "$Revision: 1.1 $");
 
 //----------------------------------------------------------------------------
-vtkProstateNavConfigurationStep::vtkProstateNavConfigurationStep()
+vtkProstateNavStepSetUp::vtkProstateNavStepSetUp()
 {
 
   this->SetName("1/5. Configuration");
@@ -61,7 +61,7 @@ vtkProstateNavConfigurationStep::vtkProstateNavConfigurationStep()
 
 
 //----------------------------------------------------------------------------
-vtkProstateNavConfigurationStep::~vtkProstateNavConfigurationStep()
+vtkProstateNavStepSetUp::~vtkProstateNavStepSetUp()
 {
 
   if (this->RobotFrame)
@@ -142,7 +142,7 @@ vtkProstateNavConfigurationStep::~vtkProstateNavConfigurationStep()
 
 
 //----------------------------------------------------------------------------
-void vtkProstateNavConfigurationStep::ShowUserInterface()
+void vtkProstateNavStepSetUp::ShowUserInterface()
 {
 
   this->Superclass::ShowUserInterface();
@@ -278,13 +278,13 @@ void vtkProstateNavConfigurationStep::ShowUserInterface()
 
 
 //----------------------------------------------------------------------------
-void vtkProstateNavConfigurationStep::PrintSelf(ostream& os, vtkIndent indent)
+void vtkProstateNavStepSetUp::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }
 
 //----------------------------------------------------------------------------
-void vtkProstateNavConfigurationStep::ProcessGUIEvents( vtkObject *caller,
+void vtkProstateNavStepSetUp::ProcessGUIEvents( vtkObject *caller,
                                          unsigned long event, void *callData )
 {
 

@@ -26,7 +26,7 @@
 #include "vtkKWWizardWidget.h"
 #include "vtkKWWizardWorkflow.h"
 #include "vtkProstateNavStep.h"
-#include "vtkProstateNavConfigurationStep.h"
+#include "vtkProstateNavStepSetUp.h"
 #include "vtkProstateNavScanControlStep.h"
 #include "vtkProstateNavCalibrationStep.h"
 #include "vtkProstateNavTargetingStep.h"
@@ -1065,7 +1065,7 @@ void vtkProstateNavGUI::BuildGUIForWizardFrame()
 
     if (!this->WizardSteps[vtkProstateNavLogic::StartUp])
       {
-      this->WizardSteps[vtkProstateNavLogic::StartUp] = vtkProstateNavConfigurationStep::New();
+      this->WizardSteps[vtkProstateNavLogic::StartUp] = vtkProstateNavStepSetUp::New();
       }
 
     // -----------------------------------------------------------------
