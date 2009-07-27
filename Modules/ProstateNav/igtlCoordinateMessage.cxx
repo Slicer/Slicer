@@ -27,7 +27,7 @@ CoordinateMessage::CoordinateMessage():
   MessageBase()
 {
   Init();
-  m_DefaultBodyType  = "COORDINATE";
+  m_DefaultBodyType  = "COORDINATES";
 }
 
 

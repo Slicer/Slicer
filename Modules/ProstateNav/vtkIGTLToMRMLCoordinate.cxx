@@ -133,11 +133,11 @@ int vtkIGTLToMRMLCoordinate::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMR
   float py = position[1];
   float pz = position[2];
   
-  //std::cerr << "matrix = " << std::endl;
-  //std::cerr << tx << ", " << ty << ", " << tz << std::endl;
-  //std::cerr << sx << ", " << sy << ", " << sz << std::endl;
-  //std::cerr << nx << ", " << ny << ", " << nz << std::endl;
-  //std::cerr << px << ", " << py << ", " << pz << std::endl;
+  std::cerr << "matrix = " << std::endl;
+  std::cerr << tx << ", " << ty << ", " << tz << std::endl;
+  std::cerr << sx << ", " << sy << ", " << sz << std::endl;
+  std::cerr << nx << ", " << ny << ", " << nz << std::endl;
+  std::cerr << px << ", " << py << ", " << pz << std::endl;
   
   vtkMatrix4x4* transform = vtkMatrix4x4::New();
   vtkMatrix4x4* transformToParent = transformNode->GetMatrixTransformToParent();

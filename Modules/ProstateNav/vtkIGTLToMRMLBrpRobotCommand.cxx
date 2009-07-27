@@ -203,13 +203,14 @@ int vtkIGTLToMRMLBrpRobotCommand::MRMLToIGTL(unsigned long event, vtkMRMLNode* m
         igtlmatrix[3][3]  = matrix->GetElement(3, 3);
         
         float position[3];
-        float quaternion[3];
+        float quaternion[4];
         
         position[0] = igtlmatrix[0][3];
         position[1] = igtlmatrix[1][3];
         position[2] = igtlmatrix[2][3];
+
         igtl::MatrixToQuaternion(igtlmatrix, quaternion);
-        
+
         //this->OutMoveToMsg->SetMatrix(igtlmatrix);
         this->OutMoveToMsg->SetPosition(position);
         this->OutMoveToMsg->SetQuaternion(quaternion);

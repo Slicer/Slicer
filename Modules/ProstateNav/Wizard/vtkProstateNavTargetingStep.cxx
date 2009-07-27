@@ -337,19 +337,28 @@ void vtkProstateNavTargetingStep::ProcessGUIEvents(vtkObject *caller,
         matrix->SetElement(1, 0, igtlmatrix[1][0]);
         matrix->SetElement(2, 0, igtlmatrix[2][0]);
         matrix->SetElement(3, 0, igtlmatrix[3][0]);
+
         matrix->SetElement(0, 1, igtlmatrix[0][1]);
         matrix->SetElement(1, 1, igtlmatrix[1][1]);
         matrix->SetElement(2, 1, igtlmatrix[2][1]);
         matrix->SetElement(3, 1, igtlmatrix[3][1]);
+
         matrix->SetElement(0, 2, igtlmatrix[0][2]);
         matrix->SetElement(1, 2, igtlmatrix[1][2]);
         matrix->SetElement(2, 2, igtlmatrix[2][2]);
         matrix->SetElement(3, 2, igtlmatrix[3][2]);
+
         matrix->SetElement(0, 3, igtlmatrix[0][3]);
         matrix->SetElement(1, 3, igtlmatrix[1][3]);
         matrix->SetElement(2, 3, igtlmatrix[2][3]);
         matrix->SetElement(3, 3, igtlmatrix[3][3]);
         
+
+        std::cerr << "TARGETPOISITION = "
+                  << igtlmatrix[0][3] << ", "
+                  << igtlmatrix[1][3] << ", "
+                  << igtlmatrix[2][3] << std::endl;
+
         vtkMatrix4x4* transformToParent = transformNode->GetMatrixTransformToParent();
         transformToParent->DeepCopy(matrix);
         this->Logic->RobotMoveTo();

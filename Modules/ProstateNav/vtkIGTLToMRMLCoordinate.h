@@ -31,7 +31,7 @@ class VTK_PROSTATENAV_EXPORT vtkIGTLToMRMLCoordinate : public vtkIGTLToMRMLBase
 
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  virtual const char*  GetIGTLName() { return "COORDIANTE"; };
+  virtual const char*  GetIGTLName() { return "COORDINATES"; };
   virtual const char*  GetMRMLName() { return "LinearTransform"; };
   virtual vtkIntArray* GetNodeEvents();
   virtual vtkMRMLNode* CreateNewNode(vtkMRMLScene* scene, const char* name);

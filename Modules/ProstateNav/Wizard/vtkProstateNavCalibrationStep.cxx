@@ -778,6 +778,14 @@ int vtkProstateNavCalibrationStep::ZFrameRegistration(vtkMRMLScalarVolumeNode* v
     for(j=0; j<ysize; j++)
       SourceImage.element(i,j) = InputImage[i*ysize+j];
 
+  FILE* fp;
+  fp = fopen("dump_before.txt", "w");
+  for(i=0; i<xsize; i++)
+    for(j=0; j<ysize; j++)
+      fprintf(fp, "%.2f\n", SourceImage.element(i,j));
+  fclose(fp);
+
+
   // Find the 7 Z-frame fiducial intercept artifacts in the image.
   std::cerr << "ZTrackerTransform - Searching fiducials...\n" << std::endl;
   if(LocateFiducials(SourceImage, xsize, ysize, Zcoordinates, tZcoordinates) == false)
@@ -928,6 +936,14 @@ bool vtkProstateNavCalibrationStep::LocateFiducials(Matrix &SourceImage, int xsi
 
   // Transform the MR image to the frequency domain (k-space).
   FFT2(SourceImage, zeroimag, IFreal, IFimag);
+
+  FILE* fp;
+  fp = fopen("dump.txt", "w");
+  for(i=0; i<xsize; i++)
+    for(j=0; j<ysize; j++)
+      fprintf(fp, "%.2f\n", SourceImage.element(i,j));
+  fclose(fp);
+
 
   // Normalize the image.
   Real maxabsolute = ComplexMax(IFreal,IFimag);
