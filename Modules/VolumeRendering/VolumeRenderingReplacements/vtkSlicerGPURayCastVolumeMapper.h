@@ -126,6 +126,8 @@ protected:
   int              InternalVolumeSize;
 
   GLuint           Volume1Index;
+  GLuint           Volume2Index;
+  GLuint           Volume3Index;
   GLuint           ColorLookupIndex;
   GLuint           ColorLookup2Index;
   GLuint           RayCastVertexShader;

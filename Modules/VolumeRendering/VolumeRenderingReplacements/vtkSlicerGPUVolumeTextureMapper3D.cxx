@@ -673,10 +673,10 @@ vtkSlicerGPUVolumeTextureMapper3D::~vtkSlicerGPUVolumeTextureMapper3D()
         delete this->GradientsArgs;
 
     if (this->Threader)
-      {
+    {
       this->Threader->Delete();
       this->Threader = NULL;
-      }
+    }
 }
 
 
@@ -699,14 +699,14 @@ int vtkSlicerGPUVolumeTextureMapper3D::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
   // Has the volume changed in some way?
   if ( this->SavedTextureInput != input ||
        this->SavedTextureMTime.GetMTime() < input->GetMTime() )
-    {
+  {
     needToUpdate = 1;
-    }
+  }
  
   if ( !needToUpdate )
-    {
+  {
     return 0;
-    }
+  }
  
   this->SavedTextureInput = input;
   this->SavedTextureMTime.Modified();

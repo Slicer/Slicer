@@ -15,6 +15,7 @@
 #include "vtkSlicerGPUVolumeMapper.h"
 #include "vtkSlicerVolumeRenderingFactory.h"
 
+#include "vtkMultiThreader.h"
 #include "vtkRenderer.h"
 #include "vtkVolume.h"
 #include "vtkCamera.h"
@@ -38,7 +39,9 @@ vtkInstantiatorNewMacro(vtkSlicerGPUVolumeMapper);
 //
 //  1 component three input volumes (A, B, and LabelMap):
 //             R            G             B             A
-//  volume 1   scalar.A     scalar.B      Label                
+//  volume 1   scalar.A     scalar.B      Label              
+//  volume 2   normal.A.x   normal.A.y    normal.A.z    normal.A.mag  
+//  volume 3   normal.B.x   normal.B.y    normal.B.z    normal.B.mag
 //  
 //  normal calculated at run time
 
@@ -236,6 +239,240 @@ void vtkSlicerGPUVolumeMapperComputeScalars( T *dataPtr,
   }
 }
 
+VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeMapperComputeGradients( void *arg)
+{
+  GPUGradientsArgsType *pArgs = (GPUGradientsArgsType *)(((vtkMultiThreader::ThreadInfo *)arg)->UserData);
+  
+  float *dataPtr = pArgs->dataPtr;
+  vtkSlicerGPUVolumeMapper *me = pArgs->me;
+  double scalarRange[2];
+  scalarRange[0] = pArgs->scalarRange[0];
+  scalarRange[1] = pArgs->scalarRange[1];
+  unsigned char *volume = pArgs->volume;
+  
+  int                 x, y, z;
+  int                 offset, outputOffset;
+  int                 x_start, x_limit;
+  int                 y_start, y_limit;
+  int                 z_start, z_limit;
+  float               *dptr;
+  float               n[3], t;
+  float               gvalue;
+  float               zeroNormalThreshold;
+  int                 xlow, xhigh;
+  double              aspect[3];
+  unsigned char       *outPtr;
+  unsigned char       *normals;
+  double              floc[3];
+  int                 loc[3];
+
+  float outputSpacing[3];
+  me->GetVolumeSpacing( outputSpacing );
+
+  double spacing[3];
+  me->GetInput()->GetSpacing( spacing );
+
+  double sampleRate[3];
+  sampleRate[0] = (double)outputSpacing[0] / (double)spacing[0];
+  sampleRate[1] = (double)outputSpacing[1] / (double)spacing[1];
+  sampleRate[2] = (double)outputSpacing[2] / (double)spacing[2];
+ 
+  int components = me->GetInput()->GetNumberOfScalarComponents();
+ 
+  int dim[3];
+  me->GetInput()->GetDimensions(dim);
+
+  int outputDim[3];
+  me->GetVolumeDimensions( outputDim );
+
+  double avgSpacing = ((double)spacing[0] +
+                       (double)spacing[1] + 
+                       (double)spacing[2]) / 3.0;
+
+  // adjust the aspect
+  aspect[0] = (double)spacing[0] * 2.0 / avgSpacing;
+  aspect[1] = (double)spacing[1] * 2.0 / avgSpacing;
+  aspect[2] = (double)spacing[2] * 2.0 / avgSpacing;
+  
+  //avoid division inside for loop
+  aspect[0] = 1.0/aspect[0];
+  aspect[1] = 1.0/aspect[1];
+  aspect[2] = 1.0/aspect[2];
+  
+  float               scale;
+  scale = 255.0 / (0.25*(scalarRange[1] - scalarRange[0]));
+
+  // Get the length at or below which normals are considered to
+  // be "zero"
+  zeroNormalThreshold =.001 * (scalarRange[1] - scalarRange[0]);
+
+  int thread_id    = ((vtkMultiThreader::ThreadInfo *)(arg))->ThreadID;
+  int thread_count = ((vtkMultiThreader::ThreadInfo *)(arg))->NumberOfThreads;
+  
+  x_start = 0;
+  x_limit = outputDim[0];
+  y_start = 0;
+  y_limit = outputDim[1];
+  z_start = (int)(( (float)thread_id / (float)thread_count ) *
+                  outputDim[2] );
+  z_limit = (int)(( (float)(thread_id + 1) / (float)thread_count ) *
+                  outputDim[2] );
+
+  // Do final error checking on limits - make sure they are all within bounds
+  // of the scalar input
+
+  x_start = (x_start<0)?(0):(x_start);
+  y_start = (y_start<0)?(0):(y_start);
+  z_start = (z_start<0)?(0):(z_start);
+
+  x_limit = (x_limit>dim[0])?(outputDim[0]):(x_limit);
+  y_limit = (y_limit>dim[1])?(outputDim[1]):(y_limit);
+  z_limit = (z_limit>dim[2])?(outputDim[2]):(z_limit);
+
+  normals = volume;
+  
+  double wx, wy, wz;
+
+  // Loop through all the data and compute the encoded normal and
+  // gradient magnitude for each scalar location
+  for ( z = z_start; z < z_limit; z++ )
+    {
+    floc[2] = z*sampleRate[2];
+    floc[2] = (floc[2]>=(dim[2]-1))?(dim[2]-1.001):(floc[2]);
+    loc[2]  = vtkMath::Floor(floc[2]);
+    wz = floc[2] - loc[2];
+
+    for ( y = y_start; y < y_limit; y++ )
+      {
+      floc[1] = y*sampleRate[1];
+      floc[1] = (floc[1]>=(dim[1]-1))?(dim[1]-1.001):(floc[1]);
+      loc[1]  = vtkMath::Floor(floc[1]);
+      wy = floc[1] - loc[1];
+
+      xlow = x_start;
+      xhigh = x_limit;
+      outputOffset = z * outputDim[0] * outputDim[1] + y * outputDim[0] + xlow;
+
+      // Set some pointers
+      outPtr = normals + 4*outputOffset;
+
+      for ( x = xlow; x < xhigh; x++ )
+        {
+        floc[0] = x*sampleRate[0];
+        floc[0] = (floc[0]>=(dim[0]-1))?(dim[0]-1.001):(floc[0]);
+        loc[0]  = vtkMath::Floor(floc[0]);
+        wx = floc[0] - loc[0];
+
+        offset = loc[2] * dim[0] * dim[1] + loc[1] * dim[0] + loc[0];
+
+        dptr = dataPtr + components*offset + components - 1;
+
+        // Use a central difference method if possible,
+        // otherwise use a forward or backward difference if
+        // we are on the edge
+        int sampleOffset[6];
+        sampleOffset[0] = (loc[0]<1)        ?(0):(-components);
+        sampleOffset[1] = (loc[0]>=dim[0]-2)?(0):( components);
+        sampleOffset[2] = (loc[1]<1)        ?(0):(-components*dim[0]);
+        sampleOffset[3] = (loc[1]>=dim[1]-2)?(0):( components*dim[0]);
+        sampleOffset[4] = (loc[2]<1)        ?(0):(-components*dim[0]*dim[1]);
+        sampleOffset[5] = (loc[2]>=dim[2]-2)?(0):( components*dim[0]*dim[1]);
+
+        float sample[6];
+        for ( int i = 0; i < 6; i++ )
+          {
+          float A, B, C, D, E, F, G, H;
+          float *samplePtr = dptr + sampleOffset[i];
+
+          A = static_cast<float>(*(samplePtr));
+          B = static_cast<float>(*(samplePtr+components));
+          C = static_cast<float>(*(samplePtr+components*dim[0]));
+          D = static_cast<float>(*(samplePtr+components*dim[0]+components));
+          E = static_cast<float>(*(samplePtr+components*dim[0]*dim[1]));
+          F = static_cast<float>(*(samplePtr+components*dim[0]*dim[1]+components));
+          G = static_cast<float>(*(samplePtr+components*dim[0]*dim[1]+components*dim[0]));
+          H = static_cast<float>(*(samplePtr+components*dim[0]*dim[1]+components*dim[0]+components));
+
+          sample[i] = 
+            (1.0-wx)*(1.0-wy)*(1.0-wz)*A +
+            (    wx)*(1.0-wy)*(1.0-wz)*B +
+            (1.0-wx)*(    wy)*(1.0-wz)*C +
+            (    wx)*(    wy)*(1.0-wz)*D +
+            (1.0-wx)*(1.0-wy)*(    wz)*E +
+            (    wx)*(1.0-wy)*(    wz)*F +
+            (1.0-wx)*(    wy)*(    wz)*G +
+            (    wx)*(    wy)*(    wz)*H;
+          }
+
+        n[0] = ((sampleOffset[0]==0 || sampleOffset[1]==0)?(2.0):(1.0))*(sample[0] -sample[1]);
+        n[1] = ((sampleOffset[2]==0 || sampleOffset[3]==0)?(2.0):(1.0))*(sample[2] -sample[3]);
+        n[2] = ((sampleOffset[4]==0 || sampleOffset[5]==0)?(2.0):(1.0))*(sample[4] -sample[5]);
+
+        // Take care of the aspect ratio of the data
+        // Scaling in the vtkVolume is isotropic, so this is the
+        // only place we have to worry about non-isotropic scaling.
+        n[0] *= aspect[0];
+        n[1] *= aspect[1];
+        n[2] *= aspect[2];
+
+        // Compute the gradient magnitude
+        t = sqrt( (double)( n[0]*n[0] + 
+                            n[1]*n[1] + 
+                            n[2]*n[2] ) );
+
+        // Encode this into an 4 bit value 
+        gvalue = t * scale; 
+
+        gvalue = (gvalue<0.0)?(0.0):(gvalue);
+        gvalue = (gvalue>255.0)?(255.0):(gvalue);
+
+        *(outPtr+3) = static_cast<unsigned char>(gvalue + 0.5);
+
+        // Normalize the gradient direction
+        if ( t > zeroNormalThreshold )
+          {
+          float t_rev = 1.0/t;
+          n[0] *= t_rev;
+          n[1] *= t_rev;
+          n[2] *= t_rev;
+          }
+        else
+          {
+          n[0] = n[1] = n[2] = 0.0;
+          }
+
+        int nx = static_cast<int>((n[0] * 0.5 + 0.5)*255.0 + 0.5);
+        int ny = static_cast<int>((n[1] * 0.5 + 0.5)*255.0 + 0.5);
+        int nz = static_cast<int>((n[2] * 0.5 + 0.5)*255.0 + 0.5);
+
+        nx = (nx<0)?(0):(nx);
+        ny = (ny<0)?(0):(ny);
+        nz = (nz<0)?(0):(nz);
+
+        nx = (nx>255)?(255):(nx);
+        ny = (ny>255)?(255):(ny);
+        nz = (nz>255)?(255):(nz);
+
+        *(outPtr  ) = nx;
+        *(outPtr+1) = ny;
+        *(outPtr+2) = nz;
+
+        outPtr += 4;
+        }
+      }
+    if ( z%8 == 7 )
+      {
+      float args[1];
+      args[0] = 
+        static_cast<float>(z - z_start) / 
+        static_cast<float>(z_limit - z_start - 1);
+        if (thread_id == 0)
+          me->InvokeEvent( vtkCommand::VolumeMapperComputeGradientsProgressEvent, args );
+      }
+    }
+    return VTK_THREAD_RETURN_VALUE;
+}
+
 vtkSlicerGPUVolumeMapper::vtkSlicerGPUVolumeMapper()
 {
   // The input used when creating the textures
@@ -255,15 +492,33 @@ vtkSlicerGPUVolumeMapper::vtkSlicerGPUVolumeMapper()
   this->SavedScalarOpacityDistance2nd    = 0;
   
   this->Volume1                       = NULL;
+  this->Volume2                       = NULL;
+  this->Volume3                       = NULL;
+  
   this->VolumeSize                    = 0;
   
   this->Framerate                    = 5.0f;
+  
+  this->Threader               = vtkMultiThreader::New();
 }
 
 vtkSlicerGPUVolumeMapper::~vtkSlicerGPUVolumeMapper()
 {
     if (this->Volume1)
         delete [] this->Volume1;
+    if (this->Volume2)
+        delete [] this->Volume2;
+    if (this->Volume3)
+        delete [] this->Volume3;
+        
+    if (this->GradientsArgs)
+        delete this->GradientsArgs;
+        
+    if (this->Threader)
+    {
+      this->Threader->Delete();
+      this->Threader = NULL;
+    }
 }
 
 
@@ -345,8 +600,14 @@ int vtkSlicerGPUVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
   {
     if (this->Volume1)
         delete [] this->Volume1;
-    
+    if (this->Volume2)
+        delete [] this->Volume2;
+    if (this->Volume3)
+        delete [] this->Volume3;
+        
     this->Volume1 = new unsigned char [4*neededSize];
+    this->Volume2 = new unsigned char [4*neededSize];
+    this->Volume3 = new unsigned char [4*neededSize];
     
     this->VolumeSize       = neededSize;
   }
@@ -429,10 +690,115 @@ int vtkSlicerGPUVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
         this, offset, scale,
         this->Volume1));
     }
-
+  
+  int dataPtrSize = dim[0]*dim[1]*dim[2];
+  float* floatDataPtr = new float[dataPtrSize];  
+  
+  //copy out scalar as float array for multithreading
+  //or maybe later multithreading with template...
+  CopyToFloatBuffer(input, floatDataPtr, dataPtrSize);
+  
+  if (this->GradientsArgs)
+        delete this->GradientsArgs;
+  
+  this->GradientsArgs = new GPUGradientsArgsType;
+  
+  this->GradientsArgs->dataPtr = floatDataPtr;
+  this->GradientsArgs->me = this;
+  this->GradientsArgs->scalarRange[0] = scalarRange[0];
+  this->GradientsArgs->scalarRange[1] = scalarRange[1];
+  this->GradientsArgs->volume = this->Volume2;
+  
+  this->Threader->SetSingleMethod( vtkSlicerGPUVolumeMapperComputeGradients, (void *)(this->GradientsArgs) );
+  this->Threader->SingleMethodExecute();
+  
+  //handle second volume
+  if (input1)
+  {
+    CopyToFloatBuffer(input1, floatDataPtr, dataPtrSize);
+    this->GradientsArgs->volume = this->Volume3;
+    
+    this->Threader->SetSingleMethod( vtkSlicerGPUVolumeMapperComputeGradients, (void *)(this->GradientsArgs) );
+    this->Threader->SingleMethodExecute();
+  }
+  
+  delete [] floatDataPtr;
+  
   return 1;
 }
 
+void vtkSlicerGPUVolumeMapper::CopyToFloatBuffer(vtkImageData* input, float* floatDataPtr, int dataPtrSize)
+{
+  int scalarType = input->GetScalarType();
+  
+  switch(scalarType)
+  {
+  case VTK_SIGNED_CHAR:
+  case VTK_CHAR:
+    {
+      char* tempDataPtr = (char*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }
+    break;
+  case VTK_UNSIGNED_CHAR:
+    {
+      unsigned char* tempDataPtr = (unsigned char*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }
+    break;
+  case VTK_SHORT:
+    {
+      short* tempDataPtr = (short*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }    
+    break;
+  case VTK_UNSIGNED_SHORT:
+    {
+      unsigned short* tempDataPtr = (unsigned short*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }    
+    break;
+  case VTK_INT:
+    {
+      int* tempDataPtr = (int*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }    
+    break;
+  case VTK_UNSIGNED_INT:
+    {
+      unsigned int* tempDataPtr = (unsigned int*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }    
+    break;
+  case VTK_DOUBLE:
+    {
+      double* tempDataPtr = (double*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }    
+    break;
+  case VTK_FLOAT:
+    {
+      float* tempDataPtr = (float*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }    
+    break;
+  case VTK_LONG:
+    {
+      long* tempDataPtr = (long*)input->GetScalarPointer();
+      for (int i = 0; i < dataPtrSize; i++)
+        floatDataPtr[i] = (float)tempDataPtr[i];
+    }    
+    break;
+  }
+}
 
 int vtkSlicerGPUVolumeMapper::UpdateColorLookup( vtkVolume *vol )
 {
@@ -780,16 +1146,14 @@ void vtkSlicerGPUVolumeMapper::SetNthInput( int index, vtkDataSet *genericInput)
 }
 
 void vtkSlicerGPUVolumeMapper::SetNthInput( int index, vtkImageData *input )
-{
+{ 
+  if (this->GetNumberOfInputPorts() < index + 1)
+    this->SetNumberOfInputPorts(index + 1);
+  
   if(input)
-    {
     this->SetInputConnection(index, input->GetProducerPort());
-    }
   else
-    {
-    // Setting a NULL input removes the connection.
     this->SetInputConnection(index, 0);
-    }
 }
 
 vtkImageData *vtkSlicerGPUVolumeMapper::GetNthInput(int index)

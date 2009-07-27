@@ -41,10 +41,19 @@
 #include "vtkVolumeMapper.h"
 #include "vtkVolumeRenderingReplacements.h"
 
+class vtkMultiThreader;
 class vtkImageData;
 class vtkColorTransferFunction;
 class vtkPiecewiseFunction;
 class vtkVolumeProperty;
+
+class vtkSlicerGPUVolumeMapper;
+typedef struct{
+    float *dataPtr;
+    vtkSlicerGPUVolumeMapper *me;
+    double scalarRange[2];
+    unsigned char *volume;
+}GPUGradientsArgsType;
 
 class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerGPUVolumeMapper : public vtkVolumeMapper
 {
@@ -98,6 +107,8 @@ protected:
   float                     Framerate;
   
   unsigned char            *Volume1;
+  unsigned char            *Volume2;
+  unsigned char            *Volume3;
   int                       VolumeSize;
   int                       VolumeDimensions[3];
   float                     VolumeSpacing[3];
@@ -133,18 +144,26 @@ protected:
   
   vtkTimeStamp              SavedColorOpacityMTime;
   vtkTimeStamp              SavedColorOpacityMTime2nd;
+  
+  vtkMultiThreader          *Threader;
+  
+  GPUGradientsArgsType         *GradientsArgs;
 
   // Description:
   // Update the internal RGBA representation of the volume. Return 1 if
   // anything change, 0 if nothing changed.
   int    UpdateVolumes( vtkVolume * );
   int    UpdateColorLookup( vtkVolume * );
+  
+  void   CopyToFloatBuffer(vtkImageData* input, float* floatDataPtr, int dataPtrSize);
 
   // Description:
   // Impemented in subclass - check is texture size is OK.
   //BTX
   virtual int IsTextureSizeSupported( int [3] ) {return 0;};
   //ETX
+  
+  friend VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeMapperComputeGradients( void *arg );
   
 private:
   vtkSlicerGPUVolumeMapper(const vtkSlicerGPUVolumeMapper&);  // Not implemented.
