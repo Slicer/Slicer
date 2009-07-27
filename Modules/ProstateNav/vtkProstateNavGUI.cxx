@@ -71,7 +71,7 @@
 #include "vtkSlicerColorLogic.h"
 //#include "vtkSlicerVolumesGUI.h"
 
-#include "vtkIGTDataStream.h"
+//#include "vtkIGTDataStream.h"
 #include "vtkCylinderSource.h"
 #include "vtkMRMLLinearTransformNode.h"
 

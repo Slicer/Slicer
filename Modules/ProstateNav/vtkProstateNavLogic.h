@@ -39,9 +39,9 @@
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLSliceNode.h"
 
-#ifdef USE_NAVITRACK
-  #include "vtkProstateNavDataStream.h"
-#endif
+//#ifdef USE_NAVITRACK
+//  #include "vtkProstateNavDataStream.h"
+//#endif
 
 class vtkProstateNavGUI;
 
