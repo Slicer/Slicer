@@ -17,7 +17,7 @@ You can save a copy of the models after intermediate steps (marching cubes, smoo
 Here you can specify an external file linking label values with anatomical names.
 </description>
   <version>3.2</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:Modelmaker-Documentation-3.4</documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:Model_Maker-Documentation-3.4</documentation-url>
   <license>slicer3</license>
   <contributor>Nicole Aucoin</contributor>
 <acknowledgements>
