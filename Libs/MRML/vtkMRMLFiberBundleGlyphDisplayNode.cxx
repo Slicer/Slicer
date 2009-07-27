@@ -190,6 +190,11 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
         {
         this->ScalarVisibilityOff( );
         }
+      else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeUseCellScalars)
+    {
+      this->ScalarVisibilityOn( );
+     
+    }
       else  
         {
         if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalar)
