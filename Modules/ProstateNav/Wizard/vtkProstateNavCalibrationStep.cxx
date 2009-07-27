@@ -46,11 +46,6 @@
 
 #include "vtkZFrameRobotToImageRegistration.h"
 
-#include "igtlMath.h"
-
-#include "newmat.h"
-
-#define DEBUG_ZFRAME
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkProstateNavCalibrationStep);
@@ -69,11 +64,6 @@ vtkProstateNavCalibrationStep::vtkProstateNavCalibrationStep()
   this->ZFrameSettingFrame = NULL;
   this->ShowZFrameCheckButton = NULL;
 
-  //ZFrameModelNode = NULL;
-  /*
-  this->ZFrameModelNodeID = "";
-  this->ZFrameTransformNodeID = "";
-  */
 }
 
 //----------------------------------------------------------------------------
@@ -226,12 +216,6 @@ void vtkProstateNavCalibrationStep::ProcessGUIEvents(vtkObject *caller,
 void vtkProstateNavCalibrationStep::ShowZFrameModel()
 {
 
-  //if (this->ZFrameModelNodeID.length() == 0 ||
-  //    this->MRMLScene->GetNodeByID(this->ZFrameModelNodeID) == NULL)
-  //  {
-  //  this->ZFrameModelNodeID = AddZFrameModel("ZFrame");
-  //  }
-
   vtkMRMLModelNode*  modelNode =
     //vtkMRMLModelNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->ZFrameModelNodeID.c_str()));
     vtkMRMLModelNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->GetLogic()->GetZFrameModelNodeID()));
@@ -241,13 +225,6 @@ void vtkProstateNavCalibrationStep::ShowZFrameModel()
   modelNode->Modified();
   this->MRMLScene->Modified();
   
-  //if (this->ZFrameTransformNodeID.length() == 0 ||
-  //    this->MRMLScene->GetNodeByID(this->ZFrameTransformNodeID) == NULL)
-  //  {
-  //  this->ZFrameTransformNodeID = AddZFrameTransform("ZFrameTransform");
-  //  }
-  //
-  //modelNode->SetAndObserveTransformNodeID(this->ZFrameTransformNodeID.c_str());
 
 }
 
