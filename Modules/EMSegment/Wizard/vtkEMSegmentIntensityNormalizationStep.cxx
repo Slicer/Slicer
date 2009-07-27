@@ -1100,7 +1100,7 @@ void vtkEMSegmentIntensityNormalizationStep::ProcessCursorMovingGUIEvents(
     this->NormalizationHistogram->GetRange(range);
     occurence = this->NormalizationHistogram->GetOccurenceAtValue(90);
 
-    for (int i = this->NormalizationPiecewiseFunctionEditor->
+    for (double i = this->NormalizationPiecewiseFunctionEditor->
         GetParameterCursorPosition(); i < range[1] ; i++)
     {
       double num = this->NormalizationHistogram->GetOccurenceAtValue(i);

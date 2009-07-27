@@ -1615,6 +1615,9 @@ IntensityDistributionTargetSelectionChangedCallback(vtkIdType targetVolId)
 
   this->Gaussian2DWidget->RemoveAllGaussians();
 
+  this->Gaussian2DWidget->SetScalarRangeX(this->TargetVolumeXRange);
+  this->Gaussian2DWidget->SetScalarRangeY(this->TargetVolumeYRange);
+
   for (int m=0; m < this->NumberOfLeaves; m++)
   {
     vtkIdType leaf  = this->LeafId[m];

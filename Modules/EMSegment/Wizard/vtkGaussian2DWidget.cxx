@@ -252,27 +252,29 @@ int vtkGaussian2DWidget::AddGaussian(double meanX, double meanY,
 
   imageDataGeometryFilter->Delete();
 
-  double factorX = 1.0 / eigenValues[0];//varianceX;
-  double factorY = 1.0 / eigenValues[1];//varianceY;
+  double factorX = 1.0 /varianceX;
+  double factorY = 1.0 /varianceY;
+
+  
 
   for(int j=0, id=0; j<=extent[3]; j++)
   {
     pt[1]  = origin[1] + j * spacing[1];
-    pt[1] -= meanY;
+    //pt[1] -= meanY;
 
     for(int i=0; i<=extent[1]; i++, id++)
     {
       pt[0]  = origin[0] + i * spacing[0];
-      pt[0] -= meanX;
+      //pt[0] -= meanX;
 
       // apply the rotation
-      x =  pt[0] * cosine + pt[1] *   sine;
-      y = -pt[0] *   sine + pt[1] * cosine;
+      x =  (pt[0]-meanX) * cosine + (pt[1]-meanY) *   sine;
+      y = -(pt[0]-meanX) *   sine + (pt[1]-meanY) * cosine;
 
-      x *= factorX;
-      y *= factorY;
+    //  x *= factorX;
+    //  y *= factorY;
 
-      dist = x*x + y*y;
+      dist = x*x*factorX + y*y*factorY;
       pt[2] = exp(-dist);
 
       newPoints->SetPoint(  id, pt );
@@ -343,7 +345,7 @@ int vtkGaussian2DWidget::AddGaussian(double meanX, double meanY,
 
   //this->AddViewProp(cutterActor);
   //cutterActor->Delete();
-
+/*
   imageDataGeometryFilter->Delete();
 
   vtkAxisActor2D *XaxisActor2D = vtkAxisActor2D::New();
@@ -365,10 +367,10 @@ int vtkGaussian2DWidget::AddGaussian(double meanX, double meanY,
   camera->SetPosition( center[0], center[1], 800.0 );
   camera->SetFocalPoint( center[0], center[1], 0.0 );
   camera->SetViewUp( 0, 1, 0 );
-  camera->ParallelProjectionOn();
+  camera->ParallelProjectionOn();*/
   this->ResetCamera();
   //this->GetRenderer()->SetActiveCamera(camera);
-  camera->Delete();
+ // camera->Delete();
   this->Render();
 
   return this->NumberOfGaussians++;
