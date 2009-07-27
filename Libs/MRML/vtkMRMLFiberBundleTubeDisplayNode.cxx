@@ -2,8 +2,7 @@
 
 Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-See Doc/copyright/copyright.txt
-or http://www.slicer.org/copyright/copyright.txt for details.
+See Doc/copyright/copyright.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   3D Slicer
 Module:    $RCSfile: vtkMRMLFiberBundleTubeDisplayNode.cxx,v $
@@ -17,6 +16,7 @@ Version:   $Revision: 1.3 $
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
+#include "vtkCellData.h"
 
 #include "vtkPolyDataTensorToColor.h"
 #include "vtkTubeFilter.h"
@@ -163,18 +163,32 @@ void vtkMRMLFiberBundleTubeDisplayNode::SetPolyData(vtkPolyData *glyphPolyData)
 vtkPolyData* vtkMRMLFiberBundleTubeDisplayNode::GetPolyData()
 {
   if ( this->TubeFilter && this->TubeFilter->GetInput() && this->TensorToColor)
+  {
+    if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeUseCellScalars)
     {
-    this->UpdatePolyDataPipeline();
-    this->TubeFilter->Update();
-    this->TensorToColor->Update();
-    return this->TensorToColor->GetOutput();
+      vtkPolyData* CurrentPolyData =vtkPolyData::SafeDownCast(this->TensorToColor->GetInput());
+      this->SetActiveScalarName("ClusterId");
+      if (CurrentPolyData->GetCellData()->HasArray("ClusterId"))
+      {
+        CurrentPolyData->GetCellData()->GetArray("ClusterId")->GetRange(this->ScalarRange);
+      }
+      return CurrentPolyData;
     }
+    else
+    {
+      this->SetActiveScalarName("FA");
+      this->UpdatePolyDataPipeline();
+      this->TubeFilter->Update();
+      this->TensorToColor->Update();
+      return this->TensorToColor->GetOutput();
+    }
+  }
   else
-    {
+  {
     return NULL;
-    }
+  }
+
 }
- 
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline() 
 {
@@ -194,6 +208,11 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
       this->ScalarVisibilityOff( );
       this->TensorToColor->SetExtractScalar(0);
       }
+    else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeUseCellScalars)
+    {
+      this->ScalarVisibilityOn( );
+      this->TensorToColor->SetExtractScalar(0);
+    }
     else  
       {
       if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalar)
@@ -271,13 +290,16 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
     
   if ( this->GetScalarVisibility() && this->TubeFilter->GetInput() != NULL )
     {
+      if (this->GetColorMode ( ) != vtkMRMLFiberBundleDisplayNode::colorModeUseCellScalars)
+    
+     {
     this->TensorToColor->Update();
     double *range = this->TensorToColor->GetOutput()->GetScalarRange();
     this->ScalarRange[0] = range[0];
     this->ScalarRange[1] = range[1];
     // avoid Set not to cause event loops
     //this->SetScalarRange( this->DiffusionTensorGlyphFilter->GetOutput()->GetScalarRange() );
-    }
+      }}
 }
 
  
