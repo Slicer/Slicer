@@ -1,14 +1,14 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-  See Doc/copyright/copyright.txt
-  or http://www.slicer.org/copyright/copyright.txt for details.
+See Doc/copyright/copyright.txt
+or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkSlicerNodeSelectorWidget.h,v $
-  Date:      $Date: 2006/01/08 04:48:05 $
-  Version:   $Revision: 1.45 $
+Program:   3D Slicer
+Module:    $RCSfile: vtkSlicerNodeSelectorWidget.h,v $
+Date:      $Date: 2006/01/08 04:48:05 $
+Version:   $Revision: 1.45 $
 
 =========================================================================auto=*/
 
@@ -34,6 +34,9 @@
 #include "vtkKWChangeColorButton.h"
 #include "vtkKWMenuButtonWithLabel.h"
 #include "vtkKWFrameWithLabel.h"
+#include "vtkKWRadioButtonSetWithLabel.h" 
+#include "vtkKWRadioButton.h"
+
 
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
@@ -41,7 +44,7 @@
 
 class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerFiberBundleDisplayWidget : public vtkSlicerWidget
 {
-  
+
 public:
   static vtkSlicerFiberBundleDisplayWidget* New();
   vtkTypeRevisionMacro(vtkSlicerFiberBundleDisplayWidget,vtkSlicerWidget);
@@ -56,14 +59,14 @@ public:
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData );
-  
+
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
-  
+
   void SetTractVisibility(int visibility);
 
- protected:
+protected:
   vtkSlicerFiberBundleDisplayWidget();
   virtual ~vtkSlicerFiberBundleDisplayWidget();
 
@@ -74,7 +77,7 @@ public:
   // Description:
   // remove observers on display node
   virtual void RemoveMRMLObservers ( );
-  
+
   // Description:
   // removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
@@ -90,9 +93,9 @@ public:
   // Description:
   // Update the display node's values to correspond to the widget
   virtual void UpdateMRML();
-  
+
   virtual bool SyncSceneNodes();
-    
+
   // Description:
   // All of the widgets used in this widget
   vtkSlicerNodeSelectorWidget* FiberBundleSelectorWidget;
@@ -102,15 +105,16 @@ public:
   vtkKWChangeColorButton *ChangeColorButton;
 
   vtkKWCheckButtonWithLabel *VisibilityButton;
-  vtkKWCheckButtonWithLabel *ScalarVisibilityButton;
+  vtkKWRadioButtonSetWithLabel  *ScalarVisibilityButton;
+  vtkKWCheckButtonWithLabel *FiberScalarVisibilityButton;
 
   vtkSlicerDiffusionTensorGlyphDisplayWidget *GlyphDisplayWidget;
 
   int UpdatingMRML;
   int UpdatingWidget;
-  
+
   vtkMRMLFiberBundleNode* FiberBundleNode;
-  
+
   vtkMRMLFiberBundleDisplayNode* FiberBundleLineDisplayNode;
   vtkMRMLFiberBundleDisplayNode* FiberBundleTubeDisplayNode;
   vtkMRMLFiberBundleDisplayNode* FiberBundleGlyphDisplayNode;
@@ -121,14 +125,14 @@ public:
   vtkKWNotebook *GeometryMenu;
   vtkKWFrameWithLabel *DisplayFrame;
   vtkKWMenuButtonWithLabel  *GeometryColorMenu;
-  
-//BTX
+
+  //BTX
   std::vector<int> GeometryMenuID;
   int CurrentGeometryID;
   std::string CurrentGeometry;
   std::map <std::string, int> GeometryColorMap;
-//ETX
-  
+  //ETX
+
 private:
 
 
