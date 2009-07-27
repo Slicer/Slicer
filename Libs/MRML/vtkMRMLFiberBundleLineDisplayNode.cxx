@@ -17,6 +17,7 @@ Version:   $Revision: 1.3 $
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
+#include "vtkCellData.h"
 
 #include "vtkPolyDataTensorToColor.h"
 
@@ -116,9 +117,23 @@ vtkPolyData* vtkMRMLFiberBundleLineDisplayNode::GetPolyData()
 {
   if (this->TensorToColor)
     {
-    this->UpdatePolyDataPipeline();
-    this->TensorToColor->Update();
-    return this->TensorToColor->GetOutput();
+      if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeUseCellScalars)
+      {
+        vtkPolyData* CurrentPolyData =vtkPolyData::SafeDownCast(this->TensorToColor->GetInput());
+        this->SetActiveScalarName("ClusterId");
+        if (CurrentPolyData->GetCellData()->HasArray("ClusterId"))
+        {
+          CurrentPolyData->GetCellData()->GetArray("ClusterId")->GetRange(this->ScalarRange);
+        }
+        return CurrentPolyData;
+      }
+      else 
+      {
+        this->SetActiveScalarName("FA");
+        this->UpdatePolyDataPipeline();
+        this->TensorToColor->Update();
+        return this->TensorToColor->GetOutput();
+      }
     }
   else
     {
@@ -137,11 +152,17 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
     
     
     // set line coloring
+   
     if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeSolid)
       {
       this->ScalarVisibilityOff( );
       this->TensorToColor->SetExtractScalar(0);
       }
+    else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeUseCellScalars)
+    {
+      this->ScalarVisibilityOn( );
+      this->TensorToColor->SetExtractScalar(0); // force a copy of the data
+    }
     else  
       {
       if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalar)
@@ -219,12 +240,14 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
     
   if ( this->GetScalarVisibility() && this->TensorToColor->GetInput() != NULL )
     {
-    this->TensorToColor->Update();
+     if (this->GetColorMode ( ) != vtkMRMLFiberBundleDisplayNode::colorModeUseCellScalars)
+    
+     {this->TensorToColor->Update();
     double *range = this->TensorToColor->GetOutput()->GetScalarRange();
     this->ScalarRange[0] = range[0];
     this->ScalarRange[1] = range[1];
     // avoid Set not to cause event loops
     //this->SetScalarRange( this->DiffusionTensorGlyphFilter->GetOutput()->GetScalarRange() );
-    }
+     }}
 }
 
