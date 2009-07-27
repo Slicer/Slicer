@@ -1151,6 +1151,19 @@ void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLDisplayableNode *model)
     if (modelDisplayNode && cit != this->DisplayedClipState.end() && cit->second == clipping )
       {
       this->DisplayedVisibility[modelDisplayNode->GetID()] = visibility;
+      // make sure that we are looking at the current polydata (most of the code in here 
+      // assumes a display node will never change what polydata it wants to view and hence
+      // caches information to skip steps if the display node has already rendered. but we
+      // can have rendered a display node but not rendered its current polydata.
+      vtkActor *actor = vtkActor::SafeDownCast(prop);
+      if (actor)
+        {
+        vtkPolyDataMapper *mapper = vtkPolyDataMapper::SafeDownCast(actor->GetMapper());
+        if (mapper)
+          {
+          mapper->SetInput(poly);
+          }
+        }
       continue;
       }
     }
@@ -1711,12 +1724,15 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLDisplayableNode *mode
              // }
             actor->GetMapper()->SetScalarModeToUsePointData();            
             actor->GetMapper()->SetColorModeToMapScalars();            
+            actor->GetMapper()->UseLookupTableScalarRangeOff();
+            actor->GetMapper()->SetScalarRange(mdnode->GetScalarRange());
             }
           else
             {
             actor->GetMapper()->SetScalarModeToUseCellFieldData();
             actor->GetMapper()->SetColorModeToDefault();
             actor->GetMapper()->UseLookupTableScalarRangeOff();
+            actor->GetMapper()->SetScalarRange(mdnode->GetScalarRange());
             }
           }
          //// }
