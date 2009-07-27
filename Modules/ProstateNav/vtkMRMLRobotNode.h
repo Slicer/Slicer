@@ -74,9 +74,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkMRMLRobotNode : public vtkMRMLNode
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
 
-  int GetStatus();
-
-
  protected:
   //----------------------------------------------------------------
   // Constructor and destroctor
