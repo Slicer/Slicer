@@ -24,7 +24,7 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLROINode.h"
-#include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLVolumePropertyNode.h"
 
 #include "vtkVolumeRendering.h"
@@ -54,7 +54,7 @@ class VTK_SLICERVOLUMERENDERING1_EXPORT vtkMRMLVolumeRenderingParametersNode : p
 
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "VolumeRenderingSelection";};
+  virtual const char* GetNodeTagName() {return "VolumeRenderingParameters";};
 
   // Description:
   // Update the stored reference to another node in the scene
@@ -80,7 +80,7 @@ class VTK_SLICERVOLUMERENDERING1_EXPORT vtkMRMLVolumeRenderingParametersNode : p
 
   // Description:
   // Associated transform MRML node
-  vtkMRMLVolumeNode* GetVolumeNode();
+  vtkMRMLScalarVolumeNode* GetVolumeNode();
 
   // Description:
   // the ID of a parameter MRMLVolumePropertyNode
@@ -128,7 +128,7 @@ protected:
 
   char *VolumeNodeID;
   vtkSetReferenceStringMacro(VolumeNodeID);
-  vtkMRMLVolumeNode* VolumeNode;
+  vtkMRMLScalarVolumeNode* VolumeNode;
 
   char *VolumePropertyNodeID;
   vtkSetReferenceStringMacro(VolumePropertyNodeID);

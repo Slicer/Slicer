@@ -47,6 +47,10 @@ public:
 
   double EstimateSampleDistances(vtkImageData *imageData);
 
+  static void GetVolumeIJKToWorldMatrix(vtkMRMLScalarVolumeNode *volumeNode, vtkMatrix4x4 *output);
+
+  void UpdateTransform(vtkMRMLScalarVolumeNode *volumeNode);
+
 protected:
   vtkVolumeRenderingLogic();
   ~vtkVolumeRenderingLogic();

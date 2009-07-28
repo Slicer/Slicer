@@ -140,8 +140,8 @@ protected:
     void UpdateMRML();
 
     void CreateParametersNode();
-    // Description:
-    // GUI elements
+
+    void UpdateParametersNode();
 
     // Description:
     // Pointer to the module's logic class

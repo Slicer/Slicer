@@ -4,9 +4,11 @@
 #include "vtkVolumeProperty.h"
 #include "vtkImageData.h"
 #include "vtkPointData.h"
+#include "vtkMatrix4x4.h"
 
 #include "vtkMRMLVolumeRenderingNode.h"
 #include "vtkMRMLVolumeRenderingParametersNode.h"
+#include "vtkMRMLTransformNode.h"
 
 #include "vtkSlicerVolumeTextureMapper3D.h"
 #include "vtkSlicerFixedPointVolumeRayCastMapper.h"
@@ -143,6 +145,8 @@ void vtkVolumeRenderingLogic::SetParametersNode(vtkMRMLVolumeRenderingParameters
 {
   if (node == NULL)
     {
+    this->Volume->SetProperty(NULL);
+    this->CurrentVolumeMapper->SetInput((vtkImageData *)NULL);
     return;
     }
 
@@ -185,6 +189,7 @@ void vtkVolumeRenderingLogic::SetParametersNode(vtkMRMLVolumeRenderingParameters
     this->MapperTexture->SetSampleDistance(node->GetEstimatedSampleDistance());
     this->MapperRaycast->SetSampleDistance(node->GetEstimatedSampleDistance());
     }
+  this->UpdateTransform(node->GetVolumeNode());
 }
 
 
@@ -218,3 +223,43 @@ double vtkVolumeRenderingLogic::EstimateSampleDistances(vtkImageData *imageData)
     }
 }
 
+void vtkVolumeRenderingLogic::GetVolumeIJKToWorldMatrix(vtkMRMLScalarVolumeNode *volumeNode, vtkMatrix4x4 *output)
+{
+  output->Identity();
+  if (volumeNode == NULL)
+    {
+    return;
+    }
+
+  vtkMRMLTransformNode *transformNode = vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode)->GetParentTransformNode();
+
+  //check if we have a TransformNode
+  if(transformNode == NULL)
+    {
+    vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode)->GetIJKToRASMatrix(output);
+    return;
+    }
+
+  //IJK to ras
+  vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
+  vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode)->GetIJKToRASMatrix(matrix);
+   
+  // Parent transforms
+  vtkMatrix4x4   *transform=vtkMatrix4x4::New();        
+  transformNode->GetMatrixTransformToWorld(transform);
+
+  //Transform world to ras
+  vtkMatrix4x4::Multiply4x4(transform,matrix,output);
+
+  matrix->Delete();
+  transform->Delete();
+}
+
+void vtkVolumeRenderingLogic::UpdateTransform(vtkMRMLScalarVolumeNode *volumeNode)
+{
+  // update transform
+  vtkMatrix4x4 *matrix = vtkMatrix4x4::New();
+  this->GetVolumeIJKToWorldMatrix(volumeNode, matrix);
+  this->GetVolume()->PokeMatrix(matrix);
+  matrix->Delete();
+}

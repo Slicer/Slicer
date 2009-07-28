@@ -189,14 +189,16 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
 
     //NodeSelector for Node from MRML Scene
   this->VolumeNodeSelector=vtkSlicerNodeSelectorWidget::New();
+  this->VolumeNodeSelector->SetNodeClass("vtkMRMLScalarVolumeNode",NULL,NULL,NULL);
   this->VolumeNodeSelector->SetParent(loadSaveDataFrame->GetFrame());
+  this->VolumeNodeSelector->NoneEnabledOn();
   this->VolumeNodeSelector->Create();
   this->VolumeNodeSelector->SetMRMLScene(this->GetApplicationLogic()->GetMRMLScene());
   this->VolumeNodeSelector->UpdateMenu();
+
   this->VolumeNodeSelector->SetLabelText("Source Volume: ");
   this->VolumeNodeSelector->SetBalloonHelpString("Select volume to render. Only one volume at the some time is possible.");
   this->VolumeNodeSelector->SetLabelWidth(labelWidth);
-  this->VolumeNodeSelector->SetNodeClass("vtkMRMLScalarVolumeNode",NULL,NULL,NULL);
   app->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->VolumeNodeSelector->GetWidgetName());
 
 
@@ -326,16 +328,39 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
   //
   vtkSlicerNodeSelectorWidget *callerObjectNS=vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
 
-  if(callerObjectNS==this->VolumeNodeSelector&&event==vtkSlicerNodeSelectorWidget::NodeSelectedEvent)
+  if(callerObjectNS == this->VolumeNodeSelector && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent)
     {
+    vtkMRMLScalarVolumeNode *volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(this->VolumeNodeSelector->GetSelected());
+    if (this->ParametersNode)
+      {
+      vtkMRMLScalarVolumeNode *volumeNodePrev = this->ParametersNode->GetVolumeNode();
+      if (volumeNodePrev)
+        {
+        volumeNodePrev->RemoveObservers(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallbackCommand);
+        }
+      if (volumeNode)
+        {
+        this->ParametersNode->SetAndObserveVolumeNodeID(volumeNode->GetID());
+        }
+      else
+        {
+        this->ParametersNode->SetAndObserveVolumeNodeID(NULL);
+        }
+      }
+    if (volumeNode)
+      {
+      volumeNode->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallbackCommand);
+      this->Logic->UpdateTransform(volumeNode);
+      }
+   
     }
 
-  if(callerObjectNS==this->VolumeRenderingParameterSelector&&event==vtkSlicerNodeSelectorWidget::NodeSelectedEvent)
+  if(callerObjectNS == this->VolumeRenderingParameterSelector && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent)
     {
-    if(this->VolumeRenderingParameterSelector->GetSelected()!=NULL)
-      {
-      vtkSetAndObserveMRMLNodeMacro(this->ParametersNode, this->VolumeRenderingParameterSelector->GetSelected());
-      }
+    vtkMRMLVolumeRenderingParametersNode *paramNode = vtkMRMLVolumeRenderingParametersNode::SafeDownCast(this->VolumeRenderingParameterSelector->GetSelected());
+    vtkSetAndObserveMRMLNodeMacro(this->ParametersNode, paramNode);
+    this->UpdateParametersNode();
+    this->Logic->SetParametersNode(this->ParametersNode);
     }
 
 
@@ -372,11 +397,41 @@ void vtkVolumeRenderingGUI::CreateParametersNode(void)
     this->VolumeRenderingParameterSelector->ProcessNewNodeCommand("vtkMRMLVolumeRenderingParametersNode", "Parameters");
     n = vtkMRMLVolumeRenderingParametersNode::SafeDownCast(this->VolumeRenderingParameterSelector->GetSelected());
 
-    // set an observe new node
     vtkSetAndObserveMRMLNodeMacro(this->ParametersNode, n);
+
+    this->UpdateParametersNode();
+
     this->Logic->SetParametersNode(this->ParametersNode);
 
-   }
+    }
+}
+
+void vtkVolumeRenderingGUI::UpdateParametersNode(void)
+{
+  if (this->ParametersNode)
+    {
+    // set an observe new node
+    if(this->VolumeNodeSelector->GetSelected() != NULL)
+    {
+      this->ParametersNode->SetAndObserveVolumeNodeID(this->VolumeNodeSelector->GetSelected()->GetID());
+    }
+
+    if (this->ParametersNode->GetVolumePropertyNode() == NULL)
+      {
+      vtkMRMLVolumePropertyNode *vpNode = vtkMRMLVolumePropertyNode::New();
+      this->Logic->GetMRMLScene()->AddNode(vpNode);
+      vpNode->Delete();
+      //vpNode->CreateDefaultStorageNode();
+      this->ParametersNode->SetAndObserveVolumePropertyNodeID(vpNode->GetID());
+      }
+    if (this->ParametersNode->GetROINode() == NULL)
+      {
+      vtkMRMLROINode *roiNode = vtkMRMLROINode::New();
+      this->Logic->GetMRMLScene()->AddNode(roiNode);
+      roiNode->Delete();
+      this->ParametersNode->SetAndObserveROINodeID(roiNode->GetID());
+      }
+    }
 }
 
 void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData)
@@ -401,6 +456,7 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
     if (this->GetParametersNode() == NULL)
       {
       vtkSetAndObserveMRMLNodeMacro(this->ParametersNode, addedNode);
+      this->Logic->SetParametersNode(this->ParametersNode);
       this->UpdateGUI();
       }
     }
@@ -408,14 +464,31 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
       
   if (event == vtkMRMLScene::SceneCloseEvent)
     {
-    //this->UpdateGUI();
-
+    vtkSetAndObserveMRMLNodeMacro(this->ParametersNode, NULL);
+    this->Logic->SetParametersNode(NULL);
+    this->UpdateGUI();
     }
 
-
-  if(event == vtkMRMLScalarVolumeNode::ImageDataModifiedEvent){
+  if(event == vtkMRMLScalarVolumeNode::ImageDataModifiedEvent)
+    {
     this->GetApplicationGUI()->GetViewerWidget()->RequestRender();
-  }
+    }
+
+  if(event == vtkMRMLTransformableNode::TransformModifiedEvent)
+    {
+    // update transform
+    vtkMRMLScalarVolumeNode *volumeNode = this->ParametersNode->GetVolumeNode();
+    this->Logic->UpdateTransform(volumeNode);
+    
+    this->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+    } 
+
+  if(event == vtkCommand::ModifiedEvent)
+    {
+    vtkMRMLVolumeRenderingParametersNode *node = vtkMRMLVolumeRenderingParametersNode::SafeDownCast(caller);
+    this->Logic->SetParametersNode(node);
+    this->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+    }
 
   this->ProcessingMRMLEvents = 0;
 
@@ -462,6 +535,11 @@ void vtkVolumeRenderingGUI::UpdateGUI(void)
                                               this->MRMLScene->GetNodeByID(this->ParametersNode->GetVolumeNodeID()) ) );
     this->VolumeRenderingParameterSelector->SetSelected( this->ParametersNode);
     
+    }
+  else
+    {
+    this->VolumeNodeSelector->SetSelected(NULL);
+    this->VolumeRenderingParameterSelector->SetSelected(NULL);
     }
 
   this->UpdatingGUI = 0;
