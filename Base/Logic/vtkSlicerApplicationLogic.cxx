@@ -1407,7 +1407,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       {
       int removed;
       // is it a shared memory location?
-      if (req.GetFilename().find("slicer:0x") != std::string::npos)
+      if (req.GetFilename().find("slicer:") != std::string::npos)
         {
         removed = 1;
         }
