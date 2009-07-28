@@ -22,8 +22,6 @@
 #include "vtkSlicerModuleGUI.h"
 #include "vtkProstateNavLogic.h"
 
-#include "vtkIGTDataManager.h"
-#include "vtkIGTPat2ImgRegistration.h"
 #include "vtkCallbackCommand.h"
 #include "vtkSlicerInteractorStyle.h"
 
@@ -169,7 +167,6 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
   // Wizard Frame
   
   vtkKWWizardWidget *WizardWidget;
-  vtkProstateNavStep **WizardSteps;
   
   //----------------------------------------------------------------
   // Logic Values
@@ -177,10 +174,7 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
 
   vtkProstateNavLogic *Logic;
 
-  vtkIGTDataManager *DataManager;
-  vtkIGTPat2ImgRegistration *Pat2ImgReg;
   vtkCallbackCommand *DataCallbackCommand;
-
   vtkIGTLToMRMLCoordinate* CoordinateConverter;
   vtkIGTLToMRMLBrpRobotCommand* CommandConverter;
  

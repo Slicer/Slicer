@@ -71,7 +71,6 @@
 #include "vtkSlicerColorLogic.h"
 //#include "vtkSlicerVolumesGUI.h"
 
-//#include "vtkIGTDataStream.h"
 #include "vtkCylinderSource.h"
 #include "vtkMRMLLinearTransformNode.h"
 
@@ -98,8 +97,6 @@ vtkProstateNavGUI::vtkProstateNavGUI ( )
   // Logic values
   
   this->Logic = NULL;
-  this->DataManager = vtkIGTDataManager::New();
-  this->Pat2ImgReg = vtkIGTPat2ImgRegistration::New();
   
   this->DataCallbackCommand = vtkCallbackCommand::New();
   this->DataCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
@@ -120,12 +117,6 @@ vtkProstateNavGUI::vtkProstateNavGUI ( )
   // Wizard Frame
   
   this->WizardWidget = vtkKWWizardWidget::New();
-  //this->WizardSteps = new vtkProstateNavStep*[vtkProstateNavLogic::NumPhases];
-  //for (int i = 0; i < vtkProstateNavLogic::NumPhases; i ++)
-  //  {
-  //  this->WizardSteps[i] = NULL;
-  //  }
-  
 
   //----------------------------------------------------------------
   // Target Fiducials List (MRML)
@@ -143,27 +134,26 @@ vtkProstateNavGUI::vtkProstateNavGUI ( )
   this->ProstateNavManager =  vtkMRMLProstateNavManagerNode::New();
 
   vtkProstateNavStepSetUp* setupStep = vtkProstateNavStepSetUp::New();
-  setupStep->SetTitleBackgroundColor(1.0, 0.4, 1.0);
+  setupStep->SetTitleBackgroundColor(205.0/255.0, 200.0/255.0, 177.0/255.0);
   this->ProstateNavManager->AddNewStep("Set Up", setupStep);
 
   vtkProstateNavScanControlStep* scanControlStep = vtkProstateNavScanControlStep::New();
-  scanControlStep->SetTitleBackgroundColor(0.4, 1.0, 0.4);
+  scanControlStep->SetTitleBackgroundColor(179.0/255.0, 145.0/255.0, 105.0/255.0);
   this->ProstateNavManager->AddNewStep("Planning", scanControlStep);
 
   vtkProstateNavCalibrationStep* calibrationStep = vtkProstateNavCalibrationStep::New();
-  calibrationStep->SetTitleBackgroundColor(1.0, 1.0, 0.4);
+  calibrationStep->SetTitleBackgroundColor(193.0/255.0, 115.0/255.0, 80.0/255.0);
   this->ProstateNavManager->AddNewStep("Calibration", calibrationStep);
 
   vtkProstateNavTargetingStep* targetingStep = vtkProstateNavTargetingStep::New();
-  targetingStep->SetTitleBackgroundColor(0.4, 0.4, 1.0);
-  this->ProstateNavManager->AddNewStep("Calibration", targetingStep);
+  targetingStep->SetTitleBackgroundColor(138.0/255.0, 165.0/255.0, 111.0/255.0);
+  this->ProstateNavManager->AddNewStep("Targeting", targetingStep);
 
   vtkProstateNavManualControlStep* manualStep = vtkProstateNavManualControlStep::New();
-  manualStep->SetTitleBackgroundColor(0.4, 1.0, 1.0);
+  manualStep->SetTitleBackgroundColor(179.0/255.0, 179.0/255.0, 230.0/255.0);
   this->ProstateNavManager->AddNewStep("Manual", manualStep);
 
   this->ProstateNavManager->AllowAllTransitions();
-
 
 }
 
@@ -174,17 +164,6 @@ vtkProstateNavGUI::~vtkProstateNavGUI ( )
 {
   this->RemoveGUIObservers();
 
-  if (this->DataManager)
-    {
-    // If we don't set the scence to NULL for DataManager,
-    // Slicer will report a lot leak when it is closed.
-    this->DataManager->SetMRMLScene(NULL);
-    this->DataManager->Delete();
-    }
-  if (this->Pat2ImgReg)
-    {
-    this->Pat2ImgReg->Delete();
-    }
   if (this->DataCallbackCommand)
     {
     this->DataCallbackCommand->Delete();
@@ -211,20 +190,6 @@ vtkProstateNavGUI::~vtkProstateNavGUI ( )
     this->WizardWidget->Delete(); 
     this->WizardWidget = NULL;
     }
-
-  //if ( this->WizardSteps )
-  //  {
-  //  for (int i = 0; i < vtkProstateNavLogic::NumPhases; i ++)
-  //    {
-  //    if ( this->WizardSteps[i] != NULL )
-  //      {
-  //      this->WizardSteps[i]->Delete();
-  //      this->WizardSteps[i] = NULL;
-  //      }
-  //    }
-  //  delete [] this->WizardSteps;
-  //  this->WizardSteps = NULL;
-  //  }
 
   // -----------------------------------------
   // Work Phase Display Frame
@@ -259,7 +224,6 @@ vtkProstateNavGUI::~vtkProstateNavGUI ( )
     }
 
 }
-
 
 
 //---------------------------------------------------------------------------
@@ -332,17 +296,17 @@ void vtkProstateNavGUI::AddGUIObservers ( )
   // make a user interactor style to process our events
   // look at the InteractorStyle to get our events
   
-  vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
-  
-  appGUI->GetMainSliceGUI("Red")->GetSliceViewer()->GetRenderWidget()
-    ->GetRenderWindowInteractor()->GetInteractorStyle()
-    ->AddObserver(vtkCommand::LeftButtonPressEvent, (vtkCommand *)this->GUICallbackCommand);
-  appGUI->GetMainSliceGUI("Yellow")->GetSliceViewer()->GetRenderWidget()
-    ->GetRenderWindowInteractor()->GetInteractorStyle()
-    ->AddObserver(vtkCommand::LeftButtonPressEvent, (vtkCommand *)this->GUICallbackCommand);
-  appGUI->GetMainSliceGUI("Green")->GetSliceViewer()->GetRenderWidget()
-    ->GetRenderWindowInteractor()->GetInteractorStyle()
-    ->AddObserver(vtkCommand::LeftButtonPressEvent, (vtkCommand *)this->GUICallbackCommand);
+  //vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
+  //
+  //appGUI->GetMainSliceGUI("Red")->GetSliceViewer()->GetRenderWidget()
+  //  ->GetRenderWindowInteractor()->GetInteractorStyle()
+  //  ->AddObserver(vtkCommand::LeftButtonPressEvent, (vtkCommand *)this->GUICallbackCommand);
+  //appGUI->GetMainSliceGUI("Yellow")->GetSliceViewer()->GetRenderWidget()
+  //  ->GetRenderWindowInteractor()->GetInteractorStyle()
+  //  ->AddObserver(vtkCommand::LeftButtonPressEvent, (vtkCommand *)this->GUICallbackCommand);
+  //appGUI->GetMainSliceGUI("Green")->GetSliceViewer()->GetRenderWidget()
+  //  ->GetRenderWindowInteractor()->GetInteractorStyle()
+  //  ->AddObserver(vtkCommand::LeftButtonPressEvent, (vtkCommand *)this->GUICallbackCommand);
   
   //----------------------------------------------------------------
   // Workphase Frame
@@ -488,7 +452,7 @@ void vtkProstateNavGUI::ProcessGUIEvents(vtkObject *caller,
   //----------------------------------------------------------------
   // Wizard Frame
 
-  if (this->WizardWidget->GetWizardWorkflow() == vtkKWWizardWorkflow::SafeDownCast(caller) &&
+  else if (this->WizardWidget->GetWizardWorkflow() == vtkKWWizardWorkflow::SafeDownCast(caller) &&
       event == vtkKWWizardWorkflow::CurrentStateChangedEvent)
     {
           
@@ -503,13 +467,6 @@ void vtkProstateNavGUI::ProcessGUIEvents(vtkObject *caller,
         phase = i;
         }
       }
-    //for (int i = 0; i < vtkProstateNavLogic::NumPhases-1; i ++)
-    //  {
-    //  if (step == vtkKWWizardStep::SafeDownCast(this->WizardSteps[i]))
-    //    {
-    //    phase = i;
-    //    }
-    //  }
     
     ChangeWorkPhase(phase);
     }
@@ -531,22 +488,19 @@ void vtkProstateNavGUI::ProcessGUIEvents(vtkObject *caller,
 void vtkProstateNavGUI::Init()
 {
   
-  this->DataManager->SetMRMLScene(this->GetMRMLScene());
-  // NOTE: should observe node delete event
-
   this->GetMRMLScene()->AddNode(this->ProstateNavManager);
 
 }
 
 
-
+//---------------------------------------------------------------------------
 void vtkProstateNavGUI::DataCallback(vtkObject *caller, 
         unsigned long eid, void *clientData, void *callData)
 {
-    vtkProstateNavGUI *self = reinterpret_cast<vtkProstateNavGUI *>(clientData);
-    vtkDebugWithObjectMacro(self, "In vtkProstateNavGUI DataCallback");
-
-    self->UpdateAll();
+  vtkProstateNavGUI *self = reinterpret_cast<vtkProstateNavGUI *>(clientData);
+  vtkDebugWithObjectMacro(self, "In vtkProstateNavGUI DataCallback");
+  
+  self->UpdateAll();
 }
 
 
@@ -687,14 +641,6 @@ void vtkProstateNavGUI::TearDownGUI ( )
   // disconnect circular references so destructor can be called
   
   this->GetLogic()->SetGUI(NULL);
-  //for (int i = 0; i < vtkProstateNavLogic::NumPhases; i ++)
-  // {
-  // if (this->WizardSteps[i])
-  //   {
-  //   this->WizardSteps[i]->SetGUI(NULL);
-  //   this->WizardSteps[i]->SetLogic(NULL);
-  //   }
-  // }
   int numSteps = this->ProstateNavManager->GetNumberOfSteps();
   for (int i = 0; i < numSteps; i ++)
     {
@@ -760,16 +706,6 @@ void vtkProstateNavGUI::BuildGUIForWizardFrame()
       this->ProstateNavManager->GetStepPage(i)->SetLogic(this->Logic);
       wizard_workflow->AddNextStep(this->ProstateNavManager->GetStepPage(i));
       }
-
-    //for (int i = 0; i < vtkProstateNavLogic::NumPhases-1; i ++)
-    //  {
-    //  this->WizardSteps[i]->SetGUI(this);
-    //  this->WizardSteps[i]->SetLogic(this->Logic);
-    //
-    //  // Set color for the wizard title:
-    //  this->WizardSteps[i]->SetTitleBackgroundColor(0.8, 0.8, 1.0);
-    //  wizard_workflow->AddNextStep(this->WizardSteps[i]);
-    //  }
 
 
     // -----------------------------------------------------------------
