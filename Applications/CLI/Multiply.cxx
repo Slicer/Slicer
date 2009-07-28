@@ -22,11 +22,13 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#include "itkImage.h"
+#include "itkOrientedImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
-#include "itkMultiplyImageFilter.h"
+#include "itkNumericTraits.h"
+#include "itkImageRegionIteratorWithIndex.h"
+#include "itkBSplineInterpolateImageFunction.h"
 
 #include "itkPluginUtilities.h"
 #include "MultiplyCLP.h"
@@ -46,14 +48,13 @@ template<class T> int DoIt( int argc, char * argv[], T )
   typedef    T       InputPixelType;
   typedef    T       OutputPixelType;
 
-  typedef itk::Image< InputPixelType,  3 >   InputImageType;
-  typedef itk::Image< OutputPixelType, 3 >   OutputImageType;
+  typedef itk::OrientedImage< InputPixelType,  3 >   InputImageType;
+  typedef itk::OrientedImage< OutputPixelType, 3 >   OutputImageType;
 
   typedef itk::ImageFileReader< InputImageType >  ReaderType;
   typedef itk::ImageFileWriter< OutputImageType > WriterType;
 
-  typedef itk::MultiplyImageFilter<
-    InputImageType, InputImageType, OutputImageType >  FilterType;
+  typedef itk::BSplineInterpolateImageFunction<InputImageType> Interpolator;
 
   typename ReaderType::Pointer reader1 = ReaderType::New();
   itk::PluginFilterWatcher watchReader1(reader1, "Read Volume 1",
@@ -66,20 +67,66 @@ template<class T> int DoIt( int argc, char * argv[], T )
   reader1->SetFileName( inputVolume1.c_str() );
   reader2->SetFileName( inputVolume2.c_str() );
 
-  typename FilterType::Pointer filter = FilterType::New();
-  itk::PluginFilterWatcher watchFilter(filter,
-                                       "Multiply Images",
-                                       CLPProcessInformation);
+  reader1->Update();
+  reader2->Update();
 
-  filter->SetInput( 0, reader1->GetOutput() );
-  filter->SetInput( 1, reader2->GetOutput() );
+  typename OutputImageType::Pointer output = OutputImageType::New();
+  output->CopyInformation(reader1->GetOutput());
+  output->SetBufferedRegion(output->GetLargestPossibleRegion());
+  output->Allocate();
+
+  typedef itk::ImageRegionIteratorWithIndex<OutputImageType> Iterator;
+  typename Interpolator::Pointer interp = Interpolator::New();
+  interp->SetInputImage(reader2->GetOutput());
+  interp->SetSplineOrder(3);
+  
+  Iterator it(output, output->GetBufferedRegion());
+  Iterator inIt(reader1->GetOutput(), output->GetBufferedRegion());
+
+  typename OutputImageType::PointType point;
+  typename Interpolator::ContinuousIndexType index;
+  bool isinside;
+
+  typedef typename itk::NumericTraits<OutputPixelType>::AccumulateType AccumulateType;
+  AccumulateType tmp;
+  while ( ! it.IsAtEnd() )
+    {
+    output->TransformIndexToPhysicalPoint(it.GetIndex(), point);
+    isinside = reader2->GetOutput()->TransformPhysicalPointToContinuousIndex(point, index);
+
+    tmp = static_cast<AccumulateType>(inIt.Get());
+    if (isinside)
+      {
+      tmp *= interp->EvaluateAtContinuousIndex(index);
+      }
+    else
+      {
+      tmp = itk::NumericTraits<AccumulateType>::Zero;
+      }
+
+    if (tmp < itk::NumericTraits<OutputPixelType>::NonpositiveMin())
+      {
+      it.Set(itk::NumericTraits<OutputPixelType>::NonpositiveMin());
+      }
+    else if (tmp > itk::NumericTraits<OutputPixelType>::max())
+      {
+      it.Set(itk::NumericTraits<OutputPixelType>::max());
+      }
+    else
+      {
+      it.Set(static_cast<OutputPixelType>(tmp));
+      }
+
+    ++it;
+    ++inIt;
+    }
 
   typename WriterType::Pointer writer = WriterType::New();
   itk::PluginFilterWatcher watchWriter(writer,
                                        "Write Volume",
                                        CLPProcessInformation);
   writer->SetFileName( outputVolume.c_str() );
-  writer->SetInput( filter->GetOutput() );
+  writer->SetInput( output );
   writer->Update();
 
   return EXIT_SUCCESS;

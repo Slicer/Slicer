@@ -22,13 +22,13 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#include "itkImage.h"
+#include "itkOrientedImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
-#include "itkAddImageFilter.h"
-#include "itkPasteImageFilter.h"
-#include "itkExtractImageFilter.h"
+#include "itkNumericTraits.h"
+#include "itkImageRegionIteratorWithIndex.h"
+#include "itkBSplineInterpolateImageFunction.h"
 
 #include "itkPluginUtilities.h"
 #include "AddCLP.h"
@@ -48,21 +48,16 @@ template<class T> int DoIt( int argc, char * argv[], T )
   typedef    T       InputPixelType;
   typedef    T       OutputPixelType;
 
-  typedef itk::Image< InputPixelType,  3 >   InputImageType;
-  typedef itk::Image< OutputPixelType, 3 >   OutputImageType;
+  typedef itk::OrientedImage< InputPixelType,  3 >   InputImageType;
+  typedef itk::OrientedImage< OutputPixelType, 3 >   OutputImageType;
 
   typedef itk::ImageFileReader< InputImageType >  ReaderType;
   typedef itk::ImageFileWriter< OutputImageType > WriterType;
 
-  typedef itk::AddImageFilter<
-    InputImageType, InputImageType, OutputImageType >  FilterType;
-
-  typedef itk::ExtractImageFilter<OutputImageType, OutputImageType> ExtractType;
-
-  typedef itk::PasteImageFilter<InputImageType, OutputImageType, OutputImageType> PasteType;
+  typedef itk::BSplineInterpolateImageFunction<InputImageType> Interpolator;
 
   typename ReaderType::Pointer reader1 = ReaderType::New();
-  itk::PluginFilterWatcher watchReader1(reader1, "Read Volume 2",
+  itk::PluginFilterWatcher watchReader1(reader1, "Read Volume 1",
                                         CLPProcessInformation);
   
   typename ReaderType::Pointer reader2 = ReaderType::New();
@@ -75,37 +70,59 @@ template<class T> int DoIt( int argc, char * argv[], T )
   reader1->Update();
   reader2->Update();
 
-  typename InputImageType::RegionType region;
-  region = reader1->GetOutput()->GetLargestPossibleRegion();
-  region.Crop(reader2->GetOutput()->GetLargestPossibleRegion());
+  typename OutputImageType::Pointer output = OutputImageType::New();
+  output->CopyInformation(reader1->GetOutput());
+  output->SetBufferedRegion(output->GetLargestPossibleRegion());
+  output->Allocate();
 
-  std::cout << "Cropped region: " << region;
+  typedef itk::ImageRegionIteratorWithIndex<OutputImageType> Iterator;
+  typename Interpolator::Pointer interp = Interpolator::New();
+  interp->SetInputImage(reader2->GetOutput());
+  interp->SetSplineOrder(3);
+  
+  Iterator it(output, output->GetBufferedRegion());
+  Iterator inIt(reader1->GetOutput(), output->GetBufferedRegion());
 
-  typename FilterType::Pointer filter = FilterType::New();
-  itk::PluginFilterWatcher watchFilter(filter,
-                                       "Add images",
-                                       CLPProcessInformation);
+  typename OutputImageType::PointType point;
+  typename Interpolator::ContinuousIndexType index;
+  bool isinside;
 
-  filter->SetInput( 0, reader1->GetOutput() );
-  filter->SetInput( 1, reader2->GetOutput() );
+  typedef typename itk::NumericTraits<OutputPixelType>::AccumulateType AccumulateType;
+  AccumulateType tmp;
+  while ( ! it.IsAtEnd() )
+    {
+    output->TransformIndexToPhysicalPoint(it.GetIndex(), point);
+    isinside = reader2->GetOutput()->TransformPhysicalPointToContinuousIndex(point, index);
 
-  typename ExtractType::Pointer extract = ExtractType::New();
-  extract->SetInput(filter->GetOutput());
-  extract->SetExtractionRegion( region );
-  extract->Update();
+    tmp = static_cast<AccumulateType>(inIt.Get());
+    if (isinside)
+      {
+      tmp += interp->EvaluateAtContinuousIndex(index);
+      }
 
-  typename PasteType::Pointer paste = PasteType::New();
-  paste->SetDestinationImage(reader1->GetOutput());
-  paste->SetSourceImage(extract->GetOutput());
-  paste->SetDestinationIndex(region.GetIndex());
-  paste->SetSourceRegion(region);
+    if (tmp < itk::NumericTraits<OutputPixelType>::NonpositiveMin())
+      {
+      it.Set(itk::NumericTraits<OutputPixelType>::NonpositiveMin());
+      }
+    else if (tmp > itk::NumericTraits<OutputPixelType>::max())
+      {
+      it.Set(itk::NumericTraits<OutputPixelType>::max());
+      }
+    else
+      {
+      it.Set(static_cast<OutputPixelType>(tmp));
+      }
+
+    ++it;
+    ++inIt;
+    }
 
   typename WriterType::Pointer writer = WriterType::New();
   itk::PluginFilterWatcher watchWriter(writer,
                                        "Write Volume",
                                        CLPProcessInformation);
   writer->SetFileName( outputVolume.c_str() );
-  writer->SetInput( paste->GetOutput() );
+  writer->SetInput( output );
   writer->Update();
 
   return EXIT_SUCCESS;
