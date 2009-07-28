@@ -16,7 +16,6 @@
 #include "vtkObjectFactory.h"
 
 #include "vtkProstateNavGUI.h"
-#include "BRPTPRInterface.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkSlicerSliceControllerWidget.h"

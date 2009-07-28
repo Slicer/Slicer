@@ -38,9 +38,6 @@
 
 #include "vtkProstateNavGUI.h"
 
-// for communication with robot and scanner
-#include "BRPTPRInterface.h"
-
 vtkCxxRevisionMacro(vtkProstateNavLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkProstateNavLogic);
 

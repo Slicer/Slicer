@@ -21,8 +21,9 @@
 #include "vtkObject.h"
 #include "vtkProstateNavWin32Header.h" 
 
-class vtkProstateNavStep;
+#include "vtkMRMLFiducialListNode.h"
 
+class vtkProstateNavStep;
 
 class VTK_PROSTATENAV_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
 {
@@ -46,6 +47,13 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
   //ETX
 
  public:
+
+  //----------------------------------------------------------------
+  // Get and Set Macros
+  //----------------------------------------------------------------
+  vtkGetObjectMacro ( TargetPlanList, vtkMRMLFiducialListNode);
+  vtkGetObjectMacro ( TargetCompletedList, vtkMRMLFiducialListNode);
+
 
   //----------------------------------------------------------------
   // Standard methods for MRML nodes
@@ -155,6 +163,17 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
   // Returns 0, if forbidden, 1 if allowed, -1 if not defined.
   int IsTransitionable(int step_to);
 
+  //----------------------------------------------------------------
+  // Target Management
+  //----------------------------------------------------------------
+  
+  // Description:
+  // Set and start observing target plan list
+  void SetAndObserveTargetPlanList(vtkMRMLFiducialListNode* ptr);
+
+  // Description:
+  // Set and start observing completed target list
+  void SetAndObserveTargetCompletedList(vtkMRMLFiducialListNode* ptr);
 
  protected:
   //----------------------------------------------------------------
@@ -186,6 +205,8 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
   int CurrentStep;
   int PreviousStep;
   
+  vtkMRMLFiducialListNode* TargetPlanList;
+  vtkMRMLFiducialListNode* TargetCompletedList;
   
 };
 

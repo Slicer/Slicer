@@ -172,9 +172,29 @@ void vtkMRMLProstateNavManagerNode::Copy(vtkMRMLNode *anode)
 }
 
 
+//----------------------------------------------------------------------------
 void vtkMRMLProstateNavManagerNode::ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
+
+  if (this->TargetPlanList && this->TargetPlanList == vtkMRMLFiducialListNode::SafeDownCast(caller) &&
+    event ==  vtkCommand::ModifiedEvent)
+    {
+    //this->ModifiedSinceReadOn();
+    //this->InvokeEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent, NULL);
+    //this->UpdateFromMRML();
+    return;
+    }
+
+  if (this->TargetCompletedList && this->TargetCompletedList == vtkMRMLFiducialListNode::SafeDownCast(caller) &&
+    event ==  vtkCommand::ModifiedEvent)
+    {
+    //this->ModifiedSinceReadOn();
+    //this->InvokeEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent, NULL);
+    //this->UpdateFromMRML();
+    return;
+    }
+
   return;
 }
 
@@ -434,6 +454,63 @@ int vtkMRMLProstateNavManagerNode::IsTransitionable(int step_to)
     {
     return -1;
     }
+
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLProstateNavManagerNode::SetAndObserveTargetPlanList(vtkMRMLFiducialListNode* ptr)
+{
+
+  vtkMRMLFiducialListNode *oldList = this->TargetPlanList;
+
+  if (this->TargetPlanList != NULL)
+    {
+    vtkEventBroker::GetInstance()->RemoveObservations(
+      this->TargetPlanList, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    }
+
+  this->TargetPlanList = ptr;
+
+  if (ptr != NULL)
+    {
+    vtkEventBroker::GetInstance()->AddObservation(
+      ptr, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    }
+
+  if ( this->TargetPlanList != ptr )
+    {
+    this->Modified();
+    }
+
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLProstateNavManagerNode::SetAndObserveTargetCompletedList(vtkMRMLFiducialListNode* ptr)
+{
+
+  vtkMRMLFiducialListNode *oldList = this->TargetCompletedList;
+
+  if (this->TargetCompletedList != NULL)
+    {
+    vtkEventBroker::GetInstance()->RemoveObservations(
+      this->TargetCompletedList, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    }
+
+  this->TargetCompletedList = ptr;
+
+  if (ptr != NULL)
+    {
+    vtkEventBroker::GetInstance()->AddObservation(
+      ptr, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    }
+
+  if ( this->TargetCompletedList != ptr )
+    {
+    this->Modified();
+    }
+
 
 }
 

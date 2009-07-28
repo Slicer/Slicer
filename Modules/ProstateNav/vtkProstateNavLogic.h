@@ -62,9 +62,6 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavLogic : public vtkSlicerModuleLogic
 
   //ETX
   
-  // Work phase keywords used in NaviTrack (defined in BRPTPRInterface.h)
-  static const char* WorkPhaseKey[vtkProstateNavLogic::NumPhases];
-
  public:
   
   static vtkProstateNavLogic *New();
