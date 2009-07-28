@@ -24,51 +24,6 @@ include_directories(
   ${Slicer3_Base_INCLUDE_DIRS}
   )
 
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkSlicerTractographySeedingConfigure.h.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerTractographySeedingConfigure.h
-  )
-
-file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-install(FILES 
-  ${headers} 
-  "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerTractographySeedingConfigure.h"
-  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
-  )
-
-# --------------------------------------------------------------------------
-# Sources
-
-set(SlicerTractographySeeding_SRCS
-  # Seeding.cxx
-  )  
-
-# --------------------------------------------------------------------------
-# Wrapping
-
-include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-vtk_wrap_tcl3(SlicerTractographySeeding 
-  SlicerTractographySeeding_TCL_SRCS 
-  "${SlicerTractographySeeding_SRCS}" "")
-
-# --------------------------------------------------------------------------
-# Build and install the library
-
-set(lib_name SlicerTractographySeeding)
-add_library(${lib_name}
-  ${SlicerTractographySeeding_SRCS}
-  ${SlicerTractographySeeding_TCL_SRCS}
-  )
-slicer3_set_modules_output_path(${lib_name})
-
-target_link_libraries(${lib_name}
-  ${Slicer3_Libs_LIBRARIES}
-  ${Slicer3_Base_LIBRARIES}
-  ${KWWidgets_LIBRARIES}
-  ${ITK_LIBRARIES}
-  )
-
-slicer3_install_modules(${lib_name})
 
 # --------------------------------------------------------------------------
 # CLP
@@ -94,7 +49,6 @@ target_link_libraries(${CLP}
   ${Slicer3_Libs_LIBRARIES}
   vtkIO
   ${ITK_LIBRARIES}
-  ${lib_name}
   )
 
 slicer3_install_plugins(${CLP})
