@@ -488,7 +488,7 @@ void vtkSlicerModulesStep::Update()
 
     std::string installdir = app->GetExtensionsInstallPath();
     installdir += "/";
-    isntalldir += app->GetSvnRevision();
+    installdir += app->GetSvnRevision();
 
     if (this->ModulesMultiColumnList)
       {
@@ -1080,7 +1080,7 @@ bool vtkSlicerModulesStep::DownloadInstallExtension(const std::string& Extension
 
     std::string installdir = app->GetExtensionsInstallPath();
     installdir += "/";
-    isntalldir += app->GetSvnRevision();
+    installdir += app->GetSvnRevision();
 
     std::string libdir(installdir + std::string("/") + ExtensionName);
 
@@ -1121,7 +1121,7 @@ bool vtkSlicerModulesStep::UninstallExtension(const std::string& ExtensionName)
 
     std::string installdir = app->GetExtensionsInstallPath();
     installdir += "/";
-    isntalldir += app->GetSvnRevision();
+    installdir += app->GetSvnRevision();
 
     std::string libdir(installdir + std::string("/") + ExtensionName);
     
