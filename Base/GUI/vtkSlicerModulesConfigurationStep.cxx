@@ -435,7 +435,13 @@ int vtkSlicerModulesConfigurationStep::IsRepositoryValid()
       }
 
     }
-
+  else
+    {
+    // :NOTE: 20090728 tgl: Action is uninstall, repository checking
+    // is pointless.
+    result = 0;
+    }
+  
   return result;
 }
 
