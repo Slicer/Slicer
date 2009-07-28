@@ -382,7 +382,7 @@ install(FILES
   ${Slicer3_SOURCE_DIR}/CTestConfig.cmake
   ${Slicer3_BINARY_DIR}/UseSlicer3.cmake
   ${Slicer3_BINARY_DIR}/Utilities/Slicer3Config.cmake
-  $(Slicer3_BINARY_DIR)/lib/Slicer3/Slicer3Version.txt
+  ${Slicer3_BINARY_DIR}/lib/Slicer3/Slicer3Version.txt
   DESTINATION ${Slicer3_INSTALL_LIB_DIR}
   COMPONENT Development
   )
