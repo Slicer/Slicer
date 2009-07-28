@@ -100,6 +100,8 @@ vtkSlicerModulesStep::vtkSlicerModulesStep()
   this->Messages["FINISHED"] = "Continue selecting extensions for download or removal,\nor click finish to complete the operation.";
 
   this->ActionTaken = vtkSlicerModulesStep::ActionIsEmpty;
+
+  strcpy(this->InstallPath, "");
 }
 
 //----------------------------------------------------------------------------
@@ -486,10 +488,6 @@ void vtkSlicerModulesStep::Update()
         }
       }
 
-    std::string installdir = app->GetExtensionsInstallPath();
-    installdir += "/";
-    installdir += app->GetSvnRevision();
-
     if (this->ModulesMultiColumnList)
       {
       this->ModulesMultiColumnList->GetWidget()->DeleteAllRows();
@@ -497,7 +495,7 @@ void vtkSlicerModulesStep::Update()
       // Insert each extension entry discovered on the repository
       for (unsigned int i = 0; i < this->Modules.size(); i++)
         {
-        this->InsertExtension(i, this->Modules[i], installdir);
+        this->InsertExtension(i, this->Modules[i], this->GetInstallPath());
         }
       }
     }
@@ -1078,9 +1076,7 @@ bool vtkSlicerModulesStep::DownloadInstallExtension(const std::string& Extension
       
     handler->StageFileRead(ExtensionBinaryURL.c_str(), tmpfile.c_str());
 
-    std::string installdir = app->GetExtensionsInstallPath();
-    installdir += "/";
-    installdir += app->GetSvnRevision();
+    std::string installdir = this->GetInstallPath();
 
     std::string libdir(installdir + std::string("/") + ExtensionName);
 
@@ -1119,9 +1115,7 @@ bool vtkSlicerModulesStep::UninstallExtension(const std::string& ExtensionName)
     // module will be under this directory if the user has made edits
     // to the location over time.
 
-    std::string installdir = app->GetExtensionsInstallPath();
-    installdir += "/";
-    installdir += app->GetSvnRevision();
+    std::string installdir = this->GetInstallPath();
 
     std::string libdir(installdir + std::string("/") + ExtensionName);
     
@@ -1182,4 +1176,31 @@ void vtkSlicerModulesStep::ClearModules()
     iter++;
     }
   this->Modules.clear();
+}
+
+//----------------------------------------------------------------------------
+const char* vtkSlicerModulesStep::GetInstallPath()
+{
+  if (strlen(this->InstallPath) == 0)
+    {
+
+    vtkSlicerApplication *app =
+      vtkSlicerApplication::SafeDownCast(this->GetApplication());
+
+    if (app)
+      {
+      std::string installdir = app->GetExtensionsInstallPath();
+      installdir += "/";
+      installdir += app->GetSvnRevision();
+      
+      strcpy(this->InstallPath, installdir.c_str());
+      }
+    }
+
+  if (!itksys::SystemTools::FileExists(this->InstallPath))
+    {
+    itksys::SystemTools::MakeDirectory(this->InstallPath);
+    }
+  
+  return this->InstallPath;
 }

@@ -4,6 +4,7 @@
 #include "vtkStringArray.h"
 
 #include "vtkKWWizardStep.h"
+#include "vtkKWRegistryHelper.h"
 
 #include <string>
 #include <vector>
@@ -195,6 +196,13 @@ private:
   // Helper method to clear this->Modules
   //BTX
   void ClearModules();
+  //ETX
+
+  // Description:
+  // Helper method to return the extensions install path
+  //BTX
+  const char* GetInstallPath();
+  char InstallPath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   //ETX
 
 };
