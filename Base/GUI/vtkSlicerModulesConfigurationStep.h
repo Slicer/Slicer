@@ -59,6 +59,7 @@ public:
   virtual int ActionRadioButtonSetChangedCallback();
   virtual void CacheDirectoryCallback();
   virtual void EmptyCacheDirectoryCommand();
+  virtual void SearchLocationCallback(const char *value);
 
 protected:
   vtkSlicerModulesConfigurationStep();

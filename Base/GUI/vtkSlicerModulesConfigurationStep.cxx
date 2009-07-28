@@ -300,6 +300,7 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     {
     this->SearchLocationBox->SetParent( this->Frame4 );
     this->SearchLocationBox->Create();
+    this->SearchLocationBox->SetCommand(this, "SearchLocationCallback");
     }
  
   this->Script("pack %s %s -side left -anchor w -padx 5", 
@@ -435,7 +436,7 @@ int vtkSlicerModulesConfigurationStep::IsRepositoryValid()
 
     }
 
-  return 0;//result;
+  return result;
 }
 
 //----------------------------------------------------------------------------
@@ -492,6 +493,12 @@ void vtkSlicerModulesConfigurationStep::CacheDirectoryCallback()
     // Store the setting in the application object
     app->SetExtensionsInstallPath(this->CacheDirectoryButton->GetWidget()->GetLoadSaveDialog()->GetFileName());
     }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerModulesConfigurationStep::SearchLocationCallback(const char* value)
+{
+  this->GetWizardDialog()->SetSelectedRepositoryURL(value);
 }
 
 //----------------------------------------------------------------------------
