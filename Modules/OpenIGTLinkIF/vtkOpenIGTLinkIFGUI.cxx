@@ -2230,15 +2230,15 @@ void vtkOpenIGTLinkIFGUI::UpdateIOConfigTree()
   this->IOConfigTreeNodeList.clear();
 
   std::vector<vtkMRMLNode*> nodes;
+  nodes.clear();
   
   if (this->GetMRMLScene())
     {
     const char* className = this->GetMRMLScene()->GetClassNameByTag("IGTLConnector");
-    this->GetMRMLScene()->GetNodesByClass(className, nodes);
-    }
-  else
-    {
-    nodes.clear();
+    if ( className != NULL )
+      {
+      this->GetMRMLScene()->GetNodesByClass(className, nodes);
+      }
     }
 
   std::vector<vtkMRMLNode*>::iterator iter;
