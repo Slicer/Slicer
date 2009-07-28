@@ -12,8 +12,8 @@
 
 ==========================================================================*/
 
-#ifndef __vtkProstateNavScanControlStep_h
-#define __vtkProstateNavScanControlStep_h
+#ifndef __vtkProstateNavStepVerification_h
+#define __vtkProstateNavStepVerification_h
 
 #include "vtkProstateNavStep.h"
 
@@ -27,11 +27,11 @@ class vtkKWPushButton;
 class vtkMRMLSelectionNode;
 class vtkMRMLFiducialListNode;
 
-class VTK_PROSTATENAV_EXPORT vtkProstateNavScanControlStep : public vtkProstateNavStep
+class VTK_PROSTATENAV_EXPORT vtkProstateNavStepVerification : public vtkProstateNavStep
 {
 public:
-  static vtkProstateNavScanControlStep *New();
-  vtkTypeRevisionMacro(vtkProstateNavScanControlStep,vtkProstateNavStep);
+  static vtkProstateNavStepVerification *New();
+  vtkTypeRevisionMacro(vtkProstateNavStepVerification,vtkProstateNavStep);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual void ShowUserInterface();
@@ -50,8 +50,8 @@ public:
   //void SetFiducialListNode(vtkMRMLFiducialListNode *fiducialListNode);
   
 protected:
-  vtkProstateNavScanControlStep();
-  ~vtkProstateNavScanControlStep();
+  vtkProstateNavStepVerification();
+  ~vtkProstateNavStepVerification();
 
   // GUI WIdgets
   vtkKWFrame* TargetListFrame;
@@ -68,8 +68,8 @@ protected:
 //  vtkMRMLFiducialListNode *FiducialListNode;
 
 private:
-  vtkProstateNavScanControlStep(const vtkProstateNavScanControlStep&);
-  void operator=(const vtkProstateNavScanControlStep&);
+  vtkProstateNavStepVerification(const vtkProstateNavStepVerification&);
+  void operator=(const vtkProstateNavStepVerification&);
 };
 
 #endif

@@ -137,9 +137,9 @@ vtkProstateNavGUI::vtkProstateNavGUI ( )
   setupStep->SetTitleBackgroundColor(205.0/255.0, 200.0/255.0, 177.0/255.0);
   this->ProstateNavManager->AddNewStep("Set Up", setupStep);
 
-  vtkProstateNavScanControlStep* scanControlStep = vtkProstateNavScanControlStep::New();
-  scanControlStep->SetTitleBackgroundColor(179.0/255.0, 145.0/255.0, 105.0/255.0);
-  this->ProstateNavManager->AddNewStep("Planning", scanControlStep);
+  //vtkProstateNavScanControlStep* scanControlStep = vtkProstateNavScanControlStep::New();
+  //scanControlStep->SetTitleBackgroundColor(179.0/255.0, 145.0/255.0, 105.0/255.0);
+  //this->ProstateNavManager->AddNewStep("Planning", scanControlStep);
 
   vtkProstateNavCalibrationStep* calibrationStep = vtkProstateNavCalibrationStep::New();
   calibrationStep->SetTitleBackgroundColor(193.0/255.0, 115.0/255.0, 80.0/255.0);
@@ -152,6 +152,11 @@ vtkProstateNavGUI::vtkProstateNavGUI ( )
   vtkProstateNavManualControlStep* manualStep = vtkProstateNavManualControlStep::New();
   manualStep->SetTitleBackgroundColor(179.0/255.0, 179.0/255.0, 230.0/255.0);
   this->ProstateNavManager->AddNewStep("Manual", manualStep);
+
+  vtkProstateNavScanControlStep* verificationlStep = vtkProstateNavScanControlStep::New();
+  scanControlStep->SetTitleBackgroundColor(179.0/255.0, 145.0/255.0, 105.0/255.0);
+  this->ProstateNavManager->AddNewStep("Verification", scanControlStep);
+
 
   this->ProstateNavManager->AllowAllTransitions();
 
