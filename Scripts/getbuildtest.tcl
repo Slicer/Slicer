@@ -511,7 +511,7 @@ runcmd $::CMAKE \
 # are compatibile with
 #
 
-#source $::Slicer3_HOME/Scripts/versioner.tcl
+source $::Slicer3_HOME/Scripts/versioner.tcl
 
 #
 # now do the actual build
