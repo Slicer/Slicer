@@ -214,7 +214,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     strcpy(this->ColorFilePaths, "");
     strcpy(this->PotentialColorFilePaths, "");
     strcpy(this->ExtensionsInstallPath, "");
-    strcpy(this->ExtensionsInstallPathDefault, Slicer3_INSTALL_MODULES_LIB_DIR);
+    strcpy(this->ExtensionsInstallPathDefault, "");
     strcpy ( this->HomeModule, "");
     this->LoadCommandLineModules = 1;
     this->LoadModules = 1;
@@ -1243,6 +1243,13 @@ const char* vtkSlicerApplication::GetExtensionsInstallPath()
     {
       if (0 == strlen(extpath))
       {
+        // :NOTE: 20090728 tgl: Do this here as I am not certain
+        // TemporaryDirectory is available when we first copy a value
+        // to ExtensionsInstallPathDefault in vtkSlicerApplication()
+        if (0 == strlen(this->ExtensionsInstallPathDefault))
+        {
+          strcpy(this->ExtensionsInstallPathDefault, this->TemporaryDirectory);
+        }
       extpath = this->ExtensionsInstallPathDefault;
       }
 
@@ -1303,6 +1310,85 @@ const char* vtkSlicerApplication::GetExtensionsInstallPath()
       }
     }
   return extpath;
+}
+
+//----------------------------------------------------------------------------
+const char* vtkSlicerApplication::GetPlatform()
+{
+  if (strlen(this->Platform) == 0)
+  {
+    this->InitializeSlicer3Version();
+  }
+  return this->Platform;
+}
+
+//----------------------------------------------------------------------------
+const char* vtkSlicerApplication::GetBuildDate()
+{
+  if (strlen(this->BuildDate) == 0)
+  {
+    this->InitializeSlicer3Version();
+  }
+  return this->BuildDate;
+}
+
+//----------------------------------------------------------------------------
+const char* vtkSlicerApplication::GetSvnUrl()
+{
+  if (strlen(this->SvnUrl) == 0)
+  {
+    this->InitializeSlicer3Version();
+  }
+  return this->SvnUrl;
+}
+
+//----------------------------------------------------------------------------
+const char* vtkSlicerApplication::GetSvnRevision()
+{
+  if (strlen(this->SvnRevision) == 0)
+  {
+    this->InitializeSlicer3Version();
+  }
+  return this->SvnRevision;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::InitializeSlicer3Version()
+{
+  std::string txtfile(this->GetBinDir());
+  txtfile += "/../";
+  txtfile += Slicer3_INSTALL_LIB_DIR;
+  txtfile += "/";
+  txtfile += "Slicer3Version.txt";
+  
+  std::string platform;
+  std::string build_date;
+  std::string svnurl;
+  std::string svnrevision;
+  
+  std::ifstream ifs(txtfile.c_str());
+  
+  std::string line;
+  while (std::getline(ifs, line, '\n')) {
+    if (line.find("build ") == 0) {
+      platform = line.substr(6);
+    } else if (line.find("buildDate ") == 0) {
+      build_date = line.substr(10);
+    } else if (line.find("svnurl ") == 0) {
+      svnurl = line.substr(7);
+      int pos = svnurl.find_last_of("/");
+      svnurl = svnurl.substr(pos + 1 );
+    } else if (line.find("svnrevision ") == 0) {
+      svnrevision = line.substr(12);
+    }
+  }
+
+  ifs.close();
+
+  strcpy(this->Platform, platform.c_str());
+  strcpy(this->BuildDate, build_date.c_str());
+  strcpy(this->SvnUrl, svnurl.c_str());
+  strcpy(this->SvnRevision, svnrevision.c_str());
 }
 
 //----------------------------------------------------------------------------

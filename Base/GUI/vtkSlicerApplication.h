@@ -379,6 +379,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
 
   virtual vtkKWColorPickerDialog* GetColorPickerDialog();
 
+  // Description:
+  // Getter method to reference information about this build.
+  const char* GetPlatform();
+  const char* GetBuildDate();
+  const char* GetSvnUrl();
+  const char* GetSvnRevision();
+
  protected:
   vtkSlicerApplication ( );
   virtual ~vtkSlicerApplication ( );
@@ -419,6 +426,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   char IgnoreModuleNames [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char BinDir [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
 
+  char Platform [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  char BuildDate [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  char SvnUrl [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  char SvnRevision [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+
   int ApplicationWindowWidth;
   int ApplicationWindowHeight;
   int ApplicationSlicesFrameHeight;
@@ -451,6 +463,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
 private:
   vtkSlicerApplication ( const vtkSlicerApplication& ); // Not implemented.
   void operator = ( const vtkSlicerApplication& ); //Not implemented.
+
+  //BTX
+  // Description:
+  // Helper method to setup Platform, Build Date, SVN URL and SVN Revision
+  void InitializeSlicer3Version();
+  //ETX
     
   //BTX
   itk::MutexLock::Pointer DisplayMessageQueueActiveLock;
@@ -463,7 +481,6 @@ private:
   DisplayMessageQueue* InternalDisplayMessageQueue;
   
   static vtkSlicerApplication* Instance;
-
 
   int UseSplashScreen;
   int StereoEnabled;

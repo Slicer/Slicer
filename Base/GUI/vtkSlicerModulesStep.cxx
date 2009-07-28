@@ -372,6 +372,66 @@ void vtkSlicerModulesStep::UpdateModulesFromDisk(vtkSlicerApplication *app)
 {
   std::vector<ManifestEntry*> modules;
 
+  std::string paths = app->GetModulePaths();
+
+  std::cout << "UPDATE paths: " << paths << std::endl;
+
+#if WIN32
+  const char delim = ';';
+  const char dir = '\\';
+#else
+  const char delim = ':';
+  const char dir =  '/';
+#endif
+
+  ManifestEntry* entry;
+
+  std::string::size_type npos = paths.find(delim);
+
+    std::cout << "npos: " << npos << std::endl;
+
+    std::string::size_type dpos = paths.rfind(dir, npos);
+
+    std::cout << "dpos: " << dpos << std::endl;
+
+
+  while (std::string::npos != npos)
+    {
+    entry = new ManifestEntry;
+
+    entry->Name = paths.substr(dpos + 1, npos - dpos - 1);
+    
+    std::cout << "name: " << entry->Name << std::endl;
+
+    this->AddEntry(modules, entry);
+
+    npos = paths.find(delim, npos + 1);
+    dpos = paths.rfind(dir, npos);
+
+
+    std::cout << "npos: " << npos << std::endl;
+    std::cout << "dpos: " << dpos << std::endl;
+    }
+
+  
+  if (paths.length() > 0)
+    {
+    npos = paths.length() - 1;
+    dpos = paths.rfind(dir, npos);
+
+    std::cout << "npos: " << npos << std::endl;
+    std::cout << "dpos: " << dpos << std::endl;
+
+    entry = new ManifestEntry;
+
+    entry->Name = paths.substr(dpos + 1, npos - dpos);
+  
+    std::cout << "name: " << entry->Name << std::endl;
+  
+    this->AddEntry(modules, entry);
+    }
+
+
   this->Modules.insert(this->Modules.begin(), modules.begin(), modules.end());
 }
 
@@ -427,6 +487,8 @@ void vtkSlicerModulesStep::Update()
       }
 
     std::string installdir = app->GetExtensionsInstallPath();
+    installdir += "/";
+    isntalldir += app->GetSvnRevision();
 
     if (this->ModulesMultiColumnList)
       {
@@ -1017,6 +1079,8 @@ bool vtkSlicerModulesStep::DownloadInstallExtension(const std::string& Extension
     handler->StageFileRead(ExtensionBinaryURL.c_str(), tmpfile.c_str());
 
     std::string installdir = app->GetExtensionsInstallPath();
+    installdir += "/";
+    isntalldir += app->GetSvnRevision();
 
     std::string libdir(installdir + std::string("/") + ExtensionName);
 
@@ -1056,6 +1120,8 @@ bool vtkSlicerModulesStep::UninstallExtension(const std::string& ExtensionName)
     // to the location over time.
 
     std::string installdir = app->GetExtensionsInstallPath();
+    installdir += "/";
+    isntalldir += app->GetSvnRevision();
 
     std::string libdir(installdir + std::string("/") + ExtensionName);
     

@@ -232,7 +232,7 @@ void vtkSlicerModulesConfigurationStep::ShowUserInterface()
     {
     this->CacheDirectoryButton->SetParent( this->Frame3 );
     this->CacheDirectoryButton->Create();
-    this->CacheDirectoryButton->SetLabelText("Change Extensions Install Path:");
+    this->CacheDirectoryButton->SetLabelText("Change extensions install path:");
     this->CacheDirectoryButton->SetLabelWidth(34);
     this->CacheDirectoryButton->GetLabel()->SetAnchorToEast();
     this->CacheDirectoryButton->GetWidget()->TrimPathFromFileNameOff();
@@ -331,7 +331,7 @@ void vtkSlicerModulesConfigurationStep::Update()
 
   if (app)
     {
-    if (this->CacheDirectoryButton)
+      if (this->CacheDirectoryButton)
       {
       this->CacheDirectoryButton->GetWidget()->TrimPathFromFileNameOff();
       this->CacheDirectoryButton->GetWidget()->SetText(app->GetExtensionsInstallPath());
@@ -341,44 +341,15 @@ void vtkSlicerModulesConfigurationStep::Update()
 
   if (this->SearchLocationBox)
     {
-    std::string txtfile(app->GetBinDir());
-    txtfile += "/../";
-    txtfile += Slicer3_INSTALL_LIB_DIR;
-    txtfile += "/";
-    txtfile += "Slicer3Version.txt";
-
-    std::string platform;
-    std::string build_date;
-    std::string svnurl;
-    std::string svnrevision;
-
-    std::ifstream ifs(txtfile.c_str());
-
-    std::string line;
-    while (std::getline(ifs, line, '\n')) {
-      if (line.find("build ") == 0) {
-        platform = line.substr(6);
-      } else if (line.find("buildDate ") == 0) {
-        build_date = line.substr(10);
-      } else if (line.find("svnurl ") == 0) {
-        svnurl = line.substr(7);
-      } else if (line.find("svnrevision ") == 0) {
-        svnrevision = line.substr(12);
-      }
-    }
-
-    ifs.close();
-
     // :TODO: 20090405 tgl: URL below should be configurable.
 
     std::string ext_slicer_org("http://ext.slicer.org/ext/");
 
-    int pos = svnurl.find_last_of("/");
-    ext_slicer_org += svnurl.substr(pos + 1);
+    ext_slicer_org += app->GetSvnUrl();
     ext_slicer_org += "/";
-    ext_slicer_org += svnrevision;
+    ext_slicer_org += app->GetSvnRevision();
     ext_slicer_org += "-";
-    ext_slicer_org += platform;
+    ext_slicer_org += app->GetPlatform();
     
     this->GetWizardDialog()->SetSelectedRepositoryURL( ext_slicer_org );
         
