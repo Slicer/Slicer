@@ -27,6 +27,8 @@
 #include "itkImageFileWriter.h"
 
 #include "itkAddImageFilter.h"
+#include "itkPasteImageFilter.h"
+#include "itkExtractImageFilter.h"
 
 #include "itkPluginUtilities.h"
 #include "AddCLP.h"
@@ -55,6 +57,10 @@ template<class T> int DoIt( int argc, char * argv[], T )
   typedef itk::AddImageFilter<
     InputImageType, InputImageType, OutputImageType >  FilterType;
 
+  typedef itk::ExtractImageFilter<OutputImageType, OutputImageType> ExtractType;
+
+  typedef itk::PasteImageFilter<InputImageType, OutputImageType, OutputImageType> PasteType;
+
   typename ReaderType::Pointer reader1 = ReaderType::New();
   itk::PluginFilterWatcher watchReader1(reader1, "Read Volume 2",
                                         CLPProcessInformation);
@@ -66,6 +72,15 @@ template<class T> int DoIt( int argc, char * argv[], T )
   reader1->SetFileName( inputVolume1.c_str() );
   reader2->SetFileName( inputVolume2.c_str() );
 
+  reader1->Update();
+  reader2->Update();
+
+  typename InputImageType::RegionType region;
+  region = reader1->GetOutput()->GetLargestPossibleRegion();
+  region.Crop(reader2->GetOutput()->GetLargestPossibleRegion());
+
+  std::cout << "Cropped region: " << region;
+
   typename FilterType::Pointer filter = FilterType::New();
   itk::PluginFilterWatcher watchFilter(filter,
                                        "Add images",
@@ -74,12 +89,23 @@ template<class T> int DoIt( int argc, char * argv[], T )
   filter->SetInput( 0, reader1->GetOutput() );
   filter->SetInput( 1, reader2->GetOutput() );
 
+  typename ExtractType::Pointer extract = ExtractType::New();
+  extract->SetInput(filter->GetOutput());
+  extract->SetExtractionRegion( region );
+  extract->Update();
+
+  typename PasteType::Pointer paste = PasteType::New();
+  paste->SetDestinationImage(reader1->GetOutput());
+  paste->SetSourceImage(extract->GetOutput());
+  paste->SetDestinationIndex(region.GetIndex());
+  paste->SetSourceRegion(region);
+
   typename WriterType::Pointer writer = WriterType::New();
   itk::PluginFilterWatcher watchWriter(writer,
                                        "Write Volume",
                                        CLPProcessInformation);
   writer->SetFileName( outputVolume.c_str() );
-  writer->SetInput( filter->GetOutput() );
+  writer->SetInput( paste->GetOutput() );
   writer->Update();
 
   return EXIT_SUCCESS;
