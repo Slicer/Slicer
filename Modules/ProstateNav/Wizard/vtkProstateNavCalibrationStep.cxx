@@ -54,7 +54,7 @@ vtkCxxRevisionMacro(vtkProstateNavCalibrationStep, "$Revision: 1.1 $");
 //----------------------------------------------------------------------------
 vtkProstateNavCalibrationStep::vtkProstateNavCalibrationStep()
 {
-  this->SetName("3/5. Calibration");
+  this->SetName("Calibration");
   this->SetDescription("Perform Z-frame calibration.");
 
   this->SelectImageFrame  = NULL;

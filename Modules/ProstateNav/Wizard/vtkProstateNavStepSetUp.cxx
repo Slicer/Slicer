@@ -40,7 +40,7 @@ vtkCxxRevisionMacro(vtkProstateNavStepSetUp, "$Revision: 1.1 $");
 vtkProstateNavStepSetUp::vtkProstateNavStepSetUp()
 {
 
-  this->SetName("1/5. Configuration");
+  this->SetName("Configuration");
   this->SetDescription("Perform system configuration.");
 
   this->RobotFrame          = NULL;

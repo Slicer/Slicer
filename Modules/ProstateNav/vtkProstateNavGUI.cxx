@@ -27,7 +27,7 @@
 #include "vtkKWWizardWorkflow.h"
 #include "vtkProstateNavStep.h"
 #include "vtkProstateNavStepSetUp.h"
-#include "vtkProstateNavScanControlStep.h"
+#include "vtkProstateNavStepVerification.h"
 #include "vtkProstateNavCalibrationStep.h"
 #include "vtkProstateNavTargetingStep.h"
 #include "vtkProstateNavManualControlStep.h"
@@ -153,9 +153,9 @@ vtkProstateNavGUI::vtkProstateNavGUI ( )
   manualStep->SetTitleBackgroundColor(179.0/255.0, 179.0/255.0, 230.0/255.0);
   this->ProstateNavManager->AddNewStep("Manual", manualStep);
 
-  vtkProstateNavScanControlStep* verificationlStep = vtkProstateNavScanControlStep::New();
-  scanControlStep->SetTitleBackgroundColor(179.0/255.0, 145.0/255.0, 105.0/255.0);
-  this->ProstateNavManager->AddNewStep("Verification", scanControlStep);
+  vtkProstateNavStepVerification* verificationStep = vtkProstateNavStepVerification::New();
+  verificationStep->SetTitleBackgroundColor(179.0/255.0, 145.0/255.0, 105.0/255.0);
+  this->ProstateNavManager->AddNewStep("Verification", verificationStep);
 
 
   this->ProstateNavManager->AllowAllTransitions();

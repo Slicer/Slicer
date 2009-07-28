@@ -31,7 +31,7 @@ vtkCxxRevisionMacro(vtkProstateNavManualControlStep, "$Revision: 1.1 $");
 //----------------------------------------------------------------------------
 vtkProstateNavManualControlStep::vtkProstateNavManualControlStep()
 {
-  this->SetName("5/5. Manual Control");
+  this->SetName("Manual Control");
   this->SetDescription("Insert the needle.");
 
   this->MainFrame = NULL;

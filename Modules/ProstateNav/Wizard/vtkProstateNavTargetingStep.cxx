@@ -43,7 +43,7 @@ vtkCxxRevisionMacro(vtkProstateNavTargetingStep, "$Revision: 1.1 $");
 //----------------------------------------------------------------------------
 vtkProstateNavTargetingStep::vtkProstateNavTargetingStep()
 {
-  this->SetName("4/5. Targeting");
+  this->SetName("Targeting");
   this->SetDescription("Set target points.");
 
   this->MainFrame          = NULL;
