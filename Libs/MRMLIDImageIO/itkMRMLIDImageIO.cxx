@@ -492,7 +492,11 @@ MRMLIDImageIO
     // number of components in VTK is 9 for tensors but for ITK it is 6
     // NOTE: VTK requires that the number of components be set on a
     // data array before you are allowed to set it as the tensors!!!!
-    tensors->SetNumberOfComponents(9); 
+    // NOTE: Tensors need be the "named" or the AssignAttributes
+    // filter will crash. Doesn't matter what the name is, just needs
+    // to have one.
+    tensors->SetNumberOfComponents(9);
+    tensors->SetName("Tensors");
     img->GetPointData()->SetTensors( tensors );
     tensors->Delete();
     }
