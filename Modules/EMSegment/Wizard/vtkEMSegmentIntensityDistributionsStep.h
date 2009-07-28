@@ -1,18 +1,18 @@
-/*=auto==============================================================
+/*=auto=======================================================================
 
-Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All
-Rights Reserved.
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
+  Reserved.
 
-See Doc/copyright/copyright.txt
-or http://www.slicer.org/copyright/copyright.txt for details.
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
 
-Program:   3D Slicer
-Module:    $RCSfile: vtkEMSegmentIntensityDistributionsStep.h,v$
-Date:      $Date: 2006/01/06 17:56:51 $
-Version:   $Revision: 1.6 $
-Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
+  Program:   3D Slicer
+  Module:    $RCSfile: vtkEMSegmentIntensityDistributionsStep.h,v$
+  Date:      $Date: 2006/01/06 17:56:51 $
+  Version:   $Revision: 1.6 $
+  Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 
-==============================================================auto=*/
+=======================================================================auto=*/
 
 #ifndef __vtkEMSegmentIntensityDistributionsStep_h
 #define __vtkEMSegmentIntensityDistributionsStep_h
@@ -25,7 +25,6 @@ class vtkKWMatrixWidgetWithLabel;
 class vtkKWNotebook;
 class vtkKWMultiColumnListWithScrollbarsWithLabel;
 class vtkKWMenuButtonWithLabel;
-class vtkKWHistogram;
 class vtkKWPushButton;
 
 class vtkKWMultiColumnList;
@@ -143,14 +142,13 @@ protected:
   vtkKWMenuButtonWithLabel  *IntensityDistributionHistogramButton;
   vtkKWFrameWithLabel       *IntensityDistributionHistogramFrame;
 
-
   vtkGaussian2DWidget       *Gaussian2DWidget;
   vtkKWEntryWithLabel       *NumClassesEntryLabel;
   vtkKWPushButton           *Gaussian2DButton;
   vtkKWMenuButtonWithLabel  *Gaussian2DVolumeXMenuButton;
   vtkKWMenuButtonWithLabel  *Gaussian2DVolumeYMenuButton;
   vtkKWMenuButtonWithLabel  *Gaussian2DRenderingMenuButton;
-  
+
   vtkSlicerNodeSelectorWidget *LabelSelector;
   vtkKWPushButton             *LabelmapButton;
 
