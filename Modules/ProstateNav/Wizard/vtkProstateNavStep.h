@@ -68,6 +68,12 @@ public:
     this->TitleBackgroundColor[2] = b;
   };
 
+  void GetTitleBackgroundColor (double* r, double* g, double* b) {
+    *r = this->TitleBackgroundColor[0];
+    *g = this->TitleBackgroundColor[1];
+    *b = this->TitleBackgroundColor[2];
+  };
+
   // Description:
   // Reimplement the superclass's method (see vtkKWWizardStep).
   virtual void HideUserInterface();

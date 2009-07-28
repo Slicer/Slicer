@@ -39,10 +39,6 @@
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLSliceNode.h"
 
-//#ifdef USE_NAVITRACK
-//  #include "vtkProstateNavDataStream.h"
-//#endif
-
 class vtkProstateNavGUI;
 
 class VTK_PROSTATENAV_EXPORT vtkProstateNavLogic : public vtkSlicerModuleLogic 
@@ -62,7 +58,6 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavLogic : public vtkSlicerModuleLogic
   enum {  // Events
     LocatorUpdateEvent      = 50000,
     StatusUpdateEvent       = 50001,
-    //SliceUpdateEvent        = 50002,
   };
 
   //ETX
@@ -76,11 +71,6 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavLogic : public vtkSlicerModuleLogic
   
   vtkTypeRevisionMacro(vtkProstateNavLogic,vtkObject);
   
-  vtkGetMacro ( CurrentPhase,         int );
-  vtkGetMacro ( PrevPhase,            int );
-  vtkGetMacro ( PhaseTransitionCheck, bool );
-  vtkSetMacro ( PhaseTransitionCheck, bool );
-  
   vtkGetMacro ( Connection,              bool );
   vtkGetMacro ( RobotWorkPhase,           int );
   vtkGetMacro ( ScannerWorkPhase,         int );
@@ -93,9 +83,7 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavLogic : public vtkSlicerModuleLogic
   
   
   int  Enter();
-  int  SwitchWorkPhase(int);
-  void  TimerHandler();
-  int  IsPhaseTransitable(int);
+  void TimerHandler();
   
   int  ConnectTracker(const char* filename);
   int  DisconnectTracker();
@@ -118,8 +106,6 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavLogic : public vtkSlicerModuleLogic
   //                            std::vector<float>& position, std::vector<float>& orientation);
   //ETX
   
-  int WorkPhaseStringToID(const char* string);
-
   const char* GetRobotCommandNodeID()    { return this->RobotCommandNodeID.c_str();   };
   const char* GetRobotTargetNodeID()     { return this->RobotTargetNodeID.c_str();    };
   const char* GetZFrameTransformNodeID() { return this->ZFrameTransformNodeID.c_str();};
@@ -148,13 +134,7 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavLogic : public vtkSlicerModuleLogic
   
   vtkProstateNavGUI* GUI;
 
-  static const int PhaseTransitionMatrix[NumPhases][NumPhases];
-  
-  int   CurrentPhase;
-  int   PrevPhase;
-  int   PhaseComplete;
   bool  Connected;
-  bool  PhaseTransitionCheck;
   bool  RealtimeImageUpdate;
 
   int   TimerOn;
@@ -178,7 +158,6 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavLogic : public vtkSlicerModuleLogic
   int   RobotWorkPhase;
   int   ScannerWorkPhase;
 
-  
 
 };
 

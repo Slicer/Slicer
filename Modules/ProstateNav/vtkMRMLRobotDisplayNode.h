@@ -11,8 +11,8 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-#ifndef __vtkMRMLIGTLConnectorNode_h
-#define __vtkMRMLIGTLConnectorNode_h
+#ifndef __vtkMRMLRobotDisplayNodee_h
+#define __vtkMRMLRobotDisplayNodee_h
 
 #include "vtkOpenIGTLinkIFWin32Header.h"
 #include "vtkMRML.h"

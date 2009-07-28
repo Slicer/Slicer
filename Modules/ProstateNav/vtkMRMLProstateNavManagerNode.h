@@ -11,10 +11,9 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-#ifndef __vtkMRMLIGTLConnectorNode_h
-#define __vtkMRMLIGTLConnectorNode_h
+#ifndef __vtkMRMLProstateNavManagerNode_h
+#define __vtkMRMLProstateNavManagerNode_h
 
-#include "vtkOpenIGTLinkIFWin32Header.h"
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
@@ -22,7 +21,10 @@
 #include "vtkObject.h"
 #include "vtkProstateNavWin32Header.h" 
 
-class VTK_OPENIGTLINKIF_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
+class vtkProstateNavStep;
+
+
+class VTK_PROSTATENAV_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
 {
 
  public:
@@ -73,8 +75,86 @@ class VTK_OPENIGTLINKIF_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNod
   virtual const char* GetNodeTagName()
     {return "ProstateNavManager";};
 
-  // method to propagate events generated in mrml
+
+  // Description:
+  // Method to propagate events generated in mrml
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
+
+  //----------------------------------------------------------------
+  // Workflow wizard step management
+  //----------------------------------------------------------------
+
+  // Description:
+  // Get number of wizard steps
+  int GetNumberOfSteps();
+
+  // Description:
+  // Get number of wizard steps
+  const char* GetStepName(int i);
+
+  // Description:
+  // Get page by vtkProstateNavStep* pointer
+  vtkProstateNavStep* GetStepPage(int i);
+
+  // Description:
+  // Add a new step. Please note that the transition matrix is resized
+  // each time the new step is added by AddNewStep() fucntion.
+  // The matrix should  be defined after all steps are added to the
+  // manager class.
+  void AddNewStep(const char* name, vtkProstateNavStep* page);
+  
+  // Description:
+  // Clear the step
+  void ClearSteps();
+
+  // Description:
+  // Switch step. Returns 0 if it is not allowed.
+  int SwitchStep(int i);
+
+  // Description:
+  // Get current step.
+  int GetCurrentStep();
+
+  // Description:
+  // Get previous step.
+  int GetPreviousStep();
+
+
+  //----------------------------------------------------------------
+  // Phase transitions
+  //----------------------------------------------------------------
+  
+  // Description:
+  // Fill the transition matrix with 1 to allow all step transitions.
+  void AllowAllTransitions();
+
+  // Description:
+  // Fill the transition matrix with 0 to forbid all step transitions.
+  void ForbidAllTransitions();
+
+  // Description:
+  // Set phase transition by 2-D int array.
+  // The format of 'matrix' argument should be matrix[step_from][step_to].
+  int SetStepTransitionMatrix(const int** matrix);
+  
+  // Description:
+  // Allow trasition from 'step_from' to 'step_to'.
+  int SetAllowTransition(int step_from, int step_to);
+  
+  // Description:
+  // Forbid trasition from 'step_from' to 'step_to'.
+  int SetForbidTransition(int step_from, int step_to);
+
+  // Description:
+  // Check if the step can transtion from 'step_from' to 'step_to'.
+  // Returns 0, if forbidden, 1 if allowed, -1 if not defined.
+  int IsTransitionable(int step_from, int step_to);
+
+  // Description:
+  // Check if the step can transtion from current step to 'step_to'.
+  // Returns 0, if forbidden, 1 if allowed, -1 if not defined.
+  int IsTransitionable(int step_to);
+
 
  protected:
   //----------------------------------------------------------------
@@ -87,13 +167,24 @@ class VTK_OPENIGTLINKIF_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNod
   void operator=(const vtkMRMLProstateNavManagerNode&);
 
 
- public:
-
-
  protected:
   //----------------------------------------------------------------
   // Data
   //----------------------------------------------------------------
+
+  // List of wizard pages
+  //BTX
+  typedef struct {
+    std::string         name;
+    vtkProstateNavStep* page;
+  } StepInfoType;
+  std::vector<StepInfoType>         StepList;
+
+  std::vector< std::vector<int> >   StepTransitionMatrix;
+  //ETX
+  
+  int CurrentStep;
+  int PreviousStep;
   
   
 };

@@ -17,6 +17,8 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLProstateNavManagerNode.h"
 #include "vtkMRMLScene.h"
 
+#include "vtkProstateNavStep.h"
+
 
 //------------------------------------------------------------------------------
 vtkMRMLProstateNavManagerNode* vtkMRMLProstateNavManagerNode::New()
@@ -46,7 +48,10 @@ vtkMRMLNode* vtkMRMLProstateNavManagerNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLProstateNavManagerNode::vtkMRMLProstateNavManagerNode()
 {
-  
+  this->StepList.clear();
+  this->StepTransitionMatrix.clear();
+  this->CurrentStep = 0;
+  this->PreviousStep = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -180,4 +185,255 @@ void vtkMRMLProstateNavManagerNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLNode::PrintSelf(os,indent);
 }
 
+
+//----------------------------------------------------------------------------
+int vtkMRMLProstateNavManagerNode::GetNumberOfSteps()
+{
+  return this->StepList.size();
+}
+
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLProstateNavManagerNode::GetStepName(int i)
+{
+  if (i < this->StepList.size())
+    {
+    return this->StepList[i].name.c_str();
+    }
+  else
+    {
+    return NULL;
+    }
+}
+
+
+//----------------------------------------------------------------------------
+vtkProstateNavStep* vtkMRMLProstateNavManagerNode::GetStepPage(int i)
+{
+  if (i < this->StepList.size())
+    {
+    return this->StepList[i].page;
+    }
+  else
+    {
+    return NULL;
+    }
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLProstateNavManagerNode::AddNewStep(const char* name, vtkProstateNavStep* page)
+{
+
+  // Add to the list
+  StepInfoType step;
+
+  step.name  = name;
+  step.page  = page;
+
+  this->StepList.push_back(step);
+
+  // resize the transition matrix
+  int numSteps = this->StepList.size();
+  this->StepTransitionMatrix.resize(numSteps);
+  
+  std::vector< std::vector<int> >::iterator iter;
+  for (iter = this->StepTransitionMatrix.begin();
+       iter != this->StepTransitionMatrix.end(); iter ++)
+    {
+    iter->resize(numSteps);
+    }
+
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLProstateNavManagerNode::ClearSteps()
+{
+
+  // Clear the list of step info
+  std::vector<StepInfoType>::iterator iter;
+  
+  for (iter = this->StepList.begin(); iter != this->StepList.end(); iter ++)
+    {
+    iter->page->Delete();
+    }
+
+  this->StepList.clear();
+
+  // Clear the step transtion matrix
+  std::vector< std::vector<int> >::iterator iter2;
+  for (iter2 = this->StepTransitionMatrix.begin();
+       iter2 != this->StepTransitionMatrix.end(); iter2 ++)
+    {
+    iter2->clear();
+    }
+  this->StepTransitionMatrix.clear();
+  
+}
+
+
+//----------------------------------------------------------------------------
+int vtkMRMLProstateNavManagerNode::SwitchStep(int i)
+{
+
+  if (i >= 0 && i < this->StepList.size())
+    {
+    if (this->StepTransitionMatrix[this->CurrentStep][i])
+      {
+      this->PreviousStep = this->CurrentStep;
+      this->CurrentStep = i;
+      return 1;
+      }
+    else
+      {
+      return 0;
+      }
+    }
+  else
+    {
+    return 0;
+    }
+}
+
+
+//----------------------------------------------------------------------------
+int vtkMRMLProstateNavManagerNode::GetCurrentStep()
+{
+  return this->CurrentStep;
+}
+
+
+//----------------------------------------------------------------------------
+int vtkMRMLProstateNavManagerNode::GetPreviousStep()
+{
+  return this->PreviousStep;
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLProstateNavManagerNode::AllowAllTransitions()
+{
+  std::vector< std::vector<int> >::iterator iter;
+  for (iter = this->StepTransitionMatrix.begin();
+       iter != this->StepTransitionMatrix.end(); iter ++)
+    {
+    std::vector<int>::iterator iter2;
+    for (iter2 = iter->begin(); iter2 != iter->end(); iter2 ++)
+      {
+      *iter2 = 1;
+      }
+    }
+
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLProstateNavManagerNode::ForbidAllTransitions()
+{
+  std::vector< std::vector<int> >::iterator iter;
+  for (iter = this->StepTransitionMatrix.begin();
+       iter != this->StepTransitionMatrix.end(); iter ++)
+    {
+    std::vector<int>::iterator iter2;
+    for (iter2 = iter->begin(); iter2 != iter->end(); iter2 ++)
+      {
+      *iter2 = 0;
+      }
+    }
+}
+
+
+//----------------------------------------------------------------------------
+int vtkMRMLProstateNavManagerNode::SetStepTransitionMatrix(const int** matrix)
+{
+  int numSteps = this->StepTransitionMatrix.size();  
+
+  for (int step_from = 0; step_from < numSteps; step_from ++)
+    {
+    for (int step_to = 0; step_to < numSteps; step_to ++)
+      {
+      this->StepTransitionMatrix[step_from][step_to] = matrix[step_from][step_to];
+      }
+    }
+  return 1;
+}
+
+  
+//----------------------------------------------------------------------------
+int vtkMRMLProstateNavManagerNode::SetAllowTransition(int step_from, int step_to)
+{
+
+  int numSteps = this->StepTransitionMatrix.size();
+
+  // Check the range
+  if (step_from >= 0 && step_from < numSteps && step_to >= 0 && step_to < numSteps)
+    {
+    this->StepTransitionMatrix[step_from][step_to] = 1;
+    return 1;
+    }
+  else
+    {
+    return 0;
+    }
+
+}
+
+  
+//----------------------------------------------------------------------------
+int vtkMRMLProstateNavManagerNode::SetForbidTransition(int step_from, int step_to)
+{
+
+  int numSteps = this->StepTransitionMatrix.size();
+
+  // Check the range
+  if (step_from >= 0 && step_from < numSteps && step_to >= 0 && step_to < numSteps)
+    {
+    this->StepTransitionMatrix[step_from][step_to] = 0;
+    return 1;
+    }
+  else
+    {
+    return 0;
+    }
+
+}
+
+
+//----------------------------------------------------------------------------
+int vtkMRMLProstateNavManagerNode::IsTransitionable(int step_from, int step_to)
+{
+
+  int numSteps = this->StepTransitionMatrix.size();
+
+  // Check the range
+  if (step_from >= 0 && step_from < numSteps
+      && step_to >= 0 && step_to < numSteps)
+    {
+    return this->StepTransitionMatrix[step_from][step_to];
+    }
+  else
+    {
+    return -1;
+    }
+
+}
+
+
+//----------------------------------------------------------------------------
+int vtkMRMLProstateNavManagerNode::IsTransitionable(int step_to)
+{
+
+  int numSteps = this->StepTransitionMatrix.size();
+
+  if (step_to >= 0 && step_to < numSteps)  // Check the range
+    {
+    return this->StepTransitionMatrix[this->CurrentStep][step_to];
+    }
+  else
+    {
+    return -1;
+    }
+
+}
 

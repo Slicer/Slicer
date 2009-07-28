@@ -48,6 +48,8 @@ class vtkProstateNavStep;
 class vtkTransform;
 class vtkIGTLToMRMLCoordinate;
 class vtkIGTLToMRMLBrpRobotCommand;
+
+class vtkMRMLProstateNavManagerNode;
  
 // Description:    
 // This class implements Slicer's Volumes GUI
@@ -72,9 +74,6 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
     SLICE_RTIMAGE_INPLANE   = 3
   };
   
-  static const double WorkPhaseColor[vtkProstateNavLogic::NumPhases][3];
-  static const double WorkPhaseColorActive[vtkProstateNavLogic::NumPhases][3];
-  static const double WorkPhaseColorDisabled[vtkProstateNavLogic::NumPhases][3];
   static const char* WorkPhaseStr[vtkProstateNavLogic::NumPhases];
   //ETX
   
@@ -173,26 +172,6 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
   vtkProstateNavStep **WizardSteps;
   
   //----------------------------------------------------------------
-  // Visualization Control Frame
-
-  vtkKWCheckButton *FreezeImageCheckButton;
-  vtkKWPushButton  *SetLocatorModeButton;
-  vtkKWPushButton  *SetUserModeButton;
-
-  vtkKWMenuButton  *RedSliceMenu;
-  vtkKWMenuButton  *YellowSliceMenu;
-  vtkKWMenuButton  *GreenSliceMenu;
-  vtkKWCheckButton *ImagingControlCheckButton;
-  vtkKWMenuButton  *ImagingMenu;
-  
-  vtkKWPushButton  *StartScanButton;
-  vtkKWPushButton  *StopScanButton;
-
-  vtkKWCheckButton *LocatorCheckButton;
-  
-  // Module logic and mrml pointers
-
-  //----------------------------------------------------------------
   // Logic Values
   //----------------------------------------------------------------
 
@@ -201,31 +180,6 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
   vtkIGTDataManager *DataManager;
   vtkIGTPat2ImgRegistration *Pat2ImgReg;
   vtkCallbackCommand *DataCallbackCommand;
-
-  // Access the slice windows
-  //vtkSlicerSliceLogic *Logic0;
-  //vtkSlicerSliceLogic *Logic1;
-  //vtkSlicerSliceLogic *Logic2;
-  vtkMRMLSliceNode *SliceNode0;
-  vtkMRMLSliceNode *SliceNode1;
-  vtkMRMLSliceNode *SliceNode2;
-  //vtkSlicerSliceControllerWidget *Control0;
-  //vtkSlicerSliceControllerWidget *Control1;
-  //vtkSlicerSliceControllerWidget *Control2;
-
-  //BTX
-  std::string LocatorModelID;
-  std::string LocatorModelID_new;
-  //ETX
-  
-  int NeedOrientationUpdate0;
-  int NeedOrientationUpdate1;
-  int NeedOrientationUpdate2;
-  
-  //int NeedRealtimeImageUpdate;
-  int FreezeOrientationUpdate;
-
-  //int RealtimeImageOrient;
 
   vtkIGTLToMRMLCoordinate* CoordinateConverter;
   vtkIGTLToMRMLBrpRobotCommand* CommandConverter;
@@ -239,16 +193,6 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
   vtkMRMLFiducialListNode *FiducialListNode;
 
   void UpdateAll();
-  /*
-  void UpdateLocator(vtkTransform *, vtkTransform *);
-  void UpdateSliceDisplay(float nx, float ny, float nz, 
-                          float tx, float ty, float tz, 
-                          float px, float py, float pz);
-
-  void UpdateLocator();
-  void UpdateSliceDisplay();
-  */
-
   void UpdateDeviceStatus();
   
  private:
@@ -260,13 +204,14 @@ class VTK_PROSTATENAV_EXPORT vtkProstateNavGUI : public vtkSlicerModuleGUI
   void BuildGUIForWizardFrame();
   void BuildGUIForHelpFrame();
   void BuildGUIForDeviceFrame();
-  void BuildGUIForVisualizationControlFrame();
   
   int  ChangeWorkPhase(int phase, int fChangeWizard=0);
-  void ChangeSlicePlaneDriver(int slice, const char* driver);
-
 
   int Entered;
+
+
+  vtkMRMLProstateNavManagerNode* ProstateNavManager;
+
   
 };
 

@@ -80,6 +80,8 @@
 #include "vtkIGTLToMRMLCoordinate.h"
 #include "vtkIGTLToMRMLBrpRobotCommand.h"
 
+#include "vtkMRMLProstateNavManagerNode.h"
+
 #include <vector>
 
 //---------------------------------------------------------------------------
@@ -89,51 +91,9 @@ vtkCxxRevisionMacro ( vtkProstateNavGUI, "$Revision: 1.0 $");
 
 
 //---------------------------------------------------------------------------
-// Button Colors and Labels for Work Phase Control
-const double vtkProstateNavGUI::WorkPhaseColor[vtkProstateNavLogic::NumPhases][3] =
-  {
-  /* St */ { 1.0, 0.6, 1.0 },
-  /* Pl */ { 0.6, 1.0, 0.6 },
-  /* Cl */ { 1.0, 1.0, 0.6 },
-  /* Tg */ { 0.6, 0.6, 1.0 },
-  /* Mn */ { 0.6, 1.0, 1.0 },
-  /* Em */ { 1.0, 0.0, 0.0 },
-  };
-
-const double vtkProstateNavGUI::WorkPhaseColorActive[vtkProstateNavLogic::NumPhases][3] =
-  {
-  /* St */ { 1.0, 0.4, 1.0 },
-  /* Pl */ { 0.4, 1.0, 0.4 },
-  /* Cl */ { 1.0, 1.0, 0.4 },
-  /* Tg */ { 0.4, 0.4, 1.0 },
-  /* Mn */ { 0.4, 1.0, 1.0 },
-  /* Em */ { 1.0, 0.0, 0.0 },
-  };
-
-const double vtkProstateNavGUI::WorkPhaseColorDisabled[vtkProstateNavLogic::NumPhases][3] =
-  {
-  /* St */ { 1.0, 0.95, 1.0 },
-  /* Pl */ { 0.95, 1.0, 0.95 },
-  /* Cl */ { 1.0, 1.0, 0.95 },
-  /* Tg */ { 0.95, 0.95, 1.0 },
-  /* Mn */ { 0.95, 1.0, 1.0 },
-  /* Em */ { 1.0, 0.95, 0.95 },
-  };
-
-const char *vtkProstateNavGUI::WorkPhaseStr[vtkProstateNavLogic::NumPhases] =
-  {
-  /* Su */ "Set Up",
-  /* Pl */ "Planning",
-  /* Cl */ "Calibration",
-  /* Tg */ "Targeting",
-  /* Mn */ "Manual",
-  /* Em */ "Emergency",
-  };
-
-//---------------------------------------------------------------------------
 vtkProstateNavGUI::vtkProstateNavGUI ( )
 {
-
+  
   //----------------------------------------------------------------
   // Logic values
   
@@ -144,17 +104,6 @@ vtkProstateNavGUI::vtkProstateNavGUI ( )
   this->DataCallbackCommand = vtkCallbackCommand::New();
   this->DataCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
   this->DataCallbackCommand->SetCallback(vtkProstateNavGUI::DataCallback);
-  
-  this->SliceNode0 = NULL; 
-  this->SliceNode1 = NULL; 
-  this->SliceNode2 = NULL; 
-  
-  this->NeedOrientationUpdate0 = 0;
-  this->NeedOrientationUpdate1 = 0;
-  this->NeedOrientationUpdate2 = 0;
-  
-  //this->NeedRealtimeImageUpdate = 0;
-  this->FreezeOrientationUpdate = 0;
   
   
   //----------------------------------------------------------------
@@ -171,31 +120,13 @@ vtkProstateNavGUI::vtkProstateNavGUI ( )
   // Wizard Frame
   
   this->WizardWidget = vtkKWWizardWidget::New();
-  this->WizardSteps = new vtkProstateNavStep*[vtkProstateNavLogic::NumPhases];
-  for (int i = 0; i < vtkProstateNavLogic::NumPhases; i ++)
-    {
-    this->WizardSteps[i] = NULL;
-    }
+  //this->WizardSteps = new vtkProstateNavStep*[vtkProstateNavLogic::NumPhases];
+  //for (int i = 0; i < vtkProstateNavLogic::NumPhases; i ++)
+  //  {
+  //  this->WizardSteps[i] = NULL;
+  //  }
   
 
-  //----------------------------------------------------------------
-  // Visualization Control Frame
-  
-  this->FreezeImageCheckButton = NULL;
-  this->SetLocatorModeButton   = NULL;
-  this->SetUserModeButton      = NULL;
-  this->RedSliceMenu           = NULL;
-  this->YellowSliceMenu        = NULL;
-  this->GreenSliceMenu         = NULL;
-
-  this->StartScanButton        = NULL;
-  this->StopScanButton         = NULL;
-
-  this->LocatorCheckButton     = NULL;
-
-  this->ImagingControlCheckButton = NULL;
-  this->ImagingMenu            = NULL;
-  
   //----------------------------------------------------------------
   // Target Fiducials List (MRML)
 
@@ -206,7 +137,37 @@ vtkProstateNavGUI::vtkProstateNavGUI ( )
   this->CoordinateConverter = NULL;
   this->CommandConverter = NULL;
  
+  // -----------------------------------------
+  // Set up manager
+
+  this->ProstateNavManager =  vtkMRMLProstateNavManagerNode::New();
+
+  vtkProstateNavStepSetUp* setupStep = vtkProstateNavStepSetUp::New();
+  setupStep->SetTitleBackgroundColor(1.0, 0.4, 1.0);
+  this->ProstateNavManager->AddNewStep("Set Up", setupStep);
+
+  vtkProstateNavScanControlStep* scanControlStep = vtkProstateNavScanControlStep::New();
+  scanControlStep->SetTitleBackgroundColor(0.4, 1.0, 0.4);
+  this->ProstateNavManager->AddNewStep("Planning", scanControlStep);
+
+  vtkProstateNavCalibrationStep* calibrationStep = vtkProstateNavCalibrationStep::New();
+  calibrationStep->SetTitleBackgroundColor(1.0, 1.0, 0.4);
+  this->ProstateNavManager->AddNewStep("Calibration", calibrationStep);
+
+  vtkProstateNavTargetingStep* targetingStep = vtkProstateNavTargetingStep::New();
+  targetingStep->SetTitleBackgroundColor(0.4, 0.4, 1.0);
+  this->ProstateNavManager->AddNewStep("Calibration", targetingStep);
+
+  vtkProstateNavManualControlStep* manualStep = vtkProstateNavManualControlStep::New();
+  manualStep->SetTitleBackgroundColor(0.4, 1.0, 1.0);
+  this->ProstateNavManager->AddNewStep("Manual", manualStep);
+
+  this->ProstateNavManager->AllowAllTransitions();
+
+
 }
+
+
 
 //---------------------------------------------------------------------------
 vtkProstateNavGUI::~vtkProstateNavGUI ( )
@@ -238,86 +199,8 @@ vtkProstateNavGUI::~vtkProstateNavGUI ( )
     this->WorkPhaseButtonSet->SetParent(NULL);
     this->WorkPhaseButtonSet->Delete();
     }
-
-
-
-
-
   this->SetModuleLogic ( NULL );
 
-
-  //----------------------------------------------------------------
-  // Visualization Control Frame
-
-  if (this->FreezeImageCheckButton)
-    {
-    this->FreezeImageCheckButton->SetParent(NULL );
-    this->FreezeImageCheckButton->Delete ( );
-    }
-
-  if (this->SetLocatorModeButton)
-    {
-    this->SetLocatorModeButton->SetParent(NULL);
-    this->SetLocatorModeButton->Delete();
-    }
-  
-  if (this->SetUserModeButton)
-    {
-    this->SetUserModeButton->SetParent(NULL);
-    this->SetUserModeButton->Delete();
-    }
-
-  if (this->RedSliceMenu)
-    {
-    this->RedSliceMenu->SetParent(NULL );
-    this->RedSliceMenu->Delete ( );
-    }
-
-  if (this->YellowSliceMenu)
-    {
-    this->YellowSliceMenu->SetParent(NULL );
-    this->YellowSliceMenu->Delete ( );
-    }
-
-  if (this->GreenSliceMenu)
-    {
-    this->GreenSliceMenu->SetParent(NULL );
-    this->GreenSliceMenu->Delete ( );
-    }
-
-  if (this->StartScanButton)
-    {
-    this->StartScanButton->SetParent(NULL);
-    this->StartScanButton->Delete();
-    }
-
-  if (this->StopScanButton)
-    {
-    this->StopScanButton->SetParent(NULL);
-    this->StopScanButton->Delete();
-    }
-
-  if ( this->ImagingControlCheckButton )
-    {
-    this->ImagingControlCheckButton->SetParent(NULL);
-    this->ImagingControlCheckButton->Delete();
-    }
-  if ( this->ImagingMenu )
-    {
-    this->ImagingMenu->SetParent(NULL);
-    this->ImagingMenu->Delete();
-    }
-
-
-  //----------------------------------------------------------------
-  // Etc Frame
-
-
-  if (this->LocatorCheckButton)
-    {
-    this->LocatorCheckButton->SetParent(NULL );
-    this->LocatorCheckButton->Delete ( );
-    }
 
   //----------------------------------------------------------------
   // Wizard Frame
@@ -329,19 +212,19 @@ vtkProstateNavGUI::~vtkProstateNavGUI ( )
     this->WizardWidget = NULL;
     }
 
-  if ( this->WizardSteps )
-    {
-    for (int i = 0; i < vtkProstateNavLogic::NumPhases; i ++)
-      {
-      if ( this->WizardSteps[i] != NULL )
-        {
-        this->WizardSteps[i]->Delete();
-        this->WizardSteps[i] = NULL;
-        }
-      }
-    delete [] this->WizardSteps;
-    this->WizardSteps = NULL;
-    }
+  //if ( this->WizardSteps )
+  //  {
+  //  for (int i = 0; i < vtkProstateNavLogic::NumPhases; i ++)
+  //    {
+  //    if ( this->WizardSteps[i] != NULL )
+  //      {
+  //      this->WizardSteps[i]->Delete();
+  //      this->WizardSteps[i] = NULL;
+  //      }
+  //    }
+  //  delete [] this->WizardSteps;
+  //  this->WizardSteps = NULL;
+  //  }
 
   // -----------------------------------------
   // Work Phase Display Frame
@@ -375,7 +258,6 @@ vtkProstateNavGUI::~vtkProstateNavGUI ( )
     this->CommandConverter = NULL;
     }
 
-  
 }
 
 
@@ -426,51 +308,6 @@ void vtkProstateNavGUI::RemoveGUIObservers ( )
   this->WizardWidget->GetWizardWorkflow()->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
 
 
-
-  //----------------------------------------------------------------
-  // Visualization Control Frame
-
-  if (this->FreezeImageCheckButton)
-    {
-    this->FreezeImageCheckButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand );
-    }
-
-  if (this->SetLocatorModeButton)
-    {
-    this->SetLocatorModeButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand );
-    }
-
-  if (this->SetUserModeButton)
-    {
-    this->SetUserModeButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand );
-    }
-
-  if (this->LocatorCheckButton)
-    {
-    this->LocatorCheckButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand );
-    }
-
-  if (this->RedSliceMenu)
-    {
-    this->RedSliceMenu->GetMenu()
-      ->RemoveObserver((vtkCommand*)this->GUICallbackCommand);
-    }
-  if (this->YellowSliceMenu)
-    {
-    this->YellowSliceMenu->GetMenu()
-      ->RemoveObserver((vtkCommand*)this->GUICallbackCommand);
-    }
-  if (this->GreenSliceMenu)
-    {
-    this->GreenSliceMenu->GetMenu()
-      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
-    }
-  if (this->ImagingMenu)
-    {
-    this->ImagingMenu->GetMenu()
-      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
-    }
-  
   this->RemoveLogicObservers();
 }
 
@@ -525,32 +362,6 @@ void vtkProstateNavGUI::AddGUIObservers ( )
 
 
   //----------------------------------------------------------------
-  // Visualization Control Frame
-
-  this->FreezeImageCheckButton
-    ->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*)this->GUICallbackCommand);
-  this->SetLocatorModeButton
-    ->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->SetUserModeButton
-    ->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->StartScanButton
-    ->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->StopScanButton
-    ->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->LocatorCheckButton
-    ->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
-
-  this->RedSliceMenu->GetMenu()
-    ->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand*)this->GUICallbackCommand);
-  this->YellowSliceMenu->GetMenu()
-    ->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand*)this->GUICallbackCommand);
-  this->GreenSliceMenu->GetMenu()
-    ->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->ImagingMenu->GetMenu()
-    ->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand);
-
-
-  //----------------------------------------------------------------
   // Etc Frame
 
   // observer load volume button
@@ -568,17 +379,8 @@ void vtkProstateNavGUI::AddLogicObservers ( )
 
   if (this->GetLogic())
     {
-    /*
-    this->GetLogic()->AddObserver(vtkProstateNavLogic::LocatorUpdateEvent,
-                                  (vtkCommand *)this->LogicCallbackCommand);
-    */
-    /*
-    this->GetLogic()->AddObserver(vtkProstateNavLogic::SliceUpdateEvent,
-                                  (vtkCommand *)this->LogicCallbackCommand);
-    */
     this->GetLogic()->AddObserver(vtkProstateNavLogic::StatusUpdateEvent,
                                   (vtkCommand *)this->LogicCallbackCommand);
-
     }
 }
 
@@ -676,7 +478,7 @@ void vtkProstateNavGUI::ProcessGUIEvents(vtkObject *caller,
         break;
         }
       }
-    if (phase < vtkProstateNavLogic::NumPhases) // if pressed one of them
+    if (phase < this->ProstateNavManager->GetNumberOfSteps()) // if pressed one of them
       {
       ChangeWorkPhase(phase, 1);
       }
@@ -693,149 +495,34 @@ void vtkProstateNavGUI::ProcessGUIEvents(vtkObject *caller,
     int phase = vtkProstateNavLogic::Emergency;
     vtkKWWizardStep* step =  this->WizardWidget->GetWizardWorkflow()->GetCurrentStep();
 
-    for (int i = 0; i < vtkProstateNavLogic::NumPhases-1; i ++)
+    int numSteps = this->ProstateNavManager->GetNumberOfSteps();
+    for (int i = 0; i < numSteps; i ++)
       {
-      if (step == vtkKWWizardStep::SafeDownCast(this->WizardSteps[i]))
+      if (step == vtkKWWizardStep::SafeDownCast(this->ProstateNavManager->GetStepPage(i)))
         {
         phase = i;
         }
       }
+    //for (int i = 0; i < vtkProstateNavLogic::NumPhases-1; i ++)
+    //  {
+    //  if (step == vtkKWWizardStep::SafeDownCast(this->WizardSteps[i]))
+    //    {
+    //    phase = i;
+    //    }
+    //  }
     
     ChangeWorkPhase(phase);
     }
 
 
   //----------------------------------------------------------------
-  // Visualization Control Frame
-  
-  else if (this->LocatorCheckButton == vtkKWCheckButton::SafeDownCast(caller) 
-           && event == vtkKWCheckButton::SelectedStateChangedEvent )
-    {
-    int checked = this->LocatorCheckButton->GetSelectedState(); 
-    vtkMRMLModelNode *model = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID("vtkMRMLModelNode1")); 
-    if (model != NULL)
-      {
-      vtkMRMLModelDisplayNode *disp = model->GetModelDisplayNode();
-        
-      if (disp != NULL)
-        {
-        vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-        vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
-        disp->SetColor(color->SliceGUIGreen);
-        disp->SetVisibility(checked);
-        }
-      }
-    }
-  else if (this->RedSliceMenu->GetMenu() == vtkKWMenu::SafeDownCast(caller)
-            && event == vtkKWMenu::MenuItemInvokedEvent)
-    {
-    //const char* selected = this->RedSliceMenu->GetValue();
-    //ChangeSlicePlaneDriver(vtkProstateNavGUI::SLICE_PLANE_RED, selected);
-    }
-
-  else if (this->YellowSliceMenu->GetMenu() == vtkKWMenu::SafeDownCast(caller)
-            && event == vtkKWMenu::MenuItemInvokedEvent)
-    {
-    //const char* selected = this->YellowSliceMenu->GetValue();
-    //ChangeSlicePlaneDriver(vtkProstateNavGUI::SLICE_PLANE_YELLOW, selected);
-    }
-
-  else if (this->GreenSliceMenu->GetMenu() == vtkKWMenu::SafeDownCast(caller)
-          && event == vtkKWMenu::MenuItemInvokedEvent)
-    {
-    //const char* selected = this->GreenSliceMenu->GetValue();
-    //ChangeSlicePlaneDriver(vtkProstateNavGUI::SLICE_PLANE_GREEN, selected);
-    }
-
-  // -- "Locator" button 
-  else if (this->SetLocatorModeButton == vtkKWPushButton::SafeDownCast(caller) 
-            && event == vtkKWPushButton::InvokedEvent)
-    {
-    /*
-    ChangeSlicePlaneDriver(vtkProstateNavGUI::SLICE_PLANE_RED, "Locator");
-    ChangeSlicePlaneDriver(vtkProstateNavGUI::SLICE_PLANE_YELLOW, "Locator");
-    ChangeSlicePlaneDriver(vtkProstateNavGUI::SLICE_PLANE_GREEN, "Locator");
-    */
-    }
-  
-  // -- "User" button 
-  else if (this->SetUserModeButton == vtkKWPushButton::SafeDownCast(caller) 
-           && event == vtkKWPushButton::InvokedEvent)
-    {
-    /*
-    ChangeSlicePlaneDriver(vtkProstateNavGUI::SLICE_PLANE_RED, "User");
-    ChangeSlicePlaneDriver(vtkProstateNavGUI::SLICE_PLANE_YELLOW, "User");
-    ChangeSlicePlaneDriver(vtkProstateNavGUI::SLICE_PLANE_GREEN, "User");
-    */
-    }
-  
-  // -- "Freeze Image Position" check button 
-  else if (this->FreezeImageCheckButton == vtkKWCheckButton::SafeDownCast(caller) 
-           && event == vtkKWCheckButton::SelectedStateChangedEvent )
-    {
-    if (this->FreezeImageCheckButton->GetSelectedState() == 1)
-      {
-      this->FreezeOrientationUpdate = 1;
-      }
-    else
-      {
-      this->FreezeOrientationUpdate = 0;
-      }
-    }
-  else if (this->ImagingMenu->GetMenu() == vtkKWMenu::SafeDownCast(caller)
-           && event == vtkKWMenu::MenuItemInvokedEvent )
-    {
-      
-    /*
-    const char* selected = this->ImagingMenu->GetValue();
-    if (strcmp(selected, "None") == 0)
-      {
-      //this->RealtimeImageOrient = vtkProstateNavGUI::SLICE_RTIMAGE_NONE;
-      this->GetLogic()->SetRealtimeImageOrient(vtkProstateNavLogic::SLICE_RTIMAGE_NONE);
-      }
-    else if (strcmp(selected, "Perpendicular") == 0)
-      {
-      //this->RealtimeImageOrient = vtkProstateNavGUI::SLICE_RTIMAGE_PERP;
-      this->GetLogic()->SetRealtimeImageOrient(vtkProstateNavLogic::SLICE_RTIMAGE_PERP);
-      }
-    else if (strcmp(selected, "In-plane 90") == 0)
-      {
-      //this->RealtimeImageOrient = vtkProstateNavGUI::SLICE_RTIMAGE_INPLANE90;
-      this->GetLogic()->SetRealtimeImageOrient(vtkProstateNavLogic::SLICE_RTIMAGE_INPLANE90);
-      }
-    else //if ( strcmp(selected, "In-plane") == 0 )
-      {
-      //this->RealtimeImageOrient = vtkProstateNavGUI::SLICE_RTIMAGE_INPLANE;
-      this->GetLogic()->SetRealtimeImageOrient(vtkProstateNavLogic::SLICE_RTIMAGE_INPLANE);
-      }
-    
-    std::cerr << "ImagingMenu =======> " << selected << "  :  " << this->RealtimeImageOrient << std::endl;
-    */
-    
-    }
-
-  else if (this->StartScanButton == vtkKWPushButton::SafeDownCast(caller) 
-           && event == vtkKWPushButton::InvokedEvent)
-    {
-    this->Logic->ScanStart();
-    }
-  else if (this->StopScanButton == vtkKWPushButton::SafeDownCast(caller) 
-           && event == vtkKWPushButton::InvokedEvent)
-    {
-    this->Logic->ScanStop();
-    }
-  
-
-  //----------------------------------------------------------------
   // Etc Frame
-
-          
 
   // Process Wizard GUI (Active step only)
   else
     {
-    int phase = this->Logic->GetCurrentPhase();
-    this->WizardSteps[phase]->ProcessGUIEvents(caller, event, callData);
+    int phase = this->ProstateNavManager->GetCurrentStep();
+    this->ProstateNavManager->GetStepPage(phase)->ProcessGUIEvents(caller, event, callData);
     }
 
 } 
@@ -843,10 +530,12 @@ void vtkProstateNavGUI::ProcessGUIEvents(vtkObject *caller,
 
 void vtkProstateNavGUI::Init()
 {
-    this->DataManager->SetMRMLScene(this->GetMRMLScene());
-    //   this->LocatorModelID = std::string(this->DataManager->RegisterStream(0));
-    //this->LocatorModelID_new = std::string(this->DataManager->RegisterStream_new(0));
-    
+  
+  this->DataManager->SetMRMLScene(this->GetMRMLScene());
+  // NOTE: should observe node delete event
+
+  this->GetMRMLScene()->AddNode(this->ProstateNavManager);
+
 }
 
 
@@ -887,23 +576,16 @@ void vtkProstateNavGUI::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkProstateNavGUI::Enter()
 {
+
   // Fill in
   vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
   
-  this->SliceNode0 = appGUI->GetMainSliceGUI("Red")->GetLogic()->GetSliceNode();
-  this->SliceNode1 = appGUI->GetMainSliceGUI("Yellow")->GetLogic()->GetSliceNode();
-  this->SliceNode2 = appGUI->GetMainSliceGUI("Green")->GetLogic()->GetSliceNode();
-  
-
   if (this->Entered == 0)
     {
     this->GetLogic()->SetGUI(this);
 
     ChangeWorkPhase(vtkProstateNavLogic::StartUp, 1);
   
-    // neccessary?
-    //this->Logic0->GetForegroundLayer()->SetUseReslice(0);
-    
     //----------------------------------------------------------------
     // Following code should be in the logic class, but GetApplication()
     // is not available there.
@@ -959,11 +641,8 @@ void vtkProstateNavGUI::Enter()
           vtkErrorMacro("Unable to add a new fid list via the logic\n");
           }
           // now get the newly active node 
-//        this->FiducialListNodeID = fidGUI->GetFiducialListNodeID();
           this->FiducialListNodeID = newList->GetID(); 
-//        this->FiducialListNode = (vtkMRMLFiducialListNode *)this->GetMRMLScene()->GetNodeByID(this->FiducialListNodeID);
           this->FiducialListNode = (vtkMRMLFiducialListNode *)this->GetMRMLScene()->GetNodeByID(newList->GetID());
-//        newList->Delete();
  
           if (this->FiducialListNode == NULL)
             {
@@ -973,6 +652,7 @@ void vtkProstateNavGUI::Enter()
           }
        }
     }
+
 }
 
 
@@ -995,26 +675,35 @@ void vtkProstateNavGUI::BuildGUI ( )
     BuildGUIForHelpFrame();
     BuildGUIForWorkPhaseFrame ();
     BuildGUIForWizardFrame();
-    BuildGUIForVisualizationControlFrame();
-    //BuildGUIForDeviceFrame();
 
 }
+
 
 //---------------------------------------------------------------------------
 void vtkProstateNavGUI::TearDownGUI ( )
 {
+
+
   // disconnect circular references so destructor can be called
   
   this->GetLogic()->SetGUI(NULL);
-  for (int i = 0; i < vtkProstateNavLogic::NumPhases; i ++)
+  //for (int i = 0; i < vtkProstateNavLogic::NumPhases; i ++)
+  // {
+  // if (this->WizardSteps[i])
+  //   {
+  //   this->WizardSteps[i]->SetGUI(NULL);
+  //   this->WizardSteps[i]->SetLogic(NULL);
+  //   }
+  // }
+  int numSteps = this->ProstateNavManager->GetNumberOfSteps();
+  for (int i = 0; i < numSteps; i ++)
     {
-    if (this->WizardSteps[i])
-      {
-      this->WizardSteps[i]->SetGUI(NULL);
-      this->WizardSteps[i]->SetLogic(NULL);
-      }
+    this->ProstateNavManager->GetStepPage(i)->SetGUI(NULL);
+    this->ProstateNavManager->GetStepPage(i)->SetLogic(NULL);
     }
+
 }
+
 
 //---------------------------------------------------------------------------
 void vtkProstateNavGUI::BuildGUIForWizardFrame()
@@ -1061,81 +750,43 @@ void vtkProstateNavGUI::BuildGUIForWizardFrame()
       this->WizardWidget->GetWizardWorkflow();
 
     // -----------------------------------------------------------------
-    // Config File step
-
-    if (!this->WizardSteps[vtkProstateNavLogic::StartUp])
-      {
-      this->WizardSteps[vtkProstateNavLogic::StartUp] = vtkProstateNavStepSetUp::New();
-      }
-
-    // -----------------------------------------------------------------
-    // Scan Control step
-
-    if (!this->WizardSteps[vtkProstateNavLogic::Planning])
-      {
-      this->WizardSteps[vtkProstateNavLogic::Planning] = vtkProstateNavScanControlStep::New();
-      }
-
-    // -----------------------------------------------------------------
-    // Calibration step
-
-    if (!this->WizardSteps[vtkProstateNavLogic::Calibration])
-      {
-      this->WizardSteps[vtkProstateNavLogic::Calibration] = vtkProstateNavCalibrationStep::New();
-      }
-
-    // -----------------------------------------------------------------
-    // Targeting step
-
-    if (!this->WizardSteps[vtkProstateNavLogic::Targeting])
-      {
-      this->WizardSteps[vtkProstateNavLogic::Targeting] = vtkProstateNavTargetingStep::New();
-      }
-
-    // -----------------------------------------------------------------
-    // ManualControl step
-
-    if (!this->WizardSteps[vtkProstateNavLogic::Manual])
-      {
-      this->WizardSteps[vtkProstateNavLogic::Manual] = vtkProstateNavManualControlStep::New();
-      }
-
-
-    // -----------------------------------------------------------------
     // Set GUI/Logic to each step and add to workflow
 
-    for (int i = 0; i < vtkProstateNavLogic::NumPhases-1; i ++)
+    int numSteps = this->ProstateNavManager->GetNumberOfSteps();
+
+    for (int i = 0; i < numSteps; i ++)
       {
-      this->WizardSteps[i]->SetGUI(this);
-      this->WizardSteps[i]->SetLogic(this->Logic);
-
-      // Set color for the wizard title:
-
-      this->WizardSteps[i]->SetTitleBackgroundColor(0.8, 0.8, 1.0);
-      //this->WizardSteps[i]->SetTitleBackgroundColor(WorkPhaseColor[i][0],
-      //                                              WorkPhaseColor[i][1],
-      //                                              WorkPhaseColor[i][2]);
-      wizard_workflow->AddNextStep(this->WizardSteps[i]);
+      this->ProstateNavManager->GetStepPage(i)->SetGUI(this);
+      this->ProstateNavManager->GetStepPage(i)->SetLogic(this->Logic);
+      wizard_workflow->AddNextStep(this->ProstateNavManager->GetStepPage(i));
       }
+
+    //for (int i = 0; i < vtkProstateNavLogic::NumPhases-1; i ++)
+    //  {
+    //  this->WizardSteps[i]->SetGUI(this);
+    //  this->WizardSteps[i]->SetLogic(this->Logic);
+    //
+    //  // Set color for the wizard title:
+    //  this->WizardSteps[i]->SetTitleBackgroundColor(0.8, 0.8, 1.0);
+    //  wizard_workflow->AddNextStep(this->WizardSteps[i]);
+    //  }
 
 
     // -----------------------------------------------------------------
     // Initial and finish step
 
-    //wizard_workflow->SetFinishStep(this->ManualControlStep);
-    wizard_workflow->SetFinishStep(this->WizardSteps[vtkProstateNavLogic::Manual]);
+    wizard_workflow->SetFinishStep(this->ProstateNavManager->GetStepPage(numSteps-1));
     wizard_workflow->CreateGoToTransitionsToFinishStep();
-    //wizard_workflow->SetInitialStep(this->ConfigurationStep);
-    wizard_workflow->SetInitialStep(this->WizardSteps[vtkProstateNavLogic::StartUp]);
+    wizard_workflow->SetInitialStep(this->ProstateNavManager->GetStepPage(0));
 
     // -----------------------------------------------------------------
     // Show the user interface
 
-//    this->WizardWidget->GetWizardWorkflow()->GetCurrentStep()->ShowUserInterface();
     if (wizard_workflow->GetCurrentStep())
       {
       wizard_workflow->GetCurrentStep()->ShowUserInterface();
       }
+
 }
 
 
@@ -1261,16 +912,22 @@ void vtkProstateNavGUI::BuildGUIForWorkPhaseFrame ()
   this->WorkPhaseButtonSet->SetWidgetsPadY(2);
   this->WorkPhaseButtonSet->UniformColumnsOn();
   this->WorkPhaseButtonSet->UniformRowsOn();
-  
-  for (int i = 0; i < vtkProstateNavLogic::NumPhases; i ++)
+
+  int numSteps = this->ProstateNavManager->GetNumberOfSteps();
+  for (int i = 0; i < numSteps; i ++)  
+  //for (int i = 0; i < vtkProstateNavLogic::NumPhases; i ++)
     {
+    double r;
+    double g;
+    double b;
+    this->ProstateNavManager->GetStepPage(i)->GetTitleBackgroundColor(&r, &g, &b);
+    const char* name = this->ProstateNavManager->GetStepName(i);
+
     this->WorkPhaseButtonSet->AddWidget(i);
     this->WorkPhaseButtonSet->GetWidget(i)->SetWidth(16);
-    this->WorkPhaseButtonSet->GetWidget(i)->SetText(WorkPhaseStr[i]);
-    this->WorkPhaseButtonSet->GetWidget(i)
-      ->SetBackgroundColor(WorkPhaseColor[i][0], WorkPhaseColor[i][1], WorkPhaseColor[i][2]);
-    this->WorkPhaseButtonSet->GetWidget(i)
-      ->SetActiveBackgroundColor(WorkPhaseColor[i][0], WorkPhaseColor[i][1], WorkPhaseColor[i][2]);
+    this->WorkPhaseButtonSet->GetWidget(i)->SetText(name);
+    this->WorkPhaseButtonSet->GetWidget(i)->SetBackgroundColor(r, g, b);
+    this->WorkPhaseButtonSet->GetWidget(i)->SetActiveBackgroundColor(r, g, b);
     /*
     this->WorkPhaseButtonSet->GetWidget(i)
       ->SetDisabledBackgroundColor(WorkPhaseColor[i][0], WorkPhaseColor[i][1], WorkPhaseColor[i][2]);
@@ -1286,291 +943,93 @@ void vtkProstateNavGUI::BuildGUIForWorkPhaseFrame ()
   
 }
 
-//---------------------------------------------------------------------------
-void vtkProstateNavGUI::BuildGUIForVisualizationControlFrame ()
-{
-  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-  vtkKWWidget *page = this->UIPanel->GetPageWidget ("ProstateNav");
-  
-  vtkSlicerModuleCollapsibleFrame *visCtrlFrame = vtkSlicerModuleCollapsibleFrame::New();
-  visCtrlFrame->SetParent(page);
-  visCtrlFrame->Create();
-  visCtrlFrame->SetLabelText("Visualization / Scanner Control");
-  visCtrlFrame->CollapseFrame();
-  app->Script ("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-               visCtrlFrame->GetWidgetName(), page->GetWidgetName());
-
-  // -----------------------------------------
-  // Locator Display frame: Options to locator display 
-
-  vtkKWFrameWithLabel *displayFrame = vtkKWFrameWithLabel::New ( );
-  displayFrame->SetParent(visCtrlFrame->GetFrame());
-  displayFrame->Create();
-  displayFrame->SetLabelText("Locator Display");
-  this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-               displayFrame->GetWidgetName());
-  
-  this->LocatorCheckButton = vtkKWCheckButton::New();
-  this->LocatorCheckButton->SetParent(displayFrame->GetFrame());
-  this->LocatorCheckButton->Create();
-  this->LocatorCheckButton->SelectedStateOff();
-  this->LocatorCheckButton->SetText("Show Locator");
-  
-  this->Script("pack %s -side left -anchor w -padx 2 -pady 2", 
-               this->LocatorCheckButton->GetWidgetName());
-  
-  
-  // -----------------------------------------
-  // Driver frame: Locator can drive slices 
-
-  vtkKWFrameWithLabel *driverFrame = vtkKWFrameWithLabel::New();
-  driverFrame->SetParent(visCtrlFrame->GetFrame());
-  driverFrame->Create();
-  driverFrame->SetLabelText ("Driver");
-  this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-               driverFrame->GetWidgetName());
-  
-  // slice frame
-  vtkKWFrame *sliceFrame = vtkKWFrame::New();
-  sliceFrame->SetParent(driverFrame->GetFrame());
-  sliceFrame->Create();
-  app->Script("pack %s -side top -anchor nw -fill x -pady 1 -in %s",
-              sliceFrame->GetWidgetName(),
-              driverFrame->GetFrame()->GetWidgetName());
-  
-  
-  // Contents in slice frame 
-  vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
-  
-  this->RedSliceMenu = vtkKWMenuButton::New();
-  this->RedSliceMenu->SetParent(sliceFrame);
-  this->RedSliceMenu->Create();
-  this->RedSliceMenu->SetWidth(10);
-  this->RedSliceMenu->SetBackgroundColor(color->SliceGUIRed);
-  this->RedSliceMenu->SetActiveBackgroundColor(color->SliceGUIRed);
-  this->RedSliceMenu->GetMenu()->AddRadioButton ("User");
-  this->RedSliceMenu->GetMenu()->AddRadioButton ("Locator");
-  this->RedSliceMenu->GetMenu()->AddRadioButton ("RT Image");
-  this->RedSliceMenu->SetValue ("User");
-  
-  this->YellowSliceMenu = vtkKWMenuButton::New();
-  this->YellowSliceMenu->SetParent(sliceFrame);
-  this->YellowSliceMenu->Create();
-  this->YellowSliceMenu->SetWidth(10);
-  this->YellowSliceMenu->SetBackgroundColor(color->SliceGUIYellow);
-  this->YellowSliceMenu->SetActiveBackgroundColor(color->SliceGUIYellow);
-  this->YellowSliceMenu->GetMenu()->AddRadioButton ("User");
-  this->YellowSliceMenu->GetMenu()->AddRadioButton ("Locator");
-  this->YellowSliceMenu->GetMenu()->AddRadioButton ("RT Image");
-  this->YellowSliceMenu->SetValue ("User");
-  
-  this->GreenSliceMenu = vtkKWMenuButton::New();
-  this->GreenSliceMenu->SetParent(sliceFrame);
-  this->GreenSliceMenu->Create();
-  this->GreenSliceMenu->SetWidth(10);
-  this->GreenSliceMenu->SetBackgroundColor(color->SliceGUIGreen);
-  this->GreenSliceMenu->SetActiveBackgroundColor(color->SliceGUIGreen);
-  this->GreenSliceMenu->GetMenu()->AddRadioButton ("User");
-  this->GreenSliceMenu->GetMenu()->AddRadioButton ("Locator");
-  this->GreenSliceMenu->GetMenu()->AddRadioButton ("RT Image");
-  this->GreenSliceMenu->SetValue ("User");
-  
-  this->Script("pack %s %s %s -side left -anchor w -padx 2 -pady 2", 
-               this->RedSliceMenu->GetWidgetName(),
-               this->YellowSliceMenu->GetWidgetName(),
-               this->GreenSliceMenu->GetWidgetName());
-  
-  
-  // Mode frame
-  vtkKWFrame *modeFrame = vtkKWFrame::New();
-  modeFrame->SetParent ( driverFrame->GetFrame() );
-  modeFrame->Create ( );
-  app->Script ("pack %s -side top -anchor nw -fill x -pady 1 -in %s",
-               modeFrame->GetWidgetName(),
-               driverFrame->GetFrame()->GetWidgetName());
-  
-  // "Locator All" button
-  this->SetLocatorModeButton = vtkKWPushButton::New ( );
-  this->SetLocatorModeButton->SetParent ( modeFrame );
-  this->SetLocatorModeButton->Create ( );
-  this->SetLocatorModeButton->SetText ("Locator All");
-  this->SetLocatorModeButton->SetWidth (12);
-  
-  // "User All" button
-  this->SetUserModeButton = vtkKWPushButton::New ( );
-  this->SetUserModeButton->SetParent ( modeFrame );
-  this->SetUserModeButton->Create ( );
-  this->SetUserModeButton->SetText ("User All");
-  this->SetUserModeButton->SetWidth (12);
-  
-  
-  // "Freeze" check button
-  this->FreezeImageCheckButton = vtkKWCheckButton::New();
-  this->FreezeImageCheckButton->SetParent(modeFrame);
-  this->FreezeImageCheckButton->Create();
-  this->FreezeImageCheckButton->SelectedStateOff();
-  this->FreezeImageCheckButton->SetText("Freeze Image Position");
-  this->Script("pack %s %s %s -side left -anchor w -padx 2 -pady 2", 
-               this->SetLocatorModeButton->GetWidgetName(),
-               this->SetUserModeButton->GetWidgetName(),
-               this->FreezeImageCheckButton->GetWidgetName());
-  
-  
-  // -----------------------------------------
-  // Real-time imaging: Scanner controled
-
-  vtkKWFrameWithLabel *rtImageFrame = vtkKWFrameWithLabel::New ( );
-  rtImageFrame->SetParent(visCtrlFrame->GetFrame());
-  rtImageFrame->Create();
-  rtImageFrame->SetLabelText("Real-time Imaging");
-  this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-               rtImageFrame->GetWidgetName());
-
-  // Scan start/stop frame
-  vtkKWFrame *scanFrame = vtkKWFrame::New();
-  scanFrame->SetParent (rtImageFrame->GetFrame());
-  scanFrame->Create();
-  app->Script("pack %s -side top -anchor nw -fill x -pady 1 -in %s",
-              scanFrame->GetWidgetName(),
-              rtImageFrame->GetFrame()->GetWidgetName());
-  
-  this->StartScanButton = vtkKWPushButton::New();
-  this->StartScanButton->SetParent(scanFrame);
-  this->StartScanButton->Create();
-  this->StartScanButton->SetText("Start Scan");
-  this->StartScanButton->SetWidth(12);
-  
-  this->StopScanButton = vtkKWPushButton::New();
-  this->StopScanButton->SetParent(scanFrame);
-  this->StopScanButton->Create();
-  this->StopScanButton->SetText("Stop Scan");
-  this->StopScanButton->SetWidth(12);
-
-  this->ImagingMenu = vtkKWMenuButton::New();
-  this->ImagingMenu->SetParent(scanFrame);
-  this->ImagingMenu->Create();
-  this->ImagingMenu->SetWidth(10);
-  this->ImagingMenu->GetMenu()->AddRadioButton ("None");
-  this->ImagingMenu->GetMenu()->AddRadioButton ("Perpendicular");
-  this->ImagingMenu->GetMenu()->AddRadioButton ("In-plane 90");
-  this->ImagingMenu->GetMenu()->AddRadioButton ("In-plane");
-  this->ImagingMenu->SetValue("None");
-
-  this->Script("pack %s %s %s -side left -anchor w -padx 2 -pady 2", 
-               StartScanButton->GetWidgetName(),
-               StopScanButton->GetWidgetName(),
-               ImagingMenu->GetWidgetName());
-
-
-  displayFrame->SetParent(NULL);
-  displayFrame->Delete();
-  driverFrame->SetParent(NULL);
-  driverFrame->Delete();
-  modeFrame->SetParent(NULL);
-  modeFrame->Delete();
-  sliceFrame->SetParent(NULL);
-  sliceFrame->Delete();
-  visCtrlFrame->SetParent(NULL);
-  visCtrlFrame->Delete();
-  rtImageFrame->SetParent(NULL);
-  rtImageFrame->Delete();
-  scanFrame->SetParent(NULL);
-  scanFrame->Delete();
-}
-
-
 //----------------------------------------------------------------------------
 int vtkProstateNavGUI::ChangeWorkPhase(int phase, int fChangeWizard)
 {
 
-//  cerr << "ChangeWorkPhase: started" << endl;
-    if (!this->Logic->SwitchWorkPhase(phase)) // Set next phase
+
+  if (!this->ProstateNavManager->SwitchStep(phase)) // Set next phase
     {
-      cerr << "ChangeWorkPhase: Cannot make transition!" << endl;
-        return 0;
+    cerr << "ChangeWorkPhase: Cannot transition!" << endl;
+    return 0;
     }
   
-    for (int i = 0; i < vtkProstateNavLogic::NumPhases; i ++)
+  int numSteps = this->ProstateNavManager->GetNumberOfSteps();
+  
+  for (int i = 0; i < numSteps; i ++)
     {
-        vtkKWPushButton *pb = this->WorkPhaseButtonSet->GetWidget(i);
-        if (i == this->Logic->GetCurrentPhase())
-        {
-            pb->SetReliefToSunken();
-        }
-        else if (this->Logic->IsPhaseTransitable(i))
-        {
-            pb->SetReliefToGroove();
-            pb->SetStateToNormal();
-            pb->SetBackgroundColor(WorkPhaseColor[i][0],
-                                   WorkPhaseColor[i][1],
-                                   WorkPhaseColor[i][2]);
-        }
-        else
-        {
-            pb->SetReliefToGroove();
-            pb->SetStateToDisabled();
-            pb->SetBackgroundColor(WorkPhaseColorDisabled[i][0],
-                                   WorkPhaseColorDisabled[i][1],
-                                   WorkPhaseColorDisabled[i][2]);
-        }
+    vtkKWPushButton *pb = this->WorkPhaseButtonSet->GetWidget(i);
+    if (i == this->ProstateNavManager->GetCurrentStep())
+      {
+      pb->SetReliefToSunken();
+      }
+    else if (this->ProstateNavManager->IsTransitionable(i))
+      {
+      double r;
+      double g;
+      double b;
+      this->ProstateNavManager->GetStepPage(i)->GetTitleBackgroundColor(&r, &g, &b);
+      
+      pb->SetReliefToGroove();
+      pb->SetStateToNormal();
+      pb->SetBackgroundColor(r, g, b);
+      }
+    else
+      {
+      double r;
+      double g;
+      double b;
+      this->ProstateNavManager->GetStepPage(i)->GetTitleBackgroundColor(&r, &g, &b);
+      r = r * 1.5; r = (r > 1.0) ? 1.0 : r;
+      g = g * 1.5; g = (r > 1.0) ? 1.0 : g;
+      b = b * 1.5; b = (r > 1.0) ? 1.0 : b;
+      
+      pb->SetReliefToGroove();
+      pb->SetStateToDisabled();
+      pb->SetBackgroundColor(r, g, b);
+      }
     }
-
-    // Switch Wizard Frame
-    // 11/09/2007 Junichi Tokuda -- This part looks ugly. Will be fixed later.
-    if (fChangeWizard)
+  
+  // Switch Wizard Frame
+  if (fChangeWizard)
     {
-        vtkKWWizardWorkflow *wizard = 
-          this->WizardWidget->GetWizardWorkflow();
-        
-        int step_from;
-        int step_to;
-        
-        step_to = this->Logic->GetCurrentPhase();
-        step_from = this->Logic->GetPrevPhase();
-        if (step_to == vtkProstateNavLogic::Emergency)
+    vtkKWWizardWorkflow *wizard = 
+      this->WizardWidget->GetWizardWorkflow();
+    
+    int step_from;
+    int step_to;
+    
+    //step_to = this->Logic->GetCurrentPhase();
+    step_to = this->ProstateNavManager->GetCurrentStep();
+    //step_from = this->Logic->GetPrevPhase();
+    step_from = this->ProstateNavManager->GetPreviousStep();
+    
+    int steps =  step_to - step_from;
+    if (steps > 0)
+      {
+      for (int i = 0; i < steps; i ++) 
         {
-            step_to = vtkProstateNavLogic::Manual;
+        wizard->AttemptToGoToNextStep();
         }
-        if (step_from == vtkProstateNavLogic::Emergency)
+      }
+    else
+      {
+      steps = -steps;
+      for (int i = 0; i < steps; i ++)
         {
-            step_from = vtkProstateNavLogic::Manual;
+        wizard->AttemptToGoToPreviousStep();
         }
-        
-        int steps =  step_to - step_from;
-        if (steps > 0)
-        {
-            for (int i = 0; i < steps; i ++) 
-            {
-                wizard->AttemptToGoToNextStep();
-            }
-        }
-        else
-        {
-            steps = -steps;
-            for (int i = 0; i < steps; i ++)
-            {
-                wizard->AttemptToGoToPreviousStep();
-            }
-        }
-        wizard->GetCurrentStep()->ShowUserInterface();
+      }
+    wizard->GetCurrentStep()->ShowUserInterface();
     }
-
-    return 1;
+  
+  return 1;
 }
 
 
 //----------------------------------------------------------------------------
 void vtkProstateNavGUI::UpdateAll()
 {
-
-  if (this->LocatorCheckButton->GetSelectedState())
-    {
-      //this->UpdateLocator();
-    }
-  if (!this->FreezeOrientationUpdate)
-    {
-      //this->UpdateSliceDisplay(nx, ny, nz, tx, ty, tz, px, py, pz);
-    }
 
 }
 
@@ -1579,8 +1038,6 @@ void vtkProstateNavGUI::UpdateAll()
 void vtkProstateNavGUI::UpdateDeviceStatus()
 {
   
-  std::cerr << "Updating Device Status Display .........." << std::endl;
-
   int status;
   char label[128];
 
@@ -1604,11 +1061,15 @@ void vtkProstateNavGUI::UpdateDeviceStatus()
     }
   else
     {
-    sprintf(label, "RBT: %s", vtkProstateNavGUI::WorkPhaseStr[status]);
+    double r;
+    double g;
+    double b;
+    this->ProstateNavManager->GetStepPage(status)->GetTitleBackgroundColor(&r, &g, &b);
+    const char* name = this->ProstateNavManager->GetStepName(status);
+
+    sprintf(label, "RBT: %s", name);
     this->RobotStatusLabelDisp->SetValue(label);
-    this->RobotStatusLabelDisp->SetBackgroundColor(vtkProstateNavGUI::WorkPhaseColorActive[status][0],
-                                                   vtkProstateNavGUI::WorkPhaseColorActive[status][1],
-                                                   vtkProstateNavGUI::WorkPhaseColorActive[status][2]);
+    this->RobotStatusLabelDisp->SetBackgroundColor(r, g, b);
     }
 
   status = this->GetLogic()->GetScannerWorkPhase();
@@ -1619,80 +1080,18 @@ void vtkProstateNavGUI::UpdateDeviceStatus()
     }
   else
     {
-    sprintf(label, "SCNR: %s", vtkProstateNavGUI::WorkPhaseStr[status]);
+    double r;
+    double g;
+    double b;
+    this->ProstateNavManager->GetStepPage(status)->GetTitleBackgroundColor(&r, &g, &b);
+    const char* name = this->ProstateNavManager->GetStepName(status);
+
+    sprintf(label, "SCNR: %s", name);
     this->ScannerStatusLabelDisp->SetValue(label);
-    this->ScannerStatusLabelDisp->SetBackgroundColor(vtkProstateNavGUI::WorkPhaseColorActive[status][0],
-                                                     vtkProstateNavGUI::WorkPhaseColorActive[status][1],
-                                                     vtkProstateNavGUI::WorkPhaseColorActive[status][2]);
+    this->ScannerStatusLabelDisp->SetBackgroundColor(r, g, b);
 
     }
 
 }
 
-
-void vtkProstateNavGUI::ChangeSlicePlaneDriver(int slice, const char* driver)
-{
-  std::cerr << "ChangeSlicePlaneDriver -- Slice: " << slice << ", Driver: " << driver << std::endl;
-  
-  if (slice == vtkProstateNavGUI::SLICE_PLANE_RED)
-    {
-    this->RedSliceMenu->SetValue(driver);
-    if (strcmp(driver, "User") == 0)
-      {
-      this->SliceNode0->SetOrientationToAxial();
-      //this->SliceDriver0 = vtkProstateNavGUI::SLICE_DRIVER_USER;
-      //this->GetLogic()->SetSliceDriver0(vtkProstateNavLogic::SLICE_DRIVER_USER);
-      }
-    else if (strcmp(driver, "Locator") == 0)
-      {
-      //this->SliceDriver0 = vtkProstateNavGUI::SLICE_DRIVER_LOCATOR;
-      //this->GetLogic()->SetSliceDriver0(vtkProstateNavLogic::SLICE_DRIVER_LOCATOR);
-      }
-    else if (strcmp(driver, "RT Image") == 0)
-      {
-      //this->SliceDriver0 = vtkProstateNavGUI::SLICE_DRIVER_RTIMAGE;
-      //this->GetLogic()->SetSliceDriver0(vtkProstateNavLogic::SLICE_DRIVER_RTIMAGE);
-      }
-    }
-  else if (slice == vtkProstateNavGUI::SLICE_PLANE_YELLOW)
-    {
-    this->YellowSliceMenu->SetValue(driver);
-    if (strcmp(driver, "User") == 0)
-      {
-      this->SliceNode1->SetOrientationToSagittal();
-      //this->SliceDriver1 = vtkProstateNavGUI::SLICE_DRIVER_USER;
-      //this->GetLogic()->SetSliceDriver1(vtkProstateNavLogic::SLICE_DRIVER_USER);
-      }
-    else if (strcmp(driver, "Locator") == 0)
-      {
-      //this->SliceDriver1 = vtkProstateNavGUI::SLICE_DRIVER_LOCATOR;
-      //this->GetLogic()->SetSliceDriver1(vtkProstateNavLogic::SLICE_DRIVER_LOCATOR);
-      }
-    else if (strcmp(driver, "RT Image") == 0)
-      {
-      //this->SliceDriver1 = vtkProstateNavGUI::SLICE_DRIVER_RTIMAGE;
-      //this->GetLogic()->SetSliceDriver1(vtkProstateNavLogic::SLICE_DRIVER_RTIMAGE);
-      }
-    }
-  else //if ( slice == vtkProstateNavGUI::SLICE_PLANE_GREEN )
-    {
-    this->GreenSliceMenu->SetValue(driver);
-    if (strcmp(driver, "User") == 0)
-      {
-      //this->SliceNode2->SetOrientationToCoronal();
-      //this->SliceDriver2 = vtkProstateNavGUI::SLICE_DRIVER_USER;
-      //this->GetLogic()->SetSliceDriver2(vtkProstateNavLogic::SLICE_DRIVER_USER);
-      }
-    else if (strcmp(driver, "Locator") == 0)
-      {
-      //this->SliceDriver2 = vtkProstateNavGUI::SLICE_DRIVER_LOCATOR;
-      //this->GetLogic()->SetSliceDriver2(vtkProstateNavLogic::SLICE_DRIVER_LOCATOR);
-      }
-    else if (strcmp(driver, "RT Image") == 0)
-      {
-      //this->SliceDriver2 = vtkProstateNavGUI::SLICE_DRIVER_RTIMAGE;
-      //this->GetLogic()->SetSliceDriver2(vtkProstateNavLogic::SLICE_DRIVER_RTIMAGE);
-      }
-    }
-}
 
