@@ -71,8 +71,8 @@ set(ProstateNav_SRCS
   vtkRobotToImageRegistration.cxx
   vtkZFrameRobotToImageRegistration.cxx
   vtkMRMLBrpRobotCommandNode.cxx
-  vtkMRMLRobotDisplayNode.cxx
-  vtkMRMLRobotNode.cxx
+  #vtkMRMLRobotDisplayNode.cxx
+  #vtkMRMLRobotNode.cxx
   vtkMRMLProstateNavManagerNode.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkProstateNavStepSetUp.cxx
