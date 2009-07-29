@@ -314,6 +314,9 @@ int vtkGaussian2DWidget::AddGaussian(double meanX, double meanY,
   planeY->Delete();
   cutterY->Update();
 
+  std::cout << __LINE__ << " numLines " <<
+    cutter->GetOutput()->GetNumberOfLines() << std::endl;
+
   if (cutter->GetOutput()->GetNumberOfLines() > 6)
   {
     vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();

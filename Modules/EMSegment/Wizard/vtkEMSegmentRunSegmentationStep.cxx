@@ -20,6 +20,12 @@
 #include "vtkEMSegmentLogic.h"
 #include "vtkEMSegmentMRMLManager.h"
 
+#include "vtkPolyData.h"
+#include "vtkImageClip.h"
+#include "vtkPolyDataMapper.h"
+#include "vtkActor.h"
+#include "vtkMarchingSquares.h"
+
 #include "vtkKWCheckButton.h"
 #include "vtkKWCheckButtonWithLabel.h"
 #include "vtkKWFrame.h"
@@ -36,6 +42,7 @@
 #include "vtkKWWizardWidget.h"
 #include "vtkKWWizardWorkflow.h"
 #include "vtkKWRenderWidget.h"
+
 #include "vtkSlicerNodeSelectorWidget.h"
 
 #include <vtksys/SystemTools.hxx>
@@ -696,7 +703,8 @@ void vtkEMSegmentRunSegmentationStep::AddRunRegistrationOutputGUIObservers()
 }
 
 //---------------------------------------------------------------------------
-void vtkEMSegmentRunSegmentationStep::RemoveRunRegistrationOutputGUIObservers()
+void vtkEMSegmentRunSegmentationStep::
+RemoveRunRegistrationOutputGUIObservers()
 {
   this->RunSegmentationOutVolumeSelector->RemoveObservers(
     vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
@@ -707,19 +715,56 @@ void vtkEMSegmentRunSegmentationStep::RemoveRunRegistrationOutputGUIObservers()
 void vtkEMSegmentRunSegmentationStep::ProcessRunRegistrationOutputGUIEvents(
   vtkObject *caller,
   unsigned long event,
-  void *callData) 
+  void *callData)
 {
-  if (caller == this->RunSegmentationOutVolumeSelector && 
+  if (caller == this->RunSegmentationOutVolumeSelector &&
       event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent  &&
-      this->RunSegmentationOutVolumeSelector->GetSelected() != NULL) 
-    { 
+      this->RunSegmentationOutVolumeSelector->GetSelected() != NULL)
+  {
     vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
     if (mrmlManager)
       {
       mrmlManager->SetOutputVolumeMRMLID(
         this->RunSegmentationOutVolumeSelector->GetSelected()->GetID());
       }
+
+    if (this->RunRenderWidget->GetRenderWindow() == NULL)
+    {
+      vtkEMSegmentMRMLManager *mrmlManager =
+        this->GetGUI()->GetMRMLManager();
+
+      vtkMRMLScalarVolumeNode *labelVolume =
+        mrmlManager->GetOutputVolumeNode();
+
+      if (labelVolume == NULL)
+      {
+        vtkErrorMacro("No label volume found");
+        return;
+      }
+
+      if (labelVolume->GetImageData() == NULL)
+      {
+        vtkErrorMacro("Label Map has no data");
+        return;
+      }
+
+      vtkImageClip *imageClip = vtkImageClip::New();
+
+      imageClip->Delete();
+
+      vtkMarchingSquares *marchingSquares = vtkMarchingSquares::New();
+
+      marchingSquares->Delete();
+
+      vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();
+
+      mapper->Delete();
+
+      vtkActor *actor = vtkActor::New();
+
+      actor->Delete();
     }
+  }
 }
 
 //----------------------------------------------------------------------------

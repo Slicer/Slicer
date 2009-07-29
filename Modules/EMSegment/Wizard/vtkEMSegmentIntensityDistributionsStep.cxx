@@ -861,8 +861,6 @@ PopulateIntensityDistributionTargetVolumeSelector()
 void vtkEMSegmentIntensityDistributionsStep::
   Gaussian2DVolumeXSelectionChangedCallback(vtkIdType target_volId)
 {
-  EMS_DEBUG_MACRO("ShowUserInterface");
-  EMS_DEBUG_MACRO("ShowUserInterface");
   std::cout << __LINE__ << " Gaussian2DVolumeXSelectionChangedCallback"
     <<std::endl;
   std::cout << __LINE__ << " vol id: "<< target_volId <<std::endl;
