@@ -361,6 +361,7 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
     vtkSetAndObserveMRMLNodeMacro(this->ParametersNode, paramNode);
     this->UpdateParametersNode();
     this->Logic->SetParametersNode(this->ParametersNode);
+    this->UpdateGUI();
     }
 
 
