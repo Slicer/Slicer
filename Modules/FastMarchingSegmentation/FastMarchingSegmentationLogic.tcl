@@ -187,7 +187,7 @@ proc FastMarchingSegmentationCreateLabelVolume {this} {
   $outputVolumeNode SetLabelMap 1
   
   set labelImage [vtkImageData New]
-  set thresh $::FastMarchingSegmentation($this,threshold)
+  set thresh [vtkImageThreshold New]
   $thresh SetReplaceIn 1
   $thresh SetReplaceOut 1
   $thresh SetInValue 0
@@ -196,6 +196,7 @@ proc FastMarchingSegmentationCreateLabelVolume {this} {
   $thresh SetInput $inputImageData
   $thresh SetOutput $labelImage
   $thresh Update
+  $thresh Delete
 
   $outputVolumeNode SetAndObserveImageData $labelImage
   $labelImage Delete

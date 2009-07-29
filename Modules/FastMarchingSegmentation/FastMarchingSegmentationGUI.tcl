@@ -31,7 +31,7 @@ proc FastMarchingSegmentationTearDownGUI {this} {
   }
 
   set filters {
-    cast rescale fastMarchingFilter threshold
+    cast rescale fastMarchingFilter
   }
 
   foreach f $filters {
@@ -273,7 +273,6 @@ proc FastMarchingSegmentationBuildGUI {this} {
   set ::FastMarchingSegmentation($this,cast) [vtkImageCast New]
   set ::FastMarchingSegmentation($this,rescale) [vtkImageShiftScale New]
   set ::FastMarchingSegmentation($this,fastMarchingFilter) [vtkPichonFastMarching New]
-  set ::FastMarchingSegmentation($this,threshold) [vtkImageThreshold New]
 
   # disable results adjustment frame to reduce confusion
   FastMarchingSegmentationDisableAdjustFrameGUI $this
