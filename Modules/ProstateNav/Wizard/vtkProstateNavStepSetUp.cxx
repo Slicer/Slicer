@@ -28,6 +28,8 @@
 #include "vtkKWLoadSaveButton.h"
 #include "vtkKWLoadSaveButtonWithLabel.h"
 
+#include "vtkSlicerNodeSelectorWidget.h"
+
 #include "vtkOpenIGTLinkIFLogic.h"
 #include "vtkOpenIGTLinkIFGUI.h"
 
@@ -40,8 +42,13 @@ vtkCxxRevisionMacro(vtkProstateNavStepSetUp, "$Revision: 1.1 $");
 vtkProstateNavStepSetUp::vtkProstateNavStepSetUp()
 {
 
-  this->SetName("Configuration");
-  this->SetDescription("Perform system configuration.");
+  //this->SetName("Configuration");
+  this->SetTitle("Configuration");
+  this->SetDescription("System configuration.");
+
+  this->FiducialFrame                   = NULL;
+  this->TargetPlanFiducialSelector      = NULL;
+  this->TargetCompletedFiducialSelector = NULL;
 
   this->RobotFrame          = NULL;
   this->RobotLabel1         = NULL;
@@ -69,6 +76,20 @@ vtkProstateNavStepSetUp::~vtkProstateNavStepSetUp()
     this->RobotFrame->SetParent(NULL);
     this->RobotFrame->Delete();
     this->RobotFrame = NULL;
+    }
+  if (this->TargetPlanFiducialSelector)
+    {
+    this->TargetPlanFiducialSelector->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    this->TargetPlanFiducialSelector->SetParent(NULL);
+    this->TargetPlanFiducialSelector->Delete();
+    this->TargetPlanFiducialSelector = NULL;
+    }
+  if (this->TargetCompletedFiducialSelector)
+    {
+    this->TargetCompletedFiducialSelector->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    this->TargetCompletedFiducialSelector->SetParent(NULL);
+    this->TargetCompletedFiducialSelector->Delete();
+    this->TargetCompletedFiducialSelector = NULL;
     }
   if (this->RobotLabel1)
     {
@@ -148,6 +169,70 @@ void vtkProstateNavStepSetUp::ShowUserInterface()
   this->Superclass::ShowUserInterface();
   vtkKWWizardWidget *wizardWidget = this->GetGUI()->GetWizardWidget();
   vtkKWWidget *parent = wizardWidget->GetClientArea();
+
+  if (!this->FiducialFrame)
+    {
+    this->FiducialFrame = vtkKWFrame::New();
+    this->FiducialFrame->SetParent ( parent );
+    this->FiducialFrame->Create ( );
+    }
+
+  this->Script ( "pack %s -side top -fill x",
+                 this->FiducialFrame->GetWidgetName());
+
+  if (!this->TargetPlanFiducialSelector)
+    {
+    this->TargetPlanFiducialSelector = vtkSlicerNodeSelectorWidget::New() ;
+    this->TargetPlanFiducialSelector->SetParent(this->FiducialFrame);
+    this->TargetPlanFiducialSelector->Create();
+    this->TargetPlanFiducialSelector->SetNodeClass("vtkMRMLFiducialListNode", NULL, NULL, "FiducialList");
+    this->TargetPlanFiducialSelector->SetMRMLScene(this->MRMLScene);
+    this->TargetPlanFiducialSelector->SetBorderWidth(2);
+    this->TargetPlanFiducialSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+    this->TargetPlanFiducialSelector->GetWidget()->GetWidget()->SetWidth(24);
+    this->TargetPlanFiducialSelector->SetNoneEnabled(1);
+    this->TargetPlanFiducialSelector->SetNewNodeEnabled(0);
+    this->TargetPlanFiducialSelector->SetLabelText( "Targets planned: ");
+    this->TargetPlanFiducialSelector->SetBalloonHelpString("Select or create a target list.");
+    this->TargetPlanFiducialSelector->ExpandWidgetOff();
+    this->TargetPlanFiducialSelector->SetLabelWidth(18);
+
+    this->TargetPlanFiducialSelector
+      ->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
+                    (vtkCommand *)this->GUICallbackCommand );
+    this->TargetPlanFiducialSelector
+      ->AddObserver(vtkSlicerNodeSelectorWidget::NewNodeEvent,
+                    (vtkCommand *)this->GUICallbackCommand );
+    }    
+
+  if (!this->TargetCompletedFiducialSelector)
+    {
+    this->TargetCompletedFiducialSelector = vtkSlicerNodeSelectorWidget::New() ;
+    this->TargetCompletedFiducialSelector->SetParent(this->FiducialFrame);
+    this->TargetCompletedFiducialSelector->Create();
+    this->TargetCompletedFiducialSelector->SetNodeClass("vtkMRMLFiducialListNode", NULL, NULL, "FiducialList");
+    this->TargetCompletedFiducialSelector->SetMRMLScene(this->MRMLScene);
+    this->TargetCompletedFiducialSelector->SetBorderWidth(2);
+    this->TargetCompletedFiducialSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+    this->TargetCompletedFiducialSelector->GetWidget()->GetWidget()->SetWidth(24);
+    this->TargetCompletedFiducialSelector->SetNoneEnabled(1);
+    this->TargetCompletedFiducialSelector->SetNewNodeEnabled(0);
+    this->TargetCompletedFiducialSelector->SetLabelText( "Targets completed: ");
+    this->TargetCompletedFiducialSelector->SetBalloonHelpString("Select or create a target list.");
+    this->TargetCompletedFiducialSelector->ExpandWidgetOff();
+    this->TargetCompletedFiducialSelector->SetLabelWidth(18);
+
+    this->TargetCompletedFiducialSelector
+      ->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
+                    (vtkCommand *)this->GUICallbackCommand );
+    this->TargetCompletedFiducialSelector
+      ->AddObserver(vtkSlicerNodeSelectorWidget::NewNodeEvent,
+                    (vtkCommand *)this->GUICallbackCommand );
+    }    
+
+  this->Script("pack %s %s -side top -anchor nw -fill x -padx 2 -pady 2",
+               this->TargetPlanFiducialSelector->GetWidgetName(),
+               this->TargetCompletedFiducialSelector->GetWidgetName());
 
   if (!this->RobotFrame)
     {
@@ -287,6 +372,26 @@ void vtkProstateNavStepSetUp::PrintSelf(ostream& os, vtkIndent indent)
 void vtkProstateNavStepSetUp::ProcessGUIEvents( vtkObject *caller,
                                          unsigned long event, void *callData )
 {
+
+  if (this->TargetPlanFiducialSelector == vtkSlicerNodeSelectorWidget::SafeDownCast(caller)
+      && (event == vtkSlicerNodeSelectorWidget::NewNodeEvent || event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent))
+    {
+    vtkMRMLFiducialListNode* node = vtkMRMLFiducialListNode::SafeDownCast(this->TargetPlanFiducialSelector->GetSelected());
+    if (this->ProstateNavManager)
+      {
+      this->ProstateNavManager->SetAndObserveTargetPlanList(node);
+      }
+    }
+
+  if (this->TargetCompletedFiducialSelector == vtkSlicerNodeSelectorWidget::SafeDownCast(caller)
+      && (event == vtkSlicerNodeSelectorWidget::NewNodeEvent || event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent))
+    {
+    vtkMRMLFiducialListNode* node = vtkMRMLFiducialListNode::SafeDownCast(this->TargetCompletedFiducialSelector->GetSelected());
+    if (this->ProstateNavManager)
+      {
+      this->ProstateNavManager->SetAndObserveTargetCompletedList(node);
+      }
+    }
 
   if (this->RobotConnectButton == vtkKWPushButton::SafeDownCast(caller) 
       && event == vtkKWPushButton::InvokedEvent )

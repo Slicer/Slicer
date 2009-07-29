@@ -156,7 +156,6 @@ vtkProstateNavGUI::vtkProstateNavGUI ( )
   verificationStep->SetTitleBackgroundColor(179.0/255.0, 145.0/255.0, 105.0/255.0);
   this->ProstateNavManager->AddNewStep("Verification", verificationStep);
 
-
   this->ProstateNavManager->AllowAllTransitions();
 
 }
@@ -494,6 +493,11 @@ void vtkProstateNavGUI::Init()
   
   this->GetMRMLScene()->AddNode(this->ProstateNavManager);
 
+  int numSteps = this->ProstateNavManager->GetNumberOfSteps();
+  for (int i = 0; i < numSteps; i ++)
+    {
+    this->ProstateNavManager->GetStepPage(i)->SetAndObserveMRMLScene(this->GetMRMLScene());
+    }
 }
 
 

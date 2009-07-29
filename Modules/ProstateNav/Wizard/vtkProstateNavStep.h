@@ -20,11 +20,11 @@
 #include "vtkCommand.h"
 
 #include "vtkObserverManager.h"
+#include "vtkMRMLProstateNavManagerNode.h"
 
 class vtkProstateNavGUI;
 class vtkProstateNavLogic;
 class vtkMRMLScene;
-
 
 class VTK_PROSTATENAV_EXPORT vtkProstateNavStep : public vtkKWWizardStep
 {
@@ -40,8 +40,28 @@ public:
   // Get/Set GUI
   vtkGetObjectMacro(GUI, vtkProstateNavGUI);
   vtkGetObjectMacro(Logic, vtkProstateNavLogic);
+
   virtual void SetGUI(vtkProstateNavGUI*);
   virtual void SetLogic(vtkProstateNavLogic*);
+
+  vtkSetObjectMacro(ProstateNavManager, vtkMRMLProstateNavManagerNode);
+  vtkGetObjectMacro(ProstateNavManager, vtkMRMLProstateNavManagerNode);
+
+  vtkSetMacro(TotalSteps, int);
+  vtkGetMacro(TotalSteps, int);
+  vtkSetMacro(StepNumber, int);
+  vtkGetMacro(StepNumber, int);
+
+  void SetTitle(const char* title) {
+    this->Title = title;
+  }
+
+  const char* GetTitle() {
+    return this->Title.c_str();
+  }
+
+  void UpdateName();
+
 
   void SetInMRMLCallbackFlag (int flag) {
     this->InMRMLCallbackFlag = flag;
@@ -93,6 +113,8 @@ protected:
 
   static void MRMLCallback(vtkObject *caller,
                            unsigned long eid, void *clientData, void *callData );
+
+protected:
   
   double TitleBackgroundColor[3];
 
@@ -105,9 +127,16 @@ protected:
 
   vtkCallbackCommand *GUICallbackCommand;
   vtkCallbackCommand *MRMLCallbackCommand;
-
   vtkObserverManager *MRMLObserverManager;
 
+  vtkMRMLProstateNavManagerNode* ProstateNavManager;
+
+  //BTX
+  std::string Title;
+  //ETX
+  
+  int TotalSteps;     // Total number of steps in the wizard
+  int StepNumber;     // Step number for this step.
 
 private:
   vtkProstateNavStep(const vtkProstateNavStep&);

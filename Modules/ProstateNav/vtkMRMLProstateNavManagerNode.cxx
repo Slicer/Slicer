@@ -252,7 +252,7 @@ void vtkMRMLProstateNavManagerNode::AddNewStep(const char* name, vtkProstateNavS
   step.page  = page;
 
   this->StepList.push_back(step);
-
+  
   // resize the transition matrix
   int numSteps = this->StepList.size();
   this->StepTransitionMatrix.resize(numSteps);
@@ -262,6 +262,14 @@ void vtkMRMLProstateNavManagerNode::AddNewStep(const char* name, vtkProstateNavS
        iter != this->StepTransitionMatrix.end(); iter ++)
     {
     iter->resize(numSteps);
+    }
+
+  // Configure the vtkProstateNavStep class
+  for (int i = 0; i < numSteps; i ++)
+    {
+    this->StepList[i].page->SetTotalSteps(numSteps);
+    this->StepList[i].page->SetStepNumber(i+1);
+    this->StepList[i].page->UpdateName();
     }
 
 }

@@ -45,6 +45,11 @@ protected:
   ~vtkProstateNavTargetingStep();
 
   // GUI Widgets
+
+  // Target lists
+  
+
+
   vtkKWFrame *MainFrame;
   vtkKWFrame *TargetListFrame;
   vtkKWFrame *TargetControlFrame;

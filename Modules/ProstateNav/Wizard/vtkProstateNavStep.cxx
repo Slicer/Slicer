@@ -126,6 +126,7 @@ void vtkProstateNavStep::ShowUserInterface()
 
 }
 
+
 //----------------------------------------------------------------------------
 void vtkProstateNavStep::GUICallback( vtkObject *caller,
                            unsigned long eid, void *clientData, void *callData )
@@ -145,6 +146,8 @@ void vtkProstateNavStep::GUICallback( vtkObject *caller,
   
 }
 
+
+//----------------------------------------------------------------------------
 void vtkProstateNavStep::MRMLCallback(vtkObject *caller, 
                                     unsigned long eid, void *clientData, void *callData)
 {
@@ -163,3 +166,12 @@ void vtkProstateNavStep::MRMLCallback(vtkObject *caller,
   self->SetInMRMLCallbackFlag(0);
 }
 
+
+//----------------------------------------------------------------------------
+void vtkProstateNavStep::UpdateName()
+{
+  std::stringstream ss;
+  ss << this->StepNumber << " / " << this->TotalSteps << ". " << this->Title;
+  this->SetName(ss.str().c_str());
+  this->Modified();
+}
