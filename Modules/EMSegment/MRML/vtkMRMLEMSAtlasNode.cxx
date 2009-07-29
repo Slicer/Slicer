@@ -64,13 +64,16 @@ vtkMRMLEMSAtlasNode::~vtkMRMLEMSAtlasNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLEMSAtlasNode::WriteXML(ostream& of, int nIndent)
+void vtkMRMLEMSAtlasNode::
+WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
   vtkIndent indent(nIndent);
 
-  of << indent << "NumberOfTrainingSamples=\""
-    << this->NumberOfTrainingSamples << "\"";
+  of << indent
+    << " NumberOfTrainingSamples=\""
+    << this->NumberOfTrainingSamples
+    << "\"";
 }
 
 //----------------------------------------------------------------------------

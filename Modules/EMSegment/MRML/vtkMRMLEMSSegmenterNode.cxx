@@ -24,8 +24,9 @@
 vtkMRMLEMSSegmenterNode* vtkMRMLEMSSegmenterNode::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance(
-      "vtkMRMLEMSSegmenterNode");
+  vtkObject* ret =
+    vtkObjectFactory::CreateInstance(
+        "vtkMRMLEMSSegmenterNode");
 
   if (ret)
     {
@@ -77,21 +78,25 @@ void vtkMRMLEMSSegmenterNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
 
-  of << indent << "TemplateNodeID=\""
-     << (this->TemplateNodeID ? this->TemplateNodeID : "NULL")
-     << "\"";
+  of << indent
+    << " TemplateNodeID=\""
+    << (this->TemplateNodeID ? this->TemplateNodeID : "NULL")
+    << "\"";
 
-  of << indent << "OutputVolumeNodeID=\""
-     << (this->OutputVolumeNodeID ? this->OutputVolumeNodeID : "NULL")
-     << "\"";
+  of << indent
+    << " OutputVolumeNodeID=\""
+    << (this->OutputVolumeNodeID ? this->OutputVolumeNodeID : "NULL")
+    << "\"";
 
-  of << indent << "WorkingDataNodeID=\""
-     << (this->WorkingDataNodeID ? this->WorkingDataNodeID : "NULL")
-     << "\"";
+  of << indent
+    << " WorkingDataNodeID=\""
+    << (this->WorkingDataNodeID ? this->WorkingDataNodeID : "NULL")
+    << "\"";
 
-  of << indent << "WorkingDirectory=\""
-     << (this->WorkingDirectory ? this->WorkingDirectory : "NULL")
-     << "\"";
+  of << indent
+    << " WorkingDirectory=\""
+    << (this->WorkingDirectory ? this->WorkingDirectory : "NULL")
+    << "\"";
 }
 
 //----------------------------------------------------------------------------

@@ -105,28 +105,42 @@ void vtkMRMLEMSIntensityNormalizationParametersNode::WriteXML(ostream& of, int
     nIndent)
 {
   Superclass::WriteXML(of, nIndent);
+
   vtkIndent indent(nIndent);
 
-  of << indent << "NormValue=\""
-     << this->NormValue << "\"";
+  of << indent
+    << " NormValue=\""
+    << this->NormValue
+    << "\"";
 
-  of << indent << "NormType=\""
-     << this->NormType << "\"";
+  of << indent
+    << " NormType=\""
+    << this->NormType
+    << "\"";
 
-  of << indent << "InitialHistogramSmoothingWidth=\""
-     << this->InitialHistogramSmoothingWidth << "\"";
+  of << indent
+    << " InitialHistogramSmoothingWidth=\""
+    << this->InitialHistogramSmoothingWidth
+    << "\"";
 
-  of << indent << "MaxHistogramSmoothingWidth=\""
-     << this->MaxHistogramSmoothingWidth << "\"";
+  of << indent
+    << " MaxHistogramSmoothingWidth=\""
+    << this->MaxHistogramSmoothingWidth
+    << "\"";
 
-  of << indent << "RelativeMaxVoxelNum=\""
-     << this->RelativeMaxVoxelNum << "\"";
+  of << indent
+    << " RelativeMaxVoxelNum=\""
+    << this->RelativeMaxVoxelNum
+    << "\"";
 
-  of << indent << "PrintInfo=\""
-     << this->PrintInfo << "\"";
+  of << indent
+    << " PrintInfo=\""
+    << this->PrintInfo << "\"";
 
-  of << indent << "Enabled=\""
-     << this->Enabled << "\"";
+  of << indent
+    << " Enabled=\""
+    << this->Enabled
+    << "\"";
 }
 
 //----------------------------------------------------------------------------

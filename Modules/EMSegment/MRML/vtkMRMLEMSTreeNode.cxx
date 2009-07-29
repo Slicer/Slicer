@@ -73,18 +73,23 @@ void vtkMRMLEMSTreeNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
   vtkIndent indent(nIndent);
 
-  of << indent << "ParentNodeID=\""
-     << (this->ParentNodeID ? this->ParentNodeID : "NULL") << "\"";
+  of << indent
+    << " ParentNodeID=\""
+    << (this->ParentNodeID ? this->ParentNodeID : "NULL")
+    << "\"";
 
-  of << indent << "TreeParametersNodeID=\""
-     << (this->TreeParametersNodeID ? this->TreeParametersNodeID : "NULL")
-     << "\"";
+  of << indent
+    << " TreeParametersNodeID=\""
+    << (this->TreeParametersNodeID ? this->TreeParametersNodeID : "NULL")
+    << "\"";
 
-  of << indent << "Label=\""
-     << (this->Label ? this->Label : "NULL")
-     << "\"";
+  of << indent
+    << " Label=\""
+    << (this->Label ? this->Label : "NULL")
+    << "\"";
 
-  of << indent << "ChildNodeIDs=\"";
+  of << indent
+    << " ChildNodeIDs=\"";
 
   for (unsigned int i = 0; i < this->ChildNodeIDs.size(); i++)
   {

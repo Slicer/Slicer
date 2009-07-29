@@ -72,29 +72,40 @@ vtkMRMLEMSTreeParametersLeafNode::~vtkMRMLEMSTreeParametersLeafNode()
 void vtkMRMLEMSTreeParametersLeafNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
+
   vtkIndent indent(nIndent);
 
-  of << indent << "PrintQuality=\""
-     << this->PrintQuality << "\"";
+  of << indent
+    << " PrintQuality=\""
+    << this->PrintQuality
+    << "\"";
 
-  of << indent << "IntensityLabel=\""
-     << this->IntensityLabel << "\"";
+  of << indent
+    << " IntensityLabel=\""
+    << this->IntensityLabel
+    << "\"";
 
-  of << indent << "LogMean=\"";
+  of << indent
+    << " LogMean=\"";
+
   for (unsigned int i = 0; i < this->GetNumberOfTargetInputChannels(); ++i)
   {
     of << this->LogMean[i] << " ";
   }
   of << "\"";
 
-  of << indent << "Mean=\"";
+  of << indent
+    << " Mean=\"";
+
   for (unsigned int i = 0; i < this->GetNumberOfTargetInputChannels(); ++i)
   {
     of << this->Mean[i] << " ";
   }
   of << "\"";
 
-  of << indent << "LogCovariance=\"";
+  of << indent
+    << " LogCovariance=\"";
+
   for (unsigned int r = 0; r < this->GetNumberOfTargetInputChannels(); ++r)
   {
     for (unsigned int c = 0; c < this->GetNumberOfTargetInputChannels(); ++c)
@@ -109,7 +120,9 @@ void vtkMRMLEMSTreeParametersLeafNode::WriteXML(ostream& of, int nIndent)
   }
   of << "\"";
 
-  of << indent << "Covariance=\"";
+  of << indent
+    << " Covariance=\"";
+
   for (unsigned int r = 0; r < this->GetNumberOfTargetInputChannels(); ++r)
   {
     for (unsigned int c = 0; c < this->GetNumberOfTargetInputChannels(); ++c)
@@ -124,10 +137,13 @@ void vtkMRMLEMSTreeParametersLeafNode::WriteXML(ostream& of, int nIndent)
   }
   of << "\"";
 
-  of << indent << "DistributionSpecificationMethod=\""
-     << this->DistributionSpecificationMethod << "\"";
+  of << indent
+    << " DistributionSpecificationMethod=\""
+    << this->DistributionSpecificationMethod
+    << "\"";
 
-  of << indent << "DistributionSamplePointsRAS=\"";
+  of << indent
+    << " DistributionSamplePointsRAS=\"";
 
   for (SamplePointListConstIterator i = this->
       DistributionSamplePointsRAS.begin();

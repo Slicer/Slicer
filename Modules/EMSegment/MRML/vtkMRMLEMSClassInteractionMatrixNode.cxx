@@ -79,15 +79,18 @@ vtkMRMLEMSClassInteractionMatrixNode::~vtkMRMLEMSClassInteractionMatrixNode()
 void vtkMRMLEMSClassInteractionMatrixNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
+
   vtkIndent indent(nIndent);
 
-  for (unsigned int direction = 0; direction < this->DirectionNames.size();
-      ++direction)
+  for (unsigned int direction = 0;
+      direction < this->DirectionNames.size();
+      direction++)
   {
-    of << indent << this->DirectionNames[direction] << "=\"";
-    for (unsigned int r = 0; r < this->GetNumberOfClasses(); ++r)
+    of << indent << " " << this->DirectionNames[direction] << "=\"";
+
+    for (unsigned int r = 0; r < this->GetNumberOfClasses(); r++)
     {
-      for (unsigned int c = 0; c < this->GetNumberOfClasses(); ++c)
+      for (unsigned int c = 0; c < this->GetNumberOfClasses(); c++)
       {
         of << this->Matrices[direction][r][c] << " ";
       }

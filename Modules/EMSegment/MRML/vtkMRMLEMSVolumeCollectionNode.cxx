@@ -58,28 +58,33 @@ vtkMRMLNode* vtkMRMLEMSVolumeCollectionNode::CreateNodeInstance()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLEMSVolumeCollectionNode::vtkMRMLEMSVolumeCollectionNode()
+vtkMRMLEMSVolumeCollectionNode::
+vtkMRMLEMSVolumeCollectionNode()
 {
   // nothing to do here
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLEMSVolumeCollectionNode::~vtkMRMLEMSVolumeCollectionNode()
+vtkMRMLEMSVolumeCollectionNode::
+~vtkMRMLEMSVolumeCollectionNode()
 {
   // nothing to do here
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLEMSVolumeCollectionNode::WriteXML(ostream& of, int nIndent)
+void
+vtkMRMLEMSVolumeCollectionNode::
+WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
   vtkIndent indent(nIndent);
 
-  of << indent << "VolumeNodeIDs=\"";
+  of << indent << " VolumeNodeIDs=\"";
 
-  for (KeyConstIterator i = this->KeyList.begin(); i != this->KeyList.end();
-       ++i)
+  for (KeyConstIterator i = this->KeyList.begin();
+      i != this->KeyList.end();
+      i++)
   {
     std::string key   = *i;
     std::string value = this->KeyToVolumeNodeIDMap[*i];
@@ -102,10 +107,12 @@ UpdateReferenceID(const char* oldID, const char* newID)
   for (KeyIterator i = this->KeyList.begin(); i != this->KeyList.end(); ++i)
   {
     std::string mrmlID = this->KeyToVolumeNodeIDMap[*i];
+
     if (oldID && newID && mrmlID == vtksys_stl::string(oldID))
     {
       // update volID to name map
       this->VolumeNodeIDToKeyMap.erase(oldID);
+
       this->VolumeNodeIDToKeyMap[newID] = *i;
 
       // update name to volID map
@@ -121,24 +128,24 @@ UpdateReferences()
 {
   Superclass::UpdateReferences();
 
-  for (KeyIterator i = this->KeyList.begin(); i != this->KeyList.end();)
-    {
+  for (KeyIterator i = this->KeyList.begin();
+      i != this->KeyList.end();
+      i++)
+  {
     std::string mrmlID = this->KeyToVolumeNodeIDMap[*i];
+
     if (!mrmlID.empty() &&
         this->Scene->GetNodeByID(mrmlID.c_str()) == NULL)
-      {
+    {
       // remove key/value pair from mappings
       this->VolumeNodeIDToKeyMap.erase(mrmlID);
+
       this->KeyToVolumeNodeIDMap.erase(*i);
 
       // remove key/value pair from list
-      this->KeyList.erase(i++);
-      }
-    else
-      {
-      ++i;
-      }
+      this->KeyList.erase(i);
     }
+  }
 }
 
 //----------------------------------------------------------------------------

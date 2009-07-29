@@ -64,6 +64,7 @@ vtkMRMLEMSTargetNode::~vtkMRMLEMSTargetNode()
 void vtkMRMLEMSTargetNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
+
   vtkIndent indent(nIndent);
 }
 

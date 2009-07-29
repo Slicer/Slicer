@@ -87,15 +87,18 @@ vtkMRMLEMSTreeParametersNode::~vtkMRMLEMSTreeParametersNode()
 void vtkMRMLEMSTreeParametersNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
+
   vtkIndent indent(nIndent);
 
-  of << indent << "ParentParametersNodeID=\""
-     << (this->ParentParametersNodeID ? this->ParentParametersNodeID : "NULL")
-     << "\"";
+  of << indent
+    << " ParentParametersNodeID=\""
+    << (this->ParentParametersNodeID ? this->ParentParametersNodeID : "NULL")
+    << "\"";
 
-  of << indent << "LeafParametersNodeID=\""
-     << (this->LeafParametersNodeID ? this->LeafParametersNodeID : "NULL")
-     << "\"";
+  of << indent
+    << " LeafParametersNodeID=\""
+    << (this->LeafParametersNodeID ? this->LeafParametersNodeID : "NULL")
+    << "\"";
 
   {
     vtksys_stl::stringstream ss;
@@ -104,28 +107,42 @@ void vtkMRMLEMSTreeParametersNode::WriteXML(ostream& of, int nIndent)
       << this->ColorRGB[1] << " "
       << this->ColorRGB[2];
 
-    of << indent << "ColorRGB=\"" << ss.str() << "\"";
+    of << indent
+      << " ColorRGB=\"" << ss.str() << "\"";
   }
 
-  of << indent << "InputChannelWeights=\"";
+  of << indent
+    << " InputChannelWeights=\"";
+
   vtksys_stl::copy(this->InputChannelWeights.begin(),
                    this->InputChannelWeights.end(),
                    vtksys_stl::ostream_iterator<double>(of, " "));
   of << "\"";
 
-  of << indent << "SpatialPriorVolumeName=\""
-     << (this->SpatialPriorVolumeName ? this->SpatialPriorVolumeName : "")
-     << "\"";
+  of << indent
+    << " SpatialPriorVolumeName=\""
+    << (this->SpatialPriorVolumeName ? this->SpatialPriorVolumeName : "")
+    << "\"";
 
-  of << indent << "SpatialPriorWeight=\"" << this->SpatialPriorWeight
-     << "\"";
+  of << indent
+    << " SpatialPriorWeight=\""
+    << this->SpatialPriorWeight
+    << "\"";
 
-  of << indent << "ClassProbability=\"" << this->ClassProbability << "\"";
+  of << indent
+    << " ClassProbability=\""
+    << this->ClassProbability
+    << "\"";
 
-  of << indent << "ExcludeFromIncompleteEStep=\""
-     << this->ExcludeFromIncompleteEStep << "\"";
+  of << indent
+    << " ExcludeFromIncompleteEStep=\""
+    << this->ExcludeFromIncompleteEStep
+    << "\"";
 
-  of << indent << "PrintWeights=\"" << this->PrintWeights << "\"";
+  of << indent
+    << " PrintWeights=\""
+    << this->PrintWeights
+    << "\"";
 }
 
 //----------------------------------------------------------------------------

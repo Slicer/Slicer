@@ -67,19 +67,27 @@ vtkMRMLEMSNode::~vtkMRMLEMSNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLEMSNode::WriteXML(ostream& of, int nIndent)
+void vtkMRMLEMSNode::
+WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
+
   vtkIndent indent(nIndent);
 
-  of << indent << "SegmenterNodeID=\""
-     << (this->SegmenterNodeID ? this->SegmenterNodeID : "NULL") << "\"";
+  of << indent
+    << " SegmenterNodeID=\""
+    << (this->SegmenterNodeID ? this->SegmenterNodeID : "NULL")
+    << "\"";
 
-  of << indent << "TemplateFilename=\""
-     << (this->TemplateFilename ? this->TemplateFilename : "NULL") << "\"";
+  of << indent
+    << " TemplateFilename=\""
+    << (this->TemplateFilename ? this->TemplateFilename : "NULL")
+    << "\"";
 
-  of << indent << "SaveTemplateAfterSegmentation=\""
-     << this->SaveTemplateAfterSegmentation << "\"";
+  of << indent
+    << " SaveTemplateAfterSegmentation=\""
+    << this->SaveTemplateAfterSegmentation
+    << "\"";
 }
 
 //----------------------------------------------------------------------------

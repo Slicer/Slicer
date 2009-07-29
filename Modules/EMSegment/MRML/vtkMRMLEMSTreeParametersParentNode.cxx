@@ -98,98 +98,98 @@ void vtkMRMLEMSTreeParametersParentNode::WriteXML(ostream& of, int nIndent)
   vtkIndent indent(nIndent);
 
   of << indent
-    << "ClassInteractionMatrixNodeID=\""
+    << " ClassInteractionMatrixNodeID=\""
     << (this->ClassInteractionMatrixNodeID ?
         this->ClassInteractionMatrixNodeID : "NULL")
      << "\"";
 
   of << indent
-    << "Alpha=\""
+    << " Alpha=\""
     << this->Alpha
     << "\"";
 
   of << indent
-    << "PrintBias=\""
+    << " PrintBias=\""
     << this->PrintBias
     << "\"";
 
   of << indent
-    << "BiasCalculationMaxIterations=\""
+    << " BiasCalculationMaxIterations=\""
     << this->BiasCalculationMaxIterations
     << "\"";
 
   of << indent
-    << "SmoothingKernelWidth=\""
+    << " SmoothingKernelWidth=\""
     << this->SmoothingKernelWidth
      << "\"";
 
   of << indent
-    << "SmoothingKernelSigma=\""
+    << " SmoothingKernelSigma=\""
     << this->SmoothingKernelSigma
     << "\"";
 
   of << indent
-    << "StopEMType=\""
+    << " StopEMType=\""
     << this->StopEMType
     << "\"";
 
   of << indent
-    << "StopEMMaxIterations=\""
+    << " StopEMMaxIterations=\""
     << this->StopEMMaxIterations
     << "\"";
 
   of << indent
-    << "StopEMValue=\""
+    << " StopEMValue=\""
     << this->StopEMValue
     << "\"";
 
   of << indent
-    << "StopMFAType=\""
+    << " StopMFAType=\""
     << this->StopMFAType
     << "\"";
 
   of << indent
-    << "StopMFAMaxIterations=\""
+    << " StopMFAMaxIterations=\""
     << this->StopMFAMaxIterations
     << "\"";
 
   of << indent
-    << "StopMFAValue=\""
+    << " StopMFAValue=\""
     << this->StopMFAValue
     << "\"";
 
   of << indent
-    << "PrintFrequency=\""
+    << " PrintFrequency=\""
     << this->PrintFrequency
     << "\"";
 
   of << indent
-    << "PrintLabelMap=\""
+    << " PrintLabelMap=\""
     << this->PrintLabelMap
     << "\"";
 
   of << indent
-    << "PrintEMLabelMapConvergence=\""
+    << " PrintEMLabelMapConvergence=\""
     << this->PrintEMLabelMapConvergence
     << "\"";
 
   of << indent
-    << "PrintEMWeightsConvergence=\""
+    << " PrintEMWeightsConvergence=\""
     << this->PrintEMWeightsConvergence
     << "\"";
 
   of << indent
-    << "PrintMFALabelMapConvergence=\""
+    << " PrintMFALabelMapConvergence=\""
     << this->PrintEMLabelMapConvergence
     << "\"";
 
   of << indent
-    << "PrintMFAWeightsConvergence=\""
+    << " PrintMFAWeightsConvergence=\""
     << this->PrintEMWeightsConvergence
     << "\"";
 
   of << indent
-    << "GenerateBackgroundProbability=\""
+    << " GenerateBackgroundProbability=\""
     << this->GenerateBackgroundProbability
     << "\"";
 }

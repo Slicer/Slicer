@@ -127,16 +127,22 @@ void vtkMRMLEMSGlobalParametersNode::UpdateReferences()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLEMSGlobalParametersNode::WriteXML(ostream& of, int nIndent)
+void vtkMRMLEMSGlobalParametersNode::
+WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
+
   vtkIndent indent(nIndent);
 
-  of << indent << "NumberOfTargetInputChannels=\""
-     << this->NumberOfTargetInputChannels << "\"";
+  of << indent
+    << " NumberOfTargetInputChannels=\""
+    << this->NumberOfTargetInputChannels
+    << "\"";
 
-  of << indent << "WorkingDirectory=\""
-     << (this->WorkingDirectory ? this->WorkingDirectory : "NULL") << "\"";
+  of << indent
+    << " WorkingDirectory=\""
+    << (this->WorkingDirectory ? this->WorkingDirectory : "NULL")
+    << "\"";
 
     {
     vtksys_stl::stringstream ss;
@@ -148,50 +154,80 @@ void vtkMRMLEMSGlobalParametersNode::WriteXML(ostream& of, int nIndent)
 
     {
     vtksys_stl::stringstream ss;
+
     ss << this->SegmentationBoundaryMax[0] << " "
        << this->SegmentationBoundaryMax[1] << " "
        << this->SegmentationBoundaryMax[2];
-    of << indent << "SegmentationBoundaryMax=\"" << ss.str() << "\"";
+
+    of << indent
+      << " SegmentationBoundaryMax=\"" << ss.str() << "\"";
     }
 
-    of << indent << "RegistrationAffineType=\""
-       << this->RegistrationAffineType << "\" ";
-    of << indent << "RegistrationDeformableType=\""
-       << this->RegistrationDeformableType << "\" ";
-    of << indent << "RegistrationInterpolationType=\""
-       << this->RegistrationInterpolationType << "\"";
+    of << indent
+      << " RegistrationAffineType=\""
+      << this->RegistrationAffineType
+      << "\" ";
 
-    of << indent << "RegistrationAtlasVolumeKey=\""
-       << (this->RegistrationAtlasVolumeKey ? this->RegistrationAtlasVolumeKey
-           : "") << "\"";
+    of << indent
+      << " RegistrationDeformableType=\""
+      << this->RegistrationDeformableType
+      << "\" ";
 
-    of << indent << "RegistrationTargetVolumeKey=\""
-       << (this->RegistrationTargetVolumeKey ?
-           this->RegistrationTargetVolumeKey : "") << "\"";
+    of << indent
+      << " RegistrationInterpolationType=\""
+      << this->RegistrationInterpolationType
+      << "\"";
 
-    of << indent << "EnableTargetToTargetRegistration=\""
-       << this->EnableTargetToTargetRegistration << "\"";
+    of << indent
+      << " RegistrationAtlasVolumeKey=\""
+      << (this->RegistrationAtlasVolumeKey ? this->RegistrationAtlasVolumeKey
+          : "")
+      << "\"";
 
-    of << indent << "SaveIntermediateResults=\""
-       << this->SaveIntermediateResults << "\"";
+    of << indent
+      << " RegistrationTargetVolumeKey=\""
+      << (this->RegistrationTargetVolumeKey ?
+          this->RegistrationTargetVolumeKey : "")
+      << "\"";
 
-    of << indent << "SaveSurfaceModels=\""
-       << this->SaveSurfaceModels << "\" ";
+    of << indent
+      << " EnableTargetToTargetRegistration=\""
+      << this->EnableTargetToTargetRegistration
+      << "\"";
 
-    of << indent << "MultithreadingEnabled=\""
-       << this->MultithreadingEnabled << "\"";
-    of << indent << "UpdateIntermediateData=\""
-       << this->UpdateIntermediateData << "\"";
+    of << indent
+      << " SaveIntermediateResults=\""
+      << this->SaveIntermediateResults
+      << "\"";
 
-    of << indent << "IntensityNormalizationParameterNodeIDs=\"";
+    of << indent
+      << " SaveSurfaceModels=\""
+      << this->SaveSurfaceModels
+      << "\" ";
+
+    of << indent
+      << " MultithreadingEnabled=\""
+      << this->MultithreadingEnabled
+      << "\"";
+
+    of << indent
+      << " UpdateIntermediateData=\""
+      << this->UpdateIntermediateData
+      << "\"";
+
+    of << indent
+      << " IntensityNormalizationParameterNodeIDs=\"";
+
     vtksys_stl::copy(this->IntensityNormalizationParameterList.begin(),
-                     this->IntensityNormalizationParameterList.end(),
-                     vtksys_stl::ostream_iterator<vtksys_stl::string>(of,
-                       " "));
+        this->IntensityNormalizationParameterList.end(),
+        vtksys_stl::ostream_iterator<vtksys_stl::string>(of,
+          " "));
     of << "\"";
 
-    of << indent << "Colormap=\""
-       << (this->Colormap ? this->Colormap : "NULL") << "\"";
+    of << indent
+      << " Colormap=\""
+      << (this->Colormap ? this->Colormap : "NULL")
+      << "\"";
 }
 
 //----------------------------------------------------------------------------

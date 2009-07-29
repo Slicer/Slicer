@@ -65,14 +65,18 @@ vtkMRMLEMSTemplateNode::~vtkMRMLEMSTemplateNode()
 void vtkMRMLEMSTemplateNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
+
   vtkIndent indent(nIndent);
 
-  of << indent << "TreeNodeID=\""
-     << (this->TreeNodeID ? this->TreeNodeID : "NULL") << "\"";
+  of << indent
+    << " TreeNodeID=\""
+    << (this->TreeNodeID ? this->TreeNodeID : "NULL")
+    << "\"";
 
-  of << indent << "GlobalParametersNodeID=\""
-     << (this->GlobalParametersNodeID ? this->GlobalParametersNodeID : "NULL")
-     << "\"";
+  of << indent
+    << " GlobalParametersNodeID=\""
+    << (this->GlobalParametersNodeID ? this->GlobalParametersNodeID : "NULL")
+    << "\"";
 }
 
 //----------------------------------------------------------------------------

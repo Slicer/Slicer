@@ -89,30 +89,31 @@ vtkMRMLEMSWorkingDataNode::
 void vtkMRMLEMSWorkingDataNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
+
   vtkIndent indent(nIndent);
 
   of << indent
-    << "InputTargetNodeID=\""
+    << " InputTargetNodeID=\""
     << (this->InputTargetNodeID ? this->InputTargetNodeID : "NULL")
     << "\"";
 
   of << indent
-    << "NormalizedTargetNodeID=\""
+    << " NormalizedTargetNodeID=\""
     << (this->NormalizedTargetNodeID ? this->NormalizedTargetNodeID : "NULL")
     << "\"";
 
   of << indent
-    << "AlignedTargetNodeID=\""
+    << " AlignedTargetNodeID=\""
     << (this->AlignedTargetNodeID ? this->AlignedTargetNodeID : "NULL")
     << "\"";
 
   of << indent
-    << "InputAtlasNodeID=\""
+    << " InputAtlasNodeID=\""
     << (this->InputAtlasNodeID ? this->InputAtlasNodeID : "NULL")
     << "\"";
 
   of << indent
-    << "AlignedAtlasNodeID=\""
+    << " AlignedAtlasNodeID=\""
     << (this->AlignedAtlasNodeID ? this->AlignedAtlasNodeID : "NULL")
     << "\"";
 }

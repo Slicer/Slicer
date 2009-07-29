@@ -94,7 +94,7 @@ void vtkMRMLEMSegmentNode::WriteXML(ostream& of, int nIndent)
 
   if (this->ModuleName != NULL)
     {
-    of << "ModuleName = \"" << this->ModuleName << "\"";
+    of << " ModuleName = \"" << this->ModuleName << "\"";
     }
 
   vtksys_stl::map<vtksys_stl::string, vtksys_stl::string>::iterator iter;
