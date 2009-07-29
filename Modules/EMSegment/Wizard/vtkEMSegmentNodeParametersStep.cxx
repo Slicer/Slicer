@@ -2905,7 +2905,7 @@ void vtkEMSegmentNodeParametersStep::VisualFeedback()
   double ijkPt[3];
   int beginningOfTheSliceInTheRedBox[2];
 
-  xyPt[1] = round(yRedBoxSize/2);
+  xyPt[1] = (int)(0.5 * yRedBoxSize + 0.5);
   xyPt[2] = 0;
   xyPt[3] = 1;
 
@@ -2913,10 +2913,13 @@ void vtkEMSegmentNodeParametersStep::VisualFeedback()
 
   for(int i = 0; i < xRedBoxSize; i++)
     {
-    xyPt[0] = round(i);
+    xyPt[0] = i;
     xyToijk->MultiplyPoint(xyPt,ijkPt);
 
-    if(ijkPt[0]<0 || ijkPt[0]>=extent[1] ||ijkPt[1]<0 || ijkPt[1]>=extent[3] ||
+    if (ijkPt[0]<0 ||
+        ijkPt[0]>=extent[1] ||
+        ijkPt[1]<0 ||
+        ijkPt[1]>=extent[3] ||
         ijkPt[2]<0 || ijkPt[2]>=extent[5] )
       {
       //std::cout<<"OUT OF VOI"<<std::endl;
@@ -2931,14 +2934,19 @@ void vtkEMSegmentNodeParametersStep::VisualFeedback()
       }
     }
 
-  xyPt[0] = round(xRedBoxSize/2);
+  xyPt[0] = int(0.5*xRedBoxSize + 0.5);
 
   for(int i = 0; i < yRedBoxSize; i++)
     {
-    xyPt[1] = round(i);
+    xyPt[1] = i;
     xyToijk->MultiplyPoint(xyPt,ijkPt);
-    if(ijkPt[0]<0 || ijkPt[0]>=extent[1] ||ijkPt[1]<0 || ijkPt[1]>=extent[3] ||
-        ijkPt[2]<0 || ijkPt[2]>=extent[5] )
+
+    if(ijkPt[0]<0 ||
+        ijkPt[0]>=extent[1] ||
+        ijkPt[1]<0 ||
+        ijkPt[1]>=extent[3] ||
+        ijkPt[2]<0 ||
+        ijkPt[2]>=extent[5] )
       {
       //std::cout<<"OUT OF VOI"<<std::endl;
       }
