@@ -1,18 +1,18 @@
-/*=auto==============================================================
+/*=auto=======================================================================
 
-Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All
-Rights Reserved.
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
+  Reserved.
 
-See Doc/copyright/copyright.txt
-or http://www.slicer.org/copyright/copyright.txt for details.
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
 
-Program:   3D Slicer
-Module:    $RCSfile: vtkEMSegmentRunSegmentationStep.h,v$
-Date:      $Date: 2006/01/06 17:56:51 $
-Version:   $Revision: 1.6 $
-Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
+  Program:   3D Slicer
+  Module:    $RCSfile: vtkEMSegmentRunSegmentationStep.h,v$
+  Date:      $Date: 2006/01/06 17:56:51 $
+  Version:   $Revision: 1.6 $
+  Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 
-==============================================================auto=*/
+=======================================================================auto=*/
 
 #ifndef __vtkEMSegmentRunSegmentationStep_h
 #define __vtkEMSegmentRunSegmentationStep_h
@@ -27,8 +27,10 @@ class vtkKWCheckButtonWithLabel;
 class vtkKWMatrixWidgetWithLabel;
 class vtkKWMatrixWidget;
 class vtkKWFrame;
+class vtkKWRenderWidget;
 
-class VTK_EMSEGMENT_EXPORT vtkEMSegmentRunSegmentationStep : public vtkEMSegmentStep
+class VTK_EMSEGMENT_EXPORT vtkEMSegmentRunSegmentationStep :
+  public vtkEMSegmentStep
 {
 public:
   static vtkEMSegmentRunSegmentationStep *New();
@@ -81,9 +83,10 @@ protected:
   vtkKWMatrixWidgetWithLabel *RunSegmentationROIMaxMatrix;
   vtkKWFrameWithLabel        *RunSegmentationMiscFrame;
   vtkKWCheckButtonWithLabel  *RunSegmentationMultiThreadCheckButton;
+  vtkKWRenderWidget          *RunRenderWidget;
 
   // Description:
-  // Populate the run segmentation boundary matrix 
+  // Populate the run segmentation boundary matrix
   void PopulateSegmentationROIMatrix(
     vtkKWMatrixWidget* matrix, int ijk[3]);
 
@@ -93,3 +96,4 @@ private:
 };
 
 #endif
+

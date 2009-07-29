@@ -1,18 +1,18 @@
-/*=auto==============================================================
+/*=auto=======================================================================
 
-Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All
-Rights Reserved.
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
+  Reserved.
 
-See Doc/copyright/copyright.txt
-or http://www.slicer.org/copyright/copyright.txt for details.
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
 
-Program:   3D Slicer
-Module:    $RCSfile: vtkEMSegmentRunSegmentationStep.cxx,v$
-Date:      $Date: 2006/01/06 17:56:51 $
-Version:   $Revision: 1.6 $
-Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
+  Program:   3D Slicer
+  Module:    $RCSfile: vtkEMSegmentRunSegmentationStep.cxx,v$
+  Date:      $Date: 2006/01/06 17:56:51 $
+  Version:   $Revision: 1.6 $
+  Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 
-==============================================================auto=*/
+=======================================================================auto=*/
 
 #include "vtkEMSegmentRunSegmentationStep.h"
 
@@ -35,6 +35,7 @@ Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 #include "vtkKWWizardStep.h"
 #include "vtkKWWizardWidget.h"
 #include "vtkKWWizardWorkflow.h"
+#include "vtkKWRenderWidget.h"
 #include "vtkSlicerNodeSelectorWidget.h"
 
 #include <vtksys/SystemTools.hxx>
@@ -64,6 +65,7 @@ vtkEMSegmentRunSegmentationStep::vtkEMSegmentRunSegmentationStep()
   this->RunSegmentationROIMinMatrix                = NULL;
   this->RunSegmentationMiscFrame                   = NULL;
   this->RunSegmentationMultiThreadCheckButton      = NULL;
+  this->RunRenderWidget                            = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -158,6 +160,12 @@ vtkEMSegmentRunSegmentationStep::~vtkEMSegmentRunSegmentationStep()
     this->RunSegmentationMiscFrame->Delete();
     this->RunSegmentationMiscFrame = NULL;
     }
+
+  if (this->RunRenderWidget)
+  {
+    this->RunRenderWidget->Delete();
+    this->RunRenderWidget = NULL;
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -165,8 +173,12 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
 {
   this->Superclass::ShowUserInterface();
 
-  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
+  vtkEMSegmentMRMLManager *mrmlManager =
+    this->GetGUI()->GetMRMLManager();
+
+  vtkKWWizardWidget *wizard_widget =
+    this->GetGUI()->GetWizardWidget();
+
   if (!mrmlManager || !wizard_widget)
     {
     return;
@@ -188,16 +200,17 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
     this->RunSegmentationSaveFrame->Create();
     this->RunSegmentationSaveFrame->SetLabelText("Save");
     }
+
   // disable this frame for now, it is not currently useful
   //   this->Script(
-  //     "pack %s -side top -anchor nw -fill x -padx 0 -pady 2", 
+  //     "pack %s -side top -anchor nw -fill x -padx 0 -pady 2",
   //     this->RunSegmentationSaveFrame->GetWidgetName());
-  
+
   // Create the "save after segmentation" checkbutton
 
   if (!this->RunSegmentationSaveAfterSegmentationCheckButton)
     {
-    this->RunSegmentationSaveAfterSegmentationCheckButton = 
+    this->RunSegmentationSaveAfterSegmentationCheckButton =
       vtkKWCheckButtonWithLabel::New();
     }
 
@@ -579,7 +592,7 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
   this->Script(
     "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", 
     this->RunSegmentationMiscFrame->GetWidgetName());
-  
+
   // Create the multithread button
 
   if (!this->RunSegmentationMultiThreadCheckButton)
@@ -630,6 +643,26 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
     wizard_widget->GetCancelButton()->SetBalloonHelpString(
       "Cancel Segmentation");
     }
+
+  // Create the run render widget
+
+  if (!this->RunRenderWidget)
+    {
+    this->RunRenderWidget = vtkKWRenderWidget::New();
+    }
+
+  if (!this->RunRenderWidget->IsCreated())
+    {
+    this->RunRenderWidget->SetParent(
+      this->RunSegmentationMiscFrame->GetFrame());
+    this->RunRenderWidget->Create();
+    }
+  this->RunRenderWidget->SetEnabled(
+    mrmlManager->HasGlobalParametersNode() ? enabled : 0);
+
+  this->Script(
+    "pack %s -side top -anchor nw -padx 2 -pady 2",
+    this->RunRenderWidget->GetWidgetName());
 }
 
 //----------------------------------------------------------------------------
@@ -655,19 +688,19 @@ void vtkEMSegmentRunSegmentationStep::PopulateSegmentationROIMatrix(
 }
 
 //---------------------------------------------------------------------------
-void vtkEMSegmentRunSegmentationStep::AddRunRegistrationOutputGUIObservers() 
+void vtkEMSegmentRunSegmentationStep::AddRunRegistrationOutputGUIObservers()
 {
   this->RunSegmentationOutVolumeSelector->AddObserver(
-    vtkSlicerNodeSelectorWidget::NodeSelectedEvent, 
-    this->GetGUI()->GetGUICallbackCommand());  
+    vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
+    this->GetGUI()->GetGUICallbackCommand());
 }
 
 //---------------------------------------------------------------------------
 void vtkEMSegmentRunSegmentationStep::RemoveRunRegistrationOutputGUIObservers()
 {
   this->RunSegmentationOutVolumeSelector->RemoveObservers(
-    vtkSlicerNodeSelectorWidget::NodeSelectedEvent, 
-    this->GetGUI()->GetGUICallbackCommand());  
+    vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
+    this->GetGUI()->GetGUICallbackCommand());
 }
 
 //---------------------------------------------------------------------------
