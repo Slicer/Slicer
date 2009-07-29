@@ -30,13 +30,13 @@ proc Usage { {msg ""} } {
     set msg "$msg\n   --release : compile with optimization flags"
     set msg "$msg\n   --relwithdebinfo : compile with optimization flags and debugging symbols"
     set msg "$msg\n   -u --update : does a cvs/svn update on each lib"
-    set msg "$msg\n   --verbose : optional, print out lots of stuff, for debugging"
+    set msg "$msg\n   --quiet : turns off debugging messages"
     puts stderr $msg
 }
 
 set ::EXTEND(update) ""
 set ::EXTEND(release) ""
-set ::EXTEND(verbose) "false"
+set ::EXTEND(verbose) "true"
 set ::EXTEND(test-type) ""
 set ::EXTEND(buildList) ""
 
@@ -80,8 +80,8 @@ for {set i 0} {$i < $argc} {incr i} {
                 set ::EXTEND(test-type) [lindex $argv $i]
             }
         }
-        "--verbose" {
-            set ::EXTEND(verbose) "true"
+        "--quiet" {
+            set ::EXTEND(verbose) "false"
         }
         "--help" -
         "-h" {
@@ -148,6 +148,27 @@ proc runcmd {args} {
     } 
 }
 
+################################################################################
+# helper
+# - load the file into the named array
+# - ignore lines that start with # and blank lines
+# - first token on line is array key, rest of line is value
+
+proc loadArray {fileName arrayName} {
+  upvar $arrayName a
+  set fp [open $fileName "r"]
+  while { ![eof $fp] } {
+    gets $fp line
+    set line [string trim $line]
+    if { $line != "" && [string index $line 0] != "#" } {
+      set name [lindex $line 0]
+      set a($name) [lrange $line 1 end]
+    }
+  }
+  close $fp
+}
+
+
 
 #initialize platform variables
 foreach v { ::isSolaris ::isWindows ::isDarwin ::isLinux } { set $v 0 }
@@ -198,16 +219,70 @@ if { $::isWindows } {
 }
 vputs "making with $::MAKE"
 
+# get the slicer version information
+loadArray $::Slicer3_BUILD/lib/Slicer3/Slicer3Version.txt slicerVersion
+set len [string length "http://svn.slicer.org/Slicer3/"]
+set ::EXTEND(slicerSVNSubpath) [string range $slicerVersion(svnurl) $len end]
+set ::EXTEND(slicerSVNRevision) $slicerVersion(svnrevision)
+
+
+# Fill the Slicer3-ext/Extensions directory with .s3ext files for this build.
+# They come from two places:
+# - the Extensions subdirectory in the Slicer3 source tree
+# - the svn repository branch that corresponds to the version currently
+#   being built (*)
+#
+# (*) why? By storing the extensions in distinct svn directory we can add
+# .s3ext files to the release branch without incrementing the svn revision
+# number of the Slicer3 source code.  This means that when we make a release version
+# of slicer available it can be uniquely identified by it's svn revision number
+# which defines the exact ABI of slicer, it's libs, and all the other libs
+# since the exact build is specified by the files under svn control.  The extensions 
+# layer on top of that.
 
 if { ![file exists $::Slicer3_EXT] } {
-    file mkdir $::Slicer3_EXT
+  file mkdir $::Slicer3_EXT
 }
+cd $::Slicer3_EXT
+if { ![file exists Extensions] } {
+  file mkdir Extensions
+}
+
+# try to check out the extension that corresponds to our build branch
+if { [string match "branches*" $::EXTEND(slicerSVNSubpath)] } {
+  set len [string length "branches/"]
+  set branch [string range $::EXTEND(slicerSVNSubpath) $len end]
+  set svncmd "$::SVN checkout http://svn.slicer.org/Slicer3/branches/Extensions/$branch Extensions-checkout"
+  set ret [catch "runcmd $svncmd" res]
+  if { $ret } {
+    vputs "svn command failed:\n$res"
+  } else {
+  }
+}
+
+# get the files from the checked out Extensions branch
+set extFiles [glob -nocomplain $::Slicer3_EXT/Extensions-checkout/*.s3ext]
+foreach f $extFiles {
+  file copy -force $f $::Slicer3_EXT/Extensions
+}
+
+# get the files from the Slicer3 source tree
+set extFiles [glob -nocomplain $::Slicer3_HOME/Extensions/*.s3ext]
+foreach f $extFiles {
+  file copy -force $f $::Slicer3_EXT/Extensions
+}
+
 
 ################################################################################
 # discover the list of extensions
+#
+# the buildList from the command line can be:
+# - the exact file name of an s3ext file (absolute or relative path)
+# - the <name> such that Extensions/<name>.s3ext exists
+#
 
 set ::EXTEND(s3extFiles) ""
-set candidates [glob -nocomplain $::Slicer3_HOME/Extensions/*.s3ext]
+set candidates [glob -nocomplain $::Slicer3_EXT/Extensions/*.s3ext]
 foreach c $candidates {
   if { $::EXTEND(buildList) == "" } {
     lappend ::EXTEND(s3extFiles) $c
@@ -230,32 +305,11 @@ vputs "Will build: $::EXTEND(s3extFiles)"
 
 ################################################################################
 # helper
-# - load the file into the named array
-# - ignore lines that start with # and blank lines
-# - first token on line is array key, rest of line is value
-
-proc loadArray {fileName arrayName} {
-  upvar $arrayName a
-  set fp [open $fileName "r"]
-  while { ![eof $fp] } {
-    gets $fp line
-    set line [string trim $line]
-    if { $line != "" && [string index $line 0] != "#" } {
-      set name [lindex $line 0]
-      set a($name) [lrange $line 1 end]
-    }
-  }
-  close $fp
-}
-
-
-################################################################################
-# helper
 # - uploads the named file to the extension server
 
 proc upload {fileName} {
 
-  puts "Uploading $fileName to ext.slicer.org port 8845..."
+  vputs "Uploading $fileName to ext.slicer.org port 8845..."
   flush stdout
 
   set size [file size $fileName]
@@ -267,13 +321,13 @@ proc upload {fileName} {
   close $fp
 
   set sock [socket ext.slicer.org 8845]
-  puts $sock "put $::ext(slicerSVNSubpath) $::ext(slicerSVNRevision)-$::env(BUILD) $name $size"
+  puts $sock "put $::EXTEND(slicerSVNSubpath) $::EXTEND(slicerSVNRevision)-$::env(BUILD) $name $size"
   fconfigure $sock -translation binary -encoding binary
   puts -nonewline $sock $data
   flush $sock
   close $sock
   
-  puts "uploaded $fileName ($size bytes)"
+  vputs "uploaded $fileName ($size bytes)"
   flush stdout
 }
 
@@ -323,7 +377,7 @@ foreach s3ext $::EXTEND(s3extFiles) {
   }
   set ::depends($s3ext) ""
   foreach dependency $::ext(depends) {
-    set dependFile $::Slicer3_HOME/Extensions/$dependency.s3ext
+    set dependFile $::Slicer3_EXT/Extensions/$dependency.s3ext
     if { ![file exists $dependFile] && ![file exists $::Slicer3_BUILD/Modules/$dependency] } {
       puts stderr "$s3ext depends on non-existent extension $dependency - it will not be built"
       set index [lsearch $::newExtFiles $s3ext]
@@ -360,7 +414,7 @@ while { $rearranged } {
           # - so move ext2 to the front of the list and start over
           set ::newExtFiles [lreplace $newExtFiles $ext2index $ext2index]
           set ::newExtFiles [concat $s3ext2 $::newExtFiles]
-          puts "moved [file tail $s3ext2] to front because it is needed by [file tail $s3ext1]"
+          vputs "moved [file tail $s3ext2] to front because it is needed by [file tail $s3ext1]"
         }
       } else {
       }
@@ -410,7 +464,7 @@ proc buildExtension {s3ext} {
   foreach suffix {"" -build -install} {
     set dir $::Slicer3_EXT/$::ext(name)$suffix
     if { $suffix != "" } {
-      puts "Deleting $dir..."
+      vputs "Deleting $dir..."
       file delete -force $dir
     }
     if { ![file exists $dir] } {
@@ -547,12 +601,6 @@ proc buildExtension {s3ext} {
     }
   }
 
-  # get the slicer version information
-  loadArray $::Slicer3_BUILD/lib/Slicer3/Slicer3Version.txt slicerVersion
-  set len [string length "http://svn.slicer.org/Slicer3/"]
-  set ::ext(slicerSVNSubpath) [string range $slicerVersion(svnurl) $len end]
-  set ::ext(slicerSVNRevision) $slicerVersion(svnrevision)
-
   # make the zip file
   # - TODO: first, write a config file that describes the build machine
   set dir $::Slicer3_EXT/$::ext(name)-install/lib/Slicer3
@@ -580,34 +628,34 @@ set ::EXTEND(BUILT) ""
 set ::EXTEND(FAILED) ""
 
 foreach s3ext $::EXTEND(s3extFiles) {
-  puts "----------------------------------------"
-  puts "----------------------------------------"
-  puts "building $s3ext"
+  vputs "----------------------------------------"
+  vputs "----------------------------------------"
+  vputs "building $s3ext"
   set ret [catch "buildExtension $s3ext" res]
   if { $ret } {
-    puts "********************"
-    puts "Failed to build $s3ext"
-    puts "error code is: $ret"
-    puts "error result is:\n$res"
-    puts "errorInfo is:\n$::errorInfo"
+    vputs "********************"
+    vputs "Failed to build $s3ext"
+    vputs "error code is: $ret"
+    vputs "error result is:\n$res"
+    vputs "errorInfo is:\n$::errorInfo"
     lappend ::EXTEND(FAILED) $s3ext
   } else {
     lappend ::EXTEND(BUILT) $s3ext
   }
 }
 
-puts "********************\n"
-puts "BUILT:"
+vputs "********************\n"
+vputs "BUILT:"
 foreach built $::EXTEND(BUILT) {
-  puts "  $built"
+  vputs "  $built"
 }
 
 if { [llength $::EXTEND(FAILED)] != 0 } {
-  puts "FAILED:"
+  vputs "FAILED:"
   foreach failed $::EXTEND(FAILED) {
-    puts "  $failed"
+    vputs "  $failed"
   }
 }
 
-puts "\n[format %3.1f [expr 100 * (1.*[llength $::EXTEND(BUILT)] / [llength $::EXTEND(s3extFiles)])]]% succeeded" 
+vputs "\n[format %3.1f [expr 100 * (1.*[llength $::EXTEND(BUILT)] / [llength $::EXTEND(s3extFiles)])]]% succeeded" 
 
