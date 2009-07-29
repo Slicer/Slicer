@@ -35,7 +35,7 @@ public:
   virtual void ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData);  
   virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
 
-  void UpdateMRMLObserver(vtkMRMLSelectionNode* selnode);
+  void UpdateMRMLObserver();
   void OnMultiColumnListUpdate(int row, int col, char * str);
   void OnMultiColumnListSelectionChanged();
   void SetGUIFromList(vtkMRMLFiducialListNode * activeFiducialListNode);

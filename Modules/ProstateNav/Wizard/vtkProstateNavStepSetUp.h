@@ -45,21 +45,12 @@ protected:
   vtkSlicerNodeSelectorWidget* TargetPlanFiducialSelector;
   vtkSlicerNodeSelectorWidget* TargetCompletedFiducialSelector;
 
+  vtkSlicerNodeSelectorWidget* RobotConnectorSelector;
+  vtkSlicerNodeSelectorWidget* ScannerConnectorSelector;
+
   vtkKWFrame *FiducialFrame;
-  vtkKWFrame *RobotFrame;
-  vtkKWLabel *RobotLabel1;
-  vtkKWLabel *RobotLabel2;
-  vtkKWEntry *RobotAddressEntry;
-  vtkKWEntry *RobotPortEntry;
-  vtkKWPushButton *RobotConnectButton;
-  
-  vtkKWFrame *ScannerFrame;
-  vtkKWLabel *ScannerLabel1;
-  vtkKWLabel *ScannerLabel2;
-  vtkKWEntry *ScannerAddressEntry;
-  vtkKWEntry *ScannerPortEntry;
-  vtkKWPushButton *ScannerConnectButton;
-  
+  vtkKWFrame *ConnectorFrame;
+
 private:
   vtkProstateNavStepSetUp(const vtkProstateNavStepSetUp&);
   void operator=(const vtkProstateNavStepSetUp&);

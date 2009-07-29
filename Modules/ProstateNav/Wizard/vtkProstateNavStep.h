@@ -82,6 +82,17 @@ public:
       }
     }
 
+  void SetAndObserveMRMLSceneEvents ( vtkMRMLScene *mrml, vtkIntArray *events )
+    {
+    vtkObject *oldValue = this->MRMLScene;
+    this->MRMLObserverManager->SetAndObserveObjectEvents ( vtkObjectPointer( &this->MRMLScene), mrml, events );
+    if ( oldValue != this->MRMLScene )
+      {
+      this->InvokeEvent (vtkCommand::ModifiedEvent);
+      }
+    }
+
+
   void SetTitleBackgroundColor (double r, double g, double b) {
     this->TitleBackgroundColor[0] = r;
     this->TitleBackgroundColor[1] = g;

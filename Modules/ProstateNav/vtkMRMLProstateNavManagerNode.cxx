@@ -15,6 +15,8 @@ Version:   $Revision: 1.2 $
 #include "vtkObjectFactory.h"
 
 #include "vtkMRMLProstateNavManagerNode.h"
+#include "vtkMRMLIGTLConnectorNode.h"
+
 #include "vtkMRMLScene.h"
 
 #include "vtkProstateNavStep.h"
@@ -270,6 +272,7 @@ void vtkMRMLProstateNavManagerNode::AddNewStep(const char* name, vtkProstateNavS
     this->StepList[i].page->SetTotalSteps(numSteps);
     this->StepList[i].page->SetStepNumber(i+1);
     this->StepList[i].page->UpdateName();
+    this->StepList[i].page->SetProstateNavManager(this);
     }
 
 }
@@ -522,3 +525,58 @@ void vtkMRMLProstateNavManagerNode::SetAndObserveTargetCompletedList(vtkMRMLFidu
 
 }
 
+
+//----------------------------------------------------------------------------
+void vtkMRMLProstateNavManagerNode::SetAndObserveRobotConnector(vtkMRMLIGTLConnectorNode* ptr)
+{
+
+  vtkMRMLIGTLConnectorNode *oldList = this->RobotConnector;
+
+  if (this->RobotConnector != NULL)
+    {
+    vtkEventBroker::GetInstance()->RemoveObservations(
+      this->RobotConnector, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    }
+
+  this->RobotConnector = ptr;
+
+  if (ptr != NULL)
+    {
+    vtkEventBroker::GetInstance()->AddObservation(
+      ptr, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    }
+
+  if ( this->RobotConnector != ptr )
+    {
+    this->Modified();
+    }
+
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLProstateNavManagerNode::SetAndObserveScannerConnector(vtkMRMLIGTLConnectorNode* ptr)
+{
+
+  vtkMRMLIGTLConnectorNode *oldList = this->ScannerConnector;
+
+  if (this->ScannerConnector != NULL)
+    {
+    vtkEventBroker::GetInstance()->RemoveObservations(
+      this->ScannerConnector, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    }
+
+  this->ScannerConnector = ptr;
+
+  if (ptr != NULL)
+    {
+    vtkEventBroker::GetInstance()->AddObservation(
+      ptr, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    }
+
+  if ( this->ScannerConnector != ptr )
+    {
+    this->Modified();
+    }
+
+}

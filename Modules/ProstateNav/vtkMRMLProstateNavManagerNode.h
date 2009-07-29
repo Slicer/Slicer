@@ -22,6 +22,7 @@
 #include "vtkProstateNavWin32Header.h" 
 
 #include "vtkMRMLFiducialListNode.h"
+#include "vtkMRMLIGTLConnectorNode.h"
 
 class vtkProstateNavStep;
 
@@ -51,9 +52,11 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
   //----------------------------------------------------------------
   // Get and Set Macros
   //----------------------------------------------------------------
-  vtkGetObjectMacro ( TargetPlanList, vtkMRMLFiducialListNode);
-  vtkGetObjectMacro ( TargetCompletedList, vtkMRMLFiducialListNode);
+  vtkGetObjectMacro ( TargetPlanList, vtkMRMLFiducialListNode );
+  vtkGetObjectMacro ( TargetCompletedList, vtkMRMLFiducialListNode );
 
+  vtkGetObjectMacro ( RobotConnector, vtkMRMLIGTLConnectorNode );
+  vtkGetObjectMacro ( ScannerConnector, vtkMRMLIGTLConnectorNode );
 
   //----------------------------------------------------------------
   // Standard methods for MRML nodes
@@ -175,6 +178,19 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
   // Set and start observing completed target list
   void SetAndObserveTargetCompletedList(vtkMRMLFiducialListNode* ptr);
 
+  //----------------------------------------------------------------
+  // Connectors
+  //----------------------------------------------------------------
+
+  // Description:
+  // Set and start observing OpenIGTLink connector for robot
+  void SetAndObserveRobotConnector(vtkMRMLIGTLConnectorNode* ptr);
+
+  // Description:
+  // Set and start observing OpenIGTLink connector for scanner
+  void SetAndObserveScannerConnector(vtkMRMLIGTLConnectorNode* ptr);
+
+
  protected:
   //----------------------------------------------------------------
   // Constructor and destroctor
@@ -207,6 +223,9 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
   
   vtkMRMLFiducialListNode* TargetPlanList;
   vtkMRMLFiducialListNode* TargetCompletedList;
+
+  vtkMRMLIGTLConnectorNode* RobotConnector;
+  vtkMRMLIGTLConnectorNode* ScannerConnector;
   
 };
 
