@@ -3,7 +3,7 @@
   <category>Filtering.Arithmetic</category>
   <title>Mask Image</title>
   <description>
-Masks two images. The output image is set to 0 everywhere except where the chosen label from the mask volume is present, at which point it will retain it's original values. Although all image types are supported on input, only signed types are produced.
+Masks two images. The output image is set to 0 everywhere except where the chosen label from the mask volume is present, at which point it will retain it's original values. Although all image types are supported on input, only signed types are produced. The two images do not have to have the same dimensions.
 </description>
   <version>0.1.0.$Revision: 8595 $(alpha)</version>
   <documentation-url></documentation-url>
