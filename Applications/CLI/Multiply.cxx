@@ -74,9 +74,10 @@ template<class T> int DoIt( int argc, char * argv[], T )
   reader1->Update();
   reader2->Update();
 
+
   typename Interpolator::Pointer interp = Interpolator::New();
   interp->SetInputImage(reader2->GetOutput());
-  interp->SetSplineOrder(3);
+  interp->SetSplineOrder(order);
   
   typename ResampleType::Pointer resample = ResampleType::New();
   resample->SetInput(reader2->GetOutput());

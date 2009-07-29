@@ -3,7 +3,7 @@
   <category>Filtering.Arithmetic</category>
   <title>Add Images</title>
   <description>
-Adds two images. Although all image types are supported on input, only signed types are produced. The two images must have the same dimensions.
+Adds two images. Although all image types are supported on input, only signed types are produced. The two images do not have to have the same dimensions.
 </description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:AddImages-Documentation-3.4</documentation-url>
@@ -37,6 +37,20 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <index>2</index>
       <description>Volume1 + Volume2</description>
     </image>
+  </parameters>
+  <parameters>
+    <label>Controls</label>
+    <description>Control how the module operates</description>
+    <integer-enumeration>
+      <name>order</name>
+      <label>Interpolation order</label>
+      <default>1</default>
+      <element>1</element>
+      <element>2</element>
+      <element>3</element>
+      <longflag>order</longflag>
+      <description>Interpolation order if two images are in different coordinate frames or have different sampling.</description>
+    </integer-enumeration>
   </parameters>
 
 </executable>
