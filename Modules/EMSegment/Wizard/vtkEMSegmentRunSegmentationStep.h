@@ -19,15 +19,16 @@
 
 #include "vtkEMSegmentStep.h"
 
+class vtkKWFrame;
 class vtkKWFrameWithLabel;
 class vtkKWMenuButtonWithLabel;
-class vtkSlicerNodeSelectorWidget;
 class vtkKWLoadSaveButton;
 class vtkKWCheckButtonWithLabel;
 class vtkKWMatrixWidgetWithLabel;
 class vtkKWMatrixWidget;
-class vtkKWFrame;
 class vtkKWRenderWidget;
+
+class vtkSlicerNodeSelectorWidget;
 
 class VTK_EMSEGMENT_EXPORT vtkEMSegmentRunSegmentationStep :
   public vtkEMSegmentStep

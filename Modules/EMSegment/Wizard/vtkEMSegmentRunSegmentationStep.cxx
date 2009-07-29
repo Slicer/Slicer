@@ -20,12 +20,6 @@
 #include "vtkEMSegmentLogic.h"
 #include "vtkEMSegmentMRMLManager.h"
 
-#include "vtkPolyData.h"
-#include "vtkImageClip.h"
-#include "vtkPolyDataMapper.h"
-#include "vtkActor.h"
-#include "vtkMarchingSquares.h"
-
 #include "vtkKWCheckButton.h"
 #include "vtkKWCheckButtonWithLabel.h"
 #include "vtkKWFrame.h"
@@ -38,10 +32,18 @@
 #include "vtkKWMatrixWidgetWithLabel.h"
 #include "vtkKWMessageDialog.h"
 #include "vtkKWPushButton.h"
+#include "vtkKWRenderWidget.h"
 #include "vtkKWWizardStep.h"
 #include "vtkKWWizardWidget.h"
 #include "vtkKWWizardWorkflow.h"
-#include "vtkKWRenderWidget.h"
+
+#include "vtkImageData.h"
+#include "vtkImageDataGeometryFilter.h"
+#include "vtkPolyData.h"
+#include "vtkPolyDataMapper.h"
+#include "vtkActor.h"
+#include "vtkRenderer.h"
+#include "vtkRenderWindow.h"
 
 #include "vtkSlicerNodeSelectorWidget.h"
 
@@ -57,22 +59,22 @@ vtkEMSegmentRunSegmentationStep::vtkEMSegmentRunSegmentationStep()
   this->SetName("9/9. Run Segmentation");
   this->SetDescription("Apply EM algorithm to segment target image.");
 
-  this->RunSegmentationSaveFrame                   = NULL;
-  this->RunSegmentationDirectoryFrame              = NULL;
-  this->RunSegmentationOutputFrame                 = NULL;
-  this->RunSegmentationOutVolumeSelector           = NULL;
-  this->RunSegmentationSaveTemplateButton          = NULL;
-  this->RunSegmentationDirectorySubFrame           = NULL;
-  this->RunSegmentationDirectoryButton             = NULL;
+  this->RunSegmentationSaveFrame                        = NULL;
+  this->RunSegmentationDirectoryFrame                   = NULL;
+  this->RunSegmentationOutputFrame                      = NULL;
+  this->RunSegmentationOutVolumeSelector                = NULL;
+  this->RunSegmentationSaveTemplateButton               = NULL;
+  this->RunSegmentationDirectorySubFrame                = NULL;
+  this->RunSegmentationDirectoryButton                  = NULL;
   this->RunSegmentationSaveAfterSegmentationCheckButton = NULL;
-  this->RunSegmentationSaveIntermediateCheckButton = NULL;
-  this->RunSegmentationGenerateSurfaceCheckButton  = NULL;
-  this->RunSegmentationROIFrame                    = NULL;
-  this->RunSegmentationROIMaxMatrix                = NULL;
-  this->RunSegmentationROIMinMatrix                = NULL;
-  this->RunSegmentationMiscFrame                   = NULL;
-  this->RunSegmentationMultiThreadCheckButton      = NULL;
-  this->RunRenderWidget                            = NULL;
+  this->RunSegmentationSaveIntermediateCheckButton      = NULL;
+  this->RunSegmentationGenerateSurfaceCheckButton       = NULL;
+  this->RunSegmentationROIFrame                         = NULL;
+  this->RunSegmentationROIMaxMatrix                     = NULL;
+  this->RunSegmentationROIMinMatrix                     = NULL;
+  this->RunSegmentationMiscFrame                        = NULL;
+  this->RunSegmentationMultiThreadCheckButton           = NULL;
+  this->RunRenderWidget                                 = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -187,26 +189,29 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
     this->GetGUI()->GetWizardWidget();
 
   if (!mrmlManager || !wizard_widget)
-    {
+  {
     return;
-    }
+  }
 
   vtkKWWidget *parent = wizard_widget->GetClientArea();;
+
   int enabled = parent->GetEnabled();
+
   wizard_widget->GetCancelButton()->SetEnabled(enabled);
 
   // Create the save frame
 
   if (!this->RunSegmentationSaveFrame)
-    {
+  {
     this->RunSegmentationSaveFrame = vtkKWFrameWithLabel::New();
-    }
+  }
+
   if (!this->RunSegmentationSaveFrame->IsCreated())
-    {
+  {
     this->RunSegmentationSaveFrame->SetParent(parent);
     this->RunSegmentationSaveFrame->Create();
     this->RunSegmentationSaveFrame->SetLabelText("Save");
-    }
+  }
 
   // disable this frame for now, it is not currently useful
   //   this->Script(
@@ -619,16 +624,41 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
     this->RunSegmentationMultiThreadCheckButton->
       GetWidget()->SetCommand(this, "MultiThreadingCallback");
     }
+
   this->RunSegmentationMultiThreadCheckButton->SetEnabled(
     mrmlManager->HasGlobalParametersNode() ? enabled : 0);
 
   this->Script(
-    "pack %s -side top -anchor nw -padx 2 -pady 2", 
+    "pack %s -side top -anchor nw -padx 2 -pady 2",
     this->RunSegmentationMultiThreadCheckButton->GetWidgetName());
 
   this->RunSegmentationMultiThreadCheckButton->
     GetWidget()->SetSelectedState(
       mrmlManager->GetEnableMultithreading());
+
+  int windowWidth  = 400;
+  int windowHeight = 400;
+
+  if (!this->RunRenderWidget)
+  {
+    this->RunRenderWidget = vtkKWRenderWidget::New();
+  }
+
+  if (!this->RunRenderWidget->IsCreated())
+  {
+    this->RunRenderWidget->SetParent(
+      this->RunSegmentationMiscFrame->GetFrame());
+    this->RunRenderWidget->Create();
+    //this->Gaussian2DWidget->GetRenderer()->GetRenderWindow()->
+    //GetInteractor()->Disable();
+    this->RunRenderWidget->SetWidth(windowWidth);
+    this->RunRenderWidget->SetHeight(windowHeight);
+    this->RunRenderWidget->Render();
+  }
+
+  this->Script(
+    "pack %s -side top -anchor nw -padx 2 -pady 2",
+    this->RunRenderWidget->GetWidgetName());
 
   // Configure the OK button to start
 
@@ -650,26 +680,6 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
     wizard_widget->GetCancelButton()->SetBalloonHelpString(
       "Cancel Segmentation");
     }
-
-  // Create the run render widget
-
-  if (!this->RunRenderWidget)
-    {
-    this->RunRenderWidget = vtkKWRenderWidget::New();
-    }
-
-  if (!this->RunRenderWidget->IsCreated())
-    {
-    this->RunRenderWidget->SetParent(
-      this->RunSegmentationMiscFrame->GetFrame());
-    this->RunRenderWidget->Create();
-    }
-  this->RunRenderWidget->SetEnabled(
-    mrmlManager->HasGlobalParametersNode() ? enabled : 0);
-
-  this->Script(
-    "pack %s -side top -anchor nw -padx 2 -pady 2",
-    this->RunRenderWidget->GetWidgetName());
 }
 
 //----------------------------------------------------------------------------
@@ -680,29 +690,37 @@ void vtkEMSegmentRunSegmentationStep::HideUserInterface()
 }
 
 //----------------------------------------------------------------------------
-void vtkEMSegmentRunSegmentationStep::PopulateSegmentationROIMatrix(
+void
+vtkEMSegmentRunSegmentationStep::
+PopulateSegmentationROIMatrix(
     vtkKWMatrixWidget* matrix, int ijk[3])
 {
-  if(matrix && ijk)
-    {
+  if (matrix && ijk)
+  {
     char buffer[10];
-    for(int i=0; i<3; i++)
-      {
-      sprintf(buffer, "%d", ijk[i]);
-      matrix->SetElementValue(0, i, buffer);
-      }
-    }
+
+    sprintf(buffer,"%d",ijk[0]);
+    matrix->SetElementValue(0,0,buffer);
+
+    sprintf(buffer,"%d",ijk[1]);
+    matrix->SetElementValue(0,1,buffer);
+
+    sprintf(buffer,"%d",ijk[2]);
+    matrix->SetElementValue(0,2,buffer);
+  }
 }
 
-//---------------------------------------------------------------------------
-void vtkEMSegmentRunSegmentationStep::AddRunRegistrationOutputGUIObservers()
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentRunSegmentationStep::
+AddRunRegistrationOutputGUIObservers()
 {
   this->RunSegmentationOutVolumeSelector->AddObserver(
     vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
     this->GetGUI()->GetGUICallbackCommand());
 }
 
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkEMSegmentRunSegmentationStep::
 RemoveRunRegistrationOutputGUIObservers()
 {
@@ -722,46 +740,216 @@ void vtkEMSegmentRunSegmentationStep::ProcessRunRegistrationOutputGUIEvents(
       this->RunSegmentationOutVolumeSelector->GetSelected() != NULL)
   {
     vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+
     if (mrmlManager)
       {
       mrmlManager->SetOutputVolumeMRMLID(
         this->RunSegmentationOutVolumeSelector->GetSelected()->GetID());
       }
-
-    if (this->RunRenderWidget->GetRenderWindow() == NULL)
+  }
+  else if (this->RunRenderWidget)
+  {
+    if (!this->RunRenderWidget->GetRenderer()->GetNumberOfPropsRendered())
     {
-      vtkEMSegmentMRMLManager *mrmlManager =
-        this->GetGUI()->GetMRMLManager();
+      vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
-      vtkMRMLScalarVolumeNode *labelVolume =
-        mrmlManager->GetOutputVolumeNode();
-
-      if (labelVolume == NULL)
+      if (!mrmlManager)
       {
-        vtkErrorMacro("No label volume found");
+        vtkErrorMacro("No MRML Manager");
         return;
       }
 
-      if (labelVolume->GetImageData() == NULL)
+      int numTargets = mrmlManager->GetTargetNumberOfSelectedVolumes();
+
+      if (numTargets < 2)
       {
-        vtkErrorMacro("Label Map has no data");
+        vtkErrorMacro("Two target images are necessary. Number of Targets: "
+            << numTargets);
         return;
       }
 
-      vtkImageClip *imageClip = vtkImageClip::New();
+      int volumeId = mrmlManager->GetVolumeNthID(0);
 
-      imageClip->Delete();
+      vtkMRMLVolumeNode* volumeNode = mrmlManager->GetVolumeNode(volumeId);
 
-      vtkMarchingSquares *marchingSquares = vtkMarchingSquares::New();
+      if(!volumeNode)
+      {
+        vtkErrorMacro("No target volume 1");
+        return;
+      }
 
-      marchingSquares->Delete();
+      vtkImageData* inputImage1 = volumeNode->GetImageData();
+
+      if (!inputImage1)
+      {
+        vtkErrorMacro("Target 1 has no image data");
+        return;
+      }
+
+      volumeId = mrmlManager->GetVolumeNthID(1);
+
+      volumeNode = mrmlManager->GetVolumeNode(volumeId);
+
+      if(!volumeNode)
+      {
+        vtkErrorMacro("No target volume 2");
+        return;
+      }
+
+      vtkImageData* inputImage2 = volumeNode->GetImageData();
+
+      if (!inputImage2)
+      {
+        vtkErrorMacro("Target 2 has no image data");
+        return;
+      }
+
+      if (inputImage1->GetNumberOfScalarComponents() != 1)
+      {
+        vtkErrorMacro("Voxels in Target 1 must have 1 scalar components. "
+            << "Number of scalar components: "
+            << inputImage1->GetNumberOfScalarComponents());
+        return;
+      }
+
+      if (inputImage2->GetNumberOfScalarComponents() != 1)
+      {
+        vtkErrorMacro("Voxels in Target 2 must have 1 scalar components. "
+            << "Number of scalar components: "
+            << inputImage2->GetNumberOfScalarComponents());
+        return;
+      }
+
+      if (inputImage1->GetScalarType() != VTK_SHORT)
+      {
+        vtkErrorMacro("Scalar type in Target 1 must be SHORT. "
+            << "Scalar type: "
+            << inputImage1->GetScalarType());
+        return;
+      }
+
+      if (inputImage2->GetScalarType() != VTK_SHORT)
+      {
+        vtkErrorMacro("Scalar type in Target 2 must be SHORT. "
+            << "Scalar type: "
+            << inputImage2->GetScalarType());
+        return;
+      }
+
+      int extent1[6];
+      int extent2[6];
+
+      inputImage1->GetWholeExtent(extent1);
+      inputImage2->GetWholeExtent(extent2);
+
+      if( extent1[0] != extent2[0] ||
+          extent1[1] != extent2[1] ||
+          extent1[2] != extent2[2] ||
+          extent1[3] != extent2[3] ||
+          extent1[4] != extent2[4] ||
+          extent1[5] != extent2[5] )
+      {
+        vtkErrorMacro("Target 1 and Target 2 have different extent. "
+            << "Target 1 whole extent: "
+            << extent1[0] << " " << extent1[1] << " "
+            << extent1[2] << " " << extent1[3] << " "
+            << extent1[4] << " " << extent1[5] << " "
+            << "Target 2 whole extent: "
+            << extent2[0] << " " << extent2[1] << " "
+            << extent2[2] << " " << extent2[3] << " "
+            << extent2[4] << " " << extent2[5]);
+        return;
+      }
+
+      int numPts1 = inputImage1->GetNumberOfPoints();
+      int numPts2 = inputImage2->GetNumberOfPoints();
+
+      if(numPts1 != numPts2)
+      {
+        vtkErrorMacro("Target Image 1 and Target Image 2 have a different"
+            << " number of voxels."
+            << " Target 1 NumVoxels: " << numPts1
+            << " Target 2 NumVoxels: " << numPts2);
+        return;
+      }
+
+      double range1[2];
+      double range2[2];
+
+      inputImage1->GetScalarRange(range1);
+      inputImage2->GetScalarRange(range2);
+
+      if(range1[1] <= range1[0])
+      {
+        vtkErrorMacro("Target 1 has invalid scalar range. "
+            << "Scalar Range " << range1[0] << " " << range1[1]);
+        return;
+      }
+
+      if(range2[1] <= range2[0])
+      {
+        vtkErrorMacro("Target 2 has invalid scalar range. "
+            << "Scalar range: " << range2[0] << " " << range2[1]);
+        return;
+      }
+
+      int dimX = 100;
+      int dimY = 100;
+
+      int extent[6] = {0,0, 0,0, 0,0};
+
+      extent[1] = dimX - 1;
+      extent[3] = dimY - 1;
+
+      double factorX = dimX / (range1[1] - range1[0]);
+      double factorY = dimY / (range2[1] - range2[0]);
+
+      vtkImageData *imageData = vtkImageData::New();
+      imageData->SetScalarTypeToUnsignedInt();
+      imageData->SetWholeExtent(extent);
+      imageData->AllocateScalars();
+
+      int numPts = imageData->GetNumberOfPoints();
+
+      unsigned int *ptr = (unsigned int*) imageData->GetScalarPointer();
+
+      memset(ptr,numPts,0.0);
+
+      short *ptr1 = (short*) inputImage1->GetScalarPointer();
+      short *ptr2 = (short*) inputImage2->GetScalarPointer();
+
+      vtkErrorMacro("(int)(0.99) = " << (int)(0.99));
+      vtkErrorMacro("(int)(-0.99) = " << (int)(-0.99));
+
+      for(int i=0; i<numPts1; i++,ptr1++,ptr2++)
+      {
+        int id1 = (int)((*ptr1 - range1[0]) * factorX);
+        int id2 = (int)((*ptr2 - range2[0]) * factorY);
+
+        if(id1 > extent[1]) { id1--; }
+        if(id2 > extent[3]) { id2--; }
+
+        if(id1 < 0) { id1=0; }
+        if(id2 < 0) { id2=0; }
+
+        int id = id1 + dimX * id2;
+        ptr[id]++;
+      }
+
+      vtkImageDataGeometryFilter *geometryFilter =
+        vtkImageDataGeometryFilter::New();
+      geometryFilter->SetInput(imageData);
+      imageData->Delete();
 
       vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();
-
-      mapper->Delete();
+      mapper->SetInput(geometryFilter->GetOutput());
+      geometryFilter->Delete();
 
       vtkActor *actor = vtkActor::New();
+      actor->SetMapper(mapper);
+      mapper->Delete();
 
+      this->RunRenderWidget->AddViewProp(actor);
       actor->Delete();
     }
   }
@@ -772,7 +960,7 @@ void vtkEMSegmentRunSegmentationStep::SelectTemplateFileCallback()
 {
   // The template file has changed because of user interaction
 
-  if (this->RunSegmentationSaveTemplateButton && 
+  if (this->RunSegmentationSaveTemplateButton &&
       this->RunSegmentationSaveTemplateButton->IsCreated())
     {
     if (this->RunSegmentationSaveTemplateButton->GetLoadSaveDialog()->
@@ -780,7 +968,7 @@ void vtkEMSegmentRunSegmentationStep::SelectTemplateFileCallback()
       {
       this->RunSegmentationSaveTemplateButton->GetLoadSaveDialog()->
         SaveLastPathToRegistry("OpenPath");
-      vtksys_stl::string filename = 
+      vtksys_stl::string filename =
         this->RunSegmentationSaveTemplateButton->GetFileName();
       vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
       vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
@@ -797,11 +985,13 @@ void vtkEMSegmentRunSegmentationStep::SelectTemplateFileCallback()
 }
 
 //----------------------------------------------------------------------------
-void vtkEMSegmentRunSegmentationStep::SelectDirectoryCallback()
+void
+vtkEMSegmentRunSegmentationStep::
+SelectDirectoryCallback()
 {
   // The template file has changed because of user interaction
 
-  if (this->RunSegmentationDirectoryButton && 
+  if (this->RunSegmentationDirectoryButton &&
       this->RunSegmentationDirectoryButton->IsCreated())
     {
     if (this->RunSegmentationDirectoryButton->GetLoadSaveDialog()->
@@ -809,8 +999,10 @@ void vtkEMSegmentRunSegmentationStep::SelectDirectoryCallback()
       {
       this->RunSegmentationDirectoryButton->GetLoadSaveDialog()->
         SaveLastPathToRegistry("OpenPath");
-      vtksys_stl::string filename = 
+
+      vtksys_stl::string filename =
         this->RunSegmentationDirectoryButton->GetFileName();
+
       if(!vtksys::SystemTools::FileExists(filename.c_str()) ||
         !vtksys::SystemTools::FileIsDirectory(filename.c_str()))
         {
