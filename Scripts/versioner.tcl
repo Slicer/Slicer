@@ -56,10 +56,10 @@ foreach line $svninfo {
 cd $cwd
 
 set versionText ""
-set versionText "$versionText build $::env(BUILD)\n"
-set versionText "$versionText buildDate $::Slicer3_BUILDDATE\n"
-set versionText "$versionText svnurl $svn(URL)\n"
-set versionText "$versionText svnrevision $svn(revision)\n"
+set versionText "${versionText}build $::env(BUILD)\n"
+set versionText "${versionText}buildDate $::Slicer3_BUILDDATE\n"
+set versionText "${versionText}svnurl $svn(URL)\n"
+set versionText "${versionText}svnrevision $svn(revision)\n"
 
 set versionFile $::Slicer3_BUILD/lib/Slicer3/Slicer3Version.txt
 puts "Writing version information to $versionFile"
