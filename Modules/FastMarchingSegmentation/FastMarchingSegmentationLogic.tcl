@@ -168,6 +168,13 @@ proc FastMarchingSegmentationCreateLabelVolume {this} {
   set volumeNode $::FastMarchingSegmentation($this,inputVolume)
   set outputVolumeNode [ [[$this GetLogic] GetMRMLScene] GetNodeByID \
     [[$::FastMarchingSegmentation($this,outputSelector) GetSelected ] GetID] ]
+  set outputImageData [$outputVolumeNode GetImageData]
+
+  set scene [[$this GetLogic] GetMRMLScene]
+
+  if { $outputImageData != "" } {
+    $outputImageData Delete
+  }
 
   set inputVolumeName [$volumeNode GetName]
   set inputImageData $::FastMarchingSegmentation($this,inputImage)
@@ -175,16 +182,19 @@ proc FastMarchingSegmentationCreateLabelVolume {this} {
 #  $outputVolumeNode SetName "${inputVolumeName}_${outputVolumeName}"
 
   # from vtkSlicerVolumesLogic
-  set outputDisplayNode [vtkMRMLLabelMapVolumeDisplayNode New]
-  set scene [[$this GetLogic] GetMRMLScene]
-  $scene AddNode $outputDisplayNode
+  set outputDisplayNode [$outputVolumeNode GetDisplayNode]
+  if { $outputDisplayNode == ""} {
 
-  $outputDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeLabels"
+    set outputDisplayNode [vtkMRMLLabelMapVolumeDisplayNode New]
+    $scene AddNode $outputDisplayNode
 
-  $outputVolumeNode SetAndObserveDisplayNodeID [$outputDisplayNode GetID]
-  $outputDisplayNode Delete
-  $outputVolumeNode SetModifiedSinceRead 1
-  $outputVolumeNode SetLabelMap 1
+    $outputDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeLabels"
+
+    $outputVolumeNode SetAndObserveDisplayNodeID [$outputDisplayNode GetID]
+    $outputDisplayNode Delete
+    $outputVolumeNode SetModifiedSinceRead 1
+    $outputVolumeNode SetLabelMap 1
+  }
   
   set labelImage [vtkImageData New]
   set thresh [vtkImageThreshold New]
@@ -201,9 +211,6 @@ proc FastMarchingSegmentationCreateLabelVolume {this} {
   $outputVolumeNode SetAndObserveImageData $labelImage
   $labelImage Delete
 
-  set ::FastMarchingSegmentation($this,labelVolume) $outputVolumeNode
-  set ::FastMarchingSegmentation($this,labelImage) [$outputVolumeNode GetImageData]
-
   set ras2ijk [vtkMatrix4x4 New]
   set ijk2ras [vtkMatrix4x4 New]
   $volumeNode GetRASToIJKMatrix $ras2ijk
@@ -217,6 +224,9 @@ proc FastMarchingSegmentationCreateLabelVolume {this} {
 
   scan [$volumeNode GetOrigin] "%f%f%f" originX originY originZ
   $outputVolumeNode SetOrigin $originX $originY $originZ
+
+  set ::FastMarchingSegmentation($this,labelVolume) $outputVolumeNode
+  set ::FastMarchingSegmentation($this,labelImage) [$outputVolumeNode GetImageData]
 
   set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
   $selectionNode SetReferenceActiveLabelVolumeID [$outputVolumeNode GetID]
