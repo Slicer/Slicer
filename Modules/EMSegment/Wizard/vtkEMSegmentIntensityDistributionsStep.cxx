@@ -464,8 +464,8 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
   this->Script(
       "pack %s -side top -anchor nw -fill both -padx 2 -pady 2 -pady 2",
       this->LabelmapButton->GetWidgetName());
-      
-  // Add observer for callbacks    
+
+  // Add observer for callbacks
 
   this->AddLabelButtonGUIEventsObservers();
 
@@ -495,7 +495,7 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     */
   if (!this->Gaussian2DVolumeXMenuButton)
     {
-    this->Gaussian2DVolumeXMenuButton = 
+    this->Gaussian2DVolumeXMenuButton =
       vtkKWMenuButtonWithLabel::New();
     }
   if (!this->Gaussian2DVolumeXMenuButton->IsCreated())
@@ -509,27 +509,29 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     this->Gaussian2DVolumeXMenuButton->
       SetLabelText("Image X Axis:");
     this->Gaussian2DVolumeXMenuButton->
-      SetBalloonHelpString("Select a target image to adjust intensity distribution");
-
+      SetBalloonHelpString(
+          "Select a target image to adjust intensity distribution");
     }
 
   this->Script(
-    "pack %s -side top -anchor nw -fill both -padx 2 -pady 5", 
+    "pack %s -side top -anchor nw -fill both -padx 2 -pady 5",
     this->Gaussian2DVolumeXMenuButton->GetWidgetName());
-  
-  this->PopulateGaussian2DVolumeXSelector();    
-  
-  
-  /*if(mrmlManager->GetTargetNumberOfSelectedVolumes() >0){
-  this->Gaussian2DVolumeYMenuButton->GetWidget()->SetValue(mrmlManager->GetVolumeName(mrmlManager->GetTargetSelectedVolumeNthID(0)));
-  }*/
-        
+
+  this->PopulateGaussian2DVolumeXSelector();
+
+  /*
+  if(mrmlManager->GetTargetNumberOfSelectedVolumes() >0){
+  this->Gaussian2DVolumeYMenuButton->GetWidget()->SetValue(mrmlManager->
+  GetVolumeName(mrmlManager->GetTargetSelectedVolumeNthID(0)));
+  }
+  */
+
  if (!this->Gaussian2DVolumeYMenuButton)
     {
-    this->Gaussian2DVolumeYMenuButton = 
+    this->Gaussian2DVolumeYMenuButton =
       vtkKWMenuButtonWithLabel::New();
     }
-    
+
   if (!this->Gaussian2DVolumeYMenuButton->IsCreated())
     {
     this->Gaussian2DVolumeYMenuButton->SetParent(gaussianPage);
@@ -541,26 +543,27 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     this->Gaussian2DVolumeYMenuButton->
       SetLabelText("Image Y Axis:");
     this->Gaussian2DVolumeYMenuButton->
-      SetBalloonHelpString("Select a target image to adjust intensity distribution");
-
+      SetBalloonHelpString(
+          "Select a target image to adjust intensity distribution");
     }
 
   this->Script(
-    "pack %s -side top -anchor nw -fill both -padx 2 -pady 5", 
+    "pack %s -side top -anchor nw -fill both -padx 2 -pady 5",
     this->Gaussian2DVolumeYMenuButton->GetWidgetName());
-  
-  this->PopulateGaussian2DVolumeYSelector();  
-    
+
+  this->PopulateGaussian2DVolumeYSelector();
+
   /*if(mrmlManager->GetTargetNumberOfSelectedVolumes()>0)
     {
-    this->Gaussian2DVolumeYMenuButton->GetWidget()->SetValue(mrmlManager->GetVolumeName(mrmlManager->GetTargetSelectedVolumeNthID(0)));
+    this->Gaussian2DVolumeYMenuButton->GetWidget()->SetValue(mrmlManager->
+    GetVolumeName(mrmlManager->GetTargetSelectedVolumeNthID(0)));
     if(mrmlManager->GetTargetNumberOfSelectedVolumes()>1)
       {
-      this->Gaussian2DVolumeYMenuButton->GetWidget()->SetValue(mrmlManager->GetVolumeName(mrmlManager->GetTargetSelectedVolumeNthID(1)));
+      this->Gaussian2DVolumeYMenuButton->GetWidget()->SetValue(mrmlManager->
+      GetVolumeName(mrmlManager->GetTargetSelectedVolumeNthID(1)));
       }
-    }*/
-    
-/*
+    }
+
   this->PopulateGaussian2DVolumeXSelector();
 
   vtkEMSegmentMRMLManager *mrmlManager0 = this->GetGUI()->GetMRMLManager();
@@ -576,6 +579,7 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     }
 */
   this->NumberOfLeaves = 0;
+
   if (mrmlManager)
     {
     vtkIdType root_id = mrmlManager->GetTreeRootNodeID();
@@ -623,8 +627,8 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     this->Gaussian2DWidget->Render();
     }
 
-  this->Script("pack %s -side top -anchor nw -padx 2 -pady 2 -pady 2",this->
-      Gaussian2DWidget->GetWidgetName());
+  this->Script("pack %s -side top -anchor nw -padx 2 -pady 2 -pady 2",
+      this->Gaussian2DWidget->GetWidgetName());
 
   // Create the histogram volume selector
 
@@ -633,6 +637,7 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     this->IntensityDistributionHistogramButton =
       vtkKWMenuButtonWithLabel::New();
     }
+
   if (!this->IntensityDistributionHistogramButton->IsCreated())
     {
     this->IntensityDistributionHistogramButton->SetParent(gaussianPage);
@@ -654,9 +659,9 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
 
   this->PopulateIntensityDistributionTargetVolumeSelector();
 
-    vtkEMSegmentMRMLManager *mrmlManager0 = this->GetGUI()->GetMRMLManager();
-    this->IntensityDistributionHistogramButton->SetEnabled(
-    mrmlManager0->GetVolumeNumberOfChoices() ? parent->GetEnabled() : 0);
+  vtkEMSegmentMRMLManager *mrmlManager0 = this->GetGUI()->GetMRMLManager();
+  this->IntensityDistributionHistogramButton->SetEnabled(
+      mrmlManager0->GetVolumeNumberOfChoices() ? parent->GetEnabled() : 0);
 
   if(this->IntensityDistributionHistogramButton->GetEnabled())
     {
@@ -691,7 +696,8 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
   char buffer[1024];
 
   {
-    vtkKWMenu *menu = this->Gaussian2DRenderingMenuButton->GetWidget()->GetMenu();
+    vtkKWMenu *menu = this->Gaussian2DRenderingMenuButton->GetWidget()->
+      GetMenu();
     menu->DeleteAllItems();
 
     bool validSelection = true;
@@ -751,17 +757,18 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::
   PopulateGaussian2DVolumeXSelector()
-{  
+{
   vtkIdType target_vol_id;
   char buffer[256];
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+
   if (!mrmlManager)
     {
     return;
     }
   int nb_of_target_volumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
-  
+
   vtkKWMenu* menu = this->Gaussian2DVolumeXMenuButton->
     GetWidget()->GetMenu();
   menu->DeleteAllItems();
@@ -1430,7 +1437,8 @@ AddManualIntensitySamplingGUIObservers()
     GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
 
   rwi0->GetInteractorStyle()->AddObserver(
-    vtkCommand::LeftButtonPressEvent, this->GetGUI()->GetGUICallbackCommand());
+    vtkCommand::LeftButtonPressEvent,
+    this->GetGUI()->GetGUICallbackCommand());
 
   // Slice GUI 1
 
@@ -1439,7 +1447,8 @@ AddManualIntensitySamplingGUIObservers()
     GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
 
   rwi1->GetInteractorStyle()->AddObserver(
-    vtkCommand::LeftButtonPressEvent, this->GetGUI()->GetGUICallbackCommand());
+    vtkCommand::LeftButtonPressEvent,
+    this->GetGUI()->GetGUICallbackCommand());
 
   // Slice GUI 2
 
@@ -1628,8 +1637,13 @@ IntensityDistributionTargetSelectionChangedCallback(vtkIdType targetVolId)
 
     covariance = mrmlManager->GetTreeNodeDistributionCovariance(leaf,i,j);
 
-    this->Gaussian2DWidget->AddGaussian(meanX,meanY,varianceX,varianceY,
-        covariance,hsv[0]);
+    this->Gaussian2DWidget->AddGaussian(
+        meanX,
+        meanY,
+        varianceX,
+        varianceY,
+        covariance,
+        hsv[0]);
   }
 
   this->Gaussian2DWidget->Render();
@@ -1639,9 +1653,8 @@ IntensityDistributionTargetSelectionChangedCallback(vtkIdType targetVolId)
 void vtkEMSegmentIntensityDistributionsStep::ProcessGaussian2DButtonGUIEvents(
     vtkObject *caller, unsigned long event, void *callData)
 {
-
-  if (event == vtkKWPushButton::InvokedEvent && caller == this->
-      Gaussian2DButton)
+  if (event == vtkKWPushButton::InvokedEvent && caller ==
+      this->Gaussian2DButton)
   {
     EMS_DEBUG_MACRO("IN PROCESS GAUSSIAN GUI EVENT");
   }

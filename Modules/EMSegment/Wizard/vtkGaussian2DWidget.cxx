@@ -20,27 +20,25 @@
 #include "vtkAxisActor2D.h"
 #include "vtkCallbackCommand.h"
 #include "vtkCamera.h"
+#include "vtkCellArray.h"
 #include "vtkCommand.h"
 #include "vtkCornerAnnotation.h"
 #include "vtkCutter.h"
 #include "vtkFloatArray.h"
 #include "vtkImageData.h"
 #include "vtkInteractorStyleSwitch.h"
-#include "vtkLogLookupTable.h"
+#include "vtkLookupTable.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 #include "vtkPlane.h"
 #include "vtkPointData.h"
-#include "vtkProperty2D.h"
+#include "vtkPolyDataMapper.h"
+#include "vtkProperty.h"
 #include "vtkRenderWindow.h"
 #include "vtkRenderer.h"
 #include "vtkRendererCollection.h"
 #include "vtkTextActor.h"
 #include "vtkTextProperty.h"
-#include "vtkProperty.h"
-#include "vtkCellArray.h"
-#include "vtkImageDataGeometryFilter.h"
-#include "vtkPolyDataMapper.h"
 
 #include "vtkKWApplication.h"
 #include "vtkKWColorPickerWidget.h"
@@ -79,21 +77,221 @@ vtkGaussian2DWidget::vtkGaussian2DWidget()
   this->ScalarRangeY[1] = 1.0;
 
   this->NumberOfGaussians = 0;
+  this->Strips = vtkCellArray::New();
 }
 
 //----------------------------------------------------------------------------
 vtkGaussian2DWidget::~vtkGaussian2DWidget()
 {
+  if (this->Strips)
+  {
+    this->Strips->Delete();
+    this->Strips = NULL;
+  }
 }
 
 //----------------------------------------------------------------------------
-int vtkGaussian2DWidget::AddGaussian(double meanX, double meanY,
-    double varianceX, double varianceY, double covariance, double hue)
+int vtkGaussian2DWidget::EigenDecomposition(
+    double varianceX, double varianceY, double covariance,
+    double &sine, double &cosine, double &lambda1, double &lambda2)
 {
-  vtkErrorMacro("AddGaussian meanX " << meanX << " meanY " << meanY <<
-      " varianceX " << varianceX << " varianceY " << varianceY <<
-      " covariance " << covariance);
+  vtkErrorMacro(
+      << " varianceX " << varianceX
+      << " varianceY " << varianceY
+      << " covariance " << covariance);
 
+  if (varianceX < 1e-6 || varianceY < 1e-6)
+  {
+    vtkErrorMacro("Variances must be greater than 1e-6. varianceX: " <<
+        varianceX << " varianceY: " << varianceY);
+    return -1;
+  }
+
+  if (covariance < 0.0)
+  {
+    vtkErrorMacro("Covariance must be positive. Covariance: " <<
+        covariance);
+    return -1;
+  }
+
+  if (covariance > varianceX || covariance > varianceY)
+  {
+    vtkErrorMacro("Covariance must be smaller than the variances. "
+        << "varianceX: " << varianceX << " varianceY: " << varianceY
+        << "covariance " << covariance);
+    return -1;
+  }
+
+  double eigenVector[2];
+
+  if (covariance < 1e-6)
+  {
+    if (varianceX > varianceY)
+    {
+      lambda1 = varianceX;
+      lambda2 = varianceY;
+
+      eigenVector[0] = 1.0;
+      eigenVector[1] = 0.0;
+
+      sine   = 0.0;
+      cosine = 1.0;
+    }
+    else
+    {
+      lambda1 = varianceY;
+      lambda2 = varianceX;
+
+      eigenVector[0] = 0.0;
+      eigenVector[1] = 1.0;
+
+      sine   = 1.0;
+      cosine = 0.0;
+    }
+  }
+  else
+  {
+    double halfTrace   = 0.5 * ( varianceX + varianceY );
+    double determinant = varianceX * varianceY - covariance * covariance;
+
+    double d = halfTrace * halfTrace - determinant;
+    double delta = d > 0.0 ? sqrt(d) : 0.0;
+
+    lambda1 = halfTrace + delta;
+    lambda2 = halfTrace - delta;
+
+    eigenVector[0] = lambda1 - varianceX;
+    eigenVector[1] = covariance;
+
+    vtkErrorMacro("eigen vector: "<< eigenVector[0] << " " <<
+        eigenVector[1]);
+
+    double diff1 = fabs(lambda1 - varianceX);
+    double diff2 = fabs(lambda2 - varianceX);
+
+    if (diff1 < 1e-6 ||
+        diff2 < 1e-6 ||
+        fabs(lambda1 - varianceY) < 1e-6 ||
+        fabs(lambda2 - varianceY) < 1e-6 ||
+        fabs(covariance) < 1e-6 * diff1  ||
+        fabs(covariance) < 1e-6 * diff2)
+    {
+      if (varianceX > varianceY)
+      {
+        lambda1 = varianceX;
+        lambda2 = varianceY;
+
+        eigenVector[0] = 1.0;
+        eigenVector[1] = 0.0;
+
+        sine   = 0.0;
+        cosine = 1.0;
+      }
+      else
+      {
+        lambda1 = varianceY;
+        lambda2 = varianceX;
+
+        eigenVector[0] = 0.0;
+        eigenVector[1] = 1.0;
+
+        sine   = 1.0;
+        cosine = 0.0;
+      }
+    }
+    else
+    {
+      double angle = atan(eigenVector[0] / covariance);
+
+      std::cout << "angle " << angle * 180.0 / 3.14 << std::endl;
+
+      cosine = cos( angle );
+      sine   = sin( angle );
+
+      {
+        double angle = atan((lambda2 - varianceX) / covariance);
+
+        std::cout << "angle " << angle * 180.0 / 3.14 << " alternatively"
+          << std::endl;
+      }
+    }
+  }
+}
+
+//----------------------------------------------------------------------------
+int vtkGaussian2DWidget::AddGaussian(
+    double meanX,
+    double meanY,
+    double varianceX,
+    double varianceY,
+    double covariance,
+    double hue)
+{
+  this->AddCovarianceMatrix(meanX,meanY,varianceX,varianceY,covariance,hue);
+}
+
+//----------------------------------------------------------------------------
+int vtkGaussian2DWidget::AddVariances(
+    double meanX,
+    double meanY,
+    double varianceX,
+    double varianceY,
+    double hue)
+{
+  return -1;
+}
+
+//----------------------------------------------------------------------------
+int vtkGaussian2DWidget::AddCovarianceMatrix(
+    double meanX,
+    double meanY,
+    double varianceX,
+    double varianceY,
+    double covariance,
+    double hue)
+{
+  double sine    = 0.0;
+  double cosine  = 1.0;
+  double lambda1 = 1.0;
+  double lambda2 = 1.0;
+
+  this->EigenDecomposition(
+      varianceX,
+      varianceY,
+      covariance,
+      sine,
+      cosine,
+      lambda1,
+      lambda2);
+
+  return this->DrawGaussian(
+    meanX,
+    meanY,
+    varianceX,
+    varianceY,
+    covariance,
+    sine,
+    cosine,
+    lambda1,
+    lambda2,
+    hue);
+}
+
+//----------------------------------------------------------------------------
+int
+vtkGaussian2DWidget::
+DrawGaussian(
+    double meanX,
+    double meanY,
+    double varianceX,
+    double varianceY,
+    double covariance,
+    double sine,
+    double cosine,
+    double lambda1,
+    double lambda2,
+    double hue)
+{
   if (!this->IsCreated())
   {
     vtkErrorMacro(<< this->GetClassName() << " not created");
@@ -123,155 +321,73 @@ int vtkGaussian2DWidget::AddGaussian(double meanX, double meanY,
     return -1;
   }
 
-  if (varianceX < 1e-6 || varianceY < 1e-6)
-  {
-    vtkErrorMacro("Variances must be greater than 1e-6. varianceX: " <<
-        varianceX << " varianceY: " << varianceY);
-    return -1;
-  }
-
-  if (covariance > varianceX || covariance > varianceY)
-  {
-    vtkErrorMacro("Covariance must be smaller than the variances. "
-        << "varianceX: " << varianceX << " varianceY: " << varianceY
-        << "covariance " << covariance);
-    return -1;
-  }
-
-  // Compute the main eigenvector and the rotation angle
-
-  double eigenValues[2];
-  double eigenVector[2];
-
-  double sine, cosine;
-
-  if (covariance < 1e-6)
-  {
-    if (varianceX > varianceY)
-    {
-      eigenValues[0] = varianceX;
-      eigenValues[1] = varianceY;
-
-      eigenVector[0] = 1.0;
-      eigenVector[1] = 0.0;
-
-      sine   = 0.0;
-      cosine = 1.0;
-    }
-    else
-    {
-      eigenValues[0] = varianceY;
-      eigenValues[1] = varianceX;
-
-      eigenVector[0] = 0.0;
-      eigenVector[1] = 1.0;
-
-      sine   = 1.0;
-      cosine = 0.0;
-    }
-  }
-  else
-  {
-    double halfTrace   = 0.5 * ( varianceX + varianceY );
-    double determinant = varianceX * varianceY - covariance * covariance;
-
-    double d = halfTrace * halfTrace - determinant;
-    double delta = d > 0.0 ? sqrt(d) : 0.0;
-
-    eigenValues[0] = halfTrace + delta;
-    eigenValues[1] = halfTrace - delta;
-
-    // compute the eigenvector
-    // double ratio1 = ( varianceX - eigenValues[0] ) / covariance;
-    // double ratio2 = covariance / ( varianceY - eigenValues[0] );
-
-    // (varianceX - l1) * (varianceY - l1)  = covariance * covariance
-    // (fabs(ratio1 - ratio2) < 1e-5)
-
-    eigenVector[0] = covariance;
-    eigenVector[1] = varianceX - eigenValues[0];
-
-    vtkErrorMacro("eigen vector: "<< eigenVector[0] << " " <<
-        eigenVector[1]);
-
-    // eigenValues[0] - varianceY
-    // covariance
-
-    double tangent = covariance / eigenVector[1];
-    double rotationAngle = atan(tangent);
-
-    cosine = cos( rotationAngle );
-    sine   = sin( rotationAngle );
-  }
-
   double pt[3]    = { 0.0, 0.0, 0.0 };
   double range[2] = { VTK_DOUBLE_MAX, VTK_DOUBLE_MIN };
 
   double x, y;
   double dist;
 
-  double center[3];
-  double bounds[6];
+  double originX = this->ScalarRangeX[0];
+  double originY = this->ScalarRangeY[0];
 
-  int extent[6] = { 0,0, 0,0, 0,0 };
+  double spacingX = this->ScalarRangeX[1] - this->ScalarRangeX[0];
+  double spacingY = this->ScalarRangeY[1] - this->ScalarRangeY[0];
 
-  extent[1] = this->Resolution[0] - 1;
-  extent[3] = this->Resolution[1] - 1;
+  spacingX /= this->Resolution[0] - 1;
+  spacingY /= this->Resolution[1] - 1;
 
-  double origin[3]  = { 0.0, 0.0, 0.0 };
-  double spacing[3] = { 1.0, 1.0, 1.0 };
+  int numPts         = this->Resolution[0] * this->Resolution[1];
+  int numStrips      = this->Resolution[1] - 1;
+  int numPtsPerStrip = 2 * this->Resolution[0];
+  int numCellPts     = numStrips * numPtsPerStrip;
 
-  origin[0] = this->ScalarRangeX[0];
-  origin[1] = this->ScalarRangeY[0];
-
-  spacing[0] = (this->ScalarRangeX[1] - this->ScalarRangeX[0]) / extent[1];
-  spacing[1] = (this->ScalarRangeY[1] - this->ScalarRangeY[0]) / extent[3];
-
-  vtkImageData *imageData = vtkImageData::New();
-  imageData->SetWholeExtent(extent);
-  imageData->SetExtent(extent);
-  imageData->SetOrigin(origin);
-  imageData->SetSpacing(spacing);
-  imageData->SetScalarTypeToFloat();
-  imageData->AllocateScalars();
-
-  vtkImageDataGeometryFilter *imageDataGeometryFilter =
-    vtkImageDataGeometryFilter::New();
-  imageDataGeometryFilter->SetInput(imageData);
-  imageData->Delete();
-  imageDataGeometryFilter->Update();
-
-  vtkCellArray *newPolys = imageDataGeometryFilter->GetOutput()->GetPolys();
-  newPolys->Register(NULL);
-
-  vtkPoints *newPoints = imageDataGeometryFilter->GetOutput()->GetPoints();
-  newPoints->Register(NULL);
-
-  vtkFloatArray *newScalars = vtkFloatArray::SafeDownCast(
-      imageDataGeometryFilter->GetOutput()->GetPointData()->GetScalars());
-  newScalars->Register(NULL);
-
-  imageDataGeometryFilter->Delete();
-
-  double factorX = 1.0 / varianceX;
-  double factorY = 1.0 / varianceY;
-
-  for(int j=0, id=0; j<=extent[3]; j++)
+  if (this->Strips->GetNumberOfCells() != numStrips)
   {
-    pt[1]  = origin[1] + j * spacing[1];
+    this->Strips->Initialize();
+    this->Strips->Allocate(numStrips + numCellPts);
 
-    for(int i=0; i<=extent[1]; i++, id++)
+    for(int j=0; j<numStrips; j++)
     {
-      pt[0]  = origin[0] + i * spacing[0];
+      this->Strips->InsertNextCell(numPtsPerStrip);
 
-      x =  (pt[0]-meanX) * cosine + (pt[1]-meanY) *   sine;
-      y = -(pt[0]-meanX) *   sine + (pt[1]-meanY) * cosine;
+      for(int i=0; i<this->Resolution[0]; i++)
+      {
+        this->Strips->InsertCellPoint(i);
+        this->Strips->InsertCellPoint(i+this->Resolution[0]);
+      }
+    }
+  }
 
-      dist = x*x*factorX + y*y*factorY;
+  vtkPoints *newPoints = vtkPoints::New();
+  newPoints->SetNumberOfPoints(numPts);
+
+  vtkFloatArray *newScalars = vtkFloatArray::New();
+  newScalars->SetNumberOfValues(numPts);
+
+  double factorX = 1.0 / lambda1;
+  double factorY = 1.0 / lambda2;
+
+  double Dx;
+  double Dy;
+
+  for(int j=0, id=0; j < this->Resolution[1]; j++)
+  {
+    pt[1] = originY + j * spacingY;
+    Dy    = pt[1] - meanY;
+
+    for(int i=0; i < this->Resolution[0]; i++, id++)
+    {
+      pt[0] = originX + i * spacingX;
+      Dx    = pt[0] - meanX;
+
+      x =  Dx * cosine + Dy *   sine;
+      y = -Dx *   sine + Dy * cosine;
+
+      dist = x * x * factorX + y * y * factorY;
       pt[2] = exp(-dist);
 
-      newPoints->SetPoint(  id, pt );
-      newScalars->SetValue( id, pt[2] );
+      newPoints->SetPoint(id,pt);
+      newScalars->SetValue(id,pt[2]);
 
       if( pt[2] < range[0] ) { range[0] = pt[2]; }
       if( pt[2] > range[1] ) { range[1] = pt[2]; }
@@ -279,10 +395,9 @@ int vtkGaussian2DWidget::AddGaussian(double meanX, double meanY,
   }
 
   vtkPolyData *polyData = vtkPolyData::New();
+  polyData->SetStrips(this->Strips);
   polyData->SetPoints(newPoints);
   newPoints->Delete();
-  polyData->SetPolys(newPolys);
-  newPolys->Delete();
 
   vtkPlane *plane = vtkPlane::New();
   plane->SetOrigin(meanX,meanY,0.9);
@@ -322,19 +437,22 @@ int vtkGaussian2DWidget::AddGaussian(double meanX, double meanY,
     vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();
     mapper->SetInput(cutter->GetOutput());
 
-    vtkActor *actor = vtkActor::New();
-    actor->SetMapper(mapper);
-    mapper->Delete();
-    actor->GetProperty()->SetColor(0,0,0);
+      vtkActor *actor = vtkActor::New();
+      actor->SetMapper(mapper);
+      mapper->Delete();
+      actor->GetProperty()->SetColor(0,0,0);
 
-    this->AddViewProp(actor);
-    actor->Delete();
+      this->AddViewProp(actor);
+      actor->Delete();
   }
 
   cutter->Delete();
 
   polyData->GetPointData()->SetScalars(newScalars);
   newScalars->Delete();
+
+  double center[3];
+  double bounds[6];
 
   polyData->GetCenter(center);
   polyData->GetBounds(bounds);
@@ -350,7 +468,7 @@ int vtkGaussian2DWidget::AddGaussian(double meanX, double meanY,
 
   std::cout << "range " << range[0] << " " << range[1] << std::endl;
 
-  vtkLogLookupTable *LUT = vtkLogLookupTable::New();
+  vtkLookupTable *LUT = vtkLookupTable::New();
   LUT->SetTableRange(range);
   LUT->SetNumberOfTableValues(256);
   LUT->SetHueRange(hue,hue);
@@ -401,27 +519,30 @@ int vtkGaussian2DWidget::AddGaussian(double meanX, double meanY,
   if (!this->NumberOfGaussians)
   {
     vtkAxisActor2D *XaxisActor2D = vtkAxisActor2D::New();
-    XaxisActor2D->SetPoint1( 0.1, 0.1 );
-    XaxisActor2D->SetPoint2( 0.9, 0.1 );
+    XaxisActor2D->SetPoint1( 0.1, 0.1);
+    XaxisActor2D->SetPoint2( 0.9, 0.1);
 
     vtkAxisActor2D *YaxisActor2D = vtkAxisActor2D::New();
-    YaxisActor2D->SetPoint1( 0.1, 0.1 );
-    YaxisActor2D->SetPoint2( 0.1, 0.9 );
+    YaxisActor2D->SetPoint1( 0.1, 0.1);
+    YaxisActor2D->SetPoint2( 0.1, 0.9);
 
     this->AddOverlayViewProp(XaxisActor2D);
     XaxisActor2D->Delete();
     this->AddOverlayViewProp(YaxisActor2D);
     YaxisActor2D->Delete();
   }
+
   /*
   vtkCamera *camera = vtkCamera::New();
   camera->SetPosition( center[0], center[1], 800.0 );
   camera->SetFocalPoint( center[0], center[1], 0.0 );
   camera->SetViewUp( 0, 1, 0 );
-  camera->ParallelProjectionOn();*/
+  camera->ParallelProjectionOn();
+
+  this->GetRenderer()->SetActiveCamera(camera);
+  camera->Delete();
+  */
   this->ResetCamera();
-  //this->GetRenderer()->SetActiveCamera(camera);
-  // camera->Delete();
   this->Render();
 
   return this->NumberOfGaussians++;

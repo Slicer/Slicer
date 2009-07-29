@@ -27,6 +27,10 @@ class vtkKWEntryWithLabel;
 class vtkKWCheckButtonWithLabel;
 class vtkKWHistogram;
 class vtkKWPiecewiseFunctionEditor;
+class vtkKWRenderWidget;
+
+class vtkActor;
+class vtkPolyDataMapper;
 
 class VTK_EMSEGMENT_EXPORT vtkEMSegmentIntensityNormalizationStep :
   public vtkEMSegmentStep
@@ -43,19 +47,19 @@ public:
 
   // Description:
   // Callbacks.
-  virtual void NormalizationTargetSelectionChangedCallback(vtkIdType VolId);
-  virtual void NormalizationEnableCallback(vtkIdType VolId, int state);
-  virtual void NormalizationNormTypeCallback(vtkIdType VolId, int enumType);
-  virtual void NormalizationPrintInfoCallback(vtkIdType VolId, int checked);
-  virtual void NormalizationValueCallback(vtkIdType VolId, double dValue);
-  virtual void NormalizationSmoothingWidthCallback(vtkIdType VolId, int
+  virtual void NormalizationTargetSelectionChangedCallback(vtkIdType volId);
+  virtual void NormalizationEnableCallback(vtkIdType volId, int state);
+  virtual void NormalizationNormTypeCallback(vtkIdType volId, int enumType);
+  virtual void NormalizationPrintInfoCallback(vtkIdType volId, int checked);
+  virtual void NormalizationValueCallback(vtkIdType volId, double dValue);
+  virtual void NormalizationSmoothingWidthCallback(vtkIdType volId, int
       iValue);
-  virtual void NormalizationMaxSmoothingWidthCallback(vtkIdType VolId, int
+  virtual void NormalizationMaxSmoothingWidthCallback(vtkIdType volId, int
       iValue);
-  virtual void NormalizationRelativeMaxVoxelNumCallback(vtkIdType VolId,
+  virtual void NormalizationRelativeMaxVoxelNumCallback(vtkIdType volId,
       double dValue);
 
-  virtual void NormalizationHistogramChangedCallback(vtkIdType VolId);
+  virtual void NormalizationHistogramChangedCallback(vtkIdType volId);
 
   //Get histogram Value
   virtual void GetHistogramValue();
@@ -75,19 +79,6 @@ public:
     };
   //ETX
 
-  // Description:
-  // Callbacks.
-  virtual void MaskTargetSelectionChangedCallback(vtkIdType VolId);
-  //virtual void MaskEnableCallback(vtkIdType VolId, int state);
-  //virtual void MaskNormTypeCallback(vtkIdType VolId, int enumType);
-  //virtual void MaskPrintInfoCallback(vtkIdType VolId, int checked);
-  //virtual void MaskValueCallback(vtkIdType VolId, double dValue);
-
-  virtual void MaskHistogramChangedCallback(vtkIdType VolId);
-
-  // Get histogram value
-  //virtual void GetMaskHistogramValue();
-
 protected:
   vtkEMSegmentIntensityNormalizationStep();
   ~vtkEMSegmentIntensityNormalizationStep();
@@ -95,10 +86,7 @@ protected:
   virtual void PopulateNormalizationTargetVolumeSelector();
   virtual void PopulateNormalizationHistogramSelector();
 
-  virtual void PopulateMaskTargetVolumeSelector();
-  virtual void PopulateMaskHistogramSelector();
-
-  virtual void ResetDefaultParameters(vtkIdType targetVolId);
+  virtual void ResetDefaultParameters(vtkIdType targetvolId);
   virtual void HideUserInterface();
 
   vtkKWMenuButtonWithLabel     *NormalizationTargetVolumeMenuButton;
@@ -111,10 +99,7 @@ protected:
   vtkKWEntryWithLabel          *NormalizationMaxSmoothingWidthEntry;
   vtkKWScaleWithEntry          *NormalizationRelativeMaxVoxelScale;
 
-  vtkKWMenuButtonWithLabel     *MaskHistogramMenuButton;
-  vtkKWHistogram               *MaskHistogram;
-  vtkKWFrameWithLabel          *MaskHistogramFrame;
-  vtkKWPiecewiseFunctionEditor *MaskPiecewiseFunctionEditor;
+  vtkKWRenderWidget            *MaskRenderWidget;
 
   vtkKWMenuButtonWithLabel     *NormalizationHistogramMenuButton;
   vtkKWHistogram               *NormalizationHistogram;
@@ -124,7 +109,9 @@ protected:
   vtkKWEntryWithLabel          *NormalizationValueRecommendedEntry;
   vtkKWFrameWithLabel          *RecommendationFrame;
 
-  vtkIdType IdEvent;
+  vtkActor                     *Actor;
+  vtkIdType                    IdEvent;
+  vtkPolyDataMapper            *Mapper;
 
 private:
   vtkEMSegmentIntensityNormalizationStep(const

@@ -30,6 +30,8 @@
 #include "vtkEMSegment.h"
 #include "vtkKWRenderWidget.h"
 
+class vtkCellArray;
+
 class VTK_EMSEGMENT_EXPORT vtkGaussian2DWidget : public vtkKWRenderWidget
 {
 public:
@@ -55,8 +57,34 @@ public:
   // Description:
   // Set the mean and standard deviation to define an additional
   // gaussian distribution
-  virtual int AddGaussian(double meanX, double meanY, double varianceX, double
-      varianceY, double covariance, double hue);
+  virtual int AddGaussian(
+      double meanX,
+      double meanY,
+      double varianceX,
+      double varianceY,
+      double covariance,
+      double hue);
+
+  // Description:
+  // Set the mean and standard deviation to define an additional
+  // gaussian distribution
+  virtual int AddCovarianceMatrix(
+      double meanX,
+      double meanY,
+      double varianceX,
+      double varianceY,
+      double covariance,
+      double hue);
+
+  // Description:
+  // Set the mean and standard deviation to define an additional
+  // gaussian distribution
+  virtual int AddVariances(
+      double meanX,
+      double meanY,
+      double varianceX,
+      double varianceY,
+      double hue);
 
   // Description:
   // Set gaussian visibility on
@@ -74,6 +102,24 @@ protected:
   vtkGaussian2DWidget();
   ~vtkGaussian2DWidget();
 
+  int EigenDecomposition(
+    double varianceX, double varianceY, double covariance,
+    double &sine, double &cosine, double &lambda1, double &lambda2);
+
+  int DrawGaussian(
+    double meanX,
+    double meanY,
+    double varianceX,
+    double varianceY,
+    double covariance,
+    double sine,
+    double cosine,
+    double lambda1,
+    double lambda2,
+    double hue);
+
+  vtkCellArray *Strips;
+
   double ScalarRangeX[2];
   double ScalarRangeY[2];
 
@@ -81,8 +127,8 @@ protected:
   int NumberOfGaussians;
 
 private:
-  vtkGaussian2DWidget(const vtkGaussian2DWidget&);  // Not implemented
-  void operator=(const vtkGaussian2DWidget&);  // Not implemented
+  vtkGaussian2DWidget(const vtkGaussian2DWidget&); // Not implemented
+  void operator=(const vtkGaussian2DWidget&); // Not implemented
 };
 
 #endif

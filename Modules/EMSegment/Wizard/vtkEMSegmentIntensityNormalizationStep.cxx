@@ -19,24 +19,58 @@
 #include "vtkEMSegmentLogic.h"
 #include "vtkEMSegmentMRMLManager.h"
 
+#include "vtkAppendPolyData.h"
+#include "vtkBoxWidget.h"
+#include "vtkCommand.h"
+#include "vtkConeSource.h"
+#include "vtkGlyph3D.h"
+#include "vtkInteractorEventRecorder.h"
+#include "vtkPointData.h"
+#include "vtkPolyData.h"
+#include "vtkPolyDataMapper.h"
+#include "vtkRenderer.h"
+#include "vtkRenderWindow.h"
+#include "vtkRenderWindowInteractor.h"
+#include "vtkSphereSource.h"
+#include "vtkTransform.h"
+
 #include "vtkKWCheckButton.h"
 #include "vtkKWCheckButtonWithLabel.h"
 #include "vtkKWEntry.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWFrame.h"
 #include "vtkKWFrameWithLabel.h"
+#include "vtkKWHistogram.h"
 #include "vtkKWLabel.h"
+#include "vtkKWListBoxWithScrollbarsWithLabel.h"
 #include "vtkKWMenuButton.h"
 #include "vtkKWMenuButtonWithLabel.h"
-#include "vtkKWScaleWithEntry.h"
-
-#include "vtkKWHistogram.h"
 #include "vtkKWPiecewiseFunctionEditor.h"
-#include "vtkPointData.h"
-
+#include "vtkKWRenderWidget.h"
+#include "vtkKWScaleWithEntry.h"
 #include "vtkKWWizardWidget.h"
 #include "vtkKWWizardWorkflow.h"
-#include "vtkKWListBoxWithScrollbarsWithLabel.h"
+
+// Callback for the interaction
+class vtkBWCallback : public vtkCommand
+{
+public:
+  static vtkBWCallback *New()
+    {
+      return new vtkBWCallback;
+    }
+
+  virtual void Execute(vtkObject *caller, unsigned long, void*)
+    {
+      vtkBoxWidget *boxWidget = reinterpret_cast<vtkBoxWidget*>(caller);
+      boxWidget->GetTransform(this->Transform);
+      this->Actor->SetUserTransform(this->Transform);
+    }
+
+  vtkBWCallback():Transform(0),Actor(0) {}
+  vtkTransform *Transform;
+  vtkActor     *Actor;
+};
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkEMSegmentIntensityNormalizationStep);
@@ -60,10 +94,7 @@ vtkEMSegmentIntensityNormalizationStep()
   this->NormalizationMaxSmoothingWidthEntry  = NULL;
   this->NormalizationRelativeMaxVoxelScale   = NULL;
 
-  this->MaskHistogramFrame                   = NULL;
-  this->MaskHistogram                        = NULL;
-  this->MaskHistogramMenuButton              = NULL;
-  this->MaskPiecewiseFunctionEditor          = NULL;
+  this->MaskRenderWidget                     = NULL;
 
   this->NormalizationHistogramFrame          = NULL;
   this->NormalizationHistogram               = NULL;
@@ -72,6 +103,9 @@ vtkEMSegmentIntensityNormalizationStep()
 
   this->NormalizationValueRecommendedEntry   = NULL;
   this->RecommendationFrame                  = NULL;
+
+  this->Actor  = vtkActor::New();
+  this->Mapper = vtkPolyDataMapper::New();
 }
 
 //----------------------------------------------------------------------------
@@ -132,28 +166,10 @@ vtkEMSegmentIntensityNormalizationStep::
     this->NormalizationParametersFrame = NULL;
   }
 
-  if (this->MaskHistogram)
+  if (this->MaskRenderWidget)
   {
-    this->MaskHistogram->Delete();
-    this->MaskHistogram = NULL;
-  }
-
-  if (this->MaskHistogramFrame)
-  {
-    this->MaskHistogramFrame->Delete();
-    this->MaskHistogramFrame = NULL;
-  }
-
-  if (this->MaskHistogramMenuButton)
-  {
-    this->MaskHistogramMenuButton->Delete();
-    this->MaskHistogramMenuButton = NULL;
-  }
-
-  if (this->MaskPiecewiseFunctionEditor)
-  {
-    this->MaskPiecewiseFunctionEditor->Delete();
-    this->MaskPiecewiseFunctionEditor = NULL;
+    this->MaskRenderWidget->Delete();
+    this->MaskRenderWidget = NULL;
   }
 
   if (this->NormalizationHistogram)
@@ -191,6 +207,18 @@ vtkEMSegmentIntensityNormalizationStep::
     this->RecommendationFrame->Delete();
     this->RecommendationFrame = NULL;
   }
+
+  if (this->Actor)
+  {
+    this->Actor->Delete();
+    this->Actor = NULL;
+  }
+
+  if (this->Mapper)
+  {
+    this->Mapper->Delete();
+    this->Mapper = NULL;
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -198,7 +226,9 @@ void vtkEMSegmentIntensityNormalizationStep::ShowUserInterface()
 {
   this->Superclass::ShowUserInterface();
 
-  vtkKWWizardWidget *wizardWidget = this->GetGUI()->GetWizardWidget();
+  vtkKWWizardWidget *wizardWidget =
+    this->GetGUI()->GetWizardWidget();
+
   wizardWidget->GetCancelButton()->SetEnabled(0);
 
   vtkKWWidget *parent = wizardWidget->GetClientArea();
@@ -207,8 +237,8 @@ void vtkEMSegmentIntensityNormalizationStep::ShowUserInterface()
 
   if (!this->NormalizationTargetVolumeMenuButton)
   {
-    this->NormalizationTargetVolumeMenuButton = vtkKWMenuButtonWithLabel::
-      New();
+    this->NormalizationTargetVolumeMenuButton =
+      vtkKWMenuButtonWithLabel::New();
   }
 
   if (!this->NormalizationTargetVolumeMenuButton->IsCreated())
@@ -271,8 +301,8 @@ void vtkEMSegmentIntensityNormalizationStep::ShowUserInterface()
   this->Script("grid %s -column 0 -row 0 -sticky nw -padx 2 -pady 2",
       this->NormalizationEnableCheckButton->GetWidgetName());
 
-  vtkKWMenu *menu = this->NormalizationTargetVolumeMenuButton->GetWidget()->
-    GetMenu();
+  vtkKWMenu *menu =
+    this->NormalizationTargetVolumeMenuButton->GetWidget()->GetMenu();
 
   // Create the normalization actions menu button
 
@@ -424,21 +454,23 @@ void vtkEMSegmentIntensityNormalizationStep::ShowUserInterface()
   this->NormalizationRelativeMaxVoxelScale->SetEnabled(0);
 
   vtkEMSegmentMRMLManager *mrmlManager0 = this->GetGUI()->GetMRMLManager();
+
   if (!mrmlManager0)
   {
     return;
   }
 
-  this->NormalizationTargetVolumeMenuButton->SetEnabled(mrmlManager0->
-      GetTargetNumberOfSelectedVolumes() ? parent->GetEnabled() : 0);
+  this->NormalizationTargetVolumeMenuButton->SetEnabled(
+      mrmlManager0->GetTargetNumberOfSelectedVolumes() ?
+      parent->GetEnabled() : 0);
 
   if (this->NormalizationTargetVolumeMenuButton->GetEnabled())
   {
     // Select the target volume, and update everything else accordingly
     vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
-    if (!mrmlManager->GetTargetNumberOfSelectedVolumes() || menu->
-        GetNumberOfItems()<=0)
+    if (!mrmlManager->GetTargetNumberOfSelectedVolumes() ||
+        menu->GetNumberOfItems()<=0)
     {
       this->NormalizationTargetVolumeMenuButton->GetWidget()->SetValue("");
     }
@@ -451,104 +483,24 @@ void vtkEMSegmentIntensityNormalizationStep::ShowUserInterface()
   }
 
   //--------------------------------------------------------------------------
-  // Create the mask frame
+  // Create the mask render widget
 
-  if (!this->MaskHistogramFrame)
+  if (!this->MaskRenderWidget)
   {
-    this->MaskHistogramFrame = vtkKWFrameWithLabel::New();
+    this->MaskRenderWidget = vtkKWRenderWidget::New();
   }
 
-  if (!this->MaskHistogramFrame->IsCreated())
+  if (!this->MaskRenderWidget->IsCreated())
   {
-    this->MaskHistogramFrame->SetParent(parent);
-    this->MaskHistogramFrame->Create();
-    this->MaskHistogramFrame->SetLabelText("Mask");
+    this->MaskRenderWidget->SetParent(parent);
+    this->MaskRenderWidget->Create();
   }
+
+  //this->RunRenderWidget->SetEnabled(
+    //mrmlManager->HasGlobalParametersNode() ? enabled : 0);
 
   this->Script("pack %s -side top -anchor nw -fill both -padx 2 -pady 2",
-    this->MaskHistogramFrame->GetWidgetName());
-
-  // Create the mask volume selector
-
-  vtkKWFrame* maskFrame = this->MaskHistogramFrame->GetFrame();//parent???
-
-  if (!this->MaskHistogramMenuButton)
-    {
-    this->MaskHistogramMenuButton = vtkKWMenuButtonWithLabel::New();
-    }
-
-  if (!this->MaskHistogramMenuButton->IsCreated())
-    {
-    this->MaskHistogramMenuButton->SetParent(maskFrame);
-    this->MaskHistogramMenuButton->Create();
-    this->MaskHistogramMenuButton->GetWidget()->
-      SetWidth(EMSEG_MENU_BUTTON_WIDTH+10);
-    this->MaskHistogramMenuButton->GetLabel()->
-      SetWidth(EMSEG_WIDGETS_LABEL_WIDTH-10);
-    this->MaskHistogramMenuButton->
-      SetLabelText("Input Image:");
-    this->MaskHistogramMenuButton->SetBalloonHelpString(
-        "Select the image to use for the mask creation.");
-    }
-
-  this->Script("pack %s -side top -anchor nw -fill both -padx 2 -pady 5",
-    this->MaskHistogramMenuButton->GetWidgetName());
-
-  this->PopulateMaskHistogramSelector();
-
-  /*
-  if (mrmlManager0->GetTargetNumberOfSelectedVolumes()>0)
-    {
-    this->MaskHistogramMenuButton->GetWidget()->SetValue(mrmlManager0->
-      GetVolumeName(mrmlManager0->GetVolumeNthID(0)));
-    }
-  */
-
-  // Create the mask
-
-  if (!this->MaskHistogram)
-    {
-    this->MaskHistogram = vtkKWHistogram::New();
-    this->MaskPiecewiseFunctionEditor = vtkKWPiecewiseFunctionEditor::New();
-    }
-
-  if (!this->MaskPiecewiseFunctionEditor->IsCreated())
-    {
-    this->MaskPiecewiseFunctionEditor->SetParent(maskFrame);
-    this->MaskPiecewiseFunctionEditor->Create();
-    this->MaskPiecewiseFunctionEditor->GetTclName();
-    this->MaskPiecewiseFunctionEditor->SetBorderWidth(2);
-    this->MaskPiecewiseFunctionEditor->SetPadX(2);
-    this->MaskPiecewiseFunctionEditor->SetPadY(2);
-
-    this->MaskPiecewiseFunctionEditor->ParameterTicksVisibilityOn();
-    this->MaskPiecewiseFunctionEditor->ValueTicksVisibilityOn();
-    this->MaskPiecewiseFunctionEditor->ComputeValueTicksFromHistogramOn();
-    this->MaskPiecewiseFunctionEditor->SetParameterTicksFormat("%-#6.0f");
-    this->MaskPiecewiseFunctionEditor->SetValueTicksFormat(
-    this->MaskPiecewiseFunctionEditor->GetParameterTicksFormat());
-    this->MaskPiecewiseFunctionEditor->SetFrameBackgroundColor(0.92,1.0,0.92);
-    this->MaskPiecewiseFunctionEditor->SetParameterCursorVisibility(50);
-    this->MaskPiecewiseFunctionEditor->SetParameterCursorPosition(50);
-    this->MaskPiecewiseFunctionEditor->SetParameterCursorInteractionStyle(7);
-    }
-
-  this->Script(
-    "pack %s -side top -anchor nw -fill both -padx 2 -pady 2 -pady 2",
-    this->MaskPiecewiseFunctionEditor->GetWidgetName());
-
-  this->MaskHistogramMenuButton->SetEnabled(
-    mrmlManager0->GetVolumeNumberOfChoices() ? parent->GetEnabled() : 0);
-
-  if(this->MaskHistogramMenuButton->GetEnabled())
-    {
-    // Select the target volume, and update everything else accordingly
-    vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-    int volId = mrmlManager->GetVolumeNthID(0);
-    this->MaskHistogramChangedCallback(volId);
-    }
-
-  //this->AddCursorMovingGUIEvents();
+    this->MaskRenderWidget->GetWidgetName());
 
   //--------------------------------------------------------------------------
   // Create the histogram frame
@@ -709,11 +661,13 @@ void vtkEMSegmentIntensityNormalizationStep::
   char buffer[256];
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+
   if (!mrmlManager)
     {
     return;
     }
-  int nb_of_target_volumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
+
+  int numTargets = mrmlManager->GetTargetNumberOfSelectedVolumes();
 
   vtkKWMenu* menu = this->NormalizationTargetVolumeMenuButton->
     GetWidget()->GetMenu();
@@ -721,18 +675,23 @@ void vtkEMSegmentIntensityNormalizationStep::
 
   // Update the target volume list in the menu button
 
-  for(int i = 0; i < nb_of_target_volumes; i++)
+  for(int i = 0; i < numTargets; i++)
     {
     targetVolId = mrmlManager->GetTargetSelectedVolumeNthID(i);
+
     sprintf(buffer, "%s %d", "NormalizationTargetSelectionChangedCallback",
             static_cast<int>(targetVolId));
+
     const char *name = mrmlManager->GetVolumeName(targetVolId);
+
     if (name)
       {
       menu->AddRadioButton(name, this, buffer);
+
       if (i == 0)
         {
-        this->NormalizationTargetVolumeMenuButton->GetWidget()->SetValue(name);
+        this->NormalizationTargetVolumeMenuButton->GetWidget()->
+          SetValue(name);
         }
       }
     }
@@ -1116,6 +1075,108 @@ void vtkEMSegmentIntensityNormalizationStep::ProcessCursorMovingGUIEvents(
     this->NormalizationValueRecommendedEntry->GetWidget()->SetValueAsDouble(
         (int)(mean+0.5));
   }
+  else if (this->Mapper->GetInput() == NULL)
+  {
+    if (this->MaskRenderWidget->GetRenderWindow() == NULL)
+    {
+      vtkEMSegmentMRMLManager *mrmlManager =
+        this->GetGUI()->GetMRMLManager();
+
+      vtkMRMLScalarVolumeNode *labelVolume =
+        mrmlManager->GetOutputVolumeNode();
+
+      if (labelVolume == NULL)
+      {
+        vtkErrorMacro("No label volume found");
+        return;
+      }
+
+      if (labelVolume->GetImageData() == NULL)
+      {
+        vtkErrorMacro("Label Map has no data");
+        return;
+      }
+
+      vtkRenderer *renderer = this->MaskRenderWidget->GetRenderer();
+
+      vtkRenderWindow *renWin = this->MaskRenderWidget->GetRenderWindow();
+
+      vtkRenderWindowInteractor *iren = renWin->GetInteractor();
+
+      vtkBoxWidget *boxWidget = vtkBoxWidget::New();
+      boxWidget->SetInteractor( iren );
+      boxWidget->SetPlaceFactor( 1.25 );
+
+      vtkConeSource *cone = vtkConeSource::New();
+      cone->SetResolution(6);
+
+      vtkSphereSource *sphere = vtkSphereSource::New();
+      sphere->SetThetaResolution(8); sphere->SetPhiResolution(8);
+
+      vtkGlyph3D *glyph = vtkGlyph3D::New();
+      glyph->SetInputConnection(sphere->GetOutputPort());
+      glyph->SetSource(cone->GetOutput());
+      glyph->SetVectorModeToUseNormal();
+      glyph->SetScaleModeToScaleByVector();
+      glyph->SetScaleFactor(0.25);
+
+      vtkAppendPolyData *append = vtkAppendPolyData::New();
+      append->AddInput(glyph->GetOutput());
+      append->AddInput(sphere->GetOutput());
+
+      this->Mapper->SetInput(append->GetOutput());
+
+      this->Actor->SetMapper(this->Mapper);
+
+      this->MaskRenderWidget->RemoveAllViewProps();
+      this->MaskRenderWidget->AddViewProp(this->Actor);
+
+      renderer->SetBackground(0,0,0);
+      renWin->SetSize(400,400);
+
+      // Configure the box widget including callbacks
+      vtkTransform *transform = vtkTransform::New();
+      boxWidget->SetProp3D(this->Actor);
+      boxWidget->PlaceWidget();
+
+      vtkBWCallback *myCallback = vtkBWCallback::New();
+      myCallback->Transform = transform;
+
+      myCallback->Actor = this->Actor;
+      boxWidget->AddObserver(vtkCommand::InteractionEvent,myCallback);
+
+      // record events
+      //vtkInteractorEventRecorder *recorder =
+      //vtkInteractorEventRecorder::New();
+      //recorder->SetInteractor(iren);
+      //recorder->SetFileName("c:/record.log");
+      //recorder->Record();
+      //recorder->ReadFromInputStringOn();
+      //recorder->SetInputString(BoxWidgetEventLog);
+
+      this->MaskRenderWidget->Render();
+      //recorder->Play();
+
+      // Remove the observers so we can go interactive. Without this the "-I"
+      // testing option fails.
+      //recorder->Off();
+
+      //int retVal = vtkRegressionTestImage( renWin );
+      //if ( retVal == vtkRegressionTester::DO_INTERACTOR)
+      //{
+      //iren->Start();
+      //}
+/*
+      t->Delete();
+      myCallback->Delete();
+      boxWidget->Delete();
+      sphere->Delete();
+      cone->Delete();
+      glyph->Delete();
+      append->Delete();
+*/
+    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -1139,153 +1200,5 @@ void vtkEMSegmentIntensityNormalizationStep::HideUserInterface()
 {
   this->Superclass::HideUserInterface();
   this->RemoveCursorMovingGUIEvents();
-}
-
-//----------------------------------------------------------------------------
-void vtkEMSegmentIntensityNormalizationStep::
-PopulateMaskTargetVolumeSelector()
-{
-  vtkIdType targetVolId;
-  char buffer[256];
-
-  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  if (!mrmlManager)
-    {
-    return;
-    }
-
-  int numTargetVolumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
-
-  vtkKWMenu* menu = this->NormalizationTargetVolumeMenuButton->
-    GetWidget()->GetMenu();
-  menu->DeleteAllItems();
-
-  // Update the target volume list in the menu button
-
-  for (int i=0; i < numTargetVolumes; i++)
-    {
-    targetVolId = mrmlManager->GetTargetSelectedVolumeNthID(i);
-    sprintf(buffer, "%s %d", "NormalizationTargetSelectionChangedCallback",
-        static_cast<int>(targetVolId));
-    const char *name = mrmlManager->GetVolumeName(targetVolId);
-    if (name)
-      {
-      menu->AddRadioButton(name, this, buffer);
-      if (i == 0)
-        {
-        this->NormalizationTargetVolumeMenuButton->GetWidget()->
-          SetValue(name);
-        }
-      }
-    }
-}
-
-//----------------------------------------------------------------------------
-void vtkEMSegmentIntensityNormalizationStep::PopulateMaskHistogramSelector()
-{
-  char buffer[256];
-
-  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-
-  if (!mrmlManager)
-    {
-    return;
-    }
-
-  int numVolumes = mrmlManager->GetVolumeNumberOfChoices();
-
-  vtkKWMenu* menu = this->MaskHistogramMenuButton->GetWidget()->GetMenu();
-  menu->DeleteAllItems();
-
-  // Update the target volume list in the menu button
-
-  for (int i=0; i < numVolumes; i++)
-    {
-    vtkIdType volId = mrmlManager->GetVolumeNthID(i);
-
-    sprintf(buffer,"%s %d","MaskHistogramChangedCallback",
-        static_cast<int>(volId));
-
-    const char *name = mrmlManager->GetVolumeName(volId);
-
-    if (name)
-      {
-      menu->AddRadioButton(name, this, buffer);
-
-      if (i == 0)
-        {
-        this->MaskHistogramMenuButton->GetWidget()->SetValue(name);
-        }
-      }
-    }
-}
-
-//----------------------------------------------------------------------------
-void vtkEMSegmentIntensityNormalizationStep::
-  MaskTargetSelectionChangedCallback(vtkIdType targetVolId)
-{
-  // The target volumes have changed because of user interaction
-
-  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-
-  if (!mrmlManager)
-    {
-    return;
-    }
-
-  char buffer[256];
-  int parentEnabled = this->NormalizationParametersFrame->GetEnabled();
-
-  // Update Normalization-Enable check button
-
-  this->NormalizationEnableCheckButton->SetEnabled(parentEnabled);
-
-  vtkKWCheckButton *cbEnable =
-    this->NormalizationEnableCheckButton->GetWidget();
-
-  sprintf(buffer, "NormalizationEnableCallback %d",
-      static_cast<int>(targetVolId));
-
-  cbEnable->SetCommand(this, buffer);
-  cbEnable->SetSelectedState(mrmlManager->
-    GetTargetVolumeIntensityNormalizationEnabled(targetVolId));
-
-  this->NormalizationEnableCallback(targetVolId,cbEnable->GetSelectedState());
-}
-
-//----------------------------------------------------------------------------
-void vtkEMSegmentIntensityNormalizationStep::MaskHistogramChangedCallback(
-    vtkIdType targetVolId)
-{
-  // The target volumes have changed because of user interaction
-
-  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-
-  if (!mrmlManager) { return; }
-
-  vtkMRMLVolumeNode* volumeNode = mrmlManager->GetVolumeNode(targetVolId);
-
-  if (!volumeNode) { return; }
-
-  vtkImageData* inputImage = volumeNode->GetImageData();
-
-  if (!inputImage) { return; }
-
-  vtkDataArray* array = inputImage->GetPointData()->GetScalars();
-
-  if (!array) { return; }
-
-  this->MaskHistogram->BuildHistogram(array,0);
-  this->MaskPiecewiseFunctionEditor->SetHistogram(MaskHistogram);
-  this->MaskPiecewiseFunctionEditor->DisplayHistogramOnly();
-
-  this->MaskPiecewiseFunctionEditor->SetWholeParameterRangeToFunctionRange();
-  this->MaskPiecewiseFunctionEditor->
-    SetVisibleParameterRangeToWholeParameterRange();
-  this->MaskPiecewiseFunctionEditor->ParameterRangeVisibilityOn();
-  this->MaskPiecewiseFunctionEditor->ExpandCanvasWidthOn();
-  this->MaskPiecewiseFunctionEditor->SetCanvasHeight(180);
-
-  this->IdEvent = targetVolId;
 }
 
