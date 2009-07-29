@@ -1,18 +1,18 @@
-/*=auto==============================================================
+/*=auto=======================================================================
 
-Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All
-Rights Reserved.
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
+  Reserved.
 
-See Doc/copyright/copyright.txt
-or http://www.slicer.org/copyright/copyright.txt for details.
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
 
-Program:   3D Slicer
-Module:    $RCSfile: vtkEMSegmentParametersSetStep.cxx,v$
-Date:      $Date: 2006/01/06 17:56:51 $
-Version:   $Revision: 1.6 $
-Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
+  Program:   3D Slicer
+  Module:    $RCSfile: vtkEMSegmentParametersSetStep.cxx,v$
+  Date:      $Date: 2006/01/06 17:56:51 $
+  Version:   $Revision: 1.6 $
+  Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 
-==============================================================auto=*/
+=======================================================================auto=*/
 
 #include "vtkEMSegmentParametersSetStep.h"
 
@@ -67,9 +67,9 @@ void vtkEMSegmentParametersSetStep::ShowUserInterface()
 {
   this->Superclass::ShowUserInterface();
 
-  vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
+  vtkKWWizardWidget *wizardWidget = this->GetGUI()->GetWizardWidget();
 
-  wizard_widget->GetCancelButton()->SetEnabled(0);
+  wizardWidget->GetCancelButton()->SetEnabled(0);
 
   // Create the Parameters set frame
 
@@ -77,15 +77,16 @@ void vtkEMSegmentParametersSetStep::ShowUserInterface()
     {
     this->ParameterSetFrame = vtkKWFrameWithLabel::New();
     }
+
   if (!this->ParameterSetFrame->IsCreated())
     {
-    this->ParameterSetFrame->SetParent(wizard_widget->GetClientArea());
+    this->ParameterSetFrame->SetParent(wizardWidget->GetClientArea());
     this->ParameterSetFrame->Create();
     this->ParameterSetFrame->SetLabelText("Select Parameter Set");
     }
 
-  this->Script("pack %s -side top -expand n -fill both -padx 0 -pady 2", 
-               this->ParameterSetFrame->GetWidgetName());
+  this->Script("pack %s -side top -expand n -fill both -padx 0 -pady 2",
+      this->ParameterSetFrame->GetWidgetName());
 
   // Create the Parameters Set Menu button
 
@@ -93,6 +94,7 @@ void vtkEMSegmentParametersSetStep::ShowUserInterface()
     {
     this->ParameterSetMenuButton = vtkKWMenuButtonWithLabel::New();
     }
+
   if (!this->ParameterSetMenuButton->IsCreated())
     {
     this->ParameterSetMenuButton->SetParent(
@@ -107,42 +109,48 @@ void vtkEMSegmentParametersSetStep::ShowUserInterface()
       "Select Parameter Set.");
     }
 
-  this->Script("pack %s -side top -anchor nw -padx 2 -pady 2", 
-               this->ParameterSetMenuButton->GetWidgetName());
-  
+  this->Script("pack %s -side top -anchor nw -padx 2 -pady 2",
+      this->ParameterSetMenuButton->GetWidgetName());
+
   this->UpdateLoadedParameterSets();
 }
 
 //----------------------------------------------------------------------------
-void vtkEMSegmentParametersSetStep::PopulateLoadedParameterSets(
-  vtkObject *obj, const char *method)
+void vtkEMSegmentParametersSetStep::
+PopulateLoadedParameterSets(
+    vtkObject *obj, const char *method)
 {
-  if(!this->ParameterSetMenuButton ||
+  if (!this->ParameterSetMenuButton ||
      !this->ParameterSetMenuButton->IsCreated())
     {
     return;
     }
 
-  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  vtkEMSegmentMRMLManager *mrmlManager =
+    this->GetGUI()->GetMRMLManager();
 
-  vtkKWMenu *menu = 
+  vtkKWMenu *menu =
     this->ParameterSetMenuButton->GetWidget()->GetMenu();
   menu->DeleteAllItems();
+
   char buffer[256];
-  
+
   sprintf(buffer, "%s %d", method, -1);
   menu->AddRadioButton("Create New Parameters", obj, buffer);
-  
-  if(!mrmlManager)
+
+  if (!mrmlManager)
     {
-    vtkWarningMacro("PopulateLoadedParameterSets: returning, no mrml manager");
+    vtkWarningMacro(
+        "PopulateLoadedParameterSets: returning, no mrml manager");
     return;
     }
 
-  int nb_of_sets = mrmlManager->GetNumberOfParameterSets();
-  for(int index = 0; index < nb_of_sets; index++)
+  int numSets = mrmlManager->GetNumberOfParameterSets();
+
+  for(int index = 0; index < numSets; index++)
     {
     const char *name = mrmlManager->GetNthParameterSetName(index);
+
     if (name)
       {
       sprintf(buffer, "%s %d", method, index);
@@ -161,14 +169,15 @@ void vtkEMSegmentParametersSetStep::UpdateLoadedParameterSets()
     }
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  if(!mrmlManager)
+  if (!mrmlManager)
     {
     return;
     }
 
   vtkKWMenuButton *menuButton = this->ParameterSetMenuButton->GetWidget();
   vtksys_stl::string sel_value = "";
-  if(menuButton->GetValue())
+
+  if (menuButton->GetValue())
     {
     sel_value = menuButton->GetValue();
     }
@@ -179,10 +188,12 @@ void vtkEMSegmentParametersSetStep::UpdateLoadedParameterSets()
   if (strcmp(sel_value.c_str(), "") != 0)
     {
     // Select the original
-    int nb_of_sets = menuButton->GetMenu()->GetNumberOfItems();
-    for (int index = 0; index < nb_of_sets; index++)
+    int numSets = menuButton->GetMenu()->GetNumberOfItems();
+
+    for (int index = 0; index < numSets; index++)
       {
       const char *name = menuButton->GetMenu()->GetItemLabel(index);
+
       if (name && strcmp(sel_value.c_str(), name) == 0)
         {
         menuButton->GetMenu()->SelectItem(index);
@@ -194,8 +205,9 @@ void vtkEMSegmentParametersSetStep::UpdateLoadedParameterSets()
   // if there is no previous selection, select the first loaded set,
   // or if there is no loaded set, leave it blank
 
-  int nb_of_sets = mrmlManager->GetNumberOfParameterSets();
-  if(nb_of_sets > 0 &&
+  int numSets = mrmlManager->GetNumberOfParameterSets();
+
+  if (numSets > 0 &&
      menuButton->GetMenu()->GetNumberOfItems() > 1)
     {
     this->ParameterSetMenuButton->GetWidget()->GetMenu()->SelectItem(1);
@@ -204,7 +216,8 @@ void vtkEMSegmentParametersSetStep::UpdateLoadedParameterSets()
 }
 
 //----------------------------------------------------------------------------
-void vtkEMSegmentParametersSetStep::SelectedParameterSetChangedCallback(
+void vtkEMSegmentParametersSetStep::
+SelectedParameterSetChangedCallback(
   int index)
 {
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
@@ -214,20 +227,24 @@ void vtkEMSegmentParametersSetStep::SelectedParameterSetChangedCallback(
   if (index < 0)
     {
     mrmlManager->CreateAndObserveNewParameterSet();
+
     //Assuming the mrml manager adds the node to the end.
-    int nb_of_sets = mrmlManager->GetNumberOfParameterSets();
-    if (nb_of_sets > 0)
+    int numSets = mrmlManager->GetNumberOfParameterSets();
+
+    if (numSets > 0)
       {
       this->UpdateLoadedParameterSets();
-      const char *name = mrmlManager->GetNthParameterSetName(nb_of_sets-1);
+      const char *name = mrmlManager->GetNthParameterSetName(numSets-1);
+
       if (name)
         {
         // Select the newly created parameter set
-        vtkKWMenuButton *menuButton = 
+        vtkKWMenuButton *menuButton =
           this->ParameterSetMenuButton->GetWidget();
-        if (menuButton->GetMenu()->GetNumberOfItems() == nb_of_sets + 1)
+
+        if (menuButton->GetMenu()->GetNumberOfItems() == numSets + 1)
           {
-          menuButton->GetMenu()->SelectItem(nb_of_sets);
+          menuButton->GetMenu()->SelectItem(numSets);
           }
         }
       }
@@ -236,11 +253,12 @@ void vtkEMSegmentParametersSetStep::SelectedParameterSetChangedCallback(
     {
     mrmlManager->SetLoadedParameterSetIndex(index);
     }
-  
-  vtkEMSegmentAnatomicalStructureStep *anat_step = 
+
+  vtkEMSegmentAnatomicalStructureStep *anat_step =
     this->GetGUI()->GetAnatomicalStructureStep();
-  if (anat_step && 
-      anat_step->GetAnatomicalStructureTree() && 
+
+  if (anat_step &&
+      anat_step->GetAnatomicalStructureTree() &&
       anat_step->GetAnatomicalStructureTree()->IsCreated())
     {
     anat_step->GetAnatomicalStructureTree()->GetWidget()->DeleteAllNodes();
@@ -252,3 +270,4 @@ void vtkEMSegmentParametersSetStep::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }
+
