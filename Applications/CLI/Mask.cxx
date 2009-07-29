@@ -29,6 +29,9 @@
 #include "itkMaskImageFilter.h"
 #include "itkThresholdImageFilter.h"
 
+#include "itkNearestNeighborInterpolateImageFunction.h"
+#include "itkResampleImageFilter.h"
+
 #include "itkPluginUtilities.h"
 #include "MaskCLP.h"
 
@@ -53,6 +56,8 @@ template<class T> int DoIt( int argc, char * argv[], T )
   typedef itk::ImageFileReader< InputImageType >  ReaderType;
   typedef itk::ImageFileWriter< OutputImageType > WriterType;
 
+  typedef itk::NearestNeighborInterpolateImageFunction<InputImageType> Interpolator;
+  typedef itk::ResampleImageFilter<InputImageType, OutputImageType> ResampleType;
   typedef itk::MaskImageFilter<
     InputImageType, InputImageType, OutputImageType >  FilterType;
 
@@ -69,6 +74,10 @@ template<class T> int DoIt( int argc, char * argv[], T )
                                         CLPProcessInformation);
   reader1->SetFileName( InputVolume.c_str() );
   reader2->SetFileName( MaskVolume.c_str() );
+  reader2->ReleaseDataFlagOn();
+
+  reader1->Update();
+  reader2->Update();
 
   // have to threshold the mask volume
   typename ThresholdFilterType::Pointer thresholdFilter = ThresholdFilterType::New();
@@ -79,14 +88,29 @@ template<class T> int DoIt( int argc, char * argv[], T )
   thresholdFilter->SetInput(0, reader2->GetOutput());
   thresholdFilter->SetOutsideValue(0);
   thresholdFilter->ThresholdOutside(Label,Label);
+  thresholdFilter->ReleaseDataFlagOn();
   
+  typename Interpolator::Pointer interp = Interpolator::New();
+  interp->SetInputImage(thresholdFilter->GetOutput());
+  
+  typename ResampleType::Pointer resample = ResampleType::New();
+  resample->SetInput(thresholdFilter->GetOutput());
+  resample->SetOutputParametersFromImage(reader1->GetOutput());
+  resample->SetInterpolator( interp );
+  resample->SetDefaultPixelValue( 0 );
+  resample->ReleaseDataFlagOn();
+
+  itk::PluginFilterWatcher watchResample(resample, "Resampling",
+                                        CLPProcessInformation);
+  
+
   typename FilterType::Pointer filter = FilterType::New();
   itk::PluginFilterWatcher watchFilter(filter,
-                                       "Mask Image",
+                                       "Masking",
                                        CLPProcessInformation);
 
   filter->SetInput( 0, reader1->GetOutput() );
-  filter->SetInput( 1, thresholdFilter->GetOutput() );
+  filter->SetInput( 1, resample->GetOutput() );
 
   typename WriterType::Pointer writer = WriterType::New();
   itk::PluginFilterWatcher watchWriter(writer,
