@@ -472,6 +472,7 @@ if {$::GETBUILDTEST(verbose)} {
 
 # build the slicer
 # - first run cmake
+# - create the Slicer3Version.txt file
 # - then run plaftorm specific build command
 
 cd $::Slicer3_BUILD
@@ -511,7 +512,7 @@ runcmd $::CMAKE \
 # are compatibile with
 #
 
-source $::Slicer3_HOME/Scripts/versioner.tcl
+puts [exec $::Slicer3_HOME/Scripts/versioner.tcl]
 
 #
 # now do the actual build
