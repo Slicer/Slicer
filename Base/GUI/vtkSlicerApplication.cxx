@@ -1587,6 +1587,8 @@ bool vtkSlicerApplication::RequestDisplayMessage( const char *type, const char *
   active = this->DisplayMessageQueueActive;
   this->DisplayMessageQueueActiveLock->Unlock();
 
+  this->Script("puts stderr \"%s: %s\"", type, message);
+
   if (active)
     {
     this->DisplayMessageQueueLock->Lock();
