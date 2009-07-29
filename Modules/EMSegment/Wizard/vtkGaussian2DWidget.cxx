@@ -16,19 +16,31 @@
 
 #include "vtkGaussian2DWidget.h"
 
+#include "vtkActor.h"
+#include "vtkAxisActor2D.h"
 #include "vtkCallbackCommand.h"
 #include "vtkCamera.h"
 #include "vtkCommand.h"
 #include "vtkCornerAnnotation.h"
+#include "vtkCutter.h"
+#include "vtkFloatArray.h"
+#include "vtkImageData.h"
 #include "vtkInteractorStyleSwitch.h"
+#include "vtkLogLookupTable.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
+#include "vtkPlane.h"
+#include "vtkPointData.h"
 #include "vtkProperty2D.h"
 #include "vtkRenderWindow.h"
 #include "vtkRenderer.h"
 #include "vtkRendererCollection.h"
 #include "vtkTextActor.h"
 #include "vtkTextProperty.h"
+#include "vtkProperty.h"
+#include "vtkCellArray.h"
+#include "vtkImageDataGeometryFilter.h"
+#include "vtkPolyDataMapper.h"
 
 #include "vtkKWApplication.h"
 #include "vtkKWColorPickerWidget.h"
@@ -40,17 +52,6 @@
 #include "vtkKWMenu.h"
 #include "vtkKWTkUtilities.h"
 #include "vtkKWWindow.h"
-
-#include "vtkCellArray.h"
-#include "vtkImageDataGeometryFilter.h"
-#include "vtkPolyDataMapper.h"
-#include "vtkActor.h"
-
-#include "vtkFloatArray.h"
-#include "vtkImageData.h"
-#include "vtkPointData.h"
-#include "vtkLookupTable.h"
-#include "vtkAxisActor2D.h"
 
 #include "vtkKWCanvas.h"
 
@@ -252,27 +253,19 @@ int vtkGaussian2DWidget::AddGaussian(double meanX, double meanY,
 
   imageDataGeometryFilter->Delete();
 
-  double factorX = 1.0 /varianceX;
-  double factorY = 1.0 /varianceY;
-
-  
+  double factorX = 1.0 / varianceX;
+  double factorY = 1.0 / varianceY;
 
   for(int j=0, id=0; j<=extent[3]; j++)
   {
     pt[1]  = origin[1] + j * spacing[1];
-    //pt[1] -= meanY;
 
     for(int i=0; i<=extent[1]; i++, id++)
     {
       pt[0]  = origin[0] + i * spacing[0];
-      //pt[0] -= meanX;
 
-      // apply the rotation
       x =  (pt[0]-meanX) * cosine + (pt[1]-meanY) *   sine;
       y = -(pt[0]-meanX) *   sine + (pt[1]-meanY) * cosine;
-
-    //  x *= factorX;
-    //  y *= factorY;
 
       dist = x*x*factorX + y*y*factorY;
       pt[2] = exp(-dist);
@@ -290,12 +283,55 @@ int vtkGaussian2DWidget::AddGaussian(double meanX, double meanY,
   newPoints->Delete();
   polyData->SetPolys(newPolys);
   newPolys->Delete();
+
+  vtkPlane *plane = vtkPlane::New();
+  plane->SetOrigin(meanX,meanY,0.9);
+  plane->SetOrigin(0,0,1);
+
+  vtkPlane *planeX = vtkPlane::New();
+  planeX->SetOrigin(meanX,meanY,0);
+  planeX->SetNormal(-sine,cosine,0);
+
+  vtkPlane *planeY = vtkPlane::New();
+  planeY->SetOrigin(meanX,meanY,0);
+  planeY->SetNormal(cosine,sine,0);
+
+  vtkCutter *cutter = vtkCutter::New();
+  cutter->SetInput(polyData);
+  cutter->SetCutFunction(plane);
+  plane->Delete();
+  cutter->Update();
+
+  vtkCutter *cutterX = vtkCutter::New();
+  cutterX->SetInput(polyData);
+  cutterX->SetCutFunction(planeX);
+  planeX->Delete();
+  cutterX->Update();
+
+  vtkCutter *cutterY = vtkCutter::New();
+  cutterY->SetInput(polyData);
+  cutterY->SetCutFunction(planeY);
+  planeY->Delete();
+  cutterY->Update();
+
+  if (cutter->GetOutput()->GetNumberOfLines() > 6)
+  {
+    vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();
+    mapper->SetInput(cutter->GetOutput());
+
+    vtkActor *actor = vtkActor::New();
+    actor->SetMapper(mapper);
+    mapper->Delete();
+    actor->GetProperty()->SetColor(0,0,0);
+
+    this->AddViewProp(actor);
+    actor->Delete();
+  }
+
+  cutter->Delete();
+
   polyData->GetPointData()->SetScalars(newScalars);
   newScalars->Delete();
-
-  //vtkCutter *cutter = vtkCutter::New();
-  //cutter->SetInput(polyData);
-  //cutter->SetNumberOfContours(10);
 
   polyData->GetCenter(center);
   polyData->GetBounds(bounds);
@@ -311,58 +347,70 @@ int vtkGaussian2DWidget::AddGaussian(double meanX, double meanY,
 
   std::cout << "range " << range[0] << " " << range[1] << std::endl;
 
-  vtkLookupTable *LUT = vtkLookupTable::New();
-  //range[0] = range[0]-1;
+  vtkLogLookupTable *LUT = vtkLogLookupTable::New();
   LUT->SetTableRange(range);
   LUT->SetNumberOfTableValues(256);
   LUT->SetHueRange(hue,hue);
-  LUT->SetSaturationRange(1,0);
+  LUT->SetSaturationRange(0,1);
   LUT->SetValueRange(1,1);
   LUT->Build();
-  LUT->SetTableValue(0,0,0,0);
 
-  vtkPolyDataMapper *polyDataMapper = vtkPolyDataMapper::New();
-  polyDataMapper->SetInput(polyData);
+  vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();
+  mapper->SetInput(polyData);
   polyData->Delete();
-  polyDataMapper->SetLookupTable(LUT);
+  mapper->SetLookupTable(LUT);
   LUT->Delete();
-  polyDataMapper->SetScalarRange(range);
+  mapper->SetScalarRange(range);
 
-  //vtkPolyDataMapper *cutterMapper = vtkPolyDataMapper::New();
-  //cutterMapper->SetInputConnection(cutter->GetOutputPort());
-  //cutter->Delete();
+  vtkPolyDataMapper *mapperX = vtkPolyDataMapper::New();
+  mapperX->SetInputConnection(cutterX->GetOutputPort());
+  cutterX->Delete();
+  mapperX->ScalarVisibilityOff();
+
+  vtkPolyDataMapper *mapperY = vtkPolyDataMapper::New();
+  mapperY->SetInputConnection(cutterY->GetOutputPort());
+  cutterY->Delete();
+  mapperY->ScalarVisibilityOff();
 
   vtkActor *actor = vtkActor::New();
-  actor->SetMapper(polyDataMapper);
-  polyDataMapper->Delete();
+  actor->SetMapper(mapper);
+  mapper->Delete();
 
-  //vtkActor *cutterActor = vtkActor::New();
-  //cutterActor->SetMapper(cutterMapper);
-  //cutterMapper->Delete();
+  vtkActor *actorX = vtkActor::New();
+  actorX->SetMapper(mapperX);
+  mapperX->Delete();
+  actorX->GetProperty()->SetColor(0,0,0);
+
+  vtkActor *actorY = vtkActor::New();
+  actorY->SetMapper(mapperY);
+  mapperY->Delete();
+  actorY->GetProperty()->SetColor(0,0,0);
 
   this->AddViewProp(actor);
   actor->Delete();
 
-  //this->AddViewProp(cutterActor);
-  //cutterActor->Delete();
-/*
-  imageDataGeometryFilter->Delete();
+  this->AddViewProp(actorX);
+  actorX->Delete();
 
-  vtkAxisActor2D *XaxisActor2D = vtkAxisActor2D::New();
-  //XaxisActor2D->SetTitle("Volume 1");
-  XaxisActor2D->SetPoint1( 0.1, 0.1 );
-  XaxisActor2D->SetPoint2( 0.9, 0.1 );
+  this->AddViewProp(actorY);
+  actorY->Delete();
 
-  vtkAxisActor2D *YaxisActor2D = vtkAxisActor2D::New();
-  //YaxisActor2D->SetTitle("Volume 2");
-  YaxisActor2D->SetPoint1( 0.1, 0.1 );
-  YaxisActor2D->SetPoint2( 0.1, 0.9 );
+  if (!this->NumberOfGaussians)
+  {
+    vtkAxisActor2D *XaxisActor2D = vtkAxisActor2D::New();
+    XaxisActor2D->SetPoint1( 0.1, 0.1 );
+    XaxisActor2D->SetPoint2( 0.9, 0.1 );
 
-  this->AddOverlayViewProp(XaxisActor2D);
-  XaxisActor2D->Delete();
-  this->AddOverlayViewProp(YaxisActor2D);
-  YaxisActor2D->Delete();
+    vtkAxisActor2D *YaxisActor2D = vtkAxisActor2D::New();
+    YaxisActor2D->SetPoint1( 0.1, 0.1 );
+    YaxisActor2D->SetPoint2( 0.1, 0.9 );
 
+    this->AddOverlayViewProp(XaxisActor2D);
+    XaxisActor2D->Delete();
+    this->AddOverlayViewProp(YaxisActor2D);
+    YaxisActor2D->Delete();
+  }
+  /*
   vtkCamera *camera = vtkCamera::New();
   camera->SetPosition( center[0], center[1], 800.0 );
   camera->SetFocalPoint( center[0], center[1], 0.0 );
@@ -370,11 +418,11 @@ int vtkGaussian2DWidget::AddGaussian(double meanX, double meanY,
   camera->ParallelProjectionOn();*/
   this->ResetCamera();
   //this->GetRenderer()->SetActiveCamera(camera);
- // camera->Delete();
+  // camera->Delete();
   this->Render();
 
   return this->NumberOfGaussians++;
-  }
+}
 
 //----------------------------------------------------------------------------
 void vtkGaussian2DWidget::ShowGaussian(int gaussianID)
