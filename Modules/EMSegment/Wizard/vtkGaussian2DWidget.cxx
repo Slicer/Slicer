@@ -216,6 +216,7 @@ int vtkGaussian2DWidget::EigenDecomposition(
       }
     }
   }
+  return 1;
 }
 
 //----------------------------------------------------------------------------
@@ -227,7 +228,7 @@ int vtkGaussian2DWidget::AddGaussian(
     double covariance,
     double hue)
 {
-  this->AddCovarianceMatrix(meanX,meanY,varianceX,varianceY,covariance,hue);
+  return (this->AddCovarianceMatrix(meanX,meanY,varianceX,varianceY,covariance,hue));
 }
 
 //----------------------------------------------------------------------------
