@@ -45,11 +45,6 @@ MeshData* meshdata;
 SparseFieldLS* sfls;
 MeanCurvatureEnergy* energy;
 vtkXMLPolyDataWriter* writer;
-int showLS = 0;
-int evolve_its = 10; // how many evolution iterations to take
-int mesh_smooth_its = 100; // how many times to smooth the input mesh
-int H_smooth_its = 100; // how many times to average the curvature
-int adj_levels = 1; // number of levels into the adjacency tree to look
 
 
 /* An example calling convention from the commandline for this module:
@@ -64,12 +59,16 @@ as determined by evolving the curve into high mean curvature areas.
 
 int main(int argc, char* argv[] )
 {
-  std::cerr<<"starting...\n";
+  std::cout<<"Starting...\n";
   PARSE_ARGS;
 
-  std::cerr<<"Output model: "<<OutputModel.c_str()<<"\n";
-  std::cerr<<"Length of contour seeds: "<<ContourSeedPts.size()<<"\n";
-
+  std::cout<<"Output model: "<<OutputModel.c_str()<<"\n";
+  std::cout<<"Length of contour seeds: "<<ContourSeedPts.size()<<"\n";
+  std::cout << "Evolution iterations: " << evolve_its<<"\n";
+  std::cout << "Mesh smoothing iterations: " << mesh_smooth_its<<"\n";
+  std::cout << "Curvature averaging iterations: " << H_smooth_its << "\n";
+  std::cout << "Adjacency tree levels " << adj_levels << "\n";
+  
   vtkXMLPolyDataReader* reader = vtkXMLPolyDataReader::New();
   std::string comment = "Reading input model " + InputSurface;
   vtkPluginFilterWatcher watchReader(reader,
@@ -87,14 +86,14 @@ int main(int argc, char* argv[] )
   vtkPolyData* polyDataInput = reader->GetOutput();
 
   vtkSmoothPolyDataFilter* smoother = vtkSmoothPolyDataFilter::New();
-  std::cerr<<"Smoothing the surface...";
+  std::cout<<"Smoothing the surface...";
   vtkPluginFilterWatcher watchSmoother(smoother, "Smoothing the surface",
                                        CLPProcessInformation);
   smoother->SetNumberOfIterations( mesh_smooth_its );
 
   smoother->SetInput( polyDataInput );
   smoother->Update();
-  std::cerr<<" done! \n ";
+  std::cout<<" done! \n ";
 
 // Now we'll look at it.
   vtkPolyData* smooth_brain = smoother->GetOutput();
@@ -118,6 +117,7 @@ int main(int argc, char* argv[] )
 
 // assign some data from curvature computation to be the new colormap
   vtkFloatArray *scalars2 = vtkFloatArray::New();
+  scalars2->SetName("SmoothedCurvature");
   for( ::size_t i = 0; i < meshdata->MeanCurv.size(); i++ )
     {
     scalars2->InsertTuple1(i, meshdata->MeanCurv[i] );

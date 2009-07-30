@@ -4,15 +4,16 @@
   <category>Segmentation</category>
   <version>0.1 (alpha)</version>
   <documentation-url></documentation-url>
-<description>Sparse-Field Levelset Sulci Segmentation. Given some initial points in polydata will construct a contour and evolve it to high mean-curvature areas, returning the interior region indices.</description>
+<description>Sparse-Field Levelset Sulci Segmentation. Given some initial points in polydata will construct a contour and evolve it to high mean-curvature areas, returning the interior region indices.\n
+Once the output surface has been loaded into Slicer, go to the Models module, Model Display pane, and set the Scalar Visibility Flag, select the LevelSetValue as the active scalar array, and pick the FreeSurfer RedGreen Scalar Color Map. The InitialCurvature and SmoothedCurvature may appear if the path finding failed.</description>
   <parameters>
   
 	<label>Input Parameters</label>
 	<description>The inputs for the contour initialization and poly data</description>
 	<geometry>
 		<name>InputSurface</name>
-		<description>The filename of the input vtk polydata file for the surface.</description>
-		<label>Input Surface</label>
+		<description>The filename of the input vtk XML polydata file for the surface.</description>
+		<label>Input Model</label>
 		<longflag>inputScene</longflag>
 		<channel>input</channel>
 	</geometry>
@@ -29,13 +30,51 @@
 	<description>Output params.</description>
 	<geometry>
 		<name>OutputModel</name>
-		<description>Output model.</description>
+		<description>Output model, in vtk xml poly data format.</description>
 		<label>Output Model</label>
-                <channel>output</channel>
+        <channel>output</channel>
 		<longflag>outputModel</longflag>
 	</geometry>
    </parameters>
-  
+  <parameters advanced="true">
+    <label>Filter Parameters</label>
+    <description>Set the number of iterations here</description>
+    <integer>
+      <name>evolve_its</name>
+      <longflag>--evolve_its</longflag>
+      <description>How many evolution iterations to take. Use 0 to see just the curvature initialization.</description>
+      <label>Evolution Iterations</label>
+      <default>10</default>
+    </integer>
+    <integer>
+      <name>mesh_smooth_its</name>
+      <longflag>--mesh_smooth_its</longflag>
+      <description>How many times to smooth the input mesh</description>
+      <label>Mesh Smoothing Iterations</label>
+      <default>100</default>
+    </integer>
+    <integer>
+      <name>H_smooth_its</name>
+      <longflag>--H_smooth_its</longflag>
+      <description>How many times to average the curvature</description>
+      <label>Curvature Averaging Iterations</label>
+      <default>100</default>
+    </integer>
+    <integer>
+      <name>adj_levels</name>
+      <longflag>--adj_levels</longflag>
+      <description>Number of levels into the adjacency tree to look</description>
+      <label>Adjacency Tree Levels</label>
+      <default>1</default>
+    </integer>
+    <boolean>
+      <name>showLS</name>
+      <longflag>--showLS</longflag>
+      <description>Show LS</description>
+      <label>Show LS</label>
+      <default>0</default>
+    </boolean>
+  </parameters>
   <contributor>
   Peter Karasev, pkarasev@gatech.edu, Allen Tannenbaum tannenba@ece.gatech.edu
   </contributor>

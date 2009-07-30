@@ -59,7 +59,7 @@ bool SparseFieldLS::InitSphere()
     }
 
   if( L_z.size() <= 0 ) {
-  cout<<"Error, self-intersecting initial curve detected. Path finding failed.\n";
+  cerr<<"Error, self-intersecting initial curve detected. Path finding failed.\n";
   return 0;
   }
 
@@ -154,7 +154,7 @@ bool SparseFieldLS::InitSphere()
         }
       if( val > 0 )
         {
-        cout<<"Error in layer neighboring computation!! \n";
+        cerr<<"Error in layer neighboring computation!! \n";
         }
       }
     }
@@ -168,7 +168,7 @@ bool SparseFieldLS::InitSphere()
       int val = point_type[ nid ];
       if( val < 0 )
         {
-        cout<<"Error in layer neighboring computation!! \n";
+        cerr<<"Error in layer neighboring computation!! \n";
         }
       if( val > 1 )
         {
@@ -207,7 +207,7 @@ vector<int> SparseFieldLS::Evolve(int its )
     {
     if( L_z.size() == 0 )
       {
-      cout<<"Error, level set has vanished from surface \n";
+      cerr<<"Error, level set has vanished from surface \n";
       return L_z;
       }
 
@@ -452,6 +452,7 @@ vector<int> SparseFieldLS::Evolve(int its )
     }
 // assign some data from curvature computation to be the new colormap
   vtkFloatArray* scalars2 = vtkFloatArray::New(); // colormap
+  scalars2->SetName("LevelSetValue");
   if( meshdata->showLS == 1 )
     {
     meshdata->mapper->SetScalarRange( -2.0, 2.0 );

@@ -90,7 +90,7 @@ void ComputeGradCurvatureTangentPlane( MeshData* meshdata )
       meshdata->ny.size() == 0 ||
       meshdata->nz.size() == 0)
     {
-    std::cout << "ComputeGradCurvatureTangentPlane: no normals on mesh data\n";
+    std::cerr << "ComputeGradCurvatureTangentPlane: no normals on mesh data\n";
     return;
     }
   vtkPoints*    verts = meshdata->polydata->GetPoints();
@@ -205,7 +205,7 @@ void ComputeCurvature( MeshData* meshdata )
       meshdata->ny.size() == 0 ||
       meshdata->nz.size() == 0)
     {
-    std::cout << "Compute Curvature: no normals on mesh data\n";
+    std::cerr << "Compute Curvature: no normals on mesh data\n";
     return;
     }
   std::cout<<"Computing curvature...\n";
@@ -327,7 +327,7 @@ vector<int> InitPath( MeshData* meshdata, vector<int> pts)
   ::size_t numPts = pts.size();
   if( numPts < 3 )
     {
-    std::cout<<"Must have at least 3 pts to define closed contour! \n";
+    std::cerr<<"Must have at least 3 pts to define closed contour! \n";
     return vector<int>(0);
     }
   vector<int> C(0);
@@ -376,7 +376,7 @@ vector<int> InitPath( MeshData* meshdata, vector<int> pts)
       Cpt = minIdx;
       if( (minIdx != nextPt) && count( C.begin(), C.end(), Cpt ) != 0 )
         {
-        std::cout<<"Error, path finder stuck in a loop. Try another initialization. \n";
+        std::cerr<<"Error, path finder stuck in a loop. Try another initialization. \n";
         return vector<int>(0);
         }
       //if( Cpt != nextPt ) // later debug: make sure the nextPt later gets put on the stack
@@ -398,6 +398,7 @@ vector<int> InitPath( MeshData* meshdata, vector<int> pts)
 
   // assign some data from curvature computation to be the new colormap
   vtkFloatArray* scalars2 = vtkFloatArray::New(); // colormap
+  scalars2->SetName("InitialCurvature");
   for( int i = 0; i < numverts; i++ )
     {
     scalars2->InsertTuple1(i, meshdata->cmap0[i] );
