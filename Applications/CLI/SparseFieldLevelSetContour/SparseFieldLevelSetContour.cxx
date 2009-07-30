@@ -65,13 +65,19 @@ int main(int argc, char* argv[] )
   std::cerr<<"starting...\n";
   PARSE_ARGS;
 
-  std::cerr<<OutputModel.c_str()<<"\n";
+  std::cerr<<"Output model: "<<OutputModel.c_str()<<"\n";
   std::cerr<<"Length of contour seeds: "<<ContourSeedPts.size()<<"\n";
 
   vtkXMLPolyDataReader* reader = vtkXMLPolyDataReader::New();
   reader->SetFileName(InputSurface.c_str());
   reader->Update();
 
+  if (reader->GetOutput() == NULL)
+    {
+    std::cerr << "ERROR reading input surface file " << InputSurface.c_str();
+    reader->Delete();
+    return EXIT_FAILURE;
+    }
   vtkPolyData* polyDataInput = reader->GetOutput();
 
   vtkSmoothPolyDataFilter* smoother = vtkSmoothPolyDataFilter::New();
@@ -92,7 +98,16 @@ int main(int argc, char* argv[] )
   meshdata->adj_levels = adj_levels;
   meshdata->showLS = showLS;
   ComputeCurvatureData( meshdata );
+
+  if (meshdata->MeanCurv.size() == 0)
+    {
+    std::cerr << "Erorr calculating mean curvature.\n";
+    delete meshdata;
+    return EXIT_FAILURE;
+    }
+    
   energy = new MeanCurvatureEnergy( meshdata );
+
 // assign some data from curvature computation to be the new colormap
   vtkFloatArray *scalars2 = vtkFloatArray::New();
   for( ::size_t i = 0; i < meshdata->MeanCurv.size(); i++ )

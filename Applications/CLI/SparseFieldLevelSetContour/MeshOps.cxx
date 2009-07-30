@@ -42,6 +42,12 @@ void ComputeCurvatureData( MeshData* meshdata )
 
 void SmoothCurvature( MeshData* meshdata )
 {
+  if ( meshdata->MeanCurv.size() == 0)
+    {
+    std::cerr << "SmoothCurvature: No mean curvature computed on mesh\n";
+    return;
+    }
+
   std::cout<<"Smoothing curvature...\n";
   int iterations = meshdata->smoothH_its;
   vtkPoints*    verts = meshdata->polydata->GetPoints();
@@ -69,6 +75,14 @@ void SmoothCurvature( MeshData* meshdata )
 void ComputeGradCurvatureTangentPlane( MeshData* meshdata )
 {
 
+  if (meshdata == NULL ||
+      meshdata->nx.size() == 0 ||
+      meshdata->ny.size() == 0 ||
+      meshdata->nz.size() == 0)
+    {
+    std::cout << "ComputeGradCurvatureTangentPlane: no normals on mesh data\n";
+    return;
+    }
   vtkPoints*    verts = meshdata->polydata->GetPoints();
   int numverts = verts->GetNumberOfPoints();
 
@@ -176,6 +190,14 @@ Vec = transform*Vec;
 
 void ComputeCurvature( MeshData* meshdata )
 {
+  if (meshdata == NULL ||
+      meshdata->nx.size() == 0 ||
+      meshdata->ny.size() == 0 ||
+      meshdata->nz.size() == 0)
+    {
+    std::cout << "Compute Curvature: no normals on mesh data\n";
+    return;
+    }
   std::cout<<"Computing curvature...\n";
   vtkPoints*    verts = meshdata->polydata->GetPoints();
   int numverts = verts->GetNumberOfPoints();
@@ -441,11 +463,20 @@ void ComputeNormals( MeshData* meshdata )
       vertcount[pts[1]] += 1;
       vertcount[pts[2]] += 1;
       }
-    for( int i = 0;  i < numverts; i++ )
+    if (meshdata->nx.size() != 0 &&
+        meshdata->ny.size() != 0 &&
+        meshdata->nz.size() != 0)
       {
-      meshdata->nx[i] = fnx[i] / vertcount[i] ;
-      meshdata->ny[i] = fny[i] / vertcount[i] ;
-      meshdata->nz[i] = fnz[i] / vertcount[i] ;
+      for( int i = 0;  i < numverts; i++ )
+        {
+        meshdata->nx[i] = fnx[i] / vertcount[i] ;
+        meshdata->ny[i] = fny[i] / vertcount[i] ;
+        meshdata->nz[i] = fnz[i] / vertcount[i] ;
+        }
+      }
+    else
+      {
+      std::cerr << "Normals not computed for mesh data\n";
       }
     }
 }
