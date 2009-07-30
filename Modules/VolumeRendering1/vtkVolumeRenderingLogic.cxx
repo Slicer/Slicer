@@ -119,6 +119,7 @@ vtkMRMLVolumeRenderingParametersNode* vtkVolumeRenderingLogic::GetParametersNode
   if (this->MRMLScene) 
     {
     node = vtkMRMLVolumeRenderingParametersNode::SafeDownCast(this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLVolumeRenderingParametersNode"));
+    /**
     if (node == NULL)
       {
       node = vtkMRMLVolumeRenderingParametersNode::New();
@@ -129,6 +130,7 @@ vtkMRMLVolumeRenderingParametersNode* vtkVolumeRenderingLogic::GetParametersNode
         }
       node = snode;
       }
+    **/
     }
   return node;
 }

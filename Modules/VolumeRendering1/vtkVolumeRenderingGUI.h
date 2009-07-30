@@ -133,11 +133,11 @@ protected:
 
     // Description:
     // Updates GUI widgets based on parameters values in MRML node
-    void UpdateGUI();
+    void UpdateGUIFromMRML();
 
     // Description:
     // Updates parameters values in MRML node based on GUI widgets 
-    void UpdateMRML();
+    void UpdateMRMLFromGUI();
 
     void CreateParametersNode();
 
