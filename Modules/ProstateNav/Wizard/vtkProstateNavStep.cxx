@@ -49,6 +49,7 @@ vtkProstateNavStep::vtkProstateNavStep()
 
   this->InGUICallbackFlag = 0;
   this->InMRMLCallbackFlag = 0;
+  this->ProstateNavManager = NULL;
 
 }
 
