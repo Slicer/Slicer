@@ -42,8 +42,10 @@
 #include "vtkPolyData.h"
 #include "vtkPolyDataMapper.h"
 #include "vtkActor.h"
+#include "vtkLogLookupTable.h"
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"
+#include "vtkWarpScalar.h"
 
 #include "vtkSlicerNodeSelectorWidget.h"
 
@@ -951,7 +953,13 @@ void vtkEMSegmentRunSegmentationStep::ProcessRunRegistrationOutputGUIEvents(
 
       vtkWarpScalar *warpScalar = vtkWarpScalar::New();
       warpScalar->SetInput(geometryFilter->GetOutput());
+      warpScalar->Update();
+
+      vtkPolyData *polyData = vtkPolyData::New();
+      polyData->DeepCopy(geometryFilter->GetOutput());
       geometryFilter->Delete();
+      polyData->SetPoints(warpScalar->GetOutput()->GetPoints());
+      warpScalar->Delete();
 
       vtkLogLookupTable *LUT = vtkLogLookupTable::New();
       LUT->SetTableRange(range);
@@ -960,9 +968,9 @@ void vtkEMSegmentRunSegmentationStep::ProcessRunRegistrationOutputGUIEvents(
       LUT->SetValueRange(1,1);
 
       vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();
-      mapper->SetRange(range);
-      mapper->SetInput(warpScalar->GetOutput());
-      warpScalar->Delete();
+      mapper->SetScalarRange(range);
+      mapper->SetInput(polyData);
+      polyData->Delete();
       mapper->SetLookupTable(LUT);
       LUT->Delete();
 
