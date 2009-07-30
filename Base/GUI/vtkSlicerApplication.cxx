@@ -1142,9 +1142,16 @@ const char* vtkSlicerApplication::GetPotentialModulePaths() const
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerApplication::AppendPotentialModulePath(const char* path, bool enabled)
+void vtkSlicerApplication::AppendPotentialModulePath(const char* path,
+                                                     bool enabled)
 {
   std::string paths = this->PotentialModulePaths;
+
+  if (paths.find(path) != std::string::npos)
+    {
+    return;
+    }
+
   if (!paths.empty())
     {
     paths += "|";  
@@ -1154,6 +1161,8 @@ void vtkSlicerApplication::AppendPotentialModulePath(const char* path, bool enab
   (enabled) ? paths += "1" : paths += "0";
 
   this->SetPotentialModulePaths(paths.c_str());
+
+  return;
 }
 
 //----------------------------------------------------------------------------
