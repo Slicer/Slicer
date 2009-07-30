@@ -931,11 +931,27 @@ void vtkEMSegmentRunSegmentationStep::ProcessRunRegistrationOutputGUIEvents(
         if(id2 < 0) { id2=0; }
 
         int id = id1 + dimX * id2;
-        ptr[id]++;
+        if(id) { ptr[id]++; }
+      }
+
+      ptr = (unsigned int*) imageData->GetScalarPointer();
+
+      for(int i=0; i<numPts; i++,ptr++)
+      {
+        if(*ptr) { *ptr = log(*ptr); }
       }
 
       double range[2];
       imageData->GetScalarRange(range);
+
+      vtkImageDataGeometryFilter *geometryFilter =
+        vtkImageDataGeometryFilter::New();
+      geometryFilter->SetInput(imageData);
+      imageData->Delete();
+
+      vtkWarpScalar *warpScalar = vtkWarpScalar::New();
+      warpScalar->SetInput(geometryFilter->GetOutput());
+      geometryFilter->Delete();
 
       vtkLogLookupTable *LUT = vtkLogLookupTable::New();
       LUT->SetTableRange(range);
@@ -943,15 +959,10 @@ void vtkEMSegmentRunSegmentationStep::ProcessRunRegistrationOutputGUIEvents(
       LUT->SetSaturationRange(1,1);
       LUT->SetValueRange(1,1);
 
-      vtkImageDataGeometryFilter *geometryFilter =
-        vtkImageDataGeometryFilter::New();
-      geometryFilter->SetInput(imageData);
-      imageData->Delete();
-
       vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();
       mapper->SetRange(range);
-      mapper->SetInput(geometryFilter->GetOutput());
-      geometryFilter->Delete();
+      mapper->SetInput(warpScalar->GetOutput());
+      warpScalar->Delete();
       mapper->SetLookupTable(LUT);
       LUT->Delete();
 
