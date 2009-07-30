@@ -908,18 +908,16 @@ void vtkEMSegmentRunSegmentationStep::ProcessRunRegistrationOutputGUIEvents(
       imageData->SetScalarTypeToUnsignedInt();
       imageData->SetWholeExtent(extent);
       imageData->AllocateScalars();
+      imageData->Update();
 
       int numPts = imageData->GetNumberOfPoints();
 
       unsigned int *ptr = (unsigned int*) imageData->GetScalarPointer();
 
-      memset(ptr,numPts,0.0);
+      memset(ptr,0,numPts*sizeof(unsigned int));
 
       short *ptr1 = (short*) inputImage1->GetScalarPointer();
       short *ptr2 = (short*) inputImage2->GetScalarPointer();
-
-      vtkErrorMacro("(int)(0.99) = " << (int)(0.99));
-      vtkErrorMacro("(int)(-0.99) = " << (int)(-0.99));
 
       for(int i=0; i<numPts1; i++,ptr1++,ptr2++)
       {
@@ -936,14 +934,26 @@ void vtkEMSegmentRunSegmentationStep::ProcessRunRegistrationOutputGUIEvents(
         ptr[id]++;
       }
 
+      double range[2];
+      imageData->GetScalarRange(range);
+
+      vtkLogLookupTable *LUT = vtkLogLookupTable::New();
+      LUT->SetTableRange(range);
+      LUT->SetHueRange(0.667,0);
+      LUT->SetSaturationRange(1,1);
+      LUT->SetValueRange(1,1);
+
       vtkImageDataGeometryFilter *geometryFilter =
         vtkImageDataGeometryFilter::New();
       geometryFilter->SetInput(imageData);
       imageData->Delete();
 
       vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();
+      mapper->SetRange(range);
       mapper->SetInput(geometryFilter->GetOutput());
       geometryFilter->Delete();
+      mapper->SetLookupTable(LUT);
+      LUT->Delete();
 
       vtkActor *actor = vtkActor::New();
       actor->SetMapper(mapper);
