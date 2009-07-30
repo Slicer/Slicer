@@ -200,8 +200,10 @@ private:
 
   // Description:
   // Helper method to return the extensions install path
+  // @param WithToken true if the path should include @SVN@ instead of
+  // the actual subversion revision number
   //BTX
-  const char* GetInstallPath();
+  const char* GetInstallPath(bool WithToken = false);
   char InstallPath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   //ETX
 

@@ -938,6 +938,16 @@ int Slicer3_main(int argc, char *argv[])
   if (slicerApp->GetModulePaths())
     {
     userModulePaths = slicerApp->GetModulePaths();
+
+    std::string token("@SVN@");
+    std::string::size_type pos = userModulePaths.find(token);
+    while (std::string::npos != pos)
+      {
+      userModulePaths.erase(pos, token.length());
+      userModulePaths.insert(pos, slicerApp->GetSvnRevision());
+      
+      pos = userModulePaths.find(token, pos);
+      }
     }
 
   // define module paths based on the slicer installation

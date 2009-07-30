@@ -1080,19 +1080,22 @@ bool vtkSlicerModulesStep::DownloadInstallExtension(const std::string& Extension
 
     std::string libdir(installdir + std::string("/") + ExtensionName);
 
+    std::string searchdir(std::string(this->GetInstallPath(true)) + std::string("/") + ExtensionName);
+
     std::string tmpdir(std::string(app->GetTemporaryDirectory()) + std::string("/extension"));
 
     if (UnzipPackage(tmpfile, libdir, tmpdir))
       {
       result = true;
-      app->AppendPotentialModulePath(libdir.c_str(), true);
       }
     else
       {
       app->Script("eval $::_fixed_zip_code; vfs::zip::Mount %s /zipfile; file copy -force /zipfile/* %s; vfs::zip::Unmount %s /zipfile", tmpfile.c_str(), libdir.c_str(), tmpfile.c_str());
       result = true;
-      app->AppendPotentialModulePath(libdir.c_str(), true);
       }
+
+    std::cout << "search " << searchdir << std::endl;
+      app->AppendPotentialModulePath(searchdir.c_str(), true);
     }
 
   handler->Delete();
@@ -1179,27 +1182,33 @@ void vtkSlicerModulesStep::ClearModules()
 }
 
 //----------------------------------------------------------------------------
-const char* vtkSlicerModulesStep::GetInstallPath()
+const char* vtkSlicerModulesStep::GetInstallPath(bool WithToken)
 {
-  if (strlen(this->InstallPath) == 0)
+  vtkSlicerApplication *app =
+    vtkSlicerApplication::SafeDownCast(this->GetApplication());
+
+  if (app)
     {
-
-    vtkSlicerApplication *app =
-      vtkSlicerApplication::SafeDownCast(this->GetApplication());
-
-    if (app)
+    std::string installdir = app->GetExtensionsInstallPath();
+    installdir += "/";
+    if (WithToken)
       {
-      std::string installdir = app->GetExtensionsInstallPath();
-      installdir += "/";
-      installdir += app->GetSvnRevision();
-      
-      strcpy(this->InstallPath, installdir.c_str());
+      installdir += "@SVN@";
       }
+    else
+      {
+      installdir += app->GetSvnRevision();
+      }
+
+    strcpy(this->InstallPath, installdir.c_str());
     }
 
-  if (!itksys::SystemTools::FileExists(this->InstallPath))
+  if (!WithToken)
     {
-    itksys::SystemTools::MakeDirectory(this->InstallPath);
+    if (!itksys::SystemTools::FileExists(this->InstallPath))
+      {
+      itksys::SystemTools::MakeDirectory(this->InstallPath);
+      }
     }
   
   return this->InstallPath;
