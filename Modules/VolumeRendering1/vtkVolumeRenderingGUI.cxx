@@ -352,6 +352,8 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
       volumeNode->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallbackCommand);
       this->Logic->UpdateTransform(volumeNode);
       }
+    this->Logic->SetParametersNode(this->ParametersNode);
+    this->GetApplicationGUI()->GetViewerWidget()->RequestRender();
    
     }
 
@@ -362,6 +364,7 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
     this->UpdateParametersNode();
     this->Logic->SetParametersNode(this->ParametersNode);
     this->UpdateGUI();
+    this->GetApplicationGUI()->GetViewerWidget()->RequestRender();
     }
 
 
@@ -412,7 +415,7 @@ void vtkVolumeRenderingGUI::UpdateParametersNode(void)
   if (this->ParametersNode)
     {
     // set an observe new node
-    if(this->VolumeNodeSelector->GetSelected() != NULL)
+    if(this->ParametersNode->GetVolumeNode() == NULL && this->VolumeNodeSelector->GetSelected() != NULL)
     {
       this->ParametersNode->SetAndObserveVolumeNodeID(this->VolumeNodeSelector->GetSelected()->GetID());
     }
@@ -425,6 +428,7 @@ void vtkVolumeRenderingGUI::UpdateParametersNode(void)
       //vpNode->CreateDefaultStorageNode();
       this->ParametersNode->SetAndObserveVolumePropertyNodeID(vpNode->GetID());
       }
+    /**
     if (this->ParametersNode->GetROINode() == NULL)
       {
       vtkMRMLROINode *roiNode = vtkMRMLROINode::New();
@@ -432,6 +436,7 @@ void vtkVolumeRenderingGUI::UpdateParametersNode(void)
       roiNode->Delete();
       this->ParametersNode->SetAndObserveROINodeID(roiNode->GetID());
       }
+      **/
     }
 }
 
