@@ -28,13 +28,13 @@ void ComputeCurvatureData( MeshData* meshdata )
     {
     std::cout << "ComputeCurvatureData: allocating arrays to be of size " << numverts << "\n";
     }
-  meshdata->MeanCurv = valarray<double>( numverts );
-  meshdata->dkde2 = valarray<double>( numverts );
-  meshdata->dkde1 = valarray<double>( numverts );
-  meshdata->nx = valarray<double>( numverts );
-  meshdata->ny = valarray<double>( numverts );
-  meshdata->nz = valarray<double>( numverts );
-//  std::cout << "After allocation, nx = " << meshdata->nx.size() << "\n";
+  meshdata->MeanCurv.resize(numverts);
+  meshdata->dkde2.resize(numverts);
+  meshdata->dkde1.resize(numverts);
+  meshdata->nx.resize(numverts);
+  meshdata->ny.resize(numverts);
+  meshdata->nz.resize(numverts);
+  //std::cout << "After allocation, nx = " << meshdata->nx.size() << "\n";
   meshdata->adj = vector<AdjData>( numverts );
 
   ComputeAdjacency( meshdata );
@@ -390,7 +390,7 @@ vector<int> InitPath( MeshData* meshdata, vector<int> pts)
       }
     }
 
-  meshdata->cmap0 = valarray<double>(numverts);
+  meshdata->cmap0.resize(numverts);
   for( ::size_t i = 0; i < C.size(); i++ )
     {
     meshdata->cmap0[C[i]] = 1.0;
