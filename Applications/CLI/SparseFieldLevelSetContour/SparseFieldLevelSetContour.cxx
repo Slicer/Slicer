@@ -32,6 +32,8 @@
 #include "MeanCurvatureEnergy.h"
 
 
+#include "vtkPluginFilterWatcher.h"
+
 // Use an anonymous namespace to keep class types and function names
 // from colliding when module is used as shared object module.  Every
 // thing should be in an anonymous namespace except for the module
@@ -69,6 +71,10 @@ int main(int argc, char* argv[] )
   std::cerr<<"Length of contour seeds: "<<ContourSeedPts.size()<<"\n";
 
   vtkXMLPolyDataReader* reader = vtkXMLPolyDataReader::New();
+  std::string comment = "Reading input model " + InputSurface;
+  vtkPluginFilterWatcher watchReader(reader,
+                                     comment.c_str(),
+                                     CLPProcessInformation);
   reader->SetFileName(InputSurface.c_str());
   reader->Update();
 
@@ -82,6 +88,8 @@ int main(int argc, char* argv[] )
 
   vtkSmoothPolyDataFilter* smoother = vtkSmoothPolyDataFilter::New();
   std::cerr<<"Smoothing the surface...";
+  vtkPluginFilterWatcher watchSmoother(smoother, "Smoothing the surface",
+                                       CLPProcessInformation);
   smoother->SetNumberOfIterations( mesh_smooth_its );
 
   smoother->SetInput( polyDataInput );
@@ -118,6 +126,7 @@ int main(int argc, char* argv[] )
   scalars2->Delete();
 
   vtkPolyDataMapper* cubeMapper = vtkPolyDataMapper::New();
+  vtkPluginFilterWatcher watchMapper(cubeMapper, "Cube Mapper", CLPProcessInformation);
   meshdata->mapper = cubeMapper;
 
   cubeMapper->SetInput( smooth_brain );
@@ -172,6 +181,10 @@ int main(int argc, char* argv[] )
   C = sfls->Evolve(evolve_its);
 
   writer = vtkXMLPolyDataWriter::New();
+  std::string commentWrite = "Writing output model " + OutputModel;
+  vtkPluginFilterWatcher watchWriter(writer,
+                                     commentWrite.c_str(),
+                                     CLPProcessInformation);
   writer->SetInput( meshdata->polydata );
   writer->SetFileName( OutputModel.c_str() );
   writer->Write();

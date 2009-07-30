@@ -19,12 +19,22 @@ void ComputeCurvatureData( MeshData* meshdata )
 
   int numverts = verts->GetNumberOfPoints();
 
+  if (numverts < 1)
+    {
+    std::cerr << "ComputeCurvatureData: invalid number of vertices found in the polydata: " << numverts << "\n";
+    return;
+    }
+  else
+    {
+    std::cout << "ComputeCurvatureData: allocating arrays to be of size " << numverts << "\n";
+    }
   meshdata->MeanCurv = valarray<double>( numverts );
   meshdata->dkde2 = valarray<double>( numverts );
   meshdata->dkde1 = valarray<double>( numverts );
   meshdata->nx = valarray<double>( numverts );
   meshdata->ny = valarray<double>( numverts );
   meshdata->nz = valarray<double>( numverts );
+//  std::cout << "After allocation, nx = " << meshdata->nx.size() << "\n";
   meshdata->adj = vector<AdjData>( numverts );
 
   ComputeAdjacency( meshdata );
@@ -476,7 +486,7 @@ void ComputeNormals( MeshData* meshdata )
       }
     else
       {
-      std::cerr << "Normals not computed for mesh data\n";
+      std::cerr << "Normals not computed for mesh data, numverts = " << numverts << ", normal array sizes were allocated to be x = " << meshdata->nx.size() << ", y = " << meshdata->ny.size() << ", z = " << meshdata->nz.size() << "\n";
       }
     }
 }
