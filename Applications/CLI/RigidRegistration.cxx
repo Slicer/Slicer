@@ -90,9 +90,10 @@ class ScheduleCommand : public itk::Command
         optimizer->SetLearningRate ( this->m_LearningRates[m_Schedule] );
         this->m_NextChange = optimizer->GetCurrentIteration()
           + this->m_NumberOfIterations[m_Schedule];
-        std::cout << "Iteration: " << optimizer->GetCurrentIteration()
-                  << " LearningRate: " << optimizer->GetLearningRate()
-                  << std::endl;
+        //std::cout << "Iteration: " << optimizer->GetCurrentIteration()
+        //          << " Parameters: " << optimizer->GetCurrentPosition()
+        //          << " LearningRate: " << optimizer->GetLearningRate()
+        //          << std::endl;
 //         std::cout << "<filter-comment>"
 //                   << "Iteration: "
 //                   << optimizer->GetCurrentIteration() << ", "
@@ -112,13 +113,13 @@ class ScheduleCommand : public itk::Command
     itk::GradientDescentOptimizer* optimizer = (itk::GradientDescentOptimizer*)(const_cast<itk::Object *>(caller));
 
     std::cout << optimizer->GetCurrentIteration() << "   ";
-    //std::cout << optimizer->GetCurrentStepLength() << "   ";
+    std::cout << optimizer->GetCurrentPosition() << "   ";
     std::cout << optimizer->GetValue() << std::endl;
     if (m_Registration)
       {
       // for our purposes, an iteration even is a progress event
-      m_Registration->UpdateProgress( static_cast<double>(optimizer->GetCurrentIteration()) /
-                                      static_cast<double>(optimizer->GetNumberOfIterations()));
+      //m_Registration->UpdateProgress( static_cast<double>(optimizer->GetCurrentIteration()) /
+      //                                static_cast<double>(optimizer->GetNumberOfIterations()));
       }
                                         
     if ( optimizer->GetCurrentIteration() >= this->m_NextChange )
@@ -517,7 +518,7 @@ template<class T1, class T2> int DoIt2( int argc, char * argv[], const T1&, cons
   typename MetricType::Pointer  metric        = MetricType::New();
   metric->SetNumberOfHistogramBins ( HistogramBins );
   metric->SetNumberOfSpatialSamples( SpatialSamples );
-  metric->ReinitializeSeed(123);
+  metric->ReinitializeSeed(314159265);
   
   // Create the interpolator
   //
@@ -571,6 +572,27 @@ movingWriter2->Write();
 
   transform->SetParameters ( registration->GetLastTransformParameters() );
 
+  // compute eular angle and displacement
+  double Ephi;          // roll
+  double Etheta;        // pitch
+  double Epsi;          // yaw
+  double Edisplacement; // displacement
+
+  TransformType::ParametersType Eparams = registration->GetLastTransformParameters();
+  Edisplacement = sqrt( Eparams[4]*Eparams[4] + Eparams[5]*Eparams[5] + Eparams[6]*Eparams[6] );
+  Ephi = atan(2*(Eparams[0]*Eparams[1] + Eparams[2]*Eparams[3])/(1-2*(Eparams[1]*Eparams[1] + Eparams[2]*Eparams[2])));
+  Etheta = asin(2*(Eparams[0]*Eparams[2] - Eparams[1]*Eparams[3]));
+  Epsi = atan(2*(Eparams[0]*Eparams[3] + Eparams[1]*Eparams[2])/(1-2*(Eparams[2]*Eparams[2] + Eparams[3]*Eparams[3])));
+  
+  Ephi *= 180/3.14159265;
+  Etheta *= 180/3.14159265;
+  Epsi *= 180/3.14159265;
+
+  std::cout << "\nRoll: " << Ephi;
+  std::cout << " Pitch: " << Etheta;
+  std::cout << " Yaw: " << Epsi;
+  std::cout << " Displacement: " << Edisplacement << std::endl;
+
   if (OutputTransform != "")
     {
     typedef itk::TransformFileWriter TransformWriterType;
@@ -589,6 +611,8 @@ movingWriter2->Write();
       return EXIT_FAILURE ;
       }
     }
+
+  transform->Print (std::cout);
 
   // Resample to the original coordinate frame (not the reoriented
   // axial coordinate frame) of the fixed image
