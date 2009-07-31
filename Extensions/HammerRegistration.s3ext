@@ -1,0 +1,27 @@
+
+scm       svn
+svnpath   https://www.nitrc.org/svn/hammerwml/hammer/SlicerModule/plugin
+name      HammerRegistration
+cmakeproject      HammerRegistration
+svnusername slicerbot
+svnpassword slicer
+
+
+#
+# list dependencies
+# - these should be names of other modules that have .s3ext files 
+# - the dependencies will be built first
+
+# homepage
+homepage  http://www.nitrc.org/projects/hammerwml/
+
+# match category in the xml description of the module (where it shows up in Modules menu)
+category  Work in Progress
+
+# give people an idea what to expect from this code 
+# - is it just a test or something you stand beind?
+status    Alpha
+
+# One line description of what the module does
+description HammerRegistration is a deformable registration program using hierarchical attribute matching. 
+
