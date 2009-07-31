@@ -416,7 +416,8 @@ switch $::tcl_platform(os) {
         set ::COMPILER "g++"
         set ::FORTRAN_COMPILER "gfortran"
         set ::CMAKE $::CMAKE_PATH/bin/cmake
-        set numCPUs [lindex [exec /usr/sbin/system_profiler | grep "Total Number Of Cores"] end]
+        set numCPUs 1
+        catch { set numCPUs [lindex [exec /usr/sbin/system_profiler | grep "Total Number Of Cores"] end] }
         set ::MAKE "make -j [expr (2 * $numCPUs) - 1]"
         set ::SERIAL_MAKE make
     }
