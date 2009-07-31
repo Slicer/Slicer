@@ -940,7 +940,7 @@ void vtkEMSegmentRunSegmentationStep::ProcessRunRegistrationOutputGUIEvents(
 
       for(int i=0; i<numPts; i++,ptr++)
       {
-        if(*ptr) { *ptr = log(*ptr); }
+        if(*ptr) { *ptr = static_cast<unsigned int> (log(static_cast<float>(*ptr))); }
       }
 
       double range[2];
