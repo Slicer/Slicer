@@ -47,21 +47,6 @@ set(VolumeRendering1_SRCS
   vtkVolumeRenderingGUI.cxx
   vtkVolumeRenderingLogic.cxx
   vtkMRMLVolumeRenderingParametersNode.cxx
-  vtkMRMLVolumeRenderingNode.cxx
-  vtkMRMLVolumeRenderingSelectionNode.cxx
-  vtkSlicerNodeSelectorVolumeRenderingWidget.cxx
-  #vtkSlicerVRHelper.cxx
-  #vtkSlicerVRGrayscaleHelper.cxx
-  vtkSlicerVRMenuButtonColorMode.cxx
-  #LabelmapPart
-  #vtkSlicerVRLabelmapHelper.cxx
-  #vtkLabelMapColorTransferFunction.cxx
-  #vtkLabelMapPiecewiseFunction.cxx
-  #vtkSlicerLabelMapWidget.cxx
-  #vtkSlicerLabelmapTree.cxx
-  #vtkSlicerLabelmapElement.cxx
-  #vtkSlicerBaseTree.cxx
-  #vtkSlicerBaseTreeElement.cxx
   )
 
 # --------------------------------------------------------------------------

@@ -6,7 +6,6 @@
 #include "vtkVolume.h"
 
 #include "vtkMRMLVolumeRenderingParametersNode.h"
-#include "vtkMRMLVolumeRenderingSelectionNode.h"
 
 class vtkSlicerVolumeTextureMapper3D;
 class vtkSlicerFixedPointVolumeRayCastMapper;
@@ -30,8 +29,6 @@ public:
   // Register local MRML nodes
   virtual void RegisterNodes();
   
-  vtkMRMLVolumeRenderingSelectionNode* GetSelectionNode();
-
   vtkMRMLVolumeRenderingParametersNode* GetParametersNode();
 
   void SetParametersNode(vtkMRMLVolumeRenderingParametersNode *node);

@@ -6,7 +6,6 @@
 #include "vtkPointData.h"
 #include "vtkMatrix4x4.h"
 
-#include "vtkMRMLVolumeRenderingNode.h"
 #include "vtkMRMLVolumeRenderingParametersNode.h"
 #include "vtkMRMLTransformNode.h"
 
@@ -76,42 +75,14 @@ void vtkVolumeRenderingLogic::RegisterNodes()
 {
   if (this->MRMLScene && this->First)
     {
-      // :NOTE: 20050513 tgl: Guard this so it is only registered once.
-      vtkMRMLVolumeRenderingNode *vrNode=vtkMRMLVolumeRenderingNode::New();
-      this->MRMLScene->RegisterNodeClass(vrNode);
-      vrNode->Delete();
-
       vtkMRMLVolumeRenderingParametersNode *vrpNode=vtkMRMLVolumeRenderingParametersNode::New();
       this->MRMLScene->RegisterNodeClass(vrpNode);
       vrpNode->Delete();
-      
-      vtkMRMLVolumeRenderingSelectionNode *vrsNode=vtkMRMLVolumeRenderingSelectionNode::New();
-      this->MRMLScene->RegisterNodeClass(vrsNode);
-      vrsNode->Delete();
-      
+            
       this->First = false;
     }
 }
 
-vtkMRMLVolumeRenderingSelectionNode* vtkVolumeRenderingLogic::GetSelectionNode()
-{
-  vtkMRMLVolumeRenderingSelectionNode *node = NULL;
-  if (this->MRMLScene) 
-    {
-    node = vtkMRMLVolumeRenderingSelectionNode::SafeDownCast(this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLVolumeRenderingSelectionNode"));
-    if (node == NULL)
-      {
-      node = vtkMRMLVolumeRenderingSelectionNode::New();
-      vtkMRMLVolumeRenderingSelectionNode *snode = vtkMRMLVolumeRenderingSelectionNode::SafeDownCast(this->MRMLScene->AddNode(node));
-      if (snode == node)
-        {
-        node->Delete();
-        }
-      node = snode;
-      }
-    }
-  return node;
-}
 
 vtkMRMLVolumeRenderingParametersNode* vtkVolumeRenderingLogic::GetParametersNode()
 {

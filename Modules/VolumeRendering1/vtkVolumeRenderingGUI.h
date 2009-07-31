@@ -20,7 +20,6 @@ Version:   $Revision: 1.3 $
 
 #include "vtkMRMLVolumeRenderingParametersNode.h"
 #include "vtkSlicerNodeSelectorWidget.h"
-#include "vtkSlicerNodeSelectorVolumeRenderingWidget.h"
 
 #include "vtkKWLabel.h"
 #include "vtkKWHistogram.h"
