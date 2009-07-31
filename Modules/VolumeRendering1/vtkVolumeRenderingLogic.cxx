@@ -5,6 +5,7 @@
 #include "vtkImageData.h"
 #include "vtkPointData.h"
 #include "vtkMatrix4x4.h"
+#include "vtkPlanes.h"
 
 #include "vtkMRMLVolumeRenderingParametersNode.h"
 #include "vtkMRMLTransformNode.h"
@@ -162,7 +163,29 @@ void vtkVolumeRenderingLogic::SetParametersNode(vtkMRMLVolumeRenderingParameters
     this->MapperTexture->SetSampleDistance(node->GetEstimatedSampleDistance());
     this->MapperRaycast->SetSampleDistance(node->GetEstimatedSampleDistance());
     }
+
+  // update transform
   this->UpdateTransform(node->GetVolumeNode());
+
+  // update ROI
+  vtkMRMLROINode *roiNode = node->GetROINode();
+  if (roiNode && node->GetCroppingEnabled() )
+    {
+    vtkPlanes *planes = vtkPlanes::New();
+    roiNode->GetTransformedPlanes(planes);
+
+    this->CurrentVolumeMapper->SetClippingPlanes(planes);
+    this->MapperCUDARaycast->ClippingOn();
+    this->MapperGPURaycast->ClippingOn();
+
+    planes->Delete();
+    }
+  else
+    {
+    //this->CurrentVolumeMapper->SetClippingPlanes((vtkPlanes *)NULL);
+    this->MapperCUDARaycast->ClippingOff();
+    this->MapperGPURaycast->ClippingOff();
+    }
 }
 
 
@@ -236,3 +259,4 @@ void vtkVolumeRenderingLogic::UpdateTransform(vtkMRMLScalarVolumeNode *volumeNod
   this->GetVolume()->PokeMatrix(matrix);
   matrix->Delete();
 }
+

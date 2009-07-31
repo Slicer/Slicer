@@ -457,10 +457,23 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
   if (event == vtkMRMLScene::NodeAddedEvent && addedNode &&
       addedNode->IsA("vtkMRMLVolumeRenderingParametersNode"))
     {
-    //if (this->GetParametersNode() == NULL)
-     // {
-      vtkSetAndObserveMRMLNodeMacro(this->ParametersNode, addedNode);
-     // }
+    if (this->ParametersNode && this->ParametersNode->GetVolumeNode() )
+      {
+      this->ParametersNode->GetVolumeNode()->RemoveObservers(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallbackCommand);
+      }
+
+    vtkSetAndObserveMRMLNodeMacro(this->ParametersNode, addedNode);
+    
+    vtkMRMLScalarVolumeNode *volumeNode = this->ParametersNode->GetVolumeNode();
+    if (volumeNode)
+      {
+      volumeNode->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallbackCommand);
+      }
+    }
+  else if (event == vtkMRMLScene::NodeAddedEvent)
+    {
+    this->ProcessingMRMLEvents = 0;
+    return;
     }
          
   if (event == vtkMRMLScene::SceneCloseEvent)

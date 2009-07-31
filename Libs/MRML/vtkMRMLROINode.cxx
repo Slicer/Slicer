@@ -62,6 +62,7 @@ vtkMRMLROINode::vtkMRMLROINode()
 {
   this->XYZ[0] = this->XYZ[1] = this->XYZ[2] = 0.0;
   this->RadiusXYZ[0] = this->RadiusXYZ[1] = this->RadiusXYZ[2] = 10.0;
+  this->InsideOut = 0;
 
   this->IJK[0] = this->IJK[1] = this->IJK[2] = 0;
   this->RadiusIJK[0] = this->RadiusIJK[1] = this->RadiusIJK[2] = 0;
@@ -125,6 +126,8 @@ void vtkMRMLROINode::WriteXML(ostream& of, int nIndent)
 
   of << indent << " RadiusXYZ=\"" 
     << this->RadiusXYZ[0] << " " << this->RadiusXYZ[1] << " " << this->RadiusXYZ[2] << "\"";
+
+  of << indent << " InsideOut=\"" << (this->InsideOut ? "true" : "false") << "\"";
 
   of << indent << " Selected=\"" << (this->Selected ? "true" : "false") << "\"";
 
@@ -216,6 +219,17 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
         this->InteractiveMode = 0;
         }
       }
+    else if (!strcmp(attName, "InsideOut")) 
+      {
+      if (!strcmp(attValue,"true")) 
+        {
+        this->InsideOut = 1;
+        }
+      else
+        {
+        this->InsideOut = 0;
+        }
+      }
  
     }
 
@@ -296,6 +310,7 @@ void vtkMRMLROINode::Copy(vtkMRMLNode *anode)
   this->SetSelected(node->GetSelected());
   this->SetVisibility(node->Visibility);
   this->SetInteractiveMode(node->InteractiveMode);
+  this->SetInsideOut(node->InsideOut);
 
   this->EndModify(disabledModify);
 
@@ -508,9 +523,12 @@ void vtkMRMLROINode::GetTransformedPlanes(vtkPlanes *planes)
     N[3][i] = -N[2][i];
     N[5][i] = -N[4][i];
     }
+
+  double factor = (this->InsideOut ? -1.0 : 1.0);
+
   for (i=0; i<6; i++)
     {
-    normals->SetTuple3(i, N[i][0], N[i][1], N[i][2]);
+    normals->SetTuple3(i, factor*N[i][0], factor*N[i][1], factor*N[i][2]);
     }
   planes->SetNormals(normals);
 

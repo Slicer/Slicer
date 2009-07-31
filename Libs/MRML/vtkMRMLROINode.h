@@ -89,6 +89,15 @@ public:
   vtkGetVectorMacro(RadiusIJK,double,3);
 
   // Description:
+  // Set/Get the InsideOut flag. This data memeber is used in conjunction
+  // with the GetPlanes() method. When off, the normals point out of the
+  // box. When on, the normals point into the hexahedron.  InsideOut is off
+  // by default.
+  vtkSetMacro(InsideOut,int);
+  vtkGetMacro(InsideOut,int);
+  vtkBooleanMacro(InsideOut,int);
+
+  // Description:
   // Get/Set for LabelText
   vtkSetStringMacro(LabelText);
   vtkGetStringMacro(LabelText);
@@ -135,6 +144,9 @@ protected:
   // Description:
   // The radius of the ROI box in IJK space
   double RadiusIJK[3];
+
+  // Control the orientation of the normals
+  int InsideOut;
 
   char *ID;
   char *LabelText;

@@ -36,7 +36,7 @@
 <VolumeDisplay
  id="vtkMRMLScalarVolumeDisplayNode1" name="vtkMRMLScalarVolumeDisplayNode1" hideFromEditors="true" selectable="true" selected="false" color="0.5 0.5 0.5" selectedColor="1 0 0" selectedAmbient="0.4" ambient="0" diffuse="1" selectedSpecular="0.5" specular="0" power="1" opacity="1" visibility="true" clipping="false" sliceIntersectionVisibility="false" backfaceCulling="true" scalarVisibility="false" vectorVisibility="false" tensorVisibility="false" autoScalarRange="true" scalarRange="0 100" colorNodeRef="vtkMRMLColorTableNodeGrey"  window="90" level="44" upperThreshold="32767" lowerThreshold="-32768" interpolate="1" autoWindowLevel="1" applyThreshold="0" autoThreshold="0"></VolumeDisplay>
 <VolumeRenderingParameters
- id="vtkMRMLVolumeRenderingParametersNode1" name="Parameters" hideFromEditors="true" selectable="true" selected="false" volumeNodeID="vtkMRMLScalarVolumeNode1" croppingEnabled="0" ROINodeID="vtkMRMLROINode1" volumePropertyNodeID="vtkMRMLVolumePropertyNode1"></VolumeRenderingParameters>
+ id="vtkMRMLVolumeRenderingParametersNode1" name="Parameters" hideFromEditors="true" selectable="true" selected="false" volumeNodeID="vtkMRMLScalarVolumeNode1" croppingEnabled="1" ROINodeID="vtkMRMLROINode1" volumePropertyNodeID="vtkMRMLVolumePropertyNode1"></VolumeRenderingParameters>
 <VolumeProperty
  id="vtkMRMLVolumePropertyNode1" name="vtkMRMLVolumePropertyNode1"
  hideFromEditors="true" selectable="true" selected="false" userTags=""
@@ -44,5 +44,8 @@
  specularPower="10" scalarOpacity="6 -17 0 55 0.05 57 1" gradientOpacity="4
  0 1 255 1" colorTransfer="8 -17 0.5 0.5 0.5 235 0.5 0.5 0.5"></VolumeProperty>
 <MRMLROINode
- name="vtkMRMLROINode1" hideFromEditors="false" selectable="true" selected="false" ID="vtkMRMLROINode1" LabelText="" XYZ="99.3023 0 0" RadiusXYZ="89.3023 10 10" Selected="false" Visibility="true" InteractiveMode="true"></MRMLROINode>
+ name="vtkMRMLROINode1" hideFromEditors="false" selectable="true"
+ selected="false" ID="vtkMRMLROINode1" LabelText="" XYZ="99.3023 0 0"
+ RadiusXYZ="89.3023 100 100" Selected="false" Visibility="true"
+ InteractiveMode="true" InsideOut="true"></MRMLROINode>
 </MRML>
