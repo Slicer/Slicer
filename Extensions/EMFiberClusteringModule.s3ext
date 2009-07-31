@@ -1,0 +1,10 @@
+
+scm       svn
+svnpath   https://www.nitrc.org/svn/quantitativedti/QuantitativeDiffusionTools/trunk/EMClustering
+svnusername slicerbot 
+svnpassword slicer
+depends
+homepage  http://www.nitrc.org/projects/quantitativedti/
+category  Tractography
+status    Alpha
+description An EM approach for clustering of fiber bundles from Diffusion MRI.
