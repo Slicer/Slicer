@@ -77,7 +77,7 @@ USE: (1) shell>> python ModifyHeader.py : display the whole list of parameters w
     e.g. shell>> python ModifyHeader.py totalTracts 300
 
   
-(2.b.6) AnalyzeData.py: used to compute in row min, max, mean values of FA, mode, Trace, radial and axial diffusivity
+(2.b.6) AnalyzeData.py: used to compute in row min, max, mean values of FA, mode, Trace, axial/radial diffusivity
 
 remark: this script is the only one you can launch from Level0!
 
@@ -88,7 +88,7 @@ remark: two files are created: cases.data and stats.data
 
 format of stats.data:
    <case id> <min FA> <max FA> <mean FA> <min mode> <max mode> <mean mode> <min trace> <max trace> <mean trace> 
-   <case id> <min radial diffuse> <max radial diffuse> <mean radial diffuse> <min axial diffuse> <max axial diffuse> <mean axial diffuse>
+   <case id> <min axial diffuse> <max axial diffuse> <mean axial diffuse> <min radial diffuse> <max radial diffuse> <mean radial diffuse>
 
 
 Contact: Julien de Siebenthal, jdesiebenthal at gmail.com
