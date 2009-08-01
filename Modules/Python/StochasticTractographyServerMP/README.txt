@@ -17,7 +17,7 @@ This code implements a parallelization scheme to achieve stochastic tractography
 
 (II) Description:
 
-(2.a) structure of folders: To accordingly run the scripts you must follow this folder structure (names are just for examplification - you may use yours)
+(2.a) structure of folders: To accordingly run the scripts you must follow this folder structure (folder names are just for examplification purpose - you may use yours but for the Level3 that are assigned by the generators and are uniquely assigned - based on time stamp)
 
     Level0   Level1   Level2
    
