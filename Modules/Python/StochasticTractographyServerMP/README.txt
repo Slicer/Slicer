@@ -1,6 +1,6 @@
 Stochastic Tractography Batch
 
-Requirements:
+(0) Requirements:
 
 This module was tested on
 (1) Python 2.5.4 (should work on 2.6, 3.0 was not tested so far) : http://www.python.org
@@ -9,7 +9,7 @@ This module was tested on
 
 tip: I advice ipython to do your development and test : http://ipython.scipy.org/
 
-remark; It is a documentation in construction, be patient
+remark: It is a documentation in construction, be patient
 
 (I) Overview:
 
@@ -79,5 +79,5 @@ USE: (1) shell>> python ModifyHeader.py : display the whole list of parameters w
 
 
 
-contact: Julien de Siebenthal, jdesiebenthal@gmail.com
+Contact: Julien de Siebenthal, jdesiebenthal@gmail.com
 
