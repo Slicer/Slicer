@@ -43,6 +43,8 @@ remark: The folder structure have basically 3 levels. Level0 is the root. Level1
 
 (2.b) scripts you can launch:
 
+WARNING: never launch the autoTractoxxx.py scripts from Level0! It would erase your configuration sets. I will improve the behavior of the scripts on that matter.
+
 (2.b.1) autoTracto2Regions.py: used when a 2 roi based tractography is to be done, takes no argument, must be launchned from Level1 (see 2.a) 
 
 USE: shell>> python autoTracto2Regions.py
@@ -75,7 +77,13 @@ USE: (1) shell>> python ModifyHeader.py : display the whole list of parameters w
     e.g. shell>> python ModifyHeader.py totalTracts 300
 
   
-(2.b.6) AnalyzeData.py: 
+(2.b.6) AnalyzeData.py: used to compute in row min, max, mean values of FA, mode, Trace, radial and axial diffusivity
+
+remark: this script is the only one you can launch from Level0!
+
+USE: shell>> python AnalyzeData.py
+
+format of tests.data
 
 
 
