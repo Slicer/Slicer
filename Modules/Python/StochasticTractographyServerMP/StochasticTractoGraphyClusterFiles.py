@@ -1089,20 +1089,20 @@ if __name__ == '__main__':
   inputVol3 = ""
 
   if len(sys.argv)<3:
-    print 'usage: python StochasticTractoGraphyTest.py <params.in>  <volume.dwi> [<roiA.roi> [<roiB.roi> or <mask.wm>]]'
+    print 'usage: python %s <params.in>  <volume.dwi> [<roiA.roi> [<roiB.roi> or <mask.wm>]]' % sys.argv[0]
   else:
 
     if sys.argv[1].find('.in') and sys.argv[2].find('.dwi'):
       inputPar0 = sys.argv[1]
       inputVol0 = sys.argv[2]
     else:
-      print 'usage: python StochasticTractoGraphyTest.py <params.in>  <volume.dwi> [<roiA.roi> [<roiB.roi> or <mask.wm>]]'
+      print 'usage: python %s <params.in>  <volume.dwi> [<roiA.roi> [<roiB.roi> or <mask.wm>]]' % sys.argv[0] 
 
     if len(sys.argv)>3:
       if sys.argv[3].find('.roi'):
            inputVol1 = sys.argv[3]
       else:
-           print 'usage: python StochasticTractoGraphyTest.py <params.in>  <volume.dwi> [<roiA.roi> [<roiB.roi> or <mask.wm>]]'
+           print 'usage: python %s <params.in>  <volume.dwi> [<roiA.roi> [<roiB.roi> or <mask.wm>]]'  % sys.argv[0]
            
 
     if len(sys.argv)>4:
@@ -1112,18 +1112,18 @@ if __name__ == '__main__':
            if sys.argv[4].find('.wm'):
              inputVol3 = sys.argv[4]
       else:
-           print 'usage: python StochasticTractoGraphyTest.py <params.in>  <volume.dwi> [<roiA.roi> [<roiB.roi> or <mask.wm>]]'
+           print 'usage: python %s <params.in>  <volume.dwi> [<roiA.roi> [<roiB.roi> or <mask.wm>]]' % sys.argv[0]
            
 
     if len(sys.argv)>5:
       if sys.argv[5].find('.wm'):
            inputVol3 = sys.argv[5]
       else:
-           print 'usage: python StochasticTractoGraphyTest.py <params.in>  <volume.dwi> [<roiA.roi> [<roiB.roi> or <mask.wm>]]'
+           print 'usage: python %s <params.in>  <volume.dwi> [<roiA.roi> [<roiB.roi> or <mask.wm>]]' % sys.argv[0]
            
 
     if len(sys.argv)>6:
-      print 'usage: python StochasticTractoGraphyTest.py <params.in>  <volume.dwi> [<roiA.roi> [<roiB.roi> or <mask.wm>]]'
+      print 'usage: python %s <params.in>  <volume.dwi> [<roiA.roi> [<roiB.roi> or <mask.wm>]]' % sys.argv[0]
 
 
       

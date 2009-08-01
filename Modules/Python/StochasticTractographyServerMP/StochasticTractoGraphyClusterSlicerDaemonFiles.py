@@ -1137,7 +1137,7 @@ if __name__ == '__main__':
   inputVol3 = ""
 
   if len(sys.argv)<5:
-    print 'usage: python StochasticTractoGraphyTest.py <SlicerHostIP>  <SlicerPort> <params.in>  <volume.dwi> [<roiA.roi> [<roiB.roi> or <mask.wm>]]'
+    print 'usage: python %s <SlicerHostIP>  <SlicerPort> <params.in>  <volume.dwi> [<roiA.roi> [<roiB.roi> or <mask.wm>]]' % sys.argv[0]
   else:
 
     inputSHost = sys.argv[1]
@@ -1147,13 +1147,13 @@ if __name__ == '__main__':
       inputPar0 = sys.argv[3]
       inputVol0 = sys.argv[4]
     else:
-      print 'usage: python StochasticTractoGraphyTest.py <SlicerHostIP>  <SlicerPort> <params.in>  <volume.dwi> [<roiA.roi> [<roiB.roi> or <mask.wm>]]'
+      print 'usage: python %s <SlicerHostIP>  <SlicerPort> <params.in>  <volume.dwi> [<roiA.roi> [<roiB.roi> or <mask.wm>]]' % sys.argv[0]
 
     if len(sys.argv)>5:
       if sys.argv[5].split('.')[1]=='roi':
            inputVol1 = sys.argv[5]
       else:
-           print 'usage: python StochasticTractoGraphyTest.py <SlicerHostIP>  <SlicerPort> <params.in>  <volume.dwi> [<roiA.roi> [<roiB.roi> or <mask.wm>]]'
+           print 'usage: python %s <SlicerHostIP>  <SlicerPort> <params.in>  <volume.dwi> [<roiA.roi> [<roiB.roi> or <mask.wm>]]' % sys.argv[0]
            
 
     if len(sys.argv)>6:
@@ -1163,18 +1163,18 @@ if __name__ == '__main__':
            if sys.argv[6].split('.')[1]=='wm':
              inputVol3 = sys.argv[6]
       else:
-           print 'usage: python StochasticTractoGraphyTest.py <SlicerHostIP>  <SlicerPort> <params.in>  <volume.dwi> [<roiA.roi> [<roiB.roi> or <mask.wm>]]'
+           print 'usage: python %s <SlicerHostIP>  <SlicerPort> <params.in>  <volume.dwi> [<roiA.roi> [<roiB.roi> or <mask.wm>]]' % sys.argv[0]
            
 
     if len(sys.argv)>7:
       if sys.argv[7].split('.')[1]=='wm':
            inputVol3 = sys.argv[7]
       else:
-           print 'usage: python StochasticTractoGraphyTest.py <SlicerHostIP>  <SlicerPort> <params.in>  <volume.dwi> [<roiA.roi> [<roiB.roi> or <mask.wm>]]'
+           print 'usage: python %s <SlicerHostIP>  <SlicerPort> <params.in>  <volume.dwi> [<roiA.roi> [<roiB.roi> or <mask.wm>]]' % sys.argv[0]
            
 
     if len(sys.argv)>8:
-      print 'usage: python StochasticTractoGraphyTest.py <SlicerHostIP>  <SlicerPort> <params.in>  <volume.dwi> [<roiA.roi> [<roiB.roi> or <mask.wm>]]'
+      print 'usage: python %s <SlicerHostIP>  <SlicerPort> <params.in>  <volume.dwi> [<roiA.roi> [<roiB.roi> or <mask.wm>]]' % sys.argv[0]
       
     main(inputSHost, inputSPort, inputPar0, inputVol0, inputVol1, inputVol2, inputVol3)
 
