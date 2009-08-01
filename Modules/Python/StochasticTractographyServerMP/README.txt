@@ -81,8 +81,10 @@ USE: (1) shell>> python ModifyHeader.py : display the whole list of parameters w
 
 remark: this script is the only one you can launch from Level0!
 
-USE: shell>> python AnalyzeData.py
+USE:  python AnalyzeData.py < measure (FA, mode, trace, diffusivity) weighted by probability = value(0 or 1)> < threshold=value(0.0->1.0) >
+  e.g. shell>> python AnalyzeData.py 0 0.1
 
+remark: two files are created: cases.data and tests.data 
 format of tests.data
 
 

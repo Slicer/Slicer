@@ -227,8 +227,8 @@ if __name__ == '__main__':
   if len(sys.argv)==3:
     isWeighted = bool(int(sys.argv[1]))
     threshold = float(sys.argv[2]) 
-    f0 = open('cases.txt', 'w')
-    f1 = open('stats.txt', 'w')
+    f0 = open('cases.data', 'w')
+    f1 = open('stats.data', 'w')
     analyze(f0, f1, isWeighted, threshold)
     f0.close()
     f1.close()
