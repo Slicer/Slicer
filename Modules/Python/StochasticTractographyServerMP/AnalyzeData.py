@@ -107,18 +107,15 @@ def analyze(f0, f1, isWeighted=False, threshold=0.0):
     caseDirs = dir2[1]
     print 'Case folders : ', caseDirs
 
-    for j in range(len(caseDirs)): # loop on cases
+    for j in range(len(caseDirs)): 
       os.chdir(caseDirs[j])
       cont3 = os.walk('.')
       dir3 = cont3.next()
       conDirs = dir3[1]
       print 'Connection folders : ', conDirs
       if len(conDirs)>0:
-        #if conDirs[0].split('_')[0][0]=='c':
           f0.write(str(totCases) + ' ' + compDirs[i] + ' ' + caseDirs[j] + ' ' + conDirs[0].split('.')[0] + '\n')
           cTotCases+=1
-        #else:
-        #  uTotCases+=1
 
    
       isL = False
@@ -129,11 +126,7 @@ def analyze(f0, f1, isWeighted=False, threshold=0.0):
       miFa1 = maFa1 = mFa1 = miMode1 = maMode1 = mMode1 = miTrace1 = maTrace1 = mTrace1 = miRad1 = maRad1 = mRad1 = miAxl1 = maAxl1 = mAxl1 = 0.0 # L B2A
 
 
-      for k in range(len(conDirs)): # loop on hemispheres (L&R)
-        #tok = conDirs[k].split('_')
-        #print 'DEBUG : ', tok
-        #if len(tok)==12:
-        #  if tok[3] == 'L':  
+      for k in range(len(conDirs)): 
             lCases +=1
             os.chdir(conDirs[k])
             cont4 = os.walk('.')
@@ -159,12 +152,10 @@ def analyze(f0, f1, isWeighted=False, threshold=0.0):
             if not isEr1:
               os.chdir('outputs')
               ldata = glob.glob('*.data')
-              #print 'DEBUG : ', ldata
               for r in range(len(ldata)):
                     if ldata[r].split('.')[0].split('_')[0]=='cmFA2B':
                        lConA2B +=1
 
-                       #if conDirs[0].split('_')[0][0]=='c':
                        lCA2B +=1
                        isL = True
                        isLA2B = True
@@ -177,7 +168,6 @@ def analyze(f0, f1, isWeighted=False, threshold=0.0):
                     if ldata[r].split('.')[0].split('_')[0]=='cmFB2A':
                        lConB2A +=1
 
-                       #if conDirs[0].split('_')[0][0]=='c':
                        lCB2A +=1
                        isL = True
                        isLB2A = True
@@ -191,15 +181,6 @@ def analyze(f0, f1, isWeighted=False, threshold=0.0):
 
             os.chdir('..')
 
-          #else:
-          #  uCases +=1
-          #  uCasesDirs.append(caseDirs[j] + '/' + conDirs)
-
- 
-        #else:
-        #  uFolders +=1
-        #  uFoldersDirs.append(caseDirs[j] + '/' + conDirs)
-           
             
       print 'result  A2B : %s:%s:%s:%s:%s:%s:%s:%s:%s' % (str(miFa), str(maFa), str(mFa), str(miMode), str(maMode), str(mMode), str(miTrace), str(maTrace), str(mTrace))
       print 'result  B2A : %s:%s:%s:%s:%s:%s:%s:%s:%s' % (str(miFa1), str(maFa1), str(mFa1), str(miMode1), str(maMode1), str(mMode1), str(miTrace1), str(maTrace1), str(mTrace1))
@@ -215,9 +196,9 @@ def analyze(f0, f1, isWeighted=False, threshold=0.0):
       f1.write(str(totCases) + ' ' + str(miAxl1) +  ' '  + str(maAxl1) +  ' '  + str(mAxl1) +  ' '  + str(miRad1) +  ' '  + str(maRad1) +  ' '  + str(mRad1) + '\n')
 
       totCases +=1
-      os.chdir('..') # out scope of loop on hemispheres
+      os.chdir('..')  
 
-    os.chdir('..') # out scope of loop on cases
+    os.chdir('..')  
 
   print 'Total cases : ', totCases
 
