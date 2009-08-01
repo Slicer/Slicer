@@ -43,7 +43,7 @@ remark: The folder structure have basically 3 levels. Level0 is the root. Level1
 
 (2.b) scripts you can launch:
 
-(2.b.1) autoTracto2Regions.py: used when a 2 roi based tractography is to be done, takes no argument, must be launchned from the folder containing your data cases you created with the generator 
+(2.b.1) autoTracto2Regions.py: used when a 2 roi based tractography is to be done, takes no argument, must be launchned from Level1 (see 2.a) 
 
 USE: shell>> python autoTracto2Regions.py
 
