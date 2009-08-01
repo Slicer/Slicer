@@ -46,10 +46,12 @@ The folder structure have basically 3 levels. Level0 is the root. Level1 contain
 (2.b.1) autoTracto2Regions.py: used when a 2 roi based tractography is to be done, takes no argument, must be launchned from the folder containing your data cases you created with the generator 
 
 USE: shell>> python autoTracto2Regions.py
+
  
 (2.b.2) autoTracto2RegionsWithMask.py: idem as (2.b.1) but your configuration contains an external brain mask (more specifically a white matter mask)
 
 USE:  shell>> python autoTracto2RegionsWithMask.py 
+
 
 (2.b.3) autoSlicerTracto2Regions.py: idem as (2.b.1) but communicates the results to a unique Slicer3 platform started on a remote(/local) machine, takes 2 arguments  
 
@@ -60,9 +62,11 @@ remark: care must be taken
 USE:  python autoSlicerTracto2Regions.py <IP address of the machine running the Slicer3> <port of slicer daemon=18943>
  e.g. shell>> python autoSlicerTracto2Regions.py 127.0.0.1 18943
 
+
 (2.b.4) autoSlicerTracto2RegionsWithMask.py: idem as (2.b.3) but your configuration contains an external brain mask (more specifically a white matter mask)  
 
 USE: shell>> python autoSlicerTracto2RegionsWithMask.py
+
 
 (2.b.5) ModifyHeader.py: used to modify on the fly the parameters of the parameters *.in file of your configuration set. Any parameter generated through the Slicer3 interface could be modified
 
