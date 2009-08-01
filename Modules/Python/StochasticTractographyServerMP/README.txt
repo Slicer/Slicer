@@ -7,7 +7,7 @@ This module was tested on
 (2) Numpy 1.2.1 or 1.3.0 : http://numpy.scipy.org/
 (3) Parallel Python 1.5.7 : http://www.parallelpython.com/
 
-I advice ipython to do your development and test : http://ipython.scipy.org/
+tip: I advice ipython to do your development and test : http://ipython.scipy.org/
 
 remark; It is a documentation in construction, be patient
 
@@ -45,27 +45,28 @@ The folder structure have basically 3 levels. Level0 is the root. Level1 contain
 
 (2.b.1) autoTracto2Regions.py: used when a 2 roi based tractography is to be done, takes no argument, must be launchned from the folder containing your data cases you created with the generator 
 
-use: shell>> python autoTracto2Regions.py
+USE: shell>> python autoTracto2Regions.py
  
 (2.b.2) autoTracto2RegionsWithMask.py: idem as (2.b.1) but your configuration contains an external brain mask (more specifically a white matter mask)
 
-use:  shell>> python autoTracto2RegionsWithMask.py 
+USE:  shell>> python autoTracto2RegionsWithMask.py 
 
-(2.b.3) autoSlicerTracto2Regions.py: idem as (2.b.1) but communicates the results to a unique Slicer3 platform on a specific machine, takes 2 arguments  
+(2.b.3) autoSlicerTracto2Regions.py: idem as (2.b.1) but communicates the results to a unique Slicer3 platform started on a remote(/local) machine, takes 2 arguments  
 
-care must be taken
-  - the slicer dameon must be activated, if not it must be and the Slicer3 restarted
-  - a unique instance of Slicer3 must be launchned on the target machine
+remark: care must be taken
+  - the slicer dameon must be activated. If not, it must be and the Slicer3 restarted once again
+  - a unique instance of Slicer3 must be launchned on the target machine. You should shutdown any other Slicer2/Slicer3 because of the fact that any slicer daemon runs on a same port (18943) for any Slicer2/3 launched!
 
-use:  python autoSlicerTracto2Regions.py <IP address of the machine running the Slicer3> <port of slicer daemon=18943>
+USE:  python autoSlicerTracto2Regions.py <IP address of the machine running the Slicer3> <port of slicer daemon=18943>
  e.g. shell>> python autoSlicerTracto2Regions.py 127.0.0.1 18943
 
 (2.b.4) autoSlicerTracto2RegionsWithMask.py: idem as (2.b.3) but your configuration contains an external brain mask (more specifically a white matter mask)  
 
+USE: shell>> python autoSlicerTracto2RegionsWithMask.py
 
 (2.b.5) ModifyHeader.py: used to modify on the fly the parameters of the parameters *.in file of your configuration set. Any parameter generated through the Slicer3 interface could be modified
 
-use: (1) shell>> python ModifyHeader.py : display the whole list of parameters
+USE: (1) shell>> python ModifyHeader.py : display the whole list of parameters without modification
      (2) python ModifyHeader.py <tag of parameter to modify> <value of parameter you want to set>
     e.g. shell>> python ModifyHeader.py totalTracts 300
 
