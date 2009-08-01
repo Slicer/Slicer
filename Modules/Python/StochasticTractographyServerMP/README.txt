@@ -87,5 +87,12 @@ format of tests.data
 
 
 
-Contact: Julien de Siebenthal, jdesiebenthal@gmail.com
+Contact: Julien de Siebenthal, jdesiebenthal at gmail.com
+         Computational Radiology Laboratory
+         Harvard Medical School
+         Department of Radiology
+         Children's Hospital Boston
+
+         http://www.crl.med.harvard.edu
+         
 
