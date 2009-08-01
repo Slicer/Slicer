@@ -13,7 +13,7 @@ remark: It is a documentation in construction, be patient ;)
 
 (I) Overview:
 
-This code implements a parallelization scheme to achieve stochastic tractography. It does not require the Slicer3 platform to run per se. However, the stochastic tractography generator from Slicer3 must be used to generate configuration set containing all Numpy format required files as inputs.
+This code implements a parallelization scheme to achieve stochastic tractography. It does not require the Slicer3 platform to run per se. However, the stochastic tractography generator from Slicer3 must be used to generate configuration set containing all Numpy format required files as inputs. It was successfully tested on a Dell cluster of 250 computing nodes. This batch system can be customized easily to any network of machines. So far, it was only tested on Linux 64bits systems. 
 
 (II) Description:
 
