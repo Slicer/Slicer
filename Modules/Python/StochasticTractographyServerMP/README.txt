@@ -7,7 +7,7 @@ This module was tested on
 (2) Numpy 1.2.1 or 1.3.0 : http://numpy.scipy.org/
 (3) Parallel Python 1.5.7 : http://www.parallelpython.com/
 
-tip: I advice ipython to do your development and test : http://ipython.scipy.org/
+remark: I advice ipython to do your development and test : http://ipython.scipy.org/
 
 remark: It is a documentation in construction, be patient
 
