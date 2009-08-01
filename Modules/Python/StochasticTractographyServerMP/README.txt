@@ -9,7 +9,7 @@ This module was tested on
 
 I advice ipython to do your development and test : http://ipython.scipy.org/
 
-It is a documentation in construction, be patient
+remark; It is a documentation in construction, be patient
 
 (I) Overview:
 
@@ -74,5 +74,5 @@ use: (1) shell>> python ModifyHeader.py : display the whole list of parameters
 
 
 
-
+contact: Julien de Siebenthal, jdesiebenthal@gmail.com
 
