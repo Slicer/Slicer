@@ -185,8 +185,8 @@ def analyze(f0, f1, isWeighted=False, threshold=0.0):
       print 'result  A2B : %s:%s:%s:%s:%s:%s:%s:%s:%s' % (str(miFa), str(maFa), str(mFa), str(miMode), str(maMode), str(mMode), str(miTrace), str(maTrace), str(mTrace))
       print 'result  B2A : %s:%s:%s:%s:%s:%s:%s:%s:%s' % (str(miFa1), str(maFa1), str(mFa1), str(miMode1), str(maMode1), str(mMode1), str(miTrace1), str(maTrace1), str(mTrace1))
 
-      print 'result diffuse  A2B : %s:%s:%s:%s:%s:%s' % (str(miRad) , str(maRad) , str(mRad) , str(miAxl) , str(maAxl) , str(mAxl))
-      print 'result diffuse  B2A : %s:%s:%s:%s:%s:%s' % (str(miRad1) , str(maRad1) , str(mRad1) , str(miAxl1) , str(maAxl1) , str(mAxl1))
+      print 'result diffuse  A2B : %s:%s:%s:%s:%s:%s' % (str(miAxl) , str(maAxl) , str(mAxl), str(miRad) , str(maRad) , str(mRad))
+      print 'result diffuse  B2A : %s:%s:%s:%s:%s:%s' % (str(miAxl1) , str(maAxl1) , str(mAxl1), str(miRad1) , str(maRad1) , str(mRad1))
 
 
       f1.write(str(totCases) + ' ' + str(miFa) +  ' '  +  str(maFa) + ' '  + str(mFa) + ' ' + str(miMode) + ' ' + str(maMode) + ' ' + str(mMode) + ' ' + str(miTrace) +  ' '  +  str(maTrace) + ' '  + str(mTrace) + '\n')

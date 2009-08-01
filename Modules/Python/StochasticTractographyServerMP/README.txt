@@ -85,8 +85,10 @@ USE:  python AnalyzeData.py < measure (FA, mode, trace, diffusivity) weighted by
   e.g. shell>> python AnalyzeData.py 0 0.1
 
 remark: two files are created: cases.data and stats.data 
-format of stats.data
 
+format of stats.data:
+   <case id> <min FA> <max FA> <mean FA> <min mode> <max mode> <mean mode> <min trace> <max trace> <mean trace> 
+   <case id> <min radial diffuse> <max radial diffuse> <mean radial diffuse> <min axial diffuse> <max axial diffuse> <mean axial diffuse>
 
 
 Contact: Julien de Siebenthal, jdesiebenthal at gmail.com
