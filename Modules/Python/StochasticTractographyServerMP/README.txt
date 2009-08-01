@@ -9,7 +9,7 @@ This module was tested on
 
 remark: I advice ipython to do your development and test : http://ipython.scipy.org/
 
-remark: It is a documentation in construction, be patient ;)
+remark: It is a documentation in construction, be patient ;). Feel free to address any question or comment to me (see contact at the end of that doc)
 
 (I) Overview:
 
