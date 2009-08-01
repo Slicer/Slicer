@@ -68,7 +68,7 @@ USE:  python autoSlicerTracto2Regions.py <IP address of the machine running the 
 USE: shell>> python autoSlicerTracto2RegionsWithMask.py
 
 
-(2.b.5) ModifyHeader.py: used to modify on the fly the parameters of the parameters *.in file of your configuration set. Any parameter generated through the Slicer3 interface could be modified
+(2.b.5) ModifyHeader.py: used to modify on the fly the parameters *.in file of your configuration set. Any parameter generated through the Slicer3 interface could be modified
 
 USE: (1) shell>> python ModifyHeader.py : display the whole list of parameters without modification
      (2) python ModifyHeader.py <tag of parameter to modify> <value of parameter you want to set>
