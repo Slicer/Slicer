@@ -1,6 +1,19 @@
+Stochastic Tractography Batch
+
+Requirements:
+
+This module was tested on
+(1) Python 2.5.4 (should work on 2.6, 3.0 was not tested so far) : http://www.python.org
+(2) Numpy 1.2.1 or 1.3.0 : http://numpy.scipy.org/
+(3) Parallel Python 1.5.7 : http://www.parallelpython.com/
+
+I advice ipython to do your development and test : http://ipython.scipy.org/
+
+It is a documentation in construction, be patient
+
 (I) Overview:
 
-This code implements a parallelization scheme to achieve stochastic tractography. It does not require the Slicer platform to run. However, the stochastic tractography generator from Slicer3 must be used to generate configuration set containing all Numpy format required files as inputs.
+This code implements a parallelization scheme to achieve stochastic tractography. It does not require the Slicer3 platform to run. However, the stochastic tractography generator from Slicer3 must be used to generate configuration set containing all Numpy format required files as inputs.
 
 (II) Description:
 
@@ -38,5 +51,8 @@ use: (1) shell>> python ModifyHeader.py : display the whole list of parameters
 
   
 (2.b.6) AnalyzeData.py: 
+
+
+
 
 
