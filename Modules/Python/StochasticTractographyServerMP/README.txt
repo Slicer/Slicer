@@ -86,7 +86,7 @@ USE:  python AnalyzeData.py < measure (FA, mode, trace, diffusivity) weighted by
 
 remark: two files are created: cases.data and stats.data 
 
-format of stats.data:
+format of stats.data: each line is doubled indeed, because the analysis is done for region A to region B and for region B to region A
    <case id> <min FA> <max FA> <mean FA> <min mode> <max mode> <mean mode> <min trace> <max trace> <mean trace> 
    <case id> <min axial diffuse> <max axial diffuse> <mean axial diffuse> <min radial diffuse> <max radial diffuse> <mean radial diffuse>
 

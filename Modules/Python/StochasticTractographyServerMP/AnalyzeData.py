@@ -122,8 +122,8 @@ def analyze(f0, f1, isWeighted=False, threshold=0.0):
       isLA2B = False
       isLB2A = False
 
-      miFa = maFa = mFa = miMode = maMode = mMode = miTrace = maTrace = mTrace = miRad = maRad = mRad = miAxl = maAxl = mAxl = 0.0 # L A2B
-      miFa1 = maFa1 = mFa1 = miMode1 = maMode1 = mMode1 = miTrace1 = maTrace1 = mTrace1 = miRad1 = maRad1 = mRad1 = miAxl1 = maAxl1 = mAxl1 = 0.0 # L B2A
+      miFa = maFa = mFa = miMode = maMode = mMode = miTrace = maTrace = mTrace = miRad = maRad = mRad = miAxl = maAxl = mAxl = 0.0 #  A2B
+      miFa1 = maFa1 = mFa1 = miMode1 = maMode1 = mMode1 = miTrace1 = maTrace1 = mTrace1 = miRad1 = maRad1 = mRad1 = miAxl1 = maAxl1 = mAxl1 = 0.0 #  B2A
 
 
       for k in range(len(conDirs)): 
