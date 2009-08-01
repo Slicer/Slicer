@@ -76,7 +76,6 @@ def pipeline(params, nimage, roiA, roiB, wm):
 
           ppserversL=("localhost",)
           #ppserversL=("*",)
-          # adapted to FAT nodes
 
           data = nimage.getImage()
 
@@ -263,6 +262,11 @@ def pipeline(params, nimage, roiA, roiB, wm):
 
           print "Tensor flag : %s" % str(tensEnabled)
 
+          cm = numpy.zeros((shpD[0], shpD[1], shpD[2]), 'uint32')
+          cm2 = numpy.zeros((shpD[0], shpD[1], shpD[2]), 'uint32')
+          cm3 = numpy.zeros((shpD[0], shpD[1], shpD[2]), 'uint32')
+          cm4 = numpy.zeros((shpD[0], shpD[1], shpD[2]), 'uint32')
+
           if smoothEnabled:
                     for k in range(shpD[3]):
                         timeSM0 = time.time()
@@ -327,15 +331,14 @@ def pipeline(params, nimage, roiA, roiB, wm):
                     dataBlocks = []
                     wmBlocks = []
 
-                    nCpu =  4 # could be set to the number of available cores
+                    nCpu = 2 # could be set to the number of available cores
 
                     nParts = 1
-                    if shpD[2]>1 and nCpu>1 :
+                    if shpD[2]>0 and nCpu>0 :
 
                       job_server = pp.Server(ppservers=ppserversL)
                        
                       ncpusL = job_server.get_ncpus()
-                      #if ncpusL == 0 : ncpusL = 1 
                       print "Number of cores on local machine : %s" % str(ncpusL)
                       print "Number of active computing nodes : %s" % str(nCpu)
 
@@ -519,7 +522,7 @@ def pipeline(params, nimage, roiA, roiB, wm):
 
 
                         nParts = 1
-                        if shpR[0]>1 and nCpu>1 :
+                        if shpR[0]>0 and nCpu>0 :
                            if shpR[0] >= nCpu:
                                nParts = nCpu
                            else:
@@ -603,7 +606,7 @@ def pipeline(params, nimage, roiA, roiB, wm):
                         monoP = False  
 
                         nParts2 = 1
-                        if shpR2[0]>1 and nCpu>1 :
+                        if shpR2[0]>0 and nCpu>0 :
                            if shpR2[0] >= nCpu:
                                nParts2 = nCpu
                            else:
