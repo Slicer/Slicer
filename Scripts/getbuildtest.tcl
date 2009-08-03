@@ -512,7 +512,13 @@ runcmd $::CMAKE \
 # are compatibile with
 #
 
-puts [exec $::Slicer3_HOME/Scripts/versioner.tcl]
+set cmd "sh $::Slicer3_HOME/Scripts/versioner.tcl"
+set retval [catch "eval runcmd $cmd" res]
+if {$retval == 1} {
+  puts "ERROR: failed to run versioner script: $cmd"
+  puts "$res"
+  return
+}
 
 #
 # now do the actual build
