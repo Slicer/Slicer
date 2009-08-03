@@ -77,6 +77,14 @@
       <label>Verbose module discovery</label>
       </boolean>
 
+      <boolean>
+      <name>PrintModulePaths</name>
+      <longflag>--print_module_paths</longflag>
+      <description>Print the module paths registry key and exit without running slicer.</description>
+      <default>false</default>
+      <label>Print Module Paths</label>
+      </boolean>
+
       <string multiple="true">
       <name>IgnoreModule</name>
       <longflag>--ignore_module</longflag>
