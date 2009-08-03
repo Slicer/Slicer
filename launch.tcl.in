@@ -567,10 +567,6 @@ proc launch_SplashScreen {} {
     wm withdraw .
     launch_SplashShow
   }
-
-    wm withdraw .
-    launch_SplashShow
-  }
   
   # windows always has a display, so get rid of the default window
   if { [string match -nocase "windows*" $::tcl_platform(os)] } {
