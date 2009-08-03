@@ -384,6 +384,11 @@ if { [BuildThis $::TCL_TEST_FILE "tcl"] == 1 } {
       } else {
         cd $Slicer3_LIB/tcl/tcl/unix
 
+        if {$tcl_platform(os) == "SunOS" && $tcl_platform(osVersion) == "5.10"} {
+          replaceStringInFile tcl.m4 "SunOS-5.1\[\[1-9\]\]*|SunOS-5.\[\[2-9\]\]\[\[0-9\]\]" "SunOS-5.1\[\[0-9\]\]*|SunOS-5.\[\[2-9\]\]\[\[0-9\]\]"
+          replaceStringInFile configure "SunOS-5.1\[1-9\]*|SunOS-5.\[2-9\]\[0-9\]" "SunOS-5.1\[0-9\]*|SunOS-5.\[2-9\]\[0-9\]"
+
+        }
         if {$::GENLIB(bitness) == "64"} {
           runcmd ./configure --enable-64bit --prefix=$Slicer3_LIB/tcl-build
         } else {
@@ -411,6 +416,13 @@ if { [BuildThis $::TK_TEST_FILE "tk"] == 1 } {
          # ignore, already downloaded with tcl
       } else {
         cd $Slicer3_LIB/tcl/tk/unix
+
+        if {$tcl_platform(os) == "SunOS" && $tcl_platform(osVersion) == "5.10"} {
+          replaceStringInFile tcl.m4 "SunOS-5.1\[\[1-9\]\]*|SunOS-5.\[\[2-9\]\]\[\[0-9\]\]" "SunOS-5.1\[\[0-9\]\]*|SunOS-5.\[\[2-9\]\]\[\[0-9\]\]"
+          replaceStringInFile configure "SunOS-5.1\[1-9\]*|SunOS-5.\[2-9\]\[0-9\]" "SunOS-5.1\[0-9\]*|SunOS-5.\[2-9\]\[0-9\]"
+
+        }
+
         if { $isDarwin } {
           runcmd ./configure --with-tcl=$Slicer3_LIB/tcl-build/lib --prefix=$Slicer3_LIB/tcl-build --disable-corefoundation --x-libraries=/usr/X11R6/lib --x-includes=/usr/X11R6/include --with-x
         } else {
@@ -540,20 +552,54 @@ if { [BuildThis $::BLT_TEST_FILE "blt"] == 1 } {
             runcmd ./configure --with-tcl=$Slicer3_LIB/tcl/tcl/unix --with-tk=$Slicer3_LIB/tcl-build --prefix=$Slicer3_LIB/tcl-build --enable-shared --x-includes=/usr/X11R6/include --x-libraries=/usr/X11R6/lib --with-cflags=-fno-common
             eval runcmd $::MAKE
             eval runcmd $::MAKE install
+
         } elseif { $isSolaris } {
-            cd $Slicer3_LIB/tcl/blt
-            runcmd ./configure --with-tcl=$Slicer3_LIB/tcl/tcl/unix --with-tk=$Slicer3_LIB/tcl-build --prefix=$Slicer3_LIB/tcl-build --enable-shared
-            eval runcmd $::SERIAL_MAKE
-            eval runcmd $::SERIAL_MAKE install
+
+          cd $Slicer3_LIB/tcl/blt
+
+          # On Solaris 10 - due to bug http://bugs.opensolaris.org/bugdatabase/view_bug.do?bug_id=6223255 - we need to set some -L and -R paths.
+          # I does not affect later Solaris releases.
+          set EXTRAS10LIBS ""
+          set MYSQLDIR ""             
+          if {$::GENLIB(bitness) == "64"} {
+            set ::env(CC) "$::GENLIB(compiler) -m64"
+            set ::env(LDFLAGS) "-m64 -L/usr/sfw/lib/64 -R/usr/sfw/lib/64"
+            puts "genlib blt 64 bit branch: $::env(CC)"
+            if {$tcl_platform(osVersion) == "5.10"} {
+              replaceStringInFile src/Makefile.in "@XFT_LIB_SPEC@" "@EXPAT_LIB_SPEC@ @XFT_LIB_SPEC@"
+              set EXTRAS10LIBS "--with-freetype2libdir=/usr/sfw/lib/64 --with-expatlibdir=/usr/sfw/lib/64"
+              set MYSQLDIR "--without-mysqlincdir --without-mysqllibdir"
+              puts "ExtraS10Libs_64 are: $EXTRAS10LIBS"
+            } else {
+              set MYSQLDIR "--with-mysqlincdir=/usr/mysql/5.1/include --with-mysqllibdir=/usr/mysql/5.1/lib/64/mysql"
+            } 
+          } else {
+            set ::env(CC) "$::GENLIB(compiler)"
+            puts "genlib blt 32 bit branch: $::env(CC)"
+            if {$tcl_platform(osVersion) == "5.10"} {
+              replaceStringInFile src/Makefile.in "@XFT_LIB_SPEC@" "@EXPAT_LIB_SPEC@ @XFT_LIB_SPEC@"
+              set EXTRAS10LIBS "--with-freetype2libdir=/usr/sfw/lib --with-expatlibdir=/usr/sfw/lib"
+              set MYSQLDIR "--without-mysqlincdir --without-mysqllibdir"
+              puts "ExtraS10Libs_32 are: $EXTRAS10LIBS"
+            } else {
+              set MYSQLDIR "--with-mysqlincdir=/usr/mysql/5.1/include --with-mysqllibdir=/usr/mysql/5.1/lib/mysql"
+              }
+          }
+              
+          eval runcmd ./configure --with-tcl=$Slicer3_LIB/tcl/tcl/unix --with-tk=$Slicer3_LIB/tcl-build --prefix=$Slicer3_LIB/tcl-build --enable-shared $EXTRAS10LIBS $MYSQLDIR
+          eval runcmd $::SERIAL_MAKE
+          eval runcmd $::SERIAL_MAKE install
+
         } else {
+
             cd $Slicer3_LIB/tcl/blt
             runcmd ./configure --with-tcl=$Slicer3_LIB/tcl/tcl/unix --with-tk=$Slicer3_LIB/tcl-build --prefix=$Slicer3_LIB/tcl-build
             eval runcmd $::SERIAL_MAKE
             eval runcmd $::SERIAL_MAKE install
+
         }
     }
 }
-
 ################################################################################
 # Get and build python
 #
@@ -616,14 +662,22 @@ if {  [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [stri
       cd $Slicer3_LIB/python
       runcmd $::SVN co $::PYTHON_TAG
       cd $Slicer3_LIB/python/release25-maint
-
+      puts "Python genlib CFLAGS is: $::env(CFLAGS)"
       foreach flag {LD_LIBRARY_PATH LDFLAGS CPPFLAGS} {
         if { ![info exists ::env($flag)] } { set ::env($flag) "" }
       }
       set ::env(LDFLAGS) "$::env(LDFLAGS) -L$Slicer3_LIB/tcl-build/lib"
       set ::env(CPPFLAGS) "$::env(CPPFLAGS) -I$Slicer3_LIB/tcl-build/include"
       set ::env(LD_LIBRARY_PATH) $Slicer3_LIB/tcl-build/lib:$Slicer3_LIB/python-build/lib:$::env(LD_LIBRARY_PATH)
-
+      if { $isSolaris } {
+          if {$::GENLIB(bitness) == "64"} {
+              set ::env(CC) "$::GENLIB(compiler) -m64"
+              set ::env(LDFLAGS)  "$::env(LDFLAGS) -L/usr/sfw/lib/64"
+          } elseif {$::GENLIB(bitness) == "32"} {
+              set ::env(CC) "$::GENLIB(compiler)"
+              set ::env(LDFLAGS)  "$::env(LDFLAGS) -L/usr/sfw/lib"
+          }
+      }
       runcmd ./configure --prefix=$Slicer3_LIB/python-build --with-tcl=$Slicer3_LIB/tcl-build --enable-shared
       eval runcmd $::MAKE
       eval runcmd $::SERIAL_MAKE install

@@ -117,10 +117,13 @@ if { $installed } {
   # additional system libs
 
   set ::env(X11_LIB_DIR) ""
+  set ::env(SFW_LIB_DIR) ""
   if { $::env(BUILD) == $::SOLARIS && $::BUILD(bitness) == "32"} {
     set ::env(X11_LIB_DIR) /usr/X11/lib
+    set ::env(SFW_LIB_DIR) /usr/sfw/lib
   } else {
     set ::env(X11_LIB_DIR) /usr/X11/lib/64
+    set ::env(SFW_LIB_DIR) /usr/sfw/lib/64
   }
 
   # 3rd party toolkits
@@ -233,8 +236,10 @@ if { $installed } {
 
   if { $::env(BUILD) == $::SOLARIS && $::BUILD(bitness) == "32"} {
     set ::env(X11_LIB_DIR) /usr/X11/lib
+    set ::env(SFW_LIB_DIR) /usr/sfw/lib
   } else {
     set ::env(X11_LIB_DIR) /usr/X11/lib/64
+    set ::env(SFW_LIB_DIR) /usr/sfw/lib/64
   }
 
   set ::env(Slicer3_COMPILER_DIR) ""
@@ -427,6 +432,7 @@ proc launch_SetPaths {} {
             set ::env(LD_LIBRARY_PATH) $::env(Slicer3_PLUGINS_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(Slicer3_MODULES_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(X11_LIB_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(SFW_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(Slicer3_COMPILER_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(PATH) "$::env(PATH):$::env(TCL_DIR)/bin"
             set ::env(PATH) "$::env(PATH):$::env(Teem_DIR)"
@@ -551,11 +557,16 @@ proc launch_SetPaths {} {
 proc launch_SplashScreen {} {
 
   if { $::LAUNCH(showSplash) } {
+
     if { ($::env(BUILD) ==  $::DARWIN || $::env(BUILD) == $::DARWIN_X86) || [catch "package require Tk"] } {
       puts "Setting up launch environment..."
       set $::LAUNCH(showSplash) 0
       return
     }
+
+    wm withdraw .
+    launch_SplashShow
+  }
 
     wm withdraw .
     launch_SplashShow

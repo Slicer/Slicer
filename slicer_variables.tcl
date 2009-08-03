@@ -210,6 +210,7 @@ switch $::tcl_platform(os) {
         set ::Teem_TEST_FILE $::Teem_BIN_DIR/unu
         set ::VTK_TEST_FILE $::VTK_DIR/bin/vtk
         set ::KWWidgets_TEST_FILE $::KWWidgets_BUILD_DIR/bin/libKWWidgets.so
+        set ::OpenCV_TEST_FILE $::OpenCV_DIR/lib/libcv.so
         set ::VTK_TCL_LIB $::TCL_LIB_DIR/libtcl8.5.$shared_lib_ext 
         set ::VTK_TK_LIB $::TCL_LIB_DIR/libtk8.5.$shared_lib_ext
         set ::VTK_TCLSH $::TCL_BIN_DIR/tclsh8.5
@@ -346,7 +347,7 @@ switch $::tcl_platform(os) {
 # System dependent variables
 
 switch $::tcl_platform(os) {
-    "SunOS" {
+      "SunOS" {
         set ::VTKSLICERBASE_BUILD_LIB $::Slicer3_HOME/Base/builds/$::env(BUILD)/bin/vtkSlicerBase.so
         set ::VTKSLICERBASE_BUILD_TCL_LIB $::Slicer3_HOME/Base/builds/$::env(BUILD)/bin/vtkSlicerBaseTCL.so
         set ::GENERATOR "Unix Makefiles"
@@ -381,10 +382,22 @@ switch $::tcl_platform(os) {
         } else {
           set GETBUILDTEST(bitness) $GENLIB(bitness)
         }
-        if {$GETBUILDTEST(bitness) == "64" || $GENLIB(bitness) == "64"} {
-          set ::env(CFLAGS) -m64
-          set ::env(CXXFLAGS) -m64
-          set ::env(LDFLAGS) -m64
+        if {$::GETBUILDTEST(bitness) == "64" || $::GENLIB(bitness) == "64"} {
+
+          # Due to bug 6223255 on Solaris 10 we need to explicitly set the runtime path
+          # for shared objects, because the linker will not find the 64 bit lib automatically.
+          # See the bellow link for more details:
+          # http://bugs.opensolaris.org/bugdatabase/view_bug.do?bug_id=6223255
+          if {$tcl_platform(osVersion) == "5.10" && ($::GETBUILDTEST(bitness) == "64" || $::GENLIB(bitness) == "64")} {
+            set ::env(CFLAGS) -m64
+            set ::env(CXXFLAGS) -m64
+            set ::env(LDFLAGS) "-m64 -L/usr/sfw/lib/64 -R/usr/sfw/lib/64"
+
+          } else {
+            set ::env(CFLAGS) -m64
+            set ::env(CXXFLAGS) -m64
+            set ::env(LDFLAGS) -m64
+          }
         } else {
           set ::env(CFLAGS) ""
           set ::env(CXXFLAGS) ""
