@@ -662,7 +662,6 @@ if {  [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [stri
       cd $Slicer3_LIB/python
       runcmd $::SVN co $::PYTHON_TAG
       cd $Slicer3_LIB/python/release25-maint
-      puts "Python genlib CFLAGS is: $::env(CFLAGS)"
       foreach flag {LD_LIBRARY_PATH LDFLAGS CPPFLAGS} {
         if { ![info exists ::env($flag)] } { set ::env($flag) "" }
       }
