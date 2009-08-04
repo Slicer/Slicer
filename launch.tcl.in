@@ -652,9 +652,10 @@ proc launch_puts {args} {
 
 #
 # helper proc to handle text coming from the child process
+# if output is set to 0, a variable ::globallines has to exist to buffer the lines
 #
 set ::count 0
-proc launch_FileEvent {fp} {
+proc launch_FileEvent {fp {output 1}} {
     if {[eof $fp]} {
         set ret [catch "close $fp" res]
         set ::saved_errorCode $::errorCode
@@ -664,7 +665,13 @@ proc launch_FileEvent {fp} {
         set ::END 1
     } else {
         gets $fp line
-        puts $line
+        if {$output == 1} {
+            puts $line
+        } else {
+            if {$line != ""} {
+                append ::globallines $line
+            }
+        }
         launch_SplashKill ;# just in case the pre-splash screen is still up
     }
 }
@@ -781,6 +788,60 @@ proc launch_RunProgram {} {
     exit $code
 }
 
+#
+# run the program with the argument --print-module-paths to get the module path from
+# registry so dependencies can be set before the actual program launch
+#
+proc launch_ImportModulePaths {} {
+
+    set ::globallines ""  ; # reset buffer for global lines
+
+    # run the program with argument --print-module-paths
+    if {$::env(BUILD) == $::WINDOWS} {
+        set fp [open "| \"$::Slicer3_REAL\" --print-module-paths" r]
+    } else {
+        set fp [open "| sh -c \"'$::Slicer3_REAL' --print-module-paths \" |& cat" r]
+    }
+
+    # call the helper but do not pass thru output directly!
+    fileevent $fp readable "launch_FileEvent $fp 0"
+    set ::END 0    
+    while { ![catch "pid $fp"] && ![eof $fp] } {
+        vwait ::END
+    }
+
+    # we should have the module paths now
+
+    # parse the svn revision of the version file
+    set dp [open "$::env(Slicer3_HOME)/lib/Slicer3/Slicer3Version.txt" r]
+    set data [read $dp]
+    close $dp
+
+    set exp {svnrevision ([0-9]+)}
+
+    foreach {lines} [regexp -line $exp $data matched svnrevision] {
+        if {$lines==1} {
+            # find only one line
+            # substitute @SVN@ in $result with the found svnrevision
+            set newpath [string map [list \@SVN\@ $svnrevision] $::globallines]
+        }
+    }
+
+    # set the dependencies
+    if {$::env(BUILD) == $::SOLARIS ||
+        $::env(BUILD) == $::LINUX_64 || 
+        $::env(BUILD) == $::LINUX} {
+            set ::env(LD_LIBRARY_PATH) $newpath$::env(LD_LIBRARY_PATH)
+        } elseif {$::env(BUILD) ==  $::DARWIN || $::env(BUILD) == $::DARWIN_X86} { 
+            set ::env(DYLD_LIBRARY_PATH) $newpath$::env(DYLD_LIBRARY_PATH)
+        } elseif {$::env(BUILD) == $::WINDOWS} {
+            set newpath [string map [list : \;] $newpath] ; # really needed?
+            set ::env(Path) $newpath$::env(Path)
+        }
+
+}
+
+
 ######
 #######  The actual steps for launching:
 ######
@@ -793,6 +854,7 @@ launch_InitEnvironment
 
 launch_SetPaths 
 
+launch_ImportModulePaths
 
 #
 # run program until it exits and then exit this script with the ouput
