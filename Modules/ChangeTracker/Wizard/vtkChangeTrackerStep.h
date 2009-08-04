@@ -73,6 +73,7 @@ protected:
 
   vtkChangeTrackerGUI *GUI;
   vtkKWFrameWithLabel               *Frame;
+  vtkKWFrameWithLabel               *AdvancedFrame;
   vtkCallbackCommand *WizardGUICallbackCommand;
   // Needed so we can clean up mess when going backwards 
   vtkChangeTrackerStep *NextStep;

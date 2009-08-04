@@ -5,6 +5,7 @@
 
 class vtkKWCheckButton;
 class vtkKWFrame;
+class vtkKWRadioButtonSetWithLabel;
 
 class VTK_CHANGETRACKER_EXPORT vtkChangeTrackerTypeStep : public vtkChangeTrackerStep
 {
@@ -43,6 +44,7 @@ protected:
   vtkKWCheckButton *TypeIntensityCheckButton;
   vtkKWCheckButton *TypeJacobianCheckButton; 
 
+  vtkKWRadioButtonSetWithLabel *RegistrationChoice;
 
 private:
   vtkChangeTrackerTypeStep(const vtkChangeTrackerTypeStep&);

@@ -31,6 +31,7 @@ vtkChangeTrackerStep::vtkChangeTrackerStep()
 {
   this->GUI = NULL;
   this->Frame           = NULL;
+  this->AdvancedFrame = NULL;
   this->NextStep = NULL; 
   this->WizardGUICallbackCommand = vtkCallbackCommand::New();
   this->WizardGUICallbackCommand->SetClientData(reinterpret_cast<void *>(this));
@@ -57,6 +58,12 @@ vtkChangeTrackerStep::~vtkChangeTrackerStep()
     this->Frame->Delete();
     this->Frame = NULL;
   }
+
+  if(this->AdvancedFrame)
+    {
+    this->AdvancedFrame->Delete();
+    this->AdvancedFrame = NULL;
+    }
 
   if(this->WizardGUICallbackCommand) 
   {
@@ -185,6 +192,17 @@ void vtkChangeTrackerStep::ShowUserInterface()
     this->Frame->SetParent(parent);
     this->Frame->Create();
     this->Frame->AllowFrameToCollapseOff();
+  }
+
+  if (!this->AdvancedFrame)
+  {
+    this->AdvancedFrame = vtkKWFrameWithLabel::New();
+  }
+  if (!this->AdvancedFrame->IsCreated())
+    {
+    this->AdvancedFrame->SetParent(parent);
+    this->AdvancedFrame->Create();
+    this->AdvancedFrame->AllowFrameToCollapseOn();
   }
 
   wizard_widget->NextButtonVisibilityOff();

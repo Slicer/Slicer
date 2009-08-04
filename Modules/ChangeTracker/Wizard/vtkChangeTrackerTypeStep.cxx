@@ -16,6 +16,8 @@
 #include "vtkKWMessageDialog.h"
 #include "vtkKWProgressGauge.h"
 #include "vtkSlicerSlicesControlGUI.h"
+#include "vtkKWRadioButton.h"
+#include "vtkKWRadioButtonSetWithLabel.h"
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkChangeTrackerTypeStep);
@@ -34,6 +36,7 @@ vtkChangeTrackerTypeStep::vtkChangeTrackerTypeStep()
   this->TypeIntensityCheckButton  = NULL;
   this->TypeJacobianCheckButton  = NULL;
   
+  this->RegistrationChoice = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -63,6 +66,12 @@ vtkChangeTrackerTypeStep::~vtkChangeTrackerTypeStep()
     {
     this->TypeJacobianCheckButton->Delete();
     this->TypeJacobianCheckButton = NULL;
+    }
+
+  if (this->RegistrationChoice)
+    {
+    this->RegistrationChoice->Delete();
+    this->RegistrationChoice = NULL;
     }
 }
 
@@ -130,7 +139,6 @@ void vtkChangeTrackerTypeStep::ShowUserInterface()
   this->Frame->SetLabelText("Select Growth Metric");
   this->Script("pack %s -side top -anchor nw -fill x -padx 0 -pady 2", this->Frame->GetWidgetName());
 
-
   if (!this->FrameTypeIntensity)
     {
     this->FrameTypeIntensity = vtkKWFrame::New();
@@ -193,6 +201,50 @@ void vtkChangeTrackerTypeStep::ShowUserInterface()
                 this->TypeIntensityCheckButton->GetWidgetName(),
                 this->TypeJacobianCheckButton->GetWidgetName());
 
+  this->AdvancedFrame->SetLabelText("Advanced settings");
+  this->Script("pack %s -side top -anchor nw -fill x -padx 0 -pady 2",
+    this->AdvancedFrame->GetWidgetName());
+
+  if(!this->RegistrationChoice)
+    {
+    this->RegistrationChoice = vtkKWRadioButtonSetWithLabel::New();
+    }
+
+  if(!this->RegistrationChoice->IsCreated())
+    {
+    this->RegistrationChoice->SetParent(this->AdvancedFrame);
+    this->RegistrationChoice->Create();
+    this->RegistrationChoice->SetLabelText("Input data alignment:");
+    this->RegistrationChoice->SetBalloonHelpString("Describe if and how the iput data should be aligned");
+//    this->RegistrationChoice->GetWidget()->PackVerticallyOn();
+
+    // now add a widget for each of the options
+    vtkKWRadioButton *rc0 = this->RegistrationChoice->GetWidget()->AddWidget(0);
+    rc0->SetValue("0");
+    rc0->SetText("Do not align my data");
+    rc0->SetBalloonHelpString("If selected, ChangeTracker will not attempt to apply any registration to your data. Choose this if the input images are already aligned in space.");
+    rc0->SetAnchorToWest();
+    rc0->SetSelectedState(0);
+    rc0->SetEnabled(0);
+
+    vtkKWRadioButton *rc1 = this->RegistrationChoice->GetWidget()->AddWidget(1);
+    rc1->SetValue("1");
+    rc1->SetText("I have a transform that aligns my data");
+    rc1->SetBalloonHelpString("If selected, you will need to specify the transform below. The image corresponding to the second time point will be resampled according to the specified transform.");
+    rc1->SetSelectedState(0);
+    rc1->SetEnabled(0);
+
+    vtkKWRadioButton *rc2 = this->RegistrationChoice->GetWidget()->AddWidget(2);
+    rc2->SetValue("2");
+    rc2->SetText("Align my data automatically");
+    rc2->SetBalloonHelpString("If selected, ChangeTracker will attempt to register your data using the method and parameters optimized for brain post-contrast MRI T1 sequence of head with meningioma pathology.");
+    rc2->SetAnchorToWest();
+    rc2->SetSelectedState(1);
+    rc2->SetEnabled(0);
+
+    this->Script("pack %s -side left -anchor nw -fill x -padx 2 -pady 2", 
+                 this->RegistrationChoice->GetWidgetName());
+    }
 
   {
     vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
