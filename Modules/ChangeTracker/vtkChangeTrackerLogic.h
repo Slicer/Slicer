@@ -143,6 +143,7 @@ public:
   // use the same functionality for ROI
   int DoITKRegistration(vtkSlicerApplication *app);
   int DoITKROIRegistration(vtkSlicerApplication *app);
+  int ResampleScan2(vtkSlicerApplication *app);
 
   char* GetInputScanName(int);
 

@@ -512,6 +512,7 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
   // This is for testing how to start a tcl script 
   //cout << "=== Start ANALYSIS ===" << endl;
 
+  vtkMRMLScene *scene = this->ChangeTrackerNode->GetScene();
   this->SourceAnalyzeTclScripts(app);
   vtkKWProgressGauge *progressBar = app->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge();
   
@@ -522,17 +523,62 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
 
   if (!debug) { 
     progressBar->SetValue(5.0/TimeLength);
-    if(this->ChangeTrackerNode->GetUseITK()){
-      // AF: at this point, registration must have completed
-      //assert(this->ChangeTrackerNode->GetScan2_RegisteredRef());
-      if(DoITKRegistration(vtkSlicerApplication::GetInstance()))
-        return ERR_GLOBAL_REG;
-      app->Script("update");
-    } else {
-      // AF: keep initial registration approach for validation
-      app->Script("::ChangeTrackerTcl::Scan2ToScan1Registration_GUI Global");
+    vtkMRMLChangeTrackerNode *ctNode = this->ChangeTrackerNode;
+
+    // First, create the scalar volume to keep the "registered" volume
+    vtkMRMLScalarVolumeNode *registeredVolumeNode;
+    vtkMRMLVolumeNode *scan2node = 
+      static_cast<vtkMRMLVolumeNode*>(scene->GetNodeByID(ctNode->GetScan2_Ref()));
+    assert(scan2node);
+    registeredVolumeNode = static_cast<vtkMRMLScalarVolumeNode*>(scene->GetNodeByID(ctNode->GetScan2_GlobalRef()));
+    if(registeredVolumeNode){
+      scene->RemoveNode(registeredVolumeNode);
+      ctNode->SetScan2_GlobalRef("");
     }
-    progressBar->SetValue(25.0/TimeLength);
+
+    char RegVolumeName[255];
+    sprintf(RegVolumeName, "%s_GlobalReg", this->GetInputScanName(1));
+    registeredVolumeNode = 
+      CreateVolumeNode(scan2node, RegVolumeName);
+    ctNode->SetScan2_GlobalRef(registeredVolumeNode->GetID());
+
+
+    if(this->ChangeTrackerNode->GetRegistrationChoice() == REGCHOICE_REGISTER)
+      {
+      if(this->ChangeTrackerNode->GetUseITK())
+        {
+        std::cerr << "REGCHOICE == REGISTER" << std::endl;
+        // AF: do local registration. It is probably not a good style to have a
+        // separate function for the similar functionality, but style is not the
+        // goal.
+        if(DoITKRegistration(vtkSlicerApplication::GetInstance()))
+          return ERR_LOCAL_REG;
+        app->Script("update");
+        } else {
+          app->Script("::ChangeTrackerTcl::Scan2ToScan1Registration_GUI Global"); 
+          progressBar->SetValue(50.0/TimeLength);
+        }
+      }
+    else if(this->ChangeTrackerNode->GetRegistrationChoice() == REGCHOICE_RESAMPLE)
+      {
+      // resample; assume transform has been initialized (this was checked
+      // earlier)
+      std::cerr << "REGCHOICE == RESAMPLE" << std::endl;
+      ResampleScan2(vtkSlicerApplication::GetInstance());
+      }
+    else if(this->ChangeTrackerNode->GetRegistrationChoice() == REGCHOICE_ALIGNED)
+      {
+      // just duplicate the image data from scan2; need to maintain separate
+      // node, because this is hard-coded into the Tcl part
+      std::cerr << "REGCHOICE == ALIGNED" << std::endl;
+      vtkImageData *scan2imageData = scan2node->GetImageData();
+      vtkImageData *outputImageData = vtkImageData::New();
+      assert(scan2imageData);
+      assert(outputImageData);
+      outputImageData->DeepCopy(scan2imageData);
+      registeredVolumeNode->SetAndObserveImageData(outputImageData);
+      outputImageData->Delete();
+      }
 
     //----------------------------------------------
     // Second step -> Save the outcome
@@ -549,20 +595,23 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
     this->ChangeTrackerNode->SetScan2_SuperSampleRef(outputNode->GetID());
     this->SaveVolume(app,outputNode);
     progressBar->SetValue(30.0/TimeLength);
-
+    
     //----------------------------------------------
     // Kilian-Feb-08 you should first register and then normalize bc registration is not impacted by normalization 
-    if(this->ChangeTrackerNode->GetUseITK()){
+    if(this->ChangeTrackerNode->GetUseITK())
+      {
       // AF: do local registration. It is probably not a good style to have a
       // separate function for the similar functionality, but style is not the
       // goal.
       if(DoITKROIRegistration(vtkSlicerApplication::GetInstance()))
         return ERR_LOCAL_REG;
       app->Script("update");
-    } else {
-      app->Script("::ChangeTrackerTcl::Scan2ToScan1Registration_GUI Local"); 
-      progressBar->SetValue(50.0/TimeLength);
-    }
+      } 
+    else 
+      {
+        app->Script("::ChangeTrackerTcl::Scan2ToScan1Registration_GUI Local"); 
+        progressBar->SetValue(50.0/TimeLength);
+      }
 
     app->Script("::ChangeTrackerTcl::HistogramNormalization_GUI"); 
     progressBar->SetValue(55.0/TimeLength);
@@ -1035,18 +1084,6 @@ int vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
 
   moduleNode->SetModuleDescription("Rigid registration");
 
-  vtkMRMLScalarVolumeNode *outputNode;
-  outputNode = static_cast<vtkMRMLScalarVolumeNode*>(scene->GetNodeByID(ctNode->GetScan2_GlobalRef()));
-  if(outputNode){
-    scene->RemoveNode(outputNode);
-    ctNode->SetScan2_GlobalRef("");
-  }
-
-  char RegVolumeName[255];
-  sprintf(RegVolumeName, "%s_GlobalReg", this->GetInputScanName(1));
-  outputNode = 
-    CreateVolumeNode(static_cast<vtkMRMLVolumeNode*>(scene->GetNodeByID(ctNode->GetScan1_Ref())), 
-                     RegVolumeName);
 
   // Create output transform node
   vtkMRMLLinearTransformNode *transformNode =
@@ -1059,7 +1096,7 @@ int vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
   moduleNode->SetParameterAsString("FixedImageFileName", ctNode->GetScan1_Ref());
   moduleNode->SetParameterAsString("MovingImageFileName", ctNode->GetScan2_Ref());
   moduleNode->SetParameterAsString("Iterations", "100,100,50,20");
-  moduleNode->SetParameterAsString("ResampledImageFileName", outputNode->GetID());
+  moduleNode->SetParameterAsString("ResampledImageFileName", ctNode->GetScan2_GlobalRef());
   moduleNode->SetParameterAsString("OutputTransform", transformNode->GetID());
 
   moduleLogic->SetAndObserveMRMLScene(scene);
@@ -1074,7 +1111,6 @@ int vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
   if(moduleNode->GetStatus() != vtkMRMLCommandLineModuleNode::Completed)
     return -5;
 
-  ctNode->SetScan2_GlobalRef(outputNode->GetID());
   moduleLogic->SetAndObserveMRMLScene(NULL);
   moduleLogic->Delete();
   moduleNode->Delete();
@@ -1174,4 +1210,51 @@ char* vtkChangeTrackerLogic::GetInputScanName(int scan){
      volumeNode = vtkMRMLVolumeNode::SafeDownCast(this->ChangeTrackerNode->GetScene()->GetNodeByID(this->ChangeTrackerNode->GetScan2_Ref()));
    return volumeNode->GetName();
 }
+
+// Just apply the known transform to the image at the second timepoint
+int vtkChangeTrackerLogic::ResampleScan2(vtkSlicerApplication *app){
+
+  // Init some useful references
+  vtkMRMLCommandLineModuleNode *moduleNode = NULL;
+  vtkCommandLineModuleLogic *moduleLogic = NULL;
+
+  vtkMRMLScene *scene = this->ChangeTrackerNode->GetScene();
+  vtkMRMLChangeTrackerNode *ctNode = this->ChangeTrackerNode;
+
+  moduleLogic = vtkCommandLineModuleLogic::New();
+  
+  moduleNode = 
+    static_cast<vtkMRMLCommandLineModuleNode*>(scene->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
+  if(!moduleNode){
+    return -2;
+  }
+
+  moduleNode->SetModuleDescription("Resample Scalar/Vector/DWI Volume");
+
+  // Linear registration parameter setup
+  moduleNode->SetParameterAsString("inputVolume", ctNode->GetScan2_Ref());
+  moduleNode->SetParameterAsString("referenceVolume", ctNode->GetScan2_Ref());
+  moduleNode->SetParameterAsString("transformationFile", ctNode->GetScan2_TransformRef());
+  moduleNode->SetParameterAsString("outputVolume", ctNode->GetScan2_GlobalRef());
+  // Currently, linear is the default interpolation type
+
+  moduleLogic->SetAndObserveMRMLScene(scene);
+  moduleLogic->SetApplicationLogic(app->GetApplicationGUI()->GetApplicationLogic());
+  moduleLogic->SetTemporaryDirectory(app->GetTemporaryDirectory());
+  moduleLogic->LazyEvaluateModuleTarget(moduleNode);
+  ModuleDescription moduleDesc = moduleNode->GetModuleDescription();
+  if(moduleDesc.GetTarget() == "Unknown")
+    return -4;  // failed to find registration module
+
+  moduleLogic->ApplyAndWait(moduleNode);
+  if(moduleNode->GetStatus() != vtkMRMLCommandLineModuleNode::Completed)
+    return -5;
+
+  moduleLogic->SetAndObserveMRMLScene(NULL);
+  moduleLogic->Delete();
+  moduleNode->Delete();
+
+  return 0;
+}
+
 // AF <<<

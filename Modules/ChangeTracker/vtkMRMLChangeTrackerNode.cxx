@@ -108,6 +108,7 @@ vtkMRMLChangeTrackerNode::vtkMRMLChangeTrackerNode()
 
    this->RegistrationChoice = REGCHOICE_REGISTER;
    this->ROIRegistration = true;
+   this->Scan2_TransformRef = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -127,6 +128,7 @@ vtkMRMLChangeTrackerNode::~vtkMRMLChangeTrackerNode()
    this->SetAnalysis_Intensity_Ref(NULL);
    this->SetAnalysis_Deformable_Ref(NULL);
    this->SetGrid_Ref(NULL);
+   this->SetScan2_TransformRef(NULL);
 }
 
 //----------------------------------------------------------------------------
@@ -327,7 +329,7 @@ void vtkMRMLChangeTrackerNode::PrintSelf(ostream& os, vtkIndent indent)
   switch(this->RegistrationChoice){
   case REGCHOICE_ALIGNED: os << "REGCHOICE_ALIGNED"; break;
   case REGCHOICE_RESAMPLE: os << "REGCHOICE_RESAMPLE"; break;
-  case REGCHOICE_REGISTER: os << "REGCHOICE_REGISTEREDD"; break;
+  case REGCHOICE_REGISTER: os << "REGCHOICE_REGISTER"; break;
   default: os << "Invalid value";
   }
   os << "\n";

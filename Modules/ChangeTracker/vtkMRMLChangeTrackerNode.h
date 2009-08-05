@@ -172,6 +172,9 @@ class VTK_CHANGETRACKER_EXPORT vtkMRMLChangeTrackerNode : public vtkMRMLNode
   vtkSetMacro(ROIRegistration, bool);
   vtkGetMacro(ROIRegistration, bool);
 
+  vtkSetStringMacro(Scan2_TransformRef);
+  vtkGetStringMacro(Scan2_TransformRef);
+
 protected:
   vtkMRMLChangeTrackerNode();
   ~vtkMRMLChangeTrackerNode();
@@ -231,6 +234,8 @@ protected:
   bool Scan2_RegisteredReady;
   int RegistrationChoice;
   bool ROIRegistration;
+
+  char* Scan2_TransformRef;
 };
 
 #endif

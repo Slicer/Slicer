@@ -18,6 +18,7 @@
 #include "vtkSlicerSlicesControlGUI.h"
 #include "vtkKWRadioButton.h"
 #include "vtkKWRadioButtonSetWithLabel.h"
+#include "vtkMRMLTransformNode.h"
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkChangeTrackerTypeStep);
@@ -233,14 +234,14 @@ void vtkChangeTrackerTypeStep::ShowUserInterface()
     rc0->SetBalloonHelpString("If selected, ChangeTracker will not attempt to apply any registration to your data. Choose this if the input images are already aligned in space.");
     rc0->SetAnchorToWest();
     rc0->SetSelectedState(0);
-    rc0->SetEnabled(0);
+//    rc0->SetEnabled(0);
 
     vtkKWRadioButton *rc1 = this->RegistrationChoice->GetWidget()->AddWidget(1);
     rc1->SetValue("1");
     rc1->SetText("I have a transform that aligns my data");
     rc1->SetBalloonHelpString("If selected, the images requiring alignment must be under a linear transform in the MRML tree hierarchy. The image corresponding to the second time point will be resampled according to the specified transform.");
     rc1->SetSelectedState(0);
-    rc1->SetEnabled(0);
+//    rc1->SetEnabled(0);
 
     vtkKWRadioButton *rc2 = this->RegistrationChoice->GetWidget()->AddWidget(2);
     rc2->SetValue("2");
@@ -248,7 +249,7 @@ void vtkChangeTrackerTypeStep::ShowUserInterface()
     rc2->SetBalloonHelpString("If selected, ChangeTracker will attempt to register your data using the method and parameters optimized for brain post-contrast MRI T1 sequence of head with meningioma pathology.");
     rc2->SetAnchorToWest();
     rc2->SetSelectedState(0);
-    rc2->SetEnabled(0);
+//    rc2->SetEnabled(0);
 
     if (node) 
       {
@@ -357,8 +358,29 @@ void vtkChangeTrackerTypeStep::TransitionCallback( )
     Node->SetRegistrationChoice(REGCHOICE_ALIGNED);
   if(rc1->GetSelectedState())
     {
+    std::cerr << "User says transform is available" << std::endl;
     Node->SetRegistrationChoice(REGCHOICE_RESAMPLE);
+    vtkMRMLVolumeNode *volumeNode;
+    vtkMRMLTransformNode *transformNode;
+    std::cerr << "Scan2_Ref is " << Node->GetScan2_Ref() << std::endl;
+    volumeNode = vtkMRMLVolumeNode::SafeDownCast(Node->GetScene()->GetNodeByID(Node->GetScan2_Ref()));
+    std::cerr << "volumeNode retrieved" << std::endl;
+    assert(volumeNode);
+    transformNode = volumeNode->GetParentTransformNode();
+    std::cerr << "transformNode retrieved" << std::endl;
+    if(!transformNode)
+      {
+      vtkKWMessageDialog::PopupMessage(this->GUI->GetApplication(),
+                                     this->GUI->GetApplicationGUI()->GetMainSlicerWindow(),
+                                     "ChangeTracker",
+                                     "With the current selection, second image must be under a transform.",
+                                     vtkKWMessageDialog::ErrorIcon);
+      return;
+      }
+    Node->SetScan2_TransformRef(transformNode->GetID());
+    std::cerr << "Transform for scan2 has been set" << std::endl;
     }
+
   if(rc2->GetSelectedState())
     Node->SetRegistrationChoice(REGCHOICE_REGISTER);
 
