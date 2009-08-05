@@ -23,6 +23,10 @@ Version:   $Revision: 1.2 $
 
 #include <vtksys/ios/sstream>
 
+#define REGCHOICE_ALIGNED  1
+#define REGCHOICE_RESAMPLE 2
+#define REGCHOICE_REGISTER 3
+
 //------------------------------------------------------------------------------
 vtkMRMLChangeTrackerNode* vtkMRMLChangeTrackerNode::New()
 {
@@ -101,6 +105,9 @@ vtkMRMLChangeTrackerNode::vtkMRMLChangeTrackerNode()
    // more reliable
    this->UseITK = true;
    this->Scan2_RegisteredReady = false;
+
+   this->RegistrationChoice = REGCHOICE_REGISTER;
+   this->ROIRegistration = true;
 }
 
 //----------------------------------------------------------------------------
@@ -164,6 +171,8 @@ void vtkMRMLChangeTrackerNode::WriteXML(ostream& of, int nIndent)
   of << indent << " Analysis_Deformable_Flag=\""<< this->Analysis_Deformable_Flag  << "\"";
 
   of << indent << " UseITK=\"" << this->UseITK << "\"";
+  of << indent << " RegistrationChoice=\"" << this->RegistrationChoice << "\"";
+  of << indent << " ROIRegistration=\"" << this->ROIRegistration << "\"";
 }
 
 //----------------------------------------------------------------------------
@@ -239,6 +248,18 @@ void vtkMRMLChangeTrackerNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >>  this->UseITK; 
       }
+    else if(!strcmp(attName, "RegistrationChoice"))
+      {
+      vtksys_stl::stringstream ss;
+      ss << attValue;
+      ss >>  this->RegistrationChoice; 
+      }
+    else if(!strcmp(attName, "ROIRegistration"))
+      {
+      vtksys_stl::stringstream ss;
+      ss << attValue;
+      ss >>  this->ROIRegistration; 
+      }
     // AF: should the intermediate volumes be stored here?
     /*
     else if(!strcmp(attName, "Scan2_RegisteredRef"))
@@ -270,6 +291,8 @@ void vtkMRMLChangeTrackerNode::Copy(vtkMRMLNode *anode)
   this->Analysis_Intensity_Sensitivity = node->Analysis_Intensity_Sensitivity; 
   this->Analysis_Deformable_Flag = node->Analysis_Deformable_Flag; 
   this->UseITK = node->UseITK;
+  this->RegistrationChoice = node->RegistrationChoice;
+  this->ROIRegistration = node->ROIRegistration;
   // AF: why not all of the volume references are copied?
 }
 
@@ -300,5 +323,14 @@ void vtkMRMLChangeTrackerNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "WorkingDir:           " <<  (this->WorkingDir ? this->WorkingDir : "(none)") << "\n";
   os << indent << "UseITK:  " << this->UseITK << "\n";
   os << indent << "Scan2_RegisteredReady: " << this->Scan2_RegisteredReady << "\n";
+  os << indent << "RegistrationChoice: ";
+  switch(this->RegistrationChoice){
+  case REGCHOICE_ALIGNED: os << "REGCHOICE_ALIGNED"; break;
+  case REGCHOICE_RESAMPLE: os << "REGCHOICE_RESAMPLE"; break;
+  case REGCHOICE_REGISTER: os << "REGCHOICE_REGISTEREDD"; break;
+  default: os << "Invalid value";
+  }
+  os << "\n";
+  os << indent << "ROIRegistration: " << this->ROIRegistration << "\n";
 }
 

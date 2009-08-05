@@ -37,6 +37,7 @@ vtkChangeTrackerTypeStep::vtkChangeTrackerTypeStep()
   this->TypeJacobianCheckButton  = NULL;
   
   this->RegistrationChoice = NULL;
+  this->ROIRegistrationChoice = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -73,6 +74,13 @@ vtkChangeTrackerTypeStep::~vtkChangeTrackerTypeStep()
     this->RegistrationChoice->Delete();
     this->RegistrationChoice = NULL;
     }
+  
+  if (this->ROIRegistrationChoice)
+    {
+    this->ROIRegistrationChoice->Delete();
+    this->ROIRegistrationChoice = NULL;
+    }
+
 }
 
 
@@ -212,7 +220,7 @@ void vtkChangeTrackerTypeStep::ShowUserInterface()
 
   if(!this->RegistrationChoice->IsCreated())
     {
-    this->RegistrationChoice->SetParent(this->AdvancedFrame);
+    this->RegistrationChoice->SetParent(this->AdvancedFrame->GetFrame());
     this->RegistrationChoice->Create();
     this->RegistrationChoice->SetLabelText("Input data alignment:");
     this->RegistrationChoice->SetBalloonHelpString("Describe if and how the iput data should be aligned");
@@ -230,7 +238,7 @@ void vtkChangeTrackerTypeStep::ShowUserInterface()
     vtkKWRadioButton *rc1 = this->RegistrationChoice->GetWidget()->AddWidget(1);
     rc1->SetValue("1");
     rc1->SetText("I have a transform that aligns my data");
-    rc1->SetBalloonHelpString("If selected, you will need to specify the transform below. The image corresponding to the second time point will be resampled according to the specified transform.");
+    rc1->SetBalloonHelpString("If selected, the images requiring alignment must be under a linear transform in the MRML tree hierarchy. The image corresponding to the second time point will be resampled according to the specified transform.");
     rc1->SetSelectedState(0);
     rc1->SetEnabled(0);
 
@@ -239,13 +247,47 @@ void vtkChangeTrackerTypeStep::ShowUserInterface()
     rc2->SetText("Align my data automatically");
     rc2->SetBalloonHelpString("If selected, ChangeTracker will attempt to register your data using the method and parameters optimized for brain post-contrast MRI T1 sequence of head with meningioma pathology.");
     rc2->SetAnchorToWest();
-    rc2->SetSelectedState(1);
+    rc2->SetSelectedState(0);
     rc2->SetEnabled(0);
 
-    this->Script("pack %s -side left -anchor nw -fill x -padx 2 -pady 2", 
-                 this->RegistrationChoice->GetWidgetName());
+    if (node) 
+      {
+      switch(node->GetRegistrationChoice())
+        {
+        case REGCHOICE_ALIGNED: rc0->SetSelectedState(1);break;
+        case REGCHOICE_RESAMPLE: rc1->SetSelectedState(1);break;
+        case REGCHOICE_REGISTER: rc2->SetSelectedState(1);break;
+        default: std::cerr << "MRML node contains invalid data!";
+        }
+      }
     }
 
+  if(!this->ROIRegistrationChoice)
+    {
+    this->ROIRegistrationChoice = vtkKWCheckButton::New();
+    }
+
+  if(!this->ROIRegistrationChoice->IsCreated())
+    {
+    this->ROIRegistrationChoice->SetParent(this->AdvancedFrame->GetFrame());
+    this->ROIRegistrationChoice->Create();
+    this->ROIRegistrationChoice->SetText("Rigid alignment of ROI");
+    this->ROIRegistrationChoice->SetBalloonHelpString("The ROIs in the two scans will be rigidly registered prior to the analysis.");
+    this->ROIRegistrationChoice->SelectedStateOn();
+    this->ROIRegistrationChoice->SetEnabled(0);
+    
+    this->Script("pack %s %s -side top -anchor nw -fill x -padx 2 -pady 2", 
+                 this->RegistrationChoice->GetWidgetName(),
+                 this->ROIRegistrationChoice->GetWidgetName());
+    
+    if(node)
+      {
+      this->ROIRegistrationChoice->SetSelectedState(node->GetROIRegistration());
+      }
+    }
+
+    // hide the gory details from the user
+    this->AdvancedFrame->CollapseFrame();
   {
     vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
     wizard_widget->GetCancelButton()->SetText("Analyze");
@@ -306,6 +348,21 @@ void vtkChangeTrackerTypeStep::TransitionCallback( )
   //  Process images 
   Node->SetAnalysis_Intensity_Flag(this->TypeIntensityCheckButton->GetSelectedState());
   Node->SetAnalysis_Deformable_Flag(this->TypeJacobianCheckButton->GetSelectedState());
+
+  vtkKWRadioButton *rc0 = this->RegistrationChoice->GetWidget()->GetWidget(0);
+  vtkKWRadioButton *rc1 = this->RegistrationChoice->GetWidget()->GetWidget(1);
+  vtkKWRadioButton *rc2 = this->RegistrationChoice->GetWidget()->GetWidget(2);
+
+  if(rc0->GetSelectedState())
+    Node->SetRegistrationChoice(REGCHOICE_ALIGNED);
+  if(rc1->GetSelectedState())
+    {
+    Node->SetRegistrationChoice(REGCHOICE_RESAMPLE);
+    }
+  if(rc2->GetSelectedState())
+    Node->SetRegistrationChoice(REGCHOICE_REGISTER);
+
+  Node->SetROIRegistration(this->ROIRegistrationChoice->GetSelectedState());
 
   vtkChangeTrackerLogic* Logic = this->GetGUI()->GetLogic();
 

@@ -17,6 +17,10 @@
 #include "vtkMRMLNode.h"
 #include "vtkChangeTracker.h" // EXPORT definitions
 
+#define REGCHOICE_ALIGNED  1
+#define REGCHOICE_RESAMPLE 2
+#define REGCHOICE_REGISTER 3
+
 class VTK_CHANGETRACKER_EXPORT vtkMRMLChangeTrackerNode : public vtkMRMLNode
 {
   public:
@@ -162,6 +166,12 @@ class VTK_CHANGETRACKER_EXPORT vtkMRMLChangeTrackerNode : public vtkMRMLNode
   vtkSetMacro(Scan2_RegisteredReady, bool);
   vtkGetMacro(Scan2_RegisteredReady, bool);
 
+  vtkSetMacro(RegistrationChoice, int);
+  vtkGetMacro(RegistrationChoice, int);
+
+  vtkSetMacro(ROIRegistration, bool);
+  vtkGetMacro(ROIRegistration, bool);
+
 protected:
   vtkMRMLChangeTrackerNode();
   ~vtkMRMLChangeTrackerNode();
@@ -219,6 +229,8 @@ protected:
   // Logic
   bool UseITK;
   bool Scan2_RegisteredReady;
+  int RegistrationChoice;
+  bool ROIRegistration;
 };
 
 #endif

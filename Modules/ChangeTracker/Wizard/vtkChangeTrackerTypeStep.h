@@ -45,6 +45,7 @@ protected:
   vtkKWCheckButton *TypeJacobianCheckButton; 
 
   vtkKWRadioButtonSetWithLabel *RegistrationChoice;
+  vtkKWCheckButton *ROIRegistrationChoice;
 
 private:
   vtkChangeTrackerTypeStep(const vtkChangeTrackerTypeStep&);
