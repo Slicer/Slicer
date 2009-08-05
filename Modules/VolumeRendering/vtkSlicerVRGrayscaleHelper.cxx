@@ -569,25 +569,25 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
             switch(id)
             {
             case 0://128M
-                this->MapperGPURaycast->SetInternalVolumeSize(256);//256^3
-                this->MapperGPURaycastII->SetInternalVolumeSize(256);//256^3
-                this->MapperTexture->SetInternalVolumeSize(256);
-                break;
+              this->MapperGPURaycast->SetInternalVolumeSize(200);
+              this->MapperGPURaycastII->SetInternalVolumeSize(200);
+              this->MapperTexture->SetInternalVolumeSize(128);//has to be power-of-two in this mapper
+              break;
             case 1://256M
-                this->MapperGPURaycast->SetInternalVolumeSize(384);//384^3
-                this->MapperGPURaycastII->SetInternalVolumeSize(384);//384^3
-                this->MapperTexture->SetInternalVolumeSize(256);
-                break;
+              this->MapperGPURaycast->SetInternalVolumeSize(256);//256^3
+              this->MapperGPURaycastII->SetInternalVolumeSize(256);
+              this->MapperTexture->SetInternalVolumeSize(256);
+              break;
             case 2://512M
-                this->MapperGPURaycast->SetInternalVolumeSize(512);//512^3
-                this->MapperGPURaycastII->SetInternalVolumeSize(512);//512^3
-                this->MapperTexture->SetInternalVolumeSize(512);
-                break;
+              this->MapperGPURaycast->SetInternalVolumeSize(320);
+              this->MapperGPURaycastII->SetInternalVolumeSize(320);
+              this->MapperTexture->SetInternalVolumeSize(256);
+              break;
             case 3://1024M
-                this->MapperGPURaycast->SetInternalVolumeSize(640);//640^3
-                this->MapperGPURaycast->SetInternalVolumeSize(640);//640^3
-                this->MapperTexture->SetInternalVolumeSize(512);
-                break;
+              this->MapperGPURaycast->SetInternalVolumeSize(400);
+              this->MapperGPURaycastII->SetInternalVolumeSize(400);
+              this->MapperTexture->SetInternalVolumeSize(256);
+              break;
             }
         }
         
@@ -1316,24 +1316,24 @@ void vtkSlicerVRGrayscaleHelper::ProcessGPUMemorySize(int id)
     switch(id)
     {
     case 0://128M
-        this->MapperGPURaycast->SetInternalVolumeSize(256);//256^3
-        this->MapperGPURaycastII->SetInternalVolumeSize(256);//256^3
-        this->MapperTexture->SetInternalVolumeSize(256);
+        this->MapperGPURaycast->SetInternalVolumeSize(200);
+        this->MapperGPURaycastII->SetInternalVolumeSize(200);
+        this->MapperTexture->SetInternalVolumeSize(128);//has to be power-of-two in this mapper
         break;
     case 1://256M
-        this->MapperGPURaycast->SetInternalVolumeSize(384);//384^3
-        this->MapperGPURaycastII->SetInternalVolumeSize(384);//384^3
+        this->MapperGPURaycast->SetInternalVolumeSize(256);//256^3
+        this->MapperGPURaycastII->SetInternalVolumeSize(256);
         this->MapperTexture->SetInternalVolumeSize(256);
         break;
     case 2://512M
-        this->MapperGPURaycast->SetInternalVolumeSize(512);//512^3
-        this->MapperGPURaycastII->SetInternalVolumeSize(512);//512^3
-        this->MapperTexture->SetInternalVolumeSize(512);
+        this->MapperGPURaycast->SetInternalVolumeSize(320);
+        this->MapperGPURaycastII->SetInternalVolumeSize(320);
+        this->MapperTexture->SetInternalVolumeSize(256);
         break;
     case 3://1024M
-        this->MapperGPURaycast->SetInternalVolumeSize(640);//640^3
-        this->MapperGPURaycastII->SetInternalVolumeSize(640);//640^3
-        this->MapperTexture->SetInternalVolumeSize(512);
+        this->MapperGPURaycast->SetInternalVolumeSize(400);
+        this->MapperGPURaycastII->SetInternalVolumeSize(400);
+        this->MapperTexture->SetInternalVolumeSize(256);
         break;
     }
     
