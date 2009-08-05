@@ -560,6 +560,8 @@ int Slicer3_main(int argc, char *argv[])
   if (PrintModulePaths)
     {
     vtkSlicerApplication *slicerApp = vtkSlicerApplication::GetInstance ( );
+    slicerApp->SetRegistryLevel(0);
+    slicerApp->PromptBeforeExitOff();
     std::cout << slicerApp->GetModulePaths() << std::endl;
     slicerApp->SetExitStatus(0);
     slicerApp->Exit();
