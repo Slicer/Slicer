@@ -598,19 +598,51 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
     
     //----------------------------------------------
     // Kilian-Feb-08 you should first register and then normalize bc registration is not impacted by normalization 
-    if(this->ChangeTrackerNode->GetUseITK())
+    // First, create the scalar volume to keep the "registered" volume
+    vtkMRMLScalarVolumeNode *registeredROIVolumeNode;
+    vtkMRMLVolumeNode *scan2ROInode = 
+      static_cast<vtkMRMLVolumeNode*>(scene->GetNodeByID(ctNode->GetScan2_SuperSampleRef()));
+    assert(scan2ROInode);
+    registeredROIVolumeNode = static_cast<vtkMRMLScalarVolumeNode*>(scene->GetNodeByID(ctNode->GetScan2_LocalRef()));
+    if(registeredROIVolumeNode){
+      scene->RemoveNode(registeredROIVolumeNode);
+      ctNode->SetScan2_LocalRef("");
+    }
+
+    sprintf(RegVolumeName, "%s_VOI_LocalReg", this->GetInputScanName(1));
+    registeredROIVolumeNode = 
+      CreateVolumeNode(scan2ROInode, RegVolumeName);
+    ctNode->SetScan2_LocalRef(registeredROIVolumeNode->GetID());
+
+    if(this->ChangeTrackerNode->GetROIRegistration())
       {
-      // AF: do local registration. It is probably not a good style to have a
-      // separate function for the similar functionality, but style is not the
-      // goal.
-      if(DoITKROIRegistration(vtkSlicerApplication::GetInstance()))
-        return ERR_LOCAL_REG;
-      app->Script("update");
-      } 
-    else 
-      {
+      std::cerr << "Local registration requested" << std::endl;
+      if(this->ChangeTrackerNode->GetUseITK())
+        {
+        // AF: do local registration. It is probably not a good style to have a
+        // separate function for the similar functionality, but style is not the
+        // goal.
+        if(DoITKROIRegistration(vtkSlicerApplication::GetInstance()))
+          return ERR_LOCAL_REG;
+        app->Script("update");
+        } 
+      else 
+        {
         app->Script("::ChangeTrackerTcl::Scan2ToScan1Registration_GUI Local"); 
         progressBar->SetValue(50.0/TimeLength);
+        }
+      }
+    else
+      {
+      // copy the image over
+      std::cerr << "No local registration -- copy" << std::endl;
+      vtkImageData *scan2ROIimageData = scan2ROInode->GetImageData();
+      vtkImageData *outputImageData = vtkImageData::New();
+      assert(scan2ROIimageData);
+      assert(outputImageData);
+      outputImageData->DeepCopy(scan2ROIimageData);
+      registeredROIVolumeNode->SetAndObserveImageData(outputImageData);
+      outputImageData->Delete();
       }
 
     app->Script("::ChangeTrackerTcl::HistogramNormalization_GUI"); 
@@ -1141,19 +1173,6 @@ int vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
 
   moduleNode->SetModuleDescription("Rigid registration");
 
-  vtkMRMLScalarVolumeNode *outputNode;
-  outputNode = 
-    static_cast<vtkMRMLScalarVolumeNode*>(scene->GetNodeByID(ctNode->GetScan2_LocalRef()));
-  if(outputNode){
-    scene->RemoveNode(outputNode);
-    ctNode->SetScan2_LocalRef("");
-  }
-
-  char RegVolumeName[255];
-  sprintf(RegVolumeName, "%s_VOI_LocalReg", this->GetInputScanName(1));
-  outputNode = CreateVolumeNode(static_cast<vtkMRMLVolumeNode*>(scene->GetNodeByID(ctNode->GetScan1_Ref())), 
-                                RegVolumeName);
-
   // Create output transform node
   // TODO: check whether the transform has been created, delete/reuse if yes
   vtkMRMLLinearTransformNode *transformNode =
@@ -1167,7 +1186,7 @@ int vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
   moduleNode->SetParameterAsString("MovingImageFileName", ctNode->GetScan2_SuperSampleRef());
   moduleNode->SetParameterAsString("TranslationScale", "10");
   moduleNode->SetParameterAsString("Iterations", "100,100,50,20");
-  moduleNode->SetParameterAsString("ResampledImageFileName", outputNode->GetID());
+  moduleNode->SetParameterAsString("ResampledImageFileName", ctNode->GetScan2_LocalRef());
   moduleNode->SetParameterAsString("OutputTransform", transformNode->GetID());
 
   moduleLogic->SetAndObserveMRMLScene(scene);
@@ -1184,7 +1203,6 @@ int vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
   if(moduleNode->GetStatus() != vtkMRMLCommandLineModuleNode::Completed)
     return -5;
 
-  ctNode->SetScan2_LocalRef(outputNode->GetID());
   moduleLogic->SetAndObserveMRMLScene(NULL);
   moduleLogic->Delete();
   moduleNode->Delete();

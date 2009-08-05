@@ -275,7 +275,7 @@ void vtkChangeTrackerTypeStep::ShowUserInterface()
     this->ROIRegistrationChoice->SetText("Rigid alignment of ROI");
     this->ROIRegistrationChoice->SetBalloonHelpString("The ROIs in the two scans will be rigidly registered prior to the analysis.");
     this->ROIRegistrationChoice->SelectedStateOn();
-    this->ROIRegistrationChoice->SetEnabled(0);
+//    this->ROIRegistrationChoice->SetEnabled(0);
     
     this->Script("pack %s %s -side top -anchor nw -fill x -padx 2 -pady 2", 
                  this->RegistrationChoice->GetWidgetName(),
