@@ -20,6 +20,10 @@
 #define REGCHOICE_ALIGNED  1
 #define REGCHOICE_RESAMPLE 2
 #define REGCHOICE_REGISTER 3
+        
+#define RESCHOICE_NONE     1
+#define RESCHOICE_LEGACY   2
+#define RESCHOICE_ISO      3
 
 class VTK_CHANGETRACKER_EXPORT vtkMRMLChangeTrackerNode : public vtkMRMLNode
 {
@@ -175,6 +179,12 @@ class VTK_CHANGETRACKER_EXPORT vtkMRMLChangeTrackerNode : public vtkMRMLNode
   vtkSetStringMacro(Scan2_TransformRef);
   vtkGetStringMacro(Scan2_TransformRef);
 
+  vtkGetMacro(ResampleChoice, int);
+  vtkSetMacro(ResampleChoice, int);
+  
+  vtkGetMacro(ResampleConst, double);
+  vtkSetMacro(ResampleConst, double);
+
 protected:
   vtkMRMLChangeTrackerNode();
   ~vtkMRMLChangeTrackerNode();
@@ -234,6 +244,8 @@ protected:
   bool Scan2_RegisteredReady;
   int RegistrationChoice;
   bool ROIRegistration;
+  int ResampleChoice;
+  double ResampleConst;
 
   char* Scan2_TransformRef;
 };

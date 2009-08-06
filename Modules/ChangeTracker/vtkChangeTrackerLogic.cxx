@@ -312,17 +312,36 @@ void vtkChangeTrackerLogic::DeleteSuperSample(int ScanNum) {
 }
 
 double vtkChangeTrackerLogic::DefineSuperSampleSize(const double inputSpacing[3], const int ROIMin[3], const int ROIMax[3]) {
-    int size = ROIMax[0] - ROIMin[0] + 1;
-    double TempSpacing = double(size) * inputSpacing[0] / 100.0;
-    double SuperSampleSpacing = (TempSpacing < 0.3 ?  0.3 : TempSpacing);
-    
-    size = ROIMax[1] - ROIMin[1] + 1;
-    TempSpacing = double(size) * inputSpacing[1] / 100.0;
-    if (TempSpacing > SuperSampleSpacing) { SuperSampleSpacing = TempSpacing;}
+    double SuperSampleSpacing = -1.;
 
-    size = ROIMax[2] - ROIMin[2] + 1;
-    TempSpacing = double(size) * inputSpacing[2] / 100.0;
-    if (TempSpacing > SuperSampleSpacing) { SuperSampleSpacing = TempSpacing;}
+    switch(this->ChangeTrackerNode->GetResampleChoice()){
+    case RESCHOICE_NONE: // not supported
+      std::cerr << "Unsupported resample choice -- should never be here" << std::endl;
+      abort();
+      break;
+    case RESCHOICE_LEGACY: {
+      // this is the way new isotropic spacing was defined by Kilian
+      int size = ROIMax[0] - ROIMin[0] + 1;    
+      double TempSpacing = double(size) * inputSpacing[0] / 100.0;
+      
+      SuperSampleSpacing = (TempSpacing < 0.3 ?  0.3 : TempSpacing);
+      size = ROIMax[1] - ROIMin[1] + 1;
+      TempSpacing = double(size) * inputSpacing[1] / 100.0;
+      if (TempSpacing > SuperSampleSpacing) { SuperSampleSpacing = TempSpacing;}
+
+      size = ROIMax[2] - ROIMin[2] + 1;
+      TempSpacing = double(size) * inputSpacing[2] / 100.0;
+      if (TempSpacing > SuperSampleSpacing) { SuperSampleSpacing = TempSpacing;}
+      break;}
+    case RESCHOICE_ISO:{
+      double minSpacing = fmin(inputSpacing[0], fmin(inputSpacing[1], inputSpacing[2]));
+      SuperSampleSpacing = minSpacing*this->ChangeTrackerNode->GetResampleConst();
+      break;}
+    default:
+      std::cerr << "Should never be here -- invalid value in the MRML node" << std::endl;
+    }
+
+    std::cerr << "ChangeTracker will use spacing value " << SuperSampleSpacing << " for ROI resampling" << std::endl;
     
     return SuperSampleSpacing;
 }

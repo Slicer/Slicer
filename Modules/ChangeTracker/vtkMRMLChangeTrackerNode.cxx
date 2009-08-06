@@ -23,10 +23,6 @@ Version:   $Revision: 1.2 $
 
 #include <vtksys/ios/sstream>
 
-#define REGCHOICE_ALIGNED  1
-#define REGCHOICE_RESAMPLE 2
-#define REGCHOICE_REGISTER 3
-
 //------------------------------------------------------------------------------
 vtkMRMLChangeTrackerNode* vtkMRMLChangeTrackerNode::New()
 {
@@ -109,6 +105,9 @@ vtkMRMLChangeTrackerNode::vtkMRMLChangeTrackerNode()
    this->RegistrationChoice = REGCHOICE_REGISTER;
    this->ROIRegistration = true;
    this->Scan2_TransformRef = NULL;
+
+   this->ResampleChoice = RESCHOICE_LEGACY;
+   this->ResampleConst = 1.;
 }
 
 //----------------------------------------------------------------------------
@@ -175,6 +174,9 @@ void vtkMRMLChangeTrackerNode::WriteXML(ostream& of, int nIndent)
   of << indent << " UseITK=\"" << this->UseITK << "\"";
   of << indent << " RegistrationChoice=\"" << this->RegistrationChoice << "\"";
   of << indent << " ROIRegistration=\"" << this->ROIRegistration << "\"";
+
+  of << indent << " ResampleChoice=\"" << this->ResampleChoice << "\"";
+  of << indent << " ResampleConst=\"" << this->ResampleConst << "\"";
 }
 
 //----------------------------------------------------------------------------
@@ -262,6 +264,19 @@ void vtkMRMLChangeTrackerNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >>  this->ROIRegistration; 
       }
+    else if(!strcmp(attName, "ResampleChoice"))
+      {
+      vtksys_stl::stringstream ss;
+      ss << attValue;
+      ss >>  this->ResampleChoice; 
+      }
+    else if(!strcmp(attName, "ResampleConst"))
+      {
+      vtksys_stl::stringstream ss;
+      ss << attValue;
+      ss >>  this->ResampleConst; 
+      }
+
     // AF: should the intermediate volumes be stored here?
     /*
     else if(!strcmp(attName, "Scan2_RegisteredRef"))
@@ -295,6 +310,8 @@ void vtkMRMLChangeTrackerNode::Copy(vtkMRMLNode *anode)
   this->UseITK = node->UseITK;
   this->RegistrationChoice = node->RegistrationChoice;
   this->ROIRegistration = node->ROIRegistration;
+  this->ResampleChoice = node->ResampleChoice;
+  this->ResampleConst = node->ResampleConst;
   // AF: why not all of the volume references are copied?
 }
 
@@ -334,5 +351,15 @@ void vtkMRMLChangeTrackerNode::PrintSelf(ostream& os, vtkIndent indent)
   }
   os << "\n";
   os << indent << "ROIRegistration: " << this->ROIRegistration << "\n";
+  
+  switch(this->ResampleChoice){
+  case RESCHOICE_NONE: os << "REGCHOICE_NONE"; break;
+  case RESCHOICE_LEGACY: os << "RESCHOICE_LEGACY"; break;
+  case RESCHOICE_ISO: os << "RESCHOICE_ISO"; break;
+  default: os << "Invalid value";
+  }
+  os << "\n";
+  os << indent << "ResampleConst: " << this->ResampleConst << "\n";
+
 }
 
