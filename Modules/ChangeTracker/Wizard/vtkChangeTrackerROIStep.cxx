@@ -26,6 +26,11 @@
 #include "vtkVolumeTextureMapper3D.h"
 #include "vtkPiecewiseFunction.h"
 #include "vtkSlicerROIDisplayWidget.h"
+#include "vtkKWRadioButton.h"
+#include "vtkKWRadioButtonSetWithLabel.h"
+#include "vtkKWSpinBoxWithLabel.h"
+#include "vtkKWSpinBox.h"
+#include "vtkKWRadioButton.h"
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkChangeTrackerROIStep);
@@ -68,6 +73,9 @@ vtkChangeTrackerROIStep::vtkChangeTrackerROIStep()
   this->roiWidget = NULL;
   this->roiUpdateGuard = false;
   this->FrameROIIJK = NULL;
+
+  this->ResamplingChoice = NULL;
+  this->SpinResampleConst = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -172,6 +180,18 @@ vtkChangeTrackerROIStep::~vtkChangeTrackerROIStep()
     {
     this->roiWidget->Delete();
     this->roiWidget = NULL;
+    }
+
+  if(this->ResamplingChoice)
+    {
+    this->ResamplingChoice->Delete();
+    this->ResamplingChoice = NULL;
+    }
+
+  if (this->SpinResampleConst)
+    {
+    this->SpinResampleConst->Delete();
+    this->SpinResampleConst = NULL;
     }
 }
 
@@ -531,6 +551,83 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
 
   this->Script("pack %s -side top -anchor nw -padx 2 -pady 3 -fill x",
                this->roiWidget->GetWidgetName());
+
+  this->AdvancedFrame->SetLabelText("Advanced settings");
+  this->Script("pack %s -side top -anchor nw -fill x -padx 0 -pady 2",
+    this->AdvancedFrame->GetWidgetName());
+
+  if(!this->ResamplingChoice)
+    {
+    this->ResamplingChoice = vtkKWRadioButtonSetWithLabel::New();
+    }
+
+  if(!this->ResamplingChoice->IsCreated())
+    {
+    this->ResamplingChoice->SetParent(this->AdvancedFrame->GetFrame());
+    this->ResamplingChoice->Create();
+    this->ResamplingChoice->SetLabelText("ROI resampling:");
+    this->ResamplingChoice->SetBalloonHelpString("Describe if and how the iput data ROI should be resampled");
+//    this->ResamplingChoice->GetWidget()->PackVerticallyOn();
+
+    // now add a widget for each of the options
+    vtkKWRadioButton *rc0 = this->ResamplingChoice->GetWidget()->AddWidget(0);
+    rc0->SetValue("0");
+    rc0->SetText("Do not resample my data");
+    rc0->SetBalloonHelpString("ChangeTracker will not resample the image corresponding to the ROI you selected in this step. Choose this if the input images are very large, as the more you resample, the slower registration will become.");
+    rc0->SetAnchorToWest();
+    rc0->SetSelectedState(0);
+    rc0->SetEnabled(0);
+
+    vtkKWRadioButton *rc1 = this->ResamplingChoice->GetWidget()->AddWidget(1);
+    rc1->SetValue("1");
+    rc1->SetText("Default resampling");
+    rc1->SetBalloonHelpString("Use the same resampling strategy as in Slicer 3.4 ChangeTracker");
+    rc1->SetSelectedState(1);
+//    rc1->SetEnabled(0);
+
+    vtkKWRadioButton *rc2 = this->ResamplingChoice->GetWidget()->AddWidget(2);
+    rc2->SetValue("2");
+    rc2->SetText("Isotropic resampling");
+    rc2->SetBalloonHelpString("Resample the ROI to isotropic pixel size equal to the original *minimum* spacing times the constant below");
+    rc2->SetAnchorToWest();
+    rc2->SetSelectedState(0);
+//    rc2->SetEnabled(0);
+
+    if (node) 
+      {
+      switch(node->GetResampleChoice())
+        {
+        case RESCHOICE_NONE: rc0->SetSelectedState(1);break;
+        case RESCHOICE_LEGACY: rc1->SetSelectedState(1);break;
+        case RESCHOICE_ISO: rc2->SetSelectedState(1);break;
+        default: std::cerr << "MRML node contains invalid data!";
+        }
+      }
+    }
+
+  if(!this->SpinResampleConst)
+    {
+    this->SpinResampleConst = vtkKWSpinBoxWithLabel::New();
+    }
+  if(!this->SpinResampleConst->IsCreated())
+    {
+    this->SpinResampleConst->SetParent(this->AdvancedFrame->GetFrame());
+    this->SpinResampleConst->Create();
+    this->SpinResampleConst->SetLabelText("Resampling constant:");
+    this->SpinResampleConst->GetWidget()->SetValue(1.);
+    this->SpinResampleConst->SetBalloonHelpString("The value of isotropic sampling will be obtained by multiplying the smallest pixel dimension by the value defined here.");
+    }
+  
+    if (node) 
+      {
+      this->SpinResampleConst->GetWidget()->SetValue(node->GetResampleConst());
+      }
+
+
+  this->Script("pack %s %s -side top -anchor nw -fill x -padx 2 -pady 2", 
+               this->ResamplingChoice->GetWidgetName(),
+               this->SpinResampleConst->GetWidgetName());
+  this->AdvancedFrame->CollapseFrame();
 
   // Very Important 
   this->AddGUIObservers();
@@ -1102,16 +1199,35 @@ void vtkChangeTrackerROIStep::TransitionCallback()
 {
   // cout << "vtkChangeTrackerROIStep::TransitionCallback() Start" << endl; 
   if (this->ROICheck()) { 
-     // ----------------------------
-     // Create SuperSampledVolume 
+    vtkMRMLChangeTrackerNode* Node = this->GetGUI()->GetNode();
+    if (!Node) return;
+
+    // update the node with the advanced settings
+    vtkKWRadioButton *rc0 = this->ResamplingChoice->GetWidget()->GetWidget(0);
+    vtkKWRadioButton *rc1 = this->ResamplingChoice->GetWidget()->GetWidget(1);
+    vtkKWRadioButton *rc2 = this->ResamplingChoice->GetWidget()->GetWidget(2);
+    if(rc0->GetSelectedState())
+      {
+      Node->SetResampleChoice(RESCHOICE_NONE);
+      }
+    else if(rc1->GetSelectedState())
+      {
+      Node->SetResampleChoice(RESCHOICE_LEGACY);
+      }
+    else if(rc2->GetSelectedState())
+      {
+      Node->SetResampleChoice(RESCHOICE_ISO);
+      }
+    Node->SetResampleConst(this->SpinResampleConst->GetWidget()->GetValue());
+
+    // ----------------------------
+    // Create SuperSampledVolume 
     vtkSlicerApplication *application   = vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication());
     vtkMRMLScalarVolumeNode *outputNode = this->GetGUI()->GetLogic()->CreateSuperSample(1);
     this->GetGUI()->GetLogic()->SaveVolume(application,outputNode); 
 
     if (outputNode) {
        // Prepare to update mrml node with results 
-       vtkMRMLChangeTrackerNode* Node = this->GetGUI()->GetNode();
-       if (!Node) return;
               
        // Delete old attached node first 
        this->GetGUI()->GetLogic()->DeleteSuperSample(1);

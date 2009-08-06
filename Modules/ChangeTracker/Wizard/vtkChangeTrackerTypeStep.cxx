@@ -360,25 +360,23 @@ void vtkChangeTrackerTypeStep::TransitionCallback( )
     {
     std::cerr << "User says transform is available" << std::endl;
     Node->SetRegistrationChoice(REGCHOICE_RESAMPLE);
-    vtkMRMLVolumeNode *volumeNode;
-    vtkMRMLTransformNode *transformNode;
-    std::cerr << "Scan2_Ref is " << Node->GetScan2_Ref() << std::endl;
+    vtkMRMLVolumeNode *volumeNode = NULL;
+    vtkMRMLTransformNode *transformNode = NULL;
     volumeNode = vtkMRMLVolumeNode::SafeDownCast(Node->GetScene()->GetNodeByID(Node->GetScan2_Ref()));
-    std::cerr << "volumeNode retrieved" << std::endl;
-    assert(volumeNode);
-    transformNode = volumeNode->GetParentTransformNode();
-    std::cerr << "transformNode retrieved" << std::endl;
-    if(!transformNode)
+    if(volumeNode)
+      {
+      transformNode = volumeNode->GetParentTransformNode();
+      }
+    if(!transformNode || !volumeNode)
       {
       vtkKWMessageDialog::PopupMessage(this->GUI->GetApplication(),
                                      this->GUI->GetApplicationGUI()->GetMainSlicerWindow(),
                                      "ChangeTracker",
-                                     "With the current selection, second image must be under a transform.",
+                                     "With the current selection, second image must be defined, and under a transform.",
                                      vtkKWMessageDialog::ErrorIcon);
       return;
       }
     Node->SetScan2_TransformRef(transformNode->GetID());
-    std::cerr << "Transform for scan2 has been set" << std::endl;
     }
 
   if(rc2->GetSelectedState())

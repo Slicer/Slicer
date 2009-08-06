@@ -16,6 +16,8 @@ class vtkImageRectangularSource;
 class vtkMRMLROINode;
 class vtkObserverManager;
 class vtkSlicerROIDisplayWidget;
+class vtkKWSpinBoxWithLabel;
+class vtkKWRadioButtonSetWithLabel;
 
 class VTK_CHANGETRACKER_EXPORT vtkChangeTrackerROIStep : public vtkChangeTrackerStep
 {
@@ -74,6 +76,9 @@ protected:
   vtkKWLabel *LabelROIY;
   vtkKWLabel *LabelROIZ;
 
+  vtkKWRadioButtonSetWithLabel *ResamplingChoice;
+  vtkKWSpinBoxWithLabel *SpinResampleConst;
+
   static void WizardGUICallback(vtkObject *caller, unsigned long event, void *clientData, void *callData );
  
 private:
@@ -99,7 +104,7 @@ private:
 
   void ROIChangedCallback(int axis, double min, double max); 
 
-  void DeleteSuperSampleNode();
+  void DeleteSuperSampleNode();  
 
   void MRMLUpdateROINodeFromROI();
   void MRMLUpdateROIFromROINode();
