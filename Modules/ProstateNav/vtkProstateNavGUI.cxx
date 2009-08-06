@@ -445,7 +445,7 @@ void vtkProstateNavGUI::ProcessGUIEvents(vtkObject *caller,
         break;
         }
       }
-    if (phase < this->ProstateNavManager->GetNumberOfSteps()) // if pressed one of them
+    if (static_cast<unsigned int>(phase) < this->ProstateNavManager->GetNumberOfSteps()) // if pressed one of them
       {
       ChangeWorkPhase(phase, 1);
       }
@@ -540,7 +540,7 @@ void vtkProstateNavGUI::Enter()
 {
 
   // Fill in
-  vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
+  // vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
   
   if (this->Entered == 0)
     {
@@ -898,9 +898,9 @@ int vtkProstateNavGUI::ChangeWorkPhase(int phase, int fChangeWizard)
     return 0;
     }
   
-  int numSteps = this->ProstateNavManager->GetNumberOfSteps();
+  unsigned int numSteps = static_cast<unsigned int> (this->ProstateNavManager->GetNumberOfSteps());
   
-  for (int i = 0; i < numSteps; i ++)
+  for (unsigned int i = 0; i < numSteps; i ++)
     {
     vtkKWPushButton *pb = this->WorkPhaseButtonSet->GetWidget(i);
     if (i == this->ProstateNavManager->GetCurrentStep())
@@ -940,13 +940,10 @@ int vtkProstateNavGUI::ChangeWorkPhase(int phase, int fChangeWizard)
     vtkKWWizardWorkflow *wizard = 
       this->WizardWidget->GetWizardWorkflow();
     
-    int step_from;
-    int step_to;
-    
     //step_to = this->Logic->GetCurrentPhase();
-    step_to = this->ProstateNavManager->GetCurrentStep();
+    unsigned step_to = this->ProstateNavManager->GetCurrentStep();
     //step_from = this->Logic->GetPrevPhase();
-    step_from = this->ProstateNavManager->GetPreviousStep();
+    unsigned step_from = this->ProstateNavManager->GetPreviousStep();
     
     int steps =  step_to - step_from;
     if (steps > 0)

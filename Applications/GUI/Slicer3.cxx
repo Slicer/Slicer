@@ -995,11 +995,11 @@ int Slicer3_main(int argc, char *argv[])
   // add module path to the shared library load path so that modules can
   // be executed when they depend on their on libs
 #ifdef __APPLE__
-  char *pathVar = "DYLD_LIBRARY_PATH";
+  const char *pathVar = "DYLD_LIBRARY_PATH";
 #elif _WIN32
-  char *pathVar = "PATH";
+  const char *pathVar = "PATH";
 #else
-  char *pathVar = "LD_LIBRARY_PATH";
+  const char *pathVar = "LD_LIBRARY_PATH";
 #endif
 
   std::string sharedLibPath;

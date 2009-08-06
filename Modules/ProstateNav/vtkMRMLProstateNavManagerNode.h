@@ -97,15 +97,15 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
 
   // Description:
   // Get number of wizard steps
-  int GetNumberOfSteps();
+  unsigned int GetNumberOfSteps();
 
   // Description:
   // Get number of wizard steps
-  const char* GetStepName(int i);
+  const char* GetStepName(unsigned int i);
 
   // Description:
   // Get page by vtkProstateNavStep* pointer
-  vtkProstateNavStep* GetStepPage(int i);
+  vtkProstateNavStep* GetStepPage(unsigned int i);
 
   // Description:
   // Add a new step. Please note that the transition matrix is resized
@@ -120,15 +120,15 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
 
   // Description:
   // Switch step. Returns 0 if it is not allowed.
-  int SwitchStep(int i);
+  int SwitchStep(unsigned int i);
 
   // Description:
   // Get current step.
-  int GetCurrentStep();
+  unsigned int GetCurrentStep();
 
   // Description:
   // Get previous step.
-  int GetPreviousStep();
+  unsigned int GetPreviousStep();
 
 
   //----------------------------------------------------------------
@@ -146,25 +146,25 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
   // Description:
   // Set phase transition by 2-D int array.
   // The format of 'matrix' argument should be matrix[step_from][step_to].
-  int SetStepTransitionMatrix(const int** matrix);
+  int SetStepTransitionMatrix(const unsigned int** matrix);
   
   // Description:
   // Allow trasition from 'step_from' to 'step_to'.
-  int SetAllowTransition(int step_from, int step_to);
+  int SetAllowTransition(unsigned int step_from, unsigned int step_to);
   
   // Description:
   // Forbid trasition from 'step_from' to 'step_to'.
-  int SetForbidTransition(int step_from, int step_to);
+  int SetForbidTransition(unsigned int step_from, unsigned int step_to);
 
   // Description:
   // Check if the step can transtion from 'step_from' to 'step_to'.
   // Returns 0, if forbidden, 1 if allowed, -1 if not defined.
-  int IsTransitionable(int step_from, int step_to);
+  int IsTransitionable(unsigned int step_from, unsigned int step_to);
 
   // Description:
   // Check if the step can transtion from current step to 'step_to'.
   // Returns 0, if forbidden, 1 if allowed, -1 if not defined.
-  int IsTransitionable(int step_to);
+  int IsTransitionable(unsigned int step_to);
 
   //----------------------------------------------------------------
   // Target Management
@@ -215,11 +215,11 @@ class VTK_PROSTATENAV_EXPORT vtkMRMLProstateNavManagerNode : public vtkMRMLNode
   } StepInfoType;
   std::vector<StepInfoType>         StepList;
 
-  std::vector< std::vector<int> >   StepTransitionMatrix;
+  std::vector< std::vector<unsigned int> >   StepTransitionMatrix;
   //ETX
   
-  int CurrentStep;
-  int PreviousStep;
+  unsigned int CurrentStep;
+  unsigned int PreviousStep;
   
   vtkMRMLFiducialListNode* TargetPlanList;
   vtkMRMLFiducialListNode* TargetCompletedList;
