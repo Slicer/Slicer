@@ -106,10 +106,10 @@ vtkFourDAnalysisGUI::vtkFourDAnalysisGUI ( )
 
   // Curve fitting / parameter map
   //this->AcqTimeEntry        = NULL;
-  this->MaskSelectMenu      = NULL;
-  this->RunPlotButton       = NULL;
-  this->ErrorBarCheckButton = NULL;
-  this->FittingLabelMenu    = NULL;
+  this->MaskSelectMenu           = NULL;
+  this->RunPlotButton            = NULL;
+  this->ErrorBarCheckButton      = NULL;
+  this->FittingLabelMenu         = NULL;
   this->CurveScriptSelectButton  = NULL;
   this->CurveFittingStartIndexSpinBox = NULL;
   this->CurveFittingEndIndexSpinBox        = NULL;
