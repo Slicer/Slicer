@@ -107,13 +107,42 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
     return;
     }
   vtkMRMLColorTableNode *basicNode = vtkMRMLColorTableNode::New();
+
+  // add the labels first
+  vtkMRMLColorTableNode *labelsNode = vtkMRMLColorTableNode::New();
+  labelsNode->SetTypeToLabels();
+  //labelsNode->SetAttribute("Category", "Discrete");
+  labelsNode->SaveWithSceneOff();
+  labelsNode->SetName(labelsNode->GetTypeAsString());      
+  std::string labelsID = std::string(this->GetDefaultColorTableNodeID(labelsNode->GetType()));
+  labelsNode->SetSingletonTag(labelsID.c_str());
+  if (this->GetMRMLScene()->GetNodeByID(labelsID.c_str()) == NULL)
+    {
+    this->GetMRMLScene()->RequestNodeID(labelsNode, labelsID.c_str());
+    this->GetMRMLScene()->AddNode(labelsNode);
+    }
+  labelsNode->Delete();
+
+  // add the rest of the default color table nodes
   for (int i = basicNode->GetFirstType(); i <= basicNode->GetLastType(); i++)
     {
-    // don't add a File node or the old atlas node
-    if (i != basicNode->File && i != 11)
+    // don't add a second Lables node, File node or the old atlas node
+    if (i != basicNode->Labels && i != basicNode->File && i != 11)
       {
       vtkMRMLColorTableNode *node = vtkMRMLColorTableNode::New();
       node->SetType(i);
+      if (strstr(node->GetTypeAsString(), "Tint") != NULL)
+        {
+        node->SetAttribute("Category", "Tint");
+        }
+      else if (strstr(node->GetTypeAsString(), "Shade") != NULL)
+        {
+        node->SetAttribute("Category", "Shade");
+        }
+      else
+        {
+        node->SetAttribute("Category", "Discrete");
+        }
       if (strcmp(node->GetTypeAsString(), "(unknown)") != 0)
         {
         node->SaveWithSceneOff();
@@ -141,6 +170,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
   vtkDebugMacro("vtkSlicerColorLogic::AddDefaultColorNodes: making a random int mrml proc color node");
   vtkMRMLProceduralColorNode *procNode = vtkMRMLProceduralColorNode::New();
   procNode->SetName("RandomIntegers");
+  procNode->SetAttribute("Category", "Discrete");
   procNode->SaveWithSceneOff();
   const char* procNodeID = this->GetDefaultProceduralColorNodeID(procNode->GetName());
   procNode->SetSingletonTag(procNodeID);
@@ -178,6 +208,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
     vtkMRMLFreeSurferProceduralColorNode *node = vtkMRMLFreeSurferProceduralColorNode::New();
     vtkDebugMacro("vtkSlicerColorLogic::AddDefaultColorNodes: setting free surfer proc color node type to " << i);
     node->SetType(i);
+    node->SetAttribute("Category", "FreeSurfer");
     node->SaveWithSceneOff();
     if (node->GetTypeAsString() == NULL)
       {
@@ -218,6 +249,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
   // surface colours
   vtkMRMLColorTableNode *node = vtkMRMLColorTableNode::New();
   node->SetTypeToFile();
+  node->SetAttribute("Category", "File");
   node->SaveWithSceneOff();
   node->SetScene(this->GetMRMLScene());
   // make a storage node
@@ -277,6 +309,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
     {
     vtkMRMLdGEMRICProceduralColorNode *node = vtkMRMLdGEMRICProceduralColorNode::New();
     node->SetType(i);
+    node->SetAttribute("Category", "dGEMRIC");
     node->SaveWithSceneOff();
     if (node->GetTypeAsString() == NULL)
       {
@@ -306,6 +339,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
     {
     vtkMRMLColorTableNode * node =  vtkMRMLColorTableNode::New();
     node->SetTypeToFile();
+    node->SetAttribute("Category", "File");
     node->SaveWithSceneOff();
     node->SetScene(this->GetMRMLScene());
     // make a storage node
@@ -671,6 +705,7 @@ vtkMRMLColorNode * vtkSlicerColorLogic::LoadColorFile(const char *fileName)
   vtkMRMLColorTableNode *node = vtkMRMLColorTableNode::New();
   
   node->SetTypeToFile();
+  node->SetAttribute("Category", "File");
   node->SetScene(this->GetMRMLScene());
   // make a storage node
   vtkMRMLColorTableStorageNode *colorStorageNode = vtkMRMLColorTableStorageNode::New();
