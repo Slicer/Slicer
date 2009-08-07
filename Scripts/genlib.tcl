@@ -551,7 +551,7 @@ if { [BuildThis $::BLT_TEST_FILE "blt"] == 1 } {
             cd $Slicer3_LIB/tcl/blt
             runcmd ./configure --with-tcl=$Slicer3_LIB/tcl/tcl/unix --with-tk=$Slicer3_LIB/tcl-build --prefix=$Slicer3_LIB/tcl-build --enable-shared --x-includes=/usr/X11R6/include --x-libraries=/usr/X11R6/lib --with-cflags=-fno-common
             eval runcmd $::MAKE
-            eval runcmd $::MAKE install
+            catch "eval runcmd $::MAKE install" ;# install fails at end, so catch so build doesn't fail
 
         } elseif { $isSolaris } {
 
