@@ -742,7 +742,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateTransfersPanel()
       w->UpdateWidget();
       }
     }
-//  this->TransfersFrame->ScrollToBottom();
+  this->TransfersFrame->ScrollToBottom();
   vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: DONE Updating Transfers Panel");
 
   //--- update the GUI
