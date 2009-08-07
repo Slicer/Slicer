@@ -57,6 +57,11 @@ void SmoothCurvature( MeshData* meshdata )
     std::cerr << "SmoothCurvature: No mean curvature computed on mesh\n";
     return;
     }
+  if ( meshdata->adjimm.size() == 0)
+    {
+    std::cerr << "SmoothCurvature: No mean adjacency computed on mesh\n";
+    return;
+    }
 
   std::cout<<"Smoothing curvature...\n";
   int iterations = meshdata->smoothH_its;
@@ -355,6 +360,11 @@ vector<int> InitPath( MeshData* meshdata, vector<int> pts)
   
   vtkPoints*    verts = meshdata->polydata->GetPoints();
   int numverts = verts->GetNumberOfPoints();
+  if ( meshdata->adjimm.size() == 0)
+    {
+    std::cerr << "InitPath: No mean adjacency computed on mesh\n";
+    return C;
+    }
   double thispt[3];
   double thatpt[3];
 
@@ -520,6 +530,11 @@ void ComputeAdjacency( MeshData* meshdata )
   meshdata->polydata->BuildLinks();
   int numverts = meshdata->polydata->GetNumberOfPoints();
   vtkCellArray* faces = meshdata->polydata->GetPolys();
+  if (faces->GetNumberOfCells() == 0)
+    {
+    std::cerr << "No cells on the poly data polys\n";
+    return;
+    }
   vtkIdList* cellIds = vtkIdList::New();
 
   for( int i = 0; i < numverts; i++ )
