@@ -36,7 +36,7 @@ size_t write_callback(void *ptr, size_t size, size_t nmemb, void *stream)
   if (stream == NULL)
     {
     std::cerr << "write_callback: can't write, stream is null. size = " << size << std::endl;
-    return -1;
+    return 0;
     }
   int written = fwrite(ptr, size, nmemb, (FILE *)stream);
   return written;

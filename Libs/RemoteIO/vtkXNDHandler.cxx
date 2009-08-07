@@ -32,7 +32,7 @@ size_t xnd_write_callback(void *ptr, size_t size, size_t nmemb, void *stream)
   if (stream == NULL)
     {
     std::cerr << "xnd_write_callback: can't write, stream is null. size = " << size << std::endl;
-    return -1;
+    return 0;
     }
   int written = fwrite(ptr, size, nmemb, (FILE *)stream);
   return written;
@@ -44,7 +44,7 @@ size_t xnd_writeheader_callback(void *ptr, size_t size, size_t nmemb, void *stre
   if (stream == NULL)
     {
     std::cerr << "xnd_writeheader_callback: can't write, stream is null. size = " << size << std::endl;
-    return -1;
+    return 0;
     }
   int written = fwrite(ptr, size, nmemb, (FILE *)stream);
   return written;
