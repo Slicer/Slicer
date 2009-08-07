@@ -34,24 +34,27 @@ from scipy.interpolate import interp1d, splrep, splev
 from numpy import r_
 
 # ----------------------------------------------------------------------
-# Kety Model
+# Tofts Model
 # ----------------------------------------------------------------------
 
-class CurveFittingKetyModelStepInput(CurveAnalysisBase):
-
-    duration = 1.0
+class CurveFittingToftsModel(CurveAnalysisBase):
 
     # ------------------------------
     # Constructor -- Set initial parameters
     def __init__(self):
-        self.ParameterNameList  = ['Ktrans', 've', 'Cp0', 'delay']
-        self.InitialParameter   = [0.1, 0.1, 1.0, 0.0] 
-        self.ConstantNameList = ['Duration']
-        self.Constant         = [1.0]
-        self.FunctionVectorInput = 1
+        self.ParameterNameList  = ['Ktrans', 'vp', 've']
+        self.InitialParameter   = [0.1, 0.1, 0.01] 
+        #self.InitialOptimParam  = [0.015, 0.12, 0.12] 
+        #self.InitialOptimParam  = [0.05, 0.2, 0.2] 
+        self.InputCurveNameList = ['AIF']
 
-        self.MethodName          = 'Kety Model with Step Input Function'
+        self.MethodName          = 'Tofts Model'
         self.MethodDescription   = '...'
+
+        # dummy 
+        self.AifTime = r_[0:5]
+        self.AifData = r_[0:5]
+        self.tck = splrep(self.AifTime, self.AifData, s=0)
 
     # ------------------------------
     # Convert signal intensity curve to concentration curve
@@ -67,48 +70,42 @@ class CurveFittingKetyModelStepInput(CurveAnalysisBase):
         return signal
        
     # ------------------------------
-    # Set Constants
-    def SetConstant(self, name, param):
-        if name == 'Duration':
-            self.duration = param;
+    # Generate arteral input function from given data
+    def SetInputCurve(self, name, curve):
+        if name == 'AIF':
+            self.AifTime = curve[:,0]
+            self.AifData = self.SignalToConcent(curve[:,1])
+            self.Tck = splrep(self.AifTime, self.AifData, s=0)
         
     # ------------------------------
+    # Arteral input function (AIF)
+    def Aif(self, x):
+        y = splev(x, self.Tck, der=0)
+        #y = self.AifTable[int(x/self.dt)]
+        return y
+
+    # ------------------------------
     # Definition of the function
-    def Function(self, t, param):
-        Ktrans, ve, Cp0, delay = param
-
-        # If step imput is assumed, the respons can be described as
-        #
-        #   y = (Ktrans * Cp0 / kep) * (1-exp(-kep*t))         (t < duration)   ... (1)
-        #   y = (Ktrans * cp0 / kep) * exp(-kep*(t-duration))  (t >= duration)  ... (2)
-
-        #sys.stderr.write('t     : %s\n' % t )
-
-
-        # Calculate shifted time
-        t2 = scipy.greater_equal(t, delay) * (t - delay);
-
-        # To describe C(t) in one equasion, we introduce t_dush, which is
-        # defined by t_dash = t (t < duration) and t_dash = duration (t >= duration):
-        t_dash = scipy.less(t2, self.duration)*t2 + scipy.greater_equal(t2, self.duration)*self.duration
-
-        # Eq. (1) and (2) can be rewritten by:
-        kep = Ktrans / ve
-        y = (Ktrans*Cp0/kep)*(scipy.exp(kep*t_dash) - 1) * scipy.exp(-kep*t2)
-
+    def Function(self, x, param):
+        Ktrans, vp, ve = param
+        lst = range(len(x))
+        y = scipy.zeros(len(x))
+        for i in lst:
+            xx = x[i]
+            s = quadrature(lambda t: self.Aif(t) * scipy.exp(-Ktrans*(xx-t)/ve), 0.0, xx, tol=1.0e-03, vec_func=False)
+            #s = quadrature(lambda t: splev(t,self.Tck,der=0) * scipy.exp(-Ktrans*(xx-t)/ve), 0.0, xx, vec_func=False)
+            y[i] = vp * self.Aif(xx) + Ktrans  * s[0]
         return y
 
     # ------------------------------
     # Calculate the output parameters (called by GetOutputParam())
     def CalcOutputParamDict(self, param):
-        Ktrans, ve, Cp0, delay = param
+        Ktrans, vp, ve = param
 
         dict = {}
         dict['Ktrans'] = Ktrans
+        dict['vp']     = vp
         dict['ve']     = ve
-        dict['kep']    = Ktrans / ve
-        dict['Cp0']    = Cp0
-        dict['delay']  = delay
         
         return dict
 

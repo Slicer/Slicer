@@ -34,10 +34,10 @@ from scipy.interpolate import interp1d, splrep, splev
 from numpy import r_
 
 # ----------------------------------------------------------------------
-# Kety Model
+# Tofts Model
 # ----------------------------------------------------------------------
 
-class CurveFittingKetyModel2(CurveAnalysisBase):
+class CurveFittingToftsModel2(CurveAnalysisBase):
 
     # ------------------------------
     # Constructor -- Set initial parameters
@@ -46,6 +46,9 @@ class CurveFittingKetyModel2(CurveAnalysisBase):
         self.InitialParameter   = [0.1, 0.1] 
         self.InputCurveNameList = ['AIF']
         self.FunctionVectorInput = 0
+
+        self.MethodName          = 'Tofts Model (ignoring vp)'
+        self.MethodDescription   = '...'
 
         # dummy 
         self.AifTime = r_[0:5]

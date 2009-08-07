@@ -40,6 +40,22 @@ class CurveFittingGammaVariate(CurveAnalysisBase):
         self.ParameterNameList  = ['Sp', 'alpha', 'beta', 'Ta', 'S0']
         self.InitialParameter   = [200.0, 3.0,    1.0,    0.0,  20.0] 
 
+        self.MethodName          = 'Gamma Variate Function fitting'
+        self.MethodDescription   = '...'
+
+    # ------------------------------
+    # Convert signal intensity curve to concentration curve
+    # Assuming parmagnetic contrast media (e.g. Gd-DTPA)
+    def SignalToConcent(self, signal):
+        cont = signal / signal[0] - 1.0
+        return cont
+    
+    # ------------------------------
+    # Convert concentration curve to signal intensity curve
+    def ConcentToSignal(self, concent):
+        signal = (concent + 1.0) * self.TargetCurve[0, 1]
+        return signal
+       
     # ------------------------------
     # Definition of the function
     def Function(self, x, param):
