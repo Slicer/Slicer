@@ -62,14 +62,35 @@ class VTK_FourDAnalysis_EXPORT vtkMRMLCurveAnalysisNode : public vtkMRMLNode
   vtkSetObjectMacro( FittedCurve, vtkDoubleArray );
   vtkGetObjectMacro( FittedCurve, vtkDoubleArray );
 
-  void SetFunctionName(const char* name)
+  //void SetFunctionName(const char* name)
+  //{
+  //  this->FunctionName = name;
+  //}
+  //
+  //const char* GetFunctionName()
+  //{
+  //  return this->FunctionName.c_str();
+  //}
+
+  void SetMethodName(const char* name)
   {
-    this->FunctionName = name;
+    this->MethodName = name;
+  }
+  
+  const char* GetMethodName()
+  {
+    return this->MethodName.c_str();
   }
 
-  const char* GetFunctionName()
+
+  void SetMethodDescription(const char* desc)
   {
-    return this->FunctionName.c_str();
+    this->MethodDescription = desc;
+  }
+  
+  const char* GetMethodDescription()
+  {
+    return this->MethodName.c_str();
   }
 
   // Input curve data
@@ -113,7 +134,9 @@ private:
   ValueMapType    InitialParameters;
 
   //BTX
-  std::string FunctionName;
+  //std::string FunctionName;
+  std::string MethodName;
+  std::string MethodDescription;
   //ETX
 
 };

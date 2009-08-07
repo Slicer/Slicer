@@ -55,11 +55,27 @@ class CurveAnalysisBase(object):
 
     FunctionVectorInput   = 0
 
+    MethodName            = ''
+    MethodDescription     = ''
+
     #def __init__(self):
         ## ParameterNameList and Initial Param should be set here
         
     def Initialize(self):
         return 0
+
+    # ------------------------------
+    # Get method name
+
+    def GetMethodName(self):
+        return self.MethodName
+
+    # ------------------------------
+    # Get method description
+
+    def GetMethodDescription(self):
+        return self.MethodDescription
+
 
     def Function(self, x, param):
         return 0
@@ -228,6 +244,18 @@ class CurveAnalysisExecuter(object):
         finally:
             if fp:
                 fp.close()
+
+    # ------------------------------
+    # Get Method Name
+    def GetMethodName(self):
+        exec('fitting = self.Module.' + self.ModuleName + '()')
+        return fitting.GetMethodName()
+
+    # ------------------------------
+    # Get Method Description
+    def GetMethodDescription(self):
+        exec('fitting = self.Module.' + self.ModuleName + '()')
+        return fitting.GetMethodDescription()
 
     # ------------------------------
     # Get Input Curve Name List

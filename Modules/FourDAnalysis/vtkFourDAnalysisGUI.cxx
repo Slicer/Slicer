@@ -46,6 +46,7 @@
 #include "vtkKWCanvas.h"
 #include "vtkKWRange.h"
 #include "vtkKWCheckButtonWithLabel.h"
+#include "vtkKWEntryWithLabel.h"
 
 #include "vtkKWProgressDialog.h"
 #include "vtkKWMessageDialog.h"
@@ -115,6 +116,7 @@ vtkFourDAnalysisGUI::vtkFourDAnalysisGUI ( )
   this->CurveFittingEndIndexSpinBox        = NULL;
   this->RunFittingButton    = NULL;
   this->SaveFittedCurveButton = NULL;
+  this->CurveScriptMethodName = NULL;
 
   this->InitialParameterList = NULL;
   this->SavePlotButton = NULL;
@@ -250,6 +252,12 @@ vtkFourDAnalysisGUI::~vtkFourDAnalysisGUI ( )
     this->SaveFittedCurveButton->SetParent(NULL);
     this->SaveFittedCurveButton->Delete();
     }
+  if (this->CurveScriptMethodName)
+    {
+    this->CurveScriptMethodName->SetParent(NULL);
+    this->CurveScriptMethodName->Delete();
+    }
+
   if (this->ResultParameterList)
     {
     this->ResultParameterList->SetParent(NULL);
@@ -806,6 +814,7 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
     this->CurveAnalysisScript->SetCurveAnalysisNode(curveNode);
     this->CurveAnalysisScript->GetInfo();
 
+    UpdateMethodNameField(curveNode);
     UpdateInitialParameterList(curveNode);
 
     this->GetMRMLScene()->RemoveNode(curveNode);
@@ -1492,6 +1501,18 @@ void vtkFourDAnalysisGUI::BuildGUIForScriptSetting(int show)
   scriptLabel->Delete();
   scriptframe->Delete();
 
+  this->CurveScriptMethodName = vtkKWEntryWithLabel::New();
+  this->CurveScriptMethodName->SetParent(cframe->GetFrame());
+  this->CurveScriptMethodName->Create();
+  //this->CurveScriptMethodName->SetWidth(20);
+  this->CurveScriptMethodName->SetLabelText("Method: ");
+  this->CurveScriptMethodName->GetWidget()->ReadOnlyOn();
+  this->CurveScriptMethodName->GetWidget()->SetValue("----");
+  
+  this->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 2",
+                 this->CurveScriptMethodName->GetWidgetName() );
+
+
   vtkKWFrame *rangeframe = vtkKWFrame::New();
   rangeframe->SetParent(cframe->GetFrame());
   rangeframe->Create();
@@ -2136,6 +2157,18 @@ void vtkFourDAnalysisGUI::UpdateMaskSelectMenu()
       }
     }
 }
+
+
+//----------------------------------------------------------------------------
+void vtkFourDAnalysisGUI::UpdateMethodNameField(vtkMRMLCurveAnalysisNode* curveNode)
+{
+  std::cerr << "Script = " << curveNode->GetMethodName() << std::endl;
+  if (this->CurveScriptMethodName)
+    {
+    this->CurveScriptMethodName->GetWidget()->SetValue(curveNode->GetMethodName());
+    }
+}
+
 
 //----------------------------------------------------------------------------
 void vtkFourDAnalysisGUI::UpdateInitialParameterList(vtkMRMLCurveAnalysisNode* curveNode)

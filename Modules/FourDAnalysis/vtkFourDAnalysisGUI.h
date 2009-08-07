@@ -43,6 +43,7 @@ class vtkKWProgressDialog;
 class vtkKWRadioButtonSet;
 class vtkKWRadioButton;
 class vtkKWRange;
+class vtkKWEntryWithLabel;
 class vtkIntensityCurves;
 class vtkKWCheckButtonWithLabel;
 class vtkCurveAnalysisPythonInterface;
@@ -149,6 +150,7 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   void UpdateSeriesSelectorMenus();
   void UpdateMaskSelectMenu();
 
+  void UpdateMethodNameField(vtkMRMLCurveAnalysisNode* curveNode);
   void UpdateInitialParameterList(vtkMRMLCurveAnalysisNode* curveNode);
   void GetInitialParametersAndInputCurves(vtkMRMLCurveAnalysisNode* curveNode, int start, int end);
   void UpdateOutputParameterList(vtkMRMLCurveAnalysisNode* curveNode);
@@ -190,18 +192,18 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   // -----------------------------------------
   // Intensity Curve
 
-  vtkKWEntry*       AcqTimeEntry;
-  vtkKWMenuButton*  SeriesToPlotMenu;
-  vtkKWMenuButton*  MaskSelectMenu;
-  vtkKWPlotGraph*   IntensityPlot;
+  vtkKWEntry*          AcqTimeEntry;
+  vtkKWMenuButton*     SeriesToPlotMenu;
+  vtkKWMenuButton*     MaskSelectMenu;
+  vtkKWPlotGraph*      IntensityPlot;
   vtkKWCheckButtonWithLabel* ErrorBarCheckButton;
 
-  vtkKWMenuButton* FittingLabelMenu;
+  vtkKWMenuButton*     FittingLabelMenu;
   vtkKWLoadSaveButtonWithLabel* CurveScriptSelectButton;
-  vtkKWSpinBox*    CurveFittingStartIndexSpinBox;
-  vtkKWSpinBox*    CurveFittingEndIndexSpinBox;
-  vtkKWPushButton* RunFittingButton;
-
+  vtkKWSpinBox*        CurveFittingStartIndexSpinBox;
+  vtkKWSpinBox*        CurveFittingEndIndexSpinBox;
+  vtkKWPushButton*     RunFittingButton;
+  vtkKWEntryWithLabel* CurveScriptMethodName;
 
   vtkKWMultiColumnListWithScrollbars* InitialParameterList;
   vtkKWPushButton* RunPlotButton;

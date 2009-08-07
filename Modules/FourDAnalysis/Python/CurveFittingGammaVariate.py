@@ -71,6 +71,3 @@ class CurveFittingGammaVariate(CurveAnalysisBase):
         return dict
 
 
-
-
-

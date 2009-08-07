@@ -161,6 +161,8 @@ int vtkCurveAnalysisPythonInterface::GetInfo()
   pythonCmd += "initialOptimParams  = caexec.GetInitialParameters()\n";
   pythonCmd += "inputParameterNames = caexec.GetConstantNames()\n";
   pythonCmd += "outputValueNames    = caexec.GetOutputParameterNames()\n";
+  pythonCmd += "methodName          = caexec.GetMethodName()\n";
+  pythonCmd += "methodDescription   = caexec.GetMethodDescription()\n";
 
   // Set lists
   pythonCmd += "for key in curveNames:\n";
@@ -171,6 +173,8 @@ int vtkCurveAnalysisPythonInterface::GetInfo()
   pythonCmd += "    curveNode.SetConstant(key, 0.0)\n";
   pythonCmd += "for key in outputValueNames:\n";
   pythonCmd += "    curveNode.SetOutputValue(key, 0.0)\n";
+  pythonCmd += "curveNode.SetMethodName(methodName)\n";
+  pythonCmd += "curveNode.SetMethodDescription(methodDescription)\n";
 
   v = PyRun_String(pythonCmd.c_str(),
                    Py_file_input,

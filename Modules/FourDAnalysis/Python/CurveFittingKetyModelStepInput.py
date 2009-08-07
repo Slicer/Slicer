@@ -50,6 +50,9 @@ class CurveFittingKetyModelStepInput(CurveAnalysisBase):
         self.Constant         = [1.0]
         self.FunctionVectorInput = 1
 
+        self.MethodName          = 'Kety Model with Step Input Function'
+        self.MethodDescription   = '...'
+
     # ------------------------------
     # Convert signal intensity curve to concentration curve
     # Assuming parmagnetic contrast media (e.g. Gd-DTPA)

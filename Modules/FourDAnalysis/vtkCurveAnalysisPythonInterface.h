@@ -39,11 +39,13 @@ class VTK_FourDAnalysis_EXPORT vtkCurveAnalysisPythonInterface : public vtkObjec
 
   int SetScript(const char* filename);
   const char* GetScript() { return this->ScriptName.c_str(); };
+
   int SetCurveAnalysisNode(vtkMRMLCurveAnalysisNode* curveNode);
   //BTX
   int SetCurveAnalysisNode(std::vector<vtkMRMLCurveAnalysisNode*> curveNodeVector);
   //ETX
   vtkMRMLCurveAnalysisNode* GetCurveAnalysisNode() { return this->CurveAnalysisNode; };
+
   int GetInfo();
   int Run();
 
