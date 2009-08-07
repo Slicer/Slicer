@@ -837,6 +837,8 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
   this->MoreMenuButton->GetMenu()->SetItemImage ( index, imageName);
   this->MoreMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
 
+  
+
   //---     //--- 
   //--- COMPOSITING
   //--- 
@@ -888,6 +890,27 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
   vtkKWTkUtilities::UpdatePhotoFromIcon ( app, imageName,  this->FoundationIcons->GetSlicerCompositeIcon ( ));
   this->MoreMenuButton->GetMenu()->SetItemImage ( index, imageName);
   this->MoreMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
+  //--- initialize button
+  vtkMRMLSliceCompositeNode *cnode = this->SliceCompositeNode;
+  if ( cnode )
+    {
+    if ( cnode->GetCompositing() == vtkMRMLSliceCompositeNode::Alpha )
+      {
+      m3->SelectItem ("Alpha blend" );
+      }
+    else if ( cnode->GetCompositing() == vtkMRMLSliceCompositeNode::Add)
+      {
+      m3->SelectItem ( "Add");
+      }
+    else if ( cnode->GetCompositing() == vtkMRMLSliceCompositeNode::Subtract )
+      {
+      m3->SelectItem ( "Subtract");
+      }
+    }
+  else
+    {
+    m3->SelectItem ("Alpha blend" );
+    }
   m3->Delete();
 
   //--- 
@@ -2216,6 +2239,8 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
         break;
         }
       }
+    //--- if one of the compositing items is selected,
+    //--- check compositing node for same value.
     if ( found )
       {
       const char *lbstr = cmenu->GetItemLabel ( item );
@@ -2223,21 +2248,29 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
         {
         if (link)
           {
+          //--- check all linked nodes in case their compositing setting is stale.
           nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLSliceCompositeNode");
           for ( i=0; i<nnodes; i++)
             {
             cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
               this->GetMRMLScene()->GetNthNodeByClass (i, "vtkMRMLSliceCompositeNode"));
             
-            this->MRMLScene->SaveStateForUndo ( cnode );
-            cnode->SetCompositing (vtkMRMLSliceCompositeNode::Alpha );
+            //--- only update the node if the value is out of sync
+            if ( cnode->GetCompositing() != vtkMRMLSliceCompositeNode::Alpha )
+              {
+              this->MRMLScene->SaveStateForUndo ( cnode );
+              cnode->SetCompositing (vtkMRMLSliceCompositeNode::Alpha );
+              }
             }
           }
         else
           {
-          this->MRMLScene->SaveStateForUndo( this->SliceCompositeNode );
-          this->SliceCompositeNode
-            ->SetCompositing(vtkMRMLSliceCompositeNode::Alpha);
+          //--- only update the node if the value is out of sync
+          if ( this->SliceCompositeNode->GetCompositing() != vtkMRMLSliceCompositeNode::Alpha )
+            {
+            this->MRMLScene->SaveStateForUndo( this->SliceCompositeNode );
+            this->SliceCompositeNode->SetCompositing(vtkMRMLSliceCompositeNode::Alpha);
+            }
           }
         }
       else if (!strcmp ( lbstr, "Add") )
@@ -2250,15 +2283,22 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
             cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
               this->GetMRMLScene()->GetNthNodeByClass (i, "vtkMRMLSliceCompositeNode"));
             
-            this->MRMLScene->SaveStateForUndo ( cnode );
-            cnode->SetCompositing (vtkMRMLSliceCompositeNode::Add );
+            //--- only update the node if the value is out of sync
+            if ( cnode->GetCompositing() != vtkMRMLSliceCompositeNode::Add )
+              {
+              this->MRMLScene->SaveStateForUndo ( cnode );
+              cnode->SetCompositing (vtkMRMLSliceCompositeNode::Add );
+              }
             }
           }
         else
           {
-          this->MRMLScene->SaveStateForUndo( this->SliceCompositeNode );
-          this->SliceCompositeNode
-            ->SetCompositing(vtkMRMLSliceCompositeNode::Add);
+          //--- only update the node if the value is out of sync
+          if ( this->SliceCompositeNode->GetCompositing() != vtkMRMLSliceCompositeNode::Add )
+            {
+            this->MRMLScene->SaveStateForUndo( this->SliceCompositeNode );
+            this->SliceCompositeNode->SetCompositing(vtkMRMLSliceCompositeNode::Add);
+            }
           }
         }
       else if (!strcmp ( lbstr, "Subtract") )
@@ -2271,15 +2311,22 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
             cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
               this->GetMRMLScene()->GetNthNodeByClass (i, "vtkMRMLSliceCompositeNode"));
             
-            this->MRMLScene->SaveStateForUndo ( cnode );
-            cnode->SetCompositing (vtkMRMLSliceCompositeNode::Subtract );
+            //--- only update the node if the value is out of sync
+            if ( cnode->GetCompositing() != vtkMRMLSliceCompositeNode::Subtract )
+              {
+              this->MRMLScene->SaveStateForUndo ( cnode );
+              cnode->SetCompositing (vtkMRMLSliceCompositeNode::Subtract );
+              }
             }
           }
         else
           {
-          this->MRMLScene->SaveStateForUndo( this->SliceCompositeNode );
-          this->SliceCompositeNode
-            ->SetCompositing(vtkMRMLSliceCompositeNode::Subtract);
+          //--- only update the node if the value is out of sync
+          if ( this->SliceCompositeNode->GetCompositing() != vtkMRMLSliceCompositeNode::Subtract )
+            {
+            this->MRMLScene->SaveStateForUndo( this->SliceCompositeNode );
+            this->SliceCompositeNode->SetCompositing(vtkMRMLSliceCompositeNode::Subtract);
+            }
           }
         }
       }
@@ -3318,6 +3365,53 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
   //
   // when the composite node changes, update the menus to match
   //
+  if ( this->SliceCompositeNode != NULL && caller == this->SliceCompositeNode )
+    {
+    //--- find out what the current menu selection is....
+    std::string lbstr;
+    if ( this->MoreMenuButton != NULL && this->MoreMenuButton->GetMenu() )
+      {
+      int cindex = this->MoreMenuButton->GetMenu()->GetIndexOfItem ("Compositing");
+      vtkKWMenu *cmenu = this->MoreMenuButton->GetMenu()->GetItemCascade(cindex);
+      if ( cmenu )
+        {
+        int numItems = cmenu->GetNumberOfItems();
+        int found = 0;
+        int item;
+        for ( item=0; item < numItems; item++)
+          {
+          if ( cmenu->GetItemSelectedState(item) )
+            {
+            found = 1;
+            break;
+            }
+          }
+        if ( found )
+          {
+          lbstr = cmenu->GetItemLabel ( item );
+          }
+        }
+      //---
+      //--- update the GUI if node's compositing mode setting has changed.
+      //---
+      if (( this->SliceCompositeNode->GetCompositing() == vtkMRMLSliceCompositeNode::Alpha ) &&
+          ( strcmp (lbstr.c_str(), "Alpha blend")) )
+        {
+        cmenu->SelectItem ("Alpha blend" );
+        }
+      else if (( this->SliceCompositeNode->GetCompositing() == vtkMRMLSliceCompositeNode::Add ) &&
+               ( strcmp (lbstr.c_str(), "Add")) )
+        {
+        cmenu->SelectItem ("Add" );
+        }
+      else if (( this->SliceCompositeNode->GetCompositing() == vtkMRMLSliceCompositeNode::Subtract ) &&
+               ( strcmp (lbstr.c_str(), "Subtract")) )
+        {
+        cmenu->SelectItem ("Subtract" );
+        }
+      }
+    }
+
   //if ( caller == this->SliceCompositeNode )
   //  {
   vtkMRMLNode *node = this->MRMLScene->GetNodeByID( this->SliceCompositeNode->GetForegroundVolumeID() );

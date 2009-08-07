@@ -1657,6 +1657,9 @@ void vtkSlicerSlicesControlGUI::BuildCompositingMenu ( )
   this->CompositingButton->GetMenu()->AddRadioButton ( "Subtract" );
   this->CompositingButton->GetMenu()->AddSeparator ( );
   this->CompositingButton->GetMenu()->AddCommand ("close");
+ //--- don't select a mode here since different non-linked viewers may
+ //--- have different selection.
+ // this->CompositingButton->GetMenu()->SelectItem ( "Alpha blend");
 }
 
 //---------------------------------------------------------------------------
