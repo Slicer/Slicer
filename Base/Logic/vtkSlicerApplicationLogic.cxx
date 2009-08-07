@@ -55,6 +55,8 @@
 #include "vtkMRMLFreeSurferModelStorageNode.h"
 #include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
 
+#include "vtkPointData.h"
+
 #ifdef linux 
 #include "unistd.h"
 #endif
@@ -1482,6 +1484,16 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     {
     // Model node
     disp = vtkMRMLModelDisplayNode::New();
+    if (mnd->GetPolyData() &&
+        mnd->GetPolyData()->GetPointData() &&
+        mnd->GetPolyData()->GetPointData()->GetScalars())
+      {
+      vtkDebugMacro("Made a new model display node, there are scalars defined on the model - setting them visible and using the first one as the selected overlay");
+      disp->SetScalarVisibility(1);
+      disp->SetActiveScalarName(mnd->GetPolyData()->GetPointData()->GetAttribute(0)->GetName());
+      // use the fs red green colour node for now
+      disp->SetAndObserveColorNodeID("vtkMRMLFreeSurferProceduralColorNodeRedGreen");
+      }
     }
   else if (ltnd || nltnd)
     {
