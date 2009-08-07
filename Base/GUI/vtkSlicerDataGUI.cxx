@@ -1296,8 +1296,29 @@ void vtkSlicerDataGUI::ReleaseModuleEventBindings ( )
 //---------------------------------------------------------------------------
 void vtkSlicerDataGUI::Enter ( )
 {
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication() );
+  if ( !app )
+    {
+    vtkErrorMacro ( "Enter: got Null SlicerApplication" );
+    return;
+    }
+  vtkSlicerApplicationGUI *appGUI = app->GetApplicationGUI();
+  if ( !appGUI )
+    {
+    vtkErrorMacro ( "Enter: got Null SlicerApplicationGUI" );
+    return;
+    }
+  vtkSlicerWindow *win = appGUI->GetMainSlicerWindow ();
+  if ( win == NULL )
+    {
+    vtkErrorMacro ( "Enter: got NULL MainSlicerWindow");
+    return;
+    }
+
   if ( this->Built == false )
     {
+    win->SetStatusText ( "Building Interface for Data Module...." );
+    app->Script ( "update idletasks" );
     this->BuildGUI();
     this->AddGUIObservers();
     this->Built = true;
@@ -1378,7 +1399,6 @@ void vtkSlicerDataGUI::BuildGUI ( )
     return;
     }
   win->SetStatusText ( "Building Interface for Data Module...." );
-  //app->Script ( "update idletasks" );
 
     // ---
     // MODULE GUI FRAME 
