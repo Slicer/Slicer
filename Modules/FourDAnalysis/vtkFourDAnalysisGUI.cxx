@@ -2162,7 +2162,6 @@ void vtkFourDAnalysisGUI::UpdateMaskSelectMenu()
 //----------------------------------------------------------------------------
 void vtkFourDAnalysisGUI::UpdateMethodNameField(vtkMRMLCurveAnalysisNode* curveNode)
 {
-  std::cerr << "Script = " << curveNode->GetMethodName() << std::endl;
   if (this->CurveScriptMethodName)
     {
     this->CurveScriptMethodName->GetWidget()->SetValue(curveNode->GetMethodName());
