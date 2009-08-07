@@ -313,7 +313,15 @@ Vec = transform*Vec;
       pkmult( abc, ATA, LHS );
       res = sqrt( ( (LHS - RHS)*(LHS - RHS) ).sum() );
       }
-    meshdata->MeanCurv[k] = -1*(abc[0] + abc[2]);
+    // Assumes a right handed mesh, normals pointing out
+    if (meshdata->rightHandMesh)
+      {
+      meshdata->MeanCurv[k] = -1*(abc[0] + abc[2]);
+      }
+    else
+      {
+      meshdata->MeanCurv[k] = abc[0] + abc[2];
+      }
 // step 5. mean curvature is a + c
 
     }
@@ -330,7 +338,20 @@ vector<int> InitPath( MeshData* meshdata, vector<int> pts)
     std::cerr<<"Must have at least 3 pts to define closed contour! \n";
     return vector<int>(0);
     }
+
   vector<int> C(0);
+  
+  if (meshdata->polydata->GetPointData()->GetScalars("InitialCurvature") != NULL)
+    {
+    // use the initial curvature that came in with the poly data
+    vtkDataArray *curvScalars = meshdata->polydata->GetPointData()->GetScalars("InitialCurvature");
+    for (unsigned int i = 0; i < curvScalars->GetNumberOfTuples(); i++)
+      {
+      C.push_back((int)(round(curvScalars->GetTuple1(i))));
+      }
+    return C;
+    }
+  
   
   vtkPoints*    verts = meshdata->polydata->GetPoints();
   int numverts = verts->GetNumberOfPoints();
@@ -570,7 +591,6 @@ void ComputeAdjacency( MeshData* meshdata )
     meshdata->adj = tempdata->adj;
     }
   delete tempdata;
-  
 }
 
 

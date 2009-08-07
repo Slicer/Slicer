@@ -69,6 +69,7 @@ valarray<double> kappa;
 int adj_levels;
 int smoothH_its;
 int showLS;
+int rightHandMesh;
 };
 
 void ComputeCurvatureData( MeshData* meshdata ); // main function

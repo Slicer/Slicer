@@ -186,11 +186,12 @@ bool SparseFieldLS::InitSphere()
 
 // assign some data from curvature computation to be the new colormap
   vtkFloatArray* scalars2 = vtkFloatArray::New();
+  scalars2->SetName("InitSphere");
   for( int i = 0; i < numverts; i++ )
     {
     scalars2->InsertTuple1(i, double(point_type[i] != 0) );
     }
-  meshdata->polydata->GetPointData()->SetScalars(scalars2);
+  meshdata->polydata->GetPointData()->AddArray(scalars2); //SetScalars(scalars2);
   scalars2->Delete();
   meshdata->polydata->Update();
 
@@ -207,7 +208,7 @@ vector<int> SparseFieldLS::Evolve(int its )
     {
     if( L_z.size() == 0 )
       {
-      cerr<<"Error, level set has vanished from surface \n";
+      cerr<<"Error, level set has vanished from surface, Evolve iteration: " << its_ << "\n";
       return L_z;
       }
 
@@ -470,7 +471,7 @@ vector<int> SparseFieldLS::Evolve(int its )
 //scalars2->InsertTuple1(i, meshdata->dkdx[i]);
     }
   }
-  meshdata->polydata->GetPointData()->SetScalars(scalars2);
+  meshdata->polydata->GetPointData()->AddArray(scalars2);
   scalars2->Delete();
   meshdata->polydata->Update();
 

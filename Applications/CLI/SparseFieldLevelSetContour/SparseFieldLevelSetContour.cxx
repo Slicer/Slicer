@@ -68,6 +68,7 @@ int main(int argc, char* argv[] )
   std::cout << "Mesh smoothing iterations: " << mesh_smooth_its<<"\n";
   std::cout << "Curvature averaging iterations: " << H_smooth_its << "\n";
   std::cout << "Adjacency tree levels " << adj_levels << "\n";
+  std::cout << "Right handed mesh: " << rightHandMesh << "\n";
   
   vtkXMLPolyDataReader* reader = vtkXMLPolyDataReader::New();
   std::string comment = "Reading input model " + InputSurface;
@@ -104,15 +105,17 @@ int main(int argc, char* argv[] )
   meshdata->smoothH_its = H_smooth_its;
   meshdata->adj_levels = adj_levels;
   meshdata->showLS = showLS;
-  ComputeCurvatureData( meshdata );
+  meshdata->rightHandMesh = rightHandMesh;
 
+  ComputeCurvatureData( meshdata );
+  
   if (meshdata->MeanCurv.size() == 0)
     {
-    std::cerr << "Erorr calculating mean curvature.\n";
+    std::cerr << "Error calculating mean curvature.\n";
     delete meshdata;
     return EXIT_FAILURE;
     }
-    
+
   energy = new MeanCurvatureEnergy( meshdata );
 
 // assign some data from curvature computation to be the new colormap
@@ -122,7 +125,7 @@ int main(int argc, char* argv[] )
     {
     scalars2->InsertTuple1(i, meshdata->MeanCurv[i] );
     }
-  smooth_brain->GetPointData()->SetScalars(scalars2);
+  smooth_brain->GetPointData()->AddArray(scalars2);
   scalars2->Delete();
 
   vtkPolyDataMapper* cubeMapper = vtkPolyDataMapper::New();
