@@ -401,7 +401,7 @@ void vtkAtlasCreatorGUI::ProcessGUIEvents( vtkObject *caller, unsigned long
     this->ImageResample->GetOutput()->GetDimensions(dim);
     this->ImageResample->GetOutput()->GetScalarRange(scalarRange);
 
-    int slice = extent[4] + (extent[5]-extent[4]) * sliceNormalized;
+    int slice = extent[4] + (int)((extent[5]-extent[4]) * sliceNormalized + 0.5);
     double threshold = scalarRange[0] + (scalarRange[1]-scalarRange[0]) *
       thresholdNormalized;
 
