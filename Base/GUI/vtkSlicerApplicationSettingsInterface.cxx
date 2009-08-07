@@ -1414,10 +1414,13 @@ void vtkSlicerApplicationSettingsInterface::Update()
       }
     if (this->ExtensionsInstallPathButton)
       {
-      this->ExtensionsInstallPathButton->GetWidget()
-        ->SetText(app->GetExtensionsInstallPath());
-      this->ExtensionsInstallPathButton->GetWidget()
-        ->GetLoadSaveDialog()->SetLastPath(app->GetExtensionsInstallPath());
+      if ( app->GetExtensionsInstallPath() != NULL && (strcmp (app->GetExtensionsInstallPath(), "")) )
+        {
+        this->ExtensionsInstallPathButton->GetWidget()
+          ->SetText(app->GetExtensionsInstallPath());
+        this->ExtensionsInstallPathButton->GetWidget()
+          ->GetLoadSaveDialog()->SetLastPath(app->GetExtensionsInstallPath());
+        }
       }
     if (this->ColorFilePathsPresetSelector)
       {
