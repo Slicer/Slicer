@@ -1,5 +1,6 @@
 #include <sstream>
 #include <vtksys/stl/string>
+#include <vtksys/SystemTools.hxx>
 #include "vtkObjectFactory.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerGUICollection.h"
@@ -383,6 +384,180 @@ vtkSlicerApplication* vtkSlicerApplication::GetInstance()
 //---------------------------------------------------------------------------
 const char *vtkSlicerApplication::Evaluate(const char *expression) {
     return (this->Script(expression));
+}
+
+
+//---------------------------------------------------------------------------
+int vtkSlicerApplication::FullFileSystemCheck ( ) {
+
+  //---
+  //--- temporary directory first
+  //---
+  std::string temporaryDirectory;
+  std::string testFile;
+  bool dirGone;
+  
+  if (this->GetTemporaryDirectory() )
+    {
+    temporaryDirectory = this->GetTemporaryDirectory();
+    }
+  this->SetTemporaryDirectory(temporaryDirectory.c_str());
+  if (temporaryDirectory != "")
+    {
+    //--- make sure directory is present
+    if (!vtksys::SystemTools::FileExists(temporaryDirectory.c_str()))
+      {
+      vtksys::SystemTools::MakeDirectory(temporaryDirectory.c_str());
+      }
+    //--- if there, make sure it's actually a dir
+    if (vtksys::SystemTools::FileExists(temporaryDirectory.c_str())
+        && vtksys::SystemTools::FileIsDirectory(temporaryDirectory.c_str()))
+      {
+      testFile = temporaryDirectory;
+      testFile += "/SlicerDiskSpaceCheck.txt";
+      std::ofstream tst ( testFile.c_str() );
+      if (tst.good() == false || tst.fail() == true || tst.bad() == true )
+        {
+        std::string msg = "Your file system appears to be full: Do you want to clear your Temporary Directory (" + std::string(this->TemporaryDirectory) + "')?\n";
+        vtkKWMessageDialog *message = vtkKWMessageDialog::New();
+        message->SetParent(this->ApplicationGUI->GetViewerWidget());
+        message->SetOptions(vtkKWMessageDialog::ErrorIcon);
+        message->SetIcon();
+        message->SetStyleToOkCancel();
+        message->SetText(msg.c_str());
+        message->Create();
+        int clearDir = message->Invoke();
+        message->Delete();
+        if ( clearDir )
+          {
+          //--- empty temp directory
+          dirGone = vtksys::SystemTools::RemoveADirectory (temporaryDirectory.c_str() );
+          vtksys::SystemTools::RemoveADirectory ( temporaryDirectory.c_str() );
+          if ( vtksys::SystemTools::MakeDirectory ( temporaryDirectory.c_str() ) == false )
+            {
+            vtkWarningMacro ( "Temporary Directory cleared: Error: unable to recreate Temporary Directory after deleting its contents." );
+            }
+          }
+        }
+      else
+        {
+        tst.close();
+        //--- clean up
+        vtksys::SystemTools::RemoveFile ( testFile.c_str() );
+        }
+      }
+    }
+
+  //--- now cache directory....
+  std::string cacheDirectory;
+  if (this->GetRemoteCacheDirectory() )
+    {
+    cacheDirectory = this->GetRemoteCacheDirectory();
+    }
+  this->SetRemoteCacheDirectory(cacheDirectory.c_str());
+
+  if (cacheDirectory != "")
+    {
+    //--- make sure directory is present
+    if (!vtksys::SystemTools::FileExists(cacheDirectory.c_str()))
+      {
+      vtksys::SystemTools::MakeDirectory(cacheDirectory.c_str());
+      }
+    //--- if there, make sure it's actually a dir
+    if (vtksys::SystemTools::FileExists(cacheDirectory.c_str())
+        && vtksys::SystemTools::FileIsDirectory(cacheDirectory.c_str()))
+      {
+      //--- make a test write and see if it works.
+      testFile.clear();
+      testFile = cacheDirectory;
+      testFile += "/SlicerDiskSpaceCheck.txt";
+      std::ofstream tst2( testFile.c_str() );
+      tst2 << "Disk space check";
+      if (tst2.good() == false || tst2.fail() == true || tst2.bad() == true )
+        {
+        std::string msg = "Your file system still appears to be full: Do you want to clear your Cache Directory (" + std::string(this->RemoteCacheDirectory) + "')?\n";
+        vtkKWMessageDialog *message = vtkKWMessageDialog::New();
+        message->SetParent(this->ApplicationGUI->GetViewerWidget());
+        message->SetOptions(vtkKWMessageDialog::ErrorIcon);
+        message->SetIcon();
+        message->SetStyleToOkCancel();
+        message->SetText(msg.c_str());
+        message->Create();
+        int clearDir = message->Invoke();
+        message->Delete();
+        if ( clearDir )
+          {
+          //--- empty temp directory
+          dirGone = vtksys::SystemTools::RemoveADirectory ( cacheDirectory.c_str());
+          vtksys::SystemTools::RemoveADirectory ( cacheDirectory.c_str() );
+          if ( vtksys::SystemTools::MakeDirectory ( cacheDirectory.c_str() ) == false )
+            {
+            vtkWarningMacro ( "Remote Cache Directory cleared: Error: unable to recreate Remote Cache Directory after deleting its contents." );
+            }
+          }
+        }
+      else
+        {
+        tst2.close();
+        //--- clean up
+        vtksys::SystemTools::RemoveFile ( testFile.c_str() );
+        }
+      }
+    }
+
+  //--- now final test in the temporary directory
+  //--- after chance to clear temporary and cache directories,
+  //--- see if there's disk space now...
+  int diskFull = 1;
+  if (temporaryDirectory != "")
+    {
+    //--- make sure directory is present
+    if (!vtksys::SystemTools::FileExists(temporaryDirectory.c_str()))
+      {
+      vtksys::SystemTools::MakeDirectory(temporaryDirectory.c_str());
+      }
+    //--- if there, make sure it's actually a dir
+    if (vtksys::SystemTools::FileExists(temporaryDirectory.c_str())
+        && vtksys::SystemTools::FileIsDirectory(temporaryDirectory.c_str()))
+      {
+      //--- make a test write and see if it works.
+      testFile.clear();
+      testFile = temporaryDirectory;
+      testFile += "/SlicerDiskSpaceCheck.txt";
+      std::ofstream tst3( testFile.c_str() );
+      tst3 << "Disk space check";
+      if (tst3.good() == false || tst3.fail() == true || tst3.bad() == true )
+        {
+        std::string msg = "Your file system still appears to be full. Slicer will not start up with its full set of modules. It is recommended that you close the application, create some additional disk space, and then restart Slicer.";
+        vtkKWMessageDialog *message = vtkKWMessageDialog::New();
+        message->SetParent(this->ApplicationGUI->GetViewerWidget());
+        message->SetOptions(vtkKWMessageDialog::ErrorIcon);
+        message->SetIcon();
+        message->SetStyleToMessage();
+        message->SetText(msg.c_str());
+        message->Create();
+        message->Invoke();
+        message->Delete();
+        diskFull = 1;
+        }
+      else
+        {
+        diskFull = 0;
+        tst3.close();
+        //--- clean up
+        vtksys::SystemTools::RemoveFile ( testFile.c_str() );
+        }
+      }
+    }
+
+  if ( diskFull )
+    {
+    return 1;
+    }
+  else
+    {
+    return 0;
+    }
 }
 
 //---------------------------------------------------------------------------

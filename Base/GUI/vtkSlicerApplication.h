@@ -89,6 +89,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   virtual void SaveApplicationSettingsToRegistry();
   virtual void ConfigureRemoteIOSettingsFromRegistry();
   virtual void UpdateRemoteIOSettingsForRegistry();
+  // Description:
+  // Perform test after the Application Registry is read and values
+  // are set to determine whether File System is full -- if so, prompts
+  // users to remove files from Temporary Directory and from Cache
+  // Directory -- then does a check again and warns if the write to
+  // disk fails, recommends freeing up some disk space.
+  virtual int FullFileSystemCheck ( );
 
   // Description:
   // Some constants
