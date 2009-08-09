@@ -45,6 +45,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <name>order</name>
       <label>Interpolation order</label>
       <default>1</default>
+      <element>0</element>
       <element>1</element>
       <element>2</element>
       <element>3</element>
