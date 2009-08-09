@@ -24,7 +24,11 @@
 # cmake such that tokens between @ signs will be replaced by the variable 
 # from the cmake cache
 #
- 
+
+# set default error code and info so we don't get confused later if no error has
+# actually occurred...
+set ::errorCode 0
+set ::errorInfo ""
 
 #
 # Slicer3_HOME: , find it relative to the location of this script
@@ -726,6 +730,7 @@ proc launch_RunProgram {} {
       set ::LAUNCH(launchCommand) $::Slicer3_REAL
     }
 
+    set ::errorCode ""  
     set ::errorInfo ""  ;# reset error info so we are sure to get errors from the 
                          # launch and not leftovers from previous 'catch' calls
 
