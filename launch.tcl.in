@@ -366,6 +366,7 @@ proc launch_ParseArgs {argv} {
           set ::LAUNCH(showSplash) 0
           lappend newargs $arg ;# pass arg to Slicer3-real
       }
+      "--test_mode" -
       "--test-mode" {
         set ::LAUNCH(showSplash) 0
         lappend newargs $arg ;# pass arg to Slicer3-real
