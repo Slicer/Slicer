@@ -59,6 +59,7 @@ vtkMRMLProstateNavManagerNode::vtkMRMLProstateNavManagerNode()
 //----------------------------------------------------------------------------
 vtkMRMLProstateNavManagerNode::~vtkMRMLProstateNavManagerNode()
 {
+  this->ClearSteps();
 }
 
 
@@ -253,6 +254,7 @@ void vtkMRMLProstateNavManagerNode::AddNewStep(const char* name, vtkProstateNavS
 
   step.name  = name;
   step.page  = page;
+  step.page->Register(this);
 
   this->StepList.push_back(step);
   
@@ -288,6 +290,7 @@ void vtkMRMLProstateNavManagerNode::ClearSteps()
   
   for (iter = this->StepList.begin(); iter != this->StepList.end(); iter ++)
     {
+    iter->page->SetProstateNavManager(NULL);
     iter->page->Delete();
     }
 

@@ -135,6 +135,7 @@ vtkProstateNavGUI::vtkProstateNavGUI ( )
   vtkProstateNavStepSetUp* setupStep = vtkProstateNavStepSetUp::New();
   setupStep->SetTitleBackgroundColor(205.0/255.0, 200.0/255.0, 177.0/255.0);
   this->ProstateNavManager->AddNewStep("Set Up", setupStep);
+  setupStep->Delete();
 
   //vtkProstateNavScanControlStep* scanControlStep = vtkProstateNavScanControlStep::New();
   //scanControlStep->SetTitleBackgroundColor(179.0/255.0, 145.0/255.0, 105.0/255.0);
@@ -143,18 +144,22 @@ vtkProstateNavGUI::vtkProstateNavGUI ( )
   vtkProstateNavCalibrationStep* calibrationStep = vtkProstateNavCalibrationStep::New();
   calibrationStep->SetTitleBackgroundColor(193.0/255.0, 115.0/255.0, 80.0/255.0);
   this->ProstateNavManager->AddNewStep("Calibration", calibrationStep);
+  calibrationStep->Delete();
 
   vtkProstateNavTargetingStep* targetingStep = vtkProstateNavTargetingStep::New();
   targetingStep->SetTitleBackgroundColor(138.0/255.0, 165.0/255.0, 111.0/255.0);
   this->ProstateNavManager->AddNewStep("Targeting", targetingStep);
+  targetingStep->Delete();
 
   vtkProstateNavManualControlStep* manualStep = vtkProstateNavManualControlStep::New();
   manualStep->SetTitleBackgroundColor(179.0/255.0, 179.0/255.0, 230.0/255.0);
   this->ProstateNavManager->AddNewStep("Manual", manualStep);
+  manualStep->Delete();
 
   vtkProstateNavStepVerification* verificationStep = vtkProstateNavStepVerification::New();
   verificationStep->SetTitleBackgroundColor(179.0/255.0, 145.0/255.0, 105.0/255.0);
   this->ProstateNavManager->AddNewStep("Verification", verificationStep);
+  verificationStep->Delete();
 
   this->ProstateNavManager->AllowAllTransitions();
 
@@ -170,6 +175,11 @@ vtkProstateNavGUI::~vtkProstateNavGUI ( )
   if (this->DataCallbackCommand)
     {
     this->DataCallbackCommand->Delete();
+    }
+
+  if (this->ProstateNavManager)
+    {
+    this->ProstateNavManager->Delete();
     }
 
 
@@ -654,6 +664,7 @@ void vtkProstateNavGUI::TearDownGUI ( )
     {
     this->ProstateNavManager->GetStepPage(i)->SetGUI(NULL);
     this->ProstateNavManager->GetStepPage(i)->SetLogic(NULL);
+    this->ProstateNavManager->GetStepPage(i)->SetProstateNavManager(NULL);
     }
 
 }
