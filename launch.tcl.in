@@ -837,12 +837,14 @@ proc launch_ImportModulePaths {} {
     if {$::env(BUILD) == $::SOLARIS ||
         $::env(BUILD) == $::LINUX_64 || 
         $::env(BUILD) == $::LINUX} {
-            set ::env(LD_LIBRARY_PATH) ${newpath}:$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) ":$::env(LD_LIBRARY_PATH)"
+            set ::env(LD_LIBRARY_PATH) "$newpath$::env(LD_LIBRARY_PATH)"
         } elseif {$::env(BUILD) ==  $::DARWIN || $::env(BUILD) == $::DARWIN_X86} { 
-            set ::env(DYLD_LIBRARY_PATH) ${newpath}:$::env(DYLD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) ":$::env(DYLD_LIBRARY_PATH)"
+            set ::env(LD_LIBRARY_PATH) "$newpath$::env(DYLD_LIBRARY_PATH)"
         } elseif {$::env(BUILD) == $::WINDOWS} {
             set newpath [string map [list : \;] $newpath] ; # really needed?
-            set ::env(Path) ${newpath}\;$::env(Path)
+            set ::env(Path) $newpath\;$::env(Path)
         }
 
 }
