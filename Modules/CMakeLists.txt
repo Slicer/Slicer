@@ -59,12 +59,12 @@ subdirs(
   Statistics
   Tractography
 # TumorGrowth
+  Volumes
   ChangeTracker # AF: refactoring TumorGrowth...
   VolumeRendering
 # WFEngineModule  <- can't work with 2.6 and Win32??
 # MRAblation <- not working either
   ModelMirror
-  Volumes
   EMSegment
   DistanceTransformModel
   ClipModel
