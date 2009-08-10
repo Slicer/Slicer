@@ -1555,6 +1555,7 @@ void vtkFourDImageGUI::BuildGUIForLoadFrame (int show)
                this->SaveImageButton->GetWidgetName());
 
 
+  selframe->Delete();
   conBrowsFrame->Delete();
   inFrame->Delete();
   outFrame->Delete();

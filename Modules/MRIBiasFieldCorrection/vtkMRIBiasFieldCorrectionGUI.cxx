@@ -486,7 +486,7 @@ void vtkMRIBiasFieldCorrectionGUI::ProcessGUIEvents( vtkObject *caller,
     this->ImageResample->GetOutput()->GetDimensions(dim);
     this->ImageResample->GetOutput()->GetScalarRange(scalarRange);
 
-    int slice = extent[4] + (extent[5]-extent[4]) * sliceNormalized;
+    int slice = extent[4] + (extent[5]-extent[4]) * static_cast<int> (sliceNormalized);
     double threshold = scalarRange[0] + (scalarRange[1]-scalarRange[0]) *
       thresholdNormalized;
 
@@ -1002,5 +1002,7 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
 
   this->Script("pack %s -side top -anchor e -padx 20 -pady 10",
     this->ApplyButton->GetWidgetName());
+
+  moduleFrame->Delete();
 }
 

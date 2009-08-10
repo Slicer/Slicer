@@ -770,5 +770,7 @@ void vtkAtlasCreatorGUI::BuildGUI()
 
   this->Script("pack %s -side top -anchor e -padx 20 -pady 10",
     this->ApplyButton->GetWidgetName());
+
+  moduleFrame->Delete();
 }
 
