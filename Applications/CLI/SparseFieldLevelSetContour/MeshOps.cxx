@@ -350,9 +350,9 @@ vector<int> InitPath( MeshData* meshdata, vector<int> pts)
     {
     // use the initial curvature that came in with the poly data
     vtkDataArray *curvScalars = meshdata->polydata->GetPointData()->GetScalars("InitialCurvature");
-    for (unsigned int i = 0; i < curvScalars->GetNumberOfTuples(); i++)
+    for (int i = 0; i < curvScalars->GetNumberOfTuples(); i++)
       {
-      C.push_back((int)(round(curvScalars->GetTuple1(i))));
+      C.push_back((int)(floor(curvScalars->GetTuple1(i))));
       }
     return C;
     }
