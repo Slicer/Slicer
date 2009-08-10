@@ -1792,7 +1792,29 @@ int Slicer3_main(int argc, char *argv[])
   appGUI->DisplayMainSlicerWindow ( );
 
 
+  //
+  //--- set home module based on registry settings
+  // - show welcome unless disabled or not there
+  // - show user's home if set
+  // - show Data if nothing else
+  // - don't set if in test mode or --no-modules
+  //
+  const char *homeModule = slicerApp->GetHomeModule();
+  if ( ( slicerApp->GetUseWelcomeModuleAtStartup() ) &&
+       ( slicerApp->GetModuleGUIByName ( "SlicerWelcome" ) != NULL) )
+    {
+    homeModule = "SlicerWelcome";
+    }
+  if ( homeModule == NULL || *homeModule == 0 )
+    {
+    homeModule = "Data";
+    }
 
+  if ( !NoModules && !TestMode )
+    {
+    std::string tclCmd = "update; $::slicer3::ApplicationGUI SelectModule \"" + std::string(homeModule) + "\"";
+    Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
+    }
 
 
   // More command line arguments:
@@ -1920,29 +1942,6 @@ int Slicer3_main(int argc, char *argv[])
     }
 
 
-  //
-  //--- set home module based on registry settings
-  // - show welcome unless disabled or not there
-  // - show user's home if set
-  // - show Data if nothing else
-  // - don't set if in test mode or --no-modules
-  //
-  const char *homeModule = slicerApp->GetHomeModule();
-  if ( ( slicerApp->GetUseWelcomeModuleAtStartup() ) &&
-       ( slicerApp->GetModuleGUIByName ( "SlicerWelcome" ) != NULL) )
-    {
-    homeModule = "SlicerWelcome";
-    }
-  if ( homeModule == NULL || *homeModule == 0 )
-    {
-    homeModule = "Data";
-    }
-
-  if ( !NoModules && !TestMode )
-    {
-    std::string tclCmd = "after idle { update; $::slicer3::ApplicationGUI SelectModule \"" + std::string(homeModule) + "\" }";
-    Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
-    }
   Slicer3_Tcl_Eval( interp, "update" ) ;
 
   scene->ClearUndoStack();
