@@ -466,13 +466,13 @@ void vtkMRIBiasFieldCorrectionGUI::ProcessGUIEvents( vtkObject *caller,
       if (extent[3]-extent[2] > 63)
         {
         double factor = 63.0 / (extent[3]-extent[2]);
-        this->ImageResample->SetAxisMagnificationFactor(0,factor);
+        this->ImageResample->SetAxisMagnificationFactor(1,factor);
         }
 
       if (extent[5]-extent[4] > 63)
         {
         double factor = 63.0 / (extent[5]-extent[4]);
-        this->ImageResample->SetAxisMagnificationFactor(0,factor);
+        this->ImageResample->SetAxisMagnificationFactor(2,factor);
         }
 
       this->ImageResample->SetInput(inVolume->GetImageData());
