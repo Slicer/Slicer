@@ -166,7 +166,7 @@ proc FastMarchingSegmentationBuildGUI {this} {
   $fiducials SetParent [$initFrame GetFrame]
   $fiducials Create
   $fiducials NewNodeEnabledOn
-  $fiducials SetNodeClass "vtkMRMLFiducialListNode" "" "" "FastMarchingSeeds"
+  $fiducials SetNodeClass "vtkMRMLFiducialListNode" "" "" "FM"
   $fiducials SetMRMLScene [[$this GetLogic] GetMRMLScene]
   $fiducials UpdateMenu
   $fiducials SetLabelText "Input seeds:"
@@ -387,8 +387,12 @@ proc FastMarchingSegmentationProcessGUIEvents {this caller event} {
   if {$caller == $::FastMarchingSegmentation($this,fiducialsSelector) } {
     # make sure that the newly created fiducials list is selected in the MRMLSelectionNode
     set selectionNode [[[$this GetLogic] GetApplicationLogic] GetSelectionNode]
-    $selectionNode SetReferenceActiveFiducialListID \
-      [ [$::FastMarchingSegmentation($this,fiducialsSelector) GetSelected] GetID ]
+    set fmFiducialListID [ [$::FastMarchingSegmentation($this,fiducialsSelector) GetSelected] GetID ]
+    set fmFiducialList [$::slicer3::MRMLScene GetNodeByID $fmFiducialListID]
+    $selectionNode SetReferenceActiveFiducialListID $fmFiducialListID
+    $fmFiducialList SetGlyphTypeFromString "Sphere3D"
+    $fmFiducialList SetSymbolScale 2
+    $fmFiducialList SetTextScale 3
   }
 
   if {$caller == $::FastMarchingSegmentation($this,timescrollRange) } {
@@ -487,18 +491,14 @@ proc FastMarchingSegmentationProcessMRMLEvents {this callerID event} {
 }
 
 proc FastMarchingSegmentationEnter {this} {
-  if { [info exists ::FastMarchingSegmentation($this,renderVolume)] } {
-    set viewerWidget [ [$this GetApplicationGUI] GetViewerWidget ]
-    [$viewerWidget GetMainViewer ] AddViewProp $::FastMarchingSegmentation($this,renderVolume)
-    $viewerWidget RequestRender
+  if { [eval $::FastMarchingSegmentation($this,volRenderCheckbox) GetSelectedState] } {
+      FastMarchingSegmentationShowRender $this
   }
 }
 
 proc FastMarchingSegmentationExit {this} {
-  if { [info exists ::FastMarchingSegmentation($this,renderVolume)] } {
-    set viewerWidget [ [$this GetApplicationGUI] GetViewerWidget ]
-    [$viewerWidget GetMainViewer ] RemoveViewProp $::FastMarchingSegmentation($this,renderVolume)
-    $viewerWidget RequestRender
+  if { [eval $::FastMarchingSegmentation($this,volRenderCheckbox) GetSelectedState] } {
+      FastMarchingSegmentationHideRender $this
   }
 }
 
