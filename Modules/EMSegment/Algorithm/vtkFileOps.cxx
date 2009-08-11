@@ -103,6 +103,7 @@ void vtkFileOps::WriteMatrixMatlabFile (FILE *f, const char *name, double **mat,
   if (name != NULL) fprintf(f,"];\n");
   fprintf(f,"\n");
 }
+#if 0
 // int XSize, int YSize are only important if FlagUpsideDown is set 
 void  vtkFileOps::WriteDoubleToUShortToGEFile(const char* FileName, double* vec,int XSize, int YSize, int XYSize, double min, double max, unsigned short MaxOutput, bool FlagUpsideDown) const {
   unsigned short *result = new unsigned short[XYSize];
@@ -212,7 +213,7 @@ int vtkFileOps::fileIsCompressed(const char *fname, char **newFileName)
 #endif
   return 0;
 }
-
+#endif
 char* vtkFileOps::pathComponent(char *fname)
 {
   int j = 0;
@@ -285,7 +286,7 @@ int vtkFileOps::makeDirectoryIfNeeded(char *fname)
   free(path);
   return retval;
 }
-
+#if 0
 short vtkFileOps::convertShortFromGE(short ge)
 {
   char *x =(char *)&ge;
@@ -431,3 +432,4 @@ int vtkFileOps::WriteMRIfile(char *fname, double *data, int np)
   free(newdata);
   return i;
 }
+#endif

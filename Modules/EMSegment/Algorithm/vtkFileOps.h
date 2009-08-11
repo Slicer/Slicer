@@ -49,11 +49,11 @@ protected:
   void WriteVectorMatlabFile (FILE *f,const char *name, double *vec, int xMax) const;
   void WriteMatrixMatlabFile (FILE *f,const char *name, double **mat, int imgY, int imgX) const;
 
-  void ensureGEByteOrderForShort(short *data, int np);
-  int IsMSBFirstForShort(void);
-  short convertShortFromGE(short ge);
-  int fileIsCompressed(const char *fname, char **newFileName);
-  int uncompressedFileName(const char *fname, char **newFileName);
+  //void ensureGEByteOrderForShort(short *data, int np);
+  //int IsMSBFirstForShort(void);
+  //short convertShortFromGE(short ge);
+  //int fileIsCompressed(const char *fname, char **newFileName);
+  //int uncompressedFileName(const char *fname, char **newFileName);
 };
 
 //BTX
