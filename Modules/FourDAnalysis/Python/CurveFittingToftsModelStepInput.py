@@ -44,10 +44,10 @@ class CurveFittingToftsModelStepInput(CurveAnalysisBase):
     # ------------------------------
     # Constructor -- Set initial parameters
     def __init__(self):
-        self.ParameterNameList  = ['Ktrans', 've', 'Cp0', 'delay']
-        self.InitialParameter   = [0.1, 0.1, 1.0, 0.0] 
-        self.ConstantNameList = ['Duration']
-        self.Constant         = [1.0]
+        self.ParameterNameList  = ['Ktrans', 've']
+        self.InitialParameter   = [0.1, 0.1] 
+        self.ConstantNameList = ['Duration', 'Delay', 'Cp0']
+        self.Constant         = [1.0, 0.0, 1.0]
         self.FunctionVectorInput = 1
 
         self.MethodName          = 'Tofts Model with Step Input Function'
@@ -71,15 +71,23 @@ class CurveFittingToftsModelStepInput(CurveAnalysisBase):
     def SetConstant(self, name, param):
         if name == 'Duration':
             self.duration = param;
+        if name == 'Delay':
+            self.delay = param;
+        if name == 'Cp0':
+            self.cp0 = param;
         
     # ------------------------------
     # Definition of the function
     def Function(self, t, param):
-        Ktrans, ve, Cp0, delay = param
+        Ktrans, ve = param
+        duration   = self.duration
+        delay      = self.delay
+        cp0        = self.cp0
+
 
         # If step imput is assumed, the respons can be described as
         #
-        #   y = (Ktrans * Cp0 / kep) * (1-exp(-kep*t))         (t < duration)   ... (1)
+        #   y = (Ktrans * cp0 / kep) * (1-exp(-kep*t))         (t < duration)   ... (1)
         #   y = (Ktrans * cp0 / kep) * exp(-kep*(t-duration))  (t >= duration)  ... (2)
 
         #sys.stderr.write('t     : %s\n' % t )
@@ -90,25 +98,23 @@ class CurveFittingToftsModelStepInput(CurveAnalysisBase):
 
         # To describe C(t) in one equasion, we introduce t_dush, which is
         # defined by t_dash = t (t < duration) and t_dash = duration (t >= duration):
-        t_dash = scipy.less(t2, self.duration)*t2 + scipy.greater_equal(t2, self.duration)*self.duration
+        t_dash = scipy.less(t2, duration)*t2 + scipy.greater_equal(t2, duration)*duration
 
         # Eq. (1) and (2) can be rewritten by:
         kep = Ktrans / ve
-        y = (Ktrans*Cp0/kep)*(scipy.exp(kep*t_dash) - 1) * scipy.exp(-kep*t2)
+        y = (Ktrans*cp0/kep)*(scipy.exp(kep*t_dash) - 1) * scipy.exp(-kep*t2)
 
         return y
 
     # ------------------------------
     # Calculate the output parameters (called by GetOutputParam())
     def CalcOutputParamDict(self, param):
-        Ktrans, ve, Cp0, delay = param
+        Ktrans, ve = param
 
         dict = {}
         dict['Ktrans'] = Ktrans
         dict['ve']     = ve
         dict['kep']    = Ktrans / ve
-        dict['Cp0']    = Cp0
-        dict['delay']  = delay
         
         return dict
 

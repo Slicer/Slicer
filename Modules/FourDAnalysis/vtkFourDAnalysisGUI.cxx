@@ -107,7 +107,8 @@ vtkFourDAnalysisGUI::vtkFourDAnalysisGUI ( )
 
   // Curve fitting / parameter map
   //this->AcqTimeEntry        = NULL;
-  this->MaskSelectMenu           = NULL;
+  //this->MaskSelectMenu           = NULL;
+  this->MaskNodeSelector         = NULL;
   this->RunPlotButton            = NULL;
   this->ErrorBarCheckButton      = NULL;
   this->FittingLabelMenu         = NULL;
@@ -192,16 +193,23 @@ vtkFourDAnalysisGUI::~vtkFourDAnalysisGUI ( )
     this->ThresholdRange->SetParent(NULL);
     this->ThresholdRange->Delete();
     }
+  if (this->MaskNodeSelector)
+    {
+    this->MaskNodeSelector->SetParent(NULL);
+    this->MaskNodeSelector->Delete();
+    }
   //if (this->AcqTimeEntry)
   //  {
   //  this->AcqTimeEntry->SetParent(NULL);
   //  this->AcqTimeEntry->Delete();
   //  }
-  if (this->MaskSelectMenu)
-    {
-    this->MaskSelectMenu->SetParent(NULL);
-    this->MaskSelectMenu->Delete();
-    }
+  //if (this->MaskSelectMenu)
+  //  {
+  //  this->MaskSelectMenu->SetParent(NULL);
+  //  this->MaskSelectMenu->Delete();
+  //  }
+
+
   if (this->RunPlotButton)
     {
     this->RunPlotButton->SetParent(NULL);
@@ -410,12 +418,17 @@ void vtkFourDAnalysisGUI::RemoveGUIObservers ( )
   //  this->AcqTimeEntry
   //    ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
   //  }
-  if (this->MaskSelectMenu)
+  //if (this->MaskSelectMenu)
+  //  {
+  //  this->MaskSelectMenu->GetMenu()
+  //    ->RemoveObserver((vtkCommand*)this->GUICallbackCommand);
+  //  }
+  if (this->MaskNodeSelector)
     {
-    this->MaskSelectMenu->GetMenu()
-      ->RemoveObserver((vtkCommand*)this->GUICallbackCommand);
+    this->MaskNodeSelector
+      ->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
+                        (vtkCommand *)this->GUICallbackCommand );
     }
-
   if (this->RunPlotButton)
     {
     this->RunPlotButton
@@ -563,12 +576,17 @@ void vtkFourDAnalysisGUI::AddGUIObservers ( )
   //  this->AcqTimeEntry
   //    ->AddObserver(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   //  }
-  if (this->MaskSelectMenu)
+  //if (this->MaskSelectMenu)
+  //  {
+  //  this->MaskSelectMenu->GetMenu()
+  //    ->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand*)this->GUICallbackCommand);
+  //  }
+  if (this->MaskNodeSelector)
     {
-    this->MaskSelectMenu->GetMenu()
-      ->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand*)this->GUICallbackCommand);
+    this->MaskNodeSelector
+      ->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
+                    (vtkCommand *)this->GUICallbackCommand );
     }
-
   if (this->RunPlotButton)
     {
     this->RunPlotButton
@@ -752,26 +770,30 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
     this->ThresholdLower  = thlow; 
     SetWindowLevelForCurrentFrame();
     }
-  else if (this->MaskSelectMenu->GetMenu() == vtkKWMenu::SafeDownCast(caller)
-      && event == vtkKWMenu::MenuItemInvokedEvent)
+  //else if (this->MaskSelectMenu->GetMenu() == vtkKWMenu::SafeDownCast(caller)
+  //    && event == vtkKWMenu::MenuItemInvokedEvent)
+  //  {
+  //  std::cerr << "this->MaskSelectMenu->GetMenu()" << std::endl;
+  //
+  //  //int selected = this->MaskSelectMenu->GetMenu()->GetIndexOfSelectedItem();
+  //  //const char* nodeID = this->MaskNodeIDList[selected].c_str();
+  //  //SelectMask(nodeID, label);
+  //  }
+  else if (this->MaskNodeSelector == vtkSlicerNodeSelectorWidget::SafeDownCast(caller)
+           && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
     {
-    std::cerr << "this->MaskSelectMenu->GetMenu()" << std::endl;
-
-    //int selected = this->MaskSelectMenu->GetMenu()->GetIndexOfSelectedItem();
-    //const char* nodeID = this->MaskNodeIDList[selected].c_str();
-    //SelectMask(nodeID, label);
     }
   else if (this->RunPlotButton == vtkKWPushButton::SafeDownCast(caller)
            && event == vtkKWPushButton::InvokedEvent)
     {
-    //double acqTime = this->AcqTimeEntry->GetValueAsDouble();
-    int selected = this->MaskSelectMenu->GetMenu()->GetIndexOfSelectedItem();
-    const char* maskID   = this->MaskNodeIDList[selected].c_str();
+    //int selected = this->MaskSelectMenu->GetMenu()->GetIndexOfSelectedItem();
+    //const char* maskID   = this->MaskNodeIDList[selected].c_str();
     vtkMRMLTimeSeriesBundleNode *bundleNode = 
       vtkMRMLTimeSeriesBundleNode::SafeDownCast(this->Active4DBundleSelectorWidget->GetSelected());
+    //vtkMRMLScalarVolumeNode* maskNode =
+    //  vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(maskID));
     vtkMRMLScalarVolumeNode* maskNode =
-      vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(maskID));
-
+      vtkMRMLScalarVolumeNode::SafeDownCast(this->MaskNodeSelector->GetSelected());
     if (bundleNode && maskNode)
       {
       this->IntensityCurves->SetBundleNode(bundleNode);
@@ -1071,7 +1093,7 @@ void vtkFourDAnalysisGUI::ProcessMRMLEvents ( vtkObject *caller,
   if (event == vtkMRMLScene::NodeAddedEvent)
     {
     UpdateSeriesSelectorMenus();
-    UpdateMaskSelectMenu();
+    //UpdateMaskSelectMenu();
     }
   else if (event == vtkMRMLScene::SceneCloseEvent)
     {
@@ -1377,15 +1399,27 @@ void vtkFourDAnalysisGUI::BuildGUIForFunctionViewer(int show)
   this->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 2",
                  mframe->GetWidgetName() );
 
-  vtkKWLabel *menuLabel = vtkKWLabel::New();
-  menuLabel->SetParent(mframe);
-  menuLabel->Create();
-  menuLabel->SetText("Mask: ");
+  //vtkKWLabel *menuLabel = vtkKWLabel::New();
+  //menuLabel->SetParent(mframe);
+  //menuLabel->Create();
+  //menuLabel->SetText("Mask: ");
 
-  this->MaskSelectMenu = vtkKWMenuButton::New();
-  this->MaskSelectMenu->SetParent(mframe);
-  this->MaskSelectMenu->Create();
-  this->MaskSelectMenu->SetWidth(20);
+  this->MaskNodeSelector = vtkSlicerNodeSelectorWidget::New();
+  this->MaskNodeSelector->SetParent(mframe);
+  this->MaskNodeSelector->Create();
+  this->MaskNodeSelector->SetNodeClass("vtkMRMLScalarVolumeNode", NULL, NULL, NULL);
+  this->MaskNodeSelector->SetNewNodeEnabled(0);
+  this->MaskNodeSelector->SetMRMLScene(this->GetMRMLScene());
+  this->MaskNodeSelector->SetBorderWidth(2);
+  this->MaskNodeSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+  this->MaskNodeSelector->GetWidget()->GetWidget()->SetWidth(24);
+  this->MaskNodeSelector->SetLabelText( "Mask: ");
+  this->MaskNodeSelector->SetBalloonHelpString("Select a mask to specify regions of interest.");
+
+  //this->MaskSelectMenu = vtkKWMenuButton::New();
+  //this->MaskSelectMenu->SetParent(mframe);
+  //this->MaskSelectMenu->Create();
+  //this->MaskSelectMenu->SetWidth(20);
 
   this->RunPlotButton = vtkKWPushButton::New();
   this->RunPlotButton->SetParent(mframe);
@@ -1399,16 +1433,19 @@ void vtkFourDAnalysisGUI::BuildGUIForFunctionViewer(int show)
   this->SavePlotButton->SetWidth(50);
   this->SavePlotButton->GetWidget()->SetText ("Save");
   this->SavePlotButton->GetWidget()->GetLoadSaveDialog()->SaveDialogOn();
-  //this->SavePlotButton->GetWidget()->GetLoadSaveDialog()->SetDefaultExtension(".csv");
 
-  this->Script("pack %s %s %s %s -side left -fill x -expand y -anchor w -padx 2 -pady 2", 
-               menuLabel->GetWidgetName(),
-               this->MaskSelectMenu->GetWidgetName(),
+//  this->Script("pack %s %s %s %s -side left -fill x -expand y -anchor w -padx 2 -pady 2", 
+//               menuLabel->GetWidgetName(),
+//               this->MaskSelectMenu->GetWidgetName(),
+//               this->RunPlotButton->GetWidgetName(),
+
+  this->Script("pack %s %s %s -side left -fill x -expand y -anchor w -padx 2 -pady 2", 
+               this->MaskNodeSelector->GetWidgetName(),
                this->RunPlotButton->GetWidgetName(),
                this->SavePlotButton->GetWidgetName());
 
   msframe->Delete();
-  menuLabel->Delete();
+  //menuLabel->Delete();
 
   
   // -----------------------------------------
@@ -2113,50 +2150,50 @@ void vtkFourDAnalysisGUI::UpdateSeriesSelectorMenus()
 }
 
 
-//----------------------------------------------------------------------------
-void vtkFourDAnalysisGUI::UpdateMaskSelectMenu()
-{
-
-  if (!this->MaskSelectMenu)
-    {
-    return;
-    }
-
-  const char* className = this->GetMRMLScene()->GetClassNameByTag("Volume");
-  std::vector<vtkMRMLNode*> nodes;
-  this->GetMRMLScene()->GetNodesByClass(className, nodes);
-
-  std::vector<vtkMRMLNode*>::iterator iter;
-  if (nodes.size() > 0)
-    {
-    this->MaskSelectMenu->GetMenu()->DeleteAllItems();
-    this->MaskNodeIDList.clear();
-    for (iter = nodes.begin(); iter != nodes.end(); iter ++)
-      {
-      //(*iter)->GetName();
-      //nodeInfo.nodeID = (*iter)->GetID();
-      char str[256];
-
-      vtkMRMLScalarVolumeNode* node =
-        vtkMRMLScalarVolumeNode::SafeDownCast(*iter);
-        //vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID((*iter)->GetID()));
-      if (node != NULL && node->GetLabelMap())
-        {
-        //sprintf(str, "%s (%s)", (*iter)->GetName(), (*iter)->GetID());
-        sprintf(str, "%s", (*iter)->GetName());
-        this->MaskSelectMenu->GetMenu()->AddRadioButton(str);
-        std::string id((*iter)->GetID());
-        this->MaskNodeIDList.push_back(id);
-        
-        vtkIntArray* events;
-        events = vtkIntArray::New();
-        events->InsertNextValue(vtkMRMLVolumeNode::ImageDataModifiedEvent); 
-        vtkMRMLNode *nd = NULL; // TODO: is this OK?
-        vtkSetAndObserveMRMLNodeEventsMacro(nd,node,events);
-        }
-      }
-    }
-}
+////----------------------------------------------------------------------------
+//void vtkFourDAnalysisGUI::UpdateMaskSelectMenu()
+//{
+//
+//  if (!this->MaskSelectMenu)
+//    {
+//    return;
+//    }
+//
+//  const char* className = this->GetMRMLScene()->GetClassNameByTag("Volume");
+//  std::vector<vtkMRMLNode*> nodes;
+//  this->GetMRMLScene()->GetNodesByClass(className, nodes);
+//
+//  std::vector<vtkMRMLNode*>::iterator iter;
+//  if (nodes.size() > 0)
+//    {
+//    this->MaskSelectMenu->GetMenu()->DeleteAllItems();
+//    this->MaskNodeIDList.clear();
+//    for (iter = nodes.begin(); iter != nodes.end(); iter ++)
+//      {
+//      //(*iter)->GetName();
+//      //nodeInfo.nodeID = (*iter)->GetID();
+//      char str[256];
+//
+//      vtkMRMLScalarVolumeNode* node =
+//        vtkMRMLScalarVolumeNode::SafeDownCast(*iter);
+//        //vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID((*iter)->GetID()));
+//      if (node != NULL && node->GetLabelMap())
+//        {
+//        //sprintf(str, "%s (%s)", (*iter)->GetName(), (*iter)->GetID());
+//        sprintf(str, "%s", (*iter)->GetName());
+//        this->MaskSelectMenu->GetMenu()->AddRadioButton(str);
+//        std::string id((*iter)->GetID());
+//        this->MaskNodeIDList.push_back(id);
+//        
+//        vtkIntArray* events;
+//        events = vtkIntArray::New();
+//        events->InsertNextValue(vtkMRMLVolumeNode::ImageDataModifiedEvent); 
+//        vtkMRMLNode *nd = NULL; // TODO: is this OK?
+//        vtkSetAndObserveMRMLNodeEventsMacro(nd,node,events);
+//        }
+//      }
+//    }
+//}
 
 
 //----------------------------------------------------------------------------

@@ -47,7 +47,7 @@ class vtkKWEntryWithLabel;
 class vtkIntensityCurves;
 class vtkKWCheckButtonWithLabel;
 class vtkCurveAnalysisPythonInterface;
-
+class vtkSlicerNodeSelectorWidget;
 
 //class vtkFourDImageGUI;
 
@@ -148,7 +148,7 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   void SetBackground(const char* bundleID, int index);
   void SetWindowLevelForCurrentFrame();
   void UpdateSeriesSelectorMenus();
-  void UpdateMaskSelectMenu();
+  //  void UpdateMaskSelectMenu();
 
   void UpdateMethodNameField(vtkMRMLCurveAnalysisNode* curveNode);
   void UpdateInitialParameterList(vtkMRMLCurveAnalysisNode* curveNode);
@@ -194,7 +194,9 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
 
   vtkKWEntry*          AcqTimeEntry;
   vtkKWMenuButton*     SeriesToPlotMenu;
-  vtkKWMenuButton*     MaskSelectMenu;
+  //vtkKWMenuButton*     MaskSelectMenu;
+  vtkSlicerNodeSelectorWidget* MaskNodeSelector;
+
   vtkKWPlotGraph*      IntensityPlot;
   vtkKWCheckButtonWithLabel* ErrorBarCheckButton;
 
