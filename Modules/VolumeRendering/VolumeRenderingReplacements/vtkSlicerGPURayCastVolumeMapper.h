@@ -69,8 +69,12 @@ public:
   vtkBooleanMacro(Clipping,int);
   
   // Description:
-  // Set technique
+  // Set rendering technique
   void SetTechnique(int tech);
+  
+  // Description:
+  // Set multi-volume color/opacity fusion method
+  void SetColorOpacityFusion(int fusion);
   
   // Description:
   // Is hardware rendering supported? No if the input data is
@@ -121,6 +125,7 @@ protected:
   int              RayCastSupported;
   
   int              Technique;
+  int              ColorOpacityFusion;
   int              Clipping;
   int              Shading;
   int              InternalVolumeSize;

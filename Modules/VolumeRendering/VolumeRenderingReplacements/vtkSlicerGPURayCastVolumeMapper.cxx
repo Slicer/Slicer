@@ -52,6 +52,7 @@ vtkSlicerGPURayCastVolumeMapper::vtkSlicerGPURayCastVolumeMapper()
   this->Initialized          =  0;
   this->RayCastInitialized       =  0;
   this->Technique            =  0;//by default composit shading
+  this->ColorOpacityFusion   =  0;
   
   this->Clipping             =  0;
   this->ReloadShaderFlag     =  0;
@@ -1466,7 +1467,7 @@ void vtkSlicerGPURayCastVolumeMapper::LoadFragmentShader()
         "{                                                                                      \n"
         "    vec4 scalar = texture3D(TextureVol, coord);                                        \n"
         "    vec4 normal = texture3D(TextureNormalB, coord);                                    \n"
-        "    return texture2D(TextureColorLookup2, vec2(scalar.y, normal.w));                         \n"
+        "    return texture2D(TextureColorLookup2, vec2(scalar.x, normal.w));                         \n"
         "}                                                                                       \n"
         "                                                                                        \n"
         "vec3 voxelNormalA(vec3 coord)                                                           \n"
@@ -1533,15 +1534,18 @@ void vtkSlicerGPURayCastVolumeMapper::LoadFragmentShader()
         "    {                                                                                       \n"
         "        while( (t < rayLen) && (alpha < 1.0) )                                          \n"
         "        {                                                                                   \n"
-        "            vec4 nextColor = voxelColorA(nextRayOrigin);                                     \n"
-        "            float tempAlpha = nextColor.w;                                              \n"
+        "            vec4 nextColorA = voxelColorA(nextRayOrigin);                                     \n"
+        "            vec4 nextColorB = voxelColorB(nextRayOrigin);                                \n"
+        "            float tempAlpha = nextColorA.w + nextColorB.w;                                \n"
         "                                                                                        \n"
         "            if (tempAlpha > 0.0)                                                           \n"
         "            {                                                                              \n"
-        "               nextColor = directionalLightA(nextRayOrigin, lightDir, nextColor);           \n"
+        "               nextColorA = directionalLightA(nextRayOrigin, lightDir, nextColorA);           \n"
+        "               nextColorB = directionalLightB(nextRayOrigin, lightDir, nextColorB);           \n"
         "                                                                                              \n"      
         "               tempAlpha = (1.0-alpha)*tempAlpha;                                              \n"
-        "               pixelColor += nextColor*tempAlpha;                                              \n"
+        "               pixelColor += nextColorA*tempAlpha;                                              \n"
+        "               pixelColor += nextColorB*tempAlpha;                                              \n"
         "               alpha += tempAlpha;                                                             \n"
         "            }                                                                               \n"
         "                                                                                           \n"
@@ -1611,6 +1615,12 @@ void vtkSlicerGPURayCastVolumeMapper::PrintFragmentShaderInfoLog()
 void vtkSlicerGPURayCastVolumeMapper::SetTechnique(int tech)
 {
     this->Technique = tech;
+    this->ReloadShaderFlag = 1;
+}
+
+void vtkSlicerGPURayCastVolumeMapper::SetColorOpacityFusion(int fusion)
+{
+    this->ColorOpacityFusion = fusion;
     this->ReloadShaderFlag = 1;
 }
 

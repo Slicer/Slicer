@@ -1308,6 +1308,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessGPURayCastTechniqueII(int id)
 
 void vtkSlicerVRGrayscaleHelper::ProcessGPURayCastColorOpacityFusion(int id)
 {
+    this->MapperGPURaycastII->SetColorOpacityFusion(id);
+    
     this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
 }
 
