@@ -6,7 +6,7 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
   <category>Surface Models</category>
   <title>Python Surface ICP Registration</title>
   <description>
-Performes registration of the input surface onto a target surface using on the Iterative Closest Point algorithm.
+Performs registration of the input surface onto a target surface using on the Iterative Closest Point algorithm. It can output the registered surface or the transform itself, which can then be applied to other MRML nodes.
 </description>
   <version>1.0</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:PythonSurfaceICPRegistration-Documentation-3.4</documentation-url>
@@ -97,39 +97,57 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
     <label>IO</label>
     <description>Input/output parameters</description>
 
+    <transform fileExtensions=".txt">
+      <name>initialTransform</name>
+      <longflag>initialTransform</longflag>
+      <description>Initial transform. Optional.</description>
+      <label>Initial transform</label>
+      <channel>input</channel>
+    </transform>
+
     <geometry>
       <name>inputSurface</name>
+      <longflag>inputSurface</longflag>
       <label>Input Surface</label>
       <channel>input</channel>
-      <index>0</index>
       <description>Input surface to be registered</description>
     </geometry>
 
     <geometry>
       <name>targetSurface</name>
+      <longflag>targetSurface</longflag>
       <label>Target Surface</label>
       <channel>input</channel>
-      <index>1</index>
       <description>Target surface for registration</description>
     </geometry>
 
     <geometry>
       <name>outputSurface</name>
+      <longflag>outputSurface</longflag>
       <label>Output Surface</label>
       <channel>output</channel>
-      <index>2</index>
-      <description>Output registered surface</description>
+      <description>Output registered surface. Optional (specify an output transform or an output surface or both).</description>
     </geometry>
+
+    <transform fileExtensions=".txt" reference="outputSurface">
+      <name>outputTransform</name>
+      <longflag>outputTransform</longflag>
+      <description>Computed ICP transform. Optional (specify an output transform or an output surface or both).</description>
+      <label>Output transform</label>
+      <channel>output</channel>
+    </transform>
+
   </parameters>
 
 </executable>
 """
 
 
-def Execute (inputSurface, targetSurface, outputSurface, \
+def Execute (inputSurface=None, targetSurface=None, outputSurface=None, \
             landmarkTransformMode="RigidBody", meanDistanceMode="RMS", \
             maximumNumberOfIterations=50, maximumNumberOfLandmarks=200, \
-            startByMatchingCentroids=False, checkMeanDistance=False, maximumMeanDistance=0.01):
+            startByMatchingCentroids=False, checkMeanDistance=False, maximumMeanDistance=0.01, \
+            initialTransform=None, outputTransform=None):
 
     Slicer = __import__("Slicer")
     slicer = Slicer.slicer
@@ -138,8 +156,21 @@ def Execute (inputSurface, targetSurface, outputSurface, \
     targetSurface = scene.GetNodeByID(targetSurface)
     outputSurface = scene.GetNodeByID(outputSurface)
 
+    inputPolyData = inputSurface.GetPolyData()
+
+    if initialTransform:
+        initialTransform = scene.GetNodeByID(initialTransform)
+        initialMatrix = initialTransform.GetMatrixTransformToParent()
+        transform = slicer.vtkTransform()
+        transform.SetMatrix(initialMatrix)
+        transformFilter = slicer.vtkTransformPolyDataFilter()
+        transformFilter.SetInput(inputPolyData)
+        transformFilter.SetTransform(transform)        
+        transformFilter.Update()
+        inputPolyData = transformFilter.GetOutput()
+ 
     icpTransform = slicer.vtkIterativeClosestPointTransform()
-    icpTransform.SetSource(inputSurface.GetPolyData())
+    icpTransform.SetSource(inputPolyData)
     icpTransform.SetTarget(targetSurface.GetPolyData())
     if landmarkTransformMode == "RigidBody":
         icpTransform.GetLandmarkTransform().SetModeToRigidBody()
@@ -157,12 +188,21 @@ def Execute (inputSurface, targetSurface, outputSurface, \
     icpTransform.SetCheckMeanDistance(int(checkMeanDistance))
     icpTransform.SetMaximumMeanDistance(maximumMeanDistance)
 
-    transformFilter = slicer.vtkTransformPolyDataFilter()
-    transformFilter.SetInput(inputSurface.GetPolyData())
-    transformFilter.SetTransform(icpTransform)        
-    transformFilter.Update()
-    
-    outputSurface.SetAndObservePolyData(transformFilter.GetOutput())
+    if outputTransform:
+        outputTransform = scene.GetNodeByID(outputTransform)
+        outputMatrix = slicer.vtkMatrix4x4()
+        icpTransform.GetMatrix(outputMatrix)
+        outputTransform.SetAndObserveMatrixTransformToParent(outputMatrix)
+        if outputSurface:
+            outputPolyData = slicer.vtkPolyData()
+            outputPolyData.DeepCopy(inputPolyData)
+            outputSurface.SetAndObservePolyData(outputPolyData)
+    else:
+        transformFilter = slicer.vtkTransformPolyDataFilter()
+        transformFilter.SetInput(inputPolyData)
+        transformFilter.SetTransform(icpTransform)        
+        transformFilter.Update()
+        outputSurface.SetAndObservePolyData(transformFilter.GetOutput())
 
     return
 
