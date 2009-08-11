@@ -107,6 +107,14 @@
      <description>Specifies the stage of the implementation after which the code saves the output and terminates (mostly for testing purposes). 0 value instructs to run the complete analysis workflow.</description>
      <default>0</default>
    </integer>
+   <integer>
+     <name>ResampleChoice</name>
+     <longflag>resamplechoice</longflag>
+     <label>ResampleChoice</label>
+     <description>The strategy for defining the voxel size to be used in the ROI resampling.</description>
+     <default>0</default>
+   </integer>
+
   </parameters>
 </executable>
 

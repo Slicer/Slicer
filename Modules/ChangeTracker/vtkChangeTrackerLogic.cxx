@@ -311,10 +311,10 @@ void vtkChangeTrackerLogic::DeleteSuperSample(int ScanNum) {
   } 
 }
 
-double vtkChangeTrackerLogic::DefineSuperSampleSize(const double inputSpacing[3], const int ROIMin[3], const int ROIMax[3]) {
+double vtkChangeTrackerLogic::DefineSuperSampleSize(const double inputSpacing[3], const int ROIMin[3], const int ROIMax[3], int resampleChoice) {
     double SuperSampleSpacing = -1.;
 
-    switch(this->ChangeTrackerNode->GetResampleChoice()){
+    switch(resampleChoice){
     case RESCHOICE_NONE: // not supported
       std::cerr << "Unsupported resample choice -- should never be here" << std::endl;
       abort();
@@ -418,7 +418,8 @@ vtkMRMLScalarVolumeNode* vtkChangeTrackerLogic::CreateSuperSample(int ScanNum) {
   double SuperSampleSpacing = -1;
   if (ScanNum == 1) {
     double *Spacing = volumeNode->GetSpacing();
-    SuperSampleSpacing = this->DefineSuperSampleSize(Spacing, ROIMin, ROIMax);
+    SuperSampleSpacing = this->DefineSuperSampleSize(Spacing, ROIMin, ROIMax, 
+      this->ChangeTrackerNode->GetResampleChoice());
     double SuperSampleVol = SuperSampleSpacing*SuperSampleSpacing*SuperSampleSpacing;
     this->ChangeTrackerNode->SetSuperSampled_Spacing(SuperSampleSpacing);    
     this->ChangeTrackerNode->SetSuperSampled_VoxelVolume(SuperSampleVol); 

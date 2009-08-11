@@ -354,7 +354,7 @@ int main(int argc, char* argv[])
     std::string Scan2LocalNormalizedFileName = tg.WorkingDir + "/TG_scan2_norm.nhdr";
     std::string Scan1SegmentFileName = tg.WorkingDir + "/TG_scan1_Segment.nhdr";
     
-  
+    std::cerr << "After loading the data" << std::endl;
 
     // Necessary for creating matrix with correct origin
     // 
@@ -370,7 +370,7 @@ int main(int argc, char* argv[])
     {
          Spacing =  tg.Scan1Data->GetSpacing();
              
-         SuperSampleSpacing = logic->DefineSuperSampleSize(Spacing, ROIMin, ROIMax);
+         SuperSampleSpacing = logic->DefineSuperSampleSize(Spacing, ROIMin, ROIMax, ResampleChoice);
          SuperSampleVol     = SuperSampleSpacing*SuperSampleSpacing*SuperSampleSpacing;
          Scan1Vol           = (Spacing[0]*Spacing[1]*Spacing[2]);
          SuperSampleRatio   = SuperSampleVol/Scan1Vol;
