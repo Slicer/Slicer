@@ -480,15 +480,17 @@ void vtkMRIBiasFieldCorrectionGUI::ProcessGUIEvents( vtkObject *caller,
       }
 
     int dim[3];
-    double scalarRange[2];
+    double range[2];
 
     this->ImageResample->GetOutput()->GetWholeExtent(extent);
     this->ImageResample->GetOutput()->GetDimensions(dim);
-    this->ImageResample->GetOutput()->GetScalarRange(scalarRange);
+    this->ImageResample->GetOutput()->GetScalarRange(range);
 
-    int slice = extent[4] + (extent[5]-extent[4]) * static_cast<int> (sliceNormalized);
-    double threshold = scalarRange[0] + (scalarRange[1]-scalarRange[0]) *
-      thresholdNormalized;
+    int slice = extent[4];
+
+    slice += static_cast<int>((extent[5]-extent[4]) * sliceNormalized + 0.5);
+
+    double threshold = range[0] + (range[1]-range[0]) * thresholdNormalized;
 
     vtkErrorMacro("\nsliceNormalized " << sliceNormalized
         << " -> slice " << slice
@@ -954,7 +956,7 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
     this->SliceScale->SetParent(aparametersFrame);
     this->SliceScale->Create();
     this->SliceScale->SetRange(0,1);
-    this->SliceScale->SetResolution(0.01);
+    this->SliceScale->SetResolution(1.0/64.0);
     this->SliceScale->SetValue(0.5);
     this->SliceScale->SetLabelText("Set Slice for Preview");
     }
