@@ -498,7 +498,7 @@ void vtkMRIBiasFieldCorrectionGUI::ProcessGUIEvents( vtkObject *caller,
         << " -> threshold " << threshold
         << "\nextent " << extent[0] << " " << extent[1] << " " << extent[2]
         << " " << extent[3] << " " << extent[4] << " " <<extent[5]
-        << "\nscalarRange " << scalarRange[0] << " " << scalarRange[1]);
+        << "\nrange " << range[0] << " " << range[1]);
 
     this->ImageThreshold->SetInput(this->ImageResample->GetOutput());
     this->ImageThreshold->ThresholdByUpper(threshold);
