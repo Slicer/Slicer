@@ -1239,6 +1239,7 @@ void vtkSlicerFiducialListWidget::UpdateFiducialListFromMRML(vtkMRMLFiducialList
           this->TransformFilterMap[id]->SetInput(this->SphereSource->GetOutput());
           }
         }
+      
       // set up the selected/unselected colours for the list
       if (this->GlyphMapperMap[id] != NULL &&
             this->GlyphMapperMap[id]->GetLookupTable() != NULL)
@@ -1359,8 +1360,11 @@ void vtkSlicerFiducialListWidget::UpdateFiducialListFromMRML(vtkMRMLFiducialList
         }
       
       // now update the actor that controls the full list
-      this->SetFiducialDisplayProperty(flist, 0, actor, NULL);
-      
+      if (flist->GetNumberOfFiducials() > 0)
+        {
+        this->SetFiducialDisplayProperty(flist, 0, actor, NULL);
+        }
+
       // set the symbol scale      
       if (this->SymbolTransformMap[id] != NULL)        
         {
