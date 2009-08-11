@@ -112,7 +112,7 @@
      <longflag>resamplechoice</longflag>
      <label>ResampleChoice</label>
      <description>The strategy for defining the voxel size to be used in the ROI resampling.</description>
-     <default>0</default>
+     <default>2</default>
    </integer>
 
   </parameters>
