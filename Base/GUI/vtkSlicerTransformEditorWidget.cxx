@@ -357,13 +357,14 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->TranslationScaleLR->SetParent( translateFrame->GetFrame() );
     this->TranslationScaleLR->Create();
     this->TranslationScaleLR->SetLabelText("LR");
-    this->TranslationScaleLR->SetWidth ( 20 );
+    this->TranslationScaleLR->SetWidth ( 80 );
+    this->TranslationScaleLR->SetResolution(0.1);
     this->TranslationScaleLR->SetRange(-200, 200);
     this->TranslationScaleLR->SetStartCommand(this, "TransformChangingCallback");
     this->TranslationScaleLR->SetCommand(this, "TransformChangingCallback");
     this->TranslationScaleLR->SetEndCommand(this, "TransformChangedCallback");
     this->TranslationScaleLR->SetEntryCommand(this, "TransformChangedCallback");
-    this->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
+    this->Script("pack %s -side top -anchor e -padx 20 -pady 10 -fill x", 
                   this->TranslationScaleLR->GetWidgetName());
 
     this->TranslationScalePA =  vtkKWScaleWithEntry::New() ;
@@ -371,12 +372,13 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->TranslationScalePA->Create();
     this->TranslationScalePA->SetRange(-200, 200);
     this->TranslationScalePA->SetLabelText("PA");
-    this->TranslationScalePA->SetWidth ( 20 );
+    this->TranslationScalePA->SetWidth ( 80 );
+    this->TranslationScalePA->SetResolution(0.1);
     this->TranslationScalePA->SetStartCommand(this, "TransformChangingCallback");
     this->TranslationScalePA->SetCommand(this, "TransformChangingCallback");
     this->TranslationScalePA->SetEndCommand(this, "TransformChangedCallback");
     this->TranslationScalePA->SetEntryCommand(this, "TransformChangedCallback");
-    this->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
+    this->Script("pack %s -side top -anchor e -padx 20 -pady 10 -fill x", 
                   this->TranslationScalePA->GetWidgetName());
 
     this->TranslationScaleIS =  vtkKWScaleWithEntry::New() ;
@@ -384,12 +386,13 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->TranslationScaleIS->Create();
     this->TranslationScaleIS->SetRange(-200, 200);
     this->TranslationScaleIS->SetLabelText("IS");
-    this->TranslationScaleIS->SetWidth ( 20 );
+    this->TranslationScaleIS->SetWidth ( 80 );
+    this->TranslationScaleIS->SetResolution(0.1);
     this->TranslationScaleIS->SetStartCommand(this, "TransformChangingCallback");
     this->TranslationScaleIS->SetCommand(this, "TransformChangingCallback");
     this->TranslationScaleIS->SetEndCommand(this, "TransformChangedCallback");
     this->TranslationScaleIS->SetEntryCommand(this, "TransformChangedCallback");
-    this->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
+    this->Script("pack %s -side top -anchor e -padx 20 -pady 10 -fill x", 
                   this->TranslationScaleIS->GetWidgetName());
 
     this->MinRangeEntry = vtkKWEntryWithLabel::New();
@@ -423,13 +426,14 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->RotationScaleLR->SetParent( rotateFrame->GetFrame() );
     this->RotationScaleLR->Create();
     this->RotationScaleLR->SetLabelText("LR");
-    this->RotationScaleLR->SetWidth ( 20 );
+    this->RotationScaleLR->SetWidth ( 80 );
     this->RotationScaleLR->SetRange(-200, 200);
+    this->RotationScaleLR->SetResolution(0.1);
     this->RotationScaleLR->SetStartCommand(this, "RotationLRChangingCallback");
     this->RotationScaleLR->SetCommand(this, "RotationLRChangingCallback");
     this->RotationScaleLR->SetEndCommand(this, "RotationLRChangedCallback");
     this->RotationScaleLR->SetEntryCommand(this, "RotationLRChangedCallback");
-    this->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
+    this->Script("pack %s -side top -anchor e -padx 20 -pady 10 -fill x", 
                   this->RotationScaleLR->GetWidgetName());
 
     this->RotationScalePA =  vtkKWScaleWithEntry::New() ;
@@ -437,12 +441,13 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->RotationScalePA->Create();
     this->RotationScalePA->SetRange(-200, 200);
     this->RotationScalePA->SetLabelText("PA");
-    this->RotationScalePA->SetWidth ( 20 );
+    this->RotationScalePA->SetWidth ( 80 );
+    this->RotationScalePA->SetResolution(0.1);
     this->RotationScalePA->SetStartCommand(this, "RotationPAChangingCallback");
     this->RotationScalePA->SetCommand(this, "RotationPAChangingCallback");
     this->RotationScalePA->SetEndCommand(this, "RotationPAChangedCallback");
     this->RotationScalePA->SetEntryCommand(this, "RotationPAChangedCallback");
-    this->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
+    this->Script("pack %s -side top -anchor e -padx 20 -pady 10 -fill x", 
                   this->RotationScalePA->GetWidgetName());
 
     this->RotationScaleIS =  vtkKWScaleWithEntry::New() ;
@@ -450,12 +455,13 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->RotationScaleIS->Create();
     this->RotationScaleIS->SetRange(-200, 200);
     this->RotationScaleIS->SetLabelText("IS");
-    this->RotationScaleIS->SetWidth ( 20 );
+    this->RotationScaleIS->SetWidth ( 80 );
+    this->RotationScaleIS->SetResolution(0.1);
     this->RotationScaleIS->SetStartCommand(this, "RotationISChangingCallback");
     this->RotationScaleIS->SetCommand(this, "RotationISChangingCallback");
     this->RotationScaleIS->SetEndCommand(this, "RotationISChangedCallback");
     this->RotationScaleIS->SetEntryCommand(this, "RotationISChangedCallback");
-    this->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
+    this->Script("pack %s -side top -anchor e -padx 20 -pady 10 -fill x", 
                   this->RotationScaleIS->GetWidgetName());
 
     this->RotationCoordinateSystemMenu = vtkKWMenuButtonWithLabel::New();
