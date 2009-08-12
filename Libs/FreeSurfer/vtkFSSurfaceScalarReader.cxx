@@ -100,7 +100,7 @@ int vtkFSSurfaceScalarReader::ReadFSScalars()
     numValues = magicNumber;
   }
 
-  if (numValues < 0) {
+  if (numValues <= 0) {
     vtkErrorMacro (<< "vtkFSSurfaceScalarReader.cxx Execute: Number of vertices is 0 or negative, can't process file.");
       return 0;
   }
