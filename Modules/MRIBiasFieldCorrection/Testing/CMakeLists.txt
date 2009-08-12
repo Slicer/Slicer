@@ -52,7 +52,7 @@ add_test(MRIBiasFieldCorrectionCL_Glob
          --iterations 10
          --numberOfFitting 4
          --threshold 10
-         --weinerFilterNoise 0.1
+         --wienerFilterNoise 0.1
          --biasFieldFullWidthAtHalfMaximum 0.15
          --convergenceThreshold 0.001
           ${TEST_DATA}/MRHeadResampled.nhdr
