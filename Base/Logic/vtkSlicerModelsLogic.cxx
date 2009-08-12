@@ -176,7 +176,15 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
 
     // now set up the reading
     vtkDebugMacro("AddModel: calling read on the storage node");
-    storageNode->ReadData(modelNode);
+    int retval = storageNode->ReadData(modelNode);
+    if (retval != 1)
+      {
+      vtkErrorMacro("AddModel: error reading " << filename);
+      this->GetMRMLScene()->RemoveNode(modelNode);
+      this->GetMRMLScene()->RemoveNode(storageNode);
+      this->GetMRMLScene()->RemoveNode(displayNode);
+      modelNode = NULL;
+      }
     }
   else
     {
@@ -316,7 +324,14 @@ int vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRMLModelNode *mode
     // now read, since all the id's are set up
     vtkDebugMacro("AddScalar: calling read data now.");
     if (this->GetDebug()) { storageNode->DebugOn(); }
-    storageNode->ReadData(modelNode);
+    int retval = storageNode->ReadData(modelNode);
+    if (retval == 0)
+      {
+      vtkErrorMacro("AddScalar: error adding scalar " << filename);
+      this->GetMRMLScene()->RemoveNode(storageNode);
+      fsmoStorageNode->Delete();
+      return 0;
+      }
 
     //--- informatics
     //--- tag for informatics and invoke event for anyone who cares.
