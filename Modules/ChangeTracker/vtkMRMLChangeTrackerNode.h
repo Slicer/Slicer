@@ -185,6 +185,16 @@ class VTK_CHANGETRACKER_EXPORT vtkMRMLChangeTrackerNode : public vtkMRMLNode
   vtkGetMacro(ResampleConst, double);
   vtkSetMacro(ResampleConst, double);
 
+  vtkGetStringMacro(Scan1_InputSegmentRef);
+  vtkSetStringMacro(Scan1_InputSegmentRef);
+  vtkGetStringMacro(Scan1_InputSegmentSuperSampleRef);
+  vtkSetStringMacro(Scan1_InputSegmentSuperSampleRef);
+
+  vtkGetStringMacro(Scan2_InputSegmentRef);
+  vtkSetStringMacro(Scan2_InputSegmentRef);
+  vtkGetStringMacro(Scan2_InputSegmentSuperSampleRef);
+  vtkSetStringMacro(Scan2_InputSegmentSuperSampleRef);
+
 protected:
   vtkMRMLChangeTrackerNode();
   ~vtkMRMLChangeTrackerNode();
@@ -203,6 +213,12 @@ protected:
   char* Scan2_SuperSampleRef;
   char* Scan2_NormedRef;
   char* Scan2_ThreshRef;
+
+  // keep pointers to the input segmentations, if available
+  char* Scan1_InputSegmentRef;
+  char* Scan1_InputSegmentSuperSampleRef;
+  char* Scan2_InputSegmentRef;
+  char* Scan2_InputSegmentSuperSampleRef;
 
   char* Analysis_Intensity_Ref;
   char* Analysis_Deformable_Ref;

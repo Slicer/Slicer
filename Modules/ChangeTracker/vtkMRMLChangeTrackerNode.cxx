@@ -108,6 +108,11 @@ vtkMRMLChangeTrackerNode::vtkMRMLChangeTrackerNode()
 
    this->ResampleChoice = RESCHOICE_LEGACY;
    this->ResampleConst = 1.;
+
+   this->Scan1_InputSegmentRef = NULL;
+   this->Scan1_InputSegmentSuperSampleRef = NULL;
+   this->Scan2_InputSegmentRef = NULL;
+   this->Scan2_InputSegmentSuperSampleRef = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -128,6 +133,11 @@ vtkMRMLChangeTrackerNode::~vtkMRMLChangeTrackerNode()
    this->SetAnalysis_Deformable_Ref(NULL);
    this->SetGrid_Ref(NULL);
    this->SetScan2_TransformRef(NULL);
+   
+   this->SetScan1_InputSegmentRef(NULL);
+   this->SetScan1_InputSegmentSuperSampleRef(NULL);
+   this->SetScan2_InputSegmentRef(NULL);
+   this->SetScan2_InputSegmentSuperSampleRef(NULL);
 }
 
 //----------------------------------------------------------------------------
@@ -177,6 +187,31 @@ void vtkMRMLChangeTrackerNode::WriteXML(ostream& of, int nIndent)
 
   of << indent << " ResampleChoice=\"" << this->ResampleChoice << "\"";
   of << indent << " ResampleConst=\"" << this->ResampleConst << "\"";
+  
+  if ( this->Scan1_InputSegmentRef )
+      {
+      std::stringstream ss;
+      ss << this->Scan1_InputSegmentRef;
+      of << indent << " Scan1_InputSegmentRef=\"" << ss.str() << "\"";
+     }
+  if ( this->Scan1_InputSegmentSuperSampleRef )
+      {
+      std::stringstream ss;
+      ss << this->Scan1_InputSegmentSuperSampleRef;
+      of << indent << " Scan1_InputSegmentSuperSampleRef=\"" << ss.str() << "\"";
+     }
+  if ( this->Scan2_InputSegmentRef )
+      {
+      std::stringstream ss;
+      ss << this->Scan2_InputSegmentRef;
+      of << indent << " Scan2_InputSegmentRef=\"" << ss.str() << "\"";
+     }
+  if ( this->Scan2_InputSegmentSuperSampleRef )
+      {
+      std::stringstream ss;
+      ss << this->Scan2_InputSegmentSuperSampleRef;
+      of << indent << " Scan2_InputSegmentSuperSampleRef=\"" << ss.str() << "\"";
+     }
 }
 
 //----------------------------------------------------------------------------
@@ -276,6 +311,26 @@ void vtkMRMLChangeTrackerNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >>  this->ResampleConst; 
       }
+    else if(!strcmp(attName, "Scan1_InputSegmentRef"))
+      {
+      this->SetScan1_InputSegmentRef(attValue);
+      this->Scene->AddReferencedNodeID(this->Scan1_InputSegmentRef, this);
+      }
+    else if(!strcmp(attName, "Scan1_InputSegmentSuperSampleRef"))
+      {
+      this->SetScan1_InputSegmentSuperSampleRef(attValue);
+      this->Scene->AddReferencedNodeID(this->Scan1_InputSegmentSuperSampleRef, this);
+      }
+    else if(!strcmp(attName, "Scan2_InputSegmentRef"))
+      {
+      this->SetScan2_InputSegmentRef(attValue);
+      this->Scene->AddReferencedNodeID(this->Scan2_InputSegmentRef, this);
+      }
+    else if(!strcmp(attName, "Scan2_InputSegmentSuperSampleRef"))
+      {
+      this->SetScan2_InputSegmentSuperSampleRef(attValue);
+      this->Scene->AddReferencedNodeID(this->Scan2_InputSegmentSuperSampleRef, this);
+      }
 
     // AF: should the intermediate volumes be stored here?
     /*
@@ -312,6 +367,10 @@ void vtkMRMLChangeTrackerNode::Copy(vtkMRMLNode *anode)
   this->ROIRegistration = node->ROIRegistration;
   this->ResampleChoice = node->ResampleChoice;
   this->ResampleConst = node->ResampleConst;
+  this->SetScan1_InputSegmentRef(node->Scan1_InputSegmentRef);
+  this->SetScan2_InputSegmentRef(node->Scan2_InputSegmentRef);
+  this->SetScan1_InputSegmentSuperSampleRef(node->Scan1_InputSegmentSuperSampleRef);
+  this->SetScan2_InputSegmentSuperSampleRef(node->Scan2_InputSegmentSuperSampleRef);
   // AF: why not all of the volume references are copied?
 }
 
@@ -361,5 +420,12 @@ void vtkMRMLChangeTrackerNode::PrintSelf(ostream& os, vtkIndent indent)
   os << "\n";
   os << indent << "ResampleConst: " << this->ResampleConst << "\n";
 
+  os << indent << "Scan1_InputSegmentRef: " << GetScan1_InputSegmentRef() << "\n";
+  os << indent << "Scan2_InputSegmentRef: " << GetScan2_InputSegmentRef() << "\n";
+  os << indent << "Scan1_InputSegmentSuperSampleRef: " << 
+    GetScan1_InputSegmentSuperSampleRef() << "\n";
+  os << indent << "Scan2_InputSegmentSuperSampleRef: " << 
+    GetScan2_InputSegmentSuperSampleRef() << "\n";
+  os << "\n";
 }
 

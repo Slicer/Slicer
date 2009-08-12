@@ -21,6 +21,8 @@
 #include "vtkSlicerApplication.h"
 #include "vtkImageIslandFilter.h"
 
+#include "vtkSlicerNodeSelectorWidget.h"
+
 #include "vtkSlicerModelsLogic.h"
 
 //----------------------------------------------------------------------------
@@ -40,6 +42,9 @@ vtkChangeTrackerSegmentationStep::vtkChangeTrackerSegmentationStep()
   this->PreSegment = NULL;
   this->PreSegmentNode = NULL;
   this->SegmentNode = NULL;
+
+  this->Scan1_SegmSelector = NULL;
+  this->Scan2_SegmSelector = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -62,6 +67,18 @@ vtkChangeTrackerSegmentationStep::~vtkChangeTrackerSegmentationStep()
     {
     this->ThresholdLabel->Delete();
     this->ThresholdLabel = NULL;
+    }
+
+  if (this->Scan1_SegmSelector)
+    {
+    this->Scan1_SegmSelector->Delete();
+    this->Scan1_SegmSelector = NULL;
+    }
+
+  if (this->Scan2_SegmSelector)
+    {
+    this->Scan2_SegmSelector->Delete();
+    this->Scan2_SegmSelector = NULL;
     }
 
   this->PreSegmentScan1Remove();
@@ -148,6 +165,51 @@ void vtkChangeTrackerSegmentationStep::ShowUserInterface()
 
   this->Script("pack %s -side top -anchor nw -padx 0 -pady 3",this->ThresholdFrame->GetWidgetName()); 
   this->Script("pack %s %s -side left -anchor nw -padx 2 -pady 0",this->ThresholdLabel->GetWidgetName(),this->ThresholdRange->GetWidgetName());
+
+  this->AdvancedFrame->SetLabelText("Advanced settings");
+  this->Script("pack %s -side top -anchor nw -fill x -padx 0 -pady 2",
+    this->AdvancedFrame->GetWidgetName());
+
+  if(!this->Scan1_SegmSelector)
+    {
+    this->Scan1_SegmSelector = vtkSlicerNodeSelectorWidget::New();
+    }
+  if(!this->Scan1_SegmSelector->IsCreated())
+    {
+    this->Scan1_SegmSelector->SetParent(this->AdvancedFrame->GetFrame());
+    this->Scan1_SegmSelector->Create();
+    this->Scan1_SegmSelector->SetWidth(CHANGETRACKER_MENU_BUTTON_WIDTH*2);
+    this->Scan1_SegmSelector->SetNodeClass("vtkMRMLScalarVolumeNode", "LabelMap", "1", "");
+    this->Scan1_SegmSelector->NoneEnabledOn();
+    this->Scan1_SegmSelector->NewNodeEnabledOff();
+    this->Scan1_SegmSelector->SetMRMLScene(this->GetGUI()->GetLogic()->GetMRMLScene());
+    this->Scan1_SegmSelector->SetLabelText("Segmentation of the 1st scan");
+    this->Scan1_SegmSelector->SetBalloonHelpString("Specify segmentation of the first time-point. If not available, leave as \"None\"");
+    this->Scan1_SegmSelector->SetEnabled(0);
+  }
+
+  this->Script("pack %s -side top -anchor nw -fill x -padx 0 -pady 0", this->Scan1_SegmSelector->GetWidgetName());
+
+  if(!this->Scan2_SegmSelector)
+    {
+    this->Scan2_SegmSelector = vtkSlicerNodeSelectorWidget::New();
+    }
+  if(!this->Scan2_SegmSelector->IsCreated())
+    {
+    this->Scan2_SegmSelector->SetParent(this->AdvancedFrame->GetFrame());
+    this->Scan2_SegmSelector->Create();
+    this->Scan2_SegmSelector->SetWidth(CHANGETRACKER_MENU_BUTTON_WIDTH*2);
+    this->Scan2_SegmSelector->SetNodeClass("vtkMRMLScalarVolumeNode", "LabelMap", "1", "");
+    this->Scan2_SegmSelector->NoneEnabledOn();
+    this->Scan2_SegmSelector->NewNodeEnabledOff();
+    this->Scan2_SegmSelector->SetMRMLScene(this->GetGUI()->GetLogic()->GetMRMLScene());
+    this->Scan2_SegmSelector->SetLabelText("Segmentation of the 2nd scan");
+    this->Scan2_SegmSelector->SetBalloonHelpString("Specify segmentation of the second time-point. If not available, leave as \"None\"");
+    this->Scan2_SegmSelector->SetEnabled(0);
+  }
+
+  this->Script("pack %s -side top -anchor nw -fill x -padx 0 -pady 0", this->Scan2_SegmSelector->GetWidgetName());
+  this->AdvancedFrame->CollapseFrame();
 
   this->CreateGridButton(); 
   this->CreateSliceButton();

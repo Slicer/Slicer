@@ -8,6 +8,7 @@ class vtkMRMLScalarVolumeNode;
 class vtkKWFrame;
 class vtkKWLabel;
 class vtkKWRange;
+class vtkSlicerNodeSelectorWidget;
 
 class VTK_CHANGETRACKER_EXPORT vtkChangeTrackerSegmentationStep : public vtkChangeTrackerStep
 {
@@ -37,6 +38,9 @@ protected:
   vtkKWFrame *ThresholdFrame;
   vtkKWRange *ThresholdRange;
   vtkKWLabel *ThresholdLabel;
+
+  vtkSlicerNodeSelectorWidget *Scan1_SegmSelector;
+  vtkSlicerNodeSelectorWidget *Scan2_SegmSelector;
 
 private:
   vtkChangeTrackerSegmentationStep(const vtkChangeTrackerSegmentationStep&);
