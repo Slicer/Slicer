@@ -903,6 +903,7 @@ add_test(MultiplyTest ${Slicer3_EXE} --launch MultiplyTest
   --compare ${BASELINE}/MultiplyTest.nrrd
             ${TEMP}/MultiplyTest.nrrd
   MultiplyTest
+    --order 1
     ${TEST_DATA}/CTHeadAxial.nhdr
     ${TEST_DATA}/CTHeadAxial.nhdr
     ${TEMP}/MultiplyTest.nrrd
