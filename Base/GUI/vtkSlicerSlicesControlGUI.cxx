@@ -1352,6 +1352,13 @@ void vtkSlicerSlicesControlGUI::ModifyCompositingMode ( )
           cnode->SetCompositing ( vtkMRMLSliceCompositeNode::Alpha );
           }
         }
+       if ( this->GetCompositingButton()->GetMenu()->GetItemSelectedState("Reverse alpha blend") == 1)
+        {
+        if ( cnode->GetCompositing() != vtkMRMLSliceCompositeNode::ReverseAlpha )
+          {
+          cnode->SetCompositing ( vtkMRMLSliceCompositeNode::ReverseAlpha );
+          }
+        }
       else if (this->GetCompositingButton()->GetMenu()->GetItemSelectedState( "Add") == 1)
         {
         if ( cnode->GetCompositing() != vtkMRMLSliceCompositeNode::Add )
@@ -1653,6 +1660,7 @@ void vtkSlicerSlicesControlGUI::BuildCompositingMenu ( )
 {
   this->CompositingButton->GetMenu()->DeleteAllItems ( );
   this->CompositingButton->GetMenu()->AddRadioButton ( "Alpha blend");
+  this->CompositingButton->GetMenu()->AddRadioButton ( "Reverse alpha blend");
   this->CompositingButton->GetMenu()->AddRadioButton ( "Add");
   this->CompositingButton->GetMenu()->AddRadioButton ( "Subtract" );
   this->CompositingButton->GetMenu()->AddSeparator ( );

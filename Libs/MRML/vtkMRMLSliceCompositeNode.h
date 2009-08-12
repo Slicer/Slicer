@@ -88,7 +88,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
 
   // Description:
   // Compositing mode for foreground and background can be alpha
-  // blending, addition, or subtraction
+  // blending, reverse alpha blending, addition, or subtraction
   vtkGetMacro (Compositing, int);
   vtkSetMacro (Compositing, int);
   
@@ -175,6 +175,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   enum
     {
       Alpha = 0,
+      ReverseAlpha,
       Add,
       Subtract
     };

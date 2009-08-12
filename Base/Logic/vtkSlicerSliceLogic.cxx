@@ -675,18 +675,19 @@ void vtkSlicerSliceLogic::UpdatePipeline()
     vtkImageCast *tempCast = vtkImageCast::New();
     vtkImageBlend *tempBlend = vtkImageBlend::New();
 
-    bool alphaBlending = (this->SliceCompositeNode->GetCompositing() == 0);
+    int sliceCompositing = this->SliceCompositeNode->GetCompositing();
+    // alpha blend or reverse alpha blend
+    bool alphaBlending = (sliceCompositing == vtkMRMLSliceCompositeNode::Alpha ||
+                          sliceCompositing == vtkMRMLSliceCompositeNode::ReverseAlpha);
     
-    if (this->SliceCompositeNode->GetCompositing()
-             == vtkMRMLSliceCompositeNode::Add)
+    if (sliceCompositing == vtkMRMLSliceCompositeNode::Add)
       {
       // add the foreground and background
       tempMath->SetOperationToAdd();
       tempMath->GetOutput()->SetScalarType(VTK_SHORT);
       tempCast->SetOutputScalarTypeToUnsignedChar();
       }
-    else if (this->SliceCompositeNode->GetCompositing()
-             == vtkMRMLSliceCompositeNode::Subtract)
+    else if (sliceCompositing == vtkMRMLSliceCompositeNode::Subtract)
       {
       // subtract the foreground and background
       tempMath->SetOperationToSubtract();
@@ -719,15 +720,32 @@ void vtkSlicerSliceLogic::UpdatePipeline()
       }
     else
       {
-      if ( this->BackgroundLayer && this->BackgroundLayer->GetImageData() )
+      if (sliceCompositing ==  vtkMRMLSliceCompositeNode::Alpha)
         {
-        tempBlend->AddInput( this->BackgroundLayer->GetImageData() );
-        tempBlend->SetOpacity( layerIndex++, 1.0 );
+        if ( this->BackgroundLayer && this->BackgroundLayer->GetImageData() )
+          {
+          tempBlend->AddInput( this->BackgroundLayer->GetImageData() );
+          tempBlend->SetOpacity( layerIndex++, 1.0 );
+          }
+        if ( this->ForegroundLayer && this->ForegroundLayer->GetImageData() )
+          {
+          tempBlend->AddInput( this->ForegroundLayer->GetImageData() );
+          tempBlend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetForegroundOpacity() );
+          }
         }
-      if ( this->ForegroundLayer && this->ForegroundLayer->GetImageData() )
+      else if (sliceCompositing == vtkMRMLSliceCompositeNode::ReverseAlpha)
         {
-        tempBlend->AddInput( this->ForegroundLayer->GetImageData() );
-        tempBlend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetForegroundOpacity() );
+        if ( this->ForegroundLayer && this->ForegroundLayer->GetImageData() )
+          {
+          tempBlend->AddInput( this->ForegroundLayer->GetImageData() );
+          tempBlend->SetOpacity( layerIndex++, 1.0 );
+          }
+        if ( this->BackgroundLayer && this->BackgroundLayer->GetImageData() )
+          {
+          tempBlend->AddInput( this->BackgroundLayer->GetImageData() );
+          tempBlend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetForegroundOpacity() );
+          }
+        
         }
       }
 

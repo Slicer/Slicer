@@ -880,6 +880,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
   m3->SetParent(this->MoreMenuButton->GetMenu());
   m3->Create();
   m3->AddRadioButton ( "Alpha blend" );
+  m3->AddRadioButton ( "Reverse alpha blend" );
   m3->AddRadioButton ( "Add" );
   m3->AddRadioButton ( "Subtract" );
   m3->AddSeparator();
@@ -2271,6 +2272,27 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
             this->MRMLScene->SaveStateForUndo( this->SliceCompositeNode );
             this->SliceCompositeNode->SetCompositing(vtkMRMLSliceCompositeNode::Alpha);
             }
+          }
+        }
+      else if ( !strcmp ( lbstr, "Reverse alpha blend") )
+        {
+        if (link)
+          {
+          nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLSliceCompositeNode");
+          for ( i=0; i<nnodes; i++)
+            {
+            cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
+              this->GetMRMLScene()->GetNthNodeByClass (i, "vtkMRMLSliceCompositeNode"));
+            
+            this->MRMLScene->SaveStateForUndo ( cnode );
+            cnode->SetCompositing (vtkMRMLSliceCompositeNode::ReverseAlpha );
+            }
+          }
+        else
+          {
+          this->MRMLScene->SaveStateForUndo( this->SliceCompositeNode );
+          this->SliceCompositeNode
+            ->SetCompositing(vtkMRMLSliceCompositeNode::ReverseAlpha);
           }
         }
       else if (!strcmp ( lbstr, "Add") )
