@@ -19,8 +19,6 @@
 #include "vtkSlicerVisibilityIcons.h"
 #include "vtkKWChangeColorButton.h"
 
-#include "vtkKWScaleWithEntry.h"
-#include "vtkKWScale.h"
 #include "vtkKWLabel.h"
 #include "vtkKWRange.h"
 #include "vtkKWExtent.h"
