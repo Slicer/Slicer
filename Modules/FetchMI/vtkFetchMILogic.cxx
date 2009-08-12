@@ -3645,12 +3645,78 @@ void vtkFetchMILogic::RequestSceneDownload ( const char *uri )
 
   // do a synchronous dl
   this->GetCurrentWebService()->GetWebServicesClient()->Download ( remoteURL.c_str(), localURL.c_str() );
+
+  //---
+  //--- check to see if the downloaded MRML file is valid, or it it contains
+  //--- an HTTP error response.
+  //---
+  ifstream newfile;
+#ifdef _WIN32
+      newfile.open ( localURL.c_str(), ios::binary | ios::in );
+#else
+      newfile.open ( localURL.c_str(), ios::in );
+#endif
   
-  //  handler->StageFileRead(remoteURL.c_str(), localURL.c_str());
+      int downloadError = 0;
+      //--- did it open correctly?
+      if ( !newfile.is_open() )
+      {
+      vtkErrorMacro ( "DeleteSceneFromServer: error opening temporary scene file to parse for uris to delete." );
+      std::string msg = "Cannot open downloaded file ";
+      msg += localURL.c_str();
+      this->FetchMINode->SetErrorMessage (msg.c_str() );
+      this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
+      return;
+      }
+      //--- is it bigger than 0 bytes?
+      newfile.seekg(0, std::ios::end);
+      int fsize = newfile.tellg();
+      newfile.seekg(0);
+      if ( fsize <= 0 )
+        {
+        vtkErrorMacro ( "DeleteSceneFromServer: error opening temporary scene file to parse for uris to delete." );
+        std::string msg = "Downloaded file ";
+        msg += localURL.c_str();
+        msg += " is zero length.";
+        this->FetchMINode->SetErrorMessage (msg.c_str() );
+        this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
+        return;
+        }
+
+      //--- does it contain an http error code?      
+      //--- for now, look for a line with t<title> tag and see if it contains the word "Error"
+      std::string line;
+      size_t pos;
+      while ( !newfile.eof() )
+      {
+      line.clear();
+      newfile >> line;
+      pos = line.find ( "HTTP ERROR", 0 );
+      if ( pos != std::string::npos )
+        {
+        downloadError = 1;
+        break;
+        }
+      }
+      newfile.close();
+
+      //--- return an error message and abort if bad DL.
+      if ( downloadError )
+        {
+        vtkErrorMacro ( "" );
+        std::string msg = "Error downloading uri";
+        msg += uri;
+        this->FetchMINode->SetErrorMessage ( msg.c_str() );
+        this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
+        return;
+        }
+      
+  //---
+  //--- If no errors, proceed with DL
+  //---
   // now override the mrml scene's url to point to file on disk
   this->GetMRMLScene()->SetURL(localURL.c_str());
   //--- load the remote scene
-//  this->MRMLScene->Connect();
   this->MRMLScene->Import();
 
   if (  this->MRMLScene->GetErrorCode() != 0 ) 
