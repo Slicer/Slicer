@@ -76,7 +76,7 @@ set ::Slicer3_TAG "http://svn.slicer.org/Slicer3/trunk"
 set ::CMAKE_TAG "CMake-2-6"
 set ::Teem_TAG http://teem.svn.sourceforge.net/svnroot/teem/teem/tags/1.10.0
 set ::KWWidgets_TAG "Slicer-3-4"
-set ::VTK_TAG "VTK-5-2"
+set ::VTK_TAG "VTK-5-4"
 set ::ITK_TAG ITK-3-14
 set ::PYTHON_TAG "http://svn.python.org/projects/python/branches/release25-maint"
 set ::BLAS_TAG http://svn.slicer.org/Slicer3-lib-mirrors/trunk/netlib/BLAS
