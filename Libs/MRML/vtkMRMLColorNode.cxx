@@ -333,7 +333,7 @@ void vtkMRMLColorNode::SetColorName(int ind, const char *name)
     }
   else
     {
-    vtkErrorMacro("ERROR: SetColorName, index was out of bounds: " << ind << ", current size is " << this->Names.size() << endl);
+    vtkErrorMacro("ERROR: SetColorName, index was out of bounds: " << ind << ", current size is " << this->Names.size() << ", table name = " << (this->GetName() == NULL ? "null" : this->GetName()));
     }
 }
 
