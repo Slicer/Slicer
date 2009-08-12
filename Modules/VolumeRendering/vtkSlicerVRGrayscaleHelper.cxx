@@ -88,6 +88,7 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->MB_GPURayCastColorOpacityFusion=NULL;
 
     this->SC_ExpectedFPS=NULL;
+    this->SC_GPURayCastIIFgBgRatio=NULL;
     this->MB_Mapper= NULL;
     this->SVP_VolumeProperty=NULL;
     
@@ -736,6 +737,9 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
 
             this->MapperGPURaycast->SetClippingPlanes(planes);
             this->MapperGPURaycast->ClippingOn();
+            
+            this->MapperGPURaycastII->SetClippingPlanes(planes);
+            this->MapperGPURaycastII->ClippingOn();
         
             planes->Delete();
             this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
@@ -858,6 +862,13 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             this->MapperGPURaycast->SetDepthPeelingThreshold(this->SC_GPURayCastDepthPeelingThreshold->GetValue());
             this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
             return;
+        }
+        
+        if(callerObjectSC == this->SC_GPURayCastIIFgBgRatio)
+        {
+           this->MapperGPURaycastII->SetFgBgRatio(this->SC_GPURayCastIIFgBgRatio->GetValue());
+           this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+           return;
         }
     }
     
@@ -1835,6 +1846,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->SC_ExpectedFPS->SetRange(1,20); 
         this->SC_ExpectedFPS->SetResolution(1);
         this->SC_ExpectedFPS->SetValue(5.0);
+        this->SC_ExpectedFPS->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *) this->VolumeRenderingCallbackCommand);
         this->SC_ExpectedFPS->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *) this->VolumeRenderingCallbackCommand);
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SC_ExpectedFPS->GetWidgetName() );
 
@@ -1902,6 +1914,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->SC_GPURayCastDepthPeelingThreshold->SetRange(scalarRange[0],scalarRange[1]); 
         this->SC_GPURayCastDepthPeelingThreshold->SetResolution(1);
         this->SC_GPURayCastDepthPeelingThreshold->SetValue(scalarRange[0]);
+        this->SC_GPURayCastDepthPeelingThreshold->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *) this->VolumeRenderingCallbackCommand);
         this->SC_GPURayCastDepthPeelingThreshold->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *) this->VolumeRenderingCallbackCommand);
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SC_GPURayCastDepthPeelingThreshold->GetWidgetName() );
     }
@@ -1947,6 +1960,17 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastColorOpacityFusion->GetWidgetName() );
         
         this->MB_GPURayCastColorOpacityFusion->GetWidget()->SetValue("Composite");
+        
+        this->SC_GPURayCastIIFgBgRatio=vtkKWScale::New();
+        this->SC_GPURayCastIIFgBgRatio->SetParent(this->FrameGPURayCastingII->GetFrame());
+        this->SC_GPURayCastIIFgBgRatio->Create();
+        this->SC_GPURayCastIIFgBgRatio->SetLabelText("[Bg <--         --> Fg]");
+        this->SC_GPURayCastIIFgBgRatio->SetRange(0,1); 
+        this->SC_GPURayCastIIFgBgRatio->SetResolution(0.01);
+        this->SC_GPURayCastIIFgBgRatio->SetValue(1.0);
+        this->SC_GPURayCastIIFgBgRatio->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *) this->VolumeRenderingCallbackCommand);
+        this->SC_GPURayCastIIFgBgRatio->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *) this->VolumeRenderingCallbackCommand);
+        this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SC_GPURayCastIIFgBgRatio->GetWidgetName() );
     }
     
     //opengl 2D Polygon Texture 3D
@@ -2010,10 +2034,29 @@ void vtkSlicerVRGrayscaleHelper::DestroyPerformance(void)
     
     if(this->SC_ExpectedFPS!=NULL)
     {
+        this->SC_ExpectedFPS->RemoveObservers(vtkKWScale::ScaleValueChangingEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
         this->SC_ExpectedFPS->RemoveObservers(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
         this->SC_ExpectedFPS->SetParent(NULL);
         this->SC_ExpectedFPS->Delete();
         this->SC_ExpectedFPS=NULL;
+    }
+    
+    if(this->SC_GPURayCastDepthPeelingThreshold!=NULL)
+    {
+        this->SC_GPURayCastDepthPeelingThreshold->RemoveObservers(vtkKWScale::ScaleValueChangingEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+        this->SC_GPURayCastDepthPeelingThreshold->RemoveObservers(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+        this->SC_GPURayCastDepthPeelingThreshold->SetParent(NULL);
+        this->SC_GPURayCastDepthPeelingThreshold->Delete();
+        this->SC_GPURayCastDepthPeelingThreshold=NULL;
+    }
+    
+    if(this->SC_GPURayCastIIFgBgRatio!=NULL)
+    {
+        this->SC_GPURayCastIIFgBgRatio->RemoveObservers(vtkKWScale::ScaleValueChangingEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+        this->SC_GPURayCastIIFgBgRatio->RemoveObservers(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+        this->SC_GPURayCastIIFgBgRatio->SetParent(NULL);
+        this->SC_GPURayCastIIFgBgRatio->Delete();
+        this->SC_GPURayCastIIFgBgRatio=NULL;
     }
     
     if(this->CB_CPURayCastMIP!=NULL)

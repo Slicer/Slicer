@@ -53,6 +53,7 @@ vtkSlicerGPURayCastVolumeMapper::vtkSlicerGPURayCastVolumeMapper()
   this->RayCastInitialized       =  0;
   this->Technique            =  0;//by default composit shading
   this->ColorOpacityFusion   =  0;
+  this->FgBgRatio            =  1.0;
   
   this->Clipping             =  0;
   this->ReloadShaderFlag     =  0;
@@ -292,36 +293,42 @@ void vtkSlicerGPURayCastVolumeMapper::SetupRayCastParameters(vtkRenderer *pRen, 
         double *pNormal = NULL;
         double *pOrigin = NULL;
     
-        //find out clip box
-        for (int i = 0; i < numClipPlanes; i++)
-        {
-            plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(i));
-            pNormal = plane->GetNormal();
-            pOrigin = plane->GetOrigin();
-                
-            if (pNormal[0] > 0.85 || pNormal[0] < -0.85)//x
-            {
-                if (pNormal[0] > 0.0)//+x: min
-                    lowerBounds[0] = pOrigin[0];
-                else
-                    upperBounds[0] = pOrigin[0];
-            }
-            else if (pNormal[1] > 0.85 || pNormal[1] < -0.85)//y
-            {
-                if (pNormal[1] > 0.0)//+y: min
-                    lowerBounds[1] = pOrigin[1];
-                else
-                    upperBounds[1] = pOrigin[1];
-            }
-            else //z
-            {
-                if (pNormal[2] > 0.0)//+z: min
-                    lowerBounds[2] = pOrigin[2];
-                else
-                    upperBounds[2] = pOrigin[2];
-            }
-        }
-    
+        plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(0));
+        pNormal = plane->GetNormal();
+        pOrigin = plane->GetOrigin();
+        
+        lowerBounds[0] = pOrigin[0];
+        
+        plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(1));
+        pNormal = plane->GetNormal();
+        pOrigin = plane->GetOrigin();
+        
+        upperBounds[0] = pOrigin[0];
+        
+        plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(2));
+        pNormal = plane->GetNormal();
+        pOrigin = plane->GetOrigin();
+        
+        lowerBounds[1] = pOrigin[1];
+        
+        plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(3));
+        pNormal = plane->GetNormal();
+        pOrigin = plane->GetOrigin();
+        
+        upperBounds[1] = pOrigin[1];
+        
+        plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(4));
+        pNormal = plane->GetNormal();
+        pOrigin = plane->GetOrigin();
+        
+        lowerBounds[2] = pOrigin[2];
+        
+        plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(5));
+        pNormal = plane->GetNormal();
+        pOrigin = plane->GetOrigin();
+        
+        upperBounds[2] = pOrigin[2];
+        
         //clip vertices
         //correct when volume is axis-aligned
         //not correct when volume is rotated to be non-axis-aligned
@@ -375,7 +382,7 @@ void vtkSlicerGPURayCastVolumeMapper::SetupRayCastParameters(vtkRenderer *pRen, 
   //ParaMatrix:                                                             
   //EyePos.x,      EyePos.y,      EyePos.z,     Step                        
   //VolBBoxLow.x,  VolBBoxLow.y,  VolBBoxLow.z, VolBBoxHigh.x               
-  //VolBBoxHigh.y, VolBBoxHigh.z, N/A, DepthPeelingThreshold,                
+  //VolBBoxHigh.y, VolBBoxHigh.z, FgBgRatio, DepthPeelingThreshold,                
   //N/A,           GlobalAlpha,   Debug,
   
   double modelViewMat[16];
@@ -429,7 +436,7 @@ void vtkSlicerGPURayCastVolumeMapper::SetupRayCastParameters(vtkRenderer *pRen, 
   this->ParaMatrix[9] = (GLfloat)clrUpperBounds[2] > 1.0f ? 1.0f : (GLfloat)clrUpperBounds[2];
   
 //  printf("%f %f %f %f %f %f\n", this->ParaMatrix[4], this->ParaMatrix[5], this->ParaMatrix[6], this->ParaMatrix[7], this->ParaMatrix[8], this->ParaMatrix[9]);
-  this->ParaMatrix[10] = 0.0f;
+  this->ParaMatrix[10] = this->FgBgRatio;
   
   //scalar range is 0 ~ 255
   this->ParaMatrix[11] = ((this->DepthPeelingThreshold + this->ScalarOffset) * this->ScalarScale )/255.0f;
@@ -1412,7 +1419,7 @@ void vtkSlicerGPURayCastVolumeMapper::LoadFragmentShader()
         "//ParaMatrix:                                                                          \n"
         "//EyePos.x,      EyePos.y,      EyePos.z,     Step                                     \n"
         "//VolBBoxLow.x,  VolBBoxLow.y,  VolBBoxLow.z, VolBBoxHigh.x                            \n"
-        "//VolBBoxHigh.y, VolBBoxHigh.z, N/A, DepthPeelingThreshold,                            \n"
+        "//VolBBoxHigh.y, VolBBoxHigh.z, FgBgRatio,    DepthPeelingThreshold,                   \n"
         "//N/A,           GlobalAlpha,   Debug,                                                 \n"
         "                                                                                       \n"
         "vec4 computeRayEnd()                                                                   \n"
@@ -1467,7 +1474,7 @@ void vtkSlicerGPURayCastVolumeMapper::LoadFragmentShader()
         "{                                                                                      \n"
         "    vec4 scalar = texture3D(TextureVol, coord);                                        \n"
         "    vec4 normal = texture3D(TextureNormalB, coord);                                    \n"
-        "    return texture2D(TextureColorLookup2, vec2(scalar.x, normal.w));                         \n"
+        "    return texture2D(TextureColorLookup, vec2(scalar.y, normal.w));                         \n"
         "}                                                                                       \n"
         "                                                                                        \n"
         "vec3 voxelNormalA(vec3 coord)                                                           \n"
@@ -1531,12 +1538,13 @@ void vtkSlicerGPURayCastVolumeMapper::LoadFragmentShader()
         "    float t = 0.0;                                                                      \n"
         "    vec3  lightDir = normalize( gl_LightSource[0].position.xyz );                     \n"
         "                                                                                        \n"
+        "    float fgRatio = ParaMatrix[2][2];                                                    \n"
         "    {                                                                                       \n"
         "        while( (t < rayLen) && (alpha < 1.0) )                                          \n"
         "        {                                                                                   \n"
         "            vec4 nextColorA = voxelColorA(nextRayOrigin);                                     \n"
         "            vec4 nextColorB = voxelColorB(nextRayOrigin);                                \n"
-        "            float tempAlpha = nextColorA.w + nextColorB.w;                                \n"
+        "            float tempAlpha = nextColorA.w*fgRatio + nextColorB.w*(1.0-fgRatio);            \n"
         "                                                                                        \n"
         "            if (tempAlpha > 0.0)                                                           \n"
         "            {                                                                              \n"
@@ -1544,8 +1552,8 @@ void vtkSlicerGPURayCastVolumeMapper::LoadFragmentShader()
         "               nextColorB = directionalLightB(nextRayOrigin, lightDir, nextColorB);           \n"
         "                                                                                              \n"      
         "               tempAlpha = (1.0-alpha)*tempAlpha;                                              \n"
-        "               pixelColor += nextColorA*tempAlpha;                                              \n"
-        "               pixelColor += nextColorB*tempAlpha;                                              \n"
+        "               pixelColor += nextColorA*tempAlpha*fgRatio;                                      \n"
+        "               pixelColor += nextColorB*tempAlpha*(1.0-fgRatio);                                 \n"
         "               alpha += tempAlpha;                                                             \n"
         "            }                                                                               \n"
         "                                                                                           \n"

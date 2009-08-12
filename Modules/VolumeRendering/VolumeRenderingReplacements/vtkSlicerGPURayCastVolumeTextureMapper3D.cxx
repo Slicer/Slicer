@@ -287,7 +287,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupRayCastParameters(vtkRendere
     
     double *pNormal = NULL;
     double *pOrigin = NULL;
-    
+  /*  
     //find out clip box
     for (int i = 0; i < numClipPlanes; i++)
     {
@@ -316,7 +316,43 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupRayCastParameters(vtkRendere
             else
                 upperBounds[2] = pOrigin[2];
         }
-    }
+    }*/
+    
+    plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(0));
+    pNormal = plane->GetNormal();
+    pOrigin = plane->GetOrigin();
+        
+    lowerBounds[0] = pOrigin[0];
+        
+    plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(1));
+    pNormal = plane->GetNormal();
+    pOrigin = plane->GetOrigin();
+        
+    upperBounds[0] = pOrigin[0];
+        
+    plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(2));
+    pNormal = plane->GetNormal();
+    pOrigin = plane->GetOrigin();
+        
+    lowerBounds[1] = pOrigin[1];
+        
+    plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(3));
+    pNormal = plane->GetNormal();
+    pOrigin = plane->GetOrigin();
+        
+    upperBounds[1] = pOrigin[1];
+        
+    plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(4));
+    pNormal = plane->GetNormal();
+    pOrigin = plane->GetOrigin();
+        
+    lowerBounds[2] = pOrigin[2];
+       
+    plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(5));
+    pNormal = plane->GetNormal();
+    pOrigin = plane->GetOrigin();
+        
+    upperBounds[2] = pOrigin[2];
     
     //clip vertices
     //correct when volume is axis-aligned
@@ -335,10 +371,10 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::SetupRayCastParameters(vtkRendere
   {//volume bbox vertices coords
     for (int i = 0; i < 8; i++)
     {
-    for (int j = 0; j < 3; j++)
-    {
+      for (int j = 0; j < 3; j++)
+      {
         VolumeBBoxVertices[i][j] = vertices[i][j];
-    }
+      }
     }
   }
   

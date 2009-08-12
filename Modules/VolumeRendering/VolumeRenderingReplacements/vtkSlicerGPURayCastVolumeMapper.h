@@ -57,7 +57,12 @@ public:
   // Depth peeling threshold
   vtkSetMacro(DepthPeelingThreshold, float);
   vtkGetMacro(DepthPeelingThreshold, float);
-    
+  
+  // Description:
+  // Depth peeling threshold
+  vtkSetMacro(FgBgRatio, float);
+  vtkGetMacro(FgBgRatio, float);
+  
   // Description:
   // set internal volume size
   void SetInternalVolumeSize(int size);
@@ -126,6 +131,7 @@ protected:
   
   int              Technique;
   int              ColorOpacityFusion;
+  float            FgBgRatio;
   int              Clipping;
   int              Shading;
   int              InternalVolumeSize;

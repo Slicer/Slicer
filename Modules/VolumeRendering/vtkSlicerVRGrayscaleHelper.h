@@ -298,6 +298,10 @@ protected:
     vtkKWScale *SC_ExpectedFPS;
     
     // Description:
+    // Adjust the frame for interactive rendering methods
+    vtkKWScale *SC_GPURayCastIIFgBgRatio;
+    
+    // Description:
     // Depth peeling threshold for GPU ray casting
     vtkKWScale *SC_GPURayCastDepthPeelingThreshold;
     
