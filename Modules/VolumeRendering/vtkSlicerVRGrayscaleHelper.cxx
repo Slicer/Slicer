@@ -1937,12 +1937,12 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->MB_GPURayCastTechniqueII->SetBalloonHelpString("Select different techniques in GPU ray casting");
         this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->AddRadioButton("Composite With Shading");
         this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessGPURayCastTechniqueII 0");
-//        this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->AddRadioButton("Composite Psuedo Shading");
-//        this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->SetItemCommand(1, this,"ProcessGPURayCastTechnique 1");
-//        this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->AddRadioButton("Maximum Intensity Projection");
-//        this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessGPURayCastTechnique 2");
-//        this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->AddRadioButton("Minimum Intensity Projection");
-//        this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->SetItemCommand(3, this,"ProcessGPURayCastTechnique 3");
+        this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->AddRadioButton("Composite Psuedo Shading");
+        this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->SetItemCommand(1, this,"ProcessGPURayCastTechniqueII 1");
+        this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->AddRadioButton("Maximum Intensity Projection");
+        this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessGPURayCastTechniqueII 2");
+        this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->AddRadioButton("Minimum Intensity Projection");
+        this->MB_GPURayCastTechniqueII->GetWidget()->GetMenu()->SetItemCommand(3, this,"ProcessGPURayCastTechniqueII 3");
         
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastTechniqueII->GetWidgetName() );
         
@@ -1964,7 +1964,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->SC_GPURayCastIIFgBgRatio=vtkKWScale::New();
         this->SC_GPURayCastIIFgBgRatio->SetParent(this->FrameGPURayCastingII->GetFrame());
         this->SC_GPURayCastIIFgBgRatio->Create();
-        this->SC_GPURayCastIIFgBgRatio->SetLabelText("[Bg <--         --> Fg]");
+        this->SC_GPURayCastIIFgBgRatio->SetLabelText("                 [Bg <--         --> Fg]");
         this->SC_GPURayCastIIFgBgRatio->SetRange(0,1); 
         this->SC_GPURayCastIIFgBgRatio->SetResolution(0.01);
         this->SC_GPURayCastIIFgBgRatio->SetValue(1.0);
