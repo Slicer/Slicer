@@ -32,19 +32,13 @@
 #include <vector>
 
 class vtkKWPushButton;
-class vtkKWPushButtonSet;
 class vtkKWRadioButtonSet;
-class vtkKWEntryWithLabel;
-class vtkKWMenuButtonWithLabel;
 class vtkKWMenuButton;
 class vtkKWCheckButton;
 class vtkKWScaleWithEntry;
 class vtkKWEntry;
 class vtkKWFrame;
-class vtkKWEntryWithLabel;
-class vtkKWLoadSaveButtonWithLabel;
 class vtkKWMultiColumnListWithScrollbars;
-class vtkKWWizardWidget;
 class vtkKWTreeWithScrollbars;
 class vtkSlicerNodeSelectorWidget;
 
@@ -67,13 +61,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
     SLICE_PLANE_GREEN  = 2
   };
 
-  enum {
-    SLICE_RTIMAGE_NONE      = 0,
-    SLICE_RTIMAGE_PERP      = 1,
-    SLICE_RTIMAGE_INPLANE90 = 2,
-    SLICE_RTIMAGE_INPLANE   = 3
-  };
-
   // Connector List update level options
   enum {
     UPDATE_SELECTED_ONLY   = 0,  // Update selected item only
@@ -94,10 +81,9 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
 
   typedef struct {
     std::string nodeName;
-    int         deviceID;
     std::string connectorID;
-    int         io;
     std::string nodeID;
+    int         io;
   } IOConfigNodeInfoType;
 
   typedef std::list<IOConfigNodeInfoType> IOConfigNodeInfoListType;
@@ -218,15 +204,12 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   //ETX
   void AddIOConfigContextMenuItem(int type, const char* conID, int io, const char* nodeID);
   void ChangeSlicePlaneDriver(int slice, const char* driver);
-  void SetLocatorSource(int selected);
-  //void UpdateRealTimeImageSourceMenu();
   void UpdateIOConfigTree();
   void UpdateConnectorList(int updateLevel);
   void UpdateConnectorPropertyFrame(int i);
   void UpdateConnectorNodeList();
 
   vtkMRMLIGTLConnectorNode* GetConnector(const char* nodeID);
-
 
  private:
   //----------------------------------------------------------------
@@ -254,30 +237,29 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   //----------------------------------------------------------------
   // Data I/O Configuration frame
 
-  vtkKWCheckButton*    EnableAdvancedSettingButton;
+  vtkKWCheckButton*        EnableAdvancedSettingButton;
   vtkKWTreeWithScrollbars* IOConfigTree;
-  vtkKWMenu *IOConfigContextMenu;
+  vtkKWMenu*               IOConfigContextMenu;
   vtkKWMultiColumnListWithScrollbars* MrmlNodeList;
 
   //----------------------------------------------------------------
   // Visualization Control Frame
 
-  vtkKWCheckButton *FreezeImageCheckButton;
-  vtkKWCheckButton *ObliqueCheckButton;
-  vtkKWPushButton  *SetLocatorModeButton;
-  vtkKWPushButton  *SetUserModeButton;
+  vtkKWCheckButton*    FreezeImageCheckButton;
+  vtkKWCheckButton*    ObliqueCheckButton;
+  vtkKWPushButton*     SetLocatorModeButton;
+  vtkKWPushButton*     SetUserModeButton;
 
-  vtkKWMenuButton  *RedSliceMenu;
-  vtkKWMenuButton  *YellowSliceMenu;
-  vtkKWMenuButton  *GreenSliceMenu;
-  vtkKWCheckButton *ImagingControlCheckButton;
-  vtkKWMenuButton  *ImagingMenu;
+  vtkKWMenuButton*     RedSliceMenu;
+  vtkKWMenuButton*     YellowSliceMenu;
+  vtkKWMenuButton*     GreenSliceMenu;
+  vtkKWCheckButton*    ImagingControlCheckButton;
+  vtkKWMenuButton*     ImagingMenu;
 
-  //vtkKWMenuButton  *RealTimeImageSourceMenu;
-  vtkSlicerNodeSelectorWidget *ImageSourceSelectorWidget;
-  vtkSlicerNodeSelectorWidget *LocatorSourceSelectorWidget;
+  vtkSlicerNodeSelectorWidget* ImageSourceSelectorWidget;
+  vtkSlicerNodeSelectorWidget* LocatorSourceSelectorWidget;
 
-  vtkKWCheckButton *LocatorCheckButton;
+  vtkKWCheckButton* LocatorCheckButton;
   bool              IsSliceOrientationAdded;
   // Module logic and mrml pointers
 
@@ -285,11 +267,10 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   // Logic Values
   //----------------------------------------------------------------
 
-  vtkOpenIGTLinkIFLogic *Logic;
+  vtkOpenIGTLinkIFLogic* Logic;
 
-  vtkIGTDataManager *DataManager;
-  vtkIGTPat2ImgRegistration *Pat2ImgReg;
-  vtkCallbackCommand *DataCallbackCommand;
+  vtkIGTDataManager* DataManager;
+  vtkCallbackCommand* DataCallbackCommand;
 
   // Access the slice windows
   vtkMRMLSliceNode *SliceNode0;
@@ -301,13 +282,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   int UpdateConnectorPropertyFrameFlag;
   int UpdateIOConfigTreeFlag;
 
-  //BTX
-  std::string LocatorModelID;
-  std::string LocatorModelID_new;
-  //ETX
-  
-  //int RealtimeImageOrient;
-
   //----------------------------------------------------------------
   // Connector and MRML Node list management
   //----------------------------------------------------------------
@@ -318,8 +292,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   std::vector<std::string> ConnectorNodeList;
   //ETX
 
-  //int   CurrentMrmlNodeListID;  // row number
-  int   CurrentMrmlNodeListIndex; // row number
   //BTX
   vtkOpenIGTLinkIFLogic::IGTLMrmlNodeListType CurrentNodeListAvailable;
   vtkOpenIGTLinkIFLogic::IGTLMrmlNodeListType CurrentNodeListSelected;
@@ -336,7 +308,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   // Locator Model
   //----------------------------------------------------------------
 
-  //vtkMRMLModelNode           *LocatorModel;
   int                        CloseScene;
 
   //----------------------------------------------------------------

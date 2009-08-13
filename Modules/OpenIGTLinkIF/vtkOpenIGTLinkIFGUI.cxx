@@ -110,7 +110,6 @@ vtkOpenIGTLinkIFGUI::vtkOpenIGTLinkIFGUI ( )
   
   this->Logic = NULL;
   this->DataManager = vtkIGTDataManager::New();
-  this->Pat2ImgReg = vtkIGTPat2ImgRegistration::New();
   
   this->DataCallbackCommand = vtkCallbackCommand::New();
   this->DataCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
@@ -146,7 +145,6 @@ vtkOpenIGTLinkIFGUI::vtkOpenIGTLinkIFGUI ( )
   this->EnableAdvancedSettingButton = NULL;
   this->IOConfigContextMenu = NULL;
 
-  this->CurrentMrmlNodeListIndex = -1;
   this->CurrentNodeListAvailable.clear();
   this->CurrentNodeListSelected.clear();
 
@@ -191,10 +189,6 @@ vtkOpenIGTLinkIFGUI::~vtkOpenIGTLinkIFGUI ( )
     // Slicer will report a lot leak when it is closed.
     this->DataManager->SetMRMLScene(NULL);
     this->DataManager->Delete();
-    }
-  if (this->Pat2ImgReg)
-    {
-    this->Pat2ImgReg->Delete();
     }
   if (this->DataCallbackCommand)
     {
@@ -687,14 +681,6 @@ void vtkOpenIGTLinkIFGUI::AddLogicObservers ( )
 
   if (this->GetLogic())
     {
-    /*
-      this->GetLogic()->AddObserver(vtkOpenIGTLinkIFLogic::LocatorUpdateEvent,
-      (vtkCommand *)this->LogicCallbackCommand);
-    */
-    /*
-      this->GetLogic()->AddObserver(vtkOpenIGTLinkIFLogic::SliceUpdateEvent,
-      (vtkCommand *)this->LogicCallbackCommand);
-    */
     this->GetLogic()->AddObserver(vtkOpenIGTLinkIFLogic::StatusUpdateEvent,
                                   (vtkCommand *)this->LogicCallbackCommand);
     }
@@ -2278,7 +2264,6 @@ void vtkOpenIGTLinkIFGUI::UpdateIOConfigTree()
       sprintf(conNode, "%s", id);
       tree->AddNode(rootNode, conNode, con->GetName());
       nodeInfo.nodeName = conNode;
-      nodeInfo.deviceID = -1;
       nodeInfo.connectorID = id;
       nodeInfo.nodeID = "";
       nodeInfo.io = vtkMRMLIGTLConnectorNode::IO_UNSPECIFIED;
@@ -2287,7 +2272,6 @@ void vtkOpenIGTLinkIFGUI::UpdateIOConfigTree()
       sprintf(conInNode, "%s/in", id);
       tree->AddNode(conNode,  conInNode, "IN");
       nodeInfo.nodeName = conInNode;
-      nodeInfo.deviceID = -1;
       nodeInfo.connectorID = id;
       nodeInfo.nodeID = "";
       nodeInfo.io = vtkMRMLIGTLConnectorNode::IO_INCOMING;
@@ -2296,7 +2280,6 @@ void vtkOpenIGTLinkIFGUI::UpdateIOConfigTree()
       sprintf(conOutNode, "%s/out", id);
       tree->AddNode(conNode,  conOutNode, "OUT");
       nodeInfo.nodeName = conOutNode;
-      nodeInfo.deviceID = -1;
       nodeInfo.connectorID = id;
       nodeInfo.nodeID = "";
       nodeInfo.io = vtkMRMLIGTLConnectorNode::IO_OUTGOING;

@@ -62,11 +62,6 @@ vtkOpenIGTLinkIFLogic::vtkOpenIGTLinkIFLogic()
   this->SliceOrientation[1] = SLICE_RTIMAGE_INPLANE;
   this->SliceOrientation[2] = SLICE_RTIMAGE_INPLANE90;
 
-  this->NeedRealtimeImageUpdate0 = 0;
-  this->NeedRealtimeImageUpdate1 = 0;
-  this->NeedRealtimeImageUpdate2 = 0;
-  this->ImagingControl = 0;
-
   // Timer Handling
 
   this->DataCallbackCommand = vtkCallbackCommand::New();

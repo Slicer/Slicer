@@ -63,7 +63,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   };
 
   enum {  // Events
-    LocatorUpdateEvent      = 50000,
     StatusUpdateEvent       = 50001,
     //SliceUpdateEvent        = 50002,
   };
@@ -76,8 +75,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   } IGTLMrmlNodeInfoType;
 
   typedef std::vector<IGTLMrmlNodeInfoType>         IGTLMrmlNodeListType;
-  typedef std::vector<std::string>                  ConnectorListType;
-  typedef std::map<vtkMRMLNode*, ConnectorListType> MRMLNodeAndConnectorMapType;
   typedef std::vector<vtkIGTLToMRMLBase*>           MessageConverterListType;
   //ETX
   
@@ -89,17 +86,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   
   vtkTypeRevisionMacro(vtkOpenIGTLinkIFLogic,vtkObject);
 
-  vtkSetMacro ( NeedRealtimeImageUpdate0, int );
-  vtkGetMacro ( NeedRealtimeImageUpdate0, int );
-  vtkSetMacro ( NeedRealtimeImageUpdate1, int );
-  vtkGetMacro ( NeedRealtimeImageUpdate1, int );
-  vtkSetMacro ( NeedRealtimeImageUpdate2, int );
-  vtkGetMacro ( NeedRealtimeImageUpdate2, int );
-
-  vtkSetMacro ( NeedUpdateLocator,       bool );
-  vtkGetMacro ( NeedUpdateLocator,       bool );
-
-  vtkGetMacro ( Connection,              bool );
   vtkSetMacro ( EnableOblique,           bool );
   vtkGetMacro ( EnableOblique,           bool );
   vtkSetMacro ( FreezePlane,             bool );
@@ -109,7 +95,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   vtkGetObjectMacro ( LocatorMatrix,    vtkMatrix4x4 );
 
   void PrintSelf(ostream&, vtkIndent);
-  //void AddRealtimeVolumeNode(const char* name);
 
   //----------------------------------------------------------------
   // Start up the class
@@ -161,8 +146,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   //void GetDeviceTypes(std::vector<char*> &list);
   //ETX
 
-  //const char* MRMLTagToIGTLName(const char* mrmlTagName);
-
  protected:
   
   //----------------------------------------------------------------
@@ -181,13 +164,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   void UpdateSliceDisplay();
   void UpdateLocator();
 
-  int  RegisterDeviceEvent(vtkMRMLIGTLConnectorNode* con,
-                           const char* deviceName,
-                           const char* deviceType);
-  int  UnregisterDeviceEvent(vtkMRMLIGTLConnectorNode* con,
-                             const char* deviceName,
-                             const char* deviceType);
-  void UnregisterDeviceEvent(const char* conID, int devID);
   vtkCallbackCommand *DataCallbackCommand;
 
  private:
@@ -200,7 +176,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
 
   //BTX
   //ConnectorMapType              ConnectorMap;
-  MRMLNodeAndConnectorMapType   MRMLEventConnectorMap;  // will be moved to connector node.
   MessageConverterListType      MessageConverterList;
   //ETX
 
@@ -215,22 +190,9 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   vtkIGTLToMRMLPosition*        PositionConverter;
 
   //----------------------------------------------------------------
-  // Monitor Timer
-  //----------------------------------------------------------------
-
-  int MonitorFlag;
-  int MonitorInterval;
-
-  //----------------------------------------------------------------
   // Real-time image
   //----------------------------------------------------------------
   
-  vtkMRMLVolumeNode     *RealtimeVolumeNode;
-
-  int   NeedRealtimeImageUpdate0;
-  int   NeedRealtimeImageUpdate1;
-  int   NeedRealtimeImageUpdate2;
-
   vtkMRMLSliceNode *SliceNode[3];
 
   int   SliceDriver[3];
@@ -238,23 +200,13 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   int   SliceDriverDeviceID[3];    // will be obsolete
 
   //BTX
-  std::string   SliceDriverNodeID[3];
   std::string   LocatorDriverNodeID;
   std::string   RealTimeImageSourceNodeID;
   //ETX
-  //vtkMRMLNode* SliceDriverNode[3];
-  //vtkMRMLNode* LocatorDriver;
+
   int   LocatorDriverFlag;
-  
-  bool  ImagingControl;
-  bool  NeedUpdateLocator;
   bool  EnableOblique;
   bool  FreezePlane;
-
-  long  RealtimeImageTimeStamp;
-  //int   RealtimeImageSerial;
-  //int   RealtimeImageOrient;
-
   int   SliceOrientation[3];
   
   //----------------------------------------------------------------
@@ -265,8 +217,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   vtkMatrix4x4*         LocatorMatrix;
   vtkTransform*         LocatorTransform;
 
-  bool  Connection;  
-  
 };
 
 #endif
