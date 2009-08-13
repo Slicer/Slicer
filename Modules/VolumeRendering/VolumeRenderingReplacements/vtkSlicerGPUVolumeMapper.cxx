@@ -500,6 +500,8 @@ vtkSlicerGPUVolumeMapper::vtkSlicerGPUVolumeMapper()
   this->Framerate                    = 5.0f;
   
   this->Threader               = vtkMultiThreader::New();
+  
+  this->GradientsArgs                = NULL;
 }
 
 vtkSlicerGPUVolumeMapper::~vtkSlicerGPUVolumeMapper()

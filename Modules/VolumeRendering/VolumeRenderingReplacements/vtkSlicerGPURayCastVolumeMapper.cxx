@@ -1216,7 +1216,7 @@ void vtkSlicerGPURayCastVolumeMapper::LoadNoShadingFragmentShaderMINIP()
         "            nextRayOrigin += rayStep;                                                       \n"
         "        }                                                                                   \n"
         "                                                                                                             \n"
-        "        pixelColor = voxelColorA(maxScalarCoordA)*fgRatio + voxelColorB(maxScalarCoordB)*(1.0-fgRatio);      \n"
+        "        pixelColor = voxelColorA(minScalarCoordA)*fgRatio + voxelColorB(minScalarCoordB)*(1.0-fgRatio);      \n"
         "        alpha = pixelColor.w;                                                                \n"
         "    }                                                                                       \n"
         "    gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                        \n"
