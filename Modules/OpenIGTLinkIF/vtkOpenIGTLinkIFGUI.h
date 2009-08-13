@@ -1,6 +1,6 @@
 /*==========================================================================
 
-  Portions (c) Copyright 2008 Brigham and Women's Hospital (BWH) All Rights Reserved.
+  Portions (c) Copyright 2008-2009 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -97,6 +97,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
     int         deviceID;
     std::string connectorID;
     int         io;
+    std::string nodeID;
   } IOConfigNodeInfoType;
 
   typedef std::list<IOConfigNodeInfoType> IOConfigNodeInfoListType;
@@ -164,8 +165,9 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   virtual void RemoveGUIObservers ( );
   void         AddLogicObservers ( );
   void         RemoveLogicObservers ( );
-  virtual void AddNodeCallback(const char* conID, int io, const char* name, const char* type);
-  virtual void DeleteNodeCallback(const char* conID, int io, int devID);
+  //virtual void AddNodeCallback(const char* conID, int io, const char* name, const char* type);
+  virtual void AddNodeCallback(const char* conID, int io, const char* nodeID);
+  virtual void DeleteNodeCallback(const char* conID, int io, const char* nodeID);
 
   // Description:
   // Class's mediator methods for processing events invoked by
@@ -174,7 +176,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData );
   virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event, void *callData );
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
-  virtual int  OnMrmlNodeListChanged(int row, int col, const char* item);
+  //virtual int  OnMrmlNodeListChanged(int row, int col, const char* item);
   void         ProcessTimerEvents();
   void         HandleMouseEvent(vtkSlicerInteractorStyle *style);
   //BTX
@@ -211,9 +213,10 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
  private:
   void IOConfigTreeContextMenu(const char *callData);
   //BTX
-  int  IsIOConfigTreeLeafSelected(const char* callData, std::string& conID, int* devID, int* io);
+  //int  IsIOConfigTreeLeafSelected(const char* callData, std::string& conID, int* devID, int* io);
+  int  IsIOConfigTreeLeafSelected(const char* callData, std::string& conID, int* io, std::string& nodeID);
   //ETX
-  void AddIOConfigContextMenuItem(int type, const char* conID, int devID, int io);
+  void AddIOConfigContextMenuItem(int type, const char* conID, int io, const char* nodeID);
   void ChangeSlicePlaneDriver(int slice, const char* driver);
   void SetLocatorSource(int selected);
   //void UpdateRealTimeImageSourceMenu();
@@ -221,6 +224,9 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   void UpdateConnectorList(int updateLevel);
   void UpdateConnectorPropertyFrame(int i);
   void UpdateConnectorNodeList();
+
+  vtkMRMLIGTLConnectorNode* GetConnector(const char* nodeID);
+
 
  private:
   //----------------------------------------------------------------

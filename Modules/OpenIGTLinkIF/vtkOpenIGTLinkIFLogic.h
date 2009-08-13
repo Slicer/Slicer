@@ -1,6 +1,6 @@
 /*==========================================================================
 
-  Portions (c) Copyright 2008 Brigham and Women's Hospital (BWH) All Rights Reserved.
+  Portions (c) Copyright 2008-2009 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -78,7 +78,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   typedef std::vector<IGTLMrmlNodeInfoType>         IGTLMrmlNodeListType;
   typedef std::vector<std::string>                  ConnectorListType;
   typedef std::map<vtkMRMLNode*, ConnectorListType> MRMLNodeAndConnectorMapType;
-  typedef std::list<vtkIGTLToMRMLBase*>             MessageConverterListType;
+  typedef std::vector<vtkIGTLToMRMLBase*>           MessageConverterListType;
   //ETX
   
   // Work phase keywords used in NaviTrack (defined in BRPTPRInterface.h)
@@ -118,27 +118,28 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   int Initialize();
 
   //----------------------------------------------------------------
-  // Connector Management
+  // Connector and converter Management
   //----------------------------------------------------------------
 
   // Access connectors
-  int                       GetNumberOfConnectors();
   vtkMRMLIGTLConnectorNode* GetConnector(const char* conID);
   void                      ImportFromCircularBuffers();
   
   // Device Name management
   int  SetRestrictDeviceName(int f);
-  int  AddDeviceToConnector(const char* conID, const char* deviceName, const char* deviceType, int io);
-  int  DeleteDeviceFromConnector(const char* conID, const char* deviceName, const char* deviceType, int io);
-  int  DeleteDeviceFromConnector(const char* conID, int devID, int io);
+
+  int  RegisterMessageConverter(vtkIGTLToMRMLBase* converter);
+  int  UnregisterMessageConverter(vtkIGTLToMRMLBase* converter);
+
+  unsigned int       GetNumberOfConverters();
+  vtkIGTLToMRMLBase* GetConverter(unsigned int i);
+  vtkIGTLToMRMLBase* GetConverterByDeviceType(const char* deviceType);
 
   //----------------------------------------------------------------
   // MRML Management
   //----------------------------------------------------------------
-  int  RegisterMessageConverter(vtkIGTLToMRMLBase* converter);
-  int  UnregisterMessageConverter(vtkIGTLToMRMLBase* converter);
+
   void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData);
-  vtkIGTLToMRMLBase* GetConverterByDeviceType(const char* deviceType);
 
   int  SetLocatorDriver(const char* nodeID);
   int  EnableLocatorDriver(int i);
@@ -159,6 +160,8 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   void GetDeviceNamesFromMrml(IGTLMrmlNodeListType &list, const char* mrmlTagName);
   //void GetDeviceTypes(std::vector<char*> &list);
   //ETX
+
+  //const char* MRMLTagToIGTLName(const char* mrmlTagName);
 
  protected:
   
@@ -197,7 +200,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
 
   //BTX
   //ConnectorMapType              ConnectorMap;
-  MRMLNodeAndConnectorMapType   MRMLEventConnectorMap;
+  MRMLNodeAndConnectorMapType   MRMLEventConnectorMap;  // will be moved to connector node.
   MessageConverterListType      MessageConverterList;
   //ETX
 
@@ -217,15 +220,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
 
   int MonitorFlag;
   int MonitorInterval;
-
-  //----------------------------------------------------------------
-  // Massage classes
-  //----------------------------------------------------------------
-
-  //BTX
-  igtl::TransformMessage::Pointer OutTransformMsg;
-  igtl::ImageMessage::Pointer OutImageMsg;
-  //ETX
 
   //----------------------------------------------------------------
   // Real-time image

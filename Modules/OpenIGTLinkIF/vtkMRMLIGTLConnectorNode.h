@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+  Portions (c) Copyright 2009 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -18,6 +18,8 @@
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
+
+#include "vtkIGTLToMRMLBase.h"
 
 #include <string>
 #include <map>
@@ -80,9 +82,12 @@ class VTK_OPENIGTLINKIF_EXPORT vtkMRMLIGTLConnectorNode : public vtkMRMLNode
     //vtkMRMLNode*  node;
   } DeviceInfoType;
 
-  typedef std::map<int, DeviceInfoType> DeviceInfoMapType;   // Device list:  index is referred as
-                                                              // a device id in the connector.
-  typedef std::set<int> DeviceIDSetType;
+  typedef std::map<int, DeviceInfoType>   DeviceInfoMapType;   // Device list:  index is referred as
+                                                               // a device id in the connector.
+  typedef std::set<int>                   DeviceIDSetType;
+  typedef std::list<vtkIGTLToMRMLBase*>   MessageConverterListType;
+  typedef std::vector<vtkMRMLNode*>       MRMLNodeListType;
+  typedef std::map<std::string, vtkIGTLToMRMLBase*> MessageConverterMapType;
   //ETX
 
  public:
@@ -181,8 +186,8 @@ class VTK_OPENIGTLINKIF_EXPORT vtkMRMLIGTLConnectorNode : public vtkMRMLNode
 
   //BTX
   typedef std::vector<std::string> NameListType;
-  int GetUpdatedBuffersList(NameListType& nameList);
-  vtkIGTLCircularBuffer* GetCircularBuffer(std::string& key);
+  unsigned int GetUpdatedBuffersList(NameListType& nameList); // TODO: this will be moved to private
+  vtkIGTLCircularBuffer* GetCircularBuffer(std::string& key);     // TODO: Is it OK to use device name as a key?
   //ETX
 
   //----------------------------------------------------------------
@@ -202,6 +207,59 @@ class VTK_OPENIGTLINKIF_EXPORT vtkMRMLIGTLConnectorNode : public vtkMRMLNode
   DeviceIDSetType*    GetOutgoingDevice()    { return &(this->OutgoingDeviceIDSet);   }
   DeviceIDSetType*    GetUnspecifiedDevice() { return &(this->UnspecifiedDeviceIDSet);}
   //ETX
+
+  // Description:
+  // Import received data from the circular buffer to the MRML scne.
+  // This is currently called by vtkOpenIGTLinkIFLogic class.
+  void ImportDataFromCircularBuffer();
+
+  // Description:
+  // Register IGTL to MRML message converter.
+  // This is used by vtkOpenIGTLinkIFLogic class.
+  int RegisterMessageConverter(vtkIGTLToMRMLBase* converter);
+
+  // Description:
+  // Unregister IGTL to MRML message converter.
+  // This is used by vtkOpenIGTLinkIFLogic class.
+  void UnregisterMessageConverter(vtkIGTLToMRMLBase* converter);
+  
+  // Description:
+  // Set and start observing MRML node for outgoing data.
+  int RegisterOutgoingMRMLNode(vtkMRMLNode* node);
+
+  // Description:
+  // Stop observing and remove MRML node for outgoing data.
+  void UnregisterOutgoingMRMLNode(vtkMRMLNode* node);
+
+  // Description:
+  // Register MRML node for incoming data.
+  int RegisterIncomingMRMLNode(vtkMRMLNode* node);
+
+  // Description:
+  // Unregister MRML node for incoming data.
+  void UnregisterIncomingMRMLNode(vtkMRMLNode* node);
+
+  // Description:
+  // Get number of registered outgoing MRML nodes:
+  unsigned int GetNumberOfOutgoingMRMLNodes();
+
+  // Description:
+  // Get Nth outgoing MRML nodes:
+  vtkMRMLNode* GetOutgoingMRMLNode(unsigned int i);
+
+  // Description:
+  // Get number of registered outgoing MRML nodes:
+  unsigned int GetNumberOfIncomingMRMLNodes();
+
+  // Description:
+  // Get Nth outgoing MRML nodes:
+  vtkMRMLNode* GetIncomingMRMLNode(unsigned int i);
+  
+
+ private:
+
+  vtkIGTLToMRMLBase* GetConverterByMRMLTag(const char* tag);
+
 
  private:
   //----------------------------------------------------------------
@@ -235,6 +293,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkMRMLIGTLConnectorNode : public vtkMRMLNode
   // Data
   //----------------------------------------------------------------
 
+
   //BTX
   typedef std::map<std::string, vtkIGTLCircularBuffer*> CircularBufferMap;
   CircularBufferMap Buffer;
@@ -251,8 +310,16 @@ class VTK_OPENIGTLINKIF_EXPORT vtkMRMLIGTLConnectorNode : public vtkMRMLNode
   DeviceIDSetType   OutgoingDeviceIDSet;
   DeviceIDSetType   UnspecifiedDeviceIDSet;
   //ETX
+  
+  // Message converter (IGTLToMRML)
+  MessageConverterListType   MessageConverterList;
+  MessageConverterMapType    IGTLNameToConverterMap;
+  MessageConverterMapType    MRMLIDToConverterMap;
 
-
+  // List of nodes that this connector node is observing.
+  MRMLNodeListType          OutgoingMRMLNodeList;
+  MRMLNodeListType          IncomingMRMLNodeList;
+  
   
 };
 
