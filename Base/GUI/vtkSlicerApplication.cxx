@@ -256,9 +256,6 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 
     this->RestoreApplicationSettingsFromRegistry ( );
     
-    // FOR NOW!
-//    this->ApplicationLayoutType = vtkMRMLLayoutNode::SlicerLayoutConventionalView;
-
 
     this->SetHelpDialogStartingPage ( "http://www.slicer.org" );
 
@@ -1425,7 +1422,7 @@ const char* vtkSlicerApplication::GetExtensionsInstallPath()
   char* extpath = this->ExtensionsInstallPath;
   if (extpath)
     {
-      if (0 == strlen(extpath))
+    if (0 == strlen(extpath))
       {
         // :NOTE: 20090728 tgl: Do this here as I am not certain
         // TemporaryDirectory is available when we first copy a value
@@ -1448,11 +1445,11 @@ const char* vtkSlicerApplication::GetExtensionsInstallPath()
         std::string msg = std::string("ERROR\nUnable to make extensions install path: '") + std::string(extpath) + std::string("'\nYou can change the Extensions Install Path View->Application Settings->Module Settings.");
         vtkKWMessageDialog *message = vtkKWMessageDialog::New();
         message->SetParent(this->ApplicationGUI->GetViewerWidget());
+        message->Create();
         message->SetOptions(vtkKWMessageDialog::ErrorIcon);
         message->SetIcon();
         message->SetStyleToCancel();
         message->SetText(msg.c_str());
-        message->Create();
         message->Invoke();
         message->Delete();
         }
@@ -1476,11 +1473,11 @@ const char* vtkSlicerApplication::GetExtensionsInstallPath()
           std::string msg = std::string("WARNING\nUnable to write files in ExtensionsInstallPath:\n'") + std::string(extpath) + std::string("'");
           vtkKWMessageDialog *message = vtkKWMessageDialog::New();
           message->SetParent(this->ApplicationGUI->GetViewerWidget());
+          message->Create();
           message->SetOptions(vtkKWMessageDialog::ErrorIcon);
           message->SetIcon();
           message->SetStyleToCancel();
           message->SetText(msg.c_str());
-          message->Create();
           message->Invoke();
           message->Delete();
           }
@@ -1771,7 +1768,7 @@ bool vtkSlicerApplication::RequestDisplayMessage( const char *type, const char *
   active = this->DisplayMessageQueueActive;
   this->DisplayMessageQueueActiveLock->Unlock();
 
-  this->Script("puts stderr {%s: %s}", type, message);
+  //this->Script("puts stderr {%s: %s}", type, message);
 
   if (active)
     {
