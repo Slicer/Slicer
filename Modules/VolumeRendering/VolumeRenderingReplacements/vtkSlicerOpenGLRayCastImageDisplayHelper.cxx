@@ -140,9 +140,15 @@ void vtkSlicerOpenGLRayCastImageDisplayHelper::RenderTextureInternal( vtkVolume 
   
   vtkTransform *perspectiveTransform = vtkTransform::New();
   perspectiveTransform->Identity();
+#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
+  perspectiveTransform->Concatenate(
+    cam->GetProjectionTransformMatrix(aspect[0]/aspect[1], 
+                                       0.0, 1.0 ));
+#else
   perspectiveTransform->Concatenate(
     cam->GetPerspectiveTransformMatrix(aspect[0]/aspect[1], 
                                        0.0, 1.0 ));
+#endif
   perspectiveTransform->Concatenate(cam->GetViewTransformMatrix());
   
   // get the perspective transformation from the active camera 

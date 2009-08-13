@@ -366,17 +366,23 @@ void vtkMRMLFiducial::SetOrientationWXYZFromMatrix4x4(vtkMatrix4x4 *mat)
     double mag = sqrt(wxyz[1]*wxyz[1] + wxyz[2]*wxyz[2] + wxyz[3]*wxyz[3]);
 
     if (mag)
-    {   wxyz[0] = 2.0*acos(wxyz[0])/vtkMath::DoubleDegreesToRadians();
-        wxyz[1] /= mag;
-        wxyz[2] /= mag;
-        wxyz[3] /= mag;
-    }
+      {
+#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
+      wxyz[0] = 2.0*acos(wxyz[0]) / vtkMath::RadiansFromDegrees(1.0);
+#else
+      wxyz[0] = 2.0*acos(wxyz[0])/vtkMath::DoubleDegreesToRadians();
+#endif
+      wxyz[1] /= mag;
+      wxyz[2] /= mag;
+      wxyz[3] /= mag;
+      }
     else
-    {   wxyz[0] = 0.0;
-        wxyz[1] = 0.0;
-        wxyz[2] = 0.0;
-        wxyz[3] = 1.0;
-    } 
+      {
+      wxyz[0] = 0.0;
+      wxyz[1] = 0.0;
+      wxyz[2] = 0.0;
+      wxyz[3] = 1.0;
+      } 
     this->OrientationWXYZ[0] = (float) wxyz[0];
     this->OrientationWXYZ[1] = (float) wxyz[1];
     this->OrientationWXYZ[2] = (float) wxyz[2];

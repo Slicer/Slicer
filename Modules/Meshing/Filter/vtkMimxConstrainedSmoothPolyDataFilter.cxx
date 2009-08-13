@@ -226,11 +226,14 @@ int vtkMimxConstrainedSmoothPolyDataFilter::RequestData(
     vtkErrorMacro(<<"No data to smooth!");
     return 1;
     }
-
+#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
+  CosFeatureAngle = cos(vtkMath::RadiansFromDegrees(this->FeatureAngle));
+  CosEdgeAngle = cos(vtkMath::RadiansFromDegrees(this->EdgeAngle));
+#else
   CosFeatureAngle = 
     cos((double) vtkMath::DegreesToRadians() * this->FeatureAngle);
   CosEdgeAngle = cos((double) vtkMath::DegreesToRadians() * this->EdgeAngle);
-
+#endif
   vtkDebugMacro(<<"Smoothing " << numPts << " vertices, " << numCells 
                << " cells with:\n"
                << "\tConvergence= " << this->Convergence << "\n"

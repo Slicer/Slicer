@@ -670,7 +670,11 @@ void vtkMimxAbaqusFileWriter::WriteBoundaryConditions( ostream& os, vtkUnstructu
           os<<"**"<<std::endl;
           os << "*BOUNDARY, OP=NEW" << std::endl;
           }
+#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
+        os << nodesetname<<", 4, 4, "<< vtkMath::RadiansFromDegrees(floatarray->GetValue(0)) << std::endl;
+#else
         os << nodesetname<<", 4, 4, "<< vtkMath::DegreesToRadians() * floatarray->GetValue(0) << std::endl;
+#endif
         }
       //
       char Concatenate5[256];
@@ -685,7 +689,11 @@ void vtkMimxAbaqusFileWriter::WriteBoundaryConditions( ostream& os, vtkUnstructu
           os<<"**"<<std::endl;
           os << "*BOUNDARY, OP=NEW" << std::endl;
           }
+#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
+        os << nodesetname<<", 5, 5, "<< vtkMath::RadiansFromDegrees(floatarray->GetValue(0)) << std::endl;
+#else
         os << nodesetname<<", 5, 5, "<< vtkMath::DegreesToRadians() * floatarray->GetValue(0) << std::endl;
+#endif
         }
       //
       char Concatenate6[256];
@@ -700,7 +708,11 @@ void vtkMimxAbaqusFileWriter::WriteBoundaryConditions( ostream& os, vtkUnstructu
           os<<"**"<<std::endl;
           os << "*BOUNDARY, OP=NEW" << std::endl;
           }
+#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
+        os << nodesetname<<", 6, 6, "<< vtkMath::RadiansFromDegrees(floatarray->GetValue(0)) << std::endl;
+#else
         os << nodesetname<<", 6, 6, "<< vtkMath::DegreesToRadians() * floatarray->GetValue(0) << std::endl;
+#endif
         }
       }
           
