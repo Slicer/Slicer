@@ -123,12 +123,16 @@ public:
     // Get methods on class members ( no Set methods required. )
     vtkGetObjectMacro (PB_HideSurfaceModels,vtkKWPushButton);
     vtkGetObjectMacro (PB_CreateNewVolumeRenderingNode,vtkKWPushButton);
+    vtkGetObjectMacro (PB_CreateNewVolumeRenderingNodeFg,vtkKWPushButton);
     vtkGetObjectMacro (NS_ImageData,vtkSlicerNodeSelectorWidget);
     vtkGetObjectMacro (NS_ImageDataFg,vtkSlicerNodeSelectorWidget);
     vtkGetObjectMacro (NS_ImageDataLabelmap,vtkSlicerNodeSelectorWidget);
     vtkGetObjectMacro (NS_VolumeRenderingDataSlicer,vtkSlicerNodeSelectorVolumeRenderingWidget);
     vtkGetObjectMacro (NS_VolumeRenderingDataScene,vtkSlicerNodeSelectorVolumeRenderingWidget);
     vtkGetObjectMacro (EWL_CreateNewVolumeRenderingNode,vtkKWEntryWithLabel);
+    vtkGetObjectMacro (NS_VolumeRenderingDataSlicerFg,vtkSlicerNodeSelectorVolumeRenderingWidget);
+    vtkGetObjectMacro (NS_VolumeRenderingDataSceneFg,vtkSlicerNodeSelectorVolumeRenderingWidget);
+    vtkGetObjectMacro (EWL_CreateNewVolumeRenderingNodeFg,vtkKWEntryWithLabel);
     vtkGetObjectMacro (DetailsFrame,vtkSlicerModuleCollapsibleFrame);
     vtkGetObjectMacro (CurrentNode,vtkMRMLVolumeRenderingNode);
     vtkGetObjectMacro (Presets, vtkMRMLScene);
@@ -180,6 +184,7 @@ protected:
     //Frame Save/Load
     vtkKWPushButton *PB_HideSurfaceModels;
     vtkKWPushButton *PB_CreateNewVolumeRenderingNode;
+    vtkKWPushButton *PB_CreateNewVolumeRenderingNodeFg;
     vtkSlicerNodeSelectorWidget *NS_ImageData;
     vtkSlicerNodeSelectorWidget *NS_ImageDataFg;
     vtkSlicerNodeSelectorWidget *NS_ImageDataLabelmap;
@@ -196,6 +201,10 @@ protected:
     vtkSlicerNodeSelectorVolumeRenderingWidget *NS_VolumeRenderingDataScene;
     vtkKWEntryWithLabel *EWL_CreateNewVolumeRenderingNode;
 
+    vtkSlicerNodeSelectorVolumeRenderingWidget *NS_VolumeRenderingDataSlicerFg;
+    vtkSlicerNodeSelectorVolumeRenderingWidget *NS_VolumeRenderingDataSceneFg;
+    vtkKWEntryWithLabel *EWL_CreateNewVolumeRenderingNodeFg;
+    
     //Frame Details
     vtkSlicerModuleCollapsibleFrame *DetailsFrame;
     

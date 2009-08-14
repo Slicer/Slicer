@@ -69,6 +69,10 @@ vtkVolumeRenderingGUI::vtkVolumeRenderingGUI(void)
   this->NS_VolumeRenderingDataScene=NULL;
   this->EWL_CreateNewVolumeRenderingNode=NULL;
 
+  this->NS_VolumeRenderingDataSlicerFg=NULL;
+  this->NS_VolumeRenderingDataSceneFg=NULL;
+  this->EWL_CreateNewVolumeRenderingNodeFg=NULL;
+  
   //Frame Details
   this->DetailsFrame=NULL;
 
@@ -153,7 +157,26 @@ vtkVolumeRenderingGUI::~vtkVolumeRenderingGUI(void)
     this->EWL_CreateNewVolumeRenderingNode->Delete();
     this->EWL_CreateNewVolumeRenderingNode=NULL;
     }
+  if(this->NS_VolumeRenderingDataSceneFg)
+    {
+    this->NS_VolumeRenderingDataSceneFg->SetParent(NULL);
+    this->NS_VolumeRenderingDataSceneFg->Delete();
+    this->NS_VolumeRenderingDataSceneFg=NULL;
+    }
 
+  if(this->NS_VolumeRenderingDataSlicerFg)
+    {
+    this->NS_VolumeRenderingDataSlicerFg->SetParent(NULL);
+    this->NS_VolumeRenderingDataSlicerFg->Delete();
+    this->NS_VolumeRenderingDataSlicerFg=NULL;
+    }
+
+  if(this->EWL_CreateNewVolumeRenderingNodeFg)
+    {
+    this->EWL_CreateNewVolumeRenderingNodeFg->SetParent(NULL);
+    this->EWL_CreateNewVolumeRenderingNodeFg->Delete();
+    this->EWL_CreateNewVolumeRenderingNodeFg=NULL;
+    }
 
   if(this->Presets)
     {
@@ -209,6 +232,7 @@ void vtkVolumeRenderingGUI::PrintSelf(ostream& os, vtkIndent indent)
     this->GetLogic()->PrintSelf(os,indent.GetNextIndent());
     }
 }
+
 void vtkVolumeRenderingGUI::BuildGUI(void)
 {
   int labelWidth=20;
@@ -217,7 +241,7 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
 
   // Define your help text and build the help frame here.
   const char *help = "Volume Rendering allows the rendering of volumes in 3D space and not only as 2D surfaces defined in 3D space. \n<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:VolumeRendering-Documentation-3.4</a>\n Tutorials are available at <a>http://www.na-mic.org/Wiki/index.php/Slicer3:Volume_Rendering_Tutorials</a>";
-  const char *about = "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. The Volumes module was contributed by Andreas Freudling, Student Intern at SPL, BWH (Ron Kikinis) and Alex Yarmarkovich, Isomics Inc. (Steve Pieper)";
+  const char *about = "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. The VolumeRendering module was contributed by Yanling Liu, SAIC-Frederick, Andreas Freudling, Student Intern at SPL, BWH (Ron Kikinis) and Alex Yarmarkovich, Isomics Inc. (Steve Pieper)";
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "VolumeRendering" );
   this->BuildHelpAndAboutFrame ( page, help, about );
   //
@@ -323,6 +347,51 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
     this->NS_ImageDataFg->SetNodeClass("vtkMRMLScalarVolumeNode","","","");
     this->NS_ImageDataFg->SetChildClassesEnabled(0);
     app->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->NS_ImageDataFg->GetWidgetName());
+    
+    //NodeSelector for VolumeRenderingNode Preset
+    this->NS_VolumeRenderingDataSlicerFg=vtkSlicerNodeSelectorVolumeRenderingWidget::New();
+    this->NS_VolumeRenderingDataSlicerFg->SetParent(inputVolumeFrame->GetFrame());
+    this->NS_VolumeRenderingDataSlicerFg->Create();
+    this->NS_VolumeRenderingDataSlicerFg->SetLabelText("Presets:");
+    this->NS_VolumeRenderingDataSlicerFg->SetBalloonHelpString("Select one of the existing parameter sets or presets.");
+    this->NS_VolumeRenderingDataSlicerFg->SetLabelWidth(labelWidth);
+    this->NS_VolumeRenderingDataSlicerFg->EnabledOff();//By default off
+    this->NS_VolumeRenderingDataSlicerFg->NoneEnabledOn();
+    this->NS_VolumeRenderingDataSlicerFg->SetShowHidden(1);
+    this->NS_VolumeRenderingDataSlicerFg->SetNodeClass("vtkMRMLVolumeRenderingNode","","","");
+    app->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->NS_VolumeRenderingDataSlicerFg->GetWidgetName());
+
+    //NodeSelector for VolumeRenderingNode Scene
+    this->NS_VolumeRenderingDataSceneFg=vtkSlicerNodeSelectorVolumeRenderingWidget::New();
+    this->NS_VolumeRenderingDataSceneFg->SetParent(inputVolumeFrame->GetFrame());
+    this->NS_VolumeRenderingDataSceneFg->Create();
+    this->NS_VolumeRenderingDataSceneFg->NoneEnabledOn();
+    this->NS_VolumeRenderingDataSceneFg->SetLabelText("Current Parameter Set:");
+    this->NS_VolumeRenderingDataSceneFg->SetBalloonHelpString("Select how the volume should be displayed. Several parameter sets per volume are possible");
+    this->NS_VolumeRenderingDataSceneFg->SetLabelWidth(labelWidth);
+    this->NS_VolumeRenderingDataSceneFg->EnabledOff();//By default off
+    this->NS_VolumeRenderingDataSceneFg->SetShowHidden(1);
+    this->NS_VolumeRenderingDataSceneFg->SetNodeClass("vtkMRMLVolumeRenderingNode","","","");
+    app->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->NS_VolumeRenderingDataSceneFg->GetWidgetName());
+    //Missing: Load from file
+  
+    //Create New Volume Rendering Node
+    //Entry With Label
+    this->EWL_CreateNewVolumeRenderingNodeFg=vtkKWEntryWithLabel::New();
+    this->EWL_CreateNewVolumeRenderingNodeFg->SetParent(inputVolumeFrame->GetFrame());
+    this->EWL_CreateNewVolumeRenderingNodeFg->Create();
+    this->EWL_CreateNewVolumeRenderingNodeFg->SetBalloonHelpString("Specify a name for a new parameter set.");
+    this->EWL_CreateNewVolumeRenderingNodeFg->SetLabelText("New Parameter Set:");
+    this->EWL_CreateNewVolumeRenderingNodeFg->SetLabelWidth(labelWidth);
+    this->EWL_CreateNewVolumeRenderingNodeFg->EnabledOff();
+    app->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2", this->EWL_CreateNewVolumeRenderingNodeFg->GetWidgetName());
+  
+    this->PB_CreateNewVolumeRenderingNodeFg=vtkKWPushButton::New();
+    this->PB_CreateNewVolumeRenderingNodeFg->SetParent(inputVolumeFrame->GetFrame());
+    this->PB_CreateNewVolumeRenderingNodeFg->Create();
+    this->PB_CreateNewVolumeRenderingNodeFg->SetBalloonHelpString("Create a new parameter set for the current volume. This way you can switch between different visualization settings for the same volume.");
+    this->PB_CreateNewVolumeRenderingNodeFg->SetText("Create New Visualization Parameter Set");
+    app->Script("pack %s -side top -anchor ne -padx 2 -pady 2",this->PB_CreateNewVolumeRenderingNodeFg->GetWidgetName());
     
     inputVolumeFrame->CollapseFrame();
   }
