@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Portions (c) Copyright 2008 Brigham and Women's Hospital (BWH)
+  Portions (c) Copyright 2009 Brigham and Women's Hospital (BWH)
   All rights reserved.
 
   See Doc/copyright/copyright.txt

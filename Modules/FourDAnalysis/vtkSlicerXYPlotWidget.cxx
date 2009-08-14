@@ -13,7 +13,7 @@
 =========================================================================*/
 #include "vtkCommand.h"
 
-#include "vtkKWPlotGraph.h"
+#include "vtkSlicerXYPlotWidget.h"
 
 #include "vtkKWMultiColumnList.h"
 #include "vtkObjectFactory.h"
@@ -37,12 +37,23 @@
 #include <math.h>
 
 //----------------------------------------------------------------------------
-vtkStandardNewMacro( vtkKWPlotGraph );
-vtkCxxRevisionMacro(vtkKWPlotGraph, "$Revision: 1.49 $");
+vtkStandardNewMacro( vtkSlicerXYPlotWidget );
+vtkCxxRevisionMacro(vtkSlicerXYPlotWidget, "$Revision: 1.49 $");
 
 //----------------------------------------------------------------------------
-vtkKWPlotGraph::vtkKWPlotGraph()
+vtkSlicerXYPlotWidget::vtkSlicerXYPlotWidget()
 {
+
+  // Set up callbacks
+  this->MRMLObserverManager = vtkObserverManager::New();
+  this->MRMLObserverManager->AssignOwner( this );
+  this->MRMLObserverManager->GetCallbackCommand()->SetClientData( reinterpret_cast<void *> (this) );
+  this->MRMLObserverManager->GetCallbackCommand()->SetCallback(vtkSlicerComponentGUI::MRMLCallback);
+  this->MRMLCallbackCommand = this->MRMLObserverManager->GetCallbackCommand();
+
+  this->MRMLScene  = NULL;
+  this->XYPlotNode = NULL;
+
   this->Updating  = 0;
   this->PlotActor = NULL;
   this->PlotDataVector.clear();
@@ -66,7 +77,7 @@ vtkKWPlotGraph::vtkKWPlotGraph()
 
 
 //----------------------------------------------------------------------------
-vtkKWPlotGraph::~vtkKWPlotGraph()
+vtkSlicerXYPlotWidget::~vtkSlicerXYPlotWidget()
 {
 
   this->PlotDataVector.clear();
@@ -80,7 +91,7 @@ vtkKWPlotGraph::~vtkKWPlotGraph()
 }
 
 //----------------------------------------------------------------------------
-void vtkKWPlotGraph::CreateWidget()
+void vtkSlicerXYPlotWidget::CreateWidget()
 {
   // Check if already created
 
@@ -139,131 +150,101 @@ void vtkKWPlotGraph::CreateWidget()
 
 
 //----------------------------------------------------------------------------
-void vtkKWPlotGraph::ClearPlot()
+void vtkSlicerXYPlotWidget::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->PlotDataVector.clear();
+  this->Superclass::PrintSelf(os,indent);
+
+  //os << indent << "Matrix4x4: " << this->GetMatrix4x4() << endl;
 }
 
 
 //----------------------------------------------------------------------------
-int vtkKWPlotGraph::AddPlot(vtkDoubleArray* data, const char* label)
+void vtkSlicerXYPlotWidget::ProcessMRMLEvents ( vtkObject * /*caller*/, 
+                                                unsigned long /*event*/, void * /*callData*/ )
 {
-  PlotDataType plotData;
-  plotData.data    = data;
-  plotData.label   = label;
-  plotData.visible = 1;
 
-  this->PlotDataVector.push_back(plotData);
-  return this->PlotDataVector.size()-1;
 }
 
 
 //----------------------------------------------------------------------------
-void vtkKWPlotGraph::AddVerticalLine(double x)
+// Description:
+// the MRMLCallback is a static function to relay modified events from the 
+// observed mrml node back into the gui layer for further processing
+//
+void vtkSlicerXYPlotWidget::MRMLCallback(vtkObject *caller, 
+                                         unsigned long eid, void *clientData, void *callData)
 {
-  AxisLineType lineData;
-  lineData.pos     = x;
-  lineData.visible = 1;
-  this->VerticalLines.push_back(lineData);
-}
-
-
-//----------------------------------------------------------------------------
-void vtkKWPlotGraph::AddHorizontalLine(double y)
-{
-  AxisLineType lineData;
-  lineData.pos     = y;
-  lineData.visible = 1;
-  this->HorizontalLines.push_back(lineData);
-}
-
-
-//----------------------------------------------------------------------------
-void vtkKWPlotGraph::SetAxisLineColor(double r, double g, double b)
-{
-  this->AxisLineColor[0] = r;
-  this->AxisLineColor[1] = g;
-  this->AxisLineColor[2] = b;
-}
-
-
-//----------------------------------------------------------------------------
-void vtkKWPlotGraph::RemoveLines()
-{
-  this->VerticalLines.clear();
-  this->HorizontalLines.clear();
-}
-
-
-//----------------------------------------------------------------------------
-void vtkKWPlotGraph::SetColor(int id, double r, double g, double b)
-{
-  if (id >= this->PlotDataVector.size())
+  vtkSlicerXYPlotWidget *self = reinterpret_cast<vtkSlicerXYPlotWidget *>(clientData);
+  
+  if (self->GetInMRMLCallbackFlag())
     {
+#ifdef _DEBUG
+    vtkDebugWithObjectMacro(self, "In vtkSlicerXYPlotWidget *********MRMLCallback called recursively?");
+#endif
     return;
     }
-
-  this->PlotDataVector[id].color[0] = r;
-  this->PlotDataVector[id].color[1] = g;
-  this->PlotDataVector[id].color[2] = b;
+  
+  vtkDebugWithObjectMacro(self, "In vtkSlicerXYPlotWidget MRMLCallback");
+  
+  self->SetInMRMLCallbackFlag(1);
+  self->ProcessMRMLEvents(caller, eid, callData);
+  self->SetInMRMLCallbackFlag(0);
 }
 
 
 //----------------------------------------------------------------------------
-void vtkKWPlotGraph::AutoRangeOn()
+void vtkSlicerXYPlotWidget::SetMRMLScene( vtkMRMLScene *aMRMLScene)
 {
-  this->AutoRangeX = 1;
-  this->AutoRangeY = 1;
-}
 
-
-//----------------------------------------------------------------------------
-void vtkKWPlotGraph::AutoRangeOff()
-{
-  this->AutoRangeX = 0;
-  this->AutoRangeY = 0;
-}
-
-
-//----------------------------------------------------------------------------
-void vtkKWPlotGraph::SetXrange(double min, double max)
-{
-  if (min < max)
+  if ( this->MRMLScene )
     {
-    this->AutoRangeX = 0;
-    this->RangeX[0] = min;
-    this->RangeX[1] = max;
+    this->MRMLScene->RemoveObserver( this->MRMLCallbackCommand );
+    this->MRMLScene->Delete ( );
+    this->MRMLScene = NULL;
+    //    this->MRMLScene->Delete();
     }
-}
 
+  this->MRMLScene = aMRMLScene;
 
-//----------------------------------------------------------------------------
-void vtkKWPlotGraph::SetYrange(double min, double max)
-{
-  if (min < max)
+  if ( this->MRMLScene )
     {
-    this->AutoRangeY = 0;
-    this->RangeY[0] = min;
-    this->RangeY[1] = max;
+    this->MRMLScene->Register(this);
+    this->MRMLScene->AddObserver( vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand );
+    this->MRMLScene->AddObserver( vtkMRMLScene::NodeRemovedEvent, this->MRMLCallbackCommand );
+    this->MRMLScene->AddObserver( vtkMRMLScene::NewSceneEvent, this->MRMLCallbackCommand );
+    this->MRMLScene->AddObserver( vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand );
+    this->MRMLScene->AddObserver( vtkMRMLScene::SceneEditedEvent, this->MRMLCallbackCommand );
     }
+
 }
 
 
 //----------------------------------------------------------------------------
-void vtkKWPlotGraph::ErrorBarOn()
+void vtkSlicerXYPlotWidget::SetAndObserveXYPlotNode(vtkMRMLXYPlotNode* node)
 {
-  this->ErrorBar = 1;
+
+  if (this->XYPlotNode)
+    {
+    vtkSetAndObserveMRMLObjectMacro(this->XYPlotNode, NULL);
+    }
+    
+  this->XYPlotNode = node;
+  
+  if (node)
+    {
+    vtkMRMLXYPlotNode* pnode = this->GetXYPlotNode();
+    
+    vtkIntArray *events = vtkIntArray::New();
+    events->InsertNextValue(vtkCommand::ModifiedEvent);
+    vtkSetAndObserveMRMLObjectEventsMacro(this->XYPlotNode, pnode, events);
+    events->Delete();
+    }
+
 }
 
 
 //----------------------------------------------------------------------------
-void vtkKWPlotGraph::ErrorBarOff()
-{
-  this->ErrorBar = 0;
-}
-
-//----------------------------------------------------------------------------
-void vtkKWPlotGraph::UpdateGraph()
+void vtkSlicerXYPlotWidget::UpdateGraph()
 {
   if ( this->Updating ) 
     {
@@ -488,17 +469,140 @@ void vtkKWPlotGraph::UpdateGraph()
 }
 
 
-//----------------------------------------------------------------------------
-void vtkKWPlotGraph::PrintSelf(ostream& os, vtkIndent indent)
-{
-  this->Superclass::PrintSelf(os,indent);
 
-  //os << indent << "Matrix4x4: " << this->GetMatrix4x4() << endl;
+//----------------------------------------------------------------------------
+void vtkSlicerXYPlotWidget::ClearPlot()
+{
+  this->PlotDataVector.clear();
 }
 
 
 //----------------------------------------------------------------------------
-vtkDataObject* vtkKWPlotGraph::CreateDataObjectForLine(double p1[2], double p2[2])
+int vtkSlicerXYPlotWidget::AddPlot(vtkDoubleArray* data, const char* label)
+{
+  PlotDataType plotData;
+  plotData.data    = data;
+  plotData.label   = label;
+  plotData.visible = 1;
+
+  this->PlotDataVector.push_back(plotData);
+  return this->PlotDataVector.size()-1;
+}
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerXYPlotWidget::AddVerticalLine(double x)
+{
+  AxisLineType lineData;
+  lineData.pos     = x;
+  lineData.visible = 1;
+  this->VerticalLines.push_back(lineData);
+}
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerXYPlotWidget::AddHorizontalLine(double y)
+{
+  AxisLineType lineData;
+  lineData.pos     = y;
+  lineData.visible = 1;
+  this->HorizontalLines.push_back(lineData);
+}
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerXYPlotWidget::SetAxisLineColor(double r, double g, double b)
+{
+  this->AxisLineColor[0] = r;
+  this->AxisLineColor[1] = g;
+  this->AxisLineColor[2] = b;
+}
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerXYPlotWidget::RemoveLines()
+{
+  this->VerticalLines.clear();
+  this->HorizontalLines.clear();
+}
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerXYPlotWidget::SetColor(int id, double r, double g, double b)
+{
+  if (id >= this->PlotDataVector.size())
+    {
+    return;
+    }
+
+  this->PlotDataVector[id].color[0] = r;
+  this->PlotDataVector[id].color[1] = g;
+  this->PlotDataVector[id].color[2] = b;
+}
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerXYPlotWidget::AutoRangeOn()
+{
+  this->AutoRangeX = 1;
+  this->AutoRangeY = 1;
+}
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerXYPlotWidget::AutoRangeOff()
+{
+  this->AutoRangeX = 0;
+  this->AutoRangeY = 0;
+}
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerXYPlotWidget::SetXrange(double min, double max)
+{
+  if (min < max)
+    {
+    this->AutoRangeX = 0;
+    this->RangeX[0] = min;
+    this->RangeX[1] = max;
+    }
+}
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerXYPlotWidget::SetYrange(double min, double max)
+{
+  if (min < max)
+    {
+    this->AutoRangeY = 0;
+    this->RangeY[0] = min;
+    this->RangeY[1] = max;
+    }
+}
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerXYPlotWidget::ErrorBarOn()
+{
+  this->ErrorBar = 1;
+}
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerXYPlotWidget::ErrorBarOff()
+{
+  this->ErrorBar = 0;
+}
+
+
+
+
+
+
+
+
+//----------------------------------------------------------------------------
+vtkDataObject* vtkSlicerXYPlotWidget::CreateDataObjectForLine(double p1[2], double p2[2])
 {
 
   vtkDoubleArray* value = vtkDoubleArray::New();
@@ -520,7 +624,7 @@ vtkDataObject* vtkKWPlotGraph::CreateDataObjectForLine(double p1[2], double p2[2
 
 
 //----------------------------------------------------------------------------
-vtkDoubleArray* vtkKWPlotGraph::CreatePlotDataWithErrorBar(vtkDoubleArray* srcData)
+vtkDoubleArray* vtkSlicerXYPlotWidget::CreatePlotDataWithErrorBar(vtkDoubleArray* srcData)
 {
   vtkDoubleArray* plotData;
   plotData = vtkDoubleArray::New();

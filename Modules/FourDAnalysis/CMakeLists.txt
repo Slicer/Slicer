@@ -60,6 +60,8 @@ set(FourDAnalysis_SRCS
   vtkIntensityCurves.cxx
   vtkMRMLCurveAnalysisNode.cxx
   vtkCurveAnalysisPythonInterface.cxx
+#  vtkMRMLDoubleArrayNode.cxx
+#  vtkMRMLXYPlotNode.cxx
 )
 
 
