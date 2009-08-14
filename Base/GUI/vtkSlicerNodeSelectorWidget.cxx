@@ -286,7 +286,6 @@ void vtkSlicerNodeSelectorWidget::UnconditionalUpdateMenu()
 
   this->ClearMenu();
 
-  int count = 0;
   int c=0;
 
   if (this->NewNodeEnabled)
@@ -316,8 +315,7 @@ void vtkSlicerNodeSelectorWidget::UnconditionalUpdateMenu()
         std::stringstream sc;
         sc << "ProcessNewNodeCommand " << this->GetNodeClass(c) << " \"" << name << "\"";
 
-        this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton(ss.str().c_str());
-        this->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(count++, this, sc.str().c_str() );
+        this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton(ss.str().c_str(), this, sc.str().c_str());
         this->GetWidget()->GetWidget()->SetValue(ss.str().c_str());
         }
       }
@@ -325,8 +323,7 @@ void vtkSlicerNodeSelectorWidget::UnconditionalUpdateMenu()
 
   if (this->NoneEnabled)
     {
-    this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton("None");
-    this->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(count++, this, "ProcessCommand None");
+    this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton("None", this, "ProcessCommand None");
     }
 
   vtkMRMLNode *node = NULL;
@@ -334,7 +331,7 @@ void vtkSlicerNodeSelectorWidget::UnconditionalUpdateMenu()
   std::string selectedName;
   bool selected = false;
   int resultAddAdditionalNodes=this->AddAditionalNodes();
-  count +=resultAddAdditionalNodes;
+  int columnBreakEvery = 30;
   for (c=0; c < this->GetNumberOfNodeClasses(); c++)
   {
     const char *className = this->GetNodeClass(c);
@@ -367,13 +364,57 @@ void vtkSlicerNodeSelectorWidget::UnconditionalUpdateMenu()
 
           std::string entryName = this->MakeEntryName(node);
           this->NodeID_to_EntryName[node->GetID()] = entryName.c_str();
-          this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton(entryName.c_str());
-          // do we need a column break?
-          if (count != 0 && count % 30 == 0)
+
+          // does this node have a category?
+          if (node->GetAttribute("Category") != NULL)
             {
-            this->GetWidget()->GetWidget()->GetMenu()->SetItemColumnBreak(count, 1);
+            // is there a cascade for this category already?
+            int categoryIndex = this->GetWidget()->GetWidget()->GetMenu()->GetIndexOfItem(node->GetAttribute("Category"));
+            if (categoryIndex == -1)
+              {
+              vtkKWMenu *categoryMenu = vtkKWMenu::New();
+              categoryMenu->SetParent(this->GetWidget()->GetWidget()->GetMenu());
+              categoryMenu->Create();
+              categoryIndex = this->GetWidget()->GetWidget()->GetMenu()->AddCascade(node->GetAttribute("Category"), categoryMenu);
+              int nodeIndex = categoryMenu->AddRadioButton(entryName.c_str(), this, sc.str().c_str());
+              // do we need a column break? number of items needs to be
+              // decremented to match with the nodeIndex returned which is 0 based
+              int count = categoryMenu->GetNumberOfItems() - 1;
+              if (count != 0 && count % columnBreakEvery == 0)
+                {
+                categoryMenu->SetItemColumnBreak(count, 1);
+                }
+              categoryMenu->Delete();
+              }
+            else
+              {
+              // Adding this node to cascade with categoryIndex
+              vtkKWMenu *categoryMenu = this->GetWidget()->GetWidget()->GetMenu()->GetItemCascade(categoryIndex);
+              if (categoryMenu)
+                {
+                categoryMenu->AddRadioButton(entryName.c_str(), this, sc.str().c_str());
+                // do we need a column break?
+                int count = categoryMenu->GetNumberOfItems() - 1;
+                if (count != 0 && count % columnBreakEvery == 0)
+                  {
+                  categoryMenu->SetItemColumnBreak(count, 1);
+                  }
+                }
+              }
             }
-          this->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(count++, this, sc.str().c_str());
+          else
+            {
+            // uncategorised nodes will end up scattered amid the category
+            // cascades, but that saves having to do two passes through the
+            // list of nodes to get out all the nodes by category
+            this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton(entryName.c_str(), this, sc.str().c_str());
+            // do we need a column break?
+            int count = this->GetWidget()->GetWidget()->GetMenu()->GetNumberOfItems() - 1;
+            if (count  != 0 && count % columnBreakEvery == 0)
+              {
+              this->GetWidget()->GetWidget()->GetMenu()->SetItemColumnBreak(count, 1);
+              }
+            }
           if (oldSelectedNode == node)
           {
             selectedNode = node;
