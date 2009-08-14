@@ -21,8 +21,8 @@ subdirs(
   Filter
   #CommandLine
   Mesh
-  BuildingBlock
   Widgets
+  BuildingBlock
   IA_FEMesh
 )
 

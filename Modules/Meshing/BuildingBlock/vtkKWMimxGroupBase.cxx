@@ -24,7 +24,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "vtkKWMimxGroupBase.h"
 
 #include "vtkKWMimxMainMenuGroup.h"
-#include <vtkMimxUnstructuredGridWidget.h>
+#include "vtkMimxUnstructuredGridWidget.h"
 
 #include "vtkActor.h"
 #include "vtkMimxBoundingBoxSource.h"
