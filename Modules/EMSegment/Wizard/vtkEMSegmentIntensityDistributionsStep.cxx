@@ -225,6 +225,8 @@ vtkEMSegmentIntensityDistributionsStep::
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
 {
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro("ShowUserInterface");
+
   this->Superclass::ShowUserInterface();
 
   vtkKWWizardWidget *wizardWidget = this->GetGUI()->GetWizardWidget();
@@ -239,6 +241,7 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
   {
     return;
   }
+
   vtkIdType volId = mrmlManager->GetTreeRootNodeID();
 
   const char *rootNode = anatomicalStep->GetAnatomicalStructureTree()->
@@ -272,7 +275,7 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     this->IntensityDistributionNotebook->AddPage(
       "Intensity Distribution");
     //this->IntensityDistributionNotebook->AddPage("Manual S");
-    this->IntensityDistributionNotebook->AddPage("Labelmap S");
+    this->IntensityDistributionNotebook->AddPage("Labelmap");
     this->IntensityDistributionNotebook->AddPage("Visualization");
   }
 
@@ -281,7 +284,7 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
   //vtkKWFrame *manual_sampling_page =
     //this->IntensityDistributionNotebook->GetFrame("Manual S");
   vtkKWFrame *labelPage =
-    this->IntensityDistributionNotebook->GetFrame("Labelmap S");
+    this->IntensityDistributionNotebook->GetFrame("Labelmap");
   vtkKWFrame *gaussianPage =
     this->IntensityDistributionNotebook->GetFrame("Visualization");
 
@@ -753,12 +756,16 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
         SetValue("");
       }
     }
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro("ShowUserInterface end");
 }
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::
-  PopulateGaussian2DVolumeXSelector()
+PopulateGaussian2DVolumeXSelector()
 {
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "PopulateGaussian2DVolumeXSelector");
+
   vtkIdType target_vol_id;
   char buffer[256];
 
@@ -768,6 +775,7 @@ void vtkEMSegmentIntensityDistributionsStep::
     {
     return;
     }
+
   int numTargets = mrmlManager->GetTargetNumberOfSelectedVolumes();
 
   vtkKWMenu* menu = this->Gaussian2DVolumeXMenuButton->
@@ -777,36 +785,45 @@ void vtkEMSegmentIntensityDistributionsStep::
   // Update the target volume list in the menu button
 
   for(int i = 0; i < numTargets; i++)
-    {
+  {
     target_vol_id = mrmlManager->GetTargetSelectedVolumeNthID(i);
-    sprintf(buffer, "%s %d", 
-            "IntensityDistributionTargetSelectionChangedCallback", 
-            static_cast<int>(target_vol_id));
+    sprintf(buffer, "%s %d",
+        "IntensityDistributionTargetSelectionChangedCallback",
+        static_cast<int>(target_vol_id));
     const char *name = mrmlManager->GetVolumeName(target_vol_id);
     if (name)
-      {
+    {
       menu->AddRadioButton(name, this, buffer);
-      if (i == 0)
-        {
+      if(i == 0)
+      {
         this->Gaussian2DVolumeXMenuButton->GetWidget()->SetValue(name);
-        }
       }
     }
+  }
+
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "PopulateGaussian2DVolumeXSelector end");
 }
+
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::
   PopulateGaussian2DVolumeYSelector()
-{  
+{
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "PopulateGaussian2DVolumeYSelector");
+
   vtkIdType target_vol_id;
   char buffer[256];
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  if (!mrmlManager)
+
+  if(!mrmlManager)
     {
     return;
     }
+
   int numTargets = mrmlManager->GetTargetNumberOfSelectedVolumes();
-  
+
   vtkKWMenu* menu = this->Gaussian2DVolumeYMenuButton->
     GetWidget()->GetMenu();
   menu->DeleteAllItems();
@@ -816,8 +833,8 @@ void vtkEMSegmentIntensityDistributionsStep::
   for(int i = 0; i < numTargets; i++)
     {
     target_vol_id = mrmlManager->GetTargetSelectedVolumeNthID(i);
-    sprintf(buffer, "%s %d", 
-            "IntensityDistributionTargetSelectionChangedCallback", 
+    sprintf(buffer, "%s %d",
+            "IntensityDistributionTargetSelectionChangedCallback",
             static_cast<int>(target_vol_id));
     const char *name = mrmlManager->GetVolumeName(target_vol_id);
     if (name)
@@ -829,21 +846,30 @@ void vtkEMSegmentIntensityDistributionsStep::
         }
       }
     }
+
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "PopulateGaussian2DVolumeYSelector end");
 }
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::
 PopulateIntensityDistributionTargetVolumeSelector()
 {
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "PopulateIntensityDistributionTargetVolumeSelector");
+
   vtkIdType target_volId;
   char buffer[256];
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+
   if (!mrmlManager)
-    {
+  {
     return;
-    }
+  }
+
   int numTargets = mrmlManager->GetTargetNumberOfSelectedVolumes();
+
   vtkKWMenu* menu = this->IntensityDistributionHistogramButton->
     GetWidget()->GetMenu();
   menu->DeleteAllItems();
@@ -862,21 +888,24 @@ PopulateIntensityDistributionTargetVolumeSelector()
       menu->AddRadioButton(name, this, buffer);
       }
     }
+
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "PopulateIntensityDistributionTargetVolumeSelector end");
 }
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::
   Gaussian2DVolumeXSelectionChangedCallback(vtkIdType target_volId)
 {
-  std::cout << __LINE__ << " Gaussian2DVolumeXSelectionChangedCallback"
-    <<std::endl;
-  std::cout << __LINE__ << " vol id: "<< target_volId <<std::endl;
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "Gaussian2DVolumeXSelectionChangedCallback");
+
+  //std::cout << __LINE__ << " vol id: "<< target_volId <<std::endl;
 
   //vtkDataArray* array = this->GetGUI()->GetMRMLManager()->GetVolumeNode(
   //    target_volId)->GetImageData()->GetPointData()->GetScalars();
 
   //double* range = array->GetRange();
-
 }
 
 //----------------------------------------------------------------------------
@@ -922,32 +951,40 @@ PopulateGaussian2DVolumeXSelector()
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::HideUserInterface()
 {
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro("HideUserInterface");
+
   this->Superclass::HideUserInterface();
   this->RemoveManualIntensitySamplingGUIObservers();
   this->RemoveGaussian2DButtonGUIEvents();
   this->RemoveLabelButtonGUIEventsObservers();
   this->RemoveLabelSelectorGUIObservers();
+
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro("HideUserInterface end");
 }
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::
 DisplaySelectedNodeIntensityDistributionsCallback()
 {
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "DisplaySelectedNodeIntensityDistributionsCallback");
+
   // Update the UI with the proper value, if there is a selection
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+
   if (!mrmlManager)
-    {
+  {
     return;
-    }
+  }
 
   vtkEMSegmentAnatomicalStructureStep *anatomicalStep =
     this->GetGUI()->GetAnatomicalStructureStep();
 
   if (!anatomicalStep)
-    {
+  {
     return;
-    }
+  }
 
   vtkKWTree *tree = anatomicalStep->GetAnatomicalStructureTree()->GetWidget();
   vtksys_stl::string sel_node;
@@ -1170,15 +1207,17 @@ DisplaySelectedNodeIntensityDistributionsCallback()
       this->IntensityDistributionManualSamplingList->SetEnabled(0);
       }
     }
-    
+
     // Enable/disable labelmap page
-    
+
     if (this->IntensityDistributionNotebook)
     {
-    this->IntensityDistributionNotebook->SetPageEnabled(
-      "Labelmap S", label_sample_mode);
+      this->IntensityDistributionNotebook->SetPageEnabled(
+          "Labelmap S", label_sample_mode);
     }
 
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "DisplaySelectedNodeIntensityDistributionsCallback end");
 }
 
 //-------------------------------------------------------------------
@@ -1186,29 +1225,37 @@ void vtkEMSegmentIntensityDistributionsStep::
 IntensityDistributionSpecificationCallback(
   vtkIdType selVolId, int type)
 {
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "IntensityDistributionSpecificationCallback");
+
   // The distribution specification has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+
   if (!mrmlManager)
-    {
+  {
     return;
-    }
+  }
+
   if (type != mrmlManager->
       GetTreeNodeDistributionSpecificationMethod(selVolId))
-    {
+  {
     mrmlManager->SetTreeNodeDistributionSpecificationMethod(selVolId, type);
     this->DisplaySelectedNodeIntensityDistributionsCallback();
-    }
+  }
+
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "IntensityDistributionSpecificationCallback end");
 }
 
 //-------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::Gaussian2DRenderingCallback(
   vtkIdType selVolId, int type)
 {
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "Gaussian2DRenderingCallback");
+
   // The rendering type has changed because of user interaction
-  std::cout << __LINE__ <<
-    " vtkEMSegmentIntensityDistributionsStep::Gaussian2DRenderingCallback"
-    << std::endl;
   /*
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   if (!mrmlManager)
@@ -1229,14 +1276,22 @@ void vtkEMSegmentIntensityDistributionsStep::
 IntensityDistributionMeanChangedCallback(
     vtkIdType selVolId, int row, int col, const char *value)
 {
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "IntensityDistributionMeanChangedCallback");
+
   // The distribution mean vector has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+
   if (!mrmlManager)
-    {
+  {
     return;
-    }
+  }
+
   mrmlManager->SetTreeNodeDistributionLogMean(selVolId, col, atof(value));
+
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "IntensityDistributionMeanChangedCallback end");
 }
 
 //-------------------------------------------------------------------
@@ -1245,51 +1300,67 @@ vtkEMSegmentIntensityDistributionsStep::
 IntensityDistributionCovarianceChangedCallback(
   vtkIdType selVolId, int row, int col, const char *value)
 {
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "IntensityDistributionCovarianceChangedCallback");
+
   // The distribution covariance matrix has changed because of user
   // interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+
   if (!mrmlManager)
-    {
+  {
     return;
-    }
+  }
+
   mrmlManager->SetTreeNodeDistributionLogCovariance(selVolId, row,
       col, atof(value));
+
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "IntensityDistributionCovarianceChangedCallback end");
 }
 
 //-------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::
-AddIntensityDistributionSamplePoint( double ras[3])
+AddIntensityDistributionSamplePoint(double ras[3])
 {
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "AddIntensityDistributionSamplePoint");
+
   // Since it is not a callback, make sure we are really allowed to add
   // a sample point now
 
   vtkKWWizardWidget *wizardWidget = this->GetGUI()->GetWizardWidget();
 
   if (!wizardWidget)
-    {
+  {
     return;
-    }
+  }
 
   if(wizardWidget->GetWizardWorkflow()->GetCurrentStep() != this)
-    {
+  {
     return;
-    }
+  }
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+
   if (!mrmlManager)
-    {
+  {
     return;
-    }
+  }
+
   vtkEMSegmentAnatomicalStructureStep *anatomicalStep =
     this->GetGUI()->GetAnatomicalStructureStep();
+
   if (!anatomicalStep)
-    {
+  {
     return;
-    }
+  }
+
   vtkKWTree *tree = anatomicalStep->GetAnatomicalStructureTree()->GetWidget();
   vtksys_stl::string sel_node;
   vtkIdType selVolId;
+
   if (tree->HasSelection())
     {
     sel_node = tree->GetSelection();
@@ -1311,19 +1382,27 @@ AddIntensityDistributionSamplePoint( double ras[3])
       list->SeeRow(nb_samples - 1);
       }
     }
+
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "AddIntensityDistributionSamplePoint end");
 }
 
 //-------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::
 PopupManualIntensitySampleContextMenuCallback(int row, int, int x, int y)
 {
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "PopupManualIntensitySampleContextMenuCallback");
+
   vtkEMSegmentAnatomicalStructureStep *anatomicalStep =
     this->GetGUI()->GetAnatomicalStructureStep();
+
   vtkKWTree *tree = anatomicalStep->GetAnatomicalStructureTree()->GetWidget();
+
   if (!tree->HasSelection())
-    {
+  {
     return;
-    }
+  }
 
   vtksys_stl::string sel_node(tree->GetSelection());
   vtkIdType selVolId = tree->GetNodeUserDataAsInt(sel_node.c_str());
@@ -1333,70 +1412,84 @@ PopupManualIntensitySampleContextMenuCallback(int row, int, int x, int y)
   list->SelectSingleRow(row);
 
   if (!this->ContextMenu)
-    {
+  {
     this->ContextMenu = vtkKWMenu::New();
-    }
+  }
   if (!this->ContextMenu->IsCreated())
-    {
+  {
     this->ContextMenu->SetParent(list);
     this->ContextMenu->Create();
-    }
+  }
 
   char buffer[256];
   this->ContextMenu->DeleteAllItems();
 
-  if (row >= 0)
-    {
+  if(row >= 0)
+  {
     sprintf( buffer, "DeleteManualIntensitySampleCallback %d %d",
       static_cast<int>(selVolId), row);
     this->ContextMenu->AddCommand("Delete sample", this, buffer);
-    }
+  }
 
-  if (list->GetNumberOfRows())
-    {
+  if(list->GetNumberOfRows())
+  {
     sprintf(buffer, "DeleteAllManualIntensitySampleCallback %d",
             static_cast<int>(selVolId));
     this->ContextMenu->AddCommand("Delete all samples", this, buffer);
-    }
+  }
 
-  this->ContextMenu->PopUp(x, y);
+  this->ContextMenu->PopUp(x,y);
+
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "PopupManualIntensitySampleContextMenuCallback end");
 }
 
 //-------------------------------------------------------------------
-void
-vtkEMSegmentIntensityDistributionsStep::
+void vtkEMSegmentIntensityDistributionsStep::
 DeleteManualIntensitySampleCallback( vtkIdType selVolId,
     int sample_index)
 {
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "DeleteManualIntensitySampleCallback");
+
   // A sample has been deleted because of user interaction
 
-  if (sample_index >= 0)
-    {
+  if(sample_index >= 0)
+  {
     vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->
       GetMRMLManager();
+
     if (!mrmlManager)
-      {
+    {
       return;
-      }
+    }
+
     vtkKWMultiColumnList *list =
       this->IntensityDistributionManualSamplingList->GetWidget()->
       GetWidget();
+
     if (!list)
-      {
+    {
       return;
-      }
+    }
+
     list->DeleteRow(sample_index);
     mrmlManager->RemoveTreeNodeDistributionSamplePoint(selVolId,
         sample_index);
     this->DisplaySelectedNodeIntensityDistributionsCallback();
-    }
+  }
+
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "DeleteManualIntensitySampleCallback end");
 }
 
 //-------------------------------------------------------------------
-void
-vtkEMSegmentIntensityDistributionsStep::
+void vtkEMSegmentIntensityDistributionsStep::
 DeleteAllManualIntensitySampleCallback(vtkIdType selVolId)
 {
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "DeleteAllManualIntensitySampleCallback");
+
   // All samples have been deleted because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
@@ -1405,18 +1498,25 @@ DeleteAllManualIntensitySampleCallback(vtkIdType selVolId)
     IntensityDistributionManualSamplingList->GetWidget()->GetWidget();
 
   if (!mrmlManager || !list)
-    {
+  {
     return;
-    }
+  }
+
   list->DeleteAllRows();
   mrmlManager->RemoveAllTreeNodeDistributionSamplePoints(selVolId);
   this->DisplaySelectedNodeIntensityDistributionsCallback();
+
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "DeleteAllManualIntensitySampleCallback end");
 }
 
 //-------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::
 AddManualIntensitySamplingGUIObservers()
 {
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "AddManualIntensitySamplingGUIObservers");
+
   // Slice GUI 0
 
   vtkRenderWindowInteractor *rwi0 = vtkSlicerApplicationGUI::SafeDownCast(
@@ -1444,12 +1544,19 @@ AddManualIntensitySamplingGUIObservers()
     GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
 
   rwi2->GetInteractorStyle()->AddObserver(
-    vtkCommand::LeftButtonPressEvent, this->GetGUI()->GetGUICallbackCommand());
+    vtkCommand::LeftButtonPressEvent,this->GetGUI()->GetGUICallbackCommand());
+
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "AddManualIntensitySamplingGUIObservers end");
 }
 
 //---------------------------------------------------------------------------
-void vtkEMSegmentIntensityDistributionsStep::RemoveManualIntensitySamplingGUIObservers()
+void vtkEMSegmentIntensityDistributionsStep::
+RemoveManualIntensitySamplingGUIObservers()
 {
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "RemoveManualIntensitySamplingGUIObservers");
+
   // Slice GUI 0
 
   vtkRenderWindowInteractor *rwi0 = vtkSlicerApplicationGUI::SafeDownCast(
@@ -1457,7 +1564,7 @@ void vtkEMSegmentIntensityDistributionsStep::RemoveManualIntensitySamplingGUIObs
     GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
 
   rwi0->GetInteractorStyle()->RemoveObservers(
-    vtkCommand::LeftButtonPressEvent, this->GetGUI()->GetGUICallbackCommand());
+    vtkCommand::LeftButtonPressEvent,this->GetGUI()->GetGUICallbackCommand());
 
   // Slice GUI 1
 
@@ -1466,7 +1573,7 @@ void vtkEMSegmentIntensityDistributionsStep::RemoveManualIntensitySamplingGUIObs
     GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
 
   rwi1->GetInteractorStyle()->RemoveObservers(
-    vtkCommand::LeftButtonPressEvent, this->GetGUI()->GetGUICallbackCommand());
+    vtkCommand::LeftButtonPressEvent,this->GetGUI()->GetGUICallbackCommand());
 
   // Slice GUI 2
 
@@ -1475,18 +1582,24 @@ void vtkEMSegmentIntensityDistributionsStep::RemoveManualIntensitySamplingGUIObs
     GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
 
   rwi2->GetInteractorStyle()->RemoveObservers(
-    vtkCommand::LeftButtonPressEvent, this->GetGUI()->GetGUICallbackCommand());
+    vtkCommand::LeftButtonPressEvent,this->GetGUI()->GetGUICallbackCommand());
+
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "RemoveManualIntensitySamplingGUIObservers end");
 }
 
 //---------------------------------------------------------------------------
-void vtkEMSegmentIntensityDistributionsStep::ProcessManualIntensitySamplingGUIEvents(
-  vtkObject *caller,
-  unsigned long event,
-  void *callData) 
+void vtkEMSegmentIntensityDistributionsStep::
+ProcessManualIntensitySamplingGUIEvents(
+  vtkObject *caller, unsigned long event, void *callData)
 {
-  vtkSlicerInteractorStyle *s = vtkSlicerInteractorStyle::SafeDownCast(caller);
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "ProcessManualIntensitySamplingGUIEvents");
 
-  if (s && 
+  vtkSlicerInteractorStyle *s =
+    vtkSlicerInteractorStyle::SafeDownCast(caller);
+
+  if (s &&
       event == vtkCommand::LeftButtonPressEvent &&
       s->GetInteractor()->GetControlKey())
     {
@@ -1542,6 +1655,9 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessManualIntensitySamplingGUIEv
 
     this->AddIntensityDistributionSamplePoint(ras);
     }
+
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "ProcessManualIntensitySamplingGUIEvents end");
 }
 
 //----------------------------------------------------------------------------
@@ -1555,15 +1671,19 @@ void vtkEMSegmentIntensityDistributionsStep::PrintSelf(ostream& os, vtkIndent
 void vtkEMSegmentIntensityDistributionsStep::GetNumberOfLeaf(
   const char *parent, vtkIdType volId)
 {
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "GetNumberOfLeaf");
+
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
   int numChildren = mrmlManager->GetTreeNodeNumberOfChildren(volId);
 
   if(numChildren == 0)
   {
-  this->NumberOfLeaves = this->NumberOfLeaves +1;
-  this->LeafId[this->NumberOfLeaves-1] = static_cast<int>(volId);
-  this->LeafLabel[this->NumberOfLeaves-1] = mrmlManager->GetTreeNodeIntensityLabel(this->LeafId[this->NumberOfLeaves-1]);
+    this->NumberOfLeaves = this->NumberOfLeaves +1;
+    this->LeafId[this->NumberOfLeaves-1] = static_cast<int>(volId);
+    this->LeafLabel[this->NumberOfLeaves-1] = mrmlManager->
+      GetTreeNodeIntensityLabel(this->LeafId[this->NumberOfLeaves-1]);
   }
 
   for (int i = 0; i < numChildren; i++)
@@ -1571,11 +1691,18 @@ void vtkEMSegmentIntensityDistributionsStep::GetNumberOfLeaf(
     this->GetNumberOfLeaf( NULL, mrmlManager->GetTreeNodeChildNodeID(volId,
           i));
   }
+
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "GetNumberOfLeaf end");
 }
+
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::
 IntensityDistributionTargetSelectionChangedCallback(vtkIdType targetVolId)
 {
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "IntensityDistributionTargetSelectionChangedCallback");
+
   double meanX;
   double meanY;
   double varianceX;
@@ -1627,12 +1754,17 @@ IntensityDistributionTargetSelectionChangedCallback(vtkIdType targetVolId)
   }
 
   this->Gaussian2DWidget->Render();
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "IntensityDistributionTargetSelectionChangedCallback end");
 }
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::ProcessGaussian2DButtonGUIEvents(
     vtkObject *caller, unsigned long event, void *callData)
 {
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "ProcessGaussian2DButtonGUIEvents");
+
   if (event == vtkKWPushButton::InvokedEvent && caller ==
       this->Gaussian2DButton)
   {
@@ -1642,7 +1774,8 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessGaussian2DButtonGUIEvents(
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::AddGaussian2DButtonGUIEvents()
 {
-  std::cout << __LINE__ << " AddGaussian2DButtonGUIEvents" << std::endl;
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "AddGaussian2DButtonGUIEvents");
 
   this->Gaussian2DButton->AddObserver(vtkKWPushButton::InvokedEvent,
       this->GetGUI()->GetGUICallbackCommand());
@@ -1651,7 +1784,9 @@ void vtkEMSegmentIntensityDistributionsStep::AddGaussian2DButtonGUIEvents()
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::RemoveGaussian2DButtonGUIEvents()
 {
-  std::cout << __LINE__ << " RemoveGaussian2DButtonGUIEvents" << std::endl;
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "RemoveGaussian2DButtonGUIEvents");
+
   this->Gaussian2DButton->RemoveObservers(vtkKWPushButton::InvokedEvent,
       this->GetGUI()->GetGUICallbackCommand());
 }
@@ -1659,48 +1794,55 @@ void vtkEMSegmentIntensityDistributionsStep::RemoveGaussian2DButtonGUIEvents()
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::GetGaussian2DTargetVolumes()
 {
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "GetGaussian2DTargetVolumes");
+
   vtkIdType target_volId;
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+
   if (!mrmlManager)
-    {
+  {
     return;
-    }
+  }
 
   int numTargets = mrmlManager->GetTargetNumberOfSelectedVolumes();
 
   for(int i = 0; i < numTargets; i++)
-    {
+  {
     target_volId = mrmlManager->GetTargetSelectedVolumeNthID(i);
     const char *name = mrmlManager->GetVolumeName(target_volId);
-
-    //std::cout<<"NAME: "<<name<<std::endl;
-    //std::cout<<"X: "<<this->Gaussian2DVolumeXMenuButton->GetWidget()->GetValue()<<std::endl;
-    //std::cout<<"Y: "<<this->Gaussian2DVolumeYMenuButton->GetWidget()->GetValue()<<std::endl;
 
     vtkDataArray* array = this->GetGUI()->GetMRMLManager()->GetVolumeNode(
       target_volId)->GetImageData()->GetPointData()->GetScalars();
 
     double* range = array->GetRange();
 
-    if(strcmp(this->Gaussian2DVolumeXMenuButton->GetWidget()->GetValue(),name) == 0)
-      {
-      //std::cout<<"COMP SUCCEED IN X"<<std::endl;
+    if(!strcmp(this->Gaussian2DVolumeXMenuButton->GetWidget()->GetValue(),
+          name))
+    {
       this->TargetVolumeX=i;
       this->TargetVolumeXRange=range;
-      }
-    if(strcmp(this->Gaussian2DVolumeYMenuButton->GetWidget()->GetValue(),name) == 0)
-      {
-      //std::cout<<"COMP SUCCEED IN Y"<<std::endl;
+    }
+
+    if(!strcmp(this->Gaussian2DVolumeYMenuButton->GetWidget()->GetValue(),
+          name))
+    {
       this->TargetVolumeY=i;
       this->TargetVolumeYRange=range;
-      }
     }
-}
-//-------------------------------------------------------------------
+  }
 
-void vtkEMSegmentIntensityDistributionsStep::AddLabelButtonGUIEventsObservers()
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "GetGaussian2DTargetVolumes end");
+}
+
+//----------------------------------------------------------------------------
+void vtkEMSegmentIntensityDistributionsStep::
+AddLabelButtonGUIEventsObservers()
 {
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "AddLabelButtonGUIEventsObservers");
 
   this->LabelmapButton->AddObserver(vtkKWPushButton::InvokedEvent,
       this->GetGUI()->GetGUICallbackCommand());
@@ -1710,6 +1852,9 @@ void vtkEMSegmentIntensityDistributionsStep::AddLabelButtonGUIEventsObservers()
 void vtkEMSegmentIntensityDistributionsStep::
 RemoveLabelButtonGUIEventsObservers()
 {
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "RemoveLabelButtonGUIEventsObservers");
+
   this->LabelmapButton->RemoveObservers(vtkKWPushButton::InvokedEvent,
       this->GetGUI()->GetGUICallbackCommand());
 }
@@ -1718,105 +1863,108 @@ RemoveLabelButtonGUIEventsObservers()
 void vtkEMSegmentIntensityDistributionsStep::ProcessLabelButtonGUIEvents(
   vtkObject *caller, unsigned long event, void *callData)
 {
- if (event == vtkKWPushButton::InvokedEvent &&
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "ProcessLabelButtonGUIEvents");
+
+  if(event == vtkKWPushButton::InvokedEvent &&
     caller == this->LabelmapButton)
- {
-  vtkEMSegmentMRMLManager *mrmlManager =
-    this->GetGUI()->GetMRMLManager();
-
-  vtkMRMLScalarVolumeNode *labelVolume =
-    mrmlManager->GetOutputVolumeNode();
-
-  if(labelVolume == NULL)
   {
-    vtkErrorMacro("No label volume found");
-    return;
-  }
+    vtkEMSegmentMRMLManager *mrmlManager =
+      this->GetGUI()->GetMRMLManager();
 
-  if(labelVolume->GetImageData() == NULL)
-  {
-    vtkErrorMacro("Label Map has no data");
-    return;
-  }
+    vtkMRMLScalarVolumeNode *labelVolume =
+      mrmlManager->GetOutputVolumeNode();
 
-  if(labelVolume->GetImageData()->GetScalarType() != VTK_SHORT)
-  {
-    vtkErrorMacro("Scalar type of Label Map must be SHORT. Label Map type: "
+    if(labelVolume == NULL)
+    {
+      vtkErrorMacro("No label volume found");
+      return;
+    }
+
+    if(labelVolume->GetImageData() == NULL)
+    {
+      vtkErrorMacro("Label Map has no data");
+      return;
+    }
+
+    if(labelVolume->GetImageData()->GetScalarType() != VTK_SHORT)
+    {
+      vtkErrorMacro("Scalar type of Label Map must be SHORT. Label Map type: "
       << labelVolume->GetImageData()->GetScalarTypeAsString());
-    return;
-  }
+      return;
+    }
 
-  if (labelVolume->GetImageData()->GetNumberOfScalarComponents() != 1)
-  {
-    vtkErrorMacro("Label map must have voxels with 1 component. "
+    if (labelVolume->GetImageData()->GetNumberOfScalarComponents() != 1)
+    {
+      vtkErrorMacro("Label map must have voxels with 1 component. "
       << "The voxels in the label map have "
       << labelVolume->GetImageData()->GetNumberOfScalarComponents()
       << " components.");
-    return;
-  }
+      return;
+    }
 
-  int dim[3];
-  int labelExtent[6];
+    int dim[3];
+    int labelExtent[6];
 
-  labelVolume->GetImageData()->GetDimensions(dim);
-  labelVolume->GetImageData()->GetWholeExtent(labelExtent);
+    labelVolume->GetImageData()->GetDimensions(dim);
+    labelVolume->GetImageData()->GetWholeExtent(labelExtent);
 
-  if (dim[0] == 0 && dim[1] == 0 && dim[2] == 0)
-  {
-    vtkErrorMacro("Invalid dimensions for LabelMap: "
+    if (dim[0] == 0 && dim[1] == 0 && dim[2] == 0)
+    {
+      vtkErrorMacro("Invalid dimensions for LabelMap: "
         << dim[0] << " " << dim[1] << " " << dim[2]);
-    return;
-  }
+      return;
+    }
 
-  if (labelExtent[1] < labelExtent[0] ||
-      labelExtent[3] < labelExtent[2] ||
-      labelExtent[5] < labelExtent[4])
-  {
-    vtkErrorMacro("Invalid extent for LabelMap:"
+    if (labelExtent[1] < labelExtent[0] ||
+        labelExtent[3] < labelExtent[2] ||
+        labelExtent[5] < labelExtent[4])
+    {
+      vtkErrorMacro("Invalid extent for LabelMap:"
         << " " << labelExtent[0] << " " << labelExtent[1]
         << " " << labelExtent[2] << " " << labelExtent[3]
         << " " << labelExtent[4] << " " << labelExtent[5]);
-    return;
-  }
-
-  int numTargetImages = mrmlManager->GetTargetNumberOfSelectedVolumes();
-      if (numTargetImages < 1)
-  {
-    vtkErrorMacro("Invalid number of target images: " << numTargetImages);
-    return;
-  }
-
-  vtkIdType volumeID;
-
-  int extent[6];
-
-  for (int m=0; m < numTargetImages; m++)
-  {
-    volumeID = mrmlManager->GetTargetSelectedVolumeNthID(m);
-
-    vtkMRMLVolumeNode *targetVolume = mrmlManager->GetVolumeNode(volumeID);
-
-    if (targetVolume == NULL)
-    {
-      vtkErrorMacro("No target volume for ID " << volumeID);
       return;
     }
 
-    vtkImageData *targetImage = targetVolume->GetImageData();
+    int numTargetImages = mrmlManager->GetTargetNumberOfSelectedVolumes();
 
-    if (targetImage == NULL)
+    if (numTargetImages < 1)
     {
-      vtkErrorMacro("Target volume has no data");
+      vtkErrorMacro("Invalid number of target images: " << numTargetImages);
       return;
     }
 
-    targetImage->GetWholeExtent(extent);
+    vtkIdType volumeID;
+    int extent[6];
 
-    if (extent[0] != labelExtent[0] || extent[1] != labelExtent[1] ||
-        extent[2] != labelExtent[2] || extent[3] != labelExtent[3] ||
-        extent[4] != labelExtent[4] || extent[5] != labelExtent[5])
+    for (int m=0; m < numTargetImages; m++)
     {
-      vtkErrorMacro("Label Map has whole extent "
+      volumeID = mrmlManager->GetTargetSelectedVolumeNthID(m);
+
+      vtkMRMLVolumeNode *targetVolume = mrmlManager->GetVolumeNode(volumeID);
+
+      if (targetVolume == NULL)
+      {
+        vtkErrorMacro("No target volume for ID " << volumeID);
+        return;
+      }
+
+      vtkImageData *targetImage = targetVolume->GetImageData();
+
+      if (targetImage == NULL)
+      {
+        vtkErrorMacro("Target volume has no data");
+        return;
+      }
+
+      targetImage->GetWholeExtent(extent);
+
+      if (extent[0] != labelExtent[0] || extent[1] != labelExtent[1] ||
+          extent[2] != labelExtent[2] || extent[3] != labelExtent[3] ||
+          extent[4] != labelExtent[4] || extent[5] != labelExtent[5])
+      {
+        vtkErrorMacro("Label Map has whole extent "
           << labelExtent[0] << " " << labelExtent[1] << " "
           << labelExtent[2] << " " << labelExtent[3] << " "
           << labelExtent[4] << " " << labelExtent[5]
@@ -1824,190 +1972,205 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessLabelButtonGUIEvents(
           << extent[0] << " " << extent[1] << " "
           << extent[2] << " " << extent[3] << " "
           << extent[4] << " " << extent[5]);
-      return;
-    }
+        return;
+      }
 
-    if (targetImage->GetNumberOfScalarComponents() != 1)
-    {
-      vtkErrorMacro("Voxels in Target Volume must have 1 component. "
+      if (targetImage->GetNumberOfScalarComponents() != 1)
+      {
+        vtkErrorMacro("Voxels in Target Volume must have 1 component. "
           << "The voxels in the Target Volume " << volumeID << " have "
           << targetImage->GetNumberOfScalarComponents()
           << " components.");
-      return;
-    }
-  }
-
-  int numValues = this->NumberOfLeaves * numTargetImages;
-
-  vtkstd::vector<double>        meanIntensity(numValues, 0);
-  vtkstd::vector<double>     meanLogIntensity(numValues, 0);
-  vtkstd::vector<unsigned int> countIntensity(numValues, 0);
-    vtkstd::vector<double>     intensityMinRange(numValues, VTK_DOUBLE_MAX);
-  vtkstd::vector<double>     intensityMaxRange(numValues, VTK_DOUBLE_MIN);
-
-  short *ptr = (short*) labelVolume->GetImageData()->GetScalarPointer();
-
-  int id;
-  double intensity;
-  double logIntensity;
-
-  vtkMRMLVolumeNode *targetVolume;
-  vtkImageData      *targetImage;
-    for (int k=0; k < dim[2]; k++)
-  {
-    for (int j=0; j < dim[1]; j++)
-    {
-      for (int i=0; i < dim[0]; i++, ptr++)
-      {
-              short label = *ptr;
-
-        if (label)
-        {
-          for (int l=0; l < this->NumberOfLeaves; l++)
-          {
-            if (label == this->LeafLabel[l])
-            {
-              for (int m=0; m < numTargetImages; m++)
-              {
-              id = l * numTargetImages + m;
-
-              volumeID = mrmlManager->GetTargetSelectedVolumeNthID(m);
-
-              targetVolume = mrmlManager->GetVolumeNode(volumeID);
-
-              targetImage = targetVolume->GetImageData();
-
-              intensity =
-                targetImage->GetScalarComponentAsDouble(i,j,k,0)+1;
-
-              meanIntensity[id]    += intensity;
-              meanLogIntensity[id] += log(intensity);
-              countIntensity[id]++;
-              if( intensity < intensityMinRange[id] )
-                { intensityMinRange[id] = intensity; }
-              if( intensity > intensityMaxRange[id] )
-                { intensityMaxRange[id] = intensity; }
-              }
-            }
-          }
-        }
+        return;
       }
     }
-  }
 
-  for (int j=0; j < this->NumberOfLeaves; j++)
-  {
-    for (int i=0; i < numTargetImages; i++)
+    int numValues = this->NumberOfLeaves * numTargetImages;
+
+    vtkstd::vector<double>       meanIntensity(numValues, 0);
+    vtkstd::vector<double>       meanLogIntensity(numValues, 0);
+    vtkstd::vector<unsigned int> countIntensity(numValues, 0);
+
+    short *ptr =
+      static_cast<short*>(labelVolume->GetImageData()->GetScalarPointer());
+
+    int id;
+    double range[2] = {VTK_DOUBLE_MAX,VTK_DOUBLE_MIN};
+
+    double intensity;
+    double logIntensity;
+
+    vtkMRMLVolumeNode *targetVolume;
+    vtkImageData      *targetImage;
+
+    for(int k=0; k < dim[2]; k++)
     {
-      id = j * numTargetImages + i;
-
-      if (countIntensity[id])
+      for(int j=0; j < dim[1]; j++)
       {
-        meanIntensity[id] /= (double) countIntensity[id];
-                vtkErrorMacro("mean: "<<meanIntensity[id]);
-        vtkErrorMacro("min: "<<intensityMinRange[id]);
-        vtkErrorMacro("max: "<<intensityMaxRange[id]);
-                //meanIntensity[id] -= intensityMinRange[id];
-        meanIntensity[id] = (meanIntensity[id]-intensityMinRange[id])/(intensityMaxRange[id]-intensityMinRange[id]+1);
-                vtkErrorMacro("mean normalized: "<<meanIntensity[id]);
-                meanLogIntensity[id] /= (double) countIntensity[id];
-      }
-    }
-  }
-
-  ptr = (short*) labelVolume->GetImageData()->GetScalarPointer();
-
-  numValues *= numTargetImages;
-
-  vtkstd::vector<double>    covarianceMatrix(numValues, 0.0);
-  vtkstd::vector<double> covarianceLogMatrix(numValues, 0.0);
-
-  int id1, id2;
-
-  for (int k=0; k < dim[2]; k++)
-  {
-    for (int j=0; j < dim[1]; j++)
-    {
-      for (int i=0; i < dim[0]; i++, ptr++)
-      {
-        short label = *ptr;
-
-        if (label)
+        for(int i=0; i < dim[0]; i++, ptr++)
         {
-          for (int l=0; l < this->NumberOfLeaves; l++)
+          short label = *ptr;
+
+          if(label)
           {
-            if (label == this->LeafLabel[l])
+            for(int l=0; l < this->NumberOfLeaves; l++)
             {
-              for (int m=0; m < numTargetImages; m++)
+              if (label == this->LeafLabel[l])
               {
-                id1 = l * numTargetImages + m;
+                for(int m=0; m < numTargetImages; m++)
+                {
+                  id = l * numTargetImages + m;
 
-                volumeID = mrmlManager->GetTargetSelectedVolumeNthID(m);
-
-                targetVolume = mrmlManager->GetVolumeNode(volumeID);
-
-                targetImage = targetVolume->GetImageData();
-
-                double intensity1 =
-                  targetImage->GetScalarComponentAsDouble(i,j,k,0)+1;
-                double logIntensity1 =
-                  log(targetImage->GetScalarComponentAsDouble(i,j,k,0)+1);
-                //intensity1 -=  intensityMinRange[id1];
-                intensity1 =
-                  (intensity1-intensityMinRange[id1])/(intensityMaxRange[id1]-intensityMinRange[id1]+1);
-
-                double diff1 = intensity1 - meanIntensity[id1];
-
-                double logDiff1 = logIntensity1 - meanLogIntensity[id1];
-
-                for (int n=0; n < numTargetImages; n++)
-                  {
-                  id2 = l * numTargetImages + n;
-
-                  volumeID = mrmlManager->GetTargetSelectedVolumeNthID(n);
+                  volumeID = mrmlManager->GetTargetSelectedVolumeNthID(m);
 
                   targetVolume = mrmlManager->GetVolumeNode(volumeID);
 
                   targetImage = targetVolume->GetImageData();
 
-                  double intensity2 =
-                    targetImage->GetScalarComponentAsDouble(i,j,k,0)+1;
+                  intensity =
+                    targetImage->GetScalarComponentAsDouble(i,j,k,0);
 
-                  double logIntensity2 =
-                    log(targetImage->GetScalarComponentAsDouble(i,j,k,0)+1);
+                  meanIntensity[id]    += intensity;
+                  meanLogIntensity[id] += log(intensity+1);
 
-                  //intensity2 -=  intensityMinRange[id2];
-                  intensity2 =
-                    (intensity2-intensityMinRange[id2])/(intensityMaxRange[id2]-intensityMinRange[id2]+1);
+                  countIntensity[id]++;
 
-                  double diff2 = intensity2 - meanIntensity[id2];
-
-                  double logDiff2 = logIntensity2 - meanLogIntensity[id2];
-
-                  id = id1 * numTargetImages + n;
-
-                  covarianceMatrix[id]    += diff1    * diff2;
-                  covarianceLogMatrix[id] += logDiff1 * logDiff2;
-                  }
+                  if( intensity < range[0] ) { range[0] = intensity; }
+                  if( intensity > range[1] ) { range[1] = intensity; }
+                }
               }
-              continue;
             }
           }
         }
       }
     }
-  }
 
-  for (int l=0; l < this->NumberOfLeaves; l++)
+    if(range[0] >= range[1])
+    {
+      vtkErrorMacro("Invalid range " << range[0] << " " << range[1]);
+      return;
+    }
+
+    double factor = 1.0 / (range[1]-range[0]);
+
+    for(int j=0; j < this->NumberOfLeaves; j++)
+    {
+      for (int i=0; i < numTargetImages; i++)
+      {
+        id = j * numTargetImages + i;
+
+        if (countIntensity[id])
+        {
+          meanIntensity[id]    /= static_cast<double>(countIntensity[id]);
+          meanLogIntensity[id] /= static_cast<double>(countIntensity[id]);
+
+          vtkErrorMacro("mean: "<<meanIntensity[id]);
+          vtkErrorMacro("min: "<<range[0]);
+          vtkErrorMacro("max: "<<range[1]);
+
+          meanIntensity[id] -= range[0];
+          meanIntensity[id] *= factor;
+
+          vtkErrorMacro("mean normalized: "<<meanIntensity[id]);
+        }
+      }
+    }
+
+    ptr =
+      static_cast<short*>(labelVolume->GetImageData()->GetScalarPointer());
+
+    numValues *= numTargetImages;
+
+    vtkstd::vector<double>    covarianceMatrix(numValues,0.0);
+    vtkstd::vector<double> covarianceLogMatrix(numValues,0.0);
+
+    int id1;
+    int id2;
+
+    for(int k=0; k < dim[2]; k++)
+    {
+      for(int j=0; j < dim[1]; j++)
+      {
+        for(int i=0; i < dim[0]; i++, ptr++)
+        {
+          short label = *ptr;
+
+          if (label)
+          {
+            for(int l=0; l < this->NumberOfLeaves; l++)
+            {
+              if(label == this->LeafLabel[l])
+              {
+                for(int m=0; m < numTargetImages; m++)
+                {
+                  id1 = l * numTargetImages + m;
+
+                  volumeID = mrmlManager->GetTargetSelectedVolumeNthID(m);
+
+                  targetVolume = mrmlManager->GetVolumeNode(volumeID);
+                  targetImage = targetVolume->GetImageData();
+
+                  double intensity1 =
+                    targetImage->GetScalarComponentAsDouble(i,j,k,0);
+
+                  double logIntensity1 = log(intensity1+1);
+
+                  intensity1 -= range[0];
+                  intensity1 *= factor;
+
+                  double diff1    = intensity1    - meanIntensity[id1];
+                  double logDiff1 = logIntensity1 - meanLogIntensity[id1];
+
+                  for(int n=0; n < numTargetImages; n++)
+                  {
+                    id2 = l * numTargetImages + n;
+
+                    volumeID = mrmlManager->GetTargetSelectedVolumeNthID(n);
+
+                    targetVolume = mrmlManager->GetVolumeNode(volumeID);
+                    targetImage = targetVolume->GetImageData();
+
+                    double intensity2 =
+                      targetImage->GetScalarComponentAsDouble(i,j,k,0);
+
+                    double logIntensity2 = log(intensity2+1);
+
+                    intensity2 -= range[0];
+                    intensity2 *= factor;
+
+                    double diff2    = intensity2    - meanIntensity[id2];
+                    double logDiff2 = logIntensity2 - meanLogIntensity[id2];
+
+                    id = id1 * numTargetImages + n;
+
+                    covarianceMatrix[id]    += diff1 * diff2;
+                    covarianceLogMatrix[id] += logDiff1 * logDiff2;
+                  }
+                }
+                continue;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    for (int l=0; l < this->NumberOfLeaves; l++)
     {
       vtkIdType leaf = this->LeafId[l];
+
       for (int m=0; m < numTargetImages; m++)
       {
         id1 = l * numTargetImages + m;
-        intensity = meanIntensity[id1];
+
+        intensity    = meanIntensity[id1];
         logIntensity = meanLogIntensity[id1];
-        mrmlManager->SetTreeNodeDistributionLogMean(leaf, m, logIntensity);
-        mrmlManager->SetTreeNodeDistributionMean(   leaf, m,    intensity);
+
+        mrmlManager->SetTreeNodeDistributionMean(leaf,m,intensity);
+        mrmlManager->SetTreeNodeDistributionLogMean(leaf,m,logIntensity);
+
+        factor = countIntensity[id1] > 1 ?
+          1.0/static_cast<double>(countIntensity[id1]-1) : 1.0;
 
         for (int n=0; n < numTargetImages; n++)
         {
@@ -2015,16 +2178,21 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessLabelButtonGUIEvents(
 
           if (countIntensity[id1] > 1)
           {
-            covarianceMatrix[id]    /= (double) (countIntensity[id1] - 1);
-            covarianceLogMatrix[id] /= (double) (countIntensity[id1] - 1);
+            covarianceMatrix[id]    *= factor;
+            covarianceLogMatrix[id] *= factor;
           }
+
           mrmlManager->SetTreeNodeDistributionLogCovariance(leaf,m,n,
             covarianceLogMatrix[id]);
           mrmlManager->SetTreeNodeDistributionCovariance(leaf,m,n,
             covarianceMatrix[id]);
         }
       }
-    }     }
+    }
+  }
+
+  vtkEMSegmentIntensityDistributionsStep_DebugMacro(
+      "ProcessLabelButtonGUIEvents end");
 }
 
 //---------------------------------------------------------------------------
