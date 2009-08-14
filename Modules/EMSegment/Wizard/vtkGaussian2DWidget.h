@@ -30,8 +30,6 @@
 #include "vtkEMSegment.h"
 #include "vtkKWRenderWidget.h"
 
-class vtkCellArray;
-
 class VTK_EMSEGMENT_EXPORT vtkGaussian2DWidget : public vtkKWRenderWidget
 {
 public:
@@ -41,18 +39,18 @@ public:
 
   // Description:
   // Define the resolution for the gaussian representation
-  vtkSetVector2Macro(Resolution, int);
-  vtkGetVector2Macro(Resolution, int);
+  vtkSetVector2Macro(Resolution,int);
+  vtkGetVector2Macro(Resolution,int);
 
   // Description:
   // Define the range of intensities in image 1 (X axis)
-  vtkSetVector2Macro(ScalarRangeX, double);
-  vtkGetVector2Macro(ScalarRangeX, double);
+  vtkSetVector2Macro(ScalarRangeX,double);
+  vtkGetVector2Macro(ScalarRangeX,double);
 
   // Description:
   // Define the range of intensities in image 2 (Y axis)
-  vtkSetVector2Macro(ScalarRangeY, double);
-  vtkGetVector2Macro(ScalarRangeY, double);
+  vtkSetVector2Macro(ScalarRangeY,double);
+  vtkGetVector2Macro(ScalarRangeY,double);
 
   // Description:
   // Set the mean and standard deviation to define an additional
@@ -66,45 +64,20 @@ public:
       double hue);
 
   // Description:
-  // Set the mean and standard deviation to define an additional
-  // gaussian distribution
-  virtual int AddCovarianceMatrix(
-      double meanX,
-      double meanY,
-      double varianceX,
-      double varianceY,
-      double covariance,
-      double hue);
-
-  // Description:
-  // Set the mean and standard deviation to define an additional
-  // gaussian distribution
-  virtual int AddVariances(
-      double meanX,
-      double meanY,
-      double varianceX,
-      double varianceY,
-      double hue);
-
-  // Description:
-  // Set gaussian visibility on
-  virtual void ShowGaussian(int gaussianID);
-
-  // Description:
-  // Set gaussian visibility off
-  virtual void HideGaussian(int gaussianID);
-
-  // Description:
   // Remove all the gaussians without deleting the widget
   virtual void RemoveAllGaussians();
+
+  // Description:
+  // Render the gaussian distribution with a given id
+  void ShowGaussian(int gaussianID);
+
+  // Description:
+  // Do not render the gaussian distribution with a given id
+  void HideGaussian(int gaussianID);
 
 protected:
   vtkGaussian2DWidget();
   ~vtkGaussian2DWidget();
-
-  int EigenDecomposition(
-    double varianceX, double varianceY, double covariance,
-    double &sine, double &cosine, double &lambda1, double &lambda2);
 
   int DrawGaussian(
     double meanX,
@@ -117,8 +90,6 @@ protected:
     double lambda1,
     double lambda2,
     double hue);
-
-  vtkCellArray *Strips;
 
   double ScalarRangeX[2];
   double ScalarRangeY[2];
