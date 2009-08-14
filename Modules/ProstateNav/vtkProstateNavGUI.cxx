@@ -179,6 +179,7 @@ vtkProstateNavGUI::~vtkProstateNavGUI ( )
 
   if (this->ProstateNavManager)
     {
+    this->ProstateNavManager->ClearSteps();
     this->ProstateNavManager->Delete();
     }
 
