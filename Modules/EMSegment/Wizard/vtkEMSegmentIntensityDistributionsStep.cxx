@@ -77,8 +77,15 @@
 #include "vtkSlicerInteractorStyle.h"
 #include "vtkSlicerNodeSelectorWidget.h"
 
-#define EMS_DEBUG_MACRO(msg) std::cout << __LINE__ << " EMSegment " << msg \
-  << std::endl;
+#define vtkEMSegmentIntensityDistributionsStep_DebugMacro(msg) \
+  std::cout << "\n" << __FILE__ << "\n\tLine:" << __LINE__ \
+  << "\t" << msg << std::endl;
+
+#define vtkEMSegmentIntensityDistributionsStep_ErrorMacro(msg) \
+  std::cout << "\n" << __FILE__ << "\n\tLine:" << __LINE__ \
+  << "\tERROR: " << msg << std::endl; \
+  std::cerr << "\n" << __FILE__ << "\n\tLine:" << __LINE__ \
+  << "\tERROR: " << msg << std::endl;
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkEMSegmentIntensityDistributionsStep);
@@ -118,111 +125,106 @@ vtkEMSegmentIntensityDistributionsStep()
 vtkEMSegmentIntensityDistributionsStep::
 ~vtkEMSegmentIntensityDistributionsStep()
 {
-  EMS_DEBUG_MACRO("destructor start");
-
-  if (this->LabelSelector)
-    {
+  if(this->LabelSelector)
+  {
     this->LabelSelector->Delete();
     this->LabelSelector = NULL;
-    }
+  }
 
-  if (this->Gaussian2DVolumeYMenuButton)
-    {
+  if(this->Gaussian2DVolumeYMenuButton)
+  {
     this->Gaussian2DVolumeYMenuButton->Delete();
     this->Gaussian2DVolumeYMenuButton = NULL;
-    }
+  }
 
-  if (this->Gaussian2DVolumeXMenuButton)
-    {
+  if(this->Gaussian2DVolumeXMenuButton)
+  {
     this->Gaussian2DVolumeXMenuButton->Delete();
     this->Gaussian2DVolumeXMenuButton = NULL;
-    }
+  }
 
-  if (this->LabelmapButton)
-    {
+  if(this->LabelmapButton)
+  {
     this->LabelmapButton->Delete();
     this->LabelmapButton = NULL;
-    }
+  }
 
-  if (this->Gaussian2DButton)
-    {
+  if(this->Gaussian2DButton)
+  {
     this->Gaussian2DButton->Delete();
     this->Gaussian2DButton = NULL;
-    }
+  }
 
-  if (this->NumClassesEntryLabel)
-    {
+  if(this->NumClassesEntryLabel)
+  {
     this->NumClassesEntryLabel->Delete();
     this->NumClassesEntryLabel = NULL;
-    }
+  }
 
-  if (this->IntensityDistributionHistogramButton)
-    {
+  if(this->IntensityDistributionHistogramButton)
+  {
     this->IntensityDistributionHistogramButton->Delete();
     this->IntensityDistributionHistogramButton = NULL;
-    }
+  }
 
-  if (this->IntensityDistributionHistogramFrame)
-    {
+  if(this->IntensityDistributionHistogramFrame)
+  {
     this->IntensityDistributionHistogramFrame->Delete();
     this->IntensityDistributionHistogramFrame = NULL;
-    }
+  }
 
-  if (this->IntensityDistributionNotebook)
-    {
+  if(this->IntensityDistributionNotebook)
+  {
     this->IntensityDistributionNotebook->Delete();
     this->IntensityDistributionNotebook = NULL;
-    }
+  }
 
-  if (this->IntensityDistributionSpecificationMenuButton)
-    {
+  if(this->IntensityDistributionSpecificationMenuButton)
+  {
     this->IntensityDistributionSpecificationMenuButton->Delete();
     this->IntensityDistributionSpecificationMenuButton = NULL;
-    }
+  }
 
-  if (this->IntensityDistributionMeanMatrix)
-    {
+  if(this->IntensityDistributionMeanMatrix)
+  {
     this->IntensityDistributionMeanMatrix->Delete();
     this->IntensityDistributionMeanMatrix = NULL;
-    }
+  }
 
-  if (this->IntensityDistributionCovarianceMatrix)
-    {
+  if(this->IntensityDistributionCovarianceMatrix)
+  {
     this->IntensityDistributionCovarianceMatrix->Delete();
     this->IntensityDistributionCovarianceMatrix = NULL;
-    }
+  }
 
-  if (this->IntensityDistributionManualSamplingList)
-    {
+  if(this->IntensityDistributionManualSamplingList)
+  {
     this->IntensityDistributionManualSamplingList->Delete();
     this->IntensityDistributionManualSamplingList = NULL;
-    }
+  }
 
-  if (this->ContextMenu)
-    {
+  if(this->ContextMenu)
+  {
     this->ContextMenu->Delete();
     this->ContextMenu = NULL;
-    }
+  }
 
-  if (this->Gaussian2DWidget)
-    {
+  if(this->Gaussian2DWidget)
+  {
     this->Gaussian2DWidget->Delete();
     this->Gaussian2DWidget = NULL;
-    }
+  }
 
-  if (this->Gaussian2DRenderingMenuButton)
-    {
+  if(this->Gaussian2DRenderingMenuButton)
+  {
     this->Gaussian2DRenderingMenuButton->Delete();
     this->Gaussian2DRenderingMenuButton = NULL;
-    }
-
-  EMS_DEBUG_MACRO("destructor end");
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
 {
-  EMS_DEBUG_MACRO("ShowUserInterface start");
   this->Superclass::ShowUserInterface();
 
   vtkKWWizardWidget *wizardWidget = this->GetGUI()->GetWizardWidget();
@@ -234,18 +236,18 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   if (!mrmlManager)
-    {
+  {
     return;
-    }
+  }
   vtkIdType volId = mrmlManager->GetTreeRootNodeID();
 
   const char *rootNode = anatomicalStep->GetAnatomicalStructureTree()->
     GetWidget()->FindNodeWithUserDataAsInt(NULL,volId);
 
-  if (rootNode && *rootNode)
-    {
+  if(rootNode && *rootNode)
+  {
     anatomicalStep->SetAnatomicalTreeParentNodeSelectableState(rootNode, 0);
-    }
+  }
 
   this->AddManualIntensitySamplingGUIObservers();
 
@@ -259,25 +261,25 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
 
   // Create the notebook
 
-  if (!this->IntensityDistributionNotebook)
-    {
+  if(!this->IntensityDistributionNotebook)
+  {
     this->IntensityDistributionNotebook = vtkKWNotebook::New();
-    }
-  if (!this->IntensityDistributionNotebook->IsCreated())
-    {
+  }
+  if(!this->IntensityDistributionNotebook->IsCreated())
+  {
     this->IntensityDistributionNotebook->SetParent(parent);
     this->IntensityDistributionNotebook->Create();
     this->IntensityDistributionNotebook->AddPage(
       "Intensity Distribution");
-    this->IntensityDistributionNotebook->AddPage("Manual S");
+    //this->IntensityDistributionNotebook->AddPage("Manual S");
     this->IntensityDistributionNotebook->AddPage("Labelmap S");
     this->IntensityDistributionNotebook->AddPage("Visualization");
-    }
+  }
 
   vtkKWFrame *intensity_page = this->IntensityDistributionNotebook->
     GetFrame("Intensity Distribution");
-  vtkKWFrame *manual_sampling_page =
-    this->IntensityDistributionNotebook->GetFrame("Manual S");
+  //vtkKWFrame *manual_sampling_page =
+    //this->IntensityDistributionNotebook->GetFrame("Manual S");
   vtkKWFrame *labelPage =
     this->IntensityDistributionNotebook->GetFrame("Labelmap S");
   vtkKWFrame *gaussianPage =
@@ -370,7 +372,7 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
 
   this->Script("pack %s -side top -expand n -fill x -padx 2 -pady 2",
       this->IntensityDistributionCovarianceMatrix->GetWidgetName());
-
+#if 0
   // Create the manual sampling frame
 
   if (!this->IntensityDistributionManualSamplingList)
@@ -402,7 +404,7 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
   this->Script(
     "pack %s -side top -anchor nw -fill both -expand y -padx 0 -pady 2",
     this->IntensityDistributionManualSamplingList->GetWidgetName());
-
+#endif
   // Update the UI with the proper value, if there is a selection
 
   this->DisplaySelectedNodeIntensityDistributionsCallback();
@@ -410,7 +412,6 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
   // Create the Labelmap page
 
   // Create the preview volume selector
-             
   if (!this->LabelSelector)
     {
     this->LabelSelector = vtkSlicerNodeSelectorWidget::New();
@@ -418,8 +419,8 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
   if (!this->LabelSelector->IsCreated())
     {
     this->LabelSelector->SetNodeClass(
-      "vtkMRMLScalarVolumeNode", 
-      "LabelMap", "1", 
+      "vtkMRMLScalarVolumeNode",
+      "LabelMap", "1",
       "LabelMap Sampling");
     this->LabelSelector->SetNewNodeEnabled(0);
     this->LabelSelector->SetParent(
@@ -440,18 +441,18 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
       this->LabelSelector->GetMRMLScene()->
       GetNodeByID(mrmlManager->GetOutputVolumeMRMLID()));
     }
-    
+
   this->Script(
-    "pack %s -side top -anchor nw -padx 2 -pady 2", 
-    this->LabelSelector->GetWidgetName()); 
-    
+    "pack %s -side top -anchor nw -padx 2 -pady 2",
+    this->LabelSelector->GetWidgetName());
+
     if (!this->LabelmapButton)
     {
     this->LabelmapButton = vtkKWPushButton::New();
     }
- 
+
   this->AddLabelSelectorGUIObservers();
- 
+
   // Button to compute mean and covariance from labelmap
 
   if (!this->LabelmapButton->IsCreated())
@@ -767,7 +768,7 @@ void vtkEMSegmentIntensityDistributionsStep::
     {
     return;
     }
-  int nb_of_target_volumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
+  int numTargets = mrmlManager->GetTargetNumberOfSelectedVolumes();
 
   vtkKWMenu* menu = this->Gaussian2DVolumeXMenuButton->
     GetWidget()->GetMenu();
@@ -775,7 +776,7 @@ void vtkEMSegmentIntensityDistributionsStep::
 
   // Update the target volume list in the menu button
 
-  for(int i = 0; i < nb_of_target_volumes; i++)
+  for(int i = 0; i < numTargets; i++)
     {
     target_vol_id = mrmlManager->GetTargetSelectedVolumeNthID(i);
     sprintf(buffer, "%s %d", 
@@ -804,7 +805,7 @@ void vtkEMSegmentIntensityDistributionsStep::
     {
     return;
     }
-  int nb_of_target_volumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
+  int numTargets = mrmlManager->GetTargetNumberOfSelectedVolumes();
   
   vtkKWMenu* menu = this->Gaussian2DVolumeYMenuButton->
     GetWidget()->GetMenu();
@@ -812,7 +813,7 @@ void vtkEMSegmentIntensityDistributionsStep::
 
   // Update the target volume list in the menu button
 
-  for(int i = 0; i < nb_of_target_volumes; i++)
+  for(int i = 0; i < numTargets; i++)
     {
     target_vol_id = mrmlManager->GetTargetSelectedVolumeNthID(i);
     sprintf(buffer, "%s %d", 
@@ -834,7 +835,6 @@ void vtkEMSegmentIntensityDistributionsStep::
 void vtkEMSegmentIntensityDistributionsStep::
 PopulateIntensityDistributionTargetVolumeSelector()
 {
-  EMS_DEBUG_MACRO("ShowUserInterface");
   vtkIdType target_volId;
   char buffer[256];
 
@@ -843,14 +843,14 @@ PopulateIntensityDistributionTargetVolumeSelector()
     {
     return;
     }
-  int nb_of_target_volumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
+  int numTargets = mrmlManager->GetTargetNumberOfSelectedVolumes();
   vtkKWMenu* menu = this->IntensityDistributionHistogramButton->
     GetWidget()->GetMenu();
   menu->DeleteAllItems();
 
   // Update the target volume list in the menu button
 
-  for(int i = 0; i < nb_of_target_volumes; i++)
+  for(int i = 0; i < numTargets; i++)
     {
     target_volId = mrmlManager->GetTargetSelectedVolumeNthID(i);
     sprintf(buffer, "%s %d",
@@ -883,7 +883,6 @@ void vtkEMSegmentIntensityDistributionsStep::
 /*void vtkEMSegmentIntensityDistributionsStep::
 PopulateGaussian2DVolumeXSelector()
 {
-  EMS_DEBUG_MACRO("ShowUserInterface");
   std::cout << __LINE__ << " PopulateGaussian2DVolumeXSelector" << std::endl;
   vtkIdType target_volId;
   char buffer[256];
@@ -895,13 +894,13 @@ PopulateGaussian2DVolumeXSelector()
     return;
     }
 
-  int nb_of_target_volumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
+  int numTargets = mrmlManager->GetTargetNumberOfSelectedVolumes();
   vtkKWMenu* menu = this->Gaussian2DVolumeXMenuButton->GetWidget()->GetMenu();
   menu->DeleteAllItems();
 
   // Update the target volume list in the menu button
 
-  for(int i = 0; i < nb_of_target_volumes; i++)
+  for(int i = 0; i < numTargets; i++)
     {
     target_volId = mrmlManager->GetTargetSelectedVolumeNthID(i);
 
@@ -923,7 +922,6 @@ PopulateGaussian2DVolumeXSelector()
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::HideUserInterface()
 {
-  EMS_DEBUG_MACRO("HideUserInterface");
   this->Superclass::HideUserInterface();
   this->RemoveManualIntensitySamplingGUIObservers();
   this->RemoveGaussian2DButtonGUIEvents();
@@ -935,7 +933,6 @@ void vtkEMSegmentIntensityDistributionsStep::HideUserInterface()
 void vtkEMSegmentIntensityDistributionsStep::
 DisplaySelectedNodeIntensityDistributionsCallback()
 {
-  EMS_DEBUG_MACRO("ShowUserInterface");
   // Update the UI with the proper value, if there is a selection
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
@@ -961,7 +958,7 @@ DisplaySelectedNodeIntensityDistributionsCallback()
   int hasValidSelection = tree->HasSelection();
 
   if (hasValidSelection)
-    {
+  {
     sel_node = tree->GetSelection();
     selVolId = tree->GetNodeUserDataAsInt(sel_node.c_str());
     hasValidSelection = mrmlManager->GetTreeNodeIsLeaf(selVolId);
@@ -971,11 +968,11 @@ DisplaySelectedNodeIntensityDistributionsCallback()
     label_sample_mode =
       mrmlManager->GetTreeNodeDistributionSpecificationMethod(selVolId) ==
       vtkEMSegmentMRMLManager::DistributionSpecificationLabelSample;
-    }
+  }
 
   int enabled = tree->GetEnabled();
   int row, col;
-  int nb_of_target_volumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
+  int numTargets = mrmlManager->GetTargetNumberOfSelectedVolumes();
   char buffer[256];
 
   // Update the distribution specification menu button
@@ -989,49 +986,49 @@ DisplaySelectedNodeIntensityDistributionsCallback()
       {
       vtksys_stl::string value;
       this->IntensityDistributionSpecificationMenuButton->SetEnabled(enabled);
-      sprintf(
-        buffer, "IntensityDistributionSpecificationCallback %d %d",
-        static_cast<int>(selVolId), vtkEMSegmentMRMLManager::
-        DistributionSpecificationManual);
-      menu->AddRadioButton("Manual", this, buffer);
-      sprintf(
-        buffer, "IntensityDistributionSpecificationCallback %d %d",
-        static_cast<int>(selVolId),vtkEMSegmentMRMLManager::
-        DistributionSpecificationManuallySample);
-      menu->AddRadioButton("Manual Sampling", this, buffer);
+      //sprintf(
+      //  buffer, "IntensityDistributionSpecificationCallback %d %d",
+      //  static_cast<int>(selVolId), vtkEMSegmentMRMLManager::
+      //  DistributionSpecificationManual);
+      //menu->AddRadioButton("Manual", this, buffer);
+      //sprintf(
+      //  buffer, "IntensityDistributionSpecificationCallback %d %d",
+      //  static_cast<int>(selVolId),vtkEMSegmentMRMLManager::
+      //  DistributionSpecificationManuallySample);
+      //menu->AddRadioButton("Manual Sampling", this, buffer);
       sprintf(
         buffer, "IntensityDistributionSpecificationCallback %d %d",
         static_cast<int>(selVolId), vtkEMSegmentMRMLManager::
         DistributionSpecificationLabelSample);
       menu->AddRadioButton("Labelmap Sampling", this, buffer);
-      sprintf(
-        buffer, "IntensityDistributionSpecificationCallback %d %d",
-        static_cast<int>(selVolId), vtkEMSegmentMRMLManager::
-        DistributionSpecificationAutoSample);
-      menu->AddRadioButton("Auto Sampling", this, buffer);
+      //sprintf(
+      //  buffer, "IntensityDistributionSpecificationCallback %d %d",
+      //  static_cast<int>(selVolId), vtkEMSegmentMRMLManager::
+      //  DistributionSpecificationAutoSample);
+      //menu->AddRadioButton("Auto Sampling", this, buffer);
 
       // temporarily disable auto sampling because it is not currently
       // implemented
-      menu->SetItemStateToDisabled("Auto Sampling");
+      //menu->SetItemStateToDisabled("Auto Sampling");
 
-      switch (mrmlManager->GetTreeNodeDistributionSpecificationMethod(
+      switch(mrmlManager->GetTreeNodeDistributionSpecificationMethod(
             selVolId))
         {
-        case vtkEMSegmentMRMLManager::DistributionSpecificationManual:
-          value = "Manual";
-          break;
-        case vtkEMSegmentMRMLManager::
-        DistributionSpecificationManuallySample:
-          value = "Manual Sampling";
-          break;
+        //case vtkEMSegmentMRMLManager::DistributionSpecificationManual:
+        //  value = "Manual";
+        //  break;
+        //case vtkEMSegmentMRMLManager::
+        //DistributionSpecificationManuallySample:
+        //  value = "Manual Sampling";
+        //  break;
         case vtkEMSegmentMRMLManager::
         DistributionSpecificationLabelSample:
           value = "Label Sampling";
           break;
-        case vtkEMSegmentMRMLManager::
-        DistributionSpecificationAutoSample:
-          value = "Auto Sampling";
-          break;
+        //case vtkEMSegmentMRMLManager::
+        //DistributionSpecificationAutoSample:
+        //  value = "Auto Sampling";
+        //  break;
         }
       this->IntensityDistributionSpecificationMenuButton->GetWidget()->
         SetValue(value.c_str());
@@ -1053,8 +1050,8 @@ DisplaySelectedNodeIntensityDistributionsCallback()
     if (hasValidSelection)
       {
       this->IntensityDistributionMeanMatrix->SetEnabled(
-        nb_of_target_volumes ? enabled : 0);
-      matrix->SetNumberOfColumns(nb_of_target_volumes);
+        numTargets ? enabled : 0);
+      matrix->SetNumberOfColumns(numTargets);
       matrix->SetNumberOfRows(1);
       matrix->SetReadOnly(
         mrmlManager->GetTreeNodeDistributionSpecificationMethod(selVolId) !=
@@ -1064,7 +1061,7 @@ DisplaySelectedNodeIntensityDistributionsCallback()
         static_cast<int>(selVolId));
       matrix->SetElementChangedCommand(this, buffer);
 
-      for(col = 0; col < nb_of_target_volumes; col++)
+      for(col = 0; col < numTargets; col++)
         {
         matrix->SetElementValueAsDouble(
           0, col, 
@@ -1088,9 +1085,9 @@ DisplaySelectedNodeIntensityDistributionsCallback()
     if (hasValidSelection)
       {
       this->IntensityDistributionCovarianceMatrix->SetEnabled(
-        nb_of_target_volumes ? enabled : 0);
-      matrix->SetNumberOfColumns(nb_of_target_volumes);
-      matrix->SetNumberOfRows(nb_of_target_volumes);
+        numTargets ? enabled : 0);
+      matrix->SetNumberOfColumns(numTargets);
+      matrix->SetNumberOfRows(numTargets);
       matrix->SetReadOnly(
         mrmlManager->GetTreeNodeDistributionSpecificationMethod(selVolId) !=
         vtkEMSegmentMRMLManager::DistributionSpecificationManual);
@@ -1099,9 +1096,9 @@ DisplaySelectedNodeIntensityDistributionsCallback()
         static_cast<int>(selVolId));
       matrix->SetElementChangedCommand(this, buffer);
 
-      for (row = 0; row < nb_of_target_volumes; row++)
+      for (row = 0; row < numTargets; row++)
         {
-        for (col = 0; col < nb_of_target_volumes; col++)
+        for (col = 0; col < numTargets; col++)
           {
           matrix->SetElementValueAsDouble(
             row, col, 
@@ -1135,18 +1132,18 @@ DisplaySelectedNodeIntensityDistributionsCallback()
       {
       this->IntensityDistributionManualSamplingList->SetEnabled(enabled);
       int nb_cols = list->GetNumberOfColumns();
-      for (;nb_cols < nb_of_target_volumes; nb_cols++)
+      for (;nb_cols < numTargets; nb_cols++)
         {
         int col_id = list->AddColumn("");
         list->SetColumnWidth(col_id, 0);
         list->ColumnStretchableOff(col_id);
         list->SetColumnSortMode(col_id, vtkKWMultiColumnList::SortModeReal);
         }
-      for (;nb_cols > nb_of_target_volumes; nb_cols--)
+      for (;nb_cols > numTargets; nb_cols--)
         {
         list->DeleteColumn(nb_cols - 1);
         }
-      for (col = 0; col < nb_of_target_volumes; ++col)
+      for (col = 0; col < numTargets; ++col)
         {
         vtkIdType volumeID = mrmlManager->GetTargetSelectedVolumeNthID(col);
         const char* title = mrmlManager->GetVolumeName(volumeID);
@@ -1158,7 +1155,7 @@ DisplaySelectedNodeIntensityDistributionsCallback()
       for (row = 0; row < nb_samples; row++)
         {
         list->AddRow();
-        for (col = 0; col < nb_of_target_volumes; col++)
+        for (col = 0; col < numTargets; col++)
           {
           int volId = mrmlManager->GetTargetSelectedVolumeNthID(col);
           intensity = mrmlManager->
@@ -1189,7 +1186,6 @@ void vtkEMSegmentIntensityDistributionsStep::
 IntensityDistributionSpecificationCallback(
   vtkIdType selVolId, int type)
 {
-  EMS_DEBUG_MACRO("ShowUserInterface");
   // The distribution specification has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
@@ -1209,12 +1205,10 @@ IntensityDistributionSpecificationCallback(
 void vtkEMSegmentIntensityDistributionsStep::Gaussian2DRenderingCallback(
   vtkIdType selVolId, int type)
 {
-  EMS_DEBUG_MACRO("ShowUserInterface");
   // The rendering type has changed because of user interaction
   std::cout << __LINE__ <<
     " vtkEMSegmentIntensityDistributionsStep::Gaussian2DRenderingCallback"
     << std::endl;
-  EMS_DEBUG_MACRO("vtkEMSegmentIntensityDistributionsStep::Gaussian2DRenderingCallback");
   /*
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   if (!mrmlManager)
@@ -1235,7 +1229,6 @@ void vtkEMSegmentIntensityDistributionsStep::
 IntensityDistributionMeanChangedCallback(
     vtkIdType selVolId, int row, int col, const char *value)
 {
-  EMS_DEBUG_MACRO("ShowUserInterface");
   // The distribution mean vector has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
@@ -1252,7 +1245,6 @@ vtkEMSegmentIntensityDistributionsStep::
 IntensityDistributionCovarianceChangedCallback(
   vtkIdType selVolId, int row, int col, const char *value)
 {
-  EMS_DEBUG_MACRO("ShowUserInterface");
   // The distribution covariance matrix has changed because of user
   // interaction
 
@@ -1269,7 +1261,6 @@ IntensityDistributionCovarianceChangedCallback(
 void vtkEMSegmentIntensityDistributionsStep::
 AddIntensityDistributionSamplePoint( double ras[3])
 {
-  EMS_DEBUG_MACRO("ShowUserInterface");
   // Since it is not a callback, make sure we are really allowed to add
   // a sample point now
 
@@ -1326,7 +1317,6 @@ AddIntensityDistributionSamplePoint( double ras[3])
 void vtkEMSegmentIntensityDistributionsStep::
 PopupManualIntensitySampleContextMenuCallback(int row, int, int x, int y)
 {
-  EMS_DEBUG_MACRO("ShowUserInterface");
   vtkEMSegmentAnatomicalStructureStep *anatomicalStep =
     this->GetGUI()->GetAnatomicalStructureStep();
   vtkKWTree *tree = anatomicalStep->GetAnatomicalStructureTree()->GetWidget();
@@ -1378,7 +1368,6 @@ vtkEMSegmentIntensityDistributionsStep::
 DeleteManualIntensitySampleCallback( vtkIdType selVolId,
     int sample_index)
 {
-  EMS_DEBUG_MACRO("ShowUserInterface");
   // A sample has been deleted because of user interaction
 
   if (sample_index >= 0)
@@ -1408,7 +1397,6 @@ void
 vtkEMSegmentIntensityDistributionsStep::
 DeleteAllManualIntensitySampleCallback(vtkIdType selVolId)
 {
-  EMS_DEBUG_MACRO("ShowUserInterface");
   // All samples have been deleted because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
@@ -1429,7 +1417,6 @@ DeleteAllManualIntensitySampleCallback(vtkIdType selVolId)
 void vtkEMSegmentIntensityDistributionsStep::
 AddManualIntensitySamplingGUIObservers()
 {
-  EMS_DEBUG_MACRO("ShowUserInterface");
   // Slice GUI 0
 
   vtkRenderWindowInteractor *rwi0 = vtkSlicerApplicationGUI::SafeDownCast(
@@ -1463,7 +1450,6 @@ AddManualIntensitySamplingGUIObservers()
 //---------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::RemoveManualIntensitySamplingGUIObservers()
 {
-  EMS_DEBUG_MACRO("ShowUserInterface");
   // Slice GUI 0
 
   vtkRenderWindowInteractor *rwi0 = vtkSlicerApplicationGUI::SafeDownCast(
@@ -1498,7 +1484,6 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessManualIntensitySamplingGUIEv
   unsigned long event,
   void *callData) 
 {
-  EMS_DEBUG_MACRO("ShowUserInterface");
   vtkSlicerInteractorStyle *s = vtkSlicerInteractorStyle::SafeDownCast(caller);
 
   if (s && 
@@ -1563,7 +1548,6 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessManualIntensitySamplingGUIEv
 void vtkEMSegmentIntensityDistributionsStep::PrintSelf(ostream& os, vtkIndent
     indent)
 {
-  EMS_DEBUG_MACRO("");
   this->Superclass::PrintSelf(os,indent);
 }
 
@@ -1571,7 +1555,6 @@ void vtkEMSegmentIntensityDistributionsStep::PrintSelf(ostream& os, vtkIndent
 void vtkEMSegmentIntensityDistributionsStep::GetNumberOfLeaf(
   const char *parent, vtkIdType volId)
 {
-  EMS_DEBUG_MACRO("ShowUserInterface");
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
   int numChildren = mrmlManager->GetTreeNodeNumberOfChildren(volId);
@@ -1593,7 +1576,6 @@ void vtkEMSegmentIntensityDistributionsStep::GetNumberOfLeaf(
 void vtkEMSegmentIntensityDistributionsStep::
 IntensityDistributionTargetSelectionChangedCallback(vtkIdType targetVolId)
 {
-  EMS_DEBUG_MACRO("IN VOLUME SELECTOR CALLBACK");
 
   double meanX;
   double meanY;
@@ -1656,14 +1638,12 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessGaussian2DButtonGUIEvents(
   if (event == vtkKWPushButton::InvokedEvent && caller ==
       this->Gaussian2DButton)
   {
-    EMS_DEBUG_MACRO("IN PROCESS GAUSSIAN GUI EVENT");
   }
 }
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::AddGaussian2DButtonGUIEvents()
 {
-  EMS_DEBUG_MACRO("");
   std::cout << __LINE__ << " AddGaussian2DButtonGUIEvents" << std::endl;
 
   this->Gaussian2DButton->AddObserver(vtkKWPushButton::InvokedEvent,
@@ -1673,7 +1653,6 @@ void vtkEMSegmentIntensityDistributionsStep::AddGaussian2DButtonGUIEvents()
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::RemoveGaussian2DButtonGUIEvents()
 {
-  EMS_DEBUG_MACRO("");
   std::cout << __LINE__ << " RemoveGaussian2DButtonGUIEvents" << std::endl;
   this->Gaussian2DButton->RemoveObservers(vtkKWPushButton::InvokedEvent,
       this->GetGUI()->GetGUICallbackCommand());
@@ -1690,9 +1669,9 @@ void vtkEMSegmentIntensityDistributionsStep::GetGaussian2DTargetVolumes()
     return;
     }
 
-  int nb_of_target_volumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
+  int numTargets = mrmlManager->GetTargetNumberOfSelectedVolumes();
 
-  for(int i = 0; i < nb_of_target_volumes; i++)
+  for(int i = 0; i < numTargets; i++)
     {
     target_volId = mrmlManager->GetTargetSelectedVolumeNthID(i);
     const char *name = mrmlManager->GetVolumeName(target_volId);
@@ -1749,8 +1728,6 @@ ProcessLabelButtonGUIEvents(
   if (event == vtkKWPushButton::InvokedEvent &&
       caller == this->LabelmapButton)
   {
-    EMS_DEBUG_MACRO("ProcessLabelButtonGUIEvents");
-
     vtkEMSegmentMRMLManager *mrmlManager =
       this->GetGUI()->GetMRMLManager();
 
