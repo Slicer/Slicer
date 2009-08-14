@@ -260,6 +260,29 @@ void  vtkChangeTrackerGUI::UpdateNode()
 
 }
 
+//---------------------------------------------------------------------------
+void vtkChangeTrackerGUI::Enter()
+{
+  this->ModuleEntered = true;
+  if (this->FirstScanStep)    this->FirstScanStep->RenderShow(); 
+  if (this->ROIStep)          this->ROIStep->RenderShow(); 
+  if (this->SegmentationStep) this->SegmentationStep->RenderShow(); 
+  if (this->TypeStep)   this->TypeStep->RenderShow(); 
+  if (this->AnalysisStep)     this->AnalysisStep->RenderShow(); 
+}
+
+// according to vtkGradnientAnisotrpoicDiffusionoFilterGUI
+//---------------------------------------------------------------------------
+void vtkChangeTrackerGUI::Exit()
+{
+  this->ModuleEntered = false;
+  if (this->FirstScanStep)    this->FirstScanStep->RenderHide(); 
+  if (this->ROIStep)          this->ROIStep->RenderHide(); 
+  if (this->SegmentationStep) this->SegmentationStep->RenderHide(); 
+  if (this->TypeStep)   this->TypeStep->RenderHide(); 
+  if (this->AnalysisStep)     this->AnalysisStep->RenderHide(); 
+}
+
 
 //---------------------------------------------------------------------------
 void vtkChangeTrackerGUI::UpdateMRML()

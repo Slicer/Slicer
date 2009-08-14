@@ -98,12 +98,8 @@ public:
                                   void *callData);
   // Description:
   // Describe behavior at module startup and exit.
-  virtual void Enter(){
-    this->ModuleEntered = true;
-  };
-  virtual void Exit(){
-    this->ModuleEntered = false;
-  };
+  virtual void Enter();
+  virtual void Exit();
 
   // Description: The name of the Module - this is used to 
   // construct the proc invocations

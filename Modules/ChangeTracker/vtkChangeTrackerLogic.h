@@ -147,6 +147,8 @@ public:
 
   char* GetInputScanName(int);
 
+  void SetThresholdsFromSegmentation();
+
 private:
   vtkChangeTrackerLogic();
   ~vtkChangeTrackerLogic();

@@ -18,6 +18,7 @@
 #include "vtkSlicerVolumesGUI.h"
 #include "vtkKWProgressGauge.h"
 #include "vtkImageMedian3D.h"
+#include "vtkImageAccumulate.h"
 //#include "vtkSlicerApplication.h"
 
 // CommandLineModule support
@@ -752,6 +753,13 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
 
 
   if (this->ChangeTrackerNode->GetAnalysis_Intensity_Flag()) { 
+
+    // If input segmentation is provided, the thresholds are not set. 
+    // The temporary solution will be to set thresholds based on the
+    // min/max intensities in the segmented area.
+    if(this->ChangeTrackerNode->GetScan1_InputSegmentRef())
+      SetThresholdsFromSegmentation();
+
     if (!atoi(app->Script("::ChangeTrackerTcl::IntensityThresholding_GUI 1"))) 
       return ERR_OTHER; 
     progressBar->SetValue(60.0/TimeLength);
@@ -1347,4 +1355,57 @@ int vtkChangeTrackerLogic::ResampleScan2(vtkSlicerApplication *app){
   return 0;
 }
 
-// AF <<<
+void vtkChangeTrackerLogic::SetThresholdsFromSegmentation(){
+  vtkMRMLVolumeNode *scan1_segm = vtkMRMLVolumeNode::SafeDownCast(
+    this->ChangeTrackerNode->GetScene()->GetNodeByID(this->ChangeTrackerNode->GetScan1_SegmentRef()));
+  vtkMRMLVolumeNode *scan1 = vtkMRMLVolumeNode::SafeDownCast(
+    this->ChangeTrackerNode->GetScene()->GetNodeByID(this->ChangeTrackerNode->GetScan1_SuperSampleRef()));
+  if(!scan1_segm || !scan1)
+    {
+    std::cerr << "Critical error: segmentation and/or input images are not initialized!" << std::endl;
+    return;
+    }
+
+  vtkImageData *image = scan1->GetImageData();
+  vtkImageData *mask = scan1_segm->GetImageData();
+
+  std::cerr << "Input image scalar type: " << image->GetScalarType() << std::endl;
+  std::cerr << "Input mask scalar type: " << mask->GetScalarType() << std::endl;
+
+  vtkImageMathematics* mult = vtkImageMathematics::New();
+  vtkImageThreshold* thresh = vtkImageThreshold::New();
+  thresh->SetInput(mask);
+  thresh->ThresholdByLower(1);
+  thresh->SetInValue(1);
+  thresh->SetOutValue(0);
+  mult->SetInput(0, image);
+  mult->SetInput(1, thresh->GetOutput());
+  mult->SetOperationToMultiply();
+
+  vtkImageCast *cast = vtkImageCast::New();
+  cast->SetInput(mult->GetOutput());
+  cast->SetOutputScalarTypeToShort();
+  
+
+  vtkImageAccumulate* hist = vtkImageAccumulate::New();
+  hist->SetInput(cast->GetOutput());
+  hist->Update();
+
+//  double max = hist->GetMax()[0];
+  hist->SetComponentOrigin(0.,0.,0.);
+  hist->SetComponentExtent(0,(int)hist->GetMax()[0],0,0,0,0);
+  hist->SetComponentSpacing(1.,0.,0.);
+  hist->IgnoreZeroOn();
+  hist->Update();
+
+  std::cerr << "Histogram min: " << hist->GetMin()[0] << std::endl;
+  std::cerr << "Histogram max: " << hist->GetMax()[0] << std::endl;
+
+  this->ChangeTrackerNode->SetSegmentThresholdMin(hist->GetMin()[0]);
+  this->ChangeTrackerNode->SetSegmentThresholdMax(hist->GetMax()[0]);
+
+  mult->Delete();
+  thresh->Delete();
+  hist->Delete();
+  cast->Delete();
+}
