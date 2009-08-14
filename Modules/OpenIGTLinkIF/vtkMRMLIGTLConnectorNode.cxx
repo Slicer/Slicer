@@ -78,7 +78,6 @@ vtkMRMLIGTLConnectorNode::vtkMRMLIGTLConnectorNode()
   this->CircularBufferMutex = vtkMutexLock::New();
   this->RestrictDeviceName = 0;
 
-  this->DeviceInfoList.clear();
   this->IncomingDeviceIDSet.clear();
   this->OutgoingDeviceIDSet.clear();
   this->UnspecifiedDeviceIDSet.clear();
@@ -90,7 +89,6 @@ vtkMRMLIGTLConnectorNode::vtkMRMLIGTLConnectorNode()
   this->OutgoingMRMLNodeList.clear();
   this->IncomingMRMLNodeList.clear();
 
-  this->LastID = -1;
 }
 
 //----------------------------------------------------------------------------
@@ -524,19 +522,30 @@ int vtkMRMLIGTLConnectorNode::ReceiveController()
     // Check Device Name if device name is restricted
     if (this->RestrictDeviceName)
       {
-      if (GetDeviceID(headerMsg->GetDeviceName(), headerMsg->GetDeviceType()) < 0) // not found on the list
+      // Check if the node has already been registered.
+      int registered = 0;
+      MRMLNodeListType::iterator iter;
+      for (iter = this->IncomingMRMLNodeList.begin(); iter != this->IncomingMRMLNodeList.end(); iter ++)
+        {
+        if (strcmp((*iter)->GetName(), headerMsg->GetDeviceName()) == 0)
+          {
+          // Find converter for this message's device name to find out the MRML node type
+          vtkIGTLToMRMLBase* converter = GetConverterByIGTLDeviceType(headerMsg->GetDeviceType());
+          if (converter)
+            {
+            const char* mrmlName = converter->GetMRMLName();
+            if (strcmp((*iter)->GetNodeTagName(), mrmlName) == 0)
+              {
+              registered = 1;
+              break; // for (;;)
+              }
+            }
+          }
+        }
+      if (registered == 0)
         {
         this->Skip(headerMsg->GetBodySizeToRead());
-        continue;
-        }
-      }
-    else  // if device name is not restricted:
-      {
-      // search on the list
-      if (GetDeviceID(headerMsg->GetDeviceName(), headerMsg->GetDeviceType()) < 0) // not found on the list
-        {
-        int id = RegisterNewDevice(headerMsg->GetDeviceName(), headerMsg->GetDeviceType());
-        RegisterDeviceIO(id, IO_INCOMING);
+        continue; //  while (!this->ServerStopFlag)
         }
       }
     
@@ -671,156 +680,6 @@ vtkIGTLCircularBuffer* vtkMRMLIGTLConnectorNode::GetCircularBuffer(std::string& 
 }
 
 
-//----------------------------------------------------------------------------
-int vtkMRMLIGTLConnectorNode::GetDeviceID(const char* deviceName, const char* deviceType)
-{
-  // returns -1 if no device found on the list
-  int id = -1;
-
-  DeviceInfoMapType::iterator iter;
-
-  for (iter = this->DeviceInfoList.begin(); iter != this->DeviceInfoList.end(); iter ++)
-    {
-    if (iter->second.name == deviceName && iter->second.type == deviceType)
-      {
-      id = iter->first;
-      }
-    }
-
-  return id;
-}
-
-
-//----------------------------------------------------------------------------
-int vtkMRMLIGTLConnectorNode::RegisterNewDevice(const char* deviceName, const char* deviceType, int io)
-{
-  int id  = GetDeviceID(deviceName, deviceType);
-  
-  if (id < 0) // if the device is not on the list
-    {
-    this->LastID ++;
-    id = this->LastID;
-
-    DeviceInfoType info;
-    info.name = deviceName;
-    info.type = deviceType;
-    info.io   = IO_UNSPECIFIED;
-    this->UnspecifiedDeviceIDSet.insert(id);
-    this->DeviceInfoList[id] = info;
-    }
-
-  RegisterDeviceIO(id, io);
-
-  return id;
-}
-
-
-//----------------------------------------------------------------------------
-int vtkMRMLIGTLConnectorNode::UnregisterDevice(const char* deviceName, const char* deviceType, int io)
-{
-  // NOTE: If IO_UNSPECIFIED is specified as an 'io' parameter,
-  // the method will unregister deivce from both incoming and
-  // outgoing data list.
-  // return 1, if the device is removed from the device info list.
-
-  int id  = GetDeviceID(deviceName, deviceType);
-  DeviceInfoMapType::iterator iter = this->DeviceInfoList.find(id);
-
-  if (iter != this->DeviceInfoList.end())
-    {
-    if (io == IO_UNSPECIFIED)
-      {
-      this->OutgoingDeviceIDSet.erase(id);
-      this->IncomingDeviceIDSet.erase(id);
-      this->UnspecifiedDeviceIDSet.erase(id);
-      }
-    if (io & IO_INCOMING)
-      {
-      this->IncomingDeviceIDSet.erase(id);
-      }
-    if (io & IO_OUTGOING)
-      {
-      this->OutgoingDeviceIDSet.erase(id);
-      }
-    // search in device io lists 
-    if (this->OutgoingDeviceIDSet.find(id) == this->OutgoingDeviceIDSet.end() &&
-        this->IncomingDeviceIDSet.find(id) == this->IncomingDeviceIDSet.end() &&
-        this->UnspecifiedDeviceIDSet.find(id) == this->UnspecifiedDeviceIDSet.end())
-      {
-      this->DeviceInfoList.erase(iter);   // if not found, remove from device info list
-      return 1;
-      }
-    }
-
-  return 0;
-}
-
-
-//----------------------------------------------------------------------------
-int vtkMRMLIGTLConnectorNode::UnregisterDevice(int id)
-{
-  DeviceInfoMapType::iterator iter = this->DeviceInfoList.find(id);
-  if (iter != this->DeviceInfoList.end())
-    {
-    this->UnspecifiedDeviceIDSet.erase(id);
-    this->IncomingDeviceIDSet.erase(id);
-    this->OutgoingDeviceIDSet.erase(id);
-    this->DeviceInfoList.erase(iter);
-    return 1;
-    }
-  return 0;
-}
-
-
-//----------------------------------------------------------------------------
-int vtkMRMLIGTLConnectorNode::RegisterDeviceIO(int id, int io)
-{
-  DeviceInfoMapType::iterator iter = this->DeviceInfoList.find(id);
-
-  if (iter != this->DeviceInfoList.end()) // if id is on the list
-    {
-    if (io == IO_UNSPECIFIED)
-      {
-      iter->second.io = IO_UNSPECIFIED;
-      this->UnspecifiedDeviceIDSet.insert(id);
-      this->IncomingDeviceIDSet.erase(id);
-      this->OutgoingDeviceIDSet.erase(id);
-      }
-    else
-      {
-      if (io & IO_INCOMING)
-        {
-        iter->second.io |= IO_INCOMING;
-        this->UnspecifiedDeviceIDSet.erase(id);
-        this->IncomingDeviceIDSet.insert(id);
-        }
-      if (io & IO_OUTGOING)
-        {
-        iter->second.io |= IO_OUTGOING;
-        this->UnspecifiedDeviceIDSet.erase(id);
-        this->OutgoingDeviceIDSet.insert(id);
-        }
-      }
-    return 1;
-    }
-
-  return 0;
-}
-
-
-//---------------------------------------------------------------------------
-vtkMRMLIGTLConnectorNode::DeviceInfoType* vtkMRMLIGTLConnectorNode::GetDeviceInfo(int id)
-{
-  DeviceInfoMapType::iterator iter = this->DeviceInfoList.find(id);
-  if (iter != this->DeviceInfoList.end())
-    {
-    return &(iter->second);
-    }
-
-  return NULL;
-}
-
-
 //---------------------------------------------------------------------------
 void vtkMRMLIGTLConnectorNode::ImportDataFromCircularBuffer()
 {
@@ -858,7 +717,7 @@ void vtkMRMLIGTLConnectorNode::ImportDataFromCircularBuffer()
         vtkMRMLNode* node = (*inIter);
         converter->IGTLToMRML(buffer, node);
         node->Modified();
-        break;
+        continue;
         }
       }
 
@@ -880,8 +739,10 @@ void vtkMRMLIGTLConnectorNode::ImportDataFromCircularBuffer()
         for (int i = 0; i < nCol; i ++)
           {
           vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(collection->GetItemAsObject(i));
+          RegisterIncomingMRMLNode(node);
           converter->IGTLToMRML(buffer, node);
           node->Modified();
+          continue;
           }
         }
       }
@@ -1197,3 +1058,42 @@ vtkIGTLToMRMLBase* vtkMRMLIGTLConnectorNode::GetConverterByMRMLTag(const char* t
   return NULL;
 
 }
+
+
+//---------------------------------------------------------------------------
+vtkIGTLToMRMLBase* vtkMRMLIGTLConnectorNode::GetConverterByIGTLDeviceType(const char* type)
+{
+  MessageConverterListType::iterator iter;
+
+  for (iter = this->MessageConverterList.begin();
+       iter != this->MessageConverterList.end();
+       iter ++)
+    {
+    vtkIGTLToMRMLBase* converter = *iter;
+    if (converter->GetConverterType() == vtkIGTLToMRMLBase::TYPE_NORMAL)
+      {
+      if (strcmp(converter->GetMRMLName(), type) == 0)
+        {
+        return converter;
+        }
+      }
+    else // The converter has multiple IGTL device names
+      {
+      int n = converter->GetNumberOfIGTLNames();
+      for (int i = 0; i < n; i ++)
+        {
+        if (strcmp(converter->GetIGTLName(i), type) == 0)
+          {
+          return converter;
+          }
+        }
+      }
+    }
+  
+  // if no converter is found.
+  return NULL;
+  
+}
+
+
+

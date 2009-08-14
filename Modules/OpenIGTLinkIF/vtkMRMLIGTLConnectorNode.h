@@ -172,9 +172,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkMRMLIGTLConnectorNode : public vtkMRMLNode
   //----------------------------------------------------------------
   // OpenIGTLink Message handlers
   //----------------------------------------------------------------
-  //BTX
-  //igtl::ClientSocket::Pointer WaitForConnection();
-  //ETX
   int WaitForConnection();
   int ReceiveController();
   int SendData(int size, unsigned char* data);
@@ -193,20 +190,6 @@ class VTK_OPENIGTLINKIF_EXPORT vtkMRMLIGTLConnectorNode : public vtkMRMLNode
   //----------------------------------------------------------------
   // Device Lists
   //----------------------------------------------------------------
-
-  int GetDeviceID(const char* deviceName, const char* deviceType);
-  int RegisterNewDevice(const char* deviceName, const char* deviceType, int io=IO_UNSPECIFIED);
-  int UnregisterDevice(const char* deviceName, const char* deviceType, int io=IO_UNSPECIFIED);
-  int UnregisterDevice(int id);
-  int RegisterDeviceIO(int id, int io);
-
-  //BTX
-  DeviceInfoType*     GetDeviceInfo(int id);
-  DeviceInfoMapType*  GetDeviceInfoList()    { return &(this->DeviceInfoList);        };
-  DeviceIDSetType*    GetIncomingDevice()    { return &(this->IncomingDeviceIDSet);   }
-  DeviceIDSetType*    GetOutgoingDevice()    { return &(this->OutgoingDeviceIDSet);   }
-  DeviceIDSetType*    GetUnspecifiedDevice() { return &(this->UnspecifiedDeviceIDSet);}
-  //ETX
 
   // Description:
   // Import received data from the circular buffer to the MRML scne.
@@ -259,6 +242,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkMRMLIGTLConnectorNode : public vtkMRMLNode
  private:
 
   vtkIGTLToMRMLBase* GetConverterByMRMLTag(const char* tag);
+  vtkIGTLToMRMLBase* GetConverterByIGTLDeviceType(const char* type);
 
 
  private:
@@ -300,16 +284,12 @@ class VTK_OPENIGTLINKIF_EXPORT vtkMRMLIGTLConnectorNode : public vtkMRMLNode
   //ETX
 
   vtkMutexLock* CircularBufferMutex;
-  int     RestrictDeviceName;  // Flag to restrict incoming and outgoing data by device names
+  int           RestrictDeviceName;  // Flag to restrict incoming and outgoing data by device names
 
-  //BTX
   // -- Device Name (same as MRML node) and data type (data type string defined in OpenIGTLink)
-  int                LastID;
-  DeviceInfoMapType DeviceInfoList;
   DeviceIDSetType   IncomingDeviceIDSet;
   DeviceIDSetType   OutgoingDeviceIDSet;
   DeviceIDSetType   UnspecifiedDeviceIDSet;
-  //ETX
   
   // Message converter (IGTLToMRML)
   MessageConverterListType   MessageConverterList;

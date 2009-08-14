@@ -1211,6 +1211,25 @@ void vtkOpenIGTLinkIFGUI::ProcessMRMLEvents ( vtkObject *caller,
         }
       //UpdateRealTimeImageSourceMenu();
       }
+    else
+      {
+      // If a non-connector node is deleted, remove its pointers
+      // from incoming and outgoing node list in each connector.
+      std::vector<std::string>::iterator iter;
+      for (iter = this->ConnectorNodeList.begin();
+           iter != this->ConnectorNodeList.end(); iter ++)
+        {
+        vtkMRMLIGTLConnectorNode* con = 
+          vtkMRMLIGTLConnectorNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(iter->c_str()));
+        if (con)
+          {
+          vtkMRMLNode* n = vtkMRMLNode::SafeDownCast(obj);
+          con->UnregisterIncomingMRMLNode(n);
+          con->UnregisterOutgoingMRMLNode(n);
+          this->UpdateIOConfigTreeFlag           = 1;
+          }
+        }
+      }
     UpdateConnectorNodeList();
     UpdateConnectorList(UPDATE_ALL);
     }
