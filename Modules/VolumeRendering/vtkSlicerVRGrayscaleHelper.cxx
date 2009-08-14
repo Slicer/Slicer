@@ -505,8 +505,8 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
         this->MapperGPURaycastII->SetNthInput(0, vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
         
         //we must have source input, but may or maybe not have background and labelmap inputs
-        if (this->Gui->GetNS_ImageDataBg()->GetSelected())
-            this->MapperGPURaycastII->SetNthInput(1, vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageDataBg()->GetSelected())->GetImageData());
+        if (this->Gui->GetNS_ImageDataFg()->GetSelected())
+            this->MapperGPURaycastII->SetNthInput(1, vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageDataFg()->GetSelected())->GetImageData());
         if (this->Gui->GetNS_ImageDataLabelmap()->GetSelected())
             this->MapperGPURaycastII->SetNthInput(2, vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageDataLabelmap()->GetSelected())->GetImageData());
         
@@ -695,9 +695,9 @@ void vtkSlicerVRGrayscaleHelper::UpdateRendering()
         this->MapperGPURaycastII->SetNthInput(0, input);
         
     {
-        if (this->Gui->GetNS_ImageDataBg()->GetSelected())
+        if (this->Gui->GetNS_ImageDataFg()->GetSelected())
         {
-            input = vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageDataBg()->GetSelected())->GetImageData();
+            input = vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageDataFg()->GetSelected())->GetImageData();
             if (input != this->MapperGPURaycastII->GetNthInput(1))
                 this->MapperGPURaycastII->SetNthInput(1, input);
         }
@@ -1967,7 +1967,8 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->SC_GPURayCastIIFgBgRatio->SetLabelText("                 [Bg <--         --> Fg]");
         this->SC_GPURayCastIIFgBgRatio->SetRange(0,1); 
         this->SC_GPURayCastIIFgBgRatio->SetResolution(0.01);
-        this->SC_GPURayCastIIFgBgRatio->SetValue(1.0);
+        this->SC_GPURayCastIIFgBgRatio->SetValue(0.0);
+        this->SC_GPURayCastIIFgBgRatio->ValueVisibilityOff();
         this->SC_GPURayCastIIFgBgRatio->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *) this->VolumeRenderingCallbackCommand);
         this->SC_GPURayCastIIFgBgRatio->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *) this->VolumeRenderingCallbackCommand);
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SC_GPURayCastIIFgBgRatio->GetWidgetName() );

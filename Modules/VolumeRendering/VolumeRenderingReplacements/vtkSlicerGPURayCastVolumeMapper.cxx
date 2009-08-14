@@ -53,7 +53,7 @@ vtkSlicerGPURayCastVolumeMapper::vtkSlicerGPURayCastVolumeMapper()
   this->RayCastInitialized       =  0;
   this->Technique            =  0;//by default composit shading
   this->ColorOpacityFusion   =  0;
-  this->FgBgRatio            =  1.0;
+  this->FgBgRatio            =  0.0;
   
   this->Clipping             =  0;
   this->ReloadShaderFlag     =  0;
@@ -1066,7 +1066,7 @@ void vtkSlicerGPURayCastVolumeMapper::LoadNoShadingFragmentShaderMIP()
         "            nextRayOrigin += rayStep;                                                       \n"
         "        }                                                                                   \n"
         "                                                                                                             \n"
-        "        pixelColor = voxelColorA(maxScalarCoordA)*fgRatio + voxelColorB(maxScalarCoordB)*(1.0-fgRatio);      \n"
+        "        pixelColor = voxelColorA(maxScalarCoordA)*(1.0-fgRatio) + voxelColorB(maxScalarCoordB)*fgRatio;      \n"
         "        alpha = pixelColor.w;                                                                \n"
         "    }                                                                                       \n"
         "    gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                        \n"
@@ -1216,7 +1216,7 @@ void vtkSlicerGPURayCastVolumeMapper::LoadNoShadingFragmentShaderMINIP()
         "            nextRayOrigin += rayStep;                                                       \n"
         "        }                                                                                   \n"
         "                                                                                                             \n"
-        "        pixelColor = voxelColorA(minScalarCoordA)*fgRatio + voxelColorB(minScalarCoordB)*(1.0-fgRatio);      \n"
+        "        pixelColor = voxelColorA(minScalarCoordA)*(1.0-fgRatio) + voxelColorB(minScalarCoordB)*fgRatio;      \n"
         "        alpha = pixelColor.w;                                                                \n"
         "    }                                                                                       \n"
         "    gl_FragColor = vec4(pixelColor.xyz, alpha*ParaMatrix[3][1]);                        \n"
@@ -1370,11 +1370,11 @@ void vtkSlicerGPURayCastVolumeMapper::LoadNoShadingFragmentShader()
         "                                                                                        \n"
         "    float fgRatio = ParaMatrix[2][2];                                                    \n"
         "    {                                                                                       \n"
-        "        while( (t < rayLen) && (alpha < 1.0) )                                          \n"
+        "        while( (t < rayLen) && (alpha < 0.975) )                                          \n"
         "        {                                                                                   \n"
         "            vec4 nextColorA = voxelColorA(nextRayOrigin);                                     \n"
         "            vec4 nextColorB = voxelColorB(nextRayOrigin);                                \n"
-        "            float tempAlpha = nextColorA.w*fgRatio + nextColorB.w*(1.0-fgRatio);            \n"
+        "            float tempAlpha = nextColorA.w*(1.0-fgRatio) + nextColorB.w*fgRatio;            \n"
         "                                                                                        \n"
         "            if (tempAlpha > 0.0)                                                           \n"
         "            {                                                                              \n"
@@ -1382,8 +1382,8 @@ void vtkSlicerGPURayCastVolumeMapper::LoadNoShadingFragmentShader()
         "               nextColorB = edgeColoringB(nextRayOrigin, nextColorB);                         \n"
         "                                                                                              \n"      
         "               tempAlpha = (1.0-alpha)*tempAlpha;                                              \n"
-        "               pixelColor += nextColorA*tempAlpha*fgRatio;                                      \n"
-        "               pixelColor += nextColorB*tempAlpha*(1.0-fgRatio);                                 \n"
+        "               pixelColor += nextColorA*tempAlpha*(1.0-fgRatio);                             \n"
+        "               pixelColor += nextColorB*tempAlpha*fgRatio;                                 \n"
         "               alpha += tempAlpha;                                                             \n"
         "            }                                                                               \n"
         "                                                                                           \n"
@@ -1557,11 +1557,11 @@ void vtkSlicerGPURayCastVolumeMapper::LoadFragmentShader()
         "                                                                                        \n"
         "    float fgRatio = ParaMatrix[2][2];                                                    \n"
         "    {                                                                                       \n"
-        "        while( (t < rayLen) && (alpha < 1.0) )                                          \n"
+        "        while( (t < rayLen) && (alpha < 0.975) )                                          \n"
         "        {                                                                                   \n"
         "            vec4 nextColorA = voxelColorA(nextRayOrigin);                                     \n"
         "            vec4 nextColorB = voxelColorB(nextRayOrigin);                                \n"
-        "            float tempAlpha = nextColorA.w*fgRatio + nextColorB.w*(1.0-fgRatio);            \n"
+        "            float tempAlpha = nextColorA.w*(1.0-fgRatio) + nextColorB.w*fgRatio;            \n"
         "                                                                                        \n"
         "            if (tempAlpha > 0.0)                                                           \n"
         "            {                                                                              \n"
@@ -1569,8 +1569,8 @@ void vtkSlicerGPURayCastVolumeMapper::LoadFragmentShader()
         "               nextColorB = directionalLightB(nextRayOrigin, lightDir, nextColorB);           \n"
         "                                                                                              \n"      
         "               tempAlpha = (1.0-alpha)*tempAlpha;                                              \n"
-        "               pixelColor += nextColorA*tempAlpha*fgRatio;                                      \n"
-        "               pixelColor += nextColorB*tempAlpha*(1.0-fgRatio);                                 \n"
+        "               pixelColor += nextColorA*tempAlpha*(1.0-fgRatio);                                      \n"
+        "               pixelColor += nextColorB*tempAlpha*fgRatio;                                 \n"
         "               alpha += tempAlpha;                                                             \n"
         "            }                                                                               \n"
         "                                                                                           \n"
