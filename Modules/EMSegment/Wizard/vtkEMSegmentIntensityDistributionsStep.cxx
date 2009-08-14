@@ -275,7 +275,7 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     this->IntensityDistributionNotebook->AddPage(
       "Intensity Distribution");
     //this->IntensityDistributionNotebook->AddPage("Manual S");
-    this->IntensityDistributionNotebook->AddPage("Labelmap");
+    //this->IntensityDistributionNotebook->AddPage("Labelmap");
     this->IntensityDistributionNotebook->AddPage("Visualization");
   }
 
@@ -283,8 +283,8 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     GetFrame("Intensity Distribution");
   //vtkKWFrame *manual_sampling_page =
     //this->IntensityDistributionNotebook->GetFrame("Manual S");
-  vtkKWFrame *labelPage =
-    this->IntensityDistributionNotebook->GetFrame("Labelmap");
+  //vtkKWFrame *labelPage =
+    //this->IntensityDistributionNotebook->GetFrame("Labelmap");
   vtkKWFrame *gaussianPage =
     this->IntensityDistributionNotebook->GetFrame("Visualization");
 
@@ -294,7 +294,7 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
 
   // Create the distribution specification menu button
 
-  if (!this->IntensityDistributionSpecificationMenuButton)
+  /*if (!this->IntensityDistributionSpecificationMenuButton)
     {
     this->IntensityDistributionSpecificationMenuButton =
       vtkKWMenuButtonWithLabel::New();
@@ -317,6 +317,69 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
 
   this->Script("pack %s -side top -anchor nw -padx 2 -pady 2",
     this->IntensityDistributionSpecificationMenuButton->GetWidgetName());
+*/
+  
+   // Create the Labelmap page
+
+  // Create the preview volume selector
+  if (!this->LabelSelector)
+    {
+    this->LabelSelector = vtkSlicerNodeSelectorWidget::New();
+    }
+  if (!this->LabelSelector->IsCreated())
+    {
+    this->LabelSelector->SetNodeClass(
+      "vtkMRMLScalarVolumeNode",
+      "LabelMap", "1",
+      "LabelMap Sampling");
+    this->LabelSelector->SetNewNodeEnabled(0);
+    this->LabelSelector->SetParent(
+      intensity_page);
+    this->LabelSelector->Create();
+    this->LabelSelector->
+      SetMRMLScene(mrmlManager->GetMRMLScene());
+
+    this->LabelSelector->SetBorderWidth(2);
+    this->LabelSelector->SetLabelText( "Preview Labelmap: ");
+    this->LabelSelector->SetBalloonHelpString(
+      "select an preview labelmap from the current mrml scene.");
+    }
+  this->LabelSelector->UpdateMenu();
+  if(mrmlManager->GetOutputVolumeMRMLID())
+    {
+    this->LabelSelector->SetSelected(
+      this->LabelSelector->GetMRMLScene()->
+      GetNodeByID(mrmlManager->GetOutputVolumeMRMLID()));
+    }
+
+  this->Script(
+    "pack %s -side top -anchor nw -padx 2 -pady 2",
+    this->LabelSelector->GetWidgetName());
+
+    if (!this->LabelmapButton)
+    {
+    this->LabelmapButton = vtkKWPushButton::New();
+    }
+
+  this->AddLabelSelectorGUIObservers();
+
+  // Button to compute mean and covariance from labelmap
+
+  if (!this->LabelmapButton->IsCreated())
+    {
+    this->LabelmapButton->SetParent(intensity_page);
+    this->LabelmapButton->Create();
+    this->LabelmapButton->SetText("Compute class distribution");
+    }
+
+  this->Script(
+      "pack %s -side top -anchor nw -fill both -padx 2 -pady 2 -pady 2",
+      this->LabelmapButton->GetWidgetName());
+
+  // Add observer for callbacks
+
+  this->AddLabelButtonGUIEventsObservers();
+  
 
   // Create the distribution mean vector/matrix
 
@@ -412,66 +475,7 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
 
   this->DisplaySelectedNodeIntensityDistributionsCallback();
 
-  // Create the Labelmap page
-
-  // Create the preview volume selector
-  if (!this->LabelSelector)
-    {
-    this->LabelSelector = vtkSlicerNodeSelectorWidget::New();
-    }
-  if (!this->LabelSelector->IsCreated())
-    {
-    this->LabelSelector->SetNodeClass(
-      "vtkMRMLScalarVolumeNode",
-      "LabelMap", "1",
-      "LabelMap Sampling");
-    this->LabelSelector->SetNewNodeEnabled(0);
-    this->LabelSelector->SetParent(
-      labelPage);
-    this->LabelSelector->Create();
-    this->LabelSelector->
-      SetMRMLScene(mrmlManager->GetMRMLScene());
-
-    this->LabelSelector->SetBorderWidth(2);
-    this->LabelSelector->SetLabelText( "Preview Labelmap: ");
-    this->LabelSelector->SetBalloonHelpString(
-      "select an preview labelmap from the current mrml scene.");
-    }
-  this->LabelSelector->UpdateMenu();
-  if(mrmlManager->GetOutputVolumeMRMLID())
-    {
-    this->LabelSelector->SetSelected(
-      this->LabelSelector->GetMRMLScene()->
-      GetNodeByID(mrmlManager->GetOutputVolumeMRMLID()));
-    }
-
-  this->Script(
-    "pack %s -side top -anchor nw -padx 2 -pady 2",
-    this->LabelSelector->GetWidgetName());
-
-    if (!this->LabelmapButton)
-    {
-    this->LabelmapButton = vtkKWPushButton::New();
-    }
-
-  this->AddLabelSelectorGUIObservers();
-
-  // Button to compute mean and covariance from labelmap
-
-  if (!this->LabelmapButton->IsCreated())
-    {
-    this->LabelmapButton->SetParent(labelPage);
-    this->LabelmapButton->Create();
-    this->LabelmapButton->SetText("Compute class distribution");
-    }
-
-  this->Script(
-      "pack %s -side top -anchor nw -fill both -padx 2 -pady 2 -pady 2",
-      this->LabelmapButton->GetWidgetName());
-
-  // Add observer for callbacks
-
-  this->AddLabelButtonGUIEventsObservers();
+ 
 
   // Create the Gaussian 2D page
 
@@ -746,14 +750,14 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
           value = "Auto Rendering";
           break;
         }
-      this->IntensityDistributionSpecificationMenuButton->GetWidget()->
-        SetValue(value.c_str());
+      //this->IntensityDistributionSpecificationMenuButton->GetWidget()->
+      //  SetValue(value.c_str());
       }
     else
       {
-      this->IntensityDistributionSpecificationMenuButton->SetEnabled(0);
-      this->IntensityDistributionSpecificationMenuButton->GetWidget()->
-        SetValue("");
+      //this->IntensityDistributionSpecificationMenuButton->SetEnabled(0);
+      //this->IntensityDistributionSpecificationMenuButton->GetWidget()->
+      //  SetValue("");
       }
     }
   vtkEMSegmentIntensityDistributionsStep_DebugMacro("ShowUserInterface end");
@@ -1014,7 +1018,7 @@ DisplaySelectedNodeIntensityDistributionsCallback()
 
   // Update the distribution specification menu button
 
-  if (this->IntensityDistributionSpecificationMenuButton)
+  /*if (this->IntensityDistributionSpecificationMenuButton)
     {
     vtkKWMenu *menu = this->IntensityDistributionSpecificationMenuButton->
       GetWidget()->GetMenu();
@@ -1022,7 +1026,7 @@ DisplaySelectedNodeIntensityDistributionsCallback()
     if (hasValidSelection)
       {
       vtksys_stl::string value;
-      this->IntensityDistributionSpecificationMenuButton->SetEnabled(enabled);
+      this->IntensityDistributionSpecificationMenuButton->SetEnabled(enabled);*/
       //sprintf(
       //  buffer, "IntensityDistributionSpecificationCallback %d %d",
       //  static_cast<int>(selVolId), vtkEMSegmentMRMLManager::
@@ -1033,11 +1037,11 @@ DisplaySelectedNodeIntensityDistributionsCallback()
       //  static_cast<int>(selVolId),vtkEMSegmentMRMLManager::
       //  DistributionSpecificationManuallySample);
       //menu->AddRadioButton("Manual Sampling", this, buffer);
-      sprintf(
+      /*sprintf(
         buffer, "IntensityDistributionSpecificationCallback %d %d",
         static_cast<int>(selVolId), vtkEMSegmentMRMLManager::
         DistributionSpecificationLabelSample);
-      menu->AddRadioButton("Labelmap Sampling", this, buffer);
+      menu->AddRadioButton("Labelmap Sampling", this, buffer);*/
       //sprintf(
       //  buffer, "IntensityDistributionSpecificationCallback %d %d",
       //  static_cast<int>(selVolId), vtkEMSegmentMRMLManager::
@@ -1047,10 +1051,10 @@ DisplaySelectedNodeIntensityDistributionsCallback()
       // temporarily disable auto sampling because it is not currently
       // implemented
       //menu->SetItemStateToDisabled("Auto Sampling");
-
+/*
       switch(mrmlManager->GetTreeNodeDistributionSpecificationMethod(
             selVolId))
-        {
+        {*/
         //case vtkEMSegmentMRMLManager::DistributionSpecificationManual:
         //  value = "Manual";
         //  break;
@@ -1058,15 +1062,15 @@ DisplaySelectedNodeIntensityDistributionsCallback()
         //DistributionSpecificationManuallySample:
         //  value = "Manual Sampling";
         //  break;
-        case vtkEMSegmentMRMLManager::
+       /* case vtkEMSegmentMRMLManager::
         DistributionSpecificationLabelSample:
           value = "Label Sampling";
-          break;
+          break;*/
         //case vtkEMSegmentMRMLManager::
         //DistributionSpecificationAutoSample:
         //  value = "Auto Sampling";
         //  break;
-        }
+     /*   }
       this->IntensityDistributionSpecificationMenuButton->GetWidget()->
         SetValue(value.c_str());
       }
@@ -1077,7 +1081,7 @@ DisplaySelectedNodeIntensityDistributionsCallback()
         SetValue("");
       }
     }
-
+*/
   // Update the distribution mean vector/matrix
 
   if (this->IntensityDistributionMeanMatrix)
@@ -1990,12 +1994,13 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessLabelButtonGUIEvents(
     vtkstd::vector<double>       meanIntensity(numValues, 0);
     vtkstd::vector<double>       meanLogIntensity(numValues, 0);
     vtkstd::vector<unsigned int> countIntensity(numValues, 0);
+    vtkstd::vector<double>       minMaxRange(numTargetImages*2, 0);
 
     short *ptr =
       static_cast<short*>(labelVolume->GetImageData()->GetScalarPointer());
 
     int id;
-    double range[2] = {VTK_DOUBLE_MAX,VTK_DOUBLE_MIN};
+    //double range[2] = {VTK_DOUBLE_MAX,VTK_DOUBLE_MIN};
 
     double intensity;
     double logIntensity;
@@ -2035,8 +2040,8 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessLabelButtonGUIEvents(
 
                   countIntensity[id]++;
 
-                  if( intensity < range[0] ) { range[0] = intensity; }
-                  if( intensity > range[1] ) { range[1] = intensity; }
+                  if( intensity < minMaxRange[2*m] ) { minMaxRange[2*m] = intensity; }
+                  if( intensity > minMaxRange[2*m+1] ) { minMaxRange[2*m+1] = intensity; }
                 }
               }
             }
@@ -2045,13 +2050,15 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessLabelButtonGUIEvents(
       }
     }
 
-    if(range[0] >= range[1])
+    /*if(range[0] >= range[1])
     {
       vtkErrorMacro("Invalid range " << range[0] << " " << range[1]);
       return;
-    }
+    }*/
+    
+    double factor = 0.0;
 
-    double factor = 1.0 / (range[1]-range[0]);
+    //double factor = 1.0 / (range[1]-range[0]);
 
     for(int j=0; j < this->NumberOfLeaves; j++)
     {
@@ -2065,10 +2072,19 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessLabelButtonGUIEvents(
           meanLogIntensity[id] /= static_cast<double>(countIntensity[id]);
 
           vtkErrorMacro("mean: "<<meanIntensity[id]);
-          vtkErrorMacro("min: "<<range[0]);
-          vtkErrorMacro("max: "<<range[1]);
+          vtkErrorMacro("min: "<<minMaxRange[2*i]);
+          vtkErrorMacro("max: "<<minMaxRange[2*i+1]);
 
-          meanIntensity[id] -= range[0];
+          meanIntensity[id] -= minMaxRange[2*i];
+          
+          if(minMaxRange[2*i] >= minMaxRange[2*i+1])
+            {
+            vtkErrorMacro("Invalid range " << minMaxRange[2*i] << " " << minMaxRange[2*i+1]);
+            return;
+          }
+          
+          factor = 1.0 / (minMaxRange[2*i+1]-minMaxRange[2*i]);
+          
           meanIntensity[id] *= factor;
 
           vtkErrorMacro("mean normalized: "<<meanIntensity[id]);
@@ -2114,8 +2130,16 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessLabelButtonGUIEvents(
                     targetImage->GetScalarComponentAsDouble(i,j,k,0);
 
                   double logIntensity1 = log(intensity1+1);
-
-                  intensity1 -= range[0];
+                  
+                  if(minMaxRange[2*m] >= minMaxRange[2*m+1])
+                    {
+                    vtkErrorMacro("Invalid range " << minMaxRange[2*m] << " " << minMaxRange[2*m+1]);
+                    return;
+                    }
+          
+                  factor = 1.0 / (minMaxRange[2*m+1]-minMaxRange[2*m]);
+                  
+                  intensity1 -= minMaxRange[2*m];
                   intensity1 *= factor;
 
                   double diff1    = intensity1    - meanIntensity[id1];
@@ -2134,8 +2158,16 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessLabelButtonGUIEvents(
                       targetImage->GetScalarComponentAsDouble(i,j,k,0);
 
                     double logIntensity2 = log(intensity2+1);
-
-                    intensity2 -= range[0];
+                    
+                    if(minMaxRange[2*n] >= minMaxRange[2*n+1])
+                    {
+                    vtkErrorMacro("Invalid range " << minMaxRange[2*n] << " " << minMaxRange[2*n+1]);
+                    return;
+                    }
+          
+                    factor = 1.0 / (minMaxRange[2*n+1]-minMaxRange[2*n]);
+                    
+                    intensity2 -= minMaxRange[2*n];
                     intensity2 *= factor;
 
                     double diff2    = intensity2    - meanIntensity[id2];
