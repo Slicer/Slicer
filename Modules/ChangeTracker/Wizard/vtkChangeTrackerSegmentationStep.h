@@ -30,6 +30,9 @@ public:
 
   vtkGetObjectMacro(PreSegment,vtkImageThreshold);
 
+  virtual void AddGUIObservers();
+  virtual void RemoveGUIObservers();
+  void ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData);
 
 protected:
   vtkChangeTrackerSegmentationStep();
@@ -41,6 +44,9 @@ protected:
 
   vtkSlicerNodeSelectorWidget *Scan1_SegmSelector;
   vtkSlicerNodeSelectorWidget *Scan2_SegmSelector;
+
+  void ShowSegmentedVolume(vtkMRMLScalarVolumeNode*);
+  static void WizardGUICallback(vtkObject *caller, unsigned long event, void *clientData, void *callData );
 
 private:
   vtkChangeTrackerSegmentationStep(const vtkChangeTrackerSegmentationStep&);

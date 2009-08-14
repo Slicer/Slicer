@@ -34,6 +34,8 @@ vtkChangeTrackerSegmentationStep::vtkChangeTrackerSegmentationStep()
 {
   this->SetName("3/4. Identify Tumor in First Scan"); 
   this->SetDescription("Move slider to outline boundary of tumor"); 
+  
+  this->WizardGUICallbackCommand->SetCallback(vtkChangeTrackerSegmentationStep::WizardGUICallback);
 
   this->ThresholdFrame = NULL;
   this->ThresholdRange = NULL;
@@ -185,7 +187,7 @@ void vtkChangeTrackerSegmentationStep::ShowUserInterface()
     this->Scan1_SegmSelector->SetMRMLScene(this->GetGUI()->GetLogic()->GetMRMLScene());
     this->Scan1_SegmSelector->SetLabelText("Segmentation of the 1st scan");
     this->Scan1_SegmSelector->SetBalloonHelpString("Specify segmentation of the first time-point. If not available, leave as \"None\"");
-    this->Scan1_SegmSelector->SetEnabled(0);
+    this->Scan1_SegmSelector->SetEnabled(1);
   }
 
   this->Script("pack %s -side top -anchor nw -fill x -padx 0 -pady 0", this->Scan1_SegmSelector->GetWidgetName());
@@ -235,7 +237,8 @@ void vtkChangeTrackerSegmentationStep::ShowUserInterface()
     // Necesary in order to transfere results from above lines  
     this->ThresholdRangeChangedCallback(min, max);
   }
-   
+ 
+  this->AddGUIObservers();
 
   // Show Reference Image 1 in the 3D Slicer Viewer
   // this->GetGUI()->SliceLogicDefine(); 
@@ -296,7 +299,6 @@ void vtkChangeTrackerSegmentationStep::PreSegmentScan1Define() {
   if (!this->ThresholdRange) return;
 
   vtkSlicerApplication      *application      =  vtkSlicerApplication::SafeDownCast(this->GetApplication()); 
-  vtkSlicerApplicationGUI   *applicationGUI   = this->GetGUI()->GetApplicationGUI();
   // availability of Volumes module has been verified in the first step of the
   // wizard
   vtkSlicerVolumesLogic     *volumesLogic      = (vtkSlicerVolumesGUI::SafeDownCast(application->GetModuleGUIByName("Volumes")))->GetLogic();
@@ -311,30 +313,12 @@ void vtkChangeTrackerSegmentationStep::PreSegmentScan1Define() {
   int range[2] = {int(this->ThresholdRange->GetRange()[0]),int(this->ThresholdRange->GetRange()[1])}; 
   vtkChangeTrackerLogic::DefinePreSegment(volumeNode->GetImageData(),range,this->PreSegment);
 
-  // ---------------------------------
-  // show segmentation in Slice view 
-  // ------------------------------
   char segmNodeName[255];
   sprintf(segmNodeName, "%s_VOI_PreSegmented", this->GetGUI()->GetLogic()->GetInputScanName(0));
   this->PreSegmentNode = volumesLogic->CreateLabelVolume(Node->GetScene(),volumeNode, segmNodeName);
   this->PreSegmentNode->SetAndObserveImageData(this->PreSegment->GetOutput());
-  
-  applicationGUI->GetMainSliceGUI("Red")->GetLogic()->GetSliceCompositeNode()->SetLabelVolumeID(this->PreSegmentNode->GetID());
-  applicationGUI->GetMainSliceGUI("Yellow")->GetLogic()->GetSliceCompositeNode()->SetLabelVolumeID(this->PreSegmentNode->GetID());
-  applicationGUI->GetMainSliceGUI("Green")->GetLogic()->GetSliceCompositeNode()->SetLabelVolumeID(this->PreSegmentNode->GetID());
-  
-  applicationGUI->GetMainSliceGUI("Red")->GetLogic()->GetSliceCompositeNode()->SetLabelOpacity(0.6);
-  applicationGUI->GetMainSliceGUI("Yellow")->GetLogic()->GetSliceCompositeNode()->SetLabelOpacity(0.6);
-  applicationGUI->GetMainSliceGUI("Green")->GetLogic()->GetSliceCompositeNode()->SetLabelOpacity(0.6);
 
-  applicationGUI->GetSlicesControlGUI()->GetSliceFadeScale()->SetValue(0.6);
-  // ------------------------------------
-  // Show Segmentation through 3D Volume Rendering
-  // ------------------------------------
-  float color[3] = { 0.8, 0.8, 0.0 };
-
-  this->CreateRender(volumeNode, 0);
-  this->SetRender_BandPassFilter(range[0],range[1], color, color);
+  this->ShowSegmentedVolume(this->PreSegmentNode);
   
   return;
 }
@@ -391,13 +375,24 @@ int vtkChangeTrackerSegmentationStep::SegmentScan1Define() {
 //----------------------------------------------------------------------------
 void vtkChangeTrackerSegmentationStep::ThresholdRangeChangedCallback(double min , double max)
 {
+  if(!this->PreSegment)
+    {
+    std::cerr << "Cannot update render -- presegment node empty" << std::endl;
+    return;
+    }
+
   if (!this->ThresholdRange || !this->PreSegment) return;
   PreSegment->ThresholdBetween(min,max); 
   PreSegment->Update();
   this->PreSegmentNode->Modified();
 
   vtkMRMLChangeTrackerNode *mrmlNode = this->GetGUI()->GetNode();
-  if (!mrmlNode) return;
+  if (!mrmlNode)
+    {
+    std::cerr << "Cannot update render -- no node!" << std::endl;
+    return;
+    }
+
   mrmlNode->SetSegmentThresholdMin(min);
   mrmlNode->SetSegmentThresholdMax(max);
 
@@ -419,11 +414,71 @@ void vtkChangeTrackerSegmentationStep::ThresholdRangeChangedCallback(double min 
 
 //----------------------------------------------------------------------------
 void vtkChangeTrackerSegmentationStep::TransitionCallback() 
-{ 
-  this->SegmentScan1Remove();
-  if (!this->SegmentScan1Define()) return; 
+{   
+  vtkMRMLScalarVolumeNode *segmNode = NULL;
+  vtkMRMLChangeTrackerNode *ctNode;
+
+  ctNode = this->GetGUI()->GetNode();
+
+  if(this->Scan1_SegmSelector->GetSelected())
+    segmNode = vtkMRMLScalarVolumeNode::SafeDownCast(this->Scan1_SegmSelector->GetSelected());
+ 
+  if(!segmNode || segmNode==this->PreSegmentNode)
+    {
+    this->SegmentScan1Remove();
+    /*
+    if(this->Scan1_SegmSelector() && this->Scan1_SegmSelector()->GetSelected())
+    {
+    this->SetScan1_SegmentRef(this->Scan1_SegmSelector()->GetSelected()->GetID());
+    }
+    if(this->Scan2_SegmSelector() && this->Scan2_SegmSelector()->GetSelected())
+    {
+    this->SetScan2_SegmentRef(this->Scan2_SegmSelector()->GetSelected()->GetID());
+    }
+    */
+    if (!this->SegmentScan1Define()) 
+      return; 
+    }
+  else
+    {
+    // Do nothing -- done in GUI event handler for node selector
+    /*
+    // segmentation is supplied -- check whether resampling is needed or not,
+    // and assign to this->SegmentNode
+    // For now, allow the segmentation to be either in the pixel space of the
+    // original scan, or in the supersampled space of ROI, assume user does
+    // not give garbage...
+    vtkMRMLScalarVolumeNode *scan1Node = 
+      vtkMRMLScalarVolumeNode::SafeDownCast(ctNode->GetScene()->GetNodeByID(ctNode->GetScan1_Ref()));
+    vtkImageData *scan1Image = scan1Node->GetImageData(),
+                 *segmImage = segmNode->GetImageData();
+    int *scan1ImageDim = scan1Image->GetDimensions(),
+        *segmImageDim = segmImage->GetDimensions();
+    if(scan1ImageDim[0]==segmImageDim[0] && 
+       scan1ImageDim[1]==segmImageDim[1] &&
+       scan1ImageDim[2]==segmImageDim[2])
+      {
+      std::cerr << "Input segmented image is the segmentation of scan1: \
+        need to extract ROI, and resample" << std::endl;
+      vtkMRMLScalarVolumeNode *resampledScan1Segm =
+        this->GetGUI()->GetLogic()->CreateSuperSample(0);
+      this->GetGUI()->GetLogic()->DeleteSuperSample(0);
+      ctNode->SetScan1_InputSegmentSuperSampleRef(resampledScan1Segm->GetID());
+      ctNode->SetScan1_SegmentRef(resampledScan1Segm->GetID());
+      }
+    else
+      {
+      std::cerr << "Input segmented image is the segmentation of resampled ROI: \
+        nothing to do -- just assigned segmentation node to the input \
+        segmentation" << std::endl;
+      ctNode->SetScan1_SegmentRef(ctNode->GetScan1_InputSegmentRef());
+      }
+      */
+    }
+  /*
   vtkSlicerApplication *application   = vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication());
   this->GetGUI()->GetLogic()->SaveVolume(application,this->SegmentNode); 
+  */
 
   // Proceed to next step 
   this->GUI->GetWizardWidget()->GetWizardWorkflow()->AttemptToGoToNextStep();
@@ -440,3 +495,138 @@ void vtkChangeTrackerSegmentationStep::RemoveResults()  {
     this->PreSegmentScan1Remove();
     this->GetGUI()->SliceLogicRemove();
 }
+
+void vtkChangeTrackerSegmentationStep::AddGUIObservers()
+{
+  if(this->Scan1_SegmSelector && (!this->Scan1_SegmSelector->HasObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->WizardGUICallbackCommand)))
+    {
+    this->Scan1_SegmSelector->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->WizardGUICallbackCommand);
+    std::cerr << "observer added for the first segm selector" << std::endl;
+    }
+  if(this->Scan2_SegmSelector && (!this->Scan2_SegmSelector->HasObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->WizardGUICallbackCommand)))
+    {
+    this->Scan2_SegmSelector->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->WizardGUICallbackCommand);
+    }
+}
+
+void vtkChangeTrackerSegmentationStep::RemoveGUIObservers()
+{
+  this->Scan1_SegmSelector->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->WizardGUICallbackCommand);
+  this->Scan2_SegmSelector->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->WizardGUICallbackCommand);
+}
+
+void vtkChangeTrackerSegmentationStep::ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData)
+{
+  vtkSlicerNodeSelectorWidget *sel = vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
+  if(this->Scan1_SegmSelector && sel == this->Scan1_SegmSelector &&
+     event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent)
+//     this->Scan1_SegmSelector->GetSelected() != NULL)
+    {
+    // for the segmentation of the first scan, update the node, and set label
+    // in the node selector
+    if(this->Scan1_SegmSelector->GetSelected())
+      {
+      vtkMRMLChangeTrackerNode *ctNode = this->GetGUI()->GetNode();
+      
+      ctNode->SetScan1_InputSegmentRef(this->Scan1_SegmSelector->GetSelected()->GetID());
+
+      vtkMRMLScalarVolumeNode *segmNode = 
+        vtkMRMLScalarVolumeNode::SafeDownCast(this->Scan1_SegmSelector->GetSelected());
+      
+      vtkMRMLScalarVolumeNode *scan1Node = 
+        vtkMRMLScalarVolumeNode::SafeDownCast(ctNode->GetScene()->GetNodeByID(ctNode->GetScan1_Ref()));
+      if(!segmNode || !scan1Node)
+        return;
+      vtkMRMLScalarVolumeNode *resampledScan1Segm;
+      vtkImageData *scan1Image = scan1Node->GetImageData(),
+                   *segmImage = segmNode->GetImageData();
+      if(!scan1Image || !segmImage)
+        return;
+      int *scan1ImageDim = scan1Image->GetDimensions(),
+          *segmImageDim = segmImage->GetDimensions();
+      // resample right away. problem -- gui unresponsive, long processing in
+      // event handler
+      if(scan1ImageDim[0]==segmImageDim[0] && 
+        scan1ImageDim[1]==segmImageDim[1] &&
+        scan1ImageDim[2]==segmImageDim[2])
+        {
+        std::cerr << "Input segmented image is the segmentation of scan1: \
+          need to extract ROI, and resample" << std::endl;
+        resampledScan1Segm = this->GetGUI()->GetLogic()->CreateSuperSample(0);
+        this->GetGUI()->GetLogic()->DeleteSuperSample(0);
+        ctNode->SetScan1_InputSegmentSuperSampleRef(resampledScan1Segm->GetID());
+        ctNode->SetScan1_SegmentRef(resampledScan1Segm->GetID());
+        // assume label is within [1,255]
+        ctNode->SetSegmentThresholdMin(1);
+        ctNode->SetSegmentThresholdMax(255);
+        }
+      else
+        {
+        std::cerr << "Input segmented image is the segmentation of resampled ROI: \
+          nothing to do -- just assigned segmentation node to the input \
+          segmentation" << std::endl;
+        ctNode->SetScan1_SegmentRef(ctNode->GetScan1_InputSegmentRef());
+        resampledScan1Segm = 
+          vtkMRMLScalarVolumeNode::SafeDownCast(ctNode->GetScene()->GetNodeByID(ctNode->GetScan1_InputSegmentRef()));
+        }
+      this->RenderRemove();
+      // keep the pre-segment scan, so that the user can go back
+      //      this->PreSegmentScan1Remove();
+      this->ShowSegmentedVolume(resampledScan1Segm);
+      this->ThresholdRange->SetEnabled(0);
+      }
+    else
+      {
+      this->ThresholdRange->SetEnabled(1);
+      this->RenderRemove();
+      // if "None" is selected, go back to pre-segment to show
+      this->GetGUI()->GetNode()->SetScan1_InputSegmentRef(NULL);
+      this->ShowSegmentedVolume(this->PreSegmentNode);
+      }
+    }
+
+  if(this->Scan2_SegmSelector && sel == this->Scan2_SegmSelector &&
+     event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
+     this->Scan2_SegmSelector->GetSelected() != NULL)
+    {
+    this->GetGUI()->GetNode()->SetScan2_InputSegmentRef(this->Scan2_SegmSelector->GetSelected()->GetID());
+    }
+}
+
+void vtkChangeTrackerSegmentationStep::ShowSegmentedVolume(vtkMRMLScalarVolumeNode *segVol)
+{
+  // ---------------------------------
+  // show segmentation in Slice view 
+  // ------------------------------
+  
+  vtkSlicerApplicationGUI   *applicationGUI   = this->GetGUI()->GetApplicationGUI();
+  applicationGUI->GetMainSliceGUI("Red")->GetLogic()->GetSliceCompositeNode()->SetLabelVolumeID(segVol->GetID());
+  applicationGUI->GetMainSliceGUI("Yellow")->GetLogic()->GetSliceCompositeNode()->SetLabelVolumeID(segVol->GetID());
+  applicationGUI->GetMainSliceGUI("Green")->GetLogic()->GetSliceCompositeNode()->SetLabelVolumeID(segVol->GetID());
+  
+  applicationGUI->GetMainSliceGUI("Red")->GetLogic()->GetSliceCompositeNode()->SetLabelOpacity(0.6);
+  applicationGUI->GetMainSliceGUI("Yellow")->GetLogic()->GetSliceCompositeNode()->SetLabelOpacity(0.6);
+  applicationGUI->GetMainSliceGUI("Green")->GetLogic()->GetSliceCompositeNode()->SetLabelOpacity(0.6);
+
+  applicationGUI->GetSlicesControlGUI()->GetSliceFadeScale()->SetValue(0.6);
+  // ------------------------------------
+  // Show Segmentation through 3D Volume Rendering
+  // ------------------------------------
+  float color[3] = { 0.8, 0.8, 0.0 };
+
+  this->CreateRender(segVol, 0);
+  // assume the label value is between 1 and 255
+  this->SetRender_BandPassFilter(this->GetGUI()->GetNode()->GetSegmentThresholdMin(), 
+    this->GetGUI()->GetNode()->GetSegmentThresholdMax(), color, color);
+  this->GetGUI()->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+}
+
+void vtkChangeTrackerSegmentationStep::WizardGUICallback(vtkObject *caller, unsigned long event, void *clientData, void *callData )
+{
+    vtkChangeTrackerSegmentationStep *self = reinterpret_cast<vtkChangeTrackerSegmentationStep *>(clientData);
+    if (self) 
+      { 
+      self->ProcessGUIEvents(caller, event, callData); 
+      }
+}
+
