@@ -292,7 +292,7 @@ int vtkGaussian2DWidget::DrawGaussian(
   }
 #endif
   vtkImageData *imageData = vtkImageData::New();
-  imageData->SetDimensions(10,10,1);
+  imageData->SetDimensions(this->Resolution[0],this->Resolution[1],1);
 
   vtkImageDataGeometryFilter *geometryFilter =
     vtkImageDataGeometryFilter::New();
