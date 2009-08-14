@@ -299,7 +299,7 @@ int vtkGaussian2DWidget::DrawGaussian(
   geometryFilter->SetInput(imageData);
   imageData->Delete();
   geometryFilter->Update();
-
+/*
   vtkStripper *stripper = vtkStripper::New();
   stripper->SetInput(geometryFilter->GetOutput());
   stripper->Update();
@@ -320,7 +320,7 @@ int vtkGaussian2DWidget::DrawGaussian(
   }
 
   while(1) {}
-
+*/
   vtkPoints *newPoints = vtkPoints::New();
   newPoints->SetNumberOfPoints(numPts);
 
