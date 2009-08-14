@@ -414,14 +414,15 @@ int vtkGaussian2DWidget::DrawGaussian(
   {
     vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();
     mapper->SetInput(cutter->GetOutput());
+    mapper->SetResolveCoincidentTopologyToPolygonOffset();
 
-      vtkActor *actor = vtkActor::New();
-      actor->SetMapper(mapper);
-      mapper->Delete();
-      actor->GetProperty()->SetColor(0,0,0);
+    vtkActor *actor = vtkActor::New();
+    actor->SetMapper(mapper);
+    mapper->Delete();
+    actor->GetProperty()->SetColor(0,0,0);
 
-      this->AddViewProp(actor);
-      actor->Delete();
+    this->AddViewProp(actor);
+    actor->Delete();
   }
 
   cutter->Delete();
@@ -465,11 +466,13 @@ int vtkGaussian2DWidget::DrawGaussian(
   vtkPolyDataMapper *mapperX = vtkPolyDataMapper::New();
   mapperX->SetInputConnection(cutterX->GetOutputPort());
   cutterX->Delete();
+  mapperX->SetResolveCoincidentTopologyToPolygonOffset();
   mapperX->ScalarVisibilityOff();
 
   vtkPolyDataMapper *mapperY = vtkPolyDataMapper::New();
   mapperY->SetInputConnection(cutterY->GetOutputPort());
   cutterY->Delete();
+  mapperY->SetResolveCoincidentTopologyToPolygonOffset();
   mapperY->ScalarVisibilityOff();
 
   vtkActor *actor = vtkActor::New();

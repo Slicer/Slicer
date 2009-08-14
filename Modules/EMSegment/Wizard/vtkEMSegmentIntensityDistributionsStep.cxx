@@ -1576,10 +1576,8 @@ void vtkEMSegmentIntensityDistributionsStep::GetNumberOfLeaf(
 void vtkEMSegmentIntensityDistributionsStep::
 IntensityDistributionTargetSelectionChangedCallback(vtkIdType targetVolId)
 {
-
   double meanX;
   double meanY;
-
   double varianceX;
   double varianceY;
   double covariance;
@@ -1596,10 +1594,10 @@ IntensityDistributionTargetSelectionChangedCallback(vtkIdType targetVolId)
 
   this->Gaussian2DWidget->RemoveAllGaussians();
 
-  this->Gaussian2DWidget->SetScalarRangeX(this->TargetVolumeXRange);
-  this->Gaussian2DWidget->SetScalarRangeY(this->TargetVolumeYRange);
+  this->Gaussian2DWidget->SetScalarRangeX(0,1);
+  this->Gaussian2DWidget->SetScalarRangeY(0,1);
 
-  for (int m=0; m < this->NumberOfLeaves; m++)
+  for(int m=0; m < this->NumberOfLeaves; m++)
   {
     vtkIdType leaf  = this->LeafId[m];
     vtkIdType label = mrmlManager->GetTreeNodeIntensityLabel(leaf);
@@ -1709,8 +1707,7 @@ void vtkEMSegmentIntensityDistributionsStep::AddLabelButtonGUIEventsObservers()
 }
 
 //----------------------------------------------------------------------------
-void
-vtkEMSegmentIntensityDistributionsStep::
+void vtkEMSegmentIntensityDistributionsStep::
 RemoveLabelButtonGUIEventsObservers()
 {
   this->LabelmapButton->RemoveObservers(vtkKWPushButton::InvokedEvent,
@@ -1718,301 +1715,316 @@ RemoveLabelButtonGUIEventsObservers()
 }
 
 //----------------------------------------------------------------------------
-void
-vtkEMSegmentIntensityDistributionsStep::
-ProcessLabelButtonGUIEvents(
-    vtkObject *caller,
-    unsigned long event,
-    void *callData)
+void vtkEMSegmentIntensityDistributionsStep::ProcessLabelButtonGUIEvents(
+  vtkObject *caller, unsigned long event, void *callData)
 {
-  if (event == vtkKWPushButton::InvokedEvent &&
-      caller == this->LabelmapButton)
+ if (event == vtkKWPushButton::InvokedEvent &&
+    caller == this->LabelmapButton)
+ {
+  vtkEMSegmentMRMLManager *mrmlManager =
+    this->GetGUI()->GetMRMLManager();
+
+  vtkMRMLScalarVolumeNode *labelVolume =
+    mrmlManager->GetOutputVolumeNode();
+
+  if(labelVolume == NULL)
   {
-    vtkEMSegmentMRMLManager *mrmlManager =
-      this->GetGUI()->GetMRMLManager();
+    vtkErrorMacro("No label volume found");
+    return;
+  }
 
-    vtkMRMLScalarVolumeNode *labelVolume =
-      mrmlManager->GetOutputVolumeNode();
+  if(labelVolume->GetImageData() == NULL)
+  {
+    vtkErrorMacro("Label Map has no data");
+    return;
+  }
 
-    if (labelVolume == NULL)
+  if(labelVolume->GetImageData()->GetScalarType() != VTK_SHORT)
+  {
+    vtkErrorMacro("Scalar type of Label Map must be SHORT. Label Map type: "
+      << labelVolume->GetImageData()->GetScalarTypeAsString());
+    return;
+  }
+
+  if (labelVolume->GetImageData()->GetNumberOfScalarComponents() != 1)
+  {
+    vtkErrorMacro("Label map must have voxels with 1 component. "
+      << "The voxels in the label map have "
+      << labelVolume->GetImageData()->GetNumberOfScalarComponents()
+      << " components.");
+    return;
+  }
+
+  int dim[3];
+  int labelExtent[6];
+
+  labelVolume->GetImageData()->GetDimensions(dim);
+  labelVolume->GetImageData()->GetWholeExtent(labelExtent);
+
+  if (dim[0] == 0 && dim[1] == 0 && dim[2] == 0)
+  {
+    vtkErrorMacro("Invalid dimensions for LabelMap: "
+        << dim[0] << " " << dim[1] << " " << dim[2]);
+    return;
+  }
+
+  if (labelExtent[1] < labelExtent[0] ||
+      labelExtent[3] < labelExtent[2] ||
+      labelExtent[5] < labelExtent[4])
+  {
+    vtkErrorMacro("Invalid extent for LabelMap:"
+        << " " << labelExtent[0] << " " << labelExtent[1]
+        << " " << labelExtent[2] << " " << labelExtent[3]
+        << " " << labelExtent[4] << " " << labelExtent[5]);
+    return;
+  }
+
+  int numTargetImages = mrmlManager->GetTargetNumberOfSelectedVolumes();
+      if (numTargetImages < 1)
+  {
+    vtkErrorMacro("Invalid number of target images: " << numTargetImages);
+    return;
+  }
+
+  vtkIdType volumeID;
+
+  int extent[6];
+
+  for (int m=0; m < numTargetImages; m++)
+  {
+    volumeID = mrmlManager->GetTargetSelectedVolumeNthID(m);
+
+    vtkMRMLVolumeNode *targetVolume = mrmlManager->GetVolumeNode(volumeID);
+
+    if (targetVolume == NULL)
     {
-      vtkErrorMacro("No label volume found");
+      vtkErrorMacro("No target volume for ID " << volumeID);
       return;
     }
 
-    if (labelVolume->GetImageData() == NULL)
+    vtkImageData *targetImage = targetVolume->GetImageData();
+
+    if (targetImage == NULL)
     {
-      vtkErrorMacro("Label Map has no data");
+      vtkErrorMacro("Target volume has no data");
       return;
     }
 
-    if (labelVolume->GetImageData()->GetScalarType() != VTK_SHORT)
+    targetImage->GetWholeExtent(extent);
+
+    if (extent[0] != labelExtent[0] || extent[1] != labelExtent[1] ||
+        extent[2] != labelExtent[2] || extent[3] != labelExtent[3] ||
+        extent[4] != labelExtent[4] || extent[5] != labelExtent[5])
     {
-      vtkErrorMacro("Scalar type of Label Map must be SHORT. Label Map type: "
-        << labelVolume->GetImageData()->GetScalarTypeAsString());
+      vtkErrorMacro("Label Map has whole extent "
+          << labelExtent[0] << " " << labelExtent[1] << " "
+          << labelExtent[2] << " " << labelExtent[3] << " "
+          << labelExtent[4] << " " << labelExtent[5]
+          << " while Target Volume " << volumeID << " has whole extent "
+          << extent[0] << " " << extent[1] << " "
+          << extent[2] << " " << extent[3] << " "
+          << extent[4] << " " << extent[5]);
       return;
     }
 
-    if (labelVolume->GetImageData()->GetNumberOfScalarComponents() != 1)
+    if (targetImage->GetNumberOfScalarComponents() != 1)
     {
-      vtkErrorMacro("Label map must have voxels with 1 component. "
-        << "The voxels in the label map have "
-        << labelVolume->GetImageData()->GetNumberOfScalarComponents()
-        << " components.");
+      vtkErrorMacro("Voxels in Target Volume must have 1 component. "
+          << "The voxels in the Target Volume " << volumeID << " have "
+          << targetImage->GetNumberOfScalarComponents()
+          << " components.");
       return;
-    }
-
-    int dim[3];
-    int labelExtent[6];
-
-    labelVolume->GetImageData()->GetDimensions(dim);
-    labelVolume->GetImageData()->GetWholeExtent(labelExtent);
-
-    if (dim[0] == 0 && dim[1] == 0 && dim[2] == 0)
-    {
-      vtkErrorMacro("Invalid dimensions for LabelMap: "
-          << dim[0] << " " << dim[1] << " " << dim[2]);
-      return;
-    }
-
-    if (labelExtent[1] < labelExtent[0] ||
-        labelExtent[3] < labelExtent[2] ||
-        labelExtent[5] < labelExtent[4])
-    {
-      vtkErrorMacro("Invalid extent for LabelMap:"
-          << " " << labelExtent[0] << " " << labelExtent[1]
-          << " " << labelExtent[2] << " " << labelExtent[3]
-          << " " << labelExtent[4] << " " << labelExtent[5]);
-      return;
-    }
-
-    int numTargetImages = mrmlManager->GetTargetNumberOfSelectedVolumes();
-
-    if (numTargetImages < 1)
-    {
-      vtkErrorMacro("Invalid number of target images: " << numTargetImages);
-      return;
-    }
-
-    vtkIdType volumeID;
-
-    int extent[6];
-
-    for (int m=0; m < numTargetImages; m++)
-    {
-      volumeID = mrmlManager->GetTargetSelectedVolumeNthID(m);
-
-      vtkMRMLVolumeNode *targetVolume = mrmlManager->GetVolumeNode(volumeID);
-
-      if (targetVolume == NULL)
-      {
-        vtkErrorMacro("No target volume for ID " << volumeID);
-        return;
-      }
-
-      vtkImageData *targetImage = targetVolume->GetImageData();
-
-      if (targetImage == NULL)
-      {
-        vtkErrorMacro("Target volume has no data");
-        return;
-      }
-
-      targetImage->GetWholeExtent(extent);
-
-      if (extent[0] != labelExtent[0] || extent[1] != labelExtent[1] ||
-          extent[2] != labelExtent[2] || extent[3] != labelExtent[3] ||
-          extent[4] != labelExtent[4] || extent[5] != labelExtent[5])
-      {
-        vtkErrorMacro("Label Map has whole extent "
-            << labelExtent[0] << " " << labelExtent[1] << " "
-            << labelExtent[2] << " " << labelExtent[3] << " "
-            << labelExtent[4] << " " << labelExtent[5]
-            << " while Target Volume " << volumeID << " has whole extent "
-            << extent[0] << " " << extent[1] << " "
-            << extent[2] << " " << extent[3] << " "
-            << extent[4] << " " << extent[5]);
-        return;
-      }
-
-      if (targetImage->GetNumberOfScalarComponents() != 1)
-      {
-        vtkErrorMacro("Voxels in Target Volume must have 1 component. "
-            << "The voxels in the Target Volume " << volumeID << " have "
-            << targetImage->GetNumberOfScalarComponents()
-            << " components.");
-        return;
-      }
-    }
-
-    int numValues = this->NumberOfLeaves * numTargetImages;
-
-    double       *meanIntensity  = new double      [numValues];
-    unsigned int *countIntensity = new unsigned int[numValues];
-
-    memset(meanIntensity, numValues,0);
-    memset(countIntensity,numValues,0);
-
-    short *ptr = (short*) labelVolume->GetImageData()->GetScalarPointer();
-
-    int id;
-    double intensity;
-
-    vtkMRMLVolumeNode *targetVolume;
-    vtkImageData      *targetImage;
-
-    for (int k=0; k < dim[2]; k++)
-    {
-      for (int j=0; j < dim[1]; j++)
-      {
-        for (int i=0; i < dim[0]; i++, ptr++)
-        {
-          short label = *ptr;
-
-          if (label)
-          {
-            for (int l=0; l < this->NumberOfLeaves; l++)
-            {
-              if (label == this->LeafLabel[l])
-              {
-                for (int m=0; m < numTargetImages; m++)
-                {
-                  id = l * numTargetImages + m;
-
-                  volumeID = mrmlManager->GetTargetSelectedVolumeNthID(m);
-
-                  targetVolume = mrmlManager->GetVolumeNode(volumeID);
-
-                  targetImage = targetVolume->GetImageData();
-
-                  intensity =
-                    targetImage->GetScalarComponentAsDouble(i,j,k,0);
-
-                  meanIntensity[id] += intensity;
-
-                  countIntensity[id]++;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    for (int j=0; j < this->NumberOfLeaves; j++)
-    {
-      for (int i=0; i < numTargetImages; i++)
-      {
-        id = j * numTargetImages + i;
-
-        if (countIntensity[id])
-        {
-          meanIntensity[id] /= (double) countIntensity[id];
-        }
-      }
-    }
-
-    ptr = (short*) labelVolume->GetImageData()->GetScalarPointer();
-
-    numValues *= numTargetImages;
-
-    double *covarianceMatrix = new double[numValues];
-
-    memset(covarianceMatrix,numValues,0);
-
-    int id1, id2;
-
-    for (int k=0; k < dim[2]; k++)
-    {
-      for (int j=0; j < dim[1]; j++)
-      {
-        for (int i=0; i < dim[0]; i++, ptr++)
-        {
-          short label = *ptr;
-
-          if (label)
-          {
-            for (int l=0; l < this->NumberOfLeaves; l++)
-            {
-              if (label == this->LeafLabel[l])
-              {
-                for (int m=0; m < numTargetImages; m++)
-                {
-                  id1 = l * numTargetImages + m;
-
-                  volumeID = mrmlManager->GetTargetSelectedVolumeNthID(m);
-
-                  targetVolume = mrmlManager->GetVolumeNode(volumeID);
-
-                  targetImage = targetVolume->GetImageData();
-
-                  double intensity1 =
-                    targetImage->GetScalarComponentAsDouble(i,j,k,0);
-
-                  double diff1 = intensity1 - meanIntensity[id1];
-
-                  for (int n=0; n < numTargetImages; n++)
-                  {
-                    id2 = l * numTargetImages + n;
-
-                    volumeID = mrmlManager->GetTargetSelectedVolumeNthID(n);
-
-                    targetVolume = mrmlManager->GetVolumeNode(volumeID);
-
-                    targetImage = targetVolume->GetImageData();
-
-                    double intensity2 =
-                      targetImage->GetScalarComponentAsDouble(i,j,k,0);
-
-                    double diff2 = intensity2 - meanIntensity[id2];
-
-                    id = id1 * numTargetImages + n;
-
-                    covarianceMatrix[id] += diff1 * diff2;
-                  }
-                }
-
-                continue;
-              }
-            }
-          }
-        }
-      }
-
-      for (int l=0; l < this->NumberOfLeaves; l++)
-      {
-        unsigned int leaf = this->LeafId[l];
-
-        for (int m=0; m < numTargetImages; m++)
-        {
-          id1 = l * numTargetImages + m;
-          intensity = meanIntensity[id1];
-
-          mrmlManager->SetTreeNodeDistributionLogMean(leaf, m, intensity);
-          mrmlManager->SetTreeNodeDistributionMean(   leaf, m, intensity);
-
-          for (int n=0; n < numTargetImages; n++)
-          {
-            id = id1 * numTargetImages + n;
-
-            if (countIntensity[id1] > 1)
-            {
-              covarianceMatrix[id] /= (double) (countIntensity[id1] - 1);
-            }
-
-            mrmlManager->SetTreeNodeDistributionLogCovariance(leaf,m,n,
-              covarianceMatrix[id]);
-            mrmlManager->SetTreeNodeDistributionCovariance(leaf,m,n,
-              covarianceMatrix[id]);
-          }
-        }
-      }
-
-      delete[] meanIntensity;
-      delete[] countIntensity;
-      delete[] covarianceMatrix;
     }
   }
+
+  int numValues = this->NumberOfLeaves * numTargetImages;
+
+  vtkstd::vector<double>        meanIntensity(numValues, 0);
+  vtkstd::vector<double>     meanLogIntensity(numValues, 0);
+  vtkstd::vector<unsigned int> countIntensity(numValues, 0);
+    vtkstd::vector<double>     intensityMinRange(numValues, VTK_DOUBLE_MAX);
+  vtkstd::vector<double>     intensityMaxRange(numValues, VTK_DOUBLE_MIN);
+
+  short *ptr = (short*) labelVolume->GetImageData()->GetScalarPointer();
+
+  int id;
+  double intensity;
+  double logIntensity;
+
+  vtkMRMLVolumeNode *targetVolume;
+  vtkImageData      *targetImage;
+    for (int k=0; k < dim[2]; k++)
+  {
+    for (int j=0; j < dim[1]; j++)
+    {
+      for (int i=0; i < dim[0]; i++, ptr++)
+      {
+              short label = *ptr;
+
+        if (label)
+        {
+          for (int l=0; l < this->NumberOfLeaves; l++)
+          {
+            if (label == this->LeafLabel[l])
+            {
+              for (int m=0; m < numTargetImages; m++)
+              {
+              id = l * numTargetImages + m;
+
+              volumeID = mrmlManager->GetTargetSelectedVolumeNthID(m);
+
+              targetVolume = mrmlManager->GetVolumeNode(volumeID);
+
+              targetImage = targetVolume->GetImageData();
+
+              intensity =
+                targetImage->GetScalarComponentAsDouble(i,j,k,0)+1;
+
+              meanIntensity[id]    += intensity;
+              meanLogIntensity[id] += log(intensity);
+              countIntensity[id]++;
+              if( intensity < intensityMinRange[id] )
+                { intensityMinRange[id] = intensity; }
+              if( intensity > intensityMaxRange[id] )
+                { intensityMaxRange[id] = intensity; }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  for (int j=0; j < this->NumberOfLeaves; j++)
+  {
+    for (int i=0; i < numTargetImages; i++)
+    {
+      id = j * numTargetImages + i;
+
+      if (countIntensity[id])
+      {
+        meanIntensity[id] /= (double) countIntensity[id];
+                vtkErrorMacro("mean: "<<meanIntensity[id]);
+        vtkErrorMacro("min: "<<intensityMinRange[id]);
+        vtkErrorMacro("max: "<<intensityMaxRange[id]);
+                //meanIntensity[id] -= intensityMinRange[id];
+        meanIntensity[id] = (meanIntensity[id]-intensityMinRange[id])/(intensityMaxRange[id]-intensityMinRange[id]+1);
+                vtkErrorMacro("mean normalized: "<<meanIntensity[id]);
+                meanLogIntensity[id] /= (double) countIntensity[id];
+      }
+    }
+  }
+
+  ptr = (short*) labelVolume->GetImageData()->GetScalarPointer();
+
+  numValues *= numTargetImages;
+
+  vtkstd::vector<double>    covarianceMatrix(numValues, 0.0);
+  vtkstd::vector<double> covarianceLogMatrix(numValues, 0.0);
+
+  int id1, id2;
+
+  for (int k=0; k < dim[2]; k++)
+  {
+    for (int j=0; j < dim[1]; j++)
+    {
+      for (int i=0; i < dim[0]; i++, ptr++)
+      {
+        short label = *ptr;
+
+        if (label)
+        {
+          for (int l=0; l < this->NumberOfLeaves; l++)
+          {
+            if (label == this->LeafLabel[l])
+            {
+              for (int m=0; m < numTargetImages; m++)
+              {
+                id1 = l * numTargetImages + m;
+
+                volumeID = mrmlManager->GetTargetSelectedVolumeNthID(m);
+
+                targetVolume = mrmlManager->GetVolumeNode(volumeID);
+
+                targetImage = targetVolume->GetImageData();
+
+                double intensity1 =
+                  targetImage->GetScalarComponentAsDouble(i,j,k,0)+1;
+                double logIntensity1 =
+                  log(targetImage->GetScalarComponentAsDouble(i,j,k,0)+1);
+                //intensity1 -=  intensityMinRange[id1];
+                intensity1 =
+                  (intensity1-intensityMinRange[id1])/(intensityMaxRange[id1]-intensityMinRange[id1]+1);
+
+                double diff1 = intensity1 - meanIntensity[id1];
+
+                double logDiff1 = logIntensity1 - meanLogIntensity[id1];
+
+                for (int n=0; n < numTargetImages; n++)
+                  {
+                  id2 = l * numTargetImages + n;
+
+                  volumeID = mrmlManager->GetTargetSelectedVolumeNthID(n);
+
+                  targetVolume = mrmlManager->GetVolumeNode(volumeID);
+
+                  targetImage = targetVolume->GetImageData();
+
+                  double intensity2 =
+                    targetImage->GetScalarComponentAsDouble(i,j,k,0)+1;
+
+                  double logIntensity2 =
+                    log(targetImage->GetScalarComponentAsDouble(i,j,k,0)+1);
+
+                  //intensity2 -=  intensityMinRange[id2];
+                  intensity2 =
+                    (intensity2-intensityMinRange[id2])/(intensityMaxRange[id2]-intensityMinRange[id2]+1);
+
+                  double diff2 = intensity2 - meanIntensity[id2];
+
+                  double logDiff2 = logIntensity2 - meanLogIntensity[id2];
+
+                  id = id1 * numTargetImages + n;
+
+                  covarianceMatrix[id]    += diff1    * diff2;
+                  covarianceLogMatrix[id] += logDiff1 * logDiff2;
+                  }
+              }
+              continue;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  for (int l=0; l < this->NumberOfLeaves; l++)
+    {
+      vtkIdType leaf = this->LeafId[l];
+      for (int m=0; m < numTargetImages; m++)
+      {
+        id1 = l * numTargetImages + m;
+        intensity = meanIntensity[id1];
+        logIntensity = meanLogIntensity[id1];
+        mrmlManager->SetTreeNodeDistributionLogMean(leaf, m, logIntensity);
+        mrmlManager->SetTreeNodeDistributionMean(   leaf, m,    intensity);
+
+        for (int n=0; n < numTargetImages; n++)
+        {
+          id = id1 * numTargetImages + n;
+
+          if (countIntensity[id1] > 1)
+          {
+            covarianceMatrix[id]    /= (double) (countIntensity[id1] - 1);
+            covarianceLogMatrix[id] /= (double) (countIntensity[id1] - 1);
+          }
+          mrmlManager->SetTreeNodeDistributionLogCovariance(leaf,m,n,
+            covarianceLogMatrix[id]);
+          mrmlManager->SetTreeNodeDistributionCovariance(leaf,m,n,
+            covarianceMatrix[id]);
+        }
+      }
+    }     }
 }
 
 //---------------------------------------------------------------------------
@@ -2033,9 +2045,7 @@ void vtkEMSegmentIntensityDistributionsStep::RemoveLabelSelectorGUIObservers()
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::ProcessLabelSelectorGUIEvents(
-  vtkObject *caller,
-  unsigned long event,
-  void *callData)
+  vtkObject *caller, unsigned long event, void *callData)
 {
   if (caller == this->LabelSelector &&
       event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent  &&
