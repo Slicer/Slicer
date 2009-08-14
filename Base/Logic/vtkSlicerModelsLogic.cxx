@@ -273,7 +273,7 @@ int vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRMLModelNode *mode
   if (this->GetMRMLScene()->GetCacheManager() != NULL)
     {
     useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(filename);
-    vtkDebugMacro("AddModel: file name is remote: " << filename);
+    vtkDebugMacro("AddScalar: file name is remote: " << filename);
     }
 
   const char *localFile;
