@@ -511,8 +511,11 @@ void vtkChangeTrackerSegmentationStep::AddGUIObservers()
 
 void vtkChangeTrackerSegmentationStep::RemoveGUIObservers()
 {
-  this->Scan1_SegmSelector->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->WizardGUICallbackCommand);
-  this->Scan2_SegmSelector->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->WizardGUICallbackCommand);
+  if (this->Scan1_SegmSelector && this->WizardGUICallbackCommand)
+    {
+    this->Scan1_SegmSelector->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->WizardGUICallbackCommand);
+    this->Scan2_SegmSelector->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->WizardGUICallbackCommand);
+    }
 }
 
 void vtkChangeTrackerSegmentationStep::ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData)
