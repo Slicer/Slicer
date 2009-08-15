@@ -77,7 +77,7 @@ void vtkMRMLDoubleArrayNode::WriteXML(ostream& of, int nIndent)
   if (this->Array->GetNumberOfComponents() > 3)
     {
     // Put values to the string streams except the last values.
-    n = this->Array->GetSize() - 1;
+    n = this->Array->GetNumberOfTuples() - 1;
     for (int i = 0; i < n; i ++)
       {
       this->Array->GetTupleValue(i, xy);
@@ -288,7 +288,7 @@ int vtkMRMLDoubleArrayNode::GetXYValue(int index, double* x, double* y)
 {
   double xy[3];
 
-  if (this->Array->GetNumberOfComponents() > 2 && index < this->Array->GetSize())
+  if (this->Array->GetNumberOfComponents() > 2 && index < this->Array->GetNumberOfTuples())
     {
     this->Array->GetTupleValue(index, xy);
     *x = xy[0];
@@ -307,7 +307,7 @@ int vtkMRMLDoubleArrayNode::GetXYValue(int index, double* x, double* y, double* 
 {
   double xy[3];
 
-  if (this->Array->GetNumberOfComponents() > 3 && index < this->Array->GetSize())
+  if (this->Array->GetNumberOfComponents() > 3 && index < this->Array->GetNumberOfTuples())
     {
     this->Array->GetTupleValue(index, xy);
     *x    = xy[0];
@@ -326,7 +326,7 @@ int vtkMRMLDoubleArrayNode::GetXYValue(int index, double* x, double* y, double* 
 int vtkMRMLDoubleArrayNode::SetXYValue(int index, double x, double y)
 {
   double xy[3];
-  if (this->Array->GetNumberOfComponents() > 2 && index < this->Array->GetSize())
+  if (this->Array->GetNumberOfComponents() > 2 && index < this->Array->GetNumberOfTuples())
     {
     xy[0] = x;
     xy[1] = y;
@@ -347,7 +347,7 @@ int vtkMRMLDoubleArrayNode::SetXYValue(int index, double x, double y)
 int vtkMRMLDoubleArrayNode::SetXYValue(int index, double x, double y, double yerr)
 {
   double xy[3];
-  if (this->Array->GetNumberOfComponents() > 3 && index < this->Array->GetSize())
+  if (this->Array->GetNumberOfComponents() > 3 && index < this->Array->GetNumberOfTuples())
     {
     xy[0] = x;
     xy[1] = y;
@@ -403,4 +403,179 @@ int vtkMRMLDoubleArrayNode::AddXYValue(double x, double y, double yerr)
     {
     return 0;
     }
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLDoubleArrayNode::GetRange(double* rangeX, double* rangeY, int fIncludeError)
+{
+  rangeX[0] = 0.0;
+  rangeX[1] = 0.0;
+  rangeY[0] = 0.0;
+  rangeY[1] = 0.0;
+
+  if (!this->Array)
+    {
+    return;
+    }
+
+  int nTuples = this->Array->GetNumberOfTuples();
+  int nComp   = this->Array->GetNumberOfComponents();
+
+  double xy[3];
+  double c;
+
+  // Consider error value in the range calculation,
+  // if fIncludeError=1 and number of components is larger than 3
+
+  if (fIncludeError && nComp > 2)
+    {
+    c = 1.0;
+    }
+  else
+    {
+    xy[2] = 0.0;
+    c     = 0.0;
+    }
+
+  if (nTuples > 0)
+    {
+    // Get the first values as an initial value
+    this->Array->GetTupleValue(0, xy);
+    rangeX[0] = xy[0];
+    rangeX[1] = xy[0];
+    rangeY[0] = xy[1] - c * xy[2];
+    rangeY[1] = xy[1] + c * xy[2];
+    
+    // Search the array
+    for (int i = 1; i < nTuples; i ++)
+      {
+      this->Array->GetTupleValue(i, xy);
+
+      // X value
+      if (xy[0] < rangeX[0])
+        {
+        rangeX[0] = xy[0];
+        }
+      else if (xy[0] > rangeX[1])
+        {
+        rangeX[1] = xy[0];
+        }
+
+      // Y and error
+      double low  = xy[1] - c * xy[2];
+      double high = xy[1] + c * xy[2];
+
+      if (low < rangeY[0])
+        {
+        rangeY[0] = low;
+        }
+      if (high > rangeY[1])
+        {
+        rangeY[1] = high;
+        }
+      }
+
+    }
+
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLDoubleArrayNode::GetXRange(double* range)
+{
+  range[0] = 0.0;
+  range[1] = 0.0;
+
+  if (!this->Array)
+    {
+    return;
+    }
+
+  int nTuples = this->Array->GetNumberOfTuples();
+  double xy[3];
+
+  if (this->Array->GetNumberOfComponents() > 2 && nTuples > 0)
+    {
+
+    // Get the first values as an initial value
+    this->Array->GetTupleValue(0, xy);
+    range[0] = xy[0];
+    range[1] = xy[0];
+
+    // Search the array
+    for (int i = 1; i < nTuples; i ++)
+      {
+      this->Array->GetTupleValue(i, xy);
+      if (xy[0] < range[0])
+        {
+        range[0] = xy[0];
+        }
+      else if (xy[0] > range[1])
+        {
+        range[1] = xy[0];
+        }
+      }
+
+    }
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLDoubleArrayNode::GetYRange(double* range, int fIncludeError)
+{
+  range[0] = 0.0;
+  range[1] = 0.0;
+
+  if (!this->Array)
+    {
+    return;
+    }
+
+  int nTuples = this->Array->GetNumberOfTuples();
+  int nComp   = this->Array->GetNumberOfComponents();
+
+  double xy[3];
+  double c;
+
+  // Consider error value in the range calculation,
+  // if fIncludeError=1 and number of components is larger than 3
+
+  if (fIncludeError && nComp > 2)
+    {
+    c = 1.0;
+    }
+  else
+    {
+    xy[2] = 0.0;
+    c     = 0.0;
+    }
+
+  if (nTuples > 0)
+    {
+
+    // Get the first values as an initial value
+    this->Array->GetTupleValue(0, xy);
+    range[0] = xy[1] - c * xy[2];
+    range[1] = xy[1] + c * xy[2];
+    
+    // Search the array
+    for (int i = 1; i < nTuples; i ++)
+      {
+      this->Array->GetTupleValue(i, xy);
+      double low  = xy[1] - c * xy[2];
+      double high = xy[1] + c * xy[2];
+
+      if (low < range[0])
+        {
+        range[0] = low;
+        }
+      if (high > range[1])
+        {
+        range[1] = high;
+        }
+      }
+
+    }
+
 }

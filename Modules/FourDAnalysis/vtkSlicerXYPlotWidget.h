@@ -118,7 +118,7 @@ class VTK_FourDAnalysis_EXPORT vtkSlicerXYPlotWidget : public vtkKWRenderWidget
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                   unsigned long /*event*/, void * /*callData*/ ) { };
+                                   unsigned long /*event*/, void * /*callData*/ );
 
  protected:
   //BTX
@@ -143,27 +143,32 @@ class VTK_FourDAnalysis_EXPORT vtkSlicerXYPlotWidget : public vtkKWRenderWidget
   // Set and observe XYPlotNode
   void SetAndObserveXYPlotNode(vtkMRMLXYPlotNode* node);
 
+  // Description:
+  // Get XY plot node 
+  vtkGetObjectMacro(XYPlotNode, vtkMRMLXYPlotNode);
+
 
   //----------------------------------------------------------------
   // Graph operations
   //----------------------------------------------------------------
+ protected:
   void UpdateGraph();
-  void ClearPlot();
-  int  AddPlot(vtkDoubleArray* data, const char* label); // returns plot id
-  void SetColor(int id, double r, double g, double b);
+  //void ClearPlot();
+  //int  AddPlot(vtkDoubleArray* data, const char* label); // returns plot id
+  //void SetColor(int id, double r, double g, double b);
 
   void AddVerticalLine(double x);
   void AddHorizontalLine(double y);
   void SetAxisLineColor(double r, double g, double b);
   void RemoveLines();
 
-  void AutoRangeOn();
-  void AutoRangeOff();
-  void SetXrange(double min, double max);
-  void SetYrange(double min, double max);
-
-  void ErrorBarOn();
-  void ErrorBarOff();
+  //void AutoRangeOn();
+  //void AutoRangeOff();
+  //void SetXrange(double min, double max);
+  //void SetYrange(double min, double max);
+  //
+  //void ErrorBarOn();
+  //void ErrorBarOff();
 
 
   //----------------------------------------------------------------
@@ -228,7 +233,6 @@ class VTK_FourDAnalysis_EXPORT vtkSlicerXYPlotWidget : public vtkKWRenderWidget
   // Flags
   //----------------------------------------------------------------
 
-
   int Updating;
 
   //BTX
@@ -236,17 +240,17 @@ class VTK_FourDAnalysis_EXPORT vtkSlicerXYPlotWidget : public vtkKWRenderWidget
   typedef std::vector<AxisLineType> AxisLineVectorType;
   //ETX
 
-  PlotDataVectorType PlotDataVector;
+  //PlotDataVectorType PlotDataVector;
   AxisLineVectorType VerticalLines;
   AxisLineVectorType HorizontalLines;
 
   double AxisLineColor[3];
-  int    AutoRangeX;
-  int    AutoRangeY;
+  //int    AutoRangeX;
+  //int    AutoRangeY;
   double RangeX[2];
   double RangeY[2];
 
-  int    ErrorBar;
+  //int    ErrorBar;
 
 };
 

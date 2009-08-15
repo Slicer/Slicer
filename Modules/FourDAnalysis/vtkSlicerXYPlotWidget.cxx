@@ -48,7 +48,7 @@ vtkSlicerXYPlotWidget::vtkSlicerXYPlotWidget()
   this->MRMLObserverManager = vtkObserverManager::New();
   this->MRMLObserverManager->AssignOwner( this );
   this->MRMLObserverManager->GetCallbackCommand()->SetClientData( reinterpret_cast<void *> (this) );
-  this->MRMLObserverManager->GetCallbackCommand()->SetCallback(vtkSlicerComponentGUI::MRMLCallback);
+  this->MRMLObserverManager->GetCallbackCommand()->SetCallback(vtkSlicerXYPlotWidget::MRMLCallback);
   this->MRMLCallbackCommand = this->MRMLObserverManager->GetCallbackCommand();
 
   this->MRMLScene  = NULL;
@@ -56,7 +56,7 @@ vtkSlicerXYPlotWidget::vtkSlicerXYPlotWidget()
 
   this->Updating  = 0;
   this->PlotActor = NULL;
-  this->PlotDataVector.clear();
+  //this->PlotDataVector.clear();
   this->VerticalLines.clear();
   this->HorizontalLines.clear();
 
@@ -65,14 +65,14 @@ vtkSlicerXYPlotWidget::vtkSlicerXYPlotWidget()
   this->RangeY[0] = 0.0;
   this->RangeY[1] = 1.0;
 
-  this->AutoRangeX = 1;
-  this->AutoRangeY = 1;
+  //this->AutoRangeX = 1;
+  //this->AutoRangeY = 1;
 
   this->AxisLineColor[0] = 0.0;
   this->AxisLineColor[1] = 0.0;
   this->AxisLineColor[2] = 0.0;
 
-  this->ErrorBar = 0;
+  //this->ErrorBar = 0;
 }
 
 
@@ -80,7 +80,7 @@ vtkSlicerXYPlotWidget::vtkSlicerXYPlotWidget()
 vtkSlicerXYPlotWidget::~vtkSlicerXYPlotWidget()
 {
 
-  this->PlotDataVector.clear();
+  //this->PlotDataVector.clear();
   this->VerticalLines.clear();
   this->HorizontalLines.clear();
 
@@ -159,10 +159,18 @@ void vtkSlicerXYPlotWidget::PrintSelf(ostream& os, vtkIndent indent)
 
 
 //----------------------------------------------------------------------------
-void vtkSlicerXYPlotWidget::ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                                unsigned long /*event*/, void * /*callData*/ )
+void vtkSlicerXYPlotWidget::ProcessMRMLEvents ( vtkObject * caller, 
+                                                unsigned long event, void * callData )
 {
 
+  if (event == vtkCommand::ModifiedEvent)
+    {
+    vtkMRMLXYPlotNode* pnode = vtkMRMLXYPlotNode::SafeDownCast(caller);
+    if (pnode)
+      {
+      this->UpdateGraph();
+      }
+    }
 }
 
 
@@ -246,100 +254,119 @@ void vtkSlicerXYPlotWidget::SetAndObserveXYPlotNode(vtkMRMLXYPlotNode* node)
 //----------------------------------------------------------------------------
 void vtkSlicerXYPlotWidget::UpdateGraph()
 {
+
   if ( this->Updating ) 
     {
     return;
     }
   this->Updating = 1;
 
-  // -----------------------------------------
-  // If AutoRange is set, check the range of the values
-  PlotDataVectorType::iterator it;
-  double xy[3];   // xy[0]: x,    xy[1]: mean of y,   xy[2]: SD of y
-
-  // -----------------------------------------
-  // Put the first value as an initial range
-  it = this->PlotDataVector.begin();
-  if (it != this->PlotDataVector.end())
+  if (!this->XYPlotNode)
     {
-    // Check number of components in the tuple
-    int nComp = it->data->GetNumberOfComponents();
-    if (nComp == 2) // if the data contains only x and y values,
+    return;
+    }
+
+  unsigned int numArray = this->XYPlotNode->GetNumberOfArrays();
+
+  if (numArray <= 0)
+    {
+    return;
+    }
+
+  //--------------------------------------------------
+  // Check automatic range adjustment flag
+  if (this->XYPlotNode->GetAutoXRange() == 0)  // off
+    {
+    this->XYPlotNode->GetXRange(this->RangeX);
+    }
+
+  if (this->XYPlotNode->GetAutoYRange() == 0)  // off
+    {
+    this->XYPlotNode->GetYRange(this->RangeY);
+    }
+  
+  //--------------------------------------------------
+  // If auto-range options active, the ranges have to be
+  // determined by finding minimum and maximum values in the data.
+  int autoX = this->XYPlotNode->GetAutoXRange();
+  int autoY = this->XYPlotNode->GetAutoYRange();
+  
+  if (autoX && autoY)
+    {
+    vtkMRMLDoubleArrayNode* node;
+    double rangeX[2];
+    double rangeY[3];
+    int errorBar;
+    
+    // Substitute the first values
+    node  = this->XYPlotNode->GetArrayNode(0);
+    errorBar = this->XYPlotNode->GetErrorBarPlot(0);
+    node->GetRange(rangeX, rangeY, errorBar);
+
+    if (autoX)
       {
-      xy[2] = 0.0;  // SD (error) is always zero.
+      this->RangeX[0] = rangeX[0];
+      this->RangeX[1] = rangeX[1];
+      }
+    if (autoY)
+      {
+      this->RangeY[0] = rangeY[0];
+      this->RangeY[1] = rangeY[1];
       }
 
-    it->data->GetTupleValue(0, xy);
-
-    // Substitute the first data as initial values
-    if (!finite(xy[0]) || !finite(xy[1]))
+    // Search the list
+    for (unsigned int i = 1; i < numArray; i ++)
       {
-      // if the values are not finite numbers (NaN of Inf)
-      it->visible = 0; 
-      this->RangeX[0] = 0.0;
-      this->RangeX[1] = 1.0;
-      this->RangeY[0] = 0.0;
-      this->RangeY[1] = 1.0;
-      }
-    else 
-      {
-      if (this->AutoRangeX)
+      node = this->XYPlotNode->GetArrayNode(i);
+      errorBar = this->XYPlotNode->GetErrorBarPlot(i);
+      node->GetRange(rangeX, rangeY, errorBar);
+      if (autoX)
         {
-        this->RangeX[0] = xy[0];
-        this->RangeX[1] = xy[0];
-        }
-      if (this->AutoRangeY)
-        {
-        this->RangeY[0] = xy[1] - xy[2];  // minimum value = mean - sd
-        this->RangeY[1] = xy[1] + xy[2];  // maximum value = mean + sd
-        }
-      }
-    if (this->AutoRangeX || this->AutoRangeY)
-      {
-      for (; it != this->PlotDataVector.end(); it ++)
-        {
-        int n = it->data->GetNumberOfTuples();
-        for (int i = 0; i < n; i ++)
+        if (rangeX[0] < this->RangeX[0])
           {
-          it->data->GetTupleValue(i, xy);
-          if (!finite(xy[0]) || !finite(xy[1]))
-            {
-            it->visible = 0;
-            continue;
-            }
-          if (this->AutoRangeX)
-            {
-            if (xy[0] < this->RangeX[0]) this->RangeX[0] = xy[0];  // minimum X
-            if (xy[0] > this->RangeX[1]) this->RangeX[1] = xy[0];  // maximum X
-            }
-          if (this->AutoRangeY)
-            {
-            if (xy[1] - xy[2] < this->RangeY[0]) this->RangeY[0] = xy[1] - xy[2];  // minimum Y
-            if (xy[1] + xy[2] > this->RangeY[1]) this->RangeY[1] = xy[1] + xy[2];  // maximum Y
-            }
+          rangeX[0] = this->RangeX[0];
+          }
+        if (rangeX[1] < this->RangeX[1])
+          {
+          rangeX[1] = this->RangeX[1];
+          }
+        }
+      if (autoY)
+        {
+        if (rangeY[0] < this->RangeY[0])
+          {
+          rangeY[0] = this->RangeY[0];
+          }
+        if (rangeY[1] < this->RangeY[1])
+          {
+          rangeY[1] = this->RangeY[1];
           }
         }
       }
     }
 
 
+  //// -----------------------------------------
+  //// Set color for vertical and horizontal lines
+  //
+  //AxisLineVectorType::iterator aiter;
+  //for (aiter = this->VerticalLines.begin(); aiter != this->VerticalLines.end(); aiter ++)
+  //  {
+  //  aiter->color[0] = this->AxisLineColor[0];
+  //  aiter->color[1] = this->AxisLineColor[1];
+  //  aiter->color[2] = this->AxisLineColor[2];
+  //  }
+  //for (aiter = this->HorizontalLines.begin(); aiter != this->HorizontalLines.end(); aiter ++)
+  //  {
+  //  aiter->color[0] = this->AxisLineColor[0];
+  //  aiter->color[1] = this->AxisLineColor[1];
+  //  aiter->color[2] = this->AxisLineColor[2];
+  //  }
+
+
+  
   // -----------------------------------------
-  // Set color for lines parallel to the axes
-
-  AxisLineVectorType::iterator aiter;
-  for (aiter = this->VerticalLines.begin(); aiter != this->VerticalLines.end(); aiter ++)
-    {
-    aiter->color[0] = this->AxisLineColor[0];
-    aiter->color[1] = this->AxisLineColor[1];
-    aiter->color[2] = this->AxisLineColor[2];
-    }
-  for (aiter = this->HorizontalLines.begin(); aiter != this->HorizontalLines.end(); aiter ++)
-    {
-    aiter->color[0] = this->AxisLineColor[0];
-    aiter->color[1] = this->AxisLineColor[1];
-    aiter->color[2] = this->AxisLineColor[2];
-    }
-
+  // Drawing
 
   if (this->PlotActor)
     {
@@ -349,23 +376,33 @@ void vtkSlicerXYPlotWidget::UpdateGraph()
     // Draw curves
 
     int obj = 0;
-    PlotDataVectorType::iterator iter;
-    for (iter = this->PlotDataVector.begin(); iter != this->PlotDataVector.end(); iter ++)
-      {
-      if (iter->visible)
-        {
-        vtkFieldData* fieldData = vtkFieldData::New();
+    //PlotDataVectorType::iterator iter;
 
-        if (this->ErrorBar)
+    // Search the list
+    for (unsigned int i = 1; i < numArray; i ++)
+      {
+      if (this->XYPlotNode->GetVisibility(i))
+        {
+        double r;
+        double g;
+        double b;
+        this->XYPlotNode->GetColor(i, &r, &g, &b);
+        vtkMRMLDoubleArrayNode* node = this->XYPlotNode->GetArrayNode(i);
+        int errorBar = this->XYPlotNode->GetErrorBarPlot(i);
+        vtkDoubleArray* array = node->GetArray();
+
+        vtkFieldData* fieldData = vtkFieldData::New();
+        
+        if (errorBar)
           {
           // if error bar plotting is enabled, generate plot data with error bars.
-          vtkDoubleArray* data = CreatePlotDataWithErrorBar(iter->data);
+          vtkDoubleArray* data = CreatePlotDataWithErrorBar(array);
           fieldData->AddArray(data);
           data->Delete();
           }
         else
           {
-          fieldData->AddArray(iter->data);
+          fieldData->AddArray(array);
           }
 
         vtkDataObject* dataObject = vtkDataObject::New();
@@ -375,7 +412,7 @@ void vtkSlicerXYPlotWidget::UpdateGraph()
 
         this->PlotActor->SetDataObjectXComponent(obj, 0);
         this->PlotActor->SetDataObjectYComponent(obj, 1);
-        this->PlotActor->SetPlotColor(obj, iter->color[0], iter->color[1], iter->color[2]);
+        this->PlotActor->SetPlotColor(obj, r, g, b);
 
         fieldData->Delete();
         dataObject->Delete();
@@ -385,75 +422,75 @@ void vtkSlicerXYPlotWidget::UpdateGraph()
         }
       }
 
-    // -----------------------------------------
-    // Draw vertical lines
-
-    AxisLineVectorType::iterator aiter;
-    for (aiter = this->VerticalLines.begin(); aiter != this->VerticalLines.end(); aiter ++)
-      {
-      if (aiter->visible)
-        {
-        vtkFloatArray* value = vtkFloatArray::New();
-        value->SetNumberOfComponents( static_cast<vtkIdType>(2) );
-        float xy[2];
-        xy[0] = aiter->pos;  xy[1] = this->RangeY[0]; 
-        value->InsertNextTuple( xy );
-        xy[0] = aiter->pos;  xy[1] = this->RangeY[1]; 
-        value->InsertNextTuple( xy );
-
-        vtkFieldData* fieldData = vtkFieldData::New();
-        fieldData->AddArray(value);
-        value->Delete();
-        
-        vtkDataObject* dataObject = vtkDataObject::New();
-        dataObject->SetFieldData( fieldData );
-        fieldData->Delete();
-
-        this->PlotActor->AddDataObjectInput(dataObject);
-        dataObject->Delete();
-
-        this->PlotActor->SetDataObjectXComponent(obj, 0);
-        this->PlotActor->SetDataObjectYComponent(obj, 1);
-        this->PlotActor->SetPlotColor(obj, aiter->color[0], aiter->color[1], aiter->color[2]);
-
-        obj ++;
-        }
-      }
-    
-
-    // -----------------------------------------
-    // Draw horizontal lines
-
-    for (aiter = this->HorizontalLines.begin(); aiter != this->HorizontalLines.end(); aiter ++)
-      {
-      if (aiter->visible)
-        {
-        vtkFloatArray* value = vtkFloatArray::New();
-        value->SetNumberOfComponents( static_cast<vtkIdType>(2) );
-        float xy[2];
-        xy[0] = this->RangeX[0];  xy[1] = aiter->pos; 
-        value->InsertNextTuple( xy );
-        xy[0] = this->RangeX[1];  xy[1] = aiter->pos; 
-        value->InsertNextTuple( xy );
-
-        vtkFieldData* fieldData = vtkFieldData::New();
-        fieldData->AddArray(value);
-        value->Delete();
-
-        vtkDataObject* dataObject = vtkDataObject::New();
-        dataObject->SetFieldData( fieldData );
-        fieldData->Delete();
-
-        this->PlotActor->AddDataObjectInput(dataObject);
-        dataObject->Delete();
-
-        this->PlotActor->SetDataObjectXComponent(obj, 0);
-        this->PlotActor->SetDataObjectYComponent(obj, 1);
-        this->PlotActor->SetPlotColor(obj, aiter->color[0], aiter->color[1], aiter->color[2]);
-
-        obj ++;
-        }
-      }
+    //// -----------------------------------------
+    //// Draw vertical lines
+    //
+    //AxisLineVectorType::iterator aiter;
+    //for (aiter = this->VerticalLines.begin(); aiter != this->VerticalLines.end(); aiter ++)
+    //  {
+    //  if (aiter->visible)
+    //    {
+    //    vtkFloatArray* value = vtkFloatArray::New();
+    //    value->SetNumberOfComponents( static_cast<vtkIdType>(2) );
+    //    float xy[2];
+    //    xy[0] = aiter->pos;  xy[1] = this->RangeY[0]; 
+    //    value->InsertNextTuple( xy );
+    //    xy[0] = aiter->pos;  xy[1] = this->RangeY[1]; 
+    //    value->InsertNextTuple( xy );
+    //
+    //    vtkFieldData* fieldData = vtkFieldData::New();
+    //    fieldData->AddArray(value);
+    //    value->Delete();
+    //    
+    //    vtkDataObject* dataObject = vtkDataObject::New();
+    //    dataObject->SetFieldData( fieldData );
+    //    fieldData->Delete();
+    //
+    //    this->PlotActor->AddDataObjectInput(dataObject);
+    //    dataObject->Delete();
+    //
+    //    this->PlotActor->SetDataObjectXComponent(obj, 0);
+    //    this->PlotActor->SetDataObjectYComponent(obj, 1);
+    //    this->PlotActor->SetPlotColor(obj, aiter->color[0], aiter->color[1], aiter->color[2]);
+    //
+    //    obj ++;
+    //    }
+    //  }
+    //
+    //
+    //// -----------------------------------------
+    //// Draw horizontal lines
+    //
+    //for (aiter = this->HorizontalLines.begin(); aiter != this->HorizontalLines.end(); aiter ++)
+    //  {
+    //  if (aiter->visible)
+    //    {
+    //    vtkFloatArray* value = vtkFloatArray::New();
+    //    value->SetNumberOfComponents( static_cast<vtkIdType>(2) );
+    //    float xy[2];
+    //    xy[0] = this->RangeX[0];  xy[1] = aiter->pos; 
+    //    value->InsertNextTuple( xy );
+    //    xy[0] = this->RangeX[1];  xy[1] = aiter->pos; 
+    //    value->InsertNextTuple( xy );
+    //
+    //    vtkFieldData* fieldData = vtkFieldData::New();
+    //    fieldData->AddArray(value);
+    //    value->Delete();
+    //
+    //    vtkDataObject* dataObject = vtkDataObject::New();
+    //    dataObject->SetFieldData( fieldData );
+    //    fieldData->Delete();
+    //
+    //    this->PlotActor->AddDataObjectInput(dataObject);
+    //    dataObject->Delete();
+    //
+    //    this->PlotActor->SetDataObjectXComponent(obj, 0);
+    //    this->PlotActor->SetDataObjectYComponent(obj, 1);
+    //    this->PlotActor->SetPlotColor(obj, aiter->color[0], aiter->color[1], aiter->color[2]);
+    //
+    //    obj ++;
+    //    }
+    //  }
 
     this->PlotActor->SetXRange(this->RangeX[0], this->RangeX[1]);
     this->PlotActor->SetYRange(this->RangeY[0], this->RangeY[1]);
@@ -470,24 +507,24 @@ void vtkSlicerXYPlotWidget::UpdateGraph()
 
 
 
-//----------------------------------------------------------------------------
-void vtkSlicerXYPlotWidget::ClearPlot()
-{
-  this->PlotDataVector.clear();
-}
+////----------------------------------------------------------------------------
+//void vtkSlicerXYPlotWidget::ClearPlot()
+//{
+//  //this->PlotDataVector.clear();
+//}
 
 
-//----------------------------------------------------------------------------
-int vtkSlicerXYPlotWidget::AddPlot(vtkDoubleArray* data, const char* label)
-{
-  PlotDataType plotData;
-  plotData.data    = data;
-  plotData.label   = label;
-  plotData.visible = 1;
-
-  this->PlotDataVector.push_back(plotData);
-  return this->PlotDataVector.size()-1;
-}
+////----------------------------------------------------------------------------
+//int vtkSlicerXYPlotWidget::AddPlot(vtkDoubleArray* data, const char* label)
+//{
+//  PlotDataType plotData;
+//  plotData.data    = data;
+//  plotData.label   = label;
+//  plotData.visible = 1;
+//
+//  this->PlotDataVector.push_back(plotData);
+//  //return this->PlotDataVector.size()-1;
+//}
 
 
 //----------------------------------------------------------------------------
@@ -527,77 +564,72 @@ void vtkSlicerXYPlotWidget::RemoveLines()
 }
 
 
-//----------------------------------------------------------------------------
-void vtkSlicerXYPlotWidget::SetColor(int id, double r, double g, double b)
-{
-  if (id >= this->PlotDataVector.size())
-    {
-    return;
-    }
-
-  this->PlotDataVector[id].color[0] = r;
-  this->PlotDataVector[id].color[1] = g;
-  this->PlotDataVector[id].color[2] = b;
-}
-
-
-//----------------------------------------------------------------------------
-void vtkSlicerXYPlotWidget::AutoRangeOn()
-{
-  this->AutoRangeX = 1;
-  this->AutoRangeY = 1;
-}
+////----------------------------------------------------------------------------
+//void vtkSlicerXYPlotWidget::SetColor(int id, double r, double g, double b)
+//{
+//  if (id >= this->PlotDataVector.size())
+//    {
+//    return;
+//    }
+//
+//  this->PlotDataVector[id].color[0] = r;
+//  this->PlotDataVector[id].color[1] = g;
+//  this->PlotDataVector[id].color[2] = b;
+//}
 
 
-//----------------------------------------------------------------------------
-void vtkSlicerXYPlotWidget::AutoRangeOff()
-{
-  this->AutoRangeX = 0;
-  this->AutoRangeY = 0;
-}
-
-
-//----------------------------------------------------------------------------
-void vtkSlicerXYPlotWidget::SetXrange(double min, double max)
-{
-  if (min < max)
-    {
-    this->AutoRangeX = 0;
-    this->RangeX[0] = min;
-    this->RangeX[1] = max;
-    }
-}
-
-
-//----------------------------------------------------------------------------
-void vtkSlicerXYPlotWidget::SetYrange(double min, double max)
-{
-  if (min < max)
-    {
-    this->AutoRangeY = 0;
-    this->RangeY[0] = min;
-    this->RangeY[1] = max;
-    }
-}
-
-
-//----------------------------------------------------------------------------
-void vtkSlicerXYPlotWidget::ErrorBarOn()
-{
-  this->ErrorBar = 1;
-}
-
-
-//----------------------------------------------------------------------------
-void vtkSlicerXYPlotWidget::ErrorBarOff()
-{
-  this->ErrorBar = 0;
-}
-
-
-
-
-
+////----------------------------------------------------------------------------
+//void vtkSlicerXYPlotWidget::AutoRangeOn()
+//{
+//  this->AutoRangeX = 1;
+//  this->AutoRangeY = 1;
+//}
+//
+//
+////----------------------------------------------------------------------------
+//void vtkSlicerXYPlotWidget::AutoRangeOff()
+//{
+//  this->AutoRangeX = 0;
+//  this->AutoRangeY = 0;
+//}
+//
+//
+////----------------------------------------------------------------------------
+//void vtkSlicerXYPlotWidget::SetXrange(double min, double max)
+//{
+//  if (min < max)
+//    {
+//    this->AutoRangeX = 0;
+//    this->RangeX[0] = min;
+//    this->RangeX[1] = max;
+//    }
+//}
+//
+//
+////----------------------------------------------------------------------------
+//void vtkSlicerXYPlotWidget::SetYrange(double min, double max)
+//{
+//  if (min < max)
+//    {
+//    this->AutoRangeY = 0;
+//    this->RangeY[0] = min;
+//    this->RangeY[1] = max;
+//    }
+//}
+//
+//
+////----------------------------------------------------------------------------
+//void vtkSlicerXYPlotWidget::ErrorBarOn()
+//{
+//  this->ErrorBar = 1;
+//}
+//
+//
+////----------------------------------------------------------------------------
+//void vtkSlicerXYPlotWidget::ErrorBarOff()
+//{
+//  this->ErrorBar = 0;
+//}
 
 
 

@@ -142,6 +142,35 @@ class VTK_FourDAnalysis_EXPORT vtkMRMLXYPlotNode : public vtkMRMLNode
   // Set visibility of the all curves (i == 0 : off; i == 1 : on)
   void SetErrorBarPlotAll(int i);
 
+  //----------------------------------------------------------------
+  // Vertical and horizontal lines
+  //----------------------------------------------------------------
+  
+  //// Description:
+  //// Add DoiubleArrayNode to the plotting list.
+  //void AddVerticalLine(double position);
+  //
+  //// Description:
+  //// Remove DoubleArrayNode from the plotting list.
+  //void ClearVerticalLines(int i);
+  //
+  //// Description:
+  //// Get number of arrays on the list
+  //unsigned int GetNumberOfHorizontalLines();
+  //
+  //// Description:
+  //// Add DoiubleArrayNode to the plotting list.
+  //void AddHorizontalLine(double position);
+  //
+  //// Description:
+  //// Remove DoubleArrayNode from the plotting list.
+  //void ClearHorizontalLines(int i);
+  //
+  //// Description:
+  //// Get number of arrays on the list
+  //unsigned int GetNumberOfHorizontalLines();
+
+  
 
   //----------------------------------------------------------------
   // Graph properties
@@ -171,6 +200,30 @@ class VTK_FourDAnalysis_EXPORT vtkMRMLXYPlotNode : public vtkMRMLNode
   // Get label for Y-axis
   const char* GetYLabel();
 
+  // Description:
+  // Set/Get automatic range setting flag
+  vtkSetMacro ( AutoXRange, int );
+  vtkGetMacro ( AutoXRange, int );
+  vtkSetMacro ( AutoYRange, int );
+  vtkGetMacro ( AutoYRange, int );
+
+  // Description:
+  // Set X range
+  void SetXRange(double* range);
+
+  // Description:
+  // Set Y range
+  void SetYRange(double* range);
+
+  // Description:
+  // Get X range
+  void GetXRange(double* range);
+
+  // Description:
+  // Get Y range
+  void GetYRange(double* range);
+
+
 
  protected:
   //----------------------------------------------------------------
@@ -196,13 +249,24 @@ class VTK_FourDAnalysis_EXPORT vtkMRMLXYPlotNode : public vtkMRMLNode
     vtkMRMLDoubleArrayNode* arrayNode;
   } PlotDataType;
 
+  typedef struct {
+    double                  lineColor[3];
+    int                     visibility;
+    int                     errorBar;
+    double                  position;
+  } LineDataType;
+
   std::string Title;             // Plotting graph title
   std::string XLabel;            // Label for x-axis
   std::string YLabel;            // Label for y-axis
 
   std::vector< PlotDataType > Data;  // list for plotting
+  //std::vector< LineDataType > VerticalLines;
+  //std::vector< LineDataType > HorizontalLines;
   //ETX
 
+  int    AutoXRange;  // Flag for automatic range adjust (default: 0 = off)
+  int    AutoYRange;  // Flag for automatic range adjust (default: 0 = off)
   double XRange[2];
   double YRange[2];
   

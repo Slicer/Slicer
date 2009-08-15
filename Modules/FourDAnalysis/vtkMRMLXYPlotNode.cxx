@@ -53,13 +53,19 @@ vtkMRMLXYPlotNode::vtkMRMLXYPlotNode()
   this->YLabel = "";
 
   this->Data.clear();
+  //this->VerticalLines.clear();
+  //this->HorizontalLines.clear();
 
   this->XRange[0] = 0.0;
   this->XRange[1] = 0.0;
   this->YRange[0] = 0.0;
   this->YRange[1] = 0.0;
 
+  this->AutoXRange = 0.0;
+  this->AutoYRange = 0.0;
+
 }
+
 
 //----------------------------------------------------------------------------
 vtkMRMLXYPlotNode::~vtkMRMLXYPlotNode()
@@ -272,7 +278,8 @@ void vtkMRMLXYPlotNode::AddArrayNode(vtkMRMLDoubleArrayNode* node)
   data.lineColor[2] = 0.0;
 
   data.visibility = 1;
-  data.arrayNode = node;
+  data.arrayNode  = node;
+  data.errorBar   = 0;
 
   this->Data.push_back(data);
 
@@ -421,7 +428,7 @@ int vtkMRMLXYPlotNode::GetVisibility(unsigned int n)
 
 
 //----------------------------------------------------------------------------
-void vtkMRMLXYPlotNode::SetVisibilityAll(int i);
+void vtkMRMLXYPlotNode::SetVisibilityAll(int i)
 {
   std::vector< PlotDataType >::iterator iter;
 
@@ -460,7 +467,7 @@ int vtkMRMLXYPlotNode::GetErrorBarPlot(unsigned int n)
 
 
 //----------------------------------------------------------------------------
-void vtkMRMLXYPlotNode::SetErrorBarPlotAll(int i);
+void vtkMRMLXYPlotNode::SetErrorBarPlotAll(int i)
 {
   std::vector< PlotDataType >::iterator iter;
 
@@ -519,4 +526,42 @@ const char* vtkMRMLXYPlotNode::GetYLabel()
 }
 
 
+//----------------------------------------------------------------------------
+void vtkMRMLXYPlotNode::SetXRange(double* range)
+{
+  if (range[0] <= range[1])
+    {
+    this->XRange[0] = range[0];
+    this->XRange[1] = range[1];
+    this->Modified();
+    }
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLXYPlotNode::SetYRange(double* range)
+{
+  if (range[0] <= range[1])
+    {
+    this->YRange[0] = range[0];
+    this->YRange[1] = range[1];
+    this->Modified();
+    }
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLXYPlotNode::GetXRange(double* range)
+{
+  range[0] = this->XRange[0];
+  range[1] = this->XRange[1];
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLXYPlotNode::GetYRange(double* range)
+{
+  range[0] = this->YRange[0];
+  range[1] = this->YRange[1];
+}
 

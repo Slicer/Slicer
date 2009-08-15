@@ -125,8 +125,26 @@ class VTK_FourDAnalysis_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
   // Add a set of X and Y values with error (or standard deviation) of Y,
   // at the end of the array
   int AddXYValue(double x, double y, double yerr);
-  
 
+  // Description:
+  // Search min and maximum value of X and Y in the array. The result is stored in 'range'.
+  // (range[0]: minimum value, range[1]: maximum value)
+  // if fIncludeError=1 is specified, the range takes account of errors.
+  void GetRange(double* rangeX, double* rangeY, int fIncludeError=1);
+
+  // Description:
+  // Search min and maximum value of X in the array. The result is stored in 'range'.
+  // (range[0]: minimum value, range[1]: maximum value)
+  void GetXRange(double* range);
+
+  // Description:
+  // Search min and maximum value of Y in the array. The result is stored in 'range'.
+  // (range[0]: minimum value, range[1]: maximum value)
+  // if fIncludeError=1 is specified, the range takes account of errors.
+  void GetYRange(double* range, int fIncludeError=1);
+
+
+  
  protected:
   //----------------------------------------------------------------
   // Constructor and destroctor
