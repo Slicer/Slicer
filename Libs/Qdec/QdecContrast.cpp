@@ -17,6 +17,7 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <cassert>
+#include <cstdio>
 
 #include "QdecContrast.h"
 
