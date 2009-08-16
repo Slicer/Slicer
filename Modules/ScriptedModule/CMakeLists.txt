@@ -93,6 +93,13 @@ if(Slicer3_USE_PYTHON)
   endif(NOT WIN32)
 endif(Slicer3_USE_PYTHON)
 
+# Apply user-defined properties to the library target.
+IF(Slicer3_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
+     ${Slicer3_LIBRARY_PROPERTIES}
+  )
+ENDIF(Slicer3_LIBRARY_PROPERTIES)
+
 slicer3_install_modules(${lib_name})
 
 # --------------------------------------------------------------------------

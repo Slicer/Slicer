@@ -116,6 +116,13 @@ target_link_libraries(CommandIOPlugin
 
 # Note CommandIO and CommandIOPlugin are installed in different locations
 
+# Apply user-defined properties to the library target.
+IF(Slicer3_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
+     ${Slicer3_LIBRARY_PROPERTIES}
+  )
+ENDIF(Slicer3_LIBRARY_PROPERTIES)
+
 install(TARGETS CommandIOPlugin
   RUNTIME DESTINATION ${ITKCommandIO_INSTALL_ITKFACTORIES_DIR} COMPONENT RuntimeLibraries
   LIBRARY DESTINATION ${ITKCommandIO_INSTALL_ITKFACTORIES_DIR} COMPONENT RuntimeLibraries

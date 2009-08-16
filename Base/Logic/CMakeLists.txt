@@ -118,6 +118,13 @@ target_link_libraries(${lib_name}
 slicer3_get_persistent_property(Slicer3_Base_LIBRARIES tmp)
 slicer3_set_persistent_property(Slicer3_Base_LIBRARIES ${tmp} ${lib_name})
 
+# Apply user-defined properties to the library target.
+IF(Slicer3_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
+     ${Slicer3_LIBRARY_PROPERTIES}
+  )
+ENDIF(Slicer3_LIBRARY_PROPERTIES)
+
 install(TARGETS ${lib_name}
   RUNTIME DESTINATION ${Slicer3_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
   LIBRARY DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries

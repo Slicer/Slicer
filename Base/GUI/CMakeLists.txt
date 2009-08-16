@@ -177,6 +177,13 @@ target_link_libraries(${lib_name}
   RemoteIO
   )
 
+# Apply user-defined properties to the library target.
+IF(Slicer3_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
+     ${Slicer3_LIBRARY_PROPERTIES}
+  )
+ENDIF(Slicer3_LIBRARY_PROPERTIES)
+
 slicer3_get_persistent_property(Slicer3_Base_LIBRARIES tmp)
 slicer3_set_persistent_property(Slicer3_Base_LIBRARIES ${tmp} ${lib_name})
 

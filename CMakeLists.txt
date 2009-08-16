@@ -66,6 +66,17 @@ set(Slicer3_VERSION_FULL "${Slicer3_VERSION}.${Slicer3_VERSION_PATCH}")
 option(BUILD_SHARED_LIBS "Build Slicer3 with shared libraries." ON)
 
 #-----------------------------------------------------------------------------
+# Append the library version information to the library target properties.
+#
+OPTION(Slicer3_WITH_LIBRARY_VERSION "Build with library version information" OFF)
+IF(Slicer3_WITH_LIBRARY_VERSION)
+  SET(Slicer3_LIBRARY_PROPERTIES ${Slicer3_LIBRARY_PROPERTIES}
+    VERSION ${Slicer3_VERSION_FULL}
+    SOVERSION ${Slicer3_VERSION}
+  )
+ENDIF(Slicer3_WITH_LIBRARY_VERSION)
+
+#-----------------------------------------------------------------------------
 # Slicer3 macros
 #
 set(Slicer3_CMAKE_DIR "${Slicer3_SOURCE_DIR}/CMake" CACHE INTERNAL "")

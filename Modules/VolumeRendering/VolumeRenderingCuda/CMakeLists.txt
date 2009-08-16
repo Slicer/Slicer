@@ -206,6 +206,13 @@ TARGET_LINK_LIBRARIES(${lib_name}
   ${VolumeRenderingCuda_LIBRARIES}
   )
 
+# Apply user-defined properties to the library target.
+IF(Slicer3_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
+     ${Slicer3_LIBRARY_PROPERTIES}
+  )
+ENDIF(Slicer3_LIBRARY_PROPERTIES)
+
 IF(BUILD_SHARED_LIBS)
   INSTALL(TARGETS ${lib_name}
       RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 

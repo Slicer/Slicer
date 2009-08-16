@@ -237,6 +237,13 @@ if(MRML_USE_Teem)
   endif(MRML_USE_vtkTeem)
 endif(MRML_USE_Teem)
 
+# Apply user-defined properties to the library target.
+IF(Slicer3_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
+     ${Slicer3_LIBRARY_PROPERTIES}
+  )
+ENDIF(Slicer3_LIBRARY_PROPERTIES)
+
 install(TARGETS ${lib_name}
   RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
   LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
