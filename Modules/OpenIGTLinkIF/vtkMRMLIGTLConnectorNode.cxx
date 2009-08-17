@@ -1048,7 +1048,7 @@ vtkIGTLToMRMLBase* vtkMRMLIGTLConnectorNode::GetConverterByMRMLTag(const char* t
        iter != this->MessageConverterList.end();
        iter ++)
     {
-    if (strcmp((*iter)->GetMRMLName(), tag) == 0)
+    if ((*iter) && strcmp((*iter)->GetMRMLName(), tag) == 0)
       {
       return *iter;
       }
