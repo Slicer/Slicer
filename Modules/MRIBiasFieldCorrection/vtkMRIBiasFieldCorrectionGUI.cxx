@@ -896,10 +896,10 @@ if (!this->ShrinkFactor)
     this->NumOfFitLev->SetLabelText(
       "Set Number of Fitting Level");
     }
-    
-    this->Script(
-    "pack %s -side top -anchor e -expand n -padx 2 -pady 6", 
-    this->NumOfFitLev->GetWidgetName());
+
+    //this->Script(
+    //"pack %s -side top -anchor e -expand n -padx 2 -pady 6", 
+    //this->NumOfFitLev->GetWidgetName());
 
 
  if (!this->WienFilNoi)
@@ -917,9 +917,9 @@ if (!this->ShrinkFactor)
       "Set Wien Filter Noise");
     }
     
-    this->Script(
-    "pack %s -side top -anchor e -expand n -padx 2 -pady 6", 
-    this->WienFilNoi->GetWidgetName());
+    //this->Script(
+    //"pack %s -side top -anchor e -expand n -padx 2 -pady 6", 
+    //this->WienFilNoi->GetWidgetName());
 
 
  if (!this->BiasField)
@@ -932,7 +932,7 @@ if (!this->ShrinkFactor)
     this->BiasField->Create();
     this->BiasField->SetRange(0,10);
     this->BiasField->SetResolution(0.05);
-    this->BiasField->SetValue(0.15);
+    this->BiasField->SetValue(4.1);
     this->BiasField->SetLabelText(
       "Set Bias Field Full.");
     }
@@ -956,9 +956,9 @@ if (!this->ShrinkFactor)
       "Set Convergence Threshold");
     }
     
-    this->Script(
-    "pack %s -side top -anchor e -expand n -padx 2 -pady 6", 
-    this->Conv->GetWidgetName());
+    //this->Script(
+    //"pack %s -side top -anchor e -expand n -padx 2 -pady 6", 
+    //this->Conv->GetWidgetName());
 
 
 

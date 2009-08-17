@@ -1,18 +1,17 @@
-/*=auto=======================================================================
+/*=auto====================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
-  Reserved.
+Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-  See Doc/copyright/copyright.txt
-  or http://www.slicer.org/copyright/copyright.txt for details.
+See Doc/copyright/copyright.txt
+or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkMRIBiasFieldCorrectionLogic.cxx,v $
-  Date:      $Date: 2006/03/17 15:10:10 $
-  Version:   $Revision: 1.2 $
-  Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
+Program:   3D Slicer
+Module:    $RCSfile: vtkMRIBiasFieldCorrectionLogic.cxx,v $
+Date:      $Date: 2006/03/17 15:10:10 $
+Version:   $Revision: 1.2 $
+Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 
-=======================================================================auto=*/
+====================================================================auto=*/
 
 #include <string>
 #include <iostream>
@@ -40,17 +39,19 @@
 #include "vtkPointData.h"
 #include "vtkGenericAttribute.h"
 
+#define vtkMRIBiasFieldCorrectionLogic_DebugMacro(msg) \
+  std::cout << __FILE__ << "\nLine " << __LINE__ << " " << msg << std::endl;
+
 ////////////////////////////////////////////////////////
 
 #include "vtkSlicerSliceControllerWidget.h"
 #include "vtkSlicerSlicesControlGUI.h"
-#include "vtkKWScale.h" 
+#include "vtkKWScale.h"
 
 ////////////////////////////////////////////////////////
 #include "itkImage.h"
 #include "itkCastImageFilter.h"
 #include "itkImageFileReader.h"
-
 
 #include "itkN3MRIBiasFieldCorrectionImageFilter.h"
 #include "itkBSplineControlPointImageFilter.h"
@@ -104,11 +105,11 @@ vtkMRIBiasFieldCorrectionLogic::~vtkMRIBiasFieldCorrectionLogic()
 //----------------------------------------------------------------------------
 void vtkMRIBiasFieldCorrectionLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
 }
 
 void vtkMRIBiasFieldCorrectionLogic::Apply()
 {
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
 
   // check if MRML node is present 
   if (this->MRIBiasFieldCorrectionNode == NULL)
@@ -116,7 +117,9 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
     vtkErrorMacro("No input GradientAnisotropicDiffusionFilterNode found");
     return;
     }
-  
+
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   // find input volume
     vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->MRIBiasFieldCorrectionNode->GetInputVolumeRef()));
   if (inVolume == NULL)
@@ -125,14 +128,18 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
     return;
     }
     
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
      // find mask volume
   vtkMRMLScalarVolumeNode *maskVolume =  vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->MRIBiasFieldCorrectionNode->GetMaskVolumeRef()));
+  
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   if (maskVolume == NULL)
     {
     vtkErrorMacro("No mask volume found with id= " << this->MRIBiasFieldCorrectionNode->GetMaskVolumeRef());
     return;
     }
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   // find output volume
   vtkMRMLScalarVolumeNode *outVolume =  vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->MRIBiasFieldCorrectionNode->GetOutputVolumeRef()));
   if (outVolume == NULL)
@@ -141,6 +148,7 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
     return;
     }
 
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   // copy RASToIJK matrix, and other attributes from input to output
   std::string name (outVolume->GetName());
   std::string id (outVolume->GetID());
@@ -150,6 +158,7 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
 
   outVolume->SetName(name.c_str());
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   typedef itk::Image< float,  3 >   InputImageType;
   typedef itk::Image< unsigned char,   3>   MaskImageType;
   typedef itk::Image< float,  3 >   OutputImageType;
@@ -157,6 +166,7 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
  
   typedef itk::ImageFileReader< InputImageType >  ReaderType;
 
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   ReaderType::Pointer  reader = ReaderType::New();
 // input volume conversion
   vtkImageCast* VtkCaster = vtkImageCast::New();
@@ -165,6 +175,7 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
   VtkCaster->Modified();
   VtkCaster->Update();
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
     typedef itk::VTKImageToImageFilter< InternalImageType >VTK2ITKConnectorFilterType;
     VTK2ITKConnectorFilterType::Pointer VTK2ITKconnector =VTK2ITKConnectorFilterType::New();
     VTK2ITKconnector->SetInput( VtkCaster->GetOutput() );
@@ -173,18 +184,21 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
     
 // mask volume conversion
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
     vtkImageCast* VtkCasterM = vtkImageCast::New();
   VtkCasterM->SetInput(maskVolume->GetImageData());
   VtkCasterM->SetOutputScalarTypeToFloat(); 
   VtkCasterM->Modified();
   VtkCasterM->Update();
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
     typedef itk::VTKImageToImageFilter< InternalImageType >VTK2ITKConnectorFilterTypeM;
     VTK2ITKConnectorFilterTypeM::Pointer VTK2ITKconnectorM =VTK2ITKConnectorFilterTypeM::New();
     VTK2ITKconnectorM->SetInput( VtkCasterM->GetOutput() );
     VTK2ITKconnectorM->GetImporter()->Update();
     VTK2ITKconnectorM->Update();
 
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
 // processing                               
   typedef itk::ShrinkImageFilter<InputImageType, InputImageType> ShrinkerType;
   ShrinkerType::Pointer shrinker = ShrinkerType::New();
@@ -192,34 +206,42 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
   shrinker->SetShrinkFactors( 1 );                                     
                                        
     
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   typedef itk::BinaryThresholdImageFilter<InputImageType, MaskImageType>  mFilterType;
                
   mFilterType::Pointer mfilter = mFilterType::New();  
   mfilter->SetInput( VTK2ITKconnectorM->GetOutput() );
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   mfilter->SetLowerThreshold(1);
   mfilter->SetOutsideValue(0);
   mfilter->SetInsideValue(1);  
   mfilter->UpdateLargestPossibleRegion();
    
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   MaskImageType::Pointer maskImage = NULL;
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   maskImage = mfilter->GetOutput();
   typedef itk::ShrinkImageFilter<MaskImageType, MaskImageType> MaskShrinkerType;
   MaskShrinkerType::Pointer maskshrinker = MaskShrinkerType::New();
   maskshrinker->SetInput( maskImage );
   maskshrinker->SetShrinkFactors( 1 );
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   std::cout<<"shrink factor: "<<this->MRIBiasFieldCorrectionNode->GetShrink()<< std::endl;
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   shrinker->SetShrinkFactors( this->MRIBiasFieldCorrectionNode->GetShrink());
   maskshrinker->SetShrinkFactors(this->MRIBiasFieldCorrectionNode->GetShrink());
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   shrinker->Update();
   shrinker->UpdateLargestPossibleRegion();
   maskshrinker->Update();
   maskshrinker->UpdateLargestPossibleRegion();
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   typedef itk::N3MRIBiasFieldCorrectionImageFilter<InputImageType, MaskImageType,
     InputImageType> CorrecterType;
   CorrecterType::Pointer correcter = CorrecterType::New();
@@ -227,6 +249,7 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
   correcter->SetMaskImage( maskshrinker->GetOutput() );
   
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   std::cout<<"number of iteration: "<<this->MRIBiasFieldCorrectionNode->GetMax()<< std::endl;
     correcter->SetMaximumNumberOfIterations( this->MRIBiasFieldCorrectionNode->GetMax() );
 
@@ -236,15 +259,18 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
   std::cout<<"Wiener Filter Noise: "<<this->MRIBiasFieldCorrectionNode->GetWien()<< std::endl;
     correcter->SetWeinerFilterNoise(this->MRIBiasFieldCorrectionNode->GetWien());
     
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   std::cout<<"Bias Field Full..: "<<this->MRIBiasFieldCorrectionNode->GetField()<< std::endl;
     correcter->SetBiasFieldFullWidthAtHalfMaximum(this->MRIBiasFieldCorrectionNode->GetField());
     
    std::cout<<"Convergence Threshold: "<<this->MRIBiasFieldCorrectionNode->GetCon()<< std::endl;   
     correcter->SetConvergenceThreshold(this->MRIBiasFieldCorrectionNode->GetCon());
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   correcter->Update();
  
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
     typedef itk::BSplineControlPointImageFilter<
     CorrecterType::BiasFieldControlPointLatticeType, 
     CorrecterType::ScalarImageType> BSplinerType;
@@ -258,8 +284,10 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
   bspliner->SetSpacing( VTK2ITKconnector->GetOutput()->GetSpacing() );
   bspliner->Update();
  
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
     correcter->SetConvergenceThreshold(this->MRIBiasFieldCorrectionNode->GetCon());
 
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   InputImageType::Pointer logField = InputImageType::New();
   logField->SetOrigin( bspliner->GetOutput()->GetOrigin() );
   logField->SetSpacing( bspliner->GetOutput()->GetSpacing() );
@@ -270,6 +298,7 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
 
     correcter->SetConvergenceThreshold(this->MRIBiasFieldCorrectionNode->GetCon());
 
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   itk::ImageRegionIterator<CorrecterType::ScalarImageType> ItB(
     bspliner->GetOutput(),
     bspliner->GetOutput()->GetLargestPossibleRegion() );
@@ -280,6 +309,7 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
     ItF.Set( ItB.Get()[0] );
     }
    
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
     correcter->SetConvergenceThreshold(this->MRIBiasFieldCorrectionNode->GetCon());
 
   typedef itk::ExpImageFilter<InputImageType, InputImageType> ExpFilterType;
@@ -287,6 +317,7 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
   expFilter->SetInput( logField );
   expFilter->Update();
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
     correcter->SetConvergenceThreshold(this->MRIBiasFieldCorrectionNode->GetCon());
 
   typedef itk::DivideImageFilter<InputImageType, InputImageType, InputImageType> DividerType;
@@ -295,6 +326,7 @@ void vtkMRIBiasFieldCorrectionLogic::Apply()
   divider->SetInput2( expFilter->GetOutput() );
   divider->Update();  
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
 
   
  typedef itk::ImageToVTKImageFilter< InternalImageType >
@@ -305,15 +337,23 @@ ITK2VTKConnectorFilterType::New();
         ITK2VTKconnector->GetImporter()->Update(); 
   
 
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   vtkImageData* image = vtkImageData::New(); 
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   image->DeepCopy( ITK2VTKconnector->GetImporter()->GetOutput());
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   outVolume->SetAndObserveImageData(image);
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   image->Delete();
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   outVolume->SetModifiedSinceRead(1);
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
 }
 
 void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,double dim0,double dim1)
 {
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
  // check if MRML node is present 
   if (this->MRIBiasFieldCorrectionNode == NULL)
     {
@@ -321,6 +361,7 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,double d
     return;
     }
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   // find input volume
     vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->MRIBiasFieldCorrectionNode->GetInputVolumeRef()));
   if (inVolume == NULL)
@@ -329,6 +370,7 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,double d
     return;
     }
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   // create storage volume for preview
   vtkMRMLScalarVolumeNode *stoVolume =  vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->MRIBiasFieldCorrectionNode->GetStorageVolumeRef()));
   if (stoVolume == NULL)
@@ -337,6 +379,7 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,double d
     return;
     }
     
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
  // create Mask volume for processing
   vtkMRMLScalarVolumeNode *maskVolume =  vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->MRIBiasFieldCorrectionNode->GetMaskVolumeRef()));
   if (maskVolume == NULL)
@@ -345,6 +388,7 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,double d
     return;
     }
 
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
  // create output volume for preview
   vtkMRMLScalarVolumeNode *outVolume =  vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->MRIBiasFieldCorrectionNode->GetOutputVolumeRef()));
   if (outVolume == NULL)
@@ -354,6 +398,7 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,double d
     }
 
 
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   // copy RASToIJK matrix, and other attributes from input to output
   std::string name (stoVolume->GetName());
   std::string id (stoVolume->GetID());
@@ -388,12 +433,14 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,double d
   xyPt[2] = 0;
   xyPt[3] = 1;
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   int* extent  = inVolume->GetImageData()->GetWholeExtent();
   
   for(int i = 0; i < dim0; i++) {       
   xyPt[0] = round(i);
   xyToijk->MultiplyPoint(xyPt,ijkPt);
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   if(ijkPt[0]<0 || ijkPt[0]>=extent[1] ||ijkPt[1]<0 || ijkPt[1]>=extent[3] ||ijkPt[2]<0 || ijkPt[2]>=extent[5] ){
   //std::cout<<"OUT OF VOI"<<std::endl;
   }
@@ -406,6 +453,7 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,double d
   }
   
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   
   xyPt[0] = round(dim0/2);
   
@@ -427,6 +475,7 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,double d
   //std::cout<<"DIM : "<< dim1 <<" SIZE : "<< size2 <<std::endl;
  //stoVolume->SetModifiedSinceRead(1);
  
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
  // GET BOUNDS OF THE ARRAY IN IJK
  int size[6];
  
@@ -439,6 +488,7 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,double d
  double ijkPt2[3];
  double ijkPt3[3];
  
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
  xyToijk->MultiplyPoint(xyPt,ijkPt1);
   
  xyPt[0] = 0;
@@ -453,9 +503,11 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,double d
  xyPt[2] = 0;
  xyPt[3] = 1;
  
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
  xyToijk->MultiplyPoint(xyPt,ijkPt3);
  
  
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
  size[0] = sqrt((ijkPt1[0]-ijkPt3[0])*(ijkPt1[0]-ijkPt3[0]));
  size[1] = sqrt((ijkPt2[0]-ijkPt3[0])*(ijkPt2[0]-ijkPt3[0]));
  size[2] = sqrt((ijkPt1[1]-ijkPt3[1])*(ijkPt1[1]-ijkPt3[1]));
@@ -464,6 +516,7 @@ void vtkMRIBiasFieldCorrectionLogic::SliceProcess(vtkTransform* xyToijk,double d
  size[5] = sqrt((ijkPt2[2]-ijkPt3[2])*(ijkPt2[2]-ijkPt3[2]));
  
 
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
  /*std::cout<<"SIZE 2: "<< size[2] <<std::endl;
  std::cout<<"SIZE 2: "<< size[3] <<std::endl;
  std::cout<<"SIZE 3: "<< size[4] <<std::endl;
@@ -513,6 +566,7 @@ std::cout<< direction[1][0] <<" " <<  direction[1][1] <<std::endl;
 std::cout<< direction[2][0] << " " << direction[2][1] <<std::endl;
 std::cout<< direction[3][0] << " " << direction[3][1] <<std::endl;*/
 
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
 double evolution[2];
 
 if(direction[0][0] == direction [1][0]){
@@ -532,6 +586,7 @@ evolution[0] = 0;
 }
 }
 
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
 if(direction[0][1] == direction [1][1]){
 if(direction[0][1]-direction[2][1] < 0){
 evolution[1] = 1;
@@ -591,6 +646,7 @@ std::cout<<"SECOND: "<< evolution[1] <<std::endl;
 
 // POPULATE THE CORRESPONDING ARRAY AND MASK
 
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
     int wholeExtent[6];
 
     wholeExtent[0]=0;    wholeExtent[2]=0;  wholeExtent[4]=0;  wholeExtent[5]=0;  
@@ -606,6 +662,7 @@ std::cout<<"SECOND: "<< evolution[1] <<std::endl;
   
     vtkDataArray* outStorage=this->STORAGE->GetPointData()->GetScalars();  
     
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
     this->MASK = vtkImageData::New();
     this->MASK->SetWholeExtent( wholeExtent );  
     this->MASK->SetNumberOfScalarComponents(1);  
@@ -613,6 +670,7 @@ std::cout<<"SECOND: "<< evolution[1] <<std::endl;
     this->MASK->SetDimensions(size[0],size[1],1);    
     this->MASK->AllocateScalars();
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
     vtkDataArray* outMask=this->MASK->GetPointData()->GetScalars();
 
 // ARRAY EXTRACTION
@@ -698,12 +756,14 @@ outMask->SetComponent(i*(size[0])+j,0,maskVolume->GetImageData()->GetScalarCompo
 }}}
 }
 
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
 outVolume->SetAndObserveImageData(this->MASK);
 outVolume->SetModifiedSinceRead(1);
 
 // PROCESS THE SLICE
 
 
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   typedef itk::Image< float,  2 >   InputImageType;
   typedef itk::Image< unsigned char,   2 >   MaskImageType;
   typedef itk::Image< float,  2 >   OutputImageType;
@@ -713,16 +773,20 @@ outVolume->SetModifiedSinceRead(1);
 
   ReaderType::Pointer  reader = ReaderType::New();
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
 // CREATION OF THE ITK IMAGES
 
 // FOR THE SLICE TO BE PROCESSED
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   vtkImageCast* VtkCaster = vtkImageCast::New();
   VtkCaster->SetInput(this->STORAGE);
 
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   VtkCaster->SetOutputScalarTypeToFloat(); 
   VtkCaster->Modified();
   VtkCaster->UpdateWholeExtent();
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
     typedef itk::VTKImageToImageFilter< InternalImageType >
 VTK2ITKConnectorFilterType;
         VTK2ITKConnectorFilterType::Pointer VTK2ITKconnector =
@@ -730,6 +794,7 @@ VTK2ITKConnectorFilterType::New();
         VTK2ITKconnector->SetInput( VtkCaster->GetOutput() );
         VTK2ITKconnector->Update();
         
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
 // FOR THE MASK TO BE USED
 
   vtkImageCast* VtkCasterM = vtkImageCast::New();
@@ -950,15 +1015,18 @@ this->PREVIEW->SetScalarComponentFromDouble(originIJK[0]+j+1,originIJK[1],origin
 }
 
 
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
 
 stoVolume->SetAndObserveImageData(this->PREVIEW);
 stoVolume->SetModifiedSinceRead(1);
 
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
 }
 
 
 void vtkMRIBiasFieldCorrectionLogic::ApplyPreview(double red, double yellow, double green,vtkImageData* image)
 {
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
  // check if MRML node is present 
   if (this->MRIBiasFieldCorrectionNode == NULL)
     {
@@ -1342,10 +1410,12 @@ sto->SetComponent(i+dim[0]*j+offset+1,0,outCoronal->GetComponent(i+dim[0]*j,1));
   
   stoVolume->SetModifiedSinceRead(1); 
 
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
 }
 
 void vtkMRIBiasFieldCorrectionLogic::Preview()
 {
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
  // check if MRML node is present 
   if (this->MRIBiasFieldCorrectionNode == NULL)
     {
@@ -1419,10 +1489,12 @@ void vtkMRIBiasFieldCorrectionLogic::Preview()
         //outVolume->SetOrigin(-originOutvolume[0],-originOutvolume[1],0);
   
   stoVolume->SetModifiedSinceRead(1); 
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
 }
 
 void vtkMRIBiasFieldCorrectionLogic::Cut()
 {
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   // check if MRML node is present 
   if (this->MRIBiasFieldCorrectionNode == NULL)
     {
@@ -1696,11 +1768,13 @@ this->Image5->DeepCopy( this->CurrentSlide);
   this->CurrentSlide->DeepCopy( this->ImageReslice1->GetOutput());
   this->CurrentSlide->SetOrigin(0,0,0);
 */
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
 }
 
 
 int vtkMRIBiasFieldCorrectionLogic::InitMaxThreshold()
 {
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   
   // find input volume
     vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->MRIBiasFieldCorrectionNode->GetInputVolumeRef()));
@@ -1709,6 +1783,7 @@ int vtkMRIBiasFieldCorrectionLogic::InitMaxThreshold()
 double maxmin[2];
 inVolume->GetImageData()->GetScalarRange(maxmin);
 
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
 return maxmin[1];
   
   
@@ -1716,6 +1791,7 @@ return maxmin[1];
 
 int vtkMRIBiasFieldCorrectionLogic::InitMinThreshold()
 {
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   
   // find input volume
     vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->MRIBiasFieldCorrectionNode->GetInputVolumeRef()));
@@ -1724,6 +1800,7 @@ int vtkMRIBiasFieldCorrectionLogic::InitMinThreshold()
 double maxmin[2];
 inVolume->GetImageData()->GetScalarRange(maxmin);
 
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
 return maxmin[0];
   
   
@@ -1731,6 +1808,7 @@ return maxmin[0];
 
 int vtkMRIBiasFieldCorrectionLogic::AxialMin()
 {
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   
   // find input volume
     vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->MRIBiasFieldCorrectionNode->GetInputVolumeRef()));
@@ -1739,6 +1817,7 @@ int vtkMRIBiasFieldCorrectionLogic::AxialMin()
 double bounds[6];
   inVolume->GetImageData()->GetBounds(bounds);
 
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
 return bounds[0];
   
   
@@ -1746,6 +1825,7 @@ return bounds[0];
 
 int vtkMRIBiasFieldCorrectionLogic::AxialMax()
 {
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   
   // find input volume
     vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->MRIBiasFieldCorrectionNode->GetInputVolumeRef()));
@@ -1754,11 +1834,13 @@ int vtkMRIBiasFieldCorrectionLogic::AxialMax()
 double bounds[6];
   inVolume->GetImageData()->GetBounds(bounds);
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
 return bounds[1];
   
 }
 int vtkMRIBiasFieldCorrectionLogic::SagittalMax()
 {
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   
   // find input volume
     vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->MRIBiasFieldCorrectionNode->GetInputVolumeRef()));
@@ -1767,11 +1849,13 @@ int vtkMRIBiasFieldCorrectionLogic::SagittalMax()
 double bounds[6];
   inVolume->GetImageData()->GetBounds(bounds);
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
 return bounds[3];
   
 }
 int vtkMRIBiasFieldCorrectionLogic::CoronalMax()
 {
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
   
   // find input volume
     vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->MRIBiasFieldCorrectionNode->GetInputVolumeRef()));
@@ -1780,6 +1864,8 @@ int vtkMRIBiasFieldCorrectionLogic::CoronalMax()
 double bounds[6];
   inVolume->GetImageData()->GetBounds(bounds);
   
+  vtkMRIBiasFieldCorrectionLogic_DebugMacro("");
 return bounds[5];
   
 }
+
