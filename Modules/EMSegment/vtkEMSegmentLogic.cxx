@@ -380,9 +380,11 @@ StartPreprocessingTargetIntensityNormalization()
 //----------------------------------------------------------------------------
 void vtkEMSegmentLogic::PrintImageInfo(vtkMRMLVolumeNode* volumeNode)
 {
+  vtkEMSegmentLogic_DebugMacro("Print image info");
+
   if(volumeNode == NULL || volumeNode->GetImageData() == NULL)
   {
-    std::cerr << "Volume node or image data is null" << std::endl;
+    vtkEMSegmentLogic_ErrorMacro("Volume node or image data is null");
     return;
   }
 
@@ -390,7 +392,7 @@ void vtkEMSegmentLogic::PrintImageInfo(vtkMRMLVolumeNode* volumeNode)
   int extent[6];
   volumeNode->GetImageData()->GetExtent(extent);
 
-  std::cerr << "Extent: " << std::endl;
+  vtkEMSegmentLogic_ErrorMacro("Extent: ");
   std::copy(extent, extent+6, std::ostream_iterator<int>(std::cerr, " "));
   std::cerr << std::endl;
 
@@ -398,9 +400,10 @@ void vtkEMSegmentLogic::PrintImageInfo(vtkMRMLVolumeNode* volumeNode)
   vtkMatrix4x4* matrix = vtkMatrix4x4::New();
   volumeNode->GetIJKToRASMatrix(matrix);
 
-  std::cerr << "IJKtoRAS Matrix: " << std::endl;
+  vtkEMSegmentLogic_DebugMacro(
+      "IJKtoRAS Matrix:");
 
-  for(unsigned int r = 0; r < 4; ++r)
+  for(unsigned int r=0; r < 4; ++r)
   {
     std::cerr << "   ";
     for (unsigned int c = 0; c < 4; ++c)
@@ -439,6 +442,9 @@ void vtkEMSegmentLogic::PrintImageInfo(vtkImageData* image)
 bool vtkEMSegmentLogic::IsVolumeGeometryEqual(vtkMRMLVolumeNode* lhs,
     vtkMRMLVolumeNode* rhs)
 {
+  vtkEMSegmentLogic_DebugMacro(
+      "IsVolumeGeometryEqual");
+
   if( lhs == NULL || rhs == NULL ||
       lhs->GetImageData() == NULL || rhs->GetImageData() == NULL)
   {
@@ -448,26 +454,30 @@ bool vtkEMSegmentLogic::IsVolumeGeometryEqual(vtkMRMLVolumeNode* lhs,
   // check extent
   int extentLHS[6];
   lhs->GetImageData()->GetExtent(extentLHS);
+
   int extentRHS[6];
   rhs->GetImageData()->GetExtent(extentRHS);
+
   bool equalExent = std::equal(extentLHS, extentLHS+6, extentRHS);
 
   // check ijkToRAS
   vtkMatrix4x4* matrixLHS = vtkMatrix4x4::New();
   lhs->GetIJKToRASMatrix(matrixLHS);
+
   vtkMatrix4x4* matrixRHS = vtkMatrix4x4::New();
   rhs->GetIJKToRASMatrix(matrixRHS);
+
   bool equalMatrix = true;
-  for (int r = 0; r < 4; ++r)
+  for(int r = 0; r < 4; ++r)
+  {
+    for(int c = 0; c < 4; ++c)
     {
-    for (int c = 0; c < 4; ++c)
+      if((*matrixLHS)[r][c] != (*matrixRHS)[r][c])
       {
-      if ((*matrixLHS)[r][c] != (*matrixRHS)[r][c])
-        {
         equalMatrix = false;
-        }
       }
     }
+  }
 
   matrixLHS->Delete();
   matrixRHS->Delete();
@@ -479,13 +489,18 @@ bool vtkEMSegmentLogic::IsVolumeGeometryEqual(vtkMRMLVolumeNode* lhs,
 template <class T>
 T vtkEMSegmentLogic::GuessRegistrationBackgroundLevel(vtkImageData* imageData)
 {
+  vtkEMSegmentLogic_DebugMacro("GuessRegistrationBackgroundLevel");
+
   int borderWidth = 5;
   T inLevel;
+
   typedef std::map<T, unsigned int> MapType;
   MapType m;
+
   long totalVoxelsCounted = 0;
 
   T* inData = static_cast<T*>(imageData->GetScalarPointer());
+
   int dim[3];
   imageData->GetDimensions(dim);
 
@@ -493,18 +508,18 @@ T vtkEMSegmentLogic::GuessRegistrationBackgroundLevel(vtkImageData* imageData)
   vtkIdType iInc, jInc, kInc;
   imageData->GetIncrements(inc);
 
-   // k first slice
-  for (int k = 0; k < borderWidth; ++k)
+  // k first slice
+  for(int k = 0; k < borderWidth; ++k)
   {
     kInc = k*inc[2];
-    for (int j = 0; j < dim[1]; ++j)
+    for(int j = 0; j < dim[1]; ++j)
     {
       jInc = j*inc[1];
-      for (int i = 0; i < dim[0]; ++i)
+      for(int i = 0; i < dim[0]; ++i)
       {
         iInc = i*inc[0];
         inLevel = inData[iInc+jInc+kInc];
-        if (m.count(inLevel))
+        if(m.count(inLevel))
         {
           ++m[inLevel];
         }
@@ -518,13 +533,13 @@ T vtkEMSegmentLogic::GuessRegistrationBackgroundLevel(vtkImageData* imageData)
   }
 
   // k last slice
-  for (int k = dim[2]-borderWidth; k < dim[2]; ++k)
+  for(int k=dim[2]-borderWidth; k < dim[2]; ++k)
   {
     kInc = k*inc[2];
-    for (int j = 0; j < dim[1]; ++j)
+    for(int j=0; j < dim[1]; ++j)
     {
       jInc = j*inc[1];
-      for (int i = 0; i < dim[0]; ++i)
+      for(int i=0; i < dim[0]; ++i)
       {
         iInc = i*inc[0];
         inLevel = inData[iInc+jInc+kInc];
@@ -543,13 +558,13 @@ T vtkEMSegmentLogic::GuessRegistrationBackgroundLevel(vtkImageData* imageData)
 
   vtkEMSegmentLogic_DebugMacro("j first slice");
 
-  for (int j = 0; j < borderWidth; ++j)
+  for(int j=0; j < borderWidth; ++j)
   {
     jInc = j*inc[1];
-    for (int k = 0; k < dim[2]; ++k)
+    for(int k = 0; k < dim[2]; ++k)
     {
       kInc = k*inc[2];
-      for (int i = 0; i < dim[0]; ++i)
+      for(int i = 0; i < dim[0]; ++i)
       {
         iInc = i*inc[0];
         inLevel = inData[iInc+jInc+kInc];
@@ -571,10 +586,10 @@ T vtkEMSegmentLogic::GuessRegistrationBackgroundLevel(vtkImageData* imageData)
   for(int j = dim[1]-borderWidth; j < dim[1]; ++j)
   {
     jInc = j*inc[1];
-    for(int k = 0; k < dim[2]; ++k)
+    for(int k=0; k < dim[2]; ++k)
     {
       kInc = k*inc[2];
-      for (int i = 0; i < dim[0]; ++i)
+      for(int i=0; i < dim[0]; ++i)
         {
         iInc = i*inc[0];
         inLevel = inData[iInc+jInc+kInc];
