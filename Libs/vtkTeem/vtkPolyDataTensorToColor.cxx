@@ -1,15 +1,15 @@
 /*=========================================================================
 
-  Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkPolyDataTensorToColor.cxx,v $
+Program:   Visualization Toolkit
+Module:    $RCSfile: vtkPolyDataTensorToColor.cxx,v $
 
-  Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
-  All rights reserved.
-  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
+Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
+All rights reserved.
+See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notice for more information.
+This software is distributed WITHOUT ANY WARRANTY; without even
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
 #include "vtkPolyDataTensorToColor.h"
@@ -76,12 +76,12 @@ void vtkPolyDataTensorToColor::ColorGlyphsByTrace() {
 
 void vtkPolyDataTensorToColor::ColorGlyphsBy(int invariant) {
   if (this->ScalarInvariant != invariant) 
-    {
+  {
     // superclass flag to output scalars
     // superclass flag to calculate scalars from tensors
     // (rather than passing through input scalars)
     this->SetColorModeToEigenvalues();
-    
+
     this->ExtractScalar = 1;
 
     // type of scalar we'll calculate
@@ -89,7 +89,7 @@ void vtkPolyDataTensorToColor::ColorGlyphsBy(int invariant) {
 
     // we have been modified
     this->Modified();
-    }
+  }
 }
 
 int vtkPolyDataTensorToColor::RequestData(
@@ -116,13 +116,22 @@ int vtkPolyDataTensorToColor::RequestData(
   double s = 0;
 
   vtkDebugMacro(<< "Executing threshold points filter");
-     
+
   numPts = input->GetNumberOfPoints();
   newPoints = vtkPoints::New();
   newPoints->Allocate(numPts);
   pd = input->GetPointData();
   vtkDataArray *inTensors = pd->GetTensors();
   inScalars = pd->GetScalars();
+
+  if (!inTensors)
+  {
+    this->ColorMode = vtkTensorGlyph::COLOR_BY_SCALARS; 
+    //this->ExtractScalarOff();
+  }
+
+
+
 
   outPD = output->GetPointData();
   //outPD->CopyAllocate(pd);
@@ -138,52 +147,52 @@ int vtkPolyDataTensorToColor::RequestData(
   int npts;
 
   if ( (sourceCells=input->GetVerts())->GetNumberOfCells() > 0 )
-    {
+  {
     cells = vtkCellArray::New();
     cells->Allocate(sourceCells->GetSize());
     output->SetVerts(cells);
     cells->Delete();
-    }
+  }
   if ( (sourceCells=input->GetLines())->GetNumberOfCells() > 0 )
-    {
+  {
     cells = vtkCellArray::New();
     cells->Allocate(sourceCells->GetSize());
     output->SetLines(cells);
     cells->Delete();
-    }
+  }
   if ( (sourceCells=input->GetPolys())->GetNumberOfCells() > 0 )
-    {
+  {
     cells = vtkCellArray::New();
     cells->Allocate(sourceCells->GetSize());
     output->SetPolys(cells);
     cells->Delete();
-    }
+  }
   if ( (sourceCells=input->GetStrips())->GetNumberOfCells() > 0 )
-    {
+  {
     cells = vtkCellArray::New();
     cells->Allocate(sourceCells->GetSize());
     output->SetStrips(cells);
     cells->Delete();
-    }
+  }
   int i;
   int j;
   int numSourceCells = input->GetNumberOfCells();
 
   pts = new vtkIdType[input->GetMaxCellSize()];
-  
+
   // copy topology 
   for (cellId=0; cellId < numSourceCells; cellId++)
-    {
+  {
     cell = input->GetCell(cellId);
     cellPts = cell->GetPointIds();
     npts = cellPts->GetNumberOfIds();
     for (i=0; i < npts; i++)
-      {
+    {
       pts[i] = cellPts->GetId(i);
-      }
+    }
 
     output->InsertNextCell(cell->GetCellType(),npts,pts);
-    }
+  }
 
   vtkFloatArray *newScalars=NULL;
 
@@ -198,19 +207,19 @@ int vtkPolyDataTensorToColor::RequestData(
   v[0] = v0; v[1] = v1; v[2] = v2; 
 
   if (this->ExtractScalar && ((this->ColorMode == vtkTensorGlyph::COLOR_BY_EIGENVALUES) || 
-       (inScalars && (this->ColorMode == vtkTensorGlyph::COLOR_BY_SCALARS)))  )
-    {
+    (inScalars && (this->ColorMode == vtkTensorGlyph::COLOR_BY_SCALARS)))  )
+  {
     newScalars = vtkFloatArray::New();
     newScalars->Allocate(numPts);
-    }
+  }
   else
-    {
+  {
     // only copy scalar data through
     // (superclass does this but why? if user has not asked for ColorGlyphs)
     outPD->CopyAllOff();
     outPD->CopyScalarsOn();
     outPD->CopyAllocate(pd,numPts);
-    }
+  }
 
   // Check that the scalars of each point satisfy the threshold criterion
   int abort=0;
@@ -218,167 +227,170 @@ int vtkPolyDataTensorToColor::RequestData(
   vtkIdType ptOffset = 0;
 
   for (ptId=0; ptId < numPts && !abort; ptId++)
-    {
+  {
     if ( !(ptId % progressInterval) )
-      {
+    {
       this->UpdateProgress((double)ptId/numPts);
       abort = this->GetAbortExecute();
-      }
+    }
 
 
     input->GetPoint(ptId, x);
     pts[0] = newPoints->InsertNextPoint(x);
-    
+
     if (!this->ExtractScalar) 
-      {
+    {
       continue;
-      }
-    inTensors->GetTuple(ptId, (double *)tensor);
+    }
 
-    // Decide whether this tensor will be glyphed:
-    // Threshold by trace ( must be > 0)
-    //double trace = vtkDiffusionTensorMathematics::Trace(tensor);
+    if (inTensors)
+    {
+      inTensors->GetTuple(ptId, (double *)tensor);
 
-    //outPD->CopyData(pd,ptId,pts[0]);
-    //verts->InsertNextCell(1,pts);
+      // Decide whether this tensor will be glyphed:
+      // Threshold by trace ( must be > 0)
+      //double trace = vtkDiffusionTensorMathematics::Trace(tensor);
+
+      //outPD->CopyData(pd,ptId,pts[0]);
+      //verts->InsertNextCell(1,pts);
 
 
 
-    // compute orientation vectors and scale factors from tensor
-    if ( this->ExtractEigenvalues ) // extract appropriate eigenfunctions
+      // compute orientation vectors and scale factors from tensor
+      if ( this->ExtractEigenvalues ) // extract appropriate eigenfunctions
       {
-      for (j=0; j<3; j++)
+        for (j=0; j<3; j++)
         {
-        for (i=0; i<3; i++)
+          for (i=0; i<3; i++)
           {
-          // this line from vtkTensorGlyph actually transposes
-          //m[i][j] = tensor[i+3*j];  
-          // simpler code with 3x3 array:
-          m[i][j] = tensor[j][i];
+            // this line from vtkTensorGlyph actually transposes
+            //m[i][j] = tensor[i+3*j];  
+            // simpler code with 3x3 array:
+            m[i][j] = tensor[j][i];
           }
         }
 
-      //vtkMath::Jacobi(m, w, v);
-      // Use superior eigensolve from teem.
-      vtkDiffusionTensorMathematics::TeemEigenSolver(m,w,v);
-      
-      //copy eigenvectors
-      xv[0] = v[0][0]; xv[1] = v[1][0]; xv[2] = v[2][0];
-      yv[0] = v[0][1]; yv[1] = v[1][1]; yv[2] = v[2][1];
-      zv[0] = v[0][2]; zv[1] = v[1][2]; zv[2] = v[2][2];
+        //vtkMath::Jacobi(m, w, v);
+        // Use superior eigensolve from teem.
+        vtkDiffusionTensorMathematics::TeemEigenSolver(m,w,v);
+
+        //copy eigenvectors
+        xv[0] = v[0][0]; xv[1] = v[1][0]; xv[2] = v[2][0];
+        yv[0] = v[0][1]; yv[1] = v[1][1]; yv[2] = v[2][1];
+        zv[0] = v[0][2]; zv[1] = v[1][2]; zv[2] = v[2][2];
       }
-    else //use tensor columns as eigenvectors
+      else //use tensor columns as eigenvectors
       {
-      for (i=0; i<3; i++)
+        for (i=0; i<3; i++)
         {
-        //xv[i] = tensor[i]; // from vtkTensorGlyph
-        //yv[i] = tensor[i+3]; 
-        //zv[i] = tensor[i+6];
-        xv[i] = tensor[0][i]; // with 3x3 matrix
-        yv[i] = tensor[1][i];
-        zv[i] = tensor[2][i];
+          //xv[i] = tensor[i]; // from vtkTensorGlyph
+          //yv[i] = tensor[i+3]; 
+          //zv[i] = tensor[i+6];
+          xv[i] = tensor[0][i]; // with 3x3 matrix
+          yv[i] = tensor[1][i];
+          zv[i] = tensor[2][i];
         }
-      w[0] = vtkMath::Normalize(xv);
-      w[1] = vtkMath::Normalize(yv);
-      w[2] = vtkMath::Normalize(zv);
+        w[0] = vtkMath::Normalize(xv);
+        w[1] = vtkMath::Normalize(yv);
+        w[2] = vtkMath::Normalize(zv);
       }
-    
-    
+
+    } 
     // Calculate output scalars before computing glyph scale factors from eigenvalues.
     // First, pass through input scalars if requested.
     if ( inScalars  && ( this->ColorMode == vtkTensorGlyph::COLOR_BY_SCALARS ) ) 
-      {
+    {
       // Copy point data from source
       s = inScalars->GetComponent(ptId, 0);
-      }
+    }
 
     // Output scalar invariants if requested 
     else if (  this->ColorMode == vtkTensorGlyph::COLOR_BY_EIGENVALUES ) 
-      {
+    {
 
       // Correct for negative eigenvalues: use logic coded in vtkDiffusionTensorMathematics
       vtkDiffusionTensorMathematics::FixNegativeEigenvaluesMethod(w);
-      
-      switch (this->ScalarInvariant) 
-        {
-        case vtkDiffusionTensorMathematics::VTK_TENS_LINEAR_MEASURE:
-          s = vtkDiffusionTensorMathematics::LinearMeasure(w);
-          break;
-        case vtkDiffusionTensorMathematics::VTK_TENS_PLANAR_MEASURE:
-          s = vtkDiffusionTensorMathematics::PlanarMeasure(w);
-          break;
-        case vtkDiffusionTensorMathematics::VTK_TENS_SPHERICAL_MEASURE:
-          s = vtkDiffusionTensorMathematics::SphericalMeasure(w);
-          break;
-        case vtkDiffusionTensorMathematics::VTK_TENS_MAX_EIGENVALUE:
-          s = w[0];
-          break;
-        case vtkDiffusionTensorMathematics::VTK_TENS_MID_EIGENVALUE:
-          s = w[1];
-          break;
-        case vtkDiffusionTensorMathematics::VTK_TENS_MIN_EIGENVALUE:
-          s = w[2]; 
-          break;
-        case vtkDiffusionTensorMathematics::VTK_TENS_COLOR_ORIENTATION:
-          double v_maj[3];
-          v_maj[0]=v[0][0];
-          v_maj[1]=v[1][0];
-          v_maj[2]=v[2][0];
-          
-          // TO DO: here output as RGB. Need to allocate 3-component scalars first.
-          s = 0;
-          break;
-        case vtkDiffusionTensorMathematics::VTK_TENS_RELATIVE_ANISOTROPY:
-          s = vtkDiffusionTensorMathematics::RelativeAnisotropy(w);
-          break;
-        case vtkDiffusionTensorMathematics::VTK_TENS_FRACTIONAL_ANISOTROPY:
-          s = vtkDiffusionTensorMathematics::FractionalAnisotropy(w);
-          break;
-        case vtkDiffusionTensorMathematics::VTK_TENS_TRACE:
-          s = vtkDiffusionTensorMathematics::Trace(w);
-          break;
-        default:
-          s = 0;
-          break;
-        }
 
+      switch (this->ScalarInvariant) 
+      {
+      case vtkDiffusionTensorMathematics::VTK_TENS_LINEAR_MEASURE:
+        s = vtkDiffusionTensorMathematics::LinearMeasure(w);
+        break;
+      case vtkDiffusionTensorMathematics::VTK_TENS_PLANAR_MEASURE:
+        s = vtkDiffusionTensorMathematics::PlanarMeasure(w);
+        break;
+      case vtkDiffusionTensorMathematics::VTK_TENS_SPHERICAL_MEASURE:
+        s = vtkDiffusionTensorMathematics::SphericalMeasure(w);
+        break;
+      case vtkDiffusionTensorMathematics::VTK_TENS_MAX_EIGENVALUE:
+        s = w[0];
+        break;
+      case vtkDiffusionTensorMathematics::VTK_TENS_MID_EIGENVALUE:
+        s = w[1];
+        break;
+      case vtkDiffusionTensorMathematics::VTK_TENS_MIN_EIGENVALUE:
+        s = w[2]; 
+        break;
+      case vtkDiffusionTensorMathematics::VTK_TENS_COLOR_ORIENTATION:
+        double v_maj[3];
+        v_maj[0]=v[0][0];
+        v_maj[1]=v[1][0];
+        v_maj[2]=v[2][0];
+
+        // TO DO: here output as RGB. Need to allocate 3-component scalars first.
+        s = 0;
+        break;
+      case vtkDiffusionTensorMathematics::VTK_TENS_RELATIVE_ANISOTROPY:
+        s = vtkDiffusionTensorMathematics::RelativeAnisotropy(w);
+        break;
+      case vtkDiffusionTensorMathematics::VTK_TENS_FRACTIONAL_ANISOTROPY:
+        s = vtkDiffusionTensorMathematics::FractionalAnisotropy(w);
+        break;
+      case vtkDiffusionTensorMathematics::VTK_TENS_TRACE:
+        s = vtkDiffusionTensorMathematics::Trace(w);
+        break;
+      default:
+        s = 0;
+        break;
       }
+
+    }
 
     // Actually output the scalar invariant calculated above
     if ( newScalars != NULL )
-      {
+    {
       newScalars->InsertTuple(ptOffset, &s);
-      }        
+    }        
     else
-      {
+    {
       // TO DO: why does superclass have this if no scalar output?
       // in this case it appears copy scalars is on (above in
       // scalar allocation section).
       outPD->CopyData(pd,0,ptOffset);
-      }
+    }
 
     // Keep track of the number of points output so far.
     ptOffset++;
-    
-    } // for all points
+
+  } // for all points
 
   vtkDebugMacro(<< "Extracted " << output->GetNumberOfPoints() << " points.");
-  
+
   // Update ourselves and release memory
   //
   output->SetPoints(newPoints);
   newPoints->Delete();
-  
+
   if ( newScalars )
-    {
+  {
     int idx = outPD->AddArray(newScalars);
     outPD->SetActiveAttribute(idx, vtkDataSetAttributes::SCALARS);
     newScalars->Delete();
-    }
+  }
 
   //output->SetVerts(verts);
   //verts->Delete();
-  
+
   output->Squeeze();
   delete [] pts;
 
