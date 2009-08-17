@@ -45,10 +45,10 @@ class BSplineControlPointImageFilter
 : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
-  typedef BSplineControlPointImageFilter                 Self;
-  typedef ImageToImageFilter<TInputImage, TOutputImage>  Superclass;
-  typedef SmartPointer<Self>                             Pointer;
-  typedef SmartPointer<const Self>                       ConstPointer;
+  typedef BSplineControlPointImageFilter                      Self;
+  typedef ImageToImageFilter<TInputImage, TOutputImage>       Superclass;
+  typedef SmartPointer<Self>                                  Pointer;
+  typedef SmartPointer<const Self>                            ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro( Self );
@@ -133,7 +133,7 @@ public:
    */
   void EvaluateGradientAtPoint( PointType, GradientType & );
   void EvaluateGradientAtIndex( IndexType, GradientType & );
-  void EvaluateGradientAtContinuousIndex( ContinuousIndexType, GradientType&);
+  void EvaluateGradientAtContinuousIndex( ContinuousIndexType, GradientType & );
 
   /**
    * Evaluate the gradient of the resulting B-spline object

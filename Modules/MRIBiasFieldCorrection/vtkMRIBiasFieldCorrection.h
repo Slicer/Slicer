@@ -1,7 +1,6 @@
-/*=auto=====================================================================
+/*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights
-  Reserved.
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -10,9 +9,8 @@
   Module:    $RCSfile: vtkMRIBiasFieldCorrection.h,v $
   Date:      $Date: 2006/01/06 17:56:51 $
   Version:   $Revision: 1.6 $
-  Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 
-=====================================================================auto=*/
+=========================================================================auto=*/
 
 /*
  * This is needed for loading slicer code as module.

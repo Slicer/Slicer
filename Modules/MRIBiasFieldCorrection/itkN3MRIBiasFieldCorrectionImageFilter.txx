@@ -44,7 +44,7 @@ N3MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
   this->m_MaskLabel = NumericTraits<MaskPixelType>::One;
   
   this->m_NumberOfHistogramBins = 200;
-  this->m_WienerFilterNoise = 0.01;
+  this->m_WeinerFilterNoise = 0.01;
   this->m_BiasFieldFullWidthAtHalfMaximum = 0.15;
   
   this->m_MaximumNumberOfIterations = 50;
@@ -265,14 +265,14 @@ N3MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
   fft.fwd_transform( Ff );
 
   /**
-   * Create the Wiener deconvolution filter.
+   * Create the Weiner deconvolution filter.
    */  
   vnl_vector< vcl_complex<RealType> > Gf( paddedHistogramSize );
   for( unsigned int n = 0; n < paddedHistogramSize; n++ )
     {
     vcl_complex<RealType> c = 
       vnl_complex_traits< vcl_complex<RealType> >::conjugate( Ff[n] ); 
-    Gf[n] = c / ( c * Ff[n] + this->m_WienerFilterNoise );
+    Gf[n] = c / ( c * Ff[n] + this->m_WeinerFilterNoise );
     }
 
   vnl_vector< vcl_complex<RealType> > Uf( paddedHistogramSize );  
@@ -498,8 +498,8 @@ N3MRIBiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
      << this->m_MaskLabel << std::endl;
   os << indent << "Number of histogram bins: " 
      << this->m_NumberOfHistogramBins << std::endl;
-  os << indent << "Wiener filter noise: " 
-     << this->m_WienerFilterNoise << std::endl;
+  os << indent << "Weiner filter noise: " 
+     << this->m_WeinerFilterNoise << std::endl;
   os << indent << "Bias field FWHM: " 
      << this->m_BiasFieldFullWidthAtHalfMaximum << std::endl;
   os << indent << "Maximum number of iterations: " 

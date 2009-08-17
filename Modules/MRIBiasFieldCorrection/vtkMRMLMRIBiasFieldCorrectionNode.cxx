@@ -1,182 +1,160 @@
-/*=auto==============================================================
+/*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All
-  Rights Reserved.
+Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-  See Doc/copyright/copyright.txt
-  or http://www.slicer.org/copyright/copyright.txt for details.
+See Doc/copyright/copyright.txt
+or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkMRMLMRIBiasFieldCorrectionNode.cxx,v $
-  Date:      $Date: 2006/03/17 15:10:10 $
-  Version:   $Revision: 1.2 $
-  Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
+Program:   3D Slicer
+Module:    $RCSfile: vtkMRMLMRIBiasFieldCorrectionNode.cxx,v $
+Date:      $Date: 2006/03/17 15:10:10 $
+Version:   $Revision: 1.2 $
 
-==============================================================auto=*/
+=========================================================================auto=*/
 
+#include <string>
 #include <iostream>
 #include <sstream>
 
+#include "vtkObjectFactory.h"
+
 #include "vtkMRMLMRIBiasFieldCorrectionNode.h"
 #include "vtkMRMLScene.h"
-#include "vtkObjectFactory.h"
-//#include "vtkImageData.h"
 
-//----------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 vtkMRMLMRIBiasFieldCorrectionNode* vtkMRMLMRIBiasFieldCorrectionNode::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance(
-      "vtkMRMLMRIBiasFieldCorrectionNode");
-
-  if (ret)
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLMRIBiasFieldCorrectionNode");
+  if(ret)
     {
-    return (vtkMRMLMRIBiasFieldCorrectionNode*)ret;
+      return (vtkMRMLMRIBiasFieldCorrectionNode*)ret;
     }
-
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLMRIBiasFieldCorrectionNode;
 }
 
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+
 vtkMRMLNode* vtkMRMLMRIBiasFieldCorrectionNode::CreateNodeInstance()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance(
-      "vtkMRMLMRIBiasFieldCorrectionNode");
-
-  if (ret)
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLMRIBiasFieldCorrectionNode");
+  if(ret)
     {
-    return (vtkMRMLMRIBiasFieldCorrectionNode*)ret;
+      return (vtkMRMLMRIBiasFieldCorrectionNode*)ret;
     }
-
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLMRIBiasFieldCorrectionNode;
 }
 
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 vtkMRMLMRIBiasFieldCorrectionNode::vtkMRMLMRIBiasFieldCorrectionNode()
 {
-  this->MaskThreshold         = 0.0;
-  this->OutputSize            = 1.0;
-  this->NumberOfFittingLevels = 50;
-  this->NumberOfIterations    = 4;
-  this->WienerFilterNoise     = 0.1;
-  this->BiasField             = 0.15;
-  this->ConvergenceThreshold  = 0.001;
+   this->Shrink = 3;
+   
+   this->Max = 50;
+   
+   this->Num = 4;
+   
+   this->Wien = 0.1;
+   
+   this->Field = 0.15;
+   
+   this->Con = 0.001;
 
-  this->InputVolumeRef        = NULL;
-  this->OutputVolumeRef       = NULL;
-  this->PreviewVolumeRef      = NULL;
-  this->MaskVolumeRef         = NULL;
-
-  this->HideFromEditors       = true;
-  //this->DemoImage             = NULL;
+   
+   this->InputVolumeRef = NULL;
+   this->OutputVolumeRef = NULL;
+   this->StorageVolumeRef = NULL;
+   this->MaskVolumeRef = NULL;
+   
+   this->HideFromEditors = true;
 }
 
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 vtkMRMLMRIBiasFieldCorrectionNode::~vtkMRMLMRIBiasFieldCorrectionNode()
 {
-  this->SetInputVolumeRef(NULL);
-  this->SetOutputVolumeRef(NULL);
-  this->SetPreviewVolumeRef(NULL);
-  this->SetMaskVolumeRef(NULL);
+   this->SetInputVolumeRef( NULL );
+   this->SetOutputVolumeRef( NULL );
+   this->SetStorageVolumeRef(NULL);
+   this->SetMaskVolumeRef(NULL);
 }
 
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkMRMLMRIBiasFieldCorrectionNode::WriteXML(ostream& of, int nIndent)
 {
-  // Write all MRML node attributes into output stream
   Superclass::WriteXML(of, nIndent);
+
+  // Write all MRML node attributes into output stream
+
   vtkIndent indent(nIndent);
-
-  {
-  std::stringstream ss;
-  ss << this->MaskThreshold;
-  of << indent << " MaskThreshold=\"" << ss.str() << "\"";
+  
+     {
+    std::stringstream ss;
+    ss << this->Con;
+    of << indent << " Con=\"" << ss.str() << "\"";
   }
-
-  {
-  std::stringstream ss;
-  ss << this->OutputSize;
-  of << indent << " OutputSize=\"" << ss.str() << "\"";
+  
+   {
+    std::stringstream ss;
+    ss << this->Field;
+    of << indent << " Field=\"" << ss.str() << "\"";
   }
-
-  {
-  std::stringstream ss;
-  ss << this->NumberOfIterations;
-  of << indent << " NumberOfIterations=\"" << ss.str() << "\"";
+   {
+    std::stringstream ss;
+    ss << this->Wien;
+    of << indent << " Wien=\"" << ss.str() << "\"";
   }
-
-  {
-  std::stringstream ss;
-  ss << this->NumberOfFittingLevels;
-  of << indent << " NumberOfFittingLevels=\"" << ss.str() << "\"";
+   {
+    std::stringstream ss;
+    ss << this->Num;
+    of << indent << " Num=\"" << ss.str() << "\"";
   }
-
   {
-  std::stringstream ss;
-  ss << this->ConvergenceThreshold;
-  of << indent << " ConvergenceThreshold=\"" << ss.str() << "\"";
+    std::stringstream ss;
+    ss << this->Max;
+    of << indent << " Max=\"" << ss.str() << "\"";
   }
-
   {
-  std::stringstream ss;
-  ss << this->BiasField;
-  of << indent << " BiasField=\"" << ss.str() << "\"";
+    std::stringstream ss;
+    ss << this->Shrink;
+    of << indent << " Shrink=\"" << ss.str() << "\"";
   }
-
   {
-  std::stringstream ss;
-  ss << this->WienerFilterNoise;
-  of << indent << " WienerFilterNoise=\"" << ss.str() << "\"";
+    std::stringstream ss;
+    if ( this->InputVolumeRef )
+      {
+      ss << this->InputVolumeRef;
+      of << indent << " InputVolumeRef=\"" << ss.str() << "\"";
+     }
   }
-
   {
-  std::stringstream ss;
-  if (this->InputVolumeRef)
+    std::stringstream ss;
+    if ( this->OutputVolumeRef )
+      {
+      ss << this->OutputVolumeRef;
+      of << indent << " OutputVolumeRef=\"" << ss.str() << "\"";
+      }
+  }
     {
-    ss << this->InputVolumeRef;
-    of << indent << " InputVolumeRef=\"" << ss.str() << "\"";
-    }
+    std::stringstream ss;
+    if ( this->StorageVolumeRef )
+      {
+      ss << this->StorageVolumeRef;
+      of << indent << " StorageVolumeRef=\"" << ss.str() << "\"";
+      }
   }
-
   {
-  std::stringstream ss;
-  if (this->OutputVolumeRef)
-    {
-    ss << this->OutputVolumeRef;
-    of << indent << " OutputVolumeRef=\"" << ss.str() << "\"";
-    }
+    std::stringstream ss;
+    if ( this->MaskVolumeRef )
+      {
+      ss << this->MaskVolumeRef;
+      of << indent << " MaskVolumeRef=\"" << ss.str() << "\"";
+      }
   }
-
-  {
-  std::stringstream ss;
-  if (this->PreviewVolumeRef)
-    {
-    ss << this->PreviewVolumeRef;
-    of << indent << " PreviewVolumeRef=\"" << ss.str() << "\"";
-    }
-  }
-
-  {
-  std::stringstream ss;
-  if (this->MaskVolumeRef)
-    {
-    ss << this->MaskVolumeRef;
-    of << indent << " MaskVolumeRef=\"" << ss.str() << "\"";
-    }
-  }
-  /*
-  {
-  std::stringstream ss;
-  if (this->DemoImage)
-    {
-    ss << this->DemoImage;
-    of << indent << " DemoImage=\"" << ss.str() << "\"";
-    }
-  }
-  */
+  
 }
 
 //----------------------------------------------------------------------------
@@ -187,87 +165,69 @@ void vtkMRMLMRIBiasFieldCorrectionNode::ReadXMLAttributes(const char** atts)
   // Read all MRML node attributes from two arrays of names and values
   const char* attName;
   const char* attValue;
-
-  while (*atts != NULL)
+  while (*atts != NULL) 
     {
-    attName  = *(atts++);
+    attName = *(atts++);
     attValue = *(atts++);
-
-    if (!strcmp(attName,"ConvergenceThreshold"))
-    {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->ConvergenceThreshold;
-      }
-
-    if (!strcmp(attName,"BiasField"))
+    
+        if (!strcmp(attName, "Con")) 
       {
       std::stringstream ss;
       ss << attValue;
-      ss >> this->BiasField;
+      ss >> this->Con;
       }
-
-    if (!strcmp(attName,"WienerFilterNoise"))
+    if (!strcmp(attName, "Field")) 
       {
       std::stringstream ss;
       ss << attValue;
-      ss >> this->WienerFilterNoise;
+      ss >> this->Field;
       }
-
-    if (!strcmp(attName,"MaskThreshold"))
+       if (!strcmp(attName, "Wien")) 
       {
       std::stringstream ss;
       ss << attValue;
-      ss >> this->MaskThreshold;
+      ss >> this->Wien;
       }
-
-    if (!strcmp(attName,"OutputSize"))
+    if (!strcmp(attName, "Num")) 
       {
       std::stringstream ss;
       ss << attValue;
-      ss >> this->OutputSize;
+      ss >> this->Num;
       }
-
-    if (!strcmp(attName,"NumberOfIterations"))
+    if (!strcmp(attName, "Max")) 
       {
       std::stringstream ss;
       ss << attValue;
-      ss >> this->NumberOfIterations;
+      ss >> this->Max;
       }
-
-    if (!strcmp(attName,"NumberOfFittingLevels"))
+    if (!strcmp(attName, "Shrink")) 
       {
       std::stringstream ss;
       ss << attValue;
-      ss >> this->NumberOfFittingLevels;
+      ss >> this->Shrink;
       }
 
-    if (!strcmp(attName,"InputVolumeRef"))
+    if (!strcmp(attName, "InputVolumeRef"))
       {
       this->SetInputVolumeRef(attValue);
-      this->Scene->AddReferencedNodeID(this->InputVolumeRef,this);
+      this->Scene->AddReferencedNodeID(this->InputVolumeRef, this);
       }
-
-    if (!strcmp(attName,"OutputVolumeRef"))
+    if (!strcmp(attName, "OutputVolumeRef"))
       {
       this->SetOutputVolumeRef(attValue);
-      this->Scene->AddReferencedNodeID(this->OutputVolumeRef,this);
+      this->Scene->AddReferencedNodeID(this->OutputVolumeRef, this);
       }
-
-    if (!strcmp(attName,"PreviewVolumeRef"))
+    if (!strcmp(attName, "StorageVolumeRef"))
       {
-      this->SetPreviewVolumeRef(attValue);
-      this->Scene->AddReferencedNodeID(this->PreviewVolumeRef,this);
+      this->SetStorageVolumeRef(attValue);
+      this->Scene->AddReferencedNodeID(this->StorageVolumeRef, this);
       }
-
-     if (!strcmp(attName,"MaskVolumeRef"))
+     if (!strcmp(attName, "MaskVolumeRef"))
       {
       this->SetMaskVolumeRef(attValue);
-      this->Scene->AddReferencedNodeID(this->MaskVolumeRef,this);
+      this->Scene->AddReferencedNodeID(this->MaskVolumeRef, this);
       }
     }
-
-  // DemoImage
 }
 
 //----------------------------------------------------------------------------
@@ -276,74 +236,72 @@ void vtkMRMLMRIBiasFieldCorrectionNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLMRIBiasFieldCorrectionNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLMRIBiasFieldCorrectionNode *node =
-    (vtkMRMLMRIBiasFieldCorrectionNode *) anode;
+  vtkMRMLMRIBiasFieldCorrectionNode *node = (vtkMRMLMRIBiasFieldCorrectionNode *) anode;
 
-  this->SetMaskThreshold(node->MaskThreshold);
-  this->SetNumberOfIterations(node->NumberOfIterations);
-  this->SetNumberOfFittingLevels(node->NumberOfFittingLevels);
-  this->SetOutputSize(node->OutputSize);
-  this->SetConvergenceThreshold(node->ConvergenceThreshold);
-  this->SetBiasField(node->BiasField);
-  this->SetWienerFilterNoise(node->WienerFilterNoise);
+  this->SetCon(node->Con);
 
+  this->SetField(node->Field);
+
+  this->SetShrink(node->Shrink);
+  
+  this->SetMax(node->Max);
+  
+  this->SetNum(node->Num);
+  
+  this->SetWien(node->Wien);
+  
   this->SetInputVolumeRef(node->InputVolumeRef);
   this->SetOutputVolumeRef(node->OutputVolumeRef);
-  this->SetPreviewVolumeRef(node->PreviewVolumeRef);
+  this->SetStorageVolumeRef(node->StorageVolumeRef);
   this->SetMaskVolumeRef(node->MaskVolumeRef);
 
-  //this->SetDemoImage(node->DemoImage);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMRIBiasFieldCorrectionNode::PrintSelf(ostream& os, vtkIndent
-    indent)
+void vtkMRMLMRIBiasFieldCorrectionNode::PrintSelf(ostream& os, vtkIndent indent)
 {
+  
   vtkMRMLNode::PrintSelf(os,indent);
+  
+  os << indent << "Con:   " << this->Con << "\n";
+  
+  os << indent << "Field:   " << this->Field << "\n";
+  
+  os << indent << "Wien:   " << this->Wien << "\n";
+  
+  os << indent << "Num:   " << this->Num << "\n";
+  
+  os << indent << "Max:   " << this->Max << "\n";
+  
+  os << indent << "Shrink:   " << this->Shrink << "\n";
 
-  os << indent << "MaskThreshold:         " << this->MaskThreshold     <<"\n";
-  os << indent << "OutputSize:            " << this->OutputSize        <<"\n";
-  os << indent << "BiasField:             " << this->BiasField         <<"\n";
-  os << indent << "WienerFilterNoise:     " << this->WienerFilterNoise <<"\n";
-
-  os << indent << "NumberOfIterations:    " << this->NumberOfIterations    <<
-    "\n";
-  os << indent << "NumberOfFittingLevels: " << this->NumberOfFittingLevels <<
-    "\n";
-  os << indent << "ConvergenceThreshold:  " << this->ConvergenceThreshold  <<
-    "\n";
-
-  os << indent << "InputVolumeRef:   " <<
-   (this->InputVolumeRef ? this->InputVolumeRef     : "(none)") << "\n";
-  os << indent << "OutputVolumeRef:   " <<
-   (this->OutputVolumeRef ? this->OutputVolumeRef   : "(none)") << "\n";
-  os << indent << "PreviewVolumeRef:   " <<
-   (this->PreviewVolumeRef ? this->PreviewVolumeRef : "(none)") << "\n";
-   os << indent << "MaskVolumeRef:   " <<
-   (this->MaskVolumeRef ? this->MaskVolumeRef       : "(none)") << "\n";
-
-   //DemoImage
+  os << indent << "InputVolumeRef:   " << 
+   (this->InputVolumeRef ? this->InputVolumeRef : "(none)") << "\n";
+  os << indent << "OutputVolumeRef:   " << 
+   (this->OutputVolumeRef ? this->OutputVolumeRef : "(none)") << "\n";
+  os << indent << "StorageVolumeRef:   " << 
+   (this->StorageVolumeRef ? this->StorageVolumeRef : "(none)") << "\n";
+   os << indent << "MaskVolumeRef:   " << 
+   (this->MaskVolumeRef ? this->MaskVolumeRef : "(none)") << "\n";
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMRIBiasFieldCorrectionNode::UpdateReferenceID(const char *oldID,
-    const char *newID)
+void vtkMRMLMRIBiasFieldCorrectionNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
-  if (strcmp(oldID, this->InputVolumeRef) == 0)
+  if (!strcmp(oldID, this->InputVolumeRef))
     {
     this->SetInputVolumeRef(newID);
     }
-  if (strcmp(oldID, this->OutputVolumeRef) == 0)
+  if (!strcmp(oldID, this->OutputVolumeRef))
     {
     this->SetOutputVolumeRef(newID);
     }
-  if (strcmp(oldID, this->PreviewVolumeRef) == 0)
+  if (!strcmp(oldID, this->StorageVolumeRef))
     {
-    this->SetPreviewVolumeRef(newID);
+    this->SetStorageVolumeRef(newID);
     }
-  if (strcmp(oldID, this->MaskVolumeRef) == 0)
+  if (!strcmp(oldID, this->MaskVolumeRef))
     {
     this->SetMaskVolumeRef(newID);
     }
 }
-
