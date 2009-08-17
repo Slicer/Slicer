@@ -58,12 +58,12 @@ if(NOT DISABLE_CXX_TESTING)
     )
 
   add_executable(
-    vtkEMSegmentBuildAndRunNewSegmentatationParameters001
-    vtkEMSegmentBuildAndRunNewSegmentatationParameters001.cxx
+    vtkEMSegmentBuildAndRunNewSegmentationParameters001
+    vtkEMSegmentBuildAndRunNewSegmentationParameters001.cxx
     vtkEMSegmentTestUtilities.cxx
     )
   target_link_libraries(
-    vtkEMSegmentBuildAndRunNewSegmentatationParameters001
+    vtkEMSegmentBuildAndRunNewSegmentationParameters001
     EMSegment
     vtkCommon
     )
@@ -152,8 +152,8 @@ if(NOT DISABLE_CXX_TESTING)
 
   # Build parameters from scratch and run the segmentation
   add_test(
-    vtkEMSegmentBuildAndRunNewSegmentatationParameters001
-    ${Slicer3_EXE} ${WRAPPED_TEST_EXE_PREFIX}/vtkEMSegmentBuildAndRunNewSegmentatationParameters001
+    vtkEMSegmentBuildAndRunNewSegmentationParameters001
+    ${Slicer3_EXE} ${WRAPPED_TEST_EXE_PREFIX}/vtkEMSegmentBuildAndRunNewSegmentationParameters001
     ${EMSegment_SOURCE_DIR}/Testing/TestData/MiscVolumeData/R.mhd
     ${EMSegment_SOURCE_DIR}/Testing/TestData/MiscVolumeData/G.mhd
     ${EMSegment_SOURCE_DIR}/Testing/TestData/MiscVolumeData/B.mhd
