@@ -736,8 +736,8 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI ( )
   // MODULE GUI FRAME 
   // ---
    // Define your help text and build the help frame here.
-    const char *help = "The MRIBiasFieldCorrection module....";
-    const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. ";
+    const char *help = "Documentation and screenshots are available at <a>http://wiki.slicer.org/slicerWiki/index.php/Modules:MRIBiasFieldCorrection-Documentation-3.5</a>\n\nInstructions:\n- Create a mask volume using the Editor module (the Threshold tool should give a good result)\n- Select the MRIBiasFieldCorrection module\n- Select the Input Volume\n- Select the Mask Volume\n- In Preview Volume, select Create New Volume\n- In Output Volume, select Create New Volume\n- Modify parameter values if desired (The default parameters gave the results shown in the Wiki documentation)\n- Click on Apply\n\nFor a 256x256x100 voxel volume, a 22 min processing time has been measured.";
+    const char *about = "The MRIBiasFieldCorrection module was developed by Nicolas Rannou (BWH) and Sylvain Jaume (MIT).\nThis work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. ";
     vtkKWWidget *page = this->UIPanel->GetPageWidget ( "MRIBiasFieldCorrection" );
     this->BuildHelpAndAboutFrame ( page, help, about );
     
@@ -873,7 +873,7 @@ if (!this->ShrinkFactor)
     this->MaxNumOfIt->Create();
     this->MaxNumOfIt->SetRange(0,100);
     this->MaxNumOfIt->SetResolution(1);
-    this->MaxNumOfIt->SetValue(50);
+    this->MaxNumOfIt->SetValue(20);
     this->MaxNumOfIt->SetLabelText(
       "Set Max Number of Iterations");
     }
@@ -969,8 +969,8 @@ if (!this->ShrinkFactor)
   this->CatchButton->Create();
   this->CatchButton->SetText("Preview");
   this->CatchButton->SetWidth ( 8 );
-  app->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
-                this->CatchButton->GetWidgetName());
+  //app->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
+    //            this->CatchButton->GetWidgetName());
 
   this->ApplyButton->SetParent(moduleFrame->GetFrame());
   this->ApplyButton->Create();

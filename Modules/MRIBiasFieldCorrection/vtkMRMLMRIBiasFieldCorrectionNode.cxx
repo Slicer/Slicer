@@ -54,13 +54,13 @@ vtkMRMLMRIBiasFieldCorrectionNode::vtkMRMLMRIBiasFieldCorrectionNode()
 {
    this->Shrink = 3;
    
-   this->Max = 50;
+   this->Max = 20;
    
    this->Num = 4;
    
    this->Wien = 0.1;
    
-   this->Field = 0.15;
+   this->Field = 4.1;
    
    this->Con = 0.001;
 
