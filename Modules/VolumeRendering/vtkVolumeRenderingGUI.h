@@ -118,6 +118,10 @@ public:
     vtkSetMacro(PipelineInitialized,int);
     vtkGetMacro(PipelineInitialized,int);
     vtkBooleanMacro(PipelineInitialized,int);
+    
+    vtkSetMacro(PipelineInitializedFg,int);
+    vtkGetMacro(PipelineInitializedFg,int);
+    vtkBooleanMacro(PipelineInitializedFg,int);
 
     // Description:
     // Get methods on class members ( no Set methods required. )
@@ -135,6 +139,7 @@ public:
     vtkGetObjectMacro (EWL_CreateNewVolumeRenderingNodeFg,vtkKWEntryWithLabel);
     vtkGetObjectMacro (DetailsFrame,vtkSlicerModuleCollapsibleFrame);
     vtkGetObjectMacro (CurrentNode,vtkMRMLVolumeRenderingNode);
+    vtkGetObjectMacro (CurrentNodeFg,vtkMRMLVolumeRenderingNode);
     vtkGetObjectMacro (Presets, vtkMRMLScene);
     vtkGetObjectMacro (Helper, vtkSlicerVRHelper);
 
@@ -160,6 +165,7 @@ protected:
     vtkVolumeRenderingLogic *Logic;
 
     vtkMRMLVolumeRenderingSelectionNode *SelectionNode;
+    vtkMRMLVolumeRenderingSelectionNode *SelectionNodeFg;
 
     // Description:
     // A pointer back to the viewer widget, useful for picking
@@ -170,10 +176,17 @@ protected:
     vtkSlicerViewerInteractorStyle *InteractorStyle;
 
     int PipelineInitialized;//0=no,1=Yes
+    int PipelineInitializedFg;//0=no,1=Yes
+    
     void InitializePipelineNewCurrentNode();
+    void InitializePipelineNewCurrentNodeFg();
+    
     void InitializePipelineFromMRMLScene();
     void InitializePipelineFromSlicer();
+    
     void InitializePipelineFromImageData();
+    void InitializePipelineFromImageDataFg();
+    
     void LabelMapInitializePipelineNewCurrentNode();
     void LabelMapInitializePipelineFromMRMLScene();
     void LabelMapInitializePipelineFromSlicer();
@@ -196,6 +209,10 @@ protected:
     
     std::string PreviousNS_VolumeRenderingSlicer;
     std::string PreviousNS_VolumeRenderingDataScene;
+    
+    std::string PreviousNS_VolumeRenderingSlicerFg;
+    std::string PreviousNS_VolumeRenderingDataSceneFg;
+    
     //ETX
     vtkSlicerNodeSelectorVolumeRenderingWidget *NS_VolumeRenderingDataSlicer;
     vtkSlicerNodeSelectorVolumeRenderingWidget *NS_VolumeRenderingDataScene;
@@ -210,6 +227,7 @@ protected:
     
     //Other members
     vtkMRMLVolumeRenderingNode  *CurrentNode;
+    vtkMRMLVolumeRenderingNode  *CurrentNodeFg;
     vtkMRMLScene *Presets;
 
     void PackSvpGUI(void);

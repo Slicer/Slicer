@@ -33,6 +33,7 @@
 #include "vtkRenderWindowInteractor.h"
 #include "vtkPlanes.h"
 #include "vtkProperty.h"
+#include "vtkVolumeProperty.h"
 
 //KWWidgets
 #include "vtkKWHistogram.h"
@@ -70,6 +71,7 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->DebugOff();
     this->SetTCLDebug(0);
     this->Histograms=NULL;
+    this->HistogramsFg=NULL;
 
     this->MapperTexture=NULL;
     this->MapperCUDARaycast=NULL;
@@ -91,12 +93,15 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->SC_GPURayCastIIFgBgRatio=NULL;
     this->MB_Mapper= NULL;
     this->SVP_VolumeProperty=NULL;
+    this->SVP_VolumePropertyFg=NULL;
     
     this->FrameFPS = NULL;
     this->FrameGPURayCasting = NULL;
     this->FramePolygonBlending = NULL;
     this->FrameCPURayCasting = NULL;
     this->FramePerformance = NULL;
+    
+    this->VolumePropertyGPURaycastII = NULL;
     
     //Cropping:
     this->CB_Cropping=NULL;
@@ -210,13 +215,35 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
         this->SVP_VolumeProperty=NULL;
     }
     
+    if(this->SVP_VolumePropertyFg!=NULL)
+    {
+        this->Gui->Script("pack forget %s",this->SVP_VolumePropertyFg->GetWidgetName());
+        this->SVP_VolumePropertyFg->SetHistogramSet(NULL);
+        this->SVP_VolumePropertyFg->SetVolumeProperty(NULL);
+        this->SVP_VolumePropertyFg->SetDataSet(NULL);
+        this->SVP_VolumePropertyFg->SetParent(NULL);
+        this->SVP_VolumePropertyFg->RemoveObservers(vtkKWEvent::VolumePropertyChangingEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
+        this->SVP_VolumePropertyFg->Delete();
+        this->SVP_VolumePropertyFg=NULL;
+    }
+    
     if(this->Histograms!=NULL)
     {
         this->Histograms->RemoveAllHistograms();
         this->Histograms->Delete();
         this->Histograms=NULL;
     }
-    
+    if(this->HistogramsFg!=NULL)
+    {
+        this->HistogramsFg->RemoveAllHistograms();
+        this->HistogramsFg->Delete();
+        this->HistogramsFg=NULL;
+    }
+    if (this->VolumePropertyGPURaycastII!=NULL)
+    {
+      this->VolumePropertyGPURaycastII->Delete();
+      this->VolumePropertyGPURaycastII=NULL;
+    }
     //Delete the rendering pipeline
     //this->volumeWillBeDeletedInSuperClass
     if(this->MapperTexture!=NULL)
@@ -313,11 +340,15 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingGUI *gui)
     this->NB_Details->AddPage("Performance","Influence the performance and quality of the rendering. Settings will still be available after starting Slicer3 again.");
     this->NB_Details->AddPage("Threshold","Edit volume rendering mapping options by using a threshold mechanism.");
     this->NB_Details->AddPage("Cropping","Crop the volume.Advantages: Volume rendering is much faster. You can blank out unnecessary parts of the volume.");
-    this->NB_Details->AddPage("Advanced","Change mapping functions, shading, interpolation etc.");
+    this->NB_Details->AddPage("Advanced (Bg)","Change mapping functions, shading, interpolation etc.");
+    this->NB_Details->AddPage("Advanced (Fg)","Change mapping functions, shading, interpolation etc.");
     this->Script("pack %s -side top -anchor nw -fill both -expand y -padx 2 -pady 2", this->NB_Details->GetWidgetName());
     
     vtkImageData *imageData = NULL;
     vtkMRMLScalarVolumeNode *volume = NULL;
+    
+    vtkImageData *imageDataFg = NULL;
+    vtkMRMLScalarVolumeNode *volumeFg = NULL;
     
     if (this->Gui && this->Gui->GetNS_ImageData() && this->Gui->GetNS_ImageData()->GetSelected())
     {
@@ -328,14 +359,30 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingGUI *gui)
     {
         imageData = volume->GetImageData();
     }
+    
+    if (this->Gui && this->Gui->GetNS_ImageDataFg() && this->Gui->GetNS_ImageDataFg()->GetSelected())
+    {
+        volumeFg = vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageDataFg()->GetSelected());
+    }
+      
+    if (volumeFg)
+    {
+        imageDataFg = volumeFg->GetImageData();
+    }
       
     this->SVP_VolumeProperty=vtkSlicerVolumePropertyWidget::New();
-    this->SVP_VolumeProperty->SetParent(this->NB_Details->GetFrame("Advanced"));
+    this->SVP_VolumeProperty->SetParent(this->NB_Details->GetFrame("Advanced (Bg)"));
     this->SVP_VolumeProperty->Create();
     this->SVP_VolumeProperty->ScalarOpacityUnitDistanceVisibilityOff ();
     this->SVP_VolumeProperty->SetDataSet(imageData);
-    
     this->SVP_VolumeProperty->InteractiveApplyModeOn ();
+    
+    this->SVP_VolumePropertyFg=vtkSlicerVolumePropertyWidget::New();
+    this->SVP_VolumePropertyFg->SetParent(this->NB_Details->GetFrame("Advanced (Fg)"));
+    this->SVP_VolumePropertyFg->Create();
+    this->SVP_VolumePropertyFg->ScalarOpacityUnitDistanceVisibilityOff ();
+    this->SVP_VolumePropertyFg->SetDataSet(imageDataFg);
+    this->SVP_VolumePropertyFg->InteractiveApplyModeOn ();
     
     this->Histograms=vtkKWHistogramSet::New();
 
@@ -343,6 +390,14 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingGUI *gui)
     if (imageData && imageData->GetPointData())
     {
         this->Histograms->AddHistograms(imageData->GetPointData()->GetScalars());
+    }
+    
+    this->HistogramsFg=vtkKWHistogramSet::New();
+
+    //Add Histogram for image data
+    if (imageDataFg && imageDataFg->GetPointData())
+    {
+        this->HistogramsFg->AddHistograms(imageDataFg->GetPointData()->GetScalars());
     }
     
     //Build the gradient histogram
@@ -354,23 +409,151 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingGUI *gui)
     gradHisto->BuildHistogram(grad->GetOutput()->GetPointData()->GetScalars(),0);
     this->Histograms->AddHistogram(gradHisto, "0gradient");
 
-    //Delete      
+    //Build the gradient histogram
+    vtkImageGradientMagnitude *gradFg=vtkImageGradientMagnitude::New();
+    vtkKWHistogram *gradHistoFg=vtkKWHistogram::New();
+    if (imageDataFg)
+    {
+      gradFg->SetDimensionality(3);
+      gradFg->SetInput(imageDataFg);
+      gradFg->Update();
+      gradHistoFg->BuildHistogram(gradFg->GetOutput()->GetPointData()->GetScalars(),0);
+      this->HistogramsFg->AddHistogram(gradHistoFg, "0gradient");
+    }
+    
     this->SVP_VolumeProperty->SetHistogramSet(this->Histograms);
+    this->SVP_VolumePropertyFg->SetHistogramSet(this->HistogramsFg);
 
     //AddEvent for Interactive apply 
     this->SVP_VolumeProperty->AddObserver(vtkKWEvent::VolumePropertyChangingEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
+    this->SVP_VolumePropertyFg->AddObserver(vtkKWEvent::VolumePropertyChangingEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
     
     grad->Delete();
     gradHisto->Delete(); 
+    
+    gradFg->Delete();
+    gradHistoFg->Delete();
     
     this->CreatePerformance();
     this->CreateCropping();
     this->CreateThreshold();
     this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->SVP_VolumeProperty->GetWidgetName());
+    this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->SVP_VolumePropertyFg->GetWidgetName());
     
     this->WithdrawProgressDialog();
     
     this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+}
+
+void vtkSlicerVRGrayscaleHelper::SetupHistogramFg()
+{
+   //init histogram set 
+   vtkImageData *imageDataFg = NULL;
+   vtkMRMLScalarVolumeNode *volumeFg = NULL;
+
+   volumeFg = vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageDataFg()->GetSelected());
+   imageDataFg = volumeFg->GetImageData();
+    
+   this->HistogramsFg->AddHistograms(imageDataFg->GetPointData()->GetScalars());
+    
+   //Build the gradient histogram
+   vtkImageGradientMagnitude *gradFg=vtkImageGradientMagnitude::New();
+   vtkKWHistogram *gradHistoFg=vtkKWHistogram::New();
+   if (imageDataFg)
+   {
+     gradFg->SetDimensionality(3);
+     gradFg->SetInput(imageDataFg);
+     gradFg->Update();
+     gradHistoFg->BuildHistogram(gradFg->GetOutput()->GetPointData()->GetScalars(),0);
+     this->HistogramsFg->AddHistogram(gradHistoFg, "0gradient");
+   }
+}
+
+void vtkSlicerVRGrayscaleHelper::InitializePipelineNewCurrentNodeFg()
+{
+    std::stringstream autoname;
+    autoname<<"autoVisualization";
+    autoname<<this->Gui->GetNS_ImageDataFg()->GetSelected()->GetName();
+    this->Gui->GetCurrentNodeFg()->SetName(autoname.str().c_str());
+   
+    //this->Gui->GetLogic()->GetMRMLScene()->InvokeEvent(vtkMRMLScene::NodeAddedEvent);
+    vtkKWHistogram *histogram=this->HistogramsFg->GetHistogramWithName("0");
+    if(histogram==NULL)
+    {
+        vtkErrorMacro("Problems with HistogramSet");
+        return;
+    }
+    double totalOccurance=histogram->GetTotalOccurence();
+    double thresholdLow=totalOccurance*0.2;
+    double thresholdHigh=totalOccurance*0.8;
+    double range[2];
+
+    histogram->GetRange(range);
+    double thresholdLowIndex=range[0];
+    double sumLowIndex=0;
+    double thresholdHighIndex=range[0];
+    double sumHighIndex=0;
+    //calculate distance
+    double bin_width = (range[1] == range[0] ? 1 : (range[1] - range[0])/(double)histogram->GetNumberOfBins());
+    while (sumLowIndex<thresholdLow)
+    {
+        sumLowIndex+=histogram->GetOccurenceAtValue(thresholdLowIndex);
+        thresholdLowIndex+=bin_width;
+    }
+    while(sumHighIndex<thresholdHigh)
+    {
+        sumHighIndex+=histogram->GetOccurenceAtValue(thresholdHighIndex);
+        thresholdHighIndex+=bin_width;
+
+    }
+    this->Gui->GetCurrentNodeFg()->GetVolumeProperty()->SetInterpolationTypeToLinear();
+    vtkPiecewiseFunction *opacity=this->Gui->GetCurrentNodeFg()->GetVolumeProperty()->GetScalarOpacity();
+    opacity->RemoveAllPoints();
+    opacity->AddPoint(range[0],0.);
+    opacity->AddPoint(thresholdLowIndex,0.0);
+    opacity->AddPoint(thresholdHighIndex,0.2);
+    opacity->AddPoint(range[1],0.2);
+    vtkColorTransferFunction *colorTransfer=this->Gui->GetCurrentNodeFg()->GetVolumeProperty()->GetRGBTransferFunction();
+    colorTransfer->RemoveAllPoints();
+    colorTransfer->AddRGBPoint(range[0],.3,.3,1.);
+    colorTransfer->AddRGBPoint(thresholdLowIndex,.3,.3,1.);
+    colorTransfer->AddRGBPoint(thresholdLowIndex+.5*(thresholdHighIndex-thresholdLowIndex),.3,1.,.3);
+    colorTransfer->AddRGBPoint(thresholdHighIndex,1.,.3,.3);
+    colorTransfer->AddRGBPoint(range[1],1,.3,.3);
+
+    //Enable shading as default
+    this->Gui->GetCurrentNodeFg()->GetVolumeProperty()->ShadeOn();
+    this->Gui->GetCurrentNodeFg()->GetVolumeProperty()->SetAmbient(.20);
+    this->Gui->GetCurrentNodeFg()->GetVolumeProperty()->SetDiffuse(.80);
+    this->Gui->GetCurrentNodeFg()->GetVolumeProperty()->SetSpecular(.50);
+    this->Gui->GetCurrentNodeFg()->GetVolumeProperty()->SetSpecularPower(40);
+
+    //Set cropping
+    this->Gui->GetCurrentNodeFg()->CroppingEnabledOff();
+
+    vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageDataFg()->GetSelected())->GetImageData();
+    //vtkMRMLScalarVolumeNode *volumeNode=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected());
+    vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
+    double pointA[4];
+    double pointB[4];
+    for(int i=0;i<3;i++)
+    {
+        pointA[i]=iData->GetOrigin()[i];
+        pointB[i]=iData->GetDimensions()[i];
+    }
+    pointA[3]=1;
+    pointB[3]=1;
+    this->CalculateMatrix(matrix);
+    matrix->MultiplyPoint(pointA,pointA);
+    matrix->MultiplyPoint(pointB,pointB);
+    
+    this->Gui->GetCurrentNodeFg()->SetCroppingRegionPlanes(pointA[0],pointB[0], pointA[1],pointB[1], pointA[2],pointB[2]);
+
+    //Disable Gradient Opacity
+
+    this->UpdateGUIElements();
+    
+    matrix->Delete();
 }
 
 void vtkSlicerVRGrayscaleHelper::InitializePipelineNewCurrentNode()
@@ -429,7 +612,7 @@ void vtkSlicerVRGrayscaleHelper::InitializePipelineNewCurrentNode()
     this->Gui->GetCurrentNode()->GetVolumeProperty()->SetAmbient(.20);
     this->Gui->GetCurrentNode()->GetVolumeProperty()->SetDiffuse(.80);
     this->Gui->GetCurrentNode()->GetVolumeProperty()->SetSpecular(.50);
-    this->Gui->GetCurrentNode()->GetVolumeProperty()->SetSpecularPower(40);//this is really weird
+    this->Gui->GetCurrentNode()->GetVolumeProperty()->SetSpecularPower(40);
 
     //Set cropping
     this->Gui->GetCurrentNode()->CroppingEnabledOff();
@@ -601,6 +784,7 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
         if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","MB_Mapper"))
         {
             int id = this->Gui->GetApplication()->GetIntRegistryValue(2,"VolumeRendering","MB_Mapper");
+            this->RenderingMethod = id;
             this->MB_Mapper->GetWidget()->GetMenu()->SelectItem(id);
             
             switch(id)
@@ -650,11 +834,22 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
             this->Volume->SetMapper(this->MapperRaycast);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using CPU Raycasting: High Quality");
             this->FrameCPURayCasting->ExpandFrame();
+            this->RenderingMethod = 0;
         }
     }
     
     //TODO This is not the right place for this
-    this->Volume->SetProperty(this->Gui->GetCurrentNode()->GetVolumeProperty());
+    if (this->RenderingMethod == 2)
+    {
+      this->Volume->SetProperty(NULL);
+      CreateVolumePropertyGPURaycastII();
+      this->Volume->SetProperty(this->VolumePropertyGPURaycastII);
+    }
+    else
+    {
+      this->Volume->SetProperty(this->Gui->GetCurrentNode()->GetVolumeProperty());
+    }
+      
     vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
     this->CalculateMatrix(matrix);
     this->Volume->PokeMatrix(matrix);
@@ -710,7 +905,17 @@ void vtkSlicerVRGrayscaleHelper::UpdateRendering()
     }
     
     //Update Property
-    this->Volume->SetProperty(this->Gui->GetCurrentNode()->GetVolumeProperty());
+    if (this->RenderingMethod == 2)
+    {
+      this->Volume->SetProperty(NULL);
+      CreateVolumePropertyGPURaycastII();
+      this->Volume->SetProperty(this->VolumePropertyGPURaycastII);
+    }
+    else
+    {
+      this->Volume->SetProperty(this->Gui->GetCurrentNode()->GetVolumeProperty());
+    }
+      
     //Update matrix
     vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
     this->CalculateMatrix(matrix);
@@ -880,6 +1085,11 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
             return;
         }
+        if(callerObjectSVP == this->SVP_VolumePropertyFg && eid == vtkKWEvent::VolumePropertyChangingEvent)
+        {
+            this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+            return;
+        }
     }
     
     //check abort
@@ -1025,12 +1235,72 @@ void vtkSlicerVRGrayscaleHelper::UpdateSVP(void)
     this->SVP_VolumeProperty->Update();
 }
 
+void vtkSlicerVRGrayscaleHelper::UpdateSVPFg(void)
+{
+    //TODO really dirty here
+    //First check if we have a SVP
+    if(this->SVP_VolumePropertyFg==NULL)
+    {
+        vtkErrorMacro("SVP does not exist");
+        return;
+    }
+    
+    if ( !this->Gui->GetCurrentNodeFg() )
+      return;
+      
+    //First of all set New Property, Otherwise all Histograms will be overwritten
+    //First check if we really need to update
+    if(this->Gui->GetCurrentNodeFg() && this->SVP_VolumePropertyFg->GetVolumeProperty()==this->Gui->GetCurrentNodeFg()->GetVolumeProperty())
+    {
+        this->AdjustMappingFg();
+        this->SVP_VolumePropertyFg->Update();
+        //Set Treshold to none
+//        this->MB_ThresholdMode->GetWidget()->GetMenu()->SelectItem("None");
+//        this->ProcessThresholdModeEvents(0);
+        //Reset cropping
+        //Get Cropping from node
+    }
+    else
+    {
+    
+        //for(int i=0;i<3;i++)
+        //{
+        //    this->RA_Cropping[i]->SetRange(this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[2*i],this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[2*i+1]);
+        //}
+  /*      if (this->Gui->GetCurrentNodeFg())
+          this->UpdateingGUI = 1;
+          {
+          double *croppingPlanes = this->Gui->GetCurrentNode()->GetCroppingRegionPlanes();
+          for(int i=0;i<3;i++)
+            {
+            if(croppingPlanes[2*i  ]< croppingPlanes[2*i+1])
+              {
+              this->RA_Cropping[i]->SetRange(croppingPlanes[2*i], croppingPlanes[2*i+1]);
+              }
+            else
+              {
+              this->RA_Cropping[i]->SetRange(croppingPlanes[2*i+1], croppingPlanes[2*i]);
+              }
+            }
+          this->UpdateingGUI = 0;
+          }
+
+        this->CB_Cropping->GetWidget()->SetSelectedState(this->Gui->GetCurrentNode()->GetCroppingEnabled());
+        this->ProcessEnableDisableCropping(this->Gui->GetCurrentNode()->GetCroppingEnabled());*/
+    }
+    
+   this->SVP_VolumePropertyFg->SetVolumeProperty(this->Gui->GetCurrentNodeFg()->GetVolumeProperty());
+   this->SVP_VolumePropertyFg->SetHSVColorSelectorVisibility(1);
+   this->SVP_VolumePropertyFg->Update();
+}
+
 void vtkSlicerVRGrayscaleHelper::UpdateGUIElements(void)
 {
     this->UpdateingGUI = 1;
     Superclass::UpdateGUIElements();
     
     this->UpdateSVP();
+    this->UpdateSVPFg();
     
     double *croppingPlanes = this->Gui->GetCurrentNode()->GetCroppingRegionPlanes();
     for(int i = 0; i < 3; i++)
@@ -1053,6 +1323,27 @@ void vtkSlicerVRGrayscaleHelper::UpdateGUIElements(void)
     this->UpdateingGUI = 0;
     this->ProcessCropping(0,0,0);
     this->ProcessEnableDisableCropping(this->Gui->GetCurrentNode()->GetCroppingEnabled());
+}
+
+void vtkSlicerVRGrayscaleHelper::AdjustMappingFg()
+{
+    //Update Color    
+    vtkColorTransferFunction *functionColor=this->Gui->GetCurrentNodeFg()->GetVolumeProperty()->GetRGBTransferFunction();
+    double rangeNew[2];
+    vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageDataFg()->GetSelected())->GetImageData()->GetPointData()->GetScalars()->GetRange(rangeNew);
+    functionColor->AdjustRange(rangeNew);
+
+    //Update Opacity
+    vtkPiecewiseFunction *function=this->Gui->GetCurrentNodeFg()->GetVolumeProperty()->GetScalarOpacity();
+    function->AdjustRange(rangeNew);
+    
+    //Update
+    rangeNew[1]=(rangeNew[1]-rangeNew[0])/4;
+    rangeNew[0]=0;
+    function=this->Gui->GetCurrentNodeFg()->GetVolumeProperty()->GetGradientOpacity();
+    function->RemovePoint(255);//Remove the standard value
+    //this->Histograms->GetHistogramWithName("0gradient")->GetRange(rangeNew);
+    function->AdjustRange(rangeNew);
 }
 
 void vtkSlicerVRGrayscaleHelper::AdjustMapping()
@@ -2317,4 +2608,66 @@ void vtkSlicerVRGrayscaleHelper::SetupCPURayCastInteractive()
         }
     }
 }
+
+void vtkSlicerVRGrayscaleHelper::CreateVolumePropertyGPURaycastII()
+{
+  if (this->VolumePropertyGPURaycastII != NULL)
+    this->VolumePropertyGPURaycastII->Delete();
+  
+  this->VolumePropertyGPURaycastII = vtkVolumeProperty::New();
+
+  //copy bg property into 1st compoent property
+  vtkVolumeProperty* prop = this->Gui->GetCurrentNode()->GetVolumeProperty();
+  {
+    int colorChannels = prop->GetColorChannels(0);
+    
+    switch(colorChannels)
+    {
+    case 1:
+      this->VolumePropertyGPURaycastII->SetColor(0, prop->GetGrayTransferFunction(0));
+      break;
+    case 3:
+      this->VolumePropertyGPURaycastII->SetColor(0, prop->GetRGBTransferFunction(0));
+      break;
+    }
+    
+    this->VolumePropertyGPURaycastII->SetScalarOpacity(0, prop->GetScalarOpacity(0));
+    this->VolumePropertyGPURaycastII->SetGradientOpacity(0, prop->GetGradientOpacity(0));
+    this->VolumePropertyGPURaycastII->SetScalarOpacityUnitDistance(0, prop->GetScalarOpacityUnitDistance(0));
+    
+    this->VolumePropertyGPURaycastII->SetDisableGradientOpacity(0, prop->GetDisableGradientOpacity(0));
+
+    this->VolumePropertyGPURaycastII->SetShade(0, prop->GetShade(0));
+    this->VolumePropertyGPURaycastII->SetAmbient(0, prop->GetAmbient(0));
+    this->VolumePropertyGPURaycastII->SetDiffuse(0, prop->GetDiffuse(0));
+    this->VolumePropertyGPURaycastII->SetSpecular(0, prop->GetSpecular(0));
+    this->VolumePropertyGPURaycastII->SetSpecularPower(0, prop->GetSpecularPower(0));
+    
+    this->VolumePropertyGPURaycastII->SetIndependentComponents(prop->GetIndependentComponents());
+    this->VolumePropertyGPURaycastII->SetInterpolationType(prop->GetInterpolationType());
+  }
+  
+  if (this->Gui->GetCurrentNodeFg())//copy fg property into 2nd component property
+  {
+    vtkVolumeProperty* propFg = this->Gui->GetCurrentNodeFg()->GetVolumeProperty();
+    int colorChannels = propFg->GetColorChannels(0);
+    
+    switch(colorChannels)
+    {
+    case 1:
+      this->VolumePropertyGPURaycastII->SetColor(1, propFg->GetGrayTransferFunction(0));
+      break;
+    case 3:
+      this->VolumePropertyGPURaycastII->SetColor(1, propFg->GetRGBTransferFunction(0));
+      break;
+    }
+    
+    this->VolumePropertyGPURaycastII->SetScalarOpacity(1, propFg->GetScalarOpacity(0));
+    this->VolumePropertyGPURaycastII->SetGradientOpacity(1, propFg->GetGradientOpacity(0));
+    this->VolumePropertyGPURaycastII->SetScalarOpacityUnitDistance(1, propFg->GetScalarOpacityUnitDistance(0));
+    this->VolumePropertyGPURaycastII->SetDisableGradientOpacity(1, propFg->GetDisableGradientOpacity(0));
+  }
+
+}
+
 

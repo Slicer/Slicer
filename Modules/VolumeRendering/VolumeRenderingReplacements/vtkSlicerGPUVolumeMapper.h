@@ -152,6 +152,7 @@ protected:
   // Description:
   // Update the internal RGBA representation of the volume. Return 1 if
   // anything change, 0 if nothing changed.
+  
   int    UpdateVolumes( vtkVolume * );
   int    UpdateColorLookup( vtkVolume * );
   

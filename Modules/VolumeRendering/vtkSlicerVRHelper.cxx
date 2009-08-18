@@ -38,11 +38,18 @@ vtkSlicerVRHelper::~vtkSlicerVRHelper(void)
     }
 }
 
+void vtkSlicerVRHelper::SetupHistogramFg()
+{
+}
+
 void vtkSlicerVRHelper::InitializePipelineNewCurrentNode()
 {
-    
-   
 }
+
+void vtkSlicerVRHelper::InitializePipelineNewCurrentNodeFg()
+{
+}
+
 void vtkSlicerVRHelper::Rendering()
 {
    

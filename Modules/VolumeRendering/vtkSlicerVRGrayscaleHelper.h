@@ -41,6 +41,7 @@ class vtkSlicerVRMenuButtonColorMode;
 class vtkKWComboBoxWithLabel;
 class vtkKWComboBox;
 class vtkKWEntry;
+class vtkVolumeProperty;
 
 
 class VTK_SLICERVOLUMERENDERING_EXPORT vtkSlicerVRGrayscaleHelper :public vtkSlicerVRHelper
@@ -154,6 +155,12 @@ public:
     // Create a new volume rendering node using default values
     virtual void InitializePipelineNewCurrentNode(void);
 
+    // Description:
+    // Create a new volume rendering node using default values
+    virtual void InitializePipelineNewCurrentNodeFg(void);
+    
+    virtual void SetupHistogramFg();
+    
     // Description:
     // Is called at the first renderings.
     virtual void Rendering(void);
@@ -394,19 +401,37 @@ protected:
     vtkKWHistogramSet *Histograms;
 
     // Description:
+    // A set of histograms used in the volume property widget
+    vtkKWHistogramSet *HistogramsFg;
+    
+    // Description:
     // The volume property widget in the advanced page.
     vtkSlicerVolumePropertyWidget *SVP_VolumeProperty;
 
+    // Description:
+    // The volume property widget in the advanced page.
+    vtkSlicerVolumePropertyWidget *SVP_VolumePropertyFg;
+    
     // Description:
     // Update the volume property widget
     void UpdateSVP(void);
 
     // Description:
+    // Update the volume property widget
+    void UpdateSVPFg(void);
+    
+    // Description:
     // Adjust the transfer functions to the current setting of vtkVolumeProperty
     void AdjustMapping(void);
-    
+
+    // Description:
+    // Adjust the transfer functions to the current setting of vtkVolumeProperty
+    void AdjustMappingFg(void);
+        
     void SetupCPURayCastInteractive();
 
+    void CreateVolumePropertyGPURaycastII();
+    
     //--------------------------------------------------------------------------
     // Rendering Logic
     //--------------------------------------------------------------------------
@@ -464,6 +489,8 @@ protected:
     int ButtonDown;
     
     int CPURayCastingInteractionFlag;
+    
+    vtkVolumeProperty*    VolumePropertyGPURaycastII;
 
 private:
     // Description:

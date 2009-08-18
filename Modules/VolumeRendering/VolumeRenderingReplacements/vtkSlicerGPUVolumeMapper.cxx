@@ -523,7 +523,6 @@ vtkSlicerGPUVolumeMapper::~vtkSlicerGPUVolumeMapper()
     }
 }
 
-
 vtkSlicerGPUVolumeMapper *vtkSlicerGPUVolumeMapper::New()
 {
   // First try to create the object from the vtkObjectFactory

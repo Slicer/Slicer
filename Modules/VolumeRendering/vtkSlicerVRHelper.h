@@ -45,7 +45,10 @@ public:
     // Description:
     // Initialize the Rendering pipeline by creating an new vtkMRMLVolumeRenderingNode
     virtual void InitializePipelineNewCurrentNode(void);
-
+    virtual void InitializePipelineNewCurrentNodeFg(void);
+    
+    virtual void SetupHistogramFg();
+    
     // Description:
     // Update the Rendering, takes care, that the volumeproperty etc. is up to date
     virtual void UpdateRendering(void);
