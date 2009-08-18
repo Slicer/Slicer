@@ -26,12 +26,10 @@ set(Slicer3_BUILD_SHARED "@BUILD_SHARED_LIBS@")
 
 # Slicer3 options
 set(Slicer3_USE_BatchMake "@Slicer3_USE_BatchMake@")
-set(Slicer3_USE_IGSTK "@Slicer3_USE_IGSTK@")
 set(Slicer3_USE_MIDAS "@Slicer3_USE_MIDAS@")
-set(Slicer3_USE_NAVITRACK "@Slicer3_USE_NAVITRACK@")
 set(Slicer3_USE_NUMPY "@Slicer3_USE_NUMPY@")
 set(Slicer3_USE_PYTHON "@Slicer3_USE_PYTHON@")
-set(Slicer3_USE_OPENTRACKER "@Slicer3_USE_OPENTRACKER@")
+set(Slicer3_USE_OPENCV "@Slicer3_USE_OPENCV@")
 
 # Slicer home (top of the tree)
 set(Slicer3_HOME "@Slicer3_HOME@")
@@ -100,3 +98,5 @@ set(VTK_DIR "@VTK_DIR_CONFIG@")
 set(PYTHON_INCLUDE_PATH "@PYTHON_INCLUDE_PATH@")
 set(PYTHON_LIBRARIES "@PYTHON_LIBRARIES@")
 set(BatchMake_DIR "@BatchMake_DIR_CONFIG@")
+set(OpenCV_DIR "@OpenCV_DIR_CONFIG@")
+

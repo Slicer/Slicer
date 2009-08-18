@@ -88,7 +88,8 @@ set ::SCIPY_TAG "http://svn.scipy.org/svn/scipy/branches/0.7.x"
 set ::BatchMake_TAG "BatchMake-1-2"
 set ::SLICERLIBCURL_TAG "HEAD"
 set ::OpenIGTLink_TAG "http://svn.na-mic.org/NAMICSandBox/branches/OpenIGTLink-1-0"
-set ::OpenCV_TAG "https://opencvlibrary.svn.sourceforge.net/svnroot/opencvlibrary/trunk"
+#set ::OpenCV_TAG "https://opencvlibrary.svn.sourceforge.net/svnroot/opencvlibrary/trunk"
+set ::OpenCV_TAG "http://sourceforge.net/projects/opencvlibrary/files/opencv-linux/1.0/opencv-1.0.0.tar.gz/download" 
 
 
 # set TCL_VERSION to "tcl" to get 8.4, otherwise use tcl85 get 8.5
@@ -168,7 +169,7 @@ set ::USE_SCIPY "false"
 # CMake Option for using OpenIGTLink library. Must be "OFF" or "ON", default is "OFF"
 set ::USE_OPENIGTLINK "ON"
 # CMake Option for using OpenCV library. Must be "OFF" or "ON", default is "OFF"
-set ::USE_OPENCV "OFF"
+set ::USE_OPENCV "ON"
  
 switch $::tcl_platform(os) {
     "SunOS" {
