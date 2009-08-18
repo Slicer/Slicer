@@ -350,6 +350,11 @@ void vtkSlicerColorGUI::BuildGUI ( )
   // color display widget
   this->ColorDisplayWidget = vtkSlicerColorDisplayWidget::New ( );
   this->ColorDisplayWidget->SetMRMLScene(this->GetMRMLScene() );
+  if (this->GetApplicationGUI()->GetViewerWidget())
+    {
+  this->ColorDisplayWidget->SetViewerWidget(this->GetApplicationGUI()->GetViewerWidget());
+    }
+  else { vtkWarningMacro("Unable to pass the viewer widget to the col display widget"); }
   this->ColorDisplayWidget->SetParent ( displayFrame->GetFrame() );
   this->ColorDisplayWidget->Create ( );
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",

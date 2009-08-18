@@ -29,6 +29,9 @@ class vtkKWPushButton;
 class vtkKWChangeColorButton;
 class vtkKWMultiColumnListWithScrollbars;
 class vtkKWCheckButton;
+class vtkScalarBarWidget;
+class vtkSlicerViewerWidget;
+class vtkKWScalarBarAnnotation;
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColorDisplayWidget : public vtkSlicerWidget
 {
   
@@ -123,7 +126,10 @@ public:
   // Once know that the GUI has to be cleared and updated to show elements
   // from a new list, use this call
   //  virtual void SetGUIFromNode(vtkMRMLColorNode * activeColorNode);
-  
+
+  vtkGetObjectMacro(ViewerWidget, vtkSlicerViewerWidget);
+  virtual void SetViewerWidget(vtkSlicerViewerWidget *viewerWidget);
+
  protected:
   vtkSlicerColorDisplayWidget();
   virtual ~vtkSlicerColorDisplayWidget();
@@ -188,6 +194,17 @@ public:
   //ETX
 
   vtkKWCheckButton *ShowOnlyNamedColorsCheckButton;
+  // Description:
+  // Control the parameters for a scalar bar widget
+  vtkKWScalarBarAnnotation* ScalarBarAnnotation;
+
+  // Description:
+  // a widget that manipulates a scalar bar actor (integrated). 
+  vtkScalarBarWidget *ScalarBarWidget;
+
+  // Description:
+  // a pointer back to the viewer widget, useful for displaying the scalar bar actor
+  vtkSlicerViewerWidget *ViewerWidget;
 private:
 
   vtkSlicerColorDisplayWidget(const vtkSlicerColorDisplayWidget&); // Not implemented

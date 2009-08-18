@@ -20,6 +20,11 @@
 #include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLFreeSurferProceduralColorNode.h"
 
+#include "vtkScalarBarActor.h"
+#include "vtkScalarBarWidget.h"
+#include "vtkKWScalarBarAnnotation.h"
+#include "vtkSlicerViewerWidget.h"
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerColorDisplayWidget );
 vtkCxxRevisionMacro ( vtkSlicerColorDisplayWidget, "$Revision: 1.0 $");
@@ -43,11 +48,14 @@ vtkSlicerColorDisplayWidget::vtkSlicerColorDisplayWidget ( )
 
     this->ShowOnlyNamedColorsCheckButton = NULL;
 
+    this->ScalarBarAnnotation = NULL;
+    this->ScalarBarWidget = NULL;
+
     this->SelectedColorLabel = NULL;
 
     this->MultiSelectModeOff();
-    
-    //this->DebugOn();
+
+    this->ViewerWidget = NULL;
 }
 
 
@@ -89,14 +97,26 @@ vtkSlicerColorDisplayWidget::~vtkSlicerColorDisplayWidget ( )
     this->ShowOnlyNamedColorsCheckButton->Delete();
     this->ShowOnlyNamedColorsCheckButton = NULL;
     }
-
+  if (this->ScalarBarAnnotation)
+    {
+    this->ScalarBarAnnotation->SetParent(NULL);
+    this->ScalarBarAnnotation->Delete();
+    this->ScalarBarAnnotation = NULL;
+    }
   if (this->SelectedColorLabel)
     {
     this->SelectedColorLabel->SetParent(NULL);
     this->SelectedColorLabel->Delete();
     this->SelectedColorLabel = NULL;
     }
-  
+
+  if (this->ScalarBarWidget)
+    {
+    this->ScalarBarWidget->SetInteractor(NULL);
+    this->ScalarBarWidget->Delete();
+    this->ScalarBarWidget = NULL;
+    }
+  this->SetViewerWidget(NULL);
   this->SetMRMLScene ( NULL );
   this->SetColorNodeID (NULL);
   vtkSetMRMLNodeMacro(this->ColorNode, NULL);
@@ -235,6 +255,7 @@ void vtkSlicerColorDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
     this->UpdateWidget();
     return;
     }
+  
   //
   // process color selector events
   //
@@ -478,6 +499,29 @@ void vtkSlicerColorDisplayWidget::UpdateWidget()
       vtkDebugMacro("Done rebuilding table, row = " << row << ", thisRow = " << thisRow);
       }
 
+    // update the scalar bar
+    if (this->ScalarBarWidget)
+      {
+      if (colorNode->GetLookupTable())
+        {
+        this->ScalarBarWidget->GetScalarBarActor()->SetLookupTable(colorNode->GetLookupTable());
+        }
+      else
+        {
+        //try getting a transfer function
+        vtkMRMLProceduralColorNode *procColorNode = vtkMRMLProceduralColorNode::SafeDownCast(colorNode);
+        if (procColorNode && procColorNode->GetColorTransferFunction())
+          {
+          this->ScalarBarWidget->GetScalarBarActor()->SetLookupTable((vtkScalarsToColors*)(procColorNode->GetColorTransferFunction()));
+          }
+        else
+          {
+          vtkWarningMacro("This color node " << colorNode->GetName() << " doesn't have a look up table or a color transfer function.");
+//          this->ScalarBarWidget->GetScalarBarActor()->SetLookupTable(NULL);
+          }
+        }
+      } else { vtkWarningMacro("Updatewidget: no scalar bar widget"); }
+
     this->UpdateSelectedColor();
     }
   else
@@ -664,17 +708,57 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
   this->ShowOnlyNamedColorsCheckButton->Create();
   this->ShowOnlyNamedColorsCheckButton->SelectedStateOn();
   this->ShowOnlyNamedColorsCheckButton->SetText("Show Only Named Colors");
-  
-  // pack the buttons
 
   // pack the checkbutton
   app->Script("pack %s -side top -anchor w -padx 4 -pady 2 -in %s",
               this->ShowOnlyNamedColorsCheckButton->GetWidgetName(),
               buttonFrame->GetWidgetName());
+
+  // button frame
+  vtkKWFrame *scalarBarFrame = vtkKWFrame::New();
+  scalarBarFrame->SetParent ( displayFrame );
+  scalarBarFrame->Create ( );
+  app->Script ("pack %s -side top -anchor nw -fill x -pady 0 -in %s",
+               scalarBarFrame->GetWidgetName(),
+               displayFrame->GetWidgetName());
+
+  
+  // scalar bar
+  this->ScalarBarWidget = vtkScalarBarWidget::New();
+  this->ScalarBarWidget->GetScalarBarActor()->SetOrientationToVertical();
+  this->ScalarBarWidget->GetScalarBarActor()->SetNumberOfLabels(11);
+  this->ScalarBarWidget->GetScalarBarActor()->SetTitle("(mm)");
+  // it's a 2d actor, position it in screen space by percentages
+  this->ScalarBarWidget->GetScalarBarActor()->SetPosition(0.1, 0.1);
+  this->ScalarBarWidget->GetScalarBarActor()->SetWidth(0.1);
+  this->ScalarBarWidget->GetScalarBarActor()->SetHeight(0.8);
+  if (this->GetViewerWidget() &&
+      this->GetViewerWidget()->GetMainViewer() &&
+      this->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()
+      )
+    {
+    // set up the interactor
+    this->ScalarBarWidget->SetInteractor(this->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor());
+    }
+  else
+    {
+    vtkWarningMacro("No ViewerWidget set, scalar bar widget interactor not set");
+    }
+  this->ScalarBarAnnotation = vtkKWScalarBarAnnotation::New();
+  this->ScalarBarAnnotation->SetParent ( scalarBarFrame );
+  this->ScalarBarAnnotation->Create();
+  this->ScalarBarAnnotation->SetBalloonHelpString("Control parameters on a 2d scalar bar (DON'T hit the x to close this widget!)");
+  this->ScalarBarAnnotation->SetScalarBarWidget(this->ScalarBarWidget);
+
+  // pack the scalar bar annotation
+  app->Script("pack %s -side top -anchor w -padx 4 -pady 2 -in %s",
+              this->ScalarBarAnnotation->GetWidgetName(),
+              scalarBarFrame->GetWidgetName());
   
   // deleting frame widgets
   buttonFrame->Delete();
-    
+  scalarBarFrame->Delete();
+  
   // add observers
   this->ColorSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->ShowOnlyNamedColorsCheckButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -682,7 +766,6 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
   this->MultiColumnList->GetWidget()->AddObserver(vtkKWMultiColumnList::SelectionChangedEvent,
                                                       (vtkCommand *)this->GUICallbackCommand);
   
-
   // clean up
   displayFrame->Delete();
 
@@ -791,4 +874,10 @@ void vtkSlicerColorDisplayWidget::UpdateEnableState(void)
     this->PropagateEnableState(this->SelectedColorLabel);
     this->PropagateEnableState(this->MultiColumnList);
     this->PropagateEnableState(this->ShowOnlyNamedColorsCheckButton);
+    this->PropagateEnableState(this->ScalarBarAnnotation);
+}
+
+void vtkSlicerColorDisplayWidget::SetViewerWidget ( vtkSlicerViewerWidget *viewerWidget )
+{
+  this->ViewerWidget = viewerWidget;
 }
