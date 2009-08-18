@@ -209,10 +209,12 @@ void vtkSlicerModulesStep::ShowUserInterface()
     this->Frame4->Create();
     }
 
-  this->Script("pack %s %s %s %s -side top -anchor w",
+  this->Script("pack %s %s -side top -anchor w",
                this->Frame1->GetWidgetName(),
-               this->Frame2->GetWidgetName(),
-               this->Frame3->GetWidgetName(),
+               this->Frame2->GetWidgetName());
+  this->Script("pack %s -side top -anchor w -expand true -fill both",
+               this->Frame3->GetWidgetName());
+  this->Script("pack %s -side top -anchor w",
                this->Frame4->GetWidgetName());
 
   if (!this->HeaderText)
@@ -330,7 +332,7 @@ void vtkSlicerModulesStep::ShowUserInterface()
                this->SelectAllButton->GetWidgetName(),
                this->SelectNoneButton->GetWidgetName());
 
-  this->Script("pack %s -side left -anchor sw", 
+  this->Script("pack %s -side left -anchor sw -expand true -fill both", 
                this->ModulesMultiColumnList->GetWidgetName());
 
   this->Script("pack %s %s -side left -anchor sw -pady 2", 
