@@ -3046,7 +3046,7 @@ void vtkEMSegmentNodeParametersStep::VisualFeedback()
         {
           for(int i=clipExt[0];i<=clipExt[1];i++,ptr++)
           {
-            float fValue = usPtr[i*incX+j*incY+k*incZ];
+            float fValue = fPtr[i*incX+j*incY+k*incZ];
             *ptr = static_cast<float>(0.0);
 
             if(fValue)
