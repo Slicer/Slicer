@@ -1,6 +1,4 @@
 
-#define Slicer3_USE_QT
-
 #ifdef Slicer3_USE_QT
 //# ifdef Slicer3_USE_PYTHON
 //#   include "PythonQt.h"
