@@ -71,6 +71,12 @@ extern "C" {
 
 #endif
 
+//#define Slicer3_USE_QT
+
+#ifdef Slicer3_USE_QT
+#include "QtApp.h"
+#endif
+
 #include <vtksys/SystemTools.hxx>
 #include <vtksys/Directory.hxx>
 #include <vtksys/stl/string>
@@ -1794,6 +1800,12 @@ int Slicer3_main(int argc, char *argv[])
   // DISPLAY WINDOW AND RUN
   slicerApp->SplashMessage("Finalizing Startup...");
   appGUI->DisplayMainSlicerWindow ( );
+
+#ifdef Slicer3_USE_QT
+  QtApp *qtApp = new QtApp();
+  qtApp->SetMRMLScene(scene);
+  qtApp->BuildGUI();
+#endif
 
 
   //

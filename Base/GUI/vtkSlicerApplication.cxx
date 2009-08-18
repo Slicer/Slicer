@@ -1,3 +1,20 @@
+
+#define Slicer3_USE_QT
+
+#ifdef Slicer3_USE_QT
+//# ifdef Slicer3_USE_PYTHON
+//#   include "PythonQt.h"
+//#   include "PythonQt_QtAll.h"
+//# endif
+#include <QApplication>
+#include <QTextBrowser>
+#include <QLayout>
+#include <QGroupBox>
+#include <QPushButton>
+#include <QLineEdit>
+#include "QtSlicerNodeSelectorWidget.h"
+#endif
+
 #include <sstream>
 #include <vtksys/stl/string>
 #include <vtksys/SystemTools.hxx>
@@ -312,6 +329,41 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 #endif
 
     this->ColorSwatchesAdded = 0;
+
+#ifdef Slicer3_USE_QT
+
+  char *argv = NULL;
+  int argc = 0;
+  this->qapp = new QApplication(argc, &argv);
+
+#ifdef Slicer3_USE_PYTHON
+  PythonQt::init(PythonQt::DoNotInitializePython);
+  PythonQt_QtAll::init();
+#endif
+
+/**
+  // create a small Qt GUI
+  QVBoxLayout*  vbox = new QVBoxLayout;
+  QGroupBox*    box  = new QGroupBox;
+  QTextBrowser* browser = new QTextBrowser(box);
+  QLineEdit*    edit = new QLineEdit(box);
+  QPushButton*  button = new QPushButton(box);
+  button->setObjectName("button1");
+  edit->setObjectName("edit");
+  browser->setObjectName("browser");
+  vbox->addWidget(browser);
+  vbox->addWidget(edit);
+  vbox->addWidget(button);
+
+  this->qNodeSelector = new QtSlicerNodeSelectorWidget();
+  vbox->addWidget(this->qNodeSelector);
+
+  box->setLayout(vbox);
+
+
+  box->show();
+**/
+#endif
 
 }
 
@@ -664,6 +716,9 @@ void vtkSlicerApplication::DoOneTclEvent ( )
     Tcl_ServiceAll();
     broker->ProcessEventQueue();
     }
+#ifdef Slicer3_USE_QT
+  this->qapp->processEvents();
+#endif
 }
 
 //----------------------------------------------------------------------------
@@ -1422,7 +1477,6 @@ const char* vtkSlicerApplication::GetExtensionsInstallPath()
   char* extpath = this->ExtensionsInstallPath;
   if (extpath)
     {
-    if (0 == strlen(extpath))
       {
         // :NOTE: 20090728 tgl: Do this here as I am not certain
         // TemporaryDirectory is available when we first copy a value
@@ -2295,3 +2349,4 @@ vtkKWColorPickerDialog* vtkSlicerApplication::GetColorPickerDialog()
   
   return Superclass::GetColorPickerDialog();
 }
+

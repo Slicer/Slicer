@@ -1,7 +1,3 @@
-// .NAME vtkSlicerApplication
-// .SECTION Description
-// Contains slicer's style, application and collection of associated guis.
-
 #ifndef __vtkSlicerApplication_h
 #define __vtkSlicerApplication_h
 
@@ -19,6 +15,12 @@ class vtkSlicerTheme;
 class vtkSlicerGUICollection;
 //BTX
 class DisplayMessageQueue;
+//ETX
+
+//BTX
+#ifdef Slicer3_USE_QT
+class QApplication;
+#endif
 //ETX
 
 // Description:
@@ -393,6 +395,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   const char* GetSvnUrl();
   const char* GetSvnRevision();
 
+//BTX
+#ifdef Slicer3_USE_QT
+  QApplication* GetQApplication()
+    {return this->qapp;};
+#endif
+//ETX
+
  protected:
   vtkSlicerApplication ( );
   virtual ~vtkSlicerApplication ( );
@@ -494,6 +503,11 @@ private:
 
   // have we added the mrml color table nodes to the color picker dialog yet?
   int ColorSwatchesAdded;
+//BTX
+#ifdef Slicer3_USE_QT
+  QApplication *qapp;
+#endif
+//ETX
 }; 
 
 #endif

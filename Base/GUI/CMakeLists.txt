@@ -24,6 +24,14 @@ set(include_dirs
   ${RemoteIO_BINARY_DIR}
   )
 
+
+IF(Slicer3_USE_QT)
+  set(include_dirs ${include_dirs} ${QT_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR} ${QT_QTCORE_INCLUDE_DIR})
+#  QT4_WRAP_UI(UI_SRCS GUI4.ui)
+  QT4_WRAP_CPP(MOC_SRCS QtSlicerNodeSelectorWidget.h)
+  SET(SRCS ${SRCS} ${MOC_SRCS} QtApp.cxx QtApp.h QtSlicerNodeSelectorWidget.cxx QtSlicerNodeSelectorWidget.h)
+ENDIF(Slicer3_USE_QT)
+
 include_directories(${include_dirs})
 
 slicer3_get_persistent_property(Slicer3_Base_INCLUDE_DIRS tmp)
@@ -142,17 +150,19 @@ set(SlicerBaseGUI_SRCS
   vtkSlicerBoxRepresentation.cxx
   vtkSlicerBoxWidget2.cxx
   vtkSlicerWaitMessageWidget.cxx
+  ${SRCS}
   )
 
 # Helper classes
 
-#SET_SOURCE_FILES_PROPERTIES(
-# none yet
-# vtkSlicerGUIUpdate.cxx
-# vtkSlicerLogicUpdate.cxx
-# vtkSlicerMRMLUpdate.cxx
-# WRAP_EXCLUDE
-# )
+SET_SOURCE_FILES_PROPERTIES(
+  QtSlicerNodeSelectorWidget.cxx 
+  moc_QtSlicerNodeSelectorWidget.cxx
+  QtSlicerNodeSelectorWidget.h 
+  QtApp.cxx 
+  QtApp.h              
+  WRAP_EXCLUDE
+  )
 
 # --------------------------------------------------------------------------
 # Wrapping
@@ -177,12 +187,6 @@ target_link_libraries(${lib_name}
   RemoteIO
   )
 
-# Apply user-defined properties to the library target.
-IF(Slicer3_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-     ${Slicer3_LIBRARY_PROPERTIES}
-  )
-ENDIF(Slicer3_LIBRARY_PROPERTIES)
 
 slicer3_get_persistent_property(Slicer3_Base_LIBRARIES tmp)
 slicer3_set_persistent_property(Slicer3_Base_LIBRARIES ${tmp} ${lib_name})

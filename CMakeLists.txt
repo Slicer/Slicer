@@ -162,6 +162,21 @@ if(NOT KWWidgets_FOUND)
 endif(NOT KWWidgets_FOUND)
 include(${KWWidgets_USE_FILE})
 
+## Qt
+SET(DESIRED_QT_VERSION 4)
+OPTION(Slicer3_USE_QT 
+  "Use Qt as an extra GUI library"
+  OFF)
+IF(Slicer3_USE_QT)
+  FIND_PACKAGE(Qt)
+  # use what QVTK built with
+  SET(QT_QMAKE_EXECUTABLE ${VTK_QT_QMAKE_EXECUTABLE} CACHE FILEPATH "")
+  SET(QT_MOC_EXECUTABLE ${VTK_QT_MOC_EXECUTABLE} CACHE FILEPATH "")
+  SET(QT_UIC_EXECUTABLE ${VTK_QT_UIC_EXECUTABLE} CACHE FILEPATH "")
+  INCLUDE(${QT_USE_FILE})
+  add_definitions(-DSlicer3_USE_QT)
+ENDIF(Slicer3_USE_QT)
+
 ## Teem
 find_package(Teem REQUIRED)
 if(NOT Teem_FOUND)
