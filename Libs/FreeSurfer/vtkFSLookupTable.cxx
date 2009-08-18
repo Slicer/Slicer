@@ -179,7 +179,8 @@ double *vtkFSLookupTable::GetRange()
     range[0] = this->LowThresh;
     range[1] = this->HiThresh;
 
-    return (double *)NULL;
+    //return (double *)NULL;
+    return (double *)range;
     
 }
 
