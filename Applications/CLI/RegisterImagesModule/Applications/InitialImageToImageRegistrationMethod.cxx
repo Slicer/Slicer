@@ -17,11 +17,8 @@
 #include "itkOrientedImage.h"
 #include "itkImageToImageRegistrationMethodTestingHelper.h"
 
+#include "metaUtils.h"
 #include "metaCommand.h"
-
-#ifdef BUILD_SLICER_MODULE
-#include "itkMRMLIDImageIOFactory.h"
-#endif
 
 // Description:
 // Get the PixelType and ComponentType from fileName
@@ -84,6 +81,39 @@ int DoIt( MetaCommand & command )
     registrationMethod->SetComputeCenterOfRotationOnly( true );
     }
 
+  if( command.GetOptionWasSet("FixedLandmarks")
+      && command.GetOptionWasSet("MovingLandmarks") )
+    {
+    typename RegistrationMethodType::LandmarkPointContainer fixedLandmarks;
+    typename RegistrationMethodType::LandmarkPointContainer movingLandmarks;
+    std::vector< double > fixedPointList;
+    std::vector< double > movingPointList;
+    std::string fixedlms = command.GetValueAsString( "FixedLandmarks" );
+    std::string movinglms = command.GetValueAsString( "MovingLandmarks" );
+    MET_StringToVector<double>( fixedlms, fixedPointList );
+    MET_StringToVector<double>( movinglms, movingPointList );
+    unsigned int sizeV = fixedPointList.size() / DimensionsT;
+    if( movingPointList.size() / DimensionsT < sizeV )
+      {
+      sizeV = movingPointList.size() / DimensionsT;
+      }
+    for( unsigned int i=0; i<sizeV; i++)
+      {
+      typename RegistrationMethodType::LandmarkPointType fixedPoint;
+      typename RegistrationMethodType::LandmarkPointType movingPoint;
+      for( unsigned int j=0; j<DimensionsT; j++)
+        {
+        fixedPoint[j] = fixedPointList[i*DimensionsT + j];
+        movingPoint[j] = movingPointList[i*DimensionsT + j];
+        }
+      fixedLandmarks.push_back( fixedPoint );
+      movingLandmarks.push_back( movingPoint );
+      }
+    registrationMethod->SetFixedLandmarks( fixedLandmarks );
+    registrationMethod->SetMovingLandmarks( movingLandmarks );
+    registrationMethod->SetUseLandmarks( true );
+    }
+
   helper.PrepareRegistration();
   helper.SetNumberOfFailedPixelsTolerance( command.GetValueAsInt("FailedPixelTolerance") );
   helper.SetIntensityTolerance( command.GetValueAsFloat("FailedIntensityTolerance") );
@@ -99,11 +129,6 @@ int DoIt( MetaCommand & command )
 
 int main(int argc, char *argv[])
 {
-
-#ifdef BUILD_SLICER_MODULE
-  itk::ObjectFactoryBase::RegisterFactory( itk::MRMLIDImageIOFactory::New() );
-#endif
-
   MetaCommand command;
 
   command.SetOption("NumberOfMoments", "m", false,
@@ -111,6 +136,18 @@ int main(int argc, char *argv[])
   command.SetOptionLongTag("NumberOfMoments", "NumberOfMoments");
   command.AddOptionField("NumberOfMoments", "NumberOfMoments",
                          MetaCommand::INT, true, "1");
+
+  command.SetOption("FixedLandmarks", "L", false,
+                    "Comma-separated list of comma-separated landmarks in fixed image");
+  command.SetOptionLongTag("FixedLandmarks", "FixedLandmarks");
+  command.AddOptionField("FixedLandmarks", "FixedLandmarks",
+                         MetaCommand::STRING, true, "");
+
+  command.SetOption("MovingLandmarks", "l", false,
+                    "Comma-separated list of comma-separated landmarks in moving image");
+  command.SetOptionLongTag("MovingLandmarks", "MovingLandmarks");
+  command.AddOptionField("MovingLandmarks", "MovingLandmarks",
+                         MetaCommand::STRING, true, "");
 
   command.SetOption("SetCenterOfRotationOnly", "c", false,
                     "Only set the center of rotation");
@@ -138,25 +175,25 @@ int main(int argc, char *argv[])
   command.AddOptionField("DifferenceImage", "DifferenceImage",
                          MetaCommand::STRING, true);
 
-  command.SetOption("FailurePixelTolerance", "P", false,
+  command.SetOption("FailedPixelTolerance", "P", false,
                     "Number of pixel mis-matches between baseline and resampled allowed");
-  command.SetOptionLongTag("FailurePixelTolerance",
-                           "FailurePixelTolerance");
-  command.AddOptionField("FailurePixelTolerance", "FailurePixelTolerance",
+  command.SetOptionLongTag("FailedPixelTolerance",
+                           "FailedPixelTolerance");
+  command.AddOptionField("FailedPixelTolerance", "FailedPixelTolerance",
                          MetaCommand::INT, true, "1000");
 
-  command.SetOption("FailureIntensityTolerance", "I", false,
+  command.SetOption("FailedIntensityTolerance", "I", false,
                     "Intensity mis-matches between baseline and resampled allowed");
-  command.SetOptionLongTag("FailureIntensityTolerance",
-                           "FailureIntensityTolerance");
-  command.AddOptionField("FailureIntensityTolerance", "FailureIntensityTolerance",
+  command.SetOptionLongTag("FailedIntensityTolerance",
+                           "FailedIntensityTolerance");
+  command.AddOptionField("FailedIntensityTolerance", "FailedIntensityTolerance",
                          MetaCommand::INT, true, "10");
 
-  command.SetOption("FailureOffsetTolerance", "O", false,
+  command.SetOption("FailedOffsetTolerance", "O", false,
                     "Number of pixel offset between baseline and resampled allowed");
-  command.SetOptionLongTag("FailureOffsetTolerance",
-                           "FailureOffsetTolerance");
-  command.AddOptionField("FailureOffsetTolerance", "FailureOffsetTolerance",
+  command.SetOptionLongTag("FailedOffsetTolerance",
+                           "FailedOffsetTolerance");
+  command.AddOptionField("FailedOffsetTolerance", "FailedOffsetTolerance",
                          MetaCommand::FLOAT, true, "0");
 
   // Input images: Fixed and Moving

@@ -48,6 +48,10 @@ ImageToImageRegistrationMethod< TImage >
   this->m_Observer = 0;
   this->m_ReportProgress = false;
 
+  this->m_UseRegionOfInterest = false;
+  this->m_RegionOfInterestPoint1.Fill(0);
+  this->m_RegionOfInterestPoint2.Fill(0);
+
 }
 
 template< class TImage >
@@ -82,6 +86,16 @@ ImageToImageRegistrationMethod< TImage >
     this->ProcessObject::SetNthInput(1, const_cast< ImageType * >( movingImage ) );
     this->Modified();
     }
+}
+
+template< class TImage >
+void
+ImageToImageRegistrationMethod< TImage >
+::SetRegionOfInterest( const PointType & point1, const PointType & point2 )
+{
+  m_RegionOfInterestPoint1 = point1;
+  m_RegionOfInterestPoint2 = point2;
+  m_UseRegionOfInterest = true;
 }
 
 template< class TImage >
@@ -277,6 +291,13 @@ ImageToImageRegistrationMethod< TImage >
     {
     os << indent << "Moving Image = 0" << std::endl;
     }
+
+  os << indent << "Use region of interest = " << m_UseRegionOfInterest 
+     << std::endl;
+  os << indent << "Region of interest point1 = " << m_RegionOfInterestPoint1
+     << std::endl;
+  os << indent << "Region of interest point2 = " << m_RegionOfInterestPoint2
+     << std::endl;
 
   if( this->m_FixedImageMaskObject.IsNotNull() )
     {

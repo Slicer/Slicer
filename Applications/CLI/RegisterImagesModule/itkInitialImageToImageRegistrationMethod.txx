@@ -21,7 +21,7 @@
 
 #include "itkInitialImageToImageRegistrationMethod.h"
 
-#include "itkImageMomentsCalculator.h"
+#include "itkImageRegionMomentsCalculator.h"
 
 namespace itk
 {
@@ -68,8 +68,8 @@ InitialImageToImageRegistrationMethod< TImage >
 
     if ( TImage::ImageDimension == 3 )
       {
-      typedef VersorRigid3DTransform< double >  LandmarkTransformType;
-      typedef LandmarkBasedTransformInitializer< LandmarkTransformType,
+      typedef AnisotropicSimilarity3DTransform< double >  LandmarkTransformType;
+      typedef AnisotropicSimilarityLandmarkBasedTransformInitializer< LandmarkTransformType,
                                                  TImage, TImage > 
                                                 LandmarkTransformCalculatorType;
 
@@ -93,37 +93,11 @@ InitialImageToImageRegistrationMethod< TImage >
           matrix(i, j) = landmarkTransform->GetMatrix()(i, j);
           }
         }
-      double tf;
-      double sizeFixed = 0;
-      for(int i=1; i<(int)m_FixedLandmarks.size(); i++)
-        {
-        tf = (m_FixedLandmarks[i][0] - m_FixedLandmarks[i-1][0]);
-        sizeFixed += tf*tf;
-        tf = (m_FixedLandmarks[i][1] - m_FixedLandmarks[i-1][1]);
-        sizeFixed += tf*tf;
-        tf = (m_FixedLandmarks[i][2] - m_FixedLandmarks[i-1][2]);
-        sizeFixed += tf*tf;
-        }
-      sizeFixed = sqrt(sizeFixed);
-      double sizeMoving = 0;
-      for(int i=1; i<(int)m_MovingLandmarks.size(); i++)
-        {
-        tf = (m_MovingLandmarks[i][0] - m_MovingLandmarks[i-1][0]);
-        sizeMoving += tf*tf;
-        tf = (m_MovingLandmarks[i][1] - m_MovingLandmarks[i-1][1]);
-        sizeMoving += tf*tf;
-        tf = (m_MovingLandmarks[i][2] - m_MovingLandmarks[i-1][2]);
-        sizeMoving += tf*tf;
-        }
-      sizeMoving = sqrt(sizeMoving);
-      double scale = sizeMoving/sizeFixed;
-      std::cout << "scale = " << scale << std::endl;
-      //matrix *= scale;
       }
     else if ( TImage::ImageDimension == 2 )
       {
       typedef Rigid2DTransform< double >        LandmarkTransformType;
-      typedef LandmarkBasedTransformInitializer< LandmarkTransformType,
+      typedef AnisotropicSimilarityLandmarkBasedTransformInitializer< LandmarkTransformType,
                                                  TImage, TImage > 
                                                 LandmarkTransformCalculatorType;
 
@@ -168,7 +142,7 @@ InitialImageToImageRegistrationMethod< TImage >
       sizeMoving = sqrt(sizeMoving);
       double scale = sizeMoving/sizeFixed;
       std::cout << "scale = " << scale << std::endl;
-      //matrix *= scale;
+      matrix *= scale;
       }
     else
       {
@@ -184,7 +158,7 @@ InitialImageToImageRegistrationMethod< TImage >
     return;  
     }
 
-  typedef ImageMomentsCalculator< TImage > MomentsCalculatorType;
+  typedef ImageRegionMomentsCalculator< TImage > MomentsCalculatorType;
 
   typename MomentsCalculatorType::AffineTransformType::Pointer newTransform;
   newTransform = MomentsCalculatorType::AffineTransformType::New();
@@ -219,12 +193,25 @@ InitialImageToImageRegistrationMethod< TImage >
 
     size = this->GetFixedImage()->GetLargestPossibleRegion().GetSize();
 
-    for(int i=0; i<ImageDimension; i++)
+    if( !this->GetUseRegionOfInterest() )
       {
-      fixedCenterIndex[i] = size[i]/2;
+      std::cout << "Init: Using full image extent" << std::endl;
+      for( int i=0; i<ImageDimension; i++ )
+        {
+        fixedCenterIndex[i] = size[i]/2;
+        }
+      this->GetFixedImage()->TransformIndexToPhysicalPoint(fixedCenterIndex,
+                                                           fixedCenterPoint);
       }
-    this->GetFixedImage()->TransformIndexToPhysicalPoint(fixedCenterIndex,
-                                                         fixedCenterPoint);
+    else
+      {
+      std::cout << "Init: Using region of interest" << std::endl;
+      for(int i=0; i<ImageDimension; i++)
+        {
+        fixedCenterPoint[i] = ( this->GetRegionOfInterestPoint1()[i]
+                                + this->GetRegionOfInterestPoint2()[i] ) / 2;
+        }
+      }
 
     //  Moving image info
     typename TImage::IndexType       movingCenterIndex;
@@ -248,7 +235,7 @@ InitialImageToImageRegistrationMethod< TImage >
     }
   else 
     {
-    typedef ImageMomentsCalculator< TImage > MomentsCalculatorType;
+    typedef ImageRegionMomentsCalculator< TImage > MomentsCalculatorType;
 
     typename MomentsCalculatorType::Pointer momCalc;
     momCalc = MomentsCalculatorType::New();
@@ -261,6 +248,17 @@ InitialImageToImageRegistrationMethod< TImage >
         momCalc->SetSpatialObjectMask( this->GetFixedImageMaskObject() );
         }
       }
+    if( this->GetUseRegionOfInterest() )
+      {
+      std::cout << "Init: Region of interest" << std::endl;
+      momCalc->SetRegionOfInterest( this->GetRegionOfInterestPoint1(),
+                                    this->GetRegionOfInterestPoint2() );
+      }
+    else
+      {
+      std::cout << "Init: Using full image extent" << std::endl;
+      }
+
     // HELP: ImageMomentsCalculator isn't multi-threaded :(
     //momCalc->SetNumberOfThreads( this->GetRegistrationNumberOfThreads() );
     try

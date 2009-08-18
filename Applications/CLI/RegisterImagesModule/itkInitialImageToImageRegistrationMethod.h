@@ -18,15 +18,15 @@
 #ifndef __InitialImageToImageRegistrationMethod_h
 #define __InitialImageToImageRegistrationMethod_h
 
-#include "itkImage.h"
+#include "itkOrientedImage.h"
 #include "itkCommand.h"
 
 #include "itkImageToImageRegistrationMethod.h"
 
 #include "itkAffineTransform.h"
 
-#include "itkVersorRigid3DTransform.h"
-#include "itkLandmarkBasedTransformInitializer.h"
+#include "itkAnisotropicSimilarity3DTransform.h"
+#include "itkAnisotropicSimilarityLandmarkBasedTransformInitializer.h"
 
 namespace itk
 {
@@ -63,13 +63,6 @@ class InitialImageToImageRegistrationMethod
     //
     // Local Typedefs
     //
-    /*
-    typedef typename VersorRigid3DTransform< typename TransformType::ScalarType > 
-                                                LandmarkTransformType;
-    typedef typename LandmarkBasedTransformInitializer< LandmarkTransformType,
-                                                        TImage, TImage > 
-                                                LandmarkTransformCalculatorType;
-    */
     typedef Point< double, itkGetStaticConstMacro(ImageDimension) >
                                                 LandmarkPointType;
     typedef std::vector< LandmarkPointType >    LandmarkPointContainer;

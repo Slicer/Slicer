@@ -4,6 +4,7 @@
 #include <itkTransformFactory.h>
 #include <itkTransformFileReader.h>
 #include <itkBSplineDeformableTransform.h>
+#include <itkEuler3DTransform.h>
 
 #include <list>
 
@@ -13,9 +14,9 @@
 
 int main(int argc, char ** argv)
 {
-  if( argc != 3 && argc != 4 )
+  if( argc < 3 )
     {
-    std::cout << "GenerateRegisterImagesTestData <freq> <outFile> [transform]" << std::endl;
+    std::cout << "GenerateRegisterImagesTestData <freq> <outFile> [-t transform] [-p positionX positionY positionZ] [-o orientationX orientationY orientationZ]" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -78,58 +79,103 @@ int main(int argc, char ** argv)
       }
     }
 
-  if( argc == 4 )
+  int argNum = 2;
+  while( argNum < argc-1 )
     {
-    typedef itk::BSplineDeformableTransform< double, 3, 3 > BSplineTransformType;
-
-    typedef itk::TransformFileReader  TransformReaderType;
-    TransformReaderType::Pointer transformReader = TransformReaderType::New();
-    transformReader->SetFileName( argv[3] );
-    itk::TransformFactory< BSplineTransformType >::RegisterTransform();
-    transformReader->Update();
-    
-    typedef TransformReaderType::TransformListType TransformListType;
-    TransformListType * transformList = transformReader->GetTransformList();
-    TransformListType::iterator transformListIt = transformList->begin();
-
-    typedef itk::ResampleImageFilter< ImageType, ImageType > ResamplerType;
-    while( transformListIt != transformList->end() )
+    if(argv[++argNum][0] != '-')
       {
-      ResamplerType::Pointer resampler = ResamplerType::New();
-      resampler->SetInput( img );
-      bool found = false;
-      if( (*transformListIt)->GetTransformTypeAsString() == "AffineTransform_double_3_3" )
+      std::cout << "Unknown arg = " << argv[argNum] << std::endl;
+      return 0;
+      }
+    else
+      {
+      switch( argv[argNum][1] )
         {
-        std::cout << "Apply an affine transform..." << std::endl;
-        typedef itk::AffineTransform<double, 3> TransformType;
-        TransformType::Pointer transform;
-        transform = static_cast< itk::AffineTransform<double, 3> * >( transformListIt->GetPointer() );
-        resampler->SetTransform( transform );
-        found = true;
+        case 't' :
+          {
+          typedef itk::BSplineDeformableTransform< double, 3, 3 > BSplineTransformType;
+      
+          typedef itk::TransformFileReader  TransformReaderType;
+          TransformReaderType::Pointer transformReader = TransformReaderType::New();
+          transformReader->SetFileName( argv[++argNum] );
+          itk::TransformFactory< BSplineTransformType >::RegisterTransform();
+          transformReader->Update();
+          
+          typedef TransformReaderType::TransformListType TransformListType;
+          TransformListType * transformList = transformReader->GetTransformList();
+          TransformListType::iterator transformListIt = transformList->begin();
+      
+          typedef itk::ResampleImageFilter< ImageType, ImageType > ResamplerType;
+          while( transformListIt != transformList->end() )
+            {
+            ResamplerType::Pointer resampler = ResamplerType::New();
+            resampler->SetInput( img );
+            bool found = false;
+            if( (*transformListIt)->GetTransformTypeAsString() == "AffineTransform_double_3_3" )
+              {
+              std::cout << "Apply an affine transform..." << std::endl;
+              typedef itk::AffineTransform<double, 3> TransformType;
+              TransformType::Pointer transform;
+              transform = static_cast< itk::AffineTransform<double, 3> * >( transformListIt->GetPointer() );
+              resampler->SetTransform( transform );
+              found = true;
+              }
+            else if( (*transformListIt)->GetTransformTypeAsString() == "BSplineDeformableTransform_double_3_3" )
+              {
+              std::cout << "Apply an bspline transform..." << std::endl;
+              BSplineTransformType::Pointer transform;
+              transform = static_cast< BSplineTransformType * >( transformListIt->GetPointer() );
+              resampler->SetTransform( transform );
+              found = true;
+              }
+            else
+              {
+              std::cerr << "Transform type not supported." << std::endl;
+              }
+            if( found )
+              {
+              resampler->SetDefaultPixelValue( 0 );
+              resampler->SetOutputParametersFromImage( img );
+              try
+                {
+                resampler->Update();
+                }
+              catch( ... )
+                {
+                std::cerr << "tfm = " << resampler->GetTransform() << std::endl;
+                std::cerr << "Error during resampling using transform" 
+                          << std::endl;
+                }
+              img = resampler->GetOutput();
+              }
+            ++transformListIt;
+            }
+          break;
+          }
+        case 'p' :
+          {
+          ImageType::PointType pnt;
+          pnt[0] = atof( argv[++argNum] );
+          pnt[1] = atof( argv[++argNum] );
+          pnt[2] = atof( argv[++argNum] );
+          img->SetOrigin(pnt);
+          break;
+          }
+        case 'o' :
+          {
+          typedef itk::Euler3DTransform< double > TransformType;
+          TransformType::Pointer tfm = TransformType::New();
+          double rotX = atof( argv[++argNum] );
+          double rotY = atof( argv[++argNum] );
+          double rotZ = atof( argv[++argNum] );
+          tfm->SetRotation( rotX, rotY, rotZ );
+          img->SetDirection( tfm->GetMatrix() );
+          break;
+          }
         }
-      else if( (*transformListIt)->GetTransformTypeAsString() == "BSplineDeformableTransform_double_3_3" )
-        {
-        std::cout << "Apply an bspline transform..." << std::endl;
-        BSplineTransformType::Pointer transform;
-        transform = static_cast< BSplineTransformType * >( transformListIt->GetPointer() );
-        resampler->SetTransform( transform );
-        found = true;
-        }
-      else
-        {
-        std::cerr << "Transform type not supported." << std::endl;
-        }
-      if( found )
-        {
-        resampler->SetDefaultPixelValue( 0 );
-        resampler->SetOutputParametersFromImage( img );
-        resampler->Update();
-        img = resampler->GetOutput();
-        }
-      ++transformListIt;
       }
     }
-
+      
   typedef itk::ImageFileWriter< ImageType > WriterType;
   WriterType::Pointer writer = WriterType::New();
   writer->SetInput( img );

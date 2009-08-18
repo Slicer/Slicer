@@ -26,6 +26,7 @@
 #include "itkNormalizedCorrelationImageToImageMetric.h"
 #include "itkMeanSquaresImageToImageMetric.h"
 
+#include "itkNearestNeighborInterpolateImageFunction.h"
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkBSplineInterpolateImageFunction.h"
 #include "itkWindowedSincInterpolateImageFunction.h"
@@ -264,7 +265,8 @@ OptimizedImageToImageRegistrationMethod< TImage >
     itkWarningMacro(<< "ITK not compiled with ITK_USE_REVIEW. Performance will suffer.");
   #endif
 
-  if( this->GetSampleFromOverlap() ||
+  if( this->GetUseRegionOfInterest() ||
+      this->GetSampleFromOverlap() ||
       this->GetUseFixedImageSamplesIntensityThreshold() ||
       this->GetUseFixedImageMaskObject() )
     {
@@ -286,9 +288,9 @@ OptimizedImageToImageRegistrationMethod< TImage >
       {
       index = iter.GetIndex();
       fixedImage->TransformIndexToPhysicalPoint(index, fixedPoint);
-      movingPoint = this->GetTransform()->TransformPoint( fixedPoint );
       if( this->GetSampleFromOverlap() )
         {
+        movingPoint = this->GetTransform()->TransformPoint( fixedPoint );
         if( !movingImage->TransformPhysicalPointToIndex( movingPoint, movingIndex ) )
           {
           continue;
@@ -312,6 +314,26 @@ OptimizedImageToImageRegistrationMethod< TImage >
             }
           }
         }
+      if( this->GetUseRegionOfInterest() )
+        {
+        bool isInside = true;
+        for( unsigned int i=0; i<ImageDimension; i++)
+          {
+          if( !( (fixedPoint[i]>=this->GetRegionOfInterestPoint1()[i] &&
+                  fixedPoint[i]<=this->GetRegionOfInterestPoint2()[i])
+                || (fixedPoint[i]>=this->GetRegionOfInterestPoint2()[i] &&
+                    fixedPoint[i]<=this->GetRegionOfInterestPoint1()[i]) ) )
+            {
+            isInside = false;
+            break;
+            }
+          }
+        if( !isInside )
+          {
+          continue;
+          }
+        }
+                  
       ++count;
       }
     double samplingRate = (double)(m_NumberOfSamples+2) / (double)count;
@@ -342,9 +364,9 @@ OptimizedImageToImageRegistrationMethod< TImage >
       {
       index = iter.GetIndex();
       fixedImage->TransformIndexToPhysicalPoint(index, fixedPoint);
-      movingPoint = this->GetTransform()->TransformPoint( fixedPoint );
       if( this->GetSampleFromOverlap() )
         {
+        movingPoint = this->GetTransform()->TransformPoint( fixedPoint );
         if( !movingImage->TransformPhysicalPointToIndex( movingPoint, movingIndex ) )
           {
           continue;
@@ -372,7 +394,6 @@ OptimizedImageToImageRegistrationMethod< TImage >
       if( step > 1 )
         {
         indexList.push_back( index );
-        step -= 1;
         while( step > 1 )
           {
           step -= 1;
@@ -398,6 +419,8 @@ OptimizedImageToImageRegistrationMethod< TImage >
         itkWarningMacro(<< "ITK not compiled with ITK_USE_REVIEW. Performance will suffer.");
       #endif
       }
+    std::cout << "Passing index list to metric..." << std::endl;
+    std::cout << "  List size = " << indexList.size() << std::endl;
     metric->SetFixedImageIndexes( indexList );
     }
 
@@ -412,6 +435,11 @@ OptimizedImageToImageRegistrationMethod< TImage >
   typename InterpolatorType::Pointer interpolator;
   switch( this->GetInterpolationMethodEnum() )
     {
+    case NEAREST_NEIGHBOR_INTERPOLATION:
+      {
+      interpolator = NearestNeighborInterpolateImageFunction< TImage, double >::New();
+      break;
+      }
     case LINEAR_INTERPOLATION:
       {
       interpolator = LinearInterpolateImageFunction< TImage, double >::New();
@@ -471,8 +499,8 @@ OptimizedImageToImageRegistrationMethod< TImage >
                                                  ::New() );
     evoOpt->SetEpsilon( this->GetTargetError() );
     evoOpt->Initialize( 0.1 );
-    //evoOpt->SetCatchGetValueException( true );
-    //evoOpt->SetMetricWorstPossibleValue( 0 );
+    evoOpt->SetCatchGetValueException( true );
+    evoOpt->SetMetricWorstPossibleValue( 0 );
     EvoOptimizerType::ParametersType scales = 
                                      this->GetTransformParametersScales();
     for(unsigned int i=0; i<scales.size(); i++)
@@ -700,6 +728,10 @@ OptimizedImageToImageRegistrationMethod< TImage >
 
   switch( m_InterpolationMethodEnum )
     {
+    case NEAREST_NEIGHBOR_INTERPOLATION:
+      os << indent << "Interpolation method = NearestNeighbor "
+         << std::endl;
+      break;
     case LINEAR_INTERPOLATION:
       os << indent << "Interpolation method = Linear "
          << std::endl;

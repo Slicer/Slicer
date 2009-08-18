@@ -33,46 +33,53 @@ class VTK_EXPORT RegisterImagesModuleLogic : public vtkSharedModuleLogic
 {
 public:
 
-  static RegisterImagesModuleLogic *New();
-  vtkTypeMacro(RegisterImagesModuleLogic, vtkSharedModuleLogic);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  static RegisterImagesModuleLogic *New( );
+  vtkTypeMacro( RegisterImagesModuleLogic, vtkSharedModuleLogic );
+  void PrintSelf( ostream& os, vtkIndent indent );
   
-  vtkSetMRMLNodeArgumentAsStringMacro(FixedVolumeNodeId, fixedImage)
-  vtkSetMRMLNodeArgumentAsStringMacro(MovingVolumeNodeId, movingImage)
-  vtkSetMRMLNodeArgumentAsStringMacro(ResampledVolumeNodeId, resampledImage)
+  vtkSetMRMLNodeArgumentAsStringMacro( FixedVolumeNodeId, fixedImage )
+  vtkSetMRMLNodeArgumentAsStringMacro( MovingVolumeNodeId, movingImage )
+  vtkSetMRMLNodeArgumentAsStringMacro( ResampledVolumeNodeId, resampledImage )
   
-  vtkGetMRMLNodeArgumentAsStringMacro(FixedVolumeNodeId, fixedImage)
-  vtkGetMRMLNodeArgumentAsStringMacro(MovingVolumeNodeId, movingImage)
-  vtkGetMRMLNodeArgumentAsStringMacro(ResampledVolumeNodeId, resampledImage)
+  vtkGetMRMLNodeArgumentAsStringMacro( FixedVolumeNodeId, fixedImage )
+  vtkGetMRMLNodeArgumentAsStringMacro( MovingVolumeNodeId, movingImage )
+  vtkGetMRMLNodeArgumentAsStringMacro( ResampledVolumeNodeId, resampledImage )
 
-  vtkSetMRMLNodeArgumentAsStringMacro(Registration, registration);
+  vtkSetMRMLNodeArgumentAsStringMacro( Registration, registration );
 
-  vtkSetMRMLNodeArgumentAsStringMacro(Initialization, initialization);
+  vtkSetMRMLNodeArgumentAsStringMacro( Initialization, initialization );
+  
+  vtkSetMRMLNodeArgumentAsStringMacro( Interpolation, interpolation );
 
-  vtkSetMRMLNodeArgumentAsStringMacro(LoadTransform, loadTransform);
+  vtkSetMRMLNodeArgumentAsStringMacro( LoadTransform, loadTransform );
 
-  vtkSetMRMLNodeArgumentAsStringMacro(SaveTransform, saveTransform);
+  vtkSetMRMLNodeArgumentAsStringMacro( SaveTransform, saveTransform );
+  
+  vtkSetMRMLNodeArgumentAsStringMacro( RegionOfInterest, regionOfInterest );
   
   void SetLandmarks ( const std::vector<std::vector<float> > &fixed, 
-                      const std::vector<std::vector<float> > &moving);
-  int AddLandmark ( const std::vector<float> &fixed, const std::vector<float> &moving);
-  /** create a landmark if it doesn't exists */
+                      const std::vector<std::vector<float> > &moving );
+
+  int AddLandmark ( const std::vector<float> &fixed, 
+                    const std::vector<float> &moving );
+  /** Create a landmark if it doesn't exists. if landmark < 0, insert the 
+   *  landmark at the end of the list. */
   void SetLandmark ( int landmark, 
                      const std::vector<float> &fixed, 
-                     const std::vector<float> &moving);
+                     const std::vector<float> &moving );
   void RemoveLandmark( int landmark );
   
 protected:
-  vtkSetMRMLNodeArgumentAsStringMacro(FixedLandmarks, fixedLandmarks);
-  vtkSetMRMLNodeArgumentAsStringMacro(MovingLandmarks, movingLandmarks);
+  vtkSetMRMLNodeArgumentAsStringMacro( FixedLandmarks, fixedLandmarks );
+  vtkSetMRMLNodeArgumentAsStringMacro( MovingLandmarks, movingLandmarks );
   
-  RegisterImagesModuleLogic();
-  virtual ~RegisterImagesModuleLogic();
-  RegisterImagesModuleLogic(const RegisterImagesModuleLogic&);
-  void operator=(const RegisterImagesModuleLogic&);
+  RegisterImagesModuleLogic( void );
+  virtual ~RegisterImagesModuleLogic( void );
+  RegisterImagesModuleLogic( const RegisterImagesModuleLogic& );
+  void operator=( const RegisterImagesModuleLogic& );
 
   // Derived to modified the output node
-  void ApplyTask(void *clientdata);  
+  void ApplyTask( void *clientdata );
   
   std::vector< std::vector<float> > m_FixedLandmarks;
   std::vector< std::vector<float> > m_MovingLandmarks;

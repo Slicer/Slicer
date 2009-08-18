@@ -66,6 +66,8 @@ class ImageToImageRegistrationMethod
 
     typedef TImage                                    ImageType;
 
+    typedef typename TImage::PointType                PointType;
+
     typedef SpatialObject< itkGetStaticConstMacro( ImageDimension )  >
                                                       MaskObjectType;
 
@@ -83,6 +85,15 @@ class ImageToImageRegistrationMethod
 
     void SetMovingImage( const ImageType * movingImage );
     itkGetConstObjectMacro( MovingImage, ImageType );
+
+    void SetRegionOfInterest( const PointType & point1,
+                              const PointType & point2 );
+    itkSetMacro(UseRegionOfInterest, bool);
+    itkGetMacro(UseRegionOfInterest, bool);
+    itkSetMacro(RegionOfInterestPoint1, PointType);
+    itkGetMacro(RegionOfInterestPoint1, PointType);
+    itkSetMacro(RegionOfInterestPoint2, PointType);
+    itkGetMacro(RegionOfInterestPoint2, PointType);
 
     void SetFixedImageMaskObject( const MaskObjectType * maskObject );
     itkGetConstObjectMacro( FixedImageMaskObject, MaskObjectType );
@@ -142,6 +153,10 @@ class ImageToImageRegistrationMethod
 
     typename ImageType::ConstPointer       m_FixedImage;
     typename ImageType::ConstPointer       m_MovingImage;
+
+    bool                                   m_UseRegionOfInterest;
+    PointType                              m_RegionOfInterestPoint1;
+    PointType                              m_RegionOfInterestPoint2;
 
     bool                                   m_UseFixedImageMaskObject;
     typename MaskObjectType::ConstPointer  m_FixedImageMaskObject;

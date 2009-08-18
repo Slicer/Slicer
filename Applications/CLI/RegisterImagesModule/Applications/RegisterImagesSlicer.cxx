@@ -21,9 +21,6 @@
 
 #include "itkImageToImageRegistrationHelper.h"
 
-//#include "itkObjectFactoryBase.h"
-//#include "itkMRMLIDImageIOFactory.h"
-
 // Use an anonymous namespace to keep class types and function names
 // from colliding when module is used as shared object module.  Every
 // thing should be in an anonymous namespace except for the module
@@ -263,6 +260,37 @@ int DoIt( int argc, char *argv[] )
     reger->SetEnableBSplineRegistration( true );
     }
 
+  if( metric == "NormCorr" )
+    {
+    if (verbosity >= STANDARD)
+      {
+      std::cout << "### Metric: NormalizedCorrelation" << std::endl;
+      }
+    reger->SetRigidMetricMethodEnum( RegerType
+                                       ::OptimizedRegistrationMethodType
+                                       ::NORMALIZED_CORRELATION_METRIC );
+    }
+  else if( metric == "MeanSqrd" )
+    {
+    if (verbosity >= STANDARD)
+      {
+      std::cout << "### Metric: MeanSquared" << std::endl;
+      }
+    reger->SetRigidMetricMethodEnum( RegerType
+                                       ::OptimizedRegistrationMethodType
+                                       ::MEAN_SQUARED_ERROR_METRIC );
+    }
+  else // if( metric == "MattesMI" )
+    {
+    if (verbosity >= STANDARD)
+      {
+      std::cout << "### Metric: MattesMutualInformation" << std::endl;
+      }
+    reger->SetRigidMetricMethodEnum( RegerType
+                                       ::OptimizedRegistrationMethodType
+                                       ::MATTES_MI_METRIC );
+    }
+
   reger->SetSampleFromOverlap( sampleFromOverlap );
   if (verbosity >= STANDARD)
     {
@@ -274,6 +302,32 @@ int DoIt( int argc, char *argv[] )
     {
     std::cout << "### sampleIntensityPortion: " << sampleIntensityPortion << std::endl;
     }
+
+  if(regionOfInterest.size() == 2*DimensionT)
+    {
+    reger->SetRegionOfInterest( regionOfInterest );
+    if (verbosity >= STANDARD)
+      {
+      std::cout << "### regionOfInterest: ";
+      std::cout << "    ### point1: ";
+      for(unsigned int i=0; i<DimensionT; i++)
+        {
+        std::cout << regionOfInterest[i] << " ";
+        }
+      std::cout << "    ### point2: ";
+      for(unsigned int i=0; i<DimensionT; i++)
+        {
+        std::cout << regionOfInterest[i+DimensionT] << " ";
+        }
+      std::cout << std::endl;
+      }
+    }
+  else if(regionOfInterest.size() > 0)
+    {
+    std::cerr << "Error: region of interest does not contain two bounding points" << std::endl;
+    return EXIT_FAILURE;
+    }
+
 
   reger->SetMinimizeMemory( minimizeMemory );
   if (verbosity >= STANDARD)
@@ -322,6 +376,60 @@ int DoIt( int argc, char *argv[] )
     std::cout << "### BSplineSamplingRatio: " << bsplineSamplingRatio 
               << std::endl;
     }
+
+  /** not sure */
+  if( interpolation == "NearestNeighbor" )
+    {
+    reger->SetRigidInterpolationMethodEnum( RegerType
+                                            ::OptimizedRegistrationMethodType
+                                            ::NEAREST_NEIGHBOR_INTERPOLATION);
+    reger->SetAffineInterpolationMethodEnum( RegerType
+                                             ::OptimizedRegistrationMethodType
+                                             ::NEAREST_NEIGHBOR_INTERPOLATION );
+    reger->SetBSplineInterpolationMethodEnum( RegerType
+                                              ::OptimizedRegistrationMethodType
+                                              ::NEAREST_NEIGHBOR_INTERPOLATION );
+    }
+  else if( interpolation == "Linear" )
+    {
+    reger->SetRigidInterpolationMethodEnum( RegerType
+                                            ::OptimizedRegistrationMethodType
+                                            ::LINEAR_INTERPOLATION );
+    reger->SetAffineInterpolationMethodEnum( RegerType
+                                             ::OptimizedRegistrationMethodType
+                                             ::LINEAR_INTERPOLATION );
+    reger->SetBSplineInterpolationMethodEnum( RegerType
+                                              ::OptimizedRegistrationMethodType
+                                              ::LINEAR_INTERPOLATION );
+    }
+  else if( interpolation == "BSpline" )
+    {
+    reger->SetRigidInterpolationMethodEnum( RegerType
+                                            ::OptimizedRegistrationMethodType
+                                            ::BSPLINE_INTERPOLATION );
+    reger->SetAffineInterpolationMethodEnum( RegerType
+                                             ::OptimizedRegistrationMethodType
+                                             ::BSPLINE_INTERPOLATION );
+    reger->SetBSplineInterpolationMethodEnum( RegerType
+                                              ::OptimizedRegistrationMethodType
+                                              ::BSPLINE_INTERPOLATION );
+    }
+  if (verbosity >= STANDARD)
+    {
+    std::cout << "### RigidInterpolationMethod: " << interpolation
+              << std::endl;
+    }
+  if (verbosity >= STANDARD)
+    {
+    std::cout << "### AffineInterpolationMethod: " << interpolation
+              << std::endl;
+    }
+  if (verbosity >= STANDARD)
+    {
+    std::cout << "### BSplineInterpolationMethod: " << interpolation
+              << std::endl;
+    }
+
 
   reger->SetExpectedOffsetPixelMagnitude( expectedOffset );
   if (verbosity >= STANDARD)
@@ -389,53 +497,42 @@ int DoIt( int argc, char *argv[] )
       std::cout << "### Resampling..." << std::endl;
       }
     typename ImageType::ConstPointer resultImage;
-    if( useWindowedSinc )
+    try
       {
-      try
+      if( interpolation == "NearestNeighbor" )
         {
         resultImage = reger->ResampleImage( RegerType
                                            ::OptimizedRegistrationMethodType
-                                           ::SINC_INTERPOLATION );
+                                           ::NEAREST_NEIGHBOR_INTERPOLATION );
         }
-      catch( itk::ExceptionObject &excep)
+      else if( interpolation == "Linear" )
         {
-        std::cerr << "Exception caught during helper class resampling." 
-                  << excep << std::endl;
-        std::cerr << "Current Matrix Transform = " << std::endl; 
-        reger->GetCurrentMatrixTransform()->Print(std::cerr , 2);
-        return EXIT_FAILURE;
+        resultImage = reger->ResampleImage( RegerType
+                                           ::OptimizedRegistrationMethodType
+                                           ::LINEAR_INTERPOLATION );
         }
-      catch( ... )
-        {
-        std::cerr << "Uncaught exception during helper class resampling." 
-                  << std::endl;
-        return EXIT_FAILURE;
-        }
-      }
-    else
-      {
-      try
+      else if( interpolation == "BSpline" )
         {
         resultImage = reger->ResampleImage( RegerType
                                            ::OptimizedRegistrationMethodType
                                            ::BSPLINE_INTERPOLATION );
         }
-      catch( itk::ExceptionObject &excep)
-        {
-        std::cerr << "Exception caught during helper class resampling." 
-                  << excep << std::endl;
-        std::cerr << "Current Matrix Transform = " << std::endl; 
-        reger->GetCurrentMatrixTransform()->Print(std::cerr , 2);
-        return EXIT_FAILURE;
-        }
-      catch( ... )
-        {
-        std::cerr << "Uncaught exception during helper class resampling." 
-                  << std::endl;
-        return EXIT_FAILURE;
-        }
       }
-    
+    catch( itk::ExceptionObject &excep)
+      {
+      std::cerr << "Exception caught during helper class resampling." 
+                << excep << std::endl;
+      std::cerr << "Current Matrix Transform = " << std::endl; 
+      reger->GetCurrentMatrixTransform()->Print(std::cerr , 2);
+      return EXIT_FAILURE;
+      }
+    catch( ... )
+      {
+      std::cerr << "Uncaught exception during helper class resampling." 
+                << std::endl;
+      return EXIT_FAILURE;
+      }
+
     try
       {
       reger->SaveImage( resampledImage, resultImage );
@@ -569,8 +666,6 @@ int main( int argc, char * argv[] )
     itk::MultiThreader::SetGlobalDefaultNumberOfThreads(numberOfThreads);
     }
 
-  //itk::ObjectFactoryBase::RegisterFactory( itk::MRMLIDImageIOFactory::New() );
-
   unsigned int fixedDimensions = 0;
   itk::ImageIOBase::IOPixelType fixedPixelType;
   itk::ImageIOBase::IOComponentType fixedComponentType;
@@ -604,7 +699,29 @@ int main( int argc, char * argv[] )
     switch( componentType )
       {
       case itk::ImageIOBase::UCHAR:
+#ifdef SUPPORT_2D_IMAGES
+        if(dimensions == 2)
+          {
+          return DoIt<2, unsigned char>( argc, argv );
+          }
+        else
+#endif
+          {
+          return DoIt<3, unsigned char>( argc, argv );
+          }
+        break;
       case itk::ImageIOBase::CHAR:
+#ifdef SUPPORT_2D_IMAGES
+        if(dimensions == 2)
+          {
+          return DoIt<2, char>( argc, argv );
+          }
+        else
+#endif
+          {
+          return DoIt<3, char>( argc, argv );
+          }
+        break;
       case itk::ImageIOBase::SHORT:
 #ifdef SUPPORT_2D_IMAGES
         if(dimensions == 2)
@@ -618,11 +735,23 @@ int main( int argc, char * argv[] )
           }
         break;
       case itk::ImageIOBase::USHORT:
+#ifdef SUPPORT_2D_IMAGES
+        if(dimensions == 2)
+          {
+          return DoIt<2, unsigned short>( argc, argv );
+          }
+        else
+#endif
+          {
+          return DoIt<3, unsigned short>( argc, argv );
+          }
+        break;
       case itk::ImageIOBase::UINT:
       case itk::ImageIOBase::INT:
       case itk::ImageIOBase::ULONG:
       case itk::ImageIOBase::LONG:
       case itk::ImageIOBase::FLOAT:
+      case itk::ImageIOBase::DOUBLE:
 #ifdef SUPPORT_2D_IMAGES
         if(dimensions == 2)
           {
@@ -632,18 +761,6 @@ int main( int argc, char * argv[] )
 #endif
           {
           return DoIt<3, float>( argc, argv );
-          }
-        break;
-      case itk::ImageIOBase::DOUBLE:
-#ifdef SUPPORT_2D_IMAGES
-        if(dimensions == 2)
-          {
-          return DoIt<2, double>( argc, argv );
-          }
-        else
-#endif
-          {
-          return DoIt<3, double>( argc, argv );
           }
         break;
       case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:

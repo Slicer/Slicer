@@ -69,7 +69,8 @@ class OptimizedImageToImageRegistrationMethod
                                 NORMALIZED_CORRELATION_METRIC,
                                 MEAN_SQUARED_ERROR_METRIC };
 
-    enum InterpolationMethodEnumType { LINEAR_INTERPOLATION,
+    enum InterpolationMethodEnumType { NEAREST_NEIGHBOR_INTERPOLATION,
+                                       LINEAR_INTERPOLATION,
                                        BSPLINE_INTERPOLATION,
                                        SINC_INTERPOLATION };
 

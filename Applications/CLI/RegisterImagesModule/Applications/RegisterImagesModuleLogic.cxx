@@ -151,6 +151,7 @@ void RegisterImagesModuleLogic
        (unsigned int)landmark == m_FixedLandmarks.size() )
     {
     std::vector<float> a;
+    landmark = m_FixedLandmarks.size();
     m_FixedLandmarks.push_back(a);
     m_MovingLandmarks.push_back(a);
     }

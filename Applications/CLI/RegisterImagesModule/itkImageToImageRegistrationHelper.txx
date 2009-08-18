@@ -26,6 +26,7 @@
 #include "itkResampleImageFilter.h"
 #include "itkDifferenceImageFilter.h"
 #include "itkInterpolateImageFunction.h"
+#include "itkNearestNeighborInterpolateImageFunction.h"
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkBSplineInterpolateImageFunction.h"
 #include "itkWindowedSincInterpolateImageFunction.h"
@@ -52,9 +53,12 @@ ImageToImageRegistrationHelper< TImage >
   m_UseMovingImageMaskObject = false;
   m_MovingImageMaskObject = 0;
 
+  m_SampleFromOverlap = false;
   m_SampleIntensityPortion = 0.0;
 
-  m_SampleFromOverlap = false;
+  m_UseRegionOfInterest = false;
+  m_RegionOfInterestPoint1.Fill(0);
+  m_RegionOfInterestPoint2.Fill(0);
 
   m_RandomNumberSeed = 0;
 
@@ -323,6 +327,7 @@ ImageToImageRegistrationHelper< TImage >
                                    m_LoadedMatrixTransform,
                                    m_LoadedBSplineTransform );
       m_CurrentMovingImage = m_LoadedTransformResampledImage;
+      //this->SaveImage("transform.mha",m_CurrentMovingImage);
       }
  
     m_MatrixTransformResampledImage = 0;
@@ -399,7 +404,7 @@ ImageToImageRegistrationHelper< TImage >
   m_CompletedStage = INIT_STAGE;
   m_CompletedResampling = false;
 
-  typename ImageType::SizeType fixedImageSize;
+  typename TImage::SizeType fixedImageSize;
   fixedImageSize = m_FixedImage->GetLargestPossibleRegion().GetSize();
   unsigned long fixedImageNumPixels = m_FixedImage->GetLargestPossibleRegion()
                                                     .GetNumberOfPixels();
@@ -451,6 +456,11 @@ ImageToImageRegistrationHelper< TImage >
                                             * (fixedImageMax - fixedImageMin) )
                                           + fixedImageMin ) );
       }
+    if(m_UseRegionOfInterest)
+      {
+      regRigid->SetRegionOfInterest( m_RegionOfInterestPoint1, m_RegionOfInterestPoint2 );
+      }
+    regRigid->SetSampleFromOverlap( m_SampleFromOverlap );
     regRigid->SetMetricMethodEnum( m_RigidMetricMethodEnum );
     regRigid->SetInterpolationMethodEnum( m_RigidInterpolationMethodEnum );
     typename RigidTransformType::ParametersType scales;
@@ -533,6 +543,10 @@ ImageToImageRegistrationHelper< TImage >
     regAff->SetMovingImage( m_CurrentMovingImage );
     regAff->SetFixedImage( m_FixedImage );
     regAff->SetNumberOfSamples( (unsigned int)(m_AffineSamplingRatio * fixedImageNumPixels) );
+    if(m_UseRegionOfInterest)
+      {
+      regAff->SetRegionOfInterest( m_RegionOfInterestPoint1, m_RegionOfInterestPoint2 );
+      }
     regAff->SetSampleFromOverlap( m_SampleFromOverlap );
     regAff->SetMinimizeMemory( m_MinimizeMemory );
     regAff->SetMaxIterations( m_AffineMaxIterations );
@@ -648,28 +662,32 @@ ImageToImageRegistrationHelper< TImage >
       m_CompletedResampling = true;
       }
 
-    typename BSplineRegistrationMethodType::Pointer regBSpline = BSplineRegistrationMethodType::New();
-    regBSpline->SetRandomNumberSeed( m_RandomNumberSeed );
-    regBSpline->SetReportProgress( m_ReportProgress );
-    regBSpline->SetFixedImage( m_FixedImage );
-    regBSpline->SetMovingImage( m_CurrentMovingImage );
-    regBSpline->SetNumberOfSamples( (unsigned int)(m_BSplineSamplingRatio * fixedImageNumPixels) );
-    regBSpline->SetSampleFromOverlap( m_SampleFromOverlap );
-    regBSpline->SetMinimizeMemory( m_MinimizeMemory );
-    regBSpline->SetMaxIterations( m_BSplineMaxIterations );
-    regBSpline->SetTargetError( m_BSplineTargetError );
+    typename BSplineRegistrationMethodType::Pointer regBspline = BSplineRegistrationMethodType::New();
+    regBspline->SetRandomNumberSeed( m_RandomNumberSeed );
+    regBspline->SetReportProgress( m_ReportProgress );
+    regBspline->SetFixedImage( m_FixedImage );
+    regBspline->SetMovingImage( m_CurrentMovingImage );
+    regBspline->SetNumberOfSamples( (unsigned int)(m_BSplineSamplingRatio * fixedImageNumPixels) );
+    if(m_UseRegionOfInterest)
+      {
+      regBspline->SetRegionOfInterest( m_RegionOfInterestPoint1, m_RegionOfInterestPoint2 );
+      }
+    regBspline->SetSampleFromOverlap( m_SampleFromOverlap );
+    regBspline->SetMinimizeMemory( m_MinimizeMemory );
+    regBspline->SetMaxIterations( m_BSplineMaxIterations );
+    regBspline->SetTargetError( m_BSplineTargetError );
     if( m_UseFixedImageMaskObject )
       {
       if( m_FixedImageMaskObject.IsNotNull() )
         {
-        regBSpline->SetFixedImageMaskObject( m_FixedImageMaskObject );
+        regBspline->SetFixedImageMaskObject( m_FixedImageMaskObject );
         }
       }
     if( m_UseMovingImageMaskObject )
       {
       if( m_MovingImageMaskObject.IsNotNull() )
         {
-        regBSpline->SetMovingImageMaskObject( m_MovingImageMaskObject );
+        regBspline->SetMovingImageMaskObject( m_MovingImageMaskObject );
         }
       }
     if( m_SampleIntensityPortion > 0 )
@@ -681,21 +699,21 @@ ImageToImageRegistrationHelper< TImage >
       PixelType fixedImageMax = calc->GetMaximum();
       PixelType fixedImageMin = calc->GetMinimum();
 
-      regBSpline->SetFixedImageSamplesIntensityThreshold( static_cast<PixelType>( 
+      regBspline->SetFixedImageSamplesIntensityThreshold( static_cast<PixelType>( 
                                           ( m_SampleIntensityPortion 
                                             * (fixedImageMax - fixedImageMin) )
                                           + fixedImageMin ) );
       }
-    regBSpline->SetMetricMethodEnum( m_BSplineMetricMethodEnum );
-    regBSpline->SetInterpolationMethodEnum( m_BSplineInterpolationMethodEnum );
-    regBSpline->SetNumberOfControlPoints( (int)(fixedImageSize[0] / m_BSplineControlPointPixelSpacing) );
+    regBspline->SetMetricMethodEnum( m_BSplineMetricMethodEnum );
+    regBspline->SetInterpolationMethodEnum( m_BSplineInterpolationMethodEnum );
+    regBspline->SetNumberOfControlPoints( (int)(fixedImageSize[0] / m_BSplineControlPointPixelSpacing) );
 
-    regBSpline->Update();
+    regBspline->Update();
 
-    m_BSplineTransform = regBSpline->GetBSplineTransform();
+    m_BSplineTransform = regBspline->GetBSplineTransform();
     m_CurrentBSplineTransform = m_BSplineTransform;
 
-    m_FinalMetricValue = regBSpline->GetFinalMetricValue();
+    m_FinalMetricValue = regBspline->GetFinalMetricValue();
     m_BSplineMetricValue = m_FinalMetricValue;
 
     m_CompletedStage = BSPLINE_STAGE;
@@ -706,6 +724,7 @@ ImageToImageRegistrationHelper< TImage >
       std::cout << "BSpline results stored" << std::endl;
       }
     }
+  //this->SaveImage("c:/result.mha",m_CurrentMovingImage);
 }
 
 
@@ -718,6 +737,8 @@ ImageToImageRegistrationHelper< TImage >
                  const BSplineTransformType * bsplineTransform )
 {
   typedef InterpolateImageFunction< TImage, double >  InterpolatorType;
+  typedef NearestNeighborInterpolateImageFunction< TImage, double >  
+                                                     NearestNeighborInterpolatorType;
   typedef LinearInterpolateImageFunction< TImage, double >  
                                                      LinearInterpolatorType;
   typedef BSplineInterpolateImageFunction< TImage, double >  
@@ -735,6 +756,9 @@ ImageToImageRegistrationHelper< TImage >
 
   switch(interpolationMethod)
     {
+    case OptimizedRegistrationMethodType::NEAREST_NEIGHBOR_INTERPOLATION:
+      interpolator = NearestNeighborInterpolatorType::New();
+      break;
     case OptimizedRegistrationMethodType::LINEAR_INTERPOLATION:
       interpolator = LinearInterpolatorType::New();
       break;
@@ -1140,6 +1164,34 @@ ImageToImageRegistrationHelper< TImage >
 template< class TImage >
 void
 ImageToImageRegistrationHelper< TImage >
+::SetRegionOfInterest( const PointType & point1,
+                       const PointType & point2 )
+{
+  m_RegionOfInterestPoint1 = point1;
+  m_RegionOfInterestPoint2 = point2;
+  m_UseRegionOfInterest = true;
+}
+
+template< class TImage >
+void
+ImageToImageRegistrationHelper< TImage >
+::SetRegionOfInterest( const std::vector< float > & points )
+{
+  if(points.size() != 2*ImageDimension)
+    {
+    throw "Error: size of points passed to SetRegionOfInterest is not twice the image dimension";
+    }
+  for(unsigned int i=0; i<ImageDimension; i++)
+    {
+    m_RegionOfInterestPoint1[i] = points[i];
+    m_RegionOfInterestPoint2[i] = points[ImageDimension + i];
+    }
+  m_UseRegionOfInterest = true;
+}
+
+template< class TImage >
+void
+ImageToImageRegistrationHelper< TImage >
 ::SetFixedLandmarks( const std::vector<float> &fixedLandmarks )
 {
   m_FixedLandmarks.clear();
@@ -1239,6 +1291,11 @@ ImageToImageRegistrationHelper< TImage >
   os << indent << std::endl;
   switch( interpolation )
     {
+    case OptimizedRegistrationMethodType::NEAREST_NEIGHBOR_INTERPOLATION:
+      {
+      os << indent << basename << " Interpolation Method = NEAREST_NEIGHBOR_INTERPOLATION" << std::endl;
+      break;
+      }
     case OptimizedRegistrationMethodType::LINEAR_INTERPOLATION:
       {
       os << indent << basename << " Interpolation Method = LINEAR_INTERPOLATION" << std::endl;
@@ -1277,6 +1334,13 @@ ImageToImageRegistrationHelper< TImage >
     {
     os << indent << "Moving Image = " << m_MovingImage << std::endl;
     }
+  os << indent << std::endl;
+  os << indent << "Use region of interest = " << m_UseRegionOfInterest 
+     << std::endl;
+  os << indent << "Region of interest point1 = " << m_RegionOfInterestPoint1
+     << std::endl;
+  os << indent << "Region of interest point2 = " << m_RegionOfInterestPoint2
+     << std::endl;
   os << indent << std::endl;
   os << indent << "Use Fixed Image Mask Object = " << m_UseFixedImageMaskObject << std::endl;
   os << indent << std::endl;

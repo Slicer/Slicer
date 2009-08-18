@@ -95,7 +95,17 @@
       <element>PipelineRigid</element>
       <element>PipelineAffine</element>
       <element>PipelineBSpline</element>
-      <default>Affine</default>
+      <default>PipelineAffine</default>
+    </string-enumeration>
+    <string-enumeration>
+      <name>metric</name>
+      <description>Method to quantify image match</description>
+      <label>Metric</label>
+      <longflag>metric</longflag>
+      <element>MattesMI</element>
+      <element>NormCorr</element>
+      <element>MeanSqrd</element>
+      <default>MattesMI</default>
     </string-enumeration>
     <float>
       <name>expectedOffset</name>
@@ -153,6 +163,13 @@
       <longflag>sampleIntensityPortion</longflag>
       <default>0.0</default>
     </float>
+    <float-vector>
+      <name>regionOfInterest</name>
+      <description>Limit metric evaluation to the physical ROI (x1,y1,z1,x2,y2,z2)</description>
+      <label>Limit analysis to physical ROI bounded two points</label>
+      <longflag>regionOfInterest</longflag>
+      <default></default>
+    </float-vector>
     <integer>
       <name>randomNumberSeed</name>
       <description>Seed to generate a consistent random number sequence</description>
@@ -174,13 +191,16 @@
       <longflag>minimizeMemory</longflag>
       <default>false</default>
     </boolean>
-    <boolean>
-      <name>useWindowedSinc</name>
-      <description>Use Windowed Sinc interpolation when generating the final resampled moving image</description>
-      <label>Use windowed sinc for final interpolation</label>
-      <longflag>useWindowedSinc</longflag>
-      <default>false</default>
-    </boolean>
+    <string-enumeration>
+      <name>interpolation</name>
+      <description>Method for final interpolation</description>
+      <label>Interpolation</label>
+      <longflag>interpolation</longflag>
+      <element>NearestNeighbor</element>
+      <element>Linear</element>
+      <element>BSpline</element>
+      <default>Linear</default>
+    </string-enumeration>
   </parameters>
   <parameters advanced="true">
     <label>Registration Testing Parameters</label>
