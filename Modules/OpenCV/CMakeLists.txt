@@ -67,8 +67,8 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${Slicer3_Libs_INCLUDE_DIRS}
   ${Slicer3_Base_INCLUDE_DIRS}
-  ${OpenCV_INCLUDE_DIRS}
   ${OpenIGTLink_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
   )
 
 #
@@ -93,8 +93,8 @@ install(FILES
 # Sources
 
 set(OpenCV_SRCS 
-  vtkOpenCVLogic.cxx
   vtkOpenCVGUI.cxx
+  vtkOpenCVLogic.cxx
 )
 
 
