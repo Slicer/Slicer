@@ -124,7 +124,7 @@ protected:
   vtkEMSegmentIntensityDistributionsStep();
   ~vtkEMSegmentIntensityDistributionsStep();
 
-  virtual void PopulateIntensityDistributionTargetVolumeSelector();
+  //virtual void PopulateIntensityDistributionTargetVolumeSelector();
   //virtual void PopulateXVolumeSelector();
   //virtual void PopulateYVolumeSelector();
   virtual void PopulateGaussian2DVolumeXSelector();
@@ -139,7 +139,7 @@ protected:
   vtkKWMultiColumnListWithScrollbarsWithLabel
     *IntensityDistributionManualSamplingList;
 
-  vtkKWMenuButtonWithLabel  *IntensityDistributionHistogramButton;
+  //vtkKWMenuButtonWithLabel  *IntensityDistributionHistogramButton;
   vtkKWFrameWithLabel       *IntensityDistributionHistogramFrame;
 
   vtkGaussian2DWidget       *Gaussian2DWidget;
@@ -147,7 +147,7 @@ protected:
   vtkKWPushButton           *Gaussian2DButton;
   vtkKWMenuButtonWithLabel  *Gaussian2DVolumeXMenuButton;
   vtkKWMenuButtonWithLabel  *Gaussian2DVolumeYMenuButton;
-  vtkKWMenuButtonWithLabel  *Gaussian2DRenderingMenuButton;
+  //vtkKWMenuButtonWithLabel  *Gaussian2DRenderingMenuButton;
 
   vtkSlicerNodeSelectorWidget *LabelSelector;
   vtkKWPushButton             *LabelmapButton;

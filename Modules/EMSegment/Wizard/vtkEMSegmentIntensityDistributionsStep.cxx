@@ -107,12 +107,12 @@ vtkEMSegmentIntensityDistributionsStep()
   this->ContextMenu                                  = NULL;
 
   this->IntensityDistributionHistogramFrame          = NULL;
-  this->IntensityDistributionHistogramButton         = NULL;
+  //this->IntensityDistributionHistogramButton         = NULL;
 
   this->Gaussian2DWidget                             = NULL;
   this->NumClassesEntryLabel                         = NULL;
   this->Gaussian2DButton                             = NULL;
-  this->Gaussian2DRenderingMenuButton                = NULL;
+  //this->Gaussian2DRenderingMenuButton                = NULL;
 
   this->Gaussian2DVolumeXMenuButton                  = NULL;
   this->Gaussian2DVolumeYMenuButton                  = NULL;
@@ -161,11 +161,11 @@ vtkEMSegmentIntensityDistributionsStep::
     this->NumClassesEntryLabel = NULL;
   }
 
-  if(this->IntensityDistributionHistogramButton)
+  /*if(this->IntensityDistributionHistogramButton)
   {
     this->IntensityDistributionHistogramButton->Delete();
     this->IntensityDistributionHistogramButton = NULL;
-  }
+  }*/
 
   if(this->IntensityDistributionHistogramFrame)
   {
@@ -215,11 +215,11 @@ vtkEMSegmentIntensityDistributionsStep::
     this->Gaussian2DWidget = NULL;
   }
 
-  if(this->Gaussian2DRenderingMenuButton)
+ /* if(this->Gaussian2DRenderingMenuButton)
   {
     this->Gaussian2DRenderingMenuButton->Delete();
     this->Gaussian2DRenderingMenuButton = NULL;
-  }
+  }*/
 }
 
 //----------------------------------------------------------------------------
@@ -597,26 +597,6 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
       }
     }
 
-  if (!this->Gaussian2DButton)
-    {
-    vtkErrorMacro("Gaussian2DButton New");
-    this->Gaussian2DButton = vtkKWPushButton::New();
-    }
-
-  if (!this->Gaussian2DButton->IsCreated())
-    {
-    vtkErrorMacro("Gaussian2DButton->SetParent");
-    this->Gaussian2DButton->SetParent(gaussianPage);
-    this->Gaussian2DButton->Create();
-    this->Gaussian2DButton->SetText("Compute Gaussians");
-    }
-
-  this->Script(
-      "pack %s -side top -anchor nw -fill both -padx 2 -pady 2 -pady 2",
-      this->Gaussian2DButton->GetWidgetName());
-
-  this->AddGaussian2DButtonGUIEvents();
-
   int windowWidth  = 300;
   int windowHeight = 300;
 
@@ -637,10 +617,30 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
 
   this->Script("pack %s -side top -anchor nw -padx 2 -pady 2 -pady 2",
       this->Gaussian2DWidget->GetWidgetName());
+      
+ if (!this->Gaussian2DButton)
+    {
+    vtkErrorMacro("Gaussian2DButton New");
+    this->Gaussian2DButton = vtkKWPushButton::New();
+    }
+
+  if (!this->Gaussian2DButton->IsCreated())
+    {
+    vtkErrorMacro("Gaussian2DButton->SetParent");
+    this->Gaussian2DButton->SetParent(gaussianPage);
+    this->Gaussian2DButton->Create();
+    this->Gaussian2DButton->SetText("2D distributions");
+    }
+
+  this->Script(
+      "pack %s -side top -anchor nw -fill both -padx 2 -pady 5",
+      this->Gaussian2DButton->GetWidgetName());
+
+  this->AddGaussian2DButtonGUIEvents();
 
   // Create the histogram volume selector
 
-  if (!this->IntensityDistributionHistogramButton)
+  /*if (!this->IntensityDistributionHistogramButton)
     {
     this->IntensityDistributionHistogramButton =
       vtkKWMenuButtonWithLabel::New();
@@ -677,11 +677,11 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
     vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
     int volId = mrmlManager->GetVolumeNthID(0);
     this->IntensityDistributionTargetSelectionChangedCallback(volId);
-    }
+    }*/
 
   // Create the Gaussian 2D rendering menu button
 
-  if (!this->Gaussian2DRenderingMenuButton)
+  /*if (!this->Gaussian2DRenderingMenuButton)
     {
     this->Gaussian2DRenderingMenuButton = vtkKWMenuButtonWithLabel::New();
     }
@@ -759,7 +759,7 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
       //this->IntensityDistributionSpecificationMenuButton->GetWidget()->
       //  SetValue("");
       }
-    }
+    }*/
   vtkEMSegmentIntensityDistributionsStep_DebugMacro("ShowUserInterface end");
 }
 
@@ -856,7 +856,7 @@ void vtkEMSegmentIntensityDistributionsStep::
 }
 
 //----------------------------------------------------------------------------
-void vtkEMSegmentIntensityDistributionsStep::
+/*void vtkEMSegmentIntensityDistributionsStep::
 PopulateIntensityDistributionTargetVolumeSelector()
 {
   vtkEMSegmentIntensityDistributionsStep_DebugMacro(
@@ -896,7 +896,7 @@ PopulateIntensityDistributionTargetVolumeSelector()
   vtkEMSegmentIntensityDistributionsStep_DebugMacro(
       "PopulateIntensityDistributionTargetVolumeSelector end");
 }
-
+*/
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityDistributionsStep::
   Gaussian2DVolumeXSelectionChangedCallback(vtkIdType target_volId)
@@ -1941,6 +1941,10 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessLabelButtonGUIEvents(
 
     vtkIdType volumeID;
     int extent[6];
+    vtkstd::vector<double>       totalMinRange(numTargetImages, 0);
+    double* rangeMin;
+    //double rangeMax;
+
 
     for (int m=0; m < numTargetImages; m++)
     {
@@ -1987,6 +1991,12 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessLabelButtonGUIEvents(
           << " components.");
         return;
       }
+      
+      rangeMin = targetImage->GetPointData()->GetScalars()->GetRange();
+      
+      totalMinRange[m] = rangeMin[0];
+      
+      std::cout<< "min: "<< totalMinRange[m] << std::endl;
     }
 
     int numValues = this->NumberOfLeaves * numTargetImages;
@@ -2036,7 +2046,7 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessLabelButtonGUIEvents(
                     targetImage->GetScalarComponentAsDouble(i,j,k,0);
 
                   meanIntensity[id]    += intensity;
-                  meanLogIntensity[id] += log(intensity+1);
+                  meanLogIntensity[id] += log(intensity+1-totalMinRange[m]);
 
                   countIntensity[id]++;
 
@@ -2129,7 +2139,7 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessLabelButtonGUIEvents(
                   double intensity1 =
                     targetImage->GetScalarComponentAsDouble(i,j,k,0);
 
-                  double logIntensity1 = log(intensity1+1);
+                  double logIntensity1 = log(intensity1+1-totalMinRange[m]);
                   
                   if(minMaxRange[2*m] >= minMaxRange[2*m+1])
                     {
@@ -2157,7 +2167,7 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessLabelButtonGUIEvents(
                     double intensity2 =
                       targetImage->GetScalarComponentAsDouble(i,j,k,0);
 
-                    double logIntensity2 = log(intensity2+1);
+                    double logIntensity2 = log(intensity2+1-totalMinRange[n]);
                     
                     if(minMaxRange[2*n] >= minMaxRange[2*n+1])
                     {

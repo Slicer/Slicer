@@ -55,6 +55,8 @@
 #include "vtkStripper.h"
 #include "vtkCellArray.h"
 
+#include "vtkSphereSource.h"
+
 #ifdef _WIN32
 #include "vtkWin32OpenGLRenderWindow.h"
 #endif
@@ -256,7 +258,8 @@ int vtkGaussian2DWidget::DrawGaussian(
 
   double range[2] = { VTK_DOUBLE_MAX, VTK_DOUBLE_MIN };
 
-  double x, y, z;
+  //double x, y;
+  double z;
   double dist;
 
   double originX = this->ScalarRangeX[0];
@@ -327,31 +330,78 @@ int vtkGaussian2DWidget::DrawGaussian(
   vtkFloatArray *newScalars = vtkFloatArray::New();
   newScalars->SetNumberOfValues(numPts);
 
-  double factorX = fabs(lambda1) > 1e-6 ? 1.0 / lambda1 : 1.0;
-  double factorY = fabs(lambda2) > 1e-6 ? 1.0 / lambda2 : 1.0;
+  double sigmaX = sqrt(varianceX);
+  double sigmaY = sqrt(varianceY);
+  double rho    = covariance/(sigmaX*sigmaY);
+
+  double factorX = 1/(varianceX);//fabs(lambda1) > 1e-6 ? 1.0 / lambda1 : 1.0;
+  double factorY = 1/(varianceY);//fabs(lambda2) > 1e-6 ? 1.0 / lambda2 : 1.0;
+  double factorRho = -2/(sigmaX*sigmaY);
+
+  double factorExpo = -1/(2*(1-rho*rho));
+  //double amplitude = 1/(2*3.14*sigmaX*sigmaY*sqrt(1-rho*rho));
 
   double Dx;
   double Dy;
 
-  for(int j=0, id=0; j < this->Resolution[1]; j++)
+  if(rho < 0.999)
   {
-    Dy = originY + j * spacingY - meanY;
-
-    for(int i=0; i < this->Resolution[0]; i++, id++)
+  //vtkErrorMacro("rho diff "
+  //    << rho);
+    for(int j=0, id=0; j < this->Resolution[1]; j++)
     {
-      Dx = originX + i * spacingX - meanX;
+      Dy = originY + j * spacingY - meanY;
 
-      x =  Dx * cosine + Dy *   sine;
-      y = -Dx *   sine + Dy * cosine;
+      for(int i=0; i < this->Resolution[0]; i++, id++)
+      {
+        Dx = originX + i * spacingX - meanX;
 
-      dist = x * x * factorX + y * y * factorY;
-      z = exp(-dist);
+        //x =  Dx * cosine + Dy *   sine;
+        //y = -Dx *   sine + Dy * cosine;
+
+        //dist = x * x * factorX + y * y * factorY;
+        //z = exp(-dist);
+
+        z = exp(factorExpo*(Dx*Dx*factorX+Dy*Dy*factorY+rho*Dx*Dy*factorRho));
+
+        newPoints->SetPoint(id,i,j,z);
+        newScalars->SetValue(id,z);
+
+        if( z < range[0] ) { range[0] = z; }
+        if( z > range[1] ) { range[1] = z; }
+      }
+    }
+  }
+  else
+  {
+    vtkErrorMacro("rho: " << rho);
+
+    for(int j=0, id=0; j < this->Resolution[1]; j++)
+    {
+      Dy = originY + j * spacingY - meanY;
+
+      for(int i=0; i < this->Resolution[0]; i++, id++)
+      {
+        Dx = originX + i * spacingX - meanX;
+
+        //z= exp( (-1/2)*(Dx*Dx*factorX + Dy*Dy*factorY
+        // /*+ rho*Dx*Dy*factorRho*/) );
+
+        //cosine = 0.45*3.14/180;
+        //sine = 0.45*3.14/180;
+
+        //x =  Dx * cosine + Dy *   sine;
+        //y = -Dx *   sine + Dy * cosine;
+
+      dist = Dx * Dx * factorX/2 + Dy * Dy * factorY/2;
+      z = exp(-dist*dist);
 
       newPoints->SetPoint(id,i,j,z);
       newScalars->SetValue(id,z);
 
       if( z < range[0] ) { range[0] = z; }
       if( z > range[1] ) { range[1] = z; }
+      }
     }
   }
 
@@ -381,13 +431,13 @@ int vtkGaussian2DWidget::DrawGaussian(
   plane->SetOrigin(meanX,meanY,0.9);
   plane->SetNormal(0,0,1);
 
-  vtkPlane *planeX = vtkPlane::New();
-  planeX->SetOrigin(meanX,meanY,0);
+  /*vtkPlane *planeX = vtkPlane::New();
+  planeX->SetOrigin(meanX*this->Resolution[0],meanY*this->Resolution[0],0);
   planeX->SetNormal(-sine,cosine,0);
 
   vtkPlane *planeY = vtkPlane::New();
-  planeY->SetOrigin(meanX,meanY,0);
-  planeY->SetNormal(cosine,sine,0);
+  planeY->SetOrigin(meanX*this->Resolution[0],meanY*this->Resolution[0],0);
+  planeY->SetNormal(cosine,sine,0);*/
 
   vtkCutter *cutter = vtkCutter::New();
   cutter->SetInput(polyData);
@@ -395,7 +445,7 @@ int vtkGaussian2DWidget::DrawGaussian(
   plane->Delete();
   cutter->Update();
 
-  vtkCutter *cutterX = vtkCutter::New();
+  /*vtkCutter *cutterX = vtkCutter::New();
   cutterX->SetInput(polyData);
   cutterX->SetCutFunction(planeX);
   planeX->Delete();
@@ -405,25 +455,53 @@ int vtkGaussian2DWidget::DrawGaussian(
   cutterY->SetInput(polyData);
   cutterY->SetCutFunction(planeY);
   planeY->Delete();
-  cutterY->Update();
+  cutterY->Update();*/
 
   vtkErrorMacro("numLines " <<
     cutter->GetOutput()->GetNumberOfLines());
 
-  if (cutter->GetOutput()->GetNumberOfLines() > 6)
+ // if (cutter->GetOutput()->GetNumberOfLines() > 10)
+ // {
+    vtkPolyDataMapper *mapperZ = vtkPolyDataMapper::New();
+    mapperZ->SetInput(cutter->GetOutput());
+    mapperZ->SetResolveCoincidentTopologyToPolygonOffset();
+
+    vtkActor *actorZ = vtkActor::New();
+    actorZ->SetMapper(mapperZ);
+    mapperZ->Delete();
+    actorZ->GetProperty()->SetColor(0,0,0);
+
+    this->AddViewProp(actorZ);
+    actorZ->Delete();
+ // }
+  /*else
   {
-    vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();
-    mapper->SetInput(cutter->GetOutput());
-    mapper->SetResolveCoincidentTopologyToPolygonOffset();
 
-    vtkActor *actor = vtkActor::New();
-    actor->SetMapper(mapper);
-    mapper->Delete();
-    actor->GetProperty()->SetColor(0,0,0);
+  vtkSphereSource *newSphere = vtkSphereSource::New();
+  newSphere->SetCenter(meanX*100,meanY*100,range[1]);
 
-    this->AddViewProp(actor);
-    actor->Delete();
-  }
+  vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();
+  mapper->SetInput(newSphere->GetOutput());
+
+  double hsv[3] = {hue,1,1};
+  double rgb[3];
+
+  vtkMath::HSVToRGB(hsv,rgb);
+
+  vtkErrorMacro("R "<< rgb[0]);
+
+  //mapper->SetResolveCoincidentTopologyToPolygonOffset();
+
+  vtkActor *actor = vtkActor::New();
+  actor->SetMapper(mapper);
+  mapper->Delete();
+  actor->GetProperty()->SetColor(rgb);
+
+  this->AddViewProp(actor);
+  actor->Delete();
+
+  newSphere->Delete();
+  }*/
 
   cutter->Delete();
 
@@ -453,7 +531,7 @@ int vtkGaussian2DWidget::DrawGaussian(
   LUT->SetNumberOfTableValues(256);
   LUT->SetHueRange(hue,hue);
   LUT->SetSaturationRange(0,1);
-  LUT->SetValueRange(1,1);
+  LUT->SetValueRange(0,1);
   LUT->Build();
 
   vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();
@@ -463,7 +541,7 @@ int vtkGaussian2DWidget::DrawGaussian(
   LUT->Delete();
   mapper->SetScalarRange(range);
 
-  vtkPolyDataMapper *mapperX = vtkPolyDataMapper::New();
+  /*vtkPolyDataMapper *mapperX = vtkPolyDataMapper::New();
   mapperX->SetInputConnection(cutterX->GetOutputPort());
   cutterX->Delete();
   mapperX->SetResolveCoincidentTopologyToPolygonOffset();
@@ -473,13 +551,13 @@ int vtkGaussian2DWidget::DrawGaussian(
   mapperY->SetInputConnection(cutterY->GetOutputPort());
   cutterY->Delete();
   mapperY->SetResolveCoincidentTopologyToPolygonOffset();
-  mapperY->ScalarVisibilityOff();
+  mapperY->ScalarVisibilityOff();*/
 
   vtkActor *actor = vtkActor::New();
   actor->SetMapper(mapper);
   mapper->Delete();
 
-  vtkActor *actorX = vtkActor::New();
+  /*vtkActor *actorX = vtkActor::New();
   actorX->SetMapper(mapperX);
   mapperX->Delete();
   actorX->GetProperty()->SetColor(0,0,0);
@@ -487,16 +565,16 @@ int vtkGaussian2DWidget::DrawGaussian(
   vtkActor *actorY = vtkActor::New();
   actorY->SetMapper(mapperY);
   mapperY->Delete();
-  actorY->GetProperty()->SetColor(0,0,0);
+  actorY->GetProperty()->SetColor(0,0,0);*/
 
   this->AddViewProp(actor);
   actor->Delete();
 
-  this->AddViewProp(actorX);
-  actorX->Delete();
+  //this->AddViewProp(actorX);
+  //actorX->Delete();
 
-  this->AddViewProp(actorY);
-  actorY->Delete();
+  //this->AddViewProp(actorY);
+  //actorY->Delete();
 
   if (!this->NumberOfGaussians)
   {
@@ -523,6 +601,7 @@ int vtkGaussian2DWidget::DrawGaussian(
   this->GetRenderer()->SetActiveCamera(camera);
   camera->Delete();
   */
+  this->Render();
   this->ResetCamera();
   this->Render();
 
