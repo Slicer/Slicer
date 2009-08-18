@@ -1342,33 +1342,49 @@ if { ![file exists $::BatchMake_TEST_FILE] || $::GENLIB(update) } {
 #
 #
 if { [BuildThis $::OpenCV_TEST_FILE "cv"] == 1 && [string tolower $::USE_OPENCV] == "on" } {
- 
-    cd $::Slicer3_LIB
 
-    runcmd $::SVN co $::OpenCV_TAG OpenCV 
-
+    # Slicer module OpenCV doesn't compile with OpenCV library 1.1 in svn trunk.
+    # Now we try to get and build OpenCV library 1.0, which is now distributed 
+    # only in tarball on linux
     file mkdir $::Slicer3_LIB/OpenCV-build
-    cd $::Slicer3_LIB/OpenCV-build
+    file mkdir $::Slicer3_LIB/OpenCV
 
-    runcmd $::CMAKE \
-        -G$GENERATOR \
-        -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
-        -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
-        -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
-        -DBUILD_SHARED_LIBS:BOOL=ON \
-        -DBUILD_TESTING:BOOL=OFF \
-        -DOpenCV_DIR:FILEPATH=$Slicer3_LIB/OpenCV-build \
-        ../OpenCV/opencv
+    cd $::Slicer3_LIB/OpenCV
+    runcmd wget $::OpenCV_TAG 
+    runcmd tar xvfz ./opencv-1.0.0.tar.gz
+    cd $Slicer3_LIB/OpenCV/opencv-1.0.0
 
-    if {$isWindows} {
-        if { $MSVC6 } {
-            runcmd $::MAKE BatchMake.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
-        } else {
-            runcmd $::MAKE BatchMake.SLN /out buildlog.txt /build  $::VTK_BUILD_TYPE
-        }
-    } else {
-        eval runcmd $::MAKE
-    }
+    runcmd ./configure --prefix=$Slicer3_LIB/OpenCV-build 
+    eval runcmd $::MAKE
+    eval runcmd $::SERIAL_MAKE install
+
+ 
+#    cd $::Slicer3_LIB
+
+#    runcmd $::SVN co $::OpenCV_TAG OpenCV 
+
+#    file mkdir $::Slicer3_LIB/OpenCV-build
+#    cd $::Slicer3_LIB/OpenCV-build
+
+#    runcmd $::CMAKE \
+#        -G$GENERATOR \
+#        -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+#        -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
+#        -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
+#        -DBUILD_SHARED_LIBS:BOOL=ON \
+#        -DBUILD_TESTING:BOOL=OFF \
+#        -DOpenCV_DIR:FILEPATH=$Slicer3_LIB/OpenCV-build \
+#        ../OpenCV/opencv
+
+#    if {$isWindows} {
+#        if { $MSVC6 } {
+#            runcmd $::MAKE BatchMake.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
+#        } else {
+#            runcmd $::MAKE BatchMake.SLN /out buildlog.txt /build  $::VTK_BUILD_TYPE
+#        }
+#    } else {
+#        eval runcmd $::MAKE
+#    }
 }
 
 
