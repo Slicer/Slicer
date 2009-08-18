@@ -3250,15 +3250,36 @@ void vtkEMSegmentNodeParametersStep::VisualFeedback()
   this->ArrayToAccessSliceValues = vtkImageData::New();
   this->ArrayToAccessSliceValues->DeepCopy(this->SliceExtracted->GetOutput());
 
+  int ext[6];
+  inVolume->GetImageData()->GetWholeExtent(ext);
+
+  if(iMin<ext[0]) { iMin = ext[0]; }
+  if(iMin>ext[1]) { iMin = ext[1]; }
+
+  if(iMax<ext[0]) { iMax = ext[0]; }
+  if(iMax>ext[1]) { iMax = ext[1]; }
+
+  if(jMin<ext[2]) { jMin = ext[2]; }
+  if(jMin>ext[3]) { jMin = ext[3]; }
+
+  if(jMax<ext[2]) { jMax = ext[2]; }
+  if(jMax>ext[3]) { jMax = ext[3]; }
+
+  if(kMin<ext[4]) { kMin = ext[4]; }
+  if(kMin>ext[5]) { kMin = ext[5]; }
+
+  if(kMax<ext[4]) { kMax = ext[4]; }
+  if(kMax>ext[5]) { kMax = ext[5]; }
+
   // Labels  determination
   double pixelValue = 0.0;
 
-  for(int i=iMin;i<iMax+1;i++)
+  for(int i=iMin;i<=iMax;i++)
+  {
+    for(int j=jMin;j<=jMax;j++)
     {
-    for(int j=jMin;j<jMax+1;j++)
+      for(int k=kMin;k<=kMax;k++)
       {
-      for(int k=kMin;k<kMax+1;k++)
-        {
         pixelValue = this->ArrayToAccessSliceValues->
           GetScalarComponentAsDouble(i,j,k,0);
         for (int l=0;l<this->NumberOfLeaves;l++)
@@ -3295,6 +3316,7 @@ void vtkEMSegmentNodeParametersStep::VisualFeedback()
   outVolume->SetModifiedSinceRead(1);
   this->ArrayToAccessSliceValues->Delete();
 }
+
 //---------------------------------------------------------------------------
 void vtkEMSegmentNodeParametersStep::AddColumnListGUIObservers()
 {
