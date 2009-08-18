@@ -169,7 +169,7 @@ set ::USE_SCIPY "false"
 # CMake Option for using OpenIGTLink library. Must be "OFF" or "ON", default is "OFF"
 set ::USE_OPENIGTLINK "ON"
 # CMake Option for using OpenCV library. Must be "OFF" or "ON", default is "OFF"
-set ::USE_OPENCV "ON"
+set ::USE_OPENCV "OFF"
  
 switch $::tcl_platform(os) {
     "SunOS" {
