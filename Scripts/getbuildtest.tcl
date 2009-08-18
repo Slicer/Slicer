@@ -493,6 +493,7 @@ runcmd $::CMAKE \
         -DSlicer3_USE_PYTHON=$::USE_PYTHON \
         -DSlicer3_USE_NUMPY=$::USE_NUMPY \
         -DSlicer3_USE_OPENIGTLINK=$::USE_OPENIGTLINK \
+        -DSlicer3_USE_OPENCV=$::USE_OPENCV \
         -DPYTHON_INCLUDE_PATH:PATH=$::PYTHON_INCLUDE \
         -DPYTHON_LIBRARY:FILEPATH=$::PYTHON_LIB \
         -DSandBox_DIR:FILEPATH=$Slicer3_LIB/NAMICSandBox \
