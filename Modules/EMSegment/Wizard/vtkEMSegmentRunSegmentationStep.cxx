@@ -749,6 +749,7 @@ void vtkEMSegmentRunSegmentationStep::ProcessRunRegistrationOutputGUIEvents(
         this->RunSegmentationOutVolumeSelector->GetSelected()->GetID());
       }
   }
+  /*
   else if (this->RunRenderWidget)
   {
     if (!this->RunRenderWidget->GetRenderer()->GetNumberOfPropsRendered())
@@ -982,6 +983,7 @@ void vtkEMSegmentRunSegmentationStep::ProcessRunRegistrationOutputGUIEvents(
       actor->Delete();
     }
   }
+*/
 }
 
 //----------------------------------------------------------------------------
