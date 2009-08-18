@@ -3000,7 +3000,7 @@ void vtkEMSegmentNodeParametersStep::VisualFeedback()
 
   vtkErrorMacro("inImage "<<inImage->GetScalarTypeAsString());
 
-  int incX, incY, incZ;
+  vtkIdType incX, incY, incZ;
   inImage->GetIncrements(incX,incY,incZ);
 
   float *ptr = static_cast<float*>(imageData->GetScalarPointer());
