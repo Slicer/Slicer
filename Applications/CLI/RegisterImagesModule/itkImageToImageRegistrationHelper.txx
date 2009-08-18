@@ -1192,33 +1192,14 @@ ImageToImageRegistrationHelper< TImage >
 template< class TImage >
 void
 ImageToImageRegistrationHelper< TImage >
-::SetFixedLandmarks( const std::vector<float> &fixedLandmarks )
+::SetFixedLandmarks( const std::vector<std::vector<float> > &fixedLandmarks )
 {
   m_FixedLandmarks.clear();
-  std::vector<float>::const_iterator i;
-  std::vector<float>::const_iterator end;
-  for ( i = fixedLandmarks.begin(), end = fixedLandmarks.end() ; i != end; )
+  for ( std::vector<std::vector<float> >::const_iterator i = fixedLandmarks.begin();
+        i != fixedLandmarks.end(); ++i)
     {
     LandmarkPointType landmark;
-    int j = 0;
-    while ( j < ImageDimension )
-      {
-      if ( i == end )
-        {
-        ExceptionObject e;
-        e.SetDescription("Insufficient number of arguments passed for landmarks");
-        e.SetLocation(__FILE__);
-        throw e;
-        }
-      landmark[j] = *(i);
-      ++j;
-      ++i;
-      }
-    if ( j != ImageDimension )
-      {
-      // no more floats, can't create more landmark
-      break;
-      }
+    std::copy(i->begin(), i->end(), landmark.Begin());
     m_FixedLandmarks.push_back(landmark);
     }
 }
@@ -1226,33 +1207,14 @@ ImageToImageRegistrationHelper< TImage >
 template< class TImage >
 void
 ImageToImageRegistrationHelper< TImage >
-::SetMovingLandmarks( const std::vector<float> &movingLandmarks )
+::SetMovingLandmarks( const std::vector<std::vector<float> > &movingLandmarks )
 {
   m_MovingLandmarks.clear();
-  std::vector<float>::const_iterator i;
-  std::vector<float>::const_iterator end;
-  for ( i = movingLandmarks.begin(), end = movingLandmarks.end() ; i != end; )
+  for ( std::vector<std::vector<float> >::const_iterator i = movingLandmarks.begin();
+        i != movingLandmarks.end(); ++i)
     {
     LandmarkPointType landmark;
-    int j = 0;
-    while ( j < ImageDimension )
-      {
-      if ( i == end )
-        {
-        ExceptionObject e;
-        e.SetDescription("Insufficient number of arguments passed for landmarks");
-        e.SetLocation(__FILE__);
-        throw e;
-        }
-      landmark[j] = *(i);
-      ++i;
-      ++j;
-      }
-    if ( j != ImageDimension )
-      {
-      // no more floats, can't create more landmark
-      break;
-      }
+    std::copy(i->begin(), i->end(), landmark.Begin());
     m_MovingLandmarks.push_back(landmark);
     }
 }

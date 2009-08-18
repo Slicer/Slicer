@@ -254,20 +254,20 @@
   <parameters advanced="true">
     <label>Advanced Initial Registration Parameters</label>
     <description>Parameters that determine how initial registration is performed</description>
-    <float-vector>
+    <point multiple="true">
       <name>fixedLandmarks</name>
       <description>Ordered list of landmarks in the fixed image</description>
       <label>Fixed landmarks</label>
       <longflag>fixedLandmarks</longflag>
       <default></default>
-    </float-vector>
-    <float-vector>
+    </point>
+    <point multiple="true">
       <name>movingLandmarks</name>
       <description>Ordered list of landmarks in the moving image</description>
       <label>Moving landmarks</label>
       <longflag>movingLandmarks</longflag>
       <default></default>
-    </float-vector>
+    </point>
   </parameters>
   <parameters advanced="true">
     <label>Advanced Rigid Registration Parameters</label>

@@ -106,7 +106,7 @@ class ImageToImageRegistrationHelper : public Object
     typedef typename InitialRegistrationMethodType::TransformType
                                                    InitialTransformType;
 
-    typedef std::vector< float >                   LandmarkVectorType;
+    typedef std::vector<std::vector< float >  >    LandmarkVectorType;
 
     typedef typename TImage::PointType          PointType;
 
