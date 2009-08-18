@@ -111,6 +111,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
 
   filter->SetInput( 0, reader1->GetOutput() );
   filter->SetInput( 1, resample->GetOutput() );
+  filter->SetOutsideValue( Replace );
 
   typename WriterType::Pointer writer = WriterType::New();
   itk::PluginFilterWatcher watchWriter(writer,
