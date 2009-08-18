@@ -44,11 +44,8 @@
 #include "vtkKWScale.h"
 
 #include "vtkImageChangeInformation.h"
-//TEST RESLICE
 
-#include "vtkImageReader2.h"
 #include "vtkMatrix4x4.h"
-#include "vtkImageReslice.h"
 #include "vtkLookupTable.h"
 #include "vtkImageMapToColors.h"
 #include "vtkImageActor.h"
@@ -68,14 +65,10 @@
 
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkKWEntryWithLabel.h"
-#include "vtkKWMultiColumnList.h"
 #include "vtkPointData.h"
 
 #include "vtkMRMLColorNode.h"
-#include "vtkImageReslice.h"
-#include "vtkExtractVOI.h"
 #include "vtkMRMLColorTableNode.h"
-#include "vtkMatrix4x4.h"
 
 #include "vtkEMSegmentAnatomicalStructureStep.h"
 
@@ -714,15 +707,12 @@ void vtkEMSegmentNodeParametersStep::ShowUserInterface()
         GetTreeNodeIntensityLabel(this->LeavesID[i]));
 
     char red[20];
-    double redDouble = colors[0];
     char green[20];
-    double greenDouble = colors[1];
     char blue[20];
-    double blueDouble = colors[2];
 
-    sprintf(red,"%f",redDouble);
-    sprintf(green,"%f",greenDouble);
-    sprintf(blue,"%f",blueDouble);
+    sprintf(red,  "%f",colors[0]);
+    sprintf(green,"%f",colors[1]);
+    sprintf(blue, "%f",colors[2]);
 
     char listColor[11] = {"        "};
 
@@ -2494,70 +2484,78 @@ void vtkEMSegmentNodeParametersStep::ProcessPointMovingGUIEvents(
   unsigned long event,
   void *callData)
 {
+  vtkErrorMacro("");
   if(event == vtkKWParameterValueFunctionEditor::PointChangedEvent)
-    {
-    int id = 2;
-    double node_value[6];
+  {
+    //int id = 2;
+    //double node_value[6];
 
-    this->HistogramColorFunction->
-       GetNodeValue(id, node_value);
+    //vtkErrorMacro("");
+    //this->HistogramColorFunction->
+    // GetNodeValue(id, node_value);
 
+    vtkErrorMacro("");
     this->GetLeavesRange();
+    vtkErrorMacro("");
     this->VisualFeedback();
-    }
+    vtkErrorMacro("");
+  }
 }
 
 //---------------------------------------------------------------------------
-void vtkEMSegmentNodeParametersStep::GetLeavesRange(){
-
-  int i = 0;
-  int j = 0;
+void vtkEMSegmentNodeParametersStep::GetLeavesRange()
+{
+  vtkErrorMacro("");
 
   double midmin;
   double midmax;
+
   double node_value_next[6];
   double node_value_prev[6];
   double node_value[6];
-  double * position = new double[this->NumberOfLeaves];
 
+  vtkErrorMacro("NumberOfLeaves "<<this->NumberOfLeaves);
 
-
-  while(i<(this->NumberOfLeaves))
+  if(this->NumberOfLeaves<1)
   {
-    this->HistogramColorFunction->GetNodeValue(i,
-        node_value);
+    vtkErrorMacro("NumberOfLeaves "<<this->NumberOfLeaves);
+    return;
+  }
+
+  double *position = new double[this->NumberOfLeaves];
+
+  for(int i=0; i<this->NumberOfLeaves; i++)
+  {
+    this->HistogramColorFunction->GetNodeValue(i,node_value);
     position[i] = node_value[0];
-    i++;
   }
 
   //loop for all leaves but the first one and last one
-  for(j = 1;j<(this->NumberOfLeaves)-1;j++)
+  vtkErrorMacro("");
+  for(int i=1;i<(this->NumberOfLeaves-1);i++)
   {
-    midmin = 0;
-    midmax = 0;
+    this->HistogramColorFunction->GetNodeValue(i-1,node_value_prev);
+    this->HistogramColorFunction->GetNodeValue(i,node_value);
+    this->HistogramColorFunction->GetNodeValue(i+1,node_value_next);
 
-    this->HistogramColorFunction->GetNodeValue(j-1,
-        node_value_prev);
-    this->HistogramColorFunction->GetNodeValue(j,
-        node_value);
-    this->HistogramColorFunction->GetNodeValue(j+1,
-        node_value_next);
+    midmin = node_value[0];
+    midmax = node_value_next[0];
 
-    midmin = node_value[0] - (position[j] -
-        position[j-1])*(1-node_value_prev[4]);
-    midmax = node_value_next[0] - (position[j+1] -
-        position[j])*(1-node_value[4]);
+    midmin -= (position[i] - position[i-1]) * (1-node_value_prev[4]);
+    midmax -= (position[i+1] - position[i]) * (1-node_value[4]);
 
-    this->LeavesRange[j*2] = midmin;
-    this->LeavesRange[j*2+1] = midmax;
+    vtkErrorMacro("");
+    this->LeavesRange[i+i]   = midmin;
+    this->LeavesRange[i+i+1] = midmax;
   }
 
-
+  vtkErrorMacro("");
   if( this->NumberOfLeaves > 2 )
   {
     this->LeavesRange[0] = position[0];
     this->LeavesRange[1] = this->LeavesRange[2];
 
+    vtkErrorMacro("");
     this->LeavesRange[(this->NumberOfLeaves)*2 - 2] = this->
       LeavesRange[(this->NumberOfLeaves)*2-3];
     this->LeavesRange[(this->NumberOfLeaves)*2 - 1] =
@@ -2570,16 +2568,18 @@ void vtkEMSegmentNodeParametersStep::GetLeavesRange(){
     this->LeavesRange[0] = position[0];
     this->LeavesRange[3] = position[1];
 
-    this->HistogramColorFunction->GetNodeValue(0,
-        node_value);
+    vtkErrorMacro("");
+    this->HistogramColorFunction->GetNodeValue(0,node_value);
 
     midmin = position[0] + (position[1] - position[0])*(node_value[4]);
 
     this->LeavesRange[1] = midmin;
     this->LeavesRange[2] = midmin;
-
   }
 
+  vtkErrorMacro("");
+  delete[] position;
+  vtkErrorMacro("");
 }
 
 //----------------------------------------------------------------------------
@@ -2841,485 +2841,303 @@ void vtkEMSegmentNodeParametersStep::ProcessPreviewGUIEvents(
      //std::cout<<"process preview gui event"<<std::endl;
     }
 }
-//--------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------
 void vtkEMSegmentNodeParametersStep::VisualFeedback()
 {
+  vtkErrorMacro("Visual Feedback");
 
   vtkSlicerApplicationGUI *applicationGUI = this->GetGUI()->
     GetApplicationGUI();
+
+  if(!applicationGUI)
+  {
+    vtkErrorMacro("No application GUI");
+    return;
+  }
+
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
-  // find input volume
+  if(!mrmlManager)
+  {
+    vtkErrorMacro("No mrmlManager");
+    return;
+  }
+
+  vtkErrorMacro("find input volume");
+
   if (!mrmlManager->GetSegmenterNode())
-    {
-    vtkErrorMacro("Segmenter node is null---aborting segmentation.");
+  {
+    vtkErrorMacro("Segmenter node is null: aborting segmentation");
     return;
-    }
-  vtkMRMLVolumeNode *inVolume  = applicationGUI->GetApplicationLogic()->
-    GetSliceLogic("Red")->GetLayerVolumeNode (0);
-  if (inVolume == NULL)
-    {
-    vtkErrorMacro("Can't get first target image.");
-    return;
-    }
-  // find output volume
-  vtkMRMLScalarVolumeNode *outVolume =
-    mrmlManager->GetOutputVolumeNode();
-  if (outVolume == NULL)
-    {
-    vtkErrorMacro("No output volume found---aborting segmentation.");
-    return;
-    }
+  }
 
-  vtkTransform* xyToijk = vtkTransform::New();
+  vtkMRMLVolumeNode *inVolume = applicationGUI->GetApplicationLogic()->
+    GetSliceLogic("Red")->GetLayerVolumeNode(0);
 
-  xyToijk  = applicationGUI->GetApplicationLogic()->GetSliceLogic("Red")->
-    GetBackgroundLayer()->GetXYToIJKTransform();
+  if(!inVolume)
+  {
+    vtkErrorMacro("Failed to retrieve first target image");
+    return;
+  }
+
+  vtkImageData *inImage = inVolume->GetImageData();
+
+  if(!inImage)
+  {
+    vtkErrorMacro("No input image");
+    return;
+  }
+
+  int extent[6];
+  inImage->GetWholeExtent(extent);
+
+  if( extent[0]>extent[1]||
+      extent[2]>extent[3]||
+      extent[4]>extent[5])
+  {
+    vtkErrorMacro("Invalid extent for input image: "
+        <<extent[0]<<" "<<extent[1]<<" "
+        <<extent[2]<<" "<<extent[3]<<" "
+        <<extent[4]<<" "<<extent[5]);
+    return;
+  }
+
+  vtkMRMLScalarVolumeNode *outVolume = mrmlManager->GetOutputVolumeNode();
+
+  if(!outVolume)
+  {
+    vtkErrorMacro("No output volume found: aborting segmentation.");
+    return;
+  }
+
+  vtkTransform *xyToijk = applicationGUI->GetApplicationLogic()->
+    GetSliceLogic("Red")->GetBackgroundLayer()->GetXYToIJKTransform();
 
   vtkMRMLSliceNode *snode = applicationGUI->GetMainSliceGUI("Red")->
     GetSliceNode();
 
-  unsigned int dimensionsOfTheRedBox[2];
-  snode->GetDimensions(dimensionsOfTheRedBox);
+  vtkErrorMacro("xyToijk:");
+  std::cout << *xyToijk;
 
-  double xRedBoxSize = dimensionsOfTheRedBox[0];
-  double yRedBoxSize = dimensionsOfTheRedBox[1];
+  unsigned int dim[3] = {0,0,0};
+  snode->GetDimensions(dim);
 
- // std::cout<<"Dimensions of the red slice"<<std::endl;
- // std::cout<<"X: "<<xRedBoxSize<<" Y: "<<yRedBoxSize<<std::endl;
+  vtkErrorMacro("dim "
+      << dim[0] << " "
+      << dim[1] << " "
+      << dim[2]);
 
-  // copy RASToIJK matrix, and other attributes from input to output
-  std::string name (outVolume->GetName());
-  std::string id (outVolume->GetID());
+  double xy0[4]  = {0,0,0,1};
+  double ijk0[4] = {0,0,0,1};
+
+  double xy1[4]  = {0,0,0,1};
+  double ijk1[4] = {0,0,0,1};
+
+  xy1[0] = dim[0];
+  xy1[1] = dim[1];
+
+  xyToijk->MultiplyPoint(xy0,ijk0);
+  xyToijk->MultiplyPoint(xy1,ijk1);
+
+  vtkErrorMacro("("
+      <<xy0[0]<<","
+      <<xy0[1]<<") -> "
+      <<ijk0[0]<<" "
+      <<ijk0[1]<<" "
+      <<ijk0[2]<<" "
+      <<ijk0[3]);
+
+  vtkErrorMacro("("
+      <<xy1[0]<<","
+      <<xy1[1]<<") -> "
+      <<ijk1[0]<<" "
+      <<ijk1[1]<<" "
+      <<ijk1[2]<<" "
+      <<ijk1[3]);
+
+  double bounds[6];
+
+  bounds[0] = ijk0[0] < ijk1[0] ? ijk0[0] : ijk1[0];
+  bounds[2] = ijk0[1] < ijk1[1] ? ijk0[1] : ijk1[1];
+  bounds[4] = ijk0[2] < ijk1[2] ? ijk0[2] : ijk1[2];
+
+  bounds[1] = ijk0[0] > ijk1[0] ? ijk0[0] : ijk1[0];
+  bounds[3] = ijk0[1] > ijk1[1] ? ijk0[1] : ijk1[1];
+  bounds[5] = ijk0[2] > ijk1[2] ? ijk0[2] : ijk1[2];
+
+  vtkErrorMacro("bounds "
+      <<bounds[0]<<" "<<bounds[1]<<" "
+      <<bounds[2]<<" "<<bounds[3]<<" "
+      <<bounds[4]<<" "<<bounds[5]);
+
+  int clipExt[6];
+
+  clipExt[0] = static_cast<int>(bounds[0]+0.5);
+  clipExt[1] = static_cast<int>(bounds[1]+0.5);
+  clipExt[2] = static_cast<int>(bounds[2]+0.5);
+  clipExt[3] = static_cast<int>(bounds[3]+0.5);
+  clipExt[4] = static_cast<int>(bounds[4]+0.5);
+  clipExt[5] = static_cast<int>(bounds[5]+0.5);
+
+  if(clipExt[0]<extent[0]) {clipExt[0]=extent[0];}
+  if(clipExt[1]>extent[1]) {clipExt[1]=extent[1];}
+  if(clipExt[2]<extent[2]) {clipExt[2]=extent[2];}
+  if(clipExt[3]>extent[3]) {clipExt[3]=extent[3];}
+  if(clipExt[4]<extent[4]) {clipExt[4]=extent[4];}
+  if(clipExt[5]>extent[5]) {clipExt[5]=extent[5];}
+
+  int clipDim[3];
+
+  clipDim[0] = clipExt[1]-clipExt[0]+1;
+  clipDim[1] = clipExt[3]-clipExt[2]+1;
+  clipDim[2] = clipExt[5]-clipExt[4]+1;
+
+  vtkImageData *imageData = vtkImageData::New();
+  imageData->SetScalarTypeToFloat();
+  imageData->SetDimensions(clipDim);
+  imageData->Update();
+
+  vtkErrorMacro("inImage "<<inImage->GetScalarTypeAsString());
+
+  int incX, incY, incZ;
+  inImage->GetIncrements(incX,incY,incZ);
+
+  float *ptr = static_cast<float*>(imageData->GetScalarPointer());
+
+  unsigned short *usPtr =
+    static_cast<unsigned short*>(inImage->GetScalarPointer());
+
+  float *fPtr = static_cast<float*>(inImage->GetScalarPointer());
+
+  switch(inImage->GetScalarType())
+  {
+    case VTK_UNSIGNED_SHORT:
+      for(int k=clipExt[4];k<=clipExt[5];k++)
+      {
+        for(int j=clipExt[2];j<=clipExt[3];j++)
+        {
+          for(int i=clipExt[0];i<=clipExt[1];i++,ptr++)
+          {
+            unsigned short usValue = usPtr[i*incX+j*incY+k*incZ];
+            *ptr = static_cast<float>(0.0);
+
+            if(usValue)
+            {
+              double value = static_cast<double>(usValue);
+              for(int l=0;l<this->NumberOfLeaves;l++)
+              {
+                if( value>=this->LeavesRange[2*l] &&
+                    value<=this->LeavesRange[2*l+1])
+                {
+                  *ptr = static_cast<float>(this->OrderedLabels[l]);
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }
+      break;
+    case VTK_FLOAT:
+      for(int k=clipExt[4];k<=clipExt[5];k++)
+      {
+        for(int j=clipExt[2];j<=clipExt[3];j++)
+        {
+          for(int i=clipExt[0];i<=clipExt[1];i++,ptr++)
+          {
+            float fValue = usPtr[i*incX+j*incY+k*incZ];
+            *ptr = static_cast<float>(0.0);
+
+            if(fValue)
+            {
+              double value = static_cast<double>(fValue);
+              for(int l=0;l<this->NumberOfLeaves;l++)
+              {
+                if( value>=this->LeavesRange[2*l] &&
+                    value<=this->LeavesRange[2*l+1])
+                {
+                  *ptr = static_cast<float>(this->OrderedLabels[l]);
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }
+      break;
+    default:
+      for(int k=clipExt[4];k<=clipExt[5];k++)
+      {
+        for(int j=clipExt[2];j<=clipExt[3];j++)
+        {
+          for(int i=clipExt[0];i<=clipExt[1];i++,ptr++)
+          {
+            double value = inImage->GetScalarComponentAsDouble(i,j,k,0);
+            *ptr = 0.0;
+
+            if(value)
+            {
+              for(int l=0;l<this->NumberOfLeaves;l++)
+              {
+                if( value>=this->LeavesRange[2*l] &&
+                    value<=this->LeavesRange[2*l+1])
+                {
+                  *ptr = this->OrderedLabels[l];
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }
+  }
+
+  vtkErrorMacro("copy RASToIJK matrix, and other attributes");
+  std::string name(outVolume->GetName());
+  std::string id(outVolume->GetID());
 
   outVolume->CopyOrientation(inVolume);
   outVolume->SetAndObserveTransformNodeID(inVolume->GetTransformNodeID());
   outVolume->SetName(name.c_str());
 
+  vtkErrorMacro("SetAndObserveImageData");
+  outVolume->SetAndObserveImageData(imageData);
+  imageData->Delete();
+  outVolume->LabelMapOn();
 
-  //GET SIZE OF THE ARRAY TO BE PROCESSED AND THE FIRST PIXEL IN FRAME
-
-  double xSliceSizeInTheRedBox = 0;
-  double ySliceSizeInTheRedBox = 0;
-  double xyPt[4];
-  double ijkPt[3];
-  int beginningOfTheSliceInTheRedBox[2];
-
-  xyPt[1] = (int)(0.5 * yRedBoxSize + 0.5);
-  xyPt[2] = 0;
-  xyPt[3] = 1;
-
-  int* extent  = inVolume->GetImageData()->GetWholeExtent();
-
-  for(int i = 0; i < xRedBoxSize; i++)
-    {
-    xyPt[0] = i;
-    xyToijk->MultiplyPoint(xyPt,ijkPt);
-
-    if (ijkPt[0]<0 ||
-        ijkPt[0]>=extent[1] ||
-        ijkPt[1]<0 ||
-        ijkPt[1]>=extent[3] ||
-        ijkPt[2]<0 || ijkPt[2]>=extent[5] )
-      {
-      //std::cout<<"OUT OF VOI"<<std::endl;
-      }
-    else
-      {
-      if(xSliceSizeInTheRedBox == 0)
-        {
-        beginningOfTheSliceInTheRedBox[0] = i;
-        }
-      xSliceSizeInTheRedBox++;
-      }
-    }
-
-  xyPt[0] = int(0.5*xRedBoxSize + 0.5);
-
-  for(int i = 0; i < yRedBoxSize; i++)
-    {
-    xyPt[1] = i;
-    xyToijk->MultiplyPoint(xyPt,ijkPt);
-
-    if(ijkPt[0]<0 ||
-        ijkPt[0]>=extent[1] ||
-        ijkPt[1]<0 ||
-        ijkPt[1]>=extent[3] ||
-        ijkPt[2]<0 ||
-        ijkPt[2]>=extent[5] )
-      {
-      //std::cout<<"OUT OF VOI"<<std::endl;
-      }
-    else
-      {
-      if(ySliceSizeInTheRedBox == 0)
-        {
-        beginningOfTheSliceInTheRedBox[1] = i;
-        }
-      ySliceSizeInTheRedBox++;
-      }
-    }
-  //std::cout<<"Extent of the input volume: "<< extent[0]<<" " <<extent[1]<<" "
-  //<<extent[2]<<" "<<extent[3]<<" "<<extent[4]<<" "<<extent[5]<<std::endl;
-  //std::cout<<"Size of the real slice XY: "<< xSliceSizeInTheRedBox<<" "
-  //<<ySliceSizeInTheRedBox<<std::endl;
-  //std::cout<<"Beginning of the real slice XY: "
-  //<< beginningOfTheSliceInTheRedBox[1]<<" "
-  //<<beginningOfTheSliceInTheRedBox[2]<<std::endl;
-
-  // GET BOUNDS OF THE ARRAY IN IJK
-  int ijkSliceSize[6];
-
-  xyPt[0] = xSliceSizeInTheRedBox;
-  xyPt[1] = 0;
-  xyPt[2] = 0;
-  xyPt[3] = 1;
-
-  double ijkPt1[3];
-  double ijkPt2[3];
-  double ijkPt3[3];
-
-  xyToijk->MultiplyPoint(xyPt,ijkPt1);
-
-  xyPt[0] = 0;
-  xyPt[1] = ySliceSizeInTheRedBox;
-  xyPt[2] = 0;
-  xyPt[3] = 1;
-
-  xyToijk->MultiplyPoint(xyPt,ijkPt2);
-
-  xyPt[0] = 0;
-  xyPt[1] = 0;
-  xyPt[2] = 0;
-  xyPt[3] = 1;
-
-  xyToijk->MultiplyPoint(xyPt,ijkPt3);
-
-  ijkSliceSize[0] = (int)(sqrt((ijkPt1[0]-ijkPt3[0])*(ijkPt1[0]-ijkPt3[0]))
-      +0.5);
-  ijkSliceSize[1] = (int)(sqrt((ijkPt2[0]-ijkPt3[0])*(ijkPt2[0]-ijkPt3[0]))
-      +0.5);
-  ijkSliceSize[2] = (int)(sqrt((ijkPt1[1]-ijkPt3[1])*(ijkPt1[1]-ijkPt3[1]))
-      +0.5);
-  ijkSliceSize[3] = (int)(sqrt((ijkPt2[1]-ijkPt3[1])*(ijkPt2[1]-ijkPt3[1]))
-      +0.5);
-  ijkSliceSize[4] = (int)(sqrt((ijkPt1[2]-ijkPt3[2])*(ijkPt1[2]-ijkPt3[2]))
-      +0.5);
-  ijkSliceSize[5] = (int)(sqrt((ijkPt2[2]-ijkPt3[2])*(ijkPt2[2]-ijkPt3[2]))
-      +0.5);
-
-
-  int compt = 0;
-  int pos[2];
-  for(int i = 0; i < 6; i++)
-    {
-    if (ijkSliceSize[i] > 0)
-      {
-      ijkSliceSize[compt] = ijkSliceSize[i];
-      if(i<2)
-        pos[compt] = 0;
-      if(i>1 && i<4)
-        pos[compt] = 1;
-      if(i>3)
-        pos[compt] = 2;
-      compt ++;
-      }
-    }
-
-  /*std::cout<<"SIZE OF THE ARRAY TO BE PROCESSED"<<std::endl;
-  std::cout<<"SIZE : "<< ijkSliceSize[0] <<" POSITION: "<< pos[0] <<std::endl;
-  std::cout<<"SIZE : "<< ijkSliceSize[1] <<" POSITION: "<< pos[1] <<std::endl;*/
-
-  double populateXY[4];
-  double populateIJK[4];
-
-  populateXY[2] = 0;
-  populateXY[3] = 1;
-
-  //GET EVOLUTION TO POPULATE (1 INCREMENT OR 0 DECREMENT)
-
-  double direction[4][2];
-  int start = beginningOfTheSliceInTheRedBox[0]+
-    beginningOfTheSliceInTheRedBox[1];
-  for(int i = beginningOfTheSliceInTheRedBox[0];
-      i < beginningOfTheSliceInTheRedBox[0]+2; i++)
-    {
-    for(int j = beginningOfTheSliceInTheRedBox[1];
-        j < beginningOfTheSliceInTheRedBox[1]+2; j++)
-      {
-      populateXY[0] = i;
-      populateXY[1] = j;
-      xyToijk->MultiplyPoint(populateXY,populateIJK);
-      direction[i+j-start][0] = populateIJK[pos[0]];
-      direction[i+j-start][1] = populateIJK[pos[1]];
-      }
-    }
-
-  double evolution[2];
-
-  if(direction[0][0] == direction [1][0])
-    {
-    if(direction[0][0]-direction[2][0] < 0)
-      {
-      evolution[0] = 1;
-      }
-    else
-      {
-      evolution[0] = 0;
-      }
-    }
-  else
-    {
-    if(direction[0][0]-direction[1][0] < 0)
-      {
-      evolution[0] = 1;
-      }
-    else
-      {
-      evolution[0] = 0;
-      }
-    }
-
-  if(direction[0][1] == direction [1][1])
-    {
-    if(direction[0][1]-direction[2][1] < 0)
-      {
-      evolution[1] = 1;
-      }
-    else
-      {
-      evolution[1] = 0;
-      }
-    }
-  else
-    {
-    if(direction[0][1]-direction[1][1] < 0)
-      {
-      evolution[1] = 1;
-      }
-    else
-      {
-      evolution[1] = 0;
-      }
-    }
-
-  xyPt[0] = beginningOfTheSliceInTheRedBox[0];
-  xyPt[1] = beginningOfTheSliceInTheRedBox[1];
-  xyPt[2] = 0;
-  xyPt[3] = 1;
-
-  int done = 0;
-  double originIJK[3];
-  xyToijk->MultiplyPoint(xyPt,originIJK);
-
-  int iMin, iMax, jMin, jMax, kMin, kMax;
-
-  if(pos[0]==0 && pos[1] == 1)
-    {
-    kMin = (int)(originIJK[2]+0.5);
-    kMax = (int)(originIJK[2]+0.5);
-    if(evolution[0] == 0 && evolution[1] == 0)
-      {
-      iMin = (int)(originIJK[0]-ijkSliceSize[0]+0.5);
-      iMax = (int)(originIJK[0]+0.5);
-      jMin = (int)(originIJK[1]-ijkSliceSize[1]+0.5);
-      jMax = (int)(originIJK[1]+0.5);
-      }
-    if(evolution[0] == 0 && evolution[1] == 1)
-      {
-      iMin = (int)(originIJK[0]-ijkSliceSize[0]+0.5);
-      iMax = (int)(originIJK[0]+0.5);
-      jMin = (int)(originIJK[1]+0.5);
-      jMax = (int)(originIJK[1]+ijkSliceSize[1]+0.5);
-      }
-    if(evolution[0] == 1 && evolution[1] == 0)
-      {
-      iMin = (int)(originIJK[0]+0.5);
-      iMax = (int)(originIJK[0]+ijkSliceSize[0]+0.5);
-      jMin = (int)(originIJK[1]-ijkSliceSize[1]+0.5);
-      jMax = (int)(originIJK[1]+0.5);
-      }
-    if(evolution[0] == 1 && evolution[1] == 1)
-      {
-      iMin = (int)(originIJK[0]+0.5);
-      iMax = (int)(originIJK[0]+ijkSliceSize[0]+0.5);
-      jMin = (int)(originIJK[1]+0.5);
-      jMax = (int)(originIJK[1]+ijkSliceSize[1]+0.5);
-      }
-    }
-
-  if(pos[0]==0 && pos[1] == 2)
-    {
-    jMin = (int)(originIJK[1]+0.5);
-    jMax = (int)(originIJK[1]+0.5);
-    if(evolution[0] == 0 && evolution[1] == 0)
-      {
-      iMin = (int)(originIJK[0]-ijkSliceSize[0]+0.5);
-      iMax = (int)(originIJK[0]+0.5);
-      kMin = (int)(originIJK[2]-ijkSliceSize[1]+0.5);
-      kMax = (int)(originIJK[2]+0.5);
-      }
-    if(evolution[0] == 0 && evolution[1] == 1)
-      {
-      iMin = (int)(originIJK[0]-ijkSliceSize[0]+0.5);
-      iMax = (int)(originIJK[0]+0.5);
-      kMin = (int)(originIJK[2]+0.5);
-      kMax = (int)(originIJK[2]+ijkSliceSize[1]+0.5);
-      }
-    if(evolution[0] == 1 && evolution[1] == 0)
-      {
-      iMin = (int)(originIJK[0]+0.5);
-      iMax = (int)(originIJK[0]+ijkSliceSize[0]+0.5);
-      kMin = (int)(originIJK[2]-ijkSliceSize[1]+0.5);
-      kMax = (int)(originIJK[2]+0.5);
-      }
-    if(evolution[0] == 1 && evolution[1] == 1)
-      {
-      iMin = (int)(originIJK[0]+0.5);
-      iMax = (int)(originIJK[0]+ijkSliceSize[0]+0.5);
-      kMin = (int)(originIJK[2]+0.5);
-      kMax = (int)(originIJK[2]+ijkSliceSize[1]+0.5);
-      }
-    }
-
-  if(pos[0]==1 && pos[1] == 2)
-    {
-    iMin = (int)(originIJK[0]+0.5);
-    iMax = (int)(originIJK[0]+0.5);
-    if(evolution[0] == 0 && evolution[1] == 0)
-      {
-      kMin = (int)(originIJK[2]-ijkSliceSize[1]+0.5);
-      kMax = (int)(originIJK[2]+0.5);
-      jMin = (int)(originIJK[1]-ijkSliceSize[0]+0.5);
-      jMax = (int)(originIJK[1]+0.5);
-      }
-    if(evolution[0] == 0 && evolution[1] == 1)
-      {
-      kMin = (int)(originIJK[2]+0.5);
-      kMax = (int)(originIJK[2]+ijkSliceSize[1]+0.5);
-      jMin = (int)(originIJK[1]-ijkSliceSize[0]+0.5);
-      jMax = (int)(originIJK[1]+0.5);
-      }
-    if(evolution[0] == 1 && evolution[1] == 0)
-      {
-      kMin = (int)(originIJK[2]-ijkSliceSize[1]+0.5);
-      kMax = (int)(originIJK[2]+0.5);
-      jMin = (int)(originIJK[1]+0.5);
-      jMax = (int)(originIJK[1]+ijkSliceSize[0]+0.5);
-      }
-    if(evolution[0] == 1 && evolution[1] == 1)
-      {
-      kMin = (int)(originIJK[2]+0.5);
-      kMax = (int)(originIJK[2]+ijkSliceSize[1]+0.5);
-      jMin = (int)(originIJK[1]+0.5);
-      jMax = (int)(originIJK[1]+ijkSliceSize[0]+0.5);
-      }
-    }
-
-  this->SliceExtracted = vtkExtractVOI::New();
-  this->SliceExtracted->SetInput(inVolume->GetImageData());
-  this->SliceExtracted->SetVOI(iMin,iMax,jMin,jMax,kMin,kMax);
-  this->SliceExtracted->Update();
-
-  //std::cout<<"Boundaries: \n"<<std::endl;
-  //std::cout<<"iMin: "<<iMin<<"ixMax: "<<iMax<<" jMin: "<<jMin<<" jMax: "
-  //<<jMax<<" kMin: "<<kMin<<" kMax: "<<kMax<<std::endl;
-
+  vtkErrorMacro("GetDisplayMode");
+  if(outVolume->GetDisplayNode())
+  {
+    outVolume->GetDisplayNode()->SetAndObserveColorNodeID(mrmlManager->
+        GetColormap());
+  }
 
   vtkMatrix4x4 *rasToIJK = vtkMatrix4x4::New();
   vtkMatrix4x4 *ijkToRAS = vtkMatrix4x4::New();
+
   inVolume->GetRASToIJKMatrix(rasToIJK);
   inVolume->GetIJKToRASMatrix(ijkToRAS);
 
-  double *inRAS = new double[4];
-  double *inIJK = new double[4];
+  double inRAS[4] = {0,0,0,1};
+  double inIJK[4] = {0,0,0,1};
 
-  inIJK[0] = iMin;
-  inIJK[1] = jMin;
-  inIJK[2] = kMin;
-  inIJK[3] = 1;
+  inIJK[0] = clipExt[0];
+  inIJK[1] = clipExt[2];
+  inIJK[2] = clipExt[4];
 
   ijkToRAS->MultiplyPoint(inIJK,inRAS);
+  vtkErrorMacro("inRAS "<<inRAS[0]<<" "<<inRAS[1]<<" "<<inRAS[2]);
 
-  // std::cout<<"IJK: "<<inIJK[0]<<"::" <<inIJK[1]<<"::" <<inIJK[2]<<std::endl;
-  //std::cout<<"RAS: "<<inRAS[0]<<"::" <<inRAS[1]<<"::" <<inRAS[2]<<std::endl;
-  //std::cout<<"origin0: "<<SliceOrigin[0]<<std::endl;
-  //std::cout<<"origin1: "<<SliceOrigin[1]<<std::endl;
-  //std::cout<<"origin2: "<<SliceOrigin[2]<<std::endl;
-
-  this->ArrayToAccessSliceValues = vtkImageData::New();
-  this->ArrayToAccessSliceValues->DeepCopy(this->SliceExtracted->GetOutput());
-
-  int ext[6];
-  inVolume->GetImageData()->GetWholeExtent(ext);
-
-  if(iMin<ext[0]) { iMin = ext[0]; }
-  if(iMin>ext[1]) { iMin = ext[1]; }
-
-  if(iMax<ext[0]) { iMax = ext[0]; }
-  if(iMax>ext[1]) { iMax = ext[1]; }
-
-  if(jMin<ext[2]) { jMin = ext[2]; }
-  if(jMin>ext[3]) { jMin = ext[3]; }
-
-  if(jMax<ext[2]) { jMax = ext[2]; }
-  if(jMax>ext[3]) { jMax = ext[3]; }
-
-  if(kMin<ext[4]) { kMin = ext[4]; }
-  if(kMin>ext[5]) { kMin = ext[5]; }
-
-  if(kMax<ext[4]) { kMax = ext[4]; }
-  if(kMax>ext[5]) { kMax = ext[5]; }
-
-  // Labels  determination
-  double pixelValue = 0.0;
-
-  for(int i=iMin;i<=iMax;i++)
-  {
-    for(int j=jMin;j<=jMax;j++)
-    {
-      for(int k=kMin;k<=kMax;k++)
-      {
-        pixelValue = this->ArrayToAccessSliceValues->
-          GetScalarComponentAsDouble(i,j,k,0);
-        for (int l=0;l<this->NumberOfLeaves;l++)
-          {
-          if((this->LeavesRange[2*l] <= pixelValue ) &&
-             (this->LeavesRange[2*l+1] > pixelValue) && !done)
-            {
-            pixelValue = this->OrderedLabels[l];
-            done = 1;
-            }
-          }
-        done = 0;
-        this->ArrayToAccessSliceValues->SetScalarComponentFromDouble(i,j,k,0,
-            pixelValue);
-        }
-      }
-    }
-
-  vtkImageChangeInformation *sliceInformation =
-    vtkImageChangeInformation::New();
-
-  sliceInformation->SetInput(this->ArrayToAccessSliceValues);
-  sliceInformation->SetOutputExtentStart(0,0,0);
-
-  outVolume->SetAndObserveImageData(sliceInformation->GetOutput());
-  outVolume->LabelMapOn();
-
-  if(outVolume->GetDisplayNode())
-    {
-    outVolume->GetDisplayNode()->SetAndObserveColorNodeID(mrmlManager->
-        GetColormap());
-    }
   outVolume->SetOrigin(inRAS[0],inRAS[1],inRAS[2]);
   outVolume->SetModifiedSinceRead(1);
-  this->ArrayToAccessSliceValues->Delete();
+  vtkErrorMacro("end");
 }
 
 //---------------------------------------------------------------------------
 void vtkEMSegmentNodeParametersStep::AddColumnListGUIObservers()
 {
+  vtkErrorMacro("");
   this->ClassAndNodeList->AddObserver(
     vtkKWMultiColumnList::CellUpdatedEvent,
     this->GetGUI()->GetGUICallbackCommand());
@@ -3328,6 +3146,7 @@ void vtkEMSegmentNodeParametersStep::AddColumnListGUIObservers()
 //---------------------------------------------------------------------------
 void vtkEMSegmentNodeParametersStep::RemoveColumnListGUIObservers()
 {
+  vtkErrorMacro("");
   this->ClassAndNodeList->RemoveObservers(
     vtkKWMultiColumnList::CellUpdatedEvent,
     this->GetGUI()->GetGUICallbackCommand());
@@ -3335,100 +3154,140 @@ void vtkEMSegmentNodeParametersStep::RemoveColumnListGUIObservers()
 
 //---------------------------------------------------------------------------
 void vtkEMSegmentNodeParametersStep::ProcessColumnListGUIEvents(
-  vtkObject *caller,
-  unsigned long event,
-  void *callData)
+  vtkObject *caller, unsigned long event, void *callData)
 {
-  if (caller == this->ClassAndNodeList &&
+  vtkErrorMacro("");
+
+  if( caller == this->ClassAndNodeList &&
       event == vtkKWMultiColumnList::CellUpdatedEvent)
-    {
+  {
+    vtkErrorMacro("");
     vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-    for(int i = 0; i < this->NumberOfLeaves ; i++)
+
+    for(int i=0; i < this->NumberOfLeaves; i++)
+    {
+      for(int j=0; j < this->NumberOfLeaves; j++)
       {
-      for(int j = 0; j < this->NumberOfLeaves ; j++)
+        vtkErrorMacro("Leaf " << i << " & " << j);
+        if(strcmp(this->ClassAndNodeList->GetCellText(i,0),
+              this->LeavesName[j]) == 0)
         {
-        if(strcmp(this->ClassAndNodeList->GetCellText(i,0),this->LeavesName[j])
-            == 0)
-          {
+          vtkErrorMacro("");
           this->LeavesIDNewOrder[i] = this->LeavesID[j];
-          }
         }
       }
+    }
 
-  double rgb[3];
-  double *colors;
-  vtkMRMLScene     *mrmlScene = mrmlManager->GetMRMLScene();
-  vtkMRMLColorNode *colorNode = vtkMRMLColorNode::SafeDownCast(mrmlScene->
-      GetNodeByID( mrmlManager->GetColormap() ));
+    vtkErrorMacro("");
 
-  double nodeInfo[6];
+    double rgb[3];
+    double *colors;
 
-  for(int i = 0; i < this->NumberOfLeaves ; i++)
+    vtkMRMLScene     *mrmlScene = mrmlManager->GetMRMLScene();
+    vtkMRMLColorNode *colorNode = vtkMRMLColorNode::SafeDownCast(mrmlScene->
+      GetNodeByID(mrmlManager->GetColormap()));
+
+    double nodeInfo[6];
+
+    vtkErrorMacro("");
+    for(int i=0; i < this->NumberOfLeaves; i++)
     {
-    //std::cout<<"ID: "<<this->LeavesIDNewOrder[i]<<std::endl;
-    //std::cout<<"Label: "<<mrmlManager->GetTreeNodeIntensityLabel(
-    //this->LeavesIDNewOrder[i])<<std::endl;
-    this->OrderedLabels[i] = mrmlManager->
-      GetTreeNodeIntensityLabel(this->LeavesIDNewOrder[i]);
-    //std::cout<<"color map: "<<mrmlManager->GetColormap()<<std::endl;
-    mrmlManager->GetTreeNodeColor(this->LeavesIDNewOrder[i], rgb);
-    colors = colorNode->GetLookupTable()->GetTableValue(mrmlManager->
+      vtkErrorMacro("Leaf " << i << "/" << this->NumberOfLeaves);
+
+      //std::cout<<"ID: "<<this->LeavesIDNewOrder[i]<<std::endl;
+      //std::cout<<"Label: "<<mrmlManager->GetTreeNodeIntensityLabel(
+      //this->LeavesIDNewOrder[i])<<std::endl;
+
+      this->OrderedLabels[i] = mrmlManager->
+        GetTreeNodeIntensityLabel(this->LeavesIDNewOrder[i]);
+
+      //std::cout<<"color map: "<<mrmlManager->GetColormap()<<std::endl;
+
+      mrmlManager->GetTreeNodeColor(this->LeavesIDNewOrder[i], rgb);
+      colors = colorNode->GetLookupTable()->GetTableValue(mrmlManager->
         GetTreeNodeIntensityLabel(this->LeavesIDNewOrder[i]));
 
-    char red[20];
-    double redDouble = colors[0];
-    char green[20];
-    double greenDouble = colors[1];
-    char blue[20];
-    double blueDouble = colors[2];
+      char red[20];
+      char green[20];
+      char blue[20];
 
-    sprintf(red,"%f",redDouble);
-    sprintf(green,"%f",greenDouble);
-    sprintf(blue,"%f",blueDouble);
+      sprintf(red,  "%f",colors[0]);
+      sprintf(green,"%f",colors[1]);
+      sprintf(blue, "%f",colors[2]);
 
-    this->HistogramColorFunction->GetNodeValue(i,
-        nodeInfo);
-    nodeInfo[1] = colors[0];
-    nodeInfo[2] = colors[1];
-    nodeInfo[3] = colors[2];
-    this->HistogramColorFunction->SetNodeValue(i,
-        nodeInfo);
-    this->HistogramVisualization->Update();
+      std::string r = red;
+      std::string g = green;
+      std::string b = blue;
 
-    char listColor[11] = {"        "};
+      vtkErrorMacro("colors "<<colors[0]<<" "<<colors[1]<<" "<<colors[2]);
 
-    listColor[0] = red[0];
-    listColor[1] = red[1];
-    listColor[2] = red[2];
+      vtkErrorMacro("red " << red);
+      vtkErrorMacro("green " << green);
+      vtkErrorMacro("blue " << blue);
 
-    listColor[4] = green[0];
-    listColor[5] = green[1];
-    listColor[6] = green[2];
+      double range[2];
+      this->HistogramColorFunction->GetRange(range);
+      vtkErrorMacro("range " << range[0] << " " << range[1]);
+      vtkErrorMacro("size " << this->HistogramColorFunction->GetSize());
 
-    listColor[8] = blue[0];
-    listColor[9] = blue[1];
-    listColor[10] = blue[2];
+      std::cout << *this->HistogramColorFunction;
+      vtkErrorMacro("i " << i);
+      this->HistogramColorFunction->GetNodeValue(i,nodeInfo);
 
-    //std::cout<<"new color: "<<listColor<<std::endl;
-    const char *color[20];
-    color[0] = listColor;
+      nodeInfo[1] = colors[0];
+      nodeInfo[2] = colors[1];
+      nodeInfo[3] = colors[2];
 
-    this->ClassAndNodeList->InsertCellText(i,2,color[0]);
-    this->ClassAndNodeList->SetCellWindowCommandToColorButton(i,2);
+      std::cout << *this->HistogramColorFunction;
+      vtkErrorMacro("i " << i);
+      this->HistogramColorFunction->SetNodeValue(i,nodeInfo);
+      std::cout << *this->HistogramVisualization;
+      vtkErrorMacro("HistogramVisualization Update");
+      this->HistogramVisualization->Update();
 
+      vtkErrorMacro("");
+
+      char listColor[11] = {"        "};
+
+      listColor[ 0] = red[0];
+      listColor[ 1] = red[1];
+      listColor[ 2] = red[2];
+      listColor[ 3] = ' ';
+      listColor[ 4] = green[0];
+      listColor[ 5] = green[1];
+      listColor[ 6] = green[2];
+      listColor[ 7] = ' ';
+      listColor[ 8] = blue[0];
+      listColor[ 9] = blue[1];
+      listColor[10] = blue[2];
+
+      vtkErrorMacro("");
+      //std::cout<<"new color: "<<listColor<<std::endl;
+      //const char *color[20];
+      //color[0] = listColor;
+
+      this->ClassAndNodeList->InsertCellText(i,2,listColor);
+      vtkErrorMacro("");
+      this->ClassAndNodeList->SetCellWindowCommandToColorButton(i,2);
+      vtkErrorMacro("");
     }
 
-
-  if(this->PreviewSelector->GetSelected() != NULL)
+    vtkErrorMacro("");
+    if(this->PreviewSelector->GetSelected() != NULL)
     {
-    this->VisualFeedback();
+      vtkErrorMacro("");
+      this->VisualFeedback();
+      vtkErrorMacro("");
     }
   }
+
+  vtkErrorMacro("");
 }
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentNodeParametersStep::HideUserInterface()
 {
+  vtkErrorMacro("");
   this->Superclass::HideUserInterface();
   this->RemovePointMovingGUIEvents();
   this->RemoveComputeWeightsButtonGUIEvents();
@@ -3437,3 +3296,4 @@ void vtkEMSegmentNodeParametersStep::HideUserInterface()
 
   this->ClassAndNodeList->DeleteAllRows();
 }
+

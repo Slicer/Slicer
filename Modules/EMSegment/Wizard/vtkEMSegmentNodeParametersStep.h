@@ -27,31 +27,18 @@ class vtkKWMultiColumnListWithScrollbarsWithLabel;
 class vtkKWFrame;
 class vtkKWEntryWithLabel;
 class vtkKWCheckButtonWithLabel;
-
 class vtkKWPushButton;
 
 class vtkSlicerNodeSelectorWidget;
 
-// NEW
 class vtkKWHistogram;
-
-class vtkImageReslice;
-
-class vtkExtractVOI;
-
 class vtkKWMultiColumnList;
-
 class vtkKWColorTransferFunctionEditor;
-
 class vtkKWEntryWithLabel;
-
 class vtkColorTransferFunction;
 
-class vtkImageData;
-
-// END NEW
-
-class VTK_EMSEGMENT_EXPORT vtkEMSegmentNodeParametersStep : public vtkEMSegmentStep
+class VTK_EMSEGMENT_EXPORT vtkEMSegmentNodeParametersStep :
+  public vtkEMSegmentStep
 {
 public:
   static vtkEMSegmentNodeParametersStep *New();
@@ -196,7 +183,6 @@ protected:
 
   vtkKWPushButton                    *UpdatePrior;
   vtkSlicerNodeSelectorWidget        *PreviewSelector;
-  vtkImageData                       *ArrayToAccessSliceValues;
   vtkKWMenuButtonWithLabel           *HistogramVolumeSelector;
   vtkKWHistogram                     *HistogramData;
   vtkKWColorTransferFunctionEditor   *HistogramVisualization;
@@ -204,7 +190,6 @@ protected:
   vtkKWEntryWithLabel                *NbOfClassesEntryLabel;
   vtkKWMultiColumnList               *ClassAndNodeList;
   vtkKWPushButton                    *ComputeWeightsButton;
-  vtkExtractVOI                      *SliceExtracted;
 
   virtual void PopulateIntensityDistributionTargetVolumeSelector();
   virtual void PopulateClassAndNodeList();
