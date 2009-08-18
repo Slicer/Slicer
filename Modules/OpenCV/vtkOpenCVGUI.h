@@ -46,6 +46,11 @@ class VTK_OpenCV_EXPORT vtkOpenCVGUI : public vtkSlicerModuleGUI
     this->SetLogic ( vtkObjectPointer (&this->Logic), logic );
   }
 
+  // Description: 
+  // Get the categorization of the module.
+  const char *GetCategory() const { return "IGT"; }
+
+
  protected:
   //----------------------------------------------------------------
   // Constructor / Destructor (proctected/private) 
