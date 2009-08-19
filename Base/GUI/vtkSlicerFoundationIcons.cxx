@@ -70,6 +70,8 @@ vtkSlicerFoundationIcons::vtkSlicerFoundationIcons ( )
   this->SlicerUnlinkIcon = vtkKWIcon::New();
   this->SlicerLinkIcon = vtkKWIcon::New();    
   this->SlicerCheckedVisibleIcon = vtkKWIcon::New();
+  this->SlicerVisibleNoFrameIcon = vtkKWIcon::New();
+  this->SlicerInvisibleNoFrameIcon = vtkKWIcon::New();
   this->SlicerVisibleIcon = vtkKWIcon::New();
   this->SlicerInvisibleIcon = vtkKWIcon::New();
   this->SlicerRefreshIcon = vtkKWIcon::New();
@@ -420,6 +422,16 @@ vtkSlicerFoundationIcons::~vtkSlicerFoundationIcons ( )
     {
     this->SlicerCheckedVisibleIcon->Delete();
     this->SlicerCheckedVisibleIcon = NULL;    
+    }
+  if ( this->SlicerVisibleNoFrameIcon)
+    {
+    this->SlicerVisibleNoFrameIcon->Delete();
+    this->SlicerVisibleNoFrameIcon = NULL;
+    }
+  if ( this->SlicerInvisibleNoFrameIcon )
+    {
+    this->SlicerInvisibleNoFrameIcon->Delete();
+    this->SlicerInvisibleNoFrameIcon = NULL;
     }
   if ( this->SlicerVisibleIcon)
     {
@@ -924,6 +936,16 @@ void vtkSlicerFoundationIcons::AssignImageDataToIcons ( )
                                    image_SlicerLink_height,
                                    image_SlicerLink_pixel_size,
                                    image_SlicerLink_length, 0);
+  this->SlicerVisibleNoFrameIcon->SetImage (image_SlicerVisibleNoFrame,
+                                            image_SlicerVisibleNoFrame_width,
+                                            image_SlicerVisibleNoFrame_height,
+                                            image_SlicerVisibleNoFrame_pixel_size,
+                                            image_SlicerVisibleNoFrame_length, 0);
+  this->SlicerInvisibleNoFrameIcon->SetImage (image_SlicerInvisibleNoFrame,
+                                            image_SlicerInvisibleNoFrame_width,
+                                            image_SlicerInvisibleNoFrame_height,
+                                            image_SlicerInvisibleNoFrame_pixel_size,
+                                            image_SlicerInvisibleNoFrame_length, 0);
   this->SlicerVisibleIcon->SetImage ( image_SlicerVisible,
                                       image_SlicerVisible_width,
                                       image_SlicerVisible_height,
@@ -1206,6 +1228,8 @@ void vtkSlicerFoundationIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "SlicerUnlinkIcon: " << this->GetSlicerUnlinkIcon() << "\n";
     os << indent << "SlicerLinkIcon: " << this->GetSlicerLinkIcon() << "\n";
     os << indent << "SlicerCheckedVisibleIcon: " << this->GetSlicerCheckedVisibleIcon() << "\n";
+    os << indent << "SlicerVisibleNoFrameIcon: " << this->GetSlicerVisibleNoFrameIcon() << "\n";
+    os << indent << "SlicerInvisibleNoFrameIcon: " << this->GetSlicerInvisibleNoFrameIcon() << "\n";
     os << indent << "SlicerVisibleIcon: " << this->GetSlicerVisibleIcon() << "\n";
     os << indent << "SlicerInvisibleIcon: " << this->GetSlicerInvisibleIcon() << "\n";
     os << indent << "SlicerRefreshIcon: " << this->GetSlicerRefreshIcon() << "\n";

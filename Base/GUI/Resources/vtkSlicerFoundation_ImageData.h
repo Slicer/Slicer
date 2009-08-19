@@ -971,6 +971,41 @@ static const unsigned char image_SlicerVisible[] =
 
 /* 
  * Resource generated for file:
+ *    SlicerInvisibleNoFrame.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerInvisibleNoFrame_width          = 15;
+static const unsigned int  image_SlicerInvisibleNoFrame_height         = 15;
+static const unsigned int  image_SlicerInvisibleNoFrame_pixel_size     = 3;
+static const unsigned long image_SlicerInvisibleNoFrame_length         = 340;
+static const unsigned long image_SlicerInvisibleNoFrame_decoded_length = 675;
+
+static const unsigned char image_SlicerInvisibleNoFrame[] = 
+  "eNr78+/PHzT0C4z+EUBv3r3ZsmnLnFlzpkybsmbVmjv37uBSCZQCKtizb8+TR0+Aus6cOr"
+  "Nk2RIgidVMoIFAZWjuAVqEx3x0627d2bNrDwR9+fSFSF0Q1NPVw8LEAkRAB2PKAt0MkQWi"
+  "K5euQASBbtPR0/nyDd2imrqakqISNI8AjXVxc8nJyoH7EeTleXN8vHxa2lqALocrBoYq0P"
+  "1ABtAQETGRkKCQlKQUoEUqaipAZUB/AQMKaumvP0cOHYEHFJANVAm0Zcu2LUsWQcMZqAVo"
+  "EbJjgMqA9oIYx45APPvm1RugpbiCFCgL0QWMO7gg4XTy6w9J4Y8VAQDpQEbN";
+
+/* 
+ * Resource generated for file:
+ *    SlicerVisibleNoFrame.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerVisibleNoFrame_width          = 15;
+static const unsigned int  image_SlicerVisibleNoFrame_height         = 15;
+static const unsigned int  image_SlicerVisibleNoFrame_pixel_size     = 3;
+static const unsigned long image_SlicerVisibleNoFrame_length         = 416;
+static const unsigned long image_SlicerVisibleNoFrame_decoded_length = 675;
+
+static const unsigned char image_SlicerVisibleNoFrame[] = 
+  "eNr78+/PHzLQLyjjzr07Z86dQRNEQ3t27Tly6AiEMWfWHIjKNevWoKj/BdUONHDJoiVAxp"
+  "ZtW6ZMmwJkAM2HiHz59gWq5defnq6eJ8+eANlAc0KCQmTkZESERHz8fFKSUt68ewPSvmnL"
+  "m1dvIIZDTAAaaGNnw8LEAkc6WjpTJk3Zs2/PmlVr0BwsIyWTk5WTkpYSEhYCUQw0HIhaml"
+  "qA9gIRxBYgAvqopq4GqAXo8ivXroiIiQAVA0mgONCRQMOBUmdOQYOopa0FqAbomJi4GCBi"
+  "YYM6AygItBFuJgQBvfDl0xeglIqSCsQNQD8CBSHeB0ohKwZyjxw7AmEAzQf6C6gRyAWSaC"
+  "ohIQn0MtAooJshQQr0EdCdwMDEVAyPaKAWoKeAJi9ZtgRiOOFE8ous1IWKAFVMFeU=";
+
+/* 
+ * Resource generated for file:
  *    SlicerVolume.png (zlib, base64) (image file)
  */
 static const unsigned int  image_SlicerVolume_width          = 21;

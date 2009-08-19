@@ -73,6 +73,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFoundationIcons : public vtkSlicerIcon
     vtkGetObjectMacro ( SlicerUnlinkIcon, vtkKWIcon );
     vtkGetObjectMacro ( SlicerLinkIcon, vtkKWIcon );    
     vtkGetObjectMacro ( SlicerCheckedVisibleIcon, vtkKWIcon );
+    vtkGetObjectMacro ( SlicerVisibleNoFrameIcon, vtkKWIcon );
+    vtkGetObjectMacro ( SlicerInvisibleNoFrameIcon, vtkKWIcon );
     vtkGetObjectMacro ( SlicerVisibleIcon, vtkKWIcon );
     vtkGetObjectMacro ( SlicerInvisibleIcon, vtkKWIcon );
     vtkGetObjectMacro ( SlicerRefreshIcon, vtkKWIcon );
@@ -181,6 +183,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFoundationIcons : public vtkSlicerIcon
     vtkKWIcon *SlicerUnlinkIcon;
     vtkKWIcon *SlicerLinkIcon;    
     vtkKWIcon *SlicerCheckedVisibleIcon;
+    vtkKWIcon *SlicerVisibleNoFrameIcon;
+    vtkKWIcon *SlicerInvisibleNoFrameIcon;
     vtkKWIcon *SlicerVisibleIcon;
     vtkKWIcon *SlicerInvisibleIcon;
     vtkKWIcon *SlicerRefreshIcon;
