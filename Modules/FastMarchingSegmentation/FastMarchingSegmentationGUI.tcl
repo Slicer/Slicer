@@ -328,6 +328,10 @@ proc FastMarchingSegmentationProcessGUIEvents {this caller event} {
       return
     }
 
+    FastMarchingSegmentationErrorDialog $this "WARNING: The segmentation \
+    produced by this method cannot approach closer than 3 pixels to the \
+    boundary of the image.\n\nPlease make sure there is sufficient pixel margin \
+    around the structure you are trying to segment!"
     # try to prevent user from messing up the module
     FastMarchingSegmentationDisableIOFrameGUI $this
 
@@ -389,6 +393,7 @@ proc FastMarchingSegmentationProcessGUIEvents {this caller event} {
     set selectionNode [[[$this GetLogic] GetApplicationLogic] GetSelectionNode]
     set fmFiducialListID [ [$::FastMarchingSegmentation($this,fiducialsSelector) GetSelected] GetID ]
     set fmFiducialList [$::slicer3::MRMLScene GetNodeByID $fmFiducialListID]
+    puts "Setting props for $fmFiducialList"
     $selectionNode SetReferenceActiveFiducialListID $fmFiducialListID
     $fmFiducialList SetGlyphTypeFromString "Sphere3D"
     $fmFiducialList SetSymbolScale 2
