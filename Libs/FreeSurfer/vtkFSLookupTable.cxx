@@ -103,6 +103,7 @@ void vtkFSLookupTable::SetLutTypeToHeat()
     this->LutType = this->FSLUTHEAT;   
     this->FMid = 2.0;
     this->LowThresh = -100.0;
+    this->HiThresh = 10000.0;
     this->Reverse = 0;
     this->Truncate = 0;
     this->Offset = 2.0;
@@ -174,14 +175,9 @@ void vtkFSLookupTable::SetLutTypeToGreenRed()
 // What a strange code ...
 double *vtkFSLookupTable::GetRange()
 {
-    double range[2];
+    this->SetTableRange(this->LowThresh, this->HiThresh);
 
-    range[0] = this->LowThresh;
-    range[1] = this->HiThresh;
-
-    //return (double *)NULL;
-    return (double *)range;
-    
+    return this->GetTableRange();    
 }
 
 //------------------------------------------------------------------------------
