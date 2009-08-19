@@ -6,6 +6,8 @@
 #include "vtkSlicerSliceLogic.h"
 #include "vtkKWScale.h"
 
+#define TUTORIAL_XNAT_SCENE "http://xnd.slicer.org:8000/data/20090803T130148Z/ChangetrackerTutorial2009.mrml"
+
 class vtkChangeTrackerLogic;
 class vtkMRMLChangeTrackerNode;
 class vtkKWWizardWidget;
@@ -16,6 +18,7 @@ class vtkChangeTrackerTypeStep;
 class vtkChangeTrackerAnalysisStep;
 class vtkImageData;
 class vtkMRMLROINode;
+class vtkKWPushButton;
 
 class VTK_CHANGETRACKER_EXPORT vtkChangeTrackerGUI : 
   public vtkSlicerModuleGUI
@@ -135,6 +138,8 @@ public:
 
   void ObserveMRMLROINode(vtkMRMLROINode* roi);
 
+  void LoadTutorialData();
+
 protected:
    static void SliceLogicCallback(vtkObject *caller, unsigned long event, void *clientData, void *callData );
 private:
@@ -170,6 +175,8 @@ private:
   vtkSlicerSliceLogic *SliceLogic;
   vtkKWScale *SliceController_OffsetScale;
   vtkCallbackCommand *SliceLogicCallbackCommand;
+
+  vtkKWPushButton *TutorialButton;
 
   // Wizard step cannot observe MRML events
   vtkMRMLROINode *roiNode;

@@ -78,6 +78,8 @@ vtkChangeTrackerGUI::vtkChangeTrackerGUI()
   this->Logo = logo;
   logo->Delete();
 
+  this->TutorialButton = NULL;
+
   this->ModuleEntered = false;
 }
 
@@ -124,6 +126,11 @@ vtkChangeTrackerGUI::~vtkChangeTrackerGUI()
     {
     this->AnalysisStep->Delete();
     this->AnalysisStep = NULL;
+    }
+  if (this->TutorialButton)
+    {
+    this->TutorialButton->Delete();
+    this->TutorialButton = NULL;
     }
 }
 
@@ -388,7 +395,23 @@ void vtkChangeTrackerGUI::BuildGUI()
     app->Script("pack %s", logoLabel->GetWidgetName() );
     logoLabel->Delete();
   }
- 
+
+  // add the ability to load tutorial data
+  if(!this->TutorialButton)
+    {
+    this->TutorialButton = vtkKWPushButton::New();
+    }
+
+  if (!this->TutorialButton->IsCreated()) {
+    this->TutorialButton->SetParent(this->GetHelpAndAboutFrame()->GetFrame());
+    this->TutorialButton->Create();
+    this->TutorialButton->SetText("Load Tutorial data");
+    this->TutorialButton->SetBalloonHelpString("Load the tutorial data.");
+    this->TutorialButton->SetCommand(this, "LoadTutorialData");
+  }
+  this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", 
+               this->TutorialButton->GetWidgetName());
+
   // -----------------------------------------------------------------------
   // Define Wizard with the order of the steps
 
@@ -671,4 +694,12 @@ void vtkChangeTrackerGUI::PropagateVolumeSelection() {
 
 void vtkChangeTrackerGUI::ObserveMRMLROINode(vtkMRMLROINode* roi){
     vtkSetAndObserveMRMLNodeMacro(this->roiNode, roi);
+}
+
+void vtkChangeTrackerGUI::LoadTutorialData(){
+  vtkMRMLScene *scene = this->GetNode()->GetScene();
+  std::cerr << "Downloading the tutorial scene!" << std::endl;
+  scene->SetURL(TUTORIAL_XNAT_SCENE);
+  scene->Connect();
+  std::cerr << "Done" << std::endl;
 }
