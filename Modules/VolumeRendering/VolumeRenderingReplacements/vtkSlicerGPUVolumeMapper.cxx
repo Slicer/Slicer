@@ -43,14 +43,13 @@ vtkInstantiatorNewMacro(vtkSlicerGPUVolumeMapper);
 //  volume 2   normal.A.x   normal.A.y    normal.A.z    normal.A.mag  
 //  volume 3   normal.B.x   normal.B.y    normal.B.z    normal.B.mag
 //  
-//  normal calculated at run time
 
 template <class T>
 void vtkSlicerGPUVolumeMapperComputeScalars( T *dataPtr,
                                                 T *dataPtr1,
                                                 T *dataPtr2,
                                                vtkSlicerGPUVolumeMapper *me,
-                                               float offset, float scale,
+                                               float offset, float scale, float offset1, float scale1,
                                                unsigned char *volume1)
 {
   T              *inPtr;
@@ -101,7 +100,7 @@ void vtkSlicerGPUVolumeMapperComputeScalars( T *dataPtr,
         //1
         if (inPtr1)
         {
-            idx = static_cast<unsigned char>((*(inPtr1++) + offset) * scale);
+            idx = static_cast<unsigned char>((*(inPtr1++) + offset1) * scale1);
             *(outPtr++) = idx;
         }
         else
@@ -198,7 +197,7 @@ void vtkSlicerGPUVolumeMapperComputeScalars( T *dataPtr,
                   (1.0-wx)*(    wy)*(    wz)*G +
                   (    wx)*(    wy)*(    wz)*H;
 
-                idx = static_cast<unsigned char>((val + offset)*scale);
+                idx = static_cast<unsigned char>((val + offset1)*scale1);
                 *(outPtr++) = idx;
             }
             else
@@ -615,29 +614,26 @@ int vtkSlicerGPUVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
  
   // Find the scalar range
   double scalarRange[2];
-  double scalarRange1[2], scalarRange2[2];
+  double scalarRange1[2];
+//  double scalarRange2[2];
   
-  input->GetPointData()->GetScalars()->GetRange(scalarRange1, 0);
+  input->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
   
   if (input1)
-    input1->GetPointData()->GetScalars()->GetRange(scalarRange2, 0);
+    input1->GetPointData()->GetScalars()->GetRange(scalarRange1, 0);
   else
-    input->GetPointData()->GetScalars()->GetRange(scalarRange2, 0);
-    
-  //find scalar range for two inputs
-  scalarRange[0] = scalarRange1[0] < scalarRange2[0] ? scalarRange1[0] : scalarRange2[0];
-  scalarRange[1] = scalarRange1[1] > scalarRange2[1] ? scalarRange1[1] : scalarRange2[1];
- 
+    input->GetPointData()->GetScalars()->GetRange(scalarRange1, 0);
+  
   // Is the difference between max and min less than 4096? If so, and if
   // the data is not of float or double type, use a simple offset mapping.
   // If the difference between max and min is 4096 or greater, or the data
   // is of type float or double, we must use an offset / scaling mapping.
   // In this case, the array size will be 4096 - we need to figure out the 
   // offset and scale factor.
-  float offset;
-  float scale;
+  float offset, offset1;
+  float scale, scale1;
  
-  int arraySizeNeeded;
+  int arraySizeNeeded, arraySizeNeeded1;
  
   int scalarType = input->GetScalarType();
 
@@ -655,11 +651,40 @@ int vtkSlicerGPUVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
     offset          = -scalarRange[0]; 
     scale           = 1.0;
    }
- 
+
+  arraySizeNeeded1 = arraySizeNeeded;
+  offset1 = offset;
+  scale1 = scale;
+  
+  if (input1)
+  {
+    int scalarType = input1->GetScalarType();
+
+    if ( scalarType == VTK_FLOAT ||
+        scalarType == VTK_DOUBLE ||
+        scalarRange1[1] - scalarRange1[0] > 255 )
+     {
+     arraySizeNeeded1 = 256;
+     offset1          = -scalarRange1[0];
+     scale1           = 255.0 / (scalarRange1[1] - scalarRange1[0]);
+     }
+    else
+     {
+     arraySizeNeeded1 = (int)(scalarRange1[1] - scalarRange1[0] + 1);
+     offset1          = -scalarRange1[0]; 
+     scale1           = 1.0;
+    } 
+  }
+  
   this->ScalarOffset = offset;
   this->ScalarScale = scale;
   
-  this->ColorTableSize   = arraySizeNeeded;
+  this->ColorTableSize = arraySizeNeeded;
+
+  this->ScalarOffset2nd = offset1;
+  this->ScalarScale2nd = scale1;
+  
+  this->ColorTableSize2nd = arraySizeNeeded1;
   
   // Save the volume size
   this->VolumeDimensions[0] = powerOfTwoDim[0];
@@ -688,7 +713,7 @@ int vtkSlicerGPUVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
     vtkTemplateMacro(
       vtkSlicerGPUVolumeMapperComputeScalars(
         (VTK_TT *)(dataPtr), (VTK_TT*)(dataPtr1), (VTK_TT*)(dataPtr2),
-        this, offset, scale,
+        this, offset, scale, offset1, scale1,
         this->Volume1));
     }
   
@@ -980,6 +1005,7 @@ int vtkSlicerGPUVolumeMapper::UpdateColorLookup( vtkVolume *vol )
   input->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
   
   int arraySizeNeeded = this->ColorTableSize;
+  int arraySizeNeeded1 = this->ColorTableSize2nd;
 
   // Sample the transfer functions between the min and max.
   if ( colorChannels == 1 )
@@ -1001,10 +1027,7 @@ int vtkSlicerGPUVolumeMapper::UpdateColorLookup( vtkVolume *vol )
   if (input1)
     input1->GetPointData()->GetScalars()->GetRange(scalarRange1, 0);
   else
-  {
-    scalarRange1[0] = 0.0;
-    scalarRange1[1] = 0.0;
-  }
+    input->GetPointData()->GetScalars()->GetRange(scalarRange1, 0);
 
   memset(this->TempArray11, 0, sizeof(float)*3*4096);
   memset(this->TempArray21, 0, sizeof(float)*4096);
@@ -1013,16 +1036,16 @@ int vtkSlicerGPUVolumeMapper::UpdateColorLookup( vtkVolume *vol )
   if ( colorChannels1 == 1 )
   {
     if (grayFunc1)
-        grayFunc1->GetTable( scalarRange1[0], scalarRange1[1], arraySizeNeeded, this->TempArray11 );      
+        grayFunc1->GetTable( scalarRange1[0], scalarRange1[1], arraySizeNeeded1, this->TempArray11 );      
   }
   else
   {
     if (rgbFunc1)
-        rgbFunc1->GetTable( scalarRange1[0], scalarRange1[1], arraySizeNeeded, this->TempArray11 );
+        rgbFunc1->GetTable( scalarRange1[0], scalarRange1[1], arraySizeNeeded1, this->TempArray11 );
   }
   
   if (scalarOpacityFunc1)
-    scalarOpacityFunc1->GetTable( scalarRange1[0], scalarRange1[1], arraySizeNeeded, this->TempArray21 );
+    scalarOpacityFunc1->GetTable( scalarRange1[0], scalarRange1[1], arraySizeNeeded1, this->TempArray21 );
 
   float goArray1[256];
   memset(goArray1, 0, sizeof(float)*256);

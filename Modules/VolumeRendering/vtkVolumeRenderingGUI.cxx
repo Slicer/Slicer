@@ -367,6 +367,7 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
     this->NS_ImageDataFg->SetParent(inputVolumeFrame->GetFrame());
     this->NS_ImageDataFg->Create();
     this->NS_ImageDataFg->NoneEnabledOn();
+    this->NS_ImageDataFg->EnabledOff();
     this->NS_ImageDataFg->SetLabelText("Source:");
     this->NS_ImageDataFg->SetBalloonHelpString("Select background volume to render");
     this->NS_ImageDataFg->SetLabelWidth(labelWidth);
@@ -434,6 +435,7 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
     this->NS_ImageDataLabelmap->SetParent(inputVolumeFrame->GetFrame());
     this->NS_ImageDataLabelmap->Create();
     this->NS_ImageDataLabelmap->NoneEnabledOn();
+    this->NS_ImageDataLabelmap->EnabledOff();
     this->NS_ImageDataLabelmap->SetLabelText("Source:");
     this->NS_ImageDataLabelmap->SetBalloonHelpString("Select labelmap volume to render.");
     this->NS_ImageDataLabelmap->SetLabelWidth(labelWidth);
@@ -1051,6 +1053,8 @@ void vtkVolumeRenderingGUI::UpdateGUI(void)
     this->NS_VolumeRenderingDataScene->NoneEnabledOff();
     this->EWL_CreateNewVolumeRenderingNode->EnabledOn();
     this->NS_VolumeRenderingDataSlicer->EnabledOn();
+    
+    this->NS_ImageDataFg->EnabledOn();
     }
   else
     {
@@ -1061,6 +1065,8 @@ void vtkVolumeRenderingGUI::UpdateGUI(void)
     this->NS_VolumeRenderingDataScene->SetSelected(NULL);
     this->NS_VolumeRenderingDataScene->EnabledOff();
     this->NS_VolumeRenderingDataSlicer->EnabledOff();
+    
+    this->NS_ImageDataFg->EnabledOff();//if bg is not selected then turn off fg and labelmap
     }
   
   if(this->NS_ImageDataFg->GetSelected()!=NULL)

@@ -104,6 +104,9 @@ protected:
   float                     ScalarOffset;
   float                     ScalarScale;
   
+  float                     ScalarOffset2nd;
+  float                     ScalarScale2nd;
+  
   float                     Framerate;
   
   unsigned char            *Volume1;
@@ -138,6 +141,7 @@ protected:
   unsigned char             ColorLookup2nd[256*256*4];
   float                     TempArray11[3*4096];
   float                     TempArray21[4096];
+  int                       ColorTableSize2nd;
   
   vtkTimeStamp              SavedTextureMTime;
   vtkTimeStamp              SavedTextureMTime2nd;

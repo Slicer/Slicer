@@ -772,6 +772,16 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
               this->MapperGPURaycastII->SetInternalVolumeSize(400);
               this->MapperTexture->SetInternalVolumeSize(256);
               break;
+            case 4://1.5G
+              this->MapperGPURaycast->SetInternalVolumeSize(460);
+              this->MapperGPURaycastII->SetInternalVolumeSize(460);
+              this->MapperTexture->SetInternalVolumeSize(256);
+              break;
+            case 5://2.0G
+              this->MapperGPURaycast->SetInternalVolumeSize(512);
+              this->MapperGPURaycastII->SetInternalVolumeSize(512);
+              this->MapperTexture->SetInternalVolumeSize(512);
+              break;
             }
         }
         
@@ -1639,6 +1649,16 @@ void vtkSlicerVRGrayscaleHelper::ProcessGPUMemorySize(int id)
         this->MapperGPURaycastII->SetInternalVolumeSize(400);
         this->MapperTexture->SetInternalVolumeSize(256);
         break;
+    case 4://1.5G
+        this->MapperGPURaycast->SetInternalVolumeSize(460);
+        this->MapperGPURaycastII->SetInternalVolumeSize(460);
+        this->MapperTexture->SetInternalVolumeSize(256);
+        break;
+    case 5://2.0G
+        this->MapperGPURaycast->SetInternalVolumeSize(512);
+        this->MapperGPURaycastII->SetInternalVolumeSize(512);
+        this->MapperTexture->SetInternalVolumeSize(512);
+        break;
     }
     
     this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
@@ -2115,7 +2135,11 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->MB_GPUMemorySize->GetWidget()->GetMenu()->AddRadioButton("512M");
         this->MB_GPUMemorySize->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessGPUMemorySize 2");
         this->MB_GPUMemorySize->GetWidget()->GetMenu()->AddRadioButton("1024M");
-        this->MB_GPUMemorySize->GetWidget()->GetMenu()->SetItemCommand(3, this,"ProcessGPUMemorySize 3");        
+        this->MB_GPUMemorySize->GetWidget()->GetMenu()->SetItemCommand(3, this,"ProcessGPUMemorySize 3");
+        this->MB_GPUMemorySize->GetWidget()->GetMenu()->AddRadioButton("1.5G");
+        this->MB_GPUMemorySize->GetWidget()->GetMenu()->SetItemCommand(4, this,"ProcessGPUMemorySize 4");
+        this->MB_GPUMemorySize->GetWidget()->GetMenu()->AddRadioButton("2.0G");
+        this->MB_GPUMemorySize->GetWidget()->GetMenu()->SetItemCommand(5, this,"ProcessGPUMemorySize 5");
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPUMemorySize->GetWidgetName() );
         
         this->MB_GPUMemorySize->GetWidget()->SetValue("256M");
@@ -2133,7 +2157,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->SC_ExpectedFPS=vtkKWScale::New();
         this->SC_ExpectedFPS->SetParent(this->FrameFPS->GetFrame());
         this->SC_ExpectedFPS->Create();
-        this->SC_ExpectedFPS->SetBalloonHelpString("Adjust performance/quality. 1 fps: slow and high quality. 20 fps: fast and low quality.");
+        this->SC_ExpectedFPS->SetBalloonHelpString("Adjust performance/quality. 1 fps: low performance/high quality. 20 fps: high performance/low quality.");
         this->SC_ExpectedFPS->SetRange(1,20); 
         this->SC_ExpectedFPS->SetResolution(1);
         this->SC_ExpectedFPS->SetValue(5.0);

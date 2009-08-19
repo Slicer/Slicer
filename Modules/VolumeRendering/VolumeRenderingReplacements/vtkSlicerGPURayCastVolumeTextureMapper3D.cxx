@@ -197,7 +197,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::AdaptivePerformanceControl()
   {
     this->RaySteps += 10;
   }
-  else if (this->TimeToDraw > 1.125/this->Framerate)//reduce ray steps to ensure performance
+  else if (this->TimeToDraw > 1.05/this->Framerate)//reduce ray steps to ensure performance
   {
     this->RaySteps *= 0.65f;
   }
