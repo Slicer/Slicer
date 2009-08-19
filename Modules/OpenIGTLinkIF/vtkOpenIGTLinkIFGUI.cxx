@@ -102,9 +102,6 @@ const char *vtkOpenIGTLinkIFGUI::ConnectorStatusStr[vtkMRMLIGTLConnectorNode::NU
 vtkOpenIGTLinkIFGUI::vtkOpenIGTLinkIFGUI ( )
 {
 
-  std::cerr << "vtkOpenIGTLinkIFGUI::vtkOpenIGTLinkIFGUI ( ) begin" << std::endl;
-
-
   //----------------------------------------------------------------
   // Logic values
   
@@ -175,9 +172,8 @@ vtkOpenIGTLinkIFGUI::vtkOpenIGTLinkIFGUI ( )
   this->IOConfigTreeIOList.clear();
   this->IOConfigTreeNodeList.clear();
 
-  std::cerr << "vtkOpenIGTLinkIFGUI::vtkOpenIGTLinkIFGUI ( ) end" << std::endl;
-
 }
+
 
 //---------------------------------------------------------------------------
 vtkOpenIGTLinkIFGUI::~vtkOpenIGTLinkIFGUI ( )
