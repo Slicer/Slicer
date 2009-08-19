@@ -97,7 +97,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
   correcter->SetMaskImage( maskshrinker->GetOutput() );
   correcter->SetMaximumNumberOfIterations( numberOfIterations );
   correcter->SetNumberOfFittingLevels(numberOfFitting);
-  correcter->SetWienerFilterNoise(wienerFilterNoise);
+  correcter->SetWeinerFilterNoise(wienerFilterNoise);
   correcter->SetBiasFieldFullWidthAtHalfMaximum(biasFieldFullWidthAtHalfMaximum);
   correcter->SetConvergenceThreshold(convergenceThreshold);
 
