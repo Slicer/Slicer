@@ -27,9 +27,11 @@ set(include_dirs
 
 IF(Slicer3_USE_QT)
   set(include_dirs ${include_dirs} ${QT_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR} ${QT_QTCORE_INCLUDE_DIR})
-#  QT4_WRAP_UI(UI_SRCS GUI4.ui)
   QT4_WRAP_CPP(MOC_SRCS QtSlicerNodeSelectorWidget.h)
-  SET(SRCS ${SRCS} ${MOC_SRCS} QtApp.cxx QtApp.h QtSlicerNodeSelectorWidget.cxx QtSlicerNodeSelectorWidget.h)
+  SET(SRCS ${SRCS} ${MOC_SRCS} 
+           QtApp.cxx QtApp.h
+           QtSlicerNodeSelectorWidget.cxx QtSlicerNodeSelectorWidget.h)
+  SET(QT_LIBRARIES ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
 ENDIF(Slicer3_USE_QT)
 
 include_directories(${include_dirs})
@@ -181,11 +183,19 @@ add_library(${lib_name}
 )
 target_link_libraries(${lib_name} 
   ${KWWidgets_LIBRARIES}
+  ${QT_LIBRARIES}
   ModuleDescriptionParser
   SlicerBaseLogic
   FreeSurfer
   RemoteIO
   )
+
+# Apply user-defined properties to the library target.
+IF(Slicer3_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
+     ${Slicer3_LIBRARY_PROPERTIES}
+  )
+ENDIF(Slicer3_LIBRARY_PROPERTIES)
 
 
 slicer3_get_persistent_property(Slicer3_Base_LIBRARIES tmp)
