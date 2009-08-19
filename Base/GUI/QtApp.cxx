@@ -49,8 +49,8 @@ void QtApp::BuildGUI()
 
   box->setLayout(vbox);
 
-  this->qNodeSelector->connect(this->qNodeSelector, SIGNAL(NodeSelected(QString&)), edit, SLOT(setText ( const QString &)));
-  this->qNodeSelector->connect(this->qNodeSelector, SIGNAL(NodeSelected(QString&)), button, SLOT(setText ( const QString &)));
+  this->qNodeSelector->connect(this->qNodeSelector, SIGNAL(NodeSelected(const QString&)), edit, SLOT(setText ( const QString &)));
+  this->qNodeSelector->connect(this->qNodeSelector, SIGNAL(NodeSelected(const QString&)), button, SLOT(setText ( const QString &)));
 
   box->show();
 

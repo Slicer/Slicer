@@ -203,7 +203,7 @@ public slots:
   void Select(QAction *);
 
 Q_SIGNALS:
-  void NodeSelected(QString &id);
+  void NodeSelected(const QString &id);
 
 protected:
 
