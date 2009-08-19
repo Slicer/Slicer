@@ -699,7 +699,16 @@ void vtkChangeTrackerGUI::ObserveMRMLROINode(vtkMRMLROINode* roi){
 void vtkChangeTrackerGUI::LoadTutorialData(){
   vtkMRMLScene *scene = this->GetNode()->GetScene();
   std::cerr << "Downloading the tutorial scene!" << std::endl;
+  int res;
   scene->SetURL(TUTORIAL_XNAT_SCENE);
-  scene->Connect();
-  std::cerr << "Done" << std::endl;
+  res = scene->Connect();
+  if(res)
+    {
+    vtkErrorMacro("ERROR: Failed to connect to the tutorial scene. Error code: " << scene->GetErrorCode() 
+      << "Error message: " << scene->GetErrorMessage());
+    }
+  else
+    {
+    std::cerr << "Done" << std::endl;
+    }
 }
