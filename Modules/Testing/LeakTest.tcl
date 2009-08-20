@@ -11,31 +11,38 @@
 #
 ################################################################################
 
+# for easy cut and paste...
+set typical_command {
+  ../Slicer3/Modules/Testing/LeakTest.tcl 2>&1 | tee /tmp/leakout
+}
 
 #
-# two global lists of slicer modules and scripted modules 
+# global list of slicer modules
 #
 
-# TODO: add slicer command line option to list discovered modules so this list can
-# be created automatically
-set ::modules { 
- "CLI" "Change Tracker" "EMSegment"  "Gradient Anisotropic Diffusion Filter"  "Label Statistics"  "Neuro Nav"  
- "OpenIGTLinkIF"  "QdecModule"  "QueryAtlas"  "Slicer Tractography Display"  
- "Slicer Tractography Fiducial Seeding"  "Volume Rendering"  "VolumeRenderingCuda" "Volumes"
- "OpenIGTLink IF" "Skeleton" "IA_FEMesh" "ClipModel" "FetchMI" "ProstateNav" "SlicerWelcome"
- }
+switch $tcl_platform(os) {
+  "Darwin" {set ::EXT "dylib"}
+  "Linux" {set ::EXT "so"}
+  default {set ::EXT "dll"}
+}
 
-set ::scriptedModules ""
-foreach dir [glob -nocomplain lib/Slicer3/Modules/*] {
-  if { [file exists $dir/pkgIndex.tcl] } {
-    lappend ::scriptedModules $dir
+set ::dynamicModules ""
+foreach candidate [glob -nocomplain lib/Slicer3/Modules/*] {
+  if { [file exists $candidate/pkgIndex.tcl] } {
+    lappend ::dynamicModules $candidate
+  }
+  if { [string match "*.$::EXT" $candidate] } {
+    lappend ::dynamicModules $candidate
   }
 }
 
+
 foreach f [glob -nocomplain lib/Slicer3/Plugins/*.py] {
-#  lappend ::scriptedModules $f
+#  lappend ::dynamicModules $f
 }
 
+puts "evaluating:"
+puts $::dynamicModules
 
 
 #
@@ -44,31 +51,33 @@ foreach f [glob -nocomplain lib/Slicer3/Plugins/*.py] {
 #
 proc runSlicer { {doNotIgnore ""} } {
 
+  # these libs are in the Modules directory even though Slicer3.cxx links to them (bad...)
+  # todo - this doesn't actully support windows dll naming convention
+  lappend doNotIgnore "lib/Slicer3/Modules/libVolumes.$::EXT"
+  lappend doNotIgnore "lib/Slicer3/Modules/libCommandLineModule.$::EXT"
+  lappend doNotIgnore "lib/Slicer3/Modules/libScriptedModule.$::EXT"
+  lappend doNotIgnore "lib/Slicer3/Modules/libSlicerDaemon.$::EXT"
+  lappend doNotIgnore "lib/Slicer3/Modules/libSlicerTractographyDisplay.$::EXT"
+  lappend doNotIgnore "lib/Slicer3/Modules/libSlicerTractographyFiducialSeeding.$::EXT"
   puts "\n\n"
+  puts "do not ignore $doNotIgnore"
 
   # rename package files for any ignored scripted modules
   puts -nonewline "ignoring: "
-  foreach sm $::scriptedModules {
-    if { [file isdir $sm] } {
-      if { [lsearch $sm $doNotIgnore] == -1 } {
-        puts -nonewline " [file tail $sm]"
-        file rename $sm/pkgIndex.tcl $sm/pkgIndexIgnore.tcl
+  foreach sm $::dynamicModules {
+    if { [lsearch $doNotIgnore $sm] == -1 } {
+      if { [file isdir $sm] } {
+          puts -nonewline " [file tail $sm]"
+          file rename $sm/pkgIndex.tcl $sm/pkgIndexIgnore.tcl
+      } else {
+          puts -nonewline " [file tail $sm] "
+          file rename $sm ${sm}.ignore
       }
-    } else {
-        puts -nonewline "[file tail $sm]"
-        file rename $sm [file root $sm].ignore
     }
   }
   puts "\n"
   
   set cmd "./Slicer3"
-
-  # add command line flag for any ignored loadable modules
-  foreach m $::modules {
-    if { [lsearch $m $doNotIgnore] == -1 } {
-      set cmd [concat $cmd "--ignore-module '$m'"]
-    }
-  }
 
   # exit slicer after the gui is built
   set cmd [concat $cmd "--exec exit"]
@@ -87,15 +96,15 @@ proc runSlicer { {doNotIgnore ""} } {
 
   # restore ignored scripted modules
   puts -nonewline "restoring: "
-  foreach sm $::scriptedModules {
-    if { [file isdir $sm] } {
-      if { [lsearch $sm $doNotIgnore] == -1 } {
-        puts -nonewline " [file tail $sm]"
-        file rename $sm/pkgIndexIgnore.tcl $sm/pkgIndex.tcl
+  foreach sm $::dynamicModules {
+    if { [lsearch $doNotIgnore $sm] == -1 } {
+      if { [file isdir $sm] } {
+          puts -nonewline " [file tail $sm]"
+          file rename $sm/pkgIndexIgnore.tcl $sm/pkgIndex.tcl
+      } else {
+          puts -nonewline " [file tail $sm]"
+          file rename ${sm}.ignore $sm
       }
-    } else {
-        puts -nonewline " [file tail $sm]"
-        file rename [file root $sm].ignore [file root $sm].py
     }
   }
   puts "\n\n"
@@ -107,14 +116,12 @@ proc runSlicer { {doNotIgnore ""} } {
 puts "--------------------------------------------------------------------------------"
 puts "ignoring all"
 puts "--------------------------------------------------------------------------------"
-runSlicer $::modules
-
-exit
+runSlicer ""
 
 puts "--------------------------------------------------------------------------------"
 puts "ignoring none"
 puts "--------------------------------------------------------------------------------"
-runSlicer ""
+runSlicer $::dynamicModules
 
 # sequentially enable only one module at a time
 foreach m $::modules {
@@ -124,7 +131,7 @@ foreach m $::modules {
   set ::RESULTS($m) [runSlicer $m]
 }
 
-foreach m $::scriptedModules {
+foreach m $::dynamicModules {
   puts "--------------------------------------------------------------------------------"
   puts "not ignoring $m"
   puts "--------------------------------------------------------------------------------"
