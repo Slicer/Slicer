@@ -105,7 +105,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeArchetypeStorageNode : public vtkMRMLStorageN
   // Return a defualt file extension for writting
   virtual const char* GetDefaultWriteFileExtension()
     {
-    return "nhdr";
+    return "nrrd";
     };
 
 protected:
