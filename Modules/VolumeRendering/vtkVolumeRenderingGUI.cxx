@@ -353,6 +353,7 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
     this->PB_CreateNewVolumeRenderingNode->SetBalloonHelpString("Create a new parameter set for the current volume. This way you can switch between different visualization settings for the same volume.");
     this->PB_CreateNewVolumeRenderingNode->SetText("Create New Visualization Parameter Set");
     app->Script("pack %s -side top -anchor ne -padx 2 -pady 2",this->PB_CreateNewVolumeRenderingNode->GetWidgetName());
+    inputVolumeFrame->Delete();
   }  
   
   {//foreground volume
@@ -421,6 +422,7 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
     app->Script("pack %s -side top -anchor ne -padx 2 -pady 2",this->PB_CreateNewVolumeRenderingNodeFg->GetWidgetName());
     
     inputVolumeFrame->CollapseFrame();
+    inputVolumeFrame->Delete();
   }
   
   {//labelmap volume
@@ -444,6 +446,7 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
     app->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->NS_ImageDataLabelmap->GetWidgetName());
     
     inputVolumeFrame->CollapseFrame();
+    inputVolumeFrame->Delete();
   }
   
   //Details frame
