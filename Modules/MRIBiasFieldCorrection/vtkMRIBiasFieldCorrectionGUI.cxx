@@ -519,6 +519,7 @@ void vtkMRIBiasFieldCorrectionGUI::ProcessGUIEvents ( vtkObject *caller,
     std::cout<<"K4: "<< IJK4[2] <<std::endl;
     */
     this->Logic->SliceProcess(xyToijk,dimensions[0],dimensions[1]);
+#if 0
     /*
     int xyz[3];
     int x, y;
@@ -618,6 +619,7 @@ void vtkMRIBiasFieldCorrectionGUI::ProcessGUIEvents ( vtkObject *caller,
       //std::cout<<oldSliceSetting<<std::endl;
       this->Logic->Cut(oldSliceSetting);
     //this->Logic->Apply();*/
+#endif
     }
   
 }
@@ -978,6 +980,8 @@ if (!this->ShrinkFactor)
   this->ApplyButton->SetWidth ( 8 );
   app->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
                 this->ApplyButton->GetWidgetName());
+
+  moduleFrame->Delete();
                                
     /*        
   mask_page->Delete();
