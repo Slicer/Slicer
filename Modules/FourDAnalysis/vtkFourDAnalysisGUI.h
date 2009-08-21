@@ -25,8 +25,11 @@
 #include "vtkDoubleArray.h"
 
 #include "vtkFourDAnalysisLogic.h"
-#include "vtkKWPlotGraph.h"
+//#include "vtkKWPlotGraph.h"
 #include "vtkSlicerNodeSelectorWidget.h"
+
+#include "vtkSlicerXYPlotWidget.h"
+
 
 #include "vtkKWMultiColumnListWithScrollbars.h"
 #include "vtkKWLoadSaveButtonWithLabel.h"
@@ -150,13 +153,18 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   void UpdateSeriesSelectorMenus();
   //  void UpdateMaskSelectMenu();
 
-  void UpdateMethodNameField(vtkMRMLCurveAnalysisNode* curveNode);
+  void UpdatePlotList();
+  virtual void UpdatePlotListElement(int row, int col, char * str);
+
   void UpdateInitialParameterList(vtkMRMLCurveAnalysisNode* curveNode);
   void GetInitialParametersAndInputCurves(vtkMRMLCurveAnalysisNode* curveNode, int start, int end);
   void UpdateOutputParameterList(vtkMRMLCurveAnalysisNode* curveNode);
+  
+  // Description:
+  // GeneratePlotNodes() calculates time-intensity curves in the regions specified by the label data.
+  void GeneratePlotNodes();
 
-  void UpdateIntensityPlot(vtkIntensityCurves* intensityCurves);
-  void UpdateIntensityPlotWithFittedCurve(vtkIntensityCurves* intensityCurves, vtkDoubleArray* array);
+  void UpdateIntensityPlotWithFittedCurve(vtkIntensityCurves* intensityCurves);
 
  protected:
   
@@ -197,8 +205,11 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   //vtkKWMenuButton*     MaskSelectMenu;
   vtkSlicerNodeSelectorWidget* MaskNodeSelector;
 
-  vtkKWPlotGraph*      IntensityPlot;
+  //vtkKWPlotGraph*      IntensityPlot;
+  vtkSlicerXYPlotWidget*     IntensityPlot;
   vtkKWCheckButtonWithLabel* ErrorBarCheckButton;
+  vtkKWMultiColumnListWithScrollbars* PlotList;
+
 
   vtkKWMenuButton*     FittingLabelMenu;
   vtkKWLoadSaveButtonWithLabel* CurveScriptSelectButton;
@@ -267,9 +278,22 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   int BundleNameCount; // used to name 4D bundle
 
   vtkIntensityCurves* IntensityCurves;
-  vtkDoubleArray*     FittedCurve;
+  //vtkDoubleArray*     FittedCurve;
+  vtkMRMLDoubleArrayNode*     FittedCurveNode;
 
   vtkCurveAnalysisPythonInterface* CurveAnalysisScript;
+  vtkMRMLXYPlotManagerNode* PlotManagerNode;
+
+  //BTX
+  // Row index for   vtkKWMultiColumnListWithScrollbars* PlotList;
+  enum {
+    COLUMN_VISIBLE   = 0,
+    COLUMN_COLOR     = 1,
+    COLUMN_NODE_NAME = 2,
+    COLUMN_MRML_ID   = 3
+  };
+  //ETX
+
 
 };
 

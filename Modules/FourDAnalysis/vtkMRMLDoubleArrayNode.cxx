@@ -57,6 +57,11 @@ vtkMRMLDoubleArrayNode::vtkMRMLDoubleArrayNode()
 //----------------------------------------------------------------------------
 vtkMRMLDoubleArrayNode::~vtkMRMLDoubleArrayNode()
 {
+  if (this->Array)
+    {
+    this->Array->Delete();
+    this->Array = NULL;
+    }
 }
 
 

@@ -22,7 +22,7 @@
 
 #include "vtkFourDAnalysisWin32Header.h"
 #include "vtkKWRenderWidget.h"
-#include "vtkMRMLXYPlotNode.h"
+#include "vtkMRMLXYPlotManagerNode.h"
 
 #include <string>
 #include <vector>
@@ -112,7 +112,7 @@ class VTK_FourDAnalysis_EXPORT vtkSlicerXYPlotWidget : public vtkKWRenderWidget
 
   void SetInMRMLCallbackFlag (int flag) {
     this->InMRMLCallbackFlag = flag;
-  }
+  };
   vtkGetMacro(InMRMLCallbackFlag, int);
 
   // Description:
@@ -121,7 +121,7 @@ class VTK_FourDAnalysis_EXPORT vtkSlicerXYPlotWidget : public vtkKWRenderWidget
                                    unsigned long /*event*/, void * /*callData*/ );
 
  protected:
-  //BTX
+  // Description:
   // a shared function that call the virtual ProcessMRMLEvents subclasses,
   // if they are defined.
   static void MRMLCallback( vtkObject *__caller,
@@ -141,48 +141,24 @@ class VTK_FourDAnalysis_EXPORT vtkSlicerXYPlotWidget : public vtkKWRenderWidget
 
   // Description:
   // Set and observe XYPlotNode
-  void SetAndObserveXYPlotNode(vtkMRMLXYPlotNode* node);
+  void SetAndObservePlotManagerNode(vtkMRMLXYPlotManagerNode* node);
 
   // Description:
   // Get XY plot node 
-  vtkGetObjectMacro(XYPlotNode, vtkMRMLXYPlotNode);
+  vtkGetObjectMacro(PlotManagerNode, vtkMRMLXYPlotManagerNode);
 
+  // Description::
+  // AutoUpdate flag specifies when the graph is refreshed.
+  // Set 1 if the graph needs to be updated on MofifiedEvent.
+  vtkSetMacro( AutoUpdate, int );
+  vtkGetMacro( AutoUpdate, int );
 
   //----------------------------------------------------------------
   // Graph operations
   //----------------------------------------------------------------
- protected:
-  void UpdateGraph();
-  //void ClearPlot();
-  //int  AddPlot(vtkDoubleArray* data, const char* label); // returns plot id
-  //void SetColor(int id, double r, double g, double b);
-
-  void AddVerticalLine(double x);
-  void AddHorizontalLine(double y);
+ public:
   void SetAxisLineColor(double r, double g, double b);
-  void RemoveLines();
-
-  //void AutoRangeOn();
-  //void AutoRangeOff();
-  //void SetXrange(double min, double max);
-  //void SetYrange(double min, double max);
-  //
-  //void ErrorBarOn();
-  //void ErrorBarOff();
-
-
-  //----------------------------------------------------------------
-  // Subroutines for plotting
-  //----------------------------------------------------------------
- protected:
-  // Description:
-  // Create a vtkDataObject to draw a line on the graph
-  vtkDataObject* CreateDataObjectForLine(double p1[2], double p2[2]);
-
-  // Description:
-  // Create a vtkDoubleArray to draw a line with error bars
-  vtkDoubleArray* CreatePlotDataWithErrorBar(vtkDoubleArray* srcData);
-
+  void UpdateGraph();
 
   //----------------------------------------------------------------
   // Constructor / destructor
@@ -196,7 +172,6 @@ class VTK_FourDAnalysis_EXPORT vtkSlicerXYPlotWidget : public vtkKWRenderWidget
   // Create the widget.
   virtual void CreateWidget();
 
-
  private:
   vtkSlicerXYPlotWidget(const vtkSlicerXYPlotWidget&); // Not implemented
   void operator=(const vtkSlicerXYPlotWidget&); // Not implemented
@@ -208,7 +183,7 @@ class VTK_FourDAnalysis_EXPORT vtkSlicerXYPlotWidget : public vtkKWRenderWidget
   //----------------------------------------------------------------
 
   vtkMRMLScene* MRMLScene;
-  vtkMRMLXYPlotNode* XYPlotNode;
+  vtkMRMLXYPlotManagerNode* PlotManagerNode;
 
   // Description:
   // MRML observer manager
@@ -225,7 +200,6 @@ class VTK_FourDAnalysis_EXPORT vtkSlicerXYPlotWidget : public vtkKWRenderWidget
   //----------------------------------------------------------------
   // Widgets
   //----------------------------------------------------------------
-
   vtkXYPlotActor* PlotActor;
 
 
@@ -233,24 +207,22 @@ class VTK_FourDAnalysis_EXPORT vtkSlicerXYPlotWidget : public vtkKWRenderWidget
   // Flags
   //----------------------------------------------------------------
 
+  // Description::
+  // AutoUpdate flag specifies when the graph is refreshed.
+  // If the flag is 1, the graph is refreshed whenever it receives ModifiedEvent.
+  // Otherwise, the graph is refreshed only when the widget catches UpdateGraphEvent.
+  int AutoUpdate;
+
+  // Description::
+  // Updating flag is 1, while graph is being updated.
   int Updating;
 
-  //BTX
-  typedef std::vector<PlotDataType> PlotDataVectorType;
-  typedef std::vector<AxisLineType> AxisLineVectorType;
-  //ETX
-
-  //PlotDataVectorType PlotDataVector;
-  AxisLineVectorType VerticalLines;
-  AxisLineVectorType HorizontalLines;
-
   double AxisLineColor[3];
-  //int    AutoRangeX;
-  //int    AutoRangeY;
   double RangeX[2];
   double RangeY[2];
 
   //int    ErrorBar;
+
 
 };
 

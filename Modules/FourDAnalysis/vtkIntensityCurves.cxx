@@ -106,7 +106,7 @@ vtkIntArray* vtkIntensityCurves::GetLabelList()
 
 
 //---------------------------------------------------------------------------
-vtkDoubleArray* vtkIntensityCurves::GetCurve(int label)
+vtkMRMLDoubleArrayNode* vtkIntensityCurves::GetCurve(int label)
 {
   IntensityCurveMapType::iterator iter;
 
@@ -129,21 +129,28 @@ int vtkIntensityCurves::OutputDataInCSV(ostream& os, int label)
 
   Update();
 
-  vtkDoubleArray* data = this->GetCurve(label);
-  if (data)
+  vtkMRMLDoubleArrayNode* anode = this->GetCurve(label);
+  if (anode)
     {
-    int nData = data->GetNumberOfTuples();
-    for (int i = 0; i < nData; i ++)
+    vtkDoubleArray* data = anode->GetArray();
+    if (data)
       {
-      double* xy = data->GetTuple(i);
-      // Write the data
-      //      t        ,      mean     ,      std
-      //   -----------------------------------------
-      os << xy[0] << ", " << xy[1] << ", " << xy[2] << std::endl;
+      int nData = data->GetNumberOfTuples();
+      for (int i = 0; i < nData; i ++)
+        {
+        double* xy = data->GetTuple(i);
+        // Write the data
+        //      t        ,      mean     ,      std
+        //   -----------------------------------------
+        os << xy[0] << ", " << xy[1] << ", " << xy[2] << std::endl;
+        }
       }
+    return 1;
     }
-
-  return 1;
+  else
+    {
+    return 0;
+    }
 
 }
 
@@ -162,11 +169,22 @@ void vtkIntensityCurves::GenerateIntensityCurve()
     GenerateIndexMap(mask, indexTableMap);
 
     IndexTableMapType::iterator iter;
+
+    vtkDoubleArray* array;
+    
     for (iter = indexTableMap.begin(); iter != indexTableMap.end(); iter ++)
       {
       int label = iter->first;
-      this->IntensityCurve[label] = vtkDoubleArray::New();
-      this->IntensityCurve[label]->SetNumberOfComponents( static_cast<vtkIdType>(3) );
+      //this->IntensityCurve[label] = vtkDoubleArray::New();
+      //this->IntensityCurve[label]->SetNumberOfComponents( static_cast<vtkIdType>(3) );
+      array  = vtkDoubleArray::New();
+      array->SetNumberOfComponents( static_cast<vtkIdType>(3) );
+
+      vtkMRMLDoubleArrayNode* anode = vtkMRMLDoubleArrayNode::New();
+      this->GetMRMLScene()->AddNode(anode);
+      this->IntensityCurve[label] = anode;
+      anode->SetArray(array);
+      anode->Delete();
       }
     
     int nFrames = this->BundleNode->GetNumberOfFrames();
@@ -196,7 +214,7 @@ void vtkIntensityCurves::GenerateIntensityCurve()
           xy[0] = (double)ts.second + (double)ts.nanosecond / 1000000000.0;
           xy[1] = meanvalue;
           xy[2] = sdvalue;
-          this->IntensityCurve[label]->InsertNextTuple(xy);
+          this->IntensityCurve[label]->GetArray()->InsertNextTuple(xy);
           }
         }
       }

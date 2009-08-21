@@ -62,16 +62,6 @@ class VTK_FourDAnalysis_EXPORT vtkMRMLCurveAnalysisNode : public vtkMRMLNode
   vtkSetObjectMacro( FittedCurve, vtkDoubleArray );
   vtkGetObjectMacro( FittedCurve, vtkDoubleArray );
 
-  //void SetFunctionName(const char* name)
-  //{
-  //  this->FunctionName = name;
-  //}
-  //
-  //const char* GetFunctionName()
-  //{
-  //  return this->FunctionName.c_str();
-  //}
-
   void SetMethodName(const char* name)
   {
     this->MethodName = name;

@@ -11,8 +11,8 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-#ifndef __vtkMRMLXYPlotNode_h
-#define __vtkMRMLXYPlotNode_h
+#ifndef __vtkMRMLXYPlotManagerNode_h
+#define __vtkMRMLXYPlotManagerNode_h
 
 #include <string>
 #include <vector>
@@ -26,9 +26,11 @@
 #include "vtkFourDAnalysisWin32Header.h"
 
 #include "vtkMRMLDoubleArrayNode.h"
+#include "vtkMRMLPlotNode.h"
 
+class vtkIntArray;
 
-class VTK_FourDAnalysis_EXPORT vtkMRMLXYPlotNode : public vtkMRMLNode
+class VTK_FourDAnalysis_EXPORT vtkMRMLXYPlotManagerNode : public vtkMRMLNode
 {
 
  public:
@@ -37,10 +39,22 @@ class VTK_FourDAnalysis_EXPORT vtkMRMLXYPlotNode : public vtkMRMLNode
   // Constants
   //----------------------------------------------------------------
 
+  // Events
+  //BTX
+  enum {
+    UpdateGraphEvent = 11900,
+  };
+  //ETX
+
   // Interpolation method
   //BTX
   enum {
     INTERP_LINEAR = 0,
+  };
+  enum {
+    TYPE_CURVE = 0,
+    TYPE_VERTICAL_LINE,
+    TYPE_HORIZONTAL_LINE,
   };
   //ETX
 
@@ -48,8 +62,8 @@ class VTK_FourDAnalysis_EXPORT vtkMRMLXYPlotNode : public vtkMRMLNode
   // Standard methods for MRML nodes
   //----------------------------------------------------------------
 
-  static vtkMRMLXYPlotNode *New();
-  vtkTypeMacro(vtkMRMLXYPlotNode,vtkMRMLNode);
+  static vtkMRMLXYPlotManagerNode *New();
+  vtkTypeMacro(vtkMRMLXYPlotManagerNode,vtkMRMLNode);
   
   void PrintSelf(ostream& os, vtkIndent indent);
 
@@ -69,108 +83,64 @@ class VTK_FourDAnalysis_EXPORT vtkMRMLXYPlotNode : public vtkMRMLNode
 
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName()
-    {return "XYPlot";};
+  virtual const char* GetNodeTagName() { return "XYPlot"; };
 
   // Description:
   // Method to propagate events generated in mrml.
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
   //----------------------------------------------------------------
-  // Get and Set Macros
-  //----------------------------------------------------------------
-  //vtkSetObjectMacro ( Array, vtkDoubleArray );
-  //vtkGetObjectMacro ( Array, vtkDoubleArray );
-
-  //----------------------------------------------------------------
-  // Curve Data / properties
+  // PlotNode management
   //----------------------------------------------------------------
   
   // Description:
-  // Add DoiubleArrayNode to the plotting list.
-  void AddArrayNode(vtkMRMLDoubleArrayNode* node);
+  // Add DoiubleArrayNode to the plotting list. Returns array ID.
+  int AddPlotNode(vtkMRMLPlotNode* node);
 
   // Description:
   // Remove DoubleArrayNode from the plotting list.
-  void RemoveArrayNode(vtkMRMLDoubleArrayNode* node);
+  void RemovePlotNode(int id);
+
+  // Description:
+  // Remove DoubleArrayNode from the plotting list.
+  void RemovePlotNodeByNodeID(const char* nodeID);
+
+  // Description:
+  // Remove all DoubleArrayNode from the plotting list.
+  void ClearPlotNodes();
 
   // Description:
   // Get number of arrays on the list
-  unsigned int GetNumberOfArrays();
+  unsigned int GetNumberOfPlotNodes();
+
+  // Description:
+  // Get list of IDs
+  vtkIntArray* GetPlotNodeIDList();
 
   // Description:
   // Get n-th vtkMRMLDoubleArrayNode on the list
-  vtkMRMLDoubleArrayNode* GetArrayNode(unsigned int n);
+  vtkMRMLPlotNode* GetPlotNode(int id);
 
-  // Description:
-  // Set line color
-  void SetColor(unsigned int n, double r, double g, double b);
-  
-  // Description:
-  // Get line color
-  void GetColor(unsigned int n, double* r, double* g, double* b);
-  
-  // Description:
-  // Set line name (this method updates the array node's name as well)
-  void SetLineName(unsigned int n, const char* str);
-
-  // Description:
-  // Get line name (same as the array node's name)
-  const char* GetLineName(unsigned int n);
-  
-  // Description:
-  // Set visibility of the specified curve (i == 0 : off; i == 1 : on)
-  void SetVisibility(unsigned int n, int i);
-
-  // Description:
-  // Set visibility of the specified curve (0 : off; 1 : on)
-  int GetVisibility(unsigned int n);
+  //----------------------------------------------------------------
+  // Methods to change property of plot objects
+  //----------------------------------------------------------------
 
   // Description:
   // Set visibility of the all curves (i == 0 : off; i == 1 : on)
   void SetVisibilityAll(int i);
 
   // Description:
-  // Set error bar plot for the specified curve(i == 0 : off; i == 1 : on)
-  void SetErrorBarPlot(unsigned int n, int i);
-
-  // Description:
-  // Get error bar plot for the specivied curve(0 : off; 1 : on)
-  int GetErrorBarPlot(unsigned int n);
-
-  // Description:
   // Set visibility of the all curves (i == 0 : off; i == 1 : on)
-  void SetErrorBarPlotAll(int i);
+  void SetErrorBarAll(int i);
+
 
   //----------------------------------------------------------------
-  // Vertical and horizontal lines
+  // Plot graph
   //----------------------------------------------------------------
-  
-  //// Description:
-  //// Add DoiubleArrayNode to the plotting list.
-  //void AddVerticalLine(double position);
-  //
-  //// Description:
-  //// Remove DoubleArrayNode from the plotting list.
-  //void ClearVerticalLines(int i);
-  //
-  //// Description:
-  //// Get number of arrays on the list
-  //unsigned int GetNumberOfHorizontalLines();
-  //
-  //// Description:
-  //// Add DoiubleArrayNode to the plotting list.
-  //void AddHorizontalLine(double position);
-  //
-  //// Description:
-  //// Remove DoubleArrayNode from the plotting list.
-  //void ClearHorizontalLines(int i);
-  //
-  //// Description:
-  //// Get number of arrays on the list
-  //unsigned int GetNumberOfHorizontalLines();
 
-  
+  // Description:  
+  // Invoke UpdateGraphEvent to force refreshing the graph
+  void Refresh();
 
   //----------------------------------------------------------------
   // Graph properties
@@ -178,27 +148,48 @@ class VTK_FourDAnalysis_EXPORT vtkMRMLXYPlotNode : public vtkMRMLNode
 
   // Description:
   // Set title of graph.
-  void SetTitle(const char* str);
+  void SetTitle(const char* str)
+  {
+    this->Title = str;
+    this->Modified();
+  };
 
   // Description:
   // Get title of graph.
-  const char* GetTitle();
+  const char* GetTitle()
+  {
+    return this->Title.c_str();
+  };
 
   // Description:
   // Set label for X-axis
-  void SetXLabel(const char* str);
+  void SetXLabel(const char* str)
+  {
+    this->XLabel = str;
+    this->Modified();
+  };
 
   // Description:
   // Get label for X-axis
-  const char* GetXLabel();
+  const char* GetXLabel()
+  {
+    return this->XLabel.c_str();
+  };
 
   // Description:
   // Set label for Y-axis
-  void SetYLabel(const char* str);
+  void SetYLabel(const char* str)
+  {
+    this->YLabel = str;
+    this->Modified();
+  };
   
   // Description:
   // Get label for Y-axis
-  const char* GetYLabel();
+  const char* GetYLabel()
+  {
+    return this->YLabel.c_str();
+  };
 
   // Description:
   // Set/Get automatic range setting flag
@@ -209,31 +200,78 @@ class VTK_FourDAnalysis_EXPORT vtkMRMLXYPlotNode : public vtkMRMLNode
 
   // Description:
   // Set X range
-  void SetXRange(double* range);
+  void SetXRange(double* range)
+  {
+    if (range[0] <= range[1])
+      {
+        this->XRange[0] = range[0];
+        this->XRange[1] = range[1];
+        this->Modified();
+      }
+  };
 
   // Description:
   // Set Y range
-  void SetYRange(double* range);
+  void SetYRange(double* range)
+  {
+    if (range[0] <= range[1])
+      {
+        this->YRange[0] = range[0];
+        this->YRange[1] = range[1];
+        this->Modified();
+      }
+  };
 
   // Description:
   // Get X range
-  void GetXRange(double* range);
-
+  void GetXRange(double* range)
+  {
+    range[0] = this->YRange[0];
+    range[1] = this->YRange[1];
+  };
+ 
   // Description:
   // Get Y range
-  void GetYRange(double* range);
+  void GetYRange(double* range)
+  {
+    range[0] = this->YRange[0];
+    range[1] = this->YRange[1];
+  };
 
+  // Description:
+  // Set / get color of axes
+  vtkSetVector3Macro( AxesColor, double );
+  vtkGetVector3Macro( AxesColor, double );
 
+  // Description:
+  // Set / get color of background
+  void SetBackgroundColor(double r, double g, double b)
+  {
+    this->BackgroundColor[0] = r;
+    this->BackgroundColor[1] = g;
+    this->BackgroundColor[2] = b;
+    this->Modified();
+  };
 
+  // Description:
+  // Get color of background
+  void GetBackgroundColor(double* r, double* g, double* b)
+  {
+    *r = this->BackgroundColor[0];
+    *g = this->BackgroundColor[1];
+    *b = this->BackgroundColor[2];
+  };
+
+  
  protected:
   //----------------------------------------------------------------
   // Constructor and destroctor
   //----------------------------------------------------------------
   
-  vtkMRMLXYPlotNode();
-  ~vtkMRMLXYPlotNode();
-  vtkMRMLXYPlotNode(const vtkMRMLXYPlotNode&);
-  void operator=(const vtkMRMLXYPlotNode&);
+  vtkMRMLXYPlotManagerNode();
+  ~vtkMRMLXYPlotManagerNode();
+  vtkMRMLXYPlotManagerNode(const vtkMRMLXYPlotManagerNode&);
+  void operator=(const vtkMRMLXYPlotManagerNode&);
 
 
  protected:
@@ -242,33 +280,21 @@ class VTK_FourDAnalysis_EXPORT vtkMRMLXYPlotNode : public vtkMRMLNode
   //----------------------------------------------------------------
 
   //BTX
-  typedef struct {
-    double                  lineColor[3];
-    int                     visibility;
-    int                     errorBar;
-    vtkMRMLDoubleArrayNode* arrayNode;
-  } PlotDataType;
-
-  typedef struct {
-    double                  lineColor[3];
-    int                     visibility;
-    int                     errorBar;
-    double                  position;
-  } LineDataType;
-
   std::string Title;             // Plotting graph title
   std::string XLabel;            // Label for x-axis
   std::string YLabel;            // Label for y-axis
-
-  std::vector< PlotDataType > Data;  // list for plotting
-  //std::vector< LineDataType > VerticalLines;
-  //std::vector< LineDataType > HorizontalLines;
+  std::map< int, vtkMRMLPlotNode* > Data;  // map for plotting data
   //ETX
+
+  int LastArrayID;
 
   int    AutoXRange;  // Flag for automatic range adjust (default: 0 = off)
   int    AutoYRange;  // Flag for automatic range adjust (default: 0 = off)
   double XRange[2];
   double YRange[2];
+
+  double AxesColor[3];
+  double BackgroundColor[3];
   
 };
 

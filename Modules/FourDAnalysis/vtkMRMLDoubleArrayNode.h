@@ -144,12 +144,10 @@ class VTK_FourDAnalysis_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
   void GetYRange(double* range, int fIncludeError=1);
 
 
-  
- protected:
   //----------------------------------------------------------------
   // Constructor and destroctor
   //----------------------------------------------------------------
-  
+ protected:
   vtkMRMLDoubleArrayNode();
   ~vtkMRMLDoubleArrayNode();
   vtkMRMLDoubleArrayNode(const vtkMRMLDoubleArrayNode&);

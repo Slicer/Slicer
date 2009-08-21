@@ -20,6 +20,7 @@
 #include "vtkFourDAnalysisWin32Header.h"
 
 #include "vtkMRMLTimeSeriesBundleNode.h"
+#include "vtkMRMLDoubleArrayNode.h"
 
 class VTK_FourDAnalysis_EXPORT vtkIntensityCurves : public vtkObject
 {
@@ -32,7 +33,7 @@ class VTK_FourDAnalysis_EXPORT vtkIntensityCurves : public vtkObject
   } CoordType;
   typedef std::vector<CoordType>         IndexTableType;
   typedef std::map<int, IndexTableType>  IndexTableMapType;  // IndexTableMapType[label]
-  typedef std::map<int, vtkDoubleArray*> IntensityCurveMapType;
+  typedef std::map<int, vtkMRMLDoubleArrayNode*> IntensityCurveMapType;
   //ETX
 
  public:
@@ -46,11 +47,14 @@ class VTK_FourDAnalysis_EXPORT vtkIntensityCurves : public vtkObject
   vtkSetObjectMacro ( BundleNode, vtkMRMLTimeSeriesBundleNode );
   vtkGetObjectMacro ( MaskNode,   vtkMRMLScalarVolumeNode );
   vtkSetObjectMacro ( MaskNode,   vtkMRMLScalarVolumeNode );
+  vtkSetObjectMacro ( MRMLScene,  vtkMRMLScene );
+  vtkGetObjectMacro ( MRMLScene,  vtkMRMLScene );
 
   //void            SetInterval(double interval) { this->Interval = interval; };
   int             Update();
   vtkIntArray*    GetLabelList();
-  vtkDoubleArray* GetCurve(int label);
+  //vtkDoubleArray* GetCurve(int label);
+  vtkMRMLDoubleArrayNode* GetCurve(int label);
   int             OutputDataInCSV(ostream& os, int label);
 
  protected:
@@ -74,6 +78,8 @@ class VTK_FourDAnalysis_EXPORT vtkIntensityCurves : public vtkObject
   IntensityCurveMapType IntensityCurve;  // IntensityCurveMean[label]
   long                  PreviousUpdateTime;
   double                Interval;        // interval (s)
+
+  vtkMRMLScene*         MRMLScene;
 
 };
 
