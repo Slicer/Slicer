@@ -433,6 +433,41 @@ int vtkMRMLTimeSeriesBundleNode::SetTimeStamp(int i, TimeStamp* ts)
 
 
 //----------------------------------------------------------------------------
+int vtkMRMLTimeSeriesBundleNode::GetTimeStamp(int i, int& second, int& microsecond)
+{
+  if (i < 0 || i >= (int)(this->FrameNodeIDList.size()))
+    {
+    return 0;
+    }
+  
+  TimeStamp& times = this->TimeStampList[i];
+  second      = times.second;
+  microsecond = times.nanosecond / 1000;
+
+  return 1;
+}
+
+
+//----------------------------------------------------------------------------
+int vtkMRMLTimeSeriesBundleNode::SetTimeStamp(int i, int second, int microsecond)
+{
+  if (i < 0 || i >= (int)(this->FrameNodeIDList.size()))
+    {
+    return 0;
+    }
+  
+  TimeStamp& times = this->TimeStampList[i];
+  times.second     = second + microsecond / 1000000;
+  times.nanosecond = (microsecond % 1000000) * 1000;
+
+  this->Modified();
+
+  return 1;
+
+}
+
+
+//----------------------------------------------------------------------------
 int vtkMRMLTimeSeriesBundleNode::SetDisplayBufferNodeID(int bufferIndex, const char* nodeID)
 {
   this->DisplayBufferNodeIDList[bufferIndex] = nodeID;

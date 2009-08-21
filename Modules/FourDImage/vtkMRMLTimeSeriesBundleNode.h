@@ -88,6 +88,9 @@ class VTK_FourDImage_EXPORT vtkMRMLTimeSeriesBundleNode : public vtkMRMLLinearTr
 
   int          GetTimeStamp(int i, TimeStamp* ts);
   int          SetTimeStamp(int i, TimeStamp* ts);
+  int          GetTimeStamp(int i, int& second, int& microsecond);
+  int          SetTimeStamp(int i, int second, int microsecond);
+
   int          SetDisplayBufferNodeID(int bufferIndex, const char* nodeID);
   vtkMRMLNode* GetDisplayBufferNode(int bufferIndex);
   void         SwitchDisplayBuffer(int bufferIndex, int i);
