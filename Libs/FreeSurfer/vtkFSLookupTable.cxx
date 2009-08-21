@@ -109,6 +109,7 @@ void vtkFSLookupTable::SetLutTypeToHeat()
     this->Offset = 2.0;
     this->Slope = 1.5;
     this->FMid = 2.0;
+    this->SetTableRange(-10.0, 10.0);
 }
 
 //------------------------------------------------------------------------------
@@ -124,6 +125,7 @@ void vtkFSLookupTable::SetLutTypeToBlueRed()
     this->Blufact = 1.0;
     this->FMid = 0.0;
     this->NumberOfColors = 256;
+    this->SetTableRange(-1.0, 1.0);
 }
 
 //------------------------------------------------------------------------------
@@ -139,6 +141,7 @@ void vtkFSLookupTable::SetLutTypeToRedBlue()
     this->Blufact = 1.0;
     this->FMid = 0.0;
     this->NumberOfColors = 256;
+    this->SetTableRange(-1.0, 1.0);
 }
 
 //------------------------------------------------------------------------------
@@ -154,6 +157,7 @@ void vtkFSLookupTable::SetLutTypeToRedGreen()
     this->Blufact = 1.0;
     this->FMid = 0.0;
     this->NumberOfColors = 256;
+    this->SetTableRange(-1.0, 1.0);
 }
 
 //------------------------------------------------------------------------------
@@ -169,14 +173,14 @@ void vtkFSLookupTable::SetLutTypeToGreenRed()
     this->Blufact = 1.0;
     this->FMid = 0.0;
     this->NumberOfColors = 256;
+    this->SetTableRange(-1.0, 1.0);
 }
 
 //------------------------------------------------------------------------------
 // What a strange code ...
 double *vtkFSLookupTable::GetRange()
 {
-    this->SetTableRange(this->LowThresh, this->HiThresh);
-
+    //this->SetTableRange(this->LowThresh, this->HiThresh);
     return this->GetTableRange();    
 }
 
