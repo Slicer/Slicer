@@ -194,11 +194,17 @@ add_library(${lib_name}
 slicer3_set_modules_output_path(${lib_name})
 
 target_link_libraries(${lib_name}
-  ${Slicer3_Libs_LIBRARIES}
+  ${ModuleDescriptionParser}
+  ${LoadableModule}
+  ${vtkITK}
+  ${MRML}
+  ${slicerio}
+  ${CommandIO}
+  ${MRMLIDIO}
+  ${RemoteIO}
   ${Slicer3_Base_LIBRARIES}
   ${KWWidgets_LIBRARIES}
   ${ITK_LIBRARIES}
-  #${VTK_LIBRARIES}
   Volumes
   )
 

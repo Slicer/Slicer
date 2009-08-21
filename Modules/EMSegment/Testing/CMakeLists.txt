@@ -8,16 +8,16 @@ include_directories(
   )
 
 set(EMSegment_TEST_DIR ${EMSegment_BINARY_DIR})
-set(EMSegment_TUTORIAL_DIR 
+set(EMSegment_TUTORIAL_DIR
   ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest)
-set(EMSegment_TUTORIAL2_DIR 
+set(EMSegment_TUTORIAL2_DIR
   ${EMSegment_SOURCE_DIR}/Testing/TestData/TutorialTest2)
 
 # Extra Tests:
 # Change these to 1 if you want to run the extra EMSegment tests.  They
 # require a testing dataset that is not distributed by default with
 # Slicer3.  NB: The extra tests may take a long time and a large
-# amount of memory!!!  
+# amount of memory!!!
 set(EMSEG_RUN_VALGRIND_TESTS    OFF
   CACHE BOOL "Enable EMSegment Valgrind test." FORCE
   )
@@ -45,7 +45,7 @@ if(NOT DISABLE_CXX_TESTING)
 
   ############################################################################
   # add test executables
-  ############################################################################ 
+  ############################################################################
   add_executable(
     vtkEMSegmentBlackBoxSegmentationTest
     vtkEMSegmentBlackBoxSegmentationTest.cxx
@@ -104,11 +104,11 @@ if(NOT DISABLE_CXX_TESTING)
   # The test is a stand-alone executable.  However, the Slicer3
   # launcher is needed to set up shared library paths correctly.
   # We create a prefix for the test executable that accomplishes this
-  # wrapping.  
+  # wrapping.
   # WRAPPED_TEST_EXE_PREFIX: path to tests that only exist in build tree
   # WRAPPED_EXE_PREFIX: path to command line utilities that install with
   # slicer
-  ############################################################################ 
+  ############################################################################
   set(Slicer3_EXE ${Slicer3_BINARY_DIR}/Slicer3)
   set(WRAPPED_TEST_EXE_PREFIX --launch ${EXECUTABLE_OUTPUT_PATH})
   set(WRAPPED_EXE_PREFIX --launch ${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR})
@@ -197,10 +197,10 @@ if(NOT DISABLE_CXX_TESTING)
     else(${EMSEG_REMOVE_TMP_TEST_DATA})
       set(test_rm_files)
     endif(${EMSEG_REMOVE_TMP_TEST_DATA})
-    set(test_args 
+    set(test_args
       ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
-      --verbose 
-      --mrmlSceneFileName ${EMSegment_TUTORIAL2_DIR}/EMSegmentTestSet2_med.mrml 
+      --verbose
+      --mrmlSceneFileName ${EMSegment_TUTORIAL2_DIR}/EMSegmentTestSet2_med.mrml
       --resultVolumeFileName "${test_file_prefix}.nhdr"
       )
     add_test(
@@ -223,9 +223,9 @@ if(NOT DISABLE_CXX_TESTING)
     else(${EMSEG_REMOVE_TMP_TEST_DATA})
       set(test_rm_files)
     endif(${EMSEG_REMOVE_TMP_TEST_DATA})
-    set(test_args 
+    set(test_args
       ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
-      --verbose 
+      --verbose
       --mrmlSceneFileName ${EMSegment_TUTORIAL2_DIR}/EMSegmentTestSet2_NoReg_med.mrml 
       --resultVolumeFileName "${test_file_prefix}.nhdr"
       )
@@ -249,9 +249,9 @@ if(NOT DISABLE_CXX_TESTING)
     else(${EMSEG_REMOVE_TMP_TEST_DATA})
       set(test_rm_files)
     endif(${EMSEG_REMOVE_TMP_TEST_DATA})
-    set(test_args 
+    set(test_args
       ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
-      --verbose 
+      --verbose
       --mrmlSceneFileName ${EMSegment_TUTORIAL2_DIR}/EMSegmentTestSet2_T2TReg_med.mrml 
       --resultVolumeFileName "${test_file_prefix}.nhdr"
       )
@@ -275,9 +275,9 @@ if(NOT DISABLE_CXX_TESTING)
     else(${EMSEG_REMOVE_TMP_TEST_DATA})
       set(test_rm_files)
     endif(${EMSEG_REMOVE_TMP_TEST_DATA})
-    set(test_args 
+    set(test_args
       ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
-      --verbose 
+      --verbose
       --mrmlSceneFileName ${EMSegment_TUTORIAL2_DIR}/EMSegmentTestSet2_A2TReg_med.mrml 
       --resultVolumeFileName "${test_file_prefix}.nhdr"
       )
