@@ -84,6 +84,10 @@ public:
     // Add Slicer mrml colour table nodes to the application's color picker dialog as swatches. Returns 1 on failure, 0 on success.
     int AddLUTsToColorDialog();
 
+    // Description:
+    // the widget that displays info about the colour node
+    vtkGetObjectMacro(ColorDisplayWidget, vtkSlicerColorDisplayWidget);
+
 protected:
     vtkSlicerColorGUI ( );
     virtual ~vtkSlicerColorGUI ( );
