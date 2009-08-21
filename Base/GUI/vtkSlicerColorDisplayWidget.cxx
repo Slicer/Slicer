@@ -15,10 +15,14 @@
 #include "vtkKWMultiColumnList.h"
 #include "vtkKWMultiColumnListWithScrollbars.h"
 #include "vtkKWPushButton.h"
+#include "vtkKWEntry.h"
+#include "vtkKWEntryWithLabel.h"
 
 #include "vtkMRMLColorNode.h"
 #include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLFreeSurferProceduralColorNode.h"
+#include "vtkMRMLProceduralColorNode.h"
+#include "vtkColorTransferFunction.h"
 
 #include "vtkScalarBarActor.h"
 #include "vtkScalarBarWidget.h"
@@ -47,6 +51,9 @@ vtkSlicerColorDisplayWidget::vtkSlicerColorDisplayWidget ( )
     this->NumberOfColorsLabel = NULL;
 
     this->ShowOnlyNamedColorsCheckButton = NULL;
+
+    this->MinRangeEntry = NULL;
+    this->MaxRangeEntry = NULL;
 
     this->ScalarBarAnnotation = NULL;
     this->ScalarBarWidget = NULL;
@@ -97,6 +104,21 @@ vtkSlicerColorDisplayWidget::~vtkSlicerColorDisplayWidget ( )
     this->ShowOnlyNamedColorsCheckButton->Delete();
     this->ShowOnlyNamedColorsCheckButton = NULL;
     }
+
+  if (this->MinRangeEntry)
+    {
+    this->MinRangeEntry->SetParent(NULL);
+    this->MinRangeEntry->Delete();
+    this->MinRangeEntry = NULL;
+    }
+
+  if (this->MaxRangeEntry)
+    {
+    this->MaxRangeEntry->SetParent(NULL);
+    this->MaxRangeEntry->Delete();
+    this->MaxRangeEntry = NULL;
+    }
+
   if (this->ScalarBarAnnotation)
     {
     this->ScalarBarAnnotation->SetParent(NULL);
@@ -275,16 +297,12 @@ void vtkSlicerColorDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
     return;
     }
 
-  // get the currently displayed list 
-  vtkMRMLColorNode *activeColorNode = (vtkMRMLColorNode *)this->MRMLScene->GetNodeByID(this->GetColorNodeID());
-
-  if (activeColorNode == NULL)
+  if ( (this->MinRangeEntry->GetWidget() == vtkKWEntry::SafeDownCast(caller) ||
+        this->MaxRangeEntry->GetWidget() == vtkKWEntry::SafeDownCast(caller) ) &&
+       event == vtkKWEntry::EntryValueChangedEvent)
     {
-    vtkErrorMacro("ERROR: No Color!\n");
-    return;
+    this->UpdateMRML();
     }
-
-  this->UpdateMRML();
 } 
 
 
@@ -368,6 +386,10 @@ void vtkSlicerColorDisplayWidget::UpdateWidget()
   if ( this->ColorNodeID )
     {
     vtkMRMLColorNode *colorNode = vtkMRMLColorNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->ColorNodeID));
+    // special case if it's a freesurfer procedural node
+    bool isFSProcedural = false;
+    // if the colour node is defined procedurally, set this flag to true
+    bool isProcedural = false;
     
     if (colorNode == NULL)
       {
@@ -380,14 +402,42 @@ void vtkSlicerColorDisplayWidget::UpdateWidget()
       }
     
     int numColours = 0;
+    double *range = NULL;
     if (vtkMRMLColorTableNode::SafeDownCast(colorNode) != NULL)
       {
       numColours = vtkMRMLColorTableNode::SafeDownCast(colorNode)->GetNumberOfColors();
+      range =  vtkMRMLColorTableNode::SafeDownCast(colorNode)->GetLookupTable()->GetRange();
       }
     else if (vtkMRMLFreeSurferProceduralColorNode::SafeDownCast(colorNode) != NULL &&
              vtkMRMLFreeSurferProceduralColorNode::SafeDownCast(colorNode)->GetLookupTable() != NULL)
       {
-      numColours = vtkMRMLFreeSurferProceduralColorNode::SafeDownCast(colorNode)->GetLookupTable()->GetNumberOfColors();
+      //numColours = vtkMRMLFreeSurferProceduralColorNode::SafeDownCast(colorNode)->GetLookupTable()->GetNumberOfColors();
+      range = vtkMRMLFreeSurferProceduralColorNode::SafeDownCast(colorNode)->GetLookupTable()->GetRange();
+      if (range)
+        {
+        numColours = (int)floor(range[1] - range[0]);
+        if (range[0] < 0 && range[1] >= 0)
+          {
+          // add one for zero
+          numColours++;
+          }
+        }
+      isFSProcedural = true;
+      }
+    else if ( vtkMRMLProceduralColorNode::SafeDownCast(colorNode) != NULL &&
+              vtkMRMLProceduralColorNode::SafeDownCast(colorNode)->GetColorTransferFunction() != NULL)
+      {
+      range = vtkMRMLProceduralColorNode::SafeDownCast(colorNode)->GetColorTransferFunction()->GetRange();
+      if (range)
+        {
+        numColours = (int)floor(range[1] - range[0]);
+        if (range[0] < 0 && range[1] >= 0)
+          {
+          // add one for zero
+          numColours++;
+          }
+        }
+      isProcedural = true;
       }
 
     bool showOnlyNamedColors;
@@ -421,7 +471,10 @@ void vtkSlicerColorDisplayWidget::UpdateWidget()
       int numToAdd = numColours - this->MultiColumnList->GetWidget()->GetNumberOfRows();
       this->MultiColumnList->GetWidget()->AddRows(numToAdd);
       }
-    if (numColours < this->MultiColumnList->GetWidget()->GetNumberOfRows())
+    // check if no showing only named colours before deleting rows one by one
+    // if there are too many, as the next test will delete everything
+    if (!showOnlyNamedColors &&
+        numColours < this->MultiColumnList->GetWidget()->GetNumberOfRows())
       {
       // delete some rows
       for (int r = this->MultiColumnList->GetWidget()->GetNumberOfRows(); r >= numColours; r--)
@@ -441,24 +494,53 @@ void vtkSlicerColorDisplayWidget::UpdateWidget()
       deleteFlag = false;
       }
     
-    // a row for each colour
-    double *colour = NULL;
-    const char *name;
+
+    double colour[3];
+    const char *name = NULL;
     // keep track of where to add the current colour into the table
     int thisRow = 0;
+    double index = 0.0;
+    if ((isFSProcedural || isProcedural) && (range != NULL))
+      {
+      index = range[0];
+      }
+    
+
+    // for each colour
     for (int row = 0; row < numColours; row++)
       {
       // get the colour
-      if (colorNode->GetLookupTable() != NULL)
+      if (isFSProcedural)
         {
-        colour = colorNode->GetLookupTable()->GetTableValue(row);
-        }
-      if (colour == NULL)
+        if (index <= range[1])
+          {
+          vtkMRMLFreeSurferProceduralColorNode::SafeDownCast(colorNode)->GetLookupTable()->GetColor(index, colour);
+          index += 1.0;
+          }
+        }      
+      else if (isProcedural)
         {
-        vtkErrorMacro ("SetGUIFromNode: at " << row << "th colour, got a null pointer" << endl);
+        if (index <= range[1])
+          {
+          vtkMRMLProceduralColorNode::SafeDownCast(colorNode)->GetColorTransferFunction()->GetColor(index, colour);
+          index += 1.0;
+          }
         }
+      else if (colorNode->GetLookupTable() != NULL)
+        {
+        colorNode->GetLookupTable()->GetColor((double)row, colour);
+        // GetTableValue returns the alpha as well, use GetColor to just get rgb
+        }
+//      if (colour == NULL)
+//        {
+//        vtkErrorMacro ("SetGUIFromNode: at " << row << "th colour, got a null pointer" << endl);
+//        }
       // get the colour label
       name = colorNode->GetColorName(row);
+      if (name == NULL)
+        {
+        name = "(none)";
+        }
       if (!showOnlyNamedColors ||
           (showOnlyNamedColors && strcmp(name, colorNode->GetNoName()) != 0))
         {
@@ -496,9 +578,27 @@ void vtkSlicerColorDisplayWidget::UpdateWidget()
           }
         thisRow++;
         }
-      vtkDebugMacro("Done rebuilding table, row = " << row << ", thisRow = " << thisRow);
       }
 
+    // update the range
+    if (range)
+      {
+      this->MinRangeEntry->GetWidget()->SetValueAsDouble(range[0]);
+      this->MaxRangeEntry->GetWidget()->SetValueAsDouble(range[1]);
+      // this can't be edited if it's a procedural node with just a colour
+      // transfer function rather than a look up table
+      if (isProcedural || isFSProcedural)
+        {
+        this->MinRangeEntry->GetWidget()->ReadOnlyOn();
+        this->MaxRangeEntry->GetWidget()->ReadOnlyOn();
+        }
+      else
+        {
+        this->MinRangeEntry->GetWidget()->ReadOnlyOff();
+        this->MaxRangeEntry->GetWidget()->ReadOnlyOff();
+        }
+      }
+    
     // update the scalar bar
     if (this->ScalarBarWidget)
       {
@@ -558,6 +658,45 @@ void vtkSlicerColorDisplayWidget::UpdateSelectedColor()
 //---------------------------------------------------------------------------
 void vtkSlicerColorDisplayWidget::UpdateMRML()
 {
+  // get the currently displayed list 
+  vtkMRMLColorNode *activeColorNode = (vtkMRMLColorNode *)this->MRMLScene->GetNodeByID(this->GetColorNodeID());
+
+  if (activeColorNode == NULL)
+    {
+    vtkErrorMacro("ERROR: No Color!\n");
+    return;
+    }
+  // allow setting the range on the node's colour lut
+  double min = this->MinRangeEntry->GetWidget()->GetValueAsDouble();
+  double max = this->MaxRangeEntry->GetWidget()->GetValueAsDouble();
+  bool requestRender = false;
+
+  vtkMRMLProceduralColorNode *procColorNode = vtkMRMLProceduralColorNode::SafeDownCast(activeColorNode);
+  
+  if (activeColorNode->GetLookupTable())
+    {
+    activeColorNode->GetLookupTable()->SetRange(min, max);
+    // reset the scalar bar actor
+    // BUG: the mapper is resetting the range, and it ignores the new range
+    // set on the table
+    // this->ScalarBarWidget->GetScalarBarActor()->SetTitle("mm");
+//    this->ScalarBarWidget->GetScalarBarActor()->SetLookupTable(activeColorNode->GetLookupTable());
+    requestRender = true;
+    }
+  // SetRange is not implemented on ColorTransferFunctions, so just set it on
+  // the node
+  else if (procColorNode != NULL &&
+           procColorNode->GetLookupTable() != NULL)
+           // && vtkMRMLFreeSurferProceduralColorNode::SafeDownCast(activeColorNode)->GetColorTransferFunction())
+    {
+    procColorNode->GetLookupTable()->SetRange(min, max);
+    requestRender = true;
+    }
+  if (requestRender)
+    {
+    this->ViewerWidget->RequestRender();
+    }
+  
   // nothing for now, not allowing editing
 }
 
@@ -570,6 +709,9 @@ void vtkSlicerColorDisplayWidget::RemoveWidgetObservers ( ) {
   this->MultiColumnList->GetWidget()->RemoveObservers(vtkKWMultiColumnList::SelectionChangedEvent,
                                                       (vtkCommand *)this->GUICallbackCommand);
   this->RemoveObservers (vtkSlicerColorDisplayWidget::ColorIDModifiedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->MinRangeEntry->GetWidget()->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, this->GUICallbackCommand);
+  this->MaxRangeEntry->GetWidget()->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, this->GUICallbackCommand);
+
 }
 
 
@@ -714,7 +856,36 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
               this->ShowOnlyNamedColorsCheckButton->GetWidgetName(),
               buttonFrame->GetWidgetName());
 
-  // button frame
+  // range frame
+  vtkKWFrame *rangeFrame = vtkKWFrame::New();
+  rangeFrame->SetParent ( displayFrame );
+  rangeFrame->Create ( );
+  app->Script ("pack %s -side top -anchor nw -fill x -pady 0 -in %s",
+               rangeFrame->GetWidgetName(),
+               displayFrame->GetWidgetName());
+
+  // entries to show/change the range
+  this->MinRangeEntry = vtkKWEntryWithLabel::New();
+  this->MinRangeEntry->SetParent( rangeFrame );
+  this->MinRangeEntry->Create();
+  this->MinRangeEntry->SetLabelText("Lookup Table Range Min");
+  this->MinRangeEntry->SetBalloonHelpString ("Only changes display range, not the values in the table. Not valid on Procedural nodes (FreeSurfer etc.) that only define a color transfer function and not a look up table.");
+  this->MinRangeEntry->GetWidget()->SetWidth ( 6 );
+  //this->MinRangeEntry->GetWidget()->SetValueAsDouble(-200);
+  //this->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
+  //             this->MinRangeEntry->GetWidgetName());
+
+  this->MaxRangeEntry = vtkKWEntryWithLabel::New();
+  this->MaxRangeEntry->SetParent( rangeFrame );
+  this->MaxRangeEntry->Create();
+  this->MaxRangeEntry->SetLabelText("Max");
+  this->MaxRangeEntry->SetBalloonHelpString ("Only changes display range, not the values in the table. Not valid on Procedural nodes (FreeSurfer etc.) that only define a color transfer function and not a look up table.");
+  this->MaxRangeEntry->GetWidget()->SetWidth ( 6 );
+  //this->MaxRangeEntry->GetWidget()->SetValueAsDouble(200);
+  this->Script("pack %s %s -side left -anchor e -padx 4 -pady 2", 
+               this->MinRangeEntry->GetWidgetName(), this->MaxRangeEntry->GetWidgetName());
+
+  // scalar bar frame
   vtkKWFrame *scalarBarFrame = vtkKWFrame::New();
   scalarBarFrame->SetParent ( displayFrame );
   scalarBarFrame->Create ( );
@@ -728,6 +899,8 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
   this->ScalarBarWidget->GetScalarBarActor()->SetOrientationToVertical();
   this->ScalarBarWidget->GetScalarBarActor()->SetNumberOfLabels(11);
   this->ScalarBarWidget->GetScalarBarActor()->SetTitle("(mm)");
+  this->ScalarBarWidget->GetScalarBarActor()->SetLabelFormat(" %#8.3f");
+  
   // it's a 2d actor, position it in screen space by percentages
   this->ScalarBarWidget->GetScalarBarActor()->SetPosition(0.1, 0.1);
   this->ScalarBarWidget->GetScalarBarActor()->SetWidth(0.1);
@@ -749,7 +922,7 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
   this->ScalarBarAnnotation->Create();
   this->ScalarBarAnnotation->SetBalloonHelpString("Control parameters on a 2d scalar bar (DON'T hit the x to close this widget!)");
   this->ScalarBarAnnotation->SetScalarBarWidget(this->ScalarBarWidget);
-
+  
   // pack the scalar bar annotation
   app->Script("pack %s -side top -anchor w -padx 4 -pady 2 -in %s",
               this->ScalarBarAnnotation->GetWidgetName(),
@@ -758,6 +931,7 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
   // deleting frame widgets
   buttonFrame->Delete();
   scalarBarFrame->Delete();
+  rangeFrame->Delete();
   
   // add observers
   this->ColorSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
@@ -765,7 +939,9 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
   this->AddObserver(vtkSlicerColorDisplayWidget::ColorIDModifiedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->MultiColumnList->GetWidget()->AddObserver(vtkKWMultiColumnList::SelectionChangedEvent,
                                                       (vtkCommand *)this->GUICallbackCommand);
-  
+  this->MinRangeEntry->GetWidget()->AddObserver ( vtkKWEntry::EntryValueChangedEvent, this->GUICallbackCommand);
+  this->MaxRangeEntry->GetWidget()->AddObserver ( vtkKWEntry::EntryValueChangedEvent, this->GUICallbackCommand);
+
   // clean up
   displayFrame->Delete();
 
@@ -875,6 +1051,8 @@ void vtkSlicerColorDisplayWidget::UpdateEnableState(void)
     this->PropagateEnableState(this->MultiColumnList);
     this->PropagateEnableState(this->ShowOnlyNamedColorsCheckButton);
     this->PropagateEnableState(this->ScalarBarAnnotation);
+    this->PropagateEnableState(this->MinRangeEntry);
+    this->PropagateEnableState(this->MaxRangeEntry);
 }
 
 void vtkSlicerColorDisplayWidget::SetViewerWidget ( vtkSlicerViewerWidget *viewerWidget )

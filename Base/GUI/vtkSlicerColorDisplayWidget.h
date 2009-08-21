@@ -29,6 +29,7 @@ class vtkKWPushButton;
 class vtkKWChangeColorButton;
 class vtkKWMultiColumnListWithScrollbars;
 class vtkKWCheckButton;
+class vtkKWEntryWithLabel;
 class vtkScalarBarWidget;
 class vtkSlicerViewerWidget;
 class vtkKWScalarBarAnnotation;
@@ -127,9 +128,14 @@ public:
   // from a new list, use this call
   //  virtual void SetGUIFromNode(vtkMRMLColorNode * activeColorNode);
 
+  // Description:
+  // Get/set the viewer widget so can add a the scalar bar widget to it
   vtkGetObjectMacro(ViewerWidget, vtkSlicerViewerWidget);
   virtual void SetViewerWidget(vtkSlicerViewerWidget *viewerWidget);
 
+  // Description:
+  // Get the scalar bar widget
+  vtkGetObjectMacro(ScalarBarWidget, vtkScalarBarWidget);
  protected:
   vtkSlicerColorDisplayWidget();
   virtual ~vtkSlicerColorDisplayWidget();
@@ -194,6 +200,11 @@ public:
   //ETX
 
   vtkKWCheckButton *ShowOnlyNamedColorsCheckButton;
+  // Description:
+  // show and set the range on the colour lut
+  vtkKWEntryWithLabel  *MinRangeEntry;
+  vtkKWEntryWithLabel  *MaxRangeEntry;
+
   // Description:
   // Control the parameters for a scalar bar widget
   vtkKWScalarBarAnnotation* ScalarBarAnnotation;
