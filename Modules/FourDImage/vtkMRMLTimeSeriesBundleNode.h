@@ -79,7 +79,9 @@ class VTK_FourDImage_EXPORT vtkMRMLTimeSeriesBundleNode : public vtkMRMLLinearTr
 
   int GetNumberOfFrames();
   int InsertFrame(int i, const char* nodeID, TimeStamp* ts = NULL);
+  int InsertFrame(int i, const char* nodeID, unsigned int second, unsigned int microsecond);
   int AddFrame(const char* nodeID, TimeStamp* ts = NULL);
+  int AddFrame(const char* nodeID, unsigned int second, unsigned int microsecond);
   int RemoveFrame(int i);              // Delete a frame by index number (not remove from the scene)
   int RemoveFrame(const char* nodeID); // Delete a frame by node ID (not remove from the scene)
   void RemoveAllFrames();
@@ -88,8 +90,10 @@ class VTK_FourDImage_EXPORT vtkMRMLTimeSeriesBundleNode : public vtkMRMLLinearTr
 
   int          GetTimeStamp(int i, TimeStamp* ts);
   int          SetTimeStamp(int i, TimeStamp* ts);
-  int          GetTimeStamp(int i, int& second, int& microsecond);
-  int          SetTimeStamp(int i, int second, int microsecond);
+
+  int          SetTimeStamp(int i, unsigned int second, unsigned int microsecond);
+  unsigned int GetTimeStampSecondComponent(int i);
+  unsigned int GetTimeStampMicrosecondComponent(int i);
 
   int          SetDisplayBufferNodeID(int bufferIndex, const char* nodeID);
   vtkMRMLNode* GetDisplayBufferNode(int bufferIndex);

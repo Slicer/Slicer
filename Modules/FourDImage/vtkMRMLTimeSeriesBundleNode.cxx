@@ -273,6 +273,51 @@ int vtkMRMLTimeSeriesBundleNode::InsertFrame(int i, const char* nodeID, TimeStam
 
 
 //----------------------------------------------------------------------------
+int vtkMRMLTimeSeriesBundleNode::InsertFrame(int i, const char* nodeID, unsigned int second, unsigned int microsecond)
+{
+  unsigned int index;
+
+  if (i < 0)
+    {
+    index = 0;
+    }
+  else if (i > (int)(this->FrameNodeIDList.size()))
+    {
+    index = this->FrameNodeIDList.size();
+    }
+  else
+    {
+    index = i;
+    }
+
+
+  // Add the ID node to the frame list
+  NodeIDListType::iterator iter;
+  iter = this->FrameNodeIDList.begin();
+  iter += index;
+
+  this->FrameNodeIDList.insert(iter, std::string(nodeID));
+  
+  // Add the time stamp to the frame list
+  TimeStampListType::iterator titer;
+  titer = this->TimeStampList.begin();
+  titer += index;
+
+  TimeStamp times;
+  times.second     = second + microsecond / 1000000;
+  times.nanosecond = (microsecond % 1000000) * 1000;
+
+  this->TimeStampList.insert(titer, times);
+
+    
+  this->Modified();
+
+  return index;
+
+}
+
+
+//----------------------------------------------------------------------------
 int vtkMRMLTimeSeriesBundleNode::AddFrame(const char* nodeID, TimeStamp* ts)
 {
   this->FrameNodeIDList.push_back(std::string(nodeID));
@@ -288,6 +333,23 @@ int vtkMRMLTimeSeriesBundleNode::AddFrame(const char* nodeID, TimeStamp* ts)
     times.second     = 0;
     times.nanosecond = 0;
     }
+  this->TimeStampList.push_back(times);
+
+  this->Modified();
+
+  return 1;
+
+}
+
+
+//----------------------------------------------------------------------------
+int vtkMRMLTimeSeriesBundleNode::AddFrame(const char* nodeID, unsigned int second, unsigned int microsecond)
+{
+  this->FrameNodeIDList.push_back(std::string(nodeID));
+
+  TimeStamp times;
+  times.second     = second + microsecond / 1000000;
+  times.nanosecond = (microsecond % 1000000) * 1000;
   this->TimeStampList.push_back(times);
 
   this->Modified();
@@ -433,23 +495,7 @@ int vtkMRMLTimeSeriesBundleNode::SetTimeStamp(int i, TimeStamp* ts)
 
 
 //----------------------------------------------------------------------------
-int vtkMRMLTimeSeriesBundleNode::GetTimeStamp(int i, int& second, int& microsecond)
-{
-  if (i < 0 || i >= (int)(this->FrameNodeIDList.size()))
-    {
-    return 0;
-    }
-  
-  TimeStamp& times = this->TimeStampList[i];
-  second      = times.second;
-  microsecond = times.nanosecond / 1000;
-
-  return 1;
-}
-
-
-//----------------------------------------------------------------------------
-int vtkMRMLTimeSeriesBundleNode::SetTimeStamp(int i, int second, int microsecond)
+int vtkMRMLTimeSeriesBundleNode::SetTimeStamp(int i, unsigned int second, unsigned int microsecond)
 {
   if (i < 0 || i >= (int)(this->FrameNodeIDList.size()))
     {
@@ -463,7 +509,34 @@ int vtkMRMLTimeSeriesBundleNode::SetTimeStamp(int i, int second, int microsecond
   this->Modified();
 
   return 1;
+}
 
+
+//----------------------------------------------------------------------------
+unsigned int vtkMRMLTimeSeriesBundleNode::GetTimeStampSecondComponent(int i)
+{
+  if (i < 0 || i >= (int)(this->FrameNodeIDList.size()))
+    {
+    return 0;
+    }
+  
+  TimeStamp& times = this->TimeStampList[i];
+
+  return times.second;
+}
+
+
+//----------------------------------------------------------------------------
+unsigned int vtkMRMLTimeSeriesBundleNode::GetTimeStampMicrosecondComponent(int i)
+{
+  if (i < 0 || i >= (int)(this->FrameNodeIDList.size()))
+    {
+    return 0;
+    }
+  
+  TimeStamp& times = this->TimeStampList[i];
+
+  return (times.nanosecond / 1000);
 }
 
 
