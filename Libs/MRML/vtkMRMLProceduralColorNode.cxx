@@ -156,21 +156,36 @@ int vtkMRMLProceduralColorNode::ReadFile()
 //---------------------------------------------------------------------------
 void vtkMRMLProceduralColorNode::SetNamesFromColors()
 {
-  // stop gap, get the transfer function's points and use them
+  // get the transfer function's range and iterate over them
   if (this->ColorTransferFunction == NULL)
     {
     return;
     }
-  int numPoints = this->ColorTransferFunction->GetSize();
+  double *range = this->ColorTransferFunction->GetRange();
+  int numPoints = 0;
+  double index = 0;
+  if (range)
+    {
+    numPoints = (int)floor(range[1] - range[0]);
+    if (range[0] < 0 && range[1] >= 0)
+      {
+      // add one for zero
+      numPoints++;
+      }
+    index = range[0];
+    }
   // reset the names
   this->Names.clear();
   this->Names.resize(numPoints);
+  
   for (int i = 0; i < numPoints; i++)
     {
+    double colour[3];
     double r = 0.0, g = 0.0, b = 0.0;
-    r = this->ColorTransferFunction->GetRedValue(i);
-    g = this->ColorTransferFunction->GetGreenValue(i);
-    b = this->ColorTransferFunction->GetBlueValue(i);
+    this->ColorTransferFunction->GetColor(index, colour);
+    r = colour[0]; //this->ColorTransferFunction->GetRedValue(i);
+    g = colour[1]; //this->ColorTransferFunction->GetGreenValue(i);
+    b = colour[2]; //this->ColorTransferFunction->GetBlueValue(i);
     std::stringstream ss;
     ss << "R=";
     ss << r;
@@ -179,6 +194,7 @@ void vtkMRMLProceduralColorNode::SetNamesFromColors()
     ss << " B=";
     ss << b;
     this->SetColorName(i, ss.str().c_str());
+    index++;
     }
    this->NamesInitialisedOn();
 }
