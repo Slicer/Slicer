@@ -298,11 +298,13 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents(vtkObject * caller,
     }
 
   // On a new scene, create the singleton for the default crosshair
+  // for navigation or cursor
   if ( vtkMRMLScene::SafeDownCast(caller) && event == vtkMRMLScene::NewSceneEvent)
     {
     vtkMRMLScene *scene =  vtkMRMLScene::SafeDownCast(caller);
     vtkMRMLCrosshairNode *crosshair = vtkMRMLCrosshairNode::New();
     crosshair->SetCrosshairName("default");
+    crosshair->NavigationOn();
     scene->AddNode( crosshair );
     crosshair->Delete();
     }

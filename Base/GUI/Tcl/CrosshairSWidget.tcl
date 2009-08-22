@@ -122,7 +122,7 @@ itcl::body CrosshairSWidget::constructor {sliceGUI} {
 
   $::slicer3::Broker AddObservation $sliceGUI DeleteEvent "::SWidget::ProtectedDelete $this"
 
-  set events {  "MouseMoveEvent" "UserEvent"  "ConfigureEvent"  "LeftButtonPressEvent" "LeftButtonReleaseEvent"}
+  set events {  "MouseMoveEvent" "UserEvent"  "ConfigureEvent" "LeaveEvent" "LeftButtonPressEvent" "LeftButtonReleaseEvent"}
   foreach event $events {
     $::slicer3::Broker AddObservation $sliceGUI $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI $event"
   }
@@ -221,6 +221,10 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
       foreach {r a s} [$_crosshairNode GetCrosshairRAS] {}
       $this setPosition $r $a $s
 
+      # jvm - Don't like having to request a render but it may be
+      # needed for "cursor" (as opposed to "navigator") mode
+      [$sliceGUI GetSliceViewer] RequestRender
+
       return
   }
 
@@ -259,10 +263,42 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
               $this updateCrosshair
               return
           }
+          "LeaveEvent" {
+              if { [$_crosshairNode GetNavigation] != 1 } {
+                  # not navigating, move crosshair to middle
+                  set tkwindow [$_renderWidget  GetWidgetName]
+                  set w2 [expr [winfo width $tkwindow] / 2]
+                  set h2 [expr [winfo height $tkwindow] / 2]
+
+                  set xyz [$this dcToXYZ $w2 $h2]
+                     
+                  set ras [$this xyzToRAS $xyz]
+                  foreach {r a s} $ras {}
+                              
+                  # update crosshair position (observers move the crosshair actors)
+                  $_crosshairNode SetCrosshairRAS $r $a $s
+              }
+          }
       }
       
       # handle events that do depend on the pickstate
       switch $_pickState {
+          "" {
+             # Not in a picking mode -> cursor mode not navigation mode
+             switch $event {
+                 "MouseMoveEvent" {
+                     # get the event position and convert to RAS
+                     foreach {windowx windowy} [$_interactor GetEventPosition] {}
+                     set xyz [$this dcToXYZ $windowx $windowy]
+                     
+                     set ras [$this xyzToRAS $xyz]
+                     foreach {r a s} $ras {}
+                              
+                     # update crosshair position (observers move the crosshair actors)
+                     $_crosshairNode SetCrosshairRAS $r $a $s
+                 }
+             }
+          }
           "outside" {
               set _actionState ""
               set state $_actionState
@@ -599,27 +635,32 @@ itcl::body CrosshairSWidget::setPosition { r a s } {
 }
 
 itcl::body CrosshairSWidget::pick {} {
-   # crosshair position in xyz
-   foreach {cx cy cz} [$this rasToXYZ [$_crosshairNode GetCrosshairRAS]] {}
-    
-    # event position
-    foreach {windowx windowy} [$_interactor GetEventPosition] {}
-    set xyz [$this dcToXYZ $windowx $windowy]
-    foreach {x y z} $xyz {}
 
-    # check if within a few pixels
-    set tol 5
-    if { [expr abs($x - $cx) < $tol] && [expr abs($y - $cy) < $tol] } {
+   if { [$_crosshairNode GetNavigation] == 1 } {
+     # crosshair position in xyz
+     foreach {cx cy cz} [$this rasToXYZ [$_crosshairNode GetCrosshairRAS]] {}
+    
+      # event position
+      foreach {windowx windowy} [$_interactor GetEventPosition] {}
+      set xyz [$this dcToXYZ $windowx $windowy]
+      foreach {x y z} $xyz {}
+
+      # check if within a few pixels
+      set tol 5
+      if { [expr abs($x - $cx) < $tol] && [expr abs($y - $cy) < $tol] } {
         set _pickState "over"
-    } elseif { [expr abs($x - $cx) < $tol] } {
+      } elseif { [expr abs($x - $cx) < $tol] } {
         set _pickState "vertical"
-    } elseif { [expr abs($y - $cy) < $tol] } {
+      } elseif { [expr abs($y - $cy) < $tol] } {
         set _pickState "horizontal"
-    } elseif { [expr abs($x - $cx) < 2*$tol] || [expr abs($y - $cy) < 2*$tol] } {
+      } elseif { [expr abs($x - $cx) < 2*$tol] || [expr abs($y - $cy) < 2*$tol] } {
         set _pickState "near"
-    } else {
+      } else {
         set _pickState "outside"
-    }
+      }
+   } else {
+       set _pickState ""
+   }
 }
 
 itcl::body CrosshairSWidget::highlight { } {

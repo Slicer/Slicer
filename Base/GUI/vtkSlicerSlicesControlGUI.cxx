@@ -1089,11 +1089,21 @@ void vtkSlicerSlicesControlGUI::ModifyCrossHairMode ( )
     this->MRMLScene->SaveStateForUndo ( nodes );
     nodes->Delete ( );
 
-    // then change the annotation mode for all slice composite nodes
+    // then change the crosshair mode for all crosshair nodes
     for (int i = 0; i < nnodes; i++)
       {
       xnode = vtkMRMLCrosshairNode::SafeDownCast (
         appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLCrosshairNode" ) );
+      // Navigation or cursor?
+      if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("Navigator") == 1 )
+        {
+        xnode->NavigationOn();
+        }
+      else 
+        {
+        xnode->NavigationOff();
+        }
+
 
       // Crosshair mode
       if ( this->GetCrossHairButton()->GetMenu()->GetItemSelectedState("No crosshair") == 1 )
@@ -1675,6 +1685,15 @@ void vtkSlicerSlicesControlGUI::BuildCrossHairMenu ( )
 {
   int item;
   this->CrossHairButton->GetMenu()->DeleteAllItems ( );
+
+
+  item = this->CrossHairButton->GetMenu()->AddCheckButton("Navigator");
+  this->CrossHairButton->GetMenu()->SetItemGroupName(item, "CrosshairNavigation" );
+
+  this->CrossHairButton->GetMenu()->SelectItem ("Navigator");
+
+  this->CrossHairButton->GetMenu()->AddSeparator();
+
 
   item = this->CrossHairButton->GetMenu()->AddRadioButton ("No crosshair" );
   this->CrossHairButton->GetMenu()->SetItemGroupName(item, "CrosshairMode" );
