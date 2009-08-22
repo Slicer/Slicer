@@ -155,6 +155,7 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
 
   void UpdatePlotList();
   virtual void UpdatePlotListElement(int row, int col, char * str);
+  void DeleteSelectedPlots();
 
   void UpdateInitialParameterList(vtkMRMLCurveAnalysisNode* curveNode);
   void GetInitialParametersAndInputCurves(vtkMRMLCurveAnalysisNode* curveNode, int start, int end);
@@ -163,8 +164,6 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   // Description:
   // GeneratePlotNodes() calculates time-intensity curves in the regions specified by the label data.
   void GeneratePlotNodes();
-
-  void UpdateIntensityPlotWithFittedCurve(vtkIntensityCurves* intensityCurves);
 
  protected:
   
@@ -209,7 +208,9 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   vtkSlicerXYPlotWidget*     IntensityPlot;
   vtkKWCheckButtonWithLabel* ErrorBarCheckButton;
   vtkKWMultiColumnListWithScrollbars* PlotList;
-
+  vtkKWPushButton* SelectAllPlotButton;
+  vtkKWPushButton* DeselectAllPlotButton;
+  vtkKWPushButton* PlotDeleteButton;
 
   vtkKWMenuButton*     FittingLabelMenu;
   vtkKWLoadSaveButtonWithLabel* CurveScriptSelectButton;
@@ -287,10 +288,11 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   //BTX
   // Row index for   vtkKWMultiColumnListWithScrollbars* PlotList;
   enum {
-    COLUMN_VISIBLE   = 0,
-    COLUMN_COLOR     = 1,
-    COLUMN_NODE_NAME = 2,
-    COLUMN_MRML_ID   = 3
+    COLUMN_SELECT    = 0,
+    COLUMN_VISIBLE   = 1,
+    COLUMN_COLOR     = 2,
+    COLUMN_NODE_NAME = 3,
+    COLUMN_MRML_ID   = 4
   };
   //ETX
 

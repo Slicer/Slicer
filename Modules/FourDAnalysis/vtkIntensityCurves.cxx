@@ -25,6 +25,7 @@ vtkCxxRevisionMacro(vtkIntensityCurves, "$Revision: $");
 //---------------------------------------------------------------------------
 vtkIntensityCurves::vtkIntensityCurves()
 {
+  this->MRMLScene  = NULL;
   this->BundleNode = NULL;
   this->MaskNode   = NULL;
   this->PreviousBundleNode = NULL;
@@ -69,14 +70,14 @@ int vtkIntensityCurves::Update()
     this->PreviousUpdateTime = 0;
     }
 
-  if (this->PreviousUpdateTime > this->BundleNode->GetMTime() &&
-      this->PreviousUpdateTime > this->MaskNode->GetMTime())
-    {
-    // if the intensity curve is newer than the 4D bundle and the mask
-    // do nothing
-    std::cerr << "intensity curve is up to date." << std::endl;
-    return 1;
-    }
+  //if (this->PreviousUpdateTime > this->BundleNode->GetMTime() &&
+  //    this->PreviousUpdateTime > this->MaskNode->GetMTime())
+  //  {
+  //  // if the intensity curve is newer than the 4D bundle and the mask
+  //  // do nothing
+  //  std::cerr << "intensity curve is up to date." << std::endl;
+  //  return 1;
+  //  }
   
   // Generate intensity curves
   this->PreviousBundleNode = this->BundleNode;
@@ -210,7 +211,6 @@ void vtkIntensityCurves::GenerateIntensityCurve()
           this->BundleNode->GetTimeStamp(i, &ts);
 
           double xy[3];
-          //xy[0] = (double)i * this->Interval;
           xy[0] = (double)ts.second + (double)ts.nanosecond / 1000000000.0;
           xy[1] = meanvalue;
           xy[2] = sdvalue;

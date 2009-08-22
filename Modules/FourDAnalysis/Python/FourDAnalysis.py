@@ -61,9 +61,6 @@ class CurveAnalysisBase(object):
     #def __init__(self):
         ## ParameterNameList and Initial Param should be set here
         
-    def Initialize(self):
-        return 0
-
     # ------------------------------
     # Get method name
 
@@ -180,11 +177,20 @@ class CurveAnalysisBase(object):
         else:
             return self.ConcentToSignal(self.Function(x, self.Parameter))
 
+
+    # ------------------------------
+    # Initialize parameters (called just before optimization)
+
+    def Initialize(self):
+        return 0
+
     # ------------------------------
     # Execute optimization
 
     def Execute(self):
         
+        self.Initialize()
+
         x      = self.TargetCurve[:, 0]
         y_meas = self.SignalToConcent(self.TargetCurve[:, 1])
 

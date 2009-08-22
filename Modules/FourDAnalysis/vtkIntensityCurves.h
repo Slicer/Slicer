@@ -77,7 +77,6 @@ class VTK_FourDAnalysis_EXPORT vtkIntensityCurves : public vtkObject
 
   IntensityCurveMapType IntensityCurve;  // IntensityCurveMean[label]
   long                  PreviousUpdateTime;
-  double                Interval;        // interval (s)
 
   vtkMRMLScene*         MRMLScene;
 
