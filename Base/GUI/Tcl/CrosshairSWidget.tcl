@@ -266,15 +266,13 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
           "LeaveEvent" {
               if { [$_crosshairNode GetNavigation] != 1 } {
                   # not navigating, move crosshair to middle
-                  set tkwindow [$_renderWidget  GetWidgetName]
-                  set w2 [expr [winfo width $tkwindow] / 2]
-                  set h2 [expr [winfo height $tkwindow] / 2]
+                  set renderer0 [$_renderWidget GetRenderer]
+                  foreach {w h} [$renderer0 GetSize] {}
 
-                  set xyz [$this dcToXYZ $w2 $h2]
-                     
+                  set xyz "[expr $w / 2] [expr $h / 2] 0"
                   set ras [$this xyzToRAS $xyz]
                   foreach {r a s} $ras {}
-                              
+
                   # update crosshair position (observers move the crosshair actors)
                   $_crosshairNode SetCrosshairRAS $r $a $s
               }
