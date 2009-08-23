@@ -53,6 +53,7 @@ vtkMRMLCrosshairNode::vtkMRMLCrosshairNode()
   this->CrosshairMode = vtkMRMLCrosshairNode::NoCrosshair;
   this->CrosshairBehavior = vtkMRMLCrosshairNode::Normal;
   this->CrosshairThickness = vtkMRMLCrosshairNode::Fine;
+  this->Navigation = 1;
   this->CrosshairRAS[0] = this->CrosshairRAS[1] = this->CrosshairRAS[2] = 0.0;
 }
 
@@ -97,6 +98,8 @@ void vtkMRMLCrosshairNode::WriteXML(ostream& of, int nIndent)
     of << indent << " crosshairMode=\"" << "ShowSmallIntersection" << "\"";
     }
   
+  of << indent << " navigation=\"" << (this->Navigation ? "true" : "false") << "\"";
+
   if ( this->CrosshairBehavior == vtkMRMLCrosshairNode::JumpSlice )
     {
     of << indent << " crosshairBehavior=\"" << "JumpSlice" << "\"";
@@ -171,6 +174,17 @@ void vtkMRMLCrosshairNode::ReadXMLAttributes(const char** atts)
         this->SetCrosshairMode (vtkMRMLCrosshairNode::ShowSmallIntersection);
         }
       }
+    else if (!strcmp (attName, "navigaation" ))
+      {
+      if ( !strcmp (attValue, "true"))
+        {
+        this->NavigationOn();
+        }
+      else
+        {
+        this->NavigationOff();
+        }
+      }
     else if (!strcmp (attName, "crosshairBehavior" ))
       {
       if ( !strcmp (attValue, "JumpSlice"))
@@ -229,6 +243,7 @@ void vtkMRMLCrosshairNode::Copy(vtkMRMLNode *anode)
   this->SetCrosshairBehavior (node->GetCrosshairBehavior());
   this->SetCrosshairThickness (node->GetCrosshairThickness());
   this->SetCrosshairRAS(node->GetCrosshairRAS());
+  this->SetNavigation(node->GetNavigation());
 
   this->EndModify(disabledModify);
 
@@ -240,6 +255,7 @@ void vtkMRMLCrosshairNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
 
   os << indent << "CrosshairMode: " << this->CrosshairMode << "\n";
+  os << indent << "Navigation: " << (this->Navigation ? "true" : "false") << "\n";
   os << indent << "CrosshairBehavior: " << this->CrosshairBehavior << "\n";
   os << indent << "CrosshairThickness: " << this->CrosshairThickness << "\n";
   os << indent << "CrosshairRAS: \n";

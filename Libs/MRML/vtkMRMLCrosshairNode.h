@@ -67,6 +67,12 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
   vtkGetVector3Macro(CrosshairRAS, double);
   
   // Description:
+  // Is the crosshair to be used for navigation or as just a cursor
+  vtkSetMacro(Navigation, int);
+  vtkGetMacro(Navigation, int);
+  vtkBooleanMacro(Navigation, int);
+
+  // Description:
   // Name of the layout
   void SetCrosshairName(const char *name) {
     this->SetSingletonTag(name);
@@ -109,6 +115,8 @@ protected:
   int CrosshairMode;
   int CrosshairThickness;
   int CrosshairBehavior;
+
+  int Navigation;
 
   double CrosshairRAS[3];
 
