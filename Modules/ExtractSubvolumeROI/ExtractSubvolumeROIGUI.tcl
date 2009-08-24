@@ -423,11 +423,74 @@ proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
           set roiRadiusZ [expr $roiRadiusZ+$shiftZ]
         } 
       } else {
-        # in-box click -- reduce roi
-        # -- disabled for now
-        # this should reduce radius in the coordinates that correspond to
-        # in-slice only, otherwise the behavior is not intuitive, in my
-        # opinion)
+        # in-box click -- reduce ROI. I decide which coordinates are changing
+        # in-slice by adjusting the XY, and transforming to RAS. There may
+        # well be better ways to figure this out via slice API.
+        set clickXYmod {[expr [lindex $clickXY 0]+10] [expr [lindex $clickXY 1]+10]}
+        scan [lrange [eval $xy2ras MultiplyPoint "$clickXYmod 0 1"] 0 2] "%f%f%f" clickXmod clickYmod clickZmod
+        
+        set doModifyX 1
+        set doModifyY 1
+        set doModifyZ 1
+        
+        # I am not sure what is the best behavior when reducing ROI. The
+        # choice I made is to move only the closest in RAS edge of the ROI on
+        # the click. Seems to me to be most intuitive.
+        if {$clickX == $clickXmod} {
+          set doModifyX 0
+          if {$dZ>$dY} {
+            set doModifyZ 1
+            set doModifyY 0
+          } else {
+            set doModifyZ 0
+            set doModifyY 1
+          }
+        }
+        if {$clickY == $clickYmod} {
+          set doModifyY 0
+          if {$dX>$dZ} {
+            set doModifyX 1
+            set doModifyZ 0
+          } else {
+            set doModifyX 0
+            set doModifyZ 1
+          }
+        }
+        if {$clickZ == $clickZmod} {
+          set doModifyZ 0
+          if {$dX>$dY} {
+            set doModifyX 1
+            set doModifyY 0
+          } else {
+            set doModifyX 0
+            set doModifyY 1
+          }
+        }
+        
+        if {[expr (($dX<$roiRadiusX) && $doModifyX)]} {
+          if {[expr $clickX>$roiX]} {
+            set roiX [expr $roiX-$shiftX]
+          } else {
+            set roiX [expr $roiX+$shiftX]
+          }
+          set roiRadiusX [expr $roiRadiusX-$shiftX]
+        }
+        if {[expr (($dY<$roiRadiusY) && $doModifyY)]} {
+          if {[expr $clickY>$roiY]} {
+            set roiY [expr $roiY-$shiftY]
+          } else {
+            set roiY [expr $roiY+$shiftY]
+          }
+          set roiRadiusY [expr $roiRadiusY-$shiftY]
+        } 
+        if {[expr ($dZ<$roiRadiusZ) && $doModifyZ]} {
+          if {[expr $clickZ>$roiZ]} {
+            set roiZ [expr $roiZ-$shiftZ]
+          } else {
+            set roiZ [expr $roiZ+$shiftZ]
+          }
+          set roiRadiusZ [expr $roiRadiusZ-$shiftZ]
+        } 
       }
 
       $roiNode SetXYZ $roiX $roiY $roiZ
