@@ -271,7 +271,6 @@ proc ExtractSubvolumeROIProcessLogicEvents {this caller event} {
 }
 
 proc ExtractSubvolumeROIProcessGUIEvents {this caller event} {
-  puts "Event received from $caller"
   if { $caller == $::ExtractSubvolumeROI($this,runButton) } {
   
     set inputVolume [$::ExtractSubvolumeROI($this,inputSelector) GetSelected]
@@ -497,7 +496,6 @@ proc ExtractSubvolumeROIUpdateMRML {this} {
 }
 
 proc ExtractSubvolumeROIProcessMRMLEvents {this callerID event} {
-  puts "MRML event received!"
   set caller [[[$this GetLogic] GetMRMLScene] GetNodeByID $callerID]
   if { $caller == "" } {
     return
