@@ -124,7 +124,7 @@ class ExtractSubvolumeGUI(ScriptedModuleGUI):
     def BuildGUI(self):
         self.GetUIPanel().AddPage("Extract Subvolume","Extract Subvolume","")
         pageWidget = self.GetUIPanel().GetPageWidget("Extract Subvolume")
-        helpText = "Create a new volume that contains the extent of the input volume that falls within the space defined by two fiducials.  Note that the fiducials may not exactly match the voxel boundaries of the input volume so not all cases are handled.  The first two fiducials of the input list are used."
+        helpText = "Create a new volume that contains the extent of the input volume that falls within the space defined by two fiducials.  Note that the fiducials may not exactly match the voxel boundaries of the input volume so not all cases are handled.  The first two fiducials of the input list are used.  See <a>http://www.slicer.org/slicerWiki/index.php/Modules:ExtractSubvolume-Documentation-3.4</a> for more information."
         aboutText = "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details."
         self.BuildHelpAndAboutFrame(pageWidget,helpText,aboutText)
     
