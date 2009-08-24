@@ -161,8 +161,8 @@ class CurveAnalysisBase(object):
     # ------------------------------
     # Target curve
 
-    def SetTargetCurve(self, sourceCurve):
-        self.TargetCurve = sourceCurve
+    def SetTargetCurve(self, targetCurve):
+        self.TargetCurve = targetCurve
 
     # ------------------------------
     # Fit curve

@@ -897,6 +897,8 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
            && event == vtkKWPushButton::InvokedEvent)
     {
     DeleteSelectedPlots();
+    // TODO: If the MRML event handler works properly, The following call is not necessary.
+    this->PlotManagerNode->Refresh();
     }
   else if (this->CurveScriptSelectButton->GetWidget()->GetLoadSaveDialog()
            == vtkKWLoadSaveDialog::SafeDownCast(caller)
@@ -2285,18 +2287,15 @@ void vtkFourDAnalysisGUI::UpdatePlotList()
         // Selection
         std::map<std::string, int>::iterator iter;
         iter = selected.find(node->GetID());
-        if (iter != selected.end())
+        if (iter != selected.end() && iter->second == 1)
           {
-          if (iter->second == 1)
-            {
-            this->PlotList->GetWidget()->SetCellTextAsInt(i, COLUMN_SELECT, 1);
-            this->PlotList->GetWidget()->SetCellWindowCommandToCheckButton(i, COLUMN_SELECT);
-            }
-          else
-            {
-            this->PlotList->GetWidget()->SetCellTextAsInt(i, COLUMN_SELECT, 0);
-            this->PlotList->GetWidget()->SetCellWindowCommandToCheckButton(i, COLUMN_SELECT);
-            }
+          this->PlotList->GetWidget()->SetCellTextAsInt(i, COLUMN_SELECT, 1);
+          this->PlotList->GetWidget()->SetCellWindowCommandToCheckButton(i, COLUMN_SELECT);
+          }
+        else
+          {
+          this->PlotList->GetWidget()->SetCellTextAsInt(i, COLUMN_SELECT, 0);
+          this->PlotList->GetWidget()->SetCellWindowCommandToCheckButton(i, COLUMN_SELECT);
           }
 
         // Visibility

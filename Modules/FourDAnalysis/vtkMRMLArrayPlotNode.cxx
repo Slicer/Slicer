@@ -66,7 +66,6 @@ vtkMRMLArrayPlotNode::~vtkMRMLArrayPlotNode()
     {
     vtkEventBroker::GetInstance()->RemoveObservations(
       this->Array, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
-    this->Array->Delete();
     this->Array = NULL;
     }
 }
