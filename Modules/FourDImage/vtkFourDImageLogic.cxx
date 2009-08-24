@@ -47,6 +47,8 @@
 #include "vtkSlicerVolumesLogic.h"
 
 #include <cmath>
+#include <vector>
+#include <sstream>
 
 vtkCxxRevisionMacro(vtkFourDImageLogic, "$Revision: 3633 $");
 vtkStandardNewMacro(vtkFourDImageLogic);
@@ -117,6 +119,163 @@ void vtkFourDImageLogic::UpdateAll()
 
 
 //---------------------------------------------------------------------------
+int vtkFourDImageLogic::SortFilesFromDirToCreateFileList ( const char *path,
+                                                           std::vector<ReaderType::FileNamesContainer>& fileNamesContainerList)
+{
+  typedef itk::OrientedImage< PixelValueType, 2 > SliceType;
+  typedef itk::ImageFileReader< SliceType > SliceReaderType;
+  typedef itk::GDCMImageIO ImageIOType;
+  typedef itk::GDCMSeriesFileNames InputNamesGeneratorType;
+  typedef itk::ImageFileWriter< VolumeType >  WriterType;
+  typedef itk::VectorImage< PixelValueType, 3 > NRRDImageType;
+  
+  fileNamesContainerList.clear();
+  StatusMessageType statusMessage;
+  
+  statusMessage.show = 1;
+  statusMessage.progress = 0.0;
+  statusMessage.message = "Checking directory....";
+  this->InvokeEvent ( vtkFourDImageLogic::ProgressDialogEvent, &statusMessage);
+  
+  //--- Things to convert DICOM tags into
+  //--- FourDImage sorting parameters.
+  int numberOfVolumesInBundle;
+  int bundleIdentifier;
+  
+  // Search files with compatible types (except DICOM)
+  vtkGlobFileNames* gfn = vtkGlobFileNames::New();
+  gfn->SetDirectory(path);
+  gfn->AddFileNames("*.nhdr");
+  gfn->AddFileNames("*.nrrd");
+  gfn->AddFileNames("*.hdr");
+  gfn->AddFileNames("*.mha");
+  gfn->AddFileNames("*.img");
+  gfn->AddFileNames("*.nii");
+  gfn->AddFileNames("*.nia");
+
+  int nFiles = gfn->GetNumberOfFileNames();
+  if (nFiles > 0)
+    {
+    //std::cerr << "find non-dicom files" << std::endl;
+    for (int i = 0; i < nFiles; i ++)
+      {
+      ReaderType::FileNamesContainer container;
+      container.clear();
+      //std::cerr << "FileName #" << i << " " << gfn->GetNthFileName(i) << std::endl;
+      container.push_back(gfn->GetNthFileName(i));
+      fileNamesContainerList.push_back(container);
+      }
+    numberOfVolumesInBundle = nFiles;  // ??
+    }
+  else
+    {
+    // in case of dicom series
+    ImageIOType::Pointer gdcmIO = ImageIOType::New();
+    gdcmIO->LoadPrivateTagsOn();
+    
+    InputNamesGeneratorType::Pointer inputNames = InputNamesGeneratorType::New();
+    inputNames->SetUseSeriesDetails(true);
+    inputNames->SetDirectory(path);
+    
+    itk::SerieUIDContainer seriesUIDs = inputNames->GetSeriesUIDs();
+    if (seriesUIDs.size() == 1)  // if single series UID is used
+      {
+      statusMessage.message = "Splitting series.... getting file names.";
+      this->InvokeEvent ( vtkFourDImageLogic::ProgressDialogEvent, &statusMessage);
+      
+      const ReaderType::FileNamesContainer & filenames = inputNames->GetFileNames(seriesUIDs[0]);
+      
+      ReaderType::Pointer reader = ReaderType::New();
+      reader->SetImageIO( gdcmIO );
+      reader->SetFileNames( filenames );
+      
+      try
+        {
+        statusMessage.message = "Splitting series.... updating reader.";
+        this->InvokeEvent ( vtkFourDImageLogic::ProgressDialogEvent, &statusMessage);
+        reader->Update();
+        }
+      catch (itk::ExceptionObject &excp)
+        {
+        statusMessage.message = "Error encountered: exiting.";
+        this->InvokeEvent ( vtkFourDImageLogic::ProgressDialogEvent, &statusMessage);
+
+        std::cerr << "Exception thrown while reading the series" << std::endl;
+        std::cerr << excp << std::endl;
+        return EXIT_FAILURE;
+        }
+
+      //--- get DICOM header info
+      statusMessage.message = "Splitting series.... getting DICOM metadata.";
+      this->InvokeEvent ( vtkFourDImageLogic::ProgressDialogEvent, &statusMessage);
+      ReaderType::DictionaryArrayRawPointer inputDict = reader->GetMetaDataDictionaryArray();
+      int nSlices = inputDict->size();
+      
+      //--- pull out some important information for sorting.
+      std::string tag;
+      tag.clear();
+      // NumberOfTemporalPositions
+      itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0020|0105",  tag);      
+      numberOfVolumesInBundle = atoi ( tag.c_str() ); 
+
+      statusMessage.progress = 0.0;
+      statusMessage.message = "Sorting slices into volume bundles...";
+      this->InvokeEvent ( vtkFourDImageLogic::ProgressDialogEvent, &statusMessage);
+
+      //--- keep track of which volume has had room for 
+      //--- its file list allocated in the fileNamesContainerList.
+      //--- Each sub-vector is a list of elements containing the sliceLocation
+      //--- for a corresponding volume in fileNamesContainerList.
+      //--- The sorting of these by sliceLocation guides the sorting
+      //--- of files in the fileNameList. (or maybe we don't have to.
+      fileNamesContainerList.resize(numberOfVolumesInBundle);
+
+      //--- for each slice...check its header information
+      //--- and put its filename in the proper bundle container.
+      //--- here assume that filename[i] order is same as inputDict[i] info order.
+      //--- !!! check this assumption!!!!
+      int bundle;
+      std::stringstream ss;
+      for (int i = 0; i < nSlices; i ++)
+        {
+        //--- to which volume does slice belong?
+        tag.clear();
+        itk::ExposeMetaData<std::string> ( *(*inputDict)[i], "0020|0100",  tag);
+        bundleIdentifier = atof( tag.c_str() );
+        
+        //--- this filenamelist for this volume isn't yet allocated.
+        bundle = bundleIdentifier - 1;
+        fileNamesContainerList[bundle].push_back(filenames[i]);        
+
+        /*
+        ss.str("");
+        statusMessage.progress = (double)i/(double)nSlices;
+        ss <<  "putting file " << i << "/" << nSlices << "into bundle " << bundle;
+        statusMessage.message = ss.str().c_str();
+        this->InvokeEvent ( vtkFourDImageLogic::ProgressDialogEvent, &statusMessage);
+        */
+        }
+      }
+    else // if the directory contains multiple series UIDs
+      {
+      numberOfVolumesInBundle = seriesUIDs.size();
+      fileNamesContainerList.clear();
+      
+      itk::SerieUIDContainer::iterator iter;
+      for (iter = seriesUIDs.begin(); iter != seriesUIDs.end(); iter ++)
+        {
+        //std::cerr << "UID = " << *iter << std::endl;
+        fileNamesContainerList.push_back(inputNames->GetFileNames(*iter));
+        }
+      }
+    }
+  return numberOfVolumesInBundle;
+}
+
+
+
+
+//---------------------------------------------------------------------------
 int vtkFourDImageLogic::CreateFileListFromDir(const char* path,
                                              std::vector<ReaderType::FileNamesContainer>& fileNamesContainerList)
 {
@@ -183,8 +342,7 @@ int vtkFourDImageLogic::CreateFileListFromDir(const char* path,
       statusMessage.message = "Splitting series....";
       this->InvokeEvent ( vtkFourDImageLogic::ProgressDialogEvent, &statusMessage);
       
-      const ReaderType::FileNamesContainer & filenames = 
-        inputNames->GetFileNames(seriesUIDs[0]);
+      const ReaderType::FileNamesContainer & filenames = inputNames->GetFileNames(seriesUIDs[0]);
       
       ReaderType::Pointer reader = ReaderType::New();
       reader->SetImageIO( gdcmIO );
@@ -202,12 +360,15 @@ int vtkFourDImageLogic::CreateFileListFromDir(const char* path,
         std::cerr << excp << std::endl;
         return EXIT_FAILURE;
         }
+
+      //--- get DICOM header info
       ReaderType::DictionaryArrayRawPointer inputDict = reader->GetMetaDataDictionaryArray();
       int nSlices = inputDict->size();
       
       // search "cycle" of slice location
       std::string tag;
       tag.clear();
+        // Slice Location
       itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0020|1041",  tag);
       float firstSliceLocation = atof( tag.c_str() ); // first slice location
       int nSlicesInVolume;
@@ -222,6 +383,7 @@ int vtkFourDImageLogic::CreateFileListFromDir(const char* path,
         this->InvokeEvent ( vtkFourDImageLogic::ProgressDialogEvent, &statusMessage);
         
         tag.clear();
+        // Slice Location
         itk::ExposeMetaData<std::string> ( *(*inputDict)[i], "0020|1041",  tag);
         float sliceLocation = atof( tag.c_str() );
         //std::cerr << "location = " << tag.c_str() << std::endl;
@@ -520,9 +682,20 @@ vtkMRMLTimeSeriesBundleNode* vtkFourDImageLogic::LoadImagesFromDir(const char* p
     std::cerr << "Couldn't find files" << std::endl;
     return NULL;
     }
+
+/*
+  //--- testing a new method of sorting files
+  //--- begin wjp test
+  if ( SortFilesFromDirToCreateFileList ( path, fileNamesContainerList) <= 0 )
+    {
+    std::cerr << "Couldn't find files" << std::endl;
+    return NULL;
+    }
+*/
+  //--- end wjp test.
   
   return LoadImagesByList(bundleNodeName, fileNamesContainerList);
-
+  
 }
 
 

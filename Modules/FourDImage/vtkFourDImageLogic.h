@@ -105,6 +105,8 @@ class VTK_FourDImage_EXPORT vtkFourDImageLogic : public vtkSlicerModuleLogic
   typedef short PixelValueType;
   typedef itk::OrientedImage< PixelValueType, 3 > VolumeType;
   typedef itk::ImageSeriesReader< VolumeType > ReaderType;
+  int SortFilesFromDirToCreateFileList ( const char* path,
+                                         std::vector<ReaderType::FileNamesContainer>& fileNamesContainerList);
   int CreateFileListFromDir(const char* path,
                             std::vector<ReaderType::FileNamesContainer>& fileNamesContainerList);
   void CreateFileListFromDir(const char* path,
