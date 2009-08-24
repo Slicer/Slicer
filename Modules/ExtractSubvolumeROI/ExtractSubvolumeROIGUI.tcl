@@ -620,6 +620,20 @@ proc ExtractSubvolumeROIApply {this} {
     set errorText "ROI node cannot be under transform!"
   }
 
+  set ijk2ras [vtkMatrix4x4 New]
+  $volumeNode GetIJKToRASMatrix $ijk2ras
+  set m01 [$ijk2ras GetElement 0 1]
+  set m02 [$ijk2ras GetElement 0 2]
+  set m12 [$ijk2ras GetElement 1 2]
+  $ijk2ras Delete
+
+  if {[expr abs($m01) || abs($m02) || abs($m12)]} {
+    set errorText "The specified input volume is not axis-aligned! \
+    ExtractSubvolumeROI does not support non axis-aligned input images at this \
+    time.\n\nPlease resample the input image to be axis-aligned to use this \
+    module."
+  }
+
   if { $errorText != "" } {
     set dialog [vtkKWMessageDialog New]
     $dialog SetParent [$::slicer3::ApplicationGUI GetMainSlicerWindow]
