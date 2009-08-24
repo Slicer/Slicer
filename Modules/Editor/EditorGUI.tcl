@@ -101,7 +101,7 @@ proc EditorBuildGUI {this} {
   # help frame
   #
   set helptext "The Editor allows label maps to be created and edited. The active label map will be modified by the Editor.  See <a>http://www.slicer.org/slicerWiki/index.php/Modules:Editor-Documentation</a>."
-  set abouttext "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details."
+  set abouttext "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Pieper."
   $this BuildHelpAndAboutFrame $pageWidget $helptext $abouttext
 
   #
