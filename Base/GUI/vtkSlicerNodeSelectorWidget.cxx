@@ -376,7 +376,7 @@ void vtkSlicerNodeSelectorWidget::UnconditionalUpdateMenu()
               categoryMenu->SetParent(this->GetWidget()->GetWidget()->GetMenu());
               categoryMenu->Create();
               categoryIndex = this->GetWidget()->GetWidget()->GetMenu()->AddCascade(node->GetAttribute("Category"), categoryMenu);
-              int nodeIndex = categoryMenu->AddRadioButton(entryName.c_str(), this, sc.str().c_str());
+              categoryMenu->AddRadioButton(entryName.c_str(), this, sc.str().c_str());
               // do we need a column break? number of items needs to be
               // decremented to match with the nodeIndex returned which is 0 based
               int count = categoryMenu->GetNumberOfItems() - 1;
