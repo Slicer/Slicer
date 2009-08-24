@@ -472,7 +472,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     }
 
     "RightButtonPressEvent" {
-        if { [$_sliceNode GetOrientationString] == "Reformat" && [$_interactor GetControlKey] } {
+      if { [$_sliceNode GetOrientationString] == "Reformat" && [$_interactor GetControlKey] } {
         set _actionState "Rotate"
       } else {
         set _actionState "Zoom"
