@@ -160,6 +160,7 @@ protected:
   // regular ray casting
   void LoadFragmentShader();
   void LoadNoShadingFragmentShader();
+  void LoadFragmentShaderGMOM();//gradient-magnitude opacity-modulation
   
   // mip ray casting
   void LoadNoShadingFragmentShaderMIP();//lighting in MIP could be bad, so no shading here
@@ -168,6 +169,7 @@ protected:
   // regular ray casting
   void LoadFragmentShaderTwo();
   void LoadNoShadingFragmentShaderTwo();
+  void LoadFragmentShaderGMOMTwo();
   
   // mip ray casting
   void LoadNoShadingFragmentShaderMIPTwo();//lighting in MIP could be bad, so no shading here
@@ -176,6 +178,7 @@ protected:
   // regular ray casting
   void LoadFragmentShaderFour();
   void LoadNoShadingFragmentShaderFour();
+  void LoadFragmentShaderGMOMFour();
   
   // mip ray casting
   void LoadNoShadingFragmentShaderMIPFour();//lighting in MIP could be bad, so no shading here

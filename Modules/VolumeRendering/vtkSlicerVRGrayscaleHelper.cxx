@@ -2213,6 +2213,8 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessGPURayCastTechnique 2");
         this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->AddRadioButton("Minimum Intensity Projection");
         this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->SetItemCommand(3, this,"ProcessGPURayCastTechnique 3");
+        this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->AddRadioButton("Gradient Magnitude Opacity Modulation");
+        this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->SetItemCommand(4, this,"ProcessGPURayCastTechnique 4");
         
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastTechnique->GetWidgetName() );
         
