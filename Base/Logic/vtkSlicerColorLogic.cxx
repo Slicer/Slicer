@@ -249,7 +249,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
   // surface colours
   vtkMRMLColorTableNode *node = vtkMRMLColorTableNode::New();
   node->SetTypeToFile();
-  node->SetAttribute("Category", "File");
+  node->SetAttribute("Category", "Labels from File");
   node->SaveWithSceneOff();
   node->SetScene(this->GetMRMLScene());
   // make a storage node
@@ -339,7 +339,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
     {
     vtkMRMLColorTableNode * node =  vtkMRMLColorTableNode::New();
     node->SetTypeToFile();
-    node->SetAttribute("Category", "File");
+    node->SetAttribute("Category", "Labels from File");
     node->SaveWithSceneOff();
     node->SetScene(this->GetMRMLScene());
     // make a storage node
