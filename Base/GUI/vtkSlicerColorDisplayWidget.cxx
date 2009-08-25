@@ -28,6 +28,7 @@
 #include "vtkScalarBarWidget.h"
 #include "vtkKWScalarBarAnnotation.h"
 #include "vtkSlicerViewerWidget.h"
+#include "vtkSlicerPopUpHelpWidget.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerColorDisplayWidget );
@@ -42,6 +43,7 @@ vtkSlicerColorDisplayWidget::vtkSlicerColorDisplayWidget ( )
     this->ColorNode = NULL; 
 
     this->ColorSelectorWidget = NULL;
+    this->NodeHelpWidget = NULL;
 
     this->ColorNodeTypeLabel = NULL;
 
@@ -77,6 +79,12 @@ vtkSlicerColorDisplayWidget::~vtkSlicerColorDisplayWidget ( )
     this->ColorSelectorWidget->SetParent(NULL);
     this->ColorSelectorWidget->Delete();
     this->ColorSelectorWidget = NULL;
+    }
+  if (this->NodeHelpWidget)
+    {
+    this->NodeHelpWidget->SetParent(NULL);
+    this->NodeHelpWidget->Delete();
+    this->NodeHelpWidget = NULL;
     }
   if (this->ColorNodeTypeLabel) 
     {
@@ -743,9 +751,16 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  displayFrame->GetWidgetName() );
 
+  // make a little frame for the node selector and help widget
+  vtkKWFrame *selFrame = vtkKWFrame::New();
+  selFrame->SetParent(displayFrame);
+  selFrame->Create();
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 selFrame->GetWidgetName() );
+  
   // node selector
   this->ColorSelectorWidget = vtkSlicerNodeSelectorWidget::New();
-  this->ColorSelectorWidget->SetParent(displayFrame);
+  this->ColorSelectorWidget->SetParent(selFrame);
   this->ColorSelectorWidget->Create();
   this->ColorSelectorWidget->SetNodeClass("vtkMRMLColorNode", NULL, NULL, NULL);
   // don't allow new nodes to be created until can edit them
@@ -759,11 +774,48 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
   this->ColorSelectorWidget->GetWidget()->SetWidth(24);
   this->ColorSelectorWidget->SetLabelText( "Color Select: ");
   this->ColorSelectorWidget->SetBalloonHelpString("Select a color from the current mrml scene.");
-  this->Script ("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                this->ColorSelectorWidget->GetWidgetName(),
-                displayFrame->GetWidgetName());
 
   
+  // info icon to give more info about the colour nodes
+  this->NodeHelpWidget = vtkSlicerPopUpHelpWidget::New();
+  this->NodeHelpWidget->SetParent(selFrame);
+  this->NodeHelpWidget->Create();
+  this->NodeHelpWidget->SetWidth(3);
+  this->NodeHelpWidget->SetHelpTitle("Color Node Descriptions");
+  this->NodeHelpWidget->SetBalloonHelpString("Bring up help window");
+  
+  // build up a list of descriptions of the nodes
+  std::string nodeNamesDescriptions = std::string("Node names and descriptions:\n");
+  if (this->GetMRMLScene())
+    {
+      int numColorNodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLColorNode");
+      for (int n = 0; n < numColorNodes; n++)
+        {
+        vtkMRMLColorNode *cnode = vtkMRMLColorNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLColorNode"));
+        if (cnode)
+          {
+          std::string name = std::string("");
+          if (cnode->GetName())
+            {
+            name = std::string("**") + std::string(cnode->GetName()) + std::string("**");
+            }
+          std::string desc = std::string("");
+          if (cnode->GetDescription())
+            {
+            desc = std::string(cnode->GetDescription());
+            }
+          nodeNamesDescriptions = nodeNamesDescriptions + name + std::string(": ") + desc + std::string("\n");
+        }
+      }
+    }
+  this->NodeHelpWidget->SetHelpText(nodeNamesDescriptions.c_str());
+
+  this->Script ("pack %s -side left -anchor w -padx 2 -pady 2 -in %s",
+                this->NodeHelpWidget->GetWidgetName(),
+                selFrame->GetWidgetName());
+  this->Script ("pack %s -side left -anchor w -fill x -expand true -padx 2 -pady 2 -in %s",
+                this->ColorSelectorWidget->GetWidgetName(),
+                selFrame->GetWidgetName());  
   
   // type
   this->ColorNodeTypeLabel = vtkKWLabel::New();
@@ -929,6 +981,7 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
               scalarBarFrame->GetWidgetName());
   
   // deleting frame widgets
+  selFrame->Delete();
   buttonFrame->Delete();
   scalarBarFrame->Delete();
   rangeFrame->Delete();

@@ -33,6 +33,7 @@ class vtkKWEntryWithLabel;
 class vtkScalarBarWidget;
 class vtkSlicerViewerWidget;
 class vtkKWScalarBarAnnotation;
+class vtkSlicerPopUpHelpWidget;
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColorDisplayWidget : public vtkSlicerWidget
 {
   
@@ -46,6 +47,7 @@ public:
   vtkGetObjectMacro ( ColorNodeTypeLabel, vtkKWLabel);
   vtkGetObjectMacro ( NumberOfColorsLabel, vtkKWLabel);
   vtkGetObjectMacro ( MultiColumnList, vtkKWMultiColumnListWithScrollbars );
+  vtkGetObjectMacro ( NodeHelpWidget, vtkSlicerPopUpHelpWidget );
 
   //Description:
   //Enable/Disable MultiSelect possibilities
@@ -165,6 +167,10 @@ public:
   // Description:
   // select a colour node to display
   vtkSlicerNodeSelectorWidget* ColorSelectorWidget;
+
+  // Description:
+  // pop up help describing the nodes
+  vtkSlicerPopUpHelpWidget *NodeHelpWidget;
 
   // Description:
   // type of the colour node
