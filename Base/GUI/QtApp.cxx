@@ -44,7 +44,8 @@ void QtApp::BuildGUI()
   this->qNodeSelector->setObjectName("selector");
   this->qNodeSelector->SetMRMLScene(this->MRMLScene);
   this->qNodeSelector->SetNodeClass("vtkMRMLScalarVolumeNode", NULL, NULL, NULL);
-
+  this->qNodeSelector->SetNoneEnabled(1);
+  this->qNodeSelector->SetNewNodeEnabled(1);
   vbox->addWidget(this->qNodeSelector);
 
   box->setLayout(vbox);

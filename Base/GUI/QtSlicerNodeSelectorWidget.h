@@ -24,7 +24,7 @@
 #ifndef __QtSlicerNodeSelectorWidget_h
 #define __QtSlicerNodeSelectorWidget_h
 
-#include <QMenu>
+#include <QComboBox>
 
 #include "vtkCallbackCommand.h"
 
@@ -34,7 +34,7 @@
 #include "vtkSlicerBaseGUI.h"
 #include "vtkSlicerContextMenuHelper.h"
 
-class VTK_SLICER_BASE_GUI_EXPORT QtSlicerNodeSelectorWidget : public QMenu
+class VTK_SLICER_BASE_GUI_EXPORT QtSlicerNodeSelectorWidget : public QComboBox 
 {
   Q_OBJECT
 public:
@@ -182,7 +182,6 @@ public:
   void ClearMenu();
 
   void ProcessNewNodeCommand(const char *className, const char *nodeName);
-  void ProcessCommand(char *selectedID);
 
   bool CheckNodeClass(vtkMRMLNode *node);
 
@@ -200,7 +199,7 @@ public:
 
 public slots:
 
-  void Select(QAction *);
+  void Select(const QString &id);
 
 Q_SIGNALS:
   void NodeSelected(const QString &id);
@@ -211,10 +210,6 @@ protected:
   // Create the widget
   virtual void CreateWidget();
 
-  void UncheckAll();
-
-  void DeleteAllActions();
-
 //BTX
   std::vector<std::string> NodeClasses;
   std::vector<std::string> AttributeNames;
@@ -222,7 +217,9 @@ protected:
   std::vector<std::string> NodeNames;
 
   std::map<std::string, std::string> NodeID_to_EntryName;
-  std::map<QAction*, std::string> Action_to_NodeID;
+  std::map<QString, std::string> EntryName_to_NodeID;
+  std::map<std::string, std::string> ClassTag_to_Class;
+  std::map<std::string, std::string> ClassTag_to_ClassName;
   std::string MakeEntryName(vtkMRMLNode *node);
   std::string FindEntryName(vtkMRMLNode *node);
 

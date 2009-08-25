@@ -61,7 +61,7 @@ QtSlicerNodeSelectorWidget::QtSlicerNodeSelectorWidget()
   this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
   this->MRMLCallbackCommand->SetCallback(MRMLCallback);
   this->InMRMLCallbackFlag = 0;
-  connect(this, SIGNAL(triggered(QAction*)), this, SLOT(Select(QAction*)));
+  connect(this, SIGNAL(activated (const QString &)), this, SLOT(Select(const QString &)));
 
 }
 
@@ -93,14 +93,13 @@ void QtSlicerNodeSelectorWidget::SetMRMLScene( vtkMRMLScene *aMRMLScene)
     this->MRMLScene->RemoveObserver( this->MRMLCallbackCommand );
     this->MRMLScene->Delete ( );
     this->MRMLScene = NULL;
-    //    this->MRMLScene->Delete();
     }
 
   this->MRMLScene = aMRMLScene;
 
   if ( this->MRMLScene )
     {
-    //this->MRMLScene->Register(this);
+    this->MRMLScene->Register(NULL);
     this->MRMLScene->AddObserver( vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand );
     this->MRMLScene->AddObserver( vtkMRMLScene::NodeRemovedEvent, this->MRMLCallbackCommand );
     this->MRMLScene->AddObserver( vtkMRMLScene::NewSceneEvent, this->MRMLCallbackCommand );
@@ -187,9 +186,9 @@ void QtSlicerNodeSelectorWidget::AddNodeClass(const char *className,
 void QtSlicerNodeSelectorWidget::ClearMenu()
 {
   this->clear();
-  Action_to_NodeID.clear();
-  //this->DeleteAllActions();
-
+  this->EntryName_to_NodeID.clear();
+  this->ClassTag_to_ClassName.clear();
+  this->ClassTag_to_Class.clear();
 }
 
 //----------------------------------------------------------------------------
@@ -261,6 +260,7 @@ void QtSlicerNodeSelectorWidget::UnconditionalUpdateMenu()
     }
 
   NodeID_to_EntryName.clear();
+  EntryName_to_NodeID.clear();
 
   vtkMRMLNode *oldSelectedNode = this->GetSelected();
   std::string oldSelectedName = this->FindEntryName(oldSelectedNode);
@@ -294,9 +294,10 @@ void QtSlicerNodeSelectorWidget::UnconditionalUpdateMenu()
         // need to quote the node name in the constructed Tcl command
         std::stringstream sc;
         sc << "ProcessNewNodeCommand " << this->GetNodeClass(c) << " \"" << name << "\"";
-        QAction *action = new QAction(ss.str().c_str(), this);
-        this->addAction(action);
-        
+        this->addItem(ss.str().c_str());
+        this->ClassTag_to_ClassName[std::string(tag)] = std::string(name);
+        this->ClassTag_to_Class[std::string(tag)] = std::string(this->GetNodeClass(c));
+        count++;
         //this->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(count++, this, sc.str().c_str() );
         //this->GetWidget()->GetWidget()->SetValue(ss.str().c_str());
         }
@@ -305,15 +306,19 @@ void QtSlicerNodeSelectorWidget::UnconditionalUpdateMenu()
 
   if (this->NoneEnabled)
     {
-    QAction *action = new QAction("None", this);
-    this->addAction(action);
+    this->addItem("None");
+    count++;
     //this->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(count++, this, "ProcessCommand None");
+    }
+
+  if (count)
+    {
+    this->insertSeparator(count++);
     }
 
   vtkMRMLNode *node = NULL;
   vtkMRMLNode *selectedNode = NULL;
   std::string selectedName;
-  QAction *selectedAction = NULL;
 
   bool selected = false;
   int resultAddAdditionalNodes=this->AddAditionalNodes();
@@ -350,24 +355,22 @@ void QtSlicerNodeSelectorWidget::UnconditionalUpdateMenu()
 
           std::string entryName = this->MakeEntryName(node);
           this->NodeID_to_EntryName[node->GetID()] = entryName.c_str();
+          this->EntryName_to_NodeID[QString(entryName.c_str())]= std::string(node->GetID());
           
-          QAction *action = new QAction(entryName.c_str(), this);
-          action->setCheckable(true);
-          this->addAction(action);
-          this->Action_to_NodeID[action] = node->GetID();
+          this->addItem(entryName.c_str());
 
           // do we need a column break?
           if (count != 0 && count % 30 == 0)
             {
             //this->GetWidget()->GetWidget()->GetMenu()->SetItemColumnBreak(count, 1);
             }
+          count++;
           //this->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(count++, this, sc.str().c_str());
           if (oldSelectedNode == node)
           {
             selectedNode = node;
             selected = true;
             selectedName = entryName;
-            selectedAction = action;
           }
           //Only choose first one wenn the Additional Nodes didn't take care about this
           else if (!selected && !this->NoneEnabled&&(resultAddAdditionalNodes==0))
@@ -375,7 +378,6 @@ void QtSlicerNodeSelectorWidget::UnconditionalUpdateMenu()
             selectedNode = node;
             selected = true;
             selectedName = entryName;
-            selectedAction = action;
           }
         }
      }
@@ -389,9 +391,7 @@ void QtSlicerNodeSelectorWidget::UnconditionalUpdateMenu()
     }
   if (selectedNode != NULL)
     {
-    this->setActiveAction(selectedAction);
-    this->UncheckAll();
-    selectedAction->setChecked(true);
+    this->setCurrentIndex(this->findText (selectedName.c_str()));
     //this->GetWidget()->GetWidget()->SetValue(selectedName.c_str());
     this->SelectedID = std::string(selectedNode->GetID());
     }
@@ -402,7 +402,7 @@ void QtSlicerNodeSelectorWidget::UnconditionalUpdateMenu()
       {
       name = "None";
       }
-    //this->setActiveAction(xxx);
+    this->setCurrentIndex(this->findText (name));
     //this->GetWidget()->GetWidget()->SetValue(name);
     this->SelectedID = std::string(name);
     }
@@ -427,8 +427,7 @@ void QtSlicerNodeSelectorWidget::UnconditionalUpdateMenu()
     {
     if (selectedNode)
       {
-      this->UncheckAll();
-      selectedAction->setChecked(true);
+      this->setCurrentIndex(this->findText (selectedName.c_str()));
       emit NodeSelected(QString(selectedNode->GetID()));
       }
     //this->InvokeEvent(QtSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
@@ -508,36 +507,36 @@ void QtSlicerNodeSelectorWidget::ProcessNewNodeCommand(const char *className, co
 }
 
 //----------------------------------------------------------------------------
-void QtSlicerNodeSelectorWidget::Select(QAction* action)
+void QtSlicerNodeSelectorWidget::Select(const QString &id)
 {
-  std::map<QAction*, std::string>::iterator iter = this->Action_to_NodeID.find(action);
-  if (iter != this->Action_to_NodeID.end())
+
+  std::map<QString, std::string>::iterator iter = this->EntryName_to_NodeID.find(id);
+  if (iter != this->EntryName_to_NodeID.end())
     {
-    const char *selectedID = iter->second.c_str();
-    if ( selectedID )
+    this->SelectedID = iter->second;
+    emit NodeSelected(QString(iter->second.c_str()));
+    }
+  else
+    {
+    if (id.contains("Create New", Qt::CaseSensitive))
       {
-      this->setActiveAction(action);
-      this->UncheckAll();
-      action->setChecked(true);
-      this->SelectedID = selectedID;
-      emit NodeSelected(QString(selectedID));
+      QString tag = id.section(' ', 2, 2);
+      std::string className = "";
+      std::string name = "";
+      std::map<std::string, std::string>::iterator iter = this->ClassTag_to_Class.find(tag.toStdString());
+      if (iter != this->ClassTag_to_Class.end())
+        {
+        className = iter->second;
+        }
+      iter = this->ClassTag_to_ClassName.find(tag.toStdString());
+      if (iter != this->ClassTag_to_ClassName.end())
+        {
+        name = iter->second;
+        }
+
+      this->ProcessNewNodeCommand(className.c_str(), name.c_str());
       }
     }
-}
-
-//----------------------------------------------------------------------------
-void QtSlicerNodeSelectorWidget::ProcessCommand(char *selectedID)
-{
-  this->SelectedID = std::string(selectedID);
-
-  if (this->ContextMenuHelper && selectedID)
-    {
-    vtkMRMLNode *node = this->MRMLScene->GetNodeByID(this->SelectedID);
-    //this->ContextMenuHelper->SetMRMLNode(node);
-    //this->ContextMenuHelper->UpdateMenuState();
-    }
-
-  //this->InvokeEvent(QtSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
 }
 
 
@@ -548,14 +547,18 @@ void QtSlicerNodeSelectorWidget::SetSelected(vtkMRMLNode *node)
   if ( node != NULL)
     {
     std::string name = this->FindEntryName(node);
+    QString qname = name.c_str();
     this->SelectedID = std::string(node->GetID());
-    //if ( !strcmp ( m->GetValue(), name.c_str() ) )
-      //{
-      //return; // no change, don't propogate events
-      //}
-    //m->SetValue(name.c_str());
+
+    if (this->currentText () == qname) 
+      {
+      return; // no change, don't propogate events
+      }
+    this->setCurrentIndex(this->findText (qname));
 
     // new value, set it and notify observers
+    emit NodeSelected(QString(node->GetID()));
+
     //this->InvokeEvent(QtSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
     }
   else
@@ -579,25 +582,9 @@ void QtSlicerNodeSelectorWidget::SetSelectedNew(const char *className)
     const char *name = this->MRMLScene->GetTagByClassName(className);
     std::stringstream ss;
     ss << "Create New " << name;
+    this->setCurrentIndex(this->findText (ss.str().c_str()));
     //this->GetWidget()->GetWidget()->SetValue(ss.str().c_str());
     }
 }
 
-void QtSlicerNodeSelectorWidget::UncheckAll()
-{
-  std::map<QAction*, std::string>::iterator iter;
-  for(iter = this->Action_to_NodeID.begin(); iter != this->Action_to_NodeID.end(); iter++)
-    {
-    iter->first->setChecked(false);
-    }
-}
 
-void QtSlicerNodeSelectorWidget::DeleteAllActions()
-{
-  std::map<QAction*, std::string>::iterator iter;
-  for(iter = this->Action_to_NodeID.begin(); iter != this->Action_to_NodeID.end(); iter++)
-    {
-    delete iter->first;
-    }
-  this->Action_to_NodeID.clear();
-}
