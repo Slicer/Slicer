@@ -1,4 +1,4 @@
-#include "vtkObject.h"
+ #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 
 #include "vtkSlicerMRMLTreeWidget.h"
@@ -28,7 +28,6 @@
 #include "vtkMRMLVolumeNode.h"
 
 #include "vtkSlicerApplication.h"
-
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerMRMLTreeWidget );
@@ -114,7 +113,9 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
       {
       // For example, one could populate the node inspector
       this->SetSelectesLeaves();
-      this->UpdateNodeInspector(this->GetSelectedNodeInTree());
+      vtkMRMLNode *selected = this->GetSelectedNodeInTree();
+      this->UpdateNodeInspector(selected);
+      this->UpdateNodeInTree(selected);
       }
 
     // Right click: context menu
@@ -199,7 +200,7 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
           vtkMRMLDisplayableNode::SafeDownCast(node)->GetDisplayNode() != NULL )
           {
           sprintf(command, "ToggleVisibilityCallback {%s}", (const char *)callData);
-          int index = this->ContextMenu->AddCheckButton("Toggle Visibility", this, command);
+          int index = this->ContextMenu->AddCheckButton("Visibility", this, command);
           this->ContextMenu->SetItemSelectedState(index, vtkMRMLDisplayableNode::SafeDownCast(node)->GetDisplayNode()->GetVisibility());
           }
         if (node != NULL)
@@ -372,17 +373,29 @@ void vtkSlicerMRMLTreeWidget::NodeParentChangedCallback(
 //---------------------------------------------------------------------------
 void vtkSlicerMRMLTreeWidget::ToggleVisibilityCallback(const char *id)
 {
-  vtkMRMLDisplayableNode *dnode = vtkMRMLDisplayableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
-
-  if (!dnode)
+  vtkMRMLDisplayableNode *dnode = 
+    vtkMRMLDisplayableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
+  if (dnode)
     {
-    return;
+    vtkMRMLDisplayNode *dnode_node = dnode->GetDisplayNode();
+    if (dnode_node)
+      {
+      this->VisibilityCallback(id, dnode_node->GetVisibility() ? 0 : 1);
+      }
     }
+}
 
-  int newVisibilityState = this->ContextMenu->GetItemSelectedState("Toggle Visibility");
-  for (int i=0; i<dnode->GetNumberOfDisplayNodes(); i++)
+//---------------------------------------------------------------------------
+void vtkSlicerMRMLTreeWidget::VisibilityCallback(const char *id, int vis)
+{
+  vtkMRMLDisplayableNode *dnode = 
+    vtkMRMLDisplayableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
+  if (dnode)
     {
-    dnode->GetNthDisplayNode(i)->SetVisibility(newVisibilityState);
+    for (int i = 0; i < dnode->GetNumberOfDisplayNodes(); i++)
+      {
+      dnode->GetNthDisplayNode(i)->SetVisibility(vis);
+      }
     }
 }
 
@@ -470,17 +483,24 @@ void vtkSlicerMRMLTreeWidget::ProcessMRMLEvents ( vtkObject *caller,
                                                   unsigned long event, 
                                                   void *callData )
 {
-  vtkMRMLNode *node = reinterpret_cast<vtkMRMLNode *>(callData);
-  vtkMRMLTransformableNode *tnode = vtkMRMLTransformableNode::SafeDownCast(node);
+  vtkMRMLNode *caller_node = reinterpret_cast<vtkMRMLNode *>(caller);
+  vtkMRMLNode *calldata_node = reinterpret_cast<vtkMRMLNode *>(callData);
+  vtkMRMLTransformableNode *calldata_tnode = 
+    vtkMRMLTransformableNode::SafeDownCast(calldata_node);
   if (this->MRMLScene &&
       ((event == vtkMRMLScene::SceneCloseEvent) || 
-       (vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene && tnode)))
+       (vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene && 
+        calldata_tnode)))
     {
     this->UpdateTreeFromMRML();
     }
   if ( this->MRMLScene && (event == vtkMRMLScene::SceneEditedEvent) )
     {
     this->UpdateTreeFromMRML();
+    }
+  if (caller_node  && event == vtkMRMLDisplayableNode::DisplayModifiedEvent) 
+    {
+    this->UpdateNodeInTree(caller_node);
     }
 }
 
@@ -514,7 +534,6 @@ void vtkSlicerMRMLTreeWidget::RemoveWidgetObservers ( )
 void vtkSlicerMRMLTreeWidget::CreateWidget ( )
 {
   // Check if already created
-
   if (this->IsCreated())
     {
     vtkErrorMacro(<< this->GetClassName() << " already created");
@@ -631,6 +650,7 @@ void vtkSlicerMRMLTreeWidget::UpdateTreeFromMRML()
 {
   vtksys_stl::string selected_node(
     this->TreeWidget->GetWidget()->GetSelection());
+  this->TreeWidget->GetWidget()->DeleteAllNodeWindows("root");
   this->TreeWidget->GetWidget()->DeleteAllNodes();
 
   vtkMRMLScene *scene = this->GetMRMLScene();
@@ -671,29 +691,23 @@ void vtkSlicerMRMLTreeWidget::UpdateTreeFromMRML()
 //---------------------------------------------------------------------------
 void vtkSlicerMRMLTreeWidget::AddNodeToTree(vtkMRMLNode *node)
 {
-  if (!node)
-    {
-    return;
-    }
-
-  if (node->GetHideFromEditors())
+  if (!node || node->GetHideFromEditors())
    {
     return;
    }
 
   vtkKWTree *tree = this->TreeWidget->GetWidget();
-
-  if (tree->HasNode(node->GetID()))
+  char *ID = node->GetID();
+  if (tree->HasNode(ID))
     {
     return;
     }
-
-  char *ID = node->GetID();
     
   vtksys_stl::string node_text(node->GetName());
   if (node_text.size())
     {
-    if (this->ShowIDButton && this->ShowIDButton->GetWidget()->GetSelectedState())
+    if (this->ShowIDButton && 
+        this->ShowIDButton->GetWidget()->GetSelectedState())
       {
       node_text += " (";
       node_text += ID;
@@ -721,18 +735,73 @@ void vtkSlicerMRMLTreeWidget::AddNodeToTree(vtkMRMLNode *node)
       {
       parent_node = parent->GetID();
       this->AddNodeToTree(parent);
-
       }
     }
   tree->AddNode(parent_node, ID, node_text.c_str());
 
+  this->UpdateNodeInTree(node);
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerMRMLTreeWidget::UpdateNodeInTree(vtkMRMLNode *node)
+{
+  if (!node || node->GetHideFromEditors())
+   {
+    return;
+   }
+
+  vtkKWTree *tree = this->TreeWidget->GetWidget();
+  char *ID = node->GetID();
+  if (!tree->HasNode(ID))
+    {
+    return;
+    }
+
   // This is how you can set icons for each node. You can either use
   // predefined icons, or go through the usual resources framework, just
   // like the toolbar icons are constructed (see SetNodeImage...)
-  if (isTransformable)
+
+  if (node->IsA("vtkMRMLDisplayableNode") && 
+      !node->IsA("vtkMRMLVolumeNode") && 
+      !node->IsA("vtkMRMLTransformNode")) 
     {
-    //tree->SetNodeImageToPredefinedIcon(ID, vtkKWIcon::IconWarningMini);
-    //tree->SetNodePadX(ID, 20);
+    vtkMRMLDisplayNode *display_node = 
+      vtkMRMLDisplayableNode::SafeDownCast(node)->GetDisplayNode();
+    if (display_node != NULL)
+      {
+      vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(
+        this->GetApplication());
+      vtkKWCheckButton *vis_button = vtkKWCheckButton::SafeDownCast(
+        tree->GetNodeWindow(ID));
+      if (!vis_button) 
+        {
+        node->AddObserver(vtkMRMLDisplayableNode::DisplayModifiedEvent, 
+                          (vtkCommand *)this->MRMLCallbackCommand);
+        char command[255];
+        vis_button = vtkKWCheckButton::New();
+        vis_button->SetParent(tree);
+        vis_button->Create();
+        vis_button->SetBorderWidth(0);
+        vis_button->SetIndicatorVisibility(0);
+        vtkSlicerFoundationIcons *icons = 
+          app->GetApplicationGUI()->GetSlicerFoundationIcons();
+        vis_button->SetImageToIcon(
+          icons->GetSlicerInvisibleNoFrameIcon());
+        vis_button->SetSelectImageToIcon(
+          icons->GetSlicerVisibleNoFrameIcon());
+        sprintf(command, "VisibilityCallback {%s}", (const char*) ID);
+        vis_button->SetCommand(this, command);
+        tree->SetNodeWindow(ID, vis_button);
+        tree->SetNodePadX(ID, 20);
+        vis_button->Delete();
+        }
+
+      vis_button->SetBackgroundColor(tree->GetBackgroundColor());
+      vis_button->SetActiveBackgroundColor(tree->GetBackgroundColor());
+
+      int vis = display_node->GetVisibility();
+      vis_button->SetSelectedState(vis);
+      }
     }
 }
 

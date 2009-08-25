@@ -80,6 +80,7 @@ public:
   virtual void NodeParentChangedCallback (const char *node, const char *new_parent, const char*);
   
   virtual void ToggleVisibilityCallback(const char *id);
+  virtual void VisibilityCallback(const char *id, int vis);
 
   virtual void HardenTransformCallback(const char *id);
  
@@ -99,6 +100,7 @@ protected:
   
   void UpdateTreeFromMRML();
   void AddNodeToTree(vtkMRMLNode *node);
+  void UpdateNodeInTree(vtkMRMLNode *node);
   void UpdateNodeInspector(vtkMRMLNode *node);
   vtkMRMLNode* GetSelectedNodeInTree();
 
