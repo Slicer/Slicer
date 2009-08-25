@@ -1548,7 +1548,7 @@ void vtkSlicerApplicationSettingsInterface::ColorFilePathsRemovedCallback()
     str = NULL;
     this->ColorFilePathsPresetSelector->GetPresetDirectoriesToDelimitedString(
       &str, '|');
-    vtkWarningMacro("ColorFilePathsRemovedCallback: setting potential color files to '" << (str == NULL ? "null" : str) << "'");
+    vtkDebugMacro("ColorFilePathsRemovedCallback: setting potential color files to '" << (str == NULL ? "null" : str) << "'");
     app->SetPotentialColorFilePaths(str);
     delete [] str;
     }
