@@ -73,7 +73,8 @@ public:
     
     // Description:
     // Methods describe behavior at module enter and exit.
-    virtual void Enter ( );
+    virtual void Enter ( vtkMRMLNode *node );
+    virtual void Enter ( ) { this->Enter(NULL); };
     virtual void Exit ( );
 
     // Description:

@@ -212,7 +212,7 @@ void vtkSlicerColorGUI::ReleaseModuleEventBindings ( )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerColorGUI::Enter ( )
+void vtkSlicerColorGUI::Enter ( vtkMRMLNode *node )
 {
   if ( this->Built == false )
     {
@@ -220,7 +220,23 @@ void vtkSlicerColorGUI::Enter ( )
     this->Built = true;
     this->AddGUIObservers();
     }
-    this->CreateModuleEventBindings();
+  this->CreateModuleEventBindings();
+  
+  if (node == NULL)
+    {
+    return;
+    }
+  // otherwise try to select it
+  vtkMRMLColorNode *colorNode = vtkMRMLColorNode::SafeDownCast(node);
+  if (colorNode)
+    {
+    this->GetApplication()->ProcessPendingEvents();
+
+    this->ColorDisplayWidget->GetColorSelectorWidget()->UpdateMenu();
+    this->ColorDisplayWidget->GetColorSelectorWidget()->SetSelected(colorNode);
+    this->ColorEditWidget->GetCopyNodeSelectorWidget()->UpdateMenu();
+    this->ColorEditWidget->GetCopyNodeSelectorWidget()->SetSelected(colorNode);
+    }
 }
 
 

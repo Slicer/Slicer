@@ -48,6 +48,7 @@ public:
   vtkGetObjectMacro ( NumberOfColorsLabel, vtkKWLabel);
   vtkGetObjectMacro ( MultiColumnList, vtkKWMultiColumnListWithScrollbars );
   vtkGetObjectMacro ( NodeHelpWidget, vtkSlicerPopUpHelpWidget );
+  vtkGetObjectMacro ( ColorSelectorWidget, vtkSlicerNodeSelectorWidget);
 
   //Description:
   //Enable/Disable MultiSelect possibilities

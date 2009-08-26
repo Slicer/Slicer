@@ -1266,6 +1266,10 @@ void vtkSlicerApplicationGUI::SelectModuleForNode ( vtkMRMLNode *node )
     {
     moduleName = "Fiducials";
     }
+  else if (node->IsA("vtkMRMLColorNode"))
+    {
+    moduleName = "Color";
+    }
   if (moduleName)
     {
     this->SelectModule(moduleName, node);

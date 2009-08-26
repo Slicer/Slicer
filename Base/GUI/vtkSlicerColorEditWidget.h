@@ -44,6 +44,7 @@ public:
   vtkGetObjectMacro ( NameEntry, vtkKWEntryWithLabel);
   vtkGetObjectMacro ( SaveToFileButton, vtkKWPushButton);
   vtkGetObjectMacro ( GenerateButton, vtkKWPushButton);
+  vtkGetObjectMacro ( CopyNodeSelectorWidget, vtkSlicerNodeSelectorWidget);
   vtkGetObjectMacro ( CopyButton, vtkKWPushButton);
   vtkGetObjectMacro ( MultiColumnList, vtkKWMultiColumnListWithScrollbars );
 
