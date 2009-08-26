@@ -35,6 +35,10 @@
 #include "vtkGlyphSource2D.h"
 
 #include <math.h>
+#if WIN32
+#include <float.h>
+#define finite(a) (_finite(a))
+#endif
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro( vtkKWPlotGraph );
@@ -198,7 +202,7 @@ void vtkKWPlotGraph::RemoveLines()
 //----------------------------------------------------------------------------
 void vtkKWPlotGraph::SetColor(int id, double r, double g, double b)
 {
-  if (id >= this->PlotDataVector.size())
+  if (id >= (int)(this->PlotDataVector.size()))
     {
     return;
     }

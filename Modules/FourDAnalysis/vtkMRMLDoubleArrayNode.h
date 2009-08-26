@@ -97,7 +97,7 @@ class VTK_FourDAnalysis_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
   // Get Y value by X. If X is between two data points, it interpolates the value
   // by using the method specified by 'interp'.
   // NOTE: TO BE IMPLEMENTED. 
-  double GetYValue(double x, int interp=INTERP_LINEAR);
+  double GetYAxisValue(double x, int interp=INTERP_LINEAR);
 
   // Description:
   // Get X and Y values at the data point specified by 'index'

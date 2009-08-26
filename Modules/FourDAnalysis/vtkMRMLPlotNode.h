@@ -131,16 +131,16 @@ class VTK_FourDAnalysis_EXPORT vtkMRMLPlotNode : public vtkMRMLNode
   // Description:
   // Get minimum and muximum X values.
   // Returns 0 if the Y range cannot be determined.
-  virtual int GetXRange(double* xrange) {};
+  virtual int GetXRange(double* xrange) {return 0; };
 
   // Description:
   // Get minimum and muximum Y values.
   // Returns 0 if the Y range cannot be determined.
-  virtual int GetYRange(double* yrange) {};
+  virtual int GetYRange(double* yrange) {return 0;};
 
   // Description:
   // Get draw object (this funciton is called by vtkMRMLXYPlotManagerNode)
-  virtual vtkDataObject* GetDrawObject(double* xrange, double* yrange) {};
+  virtual vtkDataObject* GetDrawObject(double* xrange, double* yrange) { return NULL; };
 
 
   //----------------------------------------------------------------

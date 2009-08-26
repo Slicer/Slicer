@@ -112,7 +112,7 @@ class VTK_FourDAnalysis_EXPORT vtkMRMLArrayPlotNode : public vtkMRMLPlotNode
 
   // Description:
   // Get draw object (this funciton is called by vtkMRMLXYPlotManagerNode)
-  virtual vtkDataObject* GetDrawObject() {};
+  virtual vtkDataObject* GetDrawObject() {return NULL; };
 
   //----------------------------------------------------------------
   // Constructor and destroctor

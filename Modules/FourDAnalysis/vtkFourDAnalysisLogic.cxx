@@ -53,6 +53,12 @@
 #include "vtkMutexLock.h"
 
 #include <cmath>
+#include <math.h>
+#if WIN32
+#include <float.h>
+#define finite(a) (_finite(a))
+#endif
+
 
 vtkCxxRevisionMacro(vtkFourDAnalysisLogic, "$Revision: 3633 $");
 vtkStandardNewMacro(vtkFourDAnalysisLogic);
@@ -547,7 +553,13 @@ void* vtkFourDAnalysisLogic::CurveAnalysisThread(void* ptr)
              iter ++)
           {
           float param = (float)curveNode->GetOutputValue(iter->first.c_str());
-          if (!std::isnormal(param))
+          //hmmm... std::isnormal is there only if C99 is enabled with a
+          //combination of C99 macro dynamic.
+          // isnormal = neither { zero, subnormal, infinite, nor NaN }
+          // isnormal(x) =  _finite(x) && x != 0  && !issubnormal(x)
+          // don't know what subnormal is or how to test for it...
+//          if (!std::isnormal(param))
+          if ( !finite(param) )
             {
             param = 0.0;
             }
@@ -561,7 +573,7 @@ void* vtkFourDAnalysisLogic::CurveAnalysisThread(void* ptr)
   //Py_EndInterpreter(state);
   
   std::cerr << "Thread: " << thread_id << " .... end" << std::endl;
-  
+  return (ptr );
 }
 
 
@@ -700,7 +712,13 @@ void vtkFourDAnalysisLogic::GenerateParameterMap(vtkCurveAnalysisPythonInterface
         for (iter = ParameterImages.begin(); iter != ParameterImages.end(); iter ++)
           {
           float param = (float)curveNode->GetOutputValue(iter->first.c_str());
-          if (!std::isnormal(param))
+          //hmmm... std::isnormal is there only if C99 is enabled with a
+          //combination of C99 macro dynamic.
+          // isnormal = neither { zero, subnormal, infinite, nor NaN }
+          // isnormal(x) =  _finite(x) && x != 0  && !issubnormal(x)
+          // don't know what subnormal is or how to test for it...
+//          if (!std::isnormal(param))
+          if ( !finite(param) )
             {
             param = 0.0;
             }

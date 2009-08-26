@@ -46,11 +46,13 @@ vtkCurveAnalysisPythonInterface::vtkCurveAnalysisPythonInterface()
 //---------------------------------------------------------------------------
 vtkCurveAnalysisPythonInterface::~vtkCurveAnalysisPythonInterface()
 {
+#ifdef Slicer3_USE_PYTHON
   if (this->CompiledObject)
     {
     //free(this->CompiledObject);
     Py_DECREF(this->CompiledObject);
     }
+#endif // Slicer3_USE_PYTHON
 }
 
 
@@ -296,7 +298,7 @@ int vtkCurveAnalysisPythonInterface::GenerateFittingScript()
   pythonCmd += "finally:\n";
   pythonCmd += "    if fp:\n";
   pythonCmd += "        fp.close()\n";
-
+  
   // Get input and output curves from MRML node
   pythonCmd += "targetCurve = curveNode.GetTargetCurve().ToArray()\n";
   pythonCmd += "outputCurve = curveNode.GetFittedCurve().ToArray()\n";
@@ -327,15 +329,14 @@ int vtkCurveAnalysisPythonInterface::GenerateFittingScript()
   // Get results
   pythonCmd += "for key, value in result.iteritems():\n";
   pythonCmd += "    curveNode.SetOutputValue(key, value)\n";
-
+  
   this->PythonCmd = pythonCmd;
 
 #ifdef Slicer3_USE_PYTHON
   this->CompiledObject = NULL;
 #endif // Slicer3_USE_PYTHON
 
-  this->CompiledObject = Py_CompileString (this->PythonCmd.c_str(), "<stdin>", Py_file_input);
-  // NOTE: Py_file_input or Py_single_input???
+  this->CompiledObject = Py_CompileString (this->PythonCmd.c_str(), "<stderr>", Py_file_input);
 
   if (this->CompiledObject)
     {
@@ -366,6 +367,7 @@ int vtkCurveAnalysisPythonInterface::GenerateFittingScript()
   else
     {
     PyErr_Print ();
+    return 0;
     }
     
 #else

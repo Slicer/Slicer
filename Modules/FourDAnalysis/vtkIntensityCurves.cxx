@@ -87,6 +87,8 @@ int vtkIntensityCurves::Update()
 
   this->Modified();
   this->PreviousUpdateTime = this->GetMTime();
+  // there was no return value here -- assuming 0 = errorcode and 1=success....
+  return 1;
 }
 
 
