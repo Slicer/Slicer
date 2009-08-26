@@ -214,46 +214,94 @@ int vtkFourDImageLogic::SortFilesFromDirToCreateFileList ( const char *path,
       //--- pull out some important information for sorting.
       std::string tag;
       tag.clear();
+
+      //--- 
+      //--- Use DICOM header info to help sorting if possible.
+      //--- 
       // NumberOfTemporalPositions
-      itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0020|0105",  tag);      
-      numberOfVolumesInBundle = atoi ( tag.c_str() ); 
-
-      statusMessage.progress = 0.0;
-      statusMessage.message = "Sorting slices into volume bundles...";
-      this->InvokeEvent ( vtkFourDImageLogic::ProgressDialogEvent, &statusMessage);
-
-      //--- keep track of which volume has had room for 
-      //--- its file list allocated in the fileNamesContainerList.
-      //--- Each sub-vector is a list of elements containing the sliceLocation
-      //--- for a corresponding volume in fileNamesContainerList.
-      //--- The sorting of these by sliceLocation guides the sorting
-      //--- of files in the fileNameList. (or maybe we don't have to.
-      fileNamesContainerList.resize(numberOfVolumesInBundle);
-
-      //--- for each slice...check its header information
-      //--- and put its filename in the proper bundle container.
-      //--- here assume that filename[i] order is same as inputDict[i] info order.
-      //--- !!! check this assumption!!!!
-      int bundle;
-      std::stringstream ss;
-      for (int i = 0; i < nSlices; i ++)
+      itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0020|0105",  tag);
+      if ( tag.c_str() != NULL && strcmp (tag.c_str(), "" ))
         {
-        //--- to which volume does slice belong?
-        tag.clear();
-        itk::ExposeMetaData<std::string> ( *(*inputDict)[i], "0020|0100",  tag);
-        bundleIdentifier = atof( tag.c_str() );
-        
-        //--- this filenamelist for this volume isn't yet allocated.
-        bundle = bundleIdentifier - 1;
-        fileNamesContainerList[bundle].push_back(filenames[i]);        
+        //--- using DICOM metadata for "Number of Temporal Positions"
+        numberOfVolumesInBundle = atoi ( tag.c_str() ); 
 
-        /*
-        ss.str("");
-        statusMessage.progress = (double)i/(double)nSlices;
-        ss <<  "putting file " << i << "/" << nSlices << "into bundle " << bundle;
-        statusMessage.message = ss.str().c_str();
+        statusMessage.progress = 0.0;
+        statusMessage.message = "Sorting slices into volume bundles...";
         this->InvokeEvent ( vtkFourDImageLogic::ProgressDialogEvent, &statusMessage);
-        */
+
+        //--- keep track of which volume has had room for 
+        //--- its file list allocated in the fileNamesContainerList.
+        //--- Each sub-vector is a list of elements containing the sliceLocation
+        //--- for a corresponding volume in fileNamesContainerList.
+        //--- The sorting of these by sliceLocation guides the sorting
+        //--- of files in the fileNameList. (or maybe we don't have to.
+        fileNamesContainerList.resize(numberOfVolumesInBundle);
+
+        //--- for each slice...check its header information
+        //--- and put its filename in the proper bundle container.
+        //--- here assume that filename[i] order is same as inputDict[i] info order.
+        //--- !!! check this assumption!!!!
+        int bundle;
+        std::stringstream ss;
+        for (int i = 0; i < nSlices; i ++)
+          {
+          //--- to which volume does slice belong?
+          tag.clear();
+          itk::ExposeMetaData<std::string> ( *(*inputDict)[i], "0020|0100",  tag);
+          bundleIdentifier = atof( tag.c_str() );
+        
+          //--- this filenamelist for this volume isn't yet allocated.
+          bundle = bundleIdentifier - 1;
+          fileNamesContainerList[bundle].push_back(filenames[i]);        
+          }
+        }
+      else
+        {
+        // Slice Location
+        itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0020|1041",  tag);
+        float firstSliceLocation = atof( tag.c_str() ); // first slice location
+        int nSlicesInVolume = 0;
+      
+        statusMessage.message = "No explicit DICOM timepoints; sorting by slice locations...";
+        this->InvokeEvent ( vtkFourDImageLogic::ProgressDialogEvent, &statusMessage);
+        statusMessage.progress = 0.0;
+        for (int i = 1; i < nSlices; i ++)
+        {
+        statusMessage.progress = (double)i/(double)nSlices;
+        this->InvokeEvent ( vtkFourDImageLogic::ProgressDialogEvent, &statusMessage);
+        
+        tag.clear();
+        // Slice Location for this slice
+        itk::ExposeMetaData<std::string> ( *(*inputDict)[i], "0020|1041",  tag);
+        float sliceLocation = atof( tag.c_str() );
+        //std::cerr << "location = " << tag.c_str() << std::endl;
+        if (sliceLocation == firstSliceLocation)
+          {
+          nSlicesInVolume = i;
+          break;
+          }
+        }
+      
+        if (nSlicesInVolume > 0 )
+          {
+        numberOfVolumesInBundle = nSlices / nSlicesInVolume;
+          }
+        else
+          {
+          numberOfVolumesInBundle = 0;
+          }
+        
+        fileNamesContainerList.resize(numberOfVolumesInBundle);
+      
+        for (int i = 0; i < numberOfVolumesInBundle; i ++)
+          {
+          fileNamesContainerList[i].resize(nSlicesInVolume);
+          for (int j = 0; j < nSlicesInVolume; j ++)
+            {
+            //std::cerr << "fileNamesContainerList " << i << ", " << j << std::endl;
+            fileNamesContainerList[i][j] = filenames[i*nSlicesInVolume + j];
+            }
+          }
         }
       }
     else // if the directory contains multiple series UIDs
@@ -275,6 +323,9 @@ int vtkFourDImageLogic::SortFilesFromDirToCreateFileList ( const char *path,
 
 
 
+//---------------------------------------------------------------------------
+//--- no longer used;
+//---  SortFilesFromDirToCreateFileList ( ... ) used instead.
 //---------------------------------------------------------------------------
 int vtkFourDImageLogic::CreateFileListFromDir(const char* path,
                                              std::vector<ReaderType::FileNamesContainer>& fileNamesContainerList)
@@ -677,23 +728,13 @@ vtkMRMLTimeSeriesBundleNode* vtkFourDImageLogic::LoadImagesFromDir(const char* p
 
   std::vector<ReaderType::FileNamesContainer> fileNamesContainerList;
 
-  if (CreateFileListFromDir(path, fileNamesContainerList) <= 0)
-    {
-    std::cerr << "Couldn't find files" << std::endl;
-    return NULL;
-    }
 
-/*
-  //--- testing a new method of sorting files
-  //--- begin wjp test
   if ( SortFilesFromDirToCreateFileList ( path, fileNamesContainerList) <= 0 )
     {
     std::cerr << "Couldn't find files" << std::endl;
     return NULL;
     }
-*/
-  //--- end wjp test.
-  
+
   return LoadImagesByList(bundleNodeName, fileNamesContainerList);
   
 }

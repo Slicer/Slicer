@@ -105,10 +105,18 @@ class VTK_FourDImage_EXPORT vtkFourDImageLogic : public vtkSlicerModuleLogic
   typedef short PixelValueType;
   typedef itk::OrientedImage< PixelValueType, 3 > VolumeType;
   typedef itk::ImageSeriesReader< VolumeType > ReaderType;
+
+  // Description:
+  // Used to sort volumes into bundles based on
+  // DICOM header information.
   int SortFilesFromDirToCreateFileList ( const char* path,
                                          std::vector<ReaderType::FileNamesContainer>& fileNamesContainerList);
+  // Description:
+  // No longer used. replaced by SortFilesFromDirToCreateFileList() method
   int CreateFileListFromDir(const char* path,
                             std::vector<ReaderType::FileNamesContainer>& fileNamesContainerList);
+  // Description:
+  // Used to sort volumes into bundles based on user input
   void CreateFileListFromDir(const char* path,
                              std::vector<ReaderType::FileNamesContainer>& fileNamesContainerList,
                              const char* order, const char* filter, int nFrames, int nSlices, int nChannels, int channel);
