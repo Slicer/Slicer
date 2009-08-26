@@ -74,7 +74,7 @@ vtkKWWindowLevelThresholdEditor::vtkKWWindowLevelThresholdEditor()
   this->LevelEntry = vtkKWEntry::New();
   this->WindowEntry = vtkKWEntry::New();
   this->WindowLevelPresetsButtonSet = vtkKWPushButtonSetWithLabel::New();
- 
+  this->WindowLevelPresetsMenu = vtkKWMenuButtonWithLabel::New();
   this->ThresholdRange = vtkKWRange::New();
   this->ColorTransferFunctionEditor = vtkKWColorTransferFunctionEditor::New();   
   this->Histogram = vtkKWHistogram::New();
@@ -156,6 +156,12 @@ vtkKWWindowLevelThresholdEditor::~vtkKWWindowLevelThresholdEditor()
     this->WindowEntry->SetParent(NULL);
     this->WindowEntry->Delete();
     this->WindowEntry = NULL;
+    }
+  if ( this->WindowLevelPresetsMenu )
+    {
+    this->WindowLevelPresetsMenu->SetParent(NULL);
+    this->WindowLevelPresetsMenu->Delete();
+    this->WindowLevelPresetsMenu = NULL;
     }
   if ( this->WindowLevelPresetsButtonSet )
     {
@@ -369,12 +375,21 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->WindowLevelPresetsButtonSet->Create();
   this->WindowLevelPresetsButtonSet->ExpandWidgetOff();
   this->WindowLevelPresetsButtonSet->SetBalloonHelpString("Some preset window and level values useful for viewing CT and PET volumes, since the Auto Window/Level works best for MR");
-  this->Script("pack %s -side right -anchor nw -expand n", this->WindowLevelPresetsButtonSet->GetWidgetName());
+  this->Script("pack %s -side top -anchor nw -expand n", this->WindowLevelPresetsButtonSet->GetWidgetName());
   this->WindowLevelPresetsButtonSet->GetWidget()->PackHorizontallyOn();
 
   this->CreatePresets();
 
-  
+  this->WindowLevelPresetsMenu->SetParent(winLevelPresetsFrame);
+  this->WindowLevelPresetsMenu->Create();
+  this->WindowLevelPresetsMenu->SetLabelWidth(38);
+  this->WindowLevelPresetsMenu->GetLabel()->SetJustificationToRight();
+  this->WindowLevelPresetsMenu->GetWidget()->SetWidth(7);
+  this->WindowLevelPresetsMenu->SetLabelText("Volume Window Level Presets:");
+  this->WindowLevelPresetsMenu->SetBalloonHelpString("Window Level presets from the display node. Select one from the drop down list to set the window level to those values");
+  this->Script("pack %s -side top -anchor nw -expand n",
+               this->WindowLevelPresetsMenu->GetWidgetName());
+
   vtkKWFrame *winLevelFrame = vtkKWFrame::New ( );
   winLevelFrame->SetParent (this);
   winLevelFrame->Create();
@@ -1160,4 +1175,54 @@ void vtkKWWindowLevelThresholdEditor::SetPresetSize(int v)
   this->Modified();
 
   this->CreatePresets();
+}
+
+//----------------------------------------------------------------------------
+void vtkKWWindowLevelThresholdEditor::ClearWindowLevelPresetsMenu()
+{
+  if (this->WindowLevelPresetsMenu)
+    {
+    this->WindowLevelPresetsMenu->GetWidget()->GetMenu()->DeleteAllItems();
+    this->WindowLevelPresetsMenu->GetWidget()->SetValue("");
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkKWWindowLevelThresholdEditor::AddDisplayVolumePreset(double win, double level)
+{
+  std::stringstream ss;
+  ss << win;
+  ss << "|";
+  ss << level;
+  std::string winlevel = ss.str();
+  std::stringstream cmdStream;
+  cmdStream <<  "ProcessWindowLevelPresetsMenuCommand " << winlevel.c_str();
+  this->WindowLevelPresetsMenu->GetWidget()->GetMenu()->AddRadioButton(winlevel.c_str(),  this, cmdStream.str().c_str());
+}
+
+//----------------------------------------------------------------------------
+void vtkKWWindowLevelThresholdEditor::ProcessWindowLevelPresetsMenuCommand(char *winLevel)
+{
+  if (!this->ProcessCallbacks)
+    {
+    return;
+    }
+  std::string val = std::string(winLevel);
+  double win = 0.0;
+  double lev = 0.0;
+  vtkDebugMacro("ProcessWindowLevelPresetsMenuCommand: setting window level from " << val.c_str());
+  char *valChars = new char [(val.size() + 1)];
+  strcpy(valChars, val.c_str());
+  char *pos = strtok(valChars, "|");
+  if (pos != NULL)
+    {
+    win = atof(pos);
+    }
+  pos = strtok(NULL, "|");
+  if (pos != NULL)
+    {
+    lev = atof(pos);
+    }
+  delete [] valChars;
+  this->SetWindowLevel(win,lev);
 }

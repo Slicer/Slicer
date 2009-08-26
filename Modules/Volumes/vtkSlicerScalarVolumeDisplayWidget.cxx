@@ -30,7 +30,7 @@ vtkSlicerScalarVolumeDisplayWidget::vtkSlicerScalarVolumeDisplayWidget ( )
     this->ColorSelectorWidget = NULL;
     this->WindowLevelThresholdEditor = NULL;
     this->InterpolateButton = NULL;
-    this->UpdateDsiplayOnLoadButton = NULL;
+    this->UpdateDisplayOnLoadButton = NULL;
     this->UpdatingMRML = 0;
     this->UpdatingWidget = 0;
 }
@@ -62,11 +62,11 @@ vtkSlicerScalarVolumeDisplayWidget::~vtkSlicerScalarVolumeDisplayWidget ( )
     this->InterpolateButton->Delete();
     this->InterpolateButton = NULL;
     }
-  if (this->UpdateDsiplayOnLoadButton)
+  if (this->UpdateDisplayOnLoadButton)
     {
-    this->UpdateDsiplayOnLoadButton->SetParent(NULL);
-    this->UpdateDsiplayOnLoadButton->Delete();
-    this->UpdateDsiplayOnLoadButton = NULL;
+    this->UpdateDisplayOnLoadButton->SetParent(NULL);
+    this->UpdateDisplayOnLoadButton->Delete();
+    this->UpdateDisplayOnLoadButton = NULL;
     }
 
   this->SetMRMLScene ( NULL );
@@ -213,6 +213,12 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller
               displayNode->GetWindow(), displayNode->GetLevel() );
         }
 
+      // update the presets menu
+      this->WindowLevelThresholdEditor->ClearWindowLevelPresetsMenu();
+      for (int p = 0; p < displayNode->GetNumberOfWindowLevelPresets(); p++)
+        {
+        this->WindowLevelThresholdEditor->AddDisplayVolumePreset(displayNode->GetWindowPreset(p), displayNode->GetLevelPreset(p));
+        }
       if ( this->WindowLevelThresholdEditor->GetThresholdType() == vtkKWWindowLevelThresholdEditor::ThresholdAuto &&
            !displayNode->GetAutoThreshold())
         {
@@ -357,7 +363,7 @@ void vtkSlicerScalarVolumeDisplayWidget::UpdateWidgetFromMRML ()
 {
   vtkDebugMacro("UpdateWidgetFromMRML");
 
-  if (this->UpdateDsiplayOnLoadButton->GetSelectedState() == 0)
+  if (this->UpdateDisplayOnLoadButton->GetSelectedState() == 0)
     {
     return;
     }
@@ -408,6 +414,13 @@ void vtkSlicerScalarVolumeDisplayWidget::UpdateWidgetFromMRML ()
     // set the color node selector to reflect the volume's color node
     this->ColorSelectorWidget->SetSelected(displayNode->GetColorNode());
     this->InterpolateButton->SetSelectedState( displayNode->GetInterpolate()  );
+
+    // update the display nodes presets menu
+    this->WindowLevelThresholdEditor->ClearWindowLevelPresetsMenu();
+    for (int p = 0; p < displayNode->GetNumberOfWindowLevelPresets(); p++)
+      {
+      this->WindowLevelThresholdEditor->AddDisplayVolumePreset(displayNode->GetWindowPreset(p), displayNode->GetLevelPreset(p));
+      }
     }
   
   return;
@@ -493,6 +506,7 @@ void vtkSlicerScalarVolumeDisplayWidget::CreateWidget ( )
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                   this->ColorSelectorWidget->GetWidgetName());
 
+    
     this->InterpolateButton = vtkKWCheckButton::New();
     this->InterpolateButton->SetParent(volDisplayFrame);
     this->InterpolateButton->Create();
@@ -513,15 +527,15 @@ void vtkSlicerScalarVolumeDisplayWidget::CreateWidget ( )
     this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                   this->WindowLevelThresholdEditor->GetWidgetName() );
 
-    this->UpdateDsiplayOnLoadButton = vtkKWCheckButton::New();
-    this->UpdateDsiplayOnLoadButton->SetParent(volDisplayFrame);
-    this->UpdateDsiplayOnLoadButton->Create();
-    this->UpdateDsiplayOnLoadButton->SelectedStateOn();
-    this->UpdateDsiplayOnLoadButton->SetText("Update Dsiplay On Load");
-    this->UpdateDsiplayOnLoadButton->SetSelectedState(1);
+    this->UpdateDisplayOnLoadButton = vtkKWCheckButton::New();
+    this->UpdateDisplayOnLoadButton->SetParent(volDisplayFrame);
+    this->UpdateDisplayOnLoadButton->Create();
+    this->UpdateDisplayOnLoadButton->SelectedStateOn();
+    this->UpdateDisplayOnLoadButton->SetText("Update Display On Load");
+    this->UpdateDisplayOnLoadButton->SetSelectedState(1);
     this->Script(
       "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
-      this->UpdateDsiplayOnLoadButton->GetWidgetName());
+      this->UpdateDisplayOnLoadButton->GetWidgetName());
 
 
    this->AddWidgetObservers();

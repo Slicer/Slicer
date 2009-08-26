@@ -122,6 +122,10 @@ public:
   void ProcessThresholdStartCommand(double min, double max);
   void ProcessThresholdEndCommand(double min, double max);
 
+  // Description:
+  // deal with changes from the window level preset menu
+  void ProcessWindowLevelPresetsMenuCommand(char *winLevel);
+
 //BTX
    enum
     {
@@ -145,6 +149,14 @@ public:
   // call back from the preset buttons
   void PresetWindowLevelCallback(int rank);
 
+  // Description:
+  // clear out the preset menu
+  void ClearWindowLevelPresetsMenu();
+
+  // Description:
+  // Add a preset to the menu
+  void AddDisplayVolumePreset(double win, double level);
+  
 protected:
   vtkKWWindowLevelThresholdEditor();
   ~vtkKWWindowLevelThresholdEditor();
@@ -201,7 +213,7 @@ protected:
   // Description:
   // Update widgets from the preset
   int UpdateWindowLevelFromPreset(const Preset *preset);
-
+  
 private:
   vtkKWWindowLevelThresholdEditor(const vtkKWWindowLevelThresholdEditor&); // Not implemented
   void operator=(const vtkKWWindowLevelThresholdEditor&); // Not implemented
@@ -220,8 +232,11 @@ private:
   vtkKWRange *WindowLevelRange;
   vtkKWEntry *LevelEntry;
   vtkKWEntry *WindowEntry;
+  // this is a set of defaults
   vtkKWPushButtonSetWithLabel *WindowLevelPresetsButtonSet;
   int PresetSize;
+  // this is set from the display node
+  vtkKWMenuButtonWithLabel *WindowLevelPresetsMenu;
   vtkKWRange *ThresholdRange;
   vtkKWCheckButton *UpdateTransferFunctionButton;
 

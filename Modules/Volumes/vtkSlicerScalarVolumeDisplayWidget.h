@@ -75,7 +75,7 @@ protected:
   vtkSlicerNodeSelectorWidget* ColorSelectorWidget;
   vtkKWWindowLevelThresholdEditor* WindowLevelThresholdEditor;
   vtkKWCheckButton* InterpolateButton;
-  vtkKWCheckButton* UpdateDsiplayOnLoadButton;
+  vtkKWCheckButton* UpdateDisplayOnLoadButton;
 
   int UpdatingMRML;
   int UpdatingWidget;
