@@ -17,34 +17,8 @@ Version:   $Revision: 1.2 $
 
 #include <sstream>
 
+#include "vtkEventQtSlotConnect.h"
 
-
-//----------------------------------------------------------------------------
-// Description:
-// the MRMLCallback is a static function to relay modified events from the
-// observed mrml scene back into the logic layer for further processing
-// - this can also end up calling observers of the logic (i.e. in the GUI)
-//
-static void MRMLCallback(vtkObject *caller, unsigned long eid, void *__clientData, void *callData)
-{
-  QtSlicerNodeSelectorWidget *self = reinterpret_cast<QtSlicerNodeSelectorWidget *>(__clientData);
-
-  if (self->GetInMRMLCallbackFlag())
-    {
-    return;
-    }
-
-  vtkMRMLNode *node = reinterpret_cast<vtkMRMLNode *>(callData);
-
-  self->SetInMRMLCallbackFlag(1);
-
-  if (node == NULL || self->CheckNodeClass(node))
-    {
-    self->UpdateMenu();
-    }
-
-  self->SetInMRMLCallbackFlag(0);
-}
 
 
 //----------------------------------------------------------------------------
@@ -57,9 +31,6 @@ QtSlicerNodeSelectorWidget::QtSlicerNodeSelectorWidget()
   this->ChildClassesEnabled = 1;
   this->MRMLScene      = NULL;
   this->ContextMenuHelper      = NULL;
-  this->MRMLCallbackCommand = vtkCallbackCommand::New();
-  this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
-  this->MRMLCallbackCommand->SetCallback(MRMLCallback);
   this->InMRMLCallbackFlag = 0;
   connect(this, SIGNAL(activated (const QString &)), this, SLOT(Select(const QString &)));
 
@@ -69,11 +40,6 @@ QtSlicerNodeSelectorWidget::QtSlicerNodeSelectorWidget()
 QtSlicerNodeSelectorWidget::~QtSlicerNodeSelectorWidget()
 {
   this->SetMRMLScene ( NULL );
-  if (this->MRMLCallbackCommand)
-    {
-    this->MRMLCallbackCommand->Delete();
-    this->MRMLCallbackCommand = NULL;
-    }
   if (this->ContextMenuHelper)
     {
     this->ContextMenuHelper->Delete();
@@ -90,7 +56,6 @@ void QtSlicerNodeSelectorWidget::SetMRMLScene( vtkMRMLScene *aMRMLScene)
 {
   if ( this->MRMLScene )
     {
-    this->MRMLScene->RemoveObserver( this->MRMLCallbackCommand );
     this->MRMLScene->Delete ( );
     this->MRMLScene = NULL;
     }
@@ -100,12 +65,25 @@ void QtSlicerNodeSelectorWidget::SetMRMLScene( vtkMRMLScene *aMRMLScene)
   if ( this->MRMLScene )
     {
     this->MRMLScene->Register(NULL);
-    this->MRMLScene->AddObserver( vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand );
-    this->MRMLScene->AddObserver( vtkMRMLScene::NodeRemovedEvent, this->MRMLCallbackCommand );
-    this->MRMLScene->AddObserver( vtkMRMLScene::NewSceneEvent, this->MRMLCallbackCommand );
-    this->MRMLScene->AddObserver( vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand );
-    this->MRMLScene->AddObserver( vtkMRMLScene::SceneEditedEvent, this->MRMLCallbackCommand );
-    }
+
+    vtkEventQtSlotConnect* Connections = vtkEventQtSlotConnect::New();
+
+    Connections->Connect(this->MRMLScene, vtkMRMLScene::NodeAddedEvent,
+                         this, SLOT(UpdateMenu()));
+    Connections->Connect(this->MRMLScene, vtkMRMLScene::NodeRemovedEvent,
+                         this, SLOT(UpdateMenu()));
+    Connections->Connect(this->MRMLScene, vtkMRMLScene::SceneCloseEvent,
+                         this, SLOT(UpdateMenu()));
+    Connections->Connect(this->MRMLScene, vtkMRMLScene::SceneEditedEvent,
+                         this, SLOT(UpdateMenu()));
+/**   
+  this->MRMLScene->AddObserver( vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand );
+   this->MRMLScene->AddObserver( vtkMRMLScene::NodeRemovedEvent, this->MRMLCallbackCommand );
+   this->MRMLScene->AddObserver( vtkMRMLScene::NewSceneEvent, this->MRMLCallbackCommand );
+   this->MRMLScene->AddObserver( vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand );
+   this->MRMLScene->AddObserver( vtkMRMLScene::SceneEditedEvent, this->MRMLCallbackCommand );
+ **/
+   }
 
   this->UpdateMenu();
 }

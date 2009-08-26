@@ -31,7 +31,7 @@ IF(Slicer3_USE_QT)
   SET(SRCS ${SRCS} ${MOC_SRCS} 
            QtApp.cxx QtApp.h
            QtSlicerNodeSelectorWidget.cxx QtSlicerNodeSelectorWidget.h)
-  SET(QT_LIBRARIES ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
+  SET(QT_LIBRARIES ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} QVTK)
 ENDIF(Slicer3_USE_QT)
 
 include_directories(${include_dirs})

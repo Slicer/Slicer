@@ -171,7 +171,6 @@ public:
   // Reflect the state of the mrml scene in the menu
   // - UpdateMenu only updates if widget is mapped
   // - UnconditionalUpdateMenu updates even if not mapped
-  void UpdateMenu();
   void UnconditionalUpdateMenu();
 
   //vtkSetObjectMacro(ContextMenuHelper, vtkSlicerContextMenuHelper);
@@ -200,6 +199,8 @@ public:
 public slots:
 
   void Select(const QString &id);
+
+  void UpdateMenu();
 
 Q_SIGNALS:
   void NodeSelected(const QString &id);
@@ -240,8 +241,6 @@ protected:
 private:
 
   int NewNodeCount;
-
-   vtkCallbackCommand *MRMLCallbackCommand;
 
   // Description:
   // Flag to avoid event loops
