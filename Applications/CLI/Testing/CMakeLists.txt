@@ -858,24 +858,24 @@ add_test(RigidRegistrationTest01 ${Slicer3_EXE} --launch RigidRegistrationTest
 # In testing mode, this test is supposed to fail if the error at the image
 # corner (as compared to the transform passed with --initialtransform) exceeds
 # 0.1
-add_test(RigidRegistrationTest02 ${Slicer3_EXE} --launch RigidRegistrationTest
+#add_test(RigidRegistrationTest02 ${Slicer3_EXE} --launch RigidRegistrationTest
 #  --compare ${BASELINE}/RigidRegistrationTest02.nrrd
 #   ${TEMP}/RigidRegistrationTest02.nrrd
-  RigidRegistrationTest
-  --testingmode
-  --initialtransform ${TEST_DATA}/MRMeningioma01.tfm
-  --resampledmovingfilename  ${TEMP}/RigidRegistrationTest02.nrrd
-  --outputtransform ${TEMP}/RigidRegistrationTest02Transform.txt
-  --iterations 100,100,50,20
-  --fixedsmoothingfactor 0
-  --movingsmoothingfactor 0
-  --histogrambins 30
-  --spatialsamples 10000
-  --learningrate 0.01,0.005,0.0005,0.0002
-  --translationscale 100
-  ${TEST_DATA}/MRMeningioma0.nrrd
-  ${TEST_DATA}/MRMeningioma1.nrrd
-  )
+#  RigidRegistrationTest
+#  --testingmode
+#  --initialtransform ${TEST_DATA}/MRMeningioma01.tfm
+#  --resampledmovingfilename  ${TEMP}/RigidRegistrationTest02.nrrd
+#  --outputtransform ${TEMP}/RigidRegistrationTest02Transform.txt
+#  --iterations 100,100,50,20
+#  --fixedsmoothingfactor 0
+#  --movingsmoothingfactor 0
+#  --histogrambins 30
+#  --spatialsamples 10000
+#  --learningrate 0.01,0.005,0.0005,0.0002
+#  --translationscale 100
+#  ${TEST_DATA}/MRMeningioma0.nrrd
+#  ${TEST_DATA}/MRMeningioma1.nrrd
+#  )
 set (CLP RigidRegistration)
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
