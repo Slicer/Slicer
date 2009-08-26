@@ -169,11 +169,7 @@ protected:
   vtkKWPushButton *CopyButton;
 
   // Description:
-  // select a colour node to display
-  //  vtkSlicerNodeSelectorWidget* ColorSelectorWidget;
-
-  // Description:
-  // select a colour node to display
+  // select a colour node to copy for editing
   vtkSlicerNodeSelectorWidget *CopyNodeSelectorWidget;
 
   // Description:
@@ -197,6 +193,7 @@ protected:
       EntryColumn = 0,
       NameColumn = 1,
       ColourColumn = 2,
+      ColourTextColumn = 3,
     };
   //ETX
   

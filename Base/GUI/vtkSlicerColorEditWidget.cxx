@@ -38,10 +38,10 @@ vtkSlicerColorEditWidget::vtkSlicerColorEditWidget ( )
     this->ColorNodeID = NULL;
     this->ColorNode = NULL; 
 
-//    this->ColorSelectorWidget = NULL;
     this->CopyNodeSelectorWidget = NULL;
 
     this->MultiColumnList = NULL;
+    // for now, leave out the colour text column
     this->NumberOfColumns = 3;
 
     this->NumberOfColorsEntry = NULL;
@@ -59,14 +59,6 @@ vtkSlicerColorEditWidget::~vtkSlicerColorEditWidget ( )
   this->RemoveMRMLObservers();
   this->RemoveWidgetObservers();
 
-  /*
-  if (this->ColorSelectorWidget)
-    {
-    this->ColorSelectorWidget->SetParent(NULL);
-    this->ColorSelectorWidget->Delete();
-    this->ColorSelectorWidget = NULL;
-    }
-  */
   if (this->CopyNodeSelectorWidget)
     {
     this->CopyNodeSelectorWidget->SetParent(NULL);
@@ -177,7 +169,7 @@ void vtkSlicerColorEditWidget::SetColorNodeID (char * id)
     }
 
     // get the old node
-    vtkMRMLColorNode *colorNode = vtkMRMLColorNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->GetColorNodeID()));
+    //vtkMRMLColorNode *colorNode = vtkMRMLColorNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->GetColorNodeID()));
        
     // set the id properly - see the vtkSetStringMacro
     this->ColorNodeID = id;
@@ -187,7 +179,11 @@ void vtkSlicerColorEditWidget::SetColorNodeID (char * id)
       vtkDebugMacro("SetColorNodeID: NULL input id, removed observers and returning.\n");
       return;
       }
-    
+
+    return;
+
+
+    /*
     // get the new node
     colorNode = vtkMRMLColorNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->GetColorNodeID()));
     // set up observers on the new node
@@ -208,6 +204,7 @@ void vtkSlicerColorEditWidget::SetColorNodeID (char * id)
       {
       vtkErrorMacro ("ERROR: unable to get the mrml color node to observe!\n");
       }
+    */
 }
 
 //---------------------------------------------------------------------------
@@ -219,7 +216,7 @@ void vtkSlicerColorEditWidget::ProcessWidgetEvents ( vtkObject *caller,
       event == vtkSlicerColorEditWidget::ColorIDModifiedEvent)
     {
     vtkDebugMacro("vtkSlicerColorEditWidget::ProcessGUIEvents : got a colour id modified event.\n");
-    this->UpdateWidget();
+    //this->UpdateWidget();
     return;
     }
 
@@ -281,7 +278,7 @@ void vtkSlicerColorEditWidget::ProcessWidgetEvents ( vtkObject *caller,
   if (colorNode == this->MRMLScene->GetNodeByID(this->GetColorNodeID()) &&
       event == vtkCommand::ModifiedEvent)
     {
-    this->UpdateWidget();
+    //this->UpdateWidget();
     return;
     }
 
@@ -298,38 +295,9 @@ void vtkSlicerColorEditWidget::ProcessWidgetEvents ( vtkObject *caller,
     return;
     }
 
-  //
-  // process color selector events
-  //
-  /*
-  vtkSlicerNodeSelectorWidget *colorSelector = 
-      vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
-
-  if (colorSelector == this->ColorSelectorWidget && 
-        event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
-    {
-    vtkMRMLColorNode *color = 
-        vtkMRMLColorNode::SafeDownCast(this->ColorSelectorWidget->GetSelected());
-    if (color != NULL)
-      {
-      this->SetColorNode(color);
-      } else { vtkDebugMacro("Got a node selector event, but the color is null"); }
-
-    return;
-    }
-  
-  // get the currently displayed list 
-  vtkMRMLColorNode *activeColorNode = (vtkMRMLColorNode *)this->MRMLScene->GetNodeByID(this->GetColorNodeID());
-
-  if (activeColorNode == NULL)
-    {
-    vtkErrorMacro("ERROR: No Color!\n");
-    return;
-    }
-  */
   // 
   // save state for undo?
-//  this->MRMLScene->SaveStateForUndo();
+  // this->MRMLScene->SaveStateForUndo();
 
   vtkKWPushButton *button = vtkKWPushButton::SafeDownCast(caller);
   if (button == this->GenerateButton  && event ==  vtkKWPushButton::InvokedEvent)
@@ -370,8 +338,8 @@ void vtkSlicerColorEditWidget::ProcessMRMLEvents ( vtkObject *caller,
   if (colorNode == (vtkMRMLColorNode *)this->MRMLScene->GetNodeByID(this->GetColorNodeID()) && 
       colorNode != NULL && event == vtkCommand::ModifiedEvent)
     {
-    vtkDebugMacro("vtkSlicerColorEditWidget::ProcessMRMLEvents color node modified, updating widget and returning\n");
-    this->UpdateWidget();
+    vtkDebugMacro("vtkSlicerColorEditWidget::ProcessMRMLEvents color node modified, returning\n");
+    //this->UpdateWidget();
     return;
     }
 
@@ -445,47 +413,17 @@ void vtkSlicerColorEditWidget::UpdateWidget()
     int numColours = 0;
     if (vtkMRMLColorTableNode::SafeDownCast(colorNode) != NULL)
       {
-      numColours = vtkMRMLColorTableNode::SafeDownCast(colorNode)->GetNumberOfColors();
+      numColours = vtkMRMLColorTableNode::SafeDownCast(colorNode)->GetNumberOfColors();      
       }
-    else if (vtkMRMLFreeSurferProceduralColorNode::SafeDownCast(colorNode) != NULL &&
-             vtkMRMLFreeSurferProceduralColorNode::SafeDownCast(colorNode)->GetLookupTable() != NULL)
-      {
-      numColours = vtkMRMLFreeSurferProceduralColorNode::SafeDownCast(colorNode)->GetLookupTable()->GetNumberOfColors();
-      }
-
+    
     // set the number of colours
+    // todo: dont' trigger another update
     this->NumberOfColorsEntry->GetWidget()->SetValueAsInt(numColours);
-    
-    
-    bool deleteFlag = true;
-    if (numColours > this->MultiColumnList->GetWidget()->GetNumberOfRows())
-      {
-      // add rows to the table
-      int numToAdd = numColours - this->MultiColumnList->GetWidget()->GetNumberOfRows();
-      this->MultiColumnList->GetWidget()->AddRows(numToAdd);
-      }
-    if (numColours < this->MultiColumnList->GetWidget()->GetNumberOfRows())
-      {
-      // delete some rows
-      for (int r = this->MultiColumnList->GetWidget()->GetNumberOfRows(); r >= numColours; r--)
-        {
-        this->MultiColumnList->GetWidget()->DeleteRow(r);
-        }
-      }
-    if (numColours != this->MultiColumnList->GetWidget()->GetNumberOfRows())
-      {
-      // clear out the multi column list box and fill it in with the new list
-      // - if only showing named colours, there might not be numColours rows
-      vtkDebugMacro("Clearing out the colours MCLB, numColours = " << numColours);
-      this->MultiColumnList->GetWidget()->DeleteAllRows();
-      }
-    else
-      {
-      deleteFlag = false;
-      }
+
+    this->MultiColumnList->GetWidget()->DeleteAllRows();
     
     // a row for each colour
-    double *colour = NULL;
+    double colour[3];
     const char *name;
     // keep track of where to add the current colour into the table
     int thisRow = 0;
@@ -494,7 +432,7 @@ void vtkSlicerColorEditWidget::UpdateWidget()
       // get the colour
       if (colorNode->GetLookupTable() != NULL)
         {
-        colour = colorNode->GetLookupTable()->GetTableValue(row);
+        colorNode->GetLookupTable()->GetColor((double)row, colour);
         }
       if (colour == NULL)
         {
@@ -504,10 +442,8 @@ void vtkSlicerColorEditWidget::UpdateWidget()
       name = colorNode->GetColorName(row);
       
       // update this colour
-      if (deleteFlag)
-        {
-        this->MultiColumnList->GetWidget()->AddRow();
-        }
+      this->MultiColumnList->GetWidget()->AddRow();
+
       // now set the table
       // which entry is it in the colour table?
       if (thisRow == 0 || row == 0 ||
@@ -565,8 +501,7 @@ void vtkSlicerColorEditWidget::UpdateMRML()
 
 //---------------------------------------------------------------------------
 void vtkSlicerColorEditWidget::RemoveWidgetObservers ( ) {
-//  this->ColorSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->CopyNodeSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+  //this->CopyNodeSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->NameEntry->GetWidget()->RemoveObservers(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->NumberOfColorsEntry->GetWidget()->RemoveObservers(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->SaveToFileButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -593,63 +528,7 @@ void vtkSlicerColorEditWidget::CreateWidget ( )
   
   this->Superclass::CreateWidget();
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-  
-  // ---
-  // COPY FRAME            
-  vtkKWFrame *copyFrame = vtkKWFrame::New ( );
-  copyFrame->SetParent ( this->GetParent() );
-  copyFrame->Create ( );
 
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 copyFrame->GetWidgetName() );
-
-  /*
-  // node selector
-  this->ColorSelectorWidget = vtkSlicerNodeSelectorWidget::New();
-  this->ColorSelectorWidget->SetParent(copyFrame);
-  this->ColorSelectorWidget->Create();
-  this->ColorSelectorWidget->SetNodeClass("vtkMRMLColorTableNode", NULL, NULL, NULL);
-  //this->ColorSelectorWidget->NewNodeEnabledOn();
-  this->ColorSelectorWidget->ShowHiddenOn();
-  this->ColorSelectorWidget->SetMRMLScene(this->GetMRMLScene());
-  this->ColorSelectorWidget->SetBorderWidth(2);
-  this->ColorSelectorWidget->SetPadX(2);
-  this->ColorSelectorWidget->SetPadY(2);
-  //this->ColorSelectorWidget->GetWidget()->IndicatorVisibilityOff();
-  this->ColorSelectorWidget->GetWidget()->SetWidth(24);
-  this->ColorSelectorWidget->SetLabelText( "Color Select: ");
-  this->ColorSelectorWidget->SetBalloonHelpString("Select a color from the current mrml scene.");
-  this->Script ("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                this->ColorSelectorWidget->GetWidgetName(),
-                copyFrame->GetWidgetName());
-  */
-  // select a node to copy
-  this->CopyNodeSelectorWidget = vtkSlicerNodeSelectorWidget::New();
-  this->CopyNodeSelectorWidget->SetParent(copyFrame);
-  this->CopyNodeSelectorWidget->Create();
-  this->CopyNodeSelectorWidget->SetNodeClass("vtkMRMLColorTableNode", NULL, NULL, NULL);
-  //this->CopyNodeSelectorWidget->NewNodeEnabledOn();
-  this->CopyNodeSelectorWidget->ShowHiddenOn();
-  this->CopyNodeSelectorWidget->SetMRMLScene(this->GetMRMLScene());
-  this->CopyNodeSelectorWidget->SetBorderWidth(2);
-  this->CopyNodeSelectorWidget->SetPadX(2);
-  this->CopyNodeSelectorWidget->SetPadY(2);
-  //this->CopyNodeSelectorWidget->GetWidget()->IndicatorVisibilityOff();
-  this->CopyNodeSelectorWidget->GetWidget()->SetWidth(24);
-  this->CopyNodeSelectorWidget->SetLabelText( "Select a Color Table to Copy: ");
-  this->CopyNodeSelectorWidget->SetBalloonHelpString("Select a color from the current mrml scene, make a copy of it for editing.");
-
-  // a button to trigger the copy
-  this->CopyButton = vtkKWPushButton::New();
-  this->CopyButton->SetParent( copyFrame);
-  this->CopyButton->Create();
-  this->CopyButton->SetText("Copy Node");
-  this->CopyButton->SetBalloonHelpString("Copy the colour table node selected in the drop down menu.");
-  /*
-  this->Script ("pack %s %s -side left -anchor w -fill x -padx 2 -pady 2 -in %s",
-                this->CopyNodeSelectorWidget->GetWidgetName(), this->CopyButton->GetWidgetName(),
-                copyFrame->GetWidgetName());
-  */
   // ---
   // EDIT FRAME            
   vtkKWFrame *editFrame = vtkKWFrame::New ( );
@@ -666,7 +545,7 @@ void vtkSlicerColorEditWidget::CreateWidget ( )
   this->NameEntry->GetLabel()->SetText("Name:");
   this->NameEntry->GetWidget()->SetBalloonHelpString ( "Set the name for the new color node");
   this->NameEntry->SetLabelWidth(5);
-  this->NameEntry->GetWidget()->SetWidth(20);
+  this->NameEntry->GetWidget()->SetWidth(25);
   this->NameEntry->SetLabelPositionToLeft();
   this->Script("pack %s -side top -anchor w -padx 2 -pady 2 -in %s",
                this->NameEntry->GetWidgetName(), 
@@ -699,7 +578,8 @@ void vtkSlicerColorEditWidget::CreateWidget ( )
   // refer to the header file for the order
   this->MultiColumnList->GetWidget()->AddColumn("Label");
   this->MultiColumnList->GetWidget()->AddColumn("Name");
-  this->MultiColumnList->GetWidget()->AddColumn("Color");
+  this->MultiColumnList->GetWidget()->AddColumn("RGB");
+  //this->MultiColumnList->GetWidget()->AddColumn("Color");
 
   // now set attribs that are equal across the columns
   int col;
@@ -712,23 +592,25 @@ void vtkSlicerColorEditWidget::CreateWidget ( )
   // set the column widths
   this->MultiColumnList->GetWidget()->SetColumnWidth(this->EntryColumn, 5);
   this->MultiColumnList->GetWidget()->SetColumnWidth(this->NameColumn, 17);
-  this->MultiColumnList->GetWidget()->SetColumnWidth(this->ColourColumn, 25);
+//  this->MultiColumnList->GetWidget()->SetColumnWidth(this->ColourTextColumn, 20);
+  this->MultiColumnList->GetWidget()->SetColumnWidth(this->ColourColumn, 5);
 
   // make the colour column editable by colour chooser
   for (int row = 0; row < this->MultiColumnList->GetWidget()->GetNumberOfRows(); row++)
-    {
+    {    
     this->MultiColumnList->GetWidget()->SetCellWindowCommandToColorButton(row, this->ColourColumn);
     }
   // don't show the colour text
-  //this->MultiColumnList->GetWidget()->SetColumnFormatCommandToEmptyOutput (this->ColourColumn);
+  this->MultiColumnList->GetWidget()->SetColumnFormatCommandToEmptyOutput (this->ColourColumn);
   
   
   app->Script ( "pack %s -fill both -expand true -in %s",
                 this->MultiColumnList->GetWidgetName(),
                 editFrame->GetWidgetName());
   this->MultiColumnList->GetWidget()->SetCellUpdatedCommand(this, "UpdateElement");
-              
-  // button frame
+
+  // ---
+  // BUTTON FRAME
   vtkKWFrame *buttonFrame = vtkKWFrame::New();
   buttonFrame->SetParent ( editFrame );
   buttonFrame->Create ( );
@@ -740,25 +622,60 @@ void vtkSlicerColorEditWidget::CreateWidget ( )
   this->GenerateButton = vtkKWPushButton::New();
   this->GenerateButton->SetParent( buttonFrame);
   this->GenerateButton->Create();
-  this->GenerateButton->SetText("Generate");
+  this->GenerateButton->SetText("Generate a New Color Node");
   this->GenerateButton->SetBalloonHelpString("Generate a new color table node from the contents of the editing table. Only do this once, then you can edit it. If you press this a second time, it will create a new node again.");
   
   // a button to save a colour table to file
   this->SaveToFileButton = vtkKWPushButton::New();
   this->SaveToFileButton->SetParent( buttonFrame);
   this->SaveToFileButton->Create();
-  this->SaveToFileButton->SetText("Save");
+  this->SaveToFileButton->SetText("Save Node to File");
   this->SaveToFileButton->SetBalloonHelpString("Save the current color table node to file. Use the color table name as the file name. If you set the View, Application Settings, Module Settings, user defined color file paths, the table will be saved in one of them and will be loaded again on start up.");
   
   // pack the buttons
-   app->Script("pack %s %s -side top -anchor w -padx 4 -pady 2 -in %s", 
-                this->GenerateButton->GetWidgetName(),
-                this->SaveToFileButton->GetWidgetName(),
-   buttonFrame->GetWidgetName());
+  app->Script("pack %s %s -side top -anchor w -padx 4 -pady 2 -in %s", 
+              this->GenerateButton->GetWidgetName(),
+              this->SaveToFileButton->GetWidgetName(),
+              buttonFrame->GetWidgetName());
 
+  // ---
+  // COPY FRAME   
+  vtkKWFrame *copyFrame = vtkKWFrame::New ( );
+  copyFrame->SetParent ( this->GetParent() );
+  copyFrame->Create ( );
+
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 copyFrame->GetWidgetName() );
+
+  // select a node to copy
+  this->CopyNodeSelectorWidget = vtkSlicerNodeSelectorWidget::New();
+  this->CopyNodeSelectorWidget->SetParent(copyFrame);
+  this->CopyNodeSelectorWidget->Create();
+  this->CopyNodeSelectorWidget->SetNodeClass("vtkMRMLColorTableNode", NULL, NULL, NULL);
+  //this->CopyNodeSelectorWidget->NewNodeEnabledOn();
+  this->CopyNodeSelectorWidget->ShowHiddenOn();
+  this->CopyNodeSelectorWidget->SetMRMLScene(this->GetMRMLScene());
+  this->CopyNodeSelectorWidget->SetBorderWidth(2);
+  this->CopyNodeSelectorWidget->SetPadX(2);
+  this->CopyNodeSelectorWidget->SetPadY(2);
+  //this->CopyNodeSelectorWidget->GetWidget()->IndicatorVisibilityOff();
+  this->CopyNodeSelectorWidget->GetWidget()->SetWidth(24);
+  this->CopyNodeSelectorWidget->SetLabelText( "Select a Color Table to Copy: ");
+  this->CopyNodeSelectorWidget->SetBalloonHelpString("Select a color from the current mrml scene, then can make a copy of it for editing.");
+
+  // a button to trigger the copy
+  this->CopyButton = vtkKWPushButton::New();
+  this->CopyButton->SetParent( copyFrame);
+  this->CopyButton->Create();
+  this->CopyButton->SetText("Copy Node");
+  this->CopyButton->SetBalloonHelpString("Copy the colour table node selected in the drop down menu.");
+
+  this->Script ("pack %s %s -side top -anchor w -fill x -padx 2 -pady 2 -in %s",
+                this->CopyNodeSelectorWidget->GetWidgetName(), this->CopyButton->GetWidgetName(),
+                copyFrame->GetWidgetName());
+  
   // add observers
-  //  this->ColorSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->CopyNodeSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+//  this->CopyNodeSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->NameEntry->GetWidget()->AddObserver(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->NumberOfColorsEntry->GetWidget()->AddObserver(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->SaveToFileButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -784,35 +701,23 @@ void vtkSlicerColorEditWidget::UpdateElement(int row, int col, char * str)
   if ((row >= 0) && (row < this->MultiColumnList->GetWidget()->GetNumberOfRows()) &&
       (col >= 0) && (col < this->MultiColumnList->GetWidget()->GetNumberOfColumns()))
     {
-    vtkMRMLColorNode *activeColorNode = (vtkMRMLColorNode *)this->MRMLScene->GetNodeByID(this->GetColorNodeID());
-    // is there an active list?
-    if (activeColorNode == NULL)
+    // this isn't necessary until use the colour text column
+    /*
+    // make sure that if edit the colour text column, the colour column is
+    // updated and vice versa, first checking if they're out of sync
+    if (col == this->ColourColumn &&
+        strcmp(str, this->MultiColumnList->GetWidget()->GetCellText(row, this->ColourTextColumn)))
       {
-      // don't need to do anything just yet
-      return;
+      // update the colour text
+      this->MultiColumnList->GetWidget()->SetCellText(row, this->ColourTextColumn, str);
       }
-    // the entry in the colour table
-    int entry = this->MultiColumnList->GetWidget()->GetCellTextAsInt(row, this->EntryColumn);
-    
-    // now update the requested value
-    if (col == this->NameColumn)
+    else if (col == this->ColourTextColumn &&
+             strcmp(str, this->MultiColumnList->GetWidget()->GetCellText(row, this->ColourColumn)))
       {
-      activeColorNode->SetColorName(entry,str);
+      // update the colour
+      this->MultiColumnList->GetWidget()->SetCellText(row, this->ColourColumn, str);
       }
-    else if (col == this->ColourColumn)
-      {
-      double r, g, b;
-      std::stringstream ss;
-      ss << str;
-      ss >> r;
-      ss >> g;
-      ss >> b;
-      const char *name = activeColorNode->GetColorName(entry);
-      if (vtkMRMLColorTableNode::SafeDownCast(activeColorNode) != NULL)
-        {
-        vtkMRMLColorTableNode::SafeDownCast(activeColorNode)->SetColor(entry, name, r, g, b);
-        }
-      }
+    */
     }
   else
     {
@@ -865,7 +770,6 @@ void vtkSlicerColorEditWidget::UpdateEnableState(void)
     this->PropagateEnableState(this->SaveToFileButton);
     this->PropagateEnableState(this->GenerateButton);
     this->PropagateEnableState(this->CopyButton);
-//    this->PropagateEnableState(this->ColorSelectorWidget);
     this->PropagateEnableState(this->CopyNodeSelectorWidget);
     this->PropagateEnableState(this->NumberOfColorsEntry);
     this->PropagateEnableState(this->NameEntry);
@@ -919,11 +823,12 @@ void vtkSlicerColorEditWidget::GenerateNewColorTableNode()
   vtkMRMLColorTableNode *node = vtkMRMLColorTableNode::New();
   node->SetName(tableName);
   node->SetTypeToUser();
+  node->SetAttribute("Category", "User Generated");
   //  node->SetFileName(filename.c_str());
-  this->MRMLScene->AddNode(node);
   
   // get the max label value from the table
   int maxEntry = 0;
+  int minEntry = 0;
   int addZero = 0;
   for (int row = 0; row < this->MultiColumnList->GetWidget()->GetNumberOfRows(); row++)
     {
@@ -932,6 +837,10 @@ void vtkSlicerColorEditWidget::GenerateNewColorTableNode()
       {
       maxEntry = label;
       }
+    if (row == 0 || label < minEntry)
+      {
+      minEntry = label;
+      }
     if (label == 0)
       {
       addZero = 1;
@@ -939,6 +848,7 @@ void vtkSlicerColorEditWidget::GenerateNewColorTableNode()
     }
   maxEntry = maxEntry + addZero;
   node->SetNumberOfColors(maxEntry);
+  node->GetLookupTable()->SetRange(minEntry, maxEntry);
   // if we're not going to be setting all of the colours because the max entry 
   // is higher than the number of values that the user defined, initialise the names and colours
   if (maxEntry > numColours)
@@ -973,9 +883,21 @@ void vtkSlicerColorEditWidget::GenerateNewColorTableNode()
   // set it as modified since read, since we need to save it still
   node->ModifiedSinceReadOn();
 
+  this->MRMLScene->AddNode(node);
   // set it to be active
   this->SetColorNodeID(node->GetID());
 
+  // pop up some feedback
+  vtkKWMessageDialog *message = vtkKWMessageDialog::New();
+  message->SetParent ( this->GetParent() );
+  message->SetStyleToMessage();
+  std::string msg = std::string("Created new colors node, ") + std::string(node->GetName()) + std::string(", category = ") + std::string(node->GetAttribute("Category"));
+  message->SetText(msg.c_str());
+  message->Create();
+  message->Invoke();
+  message->Delete();
+
+  node->Delete();
 }
 
 //---------------------------------------------------------------------------
@@ -1066,5 +988,74 @@ void vtkSlicerColorEditWidget::SaveColorTableNode()
 //---------------------------------------------------------------------------
 void vtkSlicerColorEditWidget::CopyAndEditColorTableNode()
 {
-  vtkErrorMacro("CopyAndEditColorTableNode: NOT IMPLEMENTED YET!");
+  // is there a node selected?
+  vtkMRMLColorTableNode *node = 
+        vtkMRMLColorTableNode::SafeDownCast(this->CopyNodeSelectorWidget->GetSelected());
+
+  if (node == NULL)
+    {
+    vtkErrorMacro("CopyAndEditColorTableNode: no color table node selected, pick one first!");
+    return;
+    }
+  
+  // get the name and add Copy 
+  std::string newName = std::string("Copy") + std::string(node->GetName());
+  this->NameEntry->GetWidget()->SetValue(newName.c_str());
+
+
+  // get the number of colours
+  int numColours = node->GetNumberOfColors();
+  double *range = NULL;
+  range = node->GetLookupTable()->GetRange();
+  if (range)
+    {
+    numColours = (int)floor(range[1] - range[0]);
+    if (range[0] <= 0)
+      {
+      // add one for 0
+      numColours++;
+      }
+    }
+  // set the number of colours
+  this->NumberOfColorsEntry->GetWidget()->SetValueAsInt(numColours);
+
+  // make sure that the number of rows are correct
+  if (this->MultiColumnList->GetWidget()->GetNumberOfRows() != numColours)
+    {
+    // clear out the multicolumn list
+    this->MultiColumnList->GetWidget()->DeleteAllRows();
+    // add enough rows
+    this->MultiColumnList->GetWidget()->AddRows(numColours);
+    }
+
+  // then populate the multicolum list
+  int thisRow = 0;
+  for (int i = (int)floor(range[0]); i <= (int)floor(range[1]); i++)
+    {
+    // get the colour label
+    const char *name = NULL;
+    name = node->GetColorName(i);
+    if (name == NULL)
+      {
+      name = "(none)";
+      }
+    this->MultiColumnList->GetWidget()->SetCellTextAsInt(thisRow, this->EntryColumn, i);
+    this->MultiColumnList->GetWidget()->SetCellText(thisRow,this->NameColumn,name);
+    double colour[3];
+    node->GetLookupTable()->GetColor((double)i, colour);
+    // set the text, as that's how we populate the new node
+    std::stringstream ss;
+    ss << colour[0];
+    ss << " ";
+    ss << colour[1];
+    ss << " ";
+    ss << colour[2];
+    std::string colourStr = ss.str();
+//    this->MultiColumnList->GetWidget()->SetCellText(thisRow, this->ColourTextColumn, colourStr.c_str());
+    this->MultiColumnList->GetWidget()->SetCellText(thisRow, this->ColourColumn, colourStr.c_str());
+    // make the colour column editable by colour chooser
+    this->MultiColumnList->GetWidget()->SetCellWindowCommandToColorButton(thisRow, this->ColourColumn);
+    thisRow++;
+    }
+
 }
