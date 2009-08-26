@@ -309,7 +309,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
     {
     vtkMRMLdGEMRICProceduralColorNode *node = vtkMRMLdGEMRICProceduralColorNode::New();
     node->SetType(i);
-    node->SetAttribute("Category", "dGEMRIC");
+    node->SetAttribute("Category", "Cartilage MRI");
     node->SaveWithSceneOff();
     if (node->GetTypeAsString() == NULL)
       {
