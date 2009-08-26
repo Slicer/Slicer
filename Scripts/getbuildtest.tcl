@@ -475,6 +475,12 @@ if {$::GETBUILDTEST(verbose)} {
 # - create the Slicer3Version.txt file
 # - then run plaftorm specific build command
 
+if { $::USE_SYSTEM_PYTHON } {
+  set ::Slicer3_USE_SYSTEM_PYTHON ON
+} else {
+  set ::Slicer3_USE_SYSTEM_PYTHON OFF
+}
+
 cd $::Slicer3_BUILD
 runcmd $::CMAKE \
         -G$::GENERATOR \
@@ -491,6 +497,7 @@ runcmd $::CMAKE \
         -DINCR_TCL_LIBRARY:FILEPATH=$::INCR_TCL_LIB \
         -DINCR_TK_LIBRARY:FILEPATH=$::INCR_TK_LIB \
         -DSlicer3_USE_PYTHON=$::USE_PYTHON \
+        -DSlicer3_USE_SYSTEM_PYTHON=$::Slicer3_USE_SYSTEM_PYTHON \
         -DSlicer3_USE_NUMPY=$::USE_NUMPY \
         -DSlicer3_USE_OPENIGTLINK=$::USE_OPENIGTLINK \
         -DSlicer3_USE_OPENCV=$::USE_OPENCV \
