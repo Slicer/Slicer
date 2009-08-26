@@ -615,6 +615,28 @@ itcl::body LoadVolume::apply { } {
       $selNode SetReferenceActiveVolumeID [$node GetID]
     }
     # is there a win/level setting?
+    if {$_dicomWindowLevel(window) != -1 && $_dicomWindowLevel(level) != -1} {
+      if {[$node IsA "vtkMRMLScalarVolumeNode"] == 1} {
+        set dispNode [$node GetScalarVolumeDisplayNode]
+        if {$dispNode != ""} {
+            # get all of the presets out
+            foreach dicomwin [split $_dicomWindowLevel(window) {\\}] lev [split $_dicomWindowLevel(level) {\\}] {
+                # check to make sure that we don't have a mismatch in numbers of windows versus levels
+                if {$dicomwin == ""} {
+                    set dicomwin 0.0
+                }
+                if {$lev == ""} {
+                    set lev 0.0
+                }
+                puts "Adding window level preset w = '$dicomwin', l = '$lev'"
+                $dispNode AddWindowLevelPreset $dicomwin $lev
+            }
+            # now use the first one, this call turns off the auto flag
+            $dispNode SetWindowLevelFromPreset 0
+        }
+      }
+    }
+      if {0} {
     if {$_dicomWindowLevel(window) != -1} {
       if {[$node IsA "vtkMRMLScalarVolumeNode"] == 1} {
         set dispNode [$node GetScalarVolumeDisplayNode]
@@ -639,6 +661,7 @@ itcl::body LoadVolume::apply { } {
         }
       }
     }
+      }
     $::slicer3::ApplicationLogic PropagateVolumeSelection
 
     $::slicer3::Application SetRegistry "OpenPath" [file dirname $fileName]
