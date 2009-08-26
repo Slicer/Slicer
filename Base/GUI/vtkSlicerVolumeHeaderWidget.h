@@ -35,7 +35,8 @@
 
 class vtkKWPushButtonWithLabel;
 class vtkKWCheckButtonWithLabel;
-
+class vtkKWLabel;
+class vtkKWListBoxWithScrollbars;
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumeHeaderWidget : public vtkSlicerWidget
 {
   
@@ -115,6 +116,9 @@ protected:
   vtkKWEntryWithLabel *FileNameEntry;
 
   vtkKWCheckButtonWithLabel *LabelMapCheckButton;
+
+  vtkKWLabel *WinLevelPresetsLabel;
+  vtkKWListBoxWithScrollbars *WinLevelPresetsListBox;
 
 private:
 

@@ -6,6 +6,7 @@
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
 
 #include "vtkKWFrame.h"
 #include "vtkKWMenu.h"
@@ -14,6 +15,9 @@
 #include "vtkKWPushButtonWithLabel.h"
 #include "vtkKWCheckButton.h"
 #include "vtkKWCheckButtonWithLabel.h"
+#include "vtkKWLabel.h"
+#include "vtkKWListBox.h"
+#include "vtkKWListBoxWithScrollbars.h"
 
 #include <itksys/SystemTools.hxx> 
 
@@ -54,6 +58,9 @@ vtkSlicerVolumeHeaderWidget::vtkSlicerVolumeHeaderWidget ( )
 
   this->LabelMapCheckButton = NULL;
 
+  this->WinLevelPresetsLabel = NULL;
+  this->WinLevelPresetsListBox = NULL;
+  
   this->AddNodeSelectorWidget = 0;
 
   this->UpdatingFromMRML = 0;
@@ -148,7 +155,17 @@ vtkSlicerVolumeHeaderWidget::~vtkSlicerVolumeHeaderWidget ( )
     this->LabelMapCheckButton->SetParent(NULL);
     this->LabelMapCheckButton->Delete();
     }
-
+  if (this->WinLevelPresetsLabel)
+    {
+    this->WinLevelPresetsLabel->SetParent(NULL);
+    this->WinLevelPresetsLabel->Delete();
+    }
+  if (this->WinLevelPresetsListBox)
+    {
+    this->WinLevelPresetsListBox->SetParent(NULL);
+    this->WinLevelPresetsListBox->Delete();
+    }
+  
   this->SetMRMLScene ( NULL );  
   if (this->VolumeNode)
     {
@@ -435,6 +452,29 @@ void vtkSlicerVolumeHeaderWidget::UpdateWidgetFromMRML ()
       }
     }
 
+  this->WinLevelPresetsListBox->GetWidget()->DeleteAll();
+  if (volumeNode->IsA("vtkMRMLScalarVolumeNode"))
+    {
+    vtkMRMLScalarVolumeNode *scalarVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode);
+    if (scalarVolumeNode)
+      {
+      vtkMRMLScalarVolumeDisplayNode *displayNode = scalarVolumeNode->GetScalarVolumeDisplayNode();
+      if (displayNode != NULL)
+        {
+        // populate the win/level presets
+        for (int p = 0; p < displayNode->GetNumberOfWindowLevelPresets(); p++)
+          {
+          std::string winlev;
+          std::stringstream ss;
+          ss << displayNode->GetWindowPreset(p);
+          ss << " | ";
+          ss << displayNode->GetLevelPreset(p);
+          this->WinLevelPresetsListBox->GetWidget()->Append(ss.str().c_str());
+          }
+        }
+      }
+    }
+  
   this->UpdatingFromMRML = 0;
   return;
 }
@@ -753,6 +793,21 @@ void vtkSlicerVolumeHeaderWidget::CreateWidget ( )
                "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
                this->LabelMapCheckButton->GetWidgetName());
 
+  // window level presets
+  this->WinLevelPresetsLabel = vtkKWLabel::New();
+  this->WinLevelPresetsLabel->SetParent(frame);
+  this->WinLevelPresetsLabel->Create();
+  this->WinLevelPresetsLabel->SetText("Window/Level Presets");
+  
+  this->WinLevelPresetsListBox = vtkKWListBoxWithScrollbars::New();
+  this->WinLevelPresetsListBox->SetParent(frame);
+  this->WinLevelPresetsListBox->Create();
+  this->WinLevelPresetsListBox->GetWidget()->SetHeight(3);
+  this->Script(
+      "pack %s %s -side top -anchor nw -expand n -padx 2 -pady 2",
+      this->WinLevelPresetsLabel->GetWidgetName(),
+      this->WinLevelPresetsListBox->GetWidgetName());
+  
   this->AddWidgetObservers();
   volumeHeaderFrame->Delete();
   dimensionFrame->Delete();
