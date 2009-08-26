@@ -91,15 +91,37 @@ void vtkMRMLTimeSeriesBundleNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
 
+  //---
+  //--- DisplayBufferNodeList
+  //---
   of << indent << " DisplayBuffer0=\"" << this->DisplayBufferNodeIDList[0] << "\"";
   of << indent << " DisplayBuffer1=\"" << this->DisplayBufferNodeIDList[1] << "\"";
 
   NodeIDListType::iterator iter;
   int index = 0;
 
+  //---
+  //--- FrameNodeIDList
+  //---
   for (iter = this->FrameNodeIDList.begin(); iter != this->FrameNodeIDList.end(); iter ++)
     {
     of << indent << " Frame" << index << "=\"" << *iter << "\"";
+    index ++;
+    }
+
+  //---
+  //--- TimeStampList
+  //---
+
+  index = 0;
+  TimeStampListType::iterator iter2;
+  unsigned int sec, nanosec;
+  for (iter2 = this->TimeStampList.begin(); iter2 != this->TimeStampList.end(); iter2 ++)
+    {
+    sec = this->TimeStampList[index].second;
+    nanosec = this->TimeStampList[index].nanosecond;
+    of << indent << " TimePoint_second_" << index << "=\"" << sec << "\"";
+    of << indent << " TimePoint_nanosecond_" << index << "=\"" << nanosec << "\"";
     index ++;
     }
 
@@ -109,45 +131,83 @@ void vtkMRMLTimeSeriesBundleNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLTimeSeriesBundleNode::ReadXMLAttributes(const char** atts)
 {
-  // NOTE: The routine doesn't load time stamps.
 
-  Superclass::ReadXMLAttributes(atts);
+ Superclass::ReadXMLAttributes(atts);
 
-  const char* attName;
-  const char* attValue;
-  while (*atts != NULL) 
-    {
-    attName = *(atts++);
-    attValue = *(atts++);
+ const char* attName;
+ const char* attValue;
+ while (*atts != NULL) 
+   {
+   attName = *(atts++);
+   attValue = *(atts++);
 
-    std::cerr << "attName = " << attName << "." << std::endl;
-    std::cerr << "attValue = " << attValue << "." << std::endl;
+   std::cerr << "attName = " << attName << "." << std::endl;
+   std::cerr << "attValue = " << attValue << "." << std::endl;
       
-    if (!strcmp(attName, "DisplayBuffer0")) 
-      {
-      this->DisplayBufferNodeIDList[0] =attValue ;
-      }
-    if (!strcmp(attName, "DisplayBuffer1")) 
-      {
-      this->DisplayBufferNodeIDList[1] =attValue ;
-      }
-    if (!strncmp("Frame", attName, 5))
-      {
-      std::cerr << "Frames" << std::endl;
-      const char* suffix = &attName[5];
-      char** endptr;
-      unsigned long index = strtol(suffix, endptr, 10);
-      std::cerr << "index = " << index << std::endl;
-      if (index >= this->FrameNodeIDList.size())
-        {
-        this->FrameNodeIDList.resize(index+1);
-        }
-      this->FrameNodeIDList[index] = attValue;
-      }
-    }
-  this->FrameNodeIDList.clear();
-  this->DisplayBufferNodeIDList.clear();
-  this->Modified();
+   //---
+   //--- DisplayBufferNodeList
+   //---
+   if (!strcmp(attName, "DisplayBuffer0")) 
+     {
+     this->DisplayBufferNodeIDList[0] =attValue ;
+     }
+   if (!strcmp(attName, "DisplayBuffer1")) 
+     {
+     this->DisplayBufferNodeIDList[1] =attValue ;
+     }
+
+   //---
+   //--- FrameNodeIDList
+   //---
+   if (!strncmp("Frame", attName, 5))
+     {
+     std::cerr << "Frames" << std::endl;
+     const char* suffix = &attName[5];
+     char** endptr = NULL;
+     unsigned long index = strtol(suffix, endptr, 10);
+     std::cerr << "index = " << index << std::endl;
+     if (index >= this->FrameNodeIDList.size())
+       {
+       this->FrameNodeIDList.resize(index+1);
+       }
+     this->FrameNodeIDList[index] = attValue;
+     }
+
+
+   //---
+   //--- TimeStampList
+   //---
+
+   if (!strncmp("TimePoint_second_", attName, 18))
+     {
+     std::cerr << "TimePoint_second_" << std::endl;
+     const char* suffix = &attName[18];
+     char** endptr = NULL;
+     unsigned long index = strtol(suffix, endptr, 10);
+     std::cerr << "index = " << index << std::endl;
+     if (index >= this->TimeStampList.size())
+       {
+       this->TimeStampList.resize(index+1);
+       }
+     this->TimeStampList[index].second = atoi (attValue);
+     }
+   
+   if (!strncmp("TimePoint_nanosecond_", attName, 22))
+     {
+     std::cerr << "TimePoint_second_" << std::endl;
+     const char* suffix = &attName[22];
+     char** endptr = NULL;
+     unsigned long index = strtol(suffix, endptr, 10);
+     std::cerr << "index = " << index << std::endl;
+     if (index >= this->TimeStampList.size())
+       {
+       this->TimeStampList.resize(index+1);
+       }
+     this->TimeStampList[index].nanosecond = atoi (attValue);
+     }
+   }
+
+ this->Modified();
 
 }
 
@@ -407,7 +467,7 @@ int vtkMRMLTimeSeriesBundleNode::RemoveFrame(int i)
 int vtkMRMLTimeSeriesBundleNode::RemoveFrame(const char* nodeID)
 {
   
-  int index;
+  int index=0;
 
   NodeIDListType::iterator iter;
   for (iter = this->FrameNodeIDList.begin(); iter != this->FrameNodeIDList.end(); iter ++)
@@ -463,11 +523,15 @@ vtkMRMLNode* vtkMRMLTimeSeriesBundleNode::GetFrameNode(int i)
 //----------------------------------------------------------------------------
 int vtkMRMLTimeSeriesBundleNode::GetTimeStamp(int i, TimeStamp* ts)
 {
-  if (i < 0 || i >= (int)(this->FrameNodeIDList.size()))
+  if ( (this->TimeStampList.size() == 0) || (this->TimeStampList.empty()) )
+    {
+    vtkWarningMacro ( "Empty TimeStampList." );
+    return -1;
+    }
+  if ( (i < 0) || (i >= (int)(this->FrameNodeIDList.size()) ) )
     {
     return 0;
     }
-  
   TimeStamp& times = this->TimeStampList[i];
   ts->second     = times.second;
   ts->nanosecond = times.nanosecond;
@@ -582,9 +646,12 @@ void vtkMRMLTimeSeriesBundleNode::SwitchDisplayBuffer(int bufferIndex, int i)
   if (frame && displayBuffer)
     {
     vtkImageData* imageData = displayBuffer->GetImageData();
-    imageData->DeepCopy(frame->GetImageData());
-    displayBuffer->Modified();
-    displayBuffer->InvokeEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent);
+    if ( imageData )
+      {
+      imageData->DeepCopy(frame->GetImageData());
+      displayBuffer->Modified();
+      displayBuffer->InvokeEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent);
+      }
     }
 
 }

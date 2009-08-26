@@ -137,6 +137,7 @@ vtkFourDImageGUI::vtkFourDImageGUI ( )
   //----------------------------------------------------------------
   // Time
   this->TimerFlag = 0;
+
 }
 
 //---------------------------------------------------------------------------
@@ -366,13 +367,6 @@ void vtkFourDImageGUI::Enter()
     ProcessTimerEvents();
     }
 
-  // register node type to the MRML scene
-  vtkMRMLScene* scene = this->GetMRMLScene();
-
-  // 4D bundle node (vtkMRMLTimeSeriesBundleNode)
-  vtkMRMLTimeSeriesBundleNode* bundleNode = vtkMRMLTimeSeriesBundleNode::New();
-  scene->RegisterNodeClass(bundleNode);
-  bundleNode->Delete();
 
 }
 
@@ -1324,6 +1318,16 @@ void vtkFourDImageGUI::ProcessTimerEvents()
 void vtkFourDImageGUI::BuildGUI ( )
 {
 
+  // register node type to the MRML scene
+  // 4D bundle node (vtkMRMLTimeSeriesBundleNode)
+  vtkMRMLScene* scene = this->GetMRMLScene();
+  if ( scene )
+    {
+    vtkMRMLTimeSeriesBundleNode* bundleNode = vtkMRMLTimeSeriesBundleNode::New();
+    scene->RegisterNodeClass(bundleNode);
+    bundleNode->Delete();
+    }
+  
   // ---
   // MODULE GUI FRAME 
   // create a page
@@ -2274,6 +2278,7 @@ void vtkFourDImageGUI::UpdateFrameList(const char* bundleID, int selectColumn)
     }
 
   // Show info
+  int timestamp;
   char str[256];
   for (int i = 0; i < numFrames; i ++)
     {
@@ -2281,10 +2286,17 @@ void vtkFourDImageGUI::UpdateFrameList(const char* bundleID, int selectColumn)
     this->FrameList->GetWidget()->SetCellTextAsInt(i, 0, i);
     this->FrameList->GetWidget()->SetCellText(i, 1, volNode->GetName());
     vtkMRMLTimeSeriesBundleNode::TimeStamp ts;
-    bundleNode->GetTimeStamp(i, &ts);
-    double tm = (double)ts.second + (double)ts.nanosecond / 1000000000.0;
-    sprintf(str, "%f", tm);
-    this->FrameList->GetWidget()->SetCellText(i, 2, str);
+    timestamp = bundleNode->GetTimeStamp(i, &ts);
+    if ( timestamp > 0 )
+      {
+      double tm = (double)ts.second + (double)ts.nanosecond / 1000000000.0;
+      sprintf(str, "%f", tm);
+      this->FrameList->GetWidget()->SetCellText(i, 2, str);
+      }
+    else
+      {
+      this->FrameList->GetWidget()->SetCellText(i, 2, "0.000");
+      }
     }
 
   // The last one row ("new" row)

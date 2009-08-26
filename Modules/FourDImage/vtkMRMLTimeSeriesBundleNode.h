@@ -28,18 +28,18 @@
 
 class vtkMRMLStorageNode;
 
+
+
 class VTK_FourDImage_EXPORT vtkMRMLTimeSeriesBundleNode : public vtkMRMLLinearTransformNode
 {
   public:
-
-  //BTX
+//BTX
   typedef struct {
     unsigned int second;
     unsigned int nanosecond;
   } TimeStamp;
-  //ETX
+//ETX
 
-  public:
   static vtkMRMLTimeSeriesBundleNode *New();
   vtkTypeMacro(vtkMRMLTimeSeriesBundleNode,vtkMRMLLinearTransformNode);
   void PrintSelf(ostream& os, vtkIndent indent);
