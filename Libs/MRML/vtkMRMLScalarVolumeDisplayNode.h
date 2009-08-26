@@ -147,6 +147,30 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
     };
 
   virtual void UpdateImageDataPipeline();
+
+  // Description:
+  // Parse a string with window and level as double|double, and add a preset 
+  void AddWindowLevelPresetFromString(const char *preset);
+  // Description:
+  // Add a window level preset
+  void AddWindowLevelPreset(double window, double level);
+
+  // Description:
+  // Remove all presets
+  void ResetWindowLevelPresets();
+
+  // Description:
+  // Set Window and Level from preset p
+  void SetWindowLevelFromPreset(int p);
+
+  // Description:
+  // Get the number of window/level presets
+  int GetNumberOfWindowLevelPresets();
+
+  // Description:
+  // Return a specific preset, returns 0 if p out of range
+  double GetWindowPreset(int p);
+  double GetLevelPreset(int p);
   
 protected:
   vtkMRMLScalarVolumeDisplayNode();
@@ -154,6 +178,19 @@ protected:
   vtkMRMLScalarVolumeDisplayNode(const vtkMRMLScalarVolumeDisplayNode&);
   void operator=(const vtkMRMLScalarVolumeDisplayNode&);
 
+  // Description:
+  // To hold preset values for window and level, so can restore this display
+  // node's window and level to ones read from DICOM files, or defined by
+  // users
+  //BTX
+  class WindowLevelPreset
+  {
+  public:
+    double Window;
+    double Level;
+    WindowLevelPreset() { this->Window = 0.0; this->Level = 0.0; };
+  };
+  //ETX
   double Window;
   double Level;
   double UpperThreshold;
@@ -173,6 +210,11 @@ protected:
   vtkImageAppendComponents *AppendComponents;
   vtkImageMapToWindowLevelColors *MapToWindowLevelColors;
 
+  // Description:
+  // window level presets
+  //BTX
+  std::vector<WindowLevelPreset> WindowLevelPresets;
+  //ETX
 
 };
 
