@@ -191,6 +191,7 @@ void vtkMRMLdGEMRICProceduralColorNode::SetType(int type)
   // Set up the custom colours here for this type
   if (this->Type == this->dGEMRIC15T)
     {
+    this->SetDescription("Useful for displaying 1.5 tesla delayed gadolinium-enhanced MRI of cartilage");
     if (this->ColorTransferFunction->AddRGBPoint(0, 0.0, 0.0, 0.0) == -1)
       {
       vtkErrorMacro("SetType 1.5T: error adding point 0");
@@ -222,6 +223,7 @@ void vtkMRMLdGEMRICProceduralColorNode::SetType(int type)
     }
   else if (this->Type == this->dGEMRIC3T)
     {
+    this->SetDescription("Useful for displaying 3 Tesla delayed gadolinium-enhanced MRI of cartilage");
     if (this->ColorTransferFunction->AddRGBPoint(0, 0.0, 0.0, 0.0) == -1)
       {
       vtkErrorMacro("SetType 1.5T: error adding point 0");

@@ -109,7 +109,7 @@ public:
     dGEMRIC3T = 1,
   };
   //ETX
-  // escription:
+  // Description:
   // Return the lowest and the highest integers, for use in looping
   int GetFirstType() { return this->dGEMRIC15T; };
   int GetLastType() { return this->dGEMRIC3T; };
