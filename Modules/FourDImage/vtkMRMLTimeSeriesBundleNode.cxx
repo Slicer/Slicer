@@ -178,10 +178,10 @@ void vtkMRMLTimeSeriesBundleNode::ReadXMLAttributes(const char** atts)
    //--- TimeStampList
    //---
 
-   if (!strncmp("TimePoint_second_", attName, 18))
+   if (!strncmp("TimePoint_second_", attName, 17))
      {
      std::cerr << "TimePoint_second_" << std::endl;
-     const char* suffix = &attName[18];
+     const char* suffix = &attName[17];
      char** endptr = NULL;
      unsigned long index = strtol(suffix, endptr, 10);
      std::cerr << "index = " << index << std::endl;
@@ -189,13 +189,13 @@ void vtkMRMLTimeSeriesBundleNode::ReadXMLAttributes(const char** atts)
        {
        this->TimeStampList.resize(index+1);
        }
-     this->TimeStampList[index].second = atoi (attValue);
+     this->TimeStampList[index].second = (unsigned int)(atoi (attValue));
      }
    
-   if (!strncmp("TimePoint_nanosecond_", attName, 22))
+   if (!strncmp("TimePoint_nanosecond_", attName, 21))
      {
      std::cerr << "TimePoint_second_" << std::endl;
-     const char* suffix = &attName[22];
+     const char* suffix = &attName[21];
      char** endptr = NULL;
      unsigned long index = strtol(suffix, endptr, 10);
      std::cerr << "index = " << index << std::endl;
@@ -203,7 +203,7 @@ void vtkMRMLTimeSeriesBundleNode::ReadXMLAttributes(const char** atts)
        {
        this->TimeStampList.resize(index+1);
        }
-     this->TimeStampList[index].nanosecond = atoi (attValue);
+     this->TimeStampList[index].nanosecond = (unsigned int)(atoi (attValue));
      }
    }
 
