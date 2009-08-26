@@ -1460,6 +1460,10 @@ void vtkMRMLScene::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
+  os << indent << "ErrorCode = " << this->ErrorCode << "\n";
+  os << indent << "URL = " << this->GetURL() << "\n";
+  os << indent << "Root Directory = " << this->GetRootDirectory() << "\n";
+  
   this->CurrentScene->vtkCollection::PrintSelf(os,indent);
   std::list<std::string> classes = this->GetNodeClassesList();
 
