@@ -132,12 +132,12 @@ if(NOT DISABLE_CXX_TESTING)
     )
 
   # Does the preprocessing function correctly?
-  add_test(
-    vtkEMSegmentPreprocessingManagerTest
-    ${Slicer3_EXE} ${WRAPPED_TEST_EXE_PREFIX}/vtkEMSegmentPreprocessingManagerTest
-    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small_normalizationOn.mrml
-    "EMSegment Tutorial Template"
-    )
+  #add_test(
+  #  vtkEMSegmentPreprocessingManagerTest
+  #  ${Slicer3_EXE} ${WRAPPED_TEST_EXE_PREFIX}/vtkEMSegmentPreprocessingManagerTest
+  #  ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small_normalizationOn.mrml
+  #  "EMSegment Tutorial Template"
+  #  )
 
   # Test that the segmentation results match what the expected
   # results.  This is a legacy test that should not be removed.
@@ -151,14 +151,14 @@ if(NOT DISABLE_CXX_TESTING)
     )
 
   # Build parameters from scratch and run the segmentation
-  add_test(
-    vtkEMSegmentBuildAndRunNewSegmentationParameters001
-    ${Slicer3_EXE} ${WRAPPED_TEST_EXE_PREFIX}/vtkEMSegmentBuildAndRunNewSegmentationParameters001
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/MiscVolumeData/R.mhd
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/MiscVolumeData/G.mhd
-    ${EMSegment_SOURCE_DIR}/Testing/TestData/MiscVolumeData/B.mhd
-    ${EMSegment_TEST_DIR}/RGBSegmentationResult.mhd
-    )
+  #add_test(
+  #  vtkEMSegmentBuildAndRunNewSegmentationParameters001
+  #  ${Slicer3_EXE} ${WRAPPED_TEST_EXE_PREFIX}/vtkEMSegmentBuildAndRunNewSegmentationParameters001
+  #  ${EMSegment_SOURCE_DIR}/Testing/TestData/MiscVolumeData/R.mhd
+  #  ${EMSegment_SOURCE_DIR}/Testing/TestData/MiscVolumeData/G.mhd
+  #  ${EMSegment_SOURCE_DIR}/Testing/TestData/MiscVolumeData/B.mhd
+  #  ${EMSegment_TEST_DIR}/RGBSegmentationResult.mhd
+  #  )
 
   # Does help work right?
   add_test(
@@ -336,13 +336,13 @@ if(NOT DISABLE_CXX_TESTING)
     --resultVolumeFileName "${test_file_prefix}.mhd"
     --disableCompression
     )
-  add_test(
-    ${test_name} ${CMAKE_COMMAND} -V -VV "-Dtest_name:STRING=${test_name}"
-    "-Dtest_exe:STRING=${test_exe}"      "-Dtest_exe_args:STRING=${test_args}"
-    "-Dfile_cmp:STRING=${test_cmp_file}" "-Dfile_std:STRING=${test_std_file}"
-    "-Drm_files:STRING=${test_rm_files}"
-    -P "${EMSegment_SOURCE_DIR}/Testing/RunDiffRemoveTest.cmake"
-    )
+  #add_test(
+  #  ${test_name} ${CMAKE_COMMAND} -V -VV "-Dtest_name:STRING=${test_name}"
+  #  "-Dtest_exe:STRING=${test_exe}"      "-Dtest_exe_args:STRING=${test_args}"
+  #  "-Dfile_cmp:STRING=${test_cmp_file}" "-Dfile_std:STRING=${test_std_file}"
+  #  "-Drm_files:STRING=${test_rm_files}"
+  #  -P "${EMSegment_SOURCE_DIR}/Testing/RunDiffRemoveTest.cmake"
+  #  )
 
   # Does the segmenter work and give the correct answer when
   # everything is specified on the command line?
