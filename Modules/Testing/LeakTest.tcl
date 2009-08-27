@@ -49,7 +49,7 @@ puts $::dynamicModules
 # routine to run slicer with only the modules in the doNotIgnore list
 # included
 #
-proc runSlicer { {doNotIgnore ""} } {
+proc runSlicer { {doNotIgnore ""} {target ""} } {
 
   # these libs are in the Modules directory even though Slicer3.cxx links to them (bad...)
   # todo - this doesn't actully support windows dll naming convention
@@ -61,6 +61,9 @@ proc runSlicer { {doNotIgnore ""} } {
   lappend doNotIgnore "lib/Slicer3/Modules/libSlicerTractographyFiducialSeeding.$::EXT"
   puts "\n\n"
   puts "do not ignore $doNotIgnore"
+  puts "\n\n"
+  puts "testing $target"
+
 
   # rename package files for any ignored scripted modules
   puts -nonewline "ignoring: "
@@ -68,10 +71,10 @@ proc runSlicer { {doNotIgnore ""} } {
     if { [lsearch $doNotIgnore $sm] == -1 } {
       if { [file isdir $sm] } {
           puts -nonewline " [file tail $sm]"
-          file rename $sm/pkgIndex.tcl $sm/pkgIndexIgnore.tcl
+          file rename -force $sm/pkgIndex.tcl $sm/pkgIndexIgnore.tcl
       } else {
           puts -nonewline " [file tail $sm] "
-          file rename $sm ${sm}.ignore
+          file rename -force $sm ${sm}.ignore
       }
     }
   }
@@ -89,8 +92,15 @@ proc runSlicer { {doNotIgnore ""} } {
   puts ""
   if { $ret } {
     puts "****** Error when not ignoring $doNotIgnore"
+    lappend ::RESULTS(failers) $target"
   } else {
     puts "-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/ NO ERRORS"
+  }
+  if { [string match "*vtkDebugLeaks*" $res] } {
+    puts "%%%%%%%%% Leaks when not ignoring $doNotIgnore"
+    lappend ::RESULTS(leakers) $target"
+  } else {
+    puts "-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/ NO LEAKS"
   }
   puts $res
 
@@ -100,10 +110,10 @@ proc runSlicer { {doNotIgnore ""} } {
     if { [lsearch $doNotIgnore $sm] == -1 } {
       if { [file isdir $sm] } {
           puts -nonewline " [file tail $sm]"
-          file rename $sm/pkgIndexIgnore.tcl $sm/pkgIndex.tcl
+          file rename -force $sm/pkgIndexIgnore.tcl $sm/pkgIndex.tcl
       } else {
           puts -nonewline " [file tail $sm]"
-          file rename ${sm}.ignore $sm
+          file rename -force ${sm}.ignore $sm
       }
     }
   }
@@ -116,12 +126,12 @@ proc runSlicer { {doNotIgnore ""} } {
 puts "--------------------------------------------------------------------------------"
 puts "ignoring all"
 puts "--------------------------------------------------------------------------------"
-runSlicer ""
+runSlicer "" "no modules"
 
 puts "--------------------------------------------------------------------------------"
 puts "ignoring none"
 puts "--------------------------------------------------------------------------------"
-runSlicer $::dynamicModules
+runSlicer $::dynamicModules "all modules"
 
 # sequentially enable only one module at a time
 
@@ -129,7 +139,7 @@ foreach m $::dynamicModules {
   puts "--------------------------------------------------------------------------------"
   puts "not ignoring $m"
   puts "--------------------------------------------------------------------------------"
-  set ::RESULTS($m) [runSlicer $m]
+  set ::RESULTS($m) [runSlicer $m $m]
 }
 
 puts "--------------------------------------------------------------------------------"
