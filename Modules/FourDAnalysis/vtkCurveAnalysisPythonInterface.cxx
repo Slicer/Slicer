@@ -161,7 +161,8 @@ int vtkCurveAnalysisPythonInterface::GetInfo()
   // Get lists of input curves, initial parameters etc.
   pythonCmd += "curveNames          = caexec.GetInputCurveNames()\n";
   pythonCmd += "initialOptimParams  = caexec.GetInitialParameters()\n";
-  pythonCmd += "inputParameterNames = caexec.GetConstantNames()\n";
+  //pythonCmd += "inputParameterNames = caexec.GetConstantNames()\n";
+  pythonCmd += "inputParameters     = caexec.GetConstants()\n";
   pythonCmd += "outputValueNames    = caexec.GetOutputParameterNames()\n";
   pythonCmd += "methodName          = caexec.GetMethodName()\n";
   pythonCmd += "methodDescription   = caexec.GetMethodDescription()\n";
@@ -171,8 +172,10 @@ int vtkCurveAnalysisPythonInterface::GetInfo()
   pythonCmd += "    curveNode.AddInputArrayName(key)\n";
   pythonCmd += "for key, value in initialOptimParams.iteritems():\n";
   pythonCmd += "    curveNode.SetInitialParameter(key, value)\n";
-  pythonCmd += "for key in inputParameterNames:\n";
-  pythonCmd += "    curveNode.SetConstant(key, 0.0)\n";
+  //pythonCmd += "for key in inputParameterNames:\n";
+  //pythonCmd += "    curveNode.SetConstant(key, 0.0)\n";
+  pythonCmd += "for key, value in inputParameters.iteritems():\n";
+  pythonCmd += "    curveNode.SetConstant(key, value)\n";
   pythonCmd += "for key in outputValueNames:\n";
   pythonCmd += "    curveNode.SetOutputValue(key, 0.0)\n";
   pythonCmd += "curveNode.SetMethodName(methodName)\n";

@@ -130,7 +130,7 @@ class CurveAnalysisBase(object):
     def GetConstantNameList(self):
         return self.ConstantNameList
 
-    def GetConstant(slef):
+    def GetConstants(self):
         return self.Constant
 
     def SetConstant(self, name, param):
@@ -276,6 +276,18 @@ class CurveAnalysisExecuter(object):
         exec('fitting = self.Module.' + self.ModuleName + '()')
         names  = fitting.GetParameterNameList()
         values = fitting.GetInitialParameters()
+        n = len(names)
+        params = {}
+        for i in range(n):
+            params[names[i]] = values[i]
+        return params
+
+    # ------------------------------
+    # Get Constants
+    def GetConstants(self):
+        exec('fitting = self.Module.' + self.ModuleName + '()')
+        names  = fitting.GetConstantNameList()
+        values = fitting.GetConstants()
         n = len(names)
         params = {}
         for i in range(n):
