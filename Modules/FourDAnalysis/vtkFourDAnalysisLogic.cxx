@@ -223,6 +223,54 @@ const char* vtkFourDAnalysisLogic::GetFrameNodeID(int index)
 
 
 //---------------------------------------------------------------------------
+vtkMRMLDoubleArrayNode* vtkFourDAnalysisLogic::LoadDoubleArrayNodeFromFile(const char* path)
+{
+  vtkDoubleArray* array = vtkDoubleArray::New();
+  array->SetNumberOfComponents(3);
+
+  std::ifstream fin(path);
+  std::string sr;
+  
+  double row[3];
+  row[0] = row[1] = row[2] = 0.0;
+
+  while (std::getline(fin, sr))
+    {
+    std::stringstream ssr(sr);
+    std::string sc;
+    int i = 0;
+    while (std::getline(ssr, sc, ','))
+      {
+      std::stringstream ssc(sc);
+      double d;
+      ssc >> d;
+      if (i < 3)
+        {
+        row[i] = d;
+        std::cerr << d << std::endl;
+        }
+      i ++;
+      }
+    array->InsertNextTuple(row);
+    }
+
+  if (array->GetNumberOfTuples() > 0)
+    {
+    vtkMRMLDoubleArrayNode* anode = vtkMRMLDoubleArrayNode::New();
+    anode->SetArray(array);
+    array->Delete();
+    return anode;
+    }
+  else
+    {
+    array->Delete();
+    return NULL;
+    }
+
+}
+
+
+//---------------------------------------------------------------------------
 int vtkFourDAnalysisLogic::SaveIntensityCurves(vtkIntensityCurves* curves, const char* fileNamePrefix)
 {
   if (!curves)

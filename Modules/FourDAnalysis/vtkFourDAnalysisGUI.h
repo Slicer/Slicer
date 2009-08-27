@@ -163,7 +163,10 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   
   // Description:
   // GeneratePlotNodes() calculates time-intensity curves in the regions specified by the label data.
+
   void GeneratePlotNodes();
+  void ImportPlotNode(const char* path);
+
 
  protected:
   
@@ -208,6 +211,7 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   vtkSlicerXYPlotWidget*     IntensityPlot;
   vtkKWCheckButtonWithLabel* ErrorBarCheckButton;
   vtkKWMultiColumnListWithScrollbars* PlotList;
+  vtkKWPushButton* ImportPlotButton;
   vtkKWPushButton* SelectAllPlotButton;
   vtkKWPushButton* DeselectAllPlotButton;
   vtkKWPushButton* PlotDeleteButton;

@@ -47,6 +47,7 @@
 #include "vtkKWRange.h"
 #include "vtkKWCheckButtonWithLabel.h"
 #include "vtkKWEntryWithLabel.h"
+#include "vtkKWFileBrowserDialog.h"
 
 #include "vtkKWProgressDialog.h"
 #include "vtkKWMessageDialog.h"
@@ -120,6 +121,7 @@ vtkFourDAnalysisGUI::vtkFourDAnalysisGUI ( )
   this->RunPlotButton            = NULL;
   this->ErrorBarCheckButton      = NULL;
   this->PlotList                 = NULL;
+  this->ImportPlotButton         = NULL;
   this->SelectAllPlotButton      = NULL;
   this->DeselectAllPlotButton    = NULL;
   this->PlotDeleteButton         = NULL;
@@ -230,6 +232,11 @@ vtkFourDAnalysisGUI::~vtkFourDAnalysisGUI ( )
     {
     this->PlotList->SetParent(NULL);
     this->PlotList->Delete();
+    }
+  if (this->ImportPlotButton)
+    {
+    this->ImportPlotButton->SetParent(NULL);
+    this->ImportPlotButton->Delete();
     }
   if (this->SelectAllPlotButton)
     {
@@ -490,6 +497,11 @@ void vtkFourDAnalysisGUI::RemoveGUIObservers ( )
     this->PlotList->GetWidget()
       ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
+  if (this->ImportPlotButton)
+    {
+    this->ImportPlotButton
+      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
   if (this->SelectAllPlotButton)
     {
     this->SelectAllPlotButton
@@ -660,7 +672,11 @@ void vtkFourDAnalysisGUI::AddGUIObservers ( )
   //  this->PlotList->GetWidget()
   //    ->AddObserver(vtkKWMultiColumnList::CellUpdatedEvent, (vtkCommand *)this->GUICallbackCommand);
   //  }
-
+  if (this->ImportPlotButton)
+    {
+    this->ImportPlotButton
+      ->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+    }
   if (this->SelectAllPlotButton)
     {
     this->SelectAllPlotButton
@@ -884,6 +900,21 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
       this->PlotManagerNode->SetErrorBarAll(0);
       this->PlotManagerNode->Refresh();
       }
+    }
+  else if (this->ImportPlotButton == vtkKWPushButton::SafeDownCast(caller)
+           && event == vtkKWPushButton::InvokedEvent)
+    {
+    vtkKWFileBrowserDialog* fbrowse = vtkKWFileBrowserDialog::New();
+    fbrowse->SetParent(this->GetApplicationGUI()->GetViewerWidget());
+    fbrowse->Create();
+    fbrowse->SetFileTypes("{{Array data} {.txt .csv}}");
+    fbrowse->MultipleSelectionOff();
+    if (fbrowse->Invoke())
+      {
+      const char* path = fbrowse->GetFileName();
+      ImportPlotNode(path);
+      }
+    fbrowse->Delete();
     }
   else if (this->SelectAllPlotButton == vtkKWPushButton::SafeDownCast(caller)
            && event == vtkKWPushButton::InvokedEvent)
@@ -1546,6 +1577,12 @@ void vtkFourDAnalysisGUI::BuildGUIForFunctionViewer(int show)
   this->Script ("pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 2",
                 bframe->GetWidgetName() );
 
+  this->ImportPlotButton = vtkKWPushButton::New();
+  this->ImportPlotButton->SetParent(bframe);
+  this->ImportPlotButton->Create();
+  this->ImportPlotButton->SetText ("Import");
+  this->ImportPlotButton->SetWidth (4);
+
   this->SelectAllPlotButton = vtkKWPushButton::New();
   this->SelectAllPlotButton->SetParent(bframe);
   this->SelectAllPlotButton->Create();
@@ -1564,7 +1601,8 @@ void vtkFourDAnalysisGUI::BuildGUIForFunctionViewer(int show)
   this->PlotDeleteButton->SetText ("Delete");
   this->PlotDeleteButton->SetWidth (4);
 
-  this->Script ("pack %s %s %s -side left -fill x -expand y -anchor w -padx 2 -pady 2",
+  this->Script ("pack %s %s %s %s -side left -fill x -expand y -anchor w -padx 2 -pady 2",
+                this->ImportPlotButton->GetWidgetName(),
                 this->SelectAllPlotButton->GetWidgetName(),
                 this->DeselectAllPlotButton->GetWidgetName(),
                 this->PlotDeleteButton->GetWidgetName());
@@ -2577,7 +2615,6 @@ void vtkFourDAnalysisGUI::GeneratePlotNodes()
   int n = labels->GetNumberOfTuples();
 
   //this->IntensityPlot->ClearPlot();
-
   for (int i = 0; i < n; i ++)
     {
     int label = labels->GetValue(i);
@@ -2620,3 +2657,33 @@ void vtkFourDAnalysisGUI::GeneratePlotNodes()
     }
 }
 
+
+//----------------------------------------------------------------------------
+void  vtkFourDAnalysisGUI::ImportPlotNode(const char* path)
+{
+  vtkMRMLDoubleArrayNode* anode = this->GetLogic()->LoadDoubleArrayNodeFromFile(path);
+  if (anode)
+    {
+    this->GetMRMLScene()->AddNode(anode);
+    vtkMRMLArrayPlotNode* cnode = vtkMRMLArrayPlotNode::New();
+    this->GetMRMLScene()->AddNode(cnode);
+    cnode->SetAndObserveArray(anode);
+    cnode->SetErrorBar(1);
+
+    double color[3];
+    
+    color[0] = 0.0;
+    color[1] = 0.0;
+    color[2] = 0.0;
+    cnode->SetColor(color[0], color[1], color[2]);
+    
+    this->PlotManagerNode->AddPlotNode(cnode);
+    this->PlotManagerNode->SetAutoXRange(1);
+    this->PlotManagerNode->SetAutoYRange(1);
+    this->PlotManagerNode->Refresh();
+
+    anode->Delete();
+    cnode->Delete();
+    }
+
+}
