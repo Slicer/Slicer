@@ -592,6 +592,7 @@ proc ExtractSubvolumeROIApply {this} {
   # check that inputs are valid
   #
   set errorText ""
+  set warningText ""
   
   set outVolumeNode [$::ExtractSubvolumeROI($this,outputSelector) GetSelected]
   set roiNode [$::ExtractSubvolumeROI($this,roiSelector) GetSelected]
@@ -628,10 +629,11 @@ proc ExtractSubvolumeROIApply {this} {
   $ijk2ras Delete
 
   if {[expr abs($m01) || abs($m02) || abs($m12)]} {
-    set errorText "The specified input volume is not axis-aligned! \
+    set warningText "WARNING: The specified input volume is not axis-aligned! \
     ExtractSubvolumeROI does not support non axis-aligned input images at this \
-    time.\n\nPlease resample the input image to be axis-aligned to use this \
-    module."
+    time.\n\nThe extracted subvolume will not be precisely what you \
+    selected... You may need to resample the input image to be axis-aligned to \
+    get precision."
   }
 
   if { $errorText != "" } {
@@ -644,6 +646,17 @@ proc ExtractSubvolumeROIApply {this} {
     $dialog Invoke
     $dialog Delete
     return
+  }
+
+  if { $warningText != "" } {
+    set dialog [vtkKWMessageDialog New]
+    $dialog SetParent [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+    $dialog SetMasterWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+    $dialog SetStyleToMessage
+    $dialog SetText $warningText
+    $dialog Create
+    $dialog Invoke
+    $dialog Delete
   }
 
   set ijk2ras [vtkMatrix4x4 New]
