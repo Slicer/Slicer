@@ -101,12 +101,12 @@ class VTK_FourDAnalysis_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
 
   // Description:
   // Get X and Y values at the data point specified by 'index'
-  int GetXYValue(int index, double* x, double* y);
+  int GetXYAxisValue(int index, double* x, double* y);
 
   // Description:
   // Get X and Y values with error (or standard deviation) of Y,
   // at the data point specified by 'index'
-  int GetXYValue(int index, double* x, double* y, double*  yerr);
+  int GetXYAxisValue(int index, double* x, double* y, double*  yerr);
 
   // Description:
   // Set X and Y values at he data point specified by 'index'
