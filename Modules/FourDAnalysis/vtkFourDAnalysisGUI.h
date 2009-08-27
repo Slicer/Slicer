@@ -156,6 +156,8 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   void UpdatePlotList();
   virtual void UpdatePlotListElement(int row, int col, char * str);
   void DeleteSelectedPlots();
+  void SelectAllPlots();
+  void DeselectAllPlots();
 
   void UpdateInitialParameterList(vtkMRMLCurveAnalysisNode* curveNode);
   void GetInitialParametersAndInputCurves(vtkMRMLCurveAnalysisNode* curveNode, int start, int end);
@@ -163,7 +165,6 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   
   // Description:
   // GeneratePlotNodes() calculates time-intensity curves in the regions specified by the label data.
-
   void GeneratePlotNodes();
   void ImportPlotNode(const char* path);
 
