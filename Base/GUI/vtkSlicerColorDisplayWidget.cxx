@@ -972,13 +972,16 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
   this->ScalarBarAnnotation = vtkKWScalarBarAnnotation::New();
   this->ScalarBarAnnotation->SetParent ( scalarBarFrame );
   this->ScalarBarAnnotation->Create();
-  this->ScalarBarAnnotation->SetBalloonHelpString("Control parameters on a 2d scalar bar (DON'T hit the x to close this widget!)");
+  this->ScalarBarAnnotation->SetBalloonHelpString("Control parameters on a 2d scalar bar showing the colors in the 3D view");
   this->ScalarBarAnnotation->SetScalarBarWidget(this->ScalarBarWidget);
   
   // pack the scalar bar annotation
   app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
               this->ScalarBarAnnotation->GetWidgetName(),
               scalarBarFrame->GetWidgetName());
+
+  // keep the scalar bar annotation closed by default
+  this->ScalarBarAnnotation->GetFrame()->CollapseFrame();
   
   // deleting frame widgets
   selFrame->Delete();
