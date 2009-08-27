@@ -419,6 +419,7 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->WindowLevelRange->SetCommand(this, "ProcessWindowLevelCommand");
   this->WindowLevelRange->SetStartCommand(this, "ProcessWindowLevelStartCommand");
   this->WindowLevelRange->SetEndCommand(this, "ProcessWindowLevelEndCommand");
+  this->WindowLevelRange->SetEntriesCommand(this, "ProcessWindowLevelCommand");
   this->Script(
     "pack %s -side left -anchor nw -expand yes -fill x -padx 2 -pady 2", 
     this->WindowLevelRange->GetWidgetName());
@@ -471,6 +472,7 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->ThresholdRange->SetCommand(this, "ProcessThresholdCommand");
   this->ThresholdRange->SetStartCommand(this, "ProcessThresholdStartCommand");
   this->ThresholdRange->SetEndCommand(this, "ProcessThresholdEndCommand");
+  this->ThresholdRange->SetEntriesCommand(this, "ProcessThresholdCommand");
   this->Script(
     "pack %s -side left -anchor w -expand y -fill x -padx 2 -pady 2", 
     this->ThresholdRange->GetWidgetName());
