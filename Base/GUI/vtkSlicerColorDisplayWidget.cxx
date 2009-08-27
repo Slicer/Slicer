@@ -976,7 +976,7 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
   this->ScalarBarAnnotation->SetScalarBarWidget(this->ScalarBarWidget);
   
   // pack the scalar bar annotation
-  app->Script("pack %s -side top -anchor w -padx 4 -pady 2 -in %s",
+  app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
               this->ScalarBarAnnotation->GetWidgetName(),
               scalarBarFrame->GetWidgetName());
   
