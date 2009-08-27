@@ -613,11 +613,14 @@ vtkMRMLTimeSeriesBundleNode* vtkFourDImageLogic::LoadImagesByList(const char* bu
   bundleNode->SetName(bundleNodeName);
   bundleNode->SetDescription("Created by FourDImage");
 
+  /*
   vtkMatrix4x4* transform = vtkMatrix4x4::New();
   transform->Identity();
   bundleNode->ApplyTransform(transform);
   transform->Delete();
+  */
   scene->AddNode(bundleNode);
+  bundleNode->Delete();
 
 
   // Time stamp

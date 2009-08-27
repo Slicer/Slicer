@@ -53,13 +53,6 @@ vtkMRMLNode* vtkMRMLTimeSeriesBundleNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLTimeSeriesBundleNode::vtkMRMLTimeSeriesBundleNode()
 {
-  this->MatrixTransformToParent = NULL;
-
-  vtkMatrix4x4 *matrix  = vtkMatrix4x4::New();
-  matrix->Identity();
-  this->SetAndObserveMatrixTransformToParent(matrix);
-  matrix->Delete();
-
   this->FrameNodeIDList.clear();
   this->TimeStampList.clear();
   //this->TransformNodeIDList.clear();
@@ -74,11 +67,6 @@ vtkMRMLTimeSeriesBundleNode::vtkMRMLTimeSeriesBundleNode()
 //----------------------------------------------------------------------------
 vtkMRMLTimeSeriesBundleNode::~vtkMRMLTimeSeriesBundleNode()
 {
-  if (this->MatrixTransformToParent) 
-    {
-    this->SetAndObserveMatrixTransformToParent(NULL);
-    }
-
   this->FrameNodeIDList.clear();
   this->TimeStampList.clear();
   //this->TransformNodeIDList.clear();
