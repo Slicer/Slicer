@@ -421,6 +421,13 @@ public:
   // Description:
   // Add a uri handler to the collection.
   void AddURIHandler(vtkURIHandler *handler);
+
+  // Description:
+  // IsClosed is true during scene loads
+  // By checking this flag, logic and gui code can choose
+  // to ignore transient modified events and related events
+  vtkGetMacro( IsClosed, int );
+  vtkSetMacro( IsClosed, int );
   
 protected:
   vtkMRMLScene();
@@ -498,6 +505,8 @@ private:
   char* ClassNameList;
 
   static vtkMRMLScene *ActiveScene;
+
+  int IsClosed;
 };
 
 #endif

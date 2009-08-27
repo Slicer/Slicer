@@ -156,7 +156,7 @@ void vtkSlicerSliceLogic::UpdateSliceNode()
     node = this->SliceNode;
     node->Register(this);
     this->SetSliceNode (NULL);
-    this->MRMLScene->AddNode(node);
+    this->MRMLScene->AddNodeNoNotify(node);
     this->SetSliceNode (node);
     node->UnRegister(this);
     }
@@ -265,11 +265,14 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents(vtkObject * caller,
     return;
     }
 
-  this->CreateSliceModel();
+  if ( !this->MRMLScene->GetIsClosed() )
+    {
+    this->CreateSliceModel();
 
-  this->UpdateSliceNode();
- 
-  this->UpdateSliceCompositeNode();
+    this->UpdateSliceNode();
+   
+    this->UpdateSliceCompositeNode();
+    }
 
   //
   // check that our referenced nodes exist, and if not set to None

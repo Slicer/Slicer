@@ -106,6 +106,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->UserTagTable = NULL;
 
   this->ErrorCode = 0;
+  this->IsClosed = 0;
 
   //
   // Register all the 'built-in' nodes for the library
@@ -576,6 +577,7 @@ int vtkMRMLScene::Connect()
   this->ClearReferencedNodeID();
 
   this->InvokeEvent(this->SceneCloseEvent, NULL);
+  this->SetIsClosed(1);
 
   this->ClearUndoStack ( );
   this->ClearRedoStack ( );
@@ -630,6 +632,7 @@ int vtkMRMLScene::Import()
     this->UpdateNodeReferences(scene);
 
     this->InvokeEvent(this->NewSceneEvent, NULL);
+    this->SetIsClosed(0);
 
     for (n=0; n<nnodes; n++) 
       {

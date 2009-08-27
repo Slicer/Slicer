@@ -282,6 +282,8 @@ void vtkMRMLSceneSnapshotNode::RestoreScene()
   unsigned int n;
   vtkMRMLNode *node = NULL;
 
+  this->Scene->SetIsClosed(1);
+
   // remove nodes in the scene which are not stored in the snapshot
   std::map<std::string, vtkMRMLNode*> snapshotMap;
   for (n=0; n<nnodesSanpshot; n++) 
@@ -386,6 +388,7 @@ void vtkMRMLSceneSnapshotNode::RestoreScene()
       }
     }
 
+  this->Scene->SetIsClosed(0);
   for(n=0; n<addedNodes.size(); n++)
     {
     //addedNodes[n]->UpdateScene(this->Scene);
