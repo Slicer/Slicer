@@ -62,6 +62,13 @@
       <element>WLS</element>
       <element>NL</element>
     </string-enumeration>
+    <boolean>
+      <name>ShiftNegativeEigenvalues</name>
+      <longflag>shiftNeg</longflag>
+      <description>Shift eigenvalues so all are positive (accounts for bad tensors related to noise or acquisition error)</description>
+      <label>Shift Negative Eigenvalues</label>
+      <default>false</default>
+    </boolean>
     <double>
       <name>otsuOmegaThreshold</name>
       <label>Otsu Omega Threshold Parameter</label>

@@ -62,6 +62,7 @@ vtkTeemEstimateDiffusionTensor::vtkTeemEstimateDiffusionTensor()
 
   this->NumberOfWLSIterations = 1;
   this->knownB0 = 0;
+  this->ShiftNegativeEigenvalues = 0;
 
   // Output images beside the estimated tensor
   this->Baseline = vtkImageData::New();
@@ -507,6 +508,8 @@ int vtkTeemEstimateDiffusionTensor::SetTenContext(  tenEstimateContext *tec,Nrrd
       break;
      */
     }
+
+    if (!EE) tec->negEvalShift = this->ShiftNegativeEigenvalues;
 
     // Do not set any threshold for the mask. Do that later
     if (!EE) EE |= tenEstimateThresholdSet(tec, 0, 1);

@@ -123,6 +123,12 @@ class VTK_Teem_EXPORT vtkTeemEstimateDiffusionTensor : public vtkImageToImageFil
   int SetTenContext(  tenEstimateContext *tec,Nrrd *ngrad, Nrrd *nbmat);
   //ETX
 
+  // Description:
+  // Flag to shift eigenvalues upwards to that smallest one is non-negative
+  // (negEvalShift in Teem's Ten)
+  vtkSetMacro(ShiftNegativeEigenvalues,int);
+  vtkGetMacro(ShiftNegativeEigenvalues,int);
+
  protected:
   vtkTeemEstimateDiffusionTensor();
   ~vtkTeemEstimateDiffusionTensor();
@@ -158,7 +164,12 @@ class VTK_Teem_EXPORT vtkTeemEstimateDiffusionTensor : public vtkImageToImageFil
   int knownB0;
 
 
-  // Number of iterations for WLS estimation
+  // Description:
+  // Flag to shift eigenvalues upwards to that smallest one is non-negative
+  // (negEvalShift in Teem's Ten)
+  int ShiftNegativeEigenvalues;
+
+  // 
   int NumberOfWLSIterations;
 
   void ExecuteInformation(vtkImageData *inData, vtkImageData *outData);
