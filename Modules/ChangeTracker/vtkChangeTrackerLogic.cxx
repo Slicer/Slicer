@@ -638,6 +638,14 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
       // earlier)
       std::cerr << "REGCHOICE == RESAMPLE" << std::endl;
       ResampleScan2(vtkSlicerApplication::GetInstance());
+      vtkMRMLVolumeNode *scan2_resampled = vtkMRMLVolumeNode::SafeDownCast(
+        this->ChangeTrackerNode->GetScene()->GetNodeByID(this->ChangeTrackerNode->GetScan2_GlobalRef()));
+      vtkMRMLTransformNode *scan2_tfm = scan2_resampled->GetParentTransformNode();
+      if(scan2_tfm)
+        {
+        std::cerr << "Transform node is not empty: " << scan2_tfm << std::endl;
+        scan2_resampled->SetAndObserveTransformNodeID(NULL);
+        }
       }
     else if(this->ChangeTrackerNode->GetRegistrationChoice() == REGCHOICE_ALIGNED)
       {
