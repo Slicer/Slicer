@@ -135,6 +135,7 @@ void vtkSlicerContextMenuHelper::PopUpRenameEntry()
     {
     this->RenameTopLevel = vtkKWTopLevel::New ( );
     this->RenameTopLevel->SetApplication ( app );
+    this->RenameTopLevel->ModalOn();
     this->RenameTopLevel->Create ( );
     this->RenameTopLevel->SetMasterWindow ( app->GetApplicationGUI()->GetMainSlicerWindow() );
     this->RenameTopLevel->HideDecorationOn ( );
