@@ -203,7 +203,7 @@ void vtkChangeTrackerROIStep::DeleteSuperSampleNode()
 //----------------------------------------------------------------------------
 void vtkChangeTrackerROIStep::ShowUserInterface()
 {
-  // cout << "vtkChangeTrackerROIStep::ShowUserInterface() Start " << endl;
+//  cout << "vtkChangeTrackerROIStep::ShowUserInterface() Start " << endl;
   // ----------------------------------------
   // Display Scan1, Delete Super Sampled and Grid  
   // ----------------------------------------
@@ -231,37 +231,7 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
 
       memcpy(dimensions,volumeNode->GetImageData()->GetDimensions(),sizeof(int)*3);
 
-      // set the scan1 volume as the background node, while keeping the slice
-      // selector position
-      double oldSliceSetting[3];
-      vtkSlicerSliceGUI *redGUI, *greenGUI, *yellowGUI;
-      vtkSlicerApplicationGUI *applicationGUI = this->GetGUI()->GetApplicationGUI();
-      vtkSlicerApplicationLogic *applicationLogic = this->GetGUI()->GetLogic()->GetApplicationLogic();
-      
-      redGUI = applicationGUI->GetMainSliceGUI("Red");
-      greenGUI = applicationGUI->GetMainSliceGUI("Green");
-      yellowGUI = applicationGUI->GetMainSliceGUI("Yellow");
-
-      oldSliceSetting[0] = double(redGUI->GetLogic()->GetSliceOffset());
-      oldSliceSetting[1] = double(greenGUI->GetLogic()->GetSliceOffset());
-      oldSliceSetting[2] = double(yellowGUI->GetLogic()->GetSliceOffset());
-
-      applicationLogic->GetSelectionNode()->SetActiveVolumeID(volumeNode->GetID());
-      applicationLogic->PropagateVolumeSelection();
-
-      applicationGUI->GetGUILayoutNode()->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutFourUpView);
-      
-      redGUI->GetLogic()->GetSliceCompositeNode()->SetBackgroundVolumeID(volumeNode->GetID());
-      redGUI->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID("");
-      yellowGUI->GetLogic()->GetSliceCompositeNode()->SetBackgroundVolumeID(volumeNode->GetID());
-      yellowGUI->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID("");
-      greenGUI->GetLogic()->GetSliceCompositeNode()->SetBackgroundVolumeID(volumeNode->GetID());
-      greenGUI->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID("");
-
-      redGUI->GetLogic()->SetSliceOffset(oldSliceSetting[0]);
-      greenGUI->GetLogic()->SetSliceOffset(oldSliceSetting[1]);
-      yellowGUI->GetLogic()->SetSliceOffset(oldSliceSetting[2]);
-
+      this->GetGUI()->SetRedGreenYellowAllVolumes(volumeNode->GetID(), "", "");
       // Load File 
       //char fileName[1024];
       //sprintf(fileName,"%s/TG_Analysis_Intensity.nhdr",node->GetWorkingDir());
@@ -510,8 +480,9 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
     }
 
   InitROIRender();
-  ResetROIRender();
+//  ResetROIRender();
   this->MRMLUpdateROINodeFromROI();
+  
  
   if (!this->roiWidget)
     {

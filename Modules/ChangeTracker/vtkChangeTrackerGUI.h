@@ -140,6 +140,8 @@ public:
 
   void LoadTutorialData();
 
+  void SetRedGreenYellowAllVolumes(const char*, const char*, const char*);
+
 protected:
    static void SliceLogicCallback(vtkObject *caller, unsigned long event, void *clientData, void *callData );
 private:

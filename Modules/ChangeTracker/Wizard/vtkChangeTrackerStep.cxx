@@ -90,6 +90,7 @@ vtkChangeTrackerStep::~vtkChangeTrackerStep()
     
   } 
 
+//  std::cerr << "RenderRemove in destructor" << std::endl;
   this->RenderRemove();
 
 }
@@ -308,7 +309,7 @@ void vtkChangeTrackerStep::GridRemove() {
     if (currentNode) this->GetGUI()->GetMRMLScene()->RemoveNode(currentNode); 
     vtkSlicerApplicationLogic *applicationLogic = this->GetGUI()->GetLogic()->GetApplicationLogic();
     applicationLogic->GetSelectionNode()->SetReferenceActiveLabelVolumeID(NULL);
-    applicationLogic->PropagateVolumeSelection( 0 );
+//    applicationLogic->PropagateVolumeSelection( 0 );
     Node->SetGrid_Ref(NULL);
   }
 }
@@ -476,6 +477,7 @@ void vtkChangeTrackerStep::SetRender_BandStopFilter(double min, double max, floa
 
 
 void vtkChangeTrackerStep::CreateRender(vtkMRMLVolumeNode *volumeNode, int RayCastFlag ) {
+//  std::cerr << "RenderRemove in CreateRender" << std::endl;
   this->RenderRemove();
   if (!volumeNode) return;
 

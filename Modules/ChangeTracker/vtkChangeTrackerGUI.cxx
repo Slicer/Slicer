@@ -712,3 +712,29 @@ void vtkChangeTrackerGUI::LoadTutorialData(){
     std::cerr << "Done" << std::endl;
     }
 }
+  
+void vtkChangeTrackerGUI::SetRedGreenYellowAllVolumes(const char* bgVolID, 
+    const char* fgVolID, const char* lVolID){
+  vtkSlicerSliceGUI *redGUI, *greenGUI, *yellowGUI;
+  double oldSliceSetting[3];
+  vtkSlicerApplicationGUI *applicationGUI = this->GetApplicationGUI();
+
+  redGUI = applicationGUI->GetMainSliceGUI("Red");
+  greenGUI = applicationGUI->GetMainSliceGUI("Green");
+  yellowGUI = applicationGUI->GetMainSliceGUI("Yellow");
+
+  oldSliceSetting[0] = double(redGUI->GetLogic()->GetSliceOffset());
+  oldSliceSetting[1] = double(greenGUI->GetLogic()->GetSliceOffset());
+  oldSliceSetting[2] = double(yellowGUI->GetLogic()->GetSliceOffset());
+
+  redGUI->GetLogic()->GetSliceCompositeNode()->SetBackgroundVolumeID(bgVolID);
+  redGUI->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID("");
+  yellowGUI->GetLogic()->GetSliceCompositeNode()->SetBackgroundVolumeID(bgVolID);
+  yellowGUI->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID("");
+  greenGUI->GetLogic()->GetSliceCompositeNode()->SetBackgroundVolumeID(bgVolID);
+  greenGUI->GetLogic()->GetSliceCompositeNode()->SetForegroundVolumeID("");
+
+  redGUI->GetLogic()->SetSliceOffset(oldSliceSetting[0]);
+  greenGUI->GetLogic()->SetSliceOffset(oldSliceSetting[1]);
+  yellowGUI->GetLogic()->SetSliceOffset(oldSliceSetting[2]);
+}
