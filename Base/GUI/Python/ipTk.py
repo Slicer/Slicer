@@ -33,7 +33,23 @@ import Tkinter
 # Ipython-specific imports.
 import IPython
 from IPython.completer import Completer, IPCompleter
-from IPython.frontend.linefrontendbase import common_prefix
+# Compatibility versions with IPython 0.10 from IPython.frontend.linefrontendbase import common_prefix
+
+
+def common_prefix(strings):
+    """ Given a list of strings, return the common prefix between all
+        these strings.
+    """
+    ref = strings[0]
+    prefix = ''
+    for size in range(len(ref)):
+        test_prefix = ref[:size+1]
+        for string in strings[1:]:
+            if not string.startswith(test_prefix):
+                return prefix
+        prefix = test_prefix
+
+    return prefix
 
 
 def slicer_matches( text ):
@@ -495,7 +511,6 @@ class IPythonView(TkConsoleView, IterableIPShell):
 if __name__ == "__main__":
     from __main__ import tk
     top = Tkinter.Toplevel ( tk )
-    os.environ['HOME']=os.getcwd()
     s=ipTk.IPythonView(top)
     s.pack(fill=Tkinter.BOTH, expand=1)
 
