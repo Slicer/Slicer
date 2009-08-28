@@ -3376,7 +3376,7 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
   double value = this->GetOffsetScale()->GetValue();
   double offset = this->OffsetScaleMin + (value * this->OffsetScaleResolution);
   double newOffset = this->SliceLogic->GetSliceOffset();
-  int slice = static_cast<int> (0.5 + (newOffset / this->OffsetScaleResolution) - this->OffsetScaleMin);
+  int slice = static_cast<int> ( 0.5 + ((newOffset - this->OffsetScaleMin) / this->OffsetScaleResolution) );
   if ( offset != newOffset )
     {
     this->OffsetScale->SetValue( slice );
