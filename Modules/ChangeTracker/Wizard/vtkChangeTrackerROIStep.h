@@ -18,6 +18,7 @@ class vtkObserverManager;
 class vtkSlicerROIDisplayWidget;
 class vtkKWSpinBoxWithLabel;
 class vtkKWRadioButtonSetWithLabel;
+class vtkCallbackCommand;
 
 class VTK_CHANGETRACKER_EXPORT vtkChangeTrackerROIStep : public vtkChangeTrackerStep
 {
@@ -54,6 +55,8 @@ public:
 protected:
   vtkChangeTrackerROIStep();
   ~vtkChangeTrackerROIStep();
+  
+  static void ROIMRMLCallback(vtkObject*, unsigned long, void*, void*);
 
   vtkKWFrame                        *FrameButtons;
   vtkKWFrame                        *FrameBlank;
@@ -97,6 +100,7 @@ private:
   void ROIMapRemove();
   void ROIMapUpdate();
 
+
   void AddROISamplingGUIObservers();
   void RemoveROISamplingGUIObservers();
  
@@ -123,6 +127,8 @@ private:
   vtkSlicerROIDisplayWidget *roiWidget;
   vtkObserverManager *MRMLObserverManager; // to process events from roi node
   bool roiUpdateGuard;
+
+  vtkCallbackCommand *ROIMRMLCallbackCommand;
 };
 
 #endif

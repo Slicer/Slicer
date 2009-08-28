@@ -76,6 +76,10 @@ vtkChangeTrackerROIStep::vtkChangeTrackerROIStep()
 
   this->ResamplingChoice = NULL;
   this->SpinResampleConst = NULL;
+
+  this->ROIMRMLCallbackCommand = vtkCallbackCommand::New();
+  this->ROIMRMLCallbackCommand->SetClientData(reinterpret_cast<void*>(this));
+  this->ROIMRMLCallbackCommand->SetCallback(vtkChangeTrackerROIStep::ROIMRMLCallback);
 }
 
 //----------------------------------------------------------------------------
@@ -192,6 +196,11 @@ vtkChangeTrackerROIStep::~vtkChangeTrackerROIStep()
     {
     this->SpinResampleConst->Delete();
     this->SpinResampleConst = NULL;
+    }
+  if (this->ROIMRMLCallbackCommand)
+    {
+    this->ROIMRMLCallbackCommand->Delete();
+    this->ROIMRMLCallbackCommand = NULL;
     }
 }
 
@@ -474,7 +483,8 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
     scene->AddNode(roi);
     roi->SetName("ChangeTrackerROI");
     roi->SetVisibility(0);
-    this->GetGUI()->ObserveMRMLROINode(roi);
+//    this->GetGUI()->ObserveMRMLROINode(roi);
+    roi->AddObserver(vtkCommand::ModifiedEvent, this->ROIMRMLCallbackCommand);
     this->roiNode = roi;
     roi->Delete();
     }
@@ -1376,3 +1386,25 @@ void vtkChangeTrackerROIStep::ResetROICenter(int *center)
 
   CenterRYGSliceViews(pointRAS[0], pointRAS[1], pointRAS[2]);
 }
+
+void vtkChangeTrackerROIStep::ROIMRMLCallback(vtkObject *caller, unsigned long event, void *clientData, void *callData ){
+  vtkChangeTrackerROIStep *thisStep = reinterpret_cast<vtkChangeTrackerROIStep*>(clientData);
+
+  vtkMRMLROINode *roiCaller = vtkMRMLROINode::SafeDownCast(caller);
+  if(roiCaller && roiCaller == thisStep->roiNode && event == vtkCommand::ModifiedEvent && !thisStep->roiUpdateGuard)
+    {
+
+    thisStep->roiUpdateGuard = true;
+    thisStep->MRMLUpdateROIFromROINode();
+    thisStep->ROIMapUpdate();
+    if(thisStep->Render_Filter->GetSize())
+      thisStep->UpdateROIRender();
+    thisStep->roiUpdateGuard = false;
+
+    double *roiXYZ = thisStep->roiNode->GetXYZ();
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(thisStep->GetGUI()->GetApplication());
+    app->GetApplicationGUI()->GetViewControlGUI()->MainViewSetFocalPoint(roiXYZ[0], roiXYZ[1], roiXYZ[2]);
+    //      cerr << "Resetting focal point to " << roiXYZ[0] << ", " << roiXYZ[1] << ", " << roiXYZ[2] << endl;
+    }
+}
+
