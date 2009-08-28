@@ -58,6 +58,7 @@
 #include "vtkKWComboBoxWithLabel.h"
 #include "vtkKWComboBox.h"
 #include "vtkKWEntry.h"
+#include "vtkKWScaleWithEntry.h"
 
 //Compiler
 #include <math.h>
@@ -86,6 +87,8 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->MB_GPURayCastTechnique=NULL;
     this->MB_GPURayCastTechniqueII=NULL;
     this->SC_GPURayCastDepthPeelingThreshold=NULL;
+    this->SC_GPURayCastICPEkt=NULL;
+    this->SC_GPURayCastICPEks=NULL;
     this->MB_GPUMemorySize=NULL;
     this->MB_GPURayCastColorOpacityFusion=NULL;
 
@@ -1072,9 +1075,23 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             return;
         }
         
-        if(callerObjectSC == this->SC_GPURayCastDepthPeelingThreshold)
+        if(callerObjectSC == this->SC_GPURayCastDepthPeelingThreshold->GetWidget())
         {
-            this->MapperGPURaycast->SetDepthPeelingThreshold(this->SC_GPURayCastDepthPeelingThreshold->GetValue());
+            this->MapperGPURaycast->SetDepthPeelingThreshold(this->SC_GPURayCastDepthPeelingThreshold->GetWidget()->GetValue());
+            this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+            return;
+        }
+        
+        if(callerObjectSC == this->SC_GPURayCastICPEkt->GetWidget())
+        {
+            this->MapperGPURaycast->SetICPEScale(this->SC_GPURayCastICPEkt->GetWidget()->GetValue());
+            this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
+            return;
+        }
+        
+        if(callerObjectSC == this->SC_GPURayCastICPEks->GetWidget())
+        {
+            this->MapperGPURaycast->SetICPESmoothness(this->SC_GPURayCastICPEks->GetWidget()->GetValue());
             this->Gui->GetApplicationGUI()->GetViewerWidget()->RequestRender();
             return;
         }
@@ -2095,7 +2112,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->FramePerformance->SetLabelText("Performance/Quality");
     this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->FramePerformance->GetWidgetName() );
     
-    int labelWidth = 20;
+    int labelWidth = 16;
     
     //mapper selection combobox
     {
@@ -2167,6 +2184,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
 
     }
     
+    labelWidth = 24;
     //software ray casting
     {
         this->FrameCPURayCasting = vtkKWFrameWithLabel::New();
@@ -2181,7 +2199,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->CB_CPURayCastMIP->SetParent(this->FrameCPURayCasting->GetFrame());
         this->CB_CPURayCastMIP->Create();
         this->CB_CPURayCastMIP->SetBalloonHelpString("Enable MIP rendering in CPU ray cast.");
-        this->CB_CPURayCastMIP->SetLabelText("Maximum Intensity Proj.");
+        this->CB_CPURayCastMIP->SetLabelText("Maximum Intensity Projection");
         this->CB_CPURayCastMIP->SetLabelWidth(labelWidth);
         this->CB_CPURayCastMIP->GetWidget()->SetSelectedState(0);
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_CPURayCastMIP->GetWidgetName() );
@@ -2189,6 +2207,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
 
     }
     
+    labelWidth = 16;
     //GPU ray casting
     {
         this->FrameGPURayCasting = vtkKWFrameWithLabel::New();
@@ -2215,24 +2234,55 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->SetItemCommand(3, this,"ProcessGPURayCastTechnique 3");
         this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->AddRadioButton("Gradient Magnitude Opacity Modulation");
         this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->SetItemCommand(4, this,"ProcessGPURayCastTechnique 4");
+        this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->AddRadioButton("Illustrative Context Preserving Exploration");
+        this->MB_GPURayCastTechnique->GetWidget()->GetMenu()->SetItemCommand(5, this,"ProcessGPURayCastTechnique 5");
         
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPURayCastTechnique->GetWidgetName() );
         
         this->MB_GPURayCastTechnique->GetWidget()->SetValue("Composite With Shading");
         
+        this->SC_GPURayCastICPEkt=vtkKWScaleWithEntry::New();
+        this->SC_GPURayCastICPEkt->SetParent(this->FrameGPURayCasting->GetFrame());
+        this->SC_GPURayCastICPEkt->Create();
+        this->SC_GPURayCastICPEkt->SetLabelText("ICPE Scale:");
+        this->SC_GPURayCastICPEkt->SetLabelWidth(labelWidth);
+        this->SC_GPURayCastICPEkt->SetBalloonHelpString("Parameter kt for Illustrative Context Preserving Exploration.");
+        this->SC_GPURayCastICPEkt->GetWidget()->SetRange(0, 12); 
+        this->SC_GPURayCastICPEkt->GetWidget()->SetResolution(0.01);
+        this->SC_GPURayCastICPEkt->SetValue(1);
+        this->SC_GPURayCastICPEkt->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *) this->VolumeRenderingCallbackCommand);
+        this->SC_GPURayCastICPEkt->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *) this->VolumeRenderingCallbackCommand);
+        this->SC_GPURayCastICPEkt->SetEntryWidth(5);
+        this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SC_GPURayCastICPEkt->GetWidgetName() );
+        
+        this->SC_GPURayCastICPEks=vtkKWScaleWithEntry::New();
+        this->SC_GPURayCastICPEks->SetParent(this->FrameGPURayCasting->GetFrame());
+        this->SC_GPURayCastICPEks->Create();
+        this->SC_GPURayCastICPEks->SetLabelText("ICPE Smoothness:");
+        this->SC_GPURayCastICPEks->SetLabelWidth(labelWidth);
+        this->SC_GPURayCastICPEks->SetBalloonHelpString("Parameter ks for Illustrative Context Preserving Exploration.");
+        this->SC_GPURayCastICPEks->GetWidget()->SetRange(0, 3); 
+        this->SC_GPURayCastICPEks->GetWidget()->SetResolution(0.01);
+        this->SC_GPURayCastICPEks->SetValue(1);
+        this->SC_GPURayCastICPEks->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *) this->VolumeRenderingCallbackCommand);
+        this->SC_GPURayCastICPEks->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *) this->VolumeRenderingCallbackCommand);
+        this->SC_GPURayCastICPEks->SetEntryWidth(5);
+        this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SC_GPURayCastICPEks->GetWidgetName() );
+        
         //get scalar range 
         double scalarRange[2];
         vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
-        this->SC_GPURayCastDepthPeelingThreshold=vtkKWScale::New();
+        this->SC_GPURayCastDepthPeelingThreshold=vtkKWScaleWithEntry::New();
         this->SC_GPURayCastDepthPeelingThreshold->SetParent(this->FrameGPURayCasting->GetFrame());
         this->SC_GPURayCastDepthPeelingThreshold->Create();
-        this->SC_GPURayCastDepthPeelingThreshold->SetLabelText("Volumetric Depth Peeling Threshold");
-        this->SC_GPURayCastDepthPeelingThreshold->SetBalloonHelpString("Set threshold for volumetric depth peeling. Volume rendering starts after we have met scalar values higher than the threshold. Use with transfer functions together.");
-        this->SC_GPURayCastDepthPeelingThreshold->SetRange(scalarRange[0],scalarRange[1]); 
-        this->SC_GPURayCastDepthPeelingThreshold->SetResolution(1);
+        this->SC_GPURayCastDepthPeelingThreshold->SetLabelText("Vol. Depth Peeling:");
+        this->SC_GPURayCastDepthPeelingThreshold->SetLabelWidth(labelWidth);
+        this->SC_GPURayCastDepthPeelingThreshold->SetBalloonHelpString("Set threshold for Volumetric Depth Peeling. Volume rendering starts after we have met scalar values higher than the threshold. Use with transfer functions together.");
+        this->SC_GPURayCastDepthPeelingThreshold->GetWidget()->SetRange(scalarRange[0],scalarRange[1]); 
+        this->SC_GPURayCastDepthPeelingThreshold->GetWidget()->SetResolution(1);
         this->SC_GPURayCastDepthPeelingThreshold->SetValue(scalarRange[0]);
-        this->SC_GPURayCastDepthPeelingThreshold->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *) this->VolumeRenderingCallbackCommand);
-        this->SC_GPURayCastDepthPeelingThreshold->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *) this->VolumeRenderingCallbackCommand);
+        this->SC_GPURayCastDepthPeelingThreshold->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *) this->VolumeRenderingCallbackCommand);
+        this->SC_GPURayCastDepthPeelingThreshold->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *) this->VolumeRenderingCallbackCommand);
         this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SC_GPURayCastDepthPeelingThreshold->GetWidgetName() );
     }
     
@@ -2361,11 +2411,29 @@ void vtkSlicerVRGrayscaleHelper::DestroyPerformance(void)
     
     if(this->SC_GPURayCastDepthPeelingThreshold!=NULL)
     {
-        this->SC_GPURayCastDepthPeelingThreshold->RemoveObservers(vtkKWScale::ScaleValueChangingEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-        this->SC_GPURayCastDepthPeelingThreshold->RemoveObservers(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+        this->SC_GPURayCastDepthPeelingThreshold->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangingEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+        this->SC_GPURayCastDepthPeelingThreshold->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
         this->SC_GPURayCastDepthPeelingThreshold->SetParent(NULL);
         this->SC_GPURayCastDepthPeelingThreshold->Delete();
         this->SC_GPURayCastDepthPeelingThreshold=NULL;
+    }
+    
+    if(this->SC_GPURayCastICPEkt!=NULL)
+    {
+        this->SC_GPURayCastICPEkt->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangingEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+        this->SC_GPURayCastICPEkt->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+        this->SC_GPURayCastICPEkt->SetParent(NULL);
+        this->SC_GPURayCastICPEkt->Delete();
+        this->SC_GPURayCastICPEkt=NULL;
+    }
+    
+    if(this->SC_GPURayCastICPEks!=NULL)
+    {
+        this->SC_GPURayCastICPEks->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangingEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+        this->SC_GPURayCastICPEks->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+        this->SC_GPURayCastICPEks->SetParent(NULL);
+        this->SC_GPURayCastICPEks->Delete();
+        this->SC_GPURayCastICPEks=NULL;
     }
     
     if(this->SC_GPURayCastIIFgBgRatio!=NULL)

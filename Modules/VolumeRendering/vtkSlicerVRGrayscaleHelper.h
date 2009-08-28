@@ -23,6 +23,7 @@ class vtkSlicerGPURayCastVolumeMapper;
 class vtkCudaVolumeMapper;
 class vtkKWMenuButtonWithSpinButtonsWithLabel;
 class vtkKWScaleWithLabel;
+class vtkKWScaleWithEntry;
 class vtkKWScale;
 class vtkKWCheckButtonWithLabel;
 class vtkKWFrameWithLabel;
@@ -310,7 +311,12 @@ protected:
     
     // Description:
     // Depth peeling threshold for GPU ray casting
-    vtkKWScale *SC_GPURayCastDepthPeelingThreshold;
+    vtkKWScaleWithEntry *SC_GPURayCastDepthPeelingThreshold;
+    
+    // Description:
+    // Depth peeling threshold for GPU ray casting
+    vtkKWScaleWithEntry *SC_GPURayCastICPEkt;
+    vtkKWScaleWithEntry *SC_GPURayCastICPEks;
     
     // Description:
     // Create the performance page

@@ -59,6 +59,11 @@ public:
   vtkGetMacro(DepthPeelingThreshold, float);
     
   // Description:
+  // ICPE kt and ks
+  vtkSetMacro(ICPEScale, float);
+  vtkSetMacro(ICPESmoothness, float);
+  
+  // Description:
   // set internal volume size
   void SetInternalVolumeSize(int size);
   
@@ -142,6 +147,9 @@ protected:
   float            GlobalAlpha;
   float            DepthPeelingThreshold;
   
+  float            ICPEScale;
+  float            ICPESmoothness;
+  
   void Initialize();
   void InitializeRayCast();
   
@@ -161,6 +169,7 @@ protected:
   void LoadFragmentShader();
   void LoadNoShadingFragmentShader();
   void LoadFragmentShaderGMOM();//gradient-magnitude opacity-modulation
+  void LoadFragmentShaderICPE();//illustrative context preserving exploration
   
   // mip ray casting
   void LoadNoShadingFragmentShaderMIP();//lighting in MIP could be bad, so no shading here
