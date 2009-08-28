@@ -51,6 +51,7 @@ class vtkIntensityCurves;
 class vtkKWCheckButtonWithLabel;
 class vtkCurveAnalysisPythonInterface;
 class vtkSlicerNodeSelectorWidget;
+class vtkKWMenu;
 
 //class vtkFourDImageGUI;
 
@@ -150,8 +151,6 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   void SetForeground(const char* bundleID, int index);
   void SetBackground(const char* bundleID, int index);
   void SetWindowLevelForCurrentFrame();
-  void UpdateSeriesSelectorMenus();
-  //  void UpdateMaskSelectMenu();
 
   void UpdatePlotList();
   virtual void UpdatePlotListElement(int row, int col, char * str);
@@ -161,12 +160,18 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
 
   void UpdateInitialParameterList(vtkMRMLCurveAnalysisNode* curveNode);
   void GetInitialParametersAndInputCurves(vtkMRMLCurveAnalysisNode* curveNode, int start, int end);
+  void OnInitialParameterListSelected();
+  void ProcPlotSelectPopUpMenu(int row, int col, const char* nodeID);
+  void UpdatePlotSelectPopUpMenu(const char* command);
+
   void UpdateOutputParameterList(vtkMRMLCurveAnalysisNode* curveNode);
   
   // Description:
   // GeneratePlotNodes() calculates time-intensity curves in the regions specified by the label data.
   void GeneratePlotNodes();
   void ImportPlotNode(const char* path);
+
+  void UpdateFittingTargetMenu();
 
 
  protected:
@@ -217,17 +222,25 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   vtkKWPushButton* DeselectAllPlotButton;
   vtkKWPushButton* PlotDeleteButton;
 
-  vtkKWMenuButton*     FittingLabelMenu;
+  vtkKWMenuButton*     FittingTargetMenu;
   vtkKWLoadSaveButtonWithLabel* CurveScriptSelectButton;
   vtkKWSpinBox*        CurveFittingStartIndexSpinBox;
   vtkKWSpinBox*        CurveFittingEndIndexSpinBox;
   vtkKWPushButton*     RunFittingButton;
   vtkKWEntryWithLabel* CurveScriptMethodName;
 
+  // -----------------------------------------
+  // Initial Parameters
+
   vtkKWMultiColumnListWithScrollbars* InitialParameterList;
+  vtkKWMenu*                         PlotSelectPopUpMenu;
   vtkKWPushButton* RunPlotButton;
   vtkKWLoadSaveButtonWithLabel* SaveFittedCurveButton;
   vtkKWLoadSaveButtonWithLabel* SavePlotButton;
+
+  // -----------------------------------------
+  // Result Parameters
+
   vtkKWMultiColumnListWithScrollbars* ResultParameterList;
 
   // -----------------------------------------
@@ -271,7 +284,6 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   int     AutoPlayInterval;        // interval = TimerInterval * AutoPlayInterval; 
   int     AutoPlayIntervalCounter;
 
-
   //BTX
   typedef std::vector<int> WindowLevelUpdateStatusType;
   typedef std::vector<std::string> NodeIDListType;
@@ -279,13 +291,8 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   
   WindowLevelUpdateStatusType WindowLevelUpdateStatus;
   NodeIDListType MaskNodeIDList;
-  NodeIDListType BundleNodeIDList;
-
-  int BundleNameCount; // used to name 4D bundle
 
   vtkIntensityCurves* IntensityCurves;
-  //vtkDoubleArray*     FittedCurve;
-  vtkMRMLDoubleArrayNode*     FittedCurveNode;
 
   vtkCurveAnalysisPythonInterface* CurveAnalysisScript;
   vtkMRMLXYPlotManagerNode* PlotManagerNode;
@@ -300,6 +307,18 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
     COLUMN_MRML_ID   = 4
   };
   //ETX
+
+  //BTX
+  std::vector<int> InitialParameterListInputType;
+  std::vector<std::string> InitialParameterListNodeNames;
+  enum {
+    INPUT_VALUE_INITIALPARAM = 0,
+    INPUT_VALUE_CONSTANT,
+    INPUT_PLOTNODE,
+  };
+  std::vector< std::string > FittingTargetMenuNodeList;
+  //ETX
+  
 
 
 };
