@@ -700,7 +700,7 @@ void vtkSlicerColorDisplayWidget::UpdateMRML()
     procColorNode->GetLookupTable()->SetRange(min, max);
     requestRender = true;
     }
-  if (requestRender)
+  if (requestRender && this->ViewerWidget)
     {
     this->ViewerWidget->RequestRender();
     }
