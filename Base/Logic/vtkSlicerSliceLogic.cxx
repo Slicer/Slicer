@@ -595,17 +595,6 @@ void vtkSlicerSliceLogic::UpdatePipeline()
         modified = 1;
         }
       }
-    /***
-    if (this->BackgroundGlyphLayer)
-      {
-      if ( bgnode && (bgnode->GetDisplayNode()) && (bgnode->GetDisplayNode()->IsA("vtkMRMLGlyphableVolumeDisplayNode")) && (this->BackgroundGlyphLayer->GetVolumeNode() != bgnode) ) 
-        {
-        vtkErrorMacro("Background node is a glyph DisplayNode:"<<bgnode->GetDisplayNode());
-        this->BackgroundGlyphLayer->SetVolumeNode (bgnode);
-        modified = 1;
-        }
-      }
-    **/
     
     // Foreground
     id = this->SliceCompositeNode->GetForegroundVolumeID();
@@ -623,17 +612,6 @@ void vtkSlicerSliceLogic::UpdatePipeline()
         modified = 1;
         }
       }
-    /**
-    if (this->ForegroundGlyphLayer)
-      {
-
-      if (  fgnode && (fgnode->GetDisplayNode()) && (fgnode->GetDisplayNode()->IsA("vtkMRMLGlyphableVolumeDisplayNode")) && (this->ForegroundGlyphLayer->GetVolumeNode() != fgnode) ) 
-        {
-        this->ForegroundGlyphLayer->SetVolumeNode (bgnode);
-        modified = 1;
-        }
-      }
-      **/
       
     // Label
     id = this->SliceCompositeNode->GetLabelVolumeID();
@@ -817,8 +795,6 @@ void vtkSlicerSliceLogic::UpdatePipeline()
       this->Modified();
       }
     }
-
-
 }
 
 //----------------------------------------------------------------------------
