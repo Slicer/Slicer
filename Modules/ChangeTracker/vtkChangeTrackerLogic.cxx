@@ -614,6 +614,7 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
     registeredVolumeNode = 
       CreateVolumeNode(scan2node, RegVolumeName);
     ctNode->SetScan2_GlobalRef(registeredVolumeNode->GetID());
+    registeredVolumeNode->SetAndObserveTransformNodeID(NULL);
 
 
     if(this->ChangeTrackerNode->GetRegistrationChoice() == REGCHOICE_REGISTER)
@@ -636,16 +637,8 @@ int vtkChangeTrackerLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
       {
       // resample; assume transform has been initialized (this was checked
       // earlier)
-      std::cerr << "REGCHOICE == RESAMPLE" << std::endl;
+      std::cerr << "REGCHOICE == RESAMPLE" << std::endl;      
       ResampleScan2(vtkSlicerApplication::GetInstance());
-      vtkMRMLVolumeNode *scan2_resampled = vtkMRMLVolumeNode::SafeDownCast(
-        this->ChangeTrackerNode->GetScene()->GetNodeByID(this->ChangeTrackerNode->GetScan2_GlobalRef()));
-      vtkMRMLTransformNode *scan2_tfm = scan2_resampled->GetParentTransformNode();
-      if(scan2_tfm)
-        {
-        std::cerr << "Transform node is not empty: " << scan2_tfm << std::endl;
-        scan2_resampled->SetAndObserveTransformNodeID(NULL);
-        }
       }
     else if(this->ChangeTrackerNode->GetRegistrationChoice() == REGCHOICE_ALIGNED)
       {
@@ -1339,7 +1332,7 @@ int vtkChangeTrackerLogic::ResampleScan2(vtkSlicerApplication *app){
 
   // Linear registration parameter setup
   moduleNode->SetParameterAsString("inputVolume", ctNode->GetScan2_Ref());
-  moduleNode->SetParameterAsString("referenceVolume", ctNode->GetScan2_Ref());
+  moduleNode->SetParameterAsString("referenceVolume", ctNode->GetScan1_Ref());
   moduleNode->SetParameterAsString("transformationFile", ctNode->GetScan2_TransformRef());
   moduleNode->SetParameterAsString("outputVolume", ctNode->GetScan2_GlobalRef());
   // Currently, linear is the default interpolation type
