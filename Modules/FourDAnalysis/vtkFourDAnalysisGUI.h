@@ -143,7 +143,6 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   void UpdateAll();
   void SelectActive4DBundle(vtkMRMLTimeSeriesBundleNode* bundleNode);
 
-
   //----------------------------------------------------------------
   // Viewer control
   //----------------------------------------------------------------
@@ -163,7 +162,6 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   void OnInitialParameterListSelected();
   void ProcPlotSelectPopUpMenu(int row, int col, const char* nodeID);
   void UpdatePlotSelectPopUpMenu(const char* command);
-
   void UpdateOutputParameterList(vtkMRMLCurveAnalysisNode* curveNode);
   
   // Description:
@@ -187,87 +185,71 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   // GUI widgets
   //----------------------------------------------------------------
 
-  vtkKWProgressDialog *ProgressDialog;
+  vtkKWProgressDialog*                ProgressDialog;
 
   // -----------------------------------------
   // Active 4D Bundle selector
-  vtkSlicerNodeSelectorWidget*  Active4DBundleSelectorWidget;
+  vtkSlicerNodeSelectorWidget*        Active4DBundleSelectorWidget;
 
   // -----------------------------------------
-  // Frame control
-  vtkKWRange *WindowLevelRange;
-  vtkKWRange *ThresholdRange;
-
-  vtkKWScaleWithEntry* ForegroundVolumeSelectorScale;
-  vtkKWScaleWithEntry* BackgroundVolumeSelectorScale;
-
-  vtkKWPushButton*     AutoPlayFGButton;
-  vtkKWPushButton*     AutoPlayBGButton;
-  vtkKWEntry*          AutoPlayIntervalEntry;
+  // Frame Control
+  vtkKWScaleWithEntry*                ForegroundVolumeSelectorScale;
+  vtkKWScaleWithEntry*                BackgroundVolumeSelectorScale;
+  vtkKWRange*                         WindowLevelRange;
+  vtkKWRange*                         ThresholdRange;
 
   // -----------------------------------------
-  // Intensity Curve
-
-  vtkKWEntry*          AcqTimeEntry;
-  vtkKWMenuButton*     SeriesToPlotMenu;
-  //vtkKWMenuButton*     MaskSelectMenu;
-  vtkSlicerNodeSelectorWidget* MaskNodeSelector;
-
-  //vtkKWPlotGraph*      IntensityPlot;
-  vtkSlicerXYPlotWidget*     IntensityPlot;
-  vtkKWCheckButtonWithLabel* ErrorBarCheckButton;
+  // Intensity Plot
+  vtkSlicerNodeSelectorWidget*        MaskNodeSelector;
+  vtkKWPushButton*                    GenerateCurveButton;
+  vtkSlicerXYPlotWidget*              IntensityPlot;
+  vtkKWCheckButtonWithLabel*          ErrorBarCheckButton;
   vtkKWMultiColumnListWithScrollbars* PlotList;
-  vtkKWPushButton* ImportPlotButton;
-  vtkKWPushButton* SelectAllPlotButton;
-  vtkKWPushButton* DeselectAllPlotButton;
-  vtkKWPushButton* PlotDeleteButton;
 
-  vtkKWMenuButton*     FittingTargetMenu;
-  vtkKWLoadSaveButtonWithLabel* CurveScriptSelectButton;
-  vtkKWSpinBox*        CurveFittingStartIndexSpinBox;
-  vtkKWSpinBox*        CurveFittingEndIndexSpinBox;
-  vtkKWPushButton*     RunFittingButton;
-  vtkKWEntryWithLabel* CurveScriptMethodName;
+  vtkKWPushButton*                    ImportPlotButton;
+  vtkKWPushButton*                    SelectAllPlotButton;
+  vtkKWPushButton*                    DeselectAllPlotButton;
+  vtkKWPushButton*                    PlotDeleteButton;
 
   // -----------------------------------------
-  // Initial Parameters
-
+  // Model / Parameters
+  vtkKWMenuButton*                    FittingTargetMenu;
+  vtkKWLoadSaveButtonWithLabel*       CurveScriptSelectButton;
+  vtkKWEntryWithLabel*                CurveScriptMethodName;
+  vtkKWSpinBox*                       CurveFittingStartIndexSpinBox;
+  vtkKWSpinBox*                       CurveFittingEndIndexSpinBox;
   vtkKWMultiColumnListWithScrollbars* InitialParameterList;
-  vtkKWMenu*                         PlotSelectPopUpMenu;
-  vtkKWPushButton* RunPlotButton;
-  vtkKWLoadSaveButtonWithLabel* SaveFittedCurveButton;
-  vtkKWLoadSaveButtonWithLabel* SavePlotButton;
+  vtkKWMenu*                          PlotSelectPopUpMenu;
 
   // -----------------------------------------
-  // Result Parameters
-
+  // Curve Fitting
+  vtkKWPushButton*                    RunFittingButton;
+  vtkKWLoadSaveButtonWithLabel*       SaveFittedCurveButton;
+  vtkKWLoadSaveButtonWithLabel*       SavePlotButton;
   vtkKWMultiColumnListWithScrollbars* ResultParameterList;
 
   // -----------------------------------------
   // Parameter Map
-  vtkSlicerNodeSelectorWidget* MapOutputSelector;
-  vtkKWEntry*                  MapOutputVolumePrefixEntry;
-  //vtkKWMenuButton* MapOutputVolumeMenu;
-  vtkKWLoadSaveButtonWithLabel* ScriptSelectButton;
-  vtkKWPushButton* RunScriptButton;
+  vtkKWEntry*                         MapOutputVolumePrefixEntry;
+  vtkKWPushButton*                    RunScriptButton;
+  vtkKWSpinBox*                       MapIMinSpinBox;
+  vtkKWSpinBox*                       MapIMaxSpinBox;
+  vtkKWSpinBox*                       MapJMinSpinBox;
+  vtkKWSpinBox*                       MapJMaxSpinBox;
+  vtkKWSpinBox*                       MapKMinSpinBox;
+  vtkKWSpinBox*                       MapKMaxSpinBox;
 
-  vtkKWSpinBox*    MapIMinSpinBox;
-  vtkKWSpinBox*    MapIMaxSpinBox;
-  vtkKWSpinBox*    MapJMinSpinBox;
-  vtkKWSpinBox*    MapJMaxSpinBox;
-  vtkKWSpinBox*    MapKMinSpinBox;
-  vtkKWSpinBox*    MapKMaxSpinBox;
 
   //----------------------------------------------------------------
   // Logic Values
   //----------------------------------------------------------------
 
-  vtkFourDAnalysisLogic *Logic;
-  vtkCallbackCommand *DataCallbackCommand;
-  int                        CloseScene;
+  vtkFourDAnalysisLogic*      Logic;
+  vtkCallbackCommand*         DataCallbackCommand;
+  int                         CloseScene;
 
-  //vtkFourDImageGUI* FourDImageGUI;
-
+  // -----------------------------------------
+  // Window/level adjustment  -- will be integrated in 4D Image
   double  RangeLower;
   double  RangeUpper;
 
@@ -276,27 +258,15 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   double  ThresholdUpper;
   double  ThresholdLower;
 
-
-  // Auto play functions
-
-  int     AutoPlayFG;
-  int     AutoPlayBG;
-  int     AutoPlayInterval;        // interval = TimerInterval * AutoPlayInterval; 
-  int     AutoPlayIntervalCounter;
-
-  //BTX
-  typedef std::vector<int> WindowLevelUpdateStatusType;
-  typedef std::vector<std::string> NodeIDListType;
-  //ETX
-  
-  WindowLevelUpdateStatusType WindowLevelUpdateStatus;
-  NodeIDListType MaskNodeIDList;
-
-  vtkIntensityCurves* IntensityCurves;
-
+  // -----------------------------------------
+  // Curve / plot data
+  vtkIntensityCurves*              IntensityCurves;
   vtkCurveAnalysisPythonInterface* CurveAnalysisScript;
-  vtkMRMLXYPlotManagerNode* PlotManagerNode;
+  vtkMRMLXYPlotManagerNode*        PlotManagerNode;
 
+
+  // -----------------------------------------
+  // List management
   //BTX
   // Row index for   vtkKWMultiColumnListWithScrollbars* PlotList;
   enum {
@@ -318,8 +288,6 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   };
   std::vector< std::string > FittingTargetMenuNodeList;
   //ETX
-  
-
 
 };
 

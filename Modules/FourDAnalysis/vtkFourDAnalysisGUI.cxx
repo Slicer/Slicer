@@ -87,60 +87,69 @@ vtkFourDAnalysisGUI::vtkFourDAnalysisGUI ( )
   this->IntensityCurves = vtkIntensityCurves::New();
   this->CurveAnalysisScript = NULL;
 
+  this->PlotManagerNode = NULL;
+  this->InitialParameterListInputType.clear();
+  this->InitialParameterListNodeNames.clear();
+  this->FittingTargetMenuNodeList.clear();
+
   //----------------------------------------------------------------
   // GUI widgets
-  this->ProgressDialog = NULL;
+  this->ProgressDialog                = NULL;
 
-  //--------------------
-  // Bundle selector
+  // -----------------------------------------
+  // Bundle Selector
   this->Active4DBundleSelectorWidget  = NULL;
 
-  //--------------------
-  // Frame control
+  // -----------------------------------------
+  // Frame Control
   this->ForegroundVolumeSelectorScale = NULL;
   this->BackgroundVolumeSelectorScale = NULL;
+  this->WindowLevelRange              = NULL;
+  this->ThresholdRange                = NULL;
 
-  this->MaskNodeSelector         = NULL;
-  this->RunPlotButton            = NULL;
-  this->ErrorBarCheckButton      = NULL;
-  this->PlotList                 = NULL;
-  this->ImportPlotButton         = NULL;
-  this->SelectAllPlotButton      = NULL;
-  this->DeselectAllPlotButton    = NULL;
-  this->PlotDeleteButton         = NULL;
+  // -----------------------------------------
+  // Intensity Plot
+  this->MaskNodeSelector              = NULL;
+  this->GenerateCurveButton           = NULL;
+  this->IntensityPlot                 = NULL;
+  this->ErrorBarCheckButton           = NULL;
+  this->PlotList                      = NULL;
+  this->ImportPlotButton              = NULL;
+  this->SelectAllPlotButton           = NULL;
+  this->DeselectAllPlotButton         = NULL;
+  this->PlotDeleteButton              = NULL;
 
-  this->FittingTargetMenu         = NULL;
-  this->CurveScriptSelectButton  = NULL;
+  // -----------------------------------------
+  // Model / Parameters
+  this->FittingTargetMenu             = NULL;
+  this->CurveScriptSelectButton       = NULL;
+  this->CurveScriptMethodName         = NULL;
   this->CurveFittingStartIndexSpinBox = NULL;
-  this->CurveFittingEndIndexSpinBox        = NULL;
-  this->RunFittingButton    = NULL;
-  this->SaveFittedCurveButton = NULL;
-  this->CurveScriptMethodName = NULL;
+  this->CurveFittingEndIndexSpinBox   = NULL;
+  this->InitialParameterList          = NULL;
+  this->PlotSelectPopUpMenu           = NULL;
 
-  this->InitialParameterList = NULL;
-  this->SavePlotButton = NULL;
-  this->IntensityPlot  = NULL;
+  // -----------------------------------------
+  // Curve Fitting
+  this->RunFittingButton              = NULL;
+  this->SaveFittedCurveButton         = NULL;
+  this->SavePlotButton                = NULL; // will be obsolete
+  this->ResultParameterList           = NULL;
 
-  this->MapOutputVolumePrefixEntry = NULL;
-  this->RunScriptButton = NULL;
-  this->ResultParameterList = NULL;
-
-  this->MapIMinSpinBox     = NULL;
-  this->MapIMaxSpinBox     = NULL;
-  this->MapJMinSpinBox     = NULL;
-  this->MapJMaxSpinBox      = NULL;
-  this->MapKMinSpinBox     = NULL;
-  this->MapKMaxSpinBox     = NULL;
+  // -----------------------------------------
+  // Parameter Map
+  this->MapOutputVolumePrefixEntry    = NULL;
+  this->RunScriptButton               = NULL; // name should be changed
+  this->MapIMinSpinBox                = NULL;
+  this->MapIMaxSpinBox                = NULL;
+  this->MapJMinSpinBox                = NULL;
+  this->MapJMaxSpinBox                = NULL;
+  this->MapKMinSpinBox                = NULL;
+  this->MapKMaxSpinBox                = NULL;
 
   //----------------------------------------------------------------
   // Time
   this->TimerFlag = 0;
-
-  this->PlotManagerNode = NULL;
-
-  this->InitialParameterListInputType.clear();
-  this->InitialParameterListNodeNames.clear();
-  this->FittingTargetMenuNodeList.clear();
 
 }
 
@@ -169,11 +178,17 @@ vtkFourDAnalysisGUI::~vtkFourDAnalysisGUI ( )
     this->ProgressDialog->SetParent(NULL);
     this->ProgressDialog->Delete();
     }
+
+  // -----------------------------------------
+  // Bundle Selector
   if (this->Active4DBundleSelectorWidget)
     {
     this->Active4DBundleSelectorWidget->SetParent(NULL);
     this->Active4DBundleSelectorWidget->Delete();
     }
+
+  // -----------------------------------------
+  // Frame Control
   if (this->ForegroundVolumeSelectorScale)
     {
     this->ForegroundVolumeSelectorScale->SetParent(NULL);
@@ -194,16 +209,18 @@ vtkFourDAnalysisGUI::~vtkFourDAnalysisGUI ( )
     this->ThresholdRange->SetParent(NULL);
     this->ThresholdRange->Delete();
     }
+
+  // -----------------------------------------
+  // Intensity Plot
   if (this->MaskNodeSelector)
     {
     this->MaskNodeSelector->SetParent(NULL);
     this->MaskNodeSelector->Delete();
     }
-
-  if (this->RunPlotButton)
+  if (this->GenerateCurveButton)
     {
-    this->RunPlotButton->SetParent(NULL);
-    this->RunPlotButton->Delete();
+    this->GenerateCurveButton->SetParent(NULL);
+    this->GenerateCurveButton->Delete();
     }
   if (this->IntensityPlot)
     {
@@ -240,6 +257,9 @@ vtkFourDAnalysisGUI::~vtkFourDAnalysisGUI ( )
     this->PlotDeleteButton->SetParent(NULL);
     this->PlotDeleteButton->Delete();
     }
+
+  // -----------------------------------------
+  // Model / Parameters
   if (this->FittingTargetMenu)
     {
     this->FittingTargetMenu->SetParent(NULL);
@@ -249,6 +269,11 @@ vtkFourDAnalysisGUI::~vtkFourDAnalysisGUI ( )
     {
     this->CurveScriptSelectButton->SetParent(NULL);
     this->CurveScriptSelectButton->Delete();
+    }
+  if (this->CurveScriptMethodName)
+    {
+    this->CurveScriptMethodName->SetParent(NULL);
+    this->CurveScriptMethodName->Delete();
     }
   if (this->CurveFittingStartIndexSpinBox)
     {
@@ -265,6 +290,9 @@ vtkFourDAnalysisGUI::~vtkFourDAnalysisGUI ( )
     this->InitialParameterList->SetParent(NULL);
     this->InitialParameterList->Delete();
     }
+
+  // -----------------------------------------
+  // Curve Fitting
   if (this->RunFittingButton)
     {
     this->RunFittingButton->SetParent(NULL);
@@ -275,23 +303,19 @@ vtkFourDAnalysisGUI::~vtkFourDAnalysisGUI ( )
     this->SaveFittedCurveButton->SetParent(NULL);
     this->SaveFittedCurveButton->Delete();
     }
-  if (this->CurveScriptMethodName)
-    {
-    this->CurveScriptMethodName->SetParent(NULL);
-    this->CurveScriptMethodName->Delete();
-    }
-
-  if (this->ResultParameterList)
-    {
-    this->ResultParameterList->SetParent(NULL);
-    this->ResultParameterList->Delete();
-    }
   if (this->SavePlotButton)
     {
     this->SavePlotButton->SetParent(NULL);
     this->SavePlotButton->Delete();
     }
+  if (this->ResultParameterList)
+    {
+    this->ResultParameterList->SetParent(NULL);
+    this->ResultParameterList->Delete();
+    }
 
+  // -----------------------------------------
+  // Parameter Map
   if (this->MapOutputVolumePrefixEntry)
     {
     this->MapOutputVolumePrefixEntry->SetParent(NULL);
@@ -332,7 +356,6 @@ vtkFourDAnalysisGUI::~vtkFourDAnalysisGUI ( )
     this->MapKMaxSpinBox->SetParent(NULL);
     this->MapKMaxSpinBox->Delete();
     }
-
 
   //----------------------------------------------------------------
   // Unregister Logic class
@@ -394,19 +417,6 @@ void vtkFourDAnalysisGUI::Enter()
     ProcessTimerEvents();
     }
 
-  // register node type to the MRML scene
-  vtkMRMLScene* scene = this->GetMRMLScene();
-
-  // 4D bundle node (vtkMRMLTimeSeriesBundleNode)
-  vtkMRMLTimeSeriesBundleNode* bundleNode = vtkMRMLTimeSeriesBundleNode::New();
-  scene->RegisterNodeClass(bundleNode);
-  bundleNode->Delete();
-
-  // Curve analysis node (vtkMRMLCurveAnalysisNode)
-  vtkMRMLCurveAnalysisNode* curveNode = vtkMRMLCurveAnalysisNode::New();
-  scene->RegisterNodeClass(curveNode);
-  curveNode->Delete();
-
 }
 
 
@@ -432,12 +442,17 @@ void vtkFourDAnalysisGUI::RemoveGUIObservers ( )
 {
   //vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
 
+  // -----------------------------------------
+  // Bundle Selector
   if (this->Active4DBundleSelectorWidget)
     {
     this->Active4DBundleSelectorWidget
       ->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
                         (vtkCommand *)this->GUICallbackCommand );
     }
+
+  // -----------------------------------------
+  // Frame Control
   if (this->ForegroundVolumeSelectorScale)
     {
     this->ForegroundVolumeSelectorScale
@@ -458,15 +473,18 @@ void vtkFourDAnalysisGUI::RemoveGUIObservers ( )
     this->ThresholdRange
       ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
+
+  // -----------------------------------------
+  // Intensity Plot
   if (this->MaskNodeSelector)
     {
     this->MaskNodeSelector
       ->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
                         (vtkCommand *)this->GUICallbackCommand );
     }
-  if (this->RunPlotButton)
+  if (this->GenerateCurveButton)
     {
-    this->RunPlotButton
+    this->GenerateCurveButton
       ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
   if (this->ErrorBarCheckButton)
@@ -500,6 +518,8 @@ void vtkFourDAnalysisGUI::RemoveGUIObservers ( )
       ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
 
+  // -----------------------------------------
+  // Model / Parameters
   if (this->FittingTargetMenu)
     {
     this->FittingTargetMenu
@@ -520,9 +540,35 @@ void vtkFourDAnalysisGUI::RemoveGUIObservers ( )
     this->CurveFittingEndIndexSpinBox
       ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
+
+  // -----------------------------------------
+  // Curve Fitting
   if (this->RunFittingButton)
     {
     this->RunFittingButton
+      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->SavePlotButton)
+    {
+    this->SavePlotButton->GetWidget()->GetLoadSaveDialog()
+      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->SaveFittedCurveButton)
+    {
+    this->SaveFittedCurveButton->GetWidget()->GetLoadSaveDialog()
+      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
+
+  // -----------------------------------------
+  // Parameter Map
+  if (this->RunScriptButton)
+    {
+    this->RunScriptButton
+      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->MapOutputVolumePrefixEntry)
+    {
+    this->MapOutputVolumePrefixEntry
       ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
   if (this->MapIMinSpinBox)
@@ -556,27 +602,8 @@ void vtkFourDAnalysisGUI::RemoveGUIObservers ( )
       ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
 
-  if (this->SavePlotButton)
-    {
-    this->SavePlotButton->GetWidget()->GetLoadSaveDialog()
-      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
-    }
-  if (this->MapOutputVolumePrefixEntry)
-    {
-    this->MapOutputVolumePrefixEntry
-      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
-    }
-  if (this->RunScriptButton)
-    {
-    this->RunScriptButton
-      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
-    }
-  if (this->SaveFittedCurveButton)
-    {
-    this->SaveFittedCurveButton->GetWidget()->GetLoadSaveDialog()
-      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
-    }
-
+  //----------------------------------------------------------------
+  // Remove logic observers
   this->RemoveLogicObservers();
 
 }
@@ -606,21 +633,26 @@ void vtkFourDAnalysisGUI::AddGUIObservers ( )
   //----------------------------------------------------------------
   // GUI Observers
 
+  // -----------------------------------------
+  // Bundle Selector
   if (this->Active4DBundleSelectorWidget)
     {
     this->Active4DBundleSelectorWidget
       ->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
                     (vtkCommand *)this->GUICallbackCommand );
     }
+
+  // -----------------------------------------
+  // Frame Control
   if (this->ForegroundVolumeSelectorScale)
     {
     this->ForegroundVolumeSelectorScale
-      ->AddObserver(vtkKWScale::ScaleValueChangingEvent /*vtkKWScale::ScaleValueChangedEvent*/, (vtkCommand *)this->GUICallbackCommand);
+      ->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand);
     }
   if (this->BackgroundVolumeSelectorScale)
     {
     this->BackgroundVolumeSelectorScale
-      ->AddObserver(vtkKWScale::ScaleValueChangingEvent /*vtkKWScale::ScaleValueChangedEvent*/, (vtkCommand *)this->GUICallbackCommand);
+      ->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand);
     }
   if (this->WindowLevelRange)
     {
@@ -632,15 +664,18 @@ void vtkFourDAnalysisGUI::AddGUIObservers ( )
     this->ThresholdRange
       ->AddObserver(vtkKWRange::RangeValueChangingEvent, (vtkCommand *)this->GUICallbackCommand);
     }
+
+  // -----------------------------------------
+  // Intensity Plot
   if (this->MaskNodeSelector)
     {
     this->MaskNodeSelector
       ->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent,
                     (vtkCommand *)this->GUICallbackCommand );
     }
-  if (this->RunPlotButton)
+  if (this->GenerateCurveButton)
     {
-    this->RunPlotButton
+    this->GenerateCurveButton
       ->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
     }
   if (this->ErrorBarCheckButton)
@@ -670,6 +705,8 @@ void vtkFourDAnalysisGUI::AddGUIObservers ( )
       ->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
     }
 
+  // -----------------------------------------
+  // Model / Parameters
   if (this->FittingTargetMenu)
     {
     this->FittingTargetMenu
@@ -690,6 +727,9 @@ void vtkFourDAnalysisGUI::AddGUIObservers ( )
     this->CurveFittingEndIndexSpinBox
       ->AddObserver(vtkKWSpinBox::SpinBoxValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     }
+
+  // -----------------------------------------
+  // Curve Fitting
   if (this->RunFittingButton)
     {
     this->RunFittingButton
@@ -705,6 +745,9 @@ void vtkFourDAnalysisGUI::AddGUIObservers ( )
     this->SavePlotButton->GetWidget()->GetLoadSaveDialog()
       ->AddObserver(vtkKWLoadSaveDialog::FileNameChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     }
+
+  // -----------------------------------------
+  // Parameter Map
   if (this->MapOutputVolumePrefixEntry)
     {
     this->MapOutputVolumePrefixEntry
@@ -746,6 +789,10 @@ void vtkFourDAnalysisGUI::AddGUIObservers ( )
     this->MapKMaxSpinBox
       ->AddObserver(vtkKWSpinBox::SpinBoxValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     }
+
+
+  //----------------------------------------------------------------
+  // Logic Observers
 
   this->AddLogicObservers();
 
@@ -847,7 +894,7 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
            && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
     {
     }
-  else if (this->RunPlotButton == vtkKWPushButton::SafeDownCast(caller)
+  else if (this->GenerateCurveButton == vtkKWPushButton::SafeDownCast(caller)
            && event == vtkKWPushButton::InvokedEvent)
     {
     vtkMRMLTimeSeriesBundleNode *bundleNode = 
@@ -1452,11 +1499,11 @@ void vtkFourDAnalysisGUI::BuildGUIForFunctionViewer(int show)
   this->MaskNodeSelector->SetLabelText( "Mask: ");
   this->MaskNodeSelector->SetBalloonHelpString("Select a mask to specify regions of interest.");
 
-  this->RunPlotButton = vtkKWPushButton::New();
-  this->RunPlotButton->SetParent(mframe);
-  this->RunPlotButton->Create();
-  this->RunPlotButton->SetText ("Generate");
-  this->RunPlotButton->SetWidth (4);
+  this->GenerateCurveButton = vtkKWPushButton::New();
+  this->GenerateCurveButton->SetParent(mframe);
+  this->GenerateCurveButton->Create();
+  this->GenerateCurveButton->SetText ("Generate");
+  this->GenerateCurveButton->SetWidth (4);
 
   this->SavePlotButton = vtkKWLoadSaveButtonWithLabel::New();
   this->SavePlotButton->SetParent(mframe);
@@ -1467,7 +1514,7 @@ void vtkFourDAnalysisGUI::BuildGUIForFunctionViewer(int show)
 
   this->Script("pack %s %s %s -side left -fill x -expand y -anchor w -padx 2 -pady 2", 
                this->MaskNodeSelector->GetWidgetName(),
-               this->RunPlotButton->GetWidgetName(),
+               this->GenerateCurveButton->GetWidgetName(),
                this->SavePlotButton->GetWidgetName());
 
   msframe->Delete();
@@ -1614,7 +1661,7 @@ void vtkFourDAnalysisGUI::BuildGUIForScriptSetting(int show)
 
   conBrowsFrame->SetParent(page);
   conBrowsFrame->Create();
-  conBrowsFrame->SetLabelText("Script / Parameters");
+  conBrowsFrame->SetLabelText("Model / Parameters");
   if (!show)
     {
     conBrowsFrame->CollapseFrame();
