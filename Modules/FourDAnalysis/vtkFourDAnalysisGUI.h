@@ -147,27 +147,36 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   // Viewer control
   //----------------------------------------------------------------
 
+  // -----------------------------------------
+  // Frame control
   void SetForeground(const char* bundleID, int index);
   void SetBackground(const char* bundleID, int index);
   void SetWindowLevelForCurrentFrame();
 
+  // -----------------------------------------
+  // Plot list
   void UpdatePlotList();
-  virtual void UpdatePlotListElement(int row, int col, char * str);
+  void UpdatePlotListElement(int row, int col, char * str);
   void DeleteSelectedPlots();
   void SelectAllPlots();
   void DeselectAllPlots();
 
+  // Description:
+  // GeneratePlotNodes() calculates time-intensity curves in the regions specified by the label data.
+  void GeneratePlotNodes();
+  void ImportPlotNode(const char* path);
+
+  // -----------------------------------------
+  // Initial parameter list
   void UpdateInitialParameterList(vtkMRMLCurveAnalysisNode* curveNode);
   void GetInitialParametersAndInputCurves(vtkMRMLCurveAnalysisNode* curveNode, int start, int end);
   void OnInitialParameterListSelected();
   void ProcPlotSelectPopUpMenu(int row, int col, const char* nodeID);
   void UpdatePlotSelectPopUpMenu(const char* command);
+
+  // -----------------------------------------
+  // Output parameter list
   void UpdateOutputParameterList(vtkMRMLCurveAnalysisNode* curveNode);
-  
-  // Description:
-  // GeneratePlotNodes() calculates time-intensity curves in the regions specified by the label data.
-  void GeneratePlotNodes();
-  void ImportPlotNode(const char* path);
 
   void UpdateFittingTargetMenu();
 

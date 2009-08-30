@@ -943,10 +943,12 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
   else if (this->SelectAllPlotButton == vtkKWPushButton::SafeDownCast(caller)
            && event == vtkKWPushButton::InvokedEvent)
     {
+    SelectAllPlots();
     }
   else if (this->DeselectAllPlotButton == vtkKWPushButton::SafeDownCast(caller)
            && event == vtkKWPushButton::InvokedEvent)
     {
+    DeselectAllPlots();
     }
   else if (this->PlotDeleteButton == vtkKWPushButton::SafeDownCast(caller)
            && event == vtkKWPushButton::InvokedEvent)
@@ -1210,13 +1212,19 @@ void vtkFourDAnalysisGUI::ProcessMRMLEvents ( vtkObject *caller,
   else if (event == vtkMRMLScene::SceneCloseEvent)
     {
     }
-  else if (event == vtkCommand::ModifiedEvent && 
-           this->PlotManagerNode == vtkMRMLXYPlotManagerNode::SafeDownCast(caller))
+  else if (event == vtkCommand::ModifiedEvent)
     {
-    UpdatePlotList();
-    UpdateFittingTargetMenu();
-    }
-
+    if (this->PlotManagerNode == vtkMRMLXYPlotManagerNode::SafeDownCast(caller))
+      {
+      UpdatePlotList();
+      UpdateFittingTargetMenu();
+      }
+    //else if (vtkMRMLArrayPlotNode::SafeDownCast(caller))
+    //  {
+    //  UpdateFittingTargetMenu();
+    //  }
+    //
+    }    
 }
 
 
@@ -2373,7 +2381,7 @@ void vtkFourDAnalysisGUI::UpdatePlotList()
 
         // Curve name entry
         //this->PlotList->GetWidget()->SetCellEditWindowToEntry(i, 2);
-        this->PlotList->GetWidget()->SetCellText(i, COLUMN_NODE_NAME, node->GetID());
+        this->PlotList->GetWidget()->SetCellText(i, COLUMN_NODE_NAME, node->GetName());
 
         // MRML node ID
         this->PlotList->GetWidget()->SetCellText(i, COLUMN_MRML_ID, node->GetID());
@@ -2412,6 +2420,7 @@ void vtkFourDAnalysisGUI::UpdatePlotListElement(int row, int col, char * str)
         {
         const char* name = this->PlotList->GetWidget()->GetCellText(row, col);
         pnode->SetName(name);
+        UpdateFittingTargetMenu();
         }
       }
     }
@@ -2425,7 +2434,6 @@ void vtkFourDAnalysisGUI::DeleteSelectedPlots()
     int numColumn = this->PlotList->GetWidget()->GetNumberOfRows();
     std::vector< std::string > list;
     list.clear();
-
     // Check the plot list
     for (int row = 0; row < numColumn; row ++)
       {
@@ -2435,21 +2443,41 @@ void vtkFourDAnalysisGUI::DeleteSelectedPlots()
         list.push_back(this->PlotList->GetWidget()->GetCellText(row, COLUMN_MRML_ID));
         }
       }
-    
-    // Delete nodes
-    std::vector< std::string >::iterator iter;
-    for (iter = list.begin(); iter != list.end(); iter ++)
+
+    if (list.size() > 0) // if there is at least one selected node
       {
-      vtkMRMLArrayPlotNode* node = vtkMRMLArrayPlotNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(iter->c_str()));
-      if (node)
+      // Ask the user to confirm
+      vtkKWMessageDialog* dialog = vtkKWMessageDialog::New();
+      dialog->SetMasterWindow(this->GetApplicationGUI()->GetMainSlicerWindow());
+      dialog->SetParent(this->GetApplicationGUI()->GetMainSlicerWindow());
+      //dialog->SetTitle("Deletinmg Plot Nodes");
+      //dialog->SetSize(200, 400);
+      dialog->SetStyleToOkCancel();
+      dialog->Create();
+      dialog->SetText("Are you deleting plot nodes?");
+      if (dialog->Invoke())
         {
-        this->PlotManagerNode->RemovePlotNodeByNodeID(iter->c_str());
-        vtkMRMLDoubleArrayNode* anode = node->GetArray();
-        this->GetMRMLScene()->RemoveNode(anode);
-        this->GetMRMLScene()->RemoveNode(node);
+        // Delete nodes
+        std::vector< std::string >::iterator iter;
+        for (iter = list.begin(); iter != list.end(); iter ++)
+          {
+          vtkMRMLArrayPlotNode* node = vtkMRMLArrayPlotNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(iter->c_str()));
+          if (node)
+            {
+            this->PlotManagerNode->RemovePlotNodeByNodeID(iter->c_str());
+            vtkMRMLDoubleArrayNode* anode = node->GetArray();
+            this->GetMRMLScene()->RemoveNode(anode);
+            this->GetMRMLScene()->RemoveNode(node);
+            
+            this->PlotManagerNode->SetAutoXRange(1);
+            this->PlotManagerNode->SetAutoYRange(1);
+            this->PlotManagerNode->Refresh();
+            }
+          }
+        UpdatePlotList();
         }
+      dialog->Delete();
       }
-    UpdatePlotList();
     }
 }
 
@@ -2457,11 +2485,29 @@ void vtkFourDAnalysisGUI::DeleteSelectedPlots()
 //----------------------------------------------------------------------------
 void vtkFourDAnalysisGUI::SelectAllPlots()
 {
+  if (this->PlotManagerNode)
+    {
+    int numColumn = this->PlotList->GetWidget()->GetNumberOfRows();
+    for (int row = 0; row < numColumn; row ++)
+      {
+      this->PlotList->GetWidget()->SetCellTextAsInt(row, COLUMN_SELECT, 1);
+      this->PlotList->GetWidget()->SetCellWindowCommandToCheckButton(row, COLUMN_SELECT);
+      }
+    }
 }
 
 //----------------------------------------------------------------------------
 void vtkFourDAnalysisGUI::DeselectAllPlots()
 {
+  if (this->PlotManagerNode)
+    {
+    int numColumn = this->PlotList->GetWidget()->GetNumberOfRows();
+    for (int row = 0; row < numColumn; row ++)
+      {
+      this->PlotList->GetWidget()->SetCellTextAsInt(row, COLUMN_SELECT, 0);
+      this->PlotList->GetWidget()->SetCellWindowCommandToCheckButton(row, COLUMN_SELECT);
+      }
+    }
 }
 
 
