@@ -56,9 +56,6 @@ vtkMRMLXYPlotManagerNode::vtkMRMLXYPlotManagerNode()
   this->Data.clear();
   this->LastArrayID = -1;
 
-  //this->VerticalLines.clear();
-  //this->HorizontalLines.clear();
-
   this->XRange[0] = 0.0;
   this->XRange[1] = 0.0;
   this->YRange[0] = 0.0;
@@ -399,6 +396,31 @@ vtkMRMLPlotNode* vtkMRMLXYPlotManagerNode::GetPlotNode(int id)
     return NULL;
     }
 }
+
+
+//----------------------------------------------------------------------------
+vtkCollection* vtkMRMLXYPlotManagerNode::GetPlotNodes(const char* tag)
+{
+
+  vtkCollection* nodes = vtkCollection::New();  
+  
+  std::map< int, vtkMRMLPlotNode* >::iterator iter;
+  for (iter = this->Data.begin(); iter != this->Data.end(); iter ++)
+    {
+    if (iter->second)
+      {
+      if (tag == NULL ||
+          strcmp(tag, iter->second->GetNodeTagName()) == 0)
+        {
+        nodes->AddItem(iter->second);
+        }
+      }
+    }
+
+  return nodes;
+
+}
+
 
 
 //----------------------------------------------------------------------------

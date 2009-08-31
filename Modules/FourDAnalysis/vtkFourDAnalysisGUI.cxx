@@ -990,11 +990,12 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
            && event == vtkKWPushButton::InvokedEvent)
     {
     int n = this->FittingTargetMenu->GetMenu()->GetIndexOfSelectedItem();
-    vtkIntArray* labels = this->IntensityCurves->GetLabelList();
-    int label = labels->GetValue(n);
+    const char* nodeID = this->FittingTargetMenuNodeList[n].c_str();
+ 
+    //vtkIntArray* labels = this->IntensityCurves->GetLabelList();
+    //int label = labels->GetValue(n);
 
     // Get the path to the script
-    //const char* script = this->CurveScriptSelectButton->GetWidget()->GetFileName();
     if (!this->CurveAnalysisScript)
       {
       vtkErrorMacro("Script is not selected.");
@@ -1002,77 +1003,79 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
       }
 
     //vtkDoubleArray* curve = this->IntensityCurves->GetCurve(label);
-    vtkMRMLDoubleArrayNode* anode = this->IntensityCurves->GetCurve(label);
-    vtkDoubleArray* curve = anode->GetArray();
-
-    if (curve)
+    vtkMRMLArrayPlotNode* pnode = vtkMRMLArrayPlotNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(nodeID));
+    if (pnode && pnode->GetArray())
       {
-      // Add a new vtkMRMLCurveAnalysisNode to the MRML scene
-      vtkMRMLCurveAnalysisNode* curveNode = vtkMRMLCurveAnalysisNode::New();
-      this->GetMRMLScene()->AddNode(curveNode);
-      this->CurveAnalysisScript->SetCurveAnalysisNode(curveNode);
-      this->CurveAnalysisScript->GetInfo();
-
-      // Prepare vtkDoubleArray to pass the source cueve data
-      vtkDoubleArray* srcCurve = vtkDoubleArray::New();
-      srcCurve->SetNumberOfComponents( curve->GetNumberOfComponents() );
-
-      // Check the range of the curve to fit
-      int max   = curve->GetNumberOfTuples();
-      int start = (int)this->CurveFittingStartIndexSpinBox->GetValue();
-      int end   = (int)this->CurveFittingEndIndexSpinBox->GetValue();
-      if (start < 0)   start = 0;
-      if (end >= max)  end   = max-1;
-      if (start > end) start = end;
-      for (int i = start; i <= end; i ++)
+      vtkMRMLDoubleArrayNode* anode = pnode->GetArray();
+      vtkDoubleArray* curve = anode->GetArray();
+      if (curve)
         {
-        double* xy = curve->GetTuple(i);
-        srcCurve->InsertNextTuple(xy);
+        // Add a new vtkMRMLCurveAnalysisNode to the MRML scene
+        vtkMRMLCurveAnalysisNode* curveNode = vtkMRMLCurveAnalysisNode::New();
+        this->GetMRMLScene()->AddNode(curveNode);
+        this->CurveAnalysisScript->SetCurveAnalysisNode(curveNode);
+        this->CurveAnalysisScript->GetInfo();
+        
+        // Prepare vtkDoubleArray to pass the source cueve data
+        vtkDoubleArray* srcCurve = vtkDoubleArray::New();
+        srcCurve->SetNumberOfComponents( curve->GetNumberOfComponents() );
+        
+        // Check the range of the curve to fit
+        int max   = curve->GetNumberOfTuples();
+        int start = (int)this->CurveFittingStartIndexSpinBox->GetValue();
+        int end   = (int)this->CurveFittingEndIndexSpinBox->GetValue();
+        if (start < 0)   start = 0;
+        if (end >= max)  end   = max-1;
+        if (start > end) start = end;
+        for (int i = start; i <= end; i ++)
+          {
+          double* xy = curve->GetTuple(i);
+          srcCurve->InsertNextTuple(xy);
+          }
+        
+        // Get initial parameters for the curve fitting
+        GetInitialParametersAndInputCurves(curveNode, start, end);
+        
+        // Prepare vtkDoubleArray to receive a fitted curve from the script
+        // (The size of the fitted curve should be the same as original
+        // intensity curve)
+        vtkDoubleArray* fittedCurve = vtkDoubleArray::New();
+        fittedCurve->SetNumberOfComponents(2);
+        for (int i = start; i < end; i ++)
+          {
+          double* xy = curve->GetTuple(i);
+          fittedCurve->InsertNextTuple(xy);
+          }
+        
+        // Set source and fitted curve arrays to the curve analysis node.
+        curveNode->SetTargetCurve(srcCurve);
+        curveNode->SetFittedCurve(fittedCurve);
+        
+        // Call Logic to excecute the curve fitting script
+        //this->GetLogic()->RunCurveFitting(script, curveNode);
+        this->CurveAnalysisScript->Run();
+        
+        // Display result parameters
+        UpdateOutputParameterList(curveNode);
+        
+        vtkDoubleArray* resultCurve = curveNode->GetFittedCurve();
+        vtkMRMLDoubleArrayNode* resultCurveNode = vtkMRMLDoubleArrayNode::New();
+        this->GetMRMLScene()->AddNode(resultCurveNode);
+        resultCurveNode->SetArray(resultCurve);
+        
+        vtkMRMLArrayPlotNode* plotNode = vtkMRMLArrayPlotNode::New();
+        this->GetMRMLScene()->AddNode(plotNode);
+        plotNode->SetAndObserveArray(resultCurveNode);
+        
+        plotNode->SetColor(1.0, 0.0, 0.0);
+        this->PlotManagerNode->AddPlotNode(plotNode);
+        this->PlotManagerNode->SetAutoXRange(1);
+        this->PlotManagerNode->SetAutoYRange(1);
+        this->PlotManagerNode->Refresh();
+        
+        resultCurveNode->Delete();
+        plotNode->Delete();;
         }
-
-      // Get initial parameters for the curve fitting
-      GetInitialParametersAndInputCurves(curveNode, start, end);
-
-      // Prepare vtkDoubleArray to receive a fitted curve from the script
-      // (The size of the fitted curve should be the same as original
-      // intensity curve)
-      vtkDoubleArray* fittedCurve = vtkDoubleArray::New();
-      fittedCurve->SetNumberOfComponents(2);
-      for (int i = start; i < end; i ++)
-        {
-        double* xy = curve->GetTuple(i);
-        fittedCurve->InsertNextTuple(xy);
-        }
-
-      // Set source and fitted curve arrays to the curve analysis node.
-      curveNode->SetTargetCurve(srcCurve);
-      curveNode->SetFittedCurve(fittedCurve);
-
-      // Call Logic to excecute the curve fitting script
-      //this->GetLogic()->RunCurveFitting(script, curveNode);
-      this->CurveAnalysisScript->Run();
-
-      // Display result parameters
-      UpdateOutputParameterList(curveNode);
-
-      vtkDoubleArray* resultCurve = curveNode->GetFittedCurve();
-      vtkMRMLDoubleArrayNode* resultCurveNode = vtkMRMLDoubleArrayNode::New();
-      this->GetMRMLScene()->AddNode(resultCurveNode);
-      resultCurveNode->SetArray(resultCurve);
-      
-      vtkMRMLArrayPlotNode* plotNode = vtkMRMLArrayPlotNode::New();
-      this->GetMRMLScene()->AddNode(plotNode);
-      plotNode->SetAndObserveArray(resultCurveNode);
-
-      plotNode->SetColor(1.0, 0.0, 0.0);
-      this->PlotManagerNode->AddPlotNode(plotNode);
-      this->PlotManagerNode->SetAutoXRange(1);
-      this->PlotManagerNode->SetAutoYRange(1);
-      this->PlotManagerNode->Refresh();
-
-      resultCurveNode->Delete();
-      plotNode->Delete();;
-      
       }
     }
   else if (this->SaveFittedCurveButton->GetWidget()->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller)
@@ -2697,11 +2700,11 @@ void vtkFourDAnalysisGUI::UpdatePlotSelectPopUpMenu(const char* command)
     {
     this->PlotSelectPopUpMenu->DeleteAllItems();
 
-    int n = this->PlotManagerNode->GetNumberOfPlotNodes();
-    for (int i = 0; i < n; i ++)
+    vtkCollection* collection = this->PlotManagerNode->GetPlotNodes("ArrayPlot");
+    int ncol = collection->GetNumberOfItems(); 
+    for (int i = 0; i < ncol; i ++)
       {
-      vtkMRMLArrayPlotNode* node = 
-        vtkMRMLArrayPlotNode::SafeDownCast(this->PlotManagerNode->GetPlotNode(i));
+      vtkMRMLArrayPlotNode* node = vtkMRMLArrayPlotNode::SafeDownCast(collection->GetItemAsObject(i));
       if (node != NULL)
         {
         std::stringstream ss;
@@ -2709,6 +2712,19 @@ void vtkFourDAnalysisGUI::UpdatePlotSelectPopUpMenu(const char* command)
         this->PlotSelectPopUpMenu->AddRadioButton(node->GetName(), this, ss.str().c_str());
         }
       }
+
+    //int n = this->PlotManagerNode->GetNumberOfPlotNodes();
+    //for (int i = 0; i < n; i ++)
+    //  {
+    //  vtkMRMLArrayPlotNode* node = 
+    //    vtkMRMLArrayPlotNode::SafeDownCast(this->PlotManagerNode->GetPlotNode(i));
+    //  if (node != NULL)
+    //    {
+    //    std::stringstream ss;
+    //    ss << command << " " << node->GetID();
+    //    this->PlotSelectPopUpMenu->AddRadioButton(node->GetName(), this, ss.str().c_str());
+    //    }
+    //  }
     
     //// The following code gets the list from MRML scene (not from PlotManagerNode)    
     //std::vector<vtkMRMLNode *> nodes;
@@ -2867,17 +2883,31 @@ void  vtkFourDAnalysisGUI::UpdateFittingTargetMenu()
     this->FittingTargetMenuNodeList.clear();
     this->FittingTargetMenu->GetMenu()->DeleteAllItems();
 
-    int n = this->PlotManagerNode->GetNumberOfPlotNodes();
-    for (int i = 0; i < n; i ++)
+    vtkCollection* collection = this->PlotManagerNode->GetPlotNodes("ArrayPlot");
+    int ncol = collection->GetNumberOfItems(); 
+    for (int i = 0; i < ncol; i ++)
       {
-      vtkMRMLArrayPlotNode* node = 
-        vtkMRMLArrayPlotNode::SafeDownCast(this->PlotManagerNode->GetPlotNode(i));
+      vtkMRMLPlotNode* node = vtkMRMLPlotNode::SafeDownCast(collection->GetItemAsObject(i));
       if (node != NULL)
         {
         this->FittingTargetMenu->GetMenu()->AddRadioButton(node->GetName());
         this->FittingTargetMenuNodeList.push_back(node->GetID());
+
         }
       }
+
+    //int n = this->PlotManagerNode->GetNumberOfPlotNodes();
+    //vtkIntArray* nodeList = GetPlotNodeIDList();
+    //for (int i = 0; i < n; i ++)
+    //  {
+    //  vtkMRMLArrayPlotNode* node = 
+    //    vtkMRMLArrayPlotNode::SafeDownCast(this->PlotManagerNode->GetPlotNode(i));
+    //  if (node != NULL)
+    //    {
+    //    this->FittingTargetMenu->GetMenu()->AddRadioButton(node->GetName());
+    //    this->FittingTargetMenuNodeList.push_back(node->GetID());
+    //    }
+    //  }
     }
 
   //// The following code gets the list from MRML scene (not from PlotManagerNode)

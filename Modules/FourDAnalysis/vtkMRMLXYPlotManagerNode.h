@@ -17,16 +17,16 @@
 #include <string>
 #include <vector>
 
+#include "vtkObject.h"
+#include "vtkCollection.h"
+#include "vtkFourDAnalysisWin32Header.h"
+
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
-
-
-#include "vtkObject.h"
-#include "vtkFourDAnalysisWin32Header.h"
-
 #include "vtkMRMLDoubleArrayNode.h"
 #include "vtkMRMLPlotNode.h"
+
 
 class vtkIntArray;
 
@@ -120,6 +120,12 @@ class VTK_FourDAnalysis_EXPORT vtkMRMLXYPlotManagerNode : public vtkMRMLNode
   // Description:
   // Get n-th vtkMRMLDoubleArrayNode on the list
   vtkMRMLPlotNode* GetPlotNode(int id);
+
+  // Description:
+  // Get list of plot node objects.
+  // If 'tag' is specified, GetPlotNode() returns a list of nodes, which have the specified tag name.
+  vtkCollection* GetPlotNodes(const char* tag=NULL);
+
 
   //----------------------------------------------------------------
   // Methods to change property of plot objects
