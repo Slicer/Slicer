@@ -604,6 +604,8 @@ itcl::body Loader::apply { } {
               $this errorDialog "Could not open $path"
            } else {
               $node SetName $name
+              # invoke a node added event in order to update the GUI
+              $::slicer3::MRMLScene Edited
            }  
         }
       }
