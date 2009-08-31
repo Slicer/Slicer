@@ -37,7 +37,7 @@ class vtkKWMultiColumnListWithScrollbars;
 // Description:    
 // This class implements Slicer's Volumes GUI.
 //
-class VTK_PATIENTTOIMAGEREGISTRATION_EXPORT vtkPatientToImageRegistrationGUI : public vtkSlicerModuleGUI
+class VTK_PatientToImageRegistration_EXPORT vtkPatientToImageRegistrationGUI : public vtkSlicerModuleGUI
 {
 public:
 

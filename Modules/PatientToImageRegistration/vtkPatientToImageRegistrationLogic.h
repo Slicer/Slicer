@@ -36,7 +36,7 @@ Version:   $Revision: $
 #include "vtkIGTPat2ImgRegistration.h"
 
 
-class VTK_PATIENTTOIMAGEREGISTRATION_EXPORT vtkPatientToImageRegistrationLogic : public vtkSlicerModuleLogic 
+class VTK_PatientToImageRegistration_EXPORT vtkPatientToImageRegistrationLogic : public vtkSlicerModuleLogic 
 {
 public:
   //BTX
