@@ -2247,7 +2247,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->SC_GPURayCastICPEkt->SetLabelText("ICPE Scale:");
         this->SC_GPURayCastICPEkt->SetLabelWidth(labelWidth);
         this->SC_GPURayCastICPEkt->SetBalloonHelpString("Parameter kt for Illustrative Context Preserving Exploration.");
-        this->SC_GPURayCastICPEkt->GetWidget()->SetRange(0, 12); 
+        this->SC_GPURayCastICPEkt->GetWidget()->SetRange(0, 10); 
         this->SC_GPURayCastICPEkt->GetWidget()->SetResolution(0.01);
         this->SC_GPURayCastICPEkt->SetValue(1);
         this->SC_GPURayCastICPEkt->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *) this->VolumeRenderingCallbackCommand);
@@ -2261,9 +2261,9 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
         this->SC_GPURayCastICPEks->SetLabelText("ICPE Smoothness:");
         this->SC_GPURayCastICPEks->SetLabelWidth(labelWidth);
         this->SC_GPURayCastICPEks->SetBalloonHelpString("Parameter ks for Illustrative Context Preserving Exploration.");
-        this->SC_GPURayCastICPEks->GetWidget()->SetRange(0, 3); 
+        this->SC_GPURayCastICPEks->GetWidget()->SetRange(0, 1); 
         this->SC_GPURayCastICPEks->GetWidget()->SetResolution(0.01);
-        this->SC_GPURayCastICPEks->SetValue(1);
+        this->SC_GPURayCastICPEks->SetValue(0.5);
         this->SC_GPURayCastICPEks->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *) this->VolumeRenderingCallbackCommand);
         this->SC_GPURayCastICPEks->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *) this->VolumeRenderingCallbackCommand);
         this->SC_GPURayCastICPEks->SetEntryWidth(5);
