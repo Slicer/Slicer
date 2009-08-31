@@ -118,6 +118,7 @@ vtkFourDAnalysisGUI::vtkFourDAnalysisGUI ( )
   this->SelectAllPlotButton           = NULL;
   this->DeselectAllPlotButton         = NULL;
   this->PlotDeleteButton              = NULL;
+  this->SavePlotButton                = NULL;
 
   // -----------------------------------------
   // Model / Parameters
@@ -132,8 +133,6 @@ vtkFourDAnalysisGUI::vtkFourDAnalysisGUI ( )
   // -----------------------------------------
   // Curve Fitting
   this->RunFittingButton              = NULL;
-  this->SaveFittedCurveButton         = NULL;
-  this->SavePlotButton                = NULL; // will be obsolete
   this->ResultParameterList           = NULL;
 
   // -----------------------------------------
@@ -257,6 +256,12 @@ vtkFourDAnalysisGUI::~vtkFourDAnalysisGUI ( )
     this->PlotDeleteButton->SetParent(NULL);
     this->PlotDeleteButton->Delete();
     }
+  if (this->SavePlotButton)
+    {
+    this->SavePlotButton->SetParent(NULL);
+    this->SavePlotButton->Delete();
+    }
+
 
   // -----------------------------------------
   // Model / Parameters
@@ -297,16 +302,6 @@ vtkFourDAnalysisGUI::~vtkFourDAnalysisGUI ( )
     {
     this->RunFittingButton->SetParent(NULL);
     this->RunFittingButton->Delete();
-    }
-  if (this->SaveFittedCurveButton)
-    {
-    this->SaveFittedCurveButton->SetParent(NULL);
-    this->SaveFittedCurveButton->Delete();
-    }
-  if (this->SavePlotButton)
-    {
-    this->SavePlotButton->SetParent(NULL);
-    this->SavePlotButton->Delete();
     }
   if (this->ResultParameterList)
     {
@@ -517,6 +512,11 @@ void vtkFourDAnalysisGUI::RemoveGUIObservers ( )
     this->PlotDeleteButton
       ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
+  if (this->SavePlotButton)
+    {
+    this->SavePlotButton
+      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
 
   // -----------------------------------------
   // Model / Parameters
@@ -546,16 +546,6 @@ void vtkFourDAnalysisGUI::RemoveGUIObservers ( )
   if (this->RunFittingButton)
     {
     this->RunFittingButton
-      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
-    }
-  if (this->SavePlotButton)
-    {
-    this->SavePlotButton->GetWidget()->GetLoadSaveDialog()
-      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
-    }
-  if (this->SaveFittedCurveButton)
-    {
-    this->SaveFittedCurveButton->GetWidget()->GetLoadSaveDialog()
       ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
 
@@ -704,6 +694,11 @@ void vtkFourDAnalysisGUI::AddGUIObservers ( )
     this->PlotDeleteButton
       ->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
     }
+  if (this->SavePlotButton)
+    {
+    this->SavePlotButton
+      ->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+    }
 
   // -----------------------------------------
   // Model / Parameters
@@ -734,16 +729,6 @@ void vtkFourDAnalysisGUI::AddGUIObservers ( )
     {
     this->RunFittingButton
       ->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
-    }
-  if (this->SaveFittedCurveButton)
-    {
-    this->SaveFittedCurveButton->GetWidget()->GetLoadSaveDialog()
-      ->AddObserver(vtkKWLoadSaveDialog::FileNameChangedEvent, (vtkCommand *)this->GUICallbackCommand);
-    }
-  if (this->SavePlotButton)
-    {
-    this->SavePlotButton->GetWidget()->GetLoadSaveDialog()
-      ->AddObserver(vtkKWLoadSaveDialog::FileNameChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     }
 
   // -----------------------------------------
@@ -1078,19 +1063,22 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
         }
       }
     }
-  else if (this->SaveFittedCurveButton->GetWidget()->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller)
-           && event == vtkKWLoadSaveDialog::FileNameChangedEvent)
+  else if (this->SavePlotButton == vtkKWPushButton::SafeDownCast(caller)
+    //&& event == vtkKWLoadSaveDialog::FileNameChangedEvent)
+           && event == vtkKWPushButton::InvokedEvent)
     {
-    const char* filename = (const char*)callData;
-    //int selected = this->MaskSelectMenu->GetMenu()->GetIndexOfSelectedItem();
-    //this->GetLogic()->SaveCurve(this->FittedCurveNode->GetArray(), filename);
-    }
-  else if (this->SavePlotButton->GetWidget()->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller)
-           && event == vtkKWLoadSaveDialog::FileNameChangedEvent)
-    {
-    const char* filename = (const char*)callData;
-    //int selected = this->MaskSelectMenu->GetMenu()->GetIndexOfSelectedItem();
-    this->GetLogic()->SaveIntensityCurves(this->IntensityCurves, filename);
+    vtkKWFileBrowserDialog* fbrowse = vtkKWFileBrowserDialog::New();
+    fbrowse->SetParent(this->GetApplicationGUI()->GetViewerWidget());
+    fbrowse->SaveDialogOn();
+    fbrowse->Create();
+    fbrowse->SetTitle("Save Curves");
+    fbrowse->MultipleSelectionOff();
+    if (fbrowse->Invoke())
+      {
+      const char* filename = fbrowse->GetFileName();
+      SaveMarkedPlotNode(filename);
+      }
+    fbrowse->Delete();
     }
 
   else if (this->RunScriptButton == vtkKWPushButton::SafeDownCast(caller)
@@ -1516,17 +1504,9 @@ void vtkFourDAnalysisGUI::BuildGUIForFunctionViewer(int show)
   this->GenerateCurveButton->SetText ("Generate");
   this->GenerateCurveButton->SetWidth (4);
 
-  this->SavePlotButton = vtkKWLoadSaveButtonWithLabel::New();
-  this->SavePlotButton->SetParent(mframe);
-  this->SavePlotButton->Create();
-  this->SavePlotButton->SetWidth(50);
-  this->SavePlotButton->GetWidget()->SetText ("Save");
-  this->SavePlotButton->GetWidget()->GetLoadSaveDialog()->SaveDialogOn();
-
-  this->Script("pack %s %s %s -side left -fill x -expand y -anchor w -padx 2 -pady 2", 
+  this->Script("pack %s %s -side left -fill x -expand y -anchor w -padx 2 -pady 2", 
                this->MaskNodeSelector->GetWidgetName(),
-               this->GenerateCurveButton->GetWidgetName(),
-               this->SavePlotButton->GetWidgetName());
+               this->GenerateCurveButton->GetWidgetName());
 
   msframe->Delete();
   //menuLabel->Delete();
@@ -1644,11 +1624,18 @@ void vtkFourDAnalysisGUI::BuildGUIForFunctionViewer(int show)
   this->PlotDeleteButton->SetText ("Delete");
   this->PlotDeleteButton->SetWidth (4);
 
-  this->Script ("pack %s %s %s %s -side left -fill x -expand y -anchor w -padx 2 -pady 2",
+  this->SavePlotButton = vtkKWPushButton::New();
+  this->SavePlotButton->SetParent(bframe);
+  this->SavePlotButton->Create();
+  this->SavePlotButton->SetText ("Save");
+  this->SavePlotButton->SetWidth (4);
+
+  this->Script ("pack %s %s %s %s %s -side left -fill x -expand y -anchor w -padx 2 -pady 2",
                 this->ImportPlotButton->GetWidgetName(),
                 this->SelectAllPlotButton->GetWidgetName(),
                 this->DeselectAllPlotButton->GetWidgetName(),
-                this->PlotDeleteButton->GetWidgetName());
+                this->PlotDeleteButton->GetWidgetName(),
+                this->SavePlotButton->GetWidgetName());
 
   // Event handlers:
   this->PlotList->GetWidget()->SetCellUpdatedCommand(this, "UpdatePlotListElement");
@@ -1737,7 +1724,7 @@ void vtkFourDAnalysisGUI::BuildGUIForScriptSetting(int show)
   vtkKWLabel *startLabel = vtkKWLabel::New();
   startLabel->SetParent(rangeframe);
   startLabel->Create();
-  startLabel->SetText("From:");
+  startLabel->SetText("Fitting range: from ");
   
   this->CurveFittingStartIndexSpinBox = vtkKWSpinBox::New();
   this->CurveFittingStartIndexSpinBox->SetParent(rangeframe);
@@ -1747,7 +1734,7 @@ void vtkFourDAnalysisGUI::BuildGUIForScriptSetting(int show)
   vtkKWLabel *endLabel = vtkKWLabel::New();
   endLabel->SetParent(rangeframe);
   endLabel->Create();
-  endLabel->SetText("to:");
+  endLabel->SetText("to ");
 
   this->CurveFittingEndIndexSpinBox = vtkKWSpinBox::New();
   this->CurveFittingEndIndexSpinBox->SetParent(rangeframe);
@@ -1845,18 +1832,10 @@ void vtkFourDAnalysisGUI::BuildGUIForCurveFitting(int show)
   this->RunFittingButton->SetText ("Run");
   this->RunFittingButton->SetWidth (4);
 
-  this->SaveFittedCurveButton = vtkKWLoadSaveButtonWithLabel::New();
-  this->SaveFittedCurveButton->SetParent(runframe);
-  this->SaveFittedCurveButton->Create();
-  this->SaveFittedCurveButton->SetWidth(50);
-  this->SaveFittedCurveButton->GetWidget()->SetText ("Save");
-  this->SaveFittedCurveButton->GetWidget()->GetLoadSaveDialog()->SaveDialogOn();
-  
-  this->Script("pack %s %s %s %s -side left -fill x -expand y -anchor w -padx 2 -pady 2", 
+  this->Script("pack %s %s %s -side left -fill x -expand y -anchor w -padx 2 -pady 2", 
                fittingLabelLabel->GetWidgetName(),
                this->FittingTargetMenu->GetWidgetName(),
-               this->RunFittingButton->GetWidgetName(),
-               this->SaveFittedCurveButton->GetWidgetName());
+               this->RunFittingButton->GetWidgetName());
 
   this->FittingTargetMenuNodeList.clear();
 
@@ -2875,6 +2854,48 @@ void  vtkFourDAnalysisGUI::ImportPlotNode(const char* path)
     }
 
 }
+
+
+//----------------------------------------------------------------------------
+void  vtkFourDAnalysisGUI::SaveMarkedPlotNode(const char* path)
+{
+  if (this->PlotManagerNode && this->GetMRMLScene())
+    {
+    int numColumn = this->PlotList->GetWidget()->GetNumberOfRows();
+    std::vector< std::string > list;
+    list.clear();
+    // Check the plot list
+    for (int row = 0; row < numColumn; row ++)
+      {
+      int v = this->PlotList->GetWidget()->GetCellTextAsInt(row, COLUMN_SELECT);
+      if (v)
+        {
+        list.push_back(this->PlotList->GetWidget()->GetCellText(row, COLUMN_MRML_ID));
+        }
+      }
+
+    if (list.size() > 0)
+      {
+      std::vector< std::string >::iterator iter;
+      for (iter = list.begin(); iter != list.end(); iter ++)
+        {
+        vtkMRMLArrayPlotNode* node = vtkMRMLArrayPlotNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(iter->c_str()));
+        if (node)
+          {
+          if (node->GetArray() && node->GetArray()->GetArray())
+            {
+            vtkDoubleArray* array = node->GetArray()->GetArray();
+            std::stringstream ss;
+
+            ss << path << node->GetName();
+            this->GetLogic()->SaveCurve(array, ss.str().c_str());
+            }
+          }
+        }
+      }
+    }
+}
+
 
 
 //----------------------------------------------------------------------------

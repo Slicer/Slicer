@@ -165,6 +165,7 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   // GeneratePlotNodes() calculates time-intensity curves in the regions specified by the label data.
   void GeneratePlotNodes();
   void ImportPlotNode(const char* path);
+  void SaveMarkedPlotNode(const char* path);
 
   // -----------------------------------------
   // Initial parameter list
@@ -219,6 +220,7 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   vtkKWPushButton*                    SelectAllPlotButton;
   vtkKWPushButton*                    DeselectAllPlotButton;
   vtkKWPushButton*                    PlotDeleteButton;
+  vtkKWPushButton*                    SavePlotButton;
 
   // -----------------------------------------
   // Model / Parameters
@@ -233,8 +235,6 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
   // -----------------------------------------
   // Curve Fitting
   vtkKWPushButton*                    RunFittingButton;
-  vtkKWLoadSaveButtonWithLabel*       SaveFittedCurveButton;
-  vtkKWLoadSaveButtonWithLabel*       SavePlotButton;
   vtkKWMultiColumnListWithScrollbars* ResultParameterList;
 
   // -----------------------------------------
