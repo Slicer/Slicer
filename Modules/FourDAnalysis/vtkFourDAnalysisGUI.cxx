@@ -2627,24 +2627,26 @@ void vtkFourDAnalysisGUI::GetInitialParametersAndInputCurves(vtkMRMLCurveAnalysi
 
     //vtkDoubleArray* curve = this->IntensityCurves->GetCurve(label);
     //vtkMRMLDoubleArrayNode* anode = this->IntensityCurves->GetCurve(label);
-    vtkMRMLDoubleArrayNode* anode = vtkMRMLDoubleArrayNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(nodeID));
-    vtkDoubleArray* curve = anode->GetArray();
-
-    if (curve)
+    vtkMRMLArrayPlotNode* pnode = vtkMRMLArrayPlotNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(nodeID));
+    if (pnode && pnode->GetArray())
       {
-      vtkDoubleArray* inputCurve = vtkDoubleArray::New();
-      inputCurve->SetNumberOfComponents( curve->GetNumberOfComponents() );
-      int max   = curve->GetNumberOfTuples();
-      
-      if (start < 0)   start = 0;
-      if (end >= max)  end   = max-1;
-      if (start > end) start = end;
-      for (int i = start; i <= end; i ++)
+      vtkDoubleArray* curve = pnode->GetArray()->GetArray();
+      if (curve)
         {
-        double* xy = curve->GetTuple(i);
-        inputCurve->InsertNextTuple(xy);
+        vtkDoubleArray* inputCurve = vtkDoubleArray::New();
+        inputCurve->SetNumberOfComponents( curve->GetNumberOfComponents() );
+        int max   = curve->GetNumberOfTuples();
+        
+        if (start < 0)   start = 0;
+        if (end >= max)  end   = max-1;
+        if (start > end) start = end;
+        for (int i = start; i <= end; i ++)
+          {
+          double* xy = curve->GetTuple(i);
+          inputCurve->InsertNextTuple(xy);
+          }
+        curveNode->SetInputArray(name, inputCurve);
         }
-      curveNode->SetInputArray(name, inputCurve);
       }
     }
 
