@@ -54,6 +54,50 @@ proc SlicerSaveLargeImage { fileName resolutionFactor } {
 }
 
 
+proc SlicerSaveEachRenderCancel { {renderer ""} } {
+  if { $renderer == "" } {
+    set appGUI $::slicer3::ApplicationGUI
+    set viewerWidget [$appGUI GetViewerWidget]
+    set mainViewer [$viewerWidget GetMainViewer]
+    set window [ $mainViewer GetRenderWindow ]
+    set renderer [$mainViewer GetRenderer]
+  }
+  $renderer RemoveObserver $::SLICERSAVE($renderer,observerTag)
+}
+
+proc SlicerSaveEachRender { {fileNamePattern /tmp/slicer-%d.png} {resolutionFactor 1} } {
+
+  set appGUI $::slicer3::ApplicationGUI
+  set viewerWidget [$appGUI GetViewerWidget]
+  set mainViewer [$viewerWidget GetMainViewer]
+  set window [ $mainViewer GetRenderWindow ]
+  set renderer [$mainViewer GetRenderer]
+
+  if { [info exists ::SLICERSAVE($renderer,observerTag)] } {
+    SlicerSaveEachRenderCancel $renderer
+  }
+  set ::SLICERSAVE($renderer,observerTag) [$renderer AddObserver EndEvent "SlicerSaveEachRenderCallback $renderer"]
+
+  set ::SLICERSAVE($renderer,fileNamePattern) $fileNamePattern
+  set ::SLICERSAVE($renderer,resolutionFactor) $resolutionFactor
+  set ::SLICERSAVE($renderer,frameNumber) 0
+  set ::SLICERSAVE($renderer,saving) 0
+}
+
+proc SlicerSaveEachRenderCallback { renderer } {
+  if { $::SLICERSAVE($renderer,saving) } {
+    # don't do a screen grab triggered by our own render
+    puts "skipping"
+    return
+  }
+  set ::SLICERSAVE($renderer,saving) 1
+
+  set fileName [format $::SLICERSAVE($renderer,fileNamePattern) $::SLICERSAVE($renderer,frameNumber)]
+  incr ::SLICERSAVE($renderer,frameNumber)
+
+  SlicerSaveLargeImage $fileName $::SLICERSAVE($renderer,resolutionFactor)
+  set ::SLICERSAVE($renderer,saving) 0
+}
 
 
 
