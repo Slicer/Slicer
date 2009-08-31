@@ -123,6 +123,7 @@ if { [itcl::find class Loader] == "" } {
     variable _xcedeExtensions ".xcat"
     variable _fiducialExtensions ".fcsv"
     variable _colorTableExtensions ".txt .ctbl"
+    variable _transformExtensions ".tfm"
     variable _observerRecords ""
     variable _cleanupDirs ""
     variable browserResult ""
@@ -482,6 +483,9 @@ itcl::body Loader::add { paths } {
         } elseif { [lsearch $_colorTableExtensions $ext] != -1 } {
           $this addRow $path "ColorTable"
           $this status ""
+        } elseif { [lsearch $_transformExtensions $ext] != -1 } {
+          $this addRow $path "Transform"
+          $this status ""
         } else {
           $this status "Cannot read file $path\nFor DICOM use File->Add Volume..."
         }
@@ -580,17 +584,27 @@ itcl::body Loader::apply { } {
            set node [[$::slicer3::FiducialsGUI GetLogic] LoadFiducialList $path]
            if { $node == "" } {
               $this errorDialog "Could not open $path"
-            } else {
+           } else {
               $node SetName $name
-            }  
+           }  
         }
         "ColorTable" {
            set node [[$::slicer3::ColorGUI GetLogic] LoadColorFile $path]
            if { $node == "" } {
               $this errorDialog "Could not open $path"
-            } else {
+           } else {
               $node SetName $name
-            }  
+           }  
+        }
+        "Transform" {
+           set logic [vtkSlicerTransformLogic New]
+           set ret [catch "set node [$logic AddTransform $path $::slicer3::MRMLScene]" res]
+           $logic Delete
+           if { $node == "" } {
+              $this errorDialog "Could not open $path"
+           } else {
+              $node SetName $name
+           }  
         }
       }
     }
