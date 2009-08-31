@@ -202,7 +202,7 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
       {
       // File specified may not contain a grid image. Can we safely
       // error out quitely?
-      vtkErrorMacro("ITK exception caught reading grid transform image file: "
+      vtkDebugMacro("ITK exception caught reading grid transform image file: "
                     << fullName.c_str() << "\n" << exc);
 
       result = 0;
