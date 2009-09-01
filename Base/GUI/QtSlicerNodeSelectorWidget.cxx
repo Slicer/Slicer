@@ -494,26 +494,27 @@ void QtSlicerNodeSelectorWidget::Select(const QString &id)
     this->SelectedID = iter->second;
     emit NodeSelected(QString(iter->second.c_str()));
     }
-  else
+  else if (id.contains("Create New", Qt::CaseSensitive))
     {
-    if (id.contains("Create New", Qt::CaseSensitive))
+    QString tag = id.section(' ', 2, 2);
+    std::string className = "";
+    std::string name = "";
+    std::map<std::string, std::string>::iterator iter = this->ClassTag_to_Class.find(tag.toStdString());
+    if (iter != this->ClassTag_to_Class.end())
       {
-      QString tag = id.section(' ', 2, 2);
-      std::string className = "";
-      std::string name = "";
-      std::map<std::string, std::string>::iterator iter = this->ClassTag_to_Class.find(tag.toStdString());
-      if (iter != this->ClassTag_to_Class.end())
-        {
-        className = iter->second;
-        }
-      iter = this->ClassTag_to_ClassName.find(tag.toStdString());
-      if (iter != this->ClassTag_to_ClassName.end())
-        {
-        name = iter->second;
-        }
-
-      this->ProcessNewNodeCommand(className.c_str(), name.c_str());
+      className = iter->second;
       }
+    iter = this->ClassTag_to_ClassName.find(tag.toStdString());
+    if (iter != this->ClassTag_to_ClassName.end())
+      {
+      name = iter->second;
+      }
+
+    this->ProcessNewNodeCommand(className.c_str(), name.c_str());
+    }
+  else if (id.contains("None", Qt::CaseSensitive))
+    {
+    emit NodeSelected(QString(""));
     }
 }
 
