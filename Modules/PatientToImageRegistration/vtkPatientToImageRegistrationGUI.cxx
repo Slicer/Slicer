@@ -68,20 +68,6 @@ vtkPatientToImageRegistrationGUI::vtkPatientToImageRegistrationGUI ( )
 {
   this->Logic = NULL;
 
-  this->LocatorCheckButton = NULL;
-  this->TractographyCheckButton = NULL;
-  this->HandleCheckButton = NULL;
-  this->GuideCheckButton = NULL;
-
-  this->LocatorModeCheckButton = NULL;
-  this->UserModeCheckButton = NULL;
-  this->FreezeCheckButton = NULL;
-  this->ObliqueCheckButton = NULL;
-
-  this->RedSliceMenu = NULL;
-  this->YellowSliceMenu = NULL;
-  this->GreenSliceMenu = NULL;
-
   this->TransformNodeNameEntry = NULL;
   this->FiducialListNodeNameEntry = NULL;
 
@@ -111,65 +97,7 @@ vtkPatientToImageRegistrationGUI::~vtkPatientToImageRegistrationGUI ( )
 {
   this->RemoveGUIObservers();
 
-  if (this->LocatorCheckButton)
-    {
-    this->LocatorCheckButton->SetParent(NULL );
-    this->LocatorCheckButton->Delete ( );
-    }
-  if (this->TractographyCheckButton)
-    {
-    this->TractographyCheckButton->SetParent(NULL );
-    this->TractographyCheckButton->Delete ( );
-    }
-  if (this->HandleCheckButton)
-    {
-    this->HandleCheckButton->SetParent(NULL );
-    this->HandleCheckButton->Delete ( );
-    }
-  if (this->GuideCheckButton)
-    {
-    this->GuideCheckButton->SetParent(NULL );
-    this->GuideCheckButton->Delete ( );
-    }
-
-  if (this->LocatorModeCheckButton)
-    {
-    this->LocatorModeCheckButton->SetParent(NULL );
-    this->LocatorModeCheckButton->Delete ( );
-    }
-  if (this->UserModeCheckButton)
-    {
-    this->UserModeCheckButton->SetParent(NULL );
-    this->UserModeCheckButton->Delete ( );
-    }
-  if (this->FreezeCheckButton)
-    {
-    this->FreezeCheckButton->SetParent(NULL );
-    this->FreezeCheckButton->Delete ( );
-    }
-  if (this->ObliqueCheckButton)
-    {
-    this->ObliqueCheckButton->SetParent(NULL );
-    this->ObliqueCheckButton->Delete ( );
-    }
-
-
-  if (this->RedSliceMenu)
-    {
-    this->RedSliceMenu->SetParent(NULL );
-    this->RedSliceMenu->Delete ( );
-    }
-  if (this->YellowSliceMenu)
-    {
-    this->YellowSliceMenu->SetParent(NULL );
-    this->YellowSliceMenu->Delete ( );
-    }
-  if (this->GreenSliceMenu)
-    {
-    this->GreenSliceMenu->SetParent(NULL );
-    this->GreenSliceMenu->Delete ( );
-    }
-  if (this->TransformNodeNameEntry)
+ if (this->TransformNodeNameEntry)
     {
     this->TransformNodeNameEntry->SetParent(NULL);
     this->TransformNodeNameEntry->Delete();
@@ -307,26 +235,6 @@ void vtkPatientToImageRegistrationGUI::RemoveGUIObservers ( )
     {
     this->ResetPushButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
-  if (this->LocatorCheckButton)
-    {
-    this->LocatorCheckButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
-    }
-  if (this->LocatorModeCheckButton)
-    {
-    this->LocatorModeCheckButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
-    }
-  if (this->UserModeCheckButton)
-    {
-    this->UserModeCheckButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
-    }
-  if (this->FreezeCheckButton)
-    {
-    this->FreezeCheckButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
-    }
-  if (this->ObliqueCheckButton)
-    {
-    this->ObliqueCheckButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
-    }
 }
 
 
@@ -377,12 +285,6 @@ void vtkPatientToImageRegistrationGUI::AddGUIObservers ( )
   this->DeleteAllPointPairPushButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->RegisterPushButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ResetPushButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-
-  this->LocatorCheckButton->AddObserver ( vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->LocatorModeCheckButton->AddObserver ( vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->UserModeCheckButton->AddObserver ( vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->FreezeCheckButton->AddObserver ( vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ObliqueCheckButton->AddObserver ( vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -579,77 +481,6 @@ void vtkPatientToImageRegistrationGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       this->GetLogic()->SetUseRegistration(0);
       }
-    else if (this->LocatorCheckButton == vtkKWCheckButton::SafeDownCast(caller) 
-             && event == vtkKWCheckButton::SelectedStateChangedEvent )
-      {
-      int checked = this->LocatorCheckButton->GetSelectedState(); 
-      if (!this->CloseScene)
-        {
-        if (checked)
-          {
-          this->GetLogic()->SetVisibilityOfLocatorModel("IGTLocator", 1);
-          }
-        else
-          {
-          this->GetLogic()->SetVisibilityOfLocatorModel("IGTLocator", 0);
-          }
-        }
-      else
-        {
-        this->CloseScene = false;
-        }
-      }
-    else if (this->LocatorModeCheckButton == vtkKWCheckButton::SafeDownCast(caller) 
-             && event == vtkKWCheckButton::SelectedStateChangedEvent )
-      {
-      int checked = this->LocatorModeCheckButton->GetSelectedState(); 
-      std::string val("Locator");
-
-      if (checked)
-        {
-        this->UserModeCheckButton->SelectedStateOff();
-        }
-      else
-        {
-        this->UserModeCheckButton->SelectedStateOn();
-
-        val = "User";
-        }
-      this->RedSliceMenu->SetValue(val.c_str());
-      this->YellowSliceMenu->SetValue(val.c_str());
-      this->GreenSliceMenu->SetValue(val.c_str());
-      }
-    else if (this->UserModeCheckButton == vtkKWCheckButton::SafeDownCast(caller) 
-             && event == vtkKWCheckButton::SelectedStateChangedEvent )
-      {
-      int checked = this->UserModeCheckButton->GetSelectedState(); 
-      std::string val("User");
-
-      if (checked)
-        {
-        this->LocatorModeCheckButton->SelectedStateOff();
-        }
-      else
-        {
-        this->LocatorModeCheckButton->SelectedStateOn();
-        val = "Locator";
-        }
-      this->RedSliceMenu->SetValue(val.c_str());
-      this->YellowSliceMenu->SetValue(val.c_str());
-      this->GreenSliceMenu->SetValue(val.c_str());
-      }
-    else if (this->FreezeCheckButton == vtkKWCheckButton::SafeDownCast(caller) 
-             && event == vtkKWCheckButton::SelectedStateChangedEvent )
-      {
-      // int checked = this->FreezeCheckButton->GetSelectedState(); 
-      // cout << "FreezeCheckButton = " << checked << endl;
-      }
-    else if (this->ObliqueCheckButton == vtkKWCheckButton::SafeDownCast(caller) 
-             && event == vtkKWCheckButton::SelectedStateChangedEvent )
-      {
-      int checked = this->ObliqueCheckButton->GetSelectedState(); 
-      this->GetLogic()->SetEnableOblique(checked);
-      }
     }
 } 
 
@@ -669,14 +500,7 @@ void vtkPatientToImageRegistrationGUI::ProcessMRMLEvents ( vtkObject *caller,
 {
   if (event == vtkMRMLScene::SceneCloseEvent)
     {
-    if (this->LocatorCheckButton != NULL && this->LocatorCheckButton->GetSelectedState())
-      {
-      this->CloseScene = true;
-      this->LocatorCheckButton->SelectedStateOff();
-      }
     }
-
-
 }
 
 
@@ -702,45 +526,7 @@ void vtkPatientToImageRegistrationGUI::ProcessTimerEvents()
 {
   if (this->TimerFlag)
     {
-    // -----------------------------------------
-    // Check incomming new data
 
-    // this->GetLogic()->ImportFromCircularBuffers();
-
-    const char *nodeName = this->TransformNodeNameEntry->GetWidget()->GetValue();
-    this->GetLogic()->UpdateTransformNodeByName(nodeName);
-    int checked = this->FreezeCheckButton->GetSelectedState(); 
-    if (!checked)
-      {
-      int sn1 = 0;  // 0 = Locator; 1 = User
-      int sn2 = 0;
-      int sn3 = 0;
-      if (strcmp(this->RedSliceMenu->GetValue(), "Locator"))
-        {
-        sn1 = 1;
-        }
-      if (strcmp(this->YellowSliceMenu->GetValue(), "Locator"))
-        {
-        sn2 = 1;
-        }
-      if (strcmp(this->GreenSliceMenu->GetValue(), "Locator"))
-        {
-        sn3 = 1;
-        }
-
-      this->GetLogic()->UpdateDisplay(sn1, sn2, sn3);
-      }
-
-
-    // Tractography seeding
-    checked = this->TractographyCheckButton->GetSelectedState(); 
-    if (checked)
-    {
-    const char *nodeName2 = this->FiducialListNodeNameEntry->GetWidget()->GetValue();
-    double offset = this->TranslationScale->GetValue();
-    this->GetLogic()->UpdateFiducialSeeding(nodeName2, offset);
-    }
- 
     vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(), 
                                          this->TimerInterval,
                                          this, "ProcessTimerEvents");        
@@ -765,11 +551,8 @@ void vtkPatientToImageRegistrationGUI::BuildGUI ( )
   this->UIPanel->AddPage ( "PatientToImageRegistration", "PatientToImageRegistration", NULL );
 
   BuildGUIForHelpFrame();
- 
-  // BuildGUIForDeviceFrame ();
-  BuildGUIForRegistrationFrame();
-  BuildGUIForTrackingFrame();
-  // BuildGUIForHandPieceFrame ();
+  BuildGUIForLandmarksFrame();
+  BuildGUIForICPFrame();
 }
 
 
@@ -783,8 +566,8 @@ void vtkPatientToImageRegistrationGUI::BuildGUIForHelpFrame()
 
   // Define your help text here.
 
-  const char *help = "PatientToImageRegistration is a navigation system for neurosurgery. \n<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:NeuroNav-Documentation-3.4</a>";
-  const char *about = "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. The Volumes module was contributed by Haiying Liu and Noby Hata at SPL, BWH (Ron Kikinis).";
+  const char *help = "PatientToImageRegistration is a patient to image registration module for surgical navigation. \n<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:PatientToImageRegistration-Documentation-3.4</a>";
+  const char *about = "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. The PatientToImageRegistration module was contributed by Haiying Liu and Noby Hata at SPL, BWH (Ron Kikinis).";
 
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "PatientToImageRegistration" );
   this->BuildHelpAndAboutFrame (page, help, about);
@@ -793,7 +576,7 @@ void vtkPatientToImageRegistrationGUI::BuildGUIForHelpFrame()
 
 
 
-void vtkPatientToImageRegistrationGUI::BuildGUIForRegistrationFrame ()
+void vtkPatientToImageRegistrationGUI::BuildGUIForLandmarksFrame ()
 {
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "PatientToImageRegistration" );
@@ -803,8 +586,8 @@ void vtkPatientToImageRegistrationGUI::BuildGUIForRegistrationFrame ()
   // ----------------------------------------------------------------
   vtkSlicerModuleCollapsibleFrame *regFrame = vtkSlicerModuleCollapsibleFrame::New ( );
   regFrame->SetParent ( page );
-  regFrame->Create ( );
-  regFrame->SetLabelText ("Registration");
+  regFrame->Create();
+  regFrame->SetLabelText ("Landmarks");
   regFrame->CollapseFrame ( );
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                 regFrame->GetWidgetName(), page->GetWidgetName());
@@ -1003,7 +786,7 @@ void vtkPatientToImageRegistrationGUI::BuildGUIForRegistrationFrame ()
 }
 
 
-void vtkPatientToImageRegistrationGUI::BuildGUIForTrackingFrame ()
+void vtkPatientToImageRegistrationGUI::BuildGUIForICPFrame ()
 {
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "PatientToImageRegistration" );
@@ -1012,217 +795,15 @@ void vtkPatientToImageRegistrationGUI::BuildGUIForTrackingFrame ()
   // ----------------------------------------------------------------
   // Navigation FRAME            
   // ----------------------------------------------------------------
-  vtkSlicerModuleCollapsibleFrame *trackingFrame = vtkSlicerModuleCollapsibleFrame::New ( );    
-  trackingFrame->SetParent ( page );
-  trackingFrame->Create ( );
-  trackingFrame->SetLabelText ("Navigation");
-  //trackingFrame->ExpandFrame ( );
-  trackingFrame->CollapseFrame ( );
+  vtkSlicerModuleCollapsibleFrame *icpFrame = vtkSlicerModuleCollapsibleFrame::New ( );    
+  icpFrame->SetParent ( page );
+  icpFrame->Create ( );
+  icpFrame->SetLabelText ("Iterative Closest Point (ICP)");
+  icpFrame->CollapseFrame ( );
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                trackingFrame->GetWidgetName(), page->GetWidgetName());
+                icpFrame->GetWidgetName(), page->GetWidgetName());
 
-
-
-  // Display frame: Options to locator display 
-  // -----------------------------------------
-  vtkKWFrameWithLabel *displayFrame = vtkKWFrameWithLabel::New ( );
-  displayFrame->SetParent ( trackingFrame->GetFrame() );
-  displayFrame->Create ( );
-  displayFrame->SetLabelText ("Locator Display");
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 displayFrame->GetWidgetName() );
-
-
-  this->TransformNodeNameEntry = vtkKWEntryWithLabel::New();
-  this->TransformNodeNameEntry->SetParent(displayFrame->GetFrame());
-  this->TransformNodeNameEntry->Create();
-  this->TransformNodeNameEntry->SetWidth(40);
-  this->TransformNodeNameEntry->SetLabelWidth(30);
-  this->TransformNodeNameEntry->SetLabelText("Input (Transform) Node Name:");
-  this->TransformNodeNameEntry->GetWidget()->SetValue ( "Tracker" );
-  this->Script(
-               "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
-               this->TransformNodeNameEntry->GetWidgetName());
-
-
-  this->LocatorCheckButton = vtkKWCheckButton::New();
-  this->LocatorCheckButton->SetParent(displayFrame->GetFrame());
-  this->LocatorCheckButton->Create();
-  this->LocatorCheckButton->SelectedStateOff();
-  this->LocatorCheckButton->SetText("Show Locator");
-
-  /*
-     this->HandleCheckButton = vtkKWCheckButton::New();
-     this->HandleCheckButton->SetParent(displayFrame->GetFrame());
-     this->HandleCheckButton->Create();
-     this->HandleCheckButton->SelectedStateOff();
-     this->HandleCheckButton->SetText("Show Handle");
-
-     this->GuideCheckButton = vtkKWCheckButton::New();
-     this->GuideCheckButton->SetParent(displayFrame->GetFrame());
-     this->GuideCheckButton->Create();
-     this->GuideCheckButton->SelectedStateOff();
-     this->GuideCheckButton->SetText("Show Guide");
-
-
-     this->Script("pack %s %s %s -side left -anchor w -padx 2 -pady 2", 
-     this->LocatorCheckButton->GetWidgetName(),
-     this->HandleCheckButton->GetWidgetName(),
-     this->GuideCheckButton->GetWidgetName());
-     */
-
-
-  this->Script("pack %s -side left -anchor w -padx 2 -pady 2", 
-               this->LocatorCheckButton->GetWidgetName());
-
-
-  // Tractography frame: Options to tractography display 
-  // -----------------------------------------
-  vtkKWFrameWithLabel *tractographyFrame = vtkKWFrameWithLabel::New ( );
-  tractographyFrame->SetParent ( trackingFrame->GetFrame() );
-  tractographyFrame->Create ( );
-  tractographyFrame->SetLabelText ("Tractography Seeding");
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 tractographyFrame->GetWidgetName() );
-
-
-  this->FiducialListNodeNameEntry = vtkKWEntryWithLabel::New();
-  this->FiducialListNodeNameEntry->SetParent(tractographyFrame->GetFrame());
-  this->FiducialListNodeNameEntry->Create();
-  this->FiducialListNodeNameEntry->SetWidth(40);
-  this->FiducialListNodeNameEntry->SetLabelWidth(30);
-  this->FiducialListNodeNameEntry->SetLabelText("Fiducial List Node Name:");
-  this->FiducialListNodeNameEntry->GetWidget()->SetValue ( "L" );
-  this->Script(
-               "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
-               this->FiducialListNodeNameEntry->GetWidgetName());
-
-  this->TranslationScale =  vtkKWScaleWithEntry::New() ;
-  this->TranslationScale->SetParent( tractographyFrame->GetFrame() );
-  this->TranslationScale->Create();
-  this->TranslationScale->SetLabelText("Fiducial Translation: ");
-  this->TranslationScale->SetWidth ( 40 );
-  this->TranslationScale->SetLabelWidth(30);
-  this->TranslationScale->SetRange(-80, 80);
-  this->TranslationScale->SetStartCommand(this, "TransformChangingCallback");
-  this->TranslationScale->SetCommand(this, "TransformChangingCallback");
-  this->TranslationScale->SetEndCommand(this, "TransformChangedCallback");
-  this->TranslationScale->SetEntryCommand(this, "TransformChangedCallback");
-  this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 3", 
-          this->TranslationScale->GetWidgetName());
-
-  this->TractographyCheckButton = vtkKWCheckButton::New();
-  this->TractographyCheckButton->SetParent(tractographyFrame->GetFrame());
-  this->TractographyCheckButton->Create();
-  this->TractographyCheckButton->SelectedStateOff();
-  this->TractographyCheckButton->SetText("Fiducial Seeding");
-
-  this->Script("pack %s -side left -anchor w -padx 2 -pady 2", 
-               this->TractographyCheckButton->GetWidgetName());
-
-
-  // Driver frame: Locator can drive slices 
-  // -----------------------------------------
-  vtkKWFrameWithLabel *driverFrame = vtkKWFrameWithLabel::New ( );
-  driverFrame->SetParent ( trackingFrame->GetFrame() );
-  driverFrame->Create ( );
-  driverFrame->SetLabelText ("Driver");
-  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 driverFrame->GetWidgetName() );
-
-  // Mode frame
-  vtkKWFrame *modeFrame = vtkKWFrame::New();
-  modeFrame->SetParent ( driverFrame->GetFrame() );
-  modeFrame->Create ( );
-  app->Script ("pack %s -side top -anchor nw -fill x -pady 1 -in %s",
-               modeFrame->GetWidgetName(),
-               driverFrame->GetFrame()->GetWidgetName());
-
-
-  this->LocatorModeCheckButton = vtkKWCheckButton::New();
-  this->LocatorModeCheckButton->SetParent(modeFrame);
-  this->LocatorModeCheckButton->Create();
-  this->LocatorModeCheckButton->SelectedStateOff();
-  this->LocatorModeCheckButton->SetText("Locator");
-
-  this->UserModeCheckButton = vtkKWCheckButton::New();
-  this->UserModeCheckButton->SetParent(modeFrame);
-  this->UserModeCheckButton->Create();
-  this->UserModeCheckButton->SelectedStateOn();
-  this->UserModeCheckButton->SetText("User");
-
-  this->FreezeCheckButton = vtkKWCheckButton::New();
-  this->FreezeCheckButton->SetParent(modeFrame);
-  this->FreezeCheckButton->Create();
-  this->FreezeCheckButton->SelectedStateOff();
-  this->FreezeCheckButton->SetText("Freeze");
-
-  this->ObliqueCheckButton = vtkKWCheckButton::New();
-  this->ObliqueCheckButton->SetParent(modeFrame);
-  this->ObliqueCheckButton->Create();
-  this->ObliqueCheckButton->SelectedStateOff();
-  this->ObliqueCheckButton->SetText("Oblique");
-
-  this->Script("pack %s %s %s %s -side left -anchor w -padx 2 -pady 2", 
-               this->LocatorModeCheckButton->GetWidgetName(),
-               this->UserModeCheckButton->GetWidgetName(),
-               this->FreezeCheckButton->GetWidgetName(),
-               this->ObliqueCheckButton->GetWidgetName());
-
-
-  // slice frame
-  vtkKWFrame *sliceFrame = vtkKWFrame::New();
-  sliceFrame->SetParent ( driverFrame->GetFrame() );
-  sliceFrame->Create ( );
-  app->Script ("pack %s -side top -anchor nw -fill x -pady 1 -in %s",
-               sliceFrame->GetWidgetName(),
-               driverFrame->GetFrame()->GetWidgetName());
-
-
-  // Contents in slice frame 
-  vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
-
-  this->RedSliceMenu = vtkKWMenuButton::New();
-  this->RedSliceMenu->SetParent(sliceFrame);
-  this->RedSliceMenu->Create();
-  this->RedSliceMenu->SetWidth(10);
-  this->RedSliceMenu->SetBackgroundColor(color->SliceGUIRed);
-  this->RedSliceMenu->SetActiveBackgroundColor(color->SliceGUIRed);
-  this->RedSliceMenu->GetMenu()->AddRadioButton ("User");
-  this->RedSliceMenu->GetMenu()->AddRadioButton ("Locator");
-  this->RedSliceMenu->SetValue ("User");
-
-  this->YellowSliceMenu = vtkKWMenuButton::New();
-  this->YellowSliceMenu->SetParent(sliceFrame);
-  this->YellowSliceMenu->Create();
-  this->YellowSliceMenu->SetWidth(10);
-  this->YellowSliceMenu->SetBackgroundColor(color->SliceGUIYellow);
-  this->YellowSliceMenu->SetActiveBackgroundColor(color->SliceGUIYellow);
-  this->YellowSliceMenu->GetMenu()->AddRadioButton ("User");
-  this->YellowSliceMenu->GetMenu()->AddRadioButton ("Locator");
-  this->YellowSliceMenu->SetValue ("User");
-
-  this->GreenSliceMenu = vtkKWMenuButton::New();
-  this->GreenSliceMenu->SetParent(sliceFrame);
-  this->GreenSliceMenu->Create();
-  this->GreenSliceMenu->SetWidth(10);
-  this->GreenSliceMenu->SetBackgroundColor(color->SliceGUIGreen);
-  this->GreenSliceMenu->SetActiveBackgroundColor(color->SliceGUIGreen);
-  this->GreenSliceMenu->GetMenu()->AddRadioButton ("User");
-  this->GreenSliceMenu->GetMenu()->AddRadioButton ("Locator");
-  this->GreenSliceMenu->SetValue ("User");
-
-  this->Script("pack %s %s %s -side left -anchor w -padx 2 -pady 2", 
-               this->RedSliceMenu->GetWidgetName(),
-               this->YellowSliceMenu->GetWidgetName(),
-               this->GreenSliceMenu->GetWidgetName());
-
-  trackingFrame->Delete();
-  displayFrame->Delete();
-  tractographyFrame->Delete();
-  driverFrame->Delete();
-  modeFrame->Delete();
-  sliceFrame->Delete();
+  icpFrame->Delete();
 }
 
 

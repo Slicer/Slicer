@@ -102,24 +102,8 @@ protected:
   vtkPatientToImageRegistrationGUI ( );
   virtual ~vtkPatientToImageRegistrationGUI ( );
 
-  vtkKWCheckButton *LocatorCheckButton;
-  vtkKWCheckButton *TractographyCheckButton;
-  vtkKWCheckButton *HandleCheckButton;
-  vtkKWCheckButton *GuideCheckButton;
-
-  vtkKWCheckButton *LocatorModeCheckButton;
-  vtkKWCheckButton *UserModeCheckButton;
-  vtkKWCheckButton *FreezeCheckButton;
-  vtkKWCheckButton *ObliqueCheckButton;
-
-  vtkKWMenuButton *RedSliceMenu;
-  vtkKWMenuButton *YellowSliceMenu;
-  vtkKWMenuButton *GreenSliceMenu;
-
   vtkKWEntryWithLabel *TransformNodeNameEntry;
   vtkKWEntryWithLabel *FiducialListNodeNameEntry;
-
- 
 
   vtkKWEntryWithLabel *PatCoordinatesEntry;
   vtkKWEntryWithLabel *SlicerCoordinatesEntry;
@@ -145,9 +129,9 @@ private:
   vtkPatientToImageRegistrationGUI ( const vtkPatientToImageRegistrationGUI& ); // Not implemented.
   void operator = ( const vtkPatientToImageRegistrationGUI& ); //Not implemented.
 
-  void BuildGUIForTrackingFrame ();
-  void BuildGUIForRegistrationFrame ();
-  void BuildGUIForHelpFrame ();
+  void BuildGUIForICPFrame();
+  void BuildGUIForLandmarksFrame();
+  void BuildGUIForHelpFrame();
 
   void TrackerLoop();
 
