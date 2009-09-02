@@ -69,6 +69,7 @@ void QtGADModule::BuildGUI()
   box->setLayout(vbox);
 
   this->VolumeSelector->connect(button, SIGNAL(clicked()), this, SLOT(apply ()));
+  this->GADNodeSelector->connect(this->GADNodeSelector, SIGNAL(NodeSelected(const QString&)), this, SLOT(parameterSelected ( const QString &)));
   this->VolumeSelector->connect(this->VolumeSelector, SIGNAL(NodeSelected(const QString&)), this, SLOT(inputSelected ( const QString &)));
   this->OutVolumeSelector->connect(this->OutVolumeSelector, SIGNAL(NodeSelected(const QString&)), this, SLOT(outputSelected ( const QString &)));
 
