@@ -805,3 +805,198 @@ void vtkFourDAnalysisLogic::GenerateParameterMap(vtkCurveAnalysisPythonInterface
 }
 
 
+//---------------------------------------------------------------------------
+void vtkFourDAnalysisLogic::GenerateParameterMapInMask(vtkCurveAnalysisPythonInterface* script,
+                                                       vtkMRMLCurveAnalysisNode* curveNode,
+                                                       vtkMRMLTimeSeriesBundleNode* bundleNode, 
+                                                       const char* outputNodeNamePrefix,
+                                                       int start, int end,
+                                                       vtkMRMLScalarVolumeNode* maskNode, int label)
+{
+  // check pointers
+  if (!script || !bundleNode || !curveNode)
+    {
+    return;
+    }
+
+  int nFrames = bundleNode->GetNumberOfFrames();  
+  vtkStringArray* nameArray = curveNode->GetOutputValueNameArray();
+
+  StatusMessageType statusMessage;
+  statusMessage.show = 1;
+  statusMessage.progress = 0.0;
+  statusMessage.message = "Preparing maps....";
+  this->InvokeEvent ( vtkFourDAnalysisLogic::ProgressDialogEvent, &statusMessage);        
+
+  // Create map volumes for each parameter
+  int numKeys = nameArray->GetNumberOfTuples();
+  typedef std::map<std::string, vtkImageData*>            ParameterImageMapType;
+  typedef std::map<std::string, vtkMRMLScalarVolumeNode*> ParameterVolumeNodeMapType;
+
+  ParameterImageMapType      ParameterImages;
+  ParameterVolumeNodeMapType ParameterImageNodes;
+
+  for (int i = 0; i < numKeys; i ++)
+    {
+    char  nodeName[256];
+    const char* paramName = nameArray->GetValue(i);
+    sprintf(nodeName, "%s_%s", outputNodeNamePrefix, paramName);
+    std::cerr << "Creating " << nodeName << std::endl;
+    vtkMRMLScalarVolumeNode* node  = AddMapVolumeNode(bundleNode, nodeName);
+    ParameterImages[paramName]     = node->GetImageData();
+    ParameterImageNodes[paramName] = node;
+    }
+  
+  // Make an array of vtkImageData
+  int nSrcPoints = end - start + 1;
+  std::vector<vtkImageData*> imageVector;
+  std::vector<double>        imageTimeStampVector;
+  imageVector.resize(nSrcPoints);
+  imageTimeStampVector.resize(nSrcPoints);
+
+  for (int i = start; i <= end; i ++)
+    {
+    vtkMRMLScalarVolumeNode* node = vtkMRMLScalarVolumeNode::SafeDownCast(bundleNode->GetFrameNode(i));
+    imageVector[i-start] = node->GetImageData();
+
+    vtkMRMLTimeSeriesBundleNode::TimeStamp ts;
+    bundleNode->GetTimeStamp(i, &ts);
+    imageTimeStampVector[i-start] = (double)ts.second + (double)ts.nanosecond / 1000000000.0;
+
+    std::cerr << "Listing image data: " << node->GetName() << std::endl;
+    }
+  
+  int* dim = imageVector[0]->GetDimensions();
+  int x = dim[0]; int y = dim[1]; int z = dim[2];
+
+  // Check if the dimension of the frames in time series data is same as the mask
+  int maskDim[3];
+  vtkImageData*  mask = maskNode->GetImageData();
+  mask->GetDimensions(maskDim);
+  int mx = maskDim[0];
+  int my = maskDim[1];
+  int mz = maskDim[2];
+
+  if (x != mx || y != my || z!= mz)
+    {
+    return;
+    }
+
+  vtkDoubleArray* srcCurve = vtkDoubleArray::New();
+  vtkDoubleArray* fittedCurve = vtkDoubleArray::New();
+  srcCurve->SetNumberOfComponents(2);
+  srcCurve->SetNumberOfTuples(nSrcPoints);
+
+  fittedCurve->SetNumberOfComponents(2);
+  fittedCurve->SetNumberOfTuples(0);        
+
+  // set curve analysis node to the script interface
+  script->SetCurveAnalysisNode(curveNode);
+  
+  this->InvokeEvent ( vtkFourDAnalysisLogic::ProgressDialogEvent, &statusMessage);
+
+  //----------------------------------------
+  // Generate index list
+  std::vector<CoordType> indexList;
+  indexList.clear();
+  
+  for (int i = 0; i < x; i ++)
+    {
+    for (int j = 0; j < y; j ++)
+      {
+      for (int k = 0; k < z; k ++)
+        {
+        int l = (int) mask->GetScalarComponentAsDouble(i, j, k, 0);
+        if (l == label)
+          {
+          CoordType index;
+          index.x = i;
+          index.y = j;
+          index.z = k;
+          indexList.push_back(index);
+          }
+        }
+      }
+    }
+
+  double numVoxel = (double) indexList.size();
+  double counter  = 0;
+  char   progressMsg[128];
+
+  std::vector<CoordType>::iterator citer;
+
+  for (citer = indexList.begin(); citer != indexList.end(); citer ++)
+    {
+    // Update progress message.
+    int i = (*citer).x;
+    int j = (*citer).y;
+    int k = (*citer).z;
+    
+    counter += 1.0;
+    statusMessage.progress = counter / numVoxel;
+    sprintf(progressMsg, "Fitting curve at (i=%d, j=%d, k=%d)", i, j, k);
+    statusMessage.message = progressMsg;
+    this->InvokeEvent ( vtkFourDAnalysisLogic::ProgressDialogEvent, &statusMessage);        
+    
+    // Copy intensity data
+    for (int t = 0; t < nSrcPoints; t ++)
+      {
+      double xy[2];
+      xy[0] = imageTimeStampVector[t];//(double) t + start;
+      xy[1] = imageVector[t]->GetScalarComponentAsDouble(i, j, k, 0);
+      srcCurve->SetTuple(t, xy);
+      fittedCurve->InsertNextTuple(xy);
+      }
+    
+    curveNode->SetTargetCurve(srcCurve);
+    curveNode->SetFittedCurve(fittedCurve);
+    
+    script->Run();
+    
+    // Put results
+    ParameterImageMapType::iterator iter;
+    for (iter = ParameterImages.begin(); iter != ParameterImages.end(); iter ++)
+      {
+      float param = (float)curveNode->GetOutputValue(iter->first.c_str());
+      //hmmm... std::isnormal is there only if C99 is enabled with a
+      //combination of C99 macro dynamic.
+      // isnormal = neither { zero, subnormal, infinite, nor NaN }
+      // isnormal(x) =  _finite(x) && x != 0  && !issubnormal(x)
+      // don't know what subnormal is or how to test for it...
+      //          if (!std::isnormal(param))
+      if ( !finite(param) )
+        {
+        param = 0.0;
+        }
+      iter->second->SetScalarComponentFromFloat(i, j, k, 0, param);
+      }
+    }
+
+  statusMessage.show = 0;
+  statusMessage.progress = 0.0;
+  statusMessage.message = "";
+  this->InvokeEvent ( vtkFourDAnalysisLogic::ProgressDialogEvent, &statusMessage);
+
+  // Put results
+  ParameterVolumeNodeMapType::iterator iter;
+  for (iter = ParameterImageNodes.begin(); iter != ParameterImageNodes.end(); iter ++)
+    {
+    double range[2];
+    vtkImageData* imageData = iter->second->GetImageData();
+    vtkMRMLScalarVolumeDisplayNode* displayNode 
+      = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(iter->second->GetDisplayNode());
+    imageData->Update();
+    imageData->GetScalarRange(range);
+    std::cerr << "range = (" << range[0] << ", " << range[1] << ")" << std::endl;
+    displayNode->SetAutoWindowLevel(0);
+    displayNode->SetAutoThreshold(0);
+    displayNode->SetLowerThreshold(range[0]);
+    displayNode->SetUpperThreshold(range[1]);
+    displayNode->SetWindow(range[1] - range[0]);
+    displayNode->SetLevel(0.5 * (range[1] + range[0]));
+    }
+  
+  std::cerr << "END " << std::endl;
+
+}
+  

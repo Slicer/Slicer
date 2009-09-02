@@ -59,6 +59,7 @@
 #include "vtkKWLoadSaveButtonWithLabel.h"
 #include "vtkKWProgressGauge.h"
 #include "vtkKWPopupFrame.h"
+#include "vtkKWRadioButtonSetWithLabel.h"
 
 #ifdef Slicer3_USE_PYTHON
 #include <Python.h>
@@ -137,8 +138,11 @@ vtkFourDAnalysisGUI::vtkFourDAnalysisGUI ( )
 
   // -----------------------------------------
   // Parameter Map
+  this->ParameterMapRegionButtonSet   = NULL;
+  this->MapRegionMaskSelectorWidget   = NULL;
+  this->MapRegionMaskLabelEntry       = NULL;
   this->MapOutputVolumePrefixEntry    = NULL;
-  this->RunScriptButton               = NULL; // name should be changed
+  this->GenerateMapButton             = NULL; // name should be changed
   this->MapIMinSpinBox                = NULL;
   this->MapIMaxSpinBox                = NULL;
   this->MapJMinSpinBox                = NULL;
@@ -311,15 +315,30 @@ vtkFourDAnalysisGUI::~vtkFourDAnalysisGUI ( )
 
   // -----------------------------------------
   // Parameter Map
+  if (this->ParameterMapRegionButtonSet)
+    {
+    this->ParameterMapRegionButtonSet->SetParent(NULL);
+    this->ParameterMapRegionButtonSet->Delete();
+    }
+  if (this->MapRegionMaskSelectorWidget)
+    {
+    this->MapRegionMaskSelectorWidget->SetParent(NULL);
+    this->MapRegionMaskSelectorWidget->Delete();
+    }
+  if (this->MapRegionMaskLabelEntry)
+    {
+    this->MapRegionMaskLabelEntry->SetParent(NULL);
+    this->MapRegionMaskLabelEntry->Delete();
+    }
   if (this->MapOutputVolumePrefixEntry)
     {
     this->MapOutputVolumePrefixEntry->SetParent(NULL);
     this->MapOutputVolumePrefixEntry->Delete();
     }
-  if (this->RunScriptButton)
+  if (this->GenerateMapButton)
     {
-    this->RunScriptButton->SetParent(NULL);
-    this->RunScriptButton->Delete();
+    this->GenerateMapButton->SetParent(NULL);
+    this->GenerateMapButton->Delete();
     }
   if (this->MapIMinSpinBox)
     {
@@ -551,14 +570,21 @@ void vtkFourDAnalysisGUI::RemoveGUIObservers ( )
 
   // -----------------------------------------
   // Parameter Map
-  if (this->RunScriptButton)
+  if (this->GenerateMapButton)
     {
-    this->RunScriptButton
+    this->GenerateMapButton
+      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    }
+  if (this->ParameterMapRegionButtonSet)
+    {
+    this->ParameterMapRegionButtonSet->GetWidget()->GetWidget(0)
+      ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+    this->ParameterMapRegionButtonSet->GetWidget()->GetWidget(1)
       ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
   if (this->MapOutputVolumePrefixEntry)
     {
-    this->MapOutputVolumePrefixEntry
+    this->MapOutputVolumePrefixEntry->GetWidget()
       ->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
   if (this->MapIMinSpinBox)
@@ -733,14 +759,21 @@ void vtkFourDAnalysisGUI::AddGUIObservers ( )
 
   // -----------------------------------------
   // Parameter Map
+  if (this->ParameterMapRegionButtonSet)
+    {
+    this->ParameterMapRegionButtonSet->GetWidget()->GetWidget(0)
+      ->AddObserver(vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    this->ParameterMapRegionButtonSet->GetWidget()->GetWidget(1)
+      ->AddObserver(vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+    }
   if (this->MapOutputVolumePrefixEntry)
     {
-    this->MapOutputVolumePrefixEntry
+    this->MapOutputVolumePrefixEntry->GetWidget()
       ->AddObserver(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     }
-  if (this->RunScriptButton)
+  if (this->GenerateMapButton)
     {
-    this->RunScriptButton
+    this->GenerateMapButton
       ->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
     }
 
@@ -1080,50 +1113,125 @@ void vtkFourDAnalysisGUI::ProcessGUIEvents(vtkObject *caller,
       }
     fbrowse->Delete();
     }
+  else if (this->ParameterMapRegionButtonSet->GetWidget()->GetWidget(0) == vtkKWRadioButton::SafeDownCast(caller) &&
+           event == vtkKWRadioButton::SelectedStateChangedEvent &&
+           this->ParameterMapRegionButtonSet->GetWidget()->GetWidget(0)->GetSelectedState() == 1)
+    {
+    // "Region by label" is selected.
+    
+   // Turn on the widgets in "Region by label"
+    this->MapRegionMaskSelectorWidget->SetState(1);
+    this->MapRegionMaskLabelEntry->SetState(1);
 
-  else if (this->RunScriptButton == vtkKWPushButton::SafeDownCast(caller)
+    // Turn off the widgets in "Region by indices"
+    this->MapIMinSpinBox->SetState(0);
+    this->MapIMaxSpinBox->SetState(0);
+    this->MapJMinSpinBox->SetState(0);
+    this->MapJMaxSpinBox->SetState(0);
+    this->MapKMinSpinBox->SetState(0);
+    this->MapKMaxSpinBox->SetState(0);
+    }
+  else if (this->ParameterMapRegionButtonSet->GetWidget()->GetWidget(1) == vtkKWRadioButton::SafeDownCast(caller) &&
+           event == vtkKWRadioButton::SelectedStateChangedEvent &&
+           this->ParameterMapRegionButtonSet->GetWidget()->GetWidget(1)->GetSelectedState() == 1)
+    {
+    // "Region by indecies" is selected.
+    
+    // Turn off the widgets in "Region by label"
+    this->MapRegionMaskSelectorWidget->SetState(0);
+    this->MapRegionMaskLabelEntry->SetState(0);
+
+    // Turn on the widgets in "Region by indices"
+    this->MapIMinSpinBox->SetState(1);
+    this->MapIMaxSpinBox->SetState(1);
+    this->MapJMinSpinBox->SetState(1);
+    this->MapJMaxSpinBox->SetState(1);
+    this->MapKMinSpinBox->SetState(1);
+    this->MapKMaxSpinBox->SetState(1);
+    }
+  else if (this->GenerateMapButton == vtkKWPushButton::SafeDownCast(caller)
            && event == vtkKWPushButton::InvokedEvent)
     {
-    // Add a new vtkMRMLCurveAnalysisNode to the MRML scene
-    vtkMRMLCurveAnalysisNode* curveNode = vtkMRMLCurveAnalysisNode::New();
-    this->GetMRMLScene()->AddNode(curveNode);
-
-    this->CurveAnalysisScript->SetCurveAnalysisNode(curveNode);
-    this->CurveAnalysisScript->GetInfo();
-
-    int start = (int)this->CurveFittingStartIndexSpinBox->GetValue();
-    int end   = (int)this->CurveFittingEndIndexSpinBox->GetValue();
-    
-    GetInitialParametersAndInputCurves(curveNode, start, end);
-    
-    const char* prefix   = this->MapOutputVolumePrefixEntry->GetValue();
-    
-    int imin = (int)this->MapIMinSpinBox->GetValue();
-    int imax = (int)this->MapIMaxSpinBox->GetValue();
-    int jmin = (int)this->MapJMinSpinBox->GetValue();
-    int jmax = (int)this->MapJMaxSpinBox->GetValue();
-    int kmin = (int)this->MapKMinSpinBox->GetValue();
-    int kmax = (int)this->MapKMaxSpinBox->GetValue();
-    
-    vtkMRMLTimeSeriesBundleNode *bundleNode = 
-      vtkMRMLTimeSeriesBundleNode::SafeDownCast(this->Active4DBundleSelectorWidget->GetSelected());
-    if (prefix && bundleNode && this->CurveAnalysisScript)
+    if (this->ParameterMapRegionButtonSet->GetWidget()->GetWidget(0)->GetSelectedState() == 1)
       {
-      int start = (int)this->CurveFittingStartIndexSpinBox->GetValue();
-      int end   = (int)this->CurveFittingEndIndexSpinBox->GetValue();
-      this->GetLogic()->AddObserver(vtkFourDAnalysisLogic::ProgressDialogEvent,  this->LogicCallbackCommand);
+      // The region is specified by mask
+      vtkMRMLScalarVolumeNode *volumeNode = 
+        vtkMRMLScalarVolumeNode::SafeDownCast(this->MapRegionMaskSelectorWidget->GetSelected());
+      int label = this->MapRegionMaskLabelEntry->GetWidget()->GetValueAsInt();
+      if (!volumeNode->GetLabelMap())
+        {
+        // TODO: display warning that the mask is not label map
+        }
+      else
+        {
+        vtkMRMLCurveAnalysisNode* curveNode = vtkMRMLCurveAnalysisNode::New();
+        this->GetMRMLScene()->AddNode(curveNode);
+        this->CurveAnalysisScript->SetCurveAnalysisNode(curveNode);
+        this->CurveAnalysisScript->GetInfo();
 
-      this->GetLogic()->GenerateParameterMap(this->CurveAnalysisScript,
-                                              curveNode,
-                                              bundleNode,
-                                              prefix,
-                                              start, end,
-                                              imin, imax, jmin, jmax, kmin, kmax);
-      this->GetLogic()->RemoveObservers(vtkFourDAnalysisLogic::ProgressDialogEvent,  this->LogicCallbackCommand);
+        const char* prefix   = this->MapOutputVolumePrefixEntry->GetWidget()->GetValue();
+        int start = (int)this->CurveFittingStartIndexSpinBox->GetValue();
+        int end   = (int)this->CurveFittingEndIndexSpinBox->GetValue();
+
+        GetInitialParametersAndInputCurves(curveNode, start, end);
+        vtkMRMLTimeSeriesBundleNode *bundleNode = 
+          vtkMRMLTimeSeriesBundleNode::SafeDownCast(this->Active4DBundleSelectorWidget->GetSelected());
+
+        if (prefix && bundleNode && this->CurveAnalysisScript)
+          {
+          this->GetLogic()->AddObserver(vtkFourDAnalysisLogic::ProgressDialogEvent,  this->LogicCallbackCommand);
+          this->GetLogic()->GenerateParameterMapInMask(this->CurveAnalysisScript,
+                                                       curveNode, bundleNode, prefix,
+                                                       start, end, volumeNode, label);
+          this->GetLogic()->RemoveObservers(vtkFourDAnalysisLogic::ProgressDialogEvent,  this->LogicCallbackCommand);
+          }
+        else
+          {
+          // TODO printoug error message
+          }
+        }
       }
     else
       {
+      // The region is specified by indices
+      // Add a new vtkMRMLCurveAnalysisNode to the MRML scene
+      vtkMRMLCurveAnalysisNode* curveNode = vtkMRMLCurveAnalysisNode::New();
+      this->GetMRMLScene()->AddNode(curveNode);
+      this->CurveAnalysisScript->SetCurveAnalysisNode(curveNode);
+      this->CurveAnalysisScript->GetInfo();
       
+      int start = (int)this->CurveFittingStartIndexSpinBox->GetValue();
+      int end   = (int)this->CurveFittingEndIndexSpinBox->GetValue();
+      
+      GetInitialParametersAndInputCurves(curveNode, start, end);
+      
+      const char* prefix   = this->MapOutputVolumePrefixEntry->GetWidget()->GetValue();
+      
+      int imin = (int)this->MapIMinSpinBox->GetValue();
+      int imax = (int)this->MapIMaxSpinBox->GetValue();
+      int jmin = (int)this->MapJMinSpinBox->GetValue();
+      int jmax = (int)this->MapJMaxSpinBox->GetValue();
+      int kmin = (int)this->MapKMinSpinBox->GetValue();
+      int kmax = (int)this->MapKMaxSpinBox->GetValue();
+      
+      vtkMRMLTimeSeriesBundleNode *bundleNode = 
+        vtkMRMLTimeSeriesBundleNode::SafeDownCast(this->Active4DBundleSelectorWidget->GetSelected());
+      if (prefix && bundleNode && this->CurveAnalysisScript)
+        {
+        this->GetLogic()->AddObserver(vtkFourDAnalysisLogic::ProgressDialogEvent,  this->LogicCallbackCommand);
+        
+        this->GetLogic()->GenerateParameterMap(this->CurveAnalysisScript,
+                                               curveNode,
+                                               bundleNode,
+                                               prefix,
+                                               start, end,
+                                               imin, imax, jmin, jmax, kmin, kmax);
+        this->GetLogic()->RemoveObservers(vtkFourDAnalysisLogic::ProgressDialogEvent,  this->LogicCallbackCommand);
+        }
+      else
+        {
+        // TODO: show error message here ..
+        }
       }
     }
 } 
@@ -1629,7 +1737,6 @@ void vtkFourDAnalysisGUI::BuildGUIForFunctionViewer(int show)
   this->SavePlotButton->Create();
   this->SavePlotButton->SetText ("Save");
   this->SavePlotButton->SetWidth (4);
-
   this->Script ("pack %s %s %s %s %s -side left -fill x -expand y -anchor w -padx 2 -pady 2",
                 this->ImportPlotButton->GetWidgetName(),
                 this->SelectAllPlotButton->GetWidgetName(),
@@ -1884,19 +1991,70 @@ void vtkFourDAnalysisGUI::BuildGUIForMapGenerator(int show)
   app->Script ("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                conBrowsFrame->GetWidgetName(), page->GetWidgetName());
 
+  this->ParameterMapRegionButtonSet = vtkKWRadioButtonSetWithLabel::New();
+  this->ParameterMapRegionButtonSet->SetParent(conBrowsFrame->GetFrame());
+  this->ParameterMapRegionButtonSet->Create();
+  this->ParameterMapRegionButtonSet->SetLabelText("Region: ");
+  this->ParameterMapRegionButtonSet->GetWidget()->PackHorizontallyOn();
+  this->ParameterMapRegionButtonSet->GetWidget()->SetMaximumNumberOfWidgetsInPackingDirection(2);
+  this->ParameterMapRegionButtonSet->GetWidget()->UniformColumnsOn();
+  this->ParameterMapRegionButtonSet->GetWidget()->UniformRowsOn();
+  this->ParameterMapRegionButtonSet->GetWidget()->AddWidget(0);
+  this->ParameterMapRegionButtonSet->GetWidget()->GetWidget(0)->SetText("by mask");
+  this->ParameterMapRegionButtonSet->GetWidget()->AddWidget(1);
+  this->ParameterMapRegionButtonSet->GetWidget()->GetWidget(1)->SetText("by indext");
+  this->ParameterMapRegionButtonSet->GetWidget()->GetWidget(0)->SelectedStateOn();
+  
+  app->Script("pack %s -side top -anchor w -fill x -padx 2 -pady 2", 
+              this->ParameterMapRegionButtonSet->GetWidgetName());
+
+
+  // -----------------------------------------
+  // Region by mask
+  vtkKWFrameWithLabel *rmframe = vtkKWFrameWithLabel::New();
+  rmframe->SetParent(conBrowsFrame->GetFrame());
+  rmframe->Create();
+  rmframe->SetLabelText ("Region by mask");
+  this->Script ("pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 2",
+                rmframe->GetWidgetName() );
+  
+  this->MapRegionMaskSelectorWidget = vtkSlicerNodeSelectorWidget::New();
+  this->MapRegionMaskSelectorWidget->SetParent(rmframe->GetFrame());
+  this->MapRegionMaskSelectorWidget->Create();
+  this->MapRegionMaskSelectorWidget->SetNodeClass("vtkMRMLScalarVolumeNode", NULL, NULL, NULL);
+  this->MapRegionMaskSelectorWidget->SetNewNodeEnabled(0);
+  this->MapRegionMaskSelectorWidget->SetMRMLScene(this->GetMRMLScene());
+  this->MapRegionMaskSelectorWidget->SetBorderWidth(2);
+  this->MapRegionMaskSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+  this->MapRegionMaskSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
+  this->MapRegionMaskSelectorWidget->SetLabelText( "Mask: ");
+  this->MapRegionMaskSelectorWidget->SetBalloonHelpString("Select a lmask to specify regions of interest.");
+
+  this->MapRegionMaskLabelEntry = vtkKWEntryWithLabel::New();
+  this->MapRegionMaskLabelEntry->SetParent(rmframe->GetFrame());
+  this->MapRegionMaskLabelEntry->Create();
+  this->MapRegionMaskLabelEntry->SetLabelText("Label: ");
+  this->MapRegionMaskLabelEntry->GetWidget()->SetRestrictValueToInteger();
+  this->MapRegionMaskLabelEntry->GetWidget()->SetValueAsInt(1);
+
+  this->Script("pack %s %s -side top -fill x -expand y -anchor w -padx 2 -pady 2", 
+               this->MapRegionMaskSelectorWidget->GetWidgetName(),
+               this->MapRegionMaskLabelEntry->GetWidgetName());
+  
+  rmframe->Delete();
+  rmframe = NULL;
   
   // -----------------------------------------
-  // Map Generator
+  // Region by Index
 
   vtkKWFrameWithLabel *dframe = vtkKWFrameWithLabel::New();
   dframe->SetParent(conBrowsFrame->GetFrame());
   dframe->Create();
-  dframe->SetLabelText ("Configurations / Input parameters");
+  dframe->SetLabelText ("Region by indices");
   this->Script ("pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 2",
                 dframe->GetWidgetName() );
 
   // i range
-
   vtkKWFrame *iframe = vtkKWFrame::New();
   iframe->SetParent(dframe->GetFrame());
   iframe->Create();
@@ -2026,6 +2184,13 @@ void vtkFourDAnalysisGUI::BuildGUIForMapGenerator(int show)
   this->MapKMaxSpinBox->SetWidth(3);
   this->MapKMaxSpinBox->SetRange(0, 0);
 
+  this->MapIMinSpinBox->SetState(0);
+  this->MapIMaxSpinBox->SetState(0);
+  this->MapJMinSpinBox->SetState(0);
+  this->MapJMaxSpinBox->SetState(0);
+  this->MapKMinSpinBox->SetState(0);
+  this->MapKMaxSpinBox->SetState(0);
+  
   this->Script("pack %s %s %s %s %s -side left -fill x -expand y -anchor w -padx 2 -pady 2",
                klabel1->GetWidgetName(),
                klabel2->GetWidgetName(),
@@ -2039,37 +2204,29 @@ void vtkFourDAnalysisGUI::BuildGUIForMapGenerator(int show)
   klabel3->Delete();
 
   vtkKWFrame *outputFrame = vtkKWFrame::New();
-  outputFrame->SetParent(dframe->GetFrame());
+  outputFrame->SetParent(conBrowsFrame->GetFrame());
   outputFrame->Create();
   this->Script ("pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 2",
                 outputFrame->GetWidgetName());
 
-  vtkKWLabel *outputLabel = vtkKWLabel::New();
-  outputLabel->SetParent(outputFrame);
-  outputLabel->Create();
-  outputLabel->SetText("Output prefix:");
-  
-  this->MapOutputVolumePrefixEntry = vtkKWEntry::New();
+  this->MapOutputVolumePrefixEntry = vtkKWEntryWithLabel::New();
   this->MapOutputVolumePrefixEntry->SetParent(outputFrame);
   this->MapOutputVolumePrefixEntry->Create();
-  //this->MapOutputVolumePrefixEntry->SetWidth(20);
-  this->MapOutputVolumePrefixEntry->SetValue("ParameterMap");
+  this->MapOutputVolumePrefixEntry->SetLabelText("Output prefix:");
+  this->MapOutputVolumePrefixEntry->GetWidget()->SetValue("ParameterMap");
 
-  this->RunScriptButton = vtkKWPushButton::New();
-  this->RunScriptButton->SetParent(outputFrame);
-  this->RunScriptButton->Create();
-  this->RunScriptButton->SetText ("Run");
-  this->RunScriptButton->SetWidth (10);
+  this->GenerateMapButton = vtkKWPushButton::New();
+  this->GenerateMapButton->SetParent(outputFrame);
+  this->GenerateMapButton->Create();
+  this->GenerateMapButton->SetText ("Run");
+  this->GenerateMapButton->SetWidth (10);
   
-  this->Script("pack %s %s %s -side left -fill x -expand y -anchor w -padx 2 -pady 2", 
-               outputLabel->GetWidgetName(),
+  this->Script("pack %s %s -side left -fill x -expand y -anchor w -padx 2 -pady 2", 
                this->MapOutputVolumePrefixEntry->GetWidgetName(),
-               this->RunScriptButton->GetWidgetName());
+               this->GenerateMapButton->GetWidgetName());
 
   dframe->Delete();
   outputFrame->Delete();
-  outputLabel->Delete();
-
   conBrowsFrame->Delete();
 
 }

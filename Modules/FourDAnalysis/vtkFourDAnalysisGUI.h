@@ -52,6 +52,7 @@ class vtkKWCheckButtonWithLabel;
 class vtkCurveAnalysisPythonInterface;
 class vtkSlicerNodeSelectorWidget;
 class vtkKWMenu;
+class vtkKWRadioButtonSetWithLabel;
 
 //class vtkFourDImageGUI;
 
@@ -239,14 +240,17 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisGUI : public vtkSlicerModuleGUI
 
   // -----------------------------------------
   // Parameter Map
-  vtkKWEntry*                         MapOutputVolumePrefixEntry;
-  vtkKWPushButton*                    RunScriptButton;
+  vtkKWRadioButtonSetWithLabel*       ParameterMapRegionButtonSet;
+  vtkSlicerNodeSelectorWidget*        MapRegionMaskSelectorWidget;
+  vtkKWEntryWithLabel*                MapRegionMaskLabelEntry;
   vtkKWSpinBox*                       MapIMinSpinBox;
   vtkKWSpinBox*                       MapIMaxSpinBox;
   vtkKWSpinBox*                       MapJMinSpinBox;
   vtkKWSpinBox*                       MapJMaxSpinBox;
   vtkKWSpinBox*                       MapKMinSpinBox;
   vtkKWSpinBox*                       MapKMaxSpinBox;
+  vtkKWPushButton*                    GenerateMapButton;
+  vtkKWEntryWithLabel*                MapOutputVolumePrefixEntry;
 
 
   //----------------------------------------------------------------

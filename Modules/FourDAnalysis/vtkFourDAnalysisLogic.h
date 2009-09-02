@@ -74,8 +74,6 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisLogic : public vtkSlicerModuleLog
     int z;
   } CoordType;
 
-  typedef std::vector<CoordType>                       IndexTableType;
-
   typedef struct {
     unsigned long    MaskModifiedTime;
     vtkDoubleArray*  Mean;
@@ -156,8 +154,14 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisLogic : public vtkSlicerModuleLog
                             const char* outputNodeNamePrefix,
                             int start, int end,
                             int imin, int imax, int jmin, int jmax, int kmin, int kmax);
-
-
+  
+  void GenerateParameterMapInMask(vtkCurveAnalysisPythonInterface* script,
+                                  vtkMRMLCurveAnalysisNode* curveNode,
+                                  vtkMRMLTimeSeriesBundleNode* bundleNode, 
+                                  const char* outputNodeNamePrefix,
+                                  int start, int end,
+                                  vtkMRMLScalarVolumeNode* mask, int label);
+  
  protected:
   
   vtkFourDAnalysisLogic();
