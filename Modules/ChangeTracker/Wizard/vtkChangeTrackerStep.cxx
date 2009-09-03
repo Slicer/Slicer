@@ -132,7 +132,7 @@ void vtkChangeTrackerStep::RenderShow()
 }
 
 void vtkChangeTrackerStep::RenderRemove() { 
-  std::cerr << "Removing render results" << std::endl;
+//  std::cerr << "Removing render results" << std::endl;
   if (this->Render_Volume) {
     if (this->GetGUI()) {
       vtkSlicerApplicationGUI *applicationGUI = this->GetGUI()->GetApplicationGUI();
