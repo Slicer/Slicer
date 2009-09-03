@@ -664,11 +664,18 @@ proc FastMarchingSegmentationDestroyRender {this} {
   $::FastMarchingSegmentation($this,renderColorMapping) Delete
   $::FastMarchingSegmentation($this,renderVolumeProperty) Delete
   $::FastMarchingSegmentation($this,renderMatrix) Delete
+
+  set ::FastMarchingSegmentation($this,renderVolume) ""
 }
 
 proc FastMarchingSegmentationShowRender {this} {
   set renderVolume $::FastMarchingSegmentation($this,renderVolume)
   set viewerWidget [ [$this GetApplicationGUI] GetViewerWidget ]
+  
+  if {$renderVolume == ""} {
+    return
+  }
+
   [$viewerWidget GetMainViewer ] AddViewProp $renderVolume
   $viewerWidget RequestRender
 }
@@ -676,6 +683,33 @@ proc FastMarchingSegmentationShowRender {this} {
 proc FastMarchingSegmentationHideRender {this} {
   set renderVolume $::FastMarchingSegmentation($this,renderVolume)
   set viewerWidget [ [$this GetApplicationGUI] GetViewerWidget ]
+  
+  if {$renderVolume == ""} {
+    return
+  }
+
   [$viewerWidget GetMainViewer ] RemoveViewProp $renderVolume
   $viewerWidget RequestRender
+}
+
+proc FastMarchingSegmentationShowOutputLabel {this} {
+  set appGUI [$::slicer3::Application GetApplicationGUI]
+  set redGUI [$appGUI GetMainSliceGUI "Red"]
+  set yellowGUI [$appGUI GetMainSliceGUI "Yellow"]
+  set greenGUI [$appGUI GetMainSliceGUI "Green"]
+
+#  [[$redGUI GetLogic] GetSliceCompositeNode] SetReferenceBackgroundVolumeID
+#    [$::FastMarchingSegmentation($this,inputVolume) GetID]
+#  [[$yellowGUI GetLogic] GetSliceCompositeNode] SetReferenceBackgroundVolumeID
+#    [$::FastMarchingSegmentation($this,inputVolume) GetID]
+#  [[$greenGUI GetLogic] GetSliceCompositeNode] SetReferenceBackgroundVolumeID
+#    [$::FastMarchingSegmentation($this,inputVolume) GetID]
+    
+  set outputLabelID [$::FastMarchingSegmentation($this,labelVolume) GetID]
+
+  [[$redGUI GetLogic] GetSliceCompositeNode] SetReferenceLabelVolumeID $outputLabelID
+  [[$yellowGUI GetLogic] GetSliceCompositeNode] SetReferenceLabelVolumeID $outputLabelID
+  [[$greenGUI GetLogic] GetSliceCompositeNode] SetReferenceLabelVolumeID $outputLabelID
+
+  $::slicer3::MRMLScene Modified
 }

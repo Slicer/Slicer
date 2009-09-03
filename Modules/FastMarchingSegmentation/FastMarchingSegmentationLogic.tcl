@@ -228,10 +228,12 @@ proc FastMarchingSegmentationCreateLabelVolume {this} {
   set ::FastMarchingSegmentation($this,labelVolume) $outputVolumeNode
   set ::FastMarchingSegmentation($this,labelImage) [$outputVolumeNode GetImageData]
 
-  set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
-  $selectionNode SetReferenceActiveLabelVolumeID [$outputVolumeNode GetID]
-  $selectionNode Modified
-  [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection 0
+#  set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
+#  $selectionNode SetReferenceActiveLabelVolumeID [$outputVolumeNode GetID]
+#  $selectionNode Modified
+#  [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection 0
+  
+  FastMarchingSegmentationShowOutputLabel $this
 
   # this is here to trigger updates on node selectors
   $scene InvokeEvent 66000
