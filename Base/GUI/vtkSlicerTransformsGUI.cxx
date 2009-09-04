@@ -16,7 +16,6 @@
 #include "vtkKWWidget.h"
 #include "vtkKWMenuButton.h"
 #include "vtkKWMenu.h"
-#include "vtkKWFrameWithLabel.h"
 #include "vtkKWFrame.h"
 #include "vtkKWLoadSaveDialog.h"
 #include "vtkKWLoadSaveButton.h"
@@ -274,6 +273,7 @@ void vtkSlicerTransformsGUI::BuildGUI ( )
                 this->TransformEditorWidget->GetWidgetName(), displayAndEditFrame->GetFrame()->GetWidgetName());
 
   displayAndEditFrame->Delete ();
+  modLoadFrame->Delete();
 }
 
 
