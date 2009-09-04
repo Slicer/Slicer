@@ -210,7 +210,8 @@ class ImageToImageRegistrationHelper : public Object
                                         ::LINEAR_INTERPOLATION,
                                     const TImage * movingImage=NULL,
                                     const MatrixTransformType * matrixTransform=NULL,
-                                    const BSplineTransformType * bsplineTransform=NULL );
+                                    const BSplineTransformType * bsplineTransform=NULL,
+                                    PixelType defaultPixelValue=0 );
 
     // Returns the moving image resampled into the space of the fixed image
     typename TImage::ConstPointer  GetFinalMovingImage( 

@@ -734,7 +734,8 @@ ImageToImageRegistrationHelper< TImage >
 ::ResampleImage( InterpolationMethodEnumType interpolationMethod,
                  const ImageType * movingImage,
                  const MatrixTransformType * matrixTransform,
-                 const BSplineTransformType * bsplineTransform )
+                 const BSplineTransformType * bsplineTransform,
+                 PixelType defaultPixelValue)
 {
   typedef InterpolateImageFunction< TImage, double >  InterpolatorType;
   typedef NearestNeighborInterpolateImageFunction< TImage, double >  
@@ -861,6 +862,7 @@ ImageToImageRegistrationHelper< TImage >
       resampler->SetInterpolator( interpolator.GetPointer() );
       resampler->SetOutputParametersFromConstImage( m_FixedImage );
       resampler->SetTransform( m_LoadedMatrixTransform );
+      resampler->SetDefaultPixelValue( defaultPixelValue );
       resampler->Update();
       if( !passedImage )
         {

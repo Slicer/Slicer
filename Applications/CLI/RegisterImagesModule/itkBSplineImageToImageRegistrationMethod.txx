@@ -453,8 +453,8 @@ BSplineImageToImageRegistrationMethod< TImage >
 template< class TImage >
 void
 BSplineImageToImageRegistrationMethod< TImage >
-::MultiResolutionOptimize( MetricType * metric,
-                           InterpolatorType * interpolator )
+::MultiResolutionOptimize( MetricType * itkNotUsed(metric),
+                           InterpolatorType * itkNotUsed(interpolator) )
 {
   if( this->GetReportProgress() )
     {
