@@ -1525,6 +1525,7 @@ void vtkSlicerDataGUI::BuildGUI ( )
   
   displayModifyFrame->Delete ( );
   win->SetStatusText ( "" );
+  this->Built = true;
 }
 
 //---------------------------------------------------------------------------
