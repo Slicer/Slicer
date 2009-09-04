@@ -24,6 +24,8 @@
 #ifndef __vtkMeasurementsRulerWidget_h
 #define __vtkMeasurementsRulerWidget_h
 
+#include "vtkMeasurementsWin32Header.h"
+
 #include "vtkSlicerWidget.h"
 
 class vtkSlicerNodeSelectorWidget;
