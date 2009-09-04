@@ -15,16 +15,15 @@
 class vtkKWFrame;
 class vtkKWCheckButton;
 #if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
-class vtkLineWidget2;
 class vtkAngleWidget;
-class vtkPointHandleRepresentation3D;
-class vtkLineRepresentation;
 class vtkAngleRepresentation3D;
 class vtkPolygonalSurfacePointPlacer;
+class vtkPointHandleRepresentation3D;
 #endif
 class vtkAffineWidget;
 class vtkAffineRepresentation2D;
 class vtkSlicerNodeSelectorWidget;
+class vtkMeasurementsRulerWidget;
 class VTK_MEASUREMENTS_EXPORT vtkMeasurementsGUI : public vtkSlicerModuleGUI
 {
   public:
@@ -41,7 +40,7 @@ class VTK_MEASUREMENTS_EXPORT vtkMeasurementsGUI : public vtkSlicerModuleGUI
   this->SetLogic(reinterpret_cast<vtkMeasurementsLogic*> (logic)); 
   };
 
-   // Description: Get/Set MRML node
+   // Description: Get/Set logic
   vtkGetObjectMacro (Logic, vtkMeasurementsLogic);
   vtkSetObjectMacro (Logic, vtkMeasurementsLogic);
 
@@ -71,13 +70,14 @@ class VTK_MEASUREMENTS_EXPORT vtkMeasurementsGUI : public vtkSlicerModuleGUI
   virtual void Exit ( );
   virtual void Init ( );
 
-  vtkGetObjectMacro(RulerCheckButton, vtkKWCheckButton);
-
+  // Description:
+  // Access widgets
   vtkGetObjectMacro(AngleCheckButton, vtkKWCheckButton);
-
+  vtkGetObjectMacro(RulerWidget, vtkMeasurementsRulerWidget);
+  
 #if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
-//  vtkGetObjectMacro(DistanceWidget, vtkLineWidget2);
-//  vtkGetObjectMacro(AngleWidget, vtkAngleWidget);
+  vtkGetObjectMacro(AngleWidget, vtkAngleWidget);
+  
 #endif
   // Description:
   // assign the mrml node that's selected in the TransformableNodeSelectorWidget to the TransformWidget to be manipulated via it's transform node 
@@ -94,15 +94,8 @@ protected:
   void SetStatusText( const char *txt);
   vtkMeasurementsLogic *Logic;
 
+  
 #if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
-  // Description:
-  // the ruler widget
-  vtkPointHandleRepresentation3D *DistanceHandleRepresentation;
-  vtkLineRepresentation *DistanceRepresentation;
-  vtkLineWidget2 *DistanceWidget;
-  vtkPolygonalSurfacePointPlacer *RulerModel1PointPlacer;
-  vtkPolygonalSurfacePointPlacer *RulerModel2PointPlacer;
-
   // Description:
   // the angle widget
   vtkPointHandleRepresentation3D *AngleHandleRepresentation;
@@ -114,11 +107,6 @@ protected:
   vtkAffineRepresentation2D *TransformRepresentation;
   vtkAffineWidget *TransformWidget;
 
-  // Description:
-  // Ruler GUI elements
-  vtkKWCheckButton *RulerCheckButton;
-  vtkSlicerNodeSelectorWidget* RulerModel1SelectorWidget;
-  vtkSlicerNodeSelectorWidget* RulerModel2SelectorWidget;
 
   // Description:
   // Angle GUI elements
@@ -128,6 +116,10 @@ protected:
   // Transform GUI elements
   vtkKWCheckButton *TransformCheckButton;
   vtkSlicerNodeSelectorWidget* TransformableNodeSelectorWidget;
+
+  // Description:
+  // ruler gui elements
+  vtkMeasurementsRulerWidget *RulerWidget; 
 };
 
 #endif

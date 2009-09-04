@@ -46,6 +46,9 @@ install(FILES
 # Sources
 
 set(Measurements_SRCS
+  vtkMRMLMeasurementsNode.cxx
+  vtkMRMLMeasurementsRulerNode.cxx
+  vtkMeasurementsRulerWidget.cxx
   vtkMeasurementsLogic.cxx
   vtkMeasurementsGUI.cxx
   )
