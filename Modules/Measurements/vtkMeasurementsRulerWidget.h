@@ -41,7 +41,7 @@ class vtkLineRepresentation;
 class vtkPolygonalSurfacePointPlacer;
 class vtkMRMLMeasurementsRulerNode;
 class vtkSlicerViewerWidget;
-class VTK_SLICER_BASE_GUI_EXPORT vtkMeasurementsRulerWidget : public vtkSlicerWidget
+class VTK_MEASUREMENTS_EXPORT vtkMeasurementsRulerWidget : public vtkSlicerWidget
 {
   
 public:
