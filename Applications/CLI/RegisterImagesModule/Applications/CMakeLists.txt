@@ -172,7 +172,7 @@ PROJECT( RegisterImagesModuleApplications )
       OPTION( BUILD_REGISTER_IMAGES_REAL_WORLD_TESTING 
               "Build and download MRI data for testing the RegisterImagesModule" OFF )
       IF( BUILD_REGISTER_IMAGES_REAL_WORLD_TESTING )
-        SET( msg "Warning: You have chosen to enable BUILD_REGISTER_IMAGES_REAL_WORLD_TESTING." )
+        SET( msg "Attention: You have chosen to enable BUILD_REGISTER_IMAGES_REAL_WORLD_TESTING." )
         SET( msg "${msg} This module will download MRI data from Kitware's MIDAS server" )
         SET( msg "${msg} and run test that may require several hours of computation time." )
         MESSAGE( "${msg}" )
