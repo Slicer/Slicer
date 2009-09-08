@@ -637,9 +637,9 @@ if {  [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [stri
       # copy the lib so that numpy and slicer can find it easily
       # copy the socket shared library so python can find it
       # TODO: perhaps we need an installer step here
-      set ret [catch "file copy -force $::Slicer3_LIB/python-build/PCbuild/python25.lib $::Slicer3_LIB/python-build/Lib/python25.lib "]
+      set ret [catch "file copy -force $::Slicer3_LIB/python-build/PCbuild/python26.lib $::Slicer3_LIB/python-build/Lib/python26.lib "]
       if {$ret == 1} {
-          puts "ERROR: couldn't copy $::Slicer3_LIB/python-build/PCbuild/python25.lib to $::Slicer3_LIB/python-build/Lib/"
+          puts "ERROR: couldn't copy $::Slicer3_LIB/python-build/PCbuild/python26.lib to $::Slicer3_LIB/python-build/Lib/"
           exit 1
       }
       set ret [catch "file copy -force $::Slicer3_LIB/python-build/PCbuild/_socket.pyd $::Slicer3_LIB/python-build/Lib/_socket.pyd"]
@@ -661,7 +661,7 @@ if {  [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [stri
 
       cd $Slicer3_LIB/python
       runcmd $::SVN co $::PYTHON_TAG
-      cd $Slicer3_LIB/python/release25-maint
+      cd $Slicer3_LIB/python/release26-maint
       foreach flag {LD_LIBRARY_PATH LDFLAGS CPPFLAGS} {
         if { ![info exists ::env($flag)] } { set ::env($flag) "" }
       }
@@ -684,16 +684,16 @@ if {  [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [stri
       if { $isDarwin } {
             # Special Slicer hack to build and install the .dylib
             file mkdir $::Slicer3_LIB/python-build/lib/
-            file delete -force $::Slicer3_LIB/python-build/lib/libpython2.5.dylib
+            file delete -force $::Slicer3_LIB/python-build/lib/libpython2.6.dylib
             set fid [open environhack.c w]
             puts $fid "char **environ=0;"
             close $fid
             runcmd gcc -c -o environhack.o environhack.c
-            runcmd libtool -o $::Slicer3_LIB/python-build/lib/libpython2.5.dylib -dynamic  \
-                -all_load libpython2.5.a environhack.o -single_module \
-                -install_name $::Slicer3_LIB/python-build/lib/libpython2.5.dylib \
-                -compatibility_version 2.5 \
-                -current_version 2.5 -lSystem -lSystemStubs
+            runcmd libtool -o $::Slicer3_LIB/python-build/lib/libpython2.6.dylib -dynamic  \
+                -all_load libpython2.6.a environhack.o -single_module \
+                -install_name $::Slicer3_LIB/python-build/lib/libpython2.6.dylib \
+                -compatibility_version 2.6 \
+                -current_version 2.6 -lSystem -lSystemStubs
 
         }
     }
