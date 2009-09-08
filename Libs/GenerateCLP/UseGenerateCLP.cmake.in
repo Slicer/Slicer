@@ -39,41 +39,47 @@ macro(GENERATECLP SOURCES)
 
   # compute the input filename
   if (TMP_FILEPATH)
-    set(TMP_INPUT ${TMP_FILEPATH}/${TMP_FILENAME}.xml) 
+    set(TMP_INPUT ${TMP_FILEPATH}/${TMP_FILENAME}.xml)
   else (TMP_FILEPATH)
     set(TMP_INPUT ${CMAKE_CURRENT_SOURCE_DIR}/${TMP_FILENAME}.xml)
   endif (TMP_FILEPATH)
 
   # add custom command to output
   if ("x${ARGV2}" STREQUAL "x")
+    ## CASE OF NO LOGO FILE
     add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h
       DEPENDS "${GENERATECLP_EXE}" ${TMP_INPUT}
       COMMAND "${GENERATECLP_EXE}"
-      --InputXML "${quote}${TMP_INPUT}${quote}" 
+      --InputXML "${quote}${TMP_INPUT}${quote}"
       --OutputCxx "${quote}${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h${quote}"
       ${verbatim}
       )
     # mark the .clp file as a header file
     set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h PROPERTIES HEADER_FILE_ONLY TRUE)
-    set_source_files_properties(${TMP_FILENAME}.cxx PROPERTIES OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h)
+    foreach( INPUT_SOURCE_FILE ${${SOURCES}} ${TMP_FILENAME}.cxx)
+      set_source_files_properties(${INPUT_SOURCE_FILE} PROPERTIES OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h)
+    endforeach( INPUT_SOURCE_FILE )
   else ("x${ARGV2}" STREQUAL "x")
+    ## CASE WITH LOGO FILE
     add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h
       DEPENDS "${GENERATECLP_EXE}" ${TMP_INPUT} ${ARGV2}
-      COMMAND "${GENERATECLP_EXE}" 
+      COMMAND "${GENERATECLP_EXE}"
       --logoFiles "${quote}${ARGV2}${quote}"
-      --InputXML "${quote}${TMP_INPUT}${quote}" 
+      --InputXML "${quote}${TMP_INPUT}${quote}"
       --OutputCxx "${quote}${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h${quote}"
       ${verbatim}
       )
     # mark the .clp file as a header file
     set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h PROPERTIES HEADER_FILE_ONLY TRUE)
+    foreach( INPUT_SOURCE_FILE ${${SOURCES}} ${TMP_FILENAME}.cxx)
+      set_source_files_properties(${INPUT_SOURCE_FILE} PROPERTIES OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h OBJECT_DEPENDS ${ARGV2})
+    endforeach( INPUT_SOURCE_FILE )
     # mark the logo include file as a header file
     set_source_files_properties(${ARGV2} PROPERTIES HEADER_FILE_ONLY TRUE)
-    set_source_files_properties(${TMP_FILENAME}.cxx PROPERTIES OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h OBJECT_DEPENDS ${ARGV2})
   endif ("x${ARGV2}" STREQUAL "x")
 
-  set(${SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h ${${SOURCES}}) 
+  set(${SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h ${${SOURCES}})
   include_directories(${CMAKE_CURRENT_BINARY_DIR})
 endmacro(GENERATECLP)

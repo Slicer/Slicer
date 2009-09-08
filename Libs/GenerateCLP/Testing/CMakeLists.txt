@@ -25,8 +25,8 @@ GENERATECLP(SLICER3EXAMPLE_SOURCE Slicer3Example.xml)
 ADD_EXECUTABLE ( Slicer3Example ${SLICER3EXAMPLE_SOURCE})
 TARGET_LINK_LIBRARIES ( Slicer3Example)
 
-ADD_TEST(Slicer3CLPExample1 ${EXECUTABLE_OUTPUT_PATH}/Slicer3Example --help)
-ADD_TEST(Slicer3CLPExample2 ${EXECUTABLE_OUTPUT_PATH}/Slicer3Example --echo --load_freesurfer_volume FSV --stereo)
-ADD_TEST(Slicer3CLPExample3 ${EXECUTABLE_OUTPUT_PATH}/Slicer3Example)
+ADD_TEST(Slicer3CLPExample1 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Slicer3Example --help)
+ADD_TEST(Slicer3CLPExample2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Slicer3Example --echo --load_freesurfer_volume FSV --stereo)
+ADD_TEST(Slicer3CLPExample3 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Slicer3Example)
 
 

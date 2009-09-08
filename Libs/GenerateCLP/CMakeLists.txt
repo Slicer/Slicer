@@ -60,7 +60,7 @@ install(FILES ${GenerateCLP_BINARY_DIR}/UseGenerateCLP.cmake_install
 # where the binary is actually not in the same directory as the shared
 # libraries it depends on.
 #
-set(GenerateCLP_FORWARD_DIR_BUILD "${EXECUTABLE_OUTPUT_PATH}")
+set(GenerateCLP_FORWARD_DIR_BUILD "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 set(GenerateCLP_FORWARD_DIR_INSTALL ".")
 if(WIN32)
   set(GenerateCLP_FORWARD_PATH_BUILD 

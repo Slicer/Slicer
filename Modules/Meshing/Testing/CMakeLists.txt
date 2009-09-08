@@ -23,7 +23,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
   # wrapping.
   ############################################################################
   set( Slicer3_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
-  set( WRAPPED_EXE_PREFIX --launch ${EXECUTABLE_OUTPUT_PATH})
+  set( WRAPPED_EXE_PREFIX --launch ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
   if(WIN32)
     set(WRAPPED_EXE_PREFIX ${WRAPPED_EXE_PREFIX}/${CMAKE_BUILD_TYPE})
   endif(WIN32)

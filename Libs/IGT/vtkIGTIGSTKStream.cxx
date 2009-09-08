@@ -153,7 +153,7 @@ void vtkIGTIGSTKStream::Init()
 
     // logger object created 
     std::string testName = "IGSTK";
-    std::string outputDirectory = EXECUTABLE_OUTPUT_PATH; 
+    std::string outputDirectory = CMAKE_RUNTIME_OUTPUT_DIRECTORY; 
     std::string filename = outputDirectory +"/";
     filename = filename + testName;
     filename = filename + "LoggerOutput.txt";

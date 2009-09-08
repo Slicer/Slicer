@@ -14,4 +14,4 @@ ADD_EXECUTABLE(VolumeRenderingCudaTest
 #)
 
 #ADD_TEST(VolumeRenderingCudaTest
-#  ${EXECUTABLE_OUTPUT_PATH}/VolumeRenderingCudaTest ${CMAKE_CURRENT_SOURCE_DIR}/heart256.raw)
+#  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/VolumeRenderingCudaTest ${CMAKE_CURRENT_SOURCE_DIR}/heart256.raw)

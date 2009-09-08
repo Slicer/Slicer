@@ -110,7 +110,7 @@ if(NOT DISABLE_CXX_TESTING)
   # slicer
   ############################################################################
   set(Slicer3_EXE ${Slicer3_BINARY_DIR}/Slicer3)
-  set(WRAPPED_TEST_EXE_PREFIX --launch ${EXECUTABLE_OUTPUT_PATH})
+  set(WRAPPED_TEST_EXE_PREFIX --launch ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
   set(WRAPPED_EXE_PREFIX --launch ${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR})
   if(WIN32)
     set(WRAPPED_EXE_PREFIX ${WRAPPED_EXE_PREFIX}/${CMAKE_BUILD_TYPE})
@@ -571,7 +571,7 @@ if(NOT DISABLE_CXX_TESTING)
     add_test(
       EMSegMRML_ValgrindTest
       valgrind --leak-check=full 
-      ${EXECUTABLE_OUTPUT_PATH}/EMSegmentCommandLine
+      ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/EMSegmentCommandLine
       --verbose 
       --mrmlSceneFileName 
       ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small_normalizationOn.mrml

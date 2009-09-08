@@ -65,7 +65,7 @@ install(FILES ${GenerateLM_BINARY_DIR}/UseGenerateLM.cmake_install
 # where the binary is actually not in the same directory as the shared
 # libraries it depends on.
 #
-set(GenerateLM_FORWARD_DIR_BUILD "${EXECUTABLE_OUTPUT_PATH}")
+set(GenerateLM_FORWARD_DIR_BUILD "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 set(GenerateLM_FORWARD_DIR_INSTALL ".")
 if(WIN32)
   set(GenerateLM_FORWARD_PATH_BUILD 

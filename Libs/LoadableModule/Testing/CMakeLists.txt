@@ -17,10 +17,10 @@ include_directories(
   )
 
 set(TEST_DATA ${LoadableModuleDescriptionParserTesting_SOURCE_DIR}/TestData)
-add_test(LMParser1Test1 ${EXECUTABLE_OUTPUT_PATH}/LMParser1Test ${TEST_DATA}/ParserTest1.xml)
+add_test(LMParser1Test1 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/LMParser1Test ${TEST_DATA}/ParserTest1.xml)
 
-add_test(LMParser1Test2 ${EXECUTABLE_OUTPUT_PATH}/LMParser1Test ${TEST_DATA}/ParserTest2.xml)
+add_test(LMParser1Test2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/LMParser1Test ${TEST_DATA}/ParserTest2.xml)
 
 # commenting out until it runs faster via getbuildtest.tcl
-#ADD_TEST(LoadableModuleFactoryTest ${EXECUTABLE_OUTPUT_PATH}/LoadableModuleFactoryTest ${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/)
+#ADD_TEST(LoadableModuleFactoryTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/LoadableModuleFactoryTest ${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/)
 

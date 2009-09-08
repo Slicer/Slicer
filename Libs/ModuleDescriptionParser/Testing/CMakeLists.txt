@@ -17,9 +17,9 @@ include_directories(
   ${ModuleDescriptionParser_SOURCE_DIR}
   )
 
-set(EXE_PREFIX ${EXECUTABLE_OUTPUT_PATH} )
+set(EXE_PREFIX ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
 if(WIN32)
-  set(EXE_PREFIX ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE})
+  set(EXE_PREFIX ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE})
 endif(WIN32)
 
 set(TEST_DATA ${ModuleDescriptionParserTesting_SOURCE_DIR}/TestData)

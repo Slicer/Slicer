@@ -107,7 +107,9 @@ NameIsSharedLibrary(const char* name)
 #endif
   
   std::string sname = name;
-  if ( sname.rfind(extension) == sname.size() - extension.size() )
+  const std::string::size_type extpos(sname.rfind(extension));
+  if (extpos != std::string::npos &&
+      (extpos  == sname.size() - extension.size()) )
     {
     return true;
     }

@@ -90,18 +90,17 @@ include("${Slicer3_CMAKE_DIR}/Slicer3PersistenceMacros.cmake")
 #-----------------------------------------------------------------------------
 # Top level slicer3 configurations
 #
-set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
-set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
-mark_as_advanced(
-  LIBRARY_OUTPUT_PATH
-  EXECUTABLE_OUTPUT_PATH
-)
+# If CMake >= 2.6.0
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
+
 
 # Do NOT force into the cache, as plugins need to override locally and scoping
 # becomes an issue.
-#set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin/ 
+#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/ 
 #  CACHE PATH "Single output directory for building all libraries." FORCE)
-#set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin/ 
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/ 
 #  CACHE PATH "Single output directory for building all executables." FORCE)
 
 #-----------------------------------------------------------------------------
@@ -235,7 +234,7 @@ set(extra_dirs
   "${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_LIB_DIR}"
   )
 kwwidgets_generate_setup_paths_scripts(
-  "${EXECUTABLE_OUTPUT_PATH}" "Slicer3SetupPaths"
+  "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}" "Slicer3SetupPaths"
   "${extra_dirs}"
 )
 

@@ -107,10 +107,10 @@ protected:
 inline void StdOutput::version(CmdLineInterface& _cmd) 
 {
   std::string progName = _cmd.getProgramName();
-  std::string lversion = _cmd.getVersion();
+  const std::string returnVersion = _cmd.getVersion();
 
-  std::cout << std::endl << progName << "  lversion: " 
-            << lversion << std::endl << std::endl;
+  std::cout << std::endl << progName << "  version: " 
+            << returnVersion << std::endl << std::endl;
 }
 
 inline void StdOutput::usage(CmdLineInterface& _cmd ) 
@@ -151,7 +151,7 @@ inline void StdOutput::failure( CmdLineInterface& _cmd,
 }
 
 inline void StdOutput::_shortUsage( CmdLineInterface& _cmd, 
-                                    std::ostream& os ) const
+                                    std::ostream& ) const
 {
   std::list<Arg*> argList = _cmd.getArgList();
   std::string progName = _cmd.getProgramName();

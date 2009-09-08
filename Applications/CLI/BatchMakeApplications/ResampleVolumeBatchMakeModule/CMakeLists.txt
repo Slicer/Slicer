@@ -49,9 +49,9 @@ if(BatchMake_DIR)
 
     set( Slicer3ExeModulePath ${${Slicer3ExeModule}Path} )
     if(WIN32)
-      set(BatchMake_WRAPPED_APPLICATION_DIR ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE})
+      set(BatchMake_WRAPPED_APPLICATION_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE})
     else(WIN32)
-      set(BatchMake_WRAPPED_APPLICATION_DIR ${EXECUTABLE_OUTPUT_PATH})
+      set(BatchMake_WRAPPED_APPLICATION_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     endif(WIN32)
 
     # Configure a header
