@@ -64,6 +64,7 @@ int main( int argc, char * argv[] )
     estim->SetNumberOfGradients(grads->GetNumberOfTuples());
     estim->SetDiffusionGradients(grads);
     estim->SetBValues(bValues);
+    estim->SetShiftNegativeEigenvalues(ShiftNegativeEigenvalues);
 
     // Compute Transformation that brings the gradients to ijk
     // double *sp = reader->GetOutput()->GetSpacing();
