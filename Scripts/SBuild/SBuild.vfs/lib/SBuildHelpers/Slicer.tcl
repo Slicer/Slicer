@@ -57,8 +57,8 @@ proc Slicer-Configure {} {
         -DCPACK_GENERATOR:STRING=$::GETBUILDTEST(cpack-generator) \
         -DCPACK_PACKAGE_FILE_NAME:STRING=$::GETBUILDTEST(binary-filename) \
         -DSlicer3_USE_PYTHON=$BuildPython \
-        -DPYTHON_INCLUDE_PATH:PATH=$::Slicer3_LIB/python-build/include/python2.5 \
-        -DPYTHON_LIBRARY:FILEPATH=$::Slicer3_LIB/python-build/lib/libpython2.5$::GETBUILDTEST(shared-lib-extension) \
+        -DPYTHON_INCLUDE_PATH:PATH=$::Slicer3_LIB/python-build/include/python2.6 \
+        -DPYTHON_LIBRARY:FILEPATH=$::Slicer3_LIB/python-build/lib/libpython2.6$::GETBUILDTEST(shared-lib-extension) \
         -DSlicer3_USE_IGSTK=$::IGSTK \
         -DUSE_OPENTRACKER=$::OPENTRACKER \
         -DOT_VERSION_13=$::OT_VERSION \
