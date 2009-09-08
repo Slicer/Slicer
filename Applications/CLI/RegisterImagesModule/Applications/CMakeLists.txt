@@ -108,17 +108,17 @@ PROJECT( RegisterImagesModuleApplications )
       ADD_TEST(GenerateRigidTestData
         ${CXX_TEST_PATH}/GenerateRegisterImagesTestData 
         50 ${TEST_TEMP}/RI_RigidTestData.mha
-        ${RegisterImagesModuleApplications_SOURCE_DIR}/Data/RI_RigidUNC24.tfm
+        -t ${RegisterImagesModuleApplications_SOURCE_DIR}/Data/RI_RigidUNC24.tfm
         )
       ADD_TEST(GenerateAffineTestData
         ${CXX_TEST_PATH}/GenerateRegisterImagesTestData 
         50 ${TEST_TEMP}/RI_AffineTestData.mha
-        ${RegisterImagesModuleApplications_SOURCE_DIR}/Data/RI_AffineUNC24.tfm
+        -t ${RegisterImagesModuleApplications_SOURCE_DIR}/Data/RI_AffineUNC24.tfm
         )
       ADD_TEST(GenerateBSplineTestData
         ${CXX_TEST_PATH}/GenerateRegisterImagesTestData 
         50 ${TEST_TEMP}/RI_BSplineTestData.mha
-        ${RegisterImagesModuleApplications_SOURCE_DIR}/Data/RI_BSplineUNC24.tfm
+        -t ${RegisterImagesModuleApplications_SOURCE_DIR}/Data/RI_BSplineUNC24.tfm
         )
   
       ADD_TEST(RegisterImages_RigidTestData
