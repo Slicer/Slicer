@@ -1,0 +1,31 @@
+<MRML>
+
+<VolumeArchetypeStorage
+  id="vtkMRMLVolumeArchetypeStorageNode1" name=""  hideFromEditors="true" 
+  fileName="TestData/fixed.nrrd" >
+</VolumeArchetypeStorage>
+
+VolumeDisplay
+  id="vtkMRMLScalarVolumeDisplayNode1" 
+  name="vtkMRMLScalarVolumeDisplayNode1" 
+  hideFromEditors="true" selectable="true"  selected="false"  
+  color="0.5 0.5 0.5" selectedColor="1 0 0" selectedAmbient="0.4" 
+  ambient="0" diffuse="1" selectedSpecular="0.5" specular="0" power="1" 
+  opacity="1" visibility="true" clipping="false" 
+  sliceIntersectionVisibility="false" backfaceCulling="true" 
+  scalarVisibility="false" vectorVisibility="false" tensorVisibility="false" 
+  autoScalarRange="true" scalarRange="0 100" 
+  colorNodeRef="vtkMRMLColorTableNodeGrey"  window="90" level="44" 
+  upperThreshold="32767" lowerThreshold="-32768" interpolate="1" 
+  autoWindowLevel="1" applyThreshold="0" autoThreshold="0">
+</VolumeDisplay>
+
+
+<Volume
+  id="vtkMRMLScalarVolumeNode1" name="fixed.nrrd"  hideFromEditors="false" 
+  storageNodeRef="vtkMRMLVolumeArchetypeStorageNode1" displayNodeRef="vtkMRMLVolumeDisplayNode1" 
+  ijkToRASDirections="0   -0   1 -1   0   -0 0 -1 0 " spacing="5.2 3.75 3.75" 
+  origin="-80.6 120 120" labelMap="0" >
+</Volume>
+
+</MRML>
