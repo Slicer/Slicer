@@ -73,19 +73,19 @@ puts "Slicer3_HOME is $::Slicer3_HOME"
 # section below, or genlib will happily build the library again.
 
 set ::Slicer3_TAG "http://svn.slicer.org/Slicer3/trunk"
-set ::CMAKE_TAG "CMake-2-6"
+set ::CMAKE_TAG "CMake-2-6-4"
 set ::Teem_TAG http://teem.svn.sourceforge.net/svnroot/teem/teem/tags/1.10.0
 set ::KWWidgets_TAG "Slicer-3-4"
 set ::VTK_TAG "VTK-5-4"
 set ::ITK_TAG ITK-3-14
-set ::PYTHON_TAG "http://svn.python.org/projects/python/branches/release25-maint"
+set ::PYTHON_TAG "http://svn.python.org/projects/python/branches/release26-maint"
 set ::BLAS_TAG http://svn.slicer.org/Slicer3-lib-mirrors/trunk/netlib/BLAS
 set ::LAPACK_TAG http://svn.slicer.org/Slicer3-lib-mirrors/trunk/netlib/lapack-3.1.1
 #set ::NUMPY_TAG "http://svn.scipy.org/svn/numpy/trunk"
-set ::NUMPY_TAG "http://svn.scipy.org/svn/numpy/branches/1.2.x"
+set ::NUMPY_TAG "http://svn.scipy.org/svn/numpy/branches/1.3.x"
 #set ::SCIPY_TAG "http://svn.scipy.org/svn/scipy/trunk"
 set ::SCIPY_TAG "http://svn.scipy.org/svn/scipy/branches/0.7.x"
-set ::BatchMake_TAG "BatchMake-1-2"
+set ::BatchMake_TAG "HEAD"
 set ::SLICERLIBCURL_TAG "HEAD"
 set ::OpenIGTLink_TAG "http://svn.na-mic.org/NAMICSandBox/branches/OpenIGTLink-1-0"
 #set ::OpenCV_TAG "https://opencvlibrary.svn.sourceforge.net/svnroot/opencvlibrary/trunk"
@@ -201,11 +201,11 @@ switch $::tcl_platform(os) {
           error "need to define system python path for $::tcl_platform(os)"
         }
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python
-        set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython2.5.so
-        set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python2.5
+        set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython2.6.so
+        set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python2.6
         set ::NETLIB_TEST_FILE $::Slicer3_LIB/netlib-build/BLAS-build/libblas.a
-        set ::NUMPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/numpy/core/numeric.pyc
-        set ::SCIPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/scipy/version.pyc
+        set ::NUMPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.6/site-packages/numpy/core/numeric.pyc
+        set ::SCIPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.6/site-packages/scipy/version.pyc
         set ::TK_TEST_FILE  $::TCL_BIN_DIR/wish8.5
         set ::ITCL_TEST_FILE $::TCL_LIB_DIR/itcl3.4/libitcl3.4.so
         set ::Teem_TEST_FILE $::Teem_BIN_DIR/unu
@@ -242,11 +242,11 @@ switch $::tcl_platform(os) {
           set ::PYTHON_BIN_DIR /usr
         }
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python
-        set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython2.5.dylib
-        set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python2.5
+        set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython2.6.dylib
+        set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python2.6
         set ::NETLIB_TEST_FILE $::Slicer3_LIB/netlib-build/BLAS-build/libblas.a
-        set ::NUMPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/numpy/core/numeric.pyc
-        set ::SCIPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/scipy/version.pyc
+        set ::NUMPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.6/site-packages/numpy/core/numeric.pyc
+        set ::SCIPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.6/site-packages/scipy/version.pyc
         set ::ITCL_TEST_FILE $::TCL_LIB_DIR/libitcl3.2.dylib
         set ::IWIDGETS_TEST_FILE $::TCL_LIB_DIR/iwidgets4.0.1/iwidgets.tcl
         set ::BLT_TEST_FILE $::TCL_BIN_DIR/bltwish24
@@ -278,11 +278,11 @@ switch $::tcl_platform(os) {
           error "need to define system python path for $::tcl_platform(os)"
         }
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python
-        set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython2.5.so
-        set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python2.5
+        set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython2.6.so
+        set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python2.6
         set ::NETLIB_TEST_FILE $::Slicer3_LIB/netlib-build/BLAS-build/libblas.a
-        set ::NUMPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/numpy/core/numeric.pyc
-        set ::SCIPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/scipy/version.pyc
+        set ::NUMPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.6/site-packages/numpy/core/numeric.pyc
+        set ::SCIPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.6/site-packages/scipy/version.pyc
         set ::TK_TEST_FILE  $::TCL_BIN_DIR/wish8.4
         set ::ITCL_TEST_FILE $::TCL_LIB_DIR/libitcl3.2.so
         set ::Teem_TEST_FILE $::Teem_BIN_DIR/unu
@@ -325,9 +325,9 @@ switch $::tcl_platform(os) {
 
         set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include
 
-        set ::NETLIB_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/numpy/core/numeric.pyc
+        set ::NETLIB_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.6/site-packages/numpy/core/numeric.pyc
         set ::NUMPY_TEST_FILE $::PYTHON_BIN_DIR/lib/site-packages/numpy/core/numeric.pyc
-        set ::SCIPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/scipy/version.pyc
+        set ::SCIPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.6/site-packages/scipy/version.pyc
         set ::VTK_TEST_FILE $::VTK_DIR/bin/$::VTK_BUILD_TYPE/vtk.exe
         set ::KWWidgets_TEST_FILE $::KWWidgets_BUILD_DIR/bin/$::env(VTK_BUILD_SUBDIR)/KWWidgets.lib
         set ::OpenCV_TEST_FILE $::OpenCV_DIR/lib/$::VTK_BUILD_TYPE/CV.lib
