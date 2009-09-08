@@ -1,4 +1,4 @@
-#! /opt/local/bin/python2.5
+#! /opt/local/bin/python2.6
 
 import scipy.io
 import matplotlib.pyplot as plt

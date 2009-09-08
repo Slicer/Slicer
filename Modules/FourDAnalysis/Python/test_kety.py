@@ -1,4 +1,4 @@
-#! /Users/junichi/igtdev/slicer/Slicer3-lib/python-build/bin/python2.5
+#! /Users/junichi/igtdev/slicer/Slicer3-lib/python-build/bin/python2.6
 
 import sys
 import scipy, scipy.optimize, scipy.io, numpy
