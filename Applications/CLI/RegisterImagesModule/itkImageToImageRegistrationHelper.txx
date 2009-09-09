@@ -44,17 +44,17 @@ ImageToImageRegistrationHelper< TImage >
 ::ImageToImageRegistrationHelper()
 {
   // Data
-  m_FixedImage = 0;
-  m_MovingImage = 0;
-
-  // Masks
-  m_UseFixedImageMaskObject = false;
-  m_FixedImageMaskObject = 0;
-  m_UseMovingImageMaskObject = false;
-  m_MovingImageMaskObject = 0;
+  m_FixedImage = NULL;
+  m_MovingImage = NULL;
 
   m_SampleFromOverlap = false;
   m_SampleIntensityPortion = 0.0;
+
+  // Masks
+  m_UseFixedImageMaskObject = false;
+  m_FixedImageMaskObject = NULL;
+  m_UseMovingImageMaskObject = false;
+  m_MovingImageMaskObject = NULL;
 
   m_UseRegionOfInterest = false;
   m_RegionOfInterestPoint1.Fill(0);
@@ -70,9 +70,9 @@ ImageToImageRegistrationHelper< TImage >
   m_EnableBSplineRegistration = true;
 
   // Expected transform magnitude
-  m_ExpectedOffsetPixelMagnitude = 20;
-  m_ExpectedRotationMagnitude = 0.2;
-  m_ExpectedScaleMagnitude = 0.1;
+  m_ExpectedOffsetPixelMagnitude = 10;
+  m_ExpectedRotationMagnitude = 0.1;
+  m_ExpectedScaleMagnitude = 0.05;
   m_ExpectedSkewMagnitude = 0.01;
 
   // Current state of the registration pipeline
@@ -80,26 +80,26 @@ ImageToImageRegistrationHelper< TImage >
   m_CompletedStage = PRE_STAGE;
   m_CompletedResampling = false;
 
-  m_CurrentMovingImage = 0;
-  m_CurrentMatrixTransform = 0;
-  m_CurrentBSplineTransform = 0;
+  m_CurrentMovingImage = NULL;
+  m_CurrentMatrixTransform = NULL;
+  m_CurrentBSplineTransform = NULL;
 
-  m_LoadedTransformResampledImage = 0;
-  m_MatrixTransformResampledImage = 0;
-  m_BSplineTransformResampledImage = 0;
+  m_LoadedTransformResampledImage = NULL;
+  m_MatrixTransformResampledImage = NULL;
+  m_BSplineTransformResampledImage = NULL;
 
   // Results
-  m_FinalMetricValue = 0;
+  m_FinalMetricValue = 0.0;
 
   // Baseline
   m_BaselineImage = NULL;
   m_BaselineNumberOfFailedPixelsTolerance = 1000;
   m_BaselineIntensityTolerance = 10;
   m_BaselineRadiusTolerance = 0;
+  m_BaselineResampledMovingImage = NULL;
   m_BaselineDifferenceImage = NULL;
   m_BaselineNumberOfFailedPixels = 0;
   m_BaselineTestPassed = false;
-  m_BaselineResampledMovingImage = NULL;
 
   // Progress
   m_ReportProgress = false;
@@ -107,40 +107,40 @@ ImageToImageRegistrationHelper< TImage >
   m_MinimizeMemory = false;
 
   // Loaded
-  m_LoadedMatrixTransform = 0;
-  m_LoadedBSplineTransform = 0;
+  m_LoadedMatrixTransform = NULL;
+  m_LoadedBSplineTransform = NULL;
 
   // Initial
   m_InitialMethodEnum = INIT_WITH_CENTERS_OF_MASS;
-  m_InitialTransform = 0;
+  m_InitialTransform = NULL;
 
   // Rigid
-  m_RigidSamplingRatio = 0.05;
+  m_RigidSamplingRatio = 0.01;
   m_RigidTargetError = 0.0001;
   m_RigidMaxIterations = 100;
-  m_RigidTransform = 0;
+  m_RigidTransform = NULL;
   m_RigidMetricMethodEnum = OptimizedRegistrationMethodType::MATTES_MI_METRIC;
   m_RigidInterpolationMethodEnum = OptimizedRegistrationMethodType::LINEAR_INTERPOLATION;
-  m_RigidMetricValue = 0;
+  m_RigidMetricValue = 0.0;
 
   // Affine
-  m_AffineSamplingRatio = 0.05;
+  m_AffineSamplingRatio = 0.02;
   m_AffineTargetError = 0.0001;
-  m_AffineMaxIterations = 200;
-  m_AffineTransform = 0;
+  m_AffineMaxIterations = 50;
+  m_AffineTransform = NULL;
   m_AffineMetricMethodEnum = OptimizedRegistrationMethodType::MATTES_MI_METRIC;
   m_AffineInterpolationMethodEnum = OptimizedRegistrationMethodType::LINEAR_INTERPOLATION;
-  m_AffineMetricValue = 0;
+  m_AffineMetricValue = 0.0;
 
   // BSpline
-  m_BSplineSamplingRatio = 0.20;
+  m_BSplineSamplingRatio = 0.10;
   m_BSplineTargetError = 0.0001;
-  m_BSplineMaxIterations = 40;
-  m_BSplineControlPointPixelSpacing = 20;
-  m_BSplineTransform = 0;
+  m_BSplineMaxIterations = 20;
+  m_BSplineControlPointPixelSpacing = 40;
+  m_BSplineTransform = NULL;
   m_BSplineMetricMethodEnum = OptimizedRegistrationMethodType::MATTES_MI_METRIC;
   m_BSplineInterpolationMethodEnum = OptimizedRegistrationMethodType::BSPLINE_INTERPOLATION;
-  m_BSplineMetricValue = 0;
+  m_BSplineMetricValue = 0.0;
 
 }
 
