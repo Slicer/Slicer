@@ -22,13 +22,11 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#include "itkOrientedImage.h"
+#include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
-#include "itkBSplineInterpolateImageFunction.h"
-#include "itkResampleImageFilter.h"
-#include "itkConstrainedValueDifferenceImageFilter.h"
+#include "itkSubtractImageFilter.h"
 
 #include "itkPluginUtilities.h"
 #include "SubtractCLP.h"
@@ -48,18 +46,17 @@ template<class T> int DoIt( int argc, char * argv[], T )
   typedef    T       InputPixelType;
   typedef    T       OutputPixelType;
 
-  typedef itk::OrientedImage< InputPixelType,  3 >   InputImageType;
-  typedef itk::OrientedImage< OutputPixelType, 3 >   OutputImageType;
+  typedef itk::Image< InputPixelType,  3 >   InputImageType;
+  typedef itk::Image< OutputPixelType, 3 >   OutputImageType;
 
   typedef itk::ImageFileReader< InputImageType >  ReaderType;
   typedef itk::ImageFileWriter< OutputImageType > WriterType;
 
-  typedef itk::BSplineInterpolateImageFunction<InputImageType> Interpolator;
-  typedef itk::ResampleImageFilter<InputImageType, OutputImageType> ResampleType;
-  typedef itk::ConstrainedValueDifferenceImageFilter<InputImageType, OutputImageType, OutputImageType> FilterType;
+  typedef itk::SubtractImageFilter<
+    InputImageType, InputImageType, OutputImageType >  FilterType;
 
   typename ReaderType::Pointer reader1 = ReaderType::New();
-  itk::PluginFilterWatcher watchReader1(reader1, "Read Volume 1",
+  itk::PluginFilterWatcher watchReader1(reader1, "Read Volume 2",
                                         CLPProcessInformation);
   
   typename ReaderType::Pointer reader2 = ReaderType::New();
@@ -68,33 +65,14 @@ template<class T> int DoIt( int argc, char * argv[], T )
                                         CLPProcessInformation);
   reader1->SetFileName( inputVolume1.c_str() );
   reader2->SetFileName( inputVolume2.c_str() );
-  reader2->ReleaseDataFlagOn();
 
-  reader1->Update();
-  reader2->Update();
-
-  typename Interpolator::Pointer interp = Interpolator::New();
-  interp->SetInputImage(reader2->GetOutput());
-  interp->SetSplineOrder(order);
-
-  typename ResampleType::Pointer resample = ResampleType::New();
-  resample->SetInput(reader2->GetOutput());
-  resample->SetOutputParametersFromImage(reader1->GetOutput());
-  resample->SetInterpolator( interp );
-  resample->SetDefaultPixelValue( 0 );
-  resample->ReleaseDataFlagOn();
-
-  itk::PluginFilterWatcher watchResample(resample, "Resampling",
-                                        CLPProcessInformation);
-  
   typename FilterType::Pointer filter = FilterType::New();
-  filter->SetInput1( reader1->GetOutput() );
-  filter->SetInput2( resample->GetOutput() );
+  itk::PluginFilterWatcher watchFilter(filter,
+                                       "Subtract images",
+                                       CLPProcessInformation);
 
-  itk::PluginFilterWatcher watchFilter(filter, "Adding",
-                                        CLPProcessInformation);
-  
-  
+  filter->SetInput( 0, reader1->GetOutput() );
+  filter->SetInput( 1, reader2->GetOutput() );
 
   typename WriterType::Pointer writer = WriterType::New();
   itk::PluginFilterWatcher watchWriter(writer,
@@ -124,22 +102,29 @@ int main( int argc, char * argv[] )
 
     // This filter handles all types on input, but only produces
     // signed types
-    
     switch (componentType)
       {
       case itk::ImageIOBase::UCHAR:
+        return DoIt( argc, argv, static_cast<unsigned char>(0));
+        break;
       case itk::ImageIOBase::CHAR:
         return DoIt( argc, argv, static_cast<char>(0));
         break;
       case itk::ImageIOBase::USHORT:
+        return DoIt( argc, argv, static_cast<unsigned short>(0));
+        break;
       case itk::ImageIOBase::SHORT:
         return DoIt( argc, argv, static_cast<short>(0));
         break;
       case itk::ImageIOBase::UINT:
+        return DoIt( argc, argv, static_cast<unsigned int>(0));
+        break;
       case itk::ImageIOBase::INT:
         return DoIt( argc, argv, static_cast<int>(0));
         break;
       case itk::ImageIOBase::ULONG:
+        return DoIt( argc, argv, static_cast<unsigned long>(0));
+        break;
       case itk::ImageIOBase::LONG:
         return DoIt( argc, argv, static_cast<long>(0));
         break;
@@ -155,6 +140,7 @@ int main( int argc, char * argv[] )
         break;
       }
     }
+
   catch( itk::ExceptionObject &excep)
     {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
