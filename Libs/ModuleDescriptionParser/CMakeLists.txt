@@ -97,7 +97,7 @@ endif(USE_BFD)
 # Build and install the library
 
 set(lib_name ModuleDescriptionParser)
-  add_library(${lib_name} STATIC
+  add_library(${lib_name}
   ${ModuleDescriptionParser_SRCS}
 )
 
