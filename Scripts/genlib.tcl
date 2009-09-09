@@ -793,17 +793,23 @@ if {  [BuildThis $::NUMPY_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [strin
           regsub -all ":" $::COMPILER_PATH "" vcbindir
           set devenvdir /cygdrive/$devenvdir
           set vcbindir /cygdrive/$vcbindir
-          set ::env(PATH) $devenvdir:$vcbindir:$::env(PATH)
+          set ::env(PATH) $::env(PATH):$devenvdir:$vcbindir
+          regsub -all ":" $::Slicer3_LIB/python-build/PCbuild "" pcbuildpath
+          set ::env(PATH) $::env(PATH):/cygdrive/$pcbuildpath
+          regsub -all ":" $::MSSDK_PATH/Bin "" sdkpath
+          set ::env(PATH) $::env(PATH):/cygdrive/$sdkpath
         } else {
           # Jim's way - cygwin does mount c:/ as /c and doesn't use cygdrive
           set devenvdir [file dirname $::MAKE]
           set vcbindir $::COMPILER_PATH
           set ::env(PATH) $devenvdir\;$vcbindir\;$::env(PATH)
+          set ::env(PATH) $::env(PATH)\;$::Slicer3_LIB/python-build/PCbuild
         }
-        set ::env(PATH) $::Slicer3_LIB/python-build/PCbuild\;$::env(PATH)
         set ::env(INCLUDE) [file dirname $::COMPILER_PATH]/include
         set ::env(INCLUDE) $::MSSDK_PATH/Include\;$::env(INCLUDE)
+        set ::env(INCLUDE) [file normalize $::Slicer3_LIB/python-build/Include]\;$::env(INCLUDE)
         set ::env(LIB) $::MSSDK_PATH/Lib\;[file dirname $::COMPILER_PATH]/lib
+        set ::env(LIBPATH) $devenvdir
 
         cd $::Slicer3_LIB/python/numpy
         runcmd $::Slicer3_LIB/python-build/PCbuild/python.exe ./setup.py --verbose install
@@ -821,7 +827,6 @@ if {  [BuildThis $::NUMPY_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [strin
             }
           }
         }
-
     } else {
         if { $isDarwin } {
             if { ![info exists ::env(DYLD_LIBRARY_PATH)] } { set ::env(DYLD_LIBRARY_PATH) "" }
