@@ -543,8 +543,8 @@ if { $isWindows } {
     if { $::USE_PYTHON == "ON" } {
       if { ![file exists bin] } { file mkdir bin }
       if { ![file exists bin/$::VTK_BUILD_TYPE] } { file mkdir bin/$::VTK_BUILD_TYPE }
-      if { ![file exists bin/$::VTK_BUILD_TYPE/python25.dll] } { 
-        file copy $::Slicer3_LIB/python-build/PCbuild/python25.dll bin/$::VTK_BUILD_TYPE 
+      if { ![file exists bin/$::VTK_BUILD_TYPE/python26.dll] } { 
+        file copy $::Slicer3_LIB/python-build/PCbuild/python26.dll bin/$::VTK_BUILD_TYPE 
       }
     }
 
