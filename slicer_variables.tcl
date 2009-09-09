@@ -318,10 +318,8 @@ switch $::tcl_platform(os) {
         if { $::USE_SYSTEM_PYTHON } {
           error "need to define system python path for $::tcl_platform(os)"
         }
-        #set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python.exe
-        #set ::PYTHON_LIB $::PYTHON_BIN_DIR/Libs/python25.lib
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/PCbuild/python.exe
-        set ::PYTHON_LIB $::PYTHON_BIN_DIR/PCbuild/python25.lib
+        set ::PYTHON_LIB $::PYTHON_BIN_DIR/PCbuild/python26.lib
 
         set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include
 
