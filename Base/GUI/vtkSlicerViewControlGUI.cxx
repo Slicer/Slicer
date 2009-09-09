@@ -2698,7 +2698,7 @@ void vtkSlicerViewControlGUI::MainViewRotateAround ( const char *axis )
         else
           {
 #if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
-          deg = vtkMath::DegreesFromRadians(deg);
+          deg = vtkMath::RadiansFromDegrees(deg);
 #else
           deg *= vtkMath::DoubleDegreesToRadians();
 #endif
