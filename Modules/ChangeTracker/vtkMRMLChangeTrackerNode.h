@@ -195,6 +195,9 @@ class VTK_CHANGETRACKER_EXPORT vtkMRMLChangeTrackerNode : public vtkMRMLNode
   vtkGetStringMacro(Scan2_InputSegmentSuperSampleRef);
   vtkSetStringMacro(Scan2_InputSegmentSuperSampleRef);
 
+  vtkGetStringMacro(ROI_Ref);
+  vtkSetStringMacro(ROI_Ref);
+
 protected:
   vtkMRMLChangeTrackerNode();
   ~vtkMRMLChangeTrackerNode();
@@ -213,6 +216,7 @@ protected:
   char* Scan2_SuperSampleRef;
   char* Scan2_NormedRef;
   char* Scan2_ThreshRef;
+  char* ROI_Ref;
 
   // keep pointers to the input segmentations, if available
   char* Scan1_InputSegmentRef;

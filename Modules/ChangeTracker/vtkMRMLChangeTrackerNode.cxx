@@ -113,6 +113,8 @@ vtkMRMLChangeTrackerNode::vtkMRMLChangeTrackerNode()
    this->Scan1_InputSegmentSuperSampleRef = NULL;
    this->Scan2_InputSegmentRef = NULL;
    this->Scan2_InputSegmentSuperSampleRef = NULL;
+
+   this->ROI_Ref = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -138,6 +140,8 @@ vtkMRMLChangeTrackerNode::~vtkMRMLChangeTrackerNode()
    this->SetScan1_InputSegmentSuperSampleRef(NULL);
    this->SetScan2_InputSegmentRef(NULL);
    this->SetScan2_InputSegmentSuperSampleRef(NULL);
+
+   this->SetROI_Ref(NULL);
 }
 
 //----------------------------------------------------------------------------
@@ -212,6 +216,12 @@ void vtkMRMLChangeTrackerNode::WriteXML(ostream& of, int nIndent)
       ss << this->Scan2_InputSegmentSuperSampleRef;
       of << indent << " Scan2_InputSegmentSuperSampleRef=\"" << ss.str() << "\"";
      }
+  if (this->ROI_Ref)
+    {
+    std::stringstream ss;
+    ss << this->ROI_Ref;
+    of << indent << " ROI_Ref=\"" << ss.str() << "\"";
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -331,6 +341,11 @@ void vtkMRMLChangeTrackerNode::ReadXMLAttributes(const char** atts)
       this->SetScan2_InputSegmentSuperSampleRef(attValue);
       this->Scene->AddReferencedNodeID(this->Scan2_InputSegmentSuperSampleRef, this);
       }
+    else if(!strcmp(attName, "ROI_Ref"))
+      {
+      this->SetROI_Ref(attValue);
+      this->Scene->AddReferencedNodeID(this->ROI_Ref, this);
+      }
 
     // AF: should the intermediate volumes be stored here?
     /*
@@ -371,6 +386,7 @@ void vtkMRMLChangeTrackerNode::Copy(vtkMRMLNode *anode)
   this->SetScan2_InputSegmentRef(node->Scan2_InputSegmentRef);
   this->SetScan1_InputSegmentSuperSampleRef(node->Scan1_InputSegmentSuperSampleRef);
   this->SetScan2_InputSegmentSuperSampleRef(node->Scan2_InputSegmentSuperSampleRef);
+  this->SetROI_Ref(node->ROI_Ref);
   // AF: why not all of the volume references are copied?
 }
 
@@ -426,6 +442,8 @@ void vtkMRMLChangeTrackerNode::PrintSelf(ostream& os, vtkIndent indent)
     GetScan1_InputSegmentSuperSampleRef() << "\n";
   os << indent << "Scan2_InputSegmentSuperSampleRef: " << 
     GetScan2_InputSegmentSuperSampleRef() << "\n";
+  os << "\n";
+  os << indent << "ROI_Ref: " << GetROI_Ref() << "\n";
   os << "\n";
 }
 

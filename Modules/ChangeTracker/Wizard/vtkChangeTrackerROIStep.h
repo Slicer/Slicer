@@ -89,7 +89,7 @@ private:
   void operator=(const vtkChangeTrackerROIStep&);
  
   void ROIReset();
-  void ROIUpdateWithNewSample(int ijkSample[3]);
+  void ROIUpdateWithNewSample(double rasSample[3]);
   void ROIUpdateAxisWithNewSample(vtkKWRange *ROIAxis, int Sample);
   void ROIUpdateWithNode();
   void ROIUpdateAxisWithNode(vtkMRMLChangeTrackerNode* Node, vtkKWRange *ROIAxis, int Axis);
@@ -104,7 +104,7 @@ private:
   void AddROISamplingGUIObservers();
   void RemoveROISamplingGUIObservers();
  
-  void RetrieveInteractorIJKCoordinates(vtkSlicerSliceGUI *sliceGUI, vtkRenderWindowInteractor *rwi,int coords[3]);
+  void RetrieveInteractorCoordinates(vtkSlicerSliceGUI *sliceGUI, vtkRenderWindowInteractor *rwi,int coordsIJK[3], double coordsRAS[3]);
 
   void ROIChangedCallback(int axis, double min, double max); 
 

@@ -301,6 +301,9 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
     // this->FrameROI->CollapseFrame();
   }
 
+  this->Script("pack %s -side top -anchor nw -fill x -padx 0 -pady 0", this->FrameROI->GetWidgetName());
+
+#ifdef SHOWROIIJK
   if (!this->FrameROIIJK)
     {
     this->FrameROIIJK = vtkSlicerModuleCollapsibleFrame::New();
@@ -313,8 +316,8 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
     this->FrameROIIJK->CollapseFrame();
     }
 
-  this->Script("pack %s -side top -anchor nw -fill x -padx 0 -pady 0", this->FrameROI->GetWidgetName());
   this->Script("pack %s -side top -anchor nw -fill x -padx 0 -pady 0", this->FrameROIIJK->GetWidgetName());
+#endif // SHOWROIIJK
 
   if (!this->ButtonsShow) {
     this->ButtonsShow = vtkKWPushButton::New();
@@ -342,7 +345,7 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
   this->Script("pack %s %s -side left -anchor nw -expand n -padx 2 -pady 2", 
                 this->ButtonsShow->GetWidgetName(),this->ButtonsReset->GetWidgetName());
 
-  
+#ifdef SHOWROIIJK
   if (!this->FrameROIX)
     {
     this->FrameROIX = vtkKWFrame::New();
@@ -375,7 +378,7 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
     this->ROIX->SetParent(this->FrameROIX);
     this->ROIX->Create();
     this->ROIX->SymmetricalInteractionOff();
-    this->ROIX->SetCommand(this, "ROIXChangedCallback");    
+//    this->ROIX->SetCommand(this, "ROIXChangedCallback");    
     this->ROIX->SetWholeRange(-1, double(dimensions[0]-1));
     this->ROIX->SetResolution(1);
     }
@@ -414,7 +417,7 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
 
     this->ROIY->Create();
     this->ROIY->SymmetricalInteractionOff();
-    this->ROIY->SetCommand(this, "ROIYChangedCallback");    
+//    this->ROIY->SetCommand(this, "ROIYChangedCallback");    
     this->ROIY->SetWholeRange(-1, double(dimensions[1]-1));
     this->ROIY->SetResolution(1);
     }
@@ -453,7 +456,7 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
 
     this->ROIZ->Create();
     this->ROIZ->SymmetricalInteractionOff();
-    this->ROIZ->SetCommand(this, "ROIZChangedCallback");    
+//    this->ROIZ->SetCommand(this, "ROIZChangedCallback");    
     this->ROIZ->SetWholeRange(-1, double(dimensions[2]-1));
     this->ROIZ->SetResolution(1);
     }
@@ -463,35 +466,47 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
   this->Script("pack %s %s -side left -anchor nw -padx 2 -pady 0",this->LabelROIX->GetWidgetName(),this->ROIX->GetWidgetName());
   this->Script("pack %s %s -side left -anchor nw -padx 2 -pady 0",this->LabelROIY->GetWidgetName(),this->ROIY->GetWidgetName());
   this->Script("pack %s %s -side left -anchor nw -padx 2 -pady 0",this->LabelROIZ->GetWidgetName(),this->ROIZ->GetWidgetName());
-  
 
-  // Set it up so it has default value from MRML file 
-  this->ROIUpdateWithNode();
+#endif // SHOWROIIJK
+  
   {
    vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget(); 
    wizard_widget->BackButtonVisibilityOn();
    wizard_widget->GetCancelButton()->EnabledOn();
   }
  
-  if(!this->roiNode)
+  // Set it up so it has default value from MRML file 
+  if(!node->GetROI_Ref())
     {
     // Create ROI MRML node
     // see Base/GUI/vtkSlicerNodeSelectorWidget.cxx:ProcessNewNodeCommand
     vtkMRMLScene *scene = node->GetScene();
-    vtkMRMLROINode *roi = 
+    this->roiNode = 
       static_cast<vtkMRMLROINode*>(scene->CreateNodeByClass("vtkMRMLROINode"));
-    scene->AddNode(roi);
-    roi->SetName("ChangeTrackerROI");
-    roi->SetVisibility(0);
-//    this->GetGUI()->ObserveMRMLROINode(roi);
-    roi->AddObserver(vtkCommand::ModifiedEvent, this->ROIMRMLCallbackCommand);
-    this->roiNode = roi;
-    roi->Delete();
+    scene->AddNode(this->roiNode);
+    this->roiNode->SetName("ChangeTrackerROI");
+    this->roiNode->SetVisibility(0);
+    node->SetROI_Ref(this->roiNode->GetID());
     }
+  else
+    {
+    vtkMRMLScene *scene = node->GetScene();
+    this->roiNode = static_cast<vtkMRMLROINode*>(scene->GetNodeByID(node->GetROI_Ref()));
+    if(!this->roiNode)
+      {
+      vtkErrorMacro("Invalid reference to ROI in ChangeTracker node. Unable to proceed.");
+      return;
+      }
+    }
+  
+  // update the ROI label map to reflect what is stored in ROI MRML
+  this->MRMLUpdateROIFromROINode();
+  this->roiNode->SetVisibility(!this->ROIHideFlag);
+  this->roiNode->AddObserver(vtkCommand::ModifiedEvent, this->ROIMRMLCallbackCommand);
 
   InitROIRender();
 //  ResetROIRender();
-  this->MRMLUpdateROINodeFromROI();
+//  this->MRMLUpdateROINodeFromROI();
   
  
   if (!this->roiWidget)
@@ -672,6 +687,7 @@ void vtkChangeTrackerROIStep::AddROISamplingGUIObservers() {
     GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
 
   rwi0->GetInteractorStyle()->AddObserver(vtkCommand::LeftButtonPressEvent, this->WizardGUICallbackCommand);
+  rwi0->GetInteractorStyle()->AddObserver(vtkCommand::RightButtonPressEvent, this->WizardGUICallbackCommand, 1);
 
   // Slice GUI 1
 
@@ -680,6 +696,7 @@ void vtkChangeTrackerROIStep::AddROISamplingGUIObservers() {
     GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
 
   rwi1->GetInteractorStyle()->AddObserver(vtkCommand::LeftButtonPressEvent,this->WizardGUICallbackCommand);
+  rwi1->GetInteractorStyle()->AddObserver(vtkCommand::RightButtonPressEvent,this->WizardGUICallbackCommand, 1);
 
   // Slice GUI 2
 
@@ -688,6 +705,7 @@ void vtkChangeTrackerROIStep::AddROISamplingGUIObservers() {
     GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
 
   rwi2->GetInteractorStyle()->AddObserver(vtkCommand::LeftButtonPressEvent, this->WizardGUICallbackCommand);
+  rwi2->GetInteractorStyle()->AddObserver(vtkCommand::RightButtonPressEvent, this->WizardGUICallbackCommand, 1);
 } 
 
 
@@ -718,6 +736,7 @@ void vtkChangeTrackerROIStep::RemoveROISamplingGUIObservers() {
     if (!MainGUI) return;
     vtkRenderWindowInteractor *rwi = MainGUI->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
     rwi->GetInteractorStyle()->RemoveObservers(vtkCommand::LeftButtonPressEvent, this->WizardGUICallbackCommand);
+    rwi->GetInteractorStyle()->RemoveObservers(vtkCommand::RightButtonPressEvent, this->WizardGUICallbackCommand);
   }
 }
 
@@ -731,9 +750,12 @@ void vtkChangeTrackerROIStep::WizardGUICallback(vtkObject *caller, unsigned long
 
 void vtkChangeTrackerROIStep::ROIReset() {
   // cout << "ROIReset Start" << endl;
+#ifdef SHOWROIIJK
   if (this->ROIX) this->ROIX->SetRange(-1,-1);
   if (this->ROIY) this->ROIY->SetRange(-1,-1);
   if (this->ROIZ) this->ROIZ->SetRange(-1,-1);
+#endif // SHOWROIIJK
+
   this->ROIHideFlag = 0;
 
   if(this->roiNode){
@@ -770,11 +792,41 @@ void vtkChangeTrackerROIStep::ROIUpdateAxisWithNewSample(vtkKWRange *ROIAxis, in
   ROIAxis->SetRange(newRange);
 }
 
-void vtkChangeTrackerROIStep::ROIUpdateWithNewSample(int ijkSample[3]) {
-  // cout << "ROIUpdateWithNewSample start " << ijkSample[0] << " " << ijkSample[1] << " " << ijkSample[2] << " " << endl;
-  this->ROIUpdateAxisWithNewSample(this->ROIX,ijkSample[0]);
-  this->ROIUpdateAxisWithNewSample(this->ROIY,ijkSample[1]);
-  this->ROIUpdateAxisWithNewSample(this->ROIZ,ijkSample[2]);
+void vtkChangeTrackerROIStep::ROIUpdateWithNewSample(double rasSample[3]) {
+  double *roiXYZ = roiNode->GetXYZ();
+  double *roiRadius = roiNode->GetRadiusXYZ();
+  double dXYZ[3], shiftXYZ[3];
+  int i;
+
+  for(i=0;i<3;i++)
+    {
+    dXYZ[i] = fabs(roiXYZ[i]-rasSample[i]);
+    shiftXYZ[i] = abs(dXYZ[i]-roiRadius[i])/2.;
+    }
+
+  if(dXYZ[0]>roiRadius[0] || dXYZ[1]>roiRadius[1] || dXYZ[2]>roiRadius[2])
+    {
+    // click outside the box
+    for(i=0;i<3;i++)
+      {
+      if(dXYZ[i]>roiRadius[i])
+        {
+        if(rasSample[i]>roiXYZ[i])
+          {
+          roiXYZ[i] = roiXYZ[i]+shiftXYZ[i];
+          }
+        else
+          {
+          roiXYZ[i] = roiXYZ[i]-shiftXYZ[i];
+          }
+        roiRadius[i] = roiRadius[i]+shiftXYZ[i];
+        }
+      }
+    }
+  // in-slice reduction of ROI size is not there yet, because need to pass
+  // clickXY to this function
+  this->roiNode->SetXYZ(roiXYZ);
+  this->roiNode->SetRadiusXYZ(roiRadius);
 }
 
 void vtkChangeTrackerROIStep::ROIUpdateAxisWithNode(vtkMRMLChangeTrackerNode* Node, vtkKWRange *ROIAxis, int Axis) {
@@ -785,9 +837,11 @@ void vtkChangeTrackerROIStep::ROIUpdateAxisWithNode(vtkMRMLChangeTrackerNode* No
 void vtkChangeTrackerROIStep::ROIUpdateWithNode() {
   // cout << "ROIUpdateWithNode Start" << endl;
   vtkMRMLChangeTrackerNode* Node = this->GetGUI()->GetNode();
+#if SHOWROIIJK
   this->ROIUpdateAxisWithNode(Node, this->ROIX,0); 
   this->ROIUpdateAxisWithNode(Node, this->ROIY,1); 
   this->ROIUpdateAxisWithNode(Node, this->ROIZ,2); 
+#endif // SHOWROIIJK
   this->ROIMapUpdate();
 }
 
@@ -931,19 +985,20 @@ void vtkChangeTrackerROIStep::ROIMapRemove() {
   }
 }
 
-void vtkChangeTrackerROIStep::RetrieveInteractorIJKCoordinates(vtkSlicerSliceGUI *sliceGUI, 
+void vtkChangeTrackerROIStep::RetrieveInteractorCoordinates(vtkSlicerSliceGUI *sliceGUI, 
                                                                vtkRenderWindowInteractor *rwi,
-                                                               int coords[3]) 
+                                                               int coordsIJK[3], double coordsRAS[3]) 
 {
-  coords[0] = coords[1] = coords[2] = -1;
+  coordsIJK[0] = coordsIJK[1] = coordsIJK[2] = -1;
+  coordsRAS[0] = coordsRAS[1] = coordsRAS[2] = -1.;
   vtkMRMLChangeTrackerNode* Node = this->GetGUI()->GetNode();
   if (!Node) {
-    cout << "ERROR: vtkChangeTrackerROIStep::RetrieveInteractorIJKCoordinates: No Node" << endl;
+    cout << "ERROR: vtkChangeTrackerROIStep::RetrieveInteractorCoordinates: No Node" << endl;
     return;
   } 
 
   if (!Node->GetScan1_Ref()) {
-    cout << "ERROR: vtkChangeTrackerROIStep::RetrieveInteractorIJKCoordinates: No First Volume Defined" << endl;
+    cout << "ERROR: vtkChangeTrackerROIStep::RetrieveInteractorCoordinates: No First Volume Defined" << endl;
     return;
   }
   vtkMRMLNode* mrmlNode =   Node->GetScene()->GetNodeByID(Node->GetScan1_Ref());
@@ -951,19 +1006,23 @@ void vtkChangeTrackerROIStep::RetrieveInteractorIJKCoordinates(vtkSlicerSliceGUI
 
   if (!volumeNode)
     {
-      cout << "ERROR: vtkChangeTrackerROIStep::RetrieveInteractorIJKCoordinates: No Scan1_Ref" << endl;
+      cout << "ERROR: vtkChangeTrackerROIStep::RetrieveInteractorCoordinates: No Scan1_Ref" << endl;
       return;
     }
 
   // --------------------------------------------------------------
   // Compute RAS coordinates
-   int point[2];
-   rwi->GetLastEventPosition(point);
-   double inPt[4] = {point[0], point[1], 0, 1};
-   double rasPt[4];
-   vtkMatrix4x4 *matrix = sliceGUI->GetLogic()->GetSliceNode()->GetXYToRAS();
-   matrix->MultiplyPoint(inPt, rasPt); 
-   matrix = NULL;
+  int point[2];
+  rwi->GetLastEventPosition(point);
+  double inPt[4] = {point[0], point[1], 0, 1};
+  double rasPt[4];
+  vtkMatrix4x4 *matrix = sliceGUI->GetLogic()->GetSliceNode()->GetXYToRAS();
+  matrix->MultiplyPoint(inPt, rasPt); 
+  matrix = NULL;
+
+  coordsRAS[0] = rasPt[0];
+  coordsRAS[1] = rasPt[1];
+  coordsRAS[2] = rasPt[2];
 
   // --------------------------------------------------------------
   // Compute IJK coordinates
@@ -980,7 +1039,12 @@ void vtkChangeTrackerROIStep::RetrieveInteractorIJKCoordinates(vtkSlicerSliceGUI
     if (ijkPt[i] < 0 ) ijkPt[i] = 0;
     else if (ijkPt[i] >=  dimensions[i] ) ijkPt[i] = dimensions[i] -1;    
   }
-  coords[0] = int(0.5+(ijkPt[0]));  coords[1] = int(0.5+(ijkPt[1])); coords[2] = int(0.5+(ijkPt[2])); 
+  //coordsIJK[0] = int(0.5+(ijkPt[0]));  
+  //coordsIJK[1] = int(0.5+(ijkPt[1])); 
+  //coordsIJK[2] = int(0.5+(ijkPt[2])); 
+  coordsIJK[0] = int(ijkPt[0]);  
+  coordsIJK[1] = int(ijkPt[1]); 
+  coordsIJK[2] = int(ijkPt[2]); 
 
   //cout << "Sample:  " << rasPt[0] << " " <<  rasPt[1] << " " << rasPt[2] << " " << rasPt[3] << endl;
   //cout << "Coord: " << coords[0] << " " << coords[1] << " " << coords[2] << " " << coords[3] << endl;
@@ -1026,7 +1090,7 @@ void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long 
   }
 
   vtkSlicerInteractorStyle *s = vtkSlicerInteractorStyle::SafeDownCast(caller);
-  if (s && event == vtkCommand::LeftButtonPressEvent)
+  if (s)
   {
     // Retrieve Coordinates and update ROI
     int index = 0; 
@@ -1044,9 +1108,18 @@ void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long 
         rwi = sliceGUI->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
     }
     int ijkCoords[3];
-    this->RetrieveInteractorIJKCoordinates(sliceGUI, rwi, ijkCoords);
-//    this->ResetROICenter(ijkCoords);
-    this->ROIUpdateWithNewSample(ijkCoords);
+    double rasCoords[3];
+    this->RetrieveInteractorCoordinates(sliceGUI, rwi, ijkCoords, rasCoords);
+    
+    if(event == vtkCommand::LeftButtonPressEvent)
+      {
+      this->ROIUpdateWithNewSample(rasCoords);
+      }
+    else if(event == vtkCommand::RightButtonPressEvent)
+      {
+      this->roiNode->SetXYZ(rasCoords);
+      }
+
     if (!this->ROILabelMapNode && !this->ROIHideFlag && this->ROICheck()) {
       if (this->ROIMapShow()) 
         {
@@ -1129,9 +1202,11 @@ void vtkChangeTrackerROIStep::MRMLUpdateROIFromROINode()
   ctNode->SetROIMin(2, (int)bbox0ijk[2]);
   ctNode->SetROIMax(2, (int)bbox1ijk[2]);
   
-  this->ROIX->SetRange(bbox0ijk[0], bbox1ijk[0]);
-  this->ROIY->SetRange(bbox0ijk[1], bbox1ijk[1]);
-  this->ROIZ->SetRange(bbox0ijk[2], bbox1ijk[2]);
+#ifdef SHOWROIIJK
+  ROIX->SetRange(ctNode->GetROIMin(0), ctNode->GetROIMax(0));
+  ROIY->SetRange(ctNode->GetROIMin(1), ctNode->GetROIMax(1));
+  ROIZ->SetRange(ctNode->GetROIMin(2), ctNode->GetROIMax(2));
+#endif // SHOWROIIJK
 }
 
 // Propagate changes in ROINode MRML to ChangeTracker ROI MRML
@@ -1393,9 +1468,16 @@ void vtkChangeTrackerROIStep::ROIMRMLCallback(vtkObject *caller, unsigned long e
   vtkMRMLROINode *roiCaller = vtkMRMLROINode::SafeDownCast(caller);
   if(roiCaller && roiCaller == thisStep->roiNode && event == vtkCommand::ModifiedEvent && !thisStep->roiUpdateGuard)
     {
+    vtkMRMLChangeTrackerNode* node = thisStep->GetGUI()->GetNode();
 
     thisStep->roiUpdateGuard = true;
+
     thisStep->MRMLUpdateROIFromROINode();
+
+//    thisStep->ROIX->SetRange(node->GetROIMin(0), node->GetROIMax(0));
+//    thisStep->ROIY->SetRange(node->GetROIMin(1), node->GetROIMax(1));
+//    thisStep->ROIZ->SetRange(node->GetROIMin(2), node->GetROIMax(2));
+
     thisStep->ROIMapUpdate();
     if(thisStep->Render_Filter->GetSize())
       thisStep->UpdateROIRender();
