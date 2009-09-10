@@ -844,6 +844,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   // add a file browser 
   this->LoadVolumeButton = vtkKWLoadSaveButtonWithLabel::New ( );
   this->LoadVolumeButton->SetParent ( this->LoadFrame->GetFrame() );
+  this->LoadVolumeButton->GetWidget()->GetLoadSaveDialog()->SetMasterWindow ( this->GetApplicationGUI()->GetMainSlicerWindow() );
   this->LoadVolumeButton->Create ( );
   this->LoadVolumeButton->SetWidth(20);
   this->LoadVolumeButton->GetWidget()->SetText ("Select Volume File");
