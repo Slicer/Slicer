@@ -126,6 +126,7 @@ void vtkSlicerTransformsGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       vtkSlicerTransformLogic *logic = vtkSlicerTransformLogic::New();
       logic->AddTransform(fileName, this->GetMRMLScene());
+      logic->Delete();
       
       this->LoadButton->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
       }
