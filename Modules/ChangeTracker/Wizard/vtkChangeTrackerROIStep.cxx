@@ -836,8 +836,8 @@ void vtkChangeTrackerROIStep::ROIUpdateAxisWithNode(vtkMRMLChangeTrackerNode* No
 
 void vtkChangeTrackerROIStep::ROIUpdateWithNode() {
   // cout << "ROIUpdateWithNode Start" << endl;
-  vtkMRMLChangeTrackerNode* Node = this->GetGUI()->GetNode();
 #if SHOWROIIJK
+  vtkMRMLChangeTrackerNode* Node = this->GetGUI()->GetNode();
   this->ROIUpdateAxisWithNode(Node, this->ROIX,0); 
   this->ROIUpdateAxisWithNode(Node, this->ROIY,1); 
   this->ROIUpdateAxisWithNode(Node, this->ROIZ,2); 
@@ -1468,7 +1468,7 @@ void vtkChangeTrackerROIStep::ROIMRMLCallback(vtkObject *caller, unsigned long e
   vtkMRMLROINode *roiCaller = vtkMRMLROINode::SafeDownCast(caller);
   if(roiCaller && roiCaller == thisStep->roiNode && event == vtkCommand::ModifiedEvent && !thisStep->roiUpdateGuard)
     {
-    vtkMRMLChangeTrackerNode* node = thisStep->GetGUI()->GetNode();
+//    vtkMRMLChangeTrackerNode* node = thisStep->GetGUI()->GetNode();
 
     thisStep->roiUpdateGuard = true;
 
