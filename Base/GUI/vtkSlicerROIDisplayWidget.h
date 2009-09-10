@@ -120,7 +120,7 @@ protected:
   // ROI visibility
   vtkKWPushButton *VisibilityToggle;
   vtkSlicerVisibilityIcons *VisibilityIcons;
-
+  vtkKWLabel *VisibilityLabel;
 
   // interactive mode
   vtkKWCheckButtonWithLabel *InteractiveButton;

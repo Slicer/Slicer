@@ -63,6 +63,7 @@ vtkSlicerROIDisplayWidget::vtkSlicerROIDisplayWidget ( )
     
     this->VisibilityToggle = NULL;
     this->VisibilityIcons = NULL;
+    this->VisibilityLabel = NULL;
 
     this->InteractiveButton = vtkKWCheckButtonWithLabel::New();
     
@@ -104,6 +105,11 @@ vtkSlicerROIDisplayWidget::~vtkSlicerROIDisplayWidget ( )
     this->InteractiveButton->Delete  ( );
     this->InteractiveButton = NULL;
     }
+  if ( this->VisibilityLabel ) {
+    this->VisibilityLabel->SetParent(NULL);
+    this->VisibilityLabel->Delete();
+    this->VisibilityLabel = NULL;
+  }
    
   if (this->XRange) {
     this->XRange->SetParent(NULL);
@@ -527,12 +533,18 @@ void vtkSlicerROIDisplayWidget::CreateWidget ( )
   this->VisibilityToggle->SetBalloonHelpString ( "Toggles ROI list visibility in the MainViewer." );
   this->VisibilityToggle->SetText ("Visibility");
 
+  this->VisibilityLabel = vtkKWLabel::New();
+  this->VisibilityLabel->SetParent (scaleFrame);
+  this->VisibilityLabel->Create();
+  this->VisibilityLabel->SetText("Display clipping box");
+
   this->InteractiveButton->SetParent ( scaleFrame );
   this->InteractiveButton->Create ( );
   this->InteractiveButton->SetLabelText("Interactive Mode");
   this->InteractiveButton->SetBalloonHelpString("Enable interactive updates.");
 
-  this->Script("pack %s %s -side left -anchor w -padx 2 -pady 2 -in %s", 
+  this->Script("pack %s %s %s -side left -anchor w -padx 2 -pady 2 -in %s", 
+               this->VisibilityLabel->GetWidgetName(),
                this->VisibilityToggle->GetWidgetName(), 
                this->InteractiveButton->GetWidgetName(),
                scaleFrame->GetWidgetName() );
