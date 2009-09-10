@@ -31,6 +31,7 @@
 #include "vtkKWSpinBoxWithLabel.h"
 #include "vtkKWSpinBox.h"
 #include "vtkKWRadioButton.h"
+#include "vtkSlicerVisibilityIcons.h"
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkChangeTrackerROIStep);
@@ -48,7 +49,7 @@ vtkCxxRevisionMacro(vtkChangeTrackerROIStep, "$Revision: 1.2 $");
 vtkChangeTrackerROIStep::vtkChangeTrackerROIStep()
 {
   this->SetName("2/4. Define Volume of Interest"); 
-  this->SetDescription("Click left mouse button around the tumor or move sliders"); 
+  this->SetDescription("Click right mouse button to re-center VOI, use left button to resize"); 
   this->WizardGUICallbackCommand->SetCallback(vtkChangeTrackerROIStep::WizardGUICallback);
 
   this->FrameButtons    = NULL;
@@ -80,6 +81,9 @@ vtkChangeTrackerROIStep::vtkChangeTrackerROIStep()
   this->ROIMRMLCallbackCommand = vtkCallbackCommand::New();
   this->ROIMRMLCallbackCommand->SetClientData(reinterpret_cast<void*>(this));
   this->ROIMRMLCallbackCommand->SetCallback(vtkChangeTrackerROIStep::ROIMRMLCallback);
+
+  this->VisibilityIcons = NULL;
+  this->VisibilityLabel = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -202,6 +206,16 @@ vtkChangeTrackerROIStep::~vtkChangeTrackerROIStep()
     this->ROIMRMLCallbackCommand->Delete();
     this->ROIMRMLCallbackCommand = NULL;
     }
+  if ( this->VisibilityIcons ) {
+    this->VisibilityIcons->Delete  ( );
+    this->VisibilityIcons = NULL;
+    }
+  if ( this->VisibilityLabel ) {
+    this->VisibilityLabel->SetParent(NULL);
+    this->VisibilityLabel->Delete();
+    this->VisibilityLabel = NULL;
+  }
+
 }
 
 void vtkChangeTrackerROIStep::DeleteSuperSampleNode() 
@@ -323,12 +337,27 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
     this->ButtonsShow = vtkKWPushButton::New();
   }
 
+  if(!this->VisibilityIcons)
+    this->VisibilityIcons = vtkSlicerVisibilityIcons::New ( );
+
   if (!this->ButtonsShow->IsCreated()) {
     this->ButtonsShow->SetParent(this->FrameButtons);
     this->ButtonsShow->Create();
-    this->ButtonsShow->SetWidth(CHANGETRACKER_MENU_BUTTON_WIDTH);
+//    this->ButtonsShow->SetWidth(CHANGETRACKER_MENU_BUTTON_WIDTH);
     this->ButtonsShow->SetText("Show render");
-    this->ButtonsShow->SetBalloonHelpString("Show/hide VOI rendering in image viewer"); 
+    this->ButtonsShow->SetReliefToFlat ( );
+    this->ButtonsShow->SetOverReliefToNone ( );
+    this->ButtonsShow->SetBorderWidth ( 0 );
+    this->ButtonsShow->SetBalloonHelpString("Show/hide VOI rendering and label overlay in image viewer"); 
+    this->ButtonsShow->SetImageToIcon(this->VisibilityIcons->GetVisibleIcon());
+  }
+  if(!this->VisibilityLabel){
+    this->VisibilityLabel = vtkKWLabel::New();
+  }
+  if(!this->VisibilityLabel->IsCreated()){
+    this->VisibilityLabel->SetParent (this->FrameButtons);
+    this->VisibilityLabel->Create();
+    this->VisibilityLabel->SetText("Display volume rendering and VOI label");
   }
 
   if (!this->ButtonsReset) {
@@ -342,8 +371,9 @@ void vtkChangeTrackerROIStep::ShowUserInterface()
     this->ButtonsReset->SetBalloonHelpString("Reset Values"); 
   }
 
-  this->Script("pack %s %s -side left -anchor nw -expand n -padx 2 -pady 2", 
-                this->ButtonsShow->GetWidgetName(),this->ButtonsReset->GetWidgetName());
+  this->Script("pack %s %s %s -side left -anchor w -padx 4 -pady 2 -in %s", 
+                this->VisibilityLabel->GetWidgetName(), this->ButtonsShow->GetWidgetName(),
+                this->ButtonsReset->GetWidgetName(), this->FrameButtons->GetWidgetName());
 
 #ifdef SHOWROIIJK
   if (!this->FrameROIX)
@@ -757,6 +787,7 @@ void vtkChangeTrackerROIStep::ROIReset() {
 #endif // SHOWROIIJK
 
   this->ROIHideFlag = 0;
+  this->ButtonsShow->SetImageToIcon(this->VisibilityIcons->GetVisibleIcon());
 
   if(this->roiNode){
     vtkMRMLChangeTrackerNode* Node = this->GetGUI()->GetNode();
@@ -1064,11 +1095,13 @@ void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long 
 //        roiNode->SetVisibility(0);
         ResetROIRender();
         this->ROIHideFlag = 1;
+        this->ButtonsShow->SetImageToIcon(this->VisibilityIcons->GetInvisibleIcon());
       } else { 
         if (this->ROIMapShow()) { 
 //          roiNode->SetVisibility(1);
           UpdateROIRender();
           this->ButtonsShow->SetText("Hide render");
+          this->ButtonsShow->SetImageToIcon(this->VisibilityIcons->GetVisibleIcon());
         }
 // FIXME: when feature complete
 //        if (roiNode)  
@@ -1081,6 +1114,7 @@ void vtkChangeTrackerROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long 
         this->ButtonsShow->SetText("Show render");
         this->ROIMapRemove();
         roiNode->SetVisibility(0);
+        this->ButtonsShow->SetImageToIcon(this->VisibilityIcons->GetInvisibleIcon());
         ResetROIRender();
       }
       this->ROIReset();

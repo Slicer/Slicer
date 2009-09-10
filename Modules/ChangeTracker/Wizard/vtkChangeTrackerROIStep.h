@@ -19,6 +19,7 @@ class vtkSlicerROIDisplayWidget;
 class vtkKWSpinBoxWithLabel;
 class vtkKWRadioButtonSetWithLabel;
 class vtkCallbackCommand;
+class vtkSlicerVisibilityIcons;
 
 class VTK_CHANGETRACKER_EXPORT vtkChangeTrackerROIStep : public vtkChangeTrackerStep
 {
@@ -69,6 +70,8 @@ protected:
   vtkKWFrame                        *FrameROIZ;
 
   vtkKWPushButton           *ButtonsShow;
+  vtkSlicerVisibilityIcons  *VisibilityIcons;
+  vtkKWLabel                *VisibilityLabel;
   vtkKWPushButton           *ButtonsReset;
 
   vtkKWRange *ROIX;
