@@ -496,14 +496,16 @@ itcl::body LoadVolume::destructor {} {
 # layout.  Use the registry.
 #
 itcl::body LoadVolume::saveGeometry {} {
-  set geo(toplevel) [$o(toplevel) GetGeometry]
-  set geo(tableFramePosition) [$o(tableFrame) GetSeparatorPosition]
-  set geo(dicomSplitPosition) [$o(dicomSplit) GetSeparatorPosition]
-  set geo(dicomDescriptionWidth) [[$o(dicomList) GetWidget] GetColumnWidth 0]
-  set geo(dicomValueWidth) [[$o(dicomList) GetWidget] GetColumnWidth 1]
-  set geo(browserFavoriteWidth) [[$o(browser) GetMainFrame] GetFrame1Size]
-  set geo(browserDirWidth) [[$o(browser) GetDirFileFrame] GetFrame1Size]
-  $::slicer3::Application SetRegistry "LoadVolumeGeometry" [array get geo]
+  if { [info exists o(toplevel)] } {
+    set geo(toplevel) [$o(toplevel) GetGeometry]
+    set geo(tableFramePosition) [$o(tableFrame) GetSeparatorPosition]
+    set geo(dicomSplitPosition) [$o(dicomSplit) GetSeparatorPosition]
+    set geo(dicomDescriptionWidth) [[$o(dicomList) GetWidget] GetColumnWidth 0]
+    set geo(dicomValueWidth) [[$o(dicomList) GetWidget] GetColumnWidth 1]
+    set geo(browserFavoriteWidth) [[$o(browser) GetMainFrame] GetFrame1Size]
+    set geo(browserDirWidth) [[$o(browser) GetDirFileFrame] GetFrame1Size]
+    $::slicer3::Application SetRegistry "LoadVolumeGeometry" [array get geo]
+  }
 }
 
 itcl::body LoadVolume::loadGeometry {} {
