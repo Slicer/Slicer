@@ -17,6 +17,8 @@
 #include <list>
 #include "coordTypes.h"
 
+using namespace std;
+
 typedef struct skel_branch_struct
 {
   int branchID;     // == position in graph

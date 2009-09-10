@@ -24,7 +24,6 @@
 
 #include "misc.h"
 
-using namespace std;
 
 typedef struct point_struct
 {
