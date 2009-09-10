@@ -182,9 +182,7 @@ int main( int argc, char * argv[] )
     {
     itk::GetImageType (inputVolume1, pixelType, componentType);
 
-    // This filter handles all types on input, but only produces
-    // signed types
-    
+    // this filter produces the image of the same type as the input
     switch (componentType)
       {
       case itk::ImageIOBase::UCHAR:
