@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"

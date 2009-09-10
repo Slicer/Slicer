@@ -17,9 +17,10 @@
 #include "utilities.h"
 
 #include <stdlib.h>
-#include  <errno.h>
+#include <errno.h>
 #include <stdarg.h>
 #include <string.h>
+#include <stdio.h>
 
 
 #define ERR_STRLEN 128
@@ -30,7 +31,7 @@
 #undef stderr
 
 /* For SunOS */
-#if defined(__unix__) && defined(__sun__)
+#if defined(__unix) && defined(__sun)
 #if defined(__STDC__)
 extern __FILE   __iob[_NFILE];
 #define stdin   (&__iob[0])

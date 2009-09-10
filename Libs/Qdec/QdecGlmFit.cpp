@@ -14,6 +14,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <fstream>
+#include <string.h>
 
 #include "QdecGlmFit.h"
 #include "QdecUtilities.h"

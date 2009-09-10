@@ -73,7 +73,7 @@ puts "Slicer3_HOME is $::Slicer3_HOME"
 # section below, or genlib will happily build the library again.
 
 set ::Slicer3_TAG "http://svn.slicer.org/Slicer3/trunk"
-set ::CMAKE_TAG "CMake-2-6-4"
+set ::CMAKE_TAG "CMake-2-6"
 set ::Teem_TAG http://teem.svn.sourceforge.net/svnroot/teem/teem/tags/1.10.0
 set ::KWWidgets_TAG "Slicer-3-4"
 set ::VTK_TAG "VTK-5-4"
@@ -81,10 +81,9 @@ set ::ITK_TAG ITK-3-14
 set ::PYTHON_TAG "http://svn.python.org/projects/python/branches/release26-maint"
 set ::BLAS_TAG http://svn.slicer.org/Slicer3-lib-mirrors/trunk/netlib/BLAS
 set ::LAPACK_TAG http://svn.slicer.org/Slicer3-lib-mirrors/trunk/netlib/lapack-3.1.1
-#set ::NUMPY_TAG "http://svn.scipy.org/svn/numpy/trunk"
 set ::NUMPY_TAG "http://svn.scipy.org/svn/numpy/branches/1.3.x"
-#set ::SCIPY_TAG "http://svn.scipy.org/svn/scipy/trunk"
 set ::SCIPY_TAG "http://svn.scipy.org/svn/scipy/branches/0.7.x"
+#set ::BatchMake_TAG "BatchMake-1-2"
 set ::BatchMake_TAG "HEAD"
 set ::SLICERLIBCURL_TAG "HEAD"
 set ::OpenIGTLink_TAG "http://svn.na-mic.org/NAMICSandBox/branches/OpenIGTLink-1-0"
@@ -364,12 +363,14 @@ switch $::tcl_platform(os) {
           set ::env(CC) cc
           set ::env(CXX) CC
           set ::FORTRAN_COMPILER "f90"
+          set ::env(CXXFLAGS) "-library=stlport4"
         } else {
           set ::env(CC) gcc
           set ::env(CXX) g++
           set ::COMPILER_PATH "/usr/sfw/bin"
           set ::COMPILER "g++"
           set ::FORTRAN_COMPILER "g77"
+          set ::env(CXXFLAGS) ""
         }
         # NOTE: the bellow flags will only work with gcc, and Studio 12 or newer.
         # Earlier Studio versions do not accept the -m64 flag.
@@ -389,17 +390,17 @@ switch $::tcl_platform(os) {
           # http://bugs.opensolaris.org/bugdatabase/view_bug.do?bug_id=6223255
           if {$tcl_platform(osVersion) == "5.10" && ($::GETBUILDTEST(bitness) == "64" || $::GENLIB(bitness) == "64")} {
             set ::env(CFLAGS) -m64
-            set ::env(CXXFLAGS) -m64
+            set ::env(CXXFLAGS) "$::env(CXXFLAGS) -m64"
             set ::env(LDFLAGS) "-m64 -L/usr/sfw/lib/64 -R/usr/sfw/lib/64"
 
           } else {
             set ::env(CFLAGS) -m64
-            set ::env(CXXFLAGS) -m64
+            set ::env(CXXFLAGS) "$::env(CXXFLAGS) -m64"
             set ::env(LDFLAGS) -m64
           }
         } else {
           set ::env(CFLAGS) ""
-          set ::env(CXXFLAGS) ""
+          set ::env(CXXFLAGS)  $::env(CXXFLAGS)
           set ::env(LDFLAGS) ""
         }
         puts "slicer_variables.tcl: GENLIB(bitness): $::GENLIB(bitness) GETBUILDTEST(bitness): $::GETBUILDTEST(bitness)"

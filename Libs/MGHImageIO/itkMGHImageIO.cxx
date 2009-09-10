@@ -12,6 +12,7 @@
 #include <vnl/vnl_cross.h>
 
 #include <cmath>
+#include <math.h>
 
 #include <stdio.h>
 #include <stdlib.h>

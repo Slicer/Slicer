@@ -13,6 +13,7 @@
 #include <fstream>
 #include <cstring>
 #include <stdexcept>
+#include <stdlib.h>
 
 using namespace std;
 

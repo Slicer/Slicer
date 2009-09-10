@@ -16,6 +16,8 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include <stdlib.h>
+#include <string.h>
 
 #include "QdecProject.h"
 

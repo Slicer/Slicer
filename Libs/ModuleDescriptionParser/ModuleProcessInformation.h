@@ -17,6 +17,7 @@
 
 #include <ostream>
 #include <cstring>
+#include <string.h>
 
 extern "C" {
   struct ModuleProcessInformation

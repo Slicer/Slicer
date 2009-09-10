@@ -6,6 +6,7 @@
 #include <sstream>
 #include <map>
 #include <vector>
+#include <stdlib.h>
 
 std::string GenerateBatchMakeWrapper(const ModuleDescription& module)
 {

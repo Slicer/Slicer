@@ -20,6 +20,7 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+#include <string.h>
 
 #include "QdecGlmDesign.h"
 #include "QdecUtilities.h"

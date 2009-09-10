@@ -5,6 +5,7 @@
 #include "vnl/vnl_vector.h"
 #include <iostream>
 #include <limits.h>
+# include <math.h>
 
 //Simple gradient descent
 class GradientDescent{

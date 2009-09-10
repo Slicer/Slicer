@@ -25,6 +25,8 @@ command line processing and additional features have been added.
 #include <vector>
 #include <itksys/SystemTools.hxx>
 #include "ImageReadDicomWriteCLP.h"
+#include <math.h>
+
 
 // Use an anonymous namespace to keep class types and function names
 // from colliding when module is used as shared object module.  Every

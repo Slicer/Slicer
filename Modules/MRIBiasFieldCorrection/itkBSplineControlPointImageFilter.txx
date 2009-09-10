@@ -1,6 +1,7 @@
 #ifndef __itkBSplineControlPointImageFilter_txx
 #define __itkBSplineControlPointImageFilter_txx
 
+#include <math.h>
 #include "itkBSplineControlPointImageFilter.h"
 
 #include "itkImageDuplicator.h"
