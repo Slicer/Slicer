@@ -223,20 +223,22 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 
     this->ApplicationGUI = NULL;
 
+    // note: these are fixed size arrays, not pointers,
+    // so initializing them to null string is correct
     strcpy(this->ConfirmDelete, "");
-    
     strcpy(this->ModulePaths, "");
     strcpy(this->PotentialModulePaths, "");
     strcpy(this->ColorFilePaths, "");
     strcpy(this->PotentialColorFilePaths, "");
     strcpy(this->ExtensionsInstallPath, "");
     strcpy(this->ExtensionsInstallPathDefault, "");
-    strcpy ( this->HomeModule, "");
+    strcpy(this->HomeModule, "");
+    strcpy(this->IgnoreModuleNames, "");
+
     this->LoadCommandLineModules = 1;
     this->LoadModules = 1;
     this->IgnoreModules = vtkStringArray::New();
     this->LoadableModules = vtkStringArray::New();
-    strcpy(this->IgnoreModuleNames, "");
     this->NameSeparator = ";";
     this->EnableDaemon = 0;
    
@@ -1475,16 +1477,16 @@ const char* vtkSlicerApplication::GetExtensionsInstallPath()
   char* extpath = this->ExtensionsInstallPath;
   if (extpath)
     {
-      {
+        {
         // :NOTE: 20090728 tgl: Do this here as I am not certain
         // TemporaryDirectory is available when we first copy a value
         // to ExtensionsInstallPathDefault in vtkSlicerApplication()
         if (0 == strlen(this->ExtensionsInstallPathDefault))
-        {
+          {
           strcpy(this->ExtensionsInstallPathDefault, this->TemporaryDirectory);
+          }
+        extpath = this->ExtensionsInstallPathDefault;
         }
-      extpath = this->ExtensionsInstallPathDefault;
-      }
 
     // does the path exist?
     if (!itksys::SystemTools::MakeDirectory(extpath))
