@@ -17,8 +17,9 @@
 #include "itksys/Process.h"
 #include "itksys/Base64.h"
 
-#if defined(__APPLE__) && (MAC_OS_X_VERSION_MAX_ALLOWED >= 1030)
+#if !defined(WIN32)
 // needed to hack around itksys to override defaults used by Mac OS X
+// and access dlerror on unix
 #include <dlfcn.h>
 #endif
 
@@ -587,6 +588,9 @@ LoadableModuleFactory
           else
             {
             information << "Could not load library " << fullLibraryPath << std::endl;
+#if defined(WIN32)
+            information << "no error information available" << std::endl;
+#else
             const char *error = dlerror();
             if ( error )
               {
@@ -596,6 +600,7 @@ LoadableModuleFactory
               {
               information << "no error information available" << std::endl;
               }
+#endif
             }
           }
         }
