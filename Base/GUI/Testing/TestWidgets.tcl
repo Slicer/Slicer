@@ -56,12 +56,6 @@ proc createWidget {rwi widgetType} {
       $affineWidget SetInteractor $rwi
       $affineWidget SetRepresentation $affineRep
       $affineWidget On
-
-      set affineRep2 [vtkNew vtkAffineRepresentation2D widgets]
-      set affineWidget2 [vtkNew vtkAffineWidget widgets]
-      $affineWidget2 SetInteractor $rwi
-      $affineWidget2 SetRepresentation $affineRep2
-      $affineWidget2 On
     }
     "Box" {
       set ::boxWidget [vtkNew vtkBoxWidget widgets]
