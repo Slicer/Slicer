@@ -376,6 +376,7 @@ LoadableModuleFactory
       {
       bool isAPlugin = true;
       const char *filename = directory.GetFile(ii);
+      information << "Checking " << filename << std::endl;
       
       // skip any directories
       if (!itksys::SystemTools::FileIsDirectory(filename))
@@ -388,7 +389,7 @@ LoadableModuleFactory
           // library name 
           std::string fullLibraryPath = std::string(directory.GetPath())
             + "/" + filename;
-          //std::cout << "Checking " << fullLibraryPath << std::endl;
+          information << "Trying to load " << fullLibraryPath << std::endl;
 
           // early exit if we have already tested this file and succeeded
           LoadableModuleFileMap::iterator fit
@@ -581,6 +582,19 @@ LoadableModuleFactory
               information << filename
                           << " is not a loadable module (no entry points)."
                           << std::endl;
+              }
+            }
+          else
+            {
+            information << "Could not load library " << fullLibraryPath << std::endl;
+            const char *error = dlerror();
+            if ( error )
+              {
+              information << error << std::endl;
+              }
+            else
+              {
+              information << "no error information available" << std::endl;
               }
             }
           }
