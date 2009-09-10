@@ -48,6 +48,7 @@ proc Usage { {msg ""} } {
     set msg "$msg\n   -e --extend : optional, build external modules using the extend script"
     set msg "$msg\n   -32 -64 : Set if we want to build Slicer 32 or 64 bits" 
     set msg "$msg\n            : The default on Solaris is the current bitness of the underlying kernel (isainfo -b)"
+    set msg "$msg\n            : The default on Linux is the current bitness of the underlying kernel"
     set msg "$msg\n            : 32 bits on other platforms"
     set msg "$msg\n   --gcc --suncc : Set the desired compiler for the build process"
     set msg "$msg\n            : The default is gcc/g++"
@@ -71,13 +72,20 @@ set ::GETBUILDTEST(buildList) ""
 set ::GETBUILDTEST(cpack-generator) ""
 set ::GETBUILDTEST(rpm-spec) ""
 set ::GETBUILDTEST(extend) "false"
-if {$tcl_platform(os) == "SunOS"} {
-   set isainfo [exec isainfo -b]
-   set ::GETBUILDTEST(bitness) "$isainfo"
-} else {
-  set ::GETBUILDTEST(bitness) "32"
+set ::GETBUILDTEST(compiler) ""
+set ::GETBUILDTEST(bitness) "32"
+switch $::tcl_platform(os) {
+    "SunOS" { 
+        set isainfo [exec isainfo -b]
+        set ::GETBUILDTEST(bitness) "$isainfo"
+        set ::GETBUILDTEST(compiler) "gcc"
+    }
+    "Linux" {           
+        if {$::tcl_platform(machine) == "x86_64"} {
+            set ::GETBUILDTEST(bitness) 64
+        }
+    }
 }
-set ::GETBUILDTEST(compiler) "gcc"
  
 set strippedargs ""
 set argc [llength $argv]
@@ -392,7 +400,9 @@ if { $::GETBUILDTEST(doxy) } {
 cd $::Slicer3_HOME
 set cmd "sh ./Scripts/genlib.tcl $Slicer3_LIB"
 
-append cmd " --$::GETBUILDTEST(compiler)"
+if { $::GETBUILDTEST(compiler) != "" } {
+  append cmd " --$::GETBUILDTEST(compiler)"
+}
 append cmd " -$::GETBUILDTEST(bitness)"
 
 if { $::GETBUILDTEST(release) != "" } {
