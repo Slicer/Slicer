@@ -53,6 +53,7 @@ def Render():
   glTranslatef(-1.5,0.0,0.0)
   ## Starts the geometry generation mode
   glBegin(GL_TRIANGLES)
+  glNormal3f( 0.0,  0.0, 1.0)
   glVertex3f( 0.0,  1.0, 0.0)
   glVertex3f(-1.0, -1.0, 0.0)
   glVertex3f( 1.0, -1.0, 0.0)
@@ -64,6 +65,7 @@ def Render():
 
   ## Starts a different geometry generation mode
   glBegin(GL_QUADS)
+  glNormal3f( 0.0,  0.0, 1.0)
   glVertex3f(-1.0,-1.0, 0.0)
   glVertex3f( 1.0,-1.0, 0.0)
   glVertex3f( 1.0, 1.0, 0.0)
