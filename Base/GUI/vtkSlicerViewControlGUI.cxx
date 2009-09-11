@@ -2351,7 +2351,7 @@ void vtkSlicerViewControlGUI::RockView ( )
         
         //Make the lighting follow the camera to avoid illumination changes
         p->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
-        p->GetViewerWidget()->GetMainViewer()->Render();
+        p->GetViewerWidget()->RequestRender();
         }
       }
     }
@@ -2416,7 +2416,7 @@ void vtkSlicerViewControlGUI::SpinView ( int dir, double degrees )
 
         //Make the lighting follow the camera to avoid illumination changes
         p->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
-        p->GetViewerWidget()->GetMainViewer()->Render();
+        p->GetViewerWidget()->RequestRender();
         }
       }  
     }
