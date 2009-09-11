@@ -129,23 +129,7 @@ void QtGADModule::BuildGUI()
 
 void QtGADModule::parameterValueChanged(double value)
 {
-  if (this->UpdatingMRML || this->UpdatingGUI)
-    {
-    return;
-    }
-
-  vtkMRMLGradientAnisotropicDiffusionFilterNode *paramNode = vtkMRMLGradientAnisotropicDiffusionFilterNode::SafeDownCast(this->GADNodeSelector->GetSelected());
-  if (!paramNode)
-    {
-    paramNode = this->CreateParameterNode();
-    }
-  if (paramNode)
-    {
-    paramNode->SetConductance(this->ConductanceSlider->value());
-    paramNode->SetTimeStep(this->TimeStepSlider->value());
-    paramNode->SetNumberOfIterations(this->IterationsSlider->value());
-    }
-
+  this->updateMRML();
 }
 
 void QtGADModule::apply()
