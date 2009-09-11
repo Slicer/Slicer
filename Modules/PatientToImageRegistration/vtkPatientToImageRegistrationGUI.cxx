@@ -551,8 +551,10 @@ void vtkPatientToImageRegistrationGUI::BuildGUI ( )
   this->UIPanel->AddPage ( "PatientToImageRegistration", "PatientToImageRegistration", NULL );
 
   BuildGUIForHelpFrame();
+  BuildGUIForTrackerFrame();
   BuildGUIForLandmarksFrame();
   BuildGUIForICPFrame();
+
 }
 
 
@@ -572,6 +574,27 @@ void vtkPatientToImageRegistrationGUI::BuildGUIForHelpFrame()
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "PatientToImageRegistration" );
   this->BuildHelpAndAboutFrame (page, help, about);
 
+}
+
+
+
+void vtkPatientToImageRegistrationGUI::BuildGUIForTrackerFrame()
+{
+  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+  vtkKWWidget *page = this->UIPanel->GetPageWidget ( "PatientToImageRegistration" );
+
+  // ----------------------------------------------------------------
+  // Tracker frame
+  // ----------------------------------------------------------------
+  vtkSlicerModuleCollapsibleFrame *trackerFrame = vtkSlicerModuleCollapsibleFrame::New ( );    
+  trackerFrame->SetParent ( page );
+  trackerFrame->Create ( );
+  trackerFrame->SetLabelText ("Tracker");
+  trackerFrame->CollapseFrame ( );
+  app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                trackerFrame->GetWidgetName(), page->GetWidgetName());
+
+  trackerFrame->Delete();
 }
 
 

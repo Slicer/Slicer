@@ -132,6 +132,7 @@ private:
   void BuildGUIForICPFrame();
   void BuildGUIForLandmarksFrame();
   void BuildGUIForHelpFrame();
+  void BuildGUIForTrackerFrame();
 
   void TrackerLoop();
 
