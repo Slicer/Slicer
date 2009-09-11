@@ -34,12 +34,53 @@ PROJECT( RegisterImagesModuleApplications )
   ADD_EXECUTABLE( RegisterImages ${RegisterImagesSlicer_SOURCE} )
   TARGET_LINK_LIBRARIES( RegisterImages ${ITK_LIBRARIES} MRML )
 
+  # Use case specific modules
+  SET( RegisterFollowupBrainMR_SOURCE RegisterFollowupBrainMR.cxx)
+  GENERATECLP( RegisterFollowupBrainMR_SOURCE
+               RegisterFollowupBrainMR.xml
+               ${RegisterImagesModuleApplications_SOURCE_DIR}/logo.h )
+  INCLUDE_DIRECTORIES( ${RegisterImagesModuleApplications_BINARY_DIR} )
+
+  ADD_LIBRARY( RegisterFollowupBrainMRModule
+               SHARED
+               ${RegisterFollowupBrainMR_SOURCE} )
+  SET_TARGET_PROPERTIES( RegisterFollowupBrainMRModule
+                         PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint" )
+
+  ADD_EXECUTABLE( RegisterFollowupBrainMR ${RegisterFollowupBrainMR_SOURCE} )
+  TARGET_LINK_LIBRARIES( RegisterFollowupBrainMR ${ITK_LIBRARIES} MRML )
+
+  # Use case specific modules
+  SET( RegisterBrainMRToTemplate_SOURCE RegisterBrainMRToTemplate.cxx)
+  GENERATECLP( RegisterBrainMRToTemplate_SOURCE
+               RegisterBrainMRToTemplate.xml
+               ${RegisterImagesModuleApplications_SOURCE_DIR}/logo.h )
+  INCLUDE_DIRECTORIES( ${RegisterImagesModuleApplications_BINARY_DIR} )
+
+  ADD_LIBRARY( RegisterBrainMRToTemplateModule
+               SHARED
+               ${RegisterBrainMRToTemplate_SOURCE} )
+  SET_TARGET_PROPERTIES( RegisterBrainMRToTemplateModule
+                         PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint" )
+
+  ADD_EXECUTABLE( RegisterBrainMRToTemplate ${RegisterBrainMRToTemplate_SOURCE} )
+  TARGET_LINK_LIBRARIES( RegisterBrainMRToTemplate ${ITK_LIBRARIES} MRML )
+
   IF( Slicer3_SOURCE_DIR )
     slicer3_set_plugins_output_path( RegisterImagesModule )
     slicer3_set_plugins_output_path( RegisterImages )
+
+    slicer3_set_plugins_output_path( RegisterFollowupBrainMRModule )
+    slicer3_set_plugins_output_path( RegisterFollowupBrainMR )
+
+    slicer3_set_plugins_output_path( RegisterBrainMRToTemplateModule )
+    slicer3_set_plugins_output_path( RegisterBrainMRToTemplate )
+
     SET(TARGETS
          RegisterImagesModule
          RegisterImages
+         RegisterFollowupBrainMRModule
+         RegisterFollowupBrainMR
          )
     slicer3_install_plugins( ${TARGETS} )
   ENDIF( Slicer3_SOURCE_DIR )
