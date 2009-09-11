@@ -26,6 +26,7 @@
 #include "vtkKWLoadSaveButtonWithLabel.h"
 #include "vtkKWLoadSaveButton.h"
 #include "vtkRenderer.h"
+#include "vtkMRMLCrosshairNode.h"
 
 #include <vtksys/SystemTools.hxx>
 
@@ -509,6 +510,16 @@ void vtkChangeTrackerAnalysisStep::ShowUserInterface()
         redGUI->GetSliceController()->FitSliceToBackground();
 
         cv0SliceControllerWidget->LinkAllSlices();
+
+        // set up the crosshairs
+        vtkMRMLCrosshairNode *xnode;
+        int nnodes = applicationGUI->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLCrosshairNode");
+        for(int i=0;i<nnodes;i++){
+          xnode = vtkMRMLCrosshairNode::SafeDownCast (
+            applicationGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLCrosshairNode" ) );
+          xnode->SetCrosshairMode ( vtkMRMLCrosshairNode::ShowHashmarks );
+          xnode->NavigationOff();
+        }
       }
     } 
   }
