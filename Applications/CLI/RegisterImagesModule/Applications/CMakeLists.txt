@@ -81,6 +81,8 @@ PROJECT( RegisterImagesModuleApplications )
          RegisterImages
          RegisterFollowupBrainMRModule
          RegisterFollowupBrainMR
+         RegisterBrainMRToTemplateModule
+         RegisterBrainMRToTemplate
          )
     slicer3_install_plugins( ${TARGETS} )
   ENDIF( Slicer3_SOURCE_DIR )
