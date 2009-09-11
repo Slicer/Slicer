@@ -35,7 +35,7 @@
     </image>
     <transform fileExtensions=".txt">
       <name>loadTransform</name>
-      <label>Load transform</label>
+      <label>Initalize transform</label>
       <description>Load a transform that is immediately applied to the moving image</description>
       <longflag>loadTransform</longflag>
       <channel>input</channel>
@@ -43,7 +43,7 @@
     </transform>
     <transform fileExtensions=".txt">
       <name>saveTransform</name>
-      <label>Save transform</label>
+      <label>Result transform</label>
       <description>Save the transform that results from registration</description>
       <longflag>saveTransform</longflag>
       <channel>output</channel>

@@ -114,9 +114,9 @@ int DoIt( int argc, char *argv[] )
 
   if (verbosity >= STANDARD)
     {
-    std::cout << "### Initialization: CentersOfMass" << std::endl;
+    std::cout << "### Initialization: ImageCenters" << std::endl;
     }
-  reger->SetInitialMethodEnum( RegerType::INIT_WITH_CENTERS_OF_MASS );
+  reger->SetInitialMethodEnum( RegerType::INIT_WITH_IMAGE_CENTERS );
 
   if (verbosity >= STANDARD)
     {
@@ -163,10 +163,10 @@ int DoIt( int argc, char *argv[] )
               << std::endl;
     }
 
-  reger->SetRigidSamplingRatio( .1 );
+  reger->SetRigidSamplingRatio( .01 );
   if (verbosity >= STANDARD)
     {
-    std::cout << "### RigidSamplingRatio: " << .1
+    std::cout << "### RigidSamplingRatio: " << .01
               << std::endl;
     }
 
@@ -179,10 +179,18 @@ int DoIt( int argc, char *argv[] )
               << std::endl;
     }
 
-  reger->SetAffineSamplingRatio( .1 );
+  // Forgot to set max affine iterations
+  reger->SetAffineMaxIterations( 50 );
   if (verbosity >= STANDARD)
     {
-    std::cout << "### AffineSamplingRatio: " << .1
+    std::cout << "### RigidMaxIterations: " << 50
+              << std::endl;
+    }
+
+  reger->SetAffineSamplingRatio( .02 );
+  if (verbosity >= STANDARD)
+    {
+    std::cout << "### AffineSamplingRatio: " << .02
               << std::endl;
     }
 
