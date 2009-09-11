@@ -27,9 +27,10 @@ set(include_dirs
 
 IF(Slicer3_USE_QT)
   set(include_dirs ${include_dirs} ${QT_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR} ${QT_QTCORE_INCLUDE_DIR})
-  QT4_WRAP_CPP(MOC_SRCS QtSlicerNodeSelectorWidget.h)
+  QT4_WRAP_CPP(MOC_SRCS QtSlicerNodeSelectorWidget.h QtSlider.h)
   SET(SRCS ${SRCS} ${MOC_SRCS} 
-           QtSlicerNodeSelectorWidget.cxx QtSlicerNodeSelectorWidget.h)
+           QtSlicerNodeSelectorWidget.cxx QtSlicerNodeSelectorWidget.h 
+           QtSlider.cxx QtSlider.h)
   SET(QT_LIBRARIES ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} QVTK)
 ENDIF(Slicer3_USE_QT)
 
@@ -160,6 +161,9 @@ SET_SOURCE_FILES_PROPERTIES(
   QtSlicerNodeSelectorWidget.cxx 
   moc_QtSlicerNodeSelectorWidget.cxx
   QtSlicerNodeSelectorWidget.h 
+  QtSlider.cxx
+  moc_QtSlider.cxx
+  QtSlider.h
   WRAP_EXCLUDE
   )
 

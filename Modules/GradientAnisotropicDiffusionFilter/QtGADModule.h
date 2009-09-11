@@ -30,6 +30,8 @@ class QtSlicerNodeSelectorWidget;
 class vtkGradientAnisotropicDiffusionFilterLogic;
 
 #include <QWidget>
+#include "QtSlider.h"
+
 
 #include "vtkGradientAnisotropicDiffusionFilter.h"
 #include "vtkMRMLGradientAnisotropicDiffusionFilterNode.h"
@@ -60,6 +62,8 @@ public slots:
 
   void apply();
 
+  void parameterValueChanged(double value);
+
   void parameterSelected(const QString& id);
 
   void inputSelected(const QString& id);
@@ -67,6 +71,8 @@ public slots:
   void outputSelected(const QString& id);
 
   void updateGUI();
+
+  void updateMRML();
 
 //Q_SIGNALS:
  
@@ -83,7 +89,18 @@ protected:
 
   vtkGradientAnisotropicDiffusionFilterLogic *Logic;
 
+  QtSlider  *ConductanceSlider;
+  QtSlider  *TimeStepSlider;
+  QtSlider  *IterationsSlider;
+
+
   vtkMRMLGradientAnisotropicDiffusionFilterNode* CreateParameterNode();
+
+  int CreatingParametersNode;
+
+  int UpdatingGUI;
+
+  int UpdatingMRML;
 
   QtGADModule(const QtGADModule&); // Not implemented
   void operator=(const QtGADModule&); // Not Implemented
