@@ -1,9 +1,9 @@
 
 #ifdef Slicer3_USE_QT
-//# ifdef Slicer3_USE_PYTHON
-//#   include "PythonQt.h"
-//#   include "PythonQt_QtAll.h"
-//# endif
+# ifdef Slicer3_USE_PYTHONQT
+#   include "PythonQt.h"
+#   include "PythonQt_QtAll.h"
+# endif
 #include <QApplication>
 #include <QTextBrowser>
 #include <QLayout>
@@ -336,7 +336,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
   int argc = 0;
   this->qapp = new QApplication(argc, &argv);
 
-#ifdef Slicer3_USE_PYTHON
+#ifdef Slicer3_USE_PYTHONQT
   PythonQt::init(PythonQt::DoNotInitializePython);
   PythonQt_QtAll::init();
 #endif
