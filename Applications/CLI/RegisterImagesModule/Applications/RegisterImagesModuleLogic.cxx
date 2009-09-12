@@ -49,7 +49,8 @@ RegisterImagesModuleLogic::~RegisterImagesModuleLogic()
 }
 
 //----------------------------------------------------------------------------
-void RegisterImagesModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
+void RegisterImagesModuleLogic::PrintSelf( ostream & vtkNotUsed(os),
+                                           vtkIndent vtkNotUsed(indent) )
 {
   
 }
