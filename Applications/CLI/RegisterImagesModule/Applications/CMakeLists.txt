@@ -46,6 +46,7 @@ PROJECT( RegisterImagesModuleApplications )
                ${RegisterFollowupBrainMR_SOURCE} )
   SET_TARGET_PROPERTIES( RegisterFollowupBrainMRModule
                          PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint" )
+  TARGET_LINK_LIBRARIES( RegisterFollowupBrainMRModule ${ITK_LIBRARIES} MRML )
 
   ADD_EXECUTABLE( RegisterFollowupBrainMR ${RegisterFollowupBrainMR_SOURCE} )
   TARGET_LINK_LIBRARIES( RegisterFollowupBrainMR ${ITK_LIBRARIES} MRML )
@@ -62,6 +63,7 @@ PROJECT( RegisterImagesModuleApplications )
                ${RegisterBrainMRToTemplate_SOURCE} )
   SET_TARGET_PROPERTIES( RegisterBrainMRToTemplateModule
                          PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint" )
+  TARGET_LINK_LIBRARIES( RegisterBrainMRToTemplateModule ${ITK_LIBRARIES} MRML )
 
   ADD_EXECUTABLE( RegisterBrainMRToTemplate ${RegisterBrainMRToTemplate_SOURCE} )
   TARGET_LINK_LIBRARIES( RegisterBrainMRToTemplate ${ITK_LIBRARIES} MRML )
