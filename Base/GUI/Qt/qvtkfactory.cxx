@@ -39,7 +39,7 @@
 #include <QtGui>
 #include <QtWebKit>
 #include "qvtkfactory.h"
-#include "qvtkwidget.h"
+#include "QVTKWidget.h"
 
 #include "vtkview.h"
 
