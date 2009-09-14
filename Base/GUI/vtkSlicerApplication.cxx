@@ -5,12 +5,7 @@
 #   include "PythonQt_QtAll.h"
 # endif
 #include <QApplication>
-#include <QTextBrowser>
-#include <QLayout>
-#include <QGroupBox>
-#include <QPushButton>
-#include <QLineEdit>
-#include "QtSlicerNodeSelectorWidget.h"
+#include "QtSlicerWebKit.h"
 #endif
 
 #include <sstream>
@@ -331,7 +326,6 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->ColorSwatchesAdded = 0;
 
 #ifdef Slicer3_USE_QT
-
   char *argv = NULL;
   int argc = 0;
   this->qapp = new QApplication(argc, &argv);
@@ -340,29 +334,6 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
   PythonQt::init(PythonQt::DoNotInitializePython);
   PythonQt_QtAll::init();
 #endif
-
-/**
-  // create a small Qt GUI
-  QVBoxLayout*  vbox = new QVBoxLayout;
-  QGroupBox*    box  = new QGroupBox;
-  QTextBrowser* browser = new QTextBrowser(box);
-  QLineEdit*    edit = new QLineEdit(box);
-  QPushButton*  button = new QPushButton(box);
-  button->setObjectName("button1");
-  edit->setObjectName("edit");
-  browser->setObjectName("browser");
-  vbox->addWidget(browser);
-  vbox->addWidget(edit);
-  vbox->addWidget(button);
-
-  this->qNodeSelector = new QtSlicerNodeSelectorWidget();
-  vbox->addWidget(this->qNodeSelector);
-
-  box->setLayout(vbox);
-
-
-  box->show();
-**/
 #endif
 
 }
@@ -2350,3 +2321,16 @@ vtkKWColorPickerDialog* vtkSlicerApplication::GetColorPickerDialog()
   return Superclass::GetColorPickerDialog();
 }
 
+
+#if Slicer3_USE_QT
+//----------------------------------------------------------------------------
+// Temporary test method
+void vtkSlicerApplication::TestQtSlicerWebKit(const char *url)
+{
+  QtSlicerWebKit *webKit = new QtSlicerWebKit(NULL);
+  if ( url )
+    {
+    webKit->setURL(url);
+    }
+}
+#endif

@@ -24,9 +24,12 @@ set(QT_INCLUDE_DIRS
   ${QT_QTGUI_INCLUDE_DIR} 
   ${QT_QTCORE_INCLUDE_DIR} 
   )
-QT4_WRAP_CPP(MOC_SRCS QtSlicerNodeSelectorWidget.h QtSlider.h)
+QT4_WRAP_CPP(MOC_SRCS QtSlicerNodeSelectorWidget.h QtSlider.h QtSlicerWebKit.h qvtkfactory.h vtkview.h)
 SET(SRCS ${SRCS} ${MOC_SRCS} 
          QtSlicerNodeSelectorWidget.cxx QtSlicerNodeSelectorWidget.h 
+         QtSlicerWebKit.cxx QtSlicerWebKit.h 
+         vtkview.cxx vtkview.h
+         qvtkfactory.cxx qvtkfactory.h
          QtSlider.cxx QtSlider.h)
 SET(QT_LIBRARIES 
   ${QT_QTCORE_LIBRARY} 
@@ -64,9 +67,14 @@ SET_SOURCE_FILES_PROPERTIES(
   QtSlicerNodeSelectorWidget.cxx 
   moc_QtSlicerNodeSelectorWidget.cxx
   QtSlicerNodeSelectorWidget.h 
+  QtSlicerWebKit.cxx 
+  moc_QtSlicerWebKit.cxx
+  QtSlicerWebKit.h 
   QtSlider.cxx
   moc_QtSlider.cxx
   QtSlider.h
+  vtkview.cxx vtkview.h
+  qvtkfactory.cxx qvtkfactory.h
   WRAP_EXCLUDE
   )
 

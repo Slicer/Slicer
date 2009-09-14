@@ -395,12 +395,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   const char* GetSvnUrl();
   const char* GetSvnRevision();
 
-//BTX
 #ifdef Slicer3_USE_QT
+//BTX
   QApplication* GetQApplication()
     {return this->qapp;};
-#endif
 //ETX
+  void TestQtSlicerWebKit(const char *url);
+#endif
 
  protected:
   vtkSlicerApplication ( );
