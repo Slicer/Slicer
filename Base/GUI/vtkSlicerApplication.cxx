@@ -2322,15 +2322,17 @@ vtkKWColorPickerDialog* vtkSlicerApplication::GetColorPickerDialog()
 }
 
 
-#if Slicer3_USE_QT
 //----------------------------------------------------------------------------
 // Temporary test method
 void vtkSlicerApplication::TestQtSlicerWebKit(const char *url)
 {
+#ifdef Slicer3_USE_PYTHONQT
   QtSlicerWebKit *webKit = new QtSlicerWebKit(NULL);
   if ( url )
     {
     webKit->setURL(url);
     }
-}
+#else
+  vtkErrorMacro("Qt not available");
 #endif
+}

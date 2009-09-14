@@ -400,8 +400,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   QApplication* GetQApplication()
     {return this->qapp;};
 //ETX
-  void TestQtSlicerWebKit(const char *url);
 #endif
+  void TestQtSlicerWebKit(const char *url);
 
  protected:
   vtkSlicerApplication ( );
