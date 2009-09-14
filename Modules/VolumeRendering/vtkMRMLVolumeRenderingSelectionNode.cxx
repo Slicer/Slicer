@@ -56,6 +56,9 @@ vtkMRMLVolumeRenderingSelectionNode::vtkMRMLVolumeRenderingSelectionNode()
   this->HideFromEditors = 1;
   this->ActiveVolumeID = NULL;
   this->ActiveVolumeRenderingID = NULL;
+  
+  this->ActiveVolumeIDFg = NULL;
+  this->ActiveVolumeRenderingIDFg = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -71,6 +74,16 @@ vtkMRMLVolumeRenderingSelectionNode::~vtkMRMLVolumeRenderingSelectionNode()
     delete [] this->ActiveVolumeRenderingID;
     this->ActiveVolumeRenderingID = NULL;
     }
+  if (this->ActiveVolumeIDFg)
+    {
+    delete [] this->ActiveVolumeIDFg;
+    this->ActiveVolumeIDFg = NULL;
+    }
+  if (this->ActiveVolumeRenderingIDFg)
+    {
+    delete [] this->ActiveVolumeRenderingIDFg;
+    this->ActiveVolumeRenderingIDFg = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -82,6 +95,9 @@ void vtkMRMLVolumeRenderingSelectionNode::WriteXML(ostream& of, int nIndent)
 
   of << indent << " activeVolumeID=\"" << (this->ActiveVolumeID ? this->ActiveVolumeID : "NULL") << "\"";
   of << indent << " activeVolumeRenderingID=\"" << (this->ActiveVolumeRenderingID ? this->ActiveVolumeRenderingID : "NULL") << "\"";
+  
+  of << indent << " activeVolumeIDFg=\"" << (this->ActiveVolumeIDFg ? this->ActiveVolumeIDFg : "NULL") << "\"";
+  of << indent << " activeVolumeRenderingIDFg=\"" << (this->ActiveVolumeRenderingIDFg ? this->ActiveVolumeRenderingIDFg : "NULL") << "\"";
 }
 
 //----------------------------------------------------------------------------
@@ -94,6 +110,14 @@ void vtkMRMLVolumeRenderingSelectionNode::UpdateReferenceID(const char *oldID, c
   if (this->ActiveVolumeRenderingID && !strcmp(oldID, this->ActiveVolumeRenderingID))
     {
     this->SetActiveVolumeRenderingID(newID);
+    }
+  if (this->ActiveVolumeIDFg && !strcmp(oldID, this->ActiveVolumeIDFg))
+    {
+    this->SetActiveVolumeIDFg(newID);
+    }
+  if (this->ActiveVolumeRenderingIDFg && !strcmp(oldID, this->ActiveVolumeRenderingIDFg))
+    {
+    this->SetActiveVolumeRenderingIDFg(newID);
     }
 }
 
@@ -109,6 +133,14 @@ void vtkMRMLVolumeRenderingSelectionNode::UpdateReferences()
   if (this->ActiveVolumeRenderingID != NULL && this->Scene->GetNodeByID(this->ActiveVolumeRenderingID) == NULL)
     {
     this->SetActiveVolumeRenderingID(NULL);
+    }
+  if (this->ActiveVolumeIDFg != NULL && this->Scene->GetNodeByID(this->ActiveVolumeIDFg) == NULL)
+    {
+    this->SetActiveVolumeIDFg(NULL);
+    }
+  if (this->ActiveVolumeRenderingIDFg != NULL && this->Scene->GetNodeByID(this->ActiveVolumeRenderingIDFg) == NULL)
+    {
+    this->SetActiveVolumeRenderingIDFg(NULL);
     }
 }
 //----------------------------------------------------------------------------
@@ -133,6 +165,16 @@ void vtkMRMLVolumeRenderingSelectionNode::ReadXMLAttributes(const char** atts)
       this->SetActiveVolumeRenderingID(attValue);
       //this->Scene->AddReferencedNodeID(this->ActiveVolumeRenderingID, this);
       }
+    if (!strcmp(attName, "activeVolumeIDFg")) 
+      {
+      this->SetActiveVolumeIDFg(attValue);
+      //this->Scene->AddReferencedNodeID(this->ActiveVolumeID, this);
+      }
+    if (!strcmp(attName, "activeVolumeRenderingIDFg")) 
+      {
+      this->SetActiveVolumeRenderingIDFg(attValue);
+      //this->Scene->AddReferencedNodeID(this->ActiveVolumeRenderingID, this);
+      }
     }
 }
 
@@ -146,6 +188,9 @@ void vtkMRMLVolumeRenderingSelectionNode::Copy(vtkMRMLNode *anode)
 
   this->SetActiveVolumeID(node->GetActiveVolumeID());
   this->SetActiveVolumeRenderingID(node->GetActiveVolumeRenderingID());
+  
+  this->SetActiveVolumeIDFg(node->GetActiveVolumeIDFg());
+  this->SetActiveVolumeRenderingIDFg(node->GetActiveVolumeRenderingIDFg());
 }
 
 //----------------------------------------------------------------------------
@@ -155,6 +200,9 @@ void vtkMRMLVolumeRenderingSelectionNode::PrintSelf(ostream& os, vtkIndent inden
 
   os << "ActiveVolumeID: " << ( (this->ActiveVolumeID) ? this->ActiveVolumeID : "None" ) << "\n";
   os << "ActiveVolumeRenderingID: " << ( (this->ActiveVolumeRenderingID) ? this->ActiveVolumeRenderingID : "None" ) << "\n";
+  
+  os << "ActiveVolumeID Fg: " << ( (this->ActiveVolumeIDFg) ? this->ActiveVolumeIDFg : "None" ) << "\n";
+  os << "ActiveVolumeRenderingID Fg: " << ( (this->ActiveVolumeRenderingIDFg) ? this->ActiveVolumeRenderingIDFg : "None" ) << "\n";
 }
 
 

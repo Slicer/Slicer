@@ -322,11 +322,11 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingGUI *gui)
     //TODO: Move Pause Resume Button to another Place
     //Pause Resume Button
 
-    if (this->Gui->GetDetailsFrame())
+    if (this->Gui->GetRenderingFrame())
     {
         this->VI_PauseResume=vtkSlicerVisibilityIcons::New();
         this->PB_PauseResume=vtkKWPushButtonWithLabel::New();
-        this->PB_PauseResume->SetParent(this->Gui->GetDetailsFrame()->GetFrame());
+        this->PB_PauseResume->SetParent(this->Gui->GetRenderingFrame()->GetFrame());
         this->PB_PauseResume->Create();
         this->PB_PauseResume->SetBalloonHelpString("Toggle the visibility of volume rendering.");
         this->PB_PauseResume->SetLabelText("Visiblity of Volume Rendering: ");
@@ -337,7 +337,7 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingGUI *gui)
 
     //Create a notebook
     this->NB_Details=vtkKWNotebook::New();
-    this->NB_Details->SetParent(this->Gui->GetDetailsFrame()->GetFrame());
+    this->NB_Details->SetParent(this->Gui->GetRenderingFrame()->GetFrame());
     this->NB_Details->UseFrameWithScrollbarsOn();
     this->NB_Details->Create();
     this->NB_Details->AddPage("Performance","Influence the performance and quality of the rendering. Settings will still be available after starting Slicer3 again.");

@@ -72,11 +72,23 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingSelectionNode : pub
   void SetReferenceActiveVolumeID (char *id) { this->SetActiveVolumeID(id); };
 
   // Description:
+  // the ID of a MRMLVolumeNode (fg volume)
+  vtkGetStringMacro (ActiveVolumeIDFg);
+  vtkSetReferenceStringMacro (ActiveVolumeIDFg);
+  void SetReferenceActiveVolumeIDFg (char *id) { this->SetActiveVolumeIDFg(id); };
+  
+  // Description:
   // the ID of a parameter MRMLVolumeRenderingNode
   vtkGetStringMacro (ActiveVolumeRenderingID);
   vtkSetReferenceStringMacro (ActiveVolumeRenderingID);
   void SetReferenceActiveVolumeRenderingID (char *id) { this->SetActiveVolumeRenderingID(id); };
 
+  // Description:
+  // the ID of a parameter MRMLVolumeRenderingNode
+  vtkGetStringMacro (ActiveVolumeRenderingIDFg);
+  vtkSetReferenceStringMacro (ActiveVolumeRenderingIDFg);
+  void SetReferenceActiveVolumeRenderingIDFg (char *id) { this->SetActiveVolumeRenderingIDFg(id); };
+  
 protected:
   vtkMRMLVolumeRenderingSelectionNode();
   ~vtkMRMLVolumeRenderingSelectionNode();
@@ -85,6 +97,12 @@ protected:
 
   char *ActiveVolumeID;
   char *ActiveVolumeRenderingID;
+  
+  char *ActiveVolumeIDFg;
+  char *ActiveVolumeRenderingIDFg;
+  
+//  char *ActiveVolumeID;
+//  char *ActiveVolumeRenderingID;
 };
 
 #endif
