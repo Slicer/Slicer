@@ -31,10 +31,10 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 
-#include "vtkSlicerBaseGUI.h"
+#include "vtkSlicerBaseGUIQtWin32Header.h"
 #include "vtkSlicerContextMenuHelper.h"
 
-class VTK_SLICER_BASE_GUI_EXPORT QtSlicerNodeSelectorWidget : public QComboBox 
+class VTK_SLICER_BASE_GUI_QT_EXPORT QtSlicerNodeSelectorWidget : public QComboBox 
 {
   Q_OBJECT
 public:

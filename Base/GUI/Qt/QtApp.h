@@ -30,7 +30,7 @@ class QtSlicerNodeSelectorWidget;
 
 #include "vtkMRMLScene.h"
 
-class VTK_SLICER_BASE_GUI_EXPORT QtApp
+class VTK_SLICER_BASE_GUI_QT_EXPORT QtApp
 {
 public:
 

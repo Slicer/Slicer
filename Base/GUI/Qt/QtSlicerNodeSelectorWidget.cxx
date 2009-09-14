@@ -390,8 +390,8 @@ void QtSlicerNodeSelectorWidget::UnconditionalUpdateMenu()
   // - then populate it based on the currently selected node
   if ( !this->ContextMenuHelper )
     {
-    this->ContextMenuHelper = vtkSlicerContextMenuHelper::New();
-    this->ContextMenuHelper->SetMRMLScene( this->GetMRMLScene() );
+    //this->ContextMenuHelper = vtkSlicerContextMenuHelper::New();
+    //this->ContextMenuHelper->SetMRMLScene( this->GetMRMLScene() );
     }
 
   // vtkKWMenu *menu = this->GetWidget()->GetWidget()->GetMenu();

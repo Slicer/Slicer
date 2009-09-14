@@ -3,13 +3,13 @@
 #define __QtSlider_h
 
 #include <QWidget>
-#include "vtkSlicerBaseGUI.h"
+#include "vtkSlicerBaseGUIQtWin32Header.h"
   
 class QSlider;
 class QLineEdit;
 
 /// a widget with a tied slider and line edit for editing a double property
-class VTK_SLICER_BASE_GUI_EXPORT QtSlider : public QWidget
+class VTK_SLICER_BASE_GUI_QT_EXPORT QtSlider : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(double value READ value WRITE setValue USER true)

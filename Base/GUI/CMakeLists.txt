@@ -26,12 +26,12 @@ set(include_dirs
 
 
 IF(Slicer3_USE_QT)
-  set(include_dirs ${include_dirs} ${QT_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR} ${QT_QTCORE_INCLUDE_DIR})
-  QT4_WRAP_CPP(MOC_SRCS QtSlicerNodeSelectorWidget.h QtSlider.h)
-  SET(SRCS ${SRCS} ${MOC_SRCS} 
-           QtSlicerNodeSelectorWidget.cxx QtSlicerNodeSelectorWidget.h 
-           QtSlider.cxx QtSlider.h)
-  SET(QT_LIBRARIES ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} QVTK)
+  subdirs(Qt)
+  set(include_dirs ${include_dirs} 
+    ${SlicerBaseGUIQt_SOURCE_DIR}
+    ${SlicerBaseGUIQt_BINARY_DIR}
+    ${QT_INCLUDES}
+    )
 ENDIF(Slicer3_USE_QT)
 
 include_directories(${include_dirs})
@@ -155,17 +155,6 @@ set(SlicerBaseGUI_SRCS
   ${SRCS}
   )
 
-# Helper classes
-
-SET_SOURCE_FILES_PROPERTIES(
-  QtSlicerNodeSelectorWidget.cxx 
-  moc_QtSlicerNodeSelectorWidget.cxx
-  QtSlicerNodeSelectorWidget.h 
-  QtSlider.cxx
-  moc_QtSlider.cxx
-  QtSlider.h
-  WRAP_EXCLUDE
-  )
 
 # --------------------------------------------------------------------------
 # Wrapping
@@ -182,7 +171,8 @@ add_library(${lib_name}
   ${SlicerBaseGUI_TCL_SRCS} 
   ${SlicerBaseGUI_SRCS}
 )
-target_link_libraries(${lib_name} 
+
+set(libraries 
   ${KWWidgets_LIBRARIES}
   ${QT_LIBRARIES}
   ModuleDescriptionParser
@@ -190,6 +180,12 @@ target_link_libraries(${lib_name}
   FreeSurfer
   RemoteIO
   )
+
+IF(Slicer3_USE_QT)
+  set(libraries ${libraries} SlicerBaseGUIQt ${QT_LIBRARIES})
+ENDIF(Slicer3_USE_QT)
+
+target_link_libraries(${lib_name} ${libraries})
 
 # Apply user-defined properties to the library target.
 IF(Slicer3_LIBRARY_PROPERTIES)
