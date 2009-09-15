@@ -2326,7 +2326,7 @@ vtkKWColorPickerDialog* vtkSlicerApplication::GetColorPickerDialog()
 // Temporary test method
 void vtkSlicerApplication::TestQtSlicerWebKit(const char *url)
 {
-#ifdef Slicer3_USE_PYTHONQT
+#ifdef Slicer3_USE_QT
   QtSlicerWebKit *webKit = new QtSlicerWebKit(NULL);
   if ( url )
     {
