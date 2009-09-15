@@ -123,7 +123,7 @@ if { [itcl::find class Loader] == "" } {
     variable _xcedeExtensions ".xcat"
     variable _fiducialExtensions ".fcsv"
     variable _colorTableExtensions ".txt .ctbl"
-    variable _transformExtensions ".tfm"
+    variable _transformExtensions ".tfm .mat"
     variable _observerRecords ""
     variable _cleanupDirs ""
     variable browserResult ""
