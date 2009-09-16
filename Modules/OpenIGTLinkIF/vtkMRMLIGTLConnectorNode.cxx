@@ -253,7 +253,6 @@ void vtkMRMLIGTLConnectorNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLIGTLConnectorNode::ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *callData )
 {
-  std::cerr << "vtkMRMLIGTLConnectorNode::ProcessMRMLEvents( )" << std::endl;
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
   MRMLNodeListType::iterator iter;
