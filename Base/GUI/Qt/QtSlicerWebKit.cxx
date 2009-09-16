@@ -7,7 +7,7 @@
 #include <QGroupBox>
 #include <QVBoxLayout>
 #include <QtWebKit>
-#include "qvtkfactory.h"
+#include "qslicerfactory.h"
 
 QtSlicerWebKit::QtSlicerWebKit(QWidget* p)
   : QWidget(p) 
@@ -25,14 +25,13 @@ QtSlicerWebKit::QtSlicerWebKit(QWidget* p)
   this->webView = new QWebView(this->group);
   this->boxLayout->addWidget(this->webView);
 
-  this->factory = new QVTKFactory(webView, 0);
+  // this factory handles both the text/qvtk and application/qslicer mime type plugins
+  this->factory = new QSlicerFactory(webView, 0);
   this->webView->page()->setPluginFactory(this->factory);
 
   this->group->show();
   this->group->raise();
   this->group->activateWindow();
-
-  //this->webView->page()->setPluginFactory(factory);
 
   /*
   QObject::connect(this->Slider, SIGNAL(valueChanged(int)),

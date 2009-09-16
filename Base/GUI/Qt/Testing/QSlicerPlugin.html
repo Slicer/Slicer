@@ -1,0 +1,27 @@
+<html>
+<head>
+<title>QSlicer Web Plugin</title>
+</head>
+
+<body>
+<h1>QSlicer Web Plugin</h1>
+
+<p>
+  This plugin displays a QSlicer widget.
+  It is based on <a href=http://doc.trolltech.com/qq/qq26-webplugin.html>the approach described by trolltech.</a>
+</p>
+
+<object type="application/qslicer;header=present;charset=utf8"
+        width="100%" height="300" id="slicerview">
+</object>
+
+<p>
+Click <A href='JavaScript:document.slicerview.reset()'>here to reset</A> the window/level by invoking a Qt slot via javascript.
+</p>
+
+<p>
+Click <A href='JavaScript:document.slicerview.TclCommand("if {![info exists ::MRML]} {MRMLWatcher mmm}; $::MRML(vtkMRMLViewNode1) SetAnimationMode 1")'>here interact with slicer</A> by manipulating the MRML scene by invoking a Qt slot via javascript.
+</p>
+
+</body>
+</html>

@@ -250,7 +250,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
 
     virtual void PopulateModuleChooseList ( );
     virtual void SetCurrentModuleToHome();
-    virtual void PythonCommand(char *cmd);
+    //BTX
+    virtual void PythonCommand(char *cmd) {this->PythonCommand(static_cast<const char *>(cmd));}
+    //ETX
+    virtual void PythonCommand(const char *cmd);
     virtual void PythonConsole();
 
     virtual void InitializeViewControlGUI ();

@@ -10,7 +10,7 @@ class QLineEdit;
 class QGroupBox;
 class QVBoxLayout;
 class QWebView;
-class QVTKFactory;
+class QSlicerFactory;
 
 /// a widget with a tied slider and line edit for editing a double property
 class VTK_SLICER_BASE_GUI_QT_EXPORT QtSlicerWebKit : public QWidget
@@ -52,7 +52,7 @@ private:
   QGroupBox* group;
   QVBoxLayout* boxLayout;
   QWebView* webView;
-  QVTKFactory* factory;
+  QSlicerFactory* factory;
   QLineEdit* lineEdit;
 };
 

@@ -1626,7 +1626,7 @@ void vtkSlicerApplicationGUI::PythonConsole (  )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::PythonCommand ( char *cmd )
+void vtkSlicerApplicationGUI::PythonCommand ( const char *cmd )
 {
   
 #ifdef Slicer3_USE_PYTHON
