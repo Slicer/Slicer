@@ -2327,7 +2327,7 @@ vtkKWColorPickerDialog* vtkSlicerApplication::GetColorPickerDialog()
 void vtkSlicerApplication::TestQtSlicerWebKit(const char *url)
 {
 #ifdef Slicer3_USE_QT
-  QtSlicerWebKit *webKit = new QtSlicerWebKit(NULL);
+  QtSlicerWebKit *webKit = new QtSlicerWebKit(NULL, this);
   if ( url )
     {
     webKit->setURL(url);

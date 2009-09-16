@@ -11,6 +11,7 @@ class QGroupBox;
 class QVBoxLayout;
 class QWebView;
 class QSlicerFactory;
+class vtkKWApplication;
 
 /// a widget with a tied slider and line edit for editing a double property
 class VTK_SLICER_BASE_GUI_QT_EXPORT QtSlicerWebKit : public QWidget
@@ -23,7 +24,7 @@ class VTK_SLICER_BASE_GUI_QT_EXPORT QtSlicerWebKit : public QWidget
   //Q_PROPERTY(int resolution READ resolution WRITE setResolution)
 public:
   /// constructor requires the proxy, property
-  QtSlicerWebKit(QWidget* parent = NULL);
+  QtSlicerWebKit(QWidget* parent = NULL, vtkKWApplication *kwapp = 0);
   ~QtSlicerWebKit();
 
   /// get the current url
@@ -54,6 +55,8 @@ private:
   QWebView* webView;
   QSlicerFactory* factory;
   QLineEdit* lineEdit;
+
+  vtkKWApplication *kwapp;
 };
 
 #endif

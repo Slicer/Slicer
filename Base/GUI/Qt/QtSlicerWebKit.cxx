@@ -9,9 +9,13 @@
 #include <QtWebKit>
 #include "qslicerfactory.h"
 
-QtSlicerWebKit::QtSlicerWebKit(QWidget* p)
+#include "vtkKWApplication.h"
+
+QtSlicerWebKit::QtSlicerWebKit(QWidget* p, vtkKWApplication *kwapp)
   : QWidget(p) 
 {
+
+  this->kwapp = kwapp;
 
   this->group = new QGroupBox();
   this->group->setTitle("WebView");
@@ -26,7 +30,7 @@ QtSlicerWebKit::QtSlicerWebKit(QWidget* p)
   this->boxLayout->addWidget(this->webView);
 
   // this factory handles both the text/qvtk and application/qslicer mime type plugins
-  this->factory = new QSlicerFactory(webView, 0);
+  this->factory = new QSlicerFactory(webView, 0, kwapp);
   this->webView->page()->setPluginFactory(this->factory);
 
   this->group->show();

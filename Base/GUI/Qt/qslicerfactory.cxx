@@ -42,11 +42,13 @@
 
 #include "vtkview.h"
 #include "slicerview.h"
+#include "vtkKWApplication.h"
 
-QSlicerFactory::QSlicerFactory(QWebView *webView, QObject *parent)
+QSlicerFactory::QSlicerFactory(QWebView *webView, QObject *parent, vtkKWApplication *kwapp)
     : QWebPluginFactory(parent)
 {
     this->webView = webView;
+    this->kwapp = kwapp;
 };
 
 QObject *QSlicerFactory::create(const QString &mimeType, const QUrl &url,
@@ -55,7 +57,7 @@ QObject *QSlicerFactory::create(const QString &mimeType, const QUrl &url,
 {
     if (mimeType == "application/qslicer")
       {
-      SlicerView *slicerview = new SlicerView;
+      SlicerView *slicerview = new SlicerView(NULL, this->kwapp);
       return slicerview;
       }
 

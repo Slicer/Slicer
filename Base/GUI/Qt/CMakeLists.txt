@@ -97,6 +97,7 @@ add_library(${lib_name}
 target_link_libraries(${lib_name} 
   ${QT_LIBRARIES}
   SlicerBaseLogic
+  ${KWWidgets_LIBRARIES}
   )
 
 # Apply user-defined properties to the library target.

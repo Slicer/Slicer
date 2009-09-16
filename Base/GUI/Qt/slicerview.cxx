@@ -39,13 +39,19 @@
 #include <QtGui>
 #include <QByteArray>
 #include "slicerview.h"
-#include "vtkSlicerApplication.h"
-#include "vtkSlicerApplicationGUI.h"
 
-SlicerView::SlicerView(QWidget *parent)
+#include "vtkObject.h"
+#include "vtkImageEllipsoidSource.h"
+#include "vtkImageViewer.h"
+#include "vtkRenderWindowInteractor.h"
+#include "vtkRenderer.h"
+#include "vtkKWApplication.h"
+
+SlicerView::SlicerView(QWidget *parent, vtkKWApplication *kwapp)
     : QVTKWidget(parent)
 {
   this->setupPipeline();
+  this->kwapp = kwapp;
 }
 
 void SlicerView::setupPipeline()
@@ -74,13 +80,13 @@ void SlicerView::reset()
 void SlicerView::PythonCommand(const QString & command)
 {
   QByteArray byteArray = command.toAscii();
-  vtkSlicerApplication::GetInstance()->GetApplicationGUI()->PythonCommand(byteArray.constData());
+  //vtkSlicerApplication::GetInstance()->GetApplicationGUI()->PythonCommand(byteArray.constData());
 }
 
 void SlicerView::TclCommand(const QString & command)
 {
   QByteArray byteArray = command.toAscii();
-  const char *result = vtkSlicerApplication::GetInstance()->Script(byteArray.constData());
+  const char *result = this->kwapp->Script(byteArray.constData());
   emit this->TclResult(QString(result));
 }
 

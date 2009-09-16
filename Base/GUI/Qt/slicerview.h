@@ -39,19 +39,24 @@
 #ifndef SlicerVIEW_H
 #define SlicerVIEW_H
 
+#include <QObject>
 #include "QVTKWidget.h"
-#include "vtkObject.h"
-#include "vtkImageEllipsoidSource.h"
-#include "vtkImageViewer.h"
-#include "vtkRenderWindowInteractor.h"
-#include "vtkRenderer.h"
+
+class vtkObject;
+class vtkImageEllipsoidSource;
+class vtkImageViewer;
+class vtkRenderWindowInteractor;
+class vtkRenderer;
+class vtkKWApplication;
+
+
 
 class SlicerView : public QVTKWidget
 {
     Q_OBJECT
 
 public:
-    SlicerView(QWidget *parent = 0);
+    SlicerView(QWidget *parent = 0, vtkKWApplication *kwapp = 0);
 
 signals:
     //void rowSelected(const QString &form, const QString &name, const QString &address, const QString &quantity);
@@ -73,6 +78,7 @@ private:
     // pipeline elements
     vtkImageEllipsoidSource* ellip;
     vtkImageViewer* image_view;
+    vtkKWApplication* kwapp;
 };
 
 #endif

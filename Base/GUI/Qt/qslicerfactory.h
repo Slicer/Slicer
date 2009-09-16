@@ -42,13 +42,14 @@
 #include <QWebPluginFactory>
 
 class QWebView;
+class vtkKWApplication;
 
 class QSlicerFactory : public QWebPluginFactory
 {
     Q_OBJECT
 
 public:
-    QSlicerFactory(QWebView *webView, QObject *parent = 0);
+    QSlicerFactory(QWebView *webView, QObject *parent = 0, vtkKWApplication *kwapp = 0);
     QObject *create(const QString &mimeType, const QUrl &url,
                     const QStringList &argumentNames,
                     const QStringList &argumentValues) const;
@@ -56,6 +57,7 @@ public:
 
 private:
     QWebView *webView;
+    vtkKWApplication *kwapp;
 };
 
 #endif
