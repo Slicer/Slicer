@@ -149,7 +149,7 @@ WriteXML(ostream& of, int nIndent)
     ss << this->SegmentationBoundaryMin[0] << " "
        << this->SegmentationBoundaryMin[1] << " "
        << this->SegmentationBoundaryMin[2];
-    of << indent << "SegmentationBoundaryMin=\"" << ss.str() << "\"";
+    of << indent << " SegmentationBoundaryMin=\"" << ss.str() << "\"";
     }
 
     {
