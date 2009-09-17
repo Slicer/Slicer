@@ -293,5 +293,5 @@ void vtkMRMLMeasurementsRulerNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Resolution: " << this->Resolution << "\n";
 
   os << indent << "Model 1: " << (this->ModelID1 ? this->ModelID1 : "none") << "\n";
-  os << indent << "Model 2: " << (this->ModelID2 ? this->ModelID1 : "none") << "\n";
+  os << indent << "Model 2: " << (this->ModelID2 ? this->ModelID2 : "none") << "\n";
 }
