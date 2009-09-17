@@ -854,6 +854,9 @@ int vtkMRMLScene::Commit(const char* url)
     vtkIndent vindent(indent);
     file << vindent << "<" << node->GetNodeTagName() << "\n";
 
+    if(indent<=0)
+      indent = 1;
+
     node->WriteXML(file, indent);
     
     file << vindent << ">";
