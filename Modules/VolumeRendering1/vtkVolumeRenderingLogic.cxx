@@ -49,6 +49,31 @@ vtkVolumeRenderingLogic::vtkVolumeRenderingLogic(void)
 
 vtkVolumeRenderingLogic::~vtkVolumeRenderingLogic(void)
 {
+  if (this->MapperTexture)
+    {
+    this->MapperTexture->Delete();
+    this->MapperTexture = NULL;
+    }
+  if (this->MapperCUDARaycast)
+    {
+    this->MapperCUDARaycast->Delete();
+    this->MapperCUDARaycast = NULL;
+    }
+  if (this->MapperGPURaycast)
+    {
+    this->MapperGPURaycast->Delete();
+    this->MapperGPURaycast = NULL;
+    }
+  if (this->MapperRaycast)
+    {
+    this->MapperRaycast->Delete();
+    this->MapperRaycast = NULL;
+    }
+  if (this->Volume)
+    {
+    this->Volume->Delete();
+    this->Volume = NULL;
+    }
 }
 vtkVolumeRenderingLogic* vtkVolumeRenderingLogic::New()
 {
