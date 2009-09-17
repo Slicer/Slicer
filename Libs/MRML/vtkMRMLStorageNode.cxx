@@ -67,7 +67,9 @@ vtkMRMLStorageNode::~vtkMRMLStorageNode()
 
   if(this->SupportedWriteFileTypes)
     {
+    this->SupportedWriteFileTypes->Resize(0); 
     this->SupportedWriteFileTypes->Delete();
+    this->SupportedWriteFileTypes = NULL;
     }
   if(this->WriteFileFormat)
     {
