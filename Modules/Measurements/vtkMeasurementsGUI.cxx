@@ -31,7 +31,6 @@
 #if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
 
 #include "vtkPointHandleRepresentation3D.h"
-#include "vtkPolygonalSurfacePointPlacer.h"
 #include "vtkAngleWidget.h"
 #include "vtkAngleRepresentation3D.h"
 

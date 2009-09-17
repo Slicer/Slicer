@@ -17,7 +17,6 @@ class vtkKWCheckButton;
 #if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
 class vtkAngleWidget;
 class vtkAngleRepresentation3D;
-class vtkPolygonalSurfacePointPlacer;
 class vtkPointHandleRepresentation3D;
 #endif
 class vtkAffineWidget;
