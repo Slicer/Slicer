@@ -1196,18 +1196,17 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
       this->GetLogic()->GetMRMLScene()->GetNodeByID(this->SelectionNode->GetActiveVolumeRenderingID()) );
     }
   else 
-    {
+    {vtkMRMLVolumeRenderingNode *ttmp = NULL;
     //loop over existing Nodes in scene
     for( int i=0;i<this->GetLogic()->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLVolumeRenderingNode");i++)
       {
-      tmp=vtkMRMLVolumeRenderingNode::SafeDownCast(this->GetLogic()->GetMRMLScene()->GetNthNodeByClass(i,"vtkMRMLVolumeRenderingNode"));
-      if(tmp->HasReference(id))
-        {
+      ttmp=vtkMRMLVolumeRenderingNode::SafeDownCast(this->GetLogic()->GetMRMLScene()->GetNthNodeByClass(i,"vtkMRMLVolumeRenderingNode"));
+      if(ttmp->HasReference(id))
+        {tmp = ttmp;
         break;
         }//if
       }//for
       
-      tmp = NULL; //didn't find any suitable node
     }
     
   if (tmp)
@@ -1245,18 +1244,16 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageDataFg()
       this->GetLogic()->GetMRMLScene()->GetNodeByID(this->SelectionNode->GetActiveVolumeRenderingIDFg()) );
     }
   else 
-    {
+    {vtkMRMLVolumeRenderingNode *ttmp = NULL;
     //loop over existing Nodes in scene
     for( int i=0;i<this->GetLogic()->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLVolumeRenderingNode");i++)
       {
-      tmp=vtkMRMLVolumeRenderingNode::SafeDownCast(this->GetLogic()->GetMRMLScene()->GetNthNodeByClass(i,"vtkMRMLVolumeRenderingNode"));
-      if(tmp->HasReference(id))
-        {
+      ttmp=vtkMRMLVolumeRenderingNode::SafeDownCast(this->GetLogic()->GetMRMLScene()->GetNthNodeByClass(i,"vtkMRMLVolumeRenderingNode"));
+      if(ttmp->HasReference(id))
+        {tmp = ttmp;
         break;
         }//if
       }//for
-      
-      tmp = NULL;//didn't find any suitable node
     }
     
   if (tmp)
