@@ -48,6 +48,7 @@ install(FILES
 set(Measurements_SRCS
   vtkMRMLMeasurementsNode.cxx
   vtkMRMLMeasurementsRulerNode.cxx
+  vtkMeasurementsDistanceWidgetClass.cxx
   vtkMeasurementsRulerWidget.cxx
   vtkMeasurementsLogic.cxx
   vtkMeasurementsGUI.cxx

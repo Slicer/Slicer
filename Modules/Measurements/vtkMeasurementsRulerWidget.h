@@ -28,6 +28,7 @@
 
 #include "vtkSlicerWidget.h"
 
+  
 class vtkSlicerNodeSelectorWidget;
 class vtkKWCheckButtonWithLabel;
 class vtkKWScaleWithLabel;
@@ -37,12 +38,9 @@ class vtkKWMenuButtonWithLabel;
 class vtkKWLabel;
 class vtkKWEntry;
 class vtkKWEntryWithLabel;
-class vtkLineWidget2;
-class vtkPointHandleRepresentation3D;
-class vtkLineRepresentation;
-class vtkPolygonalSurfacePointPlacer;
 class vtkMRMLMeasurementsRulerNode;
 class vtkSlicerViewerWidget;
+class vtkMeasurementsDistanceWidgetClass;
 class VTK_MEASUREMENTS_EXPORT vtkMeasurementsRulerWidget : public vtkSlicerWidget
 {
   
@@ -53,8 +51,7 @@ public:
 
   // access methods
   vtkGetObjectMacro(VisibilityButton, vtkKWCheckButtonWithLabel);
-  vtkGetObjectMacro(DistanceWidget, vtkLineWidget2);
-  vtkGetObjectMacro(DistanceRepresentation, vtkLineRepresentation);
+
 
   // Description:
   // Getting the mrml ruler node id
@@ -93,7 +90,11 @@ public:
   // Get/set the viewer widget so can add a the ruler widget to it
   vtkGetObjectMacro(ViewerWidget, vtkSlicerViewerWidget);
   virtual void SetViewerWidget(vtkSlicerViewerWidget *viewerWidget);
-
+//BTX
+  // Description:
+  // encapsulated 3d widgets for each ruler node
+  vtkMeasurementsDistanceWidgetClass *DistanceWidget;
+//ETX
  protected:
   vtkMeasurementsRulerWidget();
   virtual ~vtkMeasurementsRulerWidget();
@@ -157,14 +158,6 @@ public:
   // Description:
   // number of subdivisions on the line
   vtkKWEntryWithLabel *ResolutionEntry;
-  
-  // Description:
-  // the ruler widget
-  vtkPointHandleRepresentation3D *DistanceHandleRepresentation;
-  vtkLineRepresentation *DistanceRepresentation;
-  vtkLineWidget2 *DistanceWidget;
-  vtkPolygonalSurfacePointPlacer *RulerModel1PointPlacer;
-  vtkPolygonalSurfacePointPlacer *RulerModel2PointPlacer;
 
   // Description:
   // Ruler GUI elements to select models upon which to constrain the ruler end points
