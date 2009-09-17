@@ -860,7 +860,10 @@ ImageToImageRegistrationHelper< TImage >
                                                  ResampleImageFilterType::New();
       resampler->SetInput( mImage );
       resampler->SetInterpolator( interpolator.GetPointer() );
-      resampler->SetOutputParametersFromConstImage( m_FixedImage );
+      // We should not be casting away constness here, but SetOutputParametersFromImage
+      // Does not change the image.  This is needed to workaround fixes to ITK
+      typename ImageType::Pointer tmp = const_cast<ImageType*>(m_FixedImage.GetPointer());
+      resampler->SetOutputParametersFromImage( tmp );
       resampler->SetTransform( m_LoadedMatrixTransform );
       resampler->SetDefaultPixelValue( defaultPixelValue );
       resampler->Update();
@@ -887,7 +890,10 @@ ImageToImageRegistrationHelper< TImage >
                                                  ResampleImageFilterType::New();
       resampler->SetInput( mImage );
       resampler->SetInterpolator( interpolator.GetPointer() );
-      resampler->SetOutputParametersFromConstImage( m_FixedImage );
+      // We should not be casting away constness here, but SetOutputParametersFromImage
+      // Does not change the image.  This is needed to workaround fixes to ITK
+      typename ImageType::Pointer tmp = const_cast<ImageType*>(m_FixedImage.GetPointer());
+      resampler->SetOutputParametersFromImage( tmp );
       resampler->SetTransform( m_LoadedBSplineTransform );
       resampler->Update();
       if( !passedImage )
@@ -914,7 +920,10 @@ ImageToImageRegistrationHelper< TImage >
                                                ResampleImageFilterType::New();
     resampler->SetInput( mImage );
     resampler->SetInterpolator( interpolator.GetPointer() );
-    resampler->SetOutputParametersFromConstImage( m_FixedImage );
+    // We should not be casting away constness here, but SetOutputParametersFromImage
+    // Does not change the image.  This is needed to workaround fixes to ITK
+    typename ImageType::Pointer tmp = const_cast<ImageType*>(m_FixedImage.GetPointer());
+    resampler->SetOutputParametersFromImage( tmp );
     resampler->SetTransform( aTrans );
     resampler->Update();
     if( !passedImage )
@@ -940,7 +949,10 @@ ImageToImageRegistrationHelper< TImage >
                                                ResampleImageFilterType::New();
     resampler->SetInput( mImage );
     resampler->SetInterpolator( interpolator.GetPointer() );
-    resampler->SetOutputParametersFromConstImage( m_FixedImage );
+    // We should not be casting away constness here, but SetOutputParametersFromImage
+    // Does not change the image.  This is needed to workaround fixes to ITK
+    typename ImageType::Pointer tmp = const_cast<ImageType*>(m_FixedImage.GetPointer());
+    resampler->SetOutputParametersFromImage( tmp );
     resampler->SetTransform( bTrans );
     resampler->Update();
     if( !passedImage )
@@ -969,7 +981,10 @@ ImageToImageRegistrationHelper< TImage >
                                                ResampleImageFilterType::New();
     resampler->SetInput( mImage );
     resampler->SetInterpolator( interpolator.GetPointer() );
-    resampler->SetOutputParametersFromConstImage( m_FixedImage );
+    // We should not be casting away constness here, but SetOutputParametersFromImage
+    // Does not change the image.  This is needed to workaround fixes to ITK
+    typename ImageType::Pointer tmp = const_cast<ImageType*>(m_FixedImage.GetPointer());
+    resampler->SetOutputParametersFromImage( tmp );
     resampler->SetTransform( tmpTransform );
     resampler->Update();
 

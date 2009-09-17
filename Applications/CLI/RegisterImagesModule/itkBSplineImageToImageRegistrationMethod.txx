@@ -693,7 +693,10 @@ BSplineImageToImageRegistrationMethod< TImage >
       typedef itk::ResampleImageFilter< ImageType, ImageType > ResamplerType;
       typename ResamplerType::Pointer resampler = ResamplerType::New();
       resampler->SetInput( movingImage );
-      resampler->SetOutputParametersFromConstImage( fixedImage );
+      // We should not be casting away constness here, but SetOutputParametersFromImage
+      // Does not change the image.  This is needed to workaround fixes to ITK
+      typename ImageType::Pointer tmp = const_cast<ImageType*>(fixedImage.GetPointer());
+      resampler->SetOutputParametersFromImage( tmp );
       reg->GetTransform()->SetParametersByValue( reg->GetLastTransformParameters() );
       resampler->SetTransform( reg->GetTransform() );
       try
