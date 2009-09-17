@@ -10,7 +10,6 @@
   Module:    $RCSfile: vtkMRIBiasFieldCorrectionGUI.cxx,v $
   Date:      $Date: 2006/03/17 15:10:10 $
   Version:   $Revision: 1.2 $
-  Author:    $Nicolas Rannou (BWH), Sylvain Jaume (MIT)$
 
 =======================================================================auto=*/
 
@@ -57,15 +56,14 @@ vtkMRIBiasFieldCorrectionGUI* vtkMRIBiasFieldCorrectionGUI::New()
   // First try to create the object from the vtkObjectFactory
   vtkObject* ret =
     vtkObjectFactory::CreateInstance("vtkMRIBiasFieldCorrectionGUI");
-
   if(ret)
   {
-      return (vtkMRIBiasFieldCorrectionGUI*)ret;
+    return (vtkMRIBiasFieldCorrectionGUI*)ret;
   }
-
   // If the factory was unable to create the object, then create it here.
   return new vtkMRIBiasFieldCorrectionGUI;
 }
+
 
 //----------------------------------------------------------------------------
 vtkMRIBiasFieldCorrectionGUI::vtkMRIBiasFieldCorrectionGUI()
@@ -101,168 +99,167 @@ vtkMRIBiasFieldCorrectionGUI::vtkMRIBiasFieldCorrectionGUI()
   this->Conv         = vtkKWScaleWithEntry::New();
 
   this->SlidePositionScale = vtkKWScaleWithEntry::New();
-
-  this->BiasIntensityScale         = vtkKWScaleWithEntry::New();
+  this->BiasIntensityScale = vtkKWScaleWithEntry::New();
 }
 
 //----------------------------------------------------------------------------
 vtkMRIBiasFieldCorrectionGUI::~vtkMRIBiasFieldCorrectionGUI()
 {
-  if (this->BiasIntensityScale)
-  {
-    this->BiasIntensityScale->SetParent(NULL);
-    this->BiasIntensityScale->Delete();
-    this->BiasIntensityScale = NULL;
-  }
+   if( this->BiasIntensityScale )
+   {
+     this->BiasIntensityScale->SetParent(NULL);
+     this->BiasIntensityScale->Delete();
+     this->BiasIntensityScale = NULL;
+   }
 
-  if (this->SlidePositionScale)
-  {
-    this->SlidePositionScale->SetParent(NULL);
-    this->SlidePositionScale->Delete();
-    this->SlidePositionScale = NULL;
-  }
+   if( this->SlidePositionScale )
+   {
+     this->SlidePositionScale->SetParent(NULL);
+     this->SlidePositionScale->Delete();
+     this->SlidePositionScale = NULL;
+   }
 
-  if (this->MaxNumOfIt)
+  if( this->MaxNumOfIt )
   {
     this->MaxNumOfIt->SetParent(NULL);
     this->MaxNumOfIt->Delete();
     this->MaxNumOfIt = NULL;
   }
 
-  if (this->NumOfFitLev)
+  if( this->NumOfFitLev )
   {
     this->NumOfFitLev->SetParent(NULL);
     this->NumOfFitLev->Delete();
     this->NumOfFitLev = NULL;
   }
 
-  if (this->WienFilNoi)
+  if( this->WienFilNoi )
   {
     this->WienFilNoi->SetParent(NULL);
     this->WienFilNoi->Delete();
     this->WienFilNoi = NULL;
   }
 
-  if (this->BiasField)
+  if( this->BiasField )
   {
     this->BiasField->SetParent(NULL);
     this->BiasField->Delete();
     this->BiasField = NULL;
   }
 
-  if (this->Conv)
+  if( this->Conv )
   {
     this->Conv->SetParent(NULL);
     this->Conv->Delete();
     this->Conv = NULL;
   }
 
-  if (this->ShrinkFactor)
+  if( this->ShrinkFactor )
   {
     this->ShrinkFactor->SetParent(NULL);
     this->ShrinkFactor->Delete();
     this->ShrinkFactor = NULL;
   }
 
-  if (this->ParametersFrame)
+  if( this->ParametersFrame )
   {
     this->ParametersFrame->SetParent(NULL);
     this->ParametersFrame->Delete();
     this->ParametersFrame = NULL;
   }
 
-  if (this->AdvancedParametersFrame)
+  if( this->AdvancedParametersFrame )
   {
     this->AdvancedParametersFrame->SetParent(NULL);
     this->AdvancedParametersFrame->Delete();
     this->AdvancedParametersFrame = NULL;
   }
 
-  if (this->TimeStepScale)
+  if( this->TimeStepScale )
   {
     this->TimeStepScale->SetParent(NULL);
     this->TimeStepScale->Delete();
     this->TimeStepScale = NULL;
   }
 
-  if (this->NumberOfIterationsScale)
+  if( this->NumberOfIterationsScale )
   {
     this->NumberOfIterationsScale->SetParent(NULL);
     this->NumberOfIterationsScale->Delete();
     this->NumberOfIterationsScale = NULL;
   }
 
-  if (this->VolumeSelector)
+  if( this->VolumeSelector )
   {
     this->VolumeSelector->SetParent(NULL);
     this->VolumeSelector->Delete();
     this->VolumeSelector = NULL;
   }
 
-  if (this->OutVolumeSelector)
+  if( this->OutVolumeSelector )
   {
     this->OutVolumeSelector->SetParent(NULL);
     this->OutVolumeSelector->Delete();
     this->OutVolumeSelector = NULL;
   }
 
-  if (this->StorageVolumeSelector)
+  if( this->StorageVolumeSelector )
   {
     this->StorageVolumeSelector->SetParent(NULL);
     this->StorageVolumeSelector->Delete();
     this->StorageVolumeSelector = NULL;
   }
 
-  if (this->MaskVolumeSelector)
+  if( this->MaskVolumeSelector )
   {
     this->MaskVolumeSelector->SetParent(NULL);
     this->MaskVolumeSelector->Delete();
     this->MaskVolumeSelector = NULL;
   }
 
-  if (this->GADNodeSelector)
+  if( this->GADNodeSelector )
   {
     this->GADNodeSelector->SetParent(NULL);
     this->GADNodeSelector->Delete();
     this->GADNodeSelector = NULL;
   }
 
-  if (this->ApplyButton)
+  if( this->ApplyButton )
   {
     this->ApplyButton->SetParent(NULL);
     this->ApplyButton->Delete();
     this->ApplyButton = NULL;
   }
 
-  if (this->CatchButton)
+  if( this->CatchButton )
   {
     this->CatchButton->SetParent(NULL);
     this->CatchButton->Delete();
     this->CatchButton = NULL;
   }
 
-  if (this->VolumeSelectionFrame)
+  if( this->VolumeSelectionFrame )
   {
     this->VolumeSelectionFrame->SetParent(NULL);
     this->VolumeSelectionFrame->Delete();
     this->VolumeSelectionFrame = NULL;
   }
 
-  if (this->Sagittal2Scale)
+  if( this->Sagittal2Scale )
   {
     this->Sagittal2Scale->SetParent(NULL);
     this->Sagittal2Scale->Delete();
     this->Sagittal2Scale = NULL;
   }
 
-  if (this->Coronal1Scale)
+  if( this->Coronal1Scale )
   {
     this->Coronal1Scale->SetParent(NULL);
     this->Coronal1Scale->Delete();
     this->Coronal1Scale = NULL;
   }
 
-  if (this->Coronal2Scale)
+  if( this->Coronal2Scale )
   {
     this->Coronal2Scale->SetParent(NULL);
     this->Coronal2Scale->Delete();
@@ -278,7 +275,7 @@ void vtkMRIBiasFieldCorrectionGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
 }
 
-//----------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 void vtkMRIBiasFieldCorrectionGUI::AddGUIObservers()
 {
   this->VolumeSelector->AddObserver(
@@ -310,7 +307,7 @@ void vtkMRIBiasFieldCorrectionGUI::AddGUIObservers()
       (vtkCommand*) this->GUICallbackCommand );
 }
 
-//----------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 void vtkMRIBiasFieldCorrectionGUI::RemoveGUIObservers()
 {
   this->VolumeSelector->RemoveObservers(
@@ -349,7 +346,6 @@ void vtkMRIBiasFieldCorrectionGUI::ProcessGUIEvents(
     void *callData )
 {
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast(caller);
-
   vtkSlicerNodeSelectorWidget *selector =
     vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
 
@@ -382,7 +378,7 @@ void vtkMRIBiasFieldCorrectionGUI::ProcessGUIEvents(
     this->UpdateGUI();
   }
   if (selector == this->GADNodeSelector &&
-      event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent  &&
+      event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
       this->GADNodeSelector->GetSelected() != NULL)
   {
     vtkMRMLMRIBiasFieldCorrectionNode* n =
@@ -425,41 +421,36 @@ void vtkMRIBiasFieldCorrectionGUI::ProcessGUIEvents(
     vtkImageData *image = vtkImageData::New();
     image->DeepCopy( applicationGUI->GetApplicationLogic()->
         GetSliceLogic("Red")->GetBackgroundLayer()->GetSlice()->GetOutput());
-    vtkMRMLVolumeNode *backgroundNode = NULL;
 
-    backgroundNode = applicationGUI->GetApplicationLogic()->
-      GetSliceLogic("Red")->GetLayerVolumeNode(0);
+   int extent[6];
+   double bounds[6];
 
-    int extent[6];
-    double bounds[6];
+   image->UpdateInformation();
+   image->GetBounds(bounds);
+   image->GetWholeExtent(extent);
 
-    image->UpdateInformation();
-    image->GetBounds(bounds);
-    image->GetWholeExtent(extent);
+   double ijkPt[4];
+   double xyPt[4] = { 10, 10, 0, 1 };
 
-    double ijkPt[4];
-    double xyPt[4] = { 10, 10, 0, 1 };
-
-    vtkTransform *xyToijk = applicationGUI->GetApplicationLogic()->
+   vtkTransform *xyToijk = applicationGUI->GetApplicationLogic()->
       GetSliceLogic("Red")->GetBackgroundLayer()->GetXYToIJKTransform();
-    xyToijk->MultiplyPoint(xyPt,ijkPt);
 
-    vtkMRMLSliceNode *snode = applicationGUI->GetMainSliceGUI("Red")->
+   xyToijk->MultiplyPoint(xyPt,ijkPt);
+
+   vtkMRMLSliceNode *snode = applicationGUI->GetMainSliceGUI("Red")->
       GetSliceNode();
 
-    unsigned int dimensions[3];
-    snode->GetDimensions(dimensions);
-
-    this->Logic->SliceProcess(xyToijk,dimensions[0],dimensions[1]);
+  unsigned int dimensions[3];
+  snode->GetDimensions(dimensions);
+  this->Logic->SliceProcess(xyToijk,dimensions[0],dimensions[1]);
   }
 }
 
 //---------------------------------------------------------------------------
-void vtkMRIBiasFieldCorrectionGUI::UpdateMRML ()
+void vtkMRIBiasFieldCorrectionGUI::UpdateMRML()
 {
   vtkMRMLMRIBiasFieldCorrectionNode* n =
     this->GetMRIBiasFieldCorrectionNode();
-
   if (n == NULL)
   {
     // no parameter node selected yet, create new
@@ -495,13 +486,11 @@ void vtkMRIBiasFieldCorrectionGUI::UpdateMRML ()
   {
     n->SetOutputVolumeRef(this->OutVolumeSelector->GetSelected()->GetID());
   }
-
   if (this->StorageVolumeSelector->GetSelected() != NULL)
   {
     n->SetStorageVolumeRef(
         this->StorageVolumeSelector->GetSelected()->GetID());
   }
-
   if (this->MaskVolumeSelector->GetSelected() != NULL)
   {
     n->SetMaskVolumeRef(this->MaskVolumeSelector->GetSelected()->GetID());
@@ -509,7 +498,7 @@ void vtkMRIBiasFieldCorrectionGUI::UpdateMRML ()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRIBiasFieldCorrectionGUI::UpdateGUI ()
+void vtkMRIBiasFieldCorrectionGUI::UpdateGUI()
 {
   vtkMRMLMRIBiasFieldCorrectionNode* n =
     this->GetMRIBiasFieldCorrectionNode();
@@ -550,11 +539,12 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
 
   vtkMRMLMRIBiasFieldCorrectionNode* gadNode =
     vtkMRMLMRIBiasFieldCorrectionNode::New();
+
   this->Logic->GetMRMLScene()->RegisterNodeClass(gadNode);
   gadNode->Delete();
 
-  this->UIPanel->AddPage( "MRIBiasFieldCorrection",
-      "MRIBiasFieldCorrection", NULL );
+  this->UIPanel->AddPage("MRIBiasFieldCorrection",
+      "MRIBiasFieldCorrection", NULL);
 
   // Define your help text and build the help frame here.
   std::string help = "Documentation and screenshots are available at ";
@@ -588,7 +578,7 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
   moduleFrame->Create();
   moduleFrame->SetLabelText("MRI Bias Correction Module");
   moduleFrame->ExpandFrame();
-  app->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+  app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
       moduleFrame->GetWidgetName(),
       this->UIPanel->GetPageWidget("MRIBiasFieldCorrection")->
       GetWidgetName());
@@ -605,10 +595,11 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
 
   this->GADNodeSelector->SetBorderWidth(2);
   this->GADNodeSelector->SetLabelText( "IN Parameters");
-  this->GADNodeSelector->
-    SetBalloonHelpString("select a GAD node from the current mrml scene.");
+  this->GADNodeSelector->SetBalloonHelpString(
+      "select a GAD node from the current mrml scene.");
   app->Script("pack %s -side top -anchor e -padx 20 -pady 4",
       this->GADNodeSelector->GetWidgetName());
+
 
   this->VolumeSelector->
     SetNodeClass("vtkMRMLScalarVolumeNode",NULL,NULL,NULL);
@@ -618,28 +609,28 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
   this->VolumeSelector->UpdateMenu();
 
   this->VolumeSelector->SetBorderWidth(2);
-  this->VolumeSelector->SetLabelText("Input Volume: ");
+  this->VolumeSelector->SetLabelText("Input Volume:");
   this->VolumeSelector->SetBalloonHelpString(
       "select an input volume from the current mrml scene.");
   app->Script("pack %s -side top -anchor e -padx 20 -pady 4",
       this->VolumeSelector->GetWidgetName());
 
-  this->MaskVolumeSelector->
-    SetNodeClass("vtkMRMLScalarVolumeNode",NULL,NULL,NULL);
+  this->MaskVolumeSelector->SetNodeClass("vtkMRMLScalarVolumeNode",
+      NULL, NULL, NULL);
   this->MaskVolumeSelector->SetParent(moduleFrame->GetFrame());
   this->MaskVolumeSelector->Create();
   this->MaskVolumeSelector->SetMRMLScene(this->Logic->GetMRMLScene());
   this->MaskVolumeSelector->UpdateMenu();
 
   this->MaskVolumeSelector->SetBorderWidth(2);
-  this->MaskVolumeSelector->SetLabelText("Mask Volume: ");
+  this->MaskVolumeSelector->SetLabelText("Mask Volume:");
   this->MaskVolumeSelector->SetBalloonHelpString(
       "select an output volume from the current mrml scene.");
   app->Script("pack %s -side top -anchor e -padx 20 -pady 4",
       this->MaskVolumeSelector->GetWidgetName());
 
-  this->StorageVolumeSelector->SetNodeClass("vtkMRMLScalarVolumeNode",NULL,
-      NULL, "GADVolumeStorage");
+  this->StorageVolumeSelector->SetNodeClass("vtkMRMLScalarVolumeNode",
+      NULL, NULL, "GADVolumeStorage");
   this->StorageVolumeSelector->SetNewNodeEnabled(1);
   this->StorageVolumeSelector->SetParent( moduleFrame->GetFrame() );
   this->StorageVolumeSelector->Create();
@@ -647,7 +638,7 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
   this->StorageVolumeSelector->UpdateMenu();
 
   this->StorageVolumeSelector->SetBorderWidth(2);
-  this->StorageVolumeSelector->SetLabelText( "Preview Volume: ");
+  this->StorageVolumeSelector->SetLabelText("Preview Volume: ");
   this->StorageVolumeSelector->SetBalloonHelpString(
       "select an output volume from the current mrml scene.");
   app->Script("pack %s -side top -anchor e -padx 20 -pady 4",
@@ -662,7 +653,7 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
   this->OutVolumeSelector->UpdateMenu();
 
   this->OutVolumeSelector->SetBorderWidth(2);
-  this->OutVolumeSelector->SetLabelText("Output Volume: ");
+  this->OutVolumeSelector->SetLabelText("Output Volume:");
   this->OutVolumeSelector->SetBalloonHelpString(
       "select an output volume from the current mrml scene.");
   app->Script("pack %s -side top -anchor e -padx 20 -pady 4",
@@ -676,19 +667,22 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
   {
     this->AdvancedParametersFrame->SetParent(moduleFrame->GetFrame());
     this->AdvancedParametersFrame->Create();
+    //this->AdvancedParametersFrame->CollapseFrame();
     this->AdvancedParametersFrame->SetLabelText("Parameters");
   }
 
   this->Script(
-      "pack %s -side top -anchor nw -fill both -padx 2 -pady 2",
-      this->AdvancedParametersFrame->GetWidgetName());
+    "pack %s -side top -anchor nw -fill both -padx 2 -pady 2", 
+    this->AdvancedParametersFrame->GetWidgetName());
 
   vtkKWFrame* aparametersFrame = this->AdvancedParametersFrame->GetFrame();
+////////////////////////////////////////////////////////////////////////////////////////////
 
   if (!this->ShrinkFactor)
   {
     this->ShrinkFactor = vtkKWScaleWithEntry::New();
   }
+
   if (!this->ShrinkFactor->IsCreated())
   {
     this->ShrinkFactor->SetParent(aparametersFrame);
@@ -699,14 +693,16 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
     this->ShrinkFactor->SetLabelText("Set Shrink Factor");
   }
 
-  this->Script("pack %s -side top -anchor e -expand n -padx 2 -pady 6",
-      this->ShrinkFactor->GetWidgetName());
+  this->Script(
+    "pack %s -side top -anchor e -expand n -padx 2 -pady 6",
+    this->ShrinkFactor->GetWidgetName());
 
-  if (!this->MaxNumOfIt)
+
+  if( !this->MaxNumOfIt )
   {
     this->MaxNumOfIt = vtkKWScaleWithEntry::New();
   }
-  if (!this->MaxNumOfIt->IsCreated())
+  if( !this->MaxNumOfIt->IsCreated() )
   {
     this->MaxNumOfIt->SetParent(aparametersFrame);
     this->MaxNumOfIt->Create();
@@ -717,8 +713,8 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
   }
 
   this->Script(
-      "pack %s -side top -anchor e -expand n -padx 2 -pady 6",
-      this->MaxNumOfIt->GetWidgetName());
+    "pack %s -side top -anchor e -expand n -padx 2 -pady 6", 
+    this->MaxNumOfIt->GetWidgetName());
 
   if (!this->NumOfFitLev)
   {
@@ -734,6 +730,11 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
     this->NumOfFitLev->SetLabelText("Set Number of Fitting Level");
   }
 
+  this->Script(
+    "pack %s -side top -anchor e -expand n -padx 2 -pady 6",
+    this->NumOfFitLev->GetWidgetName());
+
+
   if (!this->WienFilNoi)
   {
     this->WienFilNoi = vtkKWScaleWithEntry::New();
@@ -747,6 +748,11 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
     this->WienFilNoi->SetValue(0.1);
     this->WienFilNoi->SetLabelText("Set Wien Filter Noise");
   }
+
+  this->Script(
+    "pack %s -side top -anchor e -expand n -padx 2 -pady 6",
+    this->WienFilNoi->GetWidgetName());
+
 
   if (!this->BiasField)
   {
@@ -763,8 +769,8 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
   }
 
   this->Script(
-      "pack %s -side top -anchor e -expand n -padx 2 -pady 6",
-      this->BiasField->GetWidgetName());
+    "pack %s -side top -anchor e -expand n -padx 2 -pady 6", 
+    this->BiasField->GetWidgetName());
 
   if (!this->Conv)
   {
@@ -780,10 +786,16 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
     this->Conv->SetLabelText("Set Convergence Threshold");
   }
 
+  this->Script(
+    "pack %s -side top -anchor e -expand n -padx 2 -pady 6",
+    this->Conv->GetWidgetName());
+
   this->CatchButton->SetParent(moduleFrame->GetFrame());
   this->CatchButton->Create();
   this->CatchButton->SetText("Preview");
   this->CatchButton->SetWidth(8);
+  app->Script("pack %s -side top -anchor e -padx 20 -pady 10",
+      this->CatchButton->GetWidgetName());
 
   this->ApplyButton->SetParent(moduleFrame->GetFrame());
   this->ApplyButton->Create();
@@ -795,4 +807,3 @@ void vtkMRIBiasFieldCorrectionGUI::BuildGUI()
 
   moduleFrame->Delete();
 }
-
