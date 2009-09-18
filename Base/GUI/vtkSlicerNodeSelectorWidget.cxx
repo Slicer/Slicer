@@ -134,6 +134,13 @@ bool vtkSlicerNodeSelectorWidget::CheckNodeClass(vtkMRMLNode *node)
     const char *className = this->GetNodeClass(c);
     if (this->GetChildClassesEnabled() && node->IsA(className))
       {
+      for (int exc=0; exc < this->GetNumberOfExcludedChildClasses(); exc++)
+        {
+        if (!strcmp(this->GetExcludedChildClass(exc), node->GetClassName()))
+          {
+          return false;
+          }
+        }
       return true;
       }
 
@@ -348,6 +355,23 @@ void vtkSlicerNodeSelectorWidget::UnconditionalUpdateMenu()
         }
 
       if (!this->GetChildClassesEnabled() && strcmp(node->GetClassName(), className) != 0)
+        {
+        continue;
+        }
+      
+      bool found = true;
+      if (this->GetChildClassesEnabled())
+        {
+        for (int exc=0; exc < this->GetNumberOfExcludedChildClasses(); exc++)
+          {
+          if (!strcmp(this->GetExcludedChildClass(exc), node->GetClassName()))
+            {
+            found = false;
+            break;
+            }
+          }
+        }
+      if (!found)
         {
         continue;
         }

@@ -117,6 +117,27 @@ public:
   vtkGetMacro(ChildClassesEnabled, int);
   vtkSetMacro(ChildClassesEnabled, int);
 
+  // Description:
+  // Add child class to exclude
+  void AddExcludedChildClass(char *className)
+    {
+    this->ExcludedChildClasses.push_back(className);
+    };
+
+  // Description:
+  // Get number of excluded child classes 
+  int GetNumberOfExcludedChildClasses()
+    {
+    return this->ExcludedChildClasses.size();
+    };
+
+  // Description:
+  // Get child class to exclude
+  const char* GetExcludedChildClass(int index)
+    {
+    return this->ExcludedChildClasses[index].c_str();
+    };
+
 
   // Description
   // Get selected node
@@ -183,6 +204,7 @@ protected:
   std::vector<std::string> AttributeNames;
   std::vector<std::string> AttributeValues;
   std::vector<std::string> NodeNames;
+  std::vector<std::string> ExcludedChildClasses;
 
   std::map<std::string, std::string> NodeID_to_EntryName;
   std::string MakeEntryName(vtkMRMLNode *node);

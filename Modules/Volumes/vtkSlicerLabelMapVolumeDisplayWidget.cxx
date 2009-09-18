@@ -206,6 +206,7 @@ void vtkSlicerLabelMapVolumeDisplayWidget::CreateWidget ( )
   this->ColorSelectorWidget->SetParent ( volDisplayFrame );
   this->ColorSelectorWidget->Create ( );
   this->ColorSelectorWidget->SetNodeClass("vtkMRMLColorNode", NULL, NULL, NULL);
+  this->ColorSelectorWidget->AddExcludedChildClass("vtkMRMLDiffusionTensorDisplayPropertiesNode");
   this->ColorSelectorWidget->ShowHiddenOn();
   this->ColorSelectorWidget->SetMRMLScene(this->GetMRMLScene());
   this->ColorSelectorWidget->SetBorderWidth(2);

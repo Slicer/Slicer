@@ -648,6 +648,7 @@ void vtkSlicerFiberBundleDisplayWidget::CreateWidget ( )
   this->ColorSelectorWidget->SetParent ( this->DisplayFrame->GetFrame() );
   this->ColorSelectorWidget->Create ( );
   this->ColorSelectorWidget->SetNodeClass("vtkMRMLColorNode", NULL, NULL, NULL);
+  this->ColorSelectorWidget->AddExcludedChildClass("vtkMRMLDiffusionTensorDisplayPropertiesNode");
   this->ColorSelectorWidget->ShowHiddenOn();
   this->ColorSelectorWidget->SetMRMLScene(this->GetMRMLScene());
   this->ColorSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();

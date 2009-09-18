@@ -345,6 +345,8 @@ void vtkEMSegmentAnatomicalStructureStep::ShowUserInterface()
     this->ColorSelectorWidget->Create();
     this->ColorSelectorWidget
         ->SetNodeClass("vtkMRMLColorNode", NULL, NULL, NULL);
+    this->ColorSelectorWidget->AddExcludedChildClass("vtkMRMLDiffusionTensorDisplayPropertiesNode");
+
     // don't allow new nodes to be created until can edit them
     // this->ColorSelectorWidget->NewNodeEnabledOn();
     this->ColorSelectorWidget->ShowHiddenOn();
