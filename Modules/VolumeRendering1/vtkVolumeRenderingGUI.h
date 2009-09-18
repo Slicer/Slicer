@@ -142,6 +142,8 @@ protected:
 
     void UpdateParametersNode();
 
+    void UpdateVolumeActor();
+
     // Description:
     // Pointer to the module's logic class
     vtkVolumeRenderingLogic *Logic;

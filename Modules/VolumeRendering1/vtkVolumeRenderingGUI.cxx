@@ -127,14 +127,35 @@ void vtkVolumeRenderingGUI::PrintSelf(ostream& os, vtkIndent indent)
     this->GetLogic()->PrintSelf(os,indent.GetNextIndent());
     }
 }
-void vtkVolumeRenderingGUI::BuildGUI(void)
+
+void vtkVolumeRenderingGUI::UpdateVolumeActor()
 {
   if (this->GetApplicationGUI() && 
       this->GetApplicationGUI()->GetViewerWidget() && 
-      this->GetLogic())
+      this->GetLogic() &&
+      this->GetLogic()->GetVolume()
+      )
     {
-    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->GetLogic()->GetVolume());
+    if (this->VolumeNodeSelector->GetSelected())
+      {
+      if (!this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->HasViewProp(this->GetLogic()->GetVolume())) 
+        {
+        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->GetLogic()->GetVolume());
+        }
+      }
+    else
+      {
+      if (this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->HasViewProp(this->GetLogic()->GetVolume())) 
+        {
+        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->RemoveViewProp(this->GetLogic()->GetVolume());
+        }
+      }
+
     }
+}
+
+void vtkVolumeRenderingGUI::BuildGUI(void)
+{
 
   this->AddMRMLObservers();
 
@@ -296,6 +317,8 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
   this->ProcessingGUIEvents = 1;
 
   vtkDebugMacro("vtkVolumeRenderingGUI::ProcessGUIEvents: event = " << event);
+
+  this->UpdateVolumeActor();
 
   //
   //Check PushButtons
@@ -497,6 +520,7 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
     // this is from parameters node
     }
 
+  this->UpdateVolumeActor();
   this->UpdateGUIFromMRML();
   this->Logic->SetParametersNode(this->ParametersNode);
   this->GetApplicationGUI()->GetViewerWidget()->RequestRender();
