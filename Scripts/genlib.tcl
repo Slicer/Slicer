@@ -793,11 +793,11 @@ if {  [BuildThis $::NUMPY_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [strin
           regsub -all ":" $::COMPILER_PATH "" vcbindir
           set devenvdir /cygdrive/$devenvdir
           set vcbindir /cygdrive/$vcbindir
-          set ::env(PATH) $::env(PATH):$devenvdir:$vcbindir
+          set ::env(PATH) $devenvdir:$vcbindir:$::env(PATH)
           regsub -all ":" $::Slicer3_LIB/python-build/PCbuild "" pcbuildpath
-          set ::env(PATH) $::env(PATH):/cygdrive/$pcbuildpath
+          set ::env(PATH) /cygdrive/$pcbuildpath:$::env(PATH)
           regsub -all ":" $::MSSDK_PATH/Bin "" sdkpath
-          set ::env(PATH) $::env(PATH):/cygdrive/$sdkpath
+          set ::env(PATH) /cygdrive/$sdkpath:$::env(PATH)
         } else {
           # Jim's way - cygwin does mount c:/ as /c and doesn't use cygdrive
           set devenvdir [file dirname $::MAKE]
