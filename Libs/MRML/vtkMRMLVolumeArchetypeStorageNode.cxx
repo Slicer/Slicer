@@ -331,7 +331,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     }
     catch (...)
     {
-    vtkErrorMacro("ReadData: Cannot read file, fullName = " << fullName.c_str() << ", node num file names = " << this->GetNumberOfFileNames() << ", reader num files = " << reader->GetNumberOfFileNames() << ", reader archetype = " << reader->GetArchetype());
+    vtkErrorMacro("ReadData: Cannot read file, fullName = " << fullName.c_str() << ", number of files listed in the node = " << this->GetNumberOfFileNames() << ", the ITK reader says it was able to read " << reader->GetNumberOfFileNames() << " files, the reader used the archetype file name of " << reader->GetArchetype());
     if (reader->GetFileName(0) != NULL)
       {
       vtkErrorMacro("reader 0th file name = " << reader->GetFileName(0) );
