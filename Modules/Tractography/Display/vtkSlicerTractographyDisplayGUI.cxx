@@ -129,7 +129,7 @@ void vtkSlicerTractographyDisplayGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       vtkSlicerTractographyDisplayLogic* fiberBundleLogic = this->Logic;
       
-      vtkMRMLFiberBundleNode *fiberBundleNode = fiberBundleLogic->AddFiberBundle( fileName );
+      vtkMRMLFiberBundleNode *fiberBundleNode = fiberBundleLogic->AddFiberBundle( fileName, 1 );
 
       if ( fiberBundleNode == NULL ) 
         {

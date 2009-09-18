@@ -2054,7 +2054,11 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
     */
     this->Script ( "QueryAtlasNodeAddedUpdate" );
     this->UpdateScalarOverlayMenu();
-    this->UpdateAnnoVisibilityMenu();
+    vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast((vtkObjectBase *)callData );
+    if ( mnode != NULL )
+      {
+      this->UpdateAnnoVisibilityMenu();
+      }
     }
 
   //--- has a node been deleted?
