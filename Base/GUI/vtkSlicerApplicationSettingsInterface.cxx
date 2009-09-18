@@ -890,7 +890,7 @@ void vtkSlicerApplicationSettingsInterface::Create()
   this->RemoteCacheLimitSpinBox->GetWidget()->SetCommand(this, "RemoteCacheLimitCallback");
   this->RemoteCacheLimitSpinBox->GetWidget()->SetRestrictValueToInteger();
   this->RemoteCacheLimitSpinBox->GetWidget()->SetRange(0,1000);
-  this->RemoteCacheLimitSpinBox->SetBalloonHelpString("Set the upper limit on the size of the cache directory (Mb).");
+  this->RemoteCacheLimitSpinBox->SetBalloonHelpString("Set the upper limit on the size of the remote file download cache directory (Mb).");
 
   tk_cmd << "pack " << this->RemoteCacheLimitSpinBox->GetWidgetName()
          << "  -side top -anchor w -expand no -fill x -padx 2 -pady 2" << endl;
@@ -910,7 +910,7 @@ void vtkSlicerApplicationSettingsInterface::Create()
   this->RemoteCacheFreeBufferSizeSpinBox->GetWidget()->SetCommand(this, "RemoteCacheFreeBufferSizeCallback");
   this->RemoteCacheFreeBufferSizeSpinBox->GetWidget()->SetRestrictValueToInteger();
   this->RemoteCacheFreeBufferSizeSpinBox->GetWidget()->SetRange(0,900);
-  this->RemoteCacheFreeBufferSizeSpinBox->SetBalloonHelpString("Set the amount of space in the cache directory that should remain free (Mb).");
+  this->RemoteCacheFreeBufferSizeSpinBox->SetBalloonHelpString("Set the amount of space in the remote file download cache directory that should remain free (Mb). Must be smaller than the remote cache limit. This should be set to a typical downloaded file size, as when the application determines if it can download the next file, it will check to see if the new file will overflow the cache size limit.");
 
   tk_cmd << "pack " << this->RemoteCacheFreeBufferSizeSpinBox->GetWidgetName()
          << "  -side top -anchor w -expand no -fill x -padx 2 -pady 2" << endl;
