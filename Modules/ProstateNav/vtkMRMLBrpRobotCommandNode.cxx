@@ -32,7 +32,7 @@ vtkMRMLBrpRobotCommandNode* vtkMRMLBrpRobotCommandNode::New()
   vtkObject* r = vtkObjectFactory::CreateInstance("vtkMRMLBrpRobotCommandNode");
   if(r)
     {
-    ret =  (vtkMRMLBrpRobotCommandNode*)ret;
+    ret =  (vtkMRMLBrpRobotCommandNode*)r;
     }
   else
     {
