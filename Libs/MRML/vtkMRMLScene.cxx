@@ -994,6 +994,13 @@ vtkMRMLNode*  vtkMRMLScene::AddNode(vtkMRMLNode *n)
   return node;
 }
 
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::NodeAdded(vtkMRMLNode *n)
+{
+  this->InvokeEvent(this->NodeAddedEvent, n);
+}
+
 //------------------------------------------------------------------------------
 vtkMRMLNode*  vtkMRMLScene::CopyNode(vtkMRMLNode *n)
 {

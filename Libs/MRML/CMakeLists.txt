@@ -33,6 +33,7 @@ set(include_dirs
   )
 
 set(packages
+  VTK
   vtkITK 
   FreeSurfer
   )

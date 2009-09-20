@@ -133,8 +133,13 @@ public:
   vtkMRMLNode* CopyNode(vtkMRMLNode *n);
 
   // Description:
-  // Add a node to the scene.
+  // Add a node to the scene without invoking a NodeAdded Event
   vtkMRMLNode* AddNodeNoNotify(vtkMRMLNode *n);
+
+  // Description:
+  // Invoke a NodeAddedEvent (used, for instnace, after adding a bunch of nodes with AddNodeNoNotify
+  void NodeAdded(vtkMRMLNode *n);
+  void NodeAdded() {this->NodeAdded(NULL);};
   
   // Description:
   // Remove a path from the list.

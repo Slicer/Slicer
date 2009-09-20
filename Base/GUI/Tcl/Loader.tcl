@@ -503,6 +503,8 @@ itcl::body Loader::apply { } {
   set w [$o(list) GetWidget] 
   set rows [$w GetNumberOfRows]
 
+  set lastFiberBundleNode ""
+
   for {set row 0} {$row < $rows} {incr row} {
 
     if { [$w GetCellTextAsInt $row $col(Select)] } {
@@ -545,10 +547,14 @@ itcl::body Loader::apply { } {
                 if { $fiberBundleGUI != "" } {
                     set fiberBundleLogic [ $fiberBundleGUI GetLogic ]
                     if { $fiberBundleLogic != "" } {
-                        set fiberBundleNode [ $fiberBundleLogic AddFiberBundle $path ]
+                        set notifyScene 0
+                        set fiberBundleNode [ $fiberBundleLogic AddFiberBundle $path $notifyScene]
                         if {$fiberBundleNode == "" } {
                             $this errorDialog "Unable to read DTI fiber bundle model file $path"
+                        } else {
+                            $fiberBundleNode SetName $name
                         }
+                        set lastFiberBundleNode $fiberBundleNode
                     }
                 }
             } else {
@@ -600,12 +606,15 @@ itcl::body Loader::apply { } {
               $this errorDialog "Could not open $path"
            } else {
               $node SetName $name
-              # invoke a node added event in order to update the GUI
-              $::slicer3::MRMLScene Edited
            }  
         }
       }
     }
+  }
+  # invoke a node added event in order to update the GUI
+  if { $lastFiberBundleNode != "" } {
+    $::slicer3::MRMLScene NodeAdded $lastFiberBundleNode
+    $::slicer3::ApplicationGUI SetExternalProgress "Finalizing Fibers" .5
   }
   $::slicer3::ApplicationGUI SetExternalProgress "" 0
 }
