@@ -78,7 +78,6 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <default>10000</default>
       <constraints>
         <minimum>1000</minimum>
-        <maximum>50000</maximum>
         <step>1000</step>
       </constraints>
     </integer>
