@@ -572,6 +572,14 @@ void vtkChangeTrackerSegmentationStep::ProcessGUIEvents(vtkObject *caller, unsig
         resampledScan1Segm = 
           vtkMRMLScalarVolumeNode::SafeDownCast(ctNode->GetScene()->GetNodeByID(ctNode->GetScan1_InputSegmentRef()));
         }
+      // remove islands
+      vtkImageIslandFilter *removeIslands = vtkImageIslandFilter::New();
+      removeIslands->SetInput(resampledScan1Segm->GetImageData());
+      removeIslands->SetIslandMinSize(1000);
+      removeIslands->SetNeighborhoodDim3D();
+      removeIslands->Update();
+      resampledScan1Segm->SetAndObserveImageData(removeIslands->GetOutput());
+      removeIslands->Delete();
       this->RenderRemove();
       // keep the pre-segment scan, so that the user can go back
       //      this->PreSegmentScan1Remove();
