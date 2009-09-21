@@ -1425,7 +1425,7 @@ namespace eval ChangeTrackerTcl {
     # applying the deformation field to the segmentation and computing amount of growth
     # with the user given segmentation.
     # ${scriptDirectory}/applyDeformationITK $SegmentationFilePrefix ${ChangeTracker(save,Dir)}/${ChangeTracker(deformation,Field)}.mha ${ChangeTracker(save,Dir)}/${ChangeTracker(deformation,Scan1SegmentationDeformed)}.nhdr 1
-    set CMD "$EXE_DIR/applyDeformationITK $Scan1Segmentation $Scan1ToScan2Deformation $Scan1ToScan2Segmentation 1 1"
+    set CMD "$EXE_DIR/applyDeformationITK $Scan1Segmentation $Scan1ToScan2Deformation $Scan1ToScan2Segmentation 1 0"
     # Print "=== Deformable Segmentation Growth Metric ==" 
     # Print "$CMD"
     eval exec $CMD 
