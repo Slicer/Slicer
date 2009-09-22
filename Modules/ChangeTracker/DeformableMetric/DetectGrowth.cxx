@@ -52,12 +52,12 @@ int main(int argc, char *argv[])
   JacImageType::Pointer jacImage = jacFilter->GetOutput();
   jacFilter->Update();
   
-  if (0) {
-  typedef itk::ImageFileWriter< JacImageType > WriterType;
-  WriterType::Pointer writer = WriterType::New();
-  writer->SetFileName("deneme-jacobian-det.mha");
-  writer->SetInput( jacFilter->GetOutput() );
-  writer->Update();
+  if (argc>4) {
+    typedef itk::ImageFileWriter< JacImageType > WriterType;
+    WriterType::Pointer writer = WriterType::New();
+    writer->SetFileName(argv[4]);
+    writer->SetInput( jacFilter->GetOutput() );
+    writer->Update();
   }
 
   typedef itk::ImageRegionConstIterator< JacImageType > JacImageIteratorType;

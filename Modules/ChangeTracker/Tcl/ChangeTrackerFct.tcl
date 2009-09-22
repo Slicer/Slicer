@@ -1295,6 +1295,7 @@ namespace eval ChangeTrackerTcl {
       set SCAN1_TO_SCAN2_RESAMPLED_NAME      "$WORK_DIR/TG_Deformable_Scan1AlignedToScan2.nhdr"
       set ANALYSIS_SEGM_FILE                 "$WORK_DIR/Analysis_Deformable_Sementation_Result.txt"    
       set ANALYSIS_JACOBIAN_FILE             "$WORK_DIR/Analysis_Deformable_Jaccobian_Result.txt"    
+      set ANALYSIS_JACOBIAN_IMAGE            "$WORK_DIR/TG_Analysis_Deformable_Jacobian.nrrd"
  
  
       # -------------------------------------
@@ -1302,7 +1303,7 @@ namespace eval ChangeTrackerTcl {
       # -------------------------------------
       # For Debugging
       # !([file exists $ANALYSIS_SEGM_FILE] && [file exists $ANALYSIS_JACOBIAN_FILE] || 1)    
-      Analysis_Deformable_Fct $SCAN1_IMAGE_NAME $SCAN1_SEGM_NAME $SCAN2_IMAGE_NAME $SCAN1_TO_SCAN2_SEGM_NAME $SCAN1_TO_SCAN2_DEFORM_NAME $SCAN1_TO_SCAN2_DEFORM_INVERSE_NAME $SCAN1_TO_SCAN2_RESAMPLED_NAME $ANALYSIS_SEGM_FILE $ANALYSIS_JACOBIAN_FILE
+      Analysis_Deformable_Fct $SCAN1_IMAGE_NAME $SCAN1_SEGM_NAME $SCAN2_IMAGE_NAME $SCAN1_TO_SCAN2_SEGM_NAME $SCAN1_TO_SCAN2_DEFORM_NAME $SCAN1_TO_SCAN2_DEFORM_INVERSE_NAME $SCAN1_TO_SCAN2_RESAMPLED_NAME $ANALYSIS_SEGM_FILE $ANALYSIS_JACOBIAN_FILE $ANALYSIS_JACOBIAN_IMAGE
 
       # ======================================
       # Read Parameters and save to Node 
@@ -1319,6 +1320,9 @@ namespace eval ChangeTrackerTcl {
       # Ignore error messages 
       set SCAN2_NAME [$LOGIC GetInputScanName 1]
       set SCAN2_SEGM_NODE [$LOGIC LoadVolume $::slicer3::Application $SCAN1_TO_SCAN2_SEGM_NAME 1 "${SCAN2_NAME}_VOI_Segmented"]
+
+      # load in the Jacobian image, to visualize the deformation
+      set JACOBIAN_ANALYSIS_NODE [$LOGIC LoadVolume $::slicer3::Application $ANALYSIS_JACOBIAN_IMAGE 0 "ChTracker_Analysis_Jacobian"]
 
       # could not load in result 
       if { $SCAN2_SEGM_NODE == "" } { 
@@ -1376,7 +1380,7 @@ namespace eval ChangeTrackerTcl {
   }
 
 
-  proc Analysis_Deformable_Fct {Scan1Image  Scan1Segmentation Scan2Image Scan1ToScan2Segmentation Scan1ToScan2Deformation Scan1ToScan2DeformationInverse Scan1ToScan2Image AnalysisSegmentFile AnalysisJaccobianFile} { 
+  proc Analysis_Deformable_Fct {Scan1Image  Scan1Segmentation Scan2Image Scan1ToScan2Segmentation Scan1ToScan2Deformation Scan1ToScan2DeformationInverse Scan1ToScan2Image AnalysisSegmentFile AnalysisJaccobianFile AnalysisJacobianImage} { 
     global env
 
     # Print "Run Deformable Analaysis with automatically computed segmentation"
@@ -1444,7 +1448,7 @@ namespace eval ChangeTrackerTcl {
     eval exec $CMD 
 
     # ${scriptDirectory}/DetectGrowth ${ChangeTracker(save,Dir)}/${ChangeTracker(deformation,InverseField)}.mha $SegmentationFilePrefix
-    set CMD "$EXE_DIR/DetectGrowth $Scan1ToScan2DeformationInverse $Scan1Segmentation $AnalysisJaccobianFile"
+    set CMD "$EXE_DIR/DetectGrowth $Scan1ToScan2DeformationInverse $Scan1Segmentation $AnalysisJaccobianFile $AnalysisJacobianImage"
     # Print "$CMD"
     eval exec $CMD 
 
