@@ -297,36 +297,75 @@ int DoIt( int argc, char *argv[] )
     std::cout << "### sampleFromOverlap: " << sampleFromOverlap << std::endl;
     }
 
-  reger->SetSampleIntensityPortion( sampleIntensityPortion );
-  if (verbosity >= STANDARD)
+  typedef typename itk::ImageFileReader<itk::Image<unsigned char, 3> > ImageReader;
+  typedef typename itk::ImageMaskSpatialObject<DimensionT> ImageMaskSpatialObject;
+  
+  // if a fixed image mask was set
+  if(fixedImageMask != "")
     {
-    std::cout << "### sampleIntensityPortion: " << sampleIntensityPortion << std::endl;
-    }
+    reger->SetUseFixedImageMaskObject(true);
 
-  if(regionOfInterest.size() == 2*DimensionT)
-    {
-    reger->SetRegionOfInterest( regionOfInterest );
+    typename ImageReader::Pointer reader = ImageReader::New();
+    reader->SetFileName(fixedImageMask);
+    try
+      {
+      reader->Update();
+      }
+    catch( itk::ExceptionObject & excep )
+      {
+      std::cerr << "Exception caught while loading fixed image mask." << std::endl;
+      std::cerr << excep << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    typename ImageMaskSpatialObject::Pointer mask = ImageMaskSpatialObject::New();
+    mask->SetImage(reader->GetOutput());
+    reger->SetFixedImageMaskObject(mask);
+
     if (verbosity >= STANDARD)
       {
-      std::cout << "### regionOfInterest: ";
-      std::cout << "    ### point1: ";
-      for(unsigned int i=0; i<DimensionT; i++)
-        {
-        std::cout << regionOfInterest[i] << " ";
-        }
-      std::cout << "    ### point2: ";
-      for(unsigned int i=0; i<DimensionT; i++)
-        {
-        std::cout << regionOfInterest[i+DimensionT] << " ";
-        }
-      std::cout << std::endl;
+      std::cout << "### useFixedImageMaskObject: true" << std::endl;
       }
     }
-  else if(regionOfInterest.size() > 0)
+  else
     {
-    std::cerr << "Error: region of interest does not contain two bounding points" << std::endl;
-    return EXIT_FAILURE;
+    reger->SetUseFixedImageMaskObject(false);
+    if (verbosity >= STANDARD)
+      {
+      std::cout << "### useFixedImageMaskObject: false" << std::endl;
+      }
     }
+
+  // reger->SetSampleIntensityPortion( sampleIntensityPortion );
+  // if (verbosity >= STANDARD)
+  //   {
+  //   std::cout << "### sampleIntensityPortion: " << sampleIntensityPortion << std::endl;
+  //   }
+
+  // if(regionOfInterest.size() == 2*DimensionT)
+  //   {
+  //   reger->SetRegionOfInterest( regionOfInterest );
+  //   if (verbosity >= STANDARD)
+  //     {
+  //     std::cout << "### regionOfInterest: ";
+  //     std::cout << "    ### point1: ";
+  //     for(unsigned int i=0; i<DimensionT; i++)
+  //       {
+  //       std::cout << regionOfInterest[i] << " ";
+  //       }
+  //     std::cout << "    ### point2: ";
+  //     for(unsigned int i=0; i<DimensionT; i++)
+  //       {
+  //       std::cout << regionOfInterest[i+DimensionT] << " ";
+  //       }
+  //     std::cout << std::endl;
+  //     }
+  //   }
+  // else if(regionOfInterest.size() > 0)
+  //   {
+  //   std::cerr << "Error: region of interest does not contain two bounding points" << std::endl;
+  //   return EXIT_FAILURE;
+  //   }
 
 
   reger->SetMinimizeMemory( minimizeMemory );

@@ -156,6 +156,15 @@
       <longflag>sampleFromOverlap</longflag>
       <default>false</default>
     </boolean>
+    <image type="label">
+      <name>fixedImageMask</name>
+      <label>Fixed Image Mask</label>
+      <channel>input</channel>
+      <longflag>fixedImageMask</longflag>
+      <description>Image which defines a mask for the fixed image</description>
+    </image>
+    <!-- Removed because this can be handled by a user specified mask -->
+    <!--
     <float>
       <name>sampleIntensityPortion</name>
       <description>Limit metric evaluation to the fixed image points at or above the threshold (as a percent of intensity range of the image)</description>
@@ -163,6 +172,10 @@
       <longflag>sampleIntensityPortion</longflag>
       <default>0.0</default>
     </float>
+    -->
+    <!-- Removed because this can be handled by a mask.  If we could
+    get a MRML ROI object this may become useful again. -->
+    <!--
     <float-vector>
       <name>regionOfInterest</name>
       <description>Limit metric evaluation to the physical ROI (x1,y1,z1,x2,y2,z2)</description>
@@ -170,6 +183,7 @@
       <longflag>regionOfInterest</longflag>
       <default></default>
     </float-vector>
+    -->
     <integer>
       <name>randomNumberSeed</name>
       <description>Seed to generate a consistent random number sequence</description>
@@ -193,7 +207,7 @@
     </boolean>
     <string-enumeration>
       <name>interpolation</name>
-      <description>Method for final interpolation</description>
+      <description>Method for interpolation within the optimization process</description>
       <label>Interpolation</label>
       <longflag>interpolation</longflag>
       <element>NearestNeighbor</element>

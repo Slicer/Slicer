@@ -209,15 +209,15 @@ ImageToImageRegistrationHelper< TImage >
 template< class TImage >
 void
 ImageToImageRegistrationHelper< TImage >
-::SetFixedImageMaskObject( typename MaskObjectType::ConstPointer & maskObject )
+::SetFixedImageMaskObject( const MaskObjectType * maskObject )
 {
-  if( this->m_FixedImageMaskObject.GetPointer() != maskObject.GetPointer() )
+  if( this->m_FixedImageMaskObject.GetPointer() != maskObject )
     {
     this->m_FixedImageMaskObject = maskObject;
 
     this->Modified();
 
-    if( maskObject.IsNotNull() )
+    if( maskObject != NULL )
       {
       m_UseFixedImageMaskObject = true;
       }
@@ -231,15 +231,15 @@ ImageToImageRegistrationHelper< TImage >
 template< class TImage >
 void
 ImageToImageRegistrationHelper< TImage >
-::SetMovingImageMaskObject( typename MaskObjectType::ConstPointer & maskObject )
+::SetMovingImageMaskObject( const MaskObjectType * maskObject )
 {
-  if( this->m_MovingImageMaskObject.GetPointer() != maskObject.GetPointer() )
+  if( this->m_MovingImageMaskObject.GetPointer() != maskObject )
     {
     this->m_MovingImageMaskObject = maskObject;
 
     this->Modified();
 
-    if( maskObject.IsNotNull() )
+    if( maskObject != NULL )
       {
       m_UseMovingImageMaskObject = true;
       }

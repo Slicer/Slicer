@@ -158,14 +158,14 @@ class ImageToImageRegistrationHelper : public Object
     itkGetConstMacro( UseFixedImageMaskObject, bool );
     itkBooleanMacro( UseFixedImageMaskObject );
 
-    void SetFixedImageMaskObject( typename MaskObjectType::ConstPointer & mask );
+    void SetFixedImageMaskObject( const MaskObjectType * mask );
     itkGetConstObjectMacro( FixedImageMaskObject, MaskObjectType );
 
     itkSetMacro( UseMovingImageMaskObject, bool );
     itkGetConstMacro( UseMovingImageMaskObject, bool );
     itkBooleanMacro( UseMovingImageMaskObject );
 
-    void SetMovingImageMaskObject( typename MaskObjectType::ConstPointer & mask );
+    void SetMovingImageMaskObject( const MaskObjectType * mask );
     itkGetConstObjectMacro( MovingImageMaskObject, MaskObjectType );
 
     itkSetMacro(UseRegionOfInterest, bool);
