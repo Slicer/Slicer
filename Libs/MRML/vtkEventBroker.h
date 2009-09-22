@@ -36,10 +36,7 @@
 
 #include <deque>
 #include <vector>
-#include <set>
 #include <fstream>
-
-#include "vtksys/hash_map.hxx"
 
 class vtkCollection;
 class vtkCallbackCommand;
@@ -92,8 +89,6 @@ class VTK_MRML_EXPORT vtkEventBroker : public vtkObject
   // Description:
   // Attach adds the observers to the object.
   // Detach removes the observers
-  // These routines manage the internal datastructres and should
-  // be the only methods used to modified the internal Observations member
   void AttachObservation (vtkObservation *observation);
   void DetachObservation (vtkObservation *observation);
  
@@ -255,22 +250,11 @@ protected:
   void operator=(const vtkEventBroker&);
 
   //BTX
-  // 
-  typedef char *KeyType;
-  typedef std::vector< vtkObservation * > ObservationVector;
-  typedef vtksys::hash_map< KeyType, ObservationVector > ObjectToObservationVectorMap;
-
-  // hash maps to manage quick lookup by object
-  ObjectToObservationVectorMap SubjectMap;
-  ObjectToObservationVectorMap ObserverMap;
-
-  // keep track of all objects currently being observed
-  std::set<KeyType> SubjectSet;
-  //ETX
-
-  //BTX
-  // The event queue of triggered but not-yet-invoked observations
+  std::vector< vtkObservation * > Observations;
   std::deque< vtkObservation * > EventQueue;
+  // TODO: cache relationships for fast access when compressing events
+  // -- not clear which indices would actually speed things up
+  //std::map< vtkObject*, int > ObservationsBySubject;
   //ETX
   
   //BTX
