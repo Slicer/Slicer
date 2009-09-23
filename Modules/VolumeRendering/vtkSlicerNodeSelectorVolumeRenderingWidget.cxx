@@ -1,13 +1,14 @@
 #include "vtkSlicerNodeSelectorVolumeRenderingWidget.h"
-#include "vtkMRMLVolumeRenderingNode.h"
+#include "vtkMRMLVolumePropertyNode.h"
 
 vtkStandardNewMacro( vtkSlicerNodeSelectorVolumeRenderingWidget );
 vtkCxxRevisionMacro (vtkSlicerNodeSelectorVolumeRenderingWidget, "$Revision: 1.0 $");
+
 vtkSlicerNodeSelectorVolumeRenderingWidget::vtkSlicerNodeSelectorVolumeRenderingWidget(void)
 {
-    //Condition is not set
-    this->Condition="";
-    this->AdditionalMRMLScene=NULL;
+  //Condition is not set
+  this->Condition="";
+  this->AdditionalMRMLScene=NULL;
 }
 
 vtkSlicerNodeSelectorVolumeRenderingWidget::~vtkSlicerNodeSelectorVolumeRenderingWidget(void)
@@ -16,13 +17,14 @@ vtkSlicerNodeSelectorVolumeRenderingWidget::~vtkSlicerNodeSelectorVolumeRenderin
 
 bool vtkSlicerNodeSelectorVolumeRenderingWidget::CheckAdditionalConditions(vtkMRMLNode *node)
 {
-    if(strcmp(this->Condition.c_str(),"")==0)
-    {
-        return true;
-    }
-    vtkMRMLVolumeRenderingNode *CurrentNode=vtkMRMLVolumeRenderingNode::SafeDownCast(node);
+  if(strcmp(this->Condition.c_str(),"") == 0)
+  {
+    return true;
+  }
 
-    bool ret=CurrentNode->HasReference(this->Condition);
+  vtkMRMLVolumePropertyNode *CurrentNode = vtkMRMLVolumePropertyNode::SafeDownCast(node);
+
+  bool ret = CurrentNode->HasReference(this->Condition);
     //Enable this back for Labelmaps
     //bool retA=(CurrentNode->GetIsLabelMap()==this->IsLabelmap);
     //if(ModeCondition)
@@ -34,11 +36,12 @@ bool vtkSlicerNodeSelectorVolumeRenderingWidget::CheckAdditionalConditions(vtkMR
     ////or another Node: retA has to be true, ret to be false
     //return (retA&&!ret);
 
-    if(ModeCondition)
-    {
-        return ret;
-    }
-    return !ret;
+  if(ModeCondition)
+  {
+    return ret;
+  }
+
+  return !ret;
 
 }
 
@@ -88,7 +91,7 @@ int vtkSlicerNodeSelectorVolumeRenderingWidget::AddAditionalNodes()
                 selected = true;
             }
             else if (!selected && !this->NoneEnabled)
-            {  
+            {
                 selectedNode = node;
                 selected = true;
             }
@@ -122,7 +125,7 @@ int vtkSlicerNodeSelectorVolumeRenderingWidget::AddAditionalNodes()
 
 vtkMRMLNode* vtkSlicerNodeSelectorVolumeRenderingWidget::GetSelectedInAdditional()
 {
-    if(this->AdditionalMRMLScene==NULL)
+    if(this->AdditionalMRMLScene == NULL)
     {
         return NULL;
     }

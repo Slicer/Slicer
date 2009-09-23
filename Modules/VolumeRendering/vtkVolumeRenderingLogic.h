@@ -6,7 +6,6 @@
 #include "vtkVolume.h"
 
 #include "vtkMRMLVolumeRenderingParametersNode.h"
-#include "vtkMRMLVolumeRenderingSelectionNode.h"
 
 class vtkSlicerVolumeTextureMapper3D;
 class vtkSlicerFixedPointVolumeRayCastMapper;
@@ -27,23 +26,22 @@ public:
   //virtual void ProcessMrmlEvents ( vtkObject *caller, unsigned long event,
     //                               void *callData ){};
 
-  
+
   // Overload the scene setter, this is needed for module creation
   // via LoadableModuleFactory
   virtual void SetMRMLScene(vtkMRMLScene *scene);
 
   // Register local MRML nodes
   virtual void RegisterNodes();
-  
-  vtkMRMLVolumeRenderingSelectionNode* GetSelectionNode();
+
 
   vtkMRMLVolumeRenderingParametersNode* GetParametersNode();
 
   // Description:
   // Update MRML events
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                  unsigned long /*event*/, 
-                                  void * /*callData*/ ); 
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+                                  unsigned long /*event*/,
+                                  void * /*callData*/ );
 
   double EstimateSampleDistances(void);
 
@@ -54,35 +52,6 @@ protected:
   void operator=(const vtkVolumeRenderingLogic&);
 
   static bool First;
-
-  // Description:
-  // The hardware accelerated texture mapper.
-  vtkSlicerVolumeTextureMapper3D *MapperTexture;    
-  
-  // Description:
-  // The hardware accelerated gpu ray cast mapper.
-  vtkCudaVolumeMapper *MapperCUDARaycast;
-
-  // Description:
-  // The hardware accelerated gpu ray cast mapper.
-  vtkSlicerGPURayCastVolumeTextureMapper3D *MapperGPURaycast;
-
-  // Description:
-  // The software accelerated software mapper
-  vtkSlicerFixedPointVolumeRayCastMapper *MapperRaycast;
-
-  // Description:
-  // The current volume  mapper
-  vtkVolumeMapper *CurrentVolumeMapper;
-
-  //BTX
-  std::map<std::string, vtkVolumeMapper *> VolumeMappers;
-  //ETX
-
-  // Description:
-  // Actor used for Volume Rendering
-  vtkVolume *Volume;
-
 };
 
 #endif

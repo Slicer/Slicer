@@ -63,7 +63,7 @@ protected:
     //ETX
 
     //Description:
-    //if 1 use ==for condition if 0 use != for condition
+    //if 1 use == for condition if 0 use != for condition
     bool ModeCondition;
 
     // Description:

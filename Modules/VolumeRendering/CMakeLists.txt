@@ -29,13 +29,13 @@ include_directories(
   )
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkVolumeRenderingConfigure.h.in 
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkVolumeRenderingConfigure.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/vtkVolumeRenderingConfigure.h
   )
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-install(FILES 
-  ${headers} 
+install(FILES
+  ${headers}
   "${CMAKE_CURRENT_BINARY_DIR}/vtkVolumeRenderingConfigure.h"
   DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
@@ -47,21 +47,8 @@ set(VolumeRendering_SRCS
   vtkVolumeRenderingGUI.cxx
   vtkVolumeRenderingLogic.cxx
   vtkMRMLVolumeRenderingParametersNode.cxx
-  vtkMRMLVolumeRenderingNode.cxx
-  vtkMRMLVolumeRenderingSelectionNode.cxx
-  vtkSlicerNodeSelectorVolumeRenderingWidget.cxx
-  vtkSlicerVRHelper.cxx
-  vtkSlicerVRGrayscaleHelper.cxx
+  vtkSlicerVolumeRenderingHelper.cxx
   vtkSlicerVRMenuButtonColorMode.cxx
-  #LabelmapPart
-  #vtkSlicerVRLabelmapHelper.cxx
-  #vtkLabelMapColorTransferFunction.cxx
-  #vtkLabelMapPiecewiseFunction.cxx
-  #vtkSlicerLabelMapWidget.cxx
-  #vtkSlicerLabelmapTree.cxx
-  #vtkSlicerLabelmapElement.cxx
-  #vtkSlicerBaseTree.cxx
-  #vtkSlicerBaseTreeElement.cxx
   )
 
 # --------------------------------------------------------------------------
@@ -69,7 +56,7 @@ set(VolumeRendering_SRCS
 
 include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 vtk_wrap_tcl3(VolumeRendering
-  VolumeRendering_TCL_SRCS 
+  VolumeRendering_TCL_SRCS
   "${VolumeRendering_SRCS}" "")
 
 # --------------------------------------------------------------------------

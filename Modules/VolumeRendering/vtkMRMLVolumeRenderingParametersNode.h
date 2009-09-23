@@ -14,7 +14,7 @@
 // .NAME vtkMRMLVolumeRenderingParametersNode - MRML node for storing a slice through RAS space
 // .SECTION Description
 // This node stores the information about the currently selected volume
-// 
+//
 //
 
 #ifndef __vtkMRMLVolumeRenderingParametersNode_h
@@ -30,6 +30,8 @@
 #include "vtkVolumeRendering.h"
 
 #include "vtkMatrix4x4.h"
+
+#define COUNT_CROPPING_REGION_PLANES 6
 
 class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : public vtkMRMLNode
 {
@@ -54,14 +56,14 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
 
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "VolumeRenderingSelection";};
+  virtual const char* GetNodeTagName() {return "VolumeRenderingParameters";};
 
   // Description:
   // Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
   // Description:
-  // Updates this node if it depends on other nodes 
+  // Updates this node if it depends on other nodes
   // when the node is deleted in the scene
   virtual void UpdateReferences();
 
@@ -69,9 +71,7 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
   // Observe the reference transform node
   virtual void UpdateScene(vtkMRMLScene *scene);
 
-  virtual void ProcessMRMLEvents ( vtkObject *caller, 
-                                   unsigned long event, 
-                                   void *callData);
+  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData);
 
   // Description:
   // the ID of a MRMLVolumeNode
@@ -79,17 +79,45 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
   void SetAndObserveVolumeNodeID(const char *volumeNodeID);
 
   // Description:
+  // the ID of a MRMLVolumeRenderingPresetsNode (presets)
+  vtkGetStringMacro (PresetsNodeID);
+  vtkSetStringMacro (PresetsNodeID);
+
+  // Description:
+  // the ID of a MRMLVolumeNode (fg volume)
+  vtkGetStringMacro (FgVolumeNodeID);
+  void SetAndObserveFgVolumeNodeID(const char *volumeNodeID);
+
+  // Description:
+  // the ID of a MRMLVolumeRenderingPresetsNode (fg presets)
+  vtkGetStringMacro (FgPresetsNodeID);
+  vtkSetStringMacro (FgPresetsNodeID);
+
+  // Description:
   // Associated transform MRML node
   vtkMRMLVolumeNode* GetVolumeNode();
+
+  // Description:
+  // Associated transform MRML node (fg volume)
+  vtkMRMLVolumeNode* GetFgVolumeNode();
 
   // Description:
   // the ID of a parameter MRMLVolumePropertyNode
   vtkGetStringMacro (VolumePropertyNodeID);
   void SetAndObserveVolumePropertyNodeID(const char *volumePropertyNodeID);
-  
+
+  // Description:
+  // the ID of a parameter MRMLVolumePropertyNode (fg volume)
+  vtkGetStringMacro (FgVolumePropertyNodeID);
+  void SetAndObserveFgVolumePropertyNodeID(const char *volumePropertyNodeID);
+
   // Description:
   // Associated transform MRML node
   vtkMRMLVolumePropertyNode* GetVolumePropertyNode();
+
+  // Description:
+  // Associated transform MRML node (fg volume)
+  vtkMRMLVolumePropertyNode* GetFgVolumePropertyNode();
 
   // Description:
   // the ID of a parameter MRMLROINode
@@ -107,6 +135,11 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
   vtkBooleanMacro(CroppingEnabled,int);
 
   // Description:
+  // Set/get cropping planes
+  vtkSetVector6Macro(CroppingRegionPlanes, double);
+  vtkGetVectorMacro(CroppingRegionPlanes, double, 6);
+
+  // Description:
   // Estimated Sample Distance
   vtkSetMacro(EstimatedSampleDistance,double);
   vtkGetMacro(EstimatedSampleDistance,double);
@@ -119,7 +152,7 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
   vtkGetStringMacro (CurrentVolumeMapper);
   vtkSetStringMacro (CurrentVolumeMapper);
 
-  
+
 protected:
   vtkMRMLVolumeRenderingParametersNode();
   ~vtkMRMLVolumeRenderingParametersNode();
@@ -130,9 +163,21 @@ protected:
   vtkSetReferenceStringMacro(VolumeNodeID);
   vtkMRMLVolumeNode* VolumeNode;
 
+  char *PresetsNodeID;
+
   char *VolumePropertyNodeID;
   vtkSetReferenceStringMacro(VolumePropertyNodeID);
   vtkMRMLVolumePropertyNode* VolumePropertyNode;
+
+  char *FgVolumeNodeID;
+  vtkSetReferenceStringMacro(FgVolumeNodeID);
+  vtkMRMLVolumeNode* FgVolumeNode;
+
+  char *FgPresetsNodeID;
+
+  char *FgVolumePropertyNodeID;
+  vtkSetReferenceStringMacro(FgVolumePropertyNodeID);
+  vtkMRMLVolumePropertyNode* FgVolumePropertyNode;
 
   char *ROINodeID;
   vtkSetReferenceStringMacro(ROINodeID);
@@ -140,10 +185,13 @@ protected:
 
   int CroppingEnabled;
 
+  double CroppingRegionPlanes[COUNT_CROPPING_REGION_PLANES];
+
   double  EstimatedSampleDistance;
   int     ExpectedFPS;
 
   char *CurrentVolumeMapper;
+
 };
 
 #endif

@@ -1,17 +1,18 @@
-// .NAME vtkSlicerVRGrayscaleHelper - Central logic and GUI behind volume rendering
+// .NAME vtkSlicerVolumeRenderingHelper
 // .SECTION Description
-// vtkSlicerVRGrayscaleHelper is the core class for volume rendering. It creates the pages Treshold, Performance, Cropping and Advanced.
-// It also includes the whole rendering algorithm including a special alogrithm for a low resolution rendering
-// This class should be split into several different new classes.
-#ifndef __vtkSlicerVRGrayscaleHelper_h
-#define __vtkSlicerVRGrayscaleHelper_h
+// Takes care about issues both derived classes have in Common: Callback, Progress for Gradients, initialization...
+
+
+#ifndef __vtkSlicerVolumeRenderingHelper_h
+#define __vtkSlicerVolumeRenderingHelper_h
 
 #include "vtkVolumeRendering.h"
-#include "vtkSlicerVRHelper.h"
-#include <string>
-#include "vtkKWRange.h"
+#include "vtkKWObject.h"
 
-
+class vtkVolumeRenderingGUI;
+class vtkCallbackCommand;
+class vtkVolume;
+class vtkMatrix4x4;
 class vtkKWHistogramSet;
 class vtkSlicerVolumePropertyWidget;
 class vtkRenderer;
@@ -43,37 +44,50 @@ class vtkKWComboBoxWithLabel;
 class vtkKWComboBox;
 class vtkKWEntry;
 class vtkVolumeProperty;
+class vtkKWRange;
 
-
-class VTK_SLICERVOLUMERENDERING_EXPORT vtkSlicerVRGrayscaleHelper :public vtkSlicerVRHelper
+class VTK_SLICERVOLUMERENDERING_EXPORT vtkSlicerVolumeRenderingHelper :public vtkKWObject
 {
 public:
-    //--------------------------------------------------------------------------
-    // General
-    //--------------------------------------------------------------------------
     // Description:
     // Usual vtk/KWWidgets methods: go to www.vtk.org / www.kwwidgets.org for more details
-    static vtkSlicerVRGrayscaleHelper *New();
-    vtkTypeRevisionMacro(vtkSlicerVRGrayscaleHelper,vtkSlicerVRHelper);
+    static vtkSlicerVolumeRenderingHelper *New();
+    vtkTypeRevisionMacro(vtkSlicerVolumeRenderingHelper,vtkKWObject);
 
     // Description:
-    // Init the rendering process and the GUI.
-    // Call this method before any other method.
-    virtual void Init(vtkVolumeRenderingGUI *gui);
-
-    // Description:
-    // Update all GUI elements.
+    // Update all GUI Elements
     virtual void UpdateGUIElements(void);
 
     // Description:
-    // Process all callbacks beside of the callbacks marked with "Process"
-    virtual void ProcessVolumeRenderingEvents(vtkObject *caller,unsigned long eid,void *callData);
+    // This method hast to be called directly after the widget is created and before any other method is called.
+    virtual void Init(vtkVolumeRenderingGUI *gui);
+
+    // Description:
+    // Initialize the Rendering pipeline by creating an new vtkMRMLVolumeRenderingNode
+    virtual void InitializePipelineNewVolumeProperty(void);
+    virtual void InitializePipelineNewVolumePropertyFg(void);
+
+    virtual void SetupHistogramFg();
+
+    // Description:
+    // Update the Rendering, takes care, that the volumeproperty etc. is up to date
+    virtual void UpdateRendering(void);
+
+    // Description:
+    // Called everytime a mouse button is pressed
+    void SetButtonDown(int _arg)
+    {
+      this->ButtonDown=(_arg);
+      SetupCPURayCastInteractive();
+    }
+
+    //------------------------------------------------------
+    // GUI processing functions
+    //------------------------------------------------------
 
     // Description:
     // Callback, processed when the visibility button is pressed
     void ProcessPauseResume(void);
-
-
 
     //--------------------------------------------------------------------------
     // Treshold
@@ -97,7 +111,7 @@ public:
     //--------------------------------------------------------------------------
     // Performance/Quality
     //--------------------------------------------------------------------------
-    
+
     // Description:
     // Callback, that is processed when the rendering method (mapper) is changed
     void ProcessRenderingMethodEvents(int id);
@@ -106,19 +120,19 @@ public:
     // Callback, that is processed when the GPU ray casting rendering technique is changed
     void ProcessGPURayCastTechnique(int id);
     void ProcessGPURayCastTechniqueII(int id);
-    
+
     // Description:
     // Callback, that is processed when the multi-volume rendering fusion method is changed
     void ProcessGPURayCastColorOpacityFusion(int id);
-    
+
     // Description:
     // Callback, that is processed when the GPU ray cast mapper internal volume size changed
     void ProcessGPUMemorySize(int id);
-    
+
     // Description:
     // process when user change the expected FPS
     void ProcessExpectedFPS(void);
-    
+
     //--------------------------------------------------------------------------
     // Cropping
     //--------------------------------------------------------------------------
@@ -136,77 +150,67 @@ public:
     void ProcessDisplayClippingBox(int clippingEnabled);
 
     // Description:
-    // Callback, that is processed when the clipping was modified e. g. because of transform node 
+    // Callback, that is processed when the clipping was modified e. g. because of transform node
     void ProcessClippingModified(void);
 
     // Description:
     // Workaround to get knowledge about resize of the renderwidget. TODO: Should get into KWWidgets.
     void ProcessConfigureCallback(void);
 
-    //--------------------------------------------------------------------------
-    // Advanced
-    //--------------------------------------------------------------------------
-
-
-    //--------------------------------------------------------------------------
-    // Rendering Logic
-    //--------------------------------------------------------------------------
-
-    // Description:
-    // Create a new volume rendering node using default values
-    virtual void InitializePipelineNewCurrentNode(void);
-
-    // Description:
-    // Create a new volume rendering node using default values
-    virtual void InitializePipelineNewCurrentNodeFg(void);
-    
-    virtual void SetupHistogramFg();
-    
-    // Description:
-    // Is called at the first renderings.
-    virtual void Rendering(void);
-
-    // Description:
-    // Is called for all next renderings
-    virtual void UpdateRendering(void);
-
-    // Description:
-    // Estimate sample distances for polygon blending and cpu ray casting
-    // The current image spacing is the basis for the calculation
-    void EstimateSampleDistances();
-
-
-    // Description:
-    // The hardware accelerated texture mapper.  
-    vtkGetObjectMacro ( MapperTexture, vtkSlicerVolumeTextureMapper3D);
-
-    // Description:
-    // The software accelerated software mapper
-    vtkGetObjectMacro ( MapperRaycast, vtkSlicerFixedPointVolumeRayCastMapper);
-
-    // Description:
-    // Called everytime a mouse button is pressed
-    void SetButtonDown(int _arg)
-    {
-        vtkSlicerVRHelperDebug("setbutton %d",_arg);
-        this->ButtonDown=(_arg);
-        SetupCPURayCastInteractive();
-    }
-    
 protected:
-    //--------------------------------------------------------------------------
-    // General
-    //--------------------------------------------------------------------------
     // Description:
     // Use ::New() to get a new instance.
-    vtkSlicerVRGrayscaleHelper(void);
+    vtkSlicerVolumeRenderingHelper(void);
 
     // Description:
     // Use ->Delete() to delete object
-    ~vtkSlicerVRGrayscaleHelper(void);
+    ~vtkSlicerVolumeRenderingHelper(void);
 
     // Description:
-    // Main notebook in the details frame
+    // Actor used for Volume Rendering
+    vtkVolume *Volume;
+
+    // Description:
+    // Reference to the VolumeRenderingGUI. No delete!
+    vtkVolumeRenderingGUI *Gui;
+
+    // Description:
+    // Flag to avoid recursive callbacks
+    int InVolumeRenderingCallbackFlag;
+
+    // Description:
+    // Own callback command for volume rendering related events
+    vtkCallbackCommand* VolumeRenderingCallbackCommand;
+
+    // Description:
+    // Set/Get flag to avoid recursive rendering
+    void SetInVolumeRenderingCallbackFlag (int flag) {
+        this->InVolumeRenderingCallbackFlag = flag;
+    }
+    vtkGetMacro(InVolumeRenderingCallbackFlag, int);
+
+    // Description:
+    // Callback function for volume rendering callbacks
+    static void VolumeRenderingCallback( vtkObject *__caller, unsigned long eid, void *__clientData, void *callData );
+
+    // Description:
+    // Called when volume rendering callbacks are invoked
+    virtual void ProcessVolumeRenderingEvents(vtkObject *caller, unsigned long eid, void *callData);
+
+    // Description:
+    // called to initialize the rendering (only the first time).
+    virtual void Rendering(void);
+
+    // Description:
+    // Calculate the matrix that will be used for the rendering (includes the consideration of possible transformnodes and the IJK to RAS transform)
+    void CalculateMatrix(vtkMatrix4x4 *output);
+
+    //-------------------------------------------------------
+    // GUI variables
+    //-------------------------------------------------------
+
+    // Description:
+    // Main notebook in the rendering frame
     vtkKWNotebook *NB_Details;
 
     // Description:
@@ -216,6 +220,21 @@ protected:
     // Description:
     // Icon for the visibility of volume rendering
     vtkSlicerVisibilityIcons *VI_PauseResume;
+
+    // Description:
+    // Frame to configure the mapping options
+    // we save pointers here for dynamically collapse/expend these frames
+    vtkKWFrameWithLabel *FramePerformance;
+    vtkKWFrameWithLabel *FrameCUDARayCasting;
+    vtkKWFrameWithLabel *FrameGPURayCasting;
+    vtkKWFrameWithLabel *FrameGPURayCastingII;
+    vtkKWFrameWithLabel *FramePolygonBlending;
+    vtkKWFrameWithLabel *FrameCPURayCasting;
+    vtkKWFrameWithLabel *FrameFPS;
+
+    // Description:
+    // Adjust the frame for interactive rendering methods
+    vtkKWScale *SC_ExpectedFPS;
 
     //--------------------------------------------------------------------------
     // Treshold
@@ -249,41 +268,22 @@ protected:
     // internal saving of the threshold mode
     int ThresholdMode;
 
-    // Description:
-    // Create the threshold page
-    void CreateThreshold(void);
-
-    // Description:
-    // Destroy the threshold page
-    void DestroyTreshold(void);
-
     //--------------------------------------------------------------------------
     // Performance/Quality
     //--------------------------------------------------------------------------
 
     // Description:
     // internal saving of the rendering method (mapper)
-    int RenderingMethod;
-    
-    // Description:
-    // Frame to configure the mapping options
-    // we save pointers here for dynamically collapse/expend these frames
-    vtkKWFrameWithLabel *FramePerformance;
-    vtkKWFrameWithLabel *FrameCUDARayCasting;
-    vtkKWFrameWithLabel *FrameGPURayCasting;
-    vtkKWFrameWithLabel *FrameGPURayCastingII;
-    vtkKWFrameWithLabel *FramePolygonBlending;
-    vtkKWFrameWithLabel *FrameCPURayCasting;
-    vtkKWFrameWithLabel *FrameFPS;
-    
+    int RenderingMethod;//move to parameters node
+
     // Description:
     // Menu button to select which mapper to use
     vtkKWMenuButtonWithLabel *MB_Mapper;
-    
+
     // Description:
     // Enable/Disable shading in CUDA Ray Cast Mapping
     vtkKWCheckButtonWithLabel *CB_CUDARayCastShading;
-    
+
     // Description:
     // Menu button to select internal volume size
     vtkKWMenuButtonWithLabel *MB_GPUMemorySize;
@@ -292,39 +292,27 @@ protected:
     // Menu button to select rendering technique
     vtkKWMenuButtonWithLabel *MB_GPURayCastTechnique;
     vtkKWMenuButtonWithLabel *MB_GPURayCastTechniqueII;
-    
+
     // Description:
     // Menu button to select color/opacity fusion method in multi-volume rendering
-    vtkKWMenuButtonWithLabel *MB_GPURayCastColorOpacityFusion;        
-    
+    vtkKWMenuButtonWithLabel *MB_GPURayCastColorOpacityFusion;
+
     // Description:
     // Enable/Disable CPU ray cast MIP rendering
     vtkKWCheckButtonWithLabel *CB_CPURayCastMIP;
-    
-    // Description:
-    // Adjust the frame for interactive rendering methods
-    vtkKWScale *SC_ExpectedFPS;
-    
+
     // Description:
     // Adjust the frame for interactive rendering methods
     vtkKWScale *SC_GPURayCastIIFgBgRatio;
-    
+
     // Description:
     // Depth peeling threshold for GPU ray casting
     vtkKWScaleWithEntry *SC_GPURayCastDepthPeelingThreshold;
-    
-    // Description:
-    // Depth peeling threshold for GPU ray casting
-    vtkKWScaleWithEntry *SC_GPURayCastICPEkt;
-    vtkKWScaleWithEntry *SC_GPURayCastICPEks;
-    
-    // Description:
-    // Create the performance page
-    void CreatePerformance(void);
 
     // Description:
-    // Destroy the performance page
-    void DestroyPerformance(void);
+    // Depth/smoothness for GPU ray casting (ICPE)
+    vtkKWScaleWithEntry *SC_GPURayCastICPEkt;//depth
+    vtkKWScaleWithEntry *SC_GPURayCastICPEks;//smoothness
 
     //--------------------------------------------------------------------------
     // Cropping
@@ -345,7 +333,7 @@ protected:
     // Description:
     // The interactive clipping box widget
     vtkSlicerBoxWidget2 *BW_Clipping_Widget;
-    
+
     // Description:
     // The geometrical representation of the interactive clipping box widget
     vtkSlicerBoxRepresentation *BW_Clipping_Representation;
@@ -378,14 +366,118 @@ protected:
     // The volume boundaries in box coordinates(two points).
     double VolumeBoundariesBoxCoordinates[2][3];
 
-    // Description:
-    // Create the cropping page
-    void CreateCropping(void);
+    //--------------------------------------------------------------------------
+    // Advanced
+    //--------------------------------------------------------------------------
 
     // Description:
-    // Delete the cropping page
-    void DestroyCropping(void);
+    // A set of histograms used in the volume property widget
+    vtkKWHistogramSet *Histograms;
 
+    // Description:
+    // A set of histograms used in the volume property widget
+    vtkKWHistogramSet *HistogramsFg;
+
+    // Description:
+    // The volume property widget in the advanced page.
+    vtkSlicerVolumePropertyWidget *SVP_VolumeProperty;
+
+    // Description:
+    // The volume property widget in the advanced page.
+    vtkSlicerVolumePropertyWidget *SVP_VolumePropertyFg;
+
+    //--------------------------------------------------------------------------
+    // Rendering Logic
+    //--------------------------------------------------------------------------
+
+    // Description:
+    // The hardware accelerated texture mapper.
+    vtkSlicerVolumeTextureMapper3D *MapperTexture;
+
+    // Description:
+    // The hardware accelerated gpu (CUDA) ray cast mapper.
+    vtkCudaVolumeMapper *MapperCUDARaycast;
+
+    // Description:
+    // The hardware accelerated gpu ray cast mapper.
+    vtkSlicerGPURayCastVolumeTextureMapper3D *MapperGPURaycast;
+
+    // Description:
+    // The hardware accelerated gpu ray cast II mapper (multi-volume rendering).
+    vtkSlicerGPURayCastVolumeMapper *MapperGPURaycastII;
+
+    // Description:
+    // The software accelerated software mapper
+    vtkSlicerFixedPointVolumeRayCastMapper *MapperRaycast;
+
+    // Description:
+    // Indicates if the VolumeRendering is Paused or not
+    int RenderingPaused;
+
+    // Description:
+    // estimated sample distance for cpu ray casting
+    double EstimatedSampleDistance;//move to parameters node
+
+    // Description:
+    // if updating GUI
+    int UpdateingGUI;
+
+    // Description:
+    // if texture mapper supported
+    int IsTextureMappingSupported;
+
+    // Description:
+    // if CUDA ray casting supported
+    int IsCUDARayCastingSupported;
+
+    // Description:
+    // if GPU ray casting supported
+    int IsGPURayCastingSupported;
+
+    // Description:
+    // 1 mouse button is down at the moment
+    int ButtonDown;
+
+    // Description:
+    // if cpu ray casting is in interaction mode
+    int CPURayCastingInteractionFlag;
+
+    // Description:
+    // internal volume property for GPU ray cast II (multi-volume rendering)
+    vtkVolumeProperty*    VolumePropertyGPURaycastII;
+
+private:
+    // Description:
+    // Caution: Not implemented
+    vtkSlicerVolumeRenderingHelper(const vtkSlicerVolumeRenderingHelper&);//not implemented
+    void operator=(const vtkSlicerVolumeRenderingHelper&);//not implemented
+
+    // Description:
+    // create rendering frame GUI
+    void BuildRenderingFrameGUI();
+
+    //-------------------------------
+    // Functions create/Destroy tabs
+    //-------------------------------
+
+    // Description:
+    // Create/Destroy perfromance page
+    void CreatePerformanceTab(void);
+    void DestroyPerformanceTab(void);
+
+    // Description:
+    // Create/Destroy thresholding page
+    void CreateThresholdTab(void);
+    void DestroyThresholdTab(void);
+
+    // Description:
+    // Create/Destroy cropping page
+    void CreateCroppingTab(void);
+    void DestroyCroppingTab(void);
+
+    //------------------------------
+    // utility functions (move to logic?)
+    //------------------------------
     // Description:
     // Convert a point in world coordinates to box coordinates. input=output
     void ConvertWorldToBoxCoordinates(double* inputOutput);
@@ -398,26 +490,6 @@ protected:
     // Calculate and set the boundaries of the volume in box coordinates
     void CalculateBoxCoordinatesBoundaries(void);
 
-    //--------------------------------------------------------------------------
-    // Advanced
-    //--------------------------------------------------------------------------
-
-    // Description:
-    // A set of histograms used in the volume property widget
-    vtkKWHistogramSet *Histograms;
-
-    // Description:
-    // A set of histograms used in the volume property widget
-    vtkKWHistogramSet *HistogramsFg;
-    
-    // Description:
-    // The volume property widget in the advanced page.
-    vtkSlicerVolumePropertyWidget *SVP_VolumeProperty;
-
-    // Description:
-    // The volume property widget in the advanced page.
-    vtkSlicerVolumePropertyWidget *SVP_VolumePropertyFg;
-    
     // Description:
     // Update the volume property widget
     void UpdateSVP(void);
@@ -425,7 +497,7 @@ protected:
     // Description:
     // Update the volume property widget
     void UpdateSVPFg(void);
-    
+
     // Description:
     // Adjust the transfer functions to the current setting of vtkVolumeProperty
     void AdjustMapping(void);
@@ -433,77 +505,21 @@ protected:
     // Description:
     // Adjust the transfer functions to the current setting of vtkVolumeProperty
     void AdjustMappingFg(void);
-        
+
+    // Description:
+    // Setup CPU ray casing interactive mode parameters
     void SetupCPURayCastInteractive();
 
+    // Description:
+    // Prepare internal volume property for GPU ray casting II
     void CreateVolumePropertyGPURaycastII();
-    
-    //--------------------------------------------------------------------------
-    // Rendering Logic
-    //--------------------------------------------------------------------------
 
-    // Description:
-    // The hardware accelerated texture mapper.
-    vtkSlicerVolumeTextureMapper3D *MapperTexture;    
-    
-    // Description:
-    // The hardware accelerated gpu ray cast mapper.
-    vtkCudaVolumeMapper *MapperCUDARaycast;
-
-    // Description:
-    // The hardware accelerated gpu ray cast mapper.
-    vtkSlicerGPURayCastVolumeTextureMapper3D *MapperGPURaycast;
-
-    // Description:
-    // The hardware accelerated gpu ray cast II mapper (multi-volume rendering).
-    vtkSlicerGPURayCastVolumeMapper *MapperGPURaycastII;
-    
-    // Description:
-    // The software accelerated software mapper
-    vtkSlicerFixedPointVolumeRayCastMapper *MapperRaycast;
-
-    // Description:
-    // Indicates if the VolumeRendering is Paused or not
-    int RenderingPaused;
-    
-    // Description:
-    // estimated sample distance for cpu ray casting
-    double EstimatedSampleDistance;
-    
-    // Description:
-    // if updating GUI
-    int UpdateingGUI;
-    
-    // Description:
-    // if texture mapper supported
-    int IsTextureMappingSupported;
-    
-    // Description:
-    // if CUDA ray casting supported
-    int IsCUDARayCastingSupported;
-
-    // Description:
-    // if GPU ray casting supported
-    int IsGPURayCastingSupported;
-    
     // Description:
     // check abort event
     void CheckAbort(void);
-    
-    // Description:
-    // 1 mouse button is down at the moment
-    int ButtonDown;
-    
-    int CPURayCastingInteractionFlag;
-    
-    vtkVolumeProperty*    VolumePropertyGPURaycastII;
 
-private:
     // Description:
-    // Caution: Not implemented
-    vtkSlicerVRGrayscaleHelper(const vtkSlicerVRGrayscaleHelper&);//not implemented
-    void operator=(const vtkSlicerVRGrayscaleHelper&);//not implemented
-
+    // default sample distances
+    void EstimateSampleDistances(void);
 };
 #endif
-
